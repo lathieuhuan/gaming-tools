@@ -23,20 +23,22 @@
 }
 
 .ron-button-default {
-  background-color: var(--ron-color-light-600);
-  color: var(--ron-color-black);
+  background-color: var(--ron-color-light-surface);
 }
 .ron-button-primary {
-  background-color: var(--ron-color-yellow-400);
-  color: var(--ron-color-black);
+  background-color: var(--ron-color-primary);
 }
 .ron-button-danger {
-  background-color: var(--ron-color-red-600);
-  color: var(--ron-color-light-100);
+  background-color: var(--ron-color-danger-background);
+  color: var(--ron-color-on-dark);
 }
 .ron-button-active {
-  background-color: var(--ron-color-green-200);
-  color: var(--ron-color-black);
+  background-color: var(--ron-color-active-background);
+}
+.ron-button-default,
+.ron-button-primary,
+.ron-button-active {
+  color: var(--ron-color-on-light);
 }
 
 .ron-button-rounded {

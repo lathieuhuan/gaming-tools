@@ -1,17 +1,10 @@
 :root {
-  --ron-color-light-100: #ffffff;
-  --ron-color-light-400: #e0e0e0;
-  --ron-color-light-600: #cccccc;
-
-  --ron-color-dark-700: #151a40;
-
-  --ron-color-yellow-400: #edc73d;
-
-  --ron-color-red-600: #cc0300;
-
-  --ron-color-green-200: #89fba9;
-
-  --ron-color-black: #000;
+  --ron-color-danger-background: #c20300;
+  --ron-color-active-background: #89fba9;
+  --ron-color-light-surface: #d6d6d6;
+  --ron-color-on-dark: #f5f5f5;
+  --ron-color-on-light: #000000;
+  --ron-color-primary: #edc73d;
 }
 
 .ron-flex-center {
