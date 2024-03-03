@@ -1,0 +1,21 @@
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+body {
+  background-color: var(--ron-color-dark-700);
+  color: var(--ron-color-light-400);
+}
