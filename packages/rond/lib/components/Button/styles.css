@@ -1,8 +1,4 @@
 .ron-button {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-
   border: none;
   font-weight: 700;
   font-size: 0.875rem;
@@ -23,7 +19,7 @@
 }
 
 .ron-button-default {
-  background-color: var(--ron-color-light-surface);
+  background-color: var(--ron-color-light-surface-3);
 }
 .ron-button-primary {
   background-color: var(--ron-color-primary);

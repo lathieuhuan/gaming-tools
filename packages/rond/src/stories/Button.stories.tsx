@@ -35,6 +35,8 @@ const meta = {
     variant: { control: "select", options: variants },
     shape: { control: "select", options: shapes },
     size: { control: "select", options: sizes },
+    icon: { control: false },
+    disabled: { control: "boolean" },
   },
 } satisfies Meta<typeof Button>;
 
@@ -47,6 +49,7 @@ export const Default: Story = {
     variant: "default",
     shape: "rounded",
     size: "medium",
+    disabled: false,
     children: "Button",
   },
 };
@@ -61,8 +64,7 @@ export const WithIcon: Story = {
     children: "Button",
   },
   argTypes: {
-    icon: { control: false },
-    iconPosition: { control: "select", options: ["start", "end"] },
+    iconPosition: { control: "radio", options: ["start", "end"] },
   },
 };
 
@@ -74,7 +76,6 @@ export const IconButton: Story = {
     icon,
   },
   argTypes: {
-    icon: { control: false },
     children: { control: false },
   },
 };

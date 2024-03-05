@@ -1,10 +1,23 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 :root {
   --ron-color-danger-background: #c20300;
   --ron-color-active-background: #89fba9;
-  --ron-color-light-surface: #d6d6d6;
+  --ron-color-light-surface-2: #f5f5f5;
+  --ron-color-light-surface-3: #ebebeb;
+  /* --ron-color-light-surface-4: #e0e0e0; */
+  --ron-color-light-surface-disabled: #c2c2c2;
   --ron-color-on-dark: #f5f5f5;
   --ron-color-on-light: #000000;
   --ron-color-primary: #edc73d;
+}
+
+input {
+  outline: none;
 }
 
 .ron-flex-center {
@@ -14,12 +27,12 @@
 }
 
 .ron-disabled {
-  opacity: 0.5;
+  opacity: 0.55;
 }
 
 @media (min-width: 480px) {
   .ron-glow-on-hover:not(:disabled) {
-    opacity: 0.9;
+    opacity: 0.95;
   }
   .ron-glow-on-hover:not(:disabled):hover {
     opacity: 1;
