@@ -20,6 +20,7 @@
 
 input {
   outline: none;
+  border: none;
 }
 
 .ron-flex-center {
