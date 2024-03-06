@@ -41,6 +41,7 @@
     "eslint-plugin-react-refresh": "0.4.5",
     "eslint-plugin-storybook": "0.8.0",
     "glob": "10.3.10",
+    "sass": "1.71.1",
     "storybook": "7.6.17",
     "typescript": "5.2.2",
     "vite": "5.1.4",
