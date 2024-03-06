@@ -30,6 +30,10 @@ input {
   opacity: 0.55;
 }
 
+.ron-hidden {
+  display: none;
+}
+
 @media (min-width: 480px) {
   .ron-glow-on-hover:not(:disabled) {
     opacity: 0.95;

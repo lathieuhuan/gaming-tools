@@ -11,10 +11,6 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
-  argTypes: {
-    width: { control: { type: "number", min: 50, max: 500, step: 10 } },
-    src: { control: "text" },
-  },
 } satisfies Meta<typeof Image>;
 
 export default meta;
