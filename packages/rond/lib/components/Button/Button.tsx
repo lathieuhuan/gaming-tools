@@ -1,6 +1,6 @@
 import clsx, { type ClassValue } from "clsx";
 import type { ButtonHTMLAttributes } from "react";
-import "./styles.css";
+import "./styles.scss";
 
 type ButtonVariant = "default" | "primary" | "danger" | "active" | "custom";
 

@@ -1,7 +1,7 @@
 import clsx, { type ClassValue } from "clsx";
 import { useState } from "react";
 import type { CSSProperties, SyntheticEvent } from "react";
-import "./styles.css";
+import "./styles.scss";
 
 export interface ImageProps {
   src?: string;
