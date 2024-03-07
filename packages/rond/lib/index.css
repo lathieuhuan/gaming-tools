@@ -22,6 +22,9 @@ input {
   outline: none;
   border: none;
 }
+button {
+  background-color: transparent;
+}
 
 .ron-flex-center {
   display: flex;

@@ -19,6 +19,8 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   icon?: React.ReactNode;
   /** Default to 'start' */
   iconPosition?: "start" | "end";
+  /** Default to true */
+  withShadow?: boolean;
 }
 
 export function Button({
@@ -27,12 +29,14 @@ export function Button({
   size = "medium",
   icon,
   iconPosition = "start",
+  withShadow = true,
   children,
   className,
   ...rest
 }: ButtonProps) {
   const classes = [
     `ron-flex-center ron-button ron-button-${shape}`,
+    withShadow && "ron-button-shadow",
     variant !== "custom" && `ron-button-${variant}`,
     rest.disabled ? "ron-disabled" : "ron-glow-on-hover",
     className,
