@@ -1,18 +1,6 @@
-import { useEffect } from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { CollapseSpace } from "@lib/components";
-
-const Children = () => {
-  useEffect(() => {
-    console.log("MOUNT");
-
-    return () => {
-      console.log("UNMOUNT");
-    };
-  }, []);
-
-  return <div style={{ width: 300, height: 200, background: "red" }}>Hello from Children</div>;
-};
+import { MountAnnouncer } from "../components";
 
 const meta = {
   title: "CollapseSpace",
@@ -32,6 +20,6 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     active: true,
-    children: <Children />,
+    children: <MountAnnouncer style={{ width: 300, height: 200, background: "red" }} />,
   },
 };
