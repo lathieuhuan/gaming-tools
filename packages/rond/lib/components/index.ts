@@ -5,4 +5,5 @@ export * from "./CollapseSpace";
 export * from "./HiddenSpace";
 export * from "./Image";
 export * from "./Input";
+export * from "./Table";
 export * from "./svg-icons";
