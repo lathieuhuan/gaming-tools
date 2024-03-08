@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { HiddenSpace } from "@lib/components";
+import { MountAnnouncer } from "../components";
 
 const meta = {
   title: "HiddenSpace",
@@ -7,7 +8,9 @@ const meta = {
   parameters: {
     layout: "centered",
   },
-  argTypes: {},
+  argTypes: {
+    children: { control: false },
+  },
   tags: ["autodocs"],
 } satisfies Meta<typeof HiddenSpace>;
 
@@ -17,11 +20,6 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     active: true,
-    activeWidth: 360,
-    children: (
-      <div style={{ height: 120, background: "red" }}>
-        <p>Content</p>
-      </div>
-    ),
+    children: <MountAnnouncer style={{ width: 300, height: 200, background: "red" }} />,
   },
 };

@@ -1,32 +1,70 @@
-import clsx, { type ClassValue } from "clsx";
+import { type CSSProperties, useEffect, useState } from "react";
+import { useElementSize } from "@lib/hooks";
 
 interface HiddenSpaceProps {
-  className?: ClassValue;
   active: boolean;
-  activeWidth: string | number;
-  /** Default to 200 */
-  duration?: number;
+  /** Default to 250 */
+  moveDuration?: number;
+  /** Default to false */
+  destroyOnClose?: boolean;
+  className?: string;
+  style?: CSSProperties;
   children: React.ReactNode;
-  onTransitionEnd?: () => void;
+  afterClose?: () => void;
 }
-export function HiddenSpace({
+export const HiddenSpace = ({
   className,
   active,
-  activeWidth,
-  duration = 250,
+  moveDuration = 250,
+  destroyOnClose = false,
+  style,
   children,
-  onTransitionEnd,
-}: HiddenSpaceProps) {
+  afterClose,
+}: HiddenSpaceProps) => {
+  const [state, setState] = useState({
+    active: false,
+    mounted: false,
+  });
+  const [ref, { width }] = useElementSize<HTMLDivElement>();
+
+  useEffect(() => {
+    if (destroyOnClose && active !== state.active) {
+      setState((prevState) => ({
+        ...prevState,
+        active,
+        mounted: true,
+      }));
+    }
+  }, [active]);
+
+  const mergedActive = destroyOnClose ? state.active : active;
+  const mergedMounted = destroyOnClose ? state.mounted : true;
+
   return (
     <div
-      className={clsx("ron-hide-scrollbar", className)}
+      className={className}
       style={{
-        width: active ? activeWidth : 0,
-        transition: `width ${duration}ms ease-in-out`,
+        ...style,
+        width: mergedActive ? width : 0,
+        transition: `width ${moveDuration}ms ease-in-out`,
+        overflow: "hidden",
       }}
-      onTransitionEnd={onTransitionEnd}
+      onTransitionEnd={() => {
+        if (!mergedActive) {
+          afterClose?.();
+
+          if (destroyOnClose) {
+            setState((prevState) => ({
+              ...prevState,
+              mounted: false,
+            }));
+          }
+        }
+      }}
     >
-      {children}
+      <div ref={ref} style={{ width: "fit-content" }}>
+        {mergedMounted && children}
+      </div>
     </div>
   );
-}
+};
