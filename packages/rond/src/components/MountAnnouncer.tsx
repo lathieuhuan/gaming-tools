@@ -1,17 +1,25 @@
+import { notification } from "@lib/utils";
 import { type CSSProperties, useEffect } from "react";
 
 interface MountAnnouncerProps {
   className?: string;
+  mountMsg?: string;
+  unmountMsg?: string;
   style?: CSSProperties;
 }
-export function MountAnnouncer(props: MountAnnouncerProps) {
+export function MountAnnouncer({
+  mountMsg = "Component mounted",
+  unmountMsg = "Component unmounted",
+  ...divProps
+}: MountAnnouncerProps) {
+  //
   useEffect(() => {
-    console.log("MOUNT");
+    notification.info({ content: mountMsg });
 
     return () => {
-      console.log("UNMOUNT");
+      notification.warn({ content: unmountMsg });
     };
   }, []);
 
-  return <div {...props}>Hello from Announcer</div>;
+  return <div {...divProps}>Hello from Announcer</div>;
 }
