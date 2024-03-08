@@ -1,5 +1,5 @@
+import { type CSSProperties, useEffect, useState } from "react";
 import { useElementSize } from "@lib/hooks";
-import { CSSProperties, useEffect, useState } from "react";
 
 interface CollapseSpaceProps {
   active: boolean;
@@ -28,25 +28,12 @@ export const CollapseSpace = ({
   const [ref, { height }] = useElementSize<HTMLDivElement>();
 
   useEffect(() => {
-    if (!destroyOnClose || active === state.active) return;
-
-    setState((prevState) => ({
-      ...prevState,
-      active,
-      mounted: true,
-    }));
-
-    if (!active) {
-      setTimeout(() => {
-        setState((prevState) =>
-          prevState.active
-            ? prevState
-            : {
-                ...prevState,
-                mounted: false,
-              }
-        );
-      }, moveDuration);
+    if (destroyOnClose && active !== state.active) {
+      setState((prevState) => ({
+        ...prevState,
+        active,
+        mounted: true,
+      }));
     }
   }, [active]);
 
@@ -63,7 +50,16 @@ export const CollapseSpace = ({
         overflow: "hidden",
       }}
       onTransitionEnd={() => {
-        if (!mergedActive) afterClose?.();
+        if (!mergedActive) {
+          afterClose?.();
+
+          if (destroyOnClose) {
+            setState((prevState) => ({
+              ...prevState,
+              mounted: false,
+            }));
+          }
+        }
       }}
     >
       <div ref={ref}>{mergedMounted && children}</div>
