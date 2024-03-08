@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-
-import { Button, ButtonProps } from "@lib/components/Button";
+import { Button, ButtonProps } from "@lib/components";
 
 const variants: ButtonProps["variant"][] = ["default", "primary", "active", "danger", "custom"];
 const shapes: ButtonProps["shape"][] = ["square", "rounded"];

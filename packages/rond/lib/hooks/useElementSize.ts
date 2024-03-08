@@ -1,6 +1,6 @@
 import { type Ref, useEffect, useRef, useState } from "react";
 
-export const useElementSize = <T extends HTMLElement>(): [Ref<T>, { width: number; height: number }] => {
+export const useElementSize = <T extends HTMLElement = HTMLElement>(): [Ref<T>, { width: number; height: number }] => {
   const ref = useRef<T>(null);
   const [size, setSize] = useState({
     width: 0,
@@ -11,20 +11,24 @@ export const useElementSize = <T extends HTMLElement>(): [Ref<T>, { width: numbe
     const elmt = ref.current;
 
     if (elmt) {
+      const sizeRef = { ...size };
+
+      const updateSize = (width: any, height: any) => {
+        if (width !== sizeRef.width || height !== sizeRef.height) {
+          sizeRef.width = width;
+          sizeRef.height = height;
+          setSize({ width, height });
+        }
+      };
+
       const resizeObserver = new ResizeObserver((entries) => {
         for (const entry of entries) {
           if (entry.contentBoxSize) {
             const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
 
-            setSize({
-              width: contentBoxSize.inlineSize,
-              height: contentBoxSize.blockSize,
-            });
+            updateSize(contentBoxSize.inlineSize, contentBoxSize.blockSize);
           } else {
-            setSize({
-              width: entry.contentRect.width,
-              height: entry.contentRect.height,
-            });
+            updateSize(entry.contentRect.width, entry.contentRect.height);
           }
         }
       });
