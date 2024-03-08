@@ -1,4 +1,4 @@
-import type { NotificationRequest } from "./types";
+import type { NotificatioProps, NotificationRequest } from "./types";
 import { notifRoot, location } from "./root";
 import { NotificationCenter } from "./NotificationCenter";
 
@@ -20,8 +20,8 @@ const updateNotification = () => {
   );
 };
 
-const destroy = (id?: number | "all") => {
-  if (id === "all") {
+const destroy = (id?: number | "ALL") => {
+  if (id === "ALL") {
     for (const request of notiRequests) {
       request.isClosing = true;
     }
@@ -42,7 +42,7 @@ const destroy = (id?: number | "all") => {
   updateNotification();
 };
 
-const show = (type: NotificationRequest["type"]) => (noti: Omit<NotificationRequest, "id" | "type">) => {
+const show = (type: NotificationRequest["type"]) => (noti: NotificatioProps) => {
   //
   for (let id = 0; id < 100; id++) {
     if (notiRequests.every((notification) => notification.id !== id)) {

@@ -9,6 +9,8 @@ export type NotificationRequest = Omit<AlertProps, "onClose"> & {
   afterClose?: (id: number) => void;
 };
 
+export type NotificatioProps = Omit<NotificationRequest, "id" | "type">;
+
 export interface NotificationAnimatorProps extends PartiallyRequired<NotificationRequest, "afterClose"> {
   children: (operation: { onClose: () => void }) => React.ReactElement;
   onMount: (info: HTMLDivElement) => void;

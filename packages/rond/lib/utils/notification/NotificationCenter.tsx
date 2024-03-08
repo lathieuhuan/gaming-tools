@@ -34,7 +34,9 @@ export const NotificationCenter = (props: NotificationCenterProps) => {
                 props.afterCloseNoti(id);
               }}
             >
-              {({ onClose }) => <Alert {...request} onClose={onClose} />}
+              {({ onClose }) => (
+                <Alert {...request} className={["ron-notification-alert", request.className]} onClose={onClose} />
+              )}
             </NotificationAnimator>
           </div>
         );
