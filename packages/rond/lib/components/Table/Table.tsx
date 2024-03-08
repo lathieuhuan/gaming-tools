@@ -2,7 +2,7 @@ import clsx, { type ClassValue } from "clsx";
 import type { ColHTMLAttributes, HTMLAttributes, TableHTMLAttributes, TdHTMLAttributes, ThHTMLAttributes } from "react";
 import "./styles.scss";
 
-interface TableProps extends Omit<TableHTMLAttributes<HTMLTableElement>, "className"> {
+export interface TableProps extends Omit<TableHTMLAttributes<HTMLTableElement>, "className"> {
   className?: ClassValue;
   colAttrs?: (ColHTMLAttributes<HTMLTableColElement> | null)[];
 }

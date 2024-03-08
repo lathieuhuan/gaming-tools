@@ -11,7 +11,7 @@
       background-color: var(--ron-color-dark-surface-2);
     }
     &:hover:not(:first-child) {
-      background-color: #7a0200;
+      background-color: var(--ron-color-table-row-hover);
     }
   }
 
