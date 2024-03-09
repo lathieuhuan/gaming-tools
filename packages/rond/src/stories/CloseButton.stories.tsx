@@ -8,7 +8,9 @@ const meta = {
     layout: "centered",
   },
   tags: ["autodocs"],
-  argTypes: {},
+  argTypes: {
+    size: { control: "select", options: ["small", "medium", "large", "custom"] },
+  },
 } satisfies Meta<typeof CloseButton>;
 
 export default meta;

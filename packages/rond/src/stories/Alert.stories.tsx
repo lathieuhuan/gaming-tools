@@ -21,7 +21,7 @@ export const Default: Story = {
     type: "info",
     content: "Hello World",
     style: {
-        minWidth: 300
-    }
+      minWidth: 300,
+    },
   },
 };

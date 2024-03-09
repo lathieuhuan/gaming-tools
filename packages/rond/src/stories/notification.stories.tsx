@@ -39,7 +39,7 @@ const NotificationDemo = ({ notiType, ...notiProps }: NotificationDemoProps) => 
         </Button>
       </div>
 
-      <p>(not auto close, duration 0)</p>
+      <p style={{ color: "var(--ron-color-danger-background)"}}>(not auto close, duration 0)</p>
     </div>
   );
 };
