@@ -9,6 +9,7 @@ export * from "./ItemCase";
 export * from "./LoadingSpin";
 export * from "./Modal";
 export * from "./Radio";
+export * from "./Rarity";
 export * from "./StatsTable";
 export * from "./Table";
 export * from "./svg-icons";
