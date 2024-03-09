@@ -5,6 +5,7 @@ export * from "./CollapseSpace";
 export * from "./HiddenSpace";
 export * from "./Image";
 export * from "./Input";
+export * from "./ItemCase";
 export * from "./StatsTable";
 export * from "./Table";
 export * from "./svg-icons";

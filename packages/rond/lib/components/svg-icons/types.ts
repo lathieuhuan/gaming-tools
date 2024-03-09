@@ -1,3 +1,3 @@
-export interface SvgProps {
-  className?: string;
-}
+import { type SVGAttributes } from "react";
+
+export interface SvgProps extends SVGAttributes<SVGSVGElement> {}

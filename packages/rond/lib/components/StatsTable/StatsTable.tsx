@@ -15,12 +15,12 @@ const StatsTable = ({ className, style, children }: StatsTableProps) => {
   );
 };
 
-interface RowProps {
+export interface StatsTableRowProps {
   className?: ClassValue;
   children: ReactNode;
   onClick?: () => void;
 }
-StatsTable.Row = ({ className, children, onClick }: RowProps) => {
+StatsTable.Row = ({ className, children, onClick }: StatsTableRowProps) => {
   return (
     <div className={clsx("ron-stats-table-row", className)} onClick={onClick}>
       {children}

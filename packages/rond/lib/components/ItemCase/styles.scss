@@ -1,0 +1,41 @@
+.ron-item-case {
+  --active-color: #fff;
+
+  .ron-item-case-content .ron-item-case-img {
+    transition: transform 150ms ease-in-out;
+  }
+
+  &:hover {
+    .ron-item-case-content {
+      box-shadow: 0 0 0 2.5px var(--active-color);
+    }
+
+    &:not(.ron-item-case-clicked) .ron-item-case-content {
+      .ron-item-case-img {
+        transform: scale(1.15);
+      }
+    }
+  }
+
+  &:hover:not(.ron-item-case-clicked),
+  &.ron-item-case-chosen:not(.ron-item-case-clicked) {
+    transform: scale(1.02);
+  }
+
+  &.ron-item-case-chosen {
+    .ron-item-case-content {
+      -webkit-animation: glow 0.5s ease-in-out infinite alternate;
+      -moz-animation: glow 0.5s ease-in-out infinite alternate;
+      animation: glow 0.5s ease-in-out infinite alternate;
+    }
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 0 1px var(--active-color), 0 0 1px 1px var(--active-color), 0 0 2px 1px var(--active-color);
+  }
+  to {
+    box-shadow: 0 0 2px 1px var(--active-color), 0 0 3px 2px var(--active-color), 0 0 4px 3px var(--active-color);
+  }
+}
