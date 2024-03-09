@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { ModalCore } from "@lib/components";
+import { Modal } from "@lib/components";
 import { MountAnnouncer } from "../components";
 
 const meta = {
   title: "ModalCore",
-  component: ModalCore,
+  component: Modal.Core,
   parameters: {
     layout: "centered",
   },
@@ -15,7 +15,7 @@ const meta = {
     closable: { control: false },
     children: { control: false },
   },
-} satisfies Meta<typeof ModalCore>;
+} satisfies Meta<typeof Modal.Core>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

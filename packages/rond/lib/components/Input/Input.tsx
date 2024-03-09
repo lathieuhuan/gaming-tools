@@ -1,7 +1,7 @@
 import clsx, { type ClassValue } from "clsx";
 import type { ChangeEventHandler, InputHTMLAttributes } from "react";
 import { forwardRef, useState, useEffect } from "react";
-import "./styles.scss";
+import "./Input.styles.scss";
 
 export interface InputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "className" | "type" | "value" | "onChange"> {

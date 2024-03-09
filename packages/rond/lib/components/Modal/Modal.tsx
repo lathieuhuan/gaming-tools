@@ -1,7 +1,8 @@
 import clsx, { type ClassValue } from "clsx";
-import { ModalCore, type ModalCoreProps } from "./ModalCore";
+import { LARGE_HEIGHT_CLS, ModalCore, type ModalCoreProps } from "./ModalCore";
 import { ModalActions, type ModalActionsProps, ModalHeader } from "./modal-components";
 import { CloseButton } from "../Button";
+import "./Modal.styles.scss";
 
 export interface ModalProps
   extends ModalCoreProps,
@@ -38,44 +39,34 @@ const Modal = ({
   ...coreProps
 }: ModalProps) => {
   return (
-    <ModalCore
-      {...coreProps}
-      className={clsx(
-        "flex flex-col",
-        withActions && "pb-4",
-        !coreProps.preset && "rounded-lg shadow-white-glow",
-        className
-      )}
-      closable={closable}
-    >
+    <ModalCore {...coreProps} className={clsx("ron-modal-content-standard", className)} closable={closable}>
       <ModalHeader withDivider={withHeaderDivider}>{title}</ModalHeader>
 
-      <div className={clsx("p-4 grow overflow-auto", bodyCls)}>
-        {typeof children === "function" ? children() : children}
-      </div>
+      <div className={clsx("ron-modal-body", bodyCls)}>{typeof children === "function" ? children() : children}</div>
 
       {withActions && (
-        <div className="px-4">
-          <ModalActions
-            {...{
-              withDivider: withFooterDivider,
-              disabledConfirm,
-              focusConfirm,
-              showCancel,
-              cancelText,
-              confirmText,
-              formId,
-              cancelButtonProps,
-              confirmButtonProps,
-              moreActions,
-              onCancel: coreProps.onClose,
-              onConfirm,
-            }}
-          />
-        </div>
+        <ModalActions
+          {...{
+            className: "ron-modal-footer",
+            withDivider: withFooterDivider,
+            disabledConfirm,
+            focusConfirm,
+            showCancel,
+            cancelText,
+            confirmText,
+            formId,
+            cancelButtonProps,
+            confirmButtonProps,
+            moreActions,
+            onCancel: coreProps.onClose,
+            onConfirm,
+          }}
+        />
       )}
 
-      {withCloseButton ? <CloseButton className="" disabled={!closable} onClick={coreProps.onClose} /> : null}
+      {withCloseButton ? (
+        <CloseButton className="ron-modal-close-button" disabled={!closable} onClick={coreProps.onClose} />
+      ) : null}
     </ModalCore>
   );
 };
@@ -117,7 +108,7 @@ function withCoreModal<T>(
   };
 }
 
-Modal.LARGE_HEIGHT_CLS = "ron-modal-body-large-height";
+Modal.LARGE_HEIGHT_CLS = LARGE_HEIGHT_CLS;
 Modal.Core = ModalCore;
 Modal.Header = ModalHeader;
 Modal.Actions = ModalActions;

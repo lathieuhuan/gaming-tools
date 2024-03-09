@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import type { HTMLAttributes, ReactNode } from "react";
-import "./styles.scss";
+import "./ItemCase.styles.scss";
 
 export interface ItemCaseProps extends Omit<HTMLAttributes<HTMLDivElement>, "children"> {
   children: (className: string, imgCls: string) => ReactNode;

@@ -1,5 +1,5 @@
 import clsx, { ClassValue } from "clsx";
-import "./styles.scss";
+import "./Checkbox.styles.scss";
 
 interface CheckboxProps {
   className?: ClassValue;
@@ -10,7 +10,7 @@ interface CheckboxProps {
   children?: React.ReactNode;
   onChange?: (checked: boolean) => void;
 }
-export const Checkbox = ({ className, readOnly, children, onChange, ...inputProps }: CheckboxProps) => {
+export const Checkbox = ({ className, children, onChange, ...inputProps }: CheckboxProps) => {
   return (
     <label className={clsx("ron-checkbox-wrapper", className)}>
       <span className="ron-checkbox">

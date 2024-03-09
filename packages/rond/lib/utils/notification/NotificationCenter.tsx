@@ -2,7 +2,6 @@ import { useRef } from "react";
 import type { NotificationCenterProps } from "./types";
 import { NotificationAnimator } from "./NotificationAnimator";
 import { Alert } from "../../components";
-import "./styles.scss";
 
 export const NotificationCenter = (props: NotificationCenterProps) => {
   const heights = useRef<number[]>([]);

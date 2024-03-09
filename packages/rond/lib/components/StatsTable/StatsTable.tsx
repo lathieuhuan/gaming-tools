@@ -1,6 +1,6 @@
 import clsx, { type ClassValue } from "clsx";
 import type { CSSProperties, ReactNode } from "react";
-import "./styles.scss";
+import "./StatsTable.styles.scss";
 
 export interface StatsTableProps {
   className?: ClassValue;

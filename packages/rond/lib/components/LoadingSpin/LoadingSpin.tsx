@@ -1,6 +1,6 @@
 import clsx, { type ClassValue } from "clsx";
 import type { CSSProperties } from "react";
-import "./styles.scss";
+import "./LoadingSpin.styles.scss";
 
 export interface LoadingSpinProps {
   className?: ClassValue;

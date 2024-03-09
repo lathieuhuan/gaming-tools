@@ -1,9 +1,10 @@
 import clsx, { type ClassValue } from "clsx";
 import ReactDOM from "react-dom";
 import { useEffect, useState, type ReactNode, type CSSProperties, useRef } from "react";
-import "./ModalCore.styles.scss";
 
 type ModalPreset = "small" | "large" | "custom";
+
+export const LARGE_HEIGHT_CLS = "ron-modal-content-large-height";
 
 export interface ModalControl {
   active?: boolean;
@@ -97,7 +98,7 @@ export const ModalCore = ({
 
   return state.mounted
     ? ReactDOM.createPortal(
-        <div className={"ron-modal-core" + (state.visible ? "" : " ron-modal-core-invisible")}>
+        <div className={clsx("ron-modal-core", !state.visible && "ron-modal-core-invisible")}>
           <div
             className={`ron-modal-mask ron-modal-mask-${state.movingDir} ron-modal-transition`}
             onClick={closeOnMaskClick ? closeModal : undefined}
@@ -105,8 +106,8 @@ export const ModalCore = ({
 
           <div
             className={clsx(
-              `ron-modal-body ron-modal-body-${preset} ron-modal-body-${state.movingDir} ron-modal-transition`,
-              preset === "large" && "ron-modal-body-large-height",
+              `ron-modal-content ron-modal-content-${preset} ron-modal-content-${state.movingDir} ron-modal-transition`,
+              preset === "large" && LARGE_HEIGHT_CLS,
               className
             )}
             style={style}

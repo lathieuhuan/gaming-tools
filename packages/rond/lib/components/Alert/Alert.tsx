@@ -2,7 +2,7 @@ import clsx, { type ClassValue } from "clsx";
 import type { CSSProperties, ReactNode } from "react";
 import { CheckCircleSvg, ExclamationCircleSvg, ExclamationTriangleSvg, InfoCircleSvg, TimesSvg } from "../svg-icons";
 import { Button } from "../Button";
-import "./styles.scss";
+import "./Alert.styles.scss";
 
 export interface AlertProps {
   className?: ClassValue;

@@ -1,6 +1,6 @@
 import clsx, { type ClassValue } from "clsx";
 import type { ColHTMLAttributes, HTMLAttributes, TableHTMLAttributes, TdHTMLAttributes, ThHTMLAttributes } from "react";
-import "./styles.scss";
+import "./Table.styles.scss";
 
 export interface TableProps extends Omit<TableHTMLAttributes<HTMLTableElement>, "className"> {
   className?: ClassValue;
