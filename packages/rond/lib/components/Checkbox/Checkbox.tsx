@@ -23,7 +23,7 @@ export const Checkbox = ({ className, readOnly, children, onChange, ...inputProp
         <span className="ron-checkbox-visual" />
       </span>
 
-      <span>{children}</span>
+      <span className="ron-checkbox-label">{children}</span>
     </label>
   );
 };
