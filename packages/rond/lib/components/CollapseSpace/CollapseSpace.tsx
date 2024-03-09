@@ -1,7 +1,7 @@
 import { type CSSProperties, useEffect, useState } from "react";
 import { useElementSize } from "@lib/hooks";
 
-interface CollapseSpaceProps {
+export interface CollapseSpaceProps {
   active: boolean;
   /** Default to 250 */
   moveDuration?: number;

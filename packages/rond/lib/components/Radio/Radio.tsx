@@ -1,6 +1,6 @@
 import "./Radio.styles.scss";
 
-interface RadioProps {
+export interface RadioProps {
   size?: "small" | "medium" | "large";
   checked?: boolean;
   onChange?: (checked: boolean) => void;

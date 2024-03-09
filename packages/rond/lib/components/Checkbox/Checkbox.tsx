@@ -1,7 +1,7 @@
 import clsx, { ClassValue } from "clsx";
 import "./Checkbox.styles.scss";
 
-interface CheckboxProps {
+export interface CheckboxProps {
   className?: ClassValue;
   name?: string;
   defaultChecked?: boolean;
