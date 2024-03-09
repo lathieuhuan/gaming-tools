@@ -1,0 +1,79 @@
+.ron-modal-core {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+}
+.ron-modal-core-invisible {
+  visibility: hidden;
+}
+
+.ron-modal-mask {
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+
+  &.ron-modal-mask-out {
+    opacity: 0.6;
+  }
+  &.ron-modal-mask-in {
+    opacity: 0.2;
+  }
+}
+
+.ron-modal-body {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 50;
+  max-width: 95%;
+  transform: translate(-50%, -50%) scaleX(var(--ron-scale-x)) scaleY(var(--ron-scale-y));
+  overflow: hidden;
+
+  &.ron-modal-body-small,
+  &.ron-modal-body-large {
+    width: 22rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 3px #b8b8b8;
+  }
+  &.ron-modal-body-large {
+    background-color: var(--ron-color-dark-surface-2);
+    color: var(--ron-color-on-dark);
+
+    @media (min-width: 480px) {
+      width: 448px;
+    }
+    @media (min-width: 640px) {
+      width: 592px;
+    }
+    @media (min-width: 768px) {
+      width: 720px;
+    }
+    @media (min-width: 1024px) {
+      width: 944px;
+    }
+  }
+  &.ron-modal-body-large-height {
+    height: 90vh;
+    max-height: 760px;
+  }
+
+  &.ron-modal-body-out {
+    opacity: 1;
+    --ron-scale-x: 1;
+    --ron-scale-y: 1;
+  }
+  &.ron-modal-body-in {
+    opacity: 0;
+    --ron-scale-x: 0.95;
+    --ron-scale-y: 0.95;
+  }
+}
+
+.ron-modal-transition {
+  transition-property: opacity, transform;
+  transition-timing-function: linear;
+  transition-duration: 150ms;
+}

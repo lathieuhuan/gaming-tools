@@ -7,6 +7,7 @@ export * from "./Image";
 export * from "./Input";
 export * from "./ItemCase";
 export * from "./LoadingSpin";
+export * from "./Modal";
 export * from "./StatsTable";
 export * from "./Table";
 export * from "./svg-icons";
