@@ -1,0 +1,26 @@
+.ron-modal {
+  --ron-color-modal-divider: #535582;
+}
+
+.ron-modal-header {
+  padding: 1rem 1rem 0 1rem;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  color: var(--ron-color-heading);
+  font-weight: 600;
+
+  .ron-modal-header-inner {
+    padding-bottom: 0.5rem;
+  }
+  .ron-modal-header-with-divider {
+    border-bottom: 1px solid var(--ron-color-modal-divider);
+  }
+}
+
+.ron-modal-actions {
+  margin-top: 1rem;
+
+  .ron-modal-actions-with-divider {
+    border-bottom: 1px solid var(--ron-color-modal-divider);
+  }
+}
