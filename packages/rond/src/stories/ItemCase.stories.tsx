@@ -18,6 +18,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
+    chosen: false,
     children: (cls, imgCls) => {
       return (
         <div
