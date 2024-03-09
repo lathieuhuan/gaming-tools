@@ -45,23 +45,24 @@ const Modal = ({
       <div className={clsx("ron-modal-body", bodyCls)}>{typeof children === "function" ? children() : children}</div>
 
       {withActions && (
-        <ModalActions
-          {...{
-            className: "ron-modal-footer",
-            withDivider: withFooterDivider,
-            disabledConfirm,
-            focusConfirm,
-            showCancel,
-            cancelText,
-            confirmText,
-            formId,
-            cancelButtonProps,
-            confirmButtonProps,
-            moreActions,
-            onCancel: coreProps.onClose,
-            onConfirm,
-          }}
-        />
+        <div className="ron-modal-footer">
+          <ModalActions
+            {...{
+              withDivider: withFooterDivider,
+              disabledConfirm,
+              focusConfirm,
+              showCancel,
+              cancelText,
+              confirmText,
+              formId,
+              cancelButtonProps,
+              confirmButtonProps,
+              moreActions,
+              onCancel: coreProps.onClose,
+              onConfirm,
+            }}
+          />
+        </div>
       )}
 
       {withCloseButton ? (

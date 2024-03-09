@@ -116,14 +116,12 @@
 }
 
 .ron-modal-footer {
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-bottom: 1rem;
+  padding: 0 1rem 1rem;
 }
 .ron-modal-actions {
   padding-top: 1rem;
 
-  .ron-modal-actions-with-divider {
+  &.ron-modal-actions-with-divider {
     border-top: 1px solid var(--ron-color-modal-divider);
   }
 }
