@@ -16,4 +16,5 @@ export * from "./Rarity";
 export * from "./StatsTable";
 export * from "./SwitchNode";
 export * from "./Table";
+export * from "./WarehouseLayout";
 export * from "./svg-icons";
