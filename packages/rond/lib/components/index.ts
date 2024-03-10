@@ -1,6 +1,7 @@
 export * from "./Alert";
 export * from "./Badge";
 export * from "./Button";
+export * from "./CarouselSpace";
 export * from "./Checkbox";
 export * from "./CollapseSpace";
 export * from "./HiddenSpace";
