@@ -9,6 +9,7 @@ export * from "./Input";
 export * from "./ItemCase";
 export * from "./LoadingSpin";
 export * from "./Modal";
+export * from "./Popover";
 export * from "./Radio";
 export * from "./Rarity";
 export * from "./StatsTable";
