@@ -14,5 +14,6 @@ export * from "./Popover";
 export * from "./Radio";
 export * from "./Rarity";
 export * from "./StatsTable";
+export * from "./SwitchNode";
 export * from "./Table";
 export * from "./svg-icons";
