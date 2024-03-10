@@ -2,6 +2,8 @@ export * from "./types";
 export * from "./CheckCircleSvg";
 export * from "./ExclamationCircleSvg";
 export * from "./ExclamationTriangleSvg";
+export * from "./FilterSvg";
 export * from "./InfoCircleSvg";
+export * from "./SearchSvg";
 export * from "./StarSvg";
 export * from "./TimesSvg";

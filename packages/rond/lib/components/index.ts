@@ -4,6 +4,8 @@ export * from "./Button";
 export * from "./CarouselSpace";
 export * from "./Checkbox";
 export * from "./CollapseSpace";
+export * from "./Drawer";
+export * from "./EntitySelectTemplate";
 export * from "./HiddenSpace";
 export * from "./Image";
 export * from "./Input";
