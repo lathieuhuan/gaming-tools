@@ -1,0 +1,10 @@
+.ron-skeleton {
+  background-color: var(--ron-color-light-surface-3);
+  animation: ron-animate-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes ron-animate-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}

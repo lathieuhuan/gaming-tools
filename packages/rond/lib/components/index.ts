@@ -15,6 +15,7 @@ export * from "./Modal";
 export * from "./Popover";
 export * from "./Radio";
 export * from "./Rarity";
+export * from "./Skeleton";
 export * from "./StatsTable";
 export * from "./SwitchNode";
 export * from "./Table";
