@@ -1,0 +1,11 @@
+.ron-rarity-select {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ron-rarity-select-option {
+  border-radius: 0.25rem;
+  border: 1px solid var(--ron-color-dark-surface-3);
+  padding: 0.5rem;
+}
