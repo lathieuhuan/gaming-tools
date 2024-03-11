@@ -7,8 +7,8 @@ import { Button, CloseButton } from "../Button";
 import { Checkbox } from "../Checkbox";
 import { Popover } from "../Popover";
 import { Modal } from "../Modal";
-import { FilterSvg, SearchSvg } from "../svg-icons";
 import { Drawer, type DrawerProps } from "../Drawer";
+import { FilterSvg, SearchSvg } from "../svg-icons";
 
 export type EntitySelectRenderArgs = {
   isMultiSelect: boolean;
@@ -182,7 +182,7 @@ export const EntitySelectTemplate = ({
           style={{
             boxShadow: "0 0 1px #b8b8b8",
           }}
-          onClose={() => toggleFilter(false)}
+          afterClose={() => toggleFilter(false)}
         >
           {renderFilter?.(setFilterOn)}
         </Drawer>

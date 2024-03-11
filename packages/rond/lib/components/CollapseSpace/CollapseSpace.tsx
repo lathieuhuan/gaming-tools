@@ -1,5 +1,5 @@
 import { type CSSProperties, useEffect, useState } from "react";
-import { useElementSize } from "@lib/hooks";
+import { useElementSize } from "../../hooks";
 
 export interface CollapseSpaceProps {
   active: boolean;
