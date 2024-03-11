@@ -1,0 +1,25 @@
+.ron-stats-table {
+  width: 100%;
+  cursor: default;
+  color: var(--ron-color-on-dark);
+
+  .ron-stats-table-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.25rem 0.5rem;
+
+    & > *:first-child {
+      font-weight: 500;
+    }
+
+    &:nth-child(odd) {
+      background-color: var(--ron-color-dark-surface-2);
+    }
+    &:nth-child(even) {
+      background-color: var(--ron-color-dark-surface-1);
+    }
+    &:hover {
+      background-color: var(--ron-color-table-row-hover);
+    }
+  }
+}

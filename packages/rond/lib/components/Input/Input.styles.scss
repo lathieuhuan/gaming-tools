@@ -1,0 +1,13 @@
+.ron-input {
+  border-radius: 0.25rem;
+  line-height: 1.25;
+  background-color: var(--ron-color-light-surface-3);
+  color: var(--ron-color-on-light);
+
+  &:focus {
+    background-color: var(--ron-color-light-surface-2);
+  }
+  &:disabled {
+    background-color: var(--ron-color-light-surface-disabled);
+  }
+}

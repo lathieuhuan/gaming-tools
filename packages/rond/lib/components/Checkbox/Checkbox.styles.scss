@@ -1,0 +1,72 @@
+.ron-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+
+  &:hover .ron-checkbox {
+    background-color: var(--ron-color-light-surface-2);
+  }
+}
+
+// background when unchecked
+.ron-checkbox {
+  width: 18px;
+  height: 18px;
+  background-color: var(--ron-color-light-surface-3);
+  border-radius: 0.25rem;
+  overflow: hidden;
+  user-select: none;
+  position: relative;
+  flex-shrink: 0;
+
+  .ron-checkbox-input,
+  .ron-checkbox-visual {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+
+  // background when checked
+  .ron-checkbox-visual {
+    user-select: none;
+    background-color: var(--ron-color-active-background);
+
+    // foreground when checked
+    &::before {
+      position: absolute;
+      top: 45%;
+      width: 7px;
+      height: 11px;
+      border: 3px solid black;
+      border-top-width: 0;
+      inset-inline-start: 25%;
+      border-inline-start: 0;
+      transform: rotate(45deg) translate(-50%, -50%);
+      content: "";
+    }
+
+    &,
+    &::before {
+      transition: opacity 150ms linear;
+      opacity: 0;
+    }
+  }
+
+  // input checkbox
+  .ron-checkbox-input {
+    z-index: 10;
+    opacity: 0;
+
+    &:checked ~ .ron-checkbox-visual,
+    &:checked ~ .ron-checkbox-visual::before {
+      opacity: 1;
+    }
+  }
+}
+
+.ron-checkbox-label {
+  color: var(--ron-color-on-dark);
+}

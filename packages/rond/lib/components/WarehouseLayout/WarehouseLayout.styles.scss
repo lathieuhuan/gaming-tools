@@ -1,0 +1,64 @@
+.ron-warehouse-layout {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--ron-color-dark-surface-2);
+
+  .ron-warehouse {
+    position: relative;
+    height: 100%;
+    padding-top: 3rem;
+    width: 384px;
+    max-width: calc(100% - 2rem);
+  }
+
+  .ron-warehouse-actions {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding-left: 0.5rem;
+    width: 100%;
+    height: 2.5rem;
+  }
+
+  .ron-warehouse-content {
+    height: 100%;
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+
+@media (min-width: 480px) {
+  .ron-warehouse {
+    width: 448px;
+    max-width: none;
+  }
+}
+@media (min-width: 640px) {
+  .ron-warehouse {
+    width: 592px;
+  }
+}
+@media (min-width: 768px) {
+  .ron-warehouse-layout {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .ron-warehouse {
+    width: 736px;
+    padding-top: 3.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .ron-warehouse {
+    width: 944px;
+  }
+}
+@media (min-width: 1280px) {
+  .ron-warehouse {
+    width: 1152px;
+  }
+}

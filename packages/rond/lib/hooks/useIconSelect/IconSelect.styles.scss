@@ -1,0 +1,22 @@
+.ron-icon-select {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ron-icon-select-option {
+  border-radius: 50%;
+  transition: all 150ms linear;
+
+  &.ron-icon-select-option-medium {
+    width: 2rem;
+    height: 2rem;
+  }
+  &.ron-icon-select-option-large {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  &:not(:disabled) {
+    cursor: pointer;
+  }
+}
