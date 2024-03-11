@@ -1,6 +1,6 @@
 import clsx, { type ClassValue } from "clsx";
 import ReactDOM from "react-dom";
-import { useEffect, useState, type ReactNode, type CSSProperties, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 
 type ModalPreset = "small" | "large" | "custom";
 
@@ -26,8 +26,8 @@ export interface ModalCoreProps extends ModalControl {
   /** Default to true */
   closeOnMaskClick?: boolean;
   className?: ClassValue;
-  style?: CSSProperties;
-  children: ReactNode | (() => JSX.Element | null);
+  style?: React.CSSProperties;
+  children: React.ReactNode | (() => JSX.Element | null);
 }
 export const ModalCore = ({
   active,

@@ -1,11 +1,10 @@
 import clsx, { type ClassValue } from "clsx";
-import type { CSSProperties, ReactNode } from "react";
 import "./StatsTable.styles.scss";
 
 export interface StatsTableProps {
   className?: ClassValue;
-  style?: CSSProperties;
-  children: ReactNode;
+  style?: React.CSSProperties;
+  children: React.ReactNode;
 }
 const StatsTable = ({ className, style, children }: StatsTableProps) => {
   return (
@@ -17,7 +16,7 @@ const StatsTable = ({ className, style, children }: StatsTableProps) => {
 
 export interface StatsTableRowProps {
   className?: ClassValue;
-  children: ReactNode;
+  children: React.ReactNode;
   onClick?: () => void;
 }
 StatsTable.Row = ({ className, children, onClick }: StatsTableRowProps) => {

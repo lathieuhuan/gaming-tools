@@ -1,14 +1,13 @@
 import clsx, { type ClassValue } from "clsx";
-import type { CSSProperties, ReactNode } from "react";
 import { CheckCircleSvg, ExclamationCircleSvg, ExclamationTriangleSvg, InfoCircleSvg, TimesSvg } from "../svg-icons";
 import { Button } from "../Button";
 import "./Alert.styles.scss";
 
 export interface AlertProps {
   className?: ClassValue;
-  style?: CSSProperties;
+  style?: React.CSSProperties;
   type: "info" | "success" | "error" | "warn";
-  content: ReactNode;
+  content: React.ReactNode;
   onClose?: () => void;
 }
 export const Alert = (props: AlertProps) => {
