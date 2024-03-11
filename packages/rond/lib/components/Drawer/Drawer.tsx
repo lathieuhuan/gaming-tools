@@ -15,7 +15,7 @@ export interface DrawerProps {
   closeOnMaskClick?: boolean;
   destroyOnClose?: boolean;
   children: React.ReactNode;
-  onClose?: () => void;
+  afterClose?: () => void;
 }
 export const Drawer = ({
   className,
@@ -25,7 +25,7 @@ export const Drawer = ({
   closeOnMaskClick = true,
   destroyOnClose,
   children,
-  onClose,
+  afterClose,
 }: DrawerProps) => {
   const [state, setState] = useState<DrawerState>({
     mounted: false,
@@ -37,8 +37,6 @@ export const Drawer = ({
   };
 
   useEffect(() => {
-    console.log("useEffect", active, state.mounted);
-
     if (active) {
       if (!state.mounted) {
         updateState("mounted", true);
@@ -57,9 +55,9 @@ export const Drawer = ({
   };
 
   const onMaskTransitionEnd = () => {
-    if (state.active === false) {
+    if (!state.active) {
       updateState("mounted", false);
-      onClose?.();
+      afterClose?.();
     }
   };
 

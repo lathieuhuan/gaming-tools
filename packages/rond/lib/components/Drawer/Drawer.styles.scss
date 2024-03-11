@@ -9,7 +9,7 @@
     transition: opacity var(--transition-duration) linear;
     opacity: 0.2;
 
-    .ron-drawer-mask-active {
+    &.ron-drawer-mask-active {
       opacity: 0.6;
     }
   }
