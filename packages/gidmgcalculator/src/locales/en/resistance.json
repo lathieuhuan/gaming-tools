@@ -1,0 +1,11 @@
+{
+  "def": "DEF",
+  "pyro": "Pyro RES",
+  "hydro": "Hydro RES",
+  "geo": "Geo RES",
+  "anemo": "Anemo RES",
+  "cryo": "Cryo RES",
+  "electro": "Electro RES",
+  "dendro": "Dendro RES",
+  "phys": "Physical RES"
+}
