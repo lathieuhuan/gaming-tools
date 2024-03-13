@@ -2,6 +2,11 @@ import type { Level } from "@Src/types";
 
 export const getBareLv = (level: Level): number => +level.split("/")[0];
 
+export const getAscsFromLv = (level: Level) => {
+  const maxLv = +level.slice(-2);
+  return maxLv === 20 ? 0 : maxLv / 10 - 3;
+};
+
 export const getImgSrc = (src?: string) => {
   if (import.meta.env.DEV) return "";
   if (!src) return "";

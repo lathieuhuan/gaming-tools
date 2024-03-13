@@ -1,2 +1,2 @@
-import * as ArtifactUtils from "./artifact-utils";
-export default ArtifactUtils;
+import * as artifactUtils from "./artifact-utils";
+export default artifactUtils;

@@ -1,2 +1,2 @@
-import * as WeaponUtils from "./weapon-utils";
-export default WeaponUtils;
+import * as weaponUtils from "./weapon-utils";
+export default weaponUtils;
