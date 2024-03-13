@@ -1,8 +1,10 @@
+import { Weapon } from "@Src/models";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface UIState {
   loading: boolean;
   ready: boolean;
+  b?: Weapon;
 }
 
 const initialState: UIState = {
@@ -20,9 +22,12 @@ export const uiSlice = createSlice({
         ...action.payload,
       };
     },
+    updateB: (state, b: PayloadAction<Weapon>) => {
+      state.b = b.payload.detach();
+    },
   },
 });
 
-export const { updateUI } = uiSlice.actions;
+export const { updateUI, updateB } = uiSlice.actions;
 
 export default uiSlice.reducer;
