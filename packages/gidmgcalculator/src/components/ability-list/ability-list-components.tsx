@@ -1,6 +1,5 @@
-import clsx from "clsx";
-import type { ReactNode } from "react";
 import { FaCaretRight, FaQuestion, FaSquare } from "react-icons/fa";
+import { clsx } from "rond";
 
 import type { ElementType } from "@Src/types";
 import { getImgSrc } from "@Src/utils";
@@ -47,7 +46,7 @@ interface AbilityCarouselProps {
   currentIndex: number;
   images: (string | undefined)[];
   elementType: ElementType;
-  label?: ReactNode;
+  label?: React.ReactNode;
   onClickBack: () => void;
   onClickNext: () => void;
 }

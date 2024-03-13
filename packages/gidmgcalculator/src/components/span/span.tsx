@@ -1,9 +1,8 @@
-import clsx from "clsx";
-import type { HTMLAttributes } from "react";
+import { clsx } from "rond";
 
 type SpanExtraColor = "green-300" | "red-100" | "yellow-400" | "light-800";
 
-interface SpanProps extends HTMLAttributes<HTMLSpanElement> {
+interface SpanProps extends React.HTMLAttributes<HTMLSpanElement> {
   className?: string;
   b?: boolean;
 }
