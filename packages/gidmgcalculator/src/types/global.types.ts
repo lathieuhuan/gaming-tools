@@ -6,10 +6,14 @@ import {
   ATTRIBUTE_STAT_TYPES,
   ELEMENT_TYPES,
   LEVELS,
+  NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
   REACTIONS,
+  TALENT_TYPES,
   WEAPON_TYPES,
 } from "@Src/constants";
+
+export type Nation = "outland" | "mondstadt" | "liyue" | "inazuma" | "sumeru" | "natlan" | "fontaine" | "snezhnaya";
 
 export type Level = (typeof LEVELS)[number];
 
@@ -20,6 +24,10 @@ export type WeaponType = (typeof WEAPON_TYPES)[number];
 export type ArtifactType = (typeof ARTIFACT_TYPES)[number];
 
 /** ========== TALENTS ========== */
+
+export type NormalAttack = (typeof NORMAL_ATTACKS)[number];
+
+export type Talent = (typeof TALENT_TYPES)[number];
 
 export type AttackElement = (typeof ATTACK_ELEMENTS)[number];
 
@@ -32,6 +40,8 @@ export type AmplifyingReaction = (typeof AMPLIFYING_REACTIONS)[number];
 export type QuickenReaction = (typeof QUICKEN_REACTIONS)[number];
 
 export type Reaction = (typeof REACTIONS)[number];
+
+export type AttackReaction = AmplifyingReaction | QuickenReaction | null;
 
 /** ========== STATS ========== */
 
