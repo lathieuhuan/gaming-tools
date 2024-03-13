@@ -31,6 +31,10 @@ import {
   WeaponType,
 } from "./global.types";
 
+type TeammateData = Pick<AppCharacter, "code" | "name" | "icon" | "nation" | "vision" | "weaponType" | "EBcost">;
+
+export type PartyData = (TeammateData | null)[];
+
 export type AppCharacter = {
   code: number;
   name: string;
