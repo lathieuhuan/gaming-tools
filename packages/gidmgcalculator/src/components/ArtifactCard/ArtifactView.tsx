@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { FaChevronDown } from "react-icons/fa";
-import { Badge, Image } from "rond";
+import { Badge } from "rond";
 
 import type { ArtifactSubStat, AttributeStat, CalcArtifact, UserArtifact } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
@@ -11,6 +11,7 @@ import artifactUtils from "@Utils/artifact-utils";
 // Component
 import { ArtifactLevelSelect } from "./ArtifactLevelSelect";
 import { ArtifactSubstatsControl } from "./ArtifactSubstatsControl";
+import { WikiImage } from "../WikiImage";
 
 export interface ArtifactViewProps<T extends CalcArtifact | UserArtifact> {
   mutable?: boolean;
@@ -33,7 +34,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
 
   const appArtifact = $AppData.getArtifact(artifact);
   const { rarity = 5, mainStatType } = artifact;
-  const possibleMainStats = artifactUtils.getPossibleMainStats(artifact.type);
+  const possibleMainStatTypes = artifactUtils.getPossibleMainStatTypes(artifact.type);
   const mainStatValue = artifactUtils.getMainStatValue(artifact);
 
   return (
@@ -52,10 +53,10 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
         />
 
         <div className={`bg-gradient-${rarity} relative rounded-lg shrink-0`}>
-          <Image
+          <WikiImage
             src={appArtifact?.icon}
             alt={appArtifact?.name}
-            // imgType="artifact"
+            imgType="artifact"
             style={{ width: 104, height: 104 }}
           />
           <Badge active={appArtifact?.beta} className="absolute bottom-0 right-0">
@@ -75,7 +76,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
               value={mainStatType}
               onChange={(e) => onChangeMainStatType?.(e.target.value as AttributeStat, artifact)}
             >
-              {Object.keys(possibleMainStats).map((type) => {
+              {possibleMainStatTypes.map((type) => {
                 return (
                   <option key={type} value={type}>
                     {t(type)}

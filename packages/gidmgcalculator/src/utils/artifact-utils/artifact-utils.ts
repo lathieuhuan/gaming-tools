@@ -23,8 +23,8 @@ export function createArtifact({ type, code, rarity }: CreateArtifactArgs, ID = 
   };
 }
 
-export function getPossibleMainStats(artifactType: ArtifactType) {
-  return ARTIFACT_MAIN_STATS[artifactType];
+export function getPossibleMainStatTypes(artifactType: ArtifactType): string[] {
+  return Object.keys(ARTIFACT_MAIN_STATS[artifactType]);
 }
 
 export function getMainStatValue(artifact: Artifact): number {
