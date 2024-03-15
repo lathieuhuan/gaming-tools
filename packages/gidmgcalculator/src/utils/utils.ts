@@ -1,6 +1,8 @@
 import type { Level } from "@Src/types";
 import { ATTACK_ELEMENTS } from "@Src/constants";
 
+export const deepCopy = <T>(item: T): T => JSON.parse(JSON.stringify(item));
+
 export const getBareLv = (level: Level): number => +level.split("/")[0];
 
 export const getAscsFromLv = (level: Level) => {

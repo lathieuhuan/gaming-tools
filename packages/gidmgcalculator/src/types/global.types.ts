@@ -4,6 +4,7 @@ import {
   ATTACK_ELEMENTS,
   ATTACK_PATTERNS,
   ATTRIBUTE_STAT_TYPES,
+  BASE_STAT_TYPES,
   ELEMENT_TYPES,
   LEVELS,
   NORMAL_ATTACKS,
@@ -45,7 +46,11 @@ export type AttackReaction = AmplifyingReaction | QuickenReaction | null;
 
 /** ========== STATS ========== */
 
+export type BaseStat = (typeof BASE_STAT_TYPES)[number];
+
 export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];
+
+export type TotalAttributeStat = BaseStat | AttributeStat;
 
 /** ========== MODIFIERS ========== */
 
@@ -95,4 +100,12 @@ export type Weapon = {
   code: number;
   level: Level;
   refi: number;
+};
+
+// temporary, should make a util for message like notification
+export type AppMessage = {
+  active: boolean;
+  type?: "error" | "success" | "info";
+  content?: string;
+  closable?: boolean;
 };

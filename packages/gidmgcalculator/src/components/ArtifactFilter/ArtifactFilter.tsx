@@ -1,8 +1,7 @@
-import clsx, { ClassValue } from "clsx";
 import { useState } from "react";
 import { FaEraser, FaSquare } from "react-icons/fa";
 import { FaCaretRight } from "react-icons/fa";
-import { Button, Modal, useScreenWatcher } from "rond";
+import { Button, Modal, useScreenWatcher, clsx, type ClassValue } from "rond";
 
 import type { ArtifactType, CalcArtifact } from "@Src/types";
 import type { ArtifactFilterState } from "./ArtifactFilter.types";
