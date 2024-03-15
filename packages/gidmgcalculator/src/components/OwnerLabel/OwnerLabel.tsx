@@ -1,19 +1,19 @@
-import { CSSProperties, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { Popover, useClickOutside, type ClickOutsideHandler } from "rond";
 
-import { UserItem, UserSetup, UserWeapon } from "@Src/types";
-import { BoundingItem, useItemBoundSetups } from "@Src/hooks";
+import type { UserItem, UserSetup, UserWeapon } from "@Src/types";
+import { useItemBoundSetups, type BoundingItem } from "@Src/hooks";
 
 interface SetupListProps {
   setups: UserSetup[];
   onClickOutside: ClickOutsideHandler;
 }
 const SetupList = ({ setups, onClickOutside }: SetupListProps) => {
-  //   const listRef = useClickOutside<HTMLDivElement>(onClickOutside);
+  const listRef = useClickOutside<HTMLDivElement>(onClickOutside);
 
   return (
-    <div className="px-4 py-2 flex flex-col overflow-auto">
+    <div ref={listRef} className="px-4 py-2 flex flex-col overflow-auto">
       <p className="text-orange-500 font-medium">This item is used on these setups:</p>
       <ul className="mt-1 pl-4 list-disc overflow-auto custom-scrollbar">
         {setups.map((setup, i) => {
@@ -27,7 +27,7 @@ const SetupList = ({ setups, onClickOutside }: SetupListProps) => {
 
 interface OwnerLabelProps {
   className?: string;
-  style?: CSSProperties;
+  style?: React.CSSProperties;
   item?: BoundingItem & {
     owner?: UserItem["owner"];
     refi?: UserWeapon["refi"];

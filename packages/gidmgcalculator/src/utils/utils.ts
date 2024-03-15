@@ -8,6 +8,10 @@ export const getAscsFromLv = (level: Level) => {
   return maxLv === 20 ? 0 : maxLv / 10 - 3;
 };
 
+export const splitLv = (subject: { level: Level }) => {
+  return subject.level.split("/").map((lv) => +lv);
+};
+
 export const suffixOf = (stat: string) => {
   return stat.slice(-1) === "_" || ATTACK_ELEMENTS.includes(stat as any) ? "%" : "";
 };
@@ -28,11 +32,6 @@ export function pickProps<M, T extends keyof M>(obj: M, keys: T[]) {
 }
 
 export const toArray = <T>(subject: T | T[]): T[] => (Array.isArray(subject) ? subject : [subject]);
-
-export const round = (n: number, x: number) => {
-  const pow = Math.pow(10, x);
-  return Math.round(n * pow) / pow;
-};
 
 const find = (key: string) => {
   return <T>(arr: T[], value?: string | number | null): T | undefined => {

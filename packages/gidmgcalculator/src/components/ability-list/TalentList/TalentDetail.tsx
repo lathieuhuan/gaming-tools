@@ -1,9 +1,9 @@
 import { useState, useRef, useMemo, useEffect } from "react";
 import { FaCaretDown } from "react-icons/fa";
-import { CloseButton, LoadingSpin, StatsTable } from "rond";
+import { CloseButton, LoadingSpin, StatsTable, round } from "rond";
 
 import type { AppCharacter, Talent } from "@Src/types";
-import { round, toArray } from "@Src/utils";
+import { toArray } from "@Src/utils";
 import { useQuery, useTabs, useTranslation } from "@Src/hooks";
 import { $AppCharacter } from "@Src/services";
 import characterUtils from "@Utils/character-utils";

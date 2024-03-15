@@ -12,7 +12,7 @@ import { $AppSettings } from "@Src/services";
 import { getBareLv } from "../utils";
 import { BASE_REACTION_DAMAGE, TALENT_LV_MULTIPLIERS } from "./character-stats";
 
-export function createCharacter(name: string, info: Partial<Character>): Character {
+export function createCharacter(name: string, info?: Partial<Character>): Character {
   const { charLevel, charCons, charNAs, charES, charEB } = $AppSettings.get();
 
   return {
