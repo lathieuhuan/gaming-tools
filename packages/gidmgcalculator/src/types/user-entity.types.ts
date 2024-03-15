@@ -1,15 +1,6 @@
 import type { Character } from "./global.types";
 import type { CalcArtifact, CalcSetup, CalcWeapon, SetupType, Target } from "./calculator.types";
 
-export type UserDatabaseState = {
-  userChars: UserCharacter[];
-  userWps: UserWeapon[];
-  userArts: UserArtifact[];
-  userSetups: (UserSetup | UserComplexSetup)[];
-  chosenChar: string;
-  chosenSetupID: number;
-};
-
 export type UserCharacter = Character & {
   weaponID: number;
   artifactIDs: (number | null)[];

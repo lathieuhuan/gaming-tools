@@ -1,10 +1,15 @@
 import type { Level } from "@Src/types";
+import { ATTACK_ELEMENTS } from "@Src/constants";
 
 export const getBareLv = (level: Level): number => +level.split("/")[0];
 
 export const getAscsFromLv = (level: Level) => {
   const maxLv = +level.slice(-2);
   return maxLv === 20 ? 0 : maxLv / 10 - 3;
+};
+
+export const suffixOf = (stat: string) => {
+  return stat.slice(-1) === "_" || ATTACK_ELEMENTS.includes(stat as any) ? "%" : "";
 };
 
 export const getImgSrc = (src?: string) => {

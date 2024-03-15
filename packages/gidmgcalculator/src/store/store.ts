@@ -4,19 +4,21 @@ import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 import storage from "redux-persist/lib/storage";
 
 import uiSliceReducers, { uiSlice } from "./uiSlice";
+import userdbSliceReducers, { userdbSlice } from "./userdbSlice";
 
 export type SetupStoreArgs = { persistingUserData?: boolean };
 
 export const setupStore = (args?: SetupStoreArgs) => {
   const rootReducer = combineReducers({
     ui: uiSliceReducers,
+    userdb: userdbSliceReducers,
   });
 
   const persistConfig = {
     key: "root",
     version: 0,
     storage,
-    blacklist: [uiSlice.name],
+    blacklist: [uiSlice.name, userdbSlice.name],
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);
