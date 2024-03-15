@@ -6,7 +6,7 @@ import SetupUtils from "@Utils/setup-utils";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUserArtifact, updateUserWeapon, selectUserSetups } from "@Store/userdbSlice";
+import { updateUserArtifact, updateUserWeapon, selectUserSetups } from "@Store/userdb-slice";
 
 export type BoundingItem = Pick<UserItem, "ID" | "setupIDs">;
 

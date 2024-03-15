@@ -1,4 +1,4 @@
-import type { CalculatorState } from "./calculatorSlice.types";
+import type { CalculatorState } from "./calculator-slice.types";
 import { $AppCharacter } from "@Src/services";
 // import { calculateSetup } from "@Src/calculation";
 

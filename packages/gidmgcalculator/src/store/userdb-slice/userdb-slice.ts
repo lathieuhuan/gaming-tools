@@ -16,7 +16,7 @@ import type {
   UpdateUserArtifactSubStatAction,
   UpdateUserCharacterAction,
   UpdateUserWeaponAction,
-} from "./userdbSlice.types";
+} from "./userdb-slice.types";
 
 import { ARTIFACT_TYPES } from "@Src/constants";
 import { $AppData } from "@Src/services";

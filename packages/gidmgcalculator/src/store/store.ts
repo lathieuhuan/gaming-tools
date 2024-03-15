@@ -3,8 +3,8 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import uiSliceReducers, { uiSlice } from "./uiSlice";
-import userdbSliceReducers, { userdbSlice } from "./userdbSlice";
+import uiSliceReducers, { uiSlice } from "./ui-slice";
+import userdbSliceReducers, { userdbSlice } from "./userdb-slice";
 
 export type SetupStoreArgs = { persistingUserData?: boolean };
 

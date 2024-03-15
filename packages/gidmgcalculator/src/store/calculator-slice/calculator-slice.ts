@@ -29,7 +29,7 @@ import type {
   UpdateTeammateArtifactAction,
   ApplySettingsAction,
   InitNewSessionPayload,
-} from "./calculatorSlice.types";
+} from "./calculator-slice.types";
 
 import { ATTACK_ELEMENTS, RESONANCE_ELEMENT_TYPES } from "@Src/constants";
 import { $AppData, $AppCharacter, $AppSettings } from "@Src/services";

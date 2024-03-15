@@ -1,4 +1,4 @@
-import { Weapon } from "@Src/models";
+import { Weapon } from "@Src/types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface UIState {
@@ -22,12 +22,9 @@ export const uiSlice = createSlice({
         ...action.payload,
       };
     },
-    updateB: (state, b: PayloadAction<Weapon>) => {
-      state.b = b.payload.detach();
-    },
   },
 });
 
-export const { updateUI, updateB } = uiSlice.actions;
+export const { updateUI } = uiSlice.actions;
 
 export default uiSlice.reducer;

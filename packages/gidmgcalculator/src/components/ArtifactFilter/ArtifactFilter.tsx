@@ -9,7 +9,7 @@ import type { ArtifactFilterState } from "./ArtifactFilter.types";
 import { useArtifactTypeSelect } from "@Src/hooks";
 import { useArtifactSetFilter, useArtifactStatFilter, DEFAULT_STAT_FILTER } from "./hooks";
 import { FilterTemplate } from "../FilterTemplate";
-import { filterArtifacts } from "./filterArtifacts";
+import { filterArtifacts } from "./filter-artifacts";
 
 export interface ArtifactFilterProps {
   forcedType?: ArtifactType;

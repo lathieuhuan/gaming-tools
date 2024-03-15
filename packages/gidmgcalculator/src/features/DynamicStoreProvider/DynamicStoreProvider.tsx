@@ -2,7 +2,7 @@ import { createContext, useState, useCallback, useContext, useRef } from "react"
 
 import { setupStore, AppStore, RootState } from "@Src/store";
 import { $AppSettings } from "@Src/services";
-import { updateUI } from "@Store/uiSlice";
+import { updateUI } from "@Store/ui-slice";
 
 type ChangeConfigFn = (args: Partial<{ persistingUserData: boolean }>) => void;
 
