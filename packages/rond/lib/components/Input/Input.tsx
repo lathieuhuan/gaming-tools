@@ -1,10 +1,9 @@
 import clsx, { type ClassValue } from "clsx";
-import type { ChangeEventHandler, InputHTMLAttributes } from "react";
 import { forwardRef, useState, useEffect } from "react";
 import "./Input.styles.scss";
 
 export interface InputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "className" | "type" | "value" | "onChange"> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "className" | "type" | "value" | "onChange"> {
   className?: ClassValue;
   unstyled?: boolean;
   value?: string;
@@ -22,7 +21,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     }
   }, [value]);
 
-  const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
 
     if (!isControlled) {
