@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 
 import type { UserItem, UserSetup } from "@Src/types";
 import { findById } from "@Src/utils";
-import setupUtils from "@Utils/setup-utils";
+import SetupUtils from "@Utils/setup-utils";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -31,7 +31,7 @@ export const useItemBoundSetups = (item?: BoundingItem, isWeapon?: boolean): Use
       for (const id of item.setupIDs) {
         const containerSetup = findById(userSetups, id);
 
-        if (containerSetup && setupUtils.isUserSetup(containerSetup)) {
+        if (containerSetup && SetupUtils.isUserSetup(containerSetup)) {
           const isValid = isWeapon ? containerSetup.weaponID === item.ID : containerSetup.artifactIDs.includes(item.ID);
 
           if (isValid) {

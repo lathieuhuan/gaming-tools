@@ -1,2 +1,1 @@
-import * as setupUtils from "./setup-utils";
-export default setupUtils;
+export { default } from "./setup-utils";

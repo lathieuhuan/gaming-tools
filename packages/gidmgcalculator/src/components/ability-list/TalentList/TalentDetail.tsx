@@ -6,7 +6,7 @@ import type { AppCharacter, Talent } from "@Src/types";
 import { toArray } from "@Src/utils";
 import { useQuery, useTabs, useTranslation } from "@Src/hooks";
 import { $AppCharacter } from "@Src/services";
-import characterUtils from "@Utils/character-utils";
+import CharacterUtils from "@Utils/character-utils";
 
 // Constant
 import { ATTACK_PATTERNS } from "@Src/constants";
@@ -201,7 +201,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
     const talent = result.find((item) => item.type === resultKey);
     if (!talent) continue;
 
-    const defaultInfo = characterUtils.getTalentDefaultInfo(
+    const defaultInfo = CharacterUtils.getTalentDefaultInfo(
       resultKey,
       appChar.weaponType,
       appChar.vision,
@@ -226,7 +226,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
         } = typeof factor === "number" ? { root: factor } : factor;
 
         if (scale && root) {
-          let string = round(root * characterUtils.getTalentMult(scale, level), 2) + "%";
+          let string = round(root * CharacterUtils.getTalentMult(scale, level), 2) + "%";
 
           if (basedOn) {
             string += ` ${translate(basedOn)}`;
@@ -240,7 +240,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
         const { root, scale = defaultInfo.flatFactorScale } =
           typeof flatFactor === "number" ? { root: flatFactor } : flatFactor;
 
-        factorStrings.push(Math.round(root * (scale ? characterUtils.getTalentMult(scale, level) : 1)));
+        factorStrings.push(Math.round(root * (scale ? CharacterUtils.getTalentMult(scale, level) : 1)));
       }
 
       talent.stats.push({

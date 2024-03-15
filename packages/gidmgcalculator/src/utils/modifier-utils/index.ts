@@ -1,2 +1,1 @@
-import * as modifierUtils from "./modifier-utils";
-export default modifierUtils;
+export { default } from "./modifier-utils";

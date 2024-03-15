@@ -17,24 +17,28 @@ type CreateWeaponArgs = {
   code?: number;
 };
 
-export function createWeapon({ type, code }: CreateWeaponArgs, ID = Date.now()): Weapon {
-  const { wpLevel, wpRefi } = $AppSettings.get();
+class WeaponUtils {
+  static createWeapon({ type, code }: CreateWeaponArgs, ID = Date.now()): Weapon {
+    const { wpLevel, wpRefi } = $AppSettings.get();
 
-  return {
-    ID: ID,
-    type: type,
-    code: code || DEFAULT_WEAPON_CODE[type],
-    level: wpLevel,
-    refi: wpRefi,
-  };
+    return {
+      ID: ID,
+      type: type,
+      code: code || DEFAULT_WEAPON_CODE[type],
+      level: wpLevel,
+      refi: wpRefi,
+    };
+  }
+
+  static getMainStatValue(level: Level, scale: string): number {
+    return BASE_ATTACK_TYPE[scale][LEVELS.indexOf(level)];
+  }
+
+  static getSubStatValue(level: Level, scale: string): number {
+    const bareLv = getBareLv(level);
+    const index = bareLv === 1 ? 0 : bareLv === 20 ? 1 : (bareLv - 20) / 10;
+    return SUBSTAT_SCALE[scale][index];
+  }
 }
 
-export function getMainStatValue(level: Level, scale: string): number {
-  return BASE_ATTACK_TYPE[scale][LEVELS.indexOf(level)];
-}
-
-export function getSubStatValue(level: Level, scale: string): number {
-  const bareLv = getBareLv(level);
-  const index = bareLv === 1 ? 0 : bareLv === 20 ? 1 : (bareLv - 20) / 10;
-  return SUBSTAT_SCALE[scale][index];
-}
+export default WeaponUtils;

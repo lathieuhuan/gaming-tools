@@ -1,2 +1,1 @@
-import * as calculationUtils from "./calculation-utils";
-export default calculationUtils;
+export { default } from "./calculation-utils";

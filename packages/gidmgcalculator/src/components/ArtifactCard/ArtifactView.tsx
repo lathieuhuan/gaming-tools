@@ -6,7 +6,7 @@ import type { ArtifactSubStat, AttributeStat, CalcArtifact, UserArtifact } from 
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
 import { suffixOf } from "@Src/utils";
-import artifactUtils from "@Utils/artifact-utils";
+import ArtifactUtils from "@Utils/artifact-utils";
 
 // Component
 import { ArtifactLevelSelect } from "./ArtifactLevelSelect";
@@ -34,8 +34,8 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
 
   const appArtifact = $AppData.getArtifact(artifact);
   const { rarity = 5, mainStatType } = artifact;
-  const possibleMainStatTypes = artifactUtils.getPossibleMainStatTypes(artifact.type);
-  const mainStatValue = artifactUtils.getMainStatValue(artifact);
+  const possibleMainStatTypes = ArtifactUtils.getPossibleMainStatTypes(artifact.type);
+  const mainStatValue = ArtifactUtils.getMainStatValue(artifact);
 
   return (
     <div className={className}>

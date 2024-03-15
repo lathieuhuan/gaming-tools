@@ -6,7 +6,7 @@ import type { Character, Party } from "@Src/types";
 import { TALENT_TYPES } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
 import { getAscsFromLv } from "@Src/utils";
-import calculationUtils from "@Utils/calculation-utils";
+import CalculationUtils from "@Utils/calculation-utils";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
 
 // Component
@@ -77,7 +77,7 @@ export const TalentList = ({ char, party, onChangeTalentLevel }: TalentListProps
           const talent = activeTalents[talentType];
           if (!talent) return null;
 
-          const xtraLevel = calculationUtils.getTotalXtraTalentLv({
+          const xtraLevel = CalculationUtils.getTotalXtraTalentLv({
             appChar,
             talentType,
             char,
