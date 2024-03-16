@@ -1,27 +1,18 @@
-import type { CalcSetupManageInfo, Target, Teammate, UserComplexSetup, UserSetup, WeaponType } from "@Src/types";
+import type {
+  CalcSetup,
+  CalcSetupManageInfo,
+  Party,
+  Target,
+  Teammate,
+  UserComplexSetup,
+  UserSetup,
+  WeaponType,
+} from "@Src/types";
 import { ATTACK_ELEMENTS } from "@Src/constants";
 import { Modifier_ } from "../modifier-utils";
 import { Weapon_ } from "../weapon-utils";
-
-interface CreateTeammateArgs {
-  name: string;
-  weaponType: WeaponType;
-}
-
-function destructName(name: string) {
-  const lastWord = name.match(/\s+\(([1-9]+)\)$/);
-
-  if (lastWord?.index && lastWord[1]) {
-    return {
-      nameRoot: name.slice(0, lastWord.index),
-      copyNo: lastWord[1],
-    };
-  }
-  return {
-    nameRoot: name,
-    copyNo: null,
-  };
-}
+import { Calculation_ } from "../calculation-utils";
+import { deepCopy } from "../utils";
 
 export class Setup_ {
   static isUserSetup(setup: UserSetup | UserComplexSetup): setup is UserSetup {
@@ -53,6 +44,53 @@ export class Setup_ {
     return { name: name.trim(), ID, type };
   }
 
+  static restoreCalcSetup(data: CalcSetup) {
+    const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, data.char.name);
+    const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, data.weapon);
+    const party: Party = [];
+
+    for (const index of [0, 1, 2]) {
+      const teammate = data.party[index];
+
+      if (teammate) {
+        const [buffCtrls, debuffCtrls] = Modifier_.createCharacterModCtrls(false, teammate.name);
+        const weapon = deepCopy(teammate.weapon);
+        const artifact = deepCopy(teammate.artifact);
+
+        party.push({
+          name: teammate.name,
+          buffCtrls: restoreModCtrls(buffCtrls, teammate.buffCtrls),
+          debuffCtrls: restoreModCtrls(debuffCtrls, teammate.debuffCtrls),
+          weapon: {
+            ...weapon,
+            buffCtrls: restoreModCtrls(Modifier_.createWeaponBuffCtrls(false, weapon), weapon.buffCtrls),
+          },
+          artifact: {
+            ...artifact,
+            buffCtrls: restoreModCtrls(Modifier_.createArtifactBuffCtrls(false, artifact), artifact.buffCtrls),
+          },
+        });
+      } else {
+        party.push(null);
+      }
+    }
+
+    const setBonuses = Calculation_.getArtifactSetBonuses(data.artifacts);
+    const artBuffCtrls = setBonuses[0]?.bonusLv ? Modifier_.createArtifactBuffCtrls(true, setBonuses[0]) : [];
+
+    const output: CalcSetup = {
+      ...data,
+      selfBuffCtrls: restoreModCtrls(selfBuffCtrls, data.selfBuffCtrls),
+      selfDebuffCtrls: restoreModCtrls(selfDebuffCtrls, data.selfDebuffCtrls),
+      wpBuffCtrls: restoreModCtrls(wpBuffCtrls, data.wpBuffCtrls),
+      party,
+      artBuffCtrls: restoreModCtrls(artBuffCtrls, data.artBuffCtrls),
+      artDebuffCtrls: restoreModCtrls(Modifier_.createArtifactDebuffCtrls(), data.artDebuffCtrls),
+    };
+
+    return output;
+  }
+
   static createTeammate({ name, weaponType }: CreateTeammateArgs): Teammate {
     const [buffCtrls, debuffCtrls] = Modifier_.createCharacterModCtrls(false, name);
 
@@ -80,4 +118,46 @@ export class Setup_ {
     }
     return result;
   }
+}
+
+interface CreateTeammateArgs {
+  name: string;
+  weaponType: WeaponType;
+}
+
+function destructName(name: string) {
+  const lastWord = name.match(/\s+\(([1-9]+)\)$/);
+
+  if (lastWord?.index && lastWord[1]) {
+    return {
+      nameRoot: name.slice(0, lastWord.index),
+      copyNo: lastWord[1],
+    };
+  }
+  return {
+    nameRoot: name,
+    copyNo: null,
+  };
+}
+
+type Restorable = {
+  activated: boolean;
+  index: number;
+  inputs?: number[];
+  code?: number;
+};
+function restoreModCtrls<T extends Restorable>(newCtrls: T[], refCtrls: T[]): T[] {
+  for (const refCtrl of refCtrls) {
+    const i = newCtrls.findIndex(({ code, index }) => {
+      return index === refCtrl.index && code === refCtrl.code;
+    });
+
+    if (i !== -1) {
+      newCtrls[i].activated = true;
+      if (refCtrl.inputs && newCtrls[i].inputs) {
+        newCtrls[i].inputs = refCtrl.inputs;
+      }
+    }
+  }
+  return newCtrls;
 }

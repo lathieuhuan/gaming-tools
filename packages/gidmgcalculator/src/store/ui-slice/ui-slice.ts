@@ -1,13 +1,36 @@
-import { Weapon } from "@Src/types";
+import type { SetupImportInfo, TrackerState } from "@Src/types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
+export type MySetupsModalType =
+  | "TIPS"
+  | "FIRST_COMBINE"
+  | "COMBINE_MORE"
+  | "SHARE_SETUP"
+  | "REMOVE_SETUP"
+  | "STATS"
+  | "MODIFIERS"
+  | "WEAPON"
+  | "ARTIFACTS"
+  | "";
+
 export interface UIState {
-  loading: boolean;
   ready: boolean;
-  b?: Weapon;
+  loading: boolean;
+  atScreen: "CALCULATOR" | "MY_SETUPS" | "MY_WEAPONS" | "MY_ARTIFACTS" | "MY_CHARACTERS";
+  appModalType: "" | "INTRO" | "GUIDES" | "SETTINGS" | "UPLOAD" | "DOWNLOAD" | "DONATE";
+  highManagerActive: boolean;
+  trackerState: TrackerState;
+  mySetupsModalType: MySetupsModalType;
+  importInfo: SetupImportInfo;
 }
 
 const initialState: UIState = {
+  atScreen: "CALCULATOR",
+  appModalType: "INTRO",
+  mySetupsModalType: "",
+  highManagerActive: false,
+  trackerState: "close",
+  importInfo: {},
   loading: false,
   ready: false,
 };
@@ -22,9 +45,12 @@ export const uiSlice = createSlice({
         ...action.payload,
       };
     },
+    updateSetupImportInfo: (state, action: PayloadAction<SetupImportInfo>) => {
+      state.importInfo = action.payload;
+    },
   },
 });
 
-export const { updateUI } = uiSlice.actions;
+export const { updateUI, updateSetupImportInfo } = uiSlice.actions;
 
 export default uiSlice.reducer;

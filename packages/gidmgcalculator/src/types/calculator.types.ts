@@ -84,6 +84,8 @@ export type TrackerCalcItemRecord = {
   exclusives?: CalcItemBonus[];
 };
 
+export type TrackerState = "open" | "close" | "hidden";
+
 export type Tracker = {
   totalAttr: Record<TotalAttributeStat, TrackerRecord[]>;
   attPattBonus: Record<AttackPatternPath, TrackerRecord[]>;

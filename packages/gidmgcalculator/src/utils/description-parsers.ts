@@ -1,5 +1,5 @@
 import { round } from "rond";
-import type { LevelScale_Character, AppCharacter, Character, ValueOption_Character, PartyData } from "@Src/types";
+import type { LevelScale_Character, AppCharacter, Character, ValueOption_Character, PartyData, AppArtifact, ArtifactModifier } from "@Src/types";
 import { CharacterCal, getIntialBonusValue } from "@Src/calculation";
 import { toArray, toMult } from "./utils";
 
@@ -118,3 +118,12 @@ export const parseWeaponDescription = (description: string, refi: number) => {
     return wrapText(body + suffix, type);
   });
 };
+
+/** @to-do: check if this function is used elsewhere */
+export function getArtifactDescription(data: AppArtifact, modifier: ArtifactModifier) {
+  return parseArtifactDescription(
+    toArray(modifier.description).reduce<string>((acc, description) => {
+      return `${acc} ${typeof description === "string" ? description : data.descriptions[description] || ""}`;
+    }, "")
+  );
+}

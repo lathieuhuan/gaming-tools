@@ -44,7 +44,7 @@ import {
   Modifier_,
   Weapon_,
 } from "@Src/utils";
-import { calculate, getCharDataFromState } from "./calculator-slice-utils";
+import { calculate, getCharDataFromState } from "./calculator-slice.utils";
 
 // const defaultChar = {
 //   name: "Albedo",
@@ -575,7 +575,7 @@ export const calculatorSlice = createSlice({
       state.comparedIds = [];
 
       const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, appChar.name);
-      const newWeapon = Weapon_.createWeapon({ type: appChar.weaponType });
+      const newWeapon = Weapon_.create({ type: appChar.weaponType });
       const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, newWeapon);
       const elmtModCtrls = Modifier_.createElmtModCtrls();
       const tempManageInfos: CalcSetupManageInfo[] = [];
