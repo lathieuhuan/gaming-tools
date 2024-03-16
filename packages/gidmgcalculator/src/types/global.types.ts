@@ -5,6 +5,7 @@ import {
   ATTACK_PATTERNS,
   ATTRIBUTE_STAT_TYPES,
   BASE_STAT_TYPES,
+  CORE_STAT_TYPES,
   ELEMENT_TYPES,
   LEVELS,
   NORMAL_ATTACKS,
@@ -45,6 +46,8 @@ export type Reaction = (typeof REACTIONS)[number];
 export type AttackReaction = AmplifyingReaction | QuickenReaction | null;
 
 /** ========== STATS ========== */
+
+export type CoreStat = (typeof CORE_STAT_TYPES)[number];
 
 export type BaseStat = (typeof BASE_STAT_TYPES)[number];
 

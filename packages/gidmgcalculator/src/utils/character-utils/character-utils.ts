@@ -5,14 +5,24 @@ import type {
   Character,
   ElementType,
   Level,
+  PartyData,
+  Talent,
   TalentAttributeType,
   WeaponType,
 } from "@Src/types";
 import { $AppSettings } from "@Src/services";
-import { getBareLv } from "../utils";
+import { findByName } from "../utils";
+import { CalculationUtils } from "../calculation-utils";
 import { BASE_REACTION_DAMAGE, TALENT_LV_MULTIPLIERS } from "./character-stats";
 
-class CharacterUtils {
+interface GetTotalXtraTalentArgs {
+  char: Character;
+  appChar: AppCharacter;
+  talentType: Talent;
+  partyData?: PartyData;
+}
+
+export class CharacterUtils {
   static createCharacter(name: string, info?: Partial<Character>): Character {
     const { charLevel, charCons, charNAs, charES, charEB } = $AppSettings.get();
 
@@ -26,12 +36,35 @@ class CharacterUtils {
     };
   }
 
+  static getTotalXtraTalentLv({ char, appChar, talentType, partyData }: GetTotalXtraTalentArgs): number {
+    let result = 0;
+
+    if (talentType === "NAs") {
+      if (char.name === "Tartaglia" || (partyData && findByName(partyData, "Tartaglia"))) {
+        result++;
+      }
+    }
+    if (talentType !== "altSprint") {
+      const consLv = appChar.talentLvBonus?.[talentType];
+
+      if (consLv && char.cons >= consLv) {
+        result += 3;
+      }
+    }
+    return result;
+  }
+
+  static getFinalTalentLv(args: GetTotalXtraTalentArgs): number {
+    const talentLv = args.talentType === "altSprint" ? 0 : args.char[args.talentType];
+    return talentLv + this.getTotalXtraTalentLv(args);
+  }
+
   static getTalentMult(scale: number, level: number): number {
     return scale ? TALENT_LV_MULTIPLIERS[scale][level] : 1;
   }
 
   static getBaseRxnDmg(level: Level): number {
-    return BASE_REACTION_DAMAGE[getBareLv(level)];
+    return BASE_REACTION_DAMAGE[CalculationUtils.getBareLv(level)];
   }
 
   static getTalentDefaultInfo(
@@ -59,5 +92,3 @@ class CharacterUtils {
     };
   }
 }
-
-export default CharacterUtils;

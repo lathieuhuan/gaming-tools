@@ -1,15 +1,19 @@
+import type { PartiallyRequired } from "rond";
 import type {
   AttackElement,
   AttackPattern,
   AttackReaction,
   AttributeStat,
+  Character,
+  CoreStat,
   ElementType,
   NormalAttack,
   Reaction,
   TotalAttributeStat,
   WeaponType,
 } from "./global.types";
-import type { ActualAttackElement } from "./app-character.type";
+import type { Tracker } from "./calculator.types";
+import type { AppCharacter } from "./app-character.type";
 import { ATTACK_ELEMENT_INFO_KEYS, ATTACK_PATTERN_INFO_KEYS, REACTION_BONUS_INFO_KEYS } from "@Src/constants";
 
 export type ArtifactSetBonus = {
@@ -19,6 +23,12 @@ export type ArtifactSetBonus = {
 
 export type TotalAttribute = Record<TotalAttributeStat, number>;
 
+export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;
+
+export type ActualAttackPattern = AttackPattern | "none";
+
+export type ActualAttackElement = AttackElement | "absorb";
+
 export type AttackPatternInfoKey = (typeof ATTACK_PATTERN_INFO_KEYS)[number];
 export type AttackPatternInfo = Record<AttackPatternInfoKey, number>;
 export type AttackPatternBonusKey = AttackPattern | "all";
@@ -26,14 +36,51 @@ export type AttackPatternBonus = Record<AttackPatternBonusKey, AttackPatternInfo
 export type AttackPatternPath = `${AttackPatternBonusKey}.${AttackPatternInfoKey}`;
 
 export type ResistanceReductionKey = AttackElement | "def";
+export type ResistanceReduction = Record<ResistanceReductionKey, number>;
 
 export type AttackElementInfoKey = (typeof ATTACK_ELEMENT_INFO_KEYS)[number];
+export type AttacklementInfo = Record<AttackElementInfoKey, number>;
+export type AttackElementBonus = Record<AttackElement, AttacklementInfo>;
 export type AttackElementPath = `${AttackElement}.${AttackElementInfoKey}`;
 
 export type ReactionBonusInfoKey = (typeof REACTION_BONUS_INFO_KEYS)[number];
 export type ReactionBonusInfo = Record<ReactionBonusInfoKey, number>;
 export type ReactionBonusPath = `${Reaction}.${ReactionBonusInfoKey}`;
 export type ReactionBonus = Record<Reaction, ReactionBonusInfo>;
+
+export type CalcItemType = "attack" | "healing" | "shield" | "other";
+
+export type CalcItemBonus = Partial<Record<AttackPatternInfoKey, { desc: string; value: number }>>;
+
+export type CalcItemBuff = {
+  ids: string | string[];
+  bonus: CalcItemBonus;
+};
+
+export type BuffInfoWrap = {
+  char: Character;
+  appChar: AppCharacter;
+  partyData: PartyData;
+  totalAttr: TotalAttribute;
+  attPattBonus: AttackPatternBonus;
+  attElmtBonus: AttackElementBonus;
+  calcItemBuffs: CalcItemBuff[];
+  rxnBonus: ReactionBonus;
+  infusedElement?: AttackElement;
+  tracker?: Tracker;
+};
+
+export type DebuffInfoWrap = {
+  char: Character;
+  resistReduct: ResistanceReduction;
+  appChar: AppCharacter;
+  partyData: PartyData;
+  tracker?: Tracker;
+};
+
+type TeammateData = Pick<AppCharacter, "code" | "name" | "icon" | "nation" | "vision" | "weaponType" | "EBcost">;
+
+export type PartyData = (TeammateData | null)[];
 
 export type Target = {
   code: number;

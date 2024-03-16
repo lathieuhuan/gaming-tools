@@ -1,1 +1,1 @@
-export { default } from "./artifact-utils";
+export * from "./artifact-utils";

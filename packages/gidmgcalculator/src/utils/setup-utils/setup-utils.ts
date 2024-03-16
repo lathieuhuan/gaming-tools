@@ -1,4 +1,12 @@
-import type { CalcSetupManageInfo, UserComplexSetup, UserSetup } from "@Src/types";
+import type { CalcSetupManageInfo, Target, Teammate, UserComplexSetup, UserSetup, WeaponType } from "@Src/types";
+import { ATTACK_ELEMENTS } from "@Src/constants";
+import { ModifierUtils } from "../modifier-utils";
+import { WeaponUtils } from "../weapon-utils";
+
+interface CreateTeammateArgs {
+  name: string;
+  weaponType: WeaponType;
+}
 
 function destructName(name: string) {
   const lastWord = name.match(/\s+\(([1-9]+)\)$/);
@@ -15,7 +23,7 @@ function destructName(name: string) {
   };
 }
 
-class SetupUtils {
+export class SetupUtils {
   static isUserSetup(setup: UserSetup | UserComplexSetup): setup is UserSetup {
     return ["original", "combined"].includes(setup.type);
   }
@@ -44,6 +52,32 @@ class SetupUtils {
     const { name = "Setup 1", ID = Date.now(), type = "original" } = defaultInfo;
     return { name: name.trim(), ID, type };
   }
-}
 
-export default SetupUtils;
+  static createTeammate({ name, weaponType }: CreateTeammateArgs): Teammate {
+    const [buffCtrls, debuffCtrls] = ModifierUtils.createCharacterModCtrls(false, name);
+
+    return {
+      name,
+      buffCtrls,
+      debuffCtrls,
+      weapon: {
+        code: WeaponUtils.createWeapon({ type: weaponType }).code,
+        type: weaponType,
+        refi: 1,
+        buffCtrls: [],
+      },
+      artifact: {
+        code: 0,
+        buffCtrls: [],
+      },
+    };
+  }
+
+  static createTarget() {
+    const result = { code: 0, level: 1, resistances: {} } as Target;
+    for (const elmt of ATTACK_ELEMENTS) {
+      result.resistances[elmt] = 10;
+    }
+    return result;
+  }
+}

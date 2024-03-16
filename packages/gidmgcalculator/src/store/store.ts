@@ -3,22 +3,34 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
+import calculatorSliceReducers, { calculatorSlice } from "./calculator-slice";
 import uiSliceReducers, { uiSlice } from "./ui-slice";
-import userdbSliceReducers, { userdbSlice } from "./userdb-slice";
+import userdbSliceReducers, { userdbSlice, initialState } from "./userdb-slice";
 
 export type SetupStoreArgs = { persistingUserData?: boolean };
 
-export const setupStore = (args?: SetupStoreArgs) => {
+export const setupStore = (args?: { persistingUserData?: boolean }) => {
+  const userdbPersistReducers = persistReducer(
+    {
+      key: "database",
+      version: 0,
+      storage,
+      blacklist: args?.persistingUserData ? [] : Object.keys(initialState),
+    },
+    userdbSliceReducers
+  );
+
   const rootReducer = combineReducers({
+    calculator: calculatorSliceReducers,
     ui: uiSliceReducers,
-    userdb: userdbSliceReducers,
+    userdb: userdbPersistReducers,
   });
 
   const persistConfig = {
     key: "root",
     version: 0,
     storage,
-    blacklist: [uiSlice.name, userdbSlice.name],
+    blacklist: [calculatorSlice.name, uiSlice.name, userdbSlice.name],
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);

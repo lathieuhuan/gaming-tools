@@ -1,1 +1,1 @@
-export { default } from "./modifier-utils";
+export * from "./modifier-utils";

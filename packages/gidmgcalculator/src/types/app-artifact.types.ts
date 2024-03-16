@@ -1,5 +1,5 @@
 import type { AttributeStat, ModifierAffectType, ModInputConfig, WeaponType } from "./global.types";
-import type { AttackPatternPath, ReactionBonusPath, ResistanceReductionKey } from "./calculation.types";
+import type { AttackPatternPath, ReactionBonusPath, ResistanceReductionKey } from "./calculation-core.types";
 
 type ArtTypeData = {
   name: string;

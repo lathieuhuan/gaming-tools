@@ -5,8 +5,7 @@ import { Badge } from "rond";
 import type { ArtifactSubStat, AttributeStat, CalcArtifact, UserArtifact } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
-import { suffixOf } from "@Src/utils";
-import ArtifactUtils from "@Utils/artifact-utils";
+import { suffixOf, ArtifactUtils } from "@Src/utils";
 
 // Component
 import { ArtifactLevelSelect } from "./ArtifactLevelSelect";

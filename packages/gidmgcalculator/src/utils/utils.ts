@@ -1,18 +1,7 @@
-import type { Level } from "@Src/types";
+import type { UserArtifact, UserWeapon } from "@Src/types";
 import { ATTACK_ELEMENTS } from "@Src/constants";
 
 export const deepCopy = <T>(item: T): T => JSON.parse(JSON.stringify(item));
-
-export const getBareLv = (level: Level): number => +level.split("/")[0];
-
-export const getAscsFromLv = (level: Level) => {
-  const maxLv = +level.slice(-2);
-  return maxLv === 20 ? 0 : maxLv / 10 - 3;
-};
-
-export const splitLv = (subject: { level: Level }) => {
-  return subject.level.split("/").map((lv) => +lv);
-};
 
 export const suffixOf = (stat: string) => {
   return stat.slice(-1) === "_" || ATTACK_ELEMENTS.includes(stat as any) ? "%" : "";
@@ -32,6 +21,10 @@ export function pickProps<M, T extends keyof M>(obj: M, keys: T[]) {
   }
   return result;
 }
+
+export const toMult = (n: number) => 1 + n / 100;
+
+export const applyPercent = (n: number, percent: number) => Math.round((n * percent) / 100);
 
 export const toArray = <T>(subject: T | T[]): T[] => (Array.isArray(subject) ? subject : [subject]);
 
@@ -54,3 +47,5 @@ export const findByName = find("name");
 
 export const indexById = findIndex("ID");
 export const indexByName = findIndex("name");
+
+export const isUserWeapon = (item: UserWeapon | UserArtifact): item is UserWeapon => "refi" in item;

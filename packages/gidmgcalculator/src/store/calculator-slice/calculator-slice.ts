@@ -34,13 +34,17 @@ import type {
 import { ATTACK_ELEMENTS, RESONANCE_ELEMENT_TYPES } from "@Src/constants";
 import { $AppData, $AppCharacter, $AppSettings } from "@Src/services";
 
-import { getBareLv, deepCopy, findById, toArray, findByIndex } from "@Src/utils";
-import SetupUtils from "@Utils/setup-utils";
-import CalculationUtils from "@Utils/calculation-utils";
-import ModifierUtils from "@Utils/modifier-utils";
-import WeaponUtils from "@Utils/weapon-utils";
+import {
+  deepCopy,
+  findById,
+  toArray,
+  findByIndex,
+  SetupUtils,
+  CalculationUtils,
+  ModifierUtils,
+  WeaponUtils,
+} from "@Src/utils";
 import { calculate, getCharDataFromState } from "./calculator-slice-utils";
-
 
 // const defaultChar = {
 //   name: "Albedo",
@@ -54,7 +58,7 @@ const initialState: CalculatorState = {
   setupManageInfos: [],
   setupsById: {},
   resultById: {},
-  target: CalculationUtils.createTarget(),
+  target: SetupUtils.createTarget(),
   message: {
     active: false,
   },
@@ -186,7 +190,7 @@ export const calculatorSlice = createSlice({
       const { level } = action.payload;
 
       if (level && target.level === 1) {
-        target.level = getBareLv(level);
+        target.level = CalculationUtils.getBareLv(level);
       }
       if (charInfoIsSeparated) {
         const currentSetup = setupsById[state.activeId];
@@ -214,7 +218,7 @@ export const calculatorSlice = createSlice({
       const oldElmtCount = CalculationUtils.countElements($AppCharacter.getPartyData(party), appChar);
       const oldTeammate = party[teammateIndex];
       // assign to party
-      party[teammateIndex] = CalculationUtils.createTeammate({ name, weaponType });
+      party[teammateIndex] = SetupUtils.createTeammate({ name, weaponType });
 
       const newElmtCount = CalculationUtils.countElements($AppCharacter.getPartyData(party), appChar);
 

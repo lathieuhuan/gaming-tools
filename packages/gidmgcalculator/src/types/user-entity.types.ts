@@ -1,5 +1,6 @@
 import type { Character } from "./global.types";
-import type { CalcArtifact, CalcSetup, CalcWeapon, SetupType, Target } from "./calculator.types";
+import type { CalcArtifact, CalcSetup, CalcWeapon, SetupType } from "./calculator.types";
+import type { Target } from "./calculation-core.types";
 
 export type UserCharacter = Character & {
   weaponID: number;

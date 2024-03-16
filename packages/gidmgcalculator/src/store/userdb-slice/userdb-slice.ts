@@ -20,10 +20,16 @@ import type {
 
 import { ARTIFACT_TYPES } from "@Src/constants";
 import { $AppData } from "@Src/services";
-import { findById, findByName, indexById, indexByName, splitLv } from "@Src/utils";
-import CharacterUtils from "@Utils/character-utils";
-import SetupUtils from "@Utils/setup-utils";
-import WeaponUtils from "@Utils/weapon-utils";
+import {
+  findById,
+  findByName,
+  indexById,
+  indexByName,
+  CharacterUtils,
+  WeaponUtils,
+  SetupUtils,
+  CalculationUtils,
+} from "@Src/utils";
 
 export type UserdbState = {
   userChars: UserCharacter[];
@@ -235,8 +241,8 @@ export const userdbSlice = createSlice({
           return rB - rA;
         }
 
-        const [fA, sA] = splitLv(a);
-        const [fB, sB] = splitLv(b);
+        const [fA, sA] = CalculationUtils.splitLv(a);
+        const [fB, sB] = CalculationUtils.splitLv(b);
         if (fA !== fB) {
           return fB - fA;
         }

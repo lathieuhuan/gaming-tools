@@ -6,7 +6,7 @@ import type { ArtifactStatFilterState, ArtifactStatFilterOption } from "../Artif
 
 import { ARTIFACT_SUBSTAT_TYPES, ATTACK_ELEMENTS } from "@Src/constants";
 import { useTranslation } from "@Src/hooks";
-import ArtifactUtils from "@Utils/artifact-utils";
+import { ArtifactUtils } from "@Src/utils";
 import { FilterTemplate } from "../../FilterTemplate";
 
 type RenderSelectArgs = {

@@ -1,6 +1,6 @@
 import type { AttributeStat, UserArtifact } from "@Src/types";
 import type { ArtifactFilterState } from "./ArtifactFilter.types";
-import ArtifactUtils from "@Utils/artifact-utils";
+import { ArtifactUtils } from "@Src/utils";
 
 export const filterArtifacts = (artifacts: UserArtifact[], filterCondition: ArtifactFilterState) => {
   const { stats, codes, types } = filterCondition;

@@ -1,1 +1,1 @@
-export { default } from "./setup-utils";
+export * from "./setup-utils";

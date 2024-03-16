@@ -1,7 +1,7 @@
 import type { Level, Weapon, WeaponType } from "@Src/types";
 import { LEVELS } from "@Src/constants";
 import { $AppSettings } from "@Src/services";
-import { getBareLv } from "../utils";
+import { CalculationUtils } from "../calculation-utils";
 import { BASE_ATTACK_TYPE, SUBSTAT_SCALE } from "./weapon-stats";
 
 const DEFAULT_WEAPON_CODE = {
@@ -17,7 +17,7 @@ type CreateWeaponArgs = {
   code?: number;
 };
 
-class WeaponUtils {
+export class WeaponUtils {
   static createWeapon({ type, code }: CreateWeaponArgs, ID = Date.now()): Weapon {
     const { wpLevel, wpRefi } = $AppSettings.get();
 
@@ -35,10 +35,8 @@ class WeaponUtils {
   }
 
   static getSubStatValue(level: Level, scale: string): number {
-    const bareLv = getBareLv(level);
+    const bareLv = CalculationUtils.getBareLv(level);
     const index = bareLv === 1 ? 0 : bareLv === 20 ? 1 : (bareLv - 20) / 10;
     return SUBSTAT_SCALE[scale][index];
   }
 }
-
-export default WeaponUtils;

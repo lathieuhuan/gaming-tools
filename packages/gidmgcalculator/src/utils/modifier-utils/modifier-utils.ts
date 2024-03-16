@@ -59,7 +59,7 @@ function createItemBuffCtrls(forSelf: boolean, entity?: { buffs?: RefModifier[] 
   return buffCtrls;
 }
 
-class ModifierUtils {
+export class ModifierUtils {
   static getDefaultInitialValue(type: ModInputType) {
     return DEFAULT_INITIAL_VALUES[type] ?? 0;
   }
@@ -110,5 +110,3 @@ class ModifierUtils {
     ];
   }
 }
-
-export default ModifierUtils;

@@ -1,1 +1,1 @@
-export { default } from "./weapon-utils";
+export * from "./weapon-utils";

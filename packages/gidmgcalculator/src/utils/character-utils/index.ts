@@ -1,1 +1,1 @@
-export { default } from "./character-utils";
+export * from "./character-utils";

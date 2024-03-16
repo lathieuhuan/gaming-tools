@@ -4,7 +4,7 @@ import { ARTIFACT_MAIN_STATS } from "./artifact-stats";
 
 type CreateArtifactArgs = Pick<Artifact, "type" | "code" | "rarity">;
 
-class ArtifactUtils {
+export class ArtifactUtils {
   static createArtifact({ type, code, rarity }: CreateArtifactArgs, ID = Date.now()): Artifact {
     const { artLevel } = $AppSettings.get();
 
@@ -33,5 +33,3 @@ class ArtifactUtils {
     return ARTIFACT_MAIN_STATS[type][mainStatType]?.[rarity][level] || 0;
   }
 }
-
-export default ArtifactUtils;

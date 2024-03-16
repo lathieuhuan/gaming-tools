@@ -4,16 +4,11 @@ import type {
   CalcArtifacts,
   Character,
   ElementType,
+  Level,
   PartyData,
   Talent,
-  Target,
-  Teammate,
-  WeaponType,
 } from "@Src/types";
-import { ATTACK_ELEMENTS } from "@Src/constants";
 import { findByName } from "../utils";
-import ModifierUtils from "../modifier-utils";
-import WeaponUtils from "../weapon-utils";
 
 interface TotalXtraTalentArgs {
   char: Character;
@@ -22,12 +17,18 @@ interface TotalXtraTalentArgs {
   partyData?: PartyData;
 }
 
-interface CreateTeammateArgs {
-  name: string;
-  weaponType: WeaponType;
-}
+export class CalculationUtils {
+  static getBareLv = (level: Level): number => +level.split("/")[0];
 
-class CalculatorUtils {
+  static getAscsFromLv = (level: Level) => {
+    const maxLv = +level.slice(-2);
+    return maxLv === 20 ? 0 : maxLv / 10 - 3;
+  };
+
+  static splitLv = (subject: { level: Level }) => {
+    return subject.level.split("/").map((lv) => +lv);
+  };
+
   static getTotalXtraTalentLv({ char, appChar, talentType, partyData }: TotalXtraTalentArgs) {
     let result = 0;
 
@@ -78,34 +79,4 @@ class CalculatorUtils {
     }
     return sets;
   }
-
-  static createTeammate({ name, weaponType }: CreateTeammateArgs): Teammate {
-    const [buffCtrls, debuffCtrls] = ModifierUtils.createCharacterModCtrls(false, name);
-
-    return {
-      name,
-      buffCtrls,
-      debuffCtrls,
-      weapon: {
-        code: WeaponUtils.createWeapon({ type: weaponType }).code,
-        type: weaponType,
-        refi: 1,
-        buffCtrls: [],
-      },
-      artifact: {
-        code: 0,
-        buffCtrls: [],
-      },
-    };
-  }
-
-  static createTarget() {
-    const result = { code: 0, level: 1, resistances: {} } as Target;
-    for (const elmt of ATTACK_ELEMENTS) {
-      result.resistances[elmt] = 10;
-    }
-    return result;
-  }
 }
-
-export default CalculatorUtils;

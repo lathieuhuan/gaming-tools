@@ -3,10 +3,9 @@ import { FaCaretDown } from "react-icons/fa";
 import { CloseButton, LoadingSpin, StatsTable, round } from "rond";
 
 import type { AppCharacter, Talent } from "@Src/types";
-import { toArray } from "@Src/utils";
+import { toArray, CharacterUtils } from "@Src/utils";
 import { useQuery, useTabs, useTranslation } from "@Src/hooks";
 import { $AppCharacter } from "@Src/services";
-import CharacterUtils from "@Utils/character-utils";
 
 // Constant
 import { ATTACK_PATTERNS } from "@Src/constants";

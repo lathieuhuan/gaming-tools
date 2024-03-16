@@ -1,3 +1,23 @@
+import type {
+  AttributeStat,
+  ElementType,
+  ModInputConfig,
+  ModifierAffectType,
+  Nation,
+  Talent,
+  WeaponType,
+} from "./global.types";
+import type {
+  ActualAttackElement,
+  ActualAttackPattern,
+  AttackElementPath,
+  AttackPatternInfoKey,
+  AttackPatternPath,
+  CalcItemType,
+  ReactionBonusPath,
+  ResistanceReductionKey,
+} from "./calculation-core.types";
+
 // export type DefaultAppCharacter = Pick<
 //   AppCharacter,
 //   | "code"
@@ -11,29 +31,6 @@
 //   | "EBcost"
 //   | "talentLvBonus"
 // >;
-
-import {
-  AttackElementPath,
-  AttackPatternInfoKey,
-  AttackPatternPath,
-  ReactionBonusPath,
-  ResistanceReductionKey,
-} from "./calculation.types";
-import {
-  AttackElement,
-  AttackPattern,
-  AttributeStat,
-  ElementType,
-  ModInputConfig,
-  ModifierAffectType,
-  Nation,
-  Talent,
-  WeaponType,
-} from "./global.types";
-
-type TeammateData = Pick<AppCharacter, "code" | "name" | "icon" | "nation" | "vision" | "weaponType" | "EBcost">;
-
-export type PartyData = (TeammateData | null)[];
 
 export type AppCharacter = {
   code: number;
@@ -93,10 +90,6 @@ type Ability = {
   description?: string;
 };
 
-export type ActualAttackPattern = AttackPattern | "none";
-
-export type ActualAttackElement = AttackElement | "absorb";
-
 type CalcItemMultFactor = {
   root: number;
   /** When 0 stat not scale off talent level */
@@ -104,8 +97,6 @@ type CalcItemMultFactor = {
   /** Calc default to 'atk'. Only on ES / EB */
   basedOn?: TalentAttributeType;
 };
-
-export type CalcItemType = "attack" | "healing" | "shield" | "other";
 
 export type CalcItem = {
   id?: string;
