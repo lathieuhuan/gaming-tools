@@ -18,20 +18,6 @@ import type {
   ResistanceReductionKey,
 } from "./calculation-core.types";
 
-// export type DefaultAppCharacter = Pick<
-//   AppCharacter,
-//   | "code"
-//   | "name"
-//   | "icon"
-//   | "sideIcon"
-//   | "rarity"
-//   | "nation"
-//   | "vision"
-//   | "weaponType"
-//   | "EBcost"
-//   | "talentLvBonus"
-// >;
-
 export type AppCharacter = {
   code: number;
   name: string;

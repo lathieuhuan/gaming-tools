@@ -1,11 +1,6 @@
 import type { AttributeStat, ModInputConfig, ModifierAffectType, WeaponType } from "./global.types";
 import type { AttackPatternPath } from "./calculation-core.types";
 
-// export type DefaultAppWeapon = Pick<
-//   AppWeapon,
-//   "code" | "beta" | "name" | "rarity" | "icon" | "buffs"
-// >;
-
 export type AppWeapon = {
   /** This is id */
   code: number;
