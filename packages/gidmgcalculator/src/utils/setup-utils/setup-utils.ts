@@ -1,7 +1,7 @@
 import type { CalcSetupManageInfo, Target, Teammate, UserComplexSetup, UserSetup, WeaponType } from "@Src/types";
 import { ATTACK_ELEMENTS } from "@Src/constants";
-import { ModifierUtils } from "../modifier-utils";
-import { WeaponUtils } from "../weapon-utils";
+import { Modifier_ } from "../modifier-utils";
+import { Weapon_ } from "../weapon-utils";
 
 interface CreateTeammateArgs {
   name: string;
@@ -23,7 +23,7 @@ function destructName(name: string) {
   };
 }
 
-export class SetupUtils {
+export class Setup_ {
   static isUserSetup(setup: UserSetup | UserComplexSetup): setup is UserSetup {
     return ["original", "combined"].includes(setup.type);
   }
@@ -54,14 +54,14 @@ export class SetupUtils {
   }
 
   static createTeammate({ name, weaponType }: CreateTeammateArgs): Teammate {
-    const [buffCtrls, debuffCtrls] = ModifierUtils.createCharacterModCtrls(false, name);
+    const [buffCtrls, debuffCtrls] = Modifier_.createCharacterModCtrls(false, name);
 
     return {
       name,
       buffCtrls,
       debuffCtrls,
       weapon: {
-        code: WeaponUtils.createWeapon({ type: weaponType }).code,
+        code: Weapon_.create({ type: weaponType }).code,
         type: weaponType,
         refi: 1,
         buffCtrls: [],

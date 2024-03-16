@@ -5,7 +5,7 @@ import { CollapseSpace, Table } from "rond";
 import type { Character, CalculationFinalResult, Party, CalculationAspect } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppCharacter } from "@Src/services";
-import { CharacterUtils } from "@Src/utils";
+import { Character_ } from "@Src/utils";
 import { displayValue, getTableKeys } from "./FinalResultView.utils";
 
 // Component
@@ -46,7 +46,7 @@ export const FinalResultView = ({
         const standardValues = finalResult[key.main];
         const isReactionDmg = key.main === "RXN";
         const talentLevel = !isReactionDmg
-          ? CharacterUtils.getFinalTalentLv({
+          ? Character_.getFinalTalentLv({
               char,
               appChar,
               talentType: key.main,

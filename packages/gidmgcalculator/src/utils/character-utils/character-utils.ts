@@ -12,7 +12,7 @@ import type {
 } from "@Src/types";
 import { $AppSettings } from "@Src/services";
 import { findByName } from "../utils";
-import { CalculationUtils } from "../calculation-utils";
+import { Calculation_ } from "../calculation-utils";
 import { BASE_REACTION_DAMAGE, TALENT_LV_MULTIPLIERS } from "./character-stats";
 
 interface GetTotalXtraTalentArgs {
@@ -22,8 +22,8 @@ interface GetTotalXtraTalentArgs {
   partyData?: PartyData;
 }
 
-export class CharacterUtils {
-  static createCharacter(name: string, info?: Partial<Character>): Character {
+export class Character_ {
+  static create(name: string, info?: Partial<Character>): Character {
     const { charLevel, charCons, charNAs, charES, charEB } = $AppSettings.get();
 
     return {
@@ -64,7 +64,7 @@ export class CharacterUtils {
   }
 
   static getBaseRxnDmg(level: Level): number {
-    return BASE_REACTION_DAMAGE[CalculationUtils.getBareLv(level)];
+    return BASE_REACTION_DAMAGE[Calculation_.getBareLv(level)];
   }
 
   static getTalentDefaultInfo(

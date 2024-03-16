@@ -8,13 +8,13 @@ import type {
   UsableCondition_Character,
 } from "@Src/types";
 import type { CalcUltilInfo } from "../calculation.types";
-import { CharacterUtils, CalculationUtils } from "@Src/utils";
+import { Character_, Calculation_ } from "@Src/utils";
 
 export class CharacterCal {
   static isGranted({ grantedAt }: { grantedAt?: CharacterMilestone }, char: Character) {
     if (grantedAt) {
       const [prefix, level] = grantedAt;
-      return (prefix === "A" ? CalculationUtils.getAscsFromLv(char.level) : char.cons) >= +level;
+      return (prefix === "A" ? Calculation_.getAscension(char.level) : char.cons) >= +level;
     }
     return true;
   }
@@ -82,7 +82,7 @@ export class CharacterCal {
     if (condition.forElmts && !condition.forElmts.includes(info.appChar.vision)) {
       return false;
     }
-    const elementCount = CalculationUtils.countElements(info.partyData, info.appChar);
+    const elementCount = Calculation_.countElements(info.partyData, info.appChar);
 
     if (partyElmtCount) {
       for (const key in partyElmtCount) {
@@ -108,7 +108,7 @@ export class CharacterCal {
     if (scale) {
       const { talent, value, alterIndex = 0, max } = scale;
       const level = fromSelf
-        ? CharacterUtils.getFinalTalentLv({
+        ? Character_.getFinalTalentLv({
             talentType: talent,
             char: info.char,
             appChar: info.appChar,
@@ -116,7 +116,7 @@ export class CharacterCal {
           })
         : inputs[alterIndex] ?? 0;
 
-      const result = value ? CharacterUtils.getTalentMult(value, level) : level;
+      const result = value ? Character_.getTalentMult(value, level) : level;
       return max && result > max ? max : result;
     }
     return 1;

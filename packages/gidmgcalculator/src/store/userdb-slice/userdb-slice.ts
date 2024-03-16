@@ -20,16 +20,7 @@ import type {
 
 import { ARTIFACT_TYPES } from "@Src/constants";
 import { $AppData } from "@Src/services";
-import {
-  findById,
-  findByName,
-  indexById,
-  indexByName,
-  CharacterUtils,
-  WeaponUtils,
-  SetupUtils,
-  CalculationUtils,
-} from "@Src/utils";
+import { findById, findByName, indexById, indexByName, Character_, Weapon_, Setup_, Calculation_ } from "@Src/utils";
 
 export type UserdbState = {
   userChars: UserCharacter[];
@@ -81,14 +72,13 @@ export const userdbSlice = createSlice({
       const weaponID = Date.now();
 
       state.userChars.push({
-        // name,
-        ...CharacterUtils.createCharacter(name),
+        ...Character_.create(name),
         weaponID,
         artifactIDs: [null, null, null, null, null],
       });
       state.userWps.unshift({
         owner: name,
-        ...WeaponUtils.createWeapon({ type: weaponType }, weaponID),
+        ...Weapon_.create({ type: weaponType }, weaponID),
       });
     },
     chooseCharacter: (state, action: PayloadAction<string>) => {
@@ -241,8 +231,8 @@ export const userdbSlice = createSlice({
           return rB - rA;
         }
 
-        const [fA, sA] = CalculationUtils.splitLv(a);
-        const [fB, sB] = CalculationUtils.splitLv(b);
+        const [fA, sA] = Calculation_.splitLv(a);
+        const [fB, sB] = Calculation_.splitLv(b);
         if (fA !== fB) {
           return fB - fA;
         }
@@ -272,7 +262,7 @@ export const userdbSlice = createSlice({
 
           userWps.unshift({
             owner,
-            ...WeaponUtils.createWeapon({ type }, newWpID),
+            ...Weapon_.create({ type }, newWpID),
           });
 
           const ownerInfo = findByName(userChars, owner);
@@ -421,7 +411,7 @@ export const userdbSlice = createSlice({
         const setup = userSetups[removedIndex];
 
         // Disconnect weapon & artifacts from removed setup
-        if (SetupUtils.isUserSetup(setup)) {
+        if (Setup_.isUserSetup(setup)) {
           const { weaponID, artifactIDs } = setup;
           const foundWeapon = findById(userWps, weaponID);
 
@@ -461,7 +451,7 @@ export const userdbSlice = createSlice({
         if (setup) {
           setup.type = "combined";
 
-          if (SetupUtils.isUserSetup(setup)) {
+          if (Setup_.isUserSetup(setup)) {
             allIDs[setup.char.name] = ID;
           }
         }
@@ -480,7 +470,7 @@ export const userdbSlice = createSlice({
       const { complexID, shownID } = action.payload;
       const complexSetup = findById(state.userSetups, complexID);
 
-      if (complexSetup && !SetupUtils.isUserSetup(complexSetup)) {
+      if (complexSetup && !Setup_.isUserSetup(complexSetup)) {
         complexSetup.shownID = shownID;
       }
     },
@@ -494,7 +484,7 @@ export const userdbSlice = createSlice({
         pickedIDs.forEach((ID) => {
           const setup = findById(userSetups, ID);
 
-          if (setup && SetupUtils.isUserSetup(setup)) {
+          if (setup && Setup_.isUserSetup(setup)) {
             setup.type = "combined";
             complexSetup.allIDs[setup.char.name] = ID;
           }
@@ -505,7 +495,7 @@ export const userdbSlice = createSlice({
       const index = indexById(userSetups, action.payload);
       const targetSetup = userSetups[index];
 
-      if (targetSetup && !SetupUtils.isUserSetup(targetSetup)) {
+      if (targetSetup && !Setup_.isUserSetup(targetSetup)) {
         for (const ID of Object.values(targetSetup.allIDs)) {
           const combinedSetup = findById(userSetups, ID);
 

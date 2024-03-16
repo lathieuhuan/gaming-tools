@@ -10,7 +10,7 @@ import {
   ExtraMax_Character,
   BonusConfig_Character,
 } from "@Src/types";
-import { toArray, CalculationUtils, CharacterUtils } from "@Src/utils";
+import { toArray, Calculation_, Character_ } from "@Src/utils";
 import { CalcUltilInfo } from "../calculation.types";
 import { CharacterCal, applyModifier } from "../utils";
 import { isFinalBonus } from "./getCalculationStats.utils";
@@ -96,7 +96,7 @@ const getStackValue = (
       if (info.char.cons >= 1 && electroEnergy <= totalEnergy) {
         totalEnergy += electroEnergy * 0.8 + (totalEnergy - electroEnergy) * 0.2;
       }
-      const level = CharacterUtils.getFinalTalentLv({
+      const level = Character_.getFinalTalentLv({
         talentType: "EB",
         char: info.char,
         appChar: info.appChar,
@@ -143,9 +143,9 @@ export const getIntialBonusValue = (
   }
 
   switch (indexSrc.type) {
-    case "vision":
+    case "vision": {
       const { visionType: elementType } = indexSrc;
-      const elementCount = info.partyData.length ? CalculationUtils.countElements(info.partyData, info.appChar) : {};
+      const elementCount = info.partyData.length ? Calculation_.countElements(info.partyData, info.appChar) : {};
       const input =
         elementType === "various"
           ? Object.keys(elementCount).length
@@ -155,11 +155,12 @@ export const getIntialBonusValue = (
 
       index += input;
       break;
+    }
     case "input":
       index += inputs[indexSrc.index ?? 0];
       break;
     case "level":
-      index += CharacterUtils.getFinalTalentLv({
+      index += Character_.getFinalTalentLv({
         talentType: indexSrc.talent,
         char: info.char,
         appChar: info.appChar,
@@ -280,10 +281,11 @@ const applyAbilityBuff = ({ description, buff, infoWrap: info, inputs, fromSelf,
           case "ITEM":
             info.calcItemBuffs.push(genExclusiveBuff(description, mixed.id, mixed.path, bonusValue));
             break;
-          case "INP_ELMT":
+          case "INP_ELMT": {
             const elmtIndex = inputs[mixed ?? 0];
             applyModifier(description, info.totalAttr, ELEMENT_TYPES[elmtIndex], bonusValue, info.tracker);
             break;
+          }
           case "ELM_NA":
             if (info.appChar.weaponType === "catalyst" || info.infusedElement !== "phys") {
               applyModifier(description, info.attPattBonus, "NA.pct_", bonusValue, info.tracker);

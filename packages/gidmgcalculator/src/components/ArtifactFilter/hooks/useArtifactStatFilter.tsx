@@ -6,7 +6,7 @@ import type { ArtifactStatFilterState, ArtifactStatFilterOption } from "../Artif
 
 import { ARTIFACT_SUBSTAT_TYPES, ATTACK_ELEMENTS } from "@Src/constants";
 import { useTranslation } from "@Src/hooks";
-import { ArtifactUtils } from "@Src/utils";
+import { Artifact_ } from "@Src/utils";
 import { FilterTemplate } from "../../FilterTemplate";
 
 type RenderSelectArgs = {
@@ -35,7 +35,7 @@ export const useArtifactStatFilter = (initialFilter: ArtifactStatFilterState, co
   const { artifactType, title = "Filter by Stat" } = config || {};
 
   const mainStatOptions = artifactType
-    ? ["All", ...ArtifactUtils.getPossibleMainStatTypes(artifactType)]
+    ? ["All", ...Artifact_.possibleMainStatTypesOf(artifactType)]
     : ["All", "hp", "hp_", "atk", "atk_", "def_", "em", "er_", "cRate_", "cDmg_", ...ATTACK_ELEMENTS, "healB_"];
   const subStatOptions = ["All"].concat(ARTIFACT_SUBSTAT_TYPES);
 

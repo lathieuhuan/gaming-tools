@@ -4,8 +4,8 @@ import { ARTIFACT_MAIN_STATS } from "./artifact-stats";
 
 type CreateArtifactArgs = Pick<Artifact, "type" | "code" | "rarity">;
 
-export class ArtifactUtils {
-  static createArtifact({ type, code, rarity }: CreateArtifactArgs, ID = Date.now()): Artifact {
+export class Artifact_ {
+  static create({ type, code, rarity }: CreateArtifactArgs, ID = Date.now()): Artifact {
     const { artLevel } = $AppSettings.get();
 
     return {
@@ -24,11 +24,11 @@ export class ArtifactUtils {
     };
   }
 
-  static getPossibleMainStatTypes(artifactType: ArtifactType): string[] {
+  static possibleMainStatTypesOf(artifactType: ArtifactType): string[] {
     return Object.keys(ARTIFACT_MAIN_STATS[artifactType]);
   }
 
-  static getMainStatValue(artifact: Artifact): number {
+  static mainStatValueOf(artifact: Artifact): number {
     const { type, level, rarity = 5, mainStatType } = artifact;
     return ARTIFACT_MAIN_STATS[type][mainStatType]?.[rarity][level] || 0;
   }

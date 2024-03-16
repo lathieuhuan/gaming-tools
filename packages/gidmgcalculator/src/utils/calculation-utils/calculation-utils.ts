@@ -17,10 +17,10 @@ interface TotalXtraTalentArgs {
   partyData?: PartyData;
 }
 
-export class CalculationUtils {
+export class Calculation_ {
   static getBareLv = (level: Level): number => +level.split("/")[0];
 
-  static getAscsFromLv = (level: Level) => {
+  static getAscension = (level: Level) => {
     const maxLv = +level.slice(-2);
     return maxLv === 20 ? 0 : maxLv / 10 - 3;
   };

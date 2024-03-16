@@ -29,7 +29,7 @@ import {
   REACTIONS,
   REACTION_BONUS_INFO_KEYS,
 } from "@Src/constants";
-import { applyPercent, CalculationUtils, WeaponUtils, ArtifactUtils } from "@Src/utils";
+import { applyPercent, Calculation_, Weapon_, Artifact_ } from "@Src/utils";
 
 function addOrInit<T extends Partial<Record<K, number | undefined>>, K extends keyof T>(obj: T, key: K, value: number) {
   obj[key] = (((obj[key] as number | undefined) || 0) + value) as T[K];
@@ -69,7 +69,7 @@ export const initiateTotalAttr = ({ char, appChar, weapon, appWeapon, tracker }:
     base_def,
   } as TotalAttribute;
 
-  const scaleIndex = Math.max(CalculationUtils.getAscsFromLv(char.level) - 1, 0);
+  const scaleIndex = Math.max(Calculation_.getAscension(char.level) - 1, 0);
   const bonusScale = [0, 1, 2, 2, 3, 4][scaleIndex];
 
   addOrInit(innerStats, appChar.statBonus.type, appChar.statBonus.value * bonusScale);
@@ -99,7 +99,7 @@ export const initiateTotalAttr = ({ char, appChar, weapon, appWeapon, tracker }:
   }
 
   // Weapon main stat
-  const weaponAtk = WeaponUtils.getMainStatValue(weapon.level, appWeapon.mainStatScale);
+  const weaponAtk = Weapon_.getMainStatValue(weapon.level, appWeapon.mainStatScale);
   totalAttr.base_atk += weaponAtk;
   addTrackerRecord(tracker?.totalAttr.atk, "Weapon main stat", weaponAtk);
 
@@ -155,7 +155,7 @@ export const addArtifactAttributes = (
     if (!artifact) continue;
 
     const { type, mainStatType, subStats } = artifact;
-    const mainStat = ArtifactUtils.getMainStatValue(artifact);
+    const mainStat = Artifact_.mainStatValueOf(artifact);
 
     addOrInit(artAttr, mainStatType, mainStat);
     addTrackerRecord(tracker?.totalAttr[mainStatType], type, mainStat);

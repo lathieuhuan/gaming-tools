@@ -5,7 +5,7 @@ import { Badge } from "rond";
 import type { ArtifactSubStat, AttributeStat, CalcArtifact, UserArtifact } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
-import { suffixOf, ArtifactUtils } from "@Src/utils";
+import { suffixOf, Artifact_ } from "@Src/utils";
 
 // Component
 import { ArtifactLevelSelect } from "./ArtifactLevelSelect";
@@ -33,8 +33,8 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
 
   const appArtifact = $AppData.getArtifact(artifact);
   const { rarity = 5, mainStatType } = artifact;
-  const possibleMainStatTypes = ArtifactUtils.getPossibleMainStatTypes(artifact.type);
-  const mainStatValue = ArtifactUtils.getMainStatValue(artifact);
+  const possibleMainStatTypes = Artifact_.possibleMainStatTypesOf(artifact.type);
+  const mainStatValue = Artifact_.mainStatValueOf(artifact);
 
   return (
     <div className={className}>

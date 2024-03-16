@@ -5,7 +5,7 @@ import { Button, CarouselSpace } from "rond";
 import type { Character, Party } from "@Src/types";
 import { TALENT_TYPES } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
-import { CalculationUtils } from "@Src/utils";
+import { Calculation_ } from "@Src/utils";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
 
 // Component
@@ -76,7 +76,7 @@ export const TalentList = ({ char, party, onChangeTalentLevel }: TalentListProps
           const talent = activeTalents[talentType];
           if (!talent) return null;
 
-          const xtraLevel = CalculationUtils.getTotalXtraTalentLv({
+          const xtraLevel = Calculation_.getTotalXtraTalentLv({
             appChar,
             talentType,
             char,
@@ -109,7 +109,7 @@ export const TalentList = ({ char, party, onChangeTalentLevel }: TalentListProps
         })}
 
         {passiveTalents.map((talent, index) => {
-          const active = index === 2 || CalculationUtils.getAscsFromLv(char.level) >= (index === 0 ? 1 : 4);
+          const active = index === 2 || Calculation_.getAscension(char.level) >= (index === 0 ? 1 : 4);
           return renderTalent(
             {
               name: talent.name,

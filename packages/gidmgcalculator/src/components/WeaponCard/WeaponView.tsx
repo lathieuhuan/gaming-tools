@@ -5,7 +5,7 @@ import type { CalcWeapon, Level, UserWeapon } from "@Src/types";
 import { LEVELS } from "@Src/constants";
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
-import { parseWeaponDescription, suffixOf, WeaponUtils } from "@Src/utils";
+import { parseWeaponDescription, suffixOf, Weapon_ } from "@Src/utils";
 
 // Component
 import { WikiImage } from "../WikiImage";
@@ -73,7 +73,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
                 {t(subStat.type)}
               </p>
               <p className={`text-rarity-${rarity} text-2xl leading-7 font-bold`}>
-                {WeaponUtils.getSubStatValue(level, subStat.scale)}
+                {Weapon_.getSubStatValue(level, subStat.scale)}
                 {suffixOf(subStat.type)}
               </p>
             </div>
@@ -82,7 +82,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
           <div className={"grow pt-1 flex flex-col justify-center " + groupStyles}>
             <p className="font-semibold">Base ATK</p>
             <p className={`text-rarity-${rarity} text-2.5xl font-bold`}>
-              {WeaponUtils.getMainStatValue(level, appWeapon.mainStatScale)}
+              {Weapon_.getMainStatValue(level, appWeapon.mainStatScale)}
             </p>
           </div>
         </div>

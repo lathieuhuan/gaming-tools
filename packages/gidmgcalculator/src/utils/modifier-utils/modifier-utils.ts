@@ -31,7 +31,7 @@ function createModCrtl(mod: Modifier, forSelf: boolean) {
 
     for (const config of mod.inputConfigs) {
       if (config.for !== (forSelf ? "team" : "self")) {
-        initialValues.push(config.initialValue ?? ModifierUtils.getDefaultInitialValue(config.type));
+        initialValues.push(config.initialValue ?? Modifier_.getDefaultInitialValue(config.type));
       }
     }
     if (initialValues.length) ctrl.inputs = initialValues;
@@ -59,7 +59,7 @@ function createItemBuffCtrls(forSelf: boolean, entity?: { buffs?: RefModifier[] 
   return buffCtrls;
 }
 
-export class ModifierUtils {
+export class Modifier_ {
   static getDefaultInitialValue(type: ModInputType) {
     return DEFAULT_INITIAL_VALUES[type] ?? 0;
   }

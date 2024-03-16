@@ -42,7 +42,7 @@ export const parseAbilityDescription = (
   inputs: number[],
   fromSelf: boolean
 ) => {
-  const pattern = /\{[\w \-/,%^"'*@\.\[\]]+\}#\[\w*\]/g;
+  const pattern = /\{[\w \-/,%^"'*@.[\]]+\}#\[\w*\]/g;
 
   return ability.description.replace(pattern, (match) => {
     let [body, type = ""] = match.split("#");

@@ -3,7 +3,7 @@ import { FaCaretDown } from "react-icons/fa";
 import { CloseButton, LoadingSpin, StatsTable, round } from "rond";
 
 import type { AppCharacter, Talent } from "@Src/types";
-import { toArray, CharacterUtils } from "@Src/utils";
+import { toArray, Character_ } from "@Src/utils";
 import { useQuery, useTabs, useTranslation } from "@Src/hooks";
 import { $AppCharacter } from "@Src/services";
 
@@ -200,7 +200,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
     const talent = result.find((item) => item.type === resultKey);
     if (!talent) continue;
 
-    const defaultInfo = CharacterUtils.getTalentDefaultInfo(
+    const defaultInfo = Character_.getTalentDefaultInfo(
       resultKey,
       appChar.weaponType,
       appChar.vision,
@@ -225,7 +225,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
         } = typeof factor === "number" ? { root: factor } : factor;
 
         if (scale && root) {
-          let string = round(root * CharacterUtils.getTalentMult(scale, level), 2) + "%";
+          let string = round(root * Character_.getTalentMult(scale, level), 2) + "%";
 
           if (basedOn) {
             string += ` ${translate(basedOn)}`;
@@ -239,7 +239,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
         const { root, scale = defaultInfo.flatFactorScale } =
           typeof flatFactor === "number" ? { root: flatFactor } : flatFactor;
 
-        factorStrings.push(Math.round(root * (scale ? CharacterUtils.getTalentMult(scale, level) : 1)));
+        factorStrings.push(Math.round(root * (scale ? Character_.getTalentMult(scale, level) : 1)));
       }
 
       talent.stats.push({

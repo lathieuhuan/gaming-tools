@@ -39,10 +39,10 @@ import {
   findById,
   toArray,
   findByIndex,
-  SetupUtils,
-  CalculationUtils,
-  ModifierUtils,
-  WeaponUtils,
+  Setup_,
+  Calculation_,
+  Modifier_,
+  Weapon_,
 } from "@Src/utils";
 import { calculate, getCharDataFromState } from "./calculator-slice-utils";
 
@@ -58,7 +58,7 @@ const initialState: CalculatorState = {
   setupManageInfos: [],
   setupsById: {},
   resultById: {},
-  target: SetupUtils.createTarget(),
+  target: Setup_.createTarget(),
   message: {
     active: false,
   },
@@ -86,7 +86,7 @@ export const calculatorSlice = createSlice({
     initNewSession: (state, action: PayloadAction<InitNewSessionPayload>) => {
       const { ID = Date.now(), name, type, calcSetup, target } = action.payload;
 
-      state.setupManageInfos = [SetupUtils.getManageInfo({ ID, name, type })];
+      state.setupManageInfos = [Setup_.getManageInfo({ ID, name, type })];
       state.setupsById = {
         [ID]: calcSetup,
       };
@@ -118,7 +118,7 @@ export const calculatorSlice = createSlice({
         state.target = target;
       }
 
-      state.setupManageInfos.push(SetupUtils.getManageInfo({ name, ID, type }));
+      state.setupManageInfos.push(Setup_.getManageInfo({ name, ID, type }));
       state.setupsById[ID] = calcSetup;
       state.activeId = ID;
 
@@ -142,7 +142,7 @@ export const calculatorSlice = createSlice({
         let setupName = findById(setupManageInfos, sourceId)?.name;
 
         if (setupName) {
-          setupName = SetupUtils.getCopyName(
+          setupName = Setup_.getCopyName(
             setupName,
             setupManageInfos.map(({ name }) => name)
           );
@@ -190,7 +190,7 @@ export const calculatorSlice = createSlice({
       const { level } = action.payload;
 
       if (level && target.level === 1) {
-        target.level = CalculationUtils.getBareLv(level);
+        target.level = Calculation_.getBareLv(level);
       }
       if (charInfoIsSeparated) {
         const currentSetup = setupsById[state.activeId];
@@ -215,12 +215,12 @@ export const calculatorSlice = createSlice({
       const setup = state.setupsById[state.activeId];
       const { party, elmtModCtrls } = setup;
 
-      const oldElmtCount = CalculationUtils.countElements($AppCharacter.getPartyData(party), appChar);
+      const oldElmtCount = Calculation_.countElements($AppCharacter.getPartyData(party), appChar);
       const oldTeammate = party[teammateIndex];
       // assign to party
-      party[teammateIndex] = SetupUtils.createTeammate({ name, weaponType });
+      party[teammateIndex] = Setup_.createTeammate({ name, weaponType });
 
-      const newElmtCount = CalculationUtils.countElements($AppCharacter.getPartyData(party), appChar);
+      const newElmtCount = Calculation_.countElements($AppCharacter.getPartyData(party), appChar);
 
       if (oldTeammate) {
         const { vision: oldElement } = $AppCharacter.get(oldTeammate.name) || {};
@@ -264,7 +264,7 @@ export const calculatorSlice = createSlice({
       if (teammate) {
         const { vision: elementType } = $AppCharacter.get(teammate.name);
         party[teammateIndex] = null;
-        const newElmtCount = CalculationUtils.countElements($AppCharacter.getPartyData(party), appChar);
+        const newElmtCount = Calculation_.countElements($AppCharacter.getPartyData(party), appChar);
 
         if (newElmtCount[elementType] === 1) {
           elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
@@ -284,7 +284,7 @@ export const calculatorSlice = createSlice({
           ...newWeaponInfo,
         };
         if (newWeaponInfo.code) {
-          teammate.weapon.buffCtrls = ModifierUtils.createWeaponBuffCtrls(false, teammate.weapon);
+          teammate.weapon.buffCtrls = Modifier_.createWeaponBuffCtrls(false, teammate.weapon);
         }
         calculate(state);
       }
@@ -321,7 +321,7 @@ export const calculatorSlice = createSlice({
             }
             teammate.artifact.buffCtrls = [];
           } else {
-            teammate.artifact.buffCtrls = ModifierUtils.createArtifactBuffCtrls(false, newArtifactInfo);
+            teammate.artifact.buffCtrls = Modifier_.createArtifactBuffCtrls(false, newArtifactInfo);
           }
         }
         calculate(state);
@@ -350,7 +350,7 @@ export const calculatorSlice = createSlice({
       const weapon = action.payload;
       const setup = state.setupsById[state.activeId];
       setup.weapon = weapon;
-      setup.wpBuffCtrls = ModifierUtils.createWeaponBuffCtrls(true, weapon);
+      setup.wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, weapon);
 
       calculate(state);
     },
@@ -367,7 +367,7 @@ export const calculatorSlice = createSlice({
       const { pieceIndex, newPiece, shouldKeepStats } = action.payload;
       const setup = state.setupsById[state.activeId];
       const piece = setup.artifacts[pieceIndex];
-      const oldSetBonuses = CalculationUtils.getArtifactSetBonuses(setup.artifacts);
+      const oldSetBonuses = Calculation_.getArtifactSetBonuses(setup.artifacts);
       const oldBonusLevel = oldSetBonuses[0]?.bonusLv;
 
       if (shouldKeepStats && piece && newPiece) {
@@ -377,11 +377,11 @@ export const calculatorSlice = createSlice({
         setup.artifacts[pieceIndex] = newPiece;
       }
 
-      const newSetBonus = CalculationUtils.getArtifactSetBonuses(setup.artifacts)[0];
+      const newSetBonus = Calculation_.getArtifactSetBonuses(setup.artifacts)[0];
 
       if (newSetBonus) {
         if (oldBonusLevel === 0 && newSetBonus.bonusLv) {
-          setup.artBuffCtrls = ModifierUtils.createArtifactBuffCtrls(true, newSetBonus);
+          setup.artBuffCtrls = Modifier_.createArtifactBuffCtrls(true, newSetBonus);
         } //
         else if (oldBonusLevel && !newSetBonus.bonusLv) {
           setup.artBuffCtrls = [];
@@ -574,10 +574,10 @@ export const calculatorSlice = createSlice({
       // Reset comparedIds before repopulate with newSetupManageInfos
       state.comparedIds = [];
 
-      const [selfBuffCtrls, selfDebuffCtrls] = ModifierUtils.createCharacterModCtrls(true, appChar.name);
-      const newWeapon = WeaponUtils.createWeapon({ type: appChar.weaponType });
-      const wpBuffCtrls = ModifierUtils.createWeaponBuffCtrls(true, newWeapon);
-      const elmtModCtrls = ModifierUtils.createElmtModCtrls();
+      const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, appChar.name);
+      const newWeapon = Weapon_.createWeapon({ type: appChar.weaponType });
+      const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, newWeapon);
+      const elmtModCtrls = Modifier_.createElmtModCtrls();
       const tempManageInfos: CalcSetupManageInfo[] = [];
 
       for (const { ID, name, status, originId, isCompared } of newSetupManageInfos) {
@@ -625,7 +625,7 @@ export const calculatorSlice = createSlice({
               wpBuffCtrls,
               artifacts: [null, null, null, null, null],
               artBuffCtrls: [],
-              artDebuffCtrls: ModifierUtils.createArtifactDebuffCtrls(),
+              artDebuffCtrls: Modifier_.createArtifactDebuffCtrls(),
               party: [null, null, null],
               elmtModCtrls,
               customBuffCtrls: [],
