@@ -28,6 +28,23 @@ export class Setup_ {
     return ["original", "combined"].includes(setup.type);
   }
 
+  static getNewSetupName(setups: Array<{ name: string }>) {
+    const existedIndexes = [1, 2, 3, 4];
+
+    for (const { name } of setups) {
+      const parts = name.split(" ");
+
+      if (parts.length === 2 && parts[0] === "Setup" && !isNaN(+parts[1])) {
+        const i = existedIndexes.indexOf(+parts[1]);
+
+        if (i !== -1) {
+          existedIndexes.splice(i, 1);
+        }
+      }
+    }
+    return "Setup " + existedIndexes[0];
+  }
+
   static getCopyName(originalName: string, existedNames: string[]) {
     const { nameRoot } = destructName(originalName);
     const versions = [];

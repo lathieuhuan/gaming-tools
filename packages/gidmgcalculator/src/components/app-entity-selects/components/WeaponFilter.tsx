@@ -66,7 +66,7 @@ export const WeaponFilter = ({
         </FilterTemplate>
       </div>
 
-      {/* <ButtonGroup.Confirm
+      <ButtonGroup.Confirm
         className="mt-4"
         justify="end"
         focusConfirm
@@ -75,7 +75,7 @@ export const WeaponFilter = ({
         }}
         onCancel={onCancel}
         onConfirm={onConfirm}
-      /> */}
+      />
     </div>
   );
 };

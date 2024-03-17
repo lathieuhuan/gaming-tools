@@ -18,7 +18,6 @@ import {
 import {
   ModifierTemplate,
   ResonanceModTemplate,
-  // resonanceRenderInfo,
   // renderVapMeltDescription,
   // renderVapMeltHeading,
   // renderQuickenDescription,
@@ -69,8 +68,10 @@ export const ElementBuffs = () => {
             })
           );
         }}
-        heading={renderVapMeltHeading(element, reaction)}
-        description={renderVapMeltDescription(element, getAmplifyingMultiplier(element, rxnBonus)[reaction])}
+        heading=""
+        description=""
+        // heading={renderVapMeltHeading(element, reaction)}
+        // description={renderVapMeltDescription(element, getAmplifyingMultiplier(element, rxnBonus)[reaction])}
       />
     );
   };
@@ -96,8 +97,10 @@ export const ElementBuffs = () => {
             })
           );
         }}
-        heading={renderQuickenHeading(element, reaction)}
-        description={renderQuickenDescription(element, getQuickenBuffDamage(char.level, rxnBonus)[reaction])}
+        heading=""
+        description=""
+        // heading={renderQuickenHeading(element, reaction)}
+        // description={renderQuickenDescription(element, getQuickenBuffDamage(char.level, rxnBonus)[reaction])}
       />
     );
   };

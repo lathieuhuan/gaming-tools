@@ -81,7 +81,7 @@ export const CharacterFilter = ({ className, initialFilter, onCancel, onDone }: 
         </FilterTemplate>
       </div>
 
-      {/* <ButtonGroup.Confirm className="mt-4" justify="end" focusConfirm onCancel={onCancel} onConfirm={onConfirm} /> */}
+      <ButtonGroup.Confirm className="mt-4" justify="end" focusConfirm onCancel={onCancel} onConfirm={onConfirm} />
     </div>
   );
 };
