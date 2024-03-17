@@ -1,4 +1,3 @@
-import type { ChangeEvent } from "react";
 import { Checkbox, InputNumber } from "rond";
 
 import type { AttackElement, ElementType } from "@Src/types";
@@ -24,7 +23,7 @@ export function TargetConfig() {
   const { variant } = monster;
   const inputConfigs = monster.inputConfigs ? toArray(monster.inputConfigs) : [];
 
-  const onChangeElementVariant = (e: ChangeEvent<HTMLSelectElement>) => {
+  const onChangeElementVariant = (e: React.ChangeEvent<HTMLSelectElement>) => {
     dispatch(updateTarget({ variantType: e.target.value as ElementType }));
   };
 

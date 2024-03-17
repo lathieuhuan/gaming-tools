@@ -4,7 +4,6 @@ import type {
   AttackPattern,
   Character,
   ElementType,
-  Level,
   PartyData,
   Talent,
   TalentAttributeType,
@@ -12,8 +11,7 @@ import type {
 } from "@Src/types";
 import { $AppSettings } from "@Src/services";
 import { findByName } from "../utils";
-import { Calculation_ } from "../calculation-utils";
-import { BASE_REACTION_DAMAGE, TALENT_LV_MULTIPLIERS } from "./character-stats";
+import { TALENT_LV_MULTIPLIERS } from "./character-stats";
 
 interface GetTotalXtraTalentArgs {
   char: Character;
@@ -61,10 +59,6 @@ export class Character_ {
 
   static getTalentMult(scale: number, level: number): number {
     return scale ? TALENT_LV_MULTIPLIERS[scale][level] : 1;
-  }
-
-  static getBaseRxnDmg(level: Level): number {
-    return BASE_REACTION_DAMAGE[Calculation_.getBareLv(level)];
   }
 
   static getTalentDefaultInfo(

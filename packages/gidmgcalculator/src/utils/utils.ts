@@ -28,6 +28,10 @@ export const applyPercent = (n: number, percent: number) => Math.round((n * perc
 
 export const toArray = <T>(subject: T | T[]): T[] => (Array.isArray(subject) ? subject : [subject]);
 
+export const applyToOneOrMany = <T>(base: T | T[], callback: (base: T, index?: number) => T) => {
+  return Array.isArray(base) ? base.map(callback) : callback(base);
+};
+
 const find = (key: string) => {
   return <T>(arr: T[], value?: string | number | null): T | undefined => {
     if (value === undefined) {

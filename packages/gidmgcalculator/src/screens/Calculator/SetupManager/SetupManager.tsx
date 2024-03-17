@@ -3,7 +3,6 @@ import { FaSkull } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 import { useElementSize, Button, Modal } from "rond";
 
-// Store
 import { useDispatch } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 

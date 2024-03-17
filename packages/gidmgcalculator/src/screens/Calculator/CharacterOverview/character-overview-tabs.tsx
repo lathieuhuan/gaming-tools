@@ -13,8 +13,6 @@ import {
   updateCharacter,
   updateWeapon,
 } from "@Store/calculator-slice";
-
-// Component
 import { AttributeTable, SetBonusesView, WeaponView, TalentList, ConstellationList } from "@Src/components";
 
 export const AttributesTab = () => {

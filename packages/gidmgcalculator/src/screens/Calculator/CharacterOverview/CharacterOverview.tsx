@@ -23,10 +23,10 @@ const TABS: SwitchNodeProps<string>["cases"] = [
   { value: "Talents", element: <TalentsTab /> },
 ];
 
-interface OverviewCharProps {
+interface CharacterOverviewProps {
   touched: boolean;
 }
-export const CharacterOverview = ({ touched }: OverviewCharProps) => {
+export function CharacterOverview({ touched }: CharacterOverviewProps) {
   const dispatch = useDispatch();
   const char = useSelector(selectCharacter);
   const appReady = useSelector((state) => state.ui.ready);
@@ -158,4 +158,4 @@ export const CharacterOverview = ({ touched }: OverviewCharProps) => {
       <SetupImporter active={modalType === "IMPORT_SETUP"} onClose={closeModal} />
     </>
   );
-};
+}

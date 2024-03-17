@@ -1,3 +1,4 @@
+export * from "./useAppCharacter";
 export * from "./useWeaponTypeSelect";
 export * from "./useArtifactTypeSelect";
 export * from "./useGetMetadata";

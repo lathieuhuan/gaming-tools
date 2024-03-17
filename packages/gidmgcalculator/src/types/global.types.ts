@@ -12,6 +12,7 @@ import {
   QUICKEN_REACTIONS,
   REACTIONS,
   TALENT_TYPES,
+  TRANSFORMATIVE_REACTIONS,
   WEAPON_TYPES,
 } from "@Src/constants";
 
@@ -36,6 +37,8 @@ export type AttackElement = (typeof ATTACK_ELEMENTS)[number];
 export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
 
 /** ========== REACTIONS ========== */
+
+export type TransformativeReaction = (typeof TRANSFORMATIVE_REACTIONS)[number];
 
 export type AmplifyingReaction = (typeof AMPLIFYING_REACTIONS)[number];
 

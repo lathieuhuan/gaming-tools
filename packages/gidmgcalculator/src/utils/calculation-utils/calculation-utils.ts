@@ -1,14 +1,17 @@
 import type {
   AppCharacter,
   ArtifactSetBonus,
+  AttackElement,
   CalcArtifacts,
   Character,
   ElementType,
   Level,
   PartyData,
+  ReactionBonus,
   Talent,
 } from "@Src/types";
 import { findByName } from "../utils";
+import { BASE_REACTION_DAMAGE } from "./calculation-utils.constants";
 
 interface TotalXtraTalentArgs {
   char: Character;
@@ -86,6 +89,26 @@ export class Calculation_ {
       amplifying: Math.round((2780 * EM) / (EM + 1400)) / 10,
       quicken: Math.round((5000 * EM) / (EM + 1200)) / 10,
       shield: Math.round((4440 * EM) / (EM + 1400)) / 10,
+    };
+  }
+
+  static getAmplifyingMultiplier(elmt: AttackElement, rxnBonus: ReactionBonus) {
+    return {
+      melt: (1 + rxnBonus.melt.pct_ / 100) * (elmt === "pyro" ? 2 : elmt === "cryo" ? 1.5 : 1),
+      vaporize: (1 + rxnBonus.vaporize.pct_ / 100) * (elmt === "pyro" ? 1.5 : elmt === "hydro" ? 2 : 1),
+    };
+  }
+
+  static getBaseRxnDmg(level: Level): number {
+    return BASE_REACTION_DAMAGE[this.getBareLv(level)];
+  }
+
+  static getQuickenBuffDamage(charLv: Level, rxnBonus: ReactionBonus) {
+    const base = this.getBaseRxnDmg(charLv);
+
+    return {
+      aggravate: Math.round(base * 1.15 * (1 + rxnBonus.aggravate.pct_ / 100)),
+      spread: Math.round(base * 1.25 * (1 + rxnBonus.spread.pct_ / 100)),
     };
   }
 }

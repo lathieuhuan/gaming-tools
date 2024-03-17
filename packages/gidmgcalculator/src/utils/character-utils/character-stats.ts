@@ -14,14 +14,3 @@ export const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
   // plunge, most Aim Shot, razor CA, ayato NA+CA+PA+ES, cyno NA+CA+PA while EB, wanderer NA, Neuvillette CA
   7: [0, 1, 1.081, 1.163, 1.279, 1.361, 1.454, 1.581, 1.709, 1.837, 1.977, 2.116, 2.256, 2.395, 2.535, 2.675],
 };
-
-export const BASE_REACTION_DAMAGE: Record<number, number> = {
-  1: 17.17,
-  20: 80.58,
-  40: 207.38,
-  50: 323.6,
-  60: 492.88,
-  70: 765.64,
-  80: 1077.44,
-  90: 1446.85,
-};

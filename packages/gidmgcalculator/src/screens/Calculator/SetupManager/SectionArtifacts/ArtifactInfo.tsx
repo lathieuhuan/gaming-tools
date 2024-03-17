@@ -3,15 +3,11 @@ import isEqual from "react-fast-compare";
 import { FaSave, FaTrashAlt, FaChevronDown, FaToolbox } from "react-icons/fa";
 import { MdInventory } from "react-icons/md";
 import { GiAnvil } from "react-icons/gi";
-import { Modal, ConfirmModalBody, Button } from "rond";
+import { Modal, ConfirmModal, Button } from "rond";
 
 import type { CalcArtifact, AttributeStat } from "@Src/types";
 import { findById, suffixOf, Item_, Artifact_ } from "@Src/utils";
-
-// Constant
 import { MAX_USER_ARTIFACTS } from "@Src/constants";
-
-// Store
 import { changeArtifact, updateArtifact } from "@Store/calculator-slice";
 import { selectUserArtifacts, addUserArtifact, updateUserArtifact } from "@Store/userdb-slice";
 
@@ -158,7 +154,7 @@ function ConfirmSaving({ artifact, onClose }: ConfirmSavingProps) {
     case "SUCCESS":
     case "EXCEED_MAX":
       return (
-        <ConfirmModalBody
+        <ConfirmModal.Body
           message={
             state.current === "SUCCESS"
               ? "Successfully saved to My Artifacts."
@@ -195,13 +191,13 @@ function ConfirmSaving({ artifact, onClose }: ConfirmSavingProps) {
 
       if (noChange) {
         return (
-          <ConfirmModalBody
+          <ConfirmModal.Body
             message={<>{inform} Nothing has changed.</>}
             showCancel={false}
             focusConfirm
             moreActions={[
               {
-                text: "Duplicate",
+                children: "Duplicate",
                 onClick: addNew,
               },
             ]}
@@ -216,11 +212,11 @@ function ConfirmSaving({ artifact, onClose }: ConfirmSavingProps) {
       };
 
       return (
-        <ConfirmModalBody
+        <ConfirmModal.Body
           message={<>{inform} Their stats are different. Do you want to overwrite?</>}
           moreActions={[
             {
-              text: "Add new",
+              children: "Add new",
               onClick: addNew,
             },
           ]}

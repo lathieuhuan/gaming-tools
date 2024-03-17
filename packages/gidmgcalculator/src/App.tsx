@@ -10,11 +10,11 @@ import {
   // SetupTransshipmentPort,
   // Tracker,
 } from "@Src/features";
-// import Calculator from "@Screens/Calculator";
-// import MyArtifacts from "@Screens/MyArtifacts";
-// import MyCharacters from "@Screens/MyCharacters";
-// import MySetups from "@Screens/MySetups";
-// import MyWeapons from "@Screens/MyWeapons";
+import Calculator from "@Src/screens/Calculator";
+import MyArtifacts from "@Src/screens/MyArtifacts";
+import MyCharacters from "@Src/screens/MyCharacters";
+// import MySetups from "@Src/screens/MySetups";
+import MyWeapons from "@Src/screens/MyWeapons";
 
 function App() {
   const atScreen = useSelector((state) => state.ui.atScreen);
@@ -37,20 +37,18 @@ function App() {
         <NavBar />
 
         <div className="h-full flex-center relative">
-          {/* <Calculator /> */}
+          <Calculator />
 
           {atScreen !== "CALCULATOR" ? (
             <div className="absolute full-stretch z-30">
               <SwitchNode
                 value={atScreen}
-                cases={
-                  [
-                    // { value: EScreen.MY_CHARACTERS, element: <MyCharacters /> },
-                    // { value: EScreen.MY_WEAPONS, element: <MyWeapons /> },
-                    // { value: EScreen.MY_ARTIFACTS, element: <MyArtifacts /> },
-                    // { value: EScreen.MY_SETUPS, element: <MySetups /> },
-                  ]
-                }
+                cases={[
+                  { value: "MY_CHARACTERS", element: <MyCharacters /> },
+                  { value: "MY_WEAPONS", element: <MyWeapons /> },
+                  { value: "MY_ARTIFACTS", element: <MyArtifacts /> },
+                  // { value: "MY_SETUPS", element: <MySetups /> },
+                ]}
               />
             </div>
           ) : null}

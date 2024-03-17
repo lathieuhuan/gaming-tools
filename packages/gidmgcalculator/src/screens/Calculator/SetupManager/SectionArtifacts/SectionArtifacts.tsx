@@ -8,8 +8,6 @@ import { notification, Button, CollapseSpace, Modal } from "rond";
 import type { Artifact, ArtifactType, CalcArtifact } from "@Src/types";
 import { ARTIFACT_TYPES } from "@Src/constants";
 import { $AppData, $AppSettings } from "@Src/services";
-
-// Util
 import { getImgSrc, Item_, Artifact_ } from "@Src/utils";
 
 // Store
