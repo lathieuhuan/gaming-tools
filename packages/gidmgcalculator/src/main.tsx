@@ -4,6 +4,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { DynamicStoreProvider } from "./features";
 import App from "./App.tsx";
 import "./assets/css/tailwind.css";
+import "./assets/css/index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <DynamicStoreProvider>

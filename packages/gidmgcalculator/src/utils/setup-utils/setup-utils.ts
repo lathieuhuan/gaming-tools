@@ -99,7 +99,7 @@ export class Setup_ {
       buffCtrls,
       debuffCtrls,
       weapon: {
-        code: Weapon_.create({ type: weaponType }).code,
+        code: Weapon_.getDefaultCode(weaponType),
         type: weaponType,
         refi: 1,
         buffCtrls: [],

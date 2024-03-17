@@ -30,6 +30,10 @@ export class Weapon_ {
     };
   }
 
+  static getDefaultCode(type: WeaponType) {
+    return DEFAULT_WEAPON_CODE[type];
+  }
+
   static getMainStatValue(level: Level, scale: string): number {
     return BASE_ATTACK_TYPE[scale][LEVELS.indexOf(level)];
   }
