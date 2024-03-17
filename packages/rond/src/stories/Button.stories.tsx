@@ -60,6 +60,7 @@ export const WithIcon: Story = {
     size: "medium",
     icon,
     iconPosition: "start",
+    boneOnly: false,
     children: "Button",
   },
   argTypes: {

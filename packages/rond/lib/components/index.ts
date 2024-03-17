@@ -5,6 +5,7 @@ export * from "./CarouselSpace";
 export * from "./Checkbox";
 export * from "./CollapseList";
 export * from "./CollapseSpace";
+export * from "./ConfirmModal";
 export * from "./Drawer";
 export * from "./EntitySelectTemplate";
 export * from "./HiddenSpace";
