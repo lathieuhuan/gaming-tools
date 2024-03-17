@@ -6,17 +6,17 @@ import type { UserArtifact, UserItem, UserWeapon } from "@Src/types";
 import type { ArtifactRackProps, InventoryRackProps, MixedRackProps, WeaponRackProps } from "./inventory.types";
 import { INVENTORY_PAGE_SIZE } from "@Src/constants";
 import { $AppData } from "@Src/services";
-import { isUserWeapon } from "@Src/utils";
+import { Item_ } from "@Src/utils";
 
 // Component
 import { ItemThumbnail } from "../ItemThumbnail";
 
-export const getWeaponInfo = ({ code, owner, refi, level, setupIDs }: UserWeapon) => {
+const getWeaponInfo = ({ code, owner, refi, level, setupIDs }: UserWeapon) => {
   const { beta, name, icon = "", rarity = 5 } = $AppData.getWeapon(code) || {};
   return { beta, name, icon, rarity, level, refi, owner, setupIDs };
 };
 
-export const getArtifactInfo = ({ code, type, owner, rarity, level, setupIDs }: UserArtifact) => {
+const getArtifactInfo = ({ code, type, owner, rarity, level, setupIDs }: UserArtifact) => {
   const { beta, name, icon = "" } = $AppData.getArtifact({ code, type }) || {};
   return { beta, name, icon, rarity, level, owner, setupIDs };
 };
@@ -114,7 +114,7 @@ export function InventoryRack<T extends UserItem>({
                           <ItemThumbnail
                             className={className}
                             imgCls={imgCls}
-                            item={isUserWeapon(item) ? getWeaponInfo(item) : getArtifactInfo(item)}
+                            item={Item_.isUserWeapon(item) ? getWeaponInfo(item) : getArtifactInfo(item)}
                           />
                         )}
                       </ItemCase>

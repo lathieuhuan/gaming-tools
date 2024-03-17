@@ -48,4 +48,10 @@ export const findByName = find("name");
 export const indexById = findIndex("ID");
 export const indexByName = findIndex("name");
 
-export const isUserWeapon = (item: UserWeapon | UserArtifact): item is UserWeapon => "refi" in item;
+export const getAppDataError = (type: "character", code: number | string) => {
+  return `Cannot get ${type} config (ERROR_CODE: ${code})`;
+};
+
+export const toCustomBuffLabel = (category: string, type: string, t: (origin: string) => string) => {
+  return category === "attElmtBonus" ? (type === "phys" ? "physical" : type) : t(type);
+};

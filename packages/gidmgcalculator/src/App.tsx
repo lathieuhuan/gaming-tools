@@ -5,8 +5,7 @@ import { useSelector } from "@Store/hooks";
 import {
   AppModals,
   // Message,
-  // NavBar,
-  // ScreenSizeWatcher,
+  NavBar,
   // SetupImportCenter,
   // SetupTransshipmentPort,
   // Tracker,
@@ -35,7 +34,7 @@ function App() {
   return (
     <ScreenSizeWatcher>
       <div className="App h-screen pt-8 text-light-400 bg-light-400">
-        {/* <NavBar /> */}
+        <NavBar />
 
         <div className="h-full flex-center relative">
           {/* <Calculator /> */}

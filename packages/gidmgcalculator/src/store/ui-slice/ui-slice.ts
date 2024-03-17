@@ -13,10 +13,12 @@ export type MySetupsModalType =
   | "ARTIFACTS"
   | "";
 
+export type AppScreen = "CALCULATOR" | "MY_SETUPS" | "MY_WEAPONS" | "MY_ARTIFACTS" | "MY_CHARACTERS";
+
 export interface UIState {
   ready: boolean;
   loading: boolean;
-  atScreen: "CALCULATOR" | "MY_SETUPS" | "MY_WEAPONS" | "MY_ARTIFACTS" | "MY_CHARACTERS";
+  atScreen: AppScreen;
   appModalType: "" | "INTRO" | "GUIDES" | "SETTINGS" | "UPLOAD" | "DOWNLOAD" | "DONATE";
   highManagerActive: boolean;
   trackerState: TrackerState;

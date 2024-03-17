@@ -1,3 +1,4 @@
+export * from "./useWeaponTypeSelect";
 export * from "./useArtifactTypeSelect";
 export * from "./useGetMetadata";
 export * from "./useItemBoundSetups";

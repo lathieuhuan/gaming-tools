@@ -6,13 +6,22 @@ import type {
   Teammate,
   UserComplexSetup,
   UserSetup,
+  UserSetupCalcInfo,
   WeaponType,
 } from "@Src/types";
+import { CharacterCal } from "@Src/calculation";
 import { ATTACK_ELEMENTS } from "@Src/constants";
+import { $AppCharacter } from "@Src/services";
+import { CalculatorState } from "@Store/calculator-slice";
+import { deepCopy, findByIndex } from "../utils";
+import { Calculation_ } from "../calculation-utils";
 import { Modifier_ } from "../modifier-utils";
 import { Weapon_ } from "../weapon-utils";
-import { Calculation_ } from "../calculation-utils";
-import { deepCopy } from "../utils";
+
+interface CleanupCalcSetupOptions {
+  weaponID?: number;
+  artifactIDs?: (number | null)[];
+}
 
 export class Setup_ {
   static isUserSetup(setup: UserSetup | UserComplexSetup): setup is UserSetup {
@@ -42,6 +51,59 @@ export class Setup_ {
   static getManageInfo(defaultInfo: Partial<CalcSetupManageInfo>): CalcSetupManageInfo {
     const { name = "Setup 1", ID = Date.now(), type = "original" } = defaultInfo;
     return { name: name.trim(), ID, type };
+  }
+
+  static cleanupCalcSetup(
+    calculator: CalculatorState,
+    setupID: number,
+    options?: CleanupCalcSetupOptions
+  ): UserSetupCalcInfo {
+    const { char, weapon, artifacts, ...data } = calculator.setupsById[setupID];
+    const { buffs = [], debuffs = [] } = $AppCharacter.get(char.name) || {};
+    const party: Party = [];
+
+    for (const teammate of data.party) {
+      if (teammate) {
+        party.push({
+          name: teammate.name,
+          buffCtrls: teammate.buffCtrls.filter((ctrl) => ctrl.activated),
+          debuffCtrls: teammate.debuffCtrls.filter((ctrl) => ctrl.activated),
+          weapon: {
+            ...teammate.weapon,
+            buffCtrls: teammate.weapon.buffCtrls.filter((ctrl) => ctrl.activated),
+          },
+          artifact: {
+            ...teammate.artifact,
+            buffCtrls: teammate.artifact.buffCtrls.filter((ctrl) => ctrl.activated),
+          },
+        });
+      }
+    }
+    if (party.length < 3) {
+      party.push(...Array(3 - party.length).fill(null));
+    }
+
+    return {
+      char,
+      ...data,
+      weaponID: options?.weaponID || weapon.ID,
+      artifactIDs: options?.artifactIDs || artifacts.map((artifact) => artifact?.ID ?? null),
+      selfBuffCtrls: data.selfBuffCtrls.filter((ctrl) => {
+        const buff = findByIndex(buffs, ctrl.index);
+        return buff ? ctrl.activated && CharacterCal.isGranted(buff, char) : false;
+      }),
+      selfDebuffCtrls: data.selfDebuffCtrls.filter((ctrl) => {
+        const debuff = findByIndex(debuffs, ctrl.index);
+        return debuff ? ctrl.activated && CharacterCal.isGranted(debuff, char) : false;
+      }),
+      wpBuffCtrls: data.wpBuffCtrls.filter((ctrl) => ctrl.activated),
+      party,
+      artBuffCtrls: data.artBuffCtrls.filter((ctrl) => ctrl.activated),
+      artDebuffCtrls: data.artDebuffCtrls.filter((ctrl) => ctrl.activated),
+      customBuffCtrls: data.customBuffCtrls.filter((ctrl) => ctrl.value),
+      customDebuffCtrls: data.customDebuffCtrls.filter((ctrl) => ctrl.value),
+      target: calculator.target,
+    };
   }
 
   static restoreCalcSetup(data: CalcSetup) {

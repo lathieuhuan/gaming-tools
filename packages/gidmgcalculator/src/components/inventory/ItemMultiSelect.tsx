@@ -3,7 +3,7 @@ import { FaCheck } from "react-icons/fa";
 import { Button, Modal } from "rond";
 
 import type { UserArtifact, UserWeapon } from "@Src/types";
-import { isUserWeapon } from "@Src/utils";
+import { Item_ } from "@Src/utils";
 
 // Component
 import { ArtifactCard } from "../ArtifactCard";
@@ -78,7 +78,7 @@ const ItemMultiSelectCore = (props: ItemMultiSelectProps) => {
             />
 
             {chosenItem ? (
-              isUserWeapon(chosenItem) ? (
+              Item_.isUserWeapon(chosenItem) ? (
                 <WeaponCard wrapperCls="w-76 shrink-0" withOwnerLabel weapon={chosenItem} />
               ) : (
                 <ArtifactCard wrapperCls="w-76 shrink-0" withOwnerLabel artifact={chosenItem} />
