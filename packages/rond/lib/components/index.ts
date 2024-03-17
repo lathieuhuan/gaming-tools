@@ -3,6 +3,7 @@ export * from "./Badge";
 export * from "./Button";
 export * from "./CarouselSpace";
 export * from "./Checkbox";
+export * from "./CollapseList";
 export * from "./CollapseSpace";
 export * from "./Drawer";
 export * from "./EntitySelectTemplate";
