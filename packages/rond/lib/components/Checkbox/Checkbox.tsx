@@ -4,15 +4,17 @@ import "./Checkbox.styles.scss";
 export interface CheckboxProps {
   className?: ClassValue;
   name?: string;
+  /** Default to 'small' */
+  size?: "small" | "medium";
   defaultChecked?: boolean;
   checked?: boolean;
-  readOnly?: boolean;
+  disabled?: boolean;
   children?: React.ReactNode;
   onChange?: (checked: boolean) => void;
 }
-export const Checkbox = ({ className, children, onChange, ...inputProps }: CheckboxProps) => {
+export const Checkbox = ({ className, children, size = "small", onChange, ...inputProps }: CheckboxProps) => {
   return (
-    <label className={clsx("ron-checkbox-wrapper", className)}>
+    <label className={clsx(`ron-checkbox-wrapper ron-checkbox-wrapper-${size}`, className)}>
       <span className="ron-checkbox">
         <input
           type="checkbox"
@@ -23,7 +25,7 @@ export const Checkbox = ({ className, children, onChange, ...inputProps }: Check
         <span className="ron-checkbox-visual" />
       </span>
 
-      <span className="ron-checkbox-label">{children}</span>
+      {children ? <span className="ron-checkbox-label">{children}</span> : null}
     </label>
   );
 };

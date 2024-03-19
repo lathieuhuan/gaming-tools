@@ -15,6 +15,7 @@ export * from "./InputNumber";
 export * from "./ItemCase";
 export * from "./LoadingSpin";
 export * from "./Modal";
+export * from "./ModifierView";
 export * from "./Popover";
 export * from "./Radio";
 export * from "./Rarity";
