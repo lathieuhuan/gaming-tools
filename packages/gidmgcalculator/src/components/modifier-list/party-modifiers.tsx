@@ -11,7 +11,7 @@ import type {
 import type { GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 import { $AppCharacter } from "@Src/services";
 import { ParsedAbilityEffect, Setup_, findByIndex, parseAbilityDescription } from "@Src/utils";
-import { ModifierItem } from "../ModifierItem/ModifierItem";
+import { GiModifierView } from "../GiModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
 type Modifier = Modifier_Character & {
@@ -34,7 +34,7 @@ function getTeammateModifierElmts(
       const { inputs = [] } = ctrl;
 
       return (
-        <ModifierItem
+        <GiModifierView
           key={`${teammate.name}-${ctrl.index}`}
           mutable={props.mutable}
           heading={buff.src}
@@ -90,10 +90,10 @@ function getPartyModifierElmts(props: PartyModsViewProps, type: "buffs" | "debuf
 
 export function PartyBuffsView(props: PartyModsViewProps) {
   const content = getPartyModifierElmts(props, "buffs");
-  return renderModifiers(content, "buffs", false);
+  return renderModifiers(content, "buffs", props.mutable);
 }
 
 export function PartyDebuffsView(props: PartyModsViewProps) {
   const content = getPartyModifierElmts(props, "buffs");
-  return renderModifiers(content, "debuffs", false);
+  return renderModifiers(content, "debuffs", props.mutable);
 }

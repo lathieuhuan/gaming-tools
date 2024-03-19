@@ -3,8 +3,8 @@ import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.type
 
 import { CharacterCal } from "@Src/calculation";
 import { ParsedAbilityEffect, findByIndex, parseAbilityDescription } from "@Src/utils";
+import { GiModifierView } from "../GiModifierView";
 import { renderModifiers } from "./modifiers.utils";
-import { ModifierItem } from "../ModifierItem/ModifierItem";
 
 interface SelfModsViewProps {
   mutable?: boolean;
@@ -28,7 +28,7 @@ function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Modifier[]) {
       const { inputs = [] } = ctrl;
 
       return (
-        <ModifierItem
+        <GiModifierView
           key={ctrl.index}
           mutable={props.mutable}
           heading={modifier.src}
@@ -51,7 +51,7 @@ export function SelfBuffsView(props: SelfModsViewProps) {
   innateBuffs.forEach((buff, index) => {
     if (CharacterCal.isGranted(buff, props.char)) {
       modifierElmts.push(
-        <ModifierItem
+        <GiModifierView
           key={"innate-" + index}
           mutable={false}
           heading={buff.src}

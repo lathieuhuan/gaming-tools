@@ -1,8 +1,9 @@
 import type { ArtifactDebuffCtrl } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
+
 import { $AppData } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { ModifierItem } from "../ModifierItem/ModifierItem";
+import { GiModifierView } from "../GiModifierView";
 import { renderModifiers, getArtifactDescription } from "./modifiers.utils";
 
 interface ArtifactDebuffsViewProps {
@@ -22,7 +23,7 @@ export function ArtifactDebuffsView({ mutable, artDebuffCtrls, getHanlders }: Ar
 
     if (debuff) {
       content.push(
-        <ModifierItem
+        <GiModifierView
           key={`${ctrl.code}-${ctrl.index}`}
           mutable={mutable}
           heading={name}
@@ -35,5 +36,5 @@ export function ArtifactDebuffsView({ mutable, artDebuffCtrls, getHanlders }: Ar
       );
     }
   });
-  return renderModifiers(content, "debuffs", false);
+  return renderModifiers(content, "debuffs", mutable);
 }

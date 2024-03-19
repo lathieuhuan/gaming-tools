@@ -1,5 +1,5 @@
 import type { ModifierCtrl, Teammate } from "@Src/types";
-import type { ModifierItemProps } from "../ModifierItem";
+import type { GiModifierViewProps } from "../GiModifierView";
 
 export type GetModifierHanldersArgs = {
   ctrl: ModifierCtrl;
@@ -13,6 +13,6 @@ export type GetTeammateModifierHanldersArgs = GetModifierHanldersArgs & {
 };
 
 export type ModifierHanlders = Pick<
-  ModifierItemProps,
+  GiModifierViewProps,
   "onToggle" | "onChangeText" | "onSelectOption" | "onToggleCheck"
 >;

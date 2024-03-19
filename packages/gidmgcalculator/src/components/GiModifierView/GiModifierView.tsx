@@ -9,10 +9,10 @@ function genNumberSequenceOptions(max: number | undefined = 0, startsAt0: boolea
   return startsAt0 ? [{ label: 0, value: 0 }].concat(result) : result;
 }
 
-export interface ModifierItemProps extends Omit<ModifierViewProps, "inputConfigs"> {
+export interface GiModifierViewProps extends Omit<ModifierViewProps, "inputConfigs"> {
   inputConfigs?: ModInputConfig[];
 }
-export function ModifierItem({ inputConfigs, ...viewProps }: ModifierItemProps) {
+export function GiModifierView({ inputConfigs, ...viewProps }: GiModifierViewProps) {
   const viewInputConfigs = inputConfigs?.map<ModifierViewInputConfig>((config) => {
     const label = config.label || "[missing label]";
 

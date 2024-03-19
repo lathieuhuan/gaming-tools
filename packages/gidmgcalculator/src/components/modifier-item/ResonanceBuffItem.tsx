@@ -1,6 +1,6 @@
 import type { ElementType } from "@Src/types";
 import { Green } from "@Src/components";
-import { ModifierItem, type ModifierItemProps } from "./ModifierItem";
+import { GiModifierView, type GiModifierViewProps } from "../GiModifierView";
 
 const resonanceRenderInfo: Record<string, { name: string; description: JSX.Element }> = {
   pyro: {
@@ -50,11 +50,11 @@ const resonanceRenderInfo: Record<string, { name: string; description: JSX.Eleme
   },
 };
 
-interface ResonanceModifierItemProps extends Omit<ModifierItemProps, "heading" | "description"> {
+interface ResonanceBuffItemProps extends Omit<GiModifierViewProps, "heading" | "description"> {
   element: ElementType;
 }
 
-export function ResonanceModifierItem({ element, ...coreProps }: ResonanceModifierItemProps) {
+export function ResonanceBuffItem({ element, ...coreProps }: ResonanceBuffItemProps) {
   const { name, description } = resonanceRenderInfo[element] || {};
-  return name ? <ModifierItem heading={name} description={description} {...coreProps} /> : null;
+  return name ? <GiModifierView heading={name} description={description} {...coreProps} /> : null;
 }

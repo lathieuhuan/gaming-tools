@@ -3,7 +3,7 @@ import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, Modifier
 
 import { $AppData } from "@Src/services";
 import { findByIndex, parseWeaponDescription } from "@Src/utils";
-import { ModifierItem } from "../ModifierItem/ModifierItem";
+import { GiModifierView } from "../GiModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
 const getWeaponDescription = (descriptions: AppWeapon["descriptions"], buff: WeaponBuff, refi: number) => {
@@ -39,7 +39,7 @@ function renderWeaponModifiers({
     const buff = findByIndex(buffs, ctrl.index);
 
     return buff ? (
-      <ModifierItem
+      <GiModifierView
         key={`${keyPrefix}-${data.code}-${ctrl.index}`}
         mutable={mutable}
         checked={ctrl.activated}
@@ -97,5 +97,5 @@ export function WeaponBuffsView({
     }
   });
 
-  return renderModifiers(content, "buffs", false);
+  return renderModifiers(content, "buffs", mutable);
 }

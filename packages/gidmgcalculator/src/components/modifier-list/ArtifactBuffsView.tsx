@@ -1,8 +1,9 @@
 import type { ArtifactSetBonus, ModifierCtrl, Party } from "@Src/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
+
 import { $AppData } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { ModifierItem } from "../ModifierItem/ModifierItem";
+import { GiModifierView } from "../GiModifierView";
 import { renderModifiers, getArtifactDescription } from "./modifiers.utils";
 
 interface RenderArtifactBuffsArgs {
@@ -25,7 +26,7 @@ function renderArtifactModifiers({ fromSelf, keyPrefix, mutable, code, ctrls, ge
     const description = getArtifactDescription(data, buff);
 
     return (
-      <ModifierItem
+      <GiModifierView
         key={`${keyPrefix}-${code}-${ctrl.index}`}
         mutable={mutable}
         checked={ctrl.activated}
@@ -85,5 +86,5 @@ export function ArtifactBuffsView({
     }
   });
 
-  return renderModifiers(content, "buffs", false);
+  return renderModifiers(content, "buffs", mutable);
 }

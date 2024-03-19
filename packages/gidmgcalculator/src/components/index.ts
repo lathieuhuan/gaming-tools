@@ -1,6 +1,7 @@
 export * from "./ability-list";
 export * from "./app-entity-selects";
-export * from "./modifiers";
+export * from "./modifier-item";
+export * from "./modifier-list";
 export * from "./inventory";
 export * from "./setup-porter";
 export * from "./span";
@@ -13,6 +14,7 @@ export * from "./ElementIcon";
 export * from "./EntitySelectTemplate";
 export * from "./FilterTemplate";
 export * from "./FinalResultView";
+export * from "./GiModifierView";
 export * from "./ItemThumbnail";
 export * from "./OwnerLabel";
 export * from "./SetBonusesView";
