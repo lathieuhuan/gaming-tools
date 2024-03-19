@@ -1,6 +1,6 @@
 import type { ElementType } from "@Src/types";
 import { Green } from "@Src/components";
-import { ModifierTemplate, type ModifierTemplateProps } from "./ModifierTemplate";
+import { ModifierItem, type ModifierItemProps } from "./ModifierItem";
 
 const resonanceRenderInfo: Record<string, { name: string; description: JSX.Element }> = {
   pyro: {
@@ -50,11 +50,11 @@ const resonanceRenderInfo: Record<string, { name: string; description: JSX.Eleme
   },
 };
 
-interface ResonanceModTemplateProps extends Omit<ModifierTemplateProps, "heading" | "description"> {
+interface ResonanceModifierItemProps extends Omit<ModifierItemProps, "heading" | "description"> {
   element: ElementType;
 }
 
-export function ResonanceModTemplate({ element, ...coreProps }: ResonanceModTemplateProps) {
+export function ResonanceModifierItem({ element, ...coreProps }: ResonanceModifierItemProps) {
   const { name, description } = resonanceRenderInfo[element] || {};
-  return name ? <ModifierTemplate heading={name} description={description} {...coreProps} /> : null;
+  return name ? <ModifierItem heading={name} description={description} {...coreProps} /> : null;
 }

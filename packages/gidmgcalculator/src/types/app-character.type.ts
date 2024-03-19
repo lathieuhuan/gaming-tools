@@ -116,7 +116,7 @@ export type CalcItem = {
 
 export type CharacterMilestone = "A1" | "A4" | "C1" | "C2" | "C4" | "C6";
 
-type Modifier_Character = {
+export type Modifier_Character = {
   src: string;
   grantedAt?: CharacterMilestone;
   description: string;

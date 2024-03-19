@@ -167,7 +167,7 @@ export const TalentDetail = ({ appChar, detailIndex, onChangeDetailIndex, onClos
       </div>
 
       <div className="mt-3">
-        <CloseButton className="mx-auto" size="small" circled onClick={onClose} />
+        <CloseButton className="mx-auto" size="small" boneOnly onClick={onClose} />
       </div>
     </div>
   );

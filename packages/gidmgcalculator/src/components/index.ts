@@ -14,7 +14,6 @@ export * from "./EntitySelectTemplate";
 export * from "./FilterTemplate";
 export * from "./FinalResultView";
 export * from "./ItemThumbnail";
-export * from "./ModifierTemplate";
 export * from "./OwnerLabel";
 export * from "./SetBonusesView";
 export * from "./TeammateItems";

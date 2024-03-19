@@ -1,7 +1,9 @@
 import type { AppWeapon, CalcWeapon, ModifierCtrl, Party, Weapon, WeaponBuff } from "@Src/types";
+import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
+
 import { $AppData } from "@Src/services";
-import { ModifierTemplate, type ModifierTemplateProps } from "../ModifierTemplate";
 import { findByIndex, parseWeaponDescription } from "@Src/utils";
+import { ModifierItem } from "../ModifierItem/ModifierItem";
 import { renderModifiers } from "./modifiers.utils";
 
 const getWeaponDescription = (descriptions: AppWeapon["descriptions"], buff: WeaponBuff, refi: number) => {
@@ -19,28 +21,25 @@ interface RenderWeaponModifiersArgs {
   mutable?: boolean;
   weapon: Pick<Weapon, "code" | "type" | "refi">;
   ctrls: ModifierCtrl[];
-  getHanlders?: (
-    ctrl: ModifierCtrl,
-    ctrlIndex: number
-  ) => Pick<ModifierTemplateProps, "onToggle" | "onChangeText" | "onSelectOption" | "onToggleCheck">;
+  getHanlders?: (args: GetModifierHanldersArgs) => ModifierHanlders;
 }
-const renderWeaponModifiers = ({
+function renderWeaponModifiers({
   fromSelf,
   keyPrefix,
   mutable,
   weapon,
   ctrls,
   getHanlders,
-}: RenderWeaponModifiersArgs) => {
+}: RenderWeaponModifiersArgs) {
   const data = $AppData.getWeapon(weapon.code);
   if (!data) return [];
   const { buffs = [], descriptions = [] } = data;
 
-  return ctrls.map((ctrl, index) => {
+  return ctrls.map((ctrl, ctrlIndex) => {
     const buff = findByIndex(buffs, ctrl.index);
 
     return buff ? (
-      <ModifierTemplate
+      <ModifierItem
         key={`${keyPrefix}-${data.code}-${ctrl.index}`}
         mutable={mutable}
         checked={ctrl.activated}
@@ -48,38 +47,51 @@ const renderWeaponModifiers = ({
         description={getWeaponDescription(descriptions, buff, weapon.refi)}
         inputs={ctrl.inputs}
         inputConfigs={buff.inputConfigs}
-        {...getHanlders?.(ctrl, index)}
+        {...getHanlders?.({ ctrl, ctrlIndex, ctrls })}
       />
     ) : null;
   });
-};
+}
 
 interface WeaponBuffsViewProps {
+  mutable?: boolean;
   weapon: CalcWeapon;
   wpBuffCtrls: ModifierCtrl[];
   party: Party;
+  getSelfHandlers?: RenderWeaponModifiersArgs["getHanlders"];
+  getTeammateHandlers?: (args: GetTeammateModifierHanldersArgs) => ModifierHanlders;
 }
-export function WeaponBuffsView({ weapon, wpBuffCtrls, party }: WeaponBuffsViewProps) {
+export function WeaponBuffsView({
+  mutable,
+  weapon,
+  wpBuffCtrls,
+  party,
+  getSelfHandlers,
+  getTeammateHandlers,
+}: WeaponBuffsViewProps) {
   const content = [];
 
   content.push(
     ...renderWeaponModifiers({
+      mutable,
       fromSelf: true,
       keyPrefix: "main",
-      mutable: false,
       weapon,
       ctrls: wpBuffCtrls,
+      getHanlders: getSelfHandlers,
     })
   );
 
-  party.forEach((teammate) => {
+  party.forEach((teammate, teammateIndex) => {
     if (teammate) {
       content.push(
         ...renderWeaponModifiers({
-          keyPrefix: teammate.name,
+          mutable,
           fromSelf: false,
+          keyPrefix: teammate.name,
           weapon: teammate.weapon,
           ctrls: teammate.weapon.buffCtrls,
+          getHanlders: (args) => getTeammateHandlers?.({ ...args, teammate, teammateIndex }) || {},
         })
       );
     }

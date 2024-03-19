@@ -22,7 +22,7 @@ const wrapText = (text: string | number, type = "") => {
   return `<span class="${typeToCls[type] || ""}">${text}</span>`;
 };
 
-type Effect = {
+export type ParsedAbilityEffect = {
   value: number | ValueOption_Character;
   lvScale?: LevelScale_Character;
   preExtra?: any;
@@ -32,7 +32,7 @@ type Effect = {
 export const parseAbilityDescription = (
   ability: {
     description: string;
-    effects?: Effect | Effect[];
+    effects?: ParsedAbilityEffect | ParsedAbilityEffect[];
   },
   obj: {
     char: Character;
