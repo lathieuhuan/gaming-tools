@@ -50,7 +50,7 @@ const resonanceRenderInfo: Record<string, { name: string; description: JSX.Eleme
   },
 };
 
-interface ResonanceBuffItemProps extends Omit<GiModifierViewProps, "mutable" | "heading" | "description"> {
+interface ResonanceBuffItemProps extends Omit<GiModifierViewProps, "heading" | "description"> {
   element: ElementType;
 }
 

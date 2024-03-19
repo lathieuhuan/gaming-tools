@@ -4,9 +4,11 @@ import type {
   Party,
   Target,
   Teammate,
+  UserArtifacts,
   UserComplexSetup,
   UserSetup,
   UserSetupCalcInfo,
+  UserWeapon,
   WeaponType,
 } from "@Src/types";
 import { CharacterCal } from "@Src/calculation";
@@ -17,6 +19,7 @@ import { deepCopy, findByIndex } from "../utils";
 import { Calculation_ } from "../calculation-utils";
 import { Modifier_ } from "../modifier-utils";
 import { Weapon_ } from "../weapon-utils";
+import { Item_ } from "../item-utils";
 
 interface CleanupCalcSetupOptions {
   weaponID?: number;
@@ -26,6 +29,22 @@ interface CleanupCalcSetupOptions {
 export class Setup_ {
   static isUserSetup(setup: UserSetup | UserComplexSetup): setup is UserSetup {
     return ["original", "combined"].includes(setup.type);
+  }
+
+  static userSetupToCalcSetup(
+    setup: UserSetup,
+    weapon: UserWeapon,
+    artifacts: UserArtifacts,
+    shouldRestore?: boolean
+  ): CalcSetup {
+    const { weaponID, artifactIDs, ID, name, type, target, ...rest } = setup;
+    const calcSetup = {
+      ...rest,
+      weapon: Item_.userItemToCalcItem(weapon),
+      artifacts: artifacts.map((artifact) => (artifact ? Item_.userItemToCalcItem(artifact) : null)),
+    };
+
+    return shouldRestore ? this.restoreCalcSetup(calcSetup) : calcSetup;
   }
 
   static getNewSetupName(setups: Array<{ name: string }>) {
