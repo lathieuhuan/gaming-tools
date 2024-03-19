@@ -43,7 +43,6 @@
     &::before {
       position: absolute;
       top: 50%;
-      inset-inline-start: 25%;
       border: 3px solid black;
       border-top-width: 0;
       border-inline-start: 0;
@@ -83,6 +82,7 @@
   .ron-checkbox-visual::before {
     width: 7px;
     height: 10px;
+    inset-inline-start: 25%;
   }
   .ron-checkbox-label {
     font-size: 1rem;
@@ -97,6 +97,7 @@
   .ron-checkbox-visual::before {
     width: 8px;
     height: 12px;
+    inset-inline-start: 30%;
   }
   .ron-checkbox-label {
     font-size: 1.125rem;
