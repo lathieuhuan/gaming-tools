@@ -21,7 +21,7 @@ import { findById, Setup_ } from "@Src/utils";
 import { SetupImporter } from "@Src/components";
 import { SetupControl } from "./SetupControl";
 
-import styles from "../../styles.module.scss";
+import styles from "../../Calculator.styles.module.scss";
 
 function HighManagerCore() {
   const dispatch = useDispatch();

@@ -1,7 +1,6 @@
-import clsx from "clsx";
 import { useEffect } from "react";
 import { FaInfo } from "react-icons/fa";
-import { Button, LoadingSpin, WarehouseLayout, useScreenWatcher } from "rond";
+import { clsx, Button, LoadingSpin, WarehouseLayout, useScreenWatcher } from "rond";
 
 import type { UserComplexSetup, UserSetup } from "@Src/types";
 import { useAppCharacter } from "@Src/hooks";

@@ -1,7 +1,6 @@
-import clsx from "clsx";
 import { useState } from "react";
 import { FaPlus, FaTrashAlt } from "react-icons/fa";
-import { CloseButton, Modal, Button, InputNumber } from "rond";
+import { clsx, CloseButton, Modal, Button, InputNumber } from "rond";
 
 import type { CustomBuffCtrl, CustomDebuffCtrl } from "@Src/types";
 import { useTranslation } from "@Src/hooks";

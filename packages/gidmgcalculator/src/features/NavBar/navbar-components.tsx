@@ -1,12 +1,11 @@
-import clsx from "clsx";
-import type { ReactNode } from "react";
+import { clsx } from "rond";
 
 import type { AppScreen } from "@Store/ui-slice";
 import { useSelector } from "@Store/hooks";
 
 interface ActionButtonProps {
   className?: string;
-  icon: ReactNode;
+  icon: React.ReactNode;
   label: string;
   disabled?: boolean;
   onClick?: () => void;

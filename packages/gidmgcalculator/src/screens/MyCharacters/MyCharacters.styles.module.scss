@@ -1,0 +1,40 @@
+.side-icon-carousel {
+  position: relative;
+  width: 70%;
+  max-width: 60%;
+
+  .active-cell {
+    @apply border-b-blue-400;
+
+    .icon-wrapper {
+      @apply border-blue-400 bg-blue-400;
+    }
+  }
+  .icon-wrapper img {
+    max-width: none;
+  }
+  .side-icon-wrapper {
+    width: 60px;
+    min-width: 60px;
+    height: 60px;
+
+    img {
+      width: 85px;
+      transform: translate(-15px, -32px);
+    }
+  }
+  .beta-icon-wrapper {
+    width: 68px;
+    min-width: 68px;
+    height: 68px;
+
+    img {
+      width: 65px;
+      transform: translate(-2.5px, -0px);
+    }
+  }
+
+  @media (min-width: 768px) {
+    max-width: 70%;
+  }
+}

@@ -1,8 +1,7 @@
-import clsx from "clsx";
 import { useState, type ButtonHTMLAttributes } from "react";
 import { FaCopy, FaSave, FaBalanceScaleLeft, FaTrashAlt, FaShareAlt } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
-import { Modal, ConfirmModal } from "rond";
+import { clsx, Modal, ConfirmModal } from "rond";
 
 import type { CalcSetupManageInfo } from "@Src/types";
 import { MAX_CALC_SETUPS } from "@Src/constants";

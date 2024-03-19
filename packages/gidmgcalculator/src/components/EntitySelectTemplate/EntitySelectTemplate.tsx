@@ -130,7 +130,7 @@ export const EntitySelectTemplate = ({
 
   return (
     <div className="h-full flex flex-col rounded-lg shadow-white-glow">
-      <CloseButton onClick={onClose} />
+      <CloseButton className="ron-modal-close-button" boneOnly onClick={onClose} />
 
       <Modal.Header withDivider>
         <div className="flex items-center justify-between relative">

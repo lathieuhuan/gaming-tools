@@ -1,7 +1,6 @@
-import clsx from "clsx";
 import { useEffect, useMemo, useState } from "react";
 import { FaPlus, FaSyncAlt, FaUserSlash } from "react-icons/fa";
-import { CollapseSpace } from "rond";
+import { clsx, CollapseSpace } from "rond";
 
 import { findById } from "@Src/utils";
 import { $AppCharacter } from "@Src/services";
@@ -24,7 +23,7 @@ import {
 import { TeammateItems, Tavern, WeaponForge, ArtifactForge, WikiImage } from "@Src/components";
 import { CopySelect } from "./CopySelect";
 
-import styles from "../styles.module.scss";
+import styles from "../SetupManager.styles.module.scss";
 
 interface ModalState {
   type: "CHARACTER" | "WEAPON" | "ARTIFACT" | "";

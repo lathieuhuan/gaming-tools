@@ -1,6 +1,5 @@
-import clsx from "clsx";
 import { useState } from "react";
-import { CollapseList, ModalControl, LoadingSpin, Skeleton, Modal } from "rond";
+import { clsx, CollapseList, ModalControl, LoadingSpin, Skeleton, Modal } from "rond";
 
 import { $AppData, Update } from "@Src/services";
 import { useGetMetadata } from "@Src/hooks";

@@ -1,6 +1,5 @@
-import clsx from "clsx";
 import { memo } from "react";
-import { useScreenWatcher } from "rond";
+import { clsx, useScreenWatcher } from "rond";
 
 import { useSelector } from "@Store/hooks";
 import { selectComparedIds } from "@Store/calculator-slice";

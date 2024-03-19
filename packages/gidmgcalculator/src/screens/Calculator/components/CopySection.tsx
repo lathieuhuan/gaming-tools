@@ -1,6 +1,6 @@
-import clsx from "clsx";
 import { useState } from "react";
 import { FaCopy } from "react-icons/fa";
+import { clsx } from "rond";
 
 export type Option = {
   value: string | number;

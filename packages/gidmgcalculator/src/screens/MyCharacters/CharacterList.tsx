@@ -1,7 +1,6 @@
-import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { FaSortAmountUpAlt, FaTh, FaArrowAltCircleUp } from "react-icons/fa";
-import { useIntersectionObserver, Button } from "rond";
+import { clsx, useIntersectionObserver, Button } from "rond";
 
 import { getImgSrc } from "@Src/utils";
 import { $AppCharacter } from "@Src/services";
@@ -9,7 +8,7 @@ import { useDispatch } from "@Store/hooks";
 import { chooseCharacter } from "@Store/userdb-slice";
 import { Tavern } from "@Src/components";
 
-import styles from "./styles.module.scss";
+import styles from "./MyCharacters.styles.module.scss";
 
 interface TopBarProps {
   characters: Array<{ name: string }>;

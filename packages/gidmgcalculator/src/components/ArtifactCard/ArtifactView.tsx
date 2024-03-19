@@ -1,6 +1,5 @@
-import clsx from "clsx";
 import { FaChevronDown } from "react-icons/fa";
-import { Badge } from "rond";
+import { clsx, Badge } from "rond";
 
 import type { ArtifactSubStat, AttributeStat, CalcArtifact, UserArtifact } from "@Src/types";
 import { useTranslation } from "@Src/hooks";

@@ -1,7 +1,6 @@
-import clsx from "clsx";
 import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
-import { useClickOutside } from "rond";
+import { clsx, useClickOutside } from "rond";
 
 interface ComplexSelectProps {
   selectId: string;

@@ -1,7 +1,6 @@
-import clsx from "clsx";
 import { useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import { useScreenWatcher, ButtonGroup, Modal, WarehouseLayout } from "rond";
+import { clsx, useScreenWatcher, ButtonGroup, Modal, WarehouseLayout } from "rond";
 
 import type { UserArtifact } from "@Src/types";
 import { MAX_USER_ARTIFACTS } from "@Src/constants";

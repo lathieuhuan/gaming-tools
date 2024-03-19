@@ -27,6 +27,8 @@ interface AppEntityOptionProps {
 const AppEntityOptionCore = ({ className, imgCls, visible, item, selectedAmount }: AppEntityOptionProps) => {
   const itemType = item.vision ? "character" : "weapon"; // not worth checking artifact or weapon
 
+  console.log(item.beta);
+
   return (
     <div className={clsx("rounded-lg cursor-pointer relative", className)}>
       <Badge active={item.beta} className="absolute -top-1 -left-1 z-10">

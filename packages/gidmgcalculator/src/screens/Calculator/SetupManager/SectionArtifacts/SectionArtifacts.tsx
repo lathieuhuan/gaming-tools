@@ -1,9 +1,8 @@
-import clsx from "clsx";
 import { useState, useLayoutEffect } from "react";
 import { MdInventory } from "react-icons/md";
 import { GiAnvil } from "react-icons/gi";
 import { FaToolbox } from "react-icons/fa";
-import { notification, Button, CollapseSpace, Modal } from "rond";
+import { clsx, notification, Button, CollapseSpace, Modal } from "rond";
 
 import type { Artifact, ArtifactType, CalcArtifact } from "@Src/types";
 import { ARTIFACT_TYPES } from "@Src/constants";
@@ -25,7 +24,7 @@ import {
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
 
-import styles from "../styles.module.scss";
+import styles from "../SetupManager.styles.module.scss";
 
 type ModalType = "ARTIFACT_LOADOUT" | "";
 

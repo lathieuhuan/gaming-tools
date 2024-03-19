@@ -13,7 +13,7 @@ import {
 import Calculator from "@Src/screens/Calculator";
 import MyArtifacts from "@Src/screens/MyArtifacts";
 import MyCharacters from "@Src/screens/MyCharacters";
-// import MySetups from "@Src/screens/MySetups";
+import MySetups from "@Src/screens/MySetups";
 import MyWeapons from "@Src/screens/MyWeapons";
 
 function App() {
@@ -47,7 +47,7 @@ function App() {
                   { value: "MY_CHARACTERS", element: <MyCharacters /> },
                   { value: "MY_WEAPONS", element: <MyWeapons /> },
                   { value: "MY_ARTIFACTS", element: <MyArtifacts /> },
-                  // { value: "MY_SETUPS", element: <MySetups /> },
+                  { value: "MY_SETUPS", element: <MySetups /> },
                 ]}
               />
             </div>

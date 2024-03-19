@@ -5,7 +5,7 @@ import { $AppData } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTarget, updateTarget } from "@Store/calculator-slice";
 
-import styles from "./styles.module.scss";
+import styles from "../SetupManager.styles.module.scss";
 
 interface SectionTargetProps {
   onMinimize: () => void;

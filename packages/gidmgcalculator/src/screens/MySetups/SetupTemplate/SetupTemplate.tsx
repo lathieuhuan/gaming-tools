@@ -1,7 +1,6 @@
-import clsx from "clsx";
 import { useMemo, useState } from "react";
 import { FaLink, FaPlus, FaShareAlt, FaTrashAlt, FaUnlink, FaWrench } from "react-icons/fa";
-import { useScreenWatcher, Button, ButtonGroup, Modal, CloseButton } from "rond";
+import { clsx, useScreenWatcher, Button, ButtonGroup, Modal, CloseButton } from "rond";
 
 import type { UserArtifacts, UserSetup, UserWeapon } from "@Src/types";
 import type { OpenModalFn } from "../MySetups.types";

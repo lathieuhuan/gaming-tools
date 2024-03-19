@@ -1,7 +1,6 @@
-import clsx from "clsx";
 import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
-import { round, StatsTable, CollapseSpace, type PartiallyRequired } from "rond";
+import { clsx, round, StatsTable, CollapseSpace, type PartiallyRequired } from "rond";
 
 import type { CoreStat, TotalAttribute } from "@Src/types";
 import { ATTACK_ELEMENTS, CORE_STAT_TYPES } from "@Src/constants";

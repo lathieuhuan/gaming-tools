@@ -1,6 +1,5 @@
-import clsx from "clsx";
 import { FaInfo } from "react-icons/fa";
-import { Button, CloseButton, ItemCase } from "rond";
+import { clsx, Button, CloseButton, ItemCase } from "rond";
 
 import type { ArtifactSetBonus, UserArtifacts, UserWeapon } from "@Src/types";
 import type { GearsDetailType } from "./CharacterInfo.types";

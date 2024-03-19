@@ -1,6 +1,5 @@
-import clsx from "clsx";
 import type { CSSProperties, MouseEvent } from "react";
-import { ButtonGroup, ButtonGroupItem } from "rond";
+import { clsx, ButtonGroup, ButtonGroupItem } from "rond";
 
 import type { CalcArtifact, UserArtifact } from "@Src/types";
 import { OwnerLabel } from "../OwnerLabel";

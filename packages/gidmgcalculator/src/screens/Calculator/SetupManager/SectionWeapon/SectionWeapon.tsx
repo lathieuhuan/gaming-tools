@@ -11,7 +11,7 @@ import { selectWeapon, changeWeapon, updateWeapon } from "@Store/calculator-slic
 import { useSelector } from "@Store/hooks";
 import { WeaponForge, WeaponInventory, WikiImage } from "@Src/components";
 
-import styles from "./styles.module.scss";
+import styles from "../SetupManager.styles.module.scss";
 
 type ModalType = "MAKE_NEW_WEAPON" | "SELECT_USER_WEAPON" | "";
 
