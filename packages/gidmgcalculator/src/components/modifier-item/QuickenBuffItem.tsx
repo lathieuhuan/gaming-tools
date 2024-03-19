@@ -3,7 +3,7 @@ import { Calculation_ } from "@Src/utils";
 import { Green } from "../span";
 import { GiModifierView, type GiModifierViewProps } from "../GiModifierView";
 
-interface QuickenBuffItemProps extends Pick<GiModifierViewProps, "checked" | "onToggle"> {
+interface QuickenBuffItemProps extends Pick<GiModifierViewProps, "mutable" | "checked" | "onToggle"> {
   reaction: QuickenReaction;
   element: ElementType;
   characterLv: Level;
