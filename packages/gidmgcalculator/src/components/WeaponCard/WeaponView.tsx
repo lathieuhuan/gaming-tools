@@ -90,7 +90,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
         {/* right */}
         <div className="ml-2">
           <div className={`rounded-lg bg-gradient-${rarity} relative`}>
-            <WikiImage src={appWeapon.icon} imgType="weapon" style={{ width: 112, height: 112 }} />
+            <WikiImage src={appWeapon.icon} imgType="weapon" width={112} height={112} />
             <Badge active={appWeapon.beta} className="absolute bottom-0 right-0">
               BETA
             </Badge>

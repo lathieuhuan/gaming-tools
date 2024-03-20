@@ -19,8 +19,6 @@ export const CarouselSpace = ({ className, current = 0, children }: CarouselSpac
         }}
       >
         {items.map((item, index) => {
-          console.log(index);
-
           return (
             <div key={index} className="ron-carousel-item" style={{ width: `${100 / items.length}%` }}>
               {item}

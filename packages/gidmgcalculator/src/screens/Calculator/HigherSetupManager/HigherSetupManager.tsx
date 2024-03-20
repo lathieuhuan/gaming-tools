@@ -4,6 +4,7 @@ import { BiImport } from "react-icons/bi";
 import { clsx, Button, Popover, CloseButton, CollapseSpace } from "rond";
 
 import { MAX_CALC_SETUPS } from "@Src/constants";
+import { findById, Setup_ } from "@Src/utils";
 import {
   selectComparedIds,
   selectStandardId,
@@ -14,18 +15,14 @@ import {
 import { updateUI } from "@Store/ui-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 
-// Util
-import { findById, Setup_ } from "@Src/utils";
-
 // Component
 import { SetupImporter } from "@Src/components";
 import { SetupControl } from "./SetupControl";
 
-import styles from "../../Calculator.styles.module.scss";
+import styles from "../Calculator.styles.module.scss";
 
-function HighManagerCore() {
+function HigherSetupManagerCore() {
   const dispatch = useDispatch();
-
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const comparedIds = useSelector(selectComparedIds);
   const standardId = useSelector(selectStandardId);
@@ -148,20 +145,17 @@ function HighManagerCore() {
   return (
     <div className="p-4 h-full flex flex-col">
       <CloseButton
-        className="absolute top-2 right-2"
+        className="ron-modal-close-button"
+        boneOnly
         onClick={() => dispatch(updateUI({ highManagerActive: false }))}
       />
 
       <p className="my-2 text-1.5xl text-center text-orange-500 font-bold">Setups Management</p>
 
       <div className="flex-grow hide-scrollbar">
-        <div>
-          <div className="space-y-3">
-            {tempSetups.map((setup, index) => {
-              if (setup.status === "REMOVED") {
-                return null;
-              }
-
+        <div className="space-y-4">
+          <div hidden={!displayedSetups.length} className="space-y-3">
+            {displayedSetups.map((setup, index) => {
               return (
                 <SetupControl
                   key={setup.ID}
@@ -180,7 +174,7 @@ function HighManagerCore() {
           </div>
 
           {canAddMoreSetup && (
-            <div className="mt-4 space-y-4">
+            <div className="space-y-4">
               <Button
                 variant="custom"
                 className="w-full bg-mint-600 text-black"
@@ -218,20 +212,18 @@ function HighManagerCore() {
   );
 }
 
-interface HighManagerProps {
-  height: number;
-}
-export default function HighManager({ height }: HighManagerProps) {
+export default function HigherSetupManager() {
   const highManagerActive = useSelector((state) => state.ui.highManagerActive);
 
   return (
     <CollapseSpace
       active={highManagerActive}
       className={clsx("absolute bottom-0 left-0 bg-dark-500 z-30", styles.card)}
-      // activeHeight={height / 16 + 2 + "rem"}
+      activeHeight="100%"
       moveDuration={200}
+      destroyOnClose
     >
-      <HighManagerCore />
+      <HigherSetupManagerCore />
     </CollapseSpace>
   );
 }

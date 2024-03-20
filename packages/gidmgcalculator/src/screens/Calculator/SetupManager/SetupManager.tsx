@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaSkull } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
-import { useElementSize, Button, Modal } from "rond";
+import { Button, Modal } from "rond";
 
 import { useDispatch } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
@@ -9,11 +9,10 @@ import { updateUI } from "@Store/ui-slice";
 // Component
 import { SetupSelect } from "./SetupSelect";
 import { TargetConfig } from "./TargetConfig";
-import HighManager from "./HighManager";
 import SectionArtifacts from "./SectionArtifacts";
 import SectionParty from "./SectionParty";
-import SectionTarget from "./SectionTarget/SectionTarget";
-import SectionWeapon from "./SectionWeapon/SectionWeapon";
+import SectionTarget from "./SectionTarget";
+import SectionWeapon from "./SectionWeapon";
 
 type ModalType = "TARGET_CONFIG" | "";
 
@@ -23,12 +22,10 @@ export default function SetupManager() {
   const [modalType, setModalType] = useState<ModalType>("");
   const [targetOverviewOn, setTargetOverviewOn] = useState(true);
 
-  const [ref, { height }] = useElementSize<HTMLDivElement>();
-
   const closeModal = () => setModalType("");
 
   return (
-    <div ref={ref} className="h-full flex flex-col overflow-hidden">
+    <div className="w-full h-full flex flex-col relative overflow-hidden">
       <SetupSelect />
 
       <div className="mt-4 grow hide-scrollbar space-y-2 scroll-smooth">
@@ -54,8 +51,6 @@ export default function SetupManager() {
           />
         </div>
       </div>
-
-      <HighManager height={height} />
 
       <Modal
         active={modalType === "TARGET_CONFIG"}

@@ -1,1 +1,1 @@
-export * from "./SectionTarget";
+export { default } from "./SectionTarget";

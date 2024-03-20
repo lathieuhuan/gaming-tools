@@ -130,6 +130,7 @@ export default function MySetups() {
 
   return (
     <WarehouseLayout
+      className="h-full"
       bodyStyle={{
         width: screenWatcher.isFromSize("xm") ? "auto" : undefined,
       }}

@@ -7,7 +7,7 @@ import { clsx, notification, Button, CollapseSpace, Modal } from "rond";
 import type { Artifact, ArtifactType, CalcArtifact } from "@Src/types";
 import { ARTIFACT_TYPES } from "@Src/constants";
 import { $AppData, $AppSettings } from "@Src/services";
-import { getImgSrc, Item_, Artifact_ } from "@Src/utils";
+import { Item_, Artifact_ } from "@Src/utils";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -20,6 +20,7 @@ import {
   ArtifactInventory,
   ArtifactInventoryProps,
   LoadoutStash,
+  WikiImage,
 } from "@Src/components";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
@@ -252,19 +253,20 @@ export default function SectionArtifacts() {
             <div
               key={index}
               className={clsx(
-                "w-1/5",
-                index === activeTabIndex ? "border-2 border-light-400" : "border border-transparent"
+                "w-1/5 border-2",
+                index === activeTabIndex ? "border-light-400" : "border-transparent"
               )}
+              onClick={() => onClickTab(index)}
             >
-              <div
+              <WikiImage
                 className={clsx(
                   `h-full bg-gradient-${artifact ? artifact.rarity || 5 : 1} cursor-pointer`,
                   !artifact && "p-2 opacity-80"
                 )}
-                onClick={() => onClickTab(index)}
-              >
-                <img src={getImgSrc(icon)} alt={type} draggable={false} />
-              </div>
+                src={icon}
+                defaultFallback={{ wrapperCls: artifact ? "p-3" : "p-1" }}
+                imgType="unknown"
+              />
             </div>
           );
         })}

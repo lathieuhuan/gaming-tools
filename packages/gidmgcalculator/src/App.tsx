@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ScreenSizeWatcher, SwitchNode } from "rond";
+import { SwitchNode } from "rond";
 
 import { useSelector } from "@Store/hooks";
 import {
@@ -32,35 +32,33 @@ function App() {
   }, []);
 
   return (
-    <ScreenSizeWatcher>
-      <div className="App h-screen pt-8 text-light-400 bg-light-400">
-        <NavBar />
+    <div className="App h-screen pt-8 text-light-400 bg-light-400">
+      <NavBar />
 
-        <div className="h-full flex-center relative">
-          <Calculator />
+      <div className="h-full flex-center relative">
+        <Calculator />
 
-          {atScreen !== "CALCULATOR" ? (
-            <div className="absolute full-stretch z-30">
-              <SwitchNode
-                value={atScreen}
-                cases={[
-                  { value: "MY_CHARACTERS", element: <MyCharacters /> },
-                  { value: "MY_WEAPONS", element: <MyWeapons /> },
-                  { value: "MY_ARTIFACTS", element: <MyArtifacts /> },
-                  { value: "MY_SETUPS", element: <MySetups /> },
-                ]}
-              />
-            </div>
-          ) : null}
-        </div>
+        {atScreen !== "CALCULATOR" ? (
+          <div className="absolute full-stretch z-30">
+            <SwitchNode
+              value={atScreen}
+              cases={[
+                { value: "MY_CHARACTERS", element: <MyCharacters /> },
+                { value: "MY_WEAPONS", element: <MyWeapons /> },
+                { value: "MY_ARTIFACTS", element: <MyArtifacts /> },
+                { value: "MY_SETUPS", element: <MySetups /> },
+              ]}
+            />
+          </div>
+        ) : null}
+      </div>
 
-        <AppModals />
-        {/* <Tracker />
+      <AppModals />
+      {/* <Tracker />
         <Message />
         <SetupTransshipmentPort />
         <SetupImportCenter /> */}
-      </div>
-    </ScreenSizeWatcher>
+    </div>
   );
 }
 

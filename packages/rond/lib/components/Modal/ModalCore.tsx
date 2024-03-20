@@ -121,7 +121,7 @@ export const ModalCore = ({
 };
 
 function useModalManager() {
-  const modalManagerRef = useRef<HTMLDivElement | null>(null);
+  const modalManagerRef = useRef(document.getElementById("ron-modal-manager") as HTMLDivElement | null);
 
   if (!modalManagerRef.current) {
     const manager = document.createElement("div");

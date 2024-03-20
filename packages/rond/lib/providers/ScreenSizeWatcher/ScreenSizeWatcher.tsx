@@ -34,7 +34,7 @@ const ScreenSizeContext = createContext<ScreenSizeContextValue>({
   isFromSize: () => true,
 });
 
-export const ScreenSizeWatcher = (props: { children: React.ReactNode }) => {
+export function ScreenSizeWatcher(props: { children: React.ReactNode }) {
   const [screenSize, setScreenSize] = useState<ScreenSize>(getScreenSize);
 
   useEffect(() => {
@@ -71,8 +71,8 @@ export const ScreenSizeWatcher = (props: { children: React.ReactNode }) => {
       {props.children}
     </ScreenSizeContext.Provider>
   );
-};
+}
 
-export const useScreenWatcher = () => {
+export function useScreenWatcher() {
   return useContext(ScreenSizeContext);
-};
+}

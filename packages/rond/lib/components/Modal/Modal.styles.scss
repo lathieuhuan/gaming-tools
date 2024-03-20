@@ -41,9 +41,12 @@
   &.ron-modal-content-standard,
   &.ron-modal-content-small,
   &.ron-modal-content-large {
-    width: 22rem;
     border-radius: 0.5rem;
     box-shadow: 0 0 3px #b8b8b8;
+  }
+  &.ron-modal-content-small,
+  &.ron-modal-content-large {
+    width: 22rem;
   }
   &.ron-modal-content-large {
     background-color: var(--ron-color-dark-surface-2);

@@ -263,7 +263,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
         className="rounded-lg shadow-white-glow"
         onClose={closeTeammateDetail}
       >
-        <CloseButton onClick={closeTeammateDetail} />
+        <CloseButton className="ron-modal-close-button" boneOnly onClick={closeTeammateDetail} />
 
         {teammateInfo && (
           <TeammateDetail

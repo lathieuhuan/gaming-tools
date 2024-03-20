@@ -1,5 +1,5 @@
 import { FaChevronDown } from "react-icons/fa";
-// import { Input } from "rond";
+import { InputNumber } from "rond";
 
 import type { AttributeStat, ArtifactSubStat } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
@@ -63,26 +63,24 @@ export const ArtifactSubstatsControl = ({
 
             <span>+</span>
 
-            {/* <Input
-              type="number"
-              noDefaultStyle
+            <InputNumber
+              unstyled
               className={
                 "relative ml-1 pt-2 pb-1 pr-2 w-[3.25rem] bg-transparent text-base leading-none text-right " +
                 (isValid ? "text-light-400" : "text-red-200")
               }
-              style={{ fontSize: "1.0625rem" }}
               value={value}
               onChange={(value) => onChangeSubStat?.(i, { value })}
-            /> */}
+            />
             <span className="w-4 pt-2 pb-1">{suffixOf(type)}</span>
           </div>
         ) : (
-          <div key={i} className={`mt-2 pt-2 pb-1 flex items-center bg-dark-700`}>
-            <p className="mx-3">•</p>
+          <div key={i} className="mt-2 pt-2 pb-1 flex items-center bg-dark-700">
+            <span className="mx-3">•</span>
             <p>
               <span className={"mr-1 " + (statTypeCount[type] === 1 ? "text-light-400" : "text-red-200")}>
                 {t(type)}
-              </span>
+              </span>{" "}
               <span className={isValid ? "text-green-300" : "text-red-200"}>
                 +{value}
                 {suffixOf(type)}

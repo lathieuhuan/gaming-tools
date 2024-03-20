@@ -161,10 +161,9 @@ export const EntitySelectTemplate = ({
                   (hasSearch || hasFilter) && "ml-2 border-l border-dark-300"
                 )}
               >
-                <Checkbox className="mr-2" onChange={setIsMultiSelect}>
+                <Checkbox className="mr-2 text-light-400" onChange={setIsMultiSelect}>
                   Multiple
                 </Checkbox>
-                <span className="text-base text-light-400">Multiple</span>
               </label>
             ) : null}
           </div>

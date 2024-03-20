@@ -112,7 +112,7 @@ export default function MyWeapons() {
       />
 
       {screenWatcher.isFromSize("sm") ? (
-        renderWeaponTypeSelect()
+        renderWeaponTypeSelect(null, { defaultFallback: { } })
       ) : (
         <>
           <Button variant={filterIsActive ? "active" : "default"} onClick={() => setFilterIsActive(!filterIsActive)}>
@@ -128,7 +128,7 @@ export default function MyWeapons() {
   );
 
   return (
-    <WarehouseLayout actions={actions}>
+    <WarehouseLayout className="h-full" actions={actions}>
       <InventoryRack
         data={filteredWeapons}
         emptyText="No weapons found"

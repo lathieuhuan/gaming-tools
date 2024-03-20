@@ -36,7 +36,7 @@ interface NavTabsProps {
 }
 export function NavTabs({ ready, className = "", activeClassName, idleClassName, onClickTab }: NavTabsProps) {
   const atScreen = useSelector((state) => state.ui.atScreen);
-  const screens: AppScreen[] = ["MY_CHARACTERS", "MY_WEAPONS", "MY_ARTIFACTS", "CALCULATOR"];
+  const screens: AppScreen[] = ["MY_CHARACTERS", "MY_WEAPONS", "MY_ARTIFACTS", "MY_SETUPS", "CALCULATOR"];
 
   return (
     <>

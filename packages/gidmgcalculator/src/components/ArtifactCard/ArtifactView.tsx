@@ -54,8 +54,10 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
           <WikiImage
             src={appArtifact?.icon}
             alt={appArtifact?.name}
+            className="p-4"
             imgType="artifact"
-            style={{ width: 104, height: 104 }}
+            width={104}
+            height={104}
           />
           <Badge active={appArtifact?.beta} className="absolute bottom-0 right-0">
             BETA

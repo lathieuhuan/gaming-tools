@@ -9,6 +9,7 @@ import CharacterOverview from "./CharacterOverview";
 import Modifiers from "./Modifiers";
 import FinalResult from "./FinalResult";
 import SetupManager from "./SetupManager";
+import HigherSetupManager from "./HigherSetupManager";
 
 import styles from "./Calculator.styles.module.scss";
 
@@ -38,11 +39,12 @@ function CalculatorCore() {
           ) : null}
         </div>
 
-        <div className={`p-4 relative bg-dark-500 overflow-hidden ${styles.card}`}>
+        <div className={`p-4 bg-dark-500 relative ${styles.card}`}>
           {touched ? (
             // ========== PANEL 3 ==========
             <SetupManager />
           ) : null}
+          <HigherSetupManager />
         </div>
 
         {/* ========== PANEL 4 ========== */}

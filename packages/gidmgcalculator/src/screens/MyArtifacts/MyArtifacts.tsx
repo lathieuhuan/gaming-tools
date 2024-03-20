@@ -123,7 +123,7 @@ export default function MyArtifacts() {
   );
 
   return (
-    <WarehouseLayout actions={actions}>
+    <WarehouseLayout className="h-full" actions={actions}>
       <InventoryRack
         data={filteredArtifacts}
         emptyText="No artifacts found"

@@ -28,12 +28,6 @@ export default defineConfig({
       external: ["react", "react/jsx-runtime"],
       // input: Object.fromEntries(
       //   glob.sync("lib/**/*.{ts,tsx}").map((file) => {
-      //     console.log(
-      //       file,
-      //       path.relative("lib", file.slice(0, file.length - path.extname(file).length)),
-      //       fileURLToPath(new URL(file, import.meta.url))
-      //     );
-
       //     return [
       //       // The name of the entry point
       //       // lib/nested/foo.ts becomes nested/foo

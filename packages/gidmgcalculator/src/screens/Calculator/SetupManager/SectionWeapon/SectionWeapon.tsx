@@ -82,7 +82,7 @@ export default function SectionWeapon() {
         title="Inventory"
         className="absolute bottom-1 right-1"
         size="large"
-        // boneOnly
+        boneOnly
         icon={<MdInventory />}
         onClick={() => setModalType("SELECT_USER_WEAPON")}
       />

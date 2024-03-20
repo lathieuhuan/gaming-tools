@@ -42,7 +42,7 @@ export const PorterLayout = ({ heading, message, textareaAttrs, moreButtons, onC
         ]}
       />
 
-      <CloseButton onClick={onClose} />
+      <CloseButton className="ron-modal-close-button" boneOnly onClick={onClose} />
     </div>
   );
 };

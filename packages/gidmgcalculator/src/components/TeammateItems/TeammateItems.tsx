@@ -3,6 +3,7 @@ import { clsx, CloseButton } from "rond";
 import type { Teammate } from "@Src/types";
 import { getImgSrc } from "@Src/utils";
 import { $AppData } from "@Src/services";
+import { WikiImage } from "..";
 
 interface TeammateItemsProps {
   className?: string;
@@ -71,11 +72,13 @@ export const TeammateItems = ({
 
       <div className="flex items-start space-x-2">
         <button className="w-14 h-14 shrink-0" disabled={!mutable} onClick={onClickArtifact}>
-          {artifactSetIcon ? (
-            <img className="bg-dark-500 rounded" src={getImgSrc(artifactSetIcon)} alt="artifact" draggable={false} />
-          ) : (
-            <img className="p-1" src={getImgSrc("6/6a/Icon_Inventory_Artifacts")} alt="artifact" draggable={false} />
-          )}
+          <WikiImage
+            className={artifactSetIcon ? "bg-dark-500 rounded" : "p-1"}
+            src={artifactSetIcon || "6/6a/Icon_Inventory_Artifacts"}
+            alt="artifact"
+            defaultFallback={{ wrapperCls: "p-2" }}
+            imgType="unknown"
+          />
         </button>
 
         <p
@@ -87,7 +90,7 @@ export const TeammateItems = ({
           {artifactSetName || "No artifact buff / debuff"}
         </p>
 
-        {artifactSetName && mutable ? <CloseButton onClick={onClickRemoveArtifact} /> : null}
+        {artifactSetName && mutable ? <CloseButton boneOnly onClick={onClickRemoveArtifact} /> : null}
       </div>
     </div>
   );

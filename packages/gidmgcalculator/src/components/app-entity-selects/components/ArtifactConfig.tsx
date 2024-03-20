@@ -1,5 +1,4 @@
-import type { ReactNode } from "react";
-import { clsx, StarSvg } from "rond";
+import { Rarity } from "rond";
 
 import type { Artifact } from "@Src/types";
 import { deepCopy } from "@Src/utils";
@@ -7,9 +6,9 @@ import { ArtifactCard, ArtifactCardAction } from "../../ArtifactCard";
 
 interface ArtifactConfigProps {
   config?: Artifact;
-  typeSelect?: ReactNode;
+  typeSelect?: React.ReactNode;
   maxRarity?: number;
-  batchConfigNode?: ReactNode;
+  batchConfigNode?: React.ReactNode;
   moreButtons?: ArtifactCardAction[];
   onChangeRarity?: (rarity: number) => void;
   onUpdateConfig?: (properties: Partial<Artifact>) => void;
@@ -37,29 +36,12 @@ export const ArtifactConfig = ({
         <div className="px-2 space-y-4">
           <div className="flex items-start justify-between">
             <label className="h-8 flex items-center text-sm">Rarity</label>
-            <div className="flex gap-4">
-              {Array.from({ length: 5 }, (_, num) => {
-                const rarity = num + 1;
-                const disabled = rarity < 4;
-
-                return num < maxRarity ? (
-                  <button
-                    key={num}
-                    className={clsx(
-                      "w-8 h-8 flex-center text-3xl",
-                      disabled && "opacity-50",
-                      config.rarity >= rarity ? `text-rarity-${config.rarity}` : "text-rarity-1"
-                    )}
-                    disabled={disabled}
-                    onClick={() => onClickRarityStar(rarity)}
-                  >
-                    <StarSvg />
-                  </button>
-                ) : (
-                  <div className="w-8 h-8 shrink-0" />
-                );
-              })}
-            </div>
+            <Rarity
+              className="gap-4"
+              value={config.rarity}
+              mutable={{ min: 4, max: maxRarity }}
+              onChange={onClickRarityStar}
+            />
           </div>
 
           {typeSelect ? (

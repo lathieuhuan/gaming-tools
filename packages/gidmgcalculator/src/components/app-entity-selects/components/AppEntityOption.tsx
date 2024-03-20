@@ -25,12 +25,9 @@ interface AppEntityOptionProps {
   selectedAmount?: number;
 }
 const AppEntityOptionCore = ({ className, imgCls, visible, item, selectedAmount }: AppEntityOptionProps) => {
-  const itemType = item.vision ? "character" : "weapon"; // not worth checking artifact or weapon
-  const { beta = false } = item;
-
   return (
     <div className={clsx("rounded-lg cursor-pointer relative", className)}>
-      <Badge active={beta} className="absolute -top-1 -left-1 z-10">
+      <Badge active={item.beta} className="absolute -top-1 -left-1 z-10">
         BETA
       </Badge>
 
@@ -42,7 +39,9 @@ const AppEntityOptionCore = ({ className, imgCls, visible, item, selectedAmount 
         )}
       >
         <div className={"aspect-square transition-opacity duration-400 " + (visible ? "opacity-100" : "opacity-0")}>
-          {visible && <WikiImage className={imgCls} src={item.icon} imgType={itemType} />}
+          {visible && (
+            <WikiImage className={imgCls} src={item.icon} imgType="unknown" defaultFallback={{ wrapperCls: "p-4" }} />
+          )}
         </div>
 
         {selectedAmount ? <p className="absolute bottom-0 right-1 text-black font-bold">{selectedAmount}</p> : null}

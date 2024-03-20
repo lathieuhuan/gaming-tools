@@ -1,7 +1,7 @@
-import type { IconType } from "react-icons";
-import { Image, type ImageProps } from "rond";
+import type { IconBaseProps, IconType } from "react-icons";
 import { FaUser, FaQuestion } from "react-icons/fa";
 import { RiSwordFill } from "react-icons/ri";
+import { clsx, Image, type ImageProps } from "rond";
 import { getImgSrc } from "@Src/utils";
 
 const ICONS_BY_TYPE: Record<string, IconType> = {
@@ -10,21 +10,33 @@ const ICONS_BY_TYPE: Record<string, IconType> = {
   artifact: FaQuestion,
 };
 
-interface WikiImageProps extends ImageProps {
-  imgType?: "character" | "weapon" | "artifact";
+type FallbackProps = IconBaseProps & {
+  wrapperCls: string;
+};
+
+interface DefaultImageFallbackProps extends FallbackProps {
+  type: "character" | "weapon" | "artifact";
 }
-export function WikiImage({ src, imgType, ...rest }: WikiImageProps) {
-  const config: Pick<ImageProps, "showFallbackOnError" | "fallback"> = {
-    showFallbackOnError: false,
-    fallback: undefined,
-  };
-
-  if (imgType) {
-    const Fallback = ICONS_BY_TYPE[imgType];
-
-    config.showFallbackOnError = true;
-    config.fallback = <Fallback className="w-full h-full" />;
-  }
-
-  return <Image src={getImgSrc(src)} {...config} {...rest} />;
+export function DefaultFallback({ type, wrapperCls, className, ...rest }: DefaultImageFallbackProps) {
+  const Fallback = ICONS_BY_TYPE[type || ""] ?? FaQuestion;
+  return (
+    <div className={wrapperCls}>
+      <Fallback className={clsx("w-full h-full", className)} {...rest} />
+    </div>
+  );
 }
+
+interface WikiImageProps extends Omit<ImageProps, "defaultFallback"> {
+  /** Default to 'unknown' */
+  imgType?: "character" | "weapon" | "artifact" | "unknown";
+  defaultFallback?: FallbackProps;
+}
+function WikiImage({ src, imgType = "unknown", defaultFallback, ...rest }: WikiImageProps) {
+  return (
+    <Image src={getImgSrc(src)} showFallbackOnError defaultFallback={{ type: imgType, ...defaultFallback }} {...rest} />
+  );
+}
+
+WikiImage.Fallback = DefaultFallback;
+
+export { WikiImage };
