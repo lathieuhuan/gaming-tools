@@ -67,7 +67,7 @@ export const CharacterFilter = ({ className, initialFilter, onCancel, onDone }: 
           disabledClearAll={!weaponTypes.length}
           onClickClearAll={() => updateWeaponTypes([])}
         >
-          {renderWeaponTypeSelect("px-1")}
+          {renderWeaponTypeSelect("px-1", { defaultFallback: { cls: "p-1.5" } })}
         </FilterTemplate>
 
         <div className="w-full h-px bg-dark-300" />

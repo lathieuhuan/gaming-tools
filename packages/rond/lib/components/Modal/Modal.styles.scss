@@ -31,11 +31,11 @@
   max-width: 95%;
   transform: translate(-50%, -50%) scaleX(var(--ron-scale-x)) scaleY(var(--ron-scale-y));
   overflow: hidden;
+  --ron-color-modal-divider: #535582;
 
   &.ron-modal-content-standard {
     display: flex;
     flex-direction: column;
-    --ron-color-modal-divider: #535582;
   }
 
   &.ron-modal-content-standard,

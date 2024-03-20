@@ -66,7 +66,7 @@ const Modal = ({
       )}
 
       {withCloseButton ? (
-        <CloseButton className="ron-modal-close-button" disabled={!closable} onClick={coreProps.onClose} />
+        <CloseButton className="ron-modal-close-button" boneOnly disabled={!closable} onClick={coreProps.onClose} />
       ) : null}
     </ModalCore>
   );

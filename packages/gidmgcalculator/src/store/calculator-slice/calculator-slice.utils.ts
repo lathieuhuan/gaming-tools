@@ -1,6 +1,6 @@
 import type { CalculatorState } from "./calculator-slice.types";
 import { $AppCharacter } from "@Src/services";
-// import { calculateSetup } from "@Src/calculation";
+import { calculateSetup } from "@Src/calculation";
 
 export const getCharDataFromState = (state: CalculatorState) => {
   const setup = state.setupsById[state.activeId];
@@ -13,13 +13,13 @@ export function calculate(state: CalculatorState, all?: boolean) {
     const allIds = all ? setupManageInfos.map(({ ID }) => ID) : [activeId];
 
     for (const id of allIds) {
-      //   const result = calculateSetup(setupsById[id], target);
-      //   state.resultById[id] = {
-      //     infusedElement: result.infusedElement,
-      //     totalAttrs: result.totalAttr,
-      //     rxnBonuses: result.rxnBonus,
-      //     finalResult: result.finalResult,
-      //   };
+      const result = calculateSetup(setupsById[id], target);
+      state.resultById[id] = {
+        infusedElement: result.infusedElement,
+        totalAttrs: result.totalAttr,
+        rxnBonuses: result.rxnBonus,
+        finalResult: result.finalResult,
+      };
     }
   } catch (err) {
     console.log(err);

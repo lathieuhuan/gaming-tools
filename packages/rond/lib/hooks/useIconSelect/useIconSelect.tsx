@@ -1,6 +1,6 @@
 import clsx, { type ClassValue } from "clsx";
 import { useState } from "react";
-import { Image } from "../../components/Image";
+import { Image, type ImageProps } from "../../components/Image";
 import "./IconSelect.styles.scss";
 
 type IconOption<T> = {
@@ -29,17 +29,17 @@ export function useIconSelect<T>(
   const [selectedIcons, setSelectedIcons] = useState<T[]>(
     initialValues ? (Array.isArray(initialValues) ? initialValues : [initialValues]) : []
   );
-  const { size = "medium", iconCls, selectedCls, multiple, required, onChange } = config || {};
+  const { size = "medium" } = config || {};
 
   const updateSelectedIcons = (newTypes: T[]) => {
-    if (!required || newTypes.length) {
+    if (!config?.required || newTypes.length) {
       setSelectedIcons(newTypes);
-      onChange?.(newTypes);
+      config?.onChange?.(newTypes);
     }
   };
 
   const onClickIcon = (value: T, currentSelected: boolean) => {
-    const newTypes = multiple
+    const newTypes = config?.multiple
       ? currentSelected
         ? selectedIcons.filter((type) => type !== value)
         : selectedIcons.concat(value)
@@ -48,7 +48,7 @@ export function useIconSelect<T>(
     updateSelectedIcons(newTypes);
   };
 
-  const renderIconSelect = (className?: ClassValue) => (
+  const renderIconSelect = (className?: ClassValue, imageProps?: Omit<ImageProps, "src">) => (
     <div className={clsx("ron-icon-select", className)}>
       {options.map((option, i) => {
         const index = selectedIcons.indexOf(option.value);
@@ -60,12 +60,12 @@ export function useIconSelect<T>(
             type="button"
             className={clsx(
               `ron-icon-select-option ron-icon-select-option-${size} ron-flex-center ron-glow-on-hover`,
-              iconCls,
-              selected && selectedCls
+              config?.iconCls,
+              selected && config?.selectedCls
             )}
             onClick={() => onClickIcon(option.value, selected)}
           >
-            {typeof option.icon === "string" ? <Image src={option.icon} /> : option.icon}
+            {typeof option.icon === "string" ? <Image src={option.icon} {...imageProps} /> : option.icon}
           </button>
         );
       })}

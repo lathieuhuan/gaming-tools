@@ -118,7 +118,7 @@ export const FinalResultView = ({
                     {focusedAspect ? (
                       <FinalResultCompare focusedAspect={focusedAspect} tableKey={key} />
                     ) : (
-                      <tbody>
+                      <>
                         <Table.Tr>
                           <Table.Th />
                           <Table.Th>Non-crit</Table.Th>
@@ -138,7 +138,7 @@ export const FinalResultView = ({
                             </Table.Tr>
                           );
                         })}
-                      </tbody>
+                      </>
                     )}
                   </Table>
                 </div>

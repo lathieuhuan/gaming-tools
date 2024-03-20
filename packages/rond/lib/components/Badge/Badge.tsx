@@ -7,7 +7,7 @@ export interface BadgeProps {
   style?: React.CSSProperties;
   children: React.ReactNode;
 }
-export function Badge({ active = true, className, children, ...rest }: BadgeProps) {
+export function Badge({ active, className, children, ...rest }: BadgeProps) {
   if (!active) return null;
 
   return (

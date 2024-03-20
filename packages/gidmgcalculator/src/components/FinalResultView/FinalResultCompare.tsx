@@ -21,7 +21,7 @@ export const FinalResultCompare = ({ focusedAspect, tableKey }: FinalResultCompa
   const otherSetupIds = comparedIds.filter((id) => id !== standardId);
 
   return (
-    <tbody>
+    <>
       <Table.Tr>
         <Table.Th />
         <Table.Th>{title}</Table.Th>
@@ -87,6 +87,6 @@ export const FinalResultCompare = ({ focusedAspect, tableKey }: FinalResultCompa
           </Table.Tr>
         );
       })}
-    </tbody>
+    </>
   );
 };

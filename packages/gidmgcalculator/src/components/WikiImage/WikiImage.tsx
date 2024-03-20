@@ -23,7 +23,7 @@ export function WikiImage({ src, imgType, ...rest }: WikiImageProps) {
     const Fallback = ICONS_BY_TYPE[imgType];
 
     config.showFallbackOnError = true;
-    config.fallback = <Fallback />;
+    config.fallback = <Fallback className="w-full h-full" />;
   }
 
   return <Image src={getImgSrc(src)} {...config} {...rest} />;
