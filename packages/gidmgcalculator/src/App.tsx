@@ -6,9 +6,9 @@ import {
   AppModals,
   // Message,
   NavBar,
-  // SetupImportCenter,
-  // SetupTransshipmentPort,
-  // Tracker,
+  SetupImportCenter,
+  SetupTransshipmentPort,
+  Tracker,
 } from "@Src/features";
 import Calculator from "@Src/screens/Calculator";
 import MyArtifacts from "@Src/screens/MyArtifacts";
@@ -54,10 +54,10 @@ function App() {
       </div>
 
       <AppModals />
-      {/* <Tracker />
-        <Message />
-        <SetupTransshipmentPort />
-        <SetupImportCenter /> */}
+      <Tracker />
+      {/* <Message /> */}
+      <SetupTransshipmentPort />
+      <SetupImportCenter />
     </div>
   );
 }

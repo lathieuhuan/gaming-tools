@@ -6,7 +6,7 @@ import { updateSetupImportInfo } from "@Store/ui-slice";
 import { decodeSetup } from "./setup-porter.utils";
 import { PorterLayout } from "./PorterLayout";
 
-const SetupImporterCore = (props: { onClose: () => void }) => {
+function SetupImporterCore(props: { onClose: () => void }) {
   const dispatch = useDispatch();
   const [code, setCode] = useState("");
   const [error, setError] = useState<"NOT_SUPPORT" | "UNKNOWN" | "">("");
@@ -60,6 +60,6 @@ const SetupImporterCore = (props: { onClose: () => void }) => {
       onClose={props.onClose}
     />
   );
-};
+}
 
 export const SetupImporter = Modal.coreWrap(SetupImporterCore, { preset: "small" });
