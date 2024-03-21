@@ -11,10 +11,10 @@ import {
   Tracker,
 } from "@Src/features";
 import Calculator from "@Src/screens/Calculator";
-import MyArtifacts from "@Src/screens/MyArtifacts";
 import MyCharacters from "@Src/screens/MyCharacters";
-import MySetups from "@Src/screens/MySetups";
 import MyWeapons from "@Src/screens/MyWeapons";
+import MyArtifacts from "@Src/screens/MyArtifacts";
+import MySetups from "@Src/screens/MySetups";
 
 function App() {
   const atScreen = useSelector((state) => state.ui.atScreen);

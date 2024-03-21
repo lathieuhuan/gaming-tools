@@ -54,6 +54,7 @@ export function EntitySelectTemplate({
   const [searchOn, setSearchOn] = useState(false);
   const [isMultiSelect, setIsMultiSelect] = useState(false);
   const [keyword, setKeyword] = useState("");
+  const [debouncedKeyword, setDebouncedKeyword] = useState("");
 
   useEffect(() => {
     const focus = (e: KeyboardEvent) => {
@@ -67,6 +68,14 @@ export function EntitySelectTemplate({
       document.body.removeEventListener("keydown", focus);
     };
   }, []);
+
+  useLayoutEffect(() => {
+    clearTimeout(timeoutId.current);
+
+    timeoutId.current = setTimeout(() => {
+      setDebouncedKeyword(keyword);
+    }, 100);
+  }, [keyword]);
 
   useLayoutEffect(() => {
     if (searchOn) inputRef.current?.focus();
@@ -84,13 +93,7 @@ export function EntitySelectTemplate({
       placeholder="Search..."
       disabled={filterOn}
       value={keyword}
-      onChange={(value) => {
-        clearTimeout(timeoutId.current);
-
-        timeoutId.current = setTimeout(() => {
-          setKeyword(value);
-        }, 100);
-      }}
+      onChange={setKeyword}
     />
   );
 
@@ -109,7 +112,10 @@ export function EntitySelectTemplate({
             onClick={() => {
               const newSearchOn = !searchOn;
               setSearchOn(newSearchOn);
-              if (!newSearchOn) setKeyword("");
+
+              if (!newSearchOn) {
+                setKeyword("");
+              }
             }}
           />
 
@@ -165,7 +171,7 @@ export function EntitySelectTemplate({
         {children({
           isMultiSelect,
           searchOn,
-          keyword,
+          keyword: debouncedKeyword,
           inputRef,
         })}
 
