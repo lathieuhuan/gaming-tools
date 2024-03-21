@@ -11,7 +11,6 @@ export * from "./AttributeTable";
 export * from "./CharacterPortrait";
 export * from "./ComplexSelect";
 export * from "./ElementIcon";
-export * from "./EntitySelectTemplate";
 export * from "./FilterTemplate";
 export * from "./FinalResultView";
 export * from "./GiModifierView";

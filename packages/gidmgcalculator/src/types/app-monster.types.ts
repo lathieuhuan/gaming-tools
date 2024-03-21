@@ -13,7 +13,7 @@ type MonsterInputChanges = Partial<Record<"base" | "variant" | AttackElement, nu
 
 type MonsterInputConfig = {
   label: string;
-  type?: "check" | "select";
+  type?: "CHECK" | "SELECT";
   changes?: MonsterInputChanges;
   options?:
     | ElementType[]

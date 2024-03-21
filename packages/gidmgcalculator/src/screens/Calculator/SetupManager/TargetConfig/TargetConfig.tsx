@@ -95,10 +95,10 @@ export function TargetConfig() {
 
           {inputConfigs.map((config, index) => {
             let inputElement;
-            const { type: configType = "check" } = config;
+            const { type: configType = "CHECK" } = config;
 
             switch (configType) {
-              case "check": {
+              case "CHECK": {
                 const checked = target.inputs?.[index] === 1;
 
                 inputElement = (
@@ -110,7 +110,7 @@ export function TargetConfig() {
                 );
                 break;
               }
-              case "select":
+              case "SELECT":
                 inputElement = (
                   <select
                     className="styled-select capitalize"

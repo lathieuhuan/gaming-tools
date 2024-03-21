@@ -167,18 +167,18 @@ const cleanModifiers = (mods: OldModifierCtrl[], refs: CleanModifiersRef[]): Mod
       const input = mod.inputs?.[configIndex];
       const { type, max, options } = config;
 
-      if (typeof input === "boolean" && type === "check") {
+      if (typeof input === "boolean" && type === "CHECK") {
         return inputs.push(input ? 1 : 0);
       }
-      if (typeof input === "number" && ["text", "stacks", "select"].includes(type)) {
+      if (typeof input === "number" && ["TEXT", "STACKS", "SELECT"].includes(type)) {
         return inputs.push(max ? Math.min(input, max) : input);
       }
       if (typeof input === "string") {
         let inputIndex = -1;
 
-        if (type === "select" && options) {
+        if (type === "SELECT" && options) {
           inputIndex = options.indexOf(input);
-        } else if (type === "anemoable" || type === "dendroable") {
+        } else if (type === "ANEMOABLE" || type === "DENDROABLE") {
           inputIndex = ELEMENT_TYPES.indexOf(input.toLowerCase() as ElementType);
         }
 

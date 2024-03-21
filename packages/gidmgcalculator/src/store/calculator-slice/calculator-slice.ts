@@ -34,16 +34,7 @@ import type {
 import { ATTACK_ELEMENTS, RESONANCE_ELEMENT_TYPES } from "@Src/constants";
 import { $AppData, $AppCharacter, $AppSettings } from "@Src/services";
 
-import {
-  deepCopy,
-  findById,
-  toArray,
-  findByIndex,
-  Setup_,
-  Calculation_,
-  Modifier_,
-  Weapon_,
-} from "@Src/utils";
+import { deepCopy, findById, toArray, findByIndex, Setup_, Calculation_, Modifier_, Weapon_ } from "@Src/utils";
 import { calculate, getCharDataFromState } from "./calculator-slice.utils";
 
 // const defaultChar = {
@@ -539,15 +530,15 @@ export const calculatorSlice = createSlice({
         inputs.forEach((input, index) => {
           const config = inputConfigs[index];
           if (!config) return;
-          const { type = "check" } = config;
+          const { type = "CHECK" } = config;
 
           switch (type) {
-            case "check":
+            case "CHECK":
               if (input && config.changes) {
                 Object.entries(config.changes).forEach(updateResistances);
               }
               break;
-            case "select":
+            case "SELECT":
               if (input !== -1 && config.options) {
                 const option = config.options[input];
 

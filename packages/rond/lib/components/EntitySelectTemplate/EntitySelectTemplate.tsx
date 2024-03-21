@@ -2,12 +2,12 @@ import clsx from "clsx";
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 
 import { useScreenWatcher } from "../../providers";
+import { Drawer, DrawerProps } from "../Drawer";
 import { Input } from "../Input";
 import { Button, CloseButton } from "../Button";
-import { Checkbox } from "../Checkbox";
-import { Popover } from "../Popover";
 import { Modal } from "../Modal";
-import { Drawer, type DrawerProps } from "../Drawer";
+import { Popover } from "../Popover";
+import { Checkbox } from "../Checkbox";
 import { FilterSvg, SearchSvg } from "../svg-icons";
 
 export type EntitySelectRenderArgs = {
@@ -127,7 +127,7 @@ export const EntitySelectTemplate = ({
 
   return (
     <div className="h-full flex flex-col rounded-lg shadow-white-glow">
-      <CloseButton onClick={onClose} />
+      <CloseButton className="ron-modal-close-button" boneOnly onClick={onClose} />
 
       <Modal.Header withDivider>
         <div className="flex items-center justify-between relative">
@@ -158,8 +158,9 @@ export const EntitySelectTemplate = ({
                   (hasSearch || hasFilter) && "ml-2 border-l border-dark-300"
                 )}
               >
-                <Checkbox className="mr-2" onChange={setIsMultiSelect} />
-                <span className="text-base text-light-400">Multiple</span>
+                <Checkbox className="mr-2 text-light-400" onChange={setIsMultiSelect}>
+                  Multiple
+                </Checkbox>
               </label>
             ) : null}
           </div>

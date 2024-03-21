@@ -33,7 +33,7 @@ export const ComboBox = ({ className, targetCode, targetTitle, onSelectMonster }
     if (monster.code !== targetCode) {
       let newVariantType;
       let newInputs = monster.inputConfigs
-        ? toArray(monster.inputConfigs).map((config) => (config.type === "select" ? -1 : 0))
+        ? toArray(monster.inputConfigs).map((config) => (config.type === "SELECT" ? -1 : 0))
         : [];
 
       if (monster.variant) {

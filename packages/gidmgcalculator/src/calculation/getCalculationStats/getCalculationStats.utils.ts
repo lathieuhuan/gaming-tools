@@ -185,7 +185,7 @@ type Stack = {
 };
 export const isFinalBonus = (bonusStacks?: Stack | Stack[]) => {
   if (bonusStacks) {
-    const isFinal = (stack: Stack) => stack.type === "attribute" && stack.field !== "base_atk";
+    const isFinal = (stack: Stack) => stack.type === "ATTRIBUTE" && stack.field !== "base_atk";
     return Array.isArray(bonusStacks) ? bonusStacks.some(isFinal) : isFinal(bonusStacks);
   }
   return false;

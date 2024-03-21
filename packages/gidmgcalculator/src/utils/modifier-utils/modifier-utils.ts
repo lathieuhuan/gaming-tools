@@ -10,13 +10,13 @@ import type {
 } from "@Src/types";
 
 const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
-  check: 0,
-  level: 1,
-  text: 0,
-  select: 1,
-  stacks: 1,
-  anemoable: 0,
-  dendroable: 0,
+  CHECK: 0,
+  LEVEL: 1,
+  TEXT: 0,
+  SELECT: 1,
+  STACKS: 1,
+  ANEMOABLE: 0,
+  DENDROABLE: 0,
 };
 
 type Modifier = {
@@ -30,7 +30,7 @@ function createModCrtl(mod: Modifier, forSelf: boolean) {
     const initialValues = [];
 
     for (const config of mod.inputConfigs) {
-      if (config.for !== (forSelf ? "team" : "self")) {
+      if (config.for !== (forSelf ? "FOR_TEAM" : "FOR_SELF")) {
         initialValues.push(config.initialValue ?? Modifier_.getDefaultInitialValue(config.type));
       }
     }

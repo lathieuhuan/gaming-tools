@@ -23,11 +23,11 @@ const isUsableBonus = (
 
 const getStackValue = (stack: NonNullable<ArtifactBonus["stacks"]>, info: BuffInfoWrap, inputs: number[]) => {
   switch (stack.type) {
-    case "input":
+    case "INPUT":
       return inputs[stack.index ?? 0];
-    case "attribute":
+    case "ATTRIBUTE":
       return info.totalAttr[stack.field];
-    case "vision": {
+    case "ELEMENT": {
       const { [info.appChar.vision]: sameCount = 0, ...others } = Calculation_.countElements(info.partyData);
 
       switch (stack.element) {
@@ -47,7 +47,7 @@ const getBonusValue = (bonus: Omit<ArtifactBonus, "targets">, info: BuffInfoWrap
     bonusValue += bonus.value;
 
     if (bonus.stacks) {
-      if (bonus.stacks.type === "vision" && !info.partyData.length) {
+      if (bonus.stacks.type === "ELEMENT" && !info.partyData.length) {
         return 0;
       }
       bonusValue *= getStackValue(bonus.stacks, info, inputs);

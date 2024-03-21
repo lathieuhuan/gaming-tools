@@ -29,18 +29,18 @@ type SetBonus = {
 };
 
 type InputStack = {
-  type: "input";
+  type: "INPUT";
   /** If number, default to 0 */
   index?: number;
 };
 
 type AttributeStack = {
-  type: "attribute";
+  type: "ATTRIBUTE";
   field: "base_atk" | "hp" | "atk" | "def" | "em" | "er_";
 };
 
-type VisionStack = {
-  type: "vision";
+type ElementStack = {
+  type: "ELEMENT";
   element: "same_excluded" | "different";
 };
 
@@ -55,7 +55,7 @@ export type ArtifactBonus = {
   /** For this buff to available, the input at index 0 must equal to checkInput */
   checkInput?: number;
   value: number | ArtifactEffectValueOption;
-  stacks?: InputStack | AttributeStack | VisionStack;
+  stacks?: InputStack | AttributeStack | ElementStack;
   /** Apply after stacks */
   sufExtra?: number | Omit<ArtifactBonus, "targets">;
   targets: {

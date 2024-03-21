@@ -62,12 +62,12 @@ export type TotalAttributeStat = BaseStat | AttributeStat;
 
 export type ModifierAffectType = "SELF" | "TEAMMATE" | "SELF_TEAMMATE" | "PARTY" | "ONE_UNIT" | "ACTIVE_UNIT";
 
-export type ModInputType = "level" | "text" | "check" | "stacks" | "select" | "anemoable" | "dendroable";
+export type ModInputType = "LEVEL" | "TEXT" | "CHECK" | "STACKS" | "SELECT" | "ANEMOABLE" | "DENDROABLE";
 
 export type ModInputConfig = {
   label?: string;
   type: ModInputType;
-  for?: "self" | "team";
+  for?: "FOR_SELF" | "FOR_TEAM";
   /** See ModifierControl model for default value */
   initialValue?: number;
   max?: number;

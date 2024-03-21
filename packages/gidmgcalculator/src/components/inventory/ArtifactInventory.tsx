@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Modal, useElementSize } from "rond";
+import { useElementSize, Modal, EntitySelectTemplate, type EntitySelectTemplateProps } from "rond";
 
 import type { ArtifactType, CalcArtifact, UserArtifact } from "@Src/types";
 import { ARTIFACT_TYPES } from "@Src/constants";
@@ -10,7 +10,6 @@ import { selectUserArtifacts } from "@Store/userdb-slice";
 import { ArtifactCard } from "../ArtifactCard";
 import { OwnerLabel } from "../OwnerLabel";
 import { ArtifactFilter, ArtifactFilterProps, ArtifactFilterState } from "../ArtifactFilter";
-import { EntitySelectTemplate, EntitySelectTemplateProps } from "../EntitySelectTemplate";
 import { InventoryRack } from "./InventoryRack";
 
 export interface ArtifactInventoryProps

@@ -53,7 +53,7 @@ export const ArtifactConfig = ({
         </div>
       ) : null}
 
-      <div className="grow hide-scrollbar" style={{ width: "19.5rem" }}>
+      <div className="grow hide-scrollbar" style={{ width: "19rem" }}>
         {batchConfigNode ?? (
           <ArtifactCard
             wrapperCls="h-full"

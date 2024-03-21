@@ -136,8 +136,8 @@ export default function ElementBuffs() {
               inputConfigs={
                 resonance.vision === "dendro"
                   ? [
-                      { label: "Trigger Aggravate, Spread, Hyperbloom, Burgeon", type: "check" },
-                      { label: "Trigger Burning, Quicken, Bloom", type: "check" },
+                      { label: "Trigger Aggravate, Spread, Hyperbloom, Burgeon", type: "CHECK" },
+                      { label: "Trigger Burning, Quicken, Bloom", type: "CHECK" },
                     ]
                   : undefined
               }

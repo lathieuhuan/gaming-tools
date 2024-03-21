@@ -27,7 +27,7 @@ type InputIndex = {
 };
 
 type InputStack = {
-  type: "input";
+  type: "INPUT";
   /** Default to 0 */
   index?: number | InputIndex[];
   /**
@@ -38,28 +38,28 @@ type InputStack = {
 };
 
 type AttributeStack = {
-  type: "attribute";
+  type: "ATTRIBUTE";
   field: "hp" | "base_atk" | "def" | "em" | "er_";
   baseline?: number;
 };
 
-type VisionStack = {
-  type: "vision";
+type ElementStack = {
+  type: "ELEMENT";
   element: "same_included" | "same_excluded" | "different";
   max?: number;
 };
 
 /** Only on Watatsumi series */
 type EnergyStack = {
-  type: "energy";
+  type: "ENERGY";
 };
 
 /** Only on Lythic series */
 type NationStack = {
-  type: "nation";
+  type: "NATION";
 };
 
-export type WeaponBonusStack = VisionStack | AttributeStack | InputStack | EnergyStack | NationStack;
+export type WeaponBonusStack = ElementStack | AttributeStack | InputStack | EnergyStack | NationStack;
 
 type WeaponEffectValueOption = {
   options: number[];

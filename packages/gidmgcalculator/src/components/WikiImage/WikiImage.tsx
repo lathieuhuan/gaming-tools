@@ -11,7 +11,7 @@ const ICONS_BY_TYPE: Record<string, IconType> = {
 };
 
 type FallbackProps = IconBaseProps & {
-  wrapperCls: string;
+  wrapperCls?: string;
 };
 
 interface DefaultImageFallbackProps extends FallbackProps {

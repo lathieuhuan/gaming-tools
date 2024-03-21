@@ -58,7 +58,7 @@ const getStackValue = (
   let result = 1;
 
   switch (stack.type) {
-    case "input": {
+    case "INPUT": {
       const { index = 0, alterIndex } = stack;
       const finalIndex = alterIndex !== undefined && !fromSelf ? alterIndex : index;
       let input = inputs[finalIndex] ?? 0;
@@ -72,12 +72,12 @@ const getStackValue = (
       result = input;
       break;
     }
-    case "attribute": {
+    case "ATTRIBUTE": {
       const { field, alterIndex = 0 } = stack;
       result = fromSelf ? info.totalAttr[field] : inputs[alterIndex] ?? 1;
       break;
     }
-    case "nation": {
+    case "NATION": {
       let count = info.partyData.reduce((total, teammate) => {
         return total + (teammate?.nation === info.appChar.nation ? 1 : 0);
       }, 0);
@@ -87,11 +87,11 @@ const getStackValue = (
       result = count;
       break;
     }
-    case "energy": {
+    case "ENERGY": {
       result = info.appChar.EBcost;
       break;
     }
-    case "resolve": {
+    case "RESOLVE": {
       let [totalEnergy = 0, electroEnergy = 0] = inputs;
       if (info.char.cons >= 1 && electroEnergy <= totalEnergy) {
         totalEnergy += electroEnergy * 0.8 + (totalEnergy - electroEnergy) * 0.2;
@@ -143,8 +143,8 @@ export const getIntialBonusValue = (
   }
 
   switch (indexSrc.type) {
-    case "vision": {
-      const { visionType: elementType } = indexSrc;
+    case "ELEMENT": {
+      const { elementType: elementType } = indexSrc;
       const elementCount = info.partyData.length ? Calculation_.countElements(info.partyData, info.appChar) : {};
       const input =
         elementType === "various"
@@ -156,10 +156,10 @@ export const getIntialBonusValue = (
       index += input;
       break;
     }
-    case "input":
+    case "INPUT":
       index += inputs[indexSrc.index ?? 0];
       break;
-    case "level":
+    case "LEVEL":
       index += Character_.getFinalTalentLv({
         talentType: indexSrc.talent,
         char: info.char,

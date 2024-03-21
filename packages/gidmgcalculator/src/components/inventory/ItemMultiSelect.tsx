@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaCheck } from "react-icons/fa";
-import { Button, Modal } from "rond";
+import { Button, Modal, EntitySelectTemplate } from "rond";
 
 import type { UserArtifact, UserWeapon } from "@Src/types";
 import { Item_ } from "@Src/utils";
@@ -8,7 +8,6 @@ import { Item_ } from "@Src/utils";
 // Component
 import { ArtifactCard } from "../ArtifactCard";
 import { WeaponCard } from "../WeaponCard";
-import { EntitySelectTemplate } from "../EntitySelectTemplate";
 import { InventoryRack } from "./InventoryRack";
 
 interface ItemMultiSelectProps {

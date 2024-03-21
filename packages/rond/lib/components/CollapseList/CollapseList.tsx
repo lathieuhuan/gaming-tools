@@ -4,18 +4,19 @@ import { CollapseSpace } from "../CollapseSpace";
 import "./CollapseList.styles.scss";
 
 interface CollapseListProps {
+  className?: ClassValue;
   bodyCls?: ClassValue;
   items: Array<{
     heading: React.ReactNode | ((expanded?: boolean) => React.ReactNode);
     body: React.ReactNode;
   }>;
 }
-export const CollapseList = ({ bodyCls, items }: CollapseListProps) => {
+export const CollapseList = (props: CollapseListProps) => {
   const [expanded, setExpanded] = useState<(boolean | undefined)[]>([]);
 
   return (
-    <div className="ron-collapse-list">
-      {items.map(({ heading, body }, i) => (
+    <div className={clsx("ron-collapse-list", props.className)}>
+      {props.items.map(({ heading, body }, i) => (
         <div key={i} className="ron-collapse-item">
           <div
             className={clsx(
@@ -33,7 +34,7 @@ export const CollapseList = ({ bodyCls, items }: CollapseListProps) => {
             {typeof heading === "function" ? heading(expanded[i]) : heading}
           </div>
           <CollapseSpace active={!!expanded[i]}>
-            <div className={clsx("ron-collapse-item-body", bodyCls)}>{body}</div>
+            <div className={clsx("ron-collapse-item-body", props.bodyCls)}>{body}</div>
           </CollapseSpace>
         </div>
       ))}

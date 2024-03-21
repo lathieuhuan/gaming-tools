@@ -1,13 +1,12 @@
 import { useState } from "react";
 import type { UserWeapon, WeaponType } from "@Src/types";
-import { Modal } from "rond";
+import { Modal, EntitySelectTemplate } from "rond";
 
 import { selectUserWeapons } from "@Store/userdb-slice";
 import { useStoreSnapshot } from "@Src/features";
 
 // Component
 import { WeaponCard } from "../WeaponCard";
-import { EntitySelectTemplate } from "../EntitySelectTemplate";
 import { InventoryRack } from "./InventoryRack";
 
 interface WeaponInventoryProps {

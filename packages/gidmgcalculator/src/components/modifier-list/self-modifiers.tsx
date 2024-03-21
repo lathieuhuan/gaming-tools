@@ -35,7 +35,7 @@ function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Modifier[]) {
           description={parseAbilityDescription(modifier, props, inputs, true)}
           checked={ctrl.activated}
           inputs={inputs}
-          inputConfigs={modifier.inputConfigs?.filter((config) => config.for !== "team")}
+          inputConfigs={modifier.inputConfigs?.filter((config) => config.for !== "FOR_TEAM")}
           {...props.getHanlders?.({ ctrl, ctrlIndex, ctrls })}
         />
       );

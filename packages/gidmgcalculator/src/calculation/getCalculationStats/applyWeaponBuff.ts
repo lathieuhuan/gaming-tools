@@ -37,7 +37,7 @@ const isUsableBonus = (bonus: Pick<WeaponBonus, "checkInput">, info: BuffInfoWra
 
 const getStackValue = (stack: WeaponBonusStack, { appChar, partyData, totalAttr }: BuffInfoWrap, inputs: number[]) => {
   switch (stack.type) {
-    case "input": {
+    case "INPUT": {
       const { index = 0, doubledAt } = stack;
 
       if (typeof index === "number") {
@@ -50,7 +50,7 @@ const getStackValue = (stack: WeaponBonusStack, { appChar, partyData, totalAttr 
       }
       return index.reduce((total, { value, ratio = 1 }) => total + (inputs[value] ?? 0) * ratio, 0);
     }
-    case "attribute": {
+    case "ATTRIBUTE": {
       const stackValue = totalAttr[stack.field];
 
       if (stack.baseline) {
@@ -59,7 +59,7 @@ const getStackValue = (stack: WeaponBonusStack, { appChar, partyData, totalAttr 
       }
       return stackValue;
     }
-    case "vision": {
+    case "ELEMENT": {
       const { element, max } = stack;
       const { [appChar.vision]: sameCount = 0, ...others } = Calculation_.countElements(partyData);
       let stackValue = 0;
@@ -72,10 +72,10 @@ const getStackValue = (stack: WeaponBonusStack, { appChar, partyData, totalAttr 
 
       return max ? Math.min(stackValue, max) : stackValue;
     }
-    case "energy": {
+    case "ENERGY": {
       return partyData.reduce((result, data) => result + (data?.EBcost ?? 0), appChar.EBcost);
     }
-    case "nation": {
+    case "NATION": {
       return partyData.reduce(
         (result, data) => result + (data?.nation === "liyue" ? 1 : 0),
         appChar.nation === "liyue" ? 1 : 0
@@ -103,7 +103,7 @@ const getBonusValue = (
     }
     if (bonus.stacks) {
       for (const stack of toArray(bonus.stacks)) {
-        if (!info.partyData.length && ["vision", "energy", "nation"].includes(stack.type)) {
+        if (!info.partyData.length && ["VISION", "ENERGY", "NATION"].includes(stack.type)) {
           return 0;
         }
         bonusValue *= getStackValue(stack, info, inputs);

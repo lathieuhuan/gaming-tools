@@ -17,13 +17,13 @@ export function GiModifierView({ inputConfigs, ...viewProps }: GiModifierViewPro
     const label = config.label || "[missing label]";
 
     switch (config.type) {
-      case "text":
+      case "TEXT":
         return { type: "text", label, max: config.max };
-      case "level":
+      case "LEVEL":
         return { type: "text", label, max: 13 };
-      case "check":
+      case "CHECK":
         return { type: "check", label };
-      case "select": {
+      case "SELECT": {
         const options = config.options
           ? config.options.map((option, optionIndex) => ({
               label: option,
@@ -32,13 +32,13 @@ export function GiModifierView({ inputConfigs, ...viewProps }: GiModifierViewPro
           : genNumberSequenceOptions(config.max, config.initialValue === 0);
         return { type: "select", label, options };
       }
-      case "stacks":
+      case "STACKS":
         return {
           type: "select",
           label: "Stacks",
           options: genNumberSequenceOptions(config.max, config.initialValue === 0),
         };
-      case "anemoable":
+      case "ANEMOABLE":
         return {
           type: "select",
           label,
@@ -49,7 +49,7 @@ export function GiModifierView({ inputConfigs, ...viewProps }: GiModifierViewPro
             { label: "Cryo", value: 3 },
           ],
         };
-      case "dendroable":
+      case "DENDROABLE":
         return {
           type: "select",
           label,

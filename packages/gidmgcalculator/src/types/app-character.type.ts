@@ -173,7 +173,7 @@ export type DynamicMax_Character = {
 };
 
 type InputStack = {
-  type: "input";
+  type: "INPUT";
   /** Default to 0 */
   index?: number;
   /** When this bonus is from teammate, this is input's index to get stacks. */
@@ -188,7 +188,7 @@ type InputStack = {
 };
 
 type AttributeStack = {
-  type: "attribute";
+  type: "ATTRIBUTE";
   field: "base_atk" | "hp" | "atk" | "def" | "em" | "er_" | "healB_";
   /** When this bonus is from teammate, this is input's index to get value. Default to 0 */
   alterIndex?: number;
@@ -196,18 +196,18 @@ type AttributeStack = {
 
 type NationStack = {
   /** On Charlotte */
-  type: "nation";
+  type: "NATION";
   nation: "same" | "different";
 };
 
 type EnergyStack = {
   /** On Raiden Shogun */
-  type: "energy";
+  type: "ENERGY";
 };
 
 type ResolveStack = {
   /** On Raiden Shogun */
-  type: "resolve";
+  type: "RESOLVE";
 };
 
 export type BonusStack_Character = (InputStack | AttributeStack | NationStack | EnergyStack | ResolveStack) & {
@@ -227,17 +227,17 @@ export type ValueOption_Character = {
   options: number[];
   indexSrc:
     | {
-        type: "vision";
-        visionType: "various" | ElementType | ElementType[];
+        type: "ELEMENT";
+        elementType: "various" | ElementType | ElementType[];
       }
     | {
         /** On Neuvillette */
-        type: "input";
+        type: "INPUT";
         index?: number;
       }
     | {
         /** On Razor */
-        type: "level";
+        type: "LEVEL";
         talent: Talent;
       };
   /** Add to indexSrc. On Nahida */

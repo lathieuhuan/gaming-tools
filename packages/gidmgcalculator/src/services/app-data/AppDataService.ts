@@ -153,12 +153,12 @@ export class AppDataService extends BaseService {
         const { label, type = "check", options = [] } = inputConfigs[index] || {};
 
         switch (type) {
-          case "check":
+          case "CHECK":
             if (input) {
               statuses.push(label);
             }
             break;
-          case "select":
+          case "SELECT": {
             const option = options[input];
             const selectedLabel = typeof option === "string" ? option : option?.label;
 
@@ -166,6 +166,7 @@ export class AppDataService extends BaseService {
               statuses.push(`${label}: ${selectedLabel}`);
             }
             break;
+          }
         }
       });
     }

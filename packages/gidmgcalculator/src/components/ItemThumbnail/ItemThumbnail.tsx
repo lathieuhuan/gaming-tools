@@ -51,7 +51,12 @@ export const ItemThumbnail = ({ className, imgCls, item }: ItemThumbProps) => {
       ) : null}
 
       <div className={`aspect-square bg-gradient-${item.rarity || 5} ` + "rounded rounded-br-2xl overflow-hidden"}>
-        <WikiImage className={imgCls} src={item.icon} imgType={item.refi ? "weapon" : "artifact"} />
+        <WikiImage
+          className={imgCls}
+          src={item.icon}
+          defaultFallback={{ wrapperCls: "p-3" }}
+          imgType={item.refi ? "weapon" : "artifact"}
+        />
       </div>
 
       <div className="flex-center bg-light-400 rounded-b">
