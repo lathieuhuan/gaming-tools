@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 
 import { useScreenWatcher } from "../../providers";
@@ -9,6 +8,8 @@ import { Modal } from "../Modal";
 import { Popover } from "../Popover";
 import { Checkbox } from "../Checkbox";
 import { FilterSvg, SearchSvg } from "../svg-icons";
+
+import "./EntitySelectTemplate.styles.scss";
 
 export type EntitySelectRenderArgs = {
   isMultiSelect: boolean;
@@ -32,7 +33,7 @@ export interface EntitySelectTemplateProps {
   renderFilter?: (setFilterOn: (on: boolean) => void) => React.ReactNode;
   onClose: () => void;
 }
-export const EntitySelectTemplate = ({
+export function EntitySelectTemplate({
   title,
   hasMultipleMode,
   hasSearch,
@@ -44,7 +45,7 @@ export const EntitySelectTemplate = ({
   children,
   renderFilter,
   onClose,
-}: EntitySelectTemplateProps) => {
+}: EntitySelectTemplateProps) {
   const screenWatcher = useScreenWatcher();
   const inputRef = useRef<HTMLInputElement>(null);
   const timeoutId = useRef<NodeJS.Timeout>();
@@ -79,7 +80,7 @@ export const EntitySelectTemplate = ({
   const searchInput = (
     <Input
       ref={inputRef}
-      className="w-28 px-2 py-1 text-base leading-5 font-semibold shadow-common"
+      className="ron-entity-select__search ron-common-shadow"
       placeholder="Search..."
       disabled={filterOn}
       value={keyword}
@@ -126,17 +127,17 @@ export const EntitySelectTemplate = ({
   }
 
   return (
-    <div className="h-full flex flex-col rounded-lg shadow-white-glow">
+    <div className="ron-entity-select-template">
       <CloseButton className="ron-modal-close-button" boneOnly onClick={onClose} />
 
       <Modal.Header withDivider>
-        <div className="flex items-center justify-between relative">
+        <div className="ron-entity-select__header">
           <div>{title}</div>
 
-          <div className="mr-6 pr-4 flex items-center">
+          <div className="ron-entity-select__toolbar">
             {extra}
 
-            <div className="flex items-center gap-3">
+            <div className="ron-entity-select__search-filter">
               {searchTool}
 
               {hasFilter ? (
@@ -152,22 +153,15 @@ export const EntitySelectTemplate = ({
             </div>
 
             {hasMultipleMode ? (
-              <label
-                className={clsx(
-                  "pl-2 h-6 flex items-center",
-                  (hasSearch || hasFilter) && "ml-2 border-l border-dark-300"
-                )}
-              >
-                <Checkbox className="mr-2 text-light-400" onChange={setIsMultiSelect}>
-                  Multiple
-                </Checkbox>
-              </label>
+              <span className="ron-entity-select__multi-toggle">
+                <Checkbox onChange={setIsMultiSelect}>Multiple</Checkbox>
+              </span>
             ) : null}
           </div>
         </div>
       </Modal.Header>
 
-      <div className="p-3 pb-4 sm:p-4 grow overflow-hidden relative">
+      <div className="ron-entity-select__body">
         {children({
           isMultiSelect,
           searchOn,
@@ -190,4 +184,4 @@ export const EntitySelectTemplate = ({
       </div>
     </div>
   );
-};
+}

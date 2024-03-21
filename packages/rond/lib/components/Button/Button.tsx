@@ -38,7 +38,7 @@ export function Button({
 }: ButtonProps) {
   const classes = [
     `ron-flex-center ron-button ron-button-${shape}`,
-    withShadow && "ron-button-shadow",
+    withShadow && "ron-common-shadow",
     variant !== "custom" && (boneOnly ? `ron-bone-button-${variant}` : `ron-button-${variant}`),
     rest.disabled ? "ron-disabled" : "ron-glow-on-hover",
     className,

@@ -31,7 +31,6 @@
   max-width: 95%;
   transform: translate(-50%, -50%) scaleX(var(--ron-scale-x)) scaleY(var(--ron-scale-y));
   overflow: hidden;
-  --ron-color-modal-divider: #535582;
 
   &.ron-modal-content-standard {
     display: flex;
@@ -108,7 +107,7 @@
     padding-bottom: 0.5rem;
   }
   .ron-modal-header-with-divider {
-    border-bottom: 1px solid var(--ron-color-modal-divider);
+    border-bottom: 1px solid #535582;
   }
 }
 
@@ -125,6 +124,6 @@
   padding-top: 1rem;
 
   &.ron-modal-actions-with-divider {
-    border-top: 1px solid var(--ron-color-modal-divider);
+    border-top: 1px solid #535582;
   }
 }
