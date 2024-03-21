@@ -46,6 +46,7 @@ export default function ElementBuffs() {
     return (
       <VapMeltBuffItem
         key={reaction}
+        mutable
         checked={activated}
         {...{ reaction, element, rxnBonus }}
         onToggle={() => {
@@ -72,6 +73,7 @@ export default function ElementBuffs() {
     return (
       <QuickenBuffItem
         key={reaction}
+        mutable
         checked={activated}
         {...{ reaction, element, characterLv: char.level, rxnBonus }}
         onToggle={() => {
@@ -122,6 +124,7 @@ export default function ElementBuffs() {
           return (
             <ResonanceBuffItem
               key={resonance.vision}
+              mutable
               element={resonance.vision}
               checked={resonance.activated}
               onToggle={() => {
@@ -163,6 +166,7 @@ export default function ElementBuffs() {
         <GiModifierView
           heading="Anemo Absorption"
           description="Enable Anemo absorption on attacks that can absorb one of below elements."
+          mutable
           checked={isAbsorbing}
           onToggle={() => {
             dispatch(
@@ -232,6 +236,7 @@ export default function ElementBuffs() {
               <span className="text-light-800">(Catalyst's attacks, Bow's fully-charge aim shot)</span>.
             </>
           }
+          mutable
           checked={isInfused}
           onToggle={() => {
             dispatch(

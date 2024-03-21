@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaSortAmountUpAlt, FaTh, FaArrowAltCircleUp } from "react-icons/fa";
+import { FaSortAmountUpAlt, FaTh, FaArrowAltCircleUp, FaPlus } from "react-icons/fa";
 import { clsx, useIntersectionObserver, Button } from "rond";
 
 import { $AppCharacter } from "@Src/services";
@@ -58,7 +58,7 @@ export default function CharacterList({ characters, chosenChar, onCliceSort, onC
           </div>
         ) : null}
 
-        <div ref={observedAreaRef} className="mt-2 w-full hide-scrollbar">
+        <div ref={observedAreaRef} className="mt-2 w-full h-20 hide-scrollbar">
           <div className="flex">
             {characters.map(({ name }) => {
               const appChar = $AppCharacter.get(name);
@@ -100,26 +100,17 @@ export default function CharacterList({ characters, chosenChar, onCliceSort, onC
                 </div>
               );
             })}
-            {!characters.length ? (
-              <div className="w-full h-20 flex justify-end items-center">
-                <p className="text-2.5xl font-bold text-yellow-400 flex">
-                  <span className="mr-2">Add new characters</span> <FaArrowAltCircleUp className="rotate-90" />
-                </p>
-              </div>
-            ) : null}
           </div>
         </div>
 
-        <button
-          className="absolute top-4 left-full ml-6 rounded-circle hover:shadow-3px-3px hover:shadow-light-100"
-          style={{
-            width: 60,
-            height: 60,
-          }}
+        <Button
+          variant="custom"
+          size="custom"
+          className="absolute top-4 left-full ml-6 bg-dark-500 text-2xl"
+          style={{ width: 60, height: 60 }}
+          icon={<FaPlus />}
           onClick={onClickWish}
-        >
-          <GenshinImage src={"4/48/System_Wish"} alt="wish" />
-        </button>
+        />
       </div>
 
       <Tavern

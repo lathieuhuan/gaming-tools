@@ -28,8 +28,9 @@ export const ItemThumbnail = ({ className, imgCls, item }: ItemThumbProps) => {
         )}
       >
         <GenshinImage
-          className={clsx("max-w-none w-10 h-10 -translate-x-2 -translate-y-4", !sideIcon && "-translate-y-2")}
+          imgCls={clsx("max-w-none w-10 h-10 -translate-x-2 -translate-y-4", !sideIcon && "-translate-y-2")}
           src={sideIcon || icon}
+          defaultFallback={{ className: "p-1" }}
         />
       </div>
     );

@@ -72,7 +72,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
                   )
                 }
               >
-                {Object.keys(availableMainStatTypes).map((type) => (
+                {availableMainStatTypes.map((type) => (
                   <option key={type} value={type}>
                     {t(type)}
                   </option>

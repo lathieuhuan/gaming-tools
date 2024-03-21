@@ -12,6 +12,7 @@ export default function ElementDebuffs() {
   return (
     <div className="pt-2 space-y-3">
       <SuperconductDebuffItem
+        mutable
         checked={superconduct}
         onToggle={() => {
           dispatch(
@@ -26,6 +27,7 @@ export default function ElementDebuffs() {
       />
       {geoResonance ? (
         <GeoResoDebuffItem
+          mutable
           checked={geoResonance.activated}
           onToggle={() => {
             dispatch(updateResonance({ ...geoResonance, activated: !geoResonance.activated }));

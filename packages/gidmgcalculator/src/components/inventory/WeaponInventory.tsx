@@ -38,6 +38,7 @@ const WeaponInventoryCore = ({ weaponType, owner, buttonText, onClickButton, onC
               wrapperCls="w-76 shrink-0"
               weapon={chosenWeapon}
               withActions={chosenWeapon && chosenWeapon.owner !== owner}
+              withOwnerLabel
               actions={[
                 {
                   children: buttonText,
