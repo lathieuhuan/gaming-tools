@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaSortAmountUpAlt, FaTh, FaArrowAltCircleUp, FaPlus } from "react-icons/fa";
+import { FaSortAmountUpAlt, FaTh, FaPlus } from "react-icons/fa";
 import { clsx, useIntersectionObserver, Button } from "rond";
 
 import { $AppCharacter } from "@Src/services";
