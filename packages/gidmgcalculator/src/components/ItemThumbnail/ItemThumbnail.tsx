@@ -1,7 +1,7 @@
 import { clsx } from "rond";
 import type { Level } from "@Src/types";
 import { $AppCharacter } from "@Src/services";
-import { WikiImage } from "../WikiImage";
+import { GenshinImage } from "../GenshinImage";
 
 interface ItemThumbProps {
   className?: string;
@@ -27,7 +27,7 @@ export const ItemThumbnail = ({ className, imgCls, item }: ItemThumbProps) => {
           !sideIcon && "overflow-hidden"
         )}
       >
-        <WikiImage
+        <GenshinImage
           className={clsx("max-w-none w-10 h-10 -translate-x-2 -translate-y-4", !sideIcon && "-translate-y-2")}
           src={sideIcon || icon}
         />
@@ -51,7 +51,7 @@ export const ItemThumbnail = ({ className, imgCls, item }: ItemThumbProps) => {
       ) : null}
 
       <div className={`aspect-square bg-gradient-${item.rarity || 5} ` + "rounded rounded-br-2xl overflow-hidden"}>
-        <WikiImage
+        <GenshinImage
           className={imgCls}
           src={item.icon}
           defaultFallback={{ wrapperCls: "p-3" }}

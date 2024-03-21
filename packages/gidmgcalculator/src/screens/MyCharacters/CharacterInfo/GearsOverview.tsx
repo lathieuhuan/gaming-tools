@@ -5,8 +5,8 @@ import type { ArtifactSetBonus, UserArtifacts, UserWeapon } from "@Src/types";
 import type { GearsDetailType } from "./CharacterInfo.types";
 import { ARTIFACT_TYPES } from "@Src/constants";
 import { $AppData } from "@Src/services";
-import { getImgSrc, Artifact_ } from "@Src/utils";
-import { ItemThumbnail } from "@Src/components";
+import { Artifact_ } from "@Src/utils";
+import { GenshinImage, ItemThumbnail } from "@Src/components";
 
 const bonusStyles = (active: boolean) => {
   return ["p-2 flex justify-between items-center rounded-lg group", active && "bg-dark-700"];
@@ -81,7 +81,7 @@ export function GearsOverview({
                 className="p-4 w-full h-full flex-center rounded bg-dark-500 glow-on-hover"
                 onClick={() => onClickEmptyArtIcon(i)}
               >
-                <img className="w-full" src={getImgSrc(Artifact_.iconOf(ARTIFACT_TYPES[i]))} alt="" draggable={false} />
+                <GenshinImage className="w-full" src={Artifact_.iconOf(ARTIFACT_TYPES[i])} />
               </button>
             </div>
           )

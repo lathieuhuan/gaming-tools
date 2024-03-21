@@ -1,8 +1,9 @@
-import { FaCaretRight, FaQuestion, FaSquare } from "react-icons/fa";
+import { FaCaretRight, FaSquare } from "react-icons/fa";
 import { clsx } from "rond";
 
 import type { ElementType } from "@Src/types";
-import { getImgSrc } from "@Src/utils";
+import { GenshinImage } from "../GenshinImage";
+
 import styles from "./styles.module.scss";
 
 const ABILITY_ICON_SIZE = "3.25rem";
@@ -15,29 +16,20 @@ interface AbilityImgProps {
   onClick?: () => void;
 }
 export const AbilityIcon = ({ className, img, elementType, active = true, onClick }: AbilityImgProps) => {
-  const commonClassNames = ["transition-opacity duration-150 ease-in-out", !active && "opacity-50"];
-  const style = {
-    width: ABILITY_ICON_SIZE,
-    height: ABILITY_ICON_SIZE,
-  };
-
-  return img ? (
-    <img
-      className={clsx(commonClassNames, className)}
-      src={getImgSrc(img)}
-      alt=""
-      style={style}
-      draggable={false}
-      onClick={onClick}
-    />
-  ) : (
-    <div
-      className={clsx(`rounded-circle bg-${elementType} flex-center`, styles[elementType], commonClassNames, className)}
-      style={style}
+  return (
+    <button
+      className={clsx("transition-opacity duration-150 ease-in-out", !active && "opacity-50", className)}
       onClick={onClick}
     >
-      <FaQuestion className="text-xl" />
-    </div>
+      <GenshinImage
+        src={img}
+        width={ABILITY_ICON_SIZE}
+        height={ABILITY_ICON_SIZE}
+        defaultFallback={{
+          wrapperCls: `p-3 rounded-circle bg-${elementType} ${styles[elementType]}`,
+        }}
+      />
+    </button>
   );
 };
 

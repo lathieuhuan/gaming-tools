@@ -20,7 +20,7 @@ import {
   ArtifactInventory,
   ArtifactInventoryProps,
   LoadoutStash,
-  WikiImage,
+  GenshinImage,
 } from "@Src/components";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
@@ -258,7 +258,7 @@ export default function SectionArtifacts() {
               )}
               onClick={() => onClickTab(index)}
             >
-              <WikiImage
+              <GenshinImage
                 className={clsx(
                   `h-full bg-gradient-${artifact ? artifact.rarity || 5 : 1} cursor-pointer`,
                   !artifact && "p-2 opacity-80"

@@ -6,12 +6,6 @@ export function suffixOf(stat: string) {
   return stat.slice(-1) === "_" || ATTACK_ELEMENTS.includes(stat as any) ? "%" : "";
 }
 
-export function getImgSrc(src?: string) {
-  if (import.meta.env.DEV) return "";
-  if (!src) return "";
-  return src.split("/")[0].length === 1 ? `https://static.wikia.nocookie.net/gensin-impact/images/${src}.png` : src;
-}
-
 export function getSearchParam(key: string) {
   const searchParams = new URLSearchParams(window.location.search);
   return searchParams.get(key);

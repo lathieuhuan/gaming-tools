@@ -9,7 +9,7 @@ import { $AppData } from "@Src/services";
 import { Item_ } from "@Src/utils";
 import { selectWeapon, changeWeapon, updateWeapon } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
-import { WeaponForge, WeaponInventory, WikiImage } from "@Src/components";
+import { WeaponForge, WeaponInventory, GenshinImage } from "@Src/components";
 
 import styles from "../SetupManager.styles.module.scss";
 
@@ -31,7 +31,7 @@ export default function SectionWeapon() {
         className={`w-20 h-20 shrink-0 relative bg-gradient-${rarity} cursor-pointer rounded-md`}
         onClick={() => setModalType("MAKE_NEW_WEAPON")}
       >
-        <WikiImage src={icon} alt={name} imgType="weapon" />
+        <GenshinImage src={icon} alt={name} imgType="weapon" />
         <Badge active={beta} className="absolute -top-1 -left-1">
           BETA
         </Badge>

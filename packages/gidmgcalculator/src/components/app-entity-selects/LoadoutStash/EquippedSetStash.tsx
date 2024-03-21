@@ -8,7 +8,7 @@ import { useSelector } from "@Store/hooks";
 import { selectUserArtifacts, selectUserCharacters } from "@Store/userdb-slice";
 
 // Component
-import { WikiImage } from "@Src/components";
+import { GenshinImage } from "@Src/components";
 import { CharacterPortrait } from "../../CharacterPortrait";
 
 type EquippedSetOption = {
@@ -151,7 +151,7 @@ export const EquippedSetStash = ({ keyword, onChangeArtifact, onSelectSet }: Equ
                       >
                         {(className, imgCls) => {
                           return visible ? (
-                            <WikiImage
+                            <GenshinImage
                               className={clsx("p-1 rounded-circle", className)}
                               imgCls={imgCls}
                               src={imgMap[`${artifact.code}-${artifact.type}`]}

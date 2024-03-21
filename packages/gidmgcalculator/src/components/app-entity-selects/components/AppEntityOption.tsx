@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { clsx, Badge } from "rond";
 import type { ElementType, WeaponType } from "@Src/types";
-import { WikiImage, ElementIcon } from "@Src/components";
+import { GenshinImage, ElementIcon } from "@Src/components";
 
 export type AppEntityOptionModel = {
   code: number;
@@ -40,7 +40,7 @@ const AppEntityOptionCore = ({ className, imgCls, visible, item, selectedAmount 
       >
         <div className={"aspect-square transition-opacity duration-400 " + (visible ? "opacity-100" : "opacity-0")}>
           {visible && (
-            <WikiImage className={imgCls} src={item.icon} imgType="unknown" defaultFallback={{ wrapperCls: "p-4" }} />
+            <GenshinImage className={imgCls} src={item.icon} imgType="unknown" defaultFallback={{ wrapperCls: "p-4" }} />
           )}
         </div>
 

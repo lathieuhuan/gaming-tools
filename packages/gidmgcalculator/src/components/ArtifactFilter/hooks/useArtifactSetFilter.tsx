@@ -5,7 +5,7 @@ import type { ArtifactType, CalcArtifact } from "@Src/types";
 import type { ArtifactFilterSet } from "../ArtifactFilter.types";
 import { $AppData } from "@Src/services";
 import { findByCode } from "@Src/utils";
-import { WikiImage } from "@Src/components";
+import { GenshinImage } from "@Src/components";
 import { FilterTemplate } from "../../FilterTemplate";
 
 type Config = {
@@ -66,7 +66,7 @@ export function useArtifactSetFilter(artifacts: CalcArtifact[], chosenCodes: num
                       set.chosen ? "shadow-3px-2px shadow-green-300 bg-dark-900" : "bg-transparent"
                     )}
                   >
-                    <WikiImage className="p-1" src={set.icon} imgType="artifact" />
+                    <GenshinImage className="p-1" src={set.icon} imgType="artifact" />
                   </div>
                 </div>
               );

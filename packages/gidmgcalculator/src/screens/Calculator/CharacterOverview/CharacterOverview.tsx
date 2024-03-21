@@ -12,7 +12,7 @@ import { initNewSessionWithCharacter } from "@Store/thunks";
 import { selectCharacter, updateCharacter } from "@Store/calculator-slice";
 
 // Component
-import { ComplexSelect, SetupImporter, Tavern, WikiImage } from "@Src/components";
+import { ComplexSelect, SetupImporter, Tavern, GenshinImage } from "@Src/components";
 import { ArtifactsTab, AttributesTab, ConstellationTab, TalentsTab, WeaponTab } from "./character-overview-tabs";
 
 const TABS: SwitchNodeProps<string>["cases"] = [
@@ -64,7 +64,7 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
             <Badge active={appChar.beta} className="absolute -top-2 -right-2 z-10">
               BETA
             </Badge>
-            <WikiImage className="cursor-pointer" src={appChar.icon} imgType="character" />
+            <GenshinImage className="cursor-pointer" src={appChar.icon} imgType="character" />
           </div>
 
           <div className="min-w-0 grow">

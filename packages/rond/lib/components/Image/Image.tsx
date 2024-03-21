@@ -6,7 +6,7 @@ import "./Image.styles.scss";
 export interface ImageProps {
   src?: string;
   alt?: string;
-  className?: string;
+  className?: ClassValue;
   style?: React.CSSProperties;
   width?: string | number;
   height?: string | number;

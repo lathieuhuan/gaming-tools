@@ -15,7 +15,7 @@ import { makeTeammateSetup } from "@Store/thunks";
 import { chooseUserSetup, switchShownSetupInComplex, uncombineSetups } from "@Store/userdb-slice";
 
 // Component
-import { CharacterPortrait, WikiImage } from "@Src/components";
+import { CharacterPortrait, GenshinImage } from "@Src/components";
 import { TeammateDetail } from "./TeammateDetail";
 import { GearIcon } from "./GearIcon";
 
@@ -90,7 +90,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
 
       mainCharacter = (
         <div className="flex">
-          <WikiImage className="w-20 h-20" src={appChar.icon} imgType="character" />
+          <GenshinImage className="w-20 h-20" src={appChar.icon} imgType="character" />
 
           <div className="ml-4 flex-col justify-between">
             <p className="text-lg">Level {renderSpan(char.level)}</p>

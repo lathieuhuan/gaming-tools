@@ -8,7 +8,7 @@ import { $AppData } from "@Src/services";
 import { parseWeaponDescription, suffixOf, Weapon_ } from "@Src/utils";
 
 // Component
-import { WikiImage } from "../WikiImage";
+import { GenshinImage } from "../GenshinImage";
 
 const groupStyles = "bg-dark-700 px-3";
 
@@ -90,7 +90,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
         {/* right */}
         <div className="ml-2">
           <div className={`rounded-lg bg-gradient-${rarity} relative`}>
-            <WikiImage src={appWeapon.icon} imgType="weapon" width={112} height={112} />
+            <GenshinImage src={appWeapon.icon} imgType="weapon" width={112} height={112} />
             <Badge active={appWeapon.beta} className="absolute bottom-0 right-0">
               BETA
             </Badge>

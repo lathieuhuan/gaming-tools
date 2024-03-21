@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import { FaSortAmountUpAlt, FaTh, FaArrowAltCircleUp } from "react-icons/fa";
 import { clsx, useIntersectionObserver, Button } from "rond";
 
-import { getImgSrc } from "@Src/utils";
 import { $AppCharacter } from "@Src/services";
 import { useDispatch } from "@Store/hooks";
 import { chooseCharacter } from "@Store/userdb-slice";
-import { Tavern } from "@Src/components";
+import { GenshinImage, Tavern } from "@Src/components";
 
 import styles from "./MyCharacters.styles.module.scss";
 
@@ -90,7 +89,11 @@ export default function CharacterList({ characters, chosenChar, onCliceSort, onC
                       }
                     >
                       {visible && (
-                        <img src={getImgSrc(appChar.sideIcon || appChar.icon)} alt="icon" draggable={false} />
+                        <GenshinImage
+                          src={appChar.sideIcon || appChar.icon}
+                          alt="icon"
+                          defaultFallback={{ wrapperCls: "p-2" }}
+                        />
                       )}
                     </div>
                   </div>
@@ -115,7 +118,7 @@ export default function CharacterList({ characters, chosenChar, onCliceSort, onC
           }}
           onClick={onClickWish}
         >
-          <img src={getImgSrc("4/48/System_Wish")} alt="wish" draggable={false} />
+          <GenshinImage src={"4/48/System_Wish"} alt="wish" />
         </button>
       </div>
 

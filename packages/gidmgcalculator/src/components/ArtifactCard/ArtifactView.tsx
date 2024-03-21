@@ -9,7 +9,7 @@ import { suffixOf, Artifact_ } from "@Src/utils";
 // Component
 import { ArtifactLevelSelect } from "./ArtifactLevelSelect";
 import { ArtifactSubstatsControl } from "./ArtifactSubstatsControl";
-import { WikiImage } from "../WikiImage";
+import { GenshinImage } from "../GenshinImage";
 
 export interface ArtifactViewProps<T extends CalcArtifact | UserArtifact> {
   mutable?: boolean;
@@ -51,7 +51,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
         />
 
         <div className={`bg-gradient-${rarity} relative rounded-lg shrink-0`}>
-          <WikiImage
+          <GenshinImage
             src={appArtifact?.icon}
             alt={appArtifact?.name}
             className="p-4"

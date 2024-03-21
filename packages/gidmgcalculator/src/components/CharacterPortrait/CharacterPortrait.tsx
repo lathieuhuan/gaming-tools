@@ -1,5 +1,5 @@
 import { clsx } from "rond";
-import { WikiImage } from "@Src/components";
+import { GenshinImage } from "@Src/components";
 
 interface CharacterPortraitProps {
   className?: string;
@@ -25,7 +25,7 @@ export const CharacterPortrait = ({ className, code, icon, onClickIcon }: Charac
       )}
       onClick={onClickIcon}
     >
-      <WikiImage src={icon} imgType="character" />
+      <GenshinImage src={icon} imgType="character" />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { WikiImage } from "@Src/components";
+import { GenshinImage } from "@Src/components";
 
 interface GearIconProps {
   item: { beta?: boolean; icon: string; rarity?: number };
@@ -15,7 +15,7 @@ export const GearIcon = ({ item, disabled, onClick }: GearIconProps) => {
       disabled={disabled}
       onClick={onClick}
     >
-      <WikiImage className="w-full h-full" src={item.icon} />
+      <GenshinImage className="w-full h-full" src={item.icon} />
     </button>
   );
 };

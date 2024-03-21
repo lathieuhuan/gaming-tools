@@ -20,7 +20,7 @@ import {
 } from "@Store/calculator-slice";
 
 // Component
-import { TeammateItems, Tavern, WeaponForge, ArtifactForge, WikiImage } from "@Src/components";
+import { TeammateItems, Tavern, WeaponForge, ArtifactForge, GenshinImage } from "@Src/components";
 import { CopySelect } from "./CopySelect";
 
 import styles from "../SetupManager.styles.module.scss";
@@ -104,7 +104,7 @@ export default function SectionParty() {
               )}
               onClick={() => setDetailSlot(isExpanded ? null : teammateIndex)}
             >
-              <WikiImage src={data.icon} imgType="character" />
+              <GenshinImage src={data.icon} imgType="character" defaultFallback={{ wrapperCls: "p-3" }} />
             </button>
           ) : (
             <button

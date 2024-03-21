@@ -20,10 +20,10 @@ import {
 
 // Util
 import { getCalculationStats } from "@Src/calculation";
-import { findById, findByName, getImgSrc } from "@Src/utils";
+import { findById, findByName } from "@Src/utils";
 
 // Component
-import { AttributeTable, TalentList, ConstellationList } from "@Src/components";
+import { AttributeTable, TalentList, ConstellationList, GenshinImage } from "@Src/components";
 import Gears from "./Gears";
 
 const selectChosenInfo = createSelector(
@@ -92,7 +92,7 @@ const CharacterInfo = () => {
         <Button className="absolute top-4 right-4" boneOnly icon={<FaUserSlash />} onClick={() => setRemoving(true)} />
 
         <div className="flex" onDoubleClick={() => console.log(char, weapon, artifacts)}>
-          {!isFromXmSize && <img className="mr-4 mb-4 w-20" src={getImgSrc(icon)} alt={name} />}
+          {!isFromXmSize && <GenshinImage className="mr-4 mb-4 w-20" src={icon} alt={name} imgType="character" />}
 
           <div>
             {isFromXmSize && <p className={`text-2.5xl text-${elementType} font-black`}>{name}</p>}

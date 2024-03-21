@@ -44,7 +44,7 @@ export const TalentList = ({ char, party, onChangeTalentLevel }: TalentListProps
     const { active = true } = talent;
     return (
       <div key={index} className="flex">
-        <AbilityIcon className="my-2 mr-2 shrink-0" img={talent.image} elementType={elementType} />
+        <AbilityIcon className="my-2 mr-2 shrink-0" active={active} img={talent.image} elementType={elementType} />
         <div className="grow flex items-center">
           <div className={"px-2" + (active ? "" : " opacity-50")}>
             <p className="font-bold">{talent.name}</p>

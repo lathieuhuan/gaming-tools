@@ -1,9 +1,8 @@
 import { clsx, CloseButton } from "rond";
 
 import type { Teammate } from "@Src/types";
-import { getImgSrc } from "@Src/utils";
 import { $AppData } from "@Src/services";
-import { WikiImage } from "..";
+import { GenshinImage } from "../GenshinImage";
 
 interface TeammateItemsProps {
   className?: string;
@@ -37,7 +36,7 @@ export const TeammateItems = ({
             disabled={!mutable}
             onClick={onClickWeapon}
           >
-            <img src={getImgSrc(appWeapon.icon)} alt="weapon" draggable={false} />
+            <GenshinImage src={appWeapon.icon} alt="weapon" defaultFallback={{ wrapperCls: "p-2" }} />
           </button>
 
           <div className="overflow-hidden">
@@ -72,7 +71,7 @@ export const TeammateItems = ({
 
       <div className="flex items-start space-x-2">
         <button className="w-14 h-14 shrink-0" disabled={!mutable} onClick={onClickArtifact}>
-          <WikiImage
+          <GenshinImage
             className={artifactSetIcon ? "bg-dark-500 rounded" : "p-1"}
             src={artifactSetIcon || "6/6a/Icon_Inventory_Artifacts"}
             alt="artifact"
