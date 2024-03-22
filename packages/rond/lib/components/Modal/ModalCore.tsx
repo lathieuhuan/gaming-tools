@@ -128,9 +128,6 @@ function useModalManager() {
     manager.id = "ron-modal-manager";
     document.body.append(manager);
     modalManagerRef.current = manager;
-  } else if (!document.body.querySelector("#ron-modal-manager")) {
-    document.body.append(modalManagerRef.current);
   }
-
   return modalManagerRef.current;
 }
