@@ -1,7 +1,7 @@
 import { FaBars, FaCog } from "react-icons/fa";
 import { Yellow, Red } from "@Src/components";
 
-export const UserDataGuide = () => {
+export function UserDataGuide() {
   return (
     <div className="space-y-1 contains-inline-svg">
       <p>
@@ -28,4 +28,4 @@ export const UserDataGuide = () => {
       </p>
     </div>
   );
-};
+}

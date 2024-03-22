@@ -10,15 +10,15 @@ interface ListProps {
   children: React.ReactNode;
 }
 
-export const ListDecimal = (props: ListProps) => {
+export function ListDecimal(props: ListProps) {
   return <ul className="mt-1 pl-4 list-decimal space-y-1" {...props} />;
-};
+}
 
-export const ListDisc = (props: ListProps) => {
+export function ListDisc(props: ListProps) {
   return <ul className="mt-1 list-disc list-inside space-y-1" {...props} />;
-};
+}
 
-export const CalculatorGuide = () => {
+export function CalculatorGuide() {
   const quickActions = [
     { Icon: FaTrashAlt, desc: "Remove the setup" },
     { Icon: FaShareAlt, desc: "Encode the setup to share it with others" },
@@ -117,4 +117,4 @@ export const CalculatorGuide = () => {
       </ListDecimal>
     </div>
   );
-};
+}

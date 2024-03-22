@@ -9,7 +9,7 @@ import { updateUserArtifact, updateUserWeapon, selectUserSetups } from "@Store/u
 
 export type BoundingItem = Pick<UserItem, "ID" | "setupIDs">;
 
-export const useItemBoundSetups = (item?: BoundingItem, isWeapon?: boolean): UserSetup[] => {
+export function useItemBoundSetups(item?: BoundingItem, isWeapon?: boolean): UserSetup[] {
   const dispatch = useDispatch();
   const userSetups = useSelector(selectUserSetups);
 
@@ -62,4 +62,4 @@ export const useItemBoundSetups = (item?: BoundingItem, isWeapon?: boolean): Use
   }, [result]);
 
   return result.validSetups;
-};
+}

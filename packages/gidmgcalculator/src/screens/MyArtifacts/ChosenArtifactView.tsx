@@ -4,19 +4,14 @@ import { ConfirmModal } from "rond";
 import { AttributeStat, UserArtifact } from "@Src/types";
 import { $AppData } from "@Src/services";
 import { useDispatch } from "@Store/hooks";
-import {
-  removeArtifact,
-  swapArtifactOwner,
-  updateUserArtifact,
-  updateUserArtifactSubStat,
-} from "@Store/userdb-slice";
+import { removeArtifact, swapArtifactOwner, updateUserArtifact, updateUserArtifactSubStat } from "@Store/userdb-slice";
 import { ArtifactCard, Tavern } from "@Src/components";
 
 interface ChosenArtifactViewProps {
   artifact?: UserArtifact;
   onRemoveArtifact?: (artifact: UserArtifact) => void;
 }
-export const ChosenArtifactView = ({ artifact, onRemoveArtifact }: ChosenArtifactViewProps) => {
+export function ChosenArtifactView({ artifact, onRemoveArtifact }: ChosenArtifactViewProps) {
   const dispatch = useDispatch();
   const [modalType, setModalType] = useState<"REMOVE_ARTIFACT" | "EQUIP_CHARACTER" | "">("");
   const [newOwner, setNewOwner] = useState("");
@@ -112,4 +107,4 @@ export const ChosenArtifactView = ({ artifact, onRemoveArtifact }: ChosenArtifac
       ) : null}
     </Fragment>
   );
-};
+}

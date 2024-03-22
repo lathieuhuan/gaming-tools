@@ -29,7 +29,7 @@ const AppLoadingMask = () => {
   );
 };
 
-export const AppModals = () => {
+export function AppModals() {
   const dispatch = useDispatch();
   const appModalType = useSelector((state) => state.ui.appModalType);
 
@@ -46,4 +46,4 @@ export const AppModals = () => {
       <AppLoadingMask />
     </>
   );
-};
+}

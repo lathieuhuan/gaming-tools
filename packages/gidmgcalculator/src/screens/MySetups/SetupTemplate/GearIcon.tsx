@@ -5,7 +5,7 @@ interface GearIconProps {
   disabled?: boolean;
   onClick?: () => void;
 }
-export const GearIcon = ({ item, disabled, onClick }: GearIconProps) => {
+export function GearIcon({ item, disabled, onClick }: GearIconProps) {
   return (
     <button
       className={
@@ -18,4 +18,4 @@ export const GearIcon = ({ item, disabled, onClick }: GearIconProps) => {
       <GenshinImage className="w-full h-full" src={item.icon} />
     </button>
   );
-};
+}

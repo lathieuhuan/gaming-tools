@@ -37,7 +37,7 @@ const DIVIDER_MC = "D8";
 const DIVIDER_MC_INPUTS = "D9";
 const CUSTOM_BUFF_CATEGORIES: CustomBuffCtrlCategory[] = ["totalAttr", "attElmtBonus", "attPattBonus", "rxnBonus"];
 
-export const encodeSetup = (calcSetup: CalcSetup, target: Target) => {
+export function encodeSetup(calcSetup: CalcSetup, target: Target) {
   const {
     char,
     selfBuffCtrls,
@@ -184,9 +184,9 @@ export const encodeSetup = (calcSetup: CalcSetup, target: Target) => {
     console.log(e);
     return "";
   }
-};
+}
 
-export const decodeSetup = (code: string): SetupImportInfo => {
+export function decodeSetup(code: string): SetupImportInfo {
   const characters = $AppCharacter.getAll();
   const [
     _charCode,
@@ -412,4 +412,4 @@ export const decodeSetup = (code: string): SetupImportInfo => {
     }),
     target,
   };
-};
+}

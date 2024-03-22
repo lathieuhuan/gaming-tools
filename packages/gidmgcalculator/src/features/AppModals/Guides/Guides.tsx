@@ -4,7 +4,7 @@ import { CalculatorGuide } from "./CalculatorGuide";
 import { SettingsGuide } from "./SettingsGuide";
 import { UserDataGuide } from "./UserDataGuide";
 
-export const Guides = (props: ModalControl) => {
+export function Guides(props: ModalControl) {
   return (
     <Modal title="Guides" preset="large" withHeaderDivider={false} bodyCls="pt-0" {...props}>
       <div className="h-full custom-scrollbar">
@@ -67,4 +67,4 @@ export const Guides = (props: ModalControl) => {
       </div>
     </Modal>
   );
-};
+}

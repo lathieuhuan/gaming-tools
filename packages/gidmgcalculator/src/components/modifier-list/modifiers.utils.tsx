@@ -1,13 +1,13 @@
 import type { AppArtifact, ArtifactModifier } from "@Src/types";
 import { parseArtifactDescription, toArray } from "@Src/utils";
 
-export const getArtifactDescription = (data: AppArtifact, modifier: ArtifactModifier) => {
+export function getArtifactDescription(data: AppArtifact, modifier: ArtifactModifier) {
   return parseArtifactDescription(
     toArray(modifier.description).reduce<string>((acc, description) => {
       return `${acc} ${typeof description === "string" ? description : data.descriptions[description] || ""}`;
     }, "")
   );
-};
+}
 
 export function renderModifiers(modifiers: (JSX.Element | null)[], type: "buffs" | "debuffs", mutable?: boolean) {
   return modifiers.some((modifier) => modifier !== null) ? (

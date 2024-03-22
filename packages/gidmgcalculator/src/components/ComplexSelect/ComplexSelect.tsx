@@ -13,7 +13,7 @@ interface ComplexSelectProps {
   onChange?: (value: string | number) => void;
   onToggleDropdown?: (shouldDrop: boolean) => void;
 }
-export const ComplexSelect = ({ selectId, value, options = [], onChange, onToggleDropdown }: ComplexSelectProps) => {
+export function ComplexSelect({ selectId, value, options = [], onChange, onToggleDropdown }: ComplexSelectProps) {
   const [isDropped, setIsDropped] = useState(false);
 
   const toggleDropdown = (newIsDropped: boolean) => {
@@ -89,4 +89,4 @@ export const ComplexSelect = ({ selectId, value, options = [], onChange, onToggl
       </div>
     </div>
   );
-};
+}

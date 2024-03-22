@@ -9,10 +9,10 @@ const WEAPON_TYPE_ICONS: Array<{ value: WeaponType; icon: string }> = [
   { value: "sword", icon: "9/95/Weapon-class-sword-icon" },
 ];
 
-export const useWeaponTypeSelect = (
+export function useWeaponTypeSelect(
   initialValues?: IconSelectInitialValues<WeaponType>,
   config?: Omit<IconSelectConfig<WeaponType>, "selectedCls">
-) => {
+) {
   const mergedConfig: IconSelectConfig<WeaponType> = {
     ...config,
     selectedCls: "shadow-3px-3px shadow-green-200",
@@ -28,4 +28,4 @@ export const useWeaponTypeSelect = (
     updateWeaponTypes: updateSelectedIcons,
     renderWeaponTypeSelect: renderIconSelect,
   };
-};
+}

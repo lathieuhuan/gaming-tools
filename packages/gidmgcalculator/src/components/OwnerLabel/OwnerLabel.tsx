@@ -33,7 +33,7 @@ interface OwnerLabelProps {
     refi?: UserWeapon["refi"];
   };
 }
-export const OwnerLabel = ({ className = "", style, item }: OwnerLabelProps) => {
+export function OwnerLabel({ className = "", style, item }: OwnerLabelProps) {
   const puzzleBtnRef = useRef<HTMLButtonElement>(null);
   const [list, setList] = useState({
     isVisible: false,
@@ -97,4 +97,4 @@ export const OwnerLabel = ({ className = "", style, item }: OwnerLabelProps) => 
       ) : null}
     </div>
   );
-};
+}

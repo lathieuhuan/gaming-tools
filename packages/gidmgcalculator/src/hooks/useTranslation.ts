@@ -4,7 +4,7 @@ interface TranslateConfig {
   ns?: NameSpace;
 }
 
-export const useTranslation = () => {
+export function useTranslation() {
   const t = (origin: string, config?: TranslateConfig) => {
     const { ns = "common" } = config || {};
 
@@ -12,4 +12,4 @@ export const useTranslation = () => {
   };
 
   return { t };
-};
+}

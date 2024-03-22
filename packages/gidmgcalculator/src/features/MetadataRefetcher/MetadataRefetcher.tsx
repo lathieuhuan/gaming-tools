@@ -8,13 +8,13 @@ interface MetadataRefetcherProps {
   isError: boolean;
   onRefetch: () => void;
 }
-export const MetadataRefetcher = ({
+export function MetadataRefetcher({
   className = "",
   cooldown = 10,
   isLoading,
   isError,
   onRefetch,
-}: MetadataRefetcherProps) => {
+}: MetadataRefetcherProps) {
   const startTime = useRef(0);
   const [time, setTime] = useState(0);
 
@@ -72,4 +72,4 @@ export const MetadataRefetcher = ({
     );
   }
   return null;
-};
+}

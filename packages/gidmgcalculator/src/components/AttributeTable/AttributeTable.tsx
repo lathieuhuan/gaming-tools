@@ -53,7 +53,7 @@ const EmSection = ({ em }: EmSectionProps) => {
 interface AttributeTableProps {
   attributes: PartiallyRequired<Partial<TotalAttribute>, CoreStat>;
 }
-export const AttributeTable = ({ attributes }: AttributeTableProps) => {
+export function AttributeTable({ attributes }: AttributeTableProps) {
   const { t } = useTranslation();
 
   if (!attributes) {
@@ -111,4 +111,4 @@ export const AttributeTable = ({ attributes }: AttributeTableProps) => {
       })}
     </StatsTable>
   );
-};
+}

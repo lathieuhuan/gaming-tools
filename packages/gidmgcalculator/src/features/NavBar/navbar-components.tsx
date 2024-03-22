@@ -10,7 +10,7 @@ interface ActionButtonProps {
   disabled?: boolean;
   onClick?: () => void;
 }
-export const ActionButton = ({ className = "", icon, label, disabled, onClick }: ActionButtonProps) => {
+export function ActionButton({ className = "", icon, label, disabled, onClick }: ActionButtonProps) {
   return (
     <button
       className={clsx(
@@ -25,7 +25,7 @@ export const ActionButton = ({ className = "", icon, label, disabled, onClick }:
       <span className="ml-2">{label}</span>
     </button>
   );
-};
+}
 
 interface NavTabsProps {
   ready?: boolean;

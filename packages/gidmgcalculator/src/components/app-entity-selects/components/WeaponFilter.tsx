@@ -17,14 +17,14 @@ export interface WeaponFilterProps {
   onCancel: () => void;
   onDone: (filter: WeaponFilterState) => void;
 }
-export const WeaponFilter = ({
+export function WeaponFilter({
   className,
   initialFilter,
   withTypeSelect = true,
   disabledCancel,
   onCancel,
   onDone,
-}: WeaponFilterProps) => {
+}: WeaponFilterProps) {
   const { weaponTypes, updateWeaponTypes, renderWeaponTypeSelect } = useWeaponTypeSelect(initialFilter?.types, {
     multiple: true,
   });
@@ -78,4 +78,4 @@ export const WeaponFilter = ({
       />
     </div>
   );
-};
+}

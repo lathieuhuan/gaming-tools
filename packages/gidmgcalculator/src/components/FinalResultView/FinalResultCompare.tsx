@@ -11,7 +11,7 @@ interface FinalResultCompareProps {
   focusedAspect: CalculationAspect;
   tableKey: TableKey;
 }
-export const FinalResultCompare = ({ focusedAspect, tableKey }: FinalResultCompareProps) => {
+export function FinalResultCompare({ focusedAspect, tableKey }: FinalResultCompareProps) {
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const resultById = useSelector((state) => state.calculator.resultById);
   const comparedIds = useSelector(selectComparedIds);
@@ -89,4 +89,4 @@ export const FinalResultCompare = ({ focusedAspect, tableKey }: FinalResultCompa
       })}
     </>
   );
-};
+}

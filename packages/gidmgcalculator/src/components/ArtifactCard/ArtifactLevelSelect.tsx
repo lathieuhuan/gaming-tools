@@ -9,14 +9,14 @@ interface ArtifactLevelSelectProps {
   maxLevel?: number;
   onChangeLevel?: (newLevel: number) => void;
 }
-export const ArtifactLevelSelect = ({
+export function ArtifactLevelSelect({
   className,
   mutable,
   rarity,
   level,
   maxLevel = 0,
   onChangeLevel,
-}: ArtifactLevelSelectProps) => {
+}: ArtifactLevelSelectProps) {
   const cls = `px-2 pt-2 pb-1.5 text-lg text-rarity-${rarity} leading-none font-bold`;
 
   if (mutable) {
@@ -49,4 +49,4 @@ export const ArtifactLevelSelect = ({
     );
   }
   return <p className={clsx("rounded bg-dark-500", cls, className)}>+{level}</p>;
-};
+}

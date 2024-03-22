@@ -5,9 +5,9 @@ import type { TrackerState } from "@Src/types";
 import { findById } from "@Src/utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
-import { TrackerContainer } from "./TrackerCore";
+import { TrackerCore } from "./TrackerCore";
 
-export const Tracker = () => {
+export function Tracker() {
   const dispatch = useDispatch();
   const trackerState = useSelector((state) => state.ui.trackerState);
   const activeSetupName = useSelector((state) => {
@@ -32,8 +32,8 @@ export const Tracker = () => {
       </Modal.Header>
 
       <div className="grow px-4 pb-4 overflow-auto">
-        <TrackerContainer trackerState={trackerState} />
+        <TrackerCore trackerState={trackerState} />
       </div>
     </Modal.Core>
   );
-};
+}

@@ -13,12 +13,12 @@ interface TeammateDetailProps {
   onSwitchSetup: () => void;
   onCalculateTeammateSetup: () => void;
 }
-export const TeammateDetail = ({
+export function TeammateDetail({
   teammate,
   isCalculated,
   onSwitchSetup,
   onCalculateTeammateSetup,
-}: TeammateDetailProps) => {
+}: TeammateDetailProps) {
   const data = $AppCharacter.get(teammate.name);
   if (!data) return null;
 
@@ -53,4 +53,4 @@ export const TeammateDetail = ({
       </div>
     </div>
   );
-};
+}

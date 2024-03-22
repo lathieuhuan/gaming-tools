@@ -25,7 +25,7 @@ interface TalentListProps {
   party?: Party;
   onChangeTalentLevel: (talentType: "NAs" | "ES" | "EB", newLevel: number) => void;
 }
-export const TalentList = ({ char, party, onChangeTalentLevel }: TalentListProps) => {
+export function TalentList({ char, party, onChangeTalentLevel }: TalentListProps) {
   const [atDetail, setAtDetail] = useState(false);
   const [detailIndex, setDetailIndex] = useState(-1);
 
@@ -135,4 +135,4 @@ export const TalentList = ({ char, party, onChangeTalentLevel }: TalentListProps
       ) : null}
     </CarouselSpace>
   );
-};
+}

@@ -233,7 +233,7 @@ export interface AppEntitySelectProps<T extends AppEntityOptionModel = AppEntity
   renderFilter?: (setFilterOn: (on: boolean) => void) => ReactNode;
   onClose: () => void;
 }
-export const AppEntitySelect = <T extends AppEntityOptionModel = AppEntityOptionModel>({
+export function AppEntitySelect<T extends AppEntityOptionModel = AppEntityOptionModel>({
   data,
   hiddenCodes,
   emptyText,
@@ -243,7 +243,7 @@ export const AppEntitySelect = <T extends AppEntityOptionModel = AppEntityOption
   onChange,
   onClose,
   ...restProps
-}: AppEntitySelectProps<T>) => {
+}: AppEntitySelectProps<T>) {
   return (
     <EntitySelectTemplate {...restProps} onClose={onClose}>
       {(arg) => {
@@ -257,4 +257,4 @@ export const AppEntitySelect = <T extends AppEntityOptionModel = AppEntityOption
       }}
     </EntitySelectTemplate>
   );
-};
+}

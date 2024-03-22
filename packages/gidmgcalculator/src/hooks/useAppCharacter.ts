@@ -14,7 +14,7 @@ type State = {
   error: string | null;
 };
 
-export const useAppCharacter = (name?: string) => {
+export function useAppCharacter(name?: string) {
   const state = useRef<State>({
     data: null,
     dataOf: "",
@@ -100,4 +100,4 @@ export const useAppCharacter = (name?: string) => {
     error: state.current.error,
     appChar: state.current.data,
   };
-};
+}

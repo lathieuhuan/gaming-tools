@@ -7,21 +7,21 @@ import { CloseButton, LoadingSpin } from "rond";
 import { Green, Dim } from "../../span";
 import { AbilityCarousel } from "../ability-list-components";
 
-const useConsDescriptions = (characterName: string) => {
-  return useQuery(characterName, () => $AppCharacter.fetchConsDescriptions(characterName));
-};
-
 interface ConstellationDetailProps {
   appChar: AppCharacter;
   consLv: number;
   onChangeConsLv?: (newLv: number) => void;
   onClose?: () => void;
 }
-export const ConstellationDetail = ({ appChar, consLv, onChangeConsLv, onClose }: ConstellationDetailProps) => {
+export function ConstellationDetail({ appChar, consLv, onChangeConsLv, onClose }: ConstellationDetailProps) {
   const { vision: elementType, constellation } = appChar;
   const consInfo = constellation[consLv - 1] || {};
 
-  const { isLoading, isError, data: descriptions } = useConsDescriptions(appChar.name);
+  const {
+    isLoading,
+    isError,
+    data: descriptions,
+  } = useQuery(appChar.name, () => $AppCharacter.fetchConsDescriptions(appChar.name));
 
   return (
     <div className="h-full flex flex-col hide-scrollbar">
@@ -50,4 +50,4 @@ export const ConstellationDetail = ({ appChar, consLv, onChangeConsLv, onClose }
       </div>
     </div>
   );
-};
+}

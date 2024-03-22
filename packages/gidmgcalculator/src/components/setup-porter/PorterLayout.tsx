@@ -10,7 +10,7 @@ interface PorterLayoutProps {
   moreButtons: ButtonGroupItem[];
   onClose: () => void;
 }
-export const PorterLayout = ({ heading, message, textareaAttrs, moreButtons, onClose }: PorterLayoutProps) => {
+export function PorterLayout({ heading, message, textareaAttrs, moreButtons, onClose }: PorterLayoutProps) {
   return (
     <div className="bg-dark-900 relative">
       <Modal.Header>{heading}</Modal.Header>
@@ -45,4 +45,4 @@ export const PorterLayout = ({ heading, message, textareaAttrs, moreButtons, onC
       <CloseButton className="ron-modal-close-button" boneOnly onClick={onClose} />
     </div>
   );
-};
+}

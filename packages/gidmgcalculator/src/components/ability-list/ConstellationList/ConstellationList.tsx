@@ -13,7 +13,7 @@ interface ConstellationListProps {
   char: Character;
   onClickIcon: (index: number) => void;
 }
-export const ConstellationList = ({ char, onClickIcon }: ConstellationListProps) => {
+export function ConstellationList({ char, onClickIcon }: ConstellationListProps) {
   const [consLv, setConsLv] = useState(0);
   const [atDetails, setAtDetails] = useState(false);
 
@@ -72,4 +72,4 @@ export const ConstellationList = ({ char, onClickIcon }: ConstellationListProps)
       ) : null}
     </CarouselSpace>
   );
-};
+}

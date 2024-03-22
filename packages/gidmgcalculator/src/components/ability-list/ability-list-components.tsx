@@ -3,8 +3,7 @@ import { clsx } from "rond";
 
 import type { ElementType } from "@Src/types";
 import { GenshinImage } from "../GenshinImage";
-
-import styles from "./styles.module.scss";
+import styles from "./ability-list.styles.module.scss";
 
 const ABILITY_ICON_SIZE = "3.25rem";
 
@@ -15,7 +14,7 @@ interface AbilityImgProps {
   active?: boolean;
   onClick?: () => void;
 }
-export const AbilityIcon = ({ className, img, elementType, active = true, onClick }: AbilityImgProps) => {
+export function AbilityIcon({ className, img, elementType, active = true, onClick }: AbilityImgProps) {
   return (
     <button
       className={clsx("transition-opacity duration-150 ease-in-out", !active && "opacity-50", className)}
@@ -31,7 +30,7 @@ export const AbilityIcon = ({ className, img, elementType, active = true, onClic
       />
     </button>
   );
-};
+}
 
 interface AbilityCarouselProps {
   className?: string;
@@ -42,7 +41,7 @@ interface AbilityCarouselProps {
   onClickBack: () => void;
   onClickNext: () => void;
 }
-export const AbilityCarousel = ({
+export function AbilityCarousel({
   className = "",
   currentIndex,
   images,
@@ -50,7 +49,7 @@ export const AbilityCarousel = ({
   label,
   onClickBack,
   onClickNext,
-}: AbilityCarouselProps) => {
+}: AbilityCarouselProps) {
   const renderCaret = (direction: "right" | "left", disabled: boolean) => {
     const caretCls = `absolute top-2 w-10 h-10 flex-center text-dark-500 flex-center ${
       disabled ? "cursor-pointer opacity-50" : "hover:text-mint-600"
@@ -94,4 +93,4 @@ export const AbilityCarousel = ({
       </div>
     </div>
   );
-};
+}

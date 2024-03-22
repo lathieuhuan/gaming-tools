@@ -12,7 +12,7 @@ interface ComboBoxProps {
   targetTitle: string;
   onSelectMonster: (args: { monsterCode: number; inputs: number[]; variantType?: ElementType }) => void;
 }
-export const ComboBox = ({ className, targetCode, targetTitle, onSelectMonster }: ComboBoxProps) => {
+export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }: ComboBoxProps) {
   const [keyword, setKeyword] = useState("");
 
   const onFocusSearchInput = () => {
@@ -102,4 +102,4 @@ export const ComboBox = ({ className, targetCode, targetTitle, onSelectMonster }
       </div>
     </div>
   );
-};
+}

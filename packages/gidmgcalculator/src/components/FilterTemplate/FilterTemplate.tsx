@@ -9,7 +9,7 @@ interface FilterTemplateProps {
   children: React.ReactNode;
   onClickClearAll?: () => void;
 }
-export const FilterTemplate = (props: FilterTemplateProps) => {
+export function FilterTemplate(props: FilterTemplateProps) {
   return (
     <div className={clsx("space-y-4", props.className)}>
       <div className="flex justify-between items-center">
@@ -23,4 +23,4 @@ export const FilterTemplate = (props: FilterTemplateProps) => {
       {props.children}
     </div>
   );
-};
+}

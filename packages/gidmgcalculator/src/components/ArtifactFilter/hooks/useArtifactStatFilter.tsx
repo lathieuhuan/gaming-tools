@@ -27,7 +27,7 @@ type Config = {
   title?: React.ReactNode;
 };
 
-export const useArtifactStatFilter = (initialFilter: ArtifactStatFilterState, config?: Config) => {
+export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, config?: Config) {
   const { t } = useTranslation();
   const [filter, setFilter] = useState(initialFilter);
   const [hasDuplicates, setHasDuplicates] = useState(false);
@@ -161,4 +161,4 @@ export const useArtifactStatFilter = (initialFilter: ArtifactStatFilterState, co
     hasDuplicates,
     renderArtifactStatFilter,
   };
-};
+}

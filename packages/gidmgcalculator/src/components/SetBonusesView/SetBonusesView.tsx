@@ -6,7 +6,7 @@ interface SetBonusesViewProps {
   setBonuses: ArtifactSetBonus[];
   noTitle?: boolean;
 }
-export const SetBonusesView = ({ setBonuses, noTitle }: SetBonusesViewProps) => {
+export function SetBonusesView({ setBonuses, noTitle }: SetBonusesViewProps) {
   return (
     <div>
       {!noTitle && <p className="text-lg leading-relaxed text-orange-500 font-semibold">Set bonus</p>}
@@ -47,4 +47,4 @@ export const SetBonusesView = ({ setBonuses, noTitle }: SetBonusesViewProps) => 
       )}
     </div>
   );
-};
+}

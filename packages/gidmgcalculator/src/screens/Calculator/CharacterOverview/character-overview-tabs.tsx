@@ -15,16 +15,16 @@ import {
 } from "@Store/calculator-slice";
 import { AttributeTable, SetBonusesView, WeaponView, TalentList, ConstellationList } from "@Src/components";
 
-export const AttributesTab = () => {
+export function AttributesTab() {
   const totalAttr = useSelector(selectTotalAttr);
   return (
     <div className="h-full custom-scrollbar">
       <AttributeTable attributes={totalAttr} />
     </div>
   );
-};
+}
 
-export const WeaponTab = () => {
+export function WeaponTab() {
   const dispatch = useDispatch();
   const weapon = useSelector(selectWeapon);
   return (
@@ -37,9 +37,9 @@ export const WeaponTab = () => {
       />
     </div>
   );
-};
+}
 
-export const ArtifactsTab = () => {
+export function ArtifactsTab() {
   const artifacts = useSelector(selectArtifacts);
   const totalAttr = useSelector(selectTotalAttr);
 
@@ -64,9 +64,9 @@ export const ArtifactsTab = () => {
       </CarouselSpace>
     </div>
   );
-};
+}
 
-export const ConstellationTab = () => {
+export function ConstellationTab() {
   const dispatch = useDispatch();
   const char = useSelector(selectCharacter);
   return (
@@ -75,9 +75,9 @@ export const ConstellationTab = () => {
       onClickIcon={(i) => dispatch(updateCharacter({ cons: char.cons === i + 1 ? i : i + 1 }))}
     />
   );
-};
+}
 
-export const TalentsTab = () => {
+export function TalentsTab() {
   const dispatch = useDispatch();
   const char = useSelector(selectCharacter);
   const party = useSelector(selectParty);
@@ -92,4 +92,4 @@ export const TalentsTab = () => {
       party={party}
     />
   );
-};
+}

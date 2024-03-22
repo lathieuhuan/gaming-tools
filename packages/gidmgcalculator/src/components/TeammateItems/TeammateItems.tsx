@@ -13,7 +13,7 @@ interface TeammateItemsProps {
   onClickArtifact?: () => void;
   onClickRemoveArtifact?: () => void;
 }
-export const TeammateItems = ({
+export function TeammateItems({
   className = "",
   mutable,
   teammate,
@@ -21,7 +21,7 @@ export const TeammateItems = ({
   onChangeWeaponRefinement,
   onClickArtifact,
   onClickRemoveArtifact,
-}: TeammateItemsProps) => {
+}: TeammateItemsProps) {
   const { weapon, artifact } = teammate;
   const appWeapon = $AppData.getWeapon(weapon.code);
   const { name: artifactSetName, flower } = $AppData.getArtifactSet(artifact.code) || {};
@@ -93,4 +93,4 @@ export const TeammateItems = ({
       </div>
     </div>
   );
-};
+}

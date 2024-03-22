@@ -25,7 +25,7 @@ interface TalentDetailProps {
   onChangeDetailIndex: (newIndex: number) => void;
   onClose: () => void;
 }
-export const TalentDetail = ({ appChar, detailIndex, onChangeDetailIndex, onClose }: TalentDetailProps) => {
+export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClose }: TalentDetailProps) {
   const { t } = useTranslation();
   const { weaponType, vision: elementType, activeTalents, passiveTalents } = appChar;
   const { ES, EB, altSprint } = activeTalents;
@@ -171,7 +171,7 @@ export const TalentDetail = ({ appChar, detailIndex, onChangeDetailIndex, onClos
       </div>
     </div>
   );
-};
+}
 
 type ProcessedStat = {
   name: string;

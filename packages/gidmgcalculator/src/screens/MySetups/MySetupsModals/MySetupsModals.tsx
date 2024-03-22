@@ -12,7 +12,7 @@ import CombineMore from "./CombineMore";
 interface MySetupsModalsProps {
   combineMoreId?: number;
 }
-export const MySetupsModals = (props: MySetupsModalsProps) => {
+export function MySetupsModals(props: MySetupsModalsProps) {
   const dispatch = useDispatch();
   const modalType = useSelector(selectMySetupModalType);
 
@@ -88,4 +88,4 @@ export const MySetupsModals = (props: MySetupsModalsProps) => {
       </Modal>
     </>
   );
-};
+}

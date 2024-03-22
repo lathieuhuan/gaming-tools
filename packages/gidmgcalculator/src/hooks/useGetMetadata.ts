@@ -5,7 +5,7 @@ interface UseGetMetadataOptions {
   onSuccess?: () => void;
   onError?: () => void;
 }
-export const useGetMetadata = (options: UseGetMetadataOptions = {}) => {
+export function useGetMetadata(options: UseGetMetadataOptions = {}) {
   const [status, setStatus] = useState<"done" | "loading" | "error" | "idle">("loading");
 
   const getMetadata = async () => {
@@ -32,4 +32,4 @@ export const useGetMetadata = (options: UseGetMetadataOptions = {}) => {
     status,
     getMetadata,
   };
-};
+}

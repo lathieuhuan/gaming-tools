@@ -17,14 +17,14 @@ interface ArtifactSubstatsControlProps {
   subStats: ArtifactSubStat[];
   onChangeSubStat?: (index: number, changes: Partial<ArtifactSubStat>) => void;
 }
-export const ArtifactSubstatsControl = ({
+export function ArtifactSubstatsControl({
   className = "",
   mutable,
   mainStatType,
   subStats,
   rarity,
   onChangeSubStat,
-}: ArtifactSubstatsControlProps) => {
+}: ArtifactSubstatsControlProps) {
   const { t } = useTranslation();
 
   const statTypeCount = { [mainStatType]: 1 };
@@ -91,4 +91,4 @@ export const ArtifactSubstatsControl = ({
       })}
     </div>
   );
-};
+}

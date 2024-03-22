@@ -12,7 +12,7 @@ interface UseCombineManagerArgs {
   limit: number;
 }
 
-export const useCombineManager = ({ options, limit }: UseCombineManagerArgs) => {
+export function useCombineManager({ options, limit }: UseCombineManagerArgs) {
   const [pickedIDs, setPickedIDs] = useState<number[]>([]);
   const [isError, setIsError] = useState(false);
 
@@ -88,4 +88,4 @@ export const useCombineManager = ({ options, limit }: UseCombineManagerArgs) => 
     combineMenu,
     setIsError,
   };
-};
+}

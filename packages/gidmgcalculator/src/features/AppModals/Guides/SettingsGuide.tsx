@@ -1,7 +1,7 @@
 import { FaBars, FaCog } from "react-icons/fa";
 import { Yellow } from "@Src/components";
 
-export const SettingsGuide = () => {
+export function SettingsGuide() {
   return (
     <div className="space-y-1 contains-inline-svg">
       <p>
@@ -33,4 +33,4 @@ export const SettingsGuide = () => {
       </p>
     </div>
   );
-};
+}

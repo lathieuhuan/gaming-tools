@@ -5,7 +5,7 @@ interface ElementIconProps {
   size?: string | number;
 }
 
-export const ElementIcon = ({ type, size = "1em" }: ElementIconProps) => {
+export function ElementIcon({ type, size = "1em" }: ElementIconProps) {
   const props = {
     width: size,
     height: size,
@@ -76,4 +76,4 @@ export const ElementIcon = ({ type, size = "1em" }: ElementIconProps) => {
         </svg>
       );
   }
-};
+}

@@ -2,7 +2,7 @@ import type { AttributeStat, UserArtifact } from "@Src/types";
 import type { ArtifactFilterState } from "./ArtifactFilter.types";
 import { Artifact_ } from "@Src/utils";
 
-export const filterArtifacts = (artifacts: UserArtifact[], filterCondition: ArtifactFilterState) => {
+export function filterArtifacts(artifacts: UserArtifact[], filterCondition: ArtifactFilterState) {
   const { stats, codes, types } = filterCondition;
   const noFilterCode = !codes.length;
   const noFilterType = !types.length;
@@ -44,4 +44,4 @@ export const filterArtifacts = (artifacts: UserArtifact[], filterCondition: Arti
     });
   }
   return result;
-};
+}

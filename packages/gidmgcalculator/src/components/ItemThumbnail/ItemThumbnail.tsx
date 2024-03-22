@@ -16,7 +16,7 @@ interface ItemThumbProps {
     setupIDs?: number[];
   };
 }
-export const ItemThumbnail = ({ className, imgCls, item }: ItemThumbProps) => {
+export function ItemThumbnail({ className, imgCls, item }: ItemThumbProps) {
   //
   const renderSideIcon = (owner: string) => {
     const { icon = "", sideIcon } = $AppCharacter.get(owner) || {};
@@ -67,4 +67,4 @@ export const ItemThumbnail = ({ className, imgCls, item }: ItemThumbProps) => {
       </div>
     </div>
   );
-};
+}

@@ -7,7 +7,7 @@ import { useDispatch } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 import { FinalResultCore } from "./FinalResultCore";
 
-export const Menu = () => {
+export function Menu() {
   const dispatch = useDispatch();
 
   const [menuDropped, setMenuDropped] = useState(false);
@@ -79,4 +79,4 @@ export const Menu = () => {
       </Modal.Core>
     </div>
   );
-};
+}

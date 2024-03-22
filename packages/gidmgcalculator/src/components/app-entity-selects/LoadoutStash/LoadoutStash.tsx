@@ -16,7 +16,7 @@ interface LoadoutStashCoreProps {
   keyword?: string;
   onSelect?: (set: CalcArtifact[]) => void;
 }
-export const LoadoutStashCore = ({ keyword, onSelect }: LoadoutStashCoreProps) => {
+export function LoadoutStashCore({ keyword, onSelect }: LoadoutStashCoreProps) {
   const [chosenType, setChosenType] = useState<LoadoutType>("EQUIPPED");
   const [chosenArtifact, setChosenArtifact] = useState<UserArtifact>();
 
@@ -73,7 +73,7 @@ export const LoadoutStashCore = ({ keyword, onSelect }: LoadoutStashCoreProps) =
       </div>
     </div>
   );
-};
+}
 
 export const LoadoutStash = Modal.coreWrap(
   (props: Omit<LoadoutStashCoreProps, "keyword"> & ModalControl) => {

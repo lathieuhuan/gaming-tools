@@ -26,7 +26,7 @@ interface EquippedSetStashProps {
   onChangeArtifact: (artifact?: UserArtifact) => void;
   onSelectSet: (artifacts: UserArtifact[]) => void;
 }
-export const EquippedSetStash = ({ keyword, onChangeArtifact, onSelectSet }: EquippedSetStashProps) => {
+export function EquippedSetStash({ keyword, onChangeArtifact, onSelectSet }: EquippedSetStashProps) {
   const [chosen, setChosen] = useState({
     characterCode: 0,
     artifactId: 0,
@@ -170,4 +170,4 @@ export const EquippedSetStash = ({ keyword, onChangeArtifact, onSelectSet }: Equ
       </div>
     </div>
   );
-};
+}

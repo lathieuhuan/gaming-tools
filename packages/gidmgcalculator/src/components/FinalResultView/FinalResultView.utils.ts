@@ -13,7 +13,7 @@ type ReactionKey = {
 
 export type TableKey = AttackPatternKey | ReactionKey;
 
-export const getTableKeys = (appChar: AppCharacter): TableKey[] => {
+export function getTableKeys(appChar: AppCharacter): TableKey[] {
   const NAs: AttackPatternKey = {
     main: "NAs",
     subs: [],
@@ -37,11 +37,11 @@ export const getTableKeys = (appChar: AppCharacter): TableKey[] => {
   });
 
   return result;
-};
+}
 
-export const displayValue = (value?: number | number[]) => {
+export function displayValue(value?: number | number[]) {
   if (value) {
     return Array.isArray(value) ? value.map((v) => Math.round(v)).join(" + ") : Math.round(value);
   }
   return "-";
-};
+}

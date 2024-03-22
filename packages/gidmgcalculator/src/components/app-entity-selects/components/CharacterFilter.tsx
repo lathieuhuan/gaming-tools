@@ -17,7 +17,7 @@ interface CharacterFilterProps {
   onDone: (filter: CharacterFilterState) => void;
   onCancel: () => void;
 }
-export const CharacterFilter = ({ className, initialFilter, onCancel, onDone }: CharacterFilterProps) => {
+export function CharacterFilter({ className, initialFilter, onCancel, onDone }: CharacterFilterProps) {
   const ELEMENT_ICONS = ELEMENT_TYPES.map((value) => {
     return {
       value,
@@ -84,4 +84,4 @@ export const CharacterFilter = ({ className, initialFilter, onCancel, onDone }: 
       <ButtonGroup.Confirm className="mt-4" justify="end" focusConfirm onCancel={onCancel} onConfirm={onConfirm} />
     </div>
   );
-};
+}

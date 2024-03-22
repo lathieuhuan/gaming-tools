@@ -30,7 +30,7 @@ import { parseUserCharacter, CharacterForInit } from "./store.utils";
 type Option = {
   onSuccess?: () => void;
 };
-export const checkBeforeInitNewSession = (payload: InitNewSessionPayload, options?: Option): AppThunk => {
+export function checkBeforeInitNewSession(payload: InitNewSessionPayload, options?: Option): AppThunk {
   return async (dispatch) => {
     const { char } = payload.calcSetup;
     const { onSuccess } = options || {};
@@ -58,9 +58,9 @@ export const checkBeforeInitNewSession = (payload: InitNewSessionPayload, option
       dispatch(updateUI({ loading: false }));
     }
   };
-};
+}
 
-export const initNewSessionWithCharacter = (character: CharacterForInit): AppThunk => {
+export function initNewSessionWithCharacter(character: CharacterForInit): AppThunk {
   return (dispatch, getState) => {
     const { userWps, userArts } = getState().userdb;
 
@@ -96,9 +96,9 @@ export const initNewSessionWithCharacter = (character: CharacterForInit): AppThu
       })
     );
   };
-};
+}
 
-export const saveSetupThunk = (setupID: number, name: string): AppThunk => {
+export function saveSetupThunk(setupID: number, name: string): AppThunk {
   return (dispatch, getState) => {
     const {
       calculator,
@@ -272,14 +272,14 @@ export const saveSetupThunk = (setupID: number, name: string): AppThunk => {
       );
     });
   };
-};
+}
 
 interface MakeTeammateSetupArgs {
   setup: UserSetup;
   mainWeapon: UserWeapon;
   teammateIndex: number;
 }
-export const makeTeammateSetup = ({ setup, mainWeapon, teammateIndex }: MakeTeammateSetupArgs): AppThunk => {
+export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeammateSetupArgs): AppThunk {
   return (dispatch, getState) => {
     const teammate = setup.party[teammateIndex];
 
@@ -363,4 +363,4 @@ export const makeTeammateSetup = ({ setup, mainWeapon, teammateIndex }: MakeTeam
       );
     }
   };
-};
+}

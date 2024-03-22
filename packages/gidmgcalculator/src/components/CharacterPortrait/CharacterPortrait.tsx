@@ -7,7 +7,7 @@ interface CharacterPortraitProps {
   icon: string;
   onClickIcon?: () => void;
 }
-export const CharacterPortrait = ({ className, code, icon, onClickIcon }: CharacterPortraitProps) => {
+export function CharacterPortrait({ className, code, icon, onClickIcon }: CharacterPortraitProps) {
   // for the traveler
   const bgColorByCode: Record<number, string> = {
     1: "bg-anemo",
@@ -28,4 +28,4 @@ export const CharacterPortrait = ({ className, code, icon, onClickIcon }: Charac
       <GenshinImage src={icon} imgType="character" />
     </div>
   );
-};
+}

@@ -17,7 +17,7 @@ interface ChosenSetupModalsProps {
   artifacts: UserArtifacts;
   result?: ReturnType<typeof calculateChosenSetup>;
 }
-export const ChosenSetupModals = ({ chosenSetup, weapon, artifacts, result }: ChosenSetupModalsProps) => {
+export function ChosenSetupModals({ chosenSetup, weapon, artifacts, result }: ChosenSetupModalsProps) {
   const dispatch = useDispatch();
   const modalType = useSelector(selectMySetupModalType);
 
@@ -122,4 +122,4 @@ export const ChosenSetupModals = ({ chosenSetup, weapon, artifacts, result }: Ch
       )}
     </>
   );
-};
+}

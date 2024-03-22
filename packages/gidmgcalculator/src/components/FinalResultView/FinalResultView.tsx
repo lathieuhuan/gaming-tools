@@ -19,14 +19,14 @@ interface FinalResultViewProps {
   focusedAspect?: CalculationAspect;
   onChangeTalentLevel?: (newLevel: number) => void;
 }
-export const FinalResultView = ({
+export function FinalResultView({
   char,
   party,
   finalResult,
   talentMutable,
   focusedAspect,
   onChangeTalentLevel,
-}: FinalResultViewProps) => {
+}: FinalResultViewProps) {
   const { t } = useTranslation();
   const appChar = $AppCharacter.get(char.name);
 
@@ -149,4 +149,4 @@ export const FinalResultView = ({
       })}
     </div>
   );
-};
+}

@@ -14,7 +14,7 @@ interface ArtifactConfigProps {
   onUpdateConfig?: (properties: Partial<Artifact>) => void;
   onSelect?: (config: Artifact) => void;
 }
-export const ArtifactConfig = ({
+export function ArtifactConfig({
   config,
   typeSelect,
   maxRarity = 5,
@@ -23,7 +23,7 @@ export const ArtifactConfig = ({
   onChangeRarity,
   onUpdateConfig,
   onSelect,
-}: ArtifactConfigProps) => {
+}: ArtifactConfigProps) {
   const onClickRarityStar = (num: number) => {
     if (num !== config?.rarity) {
       onChangeRarity?.(num);
@@ -83,4 +83,4 @@ export const ArtifactConfig = ({
       </div>
     </div>
   );
-};
+}

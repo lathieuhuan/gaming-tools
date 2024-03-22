@@ -2,10 +2,10 @@ import { useIconSelect, type IconSelectConfig, type IconSelectInitialValues } fr
 import type { ArtifactType } from "@Src/types";
 import { Artifact_ } from "@Src/utils";
 
-export const useArtifactTypeSelect = (
+export function useArtifactTypeSelect(
   initialValues?: IconSelectInitialValues<ArtifactType>,
   config?: Omit<IconSelectConfig<ArtifactType>, "iconCls" | "selectedCls">
-) => {
+) {
   const finalConfig: IconSelectConfig<ArtifactType> = {
     ...config,
     iconCls: "p-1",
@@ -22,4 +22,4 @@ export const useArtifactTypeSelect = (
     updateArtifactTypes: updateSelectedIcons,
     renderArtifactTypeSelect: renderIconSelect,
   };
-};
+}

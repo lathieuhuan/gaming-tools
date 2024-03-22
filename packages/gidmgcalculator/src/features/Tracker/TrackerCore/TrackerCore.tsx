@@ -15,11 +15,10 @@ import { BonusesTracker } from "./BonusesTracker";
 import { DebuffsTracker } from "./DebuffsTracker";
 import { CalcItemTracker } from "./CalcItemTracker";
 
-
-interface TrackerContainerProps {
+interface TrackerCoreProps {
   trackerState: TrackerState;
 }
-export const TrackerContainer = ({ trackerState }: TrackerContainerProps) => {
+export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const activeSetup = useSelector((state) => {
     const { activeId, setupsById } = state.calculator;
     return setupsById[activeId];
@@ -149,4 +148,4 @@ export const TrackerContainer = ({ trackerState }: TrackerContainerProps) => {
       />
     </div>
   );
-};
+}

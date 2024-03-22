@@ -9,7 +9,7 @@ import userdbSliceReducers, { userdbSlice, initialState } from "./userdb-slice";
 
 export type SetupStoreArgs = { persistingUserData?: boolean };
 
-export const setupStore = (args?: { persistingUserData?: boolean }) => {
+export function setupStore(args?: { persistingUserData?: boolean }) {
   const userdbPersistReducers = persistReducer(
     {
       key: "database",
@@ -51,7 +51,7 @@ export const setupStore = (args?: { persistingUserData?: boolean }) => {
     store,
     persistor,
   };
-};
+}
 
 export type AppStore = ReturnType<typeof setupStore>["store"];
 
