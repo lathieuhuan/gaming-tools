@@ -3,7 +3,7 @@ import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.type
 
 import { CharacterCal } from "@Src/calculation";
 import { ParsedAbilityEffect, findByIndex, parseAbilityDescription } from "@Src/utils";
-import { GiModifierView } from "../GiModifierView";
+import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
 interface SelfModsViewProps {
@@ -28,7 +28,7 @@ function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Modifier[]) {
       const { inputs = [] } = ctrl;
 
       return (
-        <GiModifierView
+        <GenshinModifierView
           key={ctrl.index}
           mutable={props.mutable}
           heading={modifier.src}
@@ -51,7 +51,7 @@ export function SelfBuffsView(props: SelfModsViewProps) {
   innateBuffs.forEach((buff, index) => {
     if (CharacterCal.isGranted(buff, props.char)) {
       modifierElmts.push(
-        <GiModifierView
+        <GenshinModifierView
           key={"innate-" + index}
           mutable={false}
           heading={buff.src}

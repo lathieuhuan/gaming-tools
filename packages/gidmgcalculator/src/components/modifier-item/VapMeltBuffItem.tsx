@@ -3,9 +3,9 @@ import { round } from "rond";
 import type { AmplifyingReaction, ElementType, ReactionBonus } from "@Src/types";
 import { Calculation_ } from "@Src/utils";
 import { Green } from "../span";
-import { GiModifierView, type GiModifierViewProps } from "../GiModifierView";
+import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
-interface VapMeltBuffItemProps extends Pick<GiModifierViewProps, "mutable" | "checked" | "onToggle"> {
+interface VapMeltBuffItemProps extends Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle"> {
   reaction: AmplifyingReaction;
   element: ElementType;
   rxnBonus: ReactionBonus;
@@ -14,7 +14,7 @@ export function VapMeltBuffItem({ reaction, element, rxnBonus, ...rest }: VapMel
   const mult = Calculation_.getAmplifyingMultiplier(element, rxnBonus)[reaction];
 
   return (
-    <GiModifierView
+    <GenshinModifierView
       {...rest}
       heading={
         <>

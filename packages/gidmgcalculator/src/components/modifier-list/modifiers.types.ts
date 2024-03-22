@@ -1,5 +1,5 @@
 import type { ModifierCtrl, Teammate } from "@Src/types";
-import type { GiModifierViewProps } from "../GiModifierView";
+import type { GenshinModifierViewProps } from "../GenshinModifierView";
 
 export type GetModifierHanldersArgs = {
   ctrl: ModifierCtrl;
@@ -13,6 +13,6 @@ export type GetTeammateModifierHanldersArgs = GetModifierHanldersArgs & {
 };
 
 export type ModifierHanlders = Pick<
-  GiModifierViewProps,
+  GenshinModifierViewProps,
   "onToggle" | "onChangeText" | "onSelectOption" | "onToggleCheck"
 >;

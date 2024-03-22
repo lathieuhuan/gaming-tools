@@ -3,7 +3,7 @@ import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, Modifier
 
 import { $AppData } from "@Src/services";
 import { findByIndex, parseWeaponDescription } from "@Src/utils";
-import { GiModifierView } from "../GiModifierView";
+import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
 const getWeaponDescription = (descriptions: AppWeapon["descriptions"], buff: WeaponBuff, refi: number) => {
@@ -39,7 +39,7 @@ function renderWeaponModifiers({
     const buff = findByIndex(buffs, ctrl.index);
 
     return buff ? (
-      <GiModifierView
+      <GenshinModifierView
         key={`${keyPrefix}-${data.code}-${ctrl.index}`}
         mutable={mutable}
         checked={ctrl.activated}

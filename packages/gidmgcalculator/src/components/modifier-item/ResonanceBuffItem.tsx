@@ -1,6 +1,6 @@
 import type { ElementType } from "@Src/types";
 import { Green } from "@Src/components";
-import { GiModifierView, type GiModifierViewProps } from "../GiModifierView";
+import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
 const resonanceRenderInfo: Record<string, { name: string; description: JSX.Element }> = {
   pyro: {
@@ -50,11 +50,11 @@ const resonanceRenderInfo: Record<string, { name: string; description: JSX.Eleme
   },
 };
 
-interface ResonanceBuffItemProps extends Omit<GiModifierViewProps, "heading" | "description"> {
+interface ResonanceBuffItemProps extends Omit<GenshinModifierViewProps, "heading" | "description"> {
   element: ElementType;
 }
 
 export function ResonanceBuffItem({ element, ...coreProps }: ResonanceBuffItemProps) {
   const { name, description } = resonanceRenderInfo[element] || {};
-  return name ? <GiModifierView heading={name} description={description} {...coreProps} /> : null;
+  return name ? <GenshinModifierView heading={name} description={description} {...coreProps} /> : null;
 }

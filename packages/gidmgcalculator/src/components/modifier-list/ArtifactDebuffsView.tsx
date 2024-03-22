@@ -3,7 +3,7 @@ import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.type
 
 import { $AppData } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { GiModifierView } from "../GiModifierView";
+import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers, getArtifactDescription } from "./modifiers.utils";
 
 interface ArtifactDebuffsViewProps {
@@ -23,7 +23,7 @@ export function ArtifactDebuffsView({ mutable, artDebuffCtrls, getHanlders }: Ar
 
     if (debuff) {
       content.push(
-        <GiModifierView
+        <GenshinModifierView
           key={`${ctrl.code}-${ctrl.index}`}
           mutable={mutable}
           heading={name}

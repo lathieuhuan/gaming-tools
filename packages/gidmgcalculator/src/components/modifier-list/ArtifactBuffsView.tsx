@@ -3,7 +3,7 @@ import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, Modifier
 
 import { $AppData } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { GiModifierView } from "../GiModifierView";
+import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers, getArtifactDescription } from "./modifiers.utils";
 
 interface RenderArtifactBuffsArgs {
@@ -26,7 +26,7 @@ function renderArtifactModifiers({ fromSelf, keyPrefix, mutable, code, ctrls, ge
     const description = getArtifactDescription(data, buff);
 
     return (
-      <GiModifierView
+      <GenshinModifierView
         key={`${keyPrefix}-${code}-${ctrl.index}`}
         mutable={mutable}
         checked={ctrl.activated}

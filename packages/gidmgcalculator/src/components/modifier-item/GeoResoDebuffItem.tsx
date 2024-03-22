@@ -1,9 +1,9 @@
 import { Green } from "../span";
-import { GiModifierView, type GiModifierViewProps } from "../GiModifierView";
+import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
-export function GeoResoDebuffItem(props: Pick<GiModifierViewProps, "mutable" | "checked" | "onToggle">) {
+export function GeoResoDebuffItem(props: Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle">) {
   return (
-    <GiModifierView
+    <GenshinModifierView
       {...props}
       heading="Enduring Rock"
       description={

@@ -11,7 +11,7 @@ import type {
 import type { GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 import { $AppCharacter } from "@Src/services";
 import { ParsedAbilityEffect, Setup_, findByIndex, parseAbilityDescription } from "@Src/utils";
-import { GiModifierView } from "../GiModifierView";
+import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
 type Modifier = Modifier_Character & {
@@ -34,7 +34,7 @@ function getTeammateModifierElmts(
       const { inputs = [] } = ctrl;
 
       return (
-        <GiModifierView
+        <GenshinModifierView
           key={`${teammate.name}-${ctrl.index}`}
           mutable={props.mutable}
           heading={buff.src}

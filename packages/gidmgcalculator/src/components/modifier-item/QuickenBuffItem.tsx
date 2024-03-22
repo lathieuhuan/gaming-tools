@@ -1,9 +1,9 @@
 import type { ElementType, Level, QuickenReaction, ReactionBonus } from "@Src/types";
 import { Calculation_ } from "@Src/utils";
 import { Green } from "../span";
-import { GiModifierView, type GiModifierViewProps } from "../GiModifierView";
+import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
-interface QuickenBuffItemProps extends Pick<GiModifierViewProps, "mutable" | "checked" | "onToggle"> {
+interface QuickenBuffItemProps extends Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle"> {
   reaction: QuickenReaction;
   element: ElementType;
   characterLv: Level;
@@ -13,7 +13,7 @@ export function QuickenBuffItem({ reaction, element, characterLv, rxnBonus, ...r
   const value = Calculation_.getQuickenBuffDamage(characterLv, rxnBonus)[reaction];
 
   return (
-    <GiModifierView
+    <GenshinModifierView
       {...rest}
       heading={
         <>

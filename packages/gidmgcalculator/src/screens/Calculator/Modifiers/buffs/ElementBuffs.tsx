@@ -11,7 +11,7 @@ import {
   updateCalcSetup,
   updateResonance,
 } from "@Store/calculator-slice";
-import { GiModifierView, QuickenBuffItem, ResonanceBuffItem, VapMeltBuffItem } from "@Src/components";
+import { GenshinModifierView, QuickenBuffItem, ResonanceBuffItem, VapMeltBuffItem } from "@Src/components";
 
 const hasAbsorbingAttackIn = (items: CalcItem[]) => {
   return items.some((item) => item.attElmt === "absorb");
@@ -163,7 +163,7 @@ export default function ElementBuffs() {
   if (hasAbsorbingAttack) {
     renderedElmts.push(
       <div key="absorption">
-        <GiModifierView
+        <GenshinModifierView
           heading="Anemo Absorption"
           description="Enable Anemo absorption on attacks that can absorb one of below elements."
           mutable
@@ -228,7 +228,7 @@ export default function ElementBuffs() {
   if (weaponType !== "catalyst") {
     renderedElmts.push(
       <div>
-        <GiModifierView
+        <GenshinModifierView
           heading="Custom Infusion"
           description={
             <>

@@ -9,10 +9,10 @@ function genNumberSequenceOptions(max: number | undefined = 0, startsAt0: boolea
   return startsAt0 ? [{ label: 0, value: 0 }].concat(result) : result;
 }
 
-export interface GiModifierViewProps extends Omit<ModifierViewProps, "inputConfigs"> {
+export interface GenshinModifierViewProps extends Omit<ModifierViewProps, "inputConfigs"> {
   inputConfigs?: ModInputConfig[];
 }
-export function GiModifierView({ inputConfigs, ...viewProps }: GiModifierViewProps) {
+export function GenshinModifierView({ inputConfigs, ...viewProps }: GenshinModifierViewProps) {
   const viewInputConfigs = inputConfigs?.map<ModifierViewInputConfig>((config) => {
     const label = config.label || "[missing label]";
 
