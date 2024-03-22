@@ -25,9 +25,7 @@ export function TeammateDetail({
   return (
     <div className="w-75 bg-dark-700">
       <div className="pl-4 pt-4 pr-6 flex items-start">
-        <div className="w-18 h-18 shrink-0">
-          <CharacterPortrait code={data.code} icon={data.icon} />
-        </div>
+        <CharacterPortrait info={data} />
         <p className={`px-4 text-2xl text-${data.vision} font-bold`}>{teammate.name}</p>
       </div>
 

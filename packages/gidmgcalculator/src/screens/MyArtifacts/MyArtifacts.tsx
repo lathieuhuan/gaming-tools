@@ -150,6 +150,7 @@ export default function MyArtifacts() {
         active={modalType === "ADD_ARTIFACT"}
         hasMultipleMode
         hasConfigStep
+        // allowBatchForging
         onForgeArtifact={(artifact) => {
           if (isMaxArtifactsReached()) return;
 

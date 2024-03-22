@@ -54,7 +54,7 @@ export default function FirstCombine({ onClose }: { onClose: () => void }) {
         }
       }
 
-      for (const teammate of Setup_.realParty(party)) {
+      for (const teammate of Setup_.teammatesOf(party)) {
         if (!all.includes(teammate.name)) {
           if (all.length === 4) {
             setIsError(true);

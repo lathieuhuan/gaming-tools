@@ -128,8 +128,8 @@ export function EquippedSetStash({ keyword, onChangeArtifact, onSelectSet }: Equ
 
               <div className="p-3 rounded-lg bg-dark-900">
                 <div className="flex items-start space-x-3">
-                  <div className={`w-14 h-14 ${opacityCls}`}>
-                    {visible ? <CharacterPortrait {...character} /> : null}
+                  <div className={opacityCls}>
+                    {visible ? <CharacterPortrait size="small" info={character} /> : null}
                   </div>
                   <p className={`text-lg text-${character.elementType} font-bold`}>{character.name}</p>
                 </div>

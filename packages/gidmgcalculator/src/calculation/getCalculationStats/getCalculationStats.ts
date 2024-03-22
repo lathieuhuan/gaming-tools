@@ -348,7 +348,7 @@ export const getCalculationStats = ({
   }
 
   // APPPLY TEAMMATE BUFFS
-  APPLY_TEAMMATE_BUFFS(Setup_.realParty(party));
+  APPLY_TEAMMATE_BUFFS(Setup_.teammatesOf(party));
 
   APPLY_MAIN_WEAPON_BUFFS(false);
   APLY_MAIN_ARTIFACT_BUFFS(false);

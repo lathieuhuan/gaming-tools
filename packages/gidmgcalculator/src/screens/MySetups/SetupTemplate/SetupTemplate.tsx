@@ -103,33 +103,26 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
       );
     }
 
-    const teammate = party.filter(Boolean).length ? (
-      <div className="flex space-x-4">
-        {party.map((teammate, teammateIndex) => {
-          const dataTeammate = teammate && $AppCharacter.get(teammate.name);
-          if (!dataTeammate) return null;
+    const partyTeammates = Setup_.teammatesOf(party);
 
+    const teammates = partyTeammates.length ? (
+      <div className="flex space-x-4">
+        {partyTeammates.map((teammate, teammateIndex) => {
+          const teammateData = $AppCharacter.get(teammate.name);
           const isCalculated = !isOriginal && !!allIDs?.[teammate.name];
 
           return (
-            <div
+            <CharacterPortrait
               key={teammateIndex}
-              className={clsx(
-                "w-18 h-18 cursor-pointer",
-                isCalculated && " rounded-circle shadow-3px-3px shadow-yellow-400 cursor-pointer"
-              )}
-            >
-              <CharacterPortrait
-                code={dataTeammate.code}
-                icon={dataTeammate.icon}
-                onClickIcon={() => {
-                  setTeammateDetail({
-                    index: teammateIndex,
-                    isCalculated,
-                  });
-                }}
-              />
-            </div>
+              className={clsx("cursor-pointer", isCalculated && "shadow-3px-3px shadow-yellow-400")}
+              info={teammateData}
+              onClick={() => {
+                setTeammateDetail({
+                  index: teammateIndex,
+                  isCalculated,
+                });
+              }}
+            />
           );
         })}
       </div>
@@ -166,7 +159,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
       </div>
     );
 
-    return { mainCharacter, teammate, gears };
+    return { mainCharacter, teammates, gears };
   }, [`${ID}-${setup.ID}`, isFetched]);
 
   return (
@@ -228,7 +221,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
       <div className="px-4 pt-4 pb-3 rounded-lg bg-dark-900 flex flex-col lg:flex-row gap-4">
         <div className="flex flex-col gap-4">
           {display.mainCharacter}
-          {display.teammate}
+          {display.teammates}
         </div>
 
         <div className="hidden lg:block w-0.5 bg-dark-500" />

@@ -42,7 +42,6 @@ export function useCombineManager({ options, limit }: UseCombineManagerArgs) {
       {options.map((setup) => {
         const { ID } = setup;
         const picked = pickedIDs.includes(ID);
-        const { code = 0, icon = "" } = $AppCharacter.get(setup.char.name) || {};
 
         return (
           <div
@@ -59,21 +58,16 @@ export function useCombineManager({ options, limit }: UseCombineManagerArgs) {
               <p className="text-lg font-semibold text-mint-600 cursor-default">{setup.name}</p>
             </div>
 
-            <div className="mt-2 md:mt-0 flex space-x-4">
-              <div className="w-16">
-                <CharacterPortrait className="shadow-3px-2px shadow-light-400" {...{ code, icon }} />
-              </div>
+            <div className="mt-2 md:mt-0 flex gap-4">
+              <CharacterPortrait
+                className="shadow-3px-2px shadow-light-400"
+                size="small"
+                info={$AppCharacter.get(setup.char.name)}
+              />
               {setup.party.map((teammate, j) => {
-                if (teammate) {
-                  const { code = 0, icon = "" } = $AppCharacter.get(teammate.name) || {};
-
-                  return (
-                    <div key={j} className="w-16">
-                      <CharacterPortrait {...{ code, icon }} />
-                    </div>
-                  );
-                }
-                return null;
+                return teammate ? (
+                  <CharacterPortrait key={j} size="small" info={$AppCharacter.get(teammate.name)} />
+                ) : null;
               })}
             </div>
           </div>

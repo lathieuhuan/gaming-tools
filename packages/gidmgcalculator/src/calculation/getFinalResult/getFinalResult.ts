@@ -74,7 +74,7 @@ export default function getFinalResult({
   }
 
   // APPLY PARTY DEBUFFS
-  for (const teammate of Setup_.realParty(party)) {
+  for (const teammate of Setup_.teammatesOf(party)) {
     const { debuffs = [] } = $AppCharacter.get(teammate.name);
 
     for (const { activated, inputs = [], index } of teammate.debuffCtrls) {

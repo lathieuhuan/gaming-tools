@@ -70,7 +70,7 @@ interface PartyModsViewProps {
 }
 
 function getPartyModifierElmts(props: PartyModsViewProps, type: "buffs" | "debuffs") {
-  return Setup_.realParty(props.party).map((teammate, teammateIndex) => {
+  return Setup_.teammatesOf(props.party).map((teammate, teammateIndex) => {
     const teammateData = $AppCharacter.get(teammate.name);
     const modCtrls = type === "buffs" ? teammate?.buffCtrls : teammate?.debuffCtrls;
     const modifiers = type === "buffs" ? teammateData?.buffs : teammateData?.debuffs;
