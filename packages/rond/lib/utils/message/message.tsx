@@ -11,14 +11,17 @@ const msgfRoot = ReactDOM.createRoot(location);
 
 const show = (type: "info" | "error") => (message: string | JSX.Element) => {
   const updateMessage = (active: boolean) => {
+    const closeMsg = () => {
+      if (active) updateMessage(false);
+    };
+
     msgfRoot.render(
-      <Modal.Core active={active} preset="small" closeOnMaskClick={false} onClose={() => {}}>
+      <Modal.Core active={active} preset="small" onClose={closeMsg}>
         <ConfirmModal.Body
           message={<span className={type === "error" ? "ron-message-error" : ""}>{message}</span>}
           showCancel={false}
-          onConfirm={() => {
-            if (active) updateMessage(false);
-          }}
+          focusConfirm
+          onConfirm={closeMsg}
         />
       </Modal.Core>
     );

@@ -13,7 +13,6 @@ import type {
   TeammateWeapon,
   TeammateArtifact,
   SetupImportInfo,
-  AppMessage,
   AttackElement,
   TotalAttribute,
   ReactionBonus,
@@ -22,7 +21,6 @@ import type {
 } from "@Src/types";
 
 export type CalculatorState = {
-  message: AppMessage;
   activeId: number;
   standardId: number;
   comparedIds: number[];

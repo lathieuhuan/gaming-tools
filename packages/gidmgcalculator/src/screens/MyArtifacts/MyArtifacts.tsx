@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import { clsx, useScreenWatcher, ButtonGroup, Modal, WarehouseLayout } from "rond";
+import { clsx, message, useScreenWatcher, ButtonGroup, Modal, WarehouseLayout } from "rond";
 
 import type { UserArtifact } from "@Src/types";
 import { MAX_USER_ARTIFACTS } from "@Src/constants";
@@ -10,7 +10,6 @@ import { findById, indexById } from "@Src/utils";
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectUserArtifacts, addUserArtifact, sortArtifacts } from "@Store/userdb-slice";
-import { updateMessage } from "@Store/calculator-slice";
 
 // Component
 import { InventoryRack, ArtifactForge, ArtifactFilter, ArtifactFilterState } from "@Src/components";
@@ -44,12 +43,7 @@ export default function MyArtifacts() {
 
   const isMaxArtifactsReached = () => {
     if (userArts.length >= MAX_USER_ARTIFACTS) {
-      dispatch(
-        updateMessage({
-          type: "error",
-          content: "Number of stored artifacts has reached its limit.",
-        })
-      );
+      message.error("Number of stored artifacts has reached its limit.");
       return true;
     }
   };

@@ -1,5 +1,6 @@
 import { batch } from "react-redux";
 import isEqual from "react-fast-compare";
+import { message } from "rond";
 
 import type { CalcArtifacts, UserSetup, UserWeapon } from "@Src/types";
 import type { AppThunk } from "./store";
@@ -7,7 +8,7 @@ import { ARTIFACT_TYPES, MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS }
 import { $AppCharacter, $AppData } from "@Src/services";
 
 // Store
-import { initNewSession, updateMessage, type InitNewSessionPayload } from "./calculator-slice";
+import { initNewSession, type InitNewSessionPayload } from "./calculator-slice";
 import { updateSetupImportInfo, updateUI } from "./ui-slice";
 import { addUserArtifact, addUserWeapon, saveSetup, updateUserArtifact, updateUserWeapon } from "./userdb-slice";
 
@@ -47,12 +48,7 @@ export function checkBeforeInitNewSession(payload: InitNewSessionPayload, option
         dispatch(initNewSession(payload));
         onSuccess?.();
       } else {
-        dispatch(
-          updateMessage({
-            type: "error",
-            content: getAppDataError("character", response.code),
-          })
-        );
+        message.error(getAppDataError("character", response.code));
       }
 
       dispatch(updateUI({ loading: false }));
@@ -115,12 +111,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
     }
 
     if (excessType) {
-      return dispatch(
-        updateMessage({
-          type: "error",
-          content: `You're having to many ${excessType}s. Please remove some of them first.`,
-        })
-      );
+      return message.error(`You're having to many ${excessType}s. Please remove some of them first.`);
     }
 
     const { weapon, artifacts } = calculator.setupsById[setupID];

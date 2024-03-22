@@ -107,11 +107,3 @@ export type Weapon = {
   level: Level;
   refi: number;
 };
-
-// temporary, should make a util for message like notification
-export type AppMessage = {
-  active: boolean;
-  type?: "error" | "success" | "info";
-  content?: string;
-  closable?: boolean;
-};

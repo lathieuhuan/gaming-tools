@@ -1,3 +1,4 @@
+import { message } from "rond";
 import type { CalculatorState } from "./calculator-slice.types";
 import { $AppCharacter } from "@Src/services";
 import { calculateSetup } from "@Src/calculation";
@@ -23,11 +24,6 @@ export function calculate(state: CalculatorState, all?: boolean) {
     }
   } catch (err) {
     console.log(err);
-
-    state.message = {
-      active: true,
-      type: "error",
-      content: "An unknown error has occurred and prevented the calculation process.",
-    };
+    message.error("An unknown error has occurred and prevented the calculation process.");
   }
 }

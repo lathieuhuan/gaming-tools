@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { FaPlus, FaSyncAlt, FaUserSlash } from "react-icons/fa";
-import { clsx, CollapseSpace } from "rond";
+import { clsx, message, CollapseSpace } from "rond";
 
 import { findById } from "@Src/utils";
 import { $AppCharacter } from "@Src/services";
@@ -14,7 +14,6 @@ import {
   selectParty,
   addTeammate,
   removeTeammate,
-  updateMessage,
   updateTeammateArtifact,
   updateTeammateWeapon,
 } from "@Store/calculator-slice";
@@ -61,12 +60,7 @@ export default function SectionParty() {
   };
 
   const warnSetupCombined = () => {
-    dispatch(
-      updateMessage({
-        type: "info",
-        content: "This setup is marked as part of a Complex setup, thus teammates cannot be changed.",
-      })
-    );
+    message.info("This setup is marked as part of a Complex setup, thus teammates cannot be changed.");
   };
 
   const onClickChangeTeammate = (teammateIndex: number) => () => {

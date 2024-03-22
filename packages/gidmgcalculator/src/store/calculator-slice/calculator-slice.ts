@@ -1,14 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { PartiallyOptional } from "rond";
-import type {
-  AppMessage,
-  AttackElement,
-  CalcSetupManageInfo,
-  CalcWeapon,
-  Character,
-  Resonance,
-  Target,
-} from "@Src/types";
+import type { AttackElement, CalcSetupManageInfo, CalcWeapon, Character, Resonance, Target } from "@Src/types";
 import type {
   CalculatorState,
   AddTeammateAction,
@@ -50,9 +42,6 @@ const initialState: CalculatorState = {
   setupsById: {},
   resultById: {},
   target: Setup_.createTarget(),
-  message: {
-    active: false,
-  },
 };
 
 export const calculatorSlice = createSlice({
@@ -64,15 +53,6 @@ export const calculatorSlice = createSlice({
         ...state,
         ...action.payload,
       };
-    },
-    updateMessage: (state, action: PayloadAction<Partial<AppMessage> | null>) => {
-      state.message = action.payload
-        ? {
-            active: true,
-            closable: true,
-            ...action.payload,
-          }
-        : { active: false };
     },
     initNewSession: (state, action: PayloadAction<InitNewSessionPayload>) => {
       const { ID = Date.now(), name, type, calcSetup, target } = action.payload;
@@ -668,7 +648,6 @@ export const calculatorSlice = createSlice({
 
 export const {
   updateCalculator,
-  updateMessage,
   initNewSession,
   importSetup,
   updateCalcSetup,

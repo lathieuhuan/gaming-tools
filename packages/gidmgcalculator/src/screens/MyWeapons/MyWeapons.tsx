@@ -1,6 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo, useState } from "react";
-import { Button, ButtonGroup, CollapseSpace, ConfirmModal, WarehouseLayout, useScreenWatcher } from "rond";
+import { message, useScreenWatcher, Button, ButtonGroup, CollapseSpace, ConfirmModal, WarehouseLayout } from "rond";
 
 import { MAX_USER_WEAPONS } from "@Src/constants";
 import { useWeaponTypeSelect } from "@Src/hooks";
@@ -9,7 +9,6 @@ import { UserWeapon, WeaponType } from "@Src/types";
 import { findById, indexById } from "@Src/utils";
 
 // Store
-import { updateMessage } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   addUserWeapon,
@@ -49,14 +48,8 @@ export default function MyWeapons() {
   const chosenWeapon = useMemo(() => findById(filteredWeapons, chosenId), [filteredWeapons, chosenId]);
 
   const checkIfMaxWeaponsReached = () => {
-    if (totalCount + 1 > MAX_USER_WEAPONS) {
-      dispatch(
-        updateMessage({
-          type: "error",
-          content: "Number of stored weapons has reached its limit.",
-        })
-      );
-
+    if (totalCount >= MAX_USER_WEAPONS) {
+      message.error("Number of stored weapons has reached its limit.");
       return true;
     }
   };
@@ -71,15 +64,9 @@ export default function MyWeapons() {
 
   const onClickRemoveWeapon = (weapon: UserWeapon) => {
     if (weapon.setupIDs?.length) {
-      dispatch(
-        updateMessage({
-          type: "info",
-          content: "This weapon cannot be deleted. It is used by some Setups.",
-        })
-      );
-    } else {
-      setModalType("REMOVE_WEAPON");
+      return message.info("This weapon cannot be deleted. It is used by some Setups.");
     }
+    setModalType("REMOVE_WEAPON");
   };
 
   const onConfirmRemoveWeapon = (weapon: UserWeapon) => {
@@ -112,7 +99,7 @@ export default function MyWeapons() {
       />
 
       {screenWatcher.isFromSize("sm") ? (
-        renderWeaponTypeSelect(null, { defaultFallback: { } })
+        renderWeaponTypeSelect()
       ) : (
         <>
           <Button variant={filterIsActive ? "active" : "default"} onClick={() => setFilterIsActive(!filterIsActive)}>
