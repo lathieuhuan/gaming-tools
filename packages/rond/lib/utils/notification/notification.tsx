@@ -5,8 +5,8 @@ import "./notification.styles.scss";
 
 export let notiRequests: NotificationRequest[] = [];
 
-const updateNotification = () => {
-  if (!document.getElementById("ron-notification")) {
+function updateNotification() {
+  if (!document.getElementById(location.id)) {
     document.body.append(location);
   }
 
@@ -19,9 +19,9 @@ const updateNotification = () => {
       }}
     />
   );
-};
+}
 
-const destroy = (id?: number | "ALL") => {
+function destroy(id?: number | "ALL") {
   if (id === "ALL") {
     for (const request of notiRequests) {
       request.isClosing = true;
@@ -41,7 +41,7 @@ const destroy = (id?: number | "ALL") => {
   }
 
   updateNotification();
-};
+}
 
 const show = (type: NotificationRequest["type"]) => (noti: NotificatioProps) => {
   //
