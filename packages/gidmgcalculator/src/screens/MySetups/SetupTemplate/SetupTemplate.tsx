@@ -103,59 +103,64 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
       );
     }
 
-    const partyTeammates = Setup_.teammatesOf(party);
-
-    const teammates = partyTeammates.length ? (
+    const teammates = (
       <div className="flex space-x-4">
-        {partyTeammates.map((teammate, teammateIndex) => {
-          const teammateData = $AppCharacter.get(teammate.name);
-          const isCalculated = !isOriginal && !!allIDs?.[teammate.name];
+        {[0, 1, 2].map((teammateIndex) => {
+          const teammate = party[teammateIndex];
 
-          return (
-            <CharacterPortrait
-              key={teammateIndex}
-              className={clsx("cursor-pointer", isCalculated && "shadow-3px-3px shadow-yellow-400")}
-              info={teammateData}
-              onClick={() => {
-                setTeammateDetail({
-                  index: teammateIndex,
-                  isCalculated,
-                });
-              }}
-            />
-          );
+          if (teammate) {
+            const teammateData = $AppCharacter.get(teammate.name);
+            const isCalculated = !isOriginal && !!allIDs?.[teammate.name];
+
+            return (
+              <CharacterPortrait
+                key={teammateIndex}
+                className={clsx("cursor-pointer", isCalculated && "shadow-3px-3px shadow-yellow-400")}
+                info={teammateData}
+                onClick={() => {
+                  setTeammateDetail({
+                    index: teammateIndex,
+                    isCalculated,
+                  });
+                }}
+              />
+            );
+          }
+          return <CharacterPortrait />;
         })}
       </div>
-    ) : null;
+    );
 
     const gears = (
-      <div className="grid grid-cols-3 gap-2">
-        {appWeapon ? (
-          <GearIcon item={appWeapon} disabled={!isFetched} onClick={openModal("WEAPON")} />
-        ) : (
-          <GearIcon item={{ icon: "7/7b/Icon_Inventory_Weapons" }} />
-        )}
+      <div className="flex justify-center">
+        <div className="grid grid-cols-3 gap-2">
+          {appWeapon ? (
+            <GearIcon item={appWeapon} disabled={!isFetched} onClick={openModal("WEAPON")} />
+          ) : (
+            <GearIcon item={{ icon: "7/7b/Icon_Inventory_Weapons" }} />
+          )}
 
-        {artifacts.map((artifact, i) => {
-          if (artifact) {
-            const appArtifact = $AppData.getArtifact(artifact);
+          {artifacts.map((artifact, i) => {
+            if (artifact) {
+              const appArtifact = $AppData.getArtifact(artifact);
 
-            return appArtifact ? (
-              <GearIcon
-                key={i}
-                item={{
-                  icon: appArtifact.icon,
-                  beta: appArtifact.beta,
-                  rarity: artifact.rarity || 5,
-                }}
-                disabled={!isFetched}
-                onClick={openModal("ARTIFACTS")}
-              />
-            ) : null;
-          }
+              return appArtifact ? (
+                <GearIcon
+                  key={i}
+                  item={{
+                    icon: appArtifact.icon,
+                    beta: appArtifact.beta,
+                    rarity: artifact.rarity || 5,
+                  }}
+                  disabled={!isFetched}
+                  onClick={openModal("ARTIFACTS")}
+                />
+              ) : null;
+            }
 
-          return <GearIcon key={i} item={{ icon: Artifact_.iconOf(ARTIFACT_TYPES[i]) || "" }} />;
-        })}
+            return <GearIcon key={i} item={{ icon: Artifact_.iconOf(ARTIFACT_TYPES[i]) || "" }} />;
+          })}
+        </div>
       </div>
     );
 
@@ -228,7 +233,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
 
         <div className="flex flex-col gap-4">
           <ButtonGroup
-            justify="start"
+            justify="center"
             buttons={[
               {
                 children: "Stats",

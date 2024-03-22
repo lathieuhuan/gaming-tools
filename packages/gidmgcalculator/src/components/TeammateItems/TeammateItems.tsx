@@ -36,7 +36,7 @@ export function TeammateItems({
             disabled={!mutable}
             onClick={onClickWeapon}
           >
-            <GenshinImage src={appWeapon.icon} alt="weapon" defaultFallback={{ wrapperCls: "p-2" }} />
+            <GenshinImage src={appWeapon.icon} alt="weapon" fallbackCls="p-2" />
           </button>
 
           <div className="overflow-hidden">
@@ -72,10 +72,10 @@ export function TeammateItems({
       <div className="flex items-start space-x-2">
         <button className="w-14 h-14 shrink-0" disabled={!mutable} onClick={onClickArtifact}>
           <GenshinImage
-            className={artifactSetIcon ? "bg-dark-500 rounded" : "p-1"}
+            className={clsx("bg-dark-500 rounded", !artifactSetIcon && "p-1")}
             src={artifactSetIcon || "6/6a/Icon_Inventory_Artifacts"}
             alt="artifact"
-            defaultFallback={{ wrapperCls: "p-2" }}
+            fallbackCls="p-3"
             imgType="unknown"
           />
         </button>

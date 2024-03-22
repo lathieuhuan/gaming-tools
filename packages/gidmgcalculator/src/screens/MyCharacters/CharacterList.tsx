@@ -12,10 +12,10 @@ import styles from "./MyCharacters.styles.module.scss";
 interface TopBarProps {
   characters: Array<{ name: string }>;
   chosenChar: string;
-  onCliceSort: () => void;
+  onClickSort: () => void;
   onClickWish: () => void;
 }
-export default function CharacterList({ characters, chosenChar, onCliceSort, onClickWish }: TopBarProps) {
+export default function CharacterList({ characters, chosenChar, onClickSort, onClickWish }: TopBarProps) {
   const dispatch = useDispatch();
 
   const [gridviewOn, setGridviewOn] = useState(false);
@@ -53,7 +53,7 @@ export default function CharacterList({ characters, chosenChar, onCliceSort, onC
       <div className={styles["side-icon-carousel"]}>
         {characters.length ? (
           <div className="absolute top-8 right-full flex">
-            <Button className="mr-4" variant="primary" icon={<FaSortAmountUpAlt />} onClick={onCliceSort} />
+            <Button className="mr-4" variant="primary" icon={<FaSortAmountUpAlt />} onClick={onClickSort} />
             <Button className="mr-4" variant="primary" icon={<FaTh />} onClick={() => setGridviewOn(true)} />
           </div>
         ) : null}
@@ -92,7 +92,7 @@ export default function CharacterList({ characters, chosenChar, onCliceSort, onC
                         <GenshinImage
                           src={appChar.sideIcon || appChar.icon}
                           alt="icon"
-                          defaultFallback={{ wrapperCls: "p-2" }}
+                          fallbackCls="p-2"
                         />
                       )}
                     </div>

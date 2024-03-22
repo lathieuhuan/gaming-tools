@@ -39,9 +39,7 @@ const AppEntityOptionCore = ({ className, imgCls, visible, item, selectedAmount 
         )}
       >
         <div className={"aspect-square transition-opacity duration-400 " + (visible ? "opacity-100" : "opacity-0")}>
-          {visible && (
-            <GenshinImage className={imgCls} src={item.icon} imgType="unknown" defaultFallback={{ wrapperCls: "p-4" }} />
-          )}
+          {visible && <GenshinImage className={imgCls} src={item.icon} imgType="unknown" fallbackCls="p-4" />}
         </div>
 
         {selectedAmount ? <p className="absolute bottom-0 right-1 text-black font-bold">{selectedAmount}</p> : null}

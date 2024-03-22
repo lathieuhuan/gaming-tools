@@ -1,4 +1,6 @@
-import { clsx } from "rond";
+import { FaPlus } from "react-icons/fa";
+import { clsx, type ClassValue } from "rond";
+import type { ElementType } from "@Src/types";
 import { GenshinImage } from "@Src/components";
 
 type PortraitSize = "small" | "medium";
@@ -9,17 +11,27 @@ const sizeCls: Record<PortraitSize, string> = {
 };
 
 interface CharacterPortraitProps {
-  className?: string;
-  info: {
+  className?: ClassValue;
+  info?: {
     code: number;
     icon: string;
+    vision?: ElementType;
   };
   /** Default to 'medium' */
   size?: PortraitSize;
+  withColorBg?: boolean;
+  recruitable?: boolean;
   onClick?: () => void;
 }
-export function CharacterPortrait({ className, info, size = "medium", onClick }: CharacterPortraitProps) {
-  const { code = 0, icon } = info || {};
+export function CharacterPortrait({
+  className,
+  info,
+  size = "medium",
+  withColorBg,
+  recruitable,
+  onClick,
+}: CharacterPortraitProps) {
+  const { code = 0, icon, vision } = info || {};
 
   // for the traveler
   const bgColorByCode: Record<number, string> = {
@@ -29,17 +41,27 @@ export function CharacterPortrait({ className, info, size = "medium", onClick }:
     57: "bg-dendro",
   };
 
+  const cls = [
+    "shrink-0 overflow-hidden rounded-circle",
+    info && "zoomin-on-hover",
+    sizeCls[size],
+    withColorBg && vision ? `bg-${vision}` : bgColorByCode[code] ?? "bg-dark-500",
+    className,
+  ];
+
+  if (recruitable) {
+    if (!info) cls.push("flex-center glow-on-hover");
+
+    return (
+      <button className={clsx(cls)} onClick={onClick}>
+        {info ? <GenshinImage src={icon} imgType="character" fallbackCls="p-2" /> : <FaPlus className="text-2xl" />}
+      </button>
+    );
+  }
+
   return (
-    <div
-      className={clsx(
-        "shrink-0 zoomin-on-hover overflow-hidden rounded-circle",
-        sizeCls[size],
-        `${bgColorByCode[code] || "bg-dark-500"}`,
-        className
-      )}
-      onClick={onClick}
-    >
-      <GenshinImage src={icon} imgType="character" defaultFallback={{ wrapperCls: "p-2" }} />
+    <div className={clsx(cls)} onClick={onClick}>
+      {info ? <GenshinImage src={icon} imgType="character" fallbackCls="p-2" /> : null}
     </div>
   );
 }

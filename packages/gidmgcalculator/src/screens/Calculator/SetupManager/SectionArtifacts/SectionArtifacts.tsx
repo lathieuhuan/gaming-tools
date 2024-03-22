@@ -264,7 +264,7 @@ export default function SectionArtifacts() {
                   !artifact && "p-2 opacity-80"
                 )}
                 src={icon}
-                defaultFallback={{ wrapperCls: artifact ? "p-3" : "p-1" }}
+                fallbackCls={artifact ? "p-3" : "p-1"}
                 imgType="unknown"
               />
             </div>

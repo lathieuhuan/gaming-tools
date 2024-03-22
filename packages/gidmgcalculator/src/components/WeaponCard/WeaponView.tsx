@@ -25,19 +25,19 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
   refine,
 }: WeaponViewProps<T>) {
   const { t } = useTranslation();
+
+  const passiveDescription = useMemo(() => {
+    if (!appWeapon.descriptions || !weapon?.refi) {
+      return "";
+    }
+    return appWeapon.descriptions.map((content) => parseWeaponDescription(content, weapon?.refi)).join(" ");
+  }, [weapon?.code, weapon?.refi]);
+
   if (!weapon) return null;
 
   const appWeapon = $AppData.getWeapon(weapon.code)!;
-  const { level, refi } = weapon;
   const { rarity, subStat } = appWeapon;
   const selectLevels = rarity < 3 ? LEVELS.slice(0, -4) : LEVELS;
-
-  const passiveDescription = useMemo(() => {
-    if (!appWeapon.descriptions) {
-      return "";
-    }
-    return appWeapon.descriptions.map((content) => parseWeaponDescription(content, refi)).join(" ");
-  }, [weapon.code, refi]);
 
   return (
     <div className="w-full" onDoubleClick={() => console.log(weapon)}>
@@ -51,7 +51,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
             {mutable ? (
               <select
                 className={`text-lg text-rarity-${rarity} font-bold text-last-right`}
-                value={level}
+                value={weapon.level}
                 onChange={(e) => upgrade && upgrade(e.target.value as Level, weapon)}
               >
                 {selectLevels.map((_, index) => (
@@ -59,7 +59,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
                 ))}
               </select>
             ) : (
-              <p className={`text-lg text-rarity-${rarity} font-bold`}>{level}</p>
+              <p className={`text-lg text-rarity-${rarity} font-bold`}>{weapon.level}</p>
             )}
           </div>
 
@@ -73,7 +73,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
                 {t(subStat.type)}
               </p>
               <p className={`text-rarity-${rarity} text-2xl leading-7 font-bold`}>
-                {Weapon_.getSubStatValue(level, subStat.scale)}
+                {Weapon_.getSubStatValue(weapon.level, subStat.scale)}
                 {suffixOf(subStat.type)}
               </p>
             </div>
@@ -82,7 +82,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
           <div className={"grow pt-1 flex flex-col justify-center " + groupStyles}>
             <p className="font-semibold">Base ATK</p>
             <p className={`text-rarity-${rarity} text-2.5xl font-bold`}>
-              {Weapon_.getMainStatValue(level, appWeapon.mainStatScale)}
+              {Weapon_.getMainStatValue(weapon.level, appWeapon.mainStatScale)}
             </p>
           </div>
         </div>
@@ -102,7 +102,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
               {mutable ? (
                 <select
                   className={`text-lg text-rarity-${rarity} font-bold`}
-                  value={refi}
+                  value={weapon.refi}
                   onChange={(e) => refine && refine(+e.target.value, weapon)}
                 >
                   {[1, 2, 3, 4, 5].map((level) => (
@@ -110,7 +110,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
                   ))}
                 </select>
               ) : (
-                <p className={`text-lg text-rarity-${rarity} font-bold`}>{refi}</p>
+                <p className={`text-lg text-rarity-${rarity} font-bold`}>{weapon.refi}</p>
               )}
             </div>
           )}

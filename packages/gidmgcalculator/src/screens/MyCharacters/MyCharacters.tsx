@@ -31,7 +31,7 @@ export default function MyCharacters() {
         <CharacterList
           characters={userChars}
           chosenChar={chosenChar}
-          onCliceSort={() => setModalType("SORT_CHARACTERS")}
+          onClickSort={() => setModalType("SORT_CHARACTERS")}
           onClickWish={() => setModalType("ADD_CHARACTER")}
         />
       ) : (

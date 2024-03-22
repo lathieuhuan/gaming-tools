@@ -30,7 +30,7 @@ export function ItemThumbnail({ className, imgCls, item }: ItemThumbProps) {
         <GenshinImage
           imgCls={clsx("max-w-none w-10 h-10 -translate-x-2 -translate-y-4", !sideIcon && "-translate-y-2")}
           src={sideIcon || icon}
-          defaultFallback={{ className: "p-1" }}
+          fallbackCls="p-1"
         />
       </div>
     );
@@ -55,7 +55,7 @@ export function ItemThumbnail({ className, imgCls, item }: ItemThumbProps) {
         <GenshinImage
           className={imgCls}
           src={item.icon}
-          defaultFallback={{ wrapperCls: "p-3" }}
+          fallbackCls="p-3"
           imgType={item.refi ? "weapon" : "artifact"}
         />
       </div>

@@ -24,9 +24,7 @@ export function AbilityIcon({ className, img, elementType, active = true, onClic
         src={img}
         width={ABILITY_ICON_SIZE}
         height={ABILITY_ICON_SIZE}
-        defaultFallback={{
-          wrapperCls: `p-3 rounded-circle bg-${elementType} ${styles[elementType]}`,
-        }}
+        fallbackCls={`p-3 rounded-circle bg-${elementType} ${styles[elementType]}`}
       />
     </button>
   );

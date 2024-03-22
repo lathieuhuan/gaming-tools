@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { FaPlus, FaSyncAlt, FaUserSlash } from "react-icons/fa";
+import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
 import { clsx, message, CollapseSpace } from "rond";
 
 import { findById } from "@Src/utils";
@@ -19,7 +19,7 @@ import {
 } from "@Store/calculator-slice";
 
 // Component
-import { TeammateItems, Tavern, WeaponForge, ArtifactForge, GenshinImage } from "@Src/components";
+import { TeammateItems, Tavern, WeaponForge, ArtifactForge, CharacterPortrait } from "@Src/components";
 import { CopySelect } from "./CopySelect";
 
 import styles from "../SetupManager.styles.module.scss";
@@ -63,7 +63,7 @@ export default function SectionParty() {
     message.info("This setup is marked as part of a Complex setup, thus teammates cannot be changed.");
   };
 
-  const onClickChangeTeammate = (teammateIndex: number) => () => {
+  const onClickChangeTeammate = (teammateIndex: number) => {
     if (isCombined) {
       warnSetupCombined();
     } else {
@@ -90,25 +90,6 @@ export default function SectionParty() {
         {partyData.map((data, teammateIndex) => {
           const isExpanded = teammateIndex === detailSlot;
 
-          const button = data ? (
-            <button
-              className={clsx(
-                `w-18 h-18 bg-${data.vision} rounded-circle shrink-0 overflow-hidden`,
-                !isExpanded && "zoomin-on-hover"
-              )}
-              onClick={() => setDetailSlot(isExpanded ? null : teammateIndex)}
-            >
-              <GenshinImage src={data.icon} imgType="character" defaultFallback={{ wrapperCls: "p-3" }} />
-            </button>
-          ) : (
-            <button
-              className="w-18 h-18 rounded-circle flex-center text-2xl shrink-0 bg-dark-500 glow-on-hover"
-              onClick={onClickChangeTeammate(teammateIndex)}
-            >
-              <FaPlus className="text-light-400 opacity-80" />
-            </button>
-          );
-
           return (
             <div key={teammateIndex} className="w-1/3 flex flex-col items-center" style={{ height: "5.25rem" }}>
               <div
@@ -125,13 +106,24 @@ export default function SectionParty() {
                 </button>
                 <button
                   className={"w-10 h-10 glow-on-hover " + (isExpanded ? "flex-center" : "hidden")}
-                  onClick={onClickChangeTeammate(teammateIndex)}
+                  onClick={() => onClickChangeTeammate(teammateIndex)}
                 >
                   <FaSyncAlt />
                 </button>
               </div>
 
-              {button}
+              <CharacterPortrait
+                info={data ?? undefined}
+                withColorBg
+                recruitable
+                onClick={() => {
+                  if (data) {
+                    setDetailSlot(isExpanded ? null : teammateIndex);
+                    return;
+                  }
+                  onClickChangeTeammate(teammateIndex);
+                }}
+              />
             </div>
           );
         })}
