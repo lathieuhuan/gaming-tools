@@ -2,14 +2,7 @@ import { useEffect } from "react";
 import { SwitchNode } from "rond";
 
 import { useSelector } from "@Store/hooks";
-import {
-  AppModals,
-  // Message,
-  NavBar,
-  SetupImportCenter,
-  SetupTransshipmentPort,
-  Tracker,
-} from "@Src/features";
+import { AppModals, NavBar, SetupImportCenter, SetupTransshipmentPort, Tracker } from "@Src/features";
 import Calculator from "@Src/screens/Calculator";
 import MyCharacters from "@Src/screens/MyCharacters";
 import MyWeapons from "@Src/screens/MyWeapons";
@@ -55,7 +48,6 @@ function App() {
 
       <AppModals />
       <Tracker />
-      {/* <Message /> */}
       <SetupTransshipmentPort />
       <SetupImportCenter />
     </div>
