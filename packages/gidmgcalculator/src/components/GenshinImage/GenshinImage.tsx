@@ -29,8 +29,8 @@ interface GiImageProps extends Omit<ImageProps, "fallback" | "defaultFallback"> 
   fallbackCls?: string;
 }
 function GenshinImage({ src, imgType = "unknown", fallbackCls, ...rest }: GiImageProps) {
-  // const isDevEnv = import.meta.env.DEV;
-  const isDevEnv = false;
+  const isDevEnv = import.meta.env.DEV;
+  // const isDevEnv = false;
   let finalSrc = "";
 
   if (!isDevEnv && src) {
