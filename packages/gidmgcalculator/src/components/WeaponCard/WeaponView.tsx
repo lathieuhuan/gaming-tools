@@ -25,17 +25,17 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
   refine,
 }: WeaponViewProps<T>) {
   const { t } = useTranslation();
+  const appWeapon = weapon ? $AppData.getWeapon(weapon.code) : undefined;
 
   const passiveDescription = useMemo(() => {
-    if (!appWeapon.descriptions || !weapon?.refi) {
+    if (!appWeapon?.descriptions || !weapon?.refi) {
       return "";
     }
-    return appWeapon.descriptions.map((content) => parseWeaponDescription(content, weapon?.refi)).join(" ");
-  }, [weapon?.code, weapon?.refi]);
+    return appWeapon.descriptions.map((content) => parseWeaponDescription(content, weapon.refi)).join(" ");
+  }, [appWeapon?.code, weapon?.refi]);
 
-  if (!weapon) return null;
+  if (!weapon || !appWeapon) return null;
 
-  const appWeapon = $AppData.getWeapon(weapon.code)!;
   const { rarity, subStat } = appWeapon;
   const selectLevels = rarity < 3 ? LEVELS.slice(0, -4) : LEVELS;
 

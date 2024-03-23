@@ -126,7 +126,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
               />
             );
           }
-          return <CharacterPortrait />;
+          return <CharacterPortrait key={teammateIndex} />;
         })}
       </div>
     );

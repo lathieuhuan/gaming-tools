@@ -94,6 +94,6 @@ export function PartyBuffsView(props: PartyModsViewProps) {
 }
 
 export function PartyDebuffsView(props: PartyModsViewProps) {
-  const content = getPartyModifierElmts(props, "buffs");
+  const content = getPartyModifierElmts(props, "debuffs");
   return renderModifiers(content, "debuffs", props.mutable);
 }

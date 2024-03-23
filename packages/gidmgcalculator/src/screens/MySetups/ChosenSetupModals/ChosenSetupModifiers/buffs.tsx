@@ -30,11 +30,12 @@ export function ElementBuffsDetail({
 }: ElementBuffsDetailProps) {
   const content: JSX.Element[] = [];
   const { resonances, reaction, infuse_reaction, absorption } = elmtModCtrls;
+  const headingCls = "text-sm text-mint-600 mb-1";
 
   if (resonances.length) {
     content.push(
       <div>
-        <p className="text-mint-600">Resonance</p>
+        <p className={headingCls}>Resonance</p>
         {resonances.map(({ vision: resonanceType }) => {
           return <ResonanceBuffItem key={resonanceType} mutable={false} element={resonanceType} />;
         })}
@@ -53,14 +54,14 @@ export function ElementBuffsDetail({
   if (absorption) {
     content.push(
       <div>
-        <p className="text-mint-600">Reaction by Element-absorbing attacks</p>
+        <p className={headingCls}>Reaction by element-absorbing attacks</p>
         {renderReaction(reaction, absorption)}
       </div>
     );
   } else if (reaction) {
     content.push(
       <div>
-        <p>Reaction</p>
+        <p className={headingCls}>Reaction by elemental attacks</p>
         {renderReaction(reaction, elementType)}
       </div>
     );
@@ -69,7 +70,7 @@ export function ElementBuffsDetail({
   if (infusedElement !== "phys") {
     content.push(
       <div>
-        <p className="text-mint-600">Reaction by Infused attacks</p>
+        <p className={headingCls}>Reaction by infused attacks</p>
         {renderReaction(infuse_reaction, infusedElement)}
       </div>
     );

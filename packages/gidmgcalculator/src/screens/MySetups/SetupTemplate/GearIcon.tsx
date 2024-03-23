@@ -15,7 +15,7 @@ export function GearIcon({ item, disabled, onClick }: GearIconProps) {
       disabled={disabled}
       onClick={onClick}
     >
-      <GenshinImage className="w-full h-full" src={item.icon} />
+      <GenshinImage className="w-full h-full" src={item.icon} fallbackCls="p-3" />
     </button>
   );
 }

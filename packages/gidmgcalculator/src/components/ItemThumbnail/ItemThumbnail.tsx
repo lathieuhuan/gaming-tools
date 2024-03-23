@@ -28,9 +28,9 @@ export function ItemThumbnail({ className, imgCls, item }: ItemThumbProps) {
         )}
       >
         <GenshinImage
-          imgCls={clsx("max-w-none w-10 h-10 -translate-x-2 -translate-y-4", !sideIcon && "-translate-y-2")}
+          className={clsx("max-w-none w-10 h-10 -translate-x-2 -translate-y-4", !sideIcon && "-translate-y-2")}
           src={sideIcon || icon}
-          fallbackCls="p-1"
+          fallbackCls="mt-4 p-1 h-6"
         />
       </div>
     );

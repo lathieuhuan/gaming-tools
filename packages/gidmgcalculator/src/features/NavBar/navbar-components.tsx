@@ -36,7 +36,16 @@ interface NavTabsProps {
 }
 export function NavTabs({ ready, className = "", activeClassName, idleClassName, onClickTab }: NavTabsProps) {
   const atScreen = useSelector((state) => state.ui.atScreen);
-  const screens: AppScreen[] = ["MY_CHARACTERS", "MY_WEAPONS", "MY_ARTIFACTS", "MY_SETUPS", "CALCULATOR"];
+  const screens: Array<{
+    label: string;
+    value: AppScreen;
+  }> = [
+    { label: "My Characters", value: "MY_CHARACTERS" },
+    { label: "My Weapons", value: "MY_WEAPONS" },
+    { label: "My Artifacts", value: "MY_ARTIFACTS" },
+    { label: "My Setups", value: "MY_SETUPS" },
+    { label: "Calculator", value: "CALCULATOR" },
+  ];
 
   return (
     <>
@@ -45,13 +54,13 @@ export function NavTabs({ ready, className = "", activeClassName, idleClassName,
           key={i}
           className={clsx(
             "flex items-center",
-            screen === atScreen ? activeClassName : ready ? idleClassName : "text-light-800",
+            screen.value === atScreen ? activeClassName : ready ? idleClassName : "text-light-800",
             className
           )}
           disabled={!ready}
-          onClick={() => onClickTab?.(screen)}
+          onClick={() => onClickTab?.(screen.value)}
         >
-          {screen}
+          {screen.label}
         </button>
       ))}
     </>
