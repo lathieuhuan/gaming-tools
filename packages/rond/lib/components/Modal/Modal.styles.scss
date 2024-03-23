@@ -35,15 +35,17 @@
   &.ron-modal-content-standard {
     display: flex;
     flex-direction: column;
-    --ron-color-modal-divider: #535582;
   }
 
   &.ron-modal-content-standard,
   &.ron-modal-content-small,
   &.ron-modal-content-large {
-    width: 22rem;
     border-radius: 0.5rem;
     box-shadow: 0 0 3px #b8b8b8;
+  }
+  &.ron-modal-content-small,
+  &.ron-modal-content-large {
+    width: 22rem;
   }
   &.ron-modal-content-large {
     background-color: var(--ron-color-dark-surface-2);
@@ -105,7 +107,7 @@
     padding-bottom: 0.5rem;
   }
   .ron-modal-header-with-divider {
-    border-bottom: 1px solid var(--ron-color-modal-divider);
+    border-bottom: 1px solid #535582;
   }
 }
 
@@ -122,6 +124,6 @@
   padding-top: 1rem;
 
   &.ron-modal-actions-with-divider {
-    border-top: 1px solid var(--ron-color-modal-divider);
+    border-top: 1px solid #535582;
   }
 }

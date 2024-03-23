@@ -2,7 +2,7 @@ import { createContext, useState, useCallback, useContext, useRef } from "react"
 
 import { setupStore, AppStore, RootState } from "@Src/store";
 import { $AppSettings } from "@Src/services";
-import { updateUI } from "@Store/uiSlice";
+import { updateUI } from "@Store/ui-slice";
 
 type ChangeConfigFn = (args: Partial<{ persistingUserData: boolean }>) => void;
 
@@ -18,7 +18,7 @@ const useStoreContext = (): AppStore => {
   return storeContext;
 };
 
-export const useStore = () => {
+export function useStore() {
   const storeContext = useStoreContext();
 
   function select<T>(selector: (state: RootState) => T): T;
@@ -29,7 +29,7 @@ export const useStore = () => {
   return {
     select,
   };
-};
+}
 
 export function useStoreSnapshot<T>(selector: (state: RootState) => T): T {
   const storeContext = useStoreContext();
@@ -39,7 +39,7 @@ export function useStoreSnapshot<T>(selector: (state: RootState) => T): T {
 interface DynamicStoreProviderProps {
   children: (config: ReturnType<typeof setupStore>) => React.ReactElement;
 }
-export const DynamicStoreProvider = (props: DynamicStoreProviderProps) => {
+export function DynamicStoreProvider(props: DynamicStoreProviderProps) {
   const [config, setConfig] = useState(setupStore({ persistingUserData: $AppSettings.get("persistingUserData") }));
 
   const changeConfig: ChangeConfigFn = useCallback(({ persistingUserData }) => {
@@ -54,4 +54,4 @@ export const DynamicStoreProvider = (props: DynamicStoreProviderProps) => {
       <DynamicStoreContext.Provider value={config.store}>{props.children(config)}</DynamicStoreContext.Provider>
     </DynamicStoreControlContext.Provider>
   );
-};
+}

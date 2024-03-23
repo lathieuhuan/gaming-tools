@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import type { NotificationAnimatorProps } from "./types";
+import type { NotificationAnimatorProps } from "./notification.types";
 
 const ANIMATION_DURATION = 200;
 

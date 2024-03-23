@@ -121,16 +121,13 @@ export const ModalCore = ({
 };
 
 function useModalManager() {
-  const modalManagerRef = useRef<HTMLDivElement | null>(null);
+  const modalManagerRef = useRef(document.getElementById("ron-modal-manager") as HTMLDivElement | null);
 
   if (!modalManagerRef.current) {
     const manager = document.createElement("div");
     manager.id = "ron-modal-manager";
     document.body.append(manager);
     modalManagerRef.current = manager;
-  } else if (!document.body.querySelector("#ron-modal-manager")) {
-    document.body.append(modalManagerRef.current);
   }
-
   return modalManagerRef.current;
 }

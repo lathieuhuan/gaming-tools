@@ -3,6 +3,7 @@ import { useElementSize } from "../../hooks";
 
 export interface CollapseSpaceProps {
   active: boolean;
+  activeHeight?: string | number;
   /** Default to 250 */
   moveDuration?: number;
   /** Default to false */
@@ -15,6 +16,7 @@ export interface CollapseSpaceProps {
 export const CollapseSpace = ({
   className,
   active,
+  activeHeight,
   moveDuration = 250,
   destroyOnClose = false,
   style,
@@ -38,6 +40,7 @@ export const CollapseSpace = ({
   }, [active]);
 
   const mergedActive = destroyOnClose ? state.active : active;
+  const mergedHeight = activeHeight ?? height;
   const mergedMounted = destroyOnClose ? state.mounted : true;
 
   return (
@@ -45,7 +48,7 @@ export const CollapseSpace = ({
       className={className}
       style={{
         ...style,
-        height: mergedActive ? height : 0,
+        height: mergedActive ? mergedHeight : 0,
         transition: `height ${moveDuration}ms ease-in-out`,
         overflow: "hidden",
       }}

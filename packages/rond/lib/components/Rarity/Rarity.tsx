@@ -26,10 +26,11 @@ export const Rarity = ({ className, mutable, size = mutable ? "medium" : "small"
 
           return (
             <Button
+              key={i}
               className={clsx("ron-rarity-button", inactive && "ron-rarity-star-inactive")}
               variant="custom"
               withShadow={false}
-              icon={<StarSvg key={i} className={`ron-rarity-${size}`} />}
+              icon={<StarSvg className={`ron-rarity-${size}`} />}
               size={size}
               disabled={!!mutable.min && rarity < mutable.min}
               onClick={() => {
