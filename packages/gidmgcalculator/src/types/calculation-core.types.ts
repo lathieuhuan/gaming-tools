@@ -93,7 +93,7 @@ export type Target = {
 // MODIFIER CONTROL starts
 export type ModifierCtrl = {
   activated: boolean;
-  /** This is WeaponBuff.index / ArtifactBuff.index / Modifier_Character.index */
+  /** This is WeaponBuff.index / ArtifactBuff.index / CharacterModifier.index */
   index: number;
   inputs?: number[];
 };

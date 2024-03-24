@@ -1,14 +1,14 @@
 import { ELEMENT_TYPES } from "@Src/constants";
 import {
-  Bonus_Character,
-  BonusStack_Character,
-  InnateBuff_Character,
+  CharacterBonus,
+  CharacterBonusStack,
+  CharacterInnateBuff,
   AttackPatternInfoKey,
   BuffInfoWrap,
   CalcItemBuff,
-  DynamicMax_Character,
-  ExtraMax_Character,
-  BonusConfig_Character,
+  CharacterEffectDynamicMax,
+  CharacterEffectExtraMax,
+  CharacterBonusConfig,
 } from "@Src/types";
 import { toArray, Calculation_, Character_ } from "@Src/utils";
 import { CalcUltilInfo } from "../calculation.types";
@@ -30,7 +30,7 @@ const genExclusiveBuff = (
 };
 
 const getTotalExtraMax = (
-  extras: ExtraMax_Character | ExtraMax_Character[],
+  extras: CharacterEffectExtraMax | CharacterEffectExtraMax[],
   info: CalcUltilInfo,
   inputs: number[],
   fromSelf: boolean
@@ -45,12 +45,12 @@ const getTotalExtraMax = (
   return result;
 };
 
-const getMax = (max: number | DynamicMax_Character, info: CalcUltilInfo, inputs: number[], fromSelf: boolean) => {
+const getMax = (max: number | CharacterEffectDynamicMax, info: CalcUltilInfo, inputs: number[], fromSelf: boolean) => {
   return typeof max === "number" ? max : max.value + getTotalExtraMax(max.extras, info, inputs, fromSelf);
 };
 
 const getStackValue = (
-  stack: BonusStack_Character,
+  stack: CharacterBonusStack,
   info: BuffInfoWrap,
   inputs: number[],
   fromSelf: boolean
@@ -127,7 +127,7 @@ const getStackValue = (
 };
 
 export const getIntialBonusValue = (
-  value: BonusConfig_Character["value"],
+  value: CharacterBonusConfig["value"],
   info: CalcUltilInfo,
   inputs: number[],
   fromSelf: boolean
@@ -181,7 +181,7 @@ export const getIntialBonusValue = (
 };
 
 function getBonusValue(
-  bonus: BonusConfig_Character,
+  bonus: CharacterBonusConfig,
   info: BuffInfoWrap,
   inputs: number[],
   fromSelf: boolean,
@@ -232,7 +232,7 @@ function getBonusValue(
   return bonusValue;
 }
 
-const isTrulyFinalBonus = (bonus: Bonus_Character, cmnStacks: BonusStack_Character[]) => {
+const isTrulyFinalBonus = (bonus: CharacterBonus, cmnStacks: CharacterBonusStack[]) => {
   return (
     isFinalBonus(bonus.stacks) ||
     (typeof bonus.preExtra === "object" && isFinalBonus(bonus.preExtra.stacks)) ||
@@ -242,7 +242,7 @@ const isTrulyFinalBonus = (bonus: Bonus_Character, cmnStacks: BonusStack_Charact
 
 interface ApplyAbilityBuffArgs {
   description: string;
-  buff: InnateBuff_Character;
+  buff: CharacterInnateBuff;
   infoWrap: BuffInfoWrap;
   inputs: number[];
   fromSelf: boolean;

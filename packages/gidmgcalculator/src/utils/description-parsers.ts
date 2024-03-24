@@ -1,5 +1,5 @@
 import { round } from "rond";
-import type { LevelScale_Character, AppCharacter, Character, ValueOption_Character, PartyData, AppArtifact, ArtifactModifier } from "@Src/types";
+import type { CharacterEffectLevelScale, AppCharacter, Character, CharacterEffectValueOption, PartyData, AppArtifact, ArtifactModifier } from "@Src/types";
 import { CharacterCal, getIntialBonusValue } from "@Src/calculation";
 import { toArray, toMult } from "./utils";
 
@@ -23,8 +23,8 @@ const wrapText = (text: string | number, type = "") => {
 };
 
 export type ParsedAbilityEffect = {
-  value: number | ValueOption_Character;
-  lvScale?: LevelScale_Character;
+  value: number | CharacterEffectValueOption;
+  lvScale?: CharacterEffectLevelScale;
   preExtra?: any;
   max?: any;
 };

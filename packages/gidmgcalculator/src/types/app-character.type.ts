@@ -37,11 +37,11 @@ export type AppCharacter = {
     value: number;
   };
   multFactorConf?: {
-    NA?: CalcItemMultFactorConfig;
-    CA?: CalcItemMultFactorConfig;
-    PA?: CalcItemMultFactorConfig;
-    ES?: CalcItemMultFactorConfig;
-    EB?: CalcItemMultFactorConfig;
+    NA?: MultFactorConfig;
+    CA?: MultFactorConfig;
+    PA?: MultFactorConfig;
+    ES?: MultFactorConfig;
+    EB?: MultFactorConfig;
   };
   calcList: {
     NA: CalcItem[];
@@ -58,14 +58,14 @@ export type AppCharacter = {
   };
   passiveTalents: Ability[];
   constellation: Ability[];
-  innateBuffs?: InnateBuff_Character[];
-  buffs?: Buff_Character[];
-  debuffs?: Debuff_Character[];
+  innateBuffs?: CharacterInnateBuff[];
+  buffs?: CharacterBuff[];
+  debuffs?: CharacterDebuff[];
 };
 
 export type TalentAttributeType = "base_atk" | "atk" | "def" | "hp" | "em";
 
-type CalcItemMultFactorConfig = {
+type MultFactorConfig = {
   scale?: number;
   basedOn?: TalentAttributeType;
 };
@@ -116,7 +116,7 @@ export type CalcItem = {
 
 export type CharacterMilestone = "A1" | "A4" | "C1" | "C2" | "C4" | "C6";
 
-export type Modifier_Character = {
+export type CharacterModifier = {
   src: string;
   grantedAt?: CharacterMilestone;
   description: string;
@@ -130,17 +130,17 @@ type InputCheck = {
   type?: "equal" | "min" | "max" | "included";
 };
 
-export type AvailableCondition_Character = {
+export type CharacterEffectAvailableCondition = {
   grantedAt?: CharacterMilestone;
   /** When this bonus is from teammate, this is input's index to check granted. */
   alterIndex?: number;
 };
 
-export type UsableCondition_Character = AvailableCondition_Character & {
+export type CharacterEffectUsableCondition = CharacterEffectAvailableCondition & {
   checkInput?: number | InputCheck;
 };
 
-export type ExtendedUsableCondition_Character = UsableCondition_Character & {
+export type CharacterEffectExtendedUsableCondition = CharacterEffectUsableCondition & {
   /** On Chongyun */
   forWeapons?: WeaponType[];
   /** On Chevreuse */
@@ -151,7 +151,7 @@ export type ExtendedUsableCondition_Character = UsableCondition_Character & {
   partyOnlyElmts?: ElementType[];
 };
 
-export type LevelScale_Character = {
+export type CharacterEffectLevelScale = {
   talent: Talent;
   /** If [value] = 0: buff value * level. Otherwise buff value * TALENT_LV_MULTIPLIERS[value][level]. */
   value: number;
@@ -163,13 +163,13 @@ export type LevelScale_Character = {
 
 // ============ BUFFS ============
 
-export type ExtraMax_Character = UsableCondition_Character & {
+export type CharacterEffectExtraMax = CharacterEffectUsableCondition & {
   value: number;
 };
 
-export type DynamicMax_Character = {
+export type CharacterEffectDynamicMax = {
   value: number;
-  extras: ExtraMax_Character[];
+  extras: CharacterEffectExtraMax[];
 };
 
 type InputStack = {
@@ -181,7 +181,7 @@ type InputStack = {
   /** On Wanderer */
   capacity?: {
     value: number;
-    extra: UsableCondition_Character & {
+    extra: CharacterEffectUsableCondition & {
       value: number;
     };
   };
@@ -210,18 +210,18 @@ type ResolveStack = {
   type: "RESOLVE";
 };
 
-export type BonusStack_Character = (InputStack | AttributeStack | NationStack | EnergyStack | ResolveStack) & {
+export type CharacterBonusStack = (InputStack | AttributeStack | NationStack | EnergyStack | ResolveStack) & {
   /** Final stack = stack - required base */
   baseline?: number;
   /** On Furina */
-  extra?: AvailableCondition_Character & {
+  extra?: CharacterEffectAvailableCondition & {
     value: number;
   };
   /** Dynamic on Mika */
-  max?: number | DynamicMax_Character;
+  max?: number | CharacterEffectDynamicMax;
 };
 
-export type ValueOption_Character = {
+export type CharacterEffectValueOption = {
   /** On Navia */
   preOptions?: number[];
   options: number[];
@@ -241,34 +241,34 @@ export type ValueOption_Character = {
         talent: Talent;
       };
   /** Add to indexSrc. On Nahida */
-  extra?: AvailableCondition_Character & {
+  extra?: CharacterEffectAvailableCondition & {
     value: number;
   };
   /** Max index. Dynamic on Navia */
-  max?: number | DynamicMax_Character;
+  max?: number | CharacterEffectDynamicMax;
 };
 
-export type BonusConfig_Character = ExtendedUsableCondition_Character & {
-  value: number | ValueOption_Character;
+export type CharacterBonusConfig = CharacterEffectExtendedUsableCondition & {
+  value: number | CharacterEffectValueOption;
   /** Multiplier based on talent level */
-  lvScale?: LevelScale_Character;
+  lvScale?: CharacterEffectLevelScale;
   /** Added before stacks, after scale */
-  preExtra?: number | BonusConfig_Character;
+  preExtra?: number | CharacterBonusConfig;
   /** Index of pre-calculated stack */
   stackIndex?: number;
-  stacks?: BonusStack_Character | BonusStack_Character[];
+  stacks?: CharacterBonusStack | CharacterBonusStack[];
   max?:
     | number
     | {
         value: number;
         /** On Hu Tao */
-        stacks?: BonusStack_Character;
+        stacks?: CharacterBonusStack;
         /** On Xianyun */
-        extras?: ExtraMax_Character | ExtraMax_Character[];
+        extras?: CharacterEffectExtraMax | CharacterEffectExtraMax[];
       };
 };
 
-export type Bonus_Character = BonusConfig_Character & {
+export type CharacterBonus = CharacterBonusConfig & {
   targets: {
     /** totalAttr */
     ATTR?: AttributeStat | AttributeStat[];
@@ -290,12 +290,12 @@ export type Bonus_Character = BonusConfig_Character & {
   };
 };
 
-export type InnateBuff_Character = Modifier_Character & {
-  cmnStacks?: Bonus_Character["stacks"];
-  effects?: Bonus_Character | Bonus_Character[];
+export type CharacterInnateBuff = CharacterModifier & {
+  cmnStacks?: CharacterBonus["stacks"];
+  effects?: CharacterBonus | CharacterBonus[];
 };
 
-export type Buff_Character = InnateBuff_Character & {
+type CharacterBuff = CharacterInnateBuff & {
   /** This is id */
   index: number;
   affect: ModifierAffectType;
@@ -317,23 +317,23 @@ type PenaltyTarget =
       index?: number;
     };
 
-export type PenaltyConfig_Character = ExtendedUsableCondition_Character & {
+export type CharacterPenaltyConfig = CharacterEffectExtendedUsableCondition & {
   value: number;
-  lvScale?: LevelScale_Character;
+  lvScale?: CharacterEffectLevelScale;
   /** Added before stacks, after scale */
-  preExtra?: number | PenaltyConfig_Character;
+  preExtra?: number | CharacterPenaltyConfig;
   index?: number;
   max?: number;
 };
 
-export type Penalty_Character = PenaltyConfig_Character & {
+export type CharacterPenalty = CharacterPenaltyConfig & {
   targets: PenaltyTarget | PenaltyTarget[];
 };
 
-export type Debuff_Character = Modifier_Character & {
+type CharacterDebuff = CharacterModifier & {
   /** This is id */
   index: number;
   affect?: ModifierAffectType;
   inputConfigs?: ModInputConfig[];
-  effects?: Penalty_Character;
+  effects?: CharacterPenalty;
 };

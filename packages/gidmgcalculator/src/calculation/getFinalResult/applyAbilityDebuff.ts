@@ -1,11 +1,11 @@
 import { ELEMENT_TYPES } from "@Src/constants";
-import { Penalty_Character, DebuffInfoWrap, PenaltyConfig_Character } from "@Src/types";
+import { CharacterPenalty, DebuffInfoWrap, CharacterPenaltyConfig } from "@Src/types";
 import { toArray } from "@Src/utils";
 import { CalcUltilInfo } from "../calculation.types";
 import { CharacterCal, applyModifier } from "../utils";
 
 const getPenaltyValue = (
-  penalty: PenaltyConfig_Character,
+  penalty: CharacterPenaltyConfig,
   info: CalcUltilInfo,
   inputs: number[],
   fromSelf: boolean
@@ -25,7 +25,7 @@ const getPenaltyValue = (
 
 interface ApplyAbilityDebuffArgs {
   description: string;
-  effects: Penalty_Character | Penalty_Character[];
+  effects: CharacterPenalty | CharacterPenalty[];
   inputs: number[];
   infoWrap: DebuffInfoWrap;
   fromSelf: boolean;

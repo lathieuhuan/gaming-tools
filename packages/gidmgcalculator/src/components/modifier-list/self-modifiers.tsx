@@ -1,4 +1,4 @@
-import type { AppCharacter, Character, ModInputConfig, ModifierCtrl, Modifier_Character, PartyData } from "@Src/types";
+import type { AppCharacter, Character, ModInputConfig, ModifierCtrl, CharacterModifier, PartyData } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import { CharacterCal } from "@Src/calculation";
@@ -15,7 +15,7 @@ interface SelfModsViewProps {
   getHanlders?: (args: GetModifierHanldersArgs) => ModifierHanlders;
 }
 
-type Modifier = Modifier_Character & {
+type Modifier = CharacterModifier & {
   inputConfigs?: ModInputConfig[];
   effects?: ParsedAbilityEffect | ParsedAbilityEffect[];
 };

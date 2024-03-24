@@ -3,7 +3,7 @@ import type {
   Character,
   ModInputConfig,
   ModifierCtrl,
-  Modifier_Character,
+  CharacterModifier,
   Party,
   PartyData,
   Teammate,
@@ -14,7 +14,7 @@ import { ParsedAbilityEffect, Setup_, findByIndex, parseAbilityDescription } fro
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
-type Modifier = Modifier_Character & {
+type Modifier = CharacterModifier & {
   inputConfigs?: ModInputConfig[];
   effects?: ParsedAbilityEffect | ParsedAbilityEffect[];
 };

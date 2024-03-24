@@ -1,11 +1,11 @@
 import type {
-  AvailableCondition_Character,
+  CharacterEffectAvailableCondition,
   Character,
   CharacterMilestone,
   ElementType,
-  ExtendedUsableCondition_Character,
-  LevelScale_Character,
-  UsableCondition_Character,
+  CharacterEffectExtendedUsableCondition,
+  CharacterEffectLevelScale,
+  CharacterEffectUsableCondition,
 } from "@Src/types";
 import type { CalcUltilInfo } from "../calculation.types";
 import { Character_, Calculation_ } from "@Src/utils";
@@ -20,7 +20,7 @@ export class CharacterCal {
   }
 
   static isAvailable = (
-    condition: AvailableCondition_Character,
+    condition: CharacterEffectAvailableCondition,
     char: Character,
     inputs: number[],
     fromSelf: boolean
@@ -34,7 +34,7 @@ export class CharacterCal {
   };
 
   static isUsable = (
-    condition: UsableCondition_Character,
+    condition: CharacterEffectUsableCondition,
     info: CalcUltilInfo,
     inputs: number[],
     fromSelf: boolean
@@ -66,7 +66,7 @@ export class CharacterCal {
   };
 
   static isExtensivelyUsable = (
-    condition: ExtendedUsableCondition_Character,
+    condition: CharacterEffectExtendedUsableCondition,
     info: CalcUltilInfo,
     inputs: number[],
     fromSelf: boolean
@@ -100,7 +100,7 @@ export class CharacterCal {
   };
 
   static getLevelScale = (
-    scale: LevelScale_Character | undefined,
+    scale: CharacterEffectLevelScale | undefined,
     info: CalcUltilInfo,
     inputs: number[],
     fromSelf: boolean
