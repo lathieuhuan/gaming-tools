@@ -51,12 +51,12 @@ export function TalentList({ char, party, onChangeTalentLevel }: TalentListProps
             <div className="flex items-center">
               <p className="mr-1">Lv.</p>
               {levelNode}
-              {talent.xtraLevel ? <p className="ml-2 font-bold text-green-300">+{talent.xtraLevel}</p> : null}
+              {talent.xtraLevel ? <p className="ml-2 font-bold text-bonus-color">+{talent.xtraLevel}</p> : null}
             </div>
           </div>
 
           <Button
-            className="ml-auto hover:bg-yellow-400"
+            className="ml-auto hover:bg-primary-1"
             size="small"
             icon={<FaInfo />}
             onClick={() => onClickInfoSign(index)}

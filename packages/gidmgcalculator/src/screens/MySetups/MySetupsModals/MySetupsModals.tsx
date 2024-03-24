@@ -56,7 +56,7 @@ export function MySetupsModals(props: MySetupsModalsProps) {
       <Modal
         active={modalType === "FIRST_COMBINE"}
         title="Combine setups"
-        className="bg-dark-700"
+        className="bg-surface-2"
         bodyCls="grow hide-scrollbar"
         withActions
         style={{
@@ -73,7 +73,7 @@ export function MySetupsModals(props: MySetupsModalsProps) {
       <Modal
         active={modalType === "COMBINE_MORE"}
         title="Add setups to the complex"
-        className="bg-dark-700"
+        className="bg-surface-2"
         bodyCls="grow hide-scrollbar"
         withActions
         style={{

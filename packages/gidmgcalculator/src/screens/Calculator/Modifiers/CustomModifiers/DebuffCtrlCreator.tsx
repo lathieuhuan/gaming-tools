@@ -43,7 +43,7 @@ export default function DebuffCtrlCreator({ onClose }: DebuffCtrlCreatorProps) {
   return (
     <form id="debuff-creator" className="mx-auto py-4 px-2 flex items-center" onSubmit={onSubmit}>
       <select
-        className="pr-2 text-light-400 text-right text-last-right"
+        className="pr-2 text-light-default text-right text-last-right"
         value={config.type}
         onChange={(e) => onChangeType(e.target.value)}
       >

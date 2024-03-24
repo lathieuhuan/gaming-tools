@@ -12,7 +12,7 @@ interface PorterLayoutProps {
 }
 export function PorterLayout({ heading, message, textareaAttrs, moreButtons, onClose }: PorterLayoutProps) {
   return (
-    <div className="bg-dark-900 relative">
+    <div className="bg-surface-1 relative">
       <Modal.Header>{heading}</Modal.Header>
 
       <div className="px-4 flex flex-col">
@@ -22,7 +22,7 @@ export function PorterLayout({ heading, message, textareaAttrs, moreButtons, onC
           <p
             className={
               "mt-2 text-center" +
-              (message.type ? (message.type === "success" ? " text-green-300" : " text-red-100") : "")
+              (message.type ? (message.type === "success" ? " text-bonus-color" : " text-danger-3") : "")
             }
           >
             {message.text}

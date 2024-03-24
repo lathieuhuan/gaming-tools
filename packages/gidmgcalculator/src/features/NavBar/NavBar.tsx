@@ -44,8 +44,8 @@ export function NavBar() {
         <div className="hidden xm:flex">
           <NavTabs
             className="px-2 py-1 font-semibold"
-            activeClassName="bg-dark-900"
-            idleClassName="bg-dark-500 glow-on-hover"
+            activeClassName="bg-surface-1"
+            idleClassName="bg-surface-3 glow-on-hover"
             ready={appReady}
             onClickTab={onClickTab}
           />
@@ -57,13 +57,13 @@ export function NavBar() {
           </Button>
 
           {trackerState !== "close" ? (
-            <button className="w-8 h-8 flex-center text-xl text-black bg-green-200" onClick={onClickTrackerIcon}>
+            <button className="w-8 h-8 flex-center text-xl text-black bg-active-color" onClick={onClickTrackerIcon}>
               <FaSearch />
             </button>
           ) : null}
 
-          <div ref={ref} className="relative text-light-400">
-            <button className="w-8 h-8 flex-center bg-dark-500 text-xl" onClick={() => setMenuDropped(!menuDropped)}>
+          <div ref={ref} className="relative text-light-default">
+            <button className="w-8 h-8 flex-center bg-surface-3 text-xl" onClick={() => setMenuDropped(!menuDropped)}>
               <FaBars />
             </button>
 
@@ -73,7 +73,7 @@ export function NavBar() {
                 (menuDropped ? "scale-100" : "scale-0")
               }
             >
-              <div className="flex flex-col bg-light-400 text-black rounded-md overflow-hidden shadow-common">
+              <div className="flex flex-col bg-light-default text-black rounded-md overflow-hidden shadow-common">
                 <ActionButton
                   label="Introduction"
                   icon={<FaInfoCircle size="1.125rem" />}
@@ -83,7 +83,7 @@ export function NavBar() {
 
                 <NavTabs
                   className="px-4 py-2 xm:hidden font-bold"
-                  activeClassName="border-l-4 border-red-600 bg-dark-900 text-light-400"
+                  activeClassName="border-l-4 border-secondary-1 bg-surface-1 text-light-default"
                   ready={appReady}
                   onClickTab={(tab) => {
                     onClickTab(tab);

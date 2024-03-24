@@ -9,7 +9,7 @@ export function useArtifactTypeSelect(
   const finalConfig: IconSelectConfig<ArtifactType> = {
     ...config,
     iconCls: "p-1",
-    selectedCls: "bg-green-200",
+    selectedCls: "bg-active-color",
   };
   const { selectedIcons, updateSelectedIcons, renderIconSelect } = useIconSelect(
     Artifact_.ARTIFACT_TYPE_ICONS,

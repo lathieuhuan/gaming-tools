@@ -19,11 +19,12 @@ const EmSection = ({ em }: EmSectionProps) => {
 
   return (
     <div>
-      <StatsTable.Row className="cursor-pointer !bg-transparent hover:!bg-red-800" onClick={() => setDropped(!dropped)}>
+      <StatsTable.Row className="!hidden">{}</StatsTable.Row>
+      <StatsTable.Row className="cursor-pointer" onClick={() => setDropped(!dropped)}>
         <div className="flex items-center">
           <p className="mr-1">Elemental Mastery</p>
           <FaCaretDown
-            className={clsx("duration-150 ease-linear", dropped ? "text-green-200" : "text-light-400 rotate-90")}
+            className={clsx("duration-150 ease-linear", dropped ? "text-active-color" : "text-light-default rotate-90")}
           />
         </div>
         <p className="mr-2">{round(em, 1)}</p>

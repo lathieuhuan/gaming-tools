@@ -39,14 +39,14 @@ export function ArtifactSubstatsControl({
         const isValid = value === 0 || VALID_SUBSTAT_VALUES[type][rarity].includes(value);
 
         return mutable ? (
-          <div key={i} className="h-9 flex-center bg-dark-700 relative">
+          <div key={i} className="h-9 flex-center bg-surface-2 relative">
             <div className="relative">
               <FaChevronDown className="absolute top-3 left-1 text-sm" />
 
               <select
                 className={
                   "pt-2 pb-1 pr-3 pl-6 leading-base relative z-10 appearance-none " +
-                  (statTypeCount[type] === 1 ? "text-light-400" : "text-red-200")
+                  (statTypeCount[type] === 1 ? "text-light-default" : "text-danger-2")
                 }
                 value={type}
                 onChange={(e) => {
@@ -67,7 +67,7 @@ export function ArtifactSubstatsControl({
               unstyled
               className={
                 "relative ml-1 pt-2 pb-1 pr-2 w-[3.25rem] bg-transparent text-base leading-none text-right " +
-                (isValid ? "text-light-400" : "text-red-200")
+                (isValid ? "text-light-default" : "text-danger-2")
               }
               value={value}
               onChange={(value) => onChangeSubStat?.(i, { value })}
@@ -75,13 +75,13 @@ export function ArtifactSubstatsControl({
             <span className="w-4 pt-2 pb-1">{suffixOf(type)}</span>
           </div>
         ) : (
-          <div key={i} className="mt-2 pt-2 pb-1 flex items-center bg-dark-700">
+          <div key={i} className="mt-2 pt-2 pb-1 flex items-center bg-surface-2">
             <span className="mx-3">•</span>
             <p>
-              <span className={"mr-1 " + (statTypeCount[type] === 1 ? "text-light-400" : "text-red-200")}>
+              <span className={"mr-1 " + (statTypeCount[type] === 1 ? "text-light-default" : "text-danger-2")}>
                 {t(type)}
               </span>{" "}
-              <span className={isValid ? "text-green-300" : "text-red-200"}>
+              <span className={isValid ? "text-bonus-color" : "text-danger-2"}>
                 +{value}
                 {suffixOf(type)}
               </span>

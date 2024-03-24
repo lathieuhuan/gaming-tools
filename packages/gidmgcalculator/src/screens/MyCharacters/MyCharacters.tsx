@@ -26,7 +26,7 @@ export default function MyCharacters() {
   };
 
   return (
-    <div className="h-full flex flex-col bg-dark-500">
+    <div className="h-full flex flex-col bg-surface-3">
       {screenWatcher.isFromSize("md") ? (
         <CharacterList
           characters={userChars}
@@ -35,7 +35,7 @@ export default function MyCharacters() {
           onClickWish={() => setModalType("ADD_CHARACTER")}
         />
       ) : (
-        <div className="py-4 flex bg-dark-700">
+        <div className="py-4 flex bg-surface-2">
           {userChars.length ? (
             <div className="w-full flex-center relative">
               <select

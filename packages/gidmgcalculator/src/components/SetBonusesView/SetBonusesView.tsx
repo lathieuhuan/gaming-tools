@@ -9,7 +9,7 @@ interface SetBonusesViewProps {
 export function SetBonusesView({ setBonuses, noTitle }: SetBonusesViewProps) {
   return (
     <div>
-      {!noTitle && <p className="text-lg leading-relaxed text-orange-500 font-semibold">Set bonus</p>}
+      {!noTitle && <p className="text-lg leading-relaxed text-heading-color font-semibold">Set bonus</p>}
 
       {setBonuses.length > 0 ? (
         setBonuses.map((bonus, index) => {
@@ -30,20 +30,20 @@ export function SetBonusesView({ setBonuses, noTitle }: SetBonusesViewProps) {
 
             content.push(
               <li key={i} className="mt-1">
-                <span className="text-orange-500">{(i + 1) * 2}-Piece Set:</span>{" "}
+                <span className="text-heading-color">{(i + 1) * 2}-Piece Set:</span>{" "}
                 <span dangerouslySetInnerHTML={{ __html: parsedDescription }} />
               </li>
             );
           }
           return (
             <div key={index} className="mt-1">
-              <p className="text-lg leading-relaxed font-medium text-green-300">{data.name}</p>
+              <p className="text-lg leading-relaxed font-medium text-bonus-color">{data.name}</p>
               <ul className="pl-6 list-disc">{content}</ul>
             </div>
           );
         })
       ) : (
-        <p className="text-light-800 font-medium">No set bonus</p>
+        <p className="text-hint-color font-medium">No set bonus</p>
       )}
     </div>
   );

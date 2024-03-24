@@ -43,7 +43,7 @@ export function CalcItemTracker({ inHealB_, records = {}, result, defMultDisplay
 
       {infusion && infusion.element !== "phys" && (
         <div>
-          <p className="text-yellow-400">Infusion:</p>
+          <p className="text-primary-1">Infusion:</p>
           <ul className="pl-4 list-disc">
             <li className="capitalize">
               Element: <span className={`text-${infusion.element}`}>{infusion.element}</span>
@@ -65,10 +65,10 @@ export function CalcItemTracker({ inHealB_, records = {}, result, defMultDisplay
         return (
           <div key={i}>
             <p className="font-medium">{t(itemName)}</p>
-            <ul className="pl-4 text-light-800 text-sm leading-6 list-disc">
+            <ul className="pl-4 text-hint-color text-sm leading-6 list-disc">
               {record.exclusives?.length ? (
                 <li>
-                  <p className="text-yellow-400">Exclusive</p>
+                  <p className="text-primary-1">Exclusive</p>
                   {record.exclusives.map((bonus, i) => {
                     return Object.entries(bonus).map(([key, record]) => {
                       return (
@@ -86,7 +86,7 @@ export function CalcItemTracker({ inHealB_, records = {}, result, defMultDisplay
               ) : null}
 
               <li>
-                Non-crit <span className="text-orange-500 font-semibold">{nonCritDmg}</span> = (
+                Non-crit <span className="text-heading-color font-semibold">{nonCritDmg}</span> = (
                 {record.multFactors.map((factor, i) => {
                   return (
                     <Fragment key={i}>
@@ -148,14 +148,14 @@ export function CalcItemTracker({ inHealB_, records = {}, result, defMultDisplay
 
               {cDmg_ ? (
                 <li>
-                  Crit <span className="text-orange-500 font-semibold">{renderValue(crit)}</span> = {nonCritDmg}{" "}
+                  Crit <span className="text-heading-color font-semibold">{renderValue(crit)}</span> = {nonCritDmg}{" "}
                   <Green>*</Green> (<Green>1 +</Green> Crit DMG <Green>{cDmg_}</Green>)
                 </li>
               ) : null}
 
               {cDmg_ && record.cRate_ ? (
                 <li>
-                  Average <span className="text-orange-500 font-semibold">{renderValue(average)}</span> = {nonCritDmg}{" "}
+                  Average <span className="text-heading-color font-semibold">{renderValue(average)}</span> = {nonCritDmg}{" "}
                   <Green>*</Green> (<Green>1 +</Green> Crit DMG <Green>{cDmg_}</Green>
                   {renderPart({
                     label: "Crit Rate",

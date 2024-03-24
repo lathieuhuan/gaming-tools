@@ -45,7 +45,7 @@ export function CharacterPortrait({
     "shrink-0 overflow-hidden rounded-circle",
     info && "zoomin-on-hover",
     sizeCls[size],
-    withColorBg && vision ? `bg-${vision}` : bgColorByCode[code] ?? "bg-dark-500",
+    withColorBg && vision ? `bg-${vision}` : bgColorByCode[code] ?? "bg-surface-3",
     className,
   ];
 

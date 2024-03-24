@@ -47,7 +47,7 @@ export default function MySetups() {
 
   const setupList = (() => {
     if (!userSetups.length) {
-      return <p className="w-full py-4 text-light-800 text-lg text-center">No setups found</p>;
+      return <p className="w-full py-4 text-hint-color text-lg text-center">No setups found</p>;
     }
 
     return userSetups.map((setup: UserSetup | UserComplexSetup, index: number) => {
@@ -81,8 +81,8 @@ export default function MySetups() {
         <div key={key} id={`setup-${setup.ID}`} className="w-full p-1">
           <div
             className={clsx(
-              "px-2 pt-3 pb-2 rounded-lg bg-dark-500",
-              setup.ID === chosenSetupID ? "shadow-5px-1px shadow-green-200" : "shadow-common"
+              "px-2 pt-3 pb-2 rounded-lg bg-surface-3",
+              setup.ID === chosenSetupID ? "shadow-5px-1px shadow-active-color" : "shadow-common"
             )}
             onClick={() => dispatch(chooseUserSetup(setup.ID))}
           >
@@ -96,7 +96,7 @@ export default function MySetups() {
   const chosenSetupInfo = (() => {
     if (chosenSetup) {
       if (error) {
-        return <p className="text-center text-red-100">{error}</p>;
+        return <p className="text-center text-danger-3">{error}</p>;
       }
       if (isLoading) {
         return (
@@ -153,7 +153,7 @@ export default function MySetups() {
         {setupList}
       </div>
 
-      <div className="shrink-0 px-4 pt-2 pb-4 rounded-lg bg-dark-500" style={{ width: "21.75rem" }}>
+      <div className="shrink-0 px-4 pt-2 pb-4 rounded-lg bg-surface-3" style={{ width: "21.75rem" }}>
         {chosenSetupInfo}
       </div>
 

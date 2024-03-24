@@ -23,7 +23,7 @@ export function ItemThumbnail({ className, imgCls, item }: ItemThumbProps) {
     return (
       <div
         className={clsx(
-          "absolute -top-1 -right-1 z-10 w-7 h-7 bg-black/60 border-2 border-light-400 rounded-circle",
+          "absolute -top-1 -right-1 z-10 w-7 h-7 bg-black/60 border-2 border-light-default rounded-circle",
           !sideIcon && "overflow-hidden"
         )}
       >
@@ -37,14 +37,14 @@ export function ItemThumbnail({ className, imgCls, item }: ItemThumbProps) {
   };
 
   return (
-    <div className={clsx("bg-light-400 rounded flex flex-col cursor-pointer relative", className)}>
+    <div className={clsx("bg-light-default rounded flex flex-col cursor-pointer relative", className)}>
       {item.owner && renderSideIcon(item.owner)}
 
       {item.refi !== undefined ? (
         <p
           className={
             "absolute top-1 left-1 rounded px-1 text-sm font-bold " +
-            (item.refi === 5 ? "bg-black text-orange-500" : "bg-black/60 text-light-400")
+            (item.refi === 5 ? "bg-black text-heading-color" : "bg-black/60 text-light-default")
           }
         >
           {item.refi}
@@ -60,7 +60,7 @@ export function ItemThumbnail({ className, imgCls, item }: ItemThumbProps) {
         />
       </div>
 
-      <div className="flex-center bg-light-400 rounded-b">
+      <div className="flex-center bg-light-default rounded-b">
         <p className="font-bold text-black">
           Lv. {typeof item.level === "string" ? item.level.split("/")[0] : item.level}
         </p>

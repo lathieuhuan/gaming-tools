@@ -103,7 +103,7 @@ export function InventoryRack<T extends UserItem>({
                     <>
                       {chosenIDs?.[item.ID] && (
                         <button
-                          className="absolute z-10 top-1 left-1 w-8 h-8 flex-center bg-red-600 rounded-md"
+                          className="absolute z-10 top-1 left-1 w-8 h-8 flex-center bg-danger-1 rounded-md"
                           onClick={() => onUnselectItem?.(item)}
                         >
                           <FaMinus />
@@ -126,7 +126,7 @@ export function InventoryRack<T extends UserItem>({
           </div>
         ) : null}
 
-        {ready && !data.length ? <p className="py-4 text-light-800 text-lg text-center">{emptyText}</p> : null}
+        {ready && !data.length ? <p className="py-4 text-hint-color text-lg text-center">{emptyText}</p> : null}
       </div>
 
       {data.length && deadEnd ? (
@@ -140,7 +140,7 @@ export function InventoryRack<T extends UserItem>({
           </button>
 
           <p className="font-semibold">
-            <span className="text-orange-500">{pageNo + 1}</span> / {deadEnd + 1}
+            <span className="text-heading-color">{pageNo + 1}</span> / {deadEnd + 1}
           </p>
 
           <button

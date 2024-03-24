@@ -90,8 +90,8 @@ export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClos
     return (
       <button
         className={
-          "w-7 h-7 flex-center rounded border-2 border-dark-500 text-dark-500 text-1.5xl " +
-          (disabled ? "opacity-50" : "hover:border-mint-600 hover:text-mint-600")
+          "w-7 h-7 flex-center rounded border-2 border-surface-border text-surface-border text-1.5xl " +
+          (disabled ? "opacity-50" : "hover:border-secondary-1 hover:text-secondary-1")
         }
         disabled={disabled}
         onMouseDown={() => onMouseDownLevelButton(isLevelUp)}
@@ -121,7 +121,7 @@ export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClos
 
         {activeIndex ? (
           <div>
-            <div className="py-2 flex-center bg-dark-900 sticky -top-1">
+            <div className="py-2 flex-center bg-surface-1 sticky -top-1">
               {levelable ? (
                 <div className="flex items-center space-x-4">
                   {renderLevelButton(false, talentLevel <= 1)}
@@ -150,7 +150,7 @@ export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClos
               {talent.stats.map((stat, i) => {
                 return (
                   <StatsTable.Row key={i} className="pb-1 text-sm">
-                    <p className="pr-6 text-yellow-300">{stat.name}</p>
+                    <p className="pr-6">{stat.name}</p>
                     <p className="font-semibold text-right">{stat.value}</p>
                   </StatsTable.Row>
                 );
@@ -167,7 +167,7 @@ export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClos
       </div>
 
       <div className="mt-3">
-        <CloseButton className="mx-auto" size="small" boneOnly onClick={onClose} />
+        <CloseButton className="mx-auto" size="small" onClick={onClose} />
       </div>
     </div>
   );

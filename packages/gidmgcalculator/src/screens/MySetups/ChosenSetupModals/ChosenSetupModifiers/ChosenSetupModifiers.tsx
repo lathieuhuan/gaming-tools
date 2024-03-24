@@ -147,7 +147,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
 
           {Object.entries(target.resistances).map(([key, value], i) => (
             <p key={i} className="mt-1">
-              <span className={"mr-2 capitalize " + (key === "level" ? "text-yellow-400" : `text-${key}`)}>
+              <span className={"mr-2 capitalize " + (key === "level" ? "text-primary-1" : `text-${key}`)}>
                 {t(key, { ns: "resistance" })}:
               </span>
               <span className="font-medium">{value}%</span>

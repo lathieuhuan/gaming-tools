@@ -112,13 +112,13 @@ const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose 
           )
         ) : null}
 
-        {!forcedType && <div className="h-full w-px bg-dark-300 hidden md:block" />}
+        {!forcedType && <div className="h-full w-px bg-surface-border hidden md:block" />}
 
         <div className={clsx(wrapperCls(activeIndex !== 1), "shrink-0", !isSmallScreen && "w-56")}>
           {renderArtifactStatFilter()}
         </div>
 
-        <div className="h-full w-px bg-dark-300 hidden md:block" />
+        <div className="h-full w-px bg-surface-border hidden md:block" />
 
         <div className={clsx([wrapperCls(activeIndex !== 2), "grow custom-scrollbar"])}>
           {renderArtifactSetFilter(

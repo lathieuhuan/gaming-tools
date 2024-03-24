@@ -59,7 +59,7 @@ export function FinalResultView({
           <div key={key.main} className="flex flex-col">
             <button
               type="button"
-              className="mx-auto mb-2 w-52 px-4 text-base text-black bg-orange-500 leading-none font-bold flex items-center justify-between rounded-2xl overflow-hidden"
+              className="mx-auto mb-2 w-52 px-4 text-base text-black bg-heading-color leading-none font-bold flex items-center justify-between rounded-2xl overflow-hidden"
             >
               <div className="grow py-1.5 flex items-center space-x-2" onClick={() => toggleSection(index)}>
                 <FaChevronRight
@@ -69,14 +69,14 @@ export function FinalResultView({
               </div>
 
               {talentLevel ? (
-                <span className="px-1 rounded-sm bg-black/60 text-light-400 text-sm">{talentLevel}</span>
+                <span className="px-1 rounded-sm bg-black/60 text-light-default text-sm">{talentLevel}</span>
               ) : null}
             </button>
 
             {/* <div className="mx-auto mb-2 w-52 text-base text-black leading-none font-bold flex rounded-2xl overflow-hidden">
               <button
                 type="button"
-                className="grow py-1.5 pl-4 flex items-center space-x-2 bg-mint-600 overflow-hidden"
+                className="grow py-1.5 pl-4 flex items-center space-x-2 bg-secondary-1 overflow-hidden"
                 onClick={() => toggleSection(index)}
               >
                 <FaChevronRight
@@ -88,7 +88,7 @@ export function FinalResultView({
               {talentLevel ? (
                 <button
                   type="button"
-                  className="py-1.5 pl-2 pr-3 flex-center bg-light-400 glow-on-hover"
+                  className="py-1.5 pl-2 pr-3 flex-center bg-light-default glow-on-hover"
                   onClick={() => setLvlingSectionIndex(isLvling ? -1 : index)}
                 >
                   {talentLevel}
@@ -99,7 +99,7 @@ export function FinalResultView({
             <CollapseSpace active={!closedSections[index]}>
               {key.subs.length === 0 ? (
                 <div className="pb-2">
-                  <p className="pt-2 pb-1 bg-dark-700 text-center text-light-800">This talent does not deal damage.</p>
+                  <p className="pt-2 pb-1 bg-surface-2 text-center text-hint-color">This talent does not deal damage.</p>
                 </div>
               ) : (
                 <div className="custom-scrollbar">
@@ -123,7 +123,7 @@ export function FinalResultView({
                           <Table.Th />
                           <Table.Th>Non-crit</Table.Th>
                           <Table.Th>Crit</Table.Th>
-                          <Table.Th className="text-yellow-400">Avg.</Table.Th>
+                          <Table.Th className="text-primary-1">Avg.</Table.Th>
                         </Table.Tr>
 
                         {key.subs.map((subKey) => {
@@ -134,7 +134,7 @@ export function FinalResultView({
                               <Table.Td title={value.attElmt}>{isReactionDmg ? t(subKey) : subKey}</Table.Td>
                               <Table.Td>{displayValue(value.nonCrit)}</Table.Td>
                               <Table.Td>{displayValue(value.crit)}</Table.Td>
-                              <Table.Td className="text-yellow-400">{displayValue(value.average)}</Table.Td>
+                              <Table.Td className="text-primary-1">{displayValue(value.average)}</Table.Td>
                             </Table.Tr>
                           );
                         })}

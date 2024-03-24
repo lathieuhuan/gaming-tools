@@ -104,10 +104,10 @@ const ArtifactSmith = ({
     return (
       <div className="pt-4 px-2 border-t border-light-900">
         <div className="flex items-start">
-          <FaInfoCircle className="mr-1.5 text-mint-600 text-lg" />
+          <FaInfoCircle className="mr-1.5 text-secondary-1 text-lg" />
 
           <div>
-            <h5 className="text-mint-600 text-sm font-semibold">Batch Forging</h5>
+            <h5 className="text-secondary-1 text-sm font-semibold">Batch Forging</h5>
             <p className="text-sm">You now can select multiple Artifact types.</p>
           </div>
         </div>

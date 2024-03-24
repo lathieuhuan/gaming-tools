@@ -4,11 +4,11 @@ import { CharacterCal, getIntialBonusValue } from "@Src/calculation";
 import { toArray, toMult } from "./utils";
 
 const typeToCls: Record<string, string> = {
-  k: "text-green-300", // key
-  v: "text-green-300 font-bold", // value
-  m: "text-red-rose", // max
-  n: "text-light-800", // note
-  ms: "text-yellow-400", // milestone
+  k: "text-bonus-color", // key
+  v: "text-bonus-color font-bold", // value
+  m: "text-danger-max", // max
+  n: "text-hint-color", // note
+  ms: "text-primary-1", // milestone
   anemo: "text-anemo",
   cryo: "text-cryo",
   dendro: "text-dendro",

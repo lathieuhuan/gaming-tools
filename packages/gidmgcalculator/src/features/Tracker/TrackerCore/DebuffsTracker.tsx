@@ -35,7 +35,7 @@ export function DebuffsTracker({ resistReduct }: Partial<Pick<Tracker, "resistRe
         </div>
       )}
       <div>
-        <p className={"text-lg text-orange-500" + (hasRecord ? " pt-3" : "")}>Resistance Multipliers</p>
+        <p className={"text-lg text-heading-color" + (hasRecord ? " pt-3" : "")}>Resistance Multipliers</p>
         <div className={recordListStyles}>
           {ATTACK_ELEMENTS.map((attElmt) => {
             const actualResistance = 10 - totalResistReduct[attElmt];

@@ -49,7 +49,7 @@ export default function CharacterList({ characters, chosenChar, onClickSort, onC
   }, [chosenChar]);
 
   return (
-    <div className="w-full flex justify-center bg-dark-700">
+    <div className="w-full flex justify-center bg-surface-2">
       <div className={styles["side-icon-carousel"]}>
         {characters.length ? (
           <div className="absolute top-8 right-full flex">
@@ -76,7 +76,7 @@ export default function CharacterList({ characters, chosenChar, onClickSort, onC
                 >
                   <div
                     className={clsx(
-                      "rounded-circle border-3 border-light-600/30 bg-black/30",
+                      "rounded-circle border-3 border-light-default/30 bg-black/30",
                       styles["icon-wrapper"],
                       appChar.sideIcon
                         ? `m-2 ${styles["side-icon-wrapper"]}`
@@ -106,7 +106,7 @@ export default function CharacterList({ characters, chosenChar, onClickSort, onC
         <Button
           variant="custom"
           size="custom"
-          className="absolute top-4 left-full ml-6 bg-dark-500 text-2xl"
+          className="absolute top-4 left-full ml-6 bg-surface-3 text-2xl"
           style={{ width: 60, height: 60 }}
           icon={<FaPlus />}
           onClick={onClickWish}

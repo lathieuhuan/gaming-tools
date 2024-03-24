@@ -95,11 +95,11 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
 
   const renderSelect = ({ no = 0, value, options, showSelect = true, onChange }: RenderSelectArgs) => {
     return (
-      <div key={no} className="px-4 w-56 h-8 bg-dark-500 flex items-center">
-        <div className="mr-1 pt-0.5 w-2.5 text-base text-light-400 shrink-0">{no ? <p>{no}.</p> : null}</div>
+      <div key={no} className="px-4 w-56 h-8 bg-surface-3 flex items-center">
+        <div className="mr-1 pt-0.5 w-2.5 text-base text-light-default shrink-0">{no ? <p>{no}.</p> : null}</div>
         {showSelect ? (
           <select
-            className={clsx("w-full p-1", value === "All" ? "text-light-400" : "text-green-300")}
+            className={clsx("w-full p-1", value === "All" ? "text-light-default" : "text-bonus-color")}
             value={value}
             onChange={(e) => onChange(e.target.value, no - 1)}
           >
@@ -120,7 +120,7 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
         className={className}
         title={title}
         description={
-          <p className="text-sm text-light-600">
+          <p className="text-sm text-hint-color">
             Also sort by stats. The priority is Main Stat (if not "All"), then Sub Stat 1, Sub Stat 2, and so on.
           </p>
         }
@@ -128,14 +128,14 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
         onClickClearAll={clearFilter}
       >
         <div className="space-y-1">
-          <p className="text-lg text-mint-600 font-semibold">Main Stat</p>
+          <p className="text-lg text-secondary-1 font-semibold">Main Stat</p>
           <div className="mt-1 flex justify-center">
             {renderSelect({ value: filter.main, options: mainStatOptions, onChange: changeMainStat })}
           </div>
         </div>
 
         <div className="mt-3 space-y-1">
-          <p className="text-lg text-mint-600 font-semibold">Sub Stats</p>
+          <p className="text-lg text-secondary-1 font-semibold">Sub Stats</p>
           <div className="flex flex-col items-center space-y-2">
             {[1, 2, 3, 4].map((no, i) => {
               const prevValue = filter.subs[i - 1];
@@ -151,7 +151,7 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
           </div>
         </div>
 
-        {hasDuplicates && <p className="mt-4 text-red-100">Every stat must be unique!</p>}
+        {hasDuplicates && <p className="mt-4 text-danger-3">Every stat must be unique!</p>}
       </FilterTemplate>
     );
   };

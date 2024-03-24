@@ -9,7 +9,7 @@ import { Artifact_ } from "@Src/utils";
 import { GenshinImage, ItemThumbnail } from "@Src/components";
 
 const bonusStyles = (active: boolean) => {
-  return ["p-2 flex justify-between items-center rounded-lg group", active && "bg-dark-700"];
+  return ["p-2 flex justify-between items-center rounded-lg group", active && "bg-surface-2"];
 };
 
 interface GearsOverviewProps {
@@ -78,7 +78,7 @@ export function GearsOverview({
           ) : (
             <div key={i} className="p-1 w-1/3" style={{ minHeight: 124 }}>
               <button
-                className="p-4 w-full h-full flex-center rounded bg-dark-500 glow-on-hover"
+                className="p-4 w-full h-full flex-center rounded bg-surface-3 glow-on-hover"
                 onClick={() => onClickEmptyArtIcon(i)}
               >
                 <GenshinImage className="w-full" src={Artifact_.iconOf(ARTIFACT_TYPES[i])} />
@@ -95,21 +95,21 @@ export function GearsOverview({
         }}
       >
         <div>
-          <p className="text-lg text-orange-500 font-semibold">Set bonus</p>
+          <p className="text-lg text-heading-color font-semibold">Set bonus</p>
           <div className="mt-1 pl-2">
             {setBonuses.length ? (
               <>
-                <p className="text-green-300 font-medium">
+                <p className="text-bonus-color font-medium">
                   {$AppData.getArtifactSet(setBonuses[0].code)?.name} ({setBonuses[0].bonusLv * 2 + 2})
                 </p>
                 {setBonuses[1] ? (
-                  <p className="mt-1 text-green-300 font-medium">
+                  <p className="mt-1 text-bonus-color font-medium">
                     {$AppData.getArtifactSet(setBonuses[1].code)?.name} (2)
                   </p>
                 ) : null}
               </>
             ) : (
-              <p className="text-light-800 font-semibold">No Set bonus</p>
+              <p className="text-hint-color font-semibold">No Set bonus</p>
             )}
           </div>
         </div>
@@ -118,7 +118,7 @@ export function GearsOverview({
           activeDetails === "setBonus" ? (
             <CloseButton className="ml-auto" size="small" />
           ) : (
-            <Button className="ml-auto group-hover:bg-yellow-400" size="small" icon={<FaInfo />} />
+            <Button className="ml-auto group-hover:bg-primary-1" size="small" icon={<FaInfo />} />
           )
         ) : null}
       </div>
@@ -127,12 +127,12 @@ export function GearsOverview({
         className={clsx("mt-2", bonusStyles(activeDetails === "statsBonus"))}
         onClick={() => toggleDetails("statsBonus")}
       >
-        <p className="text-lg text-orange-500 font-semibold">Artifact details</p>
+        <p className="text-lg text-heading-color font-semibold">Artifact details</p>
 
         {activeDetails === "statsBonus" ? (
           <CloseButton className="ml-auto" size="small" />
         ) : (
-          <Button className="ml-auto group-hover:bg-yellow-400" size="small" icon={<FaInfo />} />
+          <Button className="ml-auto group-hover:bg-primary-1" size="small" icon={<FaInfo />} />
         )}
       </div>
     </div>

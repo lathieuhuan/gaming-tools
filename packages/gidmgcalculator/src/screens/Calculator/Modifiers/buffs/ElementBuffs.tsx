@@ -233,7 +233,7 @@ export default function ElementBuffs() {
           description={
             <>
               This infusion overwrites self infusion but does not overwrite elemental nature of attacks{" "}
-              <span className="text-light-800">(Catalyst's attacks, Bow's fully-charge aim shot)</span>.
+              <span className="text-hint-color">(Catalyst's attacks, Bow's fully-charge aim shot)</span>.
             </>
           }
           mutable
@@ -296,7 +296,7 @@ export default function ElementBuffs() {
       {renderedElmts.map((item, i) => {
         return (
           <Fragment key={i}>
-            {i ? <div className="mx-auto my-3 w-1/2 h-px bg-dark-500" /> : null}
+            {i ? <div className="mx-auto my-3 w-1/2 h-px bg-surface-3" /> : null}
             {item}
           </Fragment>
         );

@@ -211,7 +211,7 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
           })}
         </div>
 
-        {empty ? <p className="py-4 text-light-800 text-lg text-center">{emptyText}</p> : null}
+        {empty ? <p className="py-4 text-hint-color text-lg text-center">{emptyText}</p> : null}
       </div>
 
       {hasConfigStep ? <div className="overflow-auto shrink-0">{renderOptionConfig?.(afterSelect)}</div> : null}

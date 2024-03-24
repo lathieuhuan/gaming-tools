@@ -67,13 +67,13 @@ export function FinalResultCompare({ focusedAspect, tableKey }: FinalResultCompa
                       <FaLongArrowAltUp
                         className={clsx(
                           "absolute top-1/2 right-1.5 -translate-y-1/2",
-                          diff > 0 ? "text-green-300" : "text-red-200 rotate-180"
+                          diff > 0 ? "text-bonus-color" : "text-danger-2 rotate-180"
                         )}
                       />
                       <span
                         className={clsx(
                           "absolute bottom-1/2 right-5 z-10 mb-2.5 pt-1 px-2 pb-0.5 rounded font-bold bg-black shadow-white-glow hidden group-hover:block",
-                          diff > 0 ? "text-green-300" : "text-red-200"
+                          diff > 0 ? "text-bonus-color" : "text-danger-2"
                         )}
                       >
                         {diff > 0 ? "+" : "-"}

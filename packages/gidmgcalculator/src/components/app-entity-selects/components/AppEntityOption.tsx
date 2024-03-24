@@ -44,7 +44,7 @@ const AppEntityOptionCore = ({ className, imgCls, visible, item, selectedAmount 
 
         {selectedAmount ? <p className="absolute bottom-0 right-1 text-black font-bold">{selectedAmount}</p> : null}
       </div>
-      <p className="px-2 pt-1 rounded-b-lg text-sm truncate bg-light-400 text-black font-bold text-center">
+      <p className="px-2 pt-1 rounded-b-lg text-sm truncate bg-light-default text-black font-bold text-center">
         {item.name}
       </p>
 

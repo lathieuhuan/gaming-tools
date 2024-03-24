@@ -34,7 +34,7 @@ export function WeaponCard<T extends CalcWeapon | UserWeapon>({
   return (
     <div className={"flex flex-col " + wrapperCls}>
       <div
-        className={clsx("grow hide-scrollbar bg-dark-900 flex flex-col", withGutter && "p-4 rounded-lg", className)}
+        className={clsx("grow hide-scrollbar bg-surface-1 flex flex-col", withGutter && "p-4 rounded-lg", className)}
         style={style}
       >
         <div className="grow hide-scrollbar">

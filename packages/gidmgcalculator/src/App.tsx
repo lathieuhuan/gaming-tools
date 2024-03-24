@@ -25,7 +25,7 @@ function App() {
   }, []);
 
   return (
-    <div className="App h-screen pt-8 text-light-400 bg-light-400">
+    <div className="App h-screen pt-8 text-light-default bg-light-default">
       <NavBar />
 
       <div className="h-full flex-center relative">

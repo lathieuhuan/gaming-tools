@@ -230,7 +230,7 @@ export default function SectionArtifacts() {
   const renderSourceOption = (label: string, value: ArtifactSourceType, icon: JSX.Element) => {
     return (
       <button className="group" onClick={() => onSelectArtifactSourceType(value)}>
-        <p className="w-24 h-24 rounded bg-dark-900 font-bold flex-center flex-col opacity-90 group-hover:opacity-100">
+        <p className="w-24 h-24 rounded bg-surface-1 font-bold flex-center flex-col opacity-90 group-hover:opacity-100">
           <span className="mb-2 block h-8 flex-center">{icon}</span>
           <span>{label}</span>
         </p>
@@ -239,7 +239,7 @@ export default function SectionArtifacts() {
   };
 
   return (
-    <div id="calculator-section-artifacts" className={"py-3 bg-dark-900 " + styles.section}>
+    <div id="calculator-section-artifacts" className={"py-3 bg-surface-1 " + styles.section}>
       {artifacts.length && artifacts.every((artifact) => artifact === null) ? <CopySelect /> : null}
 
       <div className="flex">
@@ -254,7 +254,7 @@ export default function SectionArtifacts() {
               key={index}
               className={clsx(
                 "w-1/5 border-2",
-                index === activeTabIndex ? "border-light-400" : "border-transparent"
+                index === activeTabIndex ? "border-light-default" : "border-transparent"
               )}
               onClick={() => onClickTab(index)}
             >
@@ -315,7 +315,7 @@ export default function SectionArtifacts() {
         active={selectingSrcType}
         preset="small"
         title="Select a source"
-        className="bg-dark-700"
+        className="bg-surface-2"
         onClose={() => setSelectingSrcType(false)}
       >
         <div className="flex justify-center gap-4">

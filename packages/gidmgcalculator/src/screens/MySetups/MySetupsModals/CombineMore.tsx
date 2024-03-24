@@ -81,7 +81,7 @@ export default function CombineMore({ setupID, onClose }: CombineMoreProps) {
 
   return (
     <form id="setup-combine-more" className="h-full flex flex-col break-words" onSubmit={onSubmit}>
-      <p className={"px-2 " + (isError ? "text-red-100" : "text-light-800")}>
+      <p className={"px-2 " + (isError ? "text-danger-3" : "text-hint-color")}>
         {isError ? (
           "These 2 Setups feature the same Character."
         ) : (

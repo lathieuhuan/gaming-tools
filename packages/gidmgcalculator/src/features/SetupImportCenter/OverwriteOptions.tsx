@@ -74,7 +74,7 @@ export function OverwriteOptions({
 
       return (
         <Table.Tr key={type}>
-          <Table.Td className={"capitalize" + (value1 !== value2 ? " text-red-100" : "")}>{t(type, { ns })}</Table.Td>
+          <Table.Td className={"capitalize" + (value1 !== value2 ? " text-danger-3" : "")}>{t(type, { ns })}</Table.Td>
           {type === "name" ? (
             <Table.Td colSpan={2} style={{ textAlign: "center" }}>
               {oldChar.name}
@@ -145,7 +145,7 @@ function OverwriteOption({ visible, label, name, expanded, children, onClickSeeD
         <div className="flex items-center">
           <FaChevronRight className={"text-xs" + (expanded ? " rotate-90" : "")} />
           <span
-            className={"ml-1 text-sm cursor-pointer " + (expanded ? "text-green-300" : "text-light-400")}
+            className={"ml-1 text-sm cursor-pointer " + (expanded ? "text-bonus-color" : "text-light-default")}
             onClick={onClickSeeDetails}
           >
             See details
@@ -159,8 +159,8 @@ function OverwriteOption({ visible, label, name, expanded, children, onClickSeeD
             <Table>
               <Table.Tr>
                 <Table.Th />
-                <Table.Th className="text-yellow-400">Old</Table.Th>
-                <Table.Th className="text-yellow-400">New</Table.Th>
+                <Table.Th className="text-primary-1">Old</Table.Th>
+                <Table.Th className="text-primary-1">New</Table.Th>
               </Table.Tr>
 
               {children}

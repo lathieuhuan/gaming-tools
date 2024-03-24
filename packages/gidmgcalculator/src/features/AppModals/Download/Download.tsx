@@ -42,7 +42,7 @@ function DownloadCore() {
         Get File
       </Button>
 
-      <p className="text-center text-red-100">Please DO NOT modify this file if you don't understand how it works.</p>
+      <p className="text-center text-danger-3">Please DO NOT modify this file if you don't understand how it works.</p>
     </div>
   );
 }
@@ -50,5 +50,5 @@ function DownloadCore() {
 export const Download = Modal.wrap(DownloadCore, {
   preset: "small",
   title: "Download",
-  className: "bg-dark-900",
+  className: "bg-surface-1",
 });

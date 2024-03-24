@@ -10,7 +10,7 @@ import { parseWeaponDescription, suffixOf, Weapon_ } from "@Src/utils";
 // Component
 import { GenshinImage } from "../GenshinImage";
 
-const groupStyles = "bg-dark-700 px-3";
+const groupStyles = "bg-surface-2 px-3";
 
 export interface WeaponViewProps<T extends CalcWeapon | UserWeapon> {
   weapon?: T;
@@ -117,7 +117,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
         </div>
       </div>
       <div className="mt-3">
-        <p className="text-sm font-semibold text-orange-500">{appWeapon.passiveName}</p>
+        <p className="text-sm font-semibold text-heading-color">{appWeapon.passiveName}</p>
         <p className="indent-4 text-base" dangerouslySetInnerHTML={{ __html: passiveDescription }} />
       </div>
     </div>

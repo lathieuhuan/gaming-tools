@@ -83,7 +83,7 @@ export default function SectionParty() {
   };
 
   return (
-    <div className={"pb-3 bg-dark-700 " + styles.section}>
+    <div className={"pb-3 bg-surface-2 " + styles.section}>
       {party.length && party.every((teammate) => !teammate) ? <CopySelect /> : null}
 
       <div className="flex">
@@ -131,10 +131,10 @@ export default function SectionParty() {
 
       <CollapseSpace active={detailSlot !== null}>
         {detailTeammate && (
-          <div className="bg-dark-700 pt-2">
+          <div className="bg-surface-2 pt-2">
             <TeammateItems
               mutable
-              className="bg-dark-900 pt-12 px-2 pb-3"
+              className="bg-surface-1 pt-12 px-2 pb-3"
               teammate={detailTeammate}
               onClickWeapon={() => setModal({ type: "WEAPON", teammateIndex: detailSlot })}
               onChangeWeaponRefinement={(refi: number) => {

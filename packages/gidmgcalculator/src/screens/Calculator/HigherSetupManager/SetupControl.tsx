@@ -26,7 +26,7 @@ export function SetupControl({
   onChooseStandard,
 }: SetupControlProps) {
   return (
-    <div className="px-2 py-3 rounded-lg bg-dark-900" onDoubleClick={() => console.log(setup)}>
+    <div className="px-2 py-3 rounded-lg bg-surface-1" onDoubleClick={() => console.log(setup)}>
       <Input
         placeholder="Enter Setup's name"
         className="w-full px-4 pt-1 text-lg text-center rounded-md font-medium"

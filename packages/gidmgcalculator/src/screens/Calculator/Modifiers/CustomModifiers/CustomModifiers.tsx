@@ -147,7 +147,7 @@ export default function CustomModifiers({ isBuffs }: CustomModifiersProps) {
         <Modal
           active={modalOn}
           title="Add custom buffs"
-          className="bg-dark-900"
+          className="bg-surface-1"
           style={{ minWidth: 304 }}
           withActions
           withHeaderDivider={false}
@@ -160,7 +160,7 @@ export default function CustomModifiers({ isBuffs }: CustomModifiersProps) {
         <Modal
           active={modalOn && !isBuffs}
           title="Add custom debuffs"
-          className="bg-dark-900"
+          className="bg-surface-1"
           withActions
           formId="debuff-creator"
           onClose={closeModal}

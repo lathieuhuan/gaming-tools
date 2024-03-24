@@ -61,7 +61,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
             <div className="py-1 relative">
               <FaChevronDown className="absolute top-1/2 -translate-y-1/2 left-0" />
               <select
-                className="pl-6 text-lg text-light-400 appearance-none relative z-10"
+                className="pl-6 text-lg text-light-default appearance-none relative z-10"
                 value={mainStatType}
                 onChange={(e) =>
                   dispatch(

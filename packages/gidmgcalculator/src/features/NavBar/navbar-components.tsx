@@ -15,7 +15,7 @@ export function ActionButton({ className = "", icon, label, disabled, onClick }:
     <button
       className={clsx(
         "px-4 py-2 flex items-center font-bold cursor-default",
-        disabled ? "text-light-800" : "hover:text-light-400 hover:bg-dark-900",
+        disabled ? "text-hint-color" : "hover:text-light-default hover:bg-surface-1",
         className
       )}
       disabled={disabled}
@@ -54,7 +54,7 @@ export function NavTabs({ ready, className = "", activeClassName, idleClassName,
           key={i}
           className={clsx(
             "flex items-center",
-            screen.value === atScreen ? activeClassName : ready ? idleClassName : "text-light-800",
+            screen.value === atScreen ? activeClassName : ready ? idleClassName : "text-hint-color",
             className
           )}
           disabled={!ready}

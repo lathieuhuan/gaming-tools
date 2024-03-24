@@ -60,7 +60,7 @@ const ArtifactInventoryCore = ({
       filterWrapWidth="100%"
       renderFilter={(setFilterOn) => {
         return (
-          <div className="h-full p-4 bg-dark-900">
+          <div className="h-full p-4 bg-surface-1">
             <ArtifactFilter
               forcedType={forcedType}
               artifacts={artifacts}
@@ -120,10 +120,10 @@ const ArtifactInventoryCore = ({
                     right: "calc(100% - 1rem)",
                   }}
                 >
-                  <div className="w-64 pr-2 pb-2 h-full flex flex-col bg-dark-900 rounded-l-lg">
+                  <div className="w-64 pr-2 pb-2 h-full flex flex-col bg-surface-1 rounded-l-lg">
                     <ArtifactCard mutable={false} artifact={currentArtifact} />
 
-                    <p className="mt-4 text-center text-orange-500">Current equipment</p>
+                    <p className="mt-4 text-center text-heading-color">Current equipment</p>
                   </div>
                 </div>
               ) : null}

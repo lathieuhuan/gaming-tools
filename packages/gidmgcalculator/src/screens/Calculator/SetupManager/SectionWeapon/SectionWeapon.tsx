@@ -26,7 +26,7 @@ export default function SectionWeapon() {
   const closeModal = () => setModalType("");
 
   return (
-    <div className={"px-2 py-3 bg-dark-900 flex items-start relative " + styles.section}>
+    <div className={"px-2 py-3 bg-surface-1 flex items-start relative " + styles.section}>
       <div
         className={`w-20 h-20 shrink-0 relative bg-gradient-${rarity} cursor-pointer rounded-md`}
         onClick={() => setModalType("MAKE_NEW_WEAPON")}

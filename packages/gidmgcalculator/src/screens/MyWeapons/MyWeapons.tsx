@@ -107,7 +107,7 @@ export default function MyWeapons() {
           </Button>
 
           <CollapseSpace className="w-full absolute top-full left-0 z-20" active={filterIsActive}>
-            <div className="px-4 py-6 shadow-common bg-dark-700">{renderWeaponTypeSelect()}</div>
+            <div className="px-4 py-6 shadow-common bg-surface-2">{renderWeaponTypeSelect()}</div>
           </CollapseSpace>
         </>
       )}

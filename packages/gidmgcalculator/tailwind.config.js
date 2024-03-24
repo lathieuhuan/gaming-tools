@@ -38,52 +38,33 @@ export default {
     },
     colors: {
       transparent: colors.transparent,
-      light: {
-        100: "#ffffff", // root
-        400: "#e0e0e0", // text default
-        600: "#cccccc", // button bg default
-        800: "#b8b8b8",
-        900: "#adadad",
-      },
-      dark: {
-        300: "#535582",
-        500: "#2c315c",
-        700: "#151a40",
-        900: "#050926",
-      },
+      white: "#ffffff",
       black: "#000000",
-      red: {
-        100: "#ff8d8c",
-        200: "#ff7370",
-        // 300: "#ff4a47",
-        // 400: "#ff221f",
-        // 500: "#f50400",
-        600: "#cc0300", // root
-        // 700: "#a30300",
-        800: "#7a0200",
-        // 900: "#520100"
-        rose: "#f43f5e",
+      "hint-color": "#b8b8b8", // white-8 // bg-hint-color
+      "light-default": "#ebebeb", // white-3
+      surface: {
+        1: "#050926",
+        2: "#151a40",
+        3: "#2c315c",
+        border: "#535582",
       },
-      green: {
-        200: "#89fba9", // active color
-        300: "#62f98e", // bonus color (root)
+      primary: {
+        1: "#edc73d",
+        2: "#f5dc6e", // modified from #f1d46a (variant of primary-1) // check if really need
       },
-      blue: {
-        400: "#5ca8ff", // link
-        // 600: "#0075ff", // root
+      secondary: {
+        1: "#09bcba"
       },
-      mint: {
-        600: "#09bcba", // root
+      danger: {
+        1: "#cc0300", // root
+        2: "#ff7370", // variant of danger-1
+        3: "#ff8785", // variant of danger-1
+        max: "#f43f5e",
       },
-      orange: {
-        // 400: "#fba64b",
-        500: "#fa8a12",
-      },
-      yellow: {
-        // 200: "#f5df8f",
-        300: "#f5dc6e", // modified from #f1d46a
-        400: "#edc73d", // main (root)
-      },
+      "bonus-color": "#62f98e",
+      "active-color": "#89fba9", // variant of bonus-color
+      "link-color": "#5ca8ff", // variant of #0075ff
+      "heading-color": "#fa8a12",
       pyro: "#ff504a",
       hydro: "#2eaaff",
       dendro: "#49e03e",
@@ -105,7 +86,7 @@ export default {
       },
       borderRadius: {
         circle: "50%",
-        "2.5xl": "1.25rem",
+        "2.5xl": "2rem",
       },
       boxShadow: {
         common: "rgb(0 0 0 / 20%) 0px 3px 3px -2px, rgb(0 0 0 / 14%) 0px 3px 4px 0px, rgb(0 0 0 / 12%) 0px 1px 8px 0px",
@@ -122,7 +103,6 @@ export default {
             lineHeight: 1.2,
           },
         ],
-        "3.5xl": "2rem",
       },
       lineHeight: {
         base: 1.35,

@@ -64,10 +64,10 @@ export function getTotalRecordValue(list: TrackerRecord[]) {
   );
 }
 
-export function renderHeading(white: ReactNode, orange?: string | number) {
+export function renderHeading(main: ReactNode, extra?: string | number) {
   return (
     <p className="font-medium">
-      {white} <span className="text-orange-500">{orange}</span>
+      {main} <span className="text-heading-color">{extra}</span>
     </p>
   );
 }
@@ -75,7 +75,7 @@ export function renderHeading(white: ReactNode, orange?: string | number) {
 export function renderRecord(calcFn?: (value: number) => string | number, extraDesc?: (value: number) => string) {
   return ({ desc, value }: TrackerRecord, index: number) =>
     value ? (
-      <li key={index} className="text-light-800 text-sm">
+      <li key={index} className="text-hint-color text-sm">
         {desc?.[0]?.toUpperCase()}
         {desc.slice(1)} {extraDesc ? `${extraDesc(value)} ` : ""}
         <Green>{calcFn ? calcFn(value) : value}</Green>

@@ -91,18 +91,18 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
 
               <div
                 className={
-                  "ml-4 px-3 pt-2 pb-1.5 flex-center rounded-lg bg-dark-700 " +
+                  "ml-4 px-3 pt-2 pb-1.5 flex-center rounded-lg bg-surface-2 " +
                   `leading-none ${elmtText} font-bold cursor-default relative group`
                 }
               >
                 <span>C{char.cons}</span>
                 <div className="absolute top-full z-50 pt-1 hidden group-hover:block">
-                  <ul className="bg-light-400 text-black rounded overflow-hidden">
+                  <ul className="bg-light-default text-black rounded overflow-hidden">
                     {[...Array(7)].map((_, i) => {
                       return (
                         <li
                           key={i}
-                          className={"px-3 pt-2 pb-1.5 " + (i === char.cons ? "bg-light-800" : "hover:bg-yellow-400")}
+                          className={"px-3 pt-2 pb-1.5 " + (i === char.cons ? "bg-hint-color" : "hover:bg-primary-1")}
                           onClick={() => onClickConsLevel(i)}
                         >
                           C{i}

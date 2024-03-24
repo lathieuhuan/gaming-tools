@@ -55,7 +55,7 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
 
   return (
     <div className={"relative " + (className || "")}>
-      <label className="px-2 w-full text-black bg-light-400 rounded font-semibold flex items-center peer">
+      <label className="px-2 w-full text-black bg-light-default rounded font-semibold flex items-center peer">
         <input
           className="p-2 bg-transparent grow font-bold placeholder:text-black focus:placeholder:text-rarity-1"
           placeholder={targetTitle}
@@ -70,7 +70,7 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
 
       <div
         id="monster-list"
-        className="absolute top-full z-10 mt-1 w-full text-black bg-light-400 custom-scrollbar cursor-default hidden peer-focus-within:block"
+        className="absolute top-full z-10 mt-1 w-full text-black bg-light-default custom-scrollbar cursor-default hidden peer-focus-within:block"
         style={{ maxHeight: "50vh" }}
       >
         {$AppData.getAllMonsters().map((monster, i) => {
@@ -88,7 +88,7 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
               id={`monster-${monster.code}`}
               className={clsx(
                 "px-2 py-1 flex flex-col font-semibold",
-                monster.code === targetCode ? "bg-light-800" : "hover:text-light-400 hover:bg-dark-500 hover:font-bold"
+                monster.code === targetCode ? "bg-hint-color" : "hover:text-light-default hover:bg-surface-3 hover:font-bold"
               )}
               onMouseDown={(e) => e.preventDefault()}
               onClick={onClickMonster(monster)}

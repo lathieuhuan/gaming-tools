@@ -51,7 +51,7 @@ export function TargetConfig() {
         <div className="grow overflow-auto flex flex-col">
           <div className="flex">
             <label className="ml-auto flex items-center">
-              <span className="mr-4 text-lg text-yellow-400">Level</span>
+              <span className="mr-4 text-lg text-primary-1">Level</span>
               <InputNumber
                 className="w-16 p-2 text-right font-bold"
                 value={target.level}
@@ -79,7 +79,7 @@ export function TargetConfig() {
 
           {variant?.types.length && target.variantType ? (
             <div className="mt-4 flex justify-end items-center">
-              <p className="mr-4 text-light-400">Variant</p>
+              <p className="mr-4 text-light-default">Variant</p>
 
               <select className="styled-select capitalize" value={target.variantType} onChange={onChangeElementVariant}>
                 {variant.types.map((variantType, i) => {
@@ -147,11 +147,11 @@ export function TargetConfig() {
           {ATTACK_ELEMENTS.map((attElmt) => {
             return (
               <div key={attElmt} className="flex justify-end items-center">
-                <p className={"mr-4 text-base " + (attElmt === "phys" ? "text-light-400" : `text-${attElmt}`)}>
+                <p className={"mr-4 text-base " + (attElmt === "phys" ? "text-light-default" : `text-${attElmt}`)}>
                   {t(attElmt, { ns: "resistance" })}
                 </p>
                 <InputNumber
-                  className="w-20 p-2 text-right font-bold disabled:bg-light-800"
+                  className="w-20 p-2 text-right font-bold disabled:bg-hint-color"
                   disabled={target.code !== 0}
                   value={target.resistances[attElmt]}
                   maxDecimalDigits={0}
@@ -164,7 +164,7 @@ export function TargetConfig() {
           })}
         </div>
 
-        <p className="mt-4 pr-1 text-sm text-right text-light-400">
+        <p className="mt-4 pr-1 text-sm text-right text-light-default">
           You can search for your target's Resistances on{" "}
           <a
             href="https://genshin-impact.fandom.com/wiki/Resistance#Base_Enemy_Resistances"

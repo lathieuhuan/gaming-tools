@@ -150,7 +150,7 @@ function HigherSetupManagerCore() {
         onClick={() => dispatch(updateUI({ highManagerActive: false }))}
       />
 
-      <p className="my-2 text-1.5xl text-center text-orange-500 font-bold">Setups Management</p>
+      <p className="my-2 text-1.5xl text-center text-heading-color font-bold">Setups Management</p>
 
       <div className="flex-grow hide-scrollbar">
         <div className="space-y-4">
@@ -177,7 +177,7 @@ function HigherSetupManagerCore() {
             <div className="space-y-4">
               <Button
                 variant="custom"
-                className="w-full bg-mint-600 text-black"
+                className="w-full bg-secondary-1 text-black"
                 icon={<FaPlus />}
                 onClick={addNewSetup}
               >
@@ -198,7 +198,7 @@ function HigherSetupManagerCore() {
       <Button className="mt-4 mx-auto group relative" variant="primary" onClick={tryApplyNewSettings}>
         {errorCode === "NO_SETUPS" && (
           <Popover
-            className="w-56 mb-2 px-2 py-1 left-1/2 -translate-x-1/2 bottom-full text-center text-red-100 group-hover:scale-100"
+            className="w-56 mb-2 px-2 py-1 left-1/2 -translate-x-1/2 bottom-full text-center text-danger-3 group-hover:scale-100"
             withTooltipStyle
           >
             Please have atleast 1 setup
@@ -218,7 +218,7 @@ export default function HigherSetupManager() {
   return (
     <CollapseSpace
       active={highManagerActive}
-      className={clsx("absolute bottom-0 left-0 bg-dark-500 z-30", styles.card)}
+      className={clsx("absolute bottom-0 left-0 bg-surface-3 z-30", styles.card)}
       activeHeight="100%"
       moveDuration={200}
       destroyOnClose

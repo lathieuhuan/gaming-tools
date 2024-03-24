@@ -30,7 +30,7 @@ export function ElementBuffsDetail({
 }: ElementBuffsDetailProps) {
   const content: JSX.Element[] = [];
   const { resonances, reaction, infuse_reaction, absorption } = elmtModCtrls;
-  const headingCls = "text-sm text-mint-600 mb-1";
+  const headingCls = "text-sm text-secondary-1 mb-1";
 
   if (resonances.length) {
     content.push(
@@ -81,7 +81,7 @@ export function ElementBuffsDetail({
       {content.map((item, index) => {
         return (
           <Fragment key={index}>
-            {index ? <div className="mx-auto my-3 w-1/2 h-px bg-dark-500" /> : null}
+            {index ? <div className="mx-auto my-3 w-1/2 h-px bg-surface-3" /> : null}
             {item}
           </Fragment>
         );
@@ -99,7 +99,7 @@ export function CustomBuffsDetail({ customBuffCtrls }: CustomBuffsDetailProps) {
   const content = customBuffCtrls.map(({ category, type, subType, value }, i) => (
     <div key={i} className="flex justify-end">
       <p className="mr-4">{toCustomBuffLabel(category, type, t)}</p>
-      <p className="w-12 shrink-0 text-orange-500 text-right">
+      <p className="w-12 shrink-0 text-heading-color text-right">
         {value}
         {suffixOf(subType || type)}
       </p>

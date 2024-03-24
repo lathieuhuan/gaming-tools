@@ -57,7 +57,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
 
     return (
       <div className="flex items-center">
-        <p className="mr-4 text-yellow-400">DEF Mult.</p>
+        <p className="mr-4 text-primary-1">DEF Mult.</p>
 
         <div className="flex flex-col items-center">
           <p>

@@ -61,9 +61,9 @@ const CharacterInfo = () => {
     return (
       <div {...wrapperProps}>
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="p-4 rounded-lg bg-dark-900 shrink-0" style={{ width: 332 }}>
+          <div key={i} className="p-4 rounded-lg bg-surface-1 shrink-0" style={{ width: 332 }}>
             {error ? (
-              <p className="text-center text-red-100">{error}</p>
+              <p className="text-center text-danger-3">{error}</p>
             ) : (
               <div className="w-full h-full flex-center">
                 <LoadingSpin />
@@ -88,7 +88,7 @@ const CharacterInfo = () => {
 
   return (
     <div {...wrapperProps}>
-      <div className="p-4 rounded-lg bg-dark-900 flex flex-col relative">
+      <div className="p-4 rounded-lg bg-surface-1 flex flex-col relative">
         <Button className="absolute top-4 right-4" boneOnly icon={<FaUserSlash />} onClick={() => setRemoving(true)} />
 
         <div className="flex" onDoubleClick={() => console.log(char, weapon, artifacts)}>
@@ -120,7 +120,7 @@ const CharacterInfo = () => {
 
       <Gears weapon={weapon} artifacts={artifacts} artAttr={artAttr} />
 
-      <div className="p-4 rounded-lg bg-dark-900">
+      <div className="p-4 rounded-lg bg-surface-1">
         <div className="h-full w-75">
           <ConstellationList
             char={char}
@@ -136,7 +136,7 @@ const CharacterInfo = () => {
         </div>
       </div>
 
-      <div className="p-4 rounded-lg bg-dark-900">
+      <div className="p-4 rounded-lg bg-surface-1">
         <div className="h-full w-75">
           <TalentList
             key={char.name}

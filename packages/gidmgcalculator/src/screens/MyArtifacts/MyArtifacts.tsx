@@ -93,7 +93,7 @@ export default function MyArtifacts() {
         <button
           className={clsx(
             "pl-4 py-1 text-black glow-on-hover",
-            isFiltered ? "pr-2 bg-green-200 rounded-l-2xl" : "pr-4 bg-light-600 rounded-2xl"
+            isFiltered ? "pr-2 bg-active-color rounded-l-2xl" : "pr-4 bg-light-default rounded-2xl"
           )}
           onClick={() => setModalType("FITLER")}
         >
@@ -102,7 +102,7 @@ export default function MyArtifacts() {
 
         {isFiltered && (
           <div
-            className="pl-2 pr-3 rounded-r-2xl text-black bg-light-400 flex-center glow-on-hover"
+            className="pl-2 pr-3 rounded-r-2xl text-black bg-light-default flex-center glow-on-hover"
             onClick={() => {
               const { DEFAULT_FILTER } = ArtifactFilter;
               setFilter(DEFAULT_FILTER);

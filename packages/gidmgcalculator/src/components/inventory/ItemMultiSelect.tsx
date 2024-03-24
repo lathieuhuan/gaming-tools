@@ -49,7 +49,7 @@ const ItemMultiSelectCore = (props: ItemMultiSelectProps) => {
       title={props.title}
       extra={
         <div className="flex items-center gap-3">
-          <p className="text-base text-light-400 font-bold">
+          <p className="text-base text-light-default font-bold">
             {chosenCount}/{props.max} selected
           </p>
           <Button
@@ -83,7 +83,7 @@ const ItemMultiSelectCore = (props: ItemMultiSelectProps) => {
                 <ArtifactCard wrapperCls="w-76 shrink-0" withOwnerLabel artifact={chosenItem} />
               )
             ) : (
-              <div className="w-76 rounded-lg bg-dark-900 shrink-0" />
+              <div className="w-76 rounded-lg bg-surface-1 shrink-0" />
             )}
           </div>
         );

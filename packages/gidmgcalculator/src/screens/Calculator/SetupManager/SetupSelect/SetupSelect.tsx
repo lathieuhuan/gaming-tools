@@ -116,12 +116,12 @@ export function SetupSelect() {
     setModal({ type: "REMOVE_SETUP", setupIndex });
   };
 
-  const renderSuffixButton = ({ className, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>, index?: number) => {
+  const renderActionButton = ({ className, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>, index?: number) => {
     return (
       <button
         key={index}
         className={clsx(
-          "h-9 w-9 border-l border-b border-light-100 flex-center shrink-0 disabled:bg-light-800 disabled:text-black",
+          "h-9 w-9 border-l border-b border-white flex-center shrink-0 disabled:bg-hint-color disabled:text-black",
           className
         )}
         {...rest}
@@ -139,27 +139,27 @@ export function SetupSelect() {
             label: name,
             value: ID,
             renderActions: ({ closeSelect }) => {
-              const rightButtons: Array<ButtonHTMLAttributes<HTMLButtonElement>> = [
+              const actions: Array<ButtonHTMLAttributes<HTMLButtonElement>> = [
                 {
-                  className: ID === standardId ? "bg-green-300" : "bg-light-400",
+                  className: ID === standardId ? "bg-bonus-color" : "bg-light-default",
                   children: <SiTarget className="text-1.5xl" />,
                   disabled: comparedIds.length < 2 || !comparedIds.includes(ID),
                   onClick: onClickChooseStandard(ID),
                 },
                 {
-                  className: comparedIds.includes(ID) ? "bg-green-300" : "bg-light-400",
+                  className: comparedIds.includes(ID) ? "bg-bonus-color" : "bg-light-default",
                   children: <FaBalanceScaleLeft className="text-1.5xl" />,
                   disabled: setupManageInfos.length < 2,
                   onClick: onClickToggleCompared(ID),
                 },
                 {
-                  className: "hover:bg-yellow-400" + (isAtMax ? " bg-light-800" : ""),
+                  className: "hover:bg-primary-1" + (isAtMax ? " bg-hint-color" : ""),
                   children: <FaCopy />,
                   disabled: isAtMax,
                   onClick: onClickCopySetup(ID),
                 },
                 {
-                  className: "hover:bg-yellow-400",
+                  className: "hover:bg-primary-1",
                   children: <FaSave />,
                   onClick: () => {
                     onClickSaveSetup(i);
@@ -167,7 +167,7 @@ export function SetupSelect() {
                   },
                 },
                 {
-                  className: "hover:bg-yellow-400",
+                  className: "hover:bg-primary-1",
                   children: <FaShareAlt />,
                   onClick: () => {
                     onClickShareSetup(i);
@@ -175,7 +175,7 @@ export function SetupSelect() {
                   },
                 },
                 {
-                  className: "hover:bg-red-600 hover:text-light-400",
+                  className: "hover:bg-danger-1 hover:text-light-default",
                   children: <FaTrashAlt />,
                   disabled: setupManageInfos.length < 2,
                   onClick: () => {
@@ -185,7 +185,7 @@ export function SetupSelect() {
                 },
               ];
 
-              return <div className="ml-auto flex justify-end">{rightButtons.map(renderSuffixButton)}</div>;
+              return <div className="ml-auto flex justify-end">{actions.map(renderActionButton)}</div>;
             },
           };
         })}
@@ -195,7 +195,7 @@ export function SetupSelect() {
       <Modal
         active={modal.type === "SAVE_SETUP"}
         preset="small"
-        className="bg-dark-900"
+        className="bg-surface-1"
         title="Save setup"
         withActions
         formId="save-calc-setup"

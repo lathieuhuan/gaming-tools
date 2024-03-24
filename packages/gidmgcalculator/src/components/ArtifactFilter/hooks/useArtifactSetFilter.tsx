@@ -63,7 +63,7 @@ export function useArtifactSetFilter(artifacts: CalcArtifact[], chosenCodes: num
                   <div
                     className={clsx(
                       "rounded-circle",
-                      set.chosen ? "shadow-3px-2px shadow-green-300 bg-dark-900" : "bg-transparent"
+                      set.chosen ? "shadow-3px-2px shadow-bonus-color bg-surface-1" : "bg-transparent"
                     )}
                   >
                     <GenshinImage className="p-1" src={set.icon} imgType="artifact" />

@@ -1,6 +1,6 @@
 import { clsx } from "rond";
 
-type SpanExtraColor = "green-300" | "red-100" | "yellow-400" | "light-800";
+type SpanExtraColor = "bonus-color" | "danger-3" | "primary-1" | "hint-color";
 
 interface SpanProps extends React.HTMLAttributes<HTMLSpanElement> {
   className?: string;
@@ -12,7 +12,7 @@ const makeSpan = (color: `text-${SpanExtraColor}`) => {
   );
 };
 
-export const Green = makeSpan("text-green-300");
-export const Red = makeSpan("text-red-100");
-export const Yellow = makeSpan("text-yellow-400");
-export const Dim = makeSpan("text-light-800");
+export const Green = makeSpan("text-bonus-color");
+export const Red = makeSpan("text-danger-3");
+export const Yellow = makeSpan("text-primary-1");
+export const Dim = makeSpan("text-hint-color");

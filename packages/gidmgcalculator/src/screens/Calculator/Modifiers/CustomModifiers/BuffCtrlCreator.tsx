@@ -110,7 +110,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
     <div className="flex items-center relative">
       <FaChevronDown className="absolute -z-10" />
       <select
-        className="pl-6 pr-2 text-light-400 appearance-none capitalize"
+        className="pl-6 pr-2 text-light-default appearance-none capitalize"
         value={config.type}
         onChange={(e) => onChangeType(e.target.value)}
       >
@@ -158,7 +158,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
                 "px-4 py-1",
                 !index && "rounded-t sm:rounded-tr-none sm:rounded-l",
                 index === 3 && "rounded-b sm:rounded-bl-none sm:rounded-r",
-                chosen ? "bg-light-400" : "bg-dark-500"
+                chosen ? "bg-light-default" : "bg-surface-3"
               )}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => {
@@ -185,12 +185,12 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
                 <div className="flex items-center relative">
                   <FaChevronDown className="absolute -z-10" />
                   <select
-                    className="pl-6 pr-2 text-light-400 appearance-none"
+                    className="pl-6 pr-2 text-light-default appearance-none"
                     value={config.subType}
                     onChange={(e) => onChangeSubType(e.target.value)}
                   >
                     {subTypes.map((subType, i) => (
-                      <option key={i} className="disabled:bg-light-800" value={subType}>
+                      <option key={i} className="disabled:bg-hint-color" value={subType}>
                         {t(subType)}
                       </option>
                     ))}

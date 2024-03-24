@@ -27,9 +27,9 @@ export const Introduction = (props: ModalControl) => {
   const latestDate: string | undefined = updates[0]?.date;
 
   const typeToCls: Record<string, string> = {
-    e: "text-yellow-400",
-    u: "text-red-100",
-    f: "text-green-300",
+    e: "text-primary-1",
+    u: "text-danger-3",
+    f: "text-bonus-color",
   };
 
   const parseContent = (content: string) => {
@@ -43,9 +43,9 @@ export const Introduction = (props: ModalControl) => {
 
   const renderTitle = (content: string, className?: string) => {
     return (
-      <h1 className={clsx("text-2xl text-orange-500 text-center font-bold relative", className)}>
+      <h1 className={clsx("text-2xl text-heading-color text-center font-bold relative", className)}>
         {content}
-        <span className="absolute top-0 left-full ml-2 text-base text-light-800">
+        <span className="absolute top-0 left-full ml-2 text-base text-hint-color">
           {isLoadingMetadata ? <Skeleton className="w-14 h-4 rounded" /> : patch ? <span>v{patch}</span> : null}
         </span>
       </h1>
@@ -89,7 +89,7 @@ export const Introduction = (props: ModalControl) => {
                     isLoadingMetadata ? (
                       <Skeleton className="w-28 h-4 rounded" />
                     ) : latestDate ? (
-                      <span className="ml-2 px-1 text-sm rounded text-orange-500 bg-dark-900">{latestDate}</span>
+                      <span className="ml-2 px-1 text-sm rounded text-heading-color bg-surface-1">{latestDate}</span>
                     ) : null
                   ) : null}
                 </div>
@@ -103,7 +103,7 @@ export const Introduction = (props: ModalControl) => {
                   ) : updates.length ? (
                     updates.map(({ date, patch, content }, i) => (
                       <div key={i}>
-                        <p className="text-orange-500 font-bold">{date + (patch ? ` (v${patch})` : "")}</p>
+                        <p className="text-heading-color font-bold">{date + (patch ? ` (v${patch})` : "")}</p>
                         <ul className="mt-1 space-y-1">
                           {content.map((line, j) => (
                             <li key={j} dangerouslySetInnerHTML={{ __html: `- ${parseContent(line)}` }} />
@@ -112,7 +112,7 @@ export const Introduction = (props: ModalControl) => {
                       </div>
                     ))
                   ) : (
-                    <div className="h-20 flex-center text-red-100">
+                    <div className="h-20 flex-center text-danger-3">
                       <p>Failed to get updates</p>
                     </div>
                   )}
@@ -134,7 +134,7 @@ export const Introduction = (props: ModalControl) => {
           ]}
         />
         <div className="px-2 space-y-1">
-          <p className="text-orange-500 font-semibold">Credit</p>
+          <p className="text-heading-color font-semibold">Credit</p>
           <p>
             - Thank you{" "}
             <a href="https://genshin-impact.fandom.com/wiki/Genshin_Impact_Wiki" rel="noreferrer" target="_blank">
@@ -150,7 +150,7 @@ export const Introduction = (props: ModalControl) => {
             , data of characters, weapons, and artifacts are collected from their site.
           </p>
           <p>- Huge and special thanks to the donators!</p>
-          <ul className="ml-4 text-yellow-400 columns-1 md:columns-2 xm:columns-3 lg:columns-4">
+          <ul className="ml-4 text-primary-1 columns-1 md:columns-2 xm:columns-3 lg:columns-4">
             {["Marc (marcdau)", "Akenouille", "Brandon Pride"].map((name, i) => (
               <li key={i}>{name}</li>
             ))}
@@ -163,13 +163,13 @@ export const Introduction = (props: ModalControl) => {
               ))}
             </div>
           ) : supporters.length ? (
-            <ul className="ml-4 text-yellow-400 columns-1 md:columns-2 xm:columns-3 lg:columns-4">
+            <ul className="ml-4 text-primary-1 columns-1 md:columns-2 xm:columns-3 lg:columns-4">
               {supporters.map((name, i) => (
                 <li key={i}>{name}</li>
               ))}
             </ul>
           ) : (
-            <div className="h-20 flex-center text-red-100">
+            <div className="h-20 flex-center text-danger-3">
               <p>Failed to get supporters</p>
             </div>
           )}

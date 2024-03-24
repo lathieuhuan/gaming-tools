@@ -32,7 +32,7 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
   } = useIconSelect(ELEMENT_ICONS, initialFilter?.elementTypes, {
     multiple: true,
     iconCls: "text-2xl",
-    selectedCls: "shadow-3px-3px shadow-green-200",
+    selectedCls: "shadow-3px-3px shadow-active-color",
   });
 
   const { weaponTypes, updateWeaponTypes, renderWeaponTypeSelect } = useWeaponTypeSelect(initialFilter?.weaponTypes, {
@@ -50,7 +50,7 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
   };
 
   return (
-    <div className={clsx("px-3 py-4 bg-dark-900 flex flex-col", className)}>
+    <div className={clsx("px-3 py-4 bg-surface-1 flex flex-col", className)}>
       <div className="grow space-y-4 hide-scrollbar">
         <FilterTemplate
           title="Filter by Element"
@@ -60,7 +60,7 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
           <div className="hide-scrollbar">{renderElementSelect("p-1")}</div>
         </FilterTemplate>
 
-        <div className="w-full h-px bg-dark-300" />
+        <div className="w-full h-px bg-surface-border" />
 
         <FilterTemplate
           title="Filter by Weapon"
@@ -70,7 +70,7 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
           {renderWeaponTypeSelect("px-1", { defaultFallback: { cls: "p-1.5" } })}
         </FilterTemplate>
 
-        <div className="w-full h-px bg-dark-300" />
+        <div className="w-full h-px bg-surface-border" />
 
         <FilterTemplate
           title="Filter by Rarity"

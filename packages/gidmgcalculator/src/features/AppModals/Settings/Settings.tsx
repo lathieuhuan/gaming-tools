@@ -125,7 +125,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
             {tempSettings.persistingUserData && (
               <li>Your data is available on this browser only and will be lost if the local storage is cleared.</li>
             )}
-            <li className="text-red-100">Change of this setting can remove your current data and works on the App!</li>
+            <li className="text-danger-3">Change of this setting can remove your current data and works on the App!</li>
           </ul>
         </div>
       </Section>
@@ -153,7 +153,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
 
 export const Settings = Modal.wrap(SettingsCore, {
   title: "Settings",
-  className: ["w-96 bg-dark-700", Modal.LARGE_HEIGHT_CLS],
+  className: ["w-96 bg-surface-2", Modal.LARGE_HEIGHT_CLS],
   bodyCls: "py-0",
   withHeaderDivider: false,
   withFooterDivider: false,

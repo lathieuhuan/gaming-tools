@@ -37,7 +37,7 @@ export function SaveSetup({ manageInfo, onClose }: SaveSetupProps) {
 
   return (
     <form id="save-calc-setup" className="flex flex-col" onSubmit={onSubmit}>
-      <p className="mb-2 text-light-800">
+      <p className="mb-2 text-hint-color">
         {existedSetup ? "Do you what to update this setup" : "Do you what to save this setup as"}
       </p>
       <Input

@@ -19,16 +19,16 @@
     background: transparent;
   }
   a {
-    @apply text-blue-400;
+    @apply text-link-color;
   }
 }
 
 @layer components {
   .styled-select {
-    @apply px-2 py-1 bg-light-400 text-black rounded font-bold;
+    @apply px-2 py-1 bg-light-default text-black rounded font-bold;
   }
   .load-option {
-    @apply pt-2 pb-3 px-4 hover:bg-dark-900;
+    @apply pt-2 pb-3 px-4 hover:bg-surface-1;
   }
 }
 

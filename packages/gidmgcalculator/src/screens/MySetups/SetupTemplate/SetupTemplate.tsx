@@ -115,7 +115,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
             return (
               <CharacterPortrait
                 key={teammateIndex}
-                className={clsx("cursor-pointer", isCalculated && "shadow-3px-3px shadow-yellow-400")}
+                className={clsx("cursor-pointer", isCalculated && "shadow-3px-3px shadow-primary-1")}
                 info={teammateData}
                 onClick={() => {
                   setTeammateDetail({
@@ -173,7 +173,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
         <div className="flex items-center">
           {isOriginal ? null : screenWatcher.isFromSize("lg") ? (
             <Button
-              className="hover:text-red-200 group shadow-none"
+              className="hover:text-danger-2 group shadow-none"
               variant="custom"
               icon={
                 <>
@@ -184,9 +184,9 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
               onClick={uncombine}
             />
           ) : (
-            <Button variant="custom" className="text-red-200" boneOnly icon={<FaUnlink />} onClick={uncombine} />
+            <Button variant="custom" className="text-danger-2" boneOnly icon={<FaUnlink />} onClick={uncombine} />
           )}
-          <p className="px-1 text-xl text-orange-500 font-semibold truncate">{setupName || setup.name}</p>
+          <p className="px-1 text-xl text-heading-color font-semibold truncate">{setupName || setup.name}</p>
         </div>
 
         <div className="mt-2 lg:mt-0 pb-2 flex space-x-3 justify-end">
@@ -223,13 +223,13 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
         </div>
       </div>
 
-      <div className="px-4 pt-4 pb-3 rounded-lg bg-dark-900 flex flex-col lg:flex-row gap-4">
+      <div className="px-4 pt-4 pb-3 rounded-lg bg-surface-1 flex flex-col lg:flex-row gap-4">
         <div className="flex flex-col gap-4">
           {display.mainCharacter}
           {display.teammates}
         </div>
 
-        <div className="hidden lg:block w-0.5 bg-dark-500" />
+        <div className="hidden lg:block w-0.5 bg-surface-3" />
 
         <div className="flex flex-col gap-4">
           <ButtonGroup
@@ -238,14 +238,14 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
               {
                 children: "Stats",
                 variant: "custom",
-                className: "bg-dark-500",
+                className: "bg-surface-3",
                 disabled: !isFetched,
                 onClick: openModal("STATS"),
               },
               {
                 children: "Modifiers",
                 variant: "custom",
-                className: "bg-dark-500",
+                className: "bg-surface-3",
                 disabled: !isFetched,
                 onClick: openModal("MODIFIERS"),
               },

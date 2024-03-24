@@ -40,7 +40,7 @@ export function FinalResultCore() {
         <div className="mb-4 flex">
           <p className="mr-2">Choose a focus</p>
           <select
-            className="text-yellow-400"
+            className="text-primary-1"
             value={focusedAspect}
             onChange={(e) => setFocus(e.target.value as CalculationAspect)}
           >

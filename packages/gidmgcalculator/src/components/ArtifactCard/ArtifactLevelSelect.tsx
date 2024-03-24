@@ -23,7 +23,7 @@ export function ArtifactLevelSelect({
     const disabled = level === maxLevel;
 
     return (
-      <div className={clsx("rounded bg-dark-700 overflow-hidden flex", className)}>
+      <div className={clsx("rounded bg-surface-2 overflow-hidden flex", className)}>
         <select
           className={clsx("appearance-none", cls)}
           value={level}
@@ -37,7 +37,7 @@ export function ArtifactLevelSelect({
         </select>
         <button
           className={clsx(
-            "px-1.5 text-xl bg-light-400 text-black flex-center",
+            "px-1.5 text-xl bg-light-default text-black flex-center",
             disabled ? "opacity-50" : "glow-on-hover"
           )}
           disabled={disabled}
@@ -48,5 +48,5 @@ export function ArtifactLevelSelect({
       </div>
     );
   }
-  return <p className={clsx("rounded bg-dark-500", cls, className)}>+{level}</p>;
+  return <p className={clsx("rounded bg-surface-3", cls, className)}>+{level}</p>;
 }

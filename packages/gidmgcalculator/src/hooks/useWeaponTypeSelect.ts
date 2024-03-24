@@ -15,7 +15,7 @@ export function useWeaponTypeSelect(
 ) {
   const mergedConfig: IconSelectConfig<WeaponType> = {
     ...config,
-    selectedCls: "shadow-3px-3px shadow-green-200",
+    selectedCls: "shadow-3px-3px shadow-active-color",
   };
   const { selectedIcons, updateSelectedIcons, renderIconSelect } = useIconSelect(
     WEAPON_TYPE_ICONS,
