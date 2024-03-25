@@ -99,7 +99,7 @@ export default function Gears(props: GearsProps) {
     <>
       {isFromXmScreen ? (
         <div className="h-full flex">
-          <div className="w-75 px-4 rounded-lg bg-surface-1 box-content">{overviewComponent}</div>
+          <div className="w-76 px-4 rounded-lg bg-surface-1 box-content">{overviewComponent}</div>
           <div
             className="py-2 hide-scrollbar transition-size duration-200 ease-in-out"
             style={{ width: showingDetail ? hiddenSpaceWidth : 0 }}
@@ -108,7 +108,7 @@ export default function Gears(props: GearsProps) {
           </div>
         </div>
       ) : (
-        <div className="w-75 h-full px-4 shrink-0 rounded-lg bg-surface-1 box-content">
+        <div className="w-76 h-full px-4 shrink-0 rounded-lg bg-surface-1 box-content">
           <CarouselSpace current={showingDetail ? 1 : 0}>
             {overviewComponent}
             <div className="h-full py-4 flex flex-col">

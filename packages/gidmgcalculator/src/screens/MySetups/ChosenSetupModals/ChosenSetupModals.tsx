@@ -86,14 +86,14 @@ export function ChosenSetupModals({ chosenSetup, weapon, artifacts, result }: Ch
         onClose={closeModal}
       >
         <div className="h-full flex hide-scrollbar gap-8">
-          <div className="w-75 flex flex-col shrink-0">
+          <div className="w-76 flex flex-col shrink-0">
             <p className="text-lg text-center font-semibold">Final Attributes</p>
             <div className="mt-1 custom-scrollbar">
               {result?.totalAttr && <AttributeTable attributes={result.totalAttr} />}
             </div>
           </div>
 
-          <div className="w-75 flex flex-col shrink-0">
+          <div className="w-76 flex flex-col shrink-0">
             <p className="text-lg text-center font-semibold">Artifact Stats</p>
             <div className="mt-1 custom-scrollbar">
               {result?.artAttr && <AttributeTable attributes={result.artAttr} />}

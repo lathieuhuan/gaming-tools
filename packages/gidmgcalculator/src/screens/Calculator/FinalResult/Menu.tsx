@@ -19,7 +19,7 @@ export function Menu() {
     {
       icon: FaSearch,
       text: "Tracker",
-      className: "flex hover:bg-hint-color",
+      className: "flex hover:bg-primary-1",
       onClick: () => {
         dispatch(updateUI({ trackerState: "open" }));
       },
@@ -27,7 +27,7 @@ export function Menu() {
     {
       icon: FaExpandArrowsAlt,
       text: "Expand",
-      className: "hover:bg-hint-color hidden xm:flex",
+      className: "hover:bg-primary-1 hidden xm:flex",
       onClick: () => setResultsEnlarged(true),
     },
   ];
@@ -47,15 +47,16 @@ export function Menu() {
 
       <div
         className={
-          "absolute right-0 z-10 mt-1 rounded bg-light-default text-black hide-scrollbar" + (menuDropped ? "" : " max-h-0")
+          "absolute right-0 z-10 mt-1 rounded bg-light-default text-black hide-scrollbar" +
+          (menuDropped ? "" : " max-h-0")
         }
       >
         <div className="py-1 flex flex-col">
           {menuItems.map((item, i) => {
             return (
-              <button
+              <span
                 key={i}
-                className={"px-2 py-1 items-center font-medium " + (item.className || "")}
+                className={"px-2 py-1 items-center font-medium cursor-default " + (item.className || "")}
                 onClick={() => {
                   item.onClick();
                   setMenuDropped(false);
@@ -63,7 +64,7 @@ export function Menu() {
               >
                 <item.icon />
                 <span className="ml-2">{item.text}</span>
-              </button>
+              </span>
             );
           })}
         </div>

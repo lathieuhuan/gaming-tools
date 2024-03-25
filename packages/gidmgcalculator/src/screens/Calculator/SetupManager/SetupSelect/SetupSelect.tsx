@@ -21,11 +21,11 @@ import {
 import { useDispatch, useSelector } from "@Store/hooks";
 
 // Component
-import { ComplexSelect, SetupExporter, SetupImporter } from "@Src/components";
+import { ComplexSelect, SetupExporter } from "@Src/components";
 import { SaveSetup } from "./SaveSetup";
 
 type ModalState = {
-  type: "SAVE_SETUP" | "REMOVE_SETUP" | "SHARE_SETUP" | "IMPORT_SETUP" | "";
+  type: "SAVE_SETUP" | "REMOVE_SETUP" | "SHARE_SETUP" | "";
   setupIndex: number;
 };
 
@@ -68,6 +68,8 @@ export function SetupSelect() {
 
   const isAtMax = setupManageInfos.length === MAX_CALC_SETUPS;
 
+  const openModal = (type: ModalState["type"], setupIndex: number) => setModal({ type, setupIndex });
+
   const closeModal = () => setModal({ type: "", setupIndex: 0 });
 
   const onClickSetupName = (newID: string | number) => {
@@ -104,24 +106,12 @@ export function SetupSelect() {
     dispatch(duplicateCalcSetup(ID));
   };
 
-  const onClickSaveSetup = (setupIndex: number) => {
-    setModal({ type: "SAVE_SETUP", setupIndex });
-  };
-
-  const onClickShareSetup = (setupIndex: number) => {
-    setModal({ type: "SHARE_SETUP", setupIndex });
-  };
-
-  const onClickRemoveSetup = (setupIndex: number) => {
-    setModal({ type: "REMOVE_SETUP", setupIndex });
-  };
-
   const renderActionButton = ({ className, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>, index?: number) => {
     return (
       <button
         key={index}
         className={clsx(
-          "h-9 w-9 border-l border-b border-white flex-center shrink-0 disabled:bg-hint-color disabled:text-black",
+          "h-9 w-9 border-l border-b border-white flex-center shrink-0 disabled:bg-light-disabled disabled:text-black",
           className
         )}
         {...rest}
@@ -153,7 +143,7 @@ export function SetupSelect() {
                   onClick: onClickToggleCompared(ID),
                 },
                 {
-                  className: "hover:bg-primary-1" + (isAtMax ? " bg-hint-color" : ""),
+                  className: "hover:bg-primary-1" + (isAtMax ? " bg-light-disabled" : ""),
                   children: <FaCopy />,
                   disabled: isAtMax,
                   onClick: onClickCopySetup(ID),
@@ -162,7 +152,7 @@ export function SetupSelect() {
                   className: "hover:bg-primary-1",
                   children: <FaSave />,
                   onClick: () => {
-                    onClickSaveSetup(i);
+                    openModal("SAVE_SETUP", i);
                     closeSelect();
                   },
                 },
@@ -170,7 +160,7 @@ export function SetupSelect() {
                   className: "hover:bg-primary-1",
                   children: <FaShareAlt />,
                   onClick: () => {
-                    onClickShareSetup(i);
+                    openModal("SHARE_SETUP", i);
                     closeSelect();
                   },
                 },
@@ -179,8 +169,8 @@ export function SetupSelect() {
                   children: <FaTrashAlt />,
                   disabled: setupManageInfos.length < 2,
                   onClick: () => {
+                    openModal("REMOVE_SETUP", i);
                     closeSelect();
-                    onClickRemoveSetup(i);
                   },
                 },
               ];
@@ -197,8 +187,6 @@ export function SetupSelect() {
         preset="small"
         className="bg-surface-1"
         title="Save setup"
-        withActions
-        formId="save-calc-setup"
         onClose={closeModal}
       >
         <SaveSetup manageInfo={setupManageInfos[modal.setupIndex]} onClose={closeModal} />
@@ -209,8 +197,6 @@ export function SetupSelect() {
         {...setupManageInfos[modal.setupIndex]}
         onClose={closeModal}
       />
-
-      <SetupImporter active={modal.type === "IMPORT_SETUP"} onClose={closeModal} />
 
       <ConfirmModal
         active={modal.type === "REMOVE_SETUP"}

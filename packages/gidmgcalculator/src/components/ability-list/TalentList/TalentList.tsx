@@ -56,7 +56,7 @@ export function TalentList({ char, party, onChangeTalentLevel }: TalentListProps
           </div>
 
           <Button
-            className="ml-auto hover:bg-primary-1"
+            className="ml-auto shrink-0 hover:bg-primary-1"
             size="small"
             icon={<FaInfo />}
             onClick={() => onClickInfoSign(index)}

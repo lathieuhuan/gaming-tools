@@ -11,20 +11,12 @@ export default {
     {
       pattern: /bg-rarity-(1|2|3|4|5)/,
     },
-    "text-pyro",
-    "text-hydro",
-    "text-electro",
-    "text-dendro",
-    "text-geo",
-    "text-cryo",
-    "text-anemo",
-    "bg-pyro",
-    "bg-hydro",
-    "bg-electro",
-    "bg-dendro",
-    "bg-geo",
-    "bg-cryo",
-    "bg-anemo",
+    {
+      pattern: /text-(pyro|hydro|electro|dendro|geo|cryo|anemo)/,
+    },
+    {
+      pattern: /bg-(pyro|hydro|electro|dendro|geo|cryo|anemo)/,
+    },
   ],
   theme: {
     screens: {
@@ -40,8 +32,11 @@ export default {
       transparent: colors.transparent,
       white: "#ffffff",
       black: "#000000",
-      "hint-color": "#b8b8b8", // white-8 // bg-hint-color
-      "light-default": "#ebebeb", // white-3
+      light: {
+        default: "#ebebeb", // white-3
+        disabled: "#cccccc", // white-6
+      },
+      "hint-color": "#b8b8b8", // white-8
       surface: {
         1: "#050926",
         2: "#151a40",
@@ -53,7 +48,7 @@ export default {
         2: "#f5dc6e", // modified from #f1d46a (variant of primary-1) // check if really need
       },
       secondary: {
-        1: "#09bcba"
+        1: "#09bcba",
       },
       danger: {
         1: "#cc0300", // root
@@ -76,7 +71,7 @@ export default {
         1: "#808080",
         2: "#49e03e",
         3: "#8bb6ff",
-        4: "#e32eff",
+        4: "#ff50ff",
         5: "#ffd700",
       },
     },
@@ -110,7 +105,6 @@ export default {
       width: {
         18: "4.5rem",
         68: "17rem",
-        75: "18.75rem",
         76: "19rem",
       },
       maxWidth: {
@@ -123,9 +117,6 @@ export default {
       height: {
         18: "4.5rem",
         "98/100": "98%",
-      },
-      transformOrigin: {
-        "bottom-center": "bottom center",
       },
       transitionProperty: {
         size: "height, width",

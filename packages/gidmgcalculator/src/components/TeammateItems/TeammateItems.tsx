@@ -75,7 +75,7 @@ export function TeammateItems({
             className={clsx("bg-surface-3 rounded", !artifactSetIcon && "p-1")}
             src={artifactSetIcon || "6/6a/Icon_Inventory_Artifacts"}
             alt="artifact"
-            fallbackCls="p-3"
+            fallbackCls="p-2"
             imgType="unknown"
           />
         </button>
