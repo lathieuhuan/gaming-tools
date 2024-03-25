@@ -46,8 +46,8 @@ export function TargetConfig() {
   };
 
   return (
-    <div className="h-full px-2 flex hide-scrollbar" onDoubleClick={() => console.log(target)}>
-      <div className="w-75 flex flex-col shrink-0">
+    <div className="h-full px-2 flex gap-4 hide-scrollbar" onDoubleClick={() => console.log(target)}>
+      <div className="w-76 flex flex-col shrink-0">
         <div className="grow overflow-auto flex flex-col">
           <div className="flex">
             <label className="ml-auto flex items-center">
@@ -140,9 +140,7 @@ export function TargetConfig() {
         </div>
       </div>
 
-      <div className="mx-2" />
-
-      <div className="w-75 shrink-0 flex flex-col">
+      <div className="w-76 shrink-0 flex flex-col">
         <div className="space-y-3 grow custom-scrollbar">
           {ATTACK_ELEMENTS.map((attElmt) => {
             return (
@@ -151,7 +149,7 @@ export function TargetConfig() {
                   {t(attElmt, { ns: "resistance" })}
                 </p>
                 <InputNumber
-                  className="w-20 p-2 text-right font-bold disabled:bg-hint-color"
+                  className="w-20 p-2 text-right font-bold disabled:bg-light-disabled"
                   disabled={target.code !== 0}
                   value={target.resistances[attElmt]}
                   maxDecimalDigits={0}

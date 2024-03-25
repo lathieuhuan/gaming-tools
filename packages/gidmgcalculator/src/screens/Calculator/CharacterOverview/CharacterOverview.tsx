@@ -102,7 +102,7 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
                       return (
                         <li
                           key={i}
-                          className={"px-3 pt-2 pb-1.5 " + (i === char.cons ? "bg-hint-color" : "hover:bg-primary-1")}
+                          className={`px-3 pt-2 pb-1.5 ${i === char.cons ? "bg-light-disabled" : "hover:bg-primary-1"}`}
                           onClick={() => onClickConsLevel(i)}
                         >
                           C{i}

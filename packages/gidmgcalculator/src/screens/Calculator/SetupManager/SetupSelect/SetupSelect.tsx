@@ -121,7 +121,7 @@ export function SetupSelect() {
       <button
         key={index}
         className={clsx(
-          "h-9 w-9 border-l border-b border-white flex-center shrink-0 disabled:bg-hint-color disabled:text-black",
+          "h-9 w-9 border-l border-b border-white flex-center shrink-0 disabled:bg-light-disabled disabled:text-black",
           className
         )}
         {...rest}
@@ -153,7 +153,7 @@ export function SetupSelect() {
                   onClick: onClickToggleCompared(ID),
                 },
                 {
-                  className: "hover:bg-primary-1" + (isAtMax ? " bg-hint-color" : ""),
+                  className: "hover:bg-primary-1" + (isAtMax ? " bg-light-disabled" : ""),
                   children: <FaCopy />,
                   disabled: isAtMax,
                   onClick: onClickCopySetup(ID),

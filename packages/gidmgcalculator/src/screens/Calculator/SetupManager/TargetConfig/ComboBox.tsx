@@ -88,7 +88,9 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
               id={`monster-${monster.code}`}
               className={clsx(
                 "px-2 py-1 flex flex-col font-semibold",
-                monster.code === targetCode ? "bg-hint-color" : "hover:text-light-default hover:bg-surface-3 hover:font-bold"
+                monster.code === targetCode
+                  ? "bg-light-disabled"
+                  : "hover:text-light-default hover:bg-surface-3 hover:font-bold"
               )}
               onMouseDown={(e) => e.preventDefault()}
               onClick={onClickMonster(monster)}

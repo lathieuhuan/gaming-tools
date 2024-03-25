@@ -113,7 +113,7 @@ const CharacterInfo = () => {
           </div>
         </div>
 
-        <div className="mt-1 grow w-75 h-0 custom-scrollbar">
+        <div className="mt-1 grow w-76 h-0 custom-scrollbar">
           <AttributeTable attributes={totalAttr} />
         </div>
       </div>
@@ -121,7 +121,7 @@ const CharacterInfo = () => {
       <Gears weapon={weapon} artifacts={artifacts} artAttr={artAttr} />
 
       <div className="p-4 rounded-lg bg-surface-1">
-        <div className="h-full w-75">
+        <div className="h-full w-76">
           <ConstellationList
             char={char}
             onClickIcon={(i) => {
@@ -137,7 +137,7 @@ const CharacterInfo = () => {
       </div>
 
       <div className="p-4 rounded-lg bg-surface-1">
-        <div className="h-full w-75">
+        <div className="h-full w-76">
           <TalentList
             key={char.name}
             char={char}

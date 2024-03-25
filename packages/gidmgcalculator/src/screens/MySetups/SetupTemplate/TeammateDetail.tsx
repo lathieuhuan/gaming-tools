@@ -23,7 +23,7 @@ export function TeammateDetail({
   if (!data) return null;
 
   return (
-    <div className="w-75 bg-surface-2">
+    <div className="w-76 bg-surface-2">
       <div className="pl-4 pt-4 pr-6 flex items-start">
         <CharacterPortrait info={data} />
         <p className={`px-4 text-2xl text-${data.vision} font-bold`}>{teammate.name}</p>

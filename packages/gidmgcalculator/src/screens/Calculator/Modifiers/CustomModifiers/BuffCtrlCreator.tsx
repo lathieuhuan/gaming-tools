@@ -190,7 +190,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
                     onChange={(e) => onChangeSubType(e.target.value)}
                   >
                     {subTypes.map((subType, i) => (
-                      <option key={i} className="disabled:bg-hint-color" value={subType}>
+                      <option key={i} value={subType}>
                         {t(subType)}
                       </option>
                     ))}
