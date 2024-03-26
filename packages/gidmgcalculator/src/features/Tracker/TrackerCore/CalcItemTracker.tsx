@@ -71,12 +71,14 @@ export function CalcItemTracker({ inHealB_, records = {}, result, defMultDisplay
                   <p className="text-primary-1">Exclusive</p>
                   {record.exclusives.map((bonus, i) => {
                     return Object.entries(bonus).map(([key, record]) => {
+                      const percent = suffixOf(key);
+
                       return (
                         <p key={i}>
                           + {t(key)}: {record.desc}{" "}
                           <Green>
-                            {record.value}
-                            {suffixOf(key)}
+                            {round(record.value, percent ? 3 : 0)}
+                            {percent}
                           </Green>
                         </p>
                       );
@@ -155,8 +157,8 @@ export function CalcItemTracker({ inHealB_, records = {}, result, defMultDisplay
 
               {cDmg_ && record.cRate_ ? (
                 <li>
-                  Average <span className="text-heading-color font-semibold">{renderValue(average)}</span> = {nonCritDmg}{" "}
-                  <Green>*</Green> (<Green>1 +</Green> Crit DMG <Green>{cDmg_}</Green>
+                  Average <span className="text-heading-color font-semibold">{renderValue(average)}</span> ={" "}
+                  {nonCritDmg} <Green>*</Green> (<Green>1 +</Green> Crit DMG <Green>{cDmg_}</Green>
                   {renderPart({
                     label: "Crit Rate",
                     value: record.cRate_,

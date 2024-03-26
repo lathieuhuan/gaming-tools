@@ -9,12 +9,12 @@ import { renderModifiers, getArtifactDescription } from "./modifiers.utils";
 interface ArtifactDebuffsViewProps {
   mutable?: boolean;
   artDebuffCtrls: ArtifactDebuffCtrl[];
-  getHanlders?: (args: GetModifierHanldersArgs) => ModifierHanlders;
+  getHanlders?: (args: GetModifierHanldersArgs<ArtifactDebuffCtrl>) => ModifierHanlders;
 }
 export function ArtifactDebuffsView({ mutable, artDebuffCtrls, getHanlders }: ArtifactDebuffsViewProps) {
   const content: JSX.Element[] = [];
 
-  artDebuffCtrls.forEach((ctrl, ctrlIndex) => {
+  artDebuffCtrls.forEach((ctrl, ctrlIndex, ctrls) => {
     const data = $AppData.getArtifactSet(ctrl.code);
     if (!data) return;
 
@@ -31,7 +31,7 @@ export function ArtifactDebuffsView({ mutable, artDebuffCtrls, getHanlders }: Ar
           checked={ctrl.activated}
           inputs={ctrl.inputs}
           inputConfigs={debuff.inputConfigs}
-          {...getHanlders?.({ ctrl, ctrlIndex, ctrls: artDebuffCtrls })}
+          {...getHanlders?.({ ctrl, ctrlIndex, ctrls })}
         />
       );
     }

@@ -301,6 +301,7 @@ type CharacterBuff = CharacterInnateBuff & {
   affect: ModifierAffectType;
   inputConfigs?: ModInputConfig[];
   infuseConfig?: {
+    checkInput?: number | InputCheck;
     overwritable: boolean;
     range?: ("NA" | "CA" | "PA")[];
     disabledNAs?: boolean;

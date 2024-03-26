@@ -3,6 +3,7 @@ import { findByIndex } from "@Src/utils";
 import { $AppCharacter } from "@Src/services";
 import getCalculationStats from "./getCalculationStats";
 import getFinalResult from "./getFinalResult";
+import { CharacterCal } from "./utils";
 
 const calculateSetup = (
   {
@@ -35,13 +36,18 @@ const calculateSetup = (
   let selfInfused: boolean | undefined = undefined;
 
   if (appChar.buffs) {
-    for (const { activated, index } of selfBuffCtrls) {
-      if (activated) {
-        const buff = findByIndex(appChar.buffs, index);
+    for (const ctrl of selfBuffCtrls) {
+      if (ctrl.activated) {
+        const buff = findByIndex(appChar.buffs, ctrl.index);
 
         if (buff && buff.infuseConfig) {
           if (!selfInfused) {
-            selfInfused = !buff.infuseConfig.overwritable;
+            const info = { char, appChar, partyData };
+            const isUsable = CharacterCal.isUsable(buff.infuseConfig, info, ctrl.inputs || [], true);
+
+            if (isUsable) {
+              selfInfused = !buff.infuseConfig.overwritable;
+            }
           }
           if (!disabledNAs) {
             disabledNAs = buff.infuseConfig.disabledNAs || false;

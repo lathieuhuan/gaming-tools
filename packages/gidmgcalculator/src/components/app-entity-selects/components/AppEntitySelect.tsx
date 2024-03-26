@@ -16,7 +16,7 @@ type Return = boolean;
 
 export type OptionValidity = Return | Promise<Return>;
 
-export type AfterSelectAppEntity = (itemCode: number, quantity?: number) => void;
+type AfterSelectAppEntity = (itemCode: number, quantity?: number) => void;
 
 interface SelectOptionsProps<T> {
   className?: string;
@@ -28,7 +28,7 @@ interface SelectOptionsProps<T> {
   /** Only in multiple mode, implemented in afterSelect */
   shouldHideSelected?: boolean;
   /** Remember to handle case shouldHideSelected */
-  renderOptionConfig?: (afterSelect: AfterSelectAppEntity) => ReactNode;
+  renderOptionConfig?: (afterSelect: AfterSelectAppEntity, body: HTMLDivElement | null) => ReactNode;
   onChange?: (entity: T | undefined, isConfigStep: boolean) => OptionValidity;
   onClose: () => void;
 }
@@ -93,19 +93,7 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
 
     setEmpty(!visibleItems.length);
 
-    if (visibleItems.length) {
-      // select first visible item
-      const firstVisibleId = visibleItems[0]?.getId();
-
-      if (hasConfigStep && firstVisibleId && firstVisibleId !== `${chosenCode}`) {
-        const firstVisible = data.find((entity) => `${entity.code}` === firstVisibleId);
-
-        if (firstVisible) {
-          onChange?.(firstVisible, true);
-          setChosenCode(firstVisible.code);
-        }
-      }
-    } else if (hasConfigStep) {
+    if (!visibleItems.length && hasConfigStep) {
       onChange?.(undefined, true);
       setChosenCode(0);
     }
@@ -214,7 +202,9 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
         {empty ? <p className="py-4 text-hint-color text-lg text-center">{emptyText}</p> : null}
       </div>
 
-      {hasConfigStep ? <div className="overflow-auto shrink-0">{renderOptionConfig?.(afterSelect)}</div> : null}
+      {hasConfigStep ? (
+        <div className="overflow-auto shrink-0">{renderOptionConfig?.(afterSelect, bodyRef.current)}</div>
+      ) : null}
     </div>
   );
 }

@@ -152,6 +152,7 @@ export default function SectionArtifacts() {
     const artifactSet = $AppData.getArtifactSet(artifact.code);
 
     if (artifactSet) {
+      notification.destroy("ALL");
       notification.success({
         content: `Selected ${artifactSet.name} (${artifact.type})`,
       });
@@ -172,35 +173,16 @@ export default function SectionArtifacts() {
       ...artifact,
       ID: Date.now(),
     };
-    replaceArtifact(artifact.type, newPiece, $AppSettings.get("doKeepArtStatsOnSwitch"));
-  };
-
-  const onForgeArtifactBatch: ArtifactForgeProps["onForgeArtifactBatch"] = (code, types, rarity) => {
-    let rootID = Date.now();
-
-    for (const type of types) {
-      const newPiece = Artifact_.create({ code, type, rarity });
-
-      dispatch(
-        changeArtifact({
-          pieceIndex: ARTIFACT_TYPES.indexOf(type),
-          newPiece: { ...newPiece, ID: rootID++ },
-          shouldKeepStats: $AppSettings.get("doKeepArtStatsOnSwitch"),
-        })
-      );
-    }
-
-    const artifactSet = $AppData.getArtifactSet(code);
+    const artifactSet = $AppData.getArtifactSet(artifact.code);
 
     if (artifactSet) {
+      notification.destroy("ALL");
       notification.success({
-        content: (
-          <>
-            Forged {artifactSet.name}: <span className="capitalize">{types.join(", ")}</span>
-          </>
-        ),
+        content: `Forged ${artifactSet.name} (${artifact.type})`,
       });
     }
+
+    replaceArtifact(artifact.type, newPiece, $AppSettings.get("doKeepArtStatsOnSwitch"));
   };
 
   // ===== ACTIONS TOWARDS ACTIVE ARTIFACT =====
@@ -296,9 +278,7 @@ export default function SectionArtifacts() {
         initialTypes={forge.initialType}
         hasConfigStep
         hasMultipleMode
-        allowBatchForging
         onForgeArtifact={onForgeArtifact}
-        onForgeArtifactBatch={onForgeArtifactBatch}
         onClose={() => setForge({ active: false })}
       />
 

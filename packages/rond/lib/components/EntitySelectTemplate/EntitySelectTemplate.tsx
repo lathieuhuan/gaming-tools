@@ -58,7 +58,7 @@ export function EntitySelectTemplate({
 
   useEffect(() => {
     const focus = (e: KeyboardEvent) => {
-      if (hasSearch && e.key.length === 1 && document.activeElement !== inputRef.current) {
+      if (hasSearch && e.key.length === 1 && document.activeElement?.tagName !== "INPUT") {
         inputRef.current?.focus();
       }
     };
