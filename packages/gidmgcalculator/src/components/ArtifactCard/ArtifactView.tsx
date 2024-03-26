@@ -54,10 +54,11 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
           <GenshinImage
             src={appArtifact?.icon}
             alt={appArtifact?.name}
-            className="p-4"
+            className="p-2"
             imgType="artifact"
             width={104}
             height={104}
+            fallbackCls="p-2"
           />
           <Badge active={appArtifact?.beta} className="absolute bottom-0 right-0">
             BETA

@@ -132,8 +132,8 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
       if (item.code !== chosenCode) {
         await onChange(item, true);
         setChosenCode(item.code);
-        if (bodyRef.current) bodyRef.current.scrollLeft = 999;
       }
+      if (bodyRef.current) bodyRef.current.scrollLeft = 999;
       return;
     }
 
