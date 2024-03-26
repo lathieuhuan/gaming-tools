@@ -3,7 +3,7 @@ import { useState } from "react";
 import { CollapseSpace } from "../CollapseSpace";
 import "./CollapseList.styles.scss";
 
-interface CollapseListProps {
+export interface CollapseListProps {
   className?: ClassValue;
   bodyCls?: ClassValue;
   items: Array<{

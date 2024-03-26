@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 
 import type { CalculationAspect } from "@Src/types";
-import { selectCharacter, selectComparedIds, selectCalcFinalResult, selectParty } from "@Store/calculator-slice";
+import {
+  selectCharacter,
+  selectComparedIds,
+  selectCalcFinalResult,
+  selectParty,
+  selectWeapon,
+} from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
 import { findById } from "@Src/utils";
 import { FinalResultView } from "@Src/components";
@@ -19,6 +25,7 @@ export function FinalResultCore() {
   });
   const finalResult = useSelector(selectCalcFinalResult);
   const char = useSelector(selectCharacter);
+  const weapon = useSelector(selectWeapon);
   const party = useSelector(selectParty);
 
   const comparedIds = useSelector(selectComparedIds);
@@ -57,7 +64,7 @@ export function FinalResultCore() {
       <div className="grow hide-scrollbar">
         <FinalResultView
           key={char.name}
-          {...{ char, party, finalResult }}
+          {...{ char, weapon, party, finalResult }}
           focusedAspect={comparing ? focusedAspect : undefined}
         />
       </div>

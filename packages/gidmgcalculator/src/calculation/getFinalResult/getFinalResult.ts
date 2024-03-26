@@ -23,6 +23,7 @@ import calculateItem from "./calculateItem";
 export default function getFinalResult({
   char,
   appChar,
+  appWeapon,
   selfDebuffCtrls,
   artDebuffCtrls,
   party,
@@ -126,6 +127,7 @@ export default function getFinalResult({
     ES: {},
     EB: {},
     RXN: {},
+    WP_CALC: {},
   };
 
   if (tracker) {
@@ -133,6 +135,7 @@ export default function getFinalResult({
     tracker.ES = {};
     tracker.EB = {};
     tracker.RXN = {};
+    tracker.WP_CALC = {};
   }
 
   ATTACK_PATTERNS.forEach((ATT_PATT) => {
@@ -279,6 +282,41 @@ export default function getFinalResult({
       };
     }
   }
+
+  appWeapon.calcItems?.forEach((calcItem) => {
+    const { name, type = "attack", multFactors } = calcItem;
+    const record = {
+      itemType: type,
+      multFactors: [
+        {
+          value: totalAttr.atk,
+          desc: "atk",
+          talentMult: multFactors,
+        },
+      ],
+      normalMult: 1,
+    } as TrackerCalcItemRecord;
+
+    finalResult.WP_CALC[name] = calculateItem({
+      stat: calcItem,
+      char,
+      attElmt: "phys",
+      attPatt: "none",
+      attElmtBonus,
+      attPattBonus,
+      base: (totalAttr.atk * multFactors) / 100,
+      calcItemBonues: [],
+      resistReduct,
+      record,
+      rxnMult: 1,
+      target,
+      totalAttr,
+    });
+
+    if (tracker) {
+      tracker.WP_CALC[name] = record;
+    }
+  });
 
   return finalResult;
 }

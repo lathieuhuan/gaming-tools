@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
 import { CollapseSpace, Table } from "rond";
 
-import type { Character, CalculationFinalResult, Party, CalculationAspect } from "@Src/types";
+import type { Character, CalculationFinalResult, Party, CalculationAspect, Weapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { $AppCharacter } from "@Src/services";
+import { $AppCharacter, $AppData } from "@Src/services";
 import { Character_ } from "@Src/utils";
 import { displayValue, getTableKeys } from "./FinalResultView.utils";
 
@@ -13,6 +13,7 @@ import { FinalResultCompare } from "./FinalResultCompare";
 
 interface FinalResultViewProps {
   char: Character;
+  weapon: Weapon;
   party: Party;
   finalResult: CalculationFinalResult;
   talentMutable?: boolean;
@@ -21,6 +22,7 @@ interface FinalResultViewProps {
 }
 export function FinalResultView({
   char,
+  weapon,
   party,
   finalResult,
   talentMutable,
@@ -29,10 +31,11 @@ export function FinalResultView({
 }: FinalResultViewProps) {
   const { t } = useTranslation();
   const appChar = $AppCharacter.get(char.name);
+  const appWeapon = $AppData.getWeapon(weapon.code);
 
   const [closedSections, setClosedSections] = useState<boolean[]>([]);
   // const [lvlingSectionIndex, setLvlingSectionIndex] = useState(-1);
-  const tableKeys = useMemo(() => (appChar ? getTableKeys(appChar) : []), [char.name]);
+  const tableKeys = useMemo(() => (appChar ? getTableKeys(appChar, appWeapon) : []), [char.name, appWeapon.code]);
 
   if (!appChar) return null;
 
@@ -45,14 +48,15 @@ export function FinalResultView({
       {tableKeys.map((key, index) => {
         const standardValues = finalResult[key.main];
         const isReactionDmg = key.main === "RXN";
-        const talentLevel = !isReactionDmg
-          ? Character_.getFinalTalentLv({
-              char,
-              appChar,
-              talentType: key.main,
-              partyData: $AppCharacter.getPartyData(party),
-            })
-          : 0;
+        const talentLevel =
+          !isReactionDmg && key.main !== "WP_CALC"
+            ? Character_.getFinalTalentLv({
+                char,
+                appChar,
+                talentType: key.main,
+                partyData: $AppCharacter.getPartyData(party),
+              })
+            : 0;
         // const isLvling = index === lvlingSectionIndex;
 
         return (
@@ -99,7 +103,9 @@ export function FinalResultView({
             <CollapseSpace active={!closedSections[index]}>
               {key.subs.length === 0 ? (
                 <div className="pb-2">
-                  <p className="pt-2 pb-1 bg-surface-2 text-center text-hint-color">This talent does not deal damage.</p>
+                  <p className="pt-2 pb-1 bg-surface-2 text-center text-hint-color">
+                    This talent does not deal damage.
+                  </p>
                 </div>
               ) : (
                 <div className="custom-scrollbar">

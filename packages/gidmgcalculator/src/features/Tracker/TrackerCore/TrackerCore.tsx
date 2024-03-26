@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CollapseList } from "rond";
+import { CollapseList, CollapseListProps } from "rond";
 import type { AttackPattern, Infusion, Tracker, TrackerState } from "@Src/types";
 
 import { calculateSetup } from "@Src/calculation";
@@ -85,67 +85,71 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     );
   };
 
+  const collapseItems: CollapseListProps["items"] = [
+    {
+      heading: "Attributes",
+      body: <AttributesTracker totalAttr={totalAttr} />,
+    },
+    {
+      heading: "Bonuses",
+      body: (
+        <BonusesTracker {...{ attPattBonus, attElmtBonus, rxnBonus }} em={getTotalRecordValue(totalAttr?.em || [])} />
+      ),
+    },
+    {
+      heading: "Debuffs on Target",
+      body: <DebuffsTracker resistReduct={result?.resistReduct} />,
+    },
+    {
+      heading: "Normal Attacks",
+      body: (
+        <CalcItemTracker
+          records={result?.NAs}
+          result={finalResult.NAs}
+          defMultDisplay={renderDefMultiplier("NA")}
+          infusion={infusion}
+          {...xtraInfo}
+        />
+      ),
+    },
+    {
+      heading: "Elemental Skill",
+      body: (
+        <CalcItemTracker
+          records={result?.ES}
+          result={finalResult.ES}
+          defMultDisplay={renderDefMultiplier("ES")}
+          {...xtraInfo}
+        />
+      ),
+    },
+    {
+      heading: "Elemental Burst",
+      body: (
+        <CalcItemTracker
+          records={result?.EB}
+          result={finalResult.EB}
+          defMultDisplay={renderDefMultiplier("EB")}
+          {...xtraInfo}
+        />
+      ),
+    },
+    {
+      heading: "Reactions",
+      body: <CalcItemTracker records={result?.RXN} result={finalResult.RXN} />,
+    },
+  ];
+
+  if (result?.WP_CALC) {
+    collapseItems.push({
+      heading: "Weapon",
+      body: <CalcItemTracker records={result.WP_CALC} result={finalResult.WP_CALC} />,
+    });
+  }
+
   return (
     <div className="h-full custom-scrollbar cursor-default" onDoubleClick={() => console.log(result)}>
-      <CollapseList
-        items={[
-          {
-            heading: "Attributes",
-            body: <AttributesTracker totalAttr={totalAttr} />,
-          },
-          {
-            heading: "Bonuses",
-            body: (
-              <BonusesTracker
-                {...{ attPattBonus, attElmtBonus, rxnBonus }}
-                em={getTotalRecordValue(totalAttr?.em || [])}
-              />
-            ),
-          },
-          {
-            heading: "Debuffs on Target",
-            body: <DebuffsTracker resistReduct={result?.resistReduct} />,
-          },
-          {
-            heading: "Normal Attacks",
-            body: (
-              <CalcItemTracker
-                records={result?.NAs}
-                result={finalResult.NAs}
-                defMultDisplay={renderDefMultiplier("NA")}
-                infusion={infusion}
-                {...xtraInfo}
-              />
-            ),
-          },
-          {
-            heading: "Elemental Skill",
-            body: (
-              <CalcItemTracker
-                records={result?.ES}
-                result={finalResult.ES}
-                defMultDisplay={renderDefMultiplier("ES")}
-                {...xtraInfo}
-              />
-            ),
-          },
-          {
-            heading: "Elemental Burst",
-            body: (
-              <CalcItemTracker
-                records={result?.EB}
-                result={finalResult.EB}
-                defMultDisplay={renderDefMultiplier("EB")}
-                {...xtraInfo}
-              />
-            ),
-          },
-          {
-            heading: "Reactions",
-            body: <CalcItemTracker records={result?.RXN} result={finalResult.RXN} />,
-          },
-        ]}
-      />
+      <CollapseList items={collapseItems} />
     </div>
   );
 }

@@ -171,4 +171,12 @@ type CalculationFinalResultItem = Record<CalculationAspect, number | number[]> &
 
 export type CalculationFinalResultGroup = Record<string, CalculationFinalResultItem>;
 
-export type CalculationFinalResult = Record<"NAs" | "ES" | "EB" | "RXN", CalculationFinalResultGroup>;
+export type CalculationFinalResult = {
+  NAs: CalculationFinalResultGroup,
+  ES: CalculationFinalResultGroup,
+  EB: CalculationFinalResultGroup,
+  RXN: CalculationFinalResultGroup,
+  WP_CALC: CalculationFinalResultGroup,
+}
+
+// Record<"NAs" | "ES" | "EB" | "RXN", CalculationFinalResultGroup>;

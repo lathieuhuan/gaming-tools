@@ -116,8 +116,13 @@ export default function MySetups() {
             <p className="text-sm text-center truncate">{chosenSetup.name}</p>
           </div>
           <div className="mt-2 grow hide-scrollbar">
-            {result?.finalResult && (
-              <FinalResultView char={chosenSetup.char} party={chosenSetup.party} finalResult={result.finalResult} />
+            {result?.finalResult && weapon && (
+              <FinalResultView
+                char={chosenSetup.char}
+                weapon={weapon}
+                party={chosenSetup.party}
+                finalResult={result.finalResult}
+              />
             )}
           </div>
 

@@ -18,6 +18,7 @@ export type AppWeapon = {
   descriptions?: string[];
   bonuses?: WeaponBonus[];
   buffs?: WeaponBuff[];
+  calcItems?: WeaponCalcItem[];
 };
 
 type InputIndex = {
@@ -123,4 +124,11 @@ export type WeaponBuff = {
   description?: number | string;
   cmnStacks?: WeaponBonus["stacks"];
   effects: WeaponBonus | WeaponBonus[];
+};
+
+type WeaponCalcItem = {
+  name: string;
+  /** Default to 'attack' */
+  type?: "attack" | "healing" | "shield" | "other";
+  multFactors: number;
 };

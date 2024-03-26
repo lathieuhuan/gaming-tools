@@ -86,14 +86,17 @@ export type TrackerCalcItemRecord = {
 
 export type TrackerState = "open" | "close" | "hidden";
 
+type TrackedCalcItem = Record<string, TrackerCalcItemRecord>;
+
 export type Tracker = {
   totalAttr: Record<TotalAttributeStat, TrackerRecord[]>;
   attPattBonus: Record<AttackPatternPath, TrackerRecord[]>;
   attElmtBonus: Record<AttackElementPath, TrackerRecord[]>;
   rxnBonus: Record<ReactionBonusPath, TrackerRecord[]>;
   resistReduct: Record<ResistanceReductionKey, TrackerRecord[]>;
-  NAs: Record<string, TrackerCalcItemRecord>;
-  ES: Record<string, TrackerCalcItemRecord>;
-  EB: Record<string, TrackerCalcItemRecord>;
-  RXN: Record<string, TrackerCalcItemRecord>;
+  NAs: TrackedCalcItem;
+  ES: TrackedCalcItem;
+  EB: TrackedCalcItem;
+  RXN: TrackedCalcItem;
+  WP_CALC: TrackedCalcItem;
 };

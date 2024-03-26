@@ -1,6 +1,6 @@
 import type { CalcSetup, NormalAttack, Target, Tracker } from "@Src/types";
 import { findByIndex } from "@Src/utils";
-import { $AppCharacter } from "@Src/services";
+import { $AppCharacter, $AppData } from "@Src/services";
 import getCalculationStats from "./getCalculationStats";
 import getFinalResult from "./getFinalResult";
 import { CharacterCal } from "./utils";
@@ -26,6 +26,7 @@ const calculateSetup = (
 ) => {
   // console.time();
   const appChar = $AppCharacter.get(char.name);
+  const appWeapon = $AppData.getWeapon(weapon.code)!;
   const partyData = $AppCharacter.getPartyData(party);
   let infusedElement = customInfusion.element;
   let infusedAttacks: NormalAttack[] = ["NA", "CA", "PA"];
@@ -73,6 +74,7 @@ const calculateSetup = (
     appChar,
     selfBuffCtrls,
     weapon,
+    appWeapon,
     wpBuffCtrls,
     artifacts,
     artBuffCtrls,
@@ -86,6 +88,7 @@ const calculateSetup = (
   const finalResult = getFinalResult({
     char,
     appChar,
+    appWeapon,
     selfDebuffCtrls,
     artDebuffCtrls,
     party,

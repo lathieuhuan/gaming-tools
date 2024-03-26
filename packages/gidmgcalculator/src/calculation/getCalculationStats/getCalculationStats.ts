@@ -32,6 +32,7 @@ export const getCalculationStats = ({
   appChar,
   selfBuffCtrls,
   weapon,
+  appWeapon,
   wpBuffCtrls,
   artifacts,
   artBuffCtrls,
@@ -46,7 +47,6 @@ export const getCalculationStats = ({
   const { refi } = weapon;
   const setBonuses = Calculation_.getArtifactSetBonuses(artifacts);
 
-  const appWeapon = $AppData.getWeapon(weapon.code)!;
   const totalAttr = initiateTotalAttr({ char, appChar, weapon, appWeapon, tracker });
   const { attPattBonus, attElmtBonus, rxnBonus, calcItemBuffs } = initiateBonuses();
 

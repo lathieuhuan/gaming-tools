@@ -1,26 +1,27 @@
 import type {
-  CalcWeapon,
-  CalcArtifacts,
-  Character,
-  CustomBuffCtrl,
-  ElementModCtrl,
-  ModifierCtrl,
-  Party,
-  PartyData,
-  AttackElement,
-  AppCharacter,
-  Target,
-  ResistanceReduction,
-  ArtifactDebuffCtrl,
-  CustomDebuffCtrl,
   ActualAttackPattern,
-  Tracker,
-  TrackerCalcItemRecord,
-  NormalAttack,
+  AppCharacter,
+  AppWeapon,
+  ArtifactDebuffCtrl,
+  AttackElement,
+  BuffInfoWrap,
+  CalcArtifacts,
   CalcItem,
   CalcItemBonus,
-  BuffInfoWrap,
+  CalcWeapon,
+  Character,
+  CustomBuffCtrl,
+  CustomDebuffCtrl,
+  ElementModCtrl,
   ElementType,
+  ModifierCtrl,
+  NormalAttack,
+  Party,
+  PartyData,
+  ResistanceReduction,
+  Target,
+  Tracker,
+  TrackerCalcItemRecord,
 } from "@Src/types";
 
 export type StackableCheckCondition = {
@@ -38,6 +39,7 @@ export type GetCalculationStatsArgs = {
   char: Character;
   appChar: AppCharacter;
   weapon: CalcWeapon;
+  appWeapon: AppWeapon;
   artifacts: CalcArtifacts;
 
   selfBuffCtrls?: ModifierCtrl[];
@@ -65,6 +67,7 @@ export interface CalculateItemArgs extends Pick<BuffInfoWrap, "char" | "totalAtt
 }
 
 export interface GetFinalResultArgs extends Omit<BuffInfoWrap, "infusedElement"> {
+  appWeapon: AppWeapon;
   selfDebuffCtrls: ModifierCtrl[];
   artDebuffCtrls: ArtifactDebuffCtrl[];
   party: Party;
