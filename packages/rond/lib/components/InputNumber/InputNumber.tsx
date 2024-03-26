@@ -40,7 +40,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
 
     if (
       e.ctrlKey ||
-      ["ArrowRight", "ArrowLeft", "Backspace", "Delete", "Home", "End"].includes(e.key) ||
+      ["ArrowRight", "ArrowLeft", "Backspace", "Delete", "Home", "End", "Tab"].includes(e.key) ||
       !isNaN(+e.key) ||
       (e.key === "." && maxDecimalDigits) ||
       (e.key === "-" && props.min && props.min < 0)
@@ -80,7 +80,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
         newLocalValue = "-0";
         newValue = 0;
         break;
-      default:
+      default: {
         const numInput = +input;
 
         if (!isNaN(numInput)) {
@@ -95,6 +95,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
             newValue = numInput;
           }
         }
+      }
     }
 
     if (newValue !== undefined && newLocalValue !== undefined && newValue >= min && newValue <= max) {

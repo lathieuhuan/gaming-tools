@@ -6,6 +6,9 @@ import { useScreenWatcher, Button, ConfirmModal, LoadingSpin, Rarity } from "ron
 import type { Level } from "@Src/types";
 import { LEVELS } from "@Src/constants";
 import { useAppCharacter } from "@Src/hooks";
+import { $AppData } from "@Src/services";
+import { getCalculationStats } from "@Src/calculation";
+import { findById, findByName } from "@Src/utils";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -17,10 +20,6 @@ import {
   removeUserCharacter,
   updateUserCharacter,
 } from "@Store/userdb-slice";
-
-// Util
-import { getCalculationStats } from "@Src/calculation";
-import { findById, findByName } from "@Src/utils";
 
 // Component
 import { AttributeTable, TalentList, ConstellationList, GenshinImage } from "@Src/components";
@@ -77,10 +76,12 @@ const CharacterInfo = () => {
 
   if (!appChar || !weapon) return null;
   const { name, icon, rarity, vision: elementType } = appChar;
+  const appWeapon = $AppData.getWeapon(weapon.code);
 
   const { totalAttr, artAttr } = getCalculationStats({
     char,
     appChar,
+    appWeapon,
     weapon,
     artifacts,
   });

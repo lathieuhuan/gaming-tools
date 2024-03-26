@@ -6,17 +6,17 @@ export interface StatsTableProps {
   style?: React.CSSProperties;
   children: React.ReactNode;
 }
-const StatsTable = ({ className, style, children }: StatsTableProps) => {
+function StatsTable({ className, style, children }: StatsTableProps) {
   return (
     <div className={clsx("ron-stats-table", className)} style={style}>
       {children}
     </div>
   );
-};
+}
 
 export interface StatsTableRowProps {
   className?: ClassValue;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onClick?: () => void;
 }
 StatsTable.Row = ({ className, children, onClick }: StatsTableRowProps) => {

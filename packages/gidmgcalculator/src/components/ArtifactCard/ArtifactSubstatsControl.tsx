@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { InputNumber } from "rond";
 
@@ -26,6 +27,7 @@ export function ArtifactSubstatsControl({
   onChangeSubStat,
 }: ArtifactSubstatsControlProps) {
   const { t } = useTranslation();
+  const wrapper = useRef<HTMLDivElement>(null);
 
   const statTypeCount = { [mainStatType]: 1 };
 
@@ -33,8 +35,17 @@ export function ArtifactSubstatsControl({
     statTypeCount[type] = (statTypeCount[type] || 0) + 1;
   }
 
+  const onKeyDownValue = (index: number) => (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && wrapper.current) {
+      const inputs = wrapper.current.querySelectorAll("input");
+      const nextInput = inputs[index + (e.shiftKey ? -1 : 1)];
+
+      if (nextInput) nextInput.focus();
+    }
+  };
+
   return (
-    <div className={"space-y-2 " + className}>
+    <div ref={wrapper} className={"space-y-2 " + className}>
       {subStats.map(({ type, value }, i) => {
         const isValid = value === 0 || VALID_SUBSTAT_VALUES[type][rarity].includes(value);
 
@@ -69,8 +80,10 @@ export function ArtifactSubstatsControl({
                 "relative ml-1 pt-2 pb-1 pr-2 w-[3.25rem] bg-transparent text-base leading-none text-right " +
                 (isValid ? "text-light-default" : "text-danger-2")
               }
+              maxDecimalDigits={1}
               value={value}
               onChange={(value) => onChangeSubStat?.(i, { value })}
+              onKeyDown={onKeyDownValue(i)}
             />
             <span className="w-4 pt-2 pb-1">{suffixOf(type)}</span>
           </div>
@@ -78,7 +91,7 @@ export function ArtifactSubstatsControl({
           <div key={i} className="mt-2 pt-2 pb-1 flex items-center bg-surface-2">
             <span className="mx-3">•</span>
             <p>
-              <span className={"mr-1 " + (statTypeCount[type] === 1 ? "text-light-default" : "text-danger-2")}>
+              <span className={`mr-1 ${statTypeCount[type] === 1 ? "text-light-default" : "text-danger-2"}`}>
                 {t(type)}
               </span>{" "}
               <span className={isValid ? "text-bonus-color" : "text-danger-2"}>
