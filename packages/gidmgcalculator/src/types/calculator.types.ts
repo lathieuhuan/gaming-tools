@@ -68,7 +68,7 @@ export type TrackerRecord = {
 export type TrackerCalcItemRecord = {
   itemType: CalcItemType;
   multFactors: Array<{
-    desc?: string;
+    desc: string;
     value: number;
     talentMult?: number;
   }>;

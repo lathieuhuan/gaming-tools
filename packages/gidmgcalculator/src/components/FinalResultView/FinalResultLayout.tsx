@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
-import { CollapseSpace, Table } from "rond";
+import { CollapseSpace, Table, TableThProps, TableTrProps } from "rond";
 
 import type { Character, CalculationFinalResult, Party, CalculationAspect, Weapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
@@ -11,30 +11,21 @@ import { displayValue, getTableKeys } from "./FinalResultView.utils";
 // Component
 import { ResultSectionCompare } from "./ResultSectionCompare";
 
-interface FinalResultViewProps {
+type SectionConfig = {};
+
+interface FinalResultLayoutProps {
   char: Character;
   weapon: Weapon;
   party: Party;
   finalResult: CalculationFinalResult;
-  talentMutable?: boolean;
-  focusedAspect?: CalculationAspect;
-  onChangeTalentLevel?: (newLevel: number) => void;
+  headerConfigs: TableThProps[];
 }
-export function FinalResultView({
-  char,
-  weapon,
-  party,
-  finalResult,
-  talentMutable,
-  focusedAspect,
-  onChangeTalentLevel,
-}: FinalResultViewProps) {
+export function FinalResultLayout({ char, weapon, party, finalResult, headerConfigs }: FinalResultLayoutProps) {
   const { t } = useTranslation();
   const appChar = $AppCharacter.get(char.name);
   const appWeapon = $AppData.getWeapon(weapon.code);
 
   const [closedSections, setClosedSections] = useState<boolean[]>([]);
-  // const [lvlingSectionIndex, setLvlingSectionIndex] = useState(-1);
   const tableKeys = useMemo(() => (appChar ? getTableKeys(appChar, appWeapon) : []), [char.name, appWeapon.code]);
 
   if (!appChar) return null;
@@ -57,7 +48,6 @@ export function FinalResultView({
                 partyData: $AppCharacter.getPartyData(party),
               })
             : 0;
-        // const isLvling = index === lvlingSectionIndex;
 
         return (
           <div key={tableKey.main} className="flex flex-col">
@@ -76,29 +66,6 @@ export function FinalResultView({
                 <span className="px-1 rounded-sm bg-black/60 text-light-default text-sm">{talentLevel}</span>
               ) : null}
             </button>
-
-            {/* <div className="mx-auto mb-2 w-52 text-base text-black leading-none font-bold flex rounded-2xl overflow-hidden">
-              <button
-                type="button"
-                className="grow py-1.5 pl-4 flex items-center space-x-2 bg-secondary-1 overflow-hidden"
-                onClick={() => toggleSection(index)}
-              >
-                <FaChevronRight
-                  className={"text-sm duration-150 ease-linear" + (closedSections[index] ? "" : " rotate-90")}
-                />
-                <span>{t(tableKey.main)}</span>
-              </button>
-
-              {talentLevel ? (
-                <button
-                  type="button"
-                  className="py-1.5 pl-2 pr-3 flex-center bg-light-default glow-on-hover"
-                  onClick={() => setLvlingSectionIndex(isLvling ? -1 : index)}
-                >
-                  {talentLevel}
-                </button>
-              ) : null}
-            </div> */}
 
             <CollapseSpace active={!closedSections[index]}>
               {tableKey.subs.length === 0 ? (
@@ -127,10 +94,9 @@ export function FinalResultView({
                     ) : (
                       <>
                         <Table.Tr>
-                          <Table.Th />
-                          <Table.Th>Non-crit</Table.Th>
-                          <Table.Th>Crit</Table.Th>
-                          <Table.Th className="text-primary-1">Avg.</Table.Th>
+                          {headerConfigs.map((config, i) => {
+                            return <Table.Th key={i} {...config} />;
+                          })}
                         </Table.Tr>
 
                         {tableKey.subs.map((subKey) => {

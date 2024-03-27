@@ -7,11 +7,12 @@ import { selectComparedIds, selectStandardId, selectSetupManageInfos } from "@St
 import { findById } from "@Src/utils";
 import { displayValue, type TableKey } from "./FinalResultView.utils";
 
-interface FinalResultCompareProps {
+interface ResultSectionCompareProps {
   focusedAspect: CalculationAspect;
   tableKey: TableKey;
+  labelTranslate?: (label: string) => string;
 }
-export function FinalResultCompare({ focusedAspect, tableKey }: FinalResultCompareProps) {
+export function ResultSectionCompare({ labelTranslate, focusedAspect, tableKey }: ResultSectionCompareProps) {
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const resultById = useSelector((state) => state.calculator.resultById);
   const comparedIds = useSelector(selectComparedIds);
@@ -37,7 +38,7 @@ export function FinalResultCompare({ focusedAspect, tableKey }: FinalResultCompa
 
         return (
           <Table.Tr key={i}>
-            <Table.Td>{name}</Table.Td>
+            <Table.Td>{labelTranslate ? labelTranslate(name) : name}</Table.Td>
             <Table.Td>{displayValue(standardValue)}</Table.Td>
 
             {otherSetupIds.map((setupId, j) => {

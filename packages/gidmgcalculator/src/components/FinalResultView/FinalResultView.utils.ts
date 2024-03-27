@@ -36,12 +36,12 @@ export function getTableKeys(appChar: AppCharacter, appWeapon?: AppWeapon): Tabl
     subs: [...TRANSFORMATIVE_REACTIONS],
   });
 
-  // if (appWeapon?.calcItems) {
-  //   result.push({
-  //     main: "WP_CALC",
-  //     subs: appWeapon.calcItems.map((item) => item.name),
-  //   });
-  // }
+  if (appWeapon?.calcItems) {
+    result.push({
+      main: "WP_CALC",
+      subs: appWeapon.calcItems.map((item) => item.name),
+    });
+  }
 
   return result;
 }

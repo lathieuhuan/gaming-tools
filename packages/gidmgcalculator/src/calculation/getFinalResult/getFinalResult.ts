@@ -247,9 +247,8 @@ export default function getFinalResult({
           record,
         });
       }
-      if (tracker) {
-        tracker[resultKey][stat.name] = record;
-      }
+
+      if (tracker) tracker[resultKey][stat.name] = record;
     }
   });
 
@@ -313,9 +312,7 @@ export default function getFinalResult({
       totalAttr,
     });
 
-    if (tracker) {
-      tracker.WP_CALC[name] = record;
-    }
+    if (tracker) tracker.WP_CALC[name] = record;
   });
 
   return finalResult;

@@ -50,8 +50,9 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     }
   }, [trackerState]);
 
-  const renderDefMultiplier = (talent: AttackPattern) => {
-    const talentDefIgnore = getTotalRecordValue(result?.attPattBonus[`${talent}.defIgn_`] || []);
+  const renderDefMultiplier = (talent: AttackPattern | "WP_CALC") => {
+    const talentDefIgnore =
+      talent === "WP_CALC" ? 0 : getTotalRecordValue(result?.attPattBonus[`${talent}.defIgn_`] || []);
     const allDefIgnore = getTotalRecordValue(result?.attPattBonus["all.defIgn_"] || []);
     const totalDefIgnore = talentDefIgnore + allDefIgnore;
 
@@ -143,7 +144,15 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   if (result?.WP_CALC) {
     collapseItems.push({
       heading: "Weapon",
-      body: <CalcItemTracker records={result.WP_CALC} result={finalResult.WP_CALC} />,
+      body: (
+        <CalcItemTracker
+          records={result.WP_CALC}
+          result={finalResult.WP_CALC}
+          coreMultLabel="DMG Mult."
+          defMultDisplay={renderDefMultiplier("EB")}
+          {...xtraInfo}
+        />
+      ),
     });
   }
 
