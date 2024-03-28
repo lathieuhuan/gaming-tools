@@ -22,12 +22,13 @@ import calculateItem from "./calculateItem";
 
 export default function getFinalResult({
   char,
+  weapon,
   appChar,
+  party,
   appWeapon,
+  partyData,
   selfDebuffCtrls,
   artDebuffCtrls,
-  party,
-  partyData,
   disabledNAs,
   totalAttr,
   attPattBonus,
@@ -232,7 +233,7 @@ export default function getFinalResult({
         };
       } else {
         finalResult[resultKey][stat.name] = calculateItem({
-          stat,
+          calcType: stat.type,
           attPatt,
           attElmt,
           base: bases.length > 1 ? bases : bases[0],
@@ -283,28 +284,28 @@ export default function getFinalResult({
   }
 
   appWeapon.calcItems?.forEach((calcItem) => {
-    const { name, type = "attack", multFactors } = calcItem;
+    const { name, type = "attack", value, incre = value / 3, baseOn = "atk" } = calcItem;
+    const mult = value + incre * weapon.refi;
     const record = {
       itemType: type,
       multFactors: [
         {
-          value: totalAttr.atk,
-          desc: "atk",
-          talentMult: multFactors,
+          value: totalAttr[baseOn],
+          desc: baseOn,
+          talentMult: mult,
         },
       ],
       normalMult: 1,
     } as TrackerCalcItemRecord;
 
     finalResult.WP_CALC[name] = calculateItem({
-      stat: calcItem,
+      calcType: calcItem.type,
       char,
       attElmt: "phys",
       attPatt: "none",
       attElmtBonus,
       attPattBonus,
-      base: (totalAttr.atk * multFactors) / 100,
-      calcItemBonues: [],
+      base: (totalAttr[baseOn] * mult) / 100,
       resistReduct,
       record,
       rxnMult: 1,

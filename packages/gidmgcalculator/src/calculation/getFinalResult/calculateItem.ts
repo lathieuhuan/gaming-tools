@@ -3,7 +3,7 @@ import { CalculateItemArgs } from "../calculation.types";
 import { getExclusiveBonus } from "./getFinalResult.utils";
 
 function calculateItem({
-  stat,
+  calcType,
   attElmt,
   attPatt,
   base,
@@ -17,11 +17,11 @@ function calculateItem({
   resistReduct,
   record,
 }: CalculateItemArgs) {
-  const itemFlatBonus = getExclusiveBonus(calcItemBonues, "flat");
-  const itemPctBonus = getExclusiveBonus(calcItemBonues, "pct_");
-  const itemMultPlusBonus = getExclusiveBonus(calcItemBonues, "multPlus");
+  const itemFlatBonus = calcItemBonues ? getExclusiveBonus(calcItemBonues, "flat") : 0;
+  const itemPctBonus = calcItemBonues ? getExclusiveBonus(calcItemBonues, "pct_") : 0;
+  const itemMultPlusBonus = calcItemBonues ? getExclusiveBonus(calcItemBonues, "multPlus") : 0;
 
-  if (base !== 0 && !stat.type) {
+  if (base !== 0 && !calcType) {
     const flat =
       itemFlatBonus +
       attPattBonus.all.flat +
@@ -55,7 +55,7 @@ function calculateItem({
     const totalCrit = (type: "cRate_" | "cDmg_") => {
       return (
         totalAttr[type] +
-        getExclusiveBonus(calcItemBonues, type) +
+        (calcItemBonues ? getExclusiveBonus(calcItemBonues, type) : 0) +
         attPattBonus.all[type] +
         (attPatt !== "none" ? attPattBonus[attPatt][type] : 0) +
         attElmtBonus[attElmt][type]
@@ -86,7 +86,7 @@ function calculateItem({
     let flat = 0;
     let normalMult = 1;
 
-    switch (stat.type) {
+    switch (calcType) {
       case "healing":
         flat = itemFlatBonus;
         normalMult += totalAttr.healB_ / 100;
@@ -102,7 +102,7 @@ function calculateItem({
       base *= normalMult;
       record.normalMult = normalMult;
     }
-    if (stat.type === "healing") {
+    if (calcType === "healing") {
       base *= 1 + totalAttr.inHealB_ / 100;
     }
     return { nonCrit: base, crit: 0, average: base };

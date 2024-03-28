@@ -5,26 +5,24 @@ import getCalculationStats from "./getCalculationStats";
 import getFinalResult from "./getFinalResult";
 import { CharacterCal } from "./utils";
 
-const calculateSetup = (
-  {
+const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Tracker) => {
+  // console.time();
+  const {
     char,
+    weapon,
+    artifacts,
+    party,
     selfBuffCtrls,
     selfDebuffCtrls,
-    party,
-    weapon,
     wpBuffCtrls,
-    artifacts,
     artBuffCtrls,
     artDebuffCtrls,
     elmtModCtrls,
     customBuffCtrls,
     customDebuffCtrls,
     customInfusion,
-  }: CalcSetup,
-  target: Target,
-  tracker?: Tracker
-) => {
-  // console.time();
+  } = setup;
+
   const appChar = $AppCharacter.get(char.name);
   const appWeapon = $AppData.getWeapon(weapon.code)!;
   const partyData = $AppCharacter.getPartyData(party);
@@ -71,28 +69,29 @@ const calculateSetup = (
 
   const { artAttr, ...rest } = getCalculationStats({
     char,
-    appChar,
-    selfBuffCtrls,
     weapon,
-    appWeapon,
-    wpBuffCtrls,
     artifacts,
+    party,
+    appChar,
+    appWeapon,
+    partyData,
+    selfBuffCtrls,
+    wpBuffCtrls,
     artBuffCtrls,
     elmtModCtrls,
-    party,
-    partyData,
     customBuffCtrls,
     infusedElement,
     tracker,
   });
   const finalResult = getFinalResult({
     char,
+    weapon,
+    party,
     appChar,
     appWeapon,
+    partyData,
     selfDebuffCtrls,
     artDebuffCtrls,
-    party,
-    partyData,
     disabledNAs,
     customDebuffCtrls,
     infusion: {

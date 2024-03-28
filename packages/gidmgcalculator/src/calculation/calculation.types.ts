@@ -6,8 +6,8 @@ import type {
   AttackElement,
   BuffInfoWrap,
   CalcArtifacts,
-  CalcItem,
   CalcItemBonus,
+  CalcItemType,
   CalcWeapon,
   Character,
   CustomBuffCtrl,
@@ -54,19 +54,20 @@ export type GetCalculationStatsArgs = {
 };
 
 export interface CalculateItemArgs extends Pick<BuffInfoWrap, "char" | "totalAttr" | "attElmtBonus" | "attPattBonus"> {
-  stat: CalcItem;
+  calcType?: CalcItemType;
   attPatt: ActualAttackPattern;
   attElmt: AttackElement;
   base: number | number[];
   target: Target;
   rxnMult: number;
-  calcItemBonues: CalcItemBonus[];
+  calcItemBonues?: CalcItemBonus[];
   absorbedElmt?: ElementType;
   resistReduct: ResistanceReduction;
   record: TrackerCalcItemRecord;
 }
 
 export interface GetFinalResultArgs extends Omit<BuffInfoWrap, "infusedElement"> {
+  weapon: CalcWeapon;
   appWeapon: AppWeapon;
   selfDebuffCtrls: ModifierCtrl[];
   artDebuffCtrls: ArtifactDebuffCtrl[];
