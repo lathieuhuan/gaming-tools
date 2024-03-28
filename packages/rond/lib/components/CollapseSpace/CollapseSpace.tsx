@@ -65,7 +65,9 @@ export const CollapseSpace = ({
         }
       }}
     >
-      <div ref={ref}>{mergedMounted && children}</div>
+      <div ref={ref} style={{ height: activeHeight ? "100%" : "auto" }}>
+        {mergedMounted && children}
+      </div>
     </div>
   );
 };

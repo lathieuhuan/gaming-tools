@@ -15,7 +15,6 @@ export function FinalResultView({ finalResult, talentMutable, onChangeTalentLeve
       {...rest}
       showWeaponCalc
       headerConfigs={[
-        null,
         {
           text: "Non-crit",
         },

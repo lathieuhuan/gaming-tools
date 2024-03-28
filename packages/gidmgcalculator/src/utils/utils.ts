@@ -11,6 +11,15 @@ export function getSearchParam(key: string) {
   return searchParams.get(key);
 }
 
+export function getImgSrc(src?: string) {
+  const isDevEnv = import.meta.env.DEV;
+  // const isDevEnv = false;
+  if (isDevEnv || !src) return "";
+
+  const isFromWiki = src.split("/")[0].length === 1;
+  return isFromWiki ? `https://static.wikia.nocookie.net/gensin-impact/images/${src}.png` : src;
+}
+
 export function pickProps<M, T extends keyof M>(obj: M, keys: T[]) {
   const result = {} as Pick<M, T>;
 

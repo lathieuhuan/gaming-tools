@@ -111,7 +111,7 @@ function FinalResultCompare({ comparedIds, ...layoutProps }: FinalResultCompareP
         <FinalResultLayout
           {...layoutProps}
           showWeaponCalc={showWeaponCalc}
-          headerConfigs={[null, ...headerConfigs]}
+          headerConfigs={headerConfigs}
           getRowConfig={(mainKey, subKey) => {
             const standardValue = getValue(standardId, mainKey, subKey);
 

@@ -103,11 +103,13 @@ export function FinalResultLayout({
                     colAttrs={[
                       {
                         className: "w-34",
-                        style: { width: "8.5rem" },
+                        style: { width: "8.5rem", minWidth: "6rem" },
                       },
                     ]}
                   >
                     <Table.Tr>
+                      <Table.Th className="sticky left-0 z-10" style={{ background: "inherit" }} />
+
                       {headerConfigs.map((config, i) => {
                         return (
                           <Table.Th key={i} className={config?.className}>
@@ -122,7 +124,14 @@ export function FinalResultLayout({
 
                       return (
                         <Table.Tr key={subKey}>
-                          <Table.Td title={config.element}>{isReactionDmg ? t(subKey) : subKey}</Table.Td>
+                          <Table.Td
+                            title={config.element}
+                            className="sticky left-0 z-10"
+                            style={{ background: "inherit" }}
+                          >
+                            {isReactionDmg ? t(subKey) : subKey}
+                          </Table.Td>
+
                           {config.cells.map((cell, cellIndex) => {
                             return (
                               <Table.Td key={cellIndex} className={cell.className} style={cell.style}>

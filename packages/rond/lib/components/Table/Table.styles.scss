@@ -13,6 +13,9 @@
     &:hover:not(:first-child) {
       background-color: var(--ron-color-table-row-hover);
     }
+    &:first-child {
+      background-color: #05071a;
+    }
   }
 
   .ron-table-th,
