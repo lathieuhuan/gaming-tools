@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaLongArrowAltUp } from "react-icons/fa";
 import { clsx } from "rond";
 
 import type { CalculationAspect, Character, Party, Weapon } from "@Src/types";
@@ -14,7 +15,6 @@ import {
 import { useSelector } from "@Store/hooks";
 import { findById } from "@Src/utils";
 import { FinalResultLayout, FinalResultView, type FinalResultLayoutProps } from "@Src/components";
-import { FaLongArrowAltUp } from "react-icons/fa";
 
 type CellConfig = ReturnType<FinalResultLayoutProps["getRowConfig"]>["cells"][number];
 
@@ -59,8 +59,19 @@ function FinalResultCompare({ comparedIds, ...layoutProps }: FinalResultCompareP
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const resultById = useSelector((state) => state.calculator.resultById);
   const standardId = useSelector(selectStandardId);
+  const setupsById = useSelector((state) => state.calculator.setupsById);
 
   const [focusedAspect, setFocusedAspect] = useState<CalculationAspect>("average");
+
+  const standardWeapon = setupsById[standardId].weapon.code;
+  let showWeaponCalc = true;
+
+  for (const id of comparedIds) {
+    if (setupsById[id].weapon.code !== standardWeapon) {
+      showWeaponCalc = false;
+      break;
+    }
+  }
 
   const calculationAspects: CalculationAspect[] = ["nonCrit", "crit", "average"];
 
@@ -99,6 +110,7 @@ function FinalResultCompare({ comparedIds, ...layoutProps }: FinalResultCompareP
       <div className="grow hide-scrollbar">
         <FinalResultLayout
           {...layoutProps}
+          showWeaponCalc={showWeaponCalc}
           headerConfigs={[null, ...headerConfigs]}
           getRowConfig={(mainKey, subKey) => {
             const standardValue = getValue(standardId, mainKey, subKey);
@@ -114,7 +126,9 @@ function FinalResultCompare({ comparedIds, ...layoutProps }: FinalResultCompareP
               const value = resultById[id].finalResult[mainKey][subKey][focusedAspect];
               const comparedStandardValue = getComparedValue(standardValue);
               const diff = getComparedValue(value) - comparedStandardValue;
-              const percenttDiff = Math.round((Math.abs(diff) * 1000) / comparedStandardValue) / 10;
+              const percenttDiff = comparedStandardValue
+                ? Math.round((Math.abs(diff) * 1000) / comparedStandardValue) / 10
+                : 0;
 
               if (percenttDiff < 0.1) {
                 return {
@@ -152,9 +166,7 @@ function FinalResultCompare({ comparedIds, ...layoutProps }: FinalResultCompareP
               };
             });
 
-            return {
-              cells,
-            };
+            return { cells };
           }}
         />
       </div>

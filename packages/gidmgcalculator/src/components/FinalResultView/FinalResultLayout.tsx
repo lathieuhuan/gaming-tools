@@ -29,17 +29,27 @@ export interface FinalResultLayoutProps {
   char: Character;
   weapon: Weapon;
   party: Party;
+  showWeaponCalc?: boolean;
   headerConfigs: HeaderConfig[];
   getRowConfig: (mainKey: TableKey["main"], subKey: string) => RowConfig;
 }
-export function FinalResultLayout({ char, weapon, party, headerConfigs, getRowConfig }: FinalResultLayoutProps) {
+export function FinalResultLayout({
+  char,
+  weapon,
+  party,
+  showWeaponCalc,
+  headerConfigs,
+  getRowConfig,
+}: FinalResultLayoutProps) {
   const { t } = useTranslation();
   const appChar = $AppCharacter.get(char.name);
   const appWeapon = $AppData.getWeapon(weapon.code);
 
   const [closedSections, setClosedSections] = useState<boolean[]>([]);
 
-  const tableKeys = useMemo(() => getTableKeys(appChar, appWeapon), [char.name, appWeapon?.code]);
+  const tableKeys = useMemo(() => {
+    return getTableKeys(appChar, showWeaponCalc ? appWeapon : undefined);
+  }, [char.name, appWeapon?.code, showWeaponCalc]);
 
   if (!appChar) return null;
 
@@ -71,7 +81,7 @@ export function FinalResultLayout({ char, weapon, party, headerConfigs, getRowCo
                 <FaChevronRight
                   className={"text-sm duration-150 ease-linear" + (closedSections[index] ? "" : " rotate-90")}
                 />
-                <span>{t(tableKey.main)}</span>
+                <span>{tableKey.main === "WP_CALC" ? "Weapon" : t(tableKey.main)}</span>
               </div>
 
               {talentLevel ? (

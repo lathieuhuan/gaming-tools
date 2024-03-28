@@ -9,19 +9,11 @@ interface FinalResultViewProps {
   talentMutable?: boolean;
   onChangeTalentLevel?: (newLevel: number) => void;
 }
-export function FinalResultView({
-  char,
-  weapon,
-  party,
-  finalResult,
-  talentMutable,
-  onChangeTalentLevel,
-}: FinalResultViewProps) {
+export function FinalResultView({ finalResult, talentMutable, onChangeTalentLevel, ...rest }: FinalResultViewProps) {
   return (
     <FinalResultLayout
-      char={char}
-      weapon={weapon}
-      party={party}
+      {...rest}
+      showWeaponCalc
       headerConfigs={[
         null,
         {
@@ -42,11 +34,11 @@ export function FinalResultView({
           cells: [
             {
               value: nonCrit,
-              className: 'text-right'
+              className: "text-right",
             },
             {
               value: crit,
-              className: 'text-right'
+              className: "text-right",
             },
             {
               value: average,
