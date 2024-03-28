@@ -57,9 +57,9 @@ function CalculatorCore() {
 const FinalResultPanel = ({ isHugeScreen }: { isHugeScreen: boolean }) => {
   const comparedCount = useSelector(selectComparedIds).length;
 
-  let width = 24;
+  let width = 22;
 
-  if (isHugeScreen) {
+  if (isHugeScreen && comparedCount > 1) {
     width += (comparedCount - 1) * 2;
   }
 

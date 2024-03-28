@@ -1,32 +1,45 @@
 import { useMemo, useState } from "react";
 import { FaChevronRight } from "react-icons/fa";
-import { CollapseSpace, Table, TableThProps, TableTrProps } from "rond";
+import { CollapseSpace, Table } from "rond";
 
-import type { Character, CalculationFinalResult, Party, CalculationAspect, Weapon } from "@Src/types";
+import type { Character, Party, Weapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppCharacter, $AppData } from "@Src/services";
 import { Character_ } from "@Src/utils";
-import { displayValue, getTableKeys } from "./FinalResultView.utils";
+import { displayValue, getTableKeys, type TableKey } from "./FinalResultView.utils";
 
-// Component
-import { ResultSectionCompare } from "./ResultSectionCompare";
+type HeaderConfig = null | {
+  className?: string;
+  text: string;
+};
 
-type SectionConfig = {};
+type RowCellConfig = {
+  className?: string;
+  style?: React.CSSProperties;
+  value: number | number[];
+  extra?: React.ReactNode;
+};
 
-interface FinalResultLayoutProps {
+type RowConfig = {
+  element?: string;
+  cells: RowCellConfig[];
+};
+
+export interface FinalResultLayoutProps {
   char: Character;
   weapon: Weapon;
   party: Party;
-  finalResult: CalculationFinalResult;
-  headerConfigs: TableThProps[];
+  headerConfigs: HeaderConfig[];
+  getRowConfig: (mainKey: TableKey["main"], subKey: string) => RowConfig;
 }
-export function FinalResultLayout({ char, weapon, party, finalResult, headerConfigs }: FinalResultLayoutProps) {
+export function FinalResultLayout({ char, weapon, party, headerConfigs, getRowConfig }: FinalResultLayoutProps) {
   const { t } = useTranslation();
   const appChar = $AppCharacter.get(char.name);
   const appWeapon = $AppData.getWeapon(weapon.code);
 
   const [closedSections, setClosedSections] = useState<boolean[]>([]);
-  const tableKeys = useMemo(() => (appChar ? getTableKeys(appChar, appWeapon) : []), [char.name, appWeapon.code]);
+
+  const tableKeys = useMemo(() => getTableKeys(appChar, appWeapon), [char.name, appWeapon?.code]);
 
   if (!appChar) return null;
 
@@ -37,7 +50,6 @@ export function FinalResultLayout({ char, weapon, party, finalResult, headerConf
   return (
     <div className="flex flex-col space-y-2">
       {tableKeys.map((tableKey, index) => {
-        const standardValues = finalResult[tableKey.main];
         const isReactionDmg = tableKey.main === "RXN";
         const talentLevel =
           !isReactionDmg && tableKey.main !== "WP_CALC"
@@ -67,7 +79,7 @@ export function FinalResultLayout({ char, weapon, party, finalResult, headerConf
               ) : null}
             </button>
 
-            <CollapseSpace active={!closedSections[index]}>
+            <CollapseSpace key={tableKey.main} active={!closedSections[index]}>
               {tableKey.subs.length === 0 ? (
                 <div className="pb-2">
                   <p className="pt-2 pb-1 bg-surface-2 text-center text-hint-color">
@@ -85,34 +97,33 @@ export function FinalResultLayout({ char, weapon, party, finalResult, headerConf
                       },
                     ]}
                   >
-                    {focusedAspect ? (
-                      <ResultSectionCompare
-                        focusedAspect={focusedAspect}
-                        tableKey={tableKey}
-                        labelTranslate={isReactionDmg ? t : undefined}
-                      />
-                    ) : (
-                      <>
-                        <Table.Tr>
-                          {headerConfigs.map((config, i) => {
-                            return <Table.Th key={i} {...config} />;
+                    <Table.Tr>
+                      {headerConfigs.map((config, i) => {
+                        return (
+                          <Table.Th key={i} className={config?.className}>
+                            {config?.text}
+                          </Table.Th>
+                        );
+                      })}
+                    </Table.Tr>
+
+                    {tableKey.subs.map((subKey) => {
+                      const config = getRowConfig(tableKey.main, subKey);
+
+                      return (
+                        <Table.Tr key={subKey}>
+                          <Table.Td title={config.element}>{isReactionDmg ? t(subKey) : subKey}</Table.Td>
+                          {config.cells.map((cell, cellIndex) => {
+                            return (
+                              <Table.Td key={cellIndex} className={cell.className} style={cell.style}>
+                                {displayValue(cell.value)}
+                                {cell.extra}
+                              </Table.Td>
+                            );
                           })}
                         </Table.Tr>
-
-                        {tableKey.subs.map((subKey) => {
-                          const value = standardValues[subKey];
-
-                          return (
-                            <Table.Tr key={subKey}>
-                              <Table.Td title={value.attElmt}>{isReactionDmg ? t(subKey) : subKey}</Table.Td>
-                              <Table.Td>{displayValue(value.nonCrit)}</Table.Td>
-                              <Table.Td>{displayValue(value.crit)}</Table.Td>
-                              <Table.Td className="text-primary-1">{displayValue(value.average)}</Table.Td>
-                            </Table.Tr>
-                          );
-                        })}
-                      </>
-                    )}
+                      );
+                    })}
                   </Table>
                 </div>
               )}

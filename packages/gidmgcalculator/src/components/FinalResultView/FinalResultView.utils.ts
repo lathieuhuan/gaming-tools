@@ -1,20 +1,22 @@
 import type { AppCharacter, AppWeapon, TransformativeReaction } from "@Src/types";
 import { NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@Src/constants";
 
-type CalcItemKey = {
+type TableCalcItemKey = {
   main: "NAs" | "ES" | "EB" | "WP_CALC";
   subs: string[];
 };
 
-type ReactionKey = {
+type TableReactionKey = {
   main: "RXN";
   subs: TransformativeReaction[];
 };
 
-export type TableKey = CalcItemKey | ReactionKey;
+export type TableKey = TableCalcItemKey | TableReactionKey;
 
-export function getTableKeys(appChar: AppCharacter, appWeapon?: AppWeapon): TableKey[] {
-  const NAs: CalcItemKey = {
+export function getTableKeys(appChar?: AppCharacter, appWeapon?: AppWeapon): TableKey[] {
+  if (!appChar) return [];
+
+  const NAs: TableCalcItemKey = {
     main: "NAs",
     subs: [],
   };

@@ -1,15 +1,5 @@
-import { useMemo, useState } from "react";
-import { FaChevronRight } from "react-icons/fa";
-import { CollapseSpace, Table } from "rond";
-
-import type { Character, CalculationFinalResult, Party, CalculationAspect, Weapon } from "@Src/types";
-import { useTranslation } from "@Src/hooks";
-import { $AppCharacter, $AppData } from "@Src/services";
-import { Character_ } from "@Src/utils";
-import { displayValue, getTableKeys } from "./FinalResultView.utils";
-
-// Component
-import { ResultSectionCompare } from "./ResultSectionCompare";
+import type { Character, CalculationFinalResult, Party, Weapon } from "@Src/types";
+import { FinalResultLayout } from "./FinalResultLayout";
 
 interface FinalResultViewProps {
   char: Character;
@@ -17,7 +7,6 @@ interface FinalResultViewProps {
   party: Party;
   finalResult: CalculationFinalResult;
   talentMutable?: boolean;
-  focusedAspect?: CalculationAspect;
   onChangeTalentLevel?: (newLevel: number) => void;
 }
 export function FinalResultView({
@@ -26,134 +15,46 @@ export function FinalResultView({
   party,
   finalResult,
   talentMutable,
-  focusedAspect,
   onChangeTalentLevel,
 }: FinalResultViewProps) {
-  const { t } = useTranslation();
-  const appChar = $AppCharacter.get(char.name);
-  const appWeapon = $AppData.getWeapon(weapon.code);
-
-  const [closedSections, setClosedSections] = useState<boolean[]>([]);
-  // const [lvlingSectionIndex, setLvlingSectionIndex] = useState(-1);
-  const tableKeys = useMemo(() => (appChar ? getTableKeys(appChar, appWeapon) : []), [char.name, appWeapon.code]);
-
-  if (!appChar) return null;
-
-  const toggleSection = (index: number) => {
-    setClosedSections((prev) => Object.assign([...prev], { [index]: !prev[index] }));
-  };
-
   return (
-    <div className="flex flex-col space-y-2">
-      {tableKeys.map((tableKey, index) => {
-        const standardValues = finalResult[tableKey.main];
-        const isReactionDmg = tableKey.main === "RXN";
-        const talentLevel =
-          !isReactionDmg && tableKey.main !== "WP_CALC"
-            ? Character_.getFinalTalentLv({
-                char,
-                appChar,
-                talentType: tableKey.main,
-                partyData: $AppCharacter.getPartyData(party),
-              })
-            : 0;
-        // const isLvling = index === lvlingSectionIndex;
-
-        return (
-          <div key={tableKey.main} className="flex flex-col">
-            <button
-              type="button"
-              className="mx-auto mb-2 w-52 px-4 text-base text-black bg-heading-color leading-none font-bold flex items-center justify-between rounded-2xl overflow-hidden"
-            >
-              <div className="grow py-1.5 flex items-center space-x-2" onClick={() => toggleSection(index)}>
-                <FaChevronRight
-                  className={"text-sm duration-150 ease-linear" + (closedSections[index] ? "" : " rotate-90")}
-                />
-                <span>{t(tableKey.main)}</span>
-              </div>
-
-              {talentLevel ? (
-                <span className="px-1 rounded-sm bg-black/60 text-light-default text-sm">{talentLevel}</span>
-              ) : null}
-            </button>
-
-            {/* <div className="mx-auto mb-2 w-52 text-base text-black leading-none font-bold flex rounded-2xl overflow-hidden">
-              <button
-                type="button"
-                className="grow py-1.5 pl-4 flex items-center space-x-2 bg-secondary-1 overflow-hidden"
-                onClick={() => toggleSection(index)}
-              >
-                <FaChevronRight
-                  className={"text-sm duration-150 ease-linear" + (closedSections[index] ? "" : " rotate-90")}
-                />
-                <span>{t(tableKey.main)}</span>
-              </button>
-
-              {talentLevel ? (
-                <button
-                  type="button"
-                  className="py-1.5 pl-2 pr-3 flex-center bg-light-default glow-on-hover"
-                  onClick={() => setLvlingSectionIndex(isLvling ? -1 : index)}
-                >
-                  {talentLevel}
-                </button>
-              ) : null}
-            </div> */}
-
-            <CollapseSpace active={!closedSections[index]}>
-              {tableKey.subs.length === 0 ? (
-                <div className="pb-2">
-                  <p className="pt-2 pb-1 bg-surface-2 text-center text-hint-color">
-                    This talent does not deal damage.
-                  </p>
-                </div>
-              ) : (
-                <div className="custom-scrollbar">
-                  <Table
-                    className="mb-2 w-full"
-                    colAttrs={[
-                      {
-                        className: "w-34",
-                        style: { width: "8.5rem" },
-                      },
-                    ]}
-                  >
-                    {focusedAspect ? (
-                      <ResultSectionCompare
-                        focusedAspect={focusedAspect}
-                        tableKey={tableKey}
-                        labelTranslate={isReactionDmg ? t : undefined}
-                      />
-                    ) : (
-                      <>
-                        <Table.Tr>
-                          <Table.Th />
-                          <Table.Th>Non-crit</Table.Th>
-                          <Table.Th>Crit</Table.Th>
-                          <Table.Th className="text-primary-1">Avg.</Table.Th>
-                        </Table.Tr>
-
-                        {tableKey.subs.map((subKey) => {
-                          const value = standardValues[subKey];
-
-                          return (
-                            <Table.Tr key={subKey}>
-                              <Table.Td title={value.attElmt}>{isReactionDmg ? t(subKey) : subKey}</Table.Td>
-                              <Table.Td>{displayValue(value.nonCrit)}</Table.Td>
-                              <Table.Td>{displayValue(value.crit)}</Table.Td>
-                              <Table.Td className="text-primary-1">{displayValue(value.average)}</Table.Td>
-                            </Table.Tr>
-                          );
-                        })}
-                      </>
-                    )}
-                  </Table>
-                </div>
-              )}
-            </CollapseSpace>
-          </div>
-        );
-      })}
-    </div>
+    <FinalResultLayout
+      char={char}
+      weapon={weapon}
+      party={party}
+      headerConfigs={[
+        null,
+        {
+          text: "Non-crit",
+        },
+        {
+          text: "Crit",
+        },
+        {
+          text: "Avg.",
+          className: "text-primary-1",
+        },
+      ]}
+      getRowConfig={(mainKey, subKey) => {
+        const { nonCrit, average, crit, attElmt } = finalResult[mainKey][subKey];
+        return {
+          element: attElmt,
+          cells: [
+            {
+              value: nonCrit,
+              className: 'text-right'
+            },
+            {
+              value: crit,
+              className: 'text-right'
+            },
+            {
+              value: average,
+              className: "text-right text-primary-1",
+            },
+          ],
+        };
+      }}
+    />
   );
 }
