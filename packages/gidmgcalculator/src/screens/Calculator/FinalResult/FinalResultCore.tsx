@@ -11,8 +11,9 @@ import {
   selectWeapon,
   selectStandardId,
   selectSetupManageInfos,
+  updateCharacter,
 } from "@Store/calculator-slice";
-import { useSelector } from "@Store/hooks";
+import { useDispatch, useSelector } from "@Store/hooks";
 import { findById } from "@Src/utils";
 import { FinalResultLayout, FinalResultView, type FinalResultLayoutProps } from "@Src/components";
 
@@ -25,6 +26,7 @@ const ASPECT_LABEL: Record<CalculationAspect, string> = {
 };
 
 export function FinalResultCore() {
+  const dispatch = useDispatch();
   const activeSetupName = useSelector((state) => {
     const { activeId, setupManageInfos } = state.calculator;
     return findById(setupManageInfos, activeId)?.name || "";
@@ -43,7 +45,12 @@ export function FinalResultCore() {
     <div className="h-full flex flex-col">
       <p className="mx-4 mb-2 font-bold text-center">{activeSetupName}</p>
       <div className="grow hide-scrollbar">
-        <FinalResultView key={char.name} {...{ char, weapon, party, finalResult }} />
+        <FinalResultView
+          key={char.name}
+          {...{ char, weapon, party, finalResult }}
+          talentMutable
+          onChangeTalentLevel={(type, level) => dispatch(updateCharacter({ [type]: level }))}
+        />
       </div>
     </div>
   );

@@ -1,15 +1,13 @@
 import type { Character, CalculationFinalResult, Party, Weapon } from "@Src/types";
-import { FinalResultLayout } from "./FinalResultLayout";
+import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
 
-interface FinalResultViewProps {
+interface FinalResultViewProps extends Pick<FinalResultLayoutProps, "talentMutable" | "onChangeTalentLevel"> {
   char: Character;
   weapon: Weapon;
   party: Party;
   finalResult: CalculationFinalResult;
-  talentMutable?: boolean;
-  onChangeTalentLevel?: (newLevel: number) => void;
 }
-export function FinalResultView({ finalResult, talentMutable, onChangeTalentLevel, ...rest }: FinalResultViewProps) {
+export function FinalResultView({ finalResult, ...rest }: FinalResultViewProps) {
   return (
     <FinalResultLayout
       {...rest}
