@@ -28,7 +28,7 @@ export default function SetupManager() {
     <div className="w-full h-full flex flex-col relative overflow-hidden">
       <SetupSelect />
 
-      <div className="mt-4 grow hide-scrollbar space-y-2 scroll-smooth">
+      <div className="mt-3 grow hide-scrollbar space-y-2 scroll-smooth">
         <SectionParty />
         <SectionWeapon />
         <SectionArtifacts />

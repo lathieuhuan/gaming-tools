@@ -54,13 +54,13 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
 
     body = (
       <div className="h-full flex flex-col">
-        <div className="mt-2 mb-1 pb-4 flex">
+        <div className="pb-4 flex">
           <div
             className="mr-3 relative aspect-square shrink-0"
             onClick={() => setModalType("CHARACTER_SELECT")}
             style={{ width: 88, height: 88 }}
           >
-            <Button className="absolute -top-2 -left-2 z-10" icon={<FaSyncAlt />} />
+            <Button className="absolute -top-1 -left-1 z-10" icon={<FaSyncAlt />} />
             <Badge active={appChar.beta} className="absolute -top-2 -right-2 z-10">
               BETA
             </Badge>

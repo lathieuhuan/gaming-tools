@@ -60,7 +60,7 @@ export default function MyCharacters() {
       )}
 
       <div className="grow flex-center overflow-y-auto">
-        <div className="w-full h-98/100 flex justify-center">{userChars.length ? <CharacterInfo /> : null}</div>
+        <div className="w-full h-full flex justify-center">{userChars.length ? <CharacterInfo /> : null}</div>
       </div>
 
       <Tavern

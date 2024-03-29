@@ -41,7 +41,7 @@ export function FinalResultCore() {
 
   return (
     <div className="h-full flex flex-col">
-      <p className="mx-4 my-2 font-bold text-center">{activeSetupName}</p>
+      <p className="mx-4 mb-2 font-bold text-center">{activeSetupName}</p>
       <div className="grow hide-scrollbar">
         <FinalResultView key={char.name} {...{ char, weapon, party, finalResult }} />
       </div>
