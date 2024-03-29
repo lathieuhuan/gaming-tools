@@ -64,7 +64,7 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
             <Badge active={appChar.beta} className="absolute -top-2 -right-2 z-10">
               BETA
             </Badge>
-            <GenshinImage className="cursor-pointer" src={appChar.icon} imgType="character" />
+            <GenshinImage className="cursor-pointer" src={appChar.icon} imgType="character" fallbackCls="p-2" />
           </div>
 
           <div className="min-w-0 grow">

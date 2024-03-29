@@ -1,1 +1,1 @@
-export { default } from "./HigherSetupManager";
+export * from "./HigherSetupManager";

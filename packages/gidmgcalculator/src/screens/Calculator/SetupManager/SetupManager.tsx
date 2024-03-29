@@ -16,7 +16,7 @@ import SectionWeapon from "./SectionWeapon";
 
 type ModalType = "TARGET_CONFIG" | "";
 
-export default function SetupManager() {
+export function SetupManager() {
   const dispatch = useDispatch();
 
   const [modalType, setModalType] = useState<ModalType>("");

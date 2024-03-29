@@ -19,8 +19,6 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { SetupImporter } from "@Src/components";
 import { SetupControl } from "./SetupControl";
 
-import styles from "../Calculator.styles.module.scss";
-
 function HigherSetupManagerCore() {
   const dispatch = useDispatch();
   const setupManageInfos = useSelector(selectSetupManageInfos);
@@ -212,13 +210,13 @@ function HigherSetupManagerCore() {
   );
 }
 
-export default function HigherSetupManager() {
+export function HigherSetupManager(props: { className?: string }) {
   const highManagerActive = useSelector((state) => state.ui.highManagerActive);
 
   return (
     <CollapseSpace
       active={highManagerActive}
-      className={clsx("absolute bottom-0 left-0 bg-surface-3 z-30", styles.card)}
+      className={clsx("absolute bottom-0 left-0 bg-surface-3 z-30", props.className)}
       activeHeight="100%"
       moveDuration={200}
       destroyOnClose

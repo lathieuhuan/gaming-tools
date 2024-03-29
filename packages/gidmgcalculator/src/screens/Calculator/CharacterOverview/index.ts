@@ -1,1 +1,1 @@
-export { CharacterOverview as default } from "./CharacterOverview";
+export * from "./CharacterOverview";
