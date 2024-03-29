@@ -109,4 +109,5 @@ body {
 
 .contains-inline-svg svg {
   display: inline;
+  flex-shrink: 0;
 }

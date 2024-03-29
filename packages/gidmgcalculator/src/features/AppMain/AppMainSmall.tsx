@@ -84,23 +84,25 @@ export function AppMainSmall() {
             </div>
           </div>
 
-          <div
-            className="flex font-semibold border-surface-border"
-            style={{ backgroundColor: "#05071a", borderTopWidth: "1px" }}
-          >
-            {["Overview", "Modifiers", "Setup", "Results"].map((label, index) => {
-              return (
-                <button
-                  key={label}
-                  className={`w-1/4 py-2 ${index === activeSectionI ? "text-secondary-1" : "text-light-default/60"}`}
-                  disabled={!touched}
-                  onClick={() => onClickSectionNav(index)}
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
+          {touched ? (
+            <div
+              className="flex font-semibold border-surface-border"
+              style={{ backgroundColor: "#05071a", borderTopWidth: "1px" }}
+            >
+              {["Overview", "Modifiers", "Setup", "Results"].map((label, index) => {
+                return (
+                  <button
+                    key={label}
+                    className={`w-1/4 py-2 ${index === activeSectionI ? "text-secondary-1" : "text-light-default/60"}`}
+                    // disabled={!touched}
+                    onClick={() => onClickSectionNav(index)}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          ) : null}
         </div>
       }
     />
