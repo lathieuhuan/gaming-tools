@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { SwitchNode } from "rond";
 
-import { useSelector } from "@Store/hooks";
+import { useDispatch, useSelector } from "@Store/hooks";
 import MyCharacters from "@Src/screens/MyCharacters";
 import MyWeapons from "@Src/screens/MyWeapons";
 import MyArtifacts from "@Src/screens/MyArtifacts";
@@ -9,14 +9,17 @@ import MySetups from "@Src/screens/MySetups";
 import { CharacterOverview, Modifiers, SetupManager, HigherSetupManager, FinalResult } from "@Src/screens/Calculator";
 
 import styles from "./AppMain.styles.module.scss";
+import { updateUI } from "@Store/ui-slice";
 
 export function AppMainSmall() {
+  const dispatch = useDispatch();
   const atScreen = useSelector((state) => state.ui.atScreen);
   const touched = useSelector((state) => state.calculator.setupManageInfos.length !== 0);
   const [activeSectionI, setActiveSectionI] = useState(0);
 
   const onClickSectionNav = (index: number) => {
     setActiveSectionI(index);
+    dispatch(updateUI({ highManagerActive: false }));
   };
 
   return (

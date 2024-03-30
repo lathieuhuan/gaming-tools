@@ -1,29 +1,38 @@
-import type { Character, CalculationFinalResult, Party, Weapon } from "@Src/types";
+import type { Party, CalculationFinalResult } from "@Src/types";
 import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
+import { Character_ } from "@Src/utils";
+import { $AppCharacter } from "@Src/services";
 
-interface FinalResultViewProps extends Pick<FinalResultLayoutProps, "talentMutable" | "onChangeTalentLevel"> {
-  char: Character;
-  weapon: Weapon;
-  party: Party;
+interface FinalResultViewProps
+  extends Pick<FinalResultLayoutProps, "char" | "appChar" | "weapon" | "talentMutable" | "onChangeTalentLevel"> {
   finalResult: CalculationFinalResult;
+  party: Party;
 }
-export function FinalResultView({ finalResult, ...rest }: FinalResultViewProps) {
+export function FinalResultView({ finalResult, party, ...props }: FinalResultViewProps) {
   return (
     <FinalResultLayout
-      {...rest}
+      {...props}
       showWeaponCalc
       headerConfigs={[
         {
-          text: "Non-crit",
+          content: "Non-crit",
         },
         {
-          text: "Crit",
+          content: "Crit",
         },
         {
-          text: "Avg.",
+          content: "Avg.",
           className: "text-primary-1",
         },
       ]}
+      getTalentLevel={(talentType) => {
+        return Character_.getFinalTalentLv({
+          char: props.char,
+          appChar: props.appChar,
+          talentType,
+          partyData: $AppCharacter.getPartyData(party),
+        });
+      }}
       getRowConfig={(mainKey, subKey) => {
         const { nonCrit, average, crit, attElmt } = finalResult[mainKey][subKey];
         return {

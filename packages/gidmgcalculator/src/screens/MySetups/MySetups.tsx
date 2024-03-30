@@ -4,6 +4,7 @@ import { clsx, Button, LoadingSpin, WarehouseLayout, useScreenWatcher } from "ro
 
 import type { UserComplexSetup, UserSetup } from "@Src/types";
 import { useAppCharacter } from "@Src/hooks";
+import { $AppCharacter } from "@Src/services";
 import { Setup_, findById } from "@Src/utils";
 
 import type { OpenModalFn } from "./MySetups.types";
@@ -119,6 +120,7 @@ export default function MySetups() {
             {result?.finalResult && weapon && (
               <FinalResultView
                 char={chosenSetup.char}
+                appChar={$AppCharacter.get(chosenSetup.char.name)}
                 weapon={weapon}
                 party={chosenSetup.party}
                 finalResult={result.finalResult}

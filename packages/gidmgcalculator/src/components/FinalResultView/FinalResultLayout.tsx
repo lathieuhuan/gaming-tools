@@ -1,17 +1,17 @@
 import { useMemo, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { Button, CollapseSpace, Table } from "rond";
+import { Button, CollapseSpace, Table, TableThProps } from "rond";
 
-import type { Character, Party, Weapon } from "@Src/types";
+import type { AppCharacter, CalcCharacter, Talent, Weapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { $AppCharacter, $AppData } from "@Src/services";
-import { Character_ } from "@Src/utils";
+import { $AppData } from "@Src/services";
 import { displayValue, getTableKeys, type TableKey } from "./FinalResultView.utils";
 
-type HeaderConfig = null | {
-  className?: string;
-  text: string;
+type ToggleLvling = (active: boolean) => void;
+
+type HeaderConfig = Pick<TableThProps, "className" | "style"> & {
+  content: React.ReactNode | ((talentType: Talent | undefined) => React.ReactNode);
 };
 
 type RowCellConfig = {
@@ -27,27 +27,27 @@ type RowConfig = {
 };
 
 export interface FinalResultLayoutProps {
-  char: Character;
+  char: CalcCharacter;
+  appChar: AppCharacter;
   weapon: Weapon;
-  party: Party;
   showWeaponCalc?: boolean;
   headerConfigs: HeaderConfig[];
   getRowConfig: (mainKey: TableKey["main"], subKey: string) => RowConfig;
+  getTalentLevel?: (talentType: Talent) => number | undefined;
   talentMutable?: boolean;
   onChangeTalentLevel?: (talentType: "NAs" | "ES" | "EB", newLevel: number) => void;
 }
 export function FinalResultLayout({
   char,
+  appChar,
   weapon,
-  party,
   showWeaponCalc,
-  headerConfigs,
-  getRowConfig,
   talentMutable,
+  getTalentLevel,
   onChangeTalentLevel,
+  ...sectionProps
 }: FinalResultLayoutProps) {
   const { t } = useTranslation();
-  const appChar = $AppCharacter.get(char.name);
   const appWeapon = $AppData.getWeapon(weapon.code);
 
   const [closedSections, setClosedSections] = useState<boolean[]>([]);
@@ -59,8 +59,8 @@ export function FinalResultLayout({
 
   if (!appChar) return null;
 
-  const toggleSection = (index: number) => {
-    const newClosed = !closedSections[index];
+  const toggleSection = (index: number, forcedClosed?: boolean) => {
+    const newClosed = forcedClosed ?? !closedSections[index];
 
     setClosedSections(Object.assign([...closedSections], { [index]: newClosed }));
 
@@ -102,31 +102,27 @@ export function FinalResultLayout({
   };
 
   return (
-    <div className="flex flex-col space-y-2">
-      {tableKeys.map((tableKey, index) => {
-        const isReactionDmg = tableKey.main === "RXN";
-        const isLvling = index === lvlingSectionI;
-        const talentLevel =
-          !isReactionDmg && tableKey.main !== "WP_CALC"
-            ? Character_.getFinalTalentLv({
-                char,
-                appChar,
-                talentType: tableKey.main,
-                partyData: $AppCharacter.getPartyData(party),
-              })
-            : 0;
+    <div className="flex flex-col gap-4">
+      {tableKeys.map((tableKey, sectionIndex) => {
+        const mainKey = tableKey.main;
+        const isReactionDmg = mainKey === "RXN";
+        const isLvling = sectionIndex === lvlingSectionI;
+        const talentType = !isReactionDmg && mainKey !== "WP_CALC" ? mainKey : undefined;
+        const talentLevel = talentType ? getTalentLevel?.(talentType) : 0;
 
         return (
-          <div key={tableKey.main} className="flex flex-col gap-2">
-            <div className="flex gap-2">
+          <div key={tableKey.main}>
+            <div className="flex gap-3">
               <button
                 type="button"
                 className="pl-2 pr-3 text-base text-black bg-heading-color leading-none font-bold flex items-center gap-2 rounded-2xl overflow-hidden"
-                onClick={() => toggleSection(index)}
+                onClick={() => toggleSection(sectionIndex)}
               >
                 <div className="py-1.5 flex items-center gap-1">
                   <FaCaretRight
-                    className={"text-base duration-150 ease-linear" + (closedSections[index] ? "" : " rotate-90")}
+                    className={
+                      "text-base duration-150 ease-linear" + (closedSections[sectionIndex] ? "" : " rotate-90")
+                    }
                   />
                   <span>{tableKey.main === "WP_CALC" ? "Weapon" : t(tableKey.main)}</span>
                 </div>
@@ -136,25 +132,28 @@ export function FinalResultLayout({
                 ) : null}
               </button>
 
-              {talentMutable && talentLevel ? (
-                <Button
-                  boneOnly
-                  size="custom"
-                  className={`w-7 h-7 text-lg ${isLvling ? "text-active-color" : "text-light-disabled"}`}
-                  icon={<MdEdit />}
-                  onClick={() => onRequestChangeLevel(index, isLvling)}
-                />
-              ) : null}
+              <div className="flex">
+                {talentMutable && talentLevel ? (
+                  <Button
+                    boneOnly
+                    size="custom"
+                    className={`w-7 h-7 text-lg ${isLvling ? "text-active-color" : "text-light-disabled"}`}
+                    icon={<MdEdit />}
+                    onClick={() => onRequestChangeLevel(sectionIndex, isLvling)}
+                  />
+                ) : null}
+              </div>
             </div>
 
             {isLvling ? (
-              <div className="py-1">
-                <div className="flex gap-3">{renderLvButtons(tableKey.main)}</div>
-                <div className="flex gap-3 mt-3">{renderLvButtons(tableKey.main, 5)}</div>
+              <div className="mt-2">
+                <div className="text-sm">Select level</div>
+                <div className="mt-1 flex gap-3">{renderLvButtons(tableKey.main)}</div>
+                <div className="mt-3 flex gap-3">{renderLvButtons(tableKey.main, 5)}</div>
               </div>
             ) : null}
 
-            <CollapseSpace key={tableKey.main} active={!closedSections[index]}>
+            <CollapseSpace key={tableKey.main} active={!closedSections[sectionIndex]}>
               {tableKey.subs.length === 0 ? (
                 <div className="pb-2">
                   <p className="pt-2 pb-1 bg-surface-2 text-center text-hint-color">
@@ -162,53 +161,13 @@ export function FinalResultLayout({
                   </p>
                 </div>
               ) : (
-                <div className="custom-scrollbar">
-                  <Table
-                    className="mb-2 w-full"
-                    colAttrs={[
-                      {
-                        className: "w-34",
-                        style: { width: "8.5rem", minWidth: "6rem" },
-                      },
-                    ]}
-                  >
-                    <Table.Tr>
-                      <Table.Th className="sticky left-0 z-10" style={{ background: "inherit" }} />
-
-                      {headerConfigs.map((config, i) => {
-                        return (
-                          <Table.Th key={i} className={config?.className}>
-                            {config?.text}
-                          </Table.Th>
-                        );
-                      })}
-                    </Table.Tr>
-
-                    {tableKey.subs.map((subKey) => {
-                      const config = getRowConfig(tableKey.main, subKey);
-
-                      return (
-                        <Table.Tr key={subKey}>
-                          <Table.Td
-                            title={config.element}
-                            className="sticky left-0 z-10"
-                            style={{ background: "inherit" }}
-                          >
-                            {isReactionDmg ? t(subKey) : subKey}
-                          </Table.Td>
-
-                          {config.cells.map((cell, cellIndex) => {
-                            return (
-                              <Table.Td key={cellIndex} className={cell.className} style={cell.style}>
-                                {displayValue(cell.value)}
-                                {cell.extra}
-                              </Table.Td>
-                            );
-                          })}
-                        </Table.Tr>
-                      );
-                    })}
-                  </Table>
+                <div className="pt-2 custom-scrollbar">
+                  <SectionTable
+                    tableKey={tableKey}
+                    talentType={talentType}
+                    getRowTitle={(subKey) => (isReactionDmg ? t(subKey) : subKey)}
+                    {...sectionProps}
+                  />
                 </div>
               )}
             </CollapseSpace>
@@ -216,5 +175,57 @@ export function FinalResultLayout({
         );
       })}
     </div>
+  );
+}
+
+interface SectionTableProps extends Pick<FinalResultLayoutProps, "getRowConfig" | "headerConfigs"> {
+  tableKey: TableKey;
+  talentType?: Talent;
+  getRowTitle: (key: string) => string;
+}
+function SectionTable(props: SectionTableProps) {
+  return (
+    <Table
+      className="w-full"
+      colAttrs={[
+        {
+          className: "w-34",
+          style: { width: "8.5rem", minWidth: "6rem" },
+        },
+      ]}
+    >
+      <Table.Tr>
+        <Table.Th className="sticky left-0 z-10" style={{ background: "inherit" }} />
+
+        {props.headerConfigs.map(({ content, ...attrs }, i) => {
+          return (
+            <Table.Th key={i} {...attrs}>
+              {typeof content === "function" ? content(props.talentType) : content}
+            </Table.Th>
+          );
+        })}
+      </Table.Tr>
+
+      {props.tableKey.subs.map((subKey) => {
+        const config = props.getRowConfig(props.tableKey.main, subKey);
+
+        return (
+          <Table.Tr key={subKey}>
+            <Table.Td title={config.element} className="sticky left-0 z-10" style={{ background: "inherit" }}>
+              {props.getRowTitle(subKey)}
+            </Table.Td>
+
+            {config.cells.map((cell, cellIndex) => {
+              return (
+                <Table.Td key={cellIndex} className={cell.className} style={cell.style}>
+                  {displayValue(cell.value)}
+                  {cell.extra}
+                </Table.Td>
+              );
+            })}
+          </Table.Tr>
+        );
+      })}
+    </Table>
   );
 }

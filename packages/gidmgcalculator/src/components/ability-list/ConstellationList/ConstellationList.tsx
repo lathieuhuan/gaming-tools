@@ -41,7 +41,7 @@ export function ConstellationList({ char, onClickIcon }: ConstellationListProps)
       <div className="h-full hide-scrollbar flex flex-col space-y-4">
         {appChar.constellation.map((cons, i) => {
           return (
-            <div key={i} className="flex">
+            <div key={i} className="flex items-center">
               <div className="shrink-0 py-1 pr-2 flex-center">
                 <AbilityIcon
                   className="cursor-pointer"
@@ -51,9 +51,9 @@ export function ConstellationList({ char, onClickIcon }: ConstellationListProps)
                   onClick={() => onClickIcon(i)}
                 />
               </div>
-              <div className="grow flex items-center group" onClick={() => onClickInfo(i + 1)}>
+              <div className="grow flex group" onClick={() => onClickInfo(i + 1)}>
                 <p className={"px-2 text-lg font-bold" + (char.cons < i + 1 ? " opacity-50" : "")}>{cons.name}</p>
-                <Button className="ml-auto group-hover:bg-primary-1 shrink-0" size="small" icon={<FaInfo />} />
+                <Button className="mt-1 ml-auto group-hover:bg-primary-1 shrink-0" size="small" icon={<FaInfo />} />
               </div>
             </div>
           );

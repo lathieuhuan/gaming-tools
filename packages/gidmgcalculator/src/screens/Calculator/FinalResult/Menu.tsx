@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { FaExpandArrowsAlt, FaSearch } from "react-icons/fa";
+import { FaExpandArrowsAlt } from "react-icons/fa";
 import { MdMoreVert } from "react-icons/md";
+import { BiDetail } from "react-icons/bi";
 import { useClickOutside, Modal, CloseButton } from "rond";
 
 import { useDispatch } from "@Store/hooks";
@@ -17,7 +18,7 @@ export function Menu() {
 
   const menuItems = [
     {
-      icon: FaSearch,
+      icon: BiDetail,
       text: "Tracker",
       className: "flex hover:bg-primary-1",
       onClick: () => {

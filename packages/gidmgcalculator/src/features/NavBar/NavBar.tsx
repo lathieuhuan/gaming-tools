@@ -7,14 +7,15 @@ import {
   FaDownload,
   FaInfoCircle,
   FaQuestionCircle,
-  FaSearch,
   FaUpload,
 } from "react-icons/fa";
+import { BiDetail } from "react-icons/bi";
 import { useClickOutside, Button, Popover, CollapseSpace } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI, type UIState, type AppScreen } from "@Store/ui-slice";
 import { ActionButton, NavTabs, NavTabsProps } from "./navbar-components";
+import { selectActiveId, selectSetupManageInfos, updateCalculator } from "@Store/calculator-slice";
 
 export function NavBar() {
   const dispatch = useDispatch();
@@ -22,14 +23,10 @@ export function NavBar() {
   const atScreen = useSelector((state) => state.ui.atScreen);
   const appReady = useSelector((state) => state.ui.ready);
   const [menuDropped, setMenuDropped] = useState(false);
-  const [selectDropped, setSelectDropped] = useState(false);
 
   const closeMenu = () => setMenuDropped(false);
 
-  const closeSelect = () => setSelectDropped(false);
-
   const menuRef = useClickOutside<HTMLDivElement>(closeMenu);
-  const selectRef = useClickOutside<HTMLDivElement>(closeSelect);
 
   const screens: NavTabsProps["screens"] = [
     { label: "My Characters", value: "MY_CHARACTERS" },
@@ -68,7 +65,7 @@ export function NavBar() {
           />
         </div>
 
-        <div ref={selectRef} className="block xm:hidden relative">
+        {/* <div ref={selectRef} className="block xm:hidden relative">
           <Button
             shape="square"
             variant="custom"
@@ -99,7 +96,9 @@ export function NavBar() {
               />
             </div>
           </CollapseSpace>
-        </div>
+        </div> */}
+
+        {atScreen === "CALCULATOR" ? <QuickSetupSelect /> : null}
 
         <div className="ml-auto flex">
           <Button variant="primary" shape="square" icon={<FaDonate />} onClick={openModal("DONATE")}>
@@ -108,7 +107,7 @@ export function NavBar() {
 
           {trackerState !== "close" ? (
             <button className="w-8 h-8 flex-center text-xl text-black bg-active-color" onClick={onClickTrackerIcon}>
-              <FaSearch />
+              <BiDetail />
             </button>
           ) : null}
 
@@ -125,7 +124,7 @@ export function NavBar() {
                   onClick={openModal("INTRO")}
                 />
                 <ActionButton label="Guides" icon={<FaQuestionCircle />} onClick={openModal("GUIDES")} />
-                {/* <NavTabs
+                <NavTabs
                   className="px-4 py-2 xm:hidden font-bold"
                   screens={screens}
                   activeClassName="border-l-4 border-secondary-1 bg-surface-1 text-light-default"
@@ -134,7 +133,7 @@ export function NavBar() {
                     onClickTab(tab);
                     closeMenu();
                   }}
-                /> */}
+                />
                 <ActionButton label="Settings" icon={<FaCog />} onClick={openModal("SETTINGS")} />
                 <ActionButton
                   label="Download"
@@ -148,6 +147,59 @@ export function NavBar() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function QuickSetupSelect() {
+  const dispatch = useDispatch();
+  const manageInfos = useSelector(selectSetupManageInfos);
+  const activeId = useSelector(selectActiveId);
+  const [selectDropped, setSelectDropped] = useState(false);
+
+  const closeSelect = () => setSelectDropped(false);
+
+  const selectRef = useClickOutside<HTMLDivElement>(closeSelect);
+
+  const onSelectSetup = (id: number) => {
+    dispatch(updateCalculator({ activeId: id }));
+    closeSelect();
+  };
+
+  return (
+    <div ref={selectRef} className="block xm:hidden relative">
+      <Button
+        shape="square"
+        variant="custom"
+        className="bg-surface-2"
+        style={{
+          minWidth: "9rem",
+          borderRadius: 0,
+          justifyContent: "space-between",
+        }}
+        icon={<FaChevronDown />}
+        iconPosition="end"
+        onClick={() => setSelectDropped(!selectDropped)}
+      >
+        {manageInfos.find((info) => info.ID === activeId)?.name}
+      </Button>
+
+      <CollapseSpace active={selectDropped} className="absolute z-50 top-full left-0" moveDuration={150}>
+        <div className="flex flex-col bg-light-default text-black rounded-br overflow-hidden shadow-common">
+          {manageInfos.map((info, i) => {
+            return (
+              <button
+                key={i}
+                type="button"
+                className="p-2 text-left font-bold whitespace-nowrap"
+                onClick={() => onSelectSetup(info.ID)}
+              >
+                {info.name}
+              </button>
+            );
+          })}
+        </div>
+      </CollapseSpace>
     </div>
   );
 }

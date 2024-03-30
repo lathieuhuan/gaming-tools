@@ -5,7 +5,7 @@ import { useSelector } from "@Store/hooks";
 
 interface ActionButtonProps {
   className?: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   label: string;
   disabled?: boolean;
   onClick?: () => void;
