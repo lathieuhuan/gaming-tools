@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { SetupImporter } from "@Src/components";
 import { SetupControl } from "./SetupControl";
 
-function HigherSetupManagerCore() {
+function SetupDirectorCore() {
   const dispatch = useDispatch();
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const comparedIds = useSelector(selectComparedIds);
@@ -137,7 +137,7 @@ function HigherSetupManagerCore() {
         newStandardId: tempStandardId,
       })
     );
-    dispatch(updateUI({ highManagerActive: false }));
+    dispatch(updateUI({ setupDirectorActive: false }));
   };
 
   return (
@@ -145,7 +145,7 @@ function HigherSetupManagerCore() {
       <CloseButton
         className="ron-modal-close-button"
         boneOnly
-        onClick={() => dispatch(updateUI({ highManagerActive: false }))}
+        onClick={() => dispatch(updateUI({ setupDirectorActive: false }))}
       />
 
       <p className="my-2 text-1.5xl text-center text-heading-color font-bold">Setups Management</p>
@@ -210,18 +210,18 @@ function HigherSetupManagerCore() {
   );
 }
 
-export function HigherSetupManager(props: { className?: string }) {
-  const highManagerActive = useSelector((state) => state.ui.highManagerActive);
+export function SetupDirector(props: { className?: string }) {
+  const setupDirectorActive = useSelector((state) => state.ui.setupDirectorActive);
 
   return (
     <CollapseSpace
-      active={highManagerActive}
+      active={setupDirectorActive}
       className={clsx("absolute bottom-0 left-0 bg-surface-3 z-30", props.className)}
       activeHeight="100%"
       moveDuration={200}
       destroyOnClose
     >
-      <HigherSetupManagerCore />
+      <SetupDirectorCore />
     </CollapseSpace>
   );
 }

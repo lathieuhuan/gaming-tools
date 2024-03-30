@@ -6,7 +6,7 @@ import MyCharacters from "@Src/screens/MyCharacters";
 import MyWeapons from "@Src/screens/MyWeapons";
 import MyArtifacts from "@Src/screens/MyArtifacts";
 import MySetups from "@Src/screens/MySetups";
-import { CharacterOverview, Modifiers, SetupManager, HigherSetupManager, FinalResult } from "@Src/screens/Calculator";
+import { CharacterOverview, Modifiers, SetupManager, SetupDirector, FinalResult } from "@Src/screens/Calculator";
 
 import styles from "./AppMain.styles.module.scss";
 import { updateUI } from "@Store/ui-slice";
@@ -19,7 +19,7 @@ export function AppMainSmall() {
 
   const onClickSectionNav = (index: number) => {
     setActiveSectionI(index);
-    dispatch(updateUI({ highManagerActive: false }));
+    dispatch(updateUI({ setupDirectorActive: false }));
   };
 
   return (
@@ -71,7 +71,7 @@ export function AppMainSmall() {
                         // ========== PANEL 3 ==========
                         <SetupManager />
                       ) : null}
-                      <HigherSetupManager className={styles.card} />
+                      <SetupDirector className={styles.card} />
                     </div>
                   ),
                 },

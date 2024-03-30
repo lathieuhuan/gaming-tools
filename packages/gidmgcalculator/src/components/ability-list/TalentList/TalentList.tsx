@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace } from "rond";
 
-import type { Character, Party } from "@Src/types";
+import type { Character, LevelableTalent, Party } from "@Src/types";
 import { TALENT_TYPES } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
 import { Calculation_ } from "@Src/utils";
@@ -23,7 +23,7 @@ type RenderedTalentConfig = {
 interface TalentListProps {
   char: Character;
   party?: Party;
-  onChangeTalentLevel: (talentType: "NAs" | "ES" | "EB", newLevel: number) => void;
+  onChangeTalentLevel: (talentType: LevelableTalent, newLevel: number) => void;
 }
 export function TalentList({ char, party, onChangeTalentLevel }: TalentListProps) {
   const [atDetail, setAtDetail] = useState(false);

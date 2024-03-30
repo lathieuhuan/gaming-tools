@@ -61,7 +61,7 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
             style={{ width: 88, height: 88 }}
           >
             <Button className="absolute -top-1 -left-1 z-10" icon={<FaSyncAlt />} />
-            <Badge active={appChar.beta} className="absolute -top-2 -right-2 z-10">
+            <Badge active={appChar.beta} className="absolute -top-1 -right-1 z-10">
               BETA
             </Badge>
             <GenshinImage className="cursor-pointer" src={appChar.icon} imgType="character" fallbackCls="p-2" />

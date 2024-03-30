@@ -4,6 +4,7 @@ import type {
   AttackPattern,
   Character,
   ElementType,
+  LevelableTalent,
   PartyData,
   Talent,
   TalentAttributeType,
@@ -62,7 +63,7 @@ export class Character_ {
   }
 
   static getTalentDefaultInfo(
-    key: "NAs" | "ES" | "EB",
+    key: LevelableTalent,
     weaponType: WeaponType,
     elementType: ElementType,
     attPatt: AttackPattern,

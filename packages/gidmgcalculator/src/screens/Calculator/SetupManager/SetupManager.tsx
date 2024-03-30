@@ -47,7 +47,7 @@ export function SetupManager() {
           <Button
             className="mx-auto"
             icon={<IoDocumentText />}
-            onClick={() => dispatch(updateUI({ highManagerActive: true }))}
+            onClick={() => dispatch(updateUI({ setupDirectorActive: true }))}
           />
         </div>
       </div>

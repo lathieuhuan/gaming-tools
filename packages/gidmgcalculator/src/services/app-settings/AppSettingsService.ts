@@ -12,6 +12,7 @@ export type AppSettings = {
   wpLevel: Level;
   wpRefi: number;
   artLevel: number;
+  targetLevel: number;
 };
 
 export class AppSettingsService {
@@ -27,6 +28,7 @@ export class AppSettingsService {
     wpLevel: "1/20",
     wpRefi: 1,
     artLevel: 0,
+    targetLevel: 1,
   };
 
   get<T extends keyof AppSettings>(key: T): AppSettings[T];

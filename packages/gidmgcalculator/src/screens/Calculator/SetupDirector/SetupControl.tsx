@@ -34,30 +34,25 @@ export function SetupControl({
         maxLength={20}
         onChange={onChangeSetupName}
       />
-      <div className="mt-4 flex justify-between">
-        <div className="ml-1 flex space-x-4">
-          <Button icon={<FaTrashAlt />} onClick={onRemoveSetup} />
-          <Button icon={<FaCopy />} disabled={!copiable || setup.status === "NEW"} onClick={onCopySetup} />
-        </div>
+      <div className="mt-4 flex justify-end gap-4">
+        <Button icon={<FaTrashAlt />} onClick={onRemoveSetup} />
+        <Button icon={<FaCopy />} disabled={!copiable || setup.status === "NEW"} onClick={onCopySetup} />
 
-        <div className="flex space-x-3">
-          <Button
-            className="w-8 h-8"
-            size="custom"
-            variant={isStandard ? "active" : "default"}
-            disabled={!choosableAsStandard}
-            icon={<SiTarget className="text-2xl" />}
-            onClick={onChooseStandard}
-          />
-
-          <Button
-            className="w-8 h-8"
-            size="custom"
-            variant={setup.isCompared ? "active" : "default"}
-            icon={<FaBalanceScaleLeft className="text-xl" />}
-            onClick={onToggleCompared}
-          />
-        </div>
+        <Button
+          className="w-8 h-8"
+          size="custom"
+          variant={isStandard ? "active" : "default"}
+          disabled={!choosableAsStandard}
+          icon={<SiTarget className="text-2xl" />}
+          onClick={onChooseStandard}
+        />
+        <Button
+          className="w-8 h-8"
+          size="custom"
+          variant={setup.isCompared ? "active" : "default"}
+          icon={<FaBalanceScaleLeft className="text-xl" />}
+          onClick={onToggleCompared}
+        />
       </div>
     </div>
   );

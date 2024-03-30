@@ -1,12 +1,19 @@
 import { useContext, useRef, useState } from "react";
-import { Modal } from "rond";
+import { InputNumber, Modal } from "rond";
 
+import type { Level } from "@Src/types";
 import { LEVELS } from "@Src/constants";
-import { $AppSettings } from "@Src/services";
+import { $AppSettings, AppSettings } from "@Src/services";
 import { applySettings } from "@Store/calculator-slice";
 import { useDispatch } from "@Store/hooks";
 import { DynamicStoreControlContext } from "../../DynamicStoreProvider";
-import { CheckSetting, Section, SelectSetting } from "./settings-components";
+import { CheckSetting, Section } from "./settings-components";
+
+type DefaultValueControl = {
+  key: Exclude<keyof AppSettings, "charInfoIsSeparated" | "doKeepArtStatsOnSwitch" | "persistingUserData">;
+  label: string;
+  options?: (string | number)[];
+};
 
 const genNumberSequence = (count: number, startFromZero?: boolean) => {
   return [...Array(count)].map((_, i) => i + (startFromZero ? 0 : 1));
@@ -41,7 +48,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
     onClose();
   };
 
-  const defaultValueSettings = useRef([
+  const defaultValueSettings = useRef<DefaultValueControl[]>([
     {
       key: "charLevel",
       label: "Character level",
@@ -78,7 +85,27 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
       label: "Artifact level",
       options: [...Array(6)].map((_, i) => i * 4),
     },
-  ] as const);
+    {
+      key: "targetLevel",
+      label: "Target level",
+    },
+  ]);
+
+  const onChangeTempSettings = (key: keyof AppSettings, value: AppSettings[keyof AppSettings]) => {
+    setTempSettings((prevSettings) => ({
+      ...prevSettings,
+      [key]: value,
+    }));
+  };
+
+  const renderDefaultSetting = (key: string, label: string, control: React.ReactNode) => {
+    return (
+      <div key={key} className="flex gap-3 items-center justify-between" style={{ minHeight: "2.25rem" }}>
+        <span>{label}</span>
+        <div className="w-20">{control}</div>
+      </div>
+    );
+  };
 
   return (
     <form
@@ -94,20 +121,14 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
           label="Separate main character's info on each setup"
           defaultChecked={tempSettings.charInfoIsSeparated}
           onChange={() => {
-            setTempSettings((prevSettings) => ({
-              ...prevSettings,
-              charInfoIsSeparated: !prevSettings.charInfoIsSeparated,
-            }));
+            onChangeTempSettings("charInfoIsSeparated", !tempSettings.charInfoIsSeparated);
           }}
         />
         <CheckSetting
           label="Keep artifact stats when switching to a new set"
           defaultChecked={tempSettings.doKeepArtStatsOnSwitch}
           onChange={() => {
-            setTempSettings((prevSettings) => ({
-              ...prevSettings,
-              doKeepArtStatsOnSwitch: !prevSettings.doKeepArtStatsOnSwitch,
-            }));
+            onChangeTempSettings("doKeepArtStatsOnSwitch", !tempSettings.doKeepArtStatsOnSwitch);
           }}
         />
         <div>
@@ -115,10 +136,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
             label="Auto save my database to browser's local storage"
             defaultChecked={tempSettings.persistingUserData}
             onChange={() => {
-              setTempSettings((prevSettings) => ({
-                ...prevSettings,
-                persistingUserData: !prevSettings.persistingUserData,
-              }));
+              onChangeTempSettings("persistingUserData", !tempSettings.persistingUserData);
             }}
           />
           <ul className="mt-1 pl-4 text-sm list-disc space-y-1">
@@ -131,18 +149,39 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
       </Section>
 
       <Section title="Default values">
-        {defaultValueSettings.current.map(({ key, ...rest }) => {
-          return (
-            <SelectSetting
+        {defaultValueSettings.current.map(({ key, label, options }) => {
+          const defaultValue = tempSettings[key];
+
+          if (options) {
+            return renderDefaultSetting(
+              key,
+              label,
+              <select
+                className="w-full styled-select shrink-0 text-right text-last-right"
+                defaultValue={defaultValue}
+                onChange={(e) => {
+                  const newValue = typeof defaultValue === "string" ? (e.target.value as Level) : +e.target.value;
+                  onChangeTempSettings(key, newValue);
+                }}
+              >
+                {options.map((option, i) => (
+                  <option key={i}>{option}</option>
+                ))}
+              </select>
+            );
+          }
+
+          return renderDefaultSetting(
+            key,
+            label,
+            <InputNumber
               key={key}
-              defaultValue={tempSettings[key]}
-              onChange={(newvalue) => {
-                setTempSettings((prevSettings) => ({
-                  ...prevSettings,
-                  [key]: newvalue,
-                }));
+              className="w-full px-2 py-1 text-right font-bold"
+              value={tempSettings.targetLevel}
+              max={100}
+              onChange={(newValue) => {
+                onChangeTempSettings(key, newValue);
               }}
-              {...rest}
             />
           );
         })}

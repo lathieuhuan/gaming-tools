@@ -211,12 +211,12 @@ export class Setup_ {
 
   static teammatesOf = (party?: Party) => (party?.filter(Boolean) as Teammate[]) ?? [];
 
-  static createTarget() {
+  static createTarget(defaultValues?: Partial<Target>) {
     const result = { code: 0, level: 1, resistances: {} } as Target;
     for (const elmt of ATTACK_ELEMENTS) {
       result.resistances[elmt] = 10;
     }
-    return result;
+    return Object.assign(result, defaultValues);
   }
 }
 

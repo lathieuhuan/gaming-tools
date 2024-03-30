@@ -2,12 +2,12 @@ import { useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
 import { clsx } from "rond";
 
-import type { AppCharacter, CalculationAspect, Talent, Weapon } from "@Src/types";
-import { useSelector } from "@Store/hooks";
-import { selectSetupManageInfos, selectStandardId } from "@Store/calculator-slice";
+import type { CalculationAspect, Talent, Weapon } from "@Src/types";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { selectSetupManageInfos, selectStandardId, updateCharacter } from "@Store/calculator-slice";
 import { Character_, findById } from "@Src/utils";
-import { FinalResultLayout, FinalResultLayoutProps } from "@Src/components";
-import { $AppCharacter, $AppSettings } from "@Src/services";
+import { FinalResultLayout, type FinalResultLayoutProps } from "@Src/components";
+import { $AppCharacter } from "@Src/services";
 import { TALENT_TYPES } from "@Src/constants";
 
 type CellConfig = ReturnType<FinalResultLayoutProps["getRowConfig"]>["cells"][number];
@@ -23,6 +23,7 @@ interface FinalResultCompareProps {
   weapon: Weapon;
 }
 export function FinalResultCompare({ comparedIds, weapon }: FinalResultCompareProps) {
+  const dispatch = useDispatch();
   const resultById = useSelector((state) => state.calculator.resultById);
   const standardId = useSelector(selectStandardId);
 
@@ -59,7 +60,16 @@ export function FinalResultCompare({ comparedIds, weapon }: FinalResultComparePr
       <div className="grow hide-scrollbar">
         <FinalResultLayout
           {...layoutProps}
+          talentMutable
           weapon={weapon}
+          onChangeTalentLevel={(talentType, newLevel) => {
+            dispatch(
+              updateCharacter({
+                [talentType]: newLevel,
+                setupIds: comparedIds,
+              })
+            );
+          }}
           getRowConfig={(mainKey, subKey) => {
             const standardValue = getValue(standardId, mainKey, subKey);
 
@@ -102,7 +112,7 @@ export function FinalResultCompare({ comparedIds, weapon }: FinalResultComparePr
                     />
                     <span
                       className={clsx(
-                        "absolute bottom-1/2 right-5 z-10 mb-2.5 pt-1 px-2 pb-0.5 rounded font-bold bg-black shadow-white-glow hidden group-hover:block",
+                        "absolute bottom-1/2 right-5 z-10 mb-2.5 pt-1 px-2 pb-0.5 rounded font-semibold bg-black shadow-white-glow hidden group-hover:block",
                         diff > 0 ? "text-bonus-color" : "text-danger-2"
                       )}
                     >
@@ -121,11 +131,6 @@ export function FinalResultCompare({ comparedIds, weapon }: FinalResultComparePr
     </div>
   );
 }
-
-type LvlingState = {
-  talentType: Talent;
-  setupIndex: number;
-};
 
 type LayoutProps = Pick<
   FinalResultLayoutProps,
@@ -182,7 +187,7 @@ function useLayoutProps(comparedIds: number[], standardId: number): LayoutProps 
           return (
             <div className="flex flex-col items-center">
               <span>{text}</span>
-              <span className="px-1 rounded-sm text-xs font-bold bg-surface-3">{talentLevel}</span>
+              <span className="px-1 rounded-sm text-xs font-bold text-secondary-1">Lv.{talentLevel}</span>
             </div>
           );
         }

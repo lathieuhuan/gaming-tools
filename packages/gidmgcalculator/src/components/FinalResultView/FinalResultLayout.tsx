@@ -3,12 +3,10 @@ import { FaCaretRight } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { Button, CollapseSpace, Table, TableThProps } from "rond";
 
-import type { AppCharacter, CalcCharacter, Talent, Weapon } from "@Src/types";
+import type { AppCharacter, CalcCharacter, LevelableTalent, Talent, Weapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
 import { displayValue, getTableKeys, type TableKey } from "./FinalResultView.utils";
-
-type ToggleLvling = (active: boolean) => void;
 
 type HeaderConfig = Pick<TableThProps, "className" | "style"> & {
   content: React.ReactNode | ((talentType: Talent | undefined) => React.ReactNode);
@@ -35,7 +33,7 @@ export interface FinalResultLayoutProps {
   getRowConfig: (mainKey: TableKey["main"], subKey: string) => RowConfig;
   getTalentLevel?: (talentType: Talent) => number | undefined;
   talentMutable?: boolean;
-  onChangeTalentLevel?: (talentType: "NAs" | "ES" | "EB", newLevel: number) => void;
+  onChangeTalentLevel?: (talentType: LevelableTalent, newLevel: number) => void;
 }
 export function FinalResultLayout({
   char,
@@ -77,22 +75,18 @@ export function FinalResultLayout({
     }
   };
 
-  const renderLvButtons = (key: TableKey["main"], buffer = 0) => {
+  const renderLvButtons = (talent: LevelableTalent, buffer = 0) => {
     return Array.from({ length: 5 }, (_, i) => {
       const level = i + 1 + buffer;
-      const isTalent = key !== "RXN" && key !== "WP_CALC";
 
       return (
         <Button
           key={i}
           size="custom"
           className="w-8 h-8"
-          disabled={!isTalent || char[key] === level}
           onClick={() => {
-            if (isTalent) {
-              onChangeTalentLevel?.(key, level);
-              setLvlingSectionI(-1);
-            }
+            onChangeTalentLevel?.(talent, level);
+            setLvlingSectionI(-1);
           }}
         >
           {level}
@@ -133,7 +127,7 @@ export function FinalResultLayout({
               </button>
 
               <div className="flex">
-                {talentMutable && talentLevel ? (
+                {talentMutable && talentType ? (
                   <Button
                     boneOnly
                     size="custom"
@@ -145,11 +139,11 @@ export function FinalResultLayout({
               </div>
             </div>
 
-            {isLvling ? (
+            {isLvling && talentType ? (
               <div className="mt-2">
                 <div className="text-sm">Select level</div>
-                <div className="mt-1 flex gap-3">{renderLvButtons(tableKey.main)}</div>
-                <div className="mt-3 flex gap-3">{renderLvButtons(tableKey.main, 5)}</div>
+                <div className="mt-1 flex gap-3">{renderLvButtons(talentType)}</div>
+                <div className="mt-3 flex gap-3">{renderLvButtons(talentType, 5)}</div>
               </div>
             ) : null}
 

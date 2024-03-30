@@ -131,28 +131,11 @@ export function SetupSelect() {
             renderActions: ({ closeSelect }) => {
               const actions: Array<ButtonHTMLAttributes<HTMLButtonElement>> = [
                 {
-                  className: ID === standardId ? "bg-bonus-color" : "bg-light-default",
-                  children: <SiTarget className="text-1.5xl" />,
-                  disabled: comparedIds.length < 2 || !comparedIds.includes(ID),
-                  onClick: onClickChooseStandard(ID),
-                },
-                {
-                  className: comparedIds.includes(ID) ? "bg-bonus-color" : "bg-light-default",
-                  children: <FaBalanceScaleLeft className="text-1.5xl" />,
+                  className: "hover:bg-danger-1 hover:text-light-default",
+                  children: <FaTrashAlt />,
                   disabled: setupManageInfos.length < 2,
-                  onClick: onClickToggleCompared(ID),
-                },
-                {
-                  className: "hover:bg-primary-1" + (isAtMax ? " bg-light-disabled" : ""),
-                  children: <FaCopy />,
-                  disabled: isAtMax,
-                  onClick: onClickCopySetup(ID),
-                },
-                {
-                  className: "hover:bg-primary-1",
-                  children: <FaSave />,
                   onClick: () => {
-                    openModal("SAVE_SETUP", i);
+                    openModal("REMOVE_SETUP", i);
                     closeSelect();
                   },
                 },
@@ -165,13 +148,30 @@ export function SetupSelect() {
                   },
                 },
                 {
-                  className: "hover:bg-danger-1 hover:text-light-default",
-                  children: <FaTrashAlt />,
-                  disabled: setupManageInfos.length < 2,
+                  className: "hover:bg-primary-1",
+                  children: <FaSave />,
                   onClick: () => {
-                    openModal("REMOVE_SETUP", i);
+                    openModal("SAVE_SETUP", i);
                     closeSelect();
                   },
+                },
+                {
+                  className: "hover:bg-primary-1" + (isAtMax ? " bg-light-disabled" : ""),
+                  children: <FaCopy />,
+                  disabled: isAtMax,
+                  onClick: onClickCopySetup(ID),
+                },
+                {
+                  className: ID === standardId ? "bg-bonus-color" : "bg-light-default",
+                  children: <SiTarget className="text-1.5xl" />,
+                  disabled: comparedIds.length < 2 || !comparedIds.includes(ID),
+                  onClick: onClickChooseStandard(ID),
+                },
+                {
+                  className: comparedIds.includes(ID) ? "bg-bonus-color" : "bg-light-default",
+                  children: <FaBalanceScaleLeft className="text-1.5xl" />,
+                  disabled: setupManageInfos.length < 2,
+                  onClick: onClickToggleCompared(ID),
                 },
               ];
 

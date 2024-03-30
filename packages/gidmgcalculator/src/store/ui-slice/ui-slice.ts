@@ -20,7 +20,7 @@ export interface UIState {
   loading: boolean;
   atScreen: AppScreen;
   appModalType: "" | "INTRO" | "GUIDES" | "SETTINGS" | "UPLOAD" | "DOWNLOAD" | "DONATE";
-  highManagerActive: boolean;
+  setupDirectorActive: boolean;
   trackerState: TrackerState;
   mySetupsModalType: MySetupsModalType;
   importInfo: SetupImportInfo;
@@ -30,7 +30,7 @@ const initialState: UIState = {
   atScreen: "CALCULATOR",
   appModalType: "INTRO",
   mySetupsModalType: "",
-  highManagerActive: false,
+  setupDirectorActive: false,
   trackerState: "close",
   importInfo: {},
   loading: false,

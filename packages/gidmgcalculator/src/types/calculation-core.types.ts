@@ -179,4 +179,3 @@ export type CalculationFinalResult = {
   WP_CALC: CalculationFinalResultGroup,
 }
 
-// Record<"NAs" | "ES" | "EB" | "RXN", CalculationFinalResultGroup>;

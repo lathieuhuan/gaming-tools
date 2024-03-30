@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { PartiallyOptional } from "rond";
-import type { AttackElement, CalcSetupManageInfo, CalcWeapon, Character, Resonance, Target } from "@Src/types";
+import type { AttackElement, CalcSetupManageInfo, CalcWeapon, Resonance, Target } from "@Src/types";
 import type {
   CalculatorState,
   AddTeammateAction,
@@ -21,6 +21,7 @@ import type {
   UpdateTeammateArtifactAction,
   ApplySettingsAction,
   InitNewSessionPayload,
+  UpdateCharacterAction,
 } from "./calculator-slice.types";
 
 import { ATTACK_ELEMENTS, RESONANCE_ELEMENT_TYPES } from "@Src/constants";
@@ -155,29 +156,32 @@ export const calculatorSlice = createSlice({
       }
     },
     // CHARACTER
-    updateCharacter: (state, action: PayloadAction<Partial<Character>>) => {
-      const { setupsById, target } = state;
+    updateCharacter: (state, action: UpdateCharacterAction) => {
+      const { setupsById, activeId } = state;
       const { charInfoIsSeparated } = $AppSettings.get();
-      const { level } = action.payload;
+      const { setupIds, ...newConfig } = action.payload;
 
-      if (level && target.level === 1) {
-        target.level = Calculation_.getBareLv(level);
-      }
-      if (charInfoIsSeparated) {
-        const currentSetup = setupsById[state.activeId];
-        currentSetup.char = {
-          ...currentSetup.char,
-          ...action.payload,
+      if (setupIds) {
+        toArray(setupIds).forEach((setupId) => {
+          setupsById[setupId].char = {
+            ...setupsById[setupId].char,
+            ...newConfig,
+          };
+        });
+      } else if (charInfoIsSeparated) {
+        setupsById[activeId].char = {
+          ...setupsById[activeId].char,
+          ...newConfig,
         };
       } else {
         for (const setup of Object.values(setupsById)) {
           setup.char = {
             ...setup.char,
-            ...action.payload,
+            ...newConfig,
           };
         }
       }
-      calculate(state, !charInfoIsSeparated);
+      calculate(state, !!setupIds || !charInfoIsSeparated);
     },
     // PARTY
     addTeammate: (state, action: AddTeammateAction) => {
