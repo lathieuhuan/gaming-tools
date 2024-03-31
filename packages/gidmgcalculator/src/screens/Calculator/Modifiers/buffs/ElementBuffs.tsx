@@ -119,7 +119,7 @@ export default function ElementBuffs() {
   // ========== RESONANCE ==========
   if (elmtModCtrls.resonances.length) {
     renderedElmts.push(
-      <div>
+      <div className="space-y-3">
         {elmtModCtrls.resonances.map((resonance) => {
           return (
             <ResonanceBuffItem
