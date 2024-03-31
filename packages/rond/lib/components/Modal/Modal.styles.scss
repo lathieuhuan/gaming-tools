@@ -1,28 +1,3 @@
-.ron-modal-core {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-}
-.ron-modal-core-invisible {
-  visibility: hidden;
-}
-
-.ron-modal-mask {
-  width: 100%;
-  height: 100%;
-  background-color: #000;
-
-  &.ron-modal-mask-out {
-    opacity: 0.6;
-  }
-  &.ron-modal-mask-in {
-    opacity: 0.2;
-  }
-}
-
 .ron-modal-content {
   position: fixed;
   top: 50%;
@@ -80,12 +55,6 @@
 .ron-modal-content-large-height {
   height: 90vh;
   max-height: 760px;
-}
-
-.ron-modal-transition {
-  transition-property: opacity, transform;
-  transition-timing-function: linear;
-  transition-duration: 150ms;
 }
 
 // Modal only styles

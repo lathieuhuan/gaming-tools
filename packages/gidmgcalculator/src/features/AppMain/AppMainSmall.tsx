@@ -1,7 +1,10 @@
 import { useState } from "react";
-import { SwitchNode } from "rond";
+import { FaChevronDown } from "react-icons/fa";
+import { BottomSheet, SwitchNode } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
+import { updateUI } from "@Store/ui-slice";
+import { selectActiveId, selectSetupManageInfos, updateCalculator } from "@Store/calculator-slice";
 import MyCharacters from "@Src/screens/MyCharacters";
 import MyWeapons from "@Src/screens/MyWeapons";
 import MyArtifacts from "@Src/screens/MyArtifacts";
@@ -9,7 +12,6 @@ import MySetups from "@Src/screens/MySetups";
 import { CharacterOverview, Modifiers, SetupManager, SetupDirector, FinalResult } from "@Src/screens/Calculator";
 
 import styles from "./AppMain.styles.module.scss";
-import { updateUI } from "@Store/ui-slice";
 
 export function AppMainSmall() {
   const dispatch = useDispatch();
@@ -17,7 +19,7 @@ export function AppMainSmall() {
   const touched = useSelector((state) => state.calculator.setupManageInfos.length !== 0);
   const [activeSectionI, setActiveSectionI] = useState(0);
 
-  const onClickSectionNav = (index: number) => {
+  const onSelectSection = (index: number) => {
     setActiveSectionI(index);
     dispatch(updateUI({ setupDirectorActive: false }));
   };
@@ -87,27 +89,75 @@ export function AppMainSmall() {
             </div>
           </div>
 
-          {touched ? (
-            <div
-              className="flex font-semibold border-surface-border"
-              style={{ backgroundColor: "#05071a", borderTopWidth: "1px" }}
-            >
-              {["Overview", "Modifiers", "Setup", "Results"].map((label, index) => {
-                return (
-                  <button
-                    key={label}
-                    className={`w-1/4 py-2 ${index === activeSectionI ? "text-secondary-1" : "text-light-default/60"}`}
-                    // disabled={!touched}
-                    onClick={() => onClickSectionNav(index)}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          ) : null}
+          {touched ? <CalculatorNavBar activeSectionI={activeSectionI} onSelectSection={onSelectSection} /> : null}
         </div>
       }
     />
+  );
+}
+
+interface CalculatorNavBarProps {
+  activeSectionI: number;
+  onSelectSection: (index: number) => void;
+}
+function CalculatorNavBar({ activeSectionI, onSelectSection }: CalculatorNavBarProps) {
+  const dispatch = useDispatch();
+  const manageInfos = useSelector(selectSetupManageInfos);
+  const activeId = useSelector(selectActiveId);
+  const [optionsActive, setOptionsActive] = useState(false);
+
+  const currentSetup = manageInfos.find((info) => info.ID === activeId);
+
+  const closeOptions = () => setOptionsActive(false);
+
+  const onSelectSetup = (id: number) => {
+    if (id !== currentSetup?.ID) {
+      dispatch(updateCalculator({ activeId: id }));
+    }
+    closeOptions();
+  };
+
+  return (
+    <>
+      <div className="flex font-semibold border-t border-surface-border" style={{ backgroundColor: "#05071a" }}>
+        {["Overview", "Modifiers", "Setups", "Results"].map((label, index) => {
+          const isActive = index === activeSectionI;
+
+          return (
+            <div
+              key={label}
+              className={"w-full py-2 flex-center " + (isActive ? "text-secondary-1" : "text-light-default/60")}
+              onClick={() => onSelectSection(index)}
+            >
+              {label}
+            </div>
+          );
+        })}
+
+        <div className="my-auto w-px h-2/3 bg-surface-border" />
+        <button type="button" className="shrink-0 w-10 flex-center rotate-180" onClick={() => setOptionsActive(true)}>
+          <FaChevronDown />
+        </button>
+      </div>
+
+      <BottomSheet active={optionsActive} title="Switch to setup" height="30%" onClose={closeOptions}>
+        {manageInfos.map((info, i) => {
+          const isCurrent = info.ID === currentSetup?.ID;
+
+          return (
+            <button
+              key={i}
+              type="button"
+              className="px-6 w-full text-left font-semibold"
+              onClick={() => onSelectSetup(info.ID)}
+            >
+              <div className="py-1.5 truncate whitespace-nowrap border-b border-surface-border">
+                <span className={isCurrent ? " text-active-color" : ""}>{info.name}</span>
+              </div>
+            </button>
+          );
+        })}
+      </BottomSheet>
+    </>
   );
 }

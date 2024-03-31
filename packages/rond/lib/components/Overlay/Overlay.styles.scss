@@ -1,0 +1,30 @@
+.ron-overlay-core {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+}
+.ron-overlay-core-invisible {
+  visibility: hidden;
+}
+
+.ron-overlay-mask {
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+
+  &.ron-overlay-mask-out {
+    opacity: 0.6;
+  }
+  &.ron-overlay-mask-in {
+    opacity: 0.2;
+  }
+}
+
+.ron-overlay-transition {
+  transition-property: opacity, transform;
+  transition-timing-function: ease-in-out;
+  transition-duration: 200ms;
+}

@@ -62,10 +62,10 @@ export function ComplexSelect({
     <div ref={ref} className={clsx("shrink-0 relative", className)}>
       <button
         id={`complex-select-${selectId}_select`}
-        className="w-full py-0.5 bg-heading-color text-black rounded-t-2.5xl rounded-b-2.5xl relative cursor-default"
+        className="w-full px-8 py-0.5 bg-heading-color text-black rounded-t-2.5xl rounded-b-2.5xl relative cursor-default"
         onClick={() => toggleDropdown(!isDropped)}
       >
-        <span className="w-full text-lg font-bold text-center relative z-10">{label}</span>
+        <div className="w-full truncate text-lg font-bold text-center relative z-10">{label}</div>
         <FaChevronDown className="absolute top-1/2 right-4 -translate-y-1/2" />
       </button>
 
