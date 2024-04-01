@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { FaBars, FaCog, FaDonate, FaDownload, FaInfoCircle, FaQuestionCircle, FaUpload } from "react-icons/fa";
+import { FaBars, FaCog, FaDonate, FaDownload, FaInfoCircle, FaQuestionCircle, FaSkull, FaUpload } from "react-icons/fa";
 import { BiDetail } from "react-icons/bi";
-import { useClickOutside, Button, Popover } from "rond";
+import { useClickOutside, Button, Popover, useScreenWatcher } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI, type UIState, type AppScreen } from "@Store/ui-slice";
@@ -16,6 +16,8 @@ export function NavBar() {
   const closeMenu = () => setMenuDropped(false);
 
   const menuRef = useClickOutside<HTMLDivElement>(closeMenu);
+
+  const buttonCls = "w-8 h-8 flex-center";
 
   const screens: NavTabsProps["screens"] = [
     { label: "My Characters", value: "MY_CHARACTERS" },
@@ -39,7 +41,7 @@ export function NavBar() {
   };
 
   return (
-    <div className="absolute top-0 left-0 right-0 bg-black/60 flex gap-4">
+    <div className="absolute top-0 left-0 right-0 bg-black/60 flex">
       <div className="hidden xm:flex">
         <NavTabs
           className="px-2 py-1 font-semibold"
@@ -49,6 +51,16 @@ export function NavBar() {
           ready={appReady}
           onClickTab={onClickTab}
         />
+      </div>
+
+      <div className="flex">
+        <TargetConfigButton className={buttonCls} />
+
+        {trackerState === "hidden" ? (
+          <button className={`${buttonCls} text-xl text-black bg-active-color`} onClick={onClickTrackerIcon}>
+            <BiDetail />
+          </button>
+        ) : null}
       </div>
 
       {/* <div ref={selectRef} className="block xm:hidden relative">
@@ -89,14 +101,8 @@ export function NavBar() {
           Donate
         </Button>
 
-        {trackerState !== "close" ? (
-          <button className="w-8 h-8 flex-center text-xl text-black bg-active-color" onClick={onClickTrackerIcon}>
-            <BiDetail />
-          </button>
-        ) : null}
-
         <div ref={menuRef} className="relative text-light-default">
-          <button className="w-8 h-8 flex-center bg-surface-3 text-xl" onClick={() => setMenuDropped(!menuDropped)}>
+          <button className={`${buttonCls} bg-surface-3 text-xl`} onClick={() => setMenuDropped(!menuDropped)}>
             <FaBars />
           </button>
 
@@ -128,4 +134,20 @@ export function NavBar() {
       </div>
     </div>
   );
+}
+
+function TargetConfigButton(props: { className?: string }) {
+  const dispatch = useDispatch();
+  const screenWatcher = useScreenWatcher();
+  const atScreen = useSelector((state) => state.ui.atScreen);
+  const calcTargetConfig = useSelector((state) => state.ui.calcTargetConfig);
+
+  return screenWatcher.isToSize("sm") && atScreen === "CALCULATOR" && !calcTargetConfig.onOverview ? (
+    <button
+      className={`${props.className} bg-surface-3`}
+      onClick={() => dispatch(updateUI({ calcTargetConfig: { active: true, onOverview: false } }))}
+    >
+      <FaSkull />
+    </button>
+  ) : null;
 }

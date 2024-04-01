@@ -7,7 +7,14 @@ import MyCharacters from "@Src/screens/MyCharacters";
 import MyWeapons from "@Src/screens/MyWeapons";
 import MyArtifacts from "@Src/screens/MyArtifacts";
 import MySetups from "@Src/screens/MySetups";
-import { CharacterOverview, Modifiers, SetupManager, SetupDirector, FinalResult } from "@Src/screens/Calculator";
+import {
+  CharacterOverview,
+  Modifiers,
+  SetupManager,
+  SetupDirector,
+  FinalResult,
+  CalculatorModalsProvider,
+} from "@Src/screens/Calculator";
 
 import styles from "./AppMain.styles.module.scss";
 
@@ -90,7 +97,9 @@ export function AppMainLarge() {
 
   return (
     <div className="h-full flex-center relative">
-      <LargeCalculator />
+      <CalculatorModalsProvider>
+        <LargeCalculator />
+      </CalculatorModalsProvider>
 
       {atScreen !== "CALCULATOR" ? (
         <div className="absolute full-stretch z-30">

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Input, Modal } from "rond";
 
-import type { CalcSetupManageInfo, Party } from "@Src/types";
+import type { Party } from "@Src/types";
 import { $AppCharacter } from "@Src/services";
 import { Setup_, findById } from "@Src/utils";
 import { useStoreSnapshot } from "@Src/features";
@@ -19,16 +19,16 @@ function areDifferentParties(party1: Party, party2: Party) {
 }
 
 interface SaveSetupProps {
-  manageInfo: CalcSetupManageInfo;
+  setupId: number;
   onClose: () => void;
 }
-export function SaveSetup({ manageInfo, onClose }: SaveSetupProps) {
+export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
   const dispatch = useDispatch();
   const char = useSelector(selectCharacter);
   const party = useSelector(selectParty);
 
   const appChar = $AppCharacter.get(char.name);
-  const existedSetup = findById(useStoreSnapshot(selectUserSetups), manageInfo.ID);
+  const existedSetup = findById(useStoreSnapshot(selectUserSetups), setupId);
 
   const [input, setInput] = useState(existedSetup ? existedSetup.name : `${appChar.name} setup`);
 
@@ -48,7 +48,7 @@ export function SaveSetup({ manageInfo, onClose }: SaveSetupProps) {
   }
 
   const saveSetup = () => {
-    dispatch(saveSetupThunk(manageInfo.ID, input));
+    dispatch(saveSetupThunk(setupId, input));
     onClose();
   };
 

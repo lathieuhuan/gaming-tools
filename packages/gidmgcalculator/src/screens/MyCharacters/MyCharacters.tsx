@@ -10,6 +10,7 @@ import { Tavern } from "@Src/components";
 import CharacterSort from "./CharacterSort";
 import CharacterList from "./CharacterList";
 import CharacterInfo from "./CharacterInfo";
+import { FaPlus } from "react-icons/fa";
 
 type ModalType = "ADD_CHARACTER" | "SORT_CHARACTERS" | "";
 
@@ -25,19 +26,32 @@ export default function MyCharacters() {
     setModalType("");
   };
 
+  const renderAddCharacterButton = (cls = "") => (
+    <Button
+      variant="custom"
+      size="custom"
+      className={`w-full h-full bg-surface-3 ${cls}`}
+      icon={<FaPlus />}
+      onClick={() => setModalType("ADD_CHARACTER")}
+    />
+  );
+
   return (
     <div className="h-full flex flex-col bg-surface-3">
       {screenWatcher.isFromSize("md") ? (
         <CharacterList
           characters={userChars}
           chosenChar={chosenChar}
+          addCharacterButton={renderAddCharacterButton("text-2xl")}
           onClickSort={() => setModalType("SORT_CHARACTERS")}
           onClickWish={() => setModalType("ADD_CHARACTER")}
         />
       ) : (
-        <div className="py-4 flex bg-surface-2">
-          {userChars.length ? (
-            <div className="w-full flex-center relative">
+        <div className="py-4 flex justify-center bg-surface-2">
+          <div className="flex justify-between" style={{ width: "80%" }}>
+            <span />
+
+            {userChars.length ? (
               <select
                 className="styled-select py-0 text-1.5xl leading-base text-center text-last-center"
                 value={chosenChar}
@@ -47,15 +61,10 @@ export default function MyCharacters() {
                   <option key={i}>{userChar.name}</option>
                 ))}
               </select>
-              <Button className="ml-6" variant="primary" onClick={() => setModalType("ADD_CHARACTER")}>
-                Add
-              </Button>
-            </div>
-          ) : (
-            <Button className="mx-auto" variant="primary" onClick={() => setModalType("ADD_CHARACTER")}>
-              Add new characters
-            </Button>
-          )}
+            ) : null}
+
+            <div style={{ width: "3rem", height: "3rem" }}>{renderAddCharacterButton("text-xl")}</div>
+          </div>
         </div>
       )}
 

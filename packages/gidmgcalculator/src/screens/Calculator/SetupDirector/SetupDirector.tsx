@@ -14,12 +14,105 @@ import {
 } from "@Store/calculator-slice";
 import { updateUI } from "@Store/ui-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
+import { useCalculatorModalControl } from "../CalculatorModalsProvider";
 
 // Component
-import { SetupImporter } from "@Src/components";
 import { SetupControl } from "./SetupControl";
 
 function SetupDirectorCore() {
+  const dispatch = useDispatch();
+  const calcModalCtrl = useCalculatorModalControl();
+  const { displayedSetups, comparedSetups, canAddMoreSetup, tempStandardId, control } = useSetupDirectorKit();
+
+  return (
+    <div className="p-4 h-full flex flex-col">
+      <CloseButton
+        className="ron-modal-close-button"
+        boneOnly
+        onClick={() => dispatch(updateUI({ setupDirectorActive: false }))}
+      />
+
+      <p className="my-2 text-1.5xl text-center text-heading-color font-bold">Setups Management</p>
+
+      <div className="flex-grow hide-scrollbar">
+        <div className="space-y-4">
+          <div hidden={!displayedSetups.length} className="space-y-3">
+            {displayedSetups.map((setup, index) => {
+              return (
+                <SetupControl
+                  key={setup.ID}
+                  setup={setup}
+                  isStandard={setup.ID === tempStandardId}
+                  choosableAsStandard={setup.isCompared && comparedSetups.length > 1}
+                  copiable={canAddMoreSetup}
+                  onChangeSetupName={control.changeSetupName(index)}
+                  onRemoveSetup={control.removeSetup(index)}
+                  onCopySetup={control.copySetup(index)}
+                  onToggleCompared={control.toggleSetupCompared(index)}
+                  onChooseStandard={control.selectStandardSetup(index)}
+                />
+              );
+            })}
+          </div>
+
+          {canAddMoreSetup && (
+            <div className="space-y-4">
+              <Button
+                variant="custom"
+                className="w-full bg-secondary-1 text-black"
+                icon={<FaPlus />}
+                onClick={control.addNewSetup}
+              >
+                Add
+              </Button>
+              <Button
+                className="w-full text-black"
+                icon={<BiImport className="text-xl" />}
+                onClick={calcModalCtrl.requestImportSetup}
+              >
+                Import
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <Button
+        className="mt-4 mx-auto group relative"
+        variant="primary"
+        onClick={() => control.tryApplyNewSettings(() => dispatch(updateUI({ setupDirectorActive: false })))}
+      >
+        {/* {errorCode === "NO_SETUPS" && (
+          <Popover
+            className="w-56 mb-2 px-2 py-1 left-1/2 -translate-x-1/2 bottom-full text-center text-danger-3 group-hover:scale-100"
+            withTooltipStyle
+          >
+            Please have atleast 1 setup
+          </Popover>
+        )} */}
+        <span>Apply</span>
+      </Button>
+    </div>
+  );
+}
+
+export function SetupDirector(props: { className?: string }) {
+  const setupDirectorActive = useSelector((state) => state.ui.setupDirectorActive);
+
+  return (
+    <CollapseSpace
+      active={setupDirectorActive}
+      className={clsx("absolute bottom-0 left-0 bg-surface-3 z-30", props.className)}
+      activeHeight="100%"
+      moveDuration={200}
+      destroyOnClose
+    >
+      <SetupDirectorCore />
+    </CollapseSpace>
+  );
+}
+
+export function useSetupDirectorKit() {
   const dispatch = useDispatch();
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const comparedIds = useSelector(selectComparedIds);
@@ -33,7 +126,6 @@ function SetupDirectorCore() {
     }))
   );
   const [tempStandardId, setTempStandardId] = useState(findById(tempSetups, standardId)?.ID || 0);
-  const [importManageOn, setImportManageOn] = useState(false);
   const [errorCode, setErrorCode] = useState<"NO_SETUPS" | "">("");
 
   const displayedSetups = tempSetups.filter((tempSetup) => tempSetup.status !== "REMOVED");
@@ -113,7 +205,7 @@ function SetupDirectorCore() {
     setErrorCode("");
   };
 
-  const onToggleSetupCompared = (index: number) => () => {
+  const toggleSetupCompared = (index: number) => () => {
     setTempSetups((prevTempSetups) => {
       const newTempSetups = [...prevTempSetups];
       newTempSetups[index].isCompared = !newTempSetups[index].isCompared;
@@ -121,11 +213,11 @@ function SetupDirectorCore() {
     });
   };
 
-  const onChooseStandardSetup = (index: number) => () => {
+  const selectStandardSetup = (index: number) => () => {
     setTempStandardId(tempSetups[index].ID);
   };
 
-  const tryApplyNewSettings = () => {
+  const tryApplyNewSettings = (onSuccess?: () => void) => {
     if (!tempSetups.filter((tempSetup) => tempSetup.status !== "REMOVED").length) {
       setErrorCode("NO_SETUPS");
       return;
@@ -137,91 +229,23 @@ function SetupDirectorCore() {
         newStandardId: tempStandardId,
       })
     );
-    dispatch(updateUI({ setupDirectorActive: false }));
+    onSuccess?.();
   };
 
-  return (
-    <div className="p-4 h-full flex flex-col">
-      <CloseButton
-        className="ron-modal-close-button"
-        boneOnly
-        onClick={() => dispatch(updateUI({ setupDirectorActive: false }))}
-      />
-
-      <p className="my-2 text-1.5xl text-center text-heading-color font-bold">Setups Management</p>
-
-      <div className="flex-grow hide-scrollbar">
-        <div className="space-y-4">
-          <div hidden={!displayedSetups.length} className="space-y-3">
-            {displayedSetups.map((setup, index) => {
-              return (
-                <SetupControl
-                  key={setup.ID}
-                  setup={setup}
-                  isStandard={setup.ID === tempStandardId}
-                  choosableAsStandard={setup.isCompared && comparedSetups.length > 1}
-                  copiable={canAddMoreSetup}
-                  onChangeSetupName={changeSetupName(index)}
-                  onRemoveSetup={removeSetup(index)}
-                  onCopySetup={copySetup(index)}
-                  onToggleCompared={onToggleSetupCompared(index)}
-                  onChooseStandard={onChooseStandardSetup(index)}
-                />
-              );
-            })}
-          </div>
-
-          {canAddMoreSetup && (
-            <div className="space-y-4">
-              <Button
-                variant="custom"
-                className="w-full bg-secondary-1 text-black"
-                icon={<FaPlus />}
-                onClick={addNewSetup}
-              >
-                Add
-              </Button>
-              <Button
-                className="w-full text-black"
-                icon={<BiImport className="text-xl" />}
-                onClick={() => setImportManageOn(true)}
-              >
-                Import
-              </Button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <Button className="mt-4 mx-auto group relative" variant="primary" onClick={tryApplyNewSettings}>
-        {errorCode === "NO_SETUPS" && (
-          <Popover
-            className="w-56 mb-2 px-2 py-1 left-1/2 -translate-x-1/2 bottom-full text-center text-danger-3 group-hover:scale-100"
-            withTooltipStyle
-          >
-            Please have atleast 1 setup
-          </Popover>
-        )}
-        <span>Apply</span>
-      </Button>
-
-      <SetupImporter active={importManageOn} onClose={() => setImportManageOn(false)} />
-    </div>
-  );
-}
-
-export function SetupDirector(props: { className?: string }) {
-  const setupDirectorActive = useSelector((state) => state.ui.setupDirectorActive);
-
-  return (
-    <CollapseSpace
-      active={setupDirectorActive}
-      className={clsx("absolute bottom-0 left-0 bg-surface-3 z-30", props.className)}
-      activeHeight="100%"
-      moveDuration={200}
-      destroyOnClose
-    >
-      <SetupDirectorCore />
-    </CollapseSpace>
-  );
+  return {
+    displayedSetups,
+    comparedSetups,
+    canAddMoreSetup,
+    tempStandardId,
+    control: {
+      tryApplyNewSettings,
+      changeSetupName,
+      addNewSetup,
+      removeSetup,
+      copySetup,
+      toggleSetupCompared,
+      selectStandardSetup,
+    },
+    dispatch,
+  };
 }

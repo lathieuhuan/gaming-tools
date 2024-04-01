@@ -1,4 +1,4 @@
-import { Checkbox, InputNumber } from "rond";
+import { Checkbox, InputNumber, Modal } from "rond";
 
 import type { AttackElement, ElementType } from "@Src/types";
 import { ATTACK_ELEMENTS } from "@Src/constants";
@@ -6,10 +6,11 @@ import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
 import { toArray } from "@Src/utils";
 import { useDispatch, useSelector } from "@Store/hooks";
+import { updateUI } from "@Store/ui-slice";
 import { selectTarget, updateTarget } from "@Store/calculator-slice";
 import { ComboBox } from "./ComboBox";
 
-export function TargetConfig() {
+function TargetConfigCore() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -175,5 +176,45 @@ export function TargetConfig() {
         </p>
       </div>
     </div>
+  );
+}
+
+export function TargetConfig() {
+  const dispatch = useDispatch();
+  const targetConfig = useSelector((state) => state.ui.calcTargetConfig);
+
+  const updateTargetConfig = (active: boolean, onOverview: boolean) => {
+    dispatch(updateUI({ calcTargetConfig: { active, onOverview } }));
+  };
+
+  const closeTargetConfig = () => {
+    updateTargetConfig(false, targetConfig.onOverview);
+  };
+
+  return (
+    <Modal
+      active={targetConfig.active}
+      className={[Modal.LARGE_HEIGHT_CLS, "bg-surface-1"]}
+      title="Target Configuration (live)"
+      bodyCls="grow hide-scrollbar"
+      withActions
+      showCancel={false}
+      confirmText="Close"
+      confirmButtonProps={{ variant: "default" }}
+      onConfirm={() => updateTargetConfig(false, targetConfig.onOverview)}
+      cancelText="Overview mode"
+      moreActions={[
+        {
+          children: "Overview mode",
+          className: targetConfig.onOverview && "invisible",
+          onClick: () => {
+            updateTargetConfig(false, true);
+          },
+        },
+      ]}
+      onClose={closeTargetConfig}
+    >
+      <TargetConfigCore />
+    </Modal>
   );
 }

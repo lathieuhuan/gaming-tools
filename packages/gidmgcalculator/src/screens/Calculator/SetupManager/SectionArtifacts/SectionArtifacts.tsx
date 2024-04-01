@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect } from "react";
+import { useState, useEffect } from "react";
 import { MdInventory } from "react-icons/md";
 import { GiAnvil } from "react-icons/gi";
 import { FaToolbox } from "react-icons/fa";
@@ -39,6 +39,8 @@ type ForgeState = {
   initialType?: ArtifactType;
 };
 
+const SECTION_ID = "calculator-section-artifacts";
+
 export default function SectionArtifacts() {
   const dispatch = useDispatch();
 
@@ -59,10 +61,10 @@ export default function SectionArtifacts() {
 
   const closeModal = () => setModalType("");
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (activeTabIndex >= 0) {
       setTimeout(() => {
-        document.querySelector("#calculator-section-artifacts")?.scrollIntoView();
+        document.querySelector(`#${SECTION_ID}`)?.scrollIntoView();
       }, 200);
     }
   }, [activeTabIndex]);
@@ -221,7 +223,7 @@ export default function SectionArtifacts() {
   };
 
   return (
-    <div id="calculator-section-artifacts" className={"py-3 bg-surface-1 " + styles.section}>
+    <div id={SECTION_ID} className={`py-3 bg-surface-1 ${styles.section}`}>
       {artifacts.length && artifacts.every((artifact) => artifact === null) ? <CopySelect /> : null}
 
       <div className="flex">

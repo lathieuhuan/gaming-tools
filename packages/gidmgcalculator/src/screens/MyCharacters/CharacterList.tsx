@@ -12,12 +12,18 @@ import styles from "./MyCharacters.styles.module.scss";
 interface TopBarProps {
   characters: Array<{ name: string }>;
   chosenChar: string;
+  addCharacterButton: React.ReactNode;
   onClickSort: () => void;
   onClickWish: () => void;
 }
-export default function CharacterList({ characters, chosenChar, onClickSort, onClickWish }: TopBarProps) {
+export default function CharacterList({
+  characters,
+  chosenChar,
+  addCharacterButton,
+  onClickSort,
+  onClickWish,
+}: TopBarProps) {
   const dispatch = useDispatch();
-
   const [gridviewOn, setGridviewOn] = useState(false);
   const { observedAreaRef, visibleMap, itemUtils } = useIntersectionObserver({
     dependecies: [characters],
@@ -88,13 +94,7 @@ export default function CharacterList({ characters, chosenChar, onClickSort, onC
                         "w-ful h-full transition-opacity duration-400 " + (visible ? "opacity-100" : "opacity-0")
                       }
                     >
-                      {visible && (
-                        <GenshinImage
-                          src={appChar.sideIcon || appChar.icon}
-                          alt="icon"
-                          fallbackCls="p-2"
-                        />
-                      )}
+                      {visible && <GenshinImage src={appChar.sideIcon || appChar.icon} alt="icon" fallbackCls="p-2" />}
                     </div>
                   </div>
                 </div>
@@ -103,14 +103,9 @@ export default function CharacterList({ characters, chosenChar, onClickSort, onC
           </div>
         </div>
 
-        <Button
-          variant="custom"
-          size="custom"
-          className="absolute top-4 left-full ml-6 bg-surface-3 text-2xl"
-          style={{ width: 60, height: 60 }}
-          icon={<FaPlus />}
-          onClick={onClickWish}
-        />
+        <div className="absolute top-4 left-full ml-6" style={{ width: 60, height: 60 }}>
+          {addCharacterButton}
+        </div>
       </div>
 
       <Tavern
