@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Modal } from "rond";
 
 import { Setup_ } from "@Src/utils";
-import { useStore } from "@Src/features";
+import { useStoreSnapshot } from "@Src/features";
 import { CalculatorModalsContext, type CalculatorModalsControl } from "./calculator-modals-context";
 
 // Component
@@ -13,7 +13,6 @@ import { SaveSetup } from "./SaveSetup";
 type ModalType = "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "";
 
 export function CalculatorModalsProvider(props: { children: React.ReactNode }) {
-  const store = useStore();
   const [modalType, setModalType] = useState<ModalType>("");
   const [setupId, setSetupId] = useState(0);
 
@@ -60,24 +59,31 @@ export function CalculatorModalsProvider(props: { children: React.ReactNode }) {
       </Modal>
 
       <Modal.Core active={modalType === "SHARE_SETUP"} preset="small" onClose={closeModal}>
-        {() => {
-          const calculator = store.select((state) => state.calculator);
-          const name = calculator.setupManageInfos.find((info) => info.ID === setupId)?.name || "";
-
-          return (
-            <SetupExporterCore
-              setupName={name}
-              calcSetup={{
-                ...Setup_.cleanupCalcSetup(calculator, setupId),
-                weapon: calculator.setupsById[setupId].weapon,
-                artifacts: calculator.setupsById[setupId].artifacts,
-              }}
-              target={calculator.target}
-              onClose={closeModal}
-            />
-          );
-        }}
+        <CalcSetupExporter setupId={setupId} onClose={closeModal} />
       </Modal.Core>
     </CalculatorModalsContext.Provider>
+  );
+}
+
+interface CalcSetupExporterProps {
+  setupId: number;
+  onClose: () => void;
+}
+function CalcSetupExporter({ setupId, onClose }: CalcSetupExporterProps) {
+  const calculator = useStoreSnapshot((state) => state.calculator);
+  const setup = calculator.setupsById[setupId];
+  const setupName = calculator.setupManageInfos.find((info) => info.ID === setupId)?.name || "";
+
+  return (
+    <SetupExporterCore
+      setupName={setupName}
+      calcSetup={{
+        ...Setup_.cleanupCalcSetup(setup, calculator.target),
+        weapon: setup.weapon,
+        artifacts: setup.artifacts,
+      }}
+      target={calculator.target}
+      onClose={onClose}
+    />
   );
 }

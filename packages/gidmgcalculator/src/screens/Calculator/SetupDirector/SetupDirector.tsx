@@ -1,27 +1,18 @@
-import { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 import { BiImport } from "react-icons/bi";
-import { clsx, Button, Popover, CloseButton, CollapseSpace } from "rond";
+import { clsx, Button, CloseButton, CollapseSpace } from "rond";
 
-import { MAX_CALC_SETUPS } from "@Src/constants";
-import { findById, Setup_ } from "@Src/utils";
-import {
-  selectComparedIds,
-  selectStandardId,
-  selectSetupManageInfos,
-  updateSetups,
-  type NewSetupManageInfo,
-} from "@Store/calculator-slice";
 import { updateUI } from "@Store/ui-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { useCalculatorModalControl } from "../CalculatorModalsProvider";
+import { useCalcModalCtrl } from "../CalculatorModalsProvider";
+import { useSetupDirectorKit } from "./useSetupDirectorKit";
 
 // Component
 import { SetupControl } from "./SetupControl";
 
 function SetupDirectorCore() {
   const dispatch = useDispatch();
-  const calcModalCtrl = useCalculatorModalControl();
+  const calcModalCtrl = useCalcModalCtrl();
   const { displayedSetups, comparedSetups, canAddMoreSetup, tempStandardId, control } = useSetupDirectorKit();
 
   return (
@@ -44,6 +35,7 @@ function SetupDirectorCore() {
                   setup={setup}
                   isStandard={setup.ID === tempStandardId}
                   choosableAsStandard={setup.isCompared && comparedSetups.length > 1}
+                  removable={displayedSetups.length > 1}
                   copiable={canAddMoreSetup}
                   onChangeSetupName={control.changeSetupName(index)}
                   onRemoveSetup={control.removeSetup(index)}
@@ -82,15 +74,7 @@ function SetupDirectorCore() {
         variant="primary"
         onClick={() => control.tryApplyNewSettings(() => dispatch(updateUI({ setupDirectorActive: false })))}
       >
-        {/* {errorCode === "NO_SETUPS" && (
-          <Popover
-            className="w-56 mb-2 px-2 py-1 left-1/2 -translate-x-1/2 bottom-full text-center text-danger-3 group-hover:scale-100"
-            withTooltipStyle
-          >
-            Please have atleast 1 setup
-          </Popover>
-        )} */}
-        <span>Apply</span>
+        Apply
       </Button>
     </div>
   );
@@ -110,142 +94,4 @@ export function SetupDirector(props: { className?: string }) {
       <SetupDirectorCore />
     </CollapseSpace>
   );
-}
-
-export function useSetupDirectorKit() {
-  const dispatch = useDispatch();
-  const setupManageInfos = useSelector(selectSetupManageInfos);
-  const comparedIds = useSelector(selectComparedIds);
-  const standardId = useSelector(selectStandardId);
-
-  const [tempSetups, setTempSetups] = useState<NewSetupManageInfo[]>(
-    setupManageInfos.map((manageInfos) => ({
-      ...manageInfos,
-      status: "OLD",
-      isCompared: comparedIds.includes(manageInfos.ID),
-    }))
-  );
-  const [tempStandardId, setTempStandardId] = useState(findById(tempSetups, standardId)?.ID || 0);
-  const [errorCode, setErrorCode] = useState<"NO_SETUPS" | "">("");
-
-  const displayedSetups = tempSetups.filter((tempSetup) => tempSetup.status !== "REMOVED");
-  const comparedSetups = displayedSetups.filter((tempSetup) => tempSetup.isCompared);
-  const canAddMoreSetup = displayedSetups.length < MAX_CALC_SETUPS;
-
-  useEffect(() => {
-    if (comparedSetups.length === 0 && tempStandardId !== 0) {
-      setTempStandardId(0);
-    } else if (
-      comparedSetups.length === 1 ||
-      comparedSetups.every((comparedSetup) => comparedSetup.ID !== tempStandardId)
-    ) {
-      setTempStandardId(comparedSetups[0]?.ID || 0);
-    }
-  }, [comparedSetups.length, tempStandardId]);
-
-  const changeSetupName = (index: number) => (newName: string) => {
-    setTempSetups((prev) => {
-      const newTempSetups = [...prev];
-      newTempSetups[index].name = newName;
-      return newTempSetups;
-    });
-
-    if (errorCode) {
-      setErrorCode("");
-    }
-  };
-
-  const removeSetup = (index: number) => () => {
-    if (tempSetups[index] && tempSetups[index].status === "OLD") {
-      setTempSetups((prev) => {
-        const newTempSetups = [...prev];
-        newTempSetups[index].status = "REMOVED";
-        newTempSetups[index].isCompared = false;
-        return newTempSetups;
-      });
-    } else {
-      setTempSetups((prev) => {
-        const newTempSetups = [...prev];
-        newTempSetups.splice(index, 1);
-        return newTempSetups;
-      });
-    }
-  };
-
-  const copySetup = (index: number) => () => {
-    setTempSetups((prev) => {
-      const newSetupName = Setup_.getCopyName(
-        prev[index].name,
-        displayedSetups.map(({ name }) => name)
-      );
-
-      const newSetup: NewSetupManageInfo = {
-        ...prev[index],
-        ID: Date.now(),
-        name: newSetupName || "New setup",
-        type: "original",
-        originId: prev[index].ID,
-        status: "DUPLICATE",
-      };
-
-      return [...prev, newSetup];
-    });
-  };
-
-  const addNewSetup = () => {
-    setTempSetups((prev) => {
-      const newSetup: NewSetupManageInfo = {
-        ...Setup_.getManageInfo({ name: Setup_.getNewSetupName(prev) }),
-        status: "NEW",
-        isCompared: false,
-      };
-      return [...prev, newSetup];
-    });
-
-    setErrorCode("");
-  };
-
-  const toggleSetupCompared = (index: number) => () => {
-    setTempSetups((prevTempSetups) => {
-      const newTempSetups = [...prevTempSetups];
-      newTempSetups[index].isCompared = !newTempSetups[index].isCompared;
-      return newTempSetups;
-    });
-  };
-
-  const selectStandardSetup = (index: number) => () => {
-    setTempStandardId(tempSetups[index].ID);
-  };
-
-  const tryApplyNewSettings = (onSuccess?: () => void) => {
-    if (!tempSetups.filter((tempSetup) => tempSetup.status !== "REMOVED").length) {
-      setErrorCode("NO_SETUPS");
-      return;
-    }
-
-    dispatch(
-      updateSetups({
-        newSetupManageInfos: tempSetups,
-        newStandardId: tempStandardId,
-      })
-    );
-    onSuccess?.();
-  };
-
-  return {
-    displayedSetups,
-    comparedSetups,
-    canAddMoreSetup,
-    tempStandardId,
-    control: {
-      tryApplyNewSettings,
-      changeSetupName,
-      addNewSetup,
-      removeSetup,
-      copySetup,
-      toggleSetupCompared,
-      selectStandardSetup,
-    },
-    dispatch,
-  };
 }

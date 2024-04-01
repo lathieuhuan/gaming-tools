@@ -17,7 +17,7 @@ import {
   updateCalculator,
 } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { useCalculatorModalControl } from "../../CalculatorModalsProvider";
+import { useCalcModalCtrl } from "../../CalculatorModalsProvider";
 
 // Component
 import { ComplexSelect } from "@Src/components";
@@ -31,7 +31,7 @@ type ActionButtonAttrs = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function SetupSelect() {
   const dispatch = useDispatch();
-  const calcModalCtrl = useCalculatorModalControl();
+  const calcModalCtrl = useCalcModalCtrl();
   const activeId = useSelector(selectActiveId);
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const standardId = useSelector(selectStandardId);

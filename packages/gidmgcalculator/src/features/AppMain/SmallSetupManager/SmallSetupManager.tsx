@@ -1,19 +1,18 @@
-import { FaBalanceScaleLeft, FaCopy, FaSave, FaShareAlt, FaTrashAlt, FaArrowUp } from "react-icons/fa";
+import { FaBalanceScaleLeft, FaCopy, FaSave, FaShareAlt, FaTrashAlt, FaArrowUp, FaPlus, FaCheck } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
-import { Button, ButtonGroup, Input } from "rond";
+import { BiImport } from "react-icons/bi";
+import { Button, ButtonGroup, Input, type ButtonProps } from "rond";
 
 import { NewSetupManageInfo, selectActiveId, updateCalculator } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
-import { useCalculatorModalControl, useSetupDirectorKit } from "@Src/screens/Calculator";
-
-type ActionButtonAttrs = React.ButtonHTMLAttributes<HTMLButtonElement>;
+import { useCalcModalCtrl, useSetupDirectorKit } from "@Src/screens/Calculator";
 
 interface SmallSetupManagerProps {
   onClose: () => void;
 }
 export function SmallSetupManager({ onClose }: SmallSetupManagerProps) {
   const activeId = useSelector(selectActiveId);
-  const calcModalCtrl = useCalculatorModalControl();
+  const calcModalCtrl = useCalcModalCtrl();
   const { displayedSetups, comparedSetups, canAddMoreSetup, tempStandardId, control, dispatch } = useSetupDirectorKit();
 
   const onSelectSetup = (id: number) => {
@@ -23,7 +22,7 @@ export function SmallSetupManager({ onClose }: SmallSetupManagerProps) {
     onClose();
   };
 
-  const renderActions = (setup: NewSetupManageInfo, i: number): ActionButtonAttrs[] => [
+  const getActionsConfig = (setup: NewSetupManageInfo, i: number): ButtonProps[] => [
     {
       children: <FaTrashAlt className="text-lg" />,
       disabled: displayedSetups.length <= 1,
@@ -66,7 +65,7 @@ export function SmallSetupManager({ onClose }: SmallSetupManagerProps) {
 
   return (
     <div className="p-4">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4" style={{ height: "25rem" }}>
         {displayedSetups.map((setup, setupIndex) => {
           return (
             <div key={setup.ID} className="border-b border-surface-border">
@@ -81,17 +80,23 @@ export function SmallSetupManager({ onClose }: SmallSetupManagerProps) {
 
                 <div className="w-8 h-8 shrink-0">
                   {setup.status === "OLD" ? (
-                    <Button shape="square" icon={<FaArrowUp />} onClick={() => onSelectSetup(setup.ID)} />
+                    <Button
+                      shape="square"
+                      variant={setup.ID === activeId ? "active" : "default"}
+                      icon={<FaArrowUp />}
+                      onClick={() => onSelectSetup(setup.ID)}
+                    />
                   ) : null}
                 </div>
               </div>
 
               <div className="mt-3 flex">
-                {renderActions(setup, setupIndex).map(({ className = "", ...rest }, i) => (
+                {getActionsConfig(setup, setupIndex).map(({ className = "", ...rest }, i) => (
                   <Button
                     key={i}
                     variant="custom"
                     shape="square"
+                    withShadow={false}
                     className={`w-10 h-10 flex-center ${className}`}
                     {...rest}
                   />
@@ -108,6 +113,7 @@ export function SmallSetupManager({ onClose }: SmallSetupManagerProps) {
         buttons={[
           {
             children: "Import",
+            icon: <BiImport className="text-lg" />,
             onClick: () => {
               calcModalCtrl.requestImportSetup();
               onClose();
@@ -115,11 +121,13 @@ export function SmallSetupManager({ onClose }: SmallSetupManagerProps) {
           },
           {
             children: "Add",
+            icon: <FaPlus />,
             disabled: !canAddMoreSetup,
             onClick: control.addNewSetup,
           },
           {
             children: "Apply",
+            icon: <FaCheck />,
             variant: "primary",
             onClick: () => control.tryApplyNewSettings(onClose),
           },

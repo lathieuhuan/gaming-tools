@@ -7,6 +7,7 @@ interface SetupControlProps {
   setup: NewSetupManageInfo;
   isStandard: boolean;
   choosableAsStandard: boolean;
+  removable?: boolean;
   copiable?: boolean;
   onChangeSetupName: (newName: string) => void;
   onRemoveSetup: () => void;
@@ -18,6 +19,7 @@ export function SetupControl({
   setup,
   isStandard,
   choosableAsStandard,
+  removable,
   copiable,
   onChangeSetupName,
   onRemoveSetup,
@@ -35,7 +37,7 @@ export function SetupControl({
         onChange={onChangeSetupName}
       />
       <div className="mt-4 flex justify-end gap-4">
-        <Button icon={<FaTrashAlt />} onClick={onRemoveSetup} />
+        <Button icon={<FaTrashAlt />} disabled={!removable} onClick={onRemoveSetup} />
         <Button icon={<FaCopy />} disabled={!copiable || setup.status === "NEW"} onClick={onCopySetup} />
 
         <Button

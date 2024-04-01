@@ -89,12 +89,8 @@ export class Setup_ {
     return { name: name.trim(), ID, type };
   }
 
-  static cleanupCalcSetup(
-    calculator: CalculatorState,
-    setupID: number,
-    options?: CleanupCalcSetupOptions
-  ): UserSetupCalcInfo {
-    const { char, weapon, artifacts, ...data } = calculator.setupsById[setupID];
+  static cleanupCalcSetup(setup: CalcSetup, target: Target, options?: CleanupCalcSetupOptions): UserSetupCalcInfo {
+    const { char, weapon, artifacts, ...data } = setup;
     const { buffs = [], debuffs = [] } = $AppCharacter.get(char.name) || {};
     const party: Party = [];
 
@@ -138,7 +134,7 @@ export class Setup_ {
       artDebuffCtrls: data.artDebuffCtrls.filter((ctrl) => ctrl.activated),
       customBuffCtrls: data.customBuffCtrls.filter((ctrl) => ctrl.value),
       customDebuffCtrls: data.customDebuffCtrls.filter((ctrl) => ctrl.value),
-      target: calculator.target,
+      target,
     };
   }
 

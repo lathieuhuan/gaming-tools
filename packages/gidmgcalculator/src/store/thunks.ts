@@ -89,7 +89,7 @@ export function initNewSessionWithCharacter(character: CharacterForInit): AppThu
           customDebuffCtrls: [],
           customInfusion: { element: "phys" },
         },
-        target: Setup_.createTarget({ level: $AppSettings.get("targetLevel") })
+        target: Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
       })
     );
   };
@@ -115,7 +115,8 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
       return message.error(`You're having to many ${excessType}s. Please remove some of them first.`);
     }
 
-    const { weapon, artifacts } = calculator.setupsById[setupID];
+    const setup = calculator.setupsById[setupID];
+    const { weapon, artifacts } = setup;
     let seedID = Date.now();
     let weaponID = weapon.ID;
     const artifactIDs = artifacts.map((artifact) => artifact?.ID ?? null);
@@ -253,7 +254,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
         saveSetup({
           ID: setupID,
           name,
-          data: Setup_.cleanupCalcSetup(calculator, setupID, { weaponID, artifactIDs }),
+          data: Setup_.cleanupCalcSetup(setup, calculator.target, { weaponID, artifactIDs }),
         })
       );
       dispatch(

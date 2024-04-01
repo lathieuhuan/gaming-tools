@@ -1,2 +1,2 @@
 export * from "./CalculatorModalsProvider";
-export { useCalculatorModalControl } from "./calculator-modals-context";
+export { useCalcModalCtrl } from "./calculator-modals-context";
