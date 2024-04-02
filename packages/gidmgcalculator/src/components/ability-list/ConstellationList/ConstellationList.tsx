@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaInfo } from "react-icons/fa";
-import { Button, CarouselSpace } from "rond";
+import { Button, CarouselSpace, clsx, type ClassValue } from "rond";
 
 import type { Character } from "@Src/types";
 import { $AppCharacter } from "@Src/services";
@@ -10,10 +10,11 @@ import { AbilityIcon } from "../ability-list-components";
 import { ConstellationDetail } from "./ConstellationDetail";
 
 interface ConstellationListProps {
+  className?: ClassValue;
   char: Character;
   onClickIcon: (index: number) => void;
 }
-export function ConstellationList({ char, onClickIcon }: ConstellationListProps) {
+export function ConstellationList({ className, char, onClickIcon }: ConstellationListProps) {
   const [consLv, setConsLv] = useState(0);
   const [atDetails, setAtDetails] = useState(false);
 
@@ -25,7 +26,7 @@ export function ConstellationList({ char, onClickIcon }: ConstellationListProps)
 
   if (!appChar.constellation.length) {
     return (
-      <p className="pt-4 px-4 text-xl text-center">
+      <p className={clsx("pt-4 px-4 text-xl text-center", className)}>
         The time has not yet come for this person's corner of the night sky to light up.
       </p>
     );
@@ -37,7 +38,7 @@ export function ConstellationList({ char, onClickIcon }: ConstellationListProps)
   };
 
   return (
-    <CarouselSpace current={atDetails ? 1 : 0}>
+    <CarouselSpace current={atDetails ? 1 : 0} className={className}>
       <div className="h-full hide-scrollbar flex flex-col space-y-4">
         {appChar.constellation.map((cons, i) => {
           return (

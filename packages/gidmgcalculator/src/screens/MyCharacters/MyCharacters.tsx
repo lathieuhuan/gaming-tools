@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useScreenWatcher, Button } from "rond";
+import { FaPlus } from "react-icons/fa";
 
 // Store
 import { selectChosenCharacter, selectUserCharacters, addCharacter, chooseCharacter } from "@Store/userdb-slice";
@@ -10,11 +11,22 @@ import { Tavern } from "@Src/components";
 import CharacterSort from "./CharacterSort";
 import CharacterList from "./CharacterList";
 import CharacterInfo from "./CharacterInfo";
-import { FaPlus } from "react-icons/fa";
 
 type ModalType = "ADD_CHARACTER" | "SORT_CHARACTERS" | "";
 
 export default function MyCharacters() {
+  return (
+    <div className="h-full flex flex-col bg-surface-3">
+      <Header />
+
+      <div className="grow overflow-auto">
+        <CharacterInfo />
+      </div>
+    </div>
+  );
+}
+
+function Header() {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const chosenChar = useSelector(selectChosenCharacter);
@@ -37,7 +49,7 @@ export default function MyCharacters() {
   );
 
   return (
-    <div className="h-full flex flex-col bg-surface-3">
+    <>
       {screenWatcher.isFromSize("md") ? (
         <CharacterList
           characters={userChars}
@@ -68,10 +80,6 @@ export default function MyCharacters() {
         </div>
       )}
 
-      <div className="grow flex-center overflow-y-auto">
-        <div className="w-full h-full flex justify-center">{userChars.length ? <CharacterInfo /> : null}</div>
-      </div>
-
       <Tavern
         active={modalType === "ADD_CHARACTER"}
         sourceType="app"
@@ -87,6 +95,6 @@ export default function MyCharacters() {
       />
 
       <CharacterSort active={modalType === "SORT_CHARACTERS"} onClose={closeModal} />
-    </div>
+    </>
   );
 }

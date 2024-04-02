@@ -17,7 +17,7 @@ export function SetupManager() {
   const screenWatcher = useScreenWatcher();
   const targetConfig = useSelector((state) => state.ui.calcTargetConfig);
 
-  const isMobile = screenWatcher.isToSize("sm");
+  const isMobile = !screenWatcher.isFromSize("sm");
 
   const updateTargetConfig = (active: boolean, onOverview: boolean) => {
     dispatch(updateUI({ calcTargetConfig: { active, onOverview } }));

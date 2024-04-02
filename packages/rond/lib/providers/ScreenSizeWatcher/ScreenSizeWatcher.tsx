@@ -5,7 +5,6 @@ type ScreenSize = "xs" | "sm" | "md" | "xm" | "lg" | "xl" | "2xl";
 type ScreenSizeContextValue = {
   screenSize: ScreenSize;
   isFromSize: (size: ScreenSize) => boolean;
-  isToSize: (size: ScreenSize) => boolean;
 };
 
 const SCREEN_SIZE_MAP: Record<ScreenSize, number> = {
@@ -33,7 +32,6 @@ const getScreenSize = (): ScreenSize => {
 const ScreenSizeContext = createContext<ScreenSizeContextValue>({
   screenSize: getScreenSize(),
   isFromSize: () => true,
-  isToSize: () => true,
 });
 
 export function ScreenSizeWatcher(props: { children: React.ReactNode }) {
@@ -63,17 +61,11 @@ export function ScreenSizeWatcher(props: { children: React.ReactNode }) {
     return window.innerWidth >= minWidth;
   };
 
-  const isToSize: ScreenSizeContextValue["isToSize"] = (size) => {
-    const minWidth = SCREEN_SIZE_MAP[size];
-    return window.innerWidth <= minWidth;
-  };
-
   return (
     <ScreenSizeContext.Provider
       value={{
         screenSize,
         isFromSize,
-        isToSize,
       }}
     >
       {props.children}

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
-import { Button, CarouselSpace } from "rond";
+import { Button, CarouselSpace, type ClassValue } from "rond";
 
 import type { Character, LevelableTalent, Party } from "@Src/types";
 import { TALENT_TYPES } from "@Src/constants";
@@ -21,11 +21,12 @@ type RenderedTalentConfig = {
 };
 
 interface TalentListProps {
+  className?: ClassValue;
   char: Character;
   party?: Party;
   onChangeTalentLevel: (talentType: LevelableTalent, newLevel: number) => void;
 }
-export function TalentList({ char, party, onChangeTalentLevel }: TalentListProps) {
+export function TalentList({ className, char, party, onChangeTalentLevel }: TalentListProps) {
   const [atDetail, setAtDetail] = useState(false);
   const [detailIndex, setDetailIndex] = useState(-1);
 
@@ -72,7 +73,7 @@ export function TalentList({ char, party, onChangeTalentLevel }: TalentListProps
   const immutableLvNode = <p className={`ml-1 ${elmtText} font-bold`}>1</p>;
 
   return (
-    <CarouselSpace current={atDetail ? 1 : 0}>
+    <CarouselSpace current={atDetail ? 1 : 0} className={className}>
       <div className="h-full hide-scrollbar flex flex-col space-y-3">
         {TALENT_TYPES.map((talentType, index) => {
           const isAltSprint = talentType === "altSprint";

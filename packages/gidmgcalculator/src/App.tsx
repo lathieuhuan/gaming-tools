@@ -21,7 +21,7 @@ function App() {
   return (
     <div className="App h-screen pt-8 text-light-default bg-light-default">
       <NavBar />
-      {screenWatcher.isToSize("sm") ? <AppMain.Small /> : <AppMain.Large />}
+      {screenWatcher.isFromSize("sm") ? <AppMain.Large /> : <AppMain.Small />}
       <AppModals />
       <Tracker />
       <SetupTransshipmentPort />

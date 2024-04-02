@@ -1,9 +1,7 @@
 import { useState } from "react";
-import { FaSyncAlt } from "react-icons/fa";
-import { Button, Badge, Rarity, SwitchNode, type SwitchNodeProps } from "rond";
+import { Button, SwitchNode, type SwitchNodeProps } from "rond";
 
 import { Level } from "@Src/types";
-import { LEVELS } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
 
 // Store
@@ -12,7 +10,7 @@ import { initNewSessionWithCharacter } from "@Store/thunks";
 import { selectCharacter, updateCharacter } from "@Store/calculator-slice";
 
 // Component
-import { ComplexSelect, SetupImporter, Tavern, GenshinImage } from "@Src/components";
+import { ComplexSelect, SetupImporter, Tavern, CharacterIntro } from "@Src/components";
 import { ArtifactsTab, AttributesTab, ConstellationTab, TalentsTab, WeaponTab } from "./character-overview-tabs";
 
 const TABS: SwitchNodeProps<string>["cases"] = [
@@ -50,71 +48,18 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
 
   if (touched) {
     const appChar = $AppCharacter.get(char.name);
-    const elmtText = `text-${appChar.vision}`;
 
     body = (
-      <div className="h-full flex flex-col">
-        <div className="pb-4 flex">
-          <div
-            className="mr-3 relative aspect-square shrink-0"
-            onClick={() => setModalType("CHARACTER_SELECT")}
-            style={{ width: 88, height: 88 }}
-          >
-            <Button className="absolute -top-1 -left-1 z-10" icon={<FaSyncAlt />} />
-            <Badge active={appChar.beta} className="absolute -top-1 -right-1 z-10">
-              BETA
-            </Badge>
-            <GenshinImage className="cursor-pointer" src={appChar.icon} imgType="character" fallbackCls="p-2" />
-          </div>
-
-          <div className="min-w-0 grow">
-            <div className="overflow-hidden">
-              <p className={`text-2.5xl truncate ${elmtText} font-black`}>{char.name}</p>
-              <Rarity value={appChar.rarity} />
-            </div>
-
-            <div className="mt-1 pl-1 flex justify-between items-center">
-              <div className="flex items-center text-lg">
-                <p className="mr-1">Level</p>
-                <select
-                  className={`font-bold ${elmtText} text-right text-last-right`}
-                  value={char.level}
-                  onChange={onChangeLevel}
-                >
-                  {LEVELS.map((_, index) => (
-                    <option key={index} className="text-black">
-                      {LEVELS[LEVELS.length - 1 - index]}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div
-                className={
-                  "ml-4 px-3 pt-2 pb-1.5 flex-center rounded-lg bg-surface-2 " +
-                  `leading-none ${elmtText} font-bold cursor-default relative group`
-                }
-              >
-                <span>C{char.cons}</span>
-                <div className="absolute top-full z-50 pt-1 hidden group-hover:block">
-                  <ul className="bg-light-default text-black rounded overflow-hidden">
-                    {[...Array(7)].map((_, i) => {
-                      return (
-                        <li
-                          key={i}
-                          className={`px-3 pt-2 pb-1.5 ${i === char.cons ? "bg-light-disabled" : "hover:bg-primary-1"}`}
-                          onClick={() => onClickConsLevel(i)}
-                        >
-                          C{i}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="h-full flex flex-col gap-4">
+        <CharacterIntro
+          char={char}
+          appChar={appChar}
+          mutable
+          switchable
+          onSwitch={() => setModalType("CHARACTER_SELECT")}
+          onChangeLevel={(level) => level !== char.level && dispatch(updateCharacter({ level }))}
+          onChangeCons={(cons) => cons !== char.cons && dispatch(updateCharacter({ cons }))}
+        />
 
         <ComplexSelect
           selectId="character-overview-select"

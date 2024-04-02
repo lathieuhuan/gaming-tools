@@ -142,7 +142,7 @@ function TargetConfigButton(props: { className?: string }) {
   const atScreen = useSelector((state) => state.ui.atScreen);
   const calcTargetConfig = useSelector((state) => state.ui.calcTargetConfig);
 
-  return screenWatcher.isToSize("sm") && atScreen === "CALCULATOR" && !calcTargetConfig.onOverview ? (
+  return !screenWatcher.isFromSize("sm") && atScreen === "CALCULATOR" && !calcTargetConfig.onOverview ? (
     <button
       className={`${props.className} bg-surface-3`}
       onClick={() => dispatch(updateUI({ calcTargetConfig: { active: true, onOverview: false } }))}

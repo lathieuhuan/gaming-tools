@@ -4,6 +4,7 @@ import { BottomSheet, SwitchNode } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
+
 import MyCharacters from "@Src/screens/MyCharacters";
 import MyWeapons from "@Src/screens/MyWeapons";
 import MyArtifacts from "@Src/screens/MyArtifacts";
@@ -16,9 +17,10 @@ import {
   FinalResult,
   CalculatorModalsProvider,
 } from "@Src/screens/Calculator";
+import { MobileBottomNav } from "@Src/components";
+import { SmallSetupManager } from "./SmallSetupManager";
 
 import styles from "./AppMain.styles.module.scss";
-import { SmallSetupManager } from "./SmallSetupManager";
 
 export function AppMainSmall() {
   const dispatch = useDispatch();
@@ -97,7 +99,7 @@ export function AppMainSmall() {
               </div>
             </div>
 
-            {touched ? <CalculatorNavBar activePanelI={activePanelI} onSelectSection={onSelectSection} /> : null}
+            {touched ? <CalculatorBottomNav activePanelI={activePanelI} onSelectSection={onSelectSection} /> : null}
           </div>
         </CalculatorModalsProvider>
       }
@@ -105,37 +107,34 @@ export function AppMainSmall() {
   );
 }
 
-interface CalculatorNavBarProps {
+interface CalculatorBottomNavProps {
   activePanelI: number;
   onSelectSection: (index: number) => void;
 }
-function CalculatorNavBar({ activePanelI, onSelectSection }: CalculatorNavBarProps) {
+function CalculatorBottomNav({ activePanelI, onSelectSection }: CalculatorBottomNavProps) {
   const [optionsActive, setOptionsActive] = useState(false);
 
   const closeOptions = () => setOptionsActive(false);
 
   return (
     <>
-      <div className="flex font-semibold border-t border-surface-border" style={{ backgroundColor: "#05071a" }}>
-        {["Overview", "Modifiers", "Setup", "Results"].map((label, index) => {
-          const isActive = index === activePanelI;
-
-          return (
-            <div
-              key={label}
-              className={"w-full py-2 flex-center " + (isActive ? "text-secondary-1" : "text-light-default/60")}
-              onClick={() => onSelectSection(index)}
+      <MobileBottomNav
+        activeI={activePanelI}
+        options={["Overview", "Modifiers", "Setup", "Results"]}
+        extraEnd={
+          <>
+            <div className="my-auto w-px h-2/3 bg-surface-border" />
+            <button
+              type="button"
+              className="shrink-0 w-10 flex-center rotate-180"
+              onClick={() => setOptionsActive(true)}
             >
-              {label}
-            </div>
-          );
-        })}
-
-        <div className="my-auto w-px h-2/3 bg-surface-border" />
-        <button type="button" className="shrink-0 w-10 flex-center rotate-180" onClick={() => setOptionsActive(true)}>
-          <FaChevronDown />
-        </button>
-      </div>
+              <FaChevronDown />
+            </button>
+          </>
+        }
+        onSelect={onSelectSection}
+      />
 
       <BottomSheet active={optionsActive} title="Setups Manager" onClose={closeOptions}>
         <SmallSetupManager onClose={closeOptions} />
