@@ -2,7 +2,6 @@ export const MAX_USER_WEAPONS = 200;
 export const MAX_USER_ARTIFACTS = 800;
 export const MAX_USER_SETUPS = 50;
 export const MAX_CALC_SETUPS = 4;
-export const INVENTORY_PAGE_SIZE = 60;
 
 export const GENSHIN_DEV_URL = {
   base: "https://genshin.jmp.blue",

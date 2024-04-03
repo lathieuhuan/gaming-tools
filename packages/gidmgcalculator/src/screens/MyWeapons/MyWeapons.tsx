@@ -120,6 +120,7 @@ export default function MyWeapons() {
         data={filteredWeapons}
         emptyText="No weapons found"
         itemCls="max-w-1/3 basis-1/3 xm:max-w-1/4 xm:basis-1/4 lg:max-w-1/6 lg:basis-1/6 xl:max-w-1/8 xl:basis-1/8"
+        pageSize={screenWatcher.isFromSize("xl") ? 80 : 60}
         chosenID={chosenWeapon?.ID}
         onChangeItem={(weapon) => setChosenId(weapon?.ID)}
       />
@@ -155,7 +156,6 @@ export default function MyWeapons() {
             ID: Date.now(),
             owner: null,
           };
-
           dispatch(addUserWeapon(newUserWeapon));
           setChosenId(newUserWeapon.ID);
         }}
