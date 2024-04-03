@@ -88,18 +88,15 @@ const ArtifactSmith = ({
             config={artifactConfig}
             maxRarity={maxRarity}
             typeSelect={forcedType ? null : renderArtifactTypeSelect()}
-            moreButtons={
-              screenWatcher.isFromSize("sm")
-                ? undefined
-                : [
-                    {
-                      icon: <RiArrowGoBackLine className="text-lg" />,
-                      onClick: () => {
-                        if (selectBody) selectBody.scrollLeft = 0;
-                      },
-                    },
-                  ]
-            }
+            moreButtons={[
+              {
+                icon: <RiArrowGoBackLine className="text-lg" />,
+                className: "sm:hidden",
+                onClick: () => {
+                  if (selectBody) selectBody.scrollLeft = 0;
+                },
+              },
+            ]}
             onChangeRarity={onChangeRarity}
             onUpdateConfig={(properties) => {
               updateConfig((prevConfig) => ({ ...prevConfig, ...properties }));

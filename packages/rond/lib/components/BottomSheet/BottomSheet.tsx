@@ -4,7 +4,7 @@ import "./BottomSheet.styles.scss";
 
 export interface BottomSheetProps extends Pick<OverlayProps, "active" | "onClose" | "closable" | "closeOnMaskClick"> {
   title: React.ReactNode;
-  height?: "auto" | "30%" | "50%" | "70%";
+  height?: "auto" | "30%" | "50%" | "70%" | "90%";
   children?: React.ReactNode;
 }
 export function BottomSheet({ title, height, children, ...overlayProps }: BottomSheetProps) {

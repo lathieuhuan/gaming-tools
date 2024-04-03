@@ -81,7 +81,7 @@ export const userdbSlice = createSlice({
         ...Weapon_.create({ type: weaponType }, weaponID),
       });
     },
-    chooseCharacter: (state, action: PayloadAction<string>) => {
+    viewCharacter: (state, action: PayloadAction<string>) => {
       state.chosenChar = action.payload;
     },
     sortCharacters: (state, action: PayloadAction<number[]>) => {
@@ -512,7 +512,7 @@ export const userdbSlice = createSlice({
 export const {
   addUserDatabase,
   addCharacter,
-  chooseCharacter,
+  viewCharacter,
   sortCharacters,
   updateUserCharacter,
   removeUserCharacter,

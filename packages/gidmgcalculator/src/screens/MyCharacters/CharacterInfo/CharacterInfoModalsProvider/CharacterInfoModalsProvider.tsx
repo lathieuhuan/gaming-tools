@@ -3,7 +3,7 @@ import { ConfirmModal } from "rond";
 
 import { ARTIFACT_TYPES } from "@Src/constants";
 import { useDispatch } from "@Store/hooks";
-import { chooseCharacter, removeUserCharacter, switchArtifact, switchWeapon } from "@Store/userdb-slice";
+import { viewCharacter, removeUserCharacter, switchArtifact, switchWeapon } from "@Store/userdb-slice";
 
 // Component
 import { ArtifactInventory, Tavern, WeaponInventory } from "@Src/components";
@@ -64,7 +64,7 @@ export function CharacterInfoModalsProvider(props: CharacterInfoModalsProviderPr
           active={modalType === "SWITCH_CHARACTER"}
           sourceType="user"
           onSelectCharacter={(character) => {
-            dispatch(chooseCharacter(character.name));
+            dispatch(viewCharacter(character.name));
           }}
           onClose={closeModal}
         />
@@ -89,7 +89,7 @@ export function CharacterInfoModalsProvider(props: CharacterInfoModalsProviderPr
 
         <ArtifactInventory
           active={modalType === "SWITCH_ARTIFACT"}
-          currentArtifacts={data.artifacts}
+          currentArtifacts={artifacts}
           forcedType={ARTIFACT_TYPES[switchedArtifactI]}
           owner={char.name}
           buttonText="Switch"

@@ -3,7 +3,7 @@ import { SwitchNode, clsx, useScreenWatcher } from "rond";
 
 import { useSelector } from "@Store/hooks";
 import { selectComparedIds } from "@Store/calculator-slice";
-import MyCharacters from "@Src/screens/MyCharacters";
+import { MyCharactersLarge } from "@Src/screens/MyCharacters";
 import MyWeapons from "@Src/screens/MyWeapons";
 import MyArtifacts from "@Src/screens/MyArtifacts";
 import MySetups from "@Src/screens/MySetups";
@@ -106,7 +106,7 @@ export function AppMainLarge() {
           <SwitchNode
             value={atScreen}
             cases={[
-              { value: "MY_CHARACTERS", element: <MyCharacters /> },
+              { value: "MY_CHARACTERS", element: <MyCharactersLarge /> },
               { value: "MY_WEAPONS", element: <MyWeapons /> },
               { value: "MY_ARTIFACTS", element: <MyArtifacts /> },
               { value: "MY_SETUPS", element: <MySetups /> },

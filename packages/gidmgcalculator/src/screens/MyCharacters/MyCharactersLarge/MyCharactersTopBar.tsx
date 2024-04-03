@@ -1,33 +1,26 @@
-import { useEffect, useState } from "react";
-import { FaSortAmountUpAlt, FaTh, FaPlus } from "react-icons/fa";
+import { useEffect } from "react";
+import { FaPlus, FaSortAmountUpAlt } from "react-icons/fa";
 import { clsx, useIntersectionObserver, Button } from "rond";
 
+import { GenshinImage } from "@Src/components";
 import { $AppCharacter } from "@Src/services";
-import { useDispatch } from "@Store/hooks";
-import { chooseCharacter } from "@Store/userdb-slice";
-import { GenshinImage, Tavern } from "@Src/components";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { selectChosenCharacter, selectUserCharacters, viewCharacter } from "@Store/userdb-slice";
+import { useMyCharactersModalCtrl } from "../MyCharactersModalsProvider";
 
-import styles from "./MyCharacters.styles.module.scss";
+import styles from "./MyCharactersLarge.styles.module.scss";
 
-interface TopBarProps {
-  characters: Array<{ name: string }>;
-  chosenChar: string;
-  addCharacterButton: React.ReactNode;
-  onClickSort: () => void;
-  onClickWish: () => void;
-}
-export default function CharacterList({
-  characters,
-  chosenChar,
-  addCharacterButton,
-  onClickSort,
-  onClickWish,
-}: TopBarProps) {
+export function MyCharactersTopBar() {
   const dispatch = useDispatch();
-  const [gridviewOn, setGridviewOn] = useState(false);
+  const characters = useSelector(selectUserCharacters);
+  const chosenChar = useSelector(selectChosenCharacter);
+  const modalCtrl = useMyCharactersModalCtrl();
+
   const { observedAreaRef, visibleMap, itemUtils } = useIntersectionObserver({
     dependecies: [characters],
   });
+
+  const appCharacters = $AppCharacter.getAll();
 
   const scrollList = (name: string) => {
     itemUtils.queryById(name)?.element.scrollIntoView();
@@ -59,15 +52,19 @@ export default function CharacterList({
       <div className={styles["side-icon-carousel"]}>
         {characters.length ? (
           <div className="absolute top-8 right-full flex">
-            <Button className="mr-4" variant="primary" icon={<FaSortAmountUpAlt />} onClick={onClickSort} />
-            <Button className="mr-4" variant="primary" icon={<FaTh />} onClick={() => setGridviewOn(true)} />
+            <Button
+              className="mr-4"
+              variant="primary"
+              icon={<FaSortAmountUpAlt />}
+              onClick={modalCtrl.requestSortCharacters}
+            />
           </div>
         ) : null}
 
         <div ref={observedAreaRef} className="mt-2 w-full h-20 hide-scrollbar">
           <div className="flex">
             {characters.map(({ name }) => {
-              const appChar = $AppCharacter.get(name);
+              const appChar = appCharacters.find((appChar) => appChar.name === name);
               if (!appChar) return null;
               const visible = visibleMap[name];
 
@@ -78,7 +75,7 @@ export default function CharacterList({
                     "mx-1 border-b-3 border-transparent cursor-pointer",
                     name === chosenChar && styles["active-cell"],
                   ])}
-                  onClick={() => dispatch(chooseCharacter(name))}
+                  onClick={() => dispatch(viewCharacter(name))}
                 >
                   <div
                     className={clsx(
@@ -103,20 +100,17 @@ export default function CharacterList({
           </div>
         </div>
 
-        <div className="absolute top-4 left-full ml-6" style={{ width: 60, height: 60 }}>
-          {addCharacterButton}
+        <div className="absolute top-4 left-full ml-6">
+          <Button
+            variant="custom"
+            size="custom"
+            className="w-full h-full bg-surface-3"
+            style={{ width: "3.75rem", height: "3.75rem" }}
+            icon={<FaPlus className="text-2xl" />}
+            onClick={modalCtrl.requestAddCharacter}
+          />
         </div>
       </div>
-
-      <Tavern
-        active={gridviewOn}
-        sourceType="user"
-        onSelectCharacter={(character) => {
-          dispatch(chooseCharacter(character.name));
-          scrollList(character.name);
-        }}
-        onClose={() => setGridviewOn(false)}
-      />
     </div>
   );
 }

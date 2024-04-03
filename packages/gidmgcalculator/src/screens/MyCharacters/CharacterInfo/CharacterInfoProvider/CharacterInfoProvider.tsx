@@ -4,8 +4,27 @@ import type { Character, UserArtifacts, UserWeapon } from "@Src/types";
 import { useAppCharacter } from "@Src/hooks";
 import { getCalculationStats } from "@Src/calculation";
 import { $AppData } from "@Src/services";
-import { Calculation_ } from "@Src/utils";
+import { Calculation_, findById, findByName } from "@Src/utils";
 import { CharacterInfoContext, CharacterInfoState } from "./character-info-context";
+import { RootState } from "@Store/store";
+import { useSelector } from "@Store/hooks";
+
+const selectChosenCharacterInfo = (state: RootState) => {
+  const { userChars, userWps, userArts, chosenChar } = state.userdb;
+  const chosenCharInfo = findByName(userChars, chosenChar);
+  const weapon = findById(userWps, chosenCharInfo?.weaponID);
+
+  if (chosenCharInfo && weapon) {
+    const { weaponID, artifactIDs, ...char } = chosenCharInfo;
+
+    return {
+      char,
+      weapon,
+      artifacts: artifactIDs.map((id) => (id ? findById(userArts, id) ?? null : null)),
+    };
+  }
+  return null;
+};
 
 interface CharacterInfoProviderProps {
   char: Character;
@@ -13,7 +32,7 @@ interface CharacterInfoProviderProps {
   artifacts: UserArtifacts;
   children: React.ReactNode;
 }
-export function CharacterInfoProvider({ char, weapon, artifacts, children }: CharacterInfoProviderProps) {
+function CharacterInfoProviderCore({ char, weapon, artifacts, children }: CharacterInfoProviderProps) {
   const { isLoading, error, appChar } = useAppCharacter(char.name);
   const appWeapon = $AppData.getWeapon(weapon.code);
 
@@ -51,4 +70,12 @@ export function CharacterInfoProvider({ char, weapon, artifacts, children }: Cha
   }, [char, appChar, weapon, appWeapon, artifacts]);
 
   return <CharacterInfoContext.Provider value={characterInfoState}>{children}</CharacterInfoContext.Provider>;
+}
+
+export function CharacterInfoProvider(props: Pick<CharacterInfoProviderProps, "children">) {
+  const chosenCharacterInfo = useSelector(selectChosenCharacterInfo);
+
+  return chosenCharacterInfo ? (
+    <CharacterInfoProviderCore {...chosenCharacterInfo}>{props.children}</CharacterInfoProviderCore>
+  ) : null;
 }

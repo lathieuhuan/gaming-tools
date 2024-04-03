@@ -3,8 +3,8 @@ import { clsx } from "rond";
 
 import { useDispatch } from "@Store/hooks";
 import { updateUserCharacter } from "@Store/userdb-slice";
-import { useCharacterInfo } from "./CharacterInfoProvider";
-import { useCharacterInfoModalCtrl } from "./CharacterInfoModalsProvider";
+import { useCharacterInfo } from "../CharacterInfoProvider";
+import { useCharacterInfoModalCtrl } from "../CharacterInfoModalsProvider";
 
 interface PanelAttributesProps {
   className?: string;

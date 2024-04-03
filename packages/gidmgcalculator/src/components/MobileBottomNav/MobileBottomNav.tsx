@@ -13,7 +13,7 @@ export function MobileBottomNav(props: MobileBottomNavProps) {
         return (
           <div
             key={index}
-            className={"w-full py-2 flex-center " + (isActive ? "text-secondary-1" : "text-light-default/60")}
+            className={"grow py-2 flex-center " + (isActive ? "text-secondary-1" : "text-light-default/60")}
             onClick={() => props.onSelect(index)}
           >
             {label}

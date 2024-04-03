@@ -5,7 +5,7 @@ import { BottomSheet, SwitchNode } from "rond";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 
-import MyCharacters from "@Src/screens/MyCharacters";
+import { MyCharactersSmall } from "@Src/screens/MyCharacters";
 import MyWeapons from "@Src/screens/MyWeapons";
 import MyArtifacts from "@Src/screens/MyArtifacts";
 import MySetups from "@Src/screens/MySetups";
@@ -37,14 +37,8 @@ export function AppMainSmall() {
     <SwitchNode
       value={atScreen}
       cases={[
-        {
-          value: "MY_CHARACTERS",
-          element: <MyCharacters />,
-        },
-        {
-          value: "MY_WEAPONS",
-          element: <MyWeapons />,
-        },
+        { value: "MY_CHARACTERS", element: <MyCharactersSmall /> },
+        { value: "MY_WEAPONS", element: <MyWeapons /> },
         { value: "MY_ARTIFACTS", element: <MyArtifacts /> },
         { value: "MY_SETUPS", element: <MySetups /> },
       ]}

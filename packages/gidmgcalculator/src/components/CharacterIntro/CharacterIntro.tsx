@@ -23,8 +23,12 @@ export function CharacterIntro(props: CharacterIntroProps) {
 
   return (
     <div className={"flex relative " + className}>
-      <div className="mr-3 relative shrink-0" onClick={props.switchable ? props.onSwitch : undefined}>
-        <GenshinImage className="w-20 h-20 cursor-pointer" src={appChar.icon} imgType="character" fallbackCls="p-2" />
+      <div
+        className="mr-3 relative shrink-0"
+        onClick={props.switchable ? props.onSwitch : undefined}
+        style={{ width: "5.25rem", height: "5.25rem" }}
+      >
+        <GenshinImage className="cursor-pointer" src={appChar.icon} imgType="character" fallbackCls="p-2" />
         {props.switchable && <Button className="absolute -top-1 -left-1 z-10" icon={<FaSyncAlt />} />}
         <Badge active={appChar.beta} className="absolute -top-1 -right-1 z-10">
           BETA

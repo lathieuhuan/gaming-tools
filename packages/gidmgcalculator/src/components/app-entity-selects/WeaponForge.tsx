@@ -9,6 +9,7 @@ import { pickProps, Weapon_ } from "@Src/utils";
 import { WeaponCard } from "../WeaponCard";
 import { WeaponFilter, WeaponFilterState } from "./components/WeaponFilter";
 import { AppEntitySelect, AppEntitySelectProps } from "./components/AppEntitySelect";
+import { RiArrowGoBackLine } from "react-icons/ri";
 
 const transformWeapon = (weapon: AppWeapon) => pickProps(weapon, ["code", "name", "beta", "icon", "type", "rarity"]);
 
@@ -96,7 +97,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
           />
         );
       }}
-      renderOptionConfig={(afterSelect) => {
+      renderOptionConfig={(afterSelect, selectBody) => {
         return (
           <WeaponCard
             wrapperCls="w-76 h-full"
@@ -109,6 +110,13 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
               setWeaponConfig({ ...config, level });
             }}
             actions={[
+              {
+                icon: <RiArrowGoBackLine className="text-lg" />,
+                className: "sm:hidden",
+                onClick: () => {
+                  if (selectBody) selectBody.scrollLeft = 0;
+                },
+              },
               {
                 children: "Forge",
                 variant: "primary",

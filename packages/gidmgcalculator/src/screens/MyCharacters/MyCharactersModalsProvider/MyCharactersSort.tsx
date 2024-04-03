@@ -37,7 +37,7 @@ const Line = ({ char, marker, visiblePlot, ...rest }: LineProps) => {
   );
 };
 
-function SortInner({ onClose }: { onClose: () => void }) {
+function SortCore({ onClose }: { onClose: () => void }) {
   const dispatch = useDispatch();
 
   const toBeSorted = useStoreSnapshot(selectCharacterToBeSorted);
@@ -250,7 +250,7 @@ function SortInner({ onClose }: { onClose: () => void }) {
   );
 }
 
-const CharacterSort = Modal.wrap(SortInner, {
+const MyCharactersSort = Modal.wrap(SortCore, {
   preset: "small",
   title: "Sort characters",
   className: "bg-surface-1",
@@ -258,4 +258,4 @@ const CharacterSort = Modal.wrap(SortInner, {
   formId: "sort-characters-form",
 });
 
-export default CharacterSort;
+export default MyCharactersSort;
