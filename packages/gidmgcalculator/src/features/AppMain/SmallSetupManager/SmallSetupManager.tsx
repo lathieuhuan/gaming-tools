@@ -64,8 +64,8 @@ export function SmallSetupManager({ onClose }: SmallSetupManagerProps) {
   ];
 
   return (
-    <div className="p-4">
-      <div className="flex flex-col gap-4" style={{ height: "25rem" }}>
+    <div>
+      <div className="px-4 pt-4 flex flex-col gap-4" style={{ height: "26rem" }}>
         {displayedSetups.map((setup, setupIndex) => {
           return (
             <div key={setup.ID} className="border-b border-surface-border">
@@ -108,7 +108,7 @@ export function SmallSetupManager({ onClose }: SmallSetupManagerProps) {
       </div>
 
       <ButtonGroup
-        className="mt-4"
+        className="p-4 bg-surface-3"
         justify="end"
         buttons={[
           {

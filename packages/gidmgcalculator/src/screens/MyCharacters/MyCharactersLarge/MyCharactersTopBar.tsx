@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { FaPlus, FaSortAmountUpAlt } from "react-icons/fa";
-import { clsx, useIntersectionObserver, Button } from "rond";
+import { clsx, useIntersectionObserver, Button, useChildListObserver } from "rond";
 
 import { GenshinImage } from "@Src/components";
 import { $AppCharacter } from "@Src/services";
@@ -16,8 +16,13 @@ export function MyCharactersTopBar() {
   const chosenChar = useSelector(selectChosenCharacter);
   const modalCtrl = useMyCharactersModalCtrl();
 
-  const { observedAreaRef, visibleMap, itemUtils } = useIntersectionObserver({
-    dependecies: [characters],
+  const { observedAreaRef: intersectObsArea, visibleMap, itemUtils } = useIntersectionObserver();
+  const { observedAreaRef: listObsArea } = useChildListObserver({
+    onNodesAdded: (addedNodes) => {
+      for (const node of addedNodes) {
+        itemUtils.observe(node as Element);
+      }
+    },
   });
 
   const appCharacters = $AppCharacter.getAll();
@@ -30,16 +35,16 @@ export function MyCharactersTopBar() {
     const scrollHorizontally = (e: any) => {
       const delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.detail));
 
-      if (observedAreaRef.current) {
-        observedAreaRef.current.scrollLeft -= delta * 50;
+      if (intersectObsArea.current) {
+        intersectObsArea.current.scrollLeft -= delta * 50;
       }
       e.preventDefault();
     };
 
-    observedAreaRef.current?.addEventListener("wheel", scrollHorizontally);
+    intersectObsArea.current?.addEventListener("wheel", scrollHorizontally);
 
     return () => {
-      observedAreaRef.current?.removeEventListener("wheel", scrollHorizontally);
+      intersectObsArea.current?.removeEventListener("wheel", scrollHorizontally);
     };
   }, []);
 
@@ -61,8 +66,8 @@ export function MyCharactersTopBar() {
           </div>
         ) : null}
 
-        <div ref={observedAreaRef} className="mt-2 w-full h-20 hide-scrollbar">
-          <div className="flex">
+        <div ref={intersectObsArea} className="mt-2 w-full h-20 hide-scrollbar">
+          <div ref={listObsArea} className="flex">
             {characters.map(({ name }) => {
               const appChar = appCharacters.find((appChar) => appChar.name === name);
               if (!appChar) return null;

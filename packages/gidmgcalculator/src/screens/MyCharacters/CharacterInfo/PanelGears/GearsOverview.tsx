@@ -1,5 +1,5 @@
 import { FaInfo } from "react-icons/fa";
-import { clsx, Button, CloseButton, ItemCase } from "rond";
+import { clsx, Button, CloseButton, ItemCase, LoadingSpin } from "rond";
 
 import type { GearsDetailType } from "./Gears.types";
 import { ARTIFACT_TYPES } from "@Src/constants";
@@ -29,7 +29,11 @@ export function GearsOverview({
   const { loading, data } = useCharacterInfo();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="h-full flex-center">
+        <LoadingSpin size="large" />
+      </div>
+    );
   }
 
   if (!data) return null;

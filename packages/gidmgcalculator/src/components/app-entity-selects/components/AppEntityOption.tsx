@@ -38,7 +38,7 @@ const AppEntityOptionCore = ({ className, imgCls, visible, item, selectedAmount 
           item.vision ? "pt-4" : "p-1"
         )}
       >
-        <div className={"aspect-square transition-opacity duration-400 " + (visible ? "opacity-100" : "opacity-0")}>
+        <div className={`aspect-square transition-opacity duration-400 ${visible ? "opacity-100" : "opacity-0"}`}>
           {visible && <GenshinImage className={imgCls} src={item.icon} imgType="unknown" fallbackCls="p-4" />}
         </div>
 

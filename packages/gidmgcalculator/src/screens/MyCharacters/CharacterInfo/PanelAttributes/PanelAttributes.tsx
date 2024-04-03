@@ -1,5 +1,5 @@
 import { AttributeTable, CharacterIntro } from "@Src/components";
-import { clsx } from "rond";
+import { LoadingSpin, clsx } from "rond";
 
 import { useDispatch } from "@Store/hooks";
 import { updateUserCharacter } from "@Store/userdb-slice";
@@ -15,7 +15,11 @@ export function PanelAttributes(props: PanelAttributesProps) {
   const modalCtrl = useCharacterInfoModalCtrl();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="h-full flex-center">
+        <LoadingSpin size="large" />
+      </div>
+    );
   }
   if (!data) return null;
 

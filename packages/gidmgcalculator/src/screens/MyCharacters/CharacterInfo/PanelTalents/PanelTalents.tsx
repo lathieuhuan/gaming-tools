@@ -1,3 +1,5 @@
+import { LoadingSpin } from "rond";
+
 import { useDispatch } from "@Store/hooks";
 import { updateUserCharacter } from "@Store/userdb-slice";
 import { TalentList } from "@Src/components";
@@ -11,7 +13,11 @@ export function PanelTalents(props: PanelTalentsProps) {
   const { loading, data } = useCharacterInfo();
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="h-full flex-center">
+        <LoadingSpin size="large" />
+      </div>
+    );
   }
   if (!data) return null;
   const { char } = data;

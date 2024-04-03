@@ -22,7 +22,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
   const elmtText = `text-${appChar.vision}`;
 
   return (
-    <div className={"flex relative " + className}>
+    <div className={`flex relative ${className}`}>
       <div
         className="mr-3 relative shrink-0"
         onClick={props.switchable ? props.onSwitch : undefined}
@@ -37,7 +37,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
 
       <div className="min-w-0 grow">
         <div className="overflow-hidden">
-          <p className={`text-2xl truncate ${elmtText} font-black`}>{char.name}</p>
+          <p className={`text-2xl truncate ${elmtText} font-black ${props.removable ? "pr-9" : ""}`}>{char.name}</p>
           <Rarity value={appChar.rarity} />
         </div>
 

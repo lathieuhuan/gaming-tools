@@ -51,7 +51,7 @@ export function ItemThumbnail({ className, imgCls, item }: ItemThumbProps) {
         </p>
       ) : null}
 
-      <div className={`aspect-square bg-gradient-${item.rarity || 5} ` + "rounded rounded-br-2xl overflow-hidden"}>
+      <div className={`aspect-square bg-gradient-${item.rarity || 5} rounded rounded-br-2xl overflow-hidden`}>
         <GenshinImage
           className={imgCls}
           src={item.icon}
