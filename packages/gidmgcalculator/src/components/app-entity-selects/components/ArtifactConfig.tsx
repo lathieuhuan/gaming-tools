@@ -2,7 +2,7 @@ import { Rarity } from "rond";
 
 import type { Artifact } from "@Src/types";
 import { deepCopy } from "@Src/utils";
-import { ArtifactCard, ArtifactCardAction } from "../../ArtifactCard";
+import { ArtifactCard, type ArtifactCardAction } from "../../ArtifactCard";
 
 interface ArtifactConfigProps {
   config?: Artifact;

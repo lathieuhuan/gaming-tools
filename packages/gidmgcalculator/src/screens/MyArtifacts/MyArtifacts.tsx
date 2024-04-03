@@ -92,12 +92,12 @@ export default function MyArtifacts() {
       <div className="flex cursor-pointer">
         <button
           className={clsx(
-            "pl-4 py-1 text-black glow-on-hover",
-            isFiltered ? "pr-2 bg-active-color rounded-l-2xl" : "pr-4 bg-light-default rounded-2xl"
+            "pl-3 py-1.5 text-black rounded-2xl glow-on-hover",
+            isFiltered ? "pr-2 bg-active-color rounded-r-none" : "pr-3 bg-light-default"
           )}
           onClick={() => setModalType("FITLER")}
         >
-          <p className="font-bold">Filter</p>
+          <p className="font-bold text-sm">Filter</p>
         </button>
 
         {isFiltered && (

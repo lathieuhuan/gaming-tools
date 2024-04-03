@@ -66,7 +66,7 @@ export function GearsDetail({ detailType, showCloseBtn, onClose }: GearsDetailPr
           <div className="grow pr-1 hide-scrollbar">
             <SetBonusesView setBonuses={data.setBonuses} />
           </div>
-          <div className={`mt-3 flex justify-end ${closeBtnProps.className}`}>
+          <div className={`mt-3 flex justify-center ${closeBtnProps.className}`}>
             <Button {...closeBtnProps} />
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { FaBalanceScaleLeft, FaCopy, FaSave, FaShareAlt, FaTrashAlt, FaArrowUp, FaPlus, FaCheck } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
+import { RiArrowGoBackLine } from "react-icons/ri";
 import { BiImport } from "react-icons/bi";
 import { Button, ButtonGroup, Input, type ButtonProps } from "rond";
 
@@ -111,6 +112,10 @@ export function SmallSetupManager({ onClose }: SmallSetupManagerProps) {
         className="p-4 bg-surface-3"
         justify="end"
         buttons={[
+          {
+            icon: <RiArrowGoBackLine className="text-lg" />,
+            onClick: onClose,
+          },
           {
             children: "Import",
             icon: <BiImport className="text-lg" />,

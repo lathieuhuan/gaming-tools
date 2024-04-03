@@ -9,23 +9,6 @@ import { CharacterInfoContext, CharacterInfoState } from "./character-info-conte
 import { RootState } from "@Store/store";
 import { useSelector } from "@Store/hooks";
 
-const selectChosenCharacterInfo = (state: RootState) => {
-  const { userChars, userWps, userArts, chosenChar } = state.userdb;
-  const chosenCharInfo = findByName(userChars, chosenChar);
-  const weapon = findById(userWps, chosenCharInfo?.weaponID);
-
-  if (chosenCharInfo && weapon) {
-    const { weaponID, artifactIDs, ...char } = chosenCharInfo;
-
-    return {
-      char,
-      weapon,
-      artifacts: artifactIDs.map((id) => (id ? findById(userArts, id) ?? null : null)),
-    };
-  }
-  return null;
-};
-
 interface CharacterInfoProviderProps {
   char: Character;
   weapon: UserWeapon;
@@ -72,10 +55,42 @@ function CharacterInfoProviderCore({ char, weapon, artifacts, children }: Charac
   return <CharacterInfoContext.Provider value={characterInfoState}>{children}</CharacterInfoContext.Provider>;
 }
 
-export function CharacterInfoProvider(props: Pick<CharacterInfoProviderProps, "children">) {
-  const chosenCharacterInfo = useSelector(selectChosenCharacterInfo);
+const parseUserdb = (state: RootState) => {
+  const { userChars, userWps, userArts, chosenChar } = state.userdb;
+  const chosenCharInfo = findByName(userChars, chosenChar);
+  const weapon = findById(userWps, chosenCharInfo?.weaponID);
+  const charCount = userChars.length;
 
-  return chosenCharacterInfo ? (
-    <CharacterInfoProviderCore {...chosenCharacterInfo}>{props.children}</CharacterInfoProviderCore>
-  ) : null;
+  if (chosenCharInfo && weapon) {
+    const { weaponID, artifactIDs, ...char } = chosenCharInfo;
+
+    return {
+      characterInfo: {
+        char,
+        weapon,
+        artifacts: artifactIDs.map((id) => (id ? findById(userArts, id) ?? null : null)),
+      },
+      charCount,
+    };
+  }
+  return {
+    characterInfo: null,
+    charCount,
+  };
+};
+
+export function CharacterInfoProvider(props: Pick<CharacterInfoProviderProps, "children">) {
+  const { charCount, characterInfo } = useSelector(parseUserdb);
+
+  if (charCount) {
+    return characterInfo ? (
+      <CharacterInfoProviderCore {...characterInfo}>{props.children}</CharacterInfoProviderCore>
+    ) : null;
+  }
+
+  return (
+    <div className="pt-8">
+      <p className="text-center text-lg text-hint-color">No characters found</p>
+    </div>
+  );
 }

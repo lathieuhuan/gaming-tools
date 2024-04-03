@@ -154,7 +154,7 @@ export default function MySetups() {
           "shrink-0 flex flex-col items-start custom-scrollbar scroll-smooth space-y-3"
         )}
         style={{
-          minWidth: screenWatcher.isFromSize("lg") ? "541px" : "",
+          minWidth: screenWatcher.isFromSize("lg") ? "541px" : "19.5rem",
         }}
       >
         {setupList}

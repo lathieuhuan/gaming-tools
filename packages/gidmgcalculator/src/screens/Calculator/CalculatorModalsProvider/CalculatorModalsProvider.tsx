@@ -19,24 +19,18 @@ export function CalculatorModalsProvider(props: { children: React.ReactNode }) {
   const closeModal = () => setModalType("");
 
   const control: CalculatorModalsControl = useMemo(() => {
-    const requestImportSetup = () => {
-      setModalType("IMPORT_SETUP");
-    };
-
-    const requestSaveSetup = (setupId: number) => {
-      setModalType("SAVE_SETUP");
-      setSetupId(setupId);
-    };
-
-    const requestShareSetup = (setupId: number) => {
-      setModalType("SHARE_SETUP");
-      setSetupId(setupId);
-    };
-
     return {
-      requestImportSetup,
-      requestSaveSetup,
-      requestShareSetup,
+      requestImportSetup: () => {
+        setModalType("IMPORT_SETUP");
+      },
+      requestSaveSetup: (setupId: number) => {
+        setModalType("SAVE_SETUP");
+        setSetupId(setupId);
+      },
+      requestShareSetup: (setupId: number) => {
+        setModalType("SHARE_SETUP");
+        setSetupId(setupId);
+      },
     };
   }, []);
 
