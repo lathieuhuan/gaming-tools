@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { clsx, CollapseList, ModalControl, LoadingSpin, Skeleton, Modal } from "rond";
 
 import { $AppData, Update } from "@Src/services";
@@ -41,12 +42,31 @@ export const Introduction = (props: ModalControl) => {
     });
   };
 
-  const renderTitle = (content: string, className?: string) => {
+  const renderTitle = (screen: "small" | "large") => {
+    const config =
+      screen === "small"
+        ? {
+            title: "GI DMG Calculator",
+            cls: "text-1.5xl md:hidden",
+            patchCls: "text-sm",
+            sltCls: "h-3.5",
+          }
+        : {
+            title: "Welcome to GI DMG Calculator",
+            cls: "text-2xl hidden md:block",
+            patchCls: "text-base",
+            sltCls: "h-4",
+          };
+
     return (
-      <h1 className={clsx("text-2xl text-heading-color text-center font-bold relative", className)}>
-        {content}
-        <span className="absolute top-0 left-full ml-2 text-base text-hint-color">
-          {isLoadingMetadata ? <Skeleton className="w-14 h-4 rounded" /> : patch ? <span>v{patch}</span> : null}
+      <h1 className={clsx("text-heading-color text-center font-bold relative", config.cls)}>
+        {config.title}
+        <span className={clsx("absolute top-0 left-full ml-2 text-hint-color", config.patchCls)}>
+          {isLoadingMetadata ? (
+            <Skeleton className={clsx("w-14 rounded", config.sltCls)} />
+          ) : patch ? (
+            <span>v{patch}</span>
+          ) : null}
         </span>
       </h1>
     );
@@ -60,18 +80,30 @@ export const Introduction = (props: ModalControl) => {
       title={
         <>
           <div className="flex flex-col items-center">
-            {renderTitle("Welcome to GI DMG Calculator", "hidden md:block")}
+            {renderTitle("large")}
 
             <p className="text-xl font-semibold md:hidden">Welcome to</p>
-            {renderTitle("GI DMG Calculator", "md:hidden")}
+            {renderTitle("small")}
           </div>
 
           <MetadataRefetcher
-            className="mt-2"
+            className="my-2"
             isLoading={isLoadingMetadata}
             isError={status === "error"}
             onRefetch={getMetadata}
           />
+
+          <div className="mb-1 text-center text-light-default text-base font-normal">
+            <span>Please join the version 3.7.1 survey and share you thoughts!</span>
+
+            <a
+              className="pb-1 w-6 h-6 inline-flex justify-center items-center align-middle"
+              href="https://forms.gle/Gt4GViNVi1yoQn5n9"
+              target="_blank"
+            >
+              <FaExternalLinkAlt />
+            </a>
+          </div>
         </>
       }
       {...props}
