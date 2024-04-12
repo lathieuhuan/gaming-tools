@@ -90,7 +90,7 @@ export default function FirstCombine(props: { onClose: () => void }) {
 
       <div className="mt-4">
         <Input
-          className="w-full text-center font-medium"
+          className="w-full text-center font-semibold"
           size="medium"
           value={input}
           maxLength={32}
