@@ -59,7 +59,8 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
           {existedSetup ? "Do you what to update this setup" : "Do you what to save this setup as"}
         </p>
         <Input
-          className="px-4 py-2 text-1.5xl text-center font-semibold"
+          className="text-center font-semibold"
+          size="large"
           autoFocus
           value={input}
           maxLength={34}

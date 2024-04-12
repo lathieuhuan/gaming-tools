@@ -38,7 +38,7 @@ export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
     <div ref={intersectObsArea} className="h-full flex flex-col">
       {userChars.length ? (
         <div className="px-4 py-3">
-          <Input className="w-1/2 px-2 py-1" placeholder="Search..." onChange={setKeyword} />
+          <Input className="w-1/2" placeholder="Search..." onChange={setKeyword} />
         </div>
       ) : null}
 

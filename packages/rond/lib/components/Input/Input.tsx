@@ -3,15 +3,17 @@ import { forwardRef, useState, useEffect } from "react";
 import "./Input.styles.scss";
 
 export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "className" | "type" | "value" | "onChange"> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "className" | "type" | "size" | "value" | "onChange"> {
   className?: ClassValue;
+  /** Default to 'small' */
+  size?: "small" | "medium" | "large";
   unstyled?: boolean;
   value?: string;
   onChange?: (value: string) => void;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-  const { className, unstyled, value = "", onChange, ...nativeProps } = props;
+  const { className, size = "small", unstyled, value = "", onChange, ...nativeProps } = props;
   const isControlled = "value" in props;
   const [localValue, setLocalValue] = useState(value);
 
@@ -35,7 +37,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       ref={ref}
       {...nativeProps}
       type="text"
-      className={clsx(!unstyled && "ron-input", className)}
+      className={clsx(!unstyled && `ron-input ron-input-${size}`, className)}
       value={isControlled ? value : localValue}
       onChange={handleChange}
     />
