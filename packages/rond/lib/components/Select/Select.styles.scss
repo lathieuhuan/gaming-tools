@@ -1,0 +1,22 @@
+.ron-select {
+  width: fit-content;
+  padding: 0 0.75rem;
+  border-radius: 0.25rem;
+  color: var(--ron-color-on-light);
+  background-color: var(--ron-color-light-surface-3);
+  position: relative;
+  cursor: pointer;
+}
+.ron-select__selector {
+  padding-right: 1.125rem;
+  line-height: 2rem;
+  font-size: 1rem;
+}
+.ron-select__arrow {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  display: flex;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+}

@@ -1,5 +1,6 @@
 export * from "./types";
 export * from "./CheckCircleSvg";
+export * from "./ChevronDownSvg";
 export * from "./ExclamationCircleSvg";
 export * from "./ExclamationTriangleSvg";
 export * from "./FilterSvg";

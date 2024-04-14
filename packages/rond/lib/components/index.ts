@@ -20,6 +20,7 @@ export * from "./ModifierView";
 export * from "./Popover";
 export * from "./Radio";
 export * from "./Rarity";
+export * from "./Select";
 export * from "./Skeleton";
 export * from "./StatsTable";
 export * from "./SwitchNode";
