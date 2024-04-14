@@ -48,10 +48,10 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
           </ul>
         ) : null}
 
-        <label className="mt-3 flex items-center">
+        <label className="mt-3 flex items-center gap-4">
           <span>Level</span>
           <InputNumber
-            className="ml-4 w-14 px-2 py-1 leading-none text-right font-semibold"
+            className="w-14 font-semibold"
             value={target.level}
             max={100}
             onChange={(value) => dispatch(updateTarget({ level: value }))}

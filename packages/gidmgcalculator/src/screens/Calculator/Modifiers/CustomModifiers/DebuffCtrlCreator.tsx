@@ -55,13 +55,16 @@ export default function DebuffCtrlCreator({ onClose }: DebuffCtrlCreatorProps) {
       </select>
       <InputNumber
         ref={inputRef}
-        className="ml-4 w-16 px-2 py-1 text-lg text-right font-bold"
+        className="ml-4 w-16 font-semibold"
+        size="medium"
         autoFocus
-        value={config.value}
         max={200}
+        maxDecimalDigits={1}
+        step="0.1"
         onChange={(value) => {
           setConfig((prev) => ({ ...prev, value }));
         }}
+        value={config.value}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             onDone();

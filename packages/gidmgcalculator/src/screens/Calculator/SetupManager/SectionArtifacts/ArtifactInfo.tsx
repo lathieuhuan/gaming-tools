@@ -106,7 +106,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
         }}
       />
 
-      <div className="px-2 pt-4 pb-1 flex justify-end items-center gap-4">
+      <div className="px-2 pt-2 pb-1 flex justify-end items-center gap-4">
         <Button
           title="Remove"
           icon={<FaTrashAlt />}

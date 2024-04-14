@@ -127,11 +127,14 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
     <div className="flex items-center">
       <InputNumber
         ref={inputRef}
-        className="w-16 px-2 py-1 text-lg text-right font-semibold"
+        className="w-16 font-semibold"
+        size="medium"
         autoFocus
-        value={config.value}
         min={sign ? -99 : -9999}
         max={sign ? 999 : 99_999}
+        maxDecimalDigits={1}
+        step="0.1"
+        value={config.value}
         onChange={(value) => {
           setConfig((prev) => ({ ...prev, value }));
         }}

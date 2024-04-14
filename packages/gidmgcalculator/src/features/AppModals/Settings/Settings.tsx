@@ -176,7 +176,8 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
             label,
             <InputNumber
               key={key}
-              className="w-full px-2 py-1 text-right font-bold"
+              className="w-full font-semibold"
+              size="medium"
               value={tempSettings.targetLevel}
               max={100}
               onChange={(newValue) => {

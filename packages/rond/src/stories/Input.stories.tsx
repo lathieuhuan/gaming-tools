@@ -10,6 +10,7 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     disabled: { control: "boolean" },
+    size: { control: "select", options: ["small", "medium", "large"] },
   },
 } satisfies Meta<typeof Input>;
 
@@ -19,5 +20,6 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     disabled: false,
+    size: "small",
   },
 };

@@ -2,6 +2,7 @@
   border-radius: 0.25rem;
   background-color: var(--ron-color-light-surface-3);
   color: var(--ron-color-on-light);
+  font-weight: 500;
 
   &:focus {
     background-color: var(--ron-color-light-surface-2);
@@ -10,18 +11,18 @@
     background-color: var(--ron-color-light-surface-disabled);
   }
 }
-.ron-input-small {
+.ron-input--small {
   padding: 0.25rem 0.5rem;
   font-size: 1rem;
   line-height: 1.25rem;
 }
-.ron-input-medium {
-  padding: 0.25rem 1rem;
+.ron-input--medium {
+  padding: 0.25rem 0.75rem;
   font-size: 1.125rem;
-  line-height: 1.625rem;
+  line-height: 1.5rem;
 }
-.ron-input-large {
-  padding: 0.25rem 1rem;
+.ron-input--large {
+  padding: 0.25rem 0.75rem;
   font-size: 1.25rem;
-  line-height: 1.875rem;
+  line-height: 1.75rem;
 }

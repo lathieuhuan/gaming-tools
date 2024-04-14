@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { clsx } from "rond";
 
@@ -14,6 +14,7 @@ interface ComboBoxProps {
 }
 export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }: ComboBoxProps) {
   const [keyword, setKeyword] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const onFocusSearchInput = () => {
     document.querySelector(`#monster-${targetCode}`)?.scrollIntoView();
@@ -50,13 +51,14 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
       });
     }
 
-    (document.activeElement as HTMLInputElement)?.blur();
+    inputRef.current?.blur();
   };
 
   return (
     <div className={"relative " + (className || "")}>
       <label className="px-2 w-full text-black bg-light-default rounded font-semibold flex items-center peer">
         <input
+          ref={inputRef}
           className="p-2 bg-transparent grow font-bold placeholder:text-black focus:placeholder:text-rarity-1"
           placeholder={targetTitle}
           value={keyword}

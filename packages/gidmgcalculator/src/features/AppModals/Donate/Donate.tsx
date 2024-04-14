@@ -13,7 +13,7 @@ export function DonateCore() {
             Paypal
           </Button>
         </a>
-        <InputNumber className="w-12 px-2 py-1.5 font-semibold" value={usd} min={1} max={999} onChange={setUsd} />
+        <InputNumber className="w-12 font-semibold" size="medium" value={usd} min={1} max={999} onChange={setUsd} />
         <span>$</span>
       </div>
 

@@ -4,7 +4,10 @@ import { round } from "../../utils";
 import "./InputNumber.styles.scss";
 
 interface InputNumberProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "max" | "min" | "onChange"> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "size" | "max" | "min" | "onChange"> {
+  unstyled?: boolean;
+  transparent?: boolean;
+  size?: "small" | "medium";
   value?: number;
   /** Default to 9999 */
   max?: number;
@@ -12,12 +15,22 @@ interface InputNumberProps
   min?: number;
   /** Default to 0 */
   maxDecimalDigits?: number;
-  unstyled?: boolean;
   onChange?: (value: number) => void;
 }
 
 export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props, ref) => {
-  const { className, value = 0, maxDecimalDigits = 0, unstyled, onBlur, onKeyDown, onChange, ...nativeProps } = props;
+  const {
+    className,
+    unstyled,
+    transparent,
+    size = "small",
+    value = 0,
+    maxDecimalDigits = 0,
+    onBlur,
+    onKeyDown,
+    onChange,
+    ...nativeProps
+  } = props;
   const [localValue, setLocalValue] = useState(`${value}`);
 
   useEffect(() => {
@@ -51,8 +64,13 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    const input = e.currentTarget;
+
+    input.type = "text";
+    input.setSelectionRange(0, 20);
+    input.type = "number";
+
     props.onFocus?.(e);
-    e.currentTarget.setSelectionRange(0, 20);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -118,8 +136,11 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
     <input
       ref={ref}
       {...nativeProps}
-      type="text"
-      className={clsx(!unstyled && "ron-input-number", className)}
+      type="number"
+      className={clsx(
+        !unstyled && [`ron-input-number ron-input-number--${size}`, transparent && "ron-input-number--transparent"],
+        className
+      )}
       value={localValue}
       onKeyDown={handleKeyDown}
       onFocus={handleFocus}

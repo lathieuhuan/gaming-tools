@@ -31,7 +31,7 @@ export function SetupControl({
     <div className="px-2 py-3 rounded-lg bg-surface-1" onDoubleClick={() => console.log(setup)}>
       <Input
         placeholder="Enter Setup's name"
-        className="w-full text-center font-medium"
+        className="w-full text-center"
         size="medium"
         value={setup.name}
         maxLength={20}

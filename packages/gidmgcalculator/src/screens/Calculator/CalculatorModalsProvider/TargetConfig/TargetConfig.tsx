@@ -54,7 +54,8 @@ function TargetConfigCore() {
             <label className="ml-auto flex items-center">
               <span className="mr-4 text-lg text-primary-1">Level</span>
               <InputNumber
-                className="w-16 p-2 text-right font-bold"
+                className="w-16 font-semibold"
+                size="medium"
                 value={target.level}
                 max={100}
                 maxDecimalDigits={0}
@@ -150,7 +151,8 @@ function TargetConfigCore() {
                   {t(attElmt, { ns: "resistance" })}
                 </p>
                 <InputNumber
-                  className="w-20 p-2 text-right font-bold disabled:bg-light-disabled"
+                  className="w-20 font-semibold"
+                  size="medium"
                   disabled={target.code !== 0}
                   value={target.resistances[attElmt]}
                   maxDecimalDigits={0}

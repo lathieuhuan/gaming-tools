@@ -73,7 +73,7 @@ export function SmallSetupManager({ onClose }: SmallSetupManagerProps) {
               <div className="flex gap-4">
                 <Input
                   placeholder="Enter Setup's name"
-                  className="w-full font-medium"
+                  className="w-full"
                   value={setup.name}
                   maxLength={20}
                   onChange={control.changeSetupName(setupIndex)}
