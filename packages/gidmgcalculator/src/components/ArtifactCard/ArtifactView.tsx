@@ -1,5 +1,5 @@
-import { FaChevronDown } from "react-icons/fa";
-import { clsx, Badge } from "rond";
+import { useRef } from "react";
+import { clsx, Badge, Select } from "rond";
 
 import type { ArtifactSubStat, AttributeStat, CalcArtifact, UserArtifact } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
@@ -28,6 +28,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
   onChangeSubStat,
 }: ArtifactViewProps<T>) {
   const { t } = useTranslation();
+  const wrapElmt = useRef<HTMLDivElement>(null);
   if (!artifact) return null;
 
   const appArtifact = $AppData.getArtifact(artifact);
@@ -36,7 +37,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
   const mainStatValue = Artifact_.mainStatValueOf(artifact);
 
   return (
-    <div className={className}>
+    <div ref={wrapElmt} className={className}>
       <div className={`px-4 pt-1 bg-rarity-${rarity}`} onDoubleClick={() => console.log(artifact)}>
         <p className="text-lg font-semibold text-black truncate">{appArtifact?.name}</p>
       </div>
@@ -70,22 +71,15 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
         {["flower", "plume"].includes(artifact.type) || !mutable ? (
           <p className={"py-1 text-lg " + (mutable ? "pl-6" : "pl-2")}>{t(mainStatType)}</p>
         ) : (
-          <div className="py-1 relative">
-            <FaChevronDown className="absolute top-1/2 -translate-y-1/2 left-0" />
-            <select
-              className="pl-6 text-lg text-light-default appearance-none relative z-10"
-              value={mainStatType}
-              onChange={(e) => onChangeMainStatType?.(e.target.value as AttributeStat, artifact)}
-            >
-              {possibleMainStatTypes.map((type) => {
-                return (
-                  <option key={type} value={type}>
-                    {t(type)}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
+          <Select
+            className="w-48 h-9 text-lg"
+            transparent
+            arrowAt="start"
+            options={possibleMainStatTypes.map((type) => ({ label: t(type), value: type }))}
+            getPopupContainer={() => wrapElmt.current!}
+            value={mainStatType}
+            onChange={(value) => onChangeMainStatType?.(value as AttributeStat, artifact)}
+          />
         )}
         <p className={clsx(`text-rarity-${rarity} text-2xl leading-7 font-bold`, mutable ? "pl-6" : "pl-2")}>
           {mainStatValue}
@@ -100,6 +94,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
         mainStatType={mainStatType}
         subStats={artifact.subStats}
         onChangeSubStat={(...args) => onChangeSubStat?.(...args, artifact)}
+        getContainer={() => wrapElmt.current!}
       />
     </div>
   );

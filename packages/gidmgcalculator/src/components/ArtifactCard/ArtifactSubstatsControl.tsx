@@ -1,6 +1,5 @@
 import { useRef } from "react";
-import { FaChevronDown } from "react-icons/fa";
-import { InputNumber } from "rond";
+import { InputNumber, Select, type SelectProps } from "rond";
 
 import type { AttributeStat, ArtifactSubStat } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
@@ -16,6 +15,7 @@ interface ArtifactSubstatsControlProps {
   rarity: number;
   mainStatType: AttributeStat;
   subStats: ArtifactSubStat[];
+  getContainer?: SelectProps["getPopupContainer"];
   onChangeSubStat?: (index: number, changes: Partial<ArtifactSubStat>) => void;
 }
 export function ArtifactSubstatsControl({
@@ -24,6 +24,7 @@ export function ArtifactSubstatsControl({
   mainStatType,
   subStats,
   rarity,
+  getContainer,
   onChangeSubStat,
 }: ArtifactSubstatsControlProps) {
   const { t } = useTranslation();
@@ -51,29 +52,16 @@ export function ArtifactSubstatsControl({
 
         return mutable ? (
           <div key={i} className="h-9 flex-center bg-surface-2 relative">
-            <div className="relative">
-              <FaChevronDown className="absolute top-2.5 left-1 text-sm" />
-
-              <select
-                className={
-                  "pt-1.5 pb-1 pr-3 pl-6 leading-base relative z-10 appearance-none " +
-                  (statTypeCount[type] === 1 ? "text-light-default" : "text-danger-2")
-                }
-                value={type}
-                onChange={(e) => {
-                  onChangeSubStat?.(i, { type: e.target.value as AttributeStat });
-                }}
-              >
-                {ARTIFACT_SUBSTAT_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {t(type)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
+            <Select
+              className={["w-44 h-full", statTypeCount[type] === 1 ? "text-light-default" : "text-danger-2"]}
+              transparent
+              arrowAt="start"
+              getPopupContainer={getContainer}
+              options={ARTIFACT_SUBSTAT_TYPES.map((type) => ({ label: t(type), value: type }))}
+              value={type}
+              onChange={(value) => onChangeSubStat?.(i, { type: value as AttributeStat })}
+            />
             <span>+</span>
-
             <InputNumber
               transparent
               className={`w-14 h-full pt-1.5 ${isValid ? "text-light-default" : "text-danger-2"}`}

@@ -75,6 +75,7 @@ const Modal = ({
 type WithModalPropsKey =
   | "preset"
   | "title"
+  | "id"
   | "className"
   | "bodyCls"
   | "formId"

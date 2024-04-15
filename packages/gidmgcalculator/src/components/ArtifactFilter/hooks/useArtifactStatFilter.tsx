@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { clsx, type ClassValue } from "rond";
+import { clsx, type ClassValue, Select, type SelectProps } from "rond";
 
 import type { ArtifactType } from "@Src/types";
 import type { ArtifactStatFilterState, ArtifactStatFilterOption } from "../ArtifactFilter.types";
@@ -15,6 +15,7 @@ type RenderSelectArgs = {
   options: string[];
   showSelect?: boolean;
   onChange: (value: string, no: number) => void;
+  getContainer?: SelectProps["getPopupContainer"];
 };
 
 export const DEFAULT_STAT_FILTER: ArtifactStatFilterState = {
@@ -93,28 +94,27 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
     setHasDuplicates(false);
   };
 
-  const renderSelect = ({ no = 0, value, options, showSelect = true, onChange }: RenderSelectArgs) => {
+  const renderSelect = (args: RenderSelectArgs) => {
+    const { no = 0, showSelect = true } = args;
+
     return (
       <div key={no} className="px-4 w-56 h-8 bg-surface-3 flex items-center">
         <div className="mr-1 pt-0.5 w-2.5 text-base text-light-default shrink-0">{no ? <p>{no}.</p> : null}</div>
         {showSelect ? (
-          <select
-            className={clsx("w-full p-1", value === "All" ? "text-light-default" : "text-bonus-color")}
-            value={value}
-            onChange={(e) => onChange(e.target.value, no - 1)}
-          >
-            {options.map((type, i) => (
-              <option key={i} className="text-left" value={type}>
-                {t(type)}
-              </option>
-            ))}
-          </select>
+          <Select
+            className={clsx("w-full", args.value === "All" ? "text-light-default" : "text-bonus-color")}
+            transparent
+            getPopupContainer={args?.getContainer}
+            options={args.options.map((type) => ({ label: t(type), value: type }))}
+            value={args.value}
+            onChange={(value) => args.onChange(`${value}`, no - 1)}
+          />
         ) : null}
       </div>
     );
   };
 
-  const renderArtifactStatFilter = (className?: ClassValue) => {
+  const renderArtifactStatFilter = (className?: ClassValue, getContainer?: RenderSelectArgs["getContainer"]) => {
     return (
       <FilterTemplate
         className={className}
@@ -130,7 +130,7 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
         <div className="space-y-1">
           <p className="text-lg text-secondary-1 font-semibold">Main Stat</p>
           <div className="mt-1 flex justify-center">
-            {renderSelect({ value: filter.main, options: mainStatOptions, onChange: changeMainStat })}
+            {renderSelect({ value: filter.main, options: mainStatOptions, onChange: changeMainStat, getContainer })}
           </div>
         </div>
 
@@ -146,6 +146,7 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
                 options: subStatOptions,
                 showSelect: !prevValue || prevValue !== "All",
                 onChange: changeSubStat,
+                getContainer,
               });
             })}
           </div>

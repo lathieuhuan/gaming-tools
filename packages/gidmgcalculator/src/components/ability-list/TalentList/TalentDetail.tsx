@@ -1,9 +1,9 @@
 import { useState, useRef, useMemo, useEffect } from "react";
 import { FaCaretDown } from "react-icons/fa";
-import { CloseButton, LoadingSpin, StatsTable, round } from "rond";
+import { CloseButton, LoadingSpin, Select, StatsTable, round } from "rond";
 
 import type { AppCharacter, Talent } from "@Src/types";
-import { toArray, Character_ } from "@Src/utils";
+import { toArray, genSequentialOptions, Character_ } from "@Src/utils";
 import { useQuery, useTabs, useTranslation } from "@Src/hooks";
 import { $AppCharacter } from "@Src/services";
 
@@ -125,18 +125,17 @@ export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClos
               {levelable ? (
                 <div className="flex items-center space-x-4">
                   {renderLevelButton(false, talentLevel <= 1)}
-                  <label className="flex items-center text-lg">
+                  <div className="flex items-center text-lg">
                     <p>Lv.</p>
-                    <select
-                      className="font-bold text-right text-last-right"
+                    <Select
+                      className="w-14 font-bold text-lg"
+                      align="right"
+                      transparent
                       value={talentLevel}
-                      onChange={(e) => setTalentLevel(+e.target.value)}
-                    >
-                      {Array.from({ length: 15 }).map((_, i) => (
-                        <option key={i}>{i + 1}</option>
-                      ))}
-                    </select>
-                  </label>
+                      options={genSequentialOptions(15)}
+                      onChange={(value) => setTalentLevel(+value)}
+                    />
+                  </div>
                   {renderLevelButton(true, talentLevel >= 15)}
                 </div>
               ) : (

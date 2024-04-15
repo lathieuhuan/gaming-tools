@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { InputNumber } from "../InputNumber";
 import { Checkbox } from "../Checkbox";
+import { Select } from "../Select";
 import "./ModifierView.styles.scss";
 
 type SelectOption = {
@@ -23,6 +24,7 @@ type ModifierViewInputSelectConfig = {
   label: string;
   type: "select";
   options: SelectOption[];
+  style?: React.CSSProperties;
 };
 
 export type ModifierViewInputConfig =
@@ -86,20 +88,16 @@ export const ModifierView = ({
 
         if (!mutable) {
           const { label } = config.options.find((option) => option.value === input) || {};
-          return label ? <p className="ron-mod-input_readonly-value">{label}</p> : null;
+          return label ? <p className="ron-mod-input__readonly-value">{label}</p> : null;
         }
         return (
-          <select
+          <Select
             className="ron-mod-input__select"
+            style={config.style}
             value={input}
-            onChange={(e) => onSelectOption?.(+e.target.value, index)}
-          >
-            {config.options.map((opt, i) => (
-              <option key={i} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
+            options={config.options}
+            onChange={(value) => onSelectOption?.(+value, index)}
+          />
         );
       default:
         return null;

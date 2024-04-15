@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
-import { Button, CarouselSpace, type ClassValue } from "rond";
+import { Button, CarouselSpace, Select, type ClassValue } from "rond";
 
 import type { Character, LevelableTalent, Party } from "@Src/types";
 import { TALENT_TYPES } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
-import { Calculation_ } from "@Src/utils";
+import { Calculation_, genSequentialOptions } from "@Src/utils";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
 
 // Component
@@ -88,17 +88,13 @@ export function TalentList({ className, char, party, onChangeTalentLevel }: Tale
           });
 
           const mutableLvNode = (
-            <select
-              className={`${elmtText} font-bold`}
+            <Select
+              className={`w-14 ${elmtText} font-bold`}
               value={isAltSprint ? 1 : char[talentType]}
-              onChange={(e) => (isAltSprint ? null : onChangeTalentLevel?.(talentType, +e.target.value))}
-            >
-              {[...Array(10).keys()].map((_, i) => (
-                <option key={i} className="text-black">
-                  {i + 1}
-                </option>
-              ))}
-            </select>
+              transparent
+              options={genSequentialOptions(10)}
+              onChange={(value) => (isAltSprint ? null : onChangeTalentLevel?.(talentType, +value))}
+            />
           );
 
           return renderTalent(

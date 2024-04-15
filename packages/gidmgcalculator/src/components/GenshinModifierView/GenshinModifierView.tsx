@@ -1,13 +1,6 @@
-import { ModifierView, type ModifierViewProps, ModifierViewInputConfig } from "rond";
+import { ModifierView, type ModifierViewProps, type ModifierViewInputConfig } from "rond";
 import type { ModInputConfig } from "@Src/types";
-
-function genNumberSequenceOptions(max: number | undefined = 0, startsAt0: boolean = false, min: number = 1) {
-  const result = [...Array(max)].map((_, i) => {
-    const value = i + min;
-    return { label: value, value };
-  });
-  return startsAt0 ? [{ label: 0, value: 0 }].concat(result) : result;
-}
+import { genSequentialOptions } from "@Src/utils";
 
 export interface GenshinModifierViewProps extends Omit<ModifierViewProps, "inputConfigs"> {
   inputConfigs?: ModInputConfig[];
@@ -24,19 +17,24 @@ export function GenshinModifierView({ inputConfigs, ...viewProps }: GenshinModif
       case "CHECK":
         return { type: "check", label };
       case "SELECT": {
-        const options = config.options
-          ? config.options.map((option, optionIndex) => ({
+        if (config.options) {
+          return {
+            type: "select",
+            label,
+            options: config.options.map((option, optionIndex) => ({
               label: option,
               value: optionIndex,
-            }))
-          : genNumberSequenceOptions(config.max, config.initialValue === 0);
-        return { type: "select", label, options };
+            })),
+            style: { maxWidth: "7rem" },
+          };
+        }
+        return { type: "select", label, options: genSequentialOptions(config.max, config.initialValue === 0) };
       }
       case "STACKS":
         return {
           type: "select",
           label: "Stacks",
-          options: genNumberSequenceOptions(config.max, config.initialValue === 0),
+          options: genSequentialOptions(config.max, config.initialValue === 0),
         };
       case "ANEMOABLE":
         return {

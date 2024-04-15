@@ -40,7 +40,7 @@
     line-height: 1.5rem;
     text-align: right;
   }
-  .ron-mod-input_readonly-value {
+  .ron-mod-input__readonly-value {
     text-transform: capitalize;
     color: #09bcba;
     font-weight: 700;
@@ -52,12 +52,13 @@
     font-weight: 600;
   }
   .ron-mod-input__select {
-    height: 2rem;
-    padding: 0.25rem 0.5rem;
-    color: var(--ron-color-on-light);
-    background-color: var(--ron-color-light-surface-3);
-    border-radius: 0.25rem;
+    // height: 2rem;
+    // padding: 0.25rem 0.5rem;
+    // color: var(--ron-color-on-light);
+    // background-color: var(--ron-color-light-surface-3);
+    // border-radius: 0.25rem;
+    // font-size: 1rem;
+    max-width: 5rem;
     font-weight: 600;
-    font-size: 1rem;
   }
 }

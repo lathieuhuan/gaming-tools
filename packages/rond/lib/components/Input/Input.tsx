@@ -37,7 +37,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       ref={ref}
       {...nativeProps}
       type="text"
-      className={clsx(!unstyled && `ron-input ron-input-${size}`, className)}
+      className={clsx(!unstyled && `ron-input ron-input--${size}`, className)}
       value={isControlled ? value : localValue}
       onChange={handleChange}
     />

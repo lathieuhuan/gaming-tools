@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaEraser, FaSquare } from "react-icons/fa";
 import { FaCaretRight } from "react-icons/fa";
 import { Button, Modal, useScreenWatcher, clsx, type ClassValue } from "rond";
@@ -21,6 +21,7 @@ export interface ArtifactFilterProps {
 /** Only used on Modals */
 const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose }: ArtifactFilterProps) => {
   const screenWatcher = useScreenWatcher();
+  const wrapElmt = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const renderTitle = (title: string, position: number) => {
@@ -83,7 +84,7 @@ const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose 
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div ref={wrapElmt} className="h-full flex flex-col">
       <div className={clsx("grow overflow-hidden", !isSmallScreen && "xm:px-2 flex space-x-4")}>
         {!forcedType ? (
           isSmallScreen ? (
@@ -115,7 +116,7 @@ const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose 
         {!forcedType && <div className="h-full w-px bg-surface-border hidden md:block" />}
 
         <div className={clsx(wrapperCls(activeIndex !== 1), "shrink-0", !isSmallScreen && "w-56")}>
-          {renderArtifactStatFilter()}
+          {renderArtifactStatFilter(null, () => wrapElmt.current!)}
         </div>
 
         <div className="h-full w-px bg-surface-border hidden md:block" />

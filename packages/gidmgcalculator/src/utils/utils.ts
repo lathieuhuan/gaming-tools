@@ -48,6 +48,14 @@ export const toMult = (n: number) => 1 + n / 100;
 
 export const applyPercent = (n: number, percent: number) => Math.round((n * percent) / 100);
 
+export function genSequentialOptions(max: number | undefined = 0, startsAt0 = false, min = 1) {
+  const result = [...Array(max)].map((_, i) => {
+    const value = i + min;
+    return { label: value, value };
+  });
+  return startsAt0 ? [{ label: 0, value: 0 }].concat(result) : result;
+}
+
 export const toArray = <T>(subject: T | T[]): T[] => (Array.isArray(subject) ? subject : [subject]);
 
 export function applyToOneOrMany<T>(base: T | T[], callback: (base: T, index?: number) => T) {

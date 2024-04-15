@@ -13,6 +13,7 @@ export interface ModalControl {
 export interface ModalCoreProps extends ModalControl, Pick<OverlayProps, "closable" | "closeOnMaskClick" | "state"> {
   /** Default to 'custom' */
   preset?: ModalPreset;
+  id?: string;
   className?: ClassValue;
   style?: React.CSSProperties;
   children: React.ReactNode | (() => JSX.Element | null);
@@ -20,6 +21,7 @@ export interface ModalCoreProps extends ModalControl, Pick<OverlayProps, "closab
 export const ModalCore = ({
   closable = true,
   closeOnMaskClick = true,
+  id,
   className,
   preset = "custom",
   style,
@@ -31,6 +33,7 @@ export const ModalCore = ({
       {(direction) => {
         return (
           <div
+            id={id}
             className={clsx(
               `ron-modal-content ron-modal-content-${preset} ron-modal-content-${direction} ron-overlay-transition`,
               preset === "large" && LARGE_HEIGHT_CLS,

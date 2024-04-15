@@ -1,5 +1,5 @@
 import { useContext, useRef, useState } from "react";
-import { InputNumber, Modal } from "rond";
+import { InputNumber, Modal, Select } from "rond";
 
 import type { Level } from "@Src/types";
 import { LEVELS } from "@Src/constants";
@@ -156,18 +156,18 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
             return renderDefaultSetting(
               key,
               label,
-              <select
-                className="w-full styled-select shrink-0 text-right text-last-right"
+              <Select
+                className="font-medium"
+                dropdownCls="font-medium"
+                align="right"
                 defaultValue={defaultValue}
-                onChange={(e) => {
-                  const newValue = typeof defaultValue === "string" ? (e.target.value as Level) : +e.target.value;
+                getPopupContainer={() => document.getElementById("app-settings-form")!}
+                options={options.map((option) => ({ label: option, value: option }))}
+                onChange={(value) => {
+                  const newValue = typeof defaultValue === "string" ? (value as Level) : +value;
                   onChangeTempSettings(key, newValue);
                 }}
-              >
-                {options.map((option, i) => (
-                  <option key={i}>{option}</option>
-                ))}
-              </select>
+              />
             );
           }
 
