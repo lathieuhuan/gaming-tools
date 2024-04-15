@@ -1,7 +1,6 @@
-// import { useState } from "react";
-
-import { Button, InputNumber, Select } from "@lib/components";
 import { useState } from "react";
+import { Button, InputNumber, Select } from "@lib/components";
+import { popup } from "@lib/utils";
 
 function App() {
   const [top, setTop] = useState(16);
@@ -9,6 +8,7 @@ function App() {
 
   const onClick = () => {
     setValue("B");
+    popup.show("Select", [1, 2, 3], console.log);
   };
 
   return (
