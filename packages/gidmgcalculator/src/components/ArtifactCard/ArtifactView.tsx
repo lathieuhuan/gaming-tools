@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { clsx, Badge, Select } from "rond";
+import { clsx, Badge, VersatileSelect } from "rond";
 
 import type { ArtifactSubStat, AttributeStat, CalcArtifact, UserArtifact } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
@@ -67,11 +67,12 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
         </div>
       </div>
 
-      <div className="mt-2 ml-6">
+      <div className="mt-2 ml-6 flex flex-col">
         {["flower", "plume"].includes(artifact.type) || !mutable ? (
           <p className={"py-1 text-lg " + (mutable ? "pl-6" : "pl-2")}>{t(mainStatType)}</p>
         ) : (
-          <Select
+          <VersatileSelect
+            title="Select Main-stat"
             className="w-48 h-9 text-lg"
             transparent
             arrowAt="start"

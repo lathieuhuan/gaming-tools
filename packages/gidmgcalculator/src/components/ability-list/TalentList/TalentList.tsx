@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
-import { Button, CarouselSpace, Select, type ClassValue } from "rond";
+import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
 
 import type { Character, LevelableTalent, Party } from "@Src/types";
 import { TALENT_TYPES } from "@Src/constants";
@@ -88,8 +88,9 @@ export function TalentList({ className, char, party, onChangeTalentLevel }: Tale
           });
 
           const mutableLvNode = (
-            <Select
-              className={`w-14 ${elmtText} font-bold`}
+            <VersatileSelect
+              title="Select Level"
+              className={`w-12 ${elmtText} font-bold`}
               value={isAltSprint ? 1 : char[talentType]}
               transparent
               options={genSequentialOptions(10)}

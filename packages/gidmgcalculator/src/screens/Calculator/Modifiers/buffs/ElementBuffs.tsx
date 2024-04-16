@@ -1,4 +1,5 @@
 import { Fragment, useState } from "react";
+import { VersatileSelect } from "rond";
 import type { AmplifyingReaction, CalcItem, ElementType } from "@Src/types";
 
 import { ELEMENT_TYPES } from "@Src/constants";
@@ -181,30 +182,30 @@ export default function ElementBuffs() {
         />
         <div className="pt-2 pb-1 pr-1 flex items-center justify-end">
           <span className="mr-4 text-base leading-6 text-right">Absorbed Element</span>
-          <select
-            className="styled-select capitalize"
-            value={absorbedValue}
+          <VersatileSelect
+            title="Select Absorbed Element"
+            className="w-24 h-8 font-bold capitalize"
+            options={["pyro", "hydro", "electro", "cryo"].map((item) => ({
+              label: item,
+              value: item,
+              className: "capitalize",
+            }))}
             disabled={!isAbsorbing}
-            onChange={(e) => {
-              const absorption = e.target.value as ElementType;
+            value={absorbedValue}
+            onChange={(value) => {
+              const absorption = value as ElementType;
               setAbsorbedValue(absorption);
 
               dispatch(
                 updateCalcSetup({
                   elmtModCtrls: {
                     ...elmtModCtrls,
-                    absorption: absorption,
+                    absorption,
                   },
                 })
               );
             }}
-          >
-            {["pyro", "hydro", "electro", "cryo"].map((opt, i) => (
-              <option key={i} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+          />
         </div>
       </div>
     );
@@ -255,12 +256,20 @@ export default function ElementBuffs() {
         />
         <div className="pt-2 pb-1 pr-1 flex items-center justify-end">
           <span className="mr-4 text-base leading-6 text-right">Element</span>
-          <select
-            className="styled-select capitalize"
-            value={infusedValue}
+
+          <VersatileSelect
+            title="Select Element"
+            className="w-24 h-8 font-bold capitalize"
+            options={ELEMENT_TYPES.map((item) => ({
+              label: item,
+              value: item,
+              className: "capitalize",
+            }))}
             disabled={!isInfused}
-            onChange={(e) => {
-              setInfusedValue(e.target.value as ElementType);
+            value={infusedValue}
+            onChange={(value) => {
+              const element = value as ElementType;
+              setInfusedValue(element);
 
               dispatch(
                 updateCalcSetup({
@@ -270,18 +279,12 @@ export default function ElementBuffs() {
                   },
                   customInfusion: {
                     ...customInfusion,
-                    element: e.target.value as ElementType,
+                    element,
                   },
                 })
               );
             }}
-          >
-            {ELEMENT_TYPES.map((opt, i) => (
-              <option key={i} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         {infusedElement !== elementType && infusedElement !== "phys" ? (

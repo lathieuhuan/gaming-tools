@@ -1,5 +1,5 @@
 import { useState, useRef, FormEvent } from "react";
-import { InputNumber } from "rond";
+import { InputNumber, VersatileSelect, findParentOverlay } from "rond";
 
 import type { CustomDebuffCtrl, CustomDebuffCtrlType } from "@Src/types";
 import { ATTACK_ELEMENTS } from "@Src/constants";
@@ -42,17 +42,21 @@ export default function DebuffCtrlCreator({ onClose }: DebuffCtrlCreatorProps) {
 
   return (
     <form id="debuff-creator" className="mx-auto py-4 px-2 flex items-center" onSubmit={onSubmit}>
-      <select
-        className="pr-2 text-light-default text-right text-last-right"
+      <VersatileSelect
+        title="Select"
+        className="h-8"
+        style={{ width: "12rem" }}
+        arrowAt="start"
+        transparent
+        dropdownCls="z-50"
+        getPopupContainer={findParentOverlay}
+        options={["def", ...ATTACK_ELEMENTS].map((option) => ({
+          label: `${t(option, { ns: "resistance" })} reduction`,
+          value: option,
+        }))}
         value={config.type}
-        onChange={(e) => onChangeType(e.target.value)}
-      >
-        {["def", ...ATTACK_ELEMENTS].map((option) => (
-          <option key={option} value={option}>
-            {t(option, { ns: "resistance" })} reduction
-          </option>
-        ))}
-      </select>
+        onChange={(value) => onChangeType(value as string)}
+      />
       <InputNumber
         ref={inputRef}
         className="ml-4 w-16 font-semibold"

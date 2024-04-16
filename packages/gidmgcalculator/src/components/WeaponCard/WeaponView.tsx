@@ -1,11 +1,11 @@
-import { useMemo } from "react";
-import { Badge } from "rond";
+import { useMemo, useRef } from "react";
+import { Badge, VersatileSelect } from "rond";
 import type { CalcWeapon, Level, UserWeapon } from "@Src/types";
 
 import { LEVELS } from "@Src/constants";
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
-import { parseWeaponDescription, suffixOf, Weapon_ } from "@Src/utils";
+import { genSequentialOptions, parseWeaponDescription, suffixOf, Weapon_ } from "@Src/utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
@@ -25,6 +25,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
   refine,
 }: WeaponViewProps<T>) {
   const { t } = useTranslation();
+  const wrapElmt = useRef<HTMLDivElement>(null);
   const appWeapon = weapon ? $AppData.getWeapon(weapon.code) : undefined;
 
   const passiveDescription = useMemo(() => {
@@ -40,7 +41,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
   const selectLevels = rarity < 3 ? LEVELS.slice(0, -4) : LEVELS;
 
   return (
-    <div className="w-full" onDoubleClick={() => console.log(weapon)}>
+    <div ref={wrapElmt} className="w-full" onDoubleClick={() => console.log(weapon)}>
       <p className={`text-1.5xl text-rarity-${rarity} font-semibold`}>{appWeapon.name}</p>
 
       <div className="mt-2 flex">
@@ -49,15 +50,20 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
           <div className={"pt-1 grow flex items-center " + groupStyles}>
             <p className="mr-2 text-lg font-semibold">Level</p>
             {mutable ? (
-              <select
-                className={`text-lg text-rarity-${rarity} font-bold text-last-right`}
+              <VersatileSelect
+                title="Select Level"
+                className={`text-rarity-${rarity} font-bold`}
+                size="medium"
+                align="right"
+                transparent
+                options={selectLevels.map((_, i) => {
+                  const item = selectLevels[selectLevels.length - 1 - i];
+                  return { label: item, value: item };
+                })}
+                getPopupContainer={() => wrapElmt.current!}
                 value={weapon.level}
-                onChange={(e) => upgrade && upgrade(e.target.value as Level, weapon)}
-              >
-                {selectLevels.map((_, index) => (
-                  <option key={index}>{selectLevels[selectLevels.length - 1 - index]}</option>
-                ))}
-              </select>
+                onChange={(value) => upgrade && upgrade(value as Level, weapon)}
+              />
             ) : (
               <p className={`text-lg text-rarity-${rarity} font-bold`}>{weapon.level}</p>
             )}
@@ -100,15 +106,15 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
             <div className={"mt-2 py-1 flex flex-col items-center " + groupStyles}>
               <p className="text-center font-semibold">Refinement</p>
               {mutable ? (
-                <select
-                  className={`text-lg text-rarity-${rarity} font-bold`}
+                <VersatileSelect
+                  title="Select Refinement"
+                  className={`w-10 text-lg text-rarity-${rarity} font-bold`}
+                  transparent
+                  align="right"
+                  options={genSequentialOptions(5)}
                   value={weapon.refi}
-                  onChange={(e) => refine && refine(+e.target.value, weapon)}
-                >
-                  {[1, 2, 3, 4, 5].map((level) => (
-                    <option key={level}>{level}</option>
-                  ))}
-                </select>
+                  onChange={(value) => refine && refine(+value, weapon)}
+                />
               ) : (
                 <p className={`text-lg text-rarity-${rarity} font-bold`}>{weapon.refi}</p>
               )}

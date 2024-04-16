@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import isEqual from "react-fast-compare";
-import { FaSave, FaTrashAlt, FaChevronDown, FaToolbox } from "react-icons/fa";
+import { FaSave, FaTrashAlt, FaToolbox } from "react-icons/fa";
 import { MdInventory } from "react-icons/md";
 import { GiAnvil } from "react-icons/gi";
-import { Modal, ConfirmModal, Button } from "rond";
+import { Modal, ConfirmModal, Button, VersatileSelect } from "rond";
 
 import type { CalcArtifact, AttributeStat } from "@Src/types";
 import { findById, suffixOf, Item_, Artifact_ } from "@Src/utils";
@@ -34,7 +34,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
   const [isSaving, setIsSaving] = useState(false);
 
   const { type, rarity = 5, level, mainStatType } = artifact;
-  const availableMainStatTypes = Artifact_.possibleMainStatTypesOf(type);
+  const possibleMainStatTypes = Artifact_.possibleMainStatTypesOf(type);
   const mainStatValue = Artifact_.mainStatValueOf(artifact);
 
   const closeModal = () => {
@@ -54,31 +54,26 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
           }}
         />
 
-        <div className="ml-4">
+        <div className="ml-4 flex flex-col">
           {type === "flower" || type === "plume" ? (
             <p className="pl-6 py-1 text-lg">{t(mainStatType)}</p>
           ) : (
-            <div className="py-1 relative">
-              <FaChevronDown className="absolute top-1/2 -translate-y-1/2 left-0" />
-              <select
-                className="pl-6 text-lg text-light-default appearance-none relative z-10"
-                value={mainStatType}
-                onChange={(e) =>
-                  dispatch(
-                    updateArtifact({
-                      pieceIndex,
-                      mainStatType: e.target.value as AttributeStat,
-                    })
-                  )
-                }
-              >
-                {availableMainStatTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {t(type)}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <VersatileSelect
+              title="Select Main-stat"
+              className="w-48 h-9 text-lg"
+              transparent
+              arrowAt="start"
+              options={possibleMainStatTypes.map((type) => ({ label: t(type), value: type }))}
+              value={mainStatType}
+              onChange={(value) => {
+                dispatch(
+                  updateArtifact({
+                    pieceIndex,
+                    mainStatType: value as AttributeStat,
+                  })
+                );
+              }}
+            />
           )}
           <p className={`pl-6 text-2xl leading-7 text-rarity-${rarity} font-bold`}>
             {mainStatValue}

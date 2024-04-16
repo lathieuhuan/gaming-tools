@@ -1,6 +1,6 @@
 import { useState, useRef, useMemo, useEffect } from "react";
 import { FaCaretDown } from "react-icons/fa";
-import { CloseButton, LoadingSpin, Select, StatsTable, round } from "rond";
+import { CloseButton, LoadingSpin, StatsTable, VersatileSelect, round } from "rond";
 
 import type { AppCharacter, Talent } from "@Src/types";
 import { toArray, genSequentialOptions, Character_ } from "@Src/utils";
@@ -127,8 +127,9 @@ export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClos
                   {renderLevelButton(false, talentLevel <= 1)}
                   <div className="flex items-center text-lg">
                     <p>Lv.</p>
-                    <Select
-                      className="w-14 font-bold text-lg"
+                    <VersatileSelect
+                      title="Select Level"
+                      className="w-12 font-bold text-lg"
                       align="right"
                       transparent
                       value={talentLevel}

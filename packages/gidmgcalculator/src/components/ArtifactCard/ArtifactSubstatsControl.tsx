@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { InputNumber, Select, type SelectProps } from "rond";
+import { InputNumber, VersatileSelect, type SelectProps } from "rond";
 
 import type { AttributeStat, ArtifactSubStat } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
@@ -52,7 +52,8 @@ export function ArtifactSubstatsControl({
 
         return mutable ? (
           <div key={i} className="h-9 flex-center bg-surface-2 relative">
-            <Select
+            <VersatileSelect
+              title="Select Sub-stat"
               className={["w-44 h-full", statTypeCount[type] === 1 ? "text-light-default" : "text-danger-2"]}
               transparent
               arrowAt="start"

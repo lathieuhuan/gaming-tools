@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
-import { clsx } from "rond";
+import { VersatileSelect, clsx } from "rond";
 
 import type { CalculationAspect, Talent, Weapon } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -45,17 +45,15 @@ export function FinalResultCompare({ comparedIds, weapon }: FinalResultComparePr
     <div className="h-full flex flex-col">
       <div className="mb-4 flex">
         <p className="mr-2">Choose a focus</p>
-        <select
-          className="text-primary-1"
+        <VersatileSelect
+          title="Select Focus"
+          className="w-24 h-6 overflow-hidden text-primary-1"
+          dropdownCls="z-20"
+          transparent
+          options={calculationAspects.map((aspect) => ({ label: ASPECT_LABEL[aspect], value: aspect }))}
           value={focusedAspect}
-          onChange={(e) => setFocusedAspect(e.target.value as CalculationAspect)}
-        >
-          {calculationAspects.map((aspect) => (
-            <option key={aspect} value={aspect}>
-              {ASPECT_LABEL[aspect]}
-            </option>
-          ))}
-        </select>
+          onChange={(value) => setFocusedAspect(value as CalculationAspect)}
+        />
       </div>
       <div className="grow hide-scrollbar">
         <FinalResultLayout

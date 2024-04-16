@@ -1,5 +1,5 @@
 import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
-import { Badge, Button, Rarity } from "rond";
+import { Badge, Button, Rarity, VersatileSelect } from "rond";
 import type { AppCharacter, Character, Level } from "@Src/types";
 import { LEVELS } from "@Src/constants";
 import { GenshinImage } from "../GenshinImage";
@@ -44,17 +44,21 @@ export function CharacterIntro(props: CharacterIntroProps) {
         <div className="mt-1 pl-1 flex justify-between items-center">
           <div className="flex items-center text-lg">
             <p className="mr-1">Level</p>
-            <select
-              className={`text-right text-last-right ${elmtText} font-bold`}
+            <VersatileSelect
+              title="Select Level"
+              align="right"
+              transparent
+              size="medium"
+              className={`shrink-0 ${elmtText} font-bold`}
+              style={{ width: "4.75rem" }}
+              dropdownCls="z-20"
+              options={LEVELS.map((_, i) => {
+                const item = LEVELS[LEVELS.length - 1 - i];
+                return { label: item, value: item };
+              })}
               value={char.level}
-              onChange={(e) => props.onChangeLevel?.(e.target.value as Level)}
-            >
-              {LEVELS.map((lv, i) => (
-                <option key={i} className="text-black">
-                  {LEVELS[LEVELS.length - 1 - i]}
-                </option>
-              ))}
-            </select>
+              onChange={(value) => props.onChangeLevel?.(value as Level)}
+            />
           </div>
 
           <div

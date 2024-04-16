@@ -1,5 +1,5 @@
 import { useContext, useRef, useState } from "react";
-import { InputNumber, Modal, Select } from "rond";
+import { InputNumber, Modal, VersatileSelect } from "rond";
 
 import type { Level } from "@Src/types";
 import { LEVELS } from "@Src/constants";
@@ -102,7 +102,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
     return (
       <div key={key} className="flex gap-3 items-center justify-between" style={{ minHeight: "2.25rem" }}>
         <span>{label}</span>
-        <div className="w-20">{control}</div>
+        <div className="w-20 flex shrink-0">{control}</div>
       </div>
     );
   };
@@ -156,8 +156,9 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
             return renderDefaultSetting(
               key,
               label,
-              <Select
-                className="font-medium"
+              <VersatileSelect
+                title="Select Default Value"
+                className="font-medium h-8"
                 dropdownCls="font-medium"
                 align="right"
                 defaultValue={defaultValue}

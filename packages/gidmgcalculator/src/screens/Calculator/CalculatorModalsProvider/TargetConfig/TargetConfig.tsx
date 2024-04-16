@@ -1,4 +1,5 @@
-import { Checkbox, InputNumber, Modal } from "rond";
+import { useRef } from "react";
+import { Checkbox, InputNumber, Modal, VersatileSelect } from "rond";
 
 import type { AttackElement, ElementType } from "@Src/types";
 import { ATTACK_ELEMENTS } from "@Src/constants";
@@ -13,6 +14,7 @@ import { ComboBox } from "./ComboBox";
 function TargetConfigCore() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const wrapElmt = useRef<HTMLDivElement>(null);
 
   const target = useSelector(selectTarget);
   const monster = $AppData.getMonster(target);
@@ -24,8 +26,8 @@ function TargetConfigCore() {
   const { variant } = monster;
   const inputConfigs = monster.inputConfigs ? toArray(monster.inputConfigs) : [];
 
-  const onChangeElementVariant = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    dispatch(updateTarget({ variantType: e.target.value as ElementType }));
+  const onChangeElementVariant = (value: string | number) => {
+    dispatch(updateTarget({ variantType: value as ElementType }));
   };
 
   const onChangeTargetResistance = (attElmt: AttackElement) => {
@@ -47,7 +49,7 @@ function TargetConfigCore() {
   };
 
   return (
-    <div className="h-full px-2 flex gap-4 hide-scrollbar" onDoubleClick={() => console.log(target)}>
+    <div ref={wrapElmt} className="h-full px-2 flex gap-4 hide-scrollbar" onDoubleClick={() => console.log(target)}>
       <div className="w-76 flex flex-col shrink-0">
         <div className="grow overflow-auto flex flex-col">
           <div className="flex">
@@ -83,15 +85,21 @@ function TargetConfigCore() {
             <div className="mt-4 flex justify-end items-center">
               <p className="mr-4 text-light-default">Variant</p>
 
-              <select className="styled-select capitalize" value={target.variantType} onChange={onChangeElementVariant}>
-                {variant.types.map((variantType, i) => {
-                  return (
-                    <option key={i} value={typeof variantType === "string" ? variantType : variantType.value}>
-                      {typeof variantType === "string" ? variantType : variantType.label}
-                    </option>
-                  );
+              <VersatileSelect
+                title="Select Variant"
+                className="w-24 h-8 font-bold capitalize"
+                options={variant.types.map((variantType) => {
+                  const item = typeof variantType === "string" ? variantType : variantType.value;
+                  return {
+                    label: item,
+                    value: item,
+                    className: "capitalize",
+                  };
                 })}
-              </select>
+                getPopupContainer={() => wrapElmt.current!}
+                value={target.variantType}
+                onChange={onChangeElementVariant}
+              />
             </div>
           ) : null}
 
@@ -113,22 +121,31 @@ function TargetConfigCore() {
                 break;
               }
               case "SELECT":
-                inputElement = (
-                  <select
-                    className="styled-select capitalize"
-                    value={`${target.inputs?.[index] || 0}`}
-                    onChange={(e) => onChangeTargetInputs(+e.target.value, index)}
-                  >
-                    <option value={-1}>None</option>
-                    {config.options?.map((option, optionIndex) => {
-                      return (
-                        <option key={optionIndex} value={optionIndex}>
-                          {typeof option === "string" ? option : option.label}
-                        </option>
-                      );
-                    })}
-                  </select>
-                );
+                if (config.options) {
+                  const options = config.options.map((option, optionIndex) => {
+                    return {
+                      label: typeof option === "string" ? option : option.label,
+                      value: `${optionIndex}`,
+                      className: "capitalize",
+                    };
+                  });
+
+                  inputElement = (
+                    <VersatileSelect
+                      title={`Select ${config.label}`}
+                      className="w-32 font-bold capitalize"
+                      options={[
+                        {
+                          label: "None",
+                          value: "-1",
+                        },
+                        ...options,
+                      ]}
+                      value={`${target.inputs?.[index] || 0}`}
+                      onChange={(value) => onChangeTargetInputs(+value, index)}
+                    />
+                  );
+                }
                 break;
             }
 

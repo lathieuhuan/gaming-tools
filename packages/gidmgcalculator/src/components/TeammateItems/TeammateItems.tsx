@@ -1,7 +1,8 @@
-import { clsx, CloseButton } from "rond";
+import { clsx, CloseButton, VersatileSelect } from "rond";
 
 import type { Teammate } from "@Src/types";
 import { $AppData } from "@Src/services";
+import { genSequentialOptions } from "@Src/utils";
 import { GenshinImage } from "../GenshinImage";
 
 interface TeammateItemsProps {
@@ -45,19 +46,14 @@ export function TeammateItems({
               appWeapon.rarity >= 3 && (
                 <div className="flex items-center">
                   <span>Refinement</span>
-                  <select
-                    className={`ml-2 pr-1 text-rarity-${appWeapon.rarity} text-right`}
+                  <VersatileSelect
+                    title="Select Refinement"
+                    transparent
+                    className={`ml-2 w-10 text-rarity-${appWeapon.rarity}`}
+                    options={genSequentialOptions(5)}
                     value={weapon.refi}
-                    onChange={(e) => onChangeWeaponRefinement?.(+e.target.value)}
-                  >
-                    {[...Array(5)].map((_, index) => {
-                      return (
-                        <option key={index} value={index + 1}>
-                          {index + 1}
-                        </option>
-                      );
-                    })}
-                  </select>
+                    onChange={(value) => onChangeWeaponRefinement?.(+value)}
+                  />
                 </div>
               )
             ) : (

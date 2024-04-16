@@ -1,5 +1,6 @@
-import { FaChevronDown, FaEdit, FaMinus } from "react-icons/fa";
-import { Button, InputNumber } from "rond";
+import { useEffect, useState } from "react";
+import { FaEdit, FaMinus } from "react-icons/fa";
+import { Button, InputNumber, VersatileSelect } from "rond";
 
 import { $AppData } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -14,7 +15,12 @@ interface SectionTargetProps {
 export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps) {
   const dispatch = useDispatch();
   const target = useSelector(selectTarget);
+  const [name, setName] = useState<string>();
   const { title, names, variant, statuses } = $AppData.getTargetInfo(target);
+
+  useEffect(() => {
+    setName(names?.[0]);
+  }, [target.code]);
 
   return (
     <div className={"px-4 py-3 bg-surface-1 cursor-default relative " + styles.section}>
@@ -26,14 +32,15 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
 
       <div className="mt-2 pr-6 flex flex-col items-start">
         {names ? (
-          <div className="flex items-center relative">
-            <FaChevronDown className="absolute top-1/2 left-1 -translate-y-1/2 text-sm" />
-            <select className="pl-6 pr-2 py-1 leading-none relative z-10 appearance-none text-lg">
-              {names.map((name, i) => {
-                return <option key={i}>{name}</option>;
-              })}
-            </select>
-          </div>
+          <VersatileSelect
+            title="Select Target"
+            className="w-52"
+            transparent
+            arrowAt="start"
+            options={names.map((name) => ({ label: name, value: name }))}
+            value={name}
+            onChange={(value) => setName(value as string)}
+          />
         ) : (
           <p className="text-lg">{title}</p>
         )}

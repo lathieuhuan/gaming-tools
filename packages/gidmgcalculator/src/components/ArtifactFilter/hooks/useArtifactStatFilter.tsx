@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { clsx, type ClassValue, Select, type SelectProps } from "rond";
+import { clsx, type ClassValue, VersatileSelect, type SelectProps } from "rond";
 
 import type { ArtifactType } from "@Src/types";
 import type { ArtifactStatFilterState, ArtifactStatFilterOption } from "../ArtifactFilter.types";
@@ -101,7 +101,8 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
       <div key={no} className="px-4 w-56 h-8 bg-surface-3 flex items-center">
         <div className="mr-1 pt-0.5 w-2.5 text-base text-light-default shrink-0">{no ? <p>{no}.</p> : null}</div>
         {showSelect ? (
-          <Select
+          <VersatileSelect
+            title="Select Stat"
             className={clsx("w-full", args.value === "All" ? "text-light-default" : "text-bonus-color")}
             transparent
             getPopupContainer={args?.getContainer}
