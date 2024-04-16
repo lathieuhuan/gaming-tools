@@ -98,6 +98,11 @@ export function Overlay({
     : null;
 }
 
+export function findParentOverlay(selectElmt: HTMLElement) {
+  const overlays = Array.from(document.querySelectorAll(".ron-overlay-core"));
+  return overlays.find((elmt) => elmt.contains(selectElmt)) as HTMLElement;
+}
+
 function useOverlayManager() {
   const overlayManagerRef = useRef(document.getElementById("ron-overlay-manager") as HTMLDivElement | null);
 

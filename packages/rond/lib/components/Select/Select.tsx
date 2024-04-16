@@ -12,7 +12,8 @@ export type SelectOption = {
   className?: string;
 };
 
-export interface SelectProps extends Pick<RcProps, "open" | "disabled" | "defaultValue" | "getPopupContainer"> {
+export interface SelectProps
+  extends Pick<RcProps, "title" | "open" | "disabled" | "defaultValue" | "getPopupContainer"> {
   className?: ClassValue;
   dropdownCls?: ClassValue;
   style?: React.CSSProperties;
@@ -45,6 +46,7 @@ export function Select({
       )}
       dropdownClassName={clsx(
         `ron-select__dropdown ron-select__dropdown--${align} ron-select__dropdown--${arrowAt}`,
+        transparent && "ron-select__dropdown--transparent",
         dropdownCls
       )}
       {...rest}

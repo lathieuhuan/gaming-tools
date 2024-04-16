@@ -1,35 +1,32 @@
 import { useState } from "react";
-import { Button, InputNumber, Select } from "@lib/components";
-import { popup } from "@lib/utils";
+import { Select, SelectProps, VersatileSelect } from "@lib/components";
 
 function App() {
-  const [top, setTop] = useState(16);
-  const [value, setValue] = useState<string | number>("A");
+  const [value, setValue] = useState<string | number>(2);
 
-  const onClick = () => {
-    setValue("B");
-    popup.show("Select", [1, 2, 3], console.log);
+  const props: SelectProps = {
+    // transparent: true,
+    arrowAt: 'start',
+    align: 'right',
+    size: 'medium',
+    value,
+    options: [
+      { label: "Option 1", value: 1 },
+      { label: "Option 2", value: 2 },
+      { label: "Option 3", value: 3 },
+    ],
+    onChange: setValue,
   };
 
   return (
-    <div style={{ height: 2000 }}>
-      <p>App for developing Rond</p>
+    <div className="ron-list" style={{ gap: "1rem", padding: "1rem" }}>
+      <p>App for developing Rond {value}</p>
 
-      <Button onClick={onClick}>Click {value}</Button>
-      <InputNumber onChange={setTop} />
+      <VersatileSelect title="Select" {...props} />
 
-      <div style={{ marginTop: top, padding: "0 3rem" }}>
-        <Select
-          value={value}
-          options={[
-            { label: "Option A aksjdn aksd", value: "A" },
-            { label: "Option B", value: "B" },
-          ]}
-          onChange={setValue}
-        />
-      </div>
+      <Select {...props} />
 
-      <div style={{ marginTop: 1000, padding: "0 3rem" }}>
+      {/* <div style={{ marginTop: 1000, padding: "0 3rem" }}>
         <Select
           value="A"
           open
@@ -46,7 +43,7 @@ function App() {
             { label: "Option K", value: "K" },
           ]}
         />
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -22,7 +22,7 @@
   flex-shrink: 0;
 
   &:has(.ron-checkbox-input:disabled) {
-    background-color: var(--ron-color-light-surface-disabled);
+    background-color: var(--ron-color-light-disabled);
   }
 
   .ron-checkbox-input,
