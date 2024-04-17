@@ -17,5 +17,5 @@
 
 body {
   background-color: var(--ron-color-dark-surface-2);
-  color: var(--ron-color-on-dark);
+  /* color: var(--ron-color-on-dark); */
 }

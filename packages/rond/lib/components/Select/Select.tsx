@@ -1,163 +1,72 @@
-import clsx, { type ClassValue } from "clsx";
+import clsx, { ClassValue } from "clsx";
 import { useRef } from "react";
-import { default as RcSelect, SelectProps as RcProps } from "rc-select";
-import { ChevronDownSvg } from "../svg-icons";
 
-import "rc-select/assets/index.css";
+import { useElementSize } from "../../hooks";
+import { Button } from "../Button";
+import type { SelectProps, SelectValueType } from "./Select.types";
+import { SelectCore } from "./SelectCore";
+
 import "./Select.styles.scss";
-// import { Button, ButtonProps } from "../Button";
 
-import { SelectProps, SelectValueType } from "./Select.types";
-import { SelectWrap } from "./SelectWrap";
+type OnLocalChange = (value: SelectValueType) => void;
 
-// export type SelectOption = {
-//   label: React.ReactNode;
-//   value: string | number;
-//   disabled?: boolean;
-//   className?: string;
-// };
+export function Select({ className, style, size = "small", action, onChange, ...rest }: SelectProps) {
+  const renderSelect = (localCls?: ClassValue, localStyle?: React.CSSProperties, onLocalChange?: OnLocalChange) => {
+    return (
+      <SelectCore
+        className={localCls}
+        style={localStyle}
+        size={size}
+        onChange={(value) => {
+          onLocalChange?.(value);
+          onChange?.(value);
+        }}
+        {...rest}
+      />
+    );
+  };
 
-// type ValueType = RcProps["value"];
+  if (action) {
+    return (
+      <SelectWithAction {...{ className, style, size, action }} initialValue={rest.value ?? rest.defaultValue}>
+        {(onChange) => renderSelect("ron-select--half", undefined, onChange)}
+      </SelectWithAction>
+    );
+  }
 
-// type SelectAction = Pick<ButtonProps, "variant" | "icon" | "disabled"> & {
-//   onClick?: (localValue: ValueType) => void;
-// };
+  return renderSelect(className, style);
+}
 
-// export interface SelectProps extends Pick<RcProps, "title" | "open" | "disabled" | "getPopupContainer"> {
-//   className?: ClassValue;
-//   dropdownCls?: ClassValue;
-//   style?: React.CSSProperties;
-//   /** Default to 'small' */
-//   size?: "small" | "medium";
-//   /** Default to 'left' */
-//   align?: "left" | "right";
-//   /** Default to 'end' */
-//   arrowAt?: "start" | "end";
-//   transparent?: boolean;
-//   options: SelectOption[];
-//   value?: string | number;
-//   defaultValue?: string | number;
-//   action?: SelectAction;
-//   onChange?: (value: string | number) => void;
-// }
-export function Select({
+interface SelectWithActionProps extends Pick<SelectProps, "className" | "style" | "size" | "action"> {
+  initialValue?: SelectProps["value"];
+  children: (onChange: (value: SelectValueType) => void) => React.ReactNode;
+}
+function SelectWithAction({
   className,
   style,
-  dropdownCls,
   size = "small",
-  align = "left",
-  arrowAt = "end",
-  transparent,
+  initialValue = "",
   action,
-  onChange,
-  ...rest
-}: SelectProps) {
-  const valueRef = useRef<SelectValueType>(rest.value ?? rest.defaultValue);
-
-  // const renderSelect = (extraCls?: ClassValue, style?: React.CSSProperties) => (
-  //   <RcSelect
-  //     className={clsx(
-  //       `ron-select ron-select--${size} ron-select--${align} ron-select--arrow-${arrowAt}`,
-  //       transparent && "ron-select--transparent",
-  //       extraCls,
-  //       className
-  //     )}
-  //     style={style}
-  //     dropdownClassName={clsx(
-  //       `ron-select__dropdown ron-select__dropdown--${align} ron-select__dropdown--${arrowAt}`,
-  //       transparent && "ron-select__dropdown--transparent",
-  //       dropdownCls
-  //     )}
-  //     {...rest}
-  //     suffixIcon={<ChevronDownSvg />}
-  //     showSearch={false}
-  //     virtual={false}
-  //     menuItemSelectedIcon={null}
-  //     onChange={(value) => {
-  //       valueRef.current = value;
-  //       onChange?.(value);
-  //     }}
-  //   />
-  // );
-
-  // if (action) {
-  //   return (
-  //     <div className="ron-select__wrapper" style={style}>
-  //       {renderSelect("ron-select--half")}
-  //       <Button
-  //         {...action}
-  //         className={`ron-select__action ron-select__action--${size}`}
-  //         size="custom"
-  //         shape="custom"
-  //         withShadow={false}
-  //         onClick={() => action.onClick?.(valueRef.current)}
-  //       />
-  //     </div>
-  //   );
-  // }
-
-  // return renderSelect(null, style);
+  children,
+}: SelectWithActionProps) {
+  const valueRef = useRef<SelectValueType>(initialValue);
+  const [ref, { height }] = useElementSize<HTMLDivElement>();
 
   return (
-    <SelectWrap
-      style={style}
-      size={size}
-      action={
-        action
-          ? {
-              ...action,
-              onClick: () => action?.onClick?.(valueRef.current),
-            }
-          : undefined
-      }
-    >
-      {(extraCls, selectStyle) => {
-        return (
-          <RcSelect
-            className={clsx(
-              `ron-select ron-select--${size} ron-select--${align} ron-select--arrow-${arrowAt}`,
-              transparent && "ron-select--transparent",
-              extraCls,
-              className
-            )}
-            style={selectStyle}
-            dropdownClassName={clsx(
-              `ron-select__dropdown ron-select__dropdown--${align} ron-select__dropdown--${arrowAt}`,
-              transparent && "ron-select__dropdown--transparent",
-              dropdownCls
-            )}
-            {...rest}
-            suffixIcon={<ChevronDownSvg />}
-            showSearch={false}
-            virtual={false}
-            menuItemSelectedIcon={null}
-            onChange={(value) => {
-              valueRef.current = value;
-              onChange?.(value);
-            }}
-          />
-        );
-      }}
-    </SelectWrap>
-  );
+    <div ref={ref} className={clsx("ron-select__wrapper", className)} style={style}>
+      {children((value) => (valueRef.current = value))}
 
-  // return (
-  //   <RcSelect
-  //     className={clsx(
-  //       `ron-select ron-select--${size} ron-select--${align} ron-select--arrow-${arrowAt}`,
-  //       transparent && "ron-select--transparent",
-  //       className
-  //     )}
-  //     dropdownClassName={clsx(
-  //       `ron-select__dropdown ron-select__dropdown--${align} ron-select__dropdown--${arrowAt}`,
-  //       transparent && "ron-select__dropdown--transparent",
-  //       dropdownCls
-  //     )}
-  //     {...rest}
-  //     suffixIcon={<ChevronDownSvg />}
-  //     showSearch={false}
-  //     virtual={false}
-  //     menuItemSelectedIcon={null}
-  //   />
-  // );
+      {height ? (
+        <Button
+          {...action}
+          className={`ron-select__action ron-select__action--${size}`}
+          style={{ height, width: height }}
+          size="custom"
+          shape="custom"
+          withShadow={false}
+          onClick={() => action?.onClick?.(valueRef.current)}
+        />
+      ) : null}
+    </div>
+  );
 }

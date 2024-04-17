@@ -2,20 +2,20 @@ import { type ClassValue } from "clsx";
 import { type SelectProps as RcProps } from "rc-select";
 import { type ButtonProps } from "../Button";
 
+export type SelectValueType = string | number;
+
 export type SelectOption = {
   label: React.ReactNode;
-  value: string | number;
+  value: SelectValueType;
   disabled?: boolean;
   className?: string;
 };
-
-export type SelectValueType = RcProps["value"];
 
 export type SelectAction = Pick<ButtonProps, "variant" | "icon" | "disabled"> & {
   onClick?: (value: SelectValueType) => void;
 };
 
-export interface SelectProps extends Pick<RcProps, "title" | "open" | "disabled" | "getPopupContainer"> {
+export interface SelectCoreProps extends Pick<RcProps, "open" | "disabled" | "getPopupContainer"> {
   className?: ClassValue;
   dropdownCls?: ClassValue;
   style?: React.CSSProperties;
@@ -27,8 +27,11 @@ export interface SelectProps extends Pick<RcProps, "title" | "open" | "disabled"
   arrowAt?: "start" | "end";
   transparent?: boolean;
   options: SelectOption[];
-  value?: string | number;
-  defaultValue?: string | number;
+  value?: SelectValueType;
+  defaultValue?: SelectValueType;
+  onChange?: (value: SelectValueType) => void;
+}
+
+export interface SelectProps extends SelectCoreProps, Pick<RcProps, "title"> {
   action?: SelectAction;
-  onChange?: (value: string | number) => void;
 }
