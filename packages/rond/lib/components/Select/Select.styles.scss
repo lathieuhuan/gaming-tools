@@ -6,7 +6,8 @@
 
   &.rc-select {
     .rc-select-selector {
-      height: 100%;
+      min-height: inherit;
+      height: inherit;
       border: none;
       padding: 0;
     }
@@ -65,23 +66,11 @@
 
 .ron-select--small {
   font-size: 1rem;
-
-  .rc-select-selection-item {
-    line-height: 1.75rem;
-  }
-  .rc-select-selection-search-input {
-    min-height: 1.75rem;
-  }
+  min-height: 1.75rem;
 }
 .ron-select--medium {
   font-size: 1.125rem;
-
-  .rc-select-selection-item {
-    line-height: 2rem;
-  }
-  .rc-select-selection-search-input {
-    min-height: 2rem;
-  }
+  min-height: 2rem;
 }
 
 .ron-select--right .rc-select-selection-item {
@@ -151,4 +140,24 @@
 }
 .ron-select__dropdown--transparent.rc-select-dropdown .rc-select-item {
   padding: 0.125rem 0.25rem;
+}
+
+// SelectWrap
+.ron-select__wrapper {
+  display: flex;
+}
+.ron-select--half {
+  border-radius: 0.25rem 0 0 0.25rem;
+}
+.ron-select__action {
+  border-radius: 0 0.25rem 0.25rem 0;
+
+  &.ron-select__action--small {
+    // need to scale with select
+    min-width: 1.75rem;
+  }
+  &.ron-select__action--medium {
+    // need to scale with select
+    min-width: 2rem;
+  }
 }

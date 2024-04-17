@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { FaEdit, FaMinus } from "react-icons/fa";
 import { Button, InputNumber, VersatileSelect } from "rond";
 
@@ -15,12 +14,7 @@ interface SectionTargetProps {
 export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps) {
   const dispatch = useDispatch();
   const target = useSelector(selectTarget);
-  const [name, setName] = useState<string>();
   const { title, names, variant, statuses } = $AppData.getTargetInfo(target);
-
-  useEffect(() => {
-    setName(names?.[0]);
-  }, [target.code]);
 
   return (
     <div className={"px-4 py-3 bg-surface-1 cursor-default relative " + styles.section}>
@@ -33,13 +27,13 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
       <div className="mt-2 pr-6 flex flex-col items-start">
         {names ? (
           <VersatileSelect
+            key={target.code}
             title="Select Target"
             className="w-52"
             transparent
             arrowAt="start"
             options={names.map((name) => ({ label: name, value: name }))}
-            value={name}
-            onChange={(value) => setName(value as string)}
+            defaultValue={names?.[0]}
           />
         ) : (
           <p className="text-lg">{title}</p>

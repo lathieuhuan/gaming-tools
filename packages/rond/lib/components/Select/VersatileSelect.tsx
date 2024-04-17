@@ -1,7 +1,9 @@
 import clsx from "clsx";
+import { useEffect, useState } from "react";
 import { useScreenWatcher } from "../../providers";
 import { bottomList } from "../../utils";
-import { Select, type SelectProps } from "../Select";
+import { Select } from "./Select";
+import { type SelectProps } from "./Select.types";
 import { ChevronDownSvg } from "../svg-icons";
 
 interface VersatileSelectProps extends SelectProps {
@@ -13,34 +15,36 @@ export function VersatileSelect(props: VersatileSelectProps) {
   return screenWatcher.isFromSize("sm") ? <Select {...props} title={undefined} /> : <MobileSelect {...props} />;
 }
 
-function MobileSelect({
-  title,
-  options,
-  value,
-  defaultValue,
-  className,
-  style,
-  size = "small",
-  align = "left",
-  arrowAt = "end",
-  transparent,
-  disabled,
-  onChange,
-}: VersatileSelectProps) {
-  const localValue = value ?? defaultValue;
+function MobileSelect(props: VersatileSelectProps) {
+  const { options, value, defaultValue = "", size = "small", align = "left", arrowAt = "end", disabled } = props;
+
+  const [localValue, setLocalValue] = useState<string | number>(value ?? defaultValue);
+
+  const isControlled = "value" in props;
   const selected = options.find((option) => option.value === localValue);
+
+  useEffect(() => {
+    if (isControlled && value !== undefined && value !== localValue) {
+      setLocalValue(value);
+    }
+  }, [value]);
 
   const handleClick = () => {
     if (!disabled) {
       const optionsCount = options.length;
 
       bottomList.show({
-        title,
+        title: props.title,
         items: options,
         align,
         value: localValue,
         height: optionsCount > 10 ? "90%" : optionsCount > 7 ? "70%" : optionsCount > 3 ? "50%" : "30%",
-        onSelect: onChange,
+        onSelect: (value) => {
+          if (!isControlled) {
+            setLocalValue(value);
+          }
+          props.onChange?.(value);
+        },
       });
     }
   };
@@ -49,11 +53,11 @@ function MobileSelect({
     <div
       className={clsx(
         `ron-select ron-select--${size} ron-select--${align} ron-select--arrow-${arrowAt} rc-select rc-select-single rc-select-show-arrow`,
-        transparent && "ron-select--transparent",
+        props.transparent && "ron-select--transparent",
         disabled && "rc-select-disabled",
-        className
+        props.className
       )}
-      style={style}
+      style={props.style}
       onClick={handleClick}
     >
       <div className="rc-select-selector">

@@ -4,7 +4,7 @@ import "./Button.styles.scss";
 
 type ButtonVariant = "default" | "primary" | "danger" | "active" | "custom";
 
-type ButtonShape = "rounded" | "square";
+type ButtonShape = "rounded" | "square" | "custom";
 
 type ButtonSize = "small" | "medium" | "large" | "custom";
 
@@ -37,9 +37,10 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const classes = [
-    `ron-flex-center ron-button ron-button--${shape}`,
-    withShadow && "ron-common-shadow",
+    `ron-flex-center ron-button`,
     variant !== "custom" && (boneOnly ? `ron-bone-button--${variant}` : `ron-button--${variant}`),
+    shape !== "custom" && `ron-button--${shape}`,
+    withShadow && "ron-common-shadow",
     rest.disabled ? "ron-disabled" : "ron-glow-on-hover",
     className,
   ];
