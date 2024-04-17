@@ -1,9 +1,9 @@
-.ron-checkbox-wrapper {
+.ron-checkbox__wrapper {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 
-  &:has(.ron-checkbox-input:enabled) {
+  &:has(.ron-checkbox__input:enabled) {
     cursor: pointer;
 
     &:hover .ron-checkbox {
@@ -21,12 +21,12 @@
   position: relative;
   flex-shrink: 0;
 
-  &:has(.ron-checkbox-input:disabled) {
+  &:has(.ron-checkbox__input:disabled) {
     background-color: var(--ron-color-light-disabled);
   }
 
-  .ron-checkbox-input,
-  .ron-checkbox-visual {
+  .ron-checkbox__input,
+  .ron-checkbox__visual {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -35,7 +35,7 @@
   }
 
   // background when checked
-  .ron-checkbox-visual {
+  .ron-checkbox__visual {
     user-select: none;
     background-color: var(--ron-color-active-background);
 
@@ -58,49 +58,49 @@
   }
 
   // input checkbox
-  .ron-checkbox-input {
+  .ron-checkbox__input {
     z-index: 10;
     opacity: 0;
 
-    &:checked ~ .ron-checkbox-visual,
-    &:checked ~ .ron-checkbox-visual::before {
+    &:checked ~ .ron-checkbox__visual,
+    &:checked ~ .ron-checkbox__visual::before {
       opacity: 1;
     }
 
-    &:checked:disabled ~ .ron-checkbox-visual {
+    &:checked:disabled ~ .ron-checkbox__visual {
       background-color: var(--ron-color-active-background-disabled);
     }
   }
 }
 
 // size config
-.ron-checkbox-wrapper-small {
+.ron-checkbox__wrapper--small {
   .ron-checkbox {
     width: 18px;
     height: 18px;
   }
-  .ron-checkbox-visual::before {
+  .ron-checkbox__visual::before {
     width: 7px;
     height: 10px;
     inset-inline-start: 25%;
   }
-  .ron-checkbox-label {
+  .ron-checkbox__label {
     font-size: 1rem;
     line-height: 1.5rem;
   }
 }
 
-.ron-checkbox-wrapper-medium {
+.ron-checkbox__wrapper--medium {
   .ron-checkbox {
     width: 22px;
     height: 22px;
   }
-  .ron-checkbox-visual::before {
+  .ron-checkbox__visual::before {
     width: 8px;
     height: 12px;
     inset-inline-start: 30%;
   }
-  .ron-checkbox-label {
+  .ron-checkbox__label {
     font-size: 1.125rem;
     line-height: 1.75rem;
   }

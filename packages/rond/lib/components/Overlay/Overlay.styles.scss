@@ -1,4 +1,4 @@
-.ron-overlay-core {
+.ron-overlay {
   position: fixed;
   top: 0;
   bottom: 0;
@@ -6,19 +6,19 @@
   right: 0;
   z-index: 50;
 }
-.ron-overlay-core-invisible {
+.ron-overlay--invisible {
   visibility: hidden;
 }
 
-.ron-overlay-mask {
+.ron-overlay__mask {
   width: 100%;
   height: 100%;
   background-color: #000;
 
-  &.ron-overlay-mask-out {
+  &.ron-overlay__mask--out {
     opacity: 0.6;
   }
-  &.ron-overlay-mask-in {
+  &.ron-overlay__mask--in {
     opacity: 0.2;
   }
 }

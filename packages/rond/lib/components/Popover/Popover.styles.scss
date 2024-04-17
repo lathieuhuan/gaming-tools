@@ -5,17 +5,17 @@
   z-index: 10;
   cursor: default;
 
-  &.ron-popover-bottom-right {
+  &.ron-popover--bottom-right {
     transform-origin: bottom right;
   }
-  &.ron-popover-top-left {
+  &.ron-popover--top-left {
     transform-origin: top left;
   }
-  &.ron-popover-top-right {
+  &.ron-popover--top-right {
     transform-origin: top right;
   }
 
-  &.ron-popover-active {
+  &.ron-popover--active {
     transform: scale(1);
   }
 }

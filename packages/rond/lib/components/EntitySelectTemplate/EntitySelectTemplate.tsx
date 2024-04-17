@@ -134,7 +134,7 @@ export function EntitySelectTemplate({
 
   return (
     <div className="ron-entity-select-template">
-      <CloseButton className="ron-modal-close-button" boneOnly onClick={onClose} />
+      <CloseButton className="ron-modal__close-button" boneOnly onClick={onClose} />
 
       <Modal.Header withDivider>
         <div className="ron-entity-select__header">

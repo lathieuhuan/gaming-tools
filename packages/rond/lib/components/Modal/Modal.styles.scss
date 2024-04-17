@@ -1,4 +1,4 @@
-.ron-modal-content {
+.ron-modal {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -7,22 +7,22 @@
   transform: translate(-50%, -50%) scaleX(var(--ron-scale-x)) scaleY(var(--ron-scale-y));
   overflow: hidden;
 
-  &.ron-modal-content-standard {
+  &.ron-modal--standard {
     display: flex;
     flex-direction: column;
   }
 
-  &.ron-modal-content-standard,
-  &.ron-modal-content-small,
-  &.ron-modal-content-large {
+  &.ron-modal--standard,
+  &.ron-modal--small,
+  &.ron-modal--large {
     border-radius: 0.5rem;
     box-shadow: 0 0 3px #b8b8b8;
   }
-  &.ron-modal-content-small,
-  &.ron-modal-content-large {
+  &.ron-modal--small,
+  &.ron-modal--large {
     width: 22rem;
   }
-  &.ron-modal-content-large {
+  &.ron-modal--large {
     background-color: var(--ron-color-dark-surface-2);
     color: var(--ron-color-on-dark);
 
@@ -40,59 +40,59 @@
     }
   }
 
-  &.ron-modal-content-out {
+  &.ron-modal--out {
     opacity: 1;
     --ron-scale-x: 1;
     --ron-scale-y: 1;
   }
-  &.ron-modal-content-in {
+  &.ron-modal--in {
     opacity: 0;
     --ron-scale-x: 0.95;
     --ron-scale-y: 0.95;
   }
 }
 
-.ron-modal-content-large-height {
+.ron-modal--large-height {
   height: 90vh;
   max-height: 760px;
 }
 
 // Modal only styles
-.ron-modal-close-button {
+.ron-modal__close-button {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
   z-index: 20;
 }
 
-.ron-modal-header {
+.ron-modal__header {
   padding: 1rem 1rem 0 1rem;
   font-size: 1.25rem;
   line-height: 1.75rem;
   color: var(--ron-color-heading);
   font-weight: 600;
 
-  .ron-modal-header-inner {
+  .ron-modal__header__inner {
     padding-bottom: 0.5rem;
   }
-  .ron-modal-header-with-divider {
+  .ron-modal__header--with-divider {
     border-bottom: 1px solid #535582;
   }
 }
 
-.ron-modal-body {
+.ron-modal__body {
   padding: 1rem;
   flex-grow: 1;
   overflow: auto;
 }
 
-.ron-modal-footer {
+.ron-modal__footer {
   padding: 0 1rem 1rem;
 }
-.ron-modal-actions {
+.ron-modal__actions {
   padding-top: 1rem;
 
-  &.ron-modal-actions-with-divider {
+  &.ron-modal__actions--with-divider {
     border-top: 1px solid #535582;
   }
 }

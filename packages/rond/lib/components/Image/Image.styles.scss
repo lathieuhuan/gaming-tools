@@ -1,11 +1,10 @@
 .ron-image {
-  .ron-image-img {
+  .ron-image__img {
     width: 100%;
     height: auto;
     vertical-align: middle;
   }
-
-  .ron-image-default-fallback {
+  .ron-image__fallback {
     height: 100%;
   }
 }

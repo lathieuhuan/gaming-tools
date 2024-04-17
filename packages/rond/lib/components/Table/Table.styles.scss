@@ -3,7 +3,7 @@
   border-collapse: collapse;
   color: var(--ron-color-on-dark);
 
-  .ron-table-tr {
+  .ron-table__tr {
     &:nth-child(odd) {
       background-color: var(--ron-color-dark-surface-1);
     }
@@ -18,8 +18,8 @@
     }
   }
 
-  .ron-table-th,
-  .ron-table-td {
+  .ron-table__th,
+  .ron-table__td {
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
     line-height: 1.25rem;
@@ -29,7 +29,7 @@
     cursor: default;
   }
 
-  .ron-table-td:first-child {
+  .ron-table__td:first-child {
     font-weight: 600;
   }
 }

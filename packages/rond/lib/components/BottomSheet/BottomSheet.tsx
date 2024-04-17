@@ -12,7 +12,7 @@ export function BottomSheet({ title, height, children, ...overlayProps }: Bottom
     <Overlay {...overlayProps}>
       {(direction) => (
         <div className={`ron-bottomsheet ron-bottomsheet-${direction} ron-overlay-transition`} style={{ height }}>
-          <div className="ron-bottomsheet__header">
+          <div className="ron-bottomsheet__heading">
             <div className="ron-bottomsheet__title">{title}</div>
             <CloseButton boneOnly className="ron-bottomsheet__close" onClick={overlayProps.onClose} />
           </div>

@@ -37,9 +37,9 @@ export function Button({
   ...rest
 }: ButtonProps) {
   const classes = [
-    `ron-flex-center ron-button ron-button-${shape}`,
+    `ron-flex-center ron-button ron-button--${shape}`,
     withShadow && "ron-common-shadow",
-    variant !== "custom" && (boneOnly ? `ron-bone-button-${variant}` : `ron-button-${variant}`),
+    variant !== "custom" && (boneOnly ? `ron-bone-button--${variant}` : `ron-button--${variant}`),
     rest.disabled ? "ron-disabled" : "ron-glow-on-hover",
     className,
   ];
@@ -49,12 +49,12 @@ export function Button({
       type="button"
       className={clsx(
         classes,
-        iconPosition === "end" && "ron-button-icon-last",
-        size !== "custom" ? (children ? `ron-button-${size}` : `ron-icon-button-${size}`) : ""
+        iconPosition === "end" && "ron-button__icon--last",
+        size !== "custom" ? (children ? `ron-button--${size}` : `ron-icon-button--${size}`) : ""
       )}
       {...rest}
     >
-      {icon ? <span className="ron-button-icon">{icon}</span> : null}
+      {icon ? <span className="ron-button__icon">{icon}</span> : null}
       {children ? <span>{children}</span> : null}
     </button>
   );
@@ -66,13 +66,13 @@ export function CloseButton({ boneOnly, className, size = "medium", ...rest }: C
     <Button
       variant={boneOnly ? "default" : "danger"}
       icon={
-        <svg className={`ron-close-button-${size}`} viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor">
+        <svg className={`ron-close-button--${size}`} viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor">
           <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
         </svg>
       }
       size={size}
       boneOnly={boneOnly}
-      className={["ron-close-button-default", className]}
+      className={["ron-close-button--default", className]}
       {...rest}
     />
   );

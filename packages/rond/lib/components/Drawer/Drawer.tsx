@@ -11,7 +11,8 @@ export interface DrawerProps {
   className?: ClassValue;
   style?: React.CSSProperties;
   active?: boolean;
-  activeWidth: string | number;
+  /** Default to '20rem' */
+  activeWidth?: string | number;
   closeOnMaskClick?: boolean;
   destroyOnClose?: boolean;
   children: React.ReactNode;
@@ -21,7 +22,7 @@ export const Drawer = ({
   className,
   style,
   active,
-  activeWidth,
+  activeWidth = '20rem',
   closeOnMaskClick = true,
   destroyOnClose,
   children,
@@ -62,9 +63,9 @@ export const Drawer = ({
   };
 
   return (
-    <div className={clsx("ron-drawer-wrapper ron-full-stretch", !state.mounted && "ron-hidden")}>
+    <div className={clsx("ron-drawer__wrapper ron-full-stretch", !state.mounted && "ron-hidden")}>
       <div
-        className={clsx("ron-drawer-mask", state.active && "ron-drawer-mask-active")}
+        className={clsx("ron-drawer__mask", state.active && "ron-drawer__mask--active")}
         onTransitionEnd={onMaskTransitionEnd}
         onClick={closeOnMaskClick ? closeDrawer : undefined}
       />

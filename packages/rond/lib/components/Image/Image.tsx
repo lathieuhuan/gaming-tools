@@ -50,7 +50,7 @@ export const Image = ({
       <img
         src={src}
         alt={alt}
-        className={clsx("ron-image-img", isError && "ron-image-img-error", showFallback && "ron-hidden", imgCls)}
+        className={clsx("ron-image__img", isError && "ron-image__img--error", showFallback && "ron-hidden", imgCls)}
         draggable={draggable}
         onError={(e) => {
           setIsError(true);

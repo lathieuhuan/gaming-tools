@@ -10,9 +10,10 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     disabled: { control: "boolean" },
-    size: { control: "select", options: ["small", "medium"] },
-    align: { control: "select", options: ["left", "right"] },
-    arrowAt: { control: "select", options: ["start", "end"] },
+    size: { control: "inline-radio", options: ["small", "medium"] },
+    align: { control: "inline-radio", options: ["left", "right"] },
+    arrowAt: { control: "inline-radio", options: ["start", "end"] },
+    transparent: { control: "boolean" },
     value: { control: false },
   },
 } satisfies Meta<typeof Select>;
@@ -31,5 +32,6 @@ export const Default: Story = {
     size: "small",
     align: "left",
     arrowAt: "end",
+    transparent: false
   },
 };

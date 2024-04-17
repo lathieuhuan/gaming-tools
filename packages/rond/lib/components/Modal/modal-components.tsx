@@ -8,8 +8,8 @@ export interface ModalHeaderProps {
 }
 export function ModalHeader({ className, children, withDivider }: ModalHeaderProps) {
   return (
-    <div className={clsx("ron-modal-header", className)}>
-      <div className={clsx("ron-modal-header-inner", withDivider && "ron-modal-header-with-divider")}>{children}</div>
+    <div className={clsx("ron-modal__header", className)}>
+      <div className={clsx("ron-modal__header__inner", withDivider && "ron-modal__header--with-divider")}>{children}</div>
     </div>
   );
 }
@@ -72,7 +72,7 @@ export const ModalActions = ({
 
   return (
     <ButtonGroup
-      className={clsx("ron-modal-actions", withDivider && "ron-modal-actions-with-divider", className)}
+      className={clsx("ron-modal__actions", withDivider && "ron-modal__actions--with-divider", className)}
       justify={justify}
       buttons={buttons}
     />

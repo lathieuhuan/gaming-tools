@@ -4,7 +4,7 @@
   overflow: hidden;
   cursor: pointer;
 
-  .ron-radio-input {
+  .ron-radio__input {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -16,25 +16,25 @@
   }
 
   &,
-  .ron-radio-visual {
+  .ron-radio__visual {
     display: flex;
     border-radius: 50%;
     user-select: none;
   }
 
-  .ron-radio-visual {
+  .ron-radio__visual {
     border: 3px solid #b8b8b8;
 
-    &.ron-radio-visual-small {
+    &.ron-radio__visual--small {
       width: 1.25rem;
       height: 1.25rem;
     }
-    &.ron-radio-visual-medium {
+    &.ron-radio__visual--medium {
       width: 1.5rem;
       height: 1.5rem;
       border-width: 3.5px;
     }
-    &.ron-radio-visual-large {
+    &.ron-radio__visual--large {
       width: 2rem;
       height: 2rem;
       border-width: 4px;
@@ -51,16 +51,16 @@
     }
   }
 
-  .ron-radio-input:checked ~ .ron-radio-visual {
+  .ron-radio__input:checked ~ .ron-radio__visual {
     border-color: var(--ron-color-active-background);
 
-    &.ron-radio-visual-small {
+    &.ron-radio__visual--small {
       border-width: 4px;
     }
-    &.ron-radio-visual-medium {
+    &.ron-radio__visual--medium {
       border-width: 5.5px;
     }
-    &.ron-radio-visual-large {
+    &.ron-radio__visual--large {
       border-width: 7px;
     }
     &:before {

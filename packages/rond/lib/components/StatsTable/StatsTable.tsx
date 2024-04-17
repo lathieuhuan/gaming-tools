@@ -21,7 +21,7 @@ export interface StatsTableRowProps {
 }
 StatsTable.Row = ({ className, children, onClick }: StatsTableRowProps) => {
   return (
-    <div className={clsx("ron-stats-table-row", className)} onClick={onClick}>
+    <div className={clsx("ron-stats-table__row", className)} onClick={onClick}>
       {children}
     </div>
   );

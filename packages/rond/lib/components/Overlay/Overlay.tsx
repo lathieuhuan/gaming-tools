@@ -85,9 +85,9 @@ export function Overlay({
 
   return state.mounted
     ? ReactDOM.createPortal(
-        <div className={clsx("ron-overlay-core", !state.visible && "ron-overlay-core-invisible")}>
+        <div className={clsx("ron-overlay", !state.visible && "ron-overlay--invisible")}>
           <div
-            className={`ron-overlay-mask ron-overlay-mask-${state.movingDir} ron-overlay-transition`}
+            className={`ron-overlay__mask ron-overlay__mask--${state.movingDir} ron-overlay-transition`}
             onClick={closeOnMaskClick ? closeOverlay : undefined}
           />
 
@@ -99,7 +99,7 @@ export function Overlay({
 }
 
 export function findParentOverlay(selectElmt: HTMLElement) {
-  const overlays = Array.from(document.querySelectorAll(".ron-overlay-core"));
+  const overlays = Array.from(document.querySelectorAll(".ron-overlay"));
   return overlays.find((elmt) => elmt.contains(selectElmt)) as HTMLElement;
 }
 

@@ -12,7 +12,7 @@ const show = (type: "info" | "error") => (message: string | JSX.Element) => {
     overlayRoot.render(
       <Modal.Core active={active} preset="small" onClose={closeMsg}>
         <ConfirmModal.Body
-          message={<span className={type === "error" ? "ron-message-error" : ""}>{message}</span>}
+          message={<span className={type === "error" ? "ron-message--error" : ""}>{message}</span>}
           showCancel={false}
           focusConfirm
           onConfirm={closeMsg}

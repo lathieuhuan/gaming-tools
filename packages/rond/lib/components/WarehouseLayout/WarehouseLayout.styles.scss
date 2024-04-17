@@ -6,7 +6,7 @@
   align-items: center;
   background-color: var(--ron-color-dark-surface-2);
 
-  .ron-warehouse-actions {
+  .ron-warehouse__actions {
     position: absolute;
     top: 0;
     left: 0;
@@ -15,7 +15,7 @@
     height: 2.5rem;
   }
 
-  .ron-warehouse-content {
+  .ron-warehouse__body {
     height: 100%;
     display: flex;
     gap: 0.5rem;

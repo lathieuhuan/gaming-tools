@@ -20,8 +20,8 @@ export const CollapseList = (props: CollapseListProps) => {
         <div key={i} className="ron-collapse-item">
           <div
             className={clsx(
-              "ron-collapse-item-heading ron-glow-on-hover",
-              expanded[i] && "ron-collapse-item-heading-active"
+              "ron-collapse-item__heading ron-glow-on-hover",
+              expanded[i] && "ron-collapse-item__heading--active"
             )}
             onClick={() =>
               setExpanded((prev) => {
@@ -34,7 +34,7 @@ export const CollapseList = (props: CollapseListProps) => {
             {typeof heading === "function" ? heading(expanded[i]) : heading}
           </div>
           <CollapseSpace active={!!expanded[i]}>
-            <div className={clsx("ron-collapse-item-body", props.bodyCls)}>{body}</div>
+            <div className={clsx("ron-collapse-item__body", props.bodyCls)}>{body}</div>
           </CollapseSpace>
         </div>
       ))}

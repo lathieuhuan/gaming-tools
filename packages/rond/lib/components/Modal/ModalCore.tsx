@@ -3,7 +3,7 @@ import { Overlay, type OverlayProps } from "../Overlay";
 
 type ModalPreset = "small" | "large" | "custom";
 
-export const LARGE_HEIGHT_CLS = "ron-modal-content-large-height";
+export const LARGE_HEIGHT_CLS = "ron-modal--large-height";
 
 export interface ModalControl {
   active?: boolean;
@@ -35,7 +35,7 @@ export const ModalCore = ({
           <div
             id={id}
             className={clsx(
-              `ron-modal-content ron-modal-content-${preset} ron-modal-content-${direction} ron-overlay-transition`,
+              `ron-modal ron-modal--${preset} ron-modal--${direction} ron-overlay-transition`,
               preset === "large" && LARGE_HEIGHT_CLS,
               className
             )}

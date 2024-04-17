@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button, Popover } from "@lib/components";
+import { Popover } from "@lib/components";
 
 const meta = {
   title: "Popover",
@@ -27,7 +27,7 @@ export const Default: Story = {
   render: (args) => {
     return (
       <div style={{ position: "relative" }}>
-        <Button>Button</Button>
+        <p style={{ color: "var(--ron-color-on-dark)" }}>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
         <Popover {...args} style={{ bottom: "100%", right: "1rem", marginBottom: "0.5rem" }} />
       </div>
     );
