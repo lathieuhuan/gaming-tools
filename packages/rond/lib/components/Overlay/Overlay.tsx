@@ -9,6 +9,8 @@ type OverlayState = {
   movingDir: "out" | "in";
 };
 
+type TransitionStyle = Pick<React.CSSProperties, "transitionDuration" | "transitionTimingFunction">;
+
 export interface OverlayProps {
   active?: boolean;
   state?: "open" | "close" | "hidden";
@@ -16,16 +18,21 @@ export interface OverlayProps {
   closable?: boolean;
   /** Default to true */
   closeOnMaskClick?: boolean;
-  children: (moving: OverlayState["movingDir"]) => React.ReactNode;
+  /** Default to '200' (ms) */
+  transitionDuration?: number;
+  children: (moving: OverlayState["movingDir"], transitionStyle: TransitionStyle) => React.ReactNode;
   onClose: () => void;
+  getContainer?: () => HTMLElement | null;
 }
 export function Overlay({
   active,
   state: stateProps,
   closable = true,
   closeOnMaskClick = true,
+  transitionDuration = 200,
   children,
   onClose,
+  getContainer,
 }: OverlayProps) {
   const [state, setState] = useState<OverlayState>({
     mounted: false,
@@ -41,7 +48,7 @@ export function Overlay({
       setTimeout(() => {
         setState((prev) => ({ ...prev, mounted: false }));
         onClose();
-      }, 150);
+      }, transitionDuration);
     }
   };
 
@@ -65,7 +72,7 @@ export function Overlay({
 
         setTimeout(() => {
           setState((prev) => ({ ...prev, visible: false }));
-        }, 150);
+        }, transitionDuration);
       }
     }
 
@@ -83,17 +90,26 @@ export function Overlay({
 
   const overlayManager = useOverlayManager();
 
+  const transitionStyle: TransitionStyle = {
+    transitionTimingFunction: "ease-in-out",
+    transitionDuration: `${transitionDuration}ms`,
+  };
+
   return state.mounted
     ? ReactDOM.createPortal(
         <div className={clsx("ron-overlay", !state.visible && "ron-overlay--invisible")}>
           <div
             className={`ron-overlay__mask ron-overlay__mask--${state.movingDir} ron-overlay-transition`}
+            style={{
+              transitionProperty: "opacity, transform",
+              ...transitionStyle,
+            }}
             onClick={closeOnMaskClick ? closeOverlay : undefined}
           />
 
-          {children(state.movingDir)}
+          {children(state.movingDir, transitionStyle)}
         </div>,
-        overlayManager
+        getContainer?.() ?? overlayManager
       )
     : null;
 }

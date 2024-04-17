@@ -48,6 +48,7 @@ export function EntitySelectTemplate({
 }: EntitySelectTemplateProps) {
   const screenWatcher = useScreenWatcher();
   const inputRef = useRef<HTMLInputElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const timeoutId = useRef<NodeJS.Timeout>();
 
   const [filterOn, setFilterOn] = useState(initialFilterOn);
@@ -167,7 +168,7 @@ export function EntitySelectTemplate({
         </div>
       </Modal.Header>
 
-      <div className="ron-entity-select__body">
+      <div ref={bodyRef} className="ron-entity-select__body">
         {children({
           isMultiSelect,
           searchOn,
@@ -183,7 +184,8 @@ export function EntitySelectTemplate({
           style={{
             boxShadow: "0 0 1px #b8b8b8",
           }}
-          afterClose={() => toggleFilter(false)}
+          onClose={() => toggleFilter(false)}
+          getContainer={() => bodyRef.current}
         >
           {renderFilter?.(setFilterOn)}
         </Drawer>

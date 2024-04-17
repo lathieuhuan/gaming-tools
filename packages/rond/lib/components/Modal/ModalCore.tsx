@@ -10,7 +10,9 @@ export interface ModalControl {
   onClose: () => void;
 }
 
-export interface ModalCoreProps extends ModalControl, Pick<OverlayProps, "closable" | "closeOnMaskClick" | "state"> {
+export interface ModalCoreProps
+  extends ModalControl,
+    Pick<OverlayProps, "state" | "transitionDuration" | "closable" | "closeOnMaskClick"> {
   /** Default to 'custom' */
   preset?: ModalPreset;
   id?: string;
@@ -30,16 +32,20 @@ export const ModalCore = ({
 }: ModalCoreProps) => {
   return (
     <Overlay {...overlayProps} closable={closable} closeOnMaskClick={closeOnMaskClick}>
-      {(direction) => {
+      {(direction, transitionStyle) => {
         return (
           <div
             id={id}
             className={clsx(
-              `ron-modal ron-modal--${preset} ron-modal--${direction} ron-overlay-transition`,
+              `ron-modal ron-modal--${preset} ron-modal--${direction}`,
               preset === "large" && LARGE_HEIGHT_CLS,
               className
             )}
-            style={style}
+            style={{
+              transitionProperty: "opacity, transform",
+              ...transitionStyle,
+              ...style,
+            }}
           >
             {typeof children === "function" ? children() : children}
           </div>

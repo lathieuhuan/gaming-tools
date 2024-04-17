@@ -1,5 +1,5 @@
 .ron-overlay {
-  position: fixed;
+  position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
@@ -21,10 +21,4 @@
   &.ron-overlay__mask--in {
     opacity: 0.2;
   }
-}
-
-.ron-overlay-transition {
-  transition-property: opacity, transform;
-  transition-timing-function: ease-in-out;
-  transition-duration: 200ms;
 }
