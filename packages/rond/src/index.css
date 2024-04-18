@@ -1,21 +1,8 @@
-.flex {
-  display: flex;
-}
-
-.flex-col {
-  display: flex;
-  flex-direction: column;
-}
-
-.items-center {
-  align-items: center;
-}
-
-.gap-4 {
-  gap: 1rem;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
   background-color: var(--ron-color-dark-surface-2);
-  /* color: var(--ron-color-on-dark); */
+  color: var(--ron-color-on-dark);
 }

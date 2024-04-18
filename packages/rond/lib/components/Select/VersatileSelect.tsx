@@ -20,13 +20,14 @@ function MobileSelect(props: VersatileSelectProps) {
   const {
     className,
     style,
-    options,
+    options = [],
     value,
     defaultValue = "",
     size = "small",
     align = "left",
     arrowAt = "end",
     disabled,
+    action,
   } = props;
 
   const [localValue, setLocalValue] = useState<string | number>(value ?? defaultValue);
@@ -76,7 +77,7 @@ function MobileSelect(props: VersatileSelectProps) {
           <span className="ron-select-selection-search">
             <div className="ron-select-selection-search-input" style={{ opacity: 0 }} />
           </span>
-          <span className="ron-select-selection-item">{selected?.label}</span>
+          <span className="ron-select-selection-item">{selected?.label || props.placeholder}</span>
         </div>
         <span className="ron-select-arrow">
           <ChevronDownSvg />
@@ -85,9 +86,16 @@ function MobileSelect(props: VersatileSelectProps) {
     );
   };
 
-  if (props.action) {
+  if (action) {
     return (
-      <SelectWithAction {...{ className, style, size }} action={props.action} initialValue={value ?? defaultValue}>
+      <SelectWithAction
+        {...{ className, style, size }}
+        action={{
+          ...action,
+          onClick: () => action.onClick?.(localValue),
+        }}
+        initialValue={value ?? defaultValue}
+      >
         {() => renderSelect("ron-select--half")}
       </SelectWithAction>
     );

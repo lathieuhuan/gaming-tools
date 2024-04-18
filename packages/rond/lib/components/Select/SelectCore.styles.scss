@@ -43,6 +43,9 @@
     transform: translateY(-50%);
     width: 100%;
     pointer-events: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .ron-select-selection-placeholder {
     opacity: 0.4;
@@ -145,4 +148,12 @@
 }
 .ron-select-dropdown-hidden {
   display: none;
+}
+
+.ron-select-selection-item,
+.ron-select-selection-placeholder,
+.ron-select-item-option-content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
