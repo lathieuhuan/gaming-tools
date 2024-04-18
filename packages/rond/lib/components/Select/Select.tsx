@@ -1,12 +1,7 @@
-import clsx, { ClassValue } from "clsx";
-import { useRef } from "react";
-
-import { useElementSize } from "../../hooks";
-import { Button } from "../Button";
+import { type ClassValue } from "clsx";
 import type { SelectProps, SelectValueType } from "./Select.types";
 import { SelectCore } from "./SelectCore";
-
-import "./Select.styles.scss";
+import { SelectWithAction } from "./SelectWithAction";
 
 type OnLocalChange = (value: SelectValueType) => void;
 
@@ -35,38 +30,4 @@ export function Select({ className, style, size = "small", action, onChange, ...
   }
 
   return renderSelect(className, style);
-}
-
-interface SelectWithActionProps extends Pick<SelectProps, "className" | "style" | "size" | "action"> {
-  initialValue?: SelectProps["value"];
-  children: (onChange: (value: SelectValueType) => void) => React.ReactNode;
-}
-function SelectWithAction({
-  className,
-  style,
-  size = "small",
-  initialValue = "",
-  action,
-  children,
-}: SelectWithActionProps) {
-  const valueRef = useRef<SelectValueType>(initialValue);
-  const [ref, { height }] = useElementSize<HTMLDivElement>();
-
-  return (
-    <div ref={ref} className={clsx("ron-select__wrapper", className)} style={style}>
-      {children((value) => (valueRef.current = value))}
-
-      {height ? (
-        <Button
-          {...action}
-          className={`ron-select__action ron-select__action--${size}`}
-          style={{ height, width: height }}
-          size="custom"
-          shape="custom"
-          withShadow={false}
-          onClick={() => action?.onClick?.(valueRef.current)}
-        />
-      ) : null}
-    </div>
-  );
 }

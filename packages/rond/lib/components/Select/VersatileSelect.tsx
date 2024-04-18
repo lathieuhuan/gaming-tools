@@ -1,10 +1,11 @@
-import clsx from "clsx";
+import clsx, { type ClassValue } from "clsx";
 import { useEffect, useState } from "react";
 import { useScreenWatcher } from "../../providers";
 import { bottomList } from "../../utils";
-import { Select } from "./Select";
-import { type SelectProps } from "./Select.types";
 import { ChevronDownSvg } from "../svg-icons";
+import type { SelectProps } from "./Select.types";
+import { Select } from "./Select";
+import { SelectWithAction } from "./SelectWithAction";
 
 interface VersatileSelectProps extends SelectProps {
   title: string;
@@ -16,7 +17,17 @@ export function VersatileSelect(props: VersatileSelectProps) {
 }
 
 function MobileSelect(props: VersatileSelectProps) {
-  const { options, value, defaultValue = "", size = "small", align = "left", arrowAt = "end", disabled } = props;
+  const {
+    className,
+    style,
+    options,
+    value,
+    defaultValue = "",
+    size = "small",
+    align = "left",
+    arrowAt = "end",
+    disabled,
+  } = props;
 
   const [localValue, setLocalValue] = useState<string | number>(value ?? defaultValue);
 
@@ -49,26 +60,38 @@ function MobileSelect(props: VersatileSelectProps) {
     }
   };
 
-  return (
-    <div
-      className={clsx(
-        `ron-select ron-select--${size} ron-select--${align} ron-select--arrow-${arrowAt} rc-select rc-select-single rc-select-show-arrow`,
-        props.transparent && "ron-select--transparent",
-        disabled && "rc-select-disabled",
-        props.className
-      )}
-      style={props.style}
-      onClick={handleClick}
-    >
-      <div className="rc-select-selector">
-        <span className="rc-select-selection-search">
-          <div className="rc-select-selection-search-input" style={{ opacity: 0 }} />
+  const renderSelect = (localCls?: ClassValue, localStyle?: React.CSSProperties) => {
+    return (
+      <div
+        className={clsx(
+          `ron-select ron-select--${size} ron-select--${align} ron-select--arrow-${arrowAt} ron-select ron-select-single ron-select-show-arrow`,
+          props.transparent && "ron-select--transparent",
+          disabled && "ron-select-disabled",
+          localCls
+        )}
+        style={localStyle}
+        onClick={handleClick}
+      >
+        <div className="ron-select-selector">
+          <span className="ron-select-selection-search">
+            <div className="ron-select-selection-search-input" style={{ opacity: 0 }} />
+          </span>
+          <span className="ron-select-selection-item">{selected?.label}</span>
+        </div>
+        <span className="ron-select-arrow">
+          <ChevronDownSvg />
         </span>
-        <span className="rc-select-selection-item">{selected?.label}</span>
       </div>
-      <span className="rc-select-arrow">
-        <ChevronDownSvg />
-      </span>
-    </div>
-  );
+    );
+  };
+
+  if (props.action) {
+    return (
+      <SelectWithAction {...{ className, style, size }} action={props.action} initialValue={value ?? defaultValue}>
+        {() => renderSelect("ron-select--half")}
+      </SelectWithAction>
+    );
+  }
+
+  return renderSelect(className, style);
 }
