@@ -51,6 +51,7 @@ function MobileSelect(props: VersatileSelectProps) {
         align,
         value: localValue,
         height: optionsCount > 10 ? "90%" : optionsCount > 7 ? "70%" : optionsCount > 3 ? "50%" : "30%",
+        hasSearch: props.showSearch,
         onSelect: (value) => {
           if (!isControlled) {
             setLocalValue(value);
@@ -77,7 +78,11 @@ function MobileSelect(props: VersatileSelectProps) {
           <span className="ron-select-selection-search">
             <div className="ron-select-selection-search-input" style={{ opacity: 0 }} />
           </span>
-          <span className="ron-select-selection-item">{selected?.label || props.placeholder}</span>
+          {selected?.label ? (
+            <span className="ron-select-selection-item">{selected?.label}</span>
+          ) : (
+            <span className="ron-select-selection-placeholder">{props.placeholder}</span>
+          )}
         </div>
         <span className="ron-select-arrow">
           <ChevronDownSvg />

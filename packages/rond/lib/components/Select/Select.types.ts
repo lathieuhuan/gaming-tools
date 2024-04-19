@@ -5,7 +5,7 @@ import { type ButtonProps } from "../Button";
 export type SelectValueType = string | number;
 
 export type SelectOption = {
-  label: React.ReactNode;
+  label: SelectValueType;
   value: SelectValueType;
   disabled?: boolean;
   className?: string;
@@ -15,7 +15,8 @@ export type SelectAction = Pick<ButtonProps, "variant" | "icon" | "disabled"> & 
   onClick?: (value: SelectValueType) => void;
 };
 
-export interface SelectCoreProps extends Pick<RcProps, "open" | "disabled" | "placeholder" | "getPopupContainer"> {
+export interface SelectCoreProps
+  extends Pick<RcProps, "open" | "disabled" | "placeholder" | "showSearch" | "getPopupContainer"> {
   className?: ClassValue;
   dropdownCls?: ClassValue;
   style?: React.CSSProperties;

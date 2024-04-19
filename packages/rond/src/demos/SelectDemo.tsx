@@ -1,19 +1,10 @@
 import { useState } from "react";
-import { Button, Select, SelectProps, SelectOption, VersatileSelect, FilterSvg } from "@lib/components";
-
-function genOptions(count: number): SelectOption[] {
-  return Array.from({ length: count }, (_, i) => {
-    const num = i + 1;
-    return {
-      label: `Option ${num}`,
-      value: num,
-    };
-  });
-}
+import { Button, Select, SelectProps, VersatileSelect, FilterSvg } from "@lib/components";
+import { genSequence } from "src/utils";
 
 export function SelectDemo() {
   const [transparent, setTransparent] = useState(false);
-  const [withAction, setWithAction] = useState(false);
+  const [hasAction, setHasAction] = useState(false);
   const [align, setAlign] = useState<SelectProps["align"]>("left");
   const [arrowAt, setArrowAt] = useState<SelectProps["arrowAt"]>("end");
 
@@ -23,14 +14,14 @@ export function SelectDemo() {
 
   const selectProps: SelectProps = {
     defaultValue: 2,
-    options: genOptions(3),
+    options: genSequence(3),
     transparent,
     align,
     arrowAt,
-    action: withAction
+    action: hasAction
       ? {
           icon: <FilterSvg />,
-          onClick: console.log,
+          onClick: (value) => alert(value),
         }
       : undefined,
   };
@@ -39,7 +30,7 @@ export function SelectDemo() {
     <div className="max-w-[368px] space-y-6">
       <div className={cls.row}>
         <Button onClick={() => setTransparent(!transparent)}>Transparent: {transparent ? "on" : "off"}</Button>
-        <Button onClick={() => setWithAction(!withAction)}>With Action: {withAction ? "on" : "off"}</Button>
+        <Button onClick={() => setHasAction(!hasAction)}>With Action: {hasAction ? "on" : "off"}</Button>
         <Button onClick={() => setAlign(align === "right" ? "left" : "right")}>Align: {align}</Button>
         <Button onClick={() => setArrowAt(arrowAt === "end" ? "start" : "end")}>Arrow at: {arrowAt}</Button>
       </div>
@@ -73,12 +64,32 @@ export function SelectDemo() {
         </div>
 
         <div className={cls.row}>
-          <Select {...selectProps} size="medium" options={genOptions(10)} />
+          <Select {...selectProps} size="medium" options={genSequence(10)} />
           <VersatileSelect
             title="Select"
             {...selectProps}
             size="medium"
             options={selectProps.options?.concat([{ label: "Reallllly loooong option", value: "unknown" }])}
+          />
+        </div>
+
+        <div>Placeholder</div>
+
+        <div className={cls.row}>
+          <Select {...selectProps} defaultValue={undefined} placeholder="Select one" />
+          <VersatileSelect title="Select" {...selectProps} defaultValue={undefined} placeholder="Select one" />
+        </div>
+
+        <div>Combobox</div>
+
+        <div className={cls.row}>
+          <Select {...selectProps} showSearch />
+          <VersatileSelect
+            title="Select"
+            {...selectProps}
+            showSearch
+            defaultValue={undefined}
+            placeholder="Select one"
           />
         </div>
       </div>

@@ -1,5 +1,6 @@
 export * from "./Alert";
 export * from "./Badge";
+export * from "./BottomList";
 export * from "./BottomSheet";
 export * from "./Button";
 export * from "./CarouselSpace";

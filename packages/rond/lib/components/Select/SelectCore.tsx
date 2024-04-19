@@ -16,8 +16,6 @@ export function SelectCore({
   return (
     <RcSelect
       prefixCls="ron-select"
-      // showSearch
-      // placeholder='select...'
       className={clsx(
         `ron-select--${size} ron-select--${align} ron-select--arrow-${arrowAt}`,
         transparent && "ron-select--transparent",
@@ -29,6 +27,7 @@ export function SelectCore({
         dropdownCls
       )}
       suffixIcon={<ChevronDownSvg />}
+      optionFilterProp="label"
       virtual={false}
       menuItemSelectedIcon={null}
       {...rest}

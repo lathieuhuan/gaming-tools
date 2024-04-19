@@ -24,6 +24,10 @@
     display: block;
     width: 100%;
     height: 100%;
+
+    &:focus-within ~ .ron-select-selection-item {
+      opacity: 0.5;
+    }
   }
 
   .ron-select-arrow {
@@ -35,8 +39,8 @@
     font-size: 0.75rem;
   }
 
-  .ron-select-selection-item,
-  .ron-select-selection-placeholder {
+  .ron-select-selection-placeholder,
+  .ron-select-selection-item {
     position: absolute;
     top: 50%;
     left: 0;
@@ -48,28 +52,46 @@
     white-space: nowrap;
   }
   .ron-select-selection-placeholder {
-    opacity: 0.4;
+    opacity: 0.5;
   }
 
   .ron-select-selection-search-input {
     border: none;
     outline: none;
-    background: rgba(255, 0, 0, 0.2);
+    background: inherit;
+    border-radius: 0.25rem;
     width: 100%;
     height: 100%;
+    cursor: default;
+
+    &:focus {
+      background-color: var(--ron-color-light-surface-2);
+    }
   }
 
   &.ron-select--transparent {
     color: var(--ron-color-on-dark);
     background-color: transparent;
 
-    &.ron-select--arrow-end .ron-select-selection-item {
-      padding-left: 0.25rem;
-      padding-right: 1.375rem;
+    .ron-select-selection-search-input:focus {
+      background-color: transparent;
     }
-    &.ron-select--arrow-start .ron-select-selection-item {
-      padding-left: 1.375rem;
-      padding-right: 0.25rem;
+
+    &.ron-select--arrow-end {
+      .ron-select-selection-placeholder,
+      .ron-select-selection-search-input,
+      .ron-select-selection-item {
+        padding-left: 0.25rem;
+        padding-right: 1.375rem;
+      }
+    }
+    &.ron-select--arrow-start {
+      .ron-select-selection-placeholder,
+      .ron-select-selection-search-input,
+      .ron-select-selection-item {
+        padding-left: 1.375rem;
+        padding-right: 0.25rem;
+      }
     }
   }
 }
@@ -79,6 +101,8 @@
   .ron-select-arrow {
     right: 0.375rem;
   }
+  .ron-select-selection-placeholder,
+  .ron-select-selection-search-input,
   .ron-select-selection-item {
     padding-left: 0.5rem;
     padding-right: 1.5rem;
@@ -88,6 +112,8 @@
   .ron-select-arrow {
     left: 0.375rem;
   }
+  .ron-select-selection-placeholder,
+  .ron-select-selection-search-input,
   .ron-select-selection-item {
     padding-left: 1.5rem;
     padding-right: 0.5rem;
@@ -95,6 +121,7 @@
 }
 
 // align
+.ron-select--right .ron-select-selection-placeholder,
 .ron-select--right .ron-select-selection-item,
 .ron-select__dropdown--right .ron-select-item {
   text-align: right;
@@ -135,15 +162,19 @@
   .ron-select-item-option-selected {
     background-color: var(--ron-color-light-disabled);
   }
-  .ron-select-item {
+  .ron-select-item,
+  .ron-select-item-empty {
     padding: 0.125rem 0.375rem;
     font-size: 1rem;
     line-height: 1.5;
     cursor: default;
   }
 
-  &.ron-select__dropdown--transparent .ron-select-item {
-    padding: 0.125rem 0.25rem;
+  &.ron-select__dropdown--transparent {
+    .ron-select-item,
+    .ron-select-item-empty {
+      padding: 0.125rem 0.25rem;
+    }
   }
 }
 .ron-select-dropdown-hidden {
