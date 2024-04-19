@@ -171,6 +171,7 @@
   .ron-select-item-empty {
     padding: 0.125rem 0.375rem;
     font-size: 1rem;
+    font-weight: 500;
     line-height: 1.5;
     cursor: default;
   }
@@ -182,6 +183,7 @@
     }
   }
 }
+
 .ron-select-dropdown-hidden {
   display: none;
 }

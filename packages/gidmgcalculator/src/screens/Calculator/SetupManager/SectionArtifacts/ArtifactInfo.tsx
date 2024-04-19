@@ -43,7 +43,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
 
   return (
     <div className="pt-4 px-2 space-y-2" onDoubleClick={() => console.log(artifact)}>
-      <div className="pl-2 flex items-start">
+      <div className="pl-1 flex items-start gap-4">
         <ArtifactLevelSelect
           mutable
           rarity={rarity}
@@ -54,13 +54,13 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
           }}
         />
 
-        <div className="ml-4 flex flex-col">
+        <div className="flex flex-col">
           {type === "flower" || type === "plume" ? (
             <p className="pl-6 py-1 text-lg">{t(mainStatType)}</p>
           ) : (
             <VersatileSelect
               title="Select Main-stat"
-              className="w-48 h-9 text-lg"
+              className="h-9 text-lg"
               transparent
               arrowAt="start"
               options={possibleMainStatTypes.map((type) => ({ label: t(type), value: type }))}
