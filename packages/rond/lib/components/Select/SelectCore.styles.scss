@@ -4,14 +4,6 @@
   border-radius: 0.25rem;
   color: var(--ron-color-on-light);
   background-color: var(--ron-color-light-surface-3);
-  font-size: 1rem;
-
-  &.ron-select--small {
-    min-height: 1.75rem;
-  }
-  &.ron-select--medium {
-    min-height: 2rem;
-  }
 
   .ron-select-selector {
     position: absolute;
@@ -24,10 +16,9 @@
     display: block;
     width: 100%;
     height: 100%;
-
-    &:focus-within + .ron-select-selection-item {
-      opacity: 0.5;
-    }
+  }
+  &.ron-select-show-search .ron-select-selection-search:focus-within + .ron-select-selection-item {
+    opacity: 0.5;
   }
 
   .ron-select-arrow {
@@ -62,6 +53,7 @@
     border-radius: 0.25rem;
     width: 100%;
     height: 100%;
+    font-size: inherit;
     cursor: default;
 
     &:focus {
@@ -69,29 +61,42 @@
     }
   }
 
-  &.ron-select--transparent {
-    color: var(--ron-color-on-dark);
+  &.ron-select-disabled {
+    opacity: 0.6;
+  }
+}
+
+.ron-select--small {
+  min-height: 1.75rem;
+  font-size: 1rem;
+}
+.ron-select--medium {
+  min-height: 2rem;
+  font-size: 1.125rem;
+}
+
+.ron-select--transparent {
+  color: var(--ron-color-on-dark);
+  background-color: transparent;
+
+  .ron-select-selection-search-input:focus {
     background-color: transparent;
+  }
 
-    .ron-select-selection-search-input:focus {
-      background-color: transparent;
+  &.ron-select--arrow-end {
+    .ron-select-selection-placeholder,
+    .ron-select-selection-search-input,
+    .ron-select-selection-item {
+      padding-left: 0.25rem;
+      padding-right: 1.375rem;
     }
-
-    &.ron-select--arrow-end {
-      .ron-select-selection-placeholder,
-      .ron-select-selection-search-input,
-      .ron-select-selection-item {
-        padding-left: 0.25rem;
-        padding-right: 1.375rem;
-      }
-    }
-    &.ron-select--arrow-start {
-      .ron-select-selection-placeholder,
-      .ron-select-selection-search-input,
-      .ron-select-selection-item {
-        padding-left: 1.375rem;
-        padding-right: 0.25rem;
-      }
+  }
+  &.ron-select--arrow-start {
+    .ron-select-selection-placeholder,
+    .ron-select-selection-search-input,
+    .ron-select-selection-item {
+      padding-left: 1.375rem;
+      padding-right: 0.25rem;
     }
   }
 }

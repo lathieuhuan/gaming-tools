@@ -50,7 +50,7 @@ export function BottomList({
 
       <div className="ron-bottom-list__body">
         <div>
-          {items.map((item, itemIndex) => {
+          {items.map((item) => {
             const hidden = shouldFilter && !`${item.label ?? item.value}`.toLowerCase().includes(lowerKeyword);
 
             return (
@@ -59,7 +59,8 @@ export function BottomList({
                 className={clsx(
                   `ron-bottom-list__item ron-bottom-list__item--${align}`,
                   item.value === value && "ron-bottom-list__item--active",
-                  hidden && "ron-hidden"
+                  hidden && "ron-hidden",
+                  item.className
                 )}
                 onClick={() => onSelect?.(item.value)}
               >

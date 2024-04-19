@@ -34,5 +34,9 @@ export interface SelectCoreProps
 }
 
 export interface SelectProps extends SelectCoreProps, Pick<RcProps, "title"> {
+  /** Only when select has action */
+  wrapperCls?: string;
+  /** Only when select has action */
+  wrapperStyle?: React.CSSProperties;
   action?: SelectAction;
 }

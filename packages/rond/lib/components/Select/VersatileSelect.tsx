@@ -7,9 +7,7 @@ import type { SelectProps } from "./Select.types";
 import { Select } from "./Select";
 import { SelectWithAction } from "./SelectWithAction";
 
-interface VersatileSelectProps extends SelectProps {
-  title: string;
-}
+export interface VersatileSelectProps extends SelectProps {}
 
 export function VersatileSelect(props: VersatileSelectProps) {
   const screenWatcher = useScreenWatcher();
@@ -18,8 +16,6 @@ export function VersatileSelect(props: VersatileSelectProps) {
 
 function MobileSelect(props: VersatileSelectProps) {
   const {
-    className,
-    style,
     options = [],
     value,
     defaultValue = "",
@@ -62,23 +58,24 @@ function MobileSelect(props: VersatileSelectProps) {
     }
   };
 
-  const renderSelect = (localCls?: ClassValue, localStyle?: React.CSSProperties) => {
+  const renderSelect = (localCls?: ClassValue) => {
     return (
       <div
         className={clsx(
           `ron-select ron-select--${size} ron-select--${align} ron-select--arrow-${arrowAt} ron-select ron-select-single ron-select-show-arrow`,
           props.transparent && "ron-select--transparent",
           disabled && "ron-select-disabled",
-          localCls
+          localCls,
+          props.className
         )}
-        style={localStyle}
+        style={props.style}
         onClick={handleClick}
       >
         <div className="ron-select-selector">
           <span className="ron-select-selection-search">
             <div className="ron-select-selection-search-input" style={{ opacity: 0 }} />
           </span>
-          {selected?.label ? (
+          {selected?.label !== undefined ? (
             <span className="ron-select-selection-item">{selected?.label}</span>
           ) : (
             <span className="ron-select-selection-placeholder">{props.placeholder}</span>
@@ -94,7 +91,9 @@ function MobileSelect(props: VersatileSelectProps) {
   if (action) {
     return (
       <SelectWithAction
-        {...{ className, style, size }}
+        className={props.wrapperCls}
+        style={props.wrapperStyle}
+        size={size}
         action={{
           ...action,
           onClick: () => action.onClick?.(localValue),
@@ -106,5 +105,5 @@ function MobileSelect(props: VersatileSelectProps) {
     );
   }
 
-  return renderSelect(className, style);
+  return renderSelect();
 }

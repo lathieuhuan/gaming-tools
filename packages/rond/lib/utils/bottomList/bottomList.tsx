@@ -1,16 +1,6 @@
 import { BottomList, type BottomListProps } from "@lib/components";
 import { overlayRoot } from "../common/overlay-root";
 
-type ValueType = string | number;
-
-export type BottomListItem =
-  | ValueType
-  | {
-      label: React.ReactNode;
-      value: ValueType;
-      className?: string;
-    };
-
 type ShowArgs = Omit<BottomListProps, "active" | "onClose">;
 
 const show = (args: ShowArgs) => {
