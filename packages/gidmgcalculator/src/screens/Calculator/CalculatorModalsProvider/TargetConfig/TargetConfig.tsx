@@ -141,6 +141,7 @@ function TargetConfigCore() {
                         },
                         ...options,
                       ]}
+                      getPopupContainer={() => wrapElmt.current!}
                       value={`${target.inputs?.[index] || 0}`}
                       onChange={(value) => onChangeTargetInputs(+value, index)}
                     />

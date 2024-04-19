@@ -1,52 +1,55 @@
 import { CgPushChevronUp } from "react-icons/cg";
-import { clsx, type ClassValue } from "rond";
+import { VersatileSelect, type VersatileSelectProps } from "rond";
 
 interface ArtifactLevelSelectProps {
-  className?: ClassValue;
+  className?: string;
   mutable?: boolean;
   rarity: number;
   level: number;
   maxLevel?: number;
   onChangeLevel?: (newLevel: number) => void;
+  getContainer?: VersatileSelectProps["getPopupContainer"];
 }
 export function ArtifactLevelSelect({
-  className,
+  className = "",
   mutable,
   rarity,
   level,
   maxLevel = 0,
   onChangeLevel,
+  getContainer,
 }: ArtifactLevelSelectProps) {
-  const cls = `px-2 pt-2 pb-1.5 text-lg text-rarity-${rarity} leading-none font-bold`;
-
   if (mutable) {
-    const disabled = level === maxLevel;
-
     return (
-      <div className={clsx("rounded bg-surface-2 overflow-hidden flex", className)}>
-        <select
-          className={clsx("appearance-none", cls)}
-          value={level}
-          onChange={(e) => onChangeLevel?.(+e.target.value)}
-        >
-          {[...Array(maxLevel / 4 + 1).keys()].map((_, lv) => (
-            <option key={lv} className="text-base" value={lv * 4}>
-              +{lv * 4}
-            </option>
-          ))}
-        </select>
-        <button
-          className={clsx(
-            "px-1.5 text-xl bg-light-default text-black flex-center",
-            disabled ? "opacity-50" : "glow-on-hover"
-          )}
-          disabled={disabled}
-          onClick={() => onChangeLevel?.(maxLevel)}
-        >
-          <CgPushChevronUp />
-        </button>
-      </div>
+      <VersatileSelect
+        title="Select Level"
+        className={`bg-surface-2 text-rarity-${rarity} font-bold ${className}`}
+        style={{ width: "4.125rem" }}
+        size="medium"
+        align="right"
+        options={Array.from({ length: maxLevel / 4 + 1 }, (_, i) => {
+          const lv = i * 4;
+          return {
+            label: `+${lv}`,
+            value: lv,
+          };
+        })}
+        getPopupContainer={getContainer}
+        value={level}
+        onChange={(newLv) => onChangeLevel?.(newLv as number)}
+        action={{
+          icon: <CgPushChevronUp className="text-xl" />,
+          disabled: level === maxLevel,
+          onClick: () => onChangeLevel?.(maxLevel),
+        }}
+      />
     );
   }
-  return <p className={clsx("rounded bg-surface-3", cls, className)}>+{level}</p>;
+  return (
+    <p
+      className={`px-2 pt-2 pb-1.5 text-lg text-rarity-${rarity} leading-none font-bold rounded bg-surface-3 ${className}`}
+    >
+      +{level}
+    </p>
+  );
 }

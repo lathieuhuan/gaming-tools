@@ -48,11 +48,12 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
         {/* left */}
         <div className="flex flex-col grow justify-between space-y-1">
           <div className={"pt-1 grow flex items-center " + groupStyles}>
-            <p className="mr-2 text-lg font-semibold">Level</p>
+            <p className="mr-1 text-lg font-semibold">Level</p>
             {mutable ? (
               <VersatileSelect
                 title="Select Level"
                 className={`text-rarity-${rarity} font-bold`}
+                style={{ width: "4.75rem " }}
                 size="medium"
                 align="right"
                 transparent

@@ -40,7 +40,7 @@ export default function SectionWeapon() {
       <div className="ml-2 overflow-hidden space-y-1">
         <p className={`text-xl text-rarity-${rarity} font-bold text-ellipsis`}>{name}</p>
 
-        <div className="pl-1 flex items-center flex-wrap">
+        <div className="flex items-center flex-wrap">
           <p className="mr-1">Level</p>
           <VersatileSelect
             title="Select Level"
@@ -58,7 +58,7 @@ export default function SectionWeapon() {
         </div>
 
         {rarity >= 3 && (
-          <div className="pl-1 flex items-center flex-wrap">
+          <div className="flex items-center flex-wrap">
             <p className="mr-1">Refinement</p>
             <VersatileSelect
               title="Select Refinement"

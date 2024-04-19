@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { FaCopy } from "react-icons/fa";
-import { clsx } from "rond";
+import { clsx, VersatileSelect } from "rond";
 
 export type Option = {
   value: string | number;
@@ -19,32 +18,23 @@ export function CopySection<TOption extends Option>({
   defaultIndex = 0,
   onClickCopy,
 }: CopySectionProps<TOption>) {
-  const [chosenLabel, setChosenLabel] = useState(options[defaultIndex]?.label);
-
-  const onClick = () => {
-    const chosen = options.find(({ label }) => label === chosenLabel);
-
-    if (chosen) {
-      onClickCopy(chosen);
-    }
-  };
-
   return (
     <div className={clsx("flex justify-end", className)}>
-      <select
-        className="px-1 rounded-l bg-light-default font-bold text-black"
-        value={chosenLabel}
-        onChange={(e) => setChosenLabel(e.target.value)}
-      >
-        {options.map((option, i) => (
-          <option key={i} value={option.label}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-      <button className="w-8 h-8 bg-primary-1 text-black rounded-r flex-center glow-on-hover" onClick={onClick}>
-        <FaCopy />
-      </button>
+      <VersatileSelect
+        title="Select Setup"
+        className="w-24 h-8 font-semibold"
+        defaultValue={options[defaultIndex]?.value}
+        options={options}
+        action={{
+          variant: "primary",
+          icon: <FaCopy className="text-base" />,
+          onClick: (value) => {
+            const chosen = options.find((option) => option.value === value);
+
+            if (chosen) onClickCopy(chosen);
+          },
+        }}
+      />
     </div>
   );
 }

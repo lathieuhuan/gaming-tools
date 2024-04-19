@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
-import { VersatileSelect, clsx } from "rond";
+import { Select, clsx } from "rond";
 
 import type { CalculationAspect, Talent, Weapon } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -45,8 +45,7 @@ export function FinalResultCompare({ comparedIds, weapon }: FinalResultComparePr
     <div className="h-full flex flex-col">
       <div className="mb-4 flex">
         <p className="mr-2">Choose a focus</p>
-        <VersatileSelect
-          title="Select Focus"
+        <Select
           className="w-24 h-6 overflow-hidden text-primary-1"
           dropdownCls="z-20"
           transparent

@@ -49,6 +49,7 @@ export function TeammateItems({
                   <VersatileSelect
                     title="Select Refinement"
                     transparent
+                    align="right"
                     className={`ml-2 w-10 text-rarity-${appWeapon.rarity}`}
                     options={genSequentialOptions(5)}
                     value={weapon.refi}

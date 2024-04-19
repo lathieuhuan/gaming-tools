@@ -48,8 +48,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
               title="Select Level"
               align="right"
               transparent
-              size="medium"
-              className={`shrink-0 ${elmtText} font-bold`}
+              className={`shrink-0 ${elmtText} text-lg font-bold`}
               style={{ width: "4.75rem" }}
               dropdownCls="z-20"
               options={LEVELS.map((_, i) => {
@@ -61,29 +60,17 @@ export function CharacterIntro(props: CharacterIntroProps) {
             />
           </div>
 
-          <div
-            className={
-              "ml-4 px-3 pt-2 pb-1.5 flex-center rounded-lg bg-surface-2 " +
-              `leading-none ${elmtText} font-bold cursor-default relative group`
-            }
-          >
-            <span>C{char.cons}</span>
-            <div className="absolute top-full z-50 pt-1 hidden group-hover:block">
-              <ul className="bg-light-default text-black rounded overflow-hidden">
-                {[...Array(7)].map((_, i) => {
-                  return (
-                    <li
-                      key={i}
-                      className={`px-3 pt-2 pb-1.5 ${i === char.cons ? "bg-light-disabled" : "hover:bg-primary-1"}`}
-                      onClick={() => props.onChangeCons?.(i)}
-                    >
-                      C{i}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          </div>
+          <VersatileSelect
+            title="Select Constellation Level"
+            className={`ml-auto w-14 text-lg ${elmtText} font-bold bg-surface-2`}
+            align="right"
+            options={Array.from({ length: 7 }, (_, i) => ({
+              label: `C${i}`,
+              value: i,
+            }))}
+            value={char.cons}
+            onChange={(newCons) => props.onChangeCons?.(newCons as number)}
+          />
         </div>
       </div>
 

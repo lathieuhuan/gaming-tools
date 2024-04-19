@@ -42,13 +42,14 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
         <p className="text-lg font-semibold text-black truncate">{appArtifact?.name}</p>
       </div>
 
-      <div className="mt-4 px-4 flex justify-between items-start">
+      <div className="mt-4 px-3 flex justify-between items-start">
         <ArtifactLevelSelect
           mutable={mutable}
           rarity={rarity}
           level={artifact.level}
           maxLevel={rarity === 5 ? 20 : 16}
           onChangeLevel={(level) => onEnhance?.(level, artifact)}
+          getContainer={() => wrapElmt.current!}
         />
 
         <div className={`bg-gradient-${rarity} relative rounded-lg shrink-0`}>
