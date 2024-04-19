@@ -1,9 +1,9 @@
+import clsx from "clsx";
 import { useState } from "react";
 import { BottomSheet, type BottomSheetProps } from "../BottomSheet";
 import { Input } from "../Input";
 import { ButtonGroup, type ButtonProps } from "../Button";
 import "./BottomList.styles.scss";
-import clsx from "clsx";
 
 type ValueType = string | number;
 
@@ -42,13 +42,13 @@ export function BottomList({
 
   return (
     <BottomSheet {...sheetProps} title={title} bodyCls="ron-list">
-      <div className="ron-bottom-list__body">
-        {hasSearch && (
-          <div>
-            <Input onChange={setKeyword} />
-          </div>
-        )}
+      {hasSearch && (
+        <div className="ron-bottom-list__search">
+          <Input placeholder="Search..." onChange={setKeyword} />
+        </div>
+      )}
 
+      <div className="ron-bottom-list__body">
         <div>
           {items.map((item, itemIndex) => {
             const hidden = shouldFilter && !`${item.label ?? item.value}`.toLowerCase().includes(lowerKeyword);
@@ -70,7 +70,7 @@ export function BottomList({
         </div>
       </div>
 
-      {actions?.length ? <ButtonGroup className="p-4 bg-surface-3" justify="end" buttons={actions} /> : null}
+      {actions?.length ? <ButtonGroup className="ron-bottom-list__footer" justify="end" buttons={actions} /> : null}
     </BottomSheet>
   );
 }

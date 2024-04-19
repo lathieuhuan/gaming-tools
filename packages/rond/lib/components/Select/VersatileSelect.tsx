@@ -43,7 +43,7 @@ function MobileSelect(props: VersatileSelectProps) {
 
   const handleClick = () => {
     if (!disabled) {
-      const optionsCount = options.length;
+      const optionsCount = options.length + (props.showSearch ? 1 : 0);
 
       bottomList.show({
         title: props.title,

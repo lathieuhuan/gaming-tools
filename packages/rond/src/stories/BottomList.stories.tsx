@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 import { BottomList } from "@lib/components";
 import { genSequence } from "../utils";
 
@@ -31,6 +32,7 @@ export const Default: Story = {
     hasSearch: false,
     align: "left",
     items: genSequence(3),
+    onClose: fn(),
   },
 };
 
@@ -42,6 +44,41 @@ export const Overflow: Story = {
     value: 2,
     hasSearch: false,
     align: "left",
-    items: genSequence(5).concat({ label: "Lorem ipsum dolor sit amet consectetur adipisicing elit.", value: -1 }),
+    items: [{ label: "Lorem ipsum dolor sit amet consectetur adipisicing elit.", value: -1 }].concat(genSequence(5)),
+    onClose: fn(),
+  },
+};
+
+export const Actions: Story = {
+  args: {
+    active: true,
+    height: "70%",
+    title: "Select",
+    value: 3,
+    hasSearch: false,
+    align: "left",
+    items: genSequence(10),
+    actions: [{ children: "Confirm", variant: "primary" }],
+    onClose: fn(),
+  },
+};
+
+export const CustomRender: Story = {
+  args: {
+    active: true,
+    height: "70%",
+    title: "Select",
+    value: 3,
+    hasSearch: false,
+    align: "left",
+    items: genSequence(10),
+    renderItem: (item) => {
+      return (
+        <div>
+          Suffix {item.label} / Value: {item.value}
+        </div>
+      );
+    },
+    onClose: fn(),
   },
 };

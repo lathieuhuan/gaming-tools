@@ -1,3 +1,10 @@
+.ron-bottom-list__search {
+  padding: 0.5rem 1rem;
+
+  & + .ron-bottom-list__body {
+    padding-top: 0;
+  }
+}
 .ron-bottom-list__body {
   flex-grow: 1;
   overflow-y: auto;
@@ -17,4 +24,8 @@
 }
 .ron-bottom-list__item--active {
   color: var(--ron-color-light-disabled);
+}
+.ron-bottom-list__footer {
+  padding: 1rem;
+  background-color: var(--ron-color-dark-surface-3);
 }
