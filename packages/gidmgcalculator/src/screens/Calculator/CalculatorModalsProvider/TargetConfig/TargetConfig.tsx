@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { Checkbox, InputNumber, Modal, VersatileSelect } from "rond";
 
 import type { AttackElement, ElementType } from "@Src/types";
@@ -14,7 +13,6 @@ import { ComboBox } from "./ComboBox";
 function TargetConfigCore() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-  const wrapElmt = useRef<HTMLDivElement>(null);
 
   const target = useSelector(selectTarget);
   const monster = $AppData.getMonster(target);
@@ -49,7 +47,7 @@ function TargetConfigCore() {
   };
 
   return (
-    <div ref={wrapElmt} className="h-full px-2 flex gap-4 hide-scrollbar" onDoubleClick={() => console.log(target)}>
+    <div className="h-full px-2 flex gap-4 hide-scrollbar" onDoubleClick={() => console.log(target)}>
       <div className="w-76 flex flex-col shrink-0">
         <div className="grow overflow-auto flex flex-col">
           <div className="flex">
@@ -96,7 +94,6 @@ function TargetConfigCore() {
                     className: "capitalize",
                   };
                 })}
-                getPopupContainer={() => wrapElmt.current!}
                 value={target.variantType}
                 onChange={onChangeElementVariant}
               />
@@ -141,7 +138,6 @@ function TargetConfigCore() {
                         },
                         ...options,
                       ]}
-                      getPopupContainer={() => wrapElmt.current!}
                       value={`${target.inputs?.[index] || 0}`}
                       onChange={(value) => onChangeTargetInputs(+value, index)}
                     />

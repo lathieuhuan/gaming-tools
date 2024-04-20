@@ -54,7 +54,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
           }}
         />
 
-        <div className="flex flex-col">
+        <div className="w-full flex flex-col">
           {type === "flower" || type === "plume" ? (
             <p className="pl-6 py-1 text-lg">{t(mainStatType)}</p>
           ) : (

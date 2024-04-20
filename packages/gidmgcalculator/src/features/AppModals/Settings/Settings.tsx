@@ -181,7 +181,6 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
                 dropdownCls="font-medium"
                 align="right"
                 defaultValue={defaultValue}
-                getPopupContainer={() => document.getElementById("app-settings-form")!}
                 options={options.map((option) => ({ label: option, value: option }))}
                 onChange={(value) => {
                   const newValue = typeof defaultValue === "string" ? (value as Level) : +value;

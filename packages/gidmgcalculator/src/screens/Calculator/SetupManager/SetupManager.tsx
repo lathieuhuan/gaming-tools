@@ -1,4 +1,3 @@
-import ReactDOM from "react-dom";
 import { FaSkull } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 import { Button, useScreenWatcher } from "rond";
@@ -14,9 +13,9 @@ import SectionTarget from "./SectionTarget";
 import SectionWeapon from "./SectionWeapon";
 
 interface SetupManagerProps {
-  isModernUI: boolean;
+  isModernUI?: boolean;
 }
-export function SetupManager({ isModernUI }: SetupManagerProps) {
+export function SetupManager({ isModernUI = false }: SetupManagerProps) {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const targetConfig = useSelector((state) => state.ui.calcTargetConfig);
@@ -42,11 +41,6 @@ export function SetupManager({ isModernUI }: SetupManagerProps) {
           onMinimize={() => updateTargetConfig(false, false)}
           onEdit={() => updateTargetConfig(true, true)}
         />
-      ) : isModernUI ? (
-        ReactDOM.createPortal(
-          <ModernButton onClick={onClickTargetConfigButton} />,
-          document.getElementById("nav-slot")!
-        )
       ) : null}
     </div>
   );
@@ -78,14 +72,4 @@ export function SetupManager({ isModernUI }: SetupManagerProps) {
       </div>
     </div>
   );
-}
-
-function ModernButton(props: { onClick: () => void }) {
-  const atScreen = useSelector((state) => state.ui.atScreen);
-
-  return atScreen === "CALCULATOR" ? (
-    <button className="w-8 h-8 flex-center bg-surface-3" onClick={props.onClick}>
-      <FaSkull />
-    </button>
-  ) : null;
 }

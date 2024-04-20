@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { clsx, type ClassValue, VersatileSelect, type SelectProps } from "rond";
+import { clsx, type ClassValue, VersatileSelect } from "rond";
 
 import type { ArtifactType } from "@Src/types";
 import type { ArtifactStatFilterState, ArtifactStatFilterOption } from "../ArtifactFilter.types";
@@ -15,7 +15,6 @@ type RenderSelectArgs = {
   options: string[];
   showSelect?: boolean;
   onChange: (value: string, no: number) => void;
-  getContainer?: SelectProps["getPopupContainer"];
 };
 
 export const DEFAULT_STAT_FILTER: ArtifactStatFilterState = {
@@ -105,7 +104,6 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
             title="Select Stat"
             className={clsx("w-full", args.value === "All" ? "text-light-default" : "text-bonus-color")}
             transparent
-            getPopupContainer={args?.getContainer}
             options={args.options.map((type) => ({ label: t(type), value: type }))}
             value={args.value}
             onChange={(value) => args.onChange(`${value}`, no - 1)}
@@ -115,7 +113,7 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
     );
   };
 
-  const renderArtifactStatFilter = (className?: ClassValue, getContainer?: RenderSelectArgs["getContainer"]) => {
+  const renderArtifactStatFilter = (className?: ClassValue) => {
     return (
       <FilterTemplate
         className={className}
@@ -131,7 +129,7 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
         <div className="space-y-1">
           <p className="text-lg text-secondary-1 font-semibold">Main Stat</p>
           <div className="mt-1 flex justify-center">
-            {renderSelect({ value: filter.main, options: mainStatOptions, onChange: changeMainStat, getContainer })}
+            {renderSelect({ value: filter.main, options: mainStatOptions, onChange: changeMainStat })}
           </div>
         </div>
 
@@ -147,7 +145,6 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
                 options: subStatOptions,
                 showSelect: !prevValue || prevValue !== "All",
                 onChange: changeSubStat,
-                getContainer,
               });
             })}
           </div>

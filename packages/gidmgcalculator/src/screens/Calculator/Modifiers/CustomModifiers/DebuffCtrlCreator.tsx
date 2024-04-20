@@ -1,5 +1,5 @@
 import { useState, useRef, FormEvent } from "react";
-import { InputNumber, VersatileSelect, findParentOverlay } from "rond";
+import { InputNumber, VersatileSelect } from "rond";
 
 import type { CustomDebuffCtrl, CustomDebuffCtrlType } from "@Src/types";
 import { ATTACK_ELEMENTS } from "@Src/constants";
@@ -49,7 +49,6 @@ export default function DebuffCtrlCreator({ onClose }: DebuffCtrlCreatorProps) {
         arrowAt="start"
         transparent
         dropdownCls="z-50"
-        getPopupContainer={findParentOverlay}
         options={["def", ...ATTACK_ELEMENTS].map((option) => ({
           label: `${t(option, { ns: "resistance" })} reduction`,
           value: option,

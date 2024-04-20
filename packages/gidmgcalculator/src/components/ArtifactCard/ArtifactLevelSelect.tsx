@@ -1,5 +1,5 @@
 import { CgPushChevronUp } from "react-icons/cg";
-import { VersatileSelect, type VersatileSelectProps } from "rond";
+import { VersatileSelect } from "rond";
 
 interface ArtifactLevelSelectProps {
   className?: string;
@@ -8,7 +8,6 @@ interface ArtifactLevelSelectProps {
   level: number;
   maxLevel?: number;
   onChangeLevel?: (newLevel: number) => void;
-  getContainer?: VersatileSelectProps["getPopupContainer"];
 }
 export function ArtifactLevelSelect({
   className = "",
@@ -17,7 +16,6 @@ export function ArtifactLevelSelect({
   level,
   maxLevel = 0,
   onChangeLevel,
-  getContainer,
 }: ArtifactLevelSelectProps) {
   if (mutable) {
     return (
@@ -34,7 +32,6 @@ export function ArtifactLevelSelect({
             value: lv,
           };
         })}
-        getPopupContainer={getContainer}
         value={level}
         onChange={(newLv) => onChangeLevel?.(newLv as number)}
         action={{

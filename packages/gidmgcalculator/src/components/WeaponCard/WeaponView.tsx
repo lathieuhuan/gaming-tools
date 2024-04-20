@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { Badge, VersatileSelect } from "rond";
 import type { CalcWeapon, Level, UserWeapon } from "@Src/types";
 
@@ -25,7 +25,6 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
   refine,
 }: WeaponViewProps<T>) {
   const { t } = useTranslation();
-  const wrapElmt = useRef<HTMLDivElement>(null);
   const appWeapon = weapon ? $AppData.getWeapon(weapon.code) : undefined;
 
   const passiveDescription = useMemo(() => {
@@ -41,7 +40,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
   const selectLevels = rarity < 3 ? LEVELS.slice(0, -4) : LEVELS;
 
   return (
-    <div ref={wrapElmt} className="w-full" onDoubleClick={() => console.log(weapon)}>
+    <div className="w-full" onDoubleClick={() => console.log(weapon)}>
       <p className={`text-1.5xl text-rarity-${rarity} font-semibold`}>{appWeapon.name}</p>
 
       <div className="mt-2 flex">
@@ -61,7 +60,6 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
                   const item = selectLevels[selectLevels.length - 1 - i];
                   return { label: item, value: item };
                 })}
-                getPopupContainer={() => wrapElmt.current!}
                 value={weapon.level}
                 onChange={(value) => upgrade && upgrade(value as Level, weapon)}
               />
@@ -79,7 +77,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
               >
                 {t(subStat.type)}
               </p>
-              <p className={`text-rarity-${rarity} text-2xl leading-7 font-bold`}>
+              <p className={`text-rarity-${rarity} text-1.5xl leading-7 font-bold`}>
                 {Weapon_.getSubStatValue(weapon.level, subStat.scale)}
                 {suffixOf(subStat.type)}
               </p>

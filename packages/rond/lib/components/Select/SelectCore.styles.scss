@@ -182,6 +182,10 @@
       padding: 0.125rem 0.25rem;
     }
   }
+
+  &:not(.ron-select-dropdown-hidden) {
+    z-index: 100;
+  }
 }
 
 .ron-select-dropdown-hidden {

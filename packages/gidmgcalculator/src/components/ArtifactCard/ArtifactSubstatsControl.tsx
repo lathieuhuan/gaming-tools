@@ -15,7 +15,6 @@ interface ArtifactSubstatsControlProps {
   rarity: number;
   mainStatType: AttributeStat;
   subStats: ArtifactSubStat[];
-  getContainer?: SelectProps["getPopupContainer"];
   onChangeSubStat?: (index: number, changes: Partial<ArtifactSubStat>) => void;
 }
 export function ArtifactSubstatsControl({
@@ -24,7 +23,6 @@ export function ArtifactSubstatsControl({
   mainStatType,
   subStats,
   rarity,
-  getContainer,
   onChangeSubStat,
 }: ArtifactSubstatsControlProps) {
   const { t } = useTranslation();
@@ -57,7 +55,6 @@ export function ArtifactSubstatsControl({
               className={["w-44 h-full", statTypeCount[type] === 1 ? "text-light-default" : "text-danger-2"]}
               transparent
               arrowAt="start"
-              getPopupContainer={getContainer}
               options={ARTIFACT_SUBSTAT_TYPES.map((type) => ({ label: t(type), value: type }))}
               value={type}
               onChange={(value) => onChangeSubStat?.(i, { type: value as AttributeStat })}

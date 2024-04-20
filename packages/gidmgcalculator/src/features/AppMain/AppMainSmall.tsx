@@ -108,7 +108,7 @@ export function AppMainSmall() {
               {PANEL.Overview("snap-center")}
               {PANEL.Modifiers("snap-center")}
               {PANEL.Setup("snap-center")}
-              {PANEL.Results("snap-center")}
+              {PANEL.Results("snap-center relative")}
             </div>
           )}
         </CalculatorModalsProvider>

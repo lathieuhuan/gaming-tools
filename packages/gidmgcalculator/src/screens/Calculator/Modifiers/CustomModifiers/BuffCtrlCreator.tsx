@@ -1,5 +1,5 @@
 import { useState, useRef, FormEvent } from "react";
-import { clsx, findParentOverlay, InputNumber, VersatileSelect } from "rond";
+import { clsx, InputNumber, VersatileSelect } from "rond";
 
 import type { CustomBuffCtrl, CustomBuffCtrlType } from "@Src/types";
 import {
@@ -120,7 +120,6 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
       arrowAt="start"
       transparent
       dropdownCls="z-50"
-      getPopupContainer={findParentOverlay}
       options={CATEGORIES[config.category].types.map((option) => {
         return {
           label: toCustomBuffLabel(config.category, option, t),
@@ -202,7 +201,6 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
                   arrowAt="start"
                   transparent
                   dropdownCls="z-50"
-                  getPopupContainer={findParentOverlay}
                   options={subTypes.map((subType) => ({ label: t(subType), value: subType }))}
                   value={config.subType}
                   onChange={(value) => onChangeSubType(value as string)}

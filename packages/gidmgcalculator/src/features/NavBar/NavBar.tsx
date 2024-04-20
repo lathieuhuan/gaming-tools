@@ -7,17 +7,16 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI, type UIState, type AppScreen } from "@Store/ui-slice";
 import { ActionButton, NavTabs, NavTabsProps } from "./navbar-components";
 
+const buttonCls = "w-8 h-8 flex-center";
+
 export function NavBar() {
   const dispatch = useDispatch();
-  const trackerState = useSelector((state) => state.ui.trackerState);
   const appReady = useSelector((state) => state.ui.ready);
   const [menuDropped, setMenuDropped] = useState(false);
 
   const closeMenu = () => setMenuDropped(false);
 
   const menuRef = useClickOutside<HTMLDivElement>(closeMenu);
-
-  const buttonCls = "w-8 h-8 flex-center";
 
   const screens: NavTabsProps["screens"] = [
     { label: "My Characters", value: "MY_CHARACTERS" },
@@ -36,7 +35,11 @@ export function NavBar() {
     dispatch(updateUI({ atScreen: tab }));
   };
 
-  const onClickTrackerIcon = () => {
+  const onClickTargetButton = () => {
+    dispatch(updateUI({ calcTargetConfig: { active: true, onOverview: false } }));
+  };
+
+  const onClickTrackerButton = () => {
     dispatch(updateUI({ trackerState: "open" }));
   };
 
@@ -53,14 +56,9 @@ export function NavBar() {
         />
       </div>
 
-      <div id="nav-slot" className="flex">
-        {/* <TargetConfigButton className={buttonCls} /> */}
-
-        {trackerState === "hidden" ? (
-          <button className={`${buttonCls} text-xl text-black bg-active-color`} onClick={onClickTrackerIcon}>
-            <BiDetail />
-          </button>
-        ) : null}
+      <div className="flex">
+        <TargetButton onClick={onClickTargetButton} />
+        <TrackerButton onClick={onClickTrackerButton} />
       </div>
 
       <div className="ml-auto flex">
@@ -103,18 +101,36 @@ export function NavBar() {
   );
 }
 
-function TargetConfigButton(props: { className?: string }) {
-  const dispatch = useDispatch();
+interface ButtonProps {
+  onClick: () => void;
+}
+
+function TrackerButton(props: ButtonProps) {
+  const atScreen = useSelector((state) => state.ui.atScreen);
+  const trackerState = useSelector((state) => state.ui.trackerState);
+
+  if (trackerState === "hidden" && atScreen === "CALCULATOR") {
+    return (
+      <button className={`${buttonCls} text-xl text-black bg-active-color`} onClick={props.onClick}>
+        <BiDetail />
+      </button>
+    );
+  }
+  return null;
+}
+
+function TargetButton(props: ButtonProps) {
   const screenWatcher = useScreenWatcher();
   const atScreen = useSelector((state) => state.ui.atScreen);
+  const isModernUI = useSelector((state) => state.ui.isModernMobileUI);
   const calcTargetConfig = useSelector((state) => state.ui.calcTargetConfig);
 
-  return !screenWatcher.isFromSize("sm") && atScreen === "CALCULATOR" && !calcTargetConfig.onOverview ? (
-    <button
-      className={`${props.className} bg-surface-3`}
-      onClick={() => dispatch(updateUI({ calcTargetConfig: { active: true, onOverview: false } }))}
-    >
-      <FaSkull />
-    </button>
-  ) : null;
+  if (!calcTargetConfig.onOverview && atScreen === "CALCULATOR" && !screenWatcher.isFromSize("sm") && isModernUI) {
+    return (
+      <button className={`${buttonCls} bg-surface-3`} onClick={props.onClick}>
+        <FaSkull />
+      </button>
+    );
+  }
+  return null;
 }

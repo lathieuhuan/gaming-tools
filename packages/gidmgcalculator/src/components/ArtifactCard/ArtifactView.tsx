@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { clsx, Badge, VersatileSelect } from "rond";
 
 import type { ArtifactSubStat, AttributeStat, CalcArtifact, UserArtifact } from "@Src/types";
@@ -28,7 +27,6 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
   onChangeSubStat,
 }: ArtifactViewProps<T>) {
   const { t } = useTranslation();
-  const wrapElmt = useRef<HTMLDivElement>(null);
   if (!artifact) return null;
 
   const appArtifact = $AppData.getArtifact(artifact);
@@ -37,7 +35,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
   const mainStatValue = Artifact_.mainStatValueOf(artifact);
 
   return (
-    <div ref={wrapElmt} className={className}>
+    <div className={className}>
       <div className={`px-4 pt-1 bg-rarity-${rarity}`} onDoubleClick={() => console.log(artifact)}>
         <p className="text-lg font-semibold text-black truncate">{appArtifact?.name}</p>
       </div>
@@ -49,7 +47,6 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
           level={artifact.level}
           maxLevel={rarity === 5 ? 20 : 16}
           onChangeLevel={(level) => onEnhance?.(level, artifact)}
-          getContainer={() => wrapElmt.current!}
         />
 
         <div className={`bg-gradient-${rarity} relative rounded-lg shrink-0`}>
@@ -78,7 +75,6 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
             transparent
             arrowAt="start"
             options={possibleMainStatTypes.map((type) => ({ label: t(type), value: type }))}
-            getPopupContainer={() => wrapElmt.current!}
             value={mainStatType}
             onChange={(value) => onChangeMainStatType?.(value as AttributeStat, artifact)}
           />
@@ -96,7 +92,6 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
         mainStatType={mainStatType}
         subStats={artifact.subStats}
         onChangeSubStat={(...args) => onChangeSubStat?.(...args, artifact)}
-        getContainer={() => wrapElmt.current!}
       />
     </div>
   );
