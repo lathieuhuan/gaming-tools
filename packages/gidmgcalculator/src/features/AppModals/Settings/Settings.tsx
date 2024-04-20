@@ -5,12 +5,16 @@ import type { Level } from "@Src/types";
 import { LEVELS } from "@Src/constants";
 import { $AppSettings, AppSettings } from "@Src/services";
 import { applySettings } from "@Store/calculator-slice";
+import { updateUI } from "@Store/ui-slice";
 import { useDispatch } from "@Store/hooks";
 import { DynamicStoreControlContext } from "../../DynamicStoreProvider";
 import { CheckSetting, Section } from "./settings-components";
 
 type DefaultValueControl = {
-  key: Exclude<keyof AppSettings, "charInfoIsSeparated" | "doKeepArtStatsOnSwitch" | "persistingUserData">;
+  key: Exclude<
+    keyof AppSettings,
+    "charInfoIsSeparated" | "doKeepArtStatsOnSwitch" | "persistingUserData" | "isModernMobileUI"
+  >;
   label: string;
   options?: (string | number)[];
 };
@@ -28,7 +32,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
   const changeAppStoreConfig = useContext(DynamicStoreControlContext);
 
   const onConfirmNewSettings = () => {
-    const { charInfoIsSeparated, persistingUserData } = $AppSettings.get();
+    const { charInfoIsSeparated, persistingUserData, isModernMobileUI } = $AppSettings.get();
 
     if (!tempSettings.charInfoIsSeparated && charInfoIsSeparated) {
       dispatch(
@@ -42,6 +46,14 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
       changeAppStoreConfig({
         persistingUserData: !persistingUserData,
       });
+    }
+
+    if (tempSettings.isModernMobileUI !== isModernMobileUI) {
+      dispatch(
+        updateUI({
+          isModernMobileUI: tempSettings.isModernMobileUI,
+        })
+      );
     }
 
     $AppSettings.set(tempSettings);
@@ -146,6 +158,13 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
             <li className="text-danger-3">Change of this setting can remove your current data and works on the App!</li>
           </ul>
         </div>
+        <CheckSetting
+          label="Use new layout for Calculator & My Characters"
+          defaultChecked={tempSettings.isModernMobileUI}
+          onChange={() => {
+            onChangeTempSettings("isModernMobileUI", !tempSettings.isModernMobileUI);
+          }}
+        />
       </Section>
 
       <Section title="Default values">

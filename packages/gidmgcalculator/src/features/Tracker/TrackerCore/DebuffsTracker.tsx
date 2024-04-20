@@ -3,9 +3,13 @@ import { ATTACK_ELEMENTS } from "@Src/constants";
 import { useTranslation } from "@Src/hooks";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
-function getResMultEquation(value: number) {
+function getResMult(type: "equation" | "value", value: number) {
   const RES = value / 100;
-  return `${RES < 0 ? `1 - (${RES} / 2)` : RES >= 0.75 ? `1 / (4 * ${RES} + 1)` : `1 - ${RES}`}`;
+
+  if (type === "equation") {
+    return `${RES < 0 ? `1 - (${RES} / 2)` : RES >= 0.75 ? `1 / (4 * ${RES} + 1)` : `1 - ${RES}`}`;
+  }
+  return RES < 0 ? 1 - RES / 2 : RES >= 0.75 ? 1 / (4 * RES + 1) : 1 - RES;
 }
 
 export function DebuffsTracker({ resistReduct }: Partial<Pick<Tracker, "resistReduct">>) {
@@ -42,10 +46,7 @@ export function DebuffsTracker({ resistReduct }: Partial<Pick<Tracker, "resistRe
 
             return (
               <div key={attElmt} className="pl-2 break-inside-avoid">
-                {renderHeading(
-                  <span className="capitalize">{attElmt}</span>,
-                  eval(`${getResMultEquation(actualResistance)}`)
-                )}
+                {renderHeading(<span className="capitalize">{attElmt}</span>, getResMult("value", actualResistance))}
 
                 <ul className="pl-4 list-disc">
                   {renderRecord()(
@@ -56,7 +57,13 @@ export function DebuffsTracker({ resistReduct }: Partial<Pick<Tracker, "resistRe
                     0
                   )}
 
-                  {renderRecord(getResMultEquation)({ desc: "Equation", value: actualResistance }, 1)}
+                  {renderRecord((value) => getResMult("equation", value))(
+                    {
+                      desc: "Equation",
+                      value: actualResistance,
+                    },
+                    1
+                  )}
                 </ul>
               </div>
             );

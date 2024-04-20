@@ -1,3 +1,4 @@
+import ReactDOM from "react-dom";
 import { FaSkull } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 import { Button, useScreenWatcher } from "rond";
@@ -12,7 +13,10 @@ import SectionParty from "./SectionParty";
 import SectionTarget from "./SectionTarget";
 import SectionWeapon from "./SectionWeapon";
 
-export function SetupManager() {
+interface SetupManagerProps {
+  isModernUI: boolean;
+}
+export function SetupManager({ isModernUI }: SetupManagerProps) {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const targetConfig = useSelector((state) => state.ui.calcTargetConfig);
@@ -23,22 +27,31 @@ export function SetupManager() {
     dispatch(updateUI({ calcTargetConfig: { active, onOverview } }));
   };
 
+  const onClickTargetConfigButton = () => {
+    updateTargetConfig(true, false);
+  };
+
   const renderMainContent = (cls = "") => (
     <div className={`hide-scrollbar space-y-2 scroll-smooth ${cls}`}>
       <SectionParty />
       <SectionWeapon />
       <SectionArtifacts />
 
-      {targetConfig.onOverview && (
+      {targetConfig.onOverview ? (
         <SectionTarget
           onMinimize={() => updateTargetConfig(false, false)}
           onEdit={() => updateTargetConfig(true, true)}
         />
-      )}
+      ) : isModernUI ? (
+        ReactDOM.createPortal(
+          <ModernButton onClick={onClickTargetConfigButton} />,
+          document.getElementById("nav-slot")!
+        )
+      ) : null}
     </div>
   );
 
-  if (isMobile) {
+  if (isMobile && isModernUI) {
     return renderMainContent("h-full");
   }
 
@@ -52,9 +65,7 @@ export function SetupManager() {
 
       <div className="mt-4 grid grid-cols-3">
         <div className="flex items-center">
-          {!targetConfig.onOverview && (
-            <Button boneOnly icon={<FaSkull />} onClick={() => updateTargetConfig(true, false)} />
-          )}
+          {!targetConfig.onOverview ? <Button boneOnly icon={<FaSkull />} onClick={onClickTargetConfigButton} /> : null}
         </div>
 
         <div className="flex-center">
@@ -67,4 +78,14 @@ export function SetupManager() {
       </div>
     </div>
   );
+}
+
+function ModernButton(props: { onClick: () => void }) {
+  const atScreen = useSelector((state) => state.ui.atScreen);
+
+  return atScreen === "CALCULATOR" ? (
+    <button className="w-8 h-8 flex-center bg-surface-3" onClick={props.onClick}>
+      <FaSkull />
+    </button>
+  ) : null;
 }

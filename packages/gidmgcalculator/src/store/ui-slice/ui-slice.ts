@@ -1,5 +1,6 @@
-import type { SetupImportInfo, TrackerState } from "@Src/types";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { $AppSettings, AppSettings } from "@Src/services";
+import type { SetupImportInfo, TrackerState } from "@Src/types";
 
 export type MySetupsModalType =
   | "TIPS"
@@ -15,7 +16,7 @@ export type MySetupsModalType =
 
 export type AppScreen = "CALCULATOR" | "MY_SETUPS" | "MY_WEAPONS" | "MY_ARTIFACTS" | "MY_CHARACTERS";
 
-export interface UIState {
+export interface UIState extends Pick<AppSettings, "isModernMobileUI"> {
   ready: boolean;
   loading: boolean;
   atScreen: AppScreen;
@@ -31,6 +32,7 @@ export interface UIState {
 }
 
 const initialState: UIState = {
+  isModernMobileUI: $AppSettings.get("isModernMobileUI"),
   atScreen: "CALCULATOR",
   appModalType: "INTRO",
   mySetupsModalType: "",

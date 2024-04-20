@@ -53,8 +53,8 @@ export function NavBar() {
         />
       </div>
 
-      <div className="flex">
-        <TargetConfigButton className={buttonCls} />
+      <div id="nav-slot" className="flex">
+        {/* <TargetConfigButton className={buttonCls} /> */}
 
         {trackerState === "hidden" ? (
           <button className={`${buttonCls} text-xl text-black bg-active-color`} onClick={onClickTrackerIcon}>
@@ -62,39 +62,6 @@ export function NavBar() {
           </button>
         ) : null}
       </div>
-
-      {/* <div ref={selectRef} className="block xm:hidden relative">
-          <Button
-            shape="square"
-            variant="custom"
-            className="bg-surface-2"
-            style={{
-              minWidth: "9rem",
-              borderRadius: 0,
-              justifyContent: "space-between",
-            }}
-            icon={<FaChevronDown />}
-            iconPosition="end"
-            onClick={() => setSelectDropped(!selectDropped)}
-          >
-            {screens.find((screen) => screen.value === atScreen)?.label}
-          </Button>
-
-          <CollapseSpace active={selectDropped} className="absolute z-50 top-full left-0" moveDuration={150}>
-            <div className="flex flex-col bg-light-default text-black rounded-br overflow-hidden shadow-common">
-              <NavTabs
-                className="px-4 py-2 font-bold"
-                screens={screens}
-                activeClassName="bg-light-disabled"
-                ready={appReady}
-                onClickTab={(tab) => {
-                  onClickTab(tab);
-                  closeSelect();
-                }}
-              />
-            </div>
-          </CollapseSpace>
-        </div> */}
 
       <div className="ml-auto flex">
         <Button variant="primary" shape="square" icon={<FaDonate />} onClick={openModal("DONATE")}>

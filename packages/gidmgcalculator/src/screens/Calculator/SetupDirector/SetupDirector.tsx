@@ -18,7 +18,7 @@ function SetupDirectorCore() {
   return (
     <div className="p-4 h-full flex flex-col">
       <CloseButton
-        className="ron-modal-close-button"
+        className="ron-modal-close-button absolute top-2 right-2"
         boneOnly
         onClick={() => dispatch(updateUI({ setupDirectorActive: false }))}
       />

@@ -34,16 +34,6 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
 
   const closeModal = () => setModalType("");
 
-  const onChangeLevel = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    dispatch(updateCharacter({ level: e.target.value as Level }));
-  };
-
-  const onClickConsLevel = (cons: number) => {
-    if (cons !== char.cons) {
-      dispatch(updateCharacter({ cons }));
-    }
-  };
-
   let body;
 
   if (touched) {

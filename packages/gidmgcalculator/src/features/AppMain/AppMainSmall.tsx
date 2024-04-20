@@ -25,12 +25,46 @@ import styles from "./AppMain.styles.module.scss";
 export function AppMainSmall() {
   const dispatch = useDispatch();
   const atScreen = useSelector((state) => state.ui.atScreen);
+  const isModernUI = useSelector((state) => state.ui.isModernMobileUI);
   const touched = useSelector((state) => state.calculator.setupManageInfos.length !== 0);
   const [activePanelI, setActivePanelI] = useState(0);
 
   const onSelectSection = (index: number) => {
     setActivePanelI(index);
     dispatch(updateUI({ setupDirectorActive: false }));
+  };
+
+  const PANEL = {
+    Overview: (extraCls = "") => (
+      <div className={`p-4 bg-surface-1 ${styles.card} ${extraCls}`}>
+        <CharacterOverview touched={touched} />
+      </div>
+    ),
+    Modifiers: (extraCls = "") => (
+      <div className={`p-4 bg-surface-1 ${styles.card} ${extraCls}`}>
+        {touched ? (
+          // ========== PANEL 2 ==========
+          <Modifiers />
+        ) : null}
+      </div>
+    ),
+    Setup: (extraCls = "") => (
+      <div className={`p-4 bg-surface-3 relative ${styles.card} ${extraCls}`}>
+        {touched ? (
+          // ========== PANEL 3 ==========
+          <SetupManager isModernUI={isModernUI} />
+        ) : null}
+        <SetupDirector className={styles.card} />
+      </div>
+    ),
+    Results: (extraCls = "") => (
+      <div className={`p-4 bg-surface-3 ${styles.card} ${extraCls}`}>
+        {touched ? (
+          // ========== PANEL 4 ==========
+          <FinalResult />
+        ) : null}
+      </div>
+    ),
   };
 
   return (
@@ -44,57 +78,39 @@ export function AppMainSmall() {
       ]}
       default={
         <CalculatorModalsProvider>
-          <div className="h-full flex flex-col border-t border-surface-border">
-            <div className="grow flex overflow-auto relative">
-              <SwitchNode
-                value={activePanelI}
-                cases={[
-                  {
-                    value: 0,
-                    element: (
-                      <div className={`p-4 bg-surface-1 ${styles.card}`}>
-                        {/* ========== PANEL 1 ========== */}
-                        <CharacterOverview touched={touched} />
-                      </div>
-                    ),
-                  },
-                  {
-                    value: 1,
-                    element: (
-                      <div className={`p-4 bg-surface-1 ${styles.card}`}>
-                        {touched ? (
-                          // ========== PANEL 2 ==========
-                          <Modifiers />
-                        ) : null}
-                      </div>
-                    ),
-                  },
-                  {
-                    value: 2,
-                    element: (
-                      <div className={`p-4 bg-surface-3 relative ${styles.card}`}>
-                        {touched ? (
-                          // ========== PANEL 3 ==========
-                          <SetupManager />
-                        ) : null}
-                        <SetupDirector className={styles.card} />
-                      </div>
-                    ),
-                  },
-                ]}
-              />
-              <div
-                className={`p-4 bg-surface-3 ${styles.card} absolute full-stretch ${activePanelI === 3 ? "" : "-z-10"}`}
-              >
-                {touched ? (
-                  // ========== PANEL 4 ==========
-                  <FinalResult />
-                ) : null}
+          {isModernUI ? (
+            <div className="h-full flex flex-col border-t border-surface-border">
+              <div className="grow flex overflow-auto relative">
+                <SwitchNode
+                  value={activePanelI}
+                  cases={[
+                    {
+                      value: 0,
+                      element: PANEL.Overview(),
+                    },
+                    {
+                      value: 1,
+                      element: PANEL.Modifiers(),
+                    },
+                    {
+                      value: 2,
+                      element: PANEL.Setup(),
+                    },
+                  ]}
+                />
+                {PANEL.Results(`absolute full-stretch ${activePanelI === 3 ? "" : "-z-10"}`)}
               </div>
-            </div>
 
-            {touched ? <CalculatorBottomNav activePanelI={activePanelI} onSelectSection={onSelectSection} /> : null}
-          </div>
+              {touched ? <CalculatorBottomNav activePanelI={activePanelI} onSelectSection={onSelectSection} /> : null}
+            </div>
+          ) : (
+            <div className="h-full flex hide-scrollbar border-t border-surface-border relative snap-x snap-mandatory">
+              {PANEL.Overview("snap-center")}
+              {PANEL.Modifiers("snap-center")}
+              {PANEL.Setup("snap-center")}
+              {PANEL.Results("snap-center")}
+            </div>
+          )}
         </CalculatorModalsProvider>
       }
     />

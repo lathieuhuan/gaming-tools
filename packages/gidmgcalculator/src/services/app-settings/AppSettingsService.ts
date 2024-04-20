@@ -4,6 +4,7 @@ export type AppSettings = {
   charInfoIsSeparated: boolean;
   doKeepArtStatsOnSwitch: boolean;
   persistingUserData: boolean;
+  isModernMobileUI: boolean;
   charLevel: Level;
   charCons: number;
   charNAs: number;
@@ -20,6 +21,7 @@ export class AppSettingsService {
     charInfoIsSeparated: false,
     doKeepArtStatsOnSwitch: false,
     persistingUserData: false,
+    isModernMobileUI: true,
     charLevel: "1/20",
     charCons: 0,
     charNAs: 1,
