@@ -110,9 +110,9 @@ const ArtifactSmith = ({
     };
 
     return (
-      <div className="pt-4 px-2 border-t border-light-900">
+      <div className="pt-4 pl-2 pr-1 border-t border-light-900">
         <div className="flex items-start">
-          <FaInfoCircle className="mr-1.5 text-secondary-1 text-lg" />
+          <FaInfoCircle className="mr-1 text-secondary-1 text-lg" />
 
           <div>
             <h5 className="text-secondary-1 text-sm font-semibold">Batch Forging</h5>
@@ -120,7 +120,7 @@ const ArtifactSmith = ({
           </div>
         </div>
 
-        <div className="mt-2 ">
+        <div className="mt-2">
           <p className={`text-rarity-${artifactConfig.rarity} text-lg font-semibold`}>{name}</p>
           <p className="capitalize">{artifactTypes.join(", ")}</p>
         </div>
@@ -160,7 +160,7 @@ const ArtifactSmith = ({
             moreButtons={[
               getBackAction(selectBody),
               {
-                children: "Batching",
+                children: "Batch",
                 className: !allowBatchForging && "hidden",
                 onClick: () => setBatchForging(true),
               },
