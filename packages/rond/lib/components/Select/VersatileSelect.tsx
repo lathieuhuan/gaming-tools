@@ -14,7 +14,13 @@ export function VersatileSelect(props: VersatileSelectProps) {
   return screenWatcher.isFromSize("sm") ? <Select {...props} title={undefined} /> : <MobileSelect {...props} />;
 }
 
-function MobileSelect(props: VersatileSelectProps) {
+export interface MobileSelectProps
+  extends Pick<
+    VersatileSelectProps,
+    "options" | "value" | "defaultValue" | "size" | "align" | "arrowAt" | "disabled" | "action"
+  > {}
+
+export function MobileSelect(props: VersatileSelectProps) {
   const {
     options = [],
     value,

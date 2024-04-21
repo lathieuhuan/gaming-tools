@@ -187,6 +187,36 @@ export default function SectionArtifacts() {
     replaceArtifact(artifact.type, newPiece, $AppSettings.get("doKeepArtStatsOnSwitch"));
   };
 
+  const onForgeArtifactBatch: ArtifactForgeProps["onForgeArtifactBatch"] = (code, types, rarity) => {
+    let rootID = Date.now();
+
+    for (const type of types) {
+      const newPiece = Artifact_.create({ code, type, rarity });
+
+      dispatch(
+        changeArtifact({
+          pieceIndex: ARTIFACT_TYPES.indexOf(type),
+          newPiece: { ...newPiece, ID: rootID++ },
+          shouldKeepStats: $AppSettings.get("doKeepArtStatsOnSwitch"),
+        })
+      );
+    }
+    if (activeTabIndex === -1 && types[0]) {
+      setActiveTabIndex(Math.min(...types.map((type) => ARTIFACT_TYPES.indexOf(type))));
+    }
+    const artifactSet = $AppData.getArtifactSet(code);
+
+    if (artifactSet) {
+      notification.success({
+        content: (
+          <>
+            Forged {artifactSet.name}: <span className="capitalize">{types.join(", ")}</span>
+          </>
+        ),
+      });
+    }
+  };
+
   // ===== ACTIONS TOWARDS ACTIVE ARTIFACT =====
 
   const onRequestChangeActiveArtifact = (source: ArtifactSourceType) => {
@@ -280,7 +310,9 @@ export default function SectionArtifacts() {
         initialTypes={forge.initialType}
         hasConfigStep
         hasMultipleMode
+        allowBatchForging
         onForgeArtifact={onForgeArtifact}
+        onForgeArtifactBatch={onForgeArtifactBatch}
         onClose={() => setForge({ active: false })}
       />
 

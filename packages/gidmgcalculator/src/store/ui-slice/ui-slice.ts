@@ -16,7 +16,7 @@ export type MySetupsModalType =
 
 export type AppScreen = "CALCULATOR" | "MY_SETUPS" | "MY_WEAPONS" | "MY_ARTIFACTS" | "MY_CHARACTERS";
 
-export interface UIState extends Pick<AppSettings, "isModernMobileUI"> {
+export interface UIState extends Pick<AppSettings, "isTabLayout"> {
   ready: boolean;
   loading: boolean;
   atScreen: AppScreen;
@@ -32,7 +32,7 @@ export interface UIState extends Pick<AppSettings, "isModernMobileUI"> {
 }
 
 const initialState: UIState = {
-  isModernMobileUI: $AppSettings.get("isModernMobileUI"),
+  isTabLayout: $AppSettings.get("isTabLayout"),
   atScreen: "CALCULATOR",
   appModalType: "INTRO",
   mySetupsModalType: "",

@@ -25,7 +25,7 @@ import styles from "./AppMain.styles.module.scss";
 export function AppMainSmall() {
   const dispatch = useDispatch();
   const atScreen = useSelector((state) => state.ui.atScreen);
-  const isModernUI = useSelector((state) => state.ui.isModernMobileUI);
+  const isModernUI = useSelector((state) => state.ui.isTabLayout);
   const touched = useSelector((state) => state.calculator.setupManageInfos.length !== 0);
   const [activePanelI, setActivePanelI] = useState(0);
 

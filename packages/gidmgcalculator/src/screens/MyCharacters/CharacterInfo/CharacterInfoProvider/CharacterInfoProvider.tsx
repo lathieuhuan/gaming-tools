@@ -1,13 +1,14 @@
 import { useMemo } from "react";
+
 import type { Character, UserArtifacts, UserWeapon } from "@Src/types";
+import type { RootState } from "@Store/store";
 
 import { useAppCharacter } from "@Src/hooks";
 import { getCalculationStats } from "@Src/calculation";
 import { $AppData } from "@Src/services";
 import { Calculation_, findById, findByName } from "@Src/utils";
-import { CharacterInfoContext, CharacterInfoState } from "./character-info-context";
-import { RootState } from "@Store/store";
 import { useSelector } from "@Store/hooks";
+import { CharacterInfoContext, type CharacterInfoState } from "./character-info-context";
 
 interface CharacterInfoProviderProps {
   char: Character;

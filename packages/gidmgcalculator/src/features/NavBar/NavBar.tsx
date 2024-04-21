@@ -122,7 +122,7 @@ function TrackerButton(props: ButtonProps) {
 function TargetButton(props: ButtonProps) {
   const screenWatcher = useScreenWatcher();
   const atScreen = useSelector((state) => state.ui.atScreen);
-  const isModernUI = useSelector((state) => state.ui.isModernMobileUI);
+  const isModernUI = useSelector((state) => state.ui.isTabLayout);
   const calcTargetConfig = useSelector((state) => state.ui.calcTargetConfig);
 
   if (!calcTargetConfig.onOverview && atScreen === "CALCULATOR" && !screenWatcher.isFromSize("sm") && isModernUI) {

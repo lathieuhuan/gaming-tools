@@ -16,7 +16,7 @@ type Return = boolean;
 
 export type OptionValidity = Return | Promise<Return>;
 
-type AfterSelectAppEntity = (itemCode: number, quantity?: number) => void;
+export type AfterSelectAppEntity = (itemCode: number, quantity?: number) => void;
 
 interface SelectOptionsProps<T> {
   className?: string;

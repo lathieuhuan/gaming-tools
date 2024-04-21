@@ -1,5 +1,5 @@
 import { useContext, useRef, useState } from "react";
-import { InputNumber, Modal, VersatileSelect } from "rond";
+import { InputNumber, Modal, VersatileSelect, useScreenWatcher } from "rond";
 
 import type { Level } from "@Src/types";
 import { LEVELS } from "@Src/constants";
@@ -13,7 +13,7 @@ import { CheckSetting, Section } from "./settings-components";
 type DefaultValueControl = {
   key: Exclude<
     keyof AppSettings,
-    "charInfoIsSeparated" | "doKeepArtStatsOnSwitch" | "persistingUserData" | "isModernMobileUI"
+    "charInfoIsSeparated" | "doKeepArtStatsOnSwitch" | "persistingUserData" | "isTabLayout"
   >;
   label: string;
   options?: (string | number)[];
@@ -28,11 +28,12 @@ interface SettingsProps {
 }
 const SettingsCore = ({ onClose }: SettingsProps) => {
   const dispatch = useDispatch();
+  const screenWatcher = useScreenWatcher();
   const [tempSettings, setTempSettings] = useState($AppSettings.get());
   const changeAppStoreConfig = useContext(DynamicStoreControlContext);
 
   const onConfirmNewSettings = () => {
-    const { charInfoIsSeparated, persistingUserData, isModernMobileUI } = $AppSettings.get();
+    const { charInfoIsSeparated, persistingUserData, isTabLayout } = $AppSettings.get();
 
     if (!tempSettings.charInfoIsSeparated && charInfoIsSeparated) {
       dispatch(
@@ -48,10 +49,10 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
       });
     }
 
-    if (tempSettings.isModernMobileUI !== isModernMobileUI) {
+    if (tempSettings.isTabLayout !== isTabLayout) {
       dispatch(
         updateUI({
-          isModernMobileUI: tempSettings.isModernMobileUI,
+          isTabLayout: tempSettings.isTabLayout,
         })
       );
     }
@@ -143,6 +144,18 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
             onChangeTempSettings("doKeepArtStatsOnSwitch", !tempSettings.doKeepArtStatsOnSwitch);
           }}
         />
+        {!screenWatcher.isFromSize("sm") && (
+          <CheckSetting
+            label="Use tab layout (mobile only)"
+            defaultChecked={tempSettings.isTabLayout}
+            onChange={() => {
+              onChangeTempSettings("isTabLayout", !tempSettings.isTabLayout);
+            }}
+          />
+        )}
+      </Section>
+
+      <Section title="User Data">
         <div>
           <CheckSetting
             label="Auto save my database to browser's local storage"
@@ -152,19 +165,10 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
             }}
           />
           <ul className="mt-1 pl-4 text-sm list-disc space-y-1">
-            {tempSettings.persistingUserData && (
-              <li>Your data is available on this browser only and will be lost if the local storage is cleared.</li>
-            )}
+            <li>Your data is available on this browser only and will be lost if the local storage is cleared.</li>
             <li className="text-danger-3">Change of this setting can remove your current data and works on the App!</li>
           </ul>
         </div>
-        <CheckSetting
-          label="Use new layout for Calculator & My Characters"
-          defaultChecked={tempSettings.isModernMobileUI}
-          onChange={() => {
-            onChangeTempSettings("isModernMobileUI", !tempSettings.isModernMobileUI);
-          }}
-        />
       </Section>
 
       <Section title="Default values">

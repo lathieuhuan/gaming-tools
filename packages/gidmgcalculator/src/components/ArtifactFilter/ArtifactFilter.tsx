@@ -22,7 +22,9 @@ export interface ArtifactFilterProps {
 const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose }: ArtifactFilterProps) => {
   const screenWatcher = useScreenWatcher();
   const wrapElmt = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const minIndex = forcedType ? 1 : 0;
+
+  const [activeIndex, setActiveIndex] = useState(minIndex);
 
   const renderTitle = (title: string, position: number) => {
     return (
@@ -30,10 +32,10 @@ const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose 
         <button
           type="button"
           className="w-6 h-6 flex-center md:hidden"
-          disabled={position <= 0}
+          disabled={position <= minIndex}
           onClick={() => setActiveIndex((prev) => prev - 1)}
         >
-          {position > 0 ? <FaCaretRight className="text-2xl rotate-180" /> : <FaSquare className="opacity-50" />}
+          {position > minIndex ? <FaCaretRight className="text-2xl rotate-180" /> : <FaSquare className="opacity-50" />}
         </button>
         <p style={{ width: 100 }}>{title}</p>
         <button
