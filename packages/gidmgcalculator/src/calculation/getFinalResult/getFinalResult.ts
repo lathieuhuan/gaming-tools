@@ -46,7 +46,7 @@ export default function getFinalResult({
   for (const key of ATTACK_ELEMENTS) {
     resistReduct[key] = 0;
   }
-  const { multFactorConf, calcList, weaponType, vision: elementType, debuffs } = appChar;
+  const { multFactorConf, calcList, weaponType, vision, debuffs } = appChar;
   const infoWrap: DebuffInfoWrap = {
     char,
     appChar,
@@ -141,14 +141,14 @@ export default function getFinalResult({
 
   ATTACK_PATTERNS.forEach((ATT_PATT) => {
     const resultKey = ATT_PATT === "ES" || ATT_PATT === "EB" ? ATT_PATT : "NAs";
-    const defaultInfo = Character_.getTalentDefaultInfo(resultKey, weaponType, elementType, ATT_PATT, multFactorConf);
+    const defaultInfo = Character_.getTalentDefaultInfo(resultKey, weaponType, vision, ATT_PATT, multFactorConf);
     const level = Character_.getFinalTalentLv({ appChar, talentType: resultKey, char, partyData });
 
     for (const stat of calcList[ATT_PATT]) {
       // DMG TYPES & AMPLIFYING REACTION MULTIPLIER
       const attPatt = stat.attPatt || ATT_PATT;
       let attElmt =
-        (stat.subAttPatt === "FCA" ? elementType : stat.attElmt === "absorb" ? absorption : stat.attElmt) ??
+        (stat.subAttPatt === "FCA" ? vision : stat.attElmt === "absorb" ? absorption : stat.attElmt) ??
         defaultInfo.attElmt;
       let actualReaction = reaction;
       let rxnMult = 1;

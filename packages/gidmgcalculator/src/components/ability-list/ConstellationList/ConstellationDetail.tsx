@@ -14,7 +14,7 @@ interface ConstellationDetailProps {
   onClose?: () => void;
 }
 export function ConstellationDetail({ appChar, consLv, onChangeConsLv, onClose }: ConstellationDetailProps) {
-  const { vision: elementType, constellation } = appChar;
+  const { vision, constellation } = appChar;
   const consInfo = constellation[consLv - 1] || {};
 
   const {
@@ -29,11 +29,11 @@ export function ConstellationDetail({ appChar, consLv, onChangeConsLv, onClose }
         className="pt-2 pb-4"
         currentIndex={consLv - 1}
         images={constellation.map((cons) => cons.image)}
-        elementType={elementType}
+        vision={vision}
         onClickBack={() => onChangeConsLv?.(consLv - 1)}
         onClickNext={() => onChangeConsLv?.(consLv + 1)}
       />
-      <p className={`text-xl text-${elementType} font-bold`}>{consInfo.name}</p>
+      <p className={`text-xl text-${vision} font-bold`}>{consInfo.name}</p>
       <p className="text-sm">
         Constellation Lv. <Green b>{consLv}</Green>
       </p>

@@ -183,6 +183,10 @@
     }
   }
 
+  &.ron-select__dropdown--show-all .rc-virtual-list-holder {
+    max-height: none !important;
+  }
+
   &:not(.ron-select-dropdown-hidden) {
     z-index: 100;
   }

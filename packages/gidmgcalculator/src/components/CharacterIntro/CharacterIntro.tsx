@@ -48,6 +48,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
               title="Select Level"
               align="right"
               transparent
+              showAllOptions
               className={`shrink-0 ${elmtText} text-lg font-bold`}
               style={{ width: "4.75rem" }}
               dropdownCls="z-20"

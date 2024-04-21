@@ -75,7 +75,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
               }}
             />
           )}
-          <p className={`pl-6 text-2xl leading-7 text-rarity-${rarity} font-bold`}>
+          <p className={`pl-6 text-1.5xl leading-7 text-rarity-${rarity} font-bold`}>
             {mainStatValue}
             {suffixOf(mainStatType)}
           </p>

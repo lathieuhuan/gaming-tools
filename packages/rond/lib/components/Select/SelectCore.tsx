@@ -11,6 +11,7 @@ export function SelectCore({
   align = "left",
   arrowAt = "end",
   transparent,
+  showAllOptions,
   ...rest
 }: SelectCoreProps) {
   return (
@@ -24,6 +25,7 @@ export function SelectCore({
       dropdownClassName={clsx(
         `ron-select__dropdown--${align} ron-select__dropdown--${arrowAt}`,
         transparent && "ron-select__dropdown--transparent",
+        showAllOptions && "ron-select__dropdown--show-all",
         dropdownCls
       )}
       suffixIcon={<ChevronDownSvg />}

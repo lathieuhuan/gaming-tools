@@ -33,10 +33,11 @@ export function Select({
   if (action) {
     return (
       <SelectWithAction
-        {...{ size, action }}
         className={wrapperCls}
         style={wrapperStyle}
+        size={size}
         initialValue={rest.value ?? rest.defaultValue}
+        action={action}
       >
         {(onChange) => renderSelect("ron-select--half", onChange)}
       </SelectWithAction>

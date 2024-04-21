@@ -48,7 +48,7 @@ export function ConstellationList({ className, char, onClickIcon }: Constellatio
                   className="cursor-pointer"
                   img={cons.image}
                   active={char.cons >= i + 1}
-                  elementType={appChar.vision}
+                  vision={appChar.vision}
                   onClick={() => onClickIcon(i)}
                 />
               </div>

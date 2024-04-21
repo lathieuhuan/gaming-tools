@@ -27,6 +27,7 @@ export interface SelectCoreProps
   /** Default to 'end' */
   arrowAt?: "start" | "end";
   transparent?: boolean;
+  showAllOptions?: boolean;
   options?: SelectOption[];
   value?: SelectValueType;
   defaultValue?: SelectValueType;

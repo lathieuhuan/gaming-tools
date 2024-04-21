@@ -21,7 +21,7 @@ const hasAbsorbingAttackIn = (items: CalcItem[]) => {
 export default function ElementBuffs() {
   const dispatch = useDispatch();
   const char = useSelector(selectCharacter);
-  const { vision: elementType, weaponType, calcList } = $AppCharacter.get(char.name);
+  const { vision, weaponType, calcList } = $AppCharacter.get(char.name);
   const elmtModCtrls = useSelector(selectElmtModCtrls);
   const rxnBonus = useSelector(selectRxnBonus);
   const customInfusion = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].customInfusion);
@@ -92,8 +92,7 @@ export default function ElementBuffs() {
   };
 
   const renderAttackReaction = (attReaction: "reaction" | "infuse_reaction", forceElement?: ElementType | null) => {
-    const element =
-      forceElement === undefined ? (attReaction === "reaction" ? elementType : infusedElement) : forceElement;
+    const element = forceElement === undefined ? (attReaction === "reaction" ? vision : infusedElement) : forceElement;
 
     switch (element) {
       case "pyro":
@@ -287,7 +286,7 @@ export default function ElementBuffs() {
           />
         </div>
 
-        {infusedElement !== elementType && infusedElement !== "phys" ? (
+        {infusedElement !== vision && infusedElement !== "phys" ? (
           <div className="mt-3">{renderAttackReaction("infuse_reaction")}</div>
         ) : null}
       </div>

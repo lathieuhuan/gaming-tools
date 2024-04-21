@@ -227,13 +227,13 @@ export const calculatorSlice = createSlice({
       const teammate = party[teammateIndex];
 
       if (teammate) {
-        const { vision: elementType } = $AppCharacter.get(teammate.name);
+        const { vision } = $AppCharacter.get(teammate.name);
         party[teammateIndex] = null;
         const newElmtCount = Calculation_.countElements($AppCharacter.getPartyData(party), appChar);
 
-        if (newElmtCount[elementType] === 1) {
+        if (newElmtCount[vision] === 1) {
           elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
-            return resonance.vision !== elementType;
+            return resonance.vision !== vision;
           });
         }
         calculate(state);

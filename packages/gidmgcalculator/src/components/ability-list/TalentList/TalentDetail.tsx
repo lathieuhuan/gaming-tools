@@ -27,10 +27,10 @@ interface TalentDetailProps {
 }
 export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClose }: TalentDetailProps) {
   const { t } = useTranslation();
-  const { weaponType, vision: elementType, activeTalents, passiveTalents } = appChar;
+  const { weaponType, vision, activeTalents, passiveTalents } = appChar;
   const { ES, EB, altSprint } = activeTalents;
   const isPassiveTalent = detailIndex > Object.keys(activeTalents).length - 1;
-  const images = [NORMAL_ATTACK_ICONS[`${weaponType}_${elementType}`] || "", ES.image, EB.image];
+  const images = [NORMAL_ATTACK_ICONS[`${weaponType}_${vision}`] || "", ES.image, EB.image];
 
   const [talentLevel, setTalentLevel] = useState(1);
   const intervalRef = useRef<NodeJS.Timeout>();
@@ -111,12 +111,12 @@ export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClos
           label={t(talent.type)}
           currentIndex={detailIndex}
           images={images}
-          elementType={elementType}
+          vision={vision}
           onClickBack={onClickBack}
           onClickNext={onClickNext}
         />
 
-        <p className={`text-lg font-semibold text-${elementType} text-center`}>{talent.name}</p>
+        <p className={`text-lg font-semibold text-${vision} text-center`}>{talent.name}</p>
         {renderTabs("my-2", [false, isPassiveTalent])}
 
         {activeIndex ? (

@@ -31,9 +31,9 @@ export function TalentList({ className, char, party, onChangeTalentLevel }: Tale
   const [detailIndex, setDetailIndex] = useState(-1);
 
   const appChar = $AppCharacter.get(char.name);
-  const { weaponType, vision: elementType, activeTalents, passiveTalents } = appChar;
+  const { weaponType, vision, activeTalents, passiveTalents } = appChar;
   const partyData = party ? $AppCharacter.getPartyData(party) : undefined;
-  const elmtText = `text-${elementType}`;
+  const elmtText = `text-${vision}`;
   const numOfActives = Object.keys(activeTalents).length;
 
   const onClickInfoSign = (index: number) => {
@@ -46,7 +46,7 @@ export function TalentList({ className, char, party, onChangeTalentLevel }: Tale
     return (
       <div key={index} className="flex">
         <div className="shrink-0 py-1 pr-2 flex-center">
-          <AbilityIcon active={active} img={talent.image} elementType={elementType} />
+          <AbilityIcon active={active} img={talent.image} vision={vision} />
         </div>
 
         <div className="pt-1 grow flex">
@@ -101,7 +101,7 @@ export function TalentList({ className, char, party, onChangeTalentLevel }: Tale
           return renderTalent(
             {
               name: talent.name,
-              image: talentType === "NAs" ? NORMAL_ATTACK_ICONS[`${weaponType}_${elementType}`] : talent.image,
+              image: talentType === "NAs" ? NORMAL_ATTACK_ICONS[`${weaponType}_${vision}`] : talent.image,
               xtraLevel,
             },
             index,

@@ -1,6 +1,6 @@
+import { clsx } from "rond";
 import { ChangeEvent, useRef, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
-import { clsx } from "rond";
 
 import type { ElementType, AppMonster } from "@Src/types";
 import { toArray } from "@Src/utils";
@@ -56,10 +56,10 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
 
   return (
     <div className={"relative " + (className || "")}>
-      <label className="px-2 w-full text-black bg-light-default rounded font-semibold flex items-center peer">
+      <label className="px-2 w-full text-black bg-light-default rounded flex items-center peer">
         <input
           ref={inputRef}
-          className="p-2 bg-transparent grow font-bold placeholder:text-black focus:placeholder:text-rarity-1"
+          className="py-1 bg-transparent grow font-semibold placeholder:text-black focus:placeholder:text-hint-color"
           placeholder={targetTitle}
           value={keyword}
           maxLength={10}
@@ -90,9 +90,7 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
               id={`monster-${monster.code}`}
               className={clsx(
                 "px-2 py-1 flex flex-col font-semibold",
-                monster.code === targetCode
-                  ? "bg-light-disabled"
-                  : "hover:text-light-default hover:bg-surface-3 hover:font-bold"
+                monster.code === targetCode ? "bg-light-disabled" : "hover:bg-primary-1"
               )}
               onMouseDown={(e) => e.preventDefault()}
               onClick={onClickMonster(monster)}
