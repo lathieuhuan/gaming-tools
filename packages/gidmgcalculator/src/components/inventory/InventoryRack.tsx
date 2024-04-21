@@ -4,7 +4,6 @@ import { ItemCase, clsx, useIntersectionObserver } from "rond";
 
 import type { UserArtifact, UserItem, UserWeapon } from "@Src/types";
 import type { ArtifactRackProps, InventoryRackProps, MixedRackProps, WeaponRackProps } from "./inventory.types";
-import { INVENTORY_PAGE_SIZE } from "@Src/constants";
 import { $AppData } from "@Src/services";
 import { Item_ } from "@Src/utils";
 
@@ -30,6 +29,7 @@ export function InventoryRack<T extends UserItem>({
   emptyText = "No data",
   chosenID,
   chosenIDs,
+  pageSize = 60,
   onUnselectItem,
   onChangeItem,
 }: InventoryRackProps<T>): JSX.Element {
@@ -41,7 +41,7 @@ export function InventoryRack<T extends UserItem>({
 
   const { observedAreaRef, visibleMap, itemUtils } = useIntersectionObserver({
     ready,
-    dependecies: [ready, data, pageNo],
+    dependecies: [ready, data, pageNo, pageSize],
   });
 
   useEffect(() => {
@@ -51,9 +51,9 @@ export function InventoryRack<T extends UserItem>({
     }
   }, []);
 
-  const deadEnd = Math.ceil(data.length / INVENTORY_PAGE_SIZE) - 1;
-  const firstIndex = INVENTORY_PAGE_SIZE * pageNo;
-  const nextFirstIndex = firstIndex + INVENTORY_PAGE_SIZE;
+  const deadEnd = Math.ceil(data.length / pageSize) - 1;
+  const firstIndex = pageSize * pageNo;
+  const nextFirstIndex = firstIndex + pageSize;
 
   const resetScroll = () => {
     if (observedAreaRef.current) {
@@ -91,7 +91,6 @@ export function InventoryRack<T extends UserItem>({
                   key={item.ID}
                   {...itemUtils.getProps(item.code, [
                     "p-2 transition-opacity duration-400 relative",
-                    isOnPage && "inventory-item",
                     isOnPage && visible ? "opacity-100" : "opacity-0 !p-0",
                     itemCls,
                   ])}

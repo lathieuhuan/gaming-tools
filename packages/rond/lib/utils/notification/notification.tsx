@@ -3,7 +3,7 @@ import { notifRoot, location } from "./notification-root";
 import { NotificationCenter } from "./NotificationCenter";
 import "./notification.styles.scss";
 
-export let notiRequests: NotificationRequest[] = [];
+let notiRequests: NotificationRequest[] = [];
 
 function updateNotification() {
   if (!document.getElementById(location.id)) {

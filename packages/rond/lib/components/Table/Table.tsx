@@ -19,19 +19,19 @@ const Table = ({ className, colAttrs, children, ...rest }: TableProps) => (
   </table>
 );
 
-interface TableTrProps extends Omit<HTMLAttributes<HTMLTableRowElement>, "className"> {
+export interface TableTrProps extends Omit<HTMLAttributes<HTMLTableRowElement>, "className"> {
   className?: ClassValue;
 }
-Table.Tr = ({ className, ...rest }: TableTrProps) => <tr className={clsx("ron-table-tr", className)} {...rest} />;
+Table.Tr = ({ className, ...rest }: TableTrProps) => <tr className={clsx("ron-table__tr", className)} {...rest} />;
 
-interface TableThProps extends Omit<ThHTMLAttributes<HTMLTableCellElement>, "className"> {
+export interface TableThProps extends Omit<ThHTMLAttributes<HTMLTableCellElement>, "className"> {
   className?: ClassValue;
 }
-Table.Th = ({ className, ...rest }: TableThProps) => <th className={clsx("ron-table-th", className)} {...rest} />;
+Table.Th = ({ className, ...rest }: TableThProps) => <th className={clsx("ron-table__th", className)} {...rest} />;
 
-interface TableTdProps extends Omit<TdHTMLAttributes<HTMLTableCellElement>, "className"> {
+export interface TableTdProps extends Omit<TdHTMLAttributes<HTMLTableCellElement>, "className"> {
   className?: ClassValue;
 }
-Table.Td = ({ className, ...rest }: TableTdProps) => <td className={clsx("ron-table-td", className)} {...rest} />;
+Table.Td = ({ className, ...rest }: TableTdProps) => <td className={clsx("ron-table__td", className)} {...rest} />;
 
 export { Table };

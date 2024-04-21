@@ -19,7 +19,7 @@ const EmSection = ({ em }: EmSectionProps) => {
 
   return (
     <div>
-      <StatsTable.Row className="!hidden">{}</StatsTable.Row>
+      <StatsTable.Row className="!hidden" />
       <StatsTable.Row className="cursor-pointer" onClick={() => setDropped(!dropped)}>
         <div className="flex items-center">
           <p className="mr-1">Elemental Mastery</p>

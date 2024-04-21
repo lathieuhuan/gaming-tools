@@ -21,7 +21,7 @@ export const LoadingSpin = ({ active = true, size = "medium", className, ...rest
       width="1em"
       height="1em"
       viewBox="0 0 50 50"
-      className={clsx(`ron-loading-spin ron-loading-spin-${size}`, className)}
+      className={clsx(`ron-loading-spin ron-loading-spin--${size}`, className)}
       {...rest}
     >
       <path

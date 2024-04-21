@@ -1,30 +1,30 @@
 import type { CalcSetup, NormalAttack, Target, Tracker } from "@Src/types";
 import { findByIndex } from "@Src/utils";
-import { $AppCharacter } from "@Src/services";
+import { $AppCharacter, $AppData } from "@Src/services";
 import getCalculationStats from "./getCalculationStats";
 import getFinalResult from "./getFinalResult";
+import { CharacterCal } from "./utils";
 
-const calculateSetup = (
-  {
+const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Tracker) => {
+  // console.time();
+  const {
     char,
+    weapon,
+    artifacts,
+    party,
     selfBuffCtrls,
     selfDebuffCtrls,
-    party,
-    weapon,
     wpBuffCtrls,
-    artifacts,
     artBuffCtrls,
     artDebuffCtrls,
     elmtModCtrls,
     customBuffCtrls,
     customDebuffCtrls,
     customInfusion,
-  }: CalcSetup,
-  target: Target,
-  tracker?: Tracker
-) => {
-  // console.time();
+  } = setup;
+
   const appChar = $AppCharacter.get(char.name);
+  const appWeapon = $AppData.getWeapon(weapon.code)!;
   const partyData = $AppCharacter.getPartyData(party);
   let infusedElement = customInfusion.element;
   let infusedAttacks: NormalAttack[] = ["NA", "CA", "PA"];
@@ -35,13 +35,18 @@ const calculateSetup = (
   let selfInfused: boolean | undefined = undefined;
 
   if (appChar.buffs) {
-    for (const { activated, index } of selfBuffCtrls) {
-      if (activated) {
-        const buff = findByIndex(appChar.buffs, index);
+    for (const ctrl of selfBuffCtrls) {
+      if (ctrl.activated) {
+        const buff = findByIndex(appChar.buffs, ctrl.index);
 
         if (buff && buff.infuseConfig) {
           if (!selfInfused) {
-            selfInfused = !buff.infuseConfig.overwritable;
+            const info = { char, appChar, partyData };
+            const isUsable = CharacterCal.isUsable(buff.infuseConfig, info, ctrl.inputs || [], true);
+
+            if (isUsable) {
+              selfInfused = !buff.infuseConfig.overwritable;
+            }
           }
           if (!disabledNAs) {
             disabledNAs = buff.infuseConfig.disabledNAs || false;
@@ -64,26 +69,29 @@ const calculateSetup = (
 
   const { artAttr, ...rest } = getCalculationStats({
     char,
-    appChar,
-    selfBuffCtrls,
     weapon,
-    wpBuffCtrls,
     artifacts,
+    party,
+    appChar,
+    appWeapon,
+    partyData,
+    selfBuffCtrls,
+    wpBuffCtrls,
     artBuffCtrls,
     elmtModCtrls,
-    party,
-    partyData,
     customBuffCtrls,
     infusedElement,
     tracker,
   });
   const finalResult = getFinalResult({
     char,
+    weapon,
+    party,
     appChar,
+    appWeapon,
+    partyData,
     selfDebuffCtrls,
     artDebuffCtrls,
-    party,
-    partyData,
     disabledNAs,
     customDebuffCtrls,
     infusion: {

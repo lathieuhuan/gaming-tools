@@ -2,14 +2,14 @@
   display: flex;
   gap: 0.75rem;
 
-  &.ron-button-group-center {
+  &.ron-button-group--center {
     justify-content: center;
   }
-  &.ron-button-group-end {
+  &.ron-button-group--end {
     justify-content: flex-end;
   }
 }
 
-.ron-button-focus-shadow:focus {
+.ron-button--focus-shadow:focus {
   box-shadow: 0 0 3px 2px black, 0 0 2px 3px white;
 }

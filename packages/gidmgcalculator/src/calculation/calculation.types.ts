@@ -1,26 +1,27 @@
 import type {
-  CalcWeapon,
+  ActualAttackPattern,
+  AppCharacter,
+  AppWeapon,
+  ArtifactDebuffCtrl,
+  AttackElement,
+  BuffInfoWrap,
   CalcArtifacts,
+  CalcItemBonus,
+  CalcItemType,
+  CalcWeapon,
   Character,
   CustomBuffCtrl,
+  CustomDebuffCtrl,
   ElementModCtrl,
+  ElementType,
   ModifierCtrl,
+  NormalAttack,
   Party,
   PartyData,
-  AttackElement,
-  AppCharacter,
-  Target,
   ResistanceReduction,
-  ArtifactDebuffCtrl,
-  CustomDebuffCtrl,
-  ActualAttackPattern,
+  Target,
   Tracker,
   TrackerCalcItemRecord,
-  NormalAttack,
-  CalcItem,
-  CalcItemBonus,
-  BuffInfoWrap,
-  ElementType,
 } from "@Src/types";
 
 export type StackableCheckCondition = {
@@ -38,6 +39,7 @@ export type GetCalculationStatsArgs = {
   char: Character;
   appChar: AppCharacter;
   weapon: CalcWeapon;
+  appWeapon: AppWeapon;
   artifacts: CalcArtifacts;
 
   selfBuffCtrls?: ModifierCtrl[];
@@ -52,19 +54,21 @@ export type GetCalculationStatsArgs = {
 };
 
 export interface CalculateItemArgs extends Pick<BuffInfoWrap, "char" | "totalAttr" | "attElmtBonus" | "attPattBonus"> {
-  stat: CalcItem;
+  calcType?: CalcItemType;
   attPatt: ActualAttackPattern;
   attElmt: AttackElement;
   base: number | number[];
   target: Target;
   rxnMult: number;
-  calcItemBonues: CalcItemBonus[];
+  calcItemBonues?: CalcItemBonus[];
   absorbedElmt?: ElementType;
   resistReduct: ResistanceReduction;
   record: TrackerCalcItemRecord;
 }
 
 export interface GetFinalResultArgs extends Omit<BuffInfoWrap, "infusedElement"> {
+  weapon: CalcWeapon;
+  appWeapon: AppWeapon;
   selfDebuffCtrls: ModifierCtrl[];
   artDebuffCtrls: ArtifactDebuffCtrl[];
   party: Party;

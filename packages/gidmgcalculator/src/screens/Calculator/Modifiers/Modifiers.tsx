@@ -17,7 +17,7 @@ import PartyDebuffs from "./debuffs/PartyDebuffs";
 import ArtifactDebuffs from "./debuffs/ArtifactDebuffs";
 import CustomModifiers from "./CustomModifiers";
 
-export default function Modifiers() {
+export function Modifiers() {
   const party = useSelector(selectParty);
   const partyData = $AppCharacter.getPartyData(party);
 

@@ -27,6 +27,7 @@ export function useIntersectionObserver<
   ObservedElement extends HTMLElement = HTMLDivElement
 >(options?: UseIntersectionObserverOptions) {
   const observedAreaRef = useRef<ObservedArea>(null);
+  const observerRef = useRef<IntersectionObserver>();
   const [visibleMap, setVisibleItems] = useState<Record<string, boolean>>({});
 
   const { dependecies = [], ready = true } = options || {};
@@ -39,6 +40,10 @@ export function useIntersectionObserver<
   const queryAllObservedItems = (): Array<ObservedItem<ObservedElement>> => {
     const items = observedAreaRef.current?.querySelectorAll(`.${observedItemCls}`);
     return items ? Array.from(items, (element) => new ObservedItem(element as ObservedElement)) : [];
+  };
+
+  const observe = (element: Element) => {
+    observerRef.current?.observe(element);
   };
 
   useEffect(() => {
@@ -64,13 +69,13 @@ export function useIntersectionObserver<
         }
       };
 
-      const observer = new IntersectionObserver(handleIntersection, {
+      observerRef.current = new IntersectionObserver(handleIntersection, {
         root: observedAreaRef.current,
       });
 
-      queryAllObservedItems().forEach((item) => observer.observe(item.element));
+      queryAllObservedItems().forEach((item) => observe(item.element));
 
-      return () => observer.disconnect();
+      return () => observerRef.current?.disconnect();
     }
     return;
   }, dependecies);
@@ -86,6 +91,7 @@ export function useIntersectionObserver<
     observedAreaRef,
     visibleMap,
     itemUtils: {
+      observe,
       getProps: getObservedItemProps,
       queryAll: queryAllObservedItems,
       queryById: queryObservedItem,

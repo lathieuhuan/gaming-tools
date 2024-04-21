@@ -26,28 +26,3 @@ export function CheckSetting({ label, ...rest }: CheckSettingProps) {
     </label>
   );
 }
-
-interface SelectSettingProps<T = string | number> {
-  label: string;
-  defaultValue: T;
-  options: any[] | readonly any[];
-  onChange: (newValue: T) => void;
-}
-export function SelectSetting({ label, options, defaultValue, onChange }: SelectSettingProps) {
-  return (
-    <label className="flex items-center justify-between" style={{ minHeight: 40 }}>
-      <span>{label}</span>
-      <select
-        className="ml-3 w-20 styled-select shrink-0 text-right text-last-right"
-        defaultValue={defaultValue}
-        onChange={(e) => {
-          onChange(typeof defaultValue === "string" ? e.target.value : +e.target.value);
-        }}
-      >
-        {options.map((option, i) => (
-          <option key={i}>{option}</option>
-        ))}
-      </select>
-    </label>
-  );
-}

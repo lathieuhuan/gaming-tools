@@ -4,6 +4,8 @@ export type AppSettings = {
   charInfoIsSeparated: boolean;
   doKeepArtStatsOnSwitch: boolean;
   persistingUserData: boolean;
+  /** Applied to mobile */
+  isTabLayout: boolean;
   charLevel: Level;
   charCons: number;
   charNAs: number;
@@ -12,6 +14,7 @@ export type AppSettings = {
   wpLevel: Level;
   wpRefi: number;
   artLevel: number;
+  targetLevel: number;
 };
 
 export class AppSettingsService {
@@ -19,6 +22,7 @@ export class AppSettingsService {
     charInfoIsSeparated: false,
     doKeepArtStatsOnSwitch: false,
     persistingUserData: false,
+    isTabLayout: true,
     charLevel: "1/20",
     charCons: 0,
     charNAs: 1,
@@ -27,6 +31,7 @@ export class AppSettingsService {
     wpLevel: "1/20",
     wpRefi: 1,
     artLevel: 0,
+    targetLevel: 1,
   };
 
   get<T extends keyof AppSettings>(key: T): AppSettings[T];

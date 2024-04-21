@@ -4,6 +4,7 @@ import { clsx, Button, LoadingSpin, WarehouseLayout, useScreenWatcher } from "ro
 
 import type { UserComplexSetup, UserSetup } from "@Src/types";
 import { useAppCharacter } from "@Src/hooks";
+import { $AppCharacter } from "@Src/services";
 import { Setup_, findById } from "@Src/utils";
 
 import type { OpenModalFn } from "./MySetups.types";
@@ -116,8 +117,14 @@ export default function MySetups() {
             <p className="text-sm text-center truncate">{chosenSetup.name}</p>
           </div>
           <div className="mt-2 grow hide-scrollbar">
-            {result?.finalResult && (
-              <FinalResultView char={chosenSetup.char} party={chosenSetup.party} finalResult={result.finalResult} />
+            {result?.finalResult && weapon && (
+              <FinalResultView
+                char={chosenSetup.char}
+                appChar={$AppCharacter.get(chosenSetup.char.name)}
+                weapon={weapon}
+                party={chosenSetup.party}
+                finalResult={result.finalResult}
+              />
             )}
           </div>
 
@@ -147,7 +154,7 @@ export default function MySetups() {
           "shrink-0 flex flex-col items-start custom-scrollbar scroll-smooth space-y-3"
         )}
         style={{
-          minWidth: screenWatcher.isFromSize("lg") ? "541px" : "",
+          minWidth: screenWatcher.isFromSize("lg") ? "541px" : "19.5rem",
         }}
       >
         {setupList}

@@ -7,6 +7,8 @@ type CommonRackProps = {
   emptyText?: string;
   chosenID?: number;
   chosenIDs?: Record<string, boolean>;
+  /** Default to 60 */
+  pageSize?: number;
 };
 
 export type WeaponRackProps = CommonRackProps & {

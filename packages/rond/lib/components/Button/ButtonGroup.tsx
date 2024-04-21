@@ -17,9 +17,9 @@ export interface ButtonGroupProps {
 }
 function ButtonGroup({ className, justify = "center", buttons }: ButtonGroupProps) {
   return (
-    <div className={clsx(`ron-button-group ron-button-group-${justify}`, className)}>
+    <div className={clsx(`ron-button-group ron-button-group--${justify}`, className)}>
       {buttons.map(({ className, ...others }, i) => {
-        return <Button key={i} className={clsx("ron-button-focus-shadow", className)} {...others} />;
+        return <Button key={i} className={clsx("ron-button--focus-shadow", className)} {...others} />;
       })}
     </div>
   );

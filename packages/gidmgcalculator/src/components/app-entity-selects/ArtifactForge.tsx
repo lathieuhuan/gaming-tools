@@ -9,7 +9,7 @@ import { pickProps, Artifact_ } from "@Src/utils";
 import { useArtifactTypeSelect } from "@Src/hooks";
 
 // Component
-import { AppEntitySelect, AppEntitySelectProps, AfterSelectAppEntity } from "./components/AppEntitySelect";
+import { AppEntitySelect, type AppEntitySelectProps, type AfterSelectAppEntity } from "./components/AppEntitySelect";
 import { ArtifactConfig } from "./components/ArtifactConfig";
 
 export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> {
@@ -86,7 +86,15 @@ const ArtifactSmith = ({
     });
   };
 
-  const renderBatchConfigNode = (afterSelect: AfterSelectAppEntity) => {
+  const getBackAction = (selectBody: HTMLDivElement | null) => ({
+    icon: <RiArrowGoBackLine className="text-lg" />,
+    className: "sm:hidden",
+    onClick: () => {
+      if (selectBody) selectBody.scrollLeft = 0;
+    },
+  });
+
+  const renderBatchConfigNode = (afterSelect: AfterSelectAppEntity, selectBody: HTMLDivElement | null) => {
     if (!batchForging || !artifactConfig) return;
     const { name } = $AppData.getArtifactSet(artifactConfig.code) || {};
 
@@ -120,8 +128,9 @@ const ArtifactSmith = ({
         <ButtonGroup
           className="mt-4"
           buttons={[
+            getBackAction(selectBody),
             {
-              icon: <RiArrowGoBackLine className="text-lg" />,
+              children: "Single",
               onClick: onStopBatchForging,
             },
             {
@@ -141,23 +150,21 @@ const ArtifactSmith = ({
       data={allArtifactSets}
       emptyText="No artifacts found"
       hasSearch
-      renderOptionConfig={(afterSelect) => {
+      renderOptionConfig={(afterSelect, selectBody) => {
         return (
           <ArtifactConfig
             config={artifactConfig}
             maxRarity={maxRarity}
             typeSelect={forcedType ? null : renderArtifactTypeSelect()}
-            batchConfigNode={renderBatchConfigNode(afterSelect)}
-            moreButtons={
-              allowBatchForging
-                ? [
-                    {
-                      children: "Batch Forging",
-                      onClick: () => setBatchForging(true),
-                    },
-                  ]
-                : undefined
-            }
+            batchConfigNode={renderBatchConfigNode(afterSelect, selectBody)}
+            moreButtons={[
+              getBackAction(selectBody),
+              {
+                children: "Batching",
+                className: !allowBatchForging && "hidden",
+                onClick: () => setBatchForging(true),
+              },
+            ]}
             onChangeRarity={onChangeRarity}
             onUpdateConfig={(properties) => {
               updateConfig((prevConfig) => ({ ...prevConfig, ...properties }));

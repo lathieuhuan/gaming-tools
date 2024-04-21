@@ -11,7 +11,7 @@ interface SetupExporterProps {
   target: Target;
   onClose: () => void;
 }
-const SetupExporterCore = ({ setupName, calcSetup, target, onClose }: SetupExporterProps) => {
+export const SetupExporterCore = ({ setupName, calcSetup, target, onClose }: SetupExporterProps) => {
   const [status, setStatus] = useState<"SUCCESS" | "NOT_SUPPORT" | "">("");
 
   const encodedData = encodeSetup(calcSetup, target);

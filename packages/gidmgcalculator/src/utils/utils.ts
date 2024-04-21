@@ -11,6 +11,15 @@ export function getSearchParam(key: string) {
   return searchParams.get(key);
 }
 
+export function getImgSrc(src?: string) {
+  const isDevEnv = import.meta.env.DEV;
+  // const isDevEnv = false;
+  if (isDevEnv || !src) return "";
+
+  const isFromWiki = src.split("/")[0].length === 1;
+  return isFromWiki ? `https://static.wikia.nocookie.net/gensin-impact/images/${src}.png` : src;
+}
+
 export function pickProps<M, T extends keyof M>(obj: M, keys: T[]) {
   const result = {} as Pick<M, T>;
 
@@ -38,6 +47,14 @@ export function removeEmpty<T extends Record<string, any>>(obj: T): T {
 export const toMult = (n: number) => 1 + n / 100;
 
 export const applyPercent = (n: number, percent: number) => Math.round((n * percent) / 100);
+
+export function genSequentialOptions(max: number | undefined = 0, startsAt0 = false, min = 1) {
+  const result = [...Array(max)].map((_, i) => {
+    const value = i + min;
+    return { label: value, value };
+  });
+  return startsAt0 ? [{ label: 0, value: 0 }].concat(result) : result;
+}
 
 export const toArray = <T>(subject: T | T[]): T[] => (Array.isArray(subject) ? subject : [subject]);
 

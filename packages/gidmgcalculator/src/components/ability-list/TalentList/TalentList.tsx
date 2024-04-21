@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
-import { Button, CarouselSpace } from "rond";
+import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
 
-import type { Character, Party } from "@Src/types";
+import type { Character, LevelableTalent, Party } from "@Src/types";
 import { TALENT_TYPES } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
-import { Calculation_ } from "@Src/utils";
+import { Calculation_, genSequentialOptions } from "@Src/utils";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
 
 // Component
@@ -21,18 +21,19 @@ type RenderedTalentConfig = {
 };
 
 interface TalentListProps {
+  className?: ClassValue;
   char: Character;
   party?: Party;
-  onChangeTalentLevel: (talentType: "NAs" | "ES" | "EB", newLevel: number) => void;
+  onChangeTalentLevel: (talentType: LevelableTalent, newLevel: number) => void;
 }
-export function TalentList({ char, party, onChangeTalentLevel }: TalentListProps) {
+export function TalentList({ className, char, party, onChangeTalentLevel }: TalentListProps) {
   const [atDetail, setAtDetail] = useState(false);
   const [detailIndex, setDetailIndex] = useState(-1);
 
   const appChar = $AppCharacter.get(char.name);
-  const { weaponType, vision: elementType, activeTalents, passiveTalents } = appChar;
+  const { weaponType, vision, activeTalents, passiveTalents } = appChar;
   const partyData = party ? $AppCharacter.getPartyData(party) : undefined;
-  const elmtText = `text-${elementType}`;
+  const elmtText = `text-${vision}`;
   const numOfActives = Object.keys(activeTalents).length;
 
   const onClickInfoSign = (index: number) => {
@@ -44,8 +45,11 @@ export function TalentList({ char, party, onChangeTalentLevel }: TalentListProps
     const { active = true } = talent;
     return (
       <div key={index} className="flex">
-        <AbilityIcon className="my-2 mr-2 shrink-0" active={active} img={talent.image} elementType={elementType} />
-        <div className="grow flex items-center">
+        <div className="shrink-0 py-1 pr-2 flex-center">
+          <AbilityIcon active={active} img={talent.image} vision={vision} />
+        </div>
+
+        <div className="pt-1 grow flex">
           <div className={"px-2" + (active ? "" : " opacity-50")}>
             <p className="font-bold">{talent.name}</p>
             <div className="flex items-center">
@@ -69,7 +73,7 @@ export function TalentList({ char, party, onChangeTalentLevel }: TalentListProps
   const immutableLvNode = <p className={`ml-1 ${elmtText} font-bold`}>1</p>;
 
   return (
-    <CarouselSpace current={atDetail ? 1 : 0}>
+    <CarouselSpace current={atDetail ? 1 : 0} className={className}>
       <div className="h-full hide-scrollbar flex flex-col space-y-3">
         {TALENT_TYPES.map((talentType, index) => {
           const isAltSprint = talentType === "altSprint";
@@ -84,23 +88,20 @@ export function TalentList({ char, party, onChangeTalentLevel }: TalentListProps
           });
 
           const mutableLvNode = (
-            <select
-              className={`${elmtText} font-bold`}
+            <VersatileSelect
+              title="Select Level"
+              className={`w-12 ${elmtText} font-bold`}
               value={isAltSprint ? 1 : char[talentType]}
-              onChange={(e) => (isAltSprint ? null : onChangeTalentLevel?.(talentType, +e.target.value))}
-            >
-              {[...Array(10).keys()].map((_, i) => (
-                <option key={i} className="text-black">
-                  {i + 1}
-                </option>
-              ))}
-            </select>
+              transparent
+              options={genSequentialOptions(10)}
+              onChange={(value) => (isAltSprint ? null : onChangeTalentLevel?.(talentType, +value))}
+            />
           );
 
           return renderTalent(
             {
               name: talent.name,
-              image: talentType === "NAs" ? NORMAL_ATTACK_ICONS[`${weaponType}_${elementType}`] : talent.image,
+              image: talentType === "NAs" ? NORMAL_ATTACK_ICONS[`${weaponType}_${vision}`] : talent.image,
               xtraLevel,
             },
             index,

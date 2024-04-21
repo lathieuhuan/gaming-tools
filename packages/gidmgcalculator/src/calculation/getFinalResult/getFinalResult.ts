@@ -22,11 +22,13 @@ import calculateItem from "./calculateItem";
 
 export default function getFinalResult({
   char,
+  weapon,
   appChar,
+  party,
+  appWeapon,
+  partyData,
   selfDebuffCtrls,
   artDebuffCtrls,
-  party,
-  partyData,
   disabledNAs,
   totalAttr,
   attPattBonus,
@@ -44,7 +46,7 @@ export default function getFinalResult({
   for (const key of ATTACK_ELEMENTS) {
     resistReduct[key] = 0;
   }
-  const { multFactorConf, calcList, weaponType, vision: elementType, debuffs } = appChar;
+  const { multFactorConf, calcList, weaponType, vision, debuffs } = appChar;
   const infoWrap: DebuffInfoWrap = {
     char,
     appChar,
@@ -126,6 +128,7 @@ export default function getFinalResult({
     ES: {},
     EB: {},
     RXN: {},
+    WP_CALC: {},
   };
 
   if (tracker) {
@@ -133,18 +136,19 @@ export default function getFinalResult({
     tracker.ES = {};
     tracker.EB = {};
     tracker.RXN = {};
+    tracker.WP_CALC = {};
   }
 
   ATTACK_PATTERNS.forEach((ATT_PATT) => {
     const resultKey = ATT_PATT === "ES" || ATT_PATT === "EB" ? ATT_PATT : "NAs";
-    const defaultInfo = Character_.getTalentDefaultInfo(resultKey, weaponType, elementType, ATT_PATT, multFactorConf);
+    const defaultInfo = Character_.getTalentDefaultInfo(resultKey, weaponType, vision, ATT_PATT, multFactorConf);
     const level = Character_.getFinalTalentLv({ appChar, talentType: resultKey, char, partyData });
 
     for (const stat of calcList[ATT_PATT]) {
       // DMG TYPES & AMPLIFYING REACTION MULTIPLIER
       const attPatt = stat.attPatt || ATT_PATT;
       let attElmt =
-        (stat.subAttPatt === "FCA" ? elementType : stat.attElmt === "absorb" ? absorption : stat.attElmt) ??
+        (stat.subAttPatt === "FCA" ? vision : stat.attElmt === "absorb" ? absorption : stat.attElmt) ??
         defaultInfo.attElmt;
       let actualReaction = reaction;
       let rxnMult = 1;
@@ -229,7 +233,7 @@ export default function getFinalResult({
         };
       } else {
         finalResult[resultKey][stat.name] = calculateItem({
-          stat,
+          calcType: stat.type,
           attPatt,
           attElmt,
           base: bases.length > 1 ? bases : bases[0],
@@ -244,9 +248,8 @@ export default function getFinalResult({
           record,
         });
       }
-      if (tracker) {
-        tracker[resultKey][stat.name] = record;
-      }
+
+      if (tracker) tracker[resultKey][stat.name] = record;
     }
   });
 
@@ -279,6 +282,39 @@ export default function getFinalResult({
       };
     }
   }
+
+  appWeapon.calcItems?.forEach((calcItem) => {
+    const { name, type = "attack", value, incre = value / 3, baseOn = "atk" } = calcItem;
+    const mult = value + incre * weapon.refi;
+    const record = {
+      itemType: type,
+      multFactors: [
+        {
+          value: totalAttr[baseOn],
+          desc: baseOn,
+          talentMult: mult,
+        },
+      ],
+      normalMult: 1,
+    } as TrackerCalcItemRecord;
+
+    finalResult.WP_CALC[name] = calculateItem({
+      calcType: calcItem.type,
+      char,
+      attElmt: "phys",
+      attPatt: "none",
+      attElmtBonus,
+      attPattBonus,
+      base: (totalAttr[baseOn] * mult) / 100,
+      resistReduct,
+      record,
+      rxnMult: 1,
+      target,
+      totalAttr,
+    });
+
+    if (tracker) tracker.WP_CALC[name] = record;
+  });
 
   return finalResult;
 }

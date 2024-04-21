@@ -25,8 +25,8 @@ export const Popover = ({
   return (
     <Tag
       className={clsx(
-        `ron-popover ron-popover-${origin}`,
-        active && "ron-popover-active",
+        `ron-popover ron-popover--${origin}`,
+        active && "ron-popover--active",
         withTooltipStyle && "bg-black text-light-400 rounded-lg text-sm cursor-default",
         className
       )}

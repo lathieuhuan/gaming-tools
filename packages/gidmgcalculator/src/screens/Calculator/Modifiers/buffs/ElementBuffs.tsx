@@ -1,4 +1,5 @@
 import { Fragment, useState } from "react";
+import { VersatileSelect } from "rond";
 import type { AmplifyingReaction, CalcItem, ElementType } from "@Src/types";
 
 import { ELEMENT_TYPES } from "@Src/constants";
@@ -20,7 +21,7 @@ const hasAbsorbingAttackIn = (items: CalcItem[]) => {
 export default function ElementBuffs() {
   const dispatch = useDispatch();
   const char = useSelector(selectCharacter);
-  const { vision: elementType, weaponType, calcList } = $AppCharacter.get(char.name);
+  const { vision, weaponType, calcList } = $AppCharacter.get(char.name);
   const elmtModCtrls = useSelector(selectElmtModCtrls);
   const rxnBonus = useSelector(selectRxnBonus);
   const customInfusion = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].customInfusion);
@@ -91,8 +92,7 @@ export default function ElementBuffs() {
   };
 
   const renderAttackReaction = (attReaction: "reaction" | "infuse_reaction", forceElement?: ElementType | null) => {
-    const element =
-      forceElement === undefined ? (attReaction === "reaction" ? elementType : infusedElement) : forceElement;
+    const element = forceElement === undefined ? (attReaction === "reaction" ? vision : infusedElement) : forceElement;
 
     switch (element) {
       case "pyro":
@@ -119,7 +119,7 @@ export default function ElementBuffs() {
   // ========== RESONANCE ==========
   if (elmtModCtrls.resonances.length) {
     renderedElmts.push(
-      <div>
+      <div className="space-y-3">
         {elmtModCtrls.resonances.map((resonance) => {
           return (
             <ResonanceBuffItem
@@ -181,30 +181,30 @@ export default function ElementBuffs() {
         />
         <div className="pt-2 pb-1 pr-1 flex items-center justify-end">
           <span className="mr-4 text-base leading-6 text-right">Absorbed Element</span>
-          <select
-            className="styled-select capitalize"
-            value={absorbedValue}
+          <VersatileSelect
+            title="Select Absorbed Element"
+            className="w-24 h-8 font-bold capitalize"
+            options={["pyro", "hydro", "electro", "cryo"].map((item) => ({
+              label: item,
+              value: item,
+              className: "capitalize",
+            }))}
             disabled={!isAbsorbing}
-            onChange={(e) => {
-              const absorption = e.target.value as ElementType;
+            value={absorbedValue}
+            onChange={(value) => {
+              const absorption = value as ElementType;
               setAbsorbedValue(absorption);
 
               dispatch(
                 updateCalcSetup({
                   elmtModCtrls: {
                     ...elmtModCtrls,
-                    absorption: absorption,
+                    absorption,
                   },
                 })
               );
             }}
-          >
-            {["pyro", "hydro", "electro", "cryo"].map((opt, i) => (
-              <option key={i} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+          />
         </div>
       </div>
     );
@@ -255,12 +255,20 @@ export default function ElementBuffs() {
         />
         <div className="pt-2 pb-1 pr-1 flex items-center justify-end">
           <span className="mr-4 text-base leading-6 text-right">Element</span>
-          <select
-            className="styled-select capitalize"
-            value={infusedValue}
+
+          <VersatileSelect
+            title="Select Element"
+            className="w-24 h-8 font-bold capitalize"
+            options={ELEMENT_TYPES.map((item) => ({
+              label: item,
+              value: item,
+              className: "capitalize",
+            }))}
             disabled={!isInfused}
-            onChange={(e) => {
-              setInfusedValue(e.target.value as ElementType);
+            value={infusedValue}
+            onChange={(value) => {
+              const element = value as ElementType;
+              setInfusedValue(element);
 
               dispatch(
                 updateCalcSetup({
@@ -270,21 +278,15 @@ export default function ElementBuffs() {
                   },
                   customInfusion: {
                     ...customInfusion,
-                    element: e.target.value as ElementType,
+                    element,
                   },
                 })
               );
             }}
-          >
-            {ELEMENT_TYPES.map((opt, i) => (
-              <option key={i} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
-        {infusedElement !== elementType && infusedElement !== "phys" ? (
+        {infusedElement !== vision && infusedElement !== "phys" ? (
           <div className="mt-3">{renderAttackReaction("infuse_reaction")}</div>
         ) : null}
       </div>

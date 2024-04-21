@@ -8,7 +8,7 @@ import { useStoreSnapshot } from "@Src/features";
 import { Setup_, findById } from "@Src/utils";
 import { useCombineManager } from "./hooks";
 
-export default function FirstCombine({ onClose }: { onClose: () => void }) {
+export default function FirstCombine(props: { onClose: () => void }) {
   const dispatch = useDispatch();
   const userSetups = useStoreSnapshot(selectUserSetups);
 
@@ -66,7 +66,7 @@ export default function FirstCombine({ onClose }: { onClose: () => void }) {
       }
     }
     dispatch(combineSetups({ pickedIDs, name: input }));
-    onClose();
+    props.onClose();
   };
 
   const onKeydownInput: KeyboardEventHandler<HTMLInputElement> = (e) => {
@@ -90,7 +90,8 @@ export default function FirstCombine({ onClose }: { onClose: () => void }) {
 
       <div className="mt-4">
         <Input
-          className="px-4 py-1 w-full text-xl text-center font-bold"
+          className="w-full text-center font-semibold"
+          size="medium"
           value={input}
           maxLength={32}
           onKeyDown={onKeydownInput}

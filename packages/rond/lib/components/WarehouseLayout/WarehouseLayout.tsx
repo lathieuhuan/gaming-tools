@@ -11,8 +11,8 @@ export const WarehouseLayout = ({ className, bodyStyle, actions, children }: War
   return (
     <div className={clsx("ron-warehouse-layout", className)}>
       <div className="ron-warehouse" style={bodyStyle}>
-        {actions ? <div className="ron-warehouse-actions">{actions}</div> : null}
-        <div className="ron-warehouse-content ron-hide-scrollbar">{children}</div>
+        {actions ? <div className="ron-warehouse__actions">{actions}</div> : null}
+        <div className="ron-warehouse__body ron-hide-scrollbar">{children}</div>
       </div>
     </div>
   );

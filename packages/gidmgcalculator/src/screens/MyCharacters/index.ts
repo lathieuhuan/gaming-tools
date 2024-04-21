@@ -1,1 +1,2 @@
-export { default } from "./MyCharacters";
+export * from "./MyCharactersSmall";
+export * from "./MyCharactersLarge";

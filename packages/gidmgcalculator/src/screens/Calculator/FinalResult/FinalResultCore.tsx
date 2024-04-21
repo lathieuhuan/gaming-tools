@@ -1,64 +1,46 @@
-import { useState, useEffect } from "react";
-
-import type { CalculationAspect } from "@Src/types";
-import { selectCharacter, selectComparedIds, selectCalcFinalResult, selectParty } from "@Store/calculator-slice";
-import { useSelector } from "@Store/hooks";
 import { findById } from "@Src/utils";
-import { FinalResultView } from "@Src/components";
+import {
+  selectCalcFinalResult,
+  selectCharacter,
+  selectComparedIds,
+  selectParty,
+  selectWeapon,
+  updateCharacter,
+} from "@Store/calculator-slice";
+import { useDispatch, useSelector } from "@Store/hooks";
 
-const ASPECT_LABEL: Record<CalculationAspect, string> = {
-  nonCrit: "Non-crit",
-  crit: "Crit",
-  average: "Average",
-};
+import { FinalResultView } from "@Src/components";
+import { FinalResultCompare } from "./FinalResultCompare";
+import { $AppCharacter } from "@Src/services";
 
 export function FinalResultCore() {
+  const dispatch = useDispatch();
   const activeSetupName = useSelector((state) => {
     const { activeId, setupManageInfos } = state.calculator;
     return findById(setupManageInfos, activeId)?.name || "";
   });
-  const finalResult = useSelector(selectCalcFinalResult);
   const char = useSelector(selectCharacter);
+  const weapon = useSelector(selectWeapon);
   const party = useSelector(selectParty);
-
+  const finalResult = useSelector(selectCalcFinalResult);
   const comparedIds = useSelector(selectComparedIds);
 
-  const [focusedAspect, setFocus] = useState<CalculationAspect>("average");
-  const comparing = comparedIds.length > 1;
+  if (comparedIds.length > 1) {
+    return <FinalResultCompare comparedIds={comparedIds} {...{ char, weapon, party }} />;
+  }
 
-  useEffect(() => {
-    if (comparing) {
-      setFocus("average");
-    }
-  }, [comparing]);
-
-  const calculationAspects: CalculationAspect[] = ["nonCrit", "crit", "average"];
+  const appChar = $AppCharacter.get(char.name);
 
   return (
     <div className="h-full flex flex-col">
-      {comparing ? (
-        <div className="mb-4 flex">
-          <p className="mr-2">Choose a focus</p>
-          <select
-            className="text-primary-1"
-            value={focusedAspect}
-            onChange={(e) => setFocus(e.target.value as CalculationAspect)}
-          >
-            {calculationAspects.map((aspect) => (
-              <option key={aspect} value={aspect}>
-                {ASPECT_LABEL[aspect]}
-              </option>
-            ))}
-          </select>
-        </div>
-      ) : (
-        <p className="mx-4 my-2 font-bold text-center">{activeSetupName}</p>
-      )}
+      <div className="px-6 mb-2 shrink-0">
+        <p className="font-bold text-center truncate">{activeSetupName}</p>
+      </div>
       <div className="grow hide-scrollbar">
         <FinalResultView
-          key={char.name}
-          {...{ char, party, finalResult }}
-          focusedAspect={comparing ? focusedAspect : undefined}
+          {...{ char, weapon, party, finalResult, appChar }}
+          talentMutable
+          onChangeTalentLevel={(type, level) => dispatch(updateCharacter({ [type]: level }))}
         />
       </div>
     </div>

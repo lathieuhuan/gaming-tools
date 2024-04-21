@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { MdInventory } from "react-icons/md";
-import { Badge, Button } from "rond";
+import { Badge, Button, VersatileSelect } from "rond";
 
 import type { Level } from "@Src/types";
 import { LEVELS } from "@Src/constants";
 import { $AppData } from "@Src/services";
-import { Item_ } from "@Src/utils";
+import { Item_, genSequentialOptions } from "@Src/utils";
 import { selectWeapon, changeWeapon, updateWeapon } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
 import { WeaponForge, WeaponInventory, GenshinImage } from "@Src/components";
@@ -40,40 +40,36 @@ export default function SectionWeapon() {
       <div className="ml-2 overflow-hidden space-y-1">
         <p className={`text-xl text-rarity-${rarity} font-bold text-ellipsis`}>{name}</p>
 
-        <div className="pl-1 flex flex-wrap">
+        <div className="pl-1 flex items-center flex-wrap">
           <p className="mr-1">Level</p>
-          <select
-            className={`text-rarity-${rarity} text-right`}
-            value={weapon.level}
+          <VersatileSelect
+            title="Select Level"
+            className={`w-18 text-rarity-${rarity} font-medium`}
+            transparent
+            align="right"
             disabled={name === ""}
-            onChange={(e) => dispatch(updateWeapon({ level: e.target.value as Level }))}
-          >
-            {selectLevels.map((_, index) => {
-              const value = selectLevels[selectLevels.length - 1 - index];
-              return (
-                <option key={index} value={value}>
-                  {value}
-                </option>
-              );
+            options={selectLevels.map((_, i) => {
+              const item = selectLevels[selectLevels.length - 1 - i];
+              return { label: item, value: item };
             })}
-          </select>
+            value={weapon.level}
+            onChange={(value) => dispatch(updateWeapon({ level: value as Level }))}
+          />
         </div>
 
         {rarity >= 3 && (
-          <div className="pl-1 flex flex-wrap">
-            <p className="mr-1">Refinement rank</p>
-            <select
-              className={`text-rarity-${rarity}`}
-              value={weapon.refi}
+          <div className="pl-1 flex items-center flex-wrap">
+            <p className="mr-1">Refinement</p>
+            <VersatileSelect
+              title="Select Refinement"
+              className={`w-10 text-rarity-${rarity} font-medium`}
+              transparent
+              align="right"
               disabled={name === ""}
-              onChange={(e) => dispatch(updateWeapon({ refi: +e.target.value }))}
-            >
-              {[1, 2, 3, 4, 5].map((level) => (
-                <option key={level} value={level}>
-                  {level}
-                </option>
-              ))}
-            </select>
+              options={genSequentialOptions(5)}
+              value={weapon.refi}
+              onChange={(value) => dispatch(updateWeapon({ refi: +value }))}
+            />
           </div>
         )}
       </div>

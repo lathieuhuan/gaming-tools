@@ -39,13 +39,13 @@ const Modal = ({
   ...coreProps
 }: ModalProps) => {
   return (
-    <ModalCore {...coreProps} className={clsx("ron-modal-content-standard", className)} closable={closable}>
+    <ModalCore {...coreProps} className={clsx("ron-modal--standard", className)} closable={closable}>
       <ModalHeader withDivider={withHeaderDivider}>{title}</ModalHeader>
 
-      <div className={clsx("ron-modal-body", bodyCls)}>{typeof children === "function" ? children() : children}</div>
+      <div className={clsx("ron-modal__body", bodyCls)}>{typeof children === "function" ? children() : children}</div>
 
       {withActions && (
-        <div className="ron-modal-footer">
+        <div className="ron-modal__footer">
           <ModalActions
             {...{
               withDivider: withFooterDivider,
@@ -66,7 +66,7 @@ const Modal = ({
       )}
 
       {withCloseButton ? (
-        <CloseButton className="ron-modal-close-button" boneOnly disabled={!closable} onClick={coreProps.onClose} />
+        <CloseButton className="ron-modal__close-button" boneOnly disabled={!closable} onClick={coreProps.onClose} />
       ) : null}
     </ModalCore>
   );
@@ -75,6 +75,7 @@ const Modal = ({
 type WithModalPropsKey =
   | "preset"
   | "title"
+  | "id"
   | "className"
   | "bodyCls"
   | "formId"

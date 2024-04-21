@@ -5,8 +5,9 @@ export interface CarouselSpaceProps {
   className?: ClassValue;
   current?: number;
   children: React.ReactNode;
+  onTransitionEnd?: (current: number) => void;
 }
-export const CarouselSpace = ({ className, current = 0, children }: CarouselSpaceProps) => {
+export const CarouselSpace = ({ className, current = 0, children, onTransitionEnd }: CarouselSpaceProps) => {
   const items = Array.isArray(children) ? children : [children];
 
   return (
@@ -17,6 +18,7 @@ export const CarouselSpace = ({ className, current = 0, children }: CarouselSpac
           width: `calc(${items.length} * 100%)`,
           transform: `translateX(calc(-${current / items.length} * 100%))`,
         }}
+        onTransitionEnd={() => onTransitionEnd?.(current)}
       >
         {items.map((item, index) => {
           return (

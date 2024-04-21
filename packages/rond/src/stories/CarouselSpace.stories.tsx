@@ -29,7 +29,7 @@ export const Default: Story = {
     current: 0,
     children: [
       <PlainGround height={300}>Content 1</PlainGround>,
-      <PlainGround height={300}>Content 1</PlainGround>,
+      <PlainGround height={300}>Content 2</PlainGround>,
       <PlainGround height={200}>Content 3</PlainGround>,
     ],
   },

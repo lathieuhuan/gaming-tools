@@ -1,0 +1,205 @@
+.ron-select {
+  position: relative;
+  width: 100%;
+  border-radius: 0.25rem;
+  color: var(--ron-color-on-light);
+  background-color: var(--ron-color-light-surface-3);
+
+  .ron-select-selector {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+  .ron-select-selection-search {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  &.ron-select-show-search .ron-select-selection-search:focus-within + .ron-select-selection-item {
+    opacity: 0.5;
+  }
+
+  .ron-select-arrow {
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    display: flex;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+  }
+
+  .ron-select-selection-placeholder,
+  .ron-select-selection-item {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+    width: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ron-select-selection-placeholder {
+    opacity: 0.5;
+  }
+
+  .ron-select-selection-search-input {
+    border: none;
+    outline: none;
+    background: inherit;
+    border-radius: 0.25rem;
+    width: 100%;
+    height: 100%;
+    font-size: inherit;
+    cursor: default;
+
+    &:focus {
+      background-color: var(--ron-color-light-surface-2);
+    }
+  }
+
+  &.ron-select-disabled {
+    opacity: 0.6;
+  }
+}
+
+.ron-select--small {
+  min-height: 1.75rem;
+  font-size: 1rem;
+}
+.ron-select--medium {
+  min-height: 2rem;
+  font-size: 1.125rem;
+}
+
+.ron-select--transparent {
+  color: var(--ron-color-on-dark);
+  background-color: transparent;
+
+  .ron-select-selection-search-input:focus {
+    background-color: transparent;
+  }
+
+  &.ron-select--arrow-end {
+    .ron-select-selection-placeholder,
+    .ron-select-selection-search-input,
+    .ron-select-selection-item {
+      padding-left: 0.25rem;
+      padding-right: 1.375rem;
+    }
+  }
+  &.ron-select--arrow-start {
+    .ron-select-selection-placeholder,
+    .ron-select-selection-search-input,
+    .ron-select-selection-item {
+      padding-left: 1.375rem;
+      padding-right: 0.25rem;
+    }
+  }
+}
+
+// arrowAt
+.ron-select--arrow-end {
+  .ron-select-arrow {
+    right: 0.375rem;
+  }
+  .ron-select-selection-placeholder,
+  .ron-select-selection-search-input,
+  .ron-select-selection-item {
+    padding-left: 0.5rem;
+    padding-right: 1.5rem;
+  }
+}
+.ron-select--arrow-start {
+  .ron-select-arrow {
+    left: 0.375rem;
+  }
+  .ron-select-selection-placeholder,
+  .ron-select-selection-search-input,
+  .ron-select-selection-item {
+    padding-left: 1.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+// align
+.ron-select--right .ron-select-selection-placeholder,
+.ron-select--right .ron-select-selection-item,
+.ron-select__dropdown--right .ron-select-item {
+  text-align: right;
+}
+
+// DROPDOWN
+
+.ron-select-dropdown {
+  position: absolute;
+  min-height: auto;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  color: var(--ron-color-on-light);
+  background-color: var(--ron-color-light-surface-3);
+  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+
+  .rc-virtual-list-holder {
+    &::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 10px grey;
+      border-radius: 4px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgb(125, 125, 125);
+      border-radius: 4px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: rgb(135, 135, 135);
+    }
+  }
+
+  .ron-select-item-option-active {
+    background-color: var(--ron-color-primary-1);
+  }
+  .ron-select-item-option-selected {
+    background-color: var(--ron-color-light-disabled);
+  }
+  .ron-select-item,
+  .ron-select-item-empty {
+    padding: 0.125rem 0.375rem;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.5;
+    cursor: default;
+  }
+
+  &.ron-select__dropdown--transparent {
+    .ron-select-item,
+    .ron-select-item-empty {
+      padding: 0.125rem 0.25rem;
+    }
+  }
+
+  &.ron-select__dropdown--show-all .rc-virtual-list-holder {
+    max-height: none !important;
+  }
+
+  &:not(.ron-select-dropdown-hidden) {
+    z-index: 100;
+  }
+}
+
+.ron-select-dropdown-hidden {
+  display: none;
+}
+
+.ron-select-selection-item,
+.ron-select-selection-placeholder,
+.ron-select-item-option-content {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

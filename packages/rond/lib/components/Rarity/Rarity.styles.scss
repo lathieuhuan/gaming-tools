@@ -4,17 +4,17 @@
   align-items: center;
 }
 
-.ron-rarity-small {
+.ron-rarity--small {
   font-size: 1.125rem;
 }
-.ron-rarity-medium {
+.ron-rarity--medium {
   font-size: 1.625rem;
 }
-.ron-rarity-large {
+.ron-rarity--large {
   font-size: 1.875rem;
 }
 
-.ron-rarity-button {
+.ron-rarity__button {
   color: inherit;
 }
 
@@ -31,6 +31,6 @@
   color: #49e03e;
 }
 .ron-rarity-1,
-.ron-rarity-star-inactive {
+.ron-rarity__button--inactive {
   color: #808080;
 }

@@ -95,8 +95,8 @@ body {
   }
   .custom-scrollbar::-webkit-scrollbar {
     display: block;
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
   }
   .custom-scrollbar::-webkit-scrollbar-track {
     box-shadow: inset 0 0 6px grey;
@@ -109,4 +109,5 @@ body {
 
 .contains-inline-svg svg {
   display: inline;
+  flex-shrink: 0;
 }

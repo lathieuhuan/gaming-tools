@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
+import { RiArrowGoBackLine } from "react-icons/ri";
 import { useElementSize, Modal, EntitySelectTemplate, type EntitySelectTemplateProps } from "rond";
 
 import type { ArtifactType, CalcArtifact, UserArtifact } from "@Src/types";
@@ -34,6 +35,7 @@ const ArtifactInventoryCore = ({
   onClose,
 }: ArtifactInventoryProps) => {
   const [ref, { height }] = useElementSize<HTMLDivElement>();
+  const bodyRef = useRef<HTMLDivElement>(null);
 
   const [showingCurrent, setShowingCurrent] = useState(false);
   const [chosenArtifact, setChosenArtifact] = useState<UserArtifact>();
@@ -51,6 +53,21 @@ const ArtifactInventoryCore = ({
   const currentArtifact = chosenArtifact?.type
     ? currentArtifacts[ARTIFACT_TYPES.indexOf(chosenArtifact.type)]
     : undefined;
+
+  const onChangeItem = (artifact?: UserArtifact) => {
+    if (artifact) {
+      if (!chosenArtifact || artifact.ID !== chosenArtifact.ID) {
+        setChosenArtifact(artifact);
+      }
+      if (bodyRef.current) {
+        bodyRef.current.scrollLeft = 9999;
+      }
+      return;
+    }
+    setChosenArtifact(undefined);
+  };
+
+  const chosenIsCurrent = chosenArtifact && chosenArtifact.owner === owner;
 
   return (
     <EntitySelectTemplate
@@ -75,13 +92,13 @@ const ArtifactInventoryCore = ({
     >
       {({ isMultiSelect }) => {
         return (
-          <div className="h-full flex custom-scrollbar gap-2 scroll-smooth">
+          <div ref={bodyRef} className="h-full flex custom-scrollbar gap-2 scroll-smooth">
             <InventoryRack
               data={filteredArtifacts}
               itemCls="max-w-1/3 basis-1/3 md:w-1/4 md:basis-1/4 lg:max-w-1/6 lg:basis-1/6"
               emptyText="No artifacts found"
               chosenID={chosenArtifact?.ID}
-              onChangeItem={setChosenArtifact}
+              onChangeItem={onChangeItem}
             />
 
             <div className="h-full flex flex-col relative">
@@ -89,17 +106,26 @@ const ArtifactInventoryCore = ({
                 <ArtifactCard
                   wrapperCls="w-72 h-full"
                   artifact={chosenArtifact}
-                  withActions={chosenArtifact && chosenArtifact.owner !== owner}
+                  withActions={!!chosenArtifact}
                   actions={[
+                    {
+                      icon: <RiArrowGoBackLine className="text-lg" />,
+                      className: "sm:hidden",
+                      onClick: () => {
+                        if (bodyRef.current) bodyRef.current.scrollLeft = 0;
+                      },
+                    },
                     {
                       children: "Compare",
                       variant: showingCurrent ? "active" : "default",
+                      className: chosenIsCurrent && "hidden",
                       disabled: !currentArtifact,
                       onClick: () => setShowingCurrent(!showingCurrent),
                     },
                     {
                       children: buttonText,
                       variant: "primary",
+                      className: chosenIsCurrent && "hidden",
                       onClick: (_, artifact) => {
                         onClickButton(artifact, isMultiSelect);
                         if (!isMultiSelect) onClose();

@@ -1,20 +1,22 @@
-import type { AppCharacter } from "@Src/types";
+import type { AppCharacter, AppWeapon, TransformativeReaction } from "@Src/types";
 import { NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@Src/constants";
 
-type AttackPatternKey = {
-  main: "NAs" | "ES" | "EB";
+type TableCalcItemKey = {
+  main: "NAs" | "ES" | "EB" | "WP_CALC";
   subs: string[];
 };
 
-type ReactionKey = {
+type TableReactionKey = {
   main: "RXN";
-  subs: Array<(typeof TRANSFORMATIVE_REACTIONS)[number]>;
+  subs: TransformativeReaction[];
 };
 
-export type TableKey = AttackPatternKey | ReactionKey;
+export type TableKey = TableCalcItemKey | TableReactionKey;
 
-export function getTableKeys(appChar: AppCharacter): TableKey[] {
-  const NAs: AttackPatternKey = {
+export function getTableKeys(appChar?: AppCharacter, appWeapon?: AppWeapon): TableKey[] {
+  if (!appChar) return [];
+
+  const NAs: TableCalcItemKey = {
     main: "NAs",
     subs: [],
   };
@@ -35,6 +37,13 @@ export function getTableKeys(appChar: AppCharacter): TableKey[] {
     main: "RXN" as const,
     subs: [...TRANSFORMATIVE_REACTIONS],
   });
+
+  if (appWeapon?.calcItems) {
+    result.push({
+      main: "WP_CALC",
+      subs: appWeapon.calcItems.map((item) => item.name),
+    });
+  }
 
   return result;
 }

@@ -5,7 +5,7 @@ import { useSelector } from "@Store/hooks";
 
 interface ActionButtonProps {
   className?: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   label: string;
   disabled?: boolean;
   onClick?: () => void;
@@ -27,25 +27,19 @@ export function ActionButton({ className = "", icon, label, disabled, onClick }:
   );
 }
 
-interface NavTabsProps {
+export interface NavTabsProps {
   ready?: boolean;
   className?: string;
+  screens: Array<{
+    label: string;
+    value: AppScreen;
+  }>;
   activeClassName?: string;
   idleClassName?: string;
   onClickTab?: (tab: AppScreen) => void;
 }
-export function NavTabs({ ready, className = "", activeClassName, idleClassName, onClickTab }: NavTabsProps) {
+export function NavTabs({ ready, className = "", screens, activeClassName, idleClassName, onClickTab }: NavTabsProps) {
   const atScreen = useSelector((state) => state.ui.atScreen);
-  const screens: Array<{
-    label: string;
-    value: AppScreen;
-  }> = [
-    { label: "My Characters", value: "MY_CHARACTERS" },
-    { label: "My Weapons", value: "MY_WEAPONS" },
-    { label: "My Artifacts", value: "MY_ARTIFACTS" },
-    { label: "My Setups", value: "MY_SETUPS" },
-    { label: "Calculator", value: "CALCULATOR" },
-  ];
 
   return (
     <>
@@ -53,7 +47,7 @@ export function NavTabs({ ready, className = "", activeClassName, idleClassName,
         <button
           key={i}
           className={clsx(
-            "flex items-center",
+            "flex items-center whitespace-nowrap",
             screen.value === atScreen ? activeClassName : ready ? idleClassName : "text-hint-color",
             className
           )}

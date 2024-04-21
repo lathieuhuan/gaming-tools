@@ -48,6 +48,7 @@ export function EntitySelectTemplate({
 }: EntitySelectTemplateProps) {
   const screenWatcher = useScreenWatcher();
   const inputRef = useRef<HTMLInputElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const timeoutId = useRef<NodeJS.Timeout>();
 
   const [filterOn, setFilterOn] = useState(initialFilterOn);
@@ -58,7 +59,7 @@ export function EntitySelectTemplate({
 
   useEffect(() => {
     const focus = (e: KeyboardEvent) => {
-      if (hasSearch && e.key.length === 1 && document.activeElement !== inputRef.current) {
+      if (hasSearch && e.key.length === 1 && document.activeElement?.tagName !== "INPUT") {
         inputRef.current?.focus();
       }
     };
@@ -134,7 +135,7 @@ export function EntitySelectTemplate({
 
   return (
     <div className="ron-entity-select-template">
-      <CloseButton className="ron-modal-close-button" boneOnly onClick={onClose} />
+      <CloseButton className="ron-modal__close-button" boneOnly onClick={onClose} />
 
       <Modal.Header withDivider>
         <div className="ron-entity-select__header">
@@ -167,7 +168,7 @@ export function EntitySelectTemplate({
         </div>
       </Modal.Header>
 
-      <div className="ron-entity-select__body">
+      <div ref={bodyRef} className="ron-entity-select__body">
         {children({
           isMultiSelect,
           searchOn,
@@ -183,7 +184,8 @@ export function EntitySelectTemplate({
           style={{
             boxShadow: "0 0 1px #b8b8b8",
           }}
-          afterClose={() => toggleFilter(false)}
+          onClose={() => toggleFilter(false)}
+          getContainer={() => bodyRef.current}
         >
           {renderFilter?.(setFilterOn)}
         </Drawer>

@@ -5,7 +5,7 @@ import { message } from "rond";
 import type { CalcArtifacts, UserSetup, UserWeapon } from "@Src/types";
 import type { AppThunk } from "./store";
 import { ARTIFACT_TYPES, MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@Src/constants";
-import { $AppCharacter, $AppData } from "@Src/services";
+import { $AppCharacter, $AppData, $AppSettings } from "@Src/services";
 
 // Store
 import { initNewSession, type InitNewSessionPayload } from "./calculator-slice";
@@ -26,7 +26,7 @@ import {
   Artifact_,
   Item_,
 } from "@Src/utils";
-import { parseUserCharacter, CharacterForInit } from "./store.utils";
+import { parseUserCharacter, type CharacterForInit } from "./store.utils";
 
 type Option = {
   onSuccess?: () => void;
@@ -89,6 +89,7 @@ export function initNewSessionWithCharacter(character: CharacterForInit): AppThu
           customDebuffCtrls: [],
           customInfusion: { element: "phys" },
         },
+        target: Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
       })
     );
   };
@@ -114,7 +115,8 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
       return message.error(`You're having to many ${excessType}s. Please remove some of them first.`);
     }
 
-    const { weapon, artifacts } = calculator.setupsById[setupID];
+    const setup = calculator.setupsById[setupID];
+    const { weapon, artifacts } = setup;
     let seedID = Date.now();
     let weaponID = weapon.ID;
     const artifactIDs = artifacts.map((artifact) => artifact?.ID ?? null);
@@ -252,13 +254,13 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
         saveSetup({
           ID: setupID,
           name,
-          data: Setup_.cleanupCalcSetup(calculator, setupID, { weaponID, artifactIDs }),
+          data: Setup_.cleanupCalcSetup(setup, calculator.target, { weaponID, artifactIDs }),
         })
       );
       dispatch(
         updateUI({
           atScreen: "MY_SETUPS",
-          highManagerActive: false,
+          setupDirectorActive: false,
         })
       );
     });

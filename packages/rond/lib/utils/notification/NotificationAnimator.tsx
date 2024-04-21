@@ -16,7 +16,7 @@ export const NotificationAnimator = ({
 
   const onClose = () => {
     if (ref.current) {
-      ref.current.classList.remove("ron-notification-animator-mounted");
+      ref.current.classList.remove("ron-notification-animator--mounted");
     }
 
     noti.onClose?.(id);
@@ -29,7 +29,7 @@ export const NotificationAnimator = ({
 
     if (ref.current) {
       onMount?.(ref.current);
-      ref.current.classList.add("ron-notification-animator-mounted");
+      ref.current.classList.add("ron-notification-animator--mounted");
     }
 
     if (duration) {

@@ -1,11 +1,10 @@
-import { useState, type ButtonHTMLAttributes } from "react";
+import { useState } from "react";
 import { FaCopy, FaSave, FaBalanceScaleLeft, FaTrashAlt, FaShareAlt } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
-import { clsx, Modal, ConfirmModal } from "rond";
+import { clsx, ConfirmModal } from "rond";
 
-import type { CalcSetupManageInfo } from "@Src/types";
 import { MAX_CALC_SETUPS } from "@Src/constants";
-import { findById, Setup_ } from "@Src/utils";
+import { findById } from "@Src/utils";
 
 // Store
 import {
@@ -13,49 +12,26 @@ import {
   selectComparedIds,
   selectStandardId,
   selectSetupManageInfos,
-  selectTarget,
   duplicateCalcSetup,
   removeCalcSetup,
   updateCalculator,
 } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
+import { useCalcModalCtrl } from "../../CalculatorModalsProvider";
 
 // Component
-import { ComplexSelect, SetupExporter } from "@Src/components";
-import { SaveSetup } from "./SaveSetup";
+import { ComplexSelect } from "@Src/components";
 
 type ModalState = {
-  type: "SAVE_SETUP" | "REMOVE_SETUP" | "SHARE_SETUP" | "";
+  type: "REMOVE_SETUP" | "";
   setupIndex: number;
 };
 
-interface CalcSetupExporterProps extends CalcSetupManageInfo {
-  active: boolean;
-  onClose: () => void;
-}
-const CalcSetupExporter = ({ name, ID, ...rest }: CalcSetupExporterProps) => {
-  const calculator = useSelector((state) => state.calculator);
-  const target = useSelector(selectTarget);
-
-  return (
-    calculator.setupsById[ID] && (
-      <SetupExporter
-        setupName={name}
-        calcSetup={{
-          ...Setup_.cleanupCalcSetup(calculator, ID),
-          weapon: calculator.setupsById[ID].weapon,
-          artifacts: calculator.setupsById[ID].artifacts,
-        }}
-        target={target}
-        {...rest}
-      />
-    )
-  );
-};
+type ActionButtonAttrs = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function SetupSelect() {
   const dispatch = useDispatch();
-
+  const calcModalCtrl = useCalcModalCtrl();
   const activeId = useSelector(selectActiveId);
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const standardId = useSelector(selectStandardId);
@@ -78,7 +54,7 @@ export function SetupSelect() {
     }
   };
 
-  const onClickChooseStandard = (ID: number) => () => {
+  const onSelectStandard = (ID: number) => () => {
     if (ID !== standardId) {
       dispatch(updateCalculator({ standardId: ID }));
     }
@@ -106,7 +82,7 @@ export function SetupSelect() {
     dispatch(duplicateCalcSetup(ID));
   };
 
-  const renderActionButton = ({ className, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>, index?: number) => {
+  const renderActionButton = ({ className, ...rest }: ActionButtonAttrs, index?: number) => {
     return (
       <button
         key={index}
@@ -124,46 +100,12 @@ export function SetupSelect() {
       <ComplexSelect
         selectId="setup-select"
         value={findById(setupManageInfos, activeId)?.ID}
-        options={setupManageInfos.map(({ name, ID }, i) => {
+        options={setupManageInfos.map((setup, i) => {
           return {
-            label: name,
-            value: ID,
+            label: setup.name,
+            value: setup.ID,
             renderActions: ({ closeSelect }) => {
-              const actions: Array<ButtonHTMLAttributes<HTMLButtonElement>> = [
-                {
-                  className: ID === standardId ? "bg-bonus-color" : "bg-light-default",
-                  children: <SiTarget className="text-1.5xl" />,
-                  disabled: comparedIds.length < 2 || !comparedIds.includes(ID),
-                  onClick: onClickChooseStandard(ID),
-                },
-                {
-                  className: comparedIds.includes(ID) ? "bg-bonus-color" : "bg-light-default",
-                  children: <FaBalanceScaleLeft className="text-1.5xl" />,
-                  disabled: setupManageInfos.length < 2,
-                  onClick: onClickToggleCompared(ID),
-                },
-                {
-                  className: "hover:bg-primary-1" + (isAtMax ? " bg-light-disabled" : ""),
-                  children: <FaCopy />,
-                  disabled: isAtMax,
-                  onClick: onClickCopySetup(ID),
-                },
-                {
-                  className: "hover:bg-primary-1",
-                  children: <FaSave />,
-                  onClick: () => {
-                    openModal("SAVE_SETUP", i);
-                    closeSelect();
-                  },
-                },
-                {
-                  className: "hover:bg-primary-1",
-                  children: <FaShareAlt />,
-                  onClick: () => {
-                    openModal("SHARE_SETUP", i);
-                    closeSelect();
-                  },
-                },
+              const actions: ActionButtonAttrs[] = [
                 {
                   className: "hover:bg-danger-1 hover:text-light-default",
                   children: <FaTrashAlt />,
@@ -173,6 +115,40 @@ export function SetupSelect() {
                     closeSelect();
                   },
                 },
+                {
+                  className: "hover:bg-primary-1",
+                  children: <FaShareAlt />,
+                  onClick: () => {
+                    calcModalCtrl.requestShareSetup(setup.ID);
+                    closeSelect();
+                  },
+                },
+                {
+                  className: "hover:bg-primary-1",
+                  children: <FaSave />,
+                  onClick: () => {
+                    calcModalCtrl.requestSaveSetup(setup.ID);
+                    closeSelect();
+                  },
+                },
+                {
+                  className: "hover:bg-primary-1" + (isAtMax ? " bg-light-disabled" : ""),
+                  children: <FaCopy />,
+                  disabled: isAtMax,
+                  onClick: onClickCopySetup(setup.ID),
+                },
+                {
+                  className: setup.ID === standardId ? "bg-bonus-color" : "bg-light-default",
+                  children: <SiTarget className="text-1.5xl" />,
+                  disabled: comparedIds.length < 2 || !comparedIds.includes(setup.ID),
+                  onClick: onSelectStandard(setup.ID),
+                },
+                {
+                  className: comparedIds.includes(setup.ID) ? "bg-bonus-color" : "bg-light-default",
+                  children: <FaBalanceScaleLeft className="text-1.5xl" />,
+                  disabled: setupManageInfos.length < 2,
+                  onClick: onClickToggleCompared(setup.ID),
+                },
               ];
 
               return <div className="ml-auto flex justify-end">{actions.map(renderActionButton)}</div>;
@@ -180,22 +156,6 @@ export function SetupSelect() {
           };
         })}
         onChange={onClickSetupName}
-      />
-
-      <Modal
-        active={modal.type === "SAVE_SETUP"}
-        preset="small"
-        className="bg-surface-1"
-        title="Save setup"
-        onClose={closeModal}
-      >
-        <SaveSetup manageInfo={setupManageInfos[modal.setupIndex]} onClose={closeModal} />
-      </Modal>
-
-      <CalcSetupExporter
-        active={modal.type === "SHARE_SETUP"}
-        {...setupManageInfos[modal.setupIndex]}
-        onClose={closeModal}
       />
 
       <ConfirmModal

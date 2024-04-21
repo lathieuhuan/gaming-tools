@@ -59,7 +59,7 @@ export default {
       "bonus-color": "#62f98e",
       "active-color": "#89fba9", // variant of bonus-color
       "link-color": "#5ca8ff", // variant of #0075ff
-      "heading-color": "#fa8a12",
+      "heading-color": "#fc972a", // #fa8a12
       pyro: "#ff504a",
       hydro: "#2eaaff",
       dendro: "#49e03e",

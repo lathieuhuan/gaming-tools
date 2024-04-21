@@ -1,5 +1,4 @@
-import { FaChevronDown } from "react-icons/fa";
-import { clsx, Badge } from "rond";
+import { clsx, Badge, VersatileSelect } from "rond";
 
 import type { ArtifactSubStat, AttributeStat, CalcArtifact, UserArtifact } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
@@ -41,7 +40,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
         <p className="text-lg font-semibold text-black truncate">{appArtifact?.name}</p>
       </div>
 
-      <div className="mt-4 px-4 flex justify-between items-start">
+      <div className="mt-4 px-3 flex justify-between items-start">
         <ArtifactLevelSelect
           mutable={mutable}
           rarity={rarity}
@@ -54,10 +53,11 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
           <GenshinImage
             src={appArtifact?.icon}
             alt={appArtifact?.name}
-            className="p-4"
+            className="p-2"
             imgType="artifact"
             width={104}
             height={104}
+            fallbackCls="p-2"
           />
           <Badge active={appArtifact?.beta} className="absolute bottom-0 right-0">
             BETA
@@ -65,26 +65,19 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
         </div>
       </div>
 
-      <div className="mt-2 ml-6">
+      <div className="mt-2 ml-6 flex flex-col">
         {["flower", "plume"].includes(artifact.type) || !mutable ? (
           <p className={"py-1 text-lg " + (mutable ? "pl-6" : "pl-2")}>{t(mainStatType)}</p>
         ) : (
-          <div className="py-1 relative">
-            <FaChevronDown className="absolute top-1/2 -translate-y-1/2 left-0" />
-            <select
-              className="pl-6 text-lg text-light-default appearance-none relative z-10"
-              value={mainStatType}
-              onChange={(e) => onChangeMainStatType?.(e.target.value as AttributeStat, artifact)}
-            >
-              {possibleMainStatTypes.map((type) => {
-                return (
-                  <option key={type} value={type}>
-                    {t(type)}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
+          <VersatileSelect
+            title="Select Main-stat"
+            className="w-48 h-9 text-lg"
+            transparent
+            arrowAt="start"
+            options={possibleMainStatTypes.map((type) => ({ label: t(type), value: type }))}
+            value={mainStatType}
+            onChange={(value) => onChangeMainStatType?.(value as AttributeStat, artifact)}
+          />
         )}
         <p className={clsx(`text-rarity-${rarity} text-2xl leading-7 font-bold`, mutable ? "pl-6" : "pl-2")}>
           {mainStatValue}

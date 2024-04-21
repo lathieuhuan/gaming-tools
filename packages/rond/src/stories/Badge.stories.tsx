@@ -7,7 +7,9 @@ const meta = {
   parameters: {
     layout: "centered",
   },
-  argTypes: {},
+  argTypes: {
+    active: { control: "boolean" },
+  },
   tags: ["autodocs"],
 } satisfies Meta<typeof Badge>;
 
@@ -17,5 +19,6 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     children: "BETA",
+    active: true
   },
 };

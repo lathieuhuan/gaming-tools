@@ -18,7 +18,7 @@ export const NotificationCenter = (props: NotificationCenterProps) => {
         return (
           <div
             key={id}
-            className="ron-notification-center-item"
+            className="ron-notification-item"
             style={{
               top: 16 * (i + 1) + extraDistance,
             }}

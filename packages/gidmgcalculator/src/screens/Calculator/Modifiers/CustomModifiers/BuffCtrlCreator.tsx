@@ -1,6 +1,5 @@
 import { useState, useRef, FormEvent } from "react";
-import { FaChevronDown } from "react-icons/fa";
-import { clsx, InputNumber } from "rond";
+import { clsx, InputNumber, VersatileSelect } from "rond";
 
 import type { CustomBuffCtrl, CustomBuffCtrlType } from "@Src/types";
 import {
@@ -106,32 +105,45 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
     onDone();
   };
 
+  const widthByCategory: Record<CustomBuffCategory, string> = {
+    totalAttr: "11rem",
+    attElmtBonus: "5.5rem",
+    attPattBonus: "9rem",
+    rxnBonus: "9.5rem",
+  };
+
   const categorySelect = (
-    <div className="flex items-center relative">
-      <FaChevronDown className="absolute -z-10" />
-      <select
-        className="pl-6 pr-2 text-light-default appearance-none capitalize"
-        value={config.type}
-        onChange={(e) => onChangeType(e.target.value)}
-      >
-        {CATEGORIES[config.category].types.map((option) => (
-          <option key={option} className="pr-2" value={option}>
-            {toCustomBuffLabel(config.category, option, t)}
-          </option>
-        ))}
-      </select>
-    </div>
+    <VersatileSelect
+      title="Select"
+      className="h-8 capitalize"
+      style={{ width: widthByCategory[config.category] }}
+      arrowAt="start"
+      transparent
+      dropdownCls="z-50"
+      options={CATEGORIES[config.category].types.map((option) => {
+        return {
+          label: toCustomBuffLabel(config.category, option, t),
+          value: option,
+          className: "capitalize",
+        };
+      })}
+      value={config.type}
+      onChange={(value) => onChangeType(value as string)}
+    />
   );
 
   const valueInput = (
     <div className="flex items-center">
       <InputNumber
         ref={inputRef}
-        className="w-16 px-2 py-1 text-lg text-right font-semibold"
+        className="w-16 font-semibold"
+        size="medium"
         autoFocus
-        value={config.value}
         min={sign ? -99 : -9999}
         max={sign ? 999 : 99_999}
+        maxDecimalDigits={1}
+        step="0.1"
+        value={config.value}
         onChange={(value) => {
           setConfig((prev) => ({ ...prev, value }));
         }}
@@ -182,20 +194,17 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
               {["melt", "vaporize"].includes(config.type) ? (
                 <span className="px-2">{t("pct_")}</span>
               ) : (
-                <div className="flex items-center relative">
-                  <FaChevronDown className="absolute -z-10" />
-                  <select
-                    className="pl-6 pr-2 text-light-default appearance-none"
-                    value={config.subType}
-                    onChange={(e) => onChangeSubType(e.target.value)}
-                  >
-                    {subTypes.map((subType, i) => (
-                      <option key={i} value={subType}>
-                        {t(subType)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <VersatileSelect
+                  title="Select"
+                  className="h-8"
+                  style={{ width: "8.5rem" }}
+                  arrowAt="start"
+                  transparent
+                  dropdownCls="z-50"
+                  options={subTypes.map((subType) => ({ label: t(subType), value: subType }))}
+                  value={config.subType}
+                  onChange={(value) => onChangeSubType(value as string)}
+                />
               )}
 
               {valueInput}

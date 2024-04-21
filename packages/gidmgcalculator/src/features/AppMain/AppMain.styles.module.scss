@@ -1,0 +1,26 @@
+.calculator-container {
+  height: 100%;
+}
+.calculator {
+  scroll-snap-type: x mandatory;
+}
+.card {
+  width: 100%;
+  scroll-snap-align: center;
+  flex-shrink: 0;
+}
+
+@media (min-width: 480px) {
+  .calculator-container {
+    height: calc(100vh - 3rem);
+  }
+  .calculator {
+    scroll-snap-type: none;
+  }
+  .card {
+    min-width: 22rem;
+    max-width: 22rem;
+    border-radius: 0.625rem;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2), 0 3px 10px rgba(0, 0, 0, 0.2);
+  }
+}

@@ -18,6 +18,7 @@ import type {
   ReactionBonus,
   CalculationFinalResult,
   Target,
+  CalcCharacter,
 } from "@Src/types";
 
 export type CalculatorState = {
@@ -50,6 +51,12 @@ export type ImportSetupAction = PayloadAction<{
   shouldOverwriteChar: boolean;
   shouldOverwriteTarget: boolean;
 }>;
+
+export type UpdateCharacterAction = PayloadAction<
+  Partial<CalcCharacter> & {
+    setupIds?: number | number[];
+  }
+>;
 
 export type AddTeammateAction = PayloadAction<{
   name: string;

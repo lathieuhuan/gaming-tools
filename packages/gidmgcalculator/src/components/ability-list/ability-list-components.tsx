@@ -10,11 +10,11 @@ const ABILITY_ICON_SIZE = "3.25rem";
 interface AbilityImgProps {
   className?: string;
   img?: string;
-  elementType: ElementType;
+  vision: ElementType;
   active?: boolean;
   onClick?: () => void;
 }
-export function AbilityIcon({ className, img, elementType, active = true, onClick }: AbilityImgProps) {
+export function AbilityIcon({ className, img, vision, active = true, onClick }: AbilityImgProps) {
   return (
     <button
       className={clsx("transition-opacity duration-150 ease-in-out", !active && "opacity-50", className)}
@@ -24,7 +24,7 @@ export function AbilityIcon({ className, img, elementType, active = true, onClic
         src={img}
         width={ABILITY_ICON_SIZE}
         height={ABILITY_ICON_SIZE}
-        fallbackCls={`p-3 rounded-circle bg-${elementType} ${styles[elementType]}`}
+        fallbackCls={`p-3 rounded-circle bg-${vision} ${styles[vision]}`}
       />
     </button>
   );
@@ -34,7 +34,7 @@ interface AbilityCarouselProps {
   className?: string;
   currentIndex: number;
   images: (string | undefined)[];
-  elementType: ElementType;
+  vision: ElementType;
   label?: React.ReactNode;
   onClickBack: () => void;
   onClickNext: () => void;
@@ -43,7 +43,7 @@ export function AbilityCarousel({
   className = "",
   currentIndex,
   images,
-  elementType,
+  vision,
   label,
   onClickBack,
   onClickNext,
@@ -81,7 +81,7 @@ export function AbilityCarousel({
             style={{ transform: `translateX(calc(-${currentIndex} * ${ABILITY_ICON_SIZE}))` }}
           >
             {images.map((img, i) => (
-              <AbilityIcon key={i} img={img} elementType={elementType} />
+              <AbilityIcon key={i} img={img} vision={vision} />
             ))}
           </div>
         </div>

@@ -10,7 +10,7 @@ interface DefaultImageFallbackProps {
 
 export function DefaultImageFallback(props: DefaultImageFallbackProps) {
   return (
-    <div className={clsx("ron-image-default-fallback ron-flex-center", props.cls)} style={props?.style}>
+    <div className={clsx("ron-image__fallback ron-flex-center", props.cls)} style={props?.style}>
       <svg
         stroke="currentColor"
         fill="currentColor"

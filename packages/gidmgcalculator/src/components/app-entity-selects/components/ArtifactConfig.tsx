@@ -2,7 +2,7 @@ import { Rarity } from "rond";
 
 import type { Artifact } from "@Src/types";
 import { deepCopy } from "@Src/utils";
-import { ArtifactCard, ArtifactCardAction } from "../../ArtifactCard";
+import { ArtifactCard, type ArtifactCardAction } from "../../ArtifactCard";
 
 interface ArtifactConfigProps {
   config?: Artifact;
@@ -31,7 +31,7 @@ export function ArtifactConfig({
   };
 
   return (
-    <div className="h-full flex flex-col custom-scrollbar space-y-4">
+    <div className="h-full flex flex-col custom-scrollbar space-y-3">
       {config ? (
         <div className="px-2 space-y-4">
           <div className="flex items-start justify-between">
@@ -53,7 +53,7 @@ export function ArtifactConfig({
         </div>
       ) : null}
 
-      <div className="grow hide-scrollbar" style={{ width: "19rem" }}>
+      <div className="grow w-76 hide-scrollbar">
         {batchConfigNode ?? (
           <ArtifactCard
             wrapperCls="h-full"

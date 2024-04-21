@@ -32,6 +32,8 @@ export type NormalAttack = (typeof NORMAL_ATTACKS)[number];
 
 export type Talent = (typeof TALENT_TYPES)[number];
 
+export type LevelableTalent = Exclude<Talent, "altSprint">;
+
 export type AttackElement = (typeof ATTACK_ELEMENTS)[number];
 
 export type AttackPattern = (typeof ATTACK_PATTERNS)[number];

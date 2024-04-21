@@ -9,6 +9,7 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
+    size: { control: "select", options: ["small", "medium"] },
     min: { control: "number" },
     max: { control: "number" },
     maxDecimalDigits: { control: "number" },
@@ -21,6 +22,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
+    size: "small",
     min: 0,
     max: 9999,
     maxDecimalDigits: 0,

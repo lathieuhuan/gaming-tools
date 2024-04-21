@@ -10,11 +10,11 @@ export interface ConfirmModalBodyProps extends Omit<ModalActionsProps, "classNam
 const ConfirmModalBody = ({ message, ...actionsProps }: ConfirmModalBodyProps) => {
   const contentRef = useRef(
     <>
-      <p className="ron-modal-confirm-message">{message}</p>
+      <p className="ron-confirm-modal__content">{message}</p>
       <Modal.Actions justify="center" {...actionsProps} />
     </>
   );
-  return <div className="ron-modal-confirm-body">{contentRef.current}</div>;
+  return <div className="ron-confirm-modal__body">{contentRef.current}</div>;
 };
 
 const ConfirmModal = ({

@@ -1,8 +1,8 @@
+import { FaBars, FaCog } from "react-icons/fa";
 import { CollapseList, type ModalControl, Modal } from "rond";
-import { Yellow } from "@Src/components";
+
+import { Red, Yellow } from "@Src/components";
 import { CalculatorGuide } from "./CalculatorGuide";
-import { SettingsGuide } from "./SettingsGuide";
-import { UserDataGuide } from "./UserDataGuide";
 
 export function Guides(props: ModalControl) {
   return (
@@ -56,11 +56,67 @@ export function Guides(props: ModalControl) {
             },
             {
               heading: "User Data",
-              body: <UserDataGuide />,
+              body: (
+                <div className="space-y-1 contains-inline-svg">
+                  <p>
+                    - You can add and manage your characters and items in <Yellow>My Characters</Yellow>,{" "}
+                    <Yellow>My Weapons</Yellow>, <Yellow>My Artifacts</Yellow>.
+                  </p>
+                  <p>
+                    - You can save setups from the Calculator and view them in <Yellow>My Setups</Yellow>.
+                  </p>
+                  <p className="text-danger-3">
+                    - Your data saved in the App is just temporary. If you wish it to be available in your next visit,
+                    you need to download your data and then upload it to the App again.
+                  </p>
+                  <p>
+                    - Or you can turn on "Auto save my database to browser's local storage" option in <FaCog />{" "}
+                    Settings.
+                  </p>
+                  <p>
+                    - Open the <FaBars /> menu at the top right corner to <Yellow>download</Yellow> and{" "}
+                    <Yellow>upload</Yellow> your data.
+                  </p>
+                  <p>
+                    - Your saved data is <Red>limited</Red>. When creating new Setup in the Calculator, you should pick
+                    items that you already have if possible to reuse them and save space.
+                  </p>
+                </div>
+              ),
             },
             {
               heading: "Settings",
-              body: <SettingsGuide />,
+              body: (
+                <div className="space-y-1 contains-inline-svg">
+                  <p>
+                    - The App settings can be change via <FaCog /> Settings on the <FaBars /> Menu. These settings are
+                    saved in the browser's local storage.
+                  </p>
+                  <p>
+                    - Be careful when the Calculator is under the effect of{" "}
+                    <Yellow>Separate main character's info on each setup</Yellow> (level, constellation, talents) on
+                    each setup. It can make things complicated.
+                  </p>
+                  <p>
+                    - When the "Separate main character's info on each setup" option is deactivated. Info on the current
+                    setup will be used for others. This setting will be reset to NOT activated at the start of every
+                    calculating session (e.g. when select new main character).
+                  </p>
+                  <p>
+                    - <Yellow>Auto save my database to browser's local storage</Yellow> will help you store your data
+                    for the next visits. It takes less than 500KB to store 200 weapons & 800 artifacts. Those are
+                    current limits of the user database.
+                  </p>
+                  <p className="text-danger-3">
+                    - Change of "Auto save my database to browser's local storage" option can remove your current data
+                    and works on the App.
+                  </p>
+                  <p>
+                    - <Yellow>Default values</Yellow> will be used whenever a new character or item is created in your
+                    data or in the Calculator tab.
+                  </p>
+                </div>
+              ),
             },
           ]}
         />

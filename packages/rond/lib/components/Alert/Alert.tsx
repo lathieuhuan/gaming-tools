@@ -26,10 +26,10 @@ export const Alert = (props: AlertProps) => {
 
   return (
     <div className={clsx("ron-alert", props.className)} style={props.style}>
-      <span className={`ron-alert-icon ron-alert-icon-${props.type}`}>{renderIcon()}</span>
-      <p className="font-alert-content">{props.content}</p>
+      <span className={`ron-alert__icon ron-alert__icon--${props.type}`}>{renderIcon()}</span>
+      <p className="font-alert__content">{props.content}</p>
       <Button
-        className="ron-alert-close"
+        className="font-alert__close"
         variant="custom"
         withShadow={false}
         icon={<TimesSvg />}

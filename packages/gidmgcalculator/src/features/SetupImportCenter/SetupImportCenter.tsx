@@ -88,11 +88,11 @@ function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImport
     dispatch(
       updateUI({
         atScreen: "CALCULATOR",
-        highManagerActive: false,
+        setupDirectorActive: false,
       })
     );
     endImport();
-    dispatch(updateUI({ highManagerActive: false }));
+    dispatch(updateUI({ setupDirectorActive: false }));
   };
 
   const startNewSession = () => {
@@ -110,7 +110,7 @@ function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImport
             dispatch(
               updateUI({
                 atScreen: "CALCULATOR",
-                highManagerActive: false,
+                setupDirectorActive: false,
               })
             );
 
@@ -127,8 +127,7 @@ function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImport
   };
 
   const resetExistingSetup = () => {
-    //
-    dispatch(updateUI({ highManagerActive: false }));
+    dispatch(updateUI({ setupDirectorActive: false }));
   };
 
   switch (pendingCode) {

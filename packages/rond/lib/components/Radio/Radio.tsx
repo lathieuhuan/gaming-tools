@@ -10,11 +10,11 @@ export function Radio({ size = "small", checked, onChange }: RadioProps) {
     <span className="ron-radio">
       <input
         type="radio"
-        className="ron-radio-input"
+        className="ron-radio__input"
         checked={checked}
         onChange={(e) => onChange?.(e.target.checked)}
       />
-      <span className={`ron-radio-visual ron-radio-visual-${size}`} />
+      <span className={`ron-radio__visual ron-radio__visual--${size}`} />
     </span>
   );
 }

@@ -1,19 +1,27 @@
 import { useState } from "react";
-import { FaCaretDown } from "react-icons/fa";
+import { FaChevronDown } from "react-icons/fa";
 import { clsx, useClickOutside } from "rond";
 
 interface ComplexSelectProps {
+  className?: string;
   selectId: string;
   value?: string | number;
   options?: Array<{
-    label: string;
-    value?: string | number;
+    label: React.ReactNode;
+    value: string | number;
     renderActions?: (args: { closeSelect: () => void }) => JSX.Element;
   }>;
   onChange?: (value: string | number) => void;
   onToggleDropdown?: (shouldDrop: boolean) => void;
 }
-export function ComplexSelect({ selectId, value, options = [], onChange, onToggleDropdown }: ComplexSelectProps) {
+export function ComplexSelect({
+  className,
+  selectId,
+  value,
+  options = [],
+  onChange,
+  onToggleDropdown,
+}: ComplexSelectProps) {
   const [isDropped, setIsDropped] = useState(false);
 
   const toggleDropdown = (newIsDropped: boolean) => {
@@ -51,14 +59,14 @@ export function ComplexSelect({ selectId, value, options = [], onChange, onToggl
   };
 
   return (
-    <div ref={ref} className="shrink-0 relative">
+    <div ref={ref} className={clsx("shrink-0 relative", className)}>
       <button
         id={`complex-select-${selectId}_select`}
-        className="w-full py-0.5 bg-heading-color text-black rounded-t-2.5xl rounded-b-2.5xl relative cursor-default"
+        className="w-full px-8 py-0.5 bg-heading-color text-black rounded-t-2.5xl rounded-b-2.5xl relative cursor-default"
         onClick={() => toggleDropdown(!isDropped)}
       >
-        <span className="w-full text-lg font-bold text-center relative z-10">{label}</span>
-        <FaCaretDown className="absolute top-1/2 right-4 text-2xl -translate-y-1/2" />
+        <div className="w-full truncate text-lg font-bold text-center relative z-10">{label}</div>
+        <FaChevronDown className="absolute top-1/2 right-4 -translate-y-1/2" />
       </button>
 
       <div
@@ -75,8 +83,8 @@ export function ComplexSelect({ selectId, value, options = [], onChange, onToggl
             <div key={i} className="group">
               <div className="group-hover:bg-surface-3 group-hover:text-light-default">
                 <button
-                  className="px-3 py-1 w-full text-lg text-left font-bold truncate cursor-default hover:bg-surface-1"
-                  onClick={onClickOption(option.value || option.label)}
+                  className="px-2 py-1 w-full text-lg text-left font-bold truncate cursor-default hover:bg-surface-1"
+                  onClick={onClickOption(option.value)}
                 >
                   {option.label}
                 </button>

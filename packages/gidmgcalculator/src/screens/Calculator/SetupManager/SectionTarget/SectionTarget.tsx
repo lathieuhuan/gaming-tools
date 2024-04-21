@@ -1,5 +1,5 @@
-import { FaChevronDown, FaEdit, FaMinus } from "react-icons/fa";
-import { Button, InputNumber } from "rond";
+import { FaEdit, FaMinus } from "react-icons/fa";
+import { Button, InputNumber, VersatileSelect } from "rond";
 
 import { $AppData } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -26,14 +26,15 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
 
       <div className="mt-2 pr-6 flex flex-col items-start">
         {names ? (
-          <div className="flex items-center relative">
-            <FaChevronDown className="absolute top-1/2 left-1 -translate-y-1/2 text-sm" />
-            <select className="pl-6 pr-2 py-1 leading-none relative z-10 appearance-none text-lg">
-              {names.map((name, i) => {
-                return <option key={i}>{name}</option>;
-              })}
-            </select>
-          </div>
+          <VersatileSelect
+            key={target.code}
+            title="Select Target"
+            className="w-52"
+            transparent
+            arrowAt="start"
+            options={names.map((name) => ({ label: name, value: name }))}
+            defaultValue={names?.[0]}
+          />
         ) : (
           <p className="text-lg">{title}</p>
         )}
@@ -48,10 +49,10 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
           </ul>
         ) : null}
 
-        <label className="mt-3 flex items-center">
+        <label className="mt-3 flex items-center gap-4">
           <span>Level</span>
           <InputNumber
-            className="ml-4 w-14 px-2 py-1 leading-none text-right font-semibold"
+            className="w-14 font-semibold"
             value={target.level}
             max={100}
             onChange={(value) => dispatch(updateTarget({ level: value }))}

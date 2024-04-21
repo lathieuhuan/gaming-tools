@@ -1,29 +1,29 @@
 .ron-item-case {
   --active-color: #fff;
 
-  .ron-item-case-content .ron-item-case-img {
+  .ron-item-case__content .ron-item-case__img {
     transition: transform 150ms ease-in-out;
   }
 
   &:hover {
-    .ron-item-case-content {
+    .ron-item-case__content {
       box-shadow: 0 0 0 2.5px var(--active-color);
     }
 
-    &:not(.ron-item-case-clicked) .ron-item-case-content {
-      .ron-item-case-img {
+    &:not(.ron-item-case--clicked) .ron-item-case__content {
+      .ron-item-case__img {
         transform: scale(1.12);
       }
     }
   }
 
-  &:hover:not(.ron-item-case-clicked),
-  &.ron-item-case-chosen:not(.ron-item-case-clicked) {
+  &:hover:not(.ron-item-case--clicked),
+  &.ron-item-case--chosen:not(.ron-item-case--clicked) {
     transform: scale(1.02);
   }
 
-  &.ron-item-case-chosen {
-    .ron-item-case-content {
+  &.ron-item-case--chosen {
+    .ron-item-case__content {
       -webkit-animation: glow 0.5s ease-in-out infinite alternate;
       -moz-animation: glow 0.5s ease-in-out infinite alternate;
       animation: glow 0.5s ease-in-out infinite alternate;

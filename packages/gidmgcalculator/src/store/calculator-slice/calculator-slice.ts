@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { PartiallyOptional } from "rond";
-import type { AttackElement, CalcSetupManageInfo, CalcWeapon, Character, Resonance, Target } from "@Src/types";
+import type { AttackElement, CalcSetupManageInfo, CalcWeapon, Resonance, Target } from "@Src/types";
 import type {
   CalculatorState,
   AddTeammateAction,
@@ -21,6 +21,7 @@ import type {
   UpdateTeammateArtifactAction,
   ApplySettingsAction,
   InitNewSessionPayload,
+  UpdateCharacterAction,
 } from "./calculator-slice.types";
 
 import { ATTACK_ELEMENTS, RESONANCE_ELEMENT_TYPES } from "@Src/constants";
@@ -98,10 +99,7 @@ export const calculatorSlice = createSlice({
     updateCalcSetup: (state, action: UpdateCalcSetupAction) => {
       const { setupId = state.activeId, ...newInfo } = action.payload;
 
-      state.setupsById[setupId] = {
-        ...state.setupsById[setupId],
-        ...newInfo,
-      };
+      Object.assign(state.setupsById[setupId], newInfo);
       calculate(state, setupId !== state.activeId);
     },
     duplicateCalcSetup: (state, action: PayloadAction<number>) => {
@@ -155,29 +153,25 @@ export const calculatorSlice = createSlice({
       }
     },
     // CHARACTER
-    updateCharacter: (state, action: PayloadAction<Partial<Character>>) => {
-      const { setupsById, target } = state;
+    updateCharacter: (state, action: UpdateCharacterAction) => {
+      const { setupsById } = state;
       const { charInfoIsSeparated } = $AppSettings.get();
-      const { level } = action.payload;
+      const { setupIds, ...newConfig } = action.payload;
 
-      if (level && target.level === 1) {
-        target.level = Calculation_.getBareLv(level);
-      }
       if (charInfoIsSeparated) {
-        const currentSetup = setupsById[state.activeId];
-        currentSetup.char = {
-          ...currentSetup.char,
-          ...action.payload,
-        };
+        if (setupIds) {
+          for (const setupId of toArray(setupIds)) {
+            Object.assign(setupsById[setupId].char, newConfig);
+          }
+        } else {
+          Object.assign(setupsById[state.activeId].char, newConfig);
+        }
       } else {
         for (const setup of Object.values(setupsById)) {
-          setup.char = {
-            ...setup.char,
-            ...action.payload,
-          };
+          Object.assign(setup.char, newConfig);
         }
       }
-      calculate(state, !charInfoIsSeparated);
+      calculate(state, !charInfoIsSeparated || !!setupIds);
     },
     // PARTY
     addTeammate: (state, action: AddTeammateAction) => {
@@ -233,13 +227,13 @@ export const calculatorSlice = createSlice({
       const teammate = party[teammateIndex];
 
       if (teammate) {
-        const { vision: elementType } = $AppCharacter.get(teammate.name);
+        const { vision } = $AppCharacter.get(teammate.name);
         party[teammateIndex] = null;
         const newElmtCount = Calculation_.countElements($AppCharacter.getPartyData(party), appChar);
 
-        if (newElmtCount[elementType] === 1) {
+        if (newElmtCount[vision] === 1) {
           elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
-            return resonance.vision !== elementType;
+            return resonance.vision !== vision;
           });
         }
         calculate(state);
@@ -250,10 +244,8 @@ export const calculatorSlice = createSlice({
       const teammate = state.setupsById[state.activeId].party[teammateIndex];
 
       if (teammate) {
-        teammate.weapon = {
-          ...teammate.weapon,
-          ...newWeaponInfo,
-        };
+        Object.assign(teammate.weapon, newWeaponInfo);
+
         if (newWeaponInfo.code) {
           teammate.weapon.buffCtrls = Modifier_.createWeaponBuffCtrls(false, teammate.weapon);
         }
@@ -267,10 +259,8 @@ export const calculatorSlice = createSlice({
       if (teammate) {
         const prevArtifactCode = teammate.artifact.code;
 
-        teammate.artifact = {
-          ...teammate.artifact,
-          ...newArtifactInfo,
-        };
+        Object.assign(teammate.artifact, newArtifactInfo);
+
         if (newArtifactInfo.code) {
           if (newArtifactInfo.code === -1) {
             const debuffArtifactCodes = $AppData.getAllArtifacts().reduce<number[]>((accumulator, artifact) => {
@@ -327,10 +317,8 @@ export const calculatorSlice = createSlice({
     },
     updateWeapon: (state, action: PayloadAction<Partial<CalcWeapon>>) => {
       const currentSetup = state.setupsById[state.activeId];
-      currentSetup.weapon = {
-        ...currentSetup.weapon,
-        ...action.payload,
-      };
+
+      Object.assign(currentSetup.weapon, action.payload);
       calculate(state);
     },
     // ARTIFACTS
@@ -369,11 +357,7 @@ export const calculatorSlice = createSlice({
         piece.mainStatType = mainStatType ?? piece.mainStatType;
 
         if (subStat) {
-          const { index, newInfo } = subStat;
-          piece.subStats[index] = {
-            ...piece.subStats[index],
-            ...newInfo,
-          };
+          Object.assign(piece.subStats[subStat.index], subStat.newInfo);
         }
       }
       calculate(state);
@@ -382,19 +366,17 @@ export const calculatorSlice = createSlice({
     updateResonance: (state, action: PayloadAction<PartiallyOptional<Resonance, "activated">>) => {
       const { vision, ...newInfo } = action.payload;
       const { resonances } = state.setupsById[state.activeId].elmtModCtrls;
-      const targetIndex = resonances.findIndex((resonance) => resonance.vision === vision);
+      const resonance = resonances.find((resonance) => resonance.vision === vision);
 
-      if (targetIndex >= 0) {
-        resonances[targetIndex] = {
-          ...resonances[targetIndex],
-          ...newInfo,
-        };
+      if (resonance) {
+        Object.assign(resonance, newInfo);
         calculate(state);
       }
     },
     toggleModCtrl: (state, action: ToggleModCtrlAction) => {
       const { modCtrlName, ctrlIndex } = action.payload;
-      const ctrl = findByIndex(state.setupsById[state.activeId][modCtrlName], ctrlIndex);
+      const ctrls = state.setupsById[state.activeId][modCtrlName];
+      const ctrl = modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : findByIndex(ctrls, ctrlIndex);
 
       if (ctrl) {
         ctrl.activated = !ctrl.activated;
@@ -403,7 +385,8 @@ export const calculatorSlice = createSlice({
     },
     changeModCtrlInput: (state, action: ChangeModCtrlInputAction) => {
       const { modCtrlName, ctrlIndex, inputIndex, value } = action.payload;
-      const ctrl = findByIndex(state.setupsById[state.activeId][modCtrlName], ctrlIndex);
+      const ctrls = state.setupsById[state.activeId][modCtrlName];
+      const ctrl = modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : findByIndex(ctrls, ctrlIndex);
 
       if (ctrl?.inputs) {
         ctrl.inputs[inputIndex] = value;
@@ -421,10 +404,7 @@ export const calculatorSlice = createSlice({
           break;
         case "EDIT":
           for (const { index, ...newInfo } of toArray(ctrls)) {
-            activeSetup.customBuffCtrls[index] = {
-              ...activeSetup.customBuffCtrls[index],
-              ...newInfo,
-            };
+            Object.assign(activeSetup.customBuffCtrls[index], newInfo);
           }
           break;
         case "REPLACE":
@@ -443,10 +423,7 @@ export const calculatorSlice = createSlice({
           break;
         case "EDIT":
           for (const { index, ...newInfo } of toArray(ctrls)) {
-            activeSetup.customDebuffCtrls[index] = {
-              ...activeSetup.customDebuffCtrls[index],
-              ...newInfo,
-            };
+            Object.assign(activeSetup.customDebuffCtrls[index], newInfo);
           }
           break;
         case "REPLACE":
@@ -464,10 +441,7 @@ export const calculatorSlice = createSlice({
     },
     // TARGET
     updateTarget: (state, action: PayloadAction<Partial<Target>>) => {
-      state.target = {
-        ...state.target,
-        ...action.payload,
-      };
+      Object.assign(state.target, action.payload);
 
       const { target } = state;
       const { variantType, inputs = [] } = target;
