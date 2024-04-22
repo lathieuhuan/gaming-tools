@@ -48,12 +48,13 @@ export const getCalculationStats = ({
   const setBonuses = Calculation_.getArtifactSetBonuses(artifacts);
 
   const totalAttr = initiateTotalAttr({ char, appChar, weapon, appWeapon, tracker });
-  const { attPattBonus, attElmtBonus, rxnBonus, calcItemBuffs } = initiateBonuses();
+  const { attPattBonus, attElmtBonus, rxnBonus, calcItemBuffs, charStatus } = initiateBonuses();
 
   const infoWrap: BuffInfoWrap = {
     char,
     appChar,
     partyData,
+    charStatus,
     totalAttr,
     attPattBonus,
     attElmtBonus,
@@ -388,6 +389,7 @@ export const getCalculationStats = ({
   }
 
   return {
+    charStatus,
     totalAttr,
     attPattBonus,
     attElmtBonus,

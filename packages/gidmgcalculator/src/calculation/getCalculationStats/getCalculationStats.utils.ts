@@ -10,6 +10,7 @@ import type {
   CalcItemBuff,
   CalcWeapon,
   Character,
+  CharacterStatus,
   CoreStat,
   ReactionBonus,
   ReactionBonusInfo,
@@ -136,7 +137,12 @@ export const initiateBonuses = () => {
 
   const calcItemBuffs: CalcItemBuff[] = [];
 
+  const charStatus: CharacterStatus = {
+    BOL: 0,
+  };
+
   return {
+    charStatus,
     attPattBonus,
     attElmtBonus,
     rxnBonus,
@@ -185,7 +191,8 @@ type Stack = {
 };
 export const isFinalBonus = (bonusStacks?: Stack | Stack[]) => {
   if (bonusStacks) {
-    const isFinal = (stack: Stack) => stack.type === "ATTRIBUTE" && stack.field !== "base_atk";
+    const isFinal = (stack: Stack) =>
+      (stack.type === "ATTRIBUTE" && stack.field !== "base_atk") || stack.type === "BOL";
     return Array.isArray(bonusStacks) ? bonusStacks.some(isFinal) : isFinal(bonusStacks);
   }
   return false;

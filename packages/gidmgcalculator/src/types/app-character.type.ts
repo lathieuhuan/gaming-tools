@@ -210,7 +210,18 @@ type ResolveStack = {
   type: "RESOLVE";
 };
 
-export type CharacterBonusStack = (InputStack | AttributeStack | NationStack | EnergyStack | ResolveStack) & {
+type BondOfLifeStack = {
+  type: "BOL";
+};
+
+export type CharacterBonusStack = (
+  | InputStack
+  | AttributeStack
+  | NationStack
+  | EnergyStack
+  | ResolveStack
+  | BondOfLifeStack
+) & {
   /** Final stack = stack - required base */
   baseline?: number;
   /** On Furina */
@@ -287,6 +298,8 @@ export type CharacterBonus = CharacterBonusConfig & {
     INP_ELMT?: number; // On Dendro Traveler, Kazuha, Sucrose
     /** On Candace */
     ELM_NA?: 1;
+    /** Bond of Life */
+    C_STATUS?: "BOL";
   };
 };
 

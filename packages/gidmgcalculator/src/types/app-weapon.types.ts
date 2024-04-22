@@ -83,6 +83,8 @@ export type WeaponBonus = {
     ATTR?: "own_elmt" | AttributeStat | AttributeStat[];
     /** attPattBonus */
     PATT?: AttackPatternPath | AttackPatternPath[];
+    /** characterStatus */
+    C_STATUS?: "BOL";
   };
   max?:
     | number
@@ -97,14 +99,16 @@ export type WeaponBonus = {
    */
   checkInput?:
     | number
-    // Only on Ballad of the Fjords
+    // On Ballad of the Fjords, Crimson Moon's Semblance
     | {
         value: number;
         /**
-         * When number, it's the input's index. [various_vision] only on Ballad of the Fjords.
+         * When number, it's the input's index.
+         * [various_vision] only on Ballad of the Fjords.
+         * [BOL] only on Crimson Moon's Semblance.
          * Default to 0.
          */
-        source?: number | "various_vision";
+        source?: number | "various_vision" | "BOL";
         /** Default to [equal] */
         type?: "equal" | "min" | "max";
       };

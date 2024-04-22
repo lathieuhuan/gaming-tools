@@ -108,6 +108,7 @@ const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Tracker) => 
   return {
     infusedElement,
     infusedAttacks,
+    charStatus: rest.charStatus,
     totalAttr: rest.totalAttr,
     artAttr,
     rxnBonus: rest.rxnBonus,

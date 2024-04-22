@@ -13,14 +13,19 @@ const isUsableBonus = (bonus: Pick<WeaponBonus, "checkInput">, info: BuffInfoWra
     const { source = 0, value, type = "equal" } = bonus.checkInput;
     let input = 0;
 
-    if (source === "various_vision") {
-      if (info.partyData.length) {
-        input = Object.keys(Calculation_.countElements(info.partyData, info.appChar)).length;
-      } else {
-        return false;
-      }
-    } else {
-      input = inputs[source];
+    switch (source) {
+      case "various_vision":
+        if (info.partyData.length) {
+          input = Object.keys(Calculation_.countElements(info.partyData, info.appChar)).length;
+        } else {
+          return false;
+        }
+        break;
+      case "BOL":
+        input = info.charStatus.BOL;
+        break;
+      default:
+        input = inputs[source];
     }
 
     switch (type) {
@@ -138,7 +143,11 @@ const getBonusValue = (
 };
 
 const isTrulyFinalBonus = (bonus: WeaponBonus, cmnStacks: WeaponBonus["stacks"]) => {
-  return isFinalBonus(bonus.stacks) || isFinalBonus(cmnStacks);
+  return (
+    isFinalBonus(bonus.stacks) ||
+    isFinalBonus(cmnStacks) ||
+    (typeof bonus.checkInput === "object" && bonus.checkInput.source === "BOL")
+  );
 };
 
 interface ApplyWeaponBuffArgs {
@@ -168,7 +177,7 @@ const applyWeaponBuff = ({
       const bonusValue = getBonusValue(bonus, info, inputs, refi, commonStacks);
 
       if (bonusValue) {
-        const { ATTR, PATT } = bonus.targets;
+        const { ATTR, PATT, C_STATUS } = bonus.targets;
         if (ATTR) {
           const attributeKey = ATTR === "own_elmt" ? info.appChar.vision : ATTR;
 
@@ -178,6 +187,10 @@ const applyWeaponBuff = ({
         }
         if (PATT && isStackable({ trackId: buff.trackId, targets: PATT })) {
           applyModifier(description, info.attPattBonus, PATT, bonusValue, info.tracker);
+        }
+        if (C_STATUS) {
+          // #to-do use applyModifier
+          info.charStatus.BOL += bonusValue;
         }
       }
     }

@@ -19,6 +19,7 @@ import type {
   CalculationFinalResult,
   Target,
   CalcCharacter,
+  CharacterStatus,
 } from "@Src/types";
 
 export type CalculatorState = {
@@ -31,6 +32,7 @@ export type CalculatorState = {
   resultById: Record<
     string,
     {
+      charStatus: CharacterStatus;
       infusedElement: AttackElement;
       totalAttrs: TotalAttribute;
       rxnBonuses: ReactionBonus;

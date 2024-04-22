@@ -23,6 +23,10 @@ export type ArtifactSetBonus = {
 
 export type TotalAttribute = Record<TotalAttributeStat, number>;
 
+export type CharacterStatus = {
+  BOL: number;
+};
+
 export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;
 
 export type ActualAttackPattern = AttackPattern | "none";
@@ -61,6 +65,7 @@ export type BuffInfoWrap = {
   char: Character;
   appChar: AppCharacter;
   partyData: PartyData;
+  charStatus: CharacterStatus;
   totalAttr: TotalAttribute;
   attPattBonus: AttackPatternBonus;
   attElmtBonus: AttackElementBonus;
@@ -120,7 +125,7 @@ export type CustomBuffCtrlCategory = "totalAttr" | "attPattBonus" | "attElmtBonu
 export type CustomBuffCtrlType = AttributeStat | AttackPatternBonusKey | Reaction;
 
 export type CustomBuffCtrl = {
-  category: "totalAttr" | "attPattBonus" | "attElmtBonus" | "rxnBonus";
+  category: CustomBuffCtrlCategory;
   type: CustomBuffCtrlType;
   subType?: AttackPatternInfoKey | AttackElementInfoKey | ReactionBonusInfoKey;
   value: number;
@@ -172,10 +177,9 @@ type CalculationFinalResultItem = Record<CalculationAspect, number | number[]> &
 export type CalculationFinalResultGroup = Record<string, CalculationFinalResultItem>;
 
 export type CalculationFinalResult = {
-  NAs: CalculationFinalResultGroup,
-  ES: CalculationFinalResultGroup,
-  EB: CalculationFinalResultGroup,
-  RXN: CalculationFinalResultGroup,
-  WP_CALC: CalculationFinalResultGroup,
-}
-
+  NAs: CalculationFinalResultGroup;
+  ES: CalculationFinalResultGroup;
+  EB: CalculationFinalResultGroup;
+  RXN: CalculationFinalResultGroup;
+  WP_CALC: CalculationFinalResultGroup;
+};

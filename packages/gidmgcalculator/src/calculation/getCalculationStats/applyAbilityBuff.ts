@@ -49,12 +49,7 @@ const getMax = (max: number | CharacterEffectDynamicMax, info: CalcUltilInfo, in
   return typeof max === "number" ? max : max.value + getTotalExtraMax(max.extras, info, inputs, fromSelf);
 };
 
-const getStackValue = (
-  stack: CharacterBonusStack,
-  info: BuffInfoWrap,
-  inputs: number[],
-  fromSelf: boolean
-): number => {
+const getStackValue = (stack: CharacterBonusStack, info: BuffInfoWrap, inputs: number[], fromSelf: boolean): number => {
   let result = 1;
 
   switch (stack.type) {
@@ -91,6 +86,9 @@ const getStackValue = (
       result = info.appChar.EBcost;
       break;
     }
+    case "BOL":
+      result = info.charStatus.BOL;
+      break;
     case "RESOLVE": {
       let [totalEnergy = 0, electroEnergy = 0] = inputs;
       if (info.char.cons >= 1 && electroEnergy <= totalEnergy) {
@@ -271,6 +269,8 @@ const applyAbilityBuff = ({ description, buff, infoWrap: info, inputs, fromSelf,
             break;
           case "PATT":
             applyModifier(description, info.attPattBonus, mixed, bonusValue, info.tracker);
+            console.log('applyAbilityBuff', mixed, bonusValue);
+
             break;
           case "ELMT":
             applyModifier(description, info.attElmtBonus, mixed, bonusValue, info.tracker);
@@ -286,6 +286,10 @@ const applyAbilityBuff = ({ description, buff, infoWrap: info, inputs, fromSelf,
             applyModifier(description, info.totalAttr, ELEMENT_TYPES[elmtIndex], bonusValue, info.tracker);
             break;
           }
+          case "C_STATUS":
+            // #to-do: update & use applyModifier
+            info.charStatus.BOL += bonusValue;
+            break;
           case "ELM_NA":
             if (info.appChar.weaponType === "catalyst" || info.infusedElement !== "phys") {
               applyModifier(description, info.attPattBonus, "NA.pct_", bonusValue, info.tracker);
