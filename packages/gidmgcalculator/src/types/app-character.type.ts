@@ -17,6 +17,7 @@ import type {
   ReactionBonusPath,
   ResistanceReductionKey,
 } from "./calculation-core.types";
+import type { InputCheck } from "./app-common.types";
 
 export type AppCharacter = {
   code: number;
@@ -120,14 +121,6 @@ export type CharacterModifier = {
   src: string;
   grantedAt?: CharacterMilestone;
   description: string;
-};
-
-type InputCheck = {
-  value: number;
-  /** Default to 0 */
-  index?: number;
-  /** Default to 'equal' */
-  type?: "equal" | "min" | "max" | "included";
 };
 
 export type CharacterEffectAvailableCondition = {
@@ -306,6 +299,12 @@ export type CharacterBonus = CharacterBonusConfig & {
 export type CharacterInnateBuff = CharacterModifier & {
   cmnStacks?: CharacterBonus["stacks"];
   effects?: CharacterBonus | CharacterBonus[];
+  infuseConfig?: {
+    checkInput?: number | InputCheck;
+    overwritable: boolean;
+    range?: ("NA" | "CA" | "PA")[];
+    disabledNAs?: boolean;
+  };
 };
 
 type CharacterBuff = CharacterInnateBuff & {
@@ -313,12 +312,6 @@ type CharacterBuff = CharacterInnateBuff & {
   index: number;
   affect: ModifierAffectType;
   inputConfigs?: ModInputConfig[];
-  infuseConfig?: {
-    checkInput?: number | InputCheck;
-    overwritable: boolean;
-    range?: ("NA" | "CA" | "PA")[];
-    disabledNAs?: boolean;
-  };
 };
 
 // ============ DEBUFFS ============

@@ -10,10 +10,12 @@ import type {
   CalcItemType,
   CalcWeapon,
   Character,
+  CharacterStatus,
   CustomBuffCtrl,
   CustomDebuffCtrl,
   ElementModCtrl,
   ElementType,
+  Infusion,
   ModifierCtrl,
   NormalAttack,
   Party,
@@ -33,6 +35,7 @@ export type CalcUltilInfo = {
   char: Character;
   appChar: AppCharacter;
   partyData: PartyData;
+  charStatus?: CharacterStatus;
 };
 
 export type GetCalculationStatsArgs = {
@@ -49,7 +52,7 @@ export type GetCalculationStatsArgs = {
   party?: Party;
   partyData?: PartyData;
   customBuffCtrls?: CustomBuffCtrl[];
-  infusedElement?: AttackElement;
+  customInfusion: Infusion;
   tracker?: Tracker;
 };
 
@@ -66,6 +69,12 @@ export interface CalculateItemArgs extends Pick<BuffInfoWrap, "char" | "totalAtt
   record: TrackerCalcItemRecord;
 }
 
+export type CalcInfusion = {
+  element: AttackElement;
+  range: NormalAttack[];
+  isCustom: boolean;
+};
+
 export interface GetFinalResultArgs extends Omit<BuffInfoWrap, "infusedElement"> {
   weapon: CalcWeapon;
   appWeapon: AppWeapon;
@@ -74,11 +83,7 @@ export interface GetFinalResultArgs extends Omit<BuffInfoWrap, "infusedElement">
   party: Party;
   disabledNAs: boolean;
   customDebuffCtrls: CustomDebuffCtrl[];
-  infusion: {
-    element: AttackElement;
-    range: NormalAttack[];
-    isCustom: boolean;
-  };
+  infusion: CalcInfusion;
   elmtModCtrls: ElementModCtrl;
   target: Target;
   tracker?: Tracker;

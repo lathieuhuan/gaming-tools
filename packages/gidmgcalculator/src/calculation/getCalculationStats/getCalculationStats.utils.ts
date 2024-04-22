@@ -12,6 +12,8 @@ import type {
   Character,
   CharacterStatus,
   CoreStat,
+  Infusion,
+  ModifierCtrl,
   ReactionBonus,
   ReactionBonusInfo,
   TotalAttribute,
@@ -30,13 +32,14 @@ import {
   REACTIONS,
   REACTION_BONUS_INFO_KEYS,
 } from "@Src/constants";
-import { applyPercent, Calculation_, Weapon_, Artifact_ } from "@Src/utils";
+import { applyPercent, Calculation_, Weapon_, Artifact_, findByIndex } from "@Src/utils";
+import { CalcInfusion } from "../calculation.types";
 
 function addOrInit<T extends Partial<Record<K, number | undefined>>, K extends keyof T>(obj: T, key: K, value: number) {
   obj[key] = (((obj[key] as number | undefined) || 0) + value) as T[K];
 }
 
-export const addTrackerRecord = (list: TrackerRecord[] | undefined, desc: string, value: number) => {
+export function addTrackerRecord(list: TrackerRecord[] | undefined, desc: string, value: number) {
   if (!list) return;
 
   const existed = list.find((note: any) => note.desc === desc);
@@ -45,7 +48,52 @@ export const addTrackerRecord = (list: TrackerRecord[] | undefined, desc: string
   } else {
     list.push({ desc, value });
   }
-};
+}
+
+export function getInitialCalcInfusion(
+  appChar: AppCharacter,
+  customInfusion: Infusion,
+  selfBuffCtrls: ModifierCtrl[] = []
+) {
+  const calcInfusion: CalcInfusion = {
+    element: customInfusion.element,
+    isCustom: true,
+    range: appChar.weaponType === "bow" ? ["NA"] : ["NA", "CA", "PA"],
+  };
+  let disabledNAs = false;
+
+  /** false = overwritable infusion. true = unoverwritable. undefined = no infusion */
+  let selfInfused: boolean | undefined = undefined;
+
+  if (appChar.buffs) {
+    for (const ctrl of selfBuffCtrls) {
+      if (ctrl.activated) {
+        const buff = findByIndex(appChar.buffs, ctrl.index);
+
+        if (buff && buff.infuseConfig) {
+          if (!selfInfused) {
+            selfInfused = !buff.infuseConfig.overwritable;
+          }
+          if (!disabledNAs) {
+            disabledNAs = buff.infuseConfig.disabledNAs || false;
+          }
+        }
+      }
+    }
+  }
+
+  if (calcInfusion.element === "phys" && selfInfused !== undefined) {
+    calcInfusion.element = appChar.vision;
+    calcInfusion.isCustom = false;
+  } else if (calcInfusion.element === appChar.vision) {
+    calcInfusion.isCustom = false;
+  }
+
+  return {
+    calcInfusion,
+    disabledNAs,
+  };
+}
 
 interface InitiateTotalAttrArgs {
   char: Character;
@@ -54,7 +102,7 @@ interface InitiateTotalAttrArgs {
   appWeapon: AppWeapon;
   tracker?: Tracker;
 }
-export const initiateTotalAttr = ({ char, appChar, weapon, appWeapon, tracker }: InitiateTotalAttrArgs) => {
+export function initiateTotalAttr({ char, appChar, weapon, appWeapon, tracker }: InitiateTotalAttrArgs) {
   const totalAttr = {} as TotalAttribute;
 
   for (const type of [...BASE_STAT_TYPES, ...ATTRIBUTE_STAT_TYPES]) {
@@ -105,9 +153,9 @@ export const initiateTotalAttr = ({ char, appChar, weapon, appWeapon, tracker }:
   addTrackerRecord(tracker?.totalAttr.atk, "Weapon main stat", weaponAtk);
 
   return totalAttr;
-};
+}
 
-export const initiateBonuses = () => {
+export function initiateBonuses() {
   const attPattBonus = {} as AttackPatternBonus;
   for (const pattern of [...ATTACK_PATTERNS, "all"] as const) {
     attPattBonus[pattern] = {} as AttackPatternInfo;
@@ -148,13 +196,13 @@ export const initiateBonuses = () => {
     rxnBonus,
     calcItemBuffs,
   };
-};
+}
 
-export const addArtifactAttributes = (
+export function addArtifactAttributes(
   artifacts: CalcArtifacts,
   totalAttr: TotalAttribute,
   tracker?: Tracker
-): ArtifactAttribute => {
+): ArtifactAttribute {
   const artAttr = { hp: 0, atk: 0, def: 0 } as ArtifactAttribute;
 
   for (const artifact of artifacts) {
@@ -183,17 +231,17 @@ export const addArtifactAttributes = (
     totalAttr[key] += artAttr[key] || 0;
   }
   return artAttr;
-};
+}
 
 type Stack = {
   type: string;
   field?: string;
 };
-export const isFinalBonus = (bonusStacks?: Stack | Stack[]) => {
+export function isFinalBonus(bonusStacks?: Stack | Stack[]) {
   if (bonusStacks) {
     const isFinal = (stack: Stack) =>
       (stack.type === "ATTRIBUTE" && stack.field !== "base_atk") || stack.type === "BOL";
     return Array.isArray(bonusStacks) ? bonusStacks.some(isFinal) : isFinal(bonusStacks);
   }
   return false;
-};
+}

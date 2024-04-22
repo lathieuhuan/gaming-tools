@@ -9,6 +9,7 @@ import type {
 } from "@Src/types";
 import type { CalcUltilInfo } from "../calculation.types";
 import { Character_, Calculation_ } from "@Src/utils";
+import { CommonCalc } from "./common-calc";
 
 export class CharacterCal {
   static isGranted({ grantedAt }: { grantedAt?: CharacterMilestone }, char: Character) {
@@ -42,27 +43,7 @@ export class CharacterCal {
     if (!this.isAvailable(condition, info.char, inputs, fromSelf)) {
       return false;
     }
-    const { checkInput } = condition;
-
-    if (checkInput !== undefined) {
-      const { value, index = 0, type = "equal" } = typeof checkInput === "number" ? { value: checkInput } : checkInput;
-      const input = inputs[index] ?? 0;
-      switch (type) {
-        case "equal":
-          if (input !== value) return false;
-          else break;
-        case "min":
-          if (input < value) return false;
-          else break;
-        case "max":
-          if (input > value) return false;
-          else break;
-        case "included":
-          if (!inputs.includes(value)) return false;
-          else break;
-      }
-    }
-    return true;
+    return CommonCalc.isValidInput(info, inputs, condition.checkInput);
   };
 
   static isExtensivelyUsable = (

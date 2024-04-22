@@ -20,6 +20,7 @@ import { CharacterCal, applyModifier } from "../utils";
 import {
   addArtifactAttributes,
   addTrackerRecord,
+  getInitialCalcInfusion,
   initiateBonuses,
   initiateTotalAttr,
 } from "./getCalculationStats.utils";
@@ -40,7 +41,7 @@ export const getCalculationStats = ({
   party,
   partyData = [],
   customBuffCtrls,
-  infusedElement,
+  customInfusion,
   tracker,
 }: GetCalculationStatsArgs) => {
   const { resonances = [], reaction, infuse_reaction } = elmtModCtrls || {};
@@ -49,6 +50,7 @@ export const getCalculationStats = ({
 
   const totalAttr = initiateTotalAttr({ char, appChar, weapon, appWeapon, tracker });
   const { attPattBonus, attElmtBonus, rxnBonus, calcItemBuffs, charStatus } = initiateBonuses();
+  const { calcInfusion, disabledNAs } = getInitialCalcInfusion(appChar, customInfusion, selfBuffCtrls);
 
   const infoWrap: BuffInfoWrap = {
     char,
@@ -60,7 +62,7 @@ export const getCalculationStats = ({
     attElmtBonus,
     calcItemBuffs,
     rxnBonus,
-    infusedElement,
+    infusedElement: calcInfusion.element,
     tracker,
   };
 
@@ -396,5 +398,7 @@ export const getCalculationStats = ({
     calcItemBuffs,
     rxnBonus,
     artAttr,
+    calcInfusion,
+    disabledNAs,
   };
 };

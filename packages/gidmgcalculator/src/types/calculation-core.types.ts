@@ -77,9 +77,10 @@ export type BuffInfoWrap = {
 
 export type DebuffInfoWrap = {
   char: Character;
-  resistReduct: ResistanceReduction;
+  charStatus: CharacterStatus;
   appChar: AppCharacter;
   partyData: PartyData;
+  resistReduct: ResistanceReduction;
   tracker?: Tracker;
 };
 

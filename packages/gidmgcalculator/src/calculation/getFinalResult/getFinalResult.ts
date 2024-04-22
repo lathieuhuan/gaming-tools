@@ -30,6 +30,7 @@ export default function getFinalResult({
   selfDebuffCtrls,
   artDebuffCtrls,
   disabledNAs,
+  charStatus,
   totalAttr,
   attPattBonus,
   attElmtBonus,
@@ -49,6 +50,7 @@ export default function getFinalResult({
   const { multFactorConf, calcList, weaponType, vision, debuffs } = appChar;
   const infoWrap: DebuffInfoWrap = {
     char,
+    charStatus,
     appChar,
     partyData,
     resistReduct,

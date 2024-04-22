@@ -1,43 +1,11 @@
 import type { WeaponBonus, BuffInfoWrap, WeaponBonusStack, WeaponBuff } from "@Src/types";
 import type { StackableCheckCondition } from "../calculation.types";
 import { toArray, Calculation_ } from "@Src/utils";
-import { applyModifier } from "../utils";
+import { CommonCalc, applyModifier } from "../utils";
 import { isFinalBonus } from "./getCalculationStats.utils";
 
 const isUsableBonus = (bonus: Pick<WeaponBonus, "checkInput">, info: BuffInfoWrap, inputs: number[]) => {
-  if (typeof bonus.checkInput === "number") {
-    if (inputs[0] !== bonus.checkInput) {
-      return false;
-    }
-  } else if (bonus.checkInput) {
-    const { source = 0, value, type = "equal" } = bonus.checkInput;
-    let input = 0;
-
-    switch (source) {
-      case "various_vision":
-        if (info.partyData.length) {
-          input = Object.keys(Calculation_.countElements(info.partyData, info.appChar)).length;
-        } else {
-          return false;
-        }
-        break;
-      case "BOL":
-        input = info.charStatus.BOL;
-        break;
-      default:
-        input = inputs[source];
-    }
-
-    switch (type) {
-      case "equal":
-        if (input !== value) return false;
-        break;
-      case "min":
-        if (input < value) return false;
-        break;
-    }
-  }
-  return true;
+  return CommonCalc.isValidInput(info, inputs, bonus.checkInput);
 };
 
 const getStackValue = (stack: WeaponBonusStack, { appChar, partyData, totalAttr }: BuffInfoWrap, inputs: number[]) => {

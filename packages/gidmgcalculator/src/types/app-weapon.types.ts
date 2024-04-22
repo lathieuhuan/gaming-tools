@@ -1,5 +1,6 @@
 import type { AttributeStat, ModInputConfig, ModifierAffectType, WeaponType } from "./global.types";
 import type { AttackPatternPath } from "./calculation-core.types";
+import type { InputCheck } from "./app-common.types";
 
 export type AppWeapon = {
   /** This is id */
@@ -97,21 +98,7 @@ export type WeaponBonus = {
    * For this buff to available, the input at the [source] must meet [value] by [type].
    * If number, it's [value], [source] is 0, [type] is [equal]
    */
-  checkInput?:
-    | number
-    // On Ballad of the Fjords, Crimson Moon's Semblance
-    | {
-        value: number;
-        /**
-         * When number, it's the input's index.
-         * [various_vision] only on Ballad of the Fjords.
-         * [BOL] only on Crimson Moon's Semblance.
-         * Default to 0.
-         */
-        source?: number | "various_vision" | "BOL";
-        /** Default to [equal] */
-        type?: "equal" | "min" | "max";
-      };
+  checkInput?: number | InputCheck;
 };
 
 export type WeaponBuff = {
