@@ -4,15 +4,12 @@ import type {
   AttackPattern,
   AttackReaction,
   AttributeStat,
-  Character,
   CoreStat,
   ElementType,
   NormalAttack,
   Reaction,
-  TotalAttributeStat,
   WeaponType,
 } from "./global.types";
-import type { Tracker } from "./calculator.types";
 import type { AppCharacter } from "./app-character.type";
 import { ATTACK_ELEMENT_INFO_KEYS, ATTACK_PATTERN_INFO_KEYS, REACTION_BONUS_INFO_KEYS } from "@Src/constants";
 
@@ -20,8 +17,6 @@ export type ArtifactSetBonus = {
   code: number;
   bonusLv: number;
 };
-
-export type TotalAttribute = Record<TotalAttributeStat, number>;
 
 export type CharacterStatus = {
   BOL: number;
@@ -59,29 +54,6 @@ export type CalcItemBonus = Partial<Record<AttackPatternInfoKey, { desc: string;
 export type CalcItemBuff = {
   ids: string | string[];
   bonus: CalcItemBonus;
-};
-
-export type BuffInfoWrap = {
-  char: Character;
-  appChar: AppCharacter;
-  partyData: PartyData;
-  charStatus: CharacterStatus;
-  totalAttr: TotalAttribute;
-  attPattBonus: AttackPatternBonus;
-  attElmtBonus: AttackElementBonus;
-  calcItemBuffs: CalcItemBuff[];
-  rxnBonus: ReactionBonus;
-  infusedElement?: AttackElement;
-  tracker?: Tracker;
-};
-
-export type DebuffInfoWrap = {
-  char: Character;
-  charStatus: CharacterStatus;
-  appChar: AppCharacter;
-  partyData: PartyData;
-  resistReduct: ResistanceReduction;
-  tracker?: Tracker;
 };
 
 type TeammateData = Pick<AppCharacter, "code" | "name" | "icon" | "nation" | "vision" | "weaponType" | "EBcost">;
