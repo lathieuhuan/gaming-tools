@@ -53,5 +53,5 @@ export type GetCalculationStatsArgs = {
 
 export type StackableCheckCondition = {
   trackId?: string;
-  targets: string | string[];
+  paths: string | string[];
 };

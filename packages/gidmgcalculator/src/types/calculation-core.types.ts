@@ -10,7 +10,7 @@ import type {
   Reaction,
   WeaponType,
 } from "./global.types";
-import type { AppCharacter } from "./app-character.type";
+import type { AppCharacter } from "./app-character.types";
 import { ATTACK_ELEMENT_INFO_KEYS, ATTACK_PATTERN_INFO_KEYS, REACTION_BONUS_INFO_KEYS } from "@Src/constants";
 
 export type ArtifactSetBonus = {

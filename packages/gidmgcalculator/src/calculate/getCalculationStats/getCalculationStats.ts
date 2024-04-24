@@ -72,14 +72,14 @@ export function getCalculationStats({
   const isStackable = (condition: StackableCheckCondition) => {
     if (condition.trackId) {
       const isUsed = usedMods.some((usedMod) => {
-        if (condition.trackId === usedMod.trackId && typeof condition.targets === typeof usedMod.targets) {
-          if (Array.isArray(condition.targets)) {
+        if (condition.trackId === usedMod.trackId && typeof condition.paths === typeof usedMod.paths) {
+          if (Array.isArray(condition.paths)) {
             return (
-              condition.targets.length === usedMod.targets.length &&
-              condition.targets.every((target, i) => target === usedMod.targets[i])
+              condition.paths.length === usedMod.paths.length &&
+              condition.paths.every((target, i) => target === usedMod.paths[i])
             );
           }
-          return condition.targets === usedMod.targets;
+          return condition.paths === usedMod.paths;
         }
         return false;
       });

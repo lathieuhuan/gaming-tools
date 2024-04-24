@@ -1,10 +1,10 @@
-import type { WeaponBonus, WeaponBonusStack, WeaponBuff } from "@Src/types";
+import type { WeaponBonusCore, WeaponBonusStack, WeaponBuff } from "@Src/types/app-weapon.types";
 import type { StackableCheckCondition, BuffInfoWrap } from "../types";
 import { toArray, Calculation_ } from "@Src/utils";
 import { CommonCalc } from "../utils";
-import { isFinalBonus } from "./getCalculationStats.utils";
+import { AppliedBonus, applyBonuses, isFinalBonus } from "./getCalculationStats.utils";
 
-function isUsableBonus(bonus: Pick<WeaponBonus, "checkInput">, info: BuffInfoWrap, inputs: number[]) {
+function isUsableBonus(bonus: Pick<WeaponBonusCore, "checkInput">, info: BuffInfoWrap, inputs: number[]) {
   return CommonCalc.isValidInput(info, inputs, bonus.checkInput);
 }
 
@@ -57,17 +57,13 @@ function getStackValue(stack: WeaponBonusStack, { appChar, partyData, totalAttr 
   }
 }
 
-type Bonus = {
-  value: number;
-  isStable: boolean;
-};
 function getBonus(
-  bonus: Omit<WeaponBonus, "targets">,
+  bonus: WeaponBonusCore,
   info: BuffInfoWrap,
   inputs: number[],
   refi: number,
   preCalcStacks: number[]
-): Bonus {
+): AppliedBonus {
   let bonusValue = 0;
   let isStable = true;
   const scaleRefi = (base: number, increment = base / 3) => base + increment * refi;
@@ -122,7 +118,7 @@ function getBonus(
   };
 }
 
-function isTrulyFinalBonus(bonus: WeaponBonus, cmnStacks: WeaponBonus["stacks"]) {
+function isTrulyFinalBonus(bonus: WeaponBonusCore, cmnStacks: WeaponBonusStack[]) {
   return (
     isFinalBonus(bonus.stacks) ||
     isFinalBonus(cmnStacks) ||
@@ -148,40 +144,22 @@ function applyWeaponBuff({
   isFinal,
   isStackable = () => true,
 }: ApplyWeaponBuffArgs) {
+  if (!buff.effects) return;
   const cmnStacks = buff.cmnStacks ? toArray(buff.cmnStacks) : [];
   const commonStacks = cmnStacks.map((cmnStack) => getStackValue(cmnStack, info, inputs));
   const noIsFinal = isFinal === undefined;
 
-  const isLocalStackable = (targets: string | string[]) => isStackable({ trackId: buff.trackId, targets });
-
-  for (const bonusConfig of toArray(buff.effects)) {
-    if (
-      (noIsFinal || isFinal === isTrulyFinalBonus(bonusConfig, cmnStacks)) &&
-      isUsableBonus(bonusConfig, info, inputs)
-    ) {
-      const bonus = getBonus(bonusConfig, info, inputs, refi, commonStacks);
-
-      if (bonus.value) {
-        const { ATTR, PATT, C_STATUS } = bonusConfig.targets;
-        if (ATTR) {
-          const attributeKey = ATTR === "own_elmt" ? info.appChar.vision : ATTR;
-
-          if (isLocalStackable(attributeKey)) {
-            if (bonus.isStable) {
-              info.totalAttr.addStable(attributeKey, bonus.value, description);
-            }
-          }
-        }
-        if (PATT && isLocalStackable(PATT)) {
-          info.bonusCalc.add("PATT", PATT, bonus.value, description);
-        }
-        if (C_STATUS) {
-          // #to-do: make & use CharacterStatusCalc
-          info.charStatus.BOL += bonus.value;
-        }
-      }
-    }
-  }
+  applyBonuses({
+    buff,
+    info,
+    inputs,
+    description,
+    isApplicable: (config) => {
+      return (noIsFinal || isFinal === isTrulyFinalBonus(config, cmnStacks)) && isUsableBonus(config, info, inputs);
+    },
+    isStackable: (paths: string | string[]) => isStackable({ trackId: buff.trackId, paths }),
+    getBonus: (config) => getBonus(config, info, inputs, refi, commonStacks),
+  });
 }
 
 export default applyWeaponBuff;

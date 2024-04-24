@@ -1,5 +1,13 @@
-import type { AttributeStat, ModifierAffectType, ModInputConfig, WeaponType } from "./global.types";
-import type { AttackPatternPath, ReactionBonusPath, ResistanceReductionKey } from "./calculation-core.types";
+import type { WeaponType } from "@Src/types";
+import type {
+  AppBonus,
+  AppBonusAttributeStack,
+  AppBonusElementStack,
+  AppBuff,
+  AppDebuff,
+  WithBonusTargets,
+  WithPenaltyTargets,
+} from "./app-common.types";
 
 type ArtTypeData = {
   name: string;
@@ -23,9 +31,10 @@ export type AppArtifact = {
   debuffs?: ArtifactDebuff[];
 };
 
-type SetBonus = {
-  description?: number[];
-  effects?: ArtifactBonus | ArtifactBonus[];
+type ArtifactEffectValueOption = {
+  options: number[];
+  /** Input's index for options. Default to 0 */
+  inpIndex?: number;
 };
 
 type InputStack = {
@@ -34,64 +43,31 @@ type InputStack = {
   index?: number;
 };
 
-type AttributeStack = {
-  type: "ATTRIBUTE";
-  field: "base_atk" | "hp" | "atk" | "def" | "em" | "er_";
-};
+type ArtifactBonusStack = InputStack | AppBonusAttributeStack | AppBonusElementStack;
 
-type ElementStack = {
-  type: "ELEMENT";
-  element: "same_excluded" | "different";
-};
-
-type ArtifactEffectValueOption = {
-  options: number[];
-  /** Input's index for options. Default to 0 */
-  inpIndex?: number;
-};
-
-export type ArtifactBonus = {
+export type ArtifactBonusCore = AppBonus<ArtifactBonusStack> & {
   forWeapons?: WeaponType[];
-  /** For this buff to available, the input at index 0 must equal to checkInput */
-  checkInput?: number;
   value: number | ArtifactEffectValueOption;
-  stacks?: InputStack | AttributeStack | ElementStack;
   /** Apply after stacks */
-  sufExtra?: number | Omit<ArtifactBonus, "targets">;
-  targets: {
-    /** totalAttr */
-    ATTR?: AttributeStat | AttributeStat[];
-    /** Input's index to get element's index. */
-    INP_ELMT?: number;
-    /** attPattBonus */
-    PATT?: AttackPatternPath | AttackPatternPath[];
-    /** rxnBonus */
-    RXN?: ReactionBonusPath | ReactionBonusPath[];
-  };
+  sufExtra?: number | ArtifactBonusCore;
   max?: number;
 };
 
-export type ArtifactModifier = {
-  /** This is id */
-  index: number;
-  inputConfigs?: ModInputConfig[];
+type ArtifactBonus = WithBonusTargets<ArtifactBonusCore>;
+
+type SetBonus = {
+  description?: number[];
+  effects?: ArtifactBuff["effects"];
+};
+
+export type ArtifactBuff = AppBuff<ArtifactBonus> & {
   description: string | number | number[];
 };
 
-type ArtifactBuff = ArtifactModifier & {
-  /** id to track stackable. Effects under the same buff id and have the same targets cannot be stacked */
-  trackId?: string;
-  affect: ModifierAffectType;
-  effects: ArtifactBonus | ArtifactBonus[];
-};
-
-type ArtifactPenalty = {
+type ArtifactPenalty = WithPenaltyTargets<{
   value: number;
-  path: "inp_elmt" | ResistanceReductionKey;
-  /** Only when path = "inp_elmt". Default to 0 */
-  inpIndex?: number;
-};
+}>;
 
-type ArtifactDebuff = ArtifactModifier & {
-  effects: ArtifactPenalty;
+type ArtifactDebuff = AppDebuff<ArtifactPenalty> & {
+  description: string | number | number[];
 };

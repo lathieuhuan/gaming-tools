@@ -1,33 +1,15 @@
-import {
-  CharacterBonus,
+import type {
+  CharacterBonusCore,
   CharacterBonusStack,
-  CharacterInnateBuff,
-  AttackPatternInfoKey,
-  CalcItemBuff,
-  CharacterEffectDynamicMax,
+  CharacterBuff,
   CharacterEffectExtraMax,
-  CharacterBonusConfig,
-} from "@Src/types";
+  CharacterEffectMax,
+} from "@Src/types/app-character.types";
 import type { BuffInfoWrap, CalcUltilInfo } from "../types";
 
-import { ELEMENT_TYPES } from "@Src/constants";
-import { toArray, Calculation_, Character_ } from "@Src/utils";
+import { Calculation_, Character_, toArray } from "@Src/utils";
 import { CharacterCal } from "../utils";
-import { isFinalBonus } from "./getCalculationStats.utils";
-
-function genExclusiveBuff(
-  desc: string,
-  ids: string | string[],
-  key: AttackPatternInfoKey,
-  buffValue: number
-): CalcItemBuff {
-  return {
-    ids,
-    bonus: {
-      [key]: { desc, value: buffValue },
-    },
-  };
-}
+import { AppliedBonus, applyBonuses, isFinalBonus } from "./getCalculationStats.utils";
 
 function getTotalExtraMax(
   extras: CharacterEffectExtraMax | CharacterEffectExtraMax[],
@@ -45,8 +27,10 @@ function getTotalExtraMax(
   return result;
 }
 
-function getMax(max: number | CharacterEffectDynamicMax, info: CalcUltilInfo, inputs: number[], fromSelf: boolean) {
-  return typeof max === "number" ? max : max.value + getTotalExtraMax(max.extras, info, inputs, fromSelf);
+function getMax(max: CharacterEffectMax, info: CalcUltilInfo, inputs: number[], fromSelf: boolean) {
+  return typeof max === "number"
+    ? max
+    : max.value + (max.extras ? getTotalExtraMax(max.extras, info, inputs, fromSelf) : 0);
 }
 
 function getStackValue(stack: CharacterBonusStack, info: BuffInfoWrap, inputs: number[], fromSelf: boolean): number {
@@ -86,8 +70,8 @@ function getStackValue(stack: CharacterBonusStack, info: BuffInfoWrap, inputs: n
       result = info.appChar.EBcost;
       break;
     }
-    case "BOL":
-      result = info.charStatus.BOL;
+    case "C_STATUS":
+      result = info.charStatus[stack.status];
       break;
     case "RESOLVE": {
       let [totalEnergy = 0, electroEnergy = 0] = inputs;
@@ -125,46 +109,48 @@ function getStackValue(stack: CharacterBonusStack, info: BuffInfoWrap, inputs: n
 }
 
 export function getIntialBonusValue(
-  value: CharacterBonusConfig["value"],
+  value: CharacterBonusCore["value"],
   info: CalcUltilInfo,
   inputs: number[],
   fromSelf: boolean
 ) {
   if (typeof value === "number") return value;
-  const { preOptions, options, indexSrc } = value;
+  const { preOptions, options, optIndex = 0 } = value;
   let index = -1;
 
   /** Navia */
   if (preOptions && !inputs[1]) {
     const preIndex = preOptions[inputs[0]];
     index += preIndex ?? preOptions[preOptions.length - 1];
-  }
+  } else if (typeof optIndex === "number") {
+    index = inputs[optIndex];
+  } else {
+    switch (optIndex.source) {
+      case "ELEMENT": {
+        const { element } = optIndex;
+        const elementCount = info.partyData.length ? Calculation_.countElements(info.partyData, info.appChar) : {};
+        const input =
+          element === "various"
+            ? Object.keys(elementCount).length
+            : typeof element === "string"
+            ? elementCount[element] ?? 0
+            : element.reduce((total, type) => total + (elementCount[type] ?? 0), 0);
 
-  switch (indexSrc.type) {
-    case "ELEMENT": {
-      const { elementType: elementType } = indexSrc;
-      const elementCount = info.partyData.length ? Calculation_.countElements(info.partyData, info.appChar) : {};
-      const input =
-        elementType === "various"
-          ? Object.keys(elementCount).length
-          : typeof elementType === "string"
-          ? elementCount[elementType] ?? 0
-          : elementType.reduce((total, type) => total + (elementCount[type] ?? 0), 0);
-
-      index += input;
-      break;
+        index += input;
+        break;
+      }
+      case "INPUT":
+        index += inputs[optIndex.inpIndex ?? 0];
+        break;
+      case "LEVEL":
+        index += Character_.getFinalTalentLv({
+          talentType: optIndex.talent,
+          char: info.char,
+          appChar: info.appChar,
+          partyData: info.partyData,
+        });
+        break;
     }
-    case "INPUT":
-      index += inputs[indexSrc.index ?? 0];
-      break;
-    case "LEVEL":
-      index += Character_.getFinalTalentLv({
-        talentType: indexSrc.talent,
-        char: info.char,
-        appChar: info.appChar,
-        partyData: info.partyData,
-      });
-      break;
   }
 
   if (value.extra && CharacterCal.isAvailable(value.extra, info.char, inputs, fromSelf)) {
@@ -178,17 +164,13 @@ export function getIntialBonusValue(
   return options[index] ?? (index > 0 ? options[options.length - 1] : 0);
 }
 
-type Bonus = {
-  value: number;
-  isStable: boolean;
-};
 function getBonus(
-  bonus: CharacterBonusConfig,
+  bonus: CharacterBonusCore,
   info: BuffInfoWrap,
   inputs: number[],
   fromSelf: boolean,
   preCalcStacks: number[]
-): Bonus {
+): AppliedBonus {
   const { preExtra } = bonus;
   let bonusValue = getIntialBonusValue(bonus.value, info, inputs, fromSelf);
   let isStable = true;
@@ -243,7 +225,7 @@ function getBonus(
   };
 }
 
-function isTrulyFinalBonus(bonus: CharacterBonus, cmnStacks: CharacterBonusStack[]) {
+function isTrulyFinalBonus(bonus: CharacterBonusCore, cmnStacks: CharacterBonusStack[]) {
   return (
     isFinalBonus(bonus.stacks) ||
     (typeof bonus.preExtra === "object" && isFinalBonus(bonus.preExtra.stacks)) ||
@@ -253,7 +235,7 @@ function isTrulyFinalBonus(bonus: CharacterBonus, cmnStacks: CharacterBonusStack
 
 interface ApplyAbilityBuffArgs {
   description: string;
-  buff: CharacterInnateBuff;
+  buff: Pick<CharacterBuff, "trackId" | "cmnStacks" | "effects">;
   infoWrap: BuffInfoWrap;
   inputs: number[];
   fromSelf: boolean;
@@ -265,51 +247,19 @@ function applyAbilityBuff({ description, buff, infoWrap: info, inputs, fromSelf,
   const commonStacks = cmnStacks.map((cmnStack) => getStackValue(cmnStack, info, inputs, fromSelf));
   const noIsFinal = isFinal === undefined;
 
-  for (const bonusConfig of toArray(buff.effects)) {
-    if (
-      (noIsFinal || isFinal === isTrulyFinalBonus(bonusConfig, cmnStacks)) &&
-      CharacterCal.isExtensivelyUsable(bonusConfig, info, inputs, fromSelf)
-    ) {
-      const bonus = getBonus(bonusConfig, info, inputs, fromSelf, commonStacks);
-      if (!bonus.value) continue;
-
-      for (const [key, value] of Object.entries(bonusConfig.targets)) {
-        const mixed = value as any;
-
-        switch (key) {
-          case "ATTR":
-            if (bonus.isStable) {
-              info.totalAttr.addStable(mixed, bonus.value, description);
-            } else {
-              info.totalAttr.addUnstable(mixed, bonus.value, description);
-            }
-            break;
-          case "PATT":
-          case "ELMT":
-          case "RXN":
-            info.bonusCalc.add(key, mixed, bonus.value, description);
-            break;
-          case "ITEM":
-            info.calcItemBuffs.push(genExclusiveBuff(description, mixed.id, mixed.path, bonus.value));
-            break;
-          case "INP_ELMT": {
-            const elmtIndex = inputs[mixed ?? 0];
-            info.totalAttr.addStable(ELEMENT_TYPES[elmtIndex], bonus.value, description);
-            break;
-          }
-          case "C_STATUS":
-            // #to-do: make & use CharacterStatusCalc
-            info.charStatus.BOL += bonus.value;
-            break;
-          case "ELM_NA":
-            if (info.appChar.weaponType === "catalyst" || info.infusedElement !== "phys") {
-              info.bonusCalc.add("PATT", "NA.pct_", bonus.value, description);
-            }
-            break;
-        }
-      }
-    }
-  }
+  applyBonuses({
+    buff,
+    info,
+    inputs,
+    description,
+    isApplicable: (config) => {
+      return (
+        (noIsFinal || isFinal === isTrulyFinalBonus(config, cmnStacks)) &&
+        CharacterCal.isExtensivelyUsable(config, info, inputs, fromSelf)
+      );
+    },
+    getBonus: (config) => getBonus(config, info, inputs, fromSelf, commonStacks),
+  });
 }
 
 export default applyAbilityBuff;

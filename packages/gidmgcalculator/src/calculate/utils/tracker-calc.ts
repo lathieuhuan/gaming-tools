@@ -1,12 +1,3 @@
-import {
-  ATTACK_ELEMENTS,
-  ATTACK_ELEMENT_INFO_KEYS,
-  ATTACK_PATTERNS,
-  ATTACK_PATTERN_INFO_KEYS,
-  ATTRIBUTE_STAT_TYPES,
-  REACTIONS,
-  REACTION_BONUS_INFO_KEYS,
-} from "@Src/constants";
 import type {
   AttackElementPath,
   AttackPatternPath,
@@ -16,6 +7,15 @@ import type {
   ReactionBonusPath,
   ResistanceReductionKey,
 } from "@Src/types";
+import {
+  ATTACK_ELEMENTS,
+  ATTACK_ELEMENT_INFO_KEYS,
+  ATTACK_PATTERNS,
+  ATTACK_PATTERN_INFO_KEYS,
+  ATTRIBUTE_STAT_TYPES,
+  REACTIONS,
+  REACTION_BONUS_INFO_KEYS,
+} from "@Src/constants";
 
 type StatRecord = {
   desc: string;

@@ -1,13 +1,12 @@
-import type { ArtifactBonus } from "@Src/types";
+import type { ArtifactBonusCore, ArtifactBuff } from "@Src/types/app-artifact.types";
 import type { BuffInfoWrap, StackableCheckCondition } from "../types";
-import { ELEMENT_TYPES } from "@Src/constants";
-import { toArray, Calculation_ } from "@Src/utils";
-import { isFinalBonus } from "./getCalculationStats.utils";
+import { Calculation_ } from "@Src/utils";
+import { AppliedBonus, applyBonuses, isFinalBonus } from "./getCalculationStats.utils";
 
 type CountResult = ReturnType<typeof Calculation_.countElements>;
 
 function isUsableBonus(
-  condition: Pick<ArtifactBonus, "checkInput" | "forWeapons">,
+  condition: Pick<ArtifactBonusCore, "checkInput" | "forWeapons">,
   info: BuffInfoWrap,
   inputs: number[]
 ) {
@@ -20,7 +19,7 @@ function isUsableBonus(
   return true;
 }
 
-function getStackValue(stack: NonNullable<ArtifactBonus["stacks"]>, info: BuffInfoWrap, inputs: number[]) {
+function getStackValue(stack: NonNullable<ArtifactBonusCore["stacks"]>, info: BuffInfoWrap, inputs: number[]) {
   switch (stack.type) {
     case "INPUT":
       return inputs[stack.index ?? 0];
@@ -39,11 +38,7 @@ function getStackValue(stack: NonNullable<ArtifactBonus["stacks"]>, info: BuffIn
   }
 }
 
-type Bonus = {
-  value: number;
-  isStable: boolean;
-};
-function getBonus(bonus: Omit<ArtifactBonus, "targets">, info: BuffInfoWrap, inputs: number[]): Bonus {
+function getBonus(bonus: ArtifactBonusCore, info: BuffInfoWrap, inputs: number[]): AppliedBonus {
   let bonusValue = 0;
   let isStable = true;
 
@@ -80,10 +75,7 @@ function getBonus(bonus: Omit<ArtifactBonus, "targets">, info: BuffInfoWrap, inp
 
 interface ApplyArtifactBuffArgs {
   description: string;
-  buff: {
-    trackId?: string;
-    effects: ArtifactBonus | ArtifactBonus[];
-  };
+  buff: Pick<ArtifactBuff, "trackId" | "effects">;
   infoWrap: BuffInfoWrap;
   inputs: number[];
   isFinal?: boolean;
@@ -97,47 +89,20 @@ function applyArtifactBuff({
   isFinal,
   isStackable = () => true,
 }: ApplyArtifactBuffArgs) {
+  if (!buff.effects) return;
   const noIsFinal = isFinal === undefined;
 
-  const isLocalStackable = (targets: string | string[]) => isStackable({ trackId: buff.trackId, targets });
-
-  for (const bonusConfig of toArray(buff.effects)) {
-    if ((noIsFinal || isFinal === isFinalBonus(bonusConfig.stacks)) && isUsableBonus(bonusConfig, info, inputs)) {
-      const bonus = getBonus(bonusConfig, info, inputs);
-
-      if (bonus.value) {
-        for (const [key, value] of Object.entries(bonusConfig.targets)) {
-          const mixed = value as any;
-
-          switch (key) {
-            case "ATTR":
-              if (isLocalStackable(mixed)) {
-                if (bonus.isStable) {
-                  info.totalAttr.addStable(mixed, bonus.value, description);
-                } else {
-                  info.totalAttr.addUnstable(mixed, bonus.value, description);
-                }
-              }
-              break;
-            case "PATT":
-            case "RXN":
-              if (isLocalStackable(mixed)) {
-                info.bonusCalc.add(key, mixed, bonus.value, description);
-              }
-              break;
-            case "INP_ELMT": {
-              const elmtIndex = inputs[mixed ?? 0];
-
-              if (isLocalStackable(ELEMENT_TYPES[elmtIndex])) {
-                info.totalAttr.addStable(ELEMENT_TYPES[elmtIndex], bonus.value, description);
-              }
-              break;
-            }
-          }
-        }
-      }
-    }
-  }
+  applyBonuses({
+    buff,
+    info,
+    inputs,
+    description,
+    isApplicable: (config) => {
+      return (noIsFinal || isFinal === isFinalBonus(config.stacks)) && isUsableBonus(config, info, inputs);
+    },
+    isStackable: (paths: string | string[]) => isStackable({ trackId: buff.trackId, paths }),
+    getBonus: (config) => getBonus(config, info, inputs),
+  });
 }
 
 export default applyArtifactBuff;
