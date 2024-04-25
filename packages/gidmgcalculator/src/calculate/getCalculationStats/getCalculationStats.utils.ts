@@ -3,16 +3,25 @@ import type { BuffInfoWrap } from "../types";
 import type { AppBonus, AppBuff, WithBonusTargets } from "@Src/types/app-common.types";
 import { ELEMENT_TYPES } from "@Src/constants";
 import { toArray } from "@Src/utils";
+import { CharacterBonusStack } from "@Src/types/app-character.types";
+import { WeaponBonusStack } from "@Src/types/app-weapon.types";
+import { ArtifactBonusStack } from "@Src/types/app-artifact.types";
 
-type Stack = {
-  type: string;
-  field?: string;
-};
-export function isFinalBonus(bonusStacks?: Stack | Stack[]) {
+type BonusStack = CharacterBonusStack | WeaponBonusStack | ArtifactBonusStack;
+
+export function isFinalBonus(bonusStacks?: BonusStack | BonusStack[]) {
   if (bonusStacks) {
-    const isFinal = (stack: Stack) =>
-      (stack.type === "ATTRIBUTE" && stack.field !== "base_atk") || stack.type === "BOL";
-    return Array.isArray(bonusStacks) ? bonusStacks.some(isFinal) : isFinal(bonusStacks);
+    const hasAnyFinalBonus = toArray(bonusStacks).some((stack) => {
+      switch (stack.type) {
+        case "ATTRIBUTE":
+          return stack.field !== "base_atk";
+        case "C_STATUS":
+          return stack.status !== "BOL";
+        default:
+          return false;
+      }
+    });
+    return hasAnyFinalBonus;
   }
   return false;
 }
@@ -106,5 +115,15 @@ export function applyBonuses<T extends Bonus>(args: ApplyBonusesArgs<T>) {
         targets: config.targets,
       });
     }
+  }
+}
+
+interface BuffApplierStructure {
+  getBonus(...args: unknown[]): number;
+}
+
+class WeaponBuffApplier implements BuffApplierStructure {
+  getBonus(a: number, b: string): number {
+    return 2
   }
 }

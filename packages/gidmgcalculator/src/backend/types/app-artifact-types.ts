@@ -1,13 +1,13 @@
-import type { WeaponType } from "./global.types";
 import type {
   AppBonus,
   AppBonusAttributeStack,
   AppBonusElementStack,
   AppBuff,
   AppDebuff,
+  WeaponType,
   WithBonusTargets,
   WithPenaltyTargets,
-} from "./app-common.types";
+} from "./app-entity.types";
 
 type ArtTypeData = {
   name: string;

@@ -1,11 +1,54 @@
-import type { AttributeStat, ElementType, Talent } from "./global.types";
-import type {
-  AttackElementPath,
-  AttackPatternInfoKey,
-  AttackPatternPath,
-  ReactionBonusPath,
-  ResistanceReductionKey,
-} from "./calculation-core.types";
+import {
+  ATTACK_ELEMENTS,
+  ATTACK_ELEMENT_INFO_KEYS,
+  ATTACK_PATTERNS,
+  ATTACK_PATTERN_INFO_KEYS,
+  ATTRIBUTE_STAT_TYPES,
+  ELEMENT_TYPES,
+  REACTIONS,
+  REACTION_BONUS_INFO_KEYS,
+  TALENT_TYPES,
+  WEAPON_TYPES,
+} from "../constants";
+
+export type ElementType = (typeof ELEMENT_TYPES)[number];
+
+export type WeaponType = (typeof WEAPON_TYPES)[number];
+
+export type TalentType = (typeof TALENT_TYPES)[number];
+
+export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];
+
+export type CalcItemType = "attack" | "healing" | "shield" | "other";
+
+export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
+
+export type AttackElement = (typeof ATTACK_ELEMENTS)[number];
+
+export type ReactionType = (typeof REACTIONS)[number];
+
+//
+
+export type AttackPatternInfoKey = (typeof ATTACK_PATTERN_INFO_KEYS)[number];
+export type AttackPatternInfo = Record<AttackPatternInfoKey, number>;
+export type AttackPatternBonusKey = AttackPattern | "all";
+export type AttackPatternBonus = Record<AttackPatternBonusKey, AttackPatternInfo>;
+export type AttackPatternPath = `${AttackPatternBonusKey}.${AttackPatternInfoKey}`;
+
+export type ResistanceReductionKey = AttackElement | "def";
+export type ResistanceReduction = Record<ResistanceReductionKey, number>;
+
+export type AttackElementInfoKey = (typeof ATTACK_ELEMENT_INFO_KEYS)[number];
+export type AttacklementInfo = Record<AttackElementInfoKey, number>;
+export type AttackElementBonus = Record<AttackElement, AttacklementInfo>;
+export type AttackElementPath = `${AttackElement}.${AttackElementInfoKey}`;
+
+export type ReactionBonusInfoKey = (typeof REACTION_BONUS_INFO_KEYS)[number];
+export type ReactionBonusInfo = Record<ReactionBonusInfoKey, number>;
+export type ReactionBonusPath = `${ReactionType}.${ReactionBonusInfoKey}`;
+export type ReactionBonus = Record<ReactionType, ReactionBonusInfo>;
+
+//
 
 /**
  * For the buff/bonus to be available, the input at the [source] must meet [value] by [type].
@@ -19,15 +62,13 @@ export type InputCheck = {
   type?: "equal" | "min" | "max";
 };
 
-export type CalcItemType = "attack" | "healing" | "shield" | "other";
-
 // ========== MODIFIERS ==========
 
 export type ModifierAffectType = "SELF" | "TEAMMATE" | "SELF_TEAMMATE" | "PARTY" | "ONE_UNIT" | "ACTIVE_UNIT";
 
-export type ModInputType = "LEVEL" | "TEXT" | "CHECK" | "STACKS" | "SELECT" | "ANEMOABLE" | "DENDROABLE";
+type ModInputType = "LEVEL" | "TEXT" | "CHECK" | "STACKS" | "SELECT" | "ANEMOABLE" | "DENDROABLE";
 
-export type ModInputConfig = {
+type ModInputConfig = {
   label?: string;
   type: ModInputType;
   for?: "FOR_SELF" | "FOR_TEAM";
@@ -119,7 +160,7 @@ type ElementOptionIndex = {
 /** On Razor */
 type LevelOptionIndex = {
   source: "LEVEL";
-  talent: Talent;
+  talent: TalentType;
 };
 
 type AppBonusValueOption = {

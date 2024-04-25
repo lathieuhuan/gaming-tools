@@ -4,7 +4,7 @@ import type {
   CharacterBuff,
   CharacterEffectExtraMax,
   CharacterEffectMax,
-} from "@Src/types/app-character.types";
+} from "@Src/types";
 import type { BuffInfoWrap, CalcUltilInfo } from "../types";
 
 import { Calculation_, Character_, toArray } from "@Src/utils";
@@ -241,7 +241,7 @@ interface ApplyAbilityBuffArgs {
   fromSelf: boolean;
   isFinal?: boolean;
 }
-function applyAbilityBuff({ description, buff, infoWrap: info, inputs, fromSelf, isFinal }: ApplyAbilityBuffArgs) {
+function applyCharacterBuff({ description, buff, infoWrap: info, inputs, fromSelf, isFinal }: ApplyAbilityBuffArgs) {
   if (!buff.effects) return;
   const cmnStacks = buff.cmnStacks ? toArray(buff.cmnStacks) : [];
   const commonStacks = cmnStacks.map((cmnStack) => getStackValue(cmnStack, info, inputs, fromSelf));
@@ -262,4 +262,4 @@ function applyAbilityBuff({ description, buff, infoWrap: info, inputs, fromSelf,
   });
 }
 
-export default applyAbilityBuff;
+export default applyCharacterBuff;

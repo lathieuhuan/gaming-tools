@@ -1,4 +1,4 @@
-import type { ArtifactBonusCore, ArtifactBuff } from "@Src/types/app-artifact.types";
+import type { ArtifactBonusCore, ArtifactBonusStack, ArtifactBuff } from "@Src/types";
 import type { BuffInfoWrap, StackableCheckCondition } from "../types";
 import { Calculation_ } from "@Src/utils";
 import { AppliedBonus, applyBonuses, isFinalBonus } from "./getCalculationStats.utils";
@@ -19,7 +19,7 @@ function isUsableBonus(
   return true;
 }
 
-function getStackValue(stack: NonNullable<ArtifactBonusCore["stacks"]>, info: BuffInfoWrap, inputs: number[]) {
+function getStackValue(stack: ArtifactBonusStack, info: BuffInfoWrap, inputs: number[]) {
   switch (stack.type) {
     case "INPUT":
       return inputs[stack.index ?? 0];

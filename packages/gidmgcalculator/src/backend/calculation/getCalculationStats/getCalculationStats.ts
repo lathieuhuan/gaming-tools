@@ -1,23 +1,4 @@
-import type {
-  AttackElement,
-  AttackElementInfoKey,
-  AttackPatternBonusKey,
-  AttributeStat,
-  CalcItemBuff,
-  CharacterStatus,
-  Reaction,
-  ReactionBonusInfoKey,
-} from "@Src/types";
-import type { BuffInfoWrap, GetCalculationStatsArgs, StackableCheckCondition } from "../types";
-
-import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/constants";
-import { $AppCharacter, $AppData } from "@Src/services";
-import { Calculation_, Setup_, Weapon_, findByIndex } from "@Src/utils";
-import { RESONANCE_STAT } from "../constants";
-import { ArtifactAttributeCalc, BonusCalc, CharacterCal, TotalAttributeCalc } from "../utils";
-import applyCharacterBuff from "./applyCharacterBuff";
-import applyArtifactBuff from "./applyArtifactBuff";
-import applyWeaponBuff from "./applyWeaponBuff";
+import type { GetCalculationStatsArgs } from "../calculation.types";
 
 export function getCalculationStats({
   char,

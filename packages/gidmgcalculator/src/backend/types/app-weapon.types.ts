@@ -1,13 +1,14 @@
-import type { AttributeStat, WeaponType } from "./global.types";
 import type {
   AppBonus,
   AppBonusAttributeStack,
   AppBonusElementStack,
   AppBonusNationStack,
   AppBuff,
+  AttributeStat,
   CalcItemType,
+  WeaponType,
   WithBonusTargets,
-} from "./app-common.types";
+} from "./app-entity.types";
 
 export type AppWeapon = {
   /** This is id */

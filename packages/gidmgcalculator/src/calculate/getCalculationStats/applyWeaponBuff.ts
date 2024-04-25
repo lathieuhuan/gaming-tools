@@ -1,4 +1,4 @@
-import type { WeaponBonusCore, WeaponBonusStack, WeaponBuff } from "@Src/types/app-weapon.types";
+import type { WeaponBonusCore, WeaponBonusStack, WeaponBuff } from "@Src/types";
 import type { StackableCheckCondition, BuffInfoWrap } from "../types";
 import { toArray, Calculation_ } from "@Src/utils";
 import { CommonCalc } from "../utils";

@@ -1,18 +1,28 @@
-import type { AttributeStat, ElementType, Nation, Talent, WeaponType } from "./global.types";
-import type { ActualAttackElement, ActualAttackPattern } from "./calculation-core.types";
 import type {
-  AppBonus,
-  AppBonusAttributeStack,
-  AppBonusCharStatusStack,
-  AppBonusNationStack,
-  AppBuff,
-  AppDebuff,
+  ElementType,
+  WeaponType,
+  TalentType,
+  AttributeStat,
   CalcItemType,
-  InputCheck,
-  ModifierAffectType,
+  AttackPattern,
+  AttackElement,
+  AppBonus,
   WithBonusTargets,
+  AppBuff,
+  InputCheck,
   WithPenaltyTargets,
-} from "./app-common.types";
+  AppDebuff,
+  ModifierAffectType,
+  AppBonusNationStack,
+  AppBonusCharStatusStack,
+  AppBonusAttributeStack,
+} from "./app-entity.types";
+
+type Nation = "outland" | "mondstadt" | "liyue" | "inazuma" | "sumeru" | "natlan" | "fontaine" | "snezhnaya";
+
+type ActualAttackPattern = AttackPattern | "none";
+
+type ActualAttackElement = AttackElement | "absorb";
 
 export type AppCharacter = {
   code: number;
@@ -26,7 +36,7 @@ export type AppCharacter = {
   vision: ElementType;
   weaponType: WeaponType;
   EBcost: number;
-  talentLvBonus?: Partial<Record<Talent, number>>;
+  talentLvBonus?: Partial<Record<TalentType, number>>;
   stats: number[][];
   statBonus: {
     type: AttributeStat;
@@ -92,6 +102,7 @@ type CalcItemMultFactor = {
 
 type CalcItem = {
   id?: string;
+
   name: string;
   type?: CalcItemType;
   notOfficial?: boolean;
@@ -211,7 +222,7 @@ export type CharacterEffectMax = number | CharacterEffectDynamicMax;
 // ========== BUFF / BONUS ==========
 
 type CharacterEffectLevelScale = {
-  talent: Talent;
+  talent: TalentType;
   /** If [value] = 0: buff value * level. Otherwise buff value * TALENT_LV_MULTIPLIERS[value][level]. */
   value: number;
   /** When this bonus is from teammate, this is input's index to get level. Default to 0 */

@@ -60,22 +60,6 @@ export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];
 
 export type TotalAttributeStat = BaseStat | AttributeStat;
 
-/** ========== MODIFIERS ========== */
-
-export type ModifierAffectType = "SELF" | "TEAMMATE" | "SELF_TEAMMATE" | "PARTY" | "ONE_UNIT" | "ACTIVE_UNIT";
-
-export type ModInputType = "LEVEL" | "TEXT" | "CHECK" | "STACKS" | "SELECT" | "ANEMOABLE" | "DENDROABLE";
-
-export type ModInputConfig = {
-  label?: string;
-  type: ModInputType;
-  for?: "FOR_SELF" | "FOR_TEAM";
-  /** See ModifierControl model for default value */
-  initialValue?: number;
-  max?: number;
-  options?: string[];
-};
-
 /** ========== BASE MODELS ========== */
 
 export type Character = {

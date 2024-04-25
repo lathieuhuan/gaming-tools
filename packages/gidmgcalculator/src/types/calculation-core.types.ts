@@ -47,8 +47,6 @@ export type ReactionBonusInfo = Record<ReactionBonusInfoKey, number>;
 export type ReactionBonusPath = `${Reaction}.${ReactionBonusInfoKey}`;
 export type ReactionBonus = Record<Reaction, ReactionBonusInfo>;
 
-export type CalcItemType = "attack" | "healing" | "shield" | "other";
-
 export type CalcItemBonus = Partial<Record<AttackPatternInfoKey, { desc: string; value: number }>>;
 
 export type CalcItemBuff = {
