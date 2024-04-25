@@ -34,6 +34,7 @@ export function GenshinModifierView({ inputConfigs, ...viewProps }: GenshinModif
         return {
           type: "select",
           label: "Stacks",
+          style: { maxWidth: "3.25rem" },
           options: genSequentialOptions(config.max, config.initialValue === 0),
         };
       case "ANEMOABLE":
