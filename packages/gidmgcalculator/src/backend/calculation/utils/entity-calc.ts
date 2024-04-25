@@ -1,9 +1,9 @@
-import type { InputCheck } from "@Src/types/app-common.types";
-import type { CalcUltilInfo } from "../types";
-import { Calculation_ } from "@Src/utils";
+import type { InputCheck } from "@Src/backend/types";
+import type { CalcUltilInfo } from "../calculation.types";
+import { GeneralCalc } from "./general-calc";
 
-export class CommonCalc {
-  static isValidInput(info: CalcUltilInfo, inputs: number[], checkInput?: number | InputCheck) {
+export class EntityCalc {
+  static isValidEffectByInput(info: CalcUltilInfo, inputs: number[], checkInput?: number | InputCheck) {
     if (checkInput !== undefined) {
       const { value, source = 0, type = "equal" } = typeof checkInput === "number" ? { value: checkInput } : checkInput;
       let input = 0;
@@ -11,7 +11,7 @@ export class CommonCalc {
       switch (source) {
         case "various_vision":
           if (info.partyData.length) {
-            input = Object.keys(Calculation_.countElements(info.partyData, info.appChar)).length;
+            input = Object.keys(GeneralCalc.countElements(info.partyData, info.appChar)).length;
           } else {
             return false;
           }

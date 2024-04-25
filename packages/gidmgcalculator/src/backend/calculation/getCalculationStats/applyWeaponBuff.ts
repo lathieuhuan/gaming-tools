@@ -1,11 +1,12 @@
-import type { WeaponBonusCore, WeaponBonusStack, WeaponBuff } from "@Src/types";
-import type { StackableCheckCondition, BuffInfoWrap } from "../types";
-import { toArray, Calculation_ } from "@Src/utils";
-import { CommonCalc } from "../utils";
-import { AppliedBonus, applyBonuses, isFinalBonus } from "./getCalculationStats.utils";
+import type { WeaponBonusCore, WeaponBonusStack, WeaponBuff } from "@Src/backend/types";
+import type { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.types";
+
+import { toArray } from "@Src/utils";
+import { EntityCalc, GeneralCalc } from "../utils";
+import { meetIsFinal, applyBonuses, type AppliedBonus } from "./getCalculationStats.utils";
 
 function isUsableBonus(bonus: Pick<WeaponBonusCore, "checkInput">, info: BuffInfoWrap, inputs: number[]) {
-  return CommonCalc.isValidInput(info, inputs, bonus.checkInput);
+  return EntityCalc.isValidEffectByInput(info, inputs, bonus.checkInput);
 }
 
 function getStackValue(stack: WeaponBonusStack, { appChar, partyData, totalAttr }: BuffInfoWrap, inputs: number[]) {
@@ -34,7 +35,7 @@ function getStackValue(stack: WeaponBonusStack, { appChar, partyData, totalAttr 
     }
     case "ELEMENT": {
       const { element, max } = stack;
-      const { [appChar.vision]: sameCount = 0, ...others } = Calculation_.countElements(partyData);
+      const { [appChar.vision]: sameCount = 0, ...others } = GeneralCalc.countElements(partyData);
       let stackValue = 0;
 
       if (element === "different") {
@@ -72,8 +73,8 @@ function getBonus(
     bonusValue = scaleRefi(bonus.value, bonus.incre);
 
     // ========== APPLY STACKS ==========
-    for (const stackValue of preCalcStacks) {
-      bonusValue *= stackValue;
+    if (bonus.stackIndex !== undefined) {
+      bonusValue *= preCalcStacks[bonus.stackIndex] ?? 1;
     }
     if (bonus.stacks) {
       for (const stack of toArray(bonus.stacks)) {
@@ -118,14 +119,6 @@ function getBonus(
   };
 }
 
-function isTrulyFinalBonus(bonus: WeaponBonusCore, cmnStacks: WeaponBonusStack[]) {
-  return (
-    isFinalBonus(bonus.stacks) ||
-    isFinalBonus(cmnStacks) ||
-    (typeof bonus.checkInput === "object" && bonus.checkInput.source === "BOL")
-  );
-}
-
 interface ApplyWeaponBuffArgs {
   description: string;
   buff: Pick<WeaponBuff, "trackId" | "cmnStacks" | "effects">;
@@ -147,7 +140,6 @@ function applyWeaponBuff({
   if (!buff.effects) return;
   const cmnStacks = buff.cmnStacks ? toArray(buff.cmnStacks) : [];
   const commonStacks = cmnStacks.map((cmnStack) => getStackValue(cmnStack, info, inputs));
-  const noIsFinal = isFinal === undefined;
 
   applyBonuses({
     buff,
@@ -155,7 +147,7 @@ function applyWeaponBuff({
     inputs,
     description,
     isApplicable: (config) => {
-      return (noIsFinal || isFinal === isTrulyFinalBonus(config, cmnStacks)) && isUsableBonus(config, info, inputs);
+      return meetIsFinal(isFinal, config, cmnStacks) && isUsableBonus(config, info, inputs);
     },
     isStackable: (paths: string | string[]) => isStackable({ trackId: buff.trackId, paths }),
     getBonus: (config) => getBonus(config, info, inputs, refi, commonStacks),

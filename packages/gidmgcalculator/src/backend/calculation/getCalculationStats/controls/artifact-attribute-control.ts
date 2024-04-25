@@ -1,22 +1,28 @@
-import type { ArtifactAttribute, CalcArtifacts } from "@Src/types";
-import { CORE_STAT_TYPES } from "@Src/constants";
-import { Artifact_, applyPercent } from "@Src/utils";
-import { TotalAttributeCalc } from "./total-attribute-calc";
+import type { PartiallyRequired } from "rond";
+import type { CalcArtifacts } from "@Src/types";
+import type { AttributeStat, CoreStat } from "@Src/backend/types";
+import type { TotalAttributeControl } from "./total-attribute-control";
 
-export class ArtifactAttributeCalc {
+import { CORE_STAT_TYPES } from "@Src/backend/constants";
+import { applyPercent } from "@Src/utils";
+import { ArtifactCalc } from "../../utils";
+
+export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;
+
+export class ArtifactAttributeControl {
   private artAttr: ArtifactAttribute = {
     hp: 0,
     atk: 0,
     def: 0,
   };
 
-  constructor(artifacts: CalcArtifacts, totalAttr: TotalAttributeCalc) {
+  constructor(artifacts: CalcArtifacts, totalAttr: TotalAttributeControl) {
     for (const artifact of artifacts) {
       if (!artifact) continue;
 
       const { type, mainStatType, subStats } = artifact;
       const mainDesc = type[0].toUpperCase() + type.slice(1);
-      const mainStat = Artifact_.mainStatValueOf(artifact);
+      const mainStat = ArtifactCalc.mainStatValueOf(artifact);
 
       this.artAttr[mainStatType] = (this.artAttr[mainStatType] || 0) + mainStat;
       totalAttr.addStable(mainStatType, mainStat, mainDesc);

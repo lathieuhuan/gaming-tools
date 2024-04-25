@@ -1,7 +1,12 @@
-import type { AppCharacter, AttributeStat, CalcCharacter } from "@Src/types";
-import { ATTRIBUTE_STAT_TYPES, LEVELS } from "@Src/constants";
-import { Calculation_, toArray } from "@Src/utils";
-import { TrackerCalc } from "./tracker-calc";
+import type { CalcCharacter } from "@Src/types";
+import type { AttributeStat, AppCharacter } from "@Src/backend/types";
+import type { TrackerControl } from "@Src/backend/calculation/controls";
+
+import { LEVELS } from "@Src/constants";
+import { ATTRIBUTE_STAT_TYPES } from "@Src/backend/constants";
+
+import { toArray } from "@Src/utils";
+import { GeneralCalc } from "@Src/backend/calculation/utils";
 
 type TotalAttribute = Record<
   AttributeStat,
@@ -12,11 +17,11 @@ type TotalAttribute = Record<
   }
 >;
 
-export class TotalAttributeCalc {
+export class TotalAttributeControl {
   private totalAttr: TotalAttribute;
-  private tracker?: TrackerCalc;
+  private tracker?: TrackerControl;
 
-  constructor(tracker?: TrackerCalc) {
+  constructor(tracker?: TrackerControl) {
     this.tracker = tracker;
     this.totalAttr = {} as TotalAttribute;
 
@@ -37,7 +42,7 @@ export class TotalAttributeCalc {
   create(char: CalcCharacter, appChar: AppCharacter, weaponAtk: number) {
     // Character inner stats
     const [baseHp, baseAtk, baseDef] = appChar.stats[LEVELS.indexOf(char.level)];
-    const scaleIndex = Math.max(Calculation_.getAscension(char.level) - 1, 0);
+    const scaleIndex = Math.max(GeneralCalc.getAscension(char.level) - 1, 0);
     const bonusScale = [0, 1, 2, 2, 3, 4][scaleIndex];
     let cRate_ = 5;
 

@@ -1,18 +1,13 @@
-import { AppCharacter } from "../types/app-character.types";
+import type { Character, PartyData } from "@Src/types";
+import type { AppCharacter } from "../types";
 
-export type GetCalculationStatsArgs = {
-  char: CalcCharacter;
+export type CharacterStatus = {
+  BOL: number;
+};
+
+export type CalcUltilInfo = {
+  char: Character;
   appChar: AppCharacter;
-  weapon: CalcWeapon;
-  appWeapon: AppWeapon;
-  artifacts: CalcArtifacts;
-  party?: Party;
   partyData: PartyData;
-  elmtModCtrls?: ElementModCtrl;
-  selfBuffCtrls?: ModifierCtrl[];
-  wpBuffCtrls?: ModifierCtrl[];
-  artBuffCtrls?: ModifierCtrl[];
-  customBuffCtrls?: CustomBuffCtrl[];
-  infusedElement?: AttackElement;
-  tracker?: TrackerCalc;
+  charStatus?: CharacterStatus;
 };

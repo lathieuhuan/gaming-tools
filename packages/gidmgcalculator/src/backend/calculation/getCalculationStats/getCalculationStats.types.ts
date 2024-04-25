@@ -1,25 +1,21 @@
 import type {
-  AppCharacter,
-  AppWeapon,
-  AttackElement,
   CalcArtifacts,
   CalcCharacter,
-  CalcItemBuff,
   CalcWeapon,
-  CharacterStatus,
   CustomBuffCtrl,
   ElementModCtrl,
   ModifierCtrl,
   Party,
   PartyData,
 } from "@Src/types";
-import { BonusCalc, TotalAttributeCalc, TrackerCalc } from "./utils";
+import type { AppCharacter, AppWeapon, AttackElement, CalcItemBonus } from "@Src/backend/types";
+import type { CharacterStatus } from "../calculation.types";
+import type { TrackerControl } from "../controls";
+import type { BonusControl, TotalAttributeControl } from "./controls";
 
-export type CalcUltilInfo = {
-  char: CalcCharacter;
-  appChar: AppCharacter;
-  partyData: PartyData;
-  charStatus?: CharacterStatus;
+export type CalcItemBuff = {
+  ids: string | string[];
+  bonus: CalcItemBonus;
 };
 
 export type BuffInfoWrap = {
@@ -27,11 +23,15 @@ export type BuffInfoWrap = {
   appChar: AppCharacter;
   partyData: PartyData;
   charStatus: CharacterStatus;
-  totalAttr: TotalAttributeCalc;
-  bonusCalc: BonusCalc;
+  totalAttr: TotalAttributeControl;
+  bonusCalc: BonusControl;
   calcItemBuffs: CalcItemBuff[];
   infusedElement?: AttackElement;
-  // tracker?: TrackerCalc;
+};
+
+export type StackableCheckCondition = {
+  trackId?: string;
+  paths: string | string[];
 };
 
 export type GetCalculationStatsArgs = {
@@ -48,10 +48,5 @@ export type GetCalculationStatsArgs = {
   artBuffCtrls?: ModifierCtrl[];
   customBuffCtrls?: CustomBuffCtrl[];
   infusedElement?: AttackElement;
-  tracker?: TrackerCalc;
-};
-
-export type StackableCheckCondition = {
-  trackId?: string;
-  paths: string | string[];
+  tracker?: TrackerControl;
 };

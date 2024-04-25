@@ -1,3 +1,4 @@
+import type { ActualAttackElement } from "./common.types";
 import type {
   ElementType,
   WeaponType,
@@ -5,7 +6,6 @@ import type {
   AttributeStat,
   CalcItemType,
   AttackPattern,
-  AttackElement,
   AppBonus,
   WithBonusTargets,
   AppBuff,
@@ -21,8 +21,6 @@ import type {
 type Nation = "outland" | "mondstadt" | "liyue" | "inazuma" | "sumeru" | "natlan" | "fontaine" | "snezhnaya";
 
 type ActualAttackPattern = AttackPattern | "none";
-
-type ActualAttackElement = AttackElement | "absorb";
 
 export type AppCharacter = {
   code: number;
@@ -75,7 +73,7 @@ type Ability = {
   description?: string;
 };
 
-type CharacterMilestone = "A1" | "A4" | "C1" | "C2" | "C4" | "C6";
+export type CharacterMilestone = "A1" | "A4" | "C1" | "C2" | "C4" | "C6";
 
 type CharacterModifier = {
   src: string;
@@ -85,7 +83,7 @@ type CharacterModifier = {
 
 // ========== CALC ITEM ==========
 
-type TalentAttributeType = "base_atk" | "atk" | "def" | "hp" | "em";
+export type TalentAttributeType = "base_atk" | "atk" | "def" | "hp" | "em";
 
 type MultFactorConfig = {
   scale?: number;
@@ -131,13 +129,13 @@ type CalcItem = {
 
 // ========== CONDITIONS ==========
 
-type CharacterEffectAvailableCondition = {
+export type CharacterEffectAvailableCondition = {
   grantedAt?: CharacterMilestone;
   /** When this bonus is from teammate, this is input's index to check granted. */
   alterIndex?: number;
 };
 
-type CharacterEffectUsableCondition = CharacterEffectAvailableCondition & {
+export type CharacterEffectUsableCondition = CharacterEffectAvailableCondition & {
   checkInput?: number | InputCheck;
 };
 
@@ -151,6 +149,9 @@ type CharacterEffectOtherUsableCondition = {
   /** On Nilou, Chevreuse */
   partyOnlyElmts?: ElementType[];
 };
+
+export type CharacterEffectExtendedUsableCondition = CharacterEffectUsableCondition &
+  CharacterEffectOtherUsableCondition;
 
 // ========== EXTRA ==========
 
@@ -221,7 +222,7 @@ export type CharacterEffectMax = number | CharacterEffectDynamicMax;
 
 // ========== BUFF / BONUS ==========
 
-type CharacterEffectLevelScale = {
+export type CharacterEffectLevelScale = {
   talent: TalentType;
   /** If [value] = 0: buff value * level. Otherwise buff value * TALENT_LV_MULTIPLIERS[value][level]. */
   value: number;
@@ -269,15 +270,14 @@ export type CharacterBuff = AppBuff<CharacterBonus> &
 
 // ============ DEBUFF / PENALTY ============
 
-type CharacterPenaltyCore = CharacterEffectUsableCondition &
-  CharacterEffectOtherUsableCondition & {
-    value: number;
-    lvScale?: CharacterEffectLevelScale;
-    /** Added before stacks, after scale */
-    preExtra?: number | CharacterPenaltyCore;
-    // index?: number;
-    max?: number;
-  };
+type CharacterPenaltyCore = CharacterEffectExtendedUsableCondition & {
+  value: number;
+  lvScale?: CharacterEffectLevelScale;
+  /** Added before stacks, after scale */
+  preExtra?: number | CharacterPenaltyCore;
+  // index?: number;
+  max?: number;
+};
 
 type CharacterPenalty = WithPenaltyTargets<CharacterPenaltyCore>;
 

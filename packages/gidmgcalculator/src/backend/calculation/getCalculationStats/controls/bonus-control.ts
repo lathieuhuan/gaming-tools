@@ -9,12 +9,14 @@ import type {
   AttackPatternInfoKey,
   AttackPatternPath,
   AttacklementInfo,
-  Reaction,
   ReactionBonus,
   ReactionBonusInfo,
   ReactionBonusInfoKey,
   ReactionBonusPath,
-} from "@Src/types";
+  ReactionType,
+} from "@Src/backend/types";
+import type { TrackerControl } from "@Src/backend/calculation/controls";
+
 import {
   ATTACK_ELEMENTS,
   ATTACK_ELEMENT_INFO_KEYS,
@@ -22,19 +24,18 @@ import {
   ATTACK_PATTERN_INFO_KEYS,
   REACTIONS,
   REACTION_BONUS_INFO_KEYS,
-} from "@Src/constants";
+} from "@Src/backend/constants";
 import { toArray } from "@Src/utils";
-import { TrackerCalc } from "./tracker-calc";
 
 type BonusModule = "PATT" | "ELMT" | "RXN";
 
-export class BonusCalc {
+export class BonusControl {
   private attPattBonus: AttackPatternBonus;
   private attElmtBonus: AttackElementBonus;
   private rxnBonus: ReactionBonus;
-  private tracker?: TrackerCalc;
+  private tracker?: TrackerControl;
 
-  constructor(tracker?: TrackerCalc) {
+  constructor(tracker?: TrackerControl) {
     this.tracker = tracker;
     this.attPattBonus = {} as AttackPatternBonus;
     this.attElmtBonus = {} as AttackElementBonus;
@@ -79,7 +80,7 @@ export class BonusCalc {
           this.tracker?.recordStat("attElmtBonus", path as AttackElementPath, description, value);
           break;
         case "RXN":
-          this.rxnBonus[key1 as Reaction][key2 as ReactionBonusInfoKey] += value;
+          this.rxnBonus[key1 as ReactionType][key2 as ReactionBonusInfoKey] += value;
           this.tracker?.recordStat("rxnBonus", path as ReactionBonusPath, description, value);
           break;
       }

@@ -1,12 +1,12 @@
 import type {
-  AttackElementPath,
-  AttackPatternPath,
-  AttributeStat,
-  CalcItemBonus,
   CalcItemType,
+  CalcItemBonus,
+  AttributeStat,
+  AttackPatternPath,
+  AttackElementPath,
   ReactionBonusPath,
   ResistanceReductionKey,
-} from "@Src/types";
+} from "@Src/backend/types";
 import {
   ATTACK_ELEMENTS,
   ATTACK_ELEMENT_INFO_KEYS,
@@ -15,7 +15,7 @@ import {
   ATTRIBUTE_STAT_TYPES,
   REACTIONS,
   REACTION_BONUS_INFO_KEYS,
-} from "@Src/constants";
+} from "@Src/backend/constants";
 
 type StatRecord = {
   desc: string;
@@ -50,7 +50,7 @@ type StatRecordType =
   | ReactionBonusPath
   | ResistanceReductionKey;
 
-export class TrackerCalc {
+export class TrackerControl {
   private stats: Record<string, Record<string, StatRecord[]>>;
   private calcItems: Record<string, Record<string, CalcItemRecord>>;
 

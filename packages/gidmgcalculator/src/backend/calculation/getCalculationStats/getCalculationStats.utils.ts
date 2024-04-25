@@ -1,15 +1,26 @@
-import type { AppBonusTarget, AttributeStat, ElementType } from "@Src/types";
-import type { BuffInfoWrap } from "../types";
-import type { AppBonus, AppBuff, WithBonusTargets } from "@Src/types/app-common.types";
+import type {
+  AppBonus,
+  AppBonusTarget,
+  AppBuff,
+  ArtifactBonusCore,
+  ArtifactBonusStack,
+  AttributeStat,
+  CharacterBonusCore,
+  CharacterBonusStack,
+  ElementType,
+  WeaponBonusCore,
+  WeaponBonusStack,
+  WithBonusTargets,
+} from "@Src/backend/types";
+import type { BuffInfoWrap } from "./getCalculationStats.types";
 import { ELEMENT_TYPES } from "@Src/constants";
 import { toArray } from "@Src/utils";
-import { CharacterBonusStack } from "@Src/types/app-character.types";
-import { WeaponBonusStack } from "@Src/types/app-weapon.types";
-import { ArtifactBonusStack } from "@Src/types/app-artifact.types";
 
 type BonusStack = CharacterBonusStack | WeaponBonusStack | ArtifactBonusStack;
 
-export function isFinalBonus(bonusStacks?: BonusStack | BonusStack[]) {
+type BonusCore = CharacterBonusCore | WeaponBonusCore | ArtifactBonusCore;
+
+function isFinalBonus(bonusStacks?: BonusStack | BonusStack[]) {
   if (bonusStacks) {
     const hasAnyFinalBonus = toArray(bonusStacks).some((stack) => {
       switch (stack.type) {
@@ -24,6 +35,20 @@ export function isFinalBonus(bonusStacks?: BonusStack | BonusStack[]) {
     return hasAnyFinalBonus;
   }
   return false;
+}
+
+function isTrulyFinalBonus(bonus: BonusCore, cmnStacks: BonusStack[]) {
+  return (
+    isFinalBonus(bonus.stacks) ||
+    ("preExtra" in bonus && typeof bonus.preExtra === "object" && isFinalBonus(bonus.preExtra.stacks)) ||
+    ("sufExtra" in bonus && typeof bonus.sufExtra === "object" && isFinalBonus(bonus.sufExtra.stacks)) ||
+    (bonus.stackIndex !== undefined && isFinalBonus(cmnStacks[bonus.stackIndex])) ||
+    (typeof bonus.checkInput === "object" && bonus.checkInput.source === "BOL")
+  );
+}
+
+export function meetIsFinal(isFinal: boolean | undefined, bonus: BonusCore, cmnStacks: BonusStack[]) {
+  return isFinal === undefined || isFinal === isTrulyFinalBonus(bonus, cmnStacks);
 }
 
 export type AppliedBonus = {
@@ -115,15 +140,5 @@ export function applyBonuses<T extends Bonus>(args: ApplyBonusesArgs<T>) {
         targets: config.targets,
       });
     }
-  }
-}
-
-interface BuffApplierStructure {
-  getBonus(...args: unknown[]): number;
-}
-
-class WeaponBuffApplier implements BuffApplierStructure {
-  getBonus(a: number, b: string): number {
-    return 2
   }
 }

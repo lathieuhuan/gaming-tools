@@ -1,9 +1,10 @@
+import type { AttackElement } from "./common.types";
 import {
-  ATTACK_ELEMENTS,
   ATTACK_ELEMENT_INFO_KEYS,
   ATTACK_PATTERNS,
   ATTACK_PATTERN_INFO_KEYS,
   ATTRIBUTE_STAT_TYPES,
+  CORE_STAT_TYPES,
   ELEMENT_TYPES,
   REACTIONS,
   REACTION_BONUS_INFO_KEYS,
@@ -17,13 +18,15 @@ export type WeaponType = (typeof WEAPON_TYPES)[number];
 
 export type TalentType = (typeof TALENT_TYPES)[number];
 
+export type LevelableTalentType = Exclude<TalentType, "altSprint">;
+
+export type CoreStat = (typeof CORE_STAT_TYPES)[number];
+
 export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];
 
 export type CalcItemType = "attack" | "healing" | "shield" | "other";
 
 export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
-
-export type AttackElement = (typeof ATTACK_ELEMENTS)[number];
 
 export type ReactionType = (typeof REACTIONS)[number];
 
@@ -47,6 +50,8 @@ export type ReactionBonusInfoKey = (typeof REACTION_BONUS_INFO_KEYS)[number];
 export type ReactionBonusInfo = Record<ReactionBonusInfoKey, number>;
 export type ReactionBonusPath = `${ReactionType}.${ReactionBonusInfoKey}`;
 export type ReactionBonus = Record<ReactionType, ReactionBonusInfo>;
+
+export type CalcItemBonus = Partial<Record<AttackPatternInfoKey, { desc: string; value: number }>>;
 
 //
 

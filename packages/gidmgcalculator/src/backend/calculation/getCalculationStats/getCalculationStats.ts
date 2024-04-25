@@ -1,4 +1,29 @@
-import type { GetCalculationStatsArgs } from "../calculation.types";
+import type {
+  AttackElement,
+  AttackElementInfoKey,
+  AttackPatternBonusKey,
+  AttributeStat,
+  ReactionBonusInfoKey,
+  ReactionType,
+} from "@Src/backend/types";
+import type { CharacterStatus } from "../calculation.types";
+import type {
+  BuffInfoWrap,
+  CalcItemBuff,
+  GetCalculationStatsArgs,
+  StackableCheckCondition,
+} from "./getCalculationStats.types";
+
+import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
+import { RESONANCE_STAT } from "../calculation.constants";
+
+import { $AppCharacter, $AppData } from "@Src/services";
+import { findByIndex } from "@Src/utils";
+import { CharacterCalc, GeneralCalc, WeaponCalc } from "../utils";
+import { ArtifactAttributeControl, BonusControl, TotalAttributeControl } from "./controls";
+import applyCharacterBuff from "./applyCharacterBuff";
+import applyWeaponBuff from "./applyWeaponBuff";
+import applyArtifactBuff from "./applyArtifactBuff";
 
 export function getCalculationStats({
   char,
@@ -6,7 +31,7 @@ export function getCalculationStats({
   weapon,
   appWeapon,
   artifacts,
-  party,
+  party = [],
   partyData,
   elmtModCtrls,
   selfBuffCtrls,
@@ -17,23 +42,23 @@ export function getCalculationStats({
   tracker,
 }: GetCalculationStatsArgs) {
   const { refi } = weapon;
-  const setBonuses = Calculation_.getArtifactSetBonuses(artifacts);
+  const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
   const { resonances = [], reaction, infuse_reaction } = elmtModCtrls || {};
 
   const charStatus: CharacterStatus = {
     BOL: 0,
   };
-  const totalAttr = new TotalAttributeCalc(tracker).create(
+  const totalAttr = new TotalAttributeControl(tracker).create(
     char,
     appChar,
-    Weapon_.getMainStatValue(weapon.level, appWeapon.mainStatScale)
+    WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale)
   );
-  const artAttr = new ArtifactAttributeCalc(artifacts, totalAttr).getValues();
-  const bonusCalc = new BonusCalc(tracker);
+  const artAttr = new ArtifactAttributeControl(artifacts, totalAttr).getValues();
+  const bonusCalc = new BonusControl(tracker);
   const calcItemBuffs: CalcItemBuff[] = [];
 
   if (appWeapon.subStat) {
-    const subStatValue = Weapon_.getSubStatValue(weapon.level, appWeapon.subStat.scale);
+    const subStatValue = WeaponCalc.getSubStatValue(weapon.level, appWeapon.subStat.scale);
     totalAttr.addStable(appWeapon.subStat.type, subStatValue, `${appWeapon.name} sub-stat`);
   }
 
@@ -77,7 +102,7 @@ export function getCalculationStats({
     const { innateBuffs = [], buffs = [] } = appChar;
 
     for (const buff of innateBuffs) {
-      if (CharacterCal.isGranted(buff, char)) {
+      if (CharacterCalc.isGrantedEffect(buff, char)) {
         applyCharacterBuff({
           description: `Self / ${buff.src}`,
           buff,
@@ -91,7 +116,7 @@ export function getCalculationStats({
     for (const ctrl of charBuffCtrls) {
       const buff = findByIndex(buffs, ctrl.index);
 
-      if (ctrl.activated && buff && CharacterCal.isGranted(buff, char)) {
+      if (ctrl.activated && buff && CharacterCalc.isGrantedEffect(buff, char)) {
         applyCharacterBuff({
           description: `Self / ${buff.src}`,
           buff,
@@ -167,7 +192,7 @@ export function getCalculationStats({
           break;
         }
         case "rxnBonus": {
-          const key = type as Reaction;
+          const key = type as ReactionType;
           const subKey = subType as ReactionBonusInfoKey;
           bonusCalc.add("RXN", `${key}.${subKey}`, value, "Custom buff");
           break;
@@ -177,7 +202,8 @@ export function getCalculationStats({
   };
 
   const APPLY_TEAMMATE_BUFFS = () => {
-    for (const teammate of Setup_.teammatesOf(party)) {
+    for (const teammate of party) {
+      if (!teammate) continue;
       const { name, buffs = [] } = $AppCharacter.get(teammate.name);
 
       for (const { index, activated, inputs = [] } of teammate.buffCtrls) {
@@ -307,7 +333,7 @@ export function getCalculationStats({
   APPLY_SELF_BUFFS(true);
   APLY_MAIN_ARTIFACT_BUFFS(true);
 
-  const { transformative, amplifying, quicken } = Calculation_.getRxnBonusesFromEM(totalAttr.getTotal("em"));
+  const { transformative, amplifying, quicken } = GeneralCalc.getRxnBonusesFromEM(totalAttr.getTotal("em"));
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
     bonusCalc.add("RXN", `${rxn}.pct_`, transformative, "TRANSFORMATIVE");
@@ -320,7 +346,7 @@ export function getCalculationStats({
   }
 
   const rxnBonus = bonusCalc.serialize("RXN");
-  const { spread, aggravate } = Calculation_.getQuickenBuffDamage(char.level, rxnBonus);
+  const { spread, aggravate } = GeneralCalc.getQuickenBuffDamage(char.level, rxnBonus);
 
   if (reaction === "spread" || infuse_reaction === "spread") {
     bonusCalc.add("ELMT", "dendro.flat", spread, "Spread reaction");

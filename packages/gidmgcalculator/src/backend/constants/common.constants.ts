@@ -2,9 +2,11 @@ export const ELEMENT_TYPES = ["pyro", "hydro", "electro", "cryo", "geo", "anemo"
 
 export const WEAPON_TYPES = ["sword", "claymore", "catalyst", "polearm", "bow"] as const;
 
+export const ARTIFACT_TYPES = ["flower", "plume", "sands", "goblet", "circlet"] as const;
+
 export const TALENT_TYPES = ["NAs", "ES", "EB", "altSprint"] as const;
 
-//
+/** ========== ATTACKS ========== */
 
 const NORMAL_ATTACKS = ["NA", "CA", "PA"] as const;
 
@@ -38,9 +40,9 @@ export const REACTIONS = [...TRANSFORMATIVE_REACTIONS, ...QUICKEN_REACTIONS, ...
 
 export const REACTION_BONUS_INFO_KEYS = ["pct_", "cRate_", "cDmg_"] as const;
 
-//
+/** ========== STATS ========== */
 
-const CORE_STAT_TYPES = ["hp", "atk", "def"] as const;
+export const CORE_STAT_TYPES = ["hp", "atk", "def"] as const;
 
 export const ATTRIBUTE_STAT_TYPES = [
   ...CORE_STAT_TYPES,
