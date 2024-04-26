@@ -270,7 +270,7 @@ export type CharacterBuff = AppBuff<CharacterBonus> &
 
 // ============ DEBUFF / PENALTY ============
 
-type CharacterPenaltyCore = CharacterEffectExtendedUsableCondition & {
+export type CharacterPenaltyCore = CharacterEffectExtendedUsableCondition & {
   value: number;
   lvScale?: CharacterEffectLevelScale;
   /** Added before stacks, after scale */
@@ -279,7 +279,7 @@ type CharacterPenaltyCore = CharacterEffectExtendedUsableCondition & {
   max?: number;
 };
 
-type CharacterPenalty = WithPenaltyTargets<CharacterPenaltyCore>;
+export type CharacterPenalty = WithPenaltyTargets<CharacterPenaltyCore>;
 
 type CharacterDebuff = AppDebuff<CharacterPenalty> &
   CharacterModifier & {

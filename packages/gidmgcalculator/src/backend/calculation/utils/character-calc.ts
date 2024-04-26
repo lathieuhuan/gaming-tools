@@ -1,12 +1,17 @@
 import type {
   AppCharacter,
+  AttackElement,
+  AttackPattern,
   CharacterEffectAvailableCondition,
   CharacterEffectExtendedUsableCondition,
   CharacterEffectLevelScale,
   CharacterEffectUsableCondition,
   CharacterMilestone,
   ElementType,
+  LevelableTalentType,
+  TalentAttributeType,
   TalentType,
+  WeaponType,
 } from "@Src/backend/types";
 import type { Character, PartyData } from "@Src/types";
 import type { CalcUltilInfo } from "../calculation.types";
@@ -156,5 +161,30 @@ export class CharacterCalc {
       return max && result > max ? max : result;
     }
     return 1;
+  }
+
+  static getTalentDefaultInfo(
+    key: LevelableTalentType,
+    weaponType: WeaponType,
+    elementType: ElementType,
+    attPatt: AttackPattern,
+    config?: AppCharacter["multFactorConf"]
+  ): {
+    attElmt: AttackElement;
+    scale: number;
+    basedOn: TalentAttributeType;
+    flatFactorScale: number;
+  } {
+    const attElmt = key === "NAs" && weaponType !== "catalyst" ? "phys" : elementType;
+    const defaultScale = attPatt === "PA" ? 7 : attElmt === "phys" ? 1 : 2;
+    const defaultBasedOn: TalentAttributeType = "atk";
+    const { scale = defaultScale, basedOn = defaultBasedOn } = config?.[attPatt] || {};
+
+    return {
+      attElmt,
+      scale,
+      basedOn,
+      flatFactorScale: 3,
+    };
   }
 }

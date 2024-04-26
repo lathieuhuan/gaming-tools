@@ -94,12 +94,12 @@ export class TrackerControl {
     }
   }
 
-  recordStat(category: "totalAttr", type: AttributeStat, description: string, value: number): void;
-  recordStat(category: "attPattBonus", type: AttackPatternPath, description: string, value: number): void;
-  recordStat(category: "attElmtBonus", type: AttackElementPath, description: string, value: number): void;
-  recordStat(category: "rxnBonus", type: ReactionBonusPath, description: string, value: number): void;
-  recordStat(category: "resistReduct", type: ResistanceReductionKey, description: string, value: number): void;
-  recordStat(category: StatRecordCategory, type: StatRecordType, description: string, value: number) {
+  recordStat(category: "totalAttr", type: AttributeStat, value: number, description: string): void;
+  recordStat(category: "attPattBonus", type: AttackPatternPath, value: number, description: string): void;
+  recordStat(category: "attElmtBonus", type: AttackElementPath, value: number, description: string): void;
+  recordStat(category: "rxnBonus", type: ReactionBonusPath, value: number, description: string): void;
+  recordStat(category: "resistReduct", type: ResistanceReductionKey, value: number, description: string): void;
+  recordStat(category: StatRecordCategory, type: StatRecordType, value: number, description: string) {
     const cateRecord = this.stats[category];
     const existed = cateRecord[type].find((record) => record.desc === description);
 

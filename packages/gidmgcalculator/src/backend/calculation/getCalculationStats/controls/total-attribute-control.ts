@@ -36,7 +36,7 @@ export class TotalAttributeControl {
 
   private addBase(key: AttributeStat, value: number, description = "Character base stat") {
     this.totalAttr[key].base += value;
-    this.tracker?.recordStat("totalAttr", key, description, value);
+    this.tracker?.recordStat("totalAttr", key, value, description);
   }
 
   create(char: CalcCharacter, appChar: AppCharacter, weaponAtk: number) {
@@ -74,14 +74,14 @@ export class TotalAttributeControl {
   addStable(keys: AttributeStat | AttributeStat[], value: number, description: string) {
     toArray(keys).forEach((key) => {
       this.totalAttr[key].stableBonus += value;
-      this.tracker?.recordStat("totalAttr", key, description, value);
+      this.tracker?.recordStat("totalAttr", key, value, description);
     });
   }
 
   addUnstable(keys: AttributeStat | AttributeStat[], value: number, description: string) {
     toArray(keys).forEach((key) => {
       this.totalAttr[key].unstableBonus += value;
-      this.tracker?.recordStat("totalAttr", key, description, value);
+      this.tracker?.recordStat("totalAttr", key, value, description);
     });
   }
 

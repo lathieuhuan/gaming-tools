@@ -73,15 +73,15 @@ export class BonusControl {
       switch (module) {
         case "PATT":
           this.attPattBonus[key1 as AttackPatternBonusKey][key2 as AttackPatternInfoKey] += value;
-          this.tracker?.recordStat("attPattBonus", path as AttackPatternPath, description, value);
+          this.tracker?.recordStat("attPattBonus", path as AttackPatternPath, value, description);
           break;
         case "ELMT":
           this.attElmtBonus[key1 as AttackElement][key2 as AttackElementInfoKey] += value;
-          this.tracker?.recordStat("attElmtBonus", path as AttackElementPath, description, value);
+          this.tracker?.recordStat("attElmtBonus", path as AttackElementPath, value, description);
           break;
         case "RXN":
           this.rxnBonus[key1 as ReactionType][key2 as ReactionBonusInfoKey] += value;
-          this.tracker?.recordStat("rxnBonus", path as ReactionBonusPath, description, value);
+          this.tracker?.recordStat("rxnBonus", path as ReactionBonusPath, value, description);
           break;
       }
     });

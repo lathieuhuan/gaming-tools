@@ -6,6 +6,7 @@ import {
   ATTRIBUTE_STAT_TYPES,
   CORE_STAT_TYPES,
   ELEMENT_TYPES,
+  NORMAL_ATTACKS,
   REACTIONS,
   REACTION_BONUS_INFO_KEYS,
   TALENT_TYPES,
@@ -25,6 +26,8 @@ export type CoreStat = (typeof CORE_STAT_TYPES)[number];
 export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];
 
 export type CalcItemType = "attack" | "healing" | "shield" | "other";
+
+export type NormalAttack = (typeof NORMAL_ATTACKS)[number];
 
 export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
 
@@ -205,7 +208,7 @@ export type WithBonusTargets<T> = T & {
 
 // ========== PENALTY & DEBUFF ==========
 
-type PenaltyTarget =
+export type AppPenaltyTarget =
   | ResistanceReductionKey
   | {
       type: "inp_elmt";
@@ -221,5 +224,5 @@ export type AppDebuff<T = unknown> = {
 };
 
 export type WithPenaltyTargets<T> = T & {
-  targets: PenaltyTarget | PenaltyTarget[];
+  targets: AppPenaltyTarget | AppPenaltyTarget[];
 };

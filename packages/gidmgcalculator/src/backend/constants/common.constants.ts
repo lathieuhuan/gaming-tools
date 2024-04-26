@@ -8,7 +8,7 @@ export const TALENT_TYPES = ["NAs", "ES", "EB", "altSprint"] as const;
 
 /** ========== ATTACKS ========== */
 
-const NORMAL_ATTACKS = ["NA", "CA", "PA"] as const;
+export const NORMAL_ATTACKS = ["NA", "CA", "PA"] as const;
 
 export const ATTACK_PATTERNS = [...NORMAL_ATTACKS, "ES", "EB"] as const;
 

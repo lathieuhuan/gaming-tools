@@ -1,5 +1,5 @@
 import type { CalcArtifacts, Level, PartyData } from "@Src/types";
-import type { AppCharacter, ElementType, ReactionBonus } from "@Src/backend/types";
+import type { AppCharacter, AttackElement, ElementType, ReactionBonus } from "@Src/backend/types";
 
 type ArtifactSetBonus = {
   code: number;
@@ -63,6 +63,13 @@ export class GeneralCalc {
     return {
       aggravate: Math.round(base * 1.15 * (1 + rxnBonus.aggravate.pct_ / 100)),
       spread: Math.round(base * 1.25 * (1 + rxnBonus.spread.pct_ / 100)),
+    };
+  }
+
+  static getAmplifyingMultiplier(elmt: AttackElement, rxnBonus: ReactionBonus) {
+    return {
+      melt: (1 + rxnBonus.melt.pct_ / 100) * (elmt === "pyro" ? 2 : elmt === "cryo" ? 1.5 : 1),
+      vaporize: (1 + rxnBonus.vaporize.pct_ / 100) * (elmt === "pyro" ? 1.5 : elmt === "hydro" ? 2 : 1),
     };
   }
 
