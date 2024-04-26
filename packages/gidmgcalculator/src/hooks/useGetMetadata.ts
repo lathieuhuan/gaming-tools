@@ -8,12 +8,15 @@ interface UseGetMetadataOptions {
 export function useGetMetadata(options: UseGetMetadataOptions = {}) {
   const [status, setStatus] = useState<"done" | "loading" | "error" | "idle">("loading");
 
-  const getMetadata = async () => {
+  const getMetadata = async (isForcedRefetch?: boolean) => {
     if (status !== "loading") {
       setStatus("loading");
     }
 
-    const isOk = await $AppData.fetchMetadata((data) => $AppCharacter.populateCharacters(data.characters));
+    const isOk = await $AppData.fetchMetadata(
+      (data) => $AppCharacter.populateCharacters(data.characters),
+      isForcedRefetch
+    );
 
     if (isOk) {
       setStatus("done");

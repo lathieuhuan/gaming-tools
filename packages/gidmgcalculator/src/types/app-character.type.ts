@@ -68,6 +68,7 @@ export type TalentAttributeType = "base_atk" | "atk" | "def" | "hp" | "em";
 type MultFactorConfig = {
   scale?: number;
   basedOn?: TalentAttributeType;
+  attPatt?: ActualAttackPattern;
 };
 
 type Ability = {

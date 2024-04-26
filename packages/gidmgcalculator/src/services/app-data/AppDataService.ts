@@ -30,8 +30,8 @@ export class AppDataService extends BaseService {
       : this.artifacts.find((artifact) => artifact.data.code === code);
   }
 
-  public async fetchMetadata(onSuccess: (metaData: Metadata) => void) {
-    if (this.isFetchedMetadata) {
+  public async fetchMetadata(onSuccess: (metaData: Metadata) => void, isRefetch?: boolean) {
+    if (this.isFetchedMetadata && !isRefetch) {
       return true;
     }
     const response = await this.fetchData<Metadata>(BACKEND_URL.metadata());
