@@ -1,60 +1,15 @@
-import type { AttackElement } from "./common.types";
-import {
-  ATTACK_ELEMENT_INFO_KEYS,
-  ATTACK_PATTERNS,
-  ATTACK_PATTERN_INFO_KEYS,
-  ATTRIBUTE_STAT_TYPES,
-  CORE_STAT_TYPES,
-  ELEMENT_TYPES,
-  NORMAL_ATTACKS,
-  REACTIONS,
-  REACTION_BONUS_INFO_KEYS,
-  TALENT_TYPES,
-  WEAPON_TYPES,
-} from "../constants";
-
-export type ElementType = (typeof ELEMENT_TYPES)[number];
-
-export type WeaponType = (typeof WEAPON_TYPES)[number];
-
-export type TalentType = (typeof TALENT_TYPES)[number];
-
-export type LevelableTalentType = Exclude<TalentType, "altSprint">;
-
-export type CoreStat = (typeof CORE_STAT_TYPES)[number];
-
-export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];
+import type {
+  AttackElementPath,
+  AttackPatternInfoKey,
+  AttackPatternPath,
+  AttributeStat,
+  ElementType,
+  ReactionBonusPath,
+  ResistanceReductionKey,
+  TalentType,
+} from "./common.types";
 
 export type CalcItemType = "attack" | "healing" | "shield" | "other";
-
-export type NormalAttack = (typeof NORMAL_ATTACKS)[number];
-
-export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
-
-export type ReactionType = (typeof REACTIONS)[number];
-
-//
-
-export type AttackPatternInfoKey = (typeof ATTACK_PATTERN_INFO_KEYS)[number];
-export type AttackPatternInfo = Record<AttackPatternInfoKey, number>;
-export type AttackPatternBonusKey = AttackPattern | "all";
-export type AttackPatternBonus = Record<AttackPatternBonusKey, AttackPatternInfo>;
-export type AttackPatternPath = `${AttackPatternBonusKey}.${AttackPatternInfoKey}`;
-
-export type ResistanceReductionKey = AttackElement | "def";
-export type ResistanceReduction = Record<ResistanceReductionKey, number>;
-
-export type AttackElementInfoKey = (typeof ATTACK_ELEMENT_INFO_KEYS)[number];
-export type AttacklementInfo = Record<AttackElementInfoKey, number>;
-export type AttackElementBonus = Record<AttackElement, AttacklementInfo>;
-export type AttackElementPath = `${AttackElement}.${AttackElementInfoKey}`;
-
-export type ReactionBonusInfoKey = (typeof REACTION_BONUS_INFO_KEYS)[number];
-export type ReactionBonusInfo = Record<ReactionBonusInfoKey, number>;
-export type ReactionBonusPath = `${ReactionType}.${ReactionBonusInfoKey}`;
-export type ReactionBonus = Record<ReactionType, ReactionBonusInfo>;
-
-export type CalcItemBonus = Partial<Record<AttackPatternInfoKey, { desc: string; value: number }>>;
 
 //
 

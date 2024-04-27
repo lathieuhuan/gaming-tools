@@ -1,10 +1,10 @@
+import type { WeaponType } from "./common.types";
 import type {
   AppBonus,
   AppBonusAttributeStack,
   AppBonusElementStack,
   AppBuff,
   AppDebuff,
-  WeaponType,
   WithBonusTargets,
   WithPenaltyTargets,
 } from "./app-entity.types";

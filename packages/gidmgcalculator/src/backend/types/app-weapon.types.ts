@@ -1,12 +1,11 @@
+import type { AttributeStat, WeaponType } from "./common.types";
 import type {
   AppBonus,
   AppBonusAttributeStack,
   AppBonusElementStack,
   AppBonusNationStack,
   AppBuff,
-  AttributeStat,
   CalcItemType,
-  WeaponType,
   WithBonusTargets,
 } from "./app-entity.types";
 

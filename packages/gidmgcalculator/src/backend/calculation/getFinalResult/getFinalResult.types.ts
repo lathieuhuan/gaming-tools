@@ -1,5 +1,6 @@
 import type {
   ArtifactDebuffCtrl,
+  CalcCharacter,
   CalcWeapon,
   Character,
   CustomDebuffCtrl,
@@ -9,10 +10,10 @@ import type {
   PartyData,
   Target,
 } from "@Src/types";
-import type { AppCharacter, AppWeapon } from "@Src/backend/types";
+import type { AppCharacter, AppWeapon, CalcItemBuff, TotalAttribute } from "@Src/backend/types";
+import type { CalcInfusion, CharacterStatus } from "../calculation.types";
 import type { TrackerControl } from "../controls";
 import type { ResistanceReductionControl } from "./controls";
-import type { BuffInfoWrap } from "../getCalculationStats";
 
 export type DebuffInfoWrap = {
   char: Character;
@@ -21,7 +22,14 @@ export type DebuffInfoWrap = {
   resistReduct: ResistanceReductionControl;
 };
 
-export interface GetFinalResultArgs extends Omit<BuffInfoWrap, "infusedElement"> {
+export interface GetFinalResultArgs {
+  char: CalcCharacter;
+  appChar: AppCharacter;
+  partyData: PartyData;
+  charStatus: CharacterStatus;
+  totalAttr: TotalAttribute;
+  calcItemBuffs: CalcItemBuff[];
+
   weapon: CalcWeapon;
   appWeapon: AppWeapon;
   selfDebuffCtrls: ModifierCtrl[];
@@ -29,7 +37,7 @@ export interface GetFinalResultArgs extends Omit<BuffInfoWrap, "infusedElement">
   party: Party;
   disabledNAs: boolean;
   customDebuffCtrls: CustomDebuffCtrl[];
-  //   infusion: CalcInfusion;
+  infusion: CalcInfusion;
   elmtModCtrls: ElementModCtrl;
   target: Target;
   tracker?: TrackerControl;

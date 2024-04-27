@@ -8,15 +8,10 @@ import type {
   Party,
   PartyData,
 } from "@Src/types";
-import type { AppCharacter, AppWeapon, AttackElement, CalcItemBonus } from "@Src/backend/types";
+import type { AppCharacter, AppWeapon, AttackElement, CalcItemBuff } from "@Src/backend/types";
 import type { CharacterStatus } from "../calculation.types";
 import type { TrackerControl } from "../controls";
 import type { BonusControl, TotalAttributeControl } from "./controls";
-
-export type CalcItemBuff = {
-  ids: string | string[];
-  bonus: CalcItemBonus;
-};
 
 export type BuffInfoWrap = {
   char: CalcCharacter;

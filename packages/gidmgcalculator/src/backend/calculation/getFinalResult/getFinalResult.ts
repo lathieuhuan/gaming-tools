@@ -1,13 +1,14 @@
 import type { CalcItemBonus, NormalAttack } from "@Src/backend/types";
 import type { DebuffInfoWrap, GetFinalResultArgs } from "./getFinalResult.types";
 
-import { ATTACK_ELEMENTS, ATTACK_PATTERNS } from "@Src/backend/constants";
+import { ATTACK_ELEMENTS, ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
 import { ResistanceReductionControl } from "./controls";
 import { findByIndex, toArray } from "@Src/utils";
 import { CharacterCalc, GeneralCalc } from "../utils";
 import applyAbilityDebuff from "./applyCharacterDebuff";
 import { $AppCharacter, $AppData } from "@Src/services";
 import { applyPenalty } from "./getFinalResult.utils";
+import { TRANSFORMATIVE_REACTION_INFO } from "../calculation.constants";
 
 export default function getFinalResult({
   char,
@@ -22,9 +23,9 @@ export default function getFinalResult({
   disabledNAs,
   charStatus,
   totalAttr,
-  bonusCalc,
   calcItemBuffs,
   elmtModCtrls: { reaction, infuse_reaction, resonances, superconduct, absorption },
+  infusion,
   target,
   tracker,
 }: GetFinalResultArgs) {
@@ -189,7 +190,7 @@ export default function getFinalResult({
           const { root, scale = defaultInfo.flatFactorScale } =
             typeof flatFactor === "number" ? { root: flatFactor } : flatFactor;
 
-          flatBonus = root * Character_.getTalentMult(scale, level);
+          flatBonus = root * CharacterCalc.getTalentMult(scale, level);
         }
 
         record.multFactors.push({
@@ -235,7 +236,7 @@ export default function getFinalResult({
     }
   });
 
-  const baseRxnDmg = Calculation_.getBaseRxnDmg(char.level);
+  const baseRxnDmg = GeneralCalc.getBaseRxnDmg(char.level);
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
     const { mult, dmgType } = TRANSFORMATIVE_REACTION_INFO[rxn];

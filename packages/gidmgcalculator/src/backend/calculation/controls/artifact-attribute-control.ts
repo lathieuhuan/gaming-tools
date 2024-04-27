@@ -5,7 +5,7 @@ import type { TotalAttributeControl } from "./total-attribute-control";
 
 import { CORE_STAT_TYPES } from "@Src/backend/constants";
 import { applyPercent } from "@Src/utils";
-import { ArtifactCalc } from "../../utils";
+import { ArtifactCalc } from "../utils";
 
 export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;
 

@@ -3,16 +3,12 @@ import type {
   AttackElementInfoKey,
   AttackPatternBonusKey,
   AttributeStat,
+  CalcItemBuff,
   ReactionBonusInfoKey,
   ReactionType,
 } from "@Src/backend/types";
 import type { CharacterStatus } from "../calculation.types";
-import type {
-  BuffInfoWrap,
-  CalcItemBuff,
-  GetCalculationStatsArgs,
-  StackableCheckCondition,
-} from "./getCalculationStats.types";
+import type { BuffInfoWrap, GetCalculationStatsArgs, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
 import { RESONANCE_STAT } from "../calculation.constants";
@@ -20,12 +16,12 @@ import { RESONANCE_STAT } from "../calculation.constants";
 import { $AppCharacter, $AppData } from "@Src/services";
 import { findByIndex } from "@Src/utils";
 import { CharacterCalc, GeneralCalc, WeaponCalc } from "../utils";
-import { ArtifactAttributeControl, BonusControl, TotalAttributeControl } from "./controls";
+import { ArtifactAttributeControl, BonusControl, TotalAttributeControl } from "../controls";
 import applyCharacterBuff from "./applyCharacterBuff";
 import applyWeaponBuff from "./applyWeaponBuff";
 import applyArtifactBuff from "./applyArtifactBuff";
 
-export function getCalculationStats({
+export default function getCalculationStats({
   char,
   appChar,
   weapon,
@@ -358,8 +354,7 @@ export function getCalculationStats({
   return {
     charStatus,
     totalAttr,
-    attPattBonus: bonusCalc.serialize("PATT"),
-    attElmtBonus: bonusCalc.serialize("ELMT"),
+    bonusCalc,
     rxnBonus,
     calcItemBuffs,
     artAttr,

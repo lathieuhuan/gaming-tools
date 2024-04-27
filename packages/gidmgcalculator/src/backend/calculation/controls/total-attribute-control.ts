@@ -1,14 +1,14 @@
 import type { CalcCharacter } from "@Src/types";
-import type { AttributeStat, AppCharacter } from "@Src/backend/types";
-import type { TrackerControl } from "@Src/backend/calculation/controls";
+import type { AttributeStat, AppCharacter, TotalAttribute } from "@Src/backend/types";
+import type { TrackerControl } from "./tracker-control";
 
 import { LEVELS } from "@Src/constants";
 import { ATTRIBUTE_STAT_TYPES } from "@Src/backend/constants";
 
 import { toArray } from "@Src/utils";
-import { GeneralCalc } from "@Src/backend/calculation/utils";
+import { GeneralCalc } from "../utils";
 
-type TotalAttribute = Record<
+type InternalTotalAttribute = Record<
   AttributeStat,
   {
     base: number;
@@ -18,12 +18,12 @@ type TotalAttribute = Record<
 >;
 
 export class TotalAttributeControl {
-  private totalAttr: TotalAttribute;
+  private totalAttr: InternalTotalAttribute;
   private tracker?: TrackerControl;
 
   constructor(tracker?: TrackerControl) {
     this.tracker = tracker;
-    this.totalAttr = {} as TotalAttribute;
+    this.totalAttr = {} as InternalTotalAttribute;
 
     for (const type of ATTRIBUTE_STAT_TYPES) {
       this.totalAttr[type] = {
@@ -66,10 +66,10 @@ export class TotalAttributeControl {
     return this;
   }
 
-  transform(totalAttr: TotalAttribute) {
-    this.totalAttr = totalAttr;
-    return this;
-  }
+  // transform(totalAttr: TotalAttribute) {
+  //   this.totalAttr = totalAttr;
+  //   return this;
+  // }
 
   addStable(keys: AttributeStat | AttributeStat[], value: number, description: string) {
     toArray(keys).forEach((key) => {
@@ -106,7 +106,23 @@ export class TotalAttributeControl {
   }
 
   getTotal(key: AttributeStat) {
-    const { base, stableBonus, unstableBonus } = this.totalAttr[key];
-    return base + stableBonus + unstableBonus;
+    return this.getTotalStable(key) + this.totalAttr[key].unstableBonus;
+  }
+
+  finalize() {
+    const totalAttr = {} as TotalAttribute;
+
+    for (const key of ATTRIBUTE_STAT_TYPES) {
+      if (key === "hp_" || key === "atk_" || key === "def_") continue;
+
+      totalAttr[key] = {
+        total: this.getTotal(key),
+      };
+
+      if (key === "hp" || key === "atk" || key === "def") {
+        totalAttr[key].bonus = totalAttr[key].total - this.getBase(key);
+      }
+    }
+    return totalAttr;
   }
 }

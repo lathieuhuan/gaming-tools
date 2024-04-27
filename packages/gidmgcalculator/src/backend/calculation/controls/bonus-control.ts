@@ -15,7 +15,7 @@ import type {
   ReactionBonusPath,
   ReactionType,
 } from "@Src/backend/types";
-import type { TrackerControl } from "@Src/backend/calculation/controls";
+import type { TrackerControl } from "./tracker-control";
 
 import {
   ATTACK_ELEMENTS,

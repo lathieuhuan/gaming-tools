@@ -1,11 +1,13 @@
-import type { ActualAttackElement } from "./common.types";
 import type {
+  ActualAttackElement,
   ElementType,
   WeaponType,
   TalentType,
   AttributeStat,
-  CalcItemType,
   AttackPattern,
+} from "./common.types";
+import type {
+  CalcItemType,
   AppBonus,
   WithBonusTargets,
   AppBuff,
