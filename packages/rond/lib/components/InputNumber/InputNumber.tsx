@@ -25,6 +25,8 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
     transparent,
     size = "small",
     value = 0,
+    min = 0,
+    max = 9999,
     maxDecimalDigits = 0,
     onBlur,
     onKeyDown,
@@ -56,7 +58,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
       ["ArrowRight", "ArrowLeft", "Backspace", "Delete", "Home", "End", "Tab"].includes(e.key) ||
       !isNaN(+e.key) ||
       (e.key === "." && maxDecimalDigits) ||
-      (e.key === "-" && props.min && props.min < 0)
+      (e.key === "-" && min < 0)
     ) {
       return;
     }
@@ -64,17 +66,16 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    const input = e.currentTarget;
+    // const input = e.currentTarget;
 
-    input.type = "text";
-    input.setSelectionRange(0, 20);
-    input.type = "number";
+    // input.type = "text";
+    // input.setSelectionRange(0, 20);
+    // input.type = "number";
 
     props.onFocus?.(e);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { min = 0, max = 9999 } = props;
     const input = e.target.value;
     let newLocalValue: string | undefined;
     let newValue: number | undefined;
@@ -136,7 +137,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
     <input
       ref={ref}
       {...nativeProps}
-      type="number"
+      type="text"
       className={clsx(
         !unstyled && [`ron-input-number ron-input-number--${size}`, transparent && "ron-input-number--transparent"],
         className
