@@ -14,4 +14,7 @@ export default defineConfig({
       "@lib": path.resolve(__dirname, "./lib"),
     },
   },
+  build: {
+    outDir: "dist-demo"
+  }
 });
