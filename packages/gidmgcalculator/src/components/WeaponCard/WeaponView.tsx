@@ -1,12 +1,11 @@
 import { useMemo } from "react";
 import { Badge, VersatileSelect } from "rond";
-import type { Level } from "@Backend";
-import type { CalcWeapon, UserWeapon } from "@Src/types";
+import { LEVELS, Level, WeaponCalc } from "@Backend";
 
-import { LEVELS } from "@Src/constants";
+import type { CalcWeapon, UserWeapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
-import { genSequentialOptions, parseWeaponDescription, suffixOf, Weapon_ } from "@Src/utils";
+import { genSequentialOptions, parseWeaponDescription, suffixOf } from "@Src/utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
@@ -79,7 +78,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
                 {t(subStat.type)}
               </p>
               <p className={`text-rarity-${rarity} text-1.5xl leading-7 font-bold`}>
-                {Weapon_.getSubStatValue(weapon.level, subStat.scale)}
+                {WeaponCalc.getSubStatValue(weapon.level, subStat.scale)}
                 {suffixOf(subStat.type)}
               </p>
             </div>
@@ -88,7 +87,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
           <div className={"grow pt-1 flex flex-col justify-center " + groupStyles}>
             <p className="font-semibold">Base ATK</p>
             <p className={`text-rarity-${rarity} text-2.5xl font-bold`}>
-              {Weapon_.getMainStatValue(weapon.level, appWeapon.mainStatScale)}
+              {WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale)}
             </p>
           </div>
         </div>

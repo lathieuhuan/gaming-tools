@@ -1,11 +1,12 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo, useState } from "react";
 import { message, useScreenWatcher, Button, ButtonGroup, CollapseSpace, ConfirmModal, WarehouseLayout } from "rond";
+import { WeaponType } from "@Backend";
 
+import type { UserWeapon } from "@Src/types";
 import { MAX_USER_WEAPONS } from "@Src/constants";
 import { useWeaponTypeSelect } from "@Src/hooks";
 import { $AppData } from "@Src/services";
-import { UserWeapon, WeaponType } from "@Src/types";
 import { findById, indexById } from "@Src/utils";
 
 // Store

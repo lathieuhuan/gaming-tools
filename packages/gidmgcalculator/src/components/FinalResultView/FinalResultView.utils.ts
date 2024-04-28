@@ -1,5 +1,4 @@
-import type { AppCharacter, AppWeapon, TransformativeReaction } from "@Backend";
-import { NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@Src/constants";
+import { NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS, AppCharacter, AppWeapon, TransformativeReaction } from "@Backend";
 
 type TableCalcItemKey = {
   main: "NAs" | "ES" | "EB" | "WP_CALC";

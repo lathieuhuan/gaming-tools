@@ -1,4 +1,4 @@
-import type { AppArtifact, AppCharacter, AppMonster, AppWeapon } from "@Src/types";
+import type { AppArtifact, AppCharacter, AppMonster, AppWeapon } from "@Backend";
 
 export type DataControl<T> = {
   status: "unfetched" | "fetching" | "fetched";

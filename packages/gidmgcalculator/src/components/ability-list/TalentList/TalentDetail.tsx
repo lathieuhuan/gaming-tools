@@ -1,15 +1,11 @@
 import { useState, useRef, useMemo, useEffect } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { CloseButton, LoadingSpin, StatsTable, VersatileSelect, round } from "rond";
+import { ATTACK_PATTERNS, CharacterCalc, TalentType, AppCharacter } from "@Backend";
 
-import type { AppCharacter } from "@Backend";
-import type { Talent } from "@Src/types";
-import { toArray, genSequentialOptions, Character_ } from "@Src/utils";
+import { toArray, genSequentialOptions } from "@Src/utils";
 import { useQuery, useTabs, useTranslation } from "@Src/hooks";
 import { $AppCharacter } from "@Src/services";
-
-// Constant
-import { ATTACK_PATTERNS } from "@Src/constants";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
 
 // Component
@@ -179,7 +175,7 @@ type ProcessedStat = {
   value: string | number;
 };
 
-type ProcessedTalentType = Talent | "A1" | "A4" | "utility";
+type ProcessedTalentType = TalentType | "A1" | "A4" | "utility";
 
 interface ProcessedTalent {
   name: string;
@@ -201,7 +197,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
     const talent = result.find((item) => item.type === resultKey);
     if (!talent) continue;
 
-    const defaultInfo = Character_.getTalentDefaultInfo(
+    const defaultInfo = CharacterCalc.getTalentDefaultInfo(
       resultKey,
       appChar.weaponType,
       appChar.vision,
@@ -226,7 +222,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
         } = typeof factor === "number" ? { root: factor } : factor;
 
         if (scale && root) {
-          let string = round(root * Character_.getTalentMult(scale, level), 2) + "%";
+          let string = round(root * CharacterCalc.getTalentMult(scale, level), 2) + "%";
 
           if (basedOn) {
             string += ` ${translate(basedOn)}`;
@@ -240,7 +236,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
         const { root, scale = defaultInfo.flatFactorScale } =
           typeof flatFactor === "number" ? { root: flatFactor } : flatFactor;
 
-        factorStrings.push(Math.round(root * (scale ? Character_.getTalentMult(scale, level) : 1)));
+        factorStrings.push(Math.round(root * (scale ? CharacterCalc.getTalentMult(scale, level) : 1)));
       }
 
       talent.stats.push({

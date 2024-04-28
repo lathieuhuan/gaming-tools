@@ -16,7 +16,7 @@ import {
 } from "@Src/backend/constants";
 import { CalcItemRecord } from "../calculation.types";
 
-type StatRecord = {
+export type StatRecord = {
   desc: string;
   value: number;
 };

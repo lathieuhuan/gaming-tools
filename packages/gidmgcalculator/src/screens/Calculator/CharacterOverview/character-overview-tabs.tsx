@@ -1,9 +1,8 @@
 import { CarouselSpace } from "rond";
-import { ArtifactAttributeControl, TotalAttribute } from "@Backend";
-import type { RootState } from "@Store/store";
+import { ArtifactAttributeControl, GeneralCalc, TotalAttribute } from "@Backend";
 
+import type { RootState } from "@Store/store";
 import { useTabs } from "@Src/hooks";
-import { Calculation_ } from "@Src/utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectCharacter,
@@ -75,7 +74,7 @@ export function ArtifactsTab() {
           <AttributeTable attributes={artAttr} />
         </div>
         <div className="h-full hide-scrollbar">
-          <SetBonusesView setBonuses={Calculation_.getArtifactSetBonuses(artifacts)} noTitle />
+          <SetBonusesView setBonuses={GeneralCalc.getArtifactSetBonuses(artifacts)} noTitle />
         </div>
       </CarouselSpace>
     </div>

@@ -1,5 +1,5 @@
-import type { ResistanceReduction, Tracker } from "@Src/types";
-import { ATTACK_ELEMENTS } from "@Src/constants";
+import { ATTACK_ELEMENTS, ResistanceReduction, TrackerResult } from "@Backend";
+
 import { useTranslation } from "@Src/hooks";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
@@ -12,7 +12,7 @@ function getResMult(type: "equation" | "value", value: number) {
   return RES < 0 ? 1 - RES / 2 : RES >= 0.75 ? 1 / (4 * RES + 1) : 1 - RES;
 }
 
-export function DebuffsTracker({ resistReduct }: Partial<Pick<Tracker, "resistReduct">>) {
+export function DebuffsTracker({ resistReduct }: Partial<Pick<TrackerResult['stats'], "resistReduct">>) {
   const { t } = useTranslation();
   const hasRecord = resistReduct && Object.values(resistReduct).some((record) => record.length);
   const totalResistReduct = {} as ResistanceReduction;

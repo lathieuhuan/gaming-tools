@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
 import { Select, clsx } from "rond";
+import { TALENT_TYPES, CalculationAspect, TalentType, CharacterCalc } from "@Backend";
 
-import type { CalculationAspect, TalentType } from "@Backend";
 import type { Weapon } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectSetupManageInfos, selectStandardId, updateCharacter } from "@Store/calculator-slice";
-import { Character_, findById } from "@Src/utils";
+import { findById } from "@Src/utils";
 import { FinalResultLayout, type FinalResultLayoutProps } from "@Src/components";
 import { $AppCharacter } from "@Src/services";
-import { TALENT_TYPES } from "@Src/constants";
 
 type CellConfig = ReturnType<FinalResultLayoutProps["getRowConfig"]>["cells"][number];
 
@@ -159,7 +158,7 @@ function useLayoutProps(comparedIds: number[], standardId: number): LayoutProps 
 
   for (const talentType of TALENT_TYPES) {
     const levels = setupIds.map((id) => {
-      return Character_.getFinalTalentLv({
+      return CharacterCalc.getFinalTalentLv({
         char: setupsById[id].char,
         appChar,
         talentType,

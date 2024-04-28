@@ -1,6 +1,5 @@
 import { round } from "rond";
-import type { AppCharacter, CharacterBuff, CharacterDebuff } from "@Backend";
-import { CharacterCalc, getIntialBonusValue } from "@Backend";
+import { CharacterCalc, AppCharacter, CharacterBuff, CharacterDebuff, getIntialBonusValue } from "@Backend";
 
 import type { Character, PartyData } from "@Src/types";
 import { toArray, toMult } from "./utils";

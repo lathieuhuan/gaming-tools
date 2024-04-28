@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { Modal, EntitySelectTemplate } from "rond";
+import { WeaponType } from "@Backend";
 
-import type { WeaponType } from "@Backend";
 import type { UserWeapon } from "@Src/types";
 import { selectUserWeapons } from "@Store/userdb-slice";
 import { useStoreSnapshot } from "@Src/features";

@@ -1,10 +1,10 @@
 import { clsx, Badge, VersatileSelect } from "rond";
+import { ArtifactCalc, AttributeStat } from "@Backend";
 
-import { AttributeStat } from "@Backend";
 import type { ArtifactSubStat, CalcArtifact, UserArtifact } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
-import { suffixOf, Artifact_ } from "@Src/utils";
+import { suffixOf } from "@Src/utils";
 
 // Component
 import { ArtifactLevelSelect } from "./ArtifactLevelSelect";
@@ -32,8 +32,8 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
 
   const appArtifact = $AppData.getArtifact(artifact);
   const { rarity = 5, mainStatType } = artifact;
-  const possibleMainStatTypes = Artifact_.possibleMainStatTypesOf(artifact.type);
-  const mainStatValue = Artifact_.mainStatValueOf(artifact);
+  const possibleMainStatTypes = ArtifactCalc.possibleMainStatTypesOf(artifact.type);
+  const mainStatValue = ArtifactCalc.mainStatValueOf(artifact);
 
   return (
     <div className={className}>

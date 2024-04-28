@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from "react";
-import type { AppCharacter } from "@Backend";
+import { AppCharacter } from "@Backend";
 
 import { $AppCharacter } from "@Src/services";
 import { getAppDataError } from "@Src/utils";

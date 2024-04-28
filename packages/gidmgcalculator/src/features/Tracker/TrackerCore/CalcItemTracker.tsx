@@ -1,7 +1,8 @@
 import { Fragment } from "react";
 import { round } from "rond";
+import { CalculationFinalResultGroup, CalcItemRecord } from "@Backend";
 
-import type { CalculationFinalResultGroup, Infusion, TrackerCalcItemRecord } from "@Src/types";
+import type { Infusion } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { suffixOf } from "@Src/utils";
 import { Green } from "@Src/components";
@@ -47,7 +48,7 @@ function renderDmg(value: number | number[], callback: (value: number) => string
 interface CalcItemTrackerProps {
   /** Default to 'Talent Mult.' */
   coreMultLabel?: string;
-  records?: Record<string, TrackerCalcItemRecord>;
+  records?: Record<string, CalcItemRecord>;
   result: CalculationFinalResultGroup;
   defMultDisplay?: React.ReactNode;
   infusion?: Infusion;

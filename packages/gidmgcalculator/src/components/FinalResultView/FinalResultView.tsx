@@ -1,6 +1,7 @@
-import type { Party, CalculationFinalResult } from "@Src/types";
+import { CharacterCalc, CalculationFinalResult } from "@Backend";
+
+import type { Party } from "@Src/types";
 import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
-import { Character_ } from "@Src/utils";
 import { $AppCharacter } from "@Src/services";
 
 interface FinalResultViewProps
@@ -26,7 +27,7 @@ export function FinalResultView({ finalResult, party, ...props }: FinalResultVie
         },
       ]}
       getTalentLevel={(talentType) => {
-        return Character_.getFinalTalentLv({
+        return CharacterCalc.getFinalTalentLv({
           char: props.char,
           appChar: props.appChar,
           talentType,

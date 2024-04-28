@@ -1,6 +1,5 @@
-import type { Level, Weapon, WeaponType } from "@Src/types";
-import { LEVELS } from "@Src/constants";
-import { $AppSettings } from "@Src/services";
+import type { Level } from "@Src/backend/types";
+import { LEVELS } from "@Src/backend/constants";
 import { GeneralCalc } from "./general-calc";
 
 export const BASE_ATTACK_TYPE: Record<string, number[]> = {
@@ -57,19 +56,6 @@ export const SUBSTAT_SCALE: Record<string, number[]> = {
   43: [43, 76, 111, 129, 146, 164, 181, 198],
   48: [48, 85, 124, 143, 162, 182, 201, 221],
   58: [58, 102, 148, 172, 195, 218, 241, 265],
-};
-
-const DEFAULT_WEAPON_CODE = {
-  bow: 11,
-  catalyst: 36,
-  claymore: 59,
-  polearm: 84,
-  sword: 108,
-};
-
-type CreateWeaponArgs = {
-  type: WeaponType;
-  code?: number;
 };
 
 export class WeaponCalc {

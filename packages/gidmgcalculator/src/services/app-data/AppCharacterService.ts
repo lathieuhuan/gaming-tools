@@ -1,5 +1,6 @@
-import type { AppCharacter } from "@Backend";
-import type { Party, PartyData, Talent } from "@Src/types";
+import { AppCharacter, TalentType } from "@Backend";
+
+import type { Party, PartyData } from "@Src/types";
 import type { StandardResponse } from "../services.types";
 import type { DataControl, ServiceSubscriber } from "./app-data.types";
 
@@ -102,7 +103,7 @@ export class AppCharacterService extends BaseService {
         cons.description = description;
       });
 
-      const processDescription = (talent: Talent, type: string | undefined) => {
+      const processDescription = (talent: TalentType, type: string | undefined) => {
         const description =
           response.skillTalents.find((item: any) => item.type === type)?.description || this.NO_DESCRIPTION_MSG;
         talentDescriptions.push(description);
@@ -174,7 +175,7 @@ export class AppCharacterService extends BaseService {
     const { activeTalents, passiveTalents } = appChar;
 
     if (activeTalents.NAs.description) {
-      const coreType: Talent[] = ["NAs", "ES", "EB"];
+      const coreType: TalentType[] = ["NAs", "ES", "EB"];
       const descriptions: string[] = coreType.map((type) => {
         return activeTalents[type]?.description || this.NO_DESCRIPTION_MSG;
       });

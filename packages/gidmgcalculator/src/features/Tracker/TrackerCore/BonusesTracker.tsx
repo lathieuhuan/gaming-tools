@@ -1,18 +1,20 @@
 import { round } from "rond";
-
-import type { Tracker } from "@Src/types";
-import { useTranslation } from "@Src/hooks";
 import {
   ATTACK_ELEMENTS,
   ATTACK_ELEMENT_INFO_KEYS,
   ATTACK_PATTERNS,
   ATTACK_PATTERN_INFO_KEYS,
+  GeneralCalc,
   REACTIONS,
-} from "@Src/constants";
-import { suffixOf, Calculation_ } from "@Src/utils";
+  TrackerResult,
+} from "@Backend";
+
+import { useTranslation } from "@Src/hooks";
+import { suffixOf } from "@Src/utils";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
-interface BonusesTrackerProps extends Partial<Pick<Tracker, "attPattBonus" | "attElmtBonus" | "rxnBonus">> {
+interface BonusesTrackerProps
+  extends Partial<Pick<TrackerResult["stats"], "attPattBonus" | "attElmtBonus" | "rxnBonus">> {
   em?: number;
 }
 
@@ -32,7 +34,7 @@ export function BonusesTracker({ attPattBonus, attElmtBonus, rxnBonus, em }: Bon
   }
 
   const ATTACK_PATTERN_BONUS__KEYS = ["all", ...ATTACK_PATTERNS] as const;
-  const bonusesFromEM = Calculation_.getRxnBonusesFromEM(em);
+  const bonusesFromEM = GeneralCalc.getRxnBonusesFromEM(em);
 
   return (
     <div className="pl-2 space-y-3 divide-y divide-rarity-1">

@@ -1,7 +1,8 @@
 import { Fragment, useState } from "react";
 import { ConfirmModal } from "rond";
+import { AttributeStat } from "@Backend";
 
-import { AttributeStat, UserArtifact } from "@Src/types";
+import { UserArtifact } from "@Src/types";
 import { $AppData } from "@Src/services";
 import { useDispatch } from "@Store/hooks";
 import { removeArtifact, swapArtifactOwner, updateUserArtifact, updateUserArtifactSubStat } from "@Store/userdb-slice";

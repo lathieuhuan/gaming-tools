@@ -1,14 +1,14 @@
 import { useState, useRef, FormEvent } from "react";
 import { clsx, InputNumber, VersatileSelect } from "rond";
-
-import type { CustomBuffCtrl, CustomBuffCtrlType } from "@Src/types";
 import {
   ATTACK_ELEMENTS,
   ATTACK_ELEMENT_INFO_KEYS,
   ATTACK_PATTERNS,
   REACTION_BONUS_INFO_KEYS,
   REACTIONS,
-} from "@Src/constants";
+} from "@Backend";
+
+import type { CustomBuffCtrl, CustomBuffCtrlType } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { suffixOf, toCustomBuffLabel } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";

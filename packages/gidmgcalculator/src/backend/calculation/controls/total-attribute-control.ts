@@ -2,9 +2,7 @@ import type { CalcCharacter } from "@Src/types";
 import type { AttributeStat, AppCharacter, TotalAttribute } from "@Src/backend/types";
 import type { TrackerControl } from "./tracker-control";
 
-import { LEVELS } from "@Src/constants";
-import { ATTRIBUTE_STAT_TYPES } from "@Src/backend/constants";
-
+import { ATTRIBUTE_STAT_TYPES, LEVELS } from "@Src/backend/constants";
 import { toArray } from "@Src/utils";
 import { GeneralCalc } from "../utils";
 

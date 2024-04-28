@@ -1,4 +1,12 @@
-import type {
+import {
+  ATTACK_ELEMENTS,
+  LEVELS,
+  WEAPON_TYPES,
+  ATTRIBUTE_STAT_TYPES,
+  ATTACK_PATTERN_INFO_KEYS,
+  ATTACK_PATTERNS,
+  REACTIONS,
+  ELEMENT_TYPES,
   AttributeStat,
   ArtifactType,
   ElementType,
@@ -6,6 +14,7 @@ import type {
   AttackPatternBonusKey,
   ReactionType,
 } from "@Backend";
+
 import type {
   ArtifactDebuffCtrl,
   AttackReaction,
@@ -21,16 +30,6 @@ import type {
   CustomDebuffCtrl,
   CustomBuffCtrlType,
 } from "@Src/types";
-import {
-  ATTACK_ELEMENTS,
-  LEVELS,
-  WEAPON_TYPES,
-  ATTRIBUTE_STAT_TYPES,
-  ATTACK_PATTERN_INFO_KEYS,
-  ATTACK_PATTERNS,
-  REACTIONS,
-  ELEMENT_TYPES,
-} from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
 import { findByCode, Setup_ } from "@Src/utils";
 

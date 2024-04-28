@@ -1,4 +1,4 @@
-import type { ArtifactType, AttributeStat } from "@Backend";
+import { ArtifactType, AttributeStat } from "@Backend";
 
 export type ArtifactFilterSet = {
   code: number;

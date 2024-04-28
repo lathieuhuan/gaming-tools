@@ -1,14 +1,7 @@
 import { createContext, useContext } from "react";
-import type {
-  AppCharacter,
-  AppWeapon,
-  ArtifactAttribute,
-  ArtifactSetBonus,
-  Character,
-  TotalAttribute,
-  UserArtifacts,
-  UserWeapon,
-} from "@Src/types";
+import { AppCharacter, AppWeapon, ArtifactAttribute, ArtifactSetBonus, TotalAttribute } from "@Backend";
+
+import type { Character, UserArtifacts, UserWeapon } from "@Src/types";
 
 type CharacterInfoData = {
   char: Character;

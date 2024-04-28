@@ -1,13 +1,7 @@
+import { ModInputConfig, ModInputType, ModifierAffectType, WeaponType } from "@Backend";
+
 import { $AppCharacter, $AppData } from "@Src/services";
-import type {
-  ArtifactDebuffCtrl,
-  ElementModCtrl,
-  ModInputConfig,
-  ModInputType,
-  ModifierAffectType,
-  ModifierCtrl,
-  WeaponType,
-} from "@Src/types";
+import type { ArtifactDebuffCtrl, ElementModCtrl, ModifierCtrl } from "@Src/types";
 
 const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
   CHECK: 0,

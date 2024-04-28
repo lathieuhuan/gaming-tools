@@ -1,7 +1,6 @@
 import { round } from "rond";
+import { GeneralCalc, AmplifyingReaction, ElementType, ReactionBonus } from "@Backend";
 
-import type { AmplifyingReaction, ElementType, ReactionBonus } from "@Backend";
-import { Calculation_ } from "@Src/utils";
 import { Green } from "../span";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
@@ -11,7 +10,7 @@ interface VapMeltBuffItemProps extends Pick<GenshinModifierViewProps, "mutable" 
   rxnBonus: ReactionBonus;
 }
 export function VapMeltBuffItem({ reaction, element, rxnBonus, ...rest }: VapMeltBuffItemProps) {
-  const mult = Calculation_.getAmplifyingMultiplier(element, rxnBonus)[reaction];
+  const mult = GeneralCalc.getAmplifyingMultiplier(element, rxnBonus)[reaction];
 
   return (
     <GenshinModifierView

@@ -1,13 +1,7 @@
 import { Fragment } from "react";
-import type {
-  CustomBuffCtrl,
-  ElementModCtrl,
-  ReactionBonus,
-  ElementType,
-  Level,
-  AttackElement,
-  AttackReaction,
-} from "@Src/types";
+import { ReactionBonus, ElementType, Level, AttackElement } from "@Backend";
+
+import type { CustomBuffCtrl, ElementModCtrl, AttackReaction } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { suffixOf, toCustomBuffLabel } from "@Src/utils";
 

@@ -1,6 +1,7 @@
-import type { ArtifactSubStat, AttributeStat, Level, UserArtifact, UserCharacter, UserWeapon } from "@Src/types";
+import { ARTIFACT_TYPES, AttributeStat, Level } from "@Backend";
+
+import type { ArtifactSubStat, UserArtifact, UserCharacter, UserWeapon } from "@Src/types";
 import { $AppCharacter, $AppData } from "@Src/services";
-import { ARTIFACT_TYPES } from "@Src/constants";
 import { Weapon_, findByName } from "@Src/utils";
 import { goodFormatMap } from "./util-maps";
 

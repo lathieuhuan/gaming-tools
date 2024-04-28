@@ -1,6 +1,7 @@
-import type { Artifact, ArtifactType } from "@Src/types";
+import { ArtifactType } from "@Backend";
+
+import type { Artifact } from "@Src/types";
 import { $AppSettings } from "@Src/services";
-import { ARTIFACT_MAIN_STATS } from "./artifact-stats";
 
 type CreateArtifactArgs = Pick<Artifact, "type" | "code" | "rarity">;
 
@@ -30,15 +31,6 @@ export class Artifact_ {
         { type: "cDmg_", value: 0 },
       ],
     };
-  }
-
-  static possibleMainStatTypesOf(artifactType: ArtifactType): string[] {
-    return Object.keys(ARTIFACT_MAIN_STATS[artifactType]);
-  }
-
-  static mainStatValueOf(artifact: Artifact): number {
-    const { type, level, rarity = 5, mainStatType } = artifact;
-    return ARTIFACT_MAIN_STATS[type][mainStatType]?.[rarity][level] || 0;
   }
 
   static iconOf(artifactType: ArtifactType) {

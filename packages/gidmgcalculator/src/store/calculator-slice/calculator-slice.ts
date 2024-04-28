@@ -1,6 +1,8 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import type { PartiallyOptional } from "rond";
-import type { AttackElement, CalcSetupManageInfo, CalcWeapon, Resonance, Target } from "@Src/types";
+import { PartiallyOptional } from "rond";
+import { AttackElement, ATTACK_ELEMENTS, GeneralCalc } from "@Backend";
+
+import type { CalcSetupManageInfo, CalcWeapon, Resonance, Target } from "@Src/types";
 import type {
   CalculatorState,
   AddTeammateAction,
@@ -24,10 +26,9 @@ import type {
   UpdateCharacterAction,
 } from "./calculator-slice.types";
 
-import { ATTACK_ELEMENTS, RESONANCE_ELEMENT_TYPES } from "@Src/constants";
+import { RESONANCE_ELEMENT_TYPES } from "@Src/constants";
 import { $AppData, $AppCharacter, $AppSettings } from "@Src/services";
-
-import { deepCopy, findById, toArray, findByIndex, Setup_, Calculation_, Modifier_, Weapon_ } from "@Src/utils";
+import { deepCopy, findById, toArray, findByIndex, Setup_, Modifier_, Weapon_ } from "@Src/utils";
 import { calculate, getCharDataFromState } from "./calculator-slice.utils";
 
 // const defaultChar = {
@@ -180,12 +181,12 @@ export const calculatorSlice = createSlice({
       const setup = state.setupsById[state.activeId];
       const { party, elmtModCtrls } = setup;
 
-      const oldElmtCount = Calculation_.countElements($AppCharacter.getPartyData(party), appChar);
+      const oldElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appChar);
       const oldTeammate = party[teammateIndex];
       // assign to party
       party[teammateIndex] = Setup_.createTeammate({ name, weaponType });
 
-      const newElmtCount = Calculation_.countElements($AppCharacter.getPartyData(party), appChar);
+      const newElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appChar);
 
       if (oldTeammate) {
         const { vision: oldElement } = $AppCharacter.get(oldTeammate.name) || {};
@@ -229,7 +230,7 @@ export const calculatorSlice = createSlice({
       if (teammate) {
         const { vision } = $AppCharacter.get(teammate.name);
         party[teammateIndex] = null;
-        const newElmtCount = Calculation_.countElements($AppCharacter.getPartyData(party), appChar);
+        const newElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appChar);
 
         if (newElmtCount[vision] === 1) {
           elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
@@ -326,7 +327,7 @@ export const calculatorSlice = createSlice({
       const { pieceIndex, newPiece, shouldKeepStats } = action.payload;
       const setup = state.setupsById[state.activeId];
       const piece = setup.artifacts[pieceIndex];
-      const oldSetBonuses = Calculation_.getArtifactSetBonuses(setup.artifacts);
+      const oldSetBonuses = GeneralCalc.getArtifactSetBonuses(setup.artifacts);
       const oldBonusLevel = oldSetBonuses[0]?.bonusLv;
 
       if (shouldKeepStats && piece && newPiece) {
@@ -336,7 +337,7 @@ export const calculatorSlice = createSlice({
         setup.artifacts[pieceIndex] = newPiece;
       }
 
-      const newSetBonus = Calculation_.getArtifactSetBonuses(setup.artifacts)[0];
+      const newSetBonus = GeneralCalc.getArtifactSetBonuses(setup.artifacts)[0];
 
       if (newSetBonus) {
         if (oldBonusLevel === 0 && newSetBonus.bonusLv) {

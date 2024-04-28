@@ -2,8 +2,8 @@ import { useMemo, useState } from "react";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { FaInfoCircle } from "react-icons/fa";
 import { ButtonGroup, Modal } from "rond";
+import { AppArtifact, ArtifactType } from "@Backend";
 
-import type { AppArtifact, ArtifactType } from "@Backend";
 import type { Artifact } from "@Src/types";
 import { $AppData } from "@Src/services";
 import { pickProps, Artifact_ } from "@Src/utils";

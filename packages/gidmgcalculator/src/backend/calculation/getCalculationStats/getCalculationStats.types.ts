@@ -15,7 +15,7 @@ import type { CalcItemBuffControl, TrackerControl, BonusControl, TotalAttributeC
 export type BuffInfoWrap = {
   char: CalcCharacter;
   appChar: AppCharacter;
-  partyData: PartyData;
+  partyData?: PartyData;
   totalAttr: TotalAttributeControl;
   bonusCalc: BonusControl;
   calcItemBuff: CalcItemBuffControl;
@@ -34,13 +34,13 @@ export type GetCalculationStatsArgs = {
   appWeapon: AppWeapon;
   artifacts: CalcArtifacts;
   party?: Party;
-  partyData: PartyData;
+  partyData?: PartyData;
   elmtModCtrls?: ElementModCtrl;
   selfBuffCtrls?: ModifierCtrl[];
   wpBuffCtrls?: ModifierCtrl[];
   artBuffCtrls?: ModifierCtrl[];
   customBuffCtrls?: CustomBuffCtrl[];
   infusedElement?: AttackElement;
-  customInfusion: Infusion;
+  customInfusion?: Infusion;
   tracker?: TrackerControl;
 };

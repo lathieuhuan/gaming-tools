@@ -1,6 +1,7 @@
 import { CollapseList } from "rond";
+import { ArtifactSetBonus } from "@Backend";
 
-import type { ArtifactSetBonus, UserSetup, UserWeapon } from "@Src/types";
+import type { UserSetup, UserWeapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppCharacter, $AppData } from "@Src/services";
 import { calculateChosenSetup } from "../../MySetups.utils";

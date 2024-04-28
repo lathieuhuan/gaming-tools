@@ -1,10 +1,9 @@
 import { useMemo, useState, useRef } from "react";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { useElementSize, Modal, EntitySelectTemplate, type EntitySelectTemplateProps } from "rond";
+import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
-import type { ArtifactType } from "@Backend";
 import type { CalcArtifact, UserArtifact } from "@Src/types";
-import { ARTIFACT_TYPES } from "@Src/constants";
 import { useStoreSnapshot } from "@Src/features";
 import { selectUserArtifacts } from "@Store/userdb-slice";
 

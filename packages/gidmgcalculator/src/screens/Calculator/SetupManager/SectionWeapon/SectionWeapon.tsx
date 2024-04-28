@@ -2,9 +2,8 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { MdInventory } from "react-icons/md";
 import { Badge, Button, VersatileSelect } from "rond";
+import { LEVELS, Level } from "@Backend";
 
-import type { Level } from "@Src/types";
-import { LEVELS } from "@Src/constants";
 import { $AppData } from "@Src/services";
 import { Item_, genSequentialOptions } from "@Src/utils";
 import { selectWeapon, changeWeapon, updateWeapon } from "@Store/calculator-slice";

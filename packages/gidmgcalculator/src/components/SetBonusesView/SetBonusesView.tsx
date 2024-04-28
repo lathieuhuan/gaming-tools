@@ -1,4 +1,5 @@
-import type { ArtifactSetBonus } from "@Backend";
+import { ArtifactSetBonus } from "@Backend";
+
 import { $AppData } from "@Src/services";
 import { parseArtifactDescription, toArray } from "@Src/utils";
 

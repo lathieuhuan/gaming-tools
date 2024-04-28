@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { clsx, type ClassValue } from "rond";
+import { ArtifactType } from "@Backend";
 
-import type { ArtifactType } from "@Backend";
 import type { CalcArtifact } from "@Src/types";
 import type { ArtifactFilterSet } from "../ArtifactFilter.types";
 import { $AppData } from "@Src/services";

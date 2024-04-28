@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
 import { FaLink, FaPlus, FaShareAlt, FaTrashAlt, FaUnlink, FaWrench } from "react-icons/fa";
 import { clsx, useScreenWatcher, Button, ButtonGroup, Modal, CloseButton } from "rond";
+import { ARTIFACT_TYPES, CharacterCalc } from "@Backend";
 
 import type { UserArtifacts, UserSetup, UserWeapon } from "@Src/types";
 import type { OpenModalFn } from "../MySetups.types";
-import { ARTIFACT_TYPES } from "@Src/constants";
 import { $AppCharacter, $AppData } from "@Src/services";
-import { Artifact_, Character_, Setup_ } from "@Src/utils";
+import { Artifact_, Setup_ } from "@Src/utils";
 
 // Store
 import { useDispatch } from "@Store/hooks";
@@ -76,7 +76,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
 
     if (appChar) {
       const talents = (["NAs", "ES", "EB"] as const).map((talentType) => {
-        return Character_.getFinalTalentLv({
+        return CharacterCalc.getFinalTalentLv({
           char,
           appChar,
           talentType,

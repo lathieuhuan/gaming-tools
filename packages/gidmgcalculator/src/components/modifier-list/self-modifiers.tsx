@@ -1,8 +1,8 @@
-import type { AppCharacter, CharacterBuff, CharacterDebuff } from "@Backend";
+import { CharacterCalc, AppCharacter, CharacterBuff, CharacterDebuff } from "@Backend";
+
 import type { Character, ModifierCtrl, PartyData } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import { CharacterCalc } from "@Backend";
 import { findByIndex, parseAbilityDescription } from "@Src/utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";

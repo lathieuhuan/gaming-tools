@@ -3,9 +3,9 @@ import { MdInventory } from "react-icons/md";
 import { GiAnvil } from "react-icons/gi";
 import { FaToolbox } from "react-icons/fa";
 import { clsx, notification, Button, CollapseSpace, Modal } from "rond";
+import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
-import type { Artifact, ArtifactType, CalcArtifact } from "@Src/types";
-import { ARTIFACT_TYPES } from "@Src/constants";
+import type { Artifact, CalcArtifact } from "@Src/types";
 import { $AppData, $AppSettings } from "@Src/services";
 import { Item_, Artifact_ } from "@Src/utils";
 

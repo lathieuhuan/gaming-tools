@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { ARTIFACT_TYPES, WeaponType } from "@Backend";
 
-import type { UserArtifact, UserCharacter, UserComplexSetup, UserSetup, UserWeapon, WeaponType } from "@Src/types";
+import type { UserArtifact, UserCharacter, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
 import type {
   AddSetupToComplexAction,
   AddUserDatabaseAction,
@@ -18,9 +19,8 @@ import type {
   UpdateUserWeaponAction,
 } from "./userdb-slice.types";
 
-import { ARTIFACT_TYPES } from "@Src/constants";
 import { $AppData } from "@Src/services";
-import { findById, findByName, indexById, indexByName, Character_, Weapon_, Setup_, Calculation_ } from "@Src/utils";
+import { findById, findByName, indexById, indexByName, Character_, Weapon_, Setup_, splitLv } from "@Src/utils";
 
 export type UserdbState = {
   userChars: UserCharacter[];
@@ -231,8 +231,8 @@ export const userdbSlice = createSlice({
           return rB - rA;
         }
 
-        const [fA, sA] = Calculation_.splitLv(a);
-        const [fB, sB] = Calculation_.splitLv(b);
+        const [fA, sA] = splitLv(a);
+        const [fB, sB] = splitLv(b);
         if (fA !== fB) {
           return fB - fA;
         }

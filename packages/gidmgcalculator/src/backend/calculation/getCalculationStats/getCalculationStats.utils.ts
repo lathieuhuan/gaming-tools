@@ -13,7 +13,8 @@ import type {
   WithBonusTargets,
 } from "@Src/backend/types";
 import type { BuffInfoWrap } from "./getCalculationStats.types";
-import { ELEMENT_TYPES } from "@Src/constants";
+
+import { ELEMENT_TYPES } from "@Src/backend/constants";
 import { toArray } from "@Src/utils";
 
 type BonusStack = CharacterBonusStack | WeaponBonusStack | ArtifactBonusStack;

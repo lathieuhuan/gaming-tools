@@ -1,5 +1,6 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { PartiallyRequired } from "rond";
+import type { WeaponType, ArtifactType } from "@Backend";
 import type {
   ArtifactSubStat,
   UserArtifact,
@@ -8,8 +9,6 @@ import type {
   UserSetup,
   UserSetupCalcInfo,
   UserWeapon,
-  WeaponType,
-  ArtifactType,
 } from "@Src/types";
 
 export type AddUserDatabaseAction = PayloadAction<{

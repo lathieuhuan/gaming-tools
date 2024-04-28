@@ -1,4 +1,5 @@
-import type { AppCharacter } from "@Backend";
+import { AppCharacter } from "@Backend";
+
 import { $AppCharacter } from "@Src/services";
 import { useQuery } from "@Src/hooks";
 import { CloseButton, LoadingSpin } from "rond";

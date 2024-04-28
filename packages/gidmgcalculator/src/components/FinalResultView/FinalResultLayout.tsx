@@ -2,8 +2,8 @@ import { useMemo, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { Button, CollapseSpace, Table, TableThProps } from "rond";
+import { AppCharacter, LevelableTalentType, TalentType } from "@Backend";
 
-import type { AppCharacter, LevelableTalentType, TalentType } from "@Backend";
 import type { CalcCharacter, Weapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";

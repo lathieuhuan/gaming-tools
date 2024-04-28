@@ -4,9 +4,10 @@ import { FaSave, FaTrashAlt, FaToolbox } from "react-icons/fa";
 import { MdInventory } from "react-icons/md";
 import { GiAnvil } from "react-icons/gi";
 import { Modal, ConfirmModal, Button, VersatileSelect } from "rond";
+import { ArtifactCalc, AttributeStat } from "@Backend";
 
-import type { CalcArtifact, AttributeStat } from "@Src/types";
-import { findById, suffixOf, Item_, Artifact_ } from "@Src/utils";
+import type { CalcArtifact } from "@Src/types";
+import { findById, suffixOf, Item_ } from "@Src/utils";
 import { MAX_USER_ARTIFACTS } from "@Src/constants";
 import { changeArtifact, updateArtifact } from "@Store/calculator-slice";
 import { selectUserArtifacts, addUserArtifact, updateUserArtifact } from "@Store/userdb-slice";
@@ -34,8 +35,8 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
   const [isSaving, setIsSaving] = useState(false);
 
   const { type, rarity = 5, level, mainStatType } = artifact;
-  const possibleMainStatTypes = Artifact_.possibleMainStatTypesOf(type);
-  const mainStatValue = Artifact_.mainStatValueOf(artifact);
+  const possibleMainStatTypes = ArtifactCalc.possibleMainStatTypesOf(type);
+  const mainStatValue = ArtifactCalc.mainStatValueOf(artifact);
 
   const closeModal = () => {
     setIsSaving(false);

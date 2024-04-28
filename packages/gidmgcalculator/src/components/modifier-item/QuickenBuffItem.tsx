@@ -1,5 +1,5 @@
-import type { ElementType, Level, QuickenReaction, ReactionBonus } from "@Backend";
-import { Calculation_ } from "@Src/utils";
+import { ElementType, GeneralCalc, Level, QuickenReaction, ReactionBonus } from "@Backend";
+
 import { Green } from "../span";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
@@ -10,7 +10,7 @@ interface QuickenBuffItemProps extends Pick<GenshinModifierViewProps, "mutable" 
   rxnBonus: ReactionBonus;
 }
 export function QuickenBuffItem({ reaction, element, characterLv, rxnBonus, ...rest }: QuickenBuffItemProps) {
-  const value = Calculation_.getQuickenBuffDamage(characterLv, rxnBonus)[reaction];
+  const value = GeneralCalc.getQuickenBuffDamage(characterLv, rxnBonus)[reaction];
 
   return (
     <GenshinModifierView

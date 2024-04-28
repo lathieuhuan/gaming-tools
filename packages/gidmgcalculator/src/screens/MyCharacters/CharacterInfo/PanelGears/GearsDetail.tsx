@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { RiArrowGoBackLine } from "react-icons/ri";
+import { AttributeStat } from "@Backend";
 
-import type { AttributeStat } from "@Src/types";
 import type { GearsDetailType } from "./Gears.types";
 import { useDispatch } from "@Store/hooks";
 import { updateUserArtifactSubStat, updateUserArtifact, updateUserWeapon, unequipArtifact } from "@Store/userdb-slice";

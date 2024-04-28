@@ -1,7 +1,6 @@
 import { Checkbox, InputNumber, Modal, VersatileSelect } from "rond";
+import { ATTACK_ELEMENTS, AttackElement, ElementType } from "@Backend";
 
-import type { AttackElement, ElementType } from "@Backend";
-import { ATTACK_ELEMENTS } from "@Src/constants";
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
 import { toArray } from "@Src/utils";

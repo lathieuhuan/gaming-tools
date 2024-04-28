@@ -1,4 +1,6 @@
-import type { ArtifactSetBonus, ModifierCtrl, Party } from "@Src/types";
+import { ArtifactSetBonus } from "@Backend";
+
+import type { ModifierCtrl, Party } from "@Src/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import { $AppData } from "@Src/services";

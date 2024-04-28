@@ -1,5 +1,6 @@
+import { AppArtifact, AppWeapon, AppMonster, ArtifactType, WeaponType } from "@Backend";
+
 import type { Target } from "@Src/types";
-import type { AppArtifact, AppWeapon, AppMonster, ArtifactType, WeaponType } from "@Backend";
 import type { DataControl, Metadata, Update } from "./app-data.types";
 
 import { BACKEND_URL } from "@Src/constants";

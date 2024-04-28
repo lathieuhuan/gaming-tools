@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { Modal } from "rond";
+import { AppWeapon, WeaponType } from "@Backend";
 
-import type { AppWeapon, WeaponType } from "@Backend";
 import type { Weapon } from "@Src/types";
 import { $AppData } from "@Src/services";
 import { pickProps, Weapon_ } from "@Src/utils";

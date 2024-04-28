@@ -1,5 +1,7 @@
-import type { CalcWeapon, ModifierCtrl, UserArtifact, UserCharacter, UserWeapon, WeaponType } from "@Src/types";
-import { Calculation_, Character_, Modifier_, Weapon_, Item_, findById } from "@Src/utils";
+import { GeneralCalc, WeaponType } from "@Backend";
+
+import type { CalcWeapon, ModifierCtrl, UserArtifact, UserCharacter, UserWeapon } from "@Src/types";
+import { Character_, Modifier_, Weapon_, Item_, findById } from "@Src/utils";
 
 export type CharacterForInit = Partial<UserCharacter> & {
   name: string;
@@ -39,7 +41,7 @@ export function parseUserCharacter({
     const artifact = id ? findById(userArts, id) : undefined;
     return artifact ? Item_.userItemToCalcItem(artifact, seedID++) : null;
   });
-  const firstSetBonus = Calculation_.getArtifactSetBonuses(artifacts)[0];
+  const firstSetBonus = GeneralCalc.getArtifactSetBonuses(artifacts)[0];
 
   return {
     char,

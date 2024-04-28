@@ -1,14 +1,13 @@
 import { round } from "rond";
+import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, TrackerResult } from "@Backend";
 
-import type { Tracker } from "@Src/types";
-import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "@Src/constants";
 import { useTranslation } from "@Src/hooks";
 import { applyPercent, suffixOf } from "@Src/utils";
 import { useSelector } from "@Store/hooks";
 import { selectTotalAttr } from "@Store/calculator-slice";
 import { recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
-export function AttributesTracker({ totalAttr }: Partial<Pick<Tracker, "totalAttr">>) {
+export function AttributesTracker({ totalAttr }: Partial<Pick<TrackerResult["stats"], "totalAttr">>) {
   const { t } = useTranslation();
   const calcTotalAttr = useSelector(selectTotalAttr);
 
@@ -21,7 +20,7 @@ export function AttributesTracker({ totalAttr }: Partial<Pick<Tracker, "totalAtt
 
         return (
           <div key={statType} className="break-inside-avoid">
-            {renderHeading(t(statType), Math.round(calcTotalAttr[statType]))}
+            {renderHeading(t(statType), Math.round(calcTotalAttr[statType].total))}
 
             <ul className="pl-4 list-disc">
               {records.map(renderRecord((value) => round(value, 1)))}
@@ -29,7 +28,10 @@ export function AttributesTracker({ totalAttr }: Partial<Pick<Tracker, "totalAtt
 
               {records_.map(
                 renderRecord(
-                  (value) => applyPercent(value, calcTotalAttr[`base_${statType}`]),
+                  (value) => {
+                    const bonus = calcTotalAttr[statType].bonus ?? 0;
+                    return applyPercent(value, calcTotalAttr[statType].total - bonus);
+                  },
                   (value) => {
                     const value_ = round(value, 2);
                     const value__ = round(value_ / 100, 4);
@@ -48,7 +50,7 @@ export function AttributesTracker({ totalAttr }: Partial<Pick<Tracker, "totalAtt
 
         return (
           <div key={statType} className="break-inside-avoid">
-            {renderHeading(t(statType), round(calcTotalAttr[statType], 2) + percent)}
+            {renderHeading(t(statType), round(calcTotalAttr[statType].total, 2) + percent)}
 
             {totalAttr?.[statType].length ? (
               <ul className="pl-4 list-disc">

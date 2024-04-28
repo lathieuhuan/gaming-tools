@@ -1,4 +1,4 @@
-import type { AppArtifact, ArtifactModifierDescription } from "@Backend";
+import { AppArtifact, ArtifactModifierDescription } from "@Backend";
 import { parseArtifactDescription, toArray } from "@Src/utils";
 
 export function getArtifactDescription(data: AppArtifact, modifier: { description: ArtifactModifierDescription }) {

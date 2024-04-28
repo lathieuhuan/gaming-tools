@@ -1,4 +1,8 @@
-import { ATTACK_ELEMENTS } from "@Src/constants";
+import { ATTACK_ELEMENTS, Level } from "@Backend";
+
+export function splitLv(subject: { level: Level }) {
+  return subject.level.split("/").map((lv) => +lv);
+}
 
 export const deepCopy = <T>(item: T): T => JSON.parse(JSON.stringify(item));
 

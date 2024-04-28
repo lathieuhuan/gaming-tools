@@ -1,8 +1,7 @@
 import { Fragment, useState } from "react";
 import { VersatileSelect } from "rond";
-import type { AmplifyingReaction, CalcItem, ElementType } from "@Backend";
+import { ELEMENT_TYPES, AmplifyingReaction, CalcItem, ElementType } from "@Backend";
 
-import { ELEMENT_TYPES } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {

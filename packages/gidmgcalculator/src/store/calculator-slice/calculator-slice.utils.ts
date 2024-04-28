@@ -1,7 +1,8 @@
 import { message } from "rond";
+import { calculateSetup } from "@Backend";
+
 import type { CalculatorState } from "./calculator-slice.types";
 import { $AppCharacter } from "@Src/services";
-import { calculateSetup } from "@Backend";
 
 export function getCharDataFromState(state: CalculatorState) {
   const setup = state.setupsById[state.activeId];

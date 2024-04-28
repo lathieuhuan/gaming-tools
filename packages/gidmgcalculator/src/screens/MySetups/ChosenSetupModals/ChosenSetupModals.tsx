@@ -1,7 +1,8 @@
 import { ConfirmModal, Modal } from "rond";
-import type { UserArtifacts, UserSetup, UserWeapon } from "@Src/types";
+import { GeneralCalc } from "@Backend";
 
-import { Calculation_, Setup_ } from "@Src/utils";
+import type { UserArtifacts, UserSetup, UserWeapon } from "@Src/types";
+import { Setup_ } from "@Src/utils";
 import { calculateChosenSetup } from "../MySetups.utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectMySetupModalType, updateUI } from "@Store/ui-slice";
@@ -21,7 +22,7 @@ export function ChosenSetupModals({ chosenSetup, weapon, artifacts, result }: Ch
   const dispatch = useDispatch();
   const modalType = useSelector(selectMySetupModalType);
 
-  const setBonuses = Calculation_.getArtifactSetBonuses(artifacts);
+  const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
 
   const closeModal = () => {
     dispatch(updateUI({ mySetupsModalType: "" }));

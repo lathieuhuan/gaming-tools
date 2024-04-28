@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { CollapseList, CollapseListProps } from "rond";
-import type { AttackPattern, Infusion } from "@Src/types";
+import { AttackPattern, GeneralCalc, TrackerControl, TrackerResult, calculateSetup } from "@Backend";
+
+import type { Infusion } from "@Src/types";
 import type { TrackerState } from "@Store/ui-slice";
 
-import { TrackerResult, calculateSetup } from "@Backend";
-import { Calculation_ } from "@Src/utils";
 import { useSelector } from "@Store/hooks";
 import { selectCalcFinalResult, selectTarget } from "@Store/calculator-slice";
-import { initTracker, getTotalRecordValue } from "./TrackerCore.utils";
+import { getTotalRecordValue } from "./TrackerCore.utils";
 
 // Component
 import { Green, Dim } from "@Src/components";
@@ -34,15 +34,15 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const [xtraInfo, setXtraInfo] = useState<{ inHealB_?: number }>({});
 
   const { totalAttr, attPattBonus, attElmtBonus, rxnBonus } = result?.stats || {};
-  const charLv = Calculation_.getBareLv(activeSetup.char.level);
+  const charLv = GeneralCalc.getBareLv(activeSetup.char.level);
   const totalDefReduct = getTotalRecordValue(result?.stats?.resistReduct.def || []);
 
   useEffect(() => {
     if (trackerState === "open") {
-      const tracker = initTracker();
+      const tracker = new TrackerControl();
       const finalResult = calculateSetup(activeSetup, target, tracker);
 
-      setResult(tracker);
+      setResult(tracker.finalize());
       setInfusion({
         element: finalResult.infusedElement,
         range: finalResult.infusedAttacks,

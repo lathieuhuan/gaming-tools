@@ -1,4 +1,5 @@
-import type { AppWeapon, WeaponBuff } from "@Backend";
+import { AppWeapon, WeaponBuff } from "@Backend";
+
 import type { CalcWeapon, ModifierCtrl, Party, Weapon } from "@Src/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 

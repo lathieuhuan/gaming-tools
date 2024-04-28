@@ -1,5 +1,6 @@
+import { calculateSetup } from "@Backend";
+
 import type { UserArtifacts, UserSetup, UserWeapon } from "@Src/types";
-import { calculateSetup } from "@Src/calculation";
 import { $AppCharacter } from "@Src/services";
 
 export function calculateChosenSetup(chosenSetup: UserSetup, weapon: UserWeapon | null, artifacts: UserArtifacts) {

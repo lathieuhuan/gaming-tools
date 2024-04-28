@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
+import { TALENT_TYPES, LevelableTalentType, CharacterCalc, GeneralCalc } from "@Backend";
 
-import type { LevelableTalentType } from "@Backend";
 import type { Character, Party } from "@Src/types";
-import { TALENT_TYPES } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
-import { Calculation_, genSequentialOptions } from "@Src/utils";
+import { genSequentialOptions } from "@Src/utils";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
 
 // Component
@@ -81,7 +80,7 @@ export function TalentList({ className, char, party, onChangeTalentLevel }: Tale
           const talent = activeTalents[talentType];
           if (!talent) return null;
 
-          const xtraLevel = Calculation_.getTotalXtraTalentLv({
+          const xtraLevel = CharacterCalc.getTotalXtraTalentLv({
             appChar,
             talentType,
             char,
@@ -111,7 +110,7 @@ export function TalentList({ className, char, party, onChangeTalentLevel }: Tale
         })}
 
         {passiveTalents.map((talent, index) => {
-          const active = index === 2 || Calculation_.getAscension(char.level) >= (index === 0 ? 1 : 4);
+          const active = index === 2 || GeneralCalc.getAscension(char.level) >= (index === 0 ? 1 : 4);
           return renderTalent(
             {
               name: talent.name,

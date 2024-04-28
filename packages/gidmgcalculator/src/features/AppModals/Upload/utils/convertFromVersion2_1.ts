@@ -1,21 +1,18 @@
+import { ELEMENT_TYPES, AttributeStat, AppWeapon, ModInputConfig, ElementType, GeneralCalc } from "@Backend";
+
 import type {
-  AttributeStat,
   Character,
-  AppWeapon,
   ModifierCtrl,
-  ModInputConfig,
   Party,
   Resonance,
   UserArtifact,
   UserCharacter,
   UserSetup,
   UserWeapon,
-  ElementType,
 } from "@Src/types";
 
-import { ELEMENT_TYPES } from "@Src/constants";
 import { $AppData, $AppCharacter } from "@Src/services";
-import { Calculation_, Modifier_, Weapon_, findById, findByIndex } from "@Src/utils";
+import { Modifier_, Weapon_, findById, findByIndex } from "@Src/utils";
 import { version3map } from "./util-maps";
 
 type ConvertUserDataArgs = {
@@ -289,7 +286,7 @@ const convertSetup = (
       artifactIDs.push(null);
     }
   }
-  const { code: setBonusesCode = 0 } = Calculation_.getArtifactSetBonuses(finalArtifacts)[0] || {};
+  const { code: setBonusesCode = 0 } = GeneralCalc.getArtifactSetBonuses(finalArtifacts)[0] || {};
   const { buffs: artifactBuffs = [] } = $AppData.getArtifactSet(setBonusesCode) || {};
 
   // PARTY

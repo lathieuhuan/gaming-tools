@@ -1,4 +1,4 @@
-import type { ElementType, WeaponType } from "@Src/types";
+import { ElementType, WeaponType } from "@Backend";
 
 const NORMAL_ATTACK_ICONS: Record<`${WeaponType}_${ElementType}`, string> = {
   bow_pyro: "7/7f/Bow_Pyro",

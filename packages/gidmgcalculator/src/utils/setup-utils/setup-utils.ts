@@ -1,3 +1,5 @@
+import { ATTACK_ELEMENTS, CharacterCalc, GeneralCalc, WeaponType } from "@Backend";
+
 import type {
   CalcSetup,
   CalcSetupManageInfo,
@@ -9,14 +11,9 @@ import type {
   UserSetup,
   UserSetupCalcInfo,
   UserWeapon,
-  WeaponType,
 } from "@Src/types";
-import { CharacterCal } from "@Src/calculation";
-import { ATTACK_ELEMENTS } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
-import { CalculatorState } from "@Store/calculator-slice";
 import { deepCopy, findByIndex } from "../utils";
-import { Calculation_ } from "../calculation-utils";
 import { Modifier_ } from "../modifier-utils";
 import { Weapon_ } from "../weapon-utils";
 import { Item_ } from "../item-utils";
@@ -122,11 +119,11 @@ export class Setup_ {
       artifactIDs: options?.artifactIDs || artifacts.map((artifact) => artifact?.ID ?? null),
       selfBuffCtrls: data.selfBuffCtrls.filter((ctrl) => {
         const buff = findByIndex(buffs, ctrl.index);
-        return buff ? ctrl.activated && CharacterCal.isGranted(buff, char) : false;
+        return buff ? ctrl.activated && CharacterCalc.isGrantedEffect(buff, char) : false;
       }),
       selfDebuffCtrls: data.selfDebuffCtrls.filter((ctrl) => {
         const debuff = findByIndex(debuffs, ctrl.index);
-        return debuff ? ctrl.activated && CharacterCal.isGranted(debuff, char) : false;
+        return debuff ? ctrl.activated && CharacterCalc.isGrantedEffect(debuff, char) : false;
       }),
       wpBuffCtrls: data.wpBuffCtrls.filter((ctrl) => ctrl.activated),
       party,
@@ -169,7 +166,7 @@ export class Setup_ {
       }
     }
 
-    const setBonuses = Calculation_.getArtifactSetBonuses(data.artifacts);
+    const setBonuses = GeneralCalc.getArtifactSetBonuses(data.artifacts);
     const artBuffCtrls = setBonuses[0]?.bonusLv ? Modifier_.createArtifactBuffCtrls(true, setBonuses[0]) : [];
 
     const output: CalcSetup = {

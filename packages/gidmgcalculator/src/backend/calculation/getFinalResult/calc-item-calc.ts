@@ -1,9 +1,10 @@
-import type { ActualAttackPattern, Level } from "@Src/types";
 import type {
+  ActualAttackPattern,
   AttackElement,
   AttackElementBonus,
   AttackPatternBonus,
   CalcItemType,
+  Level,
   ResistanceReduction,
   TotalAttribute,
 } from "@Src/backend/types";

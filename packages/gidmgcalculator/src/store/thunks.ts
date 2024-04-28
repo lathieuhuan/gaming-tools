@@ -1,10 +1,11 @@
 import { batch } from "react-redux";
 import isEqual from "react-fast-compare";
 import { message } from "rond";
+import { ARTIFACT_TYPES } from "@Backend";
 
 import type { CalcArtifacts, UserSetup, UserWeapon } from "@Src/types";
 import type { AppThunk } from "./store";
-import { ARTIFACT_TYPES, MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@Src/constants";
+import { MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@Src/constants";
 import { $AppCharacter, $AppData, $AppSettings } from "@Src/services";
 
 // Store

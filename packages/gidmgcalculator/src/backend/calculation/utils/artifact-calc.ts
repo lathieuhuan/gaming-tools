@@ -103,4 +103,8 @@ export class ArtifactCalc {
     const { type, level, rarity = 5, mainStatType } = artifact;
     return ARTIFACT_MAIN_STATS[type][mainStatType]?.[rarity][level] || 0;
   }
+
+  static possibleMainStatTypesOf(artifactType: ArtifactType): string[] {
+    return Object.keys(ARTIFACT_MAIN_STATS[artifactType]);
+  }
 }

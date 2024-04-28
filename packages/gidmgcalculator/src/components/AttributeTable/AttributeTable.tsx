@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { clsx, round, StatsTable, CollapseSpace, type PartiallyRequired } from "rond";
+import { ATTACK_ELEMENTS, CORE_STAT_TYPES, GeneralCalc, CoreStat, TotalAttribute } from "@Backend";
 
-import type { CoreStat, TotalAttribute } from "@Backend";
-import { ATTACK_ELEMENTS, CORE_STAT_TYPES } from "@Src/constants";
 import { useTranslation } from "@Src/hooks";
-import { Calculation_ } from "@Src/utils";
 
 // Component
 import { Green } from "@Src/components";
@@ -15,7 +13,7 @@ interface EmSectionProps {
 }
 const EmSection = ({ em }: EmSectionProps) => {
   const [dropped, setDropped] = useState(false);
-  const rxnBonusFromEM = Calculation_.getRxnBonusesFromEM(em);
+  const rxnBonusFromEM = GeneralCalc.getRxnBonusesFromEM(em);
 
   return (
     <div>

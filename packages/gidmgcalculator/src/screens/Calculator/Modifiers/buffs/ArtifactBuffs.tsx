@@ -1,3 +1,5 @@
+import { GeneralCalc } from "@Backend";
+
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectArtifacts,
@@ -7,7 +9,7 @@ import {
   updateTeammateArtifact,
   type ToggleModCtrlPath,
 } from "@Store/calculator-slice";
-import { Calculation_, deepCopy, findByIndex } from "@Src/utils";
+import { deepCopy, findByIndex } from "@Src/utils";
 import { ArtifactBuffsView } from "@Src/components";
 
 export default function ArtifactBuffs() {
@@ -19,7 +21,8 @@ export default function ArtifactBuffs() {
   return (
     <ArtifactBuffsView
       mutable
-      {...{ setBonuses: Calculation_.getArtifactSetBonuses(artifacts), party, artBuffCtrls }}
+      {...{ party, artBuffCtrls }}
+      setBonuses={GeneralCalc.getArtifactSetBonuses(artifacts)}
       getSelfHandlers={({ ctrl }) => {
         const path: ToggleModCtrlPath = {
           modCtrlName: "artBuffCtrls",

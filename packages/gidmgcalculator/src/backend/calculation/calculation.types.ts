@@ -36,7 +36,7 @@ export type CalculationFinalResultItem = Record<CalculationAspect, number | numb
   attElmt?: ActualAttackElement;
 };
 
-type CalculationFinalResultGroup = Record<string, CalculationFinalResultItem>;
+export type CalculationFinalResultGroup = Record<string, CalculationFinalResultItem>;
 
 export type CalculationFinalResult = {
   NAs: CalculationFinalResultGroup;

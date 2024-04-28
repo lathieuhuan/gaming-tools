@@ -1,12 +1,12 @@
 import { useMemo } from "react";
+import { GeneralCalc, getCalculationStats } from "@Backend";
 
 import type { Character, UserArtifacts, UserWeapon } from "@Src/types";
 import type { RootState } from "@Store/store";
 
 import { useAppCharacter } from "@Src/hooks";
-import { getCalculationStats } from "@Src/calculation";
 import { $AppData } from "@Src/services";
-import { Calculation_, findById, findByName } from "@Src/utils";
+import { findById, findByName } from "@Src/utils";
 import { useSelector } from "@Store/hooks";
 import { CharacterInfoContext, type CharacterInfoState } from "./character-info-context";
 
@@ -38,7 +38,7 @@ function CharacterInfoProviderCore({ char, weapon, artifacts, children }: Charac
           weapon,
           appWeapon,
           artifacts,
-          setBonuses: Calculation_.getArtifactSetBonuses(artifacts),
+          setBonuses: GeneralCalc.getArtifactSetBonuses(artifacts),
           totalAttr,
           artAttr,
         },
