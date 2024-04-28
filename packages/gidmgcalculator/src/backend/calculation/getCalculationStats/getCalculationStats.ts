@@ -3,11 +3,9 @@ import type {
   AttackElementInfoKey,
   AttackPatternBonusKey,
   AttributeStat,
-  CalcItemBuff,
   ReactionBonusInfoKey,
   ReactionType,
-} from "@Src/backend/types";
-import type { CharacterStatus } from "../calculation.types";
+} from "@Backend/types";
 import type { BuffInfoWrap, GetCalculationStatsArgs, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
@@ -16,7 +14,7 @@ import { RESONANCE_STAT } from "../calculation.constants";
 import { $AppCharacter, $AppData } from "@Src/services";
 import { findByIndex } from "@Src/utils";
 import { CharacterCalc, GeneralCalc, WeaponCalc } from "../utils";
-import { ArtifactAttributeControl, BonusControl, TotalAttributeControl } from "../controls";
+import { ArtifactAttributeControl, BonusControl, CalcItemBuffControl, TotalAttributeControl } from "../controls";
 import applyCharacterBuff from "./applyCharacterBuff";
 import applyWeaponBuff from "./applyWeaponBuff";
 import applyArtifactBuff from "./applyArtifactBuff";
@@ -41,9 +39,6 @@ export default function getCalculationStats({
   const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
   const { resonances = [], reaction, infuse_reaction } = elmtModCtrls || {};
 
-  const charStatus: CharacterStatus = {
-    BOL: 0,
-  };
   const totalAttr = new TotalAttributeControl(tracker).create(
     char,
     appChar,
@@ -51,7 +46,7 @@ export default function getCalculationStats({
   );
   const artAttr = new ArtifactAttributeControl(artifacts, totalAttr).getValues();
   const bonusCalc = new BonusControl(tracker);
-  const calcItemBuffs: CalcItemBuff[] = [];
+  const calcItemBuff = new CalcItemBuffControl();
 
   if (appWeapon.subStat) {
     const subStatValue = WeaponCalc.getSubStatValue(weapon.level, appWeapon.subStat.scale);
@@ -62,10 +57,9 @@ export default function getCalculationStats({
     char,
     appChar,
     partyData,
-    charStatus,
     totalAttr,
     bonusCalc,
-    calcItemBuffs,
+    calcItemBuff,
     infusedElement,
   };
 
@@ -352,11 +346,11 @@ export default function getCalculationStats({
   }
 
   return {
-    charStatus,
-    totalAttr,
-    bonusCalc,
+    totalAttr: totalAttr.finalize(),
+    attPattBonus: bonusCalc.serialize("PATT"),
+    attElmtBonus: bonusCalc.serialize("ELMT"),
     rxnBonus,
-    calcItemBuffs,
+    calcItemBuff,
     artAttr,
     // calcInfusion,
     // disabledNAs,

@@ -11,7 +11,7 @@ import type {
   WeaponBonusCore,
   WeaponBonusStack,
   WithBonusTargets,
-} from "@Src/backend/types";
+} from "@Backend/types";
 import type { BuffInfoWrap } from "./getCalculationStats.types";
 import { ELEMENT_TYPES } from "@Src/constants";
 import { toArray } from "@Src/utils";
@@ -26,8 +26,6 @@ function isFinalBonus(bonusStacks?: BonusStack | BonusStack[]) {
       switch (stack.type) {
         case "ATTRIBUTE":
           return stack.field !== "base_atk";
-        case "C_STATUS":
-          return stack.status !== "BOL";
         default:
           return false;
       }
@@ -42,8 +40,7 @@ function isTrulyFinalBonus(bonus: BonusCore, cmnStacks: BonusStack[]) {
     isFinalBonus(bonus.stacks) ||
     ("preExtra" in bonus && typeof bonus.preExtra === "object" && isFinalBonus(bonus.preExtra.stacks)) ||
     ("sufExtra" in bonus && typeof bonus.sufExtra === "object" && isFinalBonus(bonus.sufExtra.stacks)) ||
-    (bonus.stackIndex !== undefined && isFinalBonus(cmnStacks[bonus.stackIndex])) ||
-    (typeof bonus.checkInput === "object" && bonus.checkInput.source === "BOL")
+    (bonus.stackIndex !== undefined && isFinalBonus(cmnStacks[bonus.stackIndex]))
   );
 }
 
@@ -74,10 +71,11 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
           let path: AttributeStat | AttributeStat[];
 
           switch (target.path) {
-            case "INP_ELMT":
+            case "INP_ELMT": {
               const elmtIndex = inputs[target.inpIndex ?? 0];
               path = ELEMENT_TYPES[elmtIndex];
               break;
+            }
             case "OWN_ELMT":
               path = vision;
               break;
@@ -98,16 +96,7 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
         info.bonusCalc.add(target.module, target.path, bonus.value, description);
         break;
       case "ITEM":
-        info.calcItemBuffs.push({
-          ids: target.id,
-          bonus: {
-            [target.path]: { desc: description, value: bonus.value },
-          },
-        });
-        break;
-      case "C_STATUS":
-        // #to-do: make & use CharacterStatusCalc
-        info.charStatus.BOL += bonus.value;
+        info.calcItemBuff.add(bonus.value, target, description);
         break;
       case "ELM_NA":
         if (info.appChar.weaponType === "catalyst" || info.infusedElement !== "phys") {

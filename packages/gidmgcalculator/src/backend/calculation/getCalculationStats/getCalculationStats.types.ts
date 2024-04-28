@@ -4,23 +4,21 @@ import type {
   CalcWeapon,
   CustomBuffCtrl,
   ElementModCtrl,
+  Infusion,
   ModifierCtrl,
   Party,
   PartyData,
 } from "@Src/types";
-import type { AppCharacter, AppWeapon, AttackElement, CalcItemBuff } from "@Src/backend/types";
-import type { CharacterStatus } from "../calculation.types";
-import type { TrackerControl } from "../controls";
-import type { BonusControl, TotalAttributeControl } from "./controls";
+import type { AppCharacter, AppWeapon, AttackElement } from "@Backend/types";
+import type { CalcItemBuffControl, TrackerControl, BonusControl, TotalAttributeControl } from "../controls";
 
 export type BuffInfoWrap = {
   char: CalcCharacter;
   appChar: AppCharacter;
   partyData: PartyData;
-  charStatus: CharacterStatus;
   totalAttr: TotalAttributeControl;
   bonusCalc: BonusControl;
-  calcItemBuffs: CalcItemBuff[];
+  calcItemBuff: CalcItemBuffControl;
   infusedElement?: AttackElement;
 };
 
@@ -43,5 +41,6 @@ export type GetCalculationStatsArgs = {
   artBuffCtrls?: ModifierCtrl[];
   customBuffCtrls?: CustomBuffCtrl[];
   infusedElement?: AttackElement;
+  customInfusion: Infusion;
   tracker?: TrackerControl;
 };

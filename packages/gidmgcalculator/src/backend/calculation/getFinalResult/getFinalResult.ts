@@ -1,14 +1,17 @@
-import type { CalcItemBonus, NormalAttack } from "@Src/backend/types";
+import type { NormalAttack } from "@Backend/types";
+import type { CalculationFinalResult } from "../calculation.types";
 import type { DebuffInfoWrap, GetFinalResultArgs } from "./getFinalResult.types";
 
-import { ATTACK_ELEMENTS, ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
-import { ResistanceReductionControl } from "./controls";
+import { $AppCharacter, $AppData } from "@Src/services";
+import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
+import { TRANSFORMATIVE_REACTION_INFO } from "../calculation.constants";
+
 import { findByIndex, toArray } from "@Src/utils";
 import { CharacterCalc, GeneralCalc } from "../utils";
-import applyAbilityDebuff from "./applyCharacterDebuff";
-import { $AppCharacter, $AppData } from "@Src/services";
 import { applyPenalty } from "./getFinalResult.utils";
-import { TRANSFORMATIVE_REACTION_INFO } from "../calculation.constants";
+import { ResistanceReductionControl, TrackerControl } from "../controls";
+import { CalcItemCalc } from "./calc-item-calc";
+import applyAbilityDebuff from "./applyCharacterDebuff";
 
 export default function getFinalResult({
   char,
@@ -21,15 +24,16 @@ export default function getFinalResult({
   artDebuffCtrls,
   customDebuffCtrls,
   disabledNAs,
-  charStatus,
   totalAttr,
-  calcItemBuffs,
+  attPattBonus,
+  attElmtBonus,
+  rxnBonus,
+  calcItemBuff,
   elmtModCtrls: { reaction, infuse_reaction, resonances, superconduct, absorption },
   infusion,
   target,
   tracker,
 }: GetFinalResultArgs) {
-  const rxnBonus = bonusCalc.serialize("RXN");
   const resistReduct = new ResistanceReductionControl(tracker);
 
   const { multFactorConf, calcList, weaponType, vision, debuffs } = appChar;
@@ -106,12 +110,7 @@ export default function getFinalResult({
   if (superconduct) {
     resistReduct.add("phys", 40, "Superconduct");
   }
-
-  // CALCULATE RESISTANCE REDUCTION
-  for (const key of [...ATTACK_ELEMENTS]) {
-    let RES = (target.resistances[key] - resistReduct[key]) / 100;
-    resistReduct[key] = RES < 0 ? 1 - RES / 2 : RES >= 0.75 ? 1 / (4 * RES + 1) : 1 - RES;
-  }
+  const finalResistances = resistReduct.apply(target);
 
   const finalResult: CalculationFinalResult = {
     NAs: {},
@@ -120,6 +119,15 @@ export default function getFinalResult({
     RXN: {},
     WP_CALC: {},
   };
+
+  const calcItemCalc = new CalcItemCalc(
+    char.level,
+    target.level,
+    totalAttr,
+    attPattBonus,
+    attElmtBonus,
+    finalResistances
+  );
 
   ATTACK_PATTERNS.forEach((ATT_PATT) => {
     const resultKey = ATT_PATT === "ES" || ATT_PATT === "EB" ? ATT_PATT : "NAs";
@@ -155,23 +163,15 @@ export default function getFinalResult({
       }
 
       let bases = [];
-      const { id, type = "attack", flatFactor } = stat;
-      const calcItemBonues = id
-        ? calcItemBuffs.reduce<CalcItemBonus[]>((bonuses, buff) => {
-            if (Array.isArray(buff.ids) ? buff.ids.includes(id) : buff.ids === id) {
-              bonuses.push(buff.bonus);
-            }
-            return bonuses;
-          }, [])
-        : [];
-      const itemBonusMult = getExclusiveBonus(calcItemBonues, "mult_");
+      const { type = "attack", flatFactor } = stat;
+      const [bonusList, itemBonus] = calcItemBuff.get(stat.id);
 
-      const record = {
+      const record = TrackerControl.initCalcItemRecord({
         itemType: type,
         multFactors: [],
         normalMult: 1,
-        exclusives: calcItemBonues,
-      } as TrackerCalcItemRecord;
+        exclusives: bonusList,
+      });
 
       // CALCULATE BASE DAMAGE
       for (const factor of toArray(stat.multFactors)) {
@@ -182,7 +182,7 @@ export default function getFinalResult({
         } = typeof factor === "number" ? { root: factor } : factor;
 
         const finalMult =
-          root * CharacterCalc.getTalentMult(scale, level) + itemBonusMult + attPattBonus[ATT_PATT].mult_;
+          root * CharacterCalc.getTalentMult(scale, level) + (itemBonus.mult_ ?? 0) + attPattBonus[ATT_PATT].mult_;
 
         let flatBonus = 0;
 
@@ -194,13 +194,13 @@ export default function getFinalResult({
         }
 
         record.multFactors.push({
-          value: totalAttr[basedOn],
+          value: totalAttr[basedOn].total,
           desc: basedOn,
           talentMult: finalMult,
         });
         record.totalFlat = flatBonus;
 
-        bases.push((totalAttr[basedOn] * finalMult) / 100 + flatBonus);
+        bases.push((totalAttr[basedOn].total * finalMult) / 100 + flatBonus);
       }
 
       if (stat.joinMultFactors) {
@@ -215,24 +215,18 @@ export default function getFinalResult({
           average: 0,
         };
       } else {
-        finalResult[resultKey][stat.name] = calculateItem({
-          calcType: stat.type,
+        finalResult[resultKey][stat.name] = calcItemCalc.calculate({
+          base: bases.length > 1 ? bases : bases[0],
           attPatt,
           attElmt,
-          base: bases.length > 1 ? bases : bases[0],
-          char,
-          target,
-          totalAttr,
-          attPattBonus,
-          attElmtBonus,
-          calcItemBonues,
+          calcType: stat.type,
           rxnMult,
-          resistReduct,
+          calcItemBonus: itemBonus,
           record,
         });
       }
 
-      if (tracker) tracker[resultKey][stat.name] = record;
+      tracker?.recordCalcItem(resultKey, stat.name, record);
     }
   });
 
@@ -241,7 +235,7 @@ export default function getFinalResult({
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
     const { mult, dmgType } = TRANSFORMATIVE_REACTION_INFO[rxn];
     const normalMult = 1 + rxnBonus[rxn].pct_ / 100;
-    const resMult = dmgType !== "absorb" ? resistReduct[dmgType] : 1;
+    const resMult = dmgType !== "absorb" ? finalResistances[dmgType] : 1;
     const baseValue = baseRxnDmg * mult;
     const nonCrit = baseValue * normalMult * resMult;
     const cDmg_ = rxnBonus[rxn].cDmg_ / 100;
@@ -254,49 +248,41 @@ export default function getFinalResult({
       attElmt: dmgType,
     };
 
-    if (tracker) {
-      tracker.RXN[rxn] = {
-        itemType: "attack",
-        multFactors: [{ value: Math.round(baseValue), desc: "Base DMG" }],
-        normalMult,
-        resMult,
-        cDmg_,
-        cRate_,
-      };
-    }
+    tracker?.recordCalcItem("RXN", rxn, {
+      itemType: "attack",
+      multFactors: [{ value: Math.round(baseValue), desc: "Base DMG" }],
+      normalMult,
+      resMult,
+      cDmg_,
+      cRate_,
+    });
   }
 
   appWeapon.calcItems?.forEach((calcItem) => {
     const { name, type = "attack", value, incre = value / 3, baseOn = "atk" } = calcItem;
     const mult = value + incre * weapon.refi;
-    const record = {
+    const record = TrackerControl.initCalcItemRecord({
       itemType: type,
       multFactors: [
         {
-          value: totalAttr[baseOn],
+          value: totalAttr[baseOn].total,
           desc: baseOn,
           talentMult: mult,
         },
       ],
       normalMult: 1,
-    } as TrackerCalcItemRecord;
-
-    finalResult.WP_CALC[name] = calculateItem({
-      calcType: calcItem.type,
-      char,
-      attElmt: "phys",
-      attPatt: "none",
-      attElmtBonus,
-      attPattBonus,
-      base: (totalAttr[baseOn] * mult) / 100,
-      resistReduct,
-      record,
-      rxnMult: 1,
-      target,
-      totalAttr,
     });
 
-    if (tracker) tracker.WP_CALC[name] = record;
+    finalResult.WP_CALC[name] = calcItemCalc.calculate({
+      calcType: calcItem.type,
+      attElmt: "phys",
+      attPatt: "none",
+      base: (totalAttr[baseOn].total * mult) / 100,
+      record,
+      rxnMult: 1,
+    });
+
+    tracker?.recordCalcItem("WP_CALC", name, record);
   });
 
   return finalResult;

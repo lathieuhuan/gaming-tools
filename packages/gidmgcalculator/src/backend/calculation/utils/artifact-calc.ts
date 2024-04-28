@@ -1,5 +1,5 @@
 import type { Artifact } from "@Src/types";
-import type { ArtifactType, AttackElement, AttributeStat } from "@Src/backend/types";
+import type { ArtifactType, AttackElement, AttributeStat } from "@Backend/types";
 
 const percent1 = {
   4: [6.3, 8.1, 9.9, 11.6, 13.4, 15.2, 17, 18.8, 20.6, 22.3, 24.1, 25.9, 27.7, 29.5, 31.3, 33, 34.8],

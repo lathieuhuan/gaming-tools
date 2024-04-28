@@ -1,13 +1,10 @@
-import type { PartiallyRequired } from "rond";
 import type { CalcArtifacts } from "@Src/types";
-import type { AttributeStat, CoreStat } from "@Src/backend/types";
+import type { ArtifactAttribute } from "../calculation.types";
 import type { TotalAttributeControl } from "./total-attribute-control";
 
 import { CORE_STAT_TYPES } from "@Src/backend/constants";
 import { applyPercent } from "@Src/utils";
 import { ArtifactCalc } from "../utils";
-
-export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;
 
 export class ArtifactAttributeControl {
   private artAttr: ArtifactAttribute = {

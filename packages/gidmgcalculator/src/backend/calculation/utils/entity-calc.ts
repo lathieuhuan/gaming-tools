@@ -1,4 +1,4 @@
-import type { InputCheck } from "@Src/backend/types";
+import type { InputCheck } from "@Backend/types";
 import type { CalcUltilInfo } from "../calculation.types";
 import { GeneralCalc } from "./general-calc";
 
@@ -15,10 +15,6 @@ export class EntityCalc {
           } else {
             return false;
           }
-          break;
-        case "BOL":
-          // #to-check: should require charStatus on CalcUltilInfo for parseAbilityDescription to work
-          if (info.charStatus) input = info.charStatus.BOL;
           break;
         default:
           input = inputs[source];

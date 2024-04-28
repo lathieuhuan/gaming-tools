@@ -20,7 +20,7 @@ export type CalcItemType = "attack" | "healing" | "shield" | "other";
 export type InputCheck = {
   value: number;
   /** Default to 0 */
-  source?: number | "BOL" | "various_vision";
+  source?: number | "various_vision";
   /** Default to 'equal' */
   type?: "equal" | "min" | "max";
 };
@@ -63,11 +63,6 @@ export type AppBonusElementStack = {
   max?: number;
 };
 
-export type AppBonusCharStatusStack = {
-  type: "C_STATUS";
-  status: "BOL";
-};
-
 // ========== BONUS TARGET ==========
 
 type AttributeTarget = {
@@ -88,14 +83,10 @@ type ReactionTarget = {
   module: "RXN";
   path: ReactionBonusPath | ReactionBonusPath[];
 };
-type CalcItemTarget = {
+export type CalcItemTarget = {
   module: "ITEM";
   path: AttackPatternInfoKey;
   id: string | string[];
-};
-type CharacterStatusTarget = {
-  module: "C_STATUS";
-  path: "BOL";
 };
 type ElementNaTarget = {
   module: "ELM_NA";
@@ -107,7 +98,6 @@ export type AppBonusTarget =
   | AttackElementTarget
   | ReactionTarget
   | CalcItemTarget
-  | CharacterStatusTarget
   | ElementNaTarget;
 
 // ========== BONUS VALUE ==========
@@ -134,7 +124,7 @@ type AppBonusValueOption = {
 
 // ========== BONUS & BUFF ==========
 
-export type AppBonus<BonusStack, ValueOptionExtends = {}> = {
+export type AppBonus<BonusStack, ValueOptionExtends = object> = {
   value: number | (AppBonusValueOption & ValueOptionExtends);
   checkInput?: number | InputCheck;
   /** Index of the pre-calculated stack from [cmnStacks] */

@@ -1,12 +1,10 @@
 import type {
-  CalcItemType,
-  CalcItemBonus,
   AttributeStat,
   AttackPatternPath,
   AttackElementPath,
   ReactionBonusPath,
   ResistanceReductionKey,
-} from "@Src/backend/types";
+} from "@Backend/types";
 import {
   ATTACK_ELEMENTS,
   ATTACK_ELEMENT_INFO_KEYS,
@@ -16,29 +14,11 @@ import {
   REACTIONS,
   REACTION_BONUS_INFO_KEYS,
 } from "@Src/backend/constants";
+import { CalcItemRecord } from "../calculation.types";
 
 type StatRecord = {
   desc: string;
   value: number;
-};
-
-type CalcItemRecord = {
-  itemType: CalcItemType;
-  multFactors: Array<{
-    desc: string;
-    value: number;
-    talentMult?: number;
-  }>;
-  totalFlat?: number;
-  normalMult: number;
-  specialMult?: number;
-  rxnMult?: number;
-  defMult?: number;
-  resMult?: number;
-  cRate_?: number;
-  cDmg_?: number;
-  note?: string;
-  exclusives?: CalcItemBonus[];
 };
 
 type StatRecordCategory = "totalAttr" | "attPattBonus" | "attElmtBonus" | "rxnBonus" | "resistReduct";
@@ -108,5 +88,13 @@ export class TrackerControl {
       return;
     }
     cateRecord[type].push({ desc: description, value });
+  }
+
+  static initCalcItemRecord(initInfo: CalcItemRecord): CalcItemRecord {
+    return initInfo;
+  }
+
+  recordCalcItem(category: "NAs" | "ES" | "EB" | "RXN" | "WP_CALC", name: string, record: CalcItemRecord) {
+    this.calcItems[category][name] = record;
   }
 }

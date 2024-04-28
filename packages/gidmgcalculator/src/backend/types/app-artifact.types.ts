@@ -31,12 +31,6 @@ export type AppArtifact = {
   debuffs?: ArtifactDebuff[];
 };
 
-type ArtifactEffectValueOption = {
-  options: number[];
-  /** Input's index for options. Default to 0 */
-  inpIndex?: number;
-};
-
 type InputStack = {
   type: "INPUT";
   /** If number, default to 0 */
@@ -47,7 +41,6 @@ export type ArtifactBonusStack = InputStack | AppBonusAttributeStack | AppBonusE
 
 export type ArtifactBonusCore = AppBonus<ArtifactBonusStack> & {
   forWeapons?: WeaponType[];
-  value: number | ArtifactEffectValueOption;
   /** Apply after stacks */
   sufExtra?: number | ArtifactBonusCore;
   max?: number;

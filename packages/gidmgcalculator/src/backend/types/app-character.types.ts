@@ -1,23 +1,22 @@
 import type {
   ActualAttackElement,
-  ElementType,
-  WeaponType,
-  TalentType,
-  AttributeStat,
   AttackPattern,
+  AttributeStat,
+  ElementType,
+  TalentType,
+  WeaponType,
 } from "./common.types";
 import type {
-  CalcItemType,
   AppBonus,
-  WithBonusTargets,
-  AppBuff,
-  InputCheck,
-  WithPenaltyTargets,
-  AppDebuff,
-  ModifierAffectType,
-  AppBonusNationStack,
-  AppBonusCharStatusStack,
   AppBonusAttributeStack,
+  AppBonusNationStack,
+  AppBuff,
+  AppDebuff,
+  CalcItemType,
+  InputCheck,
+  ModifierAffectType,
+  WithBonusTargets,
+  WithPenaltyTargets,
 } from "./app-entity.types";
 
 type Nation = "outland" | "mondstadt" | "liyue" | "inazuma" | "sumeru" | "natlan" | "fontaine" | "snezhnaya";
@@ -85,7 +84,7 @@ type CharacterModifier = {
 
 // ========== CALC ITEM ==========
 
-export type TalentAttributeType = "base_atk" | "atk" | "def" | "hp" | "em";
+export type TalentAttributeType = "atk" | "def" | "hp" | "em";
 
 type MultFactorConfig = {
   scale?: number;
@@ -191,14 +190,7 @@ type ResolveStack = {
   type: "RESOLVE";
 };
 
-export type CharacterBonusStack = (
-  | InputStack
-  | AttributeStack
-  | AppBonusNationStack
-  | AppBonusCharStatusStack
-  | EnergyStack
-  | ResolveStack
-) & {
+export type CharacterBonusStack = (InputStack | AttributeStack | AppBonusNationStack | EnergyStack | ResolveStack) & {
   /** Final stack = stack - baseline */
   baseline?: number;
   /** On Furina */

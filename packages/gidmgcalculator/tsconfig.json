@@ -23,6 +23,7 @@
     "baseUrl": ".",
     "paths": {
       "@Store/*": ["src/store/*"],
+      "@Backend/*": ["src/backend/*"],
       "@Src/*": ["src/*"]
     }
   },

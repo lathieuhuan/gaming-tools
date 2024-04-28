@@ -1,5 +1,5 @@
 import type { CalcArtifacts, Level, PartyData } from "@Src/types";
-import type { AppCharacter, AttackElement, ElementType, ReactionBonus } from "@Src/backend/types";
+import type { AppCharacter, AttackElement, ElementType, ReactionBonus } from "@Backend/types";
 
 type ArtifactSetBonus = {
   code: number;

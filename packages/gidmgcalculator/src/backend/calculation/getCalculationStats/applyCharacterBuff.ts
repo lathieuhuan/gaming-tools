@@ -4,7 +4,7 @@ import type {
   CharacterBuff,
   CharacterEffectExtraMax,
   CharacterEffectMax,
-} from "@Src/backend/types";
+} from "@Backend/types";
 import type { CalcUltilInfo } from "../calculation.types";
 import type { BuffInfoWrap } from "./getCalculationStats.types";
 
@@ -71,9 +71,6 @@ function getStackValue(stack: CharacterBonusStack, info: BuffInfoWrap, inputs: n
       result = info.appChar.EBcost;
       break;
     }
-    case "C_STATUS":
-      result = info.charStatus[stack.status];
-      break;
     case "RESOLVE": {
       let [totalEnergy = 0, electroEnergy = 0] = inputs;
       if (info.char.cons >= 1 && electroEnergy <= totalEnergy) {

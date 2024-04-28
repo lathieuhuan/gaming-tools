@@ -10,10 +10,16 @@ import type {
   PartyData,
   Target,
 } from "@Src/types";
-import type { AppCharacter, AppWeapon, CalcItemBuff, TotalAttribute } from "@Src/backend/types";
-import type { CalcInfusion, CharacterStatus } from "../calculation.types";
-import type { TrackerControl } from "../controls";
-import type { ResistanceReductionControl } from "./controls";
+import type {
+  AppCharacter,
+  AppWeapon,
+  AttackElementBonus,
+  AttackPatternBonus,
+  ReactionBonus,
+  TotalAttribute,
+} from "@Backend/types";
+import type { CalcInfusion } from "../calculation.types";
+import type { TrackerControl, ResistanceReductionControl, CalcItemBuffControl } from "../controls";
 
 export type DebuffInfoWrap = {
   char: Character;
@@ -25,20 +31,21 @@ export type DebuffInfoWrap = {
 export interface GetFinalResultArgs {
   char: CalcCharacter;
   appChar: AppCharacter;
+  party: Party;
   partyData: PartyData;
-  charStatus: CharacterStatus;
-  totalAttr: TotalAttribute;
-  calcItemBuffs: CalcItemBuff[];
-
   weapon: CalcWeapon;
   appWeapon: AppWeapon;
   selfDebuffCtrls: ModifierCtrl[];
   artDebuffCtrls: ArtifactDebuffCtrl[];
-  party: Party;
-  disabledNAs: boolean;
   customDebuffCtrls: CustomDebuffCtrl[];
-  infusion: CalcInfusion;
   elmtModCtrls: ElementModCtrl;
+  attElmtBonus: AttackElementBonus;
+  totalAttr: TotalAttribute;
+  attPattBonus: AttackPatternBonus;
   target: Target;
+  rxnBonus: ReactionBonus;
+  calcItemBuff: CalcItemBuffControl;
+  disabledNAs: boolean;
+  infusion: CalcInfusion;
   tracker?: TrackerControl;
 }

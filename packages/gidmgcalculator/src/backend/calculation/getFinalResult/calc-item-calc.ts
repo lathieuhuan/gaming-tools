@@ -3,15 +3,14 @@ import type {
   AttackElement,
   AttackElementBonus,
   AttackPatternBonus,
-  CalcItemBonus,
   CalcItemType,
   ResistanceReduction,
   TotalAttribute,
-} from "@Src/backend/types";
+} from "@Backend/types";
+import type { CalcItemRecord, CalculationFinalResultItem, ProcessedItemBonus } from "../calculation.types";
 
-import { toMult } from "@Src/utils";
+import { applyToOneOrMany, toMult } from "@Src/utils";
 import { GeneralCalc } from "../utils";
-import { getExclusiveBonus } from "./getFinalResult.utils";
 
 type CalculateArgs = {
   calcType?: CalcItemType;
@@ -19,18 +18,18 @@ type CalculateArgs = {
   attElmt: AttackElement;
   base: number | number[];
   rxnMult: number;
-  //   absorbedElmt?: ElementType;
-  //   record: TrackerCalcItemRecord;
+  calcItemBonus?: ProcessedItemBonus;
+  record: CalcItemRecord;
+  // absorbedElmt?: ElementType;
 };
 
 export class CalcItemCalc {
-  charLv: Level;
-  targetLv: number;
-  totalAttr: TotalAttribute;
-  attPattBonus: AttackPatternBonus;
-  attElmtBonus: AttackElementBonus;
-  resistReduct: ResistanceReduction;
-  calcItemBonuses: CalcItemBonus[];
+  private charLv: Level;
+  private targetLv: number;
+  private totalAttr: TotalAttribute;
+  private attPattBonus: AttackPatternBonus;
+  private attElmtBonus: AttackElementBonus;
+  private resistReduct: ResistanceReduction;
 
   constructor(
     charLv: Level,
@@ -38,33 +37,36 @@ export class CalcItemCalc {
     totalAttr: TotalAttribute,
     attPattBonus: AttackPatternBonus,
     attElmtBonus: AttackElementBonus,
-    resistReduct: ResistanceReduction,
-    calcItemBonuses: CalcItemBonus[] = []
+    resistReduct: ResistanceReduction
   ) {
     this.charLv = charLv;
     this.targetLv = targetLv;
     this.totalAttr = totalAttr;
     this.attPattBonus = attPattBonus;
     this.attElmtBonus = attElmtBonus;
-    this.calcItemBonuses = calcItemBonuses;
     this.resistReduct = resistReduct;
   }
 
-  calculate({ base, attPatt, attElmt, rxnMult, calcType }: CalculateArgs) {
+  calculate({
+    base,
+    attPatt,
+    attElmt,
+    rxnMult,
+    calcType,
+    calcItemBonus = {},
+    record,
+  }: CalculateArgs): CalculationFinalResultItem {
     const { totalAttr, attPattBonus, attElmtBonus, resistReduct } = this;
-    const itemFlatBonus = this.calcItemBonues ? getExclusiveBonus(this.calcItemBonues, "flat") : 0;
-    const itemPctBonus = this.calcItemBonues ? getExclusiveBonus(this.calcItemBonues, "pct_") : 0;
-    const itemMultPlusBonus = this.calcItemBonues ? getExclusiveBonus(this.calcItemBonues, "multPlus") : 0;
 
     if (base !== 0 && !calcType) {
       const flat =
-        itemFlatBonus +
+        (calcItemBonus.flat ?? 0) +
         attPattBonus.all.flat +
         (attPatt !== "none" ? attPattBonus[attPatt].flat : 0) +
         attElmtBonus[attElmt].flat;
       // CALCULATE DAMAGE BONUS MULTIPLIERS
-      let normalMult = itemPctBonus + attPattBonus.all.pct_ + totalAttr[attElmt].total;
-      let specialMult = itemMultPlusBonus + attPattBonus.all.multPlus;
+      let normalMult = (calcItemBonus.pct_ ?? 0) + attPattBonus.all.pct_ + totalAttr[attElmt].total;
+      let specialMult = (calcItemBonus.multPlus ?? 0) + attPattBonus.all.multPlus;
 
       if (attPatt !== "none") {
         normalMult += attPattBonus[attPatt].pct_;
@@ -90,7 +92,7 @@ export class CalcItemCalc {
       const totalCrit = (type: "cRate_" | "cDmg_") => {
         return (
           totalAttr[type].total +
-          (this.calcItemBonues ? getExclusiveBonus(this.calcItemBonues, type) : 0) +
+          (calcItemBonus[type] ?? 0) +
           attPattBonus.all[type] +
           (attPatt !== "none" ? attPattBonus[attPatt][type] : 0) +
           attElmtBonus[attElmt][type]
@@ -123,11 +125,11 @@ export class CalcItemCalc {
 
       switch (calcType) {
         case "healing":
-          flat = itemFlatBonus;
-          normalMult += totalAttr.healB_ / 100;
+          flat = calcItemBonus.flat ?? 0;
+          normalMult += totalAttr.healB_.total / 100;
           break;
         case "shield":
-          normalMult += itemPctBonus / 100;
+          normalMult += (calcItemBonus.pct_ ?? 0) / 100;
           break;
       }
       base += flat;
@@ -138,7 +140,7 @@ export class CalcItemCalc {
         record.normalMult = normalMult;
       }
       if (calcType === "healing") {
-        base *= 1 + totalAttr.inHealB_ / 100;
+        base *= 1 + totalAttr.inHealB_.total / 100;
       }
       return { nonCrit: base, crit: 0, average: base };
     }

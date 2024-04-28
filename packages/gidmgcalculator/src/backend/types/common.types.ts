@@ -68,15 +68,6 @@ export type ReactionBonus = Record<ReactionType, ReactionBonusInfo>;
 export type ResistanceReductionKey = AttackElement | "def";
 export type ResistanceReduction = Record<ResistanceReductionKey, number>;
 
-// ========== CALC ITEM ==========
-
-export type CalcItemBonus = Partial<Record<AttackPatternInfoKey, { desc: string; value: number }>>;
-
-export type CalcItemBuff = {
-  ids: string | string[];
-  bonus: CalcItemBonus;
-};
-
 // ========== STATS ==========
 
 export type CoreStat = (typeof CORE_STAT_TYPES)[number];

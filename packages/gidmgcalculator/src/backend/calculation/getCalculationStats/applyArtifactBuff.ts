@@ -1,4 +1,4 @@
-import { ArtifactBonusCore, ArtifactBonusStack, ArtifactBuff } from "@Src/backend/types";
+import { ArtifactBonusCore, ArtifactBonusStack, ArtifactBuff } from "@Backend/types";
 import { GeneralCalc } from "../utils";
 import { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.types";
 import { AppliedBonus, applyBonuses, meetIsFinal } from "./getCalculationStats.utils";
@@ -54,26 +54,26 @@ function getBonus(
 
   if (typeof bonus.value === "number") {
     bonusValue = bonus.value;
-
-    if (bonus.stackIndex !== undefined) {
-      bonusValue *= preCalcStacks[bonus.stackIndex] ?? 1;
-    }
-    if (bonus.stacks) {
-      for (const stack of toArray(bonus.stacks)) {
-        if (stack.type === "ELEMENT" && !info.partyData.length) {
-          return {
-            value: 0,
-            isStable,
-          };
-        }
-        bonusValue *= getStackValue(stack, info, inputs);
-      }
-    }
   } else {
-    const { options, inpIndex = 0 } = bonus.value;
-    const input = inputs[inpIndex] ?? 1;
-    bonusValue = options[input - 1] || options[options.length - 1];
+    // not used yet
   }
+
+  // ========== APPLY STACKS ==========
+  if (bonus.stackIndex !== undefined) {
+    bonusValue *= preCalcStacks[bonus.stackIndex] ?? 1;
+  }
+  if (bonus.stacks) {
+    for (const stack of toArray(bonus.stacks)) {
+      if (stack.type === "ELEMENT" && !info.partyData.length) {
+        return {
+          value: 0,
+          isStable,
+        };
+      }
+      bonusValue *= getStackValue(stack, info, inputs);
+    }
+  }
+
   if (typeof bonus.sufExtra === "number") {
     bonusValue += bonus.sufExtra;
   } else if (bonus.sufExtra && isUsableBonus(bonus.sufExtra, info, inputs)) {

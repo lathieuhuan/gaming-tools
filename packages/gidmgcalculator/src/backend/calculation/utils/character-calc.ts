@@ -12,7 +12,7 @@ import type {
   TalentAttributeType,
   TalentType,
   WeaponType,
-} from "@Src/backend/types";
+} from "@Backend/types";
 import type { Character, PartyData } from "@Src/types";
 import type { CalcUltilInfo } from "../calculation.types";
 

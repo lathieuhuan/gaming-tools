@@ -40,12 +40,6 @@ type WeaponCalcItem = {
   baseOn?: "atk" | "hp";
 };
 
-type WeaponEffectValueOption = {
-  options: number[];
-  /** Input's index for options. Default to 0 */
-  inpIndex?: number;
-};
-
 // ========== BONUS STACKS ==========
 
 type InputIndex = {
@@ -78,7 +72,6 @@ export type WeaponBonusStack =
 // ========== BONUS ==========
 
 export type WeaponBonusCore = AppBonus<WeaponBonusStack> & {
-  value: number | WeaponEffectValueOption;
   /**
    * Increment to value after each refinement.
    * Default to 1/3 of [value]. Fixed buff type has increment = 0

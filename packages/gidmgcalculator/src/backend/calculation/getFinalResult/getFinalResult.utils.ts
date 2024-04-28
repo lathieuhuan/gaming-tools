@@ -1,11 +1,7 @@
-import type { AppPenaltyTarget, AttackPatternInfoKey, CalcItemBonus, ResistanceReductionKey } from "@Src/backend/types";
+import type { AppPenaltyTarget, ResistanceReductionKey } from "@Backend/types";
 import type { DebuffInfoWrap } from "./getFinalResult.types";
 import { toArray } from "@Src/utils";
 import { ELEMENT_TYPES } from "@Src/backend/constants";
-
-export function getExclusiveBonus(bonuses: CalcItemBonus[], key: AttackPatternInfoKey) {
-  return bonuses.reduce((total, bonus) => total + (bonus[key]?.value || 0), 0);
-}
 
 type ApplyPenaltyArgs = {
   penaltyValue: number;

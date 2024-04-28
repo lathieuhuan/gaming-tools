@@ -1,4 +1,4 @@
-import type { WeaponBonusCore, WeaponBonusStack, WeaponBuff } from "@Src/backend/types";
+import type { WeaponBonusCore, WeaponBonusStack, WeaponBuff } from "@Backend/types";
 import type { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { toArray } from "@Src/utils";
@@ -71,29 +71,24 @@ function getBonus(
 
   if (typeof bonus.value === "number") {
     bonusValue = scaleRefi(bonus.value, bonus.incre);
-
-    // ========== APPLY STACKS ==========
-    if (bonus.stackIndex !== undefined) {
-      bonusValue *= preCalcStacks[bonus.stackIndex] ?? 1;
-    }
-    if (bonus.stacks) {
-      for (const stack of toArray(bonus.stacks)) {
-        if (!info.partyData.length && ["VISION", "ENERGY", "NATION"].includes(stack.type)) {
-          return {
-            value: 0,
-            isStable,
-          };
-        }
-        bonusValue *= getStackValue(stack, info, inputs);
-        if (stack.type === "ATTRIBUTE") isStable = false;
-      }
-    }
   } else {
-    const { options, inpIndex = 0 } = bonus.value;
-    const index = (inputs[inpIndex] ?? 0) - 1;
+    // not used yet
+  }
 
-    if (options[index]) {
-      bonusValue = scaleRefi(options[index]);
+  // ========== APPLY STACKS ==========
+  if (bonus.stackIndex !== undefined) {
+    bonusValue *= preCalcStacks[bonus.stackIndex] ?? 1;
+  }
+  if (bonus.stacks) {
+    for (const stack of toArray(bonus.stacks)) {
+      if (!info.partyData.length && ["VISION", "ENERGY", "NATION"].includes(stack.type)) {
+        return {
+          value: 0,
+          isStable,
+        };
+      }
+      bonusValue *= getStackValue(stack, info, inputs);
+      if (stack.type === "ATTRIBUTE") isStable = false;
     }
   }
 
