@@ -1,7 +1,7 @@
-import type { CalcArtifacts, Level, PartyData } from "@Src/types";
-import type { AppCharacter, AttackElement, ElementType, ReactionBonus } from "@Backend/types";
+import type { CalcArtifacts, PartyData } from "@Src/types";
+import type { AppCharacter, AttackElement, ElementType, Level, ReactionBonus } from "@Src/backend/types";
 
-type ArtifactSetBonus = {
+export type ArtifactSetBonus = {
   code: number;
   bonusLv: number;
 };

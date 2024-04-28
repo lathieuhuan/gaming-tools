@@ -1,11 +1,11 @@
 import { CarouselSpace } from "rond";
+import { ArtifactAttributeControl, TotalAttribute } from "@Backend";
+import type { RootState } from "@Store/store";
 
 import { useTabs } from "@Src/hooks";
-import { addArtifactAttributes } from "@Src/calculation";
 import { Calculation_ } from "@Src/utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
-  selectArtifacts,
   selectCharacter,
   selectParty,
   selectTotalAttr,
@@ -39,11 +39,27 @@ export function WeaponTab() {
   );
 }
 
-export function ArtifactsTab() {
-  const artifacts = useSelector(selectArtifacts);
-  const totalAttr = useSelector(selectTotalAttr);
+const selectArtInfo = (state: RootState) => {
+  const { activeId, setupsById, resultById } = state.calculator;
+  const { totalAttrs } = resultById[activeId];
+  const { artifacts } = setupsById[activeId];
+  const artAttr = new ArtifactAttributeControl(artifacts, totalAttrs).getValues();
 
-  const artAttr = addArtifactAttributes(artifacts, { ...totalAttr });
+  const attr = {} as TotalAttribute;
+
+  for (const [key, value] of Object.entries(artAttr)) {
+    attr[key as keyof TotalAttribute] = {
+      total: value,
+    };
+  }
+  return {
+    artAttr: attr,
+    artifacts,
+  };
+};
+
+export function ArtifactsTab() {
+  const { artAttr, artifacts } = useSelector(selectArtInfo);
 
   const { activeIndex, renderTabs } = useTabs({
     level: 2,

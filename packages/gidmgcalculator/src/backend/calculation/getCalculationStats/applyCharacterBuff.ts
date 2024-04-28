@@ -4,7 +4,7 @@ import type {
   CharacterBuff,
   CharacterEffectExtraMax,
   CharacterEffectMax,
-} from "@Backend/types";
+} from "@Src/backend/types";
 import type { CalcUltilInfo } from "../calculation.types";
 import type { BuffInfoWrap } from "./getCalculationStats.types";
 

@@ -1,8 +1,13 @@
 import type {
-  ArtifactDebuffCtrl,
   AttributeStat,
   ArtifactType,
+  ElementType,
   AttackElement,
+  AttackPatternBonusKey,
+  ReactionType,
+} from "@Backend";
+import type {
+  ArtifactDebuffCtrl,
   AttackReaction,
   CalcArtifact,
   CalcSetup,
@@ -11,10 +16,7 @@ import type {
   SetupImportInfo,
   Target,
   Teammate,
-  ElementType,
   CustomBuffCtrlCategory,
-  AttackPatternBonusKey,
-  Reaction,
   CustomBuffCtrl,
   CustomDebuffCtrl,
   CustomBuffCtrlType,
@@ -136,7 +138,7 @@ export function encodeSetup(calcSetup: CalcSetup, target: Target) {
           typeCode = ["all"].concat(ATTACK_PATTERNS).indexOf(ctrl.type as AttackPatternBonusKey);
           break;
         case "rxnBonus":
-          typeCode = REACTIONS.indexOf(ctrl.type as Reaction);
+          typeCode = REACTIONS.indexOf(ctrl.type as ReactionType);
           break;
       }
       return [

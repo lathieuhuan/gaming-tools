@@ -1,4 +1,4 @@
-import type { CharacterPenalty, CharacterPenaltyCore } from "@Backend/types";
+import type { CharacterPenalty, CharacterPenaltyCore } from "@Src/backend/types";
 import type { CalcUltilInfo } from "../calculation.types";
 import type { DebuffInfoWrap } from "./getFinalResult.types";
 

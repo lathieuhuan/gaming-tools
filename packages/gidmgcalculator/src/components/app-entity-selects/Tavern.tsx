@@ -1,7 +1,8 @@
 import { useMemo, useRef, useState } from "react";
 import { Modal } from "rond";
 
-import type { AppCharacter, UserCharacter } from "@Src/types";
+import type { AppCharacter } from "@Backend";
+import type { UserCharacter } from "@Src/types";
 import { $AppCharacter } from "@Src/services";
 import { useStoreSnapshot } from "@Src/features";
 import { findByName, pickProps } from "@Src/utils";

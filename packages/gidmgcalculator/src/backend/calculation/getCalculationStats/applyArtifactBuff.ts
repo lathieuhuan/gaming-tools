@@ -1,4 +1,4 @@
-import { ArtifactBonusCore, ArtifactBonusStack, ArtifactBuff } from "@Backend/types";
+import { ArtifactBonusCore, ArtifactBonusStack, ArtifactBuff } from "@Src/backend/types";
 import { GeneralCalc } from "../utils";
 import { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.types";
 import { AppliedBonus, applyBonuses, meetIsFinal } from "./getCalculationStats.utils";

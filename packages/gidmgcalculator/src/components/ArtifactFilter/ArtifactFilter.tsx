@@ -3,7 +3,8 @@ import { FaEraser, FaSquare } from "react-icons/fa";
 import { FaCaretRight } from "react-icons/fa";
 import { Button, Modal, useScreenWatcher, clsx, type ClassValue } from "rond";
 
-import type { ArtifactType, CalcArtifact } from "@Src/types";
+import type { ArtifactType } from "@Backend";
+import type { CalcArtifact } from "@Src/types";
 import type { ArtifactFilterState } from "./ArtifactFilter.types";
 
 import { useArtifactTypeSelect } from "@Src/hooks";

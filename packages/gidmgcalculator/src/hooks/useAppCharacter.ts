@@ -1,6 +1,7 @@
 import { useRef, useState, useEffect } from "react";
+import type { AppCharacter } from "@Backend";
+
 import { $AppCharacter } from "@Src/services";
-import { AppCharacter } from "@Src/types";
 import { getAppDataError } from "@Src/utils";
 
 type Status = "loading" | "error" | "success";

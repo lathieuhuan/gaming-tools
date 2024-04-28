@@ -2,7 +2,8 @@ import { useState, useRef, useMemo, useEffect } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { CloseButton, LoadingSpin, StatsTable, VersatileSelect, round } from "rond";
 
-import type { AppCharacter, Talent } from "@Src/types";
+import type { AppCharacter } from "@Backend";
+import type { Talent } from "@Src/types";
 import { toArray, genSequentialOptions, Character_ } from "@Src/utils";
 import { useQuery, useTabs, useTranslation } from "@Src/hooks";
 import { $AppCharacter } from "@Src/services";

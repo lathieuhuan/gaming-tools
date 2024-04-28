@@ -4,7 +4,7 @@ import type {
   AttackElementPath,
   ReactionBonusPath,
   ResistanceReductionKey,
-} from "@Backend/types";
+} from "@Src/backend/types";
 import {
   ATTACK_ELEMENTS,
   ATTACK_ELEMENT_INFO_KEYS,
@@ -30,9 +30,19 @@ type StatRecordType =
   | ReactionBonusPath
   | ResistanceReductionKey;
 
+type StatResult = Record<string, Record<string, StatRecord[]>>;
+
+type CalcItemsResult = Record<string, Record<string, CalcItemRecord>>;
+
+// #to-do: group StatRecord / CalcItemRecord
+export type TrackerResult = {
+  stats: StatResult;
+  calcItems: CalcItemsResult;
+};
+
 export class TrackerControl {
-  private stats: Record<string, Record<string, StatRecord[]>>;
-  private calcItems: Record<string, Record<string, CalcItemRecord>>;
+  private stats: StatResult;
+  private calcItems: CalcItemsResult;
 
   constructor() {
     this.stats = {
@@ -96,5 +106,12 @@ export class TrackerControl {
 
   recordCalcItem(category: "NAs" | "ES" | "EB" | "RXN" | "WP_CALC", name: string, record: CalcItemRecord) {
     this.calcItems[category][name] = record;
+  }
+
+  finalize(): TrackerResult {
+    return {
+      stats: this.stats,
+      calcItems: this.calcItems,
+    };
   }
 }

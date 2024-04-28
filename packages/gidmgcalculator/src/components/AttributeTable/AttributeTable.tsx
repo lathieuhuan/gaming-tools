@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { clsx, round, StatsTable, CollapseSpace, type PartiallyRequired } from "rond";
 
-import type { CoreStat, TotalAttribute } from "@Src/types";
+import type { CoreStat, TotalAttribute } from "@Backend";
 import { ATTACK_ELEMENTS, CORE_STAT_TYPES } from "@Src/constants";
 import { useTranslation } from "@Src/hooks";
 import { Calculation_ } from "@Src/utils";
@@ -56,25 +56,23 @@ interface AttributeTableProps {
 }
 export function AttributeTable({ attributes }: AttributeTableProps) {
   const { t } = useTranslation();
-
-  if (!attributes) {
-    return null;
-  }
+  if (!attributes) return null;
 
   return (
     <StatsTable>
       {CORE_STAT_TYPES.map((type) => {
-        const baseAttr = attributes?.[`base_${type}`] || 0;
-        const totalAttr = attributes?.[type] || 0;
+        const stat = attributes[type];
+        const total = Math.round(stat.total);
+        const bonus = Math.round(stat.bonus ?? 0);
 
         return (
           <StatsTable.Row key={type} className="group">
             <p>{t(type)}</p>
             <div className="relative">
-              <p className={clsx("mr-2", { "group-hover:hidden": baseAttr })}>{Math.round(totalAttr)}</p>
-              {baseAttr ? (
+              <p className={clsx("mr-2", { "group-hover:hidden": bonus })}>{total}</p>
+              {bonus ? (
                 <p className="mr-2 hidden whitespace-nowrap group-hover:block group-hover:absolute group-hover:top-0 group-hover:right-0">
-                  {baseAttr} + <Green>{Math.round(totalAttr - baseAttr)}</Green>
+                  {total - bonus} + <Green>{bonus}</Green>
                 </p>
               ) : null}
             </div>
@@ -82,13 +80,13 @@ export function AttributeTable({ attributes }: AttributeTableProps) {
         );
       })}
 
-      <EmSection em={attributes?.em || 0} />
+      <EmSection em={attributes?.em?.total || 0} />
 
       {(["cRate_", "cDmg_", "er_", "healB_", "inHealB_", "shieldS_"] as const).map((type) => {
         return (
           <StatsTable.Row key={type}>
             <p>{t(type)}</p>
-            <p className="mr-2">{Math.round((attributes?.[type] || 0) * 10) / 10}%</p>
+            <p className="mr-2">{Math.round((attributes?.[type]?.total || 0) * 10) / 10}%</p>
           </StatsTable.Row>
         );
       })}
@@ -97,7 +95,7 @@ export function AttributeTable({ attributes }: AttributeTableProps) {
         return (
           <StatsTable.Row key={type}>
             <p>{t(type)}</p>
-            <p className="mr-2">{Math.round((attributes?.[type] || 0) * 10) / 10}%</p>
+            <p className="mr-2">{Math.round((attributes?.[type]?.total || 0) * 10) / 10}%</p>
           </StatsTable.Row>
         );
       })}
@@ -106,7 +104,7 @@ export function AttributeTable({ attributes }: AttributeTableProps) {
         return (
           <StatsTable.Row key={type}>
             <p>{t(type)}</p>
-            <p className="mr-2">{Math.round((attributes?.[type] || 0) * 10) / 10}%</p>
+            <p className="mr-2">{Math.round((attributes?.[type]?.total || 0) * 10) / 10}%</p>
           </StatsTable.Row>
         );
       })}

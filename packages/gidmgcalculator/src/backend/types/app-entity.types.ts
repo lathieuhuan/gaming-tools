@@ -31,7 +31,7 @@ export type ModifierAffectType = "SELF" | "TEAMMATE" | "SELF_TEAMMATE" | "PARTY"
 
 type ModInputType = "LEVEL" | "TEXT" | "CHECK" | "STACKS" | "SELECT" | "ANEMOABLE" | "DENDROABLE";
 
-type ModInputConfig = {
+export type ModInputConfig = {
   label?: string;
   type: ModInputType;
   for?: "FOR_SELF" | "FOR_TEAM";

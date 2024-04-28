@@ -17,7 +17,7 @@ import type {
   AttackPatternBonus,
   ReactionBonus,
   TotalAttribute,
-} from "@Backend/types";
+} from "@Src/backend/types";
 import type { CalcInfusion } from "../calculation.types";
 import type { TrackerControl, ResistanceReductionControl, CalcItemBuffControl } from "../controls";
 

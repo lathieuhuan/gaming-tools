@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { $AppSettings, AppSettings } from "@Src/services";
-import type { SetupImportInfo, TrackerState } from "@Src/types";
+import type { SetupImportInfo } from "@Src/types";
 
 export type MySetupsModalType =
   | "TIPS"
@@ -15,6 +15,8 @@ export type MySetupsModalType =
   | "";
 
 export type AppScreen = "CALCULATOR" | "MY_SETUPS" | "MY_WEAPONS" | "MY_ARTIFACTS" | "MY_CHARACTERS";
+
+export type TrackerState = "open" | "close" | "hidden";
 
 export interface UIState extends Pick<AppSettings, "isTabLayout"> {
   ready: boolean;

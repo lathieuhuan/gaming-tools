@@ -1,4 +1,4 @@
-import type { InputCheck } from "@Backend/types";
+import type { InputCheck } from "@Src/backend/types";
 import type { CalcUltilInfo } from "../calculation.types";
 import { GeneralCalc } from "./general-calc";
 

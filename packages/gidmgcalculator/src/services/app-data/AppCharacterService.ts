@@ -1,5 +1,5 @@
+import type { AppCharacter } from "@Backend";
 import type { Party, PartyData, Talent } from "@Src/types";
-import type { AppCharacter } from "@Backend/types";
 import type { StandardResponse } from "../services.types";
 import type { DataControl, ServiceSubscriber } from "./app-data.types";
 

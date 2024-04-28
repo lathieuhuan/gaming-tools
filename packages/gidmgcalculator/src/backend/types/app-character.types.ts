@@ -1,6 +1,6 @@
 import type {
   ActualAttackElement,
-  AttackPattern,
+  ActualAttackPattern,
   AttributeStat,
   ElementType,
   TalentType,
@@ -20,8 +20,6 @@ import type {
 } from "./app-entity.types";
 
 type Nation = "outland" | "mondstadt" | "liyue" | "inazuma" | "sumeru" | "natlan" | "fontaine" | "snezhnaya";
-
-type ActualAttackPattern = AttackPattern | "none";
 
 export type AppCharacter = {
   code: number;
@@ -99,7 +97,7 @@ type CalcItemMultFactor = {
   basedOn?: TalentAttributeType;
 };
 
-type CalcItem = {
+export type CalcItem = {
   id?: string;
 
   name: string;
@@ -275,7 +273,7 @@ export type CharacterPenaltyCore = CharacterEffectExtendedUsableCondition & {
 
 export type CharacterPenalty = WithPenaltyTargets<CharacterPenaltyCore>;
 
-type CharacterDebuff = AppDebuff<CharacterPenalty> &
+export type CharacterDebuff = AppDebuff<CharacterPenalty> &
   CharacterModifier & {
     affect?: ModifierAffectType;
   };

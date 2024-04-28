@@ -1,4 +1,4 @@
-import type { AppPenaltyTarget, ResistanceReductionKey } from "@Backend/types";
+import type { AppPenaltyTarget, ResistanceReductionKey } from "@Src/backend/types";
 import type { DebuffInfoWrap } from "./getFinalResult.types";
 import { toArray } from "@Src/utils";
 import { ELEMENT_TYPES } from "@Src/backend/constants";

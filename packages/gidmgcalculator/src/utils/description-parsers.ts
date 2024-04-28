@@ -1,6 +1,8 @@
 import { round } from "rond";
-import type { CharacterEffectLevelScale, AppCharacter, Character, CharacterEffectValueOption, PartyData, AppArtifact, ArtifactModifier } from "@Src/types";
-import { CharacterCal, getIntialBonusValue } from "@Src/calculation";
+import type { AppCharacter, CharacterBuff, CharacterDebuff } from "@Backend";
+import { CharacterCalc, getIntialBonusValue } from "@Backend";
+
+import type { Character, PartyData } from "@Src/types";
 import { toArray, toMult } from "./utils";
 
 const typeToCls: Record<string, string> = {
@@ -22,18 +24,8 @@ const wrapText = (text: string | number, type = "") => {
   return `<span class="${typeToCls[type] || ""}">${text}</span>`;
 };
 
-export type ParsedAbilityEffect = {
-  value: number | CharacterEffectValueOption;
-  lvScale?: CharacterEffectLevelScale;
-  preExtra?: any;
-  max?: any;
-};
-
 export const parseAbilityDescription = (
-  ability: {
-    description: string;
-    effects?: ParsedAbilityEffect | ParsedAbilityEffect[];
-  },
+  ability: Pick<CharacterBuff | CharacterDebuff, "description" | "effects">,
   obj: {
     char: Character;
     appChar: AppCharacter;
@@ -56,7 +48,7 @@ export const parseAbilityDescription = (
         const { value, preExtra, max } = effect;
         let result = getIntialBonusValue(value, obj, inputs, fromSelf);
 
-        result *= CharacterCal.getLevelScale(effect.lvScale, obj, inputs, fromSelf);
+        result *= CharacterCalc.getLevelScale(effect.lvScale, obj, inputs, fromSelf);
         if (typeof preExtra === "number") result += preExtra;
         if (typeof max === "number" && result > max) result = max;
 
@@ -118,12 +110,3 @@ export const parseWeaponDescription = (description: string, refi: number) => {
     return wrapText(body + suffix, type);
   });
 };
-
-/** @to-do: check if this function is used elsewhere */
-export function getArtifactDescription(data: AppArtifact, modifier: ArtifactModifier) {
-  return parseArtifactDescription(
-    toArray(modifier.description).reduce<string>((acc, description) => {
-      return `${acc} ${typeof description === "string" ? description : data.descriptions[description] || ""}`;
-    }, "")
-  );
-}

@@ -53,8 +53,10 @@ type SetBonus = {
   effects?: ArtifactBuff["effects"];
 };
 
+export type ArtifactModifierDescription = string | number | number[];
+
 export type ArtifactBuff = AppBuff<ArtifactBonus> & {
-  description: string | number | number[];
+  description: ArtifactModifierDescription;
 };
 
 type ArtifactPenalty = WithPenaltyTargets<{
@@ -62,5 +64,5 @@ type ArtifactPenalty = WithPenaltyTargets<{
 }>;
 
 type ArtifactDebuff = AppDebuff<ArtifactPenalty> & {
-  description: string | number | number[];
+  description: ArtifactModifierDescription;
 };

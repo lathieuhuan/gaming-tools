@@ -1,6 +1,7 @@
 import { clsx, Badge, VersatileSelect } from "rond";
 
-import type { ArtifactSubStat, AttributeStat, CalcArtifact, UserArtifact } from "@Src/types";
+import { AttributeStat } from "@Backend";
+import type { ArtifactSubStat, CalcArtifact, UserArtifact } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
 import { suffixOf, Artifact_ } from "@Src/utils";

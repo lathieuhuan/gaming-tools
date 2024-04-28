@@ -8,10 +8,10 @@ import {
   updateCharacter,
 } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
+import { $AppCharacter } from "@Src/services";
 
 import { FinalResultView } from "@Src/components";
 import { FinalResultCompare } from "./FinalResultCompare";
-import { $AppCharacter } from "@Src/services";
 
 export function FinalResultCore() {
   const dispatch = useDispatch();

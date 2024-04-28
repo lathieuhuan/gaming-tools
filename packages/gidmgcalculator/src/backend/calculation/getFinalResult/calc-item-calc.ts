@@ -6,7 +6,7 @@ import type {
   CalcItemType,
   ResistanceReduction,
   TotalAttribute,
-} from "@Backend/types";
+} from "@Src/backend/types";
 import type { CalcItemRecord, CalculationFinalResultItem, ProcessedItemBonus } from "../calculation.types";
 
 import { applyToOneOrMany, toMult } from "@Src/utils";

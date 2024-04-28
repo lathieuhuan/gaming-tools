@@ -1,4 +1,4 @@
-import type { AttackElement, ElementType } from "./global.types";
+import type { AttackElement, ElementType } from "./common.types";
 
 type MonsterResistance = Partial<Record<AttackElement, number>> & {
   base: number;

@@ -1,4 +1,4 @@
-import type { ElementType, Level, QuickenReaction, ReactionBonus } from "@Src/types";
+import type { ElementType, Level, QuickenReaction, ReactionBonus } from "@Backend";
 import { Calculation_ } from "@Src/utils";
 import { Green } from "../span";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";

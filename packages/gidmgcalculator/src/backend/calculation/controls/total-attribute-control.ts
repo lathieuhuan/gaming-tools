@@ -1,5 +1,5 @@
 import type { CalcCharacter } from "@Src/types";
-import type { AttributeStat, AppCharacter, TotalAttribute } from "@Backend/types";
+import type { AttributeStat, AppCharacter, TotalAttribute } from "@Src/backend/types";
 import type { TrackerControl } from "./tracker-control";
 
 import { LEVELS } from "@Src/constants";
@@ -65,11 +65,6 @@ export class TotalAttributeControl {
 
     return this;
   }
-
-  // transform(totalAttr: TotalAttribute) {
-  //   this.totalAttr = totalAttr;
-  //   return this;
-  // }
 
   addStable(keys: AttributeStat | AttributeStat[], value: number, description: string) {
     toArray(keys).forEach((key) => {

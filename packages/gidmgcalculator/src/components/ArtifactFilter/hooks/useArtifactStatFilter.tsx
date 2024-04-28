@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { clsx, type ClassValue, VersatileSelect } from "rond";
 
-import type { ArtifactType } from "@Src/types";
+import type { ArtifactType } from "@Backend";
 import type { ArtifactStatFilterState, ArtifactStatFilterOption } from "../ArtifactFilter.types";
 
 import { ARTIFACT_SUBSTAT_TYPES, ATTACK_ELEMENTS } from "@Src/constants";

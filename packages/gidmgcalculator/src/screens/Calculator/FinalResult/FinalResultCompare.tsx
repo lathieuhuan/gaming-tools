@@ -2,7 +2,8 @@ import { useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
 import { Select, clsx } from "rond";
 
-import type { CalculationAspect, Talent, Weapon } from "@Src/types";
+import type { CalculationAspect, TalentType } from "@Backend";
+import type { Weapon } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectSetupManageInfos, selectStandardId, updateCharacter } from "@Store/calculator-slice";
 import { Character_, findById } from "@Src/utils";
@@ -154,7 +155,7 @@ function useLayoutProps(comparedIds: number[], standardId: number): LayoutProps 
 
   const setupIds = [standardId].concat(comparedIds.filter((id) => id !== standardId));
 
-  const talent = {} as Record<Talent, { areSame: boolean; levels: number[] }>;
+  const talent = {} as Record<TalentType, { areSame: boolean; levels: number[] }>;
 
   for (const talentType of TALENT_TYPES) {
     const levels = setupIds.map((id) => {

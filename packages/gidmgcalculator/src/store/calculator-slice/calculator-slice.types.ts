@@ -1,25 +1,26 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { PartiallyRequired } from "rond";
 import type {
-  CalcArtifact,
-  ArtifactSubStat,
-  ElementType,
-  WeaponType,
-  CalcSetupManageInfo,
+  AttackElement,
   AttributeStat,
+  CalculationFinalResult,
+  ElementType,
+  ReactionBonus,
+  TotalAttribute,
+  WeaponType,
+} from "@Backend";
+import type {
+  ArtifactSubStat,
+  CalcArtifact,
+  CalcCharacter,
   CalcSetup,
+  CalcSetupManageInfo,
   CustomBuffCtrl,
   CustomDebuffCtrl,
-  TeammateWeapon,
-  TeammateArtifact,
   SetupImportInfo,
-  AttackElement,
-  TotalAttribute,
-  ReactionBonus,
-  CalculationFinalResult,
   Target,
-  CalcCharacter,
-  CharacterStatus,
+  TeammateArtifact,
+  TeammateWeapon,
 } from "@Src/types";
 
 export type CalculatorState = {
@@ -32,7 +33,6 @@ export type CalculatorState = {
   resultById: Record<
     string,
     {
-      charStatus: CharacterStatus;
       infusedElement: AttackElement;
       totalAttrs: TotalAttribute;
       rxnBonuses: ReactionBonus;

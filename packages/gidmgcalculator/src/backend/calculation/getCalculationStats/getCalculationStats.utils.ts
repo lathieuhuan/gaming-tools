@@ -11,7 +11,7 @@ import type {
   WeaponBonusCore,
   WeaponBonusStack,
   WithBonusTargets,
-} from "@Backend/types";
+} from "@Src/backend/types";
 import type { BuffInfoWrap } from "./getCalculationStats.types";
 import { ELEMENT_TYPES } from "@Src/constants";
 import { toArray } from "@Src/utils";

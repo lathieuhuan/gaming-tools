@@ -1,23 +1,10 @@
-import type {
-  AppCharacter,
-  Character,
-  ModInputConfig,
-  ModifierCtrl,
-  CharacterModifier,
-  Party,
-  PartyData,
-  Teammate,
-} from "@Src/types";
+import { AppCharacter, CharacterBuff, CharacterDebuff } from "@Backend";
+import type { Character, ModifierCtrl, Party, PartyData, Teammate } from "@Src/types";
 import type { GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 import { $AppCharacter } from "@Src/services";
-import { ParsedAbilityEffect, Setup_, findByIndex, parseAbilityDescription } from "@Src/utils";
+import { Setup_, findByIndex, parseAbilityDescription } from "@Src/utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
-
-type Modifier = CharacterModifier & {
-  inputConfigs?: ModInputConfig[];
-  effects?: ParsedAbilityEffect | ParsedAbilityEffect[];
-};
 
 function getTeammateModifierElmts(
   props: Omit<PartyModsViewProps, "party">,
@@ -25,28 +12,28 @@ function getTeammateModifierElmts(
   teammateIndex: number,
   teammateData: AppCharacter,
   modCtrls: ModifierCtrl[],
-  modifiers: Modifier[]
+  modifiers: Array<CharacterBuff | CharacterDebuff>
 ) {
   return modCtrls.map((ctrl, ctrlIndex, ctrls) => {
-    const buff = findByIndex(modifiers, ctrl.index);
+    const modifier = findByIndex(modifiers, ctrl.index);
 
-    if (buff) {
+    if (modifier) {
       const { inputs = [] } = ctrl;
 
       return (
         <GenshinModifierView
           key={`${teammate.name}-${ctrl.index}`}
           mutable={props.mutable}
-          heading={buff.src}
+          heading={modifier.src}
           description={parseAbilityDescription(
-            buff,
+            modifier,
             { char: props.char, appChar: teammateData, partyData: props.partyData },
             inputs,
             false
           )}
           checked={ctrl.activated}
           inputs={inputs}
-          inputConfigs={buff.inputConfigs}
+          inputConfigs={modifier.inputConfigs}
           {...props.getHanlders?.({
             ctrl,
             ctrlIndex,

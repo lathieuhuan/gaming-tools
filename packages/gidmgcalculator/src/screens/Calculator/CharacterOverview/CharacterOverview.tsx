@@ -50,7 +50,6 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
           onChangeLevel={(level) => level !== char.level && dispatch(updateCharacter({ level }))}
           onChangeCons={(cons) => cons !== char.cons && dispatch(updateCharacter({ cons }))}
         />
-        <CharacterStatusView />
 
         <ComplexSelect
           selectId="character-overview-select"
@@ -94,11 +93,4 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
       <SetupImporter active={modalType === "IMPORT_SETUP"} onClose={closeModal} />
     </>
   );
-}
-
-const selectCharStatus = (state: RootState) => state.calculator.resultById[state.calculator.activeId]?.charStatus;
-
-function CharacterStatusView() {
-  const charStatus = useSelector(selectCharStatus);
-  return charStatus.BOL ? <div>Bond of Life: {charStatus.BOL}</div> : null;
 }

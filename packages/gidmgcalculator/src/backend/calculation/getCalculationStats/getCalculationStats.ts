@@ -5,7 +5,7 @@ import type {
   AttributeStat,
   ReactionBonusInfoKey,
   ReactionType,
-} from "@Backend/types";
+} from "@Src/backend/types";
 import type { BuffInfoWrap, GetCalculationStatsArgs, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";

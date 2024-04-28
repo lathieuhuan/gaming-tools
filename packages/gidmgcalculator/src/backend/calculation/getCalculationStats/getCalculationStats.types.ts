@@ -9,7 +9,7 @@ import type {
   Party,
   PartyData,
 } from "@Src/types";
-import type { AppCharacter, AppWeapon, AttackElement } from "@Backend/types";
+import type { AppCharacter, AppWeapon, AttackElement } from "@Src/backend/types";
 import type { CalcItemBuffControl, TrackerControl, BonusControl, TotalAttributeControl } from "../controls";
 
 export type BuffInfoWrap = {

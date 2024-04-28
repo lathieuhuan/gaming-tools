@@ -1,6 +1,6 @@
 import { round } from "rond";
 
-import type { AmplifyingReaction, ElementType, ReactionBonus } from "@Src/types";
+import type { AmplifyingReaction, ElementType, ReactionBonus } from "@Backend";
 import { Calculation_ } from "@Src/utils";
 import { Green } from "../span";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";

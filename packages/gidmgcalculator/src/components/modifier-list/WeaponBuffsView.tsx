@@ -1,4 +1,5 @@
-import type { AppWeapon, CalcWeapon, ModifierCtrl, Party, Weapon, WeaponBuff } from "@Src/types";
+import type { AppWeapon, WeaponBuff } from "@Backend";
+import type { CalcWeapon, ModifierCtrl, Party, Weapon } from "@Src/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import { $AppData } from "@Src/services";

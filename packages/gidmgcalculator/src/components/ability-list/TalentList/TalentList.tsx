@@ -2,7 +2,8 @@ import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
 
-import type { Character, LevelableTalent, Party } from "@Src/types";
+import type { LevelableTalentType } from "@Backend";
+import type { Character, Party } from "@Src/types";
 import { TALENT_TYPES } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
 import { Calculation_, genSequentialOptions } from "@Src/utils";
@@ -24,7 +25,7 @@ interface TalentListProps {
   className?: ClassValue;
   char: Character;
   party?: Party;
-  onChangeTalentLevel: (talentType: LevelableTalent, newLevel: number) => void;
+  onChangeTalentLevel: (talentType: LevelableTalentType, newLevel: number) => void;
 }
 export function TalentList({ className, char, party, onChangeTalentLevel }: TalentListProps) {
   const [atDetail, setAtDetail] = useState(false);

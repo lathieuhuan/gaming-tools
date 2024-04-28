@@ -1,4 +1,5 @@
-import type { AttributeStat, UserArtifact } from "@Src/types";
+import type { AttributeStat } from "@Backend";
+import type { UserArtifact } from "@Src/types";
 import type { ArtifactFilterState } from "./ArtifactFilter.types";
 import { Artifact_ } from "@Src/utils";
 

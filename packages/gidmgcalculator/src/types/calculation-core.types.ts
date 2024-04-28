@@ -1,58 +1,18 @@
-import type { PartiallyRequired } from "rond";
 import type {
-  AttackElement,
-  AttackPattern,
-  AttackReaction,
+  AppCharacter,
+  AttackElementInfoKey,
+  AttackPatternBonusKey,
+  AttackPatternInfoKey,
   AttributeStat,
-  CoreStat,
   ElementType,
-  NormalAttack,
-  Reaction,
+  ReactionBonusInfoKey,
+  ResistanceReductionKey,
   WeaponType,
-} from "./global.types";
-import type { AppCharacter } from "./app-character.types";
-import { ATTACK_ELEMENT_INFO_KEYS, ATTACK_PATTERN_INFO_KEYS, REACTION_BONUS_INFO_KEYS } from "@Src/constants";
-
-export type ArtifactSetBonus = {
-  code: number;
-  bonusLv: number;
-};
-
-export type CharacterStatus = {
-  BOL: number;
-};
-
-export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;
-
-export type ActualAttackPattern = AttackPattern | "none";
-
-export type ActualAttackElement = AttackElement | "absorb";
-
-export type AttackPatternInfoKey = (typeof ATTACK_PATTERN_INFO_KEYS)[number];
-export type AttackPatternInfo = Record<AttackPatternInfoKey, number>;
-export type AttackPatternBonusKey = AttackPattern | "all";
-export type AttackPatternBonus = Record<AttackPatternBonusKey, AttackPatternInfo>;
-export type AttackPatternPath = `${AttackPatternBonusKey}.${AttackPatternInfoKey}`;
-
-export type ResistanceReductionKey = AttackElement | "def";
-export type ResistanceReduction = Record<ResistanceReductionKey, number>;
-
-export type AttackElementInfoKey = (typeof ATTACK_ELEMENT_INFO_KEYS)[number];
-export type AttacklementInfo = Record<AttackElementInfoKey, number>;
-export type AttackElementBonus = Record<AttackElement, AttacklementInfo>;
-export type AttackElementPath = `${AttackElement}.${AttackElementInfoKey}`;
-
-export type ReactionBonusInfoKey = (typeof REACTION_BONUS_INFO_KEYS)[number];
-export type ReactionBonusInfo = Record<ReactionBonusInfoKey, number>;
-export type ReactionBonusPath = `${Reaction}.${ReactionBonusInfoKey}`;
-export type ReactionBonus = Record<Reaction, ReactionBonusInfo>;
-
-export type CalcItemBonus = Partial<Record<AttackPatternInfoKey, { desc: string; value: number }>>;
-
-export type CalcItemBuff = {
-  ids: string | string[];
-  bonus: CalcItemBonus;
-};
+  AttackElement,
+  NormalAttack,
+  ReactionType,
+} from "@Backend";
+import type { AttackReaction } from "./global.types";
 
 type TeammateData = Pick<AppCharacter, "code" | "name" | "icon" | "nation" | "vision" | "weaponType" | "EBcost">;
 
@@ -93,7 +53,7 @@ export type ElementModCtrl = {
 
 export type CustomBuffCtrlCategory = "totalAttr" | "attPattBonus" | "attElmtBonus" | "rxnBonus";
 
-export type CustomBuffCtrlType = AttributeStat | AttackPatternBonusKey | Reaction;
+export type CustomBuffCtrlType = AttributeStat | AttackPatternBonusKey | ReactionType;
 
 export type CustomBuffCtrl = {
   category: CustomBuffCtrlCategory;
@@ -138,19 +98,3 @@ export type Teammate = {
 
 export type Party = (Teammate | null)[];
 // PARTY ends
-
-export type CalculationAspect = "nonCrit" | "crit" | "average";
-
-type CalculationFinalResultItem = Record<CalculationAspect, number | number[]> & {
-  attElmt?: ActualAttackElement;
-};
-
-export type CalculationFinalResultGroup = Record<string, CalculationFinalResultItem>;
-
-export type CalculationFinalResult = {
-  NAs: CalculationFinalResultGroup;
-  ES: CalculationFinalResultGroup;
-  EB: CalculationFinalResultGroup;
-  RXN: CalculationFinalResultGroup;
-  WP_CALC: CalculationFinalResultGroup;
-};

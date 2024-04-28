@@ -1,5 +1,5 @@
 import type { Target } from "@Src/types";
-import type { ResistanceReduction } from "@Backend/types";
+import type { ResistanceReduction } from "@Src/backend/types";
 import type { TrackerControl } from "./tracker-control";
 
 import { ATTACK_ELEMENTS } from "@Src/backend/constants";

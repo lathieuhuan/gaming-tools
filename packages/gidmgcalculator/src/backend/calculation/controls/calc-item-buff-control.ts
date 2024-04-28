@@ -1,4 +1,4 @@
-import type { CalcItemTarget } from "@Backend/types";
+import type { CalcItemTarget } from "@Src/backend/types";
 import type { CalcItemBonus, ProcessedItemBonus } from "../calculation.types";
 
 type CalcItemBuff = {

@@ -30,7 +30,7 @@ export type CalcUltilInfo = {
   charStatus?: CharacterStatus;
 };
 
-type CalculationAspect = "nonCrit" | "crit" | "average";
+export type CalculationAspect = "nonCrit" | "crit" | "average";
 
 export type CalculationFinalResultItem = Record<CalculationAspect, number | number[]> & {
   attElmt?: ActualAttackElement;

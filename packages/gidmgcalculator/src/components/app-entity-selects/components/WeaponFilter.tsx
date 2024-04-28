@@ -1,6 +1,6 @@
 import { clsx, useRaritySelect, ButtonGroup, type ClassValue } from "rond";
 
-import type { WeaponType } from "@Src/types";
+import type { WeaponType } from "@Backend";
 import { useWeaponTypeSelect } from "@Src/hooks";
 import { FilterTemplate } from "@Src/components";
 

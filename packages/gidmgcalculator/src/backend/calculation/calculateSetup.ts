@@ -1,5 +1,5 @@
 import type { CalcSetup, Target } from "@Src/types";
-import type { NormalAttack } from "@Backend/types";
+import type { NormalAttack } from "@Src/backend/types";
 import type { TrackerControl } from "./controls";
 
 import { findByIndex } from "@Src/utils";

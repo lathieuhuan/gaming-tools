@@ -1,7 +1,8 @@
 import { useRef } from "react";
-import { InputNumber, VersatileSelect, type SelectProps } from "rond";
+import { InputNumber, VersatileSelect } from "rond";
 
-import type { AttributeStat, ArtifactSubStat } from "@Src/types";
+import type { AttributeStat } from "@Backend";
+import type { ArtifactSubStat } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { suffixOf } from "@Src/utils";
 

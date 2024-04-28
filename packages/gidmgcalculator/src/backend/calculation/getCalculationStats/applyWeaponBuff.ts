@@ -1,4 +1,4 @@
-import type { WeaponBonusCore, WeaponBonusStack, WeaponBuff } from "@Backend/types";
+import type { WeaponBonusCore, WeaponBonusStack, WeaponBuff } from "@Src/backend/types";
 import type { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { toArray } from "@Src/utils";

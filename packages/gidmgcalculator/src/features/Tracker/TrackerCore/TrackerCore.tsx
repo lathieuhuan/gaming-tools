@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { CollapseList, CollapseListProps } from "rond";
-import type { AttackPattern, Infusion, Tracker, TrackerState } from "@Src/types";
+import type { AttackPattern, Infusion } from "@Src/types";
+import type { TrackerState } from "@Store/ui-slice";
 
-import { calculateSetup } from "@Src/calculation";
+import { TrackerResult, calculateSetup } from "@Backend";
 import { Calculation_ } from "@Src/utils";
 import { useSelector } from "@Store/hooks";
 import { selectCalcFinalResult, selectTarget } from "@Store/calculator-slice";
@@ -26,15 +27,15 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const target = useSelector(selectTarget);
   const finalResult = useSelector(selectCalcFinalResult);
 
-  const [result, setResult] = useState<Tracker>();
+  const [result, setResult] = useState<TrackerResult>();
   const [infusion, setInfusion] = useState<Infusion>({
     element: "phys",
   });
   const [xtraInfo, setXtraInfo] = useState<{ inHealB_?: number }>({});
 
-  const { totalAttr, attPattBonus, attElmtBonus, rxnBonus } = result || {};
+  const { totalAttr, attPattBonus, attElmtBonus, rxnBonus } = result?.stats || {};
   const charLv = Calculation_.getBareLv(activeSetup.char.level);
-  const totalDefReduct = getTotalRecordValue(result?.resistReduct.def || []);
+  const totalDefReduct = getTotalRecordValue(result?.stats?.resistReduct.def || []);
 
   useEffect(() => {
     if (trackerState === "open") {
@@ -46,14 +47,13 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
         element: finalResult.infusedElement,
         range: finalResult.infusedAttacks,
       });
-      setXtraInfo({ inHealB_: finalResult.totalAttr.inHealB_ });
+      setXtraInfo({ inHealB_: finalResult.totalAttr.inHealB_.total });
     }
   }, [trackerState]);
 
   const renderDefMultiplier = (talent: AttackPattern | "WP_CALC") => {
-    const talentDefIgnore =
-      talent === "WP_CALC" ? 0 : getTotalRecordValue(result?.attPattBonus[`${talent}.defIgn_`] || []);
-    const allDefIgnore = getTotalRecordValue(result?.attPattBonus["all.defIgn_"] || []);
+    const talentDefIgnore = talent === "WP_CALC" ? 0 : getTotalRecordValue(attPattBonus[`${talent}.defIgn_`] || []);
+    const allDefIgnore = getTotalRecordValue(attPattBonus["all.defIgn_"] || []);
     const totalDefIgnore = talentDefIgnore + allDefIgnore;
 
     return (
@@ -99,13 +99,13 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     },
     {
       heading: "Debuffs on Target",
-      body: <DebuffsTracker resistReduct={result?.resistReduct} />,
+      body: <DebuffsTracker resistReduct={result?.stats?.resistReduct} />,
     },
     {
       heading: "Normal Attacks",
       body: (
         <CalcItemTracker
-          records={result?.NAs}
+          records={result?.calcItems?.NAs}
           result={finalResult.NAs}
           defMultDisplay={renderDefMultiplier("NA")}
           infusion={infusion}
@@ -117,7 +117,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       heading: "Elemental Skill",
       body: (
         <CalcItemTracker
-          records={result?.ES}
+          records={result?.calcItems?.ES}
           result={finalResult.ES}
           defMultDisplay={renderDefMultiplier("ES")}
           {...xtraInfo}
@@ -128,7 +128,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       heading: "Elemental Burst",
       body: (
         <CalcItemTracker
-          records={result?.EB}
+          records={result?.calcItems?.EB}
           result={finalResult.EB}
           defMultDisplay={renderDefMultiplier("EB")}
           {...xtraInfo}
@@ -137,16 +137,16 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     },
     {
       heading: "Reactions",
-      body: <CalcItemTracker records={result?.RXN} result={finalResult.RXN} />,
+      body: <CalcItemTracker records={result?.calcItems?.RXN} result={finalResult.RXN} />,
     },
   ];
 
-  if (result?.WP_CALC) {
+  if (result?.calcItems?.WP_CALC) {
     collapseItems.push({
       heading: "Weapon",
       body: (
         <CalcItemTracker
-          records={result.WP_CALC}
+          records={result.calcItems?.WP_CALC}
           result={finalResult.WP_CALC}
           coreMultLabel="DMG Mult."
           defMultDisplay={renderDefMultiplier("EB")}

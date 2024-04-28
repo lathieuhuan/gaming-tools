@@ -3,13 +3,14 @@ import { FaCaretRight } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { Button, CollapseSpace, Table, TableThProps } from "rond";
 
-import type { AppCharacter, CalcCharacter, LevelableTalent, Talent, Weapon } from "@Src/types";
+import type { AppCharacter, LevelableTalentType, TalentType } from "@Backend";
+import type { CalcCharacter, Weapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
 import { displayValue, getTableKeys, type TableKey } from "./FinalResultView.utils";
 
 type HeaderConfig = Pick<TableThProps, "className" | "style"> & {
-  content: React.ReactNode | ((talentType: Talent | undefined) => React.ReactNode);
+  content: React.ReactNode | ((talentType: TalentType | undefined) => React.ReactNode);
 };
 
 type RowCellConfig = {
@@ -31,9 +32,9 @@ export interface FinalResultLayoutProps {
   showWeaponCalc?: boolean;
   headerConfigs: HeaderConfig[];
   getRowConfig: (mainKey: TableKey["main"], subKey: string) => RowConfig;
-  getTalentLevel?: (talentType: Talent) => number | undefined;
+  getTalentLevel?: (talentType: TalentType) => number | undefined;
   talentMutable?: boolean;
-  onChangeTalentLevel?: (talentType: LevelableTalent, newLevel: number) => void;
+  onChangeTalentLevel?: (talentType: LevelableTalentType, newLevel: number) => void;
 }
 export function FinalResultLayout({
   char,
@@ -75,7 +76,7 @@ export function FinalResultLayout({
     }
   };
 
-  const renderLvButtons = (talent: LevelableTalent, buffer = 0) => {
+  const renderLvButtons = (talent: LevelableTalentType, buffer = 0) => {
     return Array.from({ length: 5 }, (_, i) => {
       const level = i + 1 + buffer;
 
@@ -174,7 +175,7 @@ export function FinalResultLayout({
 
 interface SectionTableProps extends Pick<FinalResultLayoutProps, "getRowConfig" | "headerConfigs"> {
   tableKey: TableKey;
-  talentType?: Talent;
+  talentType?: TalentType;
   getRowTitle: (key: string) => string;
 }
 function SectionTable(props: SectionTableProps) {

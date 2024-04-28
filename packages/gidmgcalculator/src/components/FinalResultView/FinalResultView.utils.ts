@@ -1,4 +1,4 @@
-import type { AppCharacter, AppWeapon, TransformativeReaction } from "@Src/types";
+import type { AppCharacter, AppWeapon, TransformativeReaction } from "@Backend";
 import { NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@Src/constants";
 
 type TableCalcItemKey = {

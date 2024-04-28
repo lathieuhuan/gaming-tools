@@ -1,4 +1,4 @@
-import type { NormalAttack } from "@Backend/types";
+import type { NormalAttack } from "@Src/backend/types";
 import type { CalculationFinalResult } from "../calculation.types";
 import type { DebuffInfoWrap, GetFinalResultArgs } from "./getFinalResult.types";
 

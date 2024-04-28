@@ -1,5 +1,6 @@
 import type { PartiallyRequired } from "rond";
 import {
+  AMPLIFYING_REACTIONS,
   ARTIFACT_TYPES,
   ATTACK_ELEMENTS,
   ATTACK_ELEMENT_INFO_KEYS,
@@ -9,6 +10,7 @@ import {
   CORE_STAT_TYPES,
   ELEMENT_TYPES,
   NORMAL_ATTACKS,
+  QUICKEN_REACTIONS,
   REACTIONS,
   REACTION_BONUS_INFO_KEYS,
   TALENT_TYPES,
@@ -44,6 +46,8 @@ export type NormalAttack = (typeof NORMAL_ATTACKS)[number];
 
 export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
 
+export type ActualAttackPattern = AttackPattern | "none";
+
 export type AttackPatternBonusKey = AttackPattern | "all";
 export type AttackPatternInfoKey = (typeof ATTACK_PATTERN_INFO_KEYS)[number];
 export type AttackPatternPath = `${AttackPatternBonusKey}.${AttackPatternInfoKey}`;
@@ -53,7 +57,11 @@ export type AttackPatternBonus = Record<AttackPatternBonusKey, AttackPatternInfo
 
 // ========== REACTIONS ==========
 
+export type AmplifyingReaction = (typeof AMPLIFYING_REACTIONS)[number];
+
 export type TransformativeReaction = (typeof TRANSFORMATIVE_REACTIONS)[number];
+
+export type QuickenReaction = (typeof QUICKEN_REACTIONS)[number];
 
 export type ReactionType = (typeof REACTIONS)[number];
 

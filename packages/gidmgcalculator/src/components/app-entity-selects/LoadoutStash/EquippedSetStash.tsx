@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect } from "react";
 import { clsx, Button, ItemCase, useIntersectionObserver } from "rond";
 
-import type { ElementType, UserArtifact } from "@Src/types";
+import type { ElementType } from "@Backend";
+import type { UserArtifact } from "@Src/types";
 import { $AppCharacter, $AppData } from "@Src/services";
 import { findById } from "@Src/utils";
 import { useSelector } from "@Store/hooks";
