@@ -20,7 +20,7 @@ export function AttributesTracker({ totalAttr }: Partial<Pick<TrackerResult["sta
 
         return (
           <div key={statType} className="break-inside-avoid">
-            {renderHeading(t(statType), Math.round(calcTotalAttr[statType].total))}
+            {renderHeading(t(statType), Math.round(calcTotalAttr[statType]))}
 
             <ul className="pl-4 list-disc">
               {records.map(renderRecord((value) => round(value, 1)))}
@@ -28,15 +28,12 @@ export function AttributesTracker({ totalAttr }: Partial<Pick<TrackerResult["sta
 
               {records_.map(
                 renderRecord(
-                  (value) => {
-                    const bonus = calcTotalAttr[statType].bonus ?? 0;
-                    return applyPercent(value, calcTotalAttr[statType].total - bonus);
-                  },
+                  (value) => applyPercent(calcTotalAttr[`${statType}_base`], value),
                   (value) => {
                     const value_ = round(value, 2);
                     const value__ = round(value_ / 100, 4);
 
-                    return `${value_}% = ${calcTotalAttr[`base_${statType}`]} * ${value__} =`;
+                    return `${value_}% = ${calcTotalAttr[`${statType}_base`]} * ${value__} =`;
                   }
                 )
               )}
@@ -50,7 +47,7 @@ export function AttributesTracker({ totalAttr }: Partial<Pick<TrackerResult["sta
 
         return (
           <div key={statType} className="break-inside-avoid">
-            {renderHeading(t(statType), round(calcTotalAttr[statType].total, 2) + percent)}
+            {renderHeading(t(statType), round(calcTotalAttr[statType], 2) + percent)}
 
             {totalAttr?.[statType].length ? (
               <ul className="pl-4 list-disc">

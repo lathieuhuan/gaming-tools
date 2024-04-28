@@ -5,6 +5,7 @@ import type { RootState } from "@Store/store";
 import { useTabs } from "@Src/hooks";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
+  selectArtifacts,
   selectCharacter,
   selectParty,
   selectTotalAttr,
@@ -44,21 +45,17 @@ const selectArtInfo = (state: RootState) => {
   const { artifacts } = setupsById[activeId];
   const artAttr = new ArtifactAttributeControl(artifacts, totalAttrs).getValues();
 
-  const attr = {} as TotalAttribute;
-
-  for (const [key, value] of Object.entries(artAttr)) {
-    attr[key as keyof TotalAttribute] = {
-      total: value,
-    };
-  }
   return {
-    artAttr: attr,
+    artAttr,
     artifacts,
   };
 };
 
 export function ArtifactsTab() {
-  const { artAttr, artifacts } = useSelector(selectArtInfo);
+  const totalAttr = useSelector(selectTotalAttr);
+  const artifacts = useSelector(selectArtifacts);
+
+  const artAttr = new ArtifactAttributeControl(artifacts, totalAttr).getValues();
 
   const { activeIndex, renderTabs } = useTabs({
     level: 2,

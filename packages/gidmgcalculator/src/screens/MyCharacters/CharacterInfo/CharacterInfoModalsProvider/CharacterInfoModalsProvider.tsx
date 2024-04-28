@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { ConfirmModal } from "rond";
+import { ARTIFACT_TYPES } from "@Backend";
 
-import { ARTIFACT_TYPES } from "@Src/constants";
 import { useDispatch } from "@Store/hooks";
 import { viewCharacter, removeUserCharacter, switchArtifact, switchWeapon } from "@Store/userdb-slice";
 

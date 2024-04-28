@@ -15,7 +15,7 @@ import type { CalcItemBuffControl, TrackerControl, BonusControl, TotalAttributeC
 export type BuffInfoWrap = {
   char: CalcCharacter;
   appChar: AppCharacter;
-  partyData?: PartyData;
+  partyData: PartyData;
   totalAttr: TotalAttributeControl;
   bonusCalc: BonusControl;
   calcItemBuff: CalcItemBuffControl;

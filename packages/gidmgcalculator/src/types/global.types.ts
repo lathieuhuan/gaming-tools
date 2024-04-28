@@ -1,10 +1,6 @@
 import type { AmplifyingReaction, ArtifactType, AttributeStat, Level, QuickenReaction, WeaponType } from "@Backend";
-import { BASE_STAT_TYPES } from "@Src/constants";
 
 export type AttackReaction = AmplifyingReaction | QuickenReaction | null;
-
-/** #to-check: necessary */
-export type BaseStat = (typeof BASE_STAT_TYPES)[number];
 
 /** ========== BASE MODELS ========== */
 

@@ -1,21 +1,12 @@
-import type { PartiallyRequired } from "rond";
 import type { Character, PartyData } from "@Src/types";
 import type {
   ActualAttackElement,
   AppCharacter,
   AttackElement,
   AttackPatternInfoKey,
-  AttributeStat,
   CalcItemType,
-  CoreStat,
   NormalAttack,
 } from "../types";
-
-export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;
-
-export type CharacterStatus = {
-  BOL: number;
-};
 
 export type CalcInfusion = {
   element: AttackElement;
@@ -27,7 +18,6 @@ export type CalcUltilInfo = {
   char: Character;
   appChar: AppCharacter;
   partyData: PartyData;
-  charStatus?: CharacterStatus;
 };
 
 export type CalculationAspect = "nonCrit" | "crit" | "average";

@@ -194,13 +194,13 @@ export default function getFinalResult({
         }
 
         record.multFactors.push({
-          value: totalAttr[basedOn].total,
+          value: totalAttr[basedOn],
           desc: basedOn,
           talentMult: finalMult,
         });
         record.totalFlat = flatBonus;
 
-        bases.push((totalAttr[basedOn].total * finalMult) / 100 + flatBonus);
+        bases.push((totalAttr[basedOn] * finalMult) / 100 + flatBonus);
       }
 
       if (stat.joinMultFactors) {
@@ -265,7 +265,7 @@ export default function getFinalResult({
       itemType: type,
       multFactors: [
         {
-          value: totalAttr[baseOn].total,
+          value: totalAttr[baseOn],
           desc: baseOn,
           talentMult: mult,
         },
@@ -277,7 +277,7 @@ export default function getFinalResult({
       calcType: calcItem.type,
       attElmt: "phys",
       attPatt: "none",
-      base: (totalAttr[baseOn].total * mult) / 100,
+      base: (totalAttr[baseOn] * mult) / 100,
       record,
       rxnMult: 1,
     });

@@ -59,9 +59,8 @@ export function AttributeTable({ attributes }: AttributeTableProps) {
   return (
     <StatsTable>
       {CORE_STAT_TYPES.map((type) => {
-        const stat = attributes[type];
-        const total = Math.round(stat.total);
-        const bonus = Math.round(stat.bonus ?? 0);
+        const total = Math.round(attributes[type]);
+        const bonus = total - Math.round(attributes[`${type}_base`] ?? 0);
 
         return (
           <StatsTable.Row key={type} className="group">
@@ -78,13 +77,13 @@ export function AttributeTable({ attributes }: AttributeTableProps) {
         );
       })}
 
-      <EmSection em={attributes?.em?.total || 0} />
+      <EmSection em={attributes?.em || 0} />
 
       {(["cRate_", "cDmg_", "er_", "healB_", "inHealB_", "shieldS_"] as const).map((type) => {
         return (
           <StatsTable.Row key={type}>
             <p>{t(type)}</p>
-            <p className="mr-2">{Math.round((attributes?.[type]?.total || 0) * 10) / 10}%</p>
+            <p className="mr-2">{Math.round((attributes?.[type] || 0) * 10) / 10}%</p>
           </StatsTable.Row>
         );
       })}
@@ -93,7 +92,7 @@ export function AttributeTable({ attributes }: AttributeTableProps) {
         return (
           <StatsTable.Row key={type}>
             <p>{t(type)}</p>
-            <p className="mr-2">{Math.round((attributes?.[type]?.total || 0) * 10) / 10}%</p>
+            <p className="mr-2">{Math.round((attributes?.[type] || 0) * 10) / 10}%</p>
           </StatsTable.Row>
         );
       })}
@@ -102,7 +101,7 @@ export function AttributeTable({ attributes }: AttributeTableProps) {
         return (
           <StatsTable.Row key={type}>
             <p>{t(type)}</p>
-            <p className="mr-2">{Math.round((attributes?.[type]?.total || 0) * 10) / 10}%</p>
+            <p className="mr-2">{Math.round((attributes?.[type] || 0) * 10) / 10}%</p>
           </StatsTable.Row>
         );
       })}

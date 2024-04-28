@@ -106,15 +106,13 @@ export class TotalAttributeControl {
     const totalAttr = {} as TotalAttribute;
 
     for (const key of ATTRIBUTE_STAT_TYPES) {
-      if (key === "hp_" || key === "atk_" || key === "def_") continue;
-
-      totalAttr[key] = {
-        total: this.getTotal(key),
-      };
-
-      if (key === "hp" || key === "atk" || key === "def") {
-        totalAttr[key].bonus = totalAttr[key].total - this.getBase(key);
+      if (key === "hp_" || key === "atk_" || key === "def_") {
+        continue;
       }
+      if (key === "hp" || key === "atk" || key === "def") {
+        totalAttr[`${key}_base`] = this.getBase(key);
+      }
+      totalAttr[key] = this.getTotal(key);
     }
     return totalAttr;
   }

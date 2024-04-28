@@ -66,7 +66,7 @@ export class CalcItemCalc {
         (attPatt !== "none" ? attPattBonus[attPatt].flat : 0) +
         attElmtBonus[attElmt].flat;
       // CALCULATE DAMAGE BONUS MULTIPLIERS
-      let normalMult = (calcItemBonus.pct_ ?? 0) + attPattBonus.all.pct_ + totalAttr[attElmt].total;
+      let normalMult = (calcItemBonus.pct_ ?? 0) + attPattBonus.all.pct_ + totalAttr[attElmt];
       let specialMult = (calcItemBonus.multPlus ?? 0) + attPattBonus.all.multPlus;
 
       if (attPatt !== "none") {
@@ -92,7 +92,7 @@ export class CalcItemCalc {
       // CALCULATE CRITS
       const totalCrit = (type: "cRate_" | "cDmg_") => {
         return (
-          totalAttr[type].total +
+          totalAttr[type] +
           (calcItemBonus[type] ?? 0) +
           attPattBonus.all[type] +
           (attPatt !== "none" ? attPattBonus[attPatt][type] : 0) +
@@ -127,7 +127,7 @@ export class CalcItemCalc {
       switch (calcType) {
         case "healing":
           flat = calcItemBonus.flat ?? 0;
-          normalMult += totalAttr.healB_.total / 100;
+          normalMult += totalAttr.healB_ / 100;
           break;
         case "shield":
           normalMult += (calcItemBonus.pct_ ?? 0) / 100;
@@ -141,7 +141,7 @@ export class CalcItemCalc {
         record.normalMult = normalMult;
       }
       if (calcType === "healing") {
-        base *= 1 + totalAttr.inHealB_.total / 100;
+        base *= 1 + totalAttr.inHealB_ / 100;
       }
       return { nonCrit: base, crit: 0, average: base };
     }

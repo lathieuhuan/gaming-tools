@@ -47,7 +47,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
         element: finalResult.infusedElement,
         range: finalResult.infusedAttacks,
       });
-      setXtraInfo({ inHealB_: finalResult.totalAttr.inHealB_.total });
+      setXtraInfo({ inHealB_: finalResult.totalAttr.inHealB_ });
     }
   }, [trackerState]);
 

@@ -1,8 +1,8 @@
 import { FaInfo } from "react-icons/fa";
 import { clsx, Button, CloseButton, ItemCase, LoadingSpin } from "rond";
+import { ARTIFACT_TYPES } from "@Backend";
 
 import type { GearsDetailType } from "./Gears.types";
-import { ARTIFACT_TYPES } from "@Src/constants";
 import { $AppData } from "@Src/services";
 import { Artifact_ } from "@Src/utils";
 import { GenshinImage, ItemThumbnail } from "@Src/components";

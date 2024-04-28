@@ -26,7 +26,7 @@ export default function getCalculationStats({
   appWeapon,
   artifacts,
   party = [],
-  partyData,
+  partyData = [],
   elmtModCtrls,
   selfBuffCtrls,
   wpBuffCtrls,

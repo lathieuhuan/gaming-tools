@@ -82,14 +82,10 @@ export type CoreStat = (typeof CORE_STAT_TYPES)[number];
 
 export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];
 
-export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;
+/** Actually does not contain "hp_" | "atk_" | "def_" */
+type TotalAttributeStat = AttributeStat | "hp_base" | "atk_base" | "def_base";
+
+export type ArtifactAttribute = PartiallyRequired<Partial<Record<TotalAttributeStat, number>>, CoreStat>;
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
-export type TotalAttribute = Record<
-  AttributeStat,
-  {
-    total: number;
-    /** For view only */
-    bonus?: number;
-  }
->;
+export type TotalAttribute = Record<TotalAttributeStat, number>;

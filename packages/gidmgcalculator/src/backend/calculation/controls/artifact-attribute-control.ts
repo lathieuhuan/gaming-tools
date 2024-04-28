@@ -1,6 +1,5 @@
 import type { CalcArtifacts } from "@Src/types";
-import type { TotalAttribute } from "@Src/backend/types";
-import type { ArtifactAttribute } from "../calculation.types";
+import type { ArtifactAttribute, TotalAttribute } from "@Src/backend/types";
 import { TotalAttributeControl } from "./total-attribute-control";
 
 import { CORE_STAT_TYPES } from "@Src/backend/constants";
@@ -45,9 +44,7 @@ export class ArtifactAttributeControl {
       const percentStatValue = this.artAttr[`${statType}_`];
 
       if (percentStatValue) {
-        const base = isTotalAttributeControl
-          ? totalAttr.getBase(statType)
-          : totalAttr[statType].total - (totalAttr[statType].bonus ?? 0);
+        const base = isTotalAttributeControl ? totalAttr.getBase(statType) : totalAttr[`${statType}_base`];
 
         this.artAttr[statType] += applyPercent(base, percentStatValue);
       }
