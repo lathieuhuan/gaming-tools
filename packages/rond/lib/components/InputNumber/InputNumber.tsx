@@ -66,7 +66,9 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
   };
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    // const input = e.currentTarget;
+    if (e.target.value === "0") {
+      e.target.setSelectionRange(0, 20);
+    }
 
     // input.type = "text";
     // input.setSelectionRange(0, 20);
