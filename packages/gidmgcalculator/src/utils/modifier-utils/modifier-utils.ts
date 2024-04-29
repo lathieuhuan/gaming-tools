@@ -13,46 +13,6 @@ const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
   DENDROABLE: 0,
 };
 
-type Modifier = {
-  index: number;
-  inputConfigs?: ModInputConfig[];
-};
-function createModCrtl(mod: Modifier, forSelf: boolean) {
-  const ctrl: ModifierCtrl = { index: mod.index, activated: false };
-
-  if (mod.inputConfigs) {
-    const initialValues = [];
-
-    for (const config of mod.inputConfigs) {
-      if (config.for !== (forSelf ? "FOR_TEAM" : "FOR_SELF")) {
-        initialValues.push(config.initialValue ?? Modifier_.getDefaultInitialValue(config.type));
-      }
-    }
-    if (initialValues.length) ctrl.inputs = initialValues;
-  }
-  return ctrl;
-}
-
-interface RefModifier {
-  index: number;
-  affect: ModifierAffectType;
-  inputConfigs?: ModInputConfig[];
-}
-function createItemBuffCtrls(forSelf: boolean, entity?: { buffs?: RefModifier[] }) {
-  const buffCtrls: ModifierCtrl[] = [];
-
-  if (entity?.buffs) {
-    for (const buff of entity.buffs) {
-      const incompatibleAffect: ModifierAffectType = forSelf ? "TEAMMATE" : "SELF";
-
-      if (buff.affect !== incompatibleAffect) {
-        buffCtrls.push(createModCrtl(buff, forSelf));
-      }
-    }
-  }
-  return buffCtrls;
-}
-
 export class Modifier_ {
   static getDefaultInitialValue(type: ModInputType) {
     return DEFAULT_INITIAL_VALUES[type] ?? 0;
@@ -103,4 +63,44 @@ export class Modifier_ {
       { code: 33, activated: false, index: 0 },
     ];
   }
+}
+
+type Modifier = {
+  index: number;
+  inputConfigs?: ModInputConfig[];
+};
+function createModCrtl(mod: Modifier, forSelf: boolean) {
+  const ctrl: ModifierCtrl = { index: mod.index, activated: false };
+
+  if (mod.inputConfigs) {
+    const initialValues = [];
+
+    for (const config of mod.inputConfigs) {
+      if (config.for !== (forSelf ? "FOR_TEAM" : "FOR_SELF")) {
+        initialValues.push(config.initialValue ?? Modifier_.getDefaultInitialValue(config.type));
+      }
+    }
+    if (initialValues.length) ctrl.inputs = initialValues;
+  }
+  return ctrl;
+}
+
+interface RefModifier {
+  index: number;
+  affect: ModifierAffectType;
+  inputConfigs?: ModInputConfig[];
+}
+function createItemBuffCtrls(forSelf: boolean, entity?: { buffs?: RefModifier[] }) {
+  const buffCtrls: ModifierCtrl[] = [];
+
+  if (entity?.buffs) {
+    for (const buff of entity.buffs) {
+      const incompatibleAffect: ModifierAffectType = forSelf ? "TEAMMATE" : "SELF";
+
+      if (buff.affect !== incompatibleAffect) {
+        buffCtrls.push(createModCrtl(buff, forSelf));
+      }
+    }
+  }
+  return buffCtrls;
 }

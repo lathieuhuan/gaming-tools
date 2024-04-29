@@ -33,9 +33,9 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   });
   const [xtraInfo, setXtraInfo] = useState<{ inHealB_?: number }>({});
 
-  const { totalAttr, attPattBonus, attElmtBonus, rxnBonus } = result?.stats || {};
+  const { totalAttr, attPattBonus, attElmtBonus, rxnBonus } = result || {};
   const charLv = GeneralCalc.getBareLv(activeSetup.char.level);
-  const totalDefReduct = getTotalRecordValue(result?.stats?.resistReduct.def || []);
+  const totalDefReduct = getTotalRecordValue(result?.resistReduct.def || []);
 
   useEffect(() => {
     if (trackerState === "open") {
@@ -52,8 +52,8 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   }, [trackerState]);
 
   const renderDefMultiplier = (talent: AttackPattern | "WP_CALC") => {
-    const talentDefIgnore = talent === "WP_CALC" ? 0 : getTotalRecordValue(attPattBonus[`${talent}.defIgn_`] || []);
-    const allDefIgnore = getTotalRecordValue(attPattBonus["all.defIgn_"] || []);
+    const talentDefIgnore = talent === "WP_CALC" ? 0 : getTotalRecordValue(attPattBonus?.[`${talent}.defIgn_`] || []);
+    const allDefIgnore = getTotalRecordValue(attPattBonus?.["all.defIgn_"] || []);
     const totalDefIgnore = talentDefIgnore + allDefIgnore;
 
     return (
@@ -99,13 +99,13 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     },
     {
       heading: "Debuffs on Target",
-      body: <DebuffsTracker resistReduct={result?.stats?.resistReduct} />,
+      body: <DebuffsTracker resistReduct={result?.resistReduct} />,
     },
     {
       heading: "Normal Attacks",
       body: (
         <CalcItemTracker
-          records={result?.calcItems?.NAs}
+          records={result?.NAs}
           result={finalResult.NAs}
           defMultDisplay={renderDefMultiplier("NA")}
           infusion={infusion}
@@ -117,7 +117,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       heading: "Elemental Skill",
       body: (
         <CalcItemTracker
-          records={result?.calcItems?.ES}
+          records={result?.ES}
           result={finalResult.ES}
           defMultDisplay={renderDefMultiplier("ES")}
           {...xtraInfo}
@@ -128,7 +128,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       heading: "Elemental Burst",
       body: (
         <CalcItemTracker
-          records={result?.calcItems?.EB}
+          records={result?.EB}
           result={finalResult.EB}
           defMultDisplay={renderDefMultiplier("EB")}
           {...xtraInfo}
@@ -137,16 +137,16 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     },
     {
       heading: "Reactions",
-      body: <CalcItemTracker records={result?.calcItems?.RXN} result={finalResult.RXN} />,
+      body: <CalcItemTracker records={result?.RXN} result={finalResult.RXN} />,
     },
   ];
 
-  if (result?.calcItems?.WP_CALC) {
+  if (result?.WP_CALC) {
     collapseItems.push({
       heading: "Weapon",
       body: (
         <CalcItemTracker
-          records={result.calcItems?.WP_CALC}
+          records={result.WP_CALC}
           result={finalResult.WP_CALC}
           coreMultLabel="DMG Mult."
           defMultDisplay={renderDefMultiplier("EB")}

@@ -3,7 +3,7 @@ import { FaChevronDown, FaSort } from "react-icons/fa";
 import { createSelector } from "@reduxjs/toolkit";
 import { Popover, CarouselSpace, Modal } from "rond";
 
-import { findByIndex, splitLv } from "@Src/utils";
+import { findByIndex, Utils_ } from "@Src/utils";
 import { $AppCharacter } from "@Src/services";
 import { useStoreSnapshot } from "@Src/features";
 import { useDispatch } from "@Store/hooks";
@@ -62,8 +62,8 @@ function SortCore({ onClose }: { onClose: () => void }) {
       const newList = [...prev];
 
       return newList.sort((a, b) => {
-        const [fA, sA] = splitLv(a);
-        const [fB, sB] = splitLv(b);
+        const [fA, sA] = Utils_.splitLv(a);
+        const [fB, sB] = Utils_.splitLv(b);
 
         if (fA !== fB) {
           return fB - fA;

@@ -4,7 +4,7 @@ import { ARTIFACT_TYPES } from "@Backend";
 
 import type { GearsDetailType } from "./Gears.types";
 import { $AppData } from "@Src/services";
-import { Artifact_ } from "@Src/utils";
+import { Utils_ } from "@Src/utils";
 import { GenshinImage, ItemThumbnail } from "@Src/components";
 import { useCharacterInfo } from "../CharacterInfoProvider";
 
@@ -83,7 +83,7 @@ export function GearsOverview({
                 className="p-4 w-full h-full flex-center rounded bg-surface-3 glow-on-hover"
                 onClick={() => onClickEmptyArtifact(i)}
               >
-                <GenshinImage className="w-full" src={Artifact_.iconOf(ARTIFACT_TYPES[i])} />
+                <GenshinImage className="w-full" src={Utils_.artifactIconOf(ARTIFACT_TYPES[i])} />
               </button>
             </div>
           )

@@ -2,12 +2,12 @@ import { round } from "rond";
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, TrackerResult } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
-import { applyPercent, suffixOf } from "@Src/utils";
+import { applyPercent, Utils_ } from "@Src/utils";
 import { useSelector } from "@Store/hooks";
 import { selectTotalAttr } from "@Store/calculator-slice";
 import { recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
-export function AttributesTracker({ totalAttr }: Partial<Pick<TrackerResult["stats"], "totalAttr">>) {
+export function AttributesTracker({ totalAttr }: Partial<Pick<TrackerResult, "totalAttr">>) {
   const { t } = useTranslation();
   const calcTotalAttr = useSelector(selectTotalAttr);
 
@@ -43,7 +43,7 @@ export function AttributesTracker({ totalAttr }: Partial<Pick<TrackerResult["sta
       })}
 
       {ATTRIBUTE_STAT_TYPES.slice(6).map((statType) => {
-        const percent = suffixOf(statType);
+        const percent = Utils_.suffixOf(statType);
 
         return (
           <div key={statType} className="break-inside-avoid">

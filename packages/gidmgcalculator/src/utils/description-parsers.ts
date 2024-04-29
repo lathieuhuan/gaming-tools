@@ -2,7 +2,7 @@ import { round } from "rond";
 import { CharacterCalc, AppCharacter, CharacterBuff, CharacterDebuff, getIntialBonusValue } from "@Backend";
 
 import type { Character, PartyData } from "@Src/types";
-import { toArray, toMult } from "./utils";
+import { toArray, toMult } from "./pure-utils";
 
 const typeToCls: Record<string, string> = {
   k: "text-bonus-color", // key

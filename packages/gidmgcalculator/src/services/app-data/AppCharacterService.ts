@@ -5,7 +5,7 @@ import type { StandardResponse } from "../services.types";
 import type { DataControl, ServiceSubscriber } from "./app-data.types";
 
 import { BACKEND_URL, GENSHIN_DEV_URL } from "@Src/constants";
-import { pickProps } from "@Src/utils/utils";
+import { pickProps } from "@Src/utils/pure-utils";
 import { BaseService } from "./BaseService";
 
 type CharacterSubscriber = ServiceSubscriber<AppCharacter>;

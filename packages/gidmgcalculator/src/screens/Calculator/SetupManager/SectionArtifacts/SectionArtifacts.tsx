@@ -7,7 +7,7 @@ import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
 import type { Artifact, CalcArtifact } from "@Src/types";
 import { $AppData, $AppSettings } from "@Src/services";
-import { Item_, Artifact_ } from "@Src/utils";
+import { Utils_ } from "@Src/utils";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -149,7 +149,7 @@ export default function SectionArtifacts() {
   };
 
   const onSelectInventoryArtifact: ArtifactInventoryProps["onClickButton"] = (artifact) => {
-    replaceArtifact(artifact.type, Item_.userItemToCalcItem(artifact));
+    replaceArtifact(artifact.type, Utils_.userItemToCalcItem(artifact));
 
     const artifactSet = $AppData.getArtifactSet(artifact.code);
 
@@ -191,7 +191,7 @@ export default function SectionArtifacts() {
     let rootID = Date.now();
 
     for (const type of types) {
-      const newPiece = Artifact_.create({ code, type, rarity });
+      const newPiece = Utils_.createArtifact({ code, type, rarity });
 
       dispatch(
         changeArtifact({
@@ -261,7 +261,7 @@ export default function SectionArtifacts() {
           const artifact = artifacts[index];
           const icon = artifact
             ? $AppData.getArtifact({ code: artifact.code, type })?.icon || ""
-            : Artifact_.iconOf(type);
+            : Utils_.artifactIconOf(type);
 
           return (
             <div

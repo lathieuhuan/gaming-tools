@@ -22,10 +22,7 @@ import {
   getAppDataError,
   Modifier_,
   Setup_,
-  Character_,
-  Weapon_,
-  Artifact_,
-  Item_,
+  Utils_,
 } from "@Src/utils";
 import { parseUserCharacter, type CharacterForInit } from "./store.utils";
 
@@ -126,7 +123,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
     const isOldSetup = userSetup && Setup_.isUserSetup(userSetup);
 
     if (existedWeapon) {
-      if (isEqual(weapon, Item_.userItemToCalcItem(existedWeapon))) {
+      if (isEqual(weapon, Utils_.userItemToCalcItem(existedWeapon))) {
         // Nothing changes => add setupID to existedWeapon
         const newSetupIDs = existedWeapon.setupIDs || [];
 
@@ -144,7 +141,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
 
         dispatch(
           addUserWeapon(
-            Item_.calcItemToUserItem(weapon, {
+            Utils_.calcItemToUserItem(weapon, {
               ID: weaponID,
               setupIDs: [setupID],
             })
@@ -163,7 +160,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
       // Weapon not found => Add new weapon with setupID
       dispatch(
         addUserWeapon(
-          Item_.calcItemToUserItem(weapon, {
+          Utils_.calcItemToUserItem(weapon, {
             setupIDs: [setupID],
           })
         )
@@ -189,7 +186,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
       const existedArtifact = findById(userArts, artifact.ID);
 
       if (existedArtifact) {
-        if (isEqual(artifact, Item_.userItemToCalcItem(existedArtifact))) {
+        if (isEqual(artifact, Utils_.userItemToCalcItem(existedArtifact))) {
           // Nothing changes => add setupID to existedArtifact
           const newSetupIDs = existedArtifact.setupIDs || [];
 
@@ -208,7 +205,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
 
           dispatch(
             addUserArtifact(
-              Item_.calcItemToUserItem(artifact, {
+              Utils_.calcItemToUserItem(artifact, {
                 ID: artifactID,
                 setupIDs: [setupID],
               })
@@ -227,7 +224,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
         // Artifact not found => Add new artifact with setupID
         dispatch(
           addUserArtifact(
-            Item_.calcItemToUserItem(artifact, {
+            Utils_.calcItemToUserItem(artifact, {
               setupIDs: [setupID],
             })
           )
@@ -285,8 +282,8 @@ export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeam
 
       const similarWeapon = findByCode(userWps, teammate.weapon.code);
       const actualWeapon = similarWeapon
-        ? Item_.userItemToCalcItem(similarWeapon)
-        : Weapon_.create(
+        ? Utils_.userItemToCalcItem(similarWeapon)
+        : Utils_.createWeapon(
             {
               code: weapon.code,
               type: weapon.type,
@@ -302,7 +299,7 @@ export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeam
 
         if (maxRarity) {
           artifacts = ARTIFACT_TYPES.map((type) => {
-            return Artifact_.create(
+            return Utils_.createArtifact(
               {
                 code: artifact.code,
                 rarity: maxRarity,
@@ -339,7 +336,7 @@ export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeam
           name: "New setup",
           target: setup.target,
           calcSetup: {
-            char: Character_.create(teammate.name, findByName(userChars, teammate.name)),
+            char: Utils_.createCharacter(teammate.name, findByName(userChars, teammate.name)),
             selfBuffCtrls,
             selfDebuffCtrls,
             weapon: actualWeapon,

@@ -1,5 +1,5 @@
 import type { CalcArtifacts } from "@Src/types";
-import type { ArtifactAttribute, TotalAttribute } from "@Src/backend/types";
+import type { ArtifactAttribute, TotalAttribute } from "../calculation.types";
 import { TotalAttributeControl } from "./total-attribute-control";
 
 import { CORE_STAT_TYPES } from "@Src/backend/constants";

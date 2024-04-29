@@ -10,11 +10,11 @@ import {
 } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
-import { suffixOf } from "@Src/utils";
+import { Utils_ } from "@Src/utils";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
 interface BonusesTrackerProps
-  extends Partial<Pick<TrackerResult["stats"], "attPattBonus" | "attElmtBonus" | "rxnBonus">> {
+  extends Partial<Pick<TrackerResult, "attPattBonus" | "attElmtBonus" | "rxnBonus">> {
   em?: number;
 }
 
@@ -53,7 +53,7 @@ export function BonusesTracker({ attPattBonus, attElmtBonus, rxnBonus, em }: Bon
 
                 {ATTACK_PATTERN_INFO_KEYS.map((infoKey) => {
                   const records = attPattBonus[`${attPatt}.${infoKey}`];
-                  const percent = suffixOf(infoKey);
+                  const percent = Utils_.suffixOf(infoKey);
 
                   return records.length ? (
                     <div key={infoKey} className="pl-2">
@@ -86,7 +86,7 @@ export function BonusesTracker({ attPattBonus, attElmtBonus, rxnBonus, em }: Bon
 
                 {ATTACK_ELEMENT_INFO_KEYS.map((infoKey) => {
                   const records = attElmtBonus[`${attElmt}.${infoKey}`];
-                  const percent = suffixOf(infoKey);
+                  const percent = Utils_.suffixOf(infoKey);
 
                   return records.length ? (
                     <div key={infoKey} className="mt-1 pl-2">

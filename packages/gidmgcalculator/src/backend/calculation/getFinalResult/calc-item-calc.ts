@@ -6,9 +6,9 @@ import type {
   CalcItemType,
   Level,
   ResistanceReduction,
-  TotalAttribute,
 } from "@Src/backend/types";
-import type { CalcItemRecord, CalculationFinalResultItem, ProcessedItemBonus } from "../calculation.types";
+import type { CalculationFinalResultItem, TotalAttribute } from "../calculation.types";
+import type { CalcItemRecord, ProcessedItemBonus } from "../controls";
 
 import { applyToOneOrMany, toMult } from "@Src/utils";
 import { GeneralCalc } from "../utils";

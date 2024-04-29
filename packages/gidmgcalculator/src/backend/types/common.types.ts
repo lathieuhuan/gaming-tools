@@ -1,4 +1,3 @@
-import type { PartiallyRequired } from "rond";
 import {
   AMPLIFYING_REACTIONS,
   ARTIFACT_TYPES,
@@ -6,8 +5,7 @@ import {
   ATTACK_ELEMENT_INFO_KEYS,
   ATTACK_PATTERNS,
   ATTACK_PATTERN_INFO_KEYS,
-  ATTRIBUTE_STAT_TYPES,
-  CORE_STAT_TYPES,
+  ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES,
   ELEMENT_TYPES,
   NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
@@ -15,7 +13,7 @@ import {
   REACTION_BONUS_INFO_KEYS,
   TALENT_TYPES,
   TRANSFORMATIVE_REACTIONS,
-  WEAPON_TYPES,
+  WEAPON_TYPES
 } from "../constants";
 
 export type WeaponType = (typeof WEAPON_TYPES)[number];
@@ -76,16 +74,8 @@ export type ReactionBonus = Record<ReactionType, ReactionBonusInfo>;
 export type ResistanceReductionKey = AttackElement | "def";
 export type ResistanceReduction = Record<ResistanceReductionKey, number>;
 
-// ========== STATS ==========
+//
 
 export type CoreStat = (typeof CORE_STAT_TYPES)[number];
 
 export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];
-
-/** Actually does not contain "hp_" | "atk_" | "def_" */
-type TotalAttributeStat = AttributeStat | "hp_base" | "atk_base" | "def_base";
-
-export type ArtifactAttribute = PartiallyRequired<Partial<Record<TotalAttributeStat, number>>, CoreStat>;
-
-/** Actually does not contain "hp_" | "atk_" | "def_" */
-export type TotalAttribute = Record<TotalAttributeStat, number>;

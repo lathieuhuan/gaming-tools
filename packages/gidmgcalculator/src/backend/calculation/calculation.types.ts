@@ -1,12 +1,14 @@
+import type { PartiallyRequired } from "rond";
 import type { Character, PartyData } from "@Src/types";
-import type {
-  ActualAttackElement,
-  AppCharacter,
-  AttackElement,
-  AttackPatternInfoKey,
-  CalcItemType,
-  NormalAttack,
-} from "../types";
+import type { ActualAttackElement, AppCharacter, AttackElement, AttributeStat, CoreStat, NormalAttack } from "../types";
+
+/** Actually does not contain "hp_" | "atk_" | "def_" */
+type TotalAttributeStat = AttributeStat | "hp_base" | "atk_base" | "def_base";
+
+export type ArtifactAttribute = PartiallyRequired<Partial<Record<TotalAttributeStat, number>>, CoreStat>;
+
+/** Actually does not contain "hp_" | "atk_" | "def_" */
+export type TotalAttribute = Record<TotalAttributeStat, number>;
 
 export type CalcInfusion = {
   element: AttackElement;
@@ -34,29 +36,4 @@ export type CalculationFinalResult = {
   EB: CalculationFinalResultGroup;
   RXN: CalculationFinalResultGroup;
   WP_CALC: CalculationFinalResultGroup;
-};
-
-//
-
-export type CalcItemBonus = Partial<Record<AttackPatternInfoKey, { desc: string; value: number }>>;
-
-export type ProcessedItemBonus = Partial<Record<AttackPatternInfoKey, number>>;
-
-export type CalcItemRecord = {
-  itemType: CalcItemType;
-  multFactors: Array<{
-    desc: string;
-    value: number;
-    talentMult?: number;
-  }>;
-  totalFlat?: number;
-  normalMult: number;
-  specialMult?: number;
-  rxnMult?: number;
-  defMult?: number;
-  resMult?: number;
-  cRate_?: number;
-  cDmg_?: number;
-  note?: string;
-  exclusives?: CalcItemBonus[];
 };

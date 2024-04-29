@@ -13,10 +13,9 @@ import type {
   UserWeapon,
 } from "@Src/types";
 import { $AppCharacter } from "@Src/services";
-import { deepCopy, findByIndex } from "../utils";
+import { deepCopy, findByIndex } from "../pure-utils";
 import { Modifier_ } from "../modifier-utils";
-import { Weapon_ } from "../weapon-utils";
-import { Item_ } from "../item-utils";
+import { Utils_ } from "../utils";
 
 interface CleanupCalcSetupOptions {
   weaponID?: number;
@@ -37,8 +36,8 @@ export class Setup_ {
     const { weaponID, artifactIDs, ID, name, type, target, ...rest } = setup;
     const calcSetup = {
       ...rest,
-      weapon: Item_.userItemToCalcItem(weapon),
-      artifacts: artifacts.map((artifact) => (artifact ? Item_.userItemToCalcItem(artifact) : null)),
+      weapon: Utils_.userItemToCalcItem(weapon),
+      artifacts: artifacts.map((artifact) => (artifact ? Utils_.userItemToCalcItem(artifact) : null)),
     };
 
     return shouldRestore ? this.restoreCalcSetup(calcSetup) : calcSetup;
@@ -190,7 +189,7 @@ export class Setup_ {
       buffCtrls,
       debuffCtrls,
       weapon: {
-        code: Weapon_.getDefaultCode(weaponType),
+        code: Utils_.getDefaultWeaponCode(weaponType),
         type: weaponType,
         refi: 1,
         buffCtrls: [],

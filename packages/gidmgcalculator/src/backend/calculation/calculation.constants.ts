@@ -1,4 +1,4 @@
-import type { ActualAttackElement, AttributeStat, TransformativeReaction } from "../types";
+import type { ActualAttackElement, TransformativeReaction, AttributeStat } from "../types";
 
 type ResonanceStat = {
   key: AttributeStat;

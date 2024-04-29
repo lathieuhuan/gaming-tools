@@ -20,7 +20,7 @@ import type {
 } from "./userdb-slice.types";
 
 import { $AppData } from "@Src/services";
-import { findById, findByName, indexById, indexByName, Character_, Weapon_, Setup_, splitLv } from "@Src/utils";
+import { findById, findByName, indexById, indexByName, Utils_, Setup_ } from "@Src/utils";
 
 export type UserdbState = {
   userChars: UserCharacter[];
@@ -72,13 +72,13 @@ export const userdbSlice = createSlice({
       const weaponID = Date.now();
 
       state.userChars.push({
-        ...Character_.create(name),
+        ...Utils_.createCharacter(name),
         weaponID,
         artifactIDs: [null, null, null, null, null],
       });
       state.userWps.unshift({
         owner: name,
-        ...Weapon_.create({ type: weaponType }, weaponID),
+        ...Utils_.createWeapon({ type: weaponType }, weaponID),
       });
     },
     viewCharacter: (state, action: PayloadAction<string>) => {
@@ -231,8 +231,8 @@ export const userdbSlice = createSlice({
           return rB - rA;
         }
 
-        const [fA, sA] = splitLv(a);
-        const [fB, sB] = splitLv(b);
+        const [fA, sA] = Utils_.splitLv(a);
+        const [fB, sB] = Utils_.splitLv(b);
         if (fA !== fB) {
           return fB - fA;
         }
@@ -262,7 +262,7 @@ export const userdbSlice = createSlice({
 
           userWps.unshift({
             owner,
-            ...Weapon_.create({ type }, newWpID),
+            ...Utils_.createWeapon({ type }, newWpID),
           });
 
           const ownerInfo = findByName(userChars, owner);

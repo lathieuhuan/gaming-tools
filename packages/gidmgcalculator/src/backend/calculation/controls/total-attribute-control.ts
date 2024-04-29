@@ -1,5 +1,6 @@
 import type { CalcCharacter } from "@Src/types";
-import type { AttributeStat, AppCharacter, TotalAttribute } from "@Src/backend/types";
+import type { AppCharacter, AttributeStat } from "@Src/backend/types";
+import type { TotalAttribute } from "../calculation.types";
 import type { TrackerControl } from "./tracker-control";
 
 import { ATTRIBUTE_STAT_TYPES, LEVELS } from "@Src/backend/constants";

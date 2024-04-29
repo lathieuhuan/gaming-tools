@@ -12,7 +12,7 @@ function getResMult(type: "equation" | "value", value: number) {
   return RES < 0 ? 1 - RES / 2 : RES >= 0.75 ? 1 / (4 * RES + 1) : 1 - RES;
 }
 
-export function DebuffsTracker({ resistReduct }: Partial<Pick<TrackerResult['stats'], "resistReduct">>) {
+export function DebuffsTracker({ resistReduct }: Partial<Pick<TrackerResult, "resistReduct">>) {
   const { t } = useTranslation();
   const hasRecord = resistReduct && Object.values(resistReduct).some((record) => record.length);
   const totalResistReduct = {} as ResistanceReduction;

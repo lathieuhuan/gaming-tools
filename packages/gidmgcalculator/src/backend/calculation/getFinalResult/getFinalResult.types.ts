@@ -16,9 +16,8 @@ import type {
   AttackElementBonus,
   AttackPatternBonus,
   ReactionBonus,
-  TotalAttribute,
 } from "@Src/backend/types";
-import type { CalcInfusion } from "../calculation.types";
+import type { CalcInfusion, TotalAttribute } from "../calculation.types";
 import type { TrackerControl, ResistanceReductionControl, CalcItemBuffControl } from "../controls";
 
 export type DebuffInfoWrap = {

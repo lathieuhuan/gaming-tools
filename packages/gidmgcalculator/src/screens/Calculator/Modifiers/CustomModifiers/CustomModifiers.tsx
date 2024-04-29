@@ -4,7 +4,7 @@ import { clsx, CloseButton, Modal, Button, InputNumber } from "rond";
 
 import type { CustomBuffCtrl, CustomDebuffCtrl } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { suffixOf, toCustomBuffLabel } from "@Src/utils";
+import { Utils_, toCustomBuffLabel } from "@Src/utils";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -97,7 +97,7 @@ export default function CustomModifiers({ isBuffs }: CustomModifiersProps) {
           let max = 0;
 
           if (isBuffCtrl(ctrl)) {
-            const sign = suffixOf(ctrl.subType || ctrl.type);
+            const sign = Utils_.suffixOf(ctrl.subType || ctrl.type);
 
             min = sign ? -99 : -9999;
             max = sign ? 999 : 99_999;

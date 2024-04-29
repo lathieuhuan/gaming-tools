@@ -28,7 +28,7 @@ import type {
 
 import { RESONANCE_ELEMENT_TYPES } from "@Src/constants";
 import { $AppData, $AppCharacter, $AppSettings } from "@Src/services";
-import { deepCopy, findById, toArray, findByIndex, Setup_, Modifier_, Weapon_ } from "@Src/utils";
+import { deepCopy, findById, toArray, findByIndex, Setup_, Modifier_, Utils_ } from "@Src/utils";
 import { calculate, getCharDataFromState } from "./calculator-slice.utils";
 
 // const defaultChar = {
@@ -521,7 +521,7 @@ export const calculatorSlice = createSlice({
       state.comparedIds = [];
 
       const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, appChar.name);
-      const newWeapon = Weapon_.create({ type: appChar.weaponType });
+      const newWeapon = Utils_.createWeapon({ type: appChar.weaponType });
       const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, newWeapon);
       const elmtModCtrls = Modifier_.createElmtModCtrls();
       const tempManageInfos: CalcSetupManageInfo[] = [];

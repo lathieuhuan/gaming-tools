@@ -10,7 +10,7 @@ import {
 
 import type { CustomBuffCtrl, CustomBuffCtrlType } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { suffixOf, toCustomBuffLabel } from "@Src/utils";
+import { Utils_, toCustomBuffLabel } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
 import { updateCustomBuffCtrls } from "@Store/calculator-slice";
 
@@ -56,7 +56,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
   });
 
   const subTypes = CATEGORIES[config.category].subTypes;
-  const sign = suffixOf(config.subType || config.type);
+  const sign = Utils_.suffixOf(config.subType || config.type);
 
   const onChangeCategory = (category: CustomBuffCategory) => {
     const subType = CATEGORIES[category].subTypes?.[0] as CustomBuffCtrl["subType"];

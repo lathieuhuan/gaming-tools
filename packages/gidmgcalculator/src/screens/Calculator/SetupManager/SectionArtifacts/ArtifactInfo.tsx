@@ -7,7 +7,7 @@ import { Modal, ConfirmModal, Button, VersatileSelect } from "rond";
 import { ArtifactCalc, AttributeStat } from "@Backend";
 
 import type { CalcArtifact } from "@Src/types";
-import { findById, suffixOf, Item_ } from "@Src/utils";
+import { findById, Utils_ } from "@Src/utils";
 import { MAX_USER_ARTIFACTS } from "@Src/constants";
 import { changeArtifact, updateArtifact } from "@Store/calculator-slice";
 import { selectUserArtifacts, addUserArtifact, updateUserArtifact } from "@Store/userdb-slice";
@@ -78,7 +78,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
           )}
           <p className={`pl-6 text-1.5xl leading-7 text-rarity-${rarity} font-bold`}>
             {mainStatValue}
-            {suffixOf(mainStatType)}
+            {Utils_.suffixOf(mainStatType)}
           </p>
         </div>
       </div>
@@ -141,7 +141,7 @@ function ConfirmSaving({ artifact, onClose }: ConfirmSavingProps) {
     } else if (existedArtifact) {
       state.current = "PENDING";
     } else {
-      dispatch(addUserArtifact(Item_.calcItemToUserItem(artifact)));
+      dispatch(addUserArtifact(Utils_.calcItemToUserItem(artifact)));
       state.current = "SUCCESS";
     }
   }
@@ -175,13 +175,13 @@ function ConfirmSaving({ artifact, onClose }: ConfirmSavingProps) {
       );
       const noChange = existedArtifact
         ? isEqual(artifact, {
-            ...Item_.userItemToCalcItem(existedArtifact),
+            ...Utils_.userItemToCalcItem(existedArtifact),
             ID: artifact.ID,
           })
         : false;
 
       const addNew = () => {
-        dispatch(addUserArtifact(Item_.calcItemToUserItem(artifact, { ID: Date.now() })));
+        dispatch(addUserArtifact(Utils_.calcItemToUserItem(artifact, { ID: Date.now() })));
         onClose();
       };
 
@@ -203,7 +203,7 @@ function ConfirmSaving({ artifact, onClose }: ConfirmSavingProps) {
       }
 
       const overwrite = () => {
-        dispatch(updateUserArtifact(Item_.calcItemToUserItem(artifact)));
+        dispatch(updateUserArtifact(Utils_.calcItemToUserItem(artifact)));
         onClose();
       };
 

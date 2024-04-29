@@ -12,7 +12,7 @@ import type {
 } from "@Src/types";
 
 import { $AppData, $AppCharacter } from "@Src/services";
-import { Modifier_, Weapon_, findById, findByIndex } from "@Src/utils";
+import { Modifier_, Utils_, findById, findByIndex } from "@Src/utils";
 import { version3map } from "./util-maps";
 
 type ConvertUserDataArgs = {
@@ -127,7 +127,7 @@ const convertCharacter = (
 
     xtraWeapon = {
       owner: char.name,
-      ...Weapon_.create({ type: weaponType }, finalWeaponID),
+      ...Utils_.createWeapon({ type: weaponType }, finalWeaponID),
     };
   }
 
@@ -304,7 +304,7 @@ const convertSetup = (
         party.push({
           name: teammate.name,
           weapon: {
-            code: Weapon_.getDefaultCode(weaponType),
+            code: Utils_.getDefaultWeaponCode(weaponType),
             type: weaponType,
             refi: 1,
             buffCtrls: [],

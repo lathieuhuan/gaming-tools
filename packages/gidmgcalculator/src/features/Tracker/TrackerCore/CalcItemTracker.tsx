@@ -4,7 +4,7 @@ import { CalculationFinalResultGroup, CalcItemRecord } from "@Backend";
 
 import type { Infusion } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { suffixOf } from "@Src/utils";
+import { Utils_ } from "@Src/utils";
 import { Green } from "@Src/components";
 
 interface PartConfig {
@@ -98,7 +98,7 @@ export function CalcItemTracker({
                   <p className="text-primary-1">Exclusive</p>
                   {record.exclusives.map((bonus, i) => {
                     return Object.entries(bonus).map(([key, record]) => {
-                      const percent = suffixOf(key);
+                      const percent = Utils_.suffixOf(key);
 
                       return (
                         <p key={i}>

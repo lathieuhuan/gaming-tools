@@ -4,6 +4,8 @@ import type {
   AttackElementPath,
   ReactionBonusPath,
   ResistanceReductionKey,
+  CalcItemType,
+  AttackPatternInfoKey,
 } from "@Src/backend/types";
 import {
   ATTACK_ELEMENTS,
@@ -14,9 +16,10 @@ import {
   REACTIONS,
   REACTION_BONUS_INFO_KEYS,
 } from "@Src/backend/constants";
-import { CalcItemRecord } from "../calculation.types";
 
-export type StatRecord = {
+// ========== STAT RECORD ==========
+
+export type CalcStatRecord = {
   desc: string;
   value: number;
 };
@@ -30,19 +33,49 @@ type StatRecordType =
   | ReactionBonusPath
   | ResistanceReductionKey;
 
-type StatResult = Record<string, Record<string, StatRecord[]>>;
+type StatRecordGroup = Record<string, CalcStatRecord[]>;
 
-type CalcItemsResult = Record<string, Record<string, CalcItemRecord>>;
+// ========== CALC ITEM RECORD ==========
 
-// #to-do: group StatRecord / CalcItemRecord
+export type CalcItemBonus = Partial<Record<AttackPatternInfoKey, { desc: string; value: number }>>;
+
+export type CalcItemRecord = {
+  itemType: CalcItemType;
+  multFactors: Array<{
+    desc: string;
+    value: number;
+    talentMult?: number;
+  }>;
+  totalFlat?: number;
+  normalMult: number;
+  specialMult?: number;
+  rxnMult?: number;
+  defMult?: number;
+  resMult?: number;
+  cRate_?: number;
+  cDmg_?: number;
+  note?: string;
+  exclusives?: CalcItemBonus[];
+};
+
+type CalcItemRecordGroup = Record<string, CalcItemRecord>;
+
 export type TrackerResult = {
-  stats: StatResult;
-  calcItems: CalcItemsResult;
+  totalAttr: StatRecordGroup;
+  attPattBonus: StatRecordGroup;
+  attElmtBonus: StatRecordGroup;
+  rxnBonus: StatRecordGroup;
+  resistReduct: StatRecordGroup;
+  NAs: CalcItemRecordGroup;
+  ES: CalcItemRecordGroup;
+  EB: CalcItemRecordGroup;
+  RXN: CalcItemRecordGroup;
+  WP_CALC: CalcItemRecordGroup;
 };
 
 export class TrackerControl {
-  private stats: StatResult;
-  private calcItems: CalcItemsResult;
+  private stats: Record<string, StatRecordGroup>;
+  private calcItems: Record<string, CalcItemRecordGroup>;
 
   constructor() {
     this.stats = {
@@ -108,10 +141,10 @@ export class TrackerControl {
     this.calcItems[category][name] = record;
   }
 
-  finalize(): TrackerResult {
+  finalize() {
     return {
-      stats: this.stats,
-      calcItems: this.calcItems,
-    };
+      ...this.stats,
+      ...this.calcItems,
+    } as TrackerResult;
   }
 }

@@ -6,7 +6,7 @@ import { AppArtifact, ArtifactType } from "@Backend";
 
 import type { Artifact } from "@Src/types";
 import { $AppData } from "@Src/services";
-import { pickProps, Artifact_ } from "@Src/utils";
+import { pickProps, Utils_ } from "@Src/utils";
 import { useArtifactTypeSelect } from "@Src/hooks";
 
 // Component
@@ -19,7 +19,7 @@ export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMulti
   forcedType?: ArtifactType;
   /** Default to 'flower' */
   initialTypes?: ArtifactType | ArtifactType[];
-  onForgeArtifact: (info: ReturnType<typeof Artifact_.create>) => void;
+  onForgeArtifact: (info: ReturnType<typeof Utils_.createArtifact>) => void;
   onForgeArtifactBatch?: (code: AppArtifact["code"], types: ArtifactType[], rarity: number) => void;
   onClose: () => void;
 }
@@ -50,7 +50,7 @@ const ArtifactSmith = ({
       required: batchForging,
       onChange: (types) => {
         updateConfig((prevConfig) => {
-          const newConfig = Artifact_.create({ ...prevConfig, type: types[0] as ArtifactType });
+          const newConfig = Utils_.createArtifact({ ...prevConfig, type: types[0] as ArtifactType });
           return Object.assign(newConfig, pickProps(prevConfig, ["ID", "level", "subStats"]));
         });
       },
@@ -179,7 +179,7 @@ const ArtifactSmith = ({
       }}
       onChange={(mold, isConfigStep) => {
         if (mold) {
-          const artifact = Artifact_.create({
+          const artifact = Utils_.createArtifact({
             ...mold,
             type: artifactTypes[0],
           });

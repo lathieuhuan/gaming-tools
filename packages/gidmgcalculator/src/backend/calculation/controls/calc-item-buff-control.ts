@@ -1,10 +1,12 @@
-import type { CalcItemTarget } from "@Src/backend/types";
-import type { CalcItemBonus, ProcessedItemBonus } from "../calculation.types";
+import type { AttackPatternInfoKey, CalcItemTarget } from "@Src/backend/types";
+import type { CalcItemBonus } from "./tracker-control";
 
 type CalcItemBuff = {
   ids: string | string[];
   bonus: CalcItemBonus;
 };
+
+export type ProcessedItemBonus = Partial<Record<AttackPatternInfoKey, number>>;
 
 export class CalcItemBuffControl {
   private buffs: CalcItemBuff[] = [];

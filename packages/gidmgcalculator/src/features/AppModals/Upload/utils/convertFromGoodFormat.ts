@@ -2,7 +2,7 @@ import { ARTIFACT_TYPES, AttributeStat, Level } from "@Backend";
 
 import type { ArtifactSubStat, UserArtifact, UserCharacter, UserWeapon } from "@Src/types";
 import { $AppCharacter, $AppData } from "@Src/services";
-import { Weapon_, findByName } from "@Src/utils";
+import { Utils_, findByName } from "@Src/utils";
 import { goodFormatMap } from "./util-maps";
 
 const convertLevel = (level: any, ascension: any) => {
@@ -130,7 +130,7 @@ export function convertFromGoodFormat(data: any) {
     const { code = 0, type = "sword" } = searchWeaponByKey(weapon.key) || {};
     const owner = searchCharacterByKey(weapon.location) || null;
 
-    if (!code || (Weapon_.getDefaultCode(type) === code && !owner)) continue;
+    if (!code || (Utils_.getDefaultWeaponCode(type) === code && !owner)) continue;
 
     const weaponID = seedID++;
     const newWeapon: UserWeapon = {
@@ -156,7 +156,7 @@ export function convertFromGoodFormat(data: any) {
     if (!char.weaponID) {
       const { weaponType } = $AppCharacter.get(char.name)! || {};
       const weaponID = seedID++;
-      const newWeapon = Weapon_.create({ type: weaponType }, weaponID);
+      const newWeapon = Utils_.createWeapon({ type: weaponType }, weaponID);
 
       result.weapons.unshift({
         ...newWeapon,
