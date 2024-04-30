@@ -33,7 +33,7 @@ export function GenshinModifierView({ inputConfigs, ...viewProps }: GenshinModif
       case "STACKS":
         return {
           type: "select",
-          label: "Stacks",
+          label: config.label || "Stacks",
           options: genSequentialOptions(config.max, config.initialValue === 0),
         };
       case "ANEMOABLE":

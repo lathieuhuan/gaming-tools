@@ -60,16 +60,13 @@ export class CalcItemCalc {
     const { totalAttr, attPattBonus, attElmtBonus, resistReduct } = this;
 
     if (base !== 0 && !calcType) {
-      const flat =
-        (calcItemBonus.flat ?? 0) +
-        attPattBonus.all.flat +
-        (attPatt !== "none" ? attPattBonus[attPatt].flat : 0) +
-        attElmtBonus[attElmt].flat;
+      let flat = (calcItemBonus.flat ?? 0) + attPattBonus.all.flat + attElmtBonus[attElmt].flat;
       // CALCULATE DAMAGE BONUS MULTIPLIERS
       let normalMult = (calcItemBonus.pct_ ?? 0) + attPattBonus.all.pct_ + totalAttr[attElmt];
       let specialMult = (calcItemBonus.multPlus ?? 0) + attPattBonus.all.multPlus;
 
       if (attPatt !== "none") {
+        flat += attPattBonus[attPatt].flat;
         normalMult += attPattBonus[attPatt].pct_;
         specialMult += attPattBonus[attPatt].multPlus;
       }

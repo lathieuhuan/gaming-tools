@@ -23,7 +23,7 @@ export class ResistanceReductionControl {
   }
 
   apply(target: Target) {
-    const targetResistances = {} as ResistanceReduction;
+    const targetResistances = { def: this.resistReduct.def } as ResistanceReduction;
 
     for (const key of [...ATTACK_ELEMENTS]) {
       let RES = (target.resistances[key] - this.resistReduct[key]) / 100;

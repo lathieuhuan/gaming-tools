@@ -1,6 +1,6 @@
 import { ATTACK_ELEMENTS, ArtifactType, Level, WeaponType } from "@Backend";
 import { Artifact, CalcArtifact, CalcWeapon, Character, UserArtifact, UserWeapon, Weapon } from "@Src/types";
-import { $AppSettings } from "@Src/services";
+import { $AppData, $AppSettings } from "@Src/services";
 
 // ========== TYPES ==========
 
@@ -59,14 +59,20 @@ export class Utils_ {
     };
   }
 
-  static createWeapon({ type, code }: CreateWeaponArgs, ID = Date.now()): Weapon {
+  static createWeapon(config: CreateWeaponArgs, ID = Date.now()): Weapon {
     const { wpLevel, wpRefi } = $AppSettings.get();
+    const code = config.code || DEFAULT_WEAPON_CODE[config.type];
+    let level = wpLevel;
+
+    if (+level.split("/")[1] > 70 && $AppData.getWeapon(code).rarity < 3) {
+      level = "70/70";
+    }
 
     return {
       ID: ID,
-      type: type,
-      code: code || DEFAULT_WEAPON_CODE[type],
-      level: wpLevel,
+      type: config.type,
+      code,
+      level,
       refi: wpRefi,
     };
   }

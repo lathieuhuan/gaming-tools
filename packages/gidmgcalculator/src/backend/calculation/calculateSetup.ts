@@ -85,6 +85,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     elmtModCtrls,
     customBuffCtrls,
     customInfusion,
+    infusedElement,
     tracker,
   });
   const finalResult = getFinalResult({
