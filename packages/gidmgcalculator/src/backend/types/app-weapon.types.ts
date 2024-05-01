@@ -1,13 +1,5 @@
 import type { AttributeStat, WeaponType } from "./common.types";
-import type {
-  AppBonus,
-  AppBonusAttributeStack,
-  AppBonusElementStack,
-  AppBonusNationStack,
-  AppBuff,
-  CalcItemType,
-  WithBonusTargets,
-} from "./app-entity.types";
+import type { AppBonus, AppBuff, CalcItemType, WithBonusTargets } from "./app-entity.types";
 
 export type AppWeapon = {
   /** This is id */
@@ -40,38 +32,9 @@ type WeaponCalcItem = {
   baseOn?: "atk" | "hp";
 };
 
-// ========== BONUS STACKS ==========
-
-type InputIndex = {
-  /** Only on Tulaytullah's Remembrance */
-  value: number;
-  ratio?: number;
-};
-type InputStack = {
-  type: "INPUT";
-  /** Default to 0 */
-  index?: number | InputIndex[];
-  /**
-   * Input's index when activated (equal to 1), value is doubled.
-   * Only on Liyue Series.
-   */
-  doubledAt?: number;
-};
-/** Only on Watatsumi series */
-type EnergyStack = {
-  type: "ENERGY";
-};
-
-export type WeaponBonusStack =
-  | InputStack
-  | AppBonusAttributeStack
-  | AppBonusElementStack
-  | AppBonusNationStack
-  | EnergyStack;
-
 // ========== BONUS ==========
 
-export type WeaponBonusCore = AppBonus<WeaponBonusStack> & {
+export type WeaponBonusCore = AppBonus & {
   /**
    * Increment to value after each refinement.
    * Default to 1/3 of [value]. Fixed buff type has increment = 0

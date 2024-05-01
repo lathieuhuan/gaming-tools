@@ -8,10 +8,9 @@ import type {
 } from "./common.types";
 import type {
   AppBonus,
-  AppBonusAttributeStack,
-  AppBonusNationStack,
   AppBuff,
   AppDebuff,
+  AppEffectMax,
   ApplicableCondition,
   CalcItemType,
   CharacterMilestone,
@@ -126,67 +125,11 @@ export type CalcItem = {
       };
 };
 
-// ========== CONDITIONS ==========
-
 // ========== EXTRA ==========
 
 type CharacterEffectExtra = ApplicableCondition & {
   value: number;
 };
-
-// ========== BONUS STACKS ==========
-
-type InputStack = {
-  type: "INPUT";
-  /** Default to 0 */
-  index?: number;
-  /** When this bonus is from teammate, this is input's index to get stacks. */
-  alterIndex?: number;
-  /** On Wanderer */
-  // #to-check: why not use max on CharacterBonusStack
-  capacity?: {
-    value: number;
-    extra: ApplicableCondition & {
-      value: number;
-    };
-  };
-};
-type AttributeStack = AppBonusAttributeStack & {
-  /** When this bonus is from teammate, this is input's index to get value. Default to 0 */
-  alterIndex?: number;
-};
-type EnergyStack = {
-  /** On Raiden Shogun */
-  type: "ENERGY";
-};
-type ResolveStack = {
-  /** On Raiden Shogun */
-  type: "RESOLVE";
-};
-
-export type CharacterBonusStack = (InputStack | AttributeStack | AppBonusNationStack | EnergyStack | ResolveStack) & {
-  /** Final stack = stack - baseline */
-  baseline?: number;
-  /** On Furina */
-  extra?: CharacterEffectExtra;
-  /** Dynamic on Mika */
-  max?: CharacterEffectMax;
-};
-
-// ========== BONUS MAX ==========
-
-export type CharacterEffectExtraMax = ApplicableCondition & {
-  value: number;
-};
-
-type CharacterEffectDynamicMax = {
-  value: number;
-  /** On Hu Tao */
-  stacks?: CharacterBonusStack;
-  extras?: CharacterEffectExtraMax | CharacterEffectExtraMax[];
-};
-
-export type CharacterEffectMax = number | CharacterEffectDynamicMax;
 
 // ========== BUFF / BONUS ==========
 
@@ -206,7 +149,7 @@ type CharacterEffectValueOptionExtends = {
   /** Add to optIndex. On Nahida */
   extra?: CharacterEffectExtra;
   /** Max optIndex. Dynamic on Navia */
-  max?: CharacterEffectMax;
+  max?: AppEffectMax;
 };
 
 type CharacterBonusExtends = {
@@ -214,10 +157,10 @@ type CharacterBonusExtends = {
   lvScale?: CharacterEffectLevelScale;
   /** Added before stacks, after scale */
   preExtra?: number | CharacterBonusCore;
-  max?: CharacterEffectMax;
+  max?: AppEffectMax;
 };
 
-export type CharacterBonusCore = AppBonus<CharacterBonusStack, CharacterEffectValueOptionExtends> &
+export type CharacterBonusCore = AppBonus<CharacterEffectValueOptionExtends> &
   CharacterBonusExtends;
 
 type CharacterBonus = WithBonusTargets<CharacterBonusCore>;

@@ -1,110 +1,10 @@
-import type {
-  CharacterBonusCore,
-  CharacterBonusStack,
-  CharacterBuff,
-  CharacterEffectExtraMax,
-  CharacterEffectMax,
-} from "@Src/backend/types";
+import type { CharacterBonusCore, CharacterBuff } from "@Src/backend/types";
 import type { CalcUltilInfo } from "../calculation.types";
 import type { BuffInfoWrap } from "./getCalculationStats.types";
 
 import { toArray } from "@Src/utils";
 import { CharacterCalc, GeneralCalc, EntityCalc } from "../utils";
 import { meetIsFinal, applyBonuses, type AppliedBonus } from "./getCalculationStats.utils";
-
-function getTotalExtraMax(
-  extras: CharacterEffectExtraMax | CharacterEffectExtraMax[],
-  info: CalcUltilInfo,
-  inputs: number[],
-  fromSelf: boolean
-) {
-  let result = 0;
-
-  for (const extra of toArray(extras)) {
-    if (EntityCalc.isApplicableEffect(extra, info, inputs, fromSelf)) {
-      result += extra.value;
-    }
-  }
-  return result;
-}
-
-function getMax(max: CharacterEffectMax, info: CalcUltilInfo, inputs: number[], fromSelf: boolean) {
-  return typeof max === "number"
-    ? max
-    : max.value + (max.extras ? getTotalExtraMax(max.extras, info, inputs, fromSelf) : 0);
-}
-
-function getStackValue(stack: CharacterBonusStack, info: BuffInfoWrap, inputs: number[], fromSelf: boolean): number {
-  let result = 1;
-
-  switch (stack.type) {
-    case "INPUT": {
-      const { index = 0, alterIndex } = stack;
-      const finalIndex = alterIndex !== undefined && !fromSelf ? alterIndex : index;
-      let input = inputs[finalIndex] ?? 0;
-
-      if (stack.capacity) {
-        const { value, extra } = stack.capacity;
-        input = value - input;
-        if (EntityCalc.isApplicableEffect(extra, info, inputs, fromSelf)) input += extra.value;
-        input = Math.max(input, 0);
-      }
-      result = input;
-      break;
-    }
-    case "ATTRIBUTE": {
-      const { field, alterIndex = 0 } = stack;
-      result = fromSelf ? info.totalAttr.getTotalStable(field) : inputs[alterIndex] ?? 1;
-      break;
-    }
-    case "NATION": {
-      let count = info.partyData.reduce((total, teammate) => {
-        return total + (teammate?.nation === info.appChar.nation ? 1 : 0);
-      }, 0);
-      if (stack.nation === "different") {
-        count = info.partyData.filter(Boolean).length - count;
-      }
-      result = count;
-      break;
-    }
-    case "ENERGY": {
-      result = info.appChar.EBcost;
-      break;
-    }
-    case "RESOLVE": {
-      let [totalEnergy = 0, electroEnergy = 0] = inputs;
-      if (info.char.cons >= 1 && electroEnergy <= totalEnergy) {
-        totalEnergy += electroEnergy * 0.8 + (totalEnergy - electroEnergy) * 0.2;
-      }
-      const level = CharacterCalc.getFinalTalentLv({
-        talentType: "EB",
-        char: info.char,
-        appChar: info.appChar,
-        partyData: info.partyData,
-      });
-      const stackPerEnergy = Math.min(Math.ceil(14.5 + level * 0.5), 20);
-      const stacks = Math.round(totalEnergy * stackPerEnergy) / 100;
-      // const countResolve = (energyCost: number) => Math.round(energyCost * stackPerEnergy) / 100;
-
-      result = Math.min(stacks, 60);
-      break;
-    }
-  }
-
-  if (stack.baseline) {
-    if (result <= stack.baseline) return 0;
-    result -= stack.baseline;
-  }
-  if (stack.extra && EntityCalc.isApplicableEffect(stack.extra, info, inputs, fromSelf)) {
-    result += stack.extra.value;
-  }
-  if (stack.max) {
-    const max = getMax(stack.max, info, inputs, fromSelf);
-    if (result > max) result = max;
-  }
-
-  return Math.max(result, 0);
-}
 
 export function getIntialBonusValue(
   value: CharacterBonusCore["value"],
@@ -155,7 +55,7 @@ export function getIntialBonusValue(
     index += value.extra.value;
   }
   if (value.max) {
-    const max = getMax(value.max, info, inputs, fromSelf);
+    const max = EntityCalc.getMax(value.max, info, inputs, fromSelf);
     if (index > max) index = max;
   }
 
@@ -197,7 +97,7 @@ function getBonus(
           isStable: true,
         };
       }
-      bonusValue *= getStackValue(stack, info, inputs, fromSelf);
+      bonusValue *= EntityCalc.getStackValue(stack, info, inputs, fromSelf);
 
       if (stack.type === "ATTRIBUTE") isStable = false;
     }
@@ -210,10 +110,10 @@ function getBonus(
     let finalMax = bonus.max.value;
 
     if (bonus.max.stacks) {
-      finalMax *= getStackValue(bonus.max.stacks, info, inputs, fromSelf);
+      finalMax *= EntityCalc.getStackValue(bonus.max.stacks, info, inputs, fromSelf);
     }
     if (bonus.max.extras) {
-      finalMax += getTotalExtraMax(bonus.max.extras, info, inputs, fromSelf);
+      finalMax += EntityCalc.getTotalExtraMax(bonus.max.extras, info, inputs, fromSelf);
     }
 
     bonusValue = Math.min(bonusValue, finalMax);
@@ -236,7 +136,7 @@ interface ApplyAbilityBuffArgs {
 function applyCharacterBuff({ description, buff, infoWrap: info, inputs, fromSelf, isFinal }: ApplyAbilityBuffArgs) {
   if (!buff.effects) return;
   const cmnStacks = buff.cmnStacks ? toArray(buff.cmnStacks) : [];
-  const commonStacks = cmnStacks.map((cmnStack) => getStackValue(cmnStack, info, inputs, fromSelf));
+  const commonStacks = cmnStacks.map((cmnStack) => EntityCalc.getStackValue(cmnStack, info, inputs, fromSelf));
 
   applyBonuses({
     buff,

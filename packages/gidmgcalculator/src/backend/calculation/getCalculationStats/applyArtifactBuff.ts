@@ -1,38 +1,14 @@
-import { ArtifactBonusCore, ArtifactBonusStack, ArtifactBuff } from "@Src/backend/types";
-import { EntityCalc, GeneralCalc } from "../utils";
+import { ArtifactBonusCore, ArtifactBuff } from "@Src/backend/types";
+import { EntityCalc } from "../utils";
 import { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.types";
 import { AppliedBonus, applyBonuses, meetIsFinal } from "./getCalculationStats.utils";
 import { toArray } from "@Src/utils";
-
-type CountResult = ReturnType<typeof GeneralCalc.countElements>;
-
-function getStackValue(stack: ArtifactBonusStack, info: BuffInfoWrap, inputs: number[]) {
-  switch (stack.type) {
-    case "INPUT":
-      return inputs[stack.index ?? 0];
-    case "ATTRIBUTE":
-      return info.totalAttr.getTotalStable(stack.field);
-    case "ELEMENT": {
-      const { [info.appChar.vision]: sameCount = 0, ...others } = GeneralCalc.countElements(info.partyData);
-
-      switch (stack.element) {
-        case "same_excluded":
-          return sameCount;
-        case "different":
-          return Object.values(others as CountResult).reduce((total, item) => total + item, 0);
-        default:
-          return 1;
-      }
-    }
-    default:
-      return 1;
-  }
-}
 
 function getBonus(
   bonus: ArtifactBonusCore,
   info: BuffInfoWrap,
   inputs: number[],
+  fromSelf: boolean,
   preCalcStacks: number[]
 ): AppliedBonus {
   let bonusValue = 0;
@@ -56,14 +32,14 @@ function getBonus(
           isStable,
         };
       }
-      bonusValue *= getStackValue(stack, info, inputs);
+      bonusValue *= EntityCalc.getStackValue(stack, info, inputs, fromSelf);
     }
   }
 
   if (typeof bonus.sufExtra === "number") {
     bonusValue += bonus.sufExtra;
   } else if (bonus.sufExtra && EntityCalc.isApplicableEffect(bonus.sufExtra, info, inputs)) {
-    bonusValue += getBonus(bonus.sufExtra, info, inputs, preCalcStacks).value;
+    bonusValue += getBonus(bonus.sufExtra, info, inputs, fromSelf, preCalcStacks).value;
   }
 
   if (bonus.max && bonusValue > bonus.max) bonusValue = bonus.max;
@@ -79,6 +55,7 @@ interface ApplyArtifactBuffArgs {
   buff: Pick<ArtifactBuff, "trackId" | "cmnStacks" | "effects">;
   infoWrap: BuffInfoWrap;
   inputs: number[];
+  fromSelf: boolean;
   isFinal?: boolean;
   isStackable?: (effect: StackableCheckCondition) => boolean;
 }
@@ -87,12 +64,13 @@ function applyArtifactBuff({
   buff,
   infoWrap: info,
   inputs,
+  fromSelf,
   isFinal,
   isStackable = () => true,
 }: ApplyArtifactBuffArgs) {
   if (!buff.effects) return;
   const cmnStacks = buff.cmnStacks ? toArray(buff.cmnStacks) : [];
-  const commonStacks = cmnStacks.map((cmnStack) => getStackValue(cmnStack, info, inputs));
+  const commonStacks = cmnStacks.map((cmnStack) => EntityCalc.getStackValue(cmnStack, info, inputs, fromSelf));
 
   applyBonuses({
     buff,
@@ -103,7 +81,7 @@ function applyArtifactBuff({
       return meetIsFinal(isFinal, config, cmnStacks) && EntityCalc.isApplicableEffect(config, info, inputs);
     },
     isStackable: (paths: string | string[]) => isStackable({ trackId: buff.trackId, paths }),
-    getBonus: (config) => getBonus(config, info, inputs, commonStacks),
+    getBonus: (config) => getBonus(config, info, inputs, fromSelf, commonStacks),
   });
 }
 

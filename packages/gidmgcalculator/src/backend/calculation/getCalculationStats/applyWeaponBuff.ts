@@ -1,64 +1,16 @@
-import type { WeaponBonusCore, WeaponBonusStack, WeaponBuff } from "@Src/backend/types";
+import type { WeaponBonusCore, WeaponBuff } from "@Src/backend/types";
 import type { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { toArray } from "@Src/utils";
-import { EntityCalc, GeneralCalc } from "../utils";
+import { EntityCalc } from "../utils";
 import { meetIsFinal, applyBonuses, type AppliedBonus } from "./getCalculationStats.utils";
-
-function getStackValue(stack: WeaponBonusStack, { appChar, partyData, totalAttr }: BuffInfoWrap, inputs: number[]) {
-  switch (stack.type) {
-    case "INPUT": {
-      const { index = 0, doubledAt } = stack;
-
-      if (typeof index === "number") {
-        let stackValue = inputs[index] ?? 0;
-
-        if (doubledAt !== undefined && inputs[doubledAt]) {
-          stackValue *= 2;
-        }
-        return stackValue;
-      }
-      return index.reduce((total, { value, ratio = 1 }) => total + (inputs[value] ?? 0) * ratio, 0);
-    }
-    case "ATTRIBUTE": {
-      const stackValue = totalAttr.getTotalStable(stack.field);
-
-      if (stack.baseline) {
-        if (stackValue <= stack.baseline) return 0;
-        return stackValue - stack.baseline;
-      }
-      return stackValue;
-    }
-    case "ELEMENT": {
-      const { element, max } = stack;
-      const { [appChar.vision]: sameCount = 0, ...others } = GeneralCalc.countElements(partyData);
-      let stackValue = 0;
-
-      if (element === "different") {
-        stackValue = Object.values(others as Record<string, number>).reduce((total, count) => total + count, 0);
-      } else {
-        stackValue = sameCount + (element === "same_included" ? 1 : 0);
-      }
-
-      return max ? Math.min(stackValue, max) : stackValue;
-    }
-    case "ENERGY": {
-      return partyData.reduce((result, data) => result + (data?.EBcost ?? 0), appChar.EBcost);
-    }
-    case "NATION": {
-      return partyData.reduce(
-        (result, data) => result + (data?.nation === "liyue" ? 1 : 0),
-        appChar.nation === "liyue" ? 1 : 0
-      );
-    }
-  }
-}
 
 function getBonus(
   bonus: WeaponBonusCore,
   info: BuffInfoWrap,
   inputs: number[],
   refi: number,
+  fromSelf: boolean,
   preCalcStacks: number[]
 ): AppliedBonus {
   let bonusValue = 0;
@@ -83,7 +35,7 @@ function getBonus(
           isStable,
         };
       }
-      bonusValue *= getStackValue(stack, info, inputs);
+      bonusValue *= EntityCalc.getStackValue(stack, info, inputs, fromSelf);
       if (stack.type === "ATTRIBUTE") isStable = false;
     }
   }
@@ -92,7 +44,7 @@ function getBonus(
   if (typeof bonus.sufExtra === "number") {
     bonusValue += scaleRefi(bonus.sufExtra);
   } else if (bonus.sufExtra && EntityCalc.isApplicableEffect(bonus.sufExtra, info, inputs)) {
-    bonusValue += getBonus(bonus.sufExtra, info, inputs, refi, preCalcStacks).value;
+    bonusValue += getBonus(bonus.sufExtra, info, inputs, refi, fromSelf, preCalcStacks).value;
   }
 
   // ========== APPLY MAX ==========
@@ -116,6 +68,7 @@ interface ApplyWeaponBuffArgs {
   infoWrap: BuffInfoWrap;
   inputs: number[];
   refi: number;
+  fromSelf: boolean;
   isFinal?: boolean;
   isStackable?: (effect: StackableCheckCondition) => boolean;
 }
@@ -125,12 +78,13 @@ function applyWeaponBuff({
   infoWrap: info,
   inputs,
   refi,
+  fromSelf,
   isFinal,
   isStackable = () => true,
 }: ApplyWeaponBuffArgs) {
   if (!buff.effects) return;
   const cmnStacks = buff.cmnStacks ? toArray(buff.cmnStacks) : [];
-  const commonStacks = cmnStacks.map((cmnStack) => getStackValue(cmnStack, info, inputs));
+  const commonStacks = cmnStacks.map((cmnStack) => EntityCalc.getStackValue(cmnStack, info, inputs, fromSelf));
 
   applyBonuses({
     buff,
@@ -141,7 +95,7 @@ function applyWeaponBuff({
       return meetIsFinal(isFinal, config, cmnStacks) && EntityCalc.isApplicableEffect(config, info, inputs);
     },
     isStackable: (paths: string | string[]) => isStackable({ trackId: buff.trackId, paths }),
-    getBonus: (config) => getBonus(config, info, inputs, refi, commonStacks),
+    getBonus: (config) => getBonus(config, info, inputs, refi, fromSelf, commonStacks),
   });
 }
 

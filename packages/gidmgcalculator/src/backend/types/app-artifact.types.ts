@@ -1,12 +1,4 @@
-import type {
-  AppBonus,
-  AppBonusAttributeStack,
-  AppBonusElementStack,
-  AppBuff,
-  AppDebuff,
-  WithBonusTargets,
-  WithPenaltyTargets,
-} from "./app-entity.types";
+import type { AppBonus, AppBuff, AppDebuff, WithBonusTargets, WithPenaltyTargets } from "./app-entity.types";
 
 type ArtTypeData = {
   name: string;
@@ -30,15 +22,7 @@ export type AppArtifact = {
   debuffs?: ArtifactDebuff[];
 };
 
-type InputStack = {
-  type: "INPUT";
-  /** If number, default to 0 */
-  index?: number;
-};
-
-export type ArtifactBonusStack = InputStack | AppBonusAttributeStack | AppBonusElementStack;
-
-export type ArtifactBonusCore = AppBonus<ArtifactBonusStack> & {
+export type ArtifactBonusCore = AppBonus & {
   /** Apply after stacks */
   sufExtra?: number | ArtifactBonusCore;
   max?: number;

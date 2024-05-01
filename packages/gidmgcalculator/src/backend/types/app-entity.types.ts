@@ -70,25 +70,90 @@ export type ModInputConfig = {
 
 // ========== BONUS STACKS ==========
 
-export type AppBonusAttributeStack = {
+/** Only on Tulaytullah's Remembrance */
+type InputIndex = {
+  value: number;
+  ratio?: number;
+};
+type InputStack = {
+  type: "INPUT";
+  /** If number, default to 0 */
+  index?: number | InputIndex[];
+  /** When this bonus is from teammate, this is input's index to get stacks. On characters */
+  alterIndex?: number;
+  /** Input's index when activated (equal to 1), value is doubled. On some weapons */
+  doubledAt?: number;
+  /** Actual stack = capacity - input. On Wanderer */
+  capacity?: {
+    value: number;
+    extra: ApplicableCondition & {
+      value: number;
+    };
+  };
+};
+
+type AttributeStack = {
   type: "ATTRIBUTE";
   field: "base_atk" | "hp" | "atk" | "def" | "em" | "er_" | "healB_";
-  /** Substract attribute by baseline to get effective attribute to be stacks. */
-  baseline?: number;
+  /**
+   * When this bonus is from teammate, this is input's index to get value.
+   * On characters. Default to 0
+   */
+  alterIndex?: number;
 };
 
-/** On CharacterBonus & WeaponBonus  */
-export type AppBonusNationStack = {
-  type: "NATION";
-  /** Default to 'same' */
-  nation?: "same" | "different";
-};
-
-export type AppBonusElementStack = {
+type ElementStack = {
   type: "ELEMENT";
   element: "same_included" | "same_excluded" | "different";
-  max?: number;
 };
+
+/** On characterss & weapons  */
+type NationStack = {
+  type: "NATION";
+  nation: "same" | "different" | "liyue";
+};
+
+type EnergyCostStack = {
+  type: "ENERGY";
+  /** 'ACTIVE' on Raiden Shogun. 'PARTY' on Watatsumi series */
+  scope: "ACTIVE" | "PARTY";
+};
+/** On Raiden Shogun */
+type ResolveStack = {
+  type: "RESOLVE";
+};
+
+export type AppBonusStack = (
+  | InputStack
+  | AttributeStack
+  | ElementStack
+  | NationStack
+  | EnergyCostStack
+  | ResolveStack
+) & {
+  /** actual stacks = stacks - baseline */
+  baseline?: number;
+  /** On Furina */
+  extra?: ApplicableCondition & {
+    value: number;
+  };
+  max?: AppEffectMax;
+};
+
+// ========== BONUS MAX ==========
+
+export type AppEffectExtraMax = ApplicableCondition & {
+  value: number;
+};
+
+type AppEffectDynamicMax = {
+  value: number;
+  /** On Hu Tao */
+  stacks?: AppBonusStack;
+  extras?: AppEffectExtraMax | AppEffectExtraMax[];
+};
+
+export type AppEffectMax = number | AppEffectDynamicMax;
 
 // ========== BONUS TARGET ==========
 
@@ -151,12 +216,12 @@ type AppBonusValueOption = {
 
 // ========== BONUS & BUFF ==========
 
-export type AppBonus<BonusStack, ValueOptionExtends = object> = ApplicableCondition & {
+export type AppBonus<ValueOptionExtends = object> = ApplicableCondition & {
   value: number | (AppBonusValueOption & ValueOptionExtends);
   // checkInput?: number | InputCheck;
   /** Index of the pre-calculated stack from [cmnStacks] */
   stackIndex?: number;
-  stacks?: BonusStack | BonusStack[];
+  stacks?: AppBonusStack | AppBonusStack[];
 };
 
 export type AppBuff<T extends AppBonus<unknown>> = {

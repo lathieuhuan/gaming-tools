@@ -1,15 +1,13 @@
 import type {
   AppBonus,
+  AppBonusStack,
   AppBonusTarget,
   AppBuff,
   ArtifactBonusCore,
-  ArtifactBonusStack,
   AttributeStat,
   CharacterBonusCore,
-  CharacterBonusStack,
   ElementType,
   WeaponBonusCore,
-  WeaponBonusStack,
   WithBonusTargets,
 } from "@Src/backend/types";
 import type { BuffInfoWrap } from "./getCalculationStats.types";
@@ -17,11 +15,9 @@ import type { BuffInfoWrap } from "./getCalculationStats.types";
 import { ELEMENT_TYPES } from "@Src/backend/constants";
 import { toArray } from "@Src/utils";
 
-type BonusStack = CharacterBonusStack | WeaponBonusStack | ArtifactBonusStack;
-
 type BonusCore = CharacterBonusCore | WeaponBonusCore | ArtifactBonusCore;
 
-function isFinalBonus(bonusStacks?: BonusStack | BonusStack[]) {
+function isFinalBonus(bonusStacks?: AppBonusStack | AppBonusStack[]) {
   if (bonusStacks) {
     const hasAnyFinalBonus = toArray(bonusStacks).some((stack) => {
       switch (stack.type) {
@@ -36,7 +32,7 @@ function isFinalBonus(bonusStacks?: BonusStack | BonusStack[]) {
   return false;
 }
 
-function isTrulyFinalBonus(bonus: BonusCore, cmnStacks: BonusStack[]) {
+function isTrulyFinalBonus(bonus: BonusCore, cmnStacks: AppBonusStack[]) {
   return (
     isFinalBonus(bonus.stacks) ||
     ("preExtra" in bonus && typeof bonus.preExtra === "object" && isFinalBonus(bonus.preExtra.stacks)) ||
@@ -45,7 +41,7 @@ function isTrulyFinalBonus(bonus: BonusCore, cmnStacks: BonusStack[]) {
   );
 }
 
-export function meetIsFinal(isFinal: boolean | undefined, bonus: BonusCore, cmnStacks: BonusStack[]) {
+export function meetIsFinal(isFinal: boolean | undefined, bonus: BonusCore, cmnStacks: AppBonusStack[]) {
   return isFinal === undefined || isFinal === isTrulyFinalBonus(bonus, cmnStacks);
 }
 

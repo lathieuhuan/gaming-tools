@@ -129,6 +129,7 @@ export default function getCalculationStats({
         refi,
         inputs: [],
         infoWrap,
+        fromSelf: true,
         isFinal,
       });
     }
@@ -148,6 +149,7 @@ export default function getCalculationStats({
             },
             infoWrap,
             inputs: [],
+            fromSelf: true,
             isFinal,
           });
         }
@@ -224,6 +226,7 @@ export default function getCalculationStats({
               infoWrap,
               inputs: ctrl.inputs ?? [],
               refi,
+              fromSelf: false,
               isStackable,
             });
           }
@@ -243,6 +246,7 @@ export default function getCalculationStats({
               buff,
               infoWrap,
               inputs: ctrl.inputs ?? [],
+              fromSelf: false,
               isStackable,
             });
           }
@@ -264,6 +268,7 @@ export default function getCalculationStats({
           infoWrap,
           inputs: ctrl.inputs ?? [],
           refi,
+          fromSelf: true,
           isFinal,
           // isStackable
         });
@@ -285,6 +290,7 @@ export default function getCalculationStats({
           infoWrap,
           inputs: ctrl.inputs ?? [],
           isFinal,
+          fromSelf: true,
           isStackable,
         });
       }
