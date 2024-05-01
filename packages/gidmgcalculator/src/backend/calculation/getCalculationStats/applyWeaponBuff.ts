@@ -5,10 +5,6 @@ import { toArray } from "@Src/utils";
 import { EntityCalc, GeneralCalc } from "../utils";
 import { meetIsFinal, applyBonuses, type AppliedBonus } from "./getCalculationStats.utils";
 
-function isUsableBonus(bonus: Pick<WeaponBonusCore, "checkInput">, info: BuffInfoWrap, inputs: number[]) {
-  return EntityCalc.isValidEffectByInput(info, inputs, bonus.checkInput);
-}
-
 function getStackValue(stack: WeaponBonusStack, { appChar, partyData, totalAttr }: BuffInfoWrap, inputs: number[]) {
   switch (stack.type) {
     case "INPUT": {
@@ -95,7 +91,7 @@ function getBonus(
   // ========== ADD SUF-EXTRA ==========
   if (typeof bonus.sufExtra === "number") {
     bonusValue += scaleRefi(bonus.sufExtra);
-  } else if (bonus.sufExtra && isUsableBonus(bonus.sufExtra, info, inputs)) {
+  } else if (bonus.sufExtra && EntityCalc.isApplicableEffect(bonus.sufExtra, info, inputs)) {
     bonusValue += getBonus(bonus.sufExtra, info, inputs, refi, preCalcStacks).value;
   }
 
@@ -142,7 +138,7 @@ function applyWeaponBuff({
     inputs,
     description,
     isApplicable: (config) => {
-      return meetIsFinal(isFinal, config, cmnStacks) && isUsableBonus(config, info, inputs);
+      return meetIsFinal(isFinal, config, cmnStacks) && EntityCalc.isApplicableEffect(config, info, inputs);
     },
     isStackable: (paths: string | string[]) => isStackable({ trackId: buff.trackId, paths }),
     getBonus: (config) => getBonus(config, info, inputs, refi, commonStacks),

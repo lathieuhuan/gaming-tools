@@ -2,11 +2,7 @@ import type {
   AppCharacter,
   AttackElement,
   AttackPattern,
-  CharacterEffectAvailableCondition,
-  CharacterEffectExtendedUsableCondition,
   CharacterEffectLevelScale,
-  CharacterEffectUsableCondition,
-  CharacterMilestone,
   ElementType,
   LevelableTalentType,
   TalentAttributeType,
@@ -17,8 +13,6 @@ import type { Character, PartyData } from "@Src/types";
 import type { CalcUltilInfo } from "../calculation.types";
 
 import { findByName } from "@Src/utils";
-import { GeneralCalc } from "./general-calc";
-import { EntityCalc } from "./entity-calc";
 
 interface GetTotalXtraTalentArgs {
   char: Character;
@@ -45,74 +39,6 @@ const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
 };
 
 export class CharacterCalc {
-  static isGrantedEffect({ grantedAt }: { grantedAt?: CharacterMilestone }, char: Character) {
-    if (grantedAt) {
-      const [prefix, level] = grantedAt;
-      return (prefix === "A" ? GeneralCalc.getAscension(char.level) : char.cons) >= +level;
-    }
-    return true;
-  }
-
-  static isAvailableEffect(
-    condition: CharacterEffectAvailableCondition,
-    char: Character,
-    inputs: number[],
-    fromSelf: boolean
-  ): boolean {
-    if (fromSelf) {
-      if (!this.isGrantedEffect(condition, char)) return false;
-    } else if (condition.alterIndex !== undefined && !inputs[condition.alterIndex]) {
-      return false;
-    }
-    return true;
-  }
-
-  static isUsableEffect(
-    condition: CharacterEffectUsableCondition,
-    info: CalcUltilInfo,
-    inputs: number[],
-    fromSelf: boolean
-  ): boolean {
-    if (!this.isAvailableEffect(condition, info.char, inputs, fromSelf)) {
-      return false;
-    }
-    return EntityCalc.isValidEffectByInput(info, inputs, condition.checkInput);
-  }
-
-  static isExtensivelyUsableEffect(
-    condition: CharacterEffectExtendedUsableCondition,
-    info: CalcUltilInfo,
-    inputs: number[],
-    fromSelf: boolean
-  ): boolean {
-    if (!this.isUsableEffect(condition, info, inputs, fromSelf)) {
-      return false;
-    }
-    const { partyElmtCount, partyOnlyElmts } = condition;
-
-    if (condition.forWeapons && !condition.forWeapons.includes(info.appChar.weaponType)) {
-      return false;
-    }
-    if (condition.forElmts && !condition.forElmts.includes(info.appChar.vision)) {
-      return false;
-    }
-    const elementCount = GeneralCalc.countElements(info.partyData, info.appChar);
-
-    if (partyElmtCount) {
-      for (const key in partyElmtCount) {
-        const currentCount = elementCount[key as ElementType] ?? 0;
-        const requiredCount = partyElmtCount[key as ElementType] ?? 0;
-        if (currentCount < requiredCount) return false;
-      }
-    }
-    if (partyOnlyElmts) {
-      for (const type in elementCount) {
-        if (!partyOnlyElmts.includes(type as ElementType)) return false;
-      }
-    }
-    return true;
-  }
-
   static getTotalXtraTalentLv({ char, appChar, talentType, partyData }: GetTotalXtraTalentArgs): number {
     let result = 0;
 

@@ -7,7 +7,7 @@ import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constant
 import { TRANSFORMATIVE_REACTION_INFO } from "../calculation.constants";
 
 import { findByIndex, toArray } from "@Src/utils";
-import { CharacterCalc, GeneralCalc } from "../utils";
+import { CharacterCalc, EntityCalc, GeneralCalc } from "../utils";
 import { applyPenalty } from "./getFinalResult.utils";
 import { ResistanceReductionControl, TrackerControl } from "../controls";
 import { CalcItemCalc } from "./calc-item-calc";
@@ -53,7 +53,7 @@ export default function getFinalResult({
   for (const { activated, inputs = [], index } of selfDebuffCtrls) {
     const debuff = findByIndex(debuffs || [], index);
 
-    if (activated && debuff?.effects && CharacterCalc.isGrantedEffect(debuff, char)) {
+    if (activated && debuff?.effects && EntityCalc.isGrantedEffect(debuff, char)) {
       applyAbilityDebuff({
         description: `Self / ${debuff.src}`,
         effects: debuff.effects,

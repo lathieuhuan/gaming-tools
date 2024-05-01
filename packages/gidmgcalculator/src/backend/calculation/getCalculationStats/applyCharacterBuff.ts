@@ -9,7 +9,7 @@ import type { CalcUltilInfo } from "../calculation.types";
 import type { BuffInfoWrap } from "./getCalculationStats.types";
 
 import { toArray } from "@Src/utils";
-import { CharacterCalc, GeneralCalc } from "../utils";
+import { CharacterCalc, GeneralCalc, EntityCalc } from "../utils";
 import { meetIsFinal, applyBonuses, type AppliedBonus } from "./getCalculationStats.utils";
 
 function getTotalExtraMax(
@@ -21,7 +21,7 @@ function getTotalExtraMax(
   let result = 0;
 
   for (const extra of toArray(extras)) {
-    if (CharacterCalc.isUsableEffect(extra, info, inputs, fromSelf)) {
+    if (EntityCalc.isApplicableEffect(extra, info, inputs, fromSelf)) {
       result += extra.value;
     }
   }
@@ -46,7 +46,7 @@ function getStackValue(stack: CharacterBonusStack, info: BuffInfoWrap, inputs: n
       if (stack.capacity) {
         const { value, extra } = stack.capacity;
         input = value - input;
-        if (CharacterCalc.isUsableEffect(extra, info, inputs, fromSelf)) input += extra.value;
+        if (EntityCalc.isApplicableEffect(extra, info, inputs, fromSelf)) input += extra.value;
         input = Math.max(input, 0);
       }
       result = input;
@@ -95,7 +95,7 @@ function getStackValue(stack: CharacterBonusStack, info: BuffInfoWrap, inputs: n
     if (result <= stack.baseline) return 0;
     result -= stack.baseline;
   }
-  if (stack.extra && CharacterCalc.isAvailableEffect(stack.extra, info.char, inputs, fromSelf)) {
+  if (stack.extra && EntityCalc.isApplicableEffect(stack.extra, info, inputs, fromSelf)) {
     result += stack.extra.value;
   }
   if (stack.max) {
@@ -151,7 +151,7 @@ export function getIntialBonusValue(
     }
   }
 
-  if (value.extra && CharacterCalc.isAvailableEffect(value.extra, info.char, inputs, fromSelf)) {
+  if (value.extra && EntityCalc.isApplicableEffect(value.extra, info, inputs, fromSelf)) {
     index += value.extra.value;
   }
   if (value.max) {
@@ -179,7 +179,7 @@ function getBonus(
   // ========== ADD PRE-EXTRA ==========
   if (typeof preExtra === "number") {
     bonusValue += preExtra;
-  } else if (preExtra && CharacterCalc.isUsableEffect(preExtra, info, inputs, fromSelf)) {
+  } else if (preExtra && EntityCalc.isApplicableEffect(preExtra, info, inputs, fromSelf)) {
     // #to-check: if isStable not change to false below, but this getBonus return isStable false
     // in other world, the original bonus is stable but the preExtra is not
     bonusValue += getBonus(preExtra, info, inputs, fromSelf, preCalcStacks).value;
@@ -244,10 +244,7 @@ function applyCharacterBuff({ description, buff, infoWrap: info, inputs, fromSel
     inputs,
     description,
     isApplicable: (config) => {
-      return (
-        meetIsFinal(isFinal, config, cmnStacks) &&
-        CharacterCalc.isExtensivelyUsableEffect(config, info, inputs, fromSelf)
-      );
+      return meetIsFinal(isFinal, config, cmnStacks) && EntityCalc.isApplicableEffect(config, info, inputs, fromSelf);
     },
     getBonus: (config) => getBonus(config, info, inputs, fromSelf, commonStacks),
   });

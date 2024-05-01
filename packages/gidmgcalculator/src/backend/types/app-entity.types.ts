@@ -7,11 +7,12 @@ import type {
   ReactionBonusPath,
   ResistanceReductionKey,
   TalentType,
+  WeaponType,
 } from "./common.types";
 
 export type CalcItemType = "attack" | "healing" | "shield" | "other";
 
-//
+// ========== CONDITIONS ==========
 
 /**
  * For the buff/bonus to be available, the input at the [source] must meet [value] by [type].
@@ -24,6 +25,32 @@ export type InputCheck = {
   /** Default to 'equal' */
   type?: "equal" | "min" | "max";
 };
+
+type EffectUsableCondition = {
+  checkInput?: number | InputCheck;
+};
+
+export type CharacterMilestone = "A1" | "A4" | "C1" | "C2" | "C4" | "C6";
+
+type CharacterEffectAvailableCondition = {
+  grantedAt?: CharacterMilestone;
+  /** When this bonus is from teammate, this is input's index to check granted. */
+  alterIndex?: number;
+};
+
+/** Mostly on characters */
+type ExtendedCondition = {
+  /** On Chongyun, 2 original artifacts */
+  forWeapons?: WeaponType[];
+  /** On Chevreuse */
+  forElmts?: ElementType[];
+  /** On Gorou, Nilou, Chevreuse */
+  partyElmtCount?: Partial<Record<ElementType, number>>;
+  /** On Nilou, Chevreuse */
+  partyOnlyElmts?: ElementType[];
+};
+
+export type ApplicableCondition = EffectUsableCondition & CharacterEffectAvailableCondition & ExtendedCondition;
 
 // ========== MODIFIERS ==========
 
@@ -124,9 +151,9 @@ type AppBonusValueOption = {
 
 // ========== BONUS & BUFF ==========
 
-export type AppBonus<BonusStack, ValueOptionExtends = object> = {
+export type AppBonus<BonusStack, ValueOptionExtends = object> = ApplicableCondition & {
   value: number | (AppBonusValueOption & ValueOptionExtends);
-  checkInput?: number | InputCheck;
+  // checkInput?: number | InputCheck;
   /** Index of the pre-calculated stack from [cmnStacks] */
   stackIndex?: number;
   stacks?: BonusStack | BonusStack[];

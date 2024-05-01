@@ -4,7 +4,7 @@ import type { TrackerControl } from "./controls";
 
 import { findByIndex } from "@Src/utils";
 import { $AppCharacter, $AppData } from "@Src/services";
-import { CharacterCalc } from "./utils";
+import { EntityCalc } from "./utils";
 import getCalculationStats from "./getCalculationStats";
 import getFinalResult from "./getFinalResult";
 
@@ -46,7 +46,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
         if (buff && buff.infuseConfig) {
           if (!selfInfused) {
             const info = { char, appChar, partyData };
-            const isUsable = CharacterCalc.isUsableEffect(buff.infuseConfig, info, ctrl.inputs || [], true);
+            const isUsable = EntityCalc.isApplicableEffect(buff.infuseConfig, info, ctrl.inputs || [], true);
 
             if (isUsable) {
               selfInfused = !buff.infuseConfig.overwritable;

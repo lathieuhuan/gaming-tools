@@ -13,7 +13,7 @@ import { RESONANCE_STAT } from "../calculation.constants";
 
 import { $AppCharacter, $AppData } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { CharacterCalc, GeneralCalc, WeaponCalc } from "../utils";
+import { EntityCalc, GeneralCalc, WeaponCalc } from "../utils";
 import { ArtifactAttributeControl, BonusControl, CalcItemBuffControl, TotalAttributeControl } from "../controls";
 import applyCharacterBuff from "./applyCharacterBuff";
 import applyWeaponBuff from "./applyWeaponBuff";
@@ -92,7 +92,7 @@ export default function getCalculationStats({
     const { innateBuffs = [], buffs = [] } = appChar;
 
     for (const buff of innateBuffs) {
-      if (CharacterCalc.isGrantedEffect(buff, char)) {
+      if (EntityCalc.isGrantedEffect(buff, char)) {
         applyCharacterBuff({
           description: `Self / ${buff.src}`,
           buff,
@@ -106,7 +106,7 @@ export default function getCalculationStats({
     for (const ctrl of charBuffCtrls) {
       const buff = findByIndex(buffs, ctrl.index);
 
-      if (ctrl.activated && buff && CharacterCalc.isGrantedEffect(buff, char)) {
+      if (ctrl.activated && buff && EntityCalc.isGrantedEffect(buff, char)) {
         applyCharacterBuff({
           description: `Self / ${buff.src}`,
           buff,

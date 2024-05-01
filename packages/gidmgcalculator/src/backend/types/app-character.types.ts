@@ -12,7 +12,9 @@ import type {
   AppBonusNationStack,
   AppBuff,
   AppDebuff,
+  ApplicableCondition,
   CalcItemType,
+  CharacterMilestone,
   InputCheck,
   ModifierAffectType,
   WithBonusTargets,
@@ -72,8 +74,6 @@ type Ability = {
   description?: string;
 };
 
-export type CharacterMilestone = "A1" | "A4" | "C1" | "C2" | "C4" | "C6";
-
 type CharacterModifier = {
   src: string;
   grantedAt?: CharacterMilestone | undefined;
@@ -128,33 +128,9 @@ export type CalcItem = {
 
 // ========== CONDITIONS ==========
 
-export type CharacterEffectAvailableCondition = {
-  grantedAt?: CharacterMilestone;
-  /** When this bonus is from teammate, this is input's index to check granted. */
-  alterIndex?: number;
-};
-
-export type CharacterEffectUsableCondition = CharacterEffectAvailableCondition & {
-  checkInput?: number | InputCheck;
-};
-
-type CharacterEffectOtherUsableCondition = {
-  /** On Chongyun */
-  forWeapons?: WeaponType[];
-  /** On Chevreuse */
-  forElmts?: ElementType[];
-  /** On Gorou, Nilou, Chevreuse */
-  partyElmtCount?: Partial<Record<ElementType, number>>;
-  /** On Nilou, Chevreuse */
-  partyOnlyElmts?: ElementType[];
-};
-
-export type CharacterEffectExtendedUsableCondition = CharacterEffectUsableCondition &
-  CharacterEffectOtherUsableCondition;
-
 // ========== EXTRA ==========
 
-type CharacterEffectExtra = CharacterEffectAvailableCondition & {
+type CharacterEffectExtra = ApplicableCondition & {
   value: number;
 };
 
@@ -170,7 +146,7 @@ type InputStack = {
   // #to-check: why not use max on CharacterBonusStack
   capacity?: {
     value: number;
-    extra: CharacterEffectUsableCondition & {
+    extra: ApplicableCondition & {
       value: number;
     };
   };
@@ -199,7 +175,7 @@ export type CharacterBonusStack = (InputStack | AttributeStack | AppBonusNationS
 
 // ========== BONUS MAX ==========
 
-export type CharacterEffectExtraMax = CharacterEffectUsableCondition & {
+export type CharacterEffectExtraMax = ApplicableCondition & {
   value: number;
 };
 
@@ -242,8 +218,6 @@ type CharacterBonusExtends = {
 };
 
 export type CharacterBonusCore = AppBonus<CharacterBonusStack, CharacterEffectValueOptionExtends> &
-  CharacterEffectAvailableCondition &
-  CharacterEffectOtherUsableCondition &
   CharacterBonusExtends;
 
 type CharacterBonus = WithBonusTargets<CharacterBonusCore>;
@@ -262,7 +236,7 @@ export type CharacterBuff = AppBuff<CharacterBonus> &
 
 // ============ DEBUFF / PENALTY ============
 
-export type CharacterPenaltyCore = CharacterEffectExtendedUsableCondition & {
+export type CharacterPenaltyCore = ApplicableCondition & {
   value: number;
   lvScale?: CharacterEffectLevelScale;
   /** Added before stacks, after scale */

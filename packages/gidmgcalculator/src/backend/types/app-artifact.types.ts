@@ -1,4 +1,3 @@
-import type { WeaponType } from "./common.types";
 import type {
   AppBonus,
   AppBonusAttributeStack,
@@ -40,7 +39,6 @@ type InputStack = {
 export type ArtifactBonusStack = InputStack | AppBonusAttributeStack | AppBonusElementStack;
 
 export type ArtifactBonusCore = AppBonus<ArtifactBonusStack> & {
-  forWeapons?: WeaponType[];
   /** Apply after stacks */
   sufExtra?: number | ArtifactBonusCore;
   max?: number;

@@ -3,7 +3,7 @@ import type { CalcUltilInfo } from "../calculation.types";
 import type { DebuffInfoWrap } from "./getFinalResult.types";
 
 import { toArray } from "@Src/utils";
-import { CharacterCalc } from "../utils";
+import { CharacterCalc, EntityCalc } from "../utils";
 import { applyPenalty } from "./getFinalResult.utils";
 
 const getPenaltyValue = (penalty: CharacterPenaltyCore, info: CalcUltilInfo, inputs: number[], fromSelf: boolean) => {
@@ -12,7 +12,7 @@ const getPenaltyValue = (penalty: CharacterPenaltyCore, info: CalcUltilInfo, inp
 
   if (typeof preExtra === "number") {
     result += preExtra;
-  } else if (preExtra && CharacterCalc.isUsableEffect(preExtra, info, inputs, fromSelf)) {
+  } else if (preExtra && EntityCalc.isApplicableEffect(preExtra, info, inputs, fromSelf)) {
     result += getPenaltyValue(preExtra, info, inputs, fromSelf);
   }
   if (penalty.max && result > penalty.max) result = penalty.max;
@@ -29,7 +29,7 @@ interface ApplyAbilityDebuffArgs {
 }
 const applyAbilityDebuff = ({ description, effects, infoWrap: info, inputs, fromSelf }: ApplyAbilityDebuffArgs) => {
   for (const effect of toArray(effects)) {
-    if (CharacterCalc.isExtensivelyUsableEffect(effect, info, inputs, fromSelf)) {
+    if (EntityCalc.isApplicableEffect(effect, info, inputs, fromSelf)) {
       applyPenalty({
         penaltyValue: getPenaltyValue(effect, info, inputs, fromSelf),
         targets: effect.targets,

@@ -1,24 +1,10 @@
 import { ArtifactBonusCore, ArtifactBonusStack, ArtifactBuff } from "@Src/backend/types";
-import { GeneralCalc } from "../utils";
+import { EntityCalc, GeneralCalc } from "../utils";
 import { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.types";
 import { AppliedBonus, applyBonuses, meetIsFinal } from "./getCalculationStats.utils";
 import { toArray } from "@Src/utils";
 
 type CountResult = ReturnType<typeof GeneralCalc.countElements>;
-
-function isUsableBonus(
-  condition: Pick<ArtifactBonusCore, "checkInput" | "forWeapons">,
-  info: BuffInfoWrap,
-  inputs: number[]
-) {
-  if (condition.checkInput !== undefined && inputs[0] !== condition.checkInput) {
-    return false;
-  }
-  if (condition.forWeapons && !condition.forWeapons.includes(info.appChar.weaponType)) {
-    return false;
-  }
-  return true;
-}
 
 function getStackValue(stack: ArtifactBonusStack, info: BuffInfoWrap, inputs: number[]) {
   switch (stack.type) {
@@ -76,7 +62,7 @@ function getBonus(
 
   if (typeof bonus.sufExtra === "number") {
     bonusValue += bonus.sufExtra;
-  } else if (bonus.sufExtra && isUsableBonus(bonus.sufExtra, info, inputs)) {
+  } else if (bonus.sufExtra && EntityCalc.isApplicableEffect(bonus.sufExtra, info, inputs)) {
     bonusValue += getBonus(bonus.sufExtra, info, inputs, preCalcStacks).value;
   }
 
@@ -114,7 +100,7 @@ function applyArtifactBuff({
     inputs,
     description,
     isApplicable: (config) => {
-      return meetIsFinal(isFinal, config, cmnStacks) && isUsableBonus(config, info, inputs);
+      return meetIsFinal(isFinal, config, cmnStacks) && EntityCalc.isApplicableEffect(config, info, inputs);
     },
     isStackable: (paths: string | string[]) => isStackable({ trackId: buff.trackId, paths }),
     getBonus: (config) => getBonus(config, info, inputs, commonStacks),
