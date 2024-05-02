@@ -218,7 +218,6 @@ type EntityBonusValueOption = {
 
 export type EntityBonus<ValueOptionExtends = object> = ApplicableCondition & {
   value: number | (EntityBonusValueOption & ValueOptionExtends);
-  // checkInput?: number | InputCheck;
   /** Index of the pre-calculated stack from [cmnStacks] */
   stackIndex?: number;
   stacks?: EntityBonusStack | EntityBonusStack[];

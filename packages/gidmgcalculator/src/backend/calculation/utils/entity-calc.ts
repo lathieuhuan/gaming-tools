@@ -116,8 +116,7 @@ export class EntityCalc {
         break;
       }
       case "ATTRIBUTE": {
-        const { alterIndex = 0 } = stack;
-        result = fromSelf ? info.totalAttr.getTotalStable(stack.field) : inputs[alterIndex] ?? 1;
+        result = fromSelf ? info.totalAttr.getTotalStable(stack.field) : inputs[stack.alterIndex ?? 0] ?? 1;
         break;
       }
       case "ELEMENT": {

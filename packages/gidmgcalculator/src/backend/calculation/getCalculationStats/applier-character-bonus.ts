@@ -86,9 +86,10 @@ class ApplierCharacterBonus {
     if (typeof preExtra === "number") {
       bonusValue += preExtra;
     } else if (preExtra && EntityCalc.isApplicableEffect(preExtra, this.info, inputs, fromSelf)) {
-      // #to-check: if isStable not change to false below, but this getCharacterBonus return isStable false
-      // in other world, the original bonus is stable but the preExtra is not
-      bonusValue += this.getBonus(preExtra, inputs, fromSelf, preCalcStacks).value;
+      // if preExtra is not stable, this whole bonus is not stable
+      const { value, isStable: isStablePreExtra } = this.getBonus(preExtra, inputs, fromSelf, preCalcStacks);
+      bonusValue += value;
+      if (!isStablePreExtra) isStable = false;
     }
 
     // ========== APPLY STACKS ==========

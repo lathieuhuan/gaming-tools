@@ -151,6 +151,8 @@ type CharacterBonusExtends = {
   lvScale?: CharacterEffectLevelScale;
   /** Added before stacks, after scale */
   preExtra?: number | CharacterBonusCore;
+  /** Added after stacks. Not implement yet */
+  sufExtra?: number | CharacterBonusCore;
   max?: EntityEffectMax;
 };
 
@@ -177,7 +179,6 @@ export type CharacterPenaltyCore = ApplicableCondition & {
   lvScale?: CharacterEffectLevelScale;
   /** Added before stacks, after scale */
   preExtra?: number | CharacterPenaltyCore;
-  // index?: number;
   max?: number;
 };
 

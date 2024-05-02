@@ -159,7 +159,6 @@ export default function getCalculationStats({
 
   const APPLY_CUSTOM_BUFFS = () => {
     if (!customBuffCtrls?.length) return;
-    const { totalAttr } = infoWrap;
 
     for (const { category, type, subType, value } of customBuffCtrls) {
       switch (category) {

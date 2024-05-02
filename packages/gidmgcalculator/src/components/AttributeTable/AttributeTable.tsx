@@ -60,14 +60,15 @@ export function AttributeTable({ attributes }: AttributeTableProps) {
     <StatsTable>
       {CORE_STAT_TYPES.map((type) => {
         const total = Math.round(attributes[type]);
-        const bonus = total - Math.round(attributes[`${type}_base`] ?? 0);
+        const base = attributes[`${type}_base`];
+        const bonus = base === undefined ? undefined : total - Math.round(base);
 
         return (
           <StatsTable.Row key={type} className="group">
             <p>{t(type)}</p>
             <div className="relative">
-              <p className={clsx("mr-2", { "group-hover:hidden": bonus })}>{total}</p>
-              {bonus ? (
+              <p className={clsx("mr-2", bonus !== undefined && "group-hover:hidden")}>{total}</p>
+              {bonus !== undefined ? (
                 <p className="mr-2 hidden whitespace-nowrap group-hover:block group-hover:absolute group-hover:top-0 group-hover:right-0">
                   {total - bonus} + <Green>{bonus}</Green>
                 </p>

@@ -16,8 +16,6 @@ import { ELEMENT_TYPES } from "@Src/backend/constants";
 import { toArray } from "@Src/utils";
 import { EntityCalc } from "../utils";
 
-type BonusCore = CharacterBonusCore | WeaponBonusCore | ArtifactBonusCore;
-
 function isFinalBonus(bonusStacks?: EntityBonusStack | EntityBonusStack[]) {
   if (bonusStacks) {
     const hasAnyFinalBonus = toArray(bonusStacks).some((stack) => {
@@ -33,11 +31,14 @@ function isFinalBonus(bonusStacks?: EntityBonusStack | EntityBonusStack[]) {
   return false;
 }
 
-function isTrulyFinalBonus(bonus: BonusCore, cmnStacks: EntityBonusStack[]) {
+function isTrulyFinalBonus(
+  bonus: CharacterBonusCore | WeaponBonusCore | ArtifactBonusCore,
+  cmnStacks: EntityBonusStack[]
+) {
   return (
     isFinalBonus(bonus.stacks) ||
-    ("preExtra" in bonus && typeof bonus.preExtra === "object" && isFinalBonus(bonus.preExtra.stacks)) ||
-    ("sufExtra" in bonus && typeof bonus.sufExtra === "object" && isFinalBonus(bonus.sufExtra.stacks)) ||
+    (typeof bonus.preExtra === "object" && isFinalBonus(bonus.preExtra.stacks)) ||
+    (typeof bonus.sufExtra === "object" && isFinalBonus(bonus.sufExtra.stacks)) ||
     (bonus.stackIndex !== undefined && isFinalBonus(cmnStacks[bonus.stackIndex]))
   );
 }

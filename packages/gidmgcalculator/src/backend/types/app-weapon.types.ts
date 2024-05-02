@@ -40,6 +40,8 @@ export type WeaponBonusCore = EntityBonus & {
    * Default to 1/3 of [value]. Fixed buff type has increment = 0
    */
   incre?: number;
+  /** Added before stacks, after incre. Not implement yet */
+  preExtra?: number | WeaponBonusCore;
   /** Apply after stacks */
   sufExtra?: number | WeaponBonusCore;
   max?:

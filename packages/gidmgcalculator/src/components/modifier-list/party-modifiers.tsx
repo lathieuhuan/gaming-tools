@@ -70,7 +70,9 @@ function getPartyModifierElmts(props: PartyModsViewProps, type: "buffs" | "debuf
     return (
       <div key={teammateData.name}>
         <p className={`text-lg text-${teammateData.vision} font-bold text-center uppercase`}>{teammate.name}</p>
-        {getTeammateModifierElmts(props, teammate, teammateIndex, teammateData, modCtrls, modifiers)}
+        <div className="space-y-3">
+          {getTeammateModifierElmts(props, teammate, teammateIndex, teammateData, modCtrls, modifiers)}
+        </div>
       </div>
     );
   });

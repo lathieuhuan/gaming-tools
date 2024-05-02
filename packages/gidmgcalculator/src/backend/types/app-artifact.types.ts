@@ -23,6 +23,8 @@ export type AppArtifact = {
 };
 
 export type ArtifactBonusCore = EntityBonus & {
+  /** Added before stacks. Not implement yet */
+  preExtra?: number | ArtifactBonusCore;
   /** Apply after stacks */
   sufExtra?: number | ArtifactBonusCore;
   max?: number;
