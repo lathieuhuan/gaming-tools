@@ -1,5 +1,5 @@
 import type { AttributeStat, WeaponType } from "./common.types";
-import type { AppBonus, AppBuff, CalcItemType, WithBonusTargets } from "./app-entity.types";
+import type { EntityBonus, EntityBuff, CalcItemType, WithBonusTargets } from "./app-entity.types";
 
 export type AppWeapon = {
   /** This is id */
@@ -34,7 +34,7 @@ type WeaponCalcItem = {
 
 // ========== BONUS ==========
 
-export type WeaponBonusCore = AppBonus & {
+export type WeaponBonusCore = EntityBonus & {
   /**
    * Increment to value after each refinement.
    * Default to 1/3 of [value]. Fixed buff type has increment = 0
@@ -53,7 +53,7 @@ export type WeaponBonusCore = AppBonus & {
 
 type WeaponBonus = WithBonusTargets<WeaponBonusCore>;
 
-export type WeaponBuff = AppBuff<WeaponBonus> & {
+export type WeaponBuff = EntityBuff<WeaponBonus> & {
   /**
    * If number, it's the index of weapon's descriptions (AppWeapon.descriptions).
    * Default to 0.

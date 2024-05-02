@@ -1,8 +1,8 @@
 import type { Character } from "@Src/types";
 import type {
-  AppBonusStack,
-  AppEffectExtraMax,
-  AppEffectMax,
+  EntityBonusStack,
+  EntityEffectExtraMax,
+  EntityEffectMax,
   ApplicableCondition,
   ElementType,
   InputCheck,
@@ -66,7 +66,7 @@ export class EntityCalc {
   }
 
   static getTotalExtraMax(
-    extras: AppEffectExtraMax | AppEffectExtraMax[],
+    extras: EntityEffectExtraMax | EntityEffectExtraMax[],
     info: CalcUltilInfo,
     inputs: number[],
     fromSelf: boolean
@@ -81,13 +81,13 @@ export class EntityCalc {
     return result;
   }
 
-  static getMax(max: AppEffectMax, info: CalcUltilInfo, inputs: number[], fromSelf: boolean) {
+  static getMax(max: EntityEffectMax, info: CalcUltilInfo, inputs: number[], fromSelf: boolean) {
     return typeof max === "number"
       ? max
       : max.value + (max.extras ? this.getTotalExtraMax(max.extras, info, inputs, fromSelf) : 0);
   }
 
-  static getStackValue(stack: AppBonusStack, info: GetStackValueInfo, inputs: number[], fromSelf: boolean): number {
+  static getStackValue(stack: EntityBonusStack, info: GetStackValueInfo, inputs: number[], fromSelf: boolean): number {
     const { appChar, partyData } = info;
     let result = 0;
 

@@ -39,7 +39,7 @@ type CharacterEffectAvailableCondition = {
 };
 
 /** Mostly on characters */
-type ExtendedCondition = {
+type ExtraCondition = {
   /** On Chongyun, 2 original artifacts */
   forWeapons?: WeaponType[];
   /** On Chevreuse */
@@ -50,7 +50,7 @@ type ExtendedCondition = {
   partyOnlyElmts?: ElementType[];
 };
 
-export type ApplicableCondition = EffectUsableCondition & CharacterEffectAvailableCondition & ExtendedCondition;
+export type ApplicableCondition = EffectUsableCondition & CharacterEffectAvailableCondition & ExtraCondition;
 
 // ========== MODIFIERS ==========
 
@@ -70,6 +70,10 @@ export type ModInputConfig = {
 
 // ========== BONUS STACKS ==========
 
+export type EntityEffectExtra = ApplicableCondition & {
+  value: number;
+};
+
 /** Only on Tulaytullah's Remembrance */
 type InputIndex = {
   value: number;
@@ -86,9 +90,7 @@ type InputStack = {
   /** Actual stack = capacity - input. On Wanderer */
   capacity?: {
     value: number;
-    extra: ApplicableCondition & {
-      value: number;
-    };
+    extra: EntityEffectExtra;
   };
 };
 
@@ -123,7 +125,7 @@ type ResolveStack = {
   type: "RESOLVE";
 };
 
-export type AppBonusStack = (
+export type EntityBonusStack = (
   | InputStack
   | AttributeStack
   | ElementStack
@@ -134,26 +136,24 @@ export type AppBonusStack = (
   /** actual stacks = stacks - baseline */
   baseline?: number;
   /** On Furina */
-  extra?: ApplicableCondition & {
-    value: number;
-  };
-  max?: AppEffectMax;
+  extra?: EntityEffectExtra;
+  max?: EntityEffectMax;
 };
 
 // ========== BONUS MAX ==========
 
-export type AppEffectExtraMax = ApplicableCondition & {
+export type EntityEffectExtraMax = ApplicableCondition & {
   value: number;
 };
 
-type AppEffectDynamicMax = {
+type EntityEffectDynamicMax = {
   value: number;
   /** On Hu Tao */
-  stacks?: AppBonusStack;
-  extras?: AppEffectExtraMax | AppEffectExtraMax[];
+  stacks?: EntityBonusStack;
+  extras?: EntityEffectExtraMax | EntityEffectExtraMax[];
 };
 
-export type AppEffectMax = number | AppEffectDynamicMax;
+export type EntityEffectMax = number | EntityEffectDynamicMax;
 
 // ========== BONUS TARGET ==========
 
@@ -184,7 +184,7 @@ type ElementNaTarget = {
   module: "ELM_NA";
 };
 
-export type AppBonusTarget =
+export type EntityBonusTarget =
   | AttributeTarget
   | AttackPatternTarget
   | AttackElementTarget
@@ -208,7 +208,7 @@ type LevelOptionIndex = {
   talent: TalentType;
 };
 
-type AppBonusValueOption = {
+type EntityBonusValueOption = {
   options: number[];
   /** If number, [source] is "INPUT", the number value is inpIndex. Default to 0 */
   optIndex?: number | InputOptionIndex | ElementOptionIndex | LevelOptionIndex;
@@ -216,15 +216,15 @@ type AppBonusValueOption = {
 
 // ========== BONUS & BUFF ==========
 
-export type AppBonus<ValueOptionExtends = object> = ApplicableCondition & {
-  value: number | (AppBonusValueOption & ValueOptionExtends);
+export type EntityBonus<ValueOptionExtends = object> = ApplicableCondition & {
+  value: number | (EntityBonusValueOption & ValueOptionExtends);
   // checkInput?: number | InputCheck;
   /** Index of the pre-calculated stack from [cmnStacks] */
   stackIndex?: number;
-  stacks?: AppBonusStack | AppBonusStack[];
+  stacks?: EntityBonusStack | EntityBonusStack[];
 };
 
-export type AppBuff<T extends AppBonus<unknown>> = {
+export type EntityBuff<T extends EntityBonus<unknown>> = {
   /** This is id */
   index: number;
   affect: ModifierAffectType;
@@ -240,12 +240,12 @@ export type AppBuff<T extends AppBonus<unknown>> = {
 };
 
 export type WithBonusTargets<T> = T & {
-  targets: AppBonusTarget | AppBonusTarget[];
+  targets: EntityBonusTarget | EntityBonusTarget[];
 };
 
 // ========== PENALTY & DEBUFF ==========
 
-export type AppPenaltyTarget =
+export type EntityPenaltyTarget =
   | ResistanceReductionKey
   | {
       type: "inp_elmt";
@@ -253,7 +253,7 @@ export type AppPenaltyTarget =
       inpIndex?: number;
     };
 
-export type AppDebuff<T = unknown> = {
+export type EntityDebuff<T = unknown> = {
   /** This is id */
   index: number;
   inputConfigs?: ModInputConfig[];
@@ -261,5 +261,5 @@ export type AppDebuff<T = unknown> = {
 };
 
 export type WithPenaltyTargets<T> = T & {
-  targets: AppPenaltyTarget | AppPenaltyTarget[];
+  targets: EntityPenaltyTarget | EntityPenaltyTarget[];
 };

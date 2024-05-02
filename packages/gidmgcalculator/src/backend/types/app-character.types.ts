@@ -7,10 +7,10 @@ import type {
   WeaponType,
 } from "./common.types";
 import type {
-  AppBonus,
-  AppBuff,
-  AppDebuff,
-  AppEffectMax,
+  EntityBonus,
+  EntityBuff,
+  EntityDebuff,
+  EntityEffectMax,
   ApplicableCondition,
   CalcItemType,
   CharacterMilestone,
@@ -18,6 +18,7 @@ import type {
   ModifierAffectType,
   WithBonusTargets,
   WithPenaltyTargets,
+  EntityEffectExtra,
 } from "./app-entity.types";
 
 type Nation = "outland" | "mondstadt" | "liyue" | "inazuma" | "sumeru" | "natlan" | "fontaine" | "snezhnaya";
@@ -98,7 +99,6 @@ type CalcItemMultFactor = {
 
 export type CalcItem = {
   id?: string;
-
   name: string;
   type?: CalcItemType;
   notOfficial?: boolean;
@@ -125,12 +125,6 @@ export type CalcItem = {
       };
 };
 
-// ========== EXTRA ==========
-
-type CharacterEffectExtra = ApplicableCondition & {
-  value: number;
-};
-
 // ========== BUFF / BONUS ==========
 
 export type CharacterEffectLevelScale = {
@@ -147,9 +141,9 @@ type CharacterEffectValueOptionExtends = {
   /** On Navia */
   preOptions?: number[];
   /** Add to optIndex. On Nahida */
-  extra?: CharacterEffectExtra;
+  extra?: EntityEffectExtra;
   /** Max optIndex. Dynamic on Navia */
-  max?: AppEffectMax;
+  max?: EntityEffectMax;
 };
 
 type CharacterBonusExtends = {
@@ -157,17 +151,16 @@ type CharacterBonusExtends = {
   lvScale?: CharacterEffectLevelScale;
   /** Added before stacks, after scale */
   preExtra?: number | CharacterBonusCore;
-  max?: AppEffectMax;
+  max?: EntityEffectMax;
 };
 
-export type CharacterBonusCore = AppBonus<CharacterEffectValueOptionExtends> &
-  CharacterBonusExtends;
+export type CharacterBonusCore = EntityBonus<CharacterEffectValueOptionExtends> & CharacterBonusExtends;
 
 type CharacterBonus = WithBonusTargets<CharacterBonusCore>;
 
 type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "trackId" | "cmnStacks" | "effects">;
 
-export type CharacterBuff = AppBuff<CharacterBonus> &
+export type CharacterBuff = EntityBuff<CharacterBonus> &
   CharacterModifier & {
     infuseConfig?: {
       checkInput?: number | InputCheck;
@@ -190,7 +183,7 @@ export type CharacterPenaltyCore = ApplicableCondition & {
 
 export type CharacterPenalty = WithPenaltyTargets<CharacterPenaltyCore>;
 
-export type CharacterDebuff = AppDebuff<CharacterPenalty> &
+export type CharacterDebuff = EntityDebuff<CharacterPenalty> &
   CharacterModifier & {
     affect?: ModifierAffectType;
   };

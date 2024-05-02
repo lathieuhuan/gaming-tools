@@ -1,4 +1,4 @@
-import type { AppBonus, AppBuff, AppDebuff, WithBonusTargets, WithPenaltyTargets } from "./app-entity.types";
+import type { EntityBonus, EntityBuff, EntityDebuff, WithBonusTargets, WithPenaltyTargets } from "./app-entity.types";
 
 type ArtTypeData = {
   name: string;
@@ -22,7 +22,7 @@ export type AppArtifact = {
   debuffs?: ArtifactDebuff[];
 };
 
-export type ArtifactBonusCore = AppBonus & {
+export type ArtifactBonusCore = EntityBonus & {
   /** Apply after stacks */
   sufExtra?: number | ArtifactBonusCore;
   max?: number;
@@ -37,7 +37,7 @@ type SetBonus = {
 
 export type ArtifactModifierDescription = string | number | number[];
 
-export type ArtifactBuff = AppBuff<ArtifactBonus> & {
+export type ArtifactBuff = EntityBuff<ArtifactBonus> & {
   description: ArtifactModifierDescription;
 };
 
@@ -45,6 +45,6 @@ type ArtifactPenalty = WithPenaltyTargets<{
   value: number;
 }>;
 
-type ArtifactDebuff = AppDebuff<ArtifactPenalty> & {
+type ArtifactDebuff = EntityDebuff<ArtifactPenalty> & {
   description: ArtifactModifierDescription;
 };

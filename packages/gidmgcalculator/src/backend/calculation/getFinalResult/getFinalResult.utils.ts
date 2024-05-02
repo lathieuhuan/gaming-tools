@@ -1,11 +1,11 @@
-import type { AppPenaltyTarget, ResistanceReductionKey } from "@Src/backend/types";
+import type { EntityPenaltyTarget, ResistanceReductionKey } from "@Src/backend/types";
 import type { DebuffInfoWrap } from "./getFinalResult.types";
 import { toArray } from "@Src/utils";
 import { ELEMENT_TYPES } from "@Src/backend/constants";
 
 type ApplyPenaltyArgs = {
   penaltyValue: number;
-  targets: AppPenaltyTarget | AppPenaltyTarget[];
+  targets: EntityPenaltyTarget | EntityPenaltyTarget[];
   inputs: number[];
   description: string;
   info: DebuffInfoWrap;

@@ -1,8 +1,8 @@
 import type {
-  AppBonus,
-  AppBonusStack,
-  AppBonusTarget,
-  AppBuff,
+  EntityBonus,
+  EntityBonusStack,
+  EntityBonusTarget,
+  EntityBuff,
   ArtifactBonusCore,
   AttributeStat,
   CharacterBonusCore,
@@ -14,10 +14,11 @@ import type { BuffInfoWrap } from "./getCalculationStats.types";
 
 import { ELEMENT_TYPES } from "@Src/backend/constants";
 import { toArray } from "@Src/utils";
+import { EntityCalc } from "../utils";
 
 type BonusCore = CharacterBonusCore | WeaponBonusCore | ArtifactBonusCore;
 
-function isFinalBonus(bonusStacks?: AppBonusStack | AppBonusStack[]) {
+function isFinalBonus(bonusStacks?: EntityBonusStack | EntityBonusStack[]) {
   if (bonusStacks) {
     const hasAnyFinalBonus = toArray(bonusStacks).some((stack) => {
       switch (stack.type) {
@@ -32,17 +33,13 @@ function isFinalBonus(bonusStacks?: AppBonusStack | AppBonusStack[]) {
   return false;
 }
 
-function isTrulyFinalBonus(bonus: BonusCore, cmnStacks: AppBonusStack[]) {
+function isTrulyFinalBonus(bonus: BonusCore, cmnStacks: EntityBonusStack[]) {
   return (
     isFinalBonus(bonus.stacks) ||
     ("preExtra" in bonus && typeof bonus.preExtra === "object" && isFinalBonus(bonus.preExtra.stacks)) ||
     ("sufExtra" in bonus && typeof bonus.sufExtra === "object" && isFinalBonus(bonus.sufExtra.stacks)) ||
     (bonus.stackIndex !== undefined && isFinalBonus(cmnStacks[bonus.stackIndex]))
   );
-}
-
-export function meetIsFinal(isFinal: boolean | undefined, bonus: BonusCore, cmnStacks: AppBonusStack[]) {
-  return isFinal === undefined || isFinal === isTrulyFinalBonus(bonus, cmnStacks);
 }
 
 export type AppliedBonus = {
@@ -52,7 +49,7 @@ export type AppliedBonus = {
 type ApplyBonusArgs = {
   bonus: AppliedBonus;
   vision: ElementType;
-  targets: AppBonusTarget | AppBonusTarget[];
+  targets: EntityBonusTarget | EntityBonusTarget[];
   inputs: number[];
   description: string;
   info: BuffInfoWrap;
@@ -90,7 +87,9 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
       case "PATT":
       case "ELMT":
       case "RXN":
-        info.bonusCalc.add(target.module, target.path, bonus.value, description);
+        if (!isStackable || isStackable(target.path)) {
+          info.bonusCalc.add(target.module, target.path, bonus.value, description);
+        }
         break;
       case "ITEM":
         info.calcItemBuff.add(bonus.value, target, description);
@@ -104,24 +103,33 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
   }
 }
 
-type Bonus = WithBonusTargets<AppBonus<unknown>>;
+type Bonus = WithBonusTargets<EntityBonus<unknown>>;
 
 type ApplyBonusArgsPick = Pick<ApplyBonusArgs, "description" | "info" | "inputs" | "isStackable">;
 
 interface ApplyBonusesArgs<T extends Bonus> extends ApplyBonusArgsPick {
-  buff: Pick<AppBuff<T>, "trackId" | "cmnStacks" | "effects">;
-  isApplicable: (config: T) => boolean;
-  getBonus: (config: T) => AppliedBonus;
+  buff: Pick<EntityBuff<T>, "trackId" | "cmnStacks" | "effects">;
+  fromSelf?: boolean;
+  isFinal?: boolean;
+  getBonus: (config: T, commonStacks: number[]) => AppliedBonus;
 }
 export function applyBonuses<T extends Bonus>(args: ApplyBonusesArgs<T>) {
-  const { buff, isApplicable, getBonus, ...applyArgs } = args;
+  const { buff, fromSelf = false, isFinal, getBonus, ...applyArgs } = args;
   if (!buff.effects) return;
 
+  const cmnStacks = buff.cmnStacks ? toArray(buff.cmnStacks) : [];
+  const commonStacks = cmnStacks.map((cmnStack) =>
+    EntityCalc.getStackValue(cmnStack, args.info, args.inputs, fromSelf)
+  );
+
   for (const config of toArray(buff.effects)) {
-    if (isApplicable(config)) {
+    if (
+      (isFinal === undefined || isFinal === isTrulyFinalBonus(config, cmnStacks)) &&
+      EntityCalc.isApplicableEffect(config, args.info, args.inputs, fromSelf)
+    ) {
       applyBonus({
         ...applyArgs,
-        bonus: getBonus(config),
+        bonus: getBonus(config, commonStacks),
         vision: args.info.appChar.vision,
         targets: config.targets,
       });
