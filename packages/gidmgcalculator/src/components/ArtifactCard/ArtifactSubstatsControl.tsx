@@ -37,10 +37,10 @@ export function ArtifactSubstatsControl({
 
   const onKeyDownValue = (index: number) => (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && wrapper.current) {
-      const inputs = wrapper.current.querySelectorAll("input");
+      const inputs = wrapper.current.querySelectorAll(".ron-input-number") as NodeListOf<HTMLInputElement>;
       const nextInput = inputs[index + (e.shiftKey ? -1 : 1)];
 
-      if (nextInput) nextInput.focus();
+      if (nextInput) nextInput.focus?.();
     }
   };
 

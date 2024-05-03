@@ -1,4 +1,5 @@
 import type {
+  ActualAttackPattern,
   AppCharacter,
   AttackElement,
   AttackPattern,
@@ -93,21 +94,27 @@ export class CharacterCalc {
     key: LevelableTalentType,
     weaponType: WeaponType,
     elementType: ElementType,
-    attPatt: AttackPattern,
+    expectedAttPatt: AttackPattern,
     config?: AppCharacter["multFactorConf"]
   ): {
     attElmt: AttackElement;
+    attPatt: ActualAttackPattern;
     scale: number;
     basedOn: TalentAttributeType;
     flatFactorScale: number;
   } {
     const attElmt = key === "NAs" && weaponType !== "catalyst" ? "phys" : elementType;
-    const defaultScale = attPatt === "PA" ? 7 : attElmt === "phys" ? 1 : 2;
+    const defaultScale = expectedAttPatt === "PA" ? 7 : attElmt === "phys" ? 1 : 2;
     const defaultBasedOn: TalentAttributeType = "atk";
-    const { scale = defaultScale, basedOn = defaultBasedOn } = config?.[attPatt] || {};
+    const {
+      scale = defaultScale,
+      basedOn = defaultBasedOn,
+      attPatt = expectedAttPatt,
+    } = config?.[expectedAttPatt] || {};
 
     return {
       attElmt,
+      attPatt,
       scale,
       basedOn,
       flatFactorScale: 3,

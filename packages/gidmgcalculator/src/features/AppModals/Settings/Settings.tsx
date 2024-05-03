@@ -180,7 +180,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
               label,
               <VersatileSelect
                 title="Select Default Value"
-                className="font-medium h-8"
+                className="font-semibold h-8"
                 dropdownCls="font-medium"
                 align="right"
                 defaultValue={defaultValue}

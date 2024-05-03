@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { FaBars, FaCog, FaDonate, FaDownload, FaInfoCircle, FaQuestionCircle, FaSkull, FaUpload } from "react-icons/fa";
 import { BiDetail } from "react-icons/bi";
-import { useClickOutside, Button, Popover, useScreenWatcher } from "rond";
+import { useClickOutside, Button, Popover, useScreenWatcher, LoadingSpin } from "rond";
 
+import { useGetMetadata } from "@Src/hooks";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI, type UIState, type AppScreen } from "@Store/ui-slice";
 import { ActionButton, NavTabs, NavTabsProps } from "./navbar-components";
@@ -13,6 +14,8 @@ export function NavBar() {
   const dispatch = useDispatch();
   const appReady = useSelector((state) => state.ui.ready);
   const [menuDropped, setMenuDropped] = useState(false);
+
+  const { status, getMetadata } = useGetMetadata();
 
   const closeMenu = () => setMenuDropped(false);
 
@@ -62,6 +65,16 @@ export function NavBar() {
       </div>
 
       <div className="ml-auto flex">
+        {import.meta.env.DEV && (
+          <Button
+            shape="square"
+            icon={status === "loading" ? <LoadingSpin size="small" className="text-black" /> : null}
+            onClick={() => getMetadata(true)}
+          >
+            Refetch
+          </Button>
+        )}
+
         <Button variant="primary" shape="square" icon={<FaDonate />} onClick={openModal("DONATE")}>
           Donate
         </Button>

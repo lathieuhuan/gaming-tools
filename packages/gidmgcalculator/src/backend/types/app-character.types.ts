@@ -87,6 +87,7 @@ export type TalentAttributeType = "atk" | "def" | "hp" | "em";
 type MultFactorConfig = {
   scale?: number;
   basedOn?: TalentAttributeType;
+  attPatt?: ActualAttackPattern;
 };
 
 type CalcItemMultFactor = {

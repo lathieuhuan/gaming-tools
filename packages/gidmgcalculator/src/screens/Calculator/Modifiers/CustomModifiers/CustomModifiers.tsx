@@ -122,10 +122,12 @@ export default function CustomModifiers({ isBuffs }: CustomModifiersProps) {
               <p className="pl-1 pr-2 text-sm capitalize">{label}</p>
 
               <InputNumber
-                className="ml-auto w-16 font-medium"
+                className="ml-auto w-16 font-semibold"
                 size="medium"
                 min={min}
                 max={max}
+                maxDecimalDigits={1}
+                step="0.1"
                 value={ctrl.value}
                 onChange={(value) => {
                   dispatch(

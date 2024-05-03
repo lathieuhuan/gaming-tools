@@ -136,7 +136,7 @@ export default function getFinalResult({
 
     for (const stat of calcList[ATT_PATT]) {
       // DMG TYPES & AMPLIFYING REACTION MULTIPLIER
-      const attPatt = stat.attPatt || ATT_PATT;
+      const attPatt = stat.attPatt || defaultInfo.attPatt;
       let attElmt =
         (stat.subAttPatt === "FCA" ? vision : stat.attElmt === "absorb" ? absorption : stat.attElmt) ??
         defaultInfo.attElmt;
