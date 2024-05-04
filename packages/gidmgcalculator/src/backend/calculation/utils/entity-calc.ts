@@ -6,6 +6,7 @@ import type {
   ApplicableCondition,
   ElementType,
   InputCheck,
+  EntityBonusValueOption,
 } from "@Src/backend/types";
 import type { CalcUltilInfo } from "../calculation.types";
 import { toArray } from "@Src/utils";
@@ -26,7 +27,6 @@ export class EntityCalc {
     return true;
   }
 
-  /** @param fromSelf only on character effect */
   static isApplicableEffect(
     condition: ApplicableCondition,
     info: CalcUltilInfo,
@@ -63,6 +63,42 @@ export class EntityCalc {
       }
     }
     return true;
+  }
+
+  static getBonusValueOptionIndex(config: EntityBonusValueOption, info: CalcUltilInfo, inputs: number[]) {
+    const { optIndex = 0 } = config;
+    const indexConfig =
+      typeof optIndex === "number"
+        ? ({ source: "INPUT", inpIndex: optIndex } satisfies EntityBonusValueOption["optIndex"])
+        : optIndex;
+    let indexValue = -1;
+
+    switch (indexConfig.source) {
+      case "INPUT":
+        indexValue += inputs[indexConfig.inpIndex];
+        break;
+      case "ELEMENT": {
+        const { element } = indexConfig;
+        const elementCount = info.partyData.length ? GeneralCalc.countElements(info.partyData, info.appChar) : {};
+        indexValue +=
+          element === "various"
+            ? Object.keys(elementCount).length
+            : typeof element === "string"
+            ? elementCount[element] ?? 0
+            : element.reduce((total, type) => total + (elementCount[type] ?? 0), 0);
+        break;
+      }
+      case "LEVEL": {
+        indexValue += CharacterCalc.getFinalTalentLv({
+          talentType: indexConfig.talent,
+          char: info.char,
+          appChar: info.appChar,
+          partyData: info.partyData,
+        });
+        break;
+      }
+    }
+    return indexValue;
   }
 
   static getTotalExtraMax(

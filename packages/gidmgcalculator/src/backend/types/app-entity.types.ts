@@ -208,7 +208,7 @@ type LevelOptionIndex = {
   talent: TalentType;
 };
 
-type EntityBonusValueOption = {
+export type EntityBonusValueOption = {
   options: number[];
   /** If number, [source] is "INPUT", the number value is inpIndex. Default to 0 */
   optIndex?: number | InputOptionIndex | ElementOptionIndex | LevelOptionIndex;

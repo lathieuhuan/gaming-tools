@@ -63,12 +63,12 @@ export class CalcItemCalc {
       let flat = (calcItemBonus.flat ?? 0) + attPattBonus.all.flat + attElmtBonus[attElmt].flat;
       // CALCULATE DAMAGE BONUS MULTIPLIERS
       let normalMult = (calcItemBonus.pct_ ?? 0) + attPattBonus.all.pct_ + totalAttr[attElmt];
-      let specialMult = (calcItemBonus.multPlus ?? 0) + attPattBonus.all.multPlus;
+      let specialMult = (calcItemBonus.multPlus_ ?? 0) + attPattBonus.all.multPlus_;
 
       if (attPatt !== "none") {
         flat += attPattBonus[attPatt].flat;
         normalMult += attPattBonus[attPatt].pct_;
-        specialMult += attPattBonus[attPatt].multPlus;
+        specialMult += attPattBonus[attPatt].multPlus_;
       }
       normalMult = toMult(normalMult);
       specialMult = toMult(specialMult);

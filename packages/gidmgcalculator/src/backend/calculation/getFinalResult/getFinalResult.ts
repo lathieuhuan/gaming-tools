@@ -239,12 +239,12 @@ export default function getFinalResult({
     const baseValue = baseRxnDmg * mult;
     const nonCrit = baseValue * normalMult * resMult;
     const cDmg_ = rxnBonus[rxn].cDmg_ / 100;
-    const cRate_ = rxnBonus[rxn].cRate_ / 100;
+    const cRate_ = Math.max(rxnBonus[rxn].cRate_, 0) / 100;
 
     finalResult.RXN[rxn] = {
       nonCrit,
       crit: cDmg_ ? nonCrit * (1 + cDmg_) : 0,
-      average: cRate_ ? nonCrit * (1 + cDmg_ * cRate_) : 0,
+      average: cRate_ ? nonCrit * (1 + cDmg_ * cRate_) : nonCrit,
       attElmt: dmgType,
     };
 

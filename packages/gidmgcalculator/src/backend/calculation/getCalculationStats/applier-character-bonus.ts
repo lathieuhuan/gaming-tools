@@ -3,7 +3,7 @@ import type { CalcUltilInfo } from "../calculation.types";
 import type { BuffInfoWrap } from "./getCalculationStats.types";
 
 import { toArray } from "@Src/utils";
-import { CharacterCalc, GeneralCalc, EntityCalc } from "../utils";
+import { CharacterCalc, EntityCalc } from "../utils";
 import { applyBonuses, type AppliedBonus } from "./getCalculationStats.utils";
 
 export function getIntialBonusValue(
@@ -13,42 +13,15 @@ export function getIntialBonusValue(
   fromSelf: boolean
 ) {
   if (typeof value === "number") return value;
-  const { preOptions, options, optIndex = 0 } = value;
+  const { preOptions, options } = value;
   let index = -1;
 
   /** Navia */
   if (preOptions && !inputs[1]) {
     const preIndex = preOptions[inputs[0]];
     index += preIndex ?? preOptions[preOptions.length - 1];
-  } else if (typeof optIndex === "number") {
-    index = inputs[optIndex];
   } else {
-    switch (optIndex.source) {
-      case "ELEMENT": {
-        const { element } = optIndex;
-        const elementCount = info.partyData.length ? GeneralCalc.countElements(info.partyData, info.appChar) : {};
-        const input =
-          element === "various"
-            ? Object.keys(elementCount).length
-            : typeof element === "string"
-            ? elementCount[element] ?? 0
-            : element.reduce((total, type) => total + (elementCount[type] ?? 0), 0);
-
-        index += input;
-        break;
-      }
-      case "INPUT":
-        index += inputs[optIndex.inpIndex ?? 0];
-        break;
-      case "LEVEL":
-        index += CharacterCalc.getFinalTalentLv({
-          talentType: optIndex.talent,
-          char: info.char,
-          appChar: info.appChar,
-          partyData: info.partyData,
-        });
-        break;
-    }
+    index = EntityCalc.getBonusValueOptionIndex(value, info, inputs);
   }
 
   if (value.extra && EntityCalc.isApplicableEffect(value.extra, info, inputs, fromSelf)) {

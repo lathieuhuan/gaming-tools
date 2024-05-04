@@ -26,7 +26,11 @@ class ApplierWeaponBonus {
     if (typeof bonus.value === "number") {
       bonusValue = scaleRefi(bonus.value, bonus.incre);
     } else {
-      // not used yet
+      const { options } = bonus.value;
+      const index = EntityCalc.getBonusValueOptionIndex(bonus.value, this.info, inputs);
+
+      bonusValue = options[index] ?? (index > 0 ? options[options.length - 1] : 0);
+      bonusValue = scaleRefi(bonusValue, bonus.incre);
     }
 
     // ========== APPLY STACKS ==========
