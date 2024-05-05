@@ -42,11 +42,11 @@ export type AppCharacter = {
     value: number;
   };
   calcListConfig?: {
-    NA?: MultFactorConfig;
-    CA?: MultFactorConfig;
-    PA?: MultFactorConfig;
-    ES?: MultFactorConfig;
-    EB?: MultFactorConfig;
+    NA?: CalcListConfig;
+    CA?: CalcListConfig;
+    PA?: CalcListConfig;
+    ES?: CalcListConfig;
+    EB?: CalcListConfig;
   };
   calcList: {
     NA: CalcItem[];
@@ -84,7 +84,7 @@ type CharacterModifier = {
 
 export type TalentAttributeType = "atk" | "def" | "hp" | "em";
 
-type MultFactorConfig = {
+type CalcListConfig = {
   scale?: number;
   basedOn?: TalentAttributeType;
   attPatt?: ActualAttackPattern;
@@ -163,15 +163,19 @@ type CharacterBonus = WithBonusTargets<CharacterBonusCore>;
 
 type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "trackId" | "cmnStacks" | "effects">;
 
-export type CharacterBuff = EntityBuff<CharacterBonus> &
-  CharacterModifier & {
-    infuseConfig?: {
-      checkInput?: number | InputCheck;
-      overwritable: boolean;
-      range?: ("NA" | "CA" | "PA")[];
-      disabledNAs?: boolean;
-    };
+type CharacterBuffExtends = {
+  infuseConfig?: {
+    checkInput?: number | InputCheck;
+    overwritable: boolean;
+    range?: ("NA" | "CA" | "PA")[];
+    disabledNAs?: boolean;
   };
+  calcListConfig?: {
+    NA: Pick<CalcItem, "attPatt" | "attElmt">;
+  };
+};
+
+export type CharacterBuff = EntityBuff<CharacterBonus> & CharacterModifier & CharacterBuffExtends;
 
 // ============ DEBUFF / PENALTY ============
 
