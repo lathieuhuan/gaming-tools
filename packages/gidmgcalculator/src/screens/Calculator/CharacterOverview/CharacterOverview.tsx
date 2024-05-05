@@ -4,7 +4,6 @@ import { Button, SwitchNode, type SwitchNodeProps } from "rond";
 import { $AppCharacter } from "@Src/services";
 
 // Store
-import { RootState } from "@Store/store";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { initNewSessionWithCharacter } from "@Store/thunks";
 import { selectCharacter, updateCharacter } from "@Store/calculator-slice";
@@ -58,7 +57,7 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
           onChange={(newTab) => setActiveTab(newTab.toString())}
         />
 
-        <div className="mt-3 grow hide-scrollbar">
+        <div className="grow hide-scrollbar">
           <SwitchNode value={activeTab} cases={TABS} />
         </div>
       </div>

@@ -36,7 +36,7 @@ export default function getFinalResult({
 }: GetFinalResultArgs) {
   const resistReduct = new ResistanceReductionControl(tracker);
 
-  const { multFactorConf, calcList, weaponType, vision, debuffs } = appChar;
+  const { calcListConfig, calcList, weaponType, vision, debuffs } = appChar;
   const infoWrap: DebuffInfoWrap = {
     char,
     appChar,
@@ -131,7 +131,7 @@ export default function getFinalResult({
 
   ATTACK_PATTERNS.forEach((ATT_PATT) => {
     const resultKey = ATT_PATT === "ES" || ATT_PATT === "EB" ? ATT_PATT : "NAs";
-    const defaultInfo = CharacterCalc.getTalentDefaultInfo(resultKey, weaponType, vision, ATT_PATT, multFactorConf);
+    const defaultInfo = CharacterCalc.getTalentDefaultInfo(resultKey, weaponType, vision, ATT_PATT, calcListConfig);
     const level = CharacterCalc.getFinalTalentLv({ appChar, talentType: resultKey, char, partyData });
 
     for (const stat of calcList[ATT_PATT]) {
@@ -162,9 +162,10 @@ export default function getFinalResult({
         rxnMult = GeneralCalc.getAmplifyingMultiplier(attElmt, rxnBonus)[actualReaction];
       }
 
-      let bases = [];
+      let bases: number[] = [];
       const { type = "attack", flatFactor } = stat;
       const [bonusList, itemBonus] = calcItemBuff.get(stat.id);
+      const extraMult = (itemBonus.mult_ ?? 0) + attPattBonus[ATT_PATT].mult_;
 
       const record = TrackerControl.initCalcItemRecord({
         itemType: type,
@@ -181,30 +182,27 @@ export default function getFinalResult({
           basedOn = defaultInfo.basedOn,
         } = typeof factor === "number" ? { root: factor } : factor;
 
-        const finalMult =
-          root * CharacterCalc.getTalentMult(scale, level) + (itemBonus.mult_ ?? 0) + attPattBonus[ATT_PATT].mult_;
-
-        let flatBonus = 0;
-
-        if (flatFactor) {
-          const { root, scale = defaultInfo.flatFactorScale } =
-            typeof flatFactor === "number" ? { root: flatFactor } : flatFactor;
-
-          flatBonus = root * CharacterCalc.getTalentMult(scale, level);
-        }
+        const finalMult = root * CharacterCalc.getTalentMult(scale, level) + extraMult;
 
         record.multFactors.push({
           value: totalAttr[basedOn],
           desc: basedOn,
           talentMult: finalMult,
         });
-        record.totalFlat = flatBonus;
-
-        bases.push((totalAttr[basedOn] * finalMult) / 100 + flatBonus);
+        bases.push((totalAttr[basedOn] * finalMult) / 100);
       }
 
       if (stat.joinMultFactors) {
         bases = [bases.reduce((accumulator, base) => accumulator + base, 0)];
+      }
+
+      if (flatFactor) {
+        const { root, scale = defaultInfo.flatFactorScale } =
+          typeof flatFactor === "number" ? { root: flatFactor } : flatFactor;
+        const flatBonus = root * CharacterCalc.getTalentMult(scale, level);
+
+        bases = bases.map((base) => base + flatBonus);
+        record.totalFlat = flatBonus;
       }
 
       // TALENT DMG

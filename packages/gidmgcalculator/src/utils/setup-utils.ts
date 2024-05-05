@@ -13,9 +13,9 @@ import type {
   UserWeapon,
 } from "@Src/types";
 import { $AppCharacter } from "@Src/services";
-import { deepCopy, findByIndex } from "../pure-utils";
-import { Modifier_ } from "../modifier-utils";
-import { Utils_ } from "../utils";
+import { deepCopy, findByIndex } from "./pure-utils";
+import { Modifier_ } from "./modifier-utils";
+import { Utils_ } from "./utils";
 
 interface CleanupCalcSetupOptions {
   weaponID?: number;

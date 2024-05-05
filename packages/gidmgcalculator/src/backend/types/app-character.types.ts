@@ -41,7 +41,7 @@ export type AppCharacter = {
     type: AttributeStat;
     value: number;
   };
-  multFactorConf?: {
+  calcListConfig?: {
     NA?: MultFactorConfig;
     CA?: MultFactorConfig;
     PA?: MultFactorConfig;

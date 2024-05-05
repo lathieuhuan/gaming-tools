@@ -202,7 +202,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
       appChar.weaponType,
       appChar.vision,
       attPatt,
-      appChar.multFactorConf
+      appChar.calcListConfig
     );
 
     for (const stat of appChar.calcList[attPatt]) {

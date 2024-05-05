@@ -150,7 +150,7 @@ export function FinalResultLayout({
 
             <CollapseSpace key={tableKey.main} active={!closedSections[sectionIndex]}>
               {tableKey.subs.length === 0 ? (
-                <div className="pb-2">
+                <div className="pt-2">
                   <p className="pt-2 pb-1 bg-surface-2 text-center text-hint-color">
                     This talent does not deal damage.
                   </p>

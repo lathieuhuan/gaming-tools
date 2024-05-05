@@ -116,8 +116,9 @@ export class CalcItemCalc {
         average: applyToOneOrMany(base, (n) => n * (1 + cRate_ * cDmg_)),
         attElmt,
       };
-    } //
-    else if (!Array.isArray(base)) {
+    }
+
+    if (!Array.isArray(base)) {
       let flat = 0;
       let normalMult = 1;
 
@@ -142,6 +143,7 @@ export class CalcItemCalc {
       }
       return { nonCrit: base, crit: 0, average: base };
     }
+
     return { nonCrit: 0, crit: 0, average: 0 };
   }
 }

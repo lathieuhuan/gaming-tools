@@ -2,7 +2,7 @@ import type { Level } from "@Src/backend/types";
 import { LEVELS } from "@Src/backend/constants";
 import { GeneralCalc } from "./general-calc";
 
-export const BASE_ATTACK_TYPE: Record<string, number[]> = {
+const BASE_ATTACK_TYPE: Record<string, number[]> = {
   23: [23, 56, 68, 102, 113, 130, 141, 158, 169, 185, 185, 185, 185, 185],
   33: [33, 80, 91, 139, 151, 174, 186, 209, 220, 243, 243, 243, 243, 243],
   38: [38, 86, 105, 151, 171, 193, 212, 234, 253, 274, 294, 314, 334, 354],
@@ -18,7 +18,7 @@ export const BASE_ATTACK_TYPE: Record<string, number[]> = {
   49: [49, 145, 176, 286, 317, 374, 406, 464, 495, 555, 586, 648, 679, 741],
 };
 
-export const SUBSTAT_SCALE: Record<string, number[]> = {
+const SUBSTAT_SCALE: Record<string, number[]> = {
   "3%": [3, 5.3, 7.7, 8.9, 10.1, 11.4, 12.6, 13.8],
   "3.4%": [3.4, 6, 8.8, 10.1, 11.5, 12.9, 14.2, 15.6],
   "3.6%": [3.6, 6.4, 9.3, 10.7, 12.2, 13.6, 15.1, 16.5],
