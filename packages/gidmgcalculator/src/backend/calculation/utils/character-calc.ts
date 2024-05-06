@@ -91,28 +91,29 @@ export class CharacterCalc {
   }
 
   static getTalentDefaultInfo(
-    key: LevelableTalentType,
-    weaponType: WeaponType,
-    elementType: ElementType,
     expectedAttPatt: AttackPattern,
-    config: AppCharacter["calcListConfig"]
+    appChar: AppCharacter
   ): {
-    attElmt: AttackElement;
-    attPatt: ActualAttackPattern;
-    scale: number;
-    basedOn: TalentAttributeType;
-    flatFactorScale: number;
+    resultKey: "ES" | "EB" | "NAs";
+    defaultScale: number;
+    defaultBasedOn: TalentAttributeType;
+    defaultAttPatt: ActualAttackPattern;
+    defaultFlatFactorScale: number;
   } {
-    const attElmt = key === "NAs" && weaponType !== "catalyst" ? "phys" : elementType;
-    const defaultScale = attElmt === "phys" ? 7 : 2;
-    const { scale = defaultScale, basedOn = "atk", attPatt = expectedAttPatt } = config?.[expectedAttPatt] || {};
+    const resultKey = expectedAttPatt === "ES" || expectedAttPatt === "EB" ? expectedAttPatt : "NAs";
+    const defaultScale = resultKey === "NAs" && appChar.weaponType !== "catalyst" ? 7 : 2;
+    const {
+      scale = defaultScale,
+      basedOn = "atk",
+      attPatt = expectedAttPatt,
+    } = appChar.calcListConfig?.[expectedAttPatt] || {};
 
     return {
-      attElmt,
-      attPatt,
-      scale,
-      basedOn,
-      flatFactorScale: 3,
+      resultKey,
+      defaultScale: scale,
+      defaultBasedOn: basedOn,
+      defaultAttPatt: attPatt,
+      defaultFlatFactorScale: 3,
     };
   }
 }

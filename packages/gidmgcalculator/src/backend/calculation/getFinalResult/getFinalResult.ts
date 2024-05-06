@@ -1,4 +1,3 @@
-import type { NormalAttack } from "@Src/backend/types";
 import type { CalculationFinalResult } from "../calculation.types";
 import type { DebuffInfoWrap, GetFinalResultArgs } from "./getFinalResult.types";
 
@@ -30,14 +29,13 @@ export default function getFinalResult({
   attElmtBonus,
   rxnBonus,
   calcItemBuff,
-  elmtModCtrls: { reaction, infuse_reaction, resonances, superconduct, absorption },
+  elmtModCtrls,
   infusion,
   target,
   tracker,
 }: GetFinalResultArgs) {
   const resistReduct = new ResistanceReductionControl(tracker);
 
-  const { calcListConfig, calcList, weaponType, vision, debuffs } = appChar;
   const infoWrap: DebuffInfoWrap = {
     char,
     appChar,
@@ -53,7 +51,7 @@ export default function getFinalResult({
 
   // APPLY SELF DEBUFFS
   for (const { activated, inputs = [], index } of selfDebuffCtrls) {
-    const debuff = findByIndex(debuffs || [], index);
+    const debuff = findByIndex(appChar.debuffs || [], index);
 
     if (activated && debuff?.effects && EntityCalc.isGrantedEffect(debuff, char)) {
       characterDebuff.apply({
@@ -106,11 +104,11 @@ export default function getFinalResult({
   }
 
   // APPLY RESONANCE DEBUFFS
-  const geoRsn = resonances.find((rsn) => rsn.vision === "geo");
+  const geoRsn = elmtModCtrls.resonances.find((rsn) => rsn.vision === "geo");
   if (geoRsn && geoRsn.activated) {
     resistReduct.add("geo", 20, "Geo resonance");
   }
-  if (superconduct) {
+  if (elmtModCtrls.superconduct) {
     resistReduct.add("phys", 40, "Superconduct");
   }
   const finalResistances = resistReduct.apply(target);
@@ -123,6 +121,8 @@ export default function getFinalResult({
     WP_CALC: {},
   };
 
+  const attackPatternConfig = new AttackPatternConfig(appChar, elmtModCtrls, infusion);
+
   const calcItemCalc = new CalcItemCalc(
     char.level,
     target.level,
@@ -133,41 +133,25 @@ export default function getFinalResult({
   );
 
   ATTACK_PATTERNS.forEach((ATT_PATT) => {
-    const resultKey = ATT_PATT === "ES" || ATT_PATT === "EB" ? ATT_PATT : "NAs";
-    const defaultInfo = CharacterCalc.getTalentDefaultInfo(resultKey, weaponType, vision, ATT_PATT, calcListConfig);
+    const { resultKey, configCalcItem, configFlatFactor } = attackPatternConfig.config(ATT_PATT);
     const level = CharacterCalc.getFinalTalentLv({ appChar, talentType: resultKey, char, partyData });
 
-    for (const stat of calcList[ATT_PATT]) {
-      // DMG TYPES & AMPLIFYING REACTION MULTIPLIER
-      const { attPatt = defaultInfo.attPatt } = stat;
-      let attElmt =
-        (stat.subAttPatt === "FCA" ? vision : stat.attElmt === "absorb" ? absorption : stat.attElmt) ??
-        defaultInfo.attElmt;
-      let actualReaction = reaction;
+    for (const calcItem of appChar.calcList[ATT_PATT]) {
+      const { attPatt, attElmt, reaction, configMultFactor } = configCalcItem(calcItem);
       let rxnMult = 1;
 
-      // check and infused
-      if (
-        resultKey === "NAs" &&
-        attElmt === "phys" &&
-        infusion.element !== "phys" &&
-        infusion.range.includes(ATT_PATT as NormalAttack)
-      ) {
-        attElmt = infusion.element;
-
-        if (infusion.isCustom) {
-          actualReaction = infuse_reaction;
-        }
-      }
+      // console.log("====================");
+      // console.log("calcItem", calcItem.name);
+      // console.log(attPatt, attElmt, reaction);
 
       // deal elemental dmg and want amplify reaction
-      if (attElmt !== "phys" && (actualReaction === "melt" || actualReaction === "vaporize")) {
-        rxnMult = GeneralCalc.getAmplifyingMultiplier(attElmt, rxnBonus)[actualReaction];
+      if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
+        rxnMult = GeneralCalc.getAmplifyingMultiplier(attElmt, rxnBonus)[reaction];
       }
 
       let bases: number[] = [];
-      const { type = "attack", flatFactor } = stat;
-      const [bonusList, itemBonus] = calcItemBuff.get(stat.id);
+      const { type = "attack" } = calcItem;
+      const [bonusList, itemBonus] = calcItemBuff.get(calcItem.id);
       const extraMult = (itemBonus.mult_ ?? 0) + attPattBonus[ATT_PATT].mult_;
 
       const record = TrackerControl.initCalcItemRecord({
@@ -178,14 +162,12 @@ export default function getFinalResult({
       });
 
       // CALCULATE BASE DAMAGE
-      for (const factor of toArray(stat.multFactors)) {
-        const {
-          root,
-          scale = defaultInfo.scale,
-          basedOn = defaultInfo.basedOn,
-        } = typeof factor === "number" ? { root: factor } : factor;
-
+      for (const factor of toArray(calcItem.multFactors)) {
+        const { root, scale, basedOn } = configMultFactor(factor);
         const finalMult = root * CharacterCalc.getTalentMult(scale, level) + extraMult;
+
+        // console.log("factor");
+        // console.log(root, scale, basedOn);
 
         record.multFactors.push({
           value: totalAttr[basedOn],
@@ -195,13 +177,12 @@ export default function getFinalResult({
         bases.push((totalAttr[basedOn] * finalMult) / 100);
       }
 
-      if (stat.joinMultFactors) {
+      if (calcItem.joinMultFactors) {
         bases = [bases.reduce((accumulator, base) => accumulator + base, 0)];
       }
 
-      if (flatFactor) {
-        const { root, scale = defaultInfo.flatFactorScale } =
-          typeof flatFactor === "number" ? { root: flatFactor } : flatFactor;
+      if (calcItem.flatFactor) {
+        const { root, scale } = configFlatFactor(calcItem.flatFactor);
         const flatBonus = root * CharacterCalc.getTalentMult(scale, level);
 
         bases = bases.map((base) => base + flatBonus);
@@ -209,25 +190,25 @@ export default function getFinalResult({
       }
 
       // TALENT DMG
-      if (resultKey === "NAs" && disabledNAs && !stat.type) {
-        finalResult[resultKey][stat.name] = {
+      if (resultKey === "NAs" && disabledNAs && type === "attack") {
+        finalResult[resultKey][calcItem.name] = {
           nonCrit: 0,
           crit: 0,
           average: 0,
         };
       } else {
-        finalResult[resultKey][stat.name] = calcItemCalc.calculate({
+        finalResult[resultKey][calcItem.name] = calcItemCalc.calculate({
           base: bases.length > 1 ? bases : bases[0],
           attPatt,
           attElmt,
-          calcType: stat.type,
+          calcType: type,
           rxnMult,
           calcItemBonus: itemBonus,
           record,
         });
       }
 
-      tracker?.recordCalcItem(resultKey, stat.name, record);
+      tracker?.recordCalcItem(resultKey, calcItem.name, record);
     }
   });
 
@@ -275,7 +256,7 @@ export default function getFinalResult({
     });
 
     finalResult.WP_CALC[name] = calcItemCalc.calculate({
-      calcType: calcItem.type,
+      calcType: type,
       attElmt: "phys",
       attPatt: "none",
       base: (totalAttr[baseOn] * mult) / 100,

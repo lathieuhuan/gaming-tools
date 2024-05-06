@@ -193,17 +193,9 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
   ];
 
   for (const attPatt of ATTACK_PATTERNS) {
-    const resultKey = attPatt === "ES" || attPatt === "EB" ? attPatt : "NAs";
-    const talent = result.find((item) => item.type === resultKey);
+    const info = CharacterCalc.getTalentDefaultInfo(attPatt, appChar);
+    const talent = result.find((item) => item.type === info.resultKey);
     if (!talent) continue;
-
-    const defaultInfo = CharacterCalc.getTalentDefaultInfo(
-      resultKey,
-      appChar.weaponType,
-      appChar.vision,
-      attPatt,
-      appChar.calcListConfig
-    );
 
     for (const stat of appChar.calcList[attPatt]) {
       const multFactors = toArray(stat.multFactors);
@@ -217,8 +209,8 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
       for (const factor of multFactors) {
         const {
           root,
-          scale = defaultInfo.scale,
-          basedOn = defaultInfo.basedOn,
+          scale = info.defaultScale,
+          basedOn = info.defaultBasedOn,
         } = typeof factor === "number" ? { root: factor } : factor;
 
         if (scale && root) {
@@ -233,7 +225,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
       }
 
       if (flatFactor) {
-        const { root, scale = defaultInfo.flatFactorScale } =
+        const { root, scale = info.defaultFlatFactorScale } =
           typeof flatFactor === "number" ? { root: flatFactor } : flatFactor;
 
         factorStrings.push(Math.round(root * (scale ? CharacterCalc.getTalentMult(scale, level) : 1)));

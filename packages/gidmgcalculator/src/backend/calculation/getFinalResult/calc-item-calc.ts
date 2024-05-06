@@ -14,7 +14,7 @@ import { applyToOneOrMany, toMult } from "@Src/utils";
 import { GeneralCalc } from "../utils";
 
 type CalculateArgs = {
-  calcType?: CalcItemType;
+  calcType: CalcItemType;
   attPatt: ActualAttackPattern;
   attElmt: AttackElement;
   base: number | number[];
@@ -59,7 +59,7 @@ export class CalcItemCalc {
   }: CalculateArgs): CalculationFinalResultItem {
     const { totalAttr, attPattBonus, attElmtBonus, resistReduct } = this;
 
-    if (base !== 0 && !calcType) {
+    if (base !== 0 && calcType === "attack") {
       let flat = (calcItemBonus.flat ?? 0) + attPattBonus.all.flat + attElmtBonus[attElmt].flat;
       // CALCULATE DAMAGE BONUS MULTIPLIERS
       let normalMult = (calcItemBonus.pct_ ?? 0) + attPattBonus.all.pct_ + totalAttr[attElmt];

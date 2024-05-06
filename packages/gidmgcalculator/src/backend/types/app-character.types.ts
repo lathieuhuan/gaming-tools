@@ -90,13 +90,26 @@ type CalcListConfig = {
   attPatt?: ActualAttackPattern;
 };
 
-type CalcItemMultFactor = {
-  root: number;
-  /** When 0 stat not scale off talent level */
-  scale?: number;
-  /** Calc default to 'atk'. Only on ES / EB */
-  basedOn?: TalentAttributeType;
-};
+export type CalcItemMultFactor =
+  | number
+  | {
+      root: number;
+      /** When 0 stat not scale off talent level */
+      scale?: number;
+      /** Calc default to 'atk'. Only on ES / EB */
+      basedOn?: TalentAttributeType;
+    };
+
+export type CalcItemFlatFactor =
+  | number
+  | {
+      root: number;
+      /**
+       * Calc default to getTalentDefaultInfo's return.flatFactorScale.
+       * When 0 not scale off talent level.
+       */
+      scale?: number;
+    };
 
 export type CalcItem = {
   id?: string;
@@ -109,21 +122,12 @@ export type CalcItem = {
   /**
    * Damage factors multiplying an attribute, scaling off talent level
    */
-  multFactors: number | number[] | CalcItemMultFactor | CalcItemMultFactor[];
+  multFactors: CalcItemMultFactor | CalcItemMultFactor[];
   joinMultFactors?: boolean;
   /**
    * Damage factor multiplying root, caling off talent level. Only on ES / EB
    */
-  flatFactor?:
-    | number
-    | {
-        root: number;
-        /**
-         * Calc default to getTalentDefaultInfo's return.flatFactorScale.
-         * When 0 not scale off talent level.
-         */
-        scale?: number;
-      };
+  flatFactor?: CalcItemFlatFactor;
 };
 
 // ========== BUFF / BONUS ==========
