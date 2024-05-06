@@ -7,8 +7,8 @@ import { TRANSFORMATIVE_REACTION_INFO } from "../calculation.constants";
 
 import { findByIndex, toArray } from "@Src/utils";
 import { CharacterCalc, EntityCalc, GeneralCalc } from "../utils";
-import { applyPenalty } from "./getFinalResult.utils";
 import { ResistanceReductionControl, TrackerControl } from "../controls";
+import { applyPenalty } from "./getFinalResult.utils";
 import { CalcItemCalc } from "./calc-item-calc";
 import ApplierCharacterDebuff from "./applier-character-debuff";
 import AttackPatternConfig from "./attack-pattern-config";
@@ -31,6 +31,7 @@ export default function getFinalResult({
   calcItemBuff,
   elmtModCtrls,
   infusion,
+  calcListConfig,
   target,
   tracker,
 }: GetFinalResultArgs) {
@@ -50,14 +51,14 @@ export default function getFinalResult({
   }
 
   // APPLY SELF DEBUFFS
-  for (const { activated, inputs = [], index } of selfDebuffCtrls) {
-    const debuff = findByIndex(appChar.debuffs || [], index);
+  for (const ctrl of selfDebuffCtrls) {
+    const debuff = findByIndex(appChar.debuffs || [], ctrl.index);
 
-    if (activated && debuff?.effects && EntityCalc.isGrantedEffect(debuff, char)) {
+    if (ctrl.activated && debuff?.effects && EntityCalc.isGrantedEffect(debuff, char)) {
       characterDebuff.apply({
         description: `Self / ${debuff.src}`,
         effects: debuff.effects,
-        inputs,
+        inputs: ctrl.inputs ?? [],
         fromSelf: true,
       });
     }
@@ -72,12 +73,10 @@ export default function getFinalResult({
       const debuff = findByIndex(debuffs, ctrl.index);
 
       if (ctrl.activated && debuff?.effects) {
-        const { inputs = [] } = ctrl;
-
         characterDebuff.apply({
           description: `Self / ${debuff.src}`,
           effects: debuff.effects,
-          inputs,
+          inputs: ctrl.inputs ?? [],
           fromSelf: false,
         });
       }
@@ -87,7 +86,6 @@ export default function getFinalResult({
   // APPLY ARTIFACT DEBUFFS
   for (const ctrl of artDebuffCtrls) {
     if (ctrl.activated) {
-      const { inputs = [] } = ctrl;
       const { name, debuffs = [] } = $AppData.getArtifactSet(ctrl.code) || {};
       const { effects } = debuffs[ctrl.index] || {};
 
@@ -96,7 +94,7 @@ export default function getFinalResult({
           penaltyValue: effects.value,
           targets: effects.targets,
           info: infoWrap,
-          inputs,
+          inputs: ctrl.inputs ?? [],
           description: `${name} / 4-piece activated`,
         });
       }
@@ -133,16 +131,16 @@ export default function getFinalResult({
   );
 
   ATTACK_PATTERNS.forEach((ATT_PATT) => {
-    const { resultKey, configCalcItem, configFlatFactor } = attackPatternConfig.config(ATT_PATT);
+    const { resultKey, configCalcItem, configFlatFactor } = attackPatternConfig.config(ATT_PATT, calcListConfig);
     const level = CharacterCalc.getFinalTalentLv({ appChar, talentType: resultKey, char, partyData });
 
     for (const calcItem of appChar.calcList[ATT_PATT]) {
       const { attPatt, attElmt, reaction, configMultFactor } = configCalcItem(calcItem);
       let rxnMult = 1;
 
-      // console.log("====================");
-      // console.log("calcItem", calcItem.name);
-      // console.log(attPatt, attElmt, reaction);
+      console.log("====================");
+      console.log("calcItem", calcItem.name);
+      console.log(attPatt, attElmt, reaction);
 
       // deal elemental dmg and want amplify reaction
       if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
@@ -166,8 +164,8 @@ export default function getFinalResult({
         const { root, scale, basedOn } = configMultFactor(factor);
         const finalMult = root * CharacterCalc.getTalentMult(scale, level) + extraMult;
 
-        // console.log("factor");
-        // console.log(root, scale, basedOn);
+        console.log("factor");
+        console.log(root, scale, basedOn);
 
         record.multFactors.push({
           value: totalAttr[basedOn],

@@ -206,7 +206,11 @@ function SectionTable(props: SectionTableProps) {
 
         return (
           <Table.Tr key={subKey}>
-            <Table.Td title={config.element} className="sticky left-0 z-10" style={{ background: "inherit" }}>
+            <Table.Td
+              title={config.element}
+              className={`sticky left-0 z-10 text-${config.element}`}
+              style={{ background: "inherit" }}
+            >
               {props.getRowTitle(subKey)}
             </Table.Td>
 

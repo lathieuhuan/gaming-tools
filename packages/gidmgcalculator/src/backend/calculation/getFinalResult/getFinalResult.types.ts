@@ -18,7 +18,12 @@ import type {
   ReactionBonus,
 } from "@Src/backend/types";
 import type { CalcInfusion, TotalAttribute } from "../calculation.types";
-import type { TrackerControl, ResistanceReductionControl, CalcItemBuffControl } from "../controls";
+import type {
+  TrackerControl,
+  ResistanceReductionControl,
+  CalcItemBuffControl,
+  CalcListConfigControl,
+} from "../controls";
 
 export type DebuffInfoWrap = {
   char: Character;
@@ -46,5 +51,6 @@ export interface GetFinalResultArgs {
   calcItemBuff: CalcItemBuffControl;
   disabledNAs: boolean;
   infusion: CalcInfusion;
+  calcListConfig: CalcListConfigControl;
   tracker?: TrackerControl;
 }

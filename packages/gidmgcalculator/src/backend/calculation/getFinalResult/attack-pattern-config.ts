@@ -7,11 +7,12 @@ import type {
   CalcItemFlatFactor,
   CalcItemMultFactor,
 } from "../../types";
-import type { CalcInfusion, CalcUltilInfo } from "../calculation.types";
+import type { CalcInfusion } from "../calculation.types";
+import type { CalcListConfigControl } from "../controls";
 import { CharacterCalc } from "../utils";
 
 class AttackPatternConfig {
-  private appChar: CalcUltilInfo["appChar"];
+  private appChar: AppCharacter;
   private elmtModCtrls: ElementModCtrl;
   private infusion: CalcInfusion;
 
@@ -21,9 +22,10 @@ class AttackPatternConfig {
     this.infusion = infusion;
   }
 
-  config(patternKey: AttackPattern) {
+  config(patternKey: AttackPattern, calcListConfigCtrl: CalcListConfigControl) {
     const info = CharacterCalc.getTalentDefaultInfo(patternKey, this.appChar);
     const { resultKey } = info;
+    const calcListConfig = calcListConfigCtrl.get(patternKey);
     let reaction = this.elmtModCtrls.reaction;
 
     const configCalcItem = (item: CalcItem) => {
@@ -72,8 +74,8 @@ class AttackPatternConfig {
       };
 
       return {
-        attElmt,
-        attPatt: item.attPatt || info.defaultAttPatt,
+        attElmt: calcListConfig?.attElmt ?? attElmt,
+        attPatt: calcListConfig?.attPatt ?? item.attPatt ?? info.defaultAttPatt,
         reaction,
         configMultFactor,
       };

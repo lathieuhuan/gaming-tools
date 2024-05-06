@@ -1,6 +1,8 @@
 import type {
   ActualAttackElement,
   ActualAttackPattern,
+  AttackElement,
+  AttackPattern,
   AttributeStat,
   ElementType,
   TalentType,
@@ -167,6 +169,11 @@ type CharacterBonus = WithBonusTargets<CharacterBonusCore>;
 
 type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "trackId" | "cmnStacks" | "effects">;
 
+export type CharacterBuffCalcListConfig = Record<
+  AttackPattern,
+  { attPatt: AttackPattern; attElmt: AttackElement } | undefined
+>;
+
 type CharacterBuffExtends = {
   infuseConfig?: {
     checkInput?: number | InputCheck;
@@ -174,9 +181,7 @@ type CharacterBuffExtends = {
     range?: ("NA" | "CA" | "PA")[];
     disabledNAs?: boolean;
   };
-  calcListConfig?: {
-    NA: Pick<CalcItem, "attPatt" | "attElmt">;
-  };
+  calcListConfig?: CharacterBuffCalcListConfig;
 };
 
 export type CharacterBuff = EntityBuff<CharacterBonus> & CharacterModifier & CharacterBuffExtends;

@@ -28,7 +28,7 @@ export default function getCalculationStats({
   party = [],
   partyData = [],
   elmtModCtrls,
-  selfBuffCtrls,
+  selfBuffCtrls = [],
   wpBuffCtrls,
   artBuffCtrls,
   customBuffCtrls,
@@ -91,7 +91,6 @@ export default function getCalculationStats({
   };
 
   const APPLY_SELF_BUFFS = (isFinal: boolean) => {
-    const charBuffCtrls = selfBuffCtrls || [];
     const { innateBuffs = [], buffs = [] } = appChar;
     const inputs: number[] = [];
 
@@ -106,7 +105,7 @@ export default function getCalculationStats({
         });
       }
     }
-    for (const ctrl of charBuffCtrls) {
+    for (const ctrl of selfBuffCtrls) {
       const buff = findByIndex(buffs, ctrl.index);
 
       if (ctrl.activated && buff && EntityCalc.isGrantedEffect(buff, char)) {
