@@ -11,7 +11,8 @@ import { CharacterCalc, EntityCalc, GeneralCalc } from "../utils";
 import { applyPenalty } from "./getFinalResult.utils";
 import { ResistanceReductionControl, TrackerControl } from "../controls";
 import { CalcItemCalc } from "./calc-item-calc";
-import applyAbilityDebuff from "./applyCharacterDebuff";
+import ApplierCharacterDebuff from "./applier-character-debuff";
+import AttackPatternConfig from "./attack-pattern-config";
 
 export default function getFinalResult({
   char,
@@ -43,6 +44,7 @@ export default function getFinalResult({
     partyData,
     resistReduct,
   };
+  const characterDebuff = new ApplierCharacterDebuff(infoWrap);
 
   // APPLY CUSTOM DEBUFFS
   for (const control of customDebuffCtrls) {
@@ -54,11 +56,10 @@ export default function getFinalResult({
     const debuff = findByIndex(debuffs || [], index);
 
     if (activated && debuff?.effects && EntityCalc.isGrantedEffect(debuff, char)) {
-      applyAbilityDebuff({
+      characterDebuff.apply({
         description: `Self / ${debuff.src}`,
         effects: debuff.effects,
         inputs,
-        infoWrap,
         fromSelf: true,
       });
     }
@@ -69,15 +70,16 @@ export default function getFinalResult({
     if (!teammate) continue;
     const { debuffs = [] } = $AppCharacter.get(teammate.name);
 
-    for (const { activated, inputs = [], index } of teammate.debuffCtrls) {
-      const debuff = findByIndex(debuffs, index);
+    for (const ctrl of teammate.debuffCtrls) {
+      const debuff = findByIndex(debuffs, ctrl.index);
 
-      if (activated && debuff?.effects) {
-        applyAbilityDebuff({
+      if (ctrl.activated && debuff?.effects) {
+        const { inputs = [] } = ctrl;
+
+        characterDebuff.apply({
           description: `Self / ${debuff.src}`,
           effects: debuff.effects,
           inputs,
-          infoWrap,
           fromSelf: false,
         });
       }
@@ -85,10 +87,11 @@ export default function getFinalResult({
   }
 
   // APPLY ARTIFACT DEBUFFS
-  for (const { activated, code, index, inputs = [] } of artDebuffCtrls) {
-    if (activated) {
-      const { name, debuffs = [] } = $AppData.getArtifactSet(code) || {};
-      const { effects } = debuffs[index] || {};
+  for (const ctrl of artDebuffCtrls) {
+    if (ctrl.activated) {
+      const { inputs = [] } = ctrl;
+      const { name, debuffs = [] } = $AppData.getArtifactSet(ctrl.code) || {};
+      const { effects } = debuffs[ctrl.index] || {};
 
       if (effects) {
         applyPenalty({
@@ -136,7 +139,7 @@ export default function getFinalResult({
 
     for (const stat of calcList[ATT_PATT]) {
       // DMG TYPES & AMPLIFYING REACTION MULTIPLIER
-      const attPatt = stat.attPatt || defaultInfo.attPatt;
+      const { attPatt = defaultInfo.attPatt } = stat;
       let attElmt =
         (stat.subAttPatt === "FCA" ? vision : stat.attElmt === "absorb" ? absorption : stat.attElmt) ??
         defaultInfo.attElmt;

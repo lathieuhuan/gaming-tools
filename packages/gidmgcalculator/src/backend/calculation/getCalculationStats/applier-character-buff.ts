@@ -35,7 +35,7 @@ export function getIntialBonusValue(
   return options[index] ?? (index > 0 ? options[options.length - 1] : 0);
 }
 
-class ApplierCharacterBonus {
+class ApplierCharacterBuff {
   info: BuffInfoWrap;
 
   constructor(info: BuffInfoWrap) {
@@ -120,4 +120,4 @@ class ApplierCharacterBonus {
   }
 }
 
-export default ApplierCharacterBonus;
+export default ApplierCharacterBuff;

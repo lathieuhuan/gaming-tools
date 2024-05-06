@@ -15,9 +15,9 @@ import { $AppCharacter, $AppData } from "@Src/services";
 import { findByIndex } from "@Src/utils";
 import { EntityCalc, GeneralCalc, WeaponCalc } from "../utils";
 import { ArtifactAttributeControl, BonusControl, CalcItemBuffControl, TotalAttributeControl } from "../controls";
-import ApplierCharacterBonus from "./applier-character-bonus";
-import ApplierWeaponBonus from "./applier-weapon-bonus";
-import ApplierArtifactBonus from "./applier-artifact-bonus";
+import ApplierCharacterBuff from "./applier-character-buff";
+import ApplierWeaponBuff from "./applier-weapon-buff";
+import ApplierArtifactBuff from "./applier-artifact-buff";
 
 export default function getCalculationStats({
   char,
@@ -63,9 +63,9 @@ export default function getCalculationStats({
     infusedElement,
   };
 
-  const characterBonus = new ApplierCharacterBonus(infoWrap);
-  const weaponBonus = new ApplierWeaponBonus(infoWrap);
-  const artifactBonus = new ApplierArtifactBonus(infoWrap);
+  const characterBuff = new ApplierCharacterBuff(infoWrap);
+  const weaponBuff = new ApplierWeaponBuff(infoWrap);
+  const artifactBuff = new ApplierArtifactBuff(infoWrap);
   const usedMods: NonNullable<StackableCheckCondition>[] = [];
 
   const isStackable = (condition: StackableCheckCondition) => {
@@ -97,7 +97,7 @@ export default function getCalculationStats({
 
     for (const buff of innateBuffs) {
       if (EntityCalc.isGrantedEffect(buff, char)) {
-        characterBonus.apply({
+        characterBuff.apply({
           description: `Self / ${buff.src}`,
           buff,
           inputs,
@@ -110,7 +110,7 @@ export default function getCalculationStats({
       const buff = findByIndex(buffs, ctrl.index);
 
       if (ctrl.activated && buff && EntityCalc.isGrantedEffect(buff, char)) {
-        characterBonus.apply({
+        characterBuff.apply({
           description: `Self / ${buff.src}`,
           buff,
           inputs: ctrl.inputs ?? [],
@@ -123,7 +123,7 @@ export default function getCalculationStats({
 
   const APPLY_WEAPON_BONUSES = (isFinal: boolean) => {
     if (appWeapon.bonuses) {
-      weaponBonus.apply({
+      weaponBuff.apply({
         description: `${appWeapon.name} bonus`,
         buff: {
           effects: appWeapon.bonuses,
@@ -143,7 +143,7 @@ export default function getCalculationStats({
         const buff = data?.setBonuses?.[i];
 
         if (buff && buff.effects) {
-          artifactBonus.apply({
+          artifactBuff.apply({
             description: `${data.name} / ${i * 2 + 2}-piece bonus`,
             buff: {
               effects: buff.effects,
@@ -201,7 +201,7 @@ export default function getCalculationStats({
         const buff = findByIndex(buffs, index);
         if (!activated || !buff) continue;
 
-        characterBonus.apply({
+        characterBuff.apply({
           description: `${name} / ${buff.src}`,
           buff,
           inputs,
@@ -218,7 +218,7 @@ export default function getCalculationStats({
           const buff = findByIndex(buffs, ctrl.index);
 
           if (ctrl.activated && buff) {
-            weaponBonus.apply({
+            weaponBuff.apply({
               description: `${name} activated`,
               buff,
               inputs: ctrl.inputs ?? [],
@@ -238,7 +238,7 @@ export default function getCalculationStats({
           const buff = findByIndex(buffs, ctrl.index);
 
           if (ctrl.activated && buff) {
-            artifactBonus.apply({
+            artifactBuff.apply({
               description: `${name} / 4-Piece activated`,
               buff,
               inputs: ctrl.inputs ?? [],
@@ -258,7 +258,7 @@ export default function getCalculationStats({
       const buff = findByIndex(appWeapon.buffs, ctrl.index);
 
       if (ctrl.activated && buff) {
-        weaponBonus.apply({
+        weaponBuff.apply({
           description: `${appWeapon.name} activated`,
           buff,
           inputs: ctrl.inputs ?? [],
@@ -279,7 +279,7 @@ export default function getCalculationStats({
       const buff = mainArtifactData.buffs?.[ctrl.index];
 
       if (ctrl.activated && buff) {
-        artifactBonus.apply({
+        artifactBuff.apply({
           description: `${mainArtifactData.name} (self) / 4-piece activated`,
           buff,
           inputs: ctrl.inputs ?? [],
@@ -352,7 +352,5 @@ export default function getCalculationStats({
     rxnBonus,
     calcItemBuff,
     artAttr,
-    // calcInfusion,
-    // disabledNAs,
   };
 }

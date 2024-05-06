@@ -4,7 +4,7 @@ import { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.typ
 import { AppliedBonus, applyBonuses } from "./getCalculationStats.utils";
 import { toArray } from "@Src/utils";
 
-class ApplierArtifactBonus {
+class ApplierArtifactBuff {
   info: BuffInfoWrap;
 
   constructor(info: BuffInfoWrap) {
@@ -75,4 +75,4 @@ class ApplierArtifactBonus {
   }
 }
 
-export default ApplierArtifactBonus;
+export default ApplierArtifactBuff;

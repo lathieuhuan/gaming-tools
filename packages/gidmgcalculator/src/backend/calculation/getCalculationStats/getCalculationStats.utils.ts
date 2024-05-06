@@ -109,7 +109,7 @@ type Bonus = WithBonusTargets<EntityBonus<unknown>>;
 type ApplyBonusArgsPick = Pick<ApplyBonusArgs, "description" | "info" | "inputs" | "isStackable">;
 
 interface ApplyBonusesArgs<T extends Bonus> extends ApplyBonusArgsPick {
-  buff: Pick<EntityBuff<T>, "trackId" | "cmnStacks" | "effects">;
+  buff: Pick<EntityBuff<T>, "cmnStacks" | "effects">;
   fromSelf?: boolean;
   isFinal?: boolean;
   getBonus: (config: T, commonStacks: number[]) => AppliedBonus;

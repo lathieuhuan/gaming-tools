@@ -5,7 +5,7 @@ import { toArray } from "@Src/utils";
 import { EntityCalc } from "../utils";
 import { applyBonuses, type AppliedBonus } from "./getCalculationStats.utils";
 
-class ApplierWeaponBonus {
+class ApplierWeaponBuff {
   info: BuffInfoWrap;
 
   constructor(info: BuffInfoWrap) {
@@ -92,4 +92,4 @@ class ApplierWeaponBonus {
   }
 }
 
-export default ApplierWeaponBonus;
+export default ApplierWeaponBuff;
