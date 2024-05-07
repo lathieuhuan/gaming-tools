@@ -6,7 +6,7 @@ type CalcItemBuff = {
   bonus: CalcItemBonus;
 };
 
-export type ProcessedItemBonus = Partial<Record<AttackPatternInfoKey, number>>;
+type ProcessedItemBonus = Partial<Record<AttackPatternInfoKey, number>>;
 
 export class CalcItemBuffControl {
   private buffs: CalcItemBuff[] = [];
@@ -20,7 +20,7 @@ export class CalcItemBuffControl {
     });
   }
 
-  get(id?: string) {
+  get(id: string | undefined) {
     const list: CalcItemBonus[] = [];
     const bonus: ProcessedItemBonus = {};
 
@@ -36,6 +36,12 @@ export class CalcItemBuffControl {
         }
       }
     }
-    return [list, bonus] as const;
+
+    const of = (key: AttackPatternInfoKey) => bonus[key] ?? 0;
+
+    return {
+      list,
+      of,
+    };
   }
 }

@@ -22,9 +22,9 @@ export function DebuffsTracker({ resistReduct }: Partial<Pick<TrackerResult, "re
   }
 
   return (
-    <div className="pl-2 space-y-3 divide-y divide-rarity-1">
+    <div className="-mt-1 -mb-3 divide-y divide-surface-border">
       {hasRecord && (
-        <div className={recordListStyles}>
+        <div className={"py-3 " + recordListStyles}>
           {(["def", ...ATTACK_ELEMENTS] as const).map((attElmt) => {
             const records = resistReduct?.[attElmt] || [];
 
@@ -38,8 +38,8 @@ export function DebuffsTracker({ resistReduct }: Partial<Pick<TrackerResult, "re
           })}
         </div>
       )}
-      <div>
-        <p className={"text-lg text-heading-color" + (hasRecord ? " pt-3" : "")}>Resistance Multipliers</p>
+      <div className="py-3">
+        <p className="text-lg text-heading-color">Resistance Multipliers</p>
         <div className={recordListStyles}>
           {ATTACK_ELEMENTS.map((attElmt) => {
             const actualResistance = 10 - totalResistReduct[attElmt];

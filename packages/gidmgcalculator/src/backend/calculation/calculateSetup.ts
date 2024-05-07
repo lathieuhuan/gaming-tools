@@ -1,13 +1,11 @@
 import type { CalcSetup, Target } from "@Src/types";
-import type { NormalAttack } from "@Src/backend/types";
-import { CalcListConfigControl, type TrackerControl } from "./controls";
-import type { CalcInfusion } from "./calculation.types";
+import type { TrackerControl } from "./controls";
 
-import { findByIndex } from "@Src/utils";
 import { $AppCharacter, $AppData } from "@Src/services";
-import { EntityCalc } from "./utils";
+import { AttackPatternConf } from "./attack-pattern-conf";
 import getCalculationStats from "./getCalculationStats";
 import getFinalResult from "./getFinalResult";
+import { AttackElement, AttackPattern, NormalAttack } from "../types";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
@@ -31,53 +29,6 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   const appWeapon = $AppData.getWeapon(weapon.code)!;
   const partyData = $AppCharacter.getPartyData(party);
 
-  const calcListConfig = new CalcListConfigControl();
-
-  const infusion: CalcInfusion = {
-    element: customInfusion.element,
-    isCustom: true,
-    range: ["NA", "CA", "PA"],
-  };
-  let disabledNAs = false;
-
-  /** false = overwritable infusion. true = unoverwritable. undefined = no infusion */
-  let selfInfused: boolean | undefined = undefined;
-
-  for (const ctrl of selfBuffCtrls) {
-    const buff = findByIndex(appChar.buffs ?? [], ctrl.index);
-
-    if (ctrl.activated && buff) {
-      //
-      if (buff.infuseConfig) {
-        if (!selfInfused) {
-          const info = { char, appChar, partyData };
-          const isUsable = EntityCalc.isApplicableEffect(buff.infuseConfig, info, ctrl.inputs || [], true);
-
-          if (isUsable) {
-            selfInfused = !buff.infuseConfig.overwritable;
-          }
-        }
-        if (!disabledNAs) {
-          disabledNAs = buff.infuseConfig.disabledNAs || false;
-        }
-      }
-      if (buff.calcListConfig) {
-        calcListConfig.update(buff.calcListConfig);
-      }
-    }
-  }
-
-  if (infusion.element === "phys" && selfInfused !== undefined) {
-    infusion.element = appChar.vision;
-    infusion.isCustom = false;
-  } else if (infusion.element === appChar.vision) {
-    infusion.isCustom = false;
-  }
-
-  if (appChar.weaponType === "bow") {
-    infusion.range = ["NA"];
-  }
-
   const { artAttr, ...rest } = getCalculationStats({
     char,
     weapon,
@@ -92,9 +43,19 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     elmtModCtrls,
     customBuffCtrls,
     customInfusion,
-    infusedElement: infusion.element,
+    // infusedElement: infusion.element,
     tracker,
   });
+
+  const attackPatternConf = AttackPatternConf({
+    char,
+    appChar,
+    partyData,
+    selfBuffCtrls,
+    elmtModCtrls,
+    customInfusion,
+  });
+
   const finalResult = getFinalResult({
     char,
     weapon,
@@ -104,12 +65,10 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     partyData,
     selfDebuffCtrls,
     artDebuffCtrls,
-    disabledNAs,
     customDebuffCtrls,
-    infusion,
     elmtModCtrls,
+    attackPatternConf,
     target,
-    calcListConfig,
     tracker,
     ...rest,
   });
@@ -118,8 +77,10 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     totalAttr: rest.totalAttr,
     artAttr,
     rxnBonus: rest.rxnBonus,
-    infusedElement: infusion.element,
-    infusedAttacks: infusion.range,
+    // infusedElement: attackPatternConf.infusedElement,
+    // infusedAttacks: attackPatternConf.infusedAttacks,
+    infusedElement: "phys" as AttackElement,
+    infusedAttacks: ["NA"] as NormalAttack[],
     finalResult,
   };
 };

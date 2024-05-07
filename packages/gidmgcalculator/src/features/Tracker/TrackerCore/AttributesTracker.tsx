@@ -12,7 +12,7 @@ export function AttributesTracker({ totalAttr }: Partial<Pick<TrackerResult, "to
   const calcTotalAttr = useSelector(selectTotalAttr);
 
   return (
-    <div className={"pl-2 pr-4 " + recordListStyles}>
+    <div className={"pl-2 pt-2 pr-4 " + recordListStyles}>
       {CORE_STAT_TYPES.map((statType) => {
         const records = totalAttr?.[statType] || [];
         const base_records = totalAttr?.[`base_${statType}`] || [];

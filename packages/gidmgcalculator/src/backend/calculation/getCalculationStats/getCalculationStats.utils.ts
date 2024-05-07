@@ -95,11 +95,11 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
       case "ITEM":
         info.calcItemBuff.add(bonus.value, target, description);
         break;
-      case "ELM_NA":
-        if (info.appChar.weaponType === "catalyst" || info.infusedElement !== "phys") {
-          info.bonusCalc.add("PATT", "NA.pct_", bonus.value, description);
-        }
-        break;
+      // case "ELM_NA":
+      //   if (info.appChar.weaponType === "catalyst" || info.infusedElement !== "phys") {
+      //     info.bonusCalc.add("PATT", "NA.pct_", bonus.value, description);
+      //   }
+      //   break;
     }
   }
 }

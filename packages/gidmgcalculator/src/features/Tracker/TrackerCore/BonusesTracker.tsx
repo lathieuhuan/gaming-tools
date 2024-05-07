@@ -4,7 +4,6 @@ import {
   ATTACK_ELEMENT_INFO_KEYS,
   ATTACK_PATTERNS,
   ATTACK_PATTERN_INFO_KEYS,
-  GeneralCalc,
   REACTIONS,
   TrackerResult,
 } from "@Backend";
@@ -13,8 +12,7 @@ import { useTranslation } from "@Src/hooks";
 import { Utils_ } from "@Src/utils";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
-interface BonusesTrackerProps
-  extends Partial<Pick<TrackerResult, "attPattBonus" | "attElmtBonus" | "rxnBonus">> {
+interface BonusesTrackerProps extends Partial<Pick<TrackerResult, "attPattBonus" | "attElmtBonus" | "rxnBonus">> {
   em?: number;
 }
 
@@ -34,12 +32,11 @@ export function BonusesTracker({ attPattBonus, attElmtBonus, rxnBonus, em }: Bon
   }
 
   const ATTACK_PATTERN_BONUS__KEYS = ["all", ...ATTACK_PATTERNS] as const;
-  const bonusesFromEM = GeneralCalc.getRxnBonusesFromEM(em);
 
   return (
-    <div className="pl-2 space-y-3 divide-y divide-rarity-1">
+    <div className="pl-2 -mt-1 -mb-3 divide-y divide-surface-border">
       {hasAttPattBonus ? (
-        <div className={"pl-2 " + recordListStyles}>
+        <div className={"py-3 " + recordListStyles}>
           {ATTACK_PATTERN_BONUS__KEYS.map((attPatt) => {
             const noRecord = ATTACK_PATTERN_INFO_KEYS.every((infoKey) => {
               return attPattBonus[`${attPatt}.${infoKey}`].length === 0;
@@ -72,7 +69,7 @@ export function BonusesTracker({ attPattBonus, attElmtBonus, rxnBonus, em }: Bon
       ) : null}
 
       {hasAttElmtBonus ? (
-        <div className={"pl-2 " + recordListStyles + (hasAttPattBonus ? " pt-3" : "")}>
+        <div className={"py-3 " + recordListStyles}>
           {ATTACK_ELEMENTS.map((attElmt) => {
             const noRecord = ATTACK_ELEMENT_INFO_KEYS.every((infoKey) => {
               return attElmtBonus[`${attElmt}.${infoKey}`].length === 0;
@@ -105,34 +102,15 @@ export function BonusesTracker({ attPattBonus, attElmtBonus, rxnBonus, em }: Bon
       ) : null}
 
       {hasRxnBonus || em ? (
-        <div className={recordListStyles + (hasAttPattBonus || hasAttElmtBonus ? " pt-3" : "")}>
+        <div className={"py-3 " + recordListStyles}>
           {REACTIONS.map((reaction) => {
             const records = rxnBonus?.[`${reaction}.pct_`] || [];
-            let bonusFromEM = 0;
-
-            if (reaction === "melt" || reaction === "vaporize") {
-              bonusFromEM = bonusesFromEM.amplifying;
-            } else if (reaction === "aggravate" || reaction === "spread") {
-              bonusFromEM = bonusesFromEM.quicken;
-            } else {
-              bonusFromEM = bonusesFromEM.transformative;
-            }
 
             return records.length || em ? (
-              <div key={reaction} className="pl-2 break-inside-avoid">
-                {renderHeading(t(reaction), round(getTotalRecordValue(records) + bonusFromEM, 1) + "%")}
+              <div key={reaction} className="break-inside-avoid">
+                {renderHeading(t(reaction), round(getTotalRecordValue(records), 1) + "%")}
 
-                <ul className="pl-4 list-disc">
-                  {renderRecord((value) => value + "%")(
-                    {
-                      desc: "From Elemental Mastery",
-                      value: bonusFromEM,
-                    },
-                    -1
-                  )}
-
-                  {records.map(renderRecord((value) => round(value, 1) + "%"))}
-                </ul>
+                <ul className="pl-4 list-disc">{records.map(renderRecord((value) => round(value, 1) + "%"))}</ul>
               </div>
             ) : null;
           })}

@@ -17,13 +17,9 @@ import type {
   AttackPatternBonus,
   ReactionBonus,
 } from "@Src/backend/types";
-import type { CalcInfusion, TotalAttribute } from "../calculation.types";
-import type {
-  TrackerControl,
-  ResistanceReductionControl,
-  CalcItemBuffControl,
-  CalcListConfigControl,
-} from "../controls";
+import type { TotalAttribute } from "../calculation.types";
+import type { TrackerControl, ResistanceReductionControl, CalcItemBuffControl } from "../controls";
+import { AttackPatternConf } from "../attack-pattern-conf";
 
 export type DebuffInfoWrap = {
   char: Character;
@@ -49,8 +45,6 @@ export interface GetFinalResultArgs {
   target: Target;
   rxnBonus: ReactionBonus;
   calcItemBuff: CalcItemBuffControl;
-  disabledNAs: boolean;
-  infusion: CalcInfusion;
-  calcListConfig: CalcListConfigControl;
+  attackPatternConf: ReturnType<typeof AttackPatternConf>;
   tracker?: TrackerControl;
 }

@@ -32,7 +32,7 @@ export default function getCalculationStats({
   wpBuffCtrls,
   artBuffCtrls,
   customBuffCtrls,
-  infusedElement,
+  // infusedElement,
   tracker,
 }: GetCalculationStatsArgs) {
   const { refi } = weapon;
@@ -60,7 +60,7 @@ export default function getCalculationStats({
     totalAttr,
     bonusCalc,
     calcItemBuff,
-    infusedElement,
+    // infusedElement,
   };
 
   const characterBuff = new ApplierCharacterBuff(infoWrap);
@@ -325,13 +325,13 @@ export default function getCalculationStats({
   const { transformative, amplifying, quicken } = GeneralCalc.getRxnBonusesFromEM(totalAttr.getTotal("em"));
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
-    bonusCalc.add("RXN", `${rxn}.pct_`, transformative, "TRANSFORMATIVE");
+    bonusCalc.add("RXN", `${rxn}.pct_`, transformative, "From Elemental Mastery");
   }
   for (const rxn of AMPLIFYING_REACTIONS) {
-    bonusCalc.add("RXN", `${rxn}.pct_`, amplifying, "AMPLIFYING");
+    bonusCalc.add("RXN", `${rxn}.pct_`, amplifying, "From Elemental Mastery");
   }
   for (const rxn of QUICKEN_REACTIONS) {
-    bonusCalc.add("RXN", `${rxn}.pct_`, quicken, "QUICKEN");
+    bonusCalc.add("RXN", `${rxn}.pct_`, quicken, "From Elemental Mastery");
   }
 
   const rxnBonus = bonusCalc.serialize("RXN");

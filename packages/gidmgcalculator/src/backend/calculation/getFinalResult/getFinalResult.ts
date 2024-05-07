@@ -11,7 +11,6 @@ import { ResistanceReductionControl, TrackerControl } from "../controls";
 import { applyPenalty } from "./getFinalResult.utils";
 import { CalcItemCalc } from "./calc-item-calc";
 import ApplierCharacterDebuff from "./applier-character-debuff";
-import AttackPatternConfig from "./attack-pattern-config";
 
 export default function getFinalResult({
   char,
@@ -23,15 +22,13 @@ export default function getFinalResult({
   selfDebuffCtrls,
   artDebuffCtrls,
   customDebuffCtrls,
-  disabledNAs,
   totalAttr,
   attPattBonus,
   attElmtBonus,
   rxnBonus,
   calcItemBuff,
   elmtModCtrls,
-  infusion,
-  calcListConfig,
+  attackPatternConf: { config },
   target,
   tracker,
 }: GetFinalResultArgs) {
@@ -119,8 +116,6 @@ export default function getFinalResult({
     WP_CALC: {},
   };
 
-  const attackPatternConfig = new AttackPatternConfig(appChar, elmtModCtrls, infusion);
-
   const calcItemCalc = new CalcItemCalc(
     char.level,
     target.level,
@@ -131,7 +126,7 @@ export default function getFinalResult({
   );
 
   ATTACK_PATTERNS.forEach((ATT_PATT) => {
-    const { resultKey, configCalcItem, configFlatFactor } = attackPatternConfig.config(ATT_PATT, calcListConfig);
+    const { resultKey, disabled, configCalcItem, configFlatFactor } = config(ATT_PATT);
     const level = CharacterCalc.getFinalTalentLv({ appChar, talentType: resultKey, char, partyData });
 
     for (const calcItem of appChar.calcList[ATT_PATT]) {
@@ -149,14 +144,14 @@ export default function getFinalResult({
 
       let bases: number[] = [];
       const { type = "attack" } = calcItem;
-      const [bonusList, itemBonus] = calcItemBuff.get(calcItem.id);
-      const extraMult = (itemBonus.mult_ ?? 0) + attPattBonus[ATT_PATT].mult_;
+      const calcItemBonus = calcItemBuff.get(calcItem.id);
+      const extraMult = calcItemBonus.of("mult_") + attPattBonus[ATT_PATT].mult_;
 
       const record = TrackerControl.initCalcItemRecord({
         itemType: type,
         multFactors: [],
         normalMult: 1,
-        exclusives: bonusList,
+        exclusives: calcItemBonus.list,
       });
 
       // CALCULATE BASE DAMAGE
@@ -188,7 +183,7 @@ export default function getFinalResult({
       }
 
       // TALENT DMG
-      if (resultKey === "NAs" && disabledNAs && type === "attack") {
+      if (disabled && type === "attack") {
         finalResult[resultKey][calcItem.name] = {
           nonCrit: 0,
           crit: 0,
@@ -201,7 +196,7 @@ export default function getFinalResult({
           attElmt,
           calcType: type,
           rxnMult,
-          calcItemBonus: itemBonus,
+          calcItemBonusOf: calcItemBonus.of,
           record,
         });
       }

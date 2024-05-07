@@ -19,7 +19,7 @@ export type BuffInfoWrap = {
   totalAttr: TotalAttributeControl;
   bonusCalc: BonusControl;
   calcItemBuff: CalcItemBuffControl;
-  infusedElement?: AttackElement;
+  // infusedElement?: AttackElement;
 };
 
 export type StackableCheckCondition = {
@@ -40,7 +40,7 @@ export type GetCalculationStatsArgs = {
   wpBuffCtrls?: ModifierCtrl[];
   artBuffCtrls?: ModifierCtrl[];
   customBuffCtrls?: CustomBuffCtrl[];
-  infusedElement?: AttackElement;
+  // infusedElement?: AttackElement;
   customInfusion?: Infusion;
   tracker?: TrackerControl;
 };

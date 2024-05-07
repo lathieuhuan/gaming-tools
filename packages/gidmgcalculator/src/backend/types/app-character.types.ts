@@ -5,6 +5,7 @@ import type {
   AttackPattern,
   AttributeStat,
   ElementType,
+  NormalAttack,
   TalentType,
   WeaponType,
 } from "./common.types";
@@ -16,7 +17,6 @@ import type {
   ApplicableCondition,
   CalcItemType,
   CharacterMilestone,
-  InputCheck,
   ModifierAffectType,
   WithBonusTargets,
   WithPenaltyTargets,
@@ -169,19 +169,23 @@ type CharacterBonus = WithBonusTargets<CharacterBonusCore>;
 
 type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "trackId" | "cmnStacks" | "effects">;
 
-export type CharacterBuffCalcListConfig = Record<
-  AttackPattern,
-  { attPatt: AttackPattern; attElmt: AttackElement } | undefined
->;
+export type CharacterBuffNAsConfig = {
+  forPatt?: "ALL" | NormalAttack;
+  attPatt?: AttackPattern;
+  attElmt?: ElementType;
+  /** [attElmt] config is overwritable or not */
+  overwritable?: boolean;
+  disabled?: boolean;
+};
 
 type CharacterBuffExtends = {
-  infuseConfig?: {
-    checkInput?: number | InputCheck;
-    overwritable: boolean;
-    range?: ("NA" | "CA" | "PA")[];
-    disabledNAs?: boolean;
-  };
-  calcListConfig?: CharacterBuffCalcListConfig;
+  // infuseConfig?: {
+  //   checkInput?: number | InputCheck;
+  //   overwritable: boolean;
+  //   range?: ("NA" | "CA" | "PA")[];
+  //   disabledNAs?: boolean;
+  // };
+  normalsConfigs?: CharacterBuffNAsConfig | CharacterBuffNAsConfig[];
 };
 
 export type CharacterBuff = EntityBuff<CharacterBonus> & CharacterModifier & CharacterBuffExtends;

@@ -3,12 +3,13 @@ import type {
   AttackElement,
   AttackElementBonus,
   AttackPatternBonus,
+  AttackPatternInfoKey,
   CalcItemType,
   Level,
   ResistanceReduction,
 } from "@Src/backend/types";
 import type { CalculationFinalResultItem, TotalAttribute } from "../calculation.types";
-import type { CalcItemRecord, ProcessedItemBonus } from "../controls";
+import type { CalcItemRecord } from "../controls";
 
 import { applyToOneOrMany, toMult } from "@Src/utils";
 import { GeneralCalc } from "../utils";
@@ -19,9 +20,8 @@ type CalculateArgs = {
   attElmt: AttackElement;
   base: number | number[];
   rxnMult: number;
-  calcItemBonus?: ProcessedItemBonus;
   record: CalcItemRecord;
-  // absorbedElmt?: ElementType;
+  calcItemBonusOf?: (key: AttackPatternInfoKey) => number;
 };
 
 export class CalcItemCalc {
@@ -54,16 +54,16 @@ export class CalcItemCalc {
     attElmt,
     rxnMult,
     calcType,
-    calcItemBonus = {},
     record,
+    calcItemBonusOf = () => 0,
   }: CalculateArgs): CalculationFinalResultItem {
     const { totalAttr, attPattBonus, attElmtBonus, resistReduct } = this;
 
     if (base !== 0 && calcType === "attack") {
-      let flat = (calcItemBonus.flat ?? 0) + attPattBonus.all.flat + attElmtBonus[attElmt].flat;
+      let flat = calcItemBonusOf("flat") + attPattBonus.all.flat + attElmtBonus[attElmt].flat;
       // CALCULATE DAMAGE BONUS MULTIPLIERS
-      let normalMult = (calcItemBonus.pct_ ?? 0) + attPattBonus.all.pct_ + totalAttr[attElmt];
-      let specialMult = (calcItemBonus.multPlus_ ?? 0) + attPattBonus.all.multPlus_;
+      let normalMult = calcItemBonusOf("pct_") + attPattBonus.all.pct_ + totalAttr[attElmt];
+      let specialMult = calcItemBonusOf("multPlus_") + attPattBonus.all.multPlus_;
 
       if (attPatt !== "none") {
         flat += attPattBonus[attPatt].flat;
@@ -90,7 +90,7 @@ export class CalcItemCalc {
       const totalCrit = (type: "cRate_" | "cDmg_") => {
         return (
           totalAttr[type] +
-          (calcItemBonus[type] ?? 0) +
+          calcItemBonusOf(type) +
           attPattBonus.all[type] +
           (attPatt !== "none" ? attPattBonus[attPatt][type] : 0) +
           attElmtBonus[attElmt][type]
@@ -124,11 +124,11 @@ export class CalcItemCalc {
 
       switch (calcType) {
         case "healing":
-          flat = calcItemBonus.flat ?? 0;
+          flat = calcItemBonusOf("flat") ?? 0;
           normalMult += totalAttr.healB_ / 100;
           break;
         case "shield":
-          normalMult += (calcItemBonus.pct_ ?? 0) / 100;
+          normalMult += calcItemBonusOf("pct_") / 100;
           break;
       }
       base += flat;
