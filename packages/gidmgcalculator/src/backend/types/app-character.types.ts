@@ -1,7 +1,6 @@
 import type {
   ActualAttackElement,
   ActualAttackPattern,
-  AttackElement,
   AttackPattern,
   AttributeStat,
   ElementType,
@@ -21,6 +20,7 @@ import type {
   WithBonusTargets,
   WithPenaltyTargets,
   EntityEffectExtra,
+  InputCheck,
 } from "./app-entity.types";
 
 type Nation = "outland" | "mondstadt" | "liyue" | "inazuma" | "sumeru" | "natlan" | "fontaine" | "snezhnaya";
@@ -170,6 +170,7 @@ type CharacterBonus = WithBonusTargets<CharacterBonusCore>;
 type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "trackId" | "cmnStacks" | "effects">;
 
 export type CharacterBuffNAsConfig = {
+  checkInput?: number | InputCheck;
   forPatt?: "ALL" | NormalAttack;
   attPatt?: AttackPattern;
   attElmt?: ElementType;

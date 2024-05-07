@@ -10,7 +10,7 @@ import type {
 import type { CalcUltilInfo } from "./calculation.types";
 
 import { findByIndex, toArray } from "@Src/utils";
-import { CharacterCalc } from "./utils";
+import { CharacterCalc, EntityCalc } from "./utils";
 import { NORMAL_ATTACKS } from "../constants";
 
 type AttackPatternConfArgs = CalcUltilInfo & {
@@ -34,14 +34,17 @@ export function AttackPatternConf({
 
     if (ctrl.activated && buff?.normalsConfigs) {
       for (const config of toArray(buff?.normalsConfigs)) {
-        const { forPatt = "ALL", ...rest } = config;
+        const { checkInput, forPatt = "ALL", ...rest } = config;
+        const info = { char, appChar, partyData };
 
-        if (forPatt === "ALL") {
-          for (const type of NORMAL_ATTACKS) {
-            normalsConfig[type] = rest;
+        if (EntityCalc.isApplicableEffect(config, info, ctrl.inputs ?? [], true)) {
+          if (forPatt === "ALL") {
+            for (const type of NORMAL_ATTACKS) {
+              normalsConfig[type] = rest;
+            }
+          } else {
+            normalsConfig[forPatt] = rest;
           }
-        } else {
-          normalsConfig[forPatt] = rest;
         }
       }
     }
