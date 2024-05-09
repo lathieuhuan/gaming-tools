@@ -6,7 +6,7 @@ type TableCalcItemKey = {
 };
 
 type TableReactionKey = {
-  main: "RXN";
+  main: "RXN_CALC";
   subs: TransformativeReaction[];
 };
 
@@ -33,7 +33,7 @@ export function getTableKeys(appChar?: AppCharacter, appWeapon?: AppWeapon): Tab
   }
 
   result.push({
-    main: "RXN" as const,
+    main: "RXN_CALC" as const,
     subs: [...TRANSFORMATIVE_REACTIONS],
   });
 

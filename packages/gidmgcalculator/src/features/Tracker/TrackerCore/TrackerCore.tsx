@@ -33,9 +33,8 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   });
   const [xtraInfo, setXtraInfo] = useState<{ inHealB_?: number }>({});
 
-  const { totalAttr, attPattBonus, attElmtBonus, rxnBonus } = result || {};
   const charLv = GeneralCalc.getBareLv(activeSetup.char.level);
-  const totalDefReduct = getTotalRecordValue(result?.resistReduct.def || []);
+  const totalDefReduct = getTotalRecordValue(result?.RESIST.def || []);
 
   useEffect(() => {
     if (trackerState === "open") {
@@ -52,8 +51,8 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   }, [trackerState]);
 
   const renderDefMultiplier = (talent: AttackPattern | "WP_CALC") => {
-    const talentDefIgnore = talent === "WP_CALC" ? 0 : getTotalRecordValue(attPattBonus?.[`${talent}.defIgn_`] || []);
-    const allDefIgnore = getTotalRecordValue(attPattBonus?.["all.defIgn_"] || []);
+    const talentDefIgnore = talent === "WP_CALC" ? 0 : getTotalRecordValue(result?.PATT?.[`${talent}.defIgn_`] || []);
+    const allDefIgnore = getTotalRecordValue(result?.PATT?.["all.defIgn_"] || []);
     const totalDefIgnore = talentDefIgnore + allDefIgnore;
 
     return (
@@ -89,17 +88,15 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const collapseItems: CollapseListProps["items"] = [
     {
       heading: "Attributes",
-      body: <AttributesTracker totalAttr={totalAttr} />,
+      body: <AttributesTracker result={result} />,
     },
     {
       heading: "Bonuses",
-      body: (
-        <BonusesTracker {...{ attPattBonus, attElmtBonus, rxnBonus }} em={getTotalRecordValue(totalAttr?.em || [])} />
-      ),
+      body: <BonusesTracker result={result} />,
     },
     {
       heading: "Debuffs on Target",
-      body: <DebuffsTracker resistReduct={result?.resistReduct} />,
+      body: <DebuffsTracker result={result} />,
     },
     {
       heading: "Normal Attacks",
@@ -137,7 +134,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     },
     {
       heading: "Reactions",
-      body: <CalcItemTracker records={result?.RXN} result={finalResult.RXN} />,
+      body: <CalcItemTracker records={result?.RXN_CALC} result={finalResult.RXN_CALC} />,
     },
   ];
 

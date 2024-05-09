@@ -5,7 +5,7 @@ import { $AppCharacter, $AppData } from "@Src/services";
 import { AttackPatternConf } from "./attack-pattern-conf";
 import getCalculationStats from "./getCalculationStats";
 import getFinalResult from "./getFinalResult";
-import { AttackElement, AttackPattern, NormalAttack } from "../types";
+import { AttackElement, NormalAttack } from "../types";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();

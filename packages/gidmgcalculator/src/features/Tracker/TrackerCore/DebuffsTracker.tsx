@@ -12,13 +12,14 @@ function getResMult(type: "equation" | "value", value: number) {
   return RES < 0 ? 1 - RES / 2 : RES >= 0.75 ? 1 / (4 * RES + 1) : 1 - RES;
 }
 
-export function DebuffsTracker({ resistReduct }: Partial<Pick<TrackerResult, "resistReduct">>) {
+export function DebuffsTracker({ result }: { result?: TrackerResult }) {
   const { t } = useTranslation();
-  const hasRecord = resistReduct && Object.values(resistReduct).some((record) => record.length);
+  const { RESIST } = result || {};
+  const hasRecord = RESIST && Object.values(RESIST).some((record) => RESIST.length);
   const totalResistReduct = {} as ResistanceReduction;
 
   for (const attElmt of ["def", ...ATTACK_ELEMENTS] as const) {
-    totalResistReduct[attElmt] = getTotalRecordValue(resistReduct?.[attElmt] || []);
+    totalResistReduct[attElmt] = getTotalRecordValue(RESIST?.[attElmt] || []);
   }
 
   return (
@@ -26,7 +27,7 @@ export function DebuffsTracker({ resistReduct }: Partial<Pick<TrackerResult, "re
       {hasRecord && (
         <div className={"py-3 " + recordListStyles}>
           {(["def", ...ATTACK_ELEMENTS] as const).map((attElmt) => {
-            const records = resistReduct?.[attElmt] || [];
+            const records = RESIST?.[attElmt] || [];
 
             return records.length ? (
               <div key={attElmt} className="break-inside-avoid">

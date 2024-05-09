@@ -100,7 +100,7 @@ export function FinalResultLayout({
     <div className="flex flex-col gap-4">
       {tableKeys.map((tableKey, sectionIndex) => {
         const mainKey = tableKey.main;
-        const isReactionDmg = mainKey === "RXN";
+        const isReactionDmg = mainKey === "RXN_CALC";
         const isLvling = sectionIndex === lvlingSectionI;
         const talentType = !isReactionDmg && mainKey !== "WP_CALC" ? mainKey : undefined;
         const talentLevel = talentType ? getTalentLevel?.(talentType) : 0;

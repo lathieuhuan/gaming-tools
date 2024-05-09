@@ -7,16 +7,17 @@ import { useSelector } from "@Store/hooks";
 import { selectTotalAttr } from "@Store/calculator-slice";
 import { recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
-export function AttributesTracker({ totalAttr }: Partial<Pick<TrackerResult, "totalAttr">>) {
+export function AttributesTracker({ result }: { result?: TrackerResult }) {
   const { t } = useTranslation();
   const calcTotalAttr = useSelector(selectTotalAttr);
+  const { ATTR } = result || {};
 
   return (
     <div className={"pl-2 pt-2 pr-4 " + recordListStyles}>
       {CORE_STAT_TYPES.map((statType) => {
-        const records = totalAttr?.[statType] || [];
-        const base_records = totalAttr?.[`base_${statType}`] || [];
-        const records_ = totalAttr?.[`${statType}_`] || [];
+        const records = ATTR?.[statType] || [];
+        const base_records = ATTR?.[`base_${statType}`] || [];
+        const records_ = ATTR?.[`${statType}_`] || [];
 
         return (
           <div key={statType} className="break-inside-avoid">
@@ -49,9 +50,9 @@ export function AttributesTracker({ totalAttr }: Partial<Pick<TrackerResult, "to
           <div key={statType} className="break-inside-avoid">
             {renderHeading(t(statType), round(calcTotalAttr[statType], 2) + percent)}
 
-            {totalAttr?.[statType].length ? (
+            {ATTR?.[statType].length ? (
               <ul className="pl-4 list-disc">
-                {totalAttr?.[statType].map(renderRecord((value) => round(value, 1) + percent))}
+                {ATTR?.[statType].map(renderRecord((value) => round(value, 1) + percent))}
               </ul>
             ) : null}
           </div>

@@ -32,8 +32,8 @@ export function AttackPatternConf({
   for (const ctrl of selfBuffCtrls) {
     const buff = findByIndex(appChar.buffs ?? [], ctrl.index);
 
-    if (ctrl.activated && buff?.normalsConfigs) {
-      for (const config of toArray(buff?.normalsConfigs)) {
+    if (ctrl.activated && buff?.normalsConfig) {
+      for (const config of toArray(buff?.normalsConfig)) {
         const { checkInput, forPatt = "ALL", ...rest } = config;
         const info = { char, appChar, partyData };
 

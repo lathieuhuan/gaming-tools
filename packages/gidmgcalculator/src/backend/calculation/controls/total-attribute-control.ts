@@ -4,6 +4,7 @@ import type { TotalAttribute } from "../calculation.types";
 import type { TrackerControl } from "./tracker-control";
 
 import { ATTRIBUTE_STAT_TYPES, LEVELS } from "@Src/backend/constants";
+import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
 import { toArray } from "@Src/utils";
 import { GeneralCalc } from "../utils";
 
@@ -35,7 +36,7 @@ export class TotalAttributeControl {
 
   private addBase(key: AttributeStat, value: number, description = "Character base stat") {
     this.totalAttr[key].base += value;
-    this.tracker?.recordStat("totalAttr", key, value, description);
+    this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
   }
 
   create(char: CalcCharacter, appChar: AppCharacter, weaponAtk: number) {
@@ -68,14 +69,14 @@ export class TotalAttributeControl {
   addStable(keys: AttributeStat | AttributeStat[], value: number, description: string) {
     toArray(keys).forEach((key) => {
       this.totalAttr[key].stableBonus += value;
-      this.tracker?.recordStat("totalAttr", key, value, description);
+      this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
     });
   }
 
   addUnstable(keys: AttributeStat | AttributeStat[], value: number, description: string) {
     toArray(keys).forEach((key) => {
       this.totalAttr[key].unstableBonus += value;
-      this.tracker?.recordStat("totalAttr", key, value, description);
+      this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
     });
   }
 

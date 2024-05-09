@@ -1,3 +1,4 @@
+import type { ECalcStatModule } from "../constants/internal.constants";
 import type {
   AttackElementPath,
   AttackPatternInfoKey,
@@ -158,21 +159,25 @@ export type EntityEffectMax = number | EntityEffectDynamicMax;
 // ========== BONUS TARGET ==========
 
 type AttributeTarget = {
-  module: "ATTR";
+  module: ECalcStatModule.ATTR;
   path: "INP_ELMT" | "OWN_ELMT" | AttributeStat | AttributeStat[];
   /** Input's index to get element's index if path is 'INP_ELMT'. Default to 0 */
   inpIndex?: number;
 };
 type AttackPatternTarget = {
-  module: "PATT";
+  module: ECalcStatModule.PATT;
   path: AttackPatternPath | AttackPatternPath[];
 };
 type AttackElementTarget = {
-  module: "ELMT";
+  module: ECalcStatModule.ELMT;
   path: AttackElementPath | AttackElementPath[];
 };
+type AttackPatternElementTarget = {
+  module: ECalcStatModule.PAEL;
+  path: "ALL" | ElementType;
+};
 type ReactionTarget = {
-  module: "RXN";
+  module: ECalcStatModule.RXN;
   path: ReactionBonusPath | ReactionBonusPath[];
 };
 export type CalcItemTarget = {
@@ -180,17 +185,14 @@ export type CalcItemTarget = {
   path: AttackPatternInfoKey;
   id: string | string[];
 };
-type ElementNaTarget = {
-  module: "ELM_NA";
-};
 
 export type EntityBonusTarget =
   | AttributeTarget
   | AttackPatternTarget
   | AttackElementTarget
+  | AttackPatternElementTarget
   | ReactionTarget
-  | CalcItemTarget
-  | ElementNaTarget;
+  | CalcItemTarget;
 
 // ========== BONUS VALUE ==========
 

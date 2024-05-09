@@ -33,7 +33,7 @@ export function FinalResultCompare({ comparedIds, weapon }: FinalResultComparePr
 
   const calculationAspects: CalculationAspect[] = ["nonCrit", "crit", "average"];
 
-  const getValue = (setupId: number, mainKey: "NAs" | "ES" | "EB" | "WP_CALC" | "RXN", subKey: string) => {
+  const getValue = (setupId: number, mainKey: "NAs" | "ES" | "EB" | "WP_CALC" | "RXN_CALC", subKey: string) => {
     return resultById[setupId].finalResult[mainKey][subKey][focusedAspect];
   };
 

@@ -3,6 +3,7 @@ import type { ResistanceReduction } from "@Src/backend/types";
 import type { TrackerControl } from "./tracker-control";
 
 import { ATTACK_ELEMENTS } from "@Src/backend/constants";
+import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
 
 export class ResistanceReductionControl {
   private resistReduct: ResistanceReduction;
@@ -19,7 +20,7 @@ export class ResistanceReductionControl {
 
   add(key: keyof ResistanceReduction, value: number, description: string) {
     this.resistReduct[key] += value;
-    this.tracker?.recordStat("resistReduct", key, value, description);
+    this.tracker?.recordStat(ECalcStatModule.RESIST, key, value, description);
   }
 
   apply(target: Target) {

@@ -174,19 +174,11 @@ export type CharacterBuffNAsConfig = {
   forPatt?: "ALL" | NormalAttack;
   attPatt?: AttackPattern;
   attElmt?: ElementType;
-  /** [attElmt] config is overwritable or not */
-  overwritable?: boolean;
   disabled?: boolean;
 };
 
 type CharacterBuffExtends = {
-  // infuseConfig?: {
-  //   checkInput?: number | InputCheck;
-  //   overwritable: boolean;
-  //   range?: ("NA" | "CA" | "PA")[];
-  //   disabledNAs?: boolean;
-  // };
-  normalsConfigs?: CharacterBuffNAsConfig | CharacterBuffNAsConfig[];
+  normalsConfig?: CharacterBuffNAsConfig | CharacterBuffNAsConfig[];
 };
 
 export type CharacterBuff = EntityBuff<CharacterBonus> & CharacterModifier & CharacterBuffExtends;

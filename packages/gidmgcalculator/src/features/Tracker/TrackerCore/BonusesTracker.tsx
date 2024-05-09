@@ -12,16 +12,14 @@ import { useTranslation } from "@Src/hooks";
 import { Utils_ } from "@Src/utils";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
-interface BonusesTrackerProps extends Partial<Pick<TrackerResult, "attPattBonus" | "attElmtBonus" | "rxnBonus">> {
-  em?: number;
-}
-
-export function BonusesTracker({ attPattBonus, attElmtBonus, rxnBonus, em }: BonusesTrackerProps) {
+export function BonusesTracker({ result }: { result?: TrackerResult }) {
   const { t } = useTranslation();
 
-  const hasAttPattBonus = attPattBonus && Object.values(attPattBonus).some((records) => records.length);
-  const hasAttElmtBonus = attElmtBonus && Object.values(attElmtBonus).some((records) => records.length);
-  const hasRxnBonus = rxnBonus && Object.values(rxnBonus).some((records) => records.length);
+  const { ATTR, PATT, ELMT, RXN } = result || {};
+  const em = getTotalRecordValue(ATTR?.em || []);
+  const hasAttPattBonus = PATT && Object.values(PATT).some((records) => records.length);
+  const hasAttElmtBonus = ELMT && Object.values(ELMT).some((records) => records.length);
+  const hasRxnBonus = RXN && Object.values(RXN).some((records) => records.length);
 
   if (!hasAttPattBonus && !hasAttElmtBonus && !hasRxnBonus && !em) {
     return (
@@ -39,7 +37,7 @@ export function BonusesTracker({ attPattBonus, attElmtBonus, rxnBonus, em }: Bon
         <div className={"py-3 " + recordListStyles}>
           {ATTACK_PATTERN_BONUS__KEYS.map((attPatt) => {
             const noRecord = ATTACK_PATTERN_INFO_KEYS.every((infoKey) => {
-              return attPattBonus[`${attPatt}.${infoKey}`].length === 0;
+              return PATT[`${attPatt}.${infoKey}`].length === 0;
             });
 
             if (noRecord) return null;
@@ -49,7 +47,7 @@ export function BonusesTracker({ attPattBonus, attElmtBonus, rxnBonus, em }: Bon
                 <p className="text-heading-color capitalize">{t(attPatt)}</p>
 
                 {ATTACK_PATTERN_INFO_KEYS.map((infoKey) => {
-                  const records = attPattBonus[`${attPatt}.${infoKey}`];
+                  const records = PATT[`${attPatt}.${infoKey}`];
                   const percent = Utils_.suffixOf(infoKey);
 
                   return records.length ? (
@@ -72,7 +70,7 @@ export function BonusesTracker({ attPattBonus, attElmtBonus, rxnBonus, em }: Bon
         <div className={"py-3 " + recordListStyles}>
           {ATTACK_ELEMENTS.map((attElmt) => {
             const noRecord = ATTACK_ELEMENT_INFO_KEYS.every((infoKey) => {
-              return attElmtBonus[`${attElmt}.${infoKey}`].length === 0;
+              return ELMT[`${attElmt}.${infoKey}`].length === 0;
             });
 
             if (noRecord) return null;
@@ -82,7 +80,7 @@ export function BonusesTracker({ attPattBonus, attElmtBonus, rxnBonus, em }: Bon
                 <p className="text-heading-color capitalize">{attElmt} DMG</p>
 
                 {ATTACK_ELEMENT_INFO_KEYS.map((infoKey) => {
-                  const records = attElmtBonus[`${attElmt}.${infoKey}`];
+                  const records = ELMT[`${attElmt}.${infoKey}`];
                   const percent = Utils_.suffixOf(infoKey);
 
                   return records.length ? (
@@ -104,7 +102,7 @@ export function BonusesTracker({ attPattBonus, attElmtBonus, rxnBonus, em }: Bon
       {hasRxnBonus || em ? (
         <div className={"py-3 " + recordListStyles}>
           {REACTIONS.map((reaction) => {
-            const records = rxnBonus?.[`${reaction}.pct_`] || [];
+            const records = RXN?.[`${reaction}.pct_`] || [];
 
             return records.length || em ? (
               <div key={reaction} className="break-inside-avoid">

@@ -9,6 +9,7 @@ import type {
 import type { BuffInfoWrap, GetCalculationStatsArgs, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
+import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
 import { RESONANCE_STAT } from "../calculation.constants";
 
 import { $AppCharacter, $AppData } from "@Src/services";
@@ -170,21 +171,21 @@ export default function getCalculationStats({
           } else if (subType) {
             const key = type as AttackElement;
             const subKey = subType as AttackElementInfoKey;
-            bonusCalc.add("ELMT", `${key}.${subKey}`, value, "Custom buff");
+            bonusCalc.add(ECalcStatModule.ELMT, `${key}.${subKey}`, value, "Custom buff");
           }
           break;
         }
         case "attPattBonus": {
           if (subType) {
             const key = type as AttackPatternBonusKey;
-            bonusCalc.add("PATT", `${key}.${subType}`, value, "Custom buff");
+            bonusCalc.add(ECalcStatModule.PATT, `${key}.${subType}`, value, "Custom buff");
           }
           break;
         }
         case "rxnBonus": {
           const key = type as ReactionType;
           const subKey = subType as ReactionBonusInfoKey;
-          bonusCalc.add("RXN", `${key}.${subKey}`, value, "Custom buff");
+          bonusCalc.add(ECalcStatModule.RXN, `${key}.${subKey}`, value, "Custom buff");
           break;
         }
       }
@@ -308,7 +309,7 @@ export default function getCalculationStats({
 
       totalAttr.addStable(key, value + xtraValue, desc);
 
-      if (elementType === "geo") bonusCalc.add("PATT", "all.pct_", 15, desc);
+      if (elementType === "geo") bonusCalc.add(ECalcStatModule.PATT, "all.pct_", 15, desc);
     }
   }
 
@@ -325,29 +326,29 @@ export default function getCalculationStats({
   const { transformative, amplifying, quicken } = GeneralCalc.getRxnBonusesFromEM(totalAttr.getTotal("em"));
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
-    bonusCalc.add("RXN", `${rxn}.pct_`, transformative, "From Elemental Mastery");
+    bonusCalc.add(ECalcStatModule.RXN, `${rxn}.pct_`, transformative, "From Elemental Mastery");
   }
   for (const rxn of AMPLIFYING_REACTIONS) {
-    bonusCalc.add("RXN", `${rxn}.pct_`, amplifying, "From Elemental Mastery");
+    bonusCalc.add(ECalcStatModule.RXN, `${rxn}.pct_`, amplifying, "From Elemental Mastery");
   }
   for (const rxn of QUICKEN_REACTIONS) {
-    bonusCalc.add("RXN", `${rxn}.pct_`, quicken, "From Elemental Mastery");
+    bonusCalc.add(ECalcStatModule.RXN, `${rxn}.pct_`, quicken, "From Elemental Mastery");
   }
 
-  const rxnBonus = bonusCalc.serialize("RXN");
+  const rxnBonus = bonusCalc.serialize(ECalcStatModule.RXN);
   const { spread, aggravate } = GeneralCalc.getQuickenBuffDamage(char.level, rxnBonus);
 
   if (reaction === "spread" || infuse_reaction === "spread") {
-    bonusCalc.add("ELMT", "dendro.flat", spread, "Spread reaction");
+    bonusCalc.add(ECalcStatModule.ELMT, "dendro.flat", spread, "Spread reaction");
   }
   if (reaction === "aggravate" || infuse_reaction === "aggravate") {
-    bonusCalc.add("ELMT", "electro.flat", aggravate, "Aggravate reaction");
+    bonusCalc.add(ECalcStatModule.ELMT, "electro.flat", aggravate, "Aggravate reaction");
   }
 
   return {
     totalAttr: totalAttr.finalize(),
-    attPattBonus: bonusCalc.serialize("PATT"),
-    attElmtBonus: bonusCalc.serialize("ELMT"),
+    attPattBonus: bonusCalc.serialize(ECalcStatModule.PATT),
+    attElmtBonus: bonusCalc.serialize(ECalcStatModule.ELMT),
     rxnBonus,
     calcItemBuff,
     artAttr,

@@ -112,7 +112,7 @@ export default function getFinalResult({
     NAs: {},
     ES: {},
     EB: {},
-    RXN: {},
+    RXN_CALC: {},
     WP_CALC: {},
   };
 
@@ -133,9 +133,9 @@ export default function getFinalResult({
       const { attPatt, attElmt, reaction, configMultFactor } = configCalcItem(calcItem);
       let rxnMult = 1;
 
-      console.log("====================");
-      console.log("calcItem", calcItem.name);
-      console.log(attPatt, attElmt, reaction);
+      // console.log("====================");
+      // console.log("calcItem", calcItem.name);
+      // console.log(attPatt, attElmt, reaction);
 
       // deal elemental dmg and want amplify reaction
       if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
@@ -159,8 +159,8 @@ export default function getFinalResult({
         const { root, scale, basedOn } = configMultFactor(factor);
         const finalMult = root * CharacterCalc.getTalentMult(scale, level) + extraMult;
 
-        console.log("factor");
-        console.log(root, scale, basedOn);
+        // console.log("factor");
+        // console.log(root, scale, basedOn);
 
         record.multFactors.push({
           value: totalAttr[basedOn],
@@ -216,14 +216,14 @@ export default function getFinalResult({
     const cDmg_ = rxnBonus[rxn].cDmg_ / 100;
     const cRate_ = Math.max(rxnBonus[rxn].cRate_, 0) / 100;
 
-    finalResult.RXN[rxn] = {
+    finalResult.RXN_CALC[rxn] = {
       nonCrit,
       crit: cDmg_ ? nonCrit * (1 + cDmg_) : 0,
       average: cRate_ ? nonCrit * (1 + cDmg_ * cRate_) : nonCrit,
       attElmt: dmgType,
     };
 
-    tracker?.recordCalcItem("RXN", rxn, {
+    tracker?.recordCalcItem("RXN_CALC", rxn, {
       itemType: "attack",
       multFactors: [{ value: Math.round(baseValue), desc: "Base DMG" }],
       normalMult,

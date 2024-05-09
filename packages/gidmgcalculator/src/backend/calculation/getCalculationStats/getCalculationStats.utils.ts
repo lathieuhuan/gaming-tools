@@ -13,6 +13,7 @@ import type {
 import type { BuffInfoWrap } from "./getCalculationStats.types";
 
 import { ELEMENT_TYPES } from "@Src/backend/constants";
+import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
 import { toArray } from "@Src/utils";
 import { EntityCalc } from "../utils";
 
@@ -61,7 +62,7 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
 
   for (const target of toArray(targets)) {
     switch (target.module) {
-      case "ATTR":
+      case ECalcStatModule.ATTR:
         if (!isStackable || isStackable(target.path)) {
           let path: AttributeStat | AttributeStat[];
 
@@ -85,9 +86,10 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
           }
         }
         break;
-      case "PATT":
-      case "ELMT":
-      case "RXN":
+      case ECalcStatModule.PATT:
+      case ECalcStatModule.ELMT:
+      case ECalcStatModule.PAEL:
+      case ECalcStatModule.RXN:
         if (!isStackable || isStackable(target.path)) {
           info.bonusCalc.add(target.module, target.path, bonus.value, description);
         }
@@ -100,6 +102,8 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
       //     info.bonusCalc.add("PATT", "NA.pct_", bonus.value, description);
       //   }
       //   break;
+      default:
+        target;
     }
   }
 }

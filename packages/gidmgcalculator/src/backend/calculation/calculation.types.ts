@@ -1,6 +1,14 @@
 import type { PartiallyRequired } from "rond";
 import type { Character, PartyData } from "@Src/types";
-import type { ActualAttackElement, AppCharacter, AttackElement, AttributeStat, CoreStat, NormalAttack } from "../types";
+import type {
+  ActualAttackElement,
+  AppCharacter,
+  AttackElement,
+  AttributeStat,
+  CoreStat,
+  LevelableTalentType,
+  NormalAttack,
+} from "../types";
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
 type TotalAttributeStat = AttributeStat | "hp_base" | "atk_base" | "def_base";
@@ -30,10 +38,6 @@ export type CalculationFinalResultItem = Record<CalculationAspect, number | numb
 
 export type CalculationFinalResultGroup = Record<string, CalculationFinalResultItem>;
 
-export type CalculationFinalResult = {
-  NAs: CalculationFinalResultGroup;
-  ES: CalculationFinalResultGroup;
-  EB: CalculationFinalResultGroup;
-  RXN: CalculationFinalResultGroup;
-  WP_CALC: CalculationFinalResultGroup;
-};
+export type CalculationFinalResultKey = LevelableTalentType | "RXN_CALC" | "WP_CALC";
+
+export type CalculationFinalResult = Record<CalculationFinalResultKey, CalculationFinalResultGroup>;
