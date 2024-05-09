@@ -46,7 +46,7 @@ export default function getCalculationStats({
     WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale)
   );
   const artAttr = new ArtifactAttributeControl(artifacts, totalAttr).getValues();
-  const bonusCalc = new BonusControl(tracker);
+  const bonusCtrl = new BonusControl(tracker);
   const calcItemBuff = new CalcItemBuffControl();
 
   if (appWeapon.subStat) {
@@ -59,7 +59,7 @@ export default function getCalculationStats({
     appChar,
     partyData,
     totalAttr,
-    bonusCalc,
+    bonusCtrl,
     calcItemBuff,
     // infusedElement,
   };
@@ -171,21 +171,21 @@ export default function getCalculationStats({
           } else if (subType) {
             const key = type as AttackElement;
             const subKey = subType as AttackElementInfoKey;
-            bonusCalc.add(ECalcStatModule.ELMT, `${key}.${subKey}`, value, "Custom buff");
+            bonusCtrl.add(ECalcStatModule.ELMT, `${key}.${subKey}`, value, "Custom buff");
           }
           break;
         }
         case "attPattBonus": {
           if (subType) {
             const key = type as AttackPatternBonusKey;
-            bonusCalc.add(ECalcStatModule.PATT, `${key}.${subType}`, value, "Custom buff");
+            bonusCtrl.add(ECalcStatModule.PATT, `${key}.${subType}`, value, "Custom buff");
           }
           break;
         }
         case "rxnBonus": {
           const key = type as ReactionType;
           const subKey = subType as ReactionBonusInfoKey;
-          bonusCalc.add(ECalcStatModule.RXN, `${key}.${subKey}`, value, "Custom buff");
+          bonusCtrl.add(ECalcStatModule.RXN, `${key}.${subKey}`, value, "Custom buff");
           break;
         }
       }
@@ -309,7 +309,7 @@ export default function getCalculationStats({
 
       totalAttr.addStable(key, value + xtraValue, desc);
 
-      if (elementType === "geo") bonusCalc.add(ECalcStatModule.PATT, "all.pct_", 15, desc);
+      if (elementType === "geo") bonusCtrl.add(ECalcStatModule.PATT, "all.pct_", 15, desc);
     }
   }
 
@@ -326,30 +326,31 @@ export default function getCalculationStats({
   const { transformative, amplifying, quicken } = GeneralCalc.getRxnBonusesFromEM(totalAttr.getTotal("em"));
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
-    bonusCalc.add(ECalcStatModule.RXN, `${rxn}.pct_`, transformative, "From Elemental Mastery");
+    bonusCtrl.add(ECalcStatModule.RXN, `${rxn}.pct_`, transformative, "From Elemental Mastery");
   }
   for (const rxn of AMPLIFYING_REACTIONS) {
-    bonusCalc.add(ECalcStatModule.RXN, `${rxn}.pct_`, amplifying, "From Elemental Mastery");
+    bonusCtrl.add(ECalcStatModule.RXN, `${rxn}.pct_`, amplifying, "From Elemental Mastery");
   }
   for (const rxn of QUICKEN_REACTIONS) {
-    bonusCalc.add(ECalcStatModule.RXN, `${rxn}.pct_`, quicken, "From Elemental Mastery");
+    bonusCtrl.add(ECalcStatModule.RXN, `${rxn}.pct_`, quicken, "From Elemental Mastery");
   }
 
-  const rxnBonus = bonusCalc.serialize(ECalcStatModule.RXN);
-  const { spread, aggravate } = GeneralCalc.getQuickenBuffDamage(char.level, rxnBonus);
+  const { spread, aggravate } = GeneralCalc.getQuickenBuffDamage(
+    char.level,
+    bonusCtrl.getRxnBonus("aggravate", "pct_"),
+    bonusCtrl.getRxnBonus("spread", "pct_")
+  );
 
   if (reaction === "spread" || infuse_reaction === "spread") {
-    bonusCalc.add(ECalcStatModule.ELMT, "dendro.flat", spread, "Spread reaction");
+    bonusCtrl.add(ECalcStatModule.ELMT, "dendro.flat", spread, "Spread reaction");
   }
   if (reaction === "aggravate" || infuse_reaction === "aggravate") {
-    bonusCalc.add(ECalcStatModule.ELMT, "electro.flat", aggravate, "Aggravate reaction");
+    bonusCtrl.add(ECalcStatModule.ELMT, "electro.flat", aggravate, "Aggravate reaction");
   }
 
   return {
     totalAttr: totalAttr.finalize(),
-    attPattBonus: bonusCalc.serialize(ECalcStatModule.PATT),
-    attElmtBonus: bonusCalc.serialize(ECalcStatModule.ELMT),
-    rxnBonus,
+    bonusCtrl,
     calcItemBuff,
     artAttr,
   };

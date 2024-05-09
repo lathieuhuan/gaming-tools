@@ -16,6 +16,7 @@ export function calculate(state: CalculatorState, all?: boolean) {
 
     for (const id of allIds) {
       const result = calculateSetup(setupsById[id], target);
+
       state.resultById[id] = {
         infusedElement: result.infusedElement,
         totalAttrs: result.totalAttr,

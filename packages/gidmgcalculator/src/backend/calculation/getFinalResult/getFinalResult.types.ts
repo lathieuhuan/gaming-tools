@@ -1,50 +1,21 @@
-import type {
-  ArtifactDebuffCtrl,
-  CalcCharacter,
-  CalcWeapon,
-  Character,
-  CustomDebuffCtrl,
-  ElementModCtrl,
-  ModifierCtrl,
-  Party,
-  PartyData,
-  Target,
-} from "@Src/types";
-import type {
-  AppCharacter,
-  AppWeapon,
-  AttackElementBonus,
-  AttackPatternBonus,
-  ReactionBonus,
-} from "@Src/backend/types";
+import type { CalcCharacter, CalcWeapon, PartyData } from "@Src/types";
+import type { AppCharacter, AppWeapon, ResistanceReduction } from "@Src/backend/types";
 import type { TotalAttribute } from "../calculation.types";
-import type { TrackerControl, ResistanceReductionControl, CalcItemBuffControl } from "../controls";
-import { AttackPatternConf } from "../attack-pattern-conf";
-
-export type DebuffInfoWrap = {
-  char: Character;
-  appChar: AppCharacter;
-  partyData: PartyData;
-  resistReduct: ResistanceReductionControl;
-};
+import type { TrackerControl, CalcItemBuffControl, BonusControl } from "../controls";
+import type { ConfigAttackPattern } from "../attack-pattern-conf";
+import type { CalculateCalcItem } from "../calc-item-calculator";
 
 export interface GetFinalResultArgs {
   char: CalcCharacter;
   appChar: AppCharacter;
-  party: Party;
   partyData: PartyData;
   weapon: CalcWeapon;
   appWeapon: AppWeapon;
-  selfDebuffCtrls: ModifierCtrl[];
-  artDebuffCtrls: ArtifactDebuffCtrl[];
-  customDebuffCtrls: CustomDebuffCtrl[];
-  elmtModCtrls: ElementModCtrl;
-  attElmtBonus: AttackElementBonus;
   totalAttr: TotalAttribute;
-  attPattBonus: AttackPatternBonus;
-  target: Target;
-  rxnBonus: ReactionBonus;
+  bonusCtrl: BonusControl;
   calcItemBuff: CalcItemBuffControl;
-  attackPatternConf: ReturnType<typeof AttackPatternConf>;
+  resistances: ResistanceReduction;
   tracker?: TrackerControl;
+  configAttackPattern: ConfigAttackPattern;
+  calculateCalcItem: CalculateCalcItem;
 }

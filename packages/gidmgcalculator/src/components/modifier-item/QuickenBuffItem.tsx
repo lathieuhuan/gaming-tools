@@ -10,7 +10,7 @@ interface QuickenBuffItemProps extends Pick<GenshinModifierViewProps, "mutable" 
   rxnBonus: ReactionBonus;
 }
 export function QuickenBuffItem({ reaction, element, characterLv, rxnBonus, ...rest }: QuickenBuffItemProps) {
-  const value = GeneralCalc.getQuickenBuffDamage(characterLv, rxnBonus)[reaction];
+  const value = GeneralCalc.getQuickenBuffDamage(characterLv, rxnBonus.aggravate.pct_, rxnBonus.spread.pct_)[reaction];
 
   return (
     <GenshinModifierView

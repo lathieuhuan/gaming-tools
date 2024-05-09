@@ -5,7 +5,8 @@ import {
   ATTACK_ELEMENT_INFO_KEYS,
   ATTACK_PATTERNS,
   ATTACK_PATTERN_INFO_KEYS,
-  ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES,
+  ATTRIBUTE_STAT_TYPES,
+  CORE_STAT_TYPES,
   ELEMENT_TYPES,
   NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
@@ -13,7 +14,7 @@ import {
   REACTION_BONUS_INFO_KEYS,
   TALENT_TYPES,
   TRANSFORMATIVE_REACTIONS,
-  WEAPON_TYPES
+  WEAPON_TYPES,
 } from "../constants";
 
 export type WeaponType = (typeof WEAPON_TYPES)[number];
@@ -52,6 +53,15 @@ export type AttackPatternPath = `${AttackPatternBonusKey}.${AttackPatternInfoKey
 
 export type AttackPatternInfo = Record<AttackPatternInfoKey, number>;
 export type AttackPatternBonus = Record<AttackPatternBonusKey, AttackPatternInfo>;
+
+// ========== PATTERN ELEMENT ==========
+
+export type AttackPatternElementBonusKey = ElementType | "all";
+export type AttackPatternElementInfoKey = "pct_" | "flat";
+export type AttackPatternElementPath = `${AttackPatternElementBonusKey}.${AttackPatternElementInfoKey}`;
+
+export type AttackPatternElementInfo = Record<AttackPatternElementInfoKey, number>;
+export type AttackPatternElementBonus = Record<`NA.${AttackPatternElementBonusKey}`, AttackPatternElementInfo>;
 
 // ========== REACTIONS ==========
 

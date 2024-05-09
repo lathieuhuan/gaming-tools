@@ -1,10 +1,10 @@
 import type { CharacterPenalty, CharacterPenaltyCore } from "@Src/backend/types";
 import type { CalcUltilInfo } from "../calculation.types";
-import type { DebuffInfoWrap } from "./getFinalResult.types";
+import type { DebuffInfoWrap } from "./getResistances.types";
 
 import { toArray } from "@Src/utils";
 import { CharacterCalc, EntityCalc } from "../utils";
-import { applyPenalty } from "./getFinalResult.utils";
+import { applyPenalty } from "./getResistances.utils";
 
 class ApplierCharacterDebuff {
   info: DebuffInfoWrap;

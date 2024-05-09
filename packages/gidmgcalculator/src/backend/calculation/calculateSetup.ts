@@ -1,11 +1,14 @@
 import type { CalcSetup, Target } from "@Src/types";
+import type { AttackElement, NormalAttack } from "../types";
 import type { TrackerControl } from "./controls";
 
 import { $AppCharacter, $AppData } from "@Src/services";
-import { AttackPatternConf } from "./attack-pattern-conf";
+import { ECalcStatModule } from "../constants/internal.constants";
 import getCalculationStats from "./getCalculationStats";
 import getFinalResult from "./getFinalResult";
-import { AttackElement, NormalAttack } from "../types";
+import getResistances from "./getResistances";
+import AttackPatternConf from "./attack-pattern-conf";
+import CalcItemCalculator from "./calc-item-calculator";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
@@ -29,7 +32,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   const appWeapon = $AppData.getWeapon(weapon.code)!;
   const partyData = $AppCharacter.getPartyData(party);
 
-  const { artAttr, ...rest } = getCalculationStats({
+  const { artAttr, bonusCtrl, ...rest } = getCalculationStats({
     char,
     weapon,
     artifacts,
@@ -47,36 +50,55 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     tracker,
   });
 
-  const attackPatternConf = AttackPatternConf({
+  const resistances = getResistances({
+    char,
+    appChar,
+    party,
+    partyData,
+    customDebuffCtrls,
+    elmtModCtrls,
+    selfDebuffCtrls,
+    artDebuffCtrls,
+    target,
+    tracker,
+  });
+
+  const configAttackPattern = AttackPatternConf({
     char,
     appChar,
     partyData,
     selfBuffCtrls,
     elmtModCtrls,
     customInfusion,
+    bonusCtrl,
+  });
+
+  const calculateCalcItem = CalcItemCalculator({
+    charLv: char.level,
+    targetLv: target.level,
+    resistances,
+    ...rest,
   });
 
   const finalResult = getFinalResult({
     char,
     weapon,
-    party,
     appChar,
     appWeapon,
     partyData,
-    selfDebuffCtrls,
-    artDebuffCtrls,
-    customDebuffCtrls,
-    elmtModCtrls,
-    attackPatternConf,
-    target,
+    bonusCtrl,
+    resistances,
     tracker,
+    configAttackPattern,
+    calculateCalcItem,
     ...rest,
   });
   // console.timeEnd();
+
   return {
     totalAttr: rest.totalAttr,
     artAttr,
-    rxnBonus: rest.rxnBonus,
+    rxnBonus: bonusCtrl.serialize(ECalcStatModule.RXN),
     // infusedElement: attackPatternConf.infusedElement,
     // infusedAttacks: attackPatternConf.infusedAttacks,
     infusedElement: "phys" as AttackElement,

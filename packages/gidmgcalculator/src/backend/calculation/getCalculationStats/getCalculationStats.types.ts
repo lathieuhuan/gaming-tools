@@ -17,7 +17,7 @@ export type BuffInfoWrap = {
   appChar: AppCharacter;
   partyData: PartyData;
   totalAttr: TotalAttributeControl;
-  bonusCalc: BonusControl;
+  bonusCtrl: BonusControl;
   calcItemBuff: CalcItemBuffControl;
   // infusedElement?: AttackElement;
 };

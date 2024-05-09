@@ -10,7 +10,7 @@ interface VapMeltBuffItemProps extends Pick<GenshinModifierViewProps, "mutable" 
   rxnBonus: ReactionBonus;
 }
 export function VapMeltBuffItem({ reaction, element, rxnBonus, ...rest }: VapMeltBuffItemProps) {
-  const mult = GeneralCalc.getAmplifyingMultiplier(element, rxnBonus)[reaction];
+  const mult = GeneralCalc.getAmplifyingMultiplier(element, rxnBonus.melt.pct_, rxnBonus.vaporize.pct_)[reaction];
 
   return (
     <GenshinModifierView

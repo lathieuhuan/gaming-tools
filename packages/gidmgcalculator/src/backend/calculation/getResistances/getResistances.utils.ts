@@ -1,5 +1,5 @@
 import type { EntityPenaltyTarget, ResistanceReductionKey } from "@Src/backend/types";
-import type { DebuffInfoWrap } from "./getFinalResult.types";
+import type { DebuffInfoWrap } from "./getResistances.types";
 import { toArray } from "@Src/utils";
 import { ELEMENT_TYPES } from "@Src/backend/constants";
 

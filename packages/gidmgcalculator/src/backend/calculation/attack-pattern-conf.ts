@@ -8,6 +8,7 @@ import type {
   CharacterBuffNAsConfig,
 } from "../types";
 import type { CalcUltilInfo } from "./calculation.types";
+import type { BonusControl, GetTotalBonusKey } from "./controls";
 
 import { findByIndex, toArray } from "@Src/utils";
 import { CharacterCalc, EntityCalc } from "./utils";
@@ -17,15 +18,17 @@ type AttackPatternConfArgs = CalcUltilInfo & {
   selfBuffCtrls: ModifierCtrl[];
   elmtModCtrls: ElementModCtrl;
   customInfusion: Infusion;
+  bonusCtrl: BonusControl;
 };
 
-export function AttackPatternConf({
+export default function AttackPatternConf({
   char,
   appChar,
   partyData,
   selfBuffCtrls,
   elmtModCtrls,
   customInfusion,
+  bonusCtrl,
 }: AttackPatternConfArgs) {
   const normalsConfig: Partial<Record<AttackPattern, Omit<CharacterBuffNAsConfig, "naType">>> = {};
 
@@ -81,12 +84,22 @@ export function AttackPatternConf({
         attElmt = "phys";
       }
 
+      const finalAttPatt = normalsConfig[patternKey]?.attPatt ?? item.attPatt ?? defaultAttPatt;
+      const finalAttElmt = normalsConfig[patternKey]?.attElmt ?? attElmt;
+
+      const getTotalBonus = (key: GetTotalBonusKey) => {
+        return bonusCtrl.getTotalBonus(key, finalAttPatt, finalAttElmt);
+      };
+
       const configMultFactor = (factor: CalcItemMultFactor) => {
         const {
           root,
           scale = defaultScale,
           basedOn = defaultBasedOn,
         } = typeof factor === "number" ? { root: factor } : factor;
+
+        // console.log("multFactor");
+        // console.log(root, scale, basedOn);
 
         return {
           root,
@@ -95,10 +108,15 @@ export function AttackPatternConf({
         };
       };
 
+      // console.log("====================");
+      // console.log("calcItem", item.name);
+      // console.log(finalAttPatt, finalAttElmt, reaction);
+
       return {
-        attElmt: normalsConfig[patternKey]?.attElmt ?? attElmt,
-        attPatt: normalsConfig[patternKey]?.attPatt ?? item.attPatt ?? defaultAttPatt,
+        attPatt: finalAttPatt,
+        attElmt: finalAttElmt,
         reaction,
+        getTotalBonus,
         configMultFactor,
       };
     };
@@ -120,10 +138,7 @@ export function AttackPatternConf({
     };
   };
 
-  return {
-    // disabledNAs,
-    // infusedElement: infusion.element,
-    // infusedAttacks: infusion.range,
-    config,
-  };
+  return config;
 }
+
+export type ConfigAttackPattern = ReturnType<typeof AttackPatternConf>;

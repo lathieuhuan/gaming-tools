@@ -1,6 +1,7 @@
 import type { ECalcStatModule } from "../constants/internal.constants";
 import type {
   AttackElementPath,
+  AttackPatternElementPath,
   AttackPatternInfoKey,
   AttackPatternPath,
   AttributeStat,
@@ -174,7 +175,7 @@ type AttackElementTarget = {
 };
 type AttackPatternElementTarget = {
   module: ECalcStatModule.PAEL;
-  path: "ALL" | ElementType;
+  path: AttackPatternElementPath;
 };
 type ReactionTarget = {
   module: ECalcStatModule.RXN;

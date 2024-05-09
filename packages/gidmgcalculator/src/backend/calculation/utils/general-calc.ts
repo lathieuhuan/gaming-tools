@@ -57,19 +57,19 @@ export class GeneralCalc {
     return BASE_REACTION_DAMAGE[this.getBareLv(level)];
   }
 
-  static getQuickenBuffDamage(charLv: Level, rxnBonus: ReactionBonus) {
+  static getQuickenBuffDamage(charLv: Level, aggravatePctBonus: number, spreadPctBonus: number) {
     const base = this.getBaseRxnDmg(charLv);
 
     return {
-      aggravate: Math.round(base * 1.15 * (1 + rxnBonus.aggravate.pct_ / 100)),
-      spread: Math.round(base * 1.25 * (1 + rxnBonus.spread.pct_ / 100)),
+      aggravate: Math.round(base * 1.15 * (1 + aggravatePctBonus / 100)),
+      spread: Math.round(base * 1.25 * (1 + spreadPctBonus / 100)),
     };
   }
 
-  static getAmplifyingMultiplier(elmt: AttackElement, rxnBonus: ReactionBonus) {
+  static getAmplifyingMultiplier(elmt: AttackElement, meltPctBonus: number, vapePctBonus: number) {
     return {
-      melt: (1 + rxnBonus.melt.pct_ / 100) * (elmt === "pyro" ? 2 : elmt === "cryo" ? 1.5 : 1),
-      vaporize: (1 + rxnBonus.vaporize.pct_ / 100) * (elmt === "pyro" ? 1.5 : elmt === "hydro" ? 2 : 1),
+      melt: (1 + meltPctBonus / 100) * (elmt === "pyro" ? 2 : elmt === "cryo" ? 1.5 : 1),
+      vaporize: (1 + vapePctBonus / 100) * (elmt === "pyro" ? 1.5 : elmt === "hydro" ? 2 : 1),
     };
   }
 

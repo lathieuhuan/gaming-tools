@@ -91,7 +91,7 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
       case ECalcStatModule.PAEL:
       case ECalcStatModule.RXN:
         if (!isStackable || isStackable(target.path)) {
-          info.bonusCalc.add(target.module, target.path, bonus.value, description);
+          info.bonusCtrl.add(target.module, target.path, bonus.value, description);
         }
         break;
       case "ITEM":
