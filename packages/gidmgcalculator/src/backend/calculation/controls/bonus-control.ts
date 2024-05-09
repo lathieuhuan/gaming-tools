@@ -66,7 +66,7 @@ export class BonusControl {
       // }
     }
 
-    for (const element of [...ELEMENT_TYPES, "all"] as const) {
+    for (const element of ELEMENT_TYPES) {
       this.attPattElmtBonus[`NA.${element}`] = {} as AttackPatternElementInfo;
     }
 
@@ -132,7 +132,6 @@ export class BonusControl {
       (this.attElmtBonus[attElmt]?.[path as AttackElementInfoKey] ?? 0) +
       (this.attPattBonus.all?.[path] ?? 0) +
       (this.attPattBonus[attPatt as AttackPatternBonusKey]?.[path] ?? 0) +
-      (this.attPattElmtBonus["NA.all"]?.[path as AttackPatternElementInfoKey] ?? 0) +
       (this.attPattElmtBonus[attPattElmtKey]?.[path as AttackPatternElementInfoKey] ?? 0)
     );
   }

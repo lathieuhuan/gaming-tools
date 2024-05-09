@@ -175,7 +175,7 @@ type AttackElementTarget = {
 };
 type AttackPatternElementTarget = {
   module: ECalcStatModule.PAEL;
-  path: AttackPatternElementPath;
+  path: "all.pct_" | AttackPatternElementPath;
 };
 type ReactionTarget = {
   module: ECalcStatModule.RXN;

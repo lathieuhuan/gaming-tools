@@ -56,7 +56,7 @@ export type AttackPatternBonus = Record<AttackPatternBonusKey, AttackPatternInfo
 
 // ========== PATTERN ELEMENT ==========
 
-export type AttackPatternElementBonusKey = ElementType | "all";
+export type AttackPatternElementBonusKey = ElementType;
 export type AttackPatternElementInfoKey = "pct_" | "flat";
 export type AttackPatternElementPath = `${AttackPatternElementBonusKey}.${AttackPatternElementInfoKey}`;
 

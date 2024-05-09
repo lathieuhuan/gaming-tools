@@ -61,47 +61,50 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
   if (!bonus.value) return;
 
   for (const target of toArray(targets)) {
+    if (target.module === "ITEM") {
+      info.calcItemBuff.add(bonus.value, target, description);
+      continue;
+    }
+    if (isStackable && !isStackable(target.path)) {
+      continue;
+    }
+
     switch (target.module) {
-      case ECalcStatModule.ATTR:
-        if (!isStackable || isStackable(target.path)) {
-          let path: AttributeStat | AttributeStat[];
+      case ECalcStatModule.ATTR: {
+        let path: AttributeStat | AttributeStat[];
 
-          switch (target.path) {
-            case "INP_ELMT": {
-              const elmtIndex = inputs[target.inpIndex ?? 0];
-              path = ELEMENT_TYPES[elmtIndex];
-              break;
-            }
-            case "OWN_ELMT":
-              path = vision;
-              break;
-            default:
-              path = target.path;
+        switch (target.path) {
+          case "INP_ELMT": {
+            const elmtIndex = inputs[target.inpIndex ?? 0];
+            path = ELEMENT_TYPES[elmtIndex];
+            break;
           }
+          case "OWN_ELMT":
+            path = vision;
+            break;
+          default:
+            path = target.path;
+        }
 
-          if (bonus.isStable) {
-            info.totalAttr.addStable(path, bonus.value, description);
-          } else {
-            info.totalAttr.addUnstable(path, bonus.value, description);
-          }
+        if (bonus.isStable) {
+          info.totalAttr.addStable(path, bonus.value, description);
+        } else {
+          info.totalAttr.addUnstable(path, bonus.value, description);
         }
         break;
+      }
       case ECalcStatModule.PATT:
       case ECalcStatModule.ELMT:
       case ECalcStatModule.PAEL:
       case ECalcStatModule.RXN:
-        if (!isStackable || isStackable(target.path)) {
+        if (target.module === ECalcStatModule.PAEL && target.path === "all.pct_") {
+          for (const type of ELEMENT_TYPES) {
+            info.bonusCtrl.add(target.module, `${type}.pct_`, bonus.value, description);
+          }
+        } else {
           info.bonusCtrl.add(target.module, target.path, bonus.value, description);
         }
         break;
-      case "ITEM":
-        info.calcItemBuff.add(bonus.value, target, description);
-        break;
-      // case "ELM_NA":
-      //   if (info.appChar.weaponType === "catalyst" || info.infusedElement !== "phys") {
-      //     info.bonusCalc.add("PATT", "NA.pct_", bonus.value, description);
-      //   }
-      //   break;
       default:
         target;
     }
