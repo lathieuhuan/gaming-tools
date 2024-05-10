@@ -30,13 +30,13 @@ export default function AttackPatternConf({
   customInfusion,
   bonusCtrl,
 }: AttackPatternConfArgs) {
-  const normalsConfig: Partial<Record<AttackPattern, Omit<CharacterBuffNAsConfig, "naType">>> = {};
+  const normalsConfig: Partial<Record<AttackPattern, Omit<CharacterBuffNAsConfig, "forPatt">>> = {};
 
   for (const ctrl of selfBuffCtrls) {
     const buff = findByIndex(appChar.buffs ?? [], ctrl.index);
 
     if (ctrl.activated && buff?.normalsConfig) {
-      for (const config of toArray(buff?.normalsConfig)) {
+      for (const config of toArray(buff.normalsConfig)) {
         const { checkInput, forPatt = "ALL", ...rest } = config;
         const info = { char, appChar, partyData };
 

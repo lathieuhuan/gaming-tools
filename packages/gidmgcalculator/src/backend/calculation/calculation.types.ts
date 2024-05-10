@@ -2,9 +2,11 @@ import type { PartiallyRequired } from "rond";
 import type { Character, PartyData } from "@Src/types";
 import type {
   ActualAttackElement,
+  ActualAttackPattern,
   AppCharacter,
   AttackElement,
   AttributeStat,
+  CalcItemType,
   CoreStat,
   LevelableTalentType,
   NormalAttack,
@@ -32,9 +34,18 @@ export type CalcUltilInfo = {
 
 export type CalculationAspect = "nonCrit" | "crit" | "average";
 
-export type CalculationFinalResultItem = Record<CalculationAspect, number | number[]> & {
-  attElmt?: ActualAttackElement;
+type CalculationFinalResultAttackItem = {
+  type: Extract<CalcItemType, "attack">;
+  attElmt: ActualAttackElement;
+  attPatt: ActualAttackPattern;
 };
+
+type CalculationFinalResultOtherItem = {
+  type: Exclude<CalcItemType, "attack">;
+};
+
+export type CalculationFinalResultItem = Record<CalculationAspect, number | number[]> &
+  (CalculationFinalResultAttackItem | CalculationFinalResultOtherItem);
 
 export type CalculationFinalResultGroup = Record<string, CalculationFinalResultItem>;
 

@@ -9,7 +9,7 @@ import type {
   Party,
   PartyData,
 } from "@Src/types";
-import type { AppCharacter, AppWeapon, AttackElement } from "@Src/backend/types";
+import type { AppCharacter, AppWeapon } from "@Src/backend/types";
 import type { CalcItemBuffControl, TrackerControl, BonusControl, TotalAttributeControl } from "../controls";
 
 export type BuffInfoWrap = {
@@ -19,7 +19,6 @@ export type BuffInfoWrap = {
   totalAttr: TotalAttributeControl;
   bonusCtrl: BonusControl;
   calcItemBuff: CalcItemBuffControl;
-  // infusedElement?: AttackElement;
 };
 
 export type StackableCheckCondition = {
@@ -40,7 +39,6 @@ export type GetCalculationStatsArgs = {
   wpBuffCtrls?: ModifierCtrl[];
   artBuffCtrls?: ModifierCtrl[];
   customBuffCtrls?: CustomBuffCtrl[];
-  // infusedElement?: AttackElement;
   customInfusion?: Infusion;
   tracker?: TrackerControl;
 };

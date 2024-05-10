@@ -2,7 +2,6 @@ import { Fragment } from "react";
 import { round } from "rond";
 import { CalculationFinalResultGroup, CalcItemRecord } from "@Backend";
 
-import type { Infusion } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { Utils_ } from "@Src/utils";
 import { Green } from "@Src/components";
@@ -42,25 +41,23 @@ function renderParts(parts: PartConfig[]) {
 }
 
 function renderDmg(value: number | number[], callback: (value: number) => string | number = Math.round) {
-  return Array.isArray(value) ? callback(value.reduce((total, num) => total + num, 0)) : callback(value);
+  return Array.isArray(value) ? callback(value.reduce((total, num) => total + (num ?? 0), 0)) : callback(value);
 }
 
 interface CalcItemTrackerProps {
   /** Default to 'Talent Mult.' */
   coreMultLabel?: string;
   records?: Record<string, CalcItemRecord>;
-  result: CalculationFinalResultGroup;
+  resultGroup: CalculationFinalResultGroup;
   defMultDisplay?: React.ReactNode;
-  infusion?: Infusion;
   inHealB_?: number;
 }
 export function CalcItemTracker({
   coreMultLabel = "Talent Mult.",
   inHealB_,
   records = {},
-  result,
+  resultGroup,
   defMultDisplay,
-  infusion,
 }: CalcItemTrackerProps) {
   const { t } = useTranslation();
 
@@ -68,34 +65,28 @@ export function CalcItemTracker({
     <div className="space-y-1">
       {defMultDisplay}
 
-      {infusion && infusion.element !== "phys" && (
-        <div>
-          <p className="text-primary-1">Infusion:</p>
-          <ul className="pl-4 list-disc">
-            <li className="capitalize">
-              Element: <span className={`text-${infusion.element}`}>{infusion.element}</span>
-            </li>
-            {infusion.range?.length ? (
-              <li>Infused attack types: {infusion.range.map((att) => t(att)).join(", ")}</li>
-            ) : null}
-          </ul>
-        </div>
-      )}
-
       {Object.entries(records).map(([itemName, record], i) => {
-        const { nonCrit = 0, crit = 0, average = 0 } = result[itemName] || {};
-        if (!nonCrit) return null;
+        const result = resultGroup[itemName] || {};
+        if (!result.nonCrit) return null;
 
-        const nonCritDmg = renderDmg(nonCrit);
+        const nonCritDmg = renderDmg(result.nonCrit);
         const cDmg_ = record.cDmg_ ? round(record.cDmg_, 3) : 0;
 
         return (
           <div key={i}>
             <p className="font-medium">{t(itemName)}</p>
+
+            {result.type === "attack" ? (
+              <div className="text-sm text-secondary-1">
+                <span className="capitalize">{result.attElmt === "phys" ? "physical" : result.attElmt}</span>
+                {result.attPatt !== "none" ? <span> / {t(result.attPatt)}</span> : null} DMG
+              </div>
+            ) : null}
+
             <ul className="pl-4 text-hint-color text-sm leading-6 list-disc">
               {record.exclusives?.length ? (
                 <li>
-                  <p className="text-primary-1">Exclusive</p>
+                  <p className="text-primary-1">Exclusive Bonus</p>
                   {record.exclusives.map((bonus, i) => {
                     return Object.entries(bonus).map(([key, record]) => {
                       const percent = Utils_.suffixOf(key);
@@ -114,7 +105,7 @@ export function CalcItemTracker({
                 </li>
               ) : null}
 
-              <li>
+              <li className="mt-1">
                 Non-crit <span className="text-heading-color font-semibold">{nonCritDmg}</span> = (
                 {record.multFactors.map((factor, i) => {
                   return (
@@ -182,15 +173,15 @@ export function CalcItemTracker({
 
               {cDmg_ ? (
                 <li>
-                  Crit <span className="text-heading-color font-semibold">{renderDmg(crit)}</span> = {nonCritDmg}{" "}
+                  Crit <span className="text-heading-color font-semibold">{renderDmg(result.crit)}</span> = {nonCritDmg}{" "}
                   <Green>*</Green> (<Green>1 +</Green> Crit DMG <Green>{cDmg_}</Green>)
                 </li>
               ) : null}
 
               {cDmg_ && record.cRate_ ? (
                 <li>
-                  Average <span className="text-heading-color font-semibold">{renderDmg(average)}</span> = {nonCritDmg}{" "}
-                  <Green>*</Green> (<Green>1</Green>
+                  Average <span className="text-heading-color font-semibold">{renderDmg(result.average)}</span> ={" "}
+                  {nonCritDmg} <Green>*</Green> (<Green>1</Green>
                   {renderParts([
                     {
                       sign: "+",

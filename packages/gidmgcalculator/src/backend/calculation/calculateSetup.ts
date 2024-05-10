@@ -46,7 +46,6 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     elmtModCtrls,
     customBuffCtrls,
     customInfusion,
-    // infusedElement: infusion.element,
     tracker,
   });
 
@@ -73,12 +72,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     bonusCtrl,
   });
 
-  const calculateCalcItem = CalcItemCalculator({
-    charLv: char.level,
-    targetLv: target.level,
-    resistances,
-    ...rest,
-  });
+  const calcItemCalculator = new CalcItemCalculator(char.level, target.level, rest.totalAttr, resistances);
 
   const finalResult = getFinalResult({
     char,
@@ -90,7 +84,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     resistances,
     tracker,
     configAttackPattern,
-    calculateCalcItem,
+    calculateCalcItem: calcItemCalculator.calculate,
     ...rest,
   });
   // console.timeEnd();
@@ -99,10 +93,6 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     totalAttr: rest.totalAttr,
     artAttr,
     rxnBonus: bonusCtrl.serialize(ECalcStatModule.RXN),
-    // infusedElement: attackPatternConf.infusedElement,
-    // infusedAttacks: attackPatternConf.infusedAttacks,
-    infusedElement: "phys" as AttackElement,
-    infusedAttacks: ["NA"] as NormalAttack[],
     finalResult,
   };
 };

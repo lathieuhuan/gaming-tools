@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { Button, CollapseSpace, Table, TableThProps } from "rond";
+import { clsx, Button, CollapseSpace, Table, TableThProps } from "rond";
 import { AppCharacter, LevelableTalentType, TalentType } from "@Backend";
 
 import type { CalcCharacter, Weapon } from "@Src/types";
@@ -21,8 +21,9 @@ type RowCellConfig = {
 };
 
 type RowConfig = {
-  element?: string;
+  title?: string;
   cells: RowCellConfig[];
+  className?: string;
 };
 
 export interface FinalResultLayoutProps {
@@ -207,8 +208,8 @@ function SectionTable(props: SectionTableProps) {
         return (
           <Table.Tr key={subKey}>
             <Table.Td
-              title={config.element}
-              className={`sticky left-0 z-10 text-${config.element}`}
+              title={config.title}
+              className={clsx("sticky left-0 z-10", config.className)}
               style={{ background: "inherit" }}
             >
               {props.getRowTitle(subKey)}

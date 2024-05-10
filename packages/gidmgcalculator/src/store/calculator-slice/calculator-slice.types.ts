@@ -34,7 +34,6 @@ export type CalculatorState = {
   resultById: Record<
     string,
     {
-      infusedElement: AttackElement;
       totalAttrs: TotalAttribute;
       rxnBonuses: ReactionBonus;
       finalResult: CalculationFinalResult;

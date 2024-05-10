@@ -18,7 +18,6 @@ export function calculate(state: CalculatorState, all?: boolean) {
       const result = calculateSetup(setupsById[id], target);
 
       state.resultById[id] = {
-        infusedElement: result.infusedElement,
         totalAttrs: result.totalAttr,
         rxnBonuses: result.rxnBonus,
         finalResult: result.finalResult,

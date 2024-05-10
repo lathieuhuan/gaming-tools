@@ -33,7 +33,6 @@ export default function getCalculationStats({
   wpBuffCtrls,
   artBuffCtrls,
   customBuffCtrls,
-  // infusedElement,
   tracker,
 }: GetCalculationStatsArgs) {
   const { refi } = weapon;

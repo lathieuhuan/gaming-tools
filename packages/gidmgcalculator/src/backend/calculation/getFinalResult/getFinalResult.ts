@@ -2,10 +2,12 @@ import type { CalculationFinalResult } from "../calculation.types";
 import type { GetFinalResultArgs } from "./getFinalResult.types";
 
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
+import { ActualAttackElement, ActualAttackPattern } from "@Src/backend/types";
 import { TRANSFORMATIVE_REACTION_INFO } from "../calculation.constants";
 import { toArray } from "@Src/utils";
 import { CharacterCalc, GeneralCalc } from "../utils";
 import { TrackerControl } from "../controls";
+import CalcItemCalculator from "../calc-item-calculator";
 
 export default function getFinalResult({
   char,
@@ -34,7 +36,7 @@ export default function getFinalResult({
     const level = CharacterCalc.getFinalTalentLv({ appChar, talentType: resultKey, char, partyData });
 
     for (const calcItem of appChar.calcList[ATT_PATT]) {
-      const { attElmt, reaction, getTotalBonus, configMultFactor } = configCalcItem(calcItem);
+      const { attPatt, attElmt, reaction, getTotalBonus, configMultFactor } = configCalcItem(calcItem);
       let rxnMult = 1;
 
       // deal elemental dmg and want amplify reaction
@@ -86,14 +88,11 @@ export default function getFinalResult({
 
       // TALENT DMG
       if (disabled && type === "attack") {
-        finalResult[resultKey][calcItem.name] = {
-          nonCrit: 0,
-          crit: 0,
-          average: 0,
-        };
+        finalResult[resultKey][calcItem.name] = CalcItemCalculator.genEmptyResult(type, attPatt, attElmt);
       } else {
         finalResult[resultKey][calcItem.name] = calculateCalcItem({
           base: bases.length > 1 ? bases : bases[0],
+          attPatt,
           attElmt,
           calcType: type,
           rxnMult,
@@ -118,9 +117,11 @@ export default function getFinalResult({
     const cRate_ = Math.max(bonusCtrl.getRxnBonus(rxn, "cRate_"), 0) / 100;
 
     finalResult.RXN_CALC[rxn] = {
+      type: "attack",
       nonCrit,
       crit: cDmg_ ? nonCrit * (1 + cDmg_) : 0,
       average: cRate_ ? nonCrit * (1 + cDmg_ * cRate_) : nonCrit,
+      attPatt: "none",
       attElmt: dmgType,
     };
 
@@ -148,14 +149,17 @@ export default function getFinalResult({
       ],
       normalMult: 1,
     });
+    const attPatt: ActualAttackPattern = "none";
+    const attElmt: ActualAttackElement = "phys";
 
     finalResult.WP_CALC[name] = calculateCalcItem({
       calcType: type,
-      attElmt: "phys",
+      attPatt,
+      attElmt,
       base: (totalAttr[baseOn] * mult) / 100,
       record,
       rxnMult: 1,
-      getBonus: (key) => bonusCtrl.getTotalBonus(key, "none", "phys"),
+      getBonus: (key) => bonusCtrl.getTotalBonus(key, attPatt, attElmt),
     });
 
     tracker?.recordCalcItem("WP_CALC", name, record);

@@ -56,7 +56,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
     customDebuffCtrls,
     target,
   } = chosenSetup;
-  const { appChar, infusedElement, rxnBonus } = result;
+  const { appChar } = result;
 
   const partyData = $AppCharacter.getPartyData(party);
   const { title, variant, statuses } = $AppData.getTargetInfo(target);
@@ -100,8 +100,10 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
               body: (
                 <ElementBuffsDetail
                   charLv={char.level}
-                  elementType={appChar?.vision}
-                  {...{ elmtModCtrls, rxnBonus, infusedElement }}
+                  vision={appChar?.vision}
+                  rxnBonus={result.rxnBonus}
+                  customInfusion={chosenSetup.customInfusion}
+                  elmtModCtrls={elmtModCtrls}
                 />
               ),
             },

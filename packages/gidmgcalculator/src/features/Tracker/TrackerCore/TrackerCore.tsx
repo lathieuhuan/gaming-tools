@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { CollapseList, CollapseListProps } from "rond";
 import { AttackPattern, GeneralCalc, TrackerControl, TrackerResult, calculateSetup } from "@Backend";
 
-import type { Infusion } from "@Src/types";
 import type { TrackerState } from "@Store/ui-slice";
 
 import { useSelector } from "@Store/hooks";
@@ -28,9 +27,6 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const finalResult = useSelector(selectCalcFinalResult);
 
   const [result, setResult] = useState<TrackerResult>();
-  const [infusion, setInfusion] = useState<Infusion>({
-    element: "phys",
-  });
   const [xtraInfo, setXtraInfo] = useState<{ inHealB_?: number }>({});
 
   const charLv = GeneralCalc.getBareLv(activeSetup.char.level);
@@ -42,10 +38,6 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       const finalResult = calculateSetup(activeSetup, target, tracker);
 
       setResult(tracker.finalize());
-      setInfusion({
-        element: finalResult.infusedElement,
-        range: finalResult.infusedAttacks,
-      });
       setXtraInfo({ inHealB_: finalResult.totalAttr.inHealB_ });
     }
   }, [trackerState]);
@@ -103,9 +95,8 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       body: (
         <CalcItemTracker
           records={result?.NAs}
-          result={finalResult.NAs}
+          resultGroup={finalResult.NAs}
           defMultDisplay={renderDefMultiplier("NA")}
-          infusion={infusion}
           {...xtraInfo}
         />
       ),
@@ -115,7 +106,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       body: (
         <CalcItemTracker
           records={result?.ES}
-          result={finalResult.ES}
+          resultGroup={finalResult.ES}
           defMultDisplay={renderDefMultiplier("ES")}
           {...xtraInfo}
         />
@@ -126,7 +117,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       body: (
         <CalcItemTracker
           records={result?.EB}
-          result={finalResult.EB}
+          resultGroup={finalResult.EB}
           defMultDisplay={renderDefMultiplier("EB")}
           {...xtraInfo}
         />
@@ -134,7 +125,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     },
     {
       heading: "Reactions",
-      body: <CalcItemTracker records={result?.RXN_CALC} result={finalResult.RXN_CALC} />,
+      body: <CalcItemTracker records={result?.RXN_CALC} resultGroup={finalResult.RXN_CALC} />,
     },
   ];
 
@@ -144,7 +135,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       body: (
         <CalcItemTracker
           records={result.WP_CALC}
-          result={finalResult.WP_CALC}
+          resultGroup={finalResult.WP_CALC}
           coreMultLabel="DMG Mult."
           defMultDisplay={renderDefMultiplier("EB")}
           {...xtraInfo}

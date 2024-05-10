@@ -1,3 +1,4 @@
+import type { RootState } from "@Store/store";
 import { findById } from "@Src/utils";
 import {
   selectCalcFinalResult,
@@ -13,12 +14,14 @@ import { $AppCharacter } from "@Src/services";
 import { FinalResultView } from "@Src/components";
 import { FinalResultCompare } from "./FinalResultCompare";
 
+const selectActiveSetupName = (state: RootState) => {
+  const { activeId, setupManageInfos } = state.calculator;
+  return findById(setupManageInfos, activeId)?.name || "";
+};
+
 export function FinalResultCore() {
   const dispatch = useDispatch();
-  const activeSetupName = useSelector((state) => {
-    const { activeId, setupManageInfos } = state.calculator;
-    return findById(setupManageInfos, activeId)?.name || "";
-  });
+  const activeSetupName = useSelector(selectActiveSetupName);
   const char = useSelector(selectCharacter);
   const weapon = useSelector(selectWeapon);
   const party = useSelector(selectParty);
