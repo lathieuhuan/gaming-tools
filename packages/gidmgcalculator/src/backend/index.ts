@@ -20,7 +20,7 @@ export type {
   CalculationFinalResultGroup,
   TotalAttribute,
 } from "./calculation/calculation.types";
-export type { CalcItemRecord, CalcStatRecord, TrackerResult } from "./calculation/controls";
+export type { CalcItemRecord, CalcStatRecord, TrackerResult, AttackBonus } from "./calculation/controls";
 export type {
   AmplifyingReaction,
   AppArtifact,
@@ -30,7 +30,6 @@ export type {
   ArtifactType,
   AttackElement,
   AttackPattern,
-  AttackPatternBonusKey,
   AttributeStat,
   BonusKey,
   CalcItem,

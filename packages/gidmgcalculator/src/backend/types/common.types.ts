@@ -3,7 +3,6 @@ import {
   ARTIFACT_TYPES,
   ATTACK_ELEMENTS,
   ATTACK_PATTERNS,
-  ATTACK_PATTERN_INFO_KEYS,
   ATTRIBUTE_STAT_TYPES,
   BONUS_KEYS,
   CORE_STAT_TYPES,
@@ -42,8 +41,6 @@ export type NormalAttack = (typeof NORMAL_ATTACKS)[number];
 export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
 
 export type ActualAttackPattern = AttackPattern | "none";
-
-export type AttackPatternBonusKey = AttackPattern | "all";
 
 //
 

@@ -164,7 +164,7 @@ type AttributeTarget = {
   inpIndex?: number;
 };
 type AttackBonusTarget = {
-  module: "ALL_ELMT" | AttackBonusType;
+  module: "ALL_ELMT" | AttackBonusType | AttackBonusType[];
   path: BonusKey;
 };
 type ReactionTarget = {

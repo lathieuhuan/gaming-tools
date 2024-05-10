@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CollapseList, CollapseListProps } from "rond";
-import { AttackPattern, GeneralCalc, TrackerControl, TrackerResult, calculateSetup } from "@Backend";
+import { AttackBonus, AttackPattern, GeneralCalc, TrackerControl, TrackerResult, calculateSetup } from "@Backend";
 
 import type { TrackerState } from "@Store/ui-slice";
 
@@ -15,6 +15,26 @@ import { BonusesTracker } from "./BonusesTracker";
 import { DebuffsTracker } from "./DebuffsTracker";
 import { CalcItemTracker } from "./CalcItemTracker";
 
+type ExtraInfo = {
+  inHealB_: number;
+  attBonus: AttackBonus;
+};
+
+function getTotalDefIgnore(talent: AttackPattern | "all", attBonus: AttackBonus) {
+  let result = 0;
+
+  for (const bonus of attBonus ?? []) {
+    if (bonus.type.includes(talent)) {
+      for (const record of bonus.records) {
+        if (record.to === "defIgn_") {
+          result += record.value;
+        }
+      }
+    }
+  }
+  return result;
+}
+
 interface TrackerCoreProps {
   trackerState: TrackerState;
 }
@@ -27,7 +47,10 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const finalResult = useSelector(selectCalcFinalResult);
 
   const [result, setResult] = useState<TrackerResult>();
-  const [xtraInfo, setXtraInfo] = useState<{ inHealB_?: number }>({});
+  const [xtraInfo, setXtraInfo] = useState<ExtraInfo>({
+    inHealB_: 0,
+    attBonus: [],
+  });
 
   const charLv = GeneralCalc.getBareLv(activeSetup.char.level);
   const totalDefReduct = getTotalRecordValue(result?.RESIST.def || []);
@@ -38,14 +61,17 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       const finalResult = calculateSetup(activeSetup, target, tracker);
 
       setResult(tracker.finalize());
-      setXtraInfo({ inHealB_: finalResult.totalAttr.inHealB_ });
+      setXtraInfo({
+        inHealB_: finalResult.totalAttr.inHealB_,
+        attBonus: finalResult.attBonus,
+      });
     }
   }, [trackerState]);
 
   const renderDefMultiplier = (talent: AttackPattern | "WP_CALC") => {
-    const talentDefIgnore = talent === "WP_CALC" ? 0 : getTotalRecordValue(result?.PATT?.[`${talent}.defIgn_`] || []);
-    const allDefIgnore = getTotalRecordValue(result?.PATT?.["all.defIgn_"] || []);
-    const totalDefIgnore = talentDefIgnore + allDefIgnore;
+    const totalDefIgnore =
+      getTotalDefIgnore("all", xtraInfo.attBonus) +
+      (talent === "WP_CALC" ? 0 : getTotalDefIgnore(talent, xtraInfo.attBonus));
 
     return (
       <div className="flex items-center">
@@ -84,7 +110,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     },
     {
       heading: "Bonuses",
-      body: <BonusesTracker result={result} />,
+      body: <BonusesTracker result={result} attBonus={xtraInfo.attBonus} />,
     },
     {
       heading: "Debuffs on Target",

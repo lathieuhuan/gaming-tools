@@ -3,7 +3,6 @@ import {
   LEVELS,
   WEAPON_TYPES,
   ATTRIBUTE_STAT_TYPES,
-  ATTACK_PATTERN_INFO_KEYS,
   ATTACK_PATTERNS,
   REACTIONS,
   ELEMENT_TYPES,
@@ -11,8 +10,8 @@ import {
   ArtifactType,
   ElementType,
   AttackElement,
-  AttackPatternBonusKey,
   ReactionType,
+  BONUS_KEYS,
 } from "@Backend";
 
 import type {
@@ -134,7 +133,7 @@ export function encodeSetup(calcSetup: CalcSetup, target: Target) {
           typeCode = ATTACK_ELEMENTS.indexOf(ctrl.type as AttackElement);
           break;
         case "attPattBonus":
-          typeCode = ["all"].concat(ATTACK_PATTERNS).indexOf(ctrl.type as AttackPatternBonusKey);
+          typeCode = ["all"].concat(ATTACK_PATTERNS).indexOf(ctrl.type);
           break;
         case "rxnBonus":
           typeCode = REACTIONS.indexOf(ctrl.type as ReactionType);
@@ -143,7 +142,7 @@ export function encodeSetup(calcSetup: CalcSetup, target: Target) {
       return [
         CUSTOM_BUFF_CATEGORIES.indexOf(ctrl.category),
         typeCode,
-        ctrl.subType ? ATTACK_PATTERN_INFO_KEYS.indexOf(ctrl.subType) : 0,
+        ctrl.subType ? BONUS_KEYS.indexOf(ctrl.subType) : 0,
         ctrl.value,
       ].join(DIVIDERS[2]);
     });
@@ -336,7 +335,7 @@ export function decodeSetup(code: string): SetupImportInfo {
     return {
       category,
       type: type as CustomBuffCtrlType,
-      ...(category === "totalAttr" ? undefined : { subType: ATTACK_PATTERN_INFO_KEYS[+subTypeIndex] }),
+      ...(category === "totalAttr" ? undefined : { subType: BONUS_KEYS[+subTypeIndex] }),
       value: +value,
     };
   });

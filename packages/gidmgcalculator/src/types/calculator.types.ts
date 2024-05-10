@@ -1,7 +1,6 @@
 import type {
   AppCharacter,
   AttackElement,
-  AttackPatternBonusKey,
   BonusKey,
   AttributeStat,
   ElementType,
@@ -9,6 +8,7 @@ import type {
   ReactionType,
   ResistanceReductionKey,
   WeaponType,
+  AttackPattern,
 } from "@Backend";
 import type { Artifact, AttackReaction, Character, Weapon } from "./global.types";
 
@@ -51,7 +51,7 @@ export type ElementModCtrl = {
 
 export type CustomBuffCtrlCategory = "totalAttr" | "attPattBonus" | "attElmtBonus" | "rxnBonus";
 
-export type CustomBuffCtrlType = AttributeStat | AttackPatternBonusKey | ReactionType;
+export type CustomBuffCtrlType = AttributeStat | "all" | AttackPattern | ReactionType;
 
 export type CustomBuffCtrl = {
   category: CustomBuffCtrlCategory;

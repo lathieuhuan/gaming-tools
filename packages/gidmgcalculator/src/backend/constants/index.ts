@@ -14,12 +14,7 @@ export const NORMAL_ATTACKS = ["NA", "CA", "PA"] as const;
 
 export const ATTACK_PATTERNS = [...NORMAL_ATTACKS, "ES", "EB"] as const;
 
-export const ATTACK_PATTERN_INFO_KEYS = ["pct_", "flat", "cRate_", "cDmg_", "mult_", "defIgn_", "multPlus_"] as const;
-
 export const ATTACK_ELEMENTS = [...ELEMENT_TYPES, "phys"] as const;
-
-/** #to-do: remove */
-export const ATTACK_ELEMENT_INFO_KEYS = ["flat", "cRate_", "cDmg_"] as const;
 
 /** ========== REACTIONS ========== */
 

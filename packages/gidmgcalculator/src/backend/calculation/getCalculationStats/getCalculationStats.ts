@@ -1,6 +1,6 @@
 import type {
   AttackElement,
-  AttackPatternBonusKey,
+  AttackPattern,
   AttributeStat,
   ReactionBonusInfoKey,
   ReactionType,
@@ -173,8 +173,8 @@ export default function getCalculationStats({
         }
         case "attPattBonus": {
           if (subType) {
-            const key = type as AttackPatternBonusKey;
-            bonusCtrl.addAttackBonus(key === "all" ? "ALL" : key, subType, value, "Custom buff");
+            const key = type as AttackPattern | "all";
+            bonusCtrl.addAttackBonus(key, subType, value, "Custom buff");
           }
           break;
         }
@@ -305,7 +305,7 @@ export default function getCalculationStats({
 
       totalAttr.addStable(key, value + xtraValue, desc);
 
-      if (elementType === "geo") bonusCtrl.addAttackBonus("ALL", "pct_", 15, desc);
+      if (elementType === "geo") bonusCtrl.addAttackBonus("all", "pct_", 15, desc);
     }
   }
 

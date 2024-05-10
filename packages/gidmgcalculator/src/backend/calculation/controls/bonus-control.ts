@@ -21,7 +21,7 @@ type AttackBonusRecord = {
   to: BonusKey;
 };
 
-type AttackBonus = Array<{
+export type AttackBonus = Array<{
   type: AttackBonusType;
   records: AttackBonusRecord[];
 }>;

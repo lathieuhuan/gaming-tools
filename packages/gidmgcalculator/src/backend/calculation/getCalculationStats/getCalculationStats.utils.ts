@@ -102,7 +102,9 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
         }
         break;
       default:
-        info.bonusCtrl.addAttackBonus(target.module, target.path, bonus.value, description);
+        for (const module of toArray(target.module)) {
+          info.bonusCtrl.addAttackBonus(module, target.path, bonus.value, description);
+        }
     }
   }
 }

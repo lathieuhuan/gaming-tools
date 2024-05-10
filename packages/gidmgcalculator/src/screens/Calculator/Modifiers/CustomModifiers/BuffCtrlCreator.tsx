@@ -1,12 +1,6 @@
 import { useState, useRef, FormEvent } from "react";
 import { clsx, InputNumber, VersatileSelect } from "rond";
-import {
-  ATTACK_ELEMENTS,
-  ATTACK_ELEMENT_INFO_KEYS,
-  ATTACK_PATTERNS,
-  REACTION_BONUS_INFO_KEYS,
-  REACTIONS,
-} from "@Backend";
+import { ATTACK_ELEMENTS, ATTACK_PATTERNS, REACTION_BONUS_INFO_KEYS, REACTIONS } from "@Backend";
 
 import type { CustomBuffCtrl, CustomBuffCtrlType } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
@@ -27,7 +21,7 @@ const CATEGORIES: Record<
   attElmtBonus: {
     label: "Elements",
     types: ATTACK_ELEMENTS,
-    subTypes: ["pct_", ...ATTACK_ELEMENT_INFO_KEYS],
+    subTypes: ["pct_", "flat", "cRate_", "cDmg_"],
   },
   attPattBonus: {
     label: "Talents",
