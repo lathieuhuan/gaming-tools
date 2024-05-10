@@ -1,19 +1,8 @@
 import type {
   ActualAttackPattern,
+  AttackBonusType,
   AttackElement,
-  AttackElementBonus,
-  AttackElementInfoKey,
-  AttackElementPath,
-  AttackPatternBonus,
-  AttackPatternBonusKey,
-  AttackPatternElementBonus,
-  AttackPatternElementBonusKey,
-  AttackPatternElementInfo,
-  AttackPatternElementInfoKey,
-  AttackPatternInfo,
-  AttackPatternInfoKey,
-  AttackPatternPath,
-  AttacklementInfo,
+  BonusKey,
   ReactionBonus,
   ReactionBonusInfo,
   ReactionBonusInfoKey,
@@ -22,102 +11,95 @@ import type {
 } from "@Src/backend/types";
 import type { TrackerControl } from "./tracker-control";
 
-import {
-  ATTACK_ELEMENTS,
-  ATTACK_PATTERNS,
-  ELEMENT_TYPES,
-  REACTIONS,
-  REACTION_BONUS_INFO_KEYS,
-} from "@Src/backend/constants";
+import { REACTIONS, REACTION_BONUS_INFO_KEYS } from "@Src/backend/constants";
 import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
 import { toArray } from "@Src/utils";
 
-type CalcBonusModule = ECalcStatModule.PATT | ECalcStatModule.ELMT | ECalcStatModule.PAEL | ECalcStatModule.RXN;
+type AttackBonusRecord = {
+  desc: string;
+  value: number;
+  to: BonusKey;
+};
 
-export type GetTotalBonusKey = AttackPatternInfoKey | AttackElementInfoKey | AttackPatternElementInfoKey;
+type AttackBonus = Array<{
+  type: AttackBonusType;
+  records: AttackBonusRecord[];
+}>;
 
 export class BonusControl {
   private tracker?: TrackerControl;
-  private attPattBonus: AttackPatternBonus;
-  private attElmtBonus: AttackElementBonus;
-  private attPattElmtBonus: AttackPatternElementBonus;
+  private attBonus: AttackBonus = [];
   private rxnBonus: ReactionBonus;
+
+  private finalizedAttackBonusAll = false;
+  private attackBonusAll: Partial<Record<BonusKey, number>> = {};
 
   constructor(tracker?: TrackerControl) {
     this.tracker = tracker;
-    this.attPattBonus = {} as AttackPatternBonus;
-    this.attElmtBonus = {} as AttackElementBonus;
-    this.attPattElmtBonus = {} as AttackPatternElementBonus;
     this.rxnBonus = {} as ReactionBonus;
-
-    for (const pattern of [...ATTACK_PATTERNS, "all"] as const) {
-      this.attPattBonus[pattern] = {} as AttackPatternInfo;
-
-      // for (const key of ATTACK_PATTERN_INFO_KEYS) {
-      //   this.attPattBonus[pattern][key] = 0;
-      // }
-    }
-
-    for (const element of ATTACK_ELEMENTS) {
-      this.attElmtBonus[element] = {} as AttacklementInfo;
-
-      // for (const key of ATTACK_ELEMENT_INFO_KEYS) {
-      //   this.attElmtBonus[element][key] = 0;
-      // }
-    }
-
-    for (const element of ELEMENT_TYPES) {
-      this.attPattElmtBonus[`NA.${element}`] = {} as AttackPatternElementInfo;
-    }
 
     for (const rxn of REACTIONS) {
       this.rxnBonus[rxn] = {} as ReactionBonusInfo;
-
-      // for (const key of REACTION_BONUS_INFO_KEYS) {
-      //   this.rxnBonus[rxn][key] = 0;
-      // }
     }
   }
 
-  add(module: CalcBonusModule, paths: string | string[], value: number, description: string) {
+  addAttackBonus(module: AttackBonusType, path: BonusKey, value: number, description: string) {
+    const existedBonus = this.attBonus.find((bonus) => bonus.type === module);
+    const record: AttackBonusRecord = {
+      desc: description,
+      value,
+      to: path,
+    };
+
+    if (existedBonus) {
+      existedBonus.records.push(record);
+    } else {
+      this.attBonus.push({
+        type: module,
+        records: [record],
+      });
+    }
+  }
+
+  private finalizeAttackBonusAll() {
+    for (const bonus of this.attBonus) {
+      if (bonus.type === "all") {
+        for (const record of bonus.records) {
+          this.attackBonusAll[record.to] = (this.attackBonusAll[record.to] ?? 0) + record.value;
+        }
+      }
+    }
+  }
+
+  getAttackBonus(path: BonusKey, attPatt: ActualAttackPattern, attElmt: AttackElement) {
+    if (!this.finalizedAttackBonusAll) {
+      this.finalizeAttackBonusAll();
+      this.finalizedAttackBonusAll = true;
+    }
+
+    let result = this.attackBonusAll[path] ?? 0;
+
+    for (const bonus of this.attBonus) {
+      if (bonus.type.includes(attPatt) || bonus.type.includes(attElmt)) {
+        for (const record of bonus.records) {
+          if (record.to === path) {
+            result += record.value;
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+
+  addRxnBonus(paths: ReactionBonusPath | ReactionBonusPath[], value: number, description: string) {
     toArray(paths).forEach((path) => {
       const [key1, key2] = path.split(".");
+      const path1 = key1 as ReactionType;
+      const path2 = key2 as ReactionBonusInfoKey;
 
-      switch (module) {
-        case ECalcStatModule.PATT: {
-          const path1 = key1 as AttackPatternBonusKey;
-          const path2 = key2 as AttackPatternInfoKey;
-
-          this.attPattBonus[path1][path2] = (this.attPattBonus[path1][path2] ?? 0) + value;
-          this.tracker?.recordStat(module, path as AttackPatternPath, value, description);
-          break;
-        }
-        case ECalcStatModule.ELMT: {
-          const path1 = key1 as AttackElement;
-          const path2 = key2 as AttackElementInfoKey;
-
-          this.attElmtBonus[path1][path2] = (this.attElmtBonus[path1][path2] ?? 0) + value;
-          this.tracker?.recordStat(module, path as AttackElementPath, value, description);
-          break;
-        }
-        case ECalcStatModule.PAEL: {
-          const path1 = `NA.${key1 as AttackPatternElementBonusKey}` as const;
-          const path2 = key2 as AttackPatternElementInfoKey;
-
-          this.attPattElmtBonus[path1][path2] = (this.attPattElmtBonus[path1][path2] ?? 0) + value;
-          break;
-        }
-        case ECalcStatModule.RXN: {
-          const path1 = key1 as ReactionType;
-          const path2 = key2 as ReactionBonusInfoKey;
-
-          this.rxnBonus[path1][path2] = (this.rxnBonus[path1][path2] ?? 0) + value;
-          this.tracker?.recordStat(module, path as ReactionBonusPath, value, description);
-          break;
-        }
-        default:
-          module;
-      }
+      this.rxnBonus[path1][path2] = (this.rxnBonus[path1][path2] ?? 0) + value;
+      this.tracker?.recordStat(ECalcStatModule.RXN, path, value, description);
     });
   }
 
@@ -125,50 +107,11 @@ export class BonusControl {
     return this.rxnBonus[path1]?.[path2] ?? 0;
   }
 
-  getTotalBonus(path: GetTotalBonusKey, attPatt: ActualAttackPattern, attElmt: AttackElement) {
-    const attPattElmtKey = `${attPatt as "NA"}.${attElmt as AttackPatternElementBonusKey}` as const;
-
-    return (
-      (this.attElmtBonus[attElmt]?.[path as AttackElementInfoKey] ?? 0) +
-      (this.attPattBonus.all?.[path] ?? 0) +
-      (this.attPattBonus[attPatt as AttackPatternBonusKey]?.[path] ?? 0) +
-      (this.attPattElmtBonus[attPattElmtKey]?.[path as AttackPatternElementInfoKey] ?? 0)
-    );
-  }
-
-  // serialize(module: ECalcStatModule.PATT): AttackPatternBonus;
-  // serialize(module: ECalcStatModule.ELMT): AttackElementBonus;
-  // serialize(module: ECalcStatModule.PAEL): AttackPatternElementBonus;
-  // serialize(module: ECalcStatModule.RXN): ReactionBonus;
-  // serialize(
-  //   module: CalcBonusModule
-  // ): AttackPatternBonus | AttackElementBonus | AttackPatternElementBonus | ReactionBonus {
-  serialize(module: ECalcStatModule.RXN): ReactionBonus {
+  serialize(module: "rxnBonus"): ReactionBonus;
+  serialize(module: "attBonus"): AttackBonus;
+  serialize(module: "rxnBonus" | "attBonus"): ReactionBonus | AttackBonus {
     switch (module) {
-      // case ECalcStatModule.PATT: {
-      //   const result = {} as AttackPatternBonus;
-
-      //   for (const pattern of [...ATTACK_PATTERNS, "all"] as const) {
-      //     result[pattern] = {
-      //       ...this.attPattBonus[pattern],
-      //     };
-      //   }
-      //   return result;
-      // }
-      // case ECalcStatModule.ELMT: {
-      //   const result = {} as AttackElementBonus;
-
-      //   for (const element of ATTACK_ELEMENTS) {
-      //     result[element] = {
-      //       ...this.attElmtBonus[element],
-      //     };
-      //   }
-      //   return result;
-      // }
-      // case ECalcStatModule.PAEL: {
-      //   return this.attPattElmtBonus;
-      // }
-      case ECalcStatModule.RXN: {
+      case "rxnBonus": {
         const result = {} as ReactionBonus;
 
         for (const rxn of REACTIONS) {
@@ -180,6 +123,8 @@ export class BonusControl {
         }
         return result;
       }
+      case "attBonus":
+        return [...this.attBonus];
     }
   }
 }

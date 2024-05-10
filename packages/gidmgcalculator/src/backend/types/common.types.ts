@@ -2,10 +2,10 @@ import {
   AMPLIFYING_REACTIONS,
   ARTIFACT_TYPES,
   ATTACK_ELEMENTS,
-  ATTACK_ELEMENT_INFO_KEYS,
   ATTACK_PATTERNS,
   ATTACK_PATTERN_INFO_KEYS,
   ATTRIBUTE_STAT_TYPES,
+  BONUS_KEYS,
   CORE_STAT_TYPES,
   ELEMENT_TYPES,
   NORMAL_ATTACKS,
@@ -25,6 +25,8 @@ export type TalentType = (typeof TALENT_TYPES)[number];
 
 export type LevelableTalentType = Exclude<TalentType, "altSprint">;
 
+export type BonusKey = (typeof BONUS_KEYS)[number];
+
 // ========== ELEMENTS ==========
 
 export type ElementType = (typeof ELEMENT_TYPES)[number];
@@ -32,12 +34,6 @@ export type ElementType = (typeof ELEMENT_TYPES)[number];
 export type AttackElement = (typeof ATTACK_ELEMENTS)[number];
 
 export type ActualAttackElement = AttackElement | "absorb";
-
-export type AttackElementInfoKey = (typeof ATTACK_ELEMENT_INFO_KEYS)[number];
-export type AttackElementPath = `${AttackElement}.${AttackElementInfoKey}`;
-
-export type AttacklementInfo = Record<AttackElementInfoKey, number>;
-export type AttackElementBonus = Record<AttackElement, AttacklementInfo>;
 
 // ========== PATTERN ==========
 
@@ -48,20 +44,10 @@ export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
 export type ActualAttackPattern = AttackPattern | "none";
 
 export type AttackPatternBonusKey = AttackPattern | "all";
-export type AttackPatternInfoKey = (typeof ATTACK_PATTERN_INFO_KEYS)[number];
-export type AttackPatternPath = `${AttackPatternBonusKey}.${AttackPatternInfoKey}`;
 
-export type AttackPatternInfo = Record<AttackPatternInfoKey, number>;
-export type AttackPatternBonus = Record<AttackPatternBonusKey, AttackPatternInfo>;
+//
 
-// ========== PATTERN ELEMENT ==========
-
-export type AttackPatternElementBonusKey = ElementType;
-export type AttackPatternElementInfoKey = "pct_" | "flat";
-export type AttackPatternElementPath = `${AttackPatternElementBonusKey}.${AttackPatternElementInfoKey}`;
-
-export type AttackPatternElementInfo = Record<AttackPatternElementInfoKey, number>;
-export type AttackPatternElementBonus = Record<`NA.${AttackPatternElementBonusKey}`, AttackPatternElementInfo>;
+export type AttackBonusType = "all" | AttackPattern | AttackElement | `${AttackPattern}.${AttackElement}`;
 
 // ========== REACTIONS ==========
 

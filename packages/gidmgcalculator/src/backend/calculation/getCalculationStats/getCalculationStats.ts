@@ -1,6 +1,5 @@
 import type {
   AttackElement,
-  AttackElementInfoKey,
   AttackPatternBonusKey,
   AttributeStat,
   ReactionBonusInfoKey,
@@ -9,7 +8,6 @@ import type {
 import type { BuffInfoWrap, GetCalculationStatsArgs, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
-import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
 import { RESONANCE_STAT } from "../calculation.constants";
 
 import { $AppCharacter, $AppData } from "@Src/services";
@@ -169,22 +167,21 @@ export default function getCalculationStats({
             totalAttr.addStable(type as AttributeStat, value, "Custom buff");
           } else if (subType) {
             const key = type as AttackElement;
-            const subKey = subType as AttackElementInfoKey;
-            bonusCtrl.add(ECalcStatModule.ELMT, `${key}.${subKey}`, value, "Custom buff");
+            bonusCtrl.addAttackBonus(key, subType, value, "Custom buff");
           }
           break;
         }
         case "attPattBonus": {
           if (subType) {
             const key = type as AttackPatternBonusKey;
-            bonusCtrl.add(ECalcStatModule.PATT, `${key}.${subType}`, value, "Custom buff");
+            bonusCtrl.addAttackBonus(key === "all" ? "ALL" : key, subType, value, "Custom buff");
           }
           break;
         }
         case "rxnBonus": {
           const key = type as ReactionType;
           const subKey = subType as ReactionBonusInfoKey;
-          bonusCtrl.add(ECalcStatModule.RXN, `${key}.${subKey}`, value, "Custom buff");
+          bonusCtrl.addRxnBonus(`${key}.${subKey}`, value, "Custom buff");
           break;
         }
       }
@@ -308,7 +305,7 @@ export default function getCalculationStats({
 
       totalAttr.addStable(key, value + xtraValue, desc);
 
-      if (elementType === "geo") bonusCtrl.add(ECalcStatModule.PATT, "all.pct_", 15, desc);
+      if (elementType === "geo") bonusCtrl.addAttackBonus("ALL", "pct_", 15, desc);
     }
   }
 
@@ -325,13 +322,13 @@ export default function getCalculationStats({
   const { transformative, amplifying, quicken } = GeneralCalc.getRxnBonusesFromEM(totalAttr.getTotal("em"));
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
-    bonusCtrl.add(ECalcStatModule.RXN, `${rxn}.pct_`, transformative, "From Elemental Mastery");
+    bonusCtrl.addRxnBonus(`${rxn}.pct_`, transformative, "From Elemental Mastery");
   }
   for (const rxn of AMPLIFYING_REACTIONS) {
-    bonusCtrl.add(ECalcStatModule.RXN, `${rxn}.pct_`, amplifying, "From Elemental Mastery");
+    bonusCtrl.addRxnBonus(`${rxn}.pct_`, amplifying, "From Elemental Mastery");
   }
   for (const rxn of QUICKEN_REACTIONS) {
-    bonusCtrl.add(ECalcStatModule.RXN, `${rxn}.pct_`, quicken, "From Elemental Mastery");
+    bonusCtrl.addRxnBonus(`${rxn}.pct_`, quicken, "From Elemental Mastery");
   }
 
   const { spread, aggravate } = GeneralCalc.getQuickenBuffDamage(
@@ -341,10 +338,10 @@ export default function getCalculationStats({
   );
 
   if (reaction === "spread" || infuse_reaction === "spread") {
-    bonusCtrl.add(ECalcStatModule.ELMT, "dendro.flat", spread, "Spread reaction");
+    bonusCtrl.addAttackBonus("dendro", "flat", spread, "Spread reaction");
   }
   if (reaction === "aggravate" || infuse_reaction === "aggravate") {
-    bonusCtrl.add(ECalcStatModule.ELMT, "electro.flat", aggravate, "Aggravate reaction");
+    bonusCtrl.addAttackBonus("electro", "flat", aggravate, "Aggravate reaction");
   }
 
   return {

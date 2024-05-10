@@ -1,22 +1,12 @@
 import type {
   AttributeStat,
-  AttackPatternPath,
-  AttackElementPath,
   ReactionBonusPath,
   ResistanceReductionKey,
   CalcItemType,
-  AttackPatternInfoKey,
+  BonusKey,
 } from "@Src/backend/types";
 
-import {
-  ATTACK_ELEMENTS,
-  ATTACK_ELEMENT_INFO_KEYS,
-  ATTACK_PATTERNS,
-  ATTACK_PATTERN_INFO_KEYS,
-  ATTRIBUTE_STAT_TYPES,
-  REACTIONS,
-  REACTION_BONUS_INFO_KEYS,
-} from "@Src/backend/constants";
+import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES, REACTIONS, REACTION_BONUS_INFO_KEYS } from "@Src/backend/constants";
 import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
 import { CalculationFinalResultKey } from "../calculation.types";
 
@@ -27,12 +17,7 @@ export type CalcStatRecord = {
   value: number;
 };
 
-type StatRecordType =
-  | AttributeStat
-  | AttackPatternPath
-  | AttackElementPath
-  | ReactionBonusPath
-  | ResistanceReductionKey;
+type StatRecordType = AttributeStat | ReactionBonusPath | ResistanceReductionKey;
 
 type StatRecordGroup = Record<string, CalcStatRecord[]>;
 
@@ -40,7 +25,7 @@ type StatsRecords = Record<ECalcStatModule, StatRecordGroup>;
 
 // ========== CALC ITEM RECORD ==========
 
-export type CalcItemBonus = Partial<Record<AttackPatternInfoKey, { desc: string; value: number }>>;
+export type CalcItemBonus = Partial<Record<BonusKey, { desc: string; value: number }>>;
 
 export type CalcItemRecord = {
   itemType: CalcItemType;
@@ -74,9 +59,6 @@ export class TrackerControl {
   constructor() {
     this.stats = {
       [ECalcStatModule.ATTR]: {},
-      [ECalcStatModule.PATT]: {},
-      [ECalcStatModule.ELMT]: {},
-      [ECalcStatModule.PAEL]: {},
       [ECalcStatModule.RXN]: {},
       [ECalcStatModule.RESIST]: {},
     };
@@ -92,15 +74,8 @@ export class TrackerControl {
     for (const stat of ATTRIBUTE_STAT_TYPES) {
       this.stats.ATTR[stat] = [];
     }
-    for (const attPatt of [...ATTACK_PATTERNS, "all"] as const) {
-      for (const key of ATTACK_PATTERN_INFO_KEYS) {
-        this.stats.PATT[`${attPatt}.${key}`] = [];
-      }
-    }
+
     for (const attElmt of ATTACK_ELEMENTS) {
-      for (const key of ATTACK_ELEMENT_INFO_KEYS) {
-        this.stats.ELMT[`${attElmt}.${key}`] = [];
-      }
       this.stats.RESIST[attElmt] = [];
     }
     this.stats.RESIST.def = [];
@@ -113,8 +88,6 @@ export class TrackerControl {
   }
 
   recordStat(category: ECalcStatModule.ATTR, type: AttributeStat, value: number, description: string): void;
-  recordStat(category: ECalcStatModule.PATT, type: AttackPatternPath, value: number, description: string): void;
-  recordStat(category: ECalcStatModule.ELMT, type: AttackElementPath, value: number, description: string): void;
   recordStat(category: ECalcStatModule.RXN, type: ReactionBonusPath, value: number, description: string): void;
   recordStat(category: ECalcStatModule.RESIST, type: ResistanceReductionKey, value: number, description: string): void;
   recordStat(category: ECalcStatModule, type: StatRecordType, value: number, description: string) {
@@ -136,10 +109,10 @@ export class TrackerControl {
     this.calcItems[category][name] = record;
   }
 
-  finalize() {
+  finalize(): TrackerResult {
     return {
       ...this.stats,
       ...this.calcItems,
-    } as TrackerResult;
+    };
   }
 }

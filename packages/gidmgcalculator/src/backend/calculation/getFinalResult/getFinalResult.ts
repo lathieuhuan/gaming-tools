@@ -159,7 +159,7 @@ export default function getFinalResult({
       base: (totalAttr[baseOn] * mult) / 100,
       record,
       rxnMult: 1,
-      getBonus: (key) => bonusCtrl.getTotalBonus(key, attPatt, attElmt),
+      getBonus: (key) => bonusCtrl.getAttackBonus(key, attPatt, attElmt),
     });
 
     tracker?.recordCalcItem("WP_CALC", name, record);

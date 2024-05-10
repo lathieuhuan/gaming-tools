@@ -2,7 +2,14 @@ export { calculateSetup } from "./calculation/calculateSetup";
 export { default as getCalculationStats } from "./calculation/getCalculationStats";
 export { getIntialBonusValue } from "./calculation/getCalculationStats/applier-character-buff";
 export { ArtifactAttributeControl, TrackerControl } from "./calculation/controls";
-export { ArtifactCalc, CharacterCalc, EntityCalc, GeneralCalc, WeaponCalc, type ArtifactSetBonus } from "./calculation/utils";
+export {
+  ArtifactCalc,
+  CharacterCalc,
+  EntityCalc,
+  GeneralCalc,
+  WeaponCalc,
+  type ArtifactSetBonus,
+} from "./calculation/utils";
 
 export * from "./constants";
 
@@ -22,11 +29,10 @@ export type {
   ArtifactModifierDescription,
   ArtifactType,
   AttackElement,
-  AttackElementInfoKey,
   AttackPattern,
   AttackPatternBonusKey,
-  AttackPatternInfoKey,
   AttributeStat,
+  BonusKey,
   CalcItem,
   CharacterBuff,
   CharacterDebuff,
@@ -40,7 +46,6 @@ export type {
   NormalAttack,
   QuickenReaction,
   ReactionBonus,
-  ReactionBonusInfoKey,
   ReactionType,
   ResistanceReduction,
   ResistanceReductionKey,

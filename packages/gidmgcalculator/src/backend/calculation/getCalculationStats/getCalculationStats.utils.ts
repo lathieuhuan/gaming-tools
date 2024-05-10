@@ -93,20 +93,16 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
         }
         break;
       }
-      case ECalcStatModule.PATT:
-      case ECalcStatModule.ELMT:
-      case ECalcStatModule.PAEL:
       case ECalcStatModule.RXN:
-        if (target.module === ECalcStatModule.PAEL && target.path === "all.pct_") {
-          for (const type of ELEMENT_TYPES) {
-            info.bonusCtrl.add(target.module, `${type}.pct_`, bonus.value, description);
-          }
-        } else {
-          info.bonusCtrl.add(target.module, target.path, bonus.value, description);
+        info.bonusCtrl.addRxnBonus(target.path, bonus.value, description);
+        break;
+      case "ALL_ELMT":
+        for (const elmt of ELEMENT_TYPES) {
+          info.bonusCtrl.addAttackBonus(elmt, target.path, bonus.value, description);
         }
         break;
       default:
-        target;
+        info.bonusCtrl.addAttackBonus(target.module, target.path, bonus.value, description);
     }
   }
 }

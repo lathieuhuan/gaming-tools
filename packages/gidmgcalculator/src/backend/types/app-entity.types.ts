@@ -1,10 +1,8 @@
 import type { ECalcStatModule } from "../constants/internal.constants";
 import type {
-  AttackElementPath,
-  AttackPatternElementPath,
-  AttackPatternInfoKey,
-  AttackPatternPath,
+  AttackBonusType,
   AttributeStat,
+  BonusKey,
   ElementType,
   ReactionBonusPath,
   ResistanceReductionKey,
@@ -165,17 +163,9 @@ type AttributeTarget = {
   /** Input's index to get element's index if path is 'INP_ELMT'. Default to 0 */
   inpIndex?: number;
 };
-type AttackPatternTarget = {
-  module: ECalcStatModule.PATT;
-  path: AttackPatternPath | AttackPatternPath[];
-};
-type AttackElementTarget = {
-  module: ECalcStatModule.ELMT;
-  path: AttackElementPath | AttackElementPath[];
-};
-type AttackPatternElementTarget = {
-  module: ECalcStatModule.PAEL;
-  path: "all.pct_" | AttackPatternElementPath;
+type AttackBonusTarget = {
+  module: "ALL_ELMT" | AttackBonusType;
+  path: BonusKey;
 };
 type ReactionTarget = {
   module: ECalcStatModule.RXN;
@@ -183,17 +173,11 @@ type ReactionTarget = {
 };
 export type CalcItemTarget = {
   module: "ITEM";
-  path: AttackPatternInfoKey;
+  path: BonusKey;
   id: string | string[];
 };
 
-export type EntityBonusTarget =
-  | AttributeTarget
-  | AttackPatternTarget
-  | AttackElementTarget
-  | AttackPatternElementTarget
-  | ReactionTarget
-  | CalcItemTarget;
+export type EntityBonusTarget = AttributeTarget | AttackBonusTarget | ReactionTarget | CalcItemTarget;
 
 // ========== BONUS VALUE ==========
 

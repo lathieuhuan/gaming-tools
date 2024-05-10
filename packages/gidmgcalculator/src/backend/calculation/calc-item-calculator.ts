@@ -2,12 +2,13 @@ import type {
   ActualAttackElement,
   ActualAttackPattern,
   AttackElement,
+  BonusKey,
   CalcItemType,
   Level,
   ResistanceReduction,
 } from "@Src/backend/types";
 import type { CalculationFinalResultItem, TotalAttribute } from "./calculation.types";
-import type { CalcItemRecord, GetTotalBonusKey } from "./controls";
+import type { CalcItemRecord } from "./controls";
 
 import { applyToOneOrMany, toMult } from "@Src/utils";
 import { GeneralCalc } from "./utils";
@@ -19,7 +20,7 @@ type CalculateArgs = {
   base: number | number[];
   rxnMult: number;
   record: CalcItemRecord;
-  getBonus?: (key: GetTotalBonusKey) => number;
+  getBonus?: (key: BonusKey) => number;
 };
 
 export default class CalcItemCalculator {

@@ -1,4 +1,4 @@
-import type { AttackPatternInfoKey, CalcItemTarget } from "@Src/backend/types";
+import type { BonusKey, CalcItemTarget } from "@Src/backend/types";
 import type { CalcItemBonus } from "./tracker-control";
 
 type CalcItemBuff = {
@@ -6,7 +6,7 @@ type CalcItemBuff = {
   bonus: CalcItemBonus;
 };
 
-type ProcessedItemBonus = Partial<Record<AttackPatternInfoKey, number>>;
+type ProcessedItemBonus = Partial<Record<BonusKey, number>>;
 
 export class CalcItemBuffControl {
   private buffs: CalcItemBuff[] = [];
@@ -37,7 +37,7 @@ export class CalcItemBuffControl {
       }
     }
 
-    const of = (key: AttackPatternInfoKey) => bonus[key] ?? 0;
+    const of = (key: BonusKey) => bonus[key] ?? 0;
 
     return {
       list,

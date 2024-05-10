@@ -2,13 +2,14 @@ import type { ElementModCtrl, Infusion, ModifierCtrl } from "@Src/types";
 import type {
   AttackElement,
   AttackPattern,
+  BonusKey,
   CalcItem,
   CalcItemFlatFactor,
   CalcItemMultFactor,
   CharacterBuffNAsConfig,
 } from "../types";
 import type { CalcUltilInfo } from "./calculation.types";
-import type { BonusControl, GetTotalBonusKey } from "./controls";
+import type { BonusControl } from "./controls";
 
 import { findByIndex, toArray } from "@Src/utils";
 import { CharacterCalc, EntityCalc } from "./utils";
@@ -87,8 +88,8 @@ export default function AttackPatternConf({
       const finalAttPatt = normalsConfig[patternKey]?.attPatt ?? item.attPatt ?? defaultAttPatt;
       const finalAttElmt = normalsConfig[patternKey]?.attElmt ?? attElmt;
 
-      const getTotalBonus = (key: GetTotalBonusKey) => {
-        return bonusCtrl.getTotalBonus(key, finalAttPatt, finalAttElmt);
+      const getTotalBonus = (key: BonusKey) => {
+        return bonusCtrl.getAttackBonus(key, finalAttPatt, finalAttElmt);
       };
 
       const configMultFactor = (factor: CalcItemMultFactor) => {

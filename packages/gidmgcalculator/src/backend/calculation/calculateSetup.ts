@@ -1,9 +1,7 @@
 import type { CalcSetup, Target } from "@Src/types";
-import type { AttackElement, NormalAttack } from "../types";
 import type { TrackerControl } from "./controls";
 
 import { $AppCharacter, $AppData } from "@Src/services";
-import { ECalcStatModule } from "../constants/internal.constants";
 import getCalculationStats from "./getCalculationStats";
 import getFinalResult from "./getFinalResult";
 import getResistances from "./getResistances";
@@ -92,7 +90,8 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   return {
     totalAttr: rest.totalAttr,
     artAttr,
-    rxnBonus: bonusCtrl.serialize(ECalcStatModule.RXN),
+    rxnBonus: bonusCtrl.serialize("rxnBonus"),
+    attBonus: bonusCtrl.serialize("attBonus"),
     finalResult,
   };
 };
