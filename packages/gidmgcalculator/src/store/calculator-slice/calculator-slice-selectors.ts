@@ -23,9 +23,9 @@ export const selectElmtModCtrls = (state: RootState) =>
 
 export const selectTarget = (state: RootState) => state.calculator.target;
 
-export const selectTotalAttr = (state: RootState) => state.calculator.resultById[state.calculator.activeId].totalAttrs;
+export const selectTotalAttr = (state: RootState) => state.calculator.resultById[state.calculator.activeId].totalAttr;
 
-export const selectRxnBonus = (state: RootState) => state.calculator.resultById[state.calculator.activeId].rxnBonuses;
+export const selectAttBonus = (state: RootState) => state.calculator.resultById[state.calculator.activeId].attBonus;
 
 export const selectCalcFinalResult = (state: RootState) =>
   state.calculator.resultById[state.calculator.activeId].finalResult;

@@ -18,8 +18,8 @@ export function calculate(state: CalculatorState, all?: boolean) {
       const result = calculateSetup(setupsById[id], target);
 
       state.resultById[id] = {
-        totalAttrs: result.totalAttr,
-        rxnBonuses: result.rxnBonus,
+        totalAttr: result.totalAttr,
+        attBonus: result.attBonus,
         finalResult: result.finalResult,
       };
     }

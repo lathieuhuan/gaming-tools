@@ -1,5 +1,13 @@
 import type { CalcArtifacts, PartyData } from "@Src/types";
-import type { AppCharacter, AttackElement, ElementType, Level, ReactionBonus } from "@Src/backend/types";
+import type {
+  AmplifyingReaction,
+  AppCharacter,
+  AttackElement,
+  ElementType,
+  Level,
+  QuickenReaction,
+  ReactionBonus,
+} from "@Src/backend/types";
 
 export type ArtifactSetBonus = {
   code: number;
@@ -57,20 +65,28 @@ export class GeneralCalc {
     return BASE_REACTION_DAMAGE[this.getBareLv(level)];
   }
 
-  static getQuickenBuffDamage(charLv: Level, aggravatePctBonus: number, spreadPctBonus: number) {
+  static getQuickenBuffDamage(reaction: QuickenReaction, charLv: Level, pctBonus: number) {
     const base = this.getBaseRxnDmg(charLv);
 
-    return {
-      aggravate: Math.round(base * 1.15 * (1 + aggravatePctBonus / 100)),
-      spread: Math.round(base * 1.25 * (1 + spreadPctBonus / 100)),
-    };
+    switch (reaction) {
+      case "aggravate":
+        return Math.round(base * 1.15 * (1 + pctBonus / 100));
+      case "spread":
+        return Math.round(base * 1.25 * (1 + pctBonus / 100));
+      default:
+        return 1;
+    }
   }
 
-  static getAmplifyingMultiplier(elmt: AttackElement, meltPctBonus: number, vapePctBonus: number) {
-    return {
-      melt: (1 + meltPctBonus / 100) * (elmt === "pyro" ? 2 : elmt === "cryo" ? 1.5 : 1),
-      vaporize: (1 + vapePctBonus / 100) * (elmt === "pyro" ? 1.5 : elmt === "hydro" ? 2 : 1),
-    };
+  static getAmplifyingMultiplier(reaction: AmplifyingReaction, elmt: AttackElement, pctBonus: number) {
+    switch (reaction) {
+      case "melt":
+        return (1 + pctBonus / 100) * (elmt === "pyro" ? 2 : elmt === "cryo" ? 1.5 : 1);
+      case "vaporize":
+        return (1 + pctBonus / 100) * (elmt === "pyro" ? 1.5 : elmt === "hydro" ? 2 : 1);
+      default:
+        return 1;
+    }
   }
 
   static countElements(partyData: PartyData, appChar?: AppCharacter) {

@@ -1,4 +1,4 @@
-import type { BonusKey, CalcItemTarget } from "@Src/backend/types";
+import type { BonusKey } from "@Src/backend/types";
 import type { CalcItemBonus } from "./tracker-control";
 
 type CalcItemBuff = {
@@ -11,14 +11,14 @@ type ProcessedItemBonus = Partial<Record<BonusKey, number>>;
 export class CalcItemBuffControl {
   private buffs: CalcItemBuff[] = [];
 
-  add(value: number, target: CalcItemTarget, description: string) {
-    this.buffs.push({
-      ids: target.id,
-      bonus: {
-        [target.path]: { desc: description, value: value },
-      },
-    });
-  }
+  // add(value: number, target: CalcItemTarget, description: string) {
+  //   this.buffs.push({
+  //     ids: target.id,
+  //     bonus: {
+  //       [target.path]: { desc: description, value: value },
+  //     },
+  //   });
+  // }
 
   get(id: string | undefined) {
     const list: CalcItemBonus[] = [];

@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { ReactionBonus, ElementType, Level, AttackElement } from "@Backend";
+import { ElementType, Level, AttackBonus } from "@Backend";
 
 import type { CustomBuffCtrl, ElementModCtrl, AttackReaction, Infusion } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
@@ -11,14 +11,14 @@ import { renderModifiers, VapMeltBuffItem, QuickenBuffItem, ResonanceBuffItem } 
 interface ElementBuffsDetailProps {
   charLv: Level;
   elmtModCtrls: ElementModCtrl;
-  rxnBonus: ReactionBonus;
+  attBonus: AttackBonus;
   vision: ElementType;
   customInfusion: Infusion;
 }
 export function ElementBuffsDetail({
   charLv,
   elmtModCtrls,
-  rxnBonus,
+  attBonus,
   vision,
   customInfusion,
 }: ElementBuffsDetailProps) {
@@ -39,9 +39,9 @@ export function ElementBuffsDetail({
 
   const renderReaction = (reaction: AttackReaction, element: ElementType) => {
     return reaction === "melt" || reaction === "vaporize" ? (
-      <VapMeltBuffItem mutable={false} {...{ reaction, element, rxnBonus }} />
+      <VapMeltBuffItem mutable={false} {...{ reaction, element, attBonus }} />
     ) : reaction === "spread" || reaction === "aggravate" ? (
-      <QuickenBuffItem mutable={false} {...{ reaction, element, characterLv: charLv, rxnBonus }} />
+      <QuickenBuffItem mutable={false} {...{ reaction, element, characterLv: charLv, attBonus }} />
     ) : null;
   };
 

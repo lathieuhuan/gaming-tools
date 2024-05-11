@@ -61,11 +61,7 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
   if (!bonus.value) return;
 
   for (const target of toArray(targets)) {
-    if (target.module === "ITEM") {
-      info.calcItemBuff.add(bonus.value, target, description);
-      continue;
-    }
-    if (isStackable && !isStackable(target.path)) {
+    if (target.module.slice(0, 2) === "id" || (isStackable && !isStackable(target.path))) {
       continue;
     }
 
@@ -93,17 +89,14 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
         }
         break;
       }
-      case ECalcStatModule.RXN:
-        info.bonusCtrl.addRxnBonus(target.path, bonus.value, description);
-        break;
       case "ALL_ELMT":
         for (const elmt of ELEMENT_TYPES) {
-          info.bonusCtrl.addAttackBonus(elmt, target.path, bonus.value, description);
+          info.bonusCtrl.add(elmt, target.path, bonus.value, description);
         }
         break;
       default:
         for (const module of toArray(target.module)) {
-          info.bonusCtrl.addAttackBonus(module, target.path, bonus.value, description);
+          info.bonusCtrl.add(module, target.path, bonus.value, description);
         }
     }
   }

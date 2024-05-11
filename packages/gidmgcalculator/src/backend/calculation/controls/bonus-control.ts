@@ -3,6 +3,7 @@ import type {
   AttackBonusType,
   AttackElement,
   BonusKey,
+  ExclusiveBonusType,
   ReactionBonus,
   ReactionBonusInfo,
   ReactionBonusInfoKey,
@@ -26,42 +27,41 @@ export type AttackBonus = Array<{
   records: AttackBonusRecord[];
 }>;
 
+// Array of AttackBonusType's segments
+type GetBonusPaths = Array<ActualAttackPattern | AttackElement | ReactionType | ExclusiveBonusType>;
+
 export class BonusControl {
   private tracker?: TrackerControl;
   private attBonus: AttackBonus = [];
-  private rxnBonus: ReactionBonus;
 
-  private finalizedAttackBonusAll = false;
+  private finalizedBonusAll = false;
   private attackBonusAll: Partial<Record<BonusKey, number>> = {};
 
   constructor(tracker?: TrackerControl) {
     this.tracker = tracker;
-    this.rxnBonus = {} as ReactionBonus;
+  }
 
-    for (const rxn of REACTIONS) {
-      this.rxnBonus[rxn] = {} as ReactionBonusInfo;
+  add(module: AttackBonusType, path: BonusKey, value: number, description: string) {
+    if (value) {
+      const existedBonus = this.attBonus.find((bonus) => bonus.type === module);
+      const record: AttackBonusRecord = {
+        desc: description,
+        value,
+        to: path,
+      };
+
+      if (existedBonus) {
+        existedBonus.records.push(record);
+      } else {
+        this.attBonus.push({
+          type: module,
+          records: [record],
+        });
+      }
     }
   }
 
-  addAttackBonus(module: AttackBonusType, path: BonusKey, value: number, description: string) {
-    const existedBonus = this.attBonus.find((bonus) => bonus.type === module);
-    const record: AttackBonusRecord = {
-      desc: description,
-      value,
-      to: path,
-    };
-
-    if (existedBonus) {
-      existedBonus.records.push(record);
-    } else {
-      this.attBonus.push({
-        type: module,
-        records: [record],
-      });
-    }
-  }
-
-  private finalizeAttackBonusAll() {
+  private finalizeBonusAll() {
     for (const bonus of this.attBonus) {
       if (bonus.type === "all") {
         for (const record of bonus.records) {
@@ -71,16 +71,11 @@ export class BonusControl {
     }
   }
 
-  getAttackBonus(path: BonusKey, attPatt: ActualAttackPattern, attElmt: AttackElement) {
-    if (!this.finalizedAttackBonusAll) {
-      this.finalizeAttackBonusAll();
-      this.finalizedAttackBonusAll = true;
-    }
+  static getBonus(attBonus: AttackBonus, path: BonusKey, ...paths: GetBonusPaths) {
+    let result = 0;
 
-    let result = this.attackBonusAll[path] ?? 0;
-
-    for (const bonus of this.attBonus) {
-      if (bonus.type.includes(attPatt) || bonus.type.includes(attElmt)) {
+    for (const bonus of attBonus) {
+      if (paths.some((path) => bonus.type.includes(path))) {
         for (const record of bonus.records) {
           if (record.to === path) {
             result += record.value;
@@ -88,43 +83,40 @@ export class BonusControl {
         }
       }
     }
-
     return result;
   }
 
-  addRxnBonus(paths: ReactionBonusPath | ReactionBonusPath[], value: number, description: string) {
-    toArray(paths).forEach((path) => {
-      const [key1, key2] = path.split(".");
-      const path1 = key1 as ReactionType;
-      const path2 = key2 as ReactionBonusInfoKey;
-
-      this.rxnBonus[path1][path2] = (this.rxnBonus[path1][path2] ?? 0) + value;
-      this.tracker?.recordStat(ECalcStatModule.RXN, path, value, description);
-    });
-  }
-
-  getRxnBonus(path1: ReactionType, path2: ReactionBonusInfoKey) {
-    return this.rxnBonus[path1]?.[path2] ?? 0;
-  }
-
-  serialize(module: "rxnBonus"): ReactionBonus;
-  serialize(module: "attBonus"): AttackBonus;
-  serialize(module: "rxnBonus" | "attBonus"): ReactionBonus | AttackBonus {
-    switch (module) {
-      case "rxnBonus": {
-        const result = {} as ReactionBonus;
-
-        for (const rxn of REACTIONS) {
-          result[rxn] = {} as ReactionBonusInfo;
-
-          for (const key of REACTION_BONUS_INFO_KEYS) {
-            result[rxn][key] = this.getRxnBonus(rxn, key);
-          }
-        }
-        return result;
-      }
-      case "attBonus":
-        return [...this.attBonus];
+  get(key: BonusKey, ...paths: GetBonusPaths) {
+    if (!this.finalizedBonusAll) {
+      this.finalizeBonusAll();
+      this.finalizedBonusAll = true;
     }
+
+    return (this.attackBonusAll[key] ?? 0) + BonusControl.getBonus(this.attBonus, key, ...paths);
   }
+
+  serialize() {
+    return [...this.attBonus];
+  }
+
+  // serialize(module: "rxnBonus"): ReactionBonus;
+  // serialize(module: "attBonus"): AttackBonus;
+  // serialize(module: "rxnBonus" | "attBonus"): ReactionBonus | AttackBonus {
+  //   switch (module) {
+  //     case "rxnBonus": {
+  //       const result = {} as ReactionBonus;
+
+  //       for (const rxn of REACTIONS) {
+  //         result[rxn] = {} as ReactionBonusInfo;
+
+  //         for (const key of REACTION_BONUS_INFO_KEYS) {
+  //           result[rxn][key] = this.getRxnBonus(rxn, key);
+  //         }
+  //       }
+  //       return result;
+  //     }
+  //     case "attBonus":
+  //       return [...this.attBonus];
+  //   }
+  // }
 }

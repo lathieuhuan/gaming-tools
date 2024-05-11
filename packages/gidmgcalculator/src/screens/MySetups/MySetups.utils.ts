@@ -14,7 +14,7 @@ export function calculateChosenSetup(chosenSetup: UserSetup, weapon: UserWeapon 
       appChar,
       totalAttr: result.totalAttr,
       artAttr: result.artAttr,
-      rxnBonus: result.rxnBonus,
+      attBonus: result.attBonus,
       finalResult: result.finalResult,
     };
   }

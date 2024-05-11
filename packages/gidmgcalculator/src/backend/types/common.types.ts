@@ -44,7 +44,15 @@ export type ActualAttackPattern = AttackPattern | "none";
 
 //
 
-export type AttackBonusType = "all" | AttackPattern | AttackElement | `${AttackPattern}.${AttackElement}`;
+export type ExclusiveBonusType = `id.${number}`;
+
+export type AttackBonusType =
+  | "all"
+  | AttackPattern
+  | AttackElement
+  | `${AttackPattern}.${AttackElement}`
+  | ReactionType
+  | ExclusiveBonusType;
 
 // ========== REACTIONS ==========
 

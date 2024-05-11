@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectCharacter,
   selectElmtModCtrls,
-  selectRxnBonus,
+  selectAttBonus,
   updateCalcSetup,
   updateResonance,
 } from "@Store/calculator-slice";
@@ -22,7 +22,7 @@ export default function ElementBuffs() {
   const char = useSelector(selectCharacter);
   const { vision, weaponType, calcList } = $AppCharacter.get(char.name);
   const elmtModCtrls = useSelector(selectElmtModCtrls);
-  const rxnBonus = useSelector(selectRxnBonus);
+  const attBonus = useSelector(selectAttBonus);
   const customInfusion = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].customInfusion);
 
   const { element: infusedElement } = customInfusion;
@@ -48,7 +48,7 @@ export default function ElementBuffs() {
         key={reaction}
         mutable
         checked={activated}
-        {...{ reaction, element, rxnBonus }}
+        {...{ reaction, element, attBonus }}
         onToggle={() => {
           dispatch(
             updateCalcSetup({
@@ -75,7 +75,7 @@ export default function ElementBuffs() {
         key={reaction}
         mutable
         checked={activated}
-        {...{ reaction, element, characterLv: char.level, rxnBonus }}
+        {...{ reaction, element, characterLv: char.level, attBonus }}
         onToggle={() => {
           dispatch(
             updateCalcSetup({

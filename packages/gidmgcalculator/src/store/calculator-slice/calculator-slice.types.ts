@@ -1,6 +1,7 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { PartiallyRequired } from "rond";
 import type {
+  AttackBonus,
   AttackElement,
   AttributeStat,
   CalculationFinalResult,
@@ -34,8 +35,8 @@ export type CalculatorState = {
   resultById: Record<
     string,
     {
-      totalAttrs: TotalAttribute;
-      rxnBonuses: ReactionBonus;
+      totalAttr: TotalAttribute;
+      attBonus: AttackBonus;
       finalResult: CalculationFinalResult;
     }
   >;

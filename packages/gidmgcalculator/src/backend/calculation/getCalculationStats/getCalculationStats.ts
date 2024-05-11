@@ -167,21 +167,21 @@ export default function getCalculationStats({
             totalAttr.addStable(type as AttributeStat, value, "Custom buff");
           } else if (subType) {
             const key = type as AttackElement;
-            bonusCtrl.addAttackBonus(key, subType, value, "Custom buff");
+            bonusCtrl.add(key, subType, value, "Custom buff");
           }
           break;
         }
         case "attPattBonus": {
           if (subType) {
             const key = type as AttackPattern | "all";
-            bonusCtrl.addAttackBonus(key, subType, value, "Custom buff");
+            bonusCtrl.add(key, subType, value, "Custom buff");
           }
           break;
         }
         case "rxnBonus": {
           const key = type as ReactionType;
           const subKey = subType as ReactionBonusInfoKey;
-          bonusCtrl.addRxnBonus(`${key}.${subKey}`, value, "Custom buff");
+          bonusCtrl.add(key, subKey, value, "Custom buff");
           break;
         }
       }
@@ -305,7 +305,7 @@ export default function getCalculationStats({
 
       totalAttr.addStable(key, value + xtraValue, desc);
 
-      if (elementType === "geo") bonusCtrl.addAttackBonus("all", "pct_", 15, desc);
+      if (elementType === "geo") bonusCtrl.add("all", "pct_", 15, desc);
     }
   }
 
@@ -322,26 +322,22 @@ export default function getCalculationStats({
   const { transformative, amplifying, quicken } = GeneralCalc.getRxnBonusesFromEM(totalAttr.getTotal("em"));
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
-    bonusCtrl.addRxnBonus(`${rxn}.pct_`, transformative, "From Elemental Mastery");
+    bonusCtrl.add(rxn, "pct_", transformative, "From Elemental Mastery");
   }
   for (const rxn of AMPLIFYING_REACTIONS) {
-    bonusCtrl.addRxnBonus(`${rxn}.pct_`, amplifying, "From Elemental Mastery");
+    bonusCtrl.add(rxn, "pct_", amplifying, "From Elemental Mastery");
   }
   for (const rxn of QUICKEN_REACTIONS) {
-    bonusCtrl.addRxnBonus(`${rxn}.pct_`, quicken, "From Elemental Mastery");
+    bonusCtrl.add(rxn, "pct_", quicken, "From Elemental Mastery");
   }
-
-  const { spread, aggravate } = GeneralCalc.getQuickenBuffDamage(
-    char.level,
-    bonusCtrl.getRxnBonus("aggravate", "pct_"),
-    bonusCtrl.getRxnBonus("spread", "pct_")
-  );
 
   if (reaction === "spread" || infuse_reaction === "spread") {
-    bonusCtrl.addAttackBonus("dendro", "flat", spread, "Spread reaction");
+    const bonusValue = GeneralCalc.getQuickenBuffDamage("spread", char.level, bonusCtrl.get("pct_", "spread"));
+    bonusCtrl.add("dendro", "flat", bonusValue, "Spread reaction");
   }
   if (reaction === "aggravate" || infuse_reaction === "aggravate") {
-    bonusCtrl.addAttackBonus("electro", "flat", aggravate, "Aggravate reaction");
+    const bonusValue = GeneralCalc.getQuickenBuffDamage("aggravate", char.level, bonusCtrl.get("pct_", "aggravate"));
+    bonusCtrl.add("electro", "flat", bonusValue, "Aggravate reaction");
   }
 
   return {

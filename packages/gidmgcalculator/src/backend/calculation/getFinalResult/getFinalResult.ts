@@ -41,12 +41,7 @@ export default function getFinalResult({
 
       // deal elemental dmg and want amplify reaction
       if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
-        const amplifyingMultiplier = GeneralCalc.getAmplifyingMultiplier(
-          attElmt,
-          bonusCtrl.getRxnBonus("melt", "pct_"),
-          bonusCtrl.getRxnBonus("vaporize", "pct_")
-        );
-        rxnMult = amplifyingMultiplier[reaction];
+        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, bonusCtrl.get("pct_", reaction));
       }
 
       let bases: number[] = [];
@@ -109,12 +104,12 @@ export default function getFinalResult({
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
     const { mult, dmgType } = TRANSFORMATIVE_REACTION_INFO[rxn];
-    const normalMult = 1 + bonusCtrl.getRxnBonus(rxn, "pct_") / 100;
+    const normalMult = 1 + bonusCtrl.get("pct_", rxn) / 100;
     const resMult = dmgType !== "absorb" ? resistances[dmgType] : 1;
     const baseValue = baseRxnDmg * mult;
     const nonCrit = baseValue * normalMult * resMult;
-    const cDmg_ = bonusCtrl.getRxnBonus(rxn, "cDmg_") / 100;
-    const cRate_ = Math.max(bonusCtrl.getRxnBonus(rxn, "cRate_"), 0) / 100;
+    const cDmg_ = bonusCtrl.get("cDmg_", rxn) / 100;
+    const cRate_ = Math.max(bonusCtrl.get("cRate_", rxn), 0) / 100;
 
     finalResult.RXN_CALC[rxn] = {
       type: "attack",
@@ -159,7 +154,7 @@ export default function getFinalResult({
       base: (totalAttr[baseOn] * mult) / 100,
       record,
       rxnMult: 1,
-      getBonus: (key) => bonusCtrl.getAttackBonus(key, attPatt, attElmt),
+      getBonus: (key) => bonusCtrl.get(key, attPatt, attElmt),
     });
 
     tracker?.recordCalcItem("WP_CALC", name, record);

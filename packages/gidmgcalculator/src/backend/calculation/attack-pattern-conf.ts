@@ -89,7 +89,7 @@ export default function AttackPatternConf({
       const finalAttElmt = normalsConfig[patternKey]?.attElmt ?? attElmt;
 
       const getTotalBonus = (key: BonusKey) => {
-        return bonusCtrl.getAttackBonus(key, finalAttPatt, finalAttElmt);
+        return bonusCtrl.get(key, finalAttPatt, finalAttElmt);
       };
 
       const configMultFactor = (factor: CalcItemMultFactor) => {

@@ -167,17 +167,8 @@ type AttackBonusTarget = {
   module: "ALL_ELMT" | AttackBonusType | AttackBonusType[];
   path: BonusKey;
 };
-type ReactionTarget = {
-  module: ECalcStatModule.RXN;
-  path: ReactionBonusPath | ReactionBonusPath[];
-};
-export type CalcItemTarget = {
-  module: "ITEM";
-  path: BonusKey;
-  id: string | string[];
-};
 
-export type EntityBonusTarget = AttributeTarget | AttackBonusTarget | ReactionTarget | CalcItemTarget;
+export type EntityBonusTarget = AttributeTarget | AttackBonusTarget;
 
 // ========== BONUS VALUE ==========
 
