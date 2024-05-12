@@ -16,8 +16,7 @@ export default function getFinalResult({
   appWeapon,
   partyData,
   totalAttr,
-  bonusCtrl,
-  calcItemBuff,
+  attBonus,
   resistances,
   tracker,
   configAttackPattern,
@@ -36,25 +35,10 @@ export default function getFinalResult({
     const level = CharacterCalc.getFinalTalentLv({ appChar, talentType: resultKey, char, partyData });
 
     for (const calcItem of appChar.calcList[ATT_PATT]) {
-      const { attPatt, attElmt, reaction, getTotalBonus, configMultFactor } = configCalcItem(calcItem);
-      let rxnMult = 1;
-
-      // deal elemental dmg and want amplify reaction
-      if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
-        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, bonusCtrl.get("pct_", reaction));
-      }
+      const { type, attPatt, attElmt, rxnMult, extraMult, record, getTotalBonus, configMultFactor } =
+        configCalcItem(calcItem);
 
       let bases: number[] = [];
-      const { type = "attack" } = calcItem;
-      const calcItemBonus = calcItemBuff.get(calcItem.id);
-      const extraMult = calcItemBonus.of("mult_") + getTotalBonus("mult_");
-
-      const record = TrackerControl.initCalcItemRecord({
-        itemType: type,
-        multFactors: [],
-        normalMult: 1,
-        exclusives: calcItemBonus.list,
-      });
 
       // CALCULATE BASE DAMAGE
       for (const factor of toArray(calcItem.multFactors)) {
@@ -92,7 +76,7 @@ export default function getFinalResult({
           calcType: type,
           rxnMult,
           record,
-          getBonus: (key) => calcItemBonus.of(key) + (type === "attack" ? getTotalBonus(key) : 0),
+          getBonus: getTotalBonus,
         });
       }
 
@@ -104,12 +88,12 @@ export default function getFinalResult({
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
     const { mult, dmgType } = TRANSFORMATIVE_REACTION_INFO[rxn];
-    const normalMult = 1 + bonusCtrl.get("pct_", rxn) / 100;
+    const normalMult = 1 + attBonus.get("pct_", rxn) / 100;
     const resMult = dmgType !== "absorb" ? resistances[dmgType] : 1;
     const baseValue = baseRxnDmg * mult;
     const nonCrit = baseValue * normalMult * resMult;
-    const cDmg_ = bonusCtrl.get("cDmg_", rxn) / 100;
-    const cRate_ = Math.max(bonusCtrl.get("cRate_", rxn), 0) / 100;
+    const cDmg_ = attBonus.get("cDmg_", rxn) / 100;
+    const cRate_ = Math.max(attBonus.get("cRate_", rxn), 0) / 100;
 
     finalResult.RXN_CALC[rxn] = {
       type: "attack",
@@ -154,7 +138,7 @@ export default function getFinalResult({
       base: (totalAttr[baseOn] * mult) / 100,
       record,
       rxnMult: 1,
-      getBonus: (key) => bonusCtrl.get(key, attPatt, attElmt),
+      getBonus: (key) => attBonus.get(key, attPatt, attElmt),
     });
 
     tracker?.recordCalcItem("WP_CALC", name, record);

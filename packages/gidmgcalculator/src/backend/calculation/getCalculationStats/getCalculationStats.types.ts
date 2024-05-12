@@ -10,15 +10,14 @@ import type {
   PartyData,
 } from "@Src/types";
 import type { AppCharacter, AppWeapon } from "@Src/backend/types";
-import type { CalcItemBuffControl, TrackerControl, BonusControl, TotalAttributeControl } from "../controls";
+import type { TrackerControl, AttackBonusControl, TotalAttributeControl } from "../controls";
 
 export type BuffInfoWrap = {
   char: CalcCharacter;
   appChar: AppCharacter;
   partyData: PartyData;
   totalAttr: TotalAttributeControl;
-  bonusCtrl: BonusControl;
-  calcItemBuff: CalcItemBuffControl;
+  attBonus: AttackBonusControl;
 };
 
 export type StackableCheckCondition = {

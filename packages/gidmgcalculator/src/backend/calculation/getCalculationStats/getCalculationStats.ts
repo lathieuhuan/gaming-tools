@@ -1,10 +1,4 @@
-import type {
-  AttackElement,
-  AttackPattern,
-  AttributeStat,
-  ReactionBonusInfoKey,
-  ReactionType,
-} from "@Src/backend/types";
+import type { AttackElement, AttackPattern, AttributeStat, ReactionType } from "@Src/backend/types";
 import type { BuffInfoWrap, GetCalculationStatsArgs, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
@@ -13,7 +7,7 @@ import { RESONANCE_STAT } from "../calculation.constants";
 import { $AppCharacter, $AppData } from "@Src/services";
 import { findByIndex } from "@Src/utils";
 import { EntityCalc, GeneralCalc, WeaponCalc } from "../utils";
-import { ArtifactAttributeControl, BonusControl, CalcItemBuffControl, TotalAttributeControl } from "../controls";
+import { ArtifactAttributeControl, AttackBonusControl, TotalAttributeControl } from "../controls";
 import ApplierCharacterBuff from "./applier-character-buff";
 import ApplierWeaponBuff from "./applier-weapon-buff";
 import ApplierArtifactBuff from "./applier-artifact-buff";
@@ -43,8 +37,7 @@ export default function getCalculationStats({
     WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale)
   );
   const artAttr = new ArtifactAttributeControl(artifacts, totalAttr).getValues();
-  const bonusCtrl = new BonusControl(tracker);
-  const calcItemBuff = new CalcItemBuffControl();
+  const attBonus = new AttackBonusControl();
 
   if (appWeapon.subStat) {
     const subStatValue = WeaponCalc.getSubStatValue(weapon.level, appWeapon.subStat.scale);
@@ -56,9 +49,7 @@ export default function getCalculationStats({
     appChar,
     partyData,
     totalAttr,
-    bonusCtrl,
-    calcItemBuff,
-    // infusedElement,
+    attBonus,
   };
 
   const characterBuff = new ApplierCharacterBuff(infoWrap);
@@ -167,21 +158,22 @@ export default function getCalculationStats({
             totalAttr.addStable(type as AttributeStat, value, "Custom buff");
           } else if (subType) {
             const key = type as AttackElement;
-            bonusCtrl.add(key, subType, value, "Custom buff");
+            attBonus.add(key, subType, value, "Custom buff");
           }
           break;
         }
         case "attPattBonus": {
           if (subType) {
             const key = type as AttackPattern | "all";
-            bonusCtrl.add(key, subType, value, "Custom buff");
+            attBonus.add(key, subType, value, "Custom buff");
           }
           break;
         }
         case "rxnBonus": {
-          const key = type as ReactionType;
-          const subKey = subType as ReactionBonusInfoKey;
-          bonusCtrl.add(key, subKey, value, "Custom buff");
+          if (subType) {
+            const key = type as ReactionType;
+            attBonus.add(key, subType, value, "Custom buff");
+          }
           break;
         }
       }
@@ -305,7 +297,7 @@ export default function getCalculationStats({
 
       totalAttr.addStable(key, value + xtraValue, desc);
 
-      if (elementType === "geo") bonusCtrl.add("all", "pct_", 15, desc);
+      if (elementType === "geo") attBonus.add("all", "pct_", 15, desc);
     }
   }
 
@@ -322,28 +314,27 @@ export default function getCalculationStats({
   const { transformative, amplifying, quicken } = GeneralCalc.getRxnBonusesFromEM(totalAttr.getTotal("em"));
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
-    bonusCtrl.add(rxn, "pct_", transformative, "From Elemental Mastery");
+    attBonus.add(rxn, "pct_", transformative, "From Elemental Mastery");
   }
   for (const rxn of AMPLIFYING_REACTIONS) {
-    bonusCtrl.add(rxn, "pct_", amplifying, "From Elemental Mastery");
+    attBonus.add(rxn, "pct_", amplifying, "From Elemental Mastery");
   }
   for (const rxn of QUICKEN_REACTIONS) {
-    bonusCtrl.add(rxn, "pct_", quicken, "From Elemental Mastery");
+    attBonus.add(rxn, "pct_", quicken, "From Elemental Mastery");
   }
 
   if (reaction === "spread" || infuse_reaction === "spread") {
-    const bonusValue = GeneralCalc.getQuickenBuffDamage("spread", char.level, bonusCtrl.get("pct_", "spread"));
-    bonusCtrl.add("dendro", "flat", bonusValue, "Spread reaction");
+    const bonusValue = GeneralCalc.getQuickenBuffDamage("spread", char.level, attBonus.get("pct_", "spread"));
+    attBonus.add("dendro", "flat", bonusValue, "Spread reaction");
   }
   if (reaction === "aggravate" || infuse_reaction === "aggravate") {
-    const bonusValue = GeneralCalc.getQuickenBuffDamage("aggravate", char.level, bonusCtrl.get("pct_", "aggravate"));
-    bonusCtrl.add("electro", "flat", bonusValue, "Aggravate reaction");
+    const bonusValue = GeneralCalc.getQuickenBuffDamage("aggravate", char.level, attBonus.get("pct_", "aggravate"));
+    attBonus.add("electro", "flat", bonusValue, "Aggravate reaction");
   }
 
   return {
     totalAttr: totalAttr.finalize(),
-    bonusCtrl,
-    calcItemBuff,
+    attBonus,
     artAttr,
   };
 }

@@ -1,31 +1,28 @@
-import type {
-  AttributeStat,
-  ReactionBonusPath,
-  ResistanceReductionKey,
-  CalcItemType,
-  BonusKey,
-} from "@Src/backend/types";
+import type { AttributeStat, ResistanceReductionKey, CalcItemType, BonusKey } from "@Src/backend/types";
 
-import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES, REACTIONS, REACTION_BONUS_INFO_KEYS } from "@Src/backend/constants";
+import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "@Src/backend/constants";
 import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
 import { CalculationFinalResultKey } from "../calculation.types";
 
 // ========== STAT RECORD ==========
 
-export type CalcStatRecord = {
+export type CalcAtomicRecord = {
   desc: string;
   value: number;
 };
 
-type StatRecordType = AttributeStat | ReactionBonusPath | ResistanceReductionKey;
+type StatRecordType = AttributeStat | ResistanceReductionKey;
 
-type StatRecordGroup = Record<string, CalcStatRecord[]>;
+type StatRecordGroup = Record<string, CalcAtomicRecord[]>;
 
 type StatsRecords = Record<ECalcStatModule, StatRecordGroup>;
 
 // ========== CALC ITEM RECORD ==========
 
-export type CalcItemBonus = Partial<Record<BonusKey, { desc: string; value: number }>>;
+export type CalcItemExclusiveBonus = {
+  type: BonusKey;
+  records: CalcAtomicRecord[];
+};
 
 export type CalcItemRecord = {
   itemType: CalcItemType;
@@ -43,7 +40,7 @@ export type CalcItemRecord = {
   cRate_?: number;
   cDmg_?: number;
   note?: string;
-  exclusives?: CalcItemBonus[];
+  exclusives?: CalcItemExclusiveBonus[];
 };
 
 type CalcItemRecordGroup = Record<string, CalcItemRecord>;
@@ -59,7 +56,6 @@ export class TrackerControl {
   constructor() {
     this.stats = {
       [ECalcStatModule.ATTR]: {},
-      [ECalcStatModule.RXN]: {},
       [ECalcStatModule.RESIST]: {},
     };
 
@@ -79,16 +75,9 @@ export class TrackerControl {
       this.stats.RESIST[attElmt] = [];
     }
     this.stats.RESIST.def = [];
-
-    for (const reaction of REACTIONS) {
-      for (const key of REACTION_BONUS_INFO_KEYS) {
-        this.stats.RXN[`${reaction}.${key}`] = [];
-      }
-    }
   }
 
   recordStat(category: ECalcStatModule.ATTR, type: AttributeStat, value: number, description: string): void;
-  recordStat(category: ECalcStatModule.RXN, type: ReactionBonusPath, value: number, description: string): void;
   recordStat(category: ECalcStatModule.RESIST, type: ResistanceReductionKey, value: number, description: string): void;
   recordStat(category: ECalcStatModule, type: StatRecordType, value: number, description: string) {
     const cateRecord = this.stats[category];

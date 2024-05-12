@@ -1,4 +1,4 @@
-import { AttackBonus, BonusControl, ElementType, GeneralCalc, Level, QuickenReaction } from "@Backend";
+import { AttackBonus, AttackBonusControl, ElementType, GeneralCalc, Level, QuickenReaction } from "@Backend";
 
 import { Green } from "../span";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
@@ -13,7 +13,7 @@ export function QuickenBuffItem({ reaction, element, characterLv, attBonus, ...r
   const bonusValue = GeneralCalc.getQuickenBuffDamage(
     reaction,
     characterLv,
-    BonusControl.getBonus(attBonus, "pct_", reaction)
+    AttackBonusControl.getBonus(attBonus, "pct_", reaction)
   );
 
   return (

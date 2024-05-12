@@ -88,12 +88,12 @@ export function CalcItemTracker({
                 <li>
                   <p className="text-primary-1">Exclusive Bonus</p>
                   {record.exclusives.map((bonus, i) => {
-                    return Object.entries(bonus).map(([key, record]) => {
-                      const percent = Utils_.suffixOf(key);
+                    const percent = Utils_.suffixOf(bonus.type);
 
+                    return bonus.records.map((record) => {
                       return (
                         <p key={i}>
-                          + {t(key)}: {record.desc}{" "}
+                          + {t(bonus.type)}: {record.desc}{" "}
                           <Green>
                             {round(record.value, percent ? 3 : 0)}
                             {percent}

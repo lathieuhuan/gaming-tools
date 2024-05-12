@@ -1,39 +1,64 @@
 import { round } from "rond";
-import { AttackBonus, REACTIONS, TrackerResult } from "@Backend";
+import { AttackBonus, BonusKey } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
+import { Utils_ } from "@Src/utils";
 
 interface BonusesTrackerProps {
-  result?: TrackerResult;
   attBonus: AttackBonus;
 }
-export function BonusesTracker({ result, attBonus }: BonusesTrackerProps) {
+export function BonusesTracker({ attBonus }: BonusesTrackerProps) {
   const { t } = useTranslation();
 
-  const { ATTR, RXN } = result || {};
-  const em = getTotalRecordValue(ATTR?.em || []);
-  const hasRxnBonus = RXN && Object.values(RXN).some((records) => records.length);
+  const bonuses = attBonus.filter((bonus) => bonus.type.slice(0, 2) !== "id");
 
-  console.log(attBonus);
+  return bonuses.length ? (
+    <div className={`pl-2 mt-1 ${recordListStyles}`}>
+      {bonuses.map((bonus) => {
+        const list: Array<{
+          key: BonusKey;
+          records: typeof bonus.records;
+        }> = [];
 
-  return (
-    <div className="pl-2 -mt-1 -mb-3 divide-y divide-surface-border">
-      {hasRxnBonus || em ? (
-        <div className={"py-3 " + recordListStyles}>
-          {REACTIONS.map((reaction) => {
-            const records = RXN?.[`${reaction}.pct_`] || [];
+        for (const record of bonus.records) {
+          const existed = list.find((item) => item.key === record.to);
 
-            return records.length || em ? (
-              <div key={reaction} className="break-inside-avoid">
-                {renderHeading(t(reaction), round(getTotalRecordValue(records), 1) + "%")}
+          if (existed) {
+            existed.records.push(record);
+          } else {
+            list.push({
+              key: record.to,
+              records: [record],
+            });
+          }
+        }
 
-                <ul className="pl-4 list-disc">{records.map(renderRecord((value) => round(value, 1) + "%"))}</ul>
-              </div>
-            ) : null;
-          })}
-        </div>
-      ) : null}
+        return (
+          <div key={bonus.type} className="py-0.5 break-inside-avoid">
+            <p className="text-secondary-1">{bonus.type === "all" ? "All" : t(bonus.type)}</p>
+
+            <div>
+              {list.map((item) => {
+                const suffix = Utils_.suffixOf(item.key);
+                const decimalDigits = suffix ? 2 : 0;
+
+                return (
+                  <div key={item.key} className="pl-2">
+                    {renderHeading(t(item.key), round(getTotalRecordValue(item.records), decimalDigits) + suffix)}
+
+                    <ul className="pl-4 list-disc">
+                      {item.records.map(renderRecord((value) => round(value, decimalDigits) + suffix))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
     </div>
+  ) : (
+    <p className="h-16 flex-center text-hint-color">No bonuses</p>
   );
 }

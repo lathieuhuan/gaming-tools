@@ -1,7 +1,7 @@
 export { calculateSetup } from "./calculation/calculateSetup";
 export { default as getCalculationStats } from "./calculation/getCalculationStats";
 export { getIntialBonusValue } from "./calculation/getCalculationStats/applier-character-buff";
-export { ArtifactAttributeControl, TrackerControl, BonusControl } from "./calculation/controls";
+export { ArtifactAttributeControl, TrackerControl, AttackBonusControl } from "./calculation/controls";
 export {
   ArtifactCalc,
   CharacterCalc,
@@ -20,7 +20,7 @@ export type {
   CalculationFinalResultGroup,
   TotalAttribute,
 } from "./calculation/calculation.types";
-export type { CalcItemRecord, CalcStatRecord, TrackerResult, AttackBonus } from "./calculation/controls";
+export type { CalcItemRecord, CalcAtomicRecord, TrackerResult, AttackBonus } from "./calculation/controls";
 export type {
   AmplifyingReaction,
   AppArtifact,
@@ -44,7 +44,6 @@ export type {
   ModifierAffectType,
   NormalAttack,
   QuickenReaction,
-  ReactionBonus,
   ReactionType,
   ResistanceReduction,
   ResistanceReductionKey,

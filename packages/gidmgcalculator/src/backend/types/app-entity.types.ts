@@ -4,7 +4,6 @@ import type {
   AttributeStat,
   BonusKey,
   ElementType,
-  ReactionBonusPath,
   ResistanceReductionKey,
   TalentType,
   WeaponType,

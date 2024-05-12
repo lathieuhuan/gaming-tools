@@ -9,17 +9,17 @@ import type {
   CharacterBuffNAsConfig,
 } from "../types";
 import type { CalcUltilInfo } from "./calculation.types";
-import type { BonusControl } from "./controls";
+import { TrackerControl, type AttackBonusControl } from "./controls";
 
 import { findByIndex, toArray } from "@Src/utils";
-import { CharacterCalc, EntityCalc } from "./utils";
+import { CharacterCalc, EntityCalc, GeneralCalc } from "./utils";
 import { NORMAL_ATTACKS } from "../constants";
 
 type AttackPatternConfArgs = CalcUltilInfo & {
   selfBuffCtrls: ModifierCtrl[];
   elmtModCtrls: ElementModCtrl;
   customInfusion: Infusion;
-  bonusCtrl: BonusControl;
+  attBonus: AttackBonusControl;
 };
 
 export default function AttackPatternConf({
@@ -29,7 +29,7 @@ export default function AttackPatternConf({
   selfBuffCtrls,
   elmtModCtrls,
   customInfusion,
-  bonusCtrl,
+  attBonus,
 }: AttackPatternConfArgs) {
   const normalsConfig: Partial<Record<AttackPattern, Omit<CharacterBuffNAsConfig, "forPatt">>> = {};
 
@@ -67,6 +67,7 @@ export default function AttackPatternConf({
     let reaction = elmtModCtrls.reaction;
 
     const configCalcItem = (item: CalcItem) => {
+      const { type = "attack" } = item;
       let attElmt: AttackElement;
 
       if (item.attElmt) {
@@ -89,8 +90,23 @@ export default function AttackPatternConf({
       const finalAttElmt = normalsConfig[patternKey]?.attElmt ?? attElmt;
 
       const getTotalBonus = (key: BonusKey) => {
-        return bonusCtrl.get(key, finalAttPatt, finalAttElmt);
+        return attBonus.get(key, finalAttPatt, type === "attack" ? finalAttElmt : undefined, item.id);
       };
+
+      let rxnMult = 1;
+
+      // deal elemental dmg and want amplify reaction
+      if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
+        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, attBonus.get("pct_", reaction));
+      }
+      const extraMult = getTotalBonus("mult_");
+
+      const record = TrackerControl.initCalcItemRecord({
+        itemType: type,
+        multFactors: [],
+        normalMult: 1,
+        exclusives: attBonus.getExclusiveBonuses(item),
+      });
 
       const configMultFactor = (factor: CalcItemMultFactor) => {
         const {
@@ -114,9 +130,12 @@ export default function AttackPatternConf({
       // console.log(finalAttPatt, finalAttElmt, reaction);
 
       return {
+        type,
         attPatt: finalAttPatt,
         attElmt: finalAttElmt,
-        reaction,
+        rxnMult,
+        extraMult,
+        record,
         getTotalBonus,
         configMultFactor,
       };

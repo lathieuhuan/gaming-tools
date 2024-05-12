@@ -30,7 +30,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   const appWeapon = $AppData.getWeapon(weapon.code)!;
   const partyData = $AppCharacter.getPartyData(party);
 
-  const { artAttr, bonusCtrl, ...rest } = getCalculationStats({
+  const { artAttr, attBonus, ...rest } = getCalculationStats({
     char,
     weapon,
     artifacts,
@@ -67,7 +67,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     selfBuffCtrls,
     elmtModCtrls,
     customInfusion,
-    bonusCtrl,
+    attBonus,
   });
 
   const calcItemCalculator = new CalcItemCalculator(char.level, target.level, rest.totalAttr, resistances);
@@ -78,7 +78,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     appChar,
     appWeapon,
     partyData,
-    bonusCtrl,
+    attBonus,
     resistances,
     tracker,
     configAttackPattern,
@@ -90,7 +90,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   return {
     totalAttr: rest.totalAttr,
     artAttr,
-    attBonus: bonusCtrl.serialize(),
+    attBonus: attBonus.serialize(),
     finalResult,
   };
 };

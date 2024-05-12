@@ -6,7 +6,6 @@ import type {
   ElementType,
   Level,
   QuickenReaction,
-  ReactionBonus,
 } from "@Src/backend/types";
 
 export type ArtifactSetBonus = {

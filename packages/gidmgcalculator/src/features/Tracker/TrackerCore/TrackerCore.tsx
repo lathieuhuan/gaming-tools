@@ -110,7 +110,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     },
     {
       heading: "Bonuses",
-      body: <BonusesTracker result={result} attBonus={xtraInfo.attBonus} />,
+      body: <BonusesTracker attBonus={xtraInfo.attBonus} />,
     },
     {
       heading: "Debuffs on Target",

@@ -10,7 +10,6 @@ import {
   NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
   REACTIONS,
-  REACTION_BONUS_INFO_KEYS,
   TALENT_TYPES,
   TRANSFORMATIVE_REACTIONS,
   WEAPON_TYPES,
@@ -63,12 +62,6 @@ export type TransformativeReaction = (typeof TRANSFORMATIVE_REACTIONS)[number];
 export type QuickenReaction = (typeof QUICKEN_REACTIONS)[number];
 
 export type ReactionType = (typeof REACTIONS)[number];
-
-export type ReactionBonusInfoKey = (typeof REACTION_BONUS_INFO_KEYS)[number];
-export type ReactionBonusPath = `${ReactionType}.${ReactionBonusInfoKey}`;
-
-export type ReactionBonusInfo = Record<ReactionBonusInfoKey, number>;
-export type ReactionBonus = Record<ReactionType, ReactionBonusInfo>;
 
 // ========== RESISTANCE REDUCTION ==========
 

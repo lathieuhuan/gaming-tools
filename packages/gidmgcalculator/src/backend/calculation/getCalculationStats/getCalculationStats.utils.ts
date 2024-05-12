@@ -61,7 +61,7 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
   if (!bonus.value) return;
 
   for (const target of toArray(targets)) {
-    if (target.module.slice(0, 2) === "id" || (isStackable && !isStackable(target.path))) {
+    if (isStackable && target.module.slice(0, 2) !== "id" && !isStackable(target.path)) {
       continue;
     }
 
@@ -91,12 +91,12 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
       }
       case "ALL_ELMT":
         for (const elmt of ELEMENT_TYPES) {
-          info.bonusCtrl.add(elmt, target.path, bonus.value, description);
+          info.attBonus.add(elmt, target.path, bonus.value, description);
         }
         break;
       default:
         for (const module of toArray(target.module)) {
-          info.bonusCtrl.add(module, target.path, bonus.value, description);
+          info.attBonus.add(module, target.path, bonus.value, description);
         }
     }
   }

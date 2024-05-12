@@ -2,11 +2,9 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { PartiallyRequired } from "rond";
 import type {
   AttackBonus,
-  AttackElement,
   AttributeStat,
   CalculationFinalResult,
   ElementType,
-  ReactionBonus,
   TotalAttribute,
   WeaponType,
 } from "@Backend";
@@ -25,6 +23,12 @@ import type {
   TeammateWeapon,
 } from "@Src/types";
 
+type SetupResult = {
+  totalAttr: TotalAttribute;
+  attBonus: AttackBonus;
+  finalResult: CalculationFinalResult;
+};
+
 export type CalculatorState = {
   activeId: number;
   standardId: number;
@@ -32,14 +36,7 @@ export type CalculatorState = {
 
   setupManageInfos: CalcSetupManageInfo[];
   setupsById: Record<string, CalcSetup>;
-  resultById: Record<
-    string,
-    {
-      totalAttr: TotalAttribute;
-      attBonus: AttackBonus;
-      finalResult: CalculationFinalResult;
-    }
-  >;
+  resultById: Record<string, SetupResult>;
   target: Target;
 };
 

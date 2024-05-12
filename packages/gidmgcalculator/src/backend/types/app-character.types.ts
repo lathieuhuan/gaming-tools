@@ -4,6 +4,7 @@ import type {
   AttackPattern,
   AttributeStat,
   ElementType,
+  ExclusiveBonusType,
   NormalAttack,
   TalentType,
   WeaponType,
@@ -114,7 +115,7 @@ export type CalcItemFlatFactor =
     };
 
 export type CalcItem = {
-  id?: string;
+  id?: ExclusiveBonusType;
   name: string;
   type?: CalcItemType;
   notOfficial?: boolean;

@@ -1,12 +1,12 @@
 import type { ReactNode } from "react";
 import { round } from "rond";
-import { CalcStatRecord } from "@Backend";
+import { CalcAtomicRecord } from "@Backend";
 
 import { Green } from "@Src/components";
 
 export const recordListStyles = "columns-1 md:columns-2 space-y-1";
 
-export function getTotalRecordValue(list: CalcStatRecord[]) {
+export function getTotalRecordValue(list: Array<{ value: number }>) {
   return round(
     list.reduce((accumulator, record) => accumulator + record.value, 0),
     2
@@ -22,7 +22,7 @@ export function renderHeading(main: ReactNode, extra?: string | number) {
 }
 
 export function renderRecord(calcFn?: (value: number) => string | number, extraDesc?: (value: number) => string) {
-  return ({ desc, value }: CalcStatRecord, index: number) =>
+  return ({ desc, value }: CalcAtomicRecord, index: number) =>
     value ? (
       <li key={index} className="text-hint-color text-sm">
         {desc?.[0]?.toUpperCase()}
