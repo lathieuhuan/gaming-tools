@@ -34,9 +34,30 @@ export function BonusesTracker({ attBonus }: BonusesTrackerProps) {
           }
         }
 
+        const titleFrags: string[] = [];
+
+        bonus.type.split(".").forEach((type, i) => {
+          if (type === "all") {
+            return titleFrags.push("All");
+          }
+          if (i) {
+            // For now the 2nd type is AttackElement
+            return titleFrags.push("+", type === "phys" ? "physical" : type);
+          }
+          titleFrags.push(t(type));
+        });
+
         return (
           <div key={bonus.type} className="py-0.5 break-inside-avoid">
-            <p className="text-secondary-1">{bonus.type === "all" ? "All" : t(bonus.type)}</p>
+            <div className="flex gap-1 text-secondary-1">
+              {titleFrags.map((frag, i) => {
+                return (
+                  <span key={i} className={i === 2 ? "capitalize" : ""}>
+                    {frag}
+                  </span>
+                );
+              })}
+            </div>
 
             <div>
               {list.map((item) => {

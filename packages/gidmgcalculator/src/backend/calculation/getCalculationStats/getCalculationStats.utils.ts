@@ -89,9 +89,9 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
         }
         break;
       }
-      case "ALL_ELMT":
+      case "ELMT_NA":
         for (const elmt of ELEMENT_TYPES) {
-          info.attBonus.add(elmt, target.path, bonus.value, description);
+          info.attBonus.add(`NA.${elmt}`, target.path, bonus.value, description);
         }
         break;
       default:

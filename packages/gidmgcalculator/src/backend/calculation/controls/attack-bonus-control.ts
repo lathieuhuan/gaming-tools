@@ -1,12 +1,4 @@
-import type {
-  ActualAttackPattern,
-  AttackBonusType,
-  AttackElement,
-  BonusKey,
-  CalcItem,
-  ExclusiveBonusType,
-  ReactionType,
-} from "@Src/backend/types";
+import type { AttackBonusType, BonusKey, CalcItem } from "@Src/backend/types";
 import { CalcItemExclusiveBonus } from "./tracker-control";
 
 type AttackBonusRecord = {
@@ -20,8 +12,8 @@ export type AttackBonus = Array<{
   records: AttackBonusRecord[];
 }>;
 
-// Array of AttackBonusType's segments
-type GetBonusPaths = Array<ActualAttackPattern | AttackElement | ReactionType | ExclusiveBonusType | undefined>;
+/** should not use 'all' */
+type GetBonusPaths = Array<AttackBonusType | undefined>;
 
 export class AttackBonusControl {
   private attBonus: AttackBonus = [];
@@ -63,7 +55,7 @@ export class AttackBonusControl {
     let result = 0;
 
     for (const bonus of attBonus) {
-      if (paths.some((path) => path && bonus.type.includes(path))) {
+      if (paths.some((path) => path && bonus.type === path)) {
         for (const record of bonus.records) {
           if (record.to === path) {
             result += record.value;

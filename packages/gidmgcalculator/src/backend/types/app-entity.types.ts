@@ -163,7 +163,7 @@ type AttributeTarget = {
   inpIndex?: number;
 };
 type AttackBonusTarget = {
-  module: "ALL_ELMT" | AttackBonusType | AttackBonusType[];
+  module: "ELMT_NA" | AttackBonusType | AttackBonusType[];
   path: BonusKey;
 };
 

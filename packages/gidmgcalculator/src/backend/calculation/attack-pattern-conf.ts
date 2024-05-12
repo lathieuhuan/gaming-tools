@@ -90,7 +90,13 @@ export default function AttackPatternConf({
       const finalAttElmt = normalsConfig[patternKey]?.attElmt ?? attElmt;
 
       const getTotalBonus = (key: BonusKey) => {
-        return attBonus.get(key, finalAttPatt, type === "attack" ? finalAttElmt : undefined, item.id);
+        const attPatt = finalAttPatt === "none" ? undefined : finalAttPatt;
+
+        if (type === "attack") {
+          const mixedType = attPatt ? (`${attPatt}.${finalAttElmt}` as const) : undefined;
+          return attBonus.get(key, attPatt, finalAttElmt, mixedType, item.id);
+        }
+        return attBonus.get(key, attPatt, item.id);
       };
 
       let rxnMult = 1;
