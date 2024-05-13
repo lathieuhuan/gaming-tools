@@ -27,7 +27,7 @@ import type {
 } from "./calculator-slice.types";
 
 import { RESONANCE_ELEMENT_TYPES } from "@Src/constants";
-import { $AppData, $AppCharacter, $AppSettings } from "@Src/services";
+import { $AppData, $AppCharacter, $AppSettings, $AppArtifact } from "@Src/services";
 import { deepCopy, findById, toArray, findByIndex, Setup_, Modifier_, Utils_ } from "@Src/utils";
 import { calculate, getCharDataFromState } from "./calculator-slice.utils";
 
@@ -264,7 +264,7 @@ export const calculatorSlice = createSlice({
 
         if (newArtifactInfo.code) {
           if (newArtifactInfo.code === -1) {
-            const debuffArtifactCodes = $AppData.getAllArtifacts().reduce<number[]>((accumulator, artifact) => {
+            const debuffArtifactCodes = $AppArtifact.getAll().reduce<number[]>((accumulator, artifact) => {
               if (artifact.debuffs?.length) {
                 accumulator.push(artifact.code);
               }

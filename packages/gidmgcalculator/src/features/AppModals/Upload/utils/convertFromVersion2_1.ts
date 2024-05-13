@@ -11,7 +11,7 @@ import type {
   UserWeapon,
 } from "@Src/types";
 
-import { $AppData, $AppCharacter } from "@Src/services";
+import { $AppCharacter, $AppWeapon, $AppArtifact } from "@Src/services";
 import { Modifier_, Utils_, findById, findByIndex } from "@Src/utils";
 import { version3map } from "./util-maps";
 
@@ -235,7 +235,7 @@ const convertSetup = (
 
   if (weaponInfo.ID && existedWeapon) {
     weaponID = weaponInfo.ID;
-    dataWeapon = $AppData.getWeapon(existedWeapon.code);
+    dataWeapon = $AppWeapon.get(existedWeapon.code);
 
     if (!existedWeapon.setupIDs?.includes(setup.ID)) {
       existedWeapon.setupIDs = (existedWeapon.setupIDs || []).concat(setup.ID);
@@ -249,7 +249,7 @@ const convertSetup = (
       owner: null,
       setupIDs: [setup.ID],
     };
-    dataWeapon = $AppData.getWeapon(xtraWeapon.code);
+    dataWeapon = $AppWeapon.get(xtraWeapon.code);
   }
 
   // ARTIFACTS
@@ -287,7 +287,7 @@ const convertSetup = (
     }
   }
   const { code: setBonusesCode = 0 } = GeneralCalc.getArtifactSetBonuses(finalArtifacts)[0] || {};
-  const { buffs: artifactBuffs = [] } = $AppData.getArtifactSet(setBonusesCode) || {};
+  const { buffs: artifactBuffs = [] } = $AppArtifact.getSet(setBonusesCode) || {};
 
   // PARTY
   for (const teammate of setup.party) {

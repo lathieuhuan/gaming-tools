@@ -1,6 +1,6 @@
 import type { DebuffInfoWrap, GetResistancesArgs } from "./getResistances.types";
 
-import { $AppCharacter, $AppData } from "@Src/services";
+import { $AppArtifact, $AppCharacter } from "@Src/services";
 import { findByIndex } from "@Src/utils";
 import { EntityCalc } from "../utils";
 import { ResistanceReductionControl } from "../controls";
@@ -70,7 +70,7 @@ export function getResistances({
   // APPLY ARTIFACT DEBUFFS
   for (const ctrl of artDebuffCtrls) {
     if (ctrl.activated) {
-      const { name, debuffs = [] } = $AppData.getArtifactSet(ctrl.code) || {};
+      const { name, debuffs = [] } = $AppArtifact.getSet(ctrl.code) || {};
       const { effects } = debuffs[ctrl.index] || {};
 
       if (effects) {

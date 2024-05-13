@@ -3,7 +3,7 @@ import { ConfirmModal } from "rond";
 import { AttributeStat } from "@Backend";
 
 import { UserArtifact } from "@Src/types";
-import { $AppData } from "@Src/services";
+import { $AppArtifact } from "@Src/services";
 import { useDispatch } from "@Store/hooks";
 import { removeArtifact, swapArtifactOwner, updateUserArtifact, updateUserArtifactSubStat } from "@Store/userdb-slice";
 import { ArtifactCard, Tavern } from "@Src/components";
@@ -74,7 +74,7 @@ export function ChosenArtifactView({ artifact, onRemoveArtifact }: ChosenArtifac
           message={
             <>
               <b>{artifact.owner}</b> is currently using "
-              <b>{$AppData.getArtifact(artifact)?.name || "<name missing>"}</b>
+              <b>{$AppArtifact.get(artifact)?.name || "<name missing>"}</b>
               ". Swap?
             </>
           }
@@ -90,7 +90,7 @@ export function ChosenArtifactView({ artifact, onRemoveArtifact }: ChosenArtifac
           danger
           message={
             <>
-              Remove "<b>{$AppData.getArtifactSet(artifact.code)?.name}</b>" ({artifact.type})?{" "}
+              Remove "<b>{$AppArtifact.getSet(artifact.code)?.name}</b>" ({artifact.type})?{" "}
               {artifact.owner ? (
                 <>
                   It is currently used by <b>{artifact.owner}</b>.

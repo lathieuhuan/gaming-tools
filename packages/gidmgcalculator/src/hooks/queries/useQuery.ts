@@ -79,6 +79,7 @@ export function useQuery<TQueryKey extends ReadonlyArray<string | number>, TData
     isLoading: status === "loading",
     isError: status === "error",
     isSuccess: status === "success",
+    error: state.current.error,
     data: state.current.data,
   };
 }

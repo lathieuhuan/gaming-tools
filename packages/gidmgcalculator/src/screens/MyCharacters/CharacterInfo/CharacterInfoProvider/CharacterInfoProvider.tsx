@@ -5,7 +5,7 @@ import type { Character, UserArtifacts, UserWeapon } from "@Src/types";
 import type { RootState } from "@Store/store";
 
 import { useAppCharacter } from "@Src/hooks";
-import { $AppData } from "@Src/services";
+import { $AppData, $AppWeapon } from "@Src/services";
 import { findById, findByName } from "@Src/utils";
 import { useSelector } from "@Store/hooks";
 import { CharacterInfoContext, type CharacterInfoState } from "./character-info-context";
@@ -17,8 +17,8 @@ interface CharacterInfoProviderProps {
   children: React.ReactNode;
 }
 function CharacterInfoProviderCore({ char, weapon, artifacts, children }: CharacterInfoProviderProps) {
-  const { isLoading, error, appChar } = useAppCharacter(char.name);
-  const appWeapon = $AppData.getWeapon(weapon.code);
+  const { isLoading, data: appChar } = useAppCharacter(char.name);
+  const appWeapon = $AppWeapon.get(weapon.code);
 
   const characterInfoState = useMemo<CharacterInfoState>(() => {
     if (appChar && appWeapon) {

@@ -4,7 +4,7 @@ import { ArtifactType } from "@Backend";
 
 import type { CalcArtifact } from "@Src/types";
 import type { ArtifactFilterSet } from "../ArtifactFilter.types";
-import { $AppData } from "@Src/services";
+import { $AppArtifact } from "@Src/services";
 import { findByCode } from "@Src/utils";
 import { GenshinImage } from "@Src/components";
 import { FilterTemplate } from "../../FilterTemplate";
@@ -22,7 +22,7 @@ export function useArtifactSetFilter(artifacts: CalcArtifact[], chosenCodes: num
 
     for (const { code } of artifacts) {
       if (!findByCode(result, code)) {
-        const { icon = "" } = $AppData.getArtifact({ code, type: artifactType }) || {};
+        const { icon = "" } = $AppArtifact.get({ code, type: artifactType }) || {};
 
         result.push({
           code,

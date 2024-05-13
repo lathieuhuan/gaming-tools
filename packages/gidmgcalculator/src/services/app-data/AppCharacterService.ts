@@ -17,13 +17,9 @@ export class AppCharacterService extends BaseService {
 
   constructor() {
     super();
-    // this.characters = characters.map((character) => ({
-    //   status: "fetched",
-    //   data: character,
-    // }));
   }
 
-  populateCharacters(characters: AppCharacter[]) {
+  populate(characters: AppCharacter[]) {
     this.characters = characters.map((character) => ({
       status: "fetched",
       data: character,

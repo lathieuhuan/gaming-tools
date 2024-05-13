@@ -1,7 +1,6 @@
-import { ModInputConfig, ModInputType, ModifierAffectType, WeaponType } from "@Backend";
-
+import type { ModInputConfig, ModInputType, ModifierAffectType, WeaponType } from "@Backend";
 import type { ArtifactDebuffCtrl, ElementModCtrl, ModifierCtrl } from "@Src/types";
-import { $AppCharacter, $AppData } from "@Src/services";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 
 const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
   CHECK: 0,
@@ -50,11 +49,11 @@ export class Modifier_ {
   }
 
   static createWeaponBuffCtrls(forSelf: boolean, weapon: { type: WeaponType; code: number }) {
-    return createItemBuffCtrls(forSelf, $AppData.getWeapon(weapon.code));
+    return createItemBuffCtrls(forSelf, $AppWeapon.get(weapon.code));
   }
 
   static createArtifactBuffCtrls(forSelf: boolean, artifact?: { code?: number }) {
-    return artifact?.code ? createItemBuffCtrls(forSelf, $AppData.getArtifactSet(artifact.code)) : [];
+    return artifact?.code ? createItemBuffCtrls(forSelf, $AppArtifact.getSet(artifact.code)) : [];
   }
 
   static createArtifactDebuffCtrls(): ArtifactDebuffCtrl[] {

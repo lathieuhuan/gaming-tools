@@ -4,7 +4,7 @@ import type { BuffInfoWrap, GetCalculationStatsArgs, StackableCheckCondition } f
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
 import { RESONANCE_STAT } from "../calculation.constants";
 
-import { $AppCharacter, $AppData } from "@Src/services";
+import { $AppCharacter, $AppWeapon, $AppArtifact } from "@Src/services";
 import { findByIndex } from "@Src/utils";
 import { EntityCalc, GeneralCalc, WeaponCalc } from "../utils";
 import { ArtifactAttributeControl, AttackBonusControl, TotalAttributeControl } from "../controls";
@@ -127,7 +127,7 @@ export default function getCalculationStats({
   const APPLY_ARTIFACTS_BONUSES = (isFinal: boolean) => {
     for (const { code, bonusLv } of setBonuses) {
       for (let i = 0; i <= bonusLv; i++) {
-        const data = $AppData.getArtifactSet(code);
+        const data = $AppArtifact.getSet(code);
         const buff = data?.setBonuses?.[i];
 
         if (buff && buff.effects) {
@@ -200,7 +200,7 @@ export default function getCalculationStats({
       // #to-check: should be applied before main weapon buffs?
       (() => {
         const { code, refi } = teammate.weapon;
-        const { name, buffs = [] } = $AppData.getWeapon(code) || {};
+        const { name, buffs = [] } = $AppWeapon.get(code) || {};
 
         for (const ctrl of teammate.weapon.buffCtrls) {
           const buff = findByIndex(buffs, ctrl.index);
@@ -220,7 +220,7 @@ export default function getCalculationStats({
 
       (() => {
         const { code } = teammate.artifact;
-        const { name, buffs = [] } = $AppData.getArtifactSet(code) || {};
+        const { name, buffs = [] } = $AppArtifact.getSet(code) || {};
 
         for (const ctrl of teammate.artifact.buffCtrls) {
           const buff = findByIndex(buffs, ctrl.index);
@@ -259,7 +259,7 @@ export default function getCalculationStats({
     }
   };
 
-  const mainArtifactData = setBonuses[0]?.code ? $AppData.getArtifactSet(setBonuses[0].code) : undefined;
+  const mainArtifactData = setBonuses[0]?.code ? $AppArtifact.getSet(setBonuses[0].code) : undefined;
   const APLY_MAIN_ARTIFACT_BUFFS = (isFinal: boolean) => {
     if (!mainArtifactData) return;
 

@@ -3,7 +3,7 @@ import { Modal } from "rond";
 import { AppWeapon, WeaponType } from "@Backend";
 
 import type { Weapon } from "@Src/types";
-import { $AppData } from "@Src/services";
+import { $AppWeapon } from "@Src/services";
 import { pickProps, Utils_ } from "@Src/utils";
 
 // Component
@@ -35,7 +35,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
   );
 
   const allWeapons = useMemo(() => {
-    const weapons = $AppData.getAllWeapons();
+    const weapons = $AppWeapon.getAll();
 
     if (forcedType) {
       return weapons.reduce<WeaponData>((accumulator, weapon) => {

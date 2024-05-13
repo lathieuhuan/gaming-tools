@@ -1,7 +1,7 @@
 import { ARTIFACT_TYPES, AttributeStat, Level } from "@Backend";
 
 import type { ArtifactSubStat, UserArtifact, UserCharacter, UserWeapon } from "@Src/types";
-import { $AppCharacter, $AppData } from "@Src/services";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import { Utils_, findByName } from "@Src/utils";
 import { goodFormatMap } from "./util-maps";
 
@@ -32,12 +32,12 @@ const searchCharacterByKey = (key: any) => {
 };
 
 const searchWeaponByKey = (key: any) => {
-  const weapon = $AppData.getAllWeapons().find((item) => key === convertName(item.name));
+  const weapon = $AppWeapon.getAll().find((item) => key === convertName(item.name));
   return weapon ? { code: weapon.code, type: weapon.type } : undefined;
 };
 
 const searchArtifactByKey = (key: any) => {
-  return $AppData.getAllArtifacts().find((item) => key === convertName(item.name))?.code;
+  return $AppArtifact.getAll().find((item) => key === convertName(item.name))?.code;
 };
 
 type Result = {

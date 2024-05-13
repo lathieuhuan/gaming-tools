@@ -6,7 +6,7 @@ import { WeaponType } from "@Backend";
 import type { UserWeapon } from "@Src/types";
 import { MAX_USER_WEAPONS } from "@Src/constants";
 import { useWeaponTypeSelect } from "@Src/hooks";
-import { $AppData } from "@Src/services";
+import { $AppWeapon } from "@Src/services";
 import { findById, indexById } from "@Src/utils";
 
 // Store
@@ -183,7 +183,7 @@ export default function MyWeapons() {
           danger
           message={
             <>
-              Remove "<b>{$AppData.getWeapon(chosenWeapon.code).name}</b>"?{" "}
+              Remove "<b>{$AppWeapon.get(chosenWeapon.code)?.name}</b>"?{" "}
               {chosenWeapon.owner ? (
                 <>
                   It is currently used by <b>{chosenWeapon.owner}</b>.

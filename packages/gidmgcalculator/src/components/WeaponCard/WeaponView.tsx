@@ -4,7 +4,7 @@ import { LEVELS, Level, WeaponCalc } from "@Backend";
 
 import type { CalcWeapon, UserWeapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { $AppData } from "@Src/services";
+import { $AppWeapon } from "@Src/services";
 import { genSequentialOptions, parseWeaponDescription, Utils_ } from "@Src/utils";
 
 // Component
@@ -25,7 +25,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
   refine,
 }: WeaponViewProps<T>) {
   const { t } = useTranslation();
-  const appWeapon = weapon ? $AppData.getWeapon(weapon.code) : undefined;
+  const appWeapon = weapon ? $AppWeapon.get(weapon.code) : undefined;
 
   const passiveDescription = useMemo(() => {
     if (!appWeapon?.descriptions || !weapon?.refi) {

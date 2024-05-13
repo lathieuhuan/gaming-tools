@@ -2,8 +2,8 @@ import { round } from "rond";
 import { AttackBonus, BonusKey } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
-import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 import { Utils_ } from "@Src/utils";
+import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
 interface BonusesTrackerProps {
   attBonus: AttackBonus;

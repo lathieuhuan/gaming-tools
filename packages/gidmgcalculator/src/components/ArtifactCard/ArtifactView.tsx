@@ -3,7 +3,7 @@ import { ArtifactCalc, AttributeStat } from "@Backend";
 
 import type { ArtifactSubStat, CalcArtifact, UserArtifact } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { $AppData } from "@Src/services";
+import { $AppArtifact } from "@Src/services";
 import { Utils_ } from "@Src/utils";
 
 // Component
@@ -30,7 +30,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
   const { t } = useTranslation();
   if (!artifact) return null;
 
-  const appArtifact = $AppData.getArtifact(artifact);
+  const appArtifact = $AppArtifact.get(artifact);
   const { rarity = 5, mainStatType } = artifact;
   const possibleMainStatTypes = ArtifactCalc.possibleMainStatTypesOf(artifact.type);
   const mainStatValue = ArtifactCalc.mainStatValueOf(artifact);

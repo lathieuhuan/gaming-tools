@@ -5,7 +5,7 @@ import { ARTIFACT_TYPES, CharacterCalc } from "@Backend";
 
 import type { UserArtifacts, UserSetup, UserWeapon } from "@Src/types";
 import type { OpenModalFn } from "../MySetups.types";
-import { $AppCharacter, $AppData } from "@Src/services";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import { Utils_, Setup_ } from "@Src/utils";
 
 // Store
@@ -72,7 +72,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
   const display = useMemo(() => {
     let mainCharacter = null;
     const appChar = $AppCharacter.get(char.name);
-    const appWeapon = weapon ? $AppData.getWeapon(weapon.code) : undefined;
+    const appWeapon = weapon ? $AppWeapon.get(weapon.code) : undefined;
 
     if (appChar) {
       const talents = (["NAs", "ES", "EB"] as const).map((talentType) => {
@@ -142,7 +142,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
 
           {artifacts.map((artifact, i) => {
             if (artifact) {
-              const appArtifact = $AppData.getArtifact(artifact);
+              const appArtifact = $AppArtifact.get(artifact);
 
               return appArtifact ? (
                 <GearIcon

@@ -3,7 +3,7 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { clsx, CollapseList, ModalControl, LoadingSpin, Skeleton, Modal } from "rond";
 
 import { $AppData, Update } from "@Src/services";
-import { useGetMetadata } from "@Src/hooks";
+import { useMetadata } from "@Src/hooks";
 import { useDispatch } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 
@@ -15,7 +15,7 @@ export const Introduction = (props: ModalControl) => {
   const [updates, setUpdates] = useState<Update[]>([]);
   const [supporters, setSupporters] = useState<string[]>([]);
 
-  const { status, getMetadata } = useGetMetadata({
+  const { status, refetch } = useMetadata({
     onSuccess: () => {
       setUpdates($AppData.updates);
       setSupporters($AppData.supporters);
@@ -90,7 +90,7 @@ export const Introduction = (props: ModalControl) => {
             className="my-2"
             isLoading={isLoadingMetadata}
             isError={status === "error"}
-            onRefetch={getMetadata}
+            onRefetch={refetch}
           />
 
           <div className="mb-1 text-center text-light-default text-base font-normal">
@@ -107,7 +107,7 @@ export const Introduction = (props: ModalControl) => {
         </>
       }
       {...props}
-      closable={status === "done"}
+      closable={status === "success"}
     >
       <div className="h-full custom-scrollbar">
         <CollapseList

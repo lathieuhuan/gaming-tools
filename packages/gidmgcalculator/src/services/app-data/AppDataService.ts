@@ -1,7 +1,6 @@
-import { AppArtifact, AppWeapon, AppMonster, ArtifactType, WeaponType } from "@Backend";
-
+import type { AppMonster } from "@Backend";
 import type { Target } from "@Src/types";
-import type { DataControl, Metadata, Update } from "./app-data.types";
+import type { Metadata, Update } from "./app-data.types";
 
 import { BACKEND_URL } from "@Src/constants";
 import { findByCode, toArray } from "@Src/utils";
@@ -10,29 +9,15 @@ import { BaseService } from "./BaseService";
 export class AppDataService extends BaseService {
   private isFetchedMetadata = false;
 
-  private weapons: Array<DataControl<AppWeapon>> = [];
-  private artifacts: Array<DataControl<AppArtifact>> = [];
   private monsters: AppMonster[] = [];
   public updates: Update[] = [];
   public supporters: string[] = [];
 
   constructor() {
     super();
-    // this.characters = characters.map((character) => ({
-    //   status: "fetched",
-    //   data: character,
-    // }));
   }
 
-  private getItemControl(type: "weapons", code: number): DataControl<AppWeapon> | undefined;
-  private getItemControl(type: "artifacts", code: number): DataControl<AppArtifact> | undefined;
-  private getItemControl(type: "weapons" | "artifacts", code: number) {
-    return type === "weapons"
-      ? this.weapons.find((weapon) => weapon.data.code === code)
-      : this.artifacts.find((artifact) => artifact.data.code === code);
-  }
-
-  public async fetchMetadata(onSuccess: (metaData: Metadata) => void, isRefetch?: boolean) {
+  public async fetchMetadata(onSuccess: (metaData: Metadata) => void | boolean, isRefetch?: boolean) {
     if (this.isFetchedMetadata && !isRefetch) {
       return true;
     }
@@ -41,25 +26,11 @@ export class AppDataService extends BaseService {
     if (response.data) {
       this.isFetchedMetadata = true;
 
-      // response.data.characters.forEach((dataCharacter) => {
-      //   const control = this.getCharacterControl(dataCharacter.name);
+      const isValid = onSuccess(response.data);
 
-      //   if (control) {
-      //     Object.assign(control.data, dataCharacter);
-      //   }
-      // });
-
-      onSuccess(response.data);
-
-      this.weapons = response.data.weapons.map((dataWeapon) => ({
-        status: "fetched",
-        data: dataWeapon,
-      }));
-
-      this.artifacts = response.data.artifacts.map((dataArtifact) => ({
-        status: "fetched",
-        data: dataArtifact,
-      }));
+      if (isValid === false) {
+        return false;
+      }
 
       this.monsters = response.data.monsters;
       this.updates = response.data.updates;
@@ -69,54 +40,6 @@ export class AppDataService extends BaseService {
     }
 
     return false;
-  }
-
-  // ========== WEAPONS ==========
-
-  getAllWeapons(type?: WeaponType): AppWeapon[];
-  getAllWeapons<T>(transform: (weapon: AppWeapon) => T): T[];
-  getAllWeapons<T>(arg?: WeaponType | ((weapon: AppWeapon) => T)): AppWeapon[] | T[] {
-    if (typeof arg === "string") {
-      return this.weapons.reduce<AppWeapon[]>((acc, weapon) => {
-        if (weapon.data.type === arg) {
-          acc.push(weapon.data);
-        }
-        return acc;
-      }, []);
-    }
-    if (typeof arg === "function") {
-      return this.weapons.map((weapon) => arg(weapon.data));
-    }
-
-    return this.weapons.map((weapon) => weapon.data);
-  }
-
-  getWeapon(code: number) {
-    const control = this.getItemControl("weapons", code)!;
-    return control!.data;
-  }
-
-  // ========== ARTIFACTS ==========
-  getAllArtifacts<T>(transform: (data: AppArtifact) => T): T[];
-  getAllArtifacts(): AppArtifact[];
-  getAllArtifacts<T>(transform?: (data: AppArtifact) => T): T[] | AppArtifact[] {
-    return transform
-      ? this.artifacts.map((artifact) => transform(artifact.data))
-      : this.artifacts.map((artifact) => artifact.data);
-  }
-
-  getArtifactSet(code: number) {
-    // no artifact with code 0
-    return code ? this.getItemControl("artifacts", code)?.data : undefined;
-  }
-
-  getArtifact(artifact: { code: number; type: ArtifactType }) {
-    const data = this.getArtifactSet(artifact.code);
-    if (data && data[artifact.type]) {
-      const { name, icon } = data[artifact.type];
-      return { beta: data.beta, name, icon };
-    }
-    return undefined;
   }
 
   // ========== MONSTERS ==========

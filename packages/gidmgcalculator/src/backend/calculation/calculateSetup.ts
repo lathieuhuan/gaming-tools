@@ -1,7 +1,7 @@
 import type { CalcSetup, Target } from "@Src/types";
 import type { TrackerControl } from "./controls";
 
-import { $AppCharacter, $AppData } from "@Src/services";
+import { $AppCharacter, $AppWeapon } from "@Src/services";
 import getCalculationStats from "./getCalculationStats";
 import getFinalResult from "./getFinalResult";
 import getResistances from "./getResistances";
@@ -27,7 +27,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   } = setup;
 
   const appChar = $AppCharacter.get(char.name);
-  const appWeapon = $AppData.getWeapon(weapon.code)!;
+  const appWeapon = $AppWeapon.get(weapon.code)!;
   const partyData = $AppCharacter.getPartyData(party);
 
   const { artAttr, attBonus, ...rest } = getCalculationStats({

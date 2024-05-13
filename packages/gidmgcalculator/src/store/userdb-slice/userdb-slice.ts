@@ -19,7 +19,7 @@ import type {
   UpdateUserWeaponAction,
 } from "./userdb-slice.types";
 
-import { $AppData } from "@Src/services";
+import { $AppArtifact, $AppWeapon } from "@Src/services";
 import { findById, findByName, indexById, indexByName, Utils_, Setup_ } from "@Src/utils";
 
 export type UserdbState = {
@@ -225,8 +225,8 @@ export const userdbSlice = createSlice({
     },
     sortWeapons: (state) => {
       state.userWps.sort((a, b) => {
-        const rA = $AppData.getWeapon(a.code)?.rarity || 4;
-        const rB = $AppData.getWeapon(b.code)?.rarity || 4;
+        const rA = $AppWeapon.get(a.code)?.rarity || 4;
+        const rB = $AppWeapon.get(b.code)?.rarity || 4;
         if (rA !== rB) {
           return rB - rA;
         }
@@ -342,8 +342,8 @@ export const userdbSlice = createSlice({
           };
           return type[b.type] - type[a.type];
         }
-        const aName = $AppData.getArtifactSet(a.code)?.name || "";
-        const bName = $AppData.getArtifactSet(b.code)?.name || "";
+        const aName = $AppArtifact.getSet(a.code)?.name || "";
+        const bName = $AppArtifact.getSet(b.code)?.name || "";
         return bName.localeCompare(aName);
       });
     },

@@ -6,7 +6,7 @@ import { clsx, notification, Button, CollapseSpace, Modal } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
 import type { Artifact, CalcArtifact } from "@Src/types";
-import { $AppData, $AppSettings } from "@Src/services";
+import { $AppArtifact, $AppSettings } from "@Src/services";
 import { Utils_ } from "@Src/utils";
 
 // Store
@@ -151,7 +151,7 @@ export default function SectionArtifacts() {
   const onSelectInventoryArtifact: ArtifactInventoryProps["onClickButton"] = (artifact) => {
     replaceArtifact(artifact.type, Utils_.userItemToCalcItem(artifact));
 
-    const artifactSet = $AppData.getArtifactSet(artifact.code);
+    const artifactSet = $AppArtifact.getSet(artifact.code);
 
     if (artifactSet) {
       notification.destroy("ALL");
@@ -175,7 +175,7 @@ export default function SectionArtifacts() {
       ...artifact,
       ID: Date.now(),
     };
-    const artifactSet = $AppData.getArtifactSet(artifact.code);
+    const artifactSet = $AppArtifact.getSet(artifact.code);
 
     if (artifactSet) {
       notification.destroy("ALL");
@@ -204,7 +204,7 @@ export default function SectionArtifacts() {
     if (activeTabIndex === -1 && types[0]) {
       setActiveTabIndex(Math.min(...types.map((type) => ARTIFACT_TYPES.indexOf(type))));
     }
-    const artifactSet = $AppData.getArtifactSet(code);
+    const artifactSet = $AppArtifact.getSet(code);
 
     if (artifactSet) {
       notification.success({
@@ -260,7 +260,7 @@ export default function SectionArtifacts() {
         {ARTIFACT_TYPES.map((type, index) => {
           const artifact = artifacts[index];
           const icon = artifact
-            ? $AppData.getArtifact({ code: artifact.code, type })?.icon || ""
+            ? $AppArtifact.get({ code: artifact.code, type })?.icon || ""
             : Utils_.artifactIconOf(type);
 
           return (

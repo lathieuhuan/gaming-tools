@@ -6,7 +6,7 @@ import { ARTIFACT_TYPES } from "@Backend";
 import type { CalcArtifacts, UserSetup, UserWeapon } from "@Src/types";
 import type { AppThunk } from "./store";
 import { MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@Src/constants";
-import { $AppCharacter, $AppData, $AppSettings } from "@Src/services";
+import { $AppArtifact, $AppCharacter, $AppSettings } from "@Src/services";
 
 // Store
 import { initNewSession, type InitNewSessionPayload } from "./calculator-slice";
@@ -14,16 +14,7 @@ import { updateSetupImportInfo, updateUI } from "./ui-slice";
 import { addUserArtifact, addUserWeapon, saveSetup, updateUserArtifact, updateUserWeapon } from "./userdb-slice";
 
 // Util
-import {
-  findById,
-  findByCode,
-  findByName,
-  deepCopy,
-  getAppDataError,
-  Modifier_,
-  Setup_,
-  Utils_,
-} from "@Src/utils";
+import { findById, findByCode, findByName, deepCopy, getAppDataError, Modifier_, Setup_, Utils_ } from "@Src/utils";
 import { parseUserCharacter, type CharacterForInit } from "./store.utils";
 
 type Option = {
@@ -294,7 +285,7 @@ export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeam
       let artifacts: CalcArtifacts = [null, null, null, null, null];
 
       if (artifact.code) {
-        const { variants = [] } = $AppData.getArtifactSet(artifact.code) || {};
+        const { variants = [] } = $AppArtifact.getSet(artifact.code) || {};
         const maxRarity = variants[variants.length - 1];
 
         if (maxRarity) {

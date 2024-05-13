@@ -6,7 +6,7 @@ import { AppCharacter, LevelableTalentType, TalentType } from "@Backend";
 
 import type { CalcCharacter, Weapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { $AppData } from "@Src/services";
+import { $AppWeapon } from "@Src/services";
 import { displayValue, getTableKeys, type TableKey } from "./FinalResultView.utils";
 
 type HeaderConfig = Pick<TableThProps, "className" | "style"> & {
@@ -48,7 +48,7 @@ export function FinalResultLayout({
   ...sectionProps
 }: FinalResultLayoutProps) {
   const { t } = useTranslation();
-  const appWeapon = $AppData.getWeapon(weapon.code);
+  const appWeapon = $AppWeapon.get(weapon.code);
 
   const [closedSections, setClosedSections] = useState<boolean[]>([]);
   const [lvlingSectionI, setLvlingSectionI] = useState(-1);

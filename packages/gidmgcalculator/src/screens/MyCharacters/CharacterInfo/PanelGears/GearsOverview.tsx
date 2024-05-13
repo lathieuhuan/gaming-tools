@@ -3,7 +3,7 @@ import { clsx, Button, CloseButton, ItemCase, LoadingSpin } from "rond";
 import { ARTIFACT_TYPES } from "@Backend";
 
 import type { GearsDetailType } from "./Gears.types";
-import { $AppData } from "@Src/services";
+import { $AppArtifact } from "@Src/services";
 import { Utils_ } from "@Src/utils";
 import { GenshinImage, ItemThumbnail } from "@Src/components";
 import { useCharacterInfo } from "../CharacterInfoProvider";
@@ -70,7 +70,7 @@ export function GearsOverview({
                     item={{
                       rarity: artifact.rarity,
                       level: artifact.level,
-                      icon: $AppData.getArtifact(artifact)?.icon || "",
+                      icon: $AppArtifact.get(artifact)?.icon || "",
                       setupIDs: artifact.setupIDs,
                     }}
                   />
@@ -102,11 +102,11 @@ export function GearsOverview({
             {setBonuses.length ? (
               <>
                 <p className="text-bonus-color font-medium">
-                  {$AppData.getArtifactSet(setBonuses[0].code)?.name} ({setBonuses[0].bonusLv * 2 + 2})
+                  {$AppArtifact.getSet(setBonuses[0].code)?.name} ({setBonuses[0].bonusLv * 2 + 2})
                 </p>
                 {setBonuses[1] ? (
                   <p className="mt-1 text-bonus-color font-medium">
-                    {$AppData.getArtifactSet(setBonuses[1].code)?.name} (2)
+                    {$AppArtifact.getSet(setBonuses[1].code)?.name} (2)
                   </p>
                 ) : null}
               </>

@@ -4,7 +4,7 @@ import { MdInventory } from "react-icons/md";
 import { Badge, Button, VersatileSelect } from "rond";
 import { LEVELS, Level } from "@Backend";
 
-import { $AppData } from "@Src/services";
+import { $AppWeapon } from "@Src/services";
 import { Utils_, genSequentialOptions } from "@Src/utils";
 import { selectWeapon, changeWeapon, updateWeapon } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
@@ -19,7 +19,7 @@ export default function SectionWeapon() {
   const weapon = useSelector(selectWeapon);
   const [modalType, setModalType] = useState<ModalType>("");
 
-  const { beta, name = "", icon = "", rarity = 5 } = $AppData.getWeapon(weapon.code) || {};
+  const { beta, name = "", icon = "", rarity = 5 } = $AppWeapon.get(weapon.code) || {};
   const selectLevels = rarity < 3 ? LEVELS.slice(0, -4) : LEVELS;
 
   const closeModal = () => setModalType("");

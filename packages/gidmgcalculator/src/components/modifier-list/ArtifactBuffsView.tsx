@@ -3,7 +3,7 @@ import { ArtifactSetBonus } from "@Backend";
 import type { ModifierCtrl, Party } from "@Src/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import { $AppData } from "@Src/services";
+import { $AppArtifact } from "@Src/services";
 import { findByIndex } from "@Src/utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers, getArtifactDescription } from "./modifiers.utils";
@@ -17,7 +17,7 @@ interface RenderArtifactBuffsArgs {
   getHanlders?: (args: GetModifierHanldersArgs) => ModifierHanlders;
 }
 function renderArtifactModifiers({ fromSelf, keyPrefix, mutable, code, ctrls, getHanlders }: RenderArtifactBuffsArgs) {
-  const data = $AppData.getArtifactSet(code);
+  const data = $AppArtifact.getSet(code);
   if (!data) return [];
   const { buffs = [] } = data;
 

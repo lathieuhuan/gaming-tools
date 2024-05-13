@@ -3,7 +3,7 @@ import { clsx, Button, ItemCase, useIntersectionObserver } from "rond";
 import { ElementType } from "@Backend";
 
 import type { UserArtifact } from "@Src/types";
-import { $AppCharacter, $AppData } from "@Src/services";
+import { $AppArtifact, $AppCharacter } from "@Src/services";
 import { findById } from "@Src/utils";
 import { useSelector } from "@Store/hooks";
 import { selectUserArtifacts, selectUserCharacters } from "@Store/userdb-slice";
@@ -65,7 +65,7 @@ export function EquippedSetStash({ keyword, onChangeArtifact, onSelectSet }: Equ
 
           if (artifact) {
             option.artifacts.push(artifact);
-            imgMap[`${artifact.code}-${artifact.type}`] = $AppData.getArtifact(artifact)?.icon ?? "";
+            imgMap[`${artifact.code}-${artifact.type}`] = $AppArtifact.get(artifact)?.icon ?? "";
           }
         }
         options.push(option);

@@ -5,7 +5,7 @@ import { ButtonGroup, Modal } from "rond";
 import { AppArtifact, ArtifactType } from "@Backend";
 
 import type { Artifact } from "@Src/types";
-import { $AppData } from "@Src/services";
+import { $AppArtifact } from "@Src/services";
 import { pickProps, Utils_ } from "@Src/utils";
 import { useArtifactTypeSelect } from "@Src/hooks";
 
@@ -60,10 +60,10 @@ const ArtifactSmith = ({
   const allArtifactSets = useMemo(() => {
     const artifacts =
       forFeature === "TEAMMATE_MODIFIERS"
-        ? $AppData
-            .getAllArtifacts()
+        ? $AppArtifact
+            .getAll()
             .filter((set) => set.buffs?.some((buff) => buff.affect !== "SELF") || set.debuffs?.length)
-        : $AppData.getAllArtifacts();
+        : $AppArtifact.getAll();
 
     return artifacts.map((artifact) => {
       const { code, beta, name, variants, flower } = artifact;
@@ -97,7 +97,7 @@ const ArtifactSmith = ({
 
   const renderBatchConfigNode = (afterSelect: AfterSelectAppEntity, selectBody: HTMLDivElement | null) => {
     if (!batchForging || !artifactConfig) return;
-    const { name } = $AppData.getArtifactSet(artifactConfig.code) || {};
+    const { name } = $AppArtifact.getSet(artifactConfig.code) || {};
 
     const onStopBatchForging = () => {
       const newArtifactType = artifactTypes[0] ?? "flower";
