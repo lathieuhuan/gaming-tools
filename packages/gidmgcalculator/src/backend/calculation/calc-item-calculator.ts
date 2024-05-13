@@ -36,7 +36,11 @@ export default class CalcItemCalculator {
     this.resistances = resistances;
   }
 
-  static genEmptyResult(type: CalcItemType, attPatt: ActualAttackPattern, attElmt: ActualAttackElement) {
+  static genEmptyResult(
+    type: CalcItemType,
+    attPatt: ActualAttackPattern,
+    attElmt: ActualAttackElement
+  ): CalculationFinalResultItem {
     return type === "attack"
       ? {
           type,

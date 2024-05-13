@@ -1,9 +1,10 @@
+import type { AttackElement } from "@Src/backend/types";
 import type { CalculationFinalResult } from "../calculation.types";
 import type { GetFinalResultArgs } from "./getFinalResult.types";
 
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
-import { ActualAttackElement, ActualAttackPattern } from "@Src/backend/types";
 import { TRANSFORMATIVE_REACTION_INFO } from "../calculation.constants";
+
 import { toArray } from "@Src/utils";
 import { CharacterCalc, GeneralCalc } from "../utils";
 import { TrackerControl } from "../controls";
@@ -128,17 +129,16 @@ export default function getFinalResult({
       ],
       normalMult: 1,
     });
-    const attPatt: ActualAttackPattern = "none";
-    const attElmt: ActualAttackElement = "phys";
+    const attElmt: AttackElement = "phys";
 
     finalResult.WP_CALC[name] = calculateCalcItem({
       calcType: type,
-      attPatt,
+      attPatt: "none",
       attElmt,
       base: (totalAttr[baseOn] * mult) / 100,
       record,
       rxnMult: 1,
-      getBonus: (key) => attBonus.get(key, attPatt, attElmt),
+      getBonus: (key) => attBonus.get(key, attElmt),
     });
 
     tracker?.recordCalcItem("WP_CALC", name, record);

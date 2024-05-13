@@ -70,7 +70,7 @@ export function CalcItemTracker({
         if (!result.nonCrit) return null;
 
         const nonCritDmg = renderDmg(result.nonCrit);
-        const cDmg_ = record.cDmg_ ? round(record.cDmg_, 3) : 0;
+        const cDmg_ = record.cDmg_ ? round(record.cDmg_, 0) : 0;
 
         return (
           <div key={i}>
@@ -90,12 +90,12 @@ export function CalcItemTracker({
                   {record.exclusives.map((bonus, i) => {
                     const percent = Utils_.suffixOf(bonus.type);
 
-                    return bonus.records.map((record) => {
+                    return bonus.records.map((record, j) => {
                       return (
-                        <p key={i}>
+                        <p key={i + j}>
                           + {t(bonus.type)}: {record.desc}{" "}
                           <Green>
-                            {round(record.value, percent ? 3 : 0)}
+                            {round(record.value, percent ? 2 : 0)}
                             {percent}
                           </Green>
                         </p>

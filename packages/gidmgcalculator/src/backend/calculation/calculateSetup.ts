@@ -9,7 +9,7 @@ import AttackPatternConf from "./attack-pattern-conf";
 import CalcItemCalculator from "./calc-item-calculator";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
-  console.time();
+  // console.time();
   const {
     char,
     weapon,
@@ -85,7 +85,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     calculateCalcItem: calcItemCalculator.calculate,
     ...rest,
   });
-  console.timeEnd();
+  // console.timeEnd();
 
   return {
     totalAttr: rest.totalAttr,
