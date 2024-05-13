@@ -22,7 +22,7 @@ export function ConstellationDetail({ appChar, consLv, onChangeConsLv, onClose }
     isLoading,
     isError,
     data: descriptions,
-  } = useQuery(appChar.name, () => $AppCharacter.fetchConsDescriptions(appChar.name));
+  } = useQuery([appChar.name], () => $AppCharacter.fetchConsDescriptions(appChar.name));
 
   return (
     <div className="h-full flex flex-col hide-scrollbar">

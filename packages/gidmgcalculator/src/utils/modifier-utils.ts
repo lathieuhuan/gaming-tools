@@ -37,14 +37,14 @@ export class Modifier_ {
       const incompatibleAffect: ModifierAffectType = forSelf ? "TEAMMATE" : "SELF";
 
       if (buff.affect !== incompatibleAffect) {
-        buffCtrls.push(createModCrtl(buff, forSelf));
+        buffCtrls.push(createModCtrl(buff, forSelf));
       }
     }
     for (const debuff of debuffs) {
       if (!forSelf && debuff.affect === "SELF") {
         continue;
       }
-      debuffCtrls.push(createModCrtl(debuff, forSelf));
+      debuffCtrls.push(createModCtrl(debuff, forSelf));
     }
     return [buffCtrls, debuffCtrls];
   }
@@ -69,14 +69,14 @@ type Modifier = {
   index: number;
   inputConfigs?: ModInputConfig[];
 };
-function createModCrtl(mod: Modifier, forSelf: boolean) {
+function createModCtrl(mod: Modifier, forSelf: boolean) {
   const ctrl: ModifierCtrl = { index: mod.index, activated: false };
 
   if (mod.inputConfigs) {
     const initialValues = [];
 
     for (const config of mod.inputConfigs) {
-      if (config.for !== (forSelf ? "FOR_TEAM" : "FOR_SELF")) {
+      if (!config.for || config.for !== (forSelf ? "FOR_TEAM" : "FOR_SELF")) {
         initialValues.push(config.initialValue ?? Modifier_.getDefaultInitialValue(config.type));
       }
     }
@@ -98,7 +98,7 @@ function createItemBuffCtrls(forSelf: boolean, entity?: { buffs?: RefModifier[] 
       const incompatibleAffect: ModifierAffectType = forSelf ? "TEAMMATE" : "SELF";
 
       if (buff.affect !== incompatibleAffect) {
-        buffCtrls.push(createModCrtl(buff, forSelf));
+        buffCtrls.push(createModCtrl(buff, forSelf));
       }
     }
   }

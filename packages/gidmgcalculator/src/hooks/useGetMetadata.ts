@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { $AppCharacter, $AppData } from "@Src/services";
 
+const MIN_VERSION = "3.8.0";
+
 interface UseGetMetadataOptions {
   onSuccess?: () => void;
   onError?: () => void;

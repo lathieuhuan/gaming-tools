@@ -13,7 +13,7 @@ import { Dim } from "../../span";
 import { AbilityCarousel } from "../ability-list-components";
 
 const useTalentDescriptions = (characterName: string, auto: boolean) => {
-  return useQuery(characterName, () => $AppCharacter.fetchTalentDescriptions(characterName), { auto });
+  return useQuery([characterName], () => $AppCharacter.fetchTalentDescriptions(characterName), { auto });
 };
 
 interface TalentDetailProps {
