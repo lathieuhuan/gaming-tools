@@ -6,6 +6,11 @@ import { BACKEND_URL } from "@Src/constants";
 import { findByCode, toArray } from "@Src/utils";
 import { BaseService } from "./BaseService";
 
+type FetchMetadataValidity = {
+  isOk: boolean;
+  message?: string;
+};
+
 export class AppDataService extends BaseService {
   private isFetchedMetadata = false;
 
@@ -17,29 +22,43 @@ export class AppDataService extends BaseService {
     super();
   }
 
-  public async fetchMetadata(onSuccess: (metaData: Metadata) => void | boolean, isRefetch?: boolean) {
+  public async fetchMetadata(
+    onDoneFetching: (metaData: Metadata) => void,
+    isRefetch?: boolean
+  ): Promise<FetchMetadataValidity> {
+    //
     if (this.isFetchedMetadata && !isRefetch) {
-      return true;
+      return {
+        isOk: true,
+      };
     }
     const response = await this.fetchData<Metadata>(BACKEND_URL.metadata());
 
     if (response.data) {
       this.isFetchedMetadata = true;
 
-      const isValid = onSuccess(response.data);
-
-      if (isValid === false) {
-        return false;
+      try {
+        onDoneFetching(response.data);
+      } catch (e) {
+        return {
+          isOk: false,
+          message: `${e}`,
+        };
       }
 
       this.monsters = response.data.monsters;
       this.updates = response.data.updates;
       this.supporters = response.data.supporters;
 
-      return true;
+      return {
+        isOk: true,
+      };
     }
 
-    return false;
+    return {
+      isOk: false,
+      message: response.message,
+    };
   }
 
   // ========== MONSTERS ==========

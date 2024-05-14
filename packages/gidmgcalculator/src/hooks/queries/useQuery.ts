@@ -66,8 +66,12 @@ export function useQuery<TQueryKey extends ReadonlyArray<string | number>, TData
   };
 
   if (auto && !isSameQueryKey(queryKey, state.current.queryKey)) {
-    state.current.queryKey = queryKey;
-    state.current.status = "loading";
+    state.current = {
+      ...state.current,
+      status: "loading",
+      queryKey,
+      error: null,
+    };
 
     getData(queryKey);
     render();

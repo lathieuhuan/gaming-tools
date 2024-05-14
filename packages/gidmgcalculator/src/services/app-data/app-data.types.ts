@@ -14,6 +14,7 @@ export type Update = {
 };
 
 export type Metadata = {
+  version: string;
   characters: AppCharacter[];
   weapons: AppWeapon[];
   artifacts: AppArtifact[];

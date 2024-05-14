@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { clsx, CollapseList, ModalControl, LoadingSpin, Skeleton, Modal } from "rond";
 
@@ -15,13 +15,15 @@ export const Introduction = (props: ModalControl) => {
   const [updates, setUpdates] = useState<Update[]>([]);
   const [supporters, setSupporters] = useState<string[]>([]);
 
-  const { status, refetch } = useMetadata({
-    onSuccess: () => {
+  const { status, error, cooldown, refetch } = useMetadata();
+
+  useLayoutEffect(() => {
+    if (status === "success") {
       setUpdates($AppData.updates);
       setSupporters($AppData.supporters);
       dispatch(updateUI({ ready: true }));
-    },
-  });
+    }
+  }, [status]);
 
   const isLoadingMetadata = status === "loading";
   const patch = updates.find((update) => !!update.patch)?.patch;
@@ -90,6 +92,8 @@ export const Introduction = (props: ModalControl) => {
             className="my-2"
             isLoading={isLoadingMetadata}
             isError={status === "error"}
+            error={error}
+            cooldown={cooldown}
             onRefetch={refetch}
           />
 

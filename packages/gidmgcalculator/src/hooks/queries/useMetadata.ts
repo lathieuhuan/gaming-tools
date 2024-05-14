@@ -2,40 +2,109 @@ import { useEffect, useState } from "react";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@Src/services";
 
 const MIN_VERSION = "3.8.0";
+const MESSAGE = "The system is being upgraded.";
+const COOLDOWN = {
+  NORMAL: 30,
+  UPGRADE: 300,
+};
 
-interface UseMetadataOptions {
-  onSuccess?: () => void;
-  onError?: () => void;
+function isValidVersion(version: string) {
+  const versionFrags = version.split(".");
+  const minVersionFrags = MIN_VERSION.split(".");
+  return versionFrags.every((frag, i) => +frag >= +minVersionFrags[i]);
 }
-export function useMetadata(options: UseMetadataOptions = {}) {
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+
+const currentSec = () => Math.round(Date.now() / 1000);
+
+const lastTryCtrl = {
+  getSecElapsed: () => {
+    return currentSec() - +(localStorage.getItem("lastVersionCheckTime") ?? "");
+  },
+  record: () => {
+    localStorage.setItem("lastVersionCheckTime", `${currentSec()}`);
+  },
+  remove: () => {
+    localStorage.removeItem("lastVersionCheckTime");
+  },
+};
+
+type Args = {
+  auto?: boolean;
+};
+
+type State = {
+  status: "loading" | "success" | "error" | "idle";
+  error?: string;
+  cooldown?: number;
+};
+
+export function useMetadata(args?: Args) {
+  const { auto = true } = args || {};
+
+  const [state, setState] = useState<State>({
+    status: auto ? "loading" : "idle",
+  });
 
   const getMetadata = async (isForcedRefetch?: boolean) => {
-    if (status !== "loading") {
-      setStatus("loading");
+    const secElapsed = lastTryCtrl.getSecElapsed();
+
+    if (secElapsed < COOLDOWN.UPGRADE) {
+      setState({
+        status: "error",
+        error: MESSAGE,
+        cooldown: COOLDOWN.UPGRADE - secElapsed,
+      });
+
+      return;
     }
 
-    const isOk = await $AppData.fetchMetadata((data) => {
-      $AppCharacter.populate(data.characters);
-      $AppWeapon.populate(data.weapons);
-      $AppArtifact.populate(data.artifacts);
+    if (state.status !== "loading") {
+      setState({
+        status: "loading",
+      });
+    }
+
+    const res = await $AppData.fetchMetadata((data) => {
+      if (isValidVersion(data.version)) {
+        $AppCharacter.populate(data.characters);
+        $AppWeapon.populate(data.weapons);
+        $AppArtifact.populate(data.artifacts);
+      } else {
+        lastTryCtrl.record();
+        throw "OLD_SYSTEM_VERSION";
+      }
     }, isForcedRefetch);
 
-    if (isOk) {
-      setStatus("success");
-      options.onSuccess?.();
+    if (res.isOk) {
+      setState({
+        status: "success",
+      });
+      lastTryCtrl.remove();
     } else {
-      setStatus("error");
-      options.onError?.();
+      if (res.message === "OLD_SYSTEM_VERSION") {
+        setState({
+          status: "error",
+          error: MESSAGE,
+          cooldown: COOLDOWN.UPGRADE,
+        });
+      } else {
+        setState({
+          status: "error",
+          error: res.message,
+          cooldown: COOLDOWN.NORMAL,
+        });
+      }
     }
   };
 
   useEffect(() => {
-    getMetadata();
+    if (auto) {
+      getMetadata();
+    }
   }, []);
 
   return {
-    status,
+    ...state,
     refetch: getMetadata,
   };
 }

@@ -3,7 +3,7 @@ import { FaBars, FaCog, FaDonate, FaDownload, FaInfoCircle, FaQuestionCircle, Fa
 import { BiDetail } from "react-icons/bi";
 import { useClickOutside, Button, Popover, useScreenWatcher, LoadingSpin } from "rond";
 
-import { useGetMetadata } from "@Src/hooks";
+import { useMetadata } from "@Src/hooks";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI, type UIState, type AppScreen } from "@Store/ui-slice";
 import { ActionButton, NavTabs, NavTabsProps } from "./navbar-components";
@@ -15,7 +15,7 @@ export function NavBar() {
   const appReady = useSelector((state) => state.ui.ready);
   const [menuDropped, setMenuDropped] = useState(false);
 
-  const { status, getMetadata } = useGetMetadata();
+  const { status, refetch } = useMetadata({ auto: false });
 
   const closeMenu = () => setMenuDropped(false);
 
@@ -69,7 +69,7 @@ export function NavBar() {
           <Button
             shape="square"
             icon={status === "loading" ? <LoadingSpin size="small" className="text-black" /> : null}
-            onClick={() => getMetadata(true)}
+            onClick={() => refetch(true)}
           >
             Refetch
           </Button>
