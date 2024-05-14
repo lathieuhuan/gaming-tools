@@ -15,6 +15,7 @@ export class AppDataService extends BaseService {
   private isFetchedMetadata = false;
 
   private monsters: AppMonster[] = [];
+  public version: string | undefined;
   public updates: Update[] = [];
   public supporters: string[] = [];
 
@@ -46,6 +47,7 @@ export class AppDataService extends BaseService {
         };
       }
 
+      this.version = response.data.version;
       this.monsters = response.data.monsters;
       this.updates = response.data.updates;
       this.supporters = response.data.supporters;

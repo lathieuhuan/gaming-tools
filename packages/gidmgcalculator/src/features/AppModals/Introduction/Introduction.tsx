@@ -10,24 +10,35 @@ import { updateUI } from "@Store/ui-slice";
 import { MetadataRefetcher } from "../../MetadataRefetcher";
 import { VersionRecap, Notes, About } from "./collapse-content";
 
+type State = {
+  version?: string;
+  updates: Update[];
+  supporters: string[];
+};
+
 export const Introduction = (props: ModalControl) => {
   const dispatch = useDispatch();
-  const [updates, setUpdates] = useState<Update[]>([]);
-  const [supporters, setSupporters] = useState<string[]>([]);
+  const [data, setData] = useState<State>({
+    version: "",
+    updates: [],
+    supporters: [],
+  });
 
   const { status, error, cooldown, refetch } = useMetadata();
 
   useLayoutEffect(() => {
     if (status === "success") {
-      setUpdates($AppData.updates);
-      setSupporters($AppData.supporters);
+      setData({
+        version: $AppData.version,
+        updates: $AppData.updates,
+        supporters: $AppData.supporters,
+      });
       dispatch(updateUI({ ready: true }));
     }
   }, [status]);
 
   const isLoadingMetadata = status === "loading";
-  const patch = updates.find((update) => !!update.patch)?.patch;
-  const latestDate: string | undefined = updates[0]?.date;
+  const latestDate: string | undefined = data.updates[0]?.date;
 
   const typeToCls: Record<string, string> = {
     e: "text-primary-1",
@@ -66,8 +77,8 @@ export const Introduction = (props: ModalControl) => {
         <span className={clsx("absolute top-0 left-full ml-2 text-hint-color", config.patchCls)}>
           {isLoadingMetadata ? (
             <Skeleton className={clsx("w-14 rounded", config.sltCls)} />
-          ) : patch ? (
-            <span>v{patch}</span>
+          ) : data.version ? (
+            <span>v{data.version}</span>
           ) : null}
         </span>
       </h1>
@@ -97,7 +108,7 @@ export const Introduction = (props: ModalControl) => {
             onRefetch={refetch}
           />
 
-          <div className="mb-1 text-center text-light-default text-base font-normal">
+          {/* <div className="mb-1 text-center text-light-default text-base font-normal">
             <span>Please join the version 3.7.1 survey and share you thoughts!</span>
 
             <a
@@ -107,7 +118,7 @@ export const Introduction = (props: ModalControl) => {
             >
               <FaExternalLinkAlt />
             </a>
-          </div>
+          </div> */}
         </>
       }
       {...props}
@@ -136,8 +147,8 @@ export const Introduction = (props: ModalControl) => {
                     <div className="h-20 flex-center">
                       <LoadingSpin size="large" />
                     </div>
-                  ) : updates.length ? (
-                    updates.map(({ date, patch, content }, i) => (
+                  ) : data.updates.length ? (
+                    data.updates.map(({ date, patch, content }, i) => (
                       <div key={i}>
                         <p className="text-heading-color font-bold">{date + (patch ? ` (v${patch})` : "")}</p>
                         <ul className="mt-1 space-y-1">
@@ -198,9 +209,9 @@ export const Introduction = (props: ModalControl) => {
                 <Skeleton key={i} className="w-28 h-4 rounded" />
               ))}
             </div>
-          ) : supporters.length ? (
+          ) : data.supporters.length ? (
             <ul className="ml-4 text-primary-1 columns-1 md:columns-2 xm:columns-3 lg:columns-4">
-              {supporters.map((name, i) => (
+              {data.supporters.map((name, i) => (
                 <li key={i}>{name}</li>
               ))}
             </ul>

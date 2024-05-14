@@ -15,7 +15,10 @@ import { AppEntitySelect, type AppEntitySelectProps, type AfterSelectAppEntity }
 import { ArtifactConfig } from "./components/ArtifactConfig";
 
 export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> {
+  /** Only works when hasConfigStep */
   allowBatchForging?: boolean;
+  /** Only works when hasConfigStep */
+  defaultBatchForging?: boolean;
   forFeature?: "TEAMMATE_MODIFIERS";
   forcedType?: ArtifactType;
   /** Default to 'flower' */
@@ -26,6 +29,7 @@ export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMulti
 }
 const ArtifactSmith = ({
   allowBatchForging,
+  defaultBatchForging = false,
   forFeature,
   forcedType,
   initialTypes = "flower",
@@ -36,7 +40,7 @@ const ArtifactSmith = ({
 }: ArtifactForgeProps) => {
   const [artifactConfig, setArtifactConfig] = useState<Artifact>();
   const [maxRarity, setMaxRarity] = useState(5);
-  const [batchForging, setBatchForging] = useState(false);
+  const [batchForging, setBatchForging] = useState(defaultBatchForging);
 
   const updateConfig = (update: (prevConfig: Artifact) => Artifact) => {
     if (artifactConfig) {

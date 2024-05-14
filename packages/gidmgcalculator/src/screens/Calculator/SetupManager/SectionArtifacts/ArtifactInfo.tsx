@@ -113,7 +113,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
         <Button title="Save" icon={<FaSave />} onClick={() => setIsSaving(true)} />
         <Button title="Loadout" icon={<FaToolbox />} onClick={() => onRequestChange("LOADOUT")} />
         <Button title="Inventory" icon={<MdInventory />} onClick={() => onRequestChange("INVENTORY")} />
-        <Button title="New" icon={<FaSyncAlt className="text-lg" />} onClick={() => onRequestChange("FORGE")} />
+        <Button title="Switch" icon={<FaSyncAlt className="text-lg" />} onClick={() => onRequestChange("FORGE")} />
       </div>
 
       <Modal.Core active={isSaving} preset="small" onClose={closeModal}>

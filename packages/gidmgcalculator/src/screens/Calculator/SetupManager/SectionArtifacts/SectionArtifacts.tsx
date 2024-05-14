@@ -270,6 +270,7 @@ export default function SectionArtifacts() {
         // hasMultipleMode is the same as hasConfigStep
         hasMultipleMode={forge.hasConfigStep}
         allowBatchForging
+        defaultBatchForging
         onForgeArtifact={onForgeArtifact}
         onForgeArtifactBatch={onForgeArtifactBatch}
         onClose={() => setForge((prevForge) => ({ ...prevForge, active: false }))}
