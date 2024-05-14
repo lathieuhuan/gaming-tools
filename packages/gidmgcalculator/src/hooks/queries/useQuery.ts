@@ -44,8 +44,6 @@ export function useQuery<TQueryKey extends ReadonlyArray<string | number>, TData
 
     // Still mounted & not stale
     if (state.current.mounted && isSameQueryKey(queryKey, state.current.queryKey)) {
-      console.log(queryKey, response);
-
       if (response.code === 200) {
         state.current = {
           ...state.current,

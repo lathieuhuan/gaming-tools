@@ -5,22 +5,22 @@ import type { Character, UserArtifacts, UserWeapon } from "@Src/types";
 import type { RootState } from "@Store/store";
 
 import { useAppCharacter } from "@Src/hooks";
-import { $AppData, $AppWeapon } from "@Src/services";
+import { $AppWeapon } from "@Src/services";
 import { findById, findByName } from "@Src/utils";
 import { useSelector } from "@Store/hooks";
-import { CharacterInfoContext, type CharacterInfoState } from "./character-info-context";
+import { MyCharacterDetailInfoContext, type MyCharacterDetailInfoState } from "./my-character-detail-info-context";
 
-interface CharacterInfoProviderProps {
+interface MyCharacterDetailInfoProviderProps {
   char: Character;
   weapon: UserWeapon;
   artifacts: UserArtifacts;
   children: React.ReactNode;
 }
-function CharacterInfoProviderCore({ char, weapon, artifacts, children }: CharacterInfoProviderProps) {
+function MyCharacterDetailInfoProviderCore({ char, weapon, artifacts, children }: MyCharacterDetailInfoProviderProps) {
   const { isLoading, data: appChar } = useAppCharacter(char.name);
   const appWeapon = $AppWeapon.get(weapon.code);
 
-  const characterInfoState = useMemo<CharacterInfoState>(() => {
+  const characterInfoState = useMemo<MyCharacterDetailInfoState>(() => {
     if (appChar && appWeapon) {
       const { totalAttr, artAttr } = getCalculationStats({
         char,
@@ -53,7 +53,9 @@ function CharacterInfoProviderCore({ char, weapon, artifacts, children }: Charac
     };
   }, [char, appChar, weapon, appWeapon, artifacts]);
 
-  return <CharacterInfoContext.Provider value={characterInfoState}>{children}</CharacterInfoContext.Provider>;
+  return (
+    <MyCharacterDetailInfoContext.Provider value={characterInfoState}>{children}</MyCharacterDetailInfoContext.Provider>
+  );
 }
 
 const parseUserdb = (state: RootState) => {
@@ -80,12 +82,12 @@ const parseUserdb = (state: RootState) => {
   };
 };
 
-export function CharacterInfoProvider(props: Pick<CharacterInfoProviderProps, "children">) {
+export function MyCharacterDetailInfoProvider(props: Pick<MyCharacterDetailInfoProviderProps, "children">) {
   const { charCount, characterInfo } = useSelector(parseUserdb);
 
   if (charCount) {
     return characterInfo ? (
-      <CharacterInfoProviderCore {...characterInfo}>{props.children}</CharacterInfoProviderCore>
+      <MyCharacterDetailInfoProviderCore {...characterInfo}>{props.children}</MyCharacterDetailInfoProviderCore>
     ) : null;
   }
 

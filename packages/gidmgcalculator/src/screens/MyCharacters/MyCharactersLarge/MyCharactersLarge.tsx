@@ -4,8 +4,8 @@ import {
   PanelConstellation,
   PanelGears,
   PanelTalents,
-  CharacterInfoAllProviders,
-} from "../CharacterInfo";
+  MyCharacterDetailProviders,
+} from "../MyCharacterDetail";
 import { MyCharactersModalsProvider } from "../MyCharactersModalsProvider";
 import { MyCharactersTopBar } from "./MyCharactersTopBar";
 
@@ -17,7 +17,7 @@ export function MyCharactersLarge() {
       <div className="h-full flex flex-col bg-surface-3">
         <MyCharactersTopBar />
 
-        <CharacterInfoAllProviders>
+        <MyCharacterDetailProviders>
           <div className="grow overflow-auto flex-center">
             <div className="py-4 flex h-98/100 space-x-2 custom-scrollbar" style={{ width: "92%" }}>
               <div className={sectionCls}>
@@ -48,7 +48,7 @@ export function MyCharactersLarge() {
               </div>
             </div>
           </div>
-        </CharacterInfoAllProviders>
+        </MyCharacterDetailProviders>
       </div>
     </MyCharactersModalsProvider>
   );

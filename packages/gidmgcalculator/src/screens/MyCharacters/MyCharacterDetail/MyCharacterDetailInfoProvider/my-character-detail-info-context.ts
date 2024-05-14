@@ -3,7 +3,7 @@ import { AppCharacter, AppWeapon, ArtifactAttribute, ArtifactSetBonus, TotalAttr
 
 import type { Character, UserArtifacts, UserWeapon } from "@Src/types";
 
-type CharacterInfoData = {
+type MyCharacterDetailInfo = {
   char: Character;
   appChar: AppCharacter;
   weapon: UserWeapon;
@@ -14,13 +14,13 @@ type CharacterInfoData = {
   artAttr: ArtifactAttribute;
 };
 
-export type CharacterInfoState = {
+export type MyCharacterDetailInfoState = {
   loading: boolean;
-  data: CharacterInfoData | null;
+  data: MyCharacterDetailInfo | null;
 };
 
-export const CharacterInfoContext = createContext<CharacterInfoState>({ loading: true, data: null });
+export const MyCharacterDetailInfoContext = createContext<MyCharacterDetailInfoState>({ loading: true, data: null });
 
-export function useCharacterInfo() {
-  return useContext(CharacterInfoContext);
+export function useMyCharacterDetailInfo() {
+  return useContext(MyCharacterDetailInfoContext);
 }

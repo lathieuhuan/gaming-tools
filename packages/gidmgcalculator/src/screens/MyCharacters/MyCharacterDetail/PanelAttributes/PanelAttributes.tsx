@@ -3,16 +3,16 @@ import { LoadingSpin, clsx } from "rond";
 
 import { useDispatch } from "@Store/hooks";
 import { updateUserCharacter } from "@Store/userdb-slice";
-import { useCharacterInfo } from "../CharacterInfoProvider";
-import { useCharacterInfoModalCtrl } from "../CharacterInfoModalsProvider";
+import { useMyCharacterDetailInfo } from "../MyCharacterDetailInfoProvider";
+import { useMyCharacterDetailModalsCtrl } from "../MyCharacterDetailModalsProvider";
 
 interface PanelAttributesProps {
   className?: string;
 }
 export function PanelAttributes(props: PanelAttributesProps) {
   const dispatch = useDispatch();
-  const { loading, data } = useCharacterInfo();
-  const modalCtrl = useCharacterInfoModalCtrl();
+  const { loading, data } = useMyCharacterDetailInfo();
+  const modalCtrl = useMyCharacterDetailModalsCtrl();
 
   if (loading) {
     return (

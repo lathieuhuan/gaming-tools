@@ -3,14 +3,14 @@ import { LoadingSpin } from "rond";
 import { useDispatch } from "@Store/hooks";
 import { updateUserCharacter } from "@Store/userdb-slice";
 import { TalentList } from "@Src/components";
-import { useCharacterInfo } from "../CharacterInfoProvider";
+import { useMyCharacterDetailInfo } from "../MyCharacterDetailInfoProvider";
 
 interface PanelTalentsProps {
   className?: string;
 }
 export function PanelTalents(props: PanelTalentsProps) {
   const dispatch = useDispatch();
-  const { loading, data } = useCharacterInfo();
+  const { loading, data } = useMyCharacterDetailInfo();
 
   if (loading) {
     return (

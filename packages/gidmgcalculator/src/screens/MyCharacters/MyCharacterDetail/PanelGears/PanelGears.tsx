@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useCharacterInfoModalCtrl } from "../CharacterInfoModalsProvider";
+import { useMyCharacterDetailModalsCtrl } from "../MyCharacterDetailModalsProvider";
 import { GearsOverview, GearsOverviewProps } from "./GearsOverview";
 import { GearsDetail, GearsDetailProps } from "./GearsDetail";
 import { GearsDetailType } from "./Gears.types";
@@ -23,7 +23,7 @@ interface PanelGearsProps {
   }) => React.JSX.Element;
 }
 export function PanelGears(props: PanelGearsProps) {
-  const modalCtrl = useCharacterInfoModalCtrl();
+  const modalCtrl = useMyCharacterDetailModalsCtrl();
 
   const [detail, setDetail] = useState<GearsDetailState>({
     active: false,

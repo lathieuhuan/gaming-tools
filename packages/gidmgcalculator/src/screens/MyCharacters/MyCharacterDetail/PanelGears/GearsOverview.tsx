@@ -6,7 +6,7 @@ import type { GearsDetailType } from "./Gears.types";
 import { $AppArtifact } from "@Src/services";
 import { Utils_ } from "@Src/utils";
 import { GenshinImage, ItemThumbnail } from "@Src/components";
-import { useCharacterInfo } from "../CharacterInfoProvider";
+import { useMyCharacterDetailInfo } from "../MyCharacterDetailInfoProvider";
 
 const bonusStyles = (active: boolean) => {
   return ["p-2 flex justify-between items-center rounded-lg group", active && "bg-surface-2"];
@@ -26,7 +26,7 @@ export function GearsOverview({
   onClickDetail,
   onClickEmptyArtifact,
 }: GearsOverviewProps) {
-  const { loading, data } = useCharacterInfo();
+  const { loading, data } = useMyCharacterDetailInfo();
 
   if (loading) {
     return (

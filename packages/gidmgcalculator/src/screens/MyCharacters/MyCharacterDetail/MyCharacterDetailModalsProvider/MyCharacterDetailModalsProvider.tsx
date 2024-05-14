@@ -7,23 +7,26 @@ import { viewCharacter, removeUserCharacter, switchArtifact, switchWeapon } from
 
 // Component
 import { ArtifactInventory, Tavern, WeaponInventory } from "@Src/components";
-import { useCharacterInfo } from "../CharacterInfoProvider";
-import { CharacterInfoModalsContext, type CharacterInfoModalsControl } from "./character-info-modals-context";
+import { useMyCharacterDetailInfo } from "../MyCharacterDetailInfoProvider";
+import {
+  MyCharacterDetailModalsContext,
+  type MyCharacterDetailModalsControl,
+} from "./my-character-detail-modals-context";
 
 type ModalType = "SWITCH_CHARACTER" | "SWITCH_WEAPON" | "SWITCH_ARTIFACT" | "REMOVE_CHARACTER" | "";
 
-interface CharacterInfoModalsProviderProps {
+interface MyCharacterDetailModalsProviderProps {
   children: React.ReactNode;
 }
-export function CharacterInfoModalsProvider(props: CharacterInfoModalsProviderProps) {
+export function MyCharacterDetailModalsProvider(props: MyCharacterDetailModalsProviderProps) {
   const dispatch = useDispatch();
   const [modalType, setModalType] = useState<ModalType>("");
   const [switchedArtifactI, setSwitchedArtifactI] = useState(-1);
-  const { data } = useCharacterInfo();
+  const { data } = useMyCharacterDetailInfo();
 
   const closeModal = () => setModalType("");
 
-  const control: CharacterInfoModalsControl = useMemo(() => {
+  const control: MyCharacterDetailModalsControl = useMemo(() => {
     return {
       requestSwitchCharacter: () => {
         setModalType("SWITCH_CHARACTER");
@@ -111,9 +114,9 @@ export function CharacterInfoModalsProvider(props: CharacterInfoModalsProviderPr
   };
 
   return (
-    <CharacterInfoModalsContext.Provider value={control}>
+    <MyCharacterDetailModalsContext.Provider value={control}>
       {props.children}
       {data ? renderModals() : null}
-    </CharacterInfoModalsContext.Provider>
+    </MyCharacterDetailModalsContext.Provider>
   );
 }

@@ -12,8 +12,8 @@ import {
   PanelConstellation,
   PanelGears,
   PanelTalents,
-  CharacterInfoAllProviders,
-} from "../CharacterInfo";
+  MyCharacterDetailProviders,
+} from "../MyCharacterDetail";
 import { MyCharactersModalsProvider } from "../MyCharactersModalsProvider";
 import { MyCharactersSmallMenu } from "./MyCharactersSmallMenu";
 
@@ -28,7 +28,7 @@ export function MyCharactersSmall() {
     <MyCharactersModalsProvider>
       <div className="h-full flex flex-col">
         <div className="p-4 grow hide-scrollbar bg-surface-1">
-          <CharacterInfoAllProviders>
+          <MyCharacterDetailProviders>
             <SwitchNode
               value={activePanelI}
               cases={[
@@ -58,7 +58,7 @@ export function MyCharactersSmall() {
                 { value: 3, element: <PanelTalents /> },
               ]}
             />
-          </CharacterInfoAllProviders>
+          </MyCharacterDetailProviders>
         </div>
 
         <MobileBottomNav

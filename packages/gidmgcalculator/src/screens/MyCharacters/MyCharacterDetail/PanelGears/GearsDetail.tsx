@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { RiArrowGoBackLine } from "react-icons/ri";
+import { Button } from "rond";
 import { AttributeStat } from "@Backend";
 
 import type { GearsDetailType } from "./Gears.types";
 import { useDispatch } from "@Store/hooks";
 import { updateUserArtifactSubStat, updateUserArtifact, updateUserWeapon, unequipArtifact } from "@Store/userdb-slice";
 import { AttributeTable, SetBonusesView, ArtifactCard, WeaponCard } from "@Src/components";
-import { useCharacterInfoModalCtrl } from "../CharacterInfoModalsProvider";
-import { useCharacterInfo } from "../CharacterInfoProvider";
-import { Button } from "rond";
+import { useMyCharacterDetailInfo } from "../MyCharacterDetailInfoProvider";
+import { useMyCharacterDetailModalsCtrl } from "../MyCharacterDetailModalsProvider";
 
 export interface GearsDetailProps {
   detailType: GearsDetailType;
@@ -17,8 +17,8 @@ export interface GearsDetailProps {
 }
 export function GearsDetail({ detailType, showCloseBtn, onClose }: GearsDetailProps) {
   const dispatch = useDispatch();
-  const { data } = useCharacterInfo();
-  const modalCtrl = useCharacterInfoModalCtrl();
+  const { data } = useMyCharacterDetailInfo();
+  const modalCtrl = useMyCharacterDetailModalsCtrl();
 
   const closeBtnProps = {
     icon: <RiArrowGoBackLine className="text-lg" />,

@@ -3,14 +3,14 @@ import { LoadingSpin } from "rond";
 import { useDispatch } from "@Store/hooks";
 import { updateUserCharacter } from "@Store/userdb-slice";
 import { ConstellationList } from "@Src/components";
-import { useCharacterInfo } from "../CharacterInfoProvider";
+import { useMyCharacterDetailInfo } from "../MyCharacterDetailInfoProvider";
 
 interface PanelConstellationProps {
   className?: string;
 }
 export function PanelConstellation(props: PanelConstellationProps) {
   const dispatch = useDispatch();
-  const { loading, data } = useCharacterInfo();
+  const { loading, data } = useMyCharacterDetailInfo();
 
   if (loading) {
     return (
