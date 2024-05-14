@@ -1,6 +1,6 @@
 import { FaPlus } from "react-icons/fa";
 import { BiImport } from "react-icons/bi";
-import { clsx, Button, CloseButton, CollapseSpace } from "rond";
+import { clsx, Button, CloseButton, CollapseSpace, Modal } from "rond";
 
 import { updateUI } from "@Store/ui-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -18,7 +18,7 @@ function SetupDirectorCore() {
   return (
     <div className="p-4 h-full flex flex-col">
       <CloseButton
-        className="ron-modal-close-button absolute top-2 right-2"
+        className={Modal.CLOSE_BTN_CLS}
         boneOnly
         onClick={() => dispatch(updateUI({ setupDirectorActive: false }))}
       />

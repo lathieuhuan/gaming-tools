@@ -15,7 +15,7 @@ import {
   SetupManager,
   SetupDirector,
   FinalResult,
-  CalculatorModalsProvider,
+  CalculatorProviders,
 } from "@Src/screens/Calculator";
 import { MobileBottomNav } from "@Src/components";
 import { SmallSetupManager } from "./SmallSetupManager";
@@ -77,7 +77,7 @@ export function AppMainSmall() {
         { value: "MY_SETUPS", element: <MySetups /> },
       ]}
       default={
-        <CalculatorModalsProvider>
+        <CalculatorProviders>
           {isModernUI ? (
             <div className="h-full flex flex-col border-t border-surface-border">
               <div className="grow overflow-hidden relative">
@@ -102,7 +102,7 @@ export function AppMainSmall() {
               {PANEL.Results("snap-center relative")}
             </div>
           )}
-        </CalculatorModalsProvider>
+        </CalculatorProviders>
       }
     />
   );

@@ -7,8 +7,11 @@ import type { Weapon } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectSetupManageInfos, selectStandardId, updateCharacter } from "@Store/calculator-slice";
 import { findById } from "@Src/utils";
-import { FinalResultLayout, type FinalResultLayoutProps } from "@Src/components";
 import { $AppCharacter } from "@Src/services";
+import { useCalcAppCharacter } from "../CalculatorInfoProvider";
+
+//
+import { FinalResultLayout, type FinalResultLayoutProps } from "@Src/components";
 
 type CellConfig = ReturnType<FinalResultLayoutProps["getRowConfig"]>["cells"][number];
 
@@ -138,9 +141,9 @@ type LayoutProps = Pick<
 function useLayoutProps(comparedIds: number[], standardId: number): LayoutProps {
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const setupsById = useSelector((state) => state.calculator.setupsById);
+  const appChar = useCalcAppCharacter();
 
   const char = setupsById[standardId].char;
-  const appChar = $AppCharacter.get(char.name);
 
   const standardWeapon = setupsById[standardId].weapon.code;
   let showWeaponCalc = true;

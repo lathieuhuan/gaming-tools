@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Input, Modal } from "rond";
 
 import type { Party } from "@Src/types";
-import { $AppCharacter } from "@Src/services";
 import { Setup_, findById } from "@Src/utils";
 import { useStoreSnapshot } from "@Src/features";
+import { useCalcAppCharacter } from "../../CalculatorInfoProvider";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
 import { saveSetupThunk } from "@Store/thunks";
-import { selectCharacter, selectParty } from "@Store/calculator-slice";
+import { selectParty } from "@Store/calculator-slice";
 import { selectUserSetups } from "@Store/userdb-slice";
 
 function areDifferentParties(party1: Party, party2: Party) {
@@ -24,10 +24,9 @@ interface SaveSetupProps {
 }
 export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
   const party = useSelector(selectParty);
 
-  const appChar = $AppCharacter.get(char.name);
+  const appChar = useCalcAppCharacter();
   const existedSetup = findById(useStoreSnapshot(selectUserSetups), setupId);
 
   const [input, setInput] = useState(existedSetup ? existedSetup.name : `${appChar.name} setup`);

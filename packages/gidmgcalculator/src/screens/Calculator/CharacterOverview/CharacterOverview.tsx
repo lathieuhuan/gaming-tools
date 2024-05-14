@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { Button, SwitchNode, type SwitchNodeProps } from "rond";
 
-import { $AppCharacter } from "@Src/services";
-
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
-import { initNewSessionWithCharacter } from "@Store/thunks";
 import { selectCharacter, updateCharacter } from "@Store/calculator-slice";
+import { useCalcAppCharacter } from "../CalculatorInfoProvider";
+import { useCalcModalCtrl } from "../CalculatorModalsProvider";
 
 // Component
-import { ComplexSelect, SetupImporter, Tavern, CharacterIntro } from "@Src/components";
+import { ComplexSelect, CharacterIntro } from "@Src/components";
 import { ArtifactsTab, AttributesTab, ConstellationTab, TalentsTab, WeaponTab } from "./character-overview-tabs";
 
 const TABS: SwitchNodeProps<string>["cases"] = [
@@ -20,76 +19,61 @@ const TABS: SwitchNodeProps<string>["cases"] = [
   { value: "Talents", element: <TalentsTab /> },
 ];
 
+function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
+  const dispatch = useDispatch();
+  const char = useSelector(selectCharacter);
+  const appChar = useCalcAppCharacter();
+
+  const [activeTab, setActiveTab] = useState("Attributes");
+
+  return (
+    <div className="h-full flex flex-col gap-4">
+      <CharacterIntro
+        char={char}
+        appChar={appChar}
+        mutable
+        switchable
+        onSwitch={props.onClickSwitchCharacter}
+        onChangeLevel={(level) => level !== char.level && dispatch(updateCharacter({ level }))}
+        onChangeCons={(cons) => cons !== char.cons && dispatch(updateCharacter({ cons }))}
+      />
+
+      <ComplexSelect
+        selectId="character-overview-select"
+        value={activeTab}
+        options={TABS.map((tab) => ({ value: tab.value, label: tab.value }))}
+        onChange={(newTab) => setActiveTab(newTab.toString())}
+      />
+
+      <div className="grow hide-scrollbar">
+        <SwitchNode value={activeTab} cases={TABS} />
+      </div>
+    </div>
+  );
+}
+
 interface CharacterOverviewProps {
   touched: boolean;
 }
 export function CharacterOverview({ touched }: CharacterOverviewProps) {
-  const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
   const appReady = useSelector((state) => state.ui.ready);
-
-  const [activeTab, setActiveTab] = useState("Attributes");
-  const [modalType, setModalType] = useState<"CHARACTER_SELECT" | "IMPORT_SETUP" | "">("");
-
-  const closeModal = () => setModalType("");
-
-  let body;
-
-  if (touched) {
-    const appChar = $AppCharacter.get(char.name);
-
-    body = (
-      <div className="h-full flex flex-col gap-4">
-        <CharacterIntro
-          char={char}
-          appChar={appChar}
-          mutable
-          switchable
-          onSwitch={() => setModalType("CHARACTER_SELECT")}
-          onChangeLevel={(level) => level !== char.level && dispatch(updateCharacter({ level }))}
-          onChangeCons={(cons) => cons !== char.cons && dispatch(updateCharacter({ cons }))}
-        />
-
-        <ComplexSelect
-          selectId="character-overview-select"
-          value={activeTab}
-          options={TABS.map((tab) => ({ value: tab.value, label: tab.value }))}
-          onChange={(newTab) => setActiveTab(newTab.toString())}
-        />
-
-        <div className="grow hide-scrollbar">
-          <SwitchNode value={activeTab} cases={TABS} />
-        </div>
-      </div>
-    );
-  } else {
-    body = (
-      <div className="w-full flex flex-col items-center space-y-2">
-        <Button variant="primary" disabled={!appReady} onClick={() => setModalType("CHARACTER_SELECT")}>
-          Select a character
-        </Button>
-        <p>or</p>
-        <Button disabled={!appReady} onClick={() => setModalType("IMPORT_SETUP")}>
-          Import a setup
-        </Button>
-      </div>
-    );
-  }
+  const modalCtrl = useCalcModalCtrl();
 
   return (
     <>
-      {body}
-
-      <Tavern
-        active={modalType === "CHARACTER_SELECT"}
-        sourceType="mixed"
-        onSelectCharacter={(character) => {
-          dispatch(initNewSessionWithCharacter(character));
-        }}
-        onClose={closeModal}
-      />
-
-      <SetupImporter active={modalType === "IMPORT_SETUP"} onClose={closeModal} />
+      {touched ? (
+        <CharacterOverviewCore onClickSwitchCharacter={modalCtrl.requestSwitchCharacter} />
+      ) : (
+        <div className="w-full flex flex-col items-center space-y-2">
+          <Button variant="primary" disabled={!appReady} onClick={modalCtrl.requestSwitchCharacter}>
+            Select a character
+          </Button>
+          <p>or</p>
+          <Button disabled={!appReady} onClick={modalCtrl.requestImportSetup}>
+            Import a setup
+          </Button>
+        </div>
+      )}
     </>
   );
 }

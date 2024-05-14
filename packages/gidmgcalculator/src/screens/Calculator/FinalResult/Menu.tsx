@@ -76,7 +76,7 @@ export function Menu() {
         className={[Modal.LARGE_HEIGHT_CLS, "p-4 pt-2 rounded shadow-white-glow bg-surface-3"]}
         onClose={closeEnlargedView}
       >
-        <CloseButton className="ron-modal-close-button" boneOnly onClick={closeEnlargedView} />
+        <CloseButton className={Modal.CLOSE_BTN_CLS} boneOnly onClick={closeEnlargedView} />
         <FinalResultCore />
       </Modal.Core>
     </div>

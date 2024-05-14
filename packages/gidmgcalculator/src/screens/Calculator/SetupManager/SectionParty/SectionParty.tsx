@@ -4,11 +4,11 @@ import { clsx, message, CollapseSpace } from "rond";
 
 import { findById } from "@Src/utils";
 import { $AppCharacter } from "@Src/services";
+import { useCalcAppCharacter } from "../../CalculatorInfoProvider";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
-  selectCharacter,
   selectActiveId,
   selectSetupManageInfos,
   selectParty,
@@ -31,12 +31,11 @@ interface ModalState {
 
 export default function SectionParty() {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
   const activeId = useSelector(selectActiveId);
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const party = useSelector(selectParty);
 
-  const appChar = $AppCharacter.get(char.name);
+  const appChar = useCalcAppCharacter();
 
   const [modal, setModal] = useState<ModalState>({
     type: "",

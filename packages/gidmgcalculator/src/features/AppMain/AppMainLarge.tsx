@@ -13,7 +13,7 @@ import {
   SetupManager,
   SetupDirector,
   FinalResult,
-  CalculatorModalsProvider,
+  CalculatorProviders,
 } from "@Src/screens/Calculator";
 
 import styles from "./AppMain.styles.module.scss";
@@ -97,9 +97,9 @@ export function AppMainLarge() {
 
   return (
     <div className="h-full flex-center relative">
-      <CalculatorModalsProvider>
+      <CalculatorProviders>
         <LargeCalculator />
-      </CalculatorModalsProvider>
+      </CalculatorProviders>
 
       {atScreen !== "CALCULATOR" ? (
         <div className="absolute full-stretch z-30">
