@@ -10,6 +10,7 @@ import { pickProps, Utils_ } from "@Src/utils";
 import { useArtifactTypeSelect } from "@Src/hooks";
 
 // Component
+import { GenshinImage } from "../GenshinImage";
 import { AppEntitySelect, type AppEntitySelectProps, type AfterSelectAppEntity } from "./components/AppEntitySelect";
 import { ArtifactConfig } from "./components/ArtifactConfig";
 
@@ -72,7 +73,7 @@ const ArtifactSmith = ({
         beta,
         name,
         rarity: variants[variants.length - 1],
-        icon: flower.icon,
+        icon: forcedType ? artifact[forcedType].icon : flower.icon,
       };
     });
   }, []);
@@ -97,7 +98,8 @@ const ArtifactSmith = ({
 
   const renderBatchConfigNode = (afterSelect: AfterSelectAppEntity, selectBody: HTMLDivElement | null) => {
     if (!batchForging || !artifactConfig) return;
-    const { name } = $AppArtifact.getSet(artifactConfig.code) || {};
+    const artifactSet = $AppArtifact.getSet(artifactConfig.code);
+    if (!artifactSet) return;
 
     const onStopBatchForging = () => {
       const newArtifactType = artifactTypes[0] ?? "flower";
@@ -111,7 +113,7 @@ const ArtifactSmith = ({
     };
 
     return (
-      <div className="pt-4 pl-2 pr-1 border-t border-light-900">
+      <div className="pt-4 px-1 border-t border-light-900">
         <div className="flex items-start">
           <FaInfoCircle className="mr-1 text-secondary-1 text-lg" />
 
@@ -122,8 +124,14 @@ const ArtifactSmith = ({
         </div>
 
         <div className="mt-2">
-          <p className={`text-rarity-${artifactConfig.rarity} text-lg font-semibold`}>{name}</p>
-          <p className="capitalize">{artifactTypes.join(", ")}</p>
+          <p className={`text-rarity-${artifactConfig.rarity} text-lg font-semibold`}>{artifactSet.name}</p>
+          <div className="mt-1 flex">
+            {artifactTypes.map((type) => (
+              <div key={type} className="w-1/5 p-1">
+                <GenshinImage className="bg-surface-3 rounded" fallbackCls="p-2" src={artifactSet[type].icon} />
+              </div>
+            ))}
+          </div>
         </div>
 
         <ButtonGroup

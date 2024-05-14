@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { MdInventory } from "react-icons/md";
 import { GiAnvil } from "react-icons/gi";
 import { FaToolbox } from "react-icons/fa";
-import { clsx, notification, Button, CollapseSpace, Modal } from "rond";
+import { clsx, notification, Button, CollapseSpace } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
 import type { Artifact, CalcArtifact } from "@Src/types";
@@ -34,7 +34,7 @@ type InventoryState = {
   initialType?: ArtifactType;
 };
 
-type ForgeState = {
+type ForgeState = Pick<ArtifactForgeProps, "hasConfigStep"> & {
   active: boolean;
   initialType?: ArtifactType;
 };
@@ -46,7 +46,6 @@ export default function SectionArtifacts() {
 
   const artifacts = useSelector(selectArtifacts);
 
-  const [selectingSrcType, setSelectingSrcType] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("");
   const [activeTabIndex, setActiveTabIndex] = useState(-1);
 
@@ -75,43 +74,11 @@ export default function SectionArtifacts() {
       // if click on the activeTab close it, otherwise change tab
       setActiveTabIndex(tabIndex === activeTabIndex ? -1 : tabIndex);
     } else {
-      setSelectingSrcType(true);
-
-      /** reserve type for onSelectArtifactSourceType */
-
       setForge({
-        active: false,
-        initialType: ARTIFACT_TYPES[tabIndex],
-      });
-
-      setInventory({
-        active: false,
+        active: true,
         initialType: ARTIFACT_TYPES[tabIndex],
       });
     }
-  };
-
-  // Precedent event: click tab without artifact => ask select source type
-  const onSelectArtifactSourceType = (source: ArtifactSourceType) => {
-    switch (source) {
-      case "LOADOUT":
-        onRequestSelectArtifactLoadout();
-        break;
-      case "INVENTORY":
-        setInventory({
-          active: true,
-          initialType: inventory.initialType,
-        });
-        break;
-      case "FORGE":
-        setForge({
-          active: true,
-          initialType: forge.initialType,
-        });
-        break;
-    }
-
-    setSelectingSrcType(false);
   };
 
   const replaceArtifact = (type: ArtifactType, newPiece: Artifact, shouldKeepStats = false) => {
@@ -167,6 +134,7 @@ export default function SectionArtifacts() {
     setForge({
       active: true,
       initialType: "flower",
+      hasConfigStep: true,
     });
   };
 
@@ -241,17 +209,6 @@ export default function SectionArtifacts() {
     setActiveTabIndex(-1);
   };
 
-  const renderSourceOption = (label: string, value: ArtifactSourceType, icon: JSX.Element) => {
-    return (
-      <button className="group" onClick={() => onSelectArtifactSourceType(value)}>
-        <p className="w-24 h-24 rounded bg-surface-1 font-bold flex-center flex-col opacity-90 group-hover:opacity-100">
-          <span className="mb-2 block h-8 flex-center">{icon}</span>
-          <span>{label}</span>
-        </p>
-      </button>
-    );
-  };
-
   return (
     <div id={SECTION_ID} className={`py-3 bg-surface-1 ${styles.section}`}>
       {artifacts.length && artifacts.every((artifact) => artifact === null) ? <CopySelect /> : null}
@@ -308,12 +265,14 @@ export default function SectionArtifacts() {
       <ArtifactForge
         active={forge.active}
         initialTypes={forge.initialType}
-        hasConfigStep
-        hasMultipleMode
+        forcedType={forge.hasConfigStep ? undefined : forge.initialType}
+        hasConfigStep={forge.hasConfigStep}
+        // hasMultipleMode is the same as hasConfigStep
+        hasMultipleMode={forge.hasConfigStep}
         allowBatchForging
         onForgeArtifact={onForgeArtifact}
         onForgeArtifactBatch={onForgeArtifactBatch}
-        onClose={() => setForge({ active: false })}
+        onClose={() => setForge((prevForge) => ({ ...prevForge, active: false }))}
       />
 
       <ArtifactInventory
@@ -322,22 +281,8 @@ export default function SectionArtifacts() {
         currentArtifacts={artifacts}
         buttonText="Select"
         onClickButton={onSelectInventoryArtifact}
-        onClose={() => setInventory({ active: false })}
+        onClose={() => setInventory((prevInventory) => ({ ...prevInventory, active: false }))}
       />
-
-      <Modal
-        active={selectingSrcType}
-        preset="small"
-        title="Select a source"
-        className="bg-surface-2"
-        onClose={() => setSelectingSrcType(false)}
-      >
-        <div className="flex justify-center gap-4">
-          {renderSourceOption("Loadout", "LOADOUT", <FaToolbox className="text-2xl" />)}
-          {renderSourceOption("Inventory", "INVENTORY", <MdInventory className="text-2xl" />)}
-          {renderSourceOption("New", "FORGE", <GiAnvil className="text-3xl" />)}
-        </div>
-      </Modal>
 
       <LoadoutStash active={modalType === "ARTIFACT_LOADOUT"} onSelect={onSelectLoadout} onClose={closeModal} />
     </div>

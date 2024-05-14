@@ -6,9 +6,9 @@ export * from "./SetupDirector";
 export * from "./CalculatorModalsProvider";
 
 import { useSelector } from "@Store/hooks";
+import { selectCharacter } from "@Store/calculator-slice";
 import { CalculatorInfoProvider } from "./CalculatorInfoProvider";
 import { CalculatorModalsProvider } from "./CalculatorModalsProvider";
-import { selectCharacter } from "@Store/calculator-slice";
 
 interface CalculatorAllProvidersProps {
   children: React.ReactNode;

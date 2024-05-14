@@ -1,8 +1,7 @@
 import { useRef, useState } from "react";
 import isEqual from "react-fast-compare";
-import { FaSave, FaTrashAlt, FaToolbox } from "react-icons/fa";
+import { FaSave, FaTrashAlt, FaToolbox, FaSyncAlt } from "react-icons/fa";
 import { MdInventory } from "react-icons/md";
-import { GiAnvil } from "react-icons/gi";
 import { Modal, ConfirmModal, Button, VersatileSelect } from "rond";
 import { ArtifactCalc, AttributeStat } from "@Backend";
 
@@ -114,7 +113,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
         <Button title="Save" icon={<FaSave />} onClick={() => setIsSaving(true)} />
         <Button title="Loadout" icon={<FaToolbox />} onClick={() => onRequestChange("LOADOUT")} />
         <Button title="Inventory" icon={<MdInventory />} onClick={() => onRequestChange("INVENTORY")} />
-        <Button title="New" icon={<GiAnvil className="text-lg" />} onClick={() => onRequestChange("FORGE")} />
+        <Button title="New" icon={<FaSyncAlt className="text-lg" />} onClick={() => onRequestChange("FORGE")} />
       </div>
 
       <Modal.Core active={isSaving} preset="small" onClose={closeModal}>
