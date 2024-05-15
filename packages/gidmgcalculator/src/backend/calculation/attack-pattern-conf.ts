@@ -64,10 +64,9 @@ export default function AttackPatternConf({
       //
     } = CharacterCalc.getTalentDefaultInfo(patternKey, appChar);
 
-    let reaction = elmtModCtrls.reaction;
-
     const configCalcItem = (item: CalcItem) => {
       const { type = "attack" } = item;
+      let reaction = elmtModCtrls.reaction;
       let attElmt: AttackElement;
 
       if (item.attElmt) {
@@ -102,10 +101,9 @@ export default function AttackPatternConf({
       let rxnMult = 1;
 
       // deal elemental dmg and want amplify reaction
-      if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
-        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, attBonus.get("pct_", reaction));
+      if (finalAttElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
+        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, finalAttElmt, attBonus.get("pct_", reaction));
       }
-      const extraMult = getTotalBonus("mult_");
 
       const record = TrackerControl.initCalcItemRecord({
         itemType: type,
@@ -140,7 +138,7 @@ export default function AttackPatternConf({
         attPatt: finalAttPatt,
         attElmt: finalAttElmt,
         rxnMult,
-        extraMult,
+        extraMult: getTotalBonus("mult_"),
         record,
         getTotalBonus,
         configMultFactor,
