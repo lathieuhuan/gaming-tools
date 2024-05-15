@@ -7,10 +7,11 @@ import { RESONANCE_STAT } from "../calculation.constants";
 import { $AppCharacter, $AppWeapon, $AppArtifact } from "@Src/services";
 import { findByIndex } from "@Src/utils";
 import { EntityCalc, GeneralCalc, WeaponCalc } from "../utils";
-import { ArtifactAttributeControl, AttackBonusControl, TotalAttributeControl } from "../controls";
+import { AttackBonusControl, TotalAttributeControl } from "../controls";
 import ApplierCharacterBuff from "./applier-character-buff";
 import ApplierWeaponBuff from "./applier-weapon-buff";
 import ApplierArtifactBuff from "./applier-artifact-buff";
+import { calcArtifactAtribute } from "./getCalculationStats.utils";
 
 export default function getCalculationStats({
   char,
@@ -36,7 +37,7 @@ export default function getCalculationStats({
     appChar,
     WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale)
   );
-  const artAttr = new ArtifactAttributeControl(artifacts, totalAttr).getValues();
+  const artAttr = calcArtifactAtribute(artifacts, totalAttr);
   const attBonus = new AttackBonusControl();
 
   if (appWeapon.subStat) {

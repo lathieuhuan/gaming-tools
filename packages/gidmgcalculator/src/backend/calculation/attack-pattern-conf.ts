@@ -2,7 +2,7 @@ import type { ElementModCtrl, Infusion, ModifierCtrl } from "@Src/types";
 import type {
   AttackElement,
   AttackPattern,
-  BonusKey,
+  AttackBonusKey,
   CalcItem,
   CalcItemFlatFactor,
   CalcItemMultFactor,
@@ -89,7 +89,7 @@ export default function AttackPatternConf({
       const finalAttPatt = normalsConfig[patternKey]?.attPatt ?? item.attPatt ?? defaultAttPatt;
       const finalAttElmt = normalsConfig[patternKey]?.attElmt ?? attElmt;
 
-      const getTotalBonus = (key: BonusKey) => {
+      const getTotalBonus = (key: AttackBonusKey) => {
         const attPatt = finalAttPatt === "none" ? undefined : finalAttPatt;
 
         if (type === "attack") {

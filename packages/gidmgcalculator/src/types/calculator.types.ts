@@ -1,7 +1,7 @@
 import type {
   AppCharacter,
   AttackElement,
-  BonusKey,
+  AttackBonusKey,
   AttributeStat,
   ElementType,
   NormalAttack,
@@ -56,7 +56,7 @@ export type CustomBuffCtrlType = AttributeStat | "all" | AttackPattern | Reactio
 export type CustomBuffCtrl = {
   category: CustomBuffCtrlCategory;
   type: CustomBuffCtrlType;
-  subType?: BonusKey;
+  subType?: AttackBonusKey;
   value: number;
 };
 

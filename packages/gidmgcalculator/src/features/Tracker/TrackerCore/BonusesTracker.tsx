@@ -1,5 +1,5 @@
 import { round } from "rond";
-import { AttackBonus, BonusKey } from "@Backend";
+import { AttackBonus, AttackBonusKey } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
 import { Utils_ } from "@Src/utils";
@@ -17,7 +17,7 @@ export function BonusesTracker({ attBonus }: BonusesTrackerProps) {
     <div className={`pl-2 mt-1 ${recordListStyles}`}>
       {bonuses.map((bonus) => {
         const list: Array<{
-          key: BonusKey;
+          key: AttackBonusKey;
           records: typeof bonus.records;
         }> = [];
 

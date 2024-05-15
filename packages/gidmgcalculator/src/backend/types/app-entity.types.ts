@@ -2,7 +2,7 @@ import type { ECalcStatModule } from "../constants/internal.constants";
 import type {
   AttackBonusType,
   AttributeStat,
-  BonusKey,
+  AttackBonusKey,
   ElementType,
   ResistanceReductionKey,
   TalentType,
@@ -164,7 +164,7 @@ type AttributeTarget = {
 };
 type AttackBonusTarget = {
   module: "ELMT_NA" | AttackBonusType | AttackBonusType[];
-  path: BonusKey;
+  path: AttackBonusKey;
 };
 
 export type EntityBonusTarget = AttributeTarget | AttackBonusTarget;

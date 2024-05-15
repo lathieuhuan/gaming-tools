@@ -1,4 +1,4 @@
-import type { AttributeStat, ResistanceReductionKey, CalcItemType, BonusKey } from "@Src/backend/types";
+import type { AttributeStat, ResistanceReductionKey, CalcItemType, AttackBonusKey } from "@Src/backend/types";
 
 import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "@Src/backend/constants";
 import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
@@ -20,7 +20,7 @@ type StatsRecords = Record<ECalcStatModule, StatRecordGroup>;
 // ========== CALC ITEM RECORD ==========
 
 export type CalcItemExclusiveBonus = {
-  type: BonusKey;
+  type: AttackBonusKey;
   records: CalcAtomicRecord[];
 };
 

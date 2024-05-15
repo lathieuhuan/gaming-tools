@@ -2,7 +2,7 @@ import type {
   ActualAttackElement,
   ActualAttackPattern,
   AttackElement,
-  BonusKey,
+  AttackBonusKey,
   CalcItemType,
   Level,
   ResistanceReduction,
@@ -20,7 +20,7 @@ type CalculateArgs = {
   base: number | number[];
   rxnMult: number;
   record: CalcItemRecord;
-  getBonus?: (key: BonusKey) => number;
+  getBonus?: (key: AttackBonusKey) => number;
 };
 
 export default class CalcItemCalculator {

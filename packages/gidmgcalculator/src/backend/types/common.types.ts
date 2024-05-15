@@ -23,7 +23,7 @@ export type TalentType = (typeof TALENT_TYPES)[number];
 
 export type LevelableTalentType = Exclude<TalentType, "altSprint">;
 
-export type BonusKey = (typeof BONUS_KEYS)[number];
+export type AttackBonusKey = (typeof BONUS_KEYS)[number];
 
 // ========== ELEMENTS ==========
 

@@ -1,10 +1,10 @@
-import type { AttackBonusType, BonusKey, CalcItem } from "@Src/backend/types";
+import type { AttackBonusType, AttackBonusKey, CalcItem } from "@Src/backend/types";
 import { CalcItemExclusiveBonus } from "./tracker-control";
 
 type AttackBonusRecord = {
   desc: string;
   value: number;
-  to: BonusKey;
+  to: AttackBonusKey;
 };
 
 export type AttackBonus = Array<{
@@ -19,9 +19,9 @@ export class AttackBonusControl {
   private attBonus: AttackBonus = [];
 
   private finalizedBonusAll = false;
-  private attackBonusAll: Partial<Record<BonusKey, number>> = {};
+  private attackBonusAll: Partial<Record<AttackBonusKey, number>> = {};
 
-  add = (module: AttackBonusType, path: BonusKey, value: number, description: string) => {
+  add = (module: AttackBonusType, path: AttackBonusKey, value: number, description: string) => {
     if (value) {
       const existedBonus = this.attBonus.find((bonus) => bonus.type === module);
       const record: AttackBonusRecord = {
@@ -51,7 +51,7 @@ export class AttackBonusControl {
     }
   };
 
-  static getBonus = (attBonus: AttackBonus, path: BonusKey, ...paths: GetBonusPaths) => {
+  static getBonus = (attBonus: AttackBonus, path: AttackBonusKey, ...paths: GetBonusPaths) => {
     let result = 0;
 
     for (const bonus of attBonus) {
@@ -66,7 +66,7 @@ export class AttackBonusControl {
     return result;
   };
 
-  get = (key: BonusKey, ...paths: GetBonusPaths) => {
+  get = (key: AttackBonusKey, ...paths: GetBonusPaths) => {
     if (!this.finalizedBonusAll) {
       this.finalizeBonusAll();
       this.finalizedBonusAll = true;
