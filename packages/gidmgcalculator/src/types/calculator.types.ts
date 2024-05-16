@@ -1,20 +1,101 @@
-import type { Artifact, Character, TotalAttributeStat, Weapon } from "./global.types";
 import type {
-  ArtifactDebuffCtrl,
-  AttackElementPath,
-  AttackPatternPath,
-  CalcItemBonus,
-  CalcItemType,
-  CustomBuffCtrl,
-  CustomDebuffCtrl,
-  ElementModCtrl,
-  Infusion,
-  ModifierCtrl,
-  Party,
-  ReactionBonusPath,
+  AppCharacter,
+  AttackElement,
+  AttackBonusKey,
+  AttributeStat,
+  ElementType,
+  NormalAttack,
+  ReactionType,
   ResistanceReductionKey,
-  Target,
-} from "./calculation-core.types";
+  WeaponType,
+  AttackPattern,
+} from "@Backend";
+import type { Artifact, AttackReaction, Character, Weapon } from "./global.types";
+
+type TeammateData = Pick<AppCharacter, "code" | "name" | "icon" | "nation" | "vision" | "weaponType" | "EBcost">;
+
+export type PartyData = (TeammateData | null)[];
+
+export type Target = {
+  code: number;
+  level: number;
+  variantType?: ElementType;
+  inputs?: number[];
+  resistances: Record<AttackElement, number>;
+};
+
+// MODIFIER CONTROL starts
+export type ModifierCtrl = {
+  activated: boolean;
+  /** This is WeaponBuff.index / ArtifactBuff.index / CharacterModifier.index */
+  index: number;
+  inputs?: number[];
+};
+
+export type ArtifactDebuffCtrl = ModifierCtrl & {
+  code: number;
+};
+
+export type Resonance = {
+  vision: ElementType;
+  activated: boolean;
+  inputs?: number[];
+};
+export type ElementModCtrl = {
+  infuse_reaction: AttackReaction;
+  reaction: AttackReaction;
+  absorption: ElementType | null;
+  superconduct: boolean;
+  resonances: Resonance[];
+};
+
+export type CustomBuffCtrlCategory = "totalAttr" | "attPattBonus" | "attElmtBonus" | "rxnBonus";
+
+export type CustomBuffCtrlType = AttributeStat | "all" | AttackPattern | ReactionType;
+
+export type CustomBuffCtrl = {
+  category: CustomBuffCtrlCategory;
+  type: CustomBuffCtrlType;
+  subType?: AttackBonusKey;
+  value: number;
+};
+
+export type CustomDebuffCtrlType = ResistanceReductionKey;
+
+export type CustomDebuffCtrl = {
+  type: CustomDebuffCtrlType;
+  value: number;
+};
+// MODIFIER CONTROL ends
+
+export type Infusion = {
+  element: AttackElement;
+  range?: NormalAttack[];
+};
+
+// PARTY starts
+export type TeammateWeapon = {
+  code: number;
+  type: WeaponType;
+  refi: number;
+  buffCtrls: ModifierCtrl[];
+};
+
+export type TeammateArtifact = {
+  code: number;
+  buffCtrls: ModifierCtrl[];
+};
+
+export type Teammate = {
+  name: string;
+  buffCtrls: ModifierCtrl[];
+  debuffCtrls: ModifierCtrl[];
+  weapon: TeammateWeapon;
+  artifact: TeammateArtifact;
+};
+
+export type Party = (Teammate | null)[];
+// PARTY ends
 
 export type CalcWeapon = Weapon;
 
@@ -56,47 +137,4 @@ export type SetupImportInfo = {
   type?: "original" | "combined";
   calcSetup?: CalcSetup;
   target?: Target;
-};
-
-// Tracker
-
-export type TrackerRecord = {
-  desc: string;
-  value: number;
-};
-
-export type TrackerCalcItemRecord = {
-  itemType: CalcItemType;
-  multFactors: Array<{
-    desc: string;
-    value: number;
-    talentMult?: number;
-  }>;
-  totalFlat?: number;
-  normalMult: number;
-  specialMult?: number;
-  rxnMult?: number;
-  defMult?: number;
-  resMult?: number;
-  cRate_?: number;
-  cDmg_?: number;
-  note?: string;
-  exclusives?: CalcItemBonus[];
-};
-
-export type TrackerState = "open" | "close" | "hidden";
-
-type TrackedCalcItem = Record<string, TrackerCalcItemRecord>;
-
-export type Tracker = {
-  totalAttr: Record<TotalAttributeStat, TrackerRecord[]>;
-  attPattBonus: Record<AttackPatternPath, TrackerRecord[]>;
-  attElmtBonus: Record<AttackElementPath, TrackerRecord[]>;
-  rxnBonus: Record<ReactionBonusPath, TrackerRecord[]>;
-  resistReduct: Record<ResistanceReductionKey, TrackerRecord[]>;
-  NAs: TrackedCalcItem;
-  ES: TrackedCalcItem;
-  EB: TrackedCalcItem;
-  RXN: TrackedCalcItem;
-  WP_CALC: TrackedCalcItem;
 };

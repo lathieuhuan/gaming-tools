@@ -1,5 +1,5 @@
-import type { ElementType, Level, QuickenReaction, ReactionBonus } from "@Src/types";
-import { Calculation_ } from "@Src/utils";
+import { AttackBonus, AttackBonusControl, ElementType, GeneralCalc, Level, QuickenReaction } from "@Backend";
+
 import { Green } from "../span";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
@@ -7,10 +7,14 @@ interface QuickenBuffItemProps extends Pick<GenshinModifierViewProps, "mutable" 
   reaction: QuickenReaction;
   element: ElementType;
   characterLv: Level;
-  rxnBonus: ReactionBonus;
+  attBonus: AttackBonus;
 }
-export function QuickenBuffItem({ reaction, element, characterLv, rxnBonus, ...rest }: QuickenBuffItemProps) {
-  const value = Calculation_.getQuickenBuffDamage(characterLv, rxnBonus)[reaction];
+export function QuickenBuffItem({ reaction, element, characterLv, attBonus, ...rest }: QuickenBuffItemProps) {
+  const bonusValue = GeneralCalc.getQuickenBuffDamage(
+    reaction,
+    characterLv,
+    AttackBonusControl.getBonus(attBonus, "pct_", reaction)
+  );
 
   return (
     <GenshinModifierView
@@ -25,7 +29,8 @@ export function QuickenBuffItem({ reaction, element, characterLv, rxnBonus, ...r
       }
       description={
         <>
-          Increase base <span className={`text-${element} capitalize`}>{element} DMG</span> by <Green b>{value}</Green>.
+          Increase base <span className={`text-${element} capitalize`}>{element} DMG</span> by{" "}
+          <Green b>{bonusValue}</Green>.
         </>
       }
     />

@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
 import { FaLink, FaPlus, FaShareAlt, FaTrashAlt, FaUnlink, FaWrench } from "react-icons/fa";
 import { clsx, useScreenWatcher, Button, ButtonGroup, Modal, CloseButton } from "rond";
+import { ARTIFACT_TYPES, CharacterCalc } from "@Backend";
 
 import type { UserArtifacts, UserSetup, UserWeapon } from "@Src/types";
 import type { OpenModalFn } from "../MySetups.types";
-import { ARTIFACT_TYPES } from "@Src/constants";
-import { $AppCharacter, $AppData } from "@Src/services";
-import { Artifact_, Character_, Setup_ } from "@Src/utils";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
+import { Utils_, Setup_ } from "@Src/utils";
 
 // Store
 import { useDispatch } from "@Store/hooks";
@@ -72,11 +72,11 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
   const display = useMemo(() => {
     let mainCharacter = null;
     const appChar = $AppCharacter.get(char.name);
-    const appWeapon = weapon ? $AppData.getWeapon(weapon.code) : undefined;
+    const appWeapon = weapon ? $AppWeapon.get(weapon.code) : undefined;
 
     if (appChar) {
       const talents = (["NAs", "ES", "EB"] as const).map((talentType) => {
-        return Character_.getFinalTalentLv({
+        return CharacterCalc.getFinalTalentLv({
           char,
           appChar,
           talentType,
@@ -142,7 +142,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
 
           {artifacts.map((artifact, i) => {
             if (artifact) {
-              const appArtifact = $AppData.getArtifact(artifact);
+              const appArtifact = $AppArtifact.get(artifact);
 
               return appArtifact ? (
                 <GearIcon
@@ -158,7 +158,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
               ) : null;
             }
 
-            return <GearIcon key={i} item={{ icon: Artifact_.iconOf(ARTIFACT_TYPES[i]) || "" }} />;
+            return <GearIcon key={i} item={{ icon: Utils_.artifactIconOf(ARTIFACT_TYPES[i]) || "" }} />;
           })}
         </div>
       </div>
@@ -261,7 +261,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
         className="rounded-lg shadow-white-glow"
         onClose={closeTeammateDetail}
       >
-        <CloseButton className="ron-modal-close-button" boneOnly onClick={closeTeammateDetail} />
+        <CloseButton className={Modal.CLOSE_BTN_CLS} boneOnly onClick={closeTeammateDetail} />
 
         {teammateInfo && (
           <TeammateDetail

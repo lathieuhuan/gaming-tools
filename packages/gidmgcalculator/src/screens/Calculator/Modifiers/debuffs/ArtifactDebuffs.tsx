@@ -1,7 +1,7 @@
 import { useEffect } from "react";
+import { GeneralCalc } from "@Backend";
 
 import type { Party } from "@Src/types";
-import { Calculation_ } from "@Src/utils";
 import { changeModCtrlInput, selectArtifacts, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { ArtifactDebuffsView } from "@Src/components";
@@ -12,7 +12,7 @@ export default function ArtifactDebuffs({ party }: { party: Party }) {
     return state.calculator.setupsById[state.calculator.activeId].artDebuffCtrls;
   });
   const artifacts = useSelector(selectArtifacts);
-  const { code, bonusLv } = Calculation_.getArtifactSetBonuses(artifacts || [])[0] || {};
+  const { code, bonusLv } = GeneralCalc.getArtifactSetBonuses(artifacts || [])[0] || {};
 
   const usedArtCodes = party.reduce(
     (accumulator, teammate) => {

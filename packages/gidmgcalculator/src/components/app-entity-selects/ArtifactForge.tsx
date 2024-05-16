@@ -2,28 +2,34 @@ import { useMemo, useState } from "react";
 import { RiArrowGoBackLine } from "react-icons/ri";
 import { FaInfoCircle } from "react-icons/fa";
 import { ButtonGroup, Modal } from "rond";
+import { AppArtifact, ArtifactType } from "@Backend";
 
-import type { AppArtifact, Artifact, ArtifactType } from "@Src/types";
-import { $AppData } from "@Src/services";
-import { pickProps, Artifact_ } from "@Src/utils";
+import type { Artifact } from "@Src/types";
+import { $AppArtifact } from "@Src/services";
+import { pickProps, Utils_ } from "@Src/utils";
 import { useArtifactTypeSelect } from "@Src/hooks";
 
 // Component
+import { GenshinImage } from "../GenshinImage";
 import { AppEntitySelect, type AppEntitySelectProps, type AfterSelectAppEntity } from "./components/AppEntitySelect";
 import { ArtifactConfig } from "./components/ArtifactConfig";
 
 export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> {
+  /** Only works when hasConfigStep */
   allowBatchForging?: boolean;
+  /** Only works when hasConfigStep */
+  defaultBatchForging?: boolean;
   forFeature?: "TEAMMATE_MODIFIERS";
   forcedType?: ArtifactType;
   /** Default to 'flower' */
   initialTypes?: ArtifactType | ArtifactType[];
-  onForgeArtifact: (info: ReturnType<typeof Artifact_.create>) => void;
+  onForgeArtifact: (info: ReturnType<typeof Utils_.createArtifact>) => void;
   onForgeArtifactBatch?: (code: AppArtifact["code"], types: ArtifactType[], rarity: number) => void;
   onClose: () => void;
 }
 const ArtifactSmith = ({
   allowBatchForging,
+  defaultBatchForging = false,
   forFeature,
   forcedType,
   initialTypes = "flower",
@@ -34,7 +40,7 @@ const ArtifactSmith = ({
 }: ArtifactForgeProps) => {
   const [artifactConfig, setArtifactConfig] = useState<Artifact>();
   const [maxRarity, setMaxRarity] = useState(5);
-  const [batchForging, setBatchForging] = useState(false);
+  const [batchForging, setBatchForging] = useState(defaultBatchForging);
 
   const updateConfig = (update: (prevConfig: Artifact) => Artifact) => {
     if (artifactConfig) {
@@ -49,7 +55,7 @@ const ArtifactSmith = ({
       required: batchForging,
       onChange: (types) => {
         updateConfig((prevConfig) => {
-          const newConfig = Artifact_.create({ ...prevConfig, type: types[0] as ArtifactType });
+          const newConfig = Utils_.createArtifact({ ...prevConfig, type: types[0] as ArtifactType });
           return Object.assign(newConfig, pickProps(prevConfig, ["ID", "level", "subStats"]));
         });
       },
@@ -59,10 +65,10 @@ const ArtifactSmith = ({
   const allArtifactSets = useMemo(() => {
     const artifacts =
       forFeature === "TEAMMATE_MODIFIERS"
-        ? $AppData
-            .getAllArtifacts()
+        ? $AppArtifact
+            .getAll()
             .filter((set) => set.buffs?.some((buff) => buff.affect !== "SELF") || set.debuffs?.length)
-        : $AppData.getAllArtifacts();
+        : $AppArtifact.getAll();
 
     return artifacts.map((artifact) => {
       const { code, beta, name, variants, flower } = artifact;
@@ -71,7 +77,7 @@ const ArtifactSmith = ({
         beta,
         name,
         rarity: variants[variants.length - 1],
-        icon: flower.icon,
+        icon: forcedType ? artifact[forcedType].icon : flower.icon,
       };
     });
   }, []);
@@ -96,7 +102,8 @@ const ArtifactSmith = ({
 
   const renderBatchConfigNode = (afterSelect: AfterSelectAppEntity, selectBody: HTMLDivElement | null) => {
     if (!batchForging || !artifactConfig) return;
-    const { name } = $AppData.getArtifactSet(artifactConfig.code) || {};
+    const artifactSet = $AppArtifact.getSet(artifactConfig.code);
+    if (!artifactSet) return;
 
     const onStopBatchForging = () => {
       const newArtifactType = artifactTypes[0] ?? "flower";
@@ -110,9 +117,9 @@ const ArtifactSmith = ({
     };
 
     return (
-      <div className="pt-4 px-2 border-t border-light-900">
+      <div className="pt-4 px-1 border-t border-light-900">
         <div className="flex items-start">
-          <FaInfoCircle className="mr-1.5 text-secondary-1 text-lg" />
+          <FaInfoCircle className="mr-1 text-secondary-1 text-lg" />
 
           <div>
             <h5 className="text-secondary-1 text-sm font-semibold">Batch Forging</h5>
@@ -120,9 +127,15 @@ const ArtifactSmith = ({
           </div>
         </div>
 
-        <div className="mt-2 ">
-          <p className={`text-rarity-${artifactConfig.rarity} text-lg font-semibold`}>{name}</p>
-          <p className="capitalize">{artifactTypes.join(", ")}</p>
+        <div className="mt-2">
+          <p className={`text-rarity-${artifactConfig.rarity} text-lg font-semibold`}>{artifactSet.name}</p>
+          <div className="mt-1 flex">
+            {artifactTypes.map((type) => (
+              <div key={type} className="w-1/5 p-1">
+                <GenshinImage className="bg-surface-3 rounded" fallbackCls="p-2" src={artifactSet[type].icon} />
+              </div>
+            ))}
+          </div>
         </div>
 
         <ButtonGroup
@@ -160,7 +173,7 @@ const ArtifactSmith = ({
             moreButtons={[
               getBackAction(selectBody),
               {
-                children: "Batching",
+                children: "Batch",
                 className: !allowBatchForging && "hidden",
                 onClick: () => setBatchForging(true),
               },
@@ -178,7 +191,7 @@ const ArtifactSmith = ({
       }}
       onChange={(mold, isConfigStep) => {
         if (mold) {
-          const artifact = Artifact_.create({
+          const artifact = Utils_.createArtifact({
             ...mold,
             type: artifactTypes[0],
           });

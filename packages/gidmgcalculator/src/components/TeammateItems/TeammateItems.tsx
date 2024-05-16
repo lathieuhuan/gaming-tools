@@ -1,7 +1,7 @@
 import { clsx, CloseButton, VersatileSelect } from "rond";
 
 import type { Teammate } from "@Src/types";
-import { $AppData } from "@Src/services";
+import { $AppArtifact, $AppWeapon } from "@Src/services";
 import { genSequentialOptions } from "@Src/utils";
 import { GenshinImage } from "../GenshinImage";
 
@@ -24,8 +24,8 @@ export function TeammateItems({
   onClickRemoveArtifact,
 }: TeammateItemsProps) {
   const { weapon, artifact } = teammate;
-  const appWeapon = $AppData.getWeapon(weapon.code);
-  const { name: artifactSetName, flower } = $AppData.getArtifactSet(artifact.code) || {};
+  const appWeapon = $AppWeapon.get(weapon.code);
+  const { name: artifactSetName, flower } = $AppArtifact.getSet(artifact.code) || {};
   const { icon: artifactSetIcon = "" } = flower || {};
 
   return (

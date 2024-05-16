@@ -1,4 +1,4 @@
-import { Level } from "@Src/types";
+import { Level } from "@Backend";
 
 export type AppSettings = {
   charInfoIsSeparated: boolean;

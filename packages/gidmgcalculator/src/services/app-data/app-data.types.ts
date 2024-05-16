@@ -1,4 +1,4 @@
-import type { AppArtifact, AppCharacter, AppMonster, AppWeapon } from "@Src/types";
+import type { AppArtifact, AppCharacter, AppMonster, AppWeapon } from "@Backend";
 
 export type DataControl<T> = {
   status: "unfetched" | "fetching" | "fetched";
@@ -14,6 +14,7 @@ export type Update = {
 };
 
 export type Metadata = {
+  version: string;
   characters: AppCharacter[];
   weapons: AppWeapon[];
   artifacts: AppArtifact[];

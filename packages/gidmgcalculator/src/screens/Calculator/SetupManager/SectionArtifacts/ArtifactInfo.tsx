@@ -1,12 +1,12 @@
 import { useRef, useState } from "react";
 import isEqual from "react-fast-compare";
-import { FaSave, FaTrashAlt, FaToolbox } from "react-icons/fa";
+import { FaSave, FaTrashAlt, FaToolbox, FaSyncAlt } from "react-icons/fa";
 import { MdInventory } from "react-icons/md";
-import { GiAnvil } from "react-icons/gi";
 import { Modal, ConfirmModal, Button, VersatileSelect } from "rond";
+import { ArtifactCalc, AttributeStat } from "@Backend";
 
-import type { CalcArtifact, AttributeStat } from "@Src/types";
-import { findById, suffixOf, Item_, Artifact_ } from "@Src/utils";
+import type { CalcArtifact } from "@Src/types";
+import { findById, Utils_ } from "@Src/utils";
 import { MAX_USER_ARTIFACTS } from "@Src/constants";
 import { changeArtifact, updateArtifact } from "@Store/calculator-slice";
 import { selectUserArtifacts, addUserArtifact, updateUserArtifact } from "@Store/userdb-slice";
@@ -34,8 +34,8 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
   const [isSaving, setIsSaving] = useState(false);
 
   const { type, rarity = 5, level, mainStatType } = artifact;
-  const possibleMainStatTypes = Artifact_.possibleMainStatTypesOf(type);
-  const mainStatValue = Artifact_.mainStatValueOf(artifact);
+  const possibleMainStatTypes = ArtifactCalc.possibleMainStatTypesOf(type);
+  const mainStatValue = ArtifactCalc.mainStatValueOf(artifact);
 
   const closeModal = () => {
     setIsSaving(false);
@@ -77,7 +77,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
           )}
           <p className={`pl-6 text-1.5xl leading-7 text-rarity-${rarity} font-bold`}>
             {mainStatValue}
-            {suffixOf(mainStatType)}
+            {Utils_.suffixOf(mainStatType)}
           </p>
         </div>
       </div>
@@ -113,7 +113,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
         <Button title="Save" icon={<FaSave />} onClick={() => setIsSaving(true)} />
         <Button title="Loadout" icon={<FaToolbox />} onClick={() => onRequestChange("LOADOUT")} />
         <Button title="Inventory" icon={<MdInventory />} onClick={() => onRequestChange("INVENTORY")} />
-        <Button title="New" icon={<GiAnvil className="text-lg" />} onClick={() => onRequestChange("FORGE")} />
+        <Button title="Switch" icon={<FaSyncAlt className="text-lg" />} onClick={() => onRequestChange("FORGE")} />
       </div>
 
       <Modal.Core active={isSaving} preset="small" onClose={closeModal}>
@@ -140,7 +140,7 @@ function ConfirmSaving({ artifact, onClose }: ConfirmSavingProps) {
     } else if (existedArtifact) {
       state.current = "PENDING";
     } else {
-      dispatch(addUserArtifact(Item_.calcItemToUserItem(artifact)));
+      dispatch(addUserArtifact(Utils_.calcItemToUserItem(artifact)));
       state.current = "SUCCESS";
     }
   }
@@ -174,13 +174,13 @@ function ConfirmSaving({ artifact, onClose }: ConfirmSavingProps) {
       );
       const noChange = existedArtifact
         ? isEqual(artifact, {
-            ...Item_.userItemToCalcItem(existedArtifact),
+            ...Utils_.userItemToCalcItem(existedArtifact),
             ID: artifact.ID,
           })
         : false;
 
       const addNew = () => {
-        dispatch(addUserArtifact(Item_.calcItemToUserItem(artifact, { ID: Date.now() })));
+        dispatch(addUserArtifact(Utils_.calcItemToUserItem(artifact, { ID: Date.now() })));
         onClose();
       };
 
@@ -202,7 +202,7 @@ function ConfirmSaving({ artifact, onClose }: ConfirmSavingProps) {
       }
 
       const overwrite = () => {
-        dispatch(updateUserArtifact(Item_.calcItemToUserItem(artifact)));
+        dispatch(updateUserArtifact(Utils_.calcItemToUserItem(artifact)));
         onClose();
       };
 

@@ -4,19 +4,19 @@ import { ItemCase, clsx, useIntersectionObserver } from "rond";
 
 import type { UserArtifact, UserItem, UserWeapon } from "@Src/types";
 import type { ArtifactRackProps, InventoryRackProps, MixedRackProps, WeaponRackProps } from "./inventory.types";
-import { $AppData } from "@Src/services";
-import { Item_ } from "@Src/utils";
+import { $AppArtifact, $AppWeapon } from "@Src/services";
+import { Utils_ } from "@Src/utils";
 
 // Component
 import { ItemThumbnail } from "../ItemThumbnail";
 
 const getWeaponInfo = ({ code, owner, refi, level, setupIDs }: UserWeapon) => {
-  const { beta, name, icon = "", rarity = 5 } = $AppData.getWeapon(code) || {};
+  const { beta, name, icon = "", rarity = 5 } = $AppWeapon.get(code) || {};
   return { beta, name, icon, rarity, level, refi, owner, setupIDs };
 };
 
 const getArtifactInfo = ({ code, type, owner, rarity, level, setupIDs }: UserArtifact) => {
-  const { beta, name, icon = "" } = $AppData.getArtifact({ code, type }) || {};
+  const { beta, name, icon = "" } = $AppArtifact.get({ code, type }) || {};
   return { beta, name, icon, rarity, level, owner, setupIDs };
 };
 
@@ -113,7 +113,7 @@ export function InventoryRack<T extends UserItem>({
                           <ItemThumbnail
                             className={className}
                             imgCls={imgCls}
-                            item={Item_.isUserWeapon(item) ? getWeaponInfo(item) : getArtifactInfo(item)}
+                            item={Utils_.isUserWeapon(item) ? getWeaponInfo(item) : getArtifactInfo(item)}
                           />
                         )}
                       </ItemCase>

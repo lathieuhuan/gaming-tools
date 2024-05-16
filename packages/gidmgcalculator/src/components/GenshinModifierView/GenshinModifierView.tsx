@@ -1,5 +1,5 @@
 import { ModifierView, type ModifierViewProps, type ModifierViewInputConfig } from "rond";
-import type { ModInputConfig } from "@Src/types";
+import { ModInputConfig } from "@Backend";
 import { genSequentialOptions } from "@Src/utils";
 
 export interface GenshinModifierViewProps extends Omit<ModifierViewProps, "inputConfigs"> {
@@ -33,7 +33,8 @@ export function GenshinModifierView({ inputConfigs, ...viewProps }: GenshinModif
       case "STACKS":
         return {
           type: "select",
-          label: "Stacks",
+          label: config.label || "Stacks",
+          style: { maxWidth: "3.25rem" },
           options: genSequentialOptions(config.max, config.initialValue === 0),
         };
       case "ANEMOABLE":

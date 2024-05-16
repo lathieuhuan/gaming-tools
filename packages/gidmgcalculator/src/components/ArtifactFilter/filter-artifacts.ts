@@ -1,6 +1,7 @@
-import type { AttributeStat, UserArtifact } from "@Src/types";
+import { ArtifactCalc, AttributeStat } from "@Backend";
+
+import type { UserArtifact } from "@Src/types";
 import type { ArtifactFilterState } from "./ArtifactFilter.types";
-import { Artifact_ } from "@Src/utils";
 
 export function filterArtifacts(artifacts: UserArtifact[], filterCondition: ArtifactFilterState) {
   const { stats, codes, types } = filterCondition;
@@ -12,7 +13,7 @@ export function filterArtifacts(artifacts: UserArtifact[], filterCondition: Arti
   });
 
   const compareMainStat = (a: UserArtifact, b: UserArtifact) => {
-    return Artifact_.mainStatValueOf(b) - Artifact_.mainStatValueOf(a);
+    return ArtifactCalc.mainStatValueOf(b) - ArtifactCalc.mainStatValueOf(a);
   };
 
   if (stats.main !== "All") {

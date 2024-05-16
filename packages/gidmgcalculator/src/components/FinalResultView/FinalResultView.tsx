@@ -1,7 +1,9 @@
-import type { Party, CalculationFinalResult } from "@Src/types";
-import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
-import { Character_ } from "@Src/utils";
+import { CharacterCalc, CalculationFinalResult } from "@Backend";
+
+import type { Party } from "@Src/types";
 import { $AppCharacter } from "@Src/services";
+import { useTranslation } from "@Src/hooks";
+import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
 
 interface FinalResultViewProps
   extends Pick<FinalResultLayoutProps, "char" | "appChar" | "weapon" | "talentMutable" | "onChangeTalentLevel"> {
@@ -9,6 +11,8 @@ interface FinalResultViewProps
   party: Party;
 }
 export function FinalResultView({ finalResult, party, ...props }: FinalResultViewProps) {
+  const { t } = useTranslation();
+
   return (
     <FinalResultLayout
       {...props}
@@ -26,7 +30,7 @@ export function FinalResultView({ finalResult, party, ...props }: FinalResultVie
         },
       ]}
       getTalentLevel={(talentType) => {
-        return Character_.getFinalTalentLv({
+        return CharacterCalc.getFinalTalentLv({
           char: props.char,
           appChar: props.appChar,
           talentType,
@@ -34,20 +38,28 @@ export function FinalResultView({ finalResult, party, ...props }: FinalResultVie
         });
       }}
       getRowConfig={(mainKey, subKey) => {
-        const { nonCrit, average, crit, attElmt } = finalResult[mainKey][subKey];
+        const result = finalResult[mainKey][subKey];
+        let title: string | undefined;
+
+        if (result.type === "attack") {
+          const elmt = result.attElmt === "phys" ? "physical" : result.attElmt;
+          const patt = result.attPatt !== "none" ? ` / ${t(result.attPatt).toLowerCase()}` : "";
+          title = `${elmt}${patt}`;
+        }
+
         return {
-          element: attElmt,
+          title,
           cells: [
             {
-              value: nonCrit,
+              value: result.nonCrit,
               className: "text-right",
             },
             {
-              value: crit,
+              value: result.crit,
               className: "text-right",
             },
             {
-              value: average,
+              value: result.average,
               className: "text-right text-primary-1",
             },
           ],

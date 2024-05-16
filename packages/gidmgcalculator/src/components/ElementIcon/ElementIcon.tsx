@@ -1,4 +1,4 @@
-import type { ElementType } from "@Src/types";
+import { ElementType } from "@Backend";
 
 interface ElementIconProps {
   type: ElementType;

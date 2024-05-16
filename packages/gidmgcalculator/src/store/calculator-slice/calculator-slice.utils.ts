@@ -1,7 +1,8 @@
 import { message } from "rond";
+import { calculateSetup } from "@Backend";
+
 import type { CalculatorState } from "./calculator-slice.types";
 import { $AppCharacter } from "@Src/services";
-import { calculateSetup } from "@Src/calculation";
 
 export function getCharDataFromState(state: CalculatorState) {
   const setup = state.setupsById[state.activeId];
@@ -15,10 +16,10 @@ export function calculate(state: CalculatorState, all?: boolean) {
 
     for (const id of allIds) {
       const result = calculateSetup(setupsById[id], target);
+
       state.resultById[id] = {
-        infusedElement: result.infusedElement,
-        totalAttrs: result.totalAttr,
-        rxnBonuses: result.rxnBonus,
+        totalAttr: result.totalAttr,
+        attBonus: result.attBonus,
         finalResult: result.finalResult,
       };
     }

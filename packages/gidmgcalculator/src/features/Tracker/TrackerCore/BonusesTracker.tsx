@@ -1,141 +1,85 @@
 import { round } from "rond";
+import { AttackBonus, AttackBonusKey } from "@Backend";
 
-import type { Tracker } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import {
-  ATTACK_ELEMENTS,
-  ATTACK_ELEMENT_INFO_KEYS,
-  ATTACK_PATTERNS,
-  ATTACK_PATTERN_INFO_KEYS,
-  REACTIONS,
-} from "@Src/constants";
-import { suffixOf, Calculation_ } from "@Src/utils";
+import { Utils_ } from "@Src/utils";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
-interface BonusesTrackerProps extends Partial<Pick<Tracker, "attPattBonus" | "attElmtBonus" | "rxnBonus">> {
-  em?: number;
+interface BonusesTrackerProps {
+  attBonus: AttackBonus;
 }
-
-export function BonusesTracker({ attPattBonus, attElmtBonus, rxnBonus, em }: BonusesTrackerProps) {
+export function BonusesTracker({ attBonus }: BonusesTrackerProps) {
   const { t } = useTranslation();
 
-  const hasAttPattBonus = attPattBonus && Object.values(attPattBonus).some((records) => records.length);
-  const hasAttElmtBonus = attElmtBonus && Object.values(attElmtBonus).some((records) => records.length);
-  const hasRxnBonus = rxnBonus && Object.values(rxnBonus).some((records) => records.length);
+  const bonuses = attBonus.filter((bonus) => bonus.type.slice(0, 2) !== "id");
 
-  if (!hasAttPattBonus && !hasAttElmtBonus && !hasRxnBonus && !em) {
-    return (
-      <div className="h-16 flex-center text-hint-color">
-        <p>No bonuses</p>
-      </div>
-    );
-  }
+  return bonuses.length ? (
+    <div className={`pl-2 mt-1 ${recordListStyles}`}>
+      {bonuses.map((bonus) => {
+        const list: Array<{
+          key: AttackBonusKey;
+          records: typeof bonus.records;
+        }> = [];
 
-  const ATTACK_PATTERN_BONUS__KEYS = ["all", ...ATTACK_PATTERNS] as const;
-  const bonusesFromEM = Calculation_.getRxnBonusesFromEM(em);
+        for (const record of bonus.records) {
+          const existed = list.find((item) => item.key === record.to);
 
-  return (
-    <div className="pl-2 space-y-3 divide-y divide-rarity-1">
-      {hasAttPattBonus ? (
-        <div className={"pl-2 " + recordListStyles}>
-          {ATTACK_PATTERN_BONUS__KEYS.map((attPatt) => {
-            const noRecord = ATTACK_PATTERN_INFO_KEYS.every((infoKey) => {
-              return attPattBonus[`${attPatt}.${infoKey}`].length === 0;
+          if (existed) {
+            existed.records.push(record);
+          } else {
+            list.push({
+              key: record.to,
+              records: [record],
             });
+          }
+        }
 
-            if (noRecord) return null;
+        const titleFrags: string[] = [];
 
-            return (
-              <div key={attPatt} className="break-inside-avoid">
-                <p className="text-heading-color capitalize">{t(attPatt)}</p>
+        bonus.type.split(".").forEach((type, i) => {
+          if (type === "all") {
+            return titleFrags.push("All");
+          }
+          if (i) {
+            // For now the 2nd type is AttackElement
+            return titleFrags.push("+", type === "phys" ? "physical" : type);
+          }
+          titleFrags.push(t(type));
+        });
 
-                {ATTACK_PATTERN_INFO_KEYS.map((infoKey) => {
-                  const records = attPattBonus[`${attPatt}.${infoKey}`];
-                  const percent = suffixOf(infoKey);
+        return (
+          <div key={bonus.type} className="py-0.5 break-inside-avoid">
+            <div className="flex gap-1 text-secondary-1">
+              {titleFrags.map((frag, i) => {
+                return (
+                  <span key={i} className={i === 2 ? "capitalize" : ""}>
+                    {frag}
+                  </span>
+                );
+              })}
+            </div>
 
-                  return records.length ? (
-                    <div key={infoKey} className="pl-2">
-                      {renderHeading(t(infoKey), getTotalRecordValue(records) + percent)}
+            <div>
+              {list.map((item) => {
+                const suffix = Utils_.suffixOf(item.key);
+                const decimalDigits = suffix ? 2 : 0;
 
-                      <ul className="pl-4 list-disc">
-                        {records.map(renderRecord((value) => round(value, 1) + percent))}
-                      </ul>
-                    </div>
-                  ) : null;
-                })}
-              </div>
-            );
-          })}
-        </div>
-      ) : null}
+                return (
+                  <div key={item.key} className="pl-2">
+                    {renderHeading(t(item.key), round(getTotalRecordValue(item.records), decimalDigits) + suffix)}
 
-      {hasAttElmtBonus ? (
-        <div className={"pl-2 " + recordListStyles + (hasAttPattBonus ? " pt-3" : "")}>
-          {ATTACK_ELEMENTS.map((attElmt) => {
-            const noRecord = ATTACK_ELEMENT_INFO_KEYS.every((infoKey) => {
-              return attElmtBonus[`${attElmt}.${infoKey}`].length === 0;
-            });
-
-            if (noRecord) return null;
-
-            return (
-              <div key={attElmt} className="break-inside-avoid">
-                <p className="text-heading-color capitalize">{attElmt} DMG</p>
-
-                {ATTACK_ELEMENT_INFO_KEYS.map((infoKey) => {
-                  const records = attElmtBonus[`${attElmt}.${infoKey}`];
-                  const percent = suffixOf(infoKey);
-
-                  return records.length ? (
-                    <div key={infoKey} className="mt-1 pl-2">
-                      {renderHeading(t(infoKey), getTotalRecordValue(records) + percent)}
-
-                      <ul className="pl-4 list-disc">
-                        {records.map(renderRecord((value) => round(value, 1) + percent))}
-                      </ul>
-                    </div>
-                  ) : null;
-                })}
-              </div>
-            );
-          })}
-        </div>
-      ) : null}
-
-      {hasRxnBonus || em ? (
-        <div className={recordListStyles + (hasAttPattBonus || hasAttElmtBonus ? " pt-3" : "")}>
-          {REACTIONS.map((reaction) => {
-            const records = rxnBonus?.[`${reaction}.pct_`] || [];
-            let bonusFromEM = 0;
-
-            if (reaction === "melt" || reaction === "vaporize") {
-              bonusFromEM = bonusesFromEM.amplifying;
-            } else if (reaction === "aggravate" || reaction === "spread") {
-              bonusFromEM = bonusesFromEM.quicken;
-            } else {
-              bonusFromEM = bonusesFromEM.transformative;
-            }
-
-            return records.length || em ? (
-              <div key={reaction} className="pl-2 break-inside-avoid">
-                {renderHeading(t(reaction), round(getTotalRecordValue(records) + bonusFromEM, 1) + "%")}
-
-                <ul className="pl-4 list-disc">
-                  {renderRecord((value) => value + "%")(
-                    {
-                      desc: "From Elemental Mastery",
-                      value: bonusFromEM,
-                    },
-                    -1
-                  )}
-
-                  {records.map(renderRecord((value) => round(value, 1) + "%"))}
-                </ul>
-              </div>
-            ) : null;
-          })}
-        </div>
-      ) : null}
+                    <ul className="pl-4 list-disc">
+                      {item.records.map(renderRecord((value) => round(value, decimalDigits) + suffix))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
     </div>
+  ) : (
+    <p className="h-16 flex-center text-hint-color">No bonuses</p>
   );
 }

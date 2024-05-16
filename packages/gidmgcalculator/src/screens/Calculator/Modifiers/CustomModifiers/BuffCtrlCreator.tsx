@@ -1,16 +1,10 @@
 import { useState, useRef, FormEvent } from "react";
 import { clsx, InputNumber, VersatileSelect } from "rond";
+import { ATTACK_ELEMENTS, ATTACK_PATTERNS, REACTIONS } from "@Backend";
 
 import type { CustomBuffCtrl, CustomBuffCtrlType } from "@Src/types";
-import {
-  ATTACK_ELEMENTS,
-  ATTACK_ELEMENT_INFO_KEYS,
-  ATTACK_PATTERNS,
-  REACTION_BONUS_INFO_KEYS,
-  REACTIONS,
-} from "@Src/constants";
 import { useTranslation } from "@Src/hooks";
-import { suffixOf, toCustomBuffLabel } from "@Src/utils";
+import { Utils_, toCustomBuffLabel } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
 import { updateCustomBuffCtrls } from "@Store/calculator-slice";
 
@@ -27,7 +21,7 @@ const CATEGORIES: Record<
   attElmtBonus: {
     label: "Elements",
     types: ATTACK_ELEMENTS,
-    subTypes: ["pct_", ...ATTACK_ELEMENT_INFO_KEYS],
+    subTypes: ["pct_", "flat", "cRate_", "cDmg_"],
   },
   attPattBonus: {
     label: "Talents",
@@ -37,7 +31,7 @@ const CATEGORIES: Record<
   rxnBonus: {
     label: "Reactions",
     types: REACTIONS,
-    subTypes: REACTION_BONUS_INFO_KEYS,
+    subTypes: ["pct_", "cRate_", "cDmg_"],
   },
 };
 
@@ -56,7 +50,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
   });
 
   const subTypes = CATEGORIES[config.category].subTypes;
-  const sign = suffixOf(config.subType || config.type);
+  const sign = Utils_.suffixOf(config.subType || config.type);
 
   const onChangeCategory = (category: CustomBuffCategory) => {
     const subType = CATEGORIES[category].subTypes?.[0] as CustomBuffCtrl["subType"];

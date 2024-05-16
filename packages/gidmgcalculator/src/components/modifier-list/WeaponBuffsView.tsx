@@ -1,7 +1,9 @@
-import type { AppWeapon, CalcWeapon, ModifierCtrl, Party, Weapon, WeaponBuff } from "@Src/types";
+import { AppWeapon, WeaponBuff } from "@Backend";
+
+import type { CalcWeapon, ModifierCtrl, Party, Weapon } from "@Src/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import { $AppData } from "@Src/services";
+import { $AppWeapon } from "@Src/services";
 import { findByIndex, parseWeaponDescription } from "@Src/utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
@@ -31,7 +33,7 @@ function renderWeaponModifiers({
   ctrls,
   getHanlders,
 }: RenderWeaponModifiersArgs) {
-  const data = $AppData.getWeapon(weapon.code);
+  const data = $AppWeapon.get(weapon.code);
   if (!data) return [];
   const { buffs = [], descriptions = [] } = data;
 

@@ -1,3 +1,4 @@
+import type { RootState } from "@Store/store";
 import { findById } from "@Src/utils";
 import {
   selectCalcFinalResult,
@@ -11,25 +12,26 @@ import { useDispatch, useSelector } from "@Store/hooks";
 
 import { FinalResultView } from "@Src/components";
 import { FinalResultCompare } from "./FinalResultCompare";
-import { $AppCharacter } from "@Src/services";
+import { useCalcAppCharacter } from "../CalculatorInfoProvider";
+
+const selectActiveSetupName = (state: RootState) => {
+  const { activeId, setupManageInfos } = state.calculator;
+  return findById(setupManageInfos, activeId)?.name || "";
+};
 
 export function FinalResultCore() {
   const dispatch = useDispatch();
-  const activeSetupName = useSelector((state) => {
-    const { activeId, setupManageInfos } = state.calculator;
-    return findById(setupManageInfos, activeId)?.name || "";
-  });
+  const activeSetupName = useSelector(selectActiveSetupName);
   const char = useSelector(selectCharacter);
   const weapon = useSelector(selectWeapon);
   const party = useSelector(selectParty);
   const finalResult = useSelector(selectCalcFinalResult);
   const comparedIds = useSelector(selectComparedIds);
+  const appChar = useCalcAppCharacter();
 
   if (comparedIds.length > 1) {
     return <FinalResultCompare comparedIds={comparedIds} {...{ char, weapon, party }} />;
   }
-
-  const appChar = $AppCharacter.get(char.name);
 
   return (
     <div className="h-full flex flex-col">

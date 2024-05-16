@@ -1,6 +1,7 @@
 import { createContext, useContext } from "react";
 
 export type CalculatorModalsControl = {
+  requestSwitchCharacter: () => void;
   requestImportSetup: () => void;
   requestSaveSetup: (setupId: number) => void;
   requestShareSetup: (setupId: number) => void;

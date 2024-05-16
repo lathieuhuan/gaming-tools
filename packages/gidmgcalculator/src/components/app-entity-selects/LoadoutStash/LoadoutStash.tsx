@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button, Modal, SwitchNode, EntitySelectTemplate, type ModalControl } from "rond";
 
 import type { CalcArtifact, UserArtifact } from "@Src/types";
-import { Item_ } from "@Src/utils";
+import { Utils_ } from "@Src/utils";
 import { ArtifactCard } from "@Src/components";
 import { EquippedSetStash } from "./EquippedSetStash";
 
@@ -25,7 +25,7 @@ export function LoadoutStashCore({ keyword, onSelect }: LoadoutStashCoreProps) {
   };
 
   const onSelectEquippedSet = (artifacts: UserArtifact[]) => {
-    onSelect?.(artifacts.map(Item_.userItemToCalcItem));
+    onSelect?.(artifacts.map(Utils_.userItemToCalcItem));
   };
 
   return (

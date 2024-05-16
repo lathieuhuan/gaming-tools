@@ -1,8 +1,7 @@
 import { CarouselSpace } from "rond";
+import { GeneralCalc, calcArtifactAtribute } from "@Backend";
 
 import { useTabs } from "@Src/hooks";
-import { addArtifactAttributes } from "@Src/calculation";
-import { Calculation_ } from "@Src/utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectArtifacts,
@@ -40,10 +39,10 @@ export function WeaponTab() {
 }
 
 export function ArtifactsTab() {
-  const artifacts = useSelector(selectArtifacts);
   const totalAttr = useSelector(selectTotalAttr);
+  const artifacts = useSelector(selectArtifacts);
 
-  const artAttr = addArtifactAttributes(artifacts, { ...totalAttr });
+  const artAttr = calcArtifactAtribute(artifacts, totalAttr);
 
   const { activeIndex, renderTabs } = useTabs({
     level: 2,
@@ -59,7 +58,7 @@ export function ArtifactsTab() {
           <AttributeTable attributes={artAttr} />
         </div>
         <div className="h-full hide-scrollbar">
-          <SetBonusesView setBonuses={Calculation_.getArtifactSetBonuses(artifacts)} noTitle />
+          <SetBonusesView setBonuses={GeneralCalc.getArtifactSetBonuses(artifacts)} noTitle />
         </div>
       </CarouselSpace>
     </div>

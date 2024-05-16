@@ -1,8 +1,7 @@
 import { useContext, useRef, useState } from "react";
 import { InputNumber, Modal, VersatileSelect, useScreenWatcher } from "rond";
+import { Level, LEVELS } from "@Backend";
 
-import type { Level } from "@Src/types";
-import { LEVELS } from "@Src/constants";
 import { $AppSettings, AppSettings } from "@Src/services";
 import { applySettings } from "@Store/calculator-slice";
 import { updateUI } from "@Store/ui-slice";
@@ -181,7 +180,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
               label,
               <VersatileSelect
                 title="Select Default Value"
-                className="font-medium h-8"
+                className="font-semibold h-8"
                 dropdownCls="font-medium"
                 align="right"
                 defaultValue={defaultValue}

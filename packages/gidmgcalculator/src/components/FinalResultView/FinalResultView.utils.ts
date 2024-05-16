@@ -1,5 +1,4 @@
-import type { AppCharacter, AppWeapon, TransformativeReaction } from "@Src/types";
-import { NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@Src/constants";
+import { NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS, AppCharacter, AppWeapon, TransformativeReaction } from "@Backend";
 
 type TableCalcItemKey = {
   main: "NAs" | "ES" | "EB" | "WP_CALC";
@@ -7,7 +6,7 @@ type TableCalcItemKey = {
 };
 
 type TableReactionKey = {
-  main: "RXN";
+  main: "RXN_CALC";
   subs: TransformativeReaction[];
 };
 
@@ -34,7 +33,7 @@ export function getTableKeys(appChar?: AppCharacter, appWeapon?: AppWeapon): Tab
   }
 
   result.push({
-    main: "RXN" as const,
+    main: "RXN_CALC" as const,
     subs: [...TRANSFORMATIVE_REACTIONS],
   });
 

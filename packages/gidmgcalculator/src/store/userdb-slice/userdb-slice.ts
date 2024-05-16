@@ -1,6 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { ARTIFACT_TYPES, WeaponType } from "@Backend";
 
-import type { UserArtifact, UserCharacter, UserComplexSetup, UserSetup, UserWeapon, WeaponType } from "@Src/types";
+import type { UserArtifact, UserCharacter, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
 import type {
   AddSetupToComplexAction,
   AddUserDatabaseAction,
@@ -18,9 +19,8 @@ import type {
   UpdateUserWeaponAction,
 } from "./userdb-slice.types";
 
-import { ARTIFACT_TYPES } from "@Src/constants";
-import { $AppData } from "@Src/services";
-import { findById, findByName, indexById, indexByName, Character_, Weapon_, Setup_, Calculation_ } from "@Src/utils";
+import { $AppArtifact, $AppWeapon } from "@Src/services";
+import { findById, findByName, indexById, indexByName, Utils_, Setup_ } from "@Src/utils";
 
 export type UserdbState = {
   userChars: UserCharacter[];
@@ -72,13 +72,13 @@ export const userdbSlice = createSlice({
       const weaponID = Date.now();
 
       state.userChars.push({
-        ...Character_.create(name),
+        ...Utils_.createCharacter(name),
         weaponID,
         artifactIDs: [null, null, null, null, null],
       });
       state.userWps.unshift({
         owner: name,
-        ...Weapon_.create({ type: weaponType }, weaponID),
+        ...Utils_.createWeapon({ type: weaponType }, weaponID),
       });
     },
     viewCharacter: (state, action: PayloadAction<string>) => {
@@ -225,14 +225,14 @@ export const userdbSlice = createSlice({
     },
     sortWeapons: (state) => {
       state.userWps.sort((a, b) => {
-        const rA = $AppData.getWeapon(a.code)?.rarity || 4;
-        const rB = $AppData.getWeapon(b.code)?.rarity || 4;
+        const rA = $AppWeapon.get(a.code)?.rarity || 4;
+        const rB = $AppWeapon.get(b.code)?.rarity || 4;
         if (rA !== rB) {
           return rB - rA;
         }
 
-        const [fA, sA] = Calculation_.splitLv(a);
-        const [fB, sB] = Calculation_.splitLv(b);
+        const [fA, sA] = Utils_.splitLv(a);
+        const [fB, sB] = Utils_.splitLv(b);
         if (fA !== fB) {
           return fB - fA;
         }
@@ -262,7 +262,7 @@ export const userdbSlice = createSlice({
 
           userWps.unshift({
             owner,
-            ...Weapon_.create({ type }, newWpID),
+            ...Utils_.createWeapon({ type }, newWpID),
           });
 
           const ownerInfo = findByName(userChars, owner);
@@ -342,8 +342,8 @@ export const userdbSlice = createSlice({
           };
           return type[b.type] - type[a.type];
         }
-        const aName = $AppData.getArtifactSet(a.code)?.name || "";
-        const bName = $AppData.getArtifactSet(b.code)?.name || "";
+        const aName = $AppArtifact.getSet(a.code)?.name || "";
+        const bName = $AppArtifact.getSet(b.code)?.name || "";
         return bName.localeCompare(aName);
       });
     },

@@ -1,7 +1,7 @@
 import type { ArtifactDebuffCtrl } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import { $AppData } from "@Src/services";
+import { $AppArtifact } from "@Src/services";
 import { findByIndex } from "@Src/utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers, getArtifactDescription } from "./modifiers.utils";
@@ -15,7 +15,7 @@ export function ArtifactDebuffsView({ mutable, artDebuffCtrls, getHanlders }: Ar
   const content: JSX.Element[] = [];
 
   artDebuffCtrls.forEach((ctrl, ctrlIndex, ctrls) => {
-    const data = $AppData.getArtifactSet(ctrl.code);
+    const data = $AppArtifact.getSet(ctrl.code);
     if (!data) return;
 
     const { name, debuffs = [] } = data;

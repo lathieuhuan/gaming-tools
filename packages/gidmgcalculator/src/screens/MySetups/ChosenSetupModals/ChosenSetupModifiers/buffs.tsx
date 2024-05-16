@@ -1,15 +1,9 @@
 import { Fragment } from "react";
-import type {
-  CustomBuffCtrl,
-  ElementModCtrl,
-  ReactionBonus,
-  ElementType,
-  Level,
-  AttackElement,
-  AttackReaction,
-} from "@Src/types";
+import { ElementType, Level, AttackBonus } from "@Backend";
+
+import type { CustomBuffCtrl, ElementModCtrl, AttackReaction, Infusion } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { suffixOf, toCustomBuffLabel } from "@Src/utils";
+import { Utils_, toCustomBuffLabel } from "@Src/utils";
 
 // Component
 import { renderModifiers, VapMeltBuffItem, QuickenBuffItem, ResonanceBuffItem } from "@Src/components";
@@ -17,16 +11,16 @@ import { renderModifiers, VapMeltBuffItem, QuickenBuffItem, ResonanceBuffItem } 
 interface ElementBuffsDetailProps {
   charLv: Level;
   elmtModCtrls: ElementModCtrl;
-  infusedElement: AttackElement;
-  rxnBonus: ReactionBonus;
-  elementType: ElementType;
+  attBonus: AttackBonus;
+  vision: ElementType;
+  customInfusion: Infusion;
 }
 export function ElementBuffsDetail({
   charLv,
   elmtModCtrls,
-  infusedElement,
-  rxnBonus,
-  elementType,
+  attBonus,
+  vision,
+  customInfusion,
 }: ElementBuffsDetailProps) {
   const content: JSX.Element[] = [];
   const { resonances, reaction, infuse_reaction, absorption } = elmtModCtrls;
@@ -45,9 +39,9 @@ export function ElementBuffsDetail({
 
   const renderReaction = (reaction: AttackReaction, element: ElementType) => {
     return reaction === "melt" || reaction === "vaporize" ? (
-      <VapMeltBuffItem mutable={false} {...{ reaction, element, rxnBonus }} />
+      <VapMeltBuffItem mutable={false} {...{ reaction, element, attBonus }} />
     ) : reaction === "spread" || reaction === "aggravate" ? (
-      <QuickenBuffItem mutable={false} {...{ reaction, element, characterLv: charLv, rxnBonus }} />
+      <QuickenBuffItem mutable={false} {...{ reaction, element, characterLv: charLv, attBonus }} />
     ) : null;
   };
 
@@ -62,16 +56,16 @@ export function ElementBuffsDetail({
     content.push(
       <div>
         <p className={headingCls}>Reaction by elemental attacks</p>
-        {renderReaction(reaction, elementType)}
+        {renderReaction(reaction, vision)}
       </div>
     );
   }
 
-  if (infusedElement !== "phys") {
+  if (customInfusion.element !== "phys") {
     content.push(
       <div>
         <p className={headingCls}>Reaction by infused attacks</p>
-        {renderReaction(infuse_reaction, infusedElement)}
+        {renderReaction(infuse_reaction, customInfusion.element)}
       </div>
     );
   }
@@ -101,7 +95,7 @@ export function CustomBuffsDetail({ customBuffCtrls }: CustomBuffsDetailProps) {
       <p className="mr-4">{toCustomBuffLabel(category, type, t)}</p>
       <p className="w-12 shrink-0 text-heading-color text-right">
         {value}
-        {suffixOf(subType || type)}
+        {Utils_.suffixOf(subType || type)}
       </p>
     </div>
   ));

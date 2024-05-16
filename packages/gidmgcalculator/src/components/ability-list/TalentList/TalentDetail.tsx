@@ -1,14 +1,11 @@
 import { useState, useRef, useMemo, useEffect } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { CloseButton, LoadingSpin, StatsTable, VersatileSelect, round } from "rond";
+import { ATTACK_PATTERNS, CharacterCalc, TalentType, AppCharacter } from "@Backend";
 
-import type { AppCharacter, Talent } from "@Src/types";
-import { toArray, genSequentialOptions, Character_ } from "@Src/utils";
+import { toArray, genSequentialOptions } from "@Src/utils";
 import { useQuery, useTabs, useTranslation } from "@Src/hooks";
 import { $AppCharacter } from "@Src/services";
-
-// Constant
-import { ATTACK_PATTERNS } from "@Src/constants";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
 
 // Component
@@ -16,7 +13,7 @@ import { Dim } from "../../span";
 import { AbilityCarousel } from "../ability-list-components";
 
 const useTalentDescriptions = (characterName: string, auto: boolean) => {
-  return useQuery(characterName, () => $AppCharacter.fetchTalentDescriptions(characterName), { auto });
+  return useQuery([characterName], () => $AppCharacter.fetchTalentDescriptions(characterName), { auto });
 };
 
 interface TalentDetailProps {
@@ -178,7 +175,7 @@ type ProcessedStat = {
   value: string | number;
 };
 
-type ProcessedTalentType = Talent | "A1" | "A4" | "utility";
+type ProcessedTalentType = TalentType | "A1" | "A4" | "utility";
 
 interface ProcessedTalent {
   name: string;
@@ -196,17 +193,9 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
   ];
 
   for (const attPatt of ATTACK_PATTERNS) {
-    const resultKey = attPatt === "ES" || attPatt === "EB" ? attPatt : "NAs";
-    const talent = result.find((item) => item.type === resultKey);
+    const info = CharacterCalc.getTalentDefaultInfo(attPatt, appChar);
+    const talent = result.find((item) => item.type === info.resultKey);
     if (!talent) continue;
-
-    const defaultInfo = Character_.getTalentDefaultInfo(
-      resultKey,
-      appChar.weaponType,
-      appChar.vision,
-      attPatt,
-      appChar.multFactorConf
-    );
 
     for (const stat of appChar.calcList[attPatt]) {
       const multFactors = toArray(stat.multFactors);
@@ -220,12 +209,12 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
       for (const factor of multFactors) {
         const {
           root,
-          scale = defaultInfo.scale,
-          basedOn = defaultInfo.basedOn,
+          scale = info.defaultScale,
+          basedOn = info.defaultBasedOn,
         } = typeof factor === "number" ? { root: factor } : factor;
 
         if (scale && root) {
-          let string = round(root * Character_.getTalentMult(scale, level), 2) + "%";
+          let string = round(root * CharacterCalc.getTalentMult(scale, level), 2) + "%";
 
           if (basedOn) {
             string += ` ${translate(basedOn)}`;
@@ -236,10 +225,10 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
       }
 
       if (flatFactor) {
-        const { root, scale = defaultInfo.flatFactorScale } =
+        const { root, scale = info.defaultFlatFactorScale } =
           typeof flatFactor === "number" ? { root: flatFactor } : flatFactor;
 
-        factorStrings.push(Math.round(root * (scale ? Character_.getTalentMult(scale, level) : 1)));
+        factorStrings.push(Math.round(root * (scale ? CharacterCalc.getTalentMult(scale, level) : 1)));
       }
 
       talent.stats.push({

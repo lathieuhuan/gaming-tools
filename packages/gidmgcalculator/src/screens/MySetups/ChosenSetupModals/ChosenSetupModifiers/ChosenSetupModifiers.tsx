@@ -1,6 +1,7 @@
 import { CollapseList } from "rond";
+import { ArtifactSetBonus } from "@Backend";
 
-import type { ArtifactSetBonus, UserSetup, UserWeapon } from "@Src/types";
+import type { UserSetup, UserWeapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppCharacter, $AppData } from "@Src/services";
 import { calculateChosenSetup } from "../../MySetups.utils";
@@ -55,7 +56,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
     customDebuffCtrls,
     target,
   } = chosenSetup;
-  const { appChar, infusedElement, rxnBonus } = result;
+  const { appChar } = result;
 
   const partyData = $AppCharacter.getPartyData(party);
   const { title, variant, statuses } = $AppData.getTargetInfo(target);
@@ -99,8 +100,10 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
               body: (
                 <ElementBuffsDetail
                   charLv={char.level}
-                  elementType={appChar?.vision}
-                  {...{ elmtModCtrls, rxnBonus, infusedElement }}
+                  vision={appChar?.vision}
+                  attBonus={result.attBonus}
+                  customInfusion={chosenSetup.customInfusion}
+                  elmtModCtrls={elmtModCtrls}
                 />
               ),
             },

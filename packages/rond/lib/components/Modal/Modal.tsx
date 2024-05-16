@@ -4,6 +4,8 @@ import { ModalActions, type ModalActionsProps, ModalHeader } from "./modal-compo
 import { CloseButton } from "../Button";
 import "./Modal.styles.scss";
 
+const CLOSE_BTN_CLS = "ron-modal__close-button";
+
 export interface ModalProps
   extends ModalCoreProps,
     Omit<ModalActionsProps, "className" | "justify" | "withDivider" | "onCancel"> {
@@ -66,7 +68,7 @@ const Modal = ({
       )}
 
       {withCloseButton ? (
-        <CloseButton className="ron-modal__close-button" boneOnly disabled={!closable} onClick={coreProps.onClose} />
+        <CloseButton className={CLOSE_BTN_CLS} boneOnly disabled={!closable} onClick={coreProps.onClose} />
       ) : null}
     </ModalCore>
   );
@@ -111,6 +113,7 @@ function withCoreModal<T>(
 }
 
 Modal.LARGE_HEIGHT_CLS = LARGE_HEIGHT_CLS;
+Modal.CLOSE_BTN_CLS = CLOSE_BTN_CLS;
 Modal.Core = ModalCore;
 Modal.Header = ModalHeader;
 Modal.Actions = ModalActions;

@@ -1,8 +1,8 @@
 import { clsx } from "rond";
 import { ChangeEvent, useRef, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
+import { ElementType, AppMonster } from "@Backend";
 
-import type { ElementType, AppMonster } from "@Src/types";
 import { toArray } from "@Src/utils";
 import { $AppData } from "@Src/services";
 

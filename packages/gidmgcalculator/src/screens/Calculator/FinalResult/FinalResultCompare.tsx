@@ -1,14 +1,17 @@
 import { useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
 import { Select, clsx } from "rond";
+import { TALENT_TYPES, CalculationAspect, TalentType, CharacterCalc } from "@Backend";
 
-import type { CalculationAspect, Talent, Weapon } from "@Src/types";
+import type { Weapon } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectSetupManageInfos, selectStandardId, updateCharacter } from "@Store/calculator-slice";
-import { Character_, findById } from "@Src/utils";
-import { FinalResultLayout, type FinalResultLayoutProps } from "@Src/components";
+import { findById } from "@Src/utils";
 import { $AppCharacter } from "@Src/services";
-import { TALENT_TYPES } from "@Src/constants";
+import { useCalcAppCharacter } from "../CalculatorInfoProvider";
+
+//
+import { FinalResultLayout, type FinalResultLayoutProps } from "@Src/components";
 
 type CellConfig = ReturnType<FinalResultLayoutProps["getRowConfig"]>["cells"][number];
 
@@ -33,7 +36,7 @@ export function FinalResultCompare({ comparedIds, weapon }: FinalResultComparePr
 
   const calculationAspects: CalculationAspect[] = ["nonCrit", "crit", "average"];
 
-  const getValue = (setupId: number, mainKey: "NAs" | "ES" | "EB" | "WP_CALC" | "RXN", subKey: string) => {
+  const getValue = (setupId: number, mainKey: "NAs" | "ES" | "EB" | "WP_CALC" | "RXN_CALC", subKey: string) => {
     return resultById[setupId].finalResult[mainKey][subKey][focusedAspect];
   };
 
@@ -138,9 +141,9 @@ type LayoutProps = Pick<
 function useLayoutProps(comparedIds: number[], standardId: number): LayoutProps {
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const setupsById = useSelector((state) => state.calculator.setupsById);
+  const appChar = useCalcAppCharacter();
 
   const char = setupsById[standardId].char;
-  const appChar = $AppCharacter.get(char.name);
 
   const standardWeapon = setupsById[standardId].weapon.code;
   let showWeaponCalc = true;
@@ -154,11 +157,11 @@ function useLayoutProps(comparedIds: number[], standardId: number): LayoutProps 
 
   const setupIds = [standardId].concat(comparedIds.filter((id) => id !== standardId));
 
-  const talent = {} as Record<Talent, { areSame: boolean; levels: number[] }>;
+  const talent = {} as Record<TalentType, { areSame: boolean; levels: number[] }>;
 
   for (const talentType of TALENT_TYPES) {
     const levels = setupIds.map((id) => {
-      return Character_.getFinalTalentLv({
+      return CharacterCalc.getFinalTalentLv({
         char: setupsById[id].char,
         appChar,
         talentType,

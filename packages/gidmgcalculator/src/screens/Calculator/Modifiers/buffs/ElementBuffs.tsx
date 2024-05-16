@@ -1,18 +1,17 @@
 import { Fragment, useState } from "react";
 import { VersatileSelect } from "rond";
-import type { AmplifyingReaction, CalcItem, ElementType } from "@Src/types";
+import { ELEMENT_TYPES, AmplifyingReaction, CalcItem, ElementType } from "@Backend";
 
-import { ELEMENT_TYPES } from "@Src/constants";
-import { $AppCharacter } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectCharacter,
   selectElmtModCtrls,
-  selectRxnBonus,
+  selectAttBonus,
   updateCalcSetup,
   updateResonance,
 } from "@Store/calculator-slice";
 import { GenshinModifierView, QuickenBuffItem, ResonanceBuffItem, VapMeltBuffItem } from "@Src/components";
+import { useCalcAppCharacter } from "../../CalculatorInfoProvider";
 
 const hasAbsorbingAttackIn = (items: CalcItem[]) => {
   return items.some((item) => item.attElmt === "absorb");
@@ -21,10 +20,11 @@ const hasAbsorbingAttackIn = (items: CalcItem[]) => {
 export default function ElementBuffs() {
   const dispatch = useDispatch();
   const char = useSelector(selectCharacter);
-  const { vision, weaponType, calcList } = $AppCharacter.get(char.name);
   const elmtModCtrls = useSelector(selectElmtModCtrls);
-  const rxnBonus = useSelector(selectRxnBonus);
+  const attBonus = useSelector(selectAttBonus);
   const customInfusion = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].customInfusion);
+
+  const { vision, weaponType, calcList } = useCalcAppCharacter();
 
   const { element: infusedElement } = customInfusion;
   const isInfused = infusedElement !== "phys";
@@ -49,7 +49,7 @@ export default function ElementBuffs() {
         key={reaction}
         mutable
         checked={activated}
-        {...{ reaction, element, rxnBonus }}
+        {...{ reaction, element, attBonus }}
         onToggle={() => {
           dispatch(
             updateCalcSetup({
@@ -76,7 +76,7 @@ export default function ElementBuffs() {
         key={reaction}
         mutable
         checked={activated}
-        {...{ reaction, element, characterLv: char.level, rxnBonus }}
+        {...{ reaction, element, characterLv: char.level, attBonus }}
         onToggle={() => {
           dispatch(
             updateCalcSetup({

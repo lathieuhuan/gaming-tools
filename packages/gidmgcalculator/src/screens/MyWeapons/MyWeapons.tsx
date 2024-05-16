@@ -1,11 +1,12 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo, useState } from "react";
 import { message, useScreenWatcher, Button, ButtonGroup, CollapseSpace, ConfirmModal, WarehouseLayout } from "rond";
+import { WeaponType } from "@Backend";
 
+import type { UserWeapon } from "@Src/types";
 import { MAX_USER_WEAPONS } from "@Src/constants";
 import { useWeaponTypeSelect } from "@Src/hooks";
-import { $AppData } from "@Src/services";
-import { UserWeapon, WeaponType } from "@Src/types";
+import { $AppWeapon } from "@Src/services";
 import { findById, indexById } from "@Src/utils";
 
 // Store
@@ -182,7 +183,7 @@ export default function MyWeapons() {
           danger
           message={
             <>
-              Remove "<b>{$AppData.getWeapon(chosenWeapon.code).name}</b>"?{" "}
+              Remove "<b>{$AppWeapon.get(chosenWeapon.code)?.name}</b>"?{" "}
               {chosenWeapon.owner ? (
                 <>
                   It is currently used by <b>{chosenWeapon.owner}</b>.

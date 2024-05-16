@@ -1,4 +1,5 @@
-import type { ElementType } from "@Src/types";
+import { ElementType } from "@Backend";
+
 import { Green } from "@Src/components";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 

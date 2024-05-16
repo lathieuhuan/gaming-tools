@@ -1,8 +1,9 @@
-import type { AppCharacter, Character, ModInputConfig, ModifierCtrl, CharacterModifier, PartyData } from "@Src/types";
+import { AppCharacter, CharacterBuff, CharacterDebuff, EntityCalc } from "@Backend";
+
+import type { Character, ModifierCtrl, PartyData } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import { CharacterCal } from "@Src/calculation";
-import { ParsedAbilityEffect, findByIndex, parseAbilityDescription } from "@Src/utils";
+import { findByIndex, parseAbilityDescription } from "@Src/utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
@@ -15,16 +16,11 @@ interface SelfModsViewProps {
   getHanlders?: (args: GetModifierHanldersArgs) => ModifierHanlders;
 }
 
-type Modifier = CharacterModifier & {
-  inputConfigs?: ModInputConfig[];
-  effects?: ParsedAbilityEffect | ParsedAbilityEffect[];
-};
-
-function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Modifier[]) {
+function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Array<CharacterBuff | CharacterDebuff>) {
   return props.modCtrls.map((ctrl, ctrlIndex, ctrls) => {
     const modifier = findByIndex(modifiers, ctrl.index);
 
-    if (modifier && CharacterCal.isGranted(modifier, props.char)) {
+    if (modifier && EntityCalc.isGrantedEffect(modifier, props.char)) {
       const { inputs = [] } = ctrl;
 
       return (
@@ -49,7 +45,7 @@ export function SelfBuffsView(props: SelfModsViewProps) {
   const modifierElmts: (JSX.Element | null)[] = [];
 
   innateBuffs.forEach((buff, index) => {
-    if (CharacterCal.isGranted(buff, props.char)) {
+    if (EntityCalc.isGrantedEffect(buff, props.char)) {
       modifierElmts.push(
         <GenshinModifierView
           key={"innate-" + index}

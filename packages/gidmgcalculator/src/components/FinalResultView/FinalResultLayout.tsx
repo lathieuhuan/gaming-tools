@@ -1,15 +1,16 @@
 import { useMemo, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { Button, CollapseSpace, Table, TableThProps } from "rond";
+import { clsx, Button, CollapseSpace, Table, TableThProps } from "rond";
+import { AppCharacter, LevelableTalentType, TalentType } from "@Backend";
 
-import type { AppCharacter, CalcCharacter, LevelableTalent, Talent, Weapon } from "@Src/types";
+import type { CalcCharacter, Weapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { $AppData } from "@Src/services";
+import { $AppWeapon } from "@Src/services";
 import { displayValue, getTableKeys, type TableKey } from "./FinalResultView.utils";
 
 type HeaderConfig = Pick<TableThProps, "className" | "style"> & {
-  content: React.ReactNode | ((talentType: Talent | undefined) => React.ReactNode);
+  content: React.ReactNode | ((talentType: TalentType | undefined) => React.ReactNode);
 };
 
 type RowCellConfig = {
@@ -20,8 +21,9 @@ type RowCellConfig = {
 };
 
 type RowConfig = {
-  element?: string;
+  title?: string;
   cells: RowCellConfig[];
+  className?: string;
 };
 
 export interface FinalResultLayoutProps {
@@ -31,9 +33,9 @@ export interface FinalResultLayoutProps {
   showWeaponCalc?: boolean;
   headerConfigs: HeaderConfig[];
   getRowConfig: (mainKey: TableKey["main"], subKey: string) => RowConfig;
-  getTalentLevel?: (talentType: Talent) => number | undefined;
+  getTalentLevel?: (talentType: TalentType) => number | undefined;
   talentMutable?: boolean;
-  onChangeTalentLevel?: (talentType: LevelableTalent, newLevel: number) => void;
+  onChangeTalentLevel?: (talentType: LevelableTalentType, newLevel: number) => void;
 }
 export function FinalResultLayout({
   char,
@@ -46,7 +48,7 @@ export function FinalResultLayout({
   ...sectionProps
 }: FinalResultLayoutProps) {
   const { t } = useTranslation();
-  const appWeapon = $AppData.getWeapon(weapon.code);
+  const appWeapon = $AppWeapon.get(weapon.code);
 
   const [closedSections, setClosedSections] = useState<boolean[]>([]);
   const [lvlingSectionI, setLvlingSectionI] = useState(-1);
@@ -75,7 +77,7 @@ export function FinalResultLayout({
     }
   };
 
-  const renderLvButtons = (talent: LevelableTalent, buffer = 0) => {
+  const renderLvButtons = (talent: LevelableTalentType, buffer = 0) => {
     return Array.from({ length: 5 }, (_, i) => {
       const level = i + 1 + buffer;
 
@@ -99,7 +101,7 @@ export function FinalResultLayout({
     <div className="flex flex-col gap-4">
       {tableKeys.map((tableKey, sectionIndex) => {
         const mainKey = tableKey.main;
-        const isReactionDmg = mainKey === "RXN";
+        const isReactionDmg = mainKey === "RXN_CALC";
         const isLvling = sectionIndex === lvlingSectionI;
         const talentType = !isReactionDmg && mainKey !== "WP_CALC" ? mainKey : undefined;
         const talentLevel = talentType ? getTalentLevel?.(talentType) : 0;
@@ -149,7 +151,7 @@ export function FinalResultLayout({
 
             <CollapseSpace key={tableKey.main} active={!closedSections[sectionIndex]}>
               {tableKey.subs.length === 0 ? (
-                <div className="pb-2">
+                <div className="pt-2">
                   <p className="pt-2 pb-1 bg-surface-2 text-center text-hint-color">
                     This talent does not deal damage.
                   </p>
@@ -174,7 +176,7 @@ export function FinalResultLayout({
 
 interface SectionTableProps extends Pick<FinalResultLayoutProps, "getRowConfig" | "headerConfigs"> {
   tableKey: TableKey;
-  talentType?: Talent;
+  talentType?: TalentType;
   getRowTitle: (key: string) => string;
 }
 function SectionTable(props: SectionTableProps) {
@@ -205,7 +207,11 @@ function SectionTable(props: SectionTableProps) {
 
         return (
           <Table.Tr key={subKey}>
-            <Table.Td title={config.element} className="sticky left-0 z-10" style={{ background: "inherit" }}>
+            <Table.Td
+              title={config.title}
+              className={clsx("sticky left-0 z-10", config.className)}
+              style={{ background: "inherit" }}
+            >
               {props.getRowTitle(subKey)}
             </Table.Td>
 

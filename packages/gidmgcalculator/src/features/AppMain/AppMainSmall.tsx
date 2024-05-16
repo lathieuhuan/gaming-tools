@@ -15,7 +15,7 @@ import {
   SetupManager,
   SetupDirector,
   FinalResult,
-  CalculatorModalsProvider,
+  CalculatorProviders,
 } from "@Src/screens/Calculator";
 import { MobileBottomNav } from "@Src/components";
 import { SmallSetupManager } from "./SmallSetupManager";
@@ -77,28 +77,19 @@ export function AppMainSmall() {
         { value: "MY_SETUPS", element: <MySetups /> },
       ]}
       default={
-        <CalculatorModalsProvider>
+        <CalculatorProviders>
           {isModernUI ? (
             <div className="h-full flex flex-col border-t border-surface-border">
-              <div className="grow flex overflow-auto relative">
-                <SwitchNode
-                  value={activePanelI}
-                  cases={[
-                    {
-                      value: 0,
-                      element: PANEL.Overview(),
-                    },
-                    {
-                      value: 1,
-                      element: PANEL.Modifiers(),
-                    },
-                    {
-                      value: 2,
-                      element: PANEL.Setup(),
-                    },
-                  ]}
-                />
-                {PANEL.Results(`absolute full-stretch ${activePanelI === 3 ? "" : "-z-10"}`)}
+              <div className="grow overflow-hidden relative">
+                <div
+                  className="h-full overflow-auto flex absolute left-0 top-0"
+                  style={{ width: "400%", transform: `translateX(calc(-25% * ${activePanelI}))` }}
+                >
+                  {PANEL.Overview("w-1/4")}
+                  {PANEL.Modifiers("w-1/4")}
+                  {PANEL.Setup("w-1/4")}
+                  {PANEL.Results("w-1/4")}
+                </div>
               </div>
 
               {touched ? <CalculatorBottomNav activePanelI={activePanelI} onSelectSection={onSelectSection} /> : null}
@@ -111,7 +102,7 @@ export function AppMainSmall() {
               {PANEL.Results("snap-center relative")}
             </div>
           )}
-        </CalculatorModalsProvider>
+        </CalculatorProviders>
       }
     />
   );

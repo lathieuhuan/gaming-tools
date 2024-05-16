@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { clsx, type ClassValue, VersatileSelect } from "rond";
+import { ATTACK_ELEMENTS, ArtifactCalc, ArtifactType } from "@Backend";
 
-import type { ArtifactType } from "@Src/types";
 import type { ArtifactStatFilterState, ArtifactStatFilterOption } from "../ArtifactFilter.types";
-
-import { ARTIFACT_SUBSTAT_TYPES, ATTACK_ELEMENTS } from "@Src/constants";
+import { ARTIFACT_SUBSTAT_TYPES } from "@Src/constants";
 import { useTranslation } from "@Src/hooks";
-import { Artifact_ } from "@Src/utils";
 import { FilterTemplate } from "../../FilterTemplate";
 
 type RenderSelectArgs = {
@@ -35,7 +33,7 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
   const { artifactType, title = "Filter by Stat" } = config || {};
 
   const mainStatOptions = artifactType
-    ? ["All", ...Artifact_.possibleMainStatTypesOf(artifactType)]
+    ? ["All", ...ArtifactCalc.possibleMainStatTypesOf(artifactType)]
     : ["All", "hp", "hp_", "atk", "atk_", "def_", "em", "er_", "cRate_", "cDmg_", ...ATTACK_ELEMENTS, "healB_"];
   const subStatOptions = ["All"].concat(ARTIFACT_SUBSTAT_TYPES);
 

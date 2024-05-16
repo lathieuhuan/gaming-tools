@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { CollapseList, CollapseListProps } from "rond";
-import type { AttackPattern, Infusion, Tracker, TrackerState } from "@Src/types";
+import { AttackBonus, AttackPattern, GeneralCalc, TrackerControl, TrackerResult, calculateSetup } from "@Backend";
 
-import { calculateSetup } from "@Src/calculation";
-import { Calculation_ } from "@Src/utils";
+import type { TrackerState } from "@Store/ui-slice";
+
 import { useSelector } from "@Store/hooks";
 import { selectCalcFinalResult, selectTarget } from "@Store/calculator-slice";
-import { initTracker, getTotalRecordValue } from "./TrackerCore.utils";
+import { getTotalRecordValue } from "./TrackerCore.utils";
 
 // Component
 import { Green, Dim } from "@Src/components";
@@ -14,6 +14,26 @@ import { AttributesTracker } from "./AttributesTracker";
 import { BonusesTracker } from "./BonusesTracker";
 import { DebuffsTracker } from "./DebuffsTracker";
 import { CalcItemTracker } from "./CalcItemTracker";
+
+type ExtraInfo = {
+  inHealB_: number;
+  attBonus: AttackBonus;
+};
+
+function getTotalDefIgnore(talent: AttackPattern | "all", attBonus: AttackBonus) {
+  let result = 0;
+
+  for (const bonus of attBonus ?? []) {
+    if (bonus.type.includes(talent)) {
+      for (const record of bonus.records) {
+        if (record.to === "defIgn_") {
+          result += record.value;
+        }
+      }
+    }
+  }
+  return result;
+}
 
 interface TrackerCoreProps {
   trackerState: TrackerState;
@@ -26,35 +46,32 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const target = useSelector(selectTarget);
   const finalResult = useSelector(selectCalcFinalResult);
 
-  const [result, setResult] = useState<Tracker>();
-  const [infusion, setInfusion] = useState<Infusion>({
-    element: "phys",
+  const [result, setResult] = useState<TrackerResult>();
+  const [xtraInfo, setXtraInfo] = useState<ExtraInfo>({
+    inHealB_: 0,
+    attBonus: [],
   });
-  const [xtraInfo, setXtraInfo] = useState<{ inHealB_?: number }>({});
 
-  const { totalAttr, attPattBonus, attElmtBonus, rxnBonus } = result || {};
-  const charLv = Calculation_.getBareLv(activeSetup.char.level);
-  const totalDefReduct = getTotalRecordValue(result?.resistReduct.def || []);
+  const charLv = GeneralCalc.getBareLv(activeSetup.char.level);
+  const totalDefReduct = getTotalRecordValue(result?.RESIST.def || []);
 
   useEffect(() => {
     if (trackerState === "open") {
-      const tracker = initTracker();
+      const tracker = new TrackerControl();
       const finalResult = calculateSetup(activeSetup, target, tracker);
 
-      setResult(tracker);
-      setInfusion({
-        element: finalResult.infusedElement,
-        range: finalResult.infusedAttacks,
+      setResult(tracker.finalize());
+      setXtraInfo({
+        inHealB_: finalResult.totalAttr.inHealB_,
+        attBonus: finalResult.attBonus,
       });
-      setXtraInfo({ inHealB_: finalResult.totalAttr.inHealB_ });
     }
   }, [trackerState]);
 
   const renderDefMultiplier = (talent: AttackPattern | "WP_CALC") => {
-    const talentDefIgnore =
-      talent === "WP_CALC" ? 0 : getTotalRecordValue(result?.attPattBonus[`${talent}.defIgn_`] || []);
-    const allDefIgnore = getTotalRecordValue(result?.attPattBonus["all.defIgn_"] || []);
-    const totalDefIgnore = talentDefIgnore + allDefIgnore;
+    const totalDefIgnore =
+      getTotalDefIgnore("all", xtraInfo.attBonus) +
+      (talent === "WP_CALC" ? 0 : getTotalDefIgnore(talent, xtraInfo.attBonus));
 
     return (
       <div className="flex items-center">
@@ -89,26 +106,23 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const collapseItems: CollapseListProps["items"] = [
     {
       heading: "Attributes",
-      body: <AttributesTracker totalAttr={totalAttr} />,
+      body: <AttributesTracker result={result} />,
     },
     {
       heading: "Bonuses",
-      body: (
-        <BonusesTracker {...{ attPattBonus, attElmtBonus, rxnBonus }} em={getTotalRecordValue(totalAttr?.em || [])} />
-      ),
+      body: <BonusesTracker attBonus={xtraInfo.attBonus} />,
     },
     {
       heading: "Debuffs on Target",
-      body: <DebuffsTracker resistReduct={result?.resistReduct} />,
+      body: <DebuffsTracker result={result} />,
     },
     {
       heading: "Normal Attacks",
       body: (
         <CalcItemTracker
           records={result?.NAs}
-          result={finalResult.NAs}
+          resultGroup={finalResult.NAs}
           defMultDisplay={renderDefMultiplier("NA")}
-          infusion={infusion}
           {...xtraInfo}
         />
       ),
@@ -118,7 +132,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       body: (
         <CalcItemTracker
           records={result?.ES}
-          result={finalResult.ES}
+          resultGroup={finalResult.ES}
           defMultDisplay={renderDefMultiplier("ES")}
           {...xtraInfo}
         />
@@ -129,7 +143,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       body: (
         <CalcItemTracker
           records={result?.EB}
-          result={finalResult.EB}
+          resultGroup={finalResult.EB}
           defMultDisplay={renderDefMultiplier("EB")}
           {...xtraInfo}
         />
@@ -137,7 +151,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     },
     {
       heading: "Reactions",
-      body: <CalcItemTracker records={result?.RXN} result={finalResult.RXN} />,
+      body: <CalcItemTracker records={result?.RXN_CALC} resultGroup={finalResult.RXN_CALC} />,
     },
   ];
 
@@ -147,7 +161,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       body: (
         <CalcItemTracker
           records={result.WP_CALC}
-          result={finalResult.WP_CALC}
+          resultGroup={finalResult.WP_CALC}
           coreMultLabel="DMG Mult."
           defMultDisplay={renderDefMultiplier("EB")}
           {...xtraInfo}

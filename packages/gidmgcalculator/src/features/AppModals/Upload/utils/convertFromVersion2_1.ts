@@ -1,21 +1,18 @@
+import { ELEMENT_TYPES, AttributeStat, AppWeapon, ModInputConfig, ElementType, GeneralCalc } from "@Backend";
+
 import type {
-  AttributeStat,
   Character,
-  AppWeapon,
   ModifierCtrl,
-  ModInputConfig,
   Party,
   Resonance,
   UserArtifact,
   UserCharacter,
   UserSetup,
   UserWeapon,
-  ElementType,
 } from "@Src/types";
 
-import { ELEMENT_TYPES } from "@Src/constants";
-import { $AppData, $AppCharacter } from "@Src/services";
-import { Calculation_, Modifier_, Weapon_, findById, findByIndex } from "@Src/utils";
+import { $AppCharacter, $AppWeapon, $AppArtifact } from "@Src/services";
+import { Modifier_, Utils_, findById, findByIndex } from "@Src/utils";
 import { version3map } from "./util-maps";
 
 type ConvertUserDataArgs = {
@@ -130,7 +127,7 @@ const convertCharacter = (
 
     xtraWeapon = {
       owner: char.name,
-      ...Weapon_.create({ type: weaponType }, finalWeaponID),
+      ...Utils_.createWeapon({ type: weaponType }, finalWeaponID),
     };
   }
 
@@ -238,7 +235,7 @@ const convertSetup = (
 
   if (weaponInfo.ID && existedWeapon) {
     weaponID = weaponInfo.ID;
-    dataWeapon = $AppData.getWeapon(existedWeapon.code);
+    dataWeapon = $AppWeapon.get(existedWeapon.code);
 
     if (!existedWeapon.setupIDs?.includes(setup.ID)) {
       existedWeapon.setupIDs = (existedWeapon.setupIDs || []).concat(setup.ID);
@@ -252,7 +249,7 @@ const convertSetup = (
       owner: null,
       setupIDs: [setup.ID],
     };
-    dataWeapon = $AppData.getWeapon(xtraWeapon.code);
+    dataWeapon = $AppWeapon.get(xtraWeapon.code);
   }
 
   // ARTIFACTS
@@ -289,8 +286,8 @@ const convertSetup = (
       artifactIDs.push(null);
     }
   }
-  const { code: setBonusesCode = 0 } = Calculation_.getArtifactSetBonuses(finalArtifacts)[0] || {};
-  const { buffs: artifactBuffs = [] } = $AppData.getArtifactSet(setBonusesCode) || {};
+  const { code: setBonusesCode = 0 } = GeneralCalc.getArtifactSetBonuses(finalArtifacts)[0] || {};
+  const { buffs: artifactBuffs = [] } = $AppArtifact.getSet(setBonusesCode) || {};
 
   // PARTY
   for (const teammate of setup.party) {
@@ -307,7 +304,7 @@ const convertSetup = (
         party.push({
           name: teammate.name,
           weapon: {
-            code: Weapon_.getDefaultCode(weaponType),
+            code: Utils_.getDefaultWeaponCode(weaponType),
             type: weaponType,
             refi: 1,
             buffCtrls: [],

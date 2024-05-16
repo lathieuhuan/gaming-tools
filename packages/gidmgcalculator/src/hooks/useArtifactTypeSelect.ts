@@ -1,8 +1,13 @@
 import { useIconSelect, type IconSelectConfig, type IconSelectInitialValues } from "rond";
-import type { ArtifactType } from "@Src/types";
-import { Artifact_, getImgSrc } from "@Src/utils";
+import { ArtifactType } from "@Backend";
+import { Utils_, getImgSrc } from "@Src/utils";
 
-const options = Artifact_.ARTIFACT_TYPE_ICONS.map((item) => ({ value: item.value, icon: getImgSrc(item.icon) }));
+const options = Utils_.allArtifactIcons((icon) => {
+  return {
+    value: icon.value,
+    icon: getImgSrc(icon.icon),
+  };
+});
 
 export function useArtifactTypeSelect(
   initialValues?: IconSelectInitialValues<ArtifactType>,

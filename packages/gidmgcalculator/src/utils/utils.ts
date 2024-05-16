@@ -1,91 +1,140 @@
-import { ATTACK_ELEMENTS } from "@Src/constants";
+import { ATTACK_ELEMENTS, ArtifactType, Level, WeaponType } from "@Backend";
+import { Artifact, CalcArtifact, CalcWeapon, Character, UserArtifact, UserWeapon, Weapon } from "@Src/types";
+import { $AppSettings, $AppWeapon } from "@Src/services";
 
-export const deepCopy = <T>(item: T): T => JSON.parse(JSON.stringify(item));
+// ========== TYPES ==========
 
-export function suffixOf(stat: string) {
-  return stat.slice(-1) === "_" || ATTACK_ELEMENTS.includes(stat as any) ? "%" : "";
-}
+type CreateArtifactArgs = Pick<Artifact, "type" | "code" | "rarity">;
 
-export function getSearchParam(key: string) {
-  const searchParams = new URLSearchParams(window.location.search);
-  return searchParams.get(key);
-}
+type CreateWeaponArgs = {
+  type: WeaponType;
+  code?: number;
+};
 
-export function getImgSrc(src?: string) {
-  const isDevEnv = import.meta.env.DEV;
-  // const isDevEnv = false;
-  if (isDevEnv || !src) return "";
+type Icon = { value: ArtifactType; icon: string };
 
-  const isFromWiki = src.split("/")[0].length === 1;
-  return isFromWiki ? `https://static.wikia.nocookie.net/gensin-impact/images/${src}.png` : src;
-}
+type CalcItemToUserItemOptions = {
+  ID?: number;
+  owner?: string;
+  setupIDs?: number[];
+};
 
-export function pickProps<M, T extends keyof M>(obj: M, keys: T[]) {
-  const result = {} as Pick<M, T>;
+// ========== CONSTANTS ==========
 
-  for (const key of keys) {
-    result[key] = obj[key];
+const DEFAULT_WEAPON_CODE = {
+  bow: 11,
+  catalyst: 36,
+  claymore: 59,
+  polearm: 84,
+  sword: 108,
+};
+
+const ARTIFACT_TYPE_ICONS: Icon[] = [
+  { value: "flower", icon: "2/2d/Icon_Flower_of_Life" },
+  { value: "plume", icon: "8/8b/Icon_Plume_of_Death" },
+  { value: "sands", icon: "9/9f/Icon_Sands_of_Eon" },
+  { value: "goblet", icon: "3/37/Icon_Goblet_of_Eonothem" },
+  { value: "circlet", icon: "6/64/Icon_Circlet_of_Logos" },
+];
+
+export class Utils_ {
+  static splitLv(subject: { level: Level }) {
+    return subject.level.split("/").map((lv) => +lv);
   }
-  return result;
-}
 
-export function removeEmpty<T extends Record<string, any>>(obj: T): T {
-  const copy = {} as T;
-
-  for (const key in obj) {
-    if (Array.isArray(obj[key])) {
-      if (obj[key].length) {
-        copy[key] = obj.key;
-      }
-    } else if (!["", null, undefined].includes(obj[key])) {
-      copy[key] = obj[key];
-    }
+  static suffixOf(stat: string) {
+    return stat.slice(-1) === "_" || ATTACK_ELEMENTS.includes(stat as any) ? "%" : "";
   }
-  return copy;
-}
 
-export const toMult = (n: number) => 1 + n / 100;
+  static createCharacter(name: string, info?: Partial<Character>): Character {
+    const { charLevel, charCons, charNAs, charES, charEB } = $AppSettings.get();
 
-export const applyPercent = (n: number, percent: number) => Math.round((n * percent) / 100);
+    return {
+      name: name,
+      level: info?.level || charLevel,
+      NAs: info?.NAs || charNAs,
+      ES: info?.ES || charES,
+      EB: info?.EB || charEB,
+      cons: info?.cons || charCons,
+    };
+  }
 
-export function genSequentialOptions(max: number | undefined = 0, startsAt0 = false, min = 1) {
-  const result = [...Array(max)].map((_, i) => {
-    const value = i + min;
-    return { label: value, value };
-  });
-  return startsAt0 ? [{ label: 0, value: 0 }].concat(result) : result;
-}
+  static createWeapon(config: CreateWeaponArgs, ID = Date.now()): Weapon {
+    const { wpLevel, wpRefi } = $AppSettings.get();
+    const code = config.code || DEFAULT_WEAPON_CODE[config.type];
+    const { rarity = 0 } = $AppWeapon.get(code) || {};
+    let level = wpLevel;
 
-export const toArray = <T>(subject: T | T[]): T[] => (Array.isArray(subject) ? subject : [subject]);
-
-export function applyToOneOrMany<T>(base: T | T[], callback: (base: T, index?: number) => T) {
-  return Array.isArray(base) ? base.map(callback) : callback(base);
-}
-
-function find(key: string) {
-  return <T>(arr: T[], value?: string | number | null): T | undefined => {
-    if (value === undefined) {
-      return undefined;
+    if (+level.split("/")[1] > 70 && rarity < 3) {
+      level = "70/70";
     }
-    return arr.find((item) => (item as any)?.[key] === value);
-  };
-}
-function findIndex(key: string) {
-  return <T>(arr: T[], value: string | number) => arr.findIndex((item) => (item as any)[key] === value);
-}
 
-export const findById = find("ID");
-export const findByIndex = find("index");
-export const findByCode = find("code");
-export const findByName = find("name");
+    return {
+      ID: ID,
+      type: config.type,
+      code,
+      level,
+      refi: wpRefi,
+    };
+  }
 
-export const indexById = findIndex("ID");
-export const indexByName = findIndex("name");
+  static getDefaultWeaponCode(type: WeaponType) {
+    return DEFAULT_WEAPON_CODE[type];
+  }
 
-export function getAppDataError(type: "character", code: number | string) {
-  return `Cannot get ${type} config (ERROR_CODE: ${code})`;
-}
+  static createArtifact({ type, code, rarity }: CreateArtifactArgs, ID = Date.now()): Artifact {
+    const { artLevel } = $AppSettings.get();
 
-export function toCustomBuffLabel(category: string, type: string, t: (origin: string) => string) {
-  return category === "attElmtBonus" ? (type === "phys" ? "physical" : type) : t(type);
+    return {
+      ID,
+      type,
+      code,
+      rarity,
+      level: Math.min(artLevel, rarity === 5 ? 20 : 16),
+      mainStatType: type === "flower" ? "hp" : type === "plume" ? "atk" : "atk_",
+      subStats: [
+        { type: "def", value: 0 },
+        { type: "def_", value: 0 },
+        { type: "cRate_", value: 0 },
+        { type: "cDmg_", value: 0 },
+      ],
+    };
+  }
+
+  static artifactIconOf(artifactType: ArtifactType) {
+    return ARTIFACT_TYPE_ICONS.find((item) => item.value === artifactType)?.icon;
+  }
+
+  static allArtifactIcons(): Icon[];
+  static allArtifactIcons<T>(transform: (icons: Icon) => T): T[];
+  static allArtifactIcons<T>(transform?: (icons: Icon) => T): Icon[] | T[] {
+    return transform ? ARTIFACT_TYPE_ICONS.map(transform) : ARTIFACT_TYPE_ICONS;
+  }
+
+  static isUserWeapon(item: UserWeapon | UserArtifact): item is UserWeapon {
+    return "refi" in item;
+  }
+
+  static calcItemToUserItem(item: CalcArtifact, options?: CalcItemToUserItemOptions): UserArtifact;
+  static calcItemToUserItem(item: CalcWeapon, options?: CalcItemToUserItemOptions): UserWeapon;
+  static calcItemToUserItem(
+    item: CalcArtifact | CalcWeapon,
+    options?: CalcItemToUserItemOptions
+  ): UserArtifact | UserWeapon {
+    const { ID = item.ID, owner = null, setupIDs } = options || {};
+
+    return {
+      ...item,
+      ID,
+      owner,
+      ...(setupIDs ? { setupIDs } : undefined),
+    };
+  }
+
+  static userItemToCalcItem(item: UserWeapon, newID?: number): CalcWeapon;
+  static userItemToCalcItem(item: UserArtifact, newID?: number): CalcArtifact;
+  static userItemToCalcItem(item: UserWeapon | UserArtifact): CalcWeapon | CalcArtifact {
+    const { owner, setupIDs, ...info } = item;
+    return info;
+  }
 }

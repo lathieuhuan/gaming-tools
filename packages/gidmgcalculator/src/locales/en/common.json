@@ -33,7 +33,7 @@
   "EB": "Elemental Burst",
   "altSprint": "Alternate Sprint",
   "cons": "Constellation",
-  "RXN": "Reactions DMG",
+  "RXN_CALC": "Reactions DMG",
   "bloom": "Bloom",
   "hyperbloom": "Hyperbloom",
   "burgeon": "Burgeon",
@@ -51,5 +51,5 @@
   "pct_": "Percent Bonus",
   "mult_": "Multiplier Bonus",
   "defIgn_": "Def Ignore",
-  "multPlus": "Multicative"
+  "multPlus_": "Multicative"
 }

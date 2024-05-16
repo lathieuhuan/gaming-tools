@@ -1,10 +1,9 @@
 import { FaMinus } from "react-icons/fa";
 import { Button, CloseButton, Modal } from "rond";
 
-import type { TrackerState } from "@Src/types";
 import { findById } from "@Src/utils";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { updateUI, type TrackerState } from "@Store/ui-slice";
 import { TrackerCore } from "./TrackerCore";
 
 export function Tracker() {

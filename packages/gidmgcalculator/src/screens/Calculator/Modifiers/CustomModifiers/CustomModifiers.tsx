@@ -4,7 +4,7 @@ import { clsx, CloseButton, Modal, Button, InputNumber } from "rond";
 
 import type { CustomBuffCtrl, CustomDebuffCtrl } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { suffixOf, toCustomBuffLabel } from "@Src/utils";
+import { Utils_, toCustomBuffLabel } from "@Src/utils";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -97,7 +97,7 @@ export default function CustomModifiers({ isBuffs }: CustomModifiersProps) {
           let max = 0;
 
           if (isBuffCtrl(ctrl)) {
-            const sign = suffixOf(ctrl.subType || ctrl.type);
+            const sign = Utils_.suffixOf(ctrl.subType || ctrl.type);
 
             min = sign ? -99 : -9999;
             max = sign ? 999 : 99_999;
@@ -122,10 +122,12 @@ export default function CustomModifiers({ isBuffs }: CustomModifiersProps) {
               <p className="pl-1 pr-2 text-sm capitalize">{label}</p>
 
               <InputNumber
-                className="ml-auto w-16 font-medium"
+                className="ml-auto w-16 font-semibold"
                 size="medium"
                 min={min}
                 max={max}
+                maxDecimalDigits={1}
+                step="0.1"
                 value={ctrl.value}
                 onChange={(value) => {
                   dispatch(

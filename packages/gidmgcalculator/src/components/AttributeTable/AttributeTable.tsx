@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { clsx, round, StatsTable, CollapseSpace, type PartiallyRequired } from "rond";
+import { ATTACK_ELEMENTS, CORE_STAT_TYPES, GeneralCalc, CoreStat, TotalAttribute } from "@Backend";
 
-import type { CoreStat, TotalAttribute } from "@Src/types";
-import { ATTACK_ELEMENTS, CORE_STAT_TYPES } from "@Src/constants";
 import { useTranslation } from "@Src/hooks";
-import { Calculation_ } from "@Src/utils";
 
 // Component
 import { Green } from "@Src/components";
@@ -15,7 +13,7 @@ interface EmSectionProps {
 }
 const EmSection = ({ em }: EmSectionProps) => {
   const [dropped, setDropped] = useState(false);
-  const rxnBonusFromEM = Calculation_.getRxnBonusesFromEM(em);
+  const rxnBonusFromEM = GeneralCalc.getRxnBonusesFromEM(em);
 
   return (
     <div>
@@ -56,25 +54,23 @@ interface AttributeTableProps {
 }
 export function AttributeTable({ attributes }: AttributeTableProps) {
   const { t } = useTranslation();
-
-  if (!attributes) {
-    return null;
-  }
+  if (!attributes) return null;
 
   return (
     <StatsTable>
       {CORE_STAT_TYPES.map((type) => {
-        const baseAttr = attributes?.[`base_${type}`] || 0;
-        const totalAttr = attributes?.[type] || 0;
+        const total = Math.round(attributes[type]);
+        const base = attributes[`${type}_base`];
+        const bonus = base === undefined ? undefined : total - Math.round(base);
 
         return (
           <StatsTable.Row key={type} className="group">
             <p>{t(type)}</p>
             <div className="relative">
-              <p className={clsx("mr-2", { "group-hover:hidden": baseAttr })}>{Math.round(totalAttr)}</p>
-              {baseAttr ? (
+              <p className={clsx("mr-2", bonus !== undefined && "group-hover:hidden")}>{total}</p>
+              {bonus !== undefined ? (
                 <p className="mr-2 hidden whitespace-nowrap group-hover:block group-hover:absolute group-hover:top-0 group-hover:right-0">
-                  {baseAttr} + <Green>{Math.round(totalAttr - baseAttr)}</Green>
+                  {total - bonus} + <Green>{bonus}</Green>
                 </p>
               ) : null}
             </div>

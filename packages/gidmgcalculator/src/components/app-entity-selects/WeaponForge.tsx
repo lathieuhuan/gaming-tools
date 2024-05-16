@@ -1,9 +1,10 @@
 import { useMemo, useRef, useState } from "react";
 import { Modal } from "rond";
+import { AppWeapon, WeaponType } from "@Backend";
 
-import type { AppWeapon, Weapon, WeaponType } from "@Src/types";
-import { $AppData } from "@Src/services";
-import { pickProps, Weapon_ } from "@Src/utils";
+import type { Weapon } from "@Src/types";
+import { $AppWeapon } from "@Src/services";
+import { pickProps, Utils_ } from "@Src/utils";
 
 // Component
 import { WeaponCard } from "../WeaponCard";
@@ -17,7 +18,7 @@ type WeaponData = Array<ReturnType<typeof transformWeapon>>;
 
 interface WeaponForgeProps extends Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> {
   forcedType?: WeaponType;
-  onForgeWeapon: (info: ReturnType<typeof Weapon_.create>) => void;
+  onForgeWeapon: (info: ReturnType<typeof Utils_.createWeapon>) => void;
   onClose: () => void;
 }
 function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: WeaponForgeProps) {
@@ -34,7 +35,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
   );
 
   const allWeapons = useMemo(() => {
-    const weapons = $AppData.getAllWeapons();
+    const weapons = $AppWeapon.getAll();
 
     if (forcedType) {
       return weapons.reduce<WeaponData>((accumulator, weapon) => {
@@ -131,7 +132,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
       }}
       onChange={(mold, isConfigStep) => {
         if (mold) {
-          const weapon = Weapon_.create(mold);
+          const weapon = Utils_.createWeapon(mold);
 
           if (isConfigStep) {
             setWeaponConfig({

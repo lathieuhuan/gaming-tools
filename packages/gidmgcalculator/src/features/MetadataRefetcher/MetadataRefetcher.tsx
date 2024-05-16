@@ -6,6 +6,7 @@ interface MetadataRefetcherProps {
   cooldown?: number;
   isLoading: boolean;
   isError: boolean;
+  error?: string;
   onRefetch: () => void;
 }
 export function MetadataRefetcher({
@@ -13,6 +14,7 @@ export function MetadataRefetcher({
   cooldown = 10,
   isLoading,
   isError,
+  error = "Failed to fetch App Data.",
   onRefetch,
 }: MetadataRefetcherProps) {
   const startTime = useRef(0);
@@ -32,7 +34,9 @@ export function MetadataRefetcher({
       const secElapsed = (currentTime - startTime.current) / 1000;
 
       if (secElapsed < cooldown) {
-        setTime(Math.round(cooldown - secElapsed));
+        const newTime = Math.round(cooldown - secElapsed);
+
+        setTime(newTime);
       } else {
         setTime(0);
         clearInterval(intervalId.current);
@@ -41,8 +45,10 @@ export function MetadataRefetcher({
   };
 
   useEffect(() => {
-    triesRef.current++;
-    start();
+    if (isError) {
+      triesRef.current++;
+      start();
+    }
 
     return () => {
       clearInterval(intervalId.current);
@@ -52,11 +58,18 @@ export function MetadataRefetcher({
   if (isLoading) {
     return <p className={"text-base text-light-default text-center font-normal " + className}>Loading App Data...</p>;
   }
+
+  const secondsToTime = (time: number) => {
+    const minutes = time > 60 ? Math.floor(time / 60) : 0;
+    const seconds = time - minutes * 60;
+    return `${minutes}:${seconds > 0 ? "" : "0"}${seconds}`;
+  };
+
   if (isError) {
     return (
       <div className={"flex flex-col items-center " + className}>
         <p className="text-base text-danger-3 font-normal">
-          Failed to fetch App Data. <span>{time ? `Try again in ${time}s.` : "Please try again."}</span>
+          {error} <span>{time ? `Try again after ${secondsToTime(time)}s.` : "Please try again."}</span>
         </p>
         <Button
           className="mt-1"

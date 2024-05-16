@@ -1,26 +1,26 @@
 import ReactDOM from "react-dom/client";
-import { Provider } from "react-redux";
+import { Provider as StoreProvider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { ConfigProvider, ScreenSizeWatcher } from "rond";
 
 import App from "./App.tsx";
-import { GenshinImage } from "./components/index.ts";
+import { GenshinImage } from "./components";
 import { DynamicStoreProvider } from "./features";
 import "./assets/css/tailwind.css";
 import "./assets/css/index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <DynamicStoreProvider>
-    {({ store, persistor }) => (
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <ScreenSizeWatcher>
-            <ConfigProvider config={{ ImageFallback: GenshinImage.Fallback }}>
+  <ScreenSizeWatcher>
+    <ConfigProvider config={{ ImageFallback: GenshinImage.Fallback }}>
+      <DynamicStoreProvider>
+        {({ store, persistor }) => (
+          <StoreProvider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
               <App />
-            </ConfigProvider>
-          </ScreenSizeWatcher>
-        </PersistGate>
-      </Provider>
-    )}
-  </DynamicStoreProvider>
+            </PersistGate>
+          </StoreProvider>
+        )}
+      </DynamicStoreProvider>
+    </ConfigProvider>
+  </ScreenSizeWatcher>
 );

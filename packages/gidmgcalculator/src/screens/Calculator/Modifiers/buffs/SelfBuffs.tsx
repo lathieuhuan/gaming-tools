@@ -1,14 +1,14 @@
 import type { PartyData } from "@Src/types";
-import { $AppCharacter } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectCharacter, changeModCtrlInput, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
 import { SelfBuffsView } from "@Src/components";
+import { useCalcAppCharacter } from "../../CalculatorInfoProvider";
 
 export default function SelfBuffs({ partyData }: { partyData: PartyData }) {
   const dispatch = useDispatch();
   const char = useSelector(selectCharacter);
   const selfBuffCtrls = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].selfBuffCtrls);
-  const appChar = $AppCharacter.get(char.name);
+  const appChar = useCalcAppCharacter();
 
   return (
     <SelfBuffsView

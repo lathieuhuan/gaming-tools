@@ -2,11 +2,10 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { MdInventory } from "react-icons/md";
 import { Badge, Button, VersatileSelect } from "rond";
+import { LEVELS, Level } from "@Backend";
 
-import type { Level } from "@Src/types";
-import { LEVELS } from "@Src/constants";
-import { $AppData } from "@Src/services";
-import { Item_, genSequentialOptions } from "@Src/utils";
+import { $AppWeapon } from "@Src/services";
+import { Utils_, genSequentialOptions } from "@Src/utils";
 import { selectWeapon, changeWeapon, updateWeapon } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
 import { WeaponForge, WeaponInventory, GenshinImage } from "@Src/components";
@@ -20,7 +19,7 @@ export default function SectionWeapon() {
   const weapon = useSelector(selectWeapon);
   const [modalType, setModalType] = useState<ModalType>("");
 
-  const { beta, name = "", icon = "", rarity = 5 } = $AppData.getWeapon(weapon.code) || {};
+  const { beta, name = "", icon = "", rarity = 5 } = $AppWeapon.get(weapon.code) || {};
   const selectLevels = rarity < 3 ? LEVELS.slice(0, -4) : LEVELS;
 
   const closeModal = () => setModalType("");
@@ -102,7 +101,7 @@ export default function SectionWeapon() {
         weaponType={weapon.type}
         buttonText="Select"
         onClickButton={(weapon) => {
-          dispatch(changeWeapon(Item_.userItemToCalcItem(weapon)));
+          dispatch(changeWeapon(Utils_.userItemToCalcItem(weapon)));
         }}
         onClose={closeModal}
       />

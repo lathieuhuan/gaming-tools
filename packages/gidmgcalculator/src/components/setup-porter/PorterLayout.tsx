@@ -42,7 +42,7 @@ export function PorterLayout({ heading, message, textareaAttrs, moreButtons, onC
         ]}
       />
 
-      <CloseButton className="ron-modal-close-button" boneOnly onClick={onClose} />
+      <CloseButton className={Modal.CLOSE_BTN_CLS} boneOnly onClick={onClose} />
     </div>
   );
 }

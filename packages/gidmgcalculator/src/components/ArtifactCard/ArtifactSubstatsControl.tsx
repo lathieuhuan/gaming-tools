@@ -1,9 +1,10 @@
 import { useRef } from "react";
-import { InputNumber, VersatileSelect, type SelectProps } from "rond";
+import { InputNumber, VersatileSelect } from "rond";
+import { AttributeStat } from "@Backend";
 
-import type { AttributeStat, ArtifactSubStat } from "@Src/types";
+import type { ArtifactSubStat } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { suffixOf } from "@Src/utils";
+import { Utils_ } from "@Src/utils";
 
 // Constant
 import { ARTIFACT_SUBSTAT_TYPES } from "@Src/constants";
@@ -36,10 +37,10 @@ export function ArtifactSubstatsControl({
 
   const onKeyDownValue = (index: number) => (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && wrapper.current) {
-      const inputs = wrapper.current.querySelectorAll("input");
+      const inputs = wrapper.current.querySelectorAll(".ron-input-number") as NodeListOf<HTMLInputElement>;
       const nextInput = inputs[index + (e.shiftKey ? -1 : 1)];
 
-      if (nextInput) nextInput.focus();
+      if (nextInput) nextInput.focus?.();
     }
   };
 
@@ -68,7 +69,7 @@ export function ArtifactSubstatsControl({
               onChange={(value) => onChangeSubStat?.(i, { value })}
               onKeyDown={onKeyDownValue(i)}
             />
-            <span className="w-4 pt-2 pb-1">{suffixOf(type)}</span>
+            <span className="w-4 pt-2 pb-1">{Utils_.suffixOf(type)}</span>
           </div>
         ) : (
           <div key={i} className="mt-2 pt-2 pb-1 flex items-center bg-surface-2">
@@ -79,7 +80,7 @@ export function ArtifactSubstatsControl({
               </span>{" "}
               <span className={isValid ? "text-bonus-color" : "text-danger-2"}>
                 +{value}
-                {suffixOf(type)}
+                {Utils_.suffixOf(type)}
               </span>
             </p>
           </div>
