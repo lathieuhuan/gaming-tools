@@ -167,7 +167,7 @@ type AttackBonusTarget = {
   path: AttackBonusKey;
 };
 
-export type EntityBonusTarget = AttributeTarget | AttackBonusTarget;
+export type EntityBonusTargets = AttributeTarget | AttackBonusTarget | AttackBonusTarget[];
 
 // ========== BONUS VALUE ==========
 
@@ -195,8 +195,6 @@ export type EntityBonusValueOption = {
 
 export type EntityBonus<ValueOptionExtends = object> = ApplicableCondition & {
   value: number | (EntityBonusValueOption & ValueOptionExtends);
-  /** Index of the pre-calculated stack from [cmnStacks] */
-  stackIndex?: number;
   stacks?: EntityBonusStack | EntityBonusStack[];
 };
 
@@ -205,7 +203,6 @@ export type EntityBuff<T extends EntityBonus<unknown>> = {
   index: number;
   affect: ModifierAffectType;
   inputConfigs?: ModInputConfig[];
-  cmnStacks?: T["stacks"];
   effects?: T | T[];
   /**
    * id to track stackable.
@@ -216,7 +213,7 @@ export type EntityBuff<T extends EntityBonus<unknown>> = {
 };
 
 export type WithBonusTargets<T> = T & {
-  targets: EntityBonusTarget | EntityBonusTarget[];
+  targets: EntityBonusTargets;
 };
 
 // ========== PENALTY & DEBUFF ==========

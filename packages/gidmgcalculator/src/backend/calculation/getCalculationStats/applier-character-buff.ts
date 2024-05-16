@@ -1,5 +1,6 @@
 import type { CharacterBonusCore, CharacterBuff } from "@Src/backend/types";
 import type { CalcUltilInfo } from "../calculation.types";
+import type { GetTotalAttributeType } from "../controls";
 import type { BuffInfoWrap } from "./getCalculationStats.types";
 
 import { toArray } from "@Src/utils";
@@ -44,9 +45,9 @@ class ApplierCharacterBuff {
 
   private getBonus(
     bonus: CharacterBonusCore,
+    totalAttrType: GetTotalAttributeType,
     inputs: number[],
-    fromSelf: boolean,
-    preCalcStacks: number[]
+    fromSelf: boolean
   ): AppliedBonus {
     const { preExtra } = bonus;
     let bonusValue = getIntialBonusValue(bonus.value, this.info, inputs, fromSelf);
@@ -60,15 +61,12 @@ class ApplierCharacterBuff {
       bonusValue += preExtra;
     } else if (preExtra && EntityCalc.isApplicableEffect(preExtra, this.info, inputs, fromSelf)) {
       // if preExtra is not stable, this whole bonus is not stable
-      const { value, isStable: isStablePreExtra } = this.getBonus(preExtra, inputs, fromSelf, preCalcStacks);
+      const { value, isStable: isStablePreExtra } = this.getBonus(preExtra, totalAttrType, inputs, fromSelf);
       bonusValue += value;
       if (!isStablePreExtra) isStable = false;
     }
 
     // ========== APPLY STACKS ==========
-    if (bonus.stackIndex !== undefined) {
-      bonusValue *= preCalcStacks[bonus.stackIndex] ?? 1;
-    }
     if (bonus.stacks) {
       for (const stack of toArray(bonus.stacks)) {
         if (["nation", "resolve"].includes(stack.type) && !this.info.partyData.length) {
@@ -77,7 +75,7 @@ class ApplierCharacterBuff {
             isStable: true,
           };
         }
-        bonusValue *= EntityCalc.getStackValue(stack, this.info, inputs, fromSelf);
+        bonusValue *= EntityCalc.getStackValue(stack, totalAttrType, this.info, inputs, fromSelf);
 
         if (stack.type === "ATTRIBUTE") isStable = false;
       }
@@ -90,7 +88,7 @@ class ApplierCharacterBuff {
       let finalMax = bonus.max.value;
 
       if (bonus.max.stacks) {
-        finalMax *= EntityCalc.getStackValue(bonus.max.stacks, this.info, inputs, fromSelf);
+        finalMax *= EntityCalc.getStackValue(bonus.max.stacks, totalAttrType, this.info, inputs, fromSelf);
       }
       if (bonus.max.extras) {
         finalMax += EntityCalc.getTotalExtraMax(bonus.max.extras, this.info, inputs, fromSelf);
@@ -107,7 +105,7 @@ class ApplierCharacterBuff {
 
   apply(args: {
     description: string;
-    buff: Pick<CharacterBuff, "trackId" | "cmnStacks" | "effects">;
+    buff: Pick<CharacterBuff, "trackId" | "effects">;
     inputs: number[];
     fromSelf: boolean;
     isFinal?: boolean;
@@ -115,7 +113,7 @@ class ApplierCharacterBuff {
     applyBonuses({
       ...args,
       info: this.info,
-      getBonus: (config, commonStacks) => this.getBonus(config, args.inputs, args.fromSelf, commonStacks),
+      getBonus: (config, totalAttrType) => this.getBonus(config, totalAttrType, args.inputs, args.fromSelf),
     });
   }
 }

@@ -32,10 +32,11 @@ export default function getCalculationStats({
   const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
   const { resonances = [], reaction, infuse_reaction } = elmtModCtrls || {};
 
-  const totalAttr = new TotalAttributeControl(tracker).create(
+  const totalAttr = new TotalAttributeControl(
     char,
     appChar,
-    WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale)
+    WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale),
+    tracker
   );
   const artAttr = calcArtifactAtribute(artifacts, totalAttr);
   const attBonus = new AttackBonusControl();
@@ -312,7 +313,7 @@ export default function getCalculationStats({
   APPLY_SELF_BUFFS(true);
   APLY_MAIN_ARTIFACT_BUFFS(true);
 
-  const { transformative, amplifying, quicken } = GeneralCalc.getRxnBonusesFromEM(totalAttr.getTotal("em"));
+  const { transformative, amplifying, quicken } = GeneralCalc.getRxnBonusesFromEM(totalAttr.getTotal("em", "ALL"));
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
     attBonus.add(rxn, "pct_", transformative, "From Elemental Mastery");

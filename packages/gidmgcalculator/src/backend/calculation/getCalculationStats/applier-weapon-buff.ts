@@ -1,5 +1,6 @@
 import type { WeaponBonusCore, WeaponBuff } from "@Src/backend/types";
 import type { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.types";
+import type { GetTotalAttributeType } from "../controls";
 
 import { toArray } from "@Src/utils";
 import { EntityCalc } from "../utils";
@@ -14,10 +15,10 @@ class ApplierWeaponBuff {
 
   private getBonus(
     bonus: WeaponBonusCore,
+    totalAttrType: GetTotalAttributeType,
     inputs: number[],
     refi: number,
-    fromSelf: boolean,
-    preCalcStacks: number[]
+    fromSelf: boolean
   ): AppliedBonus {
     let bonusValue = 0;
     let isStable = true;
@@ -34,9 +35,6 @@ class ApplierWeaponBuff {
     }
 
     // ========== APPLY STACKS ==========
-    if (bonus.stackIndex !== undefined) {
-      bonusValue *= preCalcStacks[bonus.stackIndex] ?? 1;
-    }
     if (bonus.stacks) {
       for (const stack of toArray(bonus.stacks)) {
         if (!this.info.partyData.length && ["VISION", "ENERGY", "NATION"].includes(stack.type)) {
@@ -45,7 +43,7 @@ class ApplierWeaponBuff {
             isStable,
           };
         }
-        bonusValue *= EntityCalc.getStackValue(stack, this.info, inputs, fromSelf);
+        bonusValue *= EntityCalc.getStackValue(stack, totalAttrType, this.info, inputs, fromSelf);
         if (stack.type === "ATTRIBUTE") isStable = false;
       }
     }
@@ -54,7 +52,7 @@ class ApplierWeaponBuff {
     if (typeof bonus.sufExtra === "number") {
       bonusValue += scaleRefi(bonus.sufExtra);
     } else if (bonus.sufExtra && EntityCalc.isApplicableEffect(bonus.sufExtra, this.info, inputs)) {
-      bonusValue += this.getBonus(bonus.sufExtra, inputs, refi, fromSelf, preCalcStacks).value;
+      bonusValue += this.getBonus(bonus.sufExtra, totalAttrType, inputs, refi, fromSelf).value;
     }
 
     // ========== APPLY MAX ==========
@@ -74,7 +72,7 @@ class ApplierWeaponBuff {
 
   apply(args: {
     description: string;
-    buff: Pick<WeaponBuff, "trackId" | "cmnStacks" | "effects">;
+    buff: Pick<WeaponBuff, "trackId" | "effects">;
     inputs: number[];
     refi: number;
     fromSelf: boolean;
@@ -87,7 +85,7 @@ class ApplierWeaponBuff {
       ...args,
       info: this.info,
       isStackable: (paths: string | string[]) => isStackable({ trackId: args.buff.trackId, paths }),
-      getBonus: (config, commonStacks) => this.getBonus(config, args.inputs, args.refi, args.fromSelf, commonStacks),
+      getBonus: (config, totalAttrType) => this.getBonus(config, totalAttrType, args.inputs, args.refi, args.fromSelf),
     });
   }
 }

@@ -8,11 +8,12 @@ import type {
   InputCheck,
   EntityBonusValueOption,
 } from "@Src/backend/types";
+import type { TotalAttributeControl, GetTotalAttributeType } from "../controls";
 import type { CalcUltilInfo } from "../calculation.types";
+
 import { toArray } from "@Src/utils";
 import { GeneralCalc } from "./general-calc";
 import { CharacterCalc } from "./character-calc";
-import { TotalAttributeControl } from "../controls";
 
 type GetStackValueInfo = CalcUltilInfo & {
   totalAttr: TotalAttributeControl;
@@ -123,7 +124,13 @@ export class EntityCalc {
       : max.value + (max.extras ? this.getTotalExtraMax(max.extras, info, inputs, fromSelf) : 0);
   }
 
-  static getStackValue(stack: EntityBonusStack, info: GetStackValueInfo, inputs: number[], fromSelf: boolean): number {
+  static getStackValue(
+    stack: EntityBonusStack,
+    totalAttrType: GetTotalAttributeType,
+    info: GetStackValueInfo,
+    inputs: number[],
+    fromSelf: boolean
+  ): number {
     const { appChar, partyData } = info;
     let result = 0;
 
@@ -152,7 +159,7 @@ export class EntityCalc {
         break;
       }
       case "ATTRIBUTE": {
-        result = fromSelf ? info.totalAttr.getTotalStable(stack.field) : inputs[stack.alterIndex ?? 0] ?? 1;
+        result = fromSelf ? info.totalAttr.getTotal(stack.field, totalAttrType) : inputs[stack.alterIndex ?? 0] ?? 1;
         break;
       }
       case "ELEMENT": {

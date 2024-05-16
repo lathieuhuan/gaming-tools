@@ -168,7 +168,7 @@ export type CharacterBonusCore = EntityBonus<CharacterEffectValueOptionExtends> 
 
 type CharacterBonus = WithBonusTargets<CharacterBonusCore>;
 
-type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "trackId" | "cmnStacks" | "effects">;
+type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "trackId" | "effects">;
 
 export type CharacterBuffNAsConfig = {
   checkInput?: number | InputCheck;

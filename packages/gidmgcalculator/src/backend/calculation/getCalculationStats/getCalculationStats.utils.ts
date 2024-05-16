@@ -2,7 +2,7 @@ import type { CalcArtifacts } from "@Src/types";
 import type {
   EntityBonus,
   EntityBonusStack,
-  EntityBonusTarget,
+  EntityBonusTargets,
   EntityBuff,
   ArtifactBonusCore,
   AttributeStat,
@@ -17,7 +17,7 @@ import type { BuffInfoWrap } from "./getCalculationStats.types";
 import { CORE_STAT_TYPES, ELEMENT_TYPES } from "@Src/backend/constants";
 import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
 import { applyPercent, toArray } from "@Src/utils";
-import { TotalAttributeControl } from "../controls";
+import { TotalAttributeControl, type GetTotalAttributeType } from "../controls";
 import { ArtifactCalc, EntityCalc } from "../utils";
 
 export function calcArtifactAtribute(artifacts: CalcArtifacts, totalAttr: TotalAttributeControl): ArtifactAttribute;
@@ -84,15 +84,11 @@ function isFinalBonus(bonusStacks?: EntityBonusStack | EntityBonusStack[]) {
   return false;
 }
 
-function isTrulyFinalBonus(
-  bonus: CharacterBonusCore | WeaponBonusCore | ArtifactBonusCore,
-  cmnStacks: EntityBonusStack[]
-) {
+function isTrulyFinalBonus(bonus: CharacterBonusCore | WeaponBonusCore | ArtifactBonusCore) {
   return (
     isFinalBonus(bonus.stacks) ||
     (typeof bonus.preExtra === "object" && isFinalBonus(bonus.preExtra.stacks)) ||
-    (typeof bonus.sufExtra === "object" && isFinalBonus(bonus.sufExtra.stacks)) ||
-    (bonus.stackIndex !== undefined && isFinalBonus(cmnStacks[bonus.stackIndex]))
+    (typeof bonus.sufExtra === "object" && isFinalBonus(bonus.sufExtra.stacks))
   );
 }
 
@@ -103,7 +99,7 @@ export type AppliedBonus = {
 type ApplyBonusArgs = {
   bonus: AppliedBonus;
   vision: ElementType;
-  targets: EntityBonusTarget | EntityBonusTarget[];
+  targets: EntityBonusTargets;
   inputs: number[];
   description: string;
   info: BuffInfoWrap;
@@ -159,28 +155,26 @@ type Bonus = WithBonusTargets<EntityBonus<unknown>>;
 type ApplyBonusArgsPick = Pick<ApplyBonusArgs, "description" | "info" | "inputs" | "isStackable">;
 
 interface ApplyBonusesArgs<T extends Bonus> extends ApplyBonusArgsPick {
-  buff: Pick<EntityBuff<T>, "cmnStacks" | "effects">;
+  buff: Pick<EntityBuff<T>, "effects">;
   fromSelf?: boolean;
   isFinal?: boolean;
-  getBonus: (config: T, commonStacks: number[]) => AppliedBonus;
+  getBonus: (config: T, totalAttrType: GetTotalAttributeType) => AppliedBonus;
 }
 export function applyBonuses<T extends Bonus>(args: ApplyBonusesArgs<T>) {
   const { buff, fromSelf = false, isFinal, getBonus, ...applyArgs } = args;
   if (!buff.effects) return;
 
-  const cmnStacks = buff.cmnStacks ? toArray(buff.cmnStacks) : [];
-  const commonStacks = cmnStacks.map((cmnStack) =>
-    EntityCalc.getStackValue(cmnStack, args.info, args.inputs, fromSelf)
-  );
-
   for (const config of toArray(buff.effects)) {
     if (
-      (isFinal === undefined || isFinal === isTrulyFinalBonus(config, cmnStacks)) &&
+      (isFinal === undefined || isFinal === isTrulyFinalBonus(config)) &&
       EntityCalc.isApplicableEffect(config, args.info, args.inputs, fromSelf)
     ) {
+      const totalAttrType: GetTotalAttributeType =
+        Array.isArray(config.targets) || config.targets.module !== ECalcStatModule.ATTR ? "ALL" : "STABLE";
+
       applyBonus({
         ...applyArgs,
-        bonus: getBonus(config, commonStacks),
+        bonus: getBonus(config, totalAttrType),
         vision: args.info.appChar.vision,
         targets: config.targets,
       });
