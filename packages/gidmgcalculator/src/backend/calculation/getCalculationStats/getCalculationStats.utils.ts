@@ -115,25 +115,27 @@ function applyBonus({ bonus, vision, targets, inputs, description, info, isStack
 
     switch (target.module) {
       case ECalcStatModule.ATTR: {
-        let path: AttributeStat | AttributeStat[];
+        for (const targetPath of toArray(target.path)) {
+          let path: AttributeStat | AttributeStat[];
 
-        switch (target.path) {
-          case "INP_ELMT": {
-            const elmtIndex = inputs[target.inpIndex ?? 0];
-            path = ELEMENT_TYPES[elmtIndex];
-            break;
+          switch (targetPath) {
+            case "INP_ELMT": {
+              const elmtIndex = inputs[target.inpIndex ?? 0];
+              path = ELEMENT_TYPES[elmtIndex];
+              break;
+            }
+            case "OWN_ELMT":
+              path = vision;
+              break;
+            default:
+              path = targetPath;
           }
-          case "OWN_ELMT":
-            path = vision;
-            break;
-          default:
-            path = target.path;
-        }
 
-        if (bonus.isStable) {
-          info.totalAttr.addStable(path, bonus.value, description);
-        } else {
-          info.totalAttr.addUnstable(path, bonus.value, description);
+          if (bonus.isStable) {
+            info.totalAttr.addStable(path, bonus.value, description);
+          } else {
+            info.totalAttr.addUnstable(path, bonus.value, description);
+          }
         }
         break;
       }
