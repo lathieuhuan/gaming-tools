@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "npx playwright test"
   },
   "dependencies": {
     "@reduxjs/toolkit": "1.8.3",
@@ -20,6 +21,8 @@
     "rond": "0.0.1"
   },
   "devDependencies": {
+    "@playwright/test": "1.44.0",
+    "@types/node": "20.12.12",
     "@types/react": "18.2.56",
     "@types/react-dom": "18.2.19",
     "@typescript-eslint/eslint-plugin": "7.0.2",
