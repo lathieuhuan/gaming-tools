@@ -68,7 +68,13 @@ const Modal = ({
       )}
 
       {withCloseButton ? (
-        <CloseButton className={CLOSE_BTN_CLS} boneOnly disabled={!closable} onClick={coreProps.onClose} />
+        <CloseButton
+          aria-label="Close"
+          className={CLOSE_BTN_CLS}
+          boneOnly
+          disabled={!closable}
+          onClick={coreProps.onClose}
+        />
       ) : null}
     </ModalCore>
   );

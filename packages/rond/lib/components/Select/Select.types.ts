@@ -34,7 +34,7 @@ export interface SelectCoreProps
   onChange?: (value: SelectValueType) => void;
 }
 
-export interface SelectProps extends SelectCoreProps, Pick<RcProps, "title"> {
+export interface SelectProps extends SelectCoreProps, Pick<RcProps, "id" | "title"> {
   /** Only when select has action */
   wrapperCls?: string;
   /** Only when select has action */

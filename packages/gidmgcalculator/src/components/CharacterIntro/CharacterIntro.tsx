@@ -39,14 +39,17 @@ export function CharacterIntro(props: CharacterIntroProps) {
 
       <div className="min-w-0 grow">
         <div className="overflow-hidden">
-          <p className={`text-2xl truncate ${elmtText} font-black ${props.removable ? "pr-9" : ""}`}>{char.name}</p>
+          <h2 className={`text-2xl truncate ${elmtText} font-black ${props.removable ? "pr-9" : ""}`}>{char.name}</h2>
           <Rarity value={appChar.rarity} />
         </div>
 
         <div className="mt-1 pl-1 flex justify-between items-center">
           <div className="flex items-center text-lg">
-            <p className="mr-1">Level</p>
+            <label className="mr-1" htmlFor="calculator_character-level">
+              Level
+            </label>
             <VersatileSelect
+              id="calculator_character-level"
               title="Select Level"
               align="right"
               transparent

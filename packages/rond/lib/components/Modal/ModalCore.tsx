@@ -35,6 +35,8 @@ export const ModalCore = ({
       {(direction, transitionStyle) => {
         return (
           <div
+            role="dialog"
+            aria-modal="true"
             id={id}
             className={clsx(
               `ron-modal ron-modal--${preset} ron-modal--${direction}`,
