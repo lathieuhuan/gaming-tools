@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "test-e2e": "npx playwright test"
+    "test": "npx playwright test"
   },
   "dependencies": {
     "@reduxjs/toolkit": "1.8.3",
