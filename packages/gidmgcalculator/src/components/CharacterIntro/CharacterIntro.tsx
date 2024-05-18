@@ -67,6 +67,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
           </div>
 
           <VersatileSelect
+            id="calculator_character-constellation"
             title="Select Constellation Level"
             className={`ml-auto w-14 text-lg ${elmtText} font-bold bg-surface-2`}
             align="right"

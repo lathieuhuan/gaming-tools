@@ -8,11 +8,11 @@ export class CharacterTester extends CoreTester {
     super(page);
   }
 
-  selectCharacter = async (name: string, level: Level) => {
-    await startSessionWithCharacter(this.page, name, level);
+  selectCharacter = async (name: string, level: Level, constellation: number) => {
+    await startSessionWithCharacter(this.page, name, level, constellation);
   };
 
   activateSelfBuff = async (name: string) => {
-    await this.activateBuff("Self buffs", name);
+    return await this.activateBuff("Self buffs", name);
   };
 }

@@ -35,6 +35,8 @@ export const CollapseList = (props: CollapseListProps) => {
                 })
               }
               title={title}
+              role="button"
+              aria-expanded={active}
             >
               {typeof heading === "function" ? heading(expanded[i]) : heading}
             </div>

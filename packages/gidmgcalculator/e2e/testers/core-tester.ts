@@ -1,18 +1,20 @@
-import { Page, expect } from "@playwright/test";
-import { AttributeStat } from "../../src/backend";
+import { Locator, Page, expect } from "@playwright/test";
+import { AttackBonusKey, AttributeStat } from "../../src/backend";
 
 type BuffGroup = "Self buffs";
 
-type SectionLabel = "Normal Attacks" | "Elemental Skill" | "Elemental Burst" | "Reactions DMG";
+type SectionLabel = "Normal Attacks" | "Elemental Skill" | "Elemental Burst";
 
-type ResultAt = {
-  section: SectionLabel;
-  row: string;
-};
-
-type Converter = {
-  before?: (value: number) => number;
-  after?: (value: number) => number;
+export type CalcFactor = {
+  root: number;
+  mult: number;
+  flat: number;
+  pct: number;
+  specMult: number;
+  defMult: number;
+  resMult: number;
+  cRate: number;
+  cDmg: number;
 };
 
 export class CoreTester {
@@ -31,8 +33,29 @@ export class CoreTester {
   };
 
   protected activateBuff = async (group: BuffGroup, name: string) => {
-    await this.page.getByTitle(group).click();
-    await this.page.getByRole("checkbox", { name }).check();
+    const collapseTrigger = this.page.getByTitle(group);
+    const isExpanded = await collapseTrigger.getAttribute("aria-expanded");
+
+    if (isExpanded !== "true") {
+      await collapseTrigger.click();
+    }
+
+    const control = this.page.getByRole("checkbox", { name });
+    await control.check();
+    return control;
+  };
+
+  private calcCalcItem = (factor: CalcFactor) => {
+    const base =
+      (factor.root * factor.mult + factor.flat) * factor.pct * factor.specMult * factor.defMult * factor.resMult;
+    const cDmg = factor.cDmg / 100;
+    const cRate = factor.cRate / 100;
+
+    return {
+      base,
+      crit: base * (1 + cDmg),
+      avr: base * (1 + cDmg * cRate),
+    };
   };
 
   checkAttribute = async (attribute: AttributeStat, value: number) => {
@@ -49,27 +72,23 @@ export class CoreTester {
     }
   };
 
-  checkResultAfterModifier = async (
-    resultAt: ResultAt,
-    activateModifier: () => Promise<void>,
-    converter?: Converter
+  checkCalcItemAfterModified = async (
+    section: SectionLabel,
+    row: string,
+    modify: () => Promise<Locator>,
+    // changes: Partial<CalcFactor>
   ) => {
-    const cell = this.getResultCell(resultAt.section, resultAt.row);
+    const cell = this.getResultCell(section, row);
 
     let valueBefore = +(await cell.innerText());
-
-    if (converter?.before) {
-      valueBefore = converter.before(valueBefore);
-    }
-
     expect(valueBefore).not.toBeNaN();
 
-    await activateModifier();
+    const control = await modify();
+    const valueAfter = +(await cell.innerText());
 
-    let valueAfter = +(await cell.innerText());
+    expect(valueAfter).not.toBeNaN();
+    expect(valueAfter - valueBefore).toBeLessThan(valueBefore * 0.01);
 
-    if (converter?.after) {
-      valueAfter = converter.after(valueAfter);
-    }
+    return control;
   };
 }
