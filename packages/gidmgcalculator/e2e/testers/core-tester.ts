@@ -1,5 +1,4 @@
 import { Locator, Page, expect } from "@playwright/test";
-import { AttackBonusKey, AttributeStat } from "../../src/backend";
 
 type BuffGroup = "Self buffs";
 
@@ -17,19 +16,21 @@ export type CalcFactor = {
   cDmg: number;
 };
 
+type CalcAttPattConfig = Pick<CalcFactor, "mult"> &
+  Partial<Pick<CalcFactor, "flat" | "pct" | "specMult" | "defMult" | "resMult" | "cRate" | "cDmg">> & {
+    baseOn: "HP" | "ATK" | "DEF" | "Elemental Mastery";
+  };
+
 export class CoreTester {
   protected page: Page;
+  attributeTable: Locator;
 
   constructor(page: Page) {
     this.page = page;
   }
 
-  private getResultCell = (sectionLabel: SectionLabel, rowLabel: string) => {
-    return this.page
-      .getByRole("table", { name: sectionLabel })
-      .getByRole("row", { name: rowLabel })
-      .getByRole("cell")
-      .nth(1);
+  protected getAttributeTableLocator = () => {
+    this.attributeTable = this.page.getByRole("table", { name: "attribute-table" });
   };
 
   protected activateBuff = async (group: BuffGroup, name: string) => {
@@ -45,50 +46,103 @@ export class CoreTester {
     return control;
   };
 
-  private calcCalcItem = (factor: CalcFactor) => {
+  getAttributeLocator = (attribute: string) => {
+    const cell = this.attributeTable.getByRole("row", { name: attribute }).getByRole("cell").nth(1);
+
+    if (["HP", "ATK", "DEF"].includes(attribute)) {
+      return cell.getByRole("paragraph").first();
+    }
+    return cell;
+  };
+
+  async getAttributeValue(attribute: string): Promise<number>;
+  async getAttributeValue(locator: Locator): Promise<number>;
+  async getAttributeValue(arg: string | Locator): Promise<number> {
+    const locator = typeof arg === "string" ? this.getAttributeLocator(arg) : arg;
+    return +(await locator.innerText()).replace(/%/g, "");
+  }
+
+  getResultLocator = (sectionLabel: SectionLabel, rowLabel: string) => {
+    const cells = this.page
+      .getByRole("table", { name: sectionLabel })
+      .getByRole("row", { name: rowLabel })
+      .getByRole("cell");
+
+    return {
+      baseLct: cells.nth(1),
+      critLct: cells.nth(2),
+      avgLct: cells.nth(3),
+    };
+  };
+
+  getResultValue = async (cellLct: Locator) => {
+    return +(await cellLct.innerText());
+  };
+
+  getResultValues = async (cellLct: Locator) => {
+    const text = await cellLct.innerText();
+    return text.split(" + ").map((n) => +n);
+  };
+
+  calculate = (factor: CalcFactor) => {
     const base =
-      (factor.root * factor.mult + factor.flat) * factor.pct * factor.specMult * factor.defMult * factor.resMult;
+      (factor.root * (factor.mult / 100) + factor.flat) *
+      (factor.pct / 100) *
+      factor.specMult *
+      factor.defMult *
+      factor.resMult;
     const cDmg = factor.cDmg / 100;
     const cRate = factor.cRate / 100;
 
     return {
       base,
       crit: base * (1 + cDmg),
-      avr: base * (1 + cDmg * cRate),
+      avg: base * (1 + cDmg * cRate),
     };
   };
 
-  checkAttribute = async (attribute: AttributeStat, value: number) => {
-    const table = this.page.getByRole("table", { name: "attribute-table" });
+  calcAttPatt = async (config: CalcAttPattConfig) => {
+    const {
+      mult,
+      flat = 0,
+      pct = 100,
+      specMult = 1,
+      defMult = 0.653,
+      resMult = 0.9,
+      cRate = await this.getAttributeValue("CRIT Rate"),
+      cDmg = await this.getAttributeValue("CRIT DMG"),
+    } = config;
+    const root = await this.getAttributeValue(config.baseOn);
 
-    async function checkRow(rowLabel: string) {
-      return await expect(table.getByRole("row", { name: rowLabel }).getByRole("cell").nth(1)).toHaveText(`${value}`);
-    }
-
-    switch (attribute) {
-      case "em":
-        await checkRow("Elemental Mastery");
-        break;
-    }
+    return this.calculate({
+      root,
+      mult,
+      flat,
+      pct,
+      specMult,
+      defMult,
+      resMult,
+      cRate,
+      cDmg,
+    });
   };
 
-  checkCalcItemAfterModified = async (
-    section: SectionLabel,
-    row: string,
-    modify: () => Promise<Locator>,
-    // changes: Partial<CalcFactor>
+  checkEqual = (value1: number, value2: number) => {
+    expect(value1).not.toBeNaN();
+    expect(value2).not.toBeNaN();
+    expect(Math.abs(value1 - value2)).toBeLessThan(value1 / 1000);
+  };
+
+  checkAttPattResult = async (
+    locator: ReturnType<typeof this.getResultLocator>,
+    expected: ReturnType<typeof this.calculate>
   ) => {
-    const cell = this.getResultCell(section, row);
+    const base = await this.getResultValue(locator.baseLct);
+    const crit = await this.getResultValue(locator.critLct);
+    const avg = await this.getResultValue(locator.avgLct);
 
-    let valueBefore = +(await cell.innerText());
-    expect(valueBefore).not.toBeNaN();
-
-    const control = await modify();
-    const valueAfter = +(await cell.innerText());
-
-    expect(valueAfter).not.toBeNaN();
-    expect(valueAfter - valueBefore).toBeLessThan(valueBefore * 0.01);
-
-    return control;
+    this.checkEqual(base, expected.base);
+    this.checkEqual(crit, expected.crit);
+    this.checkEqual(avg, expected.avg);
   };
 }
