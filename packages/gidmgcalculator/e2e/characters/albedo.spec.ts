@@ -1,12 +1,21 @@
-import { test, expect } from "@playwright/test";
-import { startSessionWithCharacter } from "../utils/start-session";
+import { test } from "@playwright/test";
+import { CharacterTester } from "../testers/character-tester";
 
 test("has working buffs", async ({ page }) => {
-  await startSessionWithCharacter(page, "Albedo", "90/90");
+  const tester = new CharacterTester(page);
 
-  await page.getByTitle("Self buffs").click();
+  await tester.selectCharacter("Albedo", "90/90");
 
-  const checkbox = page.getByRole("checkbox", { name: "Ascension 1" });
+  // A1
+  tester.checkResultAfterModifier(
+    {
+      section: "Elemental Skill",
+      row: "Transient Blossom",
+    },
+    () => tester.activateSelfBuff("Ascension 1")
+  );
 
-  await expect(checkbox).toBeVisible();
+  // A4
+  await tester.activateSelfBuff("Ascension 4");
+  await tester.checkAttribute("em", 125);
 });
