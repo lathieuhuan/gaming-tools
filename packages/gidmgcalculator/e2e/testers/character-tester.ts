@@ -12,8 +12,4 @@ export class CharacterTester extends CoreTester {
     await startSessionWithCharacter(this.page, name, level, constellation);
     this.getAttributeTableLocator();
   };
-
-  activateSelfBuff = async (name: string) => {
-    return await this.activateBuff("Self buffs", name);
-  };
 }

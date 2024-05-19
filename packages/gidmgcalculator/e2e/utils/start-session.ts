@@ -1,4 +1,5 @@
-import { Page, expect } from "@playwright/test";
+import { Page } from "@playwright/test";
+import { selectOption } from "./select-option";
 
 export async function gotoPageAndSkipIntro(page: Page) {
   await page.setViewportSize({
@@ -16,20 +17,15 @@ export async function startSessionWithCharacter(page: Page, name: string, level?
 
   await page.getByTitle(name).click();
 
-  await expect(page.getByRole("heading", { name })).toBeVisible();
-
   if (level) {
     await page.locator("#calculator_character-level").click();
 
-    await page.getByRole("listbox").getByRole("option", { name: level }).click();
+    await selectOption(page, level);
   }
 
   if (constellation) {
     await page.locator("#calculator_character-constellation").click();
 
-    await page
-      .getByRole("listbox")
-      .getByRole("option", { name: `C${constellation}` })
-      .click();
+    await selectOption(page, `C${constellation}`);
   }
 }

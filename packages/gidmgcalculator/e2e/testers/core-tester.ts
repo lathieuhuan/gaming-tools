@@ -1,4 +1,5 @@
 import { Locator, Page, expect } from "@playwright/test";
+import { selectOption } from "../utils/select-option";
 
 type BuffGroup = "Self buffs";
 
@@ -21,6 +22,8 @@ type CalcAttPattConfig = Pick<CalcFactor, "mult"> &
     baseOn: "HP" | "ATK" | "DEF" | "Elemental Mastery";
   };
 
+type InputType = "select";
+
 export class CoreTester {
   protected page: Page;
   attributeTable: Locator;
@@ -33,7 +36,7 @@ export class CoreTester {
     this.attributeTable = this.page.getByRole("table", { name: "attribute-table" });
   };
 
-  protected activateBuff = async (group: BuffGroup, name: string) => {
+  activateBuff = async (group: BuffGroup, name: string) => {
     const collapseTrigger = this.page.getByTitle(group);
     const isExpanded = await collapseTrigger.getAttribute("aria-expanded");
 
@@ -41,9 +44,20 @@ export class CoreTester {
       await collapseTrigger.click();
     }
 
-    const control = this.page.getByRole("checkbox", { name });
+    const control = this.page.getByLabel(`${group} / ${name}`).getByRole("checkbox", { name });
     await control.check();
     return control;
+  };
+
+  changeModInput = async (modifierLabel: string, inputLabel: string, inputType: InputType, value: string) => {
+    const inputCtrl = this.page.getByLabel(modifierLabel).getByLabel(inputLabel);
+
+    switch (inputType) {
+      case "select":
+        await inputCtrl.getByRole("combobox").click();
+        await selectOption(this.page, value);
+        break;
+    }
   };
 
   getAttributeLocator = (attribute: string) => {
@@ -130,7 +144,7 @@ export class CoreTester {
   checkEqual = (value1: number, value2: number) => {
     expect(value1).not.toBeNaN();
     expect(value2).not.toBeNaN();
-    expect(Math.abs(value1 - value2)).toBeLessThan(value1 / 1000);
+    expect(Math.abs(value1 - value2)).toBeLessThan(1);
   };
 
   checkAttPattResult = async (
