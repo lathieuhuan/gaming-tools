@@ -1,13 +1,20 @@
 import { Locator, Page, expect } from "@playwright/test";
 import { selectOption } from "../utils/select-option";
+import { toArray } from "../utils/to-array";
 
 type BuffGroup = "Self buffs";
 
 type SectionLabel = "Normal Attacks" | "Elemental Skill" | "Elemental Burst";
 
-export type CalcFactor = {
+type InputType = "select";
+
+type CalcFactorBase = {
   root: number;
   mult: number;
+};
+
+type CalcFactor = {
+  bases: CalcFactorBase | CalcFactorBase[];
   flat: number;
   pct: number;
   specMult: number;
@@ -17,12 +24,28 @@ export type CalcFactor = {
   cDmg: number;
 };
 
-type CalcAttPattConfig = Pick<CalcFactor, "mult"> &
-  Partial<Pick<CalcFactor, "flat" | "pct" | "specMult" | "defMult" | "resMult" | "cRate" | "cDmg">> & {
-    baseOn: "HP" | "ATK" | "DEF" | "Elemental Mastery";
-  };
+type CalcAttPattConfigBase = {
+  baseOn: "HP" | "ATK" | "DEF" | "Elemental Mastery";
+  mult: number;
+};
 
-type InputType = "select";
+type CalcAttPattConfig = Partial<
+  Pick<CalcFactor, "flat" | "pct" | "specMult" | "defMult" | "resMult" | "cRate" | "cDmg">
+> & {
+  bases: CalcAttPattConfigBase | CalcAttPattConfigBase[];
+};
+
+type ResultConfig = {
+  section: SectionLabel;
+  row: string;
+  calc: CalcAttPattConfig;
+};
+
+type StepConfig = {
+  change: () => Promise<any>;
+  commonCalcChange?: Partial<CalcAttPattConfig>;
+  calcChanges?: Array<Partial<CalcAttPattConfig> | null>;
+};
 
 export class CoreTester {
   protected page: Page;
@@ -36,7 +59,7 @@ export class CoreTester {
     this.attributeTable = this.page.getByRole("table", { name: "attribute-table" });
   };
 
-  activateBuff = async (group: BuffGroup, name: string) => {
+  public activateBuff = async (group: BuffGroup, name: string) => {
     const collapseTrigger = this.page.getByTitle(group);
     const isExpanded = await collapseTrigger.getAttribute("aria-expanded");
 
@@ -49,7 +72,7 @@ export class CoreTester {
     return control;
   };
 
-  changeModInput = async (modifierLabel: string, inputLabel: string, inputType: InputType, value: string) => {
+  public changeModInput = async (modifierLabel: string, inputLabel: string, inputType: InputType, value: string) => {
     const inputCtrl = this.page.getByLabel(modifierLabel).getByLabel(inputLabel);
 
     switch (inputType) {
@@ -60,7 +83,7 @@ export class CoreTester {
     }
   };
 
-  getAttributeLocator = (attribute: string) => {
+  private getAttributeLocator = (attribute: string) => {
     const cell = this.attributeTable.getByRole("row", { name: attribute }).getByRole("cell").nth(1);
 
     if (["HP", "ATK", "DEF"].includes(attribute)) {
@@ -69,14 +92,14 @@ export class CoreTester {
     return cell;
   };
 
-  async getAttributeValue(attribute: string): Promise<number>;
-  async getAttributeValue(locator: Locator): Promise<number>;
-  async getAttributeValue(arg: string | Locator): Promise<number> {
+  public async getAttributeValue(attribute: string): Promise<number>;
+  public async getAttributeValue(locator: Locator): Promise<number>;
+  public async getAttributeValue(arg: string | Locator): Promise<number> {
     const locator = typeof arg === "string" ? this.getAttributeLocator(arg) : arg;
     return +(await locator.innerText()).replace(/%/g, "");
   }
 
-  getResultLocator = (sectionLabel: SectionLabel, rowLabel: string) => {
+  private getResultLocator = (sectionLabel: SectionLabel, rowLabel: string) => {
     const cells = this.page
       .getByRole("table", { name: sectionLabel })
       .getByRole("row", { name: rowLabel })
@@ -89,35 +112,30 @@ export class CoreTester {
     };
   };
 
-  getResultValue = async (cellLct: Locator) => {
+  private getResultValue = async (cellLct: Locator) => {
     return +(await cellLct.innerText());
   };
 
-  getResultValues = async (cellLct: Locator) => {
+  private getResultValues = async (cellLct: Locator) => {
     const text = await cellLct.innerText();
     return text.split(" + ").map((n) => +n);
   };
 
-  calculate = (factor: CalcFactor) => {
-    const base =
-      (factor.root * (factor.mult / 100) + factor.flat) *
-      (factor.pct / 100) *
-      factor.specMult *
-      factor.defMult *
-      factor.resMult;
+  private calculate = (factor: CalcFactor) => {
+    const totalBase = toArray(factor.bases).reduce((total, base) => total + base.root * (base.mult / 100), 0);
+    const nonCrit = (totalBase + factor.flat) * (factor.pct / 100) * factor.specMult * factor.defMult * factor.resMult;
     const cDmg = factor.cDmg / 100;
     const cRate = factor.cRate / 100;
 
     return {
-      base,
-      crit: base * (1 + cDmg),
-      avg: base * (1 + cDmg * cRate),
+      base: nonCrit,
+      crit: nonCrit * (1 + cDmg),
+      avg: nonCrit * (1 + cDmg * cRate),
     };
   };
 
-  calcAttPatt = async (config: CalcAttPattConfig) => {
+  private calcAttPatt = async (config: CalcAttPattConfig) => {
     const {
-      mult,
       flat = 0,
       pct = 100,
       specMult = 1,
@@ -126,11 +144,17 @@ export class CoreTester {
       cRate = await this.getAttributeValue("CRIT Rate"),
       cDmg = await this.getAttributeValue("CRIT DMG"),
     } = config;
-    const root = await this.getAttributeValue(config.baseOn);
+    const bases: CalcFactorBase[] = [];
+
+    for (const base of toArray(config.bases)) {
+      bases.push({
+        root: await this.getAttributeValue(base.baseOn),
+        mult: base.mult,
+      });
+    }
 
     return this.calculate({
-      root,
-      mult,
+      bases,
       flat,
       pct,
       specMult,
@@ -141,13 +165,13 @@ export class CoreTester {
     });
   };
 
-  checkEqual = (value1: number, value2: number) => {
+  private checkEqual = (value1: number, value2: number) => {
     expect(value1).not.toBeNaN();
     expect(value2).not.toBeNaN();
     expect(Math.abs(value1 - value2)).toBeLessThan(1);
   };
 
-  checkAttPattResult = async (
+  private checkAttPattResult = async (
     locator: ReturnType<typeof this.getResultLocator>,
     expected: ReturnType<typeof this.calculate>
   ) => {
@@ -158,5 +182,36 @@ export class CoreTester {
     this.checkEqual(base, expected.base);
     this.checkEqual(crit, expected.crit);
     this.checkEqual(avg, expected.avg);
+  };
+
+  public testChanges = async (resultConfigs: ResultConfig[], stepConfigs: StepConfig[]) => {
+    for (const resultConfig of resultConfigs) {
+      const resultLct = this.getResultLocator(resultConfig.section, resultConfig.row);
+      const expected = await this.calcAttPatt(resultConfig.calc);
+
+      await this.checkAttPattResult(resultLct, expected);
+    }
+
+    for (const stepConfig of stepConfigs) {
+      await stepConfig.change?.();
+
+      for (let i = 0; i < resultConfigs.length; i++) {
+        const resultConfig = resultConfigs[i];
+        const calcChange = stepConfig.calcChanges?.[i];
+
+        if (stepConfig.commonCalcChange || calcChange) {
+          const calc = {
+            ...resultConfig.calc,
+            ...stepConfig.commonCalcChange,
+            ...calcChange,
+          };
+
+          const resultLct = this.getResultLocator(resultConfig.section, resultConfig.row);
+          const expected = await this.calcAttPatt(calc);
+
+          await this.checkAttPattResult(resultLct, expected);
+        }
+      }
+    }
   };
 }

@@ -14,24 +14,26 @@ test("modifiers", async ({ page }) => {
 });
 
 async function testA1(tester: CharacterTester) {
-  const resultLct = tester.getResultLocator("Elemental Skill", "Transient Blossom");
-  const expectedBefore = await tester.calcAttPatt({
-    baseOn: "DEF",
-    mult: 167,
-    pct: 128.8,
-  });
-
-  await tester.checkAttPattResult(resultLct, expectedBefore);
-
-  await tester.activateBuff("Self buffs", "Ascension 1");
-
-  const expectedAfter = await tester.calcAttPatt({
-    baseOn: "DEF",
-    mult: 167,
-    pct: 128.8 + 25,
-  });
-
-  await tester.checkAttPattResult(resultLct, expectedAfter);
+  await tester.testChanges(
+    [
+      {
+        section: "Elemental Skill",
+        row: "Transient Blossom",
+        calc: {
+          bases: { baseOn: "DEF", mult: 167 },
+          pct: 128.8,
+        },
+      },
+    ],
+    [
+      {
+        change: () => tester.activateBuff("Self buffs", "Ascension 1"),
+        commonCalcChange: {
+          pct: 128.8 + 25,
+        },
+      },
+    ]
+  );
 }
 
 async function testA4(tester: CharacterTester) {
@@ -41,57 +43,76 @@ async function testA4(tester: CharacterTester) {
 }
 
 async function testC2(tester: CharacterTester) {
-  // #to-do: also test Fatal Blossom DMG
-  const resultLct = tester.getResultLocator("Elemental Burst", "Burst DMG");
-  const expectedBefore = await tester.calcAttPatt({
-    baseOn: "ATK",
-    mult: 459,
-    pct: 128.8,
-  });
-
-  await tester.checkAttPattResult(resultLct, expectedBefore);
-
-  await tester.activateBuff("Self buffs", "Constellation 2");
-
   const def = await tester.getAttributeValue("DEF");
 
-  const expectedAfter = await tester.calcAttPatt({
-    baseOn: "ATK",
-    mult: 459,
-    pct: 128.8,
-    flat: def * 0.3,
-  });
-
-  await tester.checkAttPattResult(resultLct, expectedAfter);
-
-  await tester.changeModInput("Self buffs / Constellation 2", "Stacks", "select", "4");
-
-  const newExpectedAfter = await tester.calcAttPatt({
-    baseOn: "ATK",
-    mult: 459,
-    pct: 128.8,
-    flat: def * 1.2,
-  });
-
-  await tester.checkAttPattResult(resultLct, newExpectedAfter);
+  await tester.testChanges(
+    [
+      {
+        section: "Elemental Burst",
+        row: "Burst DMG",
+        calc: {
+          bases: { baseOn: "ATK", mult: 459 },
+          pct: 128.8,
+        },
+      },
+      {
+        section: "Elemental Burst",
+        row: "Fatal Blossom DMG",
+        calc: {
+          bases: { baseOn: "ATK", mult: 90.0 },
+          pct: 128.8,
+        },
+      },
+    ],
+    [
+      {
+        change: () => tester.activateBuff("Self buffs", "Constellation 2"),
+        commonCalcChange: {
+          flat: def * 0.3,
+        },
+      },
+      {
+        change: () => tester.changeModInput("Self buffs / Constellation 2", "Stacks", "select", "4"),
+        commonCalcChange: {
+          flat: def * 1.2,
+        },
+      },
+    ]
+  );
 }
 
 async function testC4(tester: CharacterTester) {
-  const resultLct = tester.getResultLocator("Normal Attacks", "Plunge DMG");
-  const expectedBefore = await tester.calcAttPatt({
-    baseOn: "ATK",
-    mult: 63.93,
-  });
-
-  await tester.checkAttPattResult(resultLct, expectedBefore);
-
-  await tester.activateBuff("Self buffs", "Constellation 4");
-
-  const expectedAfter = await tester.calcAttPatt({
-    baseOn: "ATK",
-    mult: 63.93,
-    pct: 130,
-  });
-
-  await tester.checkAttPattResult(resultLct, expectedAfter);
+  await tester.testChanges(
+    [
+      {
+        section: "Normal Attacks",
+        row: "Plunge DMG",
+        calc: {
+          bases: { baseOn: "ATK", mult: 63.93 },
+        },
+      },
+      {
+        section: "Normal Attacks",
+        row: "Low Plunge",
+        calc: {
+          bases: { baseOn: "ATK", mult: 127.84 },
+        },
+      },
+      {
+        section: "Normal Attacks",
+        row: "High Plunge",
+        calc: {
+          bases: { baseOn: "ATK", mult: 159.68 },
+        },
+      },
+    ],
+    [
+      {
+        change: () => tester.activateBuff("Self buffs", "Constellation 4"),
+        commonCalcChange: {
+          pct: 130,
+        },
+      },
+    ]
+  );
 }
