@@ -44,12 +44,9 @@ export function CharacterIntro(props: CharacterIntroProps) {
         </div>
 
         <div className="mt-1 pl-1 flex justify-between items-center">
-          <div className="flex items-center text-lg">
-            <label className="mr-1" htmlFor="calculator_character-level">
-              Level
-            </label>
+          <div className="flex items-center text-lg" aria-label="calculator_character-level">
+            <label className="mr-1">Level</label>
             <VersatileSelect
-              id="calculator_character-level"
               title="Select Level"
               align="right"
               transparent
@@ -67,7 +64,6 @@ export function CharacterIntro(props: CharacterIntroProps) {
           </div>
 
           <VersatileSelect
-            id="calculator_character-constellation"
             title="Select Constellation Level"
             className={`ml-auto w-14 text-lg ${elmtText} font-bold bg-surface-2`}
             align="right"
