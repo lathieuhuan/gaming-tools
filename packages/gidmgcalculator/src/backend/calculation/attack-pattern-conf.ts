@@ -66,8 +66,9 @@ export default function AttackPatternConf({
 
     const configCalcItem = (item: CalcItem) => {
       const { type = "attack" } = item;
-      let reaction = elmtModCtrls.reaction;
+      const attPatt = item.attPatt ?? normalsConfig[patternKey]?.attPatt ?? defaultAttPatt;
       let attElmt: AttackElement;
+      let reaction = elmtModCtrls.reaction;
 
       if (item.attElmt) {
         if (item.attElmt === "absorb") {
@@ -80,29 +81,31 @@ export default function AttackPatternConf({
         attElmt = appChar.vision;
       } else if (resultKey === "NAs" && customInfusion.element !== "phys") {
         attElmt = customInfusion.element;
-        reaction = elmtModCtrls.infuse_reaction;
+        /**
+         * when the customInfusion.element is the same as appChar.vision (e.g. Pyro)
+         * elmtModCtrls.infuse_reaction will be null, because the reaction of NAs will be the same as ES and EB,
+         * so we use elmtModCtrls.reaction instead
+         */
+        reaction = elmtModCtrls.infuse_reaction ?? elmtModCtrls.reaction;
       } else {
-        attElmt = "phys";
+        attElmt = normalsConfig[patternKey]?.attElmt ?? "phys";
       }
 
-      const finalAttPatt = normalsConfig[patternKey]?.attPatt ?? item.attPatt ?? defaultAttPatt;
-      const finalAttElmt = normalsConfig[patternKey]?.attElmt ?? attElmt;
-
       const getTotalBonus = (key: AttackBonusKey) => {
-        const attPatt = finalAttPatt === "none" ? undefined : finalAttPatt;
+        const finalAttPatt = attPatt === "none" ? undefined : attPatt;
 
         if (type === "attack") {
-          const mixedType = attPatt ? (`${attPatt}.${finalAttElmt}` as const) : undefined;
-          return attBonus.get(key, attPatt, finalAttElmt, mixedType, item.id);
+          const mixedType = finalAttPatt ? (`${finalAttPatt}.${attElmt}` as const) : undefined;
+          return attBonus.get(key, finalAttPatt, attElmt, mixedType, item.id);
         }
-        return attBonus.get(key, attPatt, item.id);
+        return attBonus.get(key, finalAttPatt, item.id);
       };
 
       let rxnMult = 1;
 
-      // deal elemental dmg and want amplify reaction
-      if (finalAttElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
-        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, finalAttElmt, attBonus.get("pct_", reaction));
+      // deal elemental dmg and want amplifying reaction
+      if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
+        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, attBonus.get("pct_", reaction));
       }
 
       const record = TrackerControl.initCalcItemRecord({
@@ -135,8 +138,8 @@ export default function AttackPatternConf({
 
       return {
         type,
-        attPatt: finalAttPatt,
-        attElmt: finalAttElmt,
+        attPatt,
+        attElmt,
         rxnMult,
         extraMult: getTotalBonus("mult_"),
         record,
