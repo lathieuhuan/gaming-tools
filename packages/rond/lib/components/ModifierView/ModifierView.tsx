@@ -32,7 +32,7 @@ export type ModifierViewInputConfig =
   | ModifierViewInputCheckConfig
   | ModifierViewInputSelectConfig;
 
-export interface ModifierViewProps extends Pick<React.AriaAttributes, "aria-label"> {
+export interface ModifierViewProps {
   mutable?: boolean;
   checked?: boolean;
   heading: React.ReactNode;
@@ -55,7 +55,6 @@ export const ModifierView = ({
   onChangeText,
   onToggleCheck,
   onSelectOption,
-  ...rest
 }: ModifierViewProps) => {
   //
   const renderInput = (index: number) => {
@@ -106,7 +105,7 @@ export const ModifierView = ({
   };
 
   return (
-    <div className="ron-modifier-view" {...rest}>
+    <div className="ron-modifier-view">
       <div className="ron-mod-heading">
         {mutable ? (
           <Checkbox checked={checked} onChange={onToggle}>

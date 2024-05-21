@@ -16,7 +16,7 @@ export type SelectAction = Pick<ButtonProps, "variant" | "icon" | "disabled"> & 
 };
 
 export interface SelectCoreProps
-  extends Pick<RcProps, "open" | "disabled" | "placeholder" | "showSearch" | "getPopupContainer"> {
+  extends Pick<RcProps, "id" | "open" | "disabled" | "placeholder" | "showSearch" | "getPopupContainer"> {
   className?: ClassValue;
   dropdownCls?: ClassValue;
   style?: React.CSSProperties;
@@ -34,7 +34,7 @@ export interface SelectCoreProps
   onChange?: (value: SelectValueType) => void;
 }
 
-export interface SelectProps extends SelectCoreProps, Pick<RcProps, "id" | "title"> {
+export interface SelectProps extends SelectCoreProps, Pick<RcProps, "title"> {
   /** Only when select has action */
   wrapperCls?: string;
   /** Only when select has action */

@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import gotoPageAndSkipIntro from "./utils/go-to-page-and-skip-intro";
 import selectCharacter from "./utils/select-character";
-import { selectOption } from "./utils/select-option";
+import selectOption  from "./utils/select-option";
 
 test.beforeEach(async ({ page }) => {
   await gotoPageAndSkipIntro(page);
@@ -24,5 +24,5 @@ test("it should let me change character's level", async ({ page }) => {
 
   await selectOption(page, "90/90");
 
-  await expect(characterLevel.locator(".ron-select-selection-item")).toHaveText("90/90");
+  await expect(characterLevel.getByText("90/90").and(page.getByTitle("90/90"))).toBeVisible();
 });

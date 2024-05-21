@@ -16,10 +16,7 @@ interface SelfModsViewProps {
   getHanlders?: (args: GetModifierHanldersArgs) => ModifierHanlders;
 }
 
-interface GetSelfModifierElmtsProps extends SelfModsViewProps {
-  groupLabel?: string;
-}
-function getSelfModifierElmts(props: GetSelfModifierElmtsProps, modifiers: Array<CharacterBuff | CharacterDebuff>) {
+function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Array<CharacterBuff | CharacterDebuff>) {
   return props.modCtrls.map((ctrl, ctrlIndex, ctrls) => {
     const modifier = findByIndex(modifiers, ctrl.index);
 
@@ -30,7 +27,6 @@ function getSelfModifierElmts(props: GetSelfModifierElmtsProps, modifiers: Array
         <GenshinModifierView
           key={ctrl.index}
           mutable={props.mutable}
-          aria-label={`Self buffs / ${modifier.src}`}
           heading={modifier.src}
           description={parseAbilityDescription(modifier, props, inputs, true)}
           checked={ctrl.activated}
