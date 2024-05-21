@@ -35,24 +35,33 @@ export function Modifiers() {
           key="buff"
           className={!activeIndex && "hidden"}
           items={[
-            { heading: "Resonance & Reactions", body: <ElementBuffs /> },
             {
+              title: "Resonance & Reactions buffs",
+              heading: "Resonance & Reactions",
+              body: <ElementBuffs />,
+            },
+            {
+              title: "Self buffs",
               heading: "Self",
               body: <SelfBuffs partyData={partyData} />,
             },
             {
+              title: "Party buffs",
               heading: "Party",
               body: <PartyBuffs party={party} partyData={partyData} />,
             },
             {
+              title: "Weapons buffs",
               heading: "Weapons",
               body: <WeaponBuffs party={party} />,
             },
             {
+              title: "Artifacts buffs",
               heading: "Artifacts",
               body: <ArtifactBuffs />,
             },
             {
+              title: "Custom buffs",
               heading: "Custom",
               body: <CustomModifiers isBuffs />,
             },
@@ -63,20 +72,28 @@ export function Modifiers() {
           key="debuff"
           className={activeIndex && "hidden"}
           items={[
-            { heading: "Resonance & Reactions", body: <ElementDebuffs /> },
             {
+              title: "Resonance & Reactions debuffs",
+              heading: "Resonance & Reactions",
+              body: <ElementDebuffs />,
+            },
+            {
+              title: "Self debuffs",
               heading: "Self",
               body: <SelfDebuffs partyData={partyData} />,
             },
             {
+              title: "Party debuffs",
               heading: "Party",
               body: <PartyDebuffs party={party} partyData={partyData} />,
             },
             {
+              title: "Artifacts debuffs",
               heading: "Artifacts",
               body: <ArtifactDebuffs party={party} />,
             },
             {
+              title: "Custom debuffs",
               heading: "Custom",
               body: <CustomModifiers isBuffs={false} />,
             },

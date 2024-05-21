@@ -16,7 +16,7 @@ export type SelectAction = Pick<ButtonProps, "variant" | "icon" | "disabled"> & 
 };
 
 export interface SelectCoreProps
-  extends Pick<RcProps, "open" | "disabled" | "placeholder" | "showSearch" | "getPopupContainer"> {
+  extends Pick<RcProps, "id" | "open" | "disabled" | "placeholder" | "showSearch" | "getPopupContainer"> {
   className?: ClassValue;
   dropdownCls?: ClassValue;
   style?: React.CSSProperties;

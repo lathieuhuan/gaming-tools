@@ -105,6 +105,7 @@ export function FinalResultLayout({
         const isLvling = sectionIndex === lvlingSectionI;
         const talentType = !isReactionDmg && mainKey !== "WP_CALC" ? mainKey : undefined;
         const talentLevel = talentType ? getTalentLevel?.(talentType) : 0;
+        const sectionLabel = tableKey.main === "WP_CALC" ? "Weapon" : t(tableKey.main);
 
         return (
           <div key={tableKey.main}>
@@ -120,7 +121,7 @@ export function FinalResultLayout({
                       "text-base duration-150 ease-linear" + (closedSections[sectionIndex] ? "" : " rotate-90")
                     }
                   />
-                  <span>{tableKey.main === "WP_CALC" ? "Weapon" : t(tableKey.main)}</span>
+                  <span>{sectionLabel}</span>
                 </div>
 
                 {talentLevel ? (
@@ -163,6 +164,7 @@ export function FinalResultLayout({
                     talentType={talentType}
                     getRowTitle={(subKey) => (isReactionDmg ? t(subKey) : subKey)}
                     {...sectionProps}
+                    label={sectionLabel}
                   />
                 </div>
               )}
@@ -177,6 +179,7 @@ export function FinalResultLayout({
 interface SectionTableProps extends Pick<FinalResultLayoutProps, "getRowConfig" | "headerConfigs"> {
   tableKey: TableKey;
   talentType?: TalentType;
+  label?: string;
   getRowTitle: (key: string) => string;
 }
 function SectionTable(props: SectionTableProps) {
@@ -189,6 +192,7 @@ function SectionTable(props: SectionTableProps) {
           style: { width: "8.5rem", minWidth: "6rem" },
         },
       ]}
+      aria-label={props.label}
     >
       <Table.Tr>
         <Table.Th className="sticky left-0 z-10" style={{ background: "inherit" }} />
@@ -204,15 +208,16 @@ function SectionTable(props: SectionTableProps) {
 
       {props.tableKey.subs.map((subKey) => {
         const config = props.getRowConfig(props.tableKey.main, subKey);
+        const label = props.getRowTitle(subKey);
 
         return (
-          <Table.Tr key={subKey}>
+          <Table.Tr key={subKey} aria-label={label}>
             <Table.Td
               title={config.title}
               className={clsx("sticky left-0 z-10", config.className)}
               style={{ background: "inherit" }}
             >
-              {props.getRowTitle(subKey)}
+              {label}
             </Table.Td>
 
             {config.cells.map((cell, cellIndex) => {

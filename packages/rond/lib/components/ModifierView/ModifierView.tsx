@@ -129,7 +129,7 @@ export const ModifierView = ({
           )}
         >
           {inputConfigs.map((config, i) => (
-            <div key={i} className="ron-mod-input__item">
+            <div key={i} className="ron-mod-input__item" aria-label={config.label}>
               <span className="ron-mod-input__item-label">{config.label}</span>
 
               {renderInput(i)}

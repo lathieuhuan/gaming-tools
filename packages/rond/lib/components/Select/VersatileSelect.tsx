@@ -67,6 +67,7 @@ export function MobileSelect(props: VersatileSelectProps) {
   const renderSelect = (localCls?: ClassValue) => {
     return (
       <div
+        id={props.id}
         className={clsx(
           `ron-select ron-select--${size} ron-select--${align} ron-select--arrow-${arrowAt} ron-select ron-select-single ron-select-show-arrow`,
           props.transparent && "ron-select--transparent",
