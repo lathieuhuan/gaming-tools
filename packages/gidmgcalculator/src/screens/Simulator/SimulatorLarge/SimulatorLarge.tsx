@@ -1,26 +1,10 @@
-import { Level, TotalAttribute, getCalculationStats } from "@Backend";
+import { TotalAttribute, getCalculationStats } from "@Backend";
 import { useStore } from "@Src/features";
 import { $AppCharacter, $AppWeapon } from "@Src/services";
-import { CalcArtifact, CalcSetup, CalcWeapon } from "@Src/types";
+import { CalcSetup, Simulation } from "@Src/types";
 import { useMemo, useState } from "react";
 import { Button, Modal } from "rond";
 import { CharacterDetail } from "../simulator-sections";
-
-type Simulation = {
-  name: string;
-  id: number;
-  actions: unknown[];
-  members: Array<{
-    name: string;
-    level: Level;
-    cons: number;
-    NAs: number;
-    ES: number;
-    EB: number;
-    weapon: CalcWeapon;
-    artifacts: Array<CalcArtifact | null>;
-  }>;
-};
 
 export function SimulatorLarge() {
   const [on, setOn] = useState(false);
@@ -63,7 +47,7 @@ export function SimulatorLarge() {
         Simulation: {simulation?.name} ({simulation?.id})
       </p>
 
-      {detail ? <CharacterDetail totalAttr={detail} /> : null}
+      <div className="w-76">{detail ? <CharacterDetail totalAttr={detail} /> : null}</div>
 
       <Modal.Core active={on} preset="large" className="flex flex-col" onClose={() => setOn(false)}>
         <SelectSetup onSelect={onSelect} />
