@@ -1,17 +1,20 @@
 import type { AttackElement, AttackPattern, AttributeStat, ReactionType } from "@Src/backend/types";
-import type { BuffInfoWrap, GetCalculationStatsArgs, StackableCheckCondition } from "./getCalculationStats.types";
+import type { GetCalculationStatsArgs } from "./getCalculationStats.types";
 
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
 import { RESONANCE_STAT } from "../calculation.constants";
 
 import { $AppCharacter, $AppWeapon, $AppArtifact } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { EntityCalc, GeneralCalc, WeaponCalc } from "../utils";
-import { AttackBonusControl, TotalAttributeControl } from "../controls";
-import ApplierCharacterBuff from "./applier-character-buff";
-import ApplierWeaponBuff from "./applier-weapon-buff";
-import ApplierArtifactBuff from "./applier-artifact-buff";
-import { calcArtifactAtribute } from "./getCalculationStats.utils";
+import { GeneralCalc, WeaponCalc, EntityCalc } from "@Src/backend/utils";
+import { AttackBonusControl, TotalAttributeControl, calcArtifactAtribute } from "@Src/backend/controls";
+import {
+  ApplierCharacterBuff,
+  ApplierWeaponBuff,
+  ApplierArtifactBuff,
+  type BuffInfoWrap,
+  type StackableCheckCondition,
+} from "@Src/backend/appliers";
 
 export default function getCalculationStats({
   char,
@@ -35,8 +38,8 @@ export default function getCalculationStats({
   const totalAttr = new TotalAttributeControl(
     char,
     appChar,
-    WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale),
-    tracker
+    WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale)
+    // tracker
   );
   const artAttr = calcArtifactAtribute(artifacts, totalAttr);
   const attBonus = new AttackBonusControl();

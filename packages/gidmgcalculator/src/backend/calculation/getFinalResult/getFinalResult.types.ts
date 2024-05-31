@@ -1,7 +1,6 @@
 import type { CalcCharacter, CalcWeapon, PartyData } from "@Src/types";
-import type { AppCharacter, AppWeapon, ResistanceReduction } from "@Src/backend/types";
-import type { TotalAttribute } from "../calculation.types";
-import type { TrackerControl, AttackBonusControl } from "../controls";
+import type { AppCharacter, AppWeapon, ResistanceReduction, TotalAttribute } from "@Src/backend/types";
+import type { AttackBonusControl, TrackerControl } from "@Src/backend/controls";
 import type { ConfigAttackPattern } from "../attack-pattern-conf";
 import type { CalculateCalcItem } from "../calc-item-calculator";
 

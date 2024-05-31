@@ -1,39 +1,29 @@
 export { calculateSetup } from "./calculation/calculateSetup";
+export {} from "./calculation/controls";
 export { default as getCalculationStats } from "./calculation/getCalculationStats";
-export { getIntialBonusValue } from "./calculation/getCalculationStats/applier-character-buff";
-export { calcArtifactAtribute } from "./calculation/getCalculationStats/getCalculationStats.utils";
-export { TrackerControl, AttackBonusControl } from "./calculation/controls";
-export {
-  ArtifactCalc,
-  CharacterCalc,
-  EntityCalc,
-  GeneralCalc,
-  WeaponCalc,
-  type ArtifactSetBonus,
-} from "./calculation/utils";
+export { getIntialBonusValue } from "./appliers";
+export { AttackBonusControl, TrackerControl, calcArtifactAtribute } from "./controls";
+export { ArtifactCalc, CharacterCalc, EntityCalc, GeneralCalc, WeaponCalc, type ArtifactSetBonus } from "./utils";
 
 export * from "./constants";
 
-export type {
-  ArtifactAttribute,
-  CalculationAspect,
-  CalculationFinalResult,
-  CalculationFinalResultGroup,
-  TotalAttribute,
-} from "./calculation/calculation.types";
-export type { CalcItemRecord, CalcAtomicRecord, TrackerResult, AttackBonus } from "./calculation/controls";
+export type { AttackBonus, CalcAtomicRecord, CalcItemRecord, TrackerResult } from "./controls";
 export type {
   AmplifyingReaction,
   AppArtifact,
   AppCharacter,
   AppWeapon,
+  ArtifactAttribute,
   ArtifactModifierDescription,
   ArtifactType,
+  AttackBonusKey,
   AttackElement,
   AttackPattern,
   AttributeStat,
-  AttackBonusKey,
   CalcItem,
+  CalculationAspect,
+  CalculationFinalResult,
+  CalculationFinalResultGroup,
   CharacterBuff,
   CharacterDebuff,
   CoreStat,
@@ -49,6 +39,7 @@ export type {
   ResistanceReduction,
   ResistanceReductionKey,
   TalentType,
+  TotalAttribute,
   TransformativeReaction,
   WeaponBuff,
   WeaponType,

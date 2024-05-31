@@ -7,15 +7,15 @@ import type {
   CalcItemFlatFactor,
   CalcItemMultFactor,
   CharacterBuffNAsConfig,
-} from "../types";
-import type { CalcUltilInfo } from "./calculation.types";
-import { TrackerControl, type AttackBonusControl } from "./controls";
+  CalculationHelperInfo,
+} from "@Src/backend/types";
 
 import { findByIndex, toArray } from "@Src/utils";
-import { CharacterCalc, EntityCalc, GeneralCalc } from "./utils";
-import { NORMAL_ATTACKS } from "../constants";
+import { NORMAL_ATTACKS } from "@Src/backend/constants";
+import { CharacterCalc, EntityCalc, GeneralCalc } from "@Src/backend/utils";
+import { TrackerControl, type AttackBonusControl } from "@Src/backend/controls";
 
-type AttackPatternConfArgs = CalcUltilInfo & {
+type AttackPatternConfArgs = CalculationHelperInfo & {
   selfBuffCtrls: ModifierCtrl[];
   elmtModCtrls: ElementModCtrl;
   customInfusion: Infusion;

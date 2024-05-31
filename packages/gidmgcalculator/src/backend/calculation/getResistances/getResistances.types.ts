@@ -9,7 +9,7 @@ import type {
   Target,
 } from "@Src/types";
 import type { AppCharacter } from "@Src/backend/types";
-import type { ResistanceReductionControl, TrackerControl } from "../controls";
+import type { ResistanceReductionControl, TrackerControl } from "@Src/backend/controls";
 
 export type DebuffInfoWrap = {
   char: Character;

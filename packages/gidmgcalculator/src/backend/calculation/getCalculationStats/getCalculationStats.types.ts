@@ -10,20 +10,7 @@ import type {
   PartyData,
 } from "@Src/types";
 import type { AppCharacter, AppWeapon } from "@Src/backend/types";
-import type { TrackerControl, AttackBonusControl, TotalAttributeControl } from "../controls";
-
-export type BuffInfoWrap = {
-  char: CalcCharacter;
-  appChar: AppCharacter;
-  partyData: PartyData;
-  totalAttr: TotalAttributeControl;
-  attBonus: AttackBonusControl;
-};
-
-export type StackableCheckCondition = {
-  trackId?: string;
-  paths: string | string[];
-};
+import type { TrackerControl } from "@Src/backend/controls";
 
 export type GetCalculationStatsArgs = {
   char: CalcCharacter;

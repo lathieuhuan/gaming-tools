@@ -1,21 +1,21 @@
-import type { Character } from "@Src/types";
+import type { GetTotalAttributeType, TotalAttributeControl } from "@Src/backend/controls";
 import type {
+  ApplicableCondition,
+  CalculationHelperInfo,
+  ElementType,
   EntityBonusStack,
+  EntityBonusValueOption,
   EntityEffectExtraMax,
   EntityEffectMax,
-  ApplicableCondition,
-  ElementType,
-  InputCheck,
-  EntityBonusValueOption,
+  InputCheck
 } from "@Src/backend/types";
-import type { TotalAttributeControl, GetTotalAttributeType } from "../controls";
-import type { CalcUltilInfo } from "../calculation.types";
+import type { Character } from "@Src/types";
 
+import { GeneralCalc } from "@Src/backend/utils";
 import { toArray } from "@Src/utils";
-import { GeneralCalc } from "./general-calc";
 import { CharacterCalc } from "./character-calc";
 
-type GetStackValueInfo = CalcUltilInfo & {
+type GetStackValueInfo = CalculationHelperInfo & {
   totalAttr: TotalAttributeControl;
 };
 
@@ -30,7 +30,7 @@ export class EntityCalc {
 
   static isApplicableEffect(
     condition: ApplicableCondition,
-    info: CalcUltilInfo,
+    info: CalculationHelperInfo,
     inputs: number[],
     fromSelf = false
   ): boolean {
@@ -66,7 +66,7 @@ export class EntityCalc {
     return true;
   }
 
-  static getBonusValueOptionIndex(config: EntityBonusValueOption, info: CalcUltilInfo, inputs: number[]) {
+  static getBonusValueOptionIndex(config: EntityBonusValueOption, info: CalculationHelperInfo, inputs: number[]) {
     const { optIndex = 0 } = config;
     const indexConfig =
       typeof optIndex === "number"
@@ -104,7 +104,7 @@ export class EntityCalc {
 
   static getTotalExtraMax(
     extras: EntityEffectExtraMax | EntityEffectExtraMax[],
-    info: CalcUltilInfo,
+    info: CalculationHelperInfo,
     inputs: number[],
     fromSelf: boolean
   ) {
@@ -118,7 +118,7 @@ export class EntityCalc {
     return result;
   }
 
-  static getMax(max: EntityEffectMax, info: CalcUltilInfo, inputs: number[], fromSelf: boolean) {
+  static getMax(max: EntityEffectMax, info: CalculationHelperInfo, inputs: number[], fromSelf: boolean) {
     return typeof max === "number"
       ? max
       : max.value + (max.extras ? this.getTotalExtraMax(max.extras, info, inputs, fromSelf) : 0);
@@ -237,7 +237,7 @@ export class EntityCalc {
   }
 }
 
-function isUsableEffect(info: CalcUltilInfo, inputs: number[], checkInput?: number | InputCheck) {
+function isUsableEffect(info: CalculationHelperInfo, inputs: number[], checkInput?: number | InputCheck) {
   if (checkInput !== undefined) {
     const { value, source = 0, type = "equal" } = typeof checkInput === "number" ? { value: checkInput } : checkInput;
     let input = 0;

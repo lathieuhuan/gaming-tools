@@ -1,4 +1,4 @@
-import type { CalcArtifacts, PartyData } from "@Src/types";
+import type { Artifact, PartyData } from "@Src/types";
 import type {
   AmplifyingReaction,
   AppCharacter,
@@ -32,7 +32,7 @@ export class GeneralCalc {
     return maxLv === 20 ? 0 : maxLv / 10 - 3;
   };
 
-  static getArtifactSetBonuses(artifacts: CalcArtifacts = []): ArtifactSetBonus[] {
+  static getArtifactSetBonuses(artifacts: Array<Artifact | null> = []): ArtifactSetBonus[] {
     const sets = [];
     const count: Record<number, number> = {};
 

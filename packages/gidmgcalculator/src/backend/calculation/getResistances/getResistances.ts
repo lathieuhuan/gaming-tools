@@ -2,8 +2,8 @@ import type { DebuffInfoWrap, GetResistancesArgs } from "./getResistances.types"
 
 import { $AppArtifact, $AppCharacter } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { EntityCalc } from "../utils";
-import { ResistanceReductionControl } from "../controls";
+import { EntityCalc } from "@Src/backend/utils";
+import { ResistanceReductionControl } from "@Src/backend/controls";
 import { applyPenalty } from "./getResistances.utils";
 import ApplierCharacterDebuff from "./applier-character-debuff";
 
