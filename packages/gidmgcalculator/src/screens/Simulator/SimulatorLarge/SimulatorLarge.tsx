@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
 import { Button, Modal } from "rond";
+import type { CalcSetup } from "@Src/types";
 
 import { useStore } from "@Src/features";
-import { CalcSetup } from "@Src/types";
+import { $AppSettings } from "@Src/services";
 import { useDispatch } from "@Store/hooks";
 import { addSimulation } from "@Store/simulator-slice";
+import { Setup_ } from "@Src/utils";
 
 import { MemberDetail } from "../simulator-sections";
 
@@ -90,8 +92,6 @@ export function SimulatorLarge() {
   };
 
   const onSelect = (setup: CalcSetup) => {
-    console.log(setup);
-
     dispatch(
       addSimulation({
         members: [
@@ -103,6 +103,7 @@ export function SimulatorLarge() {
             buffCtrls: setup.selfBuffCtrls,
           },
         ],
+        target: Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
         actions: [],
       })
     );

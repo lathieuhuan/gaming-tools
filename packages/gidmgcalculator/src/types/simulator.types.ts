@@ -1,12 +1,12 @@
 import type { Level } from "@Backend";
-import type { CalcArtifact, CalcWeapon, ElementModCtrl, ModifierCtrl } from "./calculator.types";
+import type { CalcArtifact, CalcWeapon, ElementModCtrl, Infusion, ModifierCtrl, Target } from "./calculator.types";
 
 export type SimulationManageInfo = {
   id: number;
   name: string;
 };
 
-type SimulationMember = {
+export type SimulationMember = {
   name: string;
   level: Level;
   cons: number;
@@ -17,9 +17,13 @@ type SimulationMember = {
   artifacts: Array<CalcArtifact | null>;
   elmtModCtrls: ElementModCtrl;
   buffCtrls: ModifierCtrl[];
+  customInfusion: Infusion;
 };
+
+export type SimulationTarget = Target;
 
 export type Simulation = {
   actions: unknown[];
   members: SimulationMember[];
+  target: SimulationTarget;
 };

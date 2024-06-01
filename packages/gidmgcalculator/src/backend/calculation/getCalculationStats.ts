@@ -1,20 +1,55 @@
-import type { AttackElement, AttackPattern, AttributeStat, ReactionType } from "@Src/backend/types";
-import type { GetCalculationStatsArgs } from "./getCalculationStats.types";
+import type {
+  CalcArtifacts,
+  CalcCharacter,
+  CalcWeapon,
+  CustomBuffCtrl,
+  ElementModCtrl,
+  Infusion,
+  ModifierCtrl,
+  Party,
+  PartyData,
+} from "@Src/types";
+import type {
+  AppCharacter,
+  AppWeapon,
+  AttackElement,
+  AttackPattern,
+  AttributeStat,
+  ReactionType,
+} from "@Src/backend/types";
+import type { TrackerControl } from "@Src/backend/controls";
 
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
 import { RESONANCE_STAT } from "@Src/backend/constants/internal.constants";
 
-import { $AppCharacter, $AppWeapon, $AppArtifact } from "@Src/services";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { GeneralCalc, WeaponCalc, EntityCalc } from "@Src/backend/utils";
+import { EntityCalc, GeneralCalc, WeaponCalc } from "@Src/backend/utils";
 import { AttackBonusControl, TotalAttributeControl, calcArtifactAtribute } from "@Src/backend/controls";
 import {
+  ApplierArtifactBuff,
   ApplierCharacterBuff,
   ApplierWeaponBuff,
-  ApplierArtifactBuff,
   type BuffInfoWrap,
   type StackableCheckCondition,
 } from "@Src/backend/appliers";
+
+type GetCalculationStatsArgs = {
+  char: CalcCharacter;
+  appChar: AppCharacter;
+  weapon: CalcWeapon;
+  appWeapon: AppWeapon;
+  artifacts: CalcArtifacts;
+  party?: Party;
+  partyData?: PartyData;
+  elmtModCtrls?: ElementModCtrl;
+  selfBuffCtrls?: ModifierCtrl[];
+  wpBuffCtrls?: ModifierCtrl[];
+  artBuffCtrls?: ModifierCtrl[];
+  customBuffCtrls?: CustomBuffCtrl[];
+  customInfusion?: Infusion;
+  tracker?: TrackerControl;
+};
 
 export default function getCalculationStats({
   char,

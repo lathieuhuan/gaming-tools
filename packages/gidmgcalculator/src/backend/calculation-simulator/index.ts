@@ -1,0 +1,1 @@
+export { calculateMember } from "./calculateMember";

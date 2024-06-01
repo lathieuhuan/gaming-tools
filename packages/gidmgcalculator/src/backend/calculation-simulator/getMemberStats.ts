@@ -29,7 +29,7 @@ type GetMemberStatsArgs = {
   // customBuffCtrls?: CustomBuffCtrl[];
   // customInfusion?: Infusion;
 };
-export function getMemberStats({
+export default function getMemberStats({
   char,
   appChar,
   weapon,

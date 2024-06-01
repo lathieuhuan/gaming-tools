@@ -1,20 +1,20 @@
-import { getMemberStats } from "@Backend";
+import { calculateMember } from "@Backend";
 
-import { AttributeTable } from "@Src/components";
+import type { RootState } from "@Store/store";
+import { AttributeTable, GenshinImage } from "@Src/components";
 import { $AppCharacter, $AppWeapon } from "@Src/services";
-import { pickProps } from "@Src/utils";
 import { useSelector } from "@Store/hooks";
-import { RootState } from "@Store/store";
 
 const selectActiveMember = (state: RootState) => {
   const { active, simulationsById } = state.simulator;
 
   if (active.simulationId) {
-    const { members } = simulationsById[active.simulationId];
+    const { members, target } = simulationsById[active.simulationId];
 
     return {
       member: members[0],
       partyData: $AppCharacter.getPartyData(members),
+      target,
     };
   }
   return null;
@@ -25,19 +25,24 @@ export function MemberDetail() {
   if (!data) return null;
   const { member, partyData } = data;
 
-  const { totalAttr } = getMemberStats({
-    char: pickProps(member, ["name", "level", "cons", "NAs", "ES", "EB"]),
+  const appWeapon = $AppWeapon.get(member.weapon.code)!;
+
+  const { totalAttr } = calculateMember({
+    member,
     appChar: $AppCharacter.get(member.name),
-    weapon: member.weapon,
-    appWeapon: $AppWeapon.get(member.weapon.code)!,
-    artifacts: member.artifacts,
+    appWeapon,
     partyData,
-    selfBuffCtrls: member.buffCtrls,
     elmtModCtrls: member.elmtModCtrls,
+    target: data.target,
   });
 
   return (
     <div>
+      <h3>{member.name}</h3>
+      <p>
+        Level: {member.level} - C{member.cons}
+      </p>
+      <GenshinImage src={appWeapon.icon} />
       <AttributeTable attributes={totalAttr} />
     </div>
   );

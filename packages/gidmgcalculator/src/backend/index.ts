@@ -1,11 +1,11 @@
 export { calculateSetup } from "./calculation/calculateSetup";
 export { default as getCalculationStats } from "./calculation/getCalculationStats";
-export { getMemberStats } from "./calculation-simulator/getMemberStats";
 export { getIntialBonusValue } from "./appliers";
 export { AttackBonusControl, TrackerControl, calcArtifactAtribute } from "./controls";
 export { ArtifactCalc, CharacterCalc, EntityCalc, GeneralCalc, WeaponCalc, type ArtifactSetBonus } from "./utils";
 
 export * from "./constants";
+export * from "./calculation-simulator";
 
 export type { AttackBonus, CalcAtomicRecord, CalcItemRecord, TrackerResult } from "./controls";
 export type {

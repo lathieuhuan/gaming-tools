@@ -7,14 +7,16 @@ import type {
   EntityBonusStack,
   EntityBonusTargets,
   EntityBuff,
+  EntityPenaltyTarget,
+  ResistanceReductionKey,
   WeaponBonusCore,
   WithBonusTargets,
 } from "@Src/backend/types";
-import type { BuffInfoWrap } from "./appliers.types";
+import type { GetTotalAttributeType } from "@Src/backend/controls";
+import type { BuffInfoWrap, DebuffInfoWrap } from "./appliers.types";
 
 import { ELEMENT_TYPES } from "@Src/backend/constants";
 import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
-import { type GetTotalAttributeType } from "@Src/backend/controls";
 import { toArray } from "@Src/utils";
 import { EntityCalc } from "../utils";
 
@@ -130,5 +132,29 @@ export function applyBonuses<T extends Bonus>(args: ApplyBonusesArgs<T>) {
         targets: config.targets,
       });
     }
+  }
+}
+
+type ApplyPenaltyArgs = {
+  penaltyValue: number;
+  targets: EntityPenaltyTarget | EntityPenaltyTarget[];
+  inputs: number[];
+  description: string;
+  info: DebuffInfoWrap;
+};
+export function applyPenalty(args: ApplyPenaltyArgs) {
+  if (!args.penaltyValue) return;
+
+  for (const target of toArray(args.targets)) {
+    let path: ResistanceReductionKey;
+
+    if (typeof target === "string") {
+      path = target;
+    } else {
+      const elmtIndex = args.inputs[target.inpIndex ?? 0];
+      path = ELEMENT_TYPES[elmtIndex];
+    }
+
+    args.info.resistReduct.add(path, args.penaltyValue, args.description);
   }
 }

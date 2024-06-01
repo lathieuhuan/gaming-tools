@@ -1,18 +1,23 @@
 import type { CalculationHelperInfo, CharacterPenalty, CharacterPenaltyCore } from "@Src/backend/types";
-import type { DebuffInfoWrap } from "./getResistances.types";
+import type { DebuffInfoWrap } from "./appliers.types";
 
 import { toArray } from "@Src/utils";
 import { CharacterCalc, EntityCalc } from "@Src/backend/utils";
-import { applyPenalty } from "./getResistances.utils";
+import { applyPenalty } from "./appliers.utils";
 
-class ApplierCharacterDebuff {
+export class ApplierCharacterDebuff {
   info: DebuffInfoWrap;
 
   constructor(info: DebuffInfoWrap) {
     this.info = info;
   }
 
-  private getPenaltyValue(penalty: CharacterPenaltyCore, info: CalculationHelperInfo, inputs: number[], fromSelf: boolean) {
+  private getPenaltyValue(
+    penalty: CharacterPenaltyCore,
+    info: CalculationHelperInfo,
+    inputs: number[],
+    fromSelf: boolean
+  ) {
     const { preExtra } = penalty;
     let result = penalty.value * CharacterCalc.getLevelScale(penalty.lvScale, info, inputs, fromSelf);
 
@@ -47,5 +52,3 @@ class ApplierCharacterDebuff {
     }
   }
 }
-
-export default ApplierCharacterDebuff;

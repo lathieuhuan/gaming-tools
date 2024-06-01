@@ -1,13 +1,36 @@
-import type { DebuffInfoWrap, GetResistancesArgs } from "./getResistances.types";
+import type {
+  ArtifactDebuffCtrl,
+  Character,
+  CustomDebuffCtrl,
+  ElementModCtrl,
+  ModifierCtrl,
+  Party,
+  PartyData,
+  Target,
+} from "@Src/types";
+import type { TrackerControl } from "@Src/backend/controls";
+import type { AppCharacter } from "@Src/backend/types";
 
 import { $AppArtifact, $AppCharacter } from "@Src/services";
 import { findByIndex } from "@Src/utils";
 import { EntityCalc } from "@Src/backend/utils";
+import { ApplierCharacterDebuff, applyPenalty, type DebuffInfoWrap } from "@Src/backend/appliers";
 import { ResistanceReductionControl } from "@Src/backend/controls";
-import { applyPenalty } from "./getResistances.utils";
-import ApplierCharacterDebuff from "./applier-character-debuff";
 
-export function getResistances({
+type GetResistancesArgs = {
+  char: Character;
+  appChar: AppCharacter;
+  party: Party;
+  partyData: PartyData;
+  customDebuffCtrls: CustomDebuffCtrl[];
+  selfDebuffCtrls: ModifierCtrl[];
+  artDebuffCtrls: ArtifactDebuffCtrl[];
+  elmtModCtrls: ElementModCtrl;
+  target: Target;
+  tracker?: TrackerControl;
+};
+
+export default function getResistances({
   char,
   appChar,
   party,
