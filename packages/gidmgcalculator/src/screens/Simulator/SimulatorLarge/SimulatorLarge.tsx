@@ -1,56 +1,122 @@
-import { TotalAttribute, getMemberStats } from "@Backend";
-import { useStore } from "@Src/features";
-import { $AppCharacter, $AppWeapon } from "@Src/services";
-import { CalcSetup, Simulation } from "@Src/types";
 import { useMemo, useState } from "react";
 import { Button, Modal } from "rond";
-import { CharacterDetail } from "../simulator-sections";
+
+import { useStore } from "@Src/features";
+import { CalcSetup } from "@Src/types";
+import { useDispatch } from "@Store/hooks";
+import { addSimulation } from "@Store/simulator-slice";
+
+import { MemberDetail } from "../simulator-sections";
+
+const mockSetup: CalcSetup = {
+  char: {
+    name: "Albedo",
+    level: "90/90",
+    NAs: 1,
+    ES: 1,
+    EB: 1,
+    cons: 0,
+  },
+  selfBuffCtrls: [
+    {
+      index: 0,
+      activated: false,
+    },
+    {
+      index: 1,
+      activated: false,
+    },
+    {
+      index: 2,
+      activated: false,
+      inputs: [1],
+    },
+    {
+      index: 3,
+      activated: false,
+    },
+    {
+      index: 4,
+      activated: false,
+    },
+  ],
+  selfDebuffCtrls: [],
+  weapon: {
+    ID: 1717242701642,
+    type: "sword",
+    code: 108,
+    level: "70/70",
+    refi: 1,
+  },
+  wpBuffCtrls: [],
+  artifacts: [null, null, null, null, null],
+  artBuffCtrls: [],
+  artDebuffCtrls: [
+    {
+      code: 15,
+      activated: false,
+      index: 0,
+      inputs: [0],
+    },
+    {
+      code: 33,
+      activated: false,
+      index: 0,
+    },
+  ],
+  party: [null, null, null],
+  elmtModCtrls: {
+    infuse_reaction: null,
+    reaction: null,
+    superconduct: false,
+    resonances: [],
+    absorption: null,
+  },
+  customBuffCtrls: [],
+  customDebuffCtrls: [],
+  customInfusion: {
+    element: "phys",
+  },
+};
 
 export function SimulatorLarge() {
-  const [on, setOn] = useState(false);
-  const [simulation, setSimulation] = useState<Simulation>();
+  const dispatch = useDispatch();
 
-  const [detail, setDetail] = useState<TotalAttribute>();
+  const [on, setOn] = useState(false);
+
+  const onClickAddSimulation = () => {
+    // setOn(true);
+    onSelect(mockSetup);
+  };
 
   const onSelect = (setup: CalcSetup) => {
-    setSimulation({
-      id: Date.now(),
-      name: "Simulation 1",
-      members: [
-        {
-          ...setup.char,
-          weapon: setup.weapon,
-          artifacts: setup.artifacts,
-        },
-      ],
-      actions: [],
-    });
+    console.log(setup);
 
-    const { totalAttr } = getMemberStats({
-      char: setup.char,
-      appChar: $AppCharacter.get(setup.char.name),
-      weapon: setup.weapon,
-      appWeapon: $AppWeapon.get(setup.weapon.code)!,
-      artifacts: setup.artifacts,
-      partyData: $AppCharacter.getPartyData(setup.party),
-      elmtModCtrls: setup.elmtModCtrls,
-      selfBuffCtrls: setup.selfBuffCtrls,
-    });
-
-    setDetail(totalAttr);
+    dispatch(
+      addSimulation({
+        members: [
+          {
+            ...setup.char,
+            weapon: setup.weapon,
+            artifacts: setup.artifacts,
+            elmtModCtrls: setup.elmtModCtrls,
+            buffCtrls: setup.selfBuffCtrls,
+          },
+        ],
+        actions: [],
+      })
+    );
 
     setOn(false);
   };
 
   return (
     <div className="h-full bg-surface-2">
-      <Button onClick={() => setOn(true)}>Add setup</Button>
+      <Button onClick={onClickAddSimulation}>Add setup</Button>
 
-      <p>
-        Simulation: {simulation?.name} ({simulation?.id})
-      </p>
-
-      <div className="w-76">{detail ? <CharacterDetail totalAttr={detail} /> : null}</div>
+      <div className="w-76">
+        <MemberDetail />
+      </div>
 
       <Modal.Core active={on} preset="large" className="flex flex-col" onClose={() => setOn(false)}>
         <SelectSetup onSelect={onSelect} />
