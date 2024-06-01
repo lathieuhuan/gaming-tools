@@ -1,4 +1,4 @@
-import { TotalAttribute, getCalculationStats } from "@Backend";
+import { TotalAttribute, getMemberStats } from "@Backend";
 import { useStore } from "@Src/features";
 import { $AppCharacter, $AppWeapon } from "@Src/services";
 import { CalcSetup, Simulation } from "@Src/types";
@@ -26,12 +26,15 @@ export function SimulatorLarge() {
       actions: [],
     });
 
-    const { totalAttr } = getCalculationStats({
+    const { totalAttr } = getMemberStats({
       char: setup.char,
       appChar: $AppCharacter.get(setup.char.name),
       weapon: setup.weapon,
       appWeapon: $AppWeapon.get(setup.weapon.code)!,
       artifacts: setup.artifacts,
+      partyData: $AppCharacter.getPartyData(setup.party),
+      elmtModCtrls: setup.elmtModCtrls,
+      selfBuffCtrls: setup.selfBuffCtrls,
     });
 
     setDetail(totalAttr);

@@ -6,6 +6,7 @@ import storage from "redux-persist/lib/storage";
 import calculatorSliceReducers, { calculatorSlice } from "./calculator-slice";
 import uiSliceReducers, { uiSlice } from "./ui-slice";
 import userdbSliceReducers, { userdbSlice, initialState } from "./userdb-slice";
+import simulatorSliceReducers, { simulatorSlice } from "./simulator-slice";
 
 export type SetupStoreArgs = { persistingUserData?: boolean };
 
@@ -22,6 +23,7 @@ export function setupStore(args?: { persistingUserData?: boolean }) {
 
   const rootReducer = combineReducers({
     calculator: calculatorSliceReducers,
+    simulator: simulatorSliceReducers,
     ui: uiSliceReducers,
     userdb: userdbPersistReducers,
   });
@@ -30,7 +32,7 @@ export function setupStore(args?: { persistingUserData?: boolean }) {
     key: "root",
     version: 0,
     storage,
-    blacklist: [calculatorSlice.name, uiSlice.name, userdbSlice.name],
+    blacklist: [calculatorSlice.name, uiSlice.name, userdbSlice.name, simulatorSlice.name],
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);

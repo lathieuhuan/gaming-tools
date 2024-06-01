@@ -2,7 +2,7 @@ import type { AttackElement, AttackPattern, AttributeStat, ReactionType } from "
 import type { GetCalculationStatsArgs } from "./getCalculationStats.types";
 
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
-import { RESONANCE_STAT } from "../calculation.constants";
+import { RESONANCE_STAT } from "@Src/backend/constants/internal.constants";
 
 import { $AppCharacter, $AppWeapon, $AppArtifact } from "@Src/services";
 import { findByIndex } from "@Src/utils";

@@ -1,9 +1,12 @@
 import type { Level } from "@Backend";
 import type { CalcArtifact, CalcWeapon } from "./calculator.types";
 
-export type Simulation = {
-  name: string;
+export type SimulationManageInfo = {
   id: number;
+  name: string;
+};
+
+export type Simulation = {
   actions: unknown[];
   members: Array<{
     name: string;
