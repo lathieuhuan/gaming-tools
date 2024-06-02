@@ -1,12 +1,12 @@
 import type { WeaponBonusCore, WeaponBuff } from "@Src/backend/types";
-import type { GetTotalAttributeType } from "@Src/backend/controls";
-import type { BuffInfoWrap, StackableCheckCondition } from "./appliers.types";
+import type { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.types";
+import type { GetTotalAttributeType } from "../controls";
 
 import { toArray } from "@Src/utils";
-import { EntityCalc } from "@Src/backend/utils";
-import { applyBonuses, type AppliedBonus } from "./appliers.utils";
+import { EntityCalc } from "../utils";
+import { applyBonuses, type AppliedBonus } from "./getCalculationStats.utils";
 
-export class ApplierWeaponBuff {
+class ApplierWeaponBuff {
   info: BuffInfoWrap;
 
   constructor(info: BuffInfoWrap) {
@@ -89,3 +89,5 @@ export class ApplierWeaponBuff {
     });
   }
 }
+
+export default ApplierWeaponBuff;

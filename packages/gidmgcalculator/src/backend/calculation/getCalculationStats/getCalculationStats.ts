@@ -1,55 +1,17 @@
-import type {
-  CalcArtifacts,
-  CalcCharacter,
-  CalcWeapon,
-  CustomBuffCtrl,
-  ElementModCtrl,
-  Infusion,
-  ModifierCtrl,
-  Party,
-  PartyData,
-} from "@Src/types";
-import type {
-  AppCharacter,
-  AppWeapon,
-  AttackElement,
-  AttackPattern,
-  AttributeStat,
-  ReactionType,
-} from "@Src/backend/types";
-import type { TrackerControl } from "@Src/backend/controls";
+import type { AttackElement, AttackPattern, AttributeStat, ReactionType } from "@Src/backend/types";
+import type { BuffInfoWrap, GetCalculationStatsArgs, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
-import { RESONANCE_STAT } from "@Src/backend/constants/internal.constants";
+import { RESONANCE_STAT } from "../calculation.constants";
 
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
+import { $AppCharacter, $AppWeapon, $AppArtifact } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { EntityCalc, GeneralCalc, WeaponCalc } from "@Src/backend/utils";
-import { AttackBonusControl, TotalAttributeControl, calcArtifactAtribute } from "@Src/backend/controls";
-import {
-  ApplierArtifactBuff,
-  ApplierCharacterBuff,
-  ApplierWeaponBuff,
-  type BuffInfoWrap,
-  type StackableCheckCondition,
-} from "@Src/backend/appliers";
-
-type GetCalculationStatsArgs = {
-  char: CalcCharacter;
-  appChar: AppCharacter;
-  weapon: CalcWeapon;
-  appWeapon: AppWeapon;
-  artifacts: CalcArtifacts;
-  party?: Party;
-  partyData?: PartyData;
-  elmtModCtrls?: ElementModCtrl;
-  selfBuffCtrls?: ModifierCtrl[];
-  wpBuffCtrls?: ModifierCtrl[];
-  artBuffCtrls?: ModifierCtrl[];
-  customBuffCtrls?: CustomBuffCtrl[];
-  customInfusion?: Infusion;
-  tracker?: TrackerControl;
-};
+import { EntityCalc, GeneralCalc, WeaponCalc } from "../utils";
+import { AttackBonusControl, TotalAttributeControl } from "../controls";
+import ApplierCharacterBuff from "./applier-character-buff";
+import ApplierWeaponBuff from "./applier-weapon-buff";
+import ApplierArtifactBuff from "./applier-artifact-buff";
+import { calcArtifactAtribute } from "./getCalculationStats.utils";
 
 export default function getCalculationStats({
   char,
@@ -73,8 +35,8 @@ export default function getCalculationStats({
   const totalAttr = new TotalAttributeControl(
     char,
     appChar,
-    WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale)
-    // tracker
+    WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale),
+    tracker
   );
   const artAttr = calcArtifactAtribute(artifacts, totalAttr);
   const attBonus = new AttackBonusControl();

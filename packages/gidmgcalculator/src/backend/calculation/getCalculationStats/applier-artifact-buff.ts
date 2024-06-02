@@ -1,12 +1,12 @@
 import type { ArtifactBonusCore, ArtifactBuff } from "@Src/backend/types";
-import type { GetTotalAttributeType } from "@Src/backend/controls";
-import type { BuffInfoWrap, StackableCheckCondition } from "./appliers.types";
+import type { GetTotalAttributeType } from "../controls";
+import type { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { toArray } from "@Src/utils";
-import { EntityCalc } from "@Src/backend/utils";
-import { AppliedBonus, applyBonuses } from "./appliers.utils";
+import { EntityCalc } from "../utils";
+import { AppliedBonus, applyBonuses } from "./getCalculationStats.utils";
 
-export class ApplierArtifactBuff {
+class ApplierArtifactBuff {
   info: BuffInfoWrap;
 
   constructor(info: BuffInfoWrap) {
@@ -76,3 +76,5 @@ export class ApplierArtifactBuff {
     });
   }
 }
+
+export default ApplierArtifactBuff;

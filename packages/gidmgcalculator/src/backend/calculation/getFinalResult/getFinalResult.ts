@@ -1,36 +1,14 @@
-import type { CalcCharacter, CalcWeapon, PartyData } from "@Src/types";
-import type {
-  AppCharacter,
-  AppWeapon,
-  AttackElement,
-  CalculationFinalResult,
-  ResistanceReduction,
-  TotalAttribute,
-} from "@Src/backend/types";
-import type { ConfigAttackPattern } from "./attack-pattern-conf";
-import type { CalculateCalcItem } from "./calc-item-calculator";
+import type { AttackElement } from "@Src/backend/types";
+import type { CalculationFinalResult } from "../calculation.types";
+import type { GetFinalResultArgs } from "./getFinalResult.types";
 
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
-import { TRANSFORMATIVE_REACTION_INFO } from "@Src/backend/constants/internal.constants";
+import { TRANSFORMATIVE_REACTION_INFO } from "../calculation.constants";
 
 import { toArray } from "@Src/utils";
-import { CharacterCalc, GeneralCalc } from "@Src/backend/utils";
-import { AttackBonusControl, TrackerControl } from "@Src/backend/controls";
-import CalcItemCalculator from "./calc-item-calculator";
-
-type GetFinalResultArgs = {
-  char: CalcCharacter;
-  appChar: AppCharacter;
-  partyData: PartyData;
-  weapon: CalcWeapon;
-  appWeapon: AppWeapon;
-  totalAttr: TotalAttribute;
-  attBonus: AttackBonusControl;
-  resistances: ResistanceReduction;
-  tracker?: TrackerControl;
-  configAttackPattern: ConfigAttackPattern;
-  calculateCalcItem: CalculateCalcItem;
-};
+import { CharacterCalc, GeneralCalc } from "../utils";
+import { TrackerControl } from "../controls";
+import CalcItemCalculator from "../calc-item-calculator";
 
 export default function getFinalResult({
   char,

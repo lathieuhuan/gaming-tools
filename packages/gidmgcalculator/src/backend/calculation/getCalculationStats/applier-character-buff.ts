@@ -1,14 +1,15 @@
-import type { CharacterBonusCore, CharacterBuff, CalculationHelperInfo } from "@Src/backend/types";
-import type { GetTotalAttributeType } from "@Src/backend/controls";
-import type { BuffInfoWrap } from "./appliers.types";
+import type { CharacterBonusCore, CharacterBuff } from "@Src/backend/types";
+import type { CalcUltilInfo } from "../calculation.types";
+import type { GetTotalAttributeType } from "../controls";
+import type { BuffInfoWrap } from "./getCalculationStats.types";
 
 import { toArray } from "@Src/utils";
 import { CharacterCalc, EntityCalc } from "../utils";
-import { applyBonuses, type AppliedBonus } from "./appliers.utils";
+import { applyBonuses, type AppliedBonus } from "./getCalculationStats.utils";
 
 export function getIntialBonusValue(
   value: CharacterBonusCore["value"],
-  info: CalculationHelperInfo,
+  info: CalcUltilInfo,
   inputs: number[],
   fromSelf: boolean
 ) {
@@ -35,7 +36,7 @@ export function getIntialBonusValue(
   return options[index] ?? (index > 0 ? options[options.length - 1] : 0);
 }
 
-export class ApplierCharacterBuff {
+class ApplierCharacterBuff {
   info: BuffInfoWrap;
 
   constructor(info: BuffInfoWrap) {
@@ -116,3 +117,5 @@ export class ApplierCharacterBuff {
     });
   }
 }
+
+export default ApplierCharacterBuff;

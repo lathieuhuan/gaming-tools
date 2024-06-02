@@ -1,14 +1,14 @@
 import type { CalcSetup, Target } from "@Src/types";
-import type { TrackerControl } from "@Src/backend/controls";
+import type { TrackerControl } from "./controls";
 
 import { $AppCharacter, $AppWeapon } from "@Src/services";
 import getCalculationStats from "./getCalculationStats";
+import getFinalResult from "./getFinalResult";
 import getResistances from "./getResistances";
 import AttackPatternConf from "./attack-pattern-conf";
 import CalcItemCalculator from "./calc-item-calculator";
-import getFinalResult from "./getFinalResult";
 
-export function calculateSetup(setup: CalcSetup, target: Target, tracker?: TrackerControl) {
+export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
   const {
     char,
@@ -93,4 +93,4 @@ export function calculateSetup(setup: CalcSetup, target: Target, tracker?: Track
     attBonus: attBonus.serialize(),
     finalResult,
   };
-}
+};

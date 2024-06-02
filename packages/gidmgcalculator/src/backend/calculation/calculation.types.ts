@@ -3,12 +3,14 @@ import type { Character, PartyData } from "@Src/types";
 import type {
   ActualAttackElement,
   ActualAttackPattern,
+  AppCharacter,
+  AttackElement,
   AttributeStat,
+  CalcItemType,
   CoreStat,
   LevelableTalentType,
-} from "./common.types";
-import type { CalcItemType } from "./app-entity.types";
-import type { AppCharacter } from "./app-character.types";
+  NormalAttack,
+} from "../types";
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
 type TotalAttributeStat = AttributeStat | "hp_base" | "atk_base" | "def_base";
@@ -18,9 +20,13 @@ export type ArtifactAttribute = PartiallyRequired<Partial<Record<TotalAttributeS
 /** Actually does not contain "hp_" | "atk_" | "def_" */
 export type TotalAttribute = Record<TotalAttributeStat, number>;
 
-//
+export type CalcInfusion = {
+  element: AttackElement;
+  range: NormalAttack[];
+  isCustom: boolean;
+};
 
-export type CalculationHelperInfo = {
+export type CalcUltilInfo = {
   char: Character;
   appChar: AppCharacter;
   partyData: PartyData;

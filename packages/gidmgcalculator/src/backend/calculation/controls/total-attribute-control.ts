@@ -1,6 +1,7 @@
 import type { CalcCharacter } from "@Src/types";
-import type { AppCharacter, AttributeStat, TotalAttribute } from "@Src/backend/types";
-// import type { TrackerControl } from "./tracker-control";
+import type { AppCharacter, AttributeStat } from "@Src/backend/types";
+import type { TotalAttribute } from "../calculation.types";
+import type { TrackerControl } from "./tracker-control";
 
 import { ATTRIBUTE_STAT_TYPES, LEVELS } from "@Src/backend/constants";
 import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
@@ -20,15 +21,10 @@ export type GetTotalAttributeType = "ALL" | "STABLE";
 
 export class TotalAttributeControl {
   private totalAttr: InternalTotalAttribute;
-  // private tracker?: TrackerControl;
+  private tracker?: TrackerControl;
 
-  constructor(
-    char: CalcCharacter,
-    appChar: AppCharacter,
-    weaponAtk: number
-    //  tracker?: TrackerControl
-  ) {
-    // this.tracker = tracker;
+  constructor(char: CalcCharacter, appChar: AppCharacter, weaponAtk: number, tracker?: TrackerControl) {
+    this.tracker = tracker;
     this.totalAttr = {} as InternalTotalAttribute;
 
     for (const type of ATTRIBUTE_STAT_TYPES) {
@@ -65,20 +61,20 @@ export class TotalAttributeControl {
 
   private addBase(key: AttributeStat, value: number, description = "Character base stat") {
     this.totalAttr[key].base += value;
-    // this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
+    this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
   }
 
   addStable(keys: AttributeStat | AttributeStat[], value: number, description: string) {
     toArray(keys).forEach((key) => {
       this.totalAttr[key].stableBonus += value;
-      // this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
+      this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
     });
   }
 
   addUnstable(keys: AttributeStat | AttributeStat[], value: number, description: string) {
     toArray(keys).forEach((key) => {
       this.totalAttr[key].unstableBonus += value;
-      // this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
+      this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
     });
   }
 
