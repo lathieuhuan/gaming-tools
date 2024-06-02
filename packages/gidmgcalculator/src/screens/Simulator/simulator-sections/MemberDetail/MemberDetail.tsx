@@ -1,4 +1,3 @@
-import { calculateMember } from "@Backend";
 
 import type { RootState } from "@Store/store";
 import { AttributeTable, GenshinImage } from "@Src/components";
@@ -27,14 +26,14 @@ export function MemberDetail() {
 
   const appWeapon = $AppWeapon.get(member.weapon.code)!;
 
-  const { totalAttr } = calculateMember({
-    member,
-    appChar: $AppCharacter.get(member.name),
-    appWeapon,
-    partyData,
-    elmtModCtrls: member.elmtModCtrls,
-    target: data.target,
-  });
+  // const { totalAttr } = calculateMember({
+  //   member,
+  //   appChar: $AppCharacter.get(member.name),
+  //   appWeapon,
+  //   partyData,
+  //   elmtModCtrls: member.elmtModCtrls,
+  //   target: data.target,
+  // });
 
   return (
     <div>
@@ -43,7 +42,7 @@ export function MemberDetail() {
         Level: {member.level} - C{member.cons}
       </p>
       <GenshinImage src={appWeapon.icon} />
-      <AttributeTable attributes={totalAttr} />
+      {/* <AttributeTable attributes={totalAttr} /> */}
     </div>
   );
 }

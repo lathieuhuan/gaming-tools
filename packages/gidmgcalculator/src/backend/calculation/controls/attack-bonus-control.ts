@@ -1,5 +1,5 @@
 import type { AttackBonusType, AttackBonusKey, CalcItem } from "@Src/backend/types";
-import { CalcItemExclusiveBonus } from "./tracker-control";
+import type { CalcItemExclusiveBonus } from "./tracker-control";
 
 type AttackBonusRecord = {
   desc: string;

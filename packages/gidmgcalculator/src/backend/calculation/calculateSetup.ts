@@ -30,7 +30,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   const appWeapon = $AppWeapon.get(weapon.code)!;
   const partyData = $AppCharacter.getPartyData(party);
 
-  const { artAttr, attBonus, ...rest } = getCalculationStats({
+  const { artAttr, attBonus, totalAttr } = getCalculationStats({
     char,
     weapon,
     artifacts,
@@ -70,7 +70,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     attBonus,
   });
 
-  const calcItemCalculator = new CalcItemCalculator(char.level, target.level, rest.totalAttr, resistances);
+  const calcItemCalculator = new CalcItemCalculator(char.level, target.level, totalAttr, resistances);
 
   const finalResult = getFinalResult({
     char,
@@ -78,17 +78,17 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     appChar,
     appWeapon,
     partyData,
+    totalAttr,
     attBonus,
     resistances,
     tracker,
     configAttackPattern,
     calculateCalcItem: calcItemCalculator.calculate,
-    ...rest,
   });
   // console.timeEnd();
 
   return {
-    totalAttr: rest.totalAttr,
+    totalAttr,
     artAttr,
     attBonus: attBonus.serialize(),
     finalResult,

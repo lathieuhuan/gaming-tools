@@ -99,8 +99,6 @@ export function SimulatorLarge() {
             ...setup.char,
             weapon: setup.weapon,
             artifacts: setup.artifacts,
-            elmtModCtrls: setup.elmtModCtrls,
-            buffCtrls: setup.selfBuffCtrls,
           },
         ],
         target: Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),

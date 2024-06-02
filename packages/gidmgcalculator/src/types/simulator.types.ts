@@ -1,23 +1,14 @@
-import type { Level } from "@Backend";
-import type { CalcArtifact, CalcWeapon, ElementModCtrl, Infusion, ModifierCtrl, Target } from "./calculator.types";
+import type { Artifact, Character, Weapon } from "./global.types";
+import type { Target } from "./calculator.types";
 
 export type SimulationManageInfo = {
   id: number;
   name: string;
 };
 
-export type SimulationMember = {
-  name: string;
-  level: Level;
-  cons: number;
-  NAs: number;
-  ES: number;
-  EB: number;
-  weapon: CalcWeapon;
-  artifacts: Array<CalcArtifact | null>;
-  elmtModCtrls: ElementModCtrl;
-  buffCtrls: ModifierCtrl[];
-  customInfusion: Infusion;
+export type SimulationMember = Character & {
+  weapon: Weapon;
+  artifacts: Array<Artifact | null>;
 };
 
 export type SimulationTarget = Target;
