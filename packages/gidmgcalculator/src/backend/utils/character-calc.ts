@@ -1,17 +1,13 @@
 import type {
   ActualAttackPattern,
   AppCharacter,
-  AttackElement,
   AttackPattern,
   CharacterEffectLevelScale,
-  ElementType,
-  LevelableTalentType,
   TalentAttributeType,
   TalentType,
-  WeaponType,
 } from "@Src/backend/types";
 import type { Character, PartyData } from "@Src/types";
-import type { CalcUltilInfo } from "../calculation.types";
+import type { CalculationInfo } from "@Src/backend/utils";
 
 import { findByName } from "@Src/utils";
 
@@ -69,7 +65,7 @@ export class CharacterCalc {
 
   static getLevelScale(
     scale: CharacterEffectLevelScale | undefined,
-    info: CalcUltilInfo,
+    info: CalculationInfo,
     inputs: number[],
     fromSelf: boolean
   ): number {

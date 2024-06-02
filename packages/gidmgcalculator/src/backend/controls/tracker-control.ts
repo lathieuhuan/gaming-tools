@@ -1,8 +1,15 @@
-import type { AttributeStat, ResistanceReductionKey, CalcItemType, AttackBonusKey } from "@Src/backend/types";
+import type {
+  AttributeStat,
+  ResistanceReductionKey,
+  CalcItemType,
+  AttackBonusKey,
+  LevelableTalentType,
+} from "@Src/backend/types";
 
 import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "@Src/backend/constants";
-import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
-import { CalculationFinalResultKey } from "../calculation.types";
+import { ECalcStatModule } from "@Src/backend/constants/internal";
+
+export type CalculationFinalResultKey = LevelableTalentType | "RXN_CALC" | "WP_CALC";
 
 // ========== STAT RECORD ==========
 

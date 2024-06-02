@@ -1,9 +1,9 @@
 import type { WeaponBonusCore, WeaponBuff } from "@Src/backend/types";
 import type { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.types";
-import type { GetTotalAttributeType } from "../controls";
+import type { GetTotalAttributeType } from "../../controls";
 
 import { toArray } from "@Src/utils";
-import { EntityCalc } from "../utils";
+import { EntityCalc } from "../../utils";
 import { applyBonuses, type AppliedBonus } from "./getCalculationStats.utils";
 
 class ApplierWeaponBuff {

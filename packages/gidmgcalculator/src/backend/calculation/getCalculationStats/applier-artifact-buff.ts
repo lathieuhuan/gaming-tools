@@ -1,9 +1,9 @@
 import type { ArtifactBonusCore, ArtifactBuff } from "@Src/backend/types";
-import type { GetTotalAttributeType } from "../controls";
+import type { GetTotalAttributeType } from "../../controls";
 import type { BuffInfoWrap, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { toArray } from "@Src/utils";
-import { EntityCalc } from "../utils";
+import { EntityCalc } from "../../utils";
 import { AppliedBonus, applyBonuses } from "./getCalculationStats.utils";
 
 class ApplierArtifactBuff {

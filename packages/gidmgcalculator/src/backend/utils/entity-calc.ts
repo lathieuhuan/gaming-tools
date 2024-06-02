@@ -8,14 +8,14 @@ import type {
   InputCheck,
   EntityBonusValueOption,
 } from "@Src/backend/types";
-import type { TotalAttributeControl, GetTotalAttributeType } from "../controls";
-import type { CalcUltilInfo } from "../calculation.types";
+import type { CalculationInfo } from "@Src/backend/utils";
+import type { TotalAttributeControl, GetTotalAttributeType } from "@Src/backend/controls/total-attribute-control";
 
 import { toArray } from "@Src/utils";
 import { GeneralCalc } from "./general-calc";
 import { CharacterCalc } from "./character-calc";
 
-type GetStackValueInfo = CalcUltilInfo & {
+type GetStackValueInfo = CalculationInfo & {
   totalAttr: TotalAttributeControl;
 };
 
@@ -30,7 +30,7 @@ export class EntityCalc {
 
   static isApplicableEffect(
     condition: ApplicableCondition,
-    info: CalcUltilInfo,
+    info: CalculationInfo,
     inputs: number[],
     fromSelf = false
   ): boolean {
@@ -66,7 +66,7 @@ export class EntityCalc {
     return true;
   }
 
-  static getBonusValueOptionIndex(config: EntityBonusValueOption, info: CalcUltilInfo, inputs: number[]) {
+  static getBonusValueOptionIndex(config: EntityBonusValueOption, info: CalculationInfo, inputs: number[]) {
     const { optIndex = 0 } = config;
     const indexConfig =
       typeof optIndex === "number"
@@ -104,7 +104,7 @@ export class EntityCalc {
 
   static getTotalExtraMax(
     extras: EntityEffectExtraMax | EntityEffectExtraMax[],
-    info: CalcUltilInfo,
+    info: CalculationInfo,
     inputs: number[],
     fromSelf: boolean
   ) {
@@ -118,7 +118,7 @@ export class EntityCalc {
     return result;
   }
 
-  static getMax(max: EntityEffectMax, info: CalcUltilInfo, inputs: number[], fromSelf: boolean) {
+  static getMax(max: EntityEffectMax, info: CalculationInfo, inputs: number[], fromSelf: boolean) {
     return typeof max === "number"
       ? max
       : max.value + (max.extras ? this.getTotalExtraMax(max.extras, info, inputs, fromSelf) : 0);
@@ -237,7 +237,7 @@ export class EntityCalc {
   }
 }
 
-function isUsableEffect(info: CalcUltilInfo, inputs: number[], checkInput?: number | InputCheck) {
+function isUsableEffect(info: CalculationInfo, inputs: number[], checkInput?: number | InputCheck) {
   if (checkInput !== undefined) {
     const { value, source = 0, type = "equal" } = typeof checkInput === "number" ? { value: checkInput } : checkInput;
     let input = 0;

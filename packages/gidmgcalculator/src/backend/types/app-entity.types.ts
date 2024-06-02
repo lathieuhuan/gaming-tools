@@ -1,4 +1,4 @@
-import type { ECalcStatModule } from "../constants/internal.constants";
+import type { ECalcStatModule } from "../constants/internal";
 import type {
   AttackBonusType,
   AttributeStat,

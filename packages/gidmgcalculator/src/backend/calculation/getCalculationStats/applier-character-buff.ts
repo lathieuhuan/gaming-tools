@@ -1,15 +1,15 @@
 import type { CharacterBonusCore, CharacterBuff } from "@Src/backend/types";
-import type { CalcUltilInfo } from "../calculation.types";
-import type { GetTotalAttributeType } from "../controls";
+import type { CalculationInfo } from "@Src/backend/utils";
+import type { GetTotalAttributeType } from "@Src/backend/controls";
 import type { BuffInfoWrap } from "./getCalculationStats.types";
 
 import { toArray } from "@Src/utils";
-import { CharacterCalc, EntityCalc } from "../utils";
+import { CharacterCalc, EntityCalc } from "../../utils";
 import { applyBonuses, type AppliedBonus } from "./getCalculationStats.utils";
 
 export function getIntialBonusValue(
   value: CharacterBonusCore["value"],
-  info: CalcUltilInfo,
+  info: CalculationInfo,
   inputs: number[],
   fromSelf: boolean
 ) {

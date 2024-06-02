@@ -2,16 +2,15 @@ import type { AttackElement, AttackPattern, AttributeStat, ReactionType } from "
 import type { BuffInfoWrap, GetCalculationStatsArgs, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
-import { RESONANCE_STAT } from "../calculation.constants";
+import { RESONANCE_STAT } from "@Src/backend/constants/internal";
 
 import { $AppCharacter, $AppWeapon, $AppArtifact } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { EntityCalc, GeneralCalc, WeaponCalc } from "../utils";
-import { AttackBonusControl, TotalAttributeControl } from "../controls";
+import { EntityCalc, GeneralCalc, WeaponCalc } from "@Src/backend/utils";
+import { AttackBonusControl, TotalAttributeControl, getArtifactAttribute } from "@Src/backend/controls";
 import ApplierCharacterBuff from "./applier-character-buff";
 import ApplierWeaponBuff from "./applier-weapon-buff";
 import ApplierArtifactBuff from "./applier-artifact-buff";
-import { calcArtifactAtribute } from "./getCalculationStats.utils";
 
 export default function getCalculationStats({
   char,
@@ -38,7 +37,7 @@ export default function getCalculationStats({
     WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale),
     tracker
   );
-  const artAttr = calcArtifactAtribute(artifacts, totalAttr);
+  const artAttr = getArtifactAttribute(artifacts, totalAttr);
   const attBonus = new AttackBonusControl();
 
   if (appWeapon.subStat) {

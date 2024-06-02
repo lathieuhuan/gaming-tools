@@ -1,17 +1,17 @@
 import type {
   ActualAttackElement,
   ActualAttackPattern,
-  AttackElement,
   AttackBonusKey,
+  AttackElement,
   CalcItemType,
   Level,
   ResistanceReduction,
 } from "@Src/backend/types";
-import type { CalculationFinalResultItem, TotalAttribute } from "./calculation.types";
-import type { CalcItemRecord } from "./controls";
+import type { CalcItemRecord, TotalAttribute } from "@Src/backend/controls";
+import type { CalculationFinalResultItem } from "./calculation.types";
 
 import { applyToOneOrMany, toMult } from "@Src/utils";
-import { GeneralCalc } from "./utils";
+import { GeneralCalc } from "../utils";
 
 type CalculateArgs = {
   calcType: CalcItemType;

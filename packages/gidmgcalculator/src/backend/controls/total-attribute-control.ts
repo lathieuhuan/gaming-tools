@@ -1,12 +1,12 @@
 import type { CalcCharacter } from "@Src/types";
 import type { AppCharacter, AttributeStat } from "@Src/backend/types";
-import type { TotalAttribute } from "../calculation.types";
+import type { TotalAttribute } from "./controls.types";
 import type { TrackerControl } from "./tracker-control";
 
 import { ATTRIBUTE_STAT_TYPES, LEVELS } from "@Src/backend/constants";
-import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
+import { ECalcStatModule } from "@Src/backend/constants/internal";
 import { toArray } from "@Src/utils";
-import { GeneralCalc } from "../utils";
+import { GeneralCalc } from "@Src/backend/utils/general-calc";
 
 type InternalTotalAttribute = Record<
   AttributeStat,
@@ -98,7 +98,7 @@ export class TotalAttributeControl {
     return total;
   }
 
-  finalize() {
+  finalize(): TotalAttribute {
     const totalAttr = {} as TotalAttribute;
 
     for (const key of ATTRIBUTE_STAT_TYPES) {

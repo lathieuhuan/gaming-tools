@@ -3,7 +3,7 @@ import type { ResistanceReduction } from "@Src/backend/types";
 import type { TrackerControl } from "./tracker-control";
 
 import { ATTACK_ELEMENTS } from "@Src/backend/constants";
-import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
+import { ECalcStatModule } from "@Src/backend/constants/internal";
 
 export class ResistanceReductionControl {
   private resistReduct: ResistanceReduction;

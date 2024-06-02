@@ -1,5 +1,5 @@
 import type { CalcSetup, Target } from "@Src/types";
-import type { TrackerControl } from "./controls";
+import type { TrackerControl } from "../controls";
 
 import { $AppCharacter, $AppWeapon } from "@Src/services";
 import getCalculationStats from "./getCalculationStats";

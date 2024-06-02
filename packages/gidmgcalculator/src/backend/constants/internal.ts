@@ -1,4 +1,11 @@
-import type { ActualAttackElement, TransformativeReaction, AttributeStat } from "../types";
+import type { ActualAttackElement, TransformativeReaction, AttributeStat } from "@Src/backend/types";
+
+export enum ECalcStatModule {
+  /** TotalAttribute */
+  ATTR = "ATTR",
+  /** ResistanceReduction */
+  RESIST = "RESIST",
+}
 
 type ResonanceStat = {
   key: AttributeStat;

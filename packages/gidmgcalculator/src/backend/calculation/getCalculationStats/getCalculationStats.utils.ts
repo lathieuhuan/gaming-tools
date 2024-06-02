@@ -1,73 +1,22 @@
-import type { CalcArtifacts } from "@Src/types";
 import type {
-  EntityBonus,
-  EntityBonusStack,
-  EntityBonusTargets,
-  EntityBuff,
   ArtifactBonusCore,
   AttributeStat,
   CharacterBonusCore,
   ElementType,
+  EntityBonus,
+  EntityBonusStack,
+  EntityBonusTargets,
+  EntityBuff,
   WeaponBonusCore,
   WithBonusTargets,
 } from "@Src/backend/types";
-import type { ArtifactAttribute, TotalAttribute } from "../calculation.types";
+import type { GetTotalAttributeType } from "@Src/backend/controls";
 import type { BuffInfoWrap } from "./getCalculationStats.types";
 
-import { CORE_STAT_TYPES, ELEMENT_TYPES } from "@Src/backend/constants";
-import { ECalcStatModule } from "@Src/backend/constants/internal.constants";
-import { applyPercent, toArray } from "@Src/utils";
-import { TotalAttributeControl, type GetTotalAttributeType } from "../controls";
-import { ArtifactCalc, EntityCalc } from "../utils";
-
-export function calcArtifactAtribute(artifacts: CalcArtifacts, totalAttr: TotalAttributeControl): ArtifactAttribute;
-export function calcArtifactAtribute(artifacts: CalcArtifacts, totalAttr: TotalAttribute): ArtifactAttribute;
-export function calcArtifactAtribute(
-  artifacts: CalcArtifacts,
-  totalAttr: TotalAttribute | TotalAttributeControl
-): ArtifactAttribute {
-  const artAttr: ArtifactAttribute = {
-    hp: 0,
-    atk: 0,
-    def: 0,
-  };
-  const isTotalAttributeControl = totalAttr instanceof TotalAttributeControl;
-
-  for (const artifact of artifacts) {
-    if (!artifact) continue;
-
-    const { type, mainStatType, subStats } = artifact;
-    const mainDesc = type[0].toUpperCase() + type.slice(1);
-    const mainStat = ArtifactCalc.mainStatValueOf(artifact);
-
-    artAttr[mainStatType] = (artAttr[mainStatType] || 0) + mainStat;
-
-    if (isTotalAttributeControl) {
-      totalAttr.addStable(mainStatType, mainStat, mainDesc);
-    }
-
-    for (const subStat of subStats) {
-      artAttr[subStat.type] = (artAttr[subStat.type] || 0) + subStat.value;
-
-      if (isTotalAttributeControl) {
-        totalAttr.addStable(subStat.type, subStat.value, "Artifact sub-stat");
-      }
-    }
-  }
-
-  for (const statType of CORE_STAT_TYPES) {
-    const percentStatValue = artAttr[`${statType}_`];
-
-    if (percentStatValue) {
-      const base = isTotalAttributeControl ? totalAttr.getBase(statType) : totalAttr[`${statType}_base`];
-
-      artAttr[statType] += applyPercent(base, percentStatValue);
-    }
-    delete artAttr[`${statType}_`];
-  }
-
-  return artAttr;
-}
+import { ELEMENT_TYPES } from "@Src/backend/constants";
+import { ECalcStatModule } from "@Src/backend/constants/internal";
+import { toArray } from "@Src/utils";
+import { EntityCalc } from "@Src/backend/utils";
 
 function isFinalBonus(bonusStacks?: EntityBonusStack | EntityBonusStack[]) {
   if (bonusStacks) {

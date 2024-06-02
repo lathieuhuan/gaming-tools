@@ -3,11 +3,11 @@ import type { CalculationFinalResult } from "../calculation.types";
 import type { GetFinalResultArgs } from "./getFinalResult.types";
 
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
-import { TRANSFORMATIVE_REACTION_INFO } from "../calculation.constants";
+import { TRANSFORMATIVE_REACTION_INFO } from "@Src/backend/constants/internal";
 
 import { toArray } from "@Src/utils";
-import { CharacterCalc, GeneralCalc } from "../utils";
-import { TrackerControl } from "../controls";
+import { CharacterCalc, GeneralCalc } from "../../utils";
+import { TrackerControl } from "../../controls";
 import CalcItemCalculator from "../calc-item-calculator";
 
 export default function getFinalResult({
