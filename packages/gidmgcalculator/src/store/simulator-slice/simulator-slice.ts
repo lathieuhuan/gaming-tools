@@ -1,7 +1,8 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import type { Simulation } from "@Src/types";
-import type { SimulatorState } from "./simulator-slice.types";
+import type { AddSimulationPayload, SimulatorState } from "./simulator-slice.types";
+import { Setup_ } from "@Src/utils";
+import { $AppSettings } from "@Src/services";
 
 const initialState: SimulatorState = {
   active: {
@@ -16,18 +17,29 @@ export const simulatorSlice = createSlice({
   name: "simulator",
   initialState,
   reducers: {
-    addSimulation: (state, action: PayloadAction<Simulation>) => {
+    addSimulation: (state, action: AddSimulationPayload) => {
       const id = Date.now();
+      const {
+        members,
+        triggerEvents = [],
+        actionEvents = [],
+        target = Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
+      } = action.payload;
 
       state.active = {
         simulationId: id,
-        member: action.payload.members[0].name,
+        member: members[0].name,
       };
       state.simulationManageInfos.push({
         id,
         name: "Simulation 1",
       });
-      state.simulationsById[id] = action.payload;
+      state.simulationsById[id] = {
+        members,
+        triggerEvents,
+        actionEvents,
+        target,
+      };
     },
   },
 });

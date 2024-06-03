@@ -6,6 +6,16 @@ export type SimulationManageInfo = {
   name: string;
 };
 
+type TriggerEvent = {
+  character: string;
+  modId: number;
+  modInputs: number[];
+};
+
+type ActionEvent = {
+  character: string;
+};
+
 export type SimulationMember = Character & {
   weapon: Weapon;
   artifacts: Array<Artifact | null>;
@@ -14,7 +24,8 @@ export type SimulationMember = Character & {
 export type SimulationTarget = Target;
 
 export type Simulation = {
-  actions: unknown[];
   members: SimulationMember[];
+  triggerEvents: TriggerEvent[];
+  actionEvents: ActionEvent[];
   target: SimulationTarget;
 };

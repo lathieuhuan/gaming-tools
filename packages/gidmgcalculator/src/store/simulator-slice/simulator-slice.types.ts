@@ -1,3 +1,5 @@
+import type { PartiallyRequired } from "rond";
+import type { PayloadAction } from "@reduxjs/toolkit";
 import type { Simulation, SimulationManageInfo } from "@Src/types";
 
 export type SimulatorState = {
@@ -8,3 +10,5 @@ export type SimulatorState = {
   simulationManageInfos: SimulationManageInfo[];
   simulationsById: Record<string, Simulation>;
 };
+
+export type AddSimulationPayload = PayloadAction<PartiallyRequired<Partial<Simulation>, "members">>;

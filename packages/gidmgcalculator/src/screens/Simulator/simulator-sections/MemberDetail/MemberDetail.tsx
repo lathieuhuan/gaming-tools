@@ -1,4 +1,3 @@
-
 import type { RootState } from "@Store/store";
 import { AttributeTable, GenshinImage } from "@Src/components";
 import { $AppCharacter, $AppWeapon } from "@Src/services";
@@ -41,7 +40,7 @@ export function MemberDetail() {
       <p>
         Level: {member.level} - C{member.cons}
       </p>
-      <GenshinImage src={appWeapon.icon} />
+      <GenshinImage className="w-14 h-14" src={appWeapon.icon} />
       {/* <AttributeTable attributes={totalAttr} /> */}
     </div>
   );
