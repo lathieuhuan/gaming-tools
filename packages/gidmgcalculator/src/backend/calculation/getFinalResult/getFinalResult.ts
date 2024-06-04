@@ -89,12 +89,12 @@ export default function getFinalResult({
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
     const { mult, dmgType } = TRANSFORMATIVE_REACTION_INFO[rxn];
-    const normalMult = 1 + attBonus.get("pct_", rxn) / 100;
+    const normalMult = 1 + attBonus.getBare("pct_", rxn) / 100;
     const resMult = dmgType !== "absorb" ? resistances[dmgType] : 1;
     const baseValue = baseRxnDmg * mult;
     const nonCrit = baseValue * normalMult * resMult;
-    const cDmg_ = attBonus.get("cDmg_", rxn) / 100;
-    const cRate_ = Math.max(attBonus.get("cRate_", rxn), 0) / 100;
+    const cDmg_ = attBonus.getBare("cDmg_", rxn) / 100;
+    const cRate_ = Math.max(attBonus.getBare("cRate_", rxn), 0) / 100;
 
     finalResult.RXN_CALC[rxn] = {
       type: "attack",

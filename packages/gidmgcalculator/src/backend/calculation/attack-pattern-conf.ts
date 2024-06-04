@@ -9,7 +9,7 @@ import type {
   CharacterBuffNAsConfig,
 } from "../types";
 import type { CalcUltilInfo } from "./calculation.types";
-import { TrackerControl, type AttackBonusControl } from "./controls";
+import { AttackBonusControl, TrackerControl } from "./controls";
 
 import { findByIndex, toArray } from "@Src/utils";
 import { CharacterCalc, EntityCalc, GeneralCalc } from "./utils";
@@ -105,7 +105,7 @@ export default function AttackPatternConf({
 
       // deal elemental dmg and want amplifying reaction
       if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
-        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, attBonus.get("pct_", reaction));
+        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, attBonus.getBare("pct_", reaction));
       }
 
       const record = TrackerControl.initCalcItemRecord({
