@@ -75,6 +75,10 @@ export class AttackBonusControl {
     return (this.attackBonusAll[key] ?? 0) + AttackBonusControl.getBonus(this.attBonus, key, ...paths);
   };
 
+  getBare = (key: AttackBonusKey, ...paths: GetBonusPaths) => {
+    return AttackBonusControl.getBonus(this.attBonus, key, ...paths);
+  };
+
   getExclusiveBonuses = (item: CalcItem): CalcItemExclusiveBonus[] => {
     const filterRecords: CalcItemExclusiveBonus[] = [];
     const foundBonus = item.id ? this.attBonus.find((bonus) => bonus.type === item.id) : undefined;
