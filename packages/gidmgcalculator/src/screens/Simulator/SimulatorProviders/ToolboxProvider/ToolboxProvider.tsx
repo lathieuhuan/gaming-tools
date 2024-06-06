@@ -32,7 +32,7 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
   const activeId = useSelector(selectActiveId);
   const activeMember = useSelector(selectActiveMember);
 
-  const a = useMemo(() => {
+  const toolbox = useMemo(() => {
     const member = getActiveSimulation(store)?.members.find((member) => member.name === activeMember);
 
     if (member) {
@@ -48,24 +48,28 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
     return null;
   }, [activeId, activeMember]);
 
-  return <ToolboxContext.Provider value={null}>{props.children}</ToolboxContext.Provider>;
+  return (
+    <ToolboxContext.Provider value={null}>
+      <TotalAttributeProvider totalAttrCtrl={toolbox?.totalAttrCtrl}>{props.children}</TotalAttributeProvider>
+    </ToolboxContext.Provider>
+  );
 }
 
 const selectModifyEvents = (state: RootState) => {
-  const {} = {};
+  const { activeId, simulationsById } = state.simulator;
+  return simulationsById[activeId]?.modifyEvents;
 };
 
 interface Props {
-  store: HandmadeStore;
-  activeId: number;
-  totalAttrCtrl: TotalAttributeControl;
+  totalAttrCtrl?: TotalAttributeControl;
+  children: React.ReactNode;
 }
-function AProvider({ store, activeId, totalAttrCtrl }: Props) {
-  // const b = useSelector();
+function TotalAttributeProvider({ totalAttrCtrl, children }: Props) {
+  const modifyEvents = useSelector(selectModifyEvents);
 
   const a = useMemo(() => {
-    const modifyEvents = getActiveSimulation(store)?.modifyEvents;
-  }, [activeId]);
+    
+  }, [modifyEvents]);
 
-  return;
+  return <>{children}</>;
 }
