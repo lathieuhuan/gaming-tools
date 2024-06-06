@@ -28,14 +28,12 @@ type SimulationBonus = {
 
 export type SimulationAttributeBonus = SimulationBonus & {
   stable: boolean;
-  to: AttributeStat;
+  toStat: AttributeStat;
 };
 
 export type SimulationAttackBonus = SimulationBonus & {
-  to: {
-    type: AttackBonusType;
-    key: AttackBonusKey;
-  };
+  toType: AttackBonusType;
+  toKey: AttackBonusKey;
 };
 
 export type SimulationMember = Character & {

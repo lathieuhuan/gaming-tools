@@ -1,12 +1,17 @@
 import type { CalcCharacter } from "@Src/types";
 import type { AppCharacter, AttributeStat } from "@Src/backend/types";
-import type { TotalAttribute } from "./controls.types";
 import type { TrackerControl } from "./tracker-control";
 
 import { ATTRIBUTE_STAT_TYPES, LEVELS } from "@Src/backend/constants";
 import { ECalcStatModule } from "@Src/backend/constants/internal";
 import { toArray } from "@Src/utils";
 import { GeneralCalc } from "@Src/backend/utils/general-calc";
+
+/** Actually does not contain "hp_" | "atk_" | "def_" */
+type TotalAttributeStat = AttributeStat | "hp_base" | "atk_base" | "def_base";
+
+/** Actually does not contain "hp_" | "atk_" | "def_" */
+export type TotalAttribute = Record<TotalAttributeStat, number>;
 
 type InternalTotalAttribute = Record<
   AttributeStat,
