@@ -23,9 +23,15 @@ type SimulationTotalAttribute = Record<
 >;
 
 export class TotalAttributeControl {
-  totalAttr: SimulationTotalAttribute;
+  private totalAttr: SimulationTotalAttribute;
 
-  constructor(char: Character, appChar: AppCharacter, weapon: Weapon, appWeapon: AppWeapon, artifacts: Artifact[]) {
+  constructor(
+    char: Character,
+    appChar: AppCharacter,
+    weapon: Weapon,
+    appWeapon: AppWeapon,
+    artifacts: Array<Artifact | null>
+  ) {
     this.totalAttr = {} as SimulationTotalAttribute;
 
     for (const type of ATTRIBUTE_STAT_TYPES) {
@@ -82,7 +88,7 @@ export class TotalAttributeControl {
     this.totalAttr[key].base += value;
   };
 
-  getArtifactAttribute = (artifacts: Artifact[]) => {
+  getArtifactAttribute = (artifacts: Array<Artifact | null>) => {
     const artAttr: ArtifactAttribute = {
       hp: 0,
       atk: 0,
