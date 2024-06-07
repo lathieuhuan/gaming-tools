@@ -1,26 +1,20 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
+import type { SimulationMember } from "@Src/types";
 
 import { useSelector } from "@Store/hooks";
 import { RootState } from "@Store/store";
 import { $AppCharacter, $AppWeapon } from "@Src/services";
-import { selectActiveSimulation } from "@Store/simulator-slice";
-
-import { TotalAttributeControl } from "../../controls";
-import { ToolboxContext } from "./toolbox-context";
 import { useStore } from "@Src/features";
-import { Simulation } from "@Src/types";
-
-type HandmadeStore = ReturnType<typeof useStore>;
+import { TotalAttributeControl } from "../../controls";
+import { ActiveMemberContext, TotalAttributeContext } from "./contexts";
 
 const selectActiveId = (state: RootState) => state.simulator.activeId;
 
 const selectActiveMember = (state: RootState) => state.simulator.activeMember;
 
-const getActiveSimulation = (store: HandmadeStore): Simulation | null => {
-  return store.select((state) => {
-    const { activeId, simulationsById } = state.simulator;
-    return simulationsById[activeId] ?? null;
-  });
+const getActiveMember = (state: RootState): SimulationMember | undefined => {
+  const { activeId, activeMember, simulationsById } = state.simulator;
+  return simulationsById[activeId]?.members?.find((member) => member.name === activeMember);
 };
 
 interface ToolboxProviderProps {
@@ -28,48 +22,58 @@ interface ToolboxProviderProps {
 }
 export function ToolboxProvider(props: ToolboxProviderProps) {
   const store = useStore();
-
   const activeId = useSelector(selectActiveId);
   const activeMember = useSelector(selectActiveMember);
 
-  const toolbox = useMemo(() => {
-    const member = getActiveSimulation(store)?.members.find((member) => member.name === activeMember);
+  console.log("render: ToolboxProvider");
+
+  const [activeMemberInfo = null, toolbox] = useMemo(() => {
+    const member = store.select(getActiveMember);
 
     if (member) {
       const appChar = $AppCharacter.get(member.name);
       const appWeapon = $AppWeapon.get(member.weapon.code)!;
 
-      return {
-        char: member,
-        appChar,
-        totalAttrCtrl: new TotalAttributeControl(member, appChar, member.weapon, appWeapon, member.artifacts),
-      };
+      return [
+        {
+          char: member,
+          appChar,
+        },
+        {
+          totalAttrCtrl: new TotalAttributeControl().construct(
+            member,
+            appChar,
+            member.weapon,
+            appWeapon,
+            member.artifacts
+          ),
+        },
+      ];
     }
-    return null;
+    return [];
   }, [activeId, activeMember]);
 
   return (
-    <ToolboxContext.Provider value={null}>
+    <ActiveMemberContext.Provider value={activeMemberInfo}>
       <TotalAttributeProvider totalAttrCtrl={toolbox?.totalAttrCtrl}>{props.children}</TotalAttributeProvider>
-    </ToolboxContext.Provider>
+    </ActiveMemberContext.Provider>
   );
 }
 
-const selectModifyEvents = (state: RootState) => {
-  const { activeId, simulationsById } = state.simulator;
-  return simulationsById[activeId]?.modifyEvents;
-};
+const selectAttributeBonus = (state: RootState) => getActiveMember(state)?.attributeBonus;
 
-interface Props {
+interface TotalAttributeProviderProps {
   totalAttrCtrl?: TotalAttributeControl;
   children: React.ReactNode;
 }
-function TotalAttributeProvider({ totalAttrCtrl, children }: Props) {
-  const modifyEvents = useSelector(selectModifyEvents);
+function TotalAttributeProvider({ totalAttrCtrl, children }: TotalAttributeProviderProps) {
+  const attributeBonus = useSelector(selectAttributeBonus);
 
-  const a = useMemo(() => {
-    
-  }, [modifyEvents]);
+  console.log("render: TotalAttributeProvider");
 
-  return <>{children}</>;
+  const totalAttr = useMemo(() => {
+    return totalAttrCtrl?.applyAttributeBonus(attributeBonus) ?? null;
+  }, [totalAttrCtrl, attributeBonus]);
+
+  return <TotalAttributeContext.Provider value={totalAttr}>{children}</TotalAttributeContext.Provider>;
 }

@@ -22,8 +22,15 @@ function SimulatorLargeCore() {
           </ToolboxProvider>
         ) : null}
       </div>
+      <RenderLast />
     </SimulatorModalsProvider>
   );
 }
+
+const RenderLast = () => {
+  console.log("====================");
+
+  return null;
+};
 
 export const SimulatorLarge = memo(SimulatorLargeCore);

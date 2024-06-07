@@ -90,8 +90,7 @@ export function CalcSetupSelect(props: CalcSetupSelectProps) {
   }, []);
 
   const onClickSetup = (setup: CalcSetup) => {
-    // props.onSelect(setup);
-    props.onSelect(mockSetup);
+    props.onSelect(setup);
   };
 
   return (
@@ -99,6 +98,7 @@ export function CalcSetupSelect(props: CalcSetupSelectProps) {
       <Modal.Header withDivider>Select Setup</Modal.Header>
 
       <div>
+        <p onClick={() => onClickSetup(mockSetup)}>Shortcut</p>
         {setups.map((setup) => {
           return (
             <div key={setup.id} className="px-2 py-1 rounded w-fit bg-surface-3" onClick={() => onClickSetup(setup)}>

@@ -1,47 +1,38 @@
-import type { RootState } from "@Store/store";
+import { ATTRIBUTE_STAT_TYPES, TotalAttribute } from "@Backend";
 import { AttributeTable, GenshinImage } from "@Src/components";
-import { $AppCharacter, $AppWeapon } from "@Src/services";
-import { useSelector } from "@Store/hooks";
+import { $AppWeapon } from "@Src/services";
+import { useActiveMember, useTotalAttribute } from "../../SimulatorProviders";
+import { TotalAttributeControl } from "../../controls";
 
-const selectActiveMember = (state: RootState) => {
-  const { active, simulationsById } = state.simulator;
+function finalize(control: TotalAttributeControl): TotalAttribute {
+  const totalAttr = {} as TotalAttribute;
 
-  if (active.simulationId) {
-    const { members, target } = simulationsById[active.simulationId];
-
-    return {
-      member: members[0],
-      partyData: $AppCharacter.getPartyData(members),
-      target,
-    };
+  for (const key of ATTRIBUTE_STAT_TYPES) {
+    if (key === "hp_" || key === "atk_" || key === "def_") {
+      continue;
+    }
+    if (key === "hp" || key === "atk" || key === "def") {
+      totalAttr[`${key}_base`] = control.getBase(key);
+    }
+    totalAttr[key] = control.getTotal(key, "ALL");
   }
-  return null;
-};
+  return totalAttr;
+}
 
 export function MemberDetail() {
-  const data = useSelector(selectActiveMember);
-  if (!data) return null;
-  const { member, partyData } = data;
+  const { char } = useActiveMember();
+  const totalAttr = useTotalAttribute();
 
-  const appWeapon = $AppWeapon.get(member.weapon.code)!;
-
-  // const { totalAttr } = calculateMember({
-  //   member,
-  //   appChar: $AppCharacter.get(member.name),
-  //   appWeapon,
-  //   partyData,
-  //   elmtModCtrls: member.elmtModCtrls,
-  //   target: data.target,
-  // });
+  const appWeapon = $AppWeapon.get(char.weapon.code)!;
 
   return (
     <div>
-      <h3>{member.name}</h3>
+      <h3>{char.name}</h3>
       <p>
-        Level: {member.level} - C{member.cons}
+        Level: {char.level} - C{char.cons}
       </p>
       <GenshinImage className="w-14 h-14" src={appWeapon.icon} />
-      {/* <AttributeTable attributes={totalAttr} /> */}
+      <AttributeTable attributes={finalize(totalAttr)} />
     </div>
   );
 }

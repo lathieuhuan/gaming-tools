@@ -26,6 +26,7 @@ export const simulatorSlice = createSlice({
 
       if (members) {
         state.activeId = id;
+        state.activeMember = members[0].name;
         state.simulationManageInfos.push({
           id,
           name: "Simulation 1",
