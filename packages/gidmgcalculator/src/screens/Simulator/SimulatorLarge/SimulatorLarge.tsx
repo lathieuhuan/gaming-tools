@@ -11,9 +11,13 @@ function SimulatorLargeCore() {
         <SimulatorHeader />
 
         <ToolboxProvider>
-          <div className="w-76">
-            <MemberDetail />
-            <ModifyEventsMaker />
+          <div className="flex">
+            <div className="w-76">
+              <MemberDetail />
+            </div>
+            <div className="w-76">
+              <ModifyEventsMaker />
+            </div>
           </div>
         </ToolboxProvider>
       </div>

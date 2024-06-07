@@ -37,11 +37,16 @@ export function SimulatorModalsProvider(props: SimulatorModalsProviderProps) {
           onSelect={(setup) => {
             const members: SimulationMember[] = [
               {
-                ...setup.char,
-                weapon: setup.weapon,
-                artifacts: setup.artifacts,
-                attributeBonus: [],
-                attackBonus: [],
+                name: setup.char.name,
+                info: {
+                  ...setup.char,
+                  weapon: setup.weapon,
+                  artifacts: setup.artifacts,
+                },
+                bonus: {
+                  attributeBonus: [],
+                  attackBonus: [],
+                },
               },
             ];
 

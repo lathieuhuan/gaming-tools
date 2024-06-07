@@ -2,8 +2,8 @@ import { createContext, useContext } from "react";
 import { AppCharacter } from "@Backend";
 import { SimulationMember } from "@Src/types";
 
-type ActiveMemberInfo = {
-  char: SimulationMember;
+export type ActiveMemberInfo = {
+  char: SimulationMember["info"];
   appChar: AppCharacter;
 };
 

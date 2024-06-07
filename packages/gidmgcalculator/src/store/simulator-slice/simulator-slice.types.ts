@@ -1,5 +1,11 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { Simulation, SimulationAttackBonus, SimulationAttributeBonus, SimulationManageInfo } from "@Src/types";
+import type {
+  ModifyEvent,
+  Simulation,
+  SimulationAttackBonus,
+  SimulationAttributeBonus,
+  SimulationManageInfo,
+} from "@Src/types";
 
 export type SimulatorState = {
   activeId: number;
@@ -9,6 +15,13 @@ export type SimulatorState = {
 };
 
 export type AddSimulationPayload = PayloadAction<Partial<Simulation>>;
+
+type AddModifyEventPayload = {
+  type: "MODIFY";
+  event: ModifyEvent;
+};
+
+export type AddEventPayload = PayloadAction<AddModifyEventPayload>;
 
 type AddAttributeBonusPayload = {
   type: "ATTRIBUTE";

@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import type { AddBonusPayload, AddSimulationPayload, SimulatorState } from "./simulator-slice.types";
+import type { AddBonusPayload, AddEventPayload, AddSimulationPayload, SimulatorState } from "./simulator-slice.types";
 import { Setup_ } from "@Src/utils";
 import { $AppSettings } from "@Src/services";
 import { ModifyEvent } from "@Src/types";
@@ -28,7 +28,7 @@ export const simulatorSlice = createSlice({
 
       if (members) {
         state.activeId = id;
-        state.activeMember = members[0].name;
+        state.activeMember = members[0].info.name;
         state.simulationManageInfos.push({
           id,
           name: "Simulation 1",
@@ -41,21 +41,26 @@ export const simulatorSlice = createSlice({
         };
       }
     },
-    addModifyEvent: (state, action: PayloadAction<ModifyEvent>) => {
-      getActiveSimulation(state)?.modifyEvents.push(action.payload);
+    addEvent: (state, action: AddEventPayload) => {
+      const { type, event } = action.payload;
+
+      switch (type) {
+        case "MODIFY":
+          getActiveSimulation(state)?.modifyEvents.push(event);
+      }
     },
     addBonus: (state, action: AddBonusPayload) => {
       const { type, toCharacter, bonus } = action.payload;
 
       if (type === "ATTRIBUTE") {
-        getMember(state, toCharacter)?.attributeBonus.push(bonus);
+        getMember(state, toCharacter)?.bonus.attributeBonus.push(bonus);
       } else {
-        getMember(state, toCharacter)?.attackBonus.push(bonus);
+        getMember(state, toCharacter)?.bonus.attackBonus.push(bonus);
       }
     },
   },
 });
 
-export const { addSimulation, addModifyEvent, addBonus } = simulatorSlice.actions;
+export const { addSimulation, addEvent, addBonus } = simulatorSlice.actions;
 
 export default simulatorSlice.reducer;
