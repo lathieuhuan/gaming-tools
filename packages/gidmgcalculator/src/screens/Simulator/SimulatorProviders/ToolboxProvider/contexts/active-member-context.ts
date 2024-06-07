@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
-import { SimulationMember } from "@Src/types";
 import { AppCharacter } from "@Backend";
+import { SimulationMember } from "@Src/types";
 
 type ActiveMemberInfo = {
   char: SimulationMember;
@@ -10,9 +10,5 @@ type ActiveMemberInfo = {
 export const ActiveMemberContext = createContext<ActiveMemberInfo | null>(null);
 
 export function useActiveMember() {
-  const context = useContext(ActiveMemberContext);
-  if (!context) {
-    throw new Error("useToolbox must be used inside ToolboxContext");
-  }
-  return context;
+  return useContext(ActiveMemberContext);
 }

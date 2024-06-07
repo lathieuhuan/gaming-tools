@@ -39,13 +39,13 @@ export class TotalAttributeControl {
     }
   }
 
-  construct(
+  construct = (
     char: Character,
     appChar: AppCharacter,
     weapon: Weapon,
     appWeapon: AppWeapon,
     artifacts: Array<Artifact | null>
-  ) {
+  ) => {
     // ========== CHARACTER ==========
 
     const [baseHp, baseAtk, baseDef] = appChar.stats[LEVELS.indexOf(char.level)];
@@ -88,33 +88,33 @@ export class TotalAttributeControl {
     }
 
     return this;
-  }
+  };
 
-  private addBase(key: AttributeStat, value: number, description = "Character base stat") {
+  private addBase = (key: AttributeStat, value: number, description = "Character base stat") => {
     this.totalAttr[key].base += value;
-  }
+  };
 
-  private addStable(keys: AttributeStat | AttributeStat[], value: number, description: string) {
+  private addStable = (keys: AttributeStat | AttributeStat[], value: number, description: string) => {
     toArray(keys).forEach((key) => {
       this.totalAttr[key].stableBonus += value;
     });
-  }
+  };
 
-  private addUnstable(keys: AttributeStat | AttributeStat[], value: number, description: string) {
+  private addUnstable = (keys: AttributeStat | AttributeStat[], value: number, description: string) => {
     toArray(keys).forEach((key) => {
       this.totalAttr[key].unstableBonus += value;
     });
-  }
+  };
 
-  getArtifactAttribute(artifacts: Array<Artifact | null>) {
+  getArtifactAttribute = (artifacts: Array<Artifact | null>) => {
     return _getArtifactAttribute(artifacts, this.totalAttr);
-  }
+  };
 
-  getBase(key: AttributeStat) {
+  getBase = (key: AttributeStat) => {
     return this.totalAttr[key].base;
-  }
+  };
 
-  getTotal(key: AttributeStat | "base_atk", type: "ALL" | "STABLE" = "ALL") {
+  getTotal = (key: AttributeStat | "base_atk", type: "ALL" | "STABLE" = "ALL") => {
     if (key === "base_atk") {
       return this.getBase("atk");
     }
@@ -128,9 +128,9 @@ export class TotalAttributeControl {
       total += (base * totalPercent) / 100;
     }
     return total;
-  }
+  };
 
-  applyAttributeBonus(bonuses?: SimulationAttributeBonus[]) {
+  applyAttributeBonus = (bonuses?: SimulationAttributeBonus[]) => {
     const clonedCtrl = new TotalAttributeControl(structuredClone(this.totalAttr));
 
     if (bonuses) {
@@ -145,5 +145,5 @@ export class TotalAttributeControl {
     }
 
     return clonedCtrl;
-  }
+  };
 }

@@ -7,13 +7,13 @@ export type SimulationManageInfo = {
   name: string;
 };
 
-type ModifyEvent = {
+export type ModifyEvent = {
   character: string;
   modId: number;
   modInputs: number[];
 };
 
-type AttackEvent = {
+export type AttackEvent = {
   character: string;
   duration: number;
 };

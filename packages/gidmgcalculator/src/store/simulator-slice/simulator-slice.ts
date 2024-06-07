@@ -1,8 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import type { AddSimulationPayload, SimulatorState } from "./simulator-slice.types";
+import type { AddBonusPayload, AddSimulationPayload, SimulatorState } from "./simulator-slice.types";
 import { Setup_ } from "@Src/utils";
 import { $AppSettings } from "@Src/services";
+import { ModifyEvent } from "@Src/types";
+import { getActiveSimulation, getMember } from "./simulator-slice.utils";
 
 const initialState: SimulatorState = {
   activeId: 0,
@@ -39,9 +41,21 @@ export const simulatorSlice = createSlice({
         };
       }
     },
+    addModifyEvent: (state, action: PayloadAction<ModifyEvent>) => {
+      getActiveSimulation(state)?.modifyEvents.push(action.payload);
+    },
+    addBonus: (state, action: AddBonusPayload) => {
+      const { type, toCharacter, bonus } = action.payload;
+
+      if (type === "ATTRIBUTE") {
+        getMember(state, toCharacter)?.attributeBonus.push(bonus);
+      } else {
+        getMember(state, toCharacter)?.attackBonus.push(bonus);
+      }
+    },
   },
 });
 
-export const { addSimulation } = simulatorSlice.actions;
+export const { addSimulation, addModifyEvent, addBonus } = simulatorSlice.actions;
 
 export default simulatorSlice.reducer;

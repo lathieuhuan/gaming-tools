@@ -20,8 +20,13 @@ function finalize(control: TotalAttributeControl): TotalAttribute {
 }
 
 export function MemberDetail() {
-  const { char } = useActiveMember();
+  const activeMember = useActiveMember();
   const totalAttr = useTotalAttribute();
+
+  if (!activeMember || !totalAttr) {
+    return null;
+  }
+  const { char } = activeMember;
 
   const appWeapon = $AppWeapon.get(char.weapon.code)!;
 
