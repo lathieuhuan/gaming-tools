@@ -1,24 +1,7 @@
-import { ATTRIBUTE_STAT_TYPES, TotalAttribute } from "@Backend";
 import { $AppWeapon } from "@Src/services";
-import { TotalAttributeControl } from "@Simulator/calculation";
 import { useActiveMember, useTotalAttribute } from "@Simulator/providers";
 
 import { AttributeTable, GenshinImage } from "@Src/components";
-
-function finalize(control: TotalAttributeControl): TotalAttribute {
-  const totalAttr = {} as TotalAttribute;
-
-  for (const key of ATTRIBUTE_STAT_TYPES) {
-    if (key === "hp_" || key === "atk_" || key === "def_") {
-      continue;
-    }
-    if (key === "hp" || key === "atk" || key === "def") {
-      totalAttr[`${key}_base`] = control.getBase(key);
-    }
-    totalAttr[key] = control.getTotal(key, "ALL");
-  }
-  return totalAttr;
-}
 
 export function MemberDetail() {
   const activeMember = useActiveMember();
@@ -38,7 +21,7 @@ export function MemberDetail() {
         Level: {char.level} - C{char.cons}
       </p>
       <GenshinImage className="w-14 h-14" src={appWeapon.icon} />
-      <AttributeTable attributes={finalize(totalAttr)} />
+      <AttributeTable attributes={totalAttr.finalize()} />
     </div>
   );
 }

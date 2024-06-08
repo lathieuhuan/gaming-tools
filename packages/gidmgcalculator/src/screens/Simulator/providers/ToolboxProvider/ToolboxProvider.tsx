@@ -7,7 +7,7 @@ import { RootState } from "@Store/store";
 import { $AppCharacter, $AppWeapon } from "@Src/services";
 import { useStore } from "@Src/features";
 import { pickProps } from "@Src/utils";
-import { TotalAttributeControl } from "@Simulator/calculation";
+import { SimulatorTotalAttributeControl } from "@Simulator/calculation";
 import { ActiveSimulationContext, ActiveMemberContext, TotalAttributeContext, ActiveMemberInfo } from "./contexts";
 
 const selectActiveId = (state: RootState) => state.simulator.activeId;
@@ -19,11 +19,9 @@ const getActiveMember = (state: RootState): SimulationMember | undefined => {
   return simulationsById[activeId]?.members?.find((member) => member.name === activeMember);
 };
 
-type ToolBox =
-  | {
-      totalAttrCtrl: TotalAttributeControl;
-    }
-  | undefined;
+type ToolBox = {
+  totalAttrCtrl: SimulatorTotalAttributeControl;
+} | null;
 
 interface ToolboxProviderProps {
   children: React.ReactNode;
@@ -56,6 +54,9 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
       const char = pickProps(member, ["name", "level", "cons", "NAs", "ES", "EB", "weapon", "artifacts"]);
       const appChar = $AppCharacter.get(char.name);
       const appWeapon = $AppWeapon.get(char.weapon.code)!;
+      const totalAttrCtrl = new SimulatorTotalAttributeControl();
+
+      totalAttrCtrl.construct(char, appChar, char.weapon, appWeapon, char.artifacts);
 
       return [
         {
@@ -63,11 +64,11 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
           appChar,
         },
         {
-          totalAttrCtrl: new TotalAttributeControl().construct(char, appChar, char.weapon, appWeapon, char.artifacts),
+          totalAttrCtrl,
         },
       ];
     }
-    return [null, undefined];
+    return [null, null];
   }, [activeId, activeMember]);
 
   return (
@@ -82,7 +83,7 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
 const selectAttributeBonus = (state: RootState) => getActiveMember(state)?.attributeBonus;
 
 interface TotalAttributeProviderProps {
-  totalAttrCtrl?: TotalAttributeControl;
+  totalAttrCtrl?: SimulatorTotalAttributeControl;
   children: React.ReactNode;
 }
 function TotalAttributeProvider({ totalAttrCtrl, children }: TotalAttributeProviderProps) {

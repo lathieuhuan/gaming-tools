@@ -1,17 +1,19 @@
-import type { CalcCharacter } from "@Src/types";
-import type { AppCharacter, AttributeStat } from "@Src/backend/types";
-import type { TrackerControl } from "./tracker-control";
+import type { PartiallyRequired } from "rond";
+import type { Artifact, Character, Weapon } from "@Src/types";
+import type { AppCharacter, AppWeapon, AttributeStat, CoreStat } from "@Src/backend/types";
 
-import { ATTRIBUTE_STAT_TYPES, LEVELS } from "@Src/backend/constants";
-import { ECalcStatModule } from "@Src/backend/constants/internal";
-import { toArray } from "@Src/utils";
+import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "@Src/backend/constants";
+import { applyPercent, toArray } from "@Src/utils";
 import { GeneralCalc } from "@Src/backend/utils/general-calc";
+import { ArtifactCalc, WeaponCalc } from "../utils";
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
 type TotalAttributeStat = AttributeStat | "hp_base" | "atk_base" | "def_base";
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
 export type TotalAttribute = Record<TotalAttributeStat, number>;
+
+export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;
 
 type InternalTotalAttribute = Record<
   AttributeStat,
@@ -24,70 +26,108 @@ type InternalTotalAttribute = Record<
 
 export type GetTotalAttributeType = "ALL" | "STABLE";
 
+type RecordBonus = (stat: AttributeStat, value: number, description: string) => void;
+
 export class TotalAttributeControl {
-  private totalAttr: InternalTotalAttribute;
-  private tracker?: TrackerControl;
+  protected totalAttr: InternalTotalAttribute;
+  private record?: RecordBonus;
 
-  constructor(char: CalcCharacter, appChar: AppCharacter, weaponAtk: number, tracker?: TrackerControl) {
-    this.tracker = tracker;
-    this.totalAttr = {} as InternalTotalAttribute;
+  constructor(totalAttr?: InternalTotalAttribute, record?: RecordBonus) {
+    if (totalAttr) {
+      this.totalAttr = totalAttr;
+    } else {
+      this.totalAttr = {} as InternalTotalAttribute;
 
-    for (const type of ATTRIBUTE_STAT_TYPES) {
-      this.totalAttr[type] = {
-        base: 0,
-        stableBonus: 0,
-        unstableBonus: 0,
-      };
+      for (const type of ATTRIBUTE_STAT_TYPES) {
+        this.totalAttr[type] = {
+          base: 0,
+          stableBonus: 0,
+          unstableBonus: 0,
+        };
+      }
     }
+    this.record = record;
+  }
 
-    // Character inner stats
+  construct = (
+    char: Character,
+    appChar: AppCharacter,
+    weapon: Weapon,
+    appWeapon: AppWeapon,
+    artifacts: Array<Artifact | null>
+  ) => {
+    // ========== CHARACTER ==========
+
     const [baseHp, baseAtk, baseDef] = appChar.stats[LEVELS.indexOf(char.level)];
     const scaleIndex = Math.max(GeneralCalc.getAscension(char.level) - 1, 0);
     const bonusScale = [0, 1, 2, 2, 3, 4][scaleIndex];
-    let cRate_ = 5;
-
-    // Kokomi
-    if (appChar.code === 42) {
-      cRate_ = -95;
-      this.addBase("healB_", 25);
-    }
 
     this.addBase("hp", baseHp);
     this.addBase("atk", baseAtk);
-    this.addBase("atk", weaponAtk, "Weapon main stat");
     this.addBase("def", baseDef);
-    this.addBase(appChar.statBonus.type, appChar.statBonus.value * bonusScale);
-    this.addBase("cRate_", cRate_);
+    this.addBase("cRate_", 5);
     this.addBase("cDmg_", 50);
     this.addBase("er_", 100);
     this.addBase("naAtkSpd_", 100);
     this.addBase("caAtkSpd_", 100);
-  }
+    this.addBase(appChar.statBonus.type, appChar.statBonus.value * bonusScale, "Character ascension stat");
 
-  private addBase(key: AttributeStat, value: number, description = "Character base stat") {
+    // Kokomi
+    if (appChar.code === 42) {
+      this.addBase("cRate_", -100, "Character inner stat");
+      this.addBase("healB_", 25, "Character inner stat");
+    }
+
+    // ========== WEAPON ==========
+
+    this.addBase("atk", WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale), "Weapon main stat");
+
+    if (appWeapon.subStat) {
+      const substatValue = WeaponCalc.getSubStatValue(weapon.level, appWeapon.subStat.scale);
+      this.addStable(appWeapon.subStat.type, substatValue, `${appWeapon.name} sub-stat`);
+    }
+
+    // ========== ARTIFACTS ==========
+
+    const attribute = this.getArtifactAttribute(artifacts);
+
+    for (const key in attribute) {
+      const type = key as keyof typeof attribute;
+      const value = attribute[type];
+      if (value) this.addStable(type, value, "Artifact stat");
+    }
+
+    return attribute;
+  };
+
+  private addBase = (key: AttributeStat, value: number, description = "Character base stat") => {
     this.totalAttr[key].base += value;
-    this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
-  }
+    this.record?.(key, value, description);
+  };
 
-  addStable(keys: AttributeStat | AttributeStat[], value: number, description: string) {
+  addStable = (keys: AttributeStat | AttributeStat[], value: number, description: string) => {
     toArray(keys).forEach((key) => {
       this.totalAttr[key].stableBonus += value;
-      this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
+      this.record?.(key, value, description);
     });
-  }
+  };
 
-  addUnstable(keys: AttributeStat | AttributeStat[], value: number, description: string) {
+  addUnstable = (keys: AttributeStat | AttributeStat[], value: number, description: string) => {
     toArray(keys).forEach((key) => {
       this.totalAttr[key].unstableBonus += value;
-      this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
+      this.record?.(key, value, description);
     });
-  }
+  };
 
-  getBase(key: AttributeStat) {
+  private getArtifactAttribute = (artifacts: Array<Artifact | null>) => {
+    return getArtifactAttribute(artifacts, this.getBase);
+  };
+
+  getBase = (key: AttributeStat) => {
     return this.totalAttr[key].base;
-  }
+  };
 
-  getTotal(key: AttributeStat | "base_atk", type: GetTotalAttributeType = "ALL") {
+  getTotal = (key: AttributeStat | "base_atk", type: "ALL" | "STABLE" = "ALL") => {
     if (key === "base_atk") {
       return this.getBase("atk");
     }
@@ -101,7 +141,7 @@ export class TotalAttributeControl {
       total += (base * totalPercent) / 100;
     }
     return total;
-  }
+  };
 
   finalize(): TotalAttribute {
     const totalAttr = {} as TotalAttribute;
@@ -117,4 +157,39 @@ export class TotalAttributeControl {
     }
     return totalAttr;
   }
+}
+
+export function getArtifactAttribute(
+  artifacts: Array<Artifact | null>,
+  getBase: (stat: "hp" | "atk" | "def") => number
+) {
+  const artAttr: ArtifactAttribute = {
+    hp: 0,
+    atk: 0,
+    def: 0,
+  };
+
+  for (const artifact of artifacts) {
+    if (!artifact) continue;
+
+    const { mainStatType, subStats } = artifact;
+    const mainStat = ArtifactCalc.mainStatValueOf(artifact);
+
+    artAttr[mainStatType] = (artAttr[mainStatType] || 0) + mainStat;
+
+    for (const subStat of subStats) {
+      artAttr[subStat.type] = (artAttr[subStat.type] || 0) + subStat.value;
+    }
+  }
+
+  for (const statType of CORE_STAT_TYPES) {
+    const percentStatValue = artAttr[`${statType}_`];
+
+    if (percentStatValue) {
+      artAttr[statType] += applyPercent(getBase(statType), percentStatValue);
+    }
+    delete artAttr[`${statType}_`];
+  }
+
+  return artAttr;
 }

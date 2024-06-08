@@ -2,12 +2,12 @@ import type { AttackElement, AttackPattern, AttributeStat, ReactionType } from "
 import type { BuffInfoWrap, GetCalculationStatsArgs, StackableCheckCondition } from "./getCalculationStats.types";
 
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
-import { RESONANCE_STAT } from "@Src/backend/constants/internal";
+import { ECalcStatModule, RESONANCE_STAT } from "@Src/backend/constants/internal";
 
 import { $AppCharacter, $AppWeapon, $AppArtifact } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { EntityCalc, GeneralCalc, WeaponCalc } from "@Src/backend/utils";
-import { AttackBonusControl, TotalAttributeControl, getArtifactAttribute } from "@Src/backend/controls";
+import { EntityCalc, GeneralCalc } from "@Src/backend/utils";
+import { AttackBonusControl, TotalAttributeControl } from "@Src/backend/controls";
 import ApplierCharacterBuff from "./applier-character-buff";
 import ApplierWeaponBuff from "./applier-weapon-buff";
 import ApplierArtifactBuff from "./applier-artifact-buff";
@@ -31,19 +31,12 @@ export default function getCalculationStats({
   const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
   const { resonances = [], reaction, infuse_reaction } = elmtModCtrls || {};
 
-  const totalAttr = new TotalAttributeControl(
-    char,
-    appChar,
-    WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale),
-    tracker
-  );
-  const artAttr = getArtifactAttribute(artifacts, totalAttr);
-  const attBonus = new AttackBonusControl();
+  const totalAttr = new TotalAttributeControl(undefined, (stat, value, description) => {
+    tracker?.recordStat(ECalcStatModule.ATTR, stat, value, description);
+  });
+  const artAttr = totalAttr.construct(char, appChar, weapon, appWeapon, artifacts);
 
-  if (appWeapon.subStat) {
-    const subStatValue = WeaponCalc.getSubStatValue(weapon.level, appWeapon.subStat.scale);
-    totalAttr.addStable(appWeapon.subStat.type, subStatValue, `${appWeapon.name} sub-stat`);
-  }
+  const attBonus = new AttackBonusControl();
 
   const infoWrap: BuffInfoWrap = {
     char,
