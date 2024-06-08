@@ -3,7 +3,7 @@ import { AppCharacter } from "@Backend";
 import { SimulationMember } from "@Src/types";
 
 export type ActiveMemberInfo = {
-  char: SimulationMember["info"];
+  char: Pick<SimulationMember, "name" | "level" | "cons" | "NAs" | "ES" | "EB" | "weapon" | "artifacts">;
   appChar: AppCharacter;
 };
 

@@ -3,10 +3,10 @@ import type { SimulationMember } from "@Src/types";
 
 import { useSelector } from "@Store/hooks";
 import { RootState } from "@Store/store";
-import { selectActiveSimulation } from "@Store/simulator-slice";
 
 import { $AppCharacter, $AppWeapon } from "@Src/services";
 import { useStore } from "@Src/features";
+import { pickProps } from "@Src/utils";
 import { TotalAttributeControl } from "@Simulator/controls";
 import { ActiveSimulationContext, ActiveMemberContext, TotalAttributeContext, ActiveMemberInfo } from "./contexts";
 
@@ -36,7 +36,10 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
   console.log("render: ToolboxProvider");
 
   const activeSimulationInfo = useMemo(() => {
-    const simulation = store.select(selectActiveSimulation);
+    const simulation = store.select((state) => {
+      const { activeId, simulationsById } = state.simulator;
+      return simulationsById[activeId] ?? null;
+    });
 
     if (simulation) {
       return {
@@ -50,13 +53,13 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
     const member = store.select(getActiveMember);
 
     if (member) {
-      const char = member.info;
+      const char = pickProps(member, ["name", "level", "cons", "NAs", "ES", "EB", "weapon", "artifacts"]);
       const appChar = $AppCharacter.get(char.name);
       const appWeapon = $AppWeapon.get(char.weapon.code)!;
 
       return [
         {
-          char: member.info,
+          char,
           appChar,
         },
         {
@@ -76,7 +79,7 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
   );
 }
 
-const selectAttributeBonus = (state: RootState) => getActiveMember(state)?.bonus.attributeBonus;
+const selectAttributeBonus = (state: RootState) => getActiveMember(state)?.attributeBonus;
 
 interface TotalAttributeProviderProps {
   totalAttrCtrl?: TotalAttributeControl;

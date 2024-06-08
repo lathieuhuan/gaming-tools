@@ -28,7 +28,7 @@ export const simulatorSlice = createSlice({
 
       if (members) {
         state.activeId = id;
-        state.activeMember = members[0].info.name;
+        state.activeMember = members[0].name;
         state.simulationManageInfos.push({
           id,
           name: "Simulation 1",
@@ -53,9 +53,9 @@ export const simulatorSlice = createSlice({
       const { type, toCharacter, bonus } = action.payload;
 
       if (type === "ATTRIBUTE") {
-        getMember(state, toCharacter)?.bonus.attributeBonus.push(bonus);
+        getMember(state, toCharacter)?.attributeBonus.push(bonus);
       } else {
-        getMember(state, toCharacter)?.bonus.attackBonus.push(bonus);
+        getMember(state, toCharacter)?.attackBonus.push(bonus);
       }
     },
   },

@@ -36,16 +36,11 @@ export type SimulationAttackBonus = SimulationBonus & {
   toKey: AttackBonusKey;
 };
 
-export type SimulationMember = {
-  name: string;
-  info: Character & {
-    weapon: Weapon;
-    artifacts: Array<Artifact | null>;
-  };
-  bonus: {
-    attributeBonus: SimulationAttributeBonus[];
-    attackBonus: SimulationAttackBonus[];
-  };
+export type SimulationMember = Character & {
+  weapon: Weapon;
+  artifacts: Array<Artifact | null>;
+  attributeBonus: SimulationAttributeBonus[];
+  attackBonus: SimulationAttackBonus[];
 };
 
 export type SimulationTarget = Target;
