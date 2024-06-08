@@ -1,5 +1,5 @@
 import { Button } from "rond";
-import { useSimModalCtrl } from "../../SimulatorProviders";
+import { useSimModalCtrl } from "@Simulator/providers";
 
 export function SimulatorHeader() {
   const modalCtrl = useSimModalCtrl();

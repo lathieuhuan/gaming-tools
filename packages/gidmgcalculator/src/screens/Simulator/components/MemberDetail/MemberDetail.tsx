@@ -1,8 +1,9 @@
 import { ATTRIBUTE_STAT_TYPES, TotalAttribute } from "@Backend";
-import { AttributeTable, GenshinImage } from "@Src/components";
 import { $AppWeapon } from "@Src/services";
-import { useActiveMember, useTotalAttribute } from "../../SimulatorProviders";
-import { TotalAttributeControl } from "../../controls";
+import { TotalAttributeControl } from "@Simulator/calculation";
+import { useActiveMember, useTotalAttribute } from "@Simulator/providers";
+
+import { AttributeTable, GenshinImage } from "@Src/components";
 
 function finalize(control: TotalAttributeControl): TotalAttribute {
   const totalAttr = {} as TotalAttribute;

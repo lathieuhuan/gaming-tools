@@ -7,7 +7,7 @@ import { RootState } from "@Store/store";
 import { $AppCharacter, $AppWeapon } from "@Src/services";
 import { useStore } from "@Src/features";
 import { pickProps } from "@Src/utils";
-import { TotalAttributeControl } from "@Simulator/controls";
+import { TotalAttributeControl } from "@Simulator/calculation";
 import { ActiveSimulationContext, ActiveMemberContext, TotalAttributeContext, ActiveMemberInfo } from "./contexts";
 
 const selectActiveId = (state: RootState) => state.simulator.activeId;

@@ -1,35 +1,25 @@
 import { Fragment, useState } from "react";
-import { CharacterBuff } from "@Backend";
+import { Button } from "rond";
+import { CharacterBuff, EntityCalc } from "@Backend";
 
-import { parseAbilityDescription } from "@Src/utils";
+import { Modifier_, parseAbilityDescription } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
 import { addBonus, addEvent } from "@Store/simulator-slice";
-import {
-  ActiveMemberInfo,
-  ActiveSimulationInfo,
-  useActiveMember,
-  useActiveSimulation,
-} from "@Simulator/SimulatorProviders";
+import { ActiveMemberInfo, ActiveSimulationInfo, useActiveMember, useActiveSimulation } from "@Simulator/providers";
 
 import { GenshinModifierView } from "@Src/components";
-import { Button } from "rond";
 
-type Ctrl = {
-  index: number;
-  inputs: number[];
-};
-
-interface CoreProps {
+interface ModifyEventHostProps {
   member: ActiveMemberInfo;
   simulation: ActiveSimulationInfo;
-  initialCtrls?: Ctrl[];
+  initalInputsList?: number[][];
   buffs?: CharacterBuff[];
 }
 
-function Core({ member, initialCtrls = [], simulation, buffs = [] }: CoreProps) {
+function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs = [] }: ModifyEventHostProps) {
   const dispatch = useDispatch();
 
-  const [ctrls, setCtrls] = useState(initialCtrls);
+  const [inputsList, setInputsList] = useState(initalInputsList);
 
   const onMakeEvent = (mod: CharacterBuff, inputs: number[]) => {
     dispatch(
@@ -62,13 +52,12 @@ function Core({ member, initialCtrls = [], simulation, buffs = [] }: CoreProps) 
   };
 
   console.log("ctrls");
-  console.log(ctrls);
+  console.log(inputsList);
 
   return (
     <div>
-      {buffs.map((modifier) => {
-        const ctrlIndex = ctrls.findIndex((ctrl) => ctrl.index === modifier.index);
-        const inputs = ctrls[ctrlIndex]?.inputs || [];
+      {buffs.map((modifier, modIndex) => {
+        const inputs = inputsList[modIndex];
 
         return (
           <Fragment key={modifier.index}>
@@ -89,11 +78,10 @@ function Core({ member, initialCtrls = [], simulation, buffs = [] }: CoreProps) 
               inputs={inputs}
               inputConfigs={modifier.inputConfigs?.filter((config) => config.for !== "FOR_TEAM")}
               onSelectOption={(value, inputIndex) => {
-                setCtrls((prevCtrls) => {
-                  const newCtrls = [...prevCtrls];
-                  const ctrl = newCtrls[ctrlIndex];
-                  if (ctrl) ctrl.inputs[inputIndex] = value;
-                  return newCtrls;
+                setInputsList((prevList) => {
+                  const newList = [...prevList];
+                  newList[modIndex][inputIndex] = value;
+                  return newList;
                 });
               }}
             />
@@ -105,19 +93,17 @@ function Core({ member, initialCtrls = [], simulation, buffs = [] }: CoreProps) 
   );
 }
 
-export function ModifyEventsMaker() {
+export function ModifyEventHost() {
   const simulation = useActiveSimulation();
   const member = useActiveMember();
 
   if (!simulation || !member) {
     return null;
   }
-  const initialCtrls: Ctrl[] | undefined = member.appChar.buffs?.map((buff) => {
-    return {
-      index: buff.index,
-      inputs: [],
-    };
-  });
 
-  return <Core {...{ simulation, member, initialCtrls }} buffs={member.appChar.buffs} />;
+  const buffs = member.appChar.buffs?.filter((buff) => EntityCalc.isGrantedEffect(buff, member.char));
+
+  const initialCtrls = buffs?.map((buff) => Modifier_.createModCtrl(buff, true).inputs ?? []);
+
+  return <ModifyEventHostCore {...{ simulation, member, initialCtrls, buffs }} />;
 }

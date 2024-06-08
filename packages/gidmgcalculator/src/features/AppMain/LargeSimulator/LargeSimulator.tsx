@@ -1,10 +1,15 @@
 import { memo } from "react";
 
 // Components
-import { SimulatorModalsProvider, ToolboxProvider } from "@Simulator/SimulatorProviders";
-import { MemberDetail, ModifyEventsMaker, SimulatorHeader } from "@Simulator/simulator-sections";
+import {
+  SimulatorModalsProvider,
+  ToolboxProvider,
+  MemberDetail,
+  ModifyEventHost,
+  SimulatorHeader,
+} from "@Src/screens/Simulator";
 
-function SimulatorLargeCore() {
+function LargeSimulatorCore() {
   return (
     <SimulatorModalsProvider>
       <div className="h-full bg-surface-2">
@@ -16,7 +21,7 @@ function SimulatorLargeCore() {
               <MemberDetail />
             </div>
             <div className="w-76">
-              <ModifyEventsMaker />
+              <ModifyEventHost />
             </div>
           </div>
         </ToolboxProvider>
@@ -25,4 +30,4 @@ function SimulatorLargeCore() {
   );
 }
 
-export const SimulatorLarge = memo(SimulatorLargeCore);
+export const LargeSimulator = memo(LargeSimulatorCore);
