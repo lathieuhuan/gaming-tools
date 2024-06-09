@@ -1,7 +1,5 @@
 import type {
   ArtifactBonusCore,
-  AttackBonusKey,
-  AttackBonusType,
   AttributeStack,
   AttributeStat,
   CharacterBonusCore,
@@ -9,13 +7,15 @@ import type {
   WeaponBonusCore,
   WithBonusTargets,
 } from "@Src/backend/types";
-import type { GetTotalAttributeType, ModifierStackingControl, TotalAttributeControl } from "@Src/backend/controls";
+import type { GetTotalAttributeType, TotalAttributeControl } from "@Src/backend/controls";
 import type { ApplyBonusArgs, ApplyBonusesArgs, BonusConfig } from "./appliers.types";
 
 import { ELEMENT_TYPES } from "@Src/backend/constants";
 import { ECalcStatModule } from "@Src/backend/constants/internal";
 import { toArray } from "@Src/utils";
 import { CalculationInfo, EntityCalc } from "@Src/backend/utils";
+import { ModifierStackingControl } from "@Src/backend/controls";
+import { getArtifactBonus, getCharacterBonus, getWeaponBonus } from "../bonus-getters";
 
 type GetTotalAttrFromSelf = (field: AttributeStack["field"], totalAttrType: GetTotalAttributeType) => number;
 
@@ -23,48 +23,30 @@ type ApplyBonus = (args: ApplyBonusArgs) => void;
 
 type ApplyBonuses = (args: ApplyBonusesArgs<WithBonusTargets<BonusConfig>>) => void;
 
-export type ApplyAttrBonus = (args: {
-  stable: boolean;
-  keys: AttributeStat | AttributeStat[];
-  value: number;
-  description: string;
-}) => void;
+export type ApplyBuffArgs<T extends BonusConfig> = Omit<ApplyBonusesArgs<WithBonusTargets<T>>, "getBonus">;
 
-export type ApplyAttkBonus = (args: {
-  module: AttackBonusType;
-  path: AttackBonusKey;
-  value: number;
-  description: string;
-}) => void;
+export type ApplyCharacterBuffArgs = ApplyBuffArgs<CharacterBonusCore>;
+
+export type ApplyWeaponBuffArgs = ApplyBuffArgs<WeaponBonusCore> & { refi: number };
+
+export type ApplyArtifactBuffArgs = ApplyBuffArgs<ArtifactBonusCore>;
 
 export class BuffApplierCore {
   protected info: CalculationInfo;
-  private modStackingCtrl?: ModifierStackingControl;
-
-  private applyAttrBonus: ApplyAttrBonus = () => {};
-
-  private applyAttkBonus: ApplyAttkBonus = () => {};
+  private modStackingCtrl = new ModifierStackingControl();
 
   private getTotalAttrFromSelf: GetTotalAttrFromSelf = () => 0;
 
-  constructor(
-    info: CalculationInfo,
-    applyAttrBonus: ApplyAttrBonus,
-    applyAttkBonus: ApplyAttkBonus,
-    totalAttr: TotalAttributeControl,
-    modStackingCtrl?: ModifierStackingControl
-  ) {
+  constructor(info: CalculationInfo, totalAttr: TotalAttributeControl) {
     this.info = info;
-    this.applyAttrBonus = applyAttrBonus;
-    this.applyAttkBonus = applyAttkBonus;
     this.getTotalAttrFromSelf = totalAttr.getTotal;
-    this.modStackingCtrl = modStackingCtrl;
   }
 
-  private applyBonus: ApplyBonus = ({ bonus, vision, targets, inputs, isStackable, description }) => {
+  private applyBonus: ApplyBonus = (args) => {
+    const { bonus, isStackable, description } = args;
     if (!bonus.value) return;
 
-    for (const target of toArray(targets)) {
+    for (const target of toArray(args.targets)) {
       if (isStackable && target.module.slice(0, 2) !== "id" && !isStackable(target.path)) {
         continue;
       }
@@ -76,33 +58,33 @@ export class BuffApplierCore {
 
             switch (targetPath) {
               case "INP_ELMT": {
-                const elmtIndex = inputs[target.inpIndex ?? 0];
+                const elmtIndex = args.inputs[target.inpIndex ?? 0];
                 path = ELEMENT_TYPES[elmtIndex];
                 break;
               }
               case "OWN_ELMT":
-                path = vision;
+                path = args.vision;
                 break;
               default:
                 path = targetPath;
             }
 
             if (bonus.isStable) {
-              this.applyAttrBonus({
+              args.applyAttrBonus({
                 stable: true,
                 keys: path,
                 value: bonus.value,
                 description,
               });
             } else {
-              this.applyAttrBonus({ stable: false, keys: path, value: bonus.value, description });
+              args.applyAttrBonus({ stable: false, keys: path, value: bonus.value, description });
             }
           }
           break;
         }
         case "ELMT_NA":
           for (const elmt of ELEMENT_TYPES) {
-            this.applyAttkBonus({
+            args.applyAttkBonus({
               module: `NA.${elmt}`,
               path: target.path,
               value: bonus.value,
@@ -112,13 +94,13 @@ export class BuffApplierCore {
           break;
         default:
           for (const module of toArray(target.module)) {
-            this.applyAttkBonus({ module, path: target.path, value: bonus.value, description });
+            args.applyAttkBonus({ module, path: target.path, value: bonus.value, description });
           }
       }
     }
   };
 
-  applyBonuses: ApplyBonuses = (args) => {
+  protected applyBonuses: ApplyBonuses = (args) => {
     const { buff, fromSelf = false, isFinal, getBonus, ...applyArgs } = args;
     if (!buff.effects) return;
 
@@ -146,6 +128,55 @@ export class BuffApplierCore {
         });
       }
     }
+  };
+
+  protected _applyCharacterBuff = (args: ApplyCharacterBuffArgs) => {
+    const { fromSelf = false } = args;
+
+    this.applyBonuses({
+      ...args,
+      getBonus: (getArgs) => {
+        return getCharacterBonus({
+          ...getArgs,
+          inputs: args.inputs,
+          fromSelf,
+          info: this.info,
+        });
+      },
+    });
+  };
+
+  protected _applyWeaponBuff = (args: ApplyWeaponBuffArgs) => {
+    const { fromSelf = false } = args;
+
+    this.applyBonuses({
+      ...args,
+      getBonus: (getArgs) => {
+        return getWeaponBonus({
+          ...getArgs,
+          refi: args.refi,
+          inputs: args.inputs,
+          fromSelf,
+          info: this.info,
+        });
+      },
+    });
+  };
+
+  protected _applyArtifactBuff = (args: ApplyArtifactBuffArgs) => {
+    const { fromSelf = false } = args;
+
+    this.applyBonuses({
+      ...args,
+      getBonus: (getArgs) => {
+        return getArtifactBonus({
+          ...getArgs,
+          inputs: args.inputs,
+          fromSelf,
+          info: this.info,
+        });
+      },
+    });
   };
 }
 

@@ -2,10 +2,16 @@ import { Fragment, useState } from "react";
 import { Button } from "rond";
 import { CharacterBuff, EntityCalc } from "@Backend";
 
-import { Modifier_, parseAbilityDescription } from "@Src/utils";
+import { Modifier_, parseAbilityDescription, toArray } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
 import { addBonus, addEvent } from "@Store/simulator-slice";
-import { ActiveMemberInfo, ActiveSimulationInfo, useActiveMember, useActiveSimulation } from "@Simulator/providers";
+import {
+  ActiveMemberInfo,
+  ActiveSimulationInfo,
+  useActiveMember,
+  useActiveSimulation,
+  useToolbox,
+} from "@Simulator/providers";
 
 import { GenshinModifierView } from "@Src/components";
 
@@ -18,8 +24,13 @@ interface ModifyEventHostProps {
 
 function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs = [] }: ModifyEventHostProps) {
   const dispatch = useDispatch();
+  const toolbox = useToolbox();
 
   const [inputsList, setInputsList] = useState(initalInputsList);
+
+  if (!toolbox) {
+    return null;
+  }
 
   const onMakeEvent = (mod: CharacterBuff, inputs: number[]) => {
     dispatch(
@@ -33,22 +44,44 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
       })
     );
 
-    // make bonus from event
+    // const attributeBonus: SimulationAttributeBonus[] = [];
 
-    dispatch(
-      addBonus({
-        type: "ATTRIBUTE",
-        bonus: {
-          toStat: "em",
-          stable: true,
-          value: 100,
-          trigger: {
-            character: "Albedo",
-            src: "Constellation 1",
-          },
-        },
-      })
-    );
+    toolbox.buffApplier.applyCharacterBuff({
+      buff: mod,
+      description: "",
+      inputs,
+      applyAttrBonus: (bonus) => {
+        // for (const toStat of toArray(bonus.keys)) {
+        //   attributeBonus.push({
+        //     stable: bonus.stable,
+        //     toStat,
+        //     value: bonus.value,
+        //     trigger: {
+        //       character: "",
+        //       src: "",
+        //     },
+        //   });
+        // }
+
+        for (const toStat of toArray(bonus.keys)) {
+          dispatch(
+            addBonus({
+              type: "ATTRIBUTE",
+              bonus: {
+                stable: bonus.stable,
+                toStat,
+                value: bonus.value,
+                trigger: {
+                  character: "",
+                  src: "",
+                },
+              },
+            })
+          );
+        }
+      },
+      applyAttkBonus: () => {},
+    });
   };
 
   console.log("ctrls");
@@ -103,7 +136,7 @@ export function ModifyEventHost() {
 
   const buffs = member.appChar.buffs?.filter((buff) => EntityCalc.isGrantedEffect(buff, member.char));
 
-  const initialCtrls = buffs?.map((buff) => Modifier_.createModCtrl(buff, true).inputs ?? []);
+  const initalInputsList = buffs?.map((buff) => Modifier_.createModCtrl(buff, true).inputs ?? []);
 
-  return <ModifyEventHostCore {...{ simulation, member, initialCtrls, buffs }} />;
+  return <ModifyEventHostCore {...{ simulation, member, initalInputsList, buffs }} />;
 }

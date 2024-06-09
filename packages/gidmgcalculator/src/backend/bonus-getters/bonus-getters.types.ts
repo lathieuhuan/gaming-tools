@@ -1,5 +1,5 @@
-import { AttributeStack, EntityBonus } from "@Src/backend/types";
-import { CalculationInfo } from "@Src/backend/utils";
+import type { AttributeStack, EntityBonus } from "@Src/backend/types";
+import type { CalculationInfo } from "@Src/backend/utils";
 
 type Bonus = EntityBonus<unknown>;
 

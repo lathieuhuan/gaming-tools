@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { SimulatorBuffApplier } from "@Backend";
 import type { SimulationMember } from "@Src/types";
 
 import { useSelector } from "@Store/hooks";
@@ -8,7 +9,13 @@ import { $AppCharacter, $AppWeapon } from "@Src/services";
 import { useStore } from "@Src/features";
 import { pickProps } from "@Src/utils";
 import { SimulatorTotalAttributeControl } from "@Simulator/calculation";
-import { ActiveSimulationContext, ActiveMemberContext, TotalAttributeContext, ActiveMemberInfo } from "./contexts";
+import {
+  ActiveSimulationContext,
+  ActiveMemberContext,
+  ToolboxContext,
+  ActiveMemberInfo,
+  ActiveSimulationInfo,
+} from "./contexts";
 
 const selectActiveId = (state: RootState) => state.simulator.activeId;
 
@@ -21,7 +28,7 @@ const getActiveMember = (state: RootState): SimulationMember | undefined => {
 
 type ToolBox = {
   totalAttrCtrl: SimulatorTotalAttributeControl;
-} | null;
+};
 
 interface ToolboxProviderProps {
   children: React.ReactNode;
@@ -47,7 +54,7 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
     return null;
   }, [activeId]);
 
-  const [activeMemberInfo, toolbox] = useMemo<[ActiveMemberInfo | null, ToolBox]>(() => {
+  const [activeMemberInfo, toolbox] = useMemo<[ActiveMemberInfo | null, ToolBox | null]>(() => {
     const member = store.select(getActiveMember);
 
     if (member) {
@@ -74,7 +81,13 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
   return (
     <ActiveSimulationContext.Provider value={activeSimulationInfo}>
       <ActiveMemberContext.Provider value={activeMemberInfo}>
-        <TotalAttributeProvider totalAttrCtrl={toolbox?.totalAttrCtrl}>{props.children}</TotalAttributeProvider>
+        <Toolbox
+          activeSimulationInfo={activeSimulationInfo}
+          activeMemberInfo={activeMemberInfo}
+          totalAttrCtrl={toolbox?.totalAttrCtrl}
+        >
+          {props.children}
+        </Toolbox>
       </ActiveMemberContext.Provider>
     </ActiveSimulationContext.Provider>
   );
@@ -82,18 +95,30 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
 
 const selectAttributeBonus = (state: RootState) => getActiveMember(state)?.attributeBonus;
 
-interface TotalAttributeProviderProps {
+interface ToolboxProps {
+  activeMemberInfo: ActiveMemberInfo | null;
+  activeSimulationInfo: ActiveSimulationInfo | null;
   totalAttrCtrl?: SimulatorTotalAttributeControl;
   children: React.ReactNode;
 }
-function TotalAttributeProvider({ totalAttrCtrl, children }: TotalAttributeProviderProps) {
+function Toolbox({ activeMemberInfo, activeSimulationInfo, totalAttrCtrl, children }: ToolboxProps) {
   const attributeBonus = useSelector(selectAttributeBonus);
 
-  console.log("render: TotalAttributeProvider");
+  console.log("render: Toolbox");
 
   const totalAttr = useMemo(() => {
-    return totalAttrCtrl?.applyAttributeBonus(attributeBonus) ?? null;
+    if (!activeSimulationInfo || !activeMemberInfo || !totalAttrCtrl) {
+      return null;
+    }
+    const totalAttr = totalAttrCtrl.applyAttributeBonus(attributeBonus);
+
+    const buffApplier = new SimulatorBuffApplier({ ...activeMemberInfo, ...activeSimulationInfo }, totalAttr);
+
+    return {
+      totalAttr,
+      buffApplier,
+    };
   }, [totalAttrCtrl, attributeBonus]);
 
-  return <TotalAttributeContext.Provider value={totalAttr}>{children}</TotalAttributeContext.Provider>;
+  return <ToolboxContext.Provider value={totalAttr}>{children}</ToolboxContext.Provider>;
 }

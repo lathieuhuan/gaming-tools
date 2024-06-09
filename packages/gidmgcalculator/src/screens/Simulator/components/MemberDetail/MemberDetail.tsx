@@ -1,13 +1,13 @@
 import { $AppWeapon } from "@Src/services";
-import { useActiveMember, useTotalAttribute } from "@Simulator/providers";
+import { useActiveMember, useToolbox } from "@Simulator/providers";
 
 import { AttributeTable, GenshinImage } from "@Src/components";
 
 export function MemberDetail() {
   const activeMember = useActiveMember();
-  const totalAttr = useTotalAttribute();
+  const toolbox = useToolbox();
 
-  if (!activeMember || !totalAttr) {
+  if (!activeMember || !toolbox) {
     return null;
   }
   const { char } = activeMember;
@@ -21,7 +21,7 @@ export function MemberDetail() {
         Level: {char.level} - C{char.cons}
       </p>
       <GenshinImage className="w-14 h-14" src={appWeapon.icon} />
-      <AttributeTable attributes={totalAttr.finalize()} />
+      <AttributeTable attributes={toolbox.totalAttr.finalize()} />
     </div>
   );
 }
