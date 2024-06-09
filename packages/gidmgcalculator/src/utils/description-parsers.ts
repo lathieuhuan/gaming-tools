@@ -1,5 +1,5 @@
 import { round } from "rond";
-import { CharacterCalc, AppCharacter, CharacterBuff, CharacterDebuff, getIntialBonusValue } from "@Backend";
+import { CharacterCalc, AppCharacter, CharacterBuff, CharacterDebuff, getIntialCharacterBonusValue } from "@Backend";
 
 import type { Character, PartyData } from "@Src/types";
 import { toArray, toMult } from "./pure-utils";
@@ -45,7 +45,7 @@ export const parseAbilityDescription = (
 
       if (effect) {
         const { value, preExtra, max } = effect;
-        let result = getIntialBonusValue(value, obj, inputs, fromSelf);
+        let result = getIntialCharacterBonusValue(value, obj, inputs, fromSelf);
 
         result *= CharacterCalc.getLevelScale(effect.lvScale, obj, inputs, fromSelf);
         if (typeof preExtra === "number") result += preExtra;

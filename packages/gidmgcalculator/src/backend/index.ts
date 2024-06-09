@@ -1,7 +1,7 @@
 export { calculateSetup } from "./calculation/calculateSetup";
 export { default as getCalculationStats } from "./calculation/getCalculationStats";
-export { getIntialBonusValue } from "./calculation/getCalculationStats/applier-character-buff";
-export { TrackerControl, TotalAttributeControl, AttackBonusControl, getArtifactAttribute } from "./controls";
+export { getIntialCharacterBonusValue } from "./bonus-getters";
+export { TrackerControl, TotalAttributeControl, AttackBonusControl } from "./controls";
 export { ArtifactCalc, CharacterCalc, EntityCalc, GeneralCalc, WeaponCalc, type ArtifactSetBonus } from "./utils";
 
 export * from "./constants";

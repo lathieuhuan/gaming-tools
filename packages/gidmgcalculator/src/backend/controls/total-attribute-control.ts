@@ -49,6 +49,38 @@ export class TotalAttributeControl {
     this.record = record;
   }
 
+  static getArtifactAttribute(artifacts: Array<Artifact | null>, getBase: (stat: "hp" | "atk" | "def") => number) {
+    const artAttr: ArtifactAttribute = {
+      hp: 0,
+      atk: 0,
+      def: 0,
+    };
+
+    for (const artifact of artifacts) {
+      if (!artifact) continue;
+
+      const { mainStatType, subStats } = artifact;
+      const mainStat = ArtifactCalc.mainStatValueOf(artifact);
+
+      artAttr[mainStatType] = (artAttr[mainStatType] || 0) + mainStat;
+
+      for (const subStat of subStats) {
+        artAttr[subStat.type] = (artAttr[subStat.type] || 0) + subStat.value;
+      }
+    }
+
+    for (const statType of CORE_STAT_TYPES) {
+      const percentStatValue = artAttr[`${statType}_`];
+
+      if (percentStatValue) {
+        artAttr[statType] += applyPercent(getBase(statType), percentStatValue);
+      }
+      delete artAttr[`${statType}_`];
+    }
+
+    return artAttr;
+  }
+
   construct = (
     char: Character,
     appChar: AppCharacter,
@@ -89,7 +121,7 @@ export class TotalAttributeControl {
 
     // ========== ARTIFACTS ==========
 
-    const attribute = this.getArtifactAttribute(artifacts);
+    const attribute = this._getArtifactAttribute(artifacts);
 
     for (const key in attribute) {
       const type = key as keyof typeof attribute;
@@ -119,8 +151,8 @@ export class TotalAttributeControl {
     });
   };
 
-  private getArtifactAttribute = (artifacts: Array<Artifact | null>) => {
-    return getArtifactAttribute(artifacts, this.getBase);
+  private _getArtifactAttribute = (artifacts: Array<Artifact | null>) => {
+    return TotalAttributeControl.getArtifactAttribute(artifacts, this.getBase);
   };
 
   getBase = (key: AttributeStat) => {
@@ -157,39 +189,4 @@ export class TotalAttributeControl {
     }
     return totalAttr;
   }
-}
-
-export function getArtifactAttribute(
-  artifacts: Array<Artifact | null>,
-  getBase: (stat: "hp" | "atk" | "def") => number
-) {
-  const artAttr: ArtifactAttribute = {
-    hp: 0,
-    atk: 0,
-    def: 0,
-  };
-
-  for (const artifact of artifacts) {
-    if (!artifact) continue;
-
-    const { mainStatType, subStats } = artifact;
-    const mainStat = ArtifactCalc.mainStatValueOf(artifact);
-
-    artAttr[mainStatType] = (artAttr[mainStatType] || 0) + mainStat;
-
-    for (const subStat of subStats) {
-      artAttr[subStat.type] = (artAttr[subStat.type] || 0) + subStat.value;
-    }
-  }
-
-  for (const statType of CORE_STAT_TYPES) {
-    const percentStatValue = artAttr[`${statType}_`];
-
-    if (percentStatValue) {
-      artAttr[statType] += applyPercent(getBase(statType), percentStatValue);
-    }
-    delete artAttr[`${statType}_`];
-  }
-
-  return artAttr;
 }

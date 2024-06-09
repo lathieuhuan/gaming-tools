@@ -7,17 +7,14 @@ import type {
   ElementType,
   InputCheck,
   EntityBonusValueOption,
+  AttributeStack,
 } from "@Src/backend/types";
 import type { CalculationInfo } from "@Src/backend/utils";
-import type { TotalAttributeControl, GetTotalAttributeType } from "@Src/backend/controls/total-attribute-control";
+import type { GetTotalAttributeType } from "@Src/backend/controls/total-attribute-control";
 
 import { toArray } from "@Src/utils";
 import { GeneralCalc } from "./general-calc";
 import { CharacterCalc } from "./character-calc";
-
-type GetStackValueInfo = CalculationInfo & {
-  totalAttr: TotalAttributeControl;
-};
 
 export class EntityCalc {
   static isGrantedEffect(condition: ApplicableCondition, char: Character) {
@@ -126,10 +123,10 @@ export class EntityCalc {
 
   static getStackValue(
     stack: EntityBonusStack,
-    totalAttrType: GetTotalAttributeType,
-    info: GetStackValueInfo,
+    info: CalculationInfo,
     inputs: number[],
-    fromSelf: boolean
+    fromSelf: boolean,
+    getTotalAttrFromSelf: (field: AttributeStack["field"]) => number
   ): number {
     const { appChar, partyData } = info;
     let result = 0;
@@ -159,7 +156,7 @@ export class EntityCalc {
         break;
       }
       case "ATTRIBUTE": {
-        result = fromSelf ? info.totalAttr.getTotal(stack.field, totalAttrType) : inputs[stack.alterIndex ?? 0] ?? 1;
+        result = fromSelf ? getTotalAttrFromSelf(stack.field) : inputs[stack.alterIndex ?? 0] ?? 1;
         break;
       }
       case "ELEMENT": {

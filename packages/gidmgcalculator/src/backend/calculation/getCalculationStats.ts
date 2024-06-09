@@ -1,16 +1,53 @@
-import type { AttackElement, AttackPattern, AttributeStat, ReactionType } from "@Src/backend/types";
-import type { BuffInfoWrap, GetCalculationStatsArgs, StackableCheckCondition } from "./getCalculationStats.types";
+import type {
+  AppCharacter,
+  AppWeapon,
+  AttackElement,
+  AttackPattern,
+  AttributeStat,
+  ReactionType,
+} from "@Src/backend/types";
+import type {
+  CalcArtifacts,
+  CalcCharacter,
+  CalcWeapon,
+  CustomBuffCtrl,
+  ElementModCtrl,
+  Infusion,
+  ModifierCtrl,
+  Party,
+  PartyData,
+} from "@Src/types";
 
 import { AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
 import { ECalcStatModule, RESONANCE_STAT } from "@Src/backend/constants/internal";
 
-import { $AppCharacter, $AppWeapon, $AppArtifact } from "@Src/services";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import { findByIndex } from "@Src/utils";
 import { EntityCalc, GeneralCalc } from "@Src/backend/utils";
-import { AttackBonusControl, TotalAttributeControl } from "@Src/backend/controls";
-import ApplierCharacterBuff from "./applier-character-buff";
-import ApplierWeaponBuff from "./applier-weapon-buff";
-import ApplierArtifactBuff from "./applier-artifact-buff";
+import {
+  AttackBonusControl,
+  ModifierStackingControl,
+  TotalAttributeControl,
+  TrackerControl,
+} from "@Src/backend/controls";
+import { CalcBuffApplier } from "@Src/backend/appliers";
+
+type GetCalculationStatsArgs = {
+  char: CalcCharacter;
+  appChar: AppCharacter;
+  weapon: CalcWeapon;
+  appWeapon: AppWeapon;
+  artifacts: CalcArtifacts;
+  party?: Party;
+  partyData?: PartyData;
+  elmtModCtrls?: ElementModCtrl;
+  selfBuffCtrls?: ModifierCtrl[];
+  wpBuffCtrls?: ModifierCtrl[];
+  artBuffCtrls?: ModifierCtrl[];
+  customBuffCtrls?: CustomBuffCtrl[];
+  customInfusion?: Infusion;
+  tracker?: TrackerControl;
+};
 
 export default function getCalculationStats({
   char,
@@ -38,40 +75,18 @@ export default function getCalculationStats({
 
   const attBonus = new AttackBonusControl();
 
-  const infoWrap: BuffInfoWrap = {
-    char,
-    appChar,
-    partyData,
+  const modStackingCtrl = new ModifierStackingControl();
+
+  const buffApplier = new CalcBuffApplier(
+    {
+      char,
+      appChar,
+      partyData,
+    },
     totalAttr,
     attBonus,
-  };
-
-  const characterBuff = new ApplierCharacterBuff(infoWrap);
-  const weaponBuff = new ApplierWeaponBuff(infoWrap);
-  const artifactBuff = new ApplierArtifactBuff(infoWrap);
-  const usedMods: NonNullable<StackableCheckCondition>[] = [];
-
-  const isStackable = (condition: StackableCheckCondition) => {
-    if (condition.trackId) {
-      const isUsed = usedMods.some((usedMod) => {
-        if (condition.trackId === usedMod.trackId && typeof condition.paths === typeof usedMod.paths) {
-          if (Array.isArray(condition.paths)) {
-            return (
-              condition.paths.length === usedMod.paths.length &&
-              condition.paths.every((target, i) => target === usedMod.paths[i])
-            );
-          }
-          return condition.paths === usedMod.paths;
-        }
-        return false;
-      });
-
-      if (isUsed) return false;
-
-      usedMods.push(condition);
-    }
-    return true;
-  };
+    modStackingCtrl
+  );
 
   const APPLY_SELF_BUFFS = (isFinal: boolean) => {
     const { innateBuffs = [], buffs = [] } = appChar;
@@ -79,7 +94,7 @@ export default function getCalculationStats({
 
     for (const buff of innateBuffs) {
       if (EntityCalc.isGrantedEffect(buff, char)) {
-        characterBuff.apply({
+        buffApplier.applyCharacterBuff({
           description: `Self / ${buff.src}`,
           buff,
           inputs,
@@ -92,7 +107,7 @@ export default function getCalculationStats({
       const buff = findByIndex(buffs, ctrl.index);
 
       if (ctrl.activated && buff && EntityCalc.isGrantedEffect(buff, char)) {
-        characterBuff.apply({
+        buffApplier.applyCharacterBuff({
           description: `Self / ${buff.src}`,
           buff,
           inputs: ctrl.inputs ?? [],
@@ -105,7 +120,7 @@ export default function getCalculationStats({
 
   const APPLY_WEAPON_BONUSES = (isFinal: boolean) => {
     if (appWeapon.bonuses) {
-      weaponBuff.apply({
+      buffApplier.applyWeaponBuff({
         description: `${appWeapon.name} bonus`,
         buff: {
           effects: appWeapon.bonuses,
@@ -125,7 +140,7 @@ export default function getCalculationStats({
         const buff = data?.setBonuses?.[i];
 
         if (buff && buff.effects) {
-          artifactBuff.apply({
+          buffApplier.applyArtifactBuff({
             description: `${data.name} / ${i * 2 + 2}-piece bonus`,
             buff: {
               effects: buff.effects,
@@ -183,7 +198,7 @@ export default function getCalculationStats({
         const buff = findByIndex(buffs, index);
         if (!activated || !buff) continue;
 
-        characterBuff.apply({
+        buffApplier.applyCharacterBuff({
           description: `${name} / ${buff.src}`,
           buff,
           inputs,
@@ -200,13 +215,12 @@ export default function getCalculationStats({
           const buff = findByIndex(buffs, ctrl.index);
 
           if (ctrl.activated && buff) {
-            weaponBuff.apply({
+            buffApplier.applyWeaponBuff({
               description: `${name} activated`,
               buff,
               inputs: ctrl.inputs ?? [],
               refi,
               fromSelf: false,
-              isStackable,
             });
           }
         }
@@ -220,12 +234,11 @@ export default function getCalculationStats({
           const buff = findByIndex(buffs, ctrl.index);
 
           if (ctrl.activated && buff) {
-            artifactBuff.apply({
+            buffApplier.applyArtifactBuff({
               description: `${name} / 4-Piece activated`,
               buff,
               inputs: ctrl.inputs ?? [],
               fromSelf: false,
-              isStackable,
             });
           }
         }
@@ -240,7 +253,7 @@ export default function getCalculationStats({
       const buff = findByIndex(appWeapon.buffs, ctrl.index);
 
       if (ctrl.activated && buff) {
-        weaponBuff.apply({
+        buffApplier.applyWeaponBuff({
           description: `${appWeapon.name} activated`,
           buff,
           inputs: ctrl.inputs ?? [],
@@ -261,13 +274,12 @@ export default function getCalculationStats({
       const buff = mainArtifactData.buffs?.[ctrl.index];
 
       if (ctrl.activated && buff) {
-        artifactBuff.apply({
+        buffApplier.applyArtifactBuff({
           description: `${mainArtifactData.name} (self) / 4-piece activated`,
           buff,
           inputs: ctrl.inputs ?? [],
           isFinal,
           fromSelf: true,
-          isStackable,
         });
       }
     }

@@ -35,11 +35,32 @@ export function SimulatorModalsProvider(props: SimulatorModalsProviderProps) {
       <Modal.Core active={modalType === "ADD_SIMULATION"} preset="large" className="flex flex-col" onClose={closeModal}>
         <CalcSetupSelect
           onSelect={(setup) => {
+            // const members: SimulationMember[] = [
+            //   {
+            //     ...setup.char,
+            //     weapon: setup.weapon,
+            //     artifacts: setup.artifacts,
+            //     attributeBonus: [],
+            //     attackBonus: [],
+            //   },
+            // ];
+
             const members: SimulationMember[] = [
               {
-                ...setup.char,
-                weapon: setup.weapon,
-                artifacts: setup.artifacts,
+                name: "Albedo",
+                level: "90/90",
+                NAs: 1,
+                ES: 1,
+                EB: 1,
+                cons: 6,
+                weapon: {
+                  ID: 1717242701642,
+                  type: "sword",
+                  code: 108,
+                  level: "70/70",
+                  refi: 1,
+                },
+                artifacts: [null, null, null, null, null],
                 attributeBonus: [],
                 attackBonus: [],
               },

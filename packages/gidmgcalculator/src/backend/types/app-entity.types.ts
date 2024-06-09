@@ -93,7 +93,7 @@ type InputStack = {
   };
 };
 
-type AttributeStack = {
+export type AttributeStack = {
   type: "ATTRIBUTE";
   field: "base_atk" | "hp" | "atk" | "def" | "em" | "er_" | "healB_";
   /**
