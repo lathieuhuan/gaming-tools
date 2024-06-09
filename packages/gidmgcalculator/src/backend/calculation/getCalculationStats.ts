@@ -24,12 +24,7 @@ import { ECalcStatModule, RESONANCE_STAT } from "@Src/backend/constants/internal
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import { findByIndex } from "@Src/utils";
 import { EntityCalc, GeneralCalc } from "@Src/backend/utils";
-import {
-  AttackBonusControl,
-  ModifierStackingControl,
-  TotalAttributeControl,
-  TrackerControl,
-} from "@Src/backend/controls";
+import { AttackBonusControl, TotalAttributeControl, TrackerControl } from "@Src/backend/controls";
 import { CalcBuffApplier } from "@Src/backend/appliers";
 
 type GetCalculationStatsArgs = {
@@ -75,8 +70,6 @@ export default function getCalculationStats({
 
   const attBonus = new AttackBonusControl();
 
-  const modStackingCtrl = new ModifierStackingControl();
-
   const buffApplier = new CalcBuffApplier(
     {
       char,
@@ -84,8 +77,7 @@ export default function getCalculationStats({
       partyData,
     },
     totalAttr,
-    attBonus,
-    modStackingCtrl
+    attBonus
   );
 
   const APPLY_SELF_BUFFS = (isFinal: boolean) => {

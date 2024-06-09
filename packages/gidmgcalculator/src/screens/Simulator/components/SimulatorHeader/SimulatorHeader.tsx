@@ -8,5 +8,11 @@ export function SimulatorHeader() {
     modalCtrl.requestAddSimulation();
   };
 
-  return <Button onClick={onClickAddSimulation}>Add setup</Button>;
+  return (
+    <div className="p-4 bg-surface-2">
+      <Button shape="square" size="small" onClick={onClickAddSimulation}>
+        Add setup
+      </Button>
+    </div>
+  );
 }

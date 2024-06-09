@@ -44,25 +44,11 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
       })
     );
 
-    // const attributeBonus: SimulationAttributeBonus[] = [];
-
     toolbox.buffApplier.applyCharacterBuff({
       buff: mod,
       description: "",
       inputs,
       applyAttrBonus: (bonus) => {
-        // for (const toStat of toArray(bonus.keys)) {
-        //   attributeBonus.push({
-        //     stable: bonus.stable,
-        //     toStat,
-        //     value: bonus.value,
-        //     trigger: {
-        //       character: "",
-        //       src: "",
-        //     },
-        //   });
-        // }
-
         for (const toStat of toArray(bonus.keys)) {
           dispatch(
             addBonus({
@@ -84,16 +70,13 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
     });
   };
 
-  console.log("ctrls");
-  console.log(inputsList);
-
   return (
-    <div>
+    <div className="h-full hide-scrollbar space-y-2">
       {buffs.map((modifier, modIndex) => {
         const inputs = inputsList[modIndex];
 
         return (
-          <Fragment key={modifier.index}>
+          <div key={modifier.index} className="p-3 rounded bg-surface-1">
             <GenshinModifierView
               mutable={true}
               heading={modifier.src}
@@ -118,15 +101,17 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
                 });
               }}
             />
-            <Button onClick={() => onMakeEvent(modifier, inputs)}>Trigger</Button>
-          </Fragment>
+            <Button shape="square" size="small" className="mt-3 mx-auto" onClick={() => onMakeEvent(modifier, inputs)}>
+              Trigger
+            </Button>
+          </div>
         );
       })}
     </div>
   );
 }
 
-export function ModifyEventHost() {
+export function ModifyEventHost({ className = "" }: { className?: string }) {
   const simulation = useActiveSimulation();
   const member = useActiveMember();
 
@@ -134,9 +119,15 @@ export function ModifyEventHost() {
     return null;
   }
 
+  console.log("ModifyEventHost");
+
   const buffs = member.appChar.buffs?.filter((buff) => EntityCalc.isGrantedEffect(buff, member.char));
 
   const initalInputsList = buffs?.map((buff) => Modifier_.createModCtrl(buff, true).inputs ?? []);
 
-  return <ModifyEventHostCore {...{ simulation, member, initalInputsList, buffs }} />;
+  return (
+    <div className={"p-4 h-full rounded-md bg-surface-2 " + className}>
+      <ModifyEventHostCore {...{ simulation, member, initalInputsList, buffs }} />
+    </div>
+  );
 }
