@@ -1,21 +1,41 @@
 import { useState } from "react";
-import { TRANSFORMATIVE_REACTIONS, TotalAttributeControl } from "@Backend";
+import { AttackBonusControl, TRANSFORMATIVE_REACTIONS, TalentType, configTalentEvent } from "@Backend";
+import type { RootState } from "@Store/store";
 
-import { useActiveMember, useToolbox } from "@Simulator/providers";
+import {
+  ActiveMemberInfo,
+  SimulatorToolbox,
+  useActiveMember,
+  useActiveSimulation,
+  useToolbox,
+} from "@Simulator/providers";
 import { useTranslation } from "@Src/hooks";
-import { getAttackEventConfigGroups, type AttackEventConfigGroup } from "./AttackEventHost.utils";
+import { useSelector } from "@Store/hooks";
+import { getActiveMember } from "@Simulator/Simulator.utils";
+import {
+  AttackEventConfigItem,
+  getAttackEventConfigGroups,
+  type AttackEventConfigGroup,
+} from "./AttackEventHost.utils";
 
 // Components
 import { AttackEventGroup } from "./AttackEventGroup";
 import { TalentAttackEvent } from "./TalentAttackEvent";
 
+const selectAttackBonus = (state: RootState) => getActiveMember(state)?.attackBonus ?? [];
+
 interface AttackEventHostProps {
-  totalAttr: TotalAttributeControl;
+  activeMember: ActiveMemberInfo;
+  toolbox: SimulatorToolbox;
   configGroups: AttackEventConfigGroup[];
 }
 
-function AttackEventHostCore({ configGroups, totalAttr }: AttackEventHostProps) {
+function AttackEventHostCore({ activeMember, toolbox, configGroups }: AttackEventHostProps) {
   const { t } = useTranslation();
+  const activeSimulation = useActiveSimulation();
+
+  const attackBonus = useSelector(selectAttackBonus);
+
   const [active, setActive] = useState({
     groupI: -1,
     itemI: -1,
@@ -23,8 +43,47 @@ function AttackEventHostCore({ configGroups, totalAttr }: AttackEventHostProps) 
 
   console.log("render: AttackEventHostCore");
 
-  const onClickKey = (groupI: number, itemI: number, active: boolean) => {
+  if (!activeSimulation) {
+    return null;
+  }
+
+  const onExpandTalentEvent = (groupI: number, itemI: number, active: boolean) => {
     setActive(active ? { groupI: -1, itemI: -1 } : { groupI, itemI });
+  };
+
+  const getTalentEventConfig = (talentType: TalentType, configItem: AttackEventConfigItem) => {
+    const attBonus = new AttackBonusControl();
+
+    for (const bonus of attackBonus) {
+      attBonus.add(bonus.toType, bonus.toKey, bonus.value, "");
+    }
+
+    return configTalentEvent({
+      underPattern: configItem.underPatt,
+      talentType,
+      totalAttr: toolbox.totalAttr.finalize(),
+      attBonus,
+      configItem,
+      info: {
+        char: activeMember.char,
+        appChar: activeMember.appChar,
+        partyData: activeSimulation.partyData,
+      },
+      elmtModCtrls: {
+        absorption: null,
+        infuse_reaction: null,
+        reaction: null,
+      },
+      target: activeSimulation.target,
+    });
+  };
+
+  const onPerformTalentEvent = (talentType: TalentType, configItem: AttackEventConfigItem) => {
+    const config = getTalentEventConfig(talentType, configItem);
+
+    if (config) {
+      console.log("perform", config.damage);
+    }
   };
 
   return (
@@ -43,8 +102,9 @@ function AttackEventHostCore({ configGroups, totalAttr }: AttackEventHostProps) 
               label: item.name,
               isActive: groupIndex === active.groupI && itemIndex === active.itemI,
             })}
-            renderContent={(item) => <TalentAttackEvent talentType={group.name} configItem={item} />}
-            onClickItem={(_, index, active) => onClickKey(groupIndex, index, active)}
+            renderContent={(item) => <TalentAttackEvent config={getTalentEventConfig(group.name, item)} />}
+            onPerformEvent={(item) => onPerformTalentEvent(group.name, item)}
+            onExpandEvent={(_, index, active) => onExpandTalentEvent(groupIndex, index, active)}
           />
         );
       })}
@@ -56,7 +116,8 @@ function AttackEventHostCore({ configGroups, totalAttr }: AttackEventHostProps) 
           isActive: configGroups.length === active.groupI && itemIndex === active.itemI,
         })}
         renderContent={() => <p>Hello</p>}
-        onClickItem={(_, index, active) => onClickKey(configGroups.length, index, active)}
+        onPerformEvent={() => {}}
+        onExpandEvent={(_, index, active) => onExpandTalentEvent(configGroups.length, index, active)}
       />
     </div>
   );
@@ -75,7 +136,8 @@ export function AttackEventHost({ className = "" }: { className?: string }) {
   return (
     <div className={"p-4 h-full rounded-md bg-surface-1 " + className}>
       <AttackEventHostCore
-        totalAttr={toolbox.totalAttr}
+        activeMember={activeMember}
+        toolbox={toolbox}
         configGroups={getAttackEventConfigGroups(activeMember.appChar)}
       />
     </div>

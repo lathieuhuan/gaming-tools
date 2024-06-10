@@ -16,7 +16,7 @@ import { CharacterCalc, EntityCalc, GeneralCalc, type CalculationInfo } from "@S
 import { TrackerControl } from "@Src/backend/controls";
 import { NORMAL_ATTACKS } from "@Src/backend/constants";
 
-type AttackPatternConfArgs = CalculationInfo & {
+export type AttackPatternConfArgs = CalculationInfo & {
   selfBuffCtrls: ModifierCtrl[];
   elmtModCtrls: PartiallyRequired<Partial<ElementModCtrl>, "reaction" | "infuse_reaction" | "absorption">;
   customInfusion: Infusion;

@@ -1,1 +1,1 @@
-export * from "./configAttackEvent";
+export * from "./configTalentEvent";
