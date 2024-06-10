@@ -8,10 +8,24 @@ import type {
   ResistanceReduction,
 } from "@Src/backend/types";
 import type { CalcItemRecord, TotalAttribute } from "@Src/backend/controls";
-import type { CalculationFinalResultItem } from "./calculation.types";
 
 import { applyToOneOrMany, toMult } from "@Src/utils";
-import { GeneralCalc } from "../utils";
+import { GeneralCalc } from "@Src/backend/utils";
+
+export type CalculationAspect = "nonCrit" | "crit" | "average";
+
+type CalculationFinalResultAttackItem = {
+  type: Extract<CalcItemType, "attack">;
+  attElmt: ActualAttackElement;
+  attPatt: ActualAttackPattern;
+};
+
+type CalculationFinalResultOtherItem = {
+  type: Exclude<CalcItemType, "attack">;
+};
+
+export type CalculationFinalResultItem = Record<CalculationAspect, number | number[]> &
+  (CalculationFinalResultAttackItem | CalculationFinalResultOtherItem);
 
 type CalculateArgs = {
   type: CalcItemType;
@@ -22,7 +36,7 @@ type CalculateArgs = {
   record: CalcItemRecord;
   getBonus?: (key: AttackBonusKey) => number;
 };
-function CalcItemCalculator(
+export function CalcItemCalculator(
   charLv: Level,
   targetLv: number,
   totalAttr: TotalAttribute,
@@ -147,5 +161,3 @@ export function genEmptyResult(
 }
 
 export type CalculateCalcItem = ReturnType<typeof CalcItemCalculator>;
-
-export default CalcItemCalculator;

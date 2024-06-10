@@ -1,9 +1,7 @@
 import type { AttributeStack, EntityBonus } from "@Src/backend/types";
 import type { CalculationInfo } from "@Src/backend/utils";
 
-type Bonus = EntityBonus<unknown>;
-
-export type GetBonusArgs<T extends Bonus> = {
+export type GetBonusArgs<T extends EntityBonus> = {
   config: T;
   info: CalculationInfo;
   inputs: number[];

@@ -22,6 +22,7 @@ import type {
   WithPenaltyTargets,
   EntityEffectExtra,
   InputCheck,
+  EntityPenalty,
 } from "./app-entity.types";
 
 type Nation = "outland" | "mondstadt" | "liyue" | "inazuma" | "sumeru" | "natlan" | "fontaine" | "snezhnaya";
@@ -186,8 +187,7 @@ export type CharacterBuff = EntityBuff<CharacterBonus> & CharacterModifier & Cha
 
 // ============ DEBUFF / PENALTY ============
 
-export type CharacterPenaltyCore = ApplicableCondition & {
-  value: number;
+export type CharacterPenaltyCore = EntityPenalty & {
   lvScale?: CharacterEffectLevelScale;
   /** Added before stacks, after scale */
   preExtra?: number | CharacterPenaltyCore;

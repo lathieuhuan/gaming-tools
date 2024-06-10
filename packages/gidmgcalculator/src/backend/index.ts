@@ -10,17 +10,12 @@ export {
 export { TrackerControl, TotalAttributeControl, AttackBonusControl } from "./controls";
 export { getIntialCharacterBonusValue } from "./bonus-getters";
 export { SimulatorBuffApplier } from "./appliers/sim-buff-applier";
-export { default as getCalculationStats } from "./calculation/getCalculationStats";
-export { default as AttackPatternConf, type ConfigAttackPattern } from "./calculation/attack-pattern-conf";
-export { calculateSetup } from "./calculation/calculateSetup";
+export { default as getCalculationStats } from "./calculation-calculator/getCalculationStats";
+export { calculateSetup } from "./calculation-calculator/calculateSetup";
 
+export * from "./calculation-simulator";
 export * from "./constants";
 
-export type {
-  CalculationAspect,
-  CalculationFinalResult,
-  CalculationFinalResultGroup,
-} from "./calculation/calculation.types";
 export type {
   CalcItemRecord,
   CalcAtomicRecord,
@@ -40,6 +35,7 @@ export type {
   AttackPattern,
   AttributeStat,
   AttackBonusKey,
+  AttackBonusType,
   CalcItem,
   CharacterBuff,
   CharacterDebuff,
@@ -61,3 +57,5 @@ export type {
   WeaponType,
 } from "./types";
 export type { AppMonster } from "./types/app-monster.types";
+export type { CalculationAspect } from "./calculation/calc-item-calculator";
+export type { CalculationFinalResult, CalculationFinalResultGroup } from "./calculation-calculator/getFinalResult";

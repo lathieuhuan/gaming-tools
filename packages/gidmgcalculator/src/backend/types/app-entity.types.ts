@@ -1,4 +1,4 @@
-import type { ECalcStatModule } from "../constants/internal";
+import type { ECalcStatModule } from "@Src/backend/constants/internal";
 import type {
   AttackBonusType,
   AttributeStat,
@@ -221,6 +221,10 @@ export type WithBonusTargets<T> = T & {
 };
 
 // ========== PENALTY & DEBUFF ==========
+
+export type EntityPenalty = ApplicableCondition & {
+  value: number;
+};
 
 export type EntityPenaltyTarget =
   | ResistanceReductionKey

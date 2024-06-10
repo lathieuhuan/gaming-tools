@@ -24,7 +24,7 @@ type AttackPatternConfArgs = CalculationInfo & {
   attBonus: AttackBonusControl;
 };
 
-export default function AttackPatternConf({
+export function AttackPatternConf({
   char,
   appChar,
   partyData,
@@ -57,7 +57,7 @@ export default function AttackPatternConf({
     }
   }
 
-  const config = (patternKey: AttackPattern) => {
+  return (patternKey: AttackPattern) => {
     const {
       resultKey,
       defaultAttPatt,
@@ -200,8 +200,6 @@ export default function AttackPatternConf({
       configCalcItem,
     };
   };
-
-  return config;
 }
 
 export type ConfigAttackPattern = ReturnType<typeof AttackPatternConf>;

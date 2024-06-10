@@ -4,8 +4,7 @@ import type { AppCharacter, AppWeapon, AttributeStat, CoreStat } from "@Src/back
 
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "@Src/backend/constants";
 import { applyPercent, toArray } from "@Src/utils";
-import { GeneralCalc } from "@Src/backend/utils/general-calc";
-import { ArtifactCalc, WeaponCalc } from "../utils";
+import { GeneralCalc, ArtifactCalc, WeaponCalc } from "@Src/backend/utils";
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
 type TotalAttributeStat = AttributeStat | "hp_base" | "atk_base" | "def_base";

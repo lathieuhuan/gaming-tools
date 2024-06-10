@@ -1,24 +1,13 @@
 import { useMemo } from "react";
-import {
-  AttackBonusControl,
-  AttackPatternConf,
-  CalculationInfo,
-  CharacterCalc,
-  TalentType,
-  TotalAttribute,
-} from "@Backend";
+import { TalentType, configAttackEvent } from "@Backend";
 import type { RootState } from "@Store/store";
 
-import { pickProps } from "@Src/utils";
 import { getActiveMember } from "@Simulator/Simulator.utils";
 import { AttackEventConfigItem } from "./AttackEventHost.utils";
 
-import { useSelector } from "@Store/hooks";
-import { useTranslation } from "@Src/hooks";
 import { useActiveMember, useActiveSimulation, useToolbox } from "@Simulator/providers";
-import { SimulationAttackBonus, SimulationTarget } from "@Src/types";
-import { ResistanceReductionControl } from "@Src/backend/controls";
-import CalcItemCalculator from "@Src/backend/calculation/calc-item-calculator";
+import { useTranslation } from "@Src/hooks";
+import { useSelector } from "@Store/hooks";
 
 const selectAttackBonus = (state: RootState) => getActiveMember(state)?.attackBonus ?? [];
 
@@ -42,7 +31,8 @@ export function TalentAttackEvent({ talentType, configItem }: TalentAttackEventP
       return null;
     }
 
-    return getEventInfo({
+    return configAttackEvent({
+      underPattern: configItem.underPatt,
       talentType,
       totalAttr: toolbox.totalAttr.finalize(),
       attackBonus,
@@ -70,60 +60,4 @@ export function TalentAttackEvent({ talentType, configItem }: TalentAttackEventP
       </div>
     </div>
   );
-}
-
-type GetEventInfoArgs = {
-  talentType: TalentType;
-  totalAttr: TotalAttribute;
-  attackBonus: SimulationAttackBonus[];
-  configItem: AttackEventConfigItem;
-  info: CalculationInfo;
-  target: SimulationTarget;
-};
-
-function getEventInfo({ talentType, totalAttr, attackBonus, configItem, info, target }: GetEventInfoArgs) {
-  const attackBonusCtrl = new AttackBonusControl();
-
-  for (const bonus of attackBonus) {
-    attackBonusCtrl.add(bonus.toType, bonus.toKey, bonus.value, "");
-  }
-
-  const { disabled, configCalcItem } = AttackPatternConf({
-    ...info,
-    totalAttr,
-    attBonus: attackBonusCtrl,
-    selfBuffCtrls: [],
-    elmtModCtrls: {
-      absorption: null,
-      infuse_reaction: null,
-      reaction: null,
-    },
-    customInfusion: {
-      element: "phys",
-    },
-  })(configItem.underPatt);
-
-  if (disabled) {
-    return false;
-  }
-
-  const config = configCalcItem(configItem);
-  const level = CharacterCalc.getFinalTalentLv({ ...info, talentType });
-  const resistReduct = new ResistanceReductionControl();
-
-  const calculateCalcItem = CalcItemCalculator(info.char.level, target.level, totalAttr, resistReduct.apply(target));
-
-  const base = config.calculateBaseDamage(level);
-
-  const result = calculateCalcItem({
-    base,
-    ...config,
-  });
-
-  console.log(config.record);
-
-  return {
-    damage: result.average,
-    ...pickProps(config, ["attElmt", "attPatt", "record"]),
-  };
 }

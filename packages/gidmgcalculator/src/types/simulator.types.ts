@@ -1,6 +1,6 @@
+import type { AttackBonusKey, AttackBonusType, AttributeStat } from "@Backend";
 import type { Artifact, Character, Weapon } from "./global.types";
 import type { Target } from "./calculator.types";
-import { AttackBonusKey, AttackBonusType, AttributeStat } from "@Src/backend/types";
 
 export type SimulationManageInfo = {
   id: number;

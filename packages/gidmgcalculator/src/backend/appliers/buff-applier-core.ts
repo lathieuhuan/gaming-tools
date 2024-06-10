@@ -3,33 +3,32 @@ import type {
   AttributeStack,
   AttributeStat,
   CharacterBonusCore,
+  EntityBonus,
   EntityBonusStack,
   WeaponBonusCore,
   WithBonusTargets,
 } from "@Src/backend/types";
 import type { GetTotalAttributeType, TotalAttributeControl } from "@Src/backend/controls";
-import type { ApplyBonusArgs, ApplyBonusesArgs, BonusConfig } from "./appliers.types";
+import type {
+  ApplyArtifactBuffArgs,
+  ApplyBonusArgs,
+  ApplyBonusesArgs,
+  ApplyCharacterBuffArgs,
+  ApplyWeaponBuffArgs,
+} from "./appliers.types";
 
 import { ELEMENT_TYPES } from "@Src/backend/constants";
 import { ECalcStatModule } from "@Src/backend/constants/internal";
 import { toArray } from "@Src/utils";
 import { CalculationInfo, EntityCalc } from "@Src/backend/utils";
 import { ModifierStackingControl } from "@Src/backend/controls";
-import { getArtifactBonus, getCharacterBonus, getWeaponBonus } from "../bonus-getters";
+import { getArtifactBonus, getCharacterBonus, getWeaponBonus } from "@Src/backend/bonus-getters";
 
 type GetTotalAttrFromSelf = (field: AttributeStack["field"], totalAttrType: GetTotalAttributeType) => number;
 
 type ApplyBonus = (args: ApplyBonusArgs) => void;
 
-type ApplyBonuses = (args: ApplyBonusesArgs<WithBonusTargets<BonusConfig>>) => void;
-
-export type ApplyBuffArgs<T extends BonusConfig> = Omit<ApplyBonusesArgs<WithBonusTargets<T>>, "getBonus">;
-
-export type ApplyCharacterBuffArgs = ApplyBuffArgs<CharacterBonusCore>;
-
-export type ApplyWeaponBuffArgs = ApplyBuffArgs<WeaponBonusCore> & { refi: number };
-
-export type ApplyArtifactBuffArgs = ApplyBuffArgs<ArtifactBonusCore>;
+type ApplyBonuses = (args: ApplyBonusesArgs<WithBonusTargets<EntityBonus>>) => void;
 
 export class BuffApplierCore {
   protected info: CalculationInfo;

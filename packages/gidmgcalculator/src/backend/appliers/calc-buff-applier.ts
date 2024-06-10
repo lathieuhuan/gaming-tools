@@ -1,13 +1,13 @@
 import type { CalculationInfo } from "@Src/backend/utils";
-
-import { AttackBonusControl, TotalAttributeControl } from "@Src/backend/controls";
-import {
+import type {
   ApplyArtifactBuffArgs,
   ApplyBuffArgs,
   ApplyCharacterBuffArgs,
   ApplyWeaponBuffArgs,
-  BuffApplierCore,
-} from "./buff-applier-core";
+} from "./appliers.types";
+
+import { AttackBonusControl, TotalAttributeControl } from "@Src/backend/controls";
+import { BuffApplierCore } from "./buff-applier-core";
 
 type InternalApplyBuffArgs<T extends ApplyBuffArgs<any>> = Omit<T, "applyAttrBonus" | "applyAttkBonus">;
 

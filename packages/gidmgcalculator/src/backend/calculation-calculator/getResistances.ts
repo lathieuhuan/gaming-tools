@@ -1,13 +1,35 @@
-import type { DebuffInfoWrap, GetResistancesArgs } from "./getResistances.types";
+import type {
+  ArtifactDebuffCtrl,
+  Character,
+  CustomDebuffCtrl,
+  ElementModCtrl,
+  ModifierCtrl,
+  Party,
+  PartyData,
+  Target,
+} from "@Src/types";
+import type { AppCharacter } from "@Src/backend/types";
 
 import { $AppArtifact, $AppCharacter } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { EntityCalc } from "../../utils";
-import { ResistanceReductionControl } from "../../controls";
-import { applyPenalty } from "./getResistances.utils";
-import ApplierCharacterDebuff from "./applier-character-debuff";
+import { EntityCalc } from "@Src/backend/utils";
+import { ResistanceReductionControl, TrackerControl } from "@Src/backend/controls";
+import { CalcDebuffApplier } from "@Src/backend/appliers";
 
-export function getResistances({
+type GetResistancesArgs = {
+  char: Character;
+  appChar: AppCharacter;
+  party: Party;
+  partyData: PartyData;
+  customDebuffCtrls: CustomDebuffCtrl[];
+  selfDebuffCtrls: ModifierCtrl[];
+  artDebuffCtrls: ArtifactDebuffCtrl[];
+  elmtModCtrls: ElementModCtrl;
+  target: Target;
+  tracker?: TrackerControl;
+};
+
+export default function getResistances({
   char,
   appChar,
   party,
@@ -21,13 +43,14 @@ export function getResistances({
 }: GetResistancesArgs) {
   const resistReduct = new ResistanceReductionControl(tracker);
 
-  const infoWrap: DebuffInfoWrap = {
-    char,
-    appChar,
-    partyData,
-    resistReduct,
-  };
-  const characterDebuff = new ApplierCharacterDebuff(infoWrap);
+  const debuffApplier = new CalcDebuffApplier(
+    {
+      char,
+      appChar,
+      partyData,
+    },
+    resistReduct
+  );
 
   // APPLY CUSTOM DEBUFFS
   for (const control of customDebuffCtrls) {
@@ -39,9 +62,9 @@ export function getResistances({
     const debuff = findByIndex(appChar.debuffs || [], ctrl.index);
 
     if (ctrl.activated && debuff?.effects && EntityCalc.isGrantedEffect(debuff, char)) {
-      characterDebuff.apply({
+      debuffApplier.applyCharacterDebuff({
         description: `Self / ${debuff.src}`,
-        effects: debuff.effects,
+        debuff,
         inputs: ctrl.inputs ?? [],
         fromSelf: true,
       });
@@ -57,9 +80,9 @@ export function getResistances({
       const debuff = findByIndex(debuffs, ctrl.index);
 
       if (ctrl.activated && debuff?.effects) {
-        characterDebuff.apply({
+        debuffApplier.applyCharacterDebuff({
           description: `Self / ${debuff.src}`,
-          effects: debuff.effects,
+          debuff,
           inputs: ctrl.inputs ?? [],
           fromSelf: false,
         });
@@ -69,19 +92,16 @@ export function getResistances({
 
   // APPLY ARTIFACT DEBUFFS
   for (const ctrl of artDebuffCtrls) {
-    if (ctrl.activated) {
-      const { name, debuffs = [] } = $AppArtifact.getSet(ctrl.code) || {};
-      const { effects } = debuffs[ctrl.index] || {};
+    const { name, debuffs = [] } = $AppArtifact.getSet(ctrl.code) || {};
+    const debuff = debuffs[ctrl.index];
 
-      if (effects) {
-        applyPenalty({
-          penaltyValue: effects.value,
-          targets: effects.targets,
-          info: infoWrap,
-          inputs: ctrl.inputs ?? [],
-          description: `${name} / 4-piece activated`,
-        });
-      }
+    if (ctrl.activated && debuff?.effects) {
+      debuffApplier.applyArtifactDebuff({
+        debuff,
+        inputs: ctrl.inputs ?? [],
+        description: `${name} / 4-piece activated`,
+        fromSelf: false,
+      });
     }
   }
 

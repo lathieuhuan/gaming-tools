@@ -8,7 +8,7 @@ import { $AppCharacter, $AppWeapon } from "@Src/services";
 import { useStore } from "@Src/features";
 import { pickProps } from "@Src/utils";
 import { getActiveMember } from "@Simulator/Simulator.utils";
-import { SimulatorTotalAttributeControl } from "@Simulator/calculation";
+import { SimulatorTotalAttributeControl } from "./toolbox";
 import {
   ActiveSimulationContext,
   ActiveMemberContext,
