@@ -9,16 +9,18 @@ import type {
   CalcItemMultFactor,
   CharacterBuffNAsConfig,
 } from "@Src/backend/types";
+import type { AttackBonusControl, TotalAttribute } from "@Src/backend/controls";
 
 import { findByIndex, toArray } from "@Src/utils";
 import { CharacterCalc, EntityCalc, GeneralCalc, type CalculationInfo } from "@Src/backend/utils";
-import { TrackerControl, type AttackBonusControl } from "@Src/backend/controls";
+import { TrackerControl } from "@Src/backend/controls";
 import { NORMAL_ATTACKS } from "@Src/backend/constants";
 
 type AttackPatternConfArgs = CalculationInfo & {
   selfBuffCtrls: ModifierCtrl[];
   elmtModCtrls: PartiallyRequired<Partial<ElementModCtrl>, "reaction" | "infuse_reaction" | "absorption">;
   customInfusion: Infusion;
+  totalAttr: TotalAttribute;
   attBonus: AttackBonusControl;
 };
 
@@ -29,6 +31,7 @@ export default function AttackPatternConf({
   selfBuffCtrls,
   elmtModCtrls,
   customInfusion,
+  totalAttr,
   attBonus,
 }: AttackPatternConfArgs) {
   const normalsConfig: Partial<Record<AttackPattern, Omit<CharacterBuffNAsConfig, "forPatt">>> = {};
@@ -64,8 +67,19 @@ export default function AttackPatternConf({
       //
     } = CharacterCalc.getTalentDefaultInfo(patternKey, appChar);
 
+    const configFlatFactor = (factor: CalcItemFlatFactor) => {
+      const { root, scale = defaultFlatFactorScale } = typeof factor === "number" ? { root: factor } : factor;
+      return {
+        root,
+        scale,
+      };
+    };
+
     const configCalcItem = (item: CalcItem) => {
       const { type = "attack" } = item;
+
+      /** ========== Attack Pattern, Attack Element, Reaction ========== */
+
       const attPatt = item.attPatt ?? normalsConfig[patternKey]?.attPatt ?? defaultAttPatt;
       let attElmt: AttackElement;
       let reaction = elmtModCtrls.reaction;
@@ -91,7 +105,7 @@ export default function AttackPatternConf({
         attElmt = normalsConfig[patternKey]?.attElmt ?? "phys";
       }
 
-      const getTotalBonus = (key: AttackBonusKey) => {
+      const getBonus = (key: AttackBonusKey) => {
         const finalAttPatt = attPatt === "none" ? undefined : attPatt;
 
         if (type === "attack") {
@@ -100,6 +114,8 @@ export default function AttackPatternConf({
         }
         return attBonus.get(key, finalAttPatt, item.id);
       };
+
+      /** ========== Attack Reaction Multiplier ========== */
 
       let rxnMult = 1;
 
@@ -132,6 +148,37 @@ export default function AttackPatternConf({
         };
       };
 
+      const calculateBaseDamage = (level: number) => {
+        let bases: number[] = [];
+
+        // CALCULATE BASE DAMAGE
+        for (const factor of toArray(item.multFactors)) {
+          const { root, scale, basedOn } = configMultFactor(factor);
+          const finalMult = root * CharacterCalc.getTalentMult(scale, level) + getBonus("mult_");
+
+          record.multFactors.push({
+            value: totalAttr[basedOn],
+            desc: basedOn,
+            talentMult: finalMult,
+          });
+          bases.push((totalAttr[basedOn] * finalMult) / 100);
+        }
+
+        if (item.joinMultFactors) {
+          bases = [bases.reduce((accumulator, base) => accumulator + base, 0)];
+        }
+
+        if (item.flatFactor) {
+          const { root, scale } = configFlatFactor(item.flatFactor);
+          const flatBonus = root * CharacterCalc.getTalentMult(scale, level);
+
+          bases = bases.map((base) => base + flatBonus);
+          record.totalFlat = flatBonus;
+        }
+
+        return bases.length > 1 ? bases : bases[0];
+      };
+
       // console.log("====================");
       // console.log("calcItem", item.name);
       // console.log(finalAttPatt, finalAttElmt, reaction);
@@ -141,18 +188,9 @@ export default function AttackPatternConf({
         attPatt,
         attElmt,
         rxnMult,
-        extraMult: getTotalBonus("mult_"),
         record,
-        getTotalBonus,
-        configMultFactor,
-      };
-    };
-
-    const configFlatFactor = (factor: CalcItemFlatFactor) => {
-      const { root, scale = defaultFlatFactorScale } = typeof factor === "number" ? { root: factor } : factor;
-      return {
-        root,
-        scale,
+        getBonus,
+        calculateBaseDamage,
       };
     };
 
@@ -160,7 +198,6 @@ export default function AttackPatternConf({
       resultKey,
       disabled: normalsConfig[patternKey]?.disabled,
       configCalcItem,
-      configFlatFactor,
     };
   };
 

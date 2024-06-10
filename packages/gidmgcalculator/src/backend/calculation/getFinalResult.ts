@@ -8,9 +8,8 @@ import type { CalculationFinalResult } from "./calculation.types";
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
 import { TRANSFORMATIVE_REACTION_INFO } from "@Src/backend/constants/internal";
 
-import { toArray } from "@Src/utils";
 import { CharacterCalc, GeneralCalc } from "@Src/backend/utils";
-import CalcItemCalculator from "./calc-item-calculator";
+import { genEmptyResult } from "./calc-item-calculator";
 
 type GetFinalResultArgs = {
   char: CalcCharacter;
@@ -48,56 +47,28 @@ export default function getFinalResult({
   };
 
   ATTACK_PATTERNS.forEach((ATT_PATT) => {
-    const { resultKey, disabled, configCalcItem, configFlatFactor } = configAttackPattern(ATT_PATT);
+    const { resultKey, disabled, configCalcItem } = configAttackPattern(ATT_PATT);
     const level = CharacterCalc.getFinalTalentLv({ appChar, talentType: resultKey, char, partyData });
 
     for (const calcItem of appChar.calcList[ATT_PATT]) {
-      const { type, attPatt, attElmt, rxnMult, extraMult, record, getTotalBonus, configMultFactor } =
-        configCalcItem(calcItem);
+      const config = configCalcItem(calcItem);
 
-      let bases: number[] = [];
+      if (disabled && config.type === "attack") {
+        finalResult[resultKey][calcItem.name] = genEmptyResult(config.type, config.attPatt, config.attElmt);
 
-      // CALCULATE BASE DAMAGE
-      for (const factor of toArray(calcItem.multFactors)) {
-        const { root, scale, basedOn } = configMultFactor(factor);
-        const finalMult = root * CharacterCalc.getTalentMult(scale, level) + extraMult;
-
-        record.multFactors.push({
-          value: totalAttr[basedOn],
-          desc: basedOn,
-          talentMult: finalMult,
-        });
-        bases.push((totalAttr[basedOn] * finalMult) / 100);
+        tracker?.recordCalcItem(resultKey, calcItem.name, config.record);
+        continue;
       }
 
-      if (calcItem.joinMultFactors) {
-        bases = [bases.reduce((accumulator, base) => accumulator + base, 0)];
-      }
-
-      if (calcItem.flatFactor) {
-        const { root, scale } = configFlatFactor(calcItem.flatFactor);
-        const flatBonus = root * CharacterCalc.getTalentMult(scale, level);
-
-        bases = bases.map((base) => base + flatBonus);
-        record.totalFlat = flatBonus;
-      }
+      const base = config.calculateBaseDamage(level);
 
       // TALENT DMG
-      if (disabled && type === "attack") {
-        finalResult[resultKey][calcItem.name] = CalcItemCalculator.genEmptyResult(type, attPatt, attElmt);
-      } else {
-        finalResult[resultKey][calcItem.name] = calculateCalcItem({
-          base: bases.length > 1 ? bases : bases[0],
-          attPatt,
-          attElmt,
-          calcType: type,
-          rxnMult,
-          record,
-          getBonus: getTotalBonus,
-        });
-      }
+      finalResult[resultKey][calcItem.name] = calculateCalcItem({
+        base,
+        ...config,
+      });
 
-      tracker?.recordCalcItem(resultKey, calcItem.name, record);
+      tracker?.recordCalcItem(resultKey, calcItem.name, config.record);
     }
   });
 
@@ -148,7 +119,7 @@ export default function getFinalResult({
     const attElmt: AttackElement = "phys";
 
     finalResult.WP_CALC[name] = calculateCalcItem({
-      calcType: type,
+      type,
       attPatt: "none",
       attElmt,
       base: (totalAttr[baseOn] * mult) / 100,

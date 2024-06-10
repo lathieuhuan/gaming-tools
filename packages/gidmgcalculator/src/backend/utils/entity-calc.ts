@@ -10,7 +10,6 @@ import type {
   AttributeStack,
 } from "@Src/backend/types";
 import type { CalculationInfo } from "@Src/backend/utils";
-import type { GetTotalAttributeType } from "@Src/backend/controls/total-attribute-control";
 
 import { toArray } from "@Src/utils";
 import { GeneralCalc } from "./general-calc";

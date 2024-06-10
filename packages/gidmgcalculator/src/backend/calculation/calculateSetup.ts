@@ -67,10 +67,11 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     selfBuffCtrls,
     elmtModCtrls,
     customInfusion,
+    totalAttr,
     attBonus,
   });
 
-  const calcItemCalculator = new CalcItemCalculator(char.level, target.level, totalAttr, resistances);
+  const calculateCalcItem = CalcItemCalculator(char.level, target.level, totalAttr, resistances);
 
   const finalResult = getFinalResult({
     char,
@@ -83,7 +84,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     resistances,
     tracker,
     configAttackPattern,
-    calculateCalcItem: calcItemCalculator.calculate,
+    calculateCalcItem,
   });
   // console.timeEnd();
 

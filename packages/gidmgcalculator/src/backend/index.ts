@@ -1,4 +1,12 @@
-export { ArtifactCalc, CharacterCalc, EntityCalc, GeneralCalc, WeaponCalc, type ArtifactSetBonus } from "./utils";
+export {
+  ArtifactCalc,
+  CharacterCalc,
+  EntityCalc,
+  GeneralCalc,
+  WeaponCalc,
+  type ArtifactSetBonus,
+  type CalculationInfo,
+} from "./utils";
 export { TrackerControl, TotalAttributeControl, AttackBonusControl } from "./controls";
 export { getIntialCharacterBonusValue } from "./bonus-getters";
 export { SimulatorBuffApplier } from "./appliers/sim-buff-applier";
