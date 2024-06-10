@@ -10,6 +10,8 @@ export function MemberDetail({ className = "" }: MemberDetailProps) {
   const activeMember = useActiveMember();
   const toolbox = useToolbox();
 
+  console.log("render: MemberDetail");
+
   if (!activeMember || !toolbox) {
     return null;
   }

@@ -1,8 +1,9 @@
 import { createContext, useContext } from "react";
-import { PartyData } from "@Src/types";
+import { PartyData, SimulationTarget } from "@Src/types";
 
 export type ActiveSimulationInfo = {
   partyData: PartyData;
+  target: SimulationTarget;
 };
 
 export const ActiveSimulationContext = createContext<ActiveSimulationInfo | null>(null);

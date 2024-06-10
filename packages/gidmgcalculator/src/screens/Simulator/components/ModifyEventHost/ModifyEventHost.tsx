@@ -1,8 +1,8 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { Button } from "rond";
 import { CharacterBuff, EntityCalc } from "@Backend";
 
-import { Modifier_, parseAbilityDescription, toArray } from "@Src/utils";
+import { Modifier_, parseAbilityDescription } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
 import { addBonus, addEvent } from "@Store/simulator-slice";
 import {
@@ -28,6 +28,8 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
 
   const [inputsList, setInputsList] = useState(initalInputsList);
 
+  console.log("render: ModifyEventHostCore");
+
   if (!toolbox) {
     return null;
   }
@@ -49,24 +51,37 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
       description: "",
       inputs,
       applyAttrBonus: (bonus) => {
-        for (const toStat of toArray(bonus.keys)) {
-          dispatch(
-            addBonus({
-              type: "ATTRIBUTE",
-              bonus: {
-                stable: bonus.stable,
-                toStat,
-                value: bonus.value,
-                trigger: {
-                  character: "",
-                  src: "",
-                },
+        dispatch(
+          addBonus({
+            type: "ATTRIBUTE",
+            bonus: {
+              toStat: bonus.stat,
+              value: bonus.value,
+              stable: bonus.stable,
+              trigger: {
+                character: "",
+                src: "",
               },
-            })
-          );
-        }
+            },
+          })
+        );
       },
-      applyAttkBonus: () => {},
+      applyAttkBonus: (bonus) => {
+        dispatch(
+          addBonus({
+            type: "ATTACK",
+            bonus: {
+              toKey: bonus.path,
+              toType: bonus.module,
+              value: bonus.value,
+              trigger: {
+                character: "",
+                src: "",
+              },
+            },
+          })
+        );
+      },
     });
   };
 
@@ -115,11 +130,11 @@ export function ModifyEventHost({ className = "" }: { className?: string }) {
   const simulation = useActiveSimulation();
   const member = useActiveMember();
 
+  console.log("render: ModifyEventHost");
+
   if (!simulation || !member) {
     return null;
   }
-
-  console.log("ModifyEventHost");
 
   const buffs = member.appChar.buffs?.filter((buff) => EntityCalc.isGrantedEffect(buff, member.char));
 

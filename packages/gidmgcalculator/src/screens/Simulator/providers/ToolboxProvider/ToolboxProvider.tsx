@@ -35,7 +35,7 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
 
   console.log("render: ToolboxProvider");
 
-  const activeSimulationInfo = useMemo(() => {
+  const activeSimulationInfo = useMemo<ActiveSimulationInfo | null>(() => {
     const simulation = store.select((state) => {
       const { activeId, simulationsById } = state.simulator;
       return simulationsById[activeId] ?? null;
@@ -44,6 +44,7 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
     if (simulation) {
       return {
         partyData: $AppCharacter.getPartyData(simulation.members),
+        target: simulation.target,
       };
     }
     return null;

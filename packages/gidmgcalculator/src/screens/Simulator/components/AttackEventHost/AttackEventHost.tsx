@@ -1,20 +1,27 @@
 import { useState } from "react";
-import { AppCharacter, CalcItem, NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@Backend";
+import { TRANSFORMATIVE_REACTIONS, TotalAttributeControl } from "@Backend";
 
+import { useActiveMember, useToolbox } from "@Simulator/providers";
 import { useTranslation } from "@Src/hooks";
-import { useActiveMember } from "@Simulator/providers";
+import { getAttackEventConfigGroups, type AttackEventConfigGroup } from "./AttackEventHost.utils";
+
+// Components
 import { AttackEventGroup } from "./AttackEventGroup";
+import { TalentAttackEvent } from "./TalentAttackEvent";
 
 interface AttackEventHostProps {
-  configGroups: ConfigGroup[];
+  totalAttr: TotalAttributeControl;
+  configGroups: AttackEventConfigGroup[];
 }
 
-function AttackEventHostCore({ configGroups }: AttackEventHostProps) {
+function AttackEventHostCore({ configGroups, totalAttr }: AttackEventHostProps) {
   const { t } = useTranslation();
   const [active, setActive] = useState({
     groupI: -1,
     itemI: -1,
   });
+
+  console.log("render: AttackEventHostCore");
 
   const onClickKey = (groupI: number, itemI: number, active: boolean) => {
     setActive(active ? { groupI: -1, itemI: -1 } : { groupI, itemI });
@@ -36,7 +43,7 @@ function AttackEventHostCore({ configGroups }: AttackEventHostProps) {
               label: item.name,
               isActive: groupIndex === active.groupI && itemIndex === active.itemI,
             })}
-            renderContent={() => <p>Hello</p>}
+            renderContent={(item) => <TalentAttackEvent talentType={group.name} configItem={item} />}
             onClickItem={(_, index, active) => onClickKey(groupIndex, index, active)}
           />
         );
@@ -57,49 +64,20 @@ function AttackEventHostCore({ configGroups }: AttackEventHostProps) {
 
 export function AttackEventHost({ className = "" }: { className?: string }) {
   const activeMember = useActiveMember();
+  const toolbox = useToolbox();
 
-  if (!activeMember) {
+  console.log("render: AttackEventHost");
+
+  if (!activeMember || !toolbox) {
     return null;
   }
 
   return (
     <div className={"p-4 h-full rounded-md bg-surface-1 " + className}>
-      <AttackEventHostCore configGroups={getAttackConfig(activeMember.appChar)} />
+      <AttackEventHostCore
+        totalAttr={toolbox.totalAttr}
+        configGroups={getAttackEventConfigGroups(activeMember.appChar)}
+      />
     </div>
   );
-}
-
-type ConfigGroup = {
-  name: string;
-  items: CalcItem[];
-};
-
-function getAttackConfig(appChar: AppCharacter) {
-  const filter = (items: CalcItem[], cb: (item: CalcItem) => void) => {
-    for (const item of items) {
-      if (!item.type || item.type === "attack") cb(item);
-    }
-  };
-
-  const NAs: ConfigGroup = {
-    name: "NAs",
-    items: [],
-  };
-  for (const NA of NORMAL_ATTACKS) {
-    filter(appChar.calcList[NA], (item) => NAs.items.push(item));
-  }
-
-  const talentAttacks: ConfigGroup[] = [NAs];
-
-  for (const attPatt of ["ES", "EB"] as const) {
-    const group: ConfigGroup = {
-      name: attPatt,
-      items: [],
-    };
-    filter(appChar.calcList[attPatt], (item) => group.items.push(item));
-
-    talentAttacks.push(group);
-  }
-
-  return talentAttacks;
 }
