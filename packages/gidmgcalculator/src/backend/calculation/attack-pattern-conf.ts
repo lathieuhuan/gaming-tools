@@ -1,3 +1,4 @@
+import type { PartiallyRequired } from "rond";
 import type { ElementModCtrl, Infusion, ModifierCtrl } from "@Src/types";
 import type {
   AttackElement,
@@ -16,7 +17,7 @@ import { NORMAL_ATTACKS } from "@Src/backend/constants";
 
 type AttackPatternConfArgs = CalculationInfo & {
   selfBuffCtrls: ModifierCtrl[];
-  elmtModCtrls: ElementModCtrl;
+  elmtModCtrls: PartiallyRequired<Partial<ElementModCtrl>, "reaction" | "infuse_reaction" | "absorption">;
   customInfusion: Infusion;
   attBonus: AttackBonusControl;
 };
@@ -148,7 +149,7 @@ export default function AttackPatternConf({
     };
 
     const configFlatFactor = (factor: CalcItemFlatFactor) => {
-      const { root, scale = 3 } = typeof factor === "number" ? { root: factor } : factor;
+      const { root, scale = defaultFlatFactorScale } = typeof factor === "number" ? { root: factor } : factor;
       return {
         root,
         scale,
@@ -158,7 +159,6 @@ export default function AttackPatternConf({
     return {
       resultKey,
       disabled: normalsConfig[patternKey]?.disabled,
-      defaultFlatFactorScale,
       configCalcItem,
       configFlatFactor,
     };

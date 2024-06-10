@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { SimulatorBuffApplier } from "@Backend";
-import type { SimulationMember } from "@Src/types";
 
 import { useSelector } from "@Store/hooks";
 import { RootState } from "@Store/store";
@@ -8,6 +7,7 @@ import { RootState } from "@Store/store";
 import { $AppCharacter, $AppWeapon } from "@Src/services";
 import { useStore } from "@Src/features";
 import { pickProps } from "@Src/utils";
+import { getActiveMember } from "@Simulator/Simulator.utils";
 import { SimulatorTotalAttributeControl } from "@Simulator/calculation";
 import {
   ActiveSimulationContext,
@@ -20,11 +20,6 @@ import {
 const selectActiveId = (state: RootState) => state.simulator.activeId;
 
 const selectActiveMember = (state: RootState) => state.simulator.activeMember;
-
-const getActiveMember = (state: RootState): SimulationMember | undefined => {
-  const { activeId, activeMember, simulationsById } = state.simulator;
-  return simulationsById[activeId]?.members?.find((member) => member.name === activeMember);
-};
 
 type ToolBox = {
   totalAttrCtrl: SimulatorTotalAttributeControl;

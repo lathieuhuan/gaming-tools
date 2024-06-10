@@ -12,7 +12,7 @@ export type AttackBonus = Array<{
   records: AttackBonusRecord[];
 }>;
 
-/** should not use 'all' */
+/** should not use 'all' in AttackBonusType */
 type GetBonusPaths = Array<AttackBonusType | undefined>;
 
 export class AttackBonusControl {

@@ -3,6 +3,7 @@ export { TrackerControl, TotalAttributeControl, AttackBonusControl } from "./con
 export { getIntialCharacterBonusValue } from "./bonus-getters";
 export { SimulatorBuffApplier } from "./appliers/sim-buff-applier";
 export { default as getCalculationStats } from "./calculation/getCalculationStats";
+export { default as AttackPatternConf, type ConfigAttackPattern } from "./calculation/attack-pattern-conf";
 export { calculateSetup } from "./calculation/calculateSetup";
 
 export * from "./constants";

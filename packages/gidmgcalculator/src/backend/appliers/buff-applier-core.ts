@@ -54,7 +54,7 @@ export class BuffApplierCore {
       switch (target.module) {
         case ECalcStatModule.ATTR: {
           for (const targetPath of toArray(target.path)) {
-            let path: AttributeStat | AttributeStat[];
+            let path: AttributeStat;
 
             switch (targetPath) {
               case "INP_ELMT": {
@@ -72,12 +72,12 @@ export class BuffApplierCore {
             if (bonus.isStable) {
               args.applyAttrBonus({
                 stable: true,
-                keys: path,
+                stat: path,
                 value: bonus.value,
                 description,
               });
             } else {
-              args.applyAttrBonus({ stable: false, keys: path, value: bonus.value, description });
+              args.applyAttrBonus({ stable: false, stat: path, value: bonus.value, description });
             }
           }
           break;

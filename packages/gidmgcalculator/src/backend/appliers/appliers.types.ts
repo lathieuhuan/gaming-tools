@@ -16,12 +16,7 @@ export type ApplyBonusArgs = {
   inputs: number[];
   description: string;
   isStackable?: (paths: string | string[]) => boolean;
-  applyAttrBonus: (args: {
-    stable: boolean;
-    keys: AttributeStat | AttributeStat[];
-    value: number;
-    description: string;
-  }) => void;
+  applyAttrBonus: (args: { stat: AttributeStat; value: number; description: string; stable: boolean }) => void;
   applyAttkBonus: (args: { module: AttackBonusType; path: AttackBonusKey; value: number; description: string }) => void;
 };
 
