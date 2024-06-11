@@ -13,7 +13,7 @@ export type TalentAttackEventConfig = {
 export function getTalentAttackEventConfig(appChar: AppCharacter) {
   const filter = (items: CalcItem[], cb: (item: CalcItem) => void) => {
     for (const item of items) {
-      if (!item.type || item.type === "attack") cb(item);
+      if ((!item.type || item.type === "attack") && !item.notOfficial) cb(item);
     }
   };
 

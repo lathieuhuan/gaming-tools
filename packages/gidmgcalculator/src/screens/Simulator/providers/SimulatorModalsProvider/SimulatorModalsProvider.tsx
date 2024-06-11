@@ -47,7 +47,7 @@ export function SimulatorModalsProvider(props: SimulatorModalsProviderProps) {
 
             const members: SimulationMember[] = [
               {
-                name: "Albedo",
+                name: "Amber",
                 level: "90/90",
                 NAs: 1,
                 ES: 1,

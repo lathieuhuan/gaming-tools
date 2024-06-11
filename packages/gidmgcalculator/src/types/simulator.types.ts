@@ -1,53 +1,46 @@
-import type { AttackBonusKey, AttackBonusType, AttributeStat } from "@Backend";
-import type { Artifact, Character, Weapon } from "./global.types";
+import type { ActualAttackPattern, AttackElement } from "@Backend";
 import type { Target } from "./calculator.types";
+import type { Artifact, Character, Weapon } from "./global.types";
 
 export type SimulationManageInfo = {
   id: number;
   name: string;
 };
 
-export type ModifyEvent = {
-  character: string;
-  modId: number;
-  modInputs: number[];
+type BaseEvent = {
+  performer: string;
 };
 
-export type AttackEvent = {
-  character: string;
+export type ModifyEvent = BaseEvent & {
+  type: "MODIFY";
+  modifier: {
+    id: number;
+    inputs: number[];
+  };
+};
+
+export type HitEvent = BaseEvent & {
+  type: "HIT";
+  calcItemId: string;
+  damage: number;
+  attElmt: AttackElement;
+  attPatt: ActualAttackPattern;
   duration: number;
 };
 
-type SimulationBonus = {
-  trigger: {
-    character: string;
-    src: string;
-  };
-  value: number;
-};
-
-export type SimulationAttributeBonus = SimulationBonus & {
-  stable: boolean;
-  toStat: AttributeStat;
-};
-
-export type SimulationAttackBonus = SimulationBonus & {
-  toType: AttackBonusType;
-  toKey: AttackBonusKey;
-};
+export type SimulationEvent = ModifyEvent | HitEvent;
 
 export type SimulationMember = Character & {
   weapon: Weapon;
   artifacts: Array<Artifact | null>;
-  attributeBonus: SimulationAttributeBonus[];
-  attackBonus: SimulationAttackBonus[];
 };
 
 export type SimulationTarget = Target;
 
+/** ==========*** SIMULATION ***========== */
+
 export type Simulation = {
   members: SimulationMember[];
-  modifyEvents: ModifyEvent[];
-  attackEvents: AttackEvent[];
+  events: SimulationEvent[];
   target: SimulationTarget;
 };

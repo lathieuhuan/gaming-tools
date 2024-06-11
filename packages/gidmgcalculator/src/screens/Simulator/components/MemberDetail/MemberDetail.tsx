@@ -3,10 +3,7 @@ import { useActiveMember, useToolbox } from "@Simulator/providers";
 
 import { AttributeTable, GenshinImage } from "@Src/components";
 
-interface MemberDetailProps {
-  className?: string;
-}
-export function MemberDetail({ className = "" }: MemberDetailProps) {
+export function MemberDetail(props: { className?: string }) {
   const activeMember = useActiveMember();
   const toolbox = useToolbox();
 
@@ -20,7 +17,7 @@ export function MemberDetail({ className = "" }: MemberDetailProps) {
   const appWeapon = $AppWeapon.get(char.weapon.code)!;
 
   return (
-    <div className={"p-4 h-full rounded-md bg-surface-1 " + className}>
+    <div className={props.className}>
       <div className="h-full space-y-3 hide-scrollbar">
         <div>
           <h3 className={`text-xl text-${appChar.vision} font-bold`}>{char.name}</h3>

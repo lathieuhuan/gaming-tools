@@ -1,10 +1,10 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import type { AddBonusPayload, AddEventPayload, AddSimulationPayload, SimulatorState } from "./simulator-slice.types";
+import type { AddSimulationPayload, SimulatorState } from "./simulator-slice.types";
 import { Setup_ } from "@Src/utils";
 import { $AppSettings } from "@Src/services";
-import { ModifyEvent } from "@Src/types";
-import { getActiveSimulation, getMember } from "./simulator-slice.utils";
+import { SimulationEvent } from "@Src/types";
+import { getSimulation } from "./simulator-slice.utils";
 
 const initialState: SimulatorState = {
   activeId: 0,
@@ -21,8 +21,7 @@ export const simulatorSlice = createSlice({
       const id = Date.now();
       const {
         members,
-        modifyEvents = [],
-        attackEvents = [],
+        events = [],
         target = Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
       } = action.payload;
 
@@ -35,32 +34,17 @@ export const simulatorSlice = createSlice({
         });
         state.simulationsById[id] = {
           members,
-          modifyEvents,
-          attackEvents,
+          events,
           target,
         };
       }
     },
-    addEvent: (state, action: AddEventPayload) => {
-      const { type, event } = action.payload;
-
-      switch (type) {
-        case "MODIFY":
-          getActiveSimulation(state)?.modifyEvents.push(event);
-      }
-    },
-    addBonus: (state, action: AddBonusPayload) => {
-      const { type, toCharacter, bonus } = action.payload;
-
-      if (type === "ATTRIBUTE") {
-        getMember(state, toCharacter)?.attributeBonus.push(bonus);
-      } else {
-        getMember(state, toCharacter)?.attackBonus.push(bonus);
-      }
+    addEvent: (state, action: PayloadAction<SimulationEvent>) => {
+      getSimulation(state)?.events.push(action.payload);
     },
   },
 });
 
-export const { addSimulation, addEvent, addBonus } = simulatorSlice.actions;
+export const { addSimulation, addEvent } = simulatorSlice.actions;
 
 export default simulatorSlice.reducer;

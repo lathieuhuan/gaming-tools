@@ -1,26 +1,23 @@
 import { TotalAttributeControl } from "@Backend";
-import { SimulationAttributeBonus } from "@Src/types";
 import { toArray } from "@Src/utils";
+import { SimulationAttributeBonus } from "./tools.types";
 
 export class SimulatorTotalAttributeControl extends TotalAttributeControl {
-  constructor() {
-    super();
-  }
+  clone = () => {
+    const clonedCtrl = new SimulatorTotalAttributeControl(structuredClone(this.totalAttr));
+    return clonedCtrl;
+  };
 
   applyAttributeBonus = (bonuses?: SimulationAttributeBonus[]) => {
-    const clonedCtrl = new TotalAttributeControl(structuredClone(this.totalAttr));
-
     if (bonuses) {
       for (const bonus of bonuses) {
-        const description = `${bonus.trigger.character} / ${bonus.trigger.src}`;
-        const add = bonus.stable ? clonedCtrl.addStable : clonedCtrl.addUnstable;
+        const description = `${bonus.trigger.character} / ${bonus.trigger.modifier}`;
+        const add = bonus.stable ? this.addStable : this.addUnstable;
 
         for (const key of toArray(bonus.toStat)) {
           add(key, bonus.value, description);
         }
       }
     }
-
-    return clonedCtrl;
   };
 }

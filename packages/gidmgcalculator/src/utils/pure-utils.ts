@@ -1,5 +1,7 @@
 export const deepCopy = <T>(item: T): T => JSON.parse(JSON.stringify(item));
 
+export const uuid = () => crypto.randomUUID();
+
 export function getSearchParam(key: string) {
   const searchParams = new URLSearchParams(window.location.search);
   return searchParams.get(key);

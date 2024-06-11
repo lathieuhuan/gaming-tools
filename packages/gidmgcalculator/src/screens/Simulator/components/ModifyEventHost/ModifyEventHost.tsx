@@ -38,51 +38,51 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
     dispatch(
       addEvent({
         type: "MODIFY",
-        event: {
-          character: member.char.name,
-          modId: mod.index,
-          modInputs: inputs,
+        performer: member.char.name,
+        modifier: {
+          id: mod.index,
+          inputs,
         },
       })
     );
 
-    toolbox.buffApplier.applyCharacterBuff({
-      buff: mod,
-      description: "",
-      inputs,
-      applyAttrBonus: (bonus) => {
-        dispatch(
-          addBonus({
-            type: "ATTRIBUTE",
-            bonus: {
-              toStat: bonus.stat,
-              value: bonus.value,
-              stable: bonus.stable,
-              trigger: {
-                character: "",
-                src: "",
-              },
-            },
-          })
-        );
-      },
-      applyAttkBonus: (bonus) => {
-        dispatch(
-          addBonus({
-            type: "ATTACK",
-            bonus: {
-              toKey: bonus.path,
-              toType: bonus.module,
-              value: bonus.value,
-              trigger: {
-                character: "",
-                src: "",
-              },
-            },
-          })
-        );
-      },
-    });
+    // toolbox.buffApplier.applyCharacterBuff({
+    //   buff: mod,
+    //   description: "",
+    //   inputs,
+    //   applyAttrBonus: (bonus) => {
+    //     dispatch(
+    //       addBonus({
+    //         type: "ATTRIBUTE",
+    //         bonus: {
+    //           toStat: bonus.stat,
+    //           value: bonus.value,
+    //           stable: bonus.stable,
+    //           trigger: {
+    //             character: "",
+    //             src: "",
+    //           },
+    //         },
+    //       })
+    //     );
+    //   },
+    //   applyAttkBonus: (bonus) => {
+    //     dispatch(
+    //       addBonus({
+    //         type: "ATTACK",
+    //         bonus: {
+    //           toKey: bonus.path,
+    //           toType: bonus.module,
+    //           value: bonus.value,
+    //           trigger: {
+    //             character: "",
+    //             src: "",
+    //           },
+    //         },
+    //       })
+    //     );
+    //   },
+    // });
   };
 
   return (
@@ -126,7 +126,7 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
   );
 }
 
-export function ModifyEventHost({ className = "" }: { className?: string }) {
+export function ModifyEventHost(props: { className?: string }) {
   const simulation = useActiveSimulation();
   const member = useActiveMember();
 
@@ -141,7 +141,7 @@ export function ModifyEventHost({ className = "" }: { className?: string }) {
   const initalInputsList = buffs?.map((buff) => Modifier_.createModCtrl(buff, true).inputs ?? []);
 
   return (
-    <div className={"p-4 h-full rounded-md bg-surface-2 " + className}>
+    <div className={props.className}>
       <ModifyEventHostCore {...{ simulation, member, initalInputsList, buffs }} />
     </div>
   );

@@ -12,7 +12,11 @@ type ConfigTalentEventArgs = Pick<AttackPatternConfArgs, "attBonus"> & {
   target: SimulationTarget;
 };
 
-export function configTalentEvent(args: ConfigTalentEventArgs) {
+export type TalentEventConfig = Pick<CalcItemConfig, "attElmt" | "attPatt" | "record"> & {
+  damage: number | number[];
+};
+
+export function configTalentEvent(args: ConfigTalentEventArgs): TalentEventConfig {
   const { itemConfig, totalAttr, info, target } = args;
 
   const resistances = new ResistanceReductionControl().apply(target);

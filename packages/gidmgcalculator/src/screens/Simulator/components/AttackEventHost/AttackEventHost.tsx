@@ -1,16 +1,19 @@
-import { useState } from "react";
 import {
   AttackBonusControl,
   AttackPattern,
   CalcItem,
   CharacterCalc,
   TRANSFORMATIVE_REACTIONS,
+  TalentEventConfig,
   TalentType,
   configTalentEvent,
 } from "@Backend";
 import type { ElementModCtrl } from "@Src/types";
 import type { RootState } from "@Store/store";
 
+import { useTranslation } from "@Src/hooks";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { addEvent } from "@Store/simulator-slice";
 import {
   ActiveMemberInfo,
   ActiveSimulationInfo,
@@ -19,8 +22,6 @@ import {
   useActiveSimulation,
   useToolbox,
 } from "@Simulator/providers";
-import { useTranslation } from "@Src/hooks";
-import { useSelector } from "@Store/hooks";
 import { getActiveMember } from "@Simulator/Simulator.utils";
 import { getTalentAttackEventConfig, type TalentAttackEventConfig } from "./AttackEventHost.utils";
 
@@ -31,24 +32,25 @@ import { AttackPatternConf } from "@Src/backend/calculation";
 
 const selectAttackBonus = (state: RootState) => getActiveMember(state)?.attackBonus ?? [];
 
+const DEFAULT_ELMT_MOD_CTRL: Pick<ElementModCtrl, "absorption" | "reaction" | "infuse_reaction"> = {
+  absorption: null,
+  reaction: null,
+  infuse_reaction: null,
+};
+
 interface AttackEventHostProps {
-  activeSimulation: ActiveSimulationInfo;
-  activeMember: ActiveMemberInfo;
+  simulation: ActiveSimulationInfo;
+  member: ActiveMemberInfo;
   toolbox: SimulatorToolbox;
   configs: TalentAttackEventConfig[];
 }
 
-function AttackEventHostCore({ activeSimulation, activeMember, toolbox, configs }: AttackEventHostProps) {
+function AttackEventHostCore({ simulation, member, toolbox, configs }: AttackEventHostProps) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const attackBonus = useSelector(selectAttackBonus);
 
   console.log("render: AttackEventHostCore");
-
-  const defaultElmtModCtrls: Pick<ElementModCtrl, "absorption" | "reaction" | "infuse_reaction"> = {
-    absorption: null,
-    reaction: null,
-    infuse_reaction: null,
-  };
 
   const configAttPatt = (talentType: TalentType, patternKey: AttackPattern) => {
     const attBonus = new AttackBonusControl();
@@ -58,10 +60,11 @@ function AttackEventHostCore({ activeSimulation, activeMember, toolbox, configs 
     }
 
     const info = {
-      char: activeMember.char,
-      appChar: activeMember.appChar,
-      partyData: activeSimulation.partyData,
+      char: member.char,
+      appChar: member.appChar,
+      partyData: simulation.partyData,
     };
+    const level = CharacterCalc.getFinalTalentLv({ ...info, talentType });
     const totalAttr = toolbox.totalAttr.finalize();
 
     const { disabled, configCalcItem } = AttackPatternConf({
@@ -74,25 +77,42 @@ function AttackEventHostCore({ activeSimulation, activeMember, toolbox, configs 
       },
     })(patternKey);
 
-    const level = CharacterCalc.getFinalTalentLv({ ...info, talentType });
-
     const configTalent = (item: CalcItem, elmtModCtrls?: Partial<ElementModCtrl>) => {
       return configTalentEvent({
         itemConfig: configCalcItem(item, {
-          ...defaultElmtModCtrls,
+          ...DEFAULT_ELMT_MOD_CTRL,
           ...elmtModCtrls,
         }),
         level,
         totalAttr,
         attBonus,
         info,
-        target: activeSimulation.target,
+        target: simulation.target,
       });
     };
+
     return {
       disabled,
       configTalent,
     };
+  };
+
+  const onHit = (item: CalcItem, info: TalentEventConfig) => {
+    const damage = Array.isArray(info.damage) ? info.damage.reduce((t, d) => t + d, 0) : info.damage;
+
+    dispatch(
+      addEvent({
+        type: "ATTACK",
+        event: {
+          character: member.char.name,
+          calcItemId: item.name,
+          damage,
+          attElmt: info.attElmt,
+          attPatt: info.attPatt,
+          duration: 0,
+        },
+      })
+    );
   };
 
   return (
@@ -120,7 +140,7 @@ function AttackEventHostCore({ activeSimulation, activeMember, toolbox, configs 
                         id={id}
                         label={item.name}
                         disabled={disabled}
-                        onQuickHit={() => {}}
+                        onQuickHit={() => onHit(item, configTalent(item))}
                       >
                         <TalentAttackEvent item={item} configTalentEvent={configTalent} />
                       </AttackEventDisplayer>
@@ -132,22 +152,22 @@ function AttackEventHostCore({ activeSimulation, activeMember, toolbox, configs 
           );
         })}
         {/* <AttackEventGroup
-        name={t("RXN_CALC")}
-        items={[...TRANSFORMATIVE_REACTIONS]}
-        getItemState={(item, itemIndex) => ({
-          label: t(item),
-          isActive: configGroups.length === active.groupI && itemIndex === active.itemI,
-        })}
-        renderContent={() => <p>Hello</p>}
-        onPerformEvent={() => {}}
-        onExpandEvent={(_, index, active) => onExpandTalentEvent(configGroups.length, index, active)}
-      /> */}
+          name={t("RXN_CALC")}
+          items={[...TRANSFORMATIVE_REACTIONS]}
+          getItemState={(item, itemIndex) => ({
+            label: t(item),
+            isActive: configGroups.length === active.groupI && itemIndex === active.itemI,
+          })}
+          renderContent={() => <p>Hello</p>}
+          onPerformEvent={() => {}}
+          onExpandEvent={(_, index, active) => onExpandTalentEvent(configGroups.length, index, active)}
+        /> */}
       </div>
     </AttackEventCoordinator>
   );
 }
 
-export function AttackEventHost({ className = "" }: { className?: string }) {
+export function AttackEventHost(props: { className?: string }) {
   const activeSimulation = useActiveSimulation();
   const activeMember = useActiveMember();
   const toolbox = useToolbox();
@@ -159,10 +179,10 @@ export function AttackEventHost({ className = "" }: { className?: string }) {
   }
 
   return (
-    <div className={"p-4 h-full rounded-md bg-surface-1 " + className}>
+    <div className={props.className}>
       <AttackEventHostCore
-        activeSimulation={activeSimulation}
-        activeMember={activeMember}
+        simulation={activeSimulation}
+        member={activeMember}
         toolbox={toolbox}
         configs={getTalentAttackEventConfig(activeMember.appChar)}
       />

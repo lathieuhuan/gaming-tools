@@ -33,6 +33,7 @@ export type {
   ArtifactType,
   AttackElement,
   AttackPattern,
+  ActualAttackPattern,
   AttributeStat,
   AttackBonusKey,
   AttackBonusType,
