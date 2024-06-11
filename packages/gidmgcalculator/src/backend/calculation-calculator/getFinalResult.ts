@@ -1,4 +1,4 @@
-import type { CalcCharacter, CalcWeapon, PartyData } from "@Src/types";
+import type { CalcCharacter, CalcWeapon, ElementModCtrl, PartyData } from "@Src/types";
 import type { AttackBonusControl, CalculationFinalResultKey, TotalAttribute } from "@Src/backend/controls";
 import type { AppCharacter, AppWeapon, AttackElement, ResistanceReduction } from "@Src/backend/types";
 import type { ConfigAttackPattern, CalculateCalcItem, CalculationFinalResultItem } from "@Src/backend/calculation";
@@ -21,6 +21,7 @@ type GetFinalResultArgs = {
   appWeapon: AppWeapon;
   totalAttr: TotalAttribute;
   attBonus: AttackBonusControl;
+  elmtModCtrls: ElementModCtrl;
   resistances: ResistanceReduction;
   tracker?: TrackerControl;
   configAttackPattern: ConfigAttackPattern;
@@ -35,6 +36,7 @@ export default function getFinalResult({
   partyData,
   totalAttr,
   attBonus,
+  elmtModCtrls,
   resistances,
   tracker,
   configAttackPattern,
@@ -53,7 +55,7 @@ export default function getFinalResult({
     const level = CharacterCalc.getFinalTalentLv({ appChar, talentType: resultKey, char, partyData });
 
     for (const calcItem of appChar.calcList[ATT_PATT]) {
-      const config = configCalcItem(calcItem);
+      const config = configCalcItem(calcItem, elmtModCtrls);
 
       if (disabled && config.type === "attack") {
         finalResult[resultKey][calcItem.name] = genEmptyResult(config.type, config.attPatt, config.attElmt);

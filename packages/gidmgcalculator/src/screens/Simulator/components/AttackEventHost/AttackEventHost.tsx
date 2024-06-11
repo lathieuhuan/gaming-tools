@@ -1,9 +1,19 @@
 import { useState } from "react";
-import { AttackBonusControl, TRANSFORMATIVE_REACTIONS, TalentType, configTalentEvent } from "@Backend";
+import {
+  AttackBonusControl,
+  AttackPattern,
+  CalcItem,
+  CharacterCalc,
+  TRANSFORMATIVE_REACTIONS,
+  TalentType,
+  configTalentEvent,
+} from "@Backend";
+import type { ElementModCtrl } from "@Src/types";
 import type { RootState } from "@Store/store";
 
 import {
   ActiveMemberInfo,
+  ActiveSimulationInfo,
   SimulatorToolbox,
   useActiveMember,
   useActiveSimulation,
@@ -12,103 +22,116 @@ import {
 import { useTranslation } from "@Src/hooks";
 import { useSelector } from "@Store/hooks";
 import { getActiveMember } from "@Simulator/Simulator.utils";
-import {
-  AttackEventConfigItem,
-  getAttackEventConfigGroups,
-  type AttackEventConfigGroup,
-} from "./AttackEventHost.utils";
+import { getTalentAttackEventConfig, type TalentAttackEventConfig } from "./AttackEventHost.utils";
 
 // Components
-import { AttackEventGroup } from "./AttackEventGroup";
 import { TalentAttackEvent } from "./TalentAttackEvent";
+import { AttackEventCoordinator, AttackEventDisplayer } from "./AttackEventCoordinator";
+import { AttackPatternConf } from "@Src/backend/calculation";
 
 const selectAttackBonus = (state: RootState) => getActiveMember(state)?.attackBonus ?? [];
 
 interface AttackEventHostProps {
+  activeSimulation: ActiveSimulationInfo;
   activeMember: ActiveMemberInfo;
   toolbox: SimulatorToolbox;
-  configGroups: AttackEventConfigGroup[];
+  configs: TalentAttackEventConfig[];
 }
 
-function AttackEventHostCore({ activeMember, toolbox, configGroups }: AttackEventHostProps) {
+function AttackEventHostCore({ activeSimulation, activeMember, toolbox, configs }: AttackEventHostProps) {
   const { t } = useTranslation();
-  const activeSimulation = useActiveSimulation();
-
   const attackBonus = useSelector(selectAttackBonus);
-
-  const [active, setActive] = useState({
-    groupI: -1,
-    itemI: -1,
-  });
 
   console.log("render: AttackEventHostCore");
 
-  if (!activeSimulation) {
-    return null;
-  }
-
-  const onExpandTalentEvent = (groupI: number, itemI: number, active: boolean) => {
-    setActive(active ? { groupI: -1, itemI: -1 } : { groupI, itemI });
+  const defaultElmtModCtrls: Pick<ElementModCtrl, "absorption" | "reaction" | "infuse_reaction"> = {
+    absorption: null,
+    reaction: null,
+    infuse_reaction: null,
   };
 
-  const getTalentEventConfig = (talentType: TalentType, configItem: AttackEventConfigItem) => {
+  const configAttPatt = (talentType: TalentType, patternKey: AttackPattern) => {
     const attBonus = new AttackBonusControl();
 
     for (const bonus of attackBonus) {
       attBonus.add(bonus.toType, bonus.toKey, bonus.value, "");
     }
 
-    return configTalentEvent({
-      underPattern: configItem.underPatt,
-      talentType,
-      totalAttr: toolbox.totalAttr.finalize(),
+    const info = {
+      char: activeMember.char,
+      appChar: activeMember.appChar,
+      partyData: activeSimulation.partyData,
+    };
+    const totalAttr = toolbox.totalAttr.finalize();
+
+    const { disabled, configCalcItem } = AttackPatternConf({
+      ...info,
+      totalAttr,
       attBonus,
-      configItem,
-      info: {
-        char: activeMember.char,
-        appChar: activeMember.appChar,
-        partyData: activeSimulation.partyData,
+      selfBuffCtrls: [],
+      customInfusion: {
+        element: "phys",
       },
-      elmtModCtrls: {
-        absorption: null,
-        infuse_reaction: null,
-        reaction: null,
-      },
-      target: activeSimulation.target,
-    });
-  };
+    })(patternKey);
 
-  const onPerformTalentEvent = (talentType: TalentType, configItem: AttackEventConfigItem) => {
-    const config = getTalentEventConfig(talentType, configItem);
+    const level = CharacterCalc.getFinalTalentLv({ ...info, talentType });
 
-    if (config) {
-      console.log("perform", config.damage);
-    }
+    const configTalent = (item: CalcItem, elmtModCtrls?: Partial<ElementModCtrl>) => {
+      return configTalentEvent({
+        itemConfig: configCalcItem(item, {
+          ...defaultElmtModCtrls,
+          ...elmtModCtrls,
+        }),
+        level,
+        totalAttr,
+        attBonus,
+        info,
+        target: activeSimulation.target,
+      });
+    };
+    return {
+      disabled,
+      configTalent,
+    };
   };
 
   return (
-    <div className="h-full hide-scrollbar space-y-3">
-      {configGroups.map((group, groupIndex) => {
-        if (!group.items.length) {
-          return null;
-        }
+    <AttackEventCoordinator>
+      <div className="h-full hide-scrollbar space-y-3">
+        {configs.map((config) => {
+          if (config.groups.every((group) => !group.items.length)) {
+            return null;
+          }
 
-        return (
-          <AttackEventGroup
-            key={group.name}
-            name={t(group.name)}
-            items={group.items}
-            getItemState={(item, itemIndex) => ({
-              label: item.name,
-              isActive: groupIndex === active.groupI && itemIndex === active.itemI,
-            })}
-            renderContent={(item) => <TalentAttackEvent config={getTalentEventConfig(group.name, item)} />}
-            onPerformEvent={(item) => onPerformTalentEvent(group.name, item)}
-            onExpandEvent={(_, index, active) => onExpandTalentEvent(groupIndex, index, active)}
-          />
-        );
-      })}
-      <AttackEventGroup
+          return (
+            <div key={config.title}>
+              <p className="text-sm text-light-default/60">{t(config.title)}</p>
+
+              <div className="mt-1 space-y-2">
+                {config.groups.map((group) => {
+                  const { disabled, configTalent } = configAttPatt(config.title, group.type);
+
+                  return group.items.map((item) => {
+                    const id = `${group.type}.${item.name}`;
+
+                    return (
+                      <AttackEventDisplayer
+                        key={id}
+                        id={id}
+                        label={item.name}
+                        disabled={disabled}
+                        onQuickHit={() => {}}
+                      >
+                        <TalentAttackEvent item={item} configTalentEvent={configTalent} />
+                      </AttackEventDisplayer>
+                    );
+                  });
+                })}
+              </div>
+            </div>
+          );
+        })}
+        {/* <AttackEventGroup
         name={t("RXN_CALC")}
         items={[...TRANSFORMATIVE_REACTIONS]}
         getItemState={(item, itemIndex) => ({
@@ -118,27 +141,30 @@ function AttackEventHostCore({ activeMember, toolbox, configGroups }: AttackEven
         renderContent={() => <p>Hello</p>}
         onPerformEvent={() => {}}
         onExpandEvent={(_, index, active) => onExpandTalentEvent(configGroups.length, index, active)}
-      />
-    </div>
+      /> */}
+      </div>
+    </AttackEventCoordinator>
   );
 }
 
 export function AttackEventHost({ className = "" }: { className?: string }) {
+  const activeSimulation = useActiveSimulation();
   const activeMember = useActiveMember();
   const toolbox = useToolbox();
 
   console.log("render: AttackEventHost");
 
-  if (!activeMember || !toolbox) {
+  if (!activeSimulation || !activeMember || !toolbox) {
     return null;
   }
 
   return (
     <div className={"p-4 h-full rounded-md bg-surface-1 " + className}>
       <AttackEventHostCore
+        activeSimulation={activeSimulation}
         activeMember={activeMember}
         toolbox={toolbox}
-        configGroups={getAttackEventConfigGroups(activeMember.appChar)}
+        configs={getTalentAttackEventConfig(activeMember.appChar)}
       />
     </div>
   );

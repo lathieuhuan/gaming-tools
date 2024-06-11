@@ -8,17 +8,30 @@ import type {
   CalcItemFlatFactor,
   CalcItemMultFactor,
   CharacterBuffNAsConfig,
+  CalcItemType,
+  ActualAttackPattern,
 } from "@Src/backend/types";
-import type { AttackBonusControl, TotalAttribute } from "@Src/backend/controls";
+import type { AttackBonusControl, CalcItemRecord, TotalAttribute } from "@Src/backend/controls";
 
 import { findByIndex, toArray } from "@Src/utils";
 import { CharacterCalc, EntityCalc, GeneralCalc, type CalculationInfo } from "@Src/backend/utils";
 import { TrackerControl } from "@Src/backend/controls";
 import { NORMAL_ATTACKS } from "@Src/backend/constants";
 
+type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorption">;
+
+export type CalcItemConfig = {
+  type: CalcItemType;
+  attPatt: ActualAttackPattern;
+  attElmt: "pyro" | "hydro" | "electro" | "cryo" | "geo" | "anemo" | "dendro" | "phys";
+  rxnMult: number;
+  record: CalcItemRecord;
+  getBonus: (key: AttackBonusKey) => number;
+  calculateBaseDamage: (level: number) => number | number[];
+};
+
 export type AttackPatternConfArgs = CalculationInfo & {
   selfBuffCtrls: ModifierCtrl[];
-  elmtModCtrls: PartiallyRequired<Partial<ElementModCtrl>, "reaction" | "infuse_reaction" | "absorption">;
   customInfusion: Infusion;
   totalAttr: TotalAttribute;
   attBonus: AttackBonusControl;
@@ -29,7 +42,6 @@ export function AttackPatternConf({
   appChar,
   partyData,
   selfBuffCtrls,
-  elmtModCtrls,
   customInfusion,
   totalAttr,
   attBonus,
@@ -75,7 +87,7 @@ export function AttackPatternConf({
       };
     };
 
-    const configCalcItem = (item: CalcItem) => {
+    const configCalcItem = (item: CalcItem, elmtModCtrls: InternalElmtModCtrls): CalcItemConfig => {
       const { type = "attack" } = item;
 
       /** ========== Attack Pattern, Attack Element, Reaction ========== */

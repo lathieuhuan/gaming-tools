@@ -1,18 +1,31 @@
-import { configTalentEvent } from "@Backend";
+import { useState } from "react";
+import { CalcItem, configTalentEvent } from "@Backend";
 import { useTranslation } from "@Src/hooks";
+import { ElementModCtrl } from "@Src/types";
+
+export type GetTalentEventConfig = (
+  item: CalcItem,
+  elmtModCtrls?: Partial<ElementModCtrl>
+) => ReturnType<typeof configTalentEvent>;
 
 interface TalentAttackEventProps {
-  config: ReturnType<typeof configTalentEvent>;
+  item: CalcItem;
+  configTalentEvent: GetTalentEventConfig;
 }
 
-export function TalentAttackEvent({ config }: TalentAttackEventProps) {
+export function TalentAttackEvent(props: TalentAttackEventProps) {
   const { t } = useTranslation();
+  const [elmtModCtrls, setElmtModCtrls] = useState<Partial<ElementModCtrl>>({
+    absorption: null,
+    reaction: null,
+    infuse_reaction: null,
+  });
 
-  console.log("render: TalentAttackEvent");
+  console.log("render: TalentAttackEvent", props.item.name);
 
-  if (!config) {
-    return <div>This attack is not available.</div>;
-  }
+  const config = props.configTalentEvent(props.item, elmtModCtrls);
+
+  console.log(config.record);
 
   return (
     <div>

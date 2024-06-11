@@ -1,40 +1,52 @@
 import { AppCharacter, AttackPattern, CalcItem, NORMAL_ATTACKS, TalentType } from "@Backend";
 
-export type AttackEventConfigItem = CalcItem & {
-  underPatt: AttackPattern;
+type AttackEventConfigGroup = {
+  type: AttackPattern;
+  items: CalcItem[];
 };
 
-export type AttackEventConfigGroup = {
-  name: TalentType;
-  items: AttackEventConfigItem[];
+export type TalentAttackEventConfig = {
+  title: TalentType;
+  groups: AttackEventConfigGroup[];
 };
 
-export function getAttackEventConfigGroups(appChar: AppCharacter) {
+export function getTalentAttackEventConfig(appChar: AppCharacter) {
   const filter = (items: CalcItem[], cb: (item: CalcItem) => void) => {
     for (const item of items) {
       if (!item.type || item.type === "attack") cb(item);
     }
   };
 
-  const NAs: AttackEventConfigGroup = {
-    name: "NAs",
-    items: [],
+  const NAs: TalentAttackEventConfig = {
+    title: "NAs",
+    groups: [],
   };
   for (const NA of NORMAL_ATTACKS) {
-    filter(appChar.calcList[NA], (item) => NAs.items.push(Object.assign({ underPatt: NA }, item)));
-  }
-
-  const configGroups: AttackEventConfigGroup[] = [NAs];
-
-  for (const attPatt of ["ES", "EB"] as const) {
     const group: AttackEventConfigGroup = {
-      name: attPatt,
+      type: NA,
       items: [],
     };
-    filter(appChar.calcList[attPatt], (item) => group.items.push(Object.assign({ underPatt: attPatt }, item)));
 
-    configGroups.push(group);
+    filter(appChar.calcList[NA], (item) => group.items.push(item));
+    NAs.groups.push(group);
   }
 
-  return configGroups;
+  const configs = [NAs];
+
+  for (const attPatt of ["ES", "EB"] as const) {
+    const config: TalentAttackEventConfig = {
+      title: attPatt,
+      groups: [
+        {
+          type: attPatt,
+          items: [],
+        },
+      ],
+    };
+    filter(appChar.calcList[attPatt], (item) => config.groups[0].items.push(item));
+
+    configs.push(config);
+  }
+
+  return configs;
 }
