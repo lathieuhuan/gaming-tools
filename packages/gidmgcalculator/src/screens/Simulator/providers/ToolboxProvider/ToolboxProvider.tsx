@@ -10,11 +10,22 @@ import { pickProps } from "@Src/utils";
 import { getMember } from "@Store/simulator-slice";
 import { ActiveMemberContext, ActiveMemberInfo, ActiveSimulationContext, ActiveSimulationInfo } from "./contexts";
 import { SimulatorTotalAttributeControl } from "./tools";
-import { ToolsProvider } from "./ToolsProvider";
+import { AppParty, ToolsProvider } from "./ToolsProvider";
+import { PartyData } from "@Src/types";
 
 const selectActiveId = (state: RootState) => state.simulator.activeId;
 
 const selectActiveMember = (state: RootState) => getMember(state.simulator);
+
+type SimulationData = {
+  activeSimulationInfo: ActiveSimulationInfo;
+  appParty: AppParty;
+};
+
+type MemberData = {
+  activeMemberInfo: ActiveMemberInfo;
+  totalAttrCtrl: SimulatorTotalAttributeControl;
+};
 
 interface ToolboxProviderProps {
   children: React.ReactNode;
@@ -26,24 +37,34 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
 
   console.log("render: ToolboxProvider");
 
-  const activeSimulationInfo = useMemo<ActiveSimulationInfo | null>(() => {
+  const simulationData = useMemo<SimulationData | null>(() => {
     const simulation = store.select((state) => {
       const { activeId, simulationsById } = state.simulator;
       return simulationsById[activeId] ?? null;
     });
-
-    if (simulation) {
-      return {
-        partyData: $AppCharacter.getPartyData(simulation.members),
-        target: simulation.target,
-      };
+    if (!simulation) {
+      return null;
     }
-    return null;
+
+    const partyData: PartyData = [];
+    const appParty: AppParty = {};
+
+    for (const member of simulation.members) {
+      const appCharacter = $AppCharacter.get(member.name);
+      partyData.push(appCharacter);
+      appParty[member.name] = appCharacter;
+    }
+
+    return {
+      activeSimulationInfo: {
+        partyData,
+        target: simulation.target,
+      },
+      appParty,
+    };
   }, [activeId]);
 
-  const [activeMemberInfo, totalAttrCtrl] = useMemo<
-    [ActiveMemberInfo | null, SimulatorTotalAttributeControl | null]
-  >(() => {
+  const memberData = useMemo<MemberData | null>(() => {
     const member = store.select(getActiveMember);
 
     if (member) {
@@ -54,24 +75,31 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
 
       totalAttrCtrl.construct(char, appChar, char.weapon, appWeapon, char.artifacts);
 
-      return [
-        {
+      return {
+        activeMemberInfo: {
           char,
           appChar,
         },
         totalAttrCtrl,
-      ];
+      };
     }
-    return [null, null];
+    return null;
   }, [activeId, activeMember]);
 
   return (
-    <ActiveSimulationContext.Provider value={activeSimulationInfo}>
-      <ActiveMemberContext.Provider value={activeMemberInfo}>
+    <ActiveSimulationContext.Provider value={simulationData?.activeSimulationInfo}>
+      <ActiveMemberContext.Provider value={memberData?.activeMemberInfo}>
         <ToolsProvider
-          activeSimulation={activeSimulationInfo}
-          activeMember={activeMemberInfo}
-          totalAttrCtrl={totalAttrCtrl}
+          data={
+            simulationData && memberData
+              ? {
+                  activeSimulation: simulationData.activeSimulationInfo,
+                  activeMember: memberData.activeMemberInfo,
+                  appParty: simulationData.appParty,
+                }
+              : null
+          }
+          totalAttrCtrl={memberData?.totalAttrCtrl}
         >
           {props.children}
         </ToolsProvider>

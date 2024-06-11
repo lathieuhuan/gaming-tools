@@ -7,7 +7,7 @@ export type ActiveMemberInfo = {
   appChar: AppCharacter;
 };
 
-export const ActiveMemberContext = createContext<ActiveMemberInfo | null>(null);
+export const ActiveMemberContext = createContext<ActiveMemberInfo | null | undefined>(null);
 
 export function useActiveMember() {
   return useContext(ActiveMemberContext);

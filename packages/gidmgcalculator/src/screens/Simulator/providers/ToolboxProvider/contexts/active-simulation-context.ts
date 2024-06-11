@@ -6,7 +6,7 @@ export type ActiveSimulationInfo = {
   target: SimulationTarget;
 };
 
-export const ActiveSimulationContext = createContext<ActiveSimulationInfo | null>(null);
+export const ActiveSimulationContext = createContext<ActiveSimulationInfo | null | undefined>(null);
 
 export function useActiveSimulation() {
   return useContext(ActiveSimulationContext);

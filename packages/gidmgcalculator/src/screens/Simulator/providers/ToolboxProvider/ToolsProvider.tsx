@@ -1,69 +1,78 @@
+import { AppCharacter, SimulatorBuffApplier } from "@Backend";
+
 import { RootState } from "@Store/store";
 import { useSelector } from "@Store/hooks";
 import { getSimulation } from "@Store/simulator-slice";
 import { ActiveMemberInfo, ActiveSimulationInfo, ToolsContext } from "./contexts";
-import { SimulatorTotalAttributeControl } from "./tools";
-import { SimulatorBuffApplier } from "@Backend";
+import { SimulationAttackBonus, SimulationAttributeBonus, SimulatorTotalAttributeControl } from "./tools";
 
 const selectEvents = (state: RootState) => getSimulation(state.simulator)?.events ?? [];
 
+export type AppParty = Record<string, AppCharacter>;
+
 interface ToolboxProps {
-  activeMember: ActiveMemberInfo | null;
-  activeSimulation: ActiveSimulationInfo | null;
-  totalAttrCtrl: SimulatorTotalAttributeControl | null;
+  data: {
+    activeMember: ActiveMemberInfo;
+    activeSimulation: ActiveSimulationInfo;
+    appParty: AppParty;
+  } | null;
+  totalAttrCtrl?: SimulatorTotalAttributeControl;
   children: React.ReactNode;
 }
-export function ToolsProvider({ activeMember, activeSimulation, totalAttrCtrl, children }: ToolboxProps) {
+export function ToolsProvider({ data, totalAttrCtrl, children }: ToolboxProps) {
   const events = useSelector(selectEvents);
 
   console.log("render: Toolbox");
 
   const totalAttr = totalAttrCtrl ? totalAttrCtrl.clone() : null;
-  const bonus = [];
+  const attrBonus: SimulationAttributeBonus[] = [];
+  const attkBonus: SimulationAttackBonus[] = [];
 
-  if (activeSimulation && activeMember && totalAttr) {
+  if (data && totalAttr) {
+    const { activeMember, activeSimulation, appParty } = data;
+
     const buffApplier = new SimulatorBuffApplier({ ...activeMember, ...activeSimulation }, totalAttr);
 
     for (const event of events) {
       switch (event.type) {
         case "MODIFY": {
+          const appCharacter = appParty[event.performer];
+          const buff = appCharacter?.buffs?.find((buff) => buff.index === event.modifier.id);
+          if (!buff) continue;
+
+          const trigger = {
+            character: appCharacter.name,
+            modifier: buff.src,
+          };
+
           buffApplier.applyCharacterBuff({
-            buff: mod,
+            buff,
             description: "",
-            inputs,
+            inputs: event.modifier.inputs,
             applyAttrBonus: (bonus) => {
-              dispatch(
-                addBonus({
-                  type: "ATTRIBUTE",
-                  bonus: {
-                    toStat: bonus.stat,
-                    value: bonus.value,
-                    stable: bonus.stable,
-                    trigger: {
-                      character: "",
-                      src: "",
-                    },
-                  },
-                })
-              );
+              const add = bonus.stable ? totalAttr.addStable : totalAttr.addUnstable;
+
+              attrBonus.push({
+                stable: bonus.stable,
+                toStat: bonus.stat,
+                value: bonus.value,
+                trigger,
+              });
+              add(bonus.stat, bonus.value, bonus.description);
             },
             applyAttkBonus: (bonus) => {
-              dispatch(
-                addBonus({
-                  type: "ATTACK",
-                  bonus: {
-                    toKey: bonus.path,
-                    toType: bonus.module,
-                    value: bonus.value,
-                    trigger: {
-                      character: "",
-                      src: "",
-                    },
-                  },
-                })
-              );
+              attkBonus.push({
+                toType: bonus.module,
+                toKey: bonus.path,
+                value: bonus.value,
+                trigger,
+              });
             },
           });
+          break;
+        }
+        case "HIT": {
+          //
           break;
         }
       }
