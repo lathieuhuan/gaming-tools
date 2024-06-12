@@ -47,10 +47,10 @@ export class MemberControl {
   info: Character;
   data: AppCharacter;
   totalAttr: TotalAttributeControl;
-  private normalsConfig: NormalsConfig = {};
   private buffApplier: SimulatorBuffApplier;
   private attrBonus: SimulationAttributeBonus[] = [];
   private attkBonus: SimulationAttackBonus[] = [];
+  private normalsConfig: NormalsConfig = {};
 
   private onChangeTotalAttrTimeoutId: NodeJS.Timeout | undefined;
   private onChangeTotalAttr: OnChangeTotalAttr | undefined;
@@ -58,16 +58,19 @@ export class MemberControl {
   private onChangeBonusTimeoutId: NodeJS.Timeout | undefined;
   private onChangeBonuses: OnChangeBonuses | undefined;
 
+  private rootTotalAttr: SimulatorTotalAttributeControl;
+
   constructor(member: SimulationMember, appChar: AppCharacter, partyData: PartyData) {
     const char: Character = pickProps(member, ["name", "level", "cons", "NAs", "ES", "EB"]);
     const appWeapon = $AppWeapon.get(member.weapon.code)!;
-    const totalAttrCtrl = new SimulatorTotalAttributeControl();
+    this.rootTotalAttr = new SimulatorTotalAttributeControl();
 
-    totalAttrCtrl.construct(char, appChar, member.weapon, appWeapon, member.artifacts);
+    this.rootTotalAttr.construct(char, appChar, member.weapon, appWeapon, member.artifacts);
 
     this.info = char;
     this.data = appChar;
-    this.totalAttr = totalAttrCtrl.clone();
+
+    this.totalAttr = this.rootTotalAttr.clone();
     this.buffApplier = new SimulatorBuffApplier({ char, appChar, partyData }, this.totalAttr);
   }
 
@@ -78,6 +81,13 @@ export class MemberControl {
   listenChanges = (onChangeTotalAttr: OnChangeTotalAttr, onChangeBonuses: OnChangeBonuses) => {
     this.onChangeTotalAttr = onChangeTotalAttr;
     this.onChangeBonuses = onChangeBonuses;
+  };
+
+  reset = (partyData: PartyData) => {
+    this.totalAttr = this.rootTotalAttr.clone();
+    this.buffApplier = new SimulatorBuffApplier({ char: this.info, appChar: this.data, partyData }, this.totalAttr);
+    this.attrBonus = [];
+    this.attkBonus = [];
   };
 
   apply = (performerName: string, buff: CharacterBuff, inputs: number[]) => {

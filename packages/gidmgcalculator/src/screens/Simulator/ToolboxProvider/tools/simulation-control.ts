@@ -21,6 +21,12 @@ export class SimulationControl {
     this.target = target;
   }
 
+  reset = () => {
+    for (const code in this.member) {
+      this.member[code].reset(this.partyData);
+    }
+  };
+
   modify = (event: ModifyEvent) => {
     const performer = this.member[event.performer];
     const buff = performer?.data.buffs?.find((buff) => buff.index === event.modifier.id);

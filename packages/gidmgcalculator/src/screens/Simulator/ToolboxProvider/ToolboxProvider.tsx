@@ -77,6 +77,9 @@ function EventsProcessor({ control }: { control?: SimulationControl }) {
   const events = useSelector(selectEvents);
 
   useEffect(() => {
+    /** Temporary until implement cached events (not do alreay done events) */
+    control?.reset();
+
     for (const event of events) {
       switch (event.type) {
         case "MODIFY":
