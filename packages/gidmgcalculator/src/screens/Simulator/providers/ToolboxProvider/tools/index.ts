@@ -1,2 +1,2 @@
-export * from "./total-attribute-control";
+export * from "./simulation-control";
 export * from "./tools.types";

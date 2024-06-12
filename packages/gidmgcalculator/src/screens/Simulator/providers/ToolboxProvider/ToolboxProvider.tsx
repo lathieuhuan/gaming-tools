@@ -5,13 +5,12 @@ import { RootState } from "@Store/store";
 
 import { getActiveMember } from "@Simulator/Simulator.utils";
 import { useStore } from "@Src/features";
-import { $AppCharacter, $AppWeapon } from "@Src/services";
+import { $AppCharacter } from "@Src/services";
 import { pickProps } from "@Src/utils";
 import { getMember } from "@Store/simulator-slice";
 import { ActiveMemberContext, ActiveMemberInfo, ActiveSimulationContext, ActiveSimulationInfo } from "./contexts";
-import { SimulatorTotalAttributeControl } from "./tools";
 import { AppParty, ToolsProvider } from "./ToolsProvider";
-import { PartyData } from "@Src/types";
+import { PartyData, SimulationMember } from "@Src/types";
 
 const selectActiveId = (state: RootState) => state.simulator.activeId;
 
@@ -19,12 +18,7 @@ const selectActiveMember = (state: RootState) => getMember(state.simulator);
 
 type SimulationData = {
   activeSimulationInfo: ActiveSimulationInfo;
-  appParty: AppParty;
-};
-
-type MemberData = {
-  activeMemberInfo: ActiveMemberInfo;
-  totalAttrCtrl: SimulatorTotalAttributeControl;
+  members: SimulationMember[];
 };
 
 interface ToolboxProviderProps {
@@ -60,27 +54,20 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
         partyData,
         target: simulation.target,
       },
-      appParty,
+      members: simulation.members,
     };
   }, [activeId]);
 
-  const memberData = useMemo<MemberData | null>(() => {
+  const activeMemberInfo = useMemo<ActiveMemberInfo | null>(() => {
     const member = store.select(getActiveMember);
 
     if (member) {
       const char = pickProps(member, ["name", "level", "cons", "NAs", "ES", "EB", "weapon", "artifacts"]);
       const appChar = $AppCharacter.get(char.name);
-      const appWeapon = $AppWeapon.get(char.weapon.code)!;
-      const totalAttrCtrl = new SimulatorTotalAttributeControl();
-
-      totalAttrCtrl.construct(char, appChar, char.weapon, appWeapon, char.artifacts);
 
       return {
-        activeMemberInfo: {
-          char,
-          appChar,
-        },
-        totalAttrCtrl,
+        char,
+        appChar,
       };
     }
     return null;
@@ -88,19 +75,8 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
 
   return (
     <ActiveSimulationContext.Provider value={simulationData?.activeSimulationInfo}>
-      <ActiveMemberContext.Provider value={memberData?.activeMemberInfo}>
-        <ToolsProvider
-          data={
-            simulationData && memberData
-              ? {
-                  activeSimulation: simulationData.activeSimulationInfo,
-                  activeMember: memberData.activeMemberInfo,
-                  appParty: simulationData.appParty,
-                }
-              : null
-          }
-          totalAttrCtrl={memberData?.totalAttrCtrl}
-        >
+      <ActiveMemberContext.Provider value={activeMemberInfo}>
+        <ToolsProvider party={simulationData?.members} target={simulationData?.activeSimulationInfo.target}>
           {props.children}
         </ToolsProvider>
       </ActiveMemberContext.Provider>

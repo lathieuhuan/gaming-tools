@@ -4,7 +4,7 @@ import { CharacterBuff, EntityCalc } from "@Backend";
 
 import { Modifier_, parseAbilityDescription } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
-import { addBonus, addEvent } from "@Store/simulator-slice";
+import { addEvent } from "@Store/simulator-slice";
 import {
   ActiveMemberInfo,
   ActiveSimulationInfo,
@@ -38,51 +38,14 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
     dispatch(
       addEvent({
         type: "MODIFY",
-        performer: member.char.name,
+        performer: member.appChar.code,
         modifier: {
           id: mod.index,
           inputs,
         },
+        receiver: member.appChar.code,
       })
     );
-
-    // toolbox.buffApplier.applyCharacterBuff({
-    //   buff: mod,
-    //   description: "",
-    //   inputs,
-    //   applyAttrBonus: (bonus) => {
-    //     dispatch(
-    //       addBonus({
-    //         type: "ATTRIBUTE",
-    //         bonus: {
-    //           toStat: bonus.stat,
-    //           value: bonus.value,
-    //           stable: bonus.stable,
-    //           trigger: {
-    //             character: "",
-    //             src: "",
-    //           },
-    //         },
-    //       })
-    //     );
-    //   },
-    //   applyAttkBonus: (bonus) => {
-    //     dispatch(
-    //       addBonus({
-    //         type: "ATTACK",
-    //         bonus: {
-    //           toKey: bonus.path,
-    //           toType: bonus.module,
-    //           value: bonus.value,
-    //           trigger: {
-    //             character: "",
-    //             src: "",
-    //           },
-    //         },
-    //       })
-    //     );
-    //   },
-    // });
   };
 
   return (

@@ -1,4 +1,4 @@
-import type { ActualAttackPattern, AttackElement } from "@Backend";
+import type { ActualAttackPattern, AttackElement, LevelableTalentType, TalentType } from "@Backend";
 import type { Target } from "./calculator.types";
 import type { Artifact, Character, Weapon } from "./global.types";
 
@@ -8,11 +8,12 @@ export type SimulationManageInfo = {
 };
 
 type BaseEvent = {
-  performer: string;
+  performer: number;
 };
 
 export type ModifyEvent = BaseEvent & {
   type: "MODIFY";
+  receiver: number;
   modifier: {
     id: number;
     inputs: number[];
@@ -21,10 +22,11 @@ export type ModifyEvent = BaseEvent & {
 
 export type HitEvent = BaseEvent & {
   type: "HIT";
+  talent: LevelableTalentType;
   calcItemId: string;
-  damage: number;
-  attElmt: AttackElement;
-  attPatt: ActualAttackPattern;
+  // damage: number;
+  // attElmt: AttackElement;
+  // attPatt: ActualAttackPattern;
   duration: number;
 };
 

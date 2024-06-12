@@ -1,4 +1,4 @@
-import { AppCharacter, AttackPattern, CalcItem, NORMAL_ATTACKS, TalentType } from "@Backend";
+import { AppCharacter, AttackPattern, CalcItem, LevelableTalentType, NORMAL_ATTACKS, TalentType } from "@Backend";
 
 type AttackEventConfigGroup = {
   type: AttackPattern;
@@ -6,7 +6,7 @@ type AttackEventConfigGroup = {
 };
 
 export type TalentAttackEventConfig = {
-  title: TalentType;
+  title: LevelableTalentType;
   groups: AttackEventConfigGroup[];
 };
 
