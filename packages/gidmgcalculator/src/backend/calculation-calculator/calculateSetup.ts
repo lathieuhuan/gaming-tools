@@ -2,7 +2,7 @@ import type { CalcSetup, Target } from "@Src/types";
 import type { TrackerControl } from "@Src/backend/controls";
 
 import { $AppCharacter, $AppWeapon } from "@Src/services";
-import { AttackPatternConf, CalcItemCalculator } from "@Src/backend/calculation";
+import { AttackPatternConf, CalcItemCalculator, getNormalsConfig } from "@Src/backend/calculation";
 import getCalculationStats from "./getCalculationStats";
 import getFinalResult from "./getFinalResult";
 import getResistances from "./getResistances";
@@ -59,11 +59,18 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     tracker,
   });
 
+  const normalsConfig = getNormalsConfig(
+    {
+      char,
+      appChar,
+      partyData,
+    },
+    selfBuffCtrls
+  );
+
   const configAttackPattern = AttackPatternConf({
-    char,
     appChar,
-    partyData,
-    selfBuffCtrls,
+    normalsConfig,
     customInfusion,
     totalAttr,
     attBonus,

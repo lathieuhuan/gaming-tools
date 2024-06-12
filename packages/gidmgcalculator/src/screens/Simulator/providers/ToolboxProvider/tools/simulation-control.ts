@@ -1,8 +1,6 @@
-import { AttackPattern, CalcItem, LevelableTalentType, NORMAL_ATTACKS } from "@Backend";
-
 import type { HitEvent, ModifyEvent, PartyData, SimulationMember, SimulationTarget } from "@Src/types";
 import { $AppCharacter } from "@Src/services";
-import { MemberControl } from "./member-control";
+import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
 
 export class SimulationControl {
   member: Record<number, MemberControl>;
@@ -26,79 +24,27 @@ export class SimulationControl {
   modify = (event: ModifyEvent) => {
     const performer = this.member[event.performer];
     const buff = performer?.data.buffs?.find((buff) => buff.index === event.modifier.id);
-    if (!buff) return;
-    const receiver = this.member[event.receiver];
 
-    performer.buffApplier.applyCharacterBuff({
-      buff,
-      description: ``,
-      inputs: event.modifier.inputs,
-      applyAttrBonus: (bonus) => {
-        const add = bonus.stable ? receiver.totalAttr.addStable : receiver.totalAttr.addUnstable;
-
-        // #to-do: record this bonus to show in bonus displayer
-
-        add(bonus.stat, bonus.value, bonus.description);
-      },
-      applyAttkBonus: (bonus) => {
-        receiver.attkBonus.push({
-          toType: bonus.module,
-          toKey: bonus.path,
-          value: bonus.value,
-          trigger: {
-            character: performer.info.name,
-            modifier: buff.src,
-          },
-        });
-      },
-    });
+    if (buff) {
+      this.member[event.receiver]?.apply(performer.info.name, buff, event.modifier.inputs);
+    }
   };
 
   hit = (event: HitEvent) => {
-    const performer = this.member[event.performer];
+    const result = this.member[event.performer]?.hit(event, this.partyData, this.target);
 
-    if (performer) {
-      const { calcList } = performer.data;
-      let hitInfo:
-        | {
-            talent: LevelableTalentType;
-            pattern: AttackPattern;
-            item: CalcItem;
-          }
-        | undefined = undefined;
-
-      switch (event.talent) {
-        case "NAs":
-          for (const type of NORMAL_ATTACKS) {
-            const found = calcList[type].find((calcItem) => calcItem.name === event.calcItemId);
-            if (found) {
-              hitInfo = {
-                item: found,
-                talent: "NAs",
-                pattern: type,
-              };
-              break;
-            }
-          }
-          break;
-        default:
-          const item = calcList[event.talent].find((calcItem) => calcItem.name === event.calcItemId);
-
-          if (item) {
-            hitInfo = {
-              item,
-              talent: event.talent,
-              pattern: event.talent,
-            };
-          }
-      }
-      if (hitInfo) {
-        const result = performer.hit(hitInfo.talent, hitInfo.pattern, hitInfo.item, {}, this.partyData, this.target);
-        console.log("hit");
-        console.log(result.damage);
-        return;
-      }
-      console.log("not hit");
+    if (result) {
+      console.log("hit", result.damage);
+      return;
     }
+    console.log("not hit");
+  };
+
+  config = (memberCode: number, args: Omit<ConfigTalentHitEventArgs, "partyData" | "target">) => {
+    return this.member[memberCode]?.configTalentHitEvent({
+      ...args,
+      partyData: this.partyData,
+      target: this.target,
+    });
   };
 }

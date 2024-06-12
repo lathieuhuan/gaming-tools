@@ -1,5 +1,4 @@
-import type { PartiallyRequired } from "rond";
-import type { ElementModCtrl, Infusion, ModifierCtrl } from "@Src/types";
+import type { ElementModCtrl, Infusion } from "@Src/types";
 import type {
   AttackElement,
   AttackPattern,
@@ -7,16 +6,16 @@ import type {
   CalcItem,
   CalcItemFlatFactor,
   CalcItemMultFactor,
-  CharacterBuffNAsConfig,
   CalcItemType,
   ActualAttackPattern,
+  AppCharacter,
 } from "@Src/backend/types";
 import type { AttackBonusControl, CalcItemRecord, TotalAttribute } from "@Src/backend/controls";
 
-import { findByIndex, toArray } from "@Src/utils";
-import { CharacterCalc, EntityCalc, GeneralCalc, type CalculationInfo } from "@Src/backend/utils";
+import { toArray } from "@Src/utils";
+import { CharacterCalc, GeneralCalc } from "@Src/backend/utils";
 import { TrackerControl } from "@Src/backend/controls";
-import { NORMAL_ATTACKS } from "@Src/backend/constants";
+import { NormalsConfig } from "./getNormalsConfig";
 
 type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorption">;
 
@@ -30,45 +29,21 @@ export type CalcItemConfig = {
   calculateBaseDamage: (level: number) => number | number[];
 };
 
-export type AttackPatternConfArgs = CalculationInfo & {
-  selfBuffCtrls: ModifierCtrl[];
+export type AttackPatternConfArgs = {
+  appChar: AppCharacter;
+  normalsConfig: NormalsConfig;
   customInfusion: Infusion;
   totalAttr: TotalAttribute;
   attBonus: AttackBonusControl;
 };
 
 export function AttackPatternConf({
-  char,
   appChar,
-  partyData,
-  selfBuffCtrls,
+  normalsConfig,
   customInfusion,
   totalAttr,
   attBonus,
 }: AttackPatternConfArgs) {
-  const normalsConfig: Partial<Record<AttackPattern, Omit<CharacterBuffNAsConfig, "forPatt">>> = {};
-
-  for (const ctrl of selfBuffCtrls) {
-    const buff = findByIndex(appChar.buffs ?? [], ctrl.index);
-
-    if (ctrl.activated && buff?.normalsConfig) {
-      for (const config of toArray(buff.normalsConfig)) {
-        const { checkInput, forPatt = "ALL", ...rest } = config;
-        const info = { char, appChar, partyData };
-
-        if (EntityCalc.isApplicableEffect(config, info, ctrl.inputs ?? [], true)) {
-          if (forPatt === "ALL") {
-            for (const type of NORMAL_ATTACKS) {
-              normalsConfig[type] = rest;
-            }
-          } else {
-            normalsConfig[forPatt] = rest;
-          }
-        }
-      }
-    }
-  }
-
   return (patternKey: AttackPattern) => {
     const {
       resultKey,

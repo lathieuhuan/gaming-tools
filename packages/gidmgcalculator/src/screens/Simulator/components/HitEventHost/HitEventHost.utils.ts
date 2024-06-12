@@ -1,28 +1,28 @@
-import { AppCharacter, AttackPattern, CalcItem, LevelableTalentType, NORMAL_ATTACKS, TalentType } from "@Backend";
+import { AppCharacter, AttackPattern, CalcItem, LevelableTalentType, NORMAL_ATTACKS } from "@Backend";
 
-type AttackEventConfigGroup = {
+type TalentHitEventConfigGroup = {
   type: AttackPattern;
   items: CalcItem[];
 };
 
-export type TalentAttackEventConfig = {
-  title: LevelableTalentType;
-  groups: AttackEventConfigGroup[];
+export type TalentHitEventConfig = {
+  type: LevelableTalentType;
+  groups: TalentHitEventConfigGroup[];
 };
 
-export function getTalentAttackEventConfig(appChar: AppCharacter) {
+export function getTalentHitEventConfig(appChar: AppCharacter) {
   const filter = (items: CalcItem[], cb: (item: CalcItem) => void) => {
     for (const item of items) {
       if ((!item.type || item.type === "attack") && !item.notOfficial) cb(item);
     }
   };
 
-  const NAs: TalentAttackEventConfig = {
-    title: "NAs",
+  const NAs: TalentHitEventConfig = {
+    type: "NAs",
     groups: [],
   };
   for (const NA of NORMAL_ATTACKS) {
-    const group: AttackEventConfigGroup = {
+    const group: TalentHitEventConfigGroup = {
       type: NA,
       items: [],
     };
@@ -34,8 +34,8 @@ export function getTalentAttackEventConfig(appChar: AppCharacter) {
   const configs = [NAs];
 
   for (const attPatt of ["ES", "EB"] as const) {
-    const config: TalentAttackEventConfig = {
-      title: attPatt,
+    const config: TalentHitEventConfig = {
+      type: attPatt,
       groups: [
         {
           type: attPatt,

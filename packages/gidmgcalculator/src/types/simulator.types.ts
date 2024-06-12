@@ -1,5 +1,5 @@
 import type { ActualAttackPattern, AttackElement, LevelableTalentType, TalentType } from "@Backend";
-import type { Target } from "./calculator.types";
+import type { ElementModCtrl, Target } from "./calculator.types";
 import type { Artifact, Character, Weapon } from "./global.types";
 
 export type SimulationManageInfo = {
@@ -20,13 +20,13 @@ export type ModifyEvent = BaseEvent & {
   };
 };
 
+export type TalentHitEventMod = Pick<ElementModCtrl, "absorption" | "reaction" | "infuse_reaction">;
+
 export type HitEvent = BaseEvent & {
   type: "HIT";
   talent: LevelableTalentType;
   calcItemId: string;
-  // damage: number;
-  // attElmt: AttackElement;
-  // attPatt: ActualAttackPattern;
+  elmtModCtrls?: TalentHitEventMod;
   duration: number;
 };
 

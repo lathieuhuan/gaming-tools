@@ -1,25 +1,16 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 import { useSelector } from "@Store/hooks";
 import { RootState } from "@Store/store";
 
-import { getActiveMember } from "@Simulator/Simulator.utils";
 import { useStore } from "@Src/features";
-import { $AppCharacter } from "@Src/services";
-import { pickProps } from "@Src/utils";
-import { getMember } from "@Store/simulator-slice";
-import { ActiveMemberContext, ActiveMemberInfo, ActiveSimulationContext, ActiveSimulationInfo } from "./contexts";
-import { AppParty, ToolsProvider } from "./ToolsProvider";
-import { PartyData, SimulationMember } from "@Src/types";
+import { getSimulation } from "@Store/simulator-slice";
+import { ActiveMemberContext, ActiveSimulationContext } from "./contexts";
+import { SimulationControl, ActiveMemberTools } from "./tools";
 
 const selectActiveId = (state: RootState) => state.simulator.activeId;
 
-const selectActiveMember = (state: RootState) => getMember(state.simulator);
-
-type SimulationData = {
-  activeSimulationInfo: ActiveSimulationInfo;
-  members: SimulationMember[];
-};
+const selectActiveMember = (state: RootState) => state.simulator.activeMember;
 
 interface ToolboxProviderProps {
   children: React.ReactNode;
@@ -27,59 +18,76 @@ interface ToolboxProviderProps {
 export function ToolboxProvider(props: ToolboxProviderProps) {
   const store = useStore();
   const activeId = useSelector(selectActiveId);
-  const activeMember = useSelector(selectActiveMember);
+  const activeMemberName = useSelector(selectActiveMember);
 
   console.log("render: ToolboxProvider");
 
-  const simulationData = useMemo<SimulationData | null>(() => {
-    const simulation = store.select((state) => {
-      const { activeId, simulationsById } = state.simulator;
-      return simulationsById[activeId] ?? null;
-    });
+  const activeSimulation = useMemo(() => {
+    const simulation = store.select((state) => getSimulation(state.simulator));
     if (!simulation) {
       return null;
     }
 
-    const partyData: PartyData = [];
-    const appParty: AppParty = {};
-
-    for (const member of simulation.members) {
-      const appCharacter = $AppCharacter.get(member.name);
-      partyData.push(appCharacter);
-      appParty[member.name] = appCharacter;
-    }
+    const control = new SimulationControl(simulation.members, simulation.target);
 
     return {
-      activeSimulationInfo: {
-        partyData,
+      info: {
+        partyData: control.partyData,
         target: simulation.target,
       },
       members: simulation.members,
+      control,
     };
   }, [activeId]);
 
-  const activeMemberInfo = useMemo<ActiveMemberInfo | null>(() => {
-    const member = store.select(getActiveMember);
-
-    if (member) {
-      const char = pickProps(member, ["name", "level", "cons", "NAs", "ES", "EB", "weapon", "artifacts"]);
-      const appChar = $AppCharacter.get(char.name);
-
-      return {
-        char,
-        appChar,
-      };
+  const activeMember = useMemo(() => {
+    if (!activeSimulation || !activeMemberName) {
+      return null;
     }
-    return null;
-  }, [activeId, activeMember]);
+    const memberCode = activeSimulation.info.partyData.find((member) => member?.name === activeMemberName)?.code;
+    const memberInfo = activeSimulation.members.find((member) => member.name === activeMemberName);
+    if (!memberCode || !memberInfo) {
+      return null;
+    }
+
+    const control = activeSimulation.control.member[memberCode];
+
+    const tools = new ActiveMemberTools(control, (args) => activeSimulation.control.config(memberCode, args));
+
+    return {
+      info: memberInfo,
+      data: control.data,
+      tools,
+    };
+  }, [activeSimulation, activeMemberName]);
 
   return (
-    <ActiveSimulationContext.Provider value={simulationData?.activeSimulationInfo}>
-      <ActiveMemberContext.Provider value={activeMemberInfo}>
-        <ToolsProvider party={simulationData?.members} target={simulationData?.activeSimulationInfo.target}>
-          {props.children}
-        </ToolsProvider>
+    <ActiveSimulationContext.Provider value={activeSimulation?.info}>
+      <ActiveMemberContext.Provider value={activeMember}>
+        <EventsProcessor control={activeSimulation?.control} />
+        {props.children}
       </ActiveMemberContext.Provider>
     </ActiveSimulationContext.Provider>
   );
+}
+
+const selectEvents = (state: RootState) => getSimulation(state.simulator)?.events ?? [];
+
+function EventsProcessor({ control }: { control?: SimulationControl }) {
+  const events = useSelector(selectEvents);
+
+  useEffect(() => {
+    for (const event of events) {
+      switch (event.type) {
+        case "MODIFY":
+          control?.modify(event);
+          break;
+        case "HIT":
+          control?.hit(event);
+          break;
+      }
+    }
+  }, [control, events]);
+
+  return null;
 }

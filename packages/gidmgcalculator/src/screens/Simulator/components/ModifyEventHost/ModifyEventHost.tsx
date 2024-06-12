@@ -5,13 +5,7 @@ import { CharacterBuff, EntityCalc } from "@Backend";
 import { Modifier_, parseAbilityDescription } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
-import {
-  ActiveMemberInfo,
-  ActiveSimulationInfo,
-  useActiveMember,
-  useActiveSimulation,
-  useToolbox,
-} from "@Simulator/providers";
+import { ActiveMemberInfo, ActiveSimulationInfo, useActiveMember, useActiveSimulation } from "@Simulator/providers";
 
 import { GenshinModifierView } from "@Src/components";
 
@@ -24,26 +18,20 @@ interface ModifyEventHostProps {
 
 function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs = [] }: ModifyEventHostProps) {
   const dispatch = useDispatch();
-  const toolbox = useToolbox();
-
   const [inputsList, setInputsList] = useState(initalInputsList);
 
   console.log("render: ModifyEventHostCore");
-
-  if (!toolbox) {
-    return null;
-  }
 
   const onMakeEvent = (mod: CharacterBuff, inputs: number[]) => {
     dispatch(
       addEvent({
         type: "MODIFY",
-        performer: member.appChar.code,
+        performer: member.data.code,
         modifier: {
           id: mod.index,
           inputs,
         },
-        receiver: member.appChar.code,
+        receiver: member.data.code,
       })
     );
   };
@@ -61,8 +49,8 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
               description={parseAbilityDescription(
                 modifier,
                 {
-                  char: member.char,
-                  appChar: member.appChar,
+                  char: member.info,
+                  appChar: member.data,
                   partyData: simulation.partyData,
                 },
                 inputs,
@@ -99,7 +87,7 @@ export function ModifyEventHost(props: { className?: string }) {
     return null;
   }
 
-  const buffs = member.appChar.buffs?.filter((buff) => EntityCalc.isGrantedEffect(buff, member.char));
+  const buffs = member.data.buffs?.filter((buff) => EntityCalc.isGrantedEffect(buff, member.info));
 
   const initalInputsList = buffs?.map((buff) => Modifier_.createModCtrl(buff, true).inputs ?? []);
 

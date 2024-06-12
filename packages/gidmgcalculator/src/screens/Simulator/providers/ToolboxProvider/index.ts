@@ -1,2 +1,2 @@
 export * from "./ToolboxProvider";
-export { useActiveSimulation, useActiveMember, useToolbox, type SimulatorToolbox } from "./contexts";
+export { useActiveSimulation, useActiveMember, useTools } from "./contexts";

@@ -16,14 +16,14 @@ const icon = (
   </svg>
 );
 
-interface AttackEventDisplayerProps {
+interface HitEventDisplayerProps {
   label: string;
   id: string;
   disabled?: boolean;
   children: React.ReactNode | (() => React.ReactNode);
   onQuickHit: () => void;
 }
-export function AttackEventDisplayer(props: AttackEventDisplayerProps) {
+export function HitEventDisplayer(props: HitEventDisplayerProps) {
   const { isActive, toggle } = useDisplayerState(props.id);
 
   useEffect(() => {

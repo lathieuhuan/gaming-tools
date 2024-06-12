@@ -7,9 +7,8 @@ import {
   MemberDetail,
   ModifyEventHost,
   SimulatorHeader,
-  AttackEventHost,
+  HitEventHost,
 } from "@Src/screens/Simulator";
-import { BonusCenter } from "@Simulator/components/BonusCenter";
 
 function LargeSimulatorCore() {
   return (
@@ -21,9 +20,9 @@ function LargeSimulatorCore() {
           <div className="px-4 py-3 grow overflow-hidden">
             <div className="h-full flex space-x-2 custom-scrollbar">
               <ModifyEventHost className="w-76 p-4 h-full rounded-md bg-surface-2" />
-              <AttackEventHost className="w-76 p-4 h-full rounded-md bg-surface-1" />
+              <HitEventHost className="w-76 p-4 h-full rounded-md bg-surface-1" />
               <div className="grow"></div>
-              <BonusCenter className="w-76 p-4 h-full rounded-md bg-surface-1" />
+              {/* <BonusCenter className="w-76 p-4 h-full rounded-md bg-surface-1" /> */}
               <MemberDetail className="w-76 p-4 h-full rounded-md bg-surface-1 " />
             </div>
           </div>

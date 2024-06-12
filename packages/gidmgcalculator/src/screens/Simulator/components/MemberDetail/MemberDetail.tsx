@@ -1,32 +1,44 @@
-import { $AppWeapon } from "@Src/services";
-import { useActiveMember, useToolbox } from "@Simulator/providers";
+import { useEffect, useState } from "react";
+import { TotalAttribute } from "@Backend";
 
+import { $AppWeapon } from "@Src/services";
 import { AttributeTable, GenshinImage } from "@Src/components";
+import { useActiveMember } from "@Simulator/providers";
 
 export function MemberDetail(props: { className?: string }) {
+  const [totalAttr, setTotalAttr] = useState<TotalAttribute | null>(null);
   const activeMember = useActiveMember();
-  const toolbox = useToolbox();
+
+  useEffect(() => {
+    if (activeMember) {
+      const { initialTotalAttr, unsubscribe } = activeMember?.tools?.subscribeTotalAttr(setTotalAttr);
+
+      setTotalAttr(initialTotalAttr);
+      return unsubscribe;
+    }
+    return undefined;
+  }, [activeMember]);
 
   console.log("render: MemberDetail");
 
-  if (!activeMember || !toolbox) {
+  if (!activeMember || !totalAttr) {
     return null;
   }
-  const { char, appChar } = activeMember;
+  const { info, data } = activeMember;
 
-  const appWeapon = $AppWeapon.get(char.weapon.code)!;
+  const appWeapon = $AppWeapon.get(info.weapon.code)!;
 
   return (
     <div className={props.className}>
       <div className="h-full space-y-3 hide-scrollbar">
         <div>
-          <h3 className={`text-xl text-${appChar.vision} font-bold`}>{char.name}</h3>
+          <h3 className={`text-xl text-${data.vision} font-bold`}>{info.name}</h3>
           <p>
-            Level: {char.level} - C{char.cons}
+            Level: {info.level} - C{info.cons}
           </p>
         </div>
         <GenshinImage className="w-12 h-12" fallbackCls="p-1" src={appWeapon.icon} />
-        <AttributeTable attributes={toolbox.totalAttr.finalize()} />
+        <AttributeTable attributes={totalAttr} />
       </div>
     </div>
   );
