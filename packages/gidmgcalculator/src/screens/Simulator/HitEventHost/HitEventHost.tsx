@@ -1,7 +1,7 @@
 import type { ElementModCtrl, HitEvent } from "@Src/types";
 import type { AttackPattern, CalcItem, LevelableTalentType } from "@Backend";
 
-import { ActiveMemberInfo, ActiveSimulationInfo, useActiveMember, useActiveSimulation } from "@Simulator/providers";
+import { ActiveMemberInfo, useActiveMember } from "@Simulator/ToolboxProvider";
 import { useTranslation } from "@Src/hooks";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";

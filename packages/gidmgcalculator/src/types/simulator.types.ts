@@ -1,11 +1,13 @@
-import type { ActualAttackPattern, AttackElement, LevelableTalentType, TalentType } from "@Backend";
-import type { ElementModCtrl, Target } from "./calculator.types";
+import type { AttackBonusKey, AttackBonusType, AttributeStat, LevelableTalentType } from "@Backend";
 import type { Artifact, Character, Weapon } from "./global.types";
+import type { ElementModCtrl, Target } from "./calculator.types";
 
 export type SimulationManageInfo = {
   id: number;
   name: string;
 };
+
+/** ========== EVENTS ========== */
 
 type BaseEvent = {
   performer: number;
@@ -37,9 +39,31 @@ export type SimulationMember = Character & {
   artifacts: Array<Artifact | null>;
 };
 
-export type SimulationTarget = Target;
+/** ========== BONUSES ========== */
+
+type SimulationBonusCore = {
+  trigger: {
+    character: string;
+    modifier: string;
+  };
+  value: number;
+};
+
+export type SimulationAttributeBonus = SimulationBonusCore & {
+  stable: boolean;
+  toStat: AttributeStat;
+};
+
+export type SimulationAttackBonus = SimulationBonusCore & {
+  toType: AttackBonusType;
+  toKey: AttackBonusKey;
+};
+
+export type SimulationBonus = SimulationAttributeBonus | SimulationAttackBonus;
 
 /** ==========*** SIMULATION ***========== */
+
+export type SimulationTarget = Target;
 
 export type Simulation = {
   members: SimulationMember[];

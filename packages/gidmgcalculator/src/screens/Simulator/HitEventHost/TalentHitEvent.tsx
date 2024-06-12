@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { CalcItem, TalentEventConfig } from "@Backend";
+import type { CalcItem, TalentEventConfig } from "@Backend";
+import type { TalentHitEventMod } from "@Src/types";
+
 import { useTranslation } from "@Src/hooks";
-import { ElementModCtrl, TalentHitEventMod } from "@Src/types";
 import { Button } from "rond";
 
 type GetTalentEventConfig = (elmtModCtrls?: TalentHitEventMod) => TalentEventConfig;
@@ -31,10 +32,16 @@ export function TalentHitEvent(props: TalentHitEventProps) {
       <div className="text-sm text-secondary-1">
         {t(`${config.attElmt}_attElmt`)} / {t(config.attPatt)} DMG
       </div>
-      <div>
-        {Array.isArray(config.damage) ? config.damage.map((d) => Math.round(d)).join(" + ") : Math.round(config.damage)}
+      <div className="mt-3 flex justify-end items-center gap-2">
+        <span>
+          {Array.isArray(config.damage)
+            ? config.damage.map((d) => Math.round(d)).join(" + ")
+            : Math.round(config.damage)}
+        </span>
+        <Button shape="square" size="small" onClick={() => props.onPerformEvent(elmtModCtrls)}>
+          Perform
+        </Button>
       </div>
-      <Button onClick={() => props.onPerformEvent(elmtModCtrls)}>Perform</Button>
     </div>
   );
 }

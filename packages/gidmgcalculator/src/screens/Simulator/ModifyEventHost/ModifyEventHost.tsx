@@ -5,7 +5,12 @@ import { CharacterBuff, EntityCalc } from "@Backend";
 import { Modifier_, parseAbilityDescription } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
-import { ActiveMemberInfo, ActiveSimulationInfo, useActiveMember, useActiveSimulation } from "@Simulator/providers";
+import {
+  ActiveMemberInfo,
+  ActiveSimulationInfo,
+  useActiveMember,
+  useActiveSimulation,
+} from "@Simulator/ToolboxProvider";
 
 import { GenshinModifierView } from "@Src/components";
 

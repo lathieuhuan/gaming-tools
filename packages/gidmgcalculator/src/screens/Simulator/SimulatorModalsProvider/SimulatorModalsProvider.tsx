@@ -61,8 +61,6 @@ export function SimulatorModalsProvider(props: SimulatorModalsProviderProps) {
                   refi: 1,
                 },
                 artifacts: [null, null, null, null, null],
-                attributeBonus: [],
-                attackBonus: [],
               },
             ];
 

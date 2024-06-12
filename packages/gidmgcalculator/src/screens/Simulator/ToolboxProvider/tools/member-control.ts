@@ -8,11 +8,21 @@ import {
   LevelableTalentType,
   NORMAL_ATTACKS,
   SimulatorBuffApplier,
+  TotalAttribute,
   TotalAttributeControl,
   configTalentEvent,
 } from "@Backend";
-import type { Character, ElementModCtrl, HitEvent, PartyData, SimulationMember, SimulationTarget } from "@Src/types";
-import type { SimulationAttackBonus } from "./tools.types";
+import type {
+  Character,
+  ElementModCtrl,
+  HitEvent,
+  PartyData,
+  SimulationMember,
+  SimulationAttackBonus,
+  SimulationAttributeBonus,
+  SimulationBonus,
+  SimulationTarget,
+} from "@Src/types";
 
 // #to-do: clean up
 import { getNormalsConfig, AttackPatternConf, type NormalsConfig } from "@Src/backend/calculation";
@@ -20,7 +30,9 @@ import { $AppWeapon } from "@Src/services";
 import { pickProps, removeEmpty } from "@Src/utils";
 import { SimulatorTotalAttributeControl } from "./total-attribute-control";
 
-type OnChangeTotalAttr = (totalAttr: TotalAttributeControl) => void;
+export type OnChangeTotalAttr = (totalAttr: TotalAttribute) => void;
+
+export type OnChangeBonuses = (bonuses: SimulationBonus[]) => void;
 
 export type ConfigTalentHitEventArgs = {
   talent: LevelableTalentType;
@@ -37,8 +49,14 @@ export class MemberControl {
   totalAttr: TotalAttributeControl;
   private normalsConfig: NormalsConfig = {};
   private buffApplier: SimulatorBuffApplier;
+  private attrBonus: SimulationAttributeBonus[] = [];
   private attkBonus: SimulationAttackBonus[] = [];
+
+  private onChangeTotalAttrTimeoutId: NodeJS.Timeout | undefined;
   private onChangeTotalAttr: OnChangeTotalAttr | undefined;
+
+  private onChangeBonusTimeoutId: NodeJS.Timeout | undefined;
+  private onChangeBonuses: OnChangeBonuses | undefined;
 
   constructor(member: SimulationMember, appChar: AppCharacter, partyData: PartyData) {
     const char: Character = pickProps(member, ["name", "level", "cons", "NAs", "ES", "EB"]);
@@ -53,8 +71,13 @@ export class MemberControl {
     this.buffApplier = new SimulatorBuffApplier({ char, appChar, partyData }, this.totalAttr);
   }
 
-  listenTotalAttrChange = (onChangeTotalAttr: OnChangeTotalAttr) => {
+  getBonuses = () => {
+    return (this.attrBonus as SimulationBonus[]).concat(this.attkBonus);
+  };
+
+  listenChanges = (onChangeTotalAttr: OnChangeTotalAttr, onChangeBonuses: OnChangeBonuses) => {
     this.onChangeTotalAttr = onChangeTotalAttr;
+    this.onChangeBonuses = onChangeBonuses;
   };
 
   apply = (performerName: string, buff: CharacterBuff, inputs: number[]) => {
@@ -70,6 +93,11 @@ export class MemberControl {
       );
     }
 
+    const trigger = {
+      character: performerName,
+      modifier: buff.src,
+    };
+
     this.buffApplier.applyCharacterBuff({
       buff,
       description: ``,
@@ -77,23 +105,39 @@ export class MemberControl {
       applyAttrBonus: (bonus) => {
         const add = bonus.stable ? this.totalAttr.addStable : this.totalAttr.addUnstable;
 
-        // #to-do: record this bonus to show in bonus displayer
-
         add(bonus.stat, bonus.value, bonus.description);
 
-        // #to-do: debounce (?)
-        this.onChangeTotalAttr?.(this.totalAttr);
+        this.attrBonus.push({
+          stable: bonus.stable,
+          toStat: bonus.stat,
+          value: bonus.value,
+          trigger,
+        });
+
+        clearTimeout(this.onChangeTotalAttrTimeoutId);
+        clearTimeout(this.onChangeBonusTimeoutId);
+
+        this.onChangeTotalAttrTimeoutId = setTimeout(() => {
+          this.onChangeTotalAttr?.(this.totalAttr.finalize());
+        }, 50);
+
+        this.onChangeBonusTimeoutId = setTimeout(() => {
+          this.onChangeBonuses?.(this.getBonuses());
+        }, 50);
       },
       applyAttkBonus: (bonus) => {
         this.attkBonus.push({
           toType: bonus.module,
           toKey: bonus.path,
           value: bonus.value,
-          trigger: {
-            character: performerName,
-            modifier: buff.src,
-          },
+          trigger,
         });
+
+        clearTimeout(this.onChangeBonusTimeoutId);
+
+        this.onChangeBonusTimeoutId = setTimeout(() => {
+          this.onChangeBonuses?.(this.getBonuses());
+        }, 50);
       },
     });
   };
@@ -120,7 +164,7 @@ export class MemberControl {
           }
         }
         break;
-      default:
+      default: {
         const item = calcList[talent].find((calcItem) => calcItem.name === calcItemId);
 
         if (item) {
@@ -129,6 +173,7 @@ export class MemberControl {
             pattern: talent,
           };
         }
+      }
     }
     return hitInfo;
   };

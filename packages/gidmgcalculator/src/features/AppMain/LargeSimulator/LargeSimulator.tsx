@@ -8,6 +8,7 @@ import {
   ModifyEventHost,
   SimulatorHeader,
   HitEventHost,
+  BonusDisplayer,
 } from "@Src/screens/Simulator";
 
 function LargeSimulatorCore() {
@@ -22,7 +23,7 @@ function LargeSimulatorCore() {
               <ModifyEventHost className="w-76 p-4 h-full rounded-md bg-surface-2" />
               <HitEventHost className="w-76 p-4 h-full rounded-md bg-surface-1" />
               <div className="grow"></div>
-              {/* <BonusCenter className="w-76 p-4 h-full rounded-md bg-surface-1" /> */}
+              <BonusDisplayer className="w-76 p-4 h-full rounded-md bg-surface-1" />
               <MemberDetail className="w-76 p-4 h-full rounded-md bg-surface-1 " />
             </div>
           </div>

@@ -3,7 +3,7 @@ import { TotalAttribute } from "@Backend";
 
 import { $AppWeapon } from "@Src/services";
 import { AttributeTable, GenshinImage } from "@Src/components";
-import { useActiveMember } from "@Simulator/providers";
+import { useActiveMember } from "@Simulator/ToolboxProvider";
 
 export function MemberDetail(props: { className?: string }) {
   const [totalAttr, setTotalAttr] = useState<TotalAttribute | null>(null);
@@ -11,7 +11,7 @@ export function MemberDetail(props: { className?: string }) {
 
   useEffect(() => {
     if (activeMember) {
-      const { initialTotalAttr, unsubscribe } = activeMember?.tools?.subscribeTotalAttr(setTotalAttr);
+      const { initialTotalAttr, unsubscribe } = activeMember.tools.subscribeTotalAttr(setTotalAttr);
 
       setTotalAttr(initialTotalAttr);
       return unsubscribe;
