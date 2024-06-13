@@ -28,7 +28,7 @@ function LargeSimulatorCore() {
                 <Timeline />
               </div>
 
-              <BonusDisplayer className="w-76 p-4 h-full rounded-md bg-surface-1" />
+              <BonusDisplayer className="w-76 p-4 h-full rounded-md bg-surface-2" />
               <MemberDetail className="w-76 p-4 h-full rounded-md bg-surface-1 " />
             </div>
           </div>

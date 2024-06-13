@@ -7,13 +7,19 @@ export {
   type ArtifactSetBonus,
   type CalculationInfo,
 } from "./utils";
-export { TrackerControl, TotalAttributeControl, AttackBonusControl } from "./controls";
+export { TrackerControl, TotalAttributeControl, AttackBonusControl, ResistanceReductionControl } from "./controls";
 export { getIntialCharacterBonusValue } from "./bonus-getters";
 export { SimulatorBuffApplier } from "./appliers/sim-buff-applier";
+export {
+  getNormalsConfig,
+  AttackPatternConf,
+  CalcItemCalculator,
+  type NormalsConfig,
+  type CalculationAspect,
+} from "./calculation";
 export { default as getCalculationStats } from "./calculation-calculator/getCalculationStats";
 export { calculateSetup } from "./calculation-calculator/calculateSetup";
 
-export * from "./calculation-simulator";
 export * from "./constants";
 
 export type {
@@ -58,5 +64,4 @@ export type {
   WeaponType,
 } from "./types";
 export type { AppMonster } from "./types/app-monster.types";
-export type { CalculationAspect } from "./calculation/calc-item-calculator";
 export type { CalculationFinalResult, CalculationFinalResultGroup } from "./calculation-calculator/getFinalResult";

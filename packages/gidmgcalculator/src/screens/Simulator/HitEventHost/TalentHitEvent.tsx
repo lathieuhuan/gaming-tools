@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Button } from "rond";
-import type { CalcItem, TalentEventConfig } from "@Backend";
+import type { CalcItem } from "@Backend";
 import type { SimulationAttackBonus, TalentHitEventMod } from "@Src/types";
 
 import { useTranslation } from "@Src/hooks";
-import { useActiveMember } from "@Simulator/ToolboxProvider";
+import { TalentEventConfig, useActiveMember } from "@Simulator/ToolboxProvider";
 
 interface TalentHitEventProps {
   item: CalcItem;

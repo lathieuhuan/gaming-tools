@@ -108,7 +108,6 @@ function HitEventHostCore({ member, configs }: HitEventHostProps) {
 }
 
 export function HitEventHost(props: { className?: string }) {
-  //   const activeSimulation = useActiveSimulation();
   const activeMember = useActiveMember();
 
   console.log("render: AttackEventHost");
@@ -119,11 +118,7 @@ export function HitEventHost(props: { className?: string }) {
 
   return (
     <div className={props.className}>
-      <HitEventHostCore
-        // simulation={activeSimulation}
-        member={activeMember}
-        configs={getTalentHitEventConfig(activeMember.data)}
-      />
+      <HitEventHostCore member={activeMember} configs={getTalentHitEventConfig(activeMember.data)} />
     </div>
   );
 }

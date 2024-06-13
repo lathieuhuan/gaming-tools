@@ -10,6 +10,7 @@ import {
   SimulatorBuffApplier,
   TotalAttribute,
   TotalAttributeControl,
+  ResistanceReductionControl,
 } from "@Backend";
 import type {
   Character,
@@ -25,7 +26,6 @@ import type {
 
 // #to-do: clean up
 import { getNormalsConfig, AttackPatternConf, type NormalsConfig, CalcItemCalculator } from "@Src/backend/calculation";
-import { ResistanceReductionControl } from "@Src/backend/controls";
 import { $AppWeapon } from "@Src/services";
 import { pickProps, removeEmpty } from "@Src/utils";
 import { SimulatorTotalAttributeControl } from "./total-attribute-control";
@@ -131,6 +131,7 @@ export class MemberControl {
         attrBonusChanged = true;
 
         this.updateBonus(this.attrBonus, {
+          type: "ATTRIBUTE",
           stable: bonus.stable,
           toStat: bonus.stat,
           value: bonus.value,
@@ -141,6 +142,7 @@ export class MemberControl {
         attkBonusChanged = true;
 
         this.updateBonus(this.attkBonus, {
+          type: "ATTACK",
           toType: bonus.module,
           toKey: bonus.path,
           value: bonus.value,
@@ -159,7 +161,7 @@ export class MemberControl {
       this.onChangeTotalAttr?.(this.totalAttr.finalize());
     }
     if (attrBonusChanged || attkBonusChanged) {
-      this.onChangeBonuses?.(this.attrBonus, this.attkBonus);
+      this.onChangeBonuses?.(structuredClone(this.attrBonus), structuredClone(this.attkBonus));
     }
   };
 

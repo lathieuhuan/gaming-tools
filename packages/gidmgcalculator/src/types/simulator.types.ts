@@ -51,11 +51,13 @@ export type SimulationBonusCore = {
 };
 
 export type SimulationAttributeBonus = SimulationBonusCore & {
+  type: "ATTRIBUTE";
   stable: boolean;
   toStat: AttributeStat;
 };
 
 export type SimulationAttackBonus = SimulationBonusCore & {
+  type: "ATTACK";
   toType: AttackBonusType;
   toKey: AttackBonusKey;
 };
