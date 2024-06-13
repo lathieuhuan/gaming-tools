@@ -10,6 +10,7 @@ export type SimulationManageInfo = {
 /** ========== EVENTS ========== */
 
 type BaseEvent = {
+  id: number;
   performer: number;
 };
 
@@ -41,7 +42,7 @@ export type SimulationMember = Character & {
 
 /** ========== BONUSES ========== */
 
-type SimulationBonusCore = {
+export type SimulationBonusCore = {
   trigger: {
     character: string;
     modifier: string;

@@ -22,6 +22,7 @@ import type {
   SimulationAttributeBonus,
   SimulationBonus,
   SimulationTarget,
+  SimulationBonusCore,
 } from "@Src/types";
 
 // #to-do: clean up
@@ -52,10 +53,9 @@ export class MemberControl {
   private attkBonus: SimulationAttackBonus[] = [];
   private normalsConfig: NormalsConfig = {};
 
-  private onChangeTotalAttrTimeoutId: NodeJS.Timeout | undefined;
+  // private onChangeTotalAttrTimeoutId: NodeJS.Timeout | undefined;
   private onChangeTotalAttr: OnChangeTotalAttr | undefined;
-
-  private onChangeBonusTimeoutId: NodeJS.Timeout | undefined;
+  // private onChangeBonusTimeoutId: NodeJS.Timeout | undefined;
   private onChangeBonuses: OnChangeBonuses | undefined;
 
   private rootTotalAttr: SimulatorTotalAttributeControl;
@@ -88,9 +88,27 @@ export class MemberControl {
     this.buffApplier = new SimulatorBuffApplier({ char: this.info, appChar: this.data, partyData }, this.totalAttr);
     this.attrBonus = [];
     this.attkBonus = [];
+
+    this.onChangeTotalAttr?.(this.totalAttr.finalize());
   };
 
-  apply = (performerName: string, buff: CharacterBuff, inputs: number[]) => {
+  private updateBonus<T extends SimulationBonusCore>(bonuses: T[], bonus: T) {
+    const existedIndex = bonuses.findIndex(
+      (_bonus) =>
+        _bonus.trigger.character === bonus.trigger.character && _bonus.trigger.modifier === bonus.trigger.modifier
+    );
+
+    if (existedIndex === -1) {
+      bonuses.push(bonus);
+    } else {
+      bonuses[existedIndex] = {
+        ...bonuses[existedIndex],
+        value: bonus.value,
+      };
+    }
+  }
+
+  applyCharacterBuff = (performerName: string, buff: CharacterBuff, inputs: number[]) => {
     if (performerName === this.data.name) {
       // #to-do: implement normalsConfig to disable attack pattern
       this.normalsConfig = getNormalsConfig(
@@ -103,6 +121,9 @@ export class MemberControl {
       );
     }
 
+    let attrBonusChanged = false;
+    let attkBonusChanged = false;
+
     const trigger = {
       character: performerName,
       modifier: buff.src,
@@ -110,46 +131,42 @@ export class MemberControl {
 
     this.buffApplier.applyCharacterBuff({
       buff,
-      description: ``,
+      description: "",
       inputs,
       applyAttrBonus: (bonus) => {
-        const add = bonus.stable ? this.totalAttr.addStable : this.totalAttr.addUnstable;
+        attrBonusChanged = true;
 
-        add(bonus.stat, bonus.value, bonus.description);
-
-        this.attrBonus.push({
+        this.updateBonus(this.attrBonus, {
           stable: bonus.stable,
           toStat: bonus.stat,
           value: bonus.value,
           trigger,
         });
-
-        clearTimeout(this.onChangeTotalAttrTimeoutId);
-        clearTimeout(this.onChangeBonusTimeoutId);
-
-        this.onChangeTotalAttrTimeoutId = setTimeout(() => {
-          this.onChangeTotalAttr?.(this.totalAttr.finalize());
-        }, 50);
-
-        this.onChangeBonusTimeoutId = setTimeout(() => {
-          this.onChangeBonuses?.(this.getBonuses());
-        }, 50);
       },
       applyAttkBonus: (bonus) => {
-        this.attkBonus.push({
+        attkBonusChanged = true;
+
+        this.updateBonus(this.attkBonus, {
           toType: bonus.module,
           toKey: bonus.path,
           value: bonus.value,
           trigger,
         });
-
-        clearTimeout(this.onChangeBonusTimeoutId);
-
-        this.onChangeBonusTimeoutId = setTimeout(() => {
-          this.onChangeBonuses?.(this.getBonuses());
-        }, 50);
       },
     });
+
+    if (attrBonusChanged) {
+      this.totalAttr = this.rootTotalAttr.clone();
+
+      for (const bonus of this.attrBonus) {
+        const add = bonus.stable ? this.totalAttr.addStable : this.totalAttr.addUnstable;
+        add(bonus.toStat, bonus.value, `${bonus.trigger.character} / ${bonus.trigger.modifier}`);
+      }
+      this.onChangeTotalAttr?.(this.totalAttr.finalize());
+    }
+    if (attrBonusChanged || attkBonusChanged) {
+      this.onChangeBonuses?.(this.getBonuses());
+    }
   };
 
   private getHitInfo = (talent: LevelableTalentType, calcItemId: string) => {

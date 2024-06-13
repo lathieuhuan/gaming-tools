@@ -9,6 +9,7 @@ import {
   SimulatorHeader,
   HitEventHost,
   BonusDisplayer,
+  Timeline,
 } from "@Src/screens/Simulator";
 
 function LargeSimulatorCore() {
@@ -22,7 +23,11 @@ function LargeSimulatorCore() {
             <div className="h-full flex space-x-2 custom-scrollbar">
               <ModifyEventHost className="w-76 p-4 h-full rounded-md bg-surface-2" />
               <HitEventHost className="w-76 p-4 h-full rounded-md bg-surface-1" />
-              <div className="grow"></div>
+
+              <div className="grow">
+                <Timeline />
+              </div>
+
               <BonusDisplayer className="w-76 p-4 h-full rounded-md bg-surface-1" />
               <MemberDetail className="w-76 p-4 h-full rounded-md bg-surface-1 " />
             </div>

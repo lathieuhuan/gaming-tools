@@ -1,4 +1,4 @@
-import type { HitEvent, ModifyEvent, PartyData, SimulationMember, SimulationTarget } from "@Src/types";
+import type { HitEvent, ModifyEvent, PartyData, SimulationEvent, SimulationMember, SimulationTarget } from "@Src/types";
 import { $AppCharacter } from "@Src/services";
 import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
 
@@ -6,6 +6,7 @@ export class SimulationControl {
   member: Record<number, MemberControl>;
   partyData: PartyData;
   target: SimulationTarget;
+  events: SimulationEvent[] = [];
 
   constructor(party: SimulationMember[], target: SimulationTarget) {
     const memberManager: Record<number, MemberControl> = {};
@@ -21,22 +22,57 @@ export class SimulationControl {
     this.target = target;
   }
 
-  reset = () => {
-    for (const code in this.member) {
-      this.member[code].reset(this.partyData);
+  processEvents = (events: SimulationEvent[]) => {
+    let isMissmatched = false;
+    let checkedIndex = 0;
+
+    while (checkedIndex < this.events.length) {
+      const event = events[checkedIndex];
+
+      if (!event || this.events[checkedIndex].id !== event.id) {
+        isMissmatched = true;
+        break;
+      }
+      checkedIndex++;
+    }
+
+    if (isMissmatched) {
+      this.events = [];
+
+      for (const code in this.member) {
+        this.member[code].reset(this.partyData);
+      }
+      return events.forEach(this.processNewEvent);
+    }
+
+    while (checkedIndex < events.length) {
+      this.processNewEvent(events[checkedIndex]);
+      checkedIndex++;
     }
   };
 
-  modify = (event: ModifyEvent) => {
+  private processNewEvent = (event: SimulationEvent) => {
+    switch (event.type) {
+      case "MODIFY":
+        this.modify(event);
+        break;
+      case "HIT":
+        this.hit(event);
+        break;
+    }
+    this.events.push(event);
+  };
+
+  private modify = (event: ModifyEvent) => {
     const performer = this.member[event.performer];
     const buff = performer?.data.buffs?.find((buff) => buff.index === event.modifier.id);
 
     if (buff) {
-      this.member[event.receiver]?.apply(performer.info.name, buff, event.modifier.inputs);
+      this.member[event.receiver]?.applyCharacterBuff(performer.info.name, buff, event.modifier.inputs);
     }
   };
 
-  hit = (event: HitEvent) => {
+  private hit = (event: HitEvent) => {
     const result = this.member[event.performer]?.hit(event, this.partyData, this.target);
 
     if (result) {

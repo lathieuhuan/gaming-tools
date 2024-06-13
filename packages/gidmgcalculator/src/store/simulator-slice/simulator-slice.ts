@@ -1,9 +1,9 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
+import type { HitEvent, ModifyEvent } from "@Src/types";
 import type { AddSimulationPayload, SimulatorState } from "./simulator-slice.types";
 import { Setup_ } from "@Src/utils";
 import { $AppSettings } from "@Src/services";
-import { SimulationEvent } from "@Src/types";
 import { getSimulation } from "./simulator-slice.utils";
 
 const initialState: SimulatorState = {
@@ -39,8 +39,28 @@ export const simulatorSlice = createSlice({
         };
       }
     },
-    addEvent: (state, action: PayloadAction<SimulationEvent>) => {
-      getSimulation(state)?.events.push(action.payload);
+    addEvent: (state, action: PayloadAction<Omit<ModifyEvent, "id"> | Omit<HitEvent, "id">>) => {
+      const events = getSimulation(state)?.events;
+
+      if (events) {
+        let id: number;
+
+        if (events.length <= 1) {
+          id = events.length;
+        } else {
+          let current = events[0];
+
+          for (const event of events) {
+            if (event.id - current.id > 1) {
+              break;
+            } else {
+              current = event;
+            }
+          }
+          id = current.id + 1;
+        }
+        events.push({ id, ...action.payload });
+      }
     },
   },
 });

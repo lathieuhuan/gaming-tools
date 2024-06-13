@@ -36,7 +36,7 @@ function HitEventHostCore({ member, configs }: HitEventHostProps) {
     });
   };
 
-  const onPerformTalentHitEvent = (eventInfo: Omit<HitEvent, "type" | "performer">) => {
+  const onPerformTalentHitEvent = (eventInfo: Omit<HitEvent, "id" | "type" | "performer">) => {
     dispatch(
       addEvent({
         type: "HIT",
