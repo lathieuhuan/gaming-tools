@@ -10,7 +10,6 @@ import {
   SimulatorBuffApplier,
   TotalAttribute,
   TotalAttributeControl,
-  configTalentEvent,
 } from "@Backend";
 import type {
   Character,
@@ -20,26 +19,27 @@ import type {
   SimulationMember,
   SimulationAttackBonus,
   SimulationAttributeBonus,
-  SimulationBonus,
   SimulationTarget,
   SimulationBonusCore,
 } from "@Src/types";
 
 // #to-do: clean up
-import { getNormalsConfig, AttackPatternConf, type NormalsConfig } from "@Src/backend/calculation";
+import { getNormalsConfig, AttackPatternConf, type NormalsConfig, CalcItemCalculator } from "@Src/backend/calculation";
+import { ResistanceReductionControl } from "@Src/backend/controls";
 import { $AppWeapon } from "@Src/services";
 import { pickProps, removeEmpty } from "@Src/utils";
 import { SimulatorTotalAttributeControl } from "./total-attribute-control";
 
 export type OnChangeTotalAttr = (totalAttr: TotalAttribute) => void;
 
-export type OnChangeBonuses = (bonuses: SimulationBonus[]) => void;
+export type OnChangeBonuses = (attrBonus: SimulationAttributeBonus[], attkBonus: SimulationAttackBonus[]) => void;
 
 export type ConfigTalentHitEventArgs = {
   talent: LevelableTalentType;
   pattern: AttackPattern;
   item: CalcItem;
   elmtModCtrls?: Partial<ElementModCtrl>;
+  attkBonus: SimulationAttackBonus[];
   partyData: PartyData;
   target: SimulationTarget;
 };
@@ -48,14 +48,12 @@ export class MemberControl {
   info: Character;
   data: AppCharacter;
   totalAttr: TotalAttributeControl;
+  attrBonus: SimulationAttributeBonus[] = [];
+  attkBonus: SimulationAttackBonus[] = [];
   private buffApplier: SimulatorBuffApplier;
-  private attrBonus: SimulationAttributeBonus[] = [];
-  private attkBonus: SimulationAttackBonus[] = [];
   private normalsConfig: NormalsConfig = {};
 
-  // private onChangeTotalAttrTimeoutId: NodeJS.Timeout | undefined;
   private onChangeTotalAttr: OnChangeTotalAttr | undefined;
-  // private onChangeBonusTimeoutId: NodeJS.Timeout | undefined;
   private onChangeBonuses: OnChangeBonuses | undefined;
 
   private rootTotalAttr: SimulatorTotalAttributeControl;
@@ -73,10 +71,6 @@ export class MemberControl {
     this.totalAttr = this.rootTotalAttr.clone();
     this.buffApplier = new SimulatorBuffApplier({ char, appChar, partyData }, this.totalAttr);
   }
-
-  getBonuses = () => {
-    return (this.attrBonus as SimulationBonus[]).concat(this.attkBonus);
-  };
 
   listenChanges = (onChangeTotalAttr: OnChangeTotalAttr, onChangeBonuses: OnChangeBonuses) => {
     this.onChangeTotalAttr = onChangeTotalAttr;
@@ -165,7 +159,7 @@ export class MemberControl {
       this.onChangeTotalAttr?.(this.totalAttr.finalize());
     }
     if (attrBonusChanged || attkBonusChanged) {
-      this.onChangeBonuses?.(this.getBonuses());
+      this.onChangeBonuses?.(this.attrBonus, this.attkBonus);
     }
   };
 
@@ -208,7 +202,7 @@ export class MemberControl {
   configTalentHitEvent = (args: ConfigTalentHitEventArgs) => {
     const attBonus = new AttackBonusControl();
 
-    for (const bonus of this.attkBonus) {
+    for (const bonus of args.attkBonus) {
       attBonus.add(bonus.toType, bonus.toKey, bonus.value, "");
     }
 
@@ -230,19 +224,30 @@ export class MemberControl {
       },
     })(args.pattern);
 
-    return configTalentEvent({
-      itemConfig: configCalcItem(args.item, {
-        absorption: null,
-        reaction: null,
-        infuse_reaction: null,
-        ...(args.elmtModCtrls ? removeEmpty(args.elmtModCtrls) : undefined),
-      }),
-      level,
-      totalAttr,
-      attBonus,
-      info,
-      target: args.target,
+    //
+
+    const itemConfig = configCalcItem(args.item, {
+      absorption: null,
+      reaction: null,
+      infuse_reaction: null,
+      ...(args.elmtModCtrls ? removeEmpty(args.elmtModCtrls) : undefined),
     });
+
+    const resistances = new ResistanceReductionControl().apply(args.target);
+
+    const calculateCalcItem = CalcItemCalculator(info.char.level, args.target.level, totalAttr, resistances);
+
+    const base = itemConfig.calculateBaseDamage(level);
+
+    const result = calculateCalcItem({
+      base,
+      ...itemConfig,
+    });
+
+    return {
+      damage: result.average,
+      ...pickProps(itemConfig, ["attElmt", "attPatt", "record"]),
+    };
   };
 
   hit = (event: HitEvent, partyData: PartyData, target: SimulationTarget) => {
@@ -259,6 +264,7 @@ export class MemberControl {
     return this.configTalentHitEvent({
       talent: event.talent,
       ...hitInfo,
+      attkBonus: this.attkBonus,
       elmtModCtrls,
       partyData,
       target,

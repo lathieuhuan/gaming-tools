@@ -1,5 +1,4 @@
-import type { ElementModCtrl, HitEvent } from "@Src/types";
-import type { AttackPattern, CalcItem, LevelableTalentType } from "@Backend";
+import type { HitEvent } from "@Src/types";
 
 import { ActiveMemberInfo, useActiveMember } from "@Simulator/ToolboxProvider";
 import { useTranslation } from "@Src/hooks";
@@ -17,24 +16,10 @@ interface HitEventHostProps {
 }
 
 function HitEventHostCore({ member, configs }: HitEventHostProps) {
-  const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   console.log("render: AttackEventHostCore");
-
-  const baseConfig = (
-    talent: LevelableTalentType,
-    pattern: AttackPattern,
-    item: CalcItem,
-    elmtModCtrls?: Partial<ElementModCtrl>
-  ) => {
-    return member.tools.configTalentHitEvent({
-      item,
-      elmtModCtrls,
-      pattern,
-      talent,
-    });
-  };
 
   const onPerformTalentHitEvent = (eventInfo: Omit<HitEvent, "id" | "type" | "performer">) => {
     dispatch(
@@ -82,8 +67,14 @@ function HitEventHostCore({ member, configs }: HitEventHostProps) {
                       >
                         <TalentHitEvent
                           item={item}
-                          getTalentEventConfig={(elmtModCtrls) => {
-                            return baseConfig(config.type, group.type, item, elmtModCtrls);
+                          getTalentEventConfig={(attkBonus, elmtModCtrls) => {
+                            return member.tools.configTalentHitEvent({
+                              talent: config.type,
+                              pattern: group.type,
+                              item,
+                              attkBonus,
+                              elmtModCtrls,
+                            });
                           }}
                           onPerformEvent={(elmtModCtrls) =>
                             onPerformTalentHitEvent({

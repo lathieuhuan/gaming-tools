@@ -60,8 +60,6 @@ export type SimulationAttackBonus = SimulationBonusCore & {
   toKey: AttackBonusKey;
 };
 
-export type SimulationBonus = SimulationAttributeBonus | SimulationAttackBonus;
-
 /** ==========*** SIMULATION ***========== */
 
 export type SimulationTarget = Target;

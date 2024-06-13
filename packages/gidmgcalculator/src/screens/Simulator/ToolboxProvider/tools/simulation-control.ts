@@ -3,10 +3,10 @@ import { $AppCharacter } from "@Src/services";
 import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
 
 export class SimulationControl {
-  member: Record<number, MemberControl>;
   partyData: PartyData;
   target: SimulationTarget;
-  events: SimulationEvent[] = [];
+  member: Record<number, MemberControl>;
+  private events: SimulationEvent[] = [];
 
   constructor(party: SimulationMember[], target: SimulationTarget) {
     const memberManager: Record<number, MemberControl> = {};

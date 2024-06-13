@@ -1,15 +1,22 @@
-import type { TalentEventConfig } from "@Backend";
+import { ActualAttackPattern, CalcItemRecord } from "@Backend";
 import type { ConfigTalentHitEventArgs, MemberControl, OnChangeBonuses, OnChangeTotalAttr } from "./member-control";
 
-type _ConfigTalentHitEvent = (args: Omit<ConfigTalentHitEventArgs, "partyData" | "target">) => TalentEventConfig;
+export type TalentEventConfig = {
+  damage: number | number[];
+  attPatt: ActualAttackPattern;
+  attElmt: "pyro" | "hydro" | "electro" | "cryo" | "geo" | "anemo" | "dendro" | "phys";
+  record: CalcItemRecord;
+};
+
+type ConfigTalentHitEvent = (args: Omit<ConfigTalentHitEventArgs, "partyData" | "target">) => TalentEventConfig;
 
 export class ActiveMemberTools {
   private member: MemberControl;
   private totalAttrSubscribers: Set<OnChangeTotalAttr> = new Set();
   private bonusesSubscribers: Set<OnChangeBonuses> = new Set();
-  configTalentHitEvent: _ConfigTalentHitEvent;
+  configTalentHitEvent: ConfigTalentHitEvent;
 
-  constructor(member: MemberControl, configTalentHitEvent: _ConfigTalentHitEvent) {
+  constructor(member: MemberControl, configTalentHitEvent: ConfigTalentHitEvent) {
     this.member = member;
     this.configTalentHitEvent = configTalentHitEvent;
 
@@ -19,10 +26,10 @@ export class ActiveMemberTools {
 
         this.totalAttrSubscribers.forEach((callback) => callback(totalAttr));
       },
-      (bonuses) => {
+      (attrBonus, attkBonus) => {
         console.log("bonusesSubscribers count:", this.bonusesSubscribers.size);
 
-        this.bonusesSubscribers.forEach((callback) => callback(bonuses));
+        this.bonusesSubscribers.forEach((callback) => callback(attrBonus, attkBonus));
       }
     );
   }
@@ -42,7 +49,10 @@ export class ActiveMemberTools {
     this.bonusesSubscribers.add(subscribe);
 
     return {
-      initialBonuses: this.member.getBonuses(),
+      initial: {
+        attrBonus: this.member.attrBonus,
+        attkBonus: this.member.attkBonus,
+      },
       unsubscribe: () => {
         this.bonusesSubscribers.delete(subscribe);
       },

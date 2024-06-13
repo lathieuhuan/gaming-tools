@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
-import type { SimulationBonus } from "@Src/types";
-
+import { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
 import { useActiveMember } from "@Simulator/ToolboxProvider";
 
+type SimulationBonus = SimulationAttributeBonus | SimulationAttackBonus;
+
 export function BonusDisplayer(props: { className?: string }) {
-  const [bonuses, setBonuses] = useState<SimulationBonus[]>([]);
   const activeMember = useActiveMember();
+  const [bonuses, setBonuses] = useState<SimulationBonus[]>([]);
 
   useEffect(() => {
     if (activeMember) {
-      const { initialBonuses, unsubscribe } = activeMember.tools.subscribeBonuses(setBonuses);
+      const { initial, unsubscribe } = activeMember.tools.subscribeBonuses((attrBonus, attkBonus) => {
+        setBonuses((attrBonus as SimulationBonus[]).concat(attkBonus));
+      });
 
-      setBonuses(initialBonuses);
+      setBonuses((initial.attrBonus as SimulationBonus[]).concat(initial.attkBonus));
       return unsubscribe;
     }
     return undefined;
