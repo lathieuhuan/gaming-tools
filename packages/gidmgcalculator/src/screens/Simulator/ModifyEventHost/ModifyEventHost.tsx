@@ -25,8 +25,6 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
   const dispatch = useDispatch();
   const [inputsList, setInputsList] = useState(initalInputsList);
 
-  console.log("render: ModifyEventHostCore");
-
   const onMakeEvent = (mod: CharacterBuff, inputs: number[]) => {
     dispatch(
       addEvent({
@@ -85,8 +83,6 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
 export function ModifyEventHost(props: { className?: string }) {
   const simulation = useActiveSimulation();
   const member = useActiveMember();
-
-  console.log("render: ModifyEventHost");
 
   if (!simulation || !member) {
     return null;

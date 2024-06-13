@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
-import { ActiveMemberInfo, useActiveMember } from "@Simulator/ToolboxProvider";
+import { useActiveMember } from "@Simulator/ToolboxProvider";
 import { useTranslation } from "@Src/hooks";
+import { ATTACK_ELEMENTS } from "@Backend";
+import { round } from "rond";
 
 type SimulationBonus = SimulationAttributeBonus | SimulationAttackBonus;
 
 interface BonusDisplayerProps {
-  member: ActiveMemberInfo;
+  className?: string;
 }
-export function BonusDisplayerCore({ member }: BonusDisplayerProps) {
+export function BonusDisplayer(props: BonusDisplayerProps) {
   const { t } = useTranslation();
+  const member = useActiveMember();
   const [bonuses, setBonuses] = useState<SimulationBonus[]>([]);
 
   useEffect(() => {
@@ -24,60 +27,55 @@ export function BonusDisplayerCore({ member }: BonusDisplayerProps) {
     return undefined;
   }, [member]);
 
-  console.log("render: BonusDisplayerCore");
-  console.log(bonuses);
-
-  const renderAttkBonusType = (bonus: SimulationAttackBonus) => {
-    let label = "";
-
-    if (bonus.toType === "all") {
-      label = "All";
-    } else {
-      for (const text of bonus.toType.split(".")) {
-        label += label ? ` + ${t(text)}` : t(text);
-      }
-      label = `${label}`;
-    }
-
-    return <div>to {label} DMG</div>;
-  };
-
-  return (
-    <div className="h-full hide-scrollbar space-y-3">
-      {bonuses.map((bonus) => {
-        const title = `${bonus.trigger.character} / ${bonus.trigger.modifier}`;
-
-        return (
-          <div key={title} className="p-3 flex flex-col items-end bg-surface-1 rounded">
-            <div className="text-lg text-bonus-color">
-              <span className="font-semibold">{bonus.value}</span>{" "}
-              {t(bonus.type === "ATTRIBUTE" ? bonus.toStat : bonus.toKey)}
-            </div>
-
-            {bonus.type === "ATTACK" && renderAttkBonusType(bonus)}
-
-            <div className="mt-1 text-sm">
-              Source: <span className="text-primary-1 font-semibold">{title}</span>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-export function BonusDisplayer(props: { className?: string }) {
-  const activeMember = useActiveMember();
-
-  console.log("render: BonusDisplayer");
-
-  if (!activeMember) {
+  if (!member) {
     return null;
   }
 
   return (
     <div className={props.className}>
-      <BonusDisplayerCore member={activeMember} />
+      <div className="h-full hide-scrollbar space-y-3">
+        {bonuses.map((bonus, index) => {
+          const title = `${bonus.trigger.character} / ${bonus.trigger.modifier}`;
+
+          return (
+            <Fragment key={index}>
+              {index ? <div className="h-px bg-surface-3" /> : null}
+
+              <div className="flex flex-col items-end rounded">
+                <div className="text-bonus-color">
+                  <span className="text-lg font-semibold">{round(bonus.value, 2)}</span>{" "}
+                  {t(bonus.type === "ATTRIBUTE" ? bonus.toStat : bonus.toKey)}
+                </div>
+
+                {bonus.type === "ATTACK" && (
+                  <div className="h-6 text-sm capitalize">
+                    {bonus.toType.split(".").map((type, index) => {
+                      const text = ATTACK_ELEMENTS.includes(type as (typeof ATTACK_ELEMENTS)[number])
+                        ? type === "phys"
+                          ? "physical"
+                          : type
+                        : t(type);
+
+                      return (
+                        <Fragment key={index}>
+                          {index ? <span className="text-light-default/60"> & </span> : null}
+                          <span key={index} className="text-secondary-1">
+                            {text}
+                          </span>
+                        </Fragment>
+                      );
+                    })}
+                  </div>
+                )}
+
+                <div className="text-sm">
+                  <span className="text-light-default/60">from</span> <span className="font-medium">{title}</span>
+                </div>
+              </div>
+            </Fragment>
+          );
+        })}
+      </div>
     </div>
   );
 }

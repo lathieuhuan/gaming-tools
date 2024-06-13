@@ -86,22 +86,6 @@ export class MemberControl {
     this.onChangeTotalAttr?.(this.totalAttr.finalize());
   };
 
-  private updateBonus<T extends SimulationBonusCore>(bonuses: T[], bonus: T) {
-    const existedIndex = bonuses.findIndex(
-      (_bonus) =>
-        _bonus.trigger.character === bonus.trigger.character && _bonus.trigger.modifier === bonus.trigger.modifier
-    );
-
-    if (existedIndex === -1) {
-      bonuses.push(bonus);
-    } else {
-      bonuses[existedIndex] = {
-        ...bonuses[existedIndex],
-        value: bonus.value,
-      };
-    }
-  }
-
   applyCharacterBuff = (performerName: string, buff: CharacterBuff, inputs: number[]) => {
     if (performerName === this.data.name) {
       // #to-do: implement normalsConfig to disable attack pattern
@@ -130,24 +114,53 @@ export class MemberControl {
       applyAttrBonus: (bonus) => {
         attrBonusChanged = true;
 
-        this.updateBonus(this.attrBonus, {
-          type: "ATTRIBUTE",
-          stable: bonus.stable,
-          toStat: bonus.stat,
-          value: bonus.value,
-          trigger,
-        });
+        const existedIndex = this.attrBonus.findIndex(
+          (_bonus) =>
+            _bonus.trigger.character === trigger.character &&
+            _bonus.trigger.modifier === trigger.modifier &&
+            _bonus.toStat === bonus.stat
+        );
+
+        if (existedIndex === -1) {
+          this.attrBonus.push({
+            type: "ATTRIBUTE",
+            stable: bonus.stable,
+            toStat: bonus.stat,
+            value: bonus.value,
+            trigger,
+          });
+        } else {
+          this.attrBonus[existedIndex] = {
+            ...this.attrBonus[existedIndex],
+            value: bonus.value,
+          };
+        }
       },
       applyAttkBonus: (bonus) => {
         attkBonusChanged = true;
 
-        this.updateBonus(this.attkBonus, {
-          type: "ATTACK",
-          toType: bonus.module,
-          toKey: bonus.path,
-          value: bonus.value,
-          trigger,
-        });
+        const existedIndex = this.attkBonus.findIndex(
+          (_bonus) =>
+            _bonus.trigger.character === trigger.character &&
+            _bonus.trigger.modifier === trigger.modifier &&
+            _bonus.toType === bonus.module &&
+            _bonus.toKey === bonus.path
+        );
+
+        if (existedIndex === -1) {
+          this.attkBonus.push({
+            type: "ATTACK",
+            toType: bonus.module,
+            toKey: bonus.path,
+            value: bonus.value,
+            trigger,
+          });
+        } else {
+          this.attkBonus[existedIndex] = {
+            ...this.attkBonus[existedIndex],
+            value: bonus.value,
+          };
+        }
       },
     });
 

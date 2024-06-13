@@ -19,8 +19,6 @@ export function MemberDetail(props: { className?: string }) {
     return undefined;
   }, [activeMember]);
 
-  console.log("render: MemberDetail");
-
   if (!activeMember || !totalAttr) {
     return null;
   }

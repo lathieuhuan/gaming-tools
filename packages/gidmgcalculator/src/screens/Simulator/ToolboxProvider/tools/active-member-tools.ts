@@ -22,13 +22,9 @@ export class ActiveMemberTools {
 
     this.member.listenChanges(
       (totalAttr) => {
-        console.log("totalAttrSubscribers count:", this.totalAttrSubscribers.size);
-
         this.totalAttrSubscribers.forEach((callback) => callback(totalAttr));
       },
       (attrBonus, attkBonus) => {
-        console.log("bonusesSubscribers count:", this.bonusesSubscribers.size);
-
         this.bonusesSubscribers.forEach((callback) => callback(attrBonus, attkBonus));
       }
     );

@@ -1,5 +1,5 @@
 import { round } from "rond";
-import type { AttackBonus, AttackBonusKey } from "@Backend";
+import { ATTACK_ELEMENTS, type AttackBonus, type AttackBonusKey } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
 import { Utils_ } from "@Src/utils";
@@ -34,30 +34,19 @@ export function BonusesTracker({ attBonus }: BonusesTrackerProps) {
           }
         }
 
-        const titleFrags: string[] = [];
-
-        bonus.type.split(".").forEach((type, i) => {
+        const titleFrags = bonus.type.split(".").map((type) => {
           if (type === "all") {
-            return titleFrags.push("All");
+            return "all";
           }
-          if (i) {
-            // For now the 2nd type is AttackElement
-            return titleFrags.push("+", type === "phys" ? "physical" : type);
+          if (ATTACK_ELEMENTS.includes(type as (typeof ATTACK_ELEMENTS)[number])) {
+            return type === "phys" ? "physical" : type;
           }
-          titleFrags.push(t(type));
+          return t(type);
         });
 
         return (
           <div key={bonus.type} className="py-0.5 break-inside-avoid">
-            <div className="flex gap-1 text-secondary-1">
-              {titleFrags.map((frag, i) => {
-                return (
-                  <span key={i} className={i === 2 ? "capitalize" : ""}>
-                    {frag}
-                  </span>
-                );
-              })}
-            </div>
+            <div className="text-secondary-1 capitalize">{titleFrags.join(" + ")}</div>
 
             <div>
               {list.map((item) => {

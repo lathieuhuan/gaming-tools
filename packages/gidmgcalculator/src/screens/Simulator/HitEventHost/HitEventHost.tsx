@@ -19,8 +19,6 @@ function HitEventHostCore({ member, configs }: HitEventHostProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  console.log("render: AttackEventHostCore");
-
   const onPerformTalentHitEvent = (eventInfo: Omit<HitEvent, "id" | "type" | "performer">) => {
     dispatch(
       addEvent({
@@ -109,8 +107,6 @@ function HitEventHostCore({ member, configs }: HitEventHostProps) {
 
 export function HitEventHost(props: { className?: string }) {
   const activeMember = useActiveMember();
-
-  console.log("render: AttackEventHost");
 
   if (!activeMember) {
     return null;

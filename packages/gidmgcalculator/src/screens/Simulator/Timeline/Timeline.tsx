@@ -7,8 +7,8 @@ const selectEvents = (state: RootState) => getSimulation(state.simulator)?.event
 export function Timeline(props: { className?: string }) {
   const events = useSelector(selectEvents);
 
-  console.log("render: Timeline");
-  console.log(events);
 
-  return <></>;
+  return <div>
+
+  </div>;
 }

@@ -5,7 +5,7 @@ import { RootState } from "@Store/store";
 
 import { useStore } from "@Src/features";
 import { getSimulation } from "@Store/simulator-slice";
-import { ActiveMemberContext, ActiveSimulationContext } from "./contexts";
+import { ActiveMemberContext, ActiveSimulationContext } from "./toolbox-contexts";
 import { SimulationControl, ActiveMemberTools } from "./tools";
 
 const selectActiveId = (state: RootState) => state.simulator.activeId;
@@ -19,8 +19,6 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
   const store = useStore();
   const activeId = useSelector(selectActiveId);
   const activeMemberName = useSelector(selectActiveMember);
-
-  console.log("render: ToolboxProvider");
 
   const activeSimulation = useMemo(() => {
     const simulation = store.select((state) => getSimulation(state.simulator));
