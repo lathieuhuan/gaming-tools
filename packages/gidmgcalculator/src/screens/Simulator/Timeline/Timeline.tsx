@@ -1,23 +1,50 @@
+import { Fragment, useEffect, useState } from "react";
+
 import { useDispatch, useSelector } from "@Store/hooks";
-import { getSimulation, selectActiveMember, switchMember } from "@Store/simulator-slice";
-import { RootState } from "@Store/store";
-import { useActiveSimulation } from "@Simulator/ToolboxProvider";
+import { selectActiveMember, switchMember } from "@Store/simulator-slice";
+import { SimulationChunk, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { CharacterPortrait } from "@Src/components";
 
-const selectEvents = (state: RootState) => getSimulation(state.simulator)?.events ?? [];
-
 export function Timeline(props: { className?: string }) {
-  const events = useSelector(selectEvents);
+  const [chunks, setChunks] = useState<SimulationChunk[]>([]);
+  const simulation = useActiveSimulation();
+
+  useEffect(() => {
+    if (simulation) {
+      const { initialChunks, unsubscribe } = simulation.subscribeEvents(setChunks);
+
+      setChunks(initialChunks);
+      return unsubscribe;
+    }
+    return undefined;
+  }, [simulation]);
+
+  console.log("render: Timeline");
+  console.log(chunks);
 
   return (
     <div className={props.className}>
-      <PartyDisplayer />
-      <div className="h-full hide-scrollbar space-y-3">
-        {events.map((event) => {
+      <PartyDisplayer simulation={simulation} onFieldCode={chunks[chunks.length - 1]?.owner.code} />
+
+      <div className="h-full hide-scrollbar space-y-2">
+        {chunks.map((chunk, index) => {
           return (
-            <div key={event.id}>
-              <div>{event.performer}</div>
-            </div>
+            <Fragment key={index}>
+              {index ? <div className="h-1 bg-surface-border" /> : null}
+
+              <div className="flex gap-2">
+                <div>{chunk.owner.name}</div>
+                <div>
+                  {chunk.events.map((event) => {
+                    return (
+                      <div key={event.id}>
+                        {event.type} {event.performer.code}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </Fragment>
           );
         })}
       </div>
@@ -25,10 +52,13 @@ export function Timeline(props: { className?: string }) {
   );
 }
 
-function PartyDisplayer() {
+interface PartyDisplayerProps {
+  onFieldCode?: number;
+  simulation: ReturnType<typeof useActiveSimulation>;
+}
+function PartyDisplayer(props: PartyDisplayerProps) {
   const dispatch = useDispatch();
   const activeMemberName = useSelector(selectActiveMember);
-  const simulation = useActiveSimulation();
 
   const onClickMember = (name: string) => {
     dispatch(switchMember(name));
@@ -36,10 +66,13 @@ function PartyDisplayer() {
 
   return (
     <div className="flex gap-4">
-      {simulation?.partyData.map((data) => {
+      {props.simulation?.partyData.map((data) => {
         return (
-          <div key={data.code} title={data.name} onClick={() => onClickMember(data.name)}>
-            <CharacterPortrait withColorBg={data.name === activeMemberName} info={data} />
+          <div key={data.code}>
+            <div title={data.name} onClick={() => onClickMember(data.name)}>
+              <CharacterPortrait withColorBg={data.name === activeMemberName} info={data} />
+            </div>
+            {data.code === props.onFieldCode ? <p>onField</p> : null}
           </div>
         );
       })}

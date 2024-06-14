@@ -30,6 +30,7 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
       info: {
         partyData: control.partyData,
         target: simulation.target,
+        subscribeEvents: control.subscribeEvents,
       },
       members: simulation.members,
       control,

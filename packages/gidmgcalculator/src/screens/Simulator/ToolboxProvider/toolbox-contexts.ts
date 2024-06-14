@@ -1,11 +1,12 @@
-import { AppCharacter } from "@Backend";
-import { SimulationMember, SimulationPartyData, SimulationTarget } from "@Src/types";
 import { createContext, useContext } from "react";
-import { ActiveMemberTools } from "./tools";
+import type { AppCharacter } from "@Backend";
+import type { SimulationMember, SimulationPartyData, SimulationTarget } from "@Src/types";
+import type { ActiveMemberTools, SimulationControl } from "./tools";
 
 export type ActiveSimulationInfo = {
   partyData: SimulationPartyData;
   target: SimulationTarget;
+  subscribeEvents: SimulationControl['subscribeEvents'];
 };
 
 export const ActiveSimulationContext = createContext<ActiveSimulationInfo | null | undefined>(null);

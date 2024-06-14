@@ -26,31 +26,17 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
   const [inputsList, setInputsList] = useState(initalInputsList);
 
   const onMakeEvent = (mod: CharacterBuff, inputs: number[]) => {
-    let receiver: number | number[] = [];
-
-    switch (mod.affect) {
-      case "SELF":
-        receiver = member.data.code;
-        break;
-      case "PARTY":
-        receiver = simulation.partyData.map((data) => data.code);
-        break;
-      case "ACTIVE_UNIT":
-      case "ONE_UNIT":
-      case "SELF_TEAMMATE":
-      case "TEAMMATE":
-        break;
-    }
-
     dispatch(
       addEvent({
         type: "MODIFY",
-        performer: member.data.code,
+        performer: {
+          type: "CHARACTER",
+          code: member.data.code,
+        },
         modifier: {
           id: mod.index,
           inputs,
         },
-        receiver,
       })
     );
   };

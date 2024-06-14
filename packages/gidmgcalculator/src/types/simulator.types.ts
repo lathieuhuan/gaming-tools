@@ -9,17 +9,22 @@ export type SimulationManageInfo = {
 
 /** ========== EVENTS ========== */
 
+type CharacterPerformer = {
+  type: "CHARACTER";
+  code: number;
+};
+
 type BaseEvent = {
   id: number;
-  performer: number;
-  isOnField?: boolean;
-  /** required if isOnField and is HitEvent */
+  performer: CharacterPerformer;
+  /** The character performing this event also switch to on field */
+  alsoSwitch?: boolean;
+  /** required if alsoSwitch and is HitEvent */
   duration?: number;
 };
 
 export type ModifyEvent = BaseEvent & {
   type: "MODIFY";
-  receiver: number | number[];
   modifier: {
     id: number;
     inputs: number[];
