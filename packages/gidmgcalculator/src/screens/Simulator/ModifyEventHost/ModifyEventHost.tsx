@@ -35,22 +35,24 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
         },
         modifier: {
           id: mod.index,
-          inputs,
+          inputs: [...inputs],
         },
       })
     );
   };
 
   return (
-    <div className="h-full hide-scrollbar space-y-2">
+    <div className="h-full hide-scrollbar space-y-3">
       {buffs.map((modifier, modIndex) => {
         const inputs = inputsList[modIndex];
+        const inputConfigs = modifier.inputConfigs?.filter((config) => config.for !== "FOR_TEAM");
 
         return (
-          <div key={modifier.index} className="p-3 rounded bg-surface-1">
+          <div key={modifier.index}>
             <GenshinModifierView
               mutable={true}
               heading={modifier.src}
+              headingVariant="CUSTOM"
               description={parseAbilityDescription(
                 modifier,
                 {
@@ -63,7 +65,7 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
               )}
               checked={false}
               inputs={inputs}
-              inputConfigs={modifier.inputConfigs?.filter((config) => config.for !== "FOR_TEAM")}
+              inputConfigs={inputConfigs}
               onSelectOption={(value, inputIndex) => {
                 setInputsList((prevList) => {
                   const newList = [...prevList];
@@ -72,9 +74,12 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
                 });
               }}
             />
-            <Button shape="square" size="small" className="mt-3 mx-auto" onClick={() => onMakeEvent(modifier, inputs)}>
-              Trigger
-            </Button>
+
+            <div className={"pr-1 flex justify-end " + (inputConfigs?.length ? "mt-3" : "mt-2")}>
+              <Button shape="square" size="small" onClick={() => onMakeEvent(modifier, inputs)}>
+                Trigger
+              </Button>
+            </div>
           </div>
         );
       })}

@@ -30,7 +30,7 @@ export function Timeline(props: { className?: string }) {
         {chunks.map((chunk, index) => {
           return (
             <Fragment key={index}>
-              {index ? <div className="h-1 bg-surface-border" /> : null}
+              {index ? <div className="h-px bg-surface-border" /> : null}
 
               <div className="flex gap-2">
                 <div>{chunk.owner.name}</div>

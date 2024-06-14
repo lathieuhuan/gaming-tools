@@ -63,7 +63,7 @@ export class SimulationControl {
   };
 
   private onChangeEvents = () => {
-    this.eventSubscribers.forEach((callback) => callback(structuredClone(this.chunks)));
+    this.eventSubscribers.forEach((callback) => callback(this.chunks.concat()));
   };
 
   subscribeEvents = (callback: OnchangeEvent) => {
@@ -262,7 +262,7 @@ export class SimulationControl {
     }
     if (attrBonusChanged || attkBonusChanged) {
       receivers.forEach((receiver) => {
-        receiver.onChangeBonuses?.(structuredClone(receiver.attrBonus), structuredClone(receiver.attkBonus));
+        receiver.onChangeBonuses?.(receiver.attrBonus.concat(), receiver.attkBonus.concat());
       });
     }
   };
