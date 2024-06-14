@@ -39,7 +39,7 @@ export function BonusDisplayer(props: BonusDisplayerProps) {
 
           return (
             <Fragment key={index}>
-              {index ? <div className="h-px bg-surface-3" /> : null}
+              {index ? <div className="h-px bg-surface-border" /> : null}
 
               <div className="flex flex-col items-end rounded">
                 <div className="text-bonus-color">

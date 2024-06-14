@@ -4,13 +4,11 @@ import { useSelector } from "@Store/hooks";
 import { RootState } from "@Store/store";
 
 import { useStore } from "@Src/features";
-import { getSimulation } from "@Store/simulator-slice";
+import { getSimulation, selectActiveMember } from "@Store/simulator-slice";
 import { ActiveMemberContext, ActiveSimulationContext } from "./toolbox-contexts";
 import { SimulationControl, ActiveMemberTools } from "./tools";
 
 const selectActiveId = (state: RootState) => state.simulator.activeId;
-
-const selectActiveMember = (state: RootState) => state.simulator.activeMember;
 
 interface ToolboxProviderProps {
   children: React.ReactNode;

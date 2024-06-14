@@ -47,7 +47,7 @@ export function SimulatorModalsProvider(props: SimulatorModalsProviderProps) {
 
             const members: SimulationMember[] = [
               {
-                name: "Candace",
+                name: "Albedo",
                 level: "90/90",
                 NAs: 1,
                 ES: 1,
@@ -55,6 +55,22 @@ export function SimulatorModalsProvider(props: SimulatorModalsProviderProps) {
                 cons: 6,
                 weapon: {
                   ID: 1717242701642,
+                  type: "sword",
+                  code: 108,
+                  level: "70/70",
+                  refi: 1,
+                },
+                artifacts: [null, null, null, null, null],
+              },
+              {
+                name: "Amber",
+                level: "90/90",
+                NAs: 1,
+                ES: 1,
+                EB: 1,
+                cons: 6,
+                weapon: {
+                  ID: 1717242701643,
                   type: "sword",
                   code: 108,
                   level: "70/70",

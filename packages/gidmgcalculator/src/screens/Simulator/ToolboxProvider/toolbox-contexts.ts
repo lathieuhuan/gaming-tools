@@ -1,10 +1,10 @@
 import { AppCharacter } from "@Backend";
-import { PartyData, SimulationMember, SimulationTarget } from "@Src/types";
+import { SimulationMember, SimulationPartyData, SimulationTarget } from "@Src/types";
 import { createContext, useContext } from "react";
 import { ActiveMemberTools } from "./tools";
 
 export type ActiveSimulationInfo = {
-  partyData: PartyData;
+  partyData: SimulationPartyData;
   target: SimulationTarget;
 };
 

@@ -12,8 +12,8 @@ type ConfigTalentHitEvent = (args: Omit<ConfigTalentHitEventArgs, "partyData" | 
 
 export class ActiveMemberTools {
   private member: MemberControl;
-  private totalAttrSubscribers: Set<OnChangeTotalAttr> = new Set();
-  private bonusesSubscribers: Set<OnChangeBonuses> = new Set();
+  private totalAttrSubscribers = new Set<OnChangeTotalAttr>();
+  private bonusesSubscribers = new Set<OnChangeBonuses>();
   configTalentHitEvent: ConfigTalentHitEvent;
 
   constructor(member: MemberControl, configTalentHitEvent: ConfigTalentHitEvent) {

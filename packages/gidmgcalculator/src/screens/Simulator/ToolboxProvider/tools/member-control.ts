@@ -3,13 +3,11 @@ import {
   AttackBonusControl,
   AttackPattern,
   CalcItem,
-  CharacterBuff,
   CharacterCalc,
   LevelableTalentType,
   NORMAL_ATTACKS,
   SimulatorBuffApplier,
   TotalAttribute,
-  TotalAttributeControl,
   ResistanceReductionControl,
 } from "@Backend";
 import type {
@@ -21,11 +19,10 @@ import type {
   SimulationAttackBonus,
   SimulationAttributeBonus,
   SimulationTarget,
-  SimulationBonusCore,
 } from "@Src/types";
 
 // #to-do: clean up
-import { getNormalsConfig, AttackPatternConf, type NormalsConfig, CalcItemCalculator } from "@Src/backend/calculation";
+import { getNormalsConfig, AttackPatternConf, CalcItemCalculator, type NormalsConfig } from "@Src/backend/calculation";
 import { $AppWeapon } from "@Src/services";
 import { pickProps, removeEmpty } from "@Src/utils";
 import { SimulatorTotalAttributeControl } from "./total-attribute-control";
@@ -47,28 +44,27 @@ export type ConfigTalentHitEventArgs = {
 export class MemberControl {
   info: Character;
   data: AppCharacter;
-  totalAttr: TotalAttributeControl;
+  totalAttr: SimulatorTotalAttributeControl;
   attrBonus: SimulationAttributeBonus[] = [];
   attkBonus: SimulationAttackBonus[] = [];
-  private buffApplier: SimulatorBuffApplier;
+  buffApplier: SimulatorBuffApplier;
   private normalsConfig: NormalsConfig = {};
 
-  private onChangeTotalAttr: OnChangeTotalAttr | undefined;
-  private onChangeBonuses: OnChangeBonuses | undefined;
-
-  private rootTotalAttr: SimulatorTotalAttributeControl;
+  onChangeTotalAttr: OnChangeTotalAttr | undefined;
+  onChangeBonuses: OnChangeBonuses | undefined;
 
   constructor(member: SimulationMember, appChar: AppCharacter, partyData: PartyData) {
     const char: Character = pickProps(member, ["name", "level", "cons", "NAs", "ES", "EB"]);
     const appWeapon = $AppWeapon.get(member.weapon.code)!;
-    this.rootTotalAttr = new SimulatorTotalAttributeControl();
 
-    this.rootTotalAttr.construct(char, appChar, member.weapon, appWeapon, member.artifacts);
+    const rootTotalAttr = new SimulatorTotalAttributeControl();
+
+    rootTotalAttr.construct(char, appChar, member.weapon, appWeapon, member.artifacts);
 
     this.info = char;
     this.data = appChar;
 
-    this.totalAttr = this.rootTotalAttr.clone();
+    this.totalAttr = rootTotalAttr.clone();
     this.buffApplier = new SimulatorBuffApplier({ char, appChar, partyData }, this.totalAttr);
   }
 
@@ -77,105 +73,12 @@ export class MemberControl {
     this.onChangeBonuses = onChangeBonuses;
   };
 
-  reset = (partyData: PartyData) => {
-    this.totalAttr = this.rootTotalAttr.clone();
-    this.buffApplier = new SimulatorBuffApplier({ char: this.info, appChar: this.data, partyData }, this.totalAttr);
+  reset = () => {
+    this.totalAttr.reset();
     this.attrBonus = [];
     this.attkBonus = [];
 
     this.onChangeTotalAttr?.(this.totalAttr.finalize());
-  };
-
-  applyCharacterBuff = (performerName: string, buff: CharacterBuff, inputs: number[]) => {
-    if (performerName === this.data.name) {
-      // #to-do: implement normalsConfig to disable attack pattern
-      this.normalsConfig = getNormalsConfig(
-        {
-          char: this.info,
-          appChar: this.data,
-          partyData: [],
-        },
-        []
-      );
-    }
-
-    let attrBonusChanged = false;
-    let attkBonusChanged = false;
-
-    const trigger = {
-      character: performerName,
-      modifier: buff.src,
-    };
-
-    this.buffApplier.applyCharacterBuff({
-      buff,
-      description: "",
-      inputs,
-      applyAttrBonus: (bonus) => {
-        attrBonusChanged = true;
-
-        const existedIndex = this.attrBonus.findIndex(
-          (_bonus) =>
-            _bonus.trigger.character === trigger.character &&
-            _bonus.trigger.modifier === trigger.modifier &&
-            _bonus.toStat === bonus.stat
-        );
-
-        if (existedIndex === -1) {
-          this.attrBonus.push({
-            type: "ATTRIBUTE",
-            stable: bonus.stable,
-            toStat: bonus.stat,
-            value: bonus.value,
-            trigger,
-          });
-        } else {
-          this.attrBonus[existedIndex] = {
-            ...this.attrBonus[existedIndex],
-            value: bonus.value,
-          };
-        }
-      },
-      applyAttkBonus: (bonus) => {
-        attkBonusChanged = true;
-
-        const existedIndex = this.attkBonus.findIndex(
-          (_bonus) =>
-            _bonus.trigger.character === trigger.character &&
-            _bonus.trigger.modifier === trigger.modifier &&
-            _bonus.toType === bonus.module &&
-            _bonus.toKey === bonus.path
-        );
-
-        if (existedIndex === -1) {
-          this.attkBonus.push({
-            type: "ATTACK",
-            toType: bonus.module,
-            toKey: bonus.path,
-            value: bonus.value,
-            trigger,
-          });
-        } else {
-          this.attkBonus[existedIndex] = {
-            ...this.attkBonus[existedIndex],
-            value: bonus.value,
-          };
-        }
-      },
-    });
-
-    if (attrBonusChanged) {
-      this.totalAttr = this.rootTotalAttr.clone();
-
-      for (const bonus of this.attrBonus) {
-        const add = bonus.stable ? this.totalAttr.addStable : this.totalAttr.addUnstable;
-        add(bonus.toStat, bonus.value, `${bonus.trigger.character} / ${bonus.trigger.modifier}`);
-      }
-      this.onChangeTotalAttr?.(this.totalAttr.finalize());
-    }
-    if (attrBonusChanged || attkBonusChanged) {
-      this.onChangeBonuses?.(structuredClone(this.attrBonus), structuredClone(this.attkBonus));
-    }
   };
 
   private getHitInfo = (talent: LevelableTalentType, calcItemId: string) => {

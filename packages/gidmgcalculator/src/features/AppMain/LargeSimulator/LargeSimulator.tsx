@@ -21,15 +21,15 @@ function LargeSimulatorCore() {
         <ToolboxProvider>
           <div className="px-4 py-3 grow overflow-hidden">
             <div className="h-full flex space-x-2 custom-scrollbar">
-              <ModifyEventHost className="w-76 p-4 h-full rounded-md bg-surface-2" />
-              <HitEventHost className="w-76 p-4 h-full rounded-md bg-surface-1" />
+              <ModifyEventHost className="w-76 p-4 h-full rounded-md bg-surface-2 overflow-auto shrink-0" />
+              <HitEventHost className="w-76 p-4 h-full rounded-md bg-surface-1 overflow-auto shrink-0" />
 
-              <div className="grow">
-                <Timeline />
+              <div className="h-full grow overflow-auto shrink-0">
+                <Timeline className="w-76 p-4 rounded-md bg-surface-1" />
               </div>
 
-              <BonusDisplayer className="w-76 p-4 h-full rounded-md bg-surface-1" />
-              <MemberDetail className="w-76 p-4 h-full rounded-md bg-surface-1" />
+              <BonusDisplayer className="w-76 p-4 h-full rounded-md bg-surface-1 overflow-auto shrink-0" />
+              <MemberDetail className="w-76 p-4 h-full rounded-md bg-surface-1 overflow-auto shrink-0" />
             </div>
           </div>
         </ToolboxProvider>

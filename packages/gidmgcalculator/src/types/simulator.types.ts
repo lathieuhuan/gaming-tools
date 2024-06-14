@@ -1,6 +1,6 @@
 import type { AttackBonusKey, AttackBonusType, AttributeStat, LevelableTalentType } from "@Backend";
 import type { Artifact, Character, Weapon } from "./global.types";
-import type { ElementModCtrl, Target } from "./calculator.types";
+import type { ElementModCtrl, PartyData, Target } from "./calculator.types";
 
 export type SimulationManageInfo = {
   id: number;
@@ -12,11 +12,14 @@ export type SimulationManageInfo = {
 type BaseEvent = {
   id: number;
   performer: number;
+  isOnField?: boolean;
+  /** required if isOnField and is HitEvent */
+  duration?: number;
 };
 
 export type ModifyEvent = BaseEvent & {
   type: "MODIFY";
-  receiver: number;
+  receiver: number | number[];
   modifier: {
     id: number;
     inputs: number[];
@@ -30,7 +33,6 @@ export type HitEvent = BaseEvent & {
   talent: LevelableTalentType;
   calcItemId: string;
   elmtModCtrls?: TalentHitEventMod;
-  duration: number;
 };
 
 export type SimulationEvent = ModifyEvent | HitEvent;
@@ -39,6 +41,8 @@ export type SimulationMember = Character & {
   weapon: Weapon;
   artifacts: Array<Artifact | null>;
 };
+
+export type SimulationPartyData = NonNullable<PartyData[number]>[];
 
 /** ========== BONUSES ========== */
 

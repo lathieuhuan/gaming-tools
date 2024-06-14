@@ -15,6 +15,20 @@ import type {
 import type { ResistanceReductionControl } from "@Src/backend/controls";
 import type { CalculationInfo } from "@Src/backend/utils";
 
+export type AppliedAttributeBonus = {
+  stat: AttributeStat;
+  value: number;
+  description: string;
+  stable: boolean;
+};
+
+export type AppliedAttackBonus = {
+  module: AttackBonusType;
+  path: AttackBonusKey;
+  value: number;
+  description: string;
+};
+
 export type ApplyBonusArgs = {
   bonus: AppliedBonus;
   vision: ElementType;
@@ -22,8 +36,8 @@ export type ApplyBonusArgs = {
   inputs: number[];
   description: string;
   isStackable?: (paths: string | string[]) => boolean;
-  applyAttrBonus: (args: { stat: AttributeStat; value: number; description: string; stable: boolean }) => void;
-  applyAttkBonus: (args: { module: AttackBonusType; path: AttackBonusKey; value: number; description: string }) => void;
+  applyAttrBonus: (args: AppliedAttributeBonus) => void;
+  applyAttkBonus: (args: AppliedAttackBonus) => void;
 };
 
 type ApplyBonusArgsPick = Pick<ApplyBonusArgs, "description" | "inputs" | "applyAttrBonus" | "applyAttkBonus">;
