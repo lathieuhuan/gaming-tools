@@ -78,6 +78,38 @@ export function SimulatorModalsProvider(props: SimulatorModalsProviderProps) {
                 },
                 artifacts: [null, null, null, null, null],
               },
+              {
+                name: "Kazuha",
+                level: "90/90",
+                NAs: 1,
+                ES: 1,
+                EB: 1,
+                cons: 6,
+                weapon: {
+                  ID: 1717242701644,
+                  type: "sword",
+                  code: 108,
+                  level: "70/70",
+                  refi: 1,
+                },
+                artifacts: [null, null, null, null, null],
+              },
+              {
+                name: "Sucrose",
+                level: "90/90",
+                NAs: 1,
+                ES: 1,
+                EB: 1,
+                cons: 6,
+                weapon: {
+                  ID: 1717242701645,
+                  type: "sword",
+                  code: 108,
+                  level: "70/70",
+                  refi: 1,
+                },
+                artifacts: [null, null, null, null, null],
+              },
             ];
 
             dispatch(addSimulation({ members }));

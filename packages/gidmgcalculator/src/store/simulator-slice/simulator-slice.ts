@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 import type { HitEvent, ModifyEvent } from "@Src/types";
 import type { AddSimulationPayload, SimulatorState } from "./simulator-slice.types";
-import { Setup_ } from "@Src/utils";
+import { Setup_, removeEmpty } from "@Src/utils";
 import { $AppSettings } from "@Src/services";
 import { getSimulation } from "./simulator-slice.utils";
 
@@ -59,7 +59,10 @@ export const simulatorSlice = createSlice({
           }
           id = current.id + 1;
         }
-        events.push({ id, ...action.payload });
+        const event = structuredClone(action.payload);
+        event.alsoSwitch = event.alsoSwitch ? true : undefined;
+
+        events.push({ id, ...removeEmpty(event) });
       }
     },
     changeActiveMember: (state, action: PayloadAction<string>) => {

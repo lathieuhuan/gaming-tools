@@ -1,4 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
+import { FaSyncAlt } from "react-icons/fa";
+import { Button } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectActiveMember, changeActiveMember } from "@Store/simulator-slice";
@@ -30,18 +32,20 @@ export function Timeline(props: { className?: string }) {
     <div className={props.className}>
       <PartyDisplayer
         simulation={simulation}
-        onFieldMember={chunks[chunks.length - 1]?.owner.code}
+        onFieldCode={chunks[0]?.ownerCode}
         onChangeOnFieldMember={simulation.switchMember}
       />
 
       <div className="h-full hide-scrollbar space-y-2">
         {chunks.map((chunk, index) => {
+          const chunkOwner = simulation.getMemberData(chunk.ownerCode);
+
           return (
             <Fragment key={chunk.id}>
               {index ? <div className="h-px bg-surface-border" /> : null}
 
               <div className="flex gap-2">
-                <div>{chunk.owner.name}</div>
+                <div>{chunkOwner.name}</div>
                 <div>
                   {chunk.events.map((event) => {
                     return (
@@ -61,7 +65,7 @@ export function Timeline(props: { className?: string }) {
 }
 
 interface PartyDisplayerProps {
-  onFieldMember?: number;
+  onFieldCode?: number;
   simulation: ActiveSimulation;
   onChangeOnFieldMember?: (code: number) => void;
 }
@@ -78,10 +82,21 @@ function PartyDisplayer(props: PartyDisplayerProps) {
       {props.simulation.partyData.map((data) => {
         return (
           <div key={data.code}>
-            <div title={data.name} onClick={() => onClickMember(data.name)}>
-              <CharacterPortrait withColorBg={data.name === activeMemberName} info={data} />
+            <CharacterPortrait
+              size="small"
+              withColorBg={data.name === activeMemberName}
+              info={data}
+              onClick={() => onClickMember(data.name)}
+            />
+
+            <div className="mt-3 flex-center">
+              <Button
+                size="small"
+                icon={<FaSyncAlt />}
+                disabled={data.code === props.onFieldCode}
+                onClick={() => props.onChangeOnFieldMember?.(data.code)}
+              />
             </div>
-            {data.code === props.onFieldMember ? <p>onField</p> : null}
           </div>
         );
       })}

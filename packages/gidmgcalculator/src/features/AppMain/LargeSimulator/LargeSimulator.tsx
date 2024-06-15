@@ -25,7 +25,7 @@ function LargeSimulatorCore() {
               <HitEventHost className="w-76 p-4 h-full rounded-md bg-surface-1 overflow-auto shrink-0" />
 
               <div className="h-full grow overflow-auto shrink-0">
-                <Timeline className="w-76 p-4 rounded-md bg-surface-1" />
+                <Timeline className="p-4 rounded-md bg-surface-1" />
               </div>
 
               <BonusDisplayer className="w-76 p-4 h-full rounded-md bg-surface-1 overflow-auto shrink-0" />

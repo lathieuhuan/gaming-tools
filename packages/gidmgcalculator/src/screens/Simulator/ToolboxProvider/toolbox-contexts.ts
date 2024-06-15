@@ -3,7 +3,10 @@ import type { AppCharacter } from "@Backend";
 import type { SimulationMember, SimulationPartyData, SimulationTarget } from "@Src/types";
 import type { ActiveMemberTools, SimulationControl } from "./tools";
 
-export type ActiveSimulation = Pick<SimulationControl, "switchMember" | "subscribeEvents"> & {
+export type ActiveSimulation = Pick<
+  SimulationControl,
+  "getLastestChunk" | "getMemberData" | "switchMember" | "subscribeEvents"
+> & {
   partyData: SimulationPartyData;
   target: SimulationTarget;
 };

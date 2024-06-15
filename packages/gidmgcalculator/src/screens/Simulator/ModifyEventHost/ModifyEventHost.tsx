@@ -21,18 +21,21 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
   const dispatch = useDispatch();
   const [inputsList, setInputsList] = useState(initalInputsList);
 
-  const onMakeEvent = (mod: CharacterBuff, inputs: number[]) => {
+  const onMakeEvent = (mod: CharacterBuff, inputs: number[], alsoSwitch?: boolean) => {
+    const performerCode = member.data.code;
+
     dispatch(
       addEvent({
         type: "MODIFY",
         performer: {
           type: "CHARACTER",
-          code: member.data.code,
+          code: performerCode,
         },
         modifier: {
           id: mod.index,
-          inputs: [...inputs],
+          inputs,
         },
+        alsoSwitch: alsoSwitch && performerCode !== simulation.getLastestChunk().ownerCode ? true : undefined,
       })
     );
   };
@@ -72,16 +75,22 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
             />
 
             <div className={"pr-1 flex justify-end " + (inputConfigs?.length ? "mt-3" : "mt-2")}>
-              <Button shape="square" size="small" onClick={() => onMakeEvent(modifier, inputs)}>
+              <Button
+                shape="square"
+                size="small"
+                className="rounded-r-none"
+                onClick={() => onMakeEvent(modifier, inputs)}
+              >
                 Trigger
               </Button>
 
-              <div className="ml-4 flex rounded overflow-hidden bg-[var(--ron-color-light-surface-4)] text-[var(--ron-color-on-light)]">
-                <button className="px-2 py-0.5 glow-on-hover">Trigger</button>
-                <button className="px-1.5 p-0.5 glow-on-hover border-l border-surface-1">
-                  <FaSyncAlt />
-                </button>
-              </div>
+              <Button
+                shape="square"
+                size="small"
+                className="ml-0.5 rounded-l-none"
+                icon={<FaSyncAlt />}
+                onClick={() => onMakeEvent(modifier, inputs, true)}
+              />
             </div>
           </div>
         );

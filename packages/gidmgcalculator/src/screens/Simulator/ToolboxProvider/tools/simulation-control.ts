@@ -10,16 +10,12 @@ import type {
 } from "@Src/types";
 
 import { $AppCharacter } from "@Src/services";
-import { pickProps, uuid } from "@Src/utils";
+import { toArray, uuid } from "@Src/utils";
 import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
 
 export type SimulationChunk = {
   id: string;
-  owner: {
-    code: number;
-    name: string;
-    icon: string;
-  };
+  ownerCode: number;
   events: SimulationEvent[];
 };
 
@@ -49,37 +45,41 @@ export class SimulationControl {
     this.resetTimeline();
   }
 
-  switchMember = (code: number) => {
-    const data = this.partyData.find((data) => data.code === code);
-    if (!data) {
-      return;
-    }
+  getLastestChunk = () => {
+    const lastestChunk = this.chunks[0];
 
-    const firstChunk = this.chunks[0];
-
-    if (firstChunk?.owner.code !== code) {
-      if (!firstChunk.events.length) {
-        this.chunks.shift();
-      }
-      this.chunks.unshift({
+    if (!lastestChunk) {
+      this.chunks[0] = {
         id: uuid(),
-        owner: pickProps(data, ["code", "name", "icon"]),
+        ownerCode: this.partyData[0].code,
         events: [],
-      });
-      this.onChangeEvents();
+      };
+      return this.chunks[0];
     }
+    return lastestChunk;
+  };
+
+  getMemberData = (code: number) => {
+    return this.member[code].data;
+  };
+
+  switchMember = (code: number) => {
+    this.addEvent([], code);
+    this.onChangeEvents();
   };
 
   private resetTimeline = () => {
     this.chunks = [
       {
         id: uuid(),
-        owner: pickProps(this.partyData[0], ["code", "name", "icon"]),
+        ownerCode: this.partyData[0].code,
         events: [],
       },
     ];
     this.eventIds = [];
   };
+
+  // ========== EVENTS ==========
 
   private onChangeEvents = () => {
     this.eventSubscribers.forEach((callback) => callback(this.chunks.concat()));
@@ -140,33 +140,27 @@ export class SimulationControl {
         this.hit(event);
         break;
     }
+    this.addEvent(event, event.alsoSwitch ? event.performer.code : undefined);
     this.eventIds.push(event.id);
+  };
 
-    if (event.alsoSwitch) {
-      // event.performer.type should be 'CHARACTER'
-      const member = this.member[event.performer.code];
+  private addEvent = (event: SimulationEvent | SimulationEvent[], ownerCode?: number) => {
+    const lastestChunk = this.getLastestChunk();
 
-      if (member) {
-        this.chunks.unshift({
-          id: uuid(),
-          owner: pickProps(member.data, ["code", "name", "icon"]),
-          events: [event],
-        });
-        return;
+    if (ownerCode && ownerCode !== lastestChunk.ownerCode) {
+      if (!lastestChunk.events.length) {
+        this.chunks.shift();
       }
-    }
-    const firstChunk = this.chunks[0];
 
-    if (firstChunk) {
-      firstChunk.events.unshift(event);
+      this.chunks.unshift({
+        id: uuid(),
+        ownerCode,
+        events: toArray(event),
+      });
       return;
     }
 
-    this.chunks[0] = {
-      id: uuid(),
-      owner: pickProps(this.partyData[0], ["code", "name", "icon"]),
-      events: [event],
-    };
+    lastestChunk.events.unshift(...toArray(event));
   };
 
   // ========== MODIFY ==========
@@ -178,8 +172,7 @@ export class SimulationControl {
       case "PARTY":
         return this.partyData.map((data) => this.member[data.code]);
       case "ACTIVE_UNIT": {
-        const firstChunk = this.chunks[0];
-        const onFieldMember = firstChunk ? firstChunk.owner.code : this.partyData[0].code;
+        const onFieldMember = this.getLastestChunk().ownerCode;
         return [this.member[onFieldMember]];
       }
       default:
