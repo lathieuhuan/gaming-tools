@@ -1,4 +1,4 @@
-import { ActualAttackPattern, CalcItemRecord } from "@Backend";
+import type { ActualAttackPattern, CalcItemRecord } from "@Backend";
 import type { ConfigTalentHitEventArgs, MemberControl, OnChangeBonuses, OnChangeTotalAttr } from "./member-control";
 
 export type TalentEventConfig = {

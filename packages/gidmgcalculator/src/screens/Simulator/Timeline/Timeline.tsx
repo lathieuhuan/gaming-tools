@@ -1,8 +1,8 @@
 import { Fragment, useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectActiveMember, switchMember } from "@Store/simulator-slice";
-import { SimulationChunk, useActiveSimulation } from "@Simulator/ToolboxProvider";
+import { selectActiveMember, changeActiveMember } from "@Store/simulator-slice";
+import { ActiveSimulation, SimulationChunk, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { CharacterPortrait } from "@Src/components";
 
 export function Timeline(props: { className?: string }) {
@@ -22,14 +22,22 @@ export function Timeline(props: { className?: string }) {
   console.log("render: Timeline");
   console.log(chunks);
 
+  if (!simulation) {
+    return null;
+  }
+
   return (
     <div className={props.className}>
-      <PartyDisplayer simulation={simulation} onFieldCode={chunks[chunks.length - 1]?.owner.code} />
+      <PartyDisplayer
+        simulation={simulation}
+        onFieldMember={chunks[chunks.length - 1]?.owner.code}
+        onChangeOnFieldMember={simulation.switchMember}
+      />
 
       <div className="h-full hide-scrollbar space-y-2">
         {chunks.map((chunk, index) => {
           return (
-            <Fragment key={index}>
+            <Fragment key={chunk.id}>
               {index ? <div className="h-px bg-surface-border" /> : null}
 
               <div className="flex gap-2">
@@ -53,26 +61,27 @@ export function Timeline(props: { className?: string }) {
 }
 
 interface PartyDisplayerProps {
-  onFieldCode?: number;
-  simulation: ReturnType<typeof useActiveSimulation>;
+  onFieldMember?: number;
+  simulation: ActiveSimulation;
+  onChangeOnFieldMember?: (code: number) => void;
 }
 function PartyDisplayer(props: PartyDisplayerProps) {
   const dispatch = useDispatch();
   const activeMemberName = useSelector(selectActiveMember);
 
   const onClickMember = (name: string) => {
-    dispatch(switchMember(name));
+    dispatch(changeActiveMember(name));
   };
 
   return (
     <div className="flex gap-4">
-      {props.simulation?.partyData.map((data) => {
+      {props.simulation.partyData.map((data) => {
         return (
           <div key={data.code}>
             <div title={data.name} onClick={() => onClickMember(data.name)}>
               <CharacterPortrait withColorBg={data.name === activeMemberName} info={data} />
             </div>
-            {data.code === props.onFieldCode ? <p>onField</p> : null}
+            {data.code === props.onFieldMember ? <p>onField</p> : null}
           </div>
         );
       })}

@@ -10,10 +10,11 @@ import type {
 } from "@Src/types";
 
 import { $AppCharacter } from "@Src/services";
-import { pickProps } from "@Src/utils";
+import { pickProps, uuid } from "@Src/utils";
 import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
 
 export type SimulationChunk = {
+  id: string;
   owner: {
     code: number;
     name: string;
@@ -28,7 +29,6 @@ export class SimulationControl {
   partyData: SimulationPartyData;
   target: SimulationTarget;
   member: Record<number, MemberControl>;
-  onFieldMember: number;
 
   private eventIds: number[] = [];
   private chunks: SimulationChunk[] = [];
@@ -43,19 +43,38 @@ export class SimulationControl {
       const memberData = partyData[i];
       memberManager[memberData.code] = new MemberControl(member, partyData[i], partyData);
     }
-    this.onFieldMember = partyData[0].code;
     this.member = memberManager;
     this.partyData = partyData;
     this.target = target;
     this.resetTimeline();
   }
 
-  private resetTimeline = () => {
-    const firstMember = this.partyData[0];
+  switchMember = (code: number) => {
+    const data = this.partyData.find((data) => data.code === code);
+    if (!data) {
+      return;
+    }
 
+    const firstChunk = this.chunks[0];
+
+    if (firstChunk?.owner.code !== code) {
+      if (!firstChunk.events.length) {
+        this.chunks.shift();
+      }
+      this.chunks.unshift({
+        id: uuid(),
+        owner: pickProps(data, ["code", "name", "icon"]),
+        events: [],
+      });
+      this.onChangeEvents();
+    }
+  };
+
+  private resetTimeline = () => {
     this.chunks = [
       {
-        owner: pickProps(firstMember, ["code", "name", "icon"]),
+        id: uuid(),
+        owner: pickProps(this.partyData[0], ["code", "name", "icon"]),
         events: [],
       },
     ];
@@ -128,25 +147,29 @@ export class SimulationControl {
       const member = this.member[event.performer.code];
 
       if (member) {
-        this.chunks.push({
+        this.chunks.unshift({
+          id: uuid(),
           owner: pickProps(member.data, ["code", "name", "icon"]),
           events: [event],
         });
         return;
       }
     }
-    const lastChunk = this.chunks[this.chunks.length - 1];
+    const firstChunk = this.chunks[0];
 
-    if (lastChunk) {
-      lastChunk.events.push(event);
+    if (firstChunk) {
+      firstChunk.events.unshift(event);
       return;
     }
 
     this.chunks[0] = {
+      id: uuid(),
       owner: pickProps(this.partyData[0], ["code", "name", "icon"]),
       events: [event],
     };
   };
+
+  // ========== MODIFY ==========
 
   private getReceivers = (performer: MemberControl, affect: ModifierAffectType): MemberControl[] => {
     switch (affect) {
@@ -154,8 +177,11 @@ export class SimulationControl {
         return [performer];
       case "PARTY":
         return this.partyData.map((data) => this.member[data.code]);
-      case "ACTIVE_UNIT":
-        return [this.member[this.onFieldMember]];
+      case "ACTIVE_UNIT": {
+        const firstChunk = this.chunks[0];
+        const onFieldMember = firstChunk ? firstChunk.owner.code : this.partyData[0].code;
+        return [this.member[onFieldMember]];
+      }
       default:
         return [];
     }
@@ -274,6 +300,8 @@ export class SimulationControl {
         break;
     }
   };
+
+  // ========== HIT ==========
 
   private hit = (event: HitEvent) => {
     switch (event.performer.type) {

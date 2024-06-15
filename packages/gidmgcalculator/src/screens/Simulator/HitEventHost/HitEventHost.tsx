@@ -1,6 +1,6 @@
 import type { HitEvent } from "@Src/types";
 
-import { ActiveMemberInfo, useActiveMember } from "@Simulator/ToolboxProvider";
+import { ActiveMember, useActiveMember } from "@Simulator/ToolboxProvider";
 import { useTranslation } from "@Src/hooks";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
@@ -11,7 +11,7 @@ import { HitEventCoordinator, HitEventDisplayer } from "./HitEventCoordinator";
 import { TalentHitEvent } from "./TalentHitEvent";
 
 interface HitEventHostProps {
-  member: ActiveMemberInfo;
+  member: ActiveMember;
   configs: TalentHitEventConfig[];
 }
 
@@ -23,7 +23,10 @@ function HitEventHostCore({ member, configs }: HitEventHostProps) {
     dispatch(
       addEvent({
         type: "HIT",
-        performer: member.data.code,
+        performer: {
+          type: "CHARACTER",
+          code: member.data.code,
+        },
         ...eventInfo,
       })
     );

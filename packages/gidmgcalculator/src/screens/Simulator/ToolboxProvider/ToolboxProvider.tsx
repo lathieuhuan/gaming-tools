@@ -27,9 +27,10 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
     const control = new SimulationControl(simulation.members, simulation.target);
 
     return {
-      info: {
+      toolbox: {
         partyData: control.partyData,
         target: simulation.target,
+        switchMember: control.switchMember,
         subscribeEvents: control.subscribeEvents,
       },
       members: simulation.members,
@@ -41,7 +42,7 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
     if (!activeSimulation || !activeMemberName) {
       return null;
     }
-    const memberCode = activeSimulation.info.partyData.find((member) => member?.name === activeMemberName)?.code;
+    const memberCode = activeSimulation.toolbox.partyData.find((member) => member?.name === activeMemberName)?.code;
     const memberInfo = activeSimulation.members.find((member) => member.name === activeMemberName);
     if (!memberCode || !memberInfo) {
       return null;
@@ -59,7 +60,7 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
   }, [activeSimulation, activeMemberName]);
 
   return (
-    <ActiveSimulationContext.Provider value={activeSimulation?.info}>
+    <ActiveSimulationContext.Provider value={activeSimulation?.toolbox ?? null}>
       <ActiveMemberContext.Provider value={activeMember}>
         <EventsProcessor control={activeSimulation?.control} />
         {props.children}

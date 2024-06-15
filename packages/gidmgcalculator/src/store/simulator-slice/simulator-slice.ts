@@ -62,12 +62,12 @@ export const simulatorSlice = createSlice({
         events.push({ id, ...action.payload });
       }
     },
-    switchMember: (state, action: PayloadAction<string>) => {
+    changeActiveMember: (state, action: PayloadAction<string>) => {
       state.activeMember = action.payload;
     },
   },
 });
 
-export const { addSimulation, addEvent, switchMember } = simulatorSlice.actions;
+export const { addSimulation, addEvent, changeActiveMember } = simulatorSlice.actions;
 
 export default simulatorSlice.reducer;

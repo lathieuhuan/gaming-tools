@@ -2,27 +2,29 @@ import {
   AppCharacter,
   AttackBonusControl,
   AttackPattern,
+  AttackPatternConf,
   CalcItem,
+  CalcItemCalculator,
   CharacterCalc,
   LevelableTalentType,
   NORMAL_ATTACKS,
+  NormalsConfig,
+  ResistanceReductionControl,
   SimulatorBuffApplier,
   TotalAttribute,
-  ResistanceReductionControl,
+  getNormalsConfig,
 } from "@Backend";
 import type {
   Character,
   ElementModCtrl,
   HitEvent,
   PartyData,
-  SimulationMember,
   SimulationAttackBonus,
   SimulationAttributeBonus,
+  SimulationMember,
   SimulationTarget,
 } from "@Src/types";
 
-// #to-do: clean up
-import { getNormalsConfig, AttackPatternConf, CalcItemCalculator, type NormalsConfig } from "@Src/backend/calculation";
 import { $AppWeapon } from "@Src/services";
 import { pickProps, removeEmpty } from "@Src/utils";
 import { SimulatorTotalAttributeControl } from "./total-attribute-control";

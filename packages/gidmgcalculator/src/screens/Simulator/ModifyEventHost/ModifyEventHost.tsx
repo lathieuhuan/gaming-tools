@@ -1,22 +1,18 @@
 import { useState } from "react";
+import { FaSyncAlt } from "react-icons/fa";
 import { Button } from "rond";
 import { CharacterBuff, EntityCalc } from "@Backend";
 
 import { Modifier_, parseAbilityDescription } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
-import {
-  ActiveMemberInfo,
-  ActiveSimulationInfo,
-  useActiveMember,
-  useActiveSimulation,
-} from "@Simulator/ToolboxProvider";
+import { ActiveMember, ActiveSimulation, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 
 import { GenshinModifierView } from "@Src/components";
 
 interface ModifyEventHostProps {
-  member: ActiveMemberInfo;
-  simulation: ActiveSimulationInfo;
+  member: ActiveMember;
+  simulation: ActiveSimulation;
   initalInputsList?: number[][];
   buffs?: CharacterBuff[];
 }
@@ -79,6 +75,13 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
               <Button shape="square" size="small" onClick={() => onMakeEvent(modifier, inputs)}>
                 Trigger
               </Button>
+
+              <div className="ml-4 flex rounded overflow-hidden bg-[var(--ron-color-light-surface-4)] text-[var(--ron-color-on-light)]">
+                <button className="px-2 py-0.5 glow-on-hover">Trigger</button>
+                <button className="px-1.5 p-0.5 glow-on-hover border-l border-surface-1">
+                  <FaSyncAlt />
+                </button>
+              </div>
             </div>
           </div>
         );
