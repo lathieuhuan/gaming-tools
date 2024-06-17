@@ -5,7 +5,7 @@ import { Button } from "rond";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectActiveMember, changeActiveMember } from "@Store/simulator-slice";
 import { ActiveSimulation, SimulationChunk, useActiveSimulation } from "@Simulator/ToolboxProvider";
-import { CharacterPortrait } from "@Src/components";
+import { CharacterPortrait, GenshinImage } from "@Src/components";
 
 export function Timeline(props: { className?: string }) {
   const [chunks, setChunks] = useState<SimulationChunk[]>([]);
@@ -22,7 +22,7 @@ export function Timeline(props: { className?: string }) {
   }, [simulation]);
 
   console.log("render: Timeline");
-  console.log(chunks);
+  if (chunks.length) console.log(chunks);
 
   if (!simulation) {
     return null;
@@ -36,7 +36,7 @@ export function Timeline(props: { className?: string }) {
         onChangeOnFieldMember={simulation.switchMember}
       />
 
-      <div className="h-full hide-scrollbar space-y-2">
+      <div className="mt-4 h-full hide-scrollbar space-y-2">
         {chunks.map((chunk, index) => {
           const chunkOwner = simulation.getMemberData(chunk.ownerCode);
 
@@ -45,12 +45,18 @@ export function Timeline(props: { className?: string }) {
               {index ? <div className="h-px bg-surface-border" /> : null}
 
               <div className="flex gap-2">
-                <div>{chunkOwner.name}</div>
-                <div>
+                <CharacterPortrait size="custorm" className="w-12 h-12" info={chunkOwner} />
+
+                <div className="grow space-y-2">
                   {chunk.events.map((event) => {
+                    const performer = simulation.getMemberData(event.performer.code);
+
                     return (
-                      <div key={event.id}>
-                        {event.type} {event.performer.code}
+                      <div key={event.id} className="p-2 rounded flex items-center bg-surface-2">
+                        <div className="w-7 h-7 mr-2">
+                          <GenshinImage src={performer.sideIcon} />
+                        </div>
+                        <span className="capitalize">{event.type.toLowerCase()}</span>
                       </div>
                     );
                   })}

@@ -1,6 +1,6 @@
 import type { HitEvent } from "@Src/types";
 
-import { ActiveMember, useActiveMember } from "@Simulator/ToolboxProvider";
+import { ActiveMember, ActiveSimulation, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { useTranslation } from "@Src/hooks";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
@@ -11,15 +11,19 @@ import { HitEventCoordinator, HitEventDisplayer } from "./HitEventCoordinator";
 import { TalentHitEvent } from "./TalentHitEvent";
 
 interface HitEventHostProps {
+  simulation: ActiveSimulation;
   member: ActiveMember;
   configs: TalentHitEventConfig[];
 }
 
-function HitEventHostCore({ member, configs }: HitEventHostProps) {
+function HitEventHostCore({ simulation, member, configs }: HitEventHostProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const onPerformTalentHitEvent = (eventInfo: Omit<HitEvent, "id" | "type" | "performer">) => {
+    const performerCode = member.data.code;
+    const alsoSwitch = eventInfo.alsoSwitch && performerCode !== simulation.getLastestChunk().ownerCode;
+
     dispatch(
       addEvent({
         type: "HIT",
@@ -28,6 +32,7 @@ function HitEventHostCore({ member, configs }: HitEventHostProps) {
           code: member.data.code,
         },
         ...eventInfo,
+        alsoSwitch,
       })
     );
   };
@@ -77,10 +82,11 @@ function HitEventHostCore({ member, configs }: HitEventHostProps) {
                               elmtModCtrls,
                             });
                           }}
-                          onPerformEvent={(elmtModCtrls) =>
+                          onPerformEvent={(elmtModCtrls, alsoSwitch) =>
                             onPerformTalentHitEvent({
                               ...eventInfo,
                               elmtModCtrls,
+                              alsoSwitch,
                             })
                           }
                         />
@@ -109,15 +115,20 @@ function HitEventHostCore({ member, configs }: HitEventHostProps) {
 }
 
 export function HitEventHost(props: { className?: string }) {
+  const simulation = useActiveSimulation();
   const activeMember = useActiveMember();
 
-  if (!activeMember) {
+  if (!simulation || !activeMember) {
     return null;
   }
 
   return (
     <div className={props.className}>
-      <HitEventHostCore member={activeMember} configs={getTalentHitEventConfig(activeMember.data)} />
+      <HitEventHostCore
+        simulation={simulation}
+        member={activeMember}
+        configs={getTalentHitEventConfig(activeMember.data)}
+      />
     </div>
   );
 }

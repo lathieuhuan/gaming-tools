@@ -10,16 +10,20 @@ import { ActiveMember, ActiveSimulation, useActiveMember, useActiveSimulation } 
 
 import { GenshinModifierView } from "@Src/components";
 
+type InputsListByMember = Record<number, number[][]>;
+
 interface ModifyEventHostProps {
   member: ActiveMember;
   simulation: ActiveSimulation;
-  initalInputsList?: number[][];
+  initalInputsListByMember?: InputsListByMember;
   buffs?: CharacterBuff[];
 }
 
-function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs = [] }: ModifyEventHostProps) {
+function ModifyEventHostCore({ member, initalInputsListByMember = {}, simulation, buffs = [] }: ModifyEventHostProps) {
   const dispatch = useDispatch();
-  const [inputsList, setInputsList] = useState(initalInputsList);
+  const [inputsListByMember, setInputsListByMember] = useState(initalInputsListByMember);
+
+  const inputsList = inputsListByMember[member.data.code];
 
   const onMakeEvent = (mod: CharacterBuff, inputs: number[], alsoSwitch?: boolean) => {
     const performerCode = member.data.code;
@@ -38,6 +42,16 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
         alsoSwitch: alsoSwitch && performerCode !== simulation.getLastestChunk().ownerCode ? true : undefined,
       })
     );
+  };
+
+  const onChangeInput = (modIndex: number, inputIndex: number, value: number) => {
+    setInputsListByMember((prevInputsList) => {
+      const newInputsList = { ...prevInputsList };
+      const mod = prevInputsList[member.data.code][modIndex];
+
+      if (mod) mod[inputIndex] = value;
+      return newInputsList;
+    });
   };
 
   return (
@@ -66,11 +80,7 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
               inputs={inputs}
               inputConfigs={inputConfigs}
               onSelectOption={(value, inputIndex) => {
-                setInputsList((prevList) => {
-                  const newList = [...prevList];
-                  newList[modIndex][inputIndex] = value;
-                  return newList;
-                });
+                onChangeInput(modIndex, inputIndex, value);
               }}
             />
 
@@ -101,19 +111,37 @@ function ModifyEventHostCore({ member, initalInputsList = [], simulation, buffs 
 
 export function ModifyEventHost(props: { className?: string }) {
   const simulation = useActiveSimulation();
-  const member = useActiveMember();
+  const activeMember = useActiveMember();
 
-  if (!simulation || !member) {
+  if (!simulation || !activeMember) {
     return null;
   }
 
-  const buffs = member.data.buffs?.filter((buff) => EntityCalc.isGrantedEffect(buff, member.info));
+  const activeMemberBuffs: CharacterBuff[] = [];
+  const initalInputsListByMember: InputsListByMember = {};
 
-  const initalInputsList = buffs?.map((buff) => Modifier_.createModCtrl(buff, true).inputs ?? []);
+  for (const data of simulation.partyData) {
+    const buffs = simulation
+      .getMemberData(data.code)
+      .buffs?.filter((buff) => EntityCalc.isGrantedEffect(buff, activeMember.info));
+
+    if (buffs) {
+      initalInputsListByMember[data.code] = buffs.map((buff) => Modifier_.createModCtrl(buff, true).inputs ?? []);
+
+      if (data.code === activeMember.data.code) {
+        activeMemberBuffs.push(...buffs);
+      }
+    }
+  }
 
   return (
     <div className={props.className}>
-      <ModifyEventHostCore {...{ simulation, member, initalInputsList, buffs }} />
+      <ModifyEventHostCore
+        simulation={simulation}
+        member={activeMember}
+        initalInputsListByMember={initalInputsListByMember}
+        buffs={activeMemberBuffs}
+      />
     </div>
   );
 }

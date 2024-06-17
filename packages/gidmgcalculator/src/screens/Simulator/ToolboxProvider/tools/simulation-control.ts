@@ -1,4 +1,4 @@
-import type { AppliedAttackBonus, AppliedAttributeBonus, ModifierAffectType } from "@Backend";
+import type { AppliedAttackBonus, AppliedAttributeBonus, AttackElement, ModifierAffectType } from "@Backend";
 import type {
   HitEvent,
   ModifyEvent,
@@ -13,10 +13,26 @@ import { $AppCharacter } from "@Src/services";
 import { toArray, uuid } from "@Src/utils";
 import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
 
+type ProcessedBaseEvent = {
+  valid: boolean;
+};
+
+type ProcessedHitEvent = HitEvent &
+  ProcessedBaseEvent & {
+    damage: {
+      value: number;
+      element: AttackElement;
+    };
+  };
+
+type ProcessedModifyEvent = ModifyEvent & ProcessedBaseEvent;
+
+type ProcessedEvent = ProcessedModifyEvent | ProcessedHitEvent;
+
 export type SimulationChunk = {
   id: string;
   ownerCode: number;
-  events: SimulationEvent[];
+  events: ProcessedEvent[];
 };
 
 type OnchangeEvent = (chunks: SimulationChunk[]) => void;
@@ -132,35 +148,40 @@ export class SimulationControl {
   };
 
   private processNewEvent = (event: SimulationEvent) => {
+    let processedEvent: ProcessedEvent;
+
     switch (event.type) {
       case "MODIFY":
-        this.modify(event);
+        processedEvent = this.modify(event);
         break;
       case "HIT":
-        this.hit(event);
+        processedEvent = this.hit(event);
         break;
     }
-    this.addEvent(event, event.alsoSwitch ? event.performer.code : undefined);
+
+    this.addEvent(processedEvent, event.alsoSwitch ? event.performer.code : undefined);
     this.eventIds.push(event.id);
   };
 
-  private addEvent = (event: SimulationEvent | SimulationEvent[], ownerCode?: number) => {
+  private addEvent = (event: ProcessedEvent | ProcessedEvent[], ownerCode?: number) => {
     const lastestChunk = this.getLastestChunk();
 
-    if (ownerCode && ownerCode !== lastestChunk.ownerCode) {
-      if (!lastestChunk.events.length) {
-        this.chunks.shift();
-      }
-
-      this.chunks.unshift({
-        id: uuid(),
-        ownerCode,
-        events: toArray(event),
-      });
+    if (!ownerCode) {
+      lastestChunk.events.unshift(...toArray(event));
       return;
     }
-
-    lastestChunk.events.unshift(...toArray(event));
+    if (!lastestChunk.events.length) {
+      this.chunks.shift();
+    }
+    if (ownerCode === this.getLastestChunk().ownerCode) {
+      lastestChunk.events.unshift(...toArray(event));
+      return;
+    }
+    this.chunks.unshift({
+      id: uuid(),
+      ownerCode,
+      events: toArray(event),
+    });
   };
 
   // ========== MODIFY ==========
@@ -242,7 +263,8 @@ export class SimulationControl {
   };
 
   private characterModify = (performer: MemberControl, event: ModifyEvent) => {
-    const buff = performer?.data.buffs?.find((buff) => buff.index === event.modifier.id);
+    const { id, inputs = [] } = event.modifier;
+    const buff = performer?.data.buffs?.find((buff) => buff.index === id);
     if (!buff) return;
 
     const receivers = this.getReceivers(performer, buff.affect);
@@ -257,7 +279,7 @@ export class SimulationControl {
     performer.buffApplier.applyCharacterBuff({
       buff,
       description: "",
-      inputs: event.modifier.inputs,
+      inputs,
       applyAttrBonus: (bonus) => {
         attrBonusChanged = true;
         this.updateAttrBonus(receivers, bonus, trigger);
@@ -286,27 +308,41 @@ export class SimulationControl {
     }
   };
 
-  private modify = (event: ModifyEvent) => {
+  private modify = (event: ModifyEvent): ProcessedModifyEvent => {
     switch (event.performer.type) {
       case "CHARACTER":
         this.characterModify(this.member[event.performer.code], event);
         break;
     }
+    return {
+      ...event,
+      // #to-do: check if character can do this event (in case events are imported
+      // but the modifier is not granted because of character's level/constellation)
+      valid: true,
+    };
   };
 
   // ========== HIT ==========
 
-  private hit = (event: HitEvent) => {
+  private hit = (event: HitEvent): ProcessedHitEvent => {
     switch (event.performer.type) {
       case "CHARACTER": {
         const result = this.member[event.performer.code]?.hit(event, this.partyData, this.target);
+        const damage: ProcessedHitEvent["damage"] = {
+          value: 0,
+          element: "phys",
+        };
 
         if (result) {
-          console.log("hit", result.damage);
-          return;
+          damage.value = Array.isArray(result.damage) ? result.damage.reduce((d, t) => t + d, 0) : result.damage;
+          damage.element = result.attElmt;
         }
-        console.log("not hit");
-        return;
+
+        return {
+          ...event,
+          valid: result !== null,
+          damage,
+        };
       }
     }
   };

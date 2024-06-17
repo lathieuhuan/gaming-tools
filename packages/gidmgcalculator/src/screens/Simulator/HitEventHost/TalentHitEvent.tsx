@@ -5,11 +5,12 @@ import type { SimulationAttackBonus, TalentHitEventMod } from "@Src/types";
 
 import { useTranslation } from "@Src/hooks";
 import { TalentEventConfig, useActiveMember } from "@Simulator/ToolboxProvider";
+import { FaSyncAlt } from "react-icons/fa";
 
 interface TalentHitEventProps {
   item: CalcItem;
   getTalentEventConfig: (attkBonus: SimulationAttackBonus[], elmtModCtrls?: TalentHitEventMod) => TalentEventConfig;
-  onPerformEvent: (elmtModCtrls?: TalentHitEventMod) => void;
+  onPerformEvent: (elmtModCtrls?: TalentHitEventMod, alsoSwitch?: boolean) => void;
 }
 
 export function TalentHitEvent(props: TalentHitEventProps) {
@@ -52,9 +53,23 @@ export function TalentHitEvent(props: TalentHitEventProps) {
             ? config.damage.map((d) => Math.round(d)).join(" + ")
             : Math.round(config.damage)}
         </span>
-        <Button shape="square" size="small" onClick={() => props.onPerformEvent(elmtModCtrls)}>
-          Perform
-        </Button>
+        <div className="flex">
+          <Button
+            shape="square"
+            size="small"
+            className="rounded-r-none"
+            onClick={() => props.onPerformEvent(elmtModCtrls)}
+          >
+            Perform
+          </Button>
+          <Button
+            shape="square"
+            size="small"
+            className="ml-0.5 rounded-l-none"
+            icon={<FaSyncAlt />}
+            onClick={() => props.onPerformEvent(elmtModCtrls, true)}
+          />
+        </div>
       </div>
     </div>
   );

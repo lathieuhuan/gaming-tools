@@ -27,7 +27,7 @@ export type ModifyEvent = BaseEvent & {
   type: "MODIFY";
   modifier: {
     id: number;
-    inputs: number[];
+    inputs?: number[];
   };
 };
 

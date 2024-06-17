@@ -25,19 +25,27 @@ export function pickProps<M, T extends keyof M>(obj: M, keys: T[]) {
   return result;
 }
 
+/**
+ * @param obj an object
+ * @returns a new object got from deeply removing all null, undefined,
+ * empty string or array properties from the original object
+ */
 export function removeEmpty<T extends Record<string, any>>(obj: T): T {
-  const copy = {} as T;
-
-  for (const key in obj) {
-    if (Array.isArray(obj[key])) {
-      if (obj[key].length) {
-        copy[key] = obj.key;
+  if (typeof obj === "object" && obj !== null && !Array.isArray(obj)) {
+    const clone = {} as T;
+    for (const key in obj) {
+      const value = obj[key];
+      if (Array.isArray(value)) {
+        if (value.length) {
+          clone[key] = value;
+        }
+      } else if (![null, undefined, ""].includes(value as any)) {
+        clone[key] = removeEmpty(value);
       }
-    } else if (!["", null, undefined].includes(obj[key])) {
-      copy[key] = obj[key];
     }
+    return clone;
   }
-  return copy;
+  return obj;
 }
 
 export const toMult = (n: number) => 1 + n / 100;
