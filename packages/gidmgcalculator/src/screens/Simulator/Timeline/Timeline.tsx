@@ -1,21 +1,46 @@
 import { Fragment, useEffect, useState } from "react";
 import { FaSyncAlt } from "react-icons/fa";
-import { Button } from "rond";
+import { Button, clsx } from "rond";
 
+import type { SimulationPartyData } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectActiveMember, changeActiveMember } from "@Store/simulator-slice";
-import { ActiveSimulation, SimulationChunk, useActiveSimulation } from "@Simulator/ToolboxProvider";
+import {
+  ActiveSimulation,
+  SimulationChunk,
+  SimulationChunksSumary,
+  useActiveSimulation,
+} from "@Simulator/ToolboxProvider";
+
+// Component
 import { CharacterPortrait, GenshinImage } from "@Src/components";
+import { EventDisplayer } from "./EventDisplayer";
+
+type SyncState = {
+  chunks: SimulationChunk[];
+  sumary: SimulationChunksSumary;
+};
 
 export function Timeline(props: { className?: string }) {
-  const [chunks, setChunks] = useState<SimulationChunk[]>([]);
+  const [{ chunks, sumary }, setState] = useState<SyncState>({
+    chunks: [],
+    sumary: {
+      damage: 0,
+      duration: 0,
+    },
+  });
   const simulation = useActiveSimulation();
 
   useEffect(() => {
     if (simulation) {
-      const { initialChunks, unsubscribe } = simulation.subscribeEvents(setChunks);
+      const { initialChunks, initialSumary, unsubscribe } = simulation.subscribeEvents((chunks, sumary) =>
+        setState({ chunks, sumary })
+      );
 
-      setChunks(initialChunks);
+      setState({
+        chunks: initialChunks,
+        sumary: initialSumary,
+      });
       return unsubscribe;
     }
     return undefined;
@@ -29,14 +54,20 @@ export function Timeline(props: { className?: string }) {
   }
 
   return (
-    <div className={props.className}>
+    <div className={clsx("h-full flex flex-col gap-4", props.className)} style={{ width: "22rem" }}>
       <PartyDisplayer
         simulation={simulation}
         onFieldCode={chunks[0]?.ownerCode}
         onChangeOnFieldMember={simulation.switchMember}
       />
 
-      <div className="mt-4 h-full hide-scrollbar space-y-2">
+      <div className="flex">
+        <span className="ml-auto">
+          Total DMG: <span className="text-lg text-secondary-1 font-bold">{sumary.damage}</span>
+        </span>
+      </div>
+
+      <div className="grow hide-scrollbar space-y-2">
         {chunks.map((chunk, index) => {
           const chunkOwner = simulation.getMemberData(chunk.ownerCode);
 
@@ -44,20 +75,21 @@ export function Timeline(props: { className?: string }) {
             <Fragment key={chunk.id}>
               {index ? <div className="h-px bg-surface-border" /> : null}
 
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <CharacterPortrait size="custorm" className="w-12 h-12" info={chunkOwner} />
 
-                <div className="grow space-y-2">
+                <div className="overflow-hidden grow space-y-2">
                   {chunk.events.map((event) => {
-                    const performer = simulation.getMemberData(event.performer.code);
-
                     return (
-                      <div key={event.id} className="p-2 rounded flex items-center bg-surface-2">
-                        <div className="w-7 h-7 mr-2">
-                          <GenshinImage src={performer.sideIcon} />
-                        </div>
-                        <span className="capitalize">{event.type.toLowerCase()}</span>
-                      </div>
+                      <EventDisplayer
+                        sideIconNode={
+                          <GenshinImage
+                            className="w-7 h-7 shrink-0"
+                            src={simulation.getMemberData(event.performer.code)?.sideIcon}
+                          />
+                        }
+                        event={event}
+                      />
                     );
                   })}
                 </div>
@@ -73,7 +105,7 @@ export function Timeline(props: { className?: string }) {
 interface PartyDisplayerProps {
   onFieldCode?: number;
   simulation: ActiveSimulation;
-  onChangeOnFieldMember?: (code: number) => void;
+  onChangeOnFieldMember: (code: number) => void;
 }
 function PartyDisplayer(props: PartyDisplayerProps) {
   const dispatch = useDispatch();
@@ -83,8 +115,13 @@ function PartyDisplayer(props: PartyDisplayerProps) {
     dispatch(changeActiveMember(name));
   };
 
+  const onChangeOnFieldMember = (data: SimulationPartyData[number]) => {
+    props.onChangeOnFieldMember(data.code);
+    onClickMember(data.name);
+  };
+
   return (
-    <div className="flex gap-4">
+    <div className="flex justify-center gap-4">
       {props.simulation.partyData.map((data) => {
         return (
           <div key={data.code}>
@@ -100,7 +137,7 @@ function PartyDisplayer(props: PartyDisplayerProps) {
                 size="small"
                 icon={<FaSyncAlt />}
                 disabled={data.code === props.onFieldCode}
-                onClick={() => props.onChangeOnFieldMember?.(data.code)}
+                onClick={() => onChangeOnFieldMember(data)}
               />
             </div>
           </div>

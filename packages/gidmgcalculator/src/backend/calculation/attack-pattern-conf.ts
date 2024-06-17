@@ -1,4 +1,4 @@
-import type { ElementModCtrl, Infusion } from "@Src/types";
+import type { AttackReaction, ElementModCtrl, Infusion } from "@Src/types";
 import type {
   AttackElement,
   AttackPattern,
@@ -23,6 +23,7 @@ export type CalcItemConfig = {
   type: CalcItemType;
   attPatt: ActualAttackPattern;
   attElmt: "pyro" | "hydro" | "electro" | "cryo" | "geo" | "anemo" | "dendro" | "phys";
+  reaction: AttackReaction;
   rxnMult: number;
   record: CalcItemRecord;
   getBonus: (key: AttackBonusKey) => number;
@@ -109,6 +110,8 @@ export function AttackPatternConf({
       // deal elemental dmg and want amplifying reaction
       if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
         rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, attBonus.getBare("pct_", reaction));
+      } else {
+        reaction = null;
       }
 
       const record = TrackerControl.initCalcItemRecord({
@@ -166,14 +169,11 @@ export function AttackPatternConf({
         return bases.length > 1 ? bases : bases[0];
       };
 
-      // console.log("====================");
-      // console.log("calcItem", item.name);
-      // console.log(finalAttPatt, finalAttElmt, reaction);
-
       return {
         type,
         attPatt,
         attElmt,
+        reaction,
         rxnMult,
         record,
         getBonus,

@@ -134,7 +134,7 @@ export class MemberControl {
     const level = CharacterCalc.getFinalTalentLv({ ...info, talentType: args.talent });
     const totalAttr = this.totalAttr.finalize();
 
-    const { configCalcItem } = AttackPatternConf({
+    const { disabled, configCalcItem } = AttackPatternConf({
       appChar: this.data,
       normalsConfig: this.normalsConfig,
       totalAttr,
@@ -166,7 +166,8 @@ export class MemberControl {
 
     return {
       damage: result.average,
-      ...pickProps(itemConfig, ["attElmt", "attPatt", "record"]),
+      disabled: !!disabled,
+      ...pickProps(itemConfig, ["attElmt", "attPatt", "reaction", "record"]),
     };
   };
 
@@ -181,7 +182,7 @@ export class MemberControl {
       ...(event.elmtModCtrls ? removeEmpty(event.elmtModCtrls) : undefined),
     };
 
-    return this.configTalentHitEvent({
+    const config = this.configTalentHitEvent({
       talent: event.talent,
       ...hitInfo,
       attkBonus: this.attkBonus,
@@ -189,5 +190,11 @@ export class MemberControl {
       partyData,
       target,
     });
+
+    return {
+      name: hitInfo.item.name,
+      ...config,
+      damage: Math.round(Array.isArray(config.damage) ? config.damage.reduce((d, t) => t + d, 0) : config.damage),
+    };
   };
 }

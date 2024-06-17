@@ -1,5 +1,6 @@
 import type { AppliedAttackBonus, AppliedAttributeBonus, AttackElement, ModifierAffectType } from "@Backend";
 import type {
+  AttackReaction,
   HitEvent,
   ModifyEvent,
   SimulationAttributeBonus,
@@ -13,29 +14,36 @@ import { $AppCharacter } from "@Src/services";
 import { toArray, uuid } from "@Src/utils";
 import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
 
-type ProcessedBaseEvent = {
-  valid: boolean;
+type SimulationProcessedBaseEvent = {
+  description: string;
+  error?: string;
 };
 
 type ProcessedHitEvent = HitEvent &
-  ProcessedBaseEvent & {
+  SimulationProcessedBaseEvent & {
     damage: {
       value: number;
       element: AttackElement;
     };
+    reaction: AttackReaction;
   };
 
-type ProcessedModifyEvent = ModifyEvent & ProcessedBaseEvent;
+type ProcessedModifyEvent = ModifyEvent & SimulationProcessedBaseEvent & {};
 
-type ProcessedEvent = ProcessedModifyEvent | ProcessedHitEvent;
+export type SimulationProcessedEvent = ProcessedModifyEvent | ProcessedHitEvent;
 
 export type SimulationChunk = {
   id: string;
   ownerCode: number;
-  events: ProcessedEvent[];
+  events: SimulationProcessedEvent[];
 };
 
-type OnchangeEvent = (chunks: SimulationChunk[]) => void;
+export type SimulationChunksSumary = {
+  damage: number;
+  duration: number;
+};
+
+type OnchangeEvent = (chunks: SimulationChunk[], sumary: SimulationChunksSumary) => void;
 
 export class SimulationControl {
   partyData: SimulationPartyData;
@@ -44,6 +52,10 @@ export class SimulationControl {
 
   private eventIds: number[] = [];
   private chunks: SimulationChunk[] = [];
+  private sumary: SimulationChunksSumary = {
+    damage: 0,
+    duration: 0,
+  };
   private eventSubscribers = new Set<OnchangeEvent>();
 
   constructor(party: SimulationMember[], target: SimulationTarget) {
@@ -98,7 +110,7 @@ export class SimulationControl {
   // ========== EVENTS ==========
 
   private onChangeEvents = () => {
-    this.eventSubscribers.forEach((callback) => callback(this.chunks.concat()));
+    this.eventSubscribers.forEach((callback) => callback(this.chunks.concat(), this.sumary));
   };
 
   subscribeEvents = (callback: OnchangeEvent) => {
@@ -110,6 +122,7 @@ export class SimulationControl {
 
     return {
       initialChunks: this.chunks,
+      initialSumary: this.sumary,
       unsubscribe,
     };
   };
@@ -148,7 +161,7 @@ export class SimulationControl {
   };
 
   private processNewEvent = (event: SimulationEvent) => {
-    let processedEvent: ProcessedEvent;
+    let processedEvent: SimulationProcessedEvent;
 
     switch (event.type) {
       case "MODIFY":
@@ -163,7 +176,7 @@ export class SimulationControl {
     this.eventIds.push(event.id);
   };
 
-  private addEvent = (event: ProcessedEvent | ProcessedEvent[], ownerCode?: number) => {
+  private addEvent = (event: SimulationProcessedEvent | SimulationProcessedEvent[], ownerCode?: number) => {
     const lastestChunk = this.getLastestChunk();
 
     if (!ownerCode) {
@@ -173,7 +186,7 @@ export class SimulationControl {
     if (!lastestChunk.events.length) {
       this.chunks.shift();
     }
-    if (ownerCode === this.getLastestChunk().ownerCode) {
+    if (ownerCode === this.chunks[0]?.ownerCode) {
       lastestChunk.events.unshift(...toArray(event));
       return;
     }
@@ -262,10 +275,11 @@ export class SimulationControl {
     });
   };
 
+  /** Return null if buff not found, otherwise return buff.src */
   private characterModify = (performer: MemberControl, event: ModifyEvent) => {
     const { id, inputs = [] } = event.modifier;
     const buff = performer?.data.buffs?.find((buff) => buff.index === id);
-    if (!buff) return;
+    if (!buff) return null;
 
     const receivers = this.getReceivers(performer, buff.affect);
     let attrBonusChanged = false;
@@ -306,19 +320,33 @@ export class SimulationControl {
         receiver.onChangeBonuses?.(receiver.attrBonus.concat(), receiver.attkBonus.concat());
       });
     }
+
+    return buff.src;
   };
 
   private modify = (event: ModifyEvent): ProcessedModifyEvent => {
+    let description: string;
+    let error: string | undefined;
+
     switch (event.performer.type) {
-      case "CHARACTER":
-        this.characterModify(this.member[event.performer.code], event);
+      case "CHARACTER": {
+        // #to-do: check if character can do this event (in case events are imported
+        // but the modifier is not granted because of character's level/constellation)
+        const src = this.characterModify(this.member[event.performer.code], event);
+
+        if (src) {
+          description = src;
+        } else {
+          error = "Cannot find the modifier.";
+          description = `[${error}]`;
+        }
         break;
+      }
     }
     return {
       ...event,
-      // #to-do: check if character can do this event (in case events are imported
-      // but the modifier is not granted because of character's level/constellation)
-      valid: true,
+      description,
+      error,
     };
   };
 
@@ -332,16 +360,32 @@ export class SimulationControl {
           value: 0,
           element: "phys",
         };
+        let description: string;
+        let error: string | undefined;
+        let reaction: AttackReaction = null;
 
         if (result) {
-          damage.value = Array.isArray(result.damage) ? result.damage.reduce((d, t) => t + d, 0) : result.damage;
+          damage.value = result.damage;
           damage.element = result.attElmt;
+          reaction = result.reaction;
+          description = result.name;
+
+          if (result.disabled) {
+            error = "This attack is disabled.";
+          }
+        } else {
+          error = "Cannot find the attack.";
+          description = `[${error}]`;
         }
+
+        this.sumary.damage += damage.value;
+        this.sumary.duration += event.duration ?? 0;
 
         return {
           ...event,
-          valid: result !== null,
           damage,
+          reaction,
+          description,
         };
       }
     }
