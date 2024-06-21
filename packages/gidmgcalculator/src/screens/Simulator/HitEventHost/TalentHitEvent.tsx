@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { Button } from "rond";
+import { FaSyncAlt } from "react-icons/fa";
+
 import type { CalcItem } from "@Backend";
 import type { SimulationAttackBonus, TalentHitEventMod } from "@Src/types";
-
 import { useTranslation } from "@Src/hooks";
 import { TalentEventConfig, useActiveMember } from "@Simulator/ToolboxProvider";
-import { FaSyncAlt } from "react-icons/fa";
 
 interface TalentHitEventProps {
   item: CalcItem;
+  isOnField: boolean;
   getTalentEventConfig: (attkBonus: SimulationAttackBonus[], elmtModCtrls?: TalentHitEventMod) => TalentEventConfig;
   onPerformEvent: (elmtModCtrls?: TalentHitEventMod, alsoSwitch?: boolean) => void;
 }
@@ -57,18 +58,21 @@ export function TalentHitEvent(props: TalentHitEventProps) {
           <Button
             shape="square"
             size="small"
-            className="rounded-r-none"
+            className={props.isOnField ? "" : "rounded-r-none"}
             onClick={() => props.onPerformEvent(elmtModCtrls)}
           >
             Perform
           </Button>
-          <Button
-            shape="square"
-            size="small"
-            className="ml-0.5 rounded-l-none"
-            icon={<FaSyncAlt />}
-            onClick={() => props.onPerformEvent(elmtModCtrls, true)}
-          />
+
+          {!props.isOnField && (
+            <Button
+              shape="square"
+              size="small"
+              className="ml-0.5 rounded-l-none"
+              icon={<FaSyncAlt />}
+              onClick={() => props.onPerformEvent(elmtModCtrls, true)}
+            />
+          )}
         </div>
       </div>
     </div>

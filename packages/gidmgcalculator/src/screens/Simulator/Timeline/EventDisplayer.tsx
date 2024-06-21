@@ -6,6 +6,8 @@ interface EventDisplayerProps {
   event: SimulationProcessedEvent;
 }
 export function EventDisplayer({ sideIconNode, event }: EventDisplayerProps) {
+  const containerCls = "p-1 pr-2 rounded-sm flex items-center hover:bg-surface-2 cursor-default";
+
   const errorNode = event.error ? (
     <span className="ml-auto">
       <FaExclamationCircle className="text-2xl text-danger-2" />
@@ -15,9 +17,9 @@ export function EventDisplayer({ sideIconNode, event }: EventDisplayerProps) {
   switch (event.type) {
     case "MODIFY": {
       return (
-        <div className="flex items-center">
+        <div className={containerCls}>
           {sideIconNode}
-          <div className="px-3 truncate">
+          <div className="px-2 truncate">
             <span className="text-light-default/60">Trigger</span> {event.description}
           </div>
           {errorNode}
@@ -26,9 +28,9 @@ export function EventDisplayer({ sideIconNode, event }: EventDisplayerProps) {
     }
     case "HIT": {
       return (
-        <div className="flex items-center">
+        <div className={containerCls}>
           {sideIconNode}
-          <div className="px-3 truncate">{event.description}</div>
+          <div className="px-2 truncate">{event.description}</div>
           <div className="ml-auto flex items-center gap-2">
             <span className="font-semibold">{event.damage.value}</span>
             {errorNode}

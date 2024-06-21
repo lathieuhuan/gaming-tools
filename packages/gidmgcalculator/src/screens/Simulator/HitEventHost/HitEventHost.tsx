@@ -1,6 +1,12 @@
 import type { HitEvent } from "@Src/types";
 
-import { ActiveMember, ActiveSimulation, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
+import {
+  ActiveMember,
+  ActiveSimulation,
+  useActiveMember,
+  useActiveSimulation,
+  useOnFieldMember,
+} from "@Simulator/ToolboxProvider";
 import { useTranslation } from "@Src/hooks";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
@@ -15,14 +21,14 @@ interface HitEventHostProps {
   member: ActiveMember;
   configs: TalentHitEventConfig[];
 }
-
 function HitEventHostCore({ simulation, member, configs }: HitEventHostProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
+  const isOnField = useOnFieldMember(simulation) === member.data.code;
+
   const onPerformTalentHitEvent = (eventInfo: Omit<HitEvent, "id" | "type" | "performer">) => {
-    const performerCode = member.data.code;
-    const alsoSwitch = eventInfo.alsoSwitch && performerCode !== simulation.getLastestChunk().ownerCode;
+    const alsoSwitch = eventInfo.alsoSwitch && !isOnField ? true : undefined;
 
     dispatch(
       addEvent({
@@ -73,6 +79,7 @@ function HitEventHostCore({ simulation, member, configs }: HitEventHostProps) {
                       >
                         <TalentHitEvent
                           item={item}
+                          isOnField={isOnField}
                           getTalentEventConfig={(attkBonus, elmtModCtrls) => {
                             return member.tools.configTalentHitEvent({
                               talent: config.type,

@@ -22,6 +22,8 @@ interface CharacterPortraitProps {
   size?: PortraitSize;
   withColorBg?: boolean;
   recruitable?: boolean;
+  /** Default to true */
+  zoomable?: boolean;
   onClick?: () => void;
 }
 export function CharacterPortrait({
@@ -30,6 +32,7 @@ export function CharacterPortrait({
   size = "medium",
   withColorBg,
   recruitable,
+  zoomable = true,
   onClick,
 }: CharacterPortraitProps) {
   const { code = 0, icon, vision } = info || {};
@@ -44,7 +47,7 @@ export function CharacterPortrait({
 
   const cls = [
     "shrink-0 overflow-hidden rounded-circle",
-    info && "zoomin-on-hover",
+    info && zoomable && "zoomin-on-hover",
     sizeCls[size],
     withColorBg && vision ? `bg-${vision}` : bgColorByCode[code] ?? "bg-surface-3",
     className,

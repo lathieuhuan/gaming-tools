@@ -6,22 +6,30 @@ import { CharacterBuff, EntityCalc } from "@Backend";
 import { Modifier_, parseAbilityDescription } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
-import { ActiveMember, ActiveSimulation, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
+import {
+  ActiveMember,
+  ActiveSimulation,
+  useActiveMember,
+  useActiveSimulation,
+  useOnFieldMember,
+} from "@Simulator/ToolboxProvider";
 
 import { GenshinModifierView } from "@Src/components";
 
 type InputsListByMember = Record<number, number[][]>;
 
 interface ModifyEventHostProps {
-  member: ActiveMember;
   simulation: ActiveSimulation;
+  member: ActiveMember;
   initalInputsListByMember?: InputsListByMember;
   buffs?: CharacterBuff[];
 }
 
-function ModifyEventHostCore({ member, initalInputsListByMember = {}, simulation, buffs = [] }: ModifyEventHostProps) {
+function ModifyEventHostCore({ simulation, member, initalInputsListByMember = {}, buffs = [] }: ModifyEventHostProps) {
   const dispatch = useDispatch();
   const [inputsListByMember, setInputsListByMember] = useState(initalInputsListByMember);
+
+  const isOnField = useOnFieldMember(simulation) === member.data.code;
 
   const inputsList = inputsListByMember[member.data.code];
 
@@ -39,7 +47,7 @@ function ModifyEventHostCore({ member, initalInputsListByMember = {}, simulation
           id: mod.index,
           inputs,
         },
-        alsoSwitch: alsoSwitch && performerCode !== simulation.getLastestChunk().ownerCode ? true : undefined,
+        alsoSwitch: alsoSwitch && !isOnField ? true : undefined,
       })
     );
   };
@@ -88,19 +96,21 @@ function ModifyEventHostCore({ member, initalInputsListByMember = {}, simulation
               <Button
                 shape="square"
                 size="small"
-                className="rounded-r-none"
+                className={isOnField ? "" : "rounded-r-none"}
                 onClick={() => onMakeEvent(modifier, inputs)}
               >
                 Trigger
               </Button>
 
-              <Button
-                shape="square"
-                size="small"
-                className="ml-0.5 rounded-l-none"
-                icon={<FaSyncAlt />}
-                onClick={() => onMakeEvent(modifier, inputs, true)}
-              />
+              {!isOnField && (
+                <Button
+                  shape="square"
+                  size="small"
+                  className="ml-0.5 rounded-l-none"
+                  icon={<FaSyncAlt />}
+                  onClick={() => onMakeEvent(modifier, inputs, true)}
+                />
+              )}
             </div>
           </div>
         );

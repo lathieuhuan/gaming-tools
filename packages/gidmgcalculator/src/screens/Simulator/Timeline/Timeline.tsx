@@ -62,7 +62,7 @@ export function Timeline(props: { className?: string }) {
       />
 
       <div className="flex">
-        <span className="ml-auto">
+        <span className="ml-auto px-2 rounded-sm hover:bg-surface-2 cursor-default">
           Total DMG: <span className="text-lg text-secondary-1 font-bold">{sumary.damage}</span>
         </span>
       </div>
@@ -75,16 +75,24 @@ export function Timeline(props: { className?: string }) {
             <Fragment key={chunk.id}>
               {index ? <div className="h-px bg-surface-border" /> : null}
 
-              <div className="flex gap-3">
-                <CharacterPortrait size="custorm" className="w-12 h-12" info={chunkOwner} />
+              <div className="flex gap-2">
+                <CharacterPortrait size="custorm" className="w-12 h-12 m-0.5" info={chunkOwner} zoomable={false} />
 
-                <div className="overflow-hidden grow space-y-2">
+                <div className="overflow-hidden grow">
                   {chunk.events.map((event) => {
                     return (
                       <EventDisplayer
+                        key={event.id}
                         sideIconNode={
                           <GenshinImage
-                            className="w-7 h-7 shrink-0"
+                            className="w-7 h-7 shrink-0 relative"
+                            imgCls="absolute"
+                            imgStyle={{
+                              maxWidth: "none",
+                              width: "130%",
+                              top: "-9px",
+                              left: "-6px",
+                            }}
                             src={simulation.getMemberData(event.performer.code)?.sideIcon}
                           />
                         }

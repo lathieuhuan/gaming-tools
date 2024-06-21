@@ -43,20 +43,24 @@ export type SimulationChunksSumary = {
   duration: number;
 };
 
-type OnchangeEvent = (chunks: SimulationChunk[], sumary: SimulationChunksSumary) => void;
+type OnChangeEvent = (chunks: SimulationChunk[], sumary: SimulationChunksSumary) => void;
+
+type OnChangeOnFieldMember = (code: number) => void;
 
 export class SimulationControl {
   partyData: SimulationPartyData;
   target: SimulationTarget;
   member: Record<number, MemberControl>;
 
+  private onFieldMember = 0;
   private eventIds: number[] = [];
   private chunks: SimulationChunk[] = [];
   private sumary: SimulationChunksSumary = {
     damage: 0,
     duration: 0,
   };
-  private eventSubscribers = new Set<OnchangeEvent>();
+  private eventSubscribers = new Set<OnChangeEvent>();
+  private onFieldMemberSubscribers = new Set<OnChangeOnFieldMember>();
 
   constructor(party: SimulationMember[], target: SimulationTarget) {
     const memberManager: Record<number, MemberControl> = {};
@@ -107,13 +111,29 @@ export class SimulationControl {
     this.eventIds = [];
   };
 
+  subscribeOnFieldMember = (callback: OnChangeOnFieldMember) => {
+    this.onFieldMemberSubscribers.add(callback);
+
+    const unsubscribe = () => {
+      this.onFieldMemberSubscribers.delete(callback);
+    };
+
+    return {
+      initialOnFieldMember: this.getLastestChunk().ownerCode,
+      unsubscribe,
+    };
+  };
+
   // ========== EVENTS ==========
 
   private onChangeEvents = () => {
+    const onFieldMember = this.getLastestChunk().ownerCode;
+
     this.eventSubscribers.forEach((callback) => callback(this.chunks.concat(), this.sumary));
+    this.onFieldMemberSubscribers.forEach((callback) => callback(onFieldMember));
   };
 
-  subscribeEvents = (callback: OnchangeEvent) => {
+  subscribeEvents = (callback: OnChangeEvent) => {
     this.eventSubscribers.add(callback);
 
     const unsubscribe = () => {

@@ -5,7 +5,7 @@ import type { ActiveMemberTools, SimulationControl } from "./tools";
 
 export type ActiveSimulation = Pick<
   SimulationControl,
-  "getLastestChunk" | "getMemberData" | "switchMember" | "subscribeEvents"
+  "getLastestChunk" | "getMemberData" | "switchMember" | "subscribeEvents" | "subscribeOnFieldMember"
 > & {
   partyData: SimulationPartyData;
   target: SimulationTarget;
