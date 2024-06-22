@@ -1,5 +1,5 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { Simulation, SimulationManageInfo } from "@Src/types";
+import type { HitEvent, ModifyEvent, Simulation, SimulationEvent, SimulationManageInfo } from "@Src/types";
 
 export type SimulatorState = {
   activeId: number;
@@ -9,3 +9,10 @@ export type SimulatorState = {
 };
 
 export type AddSimulationPayload = PayloadAction<Partial<Simulation>>;
+
+export type AddEventPayload = PayloadAction<
+  (Omit<ModifyEvent, "id"> | Omit<HitEvent, "id">) & {
+    /** The character performing this event also switch to on field => create new chunk */
+    alsoSwitch?: boolean;
+  }
+>;

@@ -4,6 +4,7 @@ import type {
   HitEvent,
   ModifyEvent,
   SimulationAttributeBonus,
+  SimulationChunk,
   SimulationEvent,
   SimulationMember,
   SimulationPartyData,
@@ -14,13 +15,13 @@ import { $AppCharacter } from "@Src/services";
 import { toArray, uuid } from "@Src/utils";
 import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
 
-type SimulationProcessedBaseEvent = {
+type ProcessedBaseEvent = {
   description: string;
   error?: string;
 };
 
 type ProcessedHitEvent = HitEvent &
-  SimulationProcessedBaseEvent & {
+  ProcessedBaseEvent & {
     damage: {
       value: number;
       element: AttackElement;
@@ -28,39 +29,38 @@ type ProcessedHitEvent = HitEvent &
     reaction: AttackReaction;
   };
 
-type ProcessedModifyEvent = ModifyEvent & SimulationProcessedBaseEvent & {};
+type ProcessedModifyEvent = ModifyEvent & ProcessedBaseEvent & {};
 
 export type SimulationProcessedEvent = ProcessedModifyEvent | ProcessedHitEvent;
 
-export type SimulationChunk = {
-  id: string;
-  ownerCode: number;
+export type SimulationProcessedChunk = Pick<SimulationChunk, "id" | "ownerCode"> & {
   events: SimulationProcessedEvent[];
 };
+
+type ChunkRecords = Array<{
+  id: string;
+  eventIds: number[];
+}>;
 
 export type SimulationChunksSumary = {
   damage: number;
   duration: number;
 };
 
-type OnChangeEvent = (chunks: SimulationChunk[], sumary: SimulationChunksSumary) => void;
-
-type OnChangeOnFieldMember = (code: number) => void;
+type OnChangeChunk = (chunks: SimulationProcessedChunk[], sumary: SimulationChunksSumary) => void;
 
 export class SimulationControl {
   partyData: SimulationPartyData;
   target: SimulationTarget;
   member: Record<number, MemberControl>;
 
-  private onFieldMember = 0;
-  private eventIds: number[] = [];
-  private chunks: SimulationChunk[] = [];
+  private chunkRecords: ChunkRecords = [];
+  private chunks: SimulationProcessedChunk[] = [];
   private sumary: SimulationChunksSumary = {
     damage: 0,
     duration: 0,
   };
-  private eventSubscribers = new Set<OnChangeEvent>();
-  private onFieldMemberSubscribers = new Set<OnChangeOnFieldMember>();
+  private chunkSubscribers = new Set<OnChangeChunk>();
 
   constructor(party: SimulationMember[], target: SimulationTarget) {
     const memberManager: Record<number, MemberControl> = {};
@@ -74,7 +74,6 @@ export class SimulationControl {
     this.member = memberManager;
     this.partyData = partyData;
     this.target = target;
-    this.resetTimeline();
   }
 
   getLastestChunk = () => {
@@ -95,49 +94,17 @@ export class SimulationControl {
     return this.member[code].data;
   };
 
-  switchMember = (code: number) => {
-    this.addEvent([], code);
-    this.onChangeEvents();
-  };
-
-  private resetTimeline = () => {
-    this.chunks = [
-      {
-        id: uuid(),
-        ownerCode: this.partyData[0].code,
-        events: [],
-      },
-    ];
-    this.eventIds = [];
-  };
-
-  subscribeOnFieldMember = (callback: OnChangeOnFieldMember) => {
-    this.onFieldMemberSubscribers.add(callback);
-
-    const unsubscribe = () => {
-      this.onFieldMemberSubscribers.delete(callback);
-    };
-
-    return {
-      initialOnFieldMember: this.getLastestChunk().ownerCode,
-      unsubscribe,
-    };
-  };
-
   // ========== EVENTS ==========
 
   private onChangeEvents = () => {
-    const onFieldMember = this.getLastestChunk().ownerCode;
-
-    this.eventSubscribers.forEach((callback) => callback(this.chunks.concat(), this.sumary));
-    this.onFieldMemberSubscribers.forEach((callback) => callback(onFieldMember));
+    this.chunkSubscribers.forEach((callback) => callback(this.chunks.concat(), this.sumary));
   };
 
-  subscribeEvents = (callback: OnChangeEvent) => {
-    this.eventSubscribers.add(callback);
+  subscribeChunks = (callback: OnChangeChunk) => {
+    this.chunkSubscribers.add(callback);
 
     const unsubscribe = () => {
-      this.eventSubscribers.delete(callback);
+      this.chunkSubscribers.delete(callback);
     };
 
     return {
@@ -147,40 +114,69 @@ export class SimulationControl {
     };
   };
 
-  processEvents = (events: SimulationEvent[]) => {
-    let isMissmatched = false;
-    let checkedIndex = 0;
+  private checkMismatched = (chunks: SimulationChunk[]): [boolean, number, number] => {
+    let checkedChunkIndex = 0;
+    let checkedEventIndex = 0;
 
-    while (checkedIndex < this.eventIds.length) {
-      const event = events[checkedIndex];
+    while (checkedChunkIndex < this.chunkRecords.length) {
+      const chunk = chunks[checkedChunkIndex];
+      const chunkRecord = this.chunkRecords[checkedChunkIndex];
 
-      if (!event || this.eventIds[checkedIndex] !== event.id) {
-        isMissmatched = true;
-        break;
+      if (!chunk || chunk.id !== chunkRecord.id) {
+        // less chunks than records OR id not match
+        return [true, 0, 0];
       }
-      checkedIndex++;
+
+      let eventIndex = 0;
+
+      while (eventIndex < chunkRecord.eventIds.length) {
+        const event = chunk.events[eventIndex];
+        const eventIdRecord = chunkRecord.eventIds[eventIndex];
+
+        if (!event || event.id !== eventIdRecord) {
+          // less events than records OR id not match
+          return [true, 0, 0];
+        }
+
+        eventIndex++;
+      }
+
+      checkedChunkIndex++;
+      checkedEventIndex = eventIndex;
     }
+
+    return [false, checkedChunkIndex, checkedEventIndex];
+  };
+
+  processChunks = (chunks: SimulationChunk[]) => {
+    console.log("processChunks");
+    console.log(chunks);
+    console.log(this.chunks);
+
+    let [isMissmatched, checkedChunkIndex, checkedEventIndex] = this.checkMismatched(chunks);
 
     if (isMissmatched) {
-      this.resetTimeline();
+      this.chunks = [];
+      this.chunkRecords = [];
+      chunks.forEach((chunk) => chunk.events.forEach((event) => this.processNewEvent(event, chunk)));
+    } else {
+      let chunkIndex = checkedChunkIndex;
 
-      for (const code in this.member) {
-        this.member[code].reset();
+      while (chunkIndex < chunks.length) {
+        const chunk = chunks[chunkIndex];
+        let eventIndex = chunkIndex === checkedChunkIndex ? checkedEventIndex : 0;
+
+        while (eventIndex < chunk.events.length) {
+          this.processNewEvent(chunk.events[eventIndex], chunk);
+          eventIndex++;
+        }
+        chunkIndex++;
       }
-
-      events.forEach(this.processNewEvent);
-      return this.onChangeEvents();
     }
-
-    while (checkedIndex < events.length) {
-      this.processNewEvent(events[checkedIndex]);
-      checkedIndex++;
-    }
-
     this.onChangeEvents();
   };
 
-  private processNewEvent = (event: SimulationEvent) => {
+  private processNewEvent = (event: SimulationEvent, chunk: SimulationChunk) => {
     let processedEvent: SimulationProcessedEvent;
 
     switch (event.type) {
@@ -192,8 +188,8 @@ export class SimulationControl {
         break;
     }
 
-    this.addEvent(processedEvent, event.alsoSwitch ? event.performer.code : undefined);
-    this.eventIds.push(event.id);
+    // this.addEvent(processedEvent, event.alsoSwitch ? event.performer.code : undefined);
+    // this.eventIds.push(event.id);
   };
 
   private addEvent = (event: SimulationProcessedEvent | SimulationProcessedEvent[], ownerCode?: number) => {
@@ -206,10 +202,10 @@ export class SimulationControl {
     if (!lastestChunk.events.length) {
       this.chunks.shift();
     }
-    if (ownerCode === this.chunks[0]?.ownerCode) {
-      lastestChunk.events.unshift(...toArray(event));
-      return;
-    }
+    // if (ownerCode === this.chunks[0]?.ownerCode) {
+    //   lastestChunk.events.unshift(...toArray(event));
+    //   return;
+    // }
     this.chunks.unshift({
       id: uuid(),
       ownerCode,

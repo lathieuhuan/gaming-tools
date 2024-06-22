@@ -63,14 +63,14 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
   );
 }
 
-const selectEvents = (state: RootState) => getSimulation(state.simulator)?.events ?? [];
+const selectChunks = (state: RootState) => getSimulation(state.simulator)?.chunks ?? [];
 
 function EventsProcessor({ control }: { control?: SimulationControl }) {
-  const events = useSelector(selectEvents);
+  const chunks = useSelector(selectChunks);
 
   useEffect(() => {
-    control?.processEvents(events);
-  }, [control, events]);
+    control?.processChunks(chunks);
+  }, [control, chunks]);
 
   return null;
 }

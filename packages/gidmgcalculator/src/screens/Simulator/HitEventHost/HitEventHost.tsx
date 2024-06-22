@@ -1,15 +1,9 @@
 import type { HitEvent } from "@Src/types";
 
-import {
-  ActiveMember,
-  ActiveSimulation,
-  useActiveMember,
-  useActiveSimulation,
-  useOnFieldMember,
-} from "@Simulator/ToolboxProvider";
+import { ActiveMember, ActiveSimulation, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { useTranslation } from "@Src/hooks";
-import { useDispatch } from "@Store/hooks";
-import { addEvent } from "@Store/simulator-slice";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { addEvent, selectOnFieldMember } from "@Store/simulator-slice";
 import { getTalentHitEventConfig, type TalentHitEventConfig } from "./HitEventHost.utils";
 
 // Components
@@ -25,11 +19,9 @@ function HitEventHostCore({ simulation, member, configs }: HitEventHostProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const isOnField = useOnFieldMember(simulation) === member.data.code;
+  const isOnField = useSelector(selectOnFieldMember) === member.data.code;
 
-  const onPerformTalentHitEvent = (eventInfo: Omit<HitEvent, "id" | "type" | "performer">) => {
-    const alsoSwitch = eventInfo.alsoSwitch && !isOnField ? true : undefined;
-
+  const onPerformTalentHitEvent = (eventInfo: Omit<HitEvent, "id" | "type" | "performer">, alsoSwitch?: boolean) => {
     dispatch(
       addEvent({
         type: "HIT",
@@ -90,11 +82,13 @@ function HitEventHostCore({ simulation, member, configs }: HitEventHostProps) {
                             });
                           }}
                           onPerformEvent={(elmtModCtrls, alsoSwitch) =>
-                            onPerformTalentHitEvent({
-                              ...eventInfo,
-                              elmtModCtrls,
-                              alsoSwitch,
-                            })
+                            onPerformTalentHitEvent(
+                              {
+                                ...eventInfo,
+                                elmtModCtrls,
+                              },
+                              alsoSwitch
+                            )
                           }
                         />
                       </HitEventDisplayer>

@@ -1,10 +1,9 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import type { HitEvent, ModifyEvent } from "@Src/types";
-import type { AddSimulationPayload, SimulatorState } from "./simulator-slice.types";
-import { Setup_, removeEmpty } from "@Src/utils";
-import { $AppSettings } from "@Src/services";
-import { getSimulation } from "./simulator-slice.utils";
+import type { AddEventPayload, AddSimulationPayload, SimulatorState } from "./simulator-slice.types";
+import { Setup_, removeEmpty, uuid } from "@Src/utils";
+import { $AppCharacter, $AppSettings } from "@Src/services";
+import { getNextEventId, getSimulation } from "./simulator-slice.utils";
 
 const initialState: SimulatorState = {
   activeId: 0,
@@ -19,13 +18,16 @@ export const simulatorSlice = createSlice({
   reducers: {
     addSimulation: (state, action: AddSimulationPayload) => {
       const id = Date.now();
-      const {
-        members,
-        events = [],
-        target = Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
-      } = action.payload;
+      const { members, target = Setup_.createTarget({ level: $AppSettings.get("targetLevel") }) } = action.payload;
 
       if (members) {
+        const initialChunk = {
+          id: uuid(),
+          ownerCode: $AppCharacter.get(members[0].name).code,
+          events: [],
+        };
+        const { chunks = [initialChunk] } = action.payload;
+
         state.activeId = id;
         state.activeMember = members[0].name;
         state.simulationManageInfos.push({
@@ -34,43 +36,48 @@ export const simulatorSlice = createSlice({
         });
         state.simulationsById[id] = {
           members,
-          events,
+          chunks,
           target,
         };
       }
     },
-    addEvent: (state, action: PayloadAction<Omit<ModifyEvent, "id"> | Omit<HitEvent, "id">>) => {
-      const events = getSimulation(state)?.events;
+    addEvent: (state, action: AddEventPayload) => {
+      const chunks = getSimulation(state)?.chunks;
 
-      if (events) {
-        let id: number;
+      if (chunks) {
+        const { alsoSwitch, ...rest } = action.payload;
+        const lastChunk = chunks[chunks.length - 1];
+        const event = Object.assign(structuredClone(removeEmpty(rest)), {
+          id: getNextEventId(chunks),
+        });
+        const performerCode = event.performer.code;
 
-        if (events.length <= 1) {
-          id = events.length;
+        if (alsoSwitch && lastChunk.ownerCode !== performerCode) {
+          chunks.push({
+            id: uuid(),
+            ownerCode: performerCode,
+            events: [event],
+          });
         } else {
-          let current = events[0];
-
-          for (const event of events) {
-            if (event.id - current.id > 1) {
-              break;
-            } else {
-              current = event;
-            }
-          }
-          id = current.id + 1;
+          lastChunk.events.push(event);
         }
-        const event = structuredClone(action.payload);
-        event.alsoSwitch = event.alsoSwitch ? true : undefined;
-
-        events.push({ id, ...removeEmpty(event) });
       }
     },
     changeActiveMember: (state, action: PayloadAction<string>) => {
       state.activeMember = action.payload;
     },
+    changeOnFieldMember: (state, action: PayloadAction<number>) => {
+      const simulation = getSimulation(state);
+
+      simulation?.chunks.push({
+        id: uuid(),
+        ownerCode: action.payload,
+        events: [],
+      });
+    },
   },
 });
 
-export const { addSimulation, addEvent, changeActiveMember } = simulatorSlice.actions;
+export const { addSimulation, addEvent, changeActiveMember, changeOnFieldMember } = simulatorSlice.actions;
 
 export default simulatorSlice.reducer;

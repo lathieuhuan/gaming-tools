@@ -17,8 +17,6 @@ type CharacterPerformer = {
 type BaseEvent = {
   id: number;
   performer: CharacterPerformer;
-  /** The character performing this event also switch to on field */
-  alsoSwitch?: boolean;
   /** required if alsoSwitch and is HitEvent */
   duration?: number;
 };
@@ -75,8 +73,14 @@ export type SimulationAttackBonus = SimulationBonusCore & {
 
 export type SimulationTarget = Target;
 
+export type SimulationChunk = {
+  id: string;
+  ownerCode: number;
+  events: SimulationEvent[];
+};
+
 export type Simulation = {
   members: SimulationMember[];
-  events: SimulationEvent[];
+  chunks: SimulationChunk[];
   target: SimulationTarget;
 };

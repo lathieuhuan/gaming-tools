@@ -4,15 +4,9 @@ import { Button } from "rond";
 import { CharacterBuff, EntityCalc } from "@Backend";
 
 import { Modifier_, parseAbilityDescription } from "@Src/utils";
-import { useDispatch } from "@Store/hooks";
-import { addEvent } from "@Store/simulator-slice";
-import {
-  ActiveMember,
-  ActiveSimulation,
-  useActiveMember,
-  useActiveSimulation,
-  useOnFieldMember,
-} from "@Simulator/ToolboxProvider";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { addEvent, selectOnFieldMember } from "@Store/simulator-slice";
+import { ActiveMember, ActiveSimulation, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 
 import { GenshinModifierView } from "@Src/components";
 
@@ -29,7 +23,7 @@ function ModifyEventHostCore({ simulation, member, initalInputsListByMember = {}
   const dispatch = useDispatch();
   const [inputsListByMember, setInputsListByMember] = useState(initalInputsListByMember);
 
-  const isOnField = useOnFieldMember(simulation) === member.data.code;
+  const isOnField = useSelector(selectOnFieldMember) === member.data.code;
 
   const inputsList = inputsListByMember[member.data.code];
 
@@ -47,7 +41,7 @@ function ModifyEventHostCore({ simulation, member, initalInputsListByMember = {}
           id: mod.index,
           inputs,
         },
-        alsoSwitch: alsoSwitch && !isOnField ? true : undefined,
+        alsoSwitch,
       })
     );
   };

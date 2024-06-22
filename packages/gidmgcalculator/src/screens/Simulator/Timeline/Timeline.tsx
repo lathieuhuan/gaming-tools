@@ -4,11 +4,11 @@ import { Button, clsx } from "rond";
 
 import type { SimulationPartyData } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectActiveMember, changeActiveMember } from "@Store/simulator-slice";
+import { selectActiveMember, changeActiveMember, changeOnFieldMember } from "@Store/simulator-slice";
 import {
   ActiveSimulation,
-  SimulationChunk,
   SimulationChunksSumary,
+  SimulationProcessedChunk,
   useActiveSimulation,
 } from "@Simulator/ToolboxProvider";
 
@@ -17,11 +17,12 @@ import { CharacterPortrait, GenshinImage } from "@Src/components";
 import { EventDisplayer } from "./EventDisplayer";
 
 type SyncState = {
-  chunks: SimulationChunk[];
+  chunks: SimulationProcessedChunk[];
   sumary: SimulationChunksSumary;
 };
 
 export function Timeline(props: { className?: string }) {
+  const dispatch = useDispatch();
   const [{ chunks, sumary }, setState] = useState<SyncState>({
     chunks: [],
     sumary: {
@@ -33,7 +34,7 @@ export function Timeline(props: { className?: string }) {
 
   useEffect(() => {
     if (simulation) {
-      const { initialChunks, initialSumary, unsubscribe } = simulation.subscribeEvents((chunks, sumary) =>
+      const { initialChunks, initialSumary, unsubscribe } = simulation.subscribeChunks((chunks, sumary) =>
         setState({ chunks, sumary })
       );
 
@@ -46,8 +47,8 @@ export function Timeline(props: { className?: string }) {
     return undefined;
   }, [simulation]);
 
-  console.log("render: Timeline");
-  if (chunks.length) console.log(chunks);
+  // console.log("render: Timeline");
+  // if (chunks.length) console.log(chunks);
 
   if (!simulation) {
     return null;
@@ -58,7 +59,9 @@ export function Timeline(props: { className?: string }) {
       <PartyDisplayer
         simulation={simulation}
         onFieldCode={chunks[0]?.ownerCode}
-        onChangeOnFieldMember={simulation.switchMember}
+        onChangeOnFieldMember={(code) => {
+          dispatch(changeOnFieldMember(code));
+        }}
       />
 
       <div className="flex">
