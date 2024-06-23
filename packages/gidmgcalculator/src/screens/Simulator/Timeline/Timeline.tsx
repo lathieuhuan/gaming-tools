@@ -4,7 +4,7 @@ import { Button, clsx } from "rond";
 
 import type { SimulationPartyData } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectActiveMember, changeActiveMember, changeOnFieldMember } from "@Store/simulator-slice";
+import { selectActiveMember, changeActiveMember, changeOnFieldMember, selectOnFieldMember } from "@Store/simulator-slice";
 import {
   ActiveSimulation,
   SimulationChunksSumary,
@@ -48,7 +48,7 @@ export function Timeline(props: { className?: string }) {
   }, [simulation]);
 
   // console.log("render: Timeline");
-  // if (chunks.length) console.log(chunks);
+  // if (chunks.length) console.log([...chunks]);
 
   if (!simulation) {
     return null;
@@ -58,7 +58,6 @@ export function Timeline(props: { className?: string }) {
     <div className={clsx("h-full flex flex-col gap-4", props.className)} style={{ width: "22rem" }}>
       <PartyDisplayer
         simulation={simulation}
-        onFieldCode={chunks[0]?.ownerCode}
         onChangeOnFieldMember={(code) => {
           dispatch(changeOnFieldMember(code));
         }}
@@ -114,13 +113,13 @@ export function Timeline(props: { className?: string }) {
 }
 
 interface PartyDisplayerProps {
-  onFieldCode?: number;
   simulation: ActiveSimulation;
   onChangeOnFieldMember: (code: number) => void;
 }
 function PartyDisplayer(props: PartyDisplayerProps) {
   const dispatch = useDispatch();
   const activeMemberName = useSelector(selectActiveMember);
+  const onFieldMember = useSelector(selectOnFieldMember);
 
   const onClickMember = (name: string) => {
     dispatch(changeActiveMember(name));
@@ -147,7 +146,7 @@ function PartyDisplayer(props: PartyDisplayerProps) {
               <Button
                 size="small"
                 icon={<FaSyncAlt />}
-                disabled={data.code === props.onFieldCode}
+                disabled={data.code === onFieldMember}
                 onClick={() => onChangeOnFieldMember(data)}
               />
             </div>

@@ -45,19 +45,28 @@ export const simulatorSlice = createSlice({
       const chunks = getSimulation(state)?.chunks;
 
       if (chunks) {
-        const { alsoSwitch, ...rest } = action.payload;
-        const lastChunk = chunks[chunks.length - 1];
-        const event = Object.assign(structuredClone(removeEmpty(rest)), {
+        const { alsoSwitch, ...eventProps } = action.payload;
+        const event = Object.assign(structuredClone(removeEmpty(eventProps)), {
           id: getNextEventId(chunks),
         });
+        const lastChunk = chunks[chunks.length - 1];
         const performerCode = event.performer.code;
 
         if (alsoSwitch && lastChunk.ownerCode !== performerCode) {
-          chunks.push({
-            id: uuid(),
-            ownerCode: performerCode,
-            events: [event],
-          });
+          if (!lastChunk.events.length) {
+            chunks.pop();
+          }
+          const newLastChunk = chunks[chunks.length - 1];
+
+          if (newLastChunk.ownerCode !== performerCode) {
+            chunks.push({
+              id: uuid(),
+              ownerCode: performerCode,
+              events: [event],
+            });
+          } else {
+            newLastChunk.events.push(event);
+          }
         } else {
           lastChunk.events.push(event);
         }
@@ -67,13 +76,27 @@ export const simulatorSlice = createSlice({
       state.activeMember = action.payload;
     },
     changeOnFieldMember: (state, action: PayloadAction<number>) => {
-      const simulation = getSimulation(state);
+      const chunks = getSimulation(state)?.chunks;
+      const newOnFieldMember = action.payload;
 
-      simulation?.chunks.push({
-        id: uuid(),
-        ownerCode: action.payload,
-        events: [],
-      });
+      if (chunks) {
+        const lastChunk = chunks[chunks.length - 1];
+
+        if (newOnFieldMember !== lastChunk.ownerCode) {
+          if (!lastChunk.events.length) {
+            chunks.pop();
+          }
+          const newLastChunk = chunks[chunks.length - 1];
+
+          if (newOnFieldMember !== newLastChunk.ownerCode) {
+            chunks.push({
+              id: uuid(),
+              ownerCode: newOnFieldMember,
+              events: [],
+            });
+          }
+        }
+      }
     },
   },
 });

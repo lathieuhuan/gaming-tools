@@ -1,6 +1,6 @@
 export const deepCopy = <T>(item: T): T => JSON.parse(JSON.stringify(item));
 
-export const uuid = () => crypto.randomUUID();
+export const uuid = (): string => crypto.randomUUID();
 
 export function getSearchParam(key: string) {
   const searchParams = new URLSearchParams(window.location.search);
@@ -26,7 +26,7 @@ export function pickProps<M, T extends keyof M>(obj: M, keys: T[]) {
 }
 
 /**
- * @param obj an object
+ * @param obj an object and not array
  * @returns a new object got from deeply removing all null, undefined,
  * empty string or array properties from the original object
  */

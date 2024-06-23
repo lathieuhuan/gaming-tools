@@ -26,8 +26,8 @@ export function getNextEventId(chunks: SimulationChunk[]) {
 
       const nextEvent = events[eventI + 1] ?? chunks[chunkI + 1]?.events[0];
 
-      if (!nextEvent || nextEvent.id !== id) {
-        return id;
+      if (!nextEvent || nextEvent.id !== id + 1) {
+        return id + 1;
       }
     }
   }

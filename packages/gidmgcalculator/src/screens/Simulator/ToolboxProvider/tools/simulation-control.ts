@@ -1,4 +1,4 @@
-import type { AppliedAttackBonus, AppliedAttributeBonus, AttackElement, ModifierAffectType } from "@Backend";
+import type { AppliedAttackBonus, AppliedAttributeBonus, ModifierAffectType } from "@Backend";
 import type {
   AttackReaction,
   HitEvent,
@@ -10,42 +10,27 @@ import type {
   SimulationPartyData,
   SimulationTarget,
 } from "@Src/types";
+import type {
+  ProcessedHitEvent,
+  ProcessedModifyEvent,
+  SimulationChunksSumary,
+  SimulationProcessedChunk,
+  SimulationProcessedEvent,
+} from "../ToolboxProvider.types";
 
 import { $AppCharacter } from "@Src/services";
 import { toArray, uuid } from "@Src/utils";
 import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
 
-type ProcessedBaseEvent = {
-  description: string;
-  error?: string;
-};
-
-type ProcessedHitEvent = HitEvent &
-  ProcessedBaseEvent & {
-    damage: {
-      value: number;
-      element: AttackElement;
+type MissmatchedCheckResult =
+  | {
+      isMissmatched: true;
+    }
+  | {
+      isMissmatched: false;
+      checkedChunkIndex: number;
+      checkedEventIndex: number;
     };
-    reaction: AttackReaction;
-  };
-
-type ProcessedModifyEvent = ModifyEvent & ProcessedBaseEvent & {};
-
-export type SimulationProcessedEvent = ProcessedModifyEvent | ProcessedHitEvent;
-
-export type SimulationProcessedChunk = Pick<SimulationChunk, "id" | "ownerCode"> & {
-  events: SimulationProcessedEvent[];
-};
-
-type ChunkRecords = Array<{
-  id: string;
-  eventIds: number[];
-}>;
-
-export type SimulationChunksSumary = {
-  damage: number;
-  duration: number;
-};
 
 type OnChangeChunk = (chunks: SimulationProcessedChunk[], sumary: SimulationChunksSumary) => void;
 
@@ -54,7 +39,7 @@ export class SimulationControl {
   target: SimulationTarget;
   member: Record<number, MemberControl>;
 
-  private chunkRecords: ChunkRecords = [];
+  // private chunkRecords: ChunkRecords = [];
   private chunks: SimulationProcessedChunk[] = [];
   private sumary: SimulationChunksSumary = {
     damage: 0,
@@ -75,20 +60,6 @@ export class SimulationControl {
     this.partyData = partyData;
     this.target = target;
   }
-
-  getLastestChunk = () => {
-    const lastestChunk = this.chunks[0];
-
-    if (!lastestChunk) {
-      this.chunks[0] = {
-        id: uuid(),
-        ownerCode: this.partyData[0].code,
-        events: [],
-      };
-      return this.chunks[0];
-    }
-    return lastestChunk;
-  };
 
   getMemberData = (code: number) => {
     return this.member[code].data;
@@ -114,63 +85,106 @@ export class SimulationControl {
     };
   };
 
-  private checkMismatched = (chunks: SimulationChunk[]): [boolean, number, number] => {
-    let checkedChunkIndex = 0;
-    let checkedEventIndex = 0;
+  private checkMismatched = (chunks: SimulationChunk[]): MissmatchedCheckResult => {
+    // console.log("checkMismatched");
+    // console.log([...chunks]);
+    // console.log([...this.chunks]);
 
-    while (checkedChunkIndex < this.chunkRecords.length) {
-      const chunk = chunks[checkedChunkIndex];
-      const chunkRecord = this.chunkRecords[checkedChunkIndex];
-
-      if (!chunk || chunk.id !== chunkRecord.id) {
-        // less chunks than records OR id not match
-        return [true, 0, 0];
-      }
-
-      let eventIndex = 0;
-
-      while (eventIndex < chunkRecord.eventIds.length) {
-        const event = chunk.events[eventIndex];
-        const eventIdRecord = chunkRecord.eventIds[eventIndex];
-
-        if (!event || event.id !== eventIdRecord) {
-          // less events than records OR id not match
-          return [true, 0, 0];
-        }
-
-        eventIndex++;
-      }
-
-      checkedChunkIndex++;
-      checkedEventIndex = eventIndex;
+    if (!this.chunks.length || this.chunks.length > chunks.length) {
+      return {
+        isMissmatched: true,
+      };
     }
 
-    return [false, checkedChunkIndex, checkedEventIndex];
+    for (let chunkIndex = 0; chunkIndex < chunks.length; chunkIndex++) {
+      const thisChunk = this.chunks[chunkIndex];
+
+      if (!thisChunk) {
+        // thisChunk are less than chunks
+        return {
+          isMissmatched: false,
+          checkedChunkIndex: chunkIndex,
+          checkedEventIndex: 0,
+        };
+      }
+      const chunk = chunks[chunkIndex];
+
+      if (thisChunk.id !== chunk.id || thisChunk.events.length > chunk.events.length) {
+        return {
+          isMissmatched: true,
+        };
+      }
+
+      for (let eventIndex = 0; eventIndex < chunk.events.length; eventIndex++) {
+        const thisEvent = thisChunk.events[eventIndex];
+
+        if (!thisEvent) {
+          // thisEvents are less than events
+          return {
+            isMissmatched: false,
+            checkedChunkIndex: chunkIndex,
+            checkedEventIndex: eventIndex,
+          };
+        }
+        const event = chunk.events[eventIndex];
+
+        if (thisEvent.id !== event.id) {
+          return {
+            isMissmatched: true,
+          };
+        }
+      }
+    }
+
+    const checkedChunkIndex = chunks.length - 1;
+
+    return {
+      isMissmatched: false,
+      checkedChunkIndex,
+      checkedEventIndex: chunks[checkedChunkIndex].events.length - 1,
+    };
   };
 
   processChunks = (chunks: SimulationChunk[]) => {
-    console.log("processChunks");
-    console.log(chunks);
-    console.log(this.chunks);
+    const result = this.checkMismatched(chunks);
 
-    let [isMissmatched, checkedChunkIndex, checkedEventIndex] = this.checkMismatched(chunks);
+    // console.log({ ...result });
 
-    if (isMissmatched) {
+    if (result.isMissmatched) {
+      // Reset
       this.chunks = [];
-      this.chunkRecords = [];
-      chunks.forEach((chunk) => chunk.events.forEach((event) => this.processNewEvent(event, chunk)));
-    } else {
-      let chunkIndex = checkedChunkIndex;
+      this.sumary = {
+        damage: 0,
+        duration: 0,
+      };
 
-      while (chunkIndex < chunks.length) {
-        const chunk = chunks[chunkIndex];
-        let eventIndex = chunkIndex === checkedChunkIndex ? checkedEventIndex : 0;
-
-        while (eventIndex < chunk.events.length) {
-          this.processNewEvent(chunk.events[eventIndex], chunk);
-          eventIndex++;
+      for (const chunk of chunks) {
+        if (chunk.events.length) {
+          chunk.events.forEach((event) => this.processNewEvent(event, chunk));
+        } else {
+          this.chunks.push({
+            ...chunk,
+            events: [],
+          });
         }
-        chunkIndex++;
+      }
+    } else {
+      for (let chunkIndex = result.checkedChunkIndex; chunkIndex < chunks.length; chunkIndex++) {
+        const chunk = chunks[chunkIndex];
+
+        if (chunk.events.length) {
+          const startEventIndex = chunkIndex === result.checkedChunkIndex ? result.checkedEventIndex : 0;
+
+          for (let eventIndex = startEventIndex; eventIndex < chunk.events.length; eventIndex++) {
+            this.processNewEvent(chunk.events[eventIndex], chunk);
+          }
+        } else {
+          // Switch character, empty chunk
+          this.chunks.push({
+            ...chunk,
+            events: [],
+          });
+        }
       }
     }
     this.onChangeEvents();
@@ -187,30 +201,16 @@ export class SimulationControl {
         processedEvent = this.hit(event);
         break;
     }
+    const lastestChunk = this.chunks[this.chunks.length - 1];
 
-    // this.addEvent(processedEvent, event.alsoSwitch ? event.performer.code : undefined);
-    // this.eventIds.push(event.id);
-  };
-
-  private addEvent = (event: SimulationProcessedEvent | SimulationProcessedEvent[], ownerCode?: number) => {
-    const lastestChunk = this.getLastestChunk();
-
-    if (!ownerCode) {
-      lastestChunk.events.unshift(...toArray(event));
-      return;
+    if (lastestChunk && chunk.id === lastestChunk.id) {
+      lastestChunk.events.push(processedEvent);
+    } else {
+      this.chunks.push({
+        ...chunk,
+        events: [processedEvent],
+      });
     }
-    if (!lastestChunk.events.length) {
-      this.chunks.shift();
-    }
-    // if (ownerCode === this.chunks[0]?.ownerCode) {
-    //   lastestChunk.events.unshift(...toArray(event));
-    //   return;
-    // }
-    this.chunks.unshift({
-      id: uuid(),
-      ownerCode,
-      events: toArray(event),
-    });
   };
 
   // ========== MODIFY ==========
@@ -222,7 +222,7 @@ export class SimulationControl {
       case "PARTY":
         return this.partyData.map((data) => this.member[data.code]);
       case "ACTIVE_UNIT": {
-        const onFieldMember = this.getLastestChunk().ownerCode;
+        const onFieldMember = this.chunks[0].ownerCode;
         return [this.member[onFieldMember]];
       }
       default:
