@@ -3,7 +3,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { AddEventPayload, AddSimulationPayload, SimulatorState } from "./simulator-slice.types";
 import { Setup_, removeEmpty, uuid } from "@Src/utils";
 import { $AppCharacter, $AppSettings } from "@Src/services";
-import { getNextEventId, getSimulation } from "./simulator-slice.utils";
+import { _addEvent, getNextEventId, getSimulation } from "./simulator-slice.utils";
 
 const initialState: SimulatorState = {
   activeId: 0,
@@ -45,31 +45,13 @@ export const simulatorSlice = createSlice({
       const chunks = getSimulation(state)?.chunks;
 
       if (chunks) {
-        const { alsoSwitch, ...eventProps } = action.payload;
+        const { alsoSwitch = false, ...eventProps } = action.payload;
         const event = Object.assign(structuredClone(removeEmpty(eventProps)), {
           id: getNextEventId(chunks),
         });
-        const lastChunk = chunks[chunks.length - 1];
         const performerCode = event.performer.code;
 
-        if (alsoSwitch && lastChunk.ownerCode !== performerCode) {
-          if (!lastChunk.events.length) {
-            chunks.pop();
-          }
-          const newLastChunk = chunks[chunks.length - 1];
-
-          if (newLastChunk.ownerCode !== performerCode) {
-            chunks.push({
-              id: uuid(),
-              ownerCode: performerCode,
-              events: [event],
-            });
-          } else {
-            newLastChunk.events.push(event);
-          }
-        } else {
-          lastChunk.events.push(event);
-        }
+        _addEvent(chunks, event, performerCode, alsoSwitch);
       }
     },
     changeActiveMember: (state, action: PayloadAction<string>) => {
@@ -77,25 +59,9 @@ export const simulatorSlice = createSlice({
     },
     changeOnFieldMember: (state, action: PayloadAction<number>) => {
       const chunks = getSimulation(state)?.chunks;
-      const newOnFieldMember = action.payload;
 
       if (chunks) {
-        const lastChunk = chunks[chunks.length - 1];
-
-        if (newOnFieldMember !== lastChunk.ownerCode) {
-          if (!lastChunk.events.length) {
-            chunks.pop();
-          }
-          const newLastChunk = chunks[chunks.length - 1];
-
-          if (newOnFieldMember !== newLastChunk.ownerCode) {
-            chunks.push({
-              id: uuid(),
-              ownerCode: newOnFieldMember,
-              events: [],
-            });
-          }
-        }
+        _addEvent(chunks, null, action.payload, true);
       }
     },
   },

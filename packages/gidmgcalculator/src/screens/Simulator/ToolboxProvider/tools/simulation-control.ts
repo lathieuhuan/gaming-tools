@@ -19,7 +19,6 @@ import type {
 } from "../ToolboxProvider.types";
 
 import { $AppCharacter } from "@Src/services";
-import { toArray, uuid } from "@Src/utils";
 import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
 
 type MissmatchedCheckResult =
@@ -28,8 +27,8 @@ type MissmatchedCheckResult =
     }
   | {
       isMissmatched: false;
-      checkedChunkIndex: number;
-      checkedEventIndex: number;
+      nextChunkIndex: number;
+      nextEventIndex: number;
     };
 
 type OnChangeChunk = (chunks: SimulationProcessedChunk[], sumary: SimulationChunksSumary) => void;
@@ -39,7 +38,6 @@ export class SimulationControl {
   target: SimulationTarget;
   member: Record<number, MemberControl>;
 
-  // private chunkRecords: ChunkRecords = [];
   private chunks: SimulationProcessedChunk[] = [];
   private sumary: SimulationChunksSumary = {
     damage: 0,
@@ -68,6 +66,9 @@ export class SimulationControl {
   // ========== EVENTS ==========
 
   private onChangeEvents = () => {
+    console.log("onChangeEvents");
+    console.log(this.chunks);
+
     this.chunkSubscribers.forEach((callback) => callback(this.chunks.concat(), this.sumary));
   };
 
@@ -86,11 +87,20 @@ export class SimulationControl {
   };
 
   private checkMismatched = (chunks: SimulationChunk[]): MissmatchedCheckResult => {
-    // console.log("checkMismatched");
-    // console.log([...chunks]);
-    // console.log([...this.chunks]);
+    console.log("checkMismatched");
+    console.log(structuredClone(chunks));
+    console.log(structuredClone(this.chunks));
 
-    if (!this.chunks.length || this.chunks.length > chunks.length) {
+    if (!this.chunks.length) {
+      // at the start
+      return {
+        isMissmatched: true,
+      };
+    }
+    if (!this.chunks[this.chunks.length - 1].events.length) {
+      this.chunks.pop();
+    }
+    if (this.chunks.length > chunks.length) {
       return {
         isMissmatched: true,
       };
@@ -100,11 +110,11 @@ export class SimulationControl {
       const thisChunk = this.chunks[chunkIndex];
 
       if (!thisChunk) {
-        // thisChunk are less than chunks
+        // thisChunks are less than chunks
         return {
           isMissmatched: false,
-          checkedChunkIndex: chunkIndex,
-          checkedEventIndex: 0,
+          nextChunkIndex: chunkIndex,
+          nextEventIndex: 0,
         };
       }
       const chunk = chunks[chunkIndex];
@@ -122,8 +132,8 @@ export class SimulationControl {
           // thisEvents are less than events
           return {
             isMissmatched: false,
-            checkedChunkIndex: chunkIndex,
-            checkedEventIndex: eventIndex,
+            nextChunkIndex: chunkIndex,
+            nextEventIndex: eventIndex,
           };
         }
         const event = chunk.events[eventIndex];
@@ -136,19 +146,21 @@ export class SimulationControl {
       }
     }
 
-    const checkedChunkIndex = chunks.length - 1;
-
     return {
       isMissmatched: false,
-      checkedChunkIndex,
-      checkedEventIndex: chunks[checkedChunkIndex].events.length - 1,
+      nextChunkIndex: chunks.length,
+      nextEventIndex: 0,
     };
   };
 
   processChunks = (chunks: SimulationChunk[]) => {
+    if (!chunks.length) {
+      console.error("No chunks found");
+      return;
+    }
     const result = this.checkMismatched(chunks);
 
-    // console.log({ ...result });
+    console.log({ ...result });
 
     if (result.isMissmatched) {
       // Reset
@@ -169,17 +181,18 @@ export class SimulationControl {
         }
       }
     } else {
-      for (let chunkIndex = result.checkedChunkIndex; chunkIndex < chunks.length; chunkIndex++) {
+      for (let chunkIndex = result.nextChunkIndex; chunkIndex < chunks.length; chunkIndex++) {
         const chunk = chunks[chunkIndex];
 
         if (chunk.events.length) {
-          const startEventIndex = chunkIndex === result.checkedChunkIndex ? result.checkedEventIndex : 0;
+          const startEventIndex = chunkIndex === result.nextChunkIndex ? result.nextEventIndex : 0;
 
           for (let eventIndex = startEventIndex; eventIndex < chunk.events.length; eventIndex++) {
             this.processNewEvent(chunk.events[eventIndex], chunk);
           }
-        } else {
-          // Switch character, empty chunk
+        }
+        // Switch character, empty chunk.
+        else {
           this.chunks.push({
             ...chunk,
             events: [],
@@ -201,10 +214,10 @@ export class SimulationControl {
         processedEvent = this.hit(event);
         break;
     }
-    const lastestChunk = this.chunks[this.chunks.length - 1];
+    const latestChunk = this.chunks[this.chunks.length - 1];
 
-    if (lastestChunk && chunk.id === lastestChunk.id) {
-      lastestChunk.events.push(processedEvent);
+    if (latestChunk && chunk.id === latestChunk.id) {
+      latestChunk.events.push(processedEvent);
     } else {
       this.chunks.push({
         ...chunk,
