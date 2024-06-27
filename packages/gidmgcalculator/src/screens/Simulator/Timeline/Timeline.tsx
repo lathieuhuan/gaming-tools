@@ -95,6 +95,7 @@ export function Timeline(props: { className?: string }) {
                               top: "-9px",
                               left: "-6px",
                             }}
+                            fallbackCls="p-0.5"
                             src={simulation.getMemberData(event.performer.code)?.sideIcon}
                           />
                         }
