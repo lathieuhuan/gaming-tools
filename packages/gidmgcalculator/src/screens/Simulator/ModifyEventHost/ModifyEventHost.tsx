@@ -1,4 +1,4 @@
-import { AppWeapon, CharacterBuff, EntityCalc, WeaponBuff } from "@Backend";
+import { AppWeapon, CharacterBuff, EntityCalc } from "@Backend";
 
 import { ActiveSimulation, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { Modifier_ } from "@Src/utils";
@@ -7,7 +7,6 @@ import { InputsByMember } from "./ModifyEventHost.types";
 import { OnFieldMemberWatch } from "@Simulator/components";
 import { EventListCharacterBuff } from "./EventListCharacterBuff";
 import { EventListWeaponBuff } from "./EventListWeaponBuff";
-import { $AppWeapon } from "@Src/services";
 
 export function ModifyEventHost(props: { className?: string }) {
   const simulation = useActiveSimulation();

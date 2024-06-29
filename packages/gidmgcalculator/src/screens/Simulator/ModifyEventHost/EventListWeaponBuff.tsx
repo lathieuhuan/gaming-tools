@@ -25,16 +25,16 @@ export function EventListWeaponBuff({ member, initalInputsByMember = {}, appWeap
   const { buffs = [] } = appWeapon;
 
   const onMakeEvent = (mod: WeaponBuff, inputs: number[], alsoSwitch?: boolean) => {
-    const performerCode = member.data.code;
-
     dispatch(
       addEvent({
         type: "MODIFY",
         performer: {
           type: "CHARACTER",
-          code: performerCode,
+          code: member.data.code,
         },
         modifier: {
+          type: "WEAPON",
+          code: appWeapon.code,
           id: mod.index,
           inputs,
         },

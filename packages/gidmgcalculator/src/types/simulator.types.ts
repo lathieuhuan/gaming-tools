@@ -24,6 +24,8 @@ type BaseEvent = {
 export type ModifyEvent = BaseEvent & {
   type: "MODIFY";
   modifier: {
+    type: "CHARACTER" | "WEAPON" | "ARTIFACT";
+    code: number;
     id: number;
     inputs?: number[];
   };

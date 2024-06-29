@@ -38,6 +38,8 @@ export function EventListCharacterBuff({
           code: performerCode,
         },
         modifier: {
+          type: "CHARACTER",
+          code: performerCode,
           id: mod.index,
           inputs,
         },
