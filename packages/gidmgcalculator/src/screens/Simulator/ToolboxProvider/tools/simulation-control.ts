@@ -1,4 +1,4 @@
-import type { AppliedAttackBonus, AppliedAttributeBonus, ModifierAffectType } from "@Backend";
+import type { AppWeapon, AppliedAttackBonus, AppliedAttributeBonus, ModifierAffectType } from "@Backend";
 import type {
   AttackReaction,
   HitEvent,
@@ -18,7 +18,7 @@ import type {
   SimulationProcessedEvent,
 } from "../ToolboxProvider.types";
 
-import { $AppCharacter } from "@Src/services";
+import { $AppCharacter, $AppWeapon } from "@Src/services";
 import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
 
 type MissmatchedCheckResult =
@@ -34,9 +34,10 @@ type MissmatchedCheckResult =
 type OnChangeChunk = (chunks: SimulationProcessedChunk[], sumary: SimulationChunksSumary) => void;
 
 export class SimulationControl {
-  partyData: SimulationPartyData;
+  partyData: SimulationPartyData = [];
+  appWeapons: Record<number, AppWeapon> = {};
   target: SimulationTarget;
-  member: Record<number, MemberControl>;
+  member: Record<number, MemberControl> = {};
 
   private chunks: SimulationProcessedChunk[] = [];
   private sumary: SimulationChunksSumary = {
@@ -46,28 +47,44 @@ export class SimulationControl {
   private chunkSubscribers = new Set<OnChangeChunk>();
 
   constructor(party: SimulationMember[], target: SimulationTarget) {
-    const memberManager: Record<number, MemberControl> = {};
-    const partyData = party.map((member) => $AppCharacter.get(member.name));
+    this.partyData = party.map((member) => $AppCharacter.get(member.name));
+    this.target = target;
 
     for (let i = 0; i < party.length; i++) {
       const member = party[i];
-      const memberData = partyData[i];
-      memberManager[memberData.code] = new MemberControl(member, partyData[i], partyData);
+      const memberData = this.partyData[i];
+      const weaponCode = member.weapon.code;
+
+      if (!this.appWeapons[weaponCode]) {
+        this.appWeapons[weaponCode] = $AppWeapon.get(weaponCode)!;
+      }
+
+      this.member[memberData.code] = new MemberControl(
+        member,
+        this.partyData[i],
+        this.appWeapons[weaponCode],
+        this.partyData
+      );
     }
-    this.member = memberManager;
-    this.partyData = partyData;
-    this.target = target;
   }
 
   getMemberData = (code: number) => {
     return this.member[code].data;
   };
 
+  getMemberInfo = (code: number) => {
+    return this.member[code].info;
+  };
+
+  getAppWeaponOfMember = (code: number) => {
+    return this.appWeapons[this.member[code].info.weapon.code];
+  };
+
   // ========== EVENTS ==========
 
   private onChangeEvents = () => {
-    console.log("onChangeEvents");
-    console.log(this.chunks);
+    // console.log("onChangeEvents");
+    // console.log(this.chunks);
 
     this.chunkSubscribers.forEach((callback) => callback(this.chunks.concat(), this.sumary));
   };
@@ -86,10 +103,10 @@ export class SimulationControl {
     };
   };
 
-  private checkMismatched = (chunks: SimulationChunk[]): MissmatchedCheckResult => {
-    console.log("checkMismatched");
-    console.log(structuredClone(chunks));
-    console.log(structuredClone(this.chunks));
+  private checkMissmatched = (chunks: SimulationChunk[]): MissmatchedCheckResult => {
+    // console.log("checkMissmatched");
+    // console.log(structuredClone(chunks));
+    // console.log(structuredClone(this.chunks));
 
     if (!this.chunks.length) {
       // at the start
@@ -158,9 +175,9 @@ export class SimulationControl {
       console.error("No chunks found");
       return;
     }
-    const result = this.checkMismatched(chunks);
+    const result = this.checkMissmatched(chunks);
 
-    console.log({ ...result });
+    // console.log({ ...result });
 
     if (result.isMissmatched) {
       // Reset

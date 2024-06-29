@@ -1,15 +1,14 @@
 import { useState } from "react";
-import { FaSyncAlt } from "react-icons/fa";
-import { Button } from "rond";
 import { CharacterBuff } from "@Backend";
 
 import { ActiveMember, ActiveSimulation } from "@Simulator/ToolboxProvider";
 import { parseAbilityDescription } from "@Src/utils";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { addEvent, selectOnFieldMember } from "@Store/simulator-slice";
+import { useDispatch } from "@Store/hooks";
+import { addEvent } from "@Store/simulator-slice";
 import { InputsByMember } from "./ModifyEventHost.types";
 
 import { GenshinModifierView } from "@Src/components";
+import { ActionButton } from "@Simulator/components";
 
 interface EventListCharacterBuffProps {
   simulation: ActiveSimulation;
@@ -25,8 +24,6 @@ export function EventListCharacterBuff({
 }: EventListCharacterBuffProps) {
   const dispatch = useDispatch();
   const [allInputs, setAllInputs] = useState(initalInputsByMember);
-
-  const isOnField = useSelector(selectOnFieldMember) === member.data.code;
 
   const inputsList = allInputs[member.data.code];
 
@@ -60,7 +57,7 @@ export function EventListCharacterBuff({
   };
 
   return (
-    <div className="h-full hide-scrollbar space-y-3">
+    <div className="space-y-3">
       {buffs.map((modifier, modIndex) => {
         const inputs = inputsList[modIndex];
         const inputConfigs = modifier.inputConfigs?.filter((config) => config.for !== "FOR_TEAM");
@@ -89,26 +86,11 @@ export function EventListCharacterBuff({
               }}
             />
 
-            <div className={"pr-1 flex justify-end " + (inputConfigs?.length ? "mt-3" : "mt-2")}>
-              <Button
-                shape="square"
-                size="small"
-                className={isOnField ? "" : "rounded-r-none"}
-                onClick={() => onMakeEvent(modifier, inputs)}
-              >
-                Trigger
-              </Button>
-
-              {!isOnField && (
-                <Button
-                  shape="square"
-                  size="small"
-                  className="ml-0.5 rounded-l-none"
-                  icon={<FaSyncAlt />}
-                  onClick={() => onMakeEvent(modifier, inputs, true)}
-                />
-              )}
-            </div>
+            <ActionButton
+              ctaText="Trigger"
+              className={"pr-1 justify-end " + (inputConfigs?.length ? "mt-3" : "mt-2")}
+              onClick={(alsoSwitch) => onMakeEvent(modifier, inputs, alsoSwitch)}
+            />
           </div>
         );
       })}

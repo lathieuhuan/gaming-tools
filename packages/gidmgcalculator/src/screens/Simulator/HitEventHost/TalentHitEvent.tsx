@@ -6,10 +6,10 @@ import type { CalcItem } from "@Backend";
 import type { SimulationAttackBonus, TalentHitEventMod } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { TalentEventConfig, useActiveMember } from "@Simulator/ToolboxProvider";
+import { ActionButton } from "@Simulator/components";
 
 interface TalentHitEventProps {
   item: CalcItem;
-  isOnField: boolean;
   getTalentEventConfig: (attkBonus: SimulationAttackBonus[], elmtModCtrls?: TalentHitEventMod) => TalentEventConfig;
   onPerformEvent: (elmtModCtrls?: TalentHitEventMod, alsoSwitch?: boolean) => void;
 }
@@ -54,26 +54,8 @@ export function TalentHitEvent(props: TalentHitEventProps) {
             ? config.damage.map((d) => Math.round(d)).join(" + ")
             : Math.round(config.damage)}
         </span>
-        <div className="flex">
-          <Button
-            shape="square"
-            size="small"
-            className={props.isOnField ? "" : "rounded-r-none"}
-            onClick={() => props.onPerformEvent(elmtModCtrls)}
-          >
-            Perform
-          </Button>
 
-          {!props.isOnField && (
-            <Button
-              shape="square"
-              size="small"
-              className="ml-0.5 rounded-l-none"
-              icon={<FaSyncAlt />}
-              onClick={() => props.onPerformEvent(elmtModCtrls, true)}
-            />
-          )}
-        </div>
+        <ActionButton ctaText="Perform" onClick={(alsoSwitch) => props.onPerformEvent(elmtModCtrls, alsoSwitch)} />
       </div>
     </div>
   );

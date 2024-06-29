@@ -2,11 +2,12 @@ import type { HitEvent } from "@Src/types";
 
 import { ActiveMember, ActiveSimulation, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { useTranslation } from "@Src/hooks";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { addEvent, selectOnFieldMember } from "@Store/simulator-slice";
+import { useDispatch } from "@Store/hooks";
+import { addEvent } from "@Store/simulator-slice";
 import { getTalentHitEventConfig, type TalentHitEventConfig } from "./HitEventHost.utils";
 
 // Components
+import { OnFieldMemberWatch } from "@Simulator/components";
 import { HitEventCoordinator, HitEventDisplayer } from "./HitEventCoordinator";
 import { TalentHitEvent } from "./TalentHitEvent";
 
@@ -18,8 +19,6 @@ interface HitEventHostProps {
 function HitEventHostCore({ simulation, member, configs }: HitEventHostProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
-
-  const isOnField = useSelector(selectOnFieldMember) === member.data.code;
 
   const onPerformTalentHitEvent = (eventInfo: Omit<HitEvent, "id" | "type" | "performer">, alsoSwitch?: boolean) => {
     dispatch(
@@ -71,7 +70,6 @@ function HitEventHostCore({ simulation, member, configs }: HitEventHostProps) {
                       >
                         <TalentHitEvent
                           item={item}
-                          isOnField={isOnField}
                           getTalentEventConfig={(attkBonus, elmtModCtrls) => {
                             return member.tools.configTalentHitEvent({
                               talent: config.type,
@@ -124,12 +122,12 @@ export function HitEventHost(props: { className?: string }) {
   }
 
   return (
-    <div className={props.className}>
+    <OnFieldMemberWatch className={props.className} activeMemberCode={activeMember.data.code}>
       <HitEventHostCore
         simulation={simulation}
         member={activeMember}
         configs={getTalentHitEventConfig(activeMember.data)}
       />
-    </div>
+    </OnFieldMemberWatch>
   );
 }

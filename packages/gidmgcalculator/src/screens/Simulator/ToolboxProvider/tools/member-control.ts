@@ -1,5 +1,6 @@
 import {
   AppCharacter,
+  AppWeapon,
   AttackBonusControl,
   AttackPattern,
   AttackPatternConf,
@@ -15,17 +16,15 @@ import {
   getNormalsConfig,
 } from "@Backend";
 import type {
-  Character,
   ElementModCtrl,
   HitEvent,
-  PartyData,
   SimulationAttackBonus,
   SimulationAttributeBonus,
   SimulationMember,
+  SimulationPartyData,
   SimulationTarget,
 } from "@Src/types";
 
-import { $AppWeapon } from "@Src/services";
 import { pickProps, removeEmpty } from "@Src/utils";
 import { SimulatorTotalAttributeControl } from "./total-attribute-control";
 
@@ -39,12 +38,12 @@ export type ConfigTalentHitEventArgs = {
   item: CalcItem;
   elmtModCtrls?: Partial<ElementModCtrl>;
   attkBonus: SimulationAttackBonus[];
-  partyData: PartyData;
+  partyData: SimulationPartyData;
   target: SimulationTarget;
 };
 
 export class MemberControl {
-  info: Character;
+  info: SimulationMember;
   data: AppCharacter;
   totalAttr: SimulatorTotalAttributeControl;
   attrBonus: SimulationAttributeBonus[] = [];
@@ -55,19 +54,16 @@ export class MemberControl {
   onChangeTotalAttr: OnChangeTotalAttr | undefined;
   onChangeBonuses: OnChangeBonuses | undefined;
 
-  constructor(member: SimulationMember, appChar: AppCharacter, partyData: PartyData) {
-    const char: Character = pickProps(member, ["name", "level", "cons", "NAs", "ES", "EB"]);
-    const appWeapon = $AppWeapon.get(member.weapon.code)!;
-
+  constructor(member: SimulationMember, appChar: AppCharacter, appWeapon: AppWeapon, partyData: SimulationPartyData) {
     const rootTotalAttr = new SimulatorTotalAttributeControl();
 
-    rootTotalAttr.construct(char, appChar, member.weapon, appWeapon, member.artifacts);
+    rootTotalAttr.construct(member, appChar, member.weapon, appWeapon, member.artifacts);
 
-    this.info = char;
+    this.info = member;
     this.data = appChar;
 
     this.totalAttr = rootTotalAttr.clone();
-    this.buffApplier = new SimulatorBuffApplier({ char, appChar, partyData }, this.totalAttr);
+    this.buffApplier = new SimulatorBuffApplier({ char: member, appChar, partyData }, this.totalAttr);
   }
 
   listenChanges = (onChangeTotalAttr: OnChangeTotalAttr, onChangeBonuses: OnChangeBonuses) => {
@@ -171,7 +167,7 @@ export class MemberControl {
     };
   };
 
-  hit = (event: HitEvent, partyData: PartyData, target: SimulationTarget) => {
+  hit = (event: HitEvent, partyData: SimulationPartyData, target: SimulationTarget) => {
     const hitInfo = this.getHitInfo(event.talent, event.calcItemId);
     if (!hitInfo) return null;
 

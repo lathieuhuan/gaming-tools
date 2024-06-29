@@ -1,5 +1,13 @@
 import { round } from "rond";
-import { CharacterCalc, AppCharacter, CharacterBuff, CharacterDebuff, getIntialCharacterBonusValue } from "@Backend";
+import {
+  CharacterCalc,
+  AppCharacter,
+  CharacterBuff,
+  CharacterDebuff,
+  getIntialCharacterBonusValue,
+  AppWeapon,
+  WeaponBuff,
+} from "@Backend";
 
 import type { Character, PartyData } from "@Src/types";
 import { toArray, toMult } from "./pure-utils";
@@ -108,4 +116,13 @@ export const parseWeaponDescription = (description: string, refi: number) => {
     }
     return wrapText(body + suffix, type);
   });
+};
+
+export const getWeaponBuffDescription = (descriptions: AppWeapon["descriptions"], buff: WeaponBuff, refi: number) => {
+  if (descriptions?.length) {
+    let { description = 0 } = buff;
+    description = typeof description === "number" ? descriptions[description] : description;
+    return parseWeaponDescription(description || "", refi);
+  }
+  return "";
 };

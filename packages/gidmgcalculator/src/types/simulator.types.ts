@@ -1,4 +1,4 @@
-import type { AttackBonusKey, AttackBonusType, AttributeStat, LevelableTalentType } from "@Backend";
+import type { AppCharacter, AttackBonusKey, AttackBonusType, AttributeStat, LevelableTalentType } from "@Backend";
 import type { Artifact, Character, Weapon } from "./global.types";
 import type { ElementModCtrl, PartyData, Target } from "./calculator.types";
 
@@ -45,7 +45,7 @@ export type SimulationMember = Character & {
   artifacts: Array<Artifact | null>;
 };
 
-export type SimulationPartyData = NonNullable<PartyData[number]>[];
+export type SimulationPartyData = AppCharacter[];
 
 /** ========== BONUSES ========== */
 
