@@ -131,6 +131,10 @@ export class TotalAttributeControl {
     return attribute;
   };
 
+  clone = () => {
+    return new TotalAttributeControl(structuredClone(this.totalAttr));
+  };
+
   private addBase = (key: AttributeStat, value: number, description = "Character base stat") => {
     this.totalAttr[key].base += value;
     this.record?.(key, value, description);

@@ -83,24 +83,10 @@ export class SimulationControl {
 
   // ========== EVENTS ==========
 
-  private onChangeEvents = (receivers: Set<MemberControl> | MemberControl[]) => {
-    console.log("onChangeEvents");
+  private onChangeEvents = () => {
+    // console.log("onChangeEvents");
     // console.log(this.chunks);
-    console.log(receivers);
-
-    receivers.forEach((receiver) => {
-      receiver.totalAttr.reset();
-
-      for (const bonus of receiver.attrBonus) {
-        const add = bonus.stable ? receiver.totalAttr.addStable : receiver.totalAttr.addUnstable;
-        add(bonus.toStat, bonus.value, `${bonus.trigger.character} / ${bonus.trigger.modifier}`);
-      }
-      receiver.onChangeTotalAttr?.(receiver.totalAttr.finalize());
-    });
-
-    receivers.forEach((receiver) => {
-      receiver.onChangeBonuses?.(receiver.attrBonus.concat(), receiver.attkBonus.concat());
-    });
+    // console.log(receivers);
 
     this.chunkSubscribers.forEach((callback) => callback(this.chunks.concat(), this.sumary));
   };
@@ -213,9 +199,8 @@ export class SimulationControl {
           });
         }
       }
-      return this.onChangeEvents(this.partyData.map((data) => this.member[data.code]));
+      return this.onChangeEvents();
     }
-    let allReceivers: MemberControl[] = [];
 
     for (let chunkIndex = result.nextChunkIndex; chunkIndex < chunks.length; chunkIndex++) {
       const chunk = chunks[chunkIndex];
@@ -224,8 +209,7 @@ export class SimulationControl {
         const startEventIndex = chunkIndex === result.nextChunkIndex ? result.nextEventIndex : 0;
 
         for (let eventIndex = startEventIndex; eventIndex < chunk.events.length; eventIndex++) {
-          const receivers = this.processNewEvent(chunk.events[eventIndex], chunk);
-          allReceivers = allReceivers.concat(receivers);
+          this.processNewEvent(chunk.events[eventIndex], chunk);
         }
       }
       // Switch character, empty chunk.
@@ -236,19 +220,16 @@ export class SimulationControl {
         });
       }
     }
-    console.log('processChunks');
-    console.log(allReceivers);
 
-    this.onChangeEvents(new Set(allReceivers));
+    this.onChangeEvents();
   };
 
   private processNewEvent = (event: SimulationEvent, chunk: SimulationChunk) => {
     let processedEvent: SimulationProcessedEvent;
-    let receivers: MemberControl[] = [];
 
     switch (event.type) {
       case "MODIFY":
-        [processedEvent, receivers] = this.modify(event);
+        processedEvent = this.modify(event);
         break;
       case "HIT":
         processedEvent = this.hit(event);
@@ -264,8 +245,6 @@ export class SimulationControl {
         events: [processedEvent],
       });
     }
-
-    return receivers;
   };
 
   // ========== MODIFY ==========
@@ -367,15 +346,28 @@ export class SimulationControl {
       },
     });
 
-    return receivers;
+    receivers.forEach((receiver) => {
+      receiver.resetTotalAttr();
+
+      for (const bonus of receiver.attrBonus) {
+        const add = bonus.stable ? receiver.totalAttr.addStable : receiver.totalAttr.addUnstable;
+        add(bonus.toStat, bonus.value, `${bonus.trigger.character} / ${bonus.trigger.modifier}`);
+      }
+      receiver.onChangeTotalAttr?.(receiver.totalAttr.finalize());
+    });
+
+    receivers.forEach((receiver) => {
+      receiver.onChangeBonuses?.(receiver.attrBonus.concat(), receiver.attkBonus.concat());
+    });
+
+    return modifier;
   };
 
-  private modify = (event: ModifyEvent): [ProcessedModifyEvent, MemberControl[]] => {
+  private modify = (event: ModifyEvent): ProcessedModifyEvent => {
     const { modifier } = event;
     const { inputs = [] } = modifier;
     const performer = this.member[event.performer.code];
     let description: string | undefined;
-    let receivers: MemberControl[] = [];
 
     switch (modifier.type) {
       case "CHARACTER": {
@@ -384,8 +376,7 @@ export class SimulationControl {
         const buff = performer?.data.buffs?.find((buff) => buff.index === modifier.id);
 
         if (buff) {
-          description = buff.src;
-          receivers = this.baseModify(performer, buff.affect, description, (applyFn) => {
+          description = this.baseModify(performer, buff.affect, buff.src, (applyFn) => {
             performer.buffApplier.applyCharacterBuff({
               buff,
               description: "",
@@ -401,8 +392,7 @@ export class SimulationControl {
         const buff = appWeapon.buffs?.find((buff) => buff.index === modifier.id);
 
         if (buff) {
-          description = appWeapon.name;
-          receivers = this.baseModify(performer, buff.affect, description, (applyFn) => {
+          description = this.baseModify(performer, buff.affect, appWeapon.name, (applyFn) => {
             performer.buffApplier.applyWeaponBuff({
               buff,
               refi: 1,
@@ -423,14 +413,11 @@ export class SimulationControl {
       description = `[${error}]`;
     }
 
-    return [
-      {
-        ...event,
-        description,
-        error,
-      },
-      receivers,
-    ];
+    return {
+      ...event,
+      description,
+      error,
+    };
   };
 
   // ========== HIT ==========

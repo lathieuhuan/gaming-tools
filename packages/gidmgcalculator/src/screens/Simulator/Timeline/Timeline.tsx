@@ -4,7 +4,12 @@ import { Button, clsx } from "rond";
 
 import type { SimulationPartyData } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectActiveMember, changeActiveMember, changeOnFieldMember, selectOnFieldMember } from "@Store/simulator-slice";
+import {
+  selectActiveMember,
+  changeActiveMember,
+  changeOnFieldMember,
+  selectOnFieldMember,
+} from "@Store/simulator-slice";
 import {
   ActiveSimulation,
   SimulationChunksSumary,
@@ -82,11 +87,14 @@ export function Timeline(props: { className?: string }) {
 
                 <div className="overflow-hidden grow">
                   {chunk.events.map((event) => {
+                    const performer = simulation.getMemberData(event.performer.code);
+
                     return (
                       <EventDisplayer
                         key={event.id}
                         sideIconNode={
                           <GenshinImage
+                            title={performer?.name}
                             className="w-7 h-7 shrink-0 relative"
                             imgCls="absolute"
                             imgStyle={{
@@ -96,7 +104,7 @@ export function Timeline(props: { className?: string }) {
                               left: "-6px",
                             }}
                             fallbackCls="p-0.5"
-                            src={simulation.getMemberData(event.performer.code)?.sideIcon}
+                            src={performer?.sideIcon}
                           />
                         }
                         event={event}

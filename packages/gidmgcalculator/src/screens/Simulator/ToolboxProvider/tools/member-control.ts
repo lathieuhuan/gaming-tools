@@ -13,6 +13,7 @@ import {
   ResistanceReductionControl,
   SimulatorBuffApplier,
   TotalAttribute,
+  TotalAttributeControl,
   getNormalsConfig,
 } from "@Backend";
 import type {
@@ -26,7 +27,6 @@ import type {
 } from "@Src/types";
 
 import { pickProps, removeEmpty } from "@Src/utils";
-import { SimulatorTotalAttributeControl } from "./total-attribute-control";
 
 export type OnChangeTotalAttr = (totalAttr: TotalAttribute) => void;
 
@@ -45,25 +45,31 @@ export type ConfigTalentHitEventArgs = {
 export class MemberControl {
   info: SimulationMember;
   data: AppCharacter;
-  totalAttr: SimulatorTotalAttributeControl;
+  totalAttr: TotalAttributeControl;
   attrBonus: SimulationAttributeBonus[] = [];
   attkBonus: SimulationAttackBonus[] = [];
   buffApplier: SimulatorBuffApplier;
+  private rootTotalAttr: TotalAttributeControl;
   private normalsConfig: NormalsConfig = {};
 
   onChangeTotalAttr: OnChangeTotalAttr | undefined;
   onChangeBonuses: OnChangeBonuses | undefined;
+  resetTotalAttr: () => void;
 
   constructor(member: SimulationMember, appChar: AppCharacter, appWeapon: AppWeapon, partyData: SimulationPartyData) {
-    const rootTotalAttr = new SimulatorTotalAttributeControl();
-
-    rootTotalAttr.construct(member, appChar, member.weapon, appWeapon, member.artifacts);
+    this.rootTotalAttr = new TotalAttributeControl();
+    this.rootTotalAttr.construct(member, appChar, member.weapon, appWeapon, member.artifacts);
 
     this.info = member;
     this.data = appChar;
 
-    this.totalAttr = rootTotalAttr.clone();
+    this.totalAttr = this.rootTotalAttr.clone();
     this.buffApplier = new SimulatorBuffApplier({ char: member, appChar, partyData }, this.totalAttr);
+
+    this.resetTotalAttr = () => {
+      this.totalAttr = this.rootTotalAttr.clone();
+      this.buffApplier = new SimulatorBuffApplier({ char: member, appChar, partyData }, this.totalAttr);
+    };
   }
 
   listenChanges = (onChangeTotalAttr: OnChangeTotalAttr, onChangeBonuses: OnChangeBonuses) => {
@@ -72,7 +78,7 @@ export class MemberControl {
   };
 
   reset = () => {
-    this.totalAttr.reset();
+    this.resetTotalAttr();
     this.attrBonus = [];
     this.attkBonus = [];
 

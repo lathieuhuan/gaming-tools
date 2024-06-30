@@ -18,6 +18,7 @@ export interface ImageProps {
   imgCls?: ClassValue;
   imgStyle?: React.CSSProperties;
   fallback?: React.ReactNode;
+  title?: string;
   onError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void;
 }
 export const Image = ({
@@ -33,6 +34,7 @@ export const Image = ({
   imgCls,
   imgStyle,
   fallback,
+  title,
   onError,
 }: ImageProps) => {
   const [isError, setIsError] = useState(false);
@@ -41,6 +43,7 @@ export const Image = ({
 
   return (
     <div
+      title={title}
       className={clsx("ron-image", isError && "ron-image-error", className)}
       style={{
         ...style,
