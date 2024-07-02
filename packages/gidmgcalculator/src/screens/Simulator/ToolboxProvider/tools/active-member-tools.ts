@@ -34,7 +34,7 @@ export class ActiveMemberTools {
     this.totalAttrSubscribers.add(subscribe);
 
     return {
-      initialTotalAttr: this.member.totalAttr.finalize(),
+      initialTotalAttr: this.member.totalAttr,
       unsubscribe: () => {
         this.totalAttrSubscribers.delete(subscribe);
       },

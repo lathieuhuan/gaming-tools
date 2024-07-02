@@ -9,7 +9,7 @@ export {
 } from "./utils";
 export { TrackerControl, TotalAttributeControl, AttackBonusControl, ResistanceReductionControl } from "./controls";
 export { getIntialCharacterBonusValue } from "./bonus-getters";
-export { SimulatorBuffApplier } from "./appliers/sim-buff-applier";
+export { BuffApplierCore } from "./appliers/buff-applier-core";
 export {
   getNormalsConfig,
   AttackPatternConf,

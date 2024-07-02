@@ -31,15 +31,23 @@ type ApplyBonus = (args: ApplyBonusArgs) => void;
 type ApplyBonuses = (args: ApplyBonusesArgs<WithBonusTargets<EntityBonus>>) => void;
 
 export class BuffApplierCore {
-  protected info: CalculationInfo;
+  protected calcInfo: CalculationInfo;
   private modStackingCtrl = new ModifierStackingControl();
 
   private getTotalAttrFromSelf: GetTotalAttrFromSelf = () => 0;
 
-  constructor(info: CalculationInfo, totalAttr: TotalAttributeControl) {
-    this.info = info;
-    this.getTotalAttrFromSelf = totalAttr.getTotal;
+  constructor(info: CalculationInfo, totalAttr?: TotalAttributeControl) {
+    this.calcInfo = info;
+
+    if (totalAttr) {
+      this.getTotalAttrFromSelf = totalAttr.getTotal;
+    }
   }
+
+  // For simulator
+  protected renew = (totalAttr: TotalAttributeControl) => {
+    this.getTotalAttrFromSelf = totalAttr.getTotal;
+  };
 
   private applyBonus: ApplyBonus = (args) => {
     const { bonus, isStackable, description } = args;
@@ -99,7 +107,7 @@ export class BuffApplierCore {
     }
   };
 
-  protected applyBonuses: ApplyBonuses = (args) => {
+  private applyBonuses: ApplyBonuses = (args) => {
     const { buff, fromSelf = false, isFinal, getBonus, ...applyArgs } = args;
     if (!buff.effects) return;
 
@@ -110,7 +118,7 @@ export class BuffApplierCore {
     for (const config of toArray(buff.effects)) {
       if (
         (isFinal === undefined || isFinal === isTrulyFinalBonus(config)) &&
-        EntityCalc.isApplicableEffect(config, this.info, args.inputs, fromSelf)
+        EntityCalc.isApplicableEffect(config, this.calcInfo, args.inputs, fromSelf)
       ) {
         const totalAttrType: GetTotalAttributeType =
           Array.isArray(config.targets) || config.targets.module !== ECalcStatModule.ATTR ? "ALL" : "STABLE";
@@ -121,7 +129,7 @@ export class BuffApplierCore {
             config,
             getTotalAttrFromSelf: (stat) => this.getTotalAttrFromSelf(stat, totalAttrType),
           }),
-          vision: this.info.appChar.vision,
+          vision: this.calcInfo.appChar.vision,
           targets: config.targets,
           isStackable,
         });
@@ -139,7 +147,7 @@ export class BuffApplierCore {
           ...getArgs,
           inputs: args.inputs,
           fromSelf,
-          info: this.info,
+          info: this.calcInfo,
         });
       },
     });
@@ -156,7 +164,7 @@ export class BuffApplierCore {
           refi: args.refi,
           inputs: args.inputs,
           fromSelf,
-          info: this.info,
+          info: this.calcInfo,
         });
       },
     });
@@ -172,7 +180,7 @@ export class BuffApplierCore {
           ...getArgs,
           inputs: args.inputs,
           fromSelf,
-          info: this.info,
+          info: this.calcInfo,
         });
       },
     });

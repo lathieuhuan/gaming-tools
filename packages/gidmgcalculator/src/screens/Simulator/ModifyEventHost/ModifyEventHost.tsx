@@ -1,4 +1,4 @@
-import { AppWeapon, CharacterBuff, EntityCalc } from "@Backend";
+import { AppWeapon, CharacterBuff, EntityCalc, GeneralCalc } from "@Backend";
 
 import { ActiveSimulation, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { Modifier_ } from "@Src/utils";
@@ -19,10 +19,13 @@ export function ModifyEventHost(props: { className?: string }) {
   const characterBuffAllInputsByMember: InputsByMember = {};
   const appWeaponByMember: ModifyEventHostForActiveMemberProps["appWeaponByMember"] = {};
   const weaponBuffAllInputsByMember: InputsByMember = {};
+  const artifactBuffAllInputsByMember: InputsByMember = {};
 
   for (const data of simulation.partyData) {
     const memberCode = data.code;
     const info = simulation.getMemberInfo(memberCode);
+
+    // Character buff
     const characterBuffs = simulation
       .getMemberData(memberCode)
       .buffs?.filter((buff) => EntityCalc.isGrantedEffect(buff, info));
@@ -35,6 +38,7 @@ export function ModifyEventHost(props: { className?: string }) {
       );
     }
 
+    // Weapon buff
     const appWeapon = simulation.getAppWeaponOfMember(memberCode);
 
     appWeaponByMember[memberCode] = appWeapon;
@@ -44,6 +48,11 @@ export function ModifyEventHost(props: { className?: string }) {
         (buff) => Modifier_.createModCtrl(buff, true).inputs ?? []
       );
     }
+
+    // Artifact buff
+    const setBonuses = GeneralCalc.getArtifactSetBonuses(info.artifacts);
+
+    
   }
 
   return (

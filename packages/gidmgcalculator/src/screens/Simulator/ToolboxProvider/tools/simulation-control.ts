@@ -47,6 +47,10 @@ export class SimulationControl {
   };
   private chunkSubscribers = new Set<OnChangeChunk>();
 
+  private get latestChunk() {
+    return this.chunks[this.chunks.length - 1];
+  }
+
   constructor(party: SimulationMember[], target: SimulationTarget) {
     this.partyData = party.map((member) => $AppCharacter.get(member.name));
     this.target = target;
@@ -116,7 +120,7 @@ export class SimulationControl {
         isMissmatched: true,
       };
     }
-    if (!this.chunks[this.chunks.length - 1].events.length) {
+    if (!this.latestChunk.events.length) {
       this.chunks.pop();
     }
     if (this.chunks.length > chunks.length) {
@@ -235,7 +239,7 @@ export class SimulationControl {
         processedEvent = this.hit(event);
         break;
     }
-    const latestChunk = this.chunks[this.chunks.length - 1];
+    const latestChunk = this.latestChunk;
 
     if (latestChunk && chunk.id === latestChunk.id) {
       latestChunk.events.push(processedEvent);
@@ -256,7 +260,7 @@ export class SimulationControl {
       case "PARTY":
         return this.partyData.map((data) => this.member[data.code]);
       case "ACTIVE_UNIT": {
-        const onFieldMember = this.chunks[0].ownerCode;
+        const onFieldMember = this.latestChunk.ownerCode;
         return [this.member[onFieldMember]];
       }
       default:
@@ -264,151 +268,37 @@ export class SimulationControl {
     }
   };
 
-  private updateAttrBonus = (
-    receivers: MemberControl[],
-    bonus: AppliedAttributeBonus,
-    trigger: SimulationAttributeBonus["trigger"]
-  ) => {
-    receivers.forEach((receiver: MemberControl) => {
-      const existedIndex = receiver.attrBonus.findIndex(
-        (_bonus) =>
-          _bonus.trigger.character === trigger.character &&
-          _bonus.trigger.modifier === trigger.modifier &&
-          _bonus.toStat === bonus.stat
-      );
+  private modify = (event: ModifyEvent): ProcessedModifyEvent => {
+    const performer = this.member[event.performer.code];
 
-      if (existedIndex === -1) {
-        receiver.attrBonus.push({
-          type: "ATTRIBUTE",
-          stable: bonus.stable,
-          toStat: bonus.stat,
-          value: bonus.value,
-          trigger,
-        });
-      } else {
-        receiver.attrBonus[existedIndex] = {
-          ...receiver.attrBonus[existedIndex],
-          value: bonus.value,
-        };
-      }
-    });
-  };
-
-  private updateAttkBonus = (
-    receivers: MemberControl[],
-    bonus: AppliedAttackBonus,
-    trigger: SimulationAttributeBonus["trigger"]
-  ) => {
-    receivers.forEach((receiver: MemberControl) => {
-      const existedIndex = receiver.attkBonus.findIndex(
-        (_bonus) =>
-          _bonus.trigger.character === trigger.character &&
-          _bonus.trigger.modifier === trigger.modifier &&
-          _bonus.toType === bonus.module &&
-          _bonus.toKey === bonus.path
-      );
-
-      if (existedIndex === -1) {
-        receiver.attkBonus.push({
-          type: "ATTACK",
-          toType: bonus.module,
-          toKey: bonus.path,
-          value: bonus.value,
-          trigger,
-        });
-      } else {
-        receiver.attkBonus[existedIndex] = {
-          ...receiver.attkBonus[existedIndex],
-          value: bonus.value,
-        };
-      }
-    });
-  };
-
-  private baseModify = (
-    performer: MemberControl,
-    affect: ModifierAffectType,
-    modifier: string,
-    apply: (applyFn: Pick<ApplyBonusArgs, "applyAttrBonus" | "applyAttkBonus">) => void
-  ) => {
-    const receivers = this.getReceivers(performer, affect);
     const trigger: SimulationAttributeBonus["trigger"] = {
       character: performer.data.name,
-      modifier,
+      modifier: "",
     };
+    let receivers: MemberControl[] = [];
 
-    apply({
-      applyAttrBonus: (bonus) => {
-        this.updateAttrBonus(receivers, bonus, trigger);
-      },
-      applyAttkBonus: (bonus) => {
-        this.updateAttkBonus(receivers, bonus, trigger);
-      },
+    performer.modify(event, this.appWeapons[event.modifier.code], (affect, description) => {
+      trigger.modifier = description;
+      receivers = this.getReceivers(performer, affect);
+
+      return {
+        applyAttrBonus: (bonus) => {
+          receivers.forEach((receiver) => receiver.updateAttrBonus(bonus, trigger));
+        },
+        applyAttkBonus: (bonus) => {
+          receivers.forEach((receiver) => receiver.updateAttkBonus(bonus, trigger));
+        },
+      };
     });
 
-    receivers.forEach((receiver) => {
-      receiver.resetTotalAttr();
-
-      for (const bonus of receiver.attrBonus) {
-        const add = bonus.stable ? receiver.totalAttr.addStable : receiver.totalAttr.addUnstable;
-        add(bonus.toStat, bonus.value, `${bonus.trigger.character} / ${bonus.trigger.modifier}`);
-      }
-      receiver.onChangeTotalAttr?.(receiver.totalAttr.finalize());
-    });
-
-    receivers.forEach((receiver) => {
-      receiver.onChangeBonuses?.(receiver.attrBonus.concat(), receiver.attkBonus.concat());
-    });
-
-    return modifier;
-  };
-
-  private modify = (event: ModifyEvent): ProcessedModifyEvent => {
-    const { modifier } = event;
-    const { inputs = [] } = modifier;
-    const performer = this.member[event.performer.code];
-    let description: string | undefined;
-
-    switch (modifier.type) {
-      case "CHARACTER": {
-        // #to-do: check if character can do this event (in case events are imported
-        // but the modifier is not granted because of character's level/constellation)
-        const buff = performer?.data.buffs?.find((buff) => buff.index === modifier.id);
-
-        if (buff) {
-          description = this.baseModify(performer, buff.affect, buff.src, (applyFn) => {
-            performer.buffApplier.applyCharacterBuff({
-              buff,
-              description: "",
-              inputs,
-              ...applyFn,
-            });
-          });
-        }
-        break;
-      }
-      case "WEAPON": {
-        const appWeapon = this.appWeapons[modifier.code];
-        const buff = appWeapon.buffs?.find((buff) => buff.index === modifier.id);
-
-        if (buff) {
-          description = this.baseModify(performer, buff.affect, appWeapon.name, (applyFn) => {
-            performer.buffApplier.applyWeaponBuff({
-              buff,
-              refi: 1,
-              description: "",
-              inputs,
-              ...applyFn,
-            });
-          });
-        }
-        break;
-      }
-    }
+    receivers.forEach((receiver) => receiver.applySimulationBonuses());
 
     let error: string | undefined;
+    let description: string | undefined;
 
-    if (!description) {
+    if (trigger.modifier) {
+      description = trigger.modifier;
+    } else {
       error = "Cannot find the modifier.";
       description = `[${error}]`;
     }

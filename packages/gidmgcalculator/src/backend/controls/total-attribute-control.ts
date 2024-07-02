@@ -28,7 +28,7 @@ export type GetTotalAttributeType = "ALL" | "STABLE";
 type RecordBonus = (stat: AttributeStat, value: number, description: string) => void;
 
 export class TotalAttributeControl {
-  protected totalAttr: InternalTotalAttribute;
+  private totalAttr: InternalTotalAttribute;
   private record?: RecordBonus;
 
   constructor(totalAttr?: InternalTotalAttribute, record?: RecordBonus) {
