@@ -68,7 +68,7 @@ export class MemberControl extends SimulatorBuffApplier {
     this.data = appChar;
 
     this.totalAttrCtrl = this.rootTotalAttr.clone();
-    this.renew(this.totalAttrCtrl);
+    this.getTotalAttrFromSelf = this.totalAttrCtrl.getTotal;
   }
 
   listenChanges = (onChangeTotalAttr: OnChangeTotalAttr, onChangeBonuses: OnChangeBonuses) => {
@@ -78,7 +78,7 @@ export class MemberControl extends SimulatorBuffApplier {
 
   private resetTotalAttr = () => {
     this.totalAttrCtrl = this.rootTotalAttr.clone();
-    this.renew(this.totalAttrCtrl);
+    this.getTotalAttrFromSelf = this.totalAttrCtrl.getTotal;
   };
 
   // reset = () => {
@@ -108,10 +108,11 @@ export class MemberControl extends SimulatorBuffApplier {
         if (buff) {
           const applyFn = getApplyFn(buff.affect, buff.src);
 
-          this.applyCharacterBuff({
+          this._applyCharacterBuff({
             buff,
             description: "",
             inputs,
+            fromSelf: true,
             ...applyFn,
           });
         }
@@ -123,11 +124,12 @@ export class MemberControl extends SimulatorBuffApplier {
         if (buff) {
           const applyFn = getApplyFn(buff.affect, performerWeapon.name);
 
-          this.applyWeaponBuff({
+          this._applyWeaponBuff({
             buff,
             refi: 1,
             description: "",
             inputs,
+            fromSelf: true,
             ...applyFn,
           });
         }

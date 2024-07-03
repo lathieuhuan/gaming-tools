@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react";
 import { Modal } from "rond";
-import type { SimulationMember } from "@Src/types";
 
 import { useDispatch } from "@Store/hooks";
 import { addSimulation } from "@Store/simulator-slice";
 
 import { SimulatorModalsContext, SimulatorModalsControl } from "./simulator-modals-context";
 import { CalcSetupSelect } from "./CalcSetupSelect";
+
+import { team1 } from "./_mock";
 
 type ModalType = "ADD_SIMULATION" | "";
 
@@ -45,74 +46,7 @@ export function SimulatorModalsProvider(props: SimulatorModalsProviderProps) {
             //   },
             // ];
 
-            const members: SimulationMember[] = [
-              {
-                name: "Albedo",
-                level: "90/90",
-                NAs: 1,
-                ES: 1,
-                EB: 1,
-                cons: 6,
-                weapon: {
-                  ID: 1717242701642,
-                  type: "sword",
-                  code: 140,
-                  level: "90/90",
-                  refi: 1,
-                },
-                artifacts: [null, null, null, null, null],
-              },
-              {
-                name: "Amber",
-                level: "90/90",
-                NAs: 1,
-                ES: 1,
-                EB: 1,
-                cons: 6,
-                weapon: {
-                  ID: 1717242701643,
-                  type: "bow",
-                  code: 9,
-                  level: "90/90",
-                  refi: 1,
-                },
-                artifacts: [null, null, null, null, null],
-              },
-              {
-                name: "Kazuha",
-                level: "90/90",
-                NAs: 1,
-                ES: 1,
-                EB: 1,
-                cons: 6,
-                weapon: {
-                  ID: 1717242701644,
-                  type: "sword",
-                  code: 104,
-                  level: "90/90",
-                  refi: 1,
-                },
-                artifacts: [null, null, null, null, null],
-              },
-              {
-                name: "Sucrose",
-                level: "90/90",
-                NAs: 1,
-                ES: 1,
-                EB: 1,
-                cons: 6,
-                weapon: {
-                  ID: 1717242701645,
-                  type: "sword",
-                  code: 29,
-                  level: "90/90",
-                  refi: 1,
-                },
-                artifacts: [null, null, null, null, null],
-              },
-            ];
-
-            dispatch(addSimulation({ members }));
+            dispatch(addSimulation({ members: team1 }));
 
             closeModal();
           }}

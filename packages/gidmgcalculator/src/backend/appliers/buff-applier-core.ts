@@ -34,7 +34,7 @@ export class BuffApplierCore {
   protected calcInfo: CalculationInfo;
   private modStackingCtrl = new ModifierStackingControl();
 
-  private getTotalAttrFromSelf: GetTotalAttrFromSelf = () => 0;
+  protected getTotalAttrFromSelf: GetTotalAttrFromSelf = () => 0;
 
   constructor(info: CalculationInfo, totalAttr?: TotalAttributeControl) {
     this.calcInfo = info;
@@ -43,11 +43,6 @@ export class BuffApplierCore {
       this.getTotalAttrFromSelf = totalAttr.getTotal;
     }
   }
-
-  // For simulator
-  protected renew = (totalAttr: TotalAttributeControl) => {
-    this.getTotalAttrFromSelf = totalAttr.getTotal;
-  };
 
   private applyBonus: ApplyBonus = (args) => {
     const { bonus, isStackable, description } = args;
