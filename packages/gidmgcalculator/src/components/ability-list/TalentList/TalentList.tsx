@@ -24,7 +24,7 @@ interface TalentListProps {
   className?: ClassValue;
   char: Character;
   party?: Party;
-  onChangeTalentLevel: (talentType: LevelableTalentType, newLevel: number) => void;
+  onChangeTalentLevel?: (talentType: LevelableTalentType, newLevel: number) => void;
 }
 export function TalentList({ className, char, party, onChangeTalentLevel }: TalentListProps) {
   const [atDetail, setAtDetail] = useState(false);

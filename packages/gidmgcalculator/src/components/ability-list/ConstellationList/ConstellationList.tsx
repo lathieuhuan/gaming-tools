@@ -12,7 +12,7 @@ import { ConstellationDetail } from "./ConstellationDetail";
 interface ConstellationListProps {
   className?: ClassValue;
   char: Character;
-  onClickIcon: (index: number) => void;
+  onClickIcon?: (index: number) => void;
 }
 export function ConstellationList({ className, char, onClickIcon }: ConstellationListProps) {
   const [consLv, setConsLv] = useState(0);
@@ -49,7 +49,7 @@ export function ConstellationList({ className, char, onClickIcon }: Constellatio
                   img={cons.image}
                   active={char.cons >= i + 1}
                   vision={appChar.vision}
-                  onClick={() => onClickIcon(i)}
+                  onClick={() => onClickIcon?.(i)}
                 />
               </div>
               <div className="grow flex group" onClick={() => onClickInfo(i + 1)}>

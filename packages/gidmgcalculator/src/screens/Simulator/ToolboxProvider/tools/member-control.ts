@@ -135,6 +135,9 @@ export class MemberControl extends SimulatorBuffApplier {
         }
         break;
       }
+      case "ARTIFACT": {
+        //
+      }
     }
   };
 
