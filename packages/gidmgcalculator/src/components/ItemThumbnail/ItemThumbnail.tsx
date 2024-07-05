@@ -7,6 +7,8 @@ import { GenshinImage } from "../GenshinImage";
 interface ItemThumbProps {
   className?: string;
   imgCls?: string;
+  title?: string;
+  compact?: boolean;
   item: {
     beta?: boolean;
     icon: string;
@@ -17,7 +19,8 @@ interface ItemThumbProps {
     setupIDs?: number[];
   };
 }
-export function ItemThumbnail({ className, imgCls, item }: ItemThumbProps) {
+export function ItemThumbnail({ className, imgCls, title, compact, item }: ItemThumbProps) {
+  const lvText = `Lv. ${typeof item.level === "string" ? item.level.split("/")[0] : item.level}`;
   //
   const renderSideIcon = (owner: string) => {
     const { icon = "", sideIcon } = $AppCharacter.get(owner) || {};
@@ -38,8 +41,15 @@ export function ItemThumbnail({ className, imgCls, item }: ItemThumbProps) {
   };
 
   return (
-    <div className={clsx("bg-light-default rounded flex flex-col cursor-pointer relative", className)}>
-      {item.owner && renderSideIcon(item.owner)}
+    <div
+      className={clsx(
+        "bg-light-default rounded flex flex-col cursor-pointer relative",
+        compact && "overflow-hidden",
+        className
+      )}
+      title={title}
+    >
+      {item.owner && !compact && renderSideIcon(item.owner)}
 
       {item.refi !== undefined ? (
         <p
@@ -52,7 +62,12 @@ export function ItemThumbnail({ className, imgCls, item }: ItemThumbProps) {
         </p>
       ) : null}
 
-      <div className={`aspect-square bg-gradient-${item.rarity || 5} rounded rounded-br-2xl overflow-hidden`}>
+      <div
+        className={clsx(
+          `aspect-square bg-gradient-${item.rarity || 5} overflow-hidden`,
+          !compact && "rounded rounded-br-2xl "
+        )}
+      >
         <GenshinImage
           className={imgCls}
           src={item.icon}
@@ -61,11 +76,15 @@ export function ItemThumbnail({ className, imgCls, item }: ItemThumbProps) {
         />
       </div>
 
-      <div className="flex-center bg-light-default rounded-b">
-        <p className="font-bold text-black">
-          Lv. {typeof item.level === "string" ? item.level.split("/")[0] : item.level}
-        </p>
-      </div>
+      {compact ? (
+        <div className="flex-center bg-black/40 w-full absolute bottom-0">
+          <p className="font-bold text-light-default text-sm">{lvText}</p>
+        </div>
+      ) : (
+        <div className="flex-center bg-light-default">
+          <p className="font-bold text-black">{lvText}</p>
+        </div>
+      )}
     </div>
   );
 }

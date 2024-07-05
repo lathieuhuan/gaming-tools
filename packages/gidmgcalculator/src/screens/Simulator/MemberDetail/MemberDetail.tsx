@@ -13,13 +13,14 @@ function MemberDetailCore({ member }: MemberDetailProps) {
   const [activeTab, setActiveTab] = useState("ATTRIBUTES");
   const { info, data } = member;
   const appWeapon = $AppWeapon.get(info.weapon.code)!;
+  const visionText = `text-${data.vision} font-bold`;
 
   return (
     <div className="h-full flex flex-col space-y-3 hide-scrollbar">
       <div className="flex justify-between items-end">
-        <h3 className={`text-xl text-${data.vision} font-bold`}>{info.name}</h3>
-        <p>
-          Lv. {info.level} - C{info.cons}
+        <h3 className={`text-xl ${visionText}`}>{info.name}</h3>
+        <p className="text-hint-color">
+          <span className={visionText}>{info.level}</span> | <span className={visionText}>C{info.cons}</span>
         </p>
       </div>
 

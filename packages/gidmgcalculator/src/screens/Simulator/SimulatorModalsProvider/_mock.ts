@@ -69,7 +69,7 @@ export const team1: SimulationMember[] = [
   },
 ];
 
-function makeArtifactSet(code: number): SimulationMember["artifacts"] {
+function makeArtifactSet(code: number, otherCode: number = code): SimulationMember["artifacts"] {
   const artifactProps: Pick<ArtifactProps, "level" | "rarity" | "subStats"> = {
     level: 20,
     rarity: 5,
@@ -92,14 +92,14 @@ function makeArtifactSet(code: number): SimulationMember["artifacts"] {
       ...artifactProps,
     },
     {
-      code,
+      code: otherCode,
       ID: 3,
       type: "sands",
       mainStatType: "atk_",
       ...artifactProps,
     },
     {
-      code,
+      code: otherCode,
       ID: 4,
       type: "goblet",
       mainStatType: "phys",
