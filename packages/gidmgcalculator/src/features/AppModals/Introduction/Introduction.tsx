@@ -198,7 +198,7 @@ export const Introduction = (props: ModalControl) => {
           </p>
           <p>- Huge and special thanks to the donators!</p>
           <ul className="ml-4 text-primary-1 columns-1 md:columns-2 xm:columns-3 lg:columns-4">
-            {["Marc (marcdau)", "Akenouille", "Brandon Pride", "apiromz"].map((name, i) => (
+            {["Marc (marcdau)", "Akenouille", "Brandon Pride", "apiromz", "aimie"].map((name, i) => (
               <li key={i}>{name}</li>
             ))}
           </ul>
