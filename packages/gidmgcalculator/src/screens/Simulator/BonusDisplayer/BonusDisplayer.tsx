@@ -35,8 +35,6 @@ export function BonusDisplayer(props: BonusDisplayerProps) {
     <div className={props.className}>
       <div className="h-full hide-scrollbar space-y-3">
         {bonuses.map((bonus, index) => {
-          const title = `${bonus.trigger.character} / ${bonus.trigger.modifier}`;
-
           return (
             <Fragment key={index}>
               {index ? <div className="h-px bg-surface-border" /> : null}
@@ -69,7 +67,8 @@ export function BonusDisplayer(props: BonusDisplayerProps) {
                 )}
 
                 <div className="text-sm">
-                  <span className="text-light-default/60">from</span> <span className="font-medium">{title}</span>
+                  <span className="text-light-default/60">from</span>{" "}
+                  <span className="font-medium">{bonus.description}</span>
                 </div>
               </div>
             </Fragment>

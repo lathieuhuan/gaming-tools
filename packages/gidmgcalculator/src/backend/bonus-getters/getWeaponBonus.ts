@@ -25,6 +25,7 @@ export function getWeaponBonus(args: GetBonusArgs<WeaponBonusCore> & { refi: num
     for (const stack of toArray(config.stacks)) {
       if (!info.partyData.length && ["VISION", "ENERGY", "NATION"].includes(stack.type)) {
         return {
+          id: "",
           value: 0,
           isStable,
         };
@@ -51,6 +52,7 @@ export function getWeaponBonus(args: GetBonusArgs<WeaponBonusCore> & { refi: num
   if (max) bonusValue = Math.min(bonusValue, max);
 
   return {
+    id: config.id,
     value: Math.max(bonusValue, 0),
     isStable,
   };

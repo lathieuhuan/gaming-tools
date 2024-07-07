@@ -10,6 +10,7 @@ export type GetBonusArgs<T extends EntityBonus> = {
 };
 
 export type AppliedBonus = {
+  id: string;
   value: number;
   isStable: boolean;
 };

@@ -22,6 +22,7 @@ export function getArtifactBonus(args: GetBonusArgs<ArtifactBonusCore>): Applied
     for (const stack of toArray(config.stacks)) {
       if (stack.type === "ELEMENT" && !info.partyData.length) {
         return {
+          id: "",
           value: 0,
           isStable,
         };
@@ -39,6 +40,7 @@ export function getArtifactBonus(args: GetBonusArgs<ArtifactBonusCore>): Applied
   if (config.max && bonusValue > config.max) bonusValue = config.max;
 
   return {
+    id: config.id,
     value: Math.max(bonusValue, 0),
     isStable,
   };

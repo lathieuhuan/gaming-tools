@@ -56,39 +56,35 @@ export class BuffApplierCore {
       switch (target.module) {
         case ECalcStatModule.ATTR: {
           for (const targetPath of toArray(target.path)) {
-            let path: AttributeStat;
+            let toStat: AttributeStat;
 
             switch (targetPath) {
               case "INP_ELMT": {
                 const elmtIndex = args.inputs[target.inpIndex ?? 0];
-                path = ELEMENT_TYPES[elmtIndex];
+                toStat = ELEMENT_TYPES[elmtIndex];
                 break;
               }
               case "OWN_ELMT":
-                path = args.vision;
+                toStat = args.vision;
                 break;
               default:
-                path = targetPath;
+                toStat = targetPath;
             }
 
-            if (bonus.isStable) {
-              args.applyAttrBonus({
-                stable: true,
-                stat: path,
-                value: bonus.value,
-                description,
-              });
-            } else {
-              args.applyAttrBonus({ stable: false, stat: path, value: bonus.value, description });
-            }
+            args.applyAttrBonus({
+              ...bonus,
+              toStat,
+              description,
+            });
           }
           break;
         }
         case "ELMT_NA":
           for (const elmt of ELEMENT_TYPES) {
             args.applyAttkBonus({
-              module: `NA.${elmt}`,
-              path: target.path,
+              id: bonus.id,
+              toType: `NA.${elmt}`,
+              toKey: target.path,
               value: bonus.value,
               description,
             });
@@ -96,7 +92,13 @@ export class BuffApplierCore {
           break;
         default:
           for (const module of toArray(target.module)) {
-            args.applyAttkBonus({ module, path: target.path, value: bonus.value, description });
+            args.applyAttkBonus({
+              id: bonus.id,
+              toType: module,
+              toKey: target.path,
+              value: bonus.value,
+              description,
+            });
           }
       }
     }

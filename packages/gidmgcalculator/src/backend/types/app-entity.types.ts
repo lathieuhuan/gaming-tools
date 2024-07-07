@@ -198,6 +198,7 @@ export type EntityBonusValueOption = {
 // ========== BONUS & BUFF ==========
 
 export type EntityBonus<ValueOptionExtends = object> = ApplicableCondition & {
+  id: string;
   value: number | (EntityBonusValueOption & ValueOptionExtends);
   stacks?: EntityBonusStack | EntityBonusStack[];
 };

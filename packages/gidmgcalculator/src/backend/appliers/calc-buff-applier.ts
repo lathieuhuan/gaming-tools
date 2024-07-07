@@ -19,11 +19,11 @@ export class CalcBuffApplier extends BuffApplierCore {
 
     this.appliers = {
       applyAttrBonus: (bonus) => {
-        const add = bonus.stable ? totalAttr.addStable : totalAttr.addUnstable;
-        add(bonus.stat, bonus.value, bonus.description);
+        const add = bonus.isStable ? totalAttr.addStable : totalAttr.addUnstable;
+        add(bonus.toStat, bonus.value, bonus.description);
       },
       applyAttkBonus: (bonus) => {
-        attackBonus.add(bonus.module, bonus.path, bonus.value, bonus.description);
+        attackBonus.add(bonus.toType, bonus.toKey, bonus.value, bonus.description);
       },
     };
   }

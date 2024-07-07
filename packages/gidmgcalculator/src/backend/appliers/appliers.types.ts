@@ -15,18 +15,18 @@ import type {
 import type { ResistanceReductionControl } from "@Src/backend/controls";
 import type { CalculationInfo } from "@Src/backend/utils";
 
-export type AppliedAttributeBonus = {
-  stat: AttributeStat;
-  value: number;
+type AppliedBonusCommon = Pick<AppliedBonus, "id" | "value"> & {
   description: string;
-  stable: boolean;
 };
 
-export type AppliedAttackBonus = {
-  module: AttackBonusType;
-  path: AttackBonusKey;
-  value: number;
-  description: string;
+export type AppliedAttributeBonus = AppliedBonusCommon & {
+  toStat: AttributeStat;
+  isStable: boolean;
+};
+
+export type AppliedAttackBonus = AppliedBonusCommon & {
+  toType: AttackBonusType;
+  toKey: AttackBonusKey;
 };
 
 export type ApplyBonusArgs = {

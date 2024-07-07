@@ -1,4 +1,4 @@
-import type { AppWeapon, AppliedAttackBonus, AppliedAttributeBonus, ModifierAffectType } from "@Backend";
+import { GeneralCalc, type AppWeapon, type ModifierAffectType } from "@Backend";
 import type {
   AttackReaction,
   HitEvent,
@@ -20,7 +20,6 @@ import type {
 
 import { $AppCharacter, $AppWeapon } from "@Src/services";
 import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
-import { ApplyBonusArgs } from "@Src/backend/appliers/appliers.types";
 
 type MissmatchedCheckResult =
   | {
@@ -55,6 +54,14 @@ export class SimulationControl {
     this.partyData = party.map((member) => $AppCharacter.get(member.name));
     this.target = target;
 
+    // Resonance
+    const resonanceBonus: SimulationAttributeBonus[] = [];
+    const { pyro = 0, hydro = 0 } = GeneralCalc.countElements(this.partyData);
+
+    if (pyro >= 2) {
+      // resonanceBonus.push()
+    }
+
     for (let i = 0; i < party.length; i++) {
       const member = party[i];
       const memberData = this.partyData[i];
@@ -68,7 +75,8 @@ export class SimulationControl {
         member,
         this.partyData[i],
         this.appWeapons[weaponCode],
-        this.partyData
+        this.partyData,
+        resonanceBonus
       );
     }
   }
@@ -183,6 +191,7 @@ export class SimulationControl {
     }
     const result = this.checkMissmatched(chunks);
 
+    // console.log("==================");
     // console.log({ ...result });
 
     if (result.isMissmatched) {
@@ -195,7 +204,7 @@ export class SimulationControl {
 
       for (const chunk of chunks) {
         if (chunk.events.length) {
-          chunk.events.forEach((event) => this.processNewEvent(event, chunk));
+          chunk.events.forEach((event, i) => this.processNewEvent(event, chunk));
         } else {
           this.chunks.push({
             ...chunk,
@@ -233,7 +242,7 @@ export class SimulationControl {
 
     switch (event.type) {
       case "MODIFY":
-        processedEvent = this.modify(event);
+        processedEvent = this.modify(event, chunk.ownerCode);
         break;
       case "HIT":
         processedEvent = this.hit(event);
@@ -253,40 +262,42 @@ export class SimulationControl {
 
   // ========== MODIFY ==========
 
-  private getReceivers = (performer: MemberControl, affect: ModifierAffectType): MemberControl[] => {
+  private getReceivers = (
+    performer: MemberControl,
+    affect: ModifierAffectType,
+    onfieldMember: number
+  ): MemberControl[] => {
     switch (affect) {
       case "SELF":
         return [performer];
       case "PARTY":
         return this.partyData.map((data) => this.member[data.code]);
       case "ACTIVE_UNIT": {
-        const onFieldMember = this.latestChunk.ownerCode;
-        return [this.member[onFieldMember]];
+        const memberCtrl = this.member[onfieldMember];
+        return memberCtrl ? [memberCtrl] : [];
       }
       default:
         return [];
     }
   };
 
-  private modify = (event: ModifyEvent): ProcessedModifyEvent => {
+  private modify = (event: ModifyEvent, onfieldMember: number): ProcessedModifyEvent => {
     const performer = this.member[event.performer.code];
 
-    const trigger: SimulationAttributeBonus["trigger"] = {
-      character: performer.data.name,
-      modifier: "",
-    };
+    let description: string | undefined;
     let receivers: MemberControl[] = [];
 
-    performer.modify(event, this.appWeapons[event.modifier.code], (affect, description) => {
-      trigger.modifier = description;
-      receivers = this.getReceivers(performer, affect);
+    performer.modify(event, this.appWeapons[event.modifier.code], (affect) => {
+      receivers = this.getReceivers(performer, affect, onfieldMember);
 
       return {
         applyAttrBonus: (bonus) => {
-          receivers.forEach((receiver) => receiver.updateAttrBonus(bonus, trigger));
+          description = bonus.description;
+          receivers.forEach((receiver) => receiver.updateAttrBonus(bonus));
         },
         applyAttkBonus: (bonus) => {
-          receivers.forEach((receiver) => receiver.updateAttkBonus(bonus, trigger));
+          description = bonus.description;
+          receivers.forEach((receiver) => receiver.updateAttkBonus(bonus));
         },
       };
     });
@@ -294,11 +305,8 @@ export class SimulationControl {
     receivers.forEach((receiver) => receiver.applySimulationBonuses());
 
     let error: string | undefined;
-    let description: string | undefined;
 
-    if (trigger.modifier) {
-      description = trigger.modifier;
-    } else {
+    if (!description) {
       error = "Cannot find the modifier.";
       description = `[${error}]`;
     }

@@ -1,4 +1,4 @@
-import type { AppCharacter, AttackBonusKey, AttackBonusType, AttributeStat, LevelableTalentType } from "@Backend";
+import type { AppCharacter, AppliedAttackBonus, AppliedAttributeBonus, AttackBonusKey, AttackBonusType, AttributeStat, LevelableTalentType } from "@Backend";
 import type { Artifact, Character, Weapon } from "./global.types";
 import type { ElementModCtrl, PartyData, Target } from "./calculator.types";
 
@@ -52,23 +52,17 @@ export type SimulationPartyData = AppCharacter[];
 /** ========== BONUSES ========== */
 
 export type SimulationBonusCore = {
-  trigger: {
-    character: string;
-    modifier: string;
-  };
+  id: string;
   value: number;
+  description: string;
 };
 
-export type SimulationAttributeBonus = SimulationBonusCore & {
+export type SimulationAttributeBonus = AppliedAttributeBonus & {
   type: "ATTRIBUTE";
-  stable: boolean;
-  toStat: AttributeStat;
 };
 
-export type SimulationAttackBonus = SimulationBonusCore & {
+export type SimulationAttackBonus = AppliedAttackBonus & {
   type: "ATTACK";
-  toType: AttackBonusType;
-  toKey: AttackBonusKey;
 };
 
 /** ==========*** SIMULATION ***========== */

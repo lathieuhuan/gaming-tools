@@ -58,8 +58,14 @@ export class MemberControl extends SimulatorBuffApplier {
     return this.totalAttrCtrl.finalize();
   }
 
-  constructor(member: SimulationMember, appChar: AppCharacter, appWeapon: AppWeapon, partyData: SimulationPartyData) {
-    super({ char: member, appChar, partyData });
+  constructor(
+    member: SimulationMember,
+    appChar: AppCharacter,
+    appWeapon: AppWeapon,
+    partyData: SimulationPartyData,
+    resonanceBonus: SimulationAttributeBonus[]
+  ) {
+    super({ char: member, appChar, partyData }, resonanceBonus);
 
     this.rootTotalAttr = new TotalAttributeControl();
     this.rootTotalAttr.construct(member, appChar, member.weapon, appWeapon, member.artifacts);
@@ -94,7 +100,7 @@ export class MemberControl extends SimulatorBuffApplier {
   modify = (
     event: ModifyEvent,
     performerWeapon: AppWeapon,
-    getApplyFn: (affect: ModifierAffectType, description: string) => ApplyFn
+    getApplyFn: (affect: ModifierAffectType) => ApplyFn
   ) => {
     const { modifier } = event;
     const { inputs = [] } = modifier;
@@ -106,11 +112,11 @@ export class MemberControl extends SimulatorBuffApplier {
         const buff = this?.data.buffs?.find((buff) => buff.index === modifier.id);
 
         if (buff) {
-          const applyFn = getApplyFn(buff.affect, buff.src);
+          const applyFn = getApplyFn(buff.affect);
 
           this._applyCharacterBuff({
             buff,
-            description: "",
+            description: `${this.data.name} / ${buff.src}`,
             inputs,
             fromSelf: true,
             ...applyFn,
@@ -122,12 +128,12 @@ export class MemberControl extends SimulatorBuffApplier {
         const buff = performerWeapon.buffs?.find((buff) => buff.index === modifier.id);
 
         if (buff) {
-          const applyFn = getApplyFn(buff.affect, performerWeapon.name);
+          const applyFn = getApplyFn(buff.affect);
 
           this._applyWeaponBuff({
             buff,
             refi: 1,
-            description: "",
+            description: `${this.data.name} / ${performerWeapon.name}`,
             inputs,
             fromSelf: true,
             ...applyFn,
@@ -145,8 +151,8 @@ export class MemberControl extends SimulatorBuffApplier {
     this.resetTotalAttr();
 
     for (const bonus of this.attrBonus) {
-      const add = bonus.stable ? this.totalAttrCtrl.addStable : this.totalAttrCtrl.addUnstable;
-      add(bonus.toStat, bonus.value, `${bonus.trigger.character} / ${bonus.trigger.modifier}`);
+      const add = bonus.isStable ? this.totalAttrCtrl.addStable : this.totalAttrCtrl.addUnstable;
+      add(bonus.toStat, bonus.value, bonus.description);
     }
 
     this.onChangeTotalAttr?.(this.totalAttrCtrl.finalize());

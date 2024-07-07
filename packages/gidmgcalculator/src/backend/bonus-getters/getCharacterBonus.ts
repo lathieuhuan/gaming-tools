@@ -30,6 +30,7 @@ export function getCharacterBonus(args: GetBonusArgs<CharacterBonusCore>): Appli
     for (const stack of toArray(config.stacks)) {
       if (["nation", "resolve"].includes(stack.type) && !info.partyData.length) {
         return {
+          id: '',
           value: 0,
           isStable: true,
         };
@@ -57,6 +58,7 @@ export function getCharacterBonus(args: GetBonusArgs<CharacterBonusCore>): Appli
   }
 
   return {
+    id: config.id,
     value: bonusValue,
     isStable,
   };

@@ -6,7 +6,7 @@ interface EventDisplayerProps {
   event: SimulationProcessedEvent;
 }
 export function EventDisplayer({ sideIconNode, event }: EventDisplayerProps) {
-  const containerCls = "p-1 pr-2 rounded-sm flex items-center hover:bg-surface-2 cursor-default";
+  const containerCls = "p-1 pr-2 text-sm rounded-sm flex items-center hover:bg-surface-2 cursor-default";
 
   const errorNode = event.error ? (
     <span className="ml-auto">

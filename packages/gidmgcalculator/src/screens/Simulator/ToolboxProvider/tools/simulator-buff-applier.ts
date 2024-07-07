@@ -1,20 +1,9 @@
-import type { SimulationAttackBonus, SimulationAttributeBonus, SimulationBonusCore } from "@Src/types";
-import type {
-  AppliedAttackBonus,
-  AppliedAttributeBonus,
-  ApplyBuffArgs,
-  // ApplyArtifactBuffArgs,
-  // ApplyCharacterBuffArgs,
-  // ApplyWeaponBuffArgs,
-} from "@Src/backend/appliers/appliers.types";
+import type { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
+import type { AppliedAttackBonus, AppliedAttributeBonus, ApplyBuffArgs } from "@Src/backend/appliers/appliers.types";
 
 import { BuffApplierCore, CalculationInfo, EntityCalc } from "@Backend";
 
-// type InternalApplyBuffArgs<T extends ApplyBuffArgs<any>> = Omit<T, "fromSelf" | "isFinal">;
-
 export type ApplyFn = Pick<ApplyBuffArgs<any>, "applyAttrBonus" | "applyAttkBonus">;
-
-type BuffTrigger = SimulationBonusCore["trigger"];
 
 export class SimulatorBuffApplier extends BuffApplierCore {
   private innateAttrBonus: SimulationAttributeBonus[] = [];
@@ -30,110 +19,63 @@ export class SimulatorBuffApplier extends BuffApplierCore {
     return this.innateAttkBonus.concat(this._attkBonus);
   }
 
-  constructor(info: CalculationInfo) {
+  constructor(info: CalculationInfo, resonanceBonus: SimulationAttributeBonus[]) {
     super(info);
 
     const { name, innateBuffs = [] } = info.appChar;
 
     for (const buff of innateBuffs) {
       if (EntityCalc.isGrantedEffect(buff, info.char)) {
-        const trigger: BuffTrigger = {
-          character: name,
-          modifier: buff.src,
-        };
+        const description = `Self / ${buff.src}`;
 
         this._applyCharacterBuff({
-          description: `Self / ${buff.src}`,
+          description,
           buff,
           inputs: [],
           fromSelf: true,
           isFinal: false,
           applyAttrBonus: (bonus) => {
-            this.innateAttrBonus.push(this.processAttributeBonus(bonus, trigger));
+            this.innateAttrBonus.push(this.processAttributeBonus(bonus));
           },
           applyAttkBonus: (bonus) => {
-            this.innateAttkBonus.push(this.processAttackBonus(bonus, trigger));
+            this.innateAttkBonus.push(this.processAttackBonus(bonus));
           },
         });
       }
     }
   }
 
-  private processAttributeBonus = (bonus: AppliedAttributeBonus, trigger: BuffTrigger): SimulationAttributeBonus => {
+  private processAttributeBonus = (bonus: AppliedAttributeBonus): SimulationAttributeBonus => {
     return {
       type: "ATTRIBUTE",
-      stable: bonus.stable,
-      toStat: bonus.stat,
-      value: bonus.value,
-      trigger,
+      ...bonus,
     };
   };
 
-  private processAttackBonus = (bonus: AppliedAttackBonus, trigger: BuffTrigger): SimulationAttackBonus => {
+  private processAttackBonus = (bonus: AppliedAttackBonus): SimulationAttackBonus => {
     return {
       type: "ATTACK",
-      toType: bonus.module,
-      toKey: bonus.path,
-      value: bonus.value,
-      trigger,
+      ...bonus,
     };
   };
 
-  updateAttrBonus = (bonus: AppliedAttributeBonus, trigger: BuffTrigger) => {
-    const existedIndex = this._attrBonus.findIndex(
-      (_bonus) =>
-        _bonus.trigger.character === trigger.character &&
-        _bonus.trigger.modifier === trigger.modifier &&
-        _bonus.toStat === bonus.stat
-    );
+  updateAttrBonus = (bonus: AppliedAttributeBonus) => {
+    const existedIndex = this._attrBonus.findIndex((_bonus) => _bonus.id === bonus.id);
 
     if (existedIndex === -1) {
-      this._attrBonus.push(this.processAttributeBonus(bonus, trigger));
+      this._attrBonus.push(this.processAttributeBonus(bonus));
     } else {
-      this._attrBonus[existedIndex] = {
-        ...this._attrBonus[existedIndex],
-        value: bonus.value,
-      };
+      this._attrBonus[existedIndex] = Object.assign(this._attrBonus[existedIndex], bonus);
     }
   };
 
-  updateAttkBonus = (bonus: AppliedAttackBonus, trigger: BuffTrigger) => {
-    const existedIndex = this._attkBonus.findIndex(
-      (_bonus) =>
-        _bonus.trigger.character === trigger.character &&
-        _bonus.trigger.modifier === trigger.modifier &&
-        _bonus.toType === bonus.module &&
-        _bonus.toKey === bonus.path
-    );
+  updateAttkBonus = (bonus: AppliedAttackBonus) => {
+    const existedIndex = this._attkBonus.findIndex((_bonus) => _bonus.id === bonus.id);
 
     if (existedIndex === -1) {
-      this._attkBonus.push(this.processAttackBonus(bonus, trigger));
+      this._attkBonus.push(this.processAttackBonus(bonus));
     } else {
-      this._attkBonus[existedIndex] = {
-        ...this._attkBonus[existedIndex],
-        value: bonus.value,
-      };
+      this._attkBonus[existedIndex] = Object.assign(this._attkBonus[existedIndex], bonus);
     }
   };
-
-  // protected applyCharacterBuff = (args: InternalApplyBuffArgs<ApplyCharacterBuffArgs>) => {
-  //   this._applyCharacterBuff({
-  //     ...args,
-  //     fromSelf: true,
-  //   });
-  // };
-
-  // protected applyWeaponBuff = (args: InternalApplyBuffArgs<ApplyWeaponBuffArgs>) => {
-  //   this._applyWeaponBuff({
-  //     ...args,
-  //     fromSelf: true,
-  //   });
-  // };
-
-  // protected applyArtifactBuff = (args: InternalApplyBuffArgs<ApplyArtifactBuffArgs>) => {
-  //   this._applyArtifactBuff({
-  //     ...args,
-  //     fromSelf: true,
-  //   });
-  // };
 }

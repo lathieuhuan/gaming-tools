@@ -19,7 +19,7 @@ function MemberDetailCore({ member }: MemberDetailProps) {
     <div className="h-full flex flex-col space-y-3 hide-scrollbar">
       <div className="flex justify-between items-end">
         <h3 className={`text-xl ${visionText}`}>{info.name}</h3>
-        <p className="text-hint-color">
+        <p className="text-surface-border">
           <span className={visionText}>{info.level}</span> | <span className={visionText}>C{info.cons}</span>
         </p>
       </div>
