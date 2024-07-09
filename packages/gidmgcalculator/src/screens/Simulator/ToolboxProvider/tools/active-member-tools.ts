@@ -1,5 +1,5 @@
 import type { ActualAttackPattern, CalcItemRecord } from "@Backend";
-import type { ConfigTalentHitEventArgs, MemberControl, OnChangeBonuses, OnChangeTotalAttr } from "./member-control";
+import type { MemberControl, OnChangeBonuses, OnChangeTotalAttr } from "./member-control";
 
 export type TalentEventConfig = {
   damage: number | number[];
@@ -8,19 +8,12 @@ export type TalentEventConfig = {
   record: CalcItemRecord;
 };
 
-type ConfigTalentHitEvent = (args: Omit<ConfigTalentHitEventArgs, "partyData" | "target">) => TalentEventConfig;
-
 export class ActiveMemberTools {
-  private member: MemberControl;
   private totalAttrSubscribers = new Set<OnChangeTotalAttr>();
   private bonusesSubscribers = new Set<OnChangeBonuses>();
-  configTalentHitEvent: ConfigTalentHitEvent;
 
-  constructor(member: MemberControl, configTalentHitEvent: ConfigTalentHitEvent) {
-    this.member = member;
-    this.configTalentHitEvent = configTalentHitEvent;
-
-    this.member.listenChanges(
+  constructor(private member: MemberControl) {
+    member.listenChanges(
       (totalAttr) => {
         this.totalAttrSubscribers.forEach((callback) => callback(totalAttr));
       },

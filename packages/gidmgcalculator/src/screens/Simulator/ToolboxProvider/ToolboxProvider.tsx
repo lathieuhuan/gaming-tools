@@ -5,7 +5,7 @@ import { RootState } from "@Store/store";
 
 import { useStore } from "@Src/features";
 import { getSimulation, selectActiveMember } from "@Store/simulator-slice";
-import { ActiveMemberContext, ActiveSimulationContext } from "./toolbox-contexts";
+import { ActiveMember, ActiveMemberContext, ActiveSimulationContext } from "./toolbox-contexts";
 import { SimulationControl, ActiveMemberTools } from "./tools";
 
 const selectActiveId = (state: RootState) => state.simulator.activeId;
@@ -32,24 +32,27 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
     };
   }, [activeId]);
 
-  const activeMember = useMemo(() => {
+  const activeMember = useMemo<ActiveMember | null>(() => {
     if (!activeSimulation || !activeMemberName) {
       return null;
     }
-    const memberCode = activeSimulation.control.partyData.find((member) => member?.name === activeMemberName)?.code;
+    const memberCode = activeSimulation.control.partyData.find((member) => member.name === activeMemberName)?.code;
     const memberInfo = activeSimulation.members.find((member) => member.name === activeMemberName);
     if (!memberCode || !memberInfo) {
       return null;
     }
 
     const control = activeSimulation.control.member[memberCode];
-
-    const tools = new ActiveMemberTools(control, (args) => activeSimulation.control.config(memberCode, args));
+    const tools = new ActiveMemberTools(control);
 
     return {
       info: memberInfo,
       data: control.data,
-      tools,
+      tools: {
+        subscribeTotalAttr: tools.subscribeTotalAttr,
+        subscribeBonuses: tools.subscribeBonuses,
+        configTalentHitEvent: (args) => activeSimulation.control.config(memberCode, args),
+      },
     };
   }, [activeSimulation, activeMemberName]);
 
