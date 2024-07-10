@@ -1,9 +1,9 @@
 import type { CharacterBonusCore } from "@Src/backend/types";
-import type { AppliedBonus, GetBonusArgs } from "./bonus-getters.types";
+import type { BareBonus, GetBonusArgs } from "./bonus-getters.types";
 import { CharacterCalc, EntityCalc, type CalculationInfo } from "@Src/backend/utils";
 import { toArray } from "@Src/utils";
 
-export function getCharacterBonus(args: GetBonusArgs<CharacterBonusCore>): AppliedBonus {
+export function getCharacterBareBonus(args: GetBonusArgs<CharacterBonusCore>): BareBonus {
   const { config, info, inputs, fromSelf } = args;
   const { preExtra } = config;
   let bonusValue = getIntialCharacterBonusValue(config.value, info, inputs, fromSelf);
@@ -17,7 +17,7 @@ export function getCharacterBonus(args: GetBonusArgs<CharacterBonusCore>): Appli
     bonusValue += preExtra;
   } else if (preExtra && EntityCalc.isApplicableEffect(preExtra, info, inputs, fromSelf)) {
     // if preExtra is not stable, this whole bonus is not stable
-    const { value, isStable: isStablePreExtra } = getCharacterBonus({
+    const { value, isStable: isStablePreExtra } = getCharacterBareBonus({
       ...args,
       config: preExtra,
     });

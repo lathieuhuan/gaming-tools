@@ -1,20 +1,19 @@
 import type {
   ArtifactBonusCore,
-  AttributeStack,
   AttributeStat,
   CharacterBonusCore,
-  EntityBonus,
   EntityBonusStack,
   WeaponBonusCore,
-  WithBonusTargets,
 } from "@Src/backend/types";
 import type { GetTotalAttributeType, TotalAttributeControl } from "@Src/backend/controls";
 import type {
+  AppliedBonuses,
   ApplyArtifactBuffArgs,
-  ApplyBonusArgs,
-  ApplyBonusesArgs,
   ApplyCharacterBuffArgs,
+  ApplyEffectBonuses,
   ApplyWeaponBuffArgs,
+  GetAppliedBonuses,
+  IsStackableAppliedBonus,
 } from "./appliers.types";
 
 import { ELEMENT_TYPES } from "@Src/backend/constants";
@@ -22,19 +21,13 @@ import { ECalcStatModule } from "@Src/backend/constants/internal";
 import { toArray } from "@Src/utils";
 import { CalculationInfo, EntityCalc } from "@Src/backend/utils";
 import { ModifierStackingControl } from "@Src/backend/controls";
-import { getArtifactBonus, getCharacterBonus, getWeaponBonus } from "@Src/backend/bonus-getters";
-
-type GetTotalAttrFromSelf = (field: AttributeStack["field"], totalAttrType: GetTotalAttributeType) => number;
-
-type ApplyBonus = (args: ApplyBonusArgs) => void;
-
-type ApplyBonuses = (args: ApplyBonusesArgs<WithBonusTargets<EntityBonus>>) => void;
+import { getCharacterBareBonus, getWeaponBareBonus, getArtifactBareBonus } from "@Src/backend/bonus-getters";
 
 export class BuffApplierCore {
   protected calcInfo: CalculationInfo;
   private modStackingCtrl = new ModifierStackingControl();
 
-  protected getTotalAttrFromSelf: GetTotalAttrFromSelf = () => 0;
+  protected getTotalAttrFromSelf: TotalAttributeControl["getTotal"] = () => 0;
 
   constructor(info: CalculationInfo, totalAttr?: TotalAttributeControl) {
     this.calcInfo = info;
@@ -44,7 +37,7 @@ export class BuffApplierCore {
     }
   }
 
-  private applyBonus: ApplyBonus = (args) => {
+  private applyEffectBonuses: ApplyEffectBonuses = (args) => {
     const { bonus, isStackable, description } = args;
     if (!bonus.value) return;
 
@@ -104,11 +97,15 @@ export class BuffApplierCore {
     }
   };
 
-  private applyBonuses: ApplyBonuses = (args) => {
-    const { buff, fromSelf = false, isFinal, getBonus, ...applyArgs } = args;
-    if (!buff.effects) return;
+  private getAppliedBonuses: GetAppliedBonuses = (args) => {
+    const { buff, fromSelf = false, isFinal, getBareBonus, ...applyArgs } = args;
+    const result: AppliedBonuses = {
+      attrBonuses: [],
+      attkBonuses: [],
+    };
+    if (!buff.effects) return result;
 
-    const isStackable: ApplyBonusArgs["isStackable"] = (paths) => {
+    const isStackable: IsStackableAppliedBonus = (paths) => {
       return this.modStackingCtrl?.isStackable({ trackId: buff.trackId, paths }) ?? true;
     };
 
@@ -120,27 +117,34 @@ export class BuffApplierCore {
         const totalAttrType: GetTotalAttributeType =
           Array.isArray(config.targets) || config.targets.module !== ECalcStatModule.ATTR ? "ALL" : "STABLE";
 
-        this.applyBonus({
+        this.applyEffectBonuses({
           ...applyArgs,
-          bonus: getBonus({
+          bonus: getBareBonus({
             config,
             getTotalAttrFromSelf: (stat) => this.getTotalAttrFromSelf(stat, totalAttrType),
           }),
           vision: this.calcInfo.appChar.vision,
           targets: config.targets,
           isStackable,
+          applyAttrBonus: (bonus) => {
+            result.attrBonuses.push(bonus);
+          },
+          applyAttkBonus: (bonus) => {
+            result.attkBonuses.push(bonus);
+          },
         });
       }
     }
+    return result;
   };
 
-  protected _applyCharacterBuff = (args: ApplyCharacterBuffArgs) => {
+  protected getAppliedCharacterBonuses = (args: ApplyCharacterBuffArgs) => {
     const { fromSelf = false } = args;
 
-    this.applyBonuses({
+    return this.getAppliedBonuses({
       ...args,
-      getBonus: (getArgs) => {
-        return getCharacterBonus({
+      getBareBonus: (getArgs) => {
+        return getCharacterBareBonus({
           ...getArgs,
           inputs: args.inputs,
           fromSelf,
@@ -150,13 +154,13 @@ export class BuffApplierCore {
     });
   };
 
-  protected _applyWeaponBuff = (args: ApplyWeaponBuffArgs) => {
+  protected getApplyWeaponBonuses = (args: ApplyWeaponBuffArgs) => {
     const { fromSelf = false } = args;
 
-    this.applyBonuses({
+    return this.getAppliedBonuses({
       ...args,
-      getBonus: (getArgs) => {
-        return getWeaponBonus({
+      getBareBonus: (getArgs) => {
+        return getWeaponBareBonus({
           ...getArgs,
           refi: args.refi,
           inputs: args.inputs,
@@ -167,13 +171,13 @@ export class BuffApplierCore {
     });
   };
 
-  protected _applyArtifactBuff = (args: ApplyArtifactBuffArgs) => {
+  protected getApplyArtifactBonuses = (args: ApplyArtifactBuffArgs) => {
     const { fromSelf = false } = args;
 
-    this.applyBonuses({
+    return this.getAppliedBonuses({
       ...args,
-      getBonus: (getArgs) => {
-        return getArtifactBonus({
+      getBareBonus: (getArgs) => {
+        return getArtifactBareBonus({
           ...getArgs,
           inputs: args.inputs,
           fromSelf,

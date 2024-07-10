@@ -1,4 +1,4 @@
-export * from "./getCharacterBonus";
-export * from "./getWeaponBonus";
-export * from "./getArtifactBonus";
-export type { AppliedBonus, GetBonusArgs } from "./bonus-getters.types";
+export * from "./getCharacterBareBonus";
+export * from "./getWeaponBareBonus";
+export * from "./getArtifactBareBonus";
+export type { BareBonus, GetBonusArgs } from "./bonus-getters.types";

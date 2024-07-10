@@ -283,37 +283,31 @@ export class SimulationControl {
 
   private modify = (event: ModifyEvent, onfieldMember: number): ProcessedModifyEvent => {
     const performer = this.member[event.performer.code];
+    const { affect, attrBonuses, attkBonuses, source } = performer.modify(event, this.appWeapons[event.modifier.code]);
 
-    let description: string | undefined;
-    let receivers: MemberControl[] = [];
+    if (affect) {
+      const receivers = this.getReceivers(performer, affect, onfieldMember);
 
-    performer.modify(event, this.appWeapons[event.modifier.code], (affect) => {
-      receivers = this.getReceivers(performer, affect, onfieldMember);
+      for (const bonus of attrBonuses) {
+        receivers.forEach((receiver) => receiver.updateAttrBonus(bonus));
+      }
+      for (const bonus of attkBonuses) {
+        receivers.forEach((receiver) => receiver.updateAttkBonus(bonus));
+      }
+
+      receivers.forEach((receiver) => receiver.applySimulationBonuses());
 
       return {
-        applyAttrBonus: (bonus) => {
-          description = bonus.description;
-          receivers.forEach((receiver) => receiver.updateAttrBonus(bonus));
-        },
-        applyAttkBonus: (bonus) => {
-          description = bonus.description;
-          receivers.forEach((receiver) => receiver.updateAttkBonus(bonus));
-        },
+        ...event,
+        description: source,
       };
-    });
-
-    receivers.forEach((receiver) => receiver.applySimulationBonuses());
-
-    let error: string | undefined;
-
-    if (!description) {
-      error = "Cannot find the modifier.";
-      description = `[${error}]`;
     }
+
+    const error = "Cannot find the modifier.";
 
     return {
       ...event,
-      description,
+      description: `[${error}]`,
       error,
     };
   };

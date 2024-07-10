@@ -1,4 +1,4 @@
-import type { AppliedBonus, GetBonusArgs } from "@Src/backend/bonus-getters";
+import type { BareBonus, GetBonusArgs } from "@Src/backend/bonus-getters";
 import type {
   ArtifactBonusCore,
   AttackBonusKey,
@@ -15,41 +15,50 @@ import type {
 import type { ResistanceReductionControl } from "@Src/backend/controls";
 import type { CalculationInfo } from "@Src/backend/utils";
 
-type AppliedBonusCommon = Pick<AppliedBonus, "id" | "value"> & {
+export type AppliedAttributeBonus = BareBonus & {
+  toStat: AttributeStat;
+  isStable: boolean;
   description: string;
 };
 
-export type AppliedAttributeBonus = AppliedBonusCommon & {
-  toStat: AttributeStat;
-  isStable: boolean;
-};
-
-export type AppliedAttackBonus = AppliedBonusCommon & {
+export type AppliedAttackBonus = Pick<BareBonus, "id" | "value"> & {
   toType: AttackBonusType;
   toKey: AttackBonusKey;
+  description: string;
 };
 
-export type ApplyBonusArgs = {
-  bonus: AppliedBonus;
+export type IsStackableAppliedBonus = (paths: string | string[]) => boolean;
+
+type ApplyEffectBonusesArgs = {
+  bonus: BareBonus;
   vision: ElementType;
   targets: EntityBonusTargets;
   inputs: number[];
   description: string;
-  isStackable?: (paths: string | string[]) => boolean;
-  applyAttrBonus: (args: AppliedAttributeBonus) => void;
-  applyAttkBonus: (args: AppliedAttackBonus) => void;
+  isStackable?: IsStackableAppliedBonus;
+  applyAttrBonus: (bonus: AppliedAttributeBonus) => void;
+  applyAttkBonus: (bonus: AppliedAttackBonus) => void;
 };
 
-type ApplyBonusArgsPick = Pick<ApplyBonusArgs, "description" | "inputs" | "applyAttrBonus" | "applyAttkBonus">;
+export type AppliedBonuses = {
+  attrBonuses: AppliedAttributeBonus[];
+  attkBonuses: AppliedAttackBonus[];
+};
 
-export type ApplyBonusesArgs<T extends EntityBonus> = ApplyBonusArgsPick & {
+export type ApplyEffectBonuses = (args: ApplyEffectBonusesArgs) => void;
+
+type ApplyBonusArgsPick = Pick<ApplyEffectBonusesArgs, "description" | "inputs">;
+
+type GetAppliedBonusesArgs<T extends EntityBonus> = ApplyBonusArgsPick & {
   buff: Pick<EntityBuff<T>, "effects" | "trackId">;
-  getBonus: (args: Pick<GetBonusArgs<T>, "config" | "getTotalAttrFromSelf">) => AppliedBonus;
+  getBareBonus: (args: Pick<GetBonusArgs<T>, "config" | "getTotalAttrFromSelf">) => BareBonus;
   fromSelf?: boolean;
   isFinal?: boolean;
 };
 
-export type ApplyBuffArgs<T extends EntityBonus> = Omit<ApplyBonusesArgs<WithBonusTargets<T>>, "getBonus">;
+export type GetAppliedBonuses = (args: GetAppliedBonusesArgs<WithBonusTargets<EntityBonus>>) => AppliedBonuses;
+
+type ApplyBuffArgs<T extends EntityBonus> = Omit<GetAppliedBonusesArgs<WithBonusTargets<T>>, "getBareBonus">;
 
 export type ApplyCharacterBuffArgs = ApplyBuffArgs<CharacterBonusCore>;
 

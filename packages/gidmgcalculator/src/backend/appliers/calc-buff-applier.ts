@@ -1,7 +1,7 @@
 import type { CalculationInfo } from "@Src/backend/utils";
 import type {
+  AppliedBonuses,
   ApplyArtifactBuffArgs,
-  ApplyBuffArgs,
   ApplyCharacterBuffArgs,
   ApplyWeaponBuffArgs,
 } from "./appliers.types";
@@ -9,43 +9,37 @@ import type {
 import { AttackBonusControl, TotalAttributeControl } from "@Src/backend/controls";
 import { BuffApplierCore } from "./buff-applier-core";
 
-type InternalApplyBuffArgs<T extends ApplyBuffArgs<any>> = Omit<T, "applyAttrBonus" | "applyAttkBonus">;
-
 export class CalcBuffApplier extends BuffApplierCore {
-  private appliers: Pick<ApplyBuffArgs<any>, "applyAttrBonus" | "applyAttkBonus">;
-
-  constructor(info: CalculationInfo, totalAttr: TotalAttributeControl, attackBonus: AttackBonusControl) {
+  constructor(
+    info: CalculationInfo,
+    private totalAttr: TotalAttributeControl,
+    private attackBonus: AttackBonusControl
+  ) {
     super(info, totalAttr);
-
-    this.appliers = {
-      applyAttrBonus: (bonus) => {
-        const add = bonus.isStable ? totalAttr.addStable : totalAttr.addUnstable;
-        add(bonus.toStat, bonus.value, bonus.description);
-      },
-      applyAttkBonus: (bonus) => {
-        attackBonus.add(bonus.toType, bonus.toKey, bonus.value, bonus.description);
-      },
-    };
   }
 
-  applyCharacterBuff = (args: InternalApplyBuffArgs<ApplyCharacterBuffArgs>) => {
-    this._applyCharacterBuff({
-      ...args,
-      ...this.appliers,
-    });
+  private applyBonuses = (bonuses: AppliedBonuses) => {
+    for (const bonus of bonuses.attrBonuses) {
+      const add = bonus.isStable ? this.totalAttr.addStable : this.totalAttr.addUnstable;
+      add(bonus.toStat, bonus.value, bonus.description);
+    }
+    for (const bonus of bonuses.attkBonuses) {
+      this.attackBonus.add(bonus.toType, bonus.toKey, bonus.value, bonus.description);
+    }
   };
 
-  applyWeaponBuff = (args: InternalApplyBuffArgs<ApplyWeaponBuffArgs>) => {
-    this._applyWeaponBuff({
-      ...args,
-      ...this.appliers,
-    });
+  applyCharacterBuff = (args: ApplyCharacterBuffArgs) => {
+    const bonuses = this.getAppliedCharacterBonuses(args);
+    this.applyBonuses(bonuses);
   };
 
-  applyArtifactBuff = (args: InternalApplyBuffArgs<ApplyArtifactBuffArgs>) => {
-    this._applyArtifactBuff({
-      ...args,
-      ...this.appliers,
-    });
+  applyWeaponBuff = (args: ApplyWeaponBuffArgs) => {
+    const bonuses = this.getApplyWeaponBonuses(args);
+    this.applyBonuses(bonuses);
+  };
+
+  applyArtifactBuff = (args: ApplyArtifactBuffArgs) => {
+    const bonuses = this.getApplyArtifactBonuses(args);
+    this.applyBonuses(bonuses);
   };
 }

@@ -1,9 +1,9 @@
 import type { ArtifactBonusCore } from "@Src/backend/types";
-import type { AppliedBonus, GetBonusArgs } from "./bonus-getters.types";
+import type { BareBonus, GetBonusArgs } from "./bonus-getters.types";
 import { EntityCalc } from "@Src/backend/utils";
 import { toArray } from "@Src/utils";
 
-export function getArtifactBonus(args: GetBonusArgs<ArtifactBonusCore>): AppliedBonus {
+export function getArtifactBareBonus(args: GetBonusArgs<ArtifactBonusCore>): BareBonus {
   const { config, info, inputs, fromSelf } = args;
   let bonusValue = 0;
   let isStable = true;
@@ -34,7 +34,7 @@ export function getArtifactBonus(args: GetBonusArgs<ArtifactBonusCore>): Applied
   if (typeof config.sufExtra === "number") {
     bonusValue += config.sufExtra;
   } else if (config.sufExtra && EntityCalc.isApplicableEffect(config.sufExtra, info, inputs)) {
-    bonusValue += getArtifactBonus({ ...args, config: config.sufExtra }).value;
+    bonusValue += getArtifactBareBonus({ ...args, config: config.sufExtra }).value;
   }
 
   if (config.max && bonusValue > config.max) bonusValue = config.max;

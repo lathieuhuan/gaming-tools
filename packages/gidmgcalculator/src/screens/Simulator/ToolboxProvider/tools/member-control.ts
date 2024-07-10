@@ -1,6 +1,8 @@
 import {
   AppCharacter,
   AppWeapon,
+  AppliedAttackBonus,
+  AppliedAttributeBonus,
   AttackBonusControl,
   AttackPattern,
   AttackPatternConf,
@@ -28,20 +30,17 @@ import type {
 } from "@Src/types";
 
 import { pickProps, removeEmpty } from "@Src/utils";
-import { ApplyFn, SimulatorBuffApplier } from "./simulator-buff-applier";
+import { SimulatorBuffApplier } from "./simulator-buff-applier";
 
 export type OnChangeTotalAttr = (totalAttrCtrl: TotalAttribute) => void;
 
 export type OnChangeBonuses = (attrBonus: SimulationAttributeBonus[], attkBonus: SimulationAttackBonus[]) => void;
 
-export type ConfigTalentHitEventArgs = {
-  talent: LevelableTalentType;
-  pattern: AttackPattern;
-  item: CalcItem;
-  elmtModCtrls?: Partial<ElementModCtrl>;
-  attkBonus: SimulationAttackBonus[];
-  partyData: SimulationPartyData;
-  target: SimulationTarget;
+type ModifyResult = {
+  affect: ModifierAffectType | null;
+  attrBonuses: AppliedAttributeBonus[];
+  attkBonuses: AppliedAttackBonus[];
+  source: string;
 };
 
 export class MemberControl extends SimulatorBuffApplier {
@@ -97,54 +96,63 @@ export class MemberControl extends SimulatorBuffApplier {
 
   // ========== MODIFY ==========
 
-  modify = (
-    event: ModifyEvent,
-    performerWeapon: AppWeapon,
-    getApplyFn: (affect: ModifierAffectType) => ApplyFn
-  ) => {
+  modify = (event: ModifyEvent, performerWeapon: AppWeapon): ModifyResult => {
     const { modifier } = event;
     const { inputs = [] } = modifier;
 
-    switch (modifier.type) {
-      case "CHARACTER": {
-        // #to-do: check if character can do this event (in case events are imported
-        // but the modifier is not granted because of character's level/constellation)
-        const buff = this?.data.buffs?.find((buff) => buff.index === modifier.id);
+    if (modifier.type === "CHARACTER") {
+      // #to-do: check if character can do this event (in case events are imported
+      // but the modifier is not granted because of character's level/constellation)
+      const buff = this?.data.buffs?.find((buff) => buff.index === modifier.id);
 
-        if (buff) {
-          const applyFn = getApplyFn(buff.affect);
+      if (buff) {
+        const source = `${this.data.name} / ${buff.src}`;
 
-          this._applyCharacterBuff({
-            buff,
-            description: `${this.data.name} / ${buff.src}`,
-            inputs,
-            fromSelf: true,
-            ...applyFn,
-          });
-        }
-        break;
-      }
-      case "WEAPON": {
-        const buff = performerWeapon.buffs?.find((buff) => buff.index === modifier.id);
+        const bonuses = this.getAppliedCharacterBonuses({
+          buff,
+          description: source,
+          inputs,
+          fromSelf: true,
+        });
 
-        if (buff) {
-          const applyFn = getApplyFn(buff.affect);
-
-          this._applyWeaponBuff({
-            buff,
-            refi: 1,
-            description: `${this.data.name} / ${performerWeapon.name}`,
-            inputs,
-            fromSelf: true,
-            ...applyFn,
-          });
-        }
-        break;
-      }
-      case "ARTIFACT": {
-        //
+        return {
+          affect: buff.affect,
+          ...bonuses,
+          source,
+        };
       }
     }
+    if (modifier.type === "WEAPON") {
+      const buff = performerWeapon.buffs?.find((buff) => buff.index === modifier.id);
+
+      if (buff) {
+        const source = `${this.data.name} / ${performerWeapon.name}`;
+
+        const bonuses = this.getApplyWeaponBonuses({
+          buff,
+          refi: 1,
+          description: source,
+          inputs,
+          fromSelf: true,
+        });
+
+        return {
+          affect: buff.affect,
+          ...bonuses,
+          source,
+        };
+      }
+    }
+    if (modifier.type === "ARTIFACT") {
+      //
+    }
+
+    return {
+      affect: null,
+      attrBonuses: [],
+      attkBonuses: [],
+      source: "",
+    };
   };
 
   applySimulationBonuses = () => {
@@ -276,3 +284,13 @@ export class MemberControl extends SimulatorBuffApplier {
     };
   };
 }
+
+export type ConfigTalentHitEventArgs = {
+  talent: LevelableTalentType;
+  pattern: AttackPattern;
+  item: CalcItem;
+  elmtModCtrls?: Partial<ElementModCtrl>;
+  attkBonus: SimulationAttackBonus[];
+  partyData: SimulationPartyData;
+  target: SimulationTarget;
+};

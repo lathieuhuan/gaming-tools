@@ -1,9 +1,7 @@
 import type { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
-import type { AppliedAttackBonus, AppliedAttributeBonus, ApplyBuffArgs } from "@Src/backend/appliers/appliers.types";
+import type { AppliedAttackBonus, AppliedAttributeBonus } from "@Src/backend";
 
 import { BuffApplierCore, CalculationInfo, EntityCalc } from "@Backend";
-
-export type ApplyFn = Pick<ApplyBuffArgs<any>, "applyAttrBonus" | "applyAttkBonus">;
 
 export class SimulatorBuffApplier extends BuffApplierCore {
   private innateAttrBonus: SimulationAttributeBonus[] = [];
@@ -28,19 +26,20 @@ export class SimulatorBuffApplier extends BuffApplierCore {
       if (EntityCalc.isGrantedEffect(buff, info.char)) {
         const description = `Self / ${buff.src}`;
 
-        this._applyCharacterBuff({
+        const bonuses = this.getAppliedCharacterBonuses({
           description,
           buff,
           inputs: [],
           fromSelf: true,
           isFinal: false,
-          applyAttrBonus: (bonus) => {
-            this.innateAttrBonus.push(this.processAttributeBonus(bonus));
-          },
-          applyAttkBonus: (bonus) => {
-            this.innateAttkBonus.push(this.processAttackBonus(bonus));
-          },
         });
+
+        for (const bonus of bonuses.attrBonuses) {
+          this.innateAttrBonus.push(this.processAttributeBonus(bonus));
+        }
+        for (const bonus of bonuses.attkBonuses) {
+          this.innateAttkBonus.push(this.processAttackBonus(bonus));
+        }
       }
     }
   }

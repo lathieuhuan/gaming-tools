@@ -1,11 +1,11 @@
 import type { WeaponBonusCore } from "@Src/backend/types";
-import type { AppliedBonus, GetBonusArgs } from "./bonus-getters.types";
+import type { BareBonus, GetBonusArgs } from "./bonus-getters.types";
 import { EntityCalc } from "@Src/backend/utils";
 import { toArray } from "@Src/utils";
 
 const scaleRefi = (base: number, increment = base / 3, refi: number) => base + increment * refi;
 
-export function getWeaponBonus(args: GetBonusArgs<WeaponBonusCore> & { refi: number }): AppliedBonus {
+export function getWeaponBareBonus(args: GetBonusArgs<WeaponBonusCore> & { refi: number }): BareBonus {
   const { config, info, refi, inputs, fromSelf } = args;
   let bonusValue = 0;
   let isStable = true;
@@ -39,7 +39,7 @@ export function getWeaponBonus(args: GetBonusArgs<WeaponBonusCore> & { refi: num
   if (typeof config.sufExtra === "number") {
     bonusValue += scaleRefi(config.sufExtra, undefined, refi);
   } else if (config.sufExtra && EntityCalc.isApplicableEffect(config.sufExtra, info, inputs)) {
-    bonusValue += getWeaponBonus({ ...args, config: config.sufExtra }).value;
+    bonusValue += getWeaponBareBonus({ ...args, config: config.sufExtra }).value;
   }
 
   // ========== APPLY MAX ==========
