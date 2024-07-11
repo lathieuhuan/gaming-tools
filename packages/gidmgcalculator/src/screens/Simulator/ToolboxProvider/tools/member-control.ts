@@ -50,21 +50,12 @@ export class MemberControl extends SimulatorBuffApplier {
   private rootTotalAttr: TotalAttributeControl;
   private normalsConfig: NormalsConfig = {};
 
-  private onChangeTotalAttr: OnChangeTotalAttr | undefined;
-  private onChangeBonuses: OnChangeBonuses | undefined;
-
   get totalAttr() {
     return this.totalAttrCtrl.finalize();
   }
 
-  constructor(
-    member: SimulationMember,
-    appChar: AppCharacter,
-    appWeapon: AppWeapon,
-    partyData: SimulationPartyData,
-    resonanceBonus: SimulationAttributeBonus[]
-  ) {
-    super({ char: member, appChar, partyData }, resonanceBonus);
+  constructor(member: SimulationMember, appChar: AppCharacter, appWeapon: AppWeapon, partyData: SimulationPartyData) {
+    super({ char: member, appChar, partyData });
 
     this.rootTotalAttr = new TotalAttributeControl();
     this.rootTotalAttr.construct(member, appChar, member.weapon, appWeapon, member.artifacts);
@@ -75,11 +66,6 @@ export class MemberControl extends SimulatorBuffApplier {
     this.totalAttrCtrl = this.rootTotalAttr.clone();
     this.getTotalAttrFromSelf = this.totalAttrCtrl.getTotal;
   }
-
-  listenChanges = (onChangeTotalAttr: OnChangeTotalAttr, onChangeBonuses: OnChangeBonuses) => {
-    this.onChangeTotalAttr = onChangeTotalAttr;
-    this.onChangeBonuses = onChangeBonuses;
-  };
 
   private resetTotalAttr = () => {
     this.totalAttrCtrl = this.rootTotalAttr.clone();
@@ -162,9 +148,6 @@ export class MemberControl extends SimulatorBuffApplier {
       const add = bonus.isStable ? this.totalAttrCtrl.addStable : this.totalAttrCtrl.addUnstable;
       add(bonus.toStat, bonus.value, bonus.description);
     }
-
-    this.onChangeTotalAttr?.(this.totalAttrCtrl.finalize());
-    this.onChangeBonuses?.(this.attrBonus.concat(), this.attkBonus.concat());
   };
 
   // ========== HIT ==========

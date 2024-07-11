@@ -1,9 +1,10 @@
 import { Fragment, useEffect, useState } from "react";
-import { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
-import { useActiveMember } from "@Simulator/ToolboxProvider";
-import { useTranslation } from "@Src/hooks";
-import { ATTACK_ELEMENTS } from "@Backend";
 import { round } from "rond";
+import { ATTACK_ELEMENTS } from "@Backend";
+
+import { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
+import { useTranslation } from "@Src/hooks";
+import { useActiveSimulation } from "@Simulator/ToolboxProvider";
 
 type SimulationBonus = SimulationAttributeBonus | SimulationAttackBonus;
 
@@ -12,12 +13,12 @@ interface BonusDisplayerProps {
 }
 export function BonusDisplayer(props: BonusDisplayerProps) {
   const { t } = useTranslation();
-  const member = useActiveMember();
+  const simulation = useActiveSimulation();
   const [bonuses, setBonuses] = useState<SimulationBonus[]>([]);
 
   useEffect(() => {
-    if (member) {
-      const { initial, unsubscribe } = member.tools.subscribeBonuses((attrBonus, attkBonus) => {
+    if (simulation) {
+      const { initial, unsubscribe } = simulation.subscribeBonuses((attrBonus, attkBonus) => {
         setBonuses((attrBonus as SimulationBonus[]).concat(attkBonus));
       });
 
@@ -25,9 +26,9 @@ export function BonusDisplayer(props: BonusDisplayerProps) {
       return unsubscribe;
     }
     return undefined;
-  }, [member]);
+  }, [simulation]);
 
-  if (!member) {
+  if (!simulation) {
     return null;
   }
 

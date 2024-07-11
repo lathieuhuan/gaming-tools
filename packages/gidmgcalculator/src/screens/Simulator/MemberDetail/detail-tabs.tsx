@@ -3,7 +3,7 @@ import { ItemCase } from "rond";
 import { ARTIFACT_TYPES, AppWeapon, GeneralCalc, TotalAttribute } from "@Backend";
 
 import type { Character, SimulationMember } from "@Src/types";
-import type { ActiveMember } from "@Simulator/ToolboxProvider";
+import type { ActiveSimulation } from "@Simulator/ToolboxProvider";
 import { $AppArtifact } from "@Src/services";
 import { Utils_ } from "@Src/utils";
 import {
@@ -16,18 +16,18 @@ import {
   WeaponCard,
 } from "@Src/components";
 
-export function AttributesTab({ member }: { member: ActiveMember }) {
+export function AttributesTab({ simulation }: { simulation: ActiveSimulation }) {
   const [totalAttr, setTotalAttr] = useState<TotalAttribute | null>(null);
 
   useEffect(() => {
-    if (member) {
-      const { initialTotalAttr, unsubscribe } = member.tools.subscribeTotalAttr(setTotalAttr);
+    if (simulation) {
+      const { initialTotalAttr, unsubscribe } = simulation.subscribeTotalAttr(setTotalAttr);
 
       setTotalAttr(initialTotalAttr);
       return unsubscribe;
     }
     return undefined;
-  }, [member]);
+  }, [simulation]);
 
   return totalAttr ? <AttributeTable attributes={totalAttr} /> : null;
 }

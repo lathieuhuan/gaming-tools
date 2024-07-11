@@ -2,14 +2,15 @@ import { useState } from "react";
 import { SwitchNode } from "rond";
 
 import { $AppWeapon } from "@Src/services";
-import { ActiveMember, useActiveMember } from "@Simulator/ToolboxProvider";
+import { ActiveMember, ActiveSimulation, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { ComplexSelect, ConstellationList } from "@Src/components";
 import { AttributesTab, GreasTab, TalentsTab } from "./detail-tabs";
 
 interface MemberDetailProps {
+  simulation: ActiveSimulation;
   member: ActiveMember;
 }
-function MemberDetailCore({ member }: MemberDetailProps) {
+function MemberDetailCore({ simulation, member }: MemberDetailProps) {
   const [activeTab, setActiveTab] = useState("ATTRIBUTES");
   const { info, data } = member;
   const appWeapon = $AppWeapon.get(info.weapon.code)!;
@@ -42,7 +43,7 @@ function MemberDetailCore({ member }: MemberDetailProps) {
           cases={[
             {
               value: "ATTRIBUTES",
-              element: <AttributesTab member={member} />,
+              element: <AttributesTab simulation={simulation} />,
             },
             {
               value: "GEARS",
@@ -64,15 +65,16 @@ function MemberDetailCore({ member }: MemberDetailProps) {
 }
 
 export function MemberDetail(props: { className?: string }) {
+  const activeSimulation = useActiveSimulation();
   const activeMember = useActiveMember();
 
-  if (!activeMember) {
+  if (!activeSimulation || !activeMember) {
     return null;
   }
 
   return (
     <div className={props.className}>
-      <MemberDetailCore member={activeMember} />
+      <MemberDetailCore simulation={activeSimulation} member={activeMember} />
     </div>
   );
 }

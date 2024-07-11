@@ -1,13 +1,11 @@
-import { GeneralCalc, type AppWeapon, type ModifierAffectType } from "@Backend";
+import type { ModifierAffectType } from "@Backend";
 import type {
   AttackReaction,
   HitEvent,
   ModifyEvent,
-  SimulationAttributeBonus,
   SimulationChunk,
   SimulationEvent,
   SimulationMember,
-  SimulationPartyData,
   SimulationTarget,
 } from "@Src/types";
 import type {
@@ -18,8 +16,8 @@ import type {
   SimulationProcessedEvent,
 } from "../ToolboxProvider.types";
 
-import { $AppCharacter, $AppWeapon } from "@Src/services";
 import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
+import { ActiveMemberWatcher } from "./active-member-watcher";
 
 type MissmatchedCheckResult =
   | {
@@ -33,12 +31,7 @@ type MissmatchedCheckResult =
 
 type OnChangeChunk = (chunks: SimulationProcessedChunk[], sumary: SimulationChunksSumary) => void;
 
-export class SimulationControl {
-  partyData: SimulationPartyData = [];
-  appWeapons: Record<number, AppWeapon> = {};
-  target: SimulationTarget;
-  member: Record<number, MemberControl> = {};
-
+export class SimulationControl extends ActiveMemberWatcher {
   private chunks: SimulationProcessedChunk[] = [];
   private sumary: SimulationChunksSumary = {
     damage: 0,
@@ -51,34 +44,7 @@ export class SimulationControl {
   }
 
   constructor(party: SimulationMember[], target: SimulationTarget) {
-    this.partyData = party.map((member) => $AppCharacter.get(member.name));
-    this.target = target;
-
-    // Resonance
-    const resonanceBonus: SimulationAttributeBonus[] = [];
-    const { pyro = 0, hydro = 0 } = GeneralCalc.countElements(this.partyData);
-
-    if (pyro >= 2) {
-      // resonanceBonus.push()
-    }
-
-    for (let i = 0; i < party.length; i++) {
-      const member = party[i];
-      const memberData = this.partyData[i];
-      const weaponCode = member.weapon.code;
-
-      if (!this.appWeapons[weaponCode]) {
-        this.appWeapons[weaponCode] = $AppWeapon.get(weaponCode)!;
-      }
-
-      this.member[memberData.code] = new MemberControl(
-        member,
-        this.partyData[i],
-        this.appWeapons[weaponCode],
-        this.partyData,
-        resonanceBonus
-      );
-    }
+    super(party, target);
   }
 
   getMemberData = (code: number) => {
@@ -296,6 +262,11 @@ export class SimulationControl {
       }
 
       receivers.forEach((receiver) => receiver.applySimulationBonuses());
+
+      if (receivers.includes(this.activeMember)) {
+        this.notifyTotalAttrSubscribers();
+        this.notifyBonusesSubscribers();
+      }
 
       return {
         ...event,

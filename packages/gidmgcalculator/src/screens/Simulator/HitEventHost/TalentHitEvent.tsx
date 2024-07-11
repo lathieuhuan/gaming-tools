@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import { Button } from "rond";
-import { FaSyncAlt } from "react-icons/fa";
 
 import type { CalcItem } from "@Backend";
 import type { SimulationAttackBonus, TalentHitEventMod } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { TalentEventConfig, useActiveMember } from "@Simulator/ToolboxProvider";
+import { TalentEventConfig, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { ActionButton } from "@Simulator/components";
 
 interface TalentHitEventProps {
@@ -16,7 +14,7 @@ interface TalentHitEventProps {
 
 export function TalentHitEvent(props: TalentHitEventProps) {
   const { t } = useTranslation();
-  const activeMember = useActiveMember();
+  const simulation = useActiveSimulation();
 
   const [attkBonus, setAttkBonus] = useState<SimulationAttackBonus[]>([]);
   const [elmtModCtrls, setElmtModCtrls] = useState<TalentHitEventMod>({
@@ -26,8 +24,8 @@ export function TalentHitEvent(props: TalentHitEventProps) {
   });
 
   useEffect(() => {
-    if (activeMember) {
-      const { initial, unsubscribe } = activeMember.tools.subscribeBonuses((_, attkBonus) => {
+    if (simulation) {
+      const { initial, unsubscribe } = simulation.subscribeBonuses((_, attkBonus) => {
         setAttkBonus(attkBonus);
       });
 
@@ -35,7 +33,7 @@ export function TalentHitEvent(props: TalentHitEventProps) {
       return unsubscribe;
     }
     return undefined;
-  }, [activeMember]);
+  }, [simulation]);
 
   console.log("render: TalentAttackEvent", props.item.name);
 

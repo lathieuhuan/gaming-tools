@@ -17,7 +17,7 @@ export class SimulatorBuffApplier extends BuffApplierCore {
     return this.innateAttkBonus.concat(this._attkBonus);
   }
 
-  constructor(info: CalculationInfo, resonanceBonus: SimulationAttributeBonus[]) {
+  constructor(info: CalculationInfo) {
     super(info);
 
     const { name, innateBuffs = [] } = info.appChar;

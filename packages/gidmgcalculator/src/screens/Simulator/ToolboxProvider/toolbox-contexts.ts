@@ -1,11 +1,16 @@
 import { createContext, useContext } from "react";
 import type { AppCharacter } from "@Backend";
 import type { SimulationMember, SimulationPartyData, SimulationTarget } from "@Src/types";
-import type { ActiveMemberTools, ConfigTalentHitEventArgs, SimulationControl, TalentEventConfig } from "./tools";
+import type { ConfigTalentHitEventArgs, SimulationControl, TalentEventConfig } from "./tools";
 
 export type ActiveSimulation = Pick<
   SimulationControl,
-  "getMemberInfo" | "getMemberData" | "getAppWeaponOfMember" | "subscribeChunks"
+  | "getMemberInfo"
+  | "getMemberData"
+  | "getAppWeaponOfMember"
+  | "subscribeChunks"
+  | "subscribeTotalAttr"
+  | "subscribeBonuses"
 > & {
   partyData: SimulationPartyData;
   target: SimulationTarget;
@@ -26,7 +31,7 @@ type ConfigTalentHitEvent = (args: Omit<ConfigTalentHitEventArgs, "partyData" | 
 export type ActiveMember = {
   info: Pick<SimulationMember, "name" | "level" | "cons" | "NAs" | "ES" | "EB" | "weapon" | "artifacts">;
   data: AppCharacter;
-  tools: Pick<ActiveMemberTools, "subscribeTotalAttr" | "subscribeBonuses"> & {
+  tools: {
     configTalentHitEvent: ConfigTalentHitEvent;
   };
 };
