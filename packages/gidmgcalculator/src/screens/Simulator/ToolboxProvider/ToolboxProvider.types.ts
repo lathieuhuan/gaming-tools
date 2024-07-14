@@ -6,6 +6,8 @@ type ProcessedBaseEvent = {
   error?: string;
 };
 
+export type ProcessedModifyEvent = ModifyEvent & ProcessedBaseEvent & {};
+
 export type ProcessedHitEvent = HitEvent &
   ProcessedBaseEvent & {
     damage: {
@@ -15,15 +17,13 @@ export type ProcessedHitEvent = HitEvent &
     reaction: AttackReaction;
   };
 
-export type ProcessedModifyEvent = ModifyEvent & ProcessedBaseEvent & {};
-
 export type SimulationProcessedEvent = ProcessedModifyEvent | ProcessedHitEvent;
 
 export type SimulationProcessedChunk = Pick<SimulationChunk, "id" | "ownerCode"> & {
   events: SimulationProcessedEvent[];
 };
 
-export type SimulationChunksSumary = {
+export type SimulationSumary = {
   damage: number;
   duration: number;
 };

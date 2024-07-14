@@ -11,8 +11,8 @@ import {
   selectOnFieldMember,
 } from "@Store/simulator-slice";
 import {
-  ActiveSimulation,
-  SimulationChunksSumary,
+  SimulationManager,
+  SimulationSumary,
   SimulationProcessedChunk,
   useActiveSimulation,
 } from "@Simulator/ToolboxProvider";
@@ -23,7 +23,7 @@ import { EventDisplayer } from "./EventDisplayer";
 
 type SyncState = {
   chunks: SimulationProcessedChunk[];
-  sumary: SimulationChunksSumary;
+  sumary: SimulationSumary;
 };
 
 export function Timeline(props: { className?: string }) {
@@ -122,21 +122,21 @@ export function Timeline(props: { className?: string }) {
 }
 
 interface PartyDisplayerProps {
-  simulation: ActiveSimulation;
+  simulation: SimulationManager;
   onChangeOnFieldMember: (code: number) => void;
 }
 function PartyDisplayer(props: PartyDisplayerProps) {
   const dispatch = useDispatch();
-  const activeMemberName = useSelector(selectActiveMember);
+  const activeMemberCode = useSelector(selectActiveMember);
   const onFieldMember = useSelector(selectOnFieldMember);
 
-  const onClickMember = (name: string) => {
-    dispatch(changeActiveMember(name));
+  const onClickMember = (code: number) => {
+    dispatch(changeActiveMember(code));
   };
 
   const onChangeOnFieldMember = (data: SimulationPartyData[number]) => {
     props.onChangeOnFieldMember(data.code);
-    onClickMember(data.name);
+    onClickMember(data.code);
   };
 
   return (
@@ -146,9 +146,9 @@ function PartyDisplayer(props: PartyDisplayerProps) {
           <div key={data.code}>
             <CharacterPortrait
               size="small"
-              withColorBg={data.name === activeMemberName}
+              withColorBg={data.code === activeMemberCode}
               info={data}
-              onClick={() => onClickMember(data.name)}
+              onClick={() => onClickMember(data.code)}
             />
 
             <div className="mt-3 flex-center">

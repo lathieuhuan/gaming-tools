@@ -5,8 +5,8 @@ import { RootState } from "@Store/store";
 
 import { useStore } from "@Src/features";
 import { getSimulation, selectActiveMember } from "@Store/simulator-slice";
-import { ActiveMember, ActiveMemberContext, ActiveSimulationContext } from "./toolbox-contexts";
-import { SimulationControl } from "./tools";
+import { ActiveMemberContext, ActiveSimulationContext } from "./toolbox-contexts";
+import { SimulationControl, ActiveMember } from "./simulation-control";
 
 const selectActiveId = (state: RootState) => state.simulator.activeId;
 
@@ -16,7 +16,7 @@ interface ToolboxProviderProps {
 export function ToolboxProvider(props: ToolboxProviderProps) {
   const store = useStore();
   const activeId = useSelector(selectActiveId);
-  const activeMemberName = useSelector(selectActiveMember);
+  const activeMemberCode = useSelector(selectActiveMember);
 
   const activeSimulation = useMemo(() => {
     const simulation = store.select((state) => getSimulation(state.simulator));
@@ -29,33 +29,21 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
     return {
       members: simulation.members,
       control,
+      manager: control.genManager(),
     };
   }, [activeId]);
 
   const activeMember = useMemo<ActiveMember | null>(() => {
-    if (!activeSimulation || !activeMemberName) {
-      return null;
-    }
-    const { control } = activeSimulation;
-    const memberCode = control.partyData.find((member) => member.name === activeMemberName)?.code;
-    const memberInfo = activeSimulation.members.find((member) => member.name === activeMemberName);
-    if (!memberCode || !memberInfo) {
+    if (!activeSimulation || !activeMemberCode) {
       return null;
     }
 
-    activeSimulation.control.changeActiveMember(memberCode);
-
-    return {
-      info: memberInfo,
-      data: control.activeMember.data,
-      tools: {
-        configTalentHitEvent: (args) => control.config(memberCode, args),
-      },
-    };
-  }, [activeSimulation, activeMemberName]);
+    return activeSimulation.control.genActiveMember(activeMemberCode);
+    //
+  }, [activeSimulation, activeMemberCode]);
 
   return (
-    <ActiveSimulationContext.Provider value={activeSimulation?.control ?? null}>
+    <ActiveSimulationContext.Provider value={activeSimulation?.manager ?? null}>
       <ActiveMemberContext.Provider value={activeMember}>
         <EventsProcessor control={activeSimulation?.control} />
         {props.children}

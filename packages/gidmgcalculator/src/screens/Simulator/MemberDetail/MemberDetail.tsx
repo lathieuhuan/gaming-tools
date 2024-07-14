@@ -2,12 +2,12 @@ import { useState } from "react";
 import { SwitchNode } from "rond";
 
 import { $AppWeapon } from "@Src/services";
-import { ActiveMember, ActiveSimulation, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
+import { ActiveMember, SimulationManager, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { ComplexSelect, ConstellationList } from "@Src/components";
 import { AttributesTab, GreasTab, TalentsTab } from "./detail-tabs";
 
 interface MemberDetailProps {
-  simulation: ActiveSimulation;
+  simulation: SimulationManager;
   member: ActiveMember;
 }
 function MemberDetailCore({ simulation, member }: MemberDetailProps) {

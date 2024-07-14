@@ -1,6 +1,6 @@
 import type { HitEvent } from "@Src/types";
 
-import { ActiveMember, ActiveSimulation, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
+import { ActiveMember, SimulationManager, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { useTranslation } from "@Src/hooks";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
@@ -12,7 +12,7 @@ import { HitEventCoordinator, HitEventDisplayer } from "./HitEventCoordinator";
 import { TalentHitEvent } from "./TalentHitEvent";
 
 interface HitEventHostProps {
-  simulation: ActiveSimulation;
+  simulation: SimulationManager;
   member: ActiveMember;
   configs: TalentHitEventConfig[];
 }

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CharacterBuff } from "@Backend";
 
-import { ActiveMember, ActiveSimulation } from "@Simulator/ToolboxProvider";
+import { ActiveMember, SimulationManager } from "@Simulator/ToolboxProvider";
 import { parseAbilityDescription } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
@@ -11,7 +11,7 @@ import { GenshinModifierView } from "@Src/components";
 import { ActionButton } from "@Simulator/components";
 
 interface EventListCharacterBuffProps {
-  simulation: ActiveSimulation;
+  simulation: SimulationManager;
   member: ActiveMember;
   initalInputsByMember?: InputsByMember;
   buffs?: CharacterBuff[];

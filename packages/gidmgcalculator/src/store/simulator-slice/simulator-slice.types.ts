@@ -3,7 +3,7 @@ import type { HitEvent, ModifyEvent, Simulation, SimulationEvent, SimulationMana
 
 export type SimulatorState = {
   activeId: number;
-  activeMember: string;
+  activeMember: number;
   simulationManageInfos: SimulationManageInfo[];
   simulationsById: Record<string, Simulation>;
 };

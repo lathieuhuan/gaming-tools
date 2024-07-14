@@ -3,7 +3,7 @@ import { ItemCase } from "rond";
 import { ARTIFACT_TYPES, AppWeapon, GeneralCalc, TotalAttribute } from "@Backend";
 
 import type { Character, SimulationMember } from "@Src/types";
-import type { ActiveSimulation } from "@Simulator/ToolboxProvider";
+import type { SimulationManager } from "@Simulator/ToolboxProvider";
 import { $AppArtifact } from "@Src/services";
 import { Utils_ } from "@Src/utils";
 import {
@@ -16,7 +16,7 @@ import {
   WeaponCard,
 } from "@Src/components";
 
-export function AttributesTab({ simulation }: { simulation: ActiveSimulation }) {
+export function AttributesTab({ simulation }: { simulation: SimulationManager }) {
   const [totalAttr, setTotalAttr] = useState<TotalAttribute | null>(null);
 
   useEffect(() => {

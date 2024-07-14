@@ -7,7 +7,7 @@ import { _addEvent, getNextEventId, getSimulation } from "./simulator-slice.util
 
 const initialState: SimulatorState = {
   activeId: 0,
-  activeMember: "",
+  activeMember: 0,
   simulationManageInfos: [],
   simulationsById: {},
 };
@@ -21,15 +21,17 @@ export const simulatorSlice = createSlice({
       const { members, target = Setup_.createTarget({ level: $AppSettings.get("targetLevel") }) } = action.payload;
 
       if (members) {
+        const ownerCode = $AppCharacter.get(members[0].name).code;
+
         const initialChunk = {
           id: uuid(),
-          ownerCode: $AppCharacter.get(members[0].name).code,
+          ownerCode,
           events: [],
         };
         const { chunks = [initialChunk] } = action.payload;
 
         state.activeId = id;
-        state.activeMember = members[0].name;
+        state.activeMember = ownerCode;
         state.simulationManageInfos.push({
           id,
           name: "Simulation 1",
@@ -54,7 +56,7 @@ export const simulatorSlice = createSlice({
         _addEvent(chunks, event, performerCode, alsoSwitch);
       }
     },
-    changeActiveMember: (state, action: PayloadAction<string>) => {
+    changeActiveMember: (state, action: PayloadAction<number>) => {
       state.activeMember = action.payload;
     },
     changeOnFieldMember: (state, action: PayloadAction<number>) => {

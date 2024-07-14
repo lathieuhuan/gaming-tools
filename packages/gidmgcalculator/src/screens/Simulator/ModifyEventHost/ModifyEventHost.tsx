@@ -1,6 +1,6 @@
 import { AppWeapon, CharacterBuff, EntityCalc, GeneralCalc } from "@Backend";
 
-import { ActiveSimulation, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
+import { SimulationManager, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { Modifier_ } from "@Src/utils";
 import { InputsByMember } from "./ModifyEventHost.types";
 
@@ -69,7 +69,7 @@ export function ModifyEventHost(props: { className?: string }) {
 
 interface ModifyEventHostForActiveMemberProps {
   className?: string;
-  simulation: ActiveSimulation;
+  simulation: SimulationManager;
   characterBuffsByMember: Record<number, CharacterBuff[]>;
   initalCharacterBuffAllInputsByMember: InputsByMember;
   appWeaponByMember: Record<number, AppWeapon>;

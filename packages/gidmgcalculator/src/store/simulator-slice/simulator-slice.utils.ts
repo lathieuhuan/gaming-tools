@@ -9,13 +9,6 @@ export function getSimulation(state: SimulatorState, id: number | string = state
   return state.simulationsById[id] ?? null;
 }
 
-/**
- * @param memberName default to activeMember
- */
-export function getMember(state: SimulatorState, memberName = state.activeMember): SimulationMember | null {
-  return getSimulation(state)?.members?.find((member) => member.name === memberName) ?? null;
-}
-
 export function getNextEventId(chunks: SimulationChunk[]) {
   let id = 0;
 
@@ -46,7 +39,7 @@ export function _addEvent(
 
   if (alsoSwitch && lastChunk.ownerCode !== performerCode) {
     let removedId: string | undefined;
-    
+
     if (!lastChunk.events.length) {
       // Reuse id of removed empty chunk
       removedId = chunks.pop()?.id;

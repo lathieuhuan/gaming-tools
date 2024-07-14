@@ -1,4 +1,5 @@
 import {
+  ActualAttackPattern,
   AppCharacter,
   AppWeapon,
   AppliedAttackBonus,
@@ -8,22 +9,22 @@ import {
   AttackPatternConf,
   CalcItem,
   CalcItemCalculator,
+  CalcItemRecord,
   CharacterCalc,
   LevelableTalentType,
   ModifierAffectType,
   NORMAL_ATTACKS,
   NormalsConfig,
   ResistanceReductionControl,
-  TotalAttribute,
   TotalAttributeControl,
-  getNormalsConfig,
+  // getNormalsConfig,
 } from "@Backend";
 import type {
+  AttackReaction,
   ElementModCtrl,
   HitEvent,
   ModifyEvent,
   SimulationAttackBonus,
-  SimulationAttributeBonus,
   SimulationMember,
   SimulationPartyData,
   SimulationTarget,
@@ -32,20 +33,9 @@ import type {
 import { pickProps, removeEmpty } from "@Src/utils";
 import { SimulatorBuffApplier } from "./simulator-buff-applier";
 
-export type OnChangeTotalAttr = (totalAttrCtrl: TotalAttribute) => void;
-
-export type OnChangeBonuses = (attrBonus: SimulationAttributeBonus[], attkBonus: SimulationAttackBonus[]) => void;
-
-type ModifyResult = {
-  affect: ModifierAffectType | null;
-  attrBonuses: AppliedAttributeBonus[];
-  attkBonuses: AppliedAttackBonus[];
-  source: string;
-};
-
 export class MemberControl extends SimulatorBuffApplier {
-  info: SimulationMember;
-  data: AppCharacter;
+  readonly info: SimulationMember;
+  readonly data: AppCharacter;
   private totalAttrCtrl: TotalAttributeControl;
   private rootTotalAttr: TotalAttributeControl;
   private normalsConfig: NormalsConfig = {};
@@ -71,14 +61,6 @@ export class MemberControl extends SimulatorBuffApplier {
     this.totalAttrCtrl = this.rootTotalAttr.clone();
     this.getTotalAttrFromSelf = this.totalAttrCtrl.getTotal;
   };
-
-  // reset = () => {
-  //   this.resetTotalAttr();
-  //   this.attrBonus = [];
-  //   this.attkBonus = [];
-
-  //   this.onChangeTotalAttr?.(this.totalAttrCtrl.finalize());
-  // };
 
   // ========== MODIFY ==========
 
@@ -188,7 +170,7 @@ export class MemberControl extends SimulatorBuffApplier {
     return hitInfo;
   };
 
-  configTalentHitEvent = (args: ConfigTalentHitEventArgs) => {
+  configTalentHitEvent = (args: ConfigTalentHitEventArgs): TalentEventConfig => {
     const attBonus = new AttackBonusControl();
 
     for (const bonus of args.attkBonus) {
@@ -268,6 +250,13 @@ export class MemberControl extends SimulatorBuffApplier {
   };
 }
 
+type ModifyResult = {
+  affect: ModifierAffectType | null;
+  attrBonuses: AppliedAttributeBonus[];
+  attkBonuses: AppliedAttackBonus[];
+  source: string;
+};
+
 export type ConfigTalentHitEventArgs = {
   talent: LevelableTalentType;
   pattern: AttackPattern;
@@ -276,4 +265,13 @@ export type ConfigTalentHitEventArgs = {
   attkBonus: SimulationAttackBonus[];
   partyData: SimulationPartyData;
   target: SimulationTarget;
+};
+
+export type TalentEventConfig = {
+  damage: number | number[];
+  disabled: boolean;
+  attPatt: ActualAttackPattern;
+  attElmt: "pyro" | "hydro" | "electro" | "cryo" | "geo" | "anemo" | "dendro" | "phys";
+  reaction: AttackReaction;
+  record: CalcItemRecord;
 };

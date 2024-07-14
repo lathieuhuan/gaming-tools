@@ -1,8 +1,5 @@
 export * from "./ToolboxProvider";
-export { useActiveSimulation, useActiveMember, type ActiveSimulation, type ActiveMember } from "./toolbox-contexts";
-export type { TalentEventConfig } from "./tools/active-member-watcher";
-export type {
-  SimulationProcessedChunk,
-  SimulationProcessedEvent,
-  SimulationChunksSumary,
-} from "./ToolboxProvider.types";
+export { useActiveSimulation, useActiveMember } from "./toolbox-contexts";
+export type { SimulationManager, ActiveMember } from "./simulation-control";
+export type { TalentEventConfig } from "./simulation-control/member-control";
+export type { SimulationProcessedChunk, SimulationProcessedEvent, SimulationSumary } from "./ToolboxProvider.types";

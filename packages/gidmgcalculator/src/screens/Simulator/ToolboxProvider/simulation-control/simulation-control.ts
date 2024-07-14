@@ -8,80 +8,15 @@ import type {
   SimulationMember,
   SimulationTarget,
 } from "@Src/types";
-import type {
-  ProcessedHitEvent,
-  ProcessedModifyEvent,
-  SimulationChunksSumary,
-  SimulationProcessedChunk,
-  SimulationProcessedEvent,
-} from "../ToolboxProvider.types";
+import type { ProcessedHitEvent, ProcessedModifyEvent, SimulationProcessedEvent } from "../ToolboxProvider.types";
+import type { MemberControl } from "./member-control";
 
-import { ConfigTalentHitEventArgs, MemberControl } from "./member-control";
-import { ActiveMemberWatcher } from "./active-member-watcher";
+import { SimulationControlCenter } from "./simulation-control-center";
 
-type MissmatchedCheckResult =
-  | {
-      isMissmatched: true;
-    }
-  | {
-      isMissmatched: false;
-      nextChunkIndex: number;
-      nextEventIndex: number;
-    };
-
-type OnChangeChunk = (chunks: SimulationProcessedChunk[], sumary: SimulationChunksSumary) => void;
-
-export class SimulationControl extends ActiveMemberWatcher {
-  private chunks: SimulationProcessedChunk[] = [];
-  private sumary: SimulationChunksSumary = {
-    damage: 0,
-    duration: 0,
-  };
-  private chunkSubscribers = new Set<OnChangeChunk>();
-
-  private get latestChunk() {
-    return this.chunks[this.chunks.length - 1];
-  }
-
+export class SimulationControl extends SimulationControlCenter {
   constructor(party: SimulationMember[], target: SimulationTarget) {
     super(party, target);
   }
-
-  getMemberData = (code: number) => {
-    return this.member[code].data;
-  };
-
-  getMemberInfo = (code: number) => {
-    return this.member[code].info;
-  };
-
-  getAppWeaponOfMember = (code: number) => {
-    return this.appWeapons[this.member[code].info.weapon.code];
-  };
-
-  // ========== EVENTS ==========
-
-  private onChangeEvents = () => {
-    // console.log("onChangeEvents");
-    // console.log(this.chunks);
-    // console.log(receivers);
-
-    this.chunkSubscribers.forEach((callback) => callback(this.chunks.concat(), this.sumary));
-  };
-
-  subscribeChunks = (callback: OnChangeChunk) => {
-    this.chunkSubscribers.add(callback);
-
-    const unsubscribe = () => {
-      this.chunkSubscribers.delete(callback);
-    };
-
-    return {
-      initialChunks: this.chunks,
-      initialSumary: this.sumary,
-      unsubscribe,
-    };
-  };
 
   private checkMissmatched = (chunks: SimulationChunk[]): MissmatchedCheckResult => {
     // console.log("checkMissmatched");
@@ -178,7 +113,7 @@ export class SimulationControl extends ActiveMemberWatcher {
           });
         }
       }
-      return this.onChangeEvents();
+      return this.notifyChunksSubscribers();
     }
 
     for (let chunkIndex = result.nextChunkIndex; chunkIndex < chunks.length; chunkIndex++) {
@@ -200,11 +135,12 @@ export class SimulationControl extends ActiveMemberWatcher {
       }
     }
 
-    this.onChangeEvents();
+    this.notifyChunksSubscribers();
   };
 
   private processNewEvent = (event: SimulationEvent, chunk: SimulationChunk) => {
     let processedEvent: SimulationProcessedEvent;
+    this.sumary.duration += event.duration ?? 0;
 
     switch (event.type) {
       case "MODIFY":
@@ -212,10 +148,12 @@ export class SimulationControl extends ActiveMemberWatcher {
         break;
       case "HIT":
         processedEvent = this.hit(event);
+        this.sumary.damage += processedEvent.damage.value;
         break;
     }
     const latestChunk = this.latestChunk;
 
+    // Check if belongs to the latest chunk
     if (latestChunk && chunk.id === latestChunk.id) {
       latestChunk.events.push(processedEvent);
     } else {
@@ -249,7 +187,10 @@ export class SimulationControl extends ActiveMemberWatcher {
 
   private modify = (event: ModifyEvent, onfieldMember: number): ProcessedModifyEvent => {
     const performer = this.member[event.performer.code];
-    const { affect, attrBonuses, attkBonuses, source } = performer.modify(event, this.appWeapons[event.modifier.code]);
+    const { affect, attrBonuses, attkBonuses, source } = performer.modify(
+      event,
+      this.getAppWeaponOfMember(event.performer.code)
+    );
 
     if (affect) {
       const receivers = this.getReceivers(performer, affect, onfieldMember);
@@ -264,8 +205,7 @@ export class SimulationControl extends ActiveMemberWatcher {
       receivers.forEach((receiver) => receiver.applySimulationBonuses());
 
       if (receivers.includes(this.activeMember)) {
-        this.notifyTotalAttrSubscribers();
-        this.notifyBonusesSubscribers();
+        this.notifyActiveMemberSubscribers();
       }
 
       return {
@@ -311,9 +251,6 @@ export class SimulationControl extends ActiveMemberWatcher {
           description = `[${error}]`;
         }
 
-        this.sumary.damage += damage.value;
-        this.sumary.duration += event.duration ?? 0;
-
         return {
           ...event,
           damage,
@@ -323,12 +260,18 @@ export class SimulationControl extends ActiveMemberWatcher {
       }
     }
   };
-
-  config = (memberCode: number, args: Omit<ConfigTalentHitEventArgs, "partyData" | "target">) => {
-    return this.member[memberCode]?.configTalentHitEvent({
-      ...args,
-      partyData: this.partyData,
-      target: this.target,
-    });
-  };
 }
+
+type MissmatchedCheckResult =
+  | {
+      isMissmatched: true;
+    }
+  | {
+      isMissmatched: false;
+      nextChunkIndex: number;
+      nextEventIndex: number;
+    };
+
+export type SimulationManager = ReturnType<SimulationControl["genManager"]>;
+
+export type ActiveMember = ReturnType<SimulationControl["genActiveMember"]>;
