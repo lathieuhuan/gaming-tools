@@ -70,7 +70,7 @@ export function CalcItemTracker({
         if (!result.nonCrit) return null;
 
         const nonCritDmg = renderDmg(result.nonCrit);
-        const cDmg_ = record.cDmg_ ? round(record.cDmg_, 0) : 0;
+        const cDmg_ = record.cDmg_ ? round(record.cDmg_, 3) : 0;
 
         return (
           <div key={i}>
