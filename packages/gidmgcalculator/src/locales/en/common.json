@@ -51,5 +51,13 @@
   "pct_": "Percent Bonus",
   "mult_": "Multiplier Bonus",
   "defIgn_": "Def Ignore",
-  "multPlus_": "Multicative"
+  "multPlus_": "Multicative",
+  "pyro_attElmt": "Pyro",
+  "hydro_attElmt": "Hydro",
+  "geo_attElmt": "Geo",
+  "anemo_attElmt": "Anemo",
+  "cryo_attElmt": "Cryo",
+  "electro_attElmt": "Electro",
+  "dendro_attElmt": "Dendro",
+  "phys_attElmt": "Physical"
 }
