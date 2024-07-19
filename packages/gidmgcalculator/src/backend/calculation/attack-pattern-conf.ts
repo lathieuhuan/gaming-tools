@@ -1,4 +1,4 @@
-import type { ElementModCtrl, Infusion, ModifierCtrl } from "@Src/types";
+import type { AttackReaction, ElementModCtrl, Infusion } from "@Src/types";
 import type {
   AttackElement,
   AttackPattern,
@@ -6,55 +6,46 @@ import type {
   CalcItem,
   CalcItemFlatFactor,
   CalcItemMultFactor,
-  CharacterBuffNAsConfig,
-} from "../types";
-import type { CalcUltilInfo } from "./calculation.types";
-import { AttackBonusControl, TrackerControl } from "./controls";
+  CalcItemType,
+  ActualAttackPattern,
+  AppCharacter,
+} from "@Src/backend/types";
+import type { AttackBonusControl, CalcItemRecord, TotalAttribute } from "@Src/backend/controls";
 
-import { findByIndex, toArray } from "@Src/utils";
-import { CharacterCalc, EntityCalc, GeneralCalc } from "./utils";
-import { NORMAL_ATTACKS } from "../constants";
+import { toArray } from "@Src/utils";
+import { CharacterCalc, GeneralCalc } from "@Src/backend/utils";
+import { TrackerControl } from "@Src/backend/controls";
+import { NormalsConfig } from "./getNormalsConfig";
 
-type AttackPatternConfArgs = CalcUltilInfo & {
-  selfBuffCtrls: ModifierCtrl[];
-  elmtModCtrls: ElementModCtrl;
+type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorption">;
+
+export type CalcItemConfig = {
+  type: CalcItemType;
+  attPatt: ActualAttackPattern;
+  attElmt: "pyro" | "hydro" | "electro" | "cryo" | "geo" | "anemo" | "dendro" | "phys";
+  reaction: AttackReaction;
+  rxnMult: number;
+  record: CalcItemRecord;
+  getBonus: (key: AttackBonusKey) => number;
+  calculateBaseDamage: (level: number) => number | number[];
+};
+
+export type AttackPatternConfArgs = {
+  appChar: AppCharacter;
+  normalsConfig: NormalsConfig;
   customInfusion: Infusion;
+  totalAttr: TotalAttribute;
   attBonus: AttackBonusControl;
 };
 
-export default function AttackPatternConf({
-  char,
+export function AttackPatternConf({
   appChar,
-  partyData,
-  selfBuffCtrls,
-  elmtModCtrls,
+  normalsConfig,
   customInfusion,
+  totalAttr,
   attBonus,
 }: AttackPatternConfArgs) {
-  const normalsConfig: Partial<Record<AttackPattern, Omit<CharacterBuffNAsConfig, "forPatt">>> = {};
-
-  for (const ctrl of selfBuffCtrls) {
-    const buff = findByIndex(appChar.buffs ?? [], ctrl.index);
-
-    if (ctrl.activated && buff?.normalsConfig) {
-      for (const config of toArray(buff.normalsConfig)) {
-        const { checkInput, forPatt = "ALL", ...rest } = config;
-        const info = { char, appChar, partyData };
-
-        if (EntityCalc.isApplicableEffect(config, info, ctrl.inputs ?? [], true)) {
-          if (forPatt === "ALL") {
-            for (const type of NORMAL_ATTACKS) {
-              normalsConfig[type] = rest;
-            }
-          } else {
-            normalsConfig[forPatt] = rest;
-          }
-        }
-      }
-    }
-  }
-
-  const config = (patternKey: AttackPattern) => {
+  return (patternKey: AttackPattern) => {
     const {
       resultKey,
       defaultAttPatt,
@@ -64,8 +55,19 @@ export default function AttackPatternConf({
       //
     } = CharacterCalc.getTalentDefaultInfo(patternKey, appChar);
 
-    const configCalcItem = (item: CalcItem) => {
+    const configFlatFactor = (factor: CalcItemFlatFactor) => {
+      const { root, scale = defaultFlatFactorScale } = typeof factor === "number" ? { root: factor } : factor;
+      return {
+        root,
+        scale,
+      };
+    };
+
+    const configCalcItem = (item: CalcItem, elmtModCtrls: InternalElmtModCtrls): CalcItemConfig => {
       const { type = "attack" } = item;
+
+      /** ========== Attack Pattern, Attack Element, Reaction ========== */
+
       const attPatt = item.attPatt ?? normalsConfig[patternKey]?.attPatt ?? defaultAttPatt;
       let attElmt: AttackElement;
       let reaction = elmtModCtrls.reaction;
@@ -91,7 +93,7 @@ export default function AttackPatternConf({
         attElmt = normalsConfig[patternKey]?.attElmt ?? "phys";
       }
 
-      const getTotalBonus = (key: AttackBonusKey) => {
+      const getBonus = (key: AttackBonusKey) => {
         const finalAttPatt = attPatt === "none" ? undefined : attPatt;
 
         if (type === "attack") {
@@ -101,11 +103,15 @@ export default function AttackPatternConf({
         return attBonus.get(key, finalAttPatt, item.id);
       };
 
+      /** ========== Attack Reaction Multiplier ========== */
+
       let rxnMult = 1;
 
       // deal elemental dmg and want amplifying reaction
       if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
         rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, attBonus.getBare("pct_", reaction));
+      } else {
+        reaction = null;
       }
 
       const record = TrackerControl.initCalcItemRecord({
@@ -132,40 +138,55 @@ export default function AttackPatternConf({
         };
       };
 
-      // console.log("====================");
-      // console.log("calcItem", item.name);
-      // console.log(finalAttPatt, finalAttElmt, reaction);
+      const calculateBaseDamage = (level: number) => {
+        let bases: number[] = [];
+
+        // CALCULATE BASE DAMAGE
+        for (const factor of toArray(item.multFactors)) {
+          const { root, scale, basedOn } = configMultFactor(factor);
+          const finalMult = root * CharacterCalc.getTalentMult(scale, level) + getBonus("mult_");
+
+          record.multFactors.push({
+            value: totalAttr[basedOn],
+            desc: basedOn,
+            talentMult: finalMult,
+          });
+          bases.push((totalAttr[basedOn] * finalMult) / 100);
+        }
+
+        if (item.joinMultFactors) {
+          bases = [bases.reduce((accumulator, base) => accumulator + base, 0)];
+        }
+
+        if (item.flatFactor) {
+          const { root, scale } = configFlatFactor(item.flatFactor);
+          const flatBonus = root * CharacterCalc.getTalentMult(scale, level);
+
+          bases = bases.map((base) => base + flatBonus);
+          record.totalFlat = flatBonus;
+        }
+
+        return bases.length > 1 ? bases : bases[0];
+      };
 
       return {
         type,
         attPatt,
         attElmt,
+        reaction,
         rxnMult,
-        extraMult: getTotalBonus("mult_"),
         record,
-        getTotalBonus,
-        configMultFactor,
-      };
-    };
-
-    const configFlatFactor = (factor: CalcItemFlatFactor) => {
-      const { root, scale = 3 } = typeof factor === "number" ? { root: factor } : factor;
-      return {
-        root,
-        scale,
+        getBonus,
+        calculateBaseDamage,
       };
     };
 
     return {
       resultKey,
       disabled: normalsConfig[patternKey]?.disabled,
-      defaultFlatFactorScale,
       configCalcItem,
-      configFlatFactor,
     };
   };
-
-  return config;
 }
 
 export type ConfigAttackPattern = ReturnType<typeof AttackPatternConf>;

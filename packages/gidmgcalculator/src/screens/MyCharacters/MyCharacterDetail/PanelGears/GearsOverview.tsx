@@ -42,7 +42,7 @@ export function GearsOverview({
   return (
     <div className={className} style={style}>
       <div className="flex flex-wrap">
-        <div className="p-1 w-1/3">
+        <div className="p-1.5 w-1/3">
           <ItemCase chosen={detailType === "weapon"} onClick={() => onClickDetail("weapon")}>
             {(className, imgCls) => (
               <ItemThumbnail
@@ -62,11 +62,12 @@ export function GearsOverview({
 
         {data.artifacts.map((artifact, i) =>
           artifact ? (
-            <div key={i} className="p-1 w-1/3">
+            <div key={i} className="p-1.5 w-1/3">
               <ItemCase chosen={detailType === i} onClick={() => onClickDetail(i)}>
-                {(className) => (
+                {(className, imgCls) => (
                   <ItemThumbnail
                     className={className}
+                    imgCls={imgCls}
                     item={{
                       rarity: artifact.rarity,
                       level: artifact.level,
@@ -78,7 +79,7 @@ export function GearsOverview({
               </ItemCase>
             </div>
           ) : (
-            <div key={i} className="p-1 w-1/3" style={{ minHeight: 124 }}>
+            <div key={i} className="p-1.5 w-1/3" style={{ minHeight: 124 }}>
               <button
                 className="p-4 w-full h-full flex-center rounded bg-surface-3 glow-on-hover"
                 onClick={() => onClickEmptyArtifact(i)}

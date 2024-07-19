@@ -1,5 +1,13 @@
 import { round } from "rond";
-import { CharacterCalc, AppCharacter, CharacterBuff, CharacterDebuff, getIntialBonusValue } from "@Backend";
+import {
+  CharacterCalc,
+  AppCharacter,
+  CharacterBuff,
+  CharacterDebuff,
+  getIntialCharacterBonusValue,
+  AppWeapon,
+  WeaponBuff,
+} from "@Backend";
 
 import type { Character, PartyData } from "@Src/types";
 import { toArray, toMult } from "./pure-utils";
@@ -45,7 +53,7 @@ export const parseAbilityDescription = (
 
       if (effect) {
         const { value, preExtra, max } = effect;
-        let result = getIntialBonusValue(value, obj, inputs, fromSelf);
+        let result = getIntialCharacterBonusValue(value, obj, inputs, fromSelf);
 
         result *= CharacterCalc.getLevelScale(effect.lvScale, obj, inputs, fromSelf);
         if (typeof preExtra === "number") result += preExtra;
@@ -108,4 +116,13 @@ export const parseWeaponDescription = (description: string, refi: number) => {
     }
     return wrapText(body + suffix, type);
   });
+};
+
+export const getWeaponBuffDescription = (descriptions: AppWeapon["descriptions"], buff: WeaponBuff, refi: number) => {
+  if (descriptions?.length) {
+    let { description = 0 } = buff;
+    description = typeof description === "number" ? descriptions[description] : description;
+    return parseWeaponDescription(description || "", refi);
+  }
+  return "";
 };

@@ -1,21 +1,10 @@
-import { AppWeapon, WeaponBuff } from "@Backend";
-
 import type { CalcWeapon, ModifierCtrl, Party, Weapon } from "@Src/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import { $AppWeapon } from "@Src/services";
-import { findByIndex, parseWeaponDescription } from "@Src/utils";
+import { findByIndex, getWeaponBuffDescription } from "@Src/utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
-
-const getWeaponDescription = (descriptions: AppWeapon["descriptions"], buff: WeaponBuff, refi: number) => {
-  if (descriptions?.length) {
-    let { description = 0 } = buff;
-    description = typeof description === "number" ? descriptions[description] : description;
-    return parseWeaponDescription(description || "", refi);
-  }
-  return "";
-};
 
 interface RenderWeaponModifiersArgs {
   fromSelf?: boolean;
@@ -46,7 +35,7 @@ function renderWeaponModifiers({
         mutable={mutable}
         checked={ctrl.activated}
         heading={`${data.name} R${weapon.refi} ${fromSelf ? "(self)" : ""}`}
-        description={getWeaponDescription(descriptions, buff, weapon.refi)}
+        description={getWeaponBuffDescription(descriptions, buff, weapon.refi)}
         inputs={ctrl.inputs}
         inputConfigs={buff.inputConfigs}
         {...getHanlders?.({ ctrl, ctrlIndex, ctrls })}

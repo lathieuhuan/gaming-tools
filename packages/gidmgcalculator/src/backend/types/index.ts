@@ -1,4 +1,4 @@
-import { LEVELS } from "../constants";
+import { LEVELS } from "@Src/backend/constants";
 
 export * from "./common.types";
 export * from "./app-character.types";
