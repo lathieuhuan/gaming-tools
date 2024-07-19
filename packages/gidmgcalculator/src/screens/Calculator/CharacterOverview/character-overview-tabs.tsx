@@ -1,5 +1,5 @@
 import { CarouselSpace } from "rond";
-import { GeneralCalc, calcArtifactAtribute } from "@Backend";
+import { GeneralCalc, TotalAttributeControl } from "@Backend";
 
 import { useTabs } from "@Src/hooks";
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -42,7 +42,7 @@ export function ArtifactsTab() {
   const totalAttr = useSelector(selectTotalAttr);
   const artifacts = useSelector(selectArtifacts);
 
-  const artAttr = calcArtifactAtribute(artifacts, totalAttr);
+  const artAttr = TotalAttributeControl.getArtifactAttribute(artifacts, (stat) => totalAttr[`${stat}_base`]);
 
   const { activeIndex, renderTabs } = useTabs({
     level: 2,

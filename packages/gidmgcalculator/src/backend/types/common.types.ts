@@ -13,7 +13,7 @@ import {
   TALENT_TYPES,
   TRANSFORMATIVE_REACTIONS,
   WEAPON_TYPES,
-} from "../constants";
+} from "@Src/backend/constants";
 
 export type WeaponType = (typeof WEAPON_TYPES)[number];
 

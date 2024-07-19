@@ -70,18 +70,20 @@ export function CalcItemTracker({
         if (!result.nonCrit) return null;
 
         const nonCritDmg = renderDmg(result.nonCrit);
-        const cDmg_ = record.cDmg_ ? round(record.cDmg_, 0) : 0;
+        const cDmg_ = record.cDmg_ ? round(record.cDmg_, 3) : 0;
+        let text = "";
+
+        if (result.type === "attack") {
+          const parts = [];
+          if (result.attElmt !== "absorb") parts.push(t(`${result.attElmt}_attElmt`));
+          if (result.attPatt !== "none") parts.push(t(result.attPatt));
+          if (parts.length) text = `${parts.join(" / ")} DMG`;
+        }
 
         return (
           <div key={i}>
             <p className="font-medium">{t(itemName)}</p>
-
-            {result.type === "attack" ? (
-              <div className="text-sm text-secondary-1">
-                <span className="capitalize">{result.attElmt === "phys" ? "physical" : result.attElmt}</span>
-                {result.attPatt !== "none" ? <span> / {t(result.attPatt)}</span> : null} DMG
-              </div>
-            ) : null}
+            {text ? <div className="text-sm text-secondary-1">{text}</div> : null}
 
             <ul className="pl-4 text-hint-color text-sm leading-6 list-disc">
               {record.exclusives?.length ? (

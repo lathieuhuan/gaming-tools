@@ -1,4 +1,11 @@
-import type { EntityBonus, EntityBuff, EntityDebuff, WithBonusTargets, WithPenaltyTargets } from "./app-entity.types";
+import type {
+  EntityBonus,
+  EntityBuff,
+  EntityDebuff,
+  EntityPenalty,
+  WithBonusTargets,
+  WithPenaltyTargets,
+} from "./app-entity.types";
 
 type ArtTypeData = {
   name: string;
@@ -43,9 +50,9 @@ export type ArtifactBuff = EntityBuff<ArtifactBonus> & {
   description: ArtifactModifierDescription;
 };
 
-type ArtifactPenalty = WithPenaltyTargets<{
-  value: number;
-}>;
+export type ArtifactPenaltyCore = EntityPenalty;
+
+type ArtifactPenalty = WithPenaltyTargets<ArtifactPenaltyCore>;
 
 type ArtifactDebuff = EntityDebuff<ArtifactPenalty> & {
   description: ArtifactModifierDescription;

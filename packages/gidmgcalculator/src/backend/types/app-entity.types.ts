@@ -1,4 +1,4 @@
-import type { ECalcStatModule } from "../constants/internal.constants";
+import type { ECalcStatModule } from "@Src/backend/constants/internal";
 import type {
   AttackBonusType,
   AttributeStat,
@@ -93,7 +93,7 @@ type InputStack = {
   };
 };
 
-type AttributeStack = {
+export type AttributeStack = {
   type: "ATTRIBUTE";
   field: "base_atk" | "hp" | "atk" | "def" | "em" | "er_" | "healB_";
   /**
@@ -198,6 +198,7 @@ export type EntityBonusValueOption = {
 // ========== BONUS & BUFF ==========
 
 export type EntityBonus<ValueOptionExtends = object> = ApplicableCondition & {
+  id: string;
   value: number | (EntityBonusValueOption & ValueOptionExtends);
   stacks?: EntityBonusStack | EntityBonusStack[];
 };
@@ -221,6 +222,10 @@ export type WithBonusTargets<T> = T & {
 };
 
 // ========== PENALTY & DEBUFF ==========
+
+export type EntityPenalty = ApplicableCondition & {
+  value: number;
+};
 
 export type EntityPenaltyTarget =
   | ResistanceReductionKey

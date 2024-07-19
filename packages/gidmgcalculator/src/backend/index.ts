@@ -1,8 +1,3 @@
-export { calculateSetup } from "./calculation/calculateSetup";
-export { default as getCalculationStats } from "./calculation/getCalculationStats";
-export { getIntialBonusValue } from "./calculation/getCalculationStats/applier-character-buff";
-export { calcArtifactAtribute } from "./calculation/getCalculationStats/getCalculationStats.utils";
-export { TrackerControl, AttackBonusControl } from "./calculation/controls";
 export {
   ArtifactCalc,
   CharacterCalc,
@@ -10,18 +5,31 @@ export {
   GeneralCalc,
   WeaponCalc,
   type ArtifactSetBonus,
-} from "./calculation/utils";
+  type CalculationInfo,
+} from "./utils";
+export { TrackerControl, TotalAttributeControl, AttackBonusControl, ResistanceReductionControl } from "./controls";
+export { getIntialCharacterBonusValue } from "./bonus-getters";
+export { BuffApplierCore } from "./appliers/buff-applier-core";
+export {
+  getNormalsConfig,
+  AttackPatternConf,
+  CalcItemCalculator,
+  type NormalsConfig,
+  type CalculationAspect,
+} from "./calculation";
+export { default as getCalculationStats } from "./calculation-calculator/getCalculationStats";
+export { calculateSetup } from "./calculation-calculator/calculateSetup";
 
 export * from "./constants";
 
 export type {
+  CalcItemRecord,
+  CalcAtomicRecord,
+  TrackerResult,
+  AttackBonus,
   ArtifactAttribute,
-  CalculationAspect,
-  CalculationFinalResult,
-  CalculationFinalResultGroup,
   TotalAttribute,
-} from "./calculation/calculation.types";
-export type { CalcItemRecord, CalcAtomicRecord, TrackerResult, AttackBonus } from "./calculation/controls";
+} from "./controls";
 export type {
   AmplifyingReaction,
   AppArtifact,
@@ -31,8 +39,10 @@ export type {
   ArtifactType,
   AttackElement,
   AttackPattern,
+  ActualAttackPattern,
   AttributeStat,
   AttackBonusKey,
+  AttackBonusType,
   CalcItem,
   CharacterBuff,
   CharacterDebuff,
@@ -54,3 +64,5 @@ export type {
   WeaponType,
 } from "./types";
 export type { AppMonster } from "./types/app-monster.types";
+export type { AppliedAttributeBonus, AppliedAttackBonus } from "./appliers/appliers.types";
+export type { CalculationFinalResult, CalculationFinalResultGroup } from "./calculation-calculator/getFinalResult";

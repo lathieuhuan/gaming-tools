@@ -1,20 +1,34 @@
 import type {
   ActualAttackElement,
   ActualAttackPattern,
-  AttackElement,
   AttackBonusKey,
+  AttackElement,
   CalcItemType,
   Level,
   ResistanceReduction,
 } from "@Src/backend/types";
-import type { CalculationFinalResultItem, TotalAttribute } from "./calculation.types";
-import type { CalcItemRecord } from "./controls";
+import type { CalcItemRecord, TotalAttribute } from "@Src/backend/controls";
 
 import { applyToOneOrMany, toMult } from "@Src/utils";
-import { GeneralCalc } from "./utils";
+import { GeneralCalc } from "@Src/backend/utils";
+
+export type CalculationAspect = "nonCrit" | "crit" | "average";
+
+type CalculationFinalResultAttackItem = {
+  type: Extract<CalcItemType, "attack">;
+  attElmt: ActualAttackElement;
+  attPatt: ActualAttackPattern;
+};
+
+type CalculationFinalResultOtherItem = {
+  type: Exclude<CalcItemType, "attack">;
+};
+
+export type CalculationFinalResultItem = Record<CalculationAspect, number | number[]> &
+  (CalculationFinalResultAttackItem | CalculationFinalResultOtherItem);
 
 type CalculateArgs = {
-  calcType: CalcItemType;
+  type: CalcItemType;
   attPatt: ActualAttackPattern;
   attElmt: AttackElement;
   base: number | number[];
@@ -22,59 +36,27 @@ type CalculateArgs = {
   record: CalcItemRecord;
   getBonus?: (key: AttackBonusKey) => number;
 };
-
-export default class CalcItemCalculator {
-  private charLv: Level;
-  private targetLv: number;
-  private totalAttr: TotalAttribute;
-  private resistances: ResistanceReduction;
-
-  constructor(charLv: Level, targetLv: number, totalAttr: TotalAttribute, resistances: ResistanceReduction) {
-    this.charLv = charLv;
-    this.targetLv = targetLv;
-    this.totalAttr = totalAttr;
-    this.resistances = resistances;
-  }
-
-  static genEmptyResult(
-    type: CalcItemType,
-    attPatt: ActualAttackPattern,
-    attElmt: ActualAttackElement
-  ): CalculationFinalResultItem {
-    return type === "attack"
-      ? {
-          type,
-          nonCrit: 0,
-          crit: 0,
-          average: 0,
-          attPatt,
-          attElmt,
-        }
-      : {
-          type,
-          nonCrit: 0,
-          crit: 0,
-          average: 0,
-        };
-  }
-
+export function CalcItemCalculator(
+  charLv: Level,
+  targetLv: number,
+  totalAttr: TotalAttribute,
+  resistances: ResistanceReduction
+) {
   //
-  calculate = ({
+  return ({
     base,
     attPatt,
     attElmt,
     rxnMult,
-    calcType,
+    type,
     record,
     getBonus = () => 0,
   }: CalculateArgs): CalculationFinalResultItem => {
-    const { charLv, targetLv, totalAttr, resistances } = this;
-
     if (base === 0) {
-      return CalcItemCalculator.genEmptyResult(calcType, attPatt, attElmt);
+      return genEmptyResult(type, attPatt, attElmt);
     }
 
-    if (calcType === "attack") {
+    if (type === "attack") {
       let flat = getBonus("flat");
       let normalMult = getBonus("pct_") + totalAttr[attElmt];
       let specialMult = getBonus("multPlus_");
@@ -112,7 +94,7 @@ export default class CalcItemCalculator {
       record.cDmg_ = cDmg_;
 
       return {
-        type: calcType,
+        type,
         nonCrit: base,
         crit: applyToOneOrMany(base, (n) => n * (1 + cDmg_)),
         average: applyToOneOrMany(base, (n) => n * (1 + cRate_ * cDmg_)),
@@ -125,7 +107,7 @@ export default class CalcItemCalculator {
       let flat = 0;
       let normalMult = 1;
 
-      switch (calcType) {
+      switch (type) {
         case "healing":
           flat = getBonus("flat") ?? 0;
           normalMult += totalAttr.healB_ / 100;
@@ -141,19 +123,41 @@ export default class CalcItemCalculator {
         base *= normalMult;
         record.normalMult = normalMult;
       }
-      if (calcType === "healing") {
+      if (type === "healing") {
         base *= 1 + totalAttr.inHealB_ / 100;
       }
       return {
-        type: calcType,
+        type,
         nonCrit: base,
         crit: 0,
         average: base,
       };
     }
 
-    return CalcItemCalculator.genEmptyResult(calcType, attPatt, attElmt);
+    return genEmptyResult(type, attPatt, attElmt);
   };
 }
 
-export type CalculateCalcItem = CalcItemCalculator["calculate"];
+export function genEmptyResult(
+  type: CalcItemType,
+  attPatt: ActualAttackPattern,
+  attElmt: ActualAttackElement
+): CalculationFinalResultItem {
+  return type === "attack"
+    ? {
+        type,
+        nonCrit: 0,
+        crit: 0,
+        average: 0,
+        attPatt,
+        attElmt,
+      }
+    : {
+        type,
+        nonCrit: 0,
+        crit: 0,
+        average: 0,
+      };
+}
+
+export type CalculateCalcItem = ReturnType<typeof CalcItemCalculator>;
