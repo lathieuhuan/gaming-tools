@@ -1,5 +1,5 @@
 import { useLayoutEffect, useState } from "react";
-import { FaExternalLinkAlt } from "react-icons/fa";
+// import { FaExternalLinkAlt } from "react-icons/fa";
 import { clsx, CollapseList, ModalControl, LoadingSpin, Skeleton, Modal } from "rond";
 
 import { $AppData, Update } from "@Src/services";

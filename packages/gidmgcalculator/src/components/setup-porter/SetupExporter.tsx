@@ -1,8 +1,8 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { Modal } from "rond";
 
 import type { CalcSetup, Target } from "@Src/types";
-import { encodeSetup } from "./setup-porter.utils";
+// import { encodeSetup } from "./setup-porter.utils";
 import { PorterLayout } from "./PorterLayout";
 
 interface SetupExporterProps {
@@ -12,49 +12,54 @@ interface SetupExporterProps {
   onClose: () => void;
 }
 export const SetupExporterCore = ({ setupName, calcSetup, target, onClose }: SetupExporterProps) => {
-  const [status, setStatus] = useState<"SUCCESS" | "NOT_SUPPORT" | "">("");
+  // const [status, setStatus] = useState<"SUCCESS" | "NOT_SUPPORT" | "">("");
 
-  const encodedData = encodeSetup(calcSetup, target);
+  // const encodedData = encodeSetup(calcSetup, target);
 
   return (
     <PorterLayout
       heading={`Share ${setupName}`}
       textareaAttrs={{
-        value: encodedData,
+        // value: encodedData,
+        disabled: true,
         readOnly: true,
       }}
       message={
-        status
-          ? {
-              text:
-                status === "SUCCESS"
-                  ? "Successfully copied to Clipboard."
-                  : "Sorry. Your browser does not allow/support this function.",
-              type: status === "SUCCESS" ? "success" : "error",
-            }
-          : undefined
+        {
+          text: "This feature is currently under maintenance.",
+          type: "error",
+        }
+        // status
+        //   ? {
+        //       text:
+        //         status === "SUCCESS"
+        //           ? "Successfully copied to Clipboard."
+        //           : "Sorry. Your browser does not allow/support this function.",
+        //       type: status === "SUCCESS" ? "success" : "error",
+        //     }
+        //   : undefined
       }
       moreButtons={[
-        {
-          children: "Copy URL",
-          onClick: () => {
-            navigator.clipboard.writeText(`${window.location.origin}?importCode=${encodedData}`).then(
-              () => setStatus("SUCCESS"),
-              () => setStatus("NOT_SUPPORT")
-            );
-          },
-        },
-        {
-          children: "Copy",
-          variant: "primary",
-          autoFocus: true,
-          onClick: () => {
-            navigator.clipboard.writeText(encodedData).then(
-              () => setStatus("SUCCESS"),
-              () => setStatus("NOT_SUPPORT")
-            );
-          },
-        },
+        // {
+        //   children: "Copy URL",
+        //   onClick: () => {
+        //     navigator.clipboard.writeText(`${window.location.origin}?importCode=${encodedData}`).then(
+        //       () => setStatus("SUCCESS"),
+        //       () => setStatus("NOT_SUPPORT")
+        //     );
+        //   },
+        // },
+        // {
+        //   children: "Copy",
+        //   variant: "primary",
+        //   autoFocus: true,
+        //   onClick: () => {
+        //     navigator.clipboard.writeText(encodedData).then(
+        //       () => setStatus("SUCCESS"),
+        //       () => setStatus("NOT_SUPPORT")
+        //     );
+        //   },
+        // },
       ]}
       onClose={onClose}
     />

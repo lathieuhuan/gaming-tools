@@ -20,7 +20,7 @@ export type CalcItemType = "attack" | "healing" | "shield" | "other";
 export type InputCheck = {
   value: number;
   /** Default to 0 */
-  source?: number | "various_vision";
+  source?: number | "various_vision" | "mixed";
   /** Default to 'equal' */
   type?: "equal" | "min" | "max";
 };
@@ -124,6 +124,11 @@ type ResolveStack = {
   type: "RESOLVE";
 };
 
+/** Temporary for Shattered Chains (bow) */
+type MixStack = {
+  type: "MIX";
+};
+
 export type EntityBonusStack = (
   | InputStack
   | AttributeStack
@@ -131,6 +136,7 @@ export type EntityBonusStack = (
   | NationStack
   | EnergyCostStack
   | ResolveStack
+  | MixStack
 ) & {
   /** actual stacks = stacks - baseline */
   baseline?: number;

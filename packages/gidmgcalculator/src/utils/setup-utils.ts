@@ -166,7 +166,7 @@ export class Setup_ {
     }
 
     const setBonuses = GeneralCalc.getArtifactSetBonuses(data.artifacts);
-    const artBuffCtrls = setBonuses[0]?.bonusLv ? Modifier_.createArtifactBuffCtrls(true, setBonuses[0]) : [];
+    const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(setBonuses);
 
     const output: CalcSetup = {
       ...data,

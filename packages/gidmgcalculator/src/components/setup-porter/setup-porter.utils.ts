@@ -15,7 +15,7 @@ import {
 } from "@Backend";
 
 import type {
-  ArtifactDebuffCtrl,
+  ArtifactModCtrl,
   AttackReaction,
   CalcArtifact,
   CalcSetup,
@@ -258,7 +258,7 @@ export function decodeSetup(code: string): SetupImportInfo {
     };
   };
 
-  const artDebuffCtrls: ArtifactDebuffCtrl[] = [];
+  const artDebuffCtrls: ArtifactModCtrl[] = [];
 
   if (_artDCsCode) {
     for (const ctrlStr of split(_artDCsCode, 1)) {
@@ -394,7 +394,9 @@ export function decodeSetup(code: string): SetupImportInfo {
         decodeArtifact(_gobletCode, "goblet"),
         decodeArtifact(_circletCode, "circlet"),
       ],
-      artBuffCtrls: splitMCs(_artBCsCode, 1),
+      // #TODO
+      // artBuffCtrls: splitMCs(_artBCsCode, 1),
+      artBuffCtrls: [],
       artDebuffCtrls,
       party: [decodeTeammate(_tmCode1), decodeTeammate(_tmCode2), decodeTeammate(_tmCode3)],
       elmtModCtrls: {

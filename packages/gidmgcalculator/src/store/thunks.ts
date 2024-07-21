@@ -321,6 +321,13 @@ export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeam
         debuffCtrls: tmDebuffCtrls,
       };
 
+      const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls([
+        {
+          code: artifact.code,
+          bonusLv: 1,
+        },
+      ]);
+
       dispatch(
         updateSetupImportInfo({
           ID: seedID++,
@@ -333,7 +340,7 @@ export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeam
             weapon: actualWeapon,
             wpBuffCtrls: Modifier_.createWeaponBuffCtrls(true, actualWeapon),
             artifacts,
-            artBuffCtrls: Modifier_.createArtifactBuffCtrls(true, { code: artifact.code }),
+            artBuffCtrls,
             artDebuffCtrls: Modifier_.createArtifactDebuffCtrls(),
             party,
             elmtModCtrls: Modifier_.createElmtModCtrls(),

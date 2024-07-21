@@ -32,7 +32,7 @@ export type ModifierCtrl = {
   inputs?: number[];
 };
 
-export type ArtifactDebuffCtrl = ModifierCtrl & {
+export type ArtifactModCtrl = ModifierCtrl & {
   code: number;
 };
 
@@ -120,8 +120,8 @@ export type CalcSetup = {
   weapon: CalcWeapon;
   wpBuffCtrls: ModifierCtrl[];
   artifacts: CalcArtifacts;
-  artBuffCtrls: ModifierCtrl[];
-  artDebuffCtrls: ArtifactDebuffCtrl[];
+  artBuffCtrls: ArtifactModCtrl[];
+  artDebuffCtrls: ArtifactModCtrl[];
 
   party: Party;
   elmtModCtrls: ElementModCtrl;

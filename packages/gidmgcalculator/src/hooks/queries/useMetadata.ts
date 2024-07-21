@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@Src/services";
+import { MINIMUM_SYSTEM_VERSION } from "@Src/constants";
 
-const MIN_VERSION = "3.8.0";
 const MESSAGE = "The system is being upgraded.";
 const COOLDOWN = {
   NORMAL: 30,
@@ -10,7 +10,7 @@ const COOLDOWN = {
 
 function isValidVersion(version: string) {
   const versionFrags = version.split(".");
-  const minVersionFrags = MIN_VERSION.split(".");
+  const minVersionFrags = MINIMUM_SYSTEM_VERSION.split(".");
   return versionFrags.every((frag, i) => +frag >= +minVersionFrags[i]);
 }
 

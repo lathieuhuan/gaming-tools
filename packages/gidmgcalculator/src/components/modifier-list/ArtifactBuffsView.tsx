@@ -1,6 +1,6 @@
 import { ArtifactSetBonus } from "@Backend";
 
-import type { ModifierCtrl, Party } from "@Src/types";
+import type { ArtifactModCtrl, ModifierCtrl, Party } from "@Src/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import { $AppArtifact } from "@Src/services";
@@ -8,15 +8,23 @@ import { findByIndex } from "@Src/utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers, getArtifactDescription } from "./modifiers.utils";
 
-interface RenderArtifactBuffsArgs {
+interface RenderArtifactBuffsArgs<T extends ModifierCtrl = ModifierCtrl> {
   mutable?: boolean;
   fromSelf?: boolean;
   keyPrefix: string | number;
   code: number;
-  ctrls: ModifierCtrl[];
-  getHanlders?: (args: GetModifierHanldersArgs) => ModifierHanlders;
+  bonusLv?: number;
+  ctrls: T[];
+  getHanlders?: (args: GetModifierHanldersArgs<T>) => ModifierHanlders;
 }
-function renderArtifactModifiers({ fromSelf, keyPrefix, mutable, code, ctrls, getHanlders }: RenderArtifactBuffsArgs) {
+function renderArtifactModifiers<T extends ModifierCtrl = ModifierCtrl>({
+  fromSelf,
+  keyPrefix,
+  mutable,
+  code,
+  ctrls,
+  getHanlders,
+}: RenderArtifactBuffsArgs<T>) {
   const data = $AppArtifact.getSet(code);
   if (!data) return [];
   const { buffs = [] } = data;
@@ -45,9 +53,9 @@ function renderArtifactModifiers({ fromSelf, keyPrefix, mutable, code, ctrls, ge
 interface ArtifactBuffsViewProps {
   mutable?: boolean;
   setBonuses: ArtifactSetBonus[];
-  artBuffCtrls: ModifierCtrl[];
+  artBuffCtrls: ArtifactModCtrl[];
   party: Party;
-  getSelfHandlers?: RenderArtifactBuffsArgs["getHanlders"];
+  getSelfHandlers?: RenderArtifactBuffsArgs<ArtifactModCtrl>["getHanlders"];
   getTeammateHandlers?: (args: GetTeammateModifierHanldersArgs) => ModifierHanlders;
 }
 export function ArtifactBuffsView({
@@ -59,16 +67,18 @@ export function ArtifactBuffsView({
   getTeammateHandlers,
 }: ArtifactBuffsViewProps) {
   const content = [];
-  const mainCode = setBonuses[0]?.code;
 
-  if (mainCode) {
+  for (const setBonus of setBonuses) {
+    const ctrls = artBuffCtrls.filter((ctrl) => ctrl.code === setBonus.code);
+
     content.push(
       ...renderArtifactModifiers({
         fromSelf: true,
         keyPrefix: "main",
         mutable,
-        code: mainCode,
-        ctrls: artBuffCtrls,
+        code: setBonus.code,
+        bonusLv: setBonus.bonusLv,
+        ctrls,
         getHanlders: getSelfHandlers,
       })
     );
