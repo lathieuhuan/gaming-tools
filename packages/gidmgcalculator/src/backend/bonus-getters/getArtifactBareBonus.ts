@@ -5,6 +5,7 @@ import { toArray } from "@Src/utils";
 
 export function getArtifactBareBonus(args: GetBonusArgs<ArtifactBonusCore>): BareBonus {
   const { config, info, inputs, fromSelf } = args;
+  const { basedOn } = config;
   let bonusValue = 0;
   let isStable = true;
 
@@ -17,6 +18,14 @@ export function getArtifactBareBonus(args: GetBonusArgs<ArtifactBonusCore>): Bar
     bonusValue = options[index] ?? (index > 0 ? options[options.length - 1] : 0);
   }
 
+  // ========== APPLY BASED ON ==========
+  if (basedOn) {
+    const { field, alterIndex = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
+    bonusValue *= fromSelf ? args.getTotalAttrFromSelf(field) : inputs[alterIndex] ?? 1;
+
+    if (field !== "base_atk") isStable = false;
+  }
+
   // ========== APPLY STACKS ==========
   if (config.stacks) {
     for (const stack of toArray(config.stacks)) {
@@ -27,7 +36,7 @@ export function getArtifactBareBonus(args: GetBonusArgs<ArtifactBonusCore>): Bar
           isStable,
         };
       }
-      bonusValue *= EntityCalc.getStackValue(stack, info, inputs, fromSelf, args.getTotalAttrFromSelf);
+      bonusValue *= EntityCalc.getStackValue(stack, info, inputs, fromSelf);
     }
   }
 

@@ -2,7 +2,7 @@ import type {
   ArtifactBonusCore,
   AttributeStat,
   CharacterBonusCore,
-  EntityBonusStack,
+  EntityBonusBasedOn,
   WeaponBonusCore,
 } from "@Src/backend/types";
 import type { GetTotalAttributeType, TotalAttributeControl } from "@Src/backend/controls";
@@ -188,25 +188,18 @@ export class BuffApplierCore {
   };
 }
 
-function isFinalBonus(bonusStacks?: EntityBonusStack | EntityBonusStack[]) {
-  if (bonusStacks) {
-    const hasAnyFinalBonus = toArray(bonusStacks).some((stack) => {
-      switch (stack.type) {
-        case "ATTRIBUTE":
-          return stack.field !== "base_atk";
-        default:
-          return false;
-      }
-    });
-    return hasAnyFinalBonus;
+function isFinalBonus(basedOn?: EntityBonusBasedOn) {
+  if (basedOn) {
+    const field = typeof basedOn === "string" ? basedOn : basedOn.field;
+    return field !== "base_atk";
   }
   return false;
 }
 
 function isTrulyFinalBonus(bonus: CharacterBonusCore | WeaponBonusCore | ArtifactBonusCore) {
   return (
-    isFinalBonus(bonus.stacks) ||
-    (typeof bonus.preExtra === "object" && isFinalBonus(bonus.preExtra.stacks)) ||
-    (typeof bonus.sufExtra === "object" && isFinalBonus(bonus.sufExtra.stacks))
+    isFinalBonus(bonus.basedOn) ||
+    (typeof bonus.preExtra === "object" && isFinalBonus(bonus.preExtra.basedOn)) ||
+    (typeof bonus.sufExtra === "object" && isFinalBonus(bonus.sufExtra.basedOn))
   );
 }

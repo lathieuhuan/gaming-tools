@@ -14,7 +14,6 @@ import type {
   EntityBuff,
   EntityDebuff,
   EntityEffectMax,
-  ApplicableCondition,
   CalcItemType,
   CharacterMilestone,
   ModifierAffectType,

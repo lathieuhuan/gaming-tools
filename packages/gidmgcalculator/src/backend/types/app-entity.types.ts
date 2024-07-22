@@ -93,16 +93,6 @@ type InputStack = {
   };
 };
 
-export type AttributeStack = {
-  type: "ATTRIBUTE";
-  field: "base_atk" | "hp" | "atk" | "def" | "em" | "er_" | "healB_";
-  /**
-   * When this bonus is from teammate, this is input's index to get value.
-   * On characters. Default to 0
-   */
-  alterIndex?: number;
-};
-
 type ElementStack = {
   type: "ELEMENT";
   element: "same_included" | "same_excluded" | "different";
@@ -131,7 +121,6 @@ type MixStack = {
 
 export type EntityBonusStack = (
   | InputStack
-  | AttributeStack
   | ElementStack
   | NationStack
   | EnergyCostStack
@@ -154,7 +143,7 @@ export type EntityEffectExtraMax = ApplicableCondition & {
 type EntityEffectDynamicMax = {
   value: number;
   /** On Hu Tao */
-  stacks?: EntityBonusStack;
+  basedOn?: EntityBonusBasedOn;
   extras?: EntityEffectExtraMax | EntityEffectExtraMax[];
 };
 
@@ -203,9 +192,26 @@ export type EntityBonusValueOption = {
 
 // ========== BONUS & BUFF ==========
 
+export type EntityBonusBasedOnField = "base_atk" | "hp" | "atk" | "def" | "em" | "er_" | "healB_";
+
+export type EntityBonusBasedOn =
+  | EntityBonusBasedOnField
+  | {
+      field: EntityBonusBasedOnField;
+      /** actual stat = total stat - baseline */
+      baseline?: number;
+      /**
+       * When this bonus is from teammate, this is input's index to get value.
+       * On characters. Default to 0
+       */
+      alterIndex?: number;
+    };
+
 export type EntityBonus<ValueOptionExtends = object> = ApplicableCondition & {
   id: string;
   value: number | (EntityBonusValueOption & ValueOptionExtends);
+  /** Added right before stacks */
+  basedOn?: EntityBonusBasedOn;
   stacks?: EntityBonusStack | EntityBonusStack[];
 };
 
