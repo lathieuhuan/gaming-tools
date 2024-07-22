@@ -5,6 +5,7 @@ import { notification, Modal, ConfirmModal, LoadingSpin, type PartiallyRequired 
 import type { SetupImportInfo } from "@Src/types";
 import { MAX_CALC_SETUPS } from "@Src/constants";
 import { removeEmpty } from "@Src/utils";
+// import { decodeSetup } from "@Src/components/setup-porter";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -192,5 +193,43 @@ function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImport
 
 export function SetupImportCenter() {
   const { calcSetup, target, ...rest } = useSelector((state) => state.ui.importInfo);
-  return calcSetup && target ? <SetupImportCenterCore calcSetup={calcSetup} target={target} {...rest} /> : null;
+
+  return (
+    <>
+      <SetupTransshipmentPort />
+      {calcSetup && target ? <SetupImportCenterCore calcSetup={calcSetup} target={target} {...rest} /> : null}
+    </>
+  );
+}
+
+function SetupTransshipmentPort() {
+  // const dispatch = useDispatch();
+  // const importCode = useRef(getSearchParam("importCode"));
+  // const appReady = useSelector((state) => state.ui.ready);
+
+  useEffect(() => {
+    window.history.replaceState(null, "", window.location.origin);
+  }, []);
+
+  // useEffect(() => {
+  //   if (appReady) {
+  //     if (importCode.current) {
+  //       try {
+  //         dispatch(
+  //           updateSetupImportInfo({
+  //             importRoute: "URL",
+  //             ...decodeSetup(importCode.current),
+  //           })
+  //         );
+  //         importCode.current = "";
+  //       } catch (error) {
+  //         message.error("An unknown error has occurred. This setup cannot be imported.");
+  //       }
+  //     }
+  //   } else {
+  //     window.history.replaceState(null, "", window.location.origin);
+  //   }
+  // }, [appReady]);
+
+  return null;
 }
