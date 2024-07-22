@@ -5,7 +5,7 @@ import { toArray } from "@Src/utils";
 
 export function getCharacterBareBonus(args: GetBonusArgs<CharacterBonusCore>): BareBonus {
   const { config, info, inputs, fromSelf } = args;
-  const { preExtra } = config;
+  const { preExtra, basedOn } = config;
   let bonusValue = getIntialCharacterBonusValue(config.value, info, inputs, fromSelf);
   let isStable = true;
 
@@ -25,19 +25,26 @@ export function getCharacterBareBonus(args: GetBonusArgs<CharacterBonusCore>): B
     if (!isStablePreExtra) isStable = false;
   }
 
+  // ========== APPLY BASED ON ==========
+  if (basedOn) {
+    const { field, alterIndex = 0, baseline = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
+    const basedOnValue = fromSelf ? args.getTotalAttrFromSelf(field) : inputs[alterIndex] ?? 1;
+    bonusValue *= Math.max(basedOnValue - baseline, 0);
+
+    if (field !== "base_atk") isStable = false;
+  }
+
   // ========== APPLY STACKS ==========
   if (config.stacks) {
     for (const stack of toArray(config.stacks)) {
       if (["nation", "resolve"].includes(stack.type) && !info.partyData.length) {
         return {
-          id: '',
+          id: "",
           value: 0,
           isStable: true,
         };
       }
-      bonusValue *= EntityCalc.getStackValue(stack, info, inputs, fromSelf, args.getTotalAttrFromSelf);
-
-      if (stack.type === "ATTRIBUTE") isStable = false;
+      bonusValue *= EntityCalc.getStackValue(stack, info, inputs, fromSelf);
     }
   }
 
@@ -45,11 +52,15 @@ export function getCharacterBareBonus(args: GetBonusArgs<CharacterBonusCore>): B
   if (typeof config.max === "number") {
     bonusValue = Math.min(bonusValue, config.max);
   } else if (config.max) {
+    const { basedOn } = config.max;
     let finalMax = config.max.value;
 
-    if (config.max.stacks) {
-      finalMax *= EntityCalc.getStackValue(config.max.stacks, info, inputs, fromSelf, args.getTotalAttrFromSelf);
+    if (basedOn) {
+      const { field, alterIndex = 0, baseline = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
+      const basedOnValue = fromSelf ? args.getTotalAttrFromSelf(field) : inputs[alterIndex] ?? 1;
+      finalMax *= Math.max(basedOnValue - baseline, 0);
     }
+
     if (config.max.extras) {
       finalMax += EntityCalc.getTotalExtraMax(config.max.extras, info, inputs, fromSelf);
     }
