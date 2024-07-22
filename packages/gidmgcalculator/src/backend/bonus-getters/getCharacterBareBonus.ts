@@ -27,8 +27,9 @@ export function getCharacterBareBonus(args: GetBonusArgs<CharacterBonusCore>): B
 
   // ========== APPLY BASED ON ==========
   if (basedOn) {
-    const { field, alterIndex = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
-    bonusValue *= fromSelf ? args.getTotalAttrFromSelf(field) : inputs[alterIndex] ?? 1;
+    const { field, alterIndex = 0, baseline = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
+    const basedOnValue = fromSelf ? args.getTotalAttrFromSelf(field) : inputs[alterIndex] ?? 1;
+    bonusValue *= Math.max(basedOnValue - baseline, 0);
 
     if (field !== "base_atk") isStable = false;
   }
@@ -55,13 +56,11 @@ export function getCharacterBareBonus(args: GetBonusArgs<CharacterBonusCore>): B
     let finalMax = config.max.value;
 
     if (basedOn) {
-      const { field, alterIndex = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
-      finalMax *= fromSelf ? args.getTotalAttrFromSelf(field) : inputs[alterIndex] ?? 1;
+      const { field, alterIndex = 0, baseline = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
+      const basedOnValue = fromSelf ? args.getTotalAttrFromSelf(field) : inputs[alterIndex] ?? 1;
+      finalMax *= Math.max(basedOnValue - baseline, 0);
     }
 
-    if (config.max.stacks) {
-      finalMax *= EntityCalc.getStackValue(config.max.stacks, info, inputs, fromSelf);
-    }
     if (config.max.extras) {
       finalMax += EntityCalc.getTotalExtraMax(config.max.extras, info, inputs, fromSelf);
     }

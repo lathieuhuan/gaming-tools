@@ -107,14 +107,14 @@ export default function getFinalResult({
   }
 
   appWeapon.calcItems?.forEach((calcItem) => {
-    const { name, type = "attack", value, incre = value / 3, baseOn = "atk" } = calcItem;
+    const { name, type = "attack", value, incre = value / 3, basedOn = "atk" } = calcItem;
     const mult = value + incre * weapon.refi;
     const record = TrackerControl.initCalcItemRecord({
       itemType: type,
       multFactors: [
         {
-          value: totalAttr[baseOn],
-          desc: baseOn,
+          value: totalAttr[basedOn],
+          desc: basedOn,
           talentMult: mult,
         },
       ],
@@ -126,7 +126,7 @@ export default function getFinalResult({
       type,
       attPatt: "none",
       attElmt,
-      base: (totalAttr[baseOn] * mult) / 100,
+      base: (totalAttr[basedOn] * mult) / 100,
       record,
       rxnMult: 1,
       getBonus: (key) => attBonus.get(key, attElmt),

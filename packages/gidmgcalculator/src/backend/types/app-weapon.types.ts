@@ -29,7 +29,7 @@ type WeaponCalcItem = {
   /** Default to 1/3 [multFactors] */
   incre?: number;
   /** Default to 'atk' */
-  baseOn?: "atk" | "hp";
+  basedOn?: "atk" | "hp";
 };
 
 // ========== BONUS ==========

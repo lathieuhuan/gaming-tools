@@ -186,6 +186,8 @@ export type EntityBonusBasedOn =
   | EntityBonusBasedOnField
   | {
       field: EntityBonusBasedOnField;
+      /** actual stat = total stat - baseline */
+      baseline?: number;
       /**
        * When this bonus is from teammate, this is input's index to get value.
        * On characters. Default to 0
@@ -196,6 +198,7 @@ export type EntityBonusBasedOn =
 export type EntityBonus<ValueOptionExtends = object> = ApplicableCondition & {
   id: string;
   value: number | (EntityBonusValueOption & ValueOptionExtends);
+  /** Added right before stacks */
   basedOn?: EntityBonusBasedOn;
   stacks?: EntityBonusStack | EntityBonusStack[];
 };
