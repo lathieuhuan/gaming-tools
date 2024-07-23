@@ -40,6 +40,7 @@ export function getArtifactBareBonus(args: GetBonusArgs<ArtifactBonusCore>): Bar
     }
   }
 
+  // ========== APPLY SUF-EXTRA ==========
   if (typeof config.sufExtra === "number") {
     bonusValue += config.sufExtra;
   } else if (config.sufExtra && EntityCalc.isApplicableEffect(config.sufExtra, info, inputs)) {

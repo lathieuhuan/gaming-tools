@@ -5,7 +5,7 @@ import { toArray } from "@Src/utils";
 
 export function getCharacterBareBonus(args: GetBonusArgs<CharacterBonusCore>): BareBonus {
   const { config, info, inputs, fromSelf } = args;
-  const { preExtra, basedOn } = config;
+  const { basedOn } = config;
   let bonusValue = getIntialCharacterBonusValue(config.value, info, inputs, fromSelf);
   let isStable = true;
 
@@ -13,13 +13,13 @@ export function getCharacterBareBonus(args: GetBonusArgs<CharacterBonusCore>): B
   bonusValue *= CharacterCalc.getLevelScale(config.lvScale, info, inputs, fromSelf);
 
   // ========== ADD PRE-EXTRA ==========
-  if (typeof preExtra === "number") {
-    bonusValue += preExtra;
-  } else if (preExtra && EntityCalc.isApplicableEffect(preExtra, info, inputs, fromSelf)) {
+  if (typeof config.preExtra === "number") {
+    bonusValue += config.preExtra;
+  } else if (config.preExtra && EntityCalc.isApplicableEffect(config.preExtra, info, inputs, fromSelf)) {
     // if preExtra is not stable, this whole bonus is not stable
     const { value, isStable: isStablePreExtra } = getCharacterBareBonus({
       ...args,
-      config: preExtra,
+      config: config.preExtra,
     });
     bonusValue += value;
     if (!isStablePreExtra) isStable = false;
