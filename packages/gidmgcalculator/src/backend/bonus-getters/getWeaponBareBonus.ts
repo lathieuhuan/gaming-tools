@@ -7,6 +7,7 @@ const scaleRefi = (base: number, increment = base / 3, refi: number) => base + i
 
 export function getWeaponBareBonus(args: GetBonusArgs<WeaponBonusCore> & { refi: number }): BareBonus {
   const { config, info, refi, inputs, fromSelf } = args;
+  const { basedOn } = config;
   let bonusValue = 0;
   let isStable = true;
 
@@ -20,6 +21,14 @@ export function getWeaponBareBonus(args: GetBonusArgs<WeaponBonusCore> & { refi:
     bonusValue = scaleRefi(bonusValue, config.incre, refi);
   }
 
+  // ========== APPLY BASED ON ==========
+  if (basedOn) {
+    const { field, alterIndex = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
+    bonusValue *= fromSelf ? args.getTotalAttrFromSelf(field) : inputs[alterIndex] ?? 1;
+
+    if (field !== "base_atk") isStable = false;
+  }
+
   // ========== APPLY STACKS ==========
   if (config.stacks) {
     for (const stack of toArray(config.stacks)) {
@@ -30,8 +39,7 @@ export function getWeaponBareBonus(args: GetBonusArgs<WeaponBonusCore> & { refi:
           isStable,
         };
       }
-      bonusValue *= EntityCalc.getStackValue(stack, info, inputs, fromSelf, args.getTotalAttrFromSelf);
-      if (stack.type === "ATTRIBUTE") isStable = false;
+      bonusValue *= EntityCalc.getStackValue(stack, info, inputs, fromSelf);
     }
   }
 

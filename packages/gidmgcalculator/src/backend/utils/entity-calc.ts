@@ -7,7 +7,6 @@ import type {
   ElementType,
   InputCheck,
   EntityBonusValueOption,
-  AttributeStack,
 } from "@Src/backend/types";
 import type { CalculationInfo } from "@Src/backend/utils";
 
@@ -120,13 +119,7 @@ export class EntityCalc {
       : max.value + (max.extras ? this.getTotalExtraMax(max.extras, info, inputs, fromSelf) : 0);
   }
 
-  static getStackValue(
-    stack: EntityBonusStack,
-    info: CalculationInfo,
-    inputs: number[],
-    fromSelf: boolean,
-    getTotalAttrFromSelf: (field: AttributeStack["field"]) => number
-  ): number {
+  static getStackValue(stack: EntityBonusStack, info: CalculationInfo, inputs: number[], fromSelf: boolean): number {
     const { appChar, partyData } = info;
     let result = 0;
 
@@ -152,10 +145,6 @@ export class EntityCalc {
           input = Math.max(input, 0);
         }
         result = input;
-        break;
-      }
-      case "ATTRIBUTE": {
-        result = fromSelf ? getTotalAttrFromSelf(stack.field) : inputs[stack.alterIndex ?? 0] ?? 1;
         break;
       }
       case "ELEMENT": {
