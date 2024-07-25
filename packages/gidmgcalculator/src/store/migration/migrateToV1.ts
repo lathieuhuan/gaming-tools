@@ -4,7 +4,7 @@ import { UserDatabaseV0 } from "./migration.types";
 import { GeneralCalc } from "@Backend";
 
 export const migrateSetupsToV1 = (
-  setups: UserDatabaseV0["userSetups"],
+  setups: UserDatabaseV0["userSetups"] = [],
   artifacts: UserArtifact[]
 ): UserdbState["userSetups"] => {
   return setups.map((setup) => {
@@ -20,8 +20,6 @@ export const migrateSetupsToV1 = (
         const code = GeneralCalc.getArtifactSetBonuses(setupArtifacts)[0]?.code;
         let newArtBuffCtrls: ArtifactModCtrl[] = [];
 
-        console.log(code);
-
         if (code) {
           newArtBuffCtrls = setup.artBuffCtrls.map<ArtifactModCtrl>((ctrl) => {
             return {
@@ -30,8 +28,6 @@ export const migrateSetupsToV1 = (
             };
           });
         }
-
-        console.log(newArtBuffCtrls);
 
         return {
           ...setup,

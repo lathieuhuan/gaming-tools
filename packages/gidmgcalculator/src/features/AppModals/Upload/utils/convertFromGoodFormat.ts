@@ -2,6 +2,7 @@ import { ARTIFACT_TYPES, AttributeStat, Level } from "@Backend";
 
 import type { ArtifactSubStat, UserArtifact, UserCharacter, UserWeapon } from "@Src/types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
+import { DOWNLOADED_DATA_VERSION } from "@Src/constants";
 import { Utils_, findByName } from "@Src/utils";
 import { goodFormatMap } from "./util-maps";
 
@@ -49,7 +50,7 @@ type Result = {
 
 export function convertFromGoodFormat(data: any) {
   const result: Result = {
-    version: 3,
+    version: DOWNLOADED_DATA_VERSION,
     characters: [],
     weapons: [],
     artifacts: [],
