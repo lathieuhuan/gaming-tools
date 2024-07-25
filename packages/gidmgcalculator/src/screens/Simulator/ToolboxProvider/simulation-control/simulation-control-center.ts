@@ -1,33 +1,60 @@
-import type { SimulationMember, SimulationTarget } from "@Src/types";
-import type { SimulationProcessedChunk, SimulationSumary } from "../ToolboxProvider.types";
-import { SimulationControlStarter } from "./simulation-control-starter";
+import type { AppWeapon, AppliedAttackBonus, AppliedAttributeBonus } from "@Backend";
+import type { ModifyEvent, SimulationMember, SimulationPartyData, SimulationTarget } from "@Src/types";
+import type { ProcessedModifyEvent } from "../ToolboxProvider.types";
+
+import { $AppCharacter, $AppWeapon } from "@Src/services";
+import { ConfigTalentHitEventArgs, MemberControl, TalentEventConfig } from "./member-control";
+import { PartyBonusControl } from "./party-bonus-control";
 import { ActiveMemberWatcher } from "./active-member-watcher";
-import { ConfigTalentHitEventArgs, TalentEventConfig } from "./member-control";
+import { SimulationChunksControl } from "./simulation-chunks-control";
 
-export class SimulationControlCenter extends SimulationControlStarter {
-  protected chunks: SimulationProcessedChunk[] = [];
-  protected sumary: SimulationSumary = {
-    damage: 0,
-    duration: 0,
-  };
-  protected chunksSubscribers = new Set<OnChangeChunks>();
+export class SimulationControlCenter extends SimulationChunksControl {
+  readonly partyData: SimulationPartyData = [];
+  readonly target: SimulationTarget;
+  readonly member: Record<number, MemberControl> = {};
 
-  protected get latestChunk() {
-    return this.chunks[this.chunks.length - 1];
-  }
+  private appWeapons: Record<number, AppWeapon> = {};
+  private partyBonus: PartyBonusControl;
 
   private activeMemberCode: number;
   private activeMemberWatcher: ActiveMemberWatcher;
 
-  protected get activeMember() {
+  private get activeMember() {
     return this.member[this.activeMemberCode];
   }
 
+  private get onfieldMember() {
+    return this.member[this.latestChunk.ownerCode];
+  }
+
   constructor(party: SimulationMember[], target: SimulationTarget) {
-    super(party, target);
+    super();
+
+    this.partyData = party.map((member) => $AppCharacter.get(member.name));
+    this.target = target;
+
+    this.partyBonus = new PartyBonusControl(this.partyData);
 
     this.activeMemberCode = this.partyData[0].code;
     this.activeMemberWatcher = new ActiveMemberWatcher(this.activeMember);
+
+    for (let i = 0; i < party.length; i++) {
+      const member = party[i];
+      const memberData = this.partyData[i];
+      const weaponCode = member.weapon.code;
+
+      if (!this.appWeapons[weaponCode]) {
+        this.appWeapons[weaponCode] = $AppWeapon.get(weaponCode)!;
+      }
+
+      this.member[memberData.code] = new MemberControl(
+        member,
+        this.partyData[i],
+        this.appWeapons[weaponCode],
+        this.partyData,
+        this.partyBonus
+      );
+    }
   }
 
   genManager = () => {
@@ -52,7 +79,8 @@ export class SimulationControlCenter extends SimulationControlStarter {
   };
 
   genActiveMember = (memberCode: number) => {
-    this.changeActiveMember(memberCode);
+    this.activeMemberCode = memberCode;
+    this.activeMemberWatcher.changeActiveMember(this.activeMember);
 
     const configTalentHitEvent = (args: Omit<ConfigTalentHitEventArgs, "partyData" | "target">): TalentEventConfig => {
       return this.activeMember?.configTalentHitEvent({
@@ -71,36 +99,91 @@ export class SimulationControlCenter extends SimulationControlStarter {
     };
   };
 
-  private changeActiveMember = (code: number) => {
-    this.activeMemberCode = code;
-    this.activeMemberWatcher.changeActiveMember(this.activeMember);
-  }
+  getAppWeaponOfMember = (code: number) => {
+    return this.appWeapons[this.member[code].info.weapon.code];
+  };
 
-  private subscribeChunks = (callback: OnChangeChunks) => {
-    this.chunksSubscribers.add(callback);
+  private modifyMembers = (
+    receivers: MemberControl[],
+    attrBonuses: AppliedAttributeBonus[],
+    attkBonuses: AppliedAttackBonus[]
+  ) => {
+    for (const bonus of attrBonuses) {
+      receivers.forEach((receiver) => receiver.updateAttrBonus(bonus));
+    }
+    for (const bonus of attkBonuses) {
+      receivers.forEach((receiver) => receiver.updateAttkBonus(bonus));
+    }
 
-    const unsubscribe = () => {
-      this.chunksSubscribers.delete(callback);
-    };
+    receivers.forEach((receiver) => receiver.applySimulationBonuses());
+
+    if (receivers.includes(this.activeMember)) {
+      this.activeMemberWatcher.notifySubscribers();
+    }
+  };
+
+  protected modify = (event: ModifyEvent, onfieldMember: number): ProcessedModifyEvent => {
+    const performer = this.member[event.performer.code];
+    const { affect, attrBonuses, attkBonuses, source } = performer.modify(
+      event,
+      this.getAppWeaponOfMember(event.performer.code)
+    );
+
+    if (affect) {
+      switch (affect) {
+        case "SELF": {
+          attrBonuses.forEach((bonus) => performer.updateAttrBonus(bonus));
+          attkBonuses.forEach((bonus) => performer.updateAttkBonus(bonus));
+
+          performer.applySimulationBonuses();
+
+          if (performer === this.activeMember) {
+            this.activeMemberWatcher.notifySubscribers();
+          }
+          break;
+        }
+        case "PARTY": {
+          attrBonuses.forEach((bonus) => this.partyBonus.updatePartyAttrBonus(bonus));
+          attkBonuses.forEach((bonus) => this.partyBonus.updatePartyAttkBonus(bonus));
+
+          for (const { code } of this.partyData) {
+            this.member[code].applySimulationBonuses();
+          }
+
+          this.activeMemberWatcher.notifySubscribers();
+          break;
+        }
+        case "ACTIVE_UNIT": {
+          attrBonuses.forEach((bonus) => this.partyBonus.updateOnfieldAttrBonus(bonus));
+          attkBonuses.forEach((bonus) => this.partyBonus.updateOnfieldAttkBonus(bonus));
+
+          this.onfieldMember.applySimulationBonuses();
+
+          if (this.onfieldMember === this.activeMember) {
+            this.activeMemberWatcher.notifySubscribers();
+          }
+          break;
+        }
+        case "TEAMMATE":
+          break;
+        case "SELF_TEAMMATE":
+          break;
+        case "ONE_UNIT":
+          break;
+      }
+
+      return {
+        ...event,
+        description: source,
+      };
+    }
+
+    const error = "Cannot find the modifier.";
 
     return {
-      initialChunks: this.chunks,
-      initialSumary: this.sumary,
-      unsubscribe,
+      ...event,
+      description: `[${error}]`,
+      error,
     };
-  }
-
-  protected notifyActiveMemberSubscribers = () => {
-    this.activeMemberWatcher.notifySubscribers();
-  }
-
-  protected notifyChunksSubscribers = () => {
-    // console.log("notifyChunksSubscribers");
-    // console.log(this.chunks);
-    // console.log(receivers);
-
-    this.chunksSubscribers.forEach((callback) => callback(this.chunks.concat(), this.sumary));
-  }
+  };
 }
-
-type OnChangeChunks = (chunks: SimulationProcessedChunk[], sumary: SimulationSumary) => void;

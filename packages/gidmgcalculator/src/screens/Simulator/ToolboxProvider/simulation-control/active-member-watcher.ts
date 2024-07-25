@@ -13,7 +13,10 @@ export class ActiveMemberWatcher {
   constructor(private activeMember: MemberControl) {}
 
   changeActiveMember = (newActiveMember: MemberControl) => {
+    // #here: wrong, this is change active not on field
+    // this.activeMember?.switch('out');
     this.activeMember = newActiveMember;
+    // this.activeMember.switch('in');
 
     setTimeout(() => {
       this.notifySubscribers();

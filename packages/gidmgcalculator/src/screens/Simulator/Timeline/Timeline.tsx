@@ -69,53 +69,56 @@ export function Timeline(props: { className?: string }) {
       />
 
       <div className="flex">
-        <span className="ml-auto px-2 rounded-sm hover:bg-surface-2 cursor-default">
-          Total DMG: <span className="text-lg text-secondary-1 font-bold">{sumary.damage}</span>
+        <span className="ml-auto px-2 rounded hover:bg-surface-2 cursor-default">
+          <span className="text-sm">Total DMG:</span>{" "}
+          <span className="text-lg text-secondary-1 font-bold">{sumary.damage}</span>
         </span>
       </div>
 
-      <div className="grow hide-scrollbar space-y-2">
-        {chunks.map((chunk, index) => {
-          const chunkOwner = simulation.getMemberData(chunk.ownerCode);
+      <div className="grow hide-scrollbar">
+        <div className="flex flex-col-reverse gap-2">
+          {chunks.map((chunk, index) => {
+            const chunkOwner = simulation.getMemberData(chunk.ownerCode);
 
-          return (
-            <Fragment key={chunk.id}>
-              {index ? <div className="h-px bg-surface-border" /> : null}
+            return (
+              <Fragment key={chunk.id}>
+                {index ? <div className="h-px bg-surface-border" /> : null}
 
-              <div className="flex gap-2">
-                <CharacterPortrait size="custorm" className="w-12 h-12 m-0.5" info={chunkOwner} zoomable={false} />
+                <div className="flex gap-2">
+                  <CharacterPortrait size="custorm" className="w-12 h-12 m-0.5" info={chunkOwner} zoomable={false} />
 
-                <div className="overflow-hidden grow">
-                  {chunk.events.map((event) => {
-                    const performer = simulation.getMemberData(event.performer.code);
+                  <div className="overflow-hidden grow flex flex-col-reverse">
+                    {chunk.events.map((event) => {
+                      const performer = simulation.getMemberData(event.performer.code);
 
-                    return (
-                      <EventDisplayer
-                        key={event.id}
-                        sideIconNode={
-                          <GenshinImage
-                            title={performer?.name}
-                            className="w-7 h-7 shrink-0 relative"
-                            imgCls="absolute"
-                            imgStyle={{
-                              maxWidth: "none",
-                              width: "130%",
-                              top: "-9px",
-                              left: "-6px",
-                            }}
-                            fallbackCls="p-0.5"
-                            src={performer?.sideIcon}
-                          />
-                        }
-                        event={event}
-                      />
-                    );
-                  })}
+                      return (
+                        <EventDisplayer
+                          key={event.id}
+                          sideIconNode={
+                            <GenshinImage
+                              title={performer?.name}
+                              className="w-7 h-7 shrink-0 relative"
+                              imgCls="absolute"
+                              imgStyle={{
+                                maxWidth: "none",
+                                width: "130%",
+                                top: "-9px",
+                                left: "-6px",
+                              }}
+                              fallbackCls="p-0.5"
+                              src={performer?.sideIcon}
+                            />
+                          }
+                          event={event}
+                        />
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            </Fragment>
-          );
-        })}
+              </Fragment>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -151,14 +154,11 @@ function PartyDisplayer(props: PartyDisplayerProps) {
               onClick={() => onClickMember(data.code)}
             />
 
-            <div className="mt-3 flex-center">
-              <Button
-                size="small"
-                icon={<FaSyncAlt />}
-                disabled={data.code === onFieldMember}
-                onClick={() => onChangeOnFieldMember(data)}
-              />
-            </div>
+            {data.code !== onFieldMember ? (
+              <div className="mt-3 flex-center">
+                <Button size="small" icon={<FaSyncAlt />} onClick={() => onChangeOnFieldMember(data)} />
+              </div>
+            ) : null}
           </div>
         );
       })}

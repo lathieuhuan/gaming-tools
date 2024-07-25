@@ -164,65 +164,6 @@ export class SimulationControl extends SimulationControlCenter {
     }
   };
 
-  // ========== MODIFY ==========
-
-  private getReceivers = (
-    performer: MemberControl,
-    affect: ModifierAffectType,
-    onfieldMember: number
-  ): MemberControl[] => {
-    switch (affect) {
-      case "SELF":
-        return [performer];
-      case "PARTY":
-        return this.partyData.map((data) => this.member[data.code]);
-      case "ACTIVE_UNIT": {
-        const memberCtrl = this.member[onfieldMember];
-        return memberCtrl ? [memberCtrl] : [];
-      }
-      default:
-        return [];
-    }
-  };
-
-  private modify = (event: ModifyEvent, onfieldMember: number): ProcessedModifyEvent => {
-    const performer = this.member[event.performer.code];
-    const { affect, attrBonuses, attkBonuses, source } = performer.modify(
-      event,
-      this.getAppWeaponOfMember(event.performer.code)
-    );
-
-    if (affect) {
-      const receivers = this.getReceivers(performer, affect, onfieldMember);
-
-      for (const bonus of attrBonuses) {
-        receivers.forEach((receiver) => receiver.updateAttrBonus(bonus));
-      }
-      for (const bonus of attkBonuses) {
-        receivers.forEach((receiver) => receiver.updateAttkBonus(bonus));
-      }
-
-      receivers.forEach((receiver) => receiver.applySimulationBonuses());
-
-      if (receivers.includes(this.activeMember)) {
-        this.notifyActiveMemberSubscribers();
-      }
-
-      return {
-        ...event,
-        description: source,
-      };
-    }
-
-    const error = "Cannot find the modifier.";
-
-    return {
-      ...event,
-      description: `[${error}]`,
-      error,
-    };
-  };
-
   // ========== HIT ==========
 
   private hit = (event: HitEvent): ProcessedHitEvent => {

@@ -31,9 +31,10 @@ import type {
 } from "@Src/types";
 
 import { pickProps, removeEmpty } from "@Src/utils";
-import { SimulatorBuffApplier } from "./simulator-buff-applier";
+import { MemberBonusesControl } from "./member-bonuses-control";
+import { PartyBonusControl } from "./party-bonus-control";
 
-export class MemberControl extends SimulatorBuffApplier {
+export class MemberControl extends MemberBonusesControl {
   readonly info: SimulationMember;
   readonly data: AppCharacter;
   private totalAttrCtrl: TotalAttributeControl;
@@ -44,8 +45,14 @@ export class MemberControl extends SimulatorBuffApplier {
     return this.totalAttrCtrl.finalize();
   }
 
-  constructor(member: SimulationMember, appChar: AppCharacter, appWeapon: AppWeapon, partyData: SimulationPartyData) {
-    super({ char: member, appChar, partyData });
+  constructor(
+    member: SimulationMember,
+    appChar: AppCharacter,
+    appWeapon: AppWeapon,
+    partyData: SimulationPartyData,
+    partyBonus: PartyBonusControl
+  ) {
+    super({ char: member, appChar, partyData }, partyBonus);
 
     this.rootTotalAttr = new TotalAttributeControl();
     this.rootTotalAttr.construct(member, appChar, member.weapon, appWeapon, member.artifacts);
@@ -64,6 +71,7 @@ export class MemberControl extends SimulatorBuffApplier {
 
   // ========== MODIFY ==========
 
+  /** return affect: null if cannot find the buff */
   modify = (event: ModifyEvent, performerWeapon: AppWeapon): ModifyResult => {
     const { modifier } = event;
     const { inputs = [] } = modifier;
