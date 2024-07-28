@@ -35,11 +35,11 @@ export function TalentHitEvent(props: TalentHitEventProps) {
     return undefined;
   }, [simulation]);
 
-  console.log("render: TalentAttackEvent", props.item.name);
+  // console.log("render: TalentAttackEvent", props.item.name);
 
   const config = props.getTalentEventConfig(attkBonus, elmtModCtrls);
 
-  console.log(config.record);
+  // console.log(config.record);
 
   return (
     <div>

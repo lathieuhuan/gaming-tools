@@ -9,7 +9,8 @@ export class MemberBonusesControl extends BuffApplierCore {
   private innateAttrBonus: SimulationAttributeBonus[] = [];
   private innateAttkBonus: SimulationAttackBonus[] = [];
   private bonusesCtrl = new CoreBonusesControl();
-  private isOnfield = false;
+
+  isOnfield = false;
 
   get attrBonus() {
     return this.innateAttrBonus.concat(this.partyBonus.getAttrBonuses(this.isOnfield), this.bonusesCtrl.attrBonus);
@@ -47,7 +48,7 @@ export class MemberBonusesControl extends BuffApplierCore {
   }
 
   switch = (dir: "in" | "out") => {
-    this.isOnfield = dir === "out";
+    this.isOnfield = dir === "in";
   };
 
   updateAttrBonus = (bonus: AppliedAttributeBonus) => {

@@ -1,15 +1,5 @@
-import type { ModifierAffectType } from "@Backend";
-import type {
-  AttackReaction,
-  HitEvent,
-  ModifyEvent,
-  SimulationChunk,
-  SimulationEvent,
-  SimulationMember,
-  SimulationTarget,
-} from "@Src/types";
-import type { ProcessedHitEvent, ProcessedModifyEvent, SimulationProcessedEvent } from "../ToolboxProvider.types";
-import type { MemberControl } from "./member-control";
+import type { SimulationChunk, SimulationEvent, SimulationMember, SimulationTarget } from "@Src/types";
+import type { SimulationProcessedEvent } from "../ToolboxProvider.types";
 
 import { SimulationControlCenter } from "./simulation-control-center";
 
@@ -31,8 +21,13 @@ export class SimulationControl extends SimulationControlCenter {
     }
     if (!this.latestChunk.events.length) {
       this.chunks.pop();
+      // because only the last chunk can be empty, the latest chunk owner can be
+      // used as the new on-field
+      this.switchOnfield(chunks[chunks.length - 1].ownerCode);
     }
     if (this.chunks.length > chunks.length) {
+      // #to-do check if the redundant chunks are all hit events
+      // => not missmatched but need to remove damage
       return {
         isMissmatched: true,
       };
@@ -86,10 +81,6 @@ export class SimulationControl extends SimulationControlCenter {
   };
 
   processChunks = (chunks: SimulationChunk[]) => {
-    if (!chunks.length) {
-      console.error("No chunks found");
-      return;
-    }
     const result = this.checkMissmatched(chunks);
 
     // console.log("==================");
@@ -104,6 +95,8 @@ export class SimulationControl extends SimulationControlCenter {
       };
 
       for (const chunk of chunks) {
+        this.switchOnfield(chunk.ownerCode);
+
         if (chunk.events.length) {
           chunk.events.forEach((event, i) => this.processNewEvent(event, chunk));
         } else {
@@ -118,10 +111,13 @@ export class SimulationControl extends SimulationControlCenter {
 
     for (let chunkIndex = result.nextChunkIndex; chunkIndex < chunks.length; chunkIndex++) {
       const chunk = chunks[chunkIndex];
+      const startEventIndex = chunkIndex === result.nextChunkIndex ? result.nextEventIndex : 0;
+
+      if (!startEventIndex) {
+        this.switchOnfield(chunk.ownerCode);
+      }
 
       if (chunk.events.length) {
-        const startEventIndex = chunkIndex === result.nextChunkIndex ? result.nextEventIndex : 0;
-
         for (let eventIndex = startEventIndex; eventIndex < chunk.events.length; eventIndex++) {
           this.processNewEvent(chunk.events[eventIndex], chunk);
         }
@@ -144,7 +140,7 @@ export class SimulationControl extends SimulationControlCenter {
 
     switch (event.type) {
       case "MODIFY":
-        processedEvent = this.modify(event, chunk.ownerCode);
+        processedEvent = this.modify(event);
         break;
       case "HIT":
         processedEvent = this.hit(event);
@@ -163,46 +159,9 @@ export class SimulationControl extends SimulationControlCenter {
       });
     }
   };
-
-  // ========== HIT ==========
-
-  private hit = (event: HitEvent): ProcessedHitEvent => {
-    switch (event.performer.type) {
-      case "CHARACTER": {
-        const result = this.member[event.performer.code]?.hit(event, this.partyData, this.target);
-        const damage: ProcessedHitEvent["damage"] = {
-          value: 0,
-          element: "phys",
-        };
-        let description: string;
-        let error: string | undefined;
-        let reaction: AttackReaction = null;
-
-        if (result) {
-          damage.value = result.damage;
-          damage.element = result.attElmt;
-          reaction = result.reaction;
-          description = result.name;
-
-          if (result.disabled) {
-            error = "This attack is disabled.";
-          }
-        } else {
-          error = "Cannot find the attack.";
-          description = `[${error}]`;
-        }
-
-        return {
-          ...event,
-          damage,
-          reaction,
-          description,
-        };
-      }
-    }
-  };
 }
 
+/** If not missmatched, also give the next chunk index & next event index need processing */
 type MissmatchedCheckResult =
   | {
       isMissmatched: true;

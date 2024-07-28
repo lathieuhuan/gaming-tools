@@ -69,6 +69,11 @@ export type SimulationAttackBonus = AppliedAttackBonus & {
 
 export type SimulationTarget = Target;
 
+/** Rules:
+ * + Only the last chunk can be empty (no event)
+ * + First event in a chunk must be performed by a character,
+ *   or only characters can start new chunk by taking the field
+ */
 export type SimulationChunk = {
   id: string;
   ownerCode: number;

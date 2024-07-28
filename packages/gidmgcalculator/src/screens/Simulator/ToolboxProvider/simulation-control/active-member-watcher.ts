@@ -13,10 +13,7 @@ export class ActiveMemberWatcher {
   constructor(private activeMember: MemberControl) {}
 
   changeActiveMember = (newActiveMember: MemberControl) => {
-    // #here: wrong, this is change active not on field
-    // this.activeMember?.switch('out');
     this.activeMember = newActiveMember;
-    // this.activeMember.switch('in');
 
     setTimeout(() => {
       this.notifySubscribers();
@@ -41,7 +38,7 @@ export class ActiveMemberWatcher {
         this.totalAttrSubscribers.delete(subscribe);
       },
     };
-  }
+  };
 
   subscribeBonuses = (subscribe: OnChangeBonuses) => {
     this.bonusesSubscribers.add(subscribe);
@@ -55,5 +52,5 @@ export class ActiveMemberWatcher {
         this.bonusesSubscribers.delete(subscribe);
       },
     };
-  }
+  };
 }

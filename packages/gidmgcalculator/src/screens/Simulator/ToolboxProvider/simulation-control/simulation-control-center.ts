@@ -1,6 +1,13 @@
-import type { AppWeapon, AppliedAttackBonus, AppliedAttributeBonus } from "@Backend";
-import type { ModifyEvent, SimulationMember, SimulationPartyData, SimulationTarget } from "@Src/types";
-import type { ProcessedModifyEvent } from "../ToolboxProvider.types";
+import type { AppWeapon } from "@Backend";
+import type {
+  AttackReaction,
+  HitEvent,
+  ModifyEvent,
+  SimulationMember,
+  SimulationPartyData,
+  SimulationTarget,
+} from "@Src/types";
+import type { ProcessedHitEvent, ProcessedModifyEvent } from "../ToolboxProvider.types";
 
 import { $AppCharacter, $AppWeapon } from "@Src/services";
 import { ConfigTalentHitEventArgs, MemberControl, TalentEventConfig } from "./member-control";
@@ -16,16 +23,9 @@ export class SimulationControlCenter extends SimulationChunksControl {
   private appWeapons: Record<number, AppWeapon> = {};
   private partyBonus: PartyBonusControl;
 
-  private activeMemberCode: number;
+  private onfieldMember: MemberControl;
+  private activeMember: MemberControl;
   private activeMemberWatcher: ActiveMemberWatcher;
-
-  private get activeMember() {
-    return this.member[this.activeMemberCode];
-  }
-
-  private get onfieldMember() {
-    return this.member[this.latestChunk.ownerCode];
-  }
 
   constructor(party: SimulationMember[], target: SimulationTarget) {
     super();
@@ -34,9 +34,6 @@ export class SimulationControlCenter extends SimulationChunksControl {
     this.target = target;
 
     this.partyBonus = new PartyBonusControl(this.partyData);
-
-    this.activeMemberCode = this.partyData[0].code;
-    this.activeMemberWatcher = new ActiveMemberWatcher(this.activeMember);
 
     for (let i = 0; i < party.length; i++) {
       const member = party[i];
@@ -55,6 +52,10 @@ export class SimulationControlCenter extends SimulationChunksControl {
         this.partyBonus
       );
     }
+
+    this.onfieldMember = this.member[this.partyData[0].code];
+    this.activeMember = this.member[this.partyData[0].code];
+    this.activeMemberWatcher = new ActiveMemberWatcher(this.activeMember);
   }
 
   genManager = () => {
@@ -79,7 +80,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
   };
 
   genActiveMember = (memberCode: number) => {
-    this.activeMemberCode = memberCode;
+    this.activeMember = this.member[memberCode];
     this.activeMemberWatcher.changeActiveMember(this.activeMember);
 
     const configTalentHitEvent = (args: Omit<ConfigTalentHitEventArgs, "partyData" | "target">): TalentEventConfig => {
@@ -99,30 +100,23 @@ export class SimulationControlCenter extends SimulationChunksControl {
     };
   };
 
-  getAppWeaponOfMember = (code: number) => {
+  private getAppWeaponOfMember = (code: number) => {
     return this.appWeapons[this.member[code].info.weapon.code];
   };
 
-  private modifyMembers = (
-    receivers: MemberControl[],
-    attrBonuses: AppliedAttributeBonus[],
-    attkBonuses: AppliedAttackBonus[]
-  ) => {
-    for (const bonus of attrBonuses) {
-      receivers.forEach((receiver) => receiver.updateAttrBonus(bonus));
-    }
-    for (const bonus of attkBonuses) {
-      receivers.forEach((receiver) => receiver.updateAttkBonus(bonus));
-    }
+  protected switchOnfield = (memberCode: number) => {
+    this.onfieldMember.switch("out");
+    this.onfieldMember = this.member[memberCode];
+    this.onfieldMember.switch("in");
 
-    receivers.forEach((receiver) => receiver.applySimulationBonuses());
-
-    if (receivers.includes(this.activeMember)) {
-      this.activeMemberWatcher.notifySubscribers();
+    if (this.onfieldMember === this.activeMember) {
+      setTimeout(() => {
+        this.activeMemberWatcher.notifySubscribers();
+      }, 0);
     }
   };
 
-  protected modify = (event: ModifyEvent, onfieldMember: number): ProcessedModifyEvent => {
+  protected modify = (event: ModifyEvent): ProcessedModifyEvent => {
     const performer = this.member[event.performer.code];
     const { affect, attrBonuses, attkBonuses, source } = performer.modify(
       event,
@@ -185,5 +179,41 @@ export class SimulationControlCenter extends SimulationChunksControl {
       description: `[${error}]`,
       error,
     };
+  };
+
+  protected hit = (event: HitEvent): ProcessedHitEvent => {
+    switch (event.performer.type) {
+      case "CHARACTER": {
+        const result = this.member[event.performer.code]?.hit(event, this.partyData, this.target);
+        const damage: ProcessedHitEvent["damage"] = {
+          value: 0,
+          element: "phys",
+        };
+        let description: string;
+        let error: string | undefined;
+        let reaction: AttackReaction = null;
+
+        if (result) {
+          damage.value = result.damage;
+          damage.element = result.attElmt;
+          reaction = result.reaction;
+          description = result.name;
+
+          if (result.disabled) {
+            error = "This attack is disabled.";
+          }
+        } else {
+          error = "Cannot find the attack.";
+          description = `[${error}]`;
+        }
+
+        return {
+          ...event,
+          damage,
+          reaction,
+          description,
+        };
+      }
+    }
   };
 }

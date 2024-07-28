@@ -27,7 +27,6 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
     const control = new SimulationControl(simulation.members, simulation.target);
 
     return {
-      members: simulation.members,
       control,
       manager: control.genManager(),
     };
@@ -58,7 +57,24 @@ function EventsProcessor({ control }: { control?: SimulationControl }) {
   const chunks = useSelector(selectChunks);
 
   useEffect(() => {
-    control?.processChunks(chunks);
+    if (!control) {
+      return;
+    }
+    if (!chunks.length) {
+      console.error("No chunks found");
+      return;
+    }
+    if (chunks.length > 1) {
+      const firstEmptyChunkIndex = chunks.findIndex((chunk) => !chunk.events.length);
+
+      if (firstEmptyChunkIndex > -1 && firstEmptyChunkIndex < chunks.length - 1) {
+        console.error(`Found empty chunk at ${firstEmptyChunkIndex}`);
+        return;
+      }
+    }
+
+    control.processChunks(chunks);
+    //
   }, [control, chunks]);
 
   return null;
