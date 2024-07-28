@@ -27,7 +27,6 @@ export function CalcSetupSelect(props: CalcSetupSelectProps) {
       <Modal.Header withDivider>Select Setup</Modal.Header>
 
       <div>
-        <p onClick={() => onClickSetup({} as any)}>Shortcut</p>
         {setups.map((setup) => {
           return (
             <div key={setup.id} className="px-2 py-1 rounded w-fit bg-surface-3" onClick={() => onClickSetup(setup)}>
