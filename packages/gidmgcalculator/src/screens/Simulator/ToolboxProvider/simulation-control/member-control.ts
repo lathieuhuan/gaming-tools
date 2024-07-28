@@ -37,13 +37,7 @@ import { PartyBonusControl } from "./party-bonus-control";
 export class MemberControl extends MemberBonusesControl {
   readonly info: SimulationMember;
   readonly data: AppCharacter;
-  private totalAttrCtrl: TotalAttributeControl;
-  private rootTotalAttr: TotalAttributeControl;
   private normalsConfig: NormalsConfig = {};
-
-  get totalAttr() {
-    return this.totalAttrCtrl.finalize();
-  }
 
   constructor(
     member: SimulationMember,
@@ -52,22 +46,15 @@ export class MemberControl extends MemberBonusesControl {
     partyData: SimulationPartyData,
     partyBonus: PartyBonusControl
   ) {
-    super({ char: member, appChar, partyData }, partyBonus);
+    const rootTotalAttr = new TotalAttributeControl();
 
-    this.rootTotalAttr = new TotalAttributeControl();
-    this.rootTotalAttr.construct(member, appChar, member.weapon, appWeapon, member.artifacts);
+    rootTotalAttr.construct(member, appChar, member.weapon, appWeapon, member.artifacts);
+
+    super({ char: member, appChar, partyData }, rootTotalAttr, partyBonus);
 
     this.info = member;
     this.data = appChar;
-
-    this.totalAttrCtrl = this.rootTotalAttr.clone();
-    this.getTotalAttrFromSelf = this.totalAttrCtrl.getTotal;
   }
-
-  private resetTotalAttr = () => {
-    this.totalAttrCtrl = this.rootTotalAttr.clone();
-    this.getTotalAttrFromSelf = this.totalAttrCtrl.getTotal;
-  };
 
   // ========== MODIFY ==========
 
@@ -129,15 +116,6 @@ export class MemberControl extends MemberBonusesControl {
       attkBonuses: [],
       source: "",
     };
-  };
-
-  applySimulationBonuses = () => {
-    this.resetTotalAttr();
-
-    for (const bonus of this.attrBonus) {
-      const add = bonus.isStable ? this.totalAttrCtrl.addStable : this.totalAttrCtrl.addUnstable;
-      add(bonus.toStat, bonus.value, bonus.description);
-    }
   };
 
   // ========== HIT ==========

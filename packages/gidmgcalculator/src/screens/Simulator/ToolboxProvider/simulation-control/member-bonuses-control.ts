@@ -1,5 +1,5 @@
 import type { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
-import type { AppliedAttackBonus, AppliedAttributeBonus } from "@Src/backend";
+import { AppliedAttackBonus, AppliedAttributeBonus, TotalAttributeControl } from "@Src/backend";
 
 import { BuffApplierCore, CalculationInfo, EntityCalc } from "@Backend";
 import { PartyBonusControl } from "./party-bonus-control";
@@ -12,6 +12,10 @@ export class MemberBonusesControl extends BuffApplierCore {
 
   isOnfield = false;
 
+  get totalAttr() {
+    return this.totalAttrCtrl.finalize();
+  }
+
   get attrBonus() {
     return this.innateAttrBonus.concat(this.partyBonus.getAttrBonuses(this.isOnfield), this.bonusesCtrl.attrBonus);
   }
@@ -20,8 +24,12 @@ export class MemberBonusesControl extends BuffApplierCore {
     return this.innateAttkBonus.concat(this.partyBonus.getAttkBonuses(this.isOnfield), this.bonusesCtrl.attkBonus);
   }
 
-  constructor(info: CalculationInfo, private partyBonus: PartyBonusControl) {
-    super(info);
+  constructor(
+    info: CalculationInfo,
+    private rootTotalAttr: TotalAttributeControl,
+    private partyBonus: PartyBonusControl
+  ) {
+    super(info, rootTotalAttr.clone());
 
     const { name, innateBuffs = [] } = info.appChar;
 
@@ -49,6 +57,15 @@ export class MemberBonusesControl extends BuffApplierCore {
 
   switch = (dir: "in" | "out") => {
     this.isOnfield = dir === "in";
+  };
+
+  applySimulationBonuses = () => {
+    this.totalAttrCtrl = this.rootTotalAttr.clone();
+
+    for (const bonus of this.attrBonus) {
+      const add = bonus.isStable ? this.totalAttrCtrl.addStable : this.totalAttrCtrl.addUnstable;
+      add(bonus.toStat, bonus.value, bonus.description);
+    }
   };
 
   updateAttrBonus = (bonus: AppliedAttributeBonus) => {
