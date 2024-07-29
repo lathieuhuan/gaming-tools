@@ -31,7 +31,11 @@ export function CharacterIntro(props: CharacterIntroProps) {
         style={{ width: "5.25rem", height: "5.25rem" }}
       >
         <GenshinImage className="cursor-pointer" src={appChar.icon} imgType="character" fallbackCls="p-2" />
-        {props.switchable && <Button className="absolute -top-1 -left-1 z-10" icon={<FaSyncAlt />} />}
+
+        {props.switchable ? (
+          <Button className="absolute -top-1 -left-1 z-10" size="small" icon={<FaSyncAlt />} />
+        ) : null}
+
         <Badge active={appChar.beta} className="absolute -top-1 -right-1 z-10">
           BETA
         </Badge>

@@ -1,127 +1,102 @@
-import { FaSyncAlt } from "react-icons/fa";
-import { Badge, Button, VersatileSelect } from "rond";
+import { useRef, useState } from "react";
+import { clsx } from "rond";
+import { Level } from "@Backend";
 
-import { GenshinImage } from "@Src/components";
-import { $AppCharacter } from "@Src/services";
+import { Tavern } from "@Src/components";
+import { useStore } from "@Src/features";
 import { SimulationMember } from "@Src/types";
-import { LEVELS, Level } from "@Backend";
-import { useState } from "react";
+import { parseUserCharacter } from "@Store/store.utils";
+import { MemberConfig } from "./MemberConfig";
+// import { useSimModalCtrl } from "../SimulatorModalsProvider";
 
-export function SimulationStarter() {
+type ModalType = "SELECT_CHARACTER" | "";
+
+interface SimulationStarterProps {
+  className?: string;
+}
+export function SimulationStarter({ className }: SimulationStarterProps) {
+  const store = useStore();
   const [members, setMembers] = useState<SimulationMember[]>([]);
+  const [modalType, setModalType] = useState<ModalType>("");
+  const vars = useRef({
+    characterSelectedIndex: -1,
+  });
 
-  const onSwitch = () => {
-    //
+  // const modalCtrl = useSimModalCtrl();
+
+  // const onClickAdd = () => {
+  //   modalCtrl.requestAddSimulation();
+  // };
+
+  const closeModal = () => setModalType("");
+
+  const onSwitch = (memberIndex: number) => {
+    setModalType("SELECT_CHARACTER");
+    vars.current.characterSelectedIndex = memberIndex;
+  };
+
+  const onChangeMemberLevel = (level: Level, memberIndex: number) => {
+    const newMembers = members.concat();
+
+    newMembers[memberIndex] = {
+      ...newMembers[memberIndex],
+      level,
+    };
+    setMembers(newMembers);
+  };
+
+  const onChangeMemberConstellation = (constellation: number, memberIndex: number) => {
+    const newMembers = members.concat();
+
+    newMembers[memberIndex] = {
+      ...newMembers[memberIndex],
+      cons: constellation,
+    };
+    setMembers(newMembers);
   };
 
   return (
-    <div className="flex gap-3">
-      {Array.from({ length: 4 }, (_, i) => {
-        return (
-          <div key={i} className="p-4 rounded bg-surface-1">
-            <MemberConfig
-              character={members[i]}
-              onSwitch={onSwitch}
-              onChangeLevel={(level) => {
-                setMembers(
-                  members.map((member, index) => {
-                    return index === i
-                      ? {
-                          ...member,
-                          level,
-                        }
-                      : member;
-                  })
-                );
-              }}
-              onChangeConstellation={(constellation) => {
-                setMembers(
-                  members.map((member, index) => {
-                    return index === i
-                      ? {
-                          ...member,
-                          cons: constellation,
-                        }
-                      : member;
-                  })
-                );
-              }}
-            />
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-interface MemberConfigProps {
-  character?: SimulationMember;
-  onSwitch: () => void;
-  onChangeLevel: (newLevel: Level) => void;
-  onChangeConstellation: (newConstellation: number) => void;
-}
-function MemberConfig({ character, onSwitch, onChangeLevel, onChangeConstellation }: MemberConfigProps) {
-  const appChar = character ? $AppCharacter.get(character.name) : null;
-  const elmtText = appChar ? `text-${appChar.vision}` : "";
-
-  return (
-    <div>
-      <div className="flex relative ">
-        <div className="mr-3 relative shrink-0" onClick={onSwitch} style={{ width: "5.25rem", height: "5.25rem" }}>
-          {appChar ? (
-            <>
-              <GenshinImage className="cursor-pointer" src={appChar.icon} imgType="character" fallbackCls="p-2" />
-              <Button className="absolute -top-1 -left-1 z-10" icon={<FaSyncAlt />} />
-              <Badge active={appChar.beta} className="absolute -top-1 -right-1 z-10">
-                BETA
-              </Badge>
-            </>
-          ) : (
-            <GenshinImage className="cursor-pointer" imgType="character" fallbackCls="p-2" />
-          )}
-        </div>
-
-        <div className="min-w-0 grow">
-          <div className="overflow-hidden">
-            {character ? <h2 className={`text-2xl truncate ${elmtText} font-black`}>{character.name}</h2> : null}
-          </div>
-
-          {character ? (
-            <div className="mt-1 pl-1 flex justify-between items-center">
-              <div className="flex items-center text-lg" aria-label="calculator_character-level">
-                <label className="mr-1">Level</label>
-                <VersatileSelect
-                  title="Select Level"
-                  align="right"
-                  transparent
-                  showAllOptions
-                  className={`shrink-0 ${elmtText} text-lg font-bold`}
-                  style={{ width: "4.75rem" }}
-                  dropdownCls="z-20"
-                  options={LEVELS.map((_, i) => {
-                    const item = LEVELS[LEVELS.length - 1 - i];
-                    return { label: item, value: item };
-                  })}
-                  value={character.level}
-                  onChange={(value) => onChangeLevel(value as Level)}
+    <>
+      <div className={clsx("p-4 h-full flex justify-center", className)}>
+        <div className="h-full pb-2 custom-scrollbar flex gap-3">
+          {Array.from({ length: 4 }, (_, index) => {
+            return (
+              <div key={index} className="w-80 h-full p-4 rounded-lg bg-surface-1 shrink-0">
+                <MemberConfig
+                  character={members[index]}
+                  onSwitch={() => onSwitch(index)}
+                  onChangeLevel={(level) => onChangeMemberLevel(level, index)}
+                  onChangeConstellation={(constellation) => onChangeMemberConstellation(constellation, index)}
                 />
               </div>
-
-              <VersatileSelect
-                title="Select Constellation Level"
-                className={`ml-auto w-14 text-lg ${elmtText} font-bold bg-surface-2`}
-                align="right"
-                options={Array.from({ length: 7 }, (_, i) => ({
-                  label: `C${i}`,
-                  value: i,
-                }))}
-                value={character.cons}
-                onChange={(newCons) => onChangeConstellation(newCons as number)}
-              />
-            </div>
-          ) : null}
+            );
+          })}
         </div>
       </div>
-    </div>
+
+      <Tavern
+        active={modalType === "SELECT_CHARACTER"}
+        sourceType="mixed"
+        onSelectCharacter={(character) => {
+          const { userWps, userArts } = store.select((state) => state.userdb);
+          const { char, weapon, artifacts } = parseUserCharacter({
+            character,
+            userWps,
+            userArts,
+            weaponType: character.weaponType,
+            seedID: Date.now(),
+          });
+          const newMembers = members.concat();
+
+          newMembers[vars.current.characterSelectedIndex] = {
+            ...char,
+            weapon,
+            artifacts,
+          };
+          setMembers(newMembers);
+        }}
+        onClose={closeModal}
+      />
+    </>
   );
 }
