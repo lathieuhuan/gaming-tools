@@ -216,7 +216,7 @@ export interface AppEntitySelectProps<T extends AppEntityOptionModel = AppEntity
   hasSearch?: boolean;
   hasFilter?: boolean;
   /** Default to 360px */
-  filterWrapWidth?: DrawerProps["activeWidth"];
+  filterWrapWidth?: DrawerProps["width"];
   /** Default to true */
   filterToggleable?: boolean;
   initialFilterOn?: boolean;

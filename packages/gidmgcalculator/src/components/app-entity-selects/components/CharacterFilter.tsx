@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { clsx, useIconSelect, useRaritySelect, ButtonGroup, type ClassValue } from "rond";
 import { ELEMENT_TYPES, ElementType, WeaponType } from "@Backend";
 
@@ -17,6 +18,10 @@ interface CharacterFilterProps {
   onCancel: () => void;
 }
 export function CharacterFilter({ className, initialFilter, onCancel, onDone }: CharacterFilterProps) {
+  // This filter is put on a drawer, the auto-focused button somehow makes the UI weirdly shift
+  // when the drawer is coming out, so we render the button group later
+  const [showActions, setShowActions] = useState(false);
+
   const ELEMENT_ICONS = ELEMENT_TYPES.map((value) => {
     return {
       value,
@@ -39,6 +44,12 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
   });
 
   const { selectedRarities, updateRarities, renderRaritySelect } = useRaritySelect([5, 4], initialFilter?.rarities);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowActions(true);
+    }, 250);
+  }, []);
 
   const onConfirm = () => {
     onDone({
@@ -80,7 +91,9 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
         </FilterTemplate>
       </div>
 
-      <ButtonGroup.Confirm className="mt-4" justify="end" focusConfirm onCancel={onCancel} onConfirm={onConfirm} />
+      {showActions && (
+        <ButtonGroup.Confirm className="mt-4" justify="end" focusConfirm onCancel={onCancel} onConfirm={onConfirm} />
+      )}
     </div>
   );
 }
