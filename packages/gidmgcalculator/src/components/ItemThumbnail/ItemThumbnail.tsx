@@ -78,7 +78,7 @@ export function ItemThumbnail({ className, imgCls, title, compact, item }: ItemT
 
       {compact ? (
         <div className="flex-center bg-black/40 w-full absolute bottom-0">
-          <p className="font-bold text-light-default text-sm">{lvText}</p>
+          <p className="font-bold text-light-default leading-5">{lvText}</p>
         </div>
       ) : (
         <div className="flex-center bg-light-default">

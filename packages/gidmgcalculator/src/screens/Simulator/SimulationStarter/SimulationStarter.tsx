@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import { clsx } from "rond";
-import { Level } from "@Backend";
 
 import { Tavern } from "@Src/components";
 import { useStore } from "@Src/features";
@@ -35,22 +34,12 @@ export function SimulationStarter({ className }: SimulationStarterProps) {
     vars.current.characterSelectedIndex = memberIndex;
   };
 
-  const onChangeMemberLevel = (level: Level, memberIndex: number) => {
+  const updateMember = (memberIndex: number, newConfig: Partial<SimulationMember>) => {
     const newMembers = members.concat();
 
     newMembers[memberIndex] = {
       ...newMembers[memberIndex],
-      level,
-    };
-    setMembers(newMembers);
-  };
-
-  const onChangeMemberConstellation = (constellation: number, memberIndex: number) => {
-    const newMembers = members.concat();
-
-    newMembers[memberIndex] = {
-      ...newMembers[memberIndex],
-      cons: constellation,
+      ...newConfig,
     };
     setMembers(newMembers);
   };
@@ -65,8 +54,17 @@ export function SimulationStarter({ className }: SimulationStarterProps) {
                 <MemberConfig
                   character={members[index]}
                   onSwitch={() => onSwitch(index)}
-                  onChangeLevel={(level) => onChangeMemberLevel(level, index)}
-                  onChangeConstellation={(constellation) => onChangeMemberConstellation(constellation, index)}
+                  onChangeLevel={(level) => {
+                    updateMember(index, { level });
+                  }}
+                  onChangeConstellation={(constellation) => {
+                    updateMember(index, { cons: constellation });
+                  }}
+                  onChangeTalentLevel={(type, level) => {
+                    updateMember(index, {
+                      [type]: level,
+                    });
+                  }}
                 />
               </div>
             );

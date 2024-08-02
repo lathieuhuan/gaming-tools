@@ -22,3 +22,4 @@ export * from "./OwnerLabel";
 export * from "./SetBonusesView";
 export * from "./TeammateItems";
 export * from "./WeaponCard";
+export * from "./EquipmentDisplay";

@@ -4,7 +4,7 @@ import { SwitchNode } from "rond";
 import { $AppWeapon } from "@Src/services";
 import { ActiveMember, SimulationManager, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { ComplexSelect, ConstellationList } from "@Src/components";
-import { AttributesTab, GreasTab, TalentsTab } from "./detail-tabs";
+import { AttributesTab, GrearsTab, TalentsTab } from "./detail-tabs";
 
 interface MemberDetailProps {
   simulation: SimulationManager;
@@ -47,7 +47,7 @@ function MemberDetailCore({ simulation, member }: MemberDetailProps) {
             },
             {
               value: "GEARS",
-              element: <GreasTab weapon={member.info.weapon} appWeapon={appWeapon} artifacts={member.info.artifacts} />,
+              element: <GrearsTab weapon={member.info.weapon} appWeapon={appWeapon} artifacts={member.info.artifacts} />,
             },
             {
               value: "CONSTELLATION",
