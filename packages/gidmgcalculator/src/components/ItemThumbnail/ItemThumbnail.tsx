@@ -4,11 +4,13 @@ import { Level } from "@Backend";
 import { $AppCharacter } from "@Src/services";
 import { GenshinImage } from "../GenshinImage";
 
-interface ItemThumbProps {
+export interface ItemThumbProps {
   className?: string;
   imgCls?: string;
   title?: string;
   compact?: boolean;
+  /** Default to true */
+  showOwner?: boolean;
   item: {
     beta?: boolean;
     icon: string;
@@ -16,10 +18,9 @@ interface ItemThumbProps {
     level: Level | number;
     refi?: number;
     owner?: string | null;
-    setupIDs?: number[];
   };
 }
-export function ItemThumbnail({ className, imgCls, title, compact, item }: ItemThumbProps) {
+export function ItemThumbnail({ className, imgCls, title, showOwner = true, compact, item }: ItemThumbProps) {
   const lvText = `Lv. ${typeof item.level === "string" ? item.level.split("/")[0] : item.level}`;
   //
   const renderSideIcon = (owner: string) => {
@@ -49,7 +50,7 @@ export function ItemThumbnail({ className, imgCls, title, compact, item }: ItemT
       )}
       title={title}
     >
-      {item.owner && !compact && renderSideIcon(item.owner)}
+      {showOwner && item.owner && !compact ? renderSideIcon(item.owner) : null}
 
       {item.refi !== undefined ? (
         <p
@@ -77,7 +78,7 @@ export function ItemThumbnail({ className, imgCls, title, compact, item }: ItemT
       </div>
 
       {compact ? (
-        <div className="flex-center bg-black/40 w-full absolute bottom-0">
+        <div className="flex-center bg-black/60 w-full absolute bottom-0">
           <p className="font-bold text-light-default leading-5">{lvText}</p>
         </div>
       ) : (

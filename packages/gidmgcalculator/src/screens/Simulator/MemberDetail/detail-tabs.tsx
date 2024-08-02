@@ -45,7 +45,7 @@ export function GrearsTab({ weapon, appWeapon, artifacts }: GreasTabProps) {
       <EquipmentDisplay
         className="mb-3"
         compact
-        highlightable
+        selectedIndex={detailIndex}
         weapon={weapon}
         appWeapon={appWeapon}
         artifacts={artifacts}

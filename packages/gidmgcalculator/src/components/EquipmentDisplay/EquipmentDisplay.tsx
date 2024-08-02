@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { clsx, ItemCase, type ClassValue } from "rond";
 import { AppWeapon, ARTIFACT_TYPES } from "@Backend";
 
@@ -8,39 +7,35 @@ import { Utils_ } from "@Src/utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
-import { ItemThumbnail } from "../ItemThumbnail";
+import { ItemThumbnail, type ItemThumbProps } from "../ItemThumbnail";
 
-interface EquipmentDisplayProps {
+interface EquipmentDisplayProps extends Pick<ItemThumbProps, "compact" | "showOwner"> {
   className?: ClassValue;
   weapon: Weapon;
   appWeapon?: AppWeapon;
   artifacts?: (Artifact | null)[];
-  compact?: boolean;
-  highlightable?: boolean;
+  /** Whether empty artifacts are rendered as clickable buttons */
+  fillable?: boolean;
+  onClickEmptyArtifact?: (itemIndex: number) => void;
+  /** 0-4 is artifact, 5 is weapon, others is none */
+  selectedIndex?: number;
   /** 0-4 is artifact, 5 is weapon */
   onClickItem?: (itemIndex: number) => void;
 }
 export function EquipmentDisplay(props: EquipmentDisplayProps) {
-  const [chosenIndex, setChosenIndex] = useState(-1);
-
   const { weapon, appWeapon = $AppWeapon.get(weapon.code)!, artifacts = [], compact } = props;
-
-  const onClickItem = (itemIndex: number) => {
-    if (props.highlightable) {
-      setChosenIndex(itemIndex);
-    }
-    props.onClickItem?.(itemIndex);
-  };
+  const EmptyWrap: keyof JSX.IntrinsicElements = props.fillable ? "button" : "div";
 
   return (
     <div className={clsx("flex flex-wrap", props.className)}>
       <div className="p-1.5 w-1/3">
-        <ItemCase chosen={chosenIndex === 5} onClick={() => onClickItem(5)}>
+        <ItemCase chosen={props.selectedIndex === 5} onClick={() => props.onClickItem?.(5)}>
           {(className, imgCls) => (
             <ItemThumbnail
               className={className}
               imgCls={imgCls}
               compact={compact}
+              showOwner={props.showOwner}
               title={appWeapon.name}
               item={{
                 beta: appWeapon.beta,
@@ -59,13 +54,14 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
         if (artifact && appArtifactSet) {
           return (
             <div key={i} className="p-1.5 w-1/3">
-              <ItemCase chosen={chosenIndex === i} onClick={() => onClickItem(i)}>
+              <ItemCase chosen={props.selectedIndex === i} onClick={() => props.onClickItem?.(i)}>
                 {(className, imgCls) => (
                   <ItemThumbnail
                     className={className}
                     imgCls={imgCls}
                     title={appArtifactSet.name}
                     compact={compact}
+                    showOwner={props.showOwner}
                     item={{
                       rarity: artifact.rarity,
                       level: artifact.level,
@@ -80,9 +76,12 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
 
         return (
           <div key={i} className="p-1.5 w-1/3" style={{ minHeight: compact ? 84 : 124 }}>
-            <div className="p-4 w-full h-full flex-center rounded bg-surface-3">
+            <EmptyWrap
+              className={clsx("p-4 w-full h-full flex-center rounded bg-surface-3", props.fillable && " glow-on-hover")}
+              onClick={props.fillable ? () => props.onClickEmptyArtifact?.(i) : undefined}
+            >
               <GenshinImage className="w-full" src={Utils_.artifactIconOf(ARTIFACT_TYPES[i])} />
-            </div>
+            </EmptyWrap>
           </div>
         );
       })}

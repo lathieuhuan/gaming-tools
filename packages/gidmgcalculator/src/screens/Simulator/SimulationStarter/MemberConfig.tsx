@@ -1,53 +1,45 @@
+import { useState } from "react";
 import { FaSyncAlt } from "react-icons/fa";
-import { Badge, Button, VersatileSelect } from "rond";
-import { LEVELS, Level, LevelableTalentType } from "@Backend";
+import { Badge, Button, HiddenSpace, VersatileSelect, clsx } from "rond";
+import { AppCharacter, LEVELS, Level, LevelableTalentType } from "@Backend";
 
-import { EquipmentDisplay, GenshinImage } from "@Src/components";
-import { $AppCharacter } from "@Src/services";
-import { SimulationMember } from "@Src/types";
+import { ArtifactCard, EquipmentDisplay, GenshinImage, WeaponCard } from "@Src/components";
+import { Artifact, SimulationMember, Weapon } from "@Src/types";
 import { genSequentialOptions } from "@Src/utils";
 import { useTranslation } from "@Src/hooks";
 
-interface MemberConfigProps {
-  character?: SimulationMember;
+const levelableTalentTypes: LevelableTalentType[] = ["NAs", "ES", "EB"];
+
+type MemberConfigCoreOnlyPropsKey = "chosenGearIndex" | "onClickItem";
+
+interface MemberConfigCoreProps {
+  className?: string;
+  character: SimulationMember;
+  appChar: AppCharacter;
   onSwitch: () => void;
   onChangeLevel: (newLevel: Level) => void;
   onChangeConstellation: (newConstellation: number) => void;
   onChangeTalentLevel: (type: LevelableTalentType, newLevel: number) => void;
+  chosenGearIndex: number;
+  onClickItem: (index: number) => void;
 }
-export function MemberConfig({
-  character,
-  onSwitch,
-  onChangeLevel,
-  onChangeConstellation,
-  onChangeTalentLevel,
-}: MemberConfigProps) {
+function MemberConfigCore(props: MemberConfigCoreProps) {
   const { t } = useTranslation();
-  const appChar = character ? $AppCharacter.get(character.name) : null;
-  const elmtText = appChar ? `text-${appChar.vision}` : "";
-  const levelableTalentTypes: LevelableTalentType[] = ["NAs", "ES", "EB"];
 
-  const imgWrapStyle: React.CSSProperties = {
-    width: "4.5rem",
-    height: "4.5rem",
-  };
-
-  if (!character || !appChar) {
-    return (
-      <div>
-        <div className="flex">
-          <div onClick={onSwitch} style={imgWrapStyle}>
-            <GenshinImage className="cursor-pointer" imgType="character" fallbackCls="p-2" />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const { character, appChar } = props;
+  const elmtText = `text-${appChar.vision}`;
 
   return (
-    <div>
+    <div className={props.className}>
       <div className="flex">
-        <div className="mr-2 relative shrink-0" onClick={onSwitch} style={imgWrapStyle}>
+        <div
+          className="mr-2 relative shrink-0"
+          onClick={props.onSwitch}
+          style={{
+            width: "4.5rem",
+            height: "4.5rem",
+          }}
+        >
           <>
             <GenshinImage className="cursor-pointer" src={appChar.icon} imgType="character" fallbackCls="p-1" />
             <Button className="absolute -top-1 -left-1 z-10" size="small" icon={<FaSyncAlt />} />
@@ -78,7 +70,7 @@ export function MemberConfig({
                   return { label: item, value: item };
                 })}
                 value={character.level}
-                onChange={(value) => onChangeLevel(value as Level)}
+                onChange={(value) => props.onChangeLevel(value as Level)}
               />
             </div>
 
@@ -91,18 +83,18 @@ export function MemberConfig({
                 value: i,
               }))}
               value={character.cons}
-              onChange={(newCons) => onChangeConstellation(newCons as number)}
+              onChange={(newCons) => props.onChangeConstellation(newCons as number)}
             />
           </div>
         </div>
       </div>
 
-      <div className="mt-4 flex flex-col gap-2">
+      <div className="mt-3 flex flex-col gap-2">
         {levelableTalentTypes.map((talentType) => {
           const talent = appChar.activeTalents[talentType];
 
           return (
-            <div key={talentType} className="px-3 py-2 bg-surface-2 rounded">
+            <div key={talentType} className="px-3 pt-2 pb-1 bg-surface-2 rounded">
               <p className="font-bold truncate">{talent.name}</p>
               <div className="flex items-center">
                 <span className="text-sm text-hint-color">{t(talentType)}</span>
@@ -115,7 +107,7 @@ export function MemberConfig({
                   showAllOptions
                   value={character[talentType]}
                   options={genSequentialOptions(10)}
-                  onChange={(value) => onChangeTalentLevel(talentType, +value)}
+                  onChange={(value) => props.onChangeTalentLevel(talentType, +value)}
                 />
               </div>
             </div>
@@ -126,10 +118,77 @@ export function MemberConfig({
       <EquipmentDisplay
         className="mt-3"
         compact
+        fillable
+        selectedIndex={props.chosenGearIndex}
         weapon={character.weapon}
         artifacts={character.artifacts}
-        onClickItem={() => {}}
+        onClickItem={props.onClickItem}
+        onClickEmptyArtifact={() => {}}
       />
+    </div>
+  );
+}
+
+interface MemberConfigProps extends Omit<MemberConfigCoreProps, MemberConfigCoreOnlyPropsKey> {
+  onChangeWeapon: (config: Partial<Weapon>) => void;
+  onChangeArtifact: (index: number, config: Partial<Artifact>) => void;
+}
+export function MemberConfig(props: MemberConfigProps) {
+  const [chosenGearIndex, setChosenGrearIndex] = useState(-1);
+
+  const onClickItem = (index: number) => {
+    setChosenGrearIndex(index === chosenGearIndex ? -1 : index);
+  };
+
+  const weapon = props.character.weapon;
+  const chosenArtifact = props.character.artifacts[chosenGearIndex];
+
+  return (
+    <div className="flex">
+      <MemberConfigCore {...props} chosenGearIndex={chosenGearIndex} onClickItem={onClickItem} />
+
+      <HiddenSpace active={chosenGearIndex !== -1} className="py-2 flex" afterClose={() => setChosenGrearIndex(-1)}>
+        <div className={clsx(`h-full ml-px rounded-l-none bg-surface-1`, props.className)}>
+          {chosenGearIndex === 5 ? (
+            <WeaponCard
+              withGutter={false}
+              mutable
+              weapon={weapon}
+              upgrade={(level) => props.onChangeWeapon({ level })}
+              refine={(refi) => props.onChangeWeapon({ refi })}
+            />
+          ) : null}
+          {chosenArtifact ? (
+            <ArtifactCard
+              withGutter={false}
+              mutable
+              artifact={chosenArtifact}
+              onEnhance={(level) => {
+                props.onChangeArtifact(chosenGearIndex, {
+                  level,
+                });
+              }}
+              onChangeMainStatType={(mainStatType) => {
+                props.onChangeArtifact(chosenGearIndex, {
+                  mainStatType,
+                });
+              }}
+              onChangeSubStat={(subStatIndex, change, artifact) => {
+                const newSubStats = [...artifact.subStats];
+
+                newSubStats[subStatIndex] = {
+                  ...newSubStats[subStatIndex],
+                  ...change,
+                };
+
+                props.onChangeArtifact(chosenGearIndex, {
+                  subStats: newSubStats,
+                });
+              }}
+            />
+          ) : null}
+        </div>
+      </HiddenSpace>
     </div>
   );
 }
