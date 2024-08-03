@@ -9,12 +9,20 @@ import type {
   SimulationTarget,
 } from "@Src/types";
 
+export type SimulatorStage = "WAITING" | "PREPARING" | "RUNNING";
+
+export type PendingSimulation = {
+  name: string;
+  members: (SimulationMember | null)[];
+};
+
 export type SimulatorState = {
+  stage: SimulatorStage;
+  pendingSimulation: PendingSimulation;
   activeId: number;
   activeMember: number;
   simulationManageInfos: SimulationManageInfo[];
   simulationsById: Record<string, Simulation>;
-  pendingMembers: (SimulationMember | null)[];
 };
 
 export type CreateSimulationPayload = PayloadAction<{

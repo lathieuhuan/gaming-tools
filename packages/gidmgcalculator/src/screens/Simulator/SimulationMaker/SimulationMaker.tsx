@@ -1,5 +1,5 @@
 import { memo, useRef, useState } from "react";
-import { Button, clsx } from "rond";
+import { Button, ConfirmModal, clsx } from "rond";
 import { BiLogInCircle } from "react-icons/bi";
 import { AppCharacter, ARTIFACT_TYPES } from "@Backend";
 
@@ -18,13 +18,29 @@ import { MemberConfig } from "./MemberConfig";
 
 type ModalType =
   | "SELECT_CHARACTER"
+  | "REMOVE_MEMBER"
   | "WEAPON_FORGE"
   | "WEAPON_INVENTORY"
   | "ARTIFACT_FORGE"
   | "ARTIFACT_INVENTORY"
   | "";
 
-const selectPendingMembers = (state: RootState) => state.simulator.pendingMembers;
+const selectPendingMembers = (state: RootState) => state.simulator.pendingSimulation.members;
+
+const useAppMembers = (members: ReturnType<typeof selectPendingMembers>) => {
+  const appMembers = useRef<AppCharacter[]>([]);
+
+  members.forEach((member, i) => {
+    if (member) {
+      const appMember = appMembers.current[i];
+
+      if (!appMember || appMember.name !== member.name) {
+        appMembers.current[i] = $AppCharacter.get(member.name);
+      }
+    }
+  });
+  return appMembers.current;
+};
 
 interface SimulationMakerProps {
   className?: string;
@@ -33,9 +49,9 @@ function SimulationMakerCore({ className }: SimulationMakerProps) {
   const dispatch = useDispatch();
   const store = useStore();
   const members = useSelector(selectPendingMembers);
-  const [modalType, setModalType] = useState<ModalType>("");
+  const appMembers = useAppMembers(members);
 
-  const appMembers = useRef<AppCharacter[]>([]);
+  const [modalType, setModalType] = useState<ModalType>("");
   const selected = useRef({
     memberIndex: -1,
     artifactIndex: -1,
@@ -63,7 +79,12 @@ function SimulationMakerCore({ className }: SimulationMakerProps) {
     setModalType("SELECT_CHARACTER");
   };
 
-  const updateMember = (memberIndex: number, newConfig: Partial<SimulationMember>) => {
+  const onRequestRemoveMember = (memberIndex: number) => {
+    selected.current.memberIndex = memberIndex;
+    setModalType("REMOVE_MEMBER");
+  };
+
+  const updateMember = (memberIndex: number, newConfig: Partial<SimulationMember> | null) => {
     dispatch(
       updatePendingMember({
         at: memberIndex,
@@ -87,7 +108,7 @@ function SimulationMakerCore({ className }: SimulationMakerProps) {
       <div className={clsx("p-4 h-full flex", className)}>
         <div className="h-full pb-2 custom-scrollbar flex gap-2">
           {members.map((character, memberIndex) => {
-            const appChar = character ? appMembers.current[memberIndex] : null;
+            const appChar = character ? appMembers[memberIndex] : null;
             const className = "w-80 h-full p-4 rounded-lg bg-surface-1 shrink-0";
 
             if (!character || !appChar) {
@@ -113,6 +134,7 @@ function SimulationMakerCore({ className }: SimulationMakerProps) {
                 character={character}
                 appChar={appChar}
                 onRequestSwitchMember={() => onRequestSwitchMember(memberIndex)}
+                onRequestRemoveMember={() => onRequestRemoveMember(memberIndex)}
                 onRequestSwitchWeapon={(source) => {
                   selected.current.memberIndex = memberIndex;
                   setModalType(`WEAPON_${source}`);
@@ -194,16 +216,27 @@ function SimulationMakerCore({ className }: SimulationMakerProps) {
             weapon,
             artifacts,
           };
-          appMembers.current[selected.current.memberIndex] = $AppCharacter.get(char.name);
+          appMembers[selected.current.memberIndex] = $AppCharacter.get(char.name);
 
           dispatch(updatePendingMembers(newMembers));
         }}
         onClose={closeModal}
       />
 
+      <ConfirmModal
+        active={modalType === "REMOVE_MEMBER"}
+        danger
+        focusConfirm
+        message={`Remove ${appMembers[selected.current.memberIndex]?.name}?`}
+        onConfirm={() => {
+          updateMember(selected.current.memberIndex, null);
+        }}
+        onClose={closeModal}
+      />
+
       <WeaponForge
         active={modalType === "WEAPON_FORGE"}
-        forcedType={appMembers.current[selected.current.memberIndex]?.weaponType}
+        forcedType={appMembers[selected.current.memberIndex]?.weaponType}
         onForgeWeapon={(weapon) => {
           updateMember(selected.current.memberIndex, { weapon });
         }}
@@ -212,7 +245,7 @@ function SimulationMakerCore({ className }: SimulationMakerProps) {
 
       <WeaponInventory
         active={modalType === "WEAPON_INVENTORY"}
-        weaponType={appMembers.current[selected.current.memberIndex]?.weaponType}
+        weaponType={appMembers[selected.current.memberIndex]?.weaponType}
         buttonText="Select"
         onClickButton={(weapon) => {
           updateMember(selected.current.memberIndex, { weapon: Utils_.userItemToCalcItem(weapon) });

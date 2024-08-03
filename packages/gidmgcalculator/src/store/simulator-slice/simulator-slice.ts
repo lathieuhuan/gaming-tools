@@ -1,31 +1,58 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 import type { SimulationMember } from "@Src/types";
-import type { AddEventPayload, CreateSimulationPayload, SimulatorState } from "./simulator-slice.types";
+import type {
+  AddEventPayload,
+  CreateSimulationPayload,
+  PendingSimulation,
+  SimulatorState,
+} from "./simulator-slice.types";
 import { Setup_, removeEmpty, uuid } from "@Src/utils";
 import { $AppCharacter, $AppSettings } from "@Src/services";
 import { _addEvent, getNextEventId, getSimulation } from "./simulator-slice.utils";
 
 const initialState: SimulatorState = {
+  stage: "WAITING",
+  pendingSimulation: {
+    name: "",
+    members: [],
+  },
   activeId: 0,
   activeMember: 0,
   simulationManageInfos: [],
   simulationsById: {},
-  pendingMembers: [],
 };
+
+export const DEFAULT_SIMULATION_NAME = "New Simulation";
 
 export const simulatorSlice = createSlice({
   name: "simulator",
   initialState,
   reducers: {
+    prepareSimulation: (state, action: PayloadAction<Partial<PendingSimulation> | undefined>) => {
+      const { name = DEFAULT_SIMULATION_NAME, members = [null, null, null, null] } = action.payload || {};
+
+      state.stage = "PREPARING";
+      state.pendingSimulation = {
+        name,
+        members,
+      };
+    },
+    cancelPendingSimulation: (state) => {
+      state.stage = state.activeId ? "RUNNING" : "WAITING";
+      state.pendingSimulation = initialState.pendingSimulation;
+    },
+    updatePendingSimulationName: (state, action: PayloadAction<string>) => {
+      state.pendingSimulation.name = action.payload;
+    },
     updatePendingMembers: (state, action: PayloadAction<(SimulationMember | null)[]>) => {
-      state.pendingMembers = action.payload;
+      state.pendingSimulation.members = action.payload;
     },
     updatePendingMember: (state, action: PayloadAction<{ at: number; config: Partial<SimulationMember> | null }>) => {
       const { at, config } = action.payload;
 
-      state.pendingMembers = state.pendingMembers.map((member, index) =>
-        member && config ? (index === at ? { ...member, ...config } : member) : null
+      state.pendingSimulation.members = state.pendingSimulation.members.map((member, index) =>
+        index === at ? (member && config ? { ...member, ...config } : null) : member
       );
     },
     createSimulation: (state, action: CreateSimulationPayload) => {
@@ -57,6 +84,9 @@ export const simulatorSlice = createSlice({
           chunks,
           target,
         };
+
+        state.stage = "RUNNING";
+        state.pendingSimulation = initialState.pendingSimulation;
       }
     },
     addEvent: (state, action: AddEventPayload) => {
@@ -86,6 +116,9 @@ export const simulatorSlice = createSlice({
 });
 
 export const {
+  prepareSimulation,
+  cancelPendingSimulation,
+  updatePendingSimulationName,
   updatePendingMembers,
   updatePendingMember,
   createSimulation,

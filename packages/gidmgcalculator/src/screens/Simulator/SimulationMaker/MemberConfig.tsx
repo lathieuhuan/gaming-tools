@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { FaSyncAlt, FaTrashAlt } from "react-icons/fa";
+import { FaSyncAlt, FaTrashAlt, FaUserSlash } from "react-icons/fa";
 import { GiAnvil } from "react-icons/gi";
 import { MdInventory } from "react-icons/md";
 import { Badge, Button, ButtonGroup, HiddenSpace, VersatileSelect, clsx } from "rond";
 import { ARTIFACT_TYPES, AppCharacter, LEVELS, Level, LevelableTalentType } from "@Backend";
 
-import { ArtifactView, EquipmentDisplay, GenshinImage, WeaponView, type EquipmentDisplayProps } from "@Src/components";
 import { Artifact, SimulationMember, Weapon } from "@Src/types";
 import { genSequentialOptions } from "@Src/utils";
 import { useTranslation } from "@Src/hooks";
+import { ArtifactView, EquipmentDisplay, GenshinImage, WeaponView, type EquipmentDisplayProps } from "@Src/components";
 
 const levelableTalentTypes: LevelableTalentType[] = ["NAs", "ES", "EB"];
 
@@ -19,6 +19,7 @@ interface MemberConfigCoreProps extends Pick<EquipmentDisplayProps, "onClickItem
   character: SimulationMember;
   appChar: AppCharacter;
   onRequestSwitchMember: () => void;
+  onRequestRemoveMember: () => void;
   onChangeLevel: (newLevel: Level) => void;
   onChangeConstellation: (newConstellation: number) => void;
   onChangeTalentLevel: (type: LevelableTalentType, newLevel: number) => void;
@@ -32,7 +33,14 @@ function MemberConfigCore(props: MemberConfigCoreProps) {
 
   return (
     <div className={props.className}>
-      <div className="flex">
+      <div className="flex relative">
+        <Button
+          className="absolute -top-2 -right-1"
+          boneOnly
+          icon={<FaUserSlash />}
+          onClick={props.onRequestRemoveMember}
+        />
+
         <div
           className="mr-2 relative shrink-0"
           onClick={props.onRequestSwitchMember}
@@ -50,9 +58,10 @@ function MemberConfigCore(props: MemberConfigCoreProps) {
           </>
         </div>
 
-        <div className="min-w-0 grow">
-          <div className="overflow-hidden">
+        <div className="pt-2 min-w-0 grow">
+          <div className="flex overflow-hidden">
             <h3 className={`text-xl truncate ${elmtText} font-black`}>{character.name}</h3>
+            <div className="w-8 shrink-0" />
           </div>
 
           <div className="pl-1 flex justify-between items-center">

@@ -7,11 +7,11 @@ export interface SimulatorManagerProps {
 export function SimulatorControlCenter(props: SimulatorManagerProps) {
   return (
     <div className={props.className}>
-      <p className="text-heading-color font-medium">Create new Simulation</p>
+      <p className="text-heading-color font-medium">Create Simulation</p>
 
       <div className="mt-2 pl-4 flex">
         <Button size="small" onClick={() => props.onClickCreateSimulation("NONE")}>
-          Start empty
+          Empty
         </Button>
       </div>
     </div>
