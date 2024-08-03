@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Badge, VersatileSelect } from "rond";
+import { Badge, VersatileSelect, clsx, type ClassValue } from "rond";
 import { LEVELS, Level, WeaponCalc } from "@Backend";
 
 import type { CalcWeapon, UserWeapon } from "@Src/types";
@@ -13,12 +13,14 @@ import { GenshinImage } from "../GenshinImage";
 const groupStyles = "bg-surface-2 px-3";
 
 export interface WeaponViewProps<T extends CalcWeapon | UserWeapon> {
+  className?: ClassValue;
   weapon?: T;
   mutable?: boolean;
   upgrade?: (newLevel: Level, weapon: T) => void;
   refine?: (newRefi: number, weapon: T) => void;
 }
 export function WeaponView<T extends CalcWeapon | UserWeapon>({
+  className,
   weapon,
   mutable,
   upgrade,
@@ -40,7 +42,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
   const selectLevels = rarity < 3 ? LEVELS.slice(0, -4) : LEVELS;
 
   return (
-    <div className="w-full" onDoubleClick={() => console.log(weapon)}>
+    <div className={clsx("w-full", className)} onDoubleClick={() => console.log(weapon)}>
       <p className={`text-1.5xl text-rarity-${rarity} font-semibold`}>{appWeapon.name}</p>
 
       <div className="mt-2 flex">

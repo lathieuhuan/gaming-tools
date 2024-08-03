@@ -9,7 +9,7 @@ import { Utils_ } from "@Src/utils";
 import { GenshinImage } from "../GenshinImage";
 import { ItemThumbnail, type ItemThumbProps } from "../ItemThumbnail";
 
-interface EquipmentDisplayProps extends Pick<ItemThumbProps, "compact" | "showOwner"> {
+export interface EquipmentDisplayProps extends Pick<ItemThumbProps, "compact" | "showOwner"> {
   className?: ClassValue;
   weapon: Weapon;
   appWeapon?: AppWeapon;

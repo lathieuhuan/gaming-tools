@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { FaSyncAlt } from "react-icons/fa";
-import { Badge, Button, HiddenSpace, VersatileSelect, clsx } from "rond";
-import { AppCharacter, LEVELS, Level, LevelableTalentType } from "@Backend";
+import { FaSyncAlt, FaTrashAlt } from "react-icons/fa";
+import { GiAnvil } from "react-icons/gi";
+import { MdInventory } from "react-icons/md";
+import { Badge, Button, ButtonGroup, HiddenSpace, VersatileSelect, clsx } from "rond";
+import { ARTIFACT_TYPES, AppCharacter, LEVELS, Level, LevelableTalentType } from "@Backend";
 
-import { ArtifactCard, EquipmentDisplay, GenshinImage, WeaponCard } from "@Src/components";
+import { ArtifactView, EquipmentDisplay, GenshinImage, WeaponView, type EquipmentDisplayProps } from "@Src/components";
 import { Artifact, SimulationMember, Weapon } from "@Src/types";
 import { genSequentialOptions } from "@Src/utils";
 import { useTranslation } from "@Src/hooks";
@@ -12,16 +14,15 @@ const levelableTalentTypes: LevelableTalentType[] = ["NAs", "ES", "EB"];
 
 type MemberConfigCoreOnlyPropsKey = "chosenGearIndex" | "onClickItem";
 
-interface MemberConfigCoreProps {
+interface MemberConfigCoreProps extends Pick<EquipmentDisplayProps, "onClickItem"> {
   className?: string;
   character: SimulationMember;
   appChar: AppCharacter;
-  onSwitch: () => void;
+  onRequestSwitchMember: () => void;
   onChangeLevel: (newLevel: Level) => void;
   onChangeConstellation: (newConstellation: number) => void;
   onChangeTalentLevel: (type: LevelableTalentType, newLevel: number) => void;
   chosenGearIndex: number;
-  onClickItem: (index: number) => void;
 }
 function MemberConfigCore(props: MemberConfigCoreProps) {
   const { t } = useTranslation();
@@ -34,7 +35,7 @@ function MemberConfigCore(props: MemberConfigCoreProps) {
       <div className="flex">
         <div
           className="mr-2 relative shrink-0"
-          onClick={props.onSwitch}
+          onClick={props.onRequestSwitchMember}
           style={{
             width: "4.5rem",
             height: "4.5rem",
@@ -123,7 +124,7 @@ function MemberConfigCore(props: MemberConfigCoreProps) {
         weapon={character.weapon}
         artifacts={character.artifacts}
         onClickItem={props.onClickItem}
-        onClickEmptyArtifact={() => {}}
+        onClickEmptyArtifact={props.onClickItem}
       />
     </div>
   );
@@ -131,9 +132,12 @@ function MemberConfigCore(props: MemberConfigCoreProps) {
 
 interface MemberConfigProps extends Omit<MemberConfigCoreProps, MemberConfigCoreOnlyPropsKey> {
   onChangeWeapon: (config: Partial<Weapon>) => void;
-  onChangeArtifact: (index: number, config: Partial<Artifact>) => void;
+  onChangeArtifact: (artifactIndex: number, config: Partial<Artifact> | null) => void;
+  onRequestSwitchWeapon: (source: "FORGE" | "INVENTORY") => void;
+  onRequestSwitchArtifact: (artifactIndex: number, source: "FORGE" | "INVENTORY") => void;
 }
 export function MemberConfig(props: MemberConfigProps) {
+  const { t } = useTranslation();
   const [chosenGearIndex, setChosenGrearIndex] = useState(-1);
 
   const onClickItem = (index: number) => {
@@ -150,42 +154,89 @@ export function MemberConfig(props: MemberConfigProps) {
       <HiddenSpace active={chosenGearIndex !== -1} className="py-2 flex" afterClose={() => setChosenGrearIndex(-1)}>
         <div className={clsx(`h-full ml-px rounded-l-none bg-surface-1`, props.className)}>
           {chosenGearIndex === 5 ? (
-            <WeaponCard
-              withGutter={false}
-              mutable
-              weapon={weapon}
-              upgrade={(level) => props.onChangeWeapon({ level })}
-              refine={(refi) => props.onChangeWeapon({ refi })}
-            />
+            <div className="h-full flex flex-col items-end">
+              <ButtonGroup
+                className="w-fit"
+                buttons={[
+                  {
+                    icon: <MdInventory />,
+                    title: "Inventory",
+                    onClick: () => props.onRequestSwitchWeapon("INVENTORY"),
+                  },
+                  {
+                    icon: <GiAnvil />,
+                    title: "Forge",
+                    onClick: () => props.onRequestSwitchWeapon("FORGE"),
+                  },
+                ]}
+              />
+
+              <WeaponView
+                className="mt-2 grow hide-scrollbar"
+                mutable
+                weapon={weapon}
+                upgrade={(level) => props.onChangeWeapon({ level })}
+                refine={(refi) => props.onChangeWeapon({ refi })}
+              />
+            </div>
           ) : null}
-          {chosenArtifact ? (
-            <ArtifactCard
-              withGutter={false}
-              mutable
-              artifact={chosenArtifact}
-              onEnhance={(level) => {
-                props.onChangeArtifact(chosenGearIndex, {
-                  level,
-                });
-              }}
-              onChangeMainStatType={(mainStatType) => {
-                props.onChangeArtifact(chosenGearIndex, {
-                  mainStatType,
-                });
-              }}
-              onChangeSubStat={(subStatIndex, change, artifact) => {
-                const newSubStats = [...artifact.subStats];
 
-                newSubStats[subStatIndex] = {
-                  ...newSubStats[subStatIndex],
-                  ...change,
-                };
+          {chosenGearIndex >= 0 && chosenGearIndex < 5 ? (
+            <div className="h-full flex flex-col items-end">
+              <ButtonGroup
+                className="w-fit"
+                buttons={[
+                  {
+                    icon: <FaTrashAlt />,
+                    className: !chosenArtifact && "hidden",
+                    onClick: () => props.onChangeArtifact(chosenGearIndex, null),
+                  },
+                  {
+                    icon: <MdInventory />,
+                    title: "Inventory",
+                    onClick: () => props.onRequestSwitchArtifact(chosenGearIndex, "INVENTORY"),
+                  },
+                  {
+                    icon: <GiAnvil />,
+                    title: "Forge",
+                    onClick: () => props.onRequestSwitchArtifact(chosenGearIndex, "FORGE"),
+                  },
+                ]}
+              />
 
-                props.onChangeArtifact(chosenGearIndex, {
-                  subStats: newSubStats,
-                });
-              }}
-            />
+              <div className="w-full mt-3 grow hide-scrollbar">
+                {chosenArtifact ? (
+                  <ArtifactView
+                    mutable
+                    artifact={chosenArtifact}
+                    onEnhance={(level) => {
+                      props.onChangeArtifact(chosenGearIndex, {
+                        level,
+                      });
+                    }}
+                    onChangeMainStatType={(mainStatType) => {
+                      props.onChangeArtifact(chosenGearIndex, {
+                        mainStatType,
+                      });
+                    }}
+                    onChangeSubStat={(subStatIndex, change, artifact) => {
+                      const newSubStats = [...artifact.subStats];
+
+                      newSubStats[subStatIndex] = {
+                        ...newSubStats[subStatIndex],
+                        ...change,
+                      };
+
+                      props.onChangeArtifact(chosenGearIndex, {
+                        subStats: newSubStats,
+                      });
+                    }}
+                  />
+                ) : (
+                  <p className="py-2 text-center text-lg text-hint-color">No {t(ARTIFACT_TYPES[chosenGearIndex])}</p>
+                )}
+              </div>
+            </div>
           ) : null}
         </div>
       </HiddenSpace>
