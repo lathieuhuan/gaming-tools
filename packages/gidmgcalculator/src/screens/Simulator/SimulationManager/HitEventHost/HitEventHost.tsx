@@ -1,8 +1,10 @@
+import { BiLogInCircle } from "react-icons/bi";
+import { Button } from "rond";
 import type { HitEvent } from "@Src/types";
 
 import { useTranslation } from "@Src/hooks";
 import { useDispatch } from "@Store/hooks";
-import { addEvent } from "@Store/simulator-slice";
+import { addEvent, changeOnFieldMember } from "@Store/simulator-slice";
 import { useActiveMember, useActiveSimulation, ActiveMember, SimulationManager } from "@Simulator/ToolboxProvider";
 import { getTalentHitEventConfig, type TalentHitEventConfig } from "./HitEventHost.utils";
 
@@ -36,78 +38,85 @@ function HitEventHostCore({ simulation, member, configs }: HitEventHostProps) {
 
   return (
     <HitEventCoordinator>
-      <div className="h-full hide-scrollbar space-y-3">
-        {configs.map((config) => {
-          if (config.groups.every((group) => !group.items.length)) {
-            return null;
-          }
+      <div className="h-full hide-scrollbar">
+        <div className="flex justify-end">
+          <Button
+            className="switch-action-btn"
+            size="small"
+            boneOnly
+            icon={<BiLogInCircle className="text-xl" />}
+            iconPosition="end"
+            onClick={() => {
+              dispatch(changeOnFieldMember(member.data.code));
+            }}
+          >
+            <span className="font-medium">Take the field</span>
+          </Button>
+        </div>
 
-          return (
-            <div key={config.type}>
-              <p className="text-sm text-light-default/60">{t(config.type)}</p>
+        <div className="mt-1 space-y-3">
+          {configs.map((config) => {
+            if (config.groups.every((group) => !group.items.length)) {
+              return null;
+            }
 
-              <div className="mt-1 space-y-2">
-                {config.groups.map((group) => {
-                  // #to-do
-                  const disabled = false;
+            return (
+              <div key={config.type}>
+                <p className="text-sm text-light-default/60">{t(config.type)}</p>
 
-                  return group.items.map((item) => {
-                    const id = `${group.type}.${item.name}`;
+                <div className="mt-1 space-y-2">
+                  {config.groups.map((group) => {
+                    // #to-do
+                    const disabled = false;
 
-                    const eventInfo = {
-                      calcItemId: item.name,
-                      talent: config.type,
-                      duration: 0,
-                    };
+                    return group.items.map((item) => {
+                      // #to-do: should make unique id (?)
+                      const id = `${group.type}.${item.name}`;
 
-                    return (
-                      <HitEventDisplayer
-                        key={id}
-                        id={id}
-                        label={item.name}
-                        disabled={disabled}
-                        onQuickHit={() => onPerformTalentHitEvent(eventInfo)}
-                      >
-                        <TalentHitEvent
-                          item={item}
-                          getTalentEventConfig={(attkBonus, elmtModCtrls) => {
-                            return member.tools.configTalentHitEvent({
-                              talent: config.type,
-                              pattern: group.type,
-                              item,
-                              attkBonus,
-                              elmtModCtrls,
-                            });
-                          }}
-                          onPerformEvent={(elmtModCtrls, alsoSwitch) =>
-                            onPerformTalentHitEvent(
-                              {
-                                ...eventInfo,
+                      const eventInfo = {
+                        calcItemId: item.name,
+                        talent: config.type,
+                        duration: 0,
+                      };
+
+                      return (
+                        <HitEventDisplayer
+                          key={id}
+                          id={id}
+                          label={item.name}
+                          disabled={disabled}
+                          onQuickHit={() => onPerformTalentHitEvent(eventInfo)}
+                        >
+                          <TalentHitEvent
+                            item={item}
+                            getTalentEventConfig={(attkBonus, elmtModCtrls) => {
+                              return member.tools.configTalentHitEvent({
+                                talent: config.type,
+                                pattern: group.type,
+                                item,
+                                attkBonus,
                                 elmtModCtrls,
-                              },
-                              alsoSwitch
-                            )
-                          }
-                        />
-                      </HitEventDisplayer>
-                    );
-                  });
-                })}
+                              });
+                            }}
+                            onPerformEvent={(elmtModCtrls, alsoSwitch) =>
+                              onPerformTalentHitEvent(
+                                {
+                                  ...eventInfo,
+                                  elmtModCtrls,
+                                },
+                                alsoSwitch
+                              )
+                            }
+                          />
+                        </HitEventDisplayer>
+                      );
+                    });
+                  })}
+                </div>
               </div>
-            </div>
-          );
-        })}
-        {/* <AttackEventGroup
-            name={t("RXN_CALC")}
-            items={[...TRANSFORMATIVE_REACTIONS]}
-            getItemState={(item, itemIndex) => ({
-              label: t(item),
-              isActive: configGroups.length === active.groupI && itemIndex === active.itemI,
-            })}
-            renderContent={() => <p>Hello</p>}
-            onPerformEvent={() => {}}
-            onExpandEvent={(_, index, active) => onExpandTalentEvent(configGroups.length, index, active)}
-          /> */}
+            );
+          })}
+        </div>
       </div>
     </HitEventCoordinator>
   );

@@ -33,7 +33,6 @@ const useCoordinator = () => {
   if (!coordinator) {
     throw new Error("useDisplayerToggleHanlder must be used inside CoordinatorContext");
   }
-
   return coordinator;
 };
 

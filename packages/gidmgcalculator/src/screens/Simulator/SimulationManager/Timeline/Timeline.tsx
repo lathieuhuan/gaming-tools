@@ -1,17 +1,9 @@
 import { Fragment, useEffect, useState } from "react";
-import { FaSyncAlt } from "react-icons/fa";
-import { Button, clsx } from "rond";
+import { clsx } from "rond";
 
-import type { SimulationPartyData } from "@Src/types";
-import type { SimulationManager, SimulationProcessedChunk, SimulationSumary } from "@Simulator/ToolboxProvider";
+import type { SimulationProcessedChunk, SimulationSumary } from "@Simulator/ToolboxProvider";
 
-import { useDispatch, useSelector } from "@Store/hooks";
-import {
-  changeActiveMember,
-  changeOnFieldMember,
-  selectActiveMember,
-  selectOnFieldMember,
-} from "@Store/simulator-slice";
+import { useDispatch } from "@Store/hooks";
 import { useActiveSimulation } from "@Simulator/ToolboxProvider";
 
 // Component
@@ -58,13 +50,6 @@ export function Timeline(props: { className?: string }) {
 
   return (
     <div className={clsx("h-full flex flex-col gap-4", props.className)} style={{ width: "22rem" }}>
-      <PartyDisplayer
-        simulation={simulation}
-        onChangeOnFieldMember={(code) => {
-          dispatch(changeOnFieldMember(code));
-        }}
-      />
-
       <div className="flex">
         <span className="ml-auto px-2 rounded hover:bg-surface-2 cursor-default">
           <span className="text-sm">Total DMG:</span>{" "}
@@ -82,7 +67,7 @@ export function Timeline(props: { className?: string }) {
                 {index ? <div className="h-px bg-surface-border" /> : null}
 
                 <div className="flex gap-2">
-                  <CharacterPortrait size="custorm" className="w-12 h-12 m-0.5" info={chunkOwner} zoomable={false} />
+                  <CharacterPortrait size="custom" className="w-12 h-12 m-0.5" info={chunkOwner} zoomable={false} />
 
                   <div className="overflow-hidden grow flex flex-col-reverse">
                     {chunk.events.map((event) => {
@@ -117,48 +102,6 @@ export function Timeline(props: { className?: string }) {
           })}
         </div>
       </div>
-    </div>
-  );
-}
-
-interface PartyDisplayerProps {
-  simulation: SimulationManager;
-  onChangeOnFieldMember: (code: number) => void;
-}
-function PartyDisplayer(props: PartyDisplayerProps) {
-  const dispatch = useDispatch();
-  const activeMemberCode = useSelector(selectActiveMember);
-  const onFieldMember = useSelector(selectOnFieldMember);
-
-  const onClickMember = (code: number) => {
-    dispatch(changeActiveMember(code));
-  };
-
-  const onChangeOnFieldMember = (data: SimulationPartyData[number]) => {
-    props.onChangeOnFieldMember(data.code);
-    onClickMember(data.code);
-  };
-
-  return (
-    <div className="flex justify-center gap-4">
-      {props.simulation.partyData.map((data) => {
-        return (
-          <div key={data.code}>
-            <CharacterPortrait
-              size="small"
-              withColorBg={data.code === activeMemberCode}
-              info={data}
-              onClick={() => onClickMember(data.code)}
-            />
-
-            {data.code !== onFieldMember ? (
-              <div className="mt-3 flex-center">
-                <Button size="small" icon={<FaSyncAlt />} onClick={() => onChangeOnFieldMember(data)} />
-              </div>
-            ) : null}
-          </div>
-        );
-      })}
     </div>
   );
 }

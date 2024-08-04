@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Drawer, Input, Modal } from "rond";
+import { Button, Drawer, Input, Modal, SwitchNode } from "rond";
 import { FaCaretDown, FaCaretRight } from "react-icons/fa";
 
 import { RootState } from "@Store/store";
@@ -16,6 +16,7 @@ import {
 
 import { SimulatorControlCenter } from "../SimulatorControlCenter";
 import { CalcSetupSelect } from "./CalcSetupSelect";
+import { MemberPortraits } from "./MemberPortraits";
 
 const selectPendingName = (state: RootState) => state.simulator.pendingSimulation.name;
 
@@ -74,7 +75,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
   return (
     <>
       <div className="px-4 py-3 bg-surface-2">
-        <div className="h-7 flex items-center">
+        <div className="h-10 flex items-center">
           <Button
             className="mr-4"
             shape="square"
@@ -83,23 +84,35 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
             onClick={() => setDrawerActive(true)}
           />
 
-          {stage === "PREPARING" ? (
-            <div className="flex items-center gap-2">
-              <Input value={pendingName} maxLength={24} onChange={onChangePendingName} />
-              <Button className="h-7" size="small" shape="square" onClick={onClickCancelPendingSimulation}>
-                Cancel
-              </Button>
-              <Button
-                className="h-7"
-                size="small"
-                shape="square"
-                disabled={!pendingName.length}
-                onClick={onClickCreateSimulation}
-              >
-                Create
-              </Button>
-            </div>
-          ) : null}
+          <SwitchNode
+            value={stage}
+            cases={[
+              {
+                value: "PREPARING",
+                element: (
+                  <div className="flex items-center gap-2">
+                    <Input value={pendingName} maxLength={24} onChange={onChangePendingName} />
+                    <Button className="h-7" size="small" shape="square" onClick={onClickCancelPendingSimulation}>
+                      Cancel
+                    </Button>
+                    <Button
+                      className="h-7"
+                      size="small"
+                      shape="square"
+                      disabled={!pendingName.length}
+                      onClick={onClickCreateSimulation}
+                    >
+                      Create
+                    </Button>
+                  </div>
+                ),
+              },
+              {
+                value: "RUNNING",
+                element: <MemberPortraits />,
+              },
+            ]}
+          />
         </div>
       </div>
 
