@@ -1,9 +1,8 @@
 import { AppWeapon, CharacterBuff, EntityCalc, GeneralCalc } from "@Backend";
-import type { SimulationManager } from "@Simulator/simulation-control";
 import type { InputsByMember } from "./ModifyEventHost.types";
 
 import { Modifier_ } from "@Src/utils";
-import { useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
+import { useActiveMember, useActiveSimulation, SimulationManager } from "@Simulator/ToolboxProvider";
 
 // Component
 import { OnFieldMemberWatch } from "../components";

@@ -3,7 +3,7 @@ import { FaSyncAlt } from "react-icons/fa";
 import { Button, clsx } from "rond";
 
 import type { SimulationPartyData } from "@Src/types";
-import type { SimulationManager, SimulationProcessedChunk, SimulationSumary } from "@Simulator/simulation-control";
+import type { SimulationManager, SimulationProcessedChunk, SimulationSumary } from "@Simulator/ToolboxProvider";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import {

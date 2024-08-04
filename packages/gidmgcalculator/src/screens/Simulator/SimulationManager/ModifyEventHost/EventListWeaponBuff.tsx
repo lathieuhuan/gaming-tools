@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AppWeapon, WeaponBuff } from "@Backend";
-import type { ActiveMember } from "@Simulator/simulation-control";
+import type { ActiveMember } from "@Simulator/ToolboxProvider";
 import type { InputsByMember } from "./ModifyEventHost.types";
 
 import { getWeaponBuffDescription } from "@Src/utils";

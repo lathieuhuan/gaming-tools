@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { SwitchNode } from "rond";
 
-import type { ActiveMember, SimulationManager } from "@Simulator/simulation-control";
 import { $AppWeapon } from "@Src/services";
 import { ComplexSelect, ConstellationList } from "@Src/components";
-import { useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
+import { useActiveMember, useActiveSimulation, ActiveMember, SimulationManager } from "@Simulator/ToolboxProvider";
 import { AttributesTab, GrearsTab, TalentsTab } from "./detail-tabs";
 
 interface MemberDetailProps {

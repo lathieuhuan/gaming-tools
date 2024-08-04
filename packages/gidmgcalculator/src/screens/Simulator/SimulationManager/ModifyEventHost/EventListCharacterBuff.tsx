@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CharacterBuff } from "@Backend";
-import type { ActiveMember, SimulationManager } from "@Simulator/simulation-control";
+import type { ActiveMember, SimulationManager } from "@Simulator/ToolboxProvider";
 import type { InputsByMember } from "./ModifyEventHost.types";
 
 import { parseAbilityDescription } from "@Src/utils";

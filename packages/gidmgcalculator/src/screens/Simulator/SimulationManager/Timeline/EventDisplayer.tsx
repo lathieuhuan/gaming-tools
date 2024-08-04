@@ -1,5 +1,5 @@
 import { FaExclamationCircle } from "react-icons/fa";
-import { SimulationProcessedEvent } from "@Simulator/simulation-control";
+import type { SimulationProcessedEvent } from "@Simulator/ToolboxProvider";
 
 interface EventDisplayerProps {
   sideIconNode: React.ReactNode;
