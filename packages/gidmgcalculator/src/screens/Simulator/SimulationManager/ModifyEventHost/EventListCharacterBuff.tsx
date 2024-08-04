@@ -9,7 +9,7 @@ import { addEvent } from "@Store/simulator-slice";
 
 // Component
 import { GenshinModifierView } from "@Src/components";
-import { ActionButton } from "@Simulator/components";
+import { ActionButton } from "../components";
 
 interface EventListCharacterBuffProps {
   simulation: SimulationManager;

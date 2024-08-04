@@ -8,7 +8,7 @@ import { useActiveMember, useActiveSimulation } from "../ToolboxProvider";
 import { getTalentHitEventConfig, type TalentHitEventConfig } from "./HitEventHost.utils";
 
 // Components
-import { OnFieldMemberWatch } from "@Simulator/components";
+import { OnFieldMemberWatch } from "../components";
 import { HitEventCoordinator, HitEventDisplayer } from "./HitEventCoordinator";
 import { TalentHitEvent } from "./TalentHitEvent";
 

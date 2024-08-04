@@ -5,7 +5,7 @@ import type { SimulationAttackBonus, TalentHitEventMod } from "@Src/types";
 import type { TalentEventConfig } from "@Simulator/simulation-control";
 
 import { useTranslation } from "@Src/hooks";
-import { ActionButton } from "@Simulator/components";
+import { ActionButton } from "../components";
 import { useActiveSimulation } from "../ToolboxProvider";
 
 interface TalentHitEventProps {

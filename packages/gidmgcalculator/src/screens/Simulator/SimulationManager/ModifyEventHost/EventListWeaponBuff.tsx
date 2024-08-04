@@ -8,8 +8,8 @@ import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
 
 // Component
-import { ActionButton } from "@Simulator/components";
 import { GenshinModifierView } from "@Src/components";
+import { ActionButton } from "../components";
 
 interface EventListWeaponBuffProps {
   member: ActiveMember;

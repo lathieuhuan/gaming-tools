@@ -6,7 +6,7 @@ import { Modifier_ } from "@Src/utils";
 import { useActiveMember, useActiveSimulation } from "../ToolboxProvider";
 
 // Component
-import { OnFieldMemberWatch } from "@Simulator/components";
+import { OnFieldMemberWatch } from "../components";
 import { EventListCharacterBuff } from "./EventListCharacterBuff";
 import { EventListWeaponBuff } from "./EventListWeaponBuff";
 
