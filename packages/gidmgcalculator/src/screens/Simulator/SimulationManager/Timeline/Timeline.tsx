@@ -12,7 +12,7 @@ import {
   selectActiveMember,
   selectOnFieldMember,
 } from "@Store/simulator-slice";
-import { useActiveSimulation } from "../ToolboxProvider";
+import { useActiveSimulation } from "@Simulator/ToolboxProvider";
 
 // Component
 import { CharacterPortrait, GenshinImage } from "@Src/components";

@@ -32,7 +32,7 @@ import type {
 import type { PartyBonusControl } from "./party-bonus-control";
 
 import { pickProps, removeEmpty } from "@Src/utils";
-import { MemberBonusesControl } from "./low-level";
+import { MemberBonusesControl } from "./member-bonuses-control";
 
 export class MemberControl extends MemberBonusesControl {
   readonly info: SimulationMember;

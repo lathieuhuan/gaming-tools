@@ -4,7 +4,7 @@ import type { ActiveMember, SimulationManager } from "@Simulator/simulation-cont
 import { useTranslation } from "@Src/hooks";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
-import { useActiveMember, useActiveSimulation } from "../ToolboxProvider";
+import { useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { getTalentHitEventConfig, type TalentHitEventConfig } from "./HitEventHost.utils";
 
 // Components

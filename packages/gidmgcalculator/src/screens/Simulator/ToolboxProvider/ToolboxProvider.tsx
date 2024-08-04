@@ -5,7 +5,7 @@ import { RootState } from "@Store/store";
 
 import { useStore } from "@Src/features";
 import { getSimulation, selectActiveMember } from "@Store/simulator-slice";
-import { SimulationControl, ActiveMember } from "../../simulation-control";
+import { SimulationControl, ActiveMember } from "./simulation-control";
 import { ActiveMemberContext, ActiveSimulationContext } from "./toolbox-contexts";
 
 const selectActiveId = (state: RootState) => state.simulator.activeId;
@@ -44,7 +44,7 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
   return (
     <ActiveSimulationContext.Provider value={activeSimulation?.manager ?? null}>
       <ActiveMemberContext.Provider value={activeMember}>
-        <EventsProcessor control={activeSimulation?.control} />
+        {activeSimulation?.control ? <EventsProcessor control={activeSimulation.control} /> : null}
         {props.children}
       </ActiveMemberContext.Provider>
     </ActiveSimulationContext.Provider>
@@ -53,13 +53,10 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
 
 const selectChunks = (state: RootState) => getSimulation(state.simulator)?.chunks ?? [];
 
-function EventsProcessor({ control }: { control?: SimulationControl }) {
+function EventsProcessor({ control }: { control: SimulationControl }) {
   const chunks = useSelector(selectChunks);
 
   useEffect(() => {
-    if (!control) {
-      return;
-    }
     if (!chunks.length) {
       console.error("No chunks found");
       return;

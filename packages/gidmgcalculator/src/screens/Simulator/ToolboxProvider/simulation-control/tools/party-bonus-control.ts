@@ -1,6 +1,6 @@
 import { AppliedAttackBonus, AppliedAttributeBonus, GeneralCalc } from "@Backend";
 import { SimulationPartyData } from "@Src/types";
-import { CoreBonusesControl } from "./low-level";
+import { CoreBonusesControl } from "./core-bonuses-control";
 
 export class PartyBonusControl {
   private partyBonusCtrl = new CoreBonusesControl();

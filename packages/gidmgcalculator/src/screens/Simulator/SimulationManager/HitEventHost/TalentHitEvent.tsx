@@ -5,8 +5,8 @@ import type { SimulationAttackBonus, TalentHitEventMod } from "@Src/types";
 import type { TalentEventConfig } from "@Simulator/simulation-control";
 
 import { useTranslation } from "@Src/hooks";
+import { useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { ActionButton } from "../components";
-import { useActiveSimulation } from "../ToolboxProvider";
 
 interface TalentHitEventProps {
   item: CalcItem;

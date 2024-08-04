@@ -1,6 +1,6 @@
 import type { CalculationInfo, AppliedAttackBonus, AppliedAttributeBonus, TotalAttributeControl } from "@Backend";
 import type { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
-import type { PartyBonusControl } from "../party-bonus-control";
+import type { PartyBonusControl } from "./party-bonus-control";
 
 import { BuffApplierCore, EntityCalc } from "@Backend";
 import { CoreBonusesControl } from "./core-bonuses-control";

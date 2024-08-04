@@ -3,7 +3,7 @@ import type { SimulationManager } from "@Simulator/simulation-control";
 import type { InputsByMember } from "./ModifyEventHost.types";
 
 import { Modifier_ } from "@Src/utils";
-import { useActiveMember, useActiveSimulation } from "../ToolboxProvider";
+import { useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 
 // Component
 import { OnFieldMemberWatch } from "../components";

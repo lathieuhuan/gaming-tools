@@ -4,7 +4,7 @@ import { ATTACK_ELEMENTS } from "@Backend";
 
 import { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { useActiveSimulation } from "../ToolboxProvider";
+import { useActiveSimulation } from "@Simulator/ToolboxProvider";
 
 type SimulationBonus = SimulationAttributeBonus | SimulationAttackBonus;
 

@@ -19,6 +19,11 @@ import { CalcSetupSelect } from "./CalcSetupSelect";
 
 const selectPendingName = (state: RootState) => state.simulator.pendingSimulation.name;
 
+const selectActiveSimulationManageInfo = (state: RootState) => {
+  const { activeId, simulationManageInfos } = state.simulator;
+  return simulationManageInfos.find((info) => info.id === activeId);
+};
+
 type ModalType = "SELECT_CALC_SETUP" | "";
 
 interface SimulatorHeaderProps {
@@ -28,6 +33,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
   const dispatch = useDispatch();
   const store = useStore();
   const pendingName = useSelector(selectPendingName);
+  // const simulation = useSelector(())
 
   const [drawerActive, setDrawerActive] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("");
