@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { SwitchNode } from "rond";
 
+import type { ActiveMember, SimulationManager } from "@Simulator/simulation-control";
 import { $AppWeapon } from "@Src/services";
-import { ActiveMember, SimulationManager, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { ComplexSelect, ConstellationList } from "@Src/components";
+import { useActiveMember, useActiveSimulation } from "../ToolboxProvider";
 import { AttributesTab, GrearsTab, TalentsTab } from "./detail-tabs";
 
 interface MemberDetailProps {
@@ -47,7 +48,9 @@ function MemberDetailCore({ simulation, member }: MemberDetailProps) {
             },
             {
               value: "GEARS",
-              element: <GrearsTab weapon={member.info.weapon} appWeapon={appWeapon} artifacts={member.info.artifacts} />,
+              element: (
+                <GrearsTab weapon={member.info.weapon} appWeapon={appWeapon} artifacts={member.info.artifacts} />
+              ),
             },
             {
               value: "CONSTELLATION",

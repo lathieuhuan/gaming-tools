@@ -3,19 +3,16 @@ import { FaSyncAlt } from "react-icons/fa";
 import { Button, clsx } from "rond";
 
 import type { SimulationPartyData } from "@Src/types";
+import type { SimulationManager, SimulationProcessedChunk, SimulationSumary } from "@Simulator/simulation-control";
+
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
-  selectActiveMember,
   changeActiveMember,
   changeOnFieldMember,
+  selectActiveMember,
   selectOnFieldMember,
 } from "@Store/simulator-slice";
-import {
-  SimulationManager,
-  SimulationSumary,
-  SimulationProcessedChunk,
-  useActiveSimulation,
-} from "@Simulator/ToolboxProvider";
+import { useActiveSimulation } from "../ToolboxProvider";
 
 // Component
 import { CharacterPortrait, GenshinImage } from "@Src/components";

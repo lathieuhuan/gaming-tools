@@ -29,10 +29,10 @@ import type {
   SimulationPartyData,
   SimulationTarget,
 } from "@Src/types";
+import type { PartyBonusControl } from "./party-bonus-control";
 
 import { pickProps, removeEmpty } from "@Src/utils";
-import { MemberBonusesControl } from "./member-bonuses-control";
-import { PartyBonusControl } from "./party-bonus-control";
+import { MemberBonusesControl } from "./low-level";
 
 export class MemberControl extends MemberBonusesControl {
   readonly info: SimulationMember;

@@ -7,13 +7,17 @@ import type {
   SimulationPartyData,
   SimulationTarget,
 } from "@Src/types";
-import type { ProcessedHitEvent, ProcessedModifyEvent } from "../ToolboxProvider.types";
+import type { ProcessedHitEvent, ProcessedModifyEvent } from "./simulation-control.types";
 
 import { $AppCharacter, $AppWeapon } from "@Src/services";
-import { ConfigTalentHitEventArgs, MemberControl, TalentEventConfig } from "./member-control";
-import { PartyBonusControl } from "./party-bonus-control";
-import { ActiveMemberWatcher } from "./active-member-watcher";
-import { SimulationChunksControl } from "./simulation-chunks-control";
+import {
+  MemberControl,
+  PartyBonusControl,
+  SimulationChunksControl,
+  ActiveMemberWatcher,
+  type ConfigTalentHitEventArgs,
+  type TalentEventConfig,
+} from "./tools";
 
 export class SimulationControlCenter extends SimulationChunksControl {
   readonly partyData: SimulationPartyData = [];

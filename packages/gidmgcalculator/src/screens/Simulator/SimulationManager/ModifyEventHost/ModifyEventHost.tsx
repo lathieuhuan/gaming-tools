@@ -1,9 +1,11 @@
 import { AppWeapon, CharacterBuff, EntityCalc, GeneralCalc } from "@Backend";
+import type { SimulationManager } from "@Simulator/simulation-control";
+import type { InputsByMember } from "./ModifyEventHost.types";
 
-import { SimulationManager, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { Modifier_ } from "@Src/utils";
-import { InputsByMember } from "./ModifyEventHost.types";
+import { useActiveMember, useActiveSimulation } from "../ToolboxProvider";
 
+// Component
 import { OnFieldMemberWatch } from "@Simulator/components";
 import { EventListCharacterBuff } from "./EventListCharacterBuff";
 import { EventListWeaponBuff } from "./EventListWeaponBuff";
@@ -51,8 +53,6 @@ export function ModifyEventHost(props: { className?: string }) {
 
     // Artifact buff
     const setBonuses = GeneralCalc.getArtifactSetBonuses(info.artifacts);
-
-    
   }
 
   return (

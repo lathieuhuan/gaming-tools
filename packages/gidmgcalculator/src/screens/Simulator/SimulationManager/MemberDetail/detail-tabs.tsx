@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { AppWeapon, GeneralCalc, TotalAttribute } from "@Backend";
 
 import type { Character, SimulationMember } from "@Src/types";
-import type { SimulationManager } from "@Simulator/ToolboxProvider";
+import type { SimulationManager } from "@Simulator/simulation-control";
 import {
   ArtifactCard,
   AttributeTable,

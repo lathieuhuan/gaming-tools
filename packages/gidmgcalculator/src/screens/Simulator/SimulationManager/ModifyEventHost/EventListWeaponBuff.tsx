@@ -1,45 +1,40 @@
 import { useState } from "react";
-import { CharacterBuff } from "@Backend";
+import { AppWeapon, WeaponBuff } from "@Backend";
+import type { ActiveMember } from "@Simulator/simulation-control";
+import type { InputsByMember } from "./ModifyEventHost.types";
 
-import { ActiveMember, SimulationManager } from "@Simulator/ToolboxProvider";
-import { parseAbilityDescription } from "@Src/utils";
+import { getWeaponBuffDescription } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
-import { InputsByMember } from "./ModifyEventHost.types";
 
-import { GenshinModifierView } from "@Src/components";
+// Component
 import { ActionButton } from "@Simulator/components";
+import { GenshinModifierView } from "@Src/components";
 
-interface EventListCharacterBuffProps {
-  simulation: SimulationManager;
+interface EventListWeaponBuffProps {
   member: ActiveMember;
   initalInputsByMember?: InputsByMember;
-  buffs?: CharacterBuff[];
+  appWeapon: AppWeapon;
+  refi: number;
 }
-export function EventListCharacterBuff({
-  simulation,
-  member,
-  initalInputsByMember = {},
-  buffs = [],
-}: EventListCharacterBuffProps) {
+export function EventListWeaponBuff({ member, initalInputsByMember = {}, appWeapon, refi }: EventListWeaponBuffProps) {
   const dispatch = useDispatch();
   const [allInputs, setAllInputs] = useState(initalInputsByMember);
 
   const inputsList = allInputs[member.data.code];
+  const { buffs = [] } = appWeapon;
 
-  const onMakeEvent = (mod: CharacterBuff, inputs: number[], alsoSwitch?: boolean) => {
-    const performerCode = member.data.code;
-
+  const onMakeEvent = (mod: WeaponBuff, inputs: number[], alsoSwitch?: boolean) => {
     dispatch(
       addEvent({
         type: "MODIFY",
         performer: {
           type: "CHARACTER",
-          code: performerCode,
+          code: member.data.code,
         },
         modifier: {
-          type: "CHARACTER",
-          code: performerCode,
+          type: "WEAPON",
+          code: appWeapon.code,
           id: mod.index,
           inputs,
         },
@@ -68,18 +63,9 @@ export function EventListCharacterBuff({
           <div key={modifier.index}>
             <GenshinModifierView
               mutable={true}
-              heading={modifier.src}
+              heading={appWeapon.name}
               headingVariant="CUSTOM"
-              description={parseAbilityDescription(
-                modifier,
-                {
-                  char: member.info,
-                  appChar: member.data,
-                  partyData: simulation.partyData,
-                },
-                inputs,
-                true
-              )}
+              description={getWeaponBuffDescription(appWeapon.descriptions, modifier, refi)}
               checked={false}
               inputs={inputs}
               inputConfigs={inputConfigs}

@@ -1,5 +1,5 @@
 import type { SimulationChunk, SimulationEvent, SimulationMember, SimulationTarget } from "@Src/types";
-import type { SimulationProcessedEvent } from "../ToolboxProvider.types";
+import type { SimulationProcessedEvent } from "./simulation-control.types";
 
 import { SimulationControlCenter } from "./simulation-control-center";
 

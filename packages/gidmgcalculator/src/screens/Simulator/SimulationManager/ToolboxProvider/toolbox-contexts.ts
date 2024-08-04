@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import type { ActiveMember, SimulationManager } from "./simulation-control";
+import type { ActiveMember, SimulationManager } from "../../simulation-control";
 
 export const ActiveSimulationContext = createContext<SimulationManager | null | undefined>(undefined);
 

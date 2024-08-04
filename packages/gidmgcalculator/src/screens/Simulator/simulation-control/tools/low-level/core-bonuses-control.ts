@@ -1,5 +1,5 @@
-import { AppliedAttackBonus, AppliedAttributeBonus } from "@Backend";
-import { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
+import type { AppliedAttackBonus, AppliedAttributeBonus } from "@Backend";
+import type { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
 
 export class CoreBonusesControl {
   attrBonus: SimulationAttributeBonus[] = [];

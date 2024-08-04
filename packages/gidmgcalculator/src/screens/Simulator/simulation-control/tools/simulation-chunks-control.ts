@@ -1,4 +1,4 @@
-import { SimulationProcessedChunk, SimulationSumary } from "../ToolboxProvider.types";
+import type { SimulationProcessedChunk, SimulationSumary } from "../simulation-control.types";
 
 type OnChangeChunks = (chunks: SimulationProcessedChunk[], sumary: SimulationSumary) => void;
 

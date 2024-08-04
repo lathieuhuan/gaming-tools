@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 
 import type { CalcItem } from "@Backend";
 import type { SimulationAttackBonus, TalentHitEventMod } from "@Src/types";
+import type { TalentEventConfig } from "@Simulator/simulation-control";
+
 import { useTranslation } from "@Src/hooks";
-import { TalentEventConfig, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { ActionButton } from "@Simulator/components";
+import { useActiveSimulation } from "../ToolboxProvider";
 
 interface TalentHitEventProps {
   item: CalcItem;

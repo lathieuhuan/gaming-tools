@@ -5,8 +5,8 @@ import { RootState } from "@Store/store";
 
 import { useStore } from "@Src/features";
 import { getSimulation, selectActiveMember } from "@Store/simulator-slice";
+import { SimulationControl, ActiveMember } from "../../simulation-control";
 import { ActiveMemberContext, ActiveSimulationContext } from "./toolbox-contexts";
-import { SimulationControl, ActiveMember } from "./simulation-control";
 
 const selectActiveId = (state: RootState) => state.simulator.activeId;
 

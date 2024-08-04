@@ -1,9 +1,10 @@
 import type { HitEvent } from "@Src/types";
+import type { ActiveMember, SimulationManager } from "@Simulator/simulation-control";
 
-import { ActiveMember, SimulationManager, useActiveMember, useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { useTranslation } from "@Src/hooks";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
+import { useActiveMember, useActiveSimulation } from "../ToolboxProvider";
 import { getTalentHitEventConfig, type TalentHitEventConfig } from "./HitEventHost.utils";
 
 // Components

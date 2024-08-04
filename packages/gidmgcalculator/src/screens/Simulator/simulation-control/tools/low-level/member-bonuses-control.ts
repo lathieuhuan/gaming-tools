@@ -1,8 +1,8 @@
+import type { CalculationInfo, AppliedAttackBonus, AppliedAttributeBonus, TotalAttributeControl } from "@Backend";
 import type { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
-import { AppliedAttackBonus, AppliedAttributeBonus, TotalAttributeControl } from "@Src/backend";
+import type { PartyBonusControl } from "../party-bonus-control";
 
-import { BuffApplierCore, CalculationInfo, EntityCalc } from "@Backend";
-import { PartyBonusControl } from "./party-bonus-control";
+import { BuffApplierCore, EntityCalc } from "@Backend";
 import { CoreBonusesControl } from "./core-bonuses-control";
 
 export class MemberBonusesControl extends BuffApplierCore {
