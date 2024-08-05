@@ -81,6 +81,8 @@ export type SimulationChunk = {
 };
 
 export type Simulation = {
+  id: number;
+  name: string;
   members: SimulationMember[];
   chunks: SimulationChunk[];
   target: SimulationTarget;

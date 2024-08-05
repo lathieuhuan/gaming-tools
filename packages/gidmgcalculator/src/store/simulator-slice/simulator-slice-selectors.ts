@@ -1,6 +1,8 @@
 import type { RootState } from "../store";
 import { getSimulation } from "./simulator-slice.utils";
 
+export const selectActiveSimulationId = (state: RootState) => state.simulator.activeId;
+
 export const selectActiveMember = (state: RootState) => state.simulator.activeMember;
 
 export function selectOnFieldMember(state: RootState) {

@@ -6,6 +6,7 @@ import type {
   CreateSimulationPayload,
   PendingSimulation,
   SimulatorState,
+  UpdateSimulatorPayload,
 } from "./simulator-slice.types";
 import { Setup_, removeEmpty, uuid } from "@Src/utils";
 import { $AppCharacter, $AppSettings } from "@Src/services";
@@ -19,8 +20,7 @@ const initialState: SimulatorState = {
   },
   activeId: 0,
   activeMember: 0,
-  simulationManageInfos: [],
-  simulationsById: {},
+  simulations: [],
 };
 
 export const DEFAULT_SIMULATION_NAME = "New Simulation";
@@ -29,6 +29,12 @@ export const simulatorSlice = createSlice({
   name: "simulator",
   initialState,
   reducers: {
+    updateSimulator: (state, action: UpdateSimulatorPayload) => {
+      return {
+        ...state,
+        ...action.payload,
+      };
+    },
     prepareSimulation: (state, action: PayloadAction<Partial<PendingSimulation> | undefined>) => {
       const { name = DEFAULT_SIMULATION_NAME, members = [null, null, null, null] } = action.payload || {};
 
@@ -75,15 +81,13 @@ export const simulatorSlice = createSlice({
 
         state.activeId = id;
         state.activeMember = ownerCode;
-        state.simulationManageInfos.push({
+        state.simulations.unshift({
           id,
           name,
-        });
-        state.simulationsById[id] = {
           members,
           chunks,
           target,
-        };
+        });
 
         state.stage = "RUNNING";
         state.pendingSimulation = initialState.pendingSimulation;
@@ -102,9 +106,6 @@ export const simulatorSlice = createSlice({
         _addEvent(chunks, event, performerCode, alsoSwitch);
       }
     },
-    changeActiveMember: (state, action: PayloadAction<number>) => {
-      state.activeMember = action.payload;
-    },
     changeOnFieldMember: (state, action: PayloadAction<number>) => {
       const chunks = getSimulation(state)?.chunks;
 
@@ -116,6 +117,7 @@ export const simulatorSlice = createSlice({
 });
 
 export const {
+  updateSimulator,
   prepareSimulation,
   cancelPendingSimulation,
   updatePendingSimulationName,
@@ -123,7 +125,6 @@ export const {
   updatePendingMember,
   createSimulation,
   addEvent,
-  changeActiveMember,
   changeOnFieldMember,
 } = simulatorSlice.actions;
 

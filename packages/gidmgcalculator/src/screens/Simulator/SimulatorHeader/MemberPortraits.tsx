@@ -1,20 +1,17 @@
 import { CharacterPortrait } from "@Src/components";
 import { useStoreSnapshot } from "@Src/features";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { changeActiveMember, selectActiveMember } from "@Store/simulator-slice";
+import { getSimulation, selectActiveMember, updateSimulator } from "@Store/simulator-slice";
 import { useActiveSimulation } from "@Simulator/ToolboxProvider";
 
 export function MemberPortraits() {
   const dispatch = useDispatch();
-  const simulationName = useStoreSnapshot((state) => {
-    const { activeId, simulationManageInfos } = state.simulator;
-    return simulationManageInfos.find((info) => info.id === activeId)?.name;
-  });
+  const simulationName = useStoreSnapshot((state) => getSimulation(state.simulator)?.name);
   const simulation = useActiveSimulation();
   const activeMemberCode = useSelector(selectActiveMember);
 
   const onClickMember = (code: number) => {
-    dispatch(changeActiveMember(code));
+    dispatch(updateSimulator({ activeMember: code }));
   };
 
   return (

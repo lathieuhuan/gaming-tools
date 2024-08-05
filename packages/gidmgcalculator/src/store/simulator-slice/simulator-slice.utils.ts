@@ -6,7 +6,8 @@ import { uuid } from "@Src/utils";
  * @param id default to activeId
  */
 export function getSimulation(state: SimulatorState, id: number | string = state.activeId): Simulation | null {
-  return state.simulationsById[id] ?? null;
+  const simulation = id ? state.simulations.find((simulation) => simulation.id === id) : undefined;
+  return simulation ?? null;
 }
 
 export function getNextEventId(chunks: SimulationChunk[]) {

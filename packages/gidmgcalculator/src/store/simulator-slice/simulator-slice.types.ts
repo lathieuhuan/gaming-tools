@@ -21,9 +21,12 @@ export type SimulatorState = {
   pendingSimulation: PendingSimulation;
   activeId: number;
   activeMember: number;
-  simulationManageInfos: SimulationManageInfo[];
-  simulationsById: Record<string, Simulation>;
+  simulations: Simulation[];
 };
+
+export type UpdateSimulatorPayload = PayloadAction<
+  Partial<Pick<SimulatorState, "stage" | "pendingSimulation" | "activeId" | "activeMember" | "simulations">>
+>;
 
 export type CreateSimulationPayload = PayloadAction<{
   name: string;

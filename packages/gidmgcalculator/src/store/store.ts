@@ -21,9 +21,20 @@ export function setupStore(args?: { persistingUserData?: boolean }) {
     userdbSliceReducers
   );
 
+  const simulatorPersistReducers = persistReducer(
+    {
+      key: "simulator",
+      version: 0,
+      storage,
+      // blacklist: args?.persistingUserData ? [] : Object.keys(initialState),
+      whitelist: ['simulations']
+    },
+    simulatorSliceReducers
+  );
+
   const rootReducer = combineReducers({
     calculator: calculatorSliceReducers,
-    simulator: simulatorSliceReducers,
+    simulator: simulatorPersistReducers,
     ui: uiSliceReducers,
     userdb: userdbPersistReducers,
   });

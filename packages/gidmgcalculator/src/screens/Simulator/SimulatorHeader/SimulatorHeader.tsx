@@ -20,11 +20,6 @@ import { MemberPortraits } from "./MemberPortraits";
 
 const selectPendingName = (state: RootState) => state.simulator.pendingSimulation.name;
 
-const selectActiveSimulationManageInfo = (state: RootState) => {
-  const { activeId, simulationManageInfos } = state.simulator;
-  return simulationManageInfos.find((info) => info.id === activeId);
-};
-
 type ModalType = "SELECT_CALC_SETUP" | "";
 
 interface SimulatorHeaderProps {
