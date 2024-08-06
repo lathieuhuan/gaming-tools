@@ -24,15 +24,18 @@ interface TalentListProps {
   className?: ClassValue;
   char: Character;
   party?: Party;
+  /** Default to true */
+  mutable?: boolean;
   onChangeTalentLevel?: (talentType: LevelableTalentType, newLevel: number) => void;
 }
-export function TalentList({ className, char, party, onChangeTalentLevel }: TalentListProps) {
+export function TalentList(props: TalentListProps) {
+  const { char, mutable = true } = props;
   const [atDetail, setAtDetail] = useState(false);
   const [detailIndex, setDetailIndex] = useState(-1);
 
   const appChar = $AppCharacter.get(char.name);
   const { weaponType, vision, activeTalents, passiveTalents } = appChar;
-  const partyData = party ? $AppCharacter.getPartyData(party) : undefined;
+  const partyData = props.party ? $AppCharacter.getPartyData(props.party) : undefined;
   const elmtText = `text-${vision}`;
   const numOfActives = Object.keys(activeTalents).length;
 
@@ -73,7 +76,7 @@ export function TalentList({ className, char, party, onChangeTalentLevel }: Tale
   const immutableLvNode = <p className={`ml-1 ${elmtText} font-bold`}>1</p>;
 
   return (
-    <CarouselSpace current={atDetail ? 1 : 0} className={className}>
+    <CarouselSpace current={atDetail ? 1 : 0} className={props.className}>
       <div className="h-full hide-scrollbar flex flex-col space-y-3">
         {TALENT_TYPES.map((talentType, index) => {
           const isAltSprint = talentType === "altSprint";
@@ -94,7 +97,7 @@ export function TalentList({ className, char, party, onChangeTalentLevel }: Tale
               value={isAltSprint ? 1 : char[talentType]}
               transparent
               options={genSequentialOptions(10)}
-              onChange={(value) => (isAltSprint ? null : onChangeTalentLevel?.(talentType, +value))}
+              onChange={(value) => (isAltSprint ? null : props.onChangeTalentLevel?.(talentType, +value))}
             />
           );
 
@@ -105,7 +108,7 @@ export function TalentList({ className, char, party, onChangeTalentLevel }: Tale
               xtraLevel,
             },
             index,
-            isAltSprint ? immutableLvNode : mutableLvNode
+            isAltSprint || !mutable ? immutableLvNode : mutableLvNode
           );
         })}
 
