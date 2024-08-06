@@ -26,7 +26,6 @@ export function setupStore(args?: { persistingUserData?: boolean }) {
       key: "simulator",
       version: 0,
       storage,
-      // blacklist: args?.persistingUserData ? [] : Object.keys(initialState),
       whitelist: ['simulations']
     },
     simulatorSliceReducers

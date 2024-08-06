@@ -2,23 +2,23 @@ import { useState } from "react";
 import { Button, Drawer, Input, Modal, SwitchNode } from "rond";
 import { FaCaretDown, FaCaretRight } from "react-icons/fa";
 
-import { RootState } from "@Store/store";
 import type { SimulationMember } from "@Src/types";
-import { useStore } from "@Src/features";
+// import { useStore } from "@Src/features";
+import type { RootState } from "@Store/store";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   SimulatorStage,
-  cancelPendingSimulation,
-  createSimulation,
-  prepareSimulation,
-  updatePendingSimulationName,
+  cancelAssembledSimulation,
+  completeAssembledSimulation,
+  startAssembledSimulation,
+  updateAssembledSimulation,
 } from "@Store/simulator-slice";
 
-import { SimulatorControlCenter } from "../SimulatorControlCenter";
+import { SimulationList } from "./SimulationList";
 import { CalcSetupSelect } from "./CalcSetupSelect";
 import { MemberPortraits } from "./MemberPortraits";
 
-const selectPendingName = (state: RootState) => state.simulator.pendingSimulation.name;
+const selectName = (state: RootState) => state.simulator.assembledSimulation.name;
 
 type ModalType = "SELECT_CALC_SETUP" | "";
 
@@ -27,9 +27,8 @@ interface SimulatorHeaderProps {
 }
 export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
   const dispatch = useDispatch();
-  const store = useStore();
-  const pendingName = useSelector(selectPendingName);
-  // const simulation = useSelector(())
+  // const store = useStore();
+  const assembledName = useSelector(selectName);
 
   const [drawerActive, setDrawerActive] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("");
@@ -38,32 +37,15 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
 
   const closeModal = () => setModalType("");
 
-  const onChangePendingName = (value: string) => {
-    dispatch(updatePendingSimulationName(value));
-  };
-
-  const createEmptyPendingSimulation = () => {
-    dispatch(prepareSimulation());
-  };
-
-  const onClickCancelPendingSimulation = () => {
-    dispatch(cancelPendingSimulation());
-  };
-
-  const onClickCreateSimulation = () => {
-    const pending = store.select((state) => state.simulator.pendingSimulation);
-    const members: SimulationMember[] = [];
-
-    for (const member of pending.members) {
-      if (member) members.push(member);
-    }
-    if (members.length) {
-      dispatch(
-        createSimulation({
-          name: pending.name,
-          members,
-        })
-      );
+  const onRequestAssembleSimulation = (source: "NONE" | "CALCULATOR") => {
+    switch (source) {
+      case "NONE":
+        dispatch(startAssembledSimulation());
+        closeDrawer();
+        break;
+      case "CALCULATOR":
+        setModalType("SELECT_CALC_SETUP");
+        break;
     }
   };
 
@@ -83,19 +65,28 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
             value={stage}
             cases={[
               {
-                value: "PREPARING",
+                value: "ASSEMBLING",
                 element: (
                   <div className="flex items-center gap-2">
-                    <Input value={pendingName} maxLength={24} onChange={onChangePendingName} />
-                    <Button className="h-7" size="small" shape="square" onClick={onClickCancelPendingSimulation}>
+                    <Input
+                      value={assembledName}
+                      maxLength={24}
+                      onChange={(value) => dispatch(updateAssembledSimulation({ name: value }))}
+                    />
+                    <Button
+                      className="h-7"
+                      size="small"
+                      shape="square"
+                      onClick={() => dispatch(cancelAssembledSimulation())}
+                    >
                       Cancel
                     </Button>
                     <Button
                       className="h-7"
                       size="small"
                       shape="square"
-                      disabled={!pendingName.length}
-                      onClick={onClickCreateSimulation}
+                      disabled={!assembledName.length}
+                      onClick={() => dispatch(completeAssembledSimulation())}
                     >
                       Create
                     </Button>
@@ -129,17 +120,28 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
             />
           </div>
 
-          <SimulatorControlCenter
-            className="grow hide-scrollbar"
-            onClickCreateSimulation={(source) => {
-              switch (source) {
-                case "NONE":
-                  createEmptyPendingSimulation();
-                  break;
-              }
-              closeDrawer();
-            }}
-          />
+          <div className="grow hide-scrollbar">
+            <div>
+              <p className="text-sm text-heading-color font-medium">Create Simulation</p>
+
+              <div className="mt-2 flex flex-wrap gap-2">
+                <Button size="small" onClick={() => onRequestAssembleSimulation("NONE")}>
+                  Empty
+                </Button>
+                <Button size="small" onClick={() => onRequestAssembleSimulation("CALCULATOR")}>
+                  With Calculator Setup
+                </Button>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <p className="text-sm text-heading-color font-medium">My Simulations</p>
+            </div>
+
+            <div className="mt-2 pl-2">
+              <SimulationList onRequestEditSimulation={closeDrawer} onRequestDuplicateSimulation={closeDrawer} />
+            </div>
+          </div>
         </div>
       </Drawer>
 
@@ -159,8 +161,14 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
               },
             ];
 
-            dispatch(createSimulation({ name: "[missing]", members }));
+            dispatch(
+              startAssembledSimulation({
+                name: setup.name,
+                members,
+              })
+            );
             closeModal();
+            closeDrawer();
           }}
         />
       </Modal.Core>

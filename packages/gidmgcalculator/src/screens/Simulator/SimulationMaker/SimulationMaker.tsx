@@ -10,7 +10,7 @@ import { Utils_ } from "@Src/utils";
 import { RootState } from "@Store/store";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { parseUserCharacter } from "@Store/store.utils";
-import { updatePendingMember, updatePendingMembers } from "@Store/simulator-slice";
+import { updateAssembledSimulation, updateAssembledMember } from "@Store/simulator-slice";
 
 // Component
 import { ArtifactForge, ArtifactInventory, Tavern, WeaponForge, WeaponInventory } from "@Src/components";
@@ -25,9 +25,9 @@ type ModalType =
   | "ARTIFACT_INVENTORY"
   | "";
 
-const selectPendingMembers = (state: RootState) => state.simulator.pendingSimulation.members;
+const selectAssembledMembers = (state: RootState) => state.simulator.assembledSimulation.members;
 
-const useAppMembers = (members: ReturnType<typeof selectPendingMembers>) => {
+const useAppMembers = (members: ReturnType<typeof selectAssembledMembers>) => {
   const appMembers = useRef<AppCharacter[]>([]);
 
   members.forEach((member, i) => {
@@ -48,7 +48,7 @@ interface SimulationMakerProps {
 function SimulationMakerCore({ className }: SimulationMakerProps) {
   const dispatch = useDispatch();
   const store = useStore();
-  const members = useSelector(selectPendingMembers);
+  const members = useSelector(selectAssembledMembers);
   const appMembers = useAppMembers(members);
 
   const [modalType, setModalType] = useState<ModalType>("");
@@ -86,7 +86,7 @@ function SimulationMakerCore({ className }: SimulationMakerProps) {
 
   const updateMember = (memberIndex: number, newConfig: Partial<SimulationMember> | null) => {
     dispatch(
-      updatePendingMember({
+      updateAssembledMember({
         at: memberIndex,
         config: newConfig,
       })
@@ -218,7 +218,7 @@ function SimulationMakerCore({ className }: SimulationMakerProps) {
           };
           appMembers[selected.current.memberIndex] = $AppCharacter.get(char.name);
 
-          dispatch(updatePendingMembers(newMembers));
+          dispatch(updateAssembledSimulation({ members: newMembers }));
         }}
         onClose={closeModal}
       />

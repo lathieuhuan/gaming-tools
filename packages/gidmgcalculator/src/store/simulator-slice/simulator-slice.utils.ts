@@ -10,6 +10,10 @@ export function getSimulation(state: SimulatorState, id: number | string = state
   return simulation ?? null;
 }
 
+export function fillAssembledMembers(members: (SimulationMember | null)[]) {
+  return Array.from({ length: 4 }, (_, i) => members[i] ?? null);
+}
+
 export function getNextEventId(chunks: SimulationChunk[]) {
   let id = 0;
 

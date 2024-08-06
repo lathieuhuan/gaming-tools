@@ -3,18 +3,19 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { SimulationMember } from "@Src/types";
 import type {
   AddEventPayload,
-  CreateSimulationPayload,
-  PendingSimulation,
+  AssembledSimulation,
   SimulatorState,
+  UpdateAssembledSimulationPayload,
   UpdateSimulatorPayload,
 } from "./simulator-slice.types";
 import { Setup_, removeEmpty, uuid } from "@Src/utils";
 import { $AppCharacter, $AppSettings } from "@Src/services";
-import { _addEvent, getNextEventId, getSimulation } from "./simulator-slice.utils";
+import { _addEvent, fillAssembledMembers, getNextEventId, getSimulation } from "./simulator-slice.utils";
 
 const initialState: SimulatorState = {
   stage: "WAITING",
-  pendingSimulation: {
+  assembledSimulation: {
+    id: 0,
     name: "",
     members: [],
   },
@@ -30,67 +31,62 @@ export const simulatorSlice = createSlice({
   initialState,
   reducers: {
     updateSimulator: (state, action: UpdateSimulatorPayload) => {
-      return {
-        ...state,
-        ...action.payload,
-      };
-    },
-    prepareSimulation: (state, action: PayloadAction<Partial<PendingSimulation> | undefined>) => {
-      const { name = DEFAULT_SIMULATION_NAME, members = [null, null, null, null] } = action.payload || {};
+      const newState = Object.assign(state, action.payload);
 
-      state.stage = "PREPARING";
-      state.pendingSimulation = {
+      if (newState.assembledSimulation.members.length < 4) {
+        newState.assembledSimulation.members = fillAssembledMembers(newState.assembledSimulation.members);
+      }
+      return newState;
+    },
+    startAssembledSimulation: (state, action: PayloadAction<Partial<AssembledSimulation> | undefined>) => {
+      const { id = Date.now(), name = DEFAULT_SIMULATION_NAME, members = [] } = action.payload || {};
+
+      state.stage = "ASSEMBLING";
+      state.assembledSimulation = {
+        id,
         name,
-        members,
+        members: fillAssembledMembers(members),
       };
     },
-    cancelPendingSimulation: (state) => {
+    cancelAssembledSimulation: (state) => {
       state.stage = state.activeId ? "RUNNING" : "WAITING";
-      state.pendingSimulation = initialState.pendingSimulation;
+      state.assembledSimulation = initialState.assembledSimulation;
     },
-    updatePendingSimulationName: (state, action: PayloadAction<string>) => {
-      state.pendingSimulation.name = action.payload;
+    updateAssembledSimulation: (state, action: UpdateAssembledSimulationPayload) => {
+      Object.assign(state.assembledSimulation, action.payload);
     },
-    updatePendingMembers: (state, action: PayloadAction<(SimulationMember | null)[]>) => {
-      state.pendingSimulation.members = action.payload;
-    },
-    updatePendingMember: (state, action: PayloadAction<{ at: number; config: Partial<SimulationMember> | null }>) => {
+    updateAssembledMember: (state, action: PayloadAction<{ at: number; config: Partial<SimulationMember> | null }>) => {
       const { at, config } = action.payload;
 
-      state.pendingSimulation.members = state.pendingSimulation.members.map((member, index) =>
+      state.assembledSimulation.members = state.assembledSimulation.members.map((member, index) =>
         index === at ? (member && config ? { ...member, ...config } : null) : member
       );
     },
-    createSimulation: (state, action: CreateSimulationPayload) => {
-      const id = Date.now();
-      const {
-        name,
-        members,
-        target = Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
-      } = action.payload;
+    completeAssembledSimulation: (state) => {
+      const members = state.assembledSimulation.members.reduce(
+        (members: SimulationMember[], member) => (member ? members.concat(member) : members),
+        []
+      );
 
-      if (members) {
-        const ownerCode = $AppCharacter.get(members[0].name).code;
-
+      if (members.length) {
+        const activeMember = $AppCharacter.get(members[0].name).code;
         const initialChunk = {
           id: uuid(),
-          ownerCode,
+          ownerCode: activeMember,
           events: [],
         };
-        const { chunks = [initialChunk] } = action.payload;
 
-        state.activeId = id;
-        state.activeMember = ownerCode;
+        state.activeId = state.assembledSimulation.id;
+        state.activeMember = activeMember;
         state.simulations.unshift({
-          id,
-          name,
+          ...state.assembledSimulation,
           members,
-          chunks,
-          target,
+          chunks: [initialChunk],
+          target: Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
         });
 
         state.stage = "RUNNING";
-        state.pendingSimulation = initialState.pendingSimulation;
+        state.assembledSimulation = initialState.assembledSimulation;
       }
     },
     addEvent: (state, action: AddEventPayload) => {
@@ -118,12 +114,11 @@ export const simulatorSlice = createSlice({
 
 export const {
   updateSimulator,
-  prepareSimulation,
-  cancelPendingSimulation,
-  updatePendingSimulationName,
-  updatePendingMembers,
-  updatePendingMember,
-  createSimulation,
+  startAssembledSimulation,
+  cancelAssembledSimulation,
+  updateAssembledSimulation,
+  updateAssembledMember,
+  completeAssembledSimulation,
   addEvent,
   changeOnFieldMember,
 } = simulatorSlice.actions;

@@ -24,7 +24,7 @@ export function Simulator() {
             value={stage}
             cases={[
               {
-                value: "PREPARING",
+                value: "ASSEMBLING",
                 element: <SimulationMaker />,
               },
               {

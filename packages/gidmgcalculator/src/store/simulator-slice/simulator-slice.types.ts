@@ -1,39 +1,27 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type {
-  HitEvent,
-  ModifyEvent,
-  Simulation,
-  SimulationChunk,
-  SimulationManageInfo,
-  SimulationMember,
-  SimulationTarget,
-} from "@Src/types";
+import type { HitEvent, ModifyEvent, Simulation, SimulationMember } from "@Src/types";
 
-export type SimulatorStage = "WAITING" | "PREPARING" | "RUNNING";
+export type SimulatorStage = "WAITING" | "ASSEMBLING" | "RUNNING";
 
-export type PendingSimulation = {
+export type AssembledSimulation = {
+  id: number;
   name: string;
   members: (SimulationMember | null)[];
 };
 
 export type SimulatorState = {
   stage: SimulatorStage;
-  pendingSimulation: PendingSimulation;
+  assembledSimulation: AssembledSimulation;
   activeId: number;
   activeMember: number;
   simulations: Simulation[];
 };
 
 export type UpdateSimulatorPayload = PayloadAction<
-  Partial<Pick<SimulatorState, "stage" | "pendingSimulation" | "activeId" | "activeMember" | "simulations">>
+  Partial<Pick<SimulatorState, "stage" | "assembledSimulation" | "activeId" | "activeMember" | "simulations">>
 >;
 
-export type CreateSimulationPayload = PayloadAction<{
-  name: string;
-  members: SimulationMember[];
-  chunks?: SimulationChunk[];
-  target?: SimulationTarget;
-}>;
+export type UpdateAssembledSimulationPayload = PayloadAction<Partial<Omit<AssembledSimulation, "id">>>;
 
 export type AddEventPayload = PayloadAction<
   (Omit<ModifyEvent, "id"> | Omit<HitEvent, "id">) & {

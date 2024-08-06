@@ -1,11 +1,6 @@
-import type { AppCharacter, AppliedAttackBonus, AppliedAttributeBonus, AttackBonusKey, AttackBonusType, AttributeStat, LevelableTalentType } from "@Backend";
+import type { AppCharacter, AppliedAttackBonus, AppliedAttributeBonus, LevelableTalentType } from "@Backend";
 import type { Artifact, Character, Weapon } from "./global.types";
-import type { ElementModCtrl, PartyData, Target } from "./calculator.types";
-
-export type SimulationManageInfo = {
-  id: number;
-  name: string;
-};
+import type { ElementModCtrl, Target } from "./calculator.types";
 
 /** ========== EVENTS ========== */
 
