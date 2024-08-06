@@ -23,7 +23,7 @@ export const Drawer = ({
   position = "right",
   active,
   width = "20rem",
-  destroyOnClose,
+  destroyOnClose = true,
   children,
   ...overlayProps
 }: DrawerProps) => {

@@ -1,12 +1,13 @@
 import { useRef, useState } from "react";
 import { FaCaretDown, FaCopy, FaTrashAlt } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { ButtonGroup, ConfirmModal, Radio } from "rond";
+import { ButtonGroup, ConfirmModal, Radio, clsx } from "rond";
+import type { Simulation } from "@Src/types";
+import type { RootState } from "@Store/store";
 
-import { Simulation } from "@Src/types";
+import { MAX_SIMULATION_NAME_LENGTH } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { RootState } from "@Store/store";
 import { selectActiveSimulationId, updateSimulator } from "@Store/simulator-slice";
 
 const selectSimulationss = (state: RootState) => state.simulator.simulations;
@@ -21,7 +22,7 @@ export function SimulationList(props: SimulationListProps) {
   const dispatch = useDispatch();
   const activeId = useSelector(selectActiveSimulationId);
   const simulations = useSelector(selectSimulationss);
-  const [expandedId, setExpandedId] = useState(0);
+  const [expandedId, setExpandedId] = useState(activeId);
   const [modalType, setModalType] = useState<ModalType>("");
   const simulationName = useRef("");
 
@@ -97,24 +98,22 @@ export function SimulationList(props: SimulationListProps) {
     dispatch(
       updateSimulator({
         stage: "ASSEMBLING",
-        assembledSimulation: {
-          id: simulation.id,
-          name: simulation.name,
-          members: simulation.members,
-        },
+        assembledSimulation: simulation,
       })
     );
     props.onRequestEditSimulation();
   };
 
   const onRequestDuplicateSimulation = (simulation: Simulation) => {
+    const addedString = "(Copy)";
+
     dispatch(
       updateSimulator({
         stage: "ASSEMBLING",
         assembledSimulation: {
+          ...simulation,
           id: Date.now(),
-          name: simulation.name,
-          members: simulation.members,
+          name: clsx(simulation.name.slice(0, MAX_SIMULATION_NAME_LENGTH - addedString.length - 1), addedString),
         },
       })
     );

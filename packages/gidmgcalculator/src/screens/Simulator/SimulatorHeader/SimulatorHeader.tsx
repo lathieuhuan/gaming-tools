@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { Button, Drawer, Input, Modal, SwitchNode } from "rond";
 import { FaCaretDown, FaCaretRight } from "react-icons/fa";
-
 import type { SimulationMember } from "@Src/types";
-// import { useStore } from "@Src/features";
 import type { RootState } from "@Store/store";
+
+import { MAX_SIMULATION_NAME_LENGTH } from "@Src/constants";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
-  SimulatorStage,
   cancelAssembledSimulation,
   completeAssembledSimulation,
   startAssembledSimulation,
   updateAssembledSimulation,
+  type SimulatorStage,
 } from "@Store/simulator-slice";
 
 import { SimulationList } from "./SimulationList";
@@ -27,7 +27,6 @@ interface SimulatorHeaderProps {
 }
 export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
   const dispatch = useDispatch();
-  // const store = useStore();
   const assembledName = useSelector(selectName);
 
   const [drawerActive, setDrawerActive] = useState(false);
@@ -70,7 +69,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
                   <div className="flex items-center gap-2">
                     <Input
                       value={assembledName}
-                      maxLength={24}
+                      maxLength={MAX_SIMULATION_NAME_LENGTH}
                       onChange={(value) => dispatch(updateAssembledSimulation({ name: value }))}
                     />
                     <Button
@@ -88,7 +87,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
                       disabled={!assembledName.length}
                       onClick={() => dispatch(completeAssembledSimulation())}
                     >
-                      Create
+                      Done
                     </Button>
                   </div>
                 ),

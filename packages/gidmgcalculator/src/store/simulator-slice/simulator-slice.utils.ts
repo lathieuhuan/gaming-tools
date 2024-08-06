@@ -1,6 +1,15 @@
 import type { Simulation, SimulationChunk, SimulationEvent, SimulationMember } from "@Src/types";
 import type { SimulatorState } from "./simulator-slice.types";
 import { uuid } from "@Src/utils";
+import { current } from "@reduxjs/toolkit";
+
+export function _logStore(object: any) {
+  try {
+    console.log(current(object));
+  } catch {
+    console.log(object);
+  }
+}
 
 /**
  * @param id default to activeId

@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import type { SimulationMember } from "@Src/types";
+import type { Simulation, SimulationChunk, SimulationMember } from "@Src/types";
 import type {
   AddEventPayload,
   AssembledSimulation,
@@ -31,21 +31,33 @@ export const simulatorSlice = createSlice({
   initialState,
   reducers: {
     updateSimulator: (state, action: UpdateSimulatorPayload) => {
-      const newState = Object.assign(state, action.payload);
+      const { assembledSimulation } = action.payload;
 
-      if (newState.assembledSimulation.members.length < 4) {
-        newState.assembledSimulation.members = fillAssembledMembers(newState.assembledSimulation.members);
+      if (assembledSimulation) {
+        const processedSimulation: AssembledSimulation = {
+          ...assembledSimulation,
+          members: fillAssembledMembers(assembledSimulation.members),
+        };
+        return {
+          ...state,
+          ...action.payload,
+          assembledSimulation: processedSimulation,
+        };
       }
-      return newState;
+      return {
+        ...state,
+        ...action.payload,
+      };
     },
     startAssembledSimulation: (state, action: PayloadAction<Partial<AssembledSimulation> | undefined>) => {
-      const { id = Date.now(), name = DEFAULT_SIMULATION_NAME, members = [] } = action.payload || {};
+      const { id = Date.now(), name = DEFAULT_SIMULATION_NAME, members = [], ...others } = action.payload || {};
 
       state.stage = "ASSEMBLING";
       state.assembledSimulation = {
         id,
         name,
         members: fillAssembledMembers(members),
+        ...others,
       };
     },
     cancelAssembledSimulation: (state) => {
@@ -63,6 +75,7 @@ export const simulatorSlice = createSlice({
       );
     },
     completeAssembledSimulation: (state) => {
+      // 3 cases: CREATE NEW, UPDATE EXISTING, DUPLICATE EXISTING
       const members = state.assembledSimulation.members.reduce(
         (members: SimulationMember[], member) => (member ? members.concat(member) : members),
         []
@@ -70,21 +83,38 @@ export const simulatorSlice = createSlice({
 
       if (members.length) {
         const activeMember = $AppCharacter.get(members[0].name).code;
-        const initialChunk = {
+        const initialChunk: SimulationChunk = {
           id: uuid(),
           ownerCode: activeMember,
           events: [],
         };
+        const {
+          id,
+          name,
+          chunks = [initialChunk],
+          target = Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
+        } = state.assembledSimulation;
 
-        state.activeId = state.assembledSimulation.id;
-        state.activeMember = activeMember;
-        state.simulations.unshift({
-          ...state.assembledSimulation,
+        const completedSimulation: Simulation = {
+          id,
+          name,
           members,
-          chunks: [initialChunk],
-          target: Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
-        });
+          chunks,
+          target,
+        };
+        const existedIndex = state.simulations.findIndex((simulation) => simulation.id === id);
 
+        if (existedIndex !== -1) {
+          // Give updated simulation new id so everything will be re-calculated (safest way)
+          completedSimulation.id = Date.now();
+
+          state.simulations[existedIndex] = completedSimulation;
+        } else {
+          state.simulations.unshift(completedSimulation);
+        }
+
+        state.activeId = completedSimulation.id;
+        state.activeMember = activeMember;
         state.stage = "RUNNING";
         state.assembledSimulation = initialState.assembledSimulation;
       }

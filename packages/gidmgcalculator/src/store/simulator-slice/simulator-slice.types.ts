@@ -3,10 +3,12 @@ import type { HitEvent, ModifyEvent, Simulation, SimulationMember } from "@Src/t
 
 export type SimulatorStage = "WAITING" | "ASSEMBLING" | "RUNNING";
 
-export type AssembledSimulation = {
+export type AssembledSimulation = Pick<Simulation, "id" | "name"> & {
   id: number;
   name: string;
   members: (SimulationMember | null)[];
+  chunks?: Simulation["chunks"];
+  target?: Simulation["target"];
 };
 
 export type SimulatorState = {
