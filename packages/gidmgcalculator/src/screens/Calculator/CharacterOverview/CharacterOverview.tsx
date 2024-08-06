@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, SwitchNode, type SwitchNodeProps } from "rond";
+import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -11,7 +11,7 @@ import { useCalcModalCtrl } from "../CalculatorModalsProvider";
 import { ComplexSelect, CharacterIntro } from "@Src/components";
 import { ArtifactsTab, AttributesTab, ConstellationTab, TalentsTab, WeaponTab } from "./character-overview-tabs";
 
-const TABS: SwitchNodeProps<string>["cases"] = [
+const TABS: SwitchNodeCase<string>[] = [
   { value: "Attributes", element: <AttributesTab /> },
   { value: "Weapon", element: <WeaponTab /> },
   { value: "Artifacts", element: <ArtifactsTab /> },

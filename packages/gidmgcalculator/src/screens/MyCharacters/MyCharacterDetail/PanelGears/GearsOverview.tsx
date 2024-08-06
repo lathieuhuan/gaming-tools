@@ -1,11 +1,9 @@
 import { FaInfo } from "react-icons/fa";
-import { clsx, Button, CloseButton, ItemCase, LoadingSpin } from "rond";
-import { ARTIFACT_TYPES } from "@Backend";
+import { clsx, Button, CloseButton, LoadingSpin } from "rond";
 
 import type { GearsDetailType } from "./Gears.types";
 import { $AppArtifact } from "@Src/services";
-import { Utils_ } from "@Src/utils";
-import { GenshinImage, ItemThumbnail } from "@Src/components";
+import { EquipmentDisplay } from "@Src/components";
 import { useMyCharacterDetailInfo } from "../MyCharacterDetailInfoProvider";
 
 const bonusStyles = (active: boolean) => {
@@ -41,55 +39,16 @@ export function GearsOverview({
 
   return (
     <div className={className} style={style}>
-      <div className="flex flex-wrap">
-        <div className="p-1.5 w-1/3">
-          <ItemCase chosen={detailType === "weapon"} onClick={() => onClickDetail("weapon")}>
-            {(className, imgCls) => (
-              <ItemThumbnail
-                className={className}
-                imgCls={imgCls}
-                item={{
-                  beta: appWeapon.beta,
-                  icon: appWeapon.icon,
-                  rarity: appWeapon.rarity,
-                  ...data.weapon,
-                  owner: undefined,
-                }}
-              />
-            )}
-          </ItemCase>
-        </div>
-
-        {data.artifacts.map((artifact, i) =>
-          artifact ? (
-            <div key={i} className="p-1.5 w-1/3">
-              <ItemCase chosen={detailType === i} onClick={() => onClickDetail(i)}>
-                {(className, imgCls) => (
-                  <ItemThumbnail
-                    className={className}
-                    imgCls={imgCls}
-                    item={{
-                      rarity: artifact.rarity,
-                      level: artifact.level,
-                      icon: $AppArtifact.get(artifact)?.icon || "",
-                      setupIDs: artifact.setupIDs,
-                    }}
-                  />
-                )}
-              </ItemCase>
-            </div>
-          ) : (
-            <div key={i} className="p-1.5 w-1/3" style={{ minHeight: 124 }}>
-              <button
-                className="p-4 w-full h-full flex-center rounded bg-surface-3 glow-on-hover"
-                onClick={() => onClickEmptyArtifact(i)}
-              >
-                <GenshinImage className="w-full" src={Utils_.artifactIconOf(ARTIFACT_TYPES[i])} />
-              </button>
-            </div>
-          )
-        )}
-      </div>
+      <EquipmentDisplay
+        fillable
+        showOwner={false}
+        selectedIndex={detailType === "weapon" ? 5 : typeof detailType === "number" ? detailType : -1}
+        weapon={data.weapon}
+        appWeapon={appWeapon}
+        artifacts={data.artifacts}
+        onClickItem={(index) => onClickDetail(index === 5 ? "weapon" : index)}
+        onClickEmptyArtifact={onClickEmptyArtifact}
+      />
 
       <div
         className={clsx("mt-3", bonusStyles(detailType === "setBonus"))}

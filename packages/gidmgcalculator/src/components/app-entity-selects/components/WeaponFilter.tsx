@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { clsx, useRaritySelect, ButtonGroup, type ClassValue } from "rond";
 import { WeaponType } from "@Backend";
 
@@ -25,6 +26,10 @@ export function WeaponFilter({
   onCancel,
   onDone,
 }: WeaponFilterProps) {
+  // This filter is put on a drawer, the auto-focused button somehow makes the UI weirdly shift
+  // when the drawer is coming out, so we render the button group later
+  const [showActions, setShowActions] = useState(false);
+
   const { weaponTypes, updateWeaponTypes, renderWeaponTypeSelect } = useWeaponTypeSelect(initialFilter?.types, {
     multiple: true,
   });
@@ -32,6 +37,12 @@ export function WeaponFilter({
     [5, 4, 3, 2, 1],
     initialFilter?.rarities
   );
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowActions(true);
+    }, 250);
+  }, []);
 
   const onConfirm = () => {
     onDone({
@@ -66,16 +77,18 @@ export function WeaponFilter({
         </FilterTemplate>
       </div>
 
-      <ButtonGroup.Confirm
-        className="mt-4"
-        justify="end"
-        focusConfirm
-        cancelButtonProps={{
-          disabled: disabledCancel,
-        }}
-        onCancel={onCancel}
-        onConfirm={onConfirm}
-      />
+      {showActions && (
+        <ButtonGroup.Confirm
+          className="mt-4"
+          justify="end"
+          focusConfirm
+          cancelButtonProps={{
+            disabled: disabledCancel,
+          }}
+          onCancel={onCancel}
+          onConfirm={onConfirm}
+        />
+      )}
     </div>
   );
 }

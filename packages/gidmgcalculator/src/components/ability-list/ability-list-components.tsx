@@ -1,5 +1,5 @@
 import { FaCaretRight, FaSquare } from "react-icons/fa";
-import { clsx } from "rond";
+import { clsx, type ClassValue } from "rond";
 import { ElementType } from "@Backend";
 
 import { GenshinImage } from "../GenshinImage";
@@ -8,7 +8,7 @@ import styles from "./ability-list.styles.module.scss";
 const ABILITY_ICON_SIZE = "3.25rem";
 
 interface AbilityImgProps {
-  className?: string;
+  className?: ClassValue;
   img?: string;
   vision: ElementType;
   active?: boolean;

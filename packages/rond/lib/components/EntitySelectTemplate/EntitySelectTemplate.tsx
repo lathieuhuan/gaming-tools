@@ -23,8 +23,9 @@ export interface EntitySelectTemplateProps {
   hasMultipleMode?: boolean;
   hasSearch?: boolean;
   hasFilter?: boolean;
+  filterTransitionDuration?: DrawerProps["transitionDuration"];
   /** Default to 360px */
-  filterWrapWidth?: DrawerProps["activeWidth"];
+  filterWrapWidth?: DrawerProps["width"];
   /** Default to true */
   filterToggleable?: boolean;
   initialFilterOn?: boolean;
@@ -38,6 +39,7 @@ export function EntitySelectTemplate({
   hasMultipleMode,
   hasSearch,
   hasFilter,
+  filterTransitionDuration,
   filterWrapWidth = 360,
   filterToggleable = true,
   initialFilterOn = false,
@@ -178,7 +180,8 @@ export function EntitySelectTemplate({
 
         <Drawer
           active={filterOn}
-          activeWidth={screenWatcher.isFromSize("sm") ? filterWrapWidth : "100%"}
+          width={screenWatcher.isFromSize("sm") ? filterWrapWidth : "100%"}
+          transitionDuration={filterTransitionDuration}
           closeOnMaskClick={filterToggleable}
           destroyOnClose
           style={{
