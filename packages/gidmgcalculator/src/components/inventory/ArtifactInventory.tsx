@@ -18,7 +18,7 @@ export interface ArtifactInventoryProps
     Pick<EntitySelectTemplateProps, "hasMultipleMode"> {
   /** Default to 'flower' */
   initialType?: ArtifactType;
-  currentArtifacts: (CalcArtifact | null)[];
+  currentArtifacts?: (CalcArtifact | null)[];
   owner?: string | null;
   buttonText: string;
   onClickButton: (chosen: UserArtifact, isMultiSelect: boolean) => void;
@@ -28,7 +28,7 @@ const ArtifactInventoryCore = ({
   forcedType,
   hasMultipleMode,
   initialType = "flower",
-  currentArtifacts,
+  currentArtifacts = [],
   owner,
   buttonText,
   onClickButton,

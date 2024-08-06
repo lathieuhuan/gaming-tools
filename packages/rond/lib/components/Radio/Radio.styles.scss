@@ -26,17 +26,17 @@
     border: 3px solid #b8b8b8;
 
     &.ron-radio__visual--small {
-      width: 1.25rem;
-      height: 1.25rem;
+      width: 1rem;
+      height: 1rem;
     }
     &.ron-radio__visual--medium {
-      width: 1.5rem;
-      height: 1.5rem;
+      width: 1.25rem;
+      height: 1.25rem;
       border-width: 3.5px;
     }
     &.ron-radio__visual--large {
-      width: 2rem;
-      height: 2rem;
+      width: 1.5rem;
+      height: 1.5rem;
       border-width: 4px;
     }
     &:before {
@@ -61,7 +61,7 @@
       border-width: 5.5px;
     }
     &.ron-radio__visual--large {
-      border-width: 7px;
+      border-width: 6px;
     }
     &:before {
       opacity: 1;

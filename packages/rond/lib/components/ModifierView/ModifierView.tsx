@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import clsx, { ClassValue } from "clsx";
 import { InputNumber } from "../InputNumber";
 import { Checkbox } from "../Checkbox";
 import { Select } from "../Select";
@@ -33,7 +33,11 @@ export type ModifierViewInputConfig =
   | ModifierViewInputSelectConfig;
 
 export interface ModifierViewProps {
+  className?: ClassValue;
   mutable?: boolean;
+  /** Default to 'TOGGLE' if mutable is true, to 'VIEW' if mutable is false */
+  headingVariant?: "TOGGLE" | "VIEW" | "CUSTOM";
+  headingSuffix?: React.ReactNode;
   checked?: boolean;
   heading: React.ReactNode;
   description: React.ReactNode;
@@ -45,7 +49,10 @@ export interface ModifierViewProps {
   onSelectOption?: (value: number, inputIndex: number) => void;
 }
 export const ModifierView = ({
+  className,
   mutable,
+  headingVariant = mutable ? "TOGGLE" : "VIEW",
+  headingSuffix,
   checked,
   heading,
   description,
@@ -104,16 +111,29 @@ export const ModifierView = ({
     }
   };
 
+  let headingNode: React.ReactNode = null;
+
+  switch (headingVariant) {
+    case "VIEW":
+      headingNode = <span>+ {heading}</span>;
+      break;
+    case "TOGGLE":
+      headingNode = (
+        <Checkbox checked={checked} onChange={onToggle}>
+          {heading}
+        </Checkbox>
+      );
+      break;
+    case "CUSTOM":
+      headingNode = <span>{heading}</span>;
+      break;
+  }
+
   return (
-    <div className="ron-modifier-view">
+    <div className={clsx("ron-modifier-view", className)}>
       <div className="ron-mod-heading">
-        {mutable ? (
-          <Checkbox checked={checked} onChange={onToggle}>
-            {heading}
-          </Checkbox>
-        ) : (
-          <span>+ {heading}</span>
-        )}
+        {headingNode}
+        {headingSuffix}
       </div>
       {typeof description === "string" ? (
         <div className="ron-mod-description" dangerouslySetInnerHTML={{ __html: description }} />

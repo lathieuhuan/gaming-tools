@@ -9,8 +9,10 @@ export interface DrawerProps
   > {
   className?: ClassValue;
   style?: React.CSSProperties;
+  /** Default to 'right' */
+  position?: "right" | "left";
   /** Default to '20rem' */
-  activeWidth?: string | number;
+  width?: string | number;
   /** Default to true */
   destroyOnClose?: boolean;
   children: React.ReactNode;
@@ -18,9 +20,10 @@ export interface DrawerProps
 export const Drawer = ({
   className,
   style,
+  position = "right",
   active,
-  activeWidth = "20rem",
-  destroyOnClose,
+  width = "20rem",
+  destroyOnClose = true,
   children,
   ...overlayProps
 }: DrawerProps) => {
@@ -29,10 +32,12 @@ export const Drawer = ({
       {(direction, transitionStyle) => {
         return (
           <div
-            className={clsx("ron-drawer", className)}
+            className={clsx(`ron-drawer ron-drawer--${position}`, className)}
             style={{
-              width: direction === "out" ? activeWidth : 0,
-              transitionProperty: "width",
+              width,
+              transitionProperty: "transform",
+              transform:
+                direction === "out" ? "translateX(0)" : position === "left" ? "translateX(-100%)" : "translateX(100%)",
               ...transitionStyle,
               ...style,
             }}

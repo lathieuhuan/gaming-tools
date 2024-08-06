@@ -1,8 +1,13 @@
 .ron-drawer {
   position: absolute;
   top: 0;
-  right: 0;
   z-index: 10;
   height: 100%;
   overflow: hidden;
+}
+.ron-drawer--right {
+  right: 0;
+}
+.ron-drawer--left {
+  left: 0;
 }
