@@ -10,6 +10,7 @@ const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
   STACKS: 1,
   ANEMOABLE: 0,
   DENDROABLE: 0,
+  ELEMENTAL: 0,
 };
 
 export class Modifier_ {
