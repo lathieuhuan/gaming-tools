@@ -13,7 +13,7 @@ type BaseEvent = {
   id: number;
   performer: CharacterPerformer;
   /** required if alsoSwitch and is HitEvent */
-  duration: number;
+  duration?: number;
 };
 
 export type ModifyEvent = BaseEvent & {

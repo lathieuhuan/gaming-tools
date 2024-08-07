@@ -5,10 +5,12 @@ import type { SimulationMember } from "@Src/types";
 import type { RootState } from "@Store/store";
 
 import { MAX_SIMULATION_NAME_LENGTH } from "@Src/constants";
+import { useStoreSnapshot } from "@Src/features";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   cancelAssembledSimulation,
   completeAssembledSimulation,
+  getSimulation,
   startAssembledSimulation,
   updateAssembledSimulation,
   type SimulatorStage,
@@ -16,7 +18,6 @@ import {
 
 import { SimulationList } from "./SimulationList";
 import { CalcSetupSelect } from "./CalcSetupSelect";
-import { MemberPortraits } from "./MemberPortraits";
 
 const select = (state: RootState) => {
   const { name, timeOn } = state.simulator.assembledSimulation;
@@ -24,6 +25,11 @@ const select = (state: RootState) => {
 };
 
 type ModalType = "SELECT_CALC_SETUP" | "";
+
+const SimulationName = () => {
+  const simulationName = useStoreSnapshot((state) => getSimulation(state.simulator)?.name);
+  return <span>{simulationName}</span>;
+};
 
 interface SimulatorHeaderProps {
   stage: SimulatorStage;
@@ -54,7 +60,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
   return (
     <>
       <div className="px-4 py-3 bg-surface-2">
-        <div className="h-10 flex items-center">
+        <div className="flex items-center">
           <Button
             className="mr-4"
             shape="square"
@@ -103,7 +109,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
               },
               {
                 value: "RUNNING",
-                element: <MemberPortraits />,
+                element: <SimulationName />,
               },
             ]}
           />

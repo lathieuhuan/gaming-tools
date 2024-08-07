@@ -126,6 +126,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
   };
 
   protected modify = (event: ModifyEvent): ProcessedModifyEvent => {
+    const { duration = 0 } = event;
     const performer = this.member[event.performer.code];
     const { affect, attrBonuses, attkBonuses, source } = performer.modify(
       event,
@@ -177,6 +178,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
 
       return {
         ...event,
+        duration,
         description: source,
       };
     }
@@ -185,12 +187,15 @@ export class SimulationControlCenter extends SimulationChunksControl {
 
     return {
       ...event,
+      duration,
       description: `[${error}]`,
       error,
     };
   };
 
   protected hit = (event: HitEvent): ProcessedHitEvent => {
+    const { duration = 0 } = event;
+
     switch (event.performer.type) {
       case "CHARACTER": {
         const result = this.member[event.performer.code]?.hit(event, this.partyData, this.target);
@@ -218,6 +223,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
 
         return {
           ...event,
+          duration,
           damage,
           reaction,
           description,

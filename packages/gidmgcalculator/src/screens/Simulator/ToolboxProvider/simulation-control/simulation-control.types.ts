@@ -1,14 +1,15 @@
 import type { AttackElement } from "@Backend";
 import type { AttackReaction, HitEvent, ModifyEvent, SimulationChunk } from "@Src/types";
+import { PartiallyRequired } from "rond";
 
 type ProcessedBaseEvent = {
   description: string;
   error?: string;
 };
 
-export type ProcessedModifyEvent = ModifyEvent & ProcessedBaseEvent & {};
+export type ProcessedModifyEvent = PartiallyRequired<ModifyEvent, "duration"> & ProcessedBaseEvent & {};
 
-export type ProcessedHitEvent = HitEvent &
+export type ProcessedHitEvent = PartiallyRequired<HitEvent, "duration"> &
   ProcessedBaseEvent & {
     damage: {
       value: number;

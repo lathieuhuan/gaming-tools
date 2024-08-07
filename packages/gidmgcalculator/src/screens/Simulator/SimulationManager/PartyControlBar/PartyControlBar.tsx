@@ -1,12 +1,10 @@
 import { CharacterPortrait } from "@Src/components";
-import { useStoreSnapshot } from "@Src/features";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { getSimulation, selectActiveMember, updateSimulator } from "@Store/simulator-slice";
+import { selectActiveMember, updateSimulator } from "@Store/simulator-slice";
 import { useActiveSimulation } from "@Simulator/ToolboxProvider";
 
-export function MemberPortraits() {
+export function PartyControlBar(props: { className?: string }) {
   const dispatch = useDispatch();
-  const simulationName = useStoreSnapshot((state) => getSimulation(state.simulator)?.name);
   const simulation = useActiveSimulation();
   const activeMemberCode = useSelector(selectActiveMember);
 
@@ -15,13 +13,12 @@ export function MemberPortraits() {
   };
 
   return (
-    <div className="flex items-center">
-      <span>{simulationName}</span>
-
-      <div className="ml-4 flex gap-3">
+    <div className={props.className}>
+      <div className="space-y-4">
         {simulation?.partyData.map((data) => {
           return (
-            <div key={data.code}>
+            <div key={data.code} className="flex justify-end gap-2 cursor-default">
+              <span className="font-semibold">{data.name}</span>
               <CharacterPortrait
                 className="w-10 h-10"
                 size="custom"

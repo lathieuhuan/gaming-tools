@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { SimulationChunk } from "@Src/types";
-import { useActiveSimulation } from "@Simulator/ToolboxProvider";
+import { useActiveSimulation, type SimulationProcessedChunk } from "@Simulator/ToolboxProvider";
 
 import "./Timeline.styles.scss";
 
 const PIXELS_PER_SECOND = 32;
 
 export function Timeline() {
-  const [chunks, setChunks] = useState<SimulationChunk[]>([]);
+  const [chunks, setChunks] = useState<SimulationProcessedChunk[]>([]);
   const simulation = useActiveSimulation();
 
   const colorsByCode = useMemo(() => {

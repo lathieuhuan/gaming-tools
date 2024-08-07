@@ -134,7 +134,6 @@ export const simulatorSlice = createSlice({
         const { alsoSwitch = false, ...eventProps } = action.payload;
         const event = Object.assign(structuredClone(removeEmpty(eventProps)), {
           id: getNextEventId(chunks),
-          duration: 0,
         });
         const performerCode = event.performer.code;
 
