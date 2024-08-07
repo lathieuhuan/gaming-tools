@@ -25,16 +25,11 @@ import { getCharacterBareBonus, getWeaponBareBonus, getArtifactBareBonus } from 
 
 export class BuffApplierCore {
   protected calcInfo: CalculationInfo;
+
   private modStackingCtrl = new ModifierStackingControl();
 
-  protected getTotalAttrFromSelf: TotalAttributeControl["getTotal"] = () => 0;
-
-  constructor(info: CalculationInfo, totalAttr?: TotalAttributeControl) {
+  constructor(info: CalculationInfo, protected totalAttrCtrl: TotalAttributeControl) {
     this.calcInfo = info;
-
-    if (totalAttr) {
-      this.getTotalAttrFromSelf = totalAttr.getTotal;
-    }
   }
 
   private applyEffectBonuses: ApplyEffectBonuses = (args) => {
@@ -117,12 +112,14 @@ export class BuffApplierCore {
         const totalAttrType: GetTotalAttributeType =
           Array.isArray(config.targets) || config.targets.module !== ECalcStatModule.ATTR ? "ALL" : "STABLE";
 
+        const bonus = getBareBonus({
+          config,
+          getTotalAttrFromSelf: (stat) => this.totalAttrCtrl.getTotal(stat, totalAttrType),
+        });
+
         this.applyEffectBonuses({
           ...applyArgs,
-          bonus: getBareBonus({
-            config,
-            getTotalAttrFromSelf: (stat) => this.getTotalAttrFromSelf(stat, totalAttrType),
-          }),
+          bonus,
           vision: this.calcInfo.appChar.vision,
           targets: config.targets,
           isStackable,
