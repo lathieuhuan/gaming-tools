@@ -1,4 +1,4 @@
-import { createContext, useState, useCallback, useContext, useRef } from "react";
+import { createContext, useState, useCallback, useContext, useMemo } from "react";
 
 import { setupStore, AppStore, RootState } from "@Src/store";
 import { $AppSettings } from "@Src/services";
@@ -31,9 +31,9 @@ export function useStore() {
   };
 }
 
-export function useStoreSnapshot<T>(selector: (state: RootState) => T): T {
+export function useStoreSnapshot<T>(selector: (state: RootState) => T, deps: React.DependencyList = []): T {
   const storeContext = useStoreContext();
-  return useRef(selector(storeContext.getState())).current;
+  return useMemo(() => selector(storeContext.getState()), deps);
 }
 
 interface DynamicStoreProviderProps {

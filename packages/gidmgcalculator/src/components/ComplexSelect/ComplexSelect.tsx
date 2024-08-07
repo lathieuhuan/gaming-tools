@@ -59,7 +59,7 @@ export function ComplexSelect({
   };
 
   return (
-    <div ref={ref} className={clsx("shrink-0 flex relative", className)}>
+    <div ref={ref} className={clsx("flex shrink-0 relative", className)}>
       <button
         id={`complex-select-${selectId}_select`}
         className="w-full px-8 py-0.5 bg-heading-color text-black rounded-t-2.5xl rounded-b-2.5xl relative cursor-default"

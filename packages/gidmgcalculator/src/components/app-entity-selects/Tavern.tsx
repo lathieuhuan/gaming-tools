@@ -15,7 +15,7 @@ import { CharacterFilter, CharacterFilterState } from "./components/CharacterFil
 type SelectedCharacterKey = "code" | "beta" | "name" | "icon" | "rarity" | "vision" | "weaponType";
 
 type SelectedCharacter = Pick<AppCharacter, SelectedCharacterKey> &
-  Partial<Pick<UserCharacter, "cons" | "artifactIDs">>;
+  Partial<Pick<UserCharacter, "level" | "NAs" | "ES" | "EB" | "cons" | "artifactIDs">>;
 
 export interface TavernProps extends Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> {
   sourceType: "app" | "user" | "mixed";

@@ -59,5 +59,10 @@
   "cryo_attElmt": "Cryo",
   "electro_attElmt": "Electro",
   "dendro_attElmt": "Dendro",
-  "phys_attElmt": "Physical"
+  "phys_attElmt": "Physical",
+  "flower": "Flower of Life",
+  "plume": "Plume of Death",
+  "sands": "Sands of Eon",
+  "goblet": "Goblet of Eonothem",
+  "circlet": "Circlet of Logos"
 }

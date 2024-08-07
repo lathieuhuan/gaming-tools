@@ -37,7 +37,7 @@ export function getCharacterBareBonus(args: GetBonusArgs<CharacterBonusCore>): B
   // ========== APPLY STACKS ==========
   if (config.stacks) {
     for (const stack of toArray(config.stacks)) {
-      if (["nation", "resolve"].includes(stack.type) && !info.partyData.length) {
+      if (["NATION", "RESOLVE"].includes(stack.type) && !info.partyData.length) {
         return {
           id: "",
           value: 0,

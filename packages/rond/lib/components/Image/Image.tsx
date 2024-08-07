@@ -16,7 +16,9 @@ export interface ImageProps {
   showFallbackOnError?: boolean;
   defaultFallback?: any;
   imgCls?: ClassValue;
+  imgStyle?: React.CSSProperties;
   fallback?: React.ReactNode;
+  title?: string;
   onError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void;
 }
 export const Image = ({
@@ -30,7 +32,9 @@ export const Image = ({
   showFallbackOnError = true,
   defaultFallback,
   imgCls,
+  imgStyle,
   fallback,
+  title,
   onError,
 }: ImageProps) => {
   const [isError, setIsError] = useState(false);
@@ -39,6 +43,7 @@ export const Image = ({
 
   return (
     <div
+      title={title}
       className={clsx("ron-image", isError && "ron-image-error", className)}
       style={{
         ...style,
@@ -51,6 +56,7 @@ export const Image = ({
         src={src}
         alt={alt}
         className={clsx("ron-image__img", isError && "ron-image__img--error", showFallback && "ron-hidden", imgCls)}
+        style={imgStyle}
         draggable={draggable}
         onError={(e) => {
           setIsError(true);

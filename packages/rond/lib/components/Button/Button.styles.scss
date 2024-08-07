@@ -16,6 +16,10 @@
   flex-direction: row-reverse;
 }
 
+.ron-button--focus-shadow:focus {
+  box-shadow: 0 0 3px 2px black, 0 0 2px 3px white;
+}
+
 // ===== VARIANT =====
 .ron-button--default {
   background-color: var(--ron-color-light-surface-4);

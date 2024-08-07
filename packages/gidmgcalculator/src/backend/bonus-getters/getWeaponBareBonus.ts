@@ -32,7 +32,7 @@ export function getWeaponBareBonus(args: GetBonusArgs<WeaponBonusCore> & { refi:
   // ========== APPLY STACKS ==========
   if (config.stacks) {
     for (const stack of toArray(config.stacks)) {
-      if (!info.partyData.length && ["VISION", "ENERGY", "NATION"].includes(stack.type)) {
+      if (["VISION", "ENERGY", "NATION"].includes(stack.type) && !info.partyData.length) {
         return {
           id: "",
           value: 0,
