@@ -10,17 +10,13 @@ import { AttackBonusControl, TotalAttributeControl } from "@Src/backend/controls
 import { BuffApplierCore } from "./buff-applier-core";
 
 export class CalcBuffApplier extends BuffApplierCore {
-  constructor(
-    info: CalculationInfo,
-    private totalAttr: TotalAttributeControl,
-    private attackBonus: AttackBonusControl
-  ) {
-    super(info, totalAttr);
+  constructor(info: CalculationInfo, totalAttrCtrl: TotalAttributeControl, private attackBonus: AttackBonusControl) {
+    super(info, totalAttrCtrl);
   }
 
   private applyBonuses = (bonuses: AppliedBonuses) => {
     for (const bonus of bonuses.attrBonuses) {
-      const add = bonus.isStable ? this.totalAttr.addStable : this.totalAttr.addUnstable;
+      const add = bonus.isStable ? this.totalAttrCtrl.addStable : this.totalAttrCtrl.addUnstable;
       add(bonus.toStat, bonus.value, bonus.description);
     }
     for (const bonus of bonuses.attkBonuses) {
