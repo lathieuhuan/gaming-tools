@@ -1,106 +1,53 @@
-import { Fragment, useEffect, useState } from "react";
-import { clsx } from "rond";
-
-import type { SimulationProcessedChunk, SimulationSumary } from "@Simulator/ToolboxProvider";
-
-import { useDispatch } from "@Store/hooks";
+import { useEffect, useMemo, useState } from "react";
+import { SimulationChunk } from "@Src/types";
 import { useActiveSimulation } from "@Simulator/ToolboxProvider";
 
-// Component
-import { CharacterPortrait, GenshinImage } from "@Src/components";
-import { EventDisplayer } from "./EventDisplayer";
+import "./Timeline.styles.scss";
 
-type SyncState = {
-  chunks: SimulationProcessedChunk[];
-  sumary: SimulationSumary;
-};
+const PIXELS_PER_SECOND = 32;
 
-export function Timeline(props: { className?: string }) {
-  const dispatch = useDispatch();
-  const [{ chunks, sumary }, setState] = useState<SyncState>({
-    chunks: [],
-    sumary: {
-      damage: 0,
-      duration: 0,
-    },
-  });
+export function Timeline() {
+  const [chunks, setChunks] = useState<SimulationChunk[]>([]);
   const simulation = useActiveSimulation();
+
+  const colorsByCode = useMemo(() => {
+    const colors = ["red", "yellow", "green", "blue"];
+    const result: Record<number, string> = {};
+
+    if (simulation) {
+      for (let i = 0; i < simulation.partyData.length; i++) {
+        const member = simulation.partyData[i];
+        result[member.code] = colors[i];
+      }
+    }
+    return result;
+  }, [simulation]);
 
   useEffect(() => {
     if (simulation) {
-      const { initialChunks, initialSumary, unsubscribe } = simulation.subscribeChunks((chunks, sumary) =>
-        setState({ chunks, sumary })
-      );
+      const { initialChunks, unsubscribe } = simulation.subscribeChunks(setChunks);
 
-      setState({
-        chunks: initialChunks,
-        sumary: initialSumary,
-      });
+      setChunks(initialChunks);
       return unsubscribe;
     }
     return undefined;
   }, [simulation]);
 
-  // console.log("render: Timeline");
-  // if (chunks.length) console.log([...chunks]);
-
-  if (!simulation) {
-    return null;
-  }
-
   return (
-    <div className={clsx("h-full flex flex-col gap-4", props.className)} style={{ width: "22rem" }}>
-      <div className="flex">
-        <span className="ml-auto px-2 rounded hover:bg-surface-2 cursor-default">
-          <span className="text-sm">Total DMG:</span>{" "}
-          <span className="text-lg text-secondary-1 font-bold">{sumary.damage}</span>
-        </span>
-      </div>
+    <div>
+      <div className="timeline flex relative after:bg-hint-color">
+        {chunks.map((chunk) => {
+          const chunkDuration = simulation?.timeOn
+            ? chunk.events.reduce((duration, event) => duration + event.duration, 0)
+            : chunk.events.length;
+          const color = colorsByCode[chunk.ownerCode];
 
-      <div className="grow hide-scrollbar">
-        <div className="flex flex-col-reverse gap-2">
-          {chunks.map((chunk, index) => {
-            const chunkOwner = simulation.getMemberData(chunk.ownerCode);
-
-            return (
-              <Fragment key={chunk.id}>
-                {index ? <div className="h-px bg-surface-border" /> : null}
-
-                <div className="flex gap-2">
-                  <CharacterPortrait size="custom" className="w-12 h-12 m-0.5" info={chunkOwner} zoomable={false} />
-
-                  <div className="overflow-hidden grow flex flex-col-reverse">
-                    {chunk.events.map((event) => {
-                      const performer = simulation.getMemberData(event.performer.code);
-
-                      return (
-                        <EventDisplayer
-                          key={event.id}
-                          sideIconNode={
-                            <GenshinImage
-                              title={performer?.name}
-                              className="w-7 h-7 shrink-0 relative"
-                              imgCls="absolute"
-                              imgStyle={{
-                                maxWidth: "none",
-                                width: "130%",
-                                top: "-9px",
-                                left: "-6px",
-                              }}
-                              fallbackCls="p-0.5"
-                              src={performer?.sideIcon}
-                            />
-                          }
-                          event={event}
-                        />
-                      );
-                    })}
-                  </div>
-                </div>
-              </Fragment>
-            );
-          })}
-        </div>
+          return (
+            <div key={chunk.id} className="h-10 flex items-center relative z-10">
+              <div className="h-1" style={{ backgroundColor: color, width: chunkDuration * PIXELS_PER_SECOND }} />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

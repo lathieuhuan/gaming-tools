@@ -13,7 +13,7 @@ type BaseEvent = {
   id: number;
   performer: CharacterPerformer;
   /** required if alsoSwitch and is HitEvent */
-  duration?: number;
+  duration: number;
 };
 
 export type ModifyEvent = BaseEvent & {
@@ -78,6 +78,7 @@ export type SimulationChunk = {
 export type Simulation = {
   id: number;
   name: string;
+  timeOn: boolean;
   members: SimulationMember[];
   chunks: SimulationChunk[];
   target: SimulationTarget;

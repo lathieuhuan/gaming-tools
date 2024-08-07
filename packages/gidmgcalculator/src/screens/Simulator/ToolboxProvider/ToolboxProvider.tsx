@@ -22,7 +22,7 @@ export function ToolboxProvider(props: ToolboxProviderProps) {
       return null;
     }
 
-    const control = new SimulationControl(simulation.members, simulation.target);
+    const control = new SimulationControl(simulation);
 
     return {
       control,

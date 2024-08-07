@@ -1,11 +1,11 @@
-import type { SimulationChunk, SimulationEvent, SimulationMember, SimulationTarget } from "@Src/types";
+import type { Simulation, SimulationChunk, SimulationEvent } from "@Src/types";
 import type { SimulationProcessedEvent } from "./simulation-control.types";
 
 import { SimulationControlCenter } from "./simulation-control-center";
 
 export class SimulationControl extends SimulationControlCenter {
-  constructor(party: SimulationMember[], target: SimulationTarget) {
-    super(party, target);
+  constructor(simulation: Simulation) {
+    super(simulation);
   }
 
   private checkMissmatched = (chunks: SimulationChunk[]): MissmatchedCheckResult => {

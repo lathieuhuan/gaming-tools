@@ -1,0 +1,9 @@
+.timeline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 4px;
+  width: 100%;
+}

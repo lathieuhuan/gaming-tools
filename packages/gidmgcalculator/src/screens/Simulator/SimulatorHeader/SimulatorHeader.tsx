@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Drawer, Input, Modal, SwitchNode } from "rond";
+import { Button, Checkbox, Drawer, Input, Modal, SwitchNode } from "rond";
 import { FaCaretDown, FaCaretRight } from "react-icons/fa";
 import type { SimulationMember } from "@Src/types";
 import type { RootState } from "@Store/store";
@@ -18,7 +18,10 @@ import { SimulationList } from "./SimulationList";
 import { CalcSetupSelect } from "./CalcSetupSelect";
 import { MemberPortraits } from "./MemberPortraits";
 
-const selectName = (state: RootState) => state.simulator.assembledSimulation.name;
+const select = (state: RootState) => {
+  const { name, timeOn } = state.simulator.assembledSimulation;
+  return { name, timeOn };
+};
 
 type ModalType = "SELECT_CALC_SETUP" | "";
 
@@ -27,7 +30,7 @@ interface SimulatorHeaderProps {
 }
 export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
   const dispatch = useDispatch();
-  const assembledName = useSelector(selectName);
+  const { name, timeOn } = useSelector(select);
 
   const [drawerActive, setDrawerActive] = useState(false);
   const [modalType, setModalType] = useState<ModalType>("");
@@ -68,10 +71,16 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
                 element: (
                   <div className="flex items-center gap-2">
                     <Input
-                      value={assembledName}
+                      value={name}
                       maxLength={MAX_SIMULATION_NAME_LENGTH}
                       onChange={(value) => dispatch(updateAssembledSimulation({ name: value }))}
                     />
+                    <Checkbox
+                      checked={timeOn}
+                      onChange={(checked) => dispatch(updateAssembledSimulation({ timeOn: checked }))}
+                    >
+                      With time
+                    </Checkbox>
                     <Button
                       className="h-7"
                       size="small"
@@ -84,7 +93,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
                       className="h-7"
                       size="small"
                       shape="square"
-                      disabled={!assembledName.length}
+                      disabled={!name.length}
                       onClick={() => dispatch(completeAssembledSimulation())}
                     >
                       Done

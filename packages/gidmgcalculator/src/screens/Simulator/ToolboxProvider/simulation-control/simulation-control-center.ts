@@ -3,7 +3,7 @@ import type {
   AttackReaction,
   HitEvent,
   ModifyEvent,
-  SimulationMember,
+  Simulation,
   SimulationPartyData,
   SimulationTarget,
 } from "@Src/types";
@@ -20,6 +20,7 @@ import {
 } from "./tools";
 
 export class SimulationControlCenter extends SimulationChunksControl {
+  readonly timeOn: boolean;
   readonly partyData: SimulationPartyData = [];
   readonly target: SimulationTarget;
   readonly member: Record<number, MemberControl> = {};
@@ -31,16 +32,19 @@ export class SimulationControlCenter extends SimulationChunksControl {
   private activeMember: MemberControl;
   private activeMemberWatcher: ActiveMemberWatcher;
 
-  constructor(party: SimulationMember[], target: SimulationTarget) {
+  constructor(simulation: Simulation) {
     super();
 
-    this.partyData = party.map((member) => $AppCharacter.get(member.name));
-    this.target = target;
+    const { members } = simulation;
+
+    this.timeOn = simulation.timeOn;
+    this.partyData = members.map((member) => $AppCharacter.get(member.name));
+    this.target = simulation.target;
 
     this.partyBonus = new PartyBonusControl(this.partyData);
 
-    for (let i = 0; i < party.length; i++) {
-      const member = party[i];
+    for (let i = 0; i < members.length; i++) {
+      const member = members[i];
       const memberData = this.partyData[i];
       const weaponCode = member.weapon.code;
 
@@ -72,6 +76,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
     };
 
     return {
+      timeOn: this.timeOn,
       partyData: this.partyData,
       target: this.target,
       getMemberInfo,

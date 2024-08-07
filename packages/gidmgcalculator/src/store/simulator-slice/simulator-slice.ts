@@ -17,6 +17,7 @@ const initialState: SimulatorState = {
   assembledSimulation: {
     id: 0,
     name: "",
+    timeOn: false,
     members: [],
   },
   activeId: 0,
@@ -50,12 +51,19 @@ export const simulatorSlice = createSlice({
       };
     },
     startAssembledSimulation: (state, action: PayloadAction<Partial<AssembledSimulation> | undefined>) => {
-      const { id = Date.now(), name = DEFAULT_SIMULATION_NAME, members = [], ...others } = action.payload || {};
+      const {
+        id = Date.now(),
+        name = DEFAULT_SIMULATION_NAME,
+        timeOn = false,
+        members = [],
+        ...others
+      } = action.payload || {};
 
       state.stage = "ASSEMBLING";
       state.assembledSimulation = {
         id,
         name,
+        timeOn,
         members: fillAssembledMembers(members),
         ...others,
       };
@@ -90,17 +98,17 @@ export const simulatorSlice = createSlice({
         };
         const {
           id,
-          name,
           chunks = [initialChunk],
           target = Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
+          ...restAssembledProps
         } = state.assembledSimulation;
 
         const completedSimulation: Simulation = {
           id,
-          name,
-          members,
           chunks,
           target,
+          ...restAssembledProps,
+          members,
         };
         const existedIndex = state.simulations.findIndex((simulation) => simulation.id === id);
 
@@ -126,6 +134,7 @@ export const simulatorSlice = createSlice({
         const { alsoSwitch = false, ...eventProps } = action.payload;
         const event = Object.assign(structuredClone(removeEmpty(eventProps)), {
           id: getNextEventId(chunks),
+          duration: 0,
         });
         const performerCode = event.performer.code;
 
