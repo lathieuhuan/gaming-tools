@@ -183,7 +183,7 @@ function SortCore({ onClose }: { onClose: () => void }) {
           <Popover
             as="div"
             className="px-1 py-2 top-full bg-surface-2 rounded group-hover:scale-100 space-y-2"
-            origin="top-left"
+            origin="top left"
           >
             {quickSortOptions.map(({ label, onSelect }, i) => {
               return (

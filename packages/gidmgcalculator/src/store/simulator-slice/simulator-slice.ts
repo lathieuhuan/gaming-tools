@@ -22,6 +22,7 @@ const initialState: SimulatorState = {
   },
   activeId: 0,
   activeMember: 0,
+  activeChunkId: '',
   simulations: [],
 };
 

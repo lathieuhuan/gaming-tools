@@ -1,21 +1,19 @@
+import { clsx, type ClassValue } from "rond";
 import { AppWeapon, CharacterBuff, EntityCalc, GeneralCalc } from "@Backend";
 import type { InputsByMember } from "./ModifyEventHost.types";
 
 import { Modifier_ } from "@Src/utils";
-import { useActiveMember, useActiveSimulation, SimulationManager } from "@Simulator/ToolboxProvider";
+import { useActiveMember, SimulationManager } from "@Simulator/ToolboxProvider";
 
 // Component
-import { OnFieldMemberWatch } from "../components";
 import { EventListCharacterBuff } from "./EventListCharacterBuff";
 import { EventListWeaponBuff } from "./EventListWeaponBuff";
 
-export function ModifyEventHost(props: { className?: string }) {
-  const simulation = useActiveSimulation();
-
-  if (!simulation) {
-    return null;
-  }
-
+interface ModifyEventHostProps {
+  className?: ClassValue;
+  simulation: SimulationManager;
+}
+export function ModifyEventHost({ className, simulation }: ModifyEventHostProps) {
   const characterBuffsByMember: ModifyEventHostForActiveMemberProps["characterBuffsByMember"] = {};
   const characterBuffAllInputsByMember: InputsByMember = {};
   const appWeaponByMember: ModifyEventHostForActiveMemberProps["appWeaponByMember"] = {};
@@ -56,7 +54,7 @@ export function ModifyEventHost(props: { className?: string }) {
 
   return (
     <ModifyEventHostForActiveMember
-      className={props.className}
+      className={className}
       simulation={simulation}
       characterBuffsByMember={characterBuffsByMember}
       initalCharacterBuffAllInputsByMember={characterBuffAllInputsByMember}
@@ -67,7 +65,7 @@ export function ModifyEventHost(props: { className?: string }) {
 }
 
 interface ModifyEventHostForActiveMemberProps {
-  className?: string;
+  className?: ClassValue;
   simulation: SimulationManager;
   characterBuffsByMember: Record<number, CharacterBuff[]>;
   initalCharacterBuffAllInputsByMember: InputsByMember;
@@ -84,7 +82,7 @@ function ModifyEventHostForActiveMember(props: ModifyEventHostForActiveMemberPro
   const activeMemberCode = activeMember.data.code;
 
   return (
-    <OnFieldMemberWatch className={props.className} activeMemberCode={activeMemberCode}>
+    <div className={clsx("p-4", props.className)}>
       <div className="h-full hide-scrollbar space-y-3">
         <EventListCharacterBuff
           simulation={simulation}
@@ -99,6 +97,6 @@ function ModifyEventHostForActiveMember(props: ModifyEventHostForActiveMemberPro
           initalInputsByMember={props.initalWeaponBuffAllInputsByMember}
         />
       </div>
-    </OnFieldMemberWatch>
+    </div>
   );
 }

@@ -5,7 +5,7 @@ type TalentHitEventConfigGroup = {
   items: CalcItem[];
 };
 
-export type TalentHitEventConfig = {
+type TalentHitEventConfig = {
   type: LevelableTalentType;
   groups: TalentHitEventConfigGroup[];
 };

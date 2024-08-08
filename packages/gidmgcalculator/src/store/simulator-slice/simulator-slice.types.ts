@@ -13,11 +13,17 @@ export type SimulatorState = {
   assembledSimulation: AssembledSimulation;
   activeId: number;
   activeMember: number;
+  activeChunkId: string;
   simulations: Simulation[];
 };
 
 export type UpdateSimulatorPayload = PayloadAction<
-  Partial<Pick<SimulatorState, "stage" | "assembledSimulation" | "activeId" | "activeMember" | "simulations">>
+  Partial<
+    Pick<
+      SimulatorState,
+      "stage" | "assembledSimulation" | "activeId" | "activeMember" | "activeChunkId" | "simulations"
+    >
+  >
 >;
 
 export type UpdateAssembledSimulationPayload = PayloadAction<Partial<Omit<AssembledSimulation, "id">>>;

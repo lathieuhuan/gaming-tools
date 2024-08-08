@@ -5,6 +5,8 @@ export const selectActiveSimulationId = (state: RootState) => state.simulator.ac
 
 export const selectActiveMember = (state: RootState) => state.simulator.activeMember;
 
+export const selectActiveChunk = (state: RootState) => state.simulator.activeChunkId;
+
 export function selectOnFieldMember(state: RootState) {
   const chunks = getSimulation(state.simulator)?.chunks ?? [];
   return chunks[chunks.length - 1]?.ownerCode;

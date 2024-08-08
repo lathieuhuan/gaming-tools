@@ -4,36 +4,29 @@ import { ATTACK_ELEMENTS } from "@Backend";
 
 import { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { useActiveSimulation } from "@Simulator/ToolboxProvider";
+import { SimulationManager } from "@Simulator/ToolboxProvider";
 
 type SimulationBonus = SimulationAttributeBonus | SimulationAttackBonus;
 
 interface BonusDisplayerProps {
   className?: string;
+  simulation: SimulationManager;
 }
-export function BonusDisplayer(props: BonusDisplayerProps) {
+export function BonusDisplayer({ className, simulation }: BonusDisplayerProps) {
   const { t } = useTranslation();
-  const simulation = useActiveSimulation();
   const [bonuses, setBonuses] = useState<SimulationBonus[]>([]);
 
   useEffect(() => {
-    if (simulation) {
-      const { initial, unsubscribe } = simulation.subscribeBonuses((attrBonus, attkBonus) => {
-        setBonuses((attrBonus as SimulationBonus[]).concat(attkBonus));
-      });
+    const { initial, unsubscribe } = simulation.subscribeBonuses((attrBonus, attkBonus) => {
+      setBonuses((attrBonus as SimulationBonus[]).concat(attkBonus));
+    });
 
-      setBonuses((initial.attrBonus as SimulationBonus[]).concat(initial.attkBonus));
-      return unsubscribe;
-    }
-    return undefined;
+    setBonuses((initial.attrBonus as SimulationBonus[]).concat(initial.attkBonus));
+    return unsubscribe;
   }, [simulation]);
 
-  if (!simulation) {
-    return null;
-  }
-
   return (
-    <div className={props.className}>
+    <div className={className}>
       <div className="h-full hide-scrollbar space-y-3">
         {bonuses.map((bonus, index) => {
           return (
