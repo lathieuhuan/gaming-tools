@@ -1,4 +1,4 @@
-import { clsx, ItemCase, type ClassValue } from "rond";
+import { AdvancedPick, clsx, ItemCase, type ClassValue } from "rond";
 import { AppWeapon, ARTIFACT_TYPES } from "@Backend";
 
 import { Artifact, Weapon } from "@Src/types";
@@ -11,9 +11,9 @@ import { ItemThumbnail, type ItemThumbProps } from "../ItemThumbnail";
 
 export interface EquipmentDisplayProps extends Pick<ItemThumbProps, "compact" | "showOwner"> {
   className?: ClassValue;
-  weapon: Weapon;
+  weapon: AdvancedPick<Weapon, "code" | "type", "level" | "refi">;
   appWeapon?: AppWeapon;
-  artifacts?: (Artifact | null)[];
+  artifacts?: (AdvancedPick<Artifact, "code" | "type" | "rarity", "level"> | null)[];
   /** Whether empty artifacts are rendered as clickable buttons */
   fillable?: boolean;
   onClickEmptyArtifact?: (itemIndex: number) => void;
@@ -38,7 +38,6 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
               showOwner={props.showOwner}
               title={appWeapon.name}
               item={{
-                beta: appWeapon.beta,
                 icon: appWeapon.icon,
                 rarity: appWeapon.rarity,
                 ...weapon,
@@ -63,9 +62,9 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
                     compact={compact}
                     showOwner={props.showOwner}
                     item={{
+                      icon: appArtifactSet[artifact.type].icon,
                       rarity: artifact.rarity,
                       level: artifact.level,
-                      icon: appArtifactSet[artifact.type].icon,
                     }}
                   />
                 )}

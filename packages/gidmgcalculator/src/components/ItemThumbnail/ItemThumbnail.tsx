@@ -12,16 +12,15 @@ export interface ItemThumbProps {
   /** Default to true */
   showOwner?: boolean;
   item: {
-    beta?: boolean;
     icon: string;
-    rarity: number;
-    level: Level | number;
+    rarity?: number;
+    level?: Level | number;
     refi?: number;
     owner?: string | null;
   };
 }
 export function ItemThumbnail({ className, imgCls, title, showOwner = true, compact, item }: ItemThumbProps) {
-  const lvText = `Lv. ${typeof item.level === "string" ? item.level.split("/")[0] : item.level}`;
+  const lvText = item.level ? `Lv. ${typeof item.level === "string" ? item.level.split("/")[0] : item.level}` : null;
   //
   const renderSideIcon = (owner: string) => {
     const { icon = "", sideIcon } = $AppCharacter.get(owner) || {};
@@ -65,7 +64,8 @@ export function ItemThumbnail({ className, imgCls, title, showOwner = true, comp
 
       <div
         className={clsx(
-          `aspect-square bg-gradient-${item.rarity || 5} overflow-hidden`,
+          "aspect-square overflow-hidden",
+          item.rarity && `bg-gradient-${item.rarity}`,
           !compact && "rounded rounded-br-2xl "
         )}
       >
@@ -77,15 +77,17 @@ export function ItemThumbnail({ className, imgCls, title, showOwner = true, comp
         />
       </div>
 
-      {compact ? (
-        <div className="flex-center bg-black/60 w-full absolute bottom-0">
-          <p className="font-bold text-light-default leading-5">{lvText}</p>
-        </div>
-      ) : (
-        <div className="flex-center bg-light-default">
-          <p className="font-bold text-black">{lvText}</p>
-        </div>
-      )}
+      {lvText ? (
+        compact ? (
+          <div className="flex-center bg-black/60 w-full absolute bottom-0">
+            <p className="font-bold text-light-default leading-5">{lvText}</p>
+          </div>
+        ) : (
+          <div className="flex-center bg-light-default">
+            <p className="font-bold text-black">{lvText}</p>
+          </div>
+        )
+      ) : null}
     </div>
   );
 }

@@ -51,46 +51,48 @@ export function Timeline({ simulation }: TimelineProps) {
   }, [simulation]);
 
   return (
-    <div className="h-18 px-4 flex flex-col justify-end bg-black/30">
-      <div ref={timelineRef} className="timeline flex relative after:bg-hint-color/60">
-        {chunks.map((chunk) => {
-          const chunkDuration = simulation.timeOn
-            ? chunk.events.reduce((duration, event) => duration + event.duration, 0)
-            : chunk.events.length;
-          const color = colorsByCode[chunk.ownerCode];
-          const selected = chunk.id === selectedChunkId;
-          const owner = simulation.getMemberData(chunk.ownerCode);
+    <div className="h-full px-4 flex flex-col justify-end bg-black/30">
+      <div className="flex items-center">
+        <div ref={timelineRef} className="timeline grow flex relative after:bg-hint-color/60">
+          {chunks.map((chunk) => {
+            const chunkDuration = simulation.timeOn
+              ? chunk.events.reduce((duration, event) => duration + event.duration, 0)
+              : chunk.events.length;
+            const color = colorsByCode[chunk.ownerCode];
+            const selected = chunk.id === selectedChunkId;
+            const owner = simulation.getMemberData(chunk.ownerCode);
 
-          return (
-            <div
-              key={chunk.id}
-              className={`h-10 flex items-center relative z-10 ${selected ? "bg-black" : "hover:bg-black/30"}`}
-              {...getChunkProps(chunk.id)}
-            >
-              <Popover
-                active={selected}
-                className="left-1/2 bottom-8"
-                style={{ translate: "-50% 0" }}
-                as="div"
-                origin="bottom center"
+            return (
+              <div
+                key={chunk.id}
+                className={`h-10 flex items-center relative z-10 ${selected ? "bg-black" : "hover:bg-black/30"}`}
+                {...getChunkProps(chunk.id)}
               >
-                <CharacterPortrait className="w-8 h-8" size="custom" info={owner} />
-              </Popover>
+                <Popover
+                  active={selected}
+                  className="left-1/2 bottom-8"
+                  style={{ translate: "-50% 0" }}
+                  as="div"
+                  origin="bottom center"
+                >
+                  <CharacterPortrait className="w-8 h-8" size="custom" info={owner} />
+                </Popover>
 
-              <div className="h-1" style={{ backgroundColor: color, width: chunkDuration * PIXELS_PER_SECOND }} />
+                <div className="h-1" style={{ backgroundColor: color, width: chunkDuration * PIXELS_PER_SECOND }} />
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="ml-2 h-14 text-secondary-1 text-lg font-bold">
+          <div className="text-right">{sumary.damage}</div>
+          {simulation.timeOn && (
+            <div>
+              {sumary.damage}
+              <span className="text-hint-color text-sm">(s)</span>
             </div>
-          );
-        })}
-      </div>
-
-      <div className="px-2 text-secondary-1 text-lg font-bold">
-        <div>{sumary.damage}</div>
-        {simulation.timeOn && (
-          <div>
-            {sumary.damage}
-            <span className="text-hint-color text-sm">(s)</span>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

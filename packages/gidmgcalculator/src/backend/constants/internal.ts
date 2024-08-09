@@ -1,4 +1,4 @@
-import type { ActualAttackElement, TransformativeReaction, AttributeStat } from "@Src/backend/types";
+import type { ActualAttackElement, TransformativeReaction } from "@Src/backend/types";
 
 export enum ECalcStatModule {
   /** TotalAttribute */
@@ -6,19 +6,6 @@ export enum ECalcStatModule {
   /** ResistanceReduction */
   RESIST = "RESIST",
 }
-
-type ResonanceStat = {
-  key: AttributeStat;
-  value: number;
-};
-
-export const RESONANCE_STAT: Record<string, ResonanceStat> = {
-  pyro: { key: "atk_", value: 25 },
-  cryo: { key: "cRate_", value: 15 },
-  geo: { key: "shieldS_", value: 15 },
-  hydro: { key: "hp_", value: 25 },
-  dendro: { key: "em", value: 50 },
-};
 
 export const TRANSFORMATIVE_REACTION_INFO: Record<
   TransformativeReaction,

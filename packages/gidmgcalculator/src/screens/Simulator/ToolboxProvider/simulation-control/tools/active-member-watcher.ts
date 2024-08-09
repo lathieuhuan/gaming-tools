@@ -14,6 +14,8 @@ export class ActiveMemberWatcher {
 
   changeActiveMember = (newActiveMember: MemberControl) => {
     this.activeMember = newActiveMember;
+    // Apply party bonuses to update TotalAttribute
+    this.activeMember.applySimulationBonuses();
 
     setTimeout(() => {
       this.notifySubscribers();

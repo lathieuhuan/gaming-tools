@@ -49,41 +49,8 @@ export function SimulationList(props: SimulationListProps) {
     simulationName.current = simulation.name;
   };
   const onConfirmRemoveSimulation = () => {
-    let removeIndex = 0;
-    const newSimulations: Simulation[] = [];
+    const newSimulations = simulations.filter((simulation) => simulation.id !== expandedId);
 
-    for (let i = 0; i < simulations.length; i++) {
-      if (simulations[i].id !== expandedId) {
-        newSimulations.push(simulations[i]);
-      } else {
-        removeIndex = i;
-      }
-    }
-
-    if (newSimulations.length) {
-      if (expandedId === activeId) {
-        // The removed simulation is the active one -> find new active simulation
-        const newActiveIndex = Math.min(removeIndex + 1, newSimulations.length - 1);
-        const newSimulation = newSimulations[newActiveIndex];
-        const firstMemberData = $AppCharacter.get(newSimulation.members[0].name);
-
-        dispatch(
-          updateSimulator({
-            activeId: newSimulation.id,
-            activeMember: firstMemberData.code,
-            simulations: newSimulations,
-          })
-        );
-        return;
-      }
-
-      dispatch(
-        updateSimulator({
-          simulations: newSimulations,
-        })
-      );
-      return;
-    }
     dispatch(
       updateSimulator({
         activeId: 0,
@@ -132,8 +99,23 @@ export function SimulationList(props: SimulationListProps) {
                 className={`p-2 flex items-center justify-between ${expanded ? "bg-surface-2" : ""}`}
                 onClick={() => onClickExpand(simulation.id)}
               >
-                <label className="flex items-center gap-2">
-                  <Radio checked={simulation.id === activeId} onChange={() => onChangeActiveSimulation(simulation)} />
+                <label
+                  className="flex items-center gap-2"
+                  onClick={(e) => {
+                    // Clicking on label will fire click event on radio, results in 2 events bubbling
+                    // to the div where onClickExpand is used to handle click
+                    // -> stopPropagation here & radio, onClickExpand on radio
+                    e.stopPropagation();
+                  }}
+                >
+                  <Radio
+                    checked={simulation.id === activeId}
+                    onChange={() => onChangeActiveSimulation(simulation)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onClickExpand(simulation.id);
+                    }}
+                  />
                   <span>{simulation.name}</span>
                 </label>
 

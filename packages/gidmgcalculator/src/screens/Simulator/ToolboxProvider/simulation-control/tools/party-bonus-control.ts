@@ -1,4 +1,4 @@
-import { AppliedAttackBonus, AppliedAttributeBonus, GeneralCalc } from "@Backend";
+import { AppliedAttackBonus, AppliedAttributeBonus, ElementType, GeneralCalc, RESONANCE_STAT } from "@Backend";
 import { SimulationPartyData } from "@Src/types";
 import { CoreBonusesControl } from "./core-bonuses-control";
 
@@ -20,27 +20,25 @@ export class PartyBonusControl {
 
   constructor(partyData: SimulationPartyData) {
     // Resonance
-    const { pyro = 0, hydro = 0 } = GeneralCalc.countElements(partyData);
+    const elmtsCount = GeneralCalc.countElements(partyData);
 
-    if (pyro >= 2) {
-      this.partyBonusCtrl.attrBonus.push({
-        id: "pyro-resonance",
-        value: 25,
-        isStable: true,
-        toStat: "atk_",
-        type: "ATTRIBUTE",
-        description: "Pyro Resonance",
-      });
-    }
-    if (hydro >= 2) {
-      this.partyBonusCtrl.attrBonus.push({
-        id: "hydro-resonance",
-        value: 25,
-        isStable: true,
-        toStat: "hp_",
-        type: "ATTRIBUTE",
-        description: "Hydro Resonance",
-      });
+    const appliedResonanceElmts: ElementType[] = ["pyro", "hydro", "geo", "dendro"];
+
+    for (const elmt of appliedResonanceElmts) {
+      const { [elmt]: elmtCount = 0 } = elmtsCount;
+
+      if (elmtCount >= 2) {
+        const resonance = RESONANCE_STAT[elmt];
+
+        this.partyBonusCtrl.attrBonus.push({
+          id: `${elmt}-resonance`,
+          value: resonance.value,
+          isStable: true,
+          toStat: resonance.key,
+          type: "ATTRIBUTE",
+          description: `${elmt.slice(0, 1).toLocaleUpperCase()}${elmt.slice(1)} Resonance`,
+        });
+      }
     }
   }
 

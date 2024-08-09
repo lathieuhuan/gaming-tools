@@ -1,11 +1,9 @@
 import { Modal } from "rond";
-import { CalcSetup } from "@Src/types";
-import { useStoreSnapshot } from "@Src/features";
+import { ARTIFACT_TYPES } from "@Backend";
 
-type SetupOption = CalcSetup & {
-  id: number;
-  name: string;
-};
+import { useStoreSnapshot } from "@Src/features";
+import { $AppArtifact } from "@Src/services";
+import { SetupOption, SetupOptions } from "./SetupOptions";
 
 interface CalcSetupSelectProps {
   onSelect: (setup: SetupOption) => void;
@@ -13,25 +11,56 @@ interface CalcSetupSelectProps {
 export function CalcSetupSelect(props: CalcSetupSelectProps) {
   const setups = useStoreSnapshot((state) => {
     const { setupManageInfos, setupsById } = state.calculator;
-    return setupManageInfos.map<SetupOption>((info) => ({
-      id: info.ID,
-      name: info.name,
-      ...setupsById[info.ID],
-    }));
+    return setupManageInfos.map<SetupOption>((info) => {
+      const { char, weapon, artifacts, party } = setupsById[info.ID];
+
+      const setupOption: SetupOption = {
+        id: info.ID,
+        name: info.name,
+        members: [
+          {
+            ...char,
+            weapon,
+            artifacts,
+          },
+        ],
+      };
+
+      for (const member of party) {
+        if (member) {
+          const setupOptionMember: SetupOption["members"][number] = {
+            name: member.name,
+            weapon: member.weapon,
+            artifacts: [],
+          };
+
+          if (member.artifact.code) {
+            const appArtifactSet = $AppArtifact.getSet(member.artifact.code);
+            const rarity = appArtifactSet ? appArtifactSet.variants[appArtifactSet.variants.length - 1] : null;
+
+            if (rarity) {
+              for (const type of ARTIFACT_TYPES) {
+                setupOptionMember.artifacts.push({
+                  code: member.artifact.code,
+                  type,
+                  rarity,
+                });
+              }
+            }
+          }
+        }
+      }
+
+      return setupOption;
+    });
   });
 
   return (
     <>
       <Modal.Header withDivider>Select Setup</Modal.Header>
 
-      <div>
-        {setups.map((setup) => {
-          return (
-            <div key={setup.id} className="px-2 py-1 rounded w-fit bg-surface-3" onClick={() => props.onSelect(setup)}>
-              {setup.name}
-            </div>
-          );
-        })}
+      <div className="p-4">
+        <SetupOptions setups={setups} onSelect={props.onSelect} />
       </div>
     </>
   );

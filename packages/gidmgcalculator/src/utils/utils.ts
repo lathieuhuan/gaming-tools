@@ -1,15 +1,13 @@
+import type { AdvancedPick } from "rond";
+import type { Artifact, CalcArtifact, CalcWeapon, Character, UserArtifact, UserWeapon, Weapon } from "@Src/types";
 import { ATTACK_ELEMENTS, ArtifactType, Level, WeaponType } from "@Backend";
-import { Artifact, CalcArtifact, CalcWeapon, Character, UserArtifact, UserWeapon, Weapon } from "@Src/types";
 import { $AppSettings, $AppWeapon } from "@Src/services";
 
 // ========== TYPES ==========
 
-type CreateArtifactArgs = Pick<Artifact, "type" | "code" | "rarity">;
+type CreateWeaponArgs = AdvancedPick<Weapon, "type", "code" | "level" | "refi">;
 
-type CreateWeaponArgs = {
-  type: WeaponType;
-  code?: number;
-};
+type CreateArtifactArgs = AdvancedPick<Artifact, "type" | "code" | "rarity", "level" | "mainStatType" | "subStats">;
 
 type Icon = { value: ArtifactType; icon: string };
 
@@ -61,20 +59,20 @@ export class Utils_ {
 
   static createWeapon(config: CreateWeaponArgs, ID = Date.now()): Weapon {
     const { wpLevel, wpRefi } = $AppSettings.get();
-    const code = config.code || DEFAULT_WEAPON_CODE[config.type];
-    const { rarity = 0 } = $AppWeapon.get(code) || {};
-    let level = wpLevel;
+    const { type, code = DEFAULT_WEAPON_CODE[type] } = config;
+    const { rarity } = $AppWeapon.get(code)!;
+    let { level = wpLevel } = config;
 
     if (+level.split("/")[1] > 70 && rarity < 3) {
       level = "70/70";
     }
 
     return {
-      ID: ID,
-      type: config.type,
+      ID,
+      type,
       code,
       level,
-      refi: wpRefi,
+      refi: config.refi || wpRefi,
     };
   }
 
@@ -82,22 +80,29 @@ export class Utils_ {
     return DEFAULT_WEAPON_CODE[type];
   }
 
-  static createArtifact({ type, code, rarity }: CreateArtifactArgs, ID = Date.now()): Artifact {
+  static createArtifact(config: CreateArtifactArgs, ID = Date.now()): Artifact {
     const { artLevel } = $AppSettings.get();
-
-    return {
-      ID,
+    const {
       type,
-      code,
       rarity,
-      level: Math.min(artLevel, rarity === 5 ? 20 : 16),
-      mainStatType: type === "flower" ? "hp" : type === "plume" ? "atk" : "atk_",
-      subStats: [
+      level = Math.min(artLevel, rarity === 5 ? 20 : 16),
+      mainStatType = type === "flower" ? "hp" : type === "plume" ? "atk" : "atk_",
+      subStats = [
         { type: "def", value: 0 },
         { type: "def_", value: 0 },
         { type: "cRate_", value: 0 },
         { type: "cDmg_", value: 0 },
       ],
+    } = config;
+
+    return {
+      ID,
+      type,
+      code: config.code,
+      rarity,
+      level,
+      mainStatType,
+      subStats,
     };
   }
 

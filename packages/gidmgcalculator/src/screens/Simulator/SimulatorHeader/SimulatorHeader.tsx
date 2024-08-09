@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Button, Checkbox, Drawer, Input, Modal, SwitchNode } from "rond";
+import { Button, Checkbox, CloseButton, Drawer, Input, Modal, SwitchNode } from "rond";
 import { FaCaretDown, FaCaretRight } from "react-icons/fa";
+
 import type { SimulationMember } from "@Src/types";
 import type { RootState } from "@Store/store";
+import type { SetupOption } from "./SetupOptions";
 
 import { MAX_SIMULATION_NAME_LENGTH } from "@Src/constants";
 import { useStoreSnapshot } from "@Src/features";
+import { Utils_ } from "@Src/utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   cancelAssembledSimulation,
@@ -16,6 +19,7 @@ import {
   type SimulatorStage,
 } from "@Store/simulator-slice";
 
+// Component
 import { SimulationList } from "./SimulationList";
 import { CalcSetupSelect } from "./CalcSetupSelect";
 
@@ -55,6 +59,25 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
         setModalType("SELECT_CALC_SETUP");
         break;
     }
+  };
+
+  const onSelectCalcSetup = (setup: SetupOption) => {
+    const members = setup.members.map<SimulationMember>((member) => {
+      return {
+        ...Utils_.createCharacter(member.name, member),
+        weapon: Utils_.createWeapon(member.weapon),
+        artifacts: member.artifacts.map((artifact) => (artifact ? Utils_.createArtifact(artifact) : null)),
+      };
+    });
+
+    dispatch(
+      startAssembledSimulation({
+        name: setup.name,
+        members,
+      })
+    );
+    closeModal();
+    closeDrawer();
   };
 
   return (
@@ -165,26 +188,8 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
         className="flex flex-col"
         onClose={closeModal}
       >
-        <CalcSetupSelect
-          onSelect={(setup) => {
-            const members: SimulationMember[] = [
-              {
-                ...setup.char,
-                weapon: setup.weapon,
-                artifacts: setup.artifacts,
-              },
-            ];
-
-            dispatch(
-              startAssembledSimulation({
-                name: setup.name,
-                members,
-              })
-            );
-            closeModal();
-            closeDrawer();
-          }}
-        />
+        <CloseButton boneOnly className={Modal.CLOSE_BTN_CLS} onClick={closeModal} />
+        <CalcSetupSelect onSelect={onSelectCalcSetup} />
       </Modal.Core>
     </>
   );
