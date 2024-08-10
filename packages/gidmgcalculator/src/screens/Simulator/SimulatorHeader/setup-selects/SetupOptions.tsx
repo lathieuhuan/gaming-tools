@@ -49,36 +49,31 @@ export function SetupOptions<TOption extends SetupOption = SetupOption>({
                 </Button>
               </div>
 
-              <div className="mt-4 flex justify-center gap-3">
-                {setup.members.map((member, i) => {
-                  const appMember = $AppCharacter.get(member.name);
-                  const selected = member.name === selectedMember?.name;
+              <div className="mt-4 mx-auto" style={{ maxWidth: "18.25rem" }}>
+                <div className="flex gap-3">
+                  {setup.members.map((member, i) => {
+                    const appMember = $AppCharacter.get(member.name);
+                    const selected = member.name === selectedMember?.name;
 
-                  return (
-                    <CharacterPortrait
-                      key={i}
-                      className={selected ? "shadow-5px-1px shadow-active-color" : ""}
-                      size="small"
-                      info={{
-                        name: member.name,
-                        code: appMember.code,
-                        icon: appMember.icon,
-                        vision: appMember.vision,
-                      }}
-                      onClick={() => onClickSetupMember(setup.id, member.name, member.name === selectedMember?.name)}
-                    />
-                  );
-                })}
+                    return (
+                      <CharacterPortrait
+                        key={i}
+                        className={selected ? "shadow-5px-1px shadow-active-color" : ""}
+                        size="small"
+                        info={{
+                          name: member.name,
+                          code: appMember.code,
+                          icon: appMember.icon,
+                          vision: appMember.vision,
+                        }}
+                        onClick={() => onClickSetupMember(setup.id, member.name, member.name === selectedMember?.name)}
+                      />
+                    );
+                  })}
+                </div>
+
+                {selectedMember ? <EquipmentDisplay className="mt-3" compact muted {...selectedMember} /> : null}
               </div>
-
-              {selectedMember ? (
-                <EquipmentDisplay
-                  className="mt-3 mx-auto"
-                  style={{ maxWidth: "18.25rem" }}
-                  compact
-                  {...selectedMember}
-                />
-              ) : null}
             </div>
           </div>
         );

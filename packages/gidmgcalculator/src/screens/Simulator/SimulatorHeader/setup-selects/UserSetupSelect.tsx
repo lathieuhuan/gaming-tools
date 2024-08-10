@@ -6,8 +6,16 @@ interface UserSetupSelectProps {
   onSelect: () => void;
 }
 export function UserSetupSelect(props: UserSetupSelectProps) {
+  //
   const setups = useStoreSnapshot((state) => {
-    const { userSetups = [] } = state.userdb;
+    const { userWps, userArts, userSetups = [] } = state.userdb;
+    const a = [];
+
+    for (const setup of userSetups) {
+      if (Setup_.isUserSetup(setup)) {
+        
+      }
+    }
 
     return [];
 

@@ -8,6 +8,9 @@ export interface ItemThumbProps {
   className?: string;
   imgCls?: string;
   title?: string;
+  /** No cursor-pointer */
+  muted?: boolean;
+  /** Smaller layout by placing level at absolute bottom */
   compact?: boolean;
   /** Default to true */
   showOwner?: boolean;
@@ -19,7 +22,8 @@ export interface ItemThumbProps {
     owner?: string | null;
   };
 }
-export function ItemThumbnail({ className, imgCls, title, showOwner = true, compact, item }: ItemThumbProps) {
+export function ItemThumbnail(props: ItemThumbProps) {
+  const { showOwner = true, compact, item } = props;
   const lvText =
     item.level === undefined ? null : `Lv. ${typeof item.level === "string" ? item.level.split("/")[0] : item.level}`;
 
@@ -44,11 +48,12 @@ export function ItemThumbnail({ className, imgCls, title, showOwner = true, comp
   return (
     <div
       className={clsx(
-        "bg-light-default rounded flex flex-col cursor-pointer relative",
+        "bg-light-default rounded flex flex-col relative",
         compact && "overflow-hidden",
-        className
+        !props.muted && "cursor-pointer",
+        props.className
       )}
-      title={title}
+      title={props.title}
     >
       {showOwner && item.owner && !compact ? renderSideIcon(item.owner) : null}
 
@@ -71,7 +76,7 @@ export function ItemThumbnail({ className, imgCls, title, showOwner = true, comp
         )}
       >
         <GenshinImage
-          className={imgCls}
+          className={props.imgCls}
           src={item.icon}
           fallbackCls="p-3"
           imgType={item.refi ? "weapon" : "artifact"}

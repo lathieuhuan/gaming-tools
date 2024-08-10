@@ -1,39 +1,25 @@
-import { useEffect, useState } from "react";
-import type { UserArtifacts, UserWeapon } from "@Src/types";
-import { Setup_, findById } from "@Src/utils";
+import { useMemo } from "react";
+import { Setup_, type UserSetupItems } from "@Src/utils";
 import { useSelector } from "@Store/hooks";
 import { selectUserArtifacts, selectUserSetups, selectUserWeapons } from "@Store/userdb-slice";
 
-type SetupItemInfos = Record<
-  string,
-  {
-    weapon: UserWeapon | null;
-    artifacts: UserArtifacts;
-  }
->;
+type SetupItemInfos = Record<string, UserSetupItems>;
 
 export function useSetupItems(userSetups: ReturnType<typeof selectUserSetups>) {
-  const userWps = useSelector(selectUserWeapons);
-  const userArts = useSelector(selectUserArtifacts);
+  const userWeapons = useSelector(selectUserWeapons);
+  const userArtifacts = useSelector(selectUserArtifacts);
 
-  const [record, setRecord] = useState<SetupItemInfos>({});
-
-  const getSetupItems = () => {
+  const record = useMemo(() => {
     const result: SetupItemInfos = {};
 
     for (const setup of userSetups) {
       if (Setup_.isUserSetup(setup)) {
-        result[setup.ID] = {
-          weapon: findById(userWps, setup.weaponID) || null,
-          artifacts: setup.artifactIDs.map((ID) => findById(userArts, ID) || null),
-        };
+        result[setup.ID] = Setup_.getUserSetupItems(setup, userWeapons, userArtifacts);
       }
     }
-
     return result;
-  };
-
-  useEffect(() => setRecord(getSetupItems()), [userSetups]);
+    //
+  }, [userSetups]);
 
   return {
     itemsBySetupID: record,
