@@ -11,6 +11,7 @@ import { ItemThumbnail, type ItemThumbProps } from "../ItemThumbnail";
 
 export interface EquipmentDisplayProps extends Pick<ItemThumbProps, "compact" | "showOwner"> {
   className?: ClassValue;
+  style?: React.CSSProperties;
   weapon: AdvancedPick<Weapon, "code" | "type", "level" | "refi">;
   appWeapon?: AppWeapon;
   artifacts?: (AdvancedPick<Artifact, "code" | "type" | "rarity", "level"> | null)[];
@@ -27,7 +28,7 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
   const EmptyWrap: keyof JSX.IntrinsicElements = props.fillable ? "button" : "div";
 
   return (
-    <div className={clsx("flex flex-wrap", props.className)}>
+    <div className={clsx("flex flex-wrap", props.className)} style={props.style}>
       <div className="p-1.5 w-1/3">
         <ItemCase chosen={props.selectedIndex === 5} onClick={() => props.onClickItem?.(5)}>
           {(className, imgCls) => (

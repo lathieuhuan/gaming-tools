@@ -20,8 +20,9 @@ export interface ItemThumbProps {
   };
 }
 export function ItemThumbnail({ className, imgCls, title, showOwner = true, compact, item }: ItemThumbProps) {
-  const lvText = item.level ? `Lv. ${typeof item.level === "string" ? item.level.split("/")[0] : item.level}` : null;
-  //
+  const lvText =
+    item.level === undefined ? null : `Lv. ${typeof item.level === "string" ? item.level.split("/")[0] : item.level}`;
+
   const renderSideIcon = (owner: string) => {
     const { icon = "", sideIcon } = $AppCharacter.get(owner) || {};
     return (

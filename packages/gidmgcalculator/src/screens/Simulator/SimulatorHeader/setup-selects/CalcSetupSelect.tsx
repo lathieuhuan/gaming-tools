@@ -1,20 +1,31 @@
-import { Modal } from "rond";
 import { ARTIFACT_TYPES } from "@Backend";
 
+import type { Artifact, CalcSetup, Teammate } from "@Src/types";
 import { useStoreSnapshot } from "@Src/features";
 import { $AppArtifact } from "@Src/services";
 import { SetupOption, SetupOptions } from "./SetupOptions";
 
+type CalcSetupTeammate = Pick<Teammate, "name" | "weapon"> & {
+  artifacts: (Pick<Artifact, "code" | "type" | "rarity"> | null)[];
+};
+
+type CalcSetupOptionMember = CalcSetupTeammate | (CalcSetup["char"] & Pick<CalcSetup, "weapon" | "artifacts">);
+
+export type CalcSetupOption = Pick<SetupOption, "id" | "name"> & {
+  members: CalcSetupOptionMember[];
+};
+
 interface CalcSetupSelectProps {
-  onSelect: (setup: SetupOption) => void;
+  onSelect: (setup: CalcSetupOption) => void;
 }
 export function CalcSetupSelect(props: CalcSetupSelectProps) {
+  //
   const setups = useStoreSnapshot((state) => {
     const { setupManageInfos, setupsById } = state.calculator;
-    return setupManageInfos.map<SetupOption>((info) => {
-      const { char, weapon, artifacts, party } = setupsById[info.ID];
 
-      const setupOption: SetupOption = {
+    return setupManageInfos.map<CalcSetupOption>((info) => {
+      const { char, weapon, artifacts, party } = setupsById[info.ID];
+      const setupOption: CalcSetupOption = {
         id: info.ID,
         name: info.name,
         members: [
@@ -28,7 +39,7 @@ export function CalcSetupSelect(props: CalcSetupSelectProps) {
 
       for (const member of party) {
         if (member) {
-          const setupOptionMember: SetupOption["members"][number] = {
+          const setupOptionMember: CalcSetupTeammate = {
             name: member.name,
             weapon: member.weapon,
             artifacts: [],
@@ -47,7 +58,10 @@ export function CalcSetupSelect(props: CalcSetupSelectProps) {
                 });
               }
             }
+          } else {
+            setupOptionMember.artifacts = [null, null, null, null, null];
           }
+          setupOption.members.push(setupOptionMember);
         }
       }
 
@@ -56,12 +70,8 @@ export function CalcSetupSelect(props: CalcSetupSelectProps) {
   });
 
   return (
-    <>
-      <Modal.Header withDivider>Select Setup</Modal.Header>
-
-      <div className="p-4">
-        <SetupOptions setups={setups} onSelect={props.onSelect} />
-      </div>
-    </>
+    <div className="p-4">
+      <SetupOptions setups={setups} onSelect={props.onSelect} />
+    </div>
   );
 }

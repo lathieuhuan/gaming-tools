@@ -4,7 +4,6 @@ import { FaCaretDown, FaCaretRight } from "react-icons/fa";
 
 import type { SimulationMember } from "@Src/types";
 import type { RootState } from "@Store/store";
-import type { SetupOption } from "./SetupOptions";
 
 import { MAX_SIMULATION_NAME_LENGTH } from "@Src/constants";
 import { useStoreSnapshot } from "@Src/features";
@@ -21,7 +20,7 @@ import {
 
 // Component
 import { SimulationList } from "./SimulationList";
-import { CalcSetupSelect } from "./CalcSetupSelect";
+import { CalcSetupSelect, type CalcSetupOption } from "./setup-selects";
 
 const select = (state: RootState) => {
   const { name, timeOn } = state.simulator.assembledSimulation;
@@ -61,7 +60,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
     }
   };
 
-  const onSelectCalcSetup = (setup: SetupOption) => {
+  const onSelectCalcSetup = (setup: CalcSetupOption) => {
     const members = setup.members.map<SimulationMember>((member) => {
       return {
         ...Utils_.createCharacter(member.name, member),
@@ -83,7 +82,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
   return (
     <>
       <div className="px-4 py-3 bg-surface-2">
-        <div className="flex items-center">
+        <div className="h-7 flex items-center">
           <Button
             className="mr-4"
             shape="square"
@@ -189,6 +188,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
         onClose={closeModal}
       >
         <CloseButton boneOnly className={Modal.CLOSE_BTN_CLS} onClick={closeModal} />
+        <Modal.Header withDivider>Select Setup</Modal.Header>
         <CalcSetupSelect onSelect={onSelectCalcSetup} />
       </Modal.Core>
     </>

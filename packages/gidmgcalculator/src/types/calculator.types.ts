@@ -74,10 +74,7 @@ export type Infusion = {
 };
 
 // PARTY starts
-export type TeammateWeapon = {
-  code: number;
-  type: WeaponType;
-  refi: number;
+export type TeammateWeapon = Pick<Weapon, "code" | "type" | "refi"> & {
   buffCtrls: ModifierCtrl[];
 };
 
