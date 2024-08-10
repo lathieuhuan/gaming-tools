@@ -3,7 +3,7 @@ import { FaLink, FaPlus, FaShareAlt, FaTrashAlt, FaUnlink, FaWrench } from "reac
 import { clsx, useScreenWatcher, Button, ButtonGroup, Modal, CloseButton } from "rond";
 import { ARTIFACT_TYPES, CharacterCalc } from "@Backend";
 
-import type { UserArtifacts, UserSetup, UserWeapon } from "@Src/types";
+import type { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
 import type { OpenModalFn } from "../MySetups.types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import { Utils_, Setup_ } from "@Src/utils";
@@ -19,19 +19,18 @@ import { CharacterPortrait, GenshinImage } from "@Src/components";
 import { TeammateDetail } from "./TeammateDetail";
 import { GearIcon } from "./GearIcon";
 
-interface SetupLayoutProps {
-  ID: number;
+interface SetupTemplateProps {
   setup: UserSetup;
-  setupName?: string;
+  complexSetup?: UserComplexSetup;
   weapon: UserWeapon | null;
   artifacts?: UserArtifacts;
-  allIDs?: Record<string, number>;
   openModal: OpenModalFn;
 }
-export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], allIDs, openModal }: SetupLayoutProps) {
+export function SetupTemplate({ setup, complexSetup, weapon, artifacts = [], openModal }: SetupTemplateProps) {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const { type, char, party } = setup;
+  const { allIDs } = complexSetup || {};
 
   const [teammateDetail, setTeammateDetail] = useState({
     index: -1,
@@ -50,11 +49,13 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
   };
 
   const uncombine = () => {
-    dispatch(uncombineSetups(ID));
+    if (complexSetup) {
+      dispatch(uncombineSetups(complexSetup.ID));
 
-    setTimeout(() => {
-      dispatch(chooseUserSetup(setup.ID));
-    }, 10);
+      setTimeout(() => {
+        dispatch(chooseUserSetup(setup.ID));
+      }, 10);
+    }
   };
 
   const onCalculateTeammateSetup = () => {
@@ -164,8 +165,12 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
       </div>
     );
 
-    return { mainCharacter, teammates, gears };
-  }, [`${ID}-${setup.ID}`, isFetched]);
+    return {
+      mainCharacter,
+      teammates,
+      gears,
+    };
+  }, [complexSetup?.ID, setup.ID, isFetched]);
 
   return (
     <>
@@ -186,7 +191,7 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
           ) : (
             <Button variant="custom" className="text-danger-2" boneOnly icon={<FaUnlink />} onClick={uncombine} />
           )}
-          <p className="px-1 text-xl text-heading-color font-semibold truncate">{setupName || setup.name}</p>
+          <p className="px-1 text-xl text-heading-color font-semibold truncate">{complexSetup?.name || setup.name}</p>
         </div>
 
         <div className="mt-2 lg:mt-0 pb-2 flex space-x-3 justify-end">
@@ -269,13 +274,13 @@ export function SetupTemplate({ ID, setup, setupName, weapon, artifacts = [], al
             isCalculated={teammateDetail.isCalculated}
             onSwitchSetup={() => {
               const { name } = teammateInfo || {};
-              const shownID = allIDs && name ? allIDs[name] : undefined;
+              const shownId = allIDs && name ? allIDs[name] : undefined;
 
-              if (shownID) {
+              if (complexSetup && shownId) {
                 dispatch(
                   switchShownSetupInComplex({
-                    complexID: ID,
-                    shownID,
+                    complexID: complexSetup.ID,
+                    shownID: shownId,
                   })
                 );
               }

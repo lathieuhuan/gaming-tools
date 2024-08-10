@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { StandardResponse } from "@Src/services";
 
-type State<K, T> = {
-  queryKey: K;
+type State<T> = {
   status: "loading" | "error" | "success" | "idle";
   error: string | null;
   data: T | null;
@@ -20,68 +19,65 @@ export function useQuery<TQueryKey extends ReadonlyArray<string | number>, TData
 ) {
   const { auto = true } = options || {};
 
-  const state = useRef<State<TQueryKey, TData>>({
+  const vars = useRef({
+    mounted: true,
     queryKey: [] as unknown as TQueryKey,
+  });
+  const [state, setState] = useState<State<TData>>({
     status: "idle",
     error: null,
     data: null,
     mounted: true,
   });
-  const [, setCount] = useState(0);
 
   useEffect(() => {
     return () => {
-      state.current.mounted = false;
+      vars.current.mounted = false;
     };
   }, []);
-
-  const render = () => {
-    setCount((n) => n + 1);
-  };
 
   const getData = async (queryKey: TQueryKey) => {
     const response = await fetchData(queryKey);
 
     // Still mounted & not stale
-    if (state.current.mounted && isSameQueryKey(queryKey, state.current.queryKey)) {
+    if (vars.current.mounted && isSameQueryKey(queryKey, vars.current.queryKey)) {
       if (response.code === 200) {
-        state.current = {
-          ...state.current,
+        setState((prevState) => ({
+          ...prevState,
           status: "success",
           error: null,
           data: response.data,
-        };
+        }));
       } else {
-        state.current = {
-          ...state.current,
+        setState((prevState) => ({
+          ...prevState,
           status: "error",
           error: response.message || null,
           data: null,
-        };
+        }));
       }
-      render();
     }
   };
 
-  if (auto && !isSameQueryKey(queryKey, state.current.queryKey)) {
-    state.current = {
-      ...state.current,
-      status: "loading",
-      queryKey,
-      error: null,
-    };
+  useEffect(() => {
+    if (auto) {
+      vars.current.queryKey = queryKey;
 
-    getData(queryKey);
-    render();
-  }
+      setState((prevState) => ({
+        ...prevState,
+        status: "loading",
+        error: null,
+      }));
 
-  const { status } = state.current;
+      getData(queryKey);
+    }
+  }, [auto, ...queryKey]);
 
   return {
-    isLoading: status === "loading",
-    isError: status === "error",
-    isSuccess: status === "success",
-    error: state.current.error,
-    data: state.current.data,
+    isLoading: state.status === "loading",
+    isError: state.status === "error",
+    isSuccess: state.status === "success",
+    error: state.error,
+    data: state.data,
   };
 }

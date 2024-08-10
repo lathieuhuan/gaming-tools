@@ -5,7 +5,7 @@ import { clsx, Button, LoadingSpin, WarehouseLayout, useScreenWatcher } from "ro
 import type { UserComplexSetup, UserSetup } from "@Src/types";
 import { useAppCharacter } from "@Src/hooks";
 import { $AppCharacter } from "@Src/services";
-import { Setup_, findById } from "@Src/utils";
+import { Setup_, UserSetupItems, findById } from "@Src/utils";
 
 import type { OpenModalFn } from "./MySetups.types";
 import { useSetupItems } from "./hooks";
@@ -27,6 +27,7 @@ export default function MySetups() {
   const screenWatcher = useScreenWatcher();
   const userSetups = useSelector(selectUserSetups);
   const chosenSetupID = useSelector(selectChosenSetupId);
+  // const chosenSetupID = useSelector((state) => state.userdb.chosenSetupID);
 
   const chosenSetup = (() => {
     const setup = findById(userSetups, chosenSetupID);
@@ -35,7 +36,7 @@ export default function MySetups() {
 
   const { itemsBySetupID } = useSetupItems(userSetups);
   const { isLoading, error } = useAppCharacter(chosenSetup?.char.name);
-  // const isLoading = true;
+  // const isLoading = false;
   // const error = null;
 
   useEffect(() => {
@@ -46,69 +47,47 @@ export default function MySetups() {
     dispatch(updateUI({ mySetupsModalType: type }));
   };
 
-  const setupList = (() => {
-    if (!userSetups.length) {
-      return <p className="w-full py-4 text-hint-color text-lg text-center">No setups found</p>;
-    }
-
-    return userSetups.map((setup: UserSetup | UserComplexSetup, index: number) => {
-      if (setup.type === "combined") return null;
-      let key = 0;
-      let setupDisplay: JSX.Element | null;
-
-      if (setup.type === "complex") {
-        const actualSetup = userSetups.find((userSetup) => userSetup.ID === setup.shownID);
-        if (!actualSetup || !Setup_.isUserSetup(actualSetup)) return null;
-
-        key = actualSetup.ID;
-        setupDisplay = itemsBySetupID[actualSetup.ID] ? (
-          <SetupTemplate
-            ID={setup.ID}
-            setupName={setup.name}
-            setup={actualSetup}
-            {...itemsBySetupID[actualSetup.ID]}
-            allIDs={setup.allIDs}
-            openModal={openModal}
-          />
-        ) : null;
-      } else {
-        key = setup.ID;
-        setupDisplay = itemsBySetupID[setup.ID] ? (
-          <SetupTemplate ID={setup.ID} setup={setup} {...itemsBySetupID[setup.ID]} openModal={openModal} />
-        ) : null;
-      }
-
-      return setupDisplay ? (
-        <div key={key} id={`setup-${setup.ID}`} className="w-full p-1">
-          <div
-            className={clsx(
-              "px-2 pt-3 pb-2 rounded-lg bg-surface-3",
-              setup.ID === chosenSetupID ? "shadow-5px-1px shadow-active-color" : "shadow-common"
-            )}
-            onClick={() => dispatch(chooseUserSetup(setup.ID))}
-          >
-            {setupDisplay}
-          </div>
+  const renderSetupLayout = (setup: UserSetup, items: UserSetupItems, complexSetup?: UserComplexSetup) => {
+    return (
+      <div key={setup.ID} id={`setup-${setup.ID}`} className="w-full p-1">
+        <div
+          className={clsx(
+            "px-2 pt-3 pb-2 rounded-lg bg-surface-3",
+            setup.ID === chosenSetupID ? "shadow-5px-1px shadow-active-color" : "shadow-common"
+          )}
+          onClick={() => dispatch(chooseUserSetup(setup.ID))}
+        >
+          <SetupTemplate setup={setup} {...items} complexSetup={complexSetup} openModal={openModal} />
         </div>
-      ) : null;
-    });
-  })();
+      </div>
+    );
+  };
 
-  const chosenSetupInfo = (() => {
+  const renderedSetups: JSX.Element[] = [];
+
+  for (const setup of userSetups) {
+    if (Setup_.isUserSetup(setup)) {
+      const items = itemsBySetupID[setup.ID];
+
+      if (setup.type === "original" && items) {
+        renderedSetups.push(renderSetupLayout(setup, items));
+      }
+      continue;
+    }
+    const actualSetup = userSetups.find((userSetup) => userSetup.ID === setup.shownID);
+
+    if (actualSetup && Setup_.isUserSetup(actualSetup)) {
+      const items = itemsBySetupID[actualSetup.ID];
+
+      if (items) {
+        renderedSetups.push(renderSetupLayout(actualSetup, items, setup));
+      }
+    }
+  }
+
+  const renderChosenSetup = () => {
     if (chosenSetup) {
-      if (error) {
-        return <p className="text-center text-danger-3">{error}</p>;
-      }
-      if (isLoading) {
-        return (
-          <div className="w-full h-full flex-center">
-            <LoadingSpin size="large" />
-          </div>
-        );
-      }
-
       const { weapon, artifacts } = itemsBySetupID[chosenSetup.ID] || {};
-
       const result = calculateChosenSetup(chosenSetup, weapon, artifacts);
 
       return (
@@ -133,7 +112,7 @@ export default function MySetups() {
       );
     }
     return null;
-  })();
+  };
 
   return (
     <WarehouseLayout
@@ -157,11 +136,23 @@ export default function MySetups() {
           minWidth: screenWatcher.isFromSize("lg") ? "541px" : "19.5rem",
         }}
       >
-        {setupList}
+        {renderedSetups.length ? (
+          renderedSetups
+        ) : (
+          <p className="w-full py-4 text-hint-color text-lg text-center">No setups found</p>
+        )}
       </div>
 
       <div className="shrink-0 px-4 pt-2 pb-4 rounded-lg bg-surface-3" style={{ width: "21.75rem" }}>
-        {chosenSetupInfo}
+        {error ? (
+          <p className="text-center text-danger-3">{error}</p>
+        ) : isLoading ? (
+          <div className="w-full h-full flex-center">
+            <LoadingSpin size="large" />
+          </div>
+        ) : (
+          renderChosenSetup()
+        )}
       </div>
 
       <MySetupsModals combineMoreId={chosenSetupID} />
