@@ -51,7 +51,7 @@ export function Timeline({ simulation }: TimelineProps) {
   }, [simulation]);
 
   return (
-    <div className="h-full px-4 flex flex-col justify-end bg-black/30">
+    <div className="h-full px-4 rounded-sm bg-black/40 flex flex-col justify-end">
       <div className="flex items-center">
         <div ref={timelineRef} className="timeline grow flex relative after:bg-hint-color/60">
           {chunks.map((chunk) => {
@@ -65,7 +65,7 @@ export function Timeline({ simulation }: TimelineProps) {
             return (
               <div
                 key={chunk.id}
-                className={`h-10 flex items-center relative z-10 ${selected ? "bg-black" : "hover:bg-black/30"}`}
+                className={`h-10 flex items-center relative z-10 ${selected ? "bg-black" : "hover:bg-black/40"}`}
                 {...getChunkProps(chunk.id)}
               >
                 <Popover

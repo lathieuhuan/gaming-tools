@@ -18,10 +18,15 @@ export function useTimelineTracker() {
     };
   };
 
+  const unSelectChunk = () => {
+    dispatch(updateSimulator({ activeChunkId: "" }));
+  };
+
   return {
     selectedChunkId,
     timelineRef: logRef,
     dispatch,
+    unSelectChunk,
     getChunkProps,
   };
 }

@@ -22,7 +22,7 @@ import { GearIcon } from "./GearIcon";
 interface SetupTemplateProps {
   setup: UserSetup;
   complexSetup?: UserComplexSetup;
-  weapon: UserWeapon | null;
+  weapon: UserWeapon;
   artifacts?: UserArtifacts;
   openModal: OpenModalFn;
 }
@@ -59,21 +59,19 @@ export function SetupTemplate({ setup, complexSetup, weapon, artifacts = [], ope
   };
 
   const onCalculateTeammateSetup = () => {
-    if (weapon) {
-      dispatch(
-        makeTeammateSetup({
-          setup,
-          mainWeapon: weapon,
-          teammateIndex: teammateDetail.index,
-        })
-      );
-    }
+    dispatch(
+      makeTeammateSetup({
+        setup,
+        mainWeapon: weapon,
+        teammateIndex: teammateDetail.index,
+      })
+    );
   };
 
   const display = useMemo(() => {
     let mainCharacter = null;
     const appChar = $AppCharacter.get(char.name);
-    const appWeapon = weapon ? $AppWeapon.get(weapon.code) : undefined;
+    const appWeapon = $AppWeapon.get(weapon.code);
 
     if (appChar) {
       const talents = (["NAs", "ES", "EB"] as const).map((talentType) => {
@@ -197,20 +195,17 @@ export function SetupTemplate({ setup, complexSetup, weapon, artifacts = [], ope
         <div className="mt-2 lg:mt-0 pb-2 flex space-x-3 justify-end">
           <Button
             icon={<FaWrench />}
-            disabled={!weapon}
             onClick={() => {
-              if (weapon) {
-                const { ID, name, type, target } = setup;
-                dispatch(
-                  updateSetupImportInfo({
-                    ID,
-                    name,
-                    type,
-                    calcSetup: Setup_.userSetupToCalcSetup(setup, weapon, artifacts, true),
-                    target,
-                  })
-                );
-              }
+              const { ID, name, type, target } = setup;
+              dispatch(
+                updateSetupImportInfo({
+                  ID,
+                  name,
+                  type,
+                  calcSetup: Setup_.userSetupToCalcSetup(setup, weapon, artifacts, true),
+                  target,
+                })
+              );
             }}
           />
 
@@ -283,6 +278,7 @@ export function SetupTemplate({ setup, complexSetup, weapon, artifacts = [], ope
                     shownID: shownId,
                   })
                 );
+                closeTeammateDetail();
               }
             }}
             onCalculateTeammateSetup={onCalculateTeammateSetup}

@@ -33,6 +33,10 @@ export function SetupOptions<TOption extends SetupOption = SetupOption>({
     setSelected(selected ? { setupId: 0, member: "" } : { setupId, member });
   };
 
+  if (!setups.length) {
+    return <div className="py-4 text-xl text-center text-hint-color font-semibold">No setups found</div>;
+  }
+
   return (
     <div className="grid grid-cols-1 xm:grid-cols-2 gap-4">
       {setups.map((setup) => {

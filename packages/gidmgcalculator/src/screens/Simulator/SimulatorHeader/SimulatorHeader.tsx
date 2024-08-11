@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Button, Checkbox, CloseButton, Drawer, Input, Modal, SwitchNode } from "rond";
 import { FaCaretDown, FaCaretRight } from "react-icons/fa";
+import { Button, Checkbox, CloseButton, Drawer, Input, Modal, SwitchNode } from "rond";
 
 import type { SimulationMember } from "@Src/types";
 import type { RootState } from "@Store/store";
@@ -21,13 +21,16 @@ import {
 // Component
 import { SimulationList } from "./SimulationList";
 import { CalcSetupSelect, type CalcSetupOption } from "./setup-selects";
+import { UserSetupSelect } from "./setup-selects/UserSetupSelect";
 
 const select = (state: RootState) => {
   const { name, timeOn } = state.simulator.assembledSimulation;
   return { name, timeOn };
 };
 
-type ModalType = "SELECT_CALC_SETUP" | "";
+type ModalType = "SELECT_CALC_SETUP" | "SELECT_USER_SETUP" | "";
+
+type CreateSimulationSource = "NONE" | "CALCULATOR" | "MY_SETUPS";
 
 const SimulationName = () => {
   const simulationName = useStoreSnapshot((state) => getSimulation(state.simulator)?.name);
@@ -48,7 +51,13 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
 
   const closeModal = () => setModalType("");
 
-  const onRequestAssembleSimulation = (source: "NONE" | "CALCULATOR") => {
+  const createSimulationOptions: Array<{ label: string; value: CreateSimulationSource }> = [
+    { label: "Empty", value: "NONE" },
+    { label: "With Calculator Setup", value: "CALCULATOR" },
+    { label: "With My Setup", value: "MY_SETUPS" },
+  ];
+
+  const onRequestAssembleSimulation = (source: CreateSimulationSource) => {
     switch (source) {
       case "NONE":
         dispatch(startAssembledSimulation());
@@ -56,6 +65,9 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
         break;
       case "CALCULATOR":
         setModalType("SELECT_CALC_SETUP");
+        break;
+      case "MY_SETUPS":
+        setModalType("SELECT_USER_SETUP");
         break;
     }
   };
@@ -160,13 +172,14 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
             <div>
               <p className="text-sm text-heading-color font-medium">Create Simulation</p>
 
-              <div className="mt-2 flex flex-wrap gap-2">
-                <Button size="small" onClick={() => onRequestAssembleSimulation("NONE")}>
-                  Empty
-                </Button>
-                <Button size="small" onClick={() => onRequestAssembleSimulation("CALCULATOR")}>
-                  With Calculator Setup
-                </Button>
+              <div className="mt-2 flex flex-wrap gap-x-2 gap-y-3">
+                {createSimulationOptions.map((option) => {
+                  return (
+                    <Button key={option.value} size="small" onClick={() => onRequestAssembleSimulation(option.value)}>
+                      {option.label}
+                    </Button>
+                  );
+                })}
               </div>
             </div>
 
@@ -174,7 +187,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
               <p className="text-sm text-heading-color font-medium">My Simulations</p>
             </div>
 
-            <div className="mt-2 pl-2">
+            <div className="mt-2">
               <SimulationList onRequestEditSimulation={closeDrawer} onRequestDuplicateSimulation={closeDrawer} />
             </div>
           </div>
@@ -190,6 +203,17 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
         <CloseButton boneOnly className={Modal.CLOSE_BTN_CLS} onClick={closeModal} />
         <Modal.Header withDivider>Select Setup</Modal.Header>
         <CalcSetupSelect onSelect={onSelectCalcSetup} />
+      </Modal.Core>
+
+      <Modal.Core
+        active={modalType === "SELECT_USER_SETUP"}
+        preset="large"
+        className="flex flex-col"
+        onClose={closeModal}
+      >
+        <CloseButton boneOnly className={Modal.CLOSE_BTN_CLS} onClick={closeModal} />
+        <Modal.Header withDivider>Select Setup</Modal.Header>
+        <UserSetupSelect onSelect={onSelectCalcSetup} />
       </Modal.Core>
     </>
   );

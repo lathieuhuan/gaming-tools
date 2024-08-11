@@ -5,9 +5,9 @@ interface EventDisplayerProps {
   sideIconNode: React.ReactNode;
   event: SimulationProcessedEvent;
 }
-export function EventDisplayer({ sideIconNode, event }: EventDisplayerProps) {
-  const containerCls =
-    "p-1 pr-2 text-sm rounded flex items-center hover:bg-secondary-1 hover:text-black cursor-default";
+export function EventDisplayer(props: EventDisplayerProps) {
+  const { event } = props;
+  const containerCls = "p-1 pr-2 text-sm flex items-center";
 
   const errorNode = event.error ? (
     <span className="ml-auto">
@@ -19,8 +19,8 @@ export function EventDisplayer({ sideIconNode, event }: EventDisplayerProps) {
     case "MODIFY": {
       return (
         <div className={containerCls}>
-          {sideIconNode}
-          <div className="px-2 font-medium truncate">
+          {props.sideIconNode}
+          <div className="px-2 truncate">
             <span className="opacity-80">Trigger</span> {event.description}
           </div>
           {errorNode}
@@ -30,8 +30,8 @@ export function EventDisplayer({ sideIconNode, event }: EventDisplayerProps) {
     case "HIT": {
       return (
         <div className={containerCls}>
-          {sideIconNode}
-          <div className="px-2 font-medium truncate">{event.description}</div>
+          {props.sideIconNode}
+          <div className="px-2 truncate">{event.description}</div>
           <div className="ml-auto flex items-center gap-2">
             <span className="font-semibold">{event.damage.value}</span>
             {errorNode}

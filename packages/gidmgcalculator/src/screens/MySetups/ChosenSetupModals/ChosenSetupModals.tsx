@@ -14,7 +14,7 @@ import { ChosenSetupModifiers } from "./ChosenSetupModifiers";
 
 interface ChosenSetupModalsProps {
   chosenSetup: UserSetup;
-  weapon: UserWeapon | null;
+  weapon?: UserWeapon;
   artifacts: UserArtifacts;
   result?: ReturnType<typeof calculateChosenSetup>;
 }

@@ -36,8 +36,8 @@ export function HitEventDisplayer(props: HitEventDisplayerProps) {
     <div>
       <div
         className={clsx(
-          "h-8 font-medium rounded-sm cursor-pointer glow-on-hover overflow-hidden flex items-center",
-          isActive ? "bg-primary-2 text-black" : "bg-surface-3"
+          "h-8 rounded-sm cursor-pointer glow-on-hover overflow-hidden flex items-center",
+          isActive ? "bg-primary-2 text-black font-semibold" : "font-medium bg-surface-3"
         )}
         onClick={toggle}
       >

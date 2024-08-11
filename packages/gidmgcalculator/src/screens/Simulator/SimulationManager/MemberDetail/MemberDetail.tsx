@@ -37,7 +37,7 @@ export function MemberDetail({ className, simulation }: MemberDetailProps) {
           value={activeTab}
           options={[
             { label: "Attributes", value: "ATTRIBUTES" },
-            { label: "Gears", value: "GEARS" },
+            { label: "Equipment", value: "EQUIPMENT" },
             { label: "Constellation", value: "CONSTELLATION" },
             { label: "Talents", value: "TALENTS" },
           ]}
@@ -53,7 +53,7 @@ export function MemberDetail({ className, simulation }: MemberDetailProps) {
                 element: <AttributesTab simulation={simulation} />,
               },
               {
-                value: "GEARS",
+                value: "EQUIPMENT",
                 element: (
                   <GrearsTab
                     weapon={activeMember.info.weapon}

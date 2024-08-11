@@ -43,22 +43,7 @@ export function HitEventHost({ className }: HitEventHostProps) {
     <div className={clsx("p-4", className)}>
       <HitEventCoordinator>
         <div className="h-full hide-scrollbar">
-          <div className="flex justify-end">
-            <Button
-              className="switch-action-btn"
-              size="small"
-              boneOnly
-              icon={<BiLogInCircle className="text-xl" />}
-              iconPosition="end"
-              onClick={() => {
-                dispatch(changeOnFieldMember(activeMember.data.code));
-              }}
-            >
-              <span className="font-medium">Take the field</span>
-            </Button>
-          </div>
-
-          <div className="mt-1 space-y-3">
+          <div className="space-y-3">
             {configs.map((config) => {
               if (config.groups.every((group) => !group.items.length)) {
                 return null;

@@ -23,7 +23,7 @@ interface CleanupCalcSetupOptions {
 }
 
 export type UserSetupItems = {
-  weapon: UserWeapon | null;
+  weapon?: UserWeapon;
   artifacts: UserArtifacts;
 };
 
@@ -50,7 +50,7 @@ export class Setup_ {
 
   static getUserSetupItems(setup: UserSetup, userWeapons: UserWeapon[], userArtifacts: UserArtifacts): UserSetupItems {
     return {
-      weapon: findById(userWeapons, setup.weaponID) || null,
+      weapon: findById(userWeapons, setup.weaponID),
       artifacts: setup.artifactIDs.map((ID) => findById(userArtifacts, ID) || null),
     };
   }
