@@ -35,8 +35,8 @@ export type ModifierViewInputConfig =
 export interface ModifierViewProps {
   className?: ClassValue;
   mutable?: boolean;
-  /** Default to 'TOGGLE' if mutable is true, to 'VIEW' if mutable is false */
-  headingVariant?: "TOGGLE" | "VIEW" | "CUSTOM";
+  /** Default to 'toggle' if mutable is true, to 'view' if mutable is false */
+  headingVariant?: "toggle" | "view" | "custom";
   headingSuffix?: React.ReactNode;
   checked?: boolean;
   heading: React.ReactNode;
@@ -51,7 +51,7 @@ export interface ModifierViewProps {
 export const ModifierView = ({
   className,
   mutable,
-  headingVariant = mutable ? "TOGGLE" : "VIEW",
+  headingVariant = mutable ? "toggle" : "view",
   headingSuffix,
   checked,
   heading,
@@ -114,17 +114,17 @@ export const ModifierView = ({
   let headingNode: React.ReactNode = null;
 
   switch (headingVariant) {
-    case "VIEW":
+    case "view":
       headingNode = <span>+ {heading}</span>;
       break;
-    case "TOGGLE":
+    case "toggle":
       headingNode = (
         <Checkbox checked={checked} onChange={onToggle}>
           {heading}
         </Checkbox>
       );
       break;
-    case "CUSTOM":
+    case "custom":
       headingNode = <span>{heading}</span>;
       break;
   }

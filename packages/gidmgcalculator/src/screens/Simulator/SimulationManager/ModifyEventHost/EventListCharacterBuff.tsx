@@ -68,9 +68,9 @@ export function EventListCharacterBuff({
         return (
           <div key={modifier.index}>
             <GenshinModifierView
-              mutable={true}
+              mutable
               heading={modifier.src}
-              headingVariant="CUSTOM"
+              headingVariant="custom"
               description={parseAbilityDescription(
                 modifier,
                 {

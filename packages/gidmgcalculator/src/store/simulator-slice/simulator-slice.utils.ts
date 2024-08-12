@@ -42,6 +42,15 @@ export function getNextEventId(chunks: SimulationChunk[]) {
   return id;
 }
 
+type InternalAddEventArgs = {
+  chunks: SimulationChunk[];
+  defaultOnfieldMemberCode: number;
+  /** Switch on field member action should have no event */
+  event?: SimulationEvent;
+  performerCode?: number;
+  alsoSwitch: boolean;
+};
+
 export function _addEvent(
   chunks: SimulationChunk[],
   /** Switch on field member action should have no event */

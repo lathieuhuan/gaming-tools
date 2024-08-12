@@ -62,9 +62,9 @@ export function EventListWeaponBuff({ member, initalInputsByMember = {}, appWeap
         return (
           <div key={modifier.index}>
             <GenshinModifierView
-              mutable={true}
+              mutable
               heading={appWeapon.name}
-              headingVariant="CUSTOM"
+              headingVariant="custom"
               description={getWeaponBuffDescription(appWeapon.descriptions, modifier, refi)}
               checked={false}
               inputs={inputs}

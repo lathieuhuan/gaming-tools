@@ -1,8 +1,18 @@
-import type { AppCharacter, AppliedAttackBonus, AppliedAttributeBonus, LevelableTalentType } from "@Backend";
+import type {
+  AppCharacter,
+  AppliedAttackBonus,
+  AppliedAttributeBonus,
+  ElementType,
+  LevelableTalentType,
+} from "@Backend";
 import type { Artifact, Character, Weapon } from "./global.types";
 import type { ElementModCtrl, Target } from "./calculator.types";
 
 /** ========== EVENTS ========== */
+
+type SystemPerformer = {
+  type: "SYSTEM";
+};
 
 type CharacterPerformer = {
   type: "CHARACTER";
@@ -11,19 +21,31 @@ type CharacterPerformer = {
 
 type BaseEvent = {
   id: number;
-  performer: CharacterPerformer;
+  performer: SystemPerformer | CharacterPerformer;
   /** required if alsoSwitch and is HitEvent */
   duration?: number;
 };
 
+type CommonModiferProps = {
+  inputs?: number[];
+};
+
+type ResonanceModifier = {
+  type: "RESONANCE";
+  element: ElementType;
+  inputs?: number[];
+};
+
+type EntityModifier = {
+  type: "CHARACTER" | "WEAPON" | "ARTIFACT";
+  code: number;
+  id: number;
+  inputs?: number[];
+};
+
 export type ModifyEvent = BaseEvent & {
   type: "MODIFY";
-  modifier: {
-    type: "CHARACTER" | "WEAPON" | "ARTIFACT";
-    code: number;
-    id: number;
-    inputs?: number[];
-  };
+  modifier: (ResonanceModifier | EntityModifier) & CommonModiferProps;
 };
 
 export type TalentHitEventMod = Pick<ElementModCtrl, "absorption" | "reaction" | "infuse_reaction">;

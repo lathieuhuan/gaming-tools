@@ -21,7 +21,6 @@ export class PartyBonusControl {
   constructor(partyData: SimulationPartyData) {
     // Resonance
     const elmtsCount = GeneralCalc.countElements(partyData);
-
     const appliedResonanceElmts: ElementType[] = ["pyro", "hydro", "geo", "dendro"];
 
     for (const elmt of appliedResonanceElmts) {

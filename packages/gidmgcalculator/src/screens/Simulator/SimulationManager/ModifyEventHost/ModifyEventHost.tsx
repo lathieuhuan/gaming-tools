@@ -1,24 +1,39 @@
 import { clsx, type ClassValue } from "rond";
-import { AppWeapon, CharacterBuff, EntityCalc, GeneralCalc } from "@Backend";
+import { AppWeapon, CharacterBuff, ElementType, EntityCalc, GeneralCalc } from "@Backend";
 import type { InputsByMember } from "./ModifyEventHost.types";
 
 import { Modifier_ } from "@Src/utils";
 import { useActiveMember, SimulationManager } from "@Simulator/ToolboxProvider";
 
 // Component
+import { EventListElementBuff } from "./EventListElementBuff";
 import { EventListCharacterBuff } from "./EventListCharacterBuff";
 import { EventListWeaponBuff } from "./EventListWeaponBuff";
+
+const APPLIABLE_RESONANCE_TYPE: ElementType[] = ["cryo", "geo", "dendro"];
 
 interface ModifyEventHostProps {
   className?: ClassValue;
   simulation: SimulationManager;
 }
 export function ModifyEventHost({ className, simulation }: ModifyEventHostProps) {
+  const appliedResonanceElmts: ElementType[] = [];
   const characterBuffsByMember: ModifyEventHostForActiveMemberProps["characterBuffsByMember"] = {};
   const characterBuffAllInputsByMember: InputsByMember = {};
   const appWeaponByMember: ModifyEventHostForActiveMemberProps["appWeaponByMember"] = {};
   const weaponBuffAllInputsByMember: InputsByMember = {};
   const artifactBuffAllInputsByMember: InputsByMember = {};
+
+  // Resonance buff
+  const elmtCount = GeneralCalc.countElements(simulation.partyData);
+
+  for (const elmtType of APPLIABLE_RESONANCE_TYPE) {
+    const { [elmtType]: count = 0 } = elmtCount;
+
+    if (count >= 2) {
+      appliedResonanceElmts.push(elmtType);
+    }
+  }
 
   for (const data of simulation.partyData) {
     const memberCode = data.code;
@@ -56,6 +71,7 @@ export function ModifyEventHost({ className, simulation }: ModifyEventHostProps)
     <ModifyEventHostForActiveMember
       className={className}
       simulation={simulation}
+      resonanceElmts={appliedResonanceElmts}
       characterBuffsByMember={characterBuffsByMember}
       initalCharacterBuffAllInputsByMember={characterBuffAllInputsByMember}
       appWeaponByMember={appWeaponByMember}
@@ -67,6 +83,7 @@ export function ModifyEventHost({ className, simulation }: ModifyEventHostProps)
 interface ModifyEventHostForActiveMemberProps {
   className?: ClassValue;
   simulation: SimulationManager;
+  resonanceElmts: ElementType[];
   characterBuffsByMember: Record<number, CharacterBuff[]>;
   initalCharacterBuffAllInputsByMember: InputsByMember;
   appWeaponByMember: Record<number, AppWeapon>;
@@ -84,6 +101,7 @@ function ModifyEventHostForActiveMember(props: ModifyEventHostForActiveMemberPro
   return (
     <div className={clsx("p-4", props.className)}>
       <div className="h-full hide-scrollbar space-y-3">
+        <EventListElementBuff resonanceElmts={props.resonanceElmts} />
         <EventListCharacterBuff
           simulation={simulation}
           member={activeMember}
