@@ -2,12 +2,17 @@ import type { AppWeapon } from "@Backend";
 import type {
   AttackReaction,
   HitEvent,
-  ModifyEvent,
+  EntityModifyEvent,
   Simulation,
   SimulationPartyData,
   SimulationTarget,
+  SystemModifyEvent,
 } from "@Src/types";
-import type { ProcessedHitEvent, ProcessedModifyEvent } from "./simulation-control.types";
+import type {
+  ProcessedHitEvent,
+  ProcessedEntityModifyEvent,
+  ProcessedSystemModifyEvent,
+} from "./simulation-control.types";
 
 import { $AppCharacter, $AppWeapon } from "@Src/services";
 import {
@@ -125,7 +130,36 @@ export class SimulationControlCenter extends SimulationChunksControl {
     }
   };
 
-  protected modify = (event: ModifyEvent): ProcessedModifyEvent => {
+  protected systemModify = (event: SystemModifyEvent): ProcessedSystemModifyEvent => {
+    switch (event.modifier.type) {
+      case "RESONANCE":
+        const { element, inputs = [] } = event.modifier;
+
+        switch (element) {
+          case "geo":
+            this.partyBonus.updatePartyAttkBonus({
+              id: "geo-reso-dmg-bonus",
+              description: "Geo Resonance / Shielded",
+              value: 15,
+              toType: "all",
+              toKey: "pct_",
+            });
+            break;
+          case "dendro":
+            break;
+        }
+
+        this.activeMemberWatcher.notifySubscribers();
+
+        return {
+          ...event,
+          duration: 0,
+          description: `${element.at(0)?.toUpperCase()}${element.slice(1)} Resonance`,
+        };
+    }
+  };
+
+  protected entityModify = (event: EntityModifyEvent): ProcessedEntityModifyEvent => {
     const { duration = 0 } = event;
     const performer = this.member[event.performer.code];
     const { affect, attrBonuses, attkBonuses, source } = performer.modify(

@@ -139,8 +139,11 @@ export class SimulationControl extends SimulationControlCenter {
     this.sumary.duration += event.duration ?? 0;
 
     switch (event.type) {
-      case "MODIFY":
-        processedEvent = this.modify(event);
+      case "SYSTEM_MODIFY":
+        processedEvent = this.systemModify(event);
+        break;
+      case "ENTITY_MODIFY":
+        processedEvent = this.entityModify(event);
         break;
       case "HIT":
         processedEvent = this.hit(event);

@@ -23,7 +23,7 @@ import type {
   AttackReaction,
   ElementModCtrl,
   HitEvent,
-  ModifyEvent,
+  EntityModifyEvent,
   SimulationAttackBonus,
   SimulationMember,
   SimulationPartyData,
@@ -59,7 +59,7 @@ export class MemberControl extends MemberBonusesControl {
   // ========== MODIFY ==========
 
   /** return affect: null if cannot find the buff */
-  modify = (event: ModifyEvent, performerWeapon: AppWeapon): ModifyResult => {
+  modify = (event: EntityModifyEvent, performerWeapon: AppWeapon): ModifyResult => {
     const { modifier } = event;
     const { inputs = [] } = modifier;
 

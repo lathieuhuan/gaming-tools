@@ -1,5 +1,5 @@
 import type { AttackElement } from "@Backend";
-import type { AttackReaction, HitEvent, ModifyEvent, SimulationChunk } from "@Src/types";
+import type { AttackReaction, HitEvent, EntityModifyEvent, SimulationChunk, SystemModifyEvent } from "@Src/types";
 import { PartiallyRequired } from "rond";
 
 type ProcessedBaseEvent = {
@@ -7,7 +7,9 @@ type ProcessedBaseEvent = {
   error?: string;
 };
 
-export type ProcessedModifyEvent = PartiallyRequired<ModifyEvent, "duration"> & ProcessedBaseEvent & {};
+export type ProcessedSystemModifyEvent = PartiallyRequired<SystemModifyEvent, "duration"> & ProcessedBaseEvent & {};
+
+export type ProcessedEntityModifyEvent = PartiallyRequired<EntityModifyEvent, "duration"> & ProcessedBaseEvent & {};
 
 export type ProcessedHitEvent = PartiallyRequired<HitEvent, "duration"> &
   ProcessedBaseEvent & {
@@ -18,7 +20,7 @@ export type ProcessedHitEvent = PartiallyRequired<HitEvent, "duration"> &
     reaction: AttackReaction;
   };
 
-export type SimulationProcessedEvent = ProcessedModifyEvent | ProcessedHitEvent;
+export type SimulationProcessedEvent = ProcessedSystemModifyEvent | ProcessedEntityModifyEvent | ProcessedHitEvent;
 
 export type SimulationProcessedChunk = Pick<SimulationChunk, "id" | "ownerCode"> & {
   events: SimulationProcessedEvent[];

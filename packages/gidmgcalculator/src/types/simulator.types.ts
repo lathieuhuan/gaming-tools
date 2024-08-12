@@ -10,10 +10,6 @@ import type { ElementModCtrl, Target } from "./calculator.types";
 
 /** ========== EVENTS ========== */
 
-type SystemPerformer = {
-  type: "SYSTEM";
-};
-
 type CharacterPerformer = {
   type: "CHARACTER";
   code: number;
@@ -21,13 +17,9 @@ type CharacterPerformer = {
 
 type BaseEvent = {
   id: number;
-  performer: SystemPerformer | CharacterPerformer;
+  performer: CharacterPerformer;
   /** required if alsoSwitch and is HitEvent */
   duration?: number;
-};
-
-type CommonModiferProps = {
-  inputs?: number[];
 };
 
 type ResonanceModifier = {
@@ -36,16 +28,19 @@ type ResonanceModifier = {
   inputs?: number[];
 };
 
-type EntityModifier = {
-  type: "CHARACTER" | "WEAPON" | "ARTIFACT";
-  code: number;
-  id: number;
-  inputs?: number[];
+export type SystemModifyEvent = Pick<BaseEvent, "id" | "duration"> & {
+  type: "SYSTEM_MODIFY";
+  modifier: ResonanceModifier;
 };
 
-export type ModifyEvent = BaseEvent & {
-  type: "MODIFY";
-  modifier: (ResonanceModifier | EntityModifier) & CommonModiferProps;
+export type EntityModifyEvent = BaseEvent & {
+  type: "ENTITY_MODIFY";
+  modifier: {
+    type: "CHARACTER" | "WEAPON" | "ARTIFACT";
+    code: number;
+    id: number;
+    inputs?: number[];
+  };
 };
 
 export type TalentHitEventMod = Pick<ElementModCtrl, "absorption" | "reaction" | "infuse_reaction">;
@@ -57,7 +52,7 @@ export type HitEvent = BaseEvent & {
   elmtModCtrls?: TalentHitEventMod;
 };
 
-export type SimulationEvent = ModifyEvent | HitEvent;
+export type SimulationEvent = SystemModifyEvent | EntityModifyEvent | HitEvent;
 
 export type SimulationMember = Character & {
   weapon: Weapon;

@@ -10,7 +10,6 @@ import {
 import { useTimelineTracker } from "@Simulator/hooks";
 
 // Component
-import { GenshinImage } from "@Src/components";
 import { EventDisplayer } from "./EventDisplayer";
 import { ChunkDetail } from "./ChunkDetail";
 
@@ -57,8 +56,6 @@ export function EventLog({ className, simulation }: EventLogProps) {
                   {...getChunkProps(chunk.id)}
                 >
                   {chunk.events.map((event) => {
-                    const performer = simulation.getMemberData(event.performer.code);
-
                     return (
                       <div
                         key={event.id}
@@ -69,24 +66,7 @@ export function EventLog({ className, simulation }: EventLogProps) {
                         }`}
                         onClick={() => setSelectedEvent(event)}
                       >
-                        <EventDisplayer
-                          sideIconNode={
-                            <GenshinImage
-                              title={performer?.name}
-                              className="w-7 h-7 shrink-0 relative"
-                              imgCls="absolute"
-                              imgStyle={{
-                                maxWidth: "none",
-                                width: "130%",
-                                top: "-9px",
-                                left: "-6px",
-                              }}
-                              fallbackCls="p-0.5"
-                              src={performer?.sideIcon}
-                            />
-                          }
-                          event={event}
-                        />
+                        <EventDisplayer simulation={simulation} event={event} />
                       </div>
                     );
                   })}

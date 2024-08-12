@@ -1,6 +1,5 @@
-import type { Simulation, SimulationChunk, SimulationEvent, SimulationMember } from "@Src/types";
+import type { Simulation, SimulationChunk, SimulationMember } from "@Src/types";
 import type { SimulatorState } from "./simulator-slice.types";
-import { uuid } from "@Src/utils";
 import { current } from "@reduxjs/toolkit";
 
 export function _logStore(object: any) {
@@ -40,49 +39,4 @@ export function getNextEventId(chunks: SimulationChunk[]) {
     }
   }
   return id;
-}
-
-type InternalAddEventArgs = {
-  chunks: SimulationChunk[];
-  defaultOnfieldMemberCode: number;
-  /** Switch on field member action should have no event */
-  event?: SimulationEvent;
-  performerCode?: number;
-  alsoSwitch: boolean;
-};
-
-export function _addEvent(
-  chunks: SimulationChunk[],
-  /** Switch on field member action should have no event */
-  event: SimulationEvent | null,
-  performerCode: number,
-  alsoSwitch: boolean
-) {
-  const lastChunk = chunks[chunks.length - 1];
-
-  if (alsoSwitch && lastChunk.ownerCode !== performerCode) {
-    let removedId: string | undefined;
-
-    if (!lastChunk.events.length) {
-      // Reuse id of removed empty chunk
-      removedId = chunks.pop()?.id;
-    }
-    const newLastChunk = chunks[chunks.length - 1];
-
-    /**
-     * newLastChunk is undefined at the start,
-     * the default first chunk has no events so it got removed by pop()
-     */
-    if (!newLastChunk || newLastChunk.ownerCode !== performerCode) {
-      chunks.push({
-        id: removedId ?? uuid(),
-        ownerCode: performerCode,
-        events: event ? [event] : [],
-      });
-    } else if (event) {
-      newLastChunk.events.push(event);
-    }
-  } else if (event) {
-    lastChunk.events.push(event);
-  }
 }

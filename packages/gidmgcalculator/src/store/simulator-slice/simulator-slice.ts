@@ -4,13 +4,14 @@ import type { Simulation, SimulationChunk, SimulationMember } from "@Src/types";
 import type {
   AddEventPayload,
   AssembledSimulation,
+  RemoveEventPayload,
   SimulatorState,
   UpdateAssembledSimulationPayload,
   UpdateSimulatorPayload,
 } from "./simulator-slice.types";
 import { Setup_, removeEmpty, uuid } from "@Src/utils";
 import { $AppCharacter, $AppSettings } from "@Src/services";
-import { _addEvent, fillAssembledMembers, getNextEventId, getSimulation } from "./simulator-slice.utils";
+import { fillAssembledMembers, getNextEventId, getSimulation } from "./simulator-slice.utils";
 
 const initialState: SimulatorState = {
   stage: "WAITING",
@@ -22,7 +23,7 @@ const initialState: SimulatorState = {
   },
   activeId: 0,
   activeMember: 0,
-  activeChunkId: '',
+  activeChunkId: "",
   simulations: [],
 };
 
@@ -129,23 +130,72 @@ export const simulatorSlice = createSlice({
       }
     },
     addEvent: (state, action: AddEventPayload) => {
-      const chunks = getSimulation(state)?.chunks;
+      const simulation = getSimulation(state);
+      const chunks = simulation?.chunks ?? [];
+      const lastChunk = chunks.at(-1);
 
-      if (chunks) {
+      if (simulation && lastChunk) {
         const { alsoSwitch = false, ...eventProps } = action.payload;
         const event = Object.assign(structuredClone(removeEmpty(eventProps)), {
           id: getNextEventId(chunks),
         });
-        const performerCode = event.performer.code;
 
-        _addEvent(chunks, event, performerCode, alsoSwitch);
+        switch (event.type) {
+          case "SYSTEM_MODIFY":
+            lastChunk.events.push(event);
+            break;
+          default:
+            if (alsoSwitch && lastChunk.ownerCode !== event.performer.code) {
+              let removedId: string | undefined;
+
+              if (!lastChunk.events.length) {
+                removedId = chunks.pop()?.id;
+              }
+
+              chunks.push({
+                id: removedId ?? uuid(),
+                ownerCode: event.performer.code,
+                events: [event],
+              });
+            } else {
+              lastChunk.events.push(event);
+            }
+        }
       }
     },
     changeOnFieldMember: (state, action: PayloadAction<number>) => {
-      const chunks = getSimulation(state)?.chunks;
+      const chunks = getSimulation(state)?.chunks ?? [];
+      const lastChunk = chunks.at(-1);
+      const newOnfieldMemberCode = action.payload;
 
-      if (chunks) {
-        _addEvent(chunks, null, action.payload, true);
+      if (lastChunk && lastChunk.ownerCode !== newOnfieldMemberCode) {
+        let removedId: string | undefined;
+
+        if (!lastChunk.events.length) {
+          removedId = chunks.pop()?.id;
+        }
+
+        chunks.push({
+          id: removedId ?? uuid(),
+          ownerCode: newOnfieldMemberCode,
+          events: [],
+        });
+      }
+    },
+    removeEvent: (state, action: RemoveEventPayload) => {
+      const { chunkId, eventId } = action.payload;
+      const chunks = getSimulation(state)?.chunks ?? [];
+      const chunkIndex = chunks.findIndex((chunk) => chunk.id === chunkId);
+
+      if (chunkIndex !== -1) {
+        const chunk = chunks[chunkIndex];
+
+        chunk.events = chunk.events.filter((event) => event.id !== eventId);
+
+        // If chunk is empty AND (not the first chunk OR there's still atleast a chunk left)
+        if (!chunk.events.length && (chunkIndex || chunks.length > 1)) {
+          chunks.splice(chunkIndex, 1);
+        }
       }
     },
   },
@@ -160,6 +210,7 @@ export const {
   completeAssembledSimulation,
   addEvent,
   changeOnFieldMember,
+  removeEvent,
 } = simulatorSlice.actions;
 
 export default simulatorSlice.reducer;

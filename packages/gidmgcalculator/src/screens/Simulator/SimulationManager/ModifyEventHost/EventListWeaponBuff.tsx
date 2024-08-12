@@ -27,7 +27,7 @@ export function EventListWeaponBuff({ member, initalInputsByMember = {}, appWeap
   const onMakeEvent = (mod: WeaponBuff, inputs: number[], alsoSwitch?: boolean) => {
     dispatch(
       addEvent({
-        type: "MODIFY",
+        type: "ENTITY_MODIFY",
         performer: {
           type: "CHARACTER",
           code: member.data.code,

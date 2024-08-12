@@ -22,10 +22,7 @@ export function EventListElementBuff(props: EventListElementBuffProps) {
   const onMakeEvent = (element: ElementType, inputs: number[]) => {
     dispatch(
       addEvent({
-        type: "MODIFY",
-        performer: {
-          type: "SYSTEM",
-        },
+        type: "SYSTEM_MODIFY",
         modifier: {
           type: "RESONANCE",
           element,

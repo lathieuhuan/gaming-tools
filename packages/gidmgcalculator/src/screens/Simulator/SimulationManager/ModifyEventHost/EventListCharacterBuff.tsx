@@ -33,7 +33,7 @@ export function EventListCharacterBuff({
 
     dispatch(
       addEvent({
-        type: "MODIFY",
+        type: "ENTITY_MODIFY",
         performer: {
           type: "CHARACTER",
           code: performerCode,

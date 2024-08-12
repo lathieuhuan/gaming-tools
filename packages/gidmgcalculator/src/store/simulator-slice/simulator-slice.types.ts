@@ -1,5 +1,5 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { HitEvent, ModifyEvent, Simulation, SimulationMember } from "@Src/types";
+import type { HitEvent, EntityModifyEvent, Simulation, SimulationMember, SystemModifyEvent } from "@Src/types";
 
 export type SimulatorStage = "WAITING" | "ASSEMBLING" | "RUNNING";
 
@@ -28,12 +28,16 @@ export type UpdateSimulatorPayload = PayloadAction<
 
 export type UpdateAssembledSimulationPayload = PayloadAction<Partial<Omit<AssembledSimulation, "id">>>;
 
-type OmittedKeys = "id" | "duration";
+type OmittedKeys = "id";
 
 export type AddEventPayload = PayloadAction<
-  (Omit<ModifyEvent, OmittedKeys> | Omit<HitEvent, OmittedKeys>) & {
+  (Omit<SystemModifyEvent, OmittedKeys> | Omit<EntityModifyEvent, OmittedKeys> | Omit<HitEvent, OmittedKeys>) & {
     /** The character performing this event also switch to on field => create new chunk */
     alsoSwitch?: boolean;
-    duration?: number;
   }
 >;
+
+export type RemoveEventPayload = PayloadAction<{
+  chunkId: string;
+  eventId: number;
+}>;
