@@ -1,17 +1,17 @@
-import { useStoreSnapshot } from "@Src/features";
-import { SetupOption, SetupOptions } from "./SetupOptions";
-import { Setup_, findById } from "@Src/utils";
-import { calcSetupToOption } from "./setup-selects-utils";
-import { CalcCharacter, UserArtifacts, UserWeapon } from "@Src/types";
-import { CalcSetupOption } from "./CalcSetupSelect";
+import type { RequiredPick } from "rond";
+import { ARTIFACT_TYPES } from "@Backend";
 
-type UserSetupOption = Pick<SetupOption, "id" | "name"> & {
-  members: Array<
-    CalcCharacter & {
-      weapon: UserWeapon;
-      artifacts: UserArtifacts;
-    }
-  >;
+import type { CalcCharacter, Teammate } from "@Src/types";
+import { useStoreSnapshot } from "@Src/features";
+import { $AppArtifact } from "@Src/services";
+import { Setup_, findById } from "@Src/utils";
+import { calcSetupToOption, type CalcSetupOption } from "./setup-selects-utils";
+import { SetupOptions, type SetupOption, type SetupOptionMember } from "./SetupOptions";
+
+type UserSetupOptionMember = RequiredPick<CalcCharacter, "name"> & Pick<SetupOptionMember, "weapon" | "artifacts">;
+
+export type UserSetupOption = Pick<SetupOption, "id" | "name" | "isComplex"> & {
+  members: UserSetupOptionMember[];
 };
 
 interface UserSetupSelectProps {
@@ -31,22 +31,54 @@ export function UserSetupSelect(props: UserSetupSelectProps) {
       };
 
       if (!Setup_.isUserSetup(setup)) {
-        for (const id of Object.values(setup.allIDs)) {
-          const setup = findById(userSetups, id);
+        const mergedMembers: Record<string, Teammate> = {};
 
-          if (setup && Setup_.isUserSetup(setup)) {
-            const { weapon, artifacts } = Setup_.getUserSetupItems(setup, userWps, userArts);
+        option.isComplex = true;
+
+        for (const id of Object.values(setup.allIDs)) {
+          const memberSetup = findById(userSetups, id);
+
+          if (memberSetup && Setup_.isUserSetup(memberSetup)) {
+            const { weapon, artifacts } = Setup_.getUserSetupItems(memberSetup, userWps, userArts);
 
             if (weapon) {
               option.members.push({
-                ...setup.char,
+                ...memberSetup.char,
                 weapon,
                 artifacts,
+              });
+
+              memberSetup.party.forEach((member) => {
+                if (member) mergedMembers[member.name] = member;
               });
             }
           }
         }
-        if (option.members.length) {
+
+        for (const name in mergedMembers) {
+          if (option.members.every((member) => member.name !== name)) {
+            const { weapon, artifact } = mergedMembers[name];
+            const optionMember: UserSetupOptionMember = {
+              name,
+              weapon,
+              artifacts: [null, null, null, null, null],
+            };
+            const appArtifact = artifact.code ? $AppArtifact.getSet(artifact.code) : null;
+
+            if (appArtifact) {
+              const rarity = appArtifact.variants.at(-1)!;
+
+              optionMember.artifacts = ARTIFACT_TYPES.map((type) => ({
+                code: artifact.code,
+                type,
+                rarity,
+              }));
+            }
+            option.members.push(optionMember);
+          }
+        }
+
+        if (option.members.length && option.members.length <= 4) {
           options.push(option);
         }
       } else {

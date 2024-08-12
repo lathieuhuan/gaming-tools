@@ -1,11 +1,12 @@
 import { useState } from "react";
+import { FaLink } from "react-icons/fa";
 import { Button, AdvancedPick, PartiallyRequiredOnly } from "rond";
 
 import type { Character } from "@Src/types";
 import { $AppCharacter } from "@Src/services";
 import { CharacterPortrait, EquipmentDisplay, EquipmentDisplayProps } from "@Src/components";
 
-type SetupOptionMember = PartiallyRequiredOnly<Character, "name"> &
+export type SetupOptionMember = PartiallyRequiredOnly<Character, "name"> &
   AdvancedPick<EquipmentDisplayProps, "weapon" | "artifacts", "appWeapon"> & {
     //
   };
@@ -13,6 +14,8 @@ type SetupOptionMember = PartiallyRequiredOnly<Character, "name"> &
 export type SetupOption = {
   id: number;
   name: string;
+  /** Whether this option is made from a UserComplexSetup */
+  isComplex?: boolean;
   members: SetupOptionMember[];
 };
 
@@ -47,7 +50,14 @@ export function SetupOptions<TOption extends SetupOption = SetupOption>({
           <div key={setup.id}>
             <div className="p-3 rounded-lg bg-surface-1">
               <div className="flex justify-between gap-4">
-                <p className="text-lg font-semibold truncate">{setup.name}</p>
+                <div className="flex items-center gap-2 overflow-hidden">
+                  {setup.isComplex && (
+                    <span>
+                      <FaLink className="text-hint-color text-sm" />
+                    </span>
+                  )}{" "}
+                  <span className="text-lg font-semibold truncate">{setup.name}</span>
+                </div>
                 <Button size="small" variant={selectedMember ? "primary" : "default"} onClick={() => onSelect(setup)}>
                   Select
                 </Button>

@@ -20,8 +20,7 @@ import {
 
 // Component
 import { SimulationList } from "./SimulationList";
-import { CalcSetupSelect, type CalcSetupOption } from "./setup-selects";
-import { UserSetupSelect } from "./setup-selects/UserSetupSelect";
+import { CalcSetupSelect, UserSetupSelect, type CalcSetupOption, type UserSetupOption } from "./setup-selects";
 
 const select = (state: RootState) => {
   const { name, timeOn } = state.simulator.assembledSimulation;
@@ -72,7 +71,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
     }
   };
 
-  const onSelectCalcSetup = (setup: CalcSetupOption) => {
+  const onSelectSetup = (setup: CalcSetupOption | UserSetupOption) => {
     const members = setup.members.map<SimulationMember>((member) => {
       return {
         ...Utils_.createCharacter(member.name, member),
@@ -202,7 +201,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
       >
         <CloseButton boneOnly className={Modal.CLOSE_BTN_CLS} onClick={closeModal} />
         <Modal.Header withDivider>Select Setup</Modal.Header>
-        <CalcSetupSelect onSelect={onSelectCalcSetup} />
+        <CalcSetupSelect onSelect={onSelectSetup} />
       </Modal.Core>
 
       <Modal.Core
@@ -213,7 +212,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
       >
         <CloseButton boneOnly className={Modal.CLOSE_BTN_CLS} onClick={closeModal} />
         <Modal.Header withDivider>Select Setup</Modal.Header>
-        <UserSetupSelect onSelect={onSelectCalcSetup} />
+        <UserSetupSelect onSelect={onSelectSetup} />
       </Modal.Core>
     </>
   );

@@ -1,19 +1,9 @@
 import { ARTIFACT_TYPES } from "@Backend";
 
-import type { Artifact, CalcSetup, Teammate } from "@Src/types";
+import type { CalcSetupOption, CalcSetupTeammate } from "./setup-selects-utils";
 import { useStoreSnapshot } from "@Src/features";
 import { $AppArtifact } from "@Src/services";
-import { SetupOption, SetupOptions } from "./SetupOptions";
-
-type CalcSetupTeammate = Pick<Teammate, "name" | "weapon"> & {
-  artifacts: (Pick<Artifact, "code" | "type" | "rarity"> | null)[];
-};
-
-type CalcSetupOptionMember = CalcSetupTeammate | (CalcSetup["char"] & Pick<CalcSetup, "weapon" | "artifacts">);
-
-export type CalcSetupOption = Pick<SetupOption, "id" | "name"> & {
-  members: CalcSetupOptionMember[];
-};
+import { SetupOptions } from "./SetupOptions";
 
 interface CalcSetupSelectProps {
   onSelect: (setup: CalcSetupOption) => void;

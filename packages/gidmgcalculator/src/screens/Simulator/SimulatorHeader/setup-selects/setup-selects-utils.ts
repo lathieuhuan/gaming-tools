@@ -3,7 +3,7 @@ import { SetupOption } from "./SetupOptions";
 import { ARTIFACT_TYPES } from "@Backend";
 import { $AppArtifact } from "@Src/services";
 
-type CalcSetupTeammate = Pick<Teammate, "name" | "weapon"> & {
+export type CalcSetupTeammate = Pick<Teammate, "name" | "weapon"> & {
   artifacts: (Pick<Artifact, "code" | "type" | "rarity"> | null)[];
 };
 
