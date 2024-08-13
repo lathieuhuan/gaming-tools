@@ -187,7 +187,7 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
             </div>
 
             <div className="mt-2">
-              <SimulationList onRequestEditSimulation={closeDrawer} onRequestDuplicateSimulation={closeDrawer} />
+              <SimulationList closeContainer={closeDrawer} />
             </div>
           </div>
         </div>

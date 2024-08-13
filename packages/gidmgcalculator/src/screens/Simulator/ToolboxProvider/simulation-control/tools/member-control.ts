@@ -69,11 +69,9 @@ export class MemberControl extends MemberBonusesControl {
       const buff = this?.data.buffs?.find((buff) => buff.index === modifier.id);
 
       if (buff) {
-        const source = `${this.data.name} / ${buff.src}`;
-
         const bonuses = this.getAppliedCharacterBonuses({
           buff,
-          description: source,
+          description: `${this.data.name} / ${buff.src}`,
           inputs,
           fromSelf: true,
         });
@@ -81,7 +79,7 @@ export class MemberControl extends MemberBonusesControl {
         return {
           affect: buff.affect,
           ...bonuses,
-          source,
+          source: buff.src,
         };
       }
     }
@@ -89,12 +87,10 @@ export class MemberControl extends MemberBonusesControl {
       const buff = performerWeapon.buffs?.find((buff) => buff.index === modifier.id);
 
       if (buff) {
-        const source = `${this.data.name} / ${performerWeapon.name}`;
-
         const bonuses = this.getApplyWeaponBonuses({
           buff,
           refi: 1,
-          description: source,
+          description: `${this.data.name} / ${performerWeapon.name}`,
           inputs,
           fromSelf: true,
         });
@@ -102,7 +98,7 @@ export class MemberControl extends MemberBonusesControl {
         return {
           affect: buff.affect,
           ...bonuses,
-          source,
+          source: performerWeapon.name,
         };
       }
     }

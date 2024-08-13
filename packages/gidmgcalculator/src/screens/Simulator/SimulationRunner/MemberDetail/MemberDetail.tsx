@@ -26,6 +26,7 @@ export function MemberDetail({ className, simulation }: MemberDetailProps) {
       <div className="h-full flex flex-col space-y-3 hide-scrollbar">
         <ComplexSelect
           selectId="member-detail-select"
+          size="small"
           value={activeTab}
           options={[
             { label: "Attributes", value: "ATTRIBUTES" },

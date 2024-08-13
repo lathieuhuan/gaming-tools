@@ -15,10 +15,9 @@ const selectSimulationss = (state: RootState) => state.simulator.simulations;
 type ModalType = "REMOVE_CONFIRM" | "";
 
 interface SimulationListProps {
-  onRequestEditSimulation: () => void;
-  onRequestDuplicateSimulation: () => void;
+  closeContainer?: () => void;
 }
-export function SimulationList(props: SimulationListProps) {
+export function SimulationList({ closeContainer }: SimulationListProps) {
   const dispatch = useDispatch();
   const activeId = useSelector(selectActiveSimulationId);
   const simulations = useSelector(selectSimulationss);
@@ -38,6 +37,7 @@ export function SimulationList(props: SimulationListProps) {
         stage: "RUNNING",
       })
     );
+    closeContainer?.();
   };
 
   const onClickExpand = (id: number) => {
@@ -68,7 +68,7 @@ export function SimulationList(props: SimulationListProps) {
         assembledSimulation: simulation,
       })
     );
-    props.onRequestEditSimulation();
+    closeContainer?.();
   };
 
   const onRequestDuplicateSimulation = (simulation: Simulation) => {
@@ -84,7 +84,7 @@ export function SimulationList(props: SimulationListProps) {
         },
       })
     );
-    props.onRequestDuplicateSimulation();
+    closeContainer?.();
   };
 
   return (
@@ -104,17 +104,14 @@ export function SimulationList(props: SimulationListProps) {
                   onClick={(e) => {
                     // Clicking on label will fire click event on radio, results in 2 events bubbling
                     // to the div where onClickExpand is used to handle click
-                    // -> stopPropagation here & radio, onClickExpand on radio
+                    // -> stopPropagation here & radio
                     e.stopPropagation();
                   }}
                 >
                   <Radio
                     checked={simulation.id === activeId}
                     onChange={() => onChangeActiveSimulation(simulation)}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onClickExpand(simulation.id);
-                    }}
+                    onClick={(e) => e.stopPropagation()}
                   />
                   <span>{simulation.name}</span>
                 </label>

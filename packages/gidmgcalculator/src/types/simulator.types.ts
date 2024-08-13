@@ -25,7 +25,6 @@ type BaseEvent = {
 type ResonanceModifier = {
   type: "RESONANCE";
   element: "geo" | "dendro_strong" | "dendro_weak";
-  inputs?: number[];
 };
 
 export type SystemModifyEvent = Pick<BaseEvent, "id" | "duration"> & {
