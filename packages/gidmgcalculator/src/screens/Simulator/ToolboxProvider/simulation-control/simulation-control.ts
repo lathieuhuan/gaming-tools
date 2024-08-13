@@ -93,6 +93,7 @@ export class SimulationControl extends SimulationControlCenter {
         damage: 0,
         duration: 0,
       };
+      this.resetBonuses();
 
       for (const chunk of chunks) {
         this.switchOnfield(chunk.ownerCode);

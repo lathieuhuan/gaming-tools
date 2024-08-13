@@ -1,10 +1,11 @@
 import { AppliedAttackBonus, AppliedAttributeBonus, ElementType, GeneralCalc, RESONANCE_STAT } from "@Backend";
-import { SimulationPartyData } from "@Src/types";
+import { SimulationAttributeBonus, SimulationPartyData } from "@Src/types";
 import { CoreBonusesControl } from "./core-bonuses-control";
 
 export class PartyBonusControl {
   private partyBonusCtrl = new CoreBonusesControl();
   private onfieldBonusCtrl = new CoreBonusesControl();
+  private deadAttrBonuses: SimulationAttributeBonus[] = [];
 
   getAttrBonuses = (onfield = false) => {
     return onfield
@@ -28,18 +29,27 @@ export class PartyBonusControl {
 
       if (elmtCount >= 2) {
         const resonance = RESONANCE_STAT[elmt];
-
-        this.partyBonusCtrl.attrBonus.push({
-          id: `${elmt}-resonance`,
+        const bonus: SimulationAttributeBonus = {
+          id: `${elmt}-dead-reso`,
           value: resonance.value,
           isStable: true,
           toStat: resonance.key,
           type: "ATTRIBUTE",
-          description: `${elmt.slice(0, 1).toLocaleUpperCase()}${elmt.slice(1)} Resonance`,
-        });
+          description: `${elmt.slice(0, 1).toUpperCase()}${elmt.slice(1)} Resonance`,
+        };
+
+        this.deadAttrBonuses.push(bonus);
+        this.partyBonusCtrl.attrBonus.push(bonus);
       }
     }
   }
+
+  reset = () => {
+    this.partyBonusCtrl.attrBonus = this.deadAttrBonuses.concat();
+    this.partyBonusCtrl.attkBonus = [];
+    this.onfieldBonusCtrl.attrBonus = [];
+    this.onfieldBonusCtrl.attkBonus = [];
+  };
 
   updatePartyAttrBonus = (bonus: AppliedAttributeBonus) => {
     this.partyBonusCtrl.updateAttrBonuses(bonus);

@@ -69,7 +69,7 @@ export function PartyControlBar({ className, simulation }: PartyControlBarProps)
                   ) : null}
                 </div>
 
-                <button className="w-14 h-14" onClick={() => onClickMember(data.code)} />
+                <button className="w-14 h-14 shrink-0" onClick={() => onClickMember(data.code)} />
               </div>
             </div>
           );

@@ -31,6 +31,16 @@ const wrapText = (text: string | number, type = "") => {
   return `<span class="${typeToCls[type] || ""}">${text}</span>`;
 };
 
+export const parseResonanceDescription = (description: string) => {
+  return description.replace(/\{[\w %]+\}#\[[kvm]\]/g, (match) => {
+    let [body, type = ""] = match.split("#");
+    body = body.slice(1, -1);
+    type = type.slice(1, -1);
+
+    return wrapText(body, type);
+  });
+};
+
 export const parseAbilityDescription = (
   ability: Pick<CharacterBuff | CharacterDebuff, "description" | "effects">,
   obj: {
@@ -41,9 +51,7 @@ export const parseAbilityDescription = (
   inputs: number[],
   fromSelf: boolean
 ) => {
-  const pattern = /\{[\w \-/,%^"'*@.[\]]+\}#\[\w*\]/g;
-
-  return ability.description.replace(pattern, (match) => {
+  return ability.description.replace(/\{[\w \-/,%^"'*@.[\]]+\}#\[\w*\]/g, (match) => {
     let [body, type = ""] = match.split("#");
     body = body.slice(1, -1);
     type = type.slice(1, -1);

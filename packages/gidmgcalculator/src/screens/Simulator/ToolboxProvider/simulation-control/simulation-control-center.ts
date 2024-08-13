@@ -118,6 +118,12 @@ export class SimulationControlCenter extends SimulationChunksControl {
     return this.appWeapons[this.member[code].info.weapon.code];
   };
 
+  private applyPartyBonuses = () => {
+    for (const { code } of this.partyData) {
+      this.member[code].applyBonuses();
+    }
+  };
+
   protected switchOnfield = (memberCode: number) => {
     this.onfieldMember.switch("out");
     this.onfieldMember = this.member[memberCode];
@@ -130,32 +136,62 @@ export class SimulationControlCenter extends SimulationChunksControl {
     }
   };
 
+  protected resetBonuses = () => {
+    this.partyBonus.reset();
+    this.applyPartyBonuses();
+  };
+
   protected systemModify = (event: SystemModifyEvent): ProcessedSystemModifyEvent => {
     switch (event.modifier.type) {
-      case "RESONANCE":
-        const { element, inputs = [] } = event.modifier;
+      case "RESONANCE": {
+        const { element } = event.modifier;
+        let description: string;
 
         switch (element) {
           case "geo":
+            description = "Geo Resonance / Shielded";
+
             this.partyBonus.updatePartyAttkBonus({
-              id: "geo-reso-dmg-bonus",
-              description: "Geo Resonance / Shielded",
+              id: "geo-live-reso",
+              description,
               value: 15,
               toType: "all",
               toKey: "pct_",
             });
             break;
-          case "dendro":
+          case "dendro_strong":
+            description = "Dendro Resonance (30)";
+
+            this.partyBonus.updatePartyAttrBonus({
+              id: "dendro-live-reso-strong",
+              description,
+              value: 30,
+              toStat: "em",
+              isStable: true,
+            });
+            break;
+          case "dendro_weak":
+            description = "Dendro Resonance (20)";
+
+            this.partyBonus.updatePartyAttrBonus({
+              id: "dendro-live-reso-weak",
+              description,
+              value: 20,
+              toStat: "em",
+              isStable: true,
+            });
             break;
         }
 
+        this.applyPartyBonuses();
         this.activeMemberWatcher.notifySubscribers();
 
         return {
           ...event,
           duration: 0,
-          description: `${element.at(0)?.toUpperCase()}${element.slice(1)} Resonance`,
+          description,
         };
+      }
     }
   };
 
@@ -173,7 +209,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
           attrBonuses.forEach((bonus) => performer.updateAttrBonus(bonus));
           attkBonuses.forEach((bonus) => performer.updateAttkBonus(bonus));
 
-          performer.applySimulationBonuses();
+          performer.applyBonuses();
 
           if (performer === this.activeMember) {
             this.activeMemberWatcher.notifySubscribers();
@@ -184,10 +220,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
           attrBonuses.forEach((bonus) => this.partyBonus.updatePartyAttrBonus(bonus));
           attkBonuses.forEach((bonus) => this.partyBonus.updatePartyAttkBonus(bonus));
 
-          for (const { code } of this.partyData) {
-            this.member[code].applySimulationBonuses();
-          }
-
+          this.applyPartyBonuses();
           this.activeMemberWatcher.notifySubscribers();
           break;
         }
@@ -195,7 +228,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
           attrBonuses.forEach((bonus) => this.partyBonus.updateOnfieldAttrBonus(bonus));
           attkBonuses.forEach((bonus) => this.partyBonus.updateOnfieldAttkBonus(bonus));
 
-          this.onfieldMember.applySimulationBonuses();
+          this.onfieldMember.applyBonuses();
 
           if (this.onfieldMember === this.activeMember) {
             this.activeMemberWatcher.notifySubscribers();

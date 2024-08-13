@@ -24,7 +24,7 @@ type BaseEvent = {
 
 type ResonanceModifier = {
   type: "RESONANCE";
-  element: ElementType;
+  element: "geo" | "dendro_strong" | "dendro_weak";
   inputs?: number[];
 };
 
