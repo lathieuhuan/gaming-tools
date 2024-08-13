@@ -6,13 +6,12 @@ import { useActiveSimulation } from "@Simulator/ToolboxProvider";
 import { OnFieldMemberWatch } from "./components";
 import { Timeline } from "./Timeline";
 import { MemberDetail } from "./MemberDetail";
-import { BonusDisplayer } from "./BonusDisplayer";
 import { EventLog } from "./EventLog";
 import { ModifyEventHost } from "./ModifyEventHost";
 import { HitEventHost } from "./HitEventHost";
 import { PartyControlBar } from "./PartyControlBar";
 
-export function SimulationManager() {
+export function SimulationRunner() {
   const activeId = useSelector(selectActiveSimulationId);
   const simulation = useActiveSimulation();
   const panelCls = "h-full rounded-md bg-surface-1 overflow-auto shrink-0";
@@ -39,7 +38,6 @@ export function SimulationManager() {
       <div className="h-full flex justify-end overflow-auto">
         <div className="h-full pb-2 flex space-x-2 overflow-auto">
           <MemberDetail key={`member-${activeId}`} className={[panelCls, "w-76"]} simulation={simulation} />
-          <BonusDisplayer key={`bonuses-${activeId}`} className={`${panelCls} w-76 p-4`} simulation={simulation} />
           <EventLog key={`events-${activeId}`} className={[panelCls, "w-80"]} simulation={simulation} />
           <ModifyEventHost key={`modify-${activeId}`} className={[panelCls, "w-76"]} simulation={simulation} />
           <HitEventHost key={`hit-${activeId}`} className={[panelCls, "w-76"]} />

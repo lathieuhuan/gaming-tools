@@ -81,7 +81,7 @@ export function EventLog({ className, simulation }: EventLogProps) {
         <div className={clsx("h-full ml-px rounded-l-none relative", className)}>
           <CloseButton boneOnly className="absolute top-1 right-1" onClick={unSelectChunk} />
 
-          {selectedChunk ? <ChunkDetail chunk={selectedChunk} event={selectedEvent} /> : null}
+          {selectedChunk ? <ChunkDetail simulation={simulation} chunk={selectedChunk} event={selectedEvent} /> : null}
         </div>
       </HiddenSpace>
     </div>

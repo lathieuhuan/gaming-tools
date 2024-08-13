@@ -7,7 +7,7 @@ import { useSelector } from "@Store/hooks";
 import { ToolboxProvider } from "./ToolboxProvider";
 import { SimulatorHeader } from "./SimulatorHeader";
 import { SimulationMaker } from "./SimulationMaker";
-import { SimulationManager } from "./SimulationManager";
+import { SimulationRunner } from "./SimulationRunner";
 
 const selectStage = (state: RootState) => state.simulator.stage;
 
@@ -29,7 +29,7 @@ export function Simulator() {
               },
               {
                 value: "RUNNING",
-                element: <SimulationManager />,
+                element: <SimulationRunner />,
               },
             ]}
           />
