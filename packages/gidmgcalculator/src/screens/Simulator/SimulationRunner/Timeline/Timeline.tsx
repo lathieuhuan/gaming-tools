@@ -7,7 +7,7 @@ import { useTimelineTracker } from "@Simulator/hooks";
 
 import "./Timeline.styles.scss";
 
-const PIXELS_PER_SECOND = 32;
+const PIXELS_PER_CENTISECOND = 1;
 
 type SyncState = {
   chunks: SimulationProcessedChunk[];
@@ -78,7 +78,10 @@ export function Timeline({ simulation }: TimelineProps) {
                   <CharacterPortrait className="w-8 h-8" size="custom" info={owner} />
                 </Popover>
 
-                <div className="h-1" style={{ backgroundColor: color, width: chunkDuration * PIXELS_PER_SECOND }} />
+                <div
+                  className="h-1"
+                  style={{ backgroundColor: color, width: chunkDuration * PIXELS_PER_CENTISECOND }}
+                />
               </div>
             );
           })}
@@ -88,8 +91,8 @@ export function Timeline({ simulation }: TimelineProps) {
           <div className="text-right">{sumary.damage}</div>
           {simulation.timeOn && (
             <div>
-              {sumary.damage}
-              <span className="text-hint-color text-sm">(s)</span>
+              {sumary.duration / 100}
+              <span className="text-hint-color">s</span>
             </div>
           )}
         </div>

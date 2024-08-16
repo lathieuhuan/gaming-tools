@@ -44,6 +44,7 @@ export function EventListCharacterBuff({
           id: mod.index,
           inputs,
         },
+        duration: 10,
         alsoSwitch,
       })
     );
@@ -91,7 +92,7 @@ export function EventListCharacterBuff({
 
             <ActionButton
               ctaText="Trigger"
-              className={"pr-1 justify-end " + (inputConfigs?.length ? "mt-3" : "mt-2")}
+              className={`pr-1 ${inputConfigs?.length ? "mt-3" : "mt-2"}`}
               onClick={(alsoSwitch) => onMakeEvent(modifier, inputs, alsoSwitch)}
             />
           </div>

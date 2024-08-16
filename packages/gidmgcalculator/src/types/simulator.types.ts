@@ -18,7 +18,7 @@ type CharacterPerformer = {
 type BaseEvent = {
   id: number;
   performer: CharacterPerformer;
-  /** required if alsoSwitch and is HitEvent */
+  /** in centisecond */
   duration?: number;
 };
 

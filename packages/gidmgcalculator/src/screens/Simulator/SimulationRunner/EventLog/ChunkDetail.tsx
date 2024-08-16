@@ -28,7 +28,7 @@ export function ChunkDetail({ simulation, chunk, event }: ChunkDetailProps) {
   if (simulation.timeOn) {
     chunkDetails.push({
       label: "Total Duration",
-      value: chunk.events.reduce((total, event) => total + event.duration, 0) + "(s)",
+      value: `${chunk.events.reduce((total, event) => total + event.duration, 0) / 100}s`,
     });
   }
 
@@ -79,7 +79,7 @@ export function ChunkDetail({ simulation, chunk, event }: ChunkDetailProps) {
 
             <div className="flex justify-between items-center">
               <span className="text-lg font-semibold">{event.description}</span>
-              {simulation.timeOn && <span>{event.duration}(s)</span>}
+              {simulation.timeOn && <span>{event.duration / 100}(s)</span>}
             </div>
 
             {renderEventContent(event)}

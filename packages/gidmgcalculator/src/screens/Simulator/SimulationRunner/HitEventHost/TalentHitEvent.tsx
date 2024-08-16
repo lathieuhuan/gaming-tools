@@ -49,6 +49,7 @@ export function TalentHitEvent(props: TalentHitEventProps) {
       </div>
       <div className="mt-3 flex justify-end items-center gap-2">
         <span>
+          <span className="text-hint-color">Damage</span>{" "}
           {Array.isArray(config.damage)
             ? config.damage.map((d) => Math.round(d)).join(" + ")
             : Math.round(config.damage)}

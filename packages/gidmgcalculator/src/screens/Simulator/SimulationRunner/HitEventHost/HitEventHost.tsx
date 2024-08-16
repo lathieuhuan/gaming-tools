@@ -34,6 +34,7 @@ export function HitEventHost({ className }: HitEventHostProps) {
           code: activeMember.data.code,
         },
         ...eventInfo,
+        duration: 20,
         alsoSwitch,
       })
     );

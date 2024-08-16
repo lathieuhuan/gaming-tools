@@ -25,6 +25,7 @@ export function EventListResonanceBuff(props: EventListResonanceBuffProps) {
           type: "RESONANCE",
           element,
         },
+        duration: 10
       })
     );
   };

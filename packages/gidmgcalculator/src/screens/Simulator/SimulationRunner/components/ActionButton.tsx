@@ -8,7 +8,7 @@ interface ActionButtonProps {
 }
 export function ActionButton(props: ActionButtonProps) {
   return (
-    <div className={"flex " + (props.className ?? "")}>
+    <div className={"flex justify-end " + (props.className ?? "")}>
       <Button shape="square" size="small" className="action-btn" onClick={() => props.onClick?.(false)}>
         {props.ctaText}
       </Button>
