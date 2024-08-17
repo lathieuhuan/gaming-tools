@@ -10,7 +10,13 @@ import {
   updateCalcSetup,
   updateResonance,
 } from "@Store/calculator-slice";
-import { GenshinModifierView, QuickenBuffItem, ResonanceBuffItem, VapMeltBuffItem } from "@Src/components";
+import {
+  GenshinModifierView,
+  QuickenBuffItem,
+  RESONANCE_INFO,
+  ResonanceBuffItem,
+  VapMeltBuffItem,
+} from "@Src/components";
 import { useCalcAppCharacter } from "../../CalculatorInfoProvider";
 
 const hasAbsorbingAttackIn = (items: CalcItem[]) => {
@@ -136,14 +142,7 @@ export default function ElementBuffs() {
                 );
               }}
               inputs={resonance.inputs}
-              inputConfigs={
-                resonance.vision === "dendro"
-                  ? [
-                      { label: "Trigger Aggravate, Spread, Hyperbloom, Burgeon", type: "CHECK" },
-                      { label: "Trigger Burning, Quicken, Bloom", type: "CHECK" },
-                    ]
-                  : undefined
-              }
+              inputConfigs={RESONANCE_INFO[resonance.vision]?.inputConfigs}
               onToggleCheck={(currentInput, inputIndex) => {
                 if (resonance.inputs) {
                   const newInputs = [...resonance.inputs];

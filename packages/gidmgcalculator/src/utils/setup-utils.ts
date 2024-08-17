@@ -13,7 +13,7 @@ import type {
   UserWeapon,
 } from "@Src/types";
 import { $AppCharacter } from "@Src/services";
-import { deepCopy, findByIndex } from "./pure-utils";
+import { deepCopy, findById, findByIndex } from "./pure-utils";
 import { Modifier_ } from "./modifier-utils";
 import { Utils_ } from "./utils";
 
@@ -21,6 +21,11 @@ interface CleanupCalcSetupOptions {
   weaponID?: number;
   artifactIDs?: (number | null)[];
 }
+
+export type UserSetupItems = {
+  weapon?: UserWeapon;
+  artifacts: UserArtifacts;
+};
 
 export class Setup_ {
   static isUserSetup(setup: UserSetup | UserComplexSetup): setup is UserSetup {
@@ -41,6 +46,13 @@ export class Setup_ {
     };
 
     return shouldRestore ? this.restoreCalcSetup(calcSetup) : calcSetup;
+  }
+
+  static getUserSetupItems(setup: UserSetup, userWeapons: UserWeapon[], userArtifacts: UserArtifacts): UserSetupItems {
+    return {
+      weapon: findById(userWeapons, setup.weaponID),
+      artifacts: setup.artifactIDs.map((ID) => findById(userArtifacts, ID) || null),
+    };
   }
 
   static getNewSetupName(setups: Array<{ name: string }>) {

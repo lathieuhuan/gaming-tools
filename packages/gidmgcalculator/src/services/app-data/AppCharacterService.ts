@@ -206,7 +206,7 @@ export class AppCharacterService extends BaseService {
     return control!.data;
   }
 
-  getPartyData(party: Party): PartyData {
+  getPartyData(party: Array<{ name: string } | null>): PartyData {
     return party.map((teammate) => {
       if (teammate) {
         const keys: Array<keyof AppCharacter> = ["code", "name", "icon", "nation", "vision", "weaponType", "EBcost"];
