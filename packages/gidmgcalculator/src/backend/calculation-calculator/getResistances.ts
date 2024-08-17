@@ -1,5 +1,5 @@
 import type {
-  ArtifactDebuffCtrl,
+  ArtifactModCtrl,
   Character,
   CustomDebuffCtrl,
   ElementModCtrl,
@@ -23,7 +23,7 @@ type GetResistancesArgs = {
   partyData: PartyData;
   customDebuffCtrls: CustomDebuffCtrl[];
   selfDebuffCtrls: ModifierCtrl[];
-  artDebuffCtrls: ArtifactDebuffCtrl[];
+  artDebuffCtrls: ArtifactModCtrl[];
   elmtModCtrls: ElementModCtrl;
   target: Target;
   tracker?: TrackerControl;

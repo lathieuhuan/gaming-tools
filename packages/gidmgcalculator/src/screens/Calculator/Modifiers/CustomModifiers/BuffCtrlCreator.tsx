@@ -2,16 +2,14 @@ import { useState, useRef, FormEvent } from "react";
 import { clsx, InputNumber, VersatileSelect } from "rond";
 import { ATTACK_ELEMENTS, ATTACK_PATTERNS, REACTIONS } from "@Backend";
 
-import type { CustomBuffCtrl, CustomBuffCtrlType } from "@Src/types";
+import type { CustomBuffCtrl, CustomBuffCtrlCategory, CustomBuffCtrlType } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { Utils_, toCustomBuffLabel } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
 import { updateCustomBuffCtrls } from "@Store/calculator-slice";
 
-type CustomBuffCategory = CustomBuffCtrl["category"];
-
 const CATEGORIES: Record<
-  CustomBuffCategory,
+  CustomBuffCtrlCategory,
   { label: string; types: readonly CustomBuffCtrlType[]; subTypes?: readonly string[] }
 > = {
   totalAttr: {
@@ -52,7 +50,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
   const subTypes = CATEGORIES[config.category].subTypes;
   const sign = Utils_.suffixOf(config.subType || config.type);
 
-  const onChangeCategory = (category: CustomBuffCategory) => {
+  const onChangeCategory = (category: CustomBuffCtrlCategory) => {
     const subType = CATEGORIES[category].subTypes?.[0] as CustomBuffCtrl["subType"];
 
     setConfig({
@@ -99,7 +97,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
     onDone();
   };
 
-  const widthByCategory: Record<CustomBuffCategory, string> = {
+  const widthByCategory: Record<CustomBuffCtrlCategory, string> = {
     totalAttr: "11rem",
     attElmtBonus: "5.5rem",
     attPattBonus: "9rem",
@@ -169,7 +167,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => {
                 if (!chosen) {
-                  onChangeCategory(category as CustomBuffCategory);
+                  onChangeCategory(category as CustomBuffCtrlCategory);
                 }
               }}
             >

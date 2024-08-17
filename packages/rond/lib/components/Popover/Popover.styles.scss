@@ -8,4 +8,12 @@
   &.ron-popover--active {
     transform: scale(1);
   }
+  &.ron-popover--tooltip {
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    background-color: var(--ron-color-on-light);
+    color: var(--ron-color-light-surface-4);
+    cursor: default;
+  }
 }

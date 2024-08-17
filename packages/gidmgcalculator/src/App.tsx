@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useScreenWatcher } from "rond";
 
-import { AppMain, AppModals, NavBar, SetupImportCenter, SetupTransshipmentPort, Tracker } from "@Src/features";
+import { AppMain, AppModals, NavBar, SetupImportCenter, Tracker } from "@Src/features";
 
 function App() {
   const screenWatcher = useScreenWatcher();
@@ -24,7 +24,6 @@ function App() {
       {screenWatcher.isFromSize("sm") ? <AppMain.Large /> : <AppMain.Small />}
       <AppModals />
       <Tracker />
-      <SetupTransshipmentPort />
       <SetupImportCenter />
     </div>
   );

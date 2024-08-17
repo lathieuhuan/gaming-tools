@@ -15,7 +15,7 @@ const SetupList = ({ setups, onClickOutside }: SetupListProps) => {
   return (
     <div ref={listRef} className="px-4 py-2 flex flex-col overflow-auto">
       <p className="text-heading-color font-medium">This item is used on these setups:</p>
-      <ul className="mt-1 pl-4 list-disc overflow-auto custom-scrollbar">
+      <ul className="mt-1 pl-4 list-disc font-semibold overflow-auto custom-scrollbar">
         {setups.map((setup, i) => {
           return <li key={i}>{setup.name}</li>;
         })}

@@ -41,13 +41,14 @@ export function parseUserCharacter({
     const artifact = id ? findById(userArts, id) : undefined;
     return artifact ? Utils_.userItemToCalcItem(artifact, seedID++) : null;
   });
-  const firstSetBonus = GeneralCalc.getArtifactSetBonuses(artifacts)[0];
+  const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
+  const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(setBonuses);
 
   return {
     char,
     weapon,
     wpBuffCtrls,
     artifacts,
-    artBuffCtrls: firstSetBonus?.bonusLv ? Modifier_.createArtifactBuffCtrls(true, firstSetBonus) : [],
+    artBuffCtrls,
   };
 }

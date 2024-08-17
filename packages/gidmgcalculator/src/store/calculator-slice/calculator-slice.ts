@@ -24,6 +24,8 @@ import type {
   ApplySettingsAction,
   InitNewSessionPayload,
   UpdateCharacterAction,
+  ToggleArtifactBuffCtrlAction,
+  ChangeArtifactBuffCtrlInputAction,
 } from "./calculator-slice.types";
 
 import { RESONANCE_ELEMENT_TYPES } from "@Src/constants";
@@ -327,8 +329,8 @@ export const calculatorSlice = createSlice({
       const { pieceIndex, newPiece, shouldKeepStats } = action.payload;
       const setup = state.setupsById[state.activeId];
       const piece = setup.artifacts[pieceIndex];
-      const oldSetBonuses = GeneralCalc.getArtifactSetBonuses(setup.artifacts);
-      const oldBonusLevel = oldSetBonuses[0]?.bonusLv;
+      // const oldSetBonuses = GeneralCalc.getArtifactSetBonuses(setup.artifacts);
+      // const oldBonusLevel = oldSetBonuses[0]?.bonusLv;
 
       if (shouldKeepStats && piece && newPiece) {
         piece.code = newPiece.code;
@@ -337,16 +339,32 @@ export const calculatorSlice = createSlice({
         setup.artifacts[pieceIndex] = newPiece;
       }
 
-      const newSetBonus = GeneralCalc.getArtifactSetBonuses(setup.artifacts)[0];
+      // const newSetBonus = GeneralCalc.getArtifactSetBonuses(setup.artifacts)[0];
 
-      if (newSetBonus) {
-        if (oldBonusLevel === 0 && newSetBonus.bonusLv) {
-          setup.artBuffCtrls = Modifier_.createArtifactBuffCtrls(true, newSetBonus);
-        } //
-        else if (oldBonusLevel && !newSetBonus.bonusLv) {
-          setup.artBuffCtrls = [];
+      // if (newSetBonus) {
+      //   if (oldBonusLevel === 0 && newSetBonus.bonusLv) {
+      //     setup.artBuffCtrls = Modifier_.createArtifactBuffCtrls(true, newSetBonus);
+      //   } //
+      //   else if (oldBonusLevel && !newSetBonus.bonusLv) {
+      //     setup.artBuffCtrls = [];
+      //   }
+      // }
+
+      const newSetBonuses = GeneralCalc.getArtifactSetBonuses(setup.artifacts);
+      const newArtBuffCtrls = Modifier_.createMainArtifactBuffCtrls(newSetBonuses);
+
+      newArtBuffCtrls.forEach((ctrl) => {
+        const oldCtrl = setup.artBuffCtrls.find(
+          (oldCtrl) => oldCtrl.code === ctrl.code && oldCtrl.index === ctrl.index
+        );
+        if (oldCtrl) {
+          ctrl.activated = oldCtrl.activated;
+          if (ctrl.inputs) ctrl.inputs = oldCtrl.inputs ?? [];
         }
-      }
+      });
+
+      setup.artBuffCtrls = newArtBuffCtrls;
+
       calculate(state);
     },
     updateArtifact: (state, action: UpdateArtifactAction) => {
@@ -388,6 +406,26 @@ export const calculatorSlice = createSlice({
       const { modCtrlName, ctrlIndex, inputIndex, value } = action.payload;
       const ctrls = state.setupsById[state.activeId][modCtrlName];
       const ctrl = modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : findByIndex(ctrls, ctrlIndex);
+
+      if (ctrl?.inputs) {
+        ctrl.inputs[inputIndex] = value;
+        calculate(state);
+      }
+    },
+    toggleArtifactBuffCtrl: (state, action: ToggleArtifactBuffCtrlAction) => {
+      const { code, ctrlIndex } = action.payload;
+      const ctrls = state.setupsById[state.activeId].artBuffCtrls;
+      const ctrl = ctrls.find((ctrl) => ctrl.code === code && ctrl.index === ctrlIndex);
+
+      if (ctrl) {
+        ctrl.activated = !ctrl.activated;
+        calculate(state);
+      }
+    },
+    changeArtifactBuffCtrlInput: (state, action: ChangeArtifactBuffCtrlInputAction) => {
+      const { code, ctrlIndex, inputIndex, value } = action.payload;
+      const ctrls = state.setupsById[state.activeId].artBuffCtrls;
+      const ctrl = ctrls.find((ctrl) => ctrl.code === code && ctrl.index === ctrlIndex);
 
       if (ctrl?.inputs) {
         ctrl.inputs[inputIndex] = value;
@@ -640,6 +678,8 @@ export const {
   updateResonance,
   toggleModCtrl,
   changeModCtrlInput,
+  toggleArtifactBuffCtrl,
+  changeArtifactBuffCtrlInput,
   toggleTeammateModCtrl,
   changeTeammateModCtrlInput,
   updateCustomBuffCtrls,

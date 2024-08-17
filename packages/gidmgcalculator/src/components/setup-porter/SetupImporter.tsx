@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { Modal } from "rond";
 
+import { DECODE_ERROR_MSG, decodeSetup, type DecodeError } from "@Src/utils/setup-porter";
 import { useDispatch } from "@Store/hooks";
 import { updateSetupImportInfo } from "@Store/ui-slice";
-import { decodeSetup } from "./setup-porter.utils";
 import { PorterLayout } from "./PorterLayout";
+
+type ImportError = "NOT_SUPPORT" | DecodeError;
 
 function SetupImporterCore(props: { onClose: () => void }) {
   const dispatch = useDispatch();
   const [code, setCode] = useState("");
-  const [error, setError] = useState<"NOT_SUPPORT" | "UNKNOWN" | "">("");
+  const [error, setError] = useState<ImportError | "">("");
 
   return (
     <PorterLayout
@@ -25,7 +27,7 @@ function SetupImporterCore(props: { onClose: () => void }) {
               text:
                 error === "NOT_SUPPORT"
                   ? "Sorry, your browser does not allow/support this function."
-                  : "An unknown error has occurred. This setup cannot be imported.",
+                  : DECODE_ERROR_MSG[error],
               type: "error",
             }
           : undefined
@@ -45,14 +47,15 @@ function SetupImporterCore(props: { onClose: () => void }) {
             const actualCode = code.trim();
 
             if (actualCode.length) {
-              try {
-                const result = decodeSetup(actualCode);
+              const result = decodeSetup(actualCode);
 
-                dispatch(updateSetupImportInfo(result));
+              if (result.isOk) {
+                dispatch(updateSetupImportInfo(result.importInfo));
                 props.onClose();
-              } catch (error) {
-                setError("UNKNOWN");
+                return;
               }
+
+              setError(result.error);
             }
           },
         },

@@ -1,4 +1,4 @@
-import type { ArtifactDebuffCtrl } from "@Src/types";
+import type { ArtifactModCtrl } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import { $AppArtifact } from "@Src/services";
@@ -8,8 +8,8 @@ import { renderModifiers, getArtifactDescription } from "./modifiers.utils";
 
 interface ArtifactDebuffsViewProps {
   mutable?: boolean;
-  artDebuffCtrls: ArtifactDebuffCtrl[];
-  getHanlders?: (args: GetModifierHanldersArgs<ArtifactDebuffCtrl>) => ModifierHanlders;
+  artDebuffCtrls: ArtifactModCtrl[];
+  getHanlders?: (args: GetModifierHanldersArgs<ArtifactModCtrl>) => ModifierHanlders;
 }
 export function ArtifactDebuffsView({ mutable, artDebuffCtrls, getHanlders }: ArtifactDebuffsViewProps) {
   const content: JSX.Element[] = [];
