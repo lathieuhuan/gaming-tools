@@ -1,17 +1,32 @@
 import type { AttackElement } from "@Backend";
-import type { AttackReaction, HitEvent, EntityModifyEvent, SimulationChunk, SystemModifyEvent } from "@Src/types";
+import type { AttackReaction, HitEvent, ModifyEvent, SimulationChunk, SystemEvent, BaseEvent } from "@Src/types";
 import { PartiallyRequired } from "rond";
 
+type EntityPerformer = {
+  type: "CHARACTER" | "WEAPON" | "ARTIFACT";
+  title: string;
+  icon: string;
+};
+
+type SystemPerformer = {
+  type: "SYSTEM";
+};
+
+export type Performer = SystemPerformer | EntityPerformer;
+
 type ProcessedBaseEvent = {
+  performers: Performer[];
   description: string;
   error?: string;
 };
 
-export type ProcessedSystemModifyEvent = PartiallyRequired<SystemModifyEvent, "duration"> & ProcessedBaseEvent & {};
+type TransformEntityEvent<T extends BaseEvent> = Omit<PartiallyRequired<T, "duration">, "modifier">;
 
-export type ProcessedEntityModifyEvent = PartiallyRequired<EntityModifyEvent, "duration"> & ProcessedBaseEvent & {};
+export type ProcessedSystemModifyEvent = PartiallyRequired<SystemEvent, "duration"> & ProcessedBaseEvent;
 
-export type ProcessedHitEvent = PartiallyRequired<HitEvent, "duration"> &
+export type ProcessedEntityModifyEvent = TransformEntityEvent<ModifyEvent> & ProcessedBaseEvent;
+
+export type ProcessedHitEvent = TransformEntityEvent<HitEvent> &
   ProcessedBaseEvent & {
     damage: {
       value: number;
@@ -28,5 +43,6 @@ export type SimulationProcessedChunk = Pick<SimulationChunk, "id" | "ownerCode">
 
 export type SimulationSumary = {
   damage: number;
+  /** in centisecond */
   duration: number;
 };

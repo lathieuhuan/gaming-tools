@@ -2,11 +2,11 @@ import type { AppWeapon } from "@Backend";
 import type {
   AttackReaction,
   HitEvent,
-  EntityModifyEvent,
+  ModifyEvent,
   Simulation,
   SimulationPartyData,
   SimulationTarget,
-  SystemModifyEvent,
+  SystemEvent,
 } from "@Src/types";
 import type {
   ProcessedHitEvent,
@@ -118,10 +118,14 @@ export class SimulationControlCenter extends SimulationChunksControl {
     return this.appWeapons[this.member[code].info.weapon.code];
   };
 
-  private applyPartyBonuses = () => {
+  private toAllMembers = (cb: (member: MemberControl) => void) => {
     for (const { code } of this.partyData) {
-      this.member[code].applyBonuses();
+      cb(this.member[code]);
     }
+  };
+
+  private applyPartyBonuses = () => {
+    this.toAllMembers((member) => member.applyBonuses());
   };
 
   protected switchOnfield = (memberCode: number) => {
@@ -138,10 +142,11 @@ export class SimulationControlCenter extends SimulationChunksControl {
 
   protected resetBonuses = () => {
     this.partyBonus.reset();
+    this.toAllMembers((member) => member.resetBonuses());
     this.applyPartyBonuses();
   };
 
-  protected systemModify = (event: SystemModifyEvent): ProcessedSystemModifyEvent => {
+  protected systemModify = (event: SystemEvent): ProcessedSystemModifyEvent => {
     switch (event.modifier.type) {
       case "RESONANCE": {
         const { element } = event.modifier;
@@ -188,6 +193,11 @@ export class SimulationControlCenter extends SimulationChunksControl {
 
         return {
           ...event,
+          performers: [
+            {
+              type: "SYSTEM",
+            },
+          ],
           duration: 0,
           description,
         };
@@ -195,12 +205,12 @@ export class SimulationControlCenter extends SimulationChunksControl {
     }
   };
 
-  protected entityModify = (event: EntityModifyEvent): ProcessedEntityModifyEvent => {
+  protected entityModify = (event: ModifyEvent): ProcessedEntityModifyEvent => {
     const { duration = 0 } = event;
-    const performer = this.member[event.performer.code];
-    const { affect, attrBonuses, attkBonuses, source } = performer.modify(
+    const performer = this.member[event.performerCode];
+    const { affect, attrBonuses, attkBonuses, performers, source } = performer.modify(
       event,
-      this.getAppWeaponOfMember(event.performer.code)
+      this.getAppWeaponOfMember(event.performerCode)
     );
 
     if (affect) {
@@ -245,6 +255,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
 
       return {
         ...event,
+        performers,
         duration,
         description: source,
       };
@@ -254,6 +265,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
 
     return {
       ...event,
+      performers: [],
       duration,
       description: `[${error}]`,
       error,
@@ -262,40 +274,43 @@ export class SimulationControlCenter extends SimulationChunksControl {
 
   protected hit = (event: HitEvent): ProcessedHitEvent => {
     const { duration = 0 } = event;
+    const performer = this.member[event.performerCode];
+    const result = performer?.hit(event, this.partyData, this.target);
+    const damage: ProcessedHitEvent["damage"] = {
+      value: 0,
+      element: "phys",
+    };
+    let description: string;
+    let error: string | undefined;
+    let reaction: AttackReaction = null;
 
-    switch (event.performer.type) {
-      case "CHARACTER": {
-        const result = this.member[event.performer.code]?.hit(event, this.partyData, this.target);
-        const damage: ProcessedHitEvent["damage"] = {
-          value: 0,
-          element: "phys",
-        };
-        let description: string;
-        let error: string | undefined;
-        let reaction: AttackReaction = null;
+    if (result) {
+      damage.value = result.damage;
+      damage.element = result.attElmt;
+      reaction = result.reaction;
+      description = result.name;
 
-        if (result) {
-          damage.value = result.damage;
-          damage.element = result.attElmt;
-          reaction = result.reaction;
-          description = result.name;
-
-          if (result.disabled) {
-            error = "This attack is disabled.";
-          }
-        } else {
-          error = "Cannot find the attack.";
-          description = `[${error}]`;
-        }
-
-        return {
-          ...event,
-          duration,
-          damage,
-          reaction,
-          description,
-        };
+      if (result.disabled) {
+        error = "This attack is disabled.";
       }
+    } else {
+      error = "Cannot find the attack.";
+      description = `[${error}]`;
     }
+
+    return {
+      ...event,
+      performers: [
+        {
+          type: "CHARACTER",
+          title: performer?.data?.name,
+          icon: performer?.data?.icon,
+        },
+      ],
+      duration,
+      damage,
+      reaction,
+      description,
+    };
   };
 }

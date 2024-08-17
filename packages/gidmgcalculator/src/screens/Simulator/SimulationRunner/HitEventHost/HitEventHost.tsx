@@ -1,11 +1,10 @@
-import { BiLogInCircle } from "react-icons/bi";
-import { Button, clsx, type ClassValue } from "rond";
+import { clsx, type ClassValue } from "rond";
 import type { HitEvent } from "@Src/types";
 
 import { useActiveMember } from "@Simulator/ToolboxProvider";
 import { useTranslation } from "@Src/hooks";
 import { useDispatch } from "@Store/hooks";
-import { addEvent, changeOnFieldMember } from "@Store/simulator-slice";
+import { addEvent } from "@Store/simulator-slice";
 import { getTalentHitEventConfig } from "./HitEventHost.utils";
 
 // Components
@@ -25,14 +24,14 @@ export function HitEventHost({ className }: HitEventHostProps) {
   }
   const configs = getTalentHitEventConfig(activeMember.data);
 
-  const onPerformTalentHitEvent = (eventInfo: Omit<HitEvent, "id" | "type" | "performer">, alsoSwitch?: boolean) => {
+  const onPerformTalentHitEvent = (
+    eventInfo: Omit<HitEvent, "id" | "type" | "performerCode">,
+    alsoSwitch?: boolean
+  ) => {
     dispatch(
       addEvent({
         type: "HIT",
-        performer: {
-          type: "CHARACTER",
-          code: activeMember.data.code,
-        },
+        performerCode: activeMember.data.code,
         ...eventInfo,
         duration: 20,
         alsoSwitch,

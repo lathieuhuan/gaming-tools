@@ -143,7 +143,7 @@ export class SimulationControl extends SimulationControlCenter {
       case "SYSTEM_MODIFY":
         processedEvent = this.systemModify(event);
         break;
-      case "ENTITY_MODIFY":
+      case "MODIFY":
         processedEvent = this.entityModify(event);
         break;
       case "HIT":

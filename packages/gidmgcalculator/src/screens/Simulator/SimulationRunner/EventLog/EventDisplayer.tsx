@@ -1,4 +1,6 @@
 import { FaExclamationCircle } from "react-icons/fa";
+import { TbLetterS } from "react-icons/tb";
+
 import type { SimulationManager, SimulationProcessedEvent } from "@Simulator/ToolboxProvider";
 import { GenshinImage } from "@Src/components";
 
@@ -13,9 +15,13 @@ export function EventDisplayer(props: EventDisplayerProps) {
   let extraNode: React.ReactNode = null;
 
   if (event.type === "SYSTEM_MODIFY") {
-    sideIconNode = <span>S</span>;
+    sideIconNode = (
+      <div className="w-7 h-7 flex-center" title="System">
+        <TbLetterS className="text-2xl" />
+      </div>
+    );
   } else {
-    const performer = props.simulation.getMemberData(event.performer.code);
+    const performer = props.simulation.getMemberData(event.performerCode);
 
     sideIconNode = (
       <GenshinImage
@@ -34,7 +40,7 @@ export function EventDisplayer(props: EventDisplayerProps) {
     );
 
     switch (event.type) {
-      case "ENTITY_MODIFY": {
+      case "MODIFY": {
         break;
       }
       case "HIT": {

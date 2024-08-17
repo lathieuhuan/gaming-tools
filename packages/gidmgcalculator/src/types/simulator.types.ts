@@ -1,23 +1,11 @@
-import type {
-  AppCharacter,
-  AppliedAttackBonus,
-  AppliedAttributeBonus,
-  ElementType,
-  LevelableTalentType,
-} from "@Backend";
+import type { AppCharacter, AppliedAttackBonus, AppliedAttributeBonus, LevelableTalentType } from "@Backend";
 import type { Artifact, Character, Weapon } from "./global.types";
 import type { ElementModCtrl, Target } from "./calculator.types";
 
 /** ========== EVENTS ========== */
 
-type CharacterPerformer = {
-  type: "CHARACTER";
-  code: number;
-};
-
-type BaseEvent = {
+export type BaseEvent = {
   id: number;
-  performer: CharacterPerformer;
   /** in centisecond */
   duration?: number;
 };
@@ -27,13 +15,14 @@ type ResonanceModifier = {
   element: "geo" | "dendro_strong" | "dendro_weak";
 };
 
-export type SystemModifyEvent = Pick<BaseEvent, "id" | "duration"> & {
+export type SystemEvent = BaseEvent & {
   type: "SYSTEM_MODIFY";
   modifier: ResonanceModifier;
 };
 
-export type EntityModifyEvent = BaseEvent & {
-  type: "ENTITY_MODIFY";
+export type ModifyEvent = BaseEvent & {
+  type: "MODIFY";
+  performerCode: number;
   modifier: {
     type: "CHARACTER" | "WEAPON" | "ARTIFACT";
     code: number;
@@ -46,12 +35,13 @@ export type TalentHitEventMod = Pick<ElementModCtrl, "absorption" | "reaction" |
 
 export type HitEvent = BaseEvent & {
   type: "HIT";
+  performerCode: number;
   talent: LevelableTalentType;
   calcItemId: string;
   elmtModCtrls?: TalentHitEventMod;
 };
 
-export type SimulationEvent = SystemModifyEvent | EntityModifyEvent | HitEvent;
+export type SimulationEvent = SystemEvent | ModifyEvent | HitEvent;
 
 export type SimulationMember = Character & {
   weapon: Weapon;

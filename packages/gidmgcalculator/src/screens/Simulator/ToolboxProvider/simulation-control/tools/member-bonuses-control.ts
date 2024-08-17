@@ -59,6 +59,11 @@ export class MemberBonusesControl extends BuffApplierCore {
     this.isOnfield = dir === "in";
   };
 
+  resetBonuses = () => {
+    this.bonusesCtrl.attrBonus = [];
+    this.bonusesCtrl.attkBonus = [];
+  }
+
   applyBonuses = () => {
     this.totalAttrCtrl = this.rootTotalAttr.clone();
 

@@ -1,14 +1,14 @@
 import { Button } from "rond";
 import { ElementType } from "@Backend";
 
-import { SystemModifyEvent } from "@Src/types";
+import { SystemEvent } from "@Src/types";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
 
 // Component
 import { RESONANCE_INFO, ResonanceBuffItem } from "@Src/components";
 
-type ModifierElement = SystemModifyEvent["modifier"]["element"];
+type ModifierElement = SystemEvent["modifier"]["element"];
 
 export interface EventListResonanceBuffProps {
   geoResonated: boolean;

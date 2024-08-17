@@ -23,12 +23,13 @@ import type {
   AttackReaction,
   ElementModCtrl,
   HitEvent,
-  EntityModifyEvent,
+  ModifyEvent,
   SimulationAttackBonus,
   SimulationMember,
   SimulationPartyData,
   SimulationTarget,
 } from "@Src/types";
+import type { Performer } from "../simulation-control.types";
 import type { PartyBonusControl } from "./party-bonus-control";
 
 import { pickProps, removeEmpty } from "@Src/utils";
@@ -59,14 +60,19 @@ export class MemberControl extends MemberBonusesControl {
   // ========== MODIFY ==========
 
   /** return affect: null if cannot find the buff */
-  modify = (event: EntityModifyEvent, performerWeapon: AppWeapon): ModifyResult => {
+  modify = (event: ModifyEvent, performerWeapon: AppWeapon): ModifyResult => {
     const { modifier } = event;
     const { inputs = [] } = modifier;
+    const characterPerform: Performer = {
+      type: "CHARACTER",
+      title: this.data.name,
+      icon: this.data.icon,
+    };
 
     if (modifier.type === "CHARACTER") {
       // #to-do: check if character can do this event (in case events are imported
       // but the modifier is not granted because of character's level/constellation)
-      const buff = this?.data.buffs?.find((buff) => buff.index === modifier.id);
+      const buff = this.data.buffs?.find((buff) => buff.index === modifier.id);
 
       if (buff) {
         const bonuses = this.getAppliedCharacterBonuses({
@@ -79,6 +85,7 @@ export class MemberControl extends MemberBonusesControl {
         return {
           affect: buff.affect,
           ...bonuses,
+          performers: [characterPerform],
           source: buff.src,
         };
       }
@@ -98,6 +105,14 @@ export class MemberControl extends MemberBonusesControl {
         return {
           affect: buff.affect,
           ...bonuses,
+          performers: [
+            characterPerform,
+            {
+              type: "WEAPON",
+              title: performerWeapon.name,
+              icon: performerWeapon.icon,
+            },
+          ],
           source: performerWeapon.name,
         };
       }
@@ -110,6 +125,7 @@ export class MemberControl extends MemberBonusesControl {
       affect: null,
       attrBonuses: [],
       attkBonuses: [],
+      performers: [],
       source: "",
     };
   };
@@ -237,6 +253,7 @@ type ModifyResult = {
   attrBonuses: AppliedAttributeBonus[];
   attkBonuses: AppliedAttackBonus[];
   source: string;
+  performers: Performer[];
 };
 
 export type ConfigTalentHitEventArgs = {

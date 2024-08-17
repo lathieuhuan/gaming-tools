@@ -145,7 +145,7 @@ export const simulatorSlice = createSlice({
             lastChunk.events.push(event);
             break;
           default:
-            if (alsoSwitch && lastChunk.ownerCode !== event.performer.code) {
+            if (alsoSwitch && lastChunk.ownerCode !== event.performerCode) {
               let removedId: string | undefined;
 
               if (!lastChunk.events.length) {
@@ -154,7 +154,7 @@ export const simulatorSlice = createSlice({
 
               chunks.push({
                 id: removedId ?? uuid(),
-                ownerCode: event.performer.code,
+                ownerCode: event.performerCode,
                 events: [event],
               });
             } else {
