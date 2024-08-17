@@ -84,7 +84,7 @@ export function NavBar() {
             <FaBars />
           </button>
 
-          <Popover as="div" className="z-50 right-0 pt-2 pr-2" active={menuDropped} origin="top-right">
+          <Popover as="div" className="z-50 right-0 pt-2 pr-2" active={menuDropped} origin="top right">
             <div className="flex flex-col bg-light-default text-black rounded-md overflow-hidden shadow-common">
               <ActionButton label="Introduction" icon={<FaInfoCircle size="1.125rem" />} onClick={openModal("INTRO")} />
               <ActionButton label="Guides" icon={<FaQuestionCircle />} onClick={openModal("GUIDES")} />
