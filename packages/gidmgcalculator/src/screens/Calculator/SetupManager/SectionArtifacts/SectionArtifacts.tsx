@@ -68,6 +68,12 @@ export default function SectionArtifacts() {
     }
   }, [activeTabIndex]);
 
+  useEffect(() => {
+    if (!activeArtifact && activeTabIndex !== -1) {
+      setActiveTabIndex(-1);
+    }
+  }, [!activeArtifact]);
+
   const onClickTab = (tabIndex: number) => {
     // there's already an artifact at tabIndex (or activeArtifact !== null after this excution)
     if (artifacts[tabIndex]) {

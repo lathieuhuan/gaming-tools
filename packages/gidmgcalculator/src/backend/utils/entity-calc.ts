@@ -204,6 +204,16 @@ export class EntityCalc {
         result = Math.min(stacks, 60);
         break;
       }
+      case "MIX": {
+        if (info.appChar.nation === "natlan") result += 1;
+
+        for (const teammate of info.partyData) {
+          if (teammate && (teammate.nation === "natlan" || teammate.vision !== info.appChar.vision)) {
+            result += 1;
+          }
+        }
+        break;
+      }
     }
 
     if (stack.baseline) {
@@ -233,6 +243,15 @@ function isUsableEffect(info: CalculationInfo, inputs: number[], checkInput?: nu
           input = Object.keys(GeneralCalc.countElements(info.partyData, info.appChar)).length;
         } else {
           return false;
+        }
+        break;
+      case "mixed":
+        if (info.appChar.nation === "natlan") input += 1;
+
+        for (const teammate of info.partyData) {
+          if (teammate && (teammate.nation === "natlan" || teammate.vision !== info.appChar.vision)) {
+            input += 1;
+          }
         }
         break;
       default:

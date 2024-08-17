@@ -45,7 +45,7 @@ function MyCharacterDetailInfoProviderCore({ char, weapon, artifacts, children }
       };
     }
 
-    // #to-do add error
+    // #TODO add error
 
     return {
       loading: true,

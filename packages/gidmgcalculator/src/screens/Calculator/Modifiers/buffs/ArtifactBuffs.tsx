@@ -4,10 +4,9 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectArtifacts,
   selectParty,
-  changeModCtrlInput,
-  toggleModCtrl,
+  toggleArtifactBuffCtrl,
+  changeArtifactBuffCtrlInput,
   updateTeammateArtifact,
-  type ToggleModCtrlPath,
 } from "@Store/calculator-slice";
 import { deepCopy, findByIndex } from "@Src/utils";
 import { ArtifactBuffsView } from "@Src/components";
@@ -24,16 +23,17 @@ export default function ArtifactBuffs() {
       {...{ party, artBuffCtrls }}
       setBonuses={GeneralCalc.getArtifactSetBonuses(artifacts)}
       getSelfHandlers={({ ctrl }) => {
-        const path: ToggleModCtrlPath = {
-          modCtrlName: "artBuffCtrls",
+        const path = {
+          code: ctrl.code,
           ctrlIndex: ctrl.index,
         };
         const updateBuffCtrlInput = (value: number, inputIndex: number) => {
-          dispatch(changeModCtrlInput(Object.assign({ value, inputIndex }, path)));
+          const payload = Object.assign({ value, inputIndex }, path);
+          dispatch(changeArtifactBuffCtrlInput(payload));
         };
         return {
           onToggle: () => {
-            dispatch(toggleModCtrl(path));
+            dispatch(toggleArtifactBuffCtrl(path));
           },
           onToggleCheck: (currentInput, inputIndex) => {
             updateBuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);

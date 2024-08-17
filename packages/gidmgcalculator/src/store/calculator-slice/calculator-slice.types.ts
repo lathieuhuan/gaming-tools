@@ -89,12 +89,21 @@ type InputInfo = {
 };
 
 export type ToggleModCtrlPath = {
-  modCtrlName: "selfBuffCtrls" | "selfDebuffCtrls" | "wpBuffCtrls" | "artBuffCtrls" | "artDebuffCtrls";
+  modCtrlName: "selfBuffCtrls" | "selfDebuffCtrls" | "wpBuffCtrls" | "artDebuffCtrls";
   ctrlIndex: number;
 };
 export type ToggleModCtrlAction = PayloadAction<ToggleModCtrlPath>;
 
+type ToggleArtifactBuffCtrlPath = {
+  code: number;
+  ctrlIndex: number;
+};
+
+export type ToggleArtifactBuffCtrlAction = PayloadAction<ToggleArtifactBuffCtrlPath>;
+
 export type ChangeModCtrlInputAction = PayloadAction<ToggleModCtrlPath & InputInfo>;
+
+export type ChangeArtifactBuffCtrlInputAction = PayloadAction<ToggleArtifactBuffCtrlPath & InputInfo>;
 
 export type ToggleTeammateModCtrlPath = {
   teammateIndex: number;

@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Modal } from "rond";
 
 import type { CalcSetup, Target } from "@Src/types";
-import { encodeSetup } from "./setup-porter.utils";
+import { encodeSetup } from "@Src/utils/setup-porter";
 import { PorterLayout } from "./PorterLayout";
 
 interface SetupExporterProps {
@@ -14,7 +14,7 @@ interface SetupExporterProps {
 export const SetupExporterCore = ({ setupName, calcSetup, target, onClose }: SetupExporterProps) => {
   const [status, setStatus] = useState<"SUCCESS" | "NOT_SUPPORT" | "">("");
 
-  const encodedData = encodeSetup(calcSetup, target);
+  const encodedData = useMemo(() => encodeSetup(calcSetup, target), []);
 
   return (
     <PorterLayout

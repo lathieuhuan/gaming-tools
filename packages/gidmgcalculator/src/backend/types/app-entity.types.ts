@@ -20,7 +20,7 @@ export type CalcItemType = "attack" | "healing" | "shield" | "other";
 export type InputCheck = {
   value: number;
   /** Default to 0 */
-  source?: number | "various_vision";
+  source?: number | "various_vision" | "mixed";
   /** Default to 'equal' */
   type?: "equal" | "min" | "max";
 };
@@ -55,7 +55,7 @@ export type ApplicableCondition = EffectUsableCondition & CharacterEffectAvailab
 
 export type ModifierAffectType = "SELF" | "TEAMMATE" | "SELF_TEAMMATE" | "PARTY" | "ONE_UNIT" | "ACTIVE_UNIT";
 
-export type ModInputType = "LEVEL" | "TEXT" | "CHECK" | "STACKS" | "SELECT" | "ANEMOABLE" | "DENDROABLE";
+export type ModInputType = "LEVEL" | "TEXT" | "CHECK" | "STACKS" | "SELECT" | "ANEMOABLE" | "DENDROABLE" | "ELEMENTAL";
 
 export type ModInputConfig = {
   label?: string;
@@ -114,7 +114,12 @@ type ResolveStack = {
   type: "RESOLVE";
 };
 
-export type EntityBonusStack = (InputStack | ElementStack | NationStack | EnergyCostStack | ResolveStack) & {
+/** Temporary for Shattered Chains (bow) */
+type MixStack = {
+  type: "MIX";
+};
+
+export type EntityBonusStack = (InputStack | ElementStack | NationStack | EnergyCostStack | ResolveStack | MixStack) & {
   /** actual stacks = stacks - baseline */
   baseline?: number;
   /** On Furina */

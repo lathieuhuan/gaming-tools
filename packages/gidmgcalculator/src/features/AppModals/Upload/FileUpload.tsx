@@ -3,8 +3,9 @@ import { FaUpload } from "react-icons/fa";
 import { notification, Button, Modal } from "rond";
 
 import type { UploadedData } from "./Upload.types";
+import { DOWNLOADED_DATA_VERSION } from "@Src/constants";
 import { convertFromGoodFormat } from "./utils/convertFromGoodFormat";
-import { convertFromVersion2_1 } from "./utils/convertFromVersion2_1";
+import { convertToV3_1 } from "./utils/convertToV3_1";
 
 interface FileUploadProps {
   onSuccessUploadFile: (data: UploadedData) => void;
@@ -27,15 +28,15 @@ const FileUploadCore = ({ onSuccessUploadFile }: FileUploadProps) => {
 
           const version = +data.version;
 
-          if (version < 2.1) {
+          if (version < 3) {
             notification.error({
               content: "Your data are too old and cannot be converted to the current version.",
             });
           }
-          if (version === 2.1) {
-            return onSuccessUploadFile(convertFromVersion2_1(data));
-          }
           if (version === 3) {
+            return onSuccessUploadFile(convertToV3_1(data));
+          }
+          if (version === DOWNLOADED_DATA_VERSION) {
             return onSuccessUploadFile(data);
           }
 

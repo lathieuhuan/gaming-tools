@@ -58,6 +58,20 @@ export function GenshinModifierView({ inputConfigs, ...viewProps }: GenshinModif
             { label: "Electro", value: 2 },
           ],
         };
+      case "ELEMENTAL":
+        return {
+          type: "select",
+          label,
+          options: [
+            { label: "Pyro", value: 0 },
+            { label: "Hydro", value: 1 },
+            { label: "Electro", value: 2 },
+            { label: "Cryo", value: 3 },
+            { label: "Geo", value: 4 },
+            { label: "Anemo", value: 5 },
+            { label: "Dendro", value: 6 },
+          ],
+        };
       default:
         return {
           label: "[unmatched type]",

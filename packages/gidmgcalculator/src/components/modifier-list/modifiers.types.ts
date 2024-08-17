@@ -4,7 +4,7 @@ import type { GenshinModifierViewProps } from "../GenshinModifierView";
 export type GetModifierHanldersArgs<T extends ModifierCtrl = ModifierCtrl> = {
   ctrl: T;
   ctrlIndex: number;
-  ctrls: ModifierCtrl[];
+  ctrls: T[];
 };
 
 export type GetTeammateModifierHanldersArgs = GetModifierHanldersArgs & {

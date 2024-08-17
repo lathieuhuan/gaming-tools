@@ -27,7 +27,7 @@ export const Popover = ({
       className={clsx(
         `ron-popover`,
         active && "ron-popover--active",
-        withTooltipStyle && "bg-black text-light-400 rounded-lg text-sm cursor-default",
+        withTooltipStyle && "ron-popover--tooltip",
         className
       )}
       style={Object.assign(style, { transformOrigin: origin })}
