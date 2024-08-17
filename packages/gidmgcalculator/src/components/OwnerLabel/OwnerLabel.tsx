@@ -89,7 +89,6 @@ export function OwnerLabel({ className = "", style, item }: OwnerLabelProps) {
             className="bottom-full right-2 mb-2 shadow-white-glow"
             active={list.isVisible}
             withTooltipStyle
-            origin="bottom-right"
           >
             {list.isMounted && <SetupList setups={containingSetups} onClickOutside={onClickOutsideList} />}
           </Popover>

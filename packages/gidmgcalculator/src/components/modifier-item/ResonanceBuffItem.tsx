@@ -1,61 +1,58 @@
-import { ElementType } from "@Backend";
+import type { ElementType, ModInputConfig } from "@Backend";
 
-import { Green } from "@Src/components";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
+import { parseResonanceDescription, toArray } from "@Src/utils";
 
-const resonanceRenderInfo: Record<string, { name: string; description: JSX.Element }> = {
+type RenderInfo = {
+  name: string;
+  description: string | string[];
+  inputConfigs?: ModInputConfig[];
+};
+
+export const RESONANCE_INFO: Record<string, RenderInfo> = {
   pyro: {
-    name: "Fervent Flames",
-    description: (
-      <>
-        Increases <Green>ATK</Green> by <Green b>25%</Green>.
-      </>
-    ),
+    name: "Pyro Resonance",
+    description: "Increases {ATK}#[k] by {25%}#[v].",
   },
   cryo: {
-    name: "Shattering Ice",
-    description: (
-      <>
-        Increases <Green>CRIT Rate</Green> against enemies that are Frozen or affected by Cryo by <Green b>15%</Green>.
-      </>
-    ),
+    name: "Cryo Resonance",
+    description: "Increases {CRIT Rate}#[k] against enemies that are Frozen or affected by Cryo by {15%}#[v].",
   },
   geo: {
-    name: "Enduring Rock",
-    description: (
-      <>
-        Increases <Green>Shield Strength</Green> by <Green b>15%</Green>. Increases <Green>DMG</Green> dealt by
-        characters that protected by a shield by <Green b>15%</Green>.
-      </>
-    ),
+    name: "Geo Resonance",
+    description: [
+      "Increases {Shield Strength}#[k] by {15%}#[v].",
+      "Increases {DMG}#[k] dealt by characters that protected by a shield by {15%}#[v].",
+    ],
   },
   hydro: {
-    name: "Soothing Water",
-    description: (
-      <>
-        Increases <Green>Max HP</Green> by <Green b>25%</Green>.
-      </>
-    ),
+    name: "Hydro Resonance",
+    description: "Increases {Max HP}#[k] by {25%}#[v].",
   },
   dendro: {
-    name: "Sprawling Greenery",
-    description: (
-      <>
-        Increases <Green>Elemental Mastery</Green> by <Green b>50</Green>. After triggering Burning, Quicken, or Bloom
-        reactions, all nearby party members gain <Green>30</Green> <Green>Elemental Mastery</Green> for 6s. After
-        triggering Aggravate, Spread, Hyperbloom, or Burgeon reactions, all nearby party members gain <Green>20</Green>{" "}
-        <Green>Elemental Mastery</Green> for 6s. The durations of the aforementioned effects will be counted
-        independently.
-      </>
-    ),
+    name: "Dendro Resonance",
+    description: [
+      `Increases {Elemental Mastery}#[k] by {50}#[v].`,
+      `After triggering Burning, Quicken, or Bloom reactions, all nearby party members gain {30}#[v] {Elemental Mastery}#[k] for 6s.`,
+      `After triggering Aggravate, Spread, Hyperbloom, or Burgeon reactions, all nearby party members gain {20}#[v] {Elemental Mastery}#[k] for 6s.`,
+    ],
+    inputConfigs: [
+      { label: "Trigger Aggravate, Spread, Hyperbloom, Burgeon", type: "CHECK" },
+      { label: "Trigger Burning, Quicken, Bloom", type: "CHECK" },
+    ],
   },
 };
 
 interface ResonanceBuffItemProps extends Omit<GenshinModifierViewProps, "heading" | "description"> {
   element: ElementType;
+  description?: string;
 }
-
 export function ResonanceBuffItem({ element, ...coreProps }: ResonanceBuffItemProps) {
-  const { name, description } = resonanceRenderInfo[element] || {};
-  return name ? <GenshinModifierView heading={name} description={description} {...coreProps} /> : null;
+  const info = RESONANCE_INFO[element] || {};
+  const { description = info.description } = coreProps;
+  const parsedDescription = toArray(description)
+    .map((part) => parseResonanceDescription(part))
+    .join(" ");
+
+  return info.name ? <GenshinModifierView heading={info.name} {...coreProps} description={parsedDescription} /> : null;
 }

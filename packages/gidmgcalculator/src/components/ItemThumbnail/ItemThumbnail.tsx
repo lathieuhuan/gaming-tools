@@ -8,21 +8,25 @@ export interface ItemThumbProps {
   className?: string;
   imgCls?: string;
   title?: string;
+  /** No cursor-pointer */
+  muted?: boolean;
+  /** Smaller layout by placing level at absolute bottom */
   compact?: boolean;
   /** Default to true */
   showOwner?: boolean;
   item: {
-    beta?: boolean;
     icon: string;
-    rarity: number;
-    level: Level | number;
+    rarity?: number;
+    level?: Level | number;
     refi?: number;
     owner?: string | null;
   };
 }
-export function ItemThumbnail({ className, imgCls, title, showOwner = true, compact, item }: ItemThumbProps) {
-  const lvText = `Lv. ${typeof item.level === "string" ? item.level.split("/")[0] : item.level}`;
-  //
+export function ItemThumbnail(props: ItemThumbProps) {
+  const { showOwner = true, compact, item } = props;
+  const lvText =
+    item.level === undefined ? null : `Lv. ${typeof item.level === "string" ? item.level.split("/")[0] : item.level}`;
+
   const renderSideIcon = (owner: string) => {
     const { icon = "", sideIcon } = $AppCharacter.get(owner) || {};
     return (
@@ -44,11 +48,12 @@ export function ItemThumbnail({ className, imgCls, title, showOwner = true, comp
   return (
     <div
       className={clsx(
-        "bg-light-default rounded flex flex-col cursor-pointer relative",
+        "bg-light-default rounded flex flex-col relative",
         compact && "overflow-hidden",
-        className
+        !props.muted && "cursor-pointer",
+        props.className
       )}
-      title={title}
+      title={props.title}
     >
       {showOwner && item.owner && !compact ? renderSideIcon(item.owner) : null}
 
@@ -65,27 +70,30 @@ export function ItemThumbnail({ className, imgCls, title, showOwner = true, comp
 
       <div
         className={clsx(
-          `aspect-square bg-gradient-${item.rarity || 5} overflow-hidden`,
+          "aspect-square overflow-hidden",
+          item.rarity && `bg-gradient-${item.rarity}`,
           !compact && "rounded rounded-br-2xl "
         )}
       >
         <GenshinImage
-          className={imgCls}
+          className={props.imgCls}
           src={item.icon}
           fallbackCls="p-3"
           imgType={item.refi ? "weapon" : "artifact"}
         />
       </div>
 
-      {compact ? (
-        <div className="flex-center bg-black/60 w-full absolute bottom-0">
-          <p className="font-bold text-light-default leading-5">{lvText}</p>
-        </div>
-      ) : (
-        <div className="flex-center bg-light-default">
-          <p className="font-bold text-black">{lvText}</p>
-        </div>
-      )}
+      {lvText ? (
+        compact ? (
+          <div className="flex-center bg-black/60 w-full absolute bottom-0">
+            <p className="font-bold text-light-default leading-5">{lvText}</p>
+          </div>
+        ) : (
+          <div className="flex-center bg-light-default">
+            <p className="font-bold text-black">{lvText}</p>
+          </div>
+        )
+      ) : null}
     </div>
   );
 }

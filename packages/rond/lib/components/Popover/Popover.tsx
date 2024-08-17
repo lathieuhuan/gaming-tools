@@ -9,28 +9,28 @@ export interface PopoverProps {
   as?: keyof JSX.IntrinsicElements;
   active?: boolean;
   withTooltipStyle?: boolean;
-  /** Default to 'bottom-right' */
-  origin?: "bottom-right" | "top-left" | "top-right";
+  /** style transformOrigin Default to 'bottom right' */
+  origin?: string;
   children: React.ReactNode;
 }
 export const Popover = ({
   className,
-  style,
+  style = {},
   as: Tag = "span",
   active,
   withTooltipStyle,
-  origin = "bottom-right",
+  origin = "bottom right",
   children,
 }: PopoverProps) => {
   return (
     <Tag
       className={clsx(
-        `ron-popover ron-popover--${origin}`,
+        `ron-popover`,
         active && "ron-popover--active",
         withTooltipStyle && "bg-black text-light-400 rounded-lg text-sm cursor-default",
         className
       )}
-      style={style}
+      style={Object.assign(style, { transformOrigin: origin })}
     >
       {children}
     </Tag>
