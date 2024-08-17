@@ -15,6 +15,7 @@ import {
   FinalResult,
   CalculatorProviders,
 } from "@Src/screens/Calculator";
+import { Simulator } from "@Src/screens/Simulator";
 
 import styles from "./AppMain.styles.module.scss";
 
@@ -110,6 +111,7 @@ export function AppMainLarge() {
               { value: "MY_WEAPONS", element: <MyWeapons /> },
               { value: "MY_ARTIFACTS", element: <MyArtifacts /> },
               { value: "MY_SETUPS", element: <MySetups /> },
+              { value: "SIMULATOR", element: <Simulator /> },
             ]}
           />
         </div>

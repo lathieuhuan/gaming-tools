@@ -27,6 +27,7 @@ export function NavBar() {
     { label: "My Artifacts", value: "MY_ARTIFACTS" },
     { label: "My Setups", value: "MY_SETUPS" },
     { label: "Calculator", value: "CALCULATOR" },
+    { label: "Simulator", value: "SIMULATOR" },
   ];
 
   const openModal = (type: UIState["appModalType"]) => () => {

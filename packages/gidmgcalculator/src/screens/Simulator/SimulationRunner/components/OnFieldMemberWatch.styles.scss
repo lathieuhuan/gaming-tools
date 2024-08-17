@@ -1,0 +1,12 @@
+.member-on-field {
+  .switch-action-btn {
+    display: none;
+  }
+}
+
+.member-off-field {
+  .action-btn {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}

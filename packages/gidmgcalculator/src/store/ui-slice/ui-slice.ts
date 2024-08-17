@@ -14,7 +14,7 @@ export type MySetupsModalType =
   | "ARTIFACTS"
   | "";
 
-export type AppScreen = "CALCULATOR" | "MY_SETUPS" | "MY_WEAPONS" | "MY_ARTIFACTS" | "MY_CHARACTERS";
+export type AppScreen = "SIMULATOR" | "CALCULATOR" | "MY_SETUPS" | "MY_WEAPONS" | "MY_ARTIFACTS" | "MY_CHARACTERS";
 
 export type TrackerState = "open" | "close" | "hidden";
 

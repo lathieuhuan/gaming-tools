@@ -28,6 +28,22 @@ export class Modifier_ {
     };
   }
 
+  static createModCtrl = (mod: Modifier, forSelf: boolean) => {
+    const ctrl: ModifierCtrl = { index: mod.index, activated: false };
+
+    if (mod.inputConfigs) {
+      const initialValues = [];
+
+      for (const config of mod.inputConfigs) {
+        if (!config.for || config.for !== (forSelf ? "FOR_TEAM" : "FOR_SELF")) {
+          initialValues.push(config.initialValue ?? Modifier_.getDefaultInitialValue(config.type));
+        }
+      }
+      if (initialValues.length) ctrl.inputs = initialValues;
+    }
+    return ctrl;
+  };
+
   static createCharacterModCtrls(forSelf: boolean, name: string) {
     const buffCtrls: ModifierCtrl[] = [];
     const debuffCtrls: ModifierCtrl[] = [];
