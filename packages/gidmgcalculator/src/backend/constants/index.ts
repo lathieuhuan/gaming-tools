@@ -57,6 +57,19 @@ export const ATTRIBUTE_STAT_TYPES = [
   "caAtkSpd_",
 ] as const;
 
+type ResonanceStat = {
+  key: (typeof ATTRIBUTE_STAT_TYPES)[number];
+  value: number;
+};
+
+export const RESONANCE_STAT: Record<string, ResonanceStat> = {
+  pyro: { key: "atk_", value: 25 },
+  cryo: { key: "cRate_", value: 15 },
+  geo: { key: "shieldS_", value: 15 },
+  hydro: { key: "hp_", value: 25 },
+  dendro: { key: "em", value: 50 },
+};
+
 //
 
 export const LEVELS = [
