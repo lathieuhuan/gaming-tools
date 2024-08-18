@@ -6,6 +6,7 @@ import type { SimulationAttackBonus, SimulationAttributeBonus, SimulationMember 
 import type { SimulationManager } from "@Simulator/ToolboxProvider";
 import { ArtifactCard, AttributeTable, EquipmentDisplay, SetBonusesView, WeaponCard } from "@Src/components";
 import { useTranslation } from "@Src/hooks";
+import { Utils_ } from "@Src/utils";
 
 export function AttributesTab({ simulation }: { simulation: SimulationManager }) {
   const [totalAttr, setTotalAttr] = useState<TotalAttribute | null>(null);
@@ -42,43 +43,51 @@ export function BonusesTab({ simulation }: BonusesTabProps) {
   }, [simulation]);
 
   return (
-    <div className="h-full hide-scrollbar space-y-3">
+    <div className="h-full hide-scrollbar space-y-2">
       {bonuses.map((bonus, index) => {
+        const valueType = bonus.type === "ATTRIBUTE" ? bonus.toStat : bonus.toKey;
+
         return (
           <Fragment key={index}>
             {index ? <div className="h-px bg-surface-border" /> : null}
 
             <div className="flex flex-col items-end rounded">
               <div className="text-bonus-color">
-                <span className="text-lg font-semibold">{round(bonus.value, 2)}</span>{" "}
-                {t(bonus.type === "ATTRIBUTE" ? bonus.toStat : bonus.toKey)}
+                <span className="text-lg font-semibold">
+                  {round(bonus.value, 2)}
+                  {Utils_.suffixOf(valueType)}
+                </span>{" "}
+                {t(valueType)}
               </div>
 
               {bonus.type === "ATTACK" && (
-                <div className="h-6 text-sm capitalize">
-                  {bonus.toType.split(".").map((type, index) => {
-                    const text = ATTACK_ELEMENTS.includes(type as (typeof ATTACK_ELEMENTS)[number])
-                      ? type === "phys"
-                        ? "physical"
-                        : type
-                      : t(type);
+                <div className="h-6 text-sm text-light-default/60">
+                  <span>to</span>{" "}
+                  <span className="capitalize">
+                    {bonus.toType.split(".").map((type, index) => {
+                      const text = ATTACK_ELEMENTS.includes(type as (typeof ATTACK_ELEMENTS)[number])
+                        ? type === "phys"
+                          ? "physical"
+                          : type
+                        : t(type);
 
-                    return (
-                      <Fragment key={index}>
-                        {index ? <span className="text-light-default/60"> & </span> : null}
-                        <span key={index} className="text-secondary-1">
-                          {text}
-                        </span>
-                      </Fragment>
-                    );
-                  })}
+                      return (
+                        <Fragment key={index}>
+                          {index ? " & " : null}
+                          <span key={index} className="text-secondary-1">
+                            {text}
+                          </span>
+                        </Fragment>
+                      );
+                    })}
+                  </span>
                 </div>
               )}
 
-              <div className="text-sm">
+              <p className="text-sm text-right">
                 <span className="text-light-default/60">from</span>{" "}
                 <span className="font-medium">{bonus.description}</span>
-              </div>
+              </p>
             </div>
           </Fragment>
         );

@@ -1,4 +1,4 @@
-import type { AppWeapon } from "@Backend";
+import { AppArtifact, GeneralCalc, type AppWeapon } from "@Backend";
 import type {
   AttackReaction,
   HitEvent,
@@ -14,7 +14,7 @@ import type {
   ProcessedSystemModifyEvent,
 } from "./simulation-control.types";
 
-import { $AppCharacter, $AppWeapon } from "@Src/services";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import {
   MemberControl,
   PartyBonusControl,
@@ -31,6 +31,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
   readonly member: Record<number, MemberControl> = {};
 
   private appWeapons: Record<number, AppWeapon> = {};
+  private appArtifacts: Record<number, AppArtifact> = {};
   private partyBonus: PartyBonusControl;
 
   private onfieldMember: MemberControl;
@@ -57,10 +58,20 @@ export class SimulationControlCenter extends SimulationChunksControl {
         this.appWeapons[weaponCode] = $AppWeapon.get(weaponCode)!;
       }
 
+      const setBonuses = GeneralCalc.getArtifactSetBonuses(member.artifacts);
+
+      for (const setBonus of setBonuses) {
+        if (!this.appArtifacts[setBonus.code]) {
+          this.appArtifacts[setBonus.code] = $AppArtifact.getSet(setBonus.code)!;
+        }
+      }
+
       this.member[memberData.code] = new MemberControl(
         member,
         this.partyData[i],
         this.appWeapons[weaponCode],
+        this.appArtifacts,
+        setBonuses,
         this.partyData,
         this.partyBonus
       );

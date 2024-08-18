@@ -1,6 +1,5 @@
 import {
   ActualAttackPattern,
-  AppCharacter,
   AppWeapon,
   AppliedAttackBonus,
   AppliedAttributeBonus,
@@ -16,7 +15,6 @@ import {
   NORMAL_ATTACKS,
   NormalsConfig,
   ResistanceReductionControl,
-  TotalAttributeControl,
   // getNormalsConfig,
 } from "@Backend";
 import type {
@@ -25,37 +23,16 @@ import type {
   HitEvent,
   ModifyEvent,
   SimulationAttackBonus,
-  SimulationMember,
   SimulationPartyData,
   SimulationTarget,
 } from "@Src/types";
 import type { Performer } from "../simulation-control.types";
-import type { PartyBonusControl } from "./party-bonus-control";
 
 import { pickProps, removeEmpty } from "@Src/utils";
 import { MemberBonusesControl } from "./member-bonuses-control";
 
 export class MemberControl extends MemberBonusesControl {
-  readonly info: SimulationMember;
-  readonly data: AppCharacter;
   private normalsConfig: NormalsConfig = {};
-
-  constructor(
-    member: SimulationMember,
-    appChar: AppCharacter,
-    appWeapon: AppWeapon,
-    partyData: SimulationPartyData,
-    partyBonus: PartyBonusControl
-  ) {
-    const rootTotalAttr = new TotalAttributeControl();
-
-    rootTotalAttr.construct(member, appChar, member.weapon, appWeapon, member.artifacts);
-
-    super({ char: member, appChar, partyData }, rootTotalAttr, partyBonus);
-
-    this.info = member;
-    this.data = appChar;
-  }
 
   // ========== MODIFY ==========
 

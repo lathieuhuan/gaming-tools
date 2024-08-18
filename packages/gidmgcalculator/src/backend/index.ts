@@ -64,5 +64,5 @@ export type {
   WeaponType,
 } from "./types";
 export type { AppMonster } from "./types/app-monster.types";
-export type { AppliedAttributeBonus, AppliedAttackBonus } from "./appliers/appliers.types";
+export type { AppliedAttributeBonus, AppliedAttackBonus, AppliedBonuses } from "./appliers/appliers.types";
 export type { CalculationFinalResult, CalculationFinalResultGroup } from "./calculation-calculator/getFinalResult";

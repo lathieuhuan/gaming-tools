@@ -24,13 +24,9 @@ import { ModifierStackingControl } from "@Src/backend/controls";
 import { getCharacterBareBonus, getWeaponBareBonus, getArtifactBareBonus } from "@Src/backend/bonus-getters";
 
 export class BuffApplierCore {
-  protected calcInfo: CalculationInfo;
-
   private modStackingCtrl = new ModifierStackingControl();
 
-  constructor(info: CalculationInfo, protected totalAttrCtrl: TotalAttributeControl) {
-    this.calcInfo = info;
-  }
+  constructor(protected calcInfo: CalculationInfo, protected totalAttrCtrl: TotalAttributeControl) {}
 
   private applyEffectBonuses: ApplyEffectBonuses = (args) => {
     const { bonus, isStackable, description } = args;
