@@ -86,7 +86,7 @@ export class Utils_ {
       type,
       rarity,
       level = Math.min(artLevel, rarity === 5 ? 20 : 16),
-      mainStatType = type === "flower" ? "hp" : type === "plume" ? "atk" : "atk_",
+      mainStatType = "atk_",
       subStats = [
         { type: "def", value: 0 },
         { type: "def_", value: 0 },
@@ -101,7 +101,7 @@ export class Utils_ {
       code: config.code,
       rarity,
       level,
-      mainStatType,
+      mainStatType: type === "flower" ? "hp" : type === "plume" ? "atk" : mainStatType,
       subStats,
     };
   }
