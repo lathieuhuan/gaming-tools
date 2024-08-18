@@ -139,6 +139,10 @@ export class SimulationControl extends SimulationControlCenter {
     let processedEvent: SimulationProcessedEvent;
     this.sumary.duration += event.duration ?? 0;
 
+    for (const appChar of this.partyData) {
+      this.member[appChar.code]?.innateModify();
+    }
+
     switch (event.type) {
       case "SYSTEM_MODIFY":
         processedEvent = this.systemModify(event);

@@ -220,7 +220,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
     const { duration = 0 } = event;
     const performer = this.member[event.performerCode];
     const { affect, attrBonuses, attkBonuses, performers, source } = performer.modify(
-      event,
+      event.modifier,
       this.getAppWeaponOfMember(event.performerCode)
     );
 

@@ -36,9 +36,12 @@ export class MemberControl extends MemberBonusesControl {
 
   // ========== MODIFY ==========
 
+  innateModify = () => {
+    // for innate dynamic buff
+  };
+
   /** return affect: null if cannot find the buff */
-  modify = (event: ModifyEvent, performerWeapon: AppWeapon): ModifyResult => {
-    const { modifier } = event;
+  modify = (modifier: ModifyEvent["modifier"], performerWeapon: AppWeapon): ModifyResult => {
     const { inputs = [] } = modifier;
     const characterPerform: Performer = {
       type: "CHARACTER",
