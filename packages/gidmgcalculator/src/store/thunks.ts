@@ -286,7 +286,7 @@ export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeam
 
       if (artifact.code) {
         const { variants = [] } = $AppArtifact.getSet(artifact.code) || {};
-        const maxRarity = variants[variants.length - 1];
+        const maxRarity = variants.at(-1);
 
         if (maxRarity) {
           artifacts = ARTIFACT_TYPES.map((type) => {
