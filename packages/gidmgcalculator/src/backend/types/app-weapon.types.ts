@@ -60,5 +60,5 @@ export type WeaponBuff = EntityBuff<WeaponBonus> & {
    * If number, it's the index of weapon's descriptions (AppWeapon.descriptions).
    * Default to 0.
    */
-  description?: number | string;
+  description?: number | string | (number | string)[];
 };

@@ -128,9 +128,13 @@ export const parseWeaponDescription = (description: string, refi: number) => {
 
 export const getWeaponBuffDescription = (descriptions: AppWeapon["descriptions"], buff: WeaponBuff, refi: number) => {
   if (descriptions?.length) {
-    let { description = 0 } = buff;
-    description = typeof description === "number" ? descriptions[description] : description;
-    return parseWeaponDescription(description || "", refi);
+    const parsedFrags: string[] = [];
+
+    for (const frag of toArray(buff.description ?? 0)) {
+      const description = typeof frag === "number" ? descriptions[frag] : frag;
+      parsedFrags.push(parseWeaponDescription(description ?? "", refi));
+    }
+    return parsedFrags.join(" ");
   }
   return "";
 };

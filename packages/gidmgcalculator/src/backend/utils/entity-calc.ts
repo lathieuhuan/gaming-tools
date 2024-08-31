@@ -5,8 +5,8 @@ import type {
   EntityEffectMax,
   ApplicableCondition,
   ElementType,
-  InputCheck,
   EntityBonusValueOption,
+  EffectUsableCondition,
 } from "@Src/backend/types";
 import type { CalculationInfo } from "@Src/backend/utils";
 
@@ -29,7 +29,7 @@ export class EntityCalc {
     inputs: number[],
     fromSelf = false
   ): boolean {
-    if (!isUsableEffect(info, inputs, condition.checkInput)) {
+    if (!isUsableEffect(info, inputs, condition)) {
       return false;
     }
     if (!isAvailableEffect(condition, info.char, inputs, fromSelf)) {
@@ -232,7 +232,9 @@ export class EntityCalc {
   }
 }
 
-function isUsableEffect(info: CalculationInfo, inputs: number[], checkInput?: number | InputCheck) {
+function isUsableEffect(info: CalculationInfo, inputs: number[], usableCondition: EffectUsableCondition) {
+  const { checkInput, checkInfo } = usableCondition;
+
   if (checkInput !== undefined) {
     const { value, source = 0, type = "equal" } = typeof checkInput === "number" ? { value: checkInput } : checkInput;
     let input = 0;
@@ -268,6 +270,13 @@ function isUsableEffect(info: CalculationInfo, inputs: number[], checkInput?: nu
       case "max":
         if (input > value) return false;
         else break;
+    }
+  }
+  if (checkInfo !== undefined) {
+    switch (checkInfo.type) {
+      case "vision":
+        if (info.appChar.vision !== checkInfo.value) return false;
+        break;
     }
   }
   return true;

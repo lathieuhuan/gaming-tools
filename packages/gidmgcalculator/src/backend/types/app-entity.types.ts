@@ -19,14 +19,21 @@ export type CalcItemType = "attack" | "healing" | "shield" | "other";
  */
 export type InputCheck = {
   value: number;
-  /** Default to 0 */
+  /**
+   * 'mixed' only on Chain Breaker.
+   * Default to 0.
+   */
   source?: number | "various_vision" | "mixed";
   /** Default to 'equal' */
   type?: "equal" | "min" | "max";
 };
 
-type EffectUsableCondition = {
+export type EffectUsableCondition = {
   checkInput?: number | InputCheck;
+  checkInfo?: {
+    type: "vision";
+    value: ElementType;
+  };
 };
 
 export type CharacterMilestone = "A1" | "A4" | "C1" | "C2" | "C4" | "C6";
@@ -238,6 +245,9 @@ export type EntityPenaltyTarget =
       type: "inp_elmt";
       /** Input's index to get ElementType index. Default to 0 */
       inpIndex?: number;
+    }
+  | {
+      type: "XILONEN";
     };
 
 export type EntityDebuff<T = unknown> = {
