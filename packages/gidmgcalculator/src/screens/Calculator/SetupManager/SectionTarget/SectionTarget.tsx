@@ -2,6 +2,7 @@ import { FaEdit, FaMinus } from "react-icons/fa";
 import { Button, InputNumber, VersatileSelect } from "rond";
 
 import { $AppData } from "@Src/services";
+import { MAX_TARGET_LEVEL } from "@Src/constants";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTarget, updateTarget } from "@Store/calculator-slice";
 
@@ -54,7 +55,7 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
           <InputNumber
             className="w-14 font-semibold"
             value={target.level}
-            max={100}
+            max={MAX_TARGET_LEVEL}
             onChange={(value) => dispatch(updateTarget({ level: value }))}
           />
         </label>
