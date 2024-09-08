@@ -7,6 +7,8 @@
   "scripts": {
     "gidmgcalculator:dev": "cd packages/gidmgcalculator && npm run dev",
     "gidmgcalculator:build": "cd packages/gidmgcalculator && npm run build",
+    "hsrsimulator:dev": "cd packages/gidmgcalculator && npm run dev",
+    "hsrsimulator:build": "cd packages/gidmgcalculator && npm run build",
     "rond:storybook": "cd packages/rond && npm run storybook",
     "rond:dev": "cd packages/rond && npm run dev",
     "rond:build": "cd packages/rond && npm run build"

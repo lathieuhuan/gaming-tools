@@ -1,0 +1,33 @@
+@import 'tailwindcss/base';
+@import 'rond/dist/style.css';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer base {
+  option {
+    color: black;
+  }
+  button,
+  input,
+  select {
+    outline: none;
+  }
+  button:disabled {
+    cursor: default;
+  }
+  select {
+    background: transparent;
+  }
+  /* a {
+    @apply text-link-color;
+  } */
+}
+
+@layer utilities {
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+  .full-stretch {
+    @apply top-0 bottom-0 right-0 left-0;
+  }
+}
