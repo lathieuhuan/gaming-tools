@@ -17,8 +17,7 @@ const March7th: AppCharacter = {
       scope: "SINGLE",
     },
     energyRestore: 20,
-    effects: {
-      id: 1,
+    main: {
       type: "ATTACK",
       toughReduce: 10,
       multiplier: 50,
@@ -31,8 +30,7 @@ const March7th: AppCharacter = {
       scope: "SINGLE",
     },
     energyRestore: 30,
-    effects: {
-      id: 1,
+    main: {
       type: "SHIELD",
       multiplier: {
         value: 38,
@@ -46,30 +44,30 @@ const March7th: AppCharacter = {
     name: "Glacial Cascade",
     target: {
       type: "ENEMY",
-      scope: "PARTY",
+      scope: "ALL",
     },
     energyRestore: 5,
-    effects: [
-      {
-        id: 1,
-        type: "ATTACK",
-        toughReduce: 20,
-        multiplier: 90,
-      },
-      {
-        id: 2,
-        type: "FREEZE",
-        dot: 30,
-        chance: 50,
-        turns: 1,
-      },
-    ],
+    main: {
+      type: "ATTACK",
+      toughReduce: 20,
+      multiplier: 90,
+    },
+    sides: {
+      id: 1,
+      type: "FREEZE",
+      dot: 30,
+      chance: 50,
+      turns: 1,
+    },
   },
   talent: {
     name: "Girl Power",
+    trigger: {
+      type: "ALLY_ATTACKED",
+      checkStatuses: "SHIELDED",
+    },
     effects: {
-      id: 1,
-      type: "ATTACK",
+      type: "COUNTER",
       multiplier: 50,
     },
     maxTriggersPerTurn: 2,
@@ -80,8 +78,7 @@ const March7th: AppCharacter = {
       type: "ENEMY",
       scope: "SINGLE",
     },
-    effects: {
-      id: 1,
+    main: {
       type: "FREEZE",
       dot: 50,
       chance: 100,

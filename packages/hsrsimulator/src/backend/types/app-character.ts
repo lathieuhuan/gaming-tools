@@ -1,3 +1,4 @@
+import type { AppEntityPassiveAbility } from "./app-entity";
 import type { StatType } from "./common";
 
 export type AppCharacter = {
@@ -8,11 +9,11 @@ export type AppCharacter = {
   rarity: number;
   maxEnergy: number;
   stats: number[][];
-  basic: ActiveAbility;
-  skill: ActiveAbility;
-  ultimate: ActiveAbility;
-  talent: PassiveAbility;
-  technique: ActiveAbility;
+  basic: ActiveEntry;
+  skill: ActiveEntry;
+  ultimate: ActiveEntry;
+  talent: PassiveEntry;
+  technique: ActiveEntry;
   traces: Trace[];
 };
 
@@ -44,27 +45,27 @@ type AbilityFreezeEffect = {
   turns: number;
 };
 
-type AbilityEffect = (AbilityAttackEffect | AbilityShieldEffect | AbilityFreezeEffect) & {
+type MainAbilityEffect = AbilityAttackEffect | AbilityShieldEffect | AbilityFreezeEffect;
+
+type SideAbilityEffect = MainAbilityEffect & {
   id: number;
 };
 
-type ActiveAbility = {
+type ActiveEntry = {
   name: string;
   target: {
     type: "ALLY" | "ENEMY";
-    scope: "SINGLE" | "MULTIPLE" | "PARTY";
+    scope: "SINGLE" | "MULTIPLE" | "ALL";
   };
   energyRestore?: number;
-  effects: AbilityEffect | AbilityEffect[];
+  main: MainAbilityEffect;
+  sides?: SideAbilityEffect | SideAbilityEffect[];
   pointCost?: boolean;
   energyCost?: number;
 };
 
-type PassiveAbility = {
+type PassiveEntry = AppEntityPassiveAbility & {
   name: string;
-  effects: AbilityEffect | AbilityEffect[];
-  // condition
-  maxTriggersPerTurn?: number;
 };
 
 // ========== TRACES ==========
