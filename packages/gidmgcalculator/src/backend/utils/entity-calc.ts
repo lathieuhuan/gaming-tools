@@ -36,7 +36,7 @@ export class EntityCalc {
       return false;
     }
 
-    const { partyElmtCount, partyOnlyElmts } = condition;
+    const { totalPartyElmtCount, partyElmtCount, partyOnlyElmts } = condition;
 
     if (condition.forWeapons && !condition.forWeapons.includes(info.appChar.weaponType)) {
       return false;
@@ -46,6 +46,15 @@ export class EntityCalc {
     }
     const elementCount = GeneralCalc.countElements(info.partyData, info.appChar);
 
+    if (totalPartyElmtCount) {
+      const { elements, value, type } = totalPartyElmtCount;
+      const totalCount = elements.reduce((total, element) => total + (elementCount[element] ?? 0), 0);
+
+      switch (type) {
+        case "max":
+          if (totalCount > value) return false;
+      }
+    }
     if (partyElmtCount) {
       for (const key in partyElmtCount) {
         const currentCount = elementCount[key as ElementType] ?? 0;

@@ -50,6 +50,12 @@ type ExtraCondition = {
   forWeapons?: WeaponType[];
   /** On Chevreuse */
   forElmts?: ElementType[];
+  /** On Xilonen */
+  totalPartyElmtCount?: {
+    elements: ElementType[];
+    value: number;
+    type: "max";
+  };
   /** On Gorou, Nilou, Chevreuse */
   partyElmtCount?: Partial<Record<ElementType, number>>;
   /** On Nilou, Chevreuse */
