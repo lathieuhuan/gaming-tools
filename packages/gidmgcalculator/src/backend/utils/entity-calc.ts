@@ -7,6 +7,8 @@ import type {
   ElementType,
   EntityBonusValueOption,
   EffectUsableCondition,
+  EntityBonusBasedOn,
+  EntityBonusBasedOnField,
 } from "@Src/backend/types";
 import type { CalculationInfo } from "@Src/backend/utils";
 
@@ -128,6 +130,20 @@ export class EntityCalc {
       : max.value + (max.extras ? this.getTotalExtraMax(max.extras, info, inputs, fromSelf) : 0);
   }
 
+  static getBasedOn(
+    basedOn: EntityBonusBasedOn,
+    inputs: number[],
+    fromSelf: boolean,
+    getTotalAttrFromSelf: (field: EntityBonusBasedOnField) => number
+  ) {
+    const { field, alterIndex = 0, baseline = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
+    const basedOnValue = fromSelf ? getTotalAttrFromSelf(field) : inputs[alterIndex] ?? 1;
+    return {
+      basedOnField: field,
+      basedOnValue: Math.max(basedOnValue - baseline, 0),
+    };
+  }
+
   static getStackValue(stack: EntityBonusStack, info: CalculationInfo, inputs: number[], fromSelf: boolean): number {
     const { appChar, partyData } = info;
     let result = 0;
@@ -224,6 +240,9 @@ export class EntityCalc {
         break;
       }
     }
+
+    console.log("stack.baseline");
+    console.log(result, stack.baseline);
 
     if (stack.baseline) {
       if (result <= stack.baseline) return 0;

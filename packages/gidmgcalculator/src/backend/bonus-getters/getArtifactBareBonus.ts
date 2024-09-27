@@ -20,10 +20,10 @@ export function getArtifactBareBonus(args: GetBonusArgs<ArtifactBonusCore>): Bar
 
   // ========== APPLY BASED ON ==========
   if (basedOn) {
-    const { field, alterIndex = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
-    bonusValue *= fromSelf ? args.getTotalAttrFromSelf(field) : inputs[alterIndex] ?? 1;
+    const { basedOnField, basedOnValue } = EntityCalc.getBasedOn(basedOn, inputs, fromSelf, args.getTotalAttrFromSelf);
 
-    if (field !== "base_atk") isStable = false;
+    bonusValue *= basedOnValue;
+    if (basedOnField !== "base_atk") isStable = false;
   }
 
   // ========== APPLY STACKS ==========
