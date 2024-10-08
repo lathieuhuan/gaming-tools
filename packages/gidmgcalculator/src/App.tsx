@@ -2,19 +2,22 @@ import { useEffect } from "react";
 import { useScreenWatcher } from "rond";
 
 import { AppMain, AppModals, NavBar, SetupImportCenter, Tracker } from "@Src/features";
+import { $AppSettings } from "./services";
 
 function App() {
   const screenWatcher = useScreenWatcher();
 
   useEffect(() => {
-    const beforeunloadAlert = (e: BeforeUnloadEvent) => {
-      e.preventDefault();
-      return (e.returnValue = "Are you sure you want to exit?");
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if ($AppSettings.get("askBeforeUnload")) {
+        e.preventDefault();
+        return (e.returnValue = "Are you sure you want to exit?");
+      }
     };
-    window.addEventListener("beforeunload", beforeunloadAlert, { capture: true });
+    window.addEventListener("beforeunload", handleBeforeUnload, { capture: true });
 
     return () => {
-      window.removeEventListener("beforeunload", beforeunloadAlert, { capture: true });
+      window.removeEventListener("beforeunload", handleBeforeUnload, { capture: true });
     };
   }, []);
 

@@ -13,7 +13,7 @@ import { CheckSetting, Section } from "./settings-components";
 type DefaultValueControl = {
   key: Exclude<
     keyof AppSettings,
-    "charInfoIsSeparated" | "doKeepArtStatsOnSwitch" | "persistingUserData" | "isTabLayout"
+    "charInfoIsSeparated" | "doKeepArtStatsOnSwitch" | "persistingUserData" | "isTabLayout" | "askBeforeUnload"
   >;
   label: string;
   options?: (string | number)[];
@@ -153,6 +153,13 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
             }}
           />
         )}
+        <CheckSetting
+          label="Confirm before leaving the site"
+          defaultChecked={tempSettings.askBeforeUnload}
+          onChange={() => {
+            onChangeTempSettings("askBeforeUnload", !tempSettings.askBeforeUnload);
+          }}
+        />
       </Section>
 
       <Section title="User Data">
