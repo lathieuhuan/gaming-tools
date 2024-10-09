@@ -241,9 +241,6 @@ export class EntityCalc {
       }
     }
 
-    console.log("stack.baseline");
-    console.log(result, stack.baseline);
-
     if (stack.baseline) {
       if (result <= stack.baseline) return 0;
       result -= stack.baseline;
