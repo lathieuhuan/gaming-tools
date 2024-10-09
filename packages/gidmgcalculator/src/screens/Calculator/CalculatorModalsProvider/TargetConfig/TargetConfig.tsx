@@ -3,6 +3,7 @@ import { ATTACK_ELEMENTS, AttackElement, ElementType } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
+import { MAX_TARGET_LEVEL } from "@Src/constants";
 import { toArray } from "@Src/utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
@@ -56,7 +57,7 @@ function TargetConfigCore() {
                 className="w-16 font-semibold"
                 size="medium"
                 value={target.level}
-                max={100}
+                max={MAX_TARGET_LEVEL}
                 maxDecimalDigits={0}
                 onChange={(value) => dispatch(updateTarget({ level: value }))}
               />

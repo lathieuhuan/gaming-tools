@@ -1,6 +1,7 @@
 import type {
   ArtifactPenaltyCore,
   CharacterPenaltyCore,
+  ElementType,
   EntityDebuff,
   EntityPenalty,
   EntityPenaltyTarget,
@@ -42,17 +43,35 @@ export class DebuffApplierCore {
 
   private applyPenalty = (args: ApplyPenaltyArgs) => {
     if (!args.penalty) return;
+    const paths = new Set<ResistanceReductionKey>();
 
     for (const target of toArray(args.targets)) {
-      let path: ResistanceReductionKey;
-
       if (typeof target === "string") {
-        path = target;
-      } else {
-        const elmtIndex = args.inputs[target.inpIndex ?? 0];
-        path = ELEMENT_TYPES[elmtIndex];
+        paths.add(target);
+        continue;
       }
+      switch (target.type) {
+        case "inp_elmt": {
+          const elmtIndex = args.inputs[target.inpIndex ?? 0];
+          paths.add(ELEMENT_TYPES[elmtIndex]);
+          break;
+        }
+        case "XILONEN": {
+          const elmts: ElementType[] = ["pyro", "hydro", "cryo", "electro"];
+          let remainingCount = 3;
 
+          for (const teammate of this.info.partyData.concat(this.info.appChar)) {
+            if (teammate && elmts.includes(teammate.vision)) {
+              paths.add(teammate.vision);
+              remainingCount--;
+            }
+          }
+          if (remainingCount > 0) paths.add("geo");
+          break;
+        }
+      }
+    }
+    for (const path of paths) {
       args.applyPenalty({
         key: path,
         value: args.penalty,
@@ -67,11 +86,13 @@ export class DebuffApplierCore {
 
     for (const config of toArray(debuff.effects)) {
       if (EntityCalc.isApplicableEffect(config, this.info, args.inputs, fromSelf)) {
+        const penalty = getPenalty({
+          config,
+        });
+
         this.applyPenalty({
           ...applyArgs,
-          penalty: getPenalty({
-            config,
-          }),
+          penalty,
           targets: config.targets,
         });
       }

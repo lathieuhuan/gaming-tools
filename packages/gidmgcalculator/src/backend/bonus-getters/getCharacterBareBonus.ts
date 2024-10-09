@@ -27,11 +27,10 @@ export function getCharacterBareBonus(args: GetBonusArgs<CharacterBonusCore>): B
 
   // ========== APPLY BASED ON ==========
   if (basedOn) {
-    const { field, alterIndex = 0, baseline = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
-    const basedOnValue = fromSelf ? args.getTotalAttrFromSelf(field) : inputs[alterIndex] ?? 1;
-    bonusValue *= Math.max(basedOnValue - baseline, 0);
+    const { basedOnField, basedOnValue } = EntityCalc.getBasedOn(basedOn, inputs, fromSelf, args.getTotalAttrFromSelf);
 
-    if (field !== "base_atk") isStable = false;
+    bonusValue *= basedOnValue;
+    if (basedOnField !== "base_atk") isStable = false;
   }
 
   // ========== APPLY STACKS ==========

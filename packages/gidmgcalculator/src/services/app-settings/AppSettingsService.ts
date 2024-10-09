@@ -6,6 +6,7 @@ export type AppSettings = {
   persistingUserData: boolean;
   /** Applied to mobile */
   isTabLayout: boolean;
+  askBeforeUnload: boolean;
   charLevel: Level;
   charCons: number;
   charNAs: number;
@@ -23,6 +24,7 @@ export class AppSettingsService {
     doKeepArtStatsOnSwitch: false,
     persistingUserData: false,
     isTabLayout: true,
+    askBeforeUnload: true,
     charLevel: "1/20",
     charCons: 0,
     charNAs: 1,

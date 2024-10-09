@@ -3,6 +3,7 @@ import { InputNumber, Modal, VersatileSelect, useScreenWatcher } from "rond";
 import { Level, LEVELS } from "@Backend";
 
 import { $AppSettings, AppSettings } from "@Src/services";
+import { MAX_TARGET_LEVEL } from "@Src/constants";
 import { applySettings } from "@Store/calculator-slice";
 import { updateUI } from "@Store/ui-slice";
 import { useDispatch } from "@Store/hooks";
@@ -12,7 +13,7 @@ import { CheckSetting, Section } from "./settings-components";
 type DefaultValueControl = {
   key: Exclude<
     keyof AppSettings,
-    "charInfoIsSeparated" | "doKeepArtStatsOnSwitch" | "persistingUserData" | "isTabLayout"
+    "charInfoIsSeparated" | "doKeepArtStatsOnSwitch" | "persistingUserData" | "isTabLayout" | "askBeforeUnload"
   >;
   label: string;
   options?: (string | number)[];
@@ -152,6 +153,13 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
             }}
           />
         )}
+        <CheckSetting
+          label="Confirm before leaving the site"
+          defaultChecked={tempSettings.askBeforeUnload}
+          onChange={() => {
+            onChangeTempSettings("askBeforeUnload", !tempSettings.askBeforeUnload);
+          }}
+        />
       </Section>
 
       <Section title="User Data">
@@ -201,7 +209,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
               className="w-full font-semibold"
               size="medium"
               value={tempSettings.targetLevel}
-              max={100}
+              max={MAX_TARGET_LEVEL}
               onChange={(newValue) => {
                 onChangeTempSettings(key, newValue);
               }}

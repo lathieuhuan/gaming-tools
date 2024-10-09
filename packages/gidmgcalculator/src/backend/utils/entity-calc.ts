@@ -5,8 +5,10 @@ import type {
   EntityEffectMax,
   ApplicableCondition,
   ElementType,
-  InputCheck,
   EntityBonusValueOption,
+  EffectUsableCondition,
+  EntityBonusBasedOn,
+  EntityBonusBasedOnField,
 } from "@Src/backend/types";
 import type { CalculationInfo } from "@Src/backend/utils";
 
@@ -29,14 +31,14 @@ export class EntityCalc {
     inputs: number[],
     fromSelf = false
   ): boolean {
-    if (!isUsableEffect(info, inputs, condition.checkInput)) {
+    if (!isUsableEffect(info, inputs, condition)) {
       return false;
     }
     if (!isAvailableEffect(condition, info.char, inputs, fromSelf)) {
       return false;
     }
 
-    const { partyElmtCount, partyOnlyElmts } = condition;
+    const { totalPartyElmtCount, partyElmtCount, partyOnlyElmts } = condition;
 
     if (condition.forWeapons && !condition.forWeapons.includes(info.appChar.weaponType)) {
       return false;
@@ -46,6 +48,15 @@ export class EntityCalc {
     }
     const elementCount = GeneralCalc.countElements(info.partyData, info.appChar);
 
+    if (totalPartyElmtCount) {
+      const { elements, value, type } = totalPartyElmtCount;
+      const totalCount = elements.reduce((total, element) => total + (elementCount[element] ?? 0), 0);
+
+      switch (type) {
+        case "max":
+          if (totalCount > value) return false;
+      }
+    }
     if (partyElmtCount) {
       for (const key in partyElmtCount) {
         const currentCount = elementCount[key as ElementType] ?? 0;
@@ -117,6 +128,20 @@ export class EntityCalc {
     return typeof max === "number"
       ? max
       : max.value + (max.extras ? this.getTotalExtraMax(max.extras, info, inputs, fromSelf) : 0);
+  }
+
+  static getBasedOn(
+    basedOn: EntityBonusBasedOn,
+    inputs: number[],
+    fromSelf: boolean,
+    getTotalAttrFromSelf: (field: EntityBonusBasedOnField) => number
+  ) {
+    const { field, alterIndex = 0, baseline = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
+    const basedOnValue = fromSelf ? getTotalAttrFromSelf(field) : inputs[alterIndex] ?? 1;
+    return {
+      basedOnField: field,
+      basedOnValue: Math.max(basedOnValue - baseline, 0),
+    };
   }
 
   static getStackValue(stack: EntityBonusStack, info: CalculationInfo, inputs: number[], fromSelf: boolean): number {
@@ -232,7 +257,9 @@ export class EntityCalc {
   }
 }
 
-function isUsableEffect(info: CalculationInfo, inputs: number[], checkInput?: number | InputCheck) {
+function isUsableEffect(info: CalculationInfo, inputs: number[], usableCondition: EffectUsableCondition) {
+  const { checkInput, checkInfo } = usableCondition;
+
   if (checkInput !== undefined) {
     const { value, source = 0, type = "equal" } = typeof checkInput === "number" ? { value: checkInput } : checkInput;
     let input = 0;
@@ -268,6 +295,13 @@ function isUsableEffect(info: CalculationInfo, inputs: number[], checkInput?: nu
       case "max":
         if (input > value) return false;
         else break;
+    }
+  }
+  if (checkInfo !== undefined) {
+    switch (checkInfo.type) {
+      case "vision":
+        if (info.appChar.vision !== checkInfo.value) return false;
+        break;
     }
   }
   return true;

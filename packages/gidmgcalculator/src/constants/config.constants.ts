@@ -1,3 +1,4 @@
+export const MAX_TARGET_LEVEL = 120;
 export const MAX_USER_WEAPONS = 200;
 export const MAX_USER_ARTIFACTS = 800;
 export const MAX_USER_SETUPS = 50;

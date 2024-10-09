@@ -128,9 +128,6 @@ export function AttackPatternConf({
           basedOn = defaultBasedOn,
         } = typeof factor === "number" ? { root: factor } : factor;
 
-        // console.log("multFactor");
-        // console.log(root, scale, basedOn);
-
         return {
           root,
           scale,
