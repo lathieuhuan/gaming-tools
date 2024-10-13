@@ -108,7 +108,7 @@ type InputStack = {
 
 type ElementStack = {
   type: "ELEMENT";
-  element: "same_included" | "same_excluded" | "different";
+  element: "same_included" | "same_excluded" | "different" | ElementType;
 };
 
 /** On characterss & weapons  */
@@ -182,7 +182,7 @@ type InputOptionIndex = {
 };
 type ElementOptionIndex = {
   source: "ELEMENT";
-  element: "various" | ElementType | ElementType[];
+  element: "various" | "different" | ElementType | ElementType[];
 };
 /** On Razor */
 type LevelOptionIndex = {
@@ -218,7 +218,7 @@ export type EntityBonus<ValueOptionExtends = object> = ApplicableCondition & {
   value: number | (EntityBonusValueOption & ValueOptionExtends);
   /** Added right before stacks */
   basedOn?: EntityBonusBasedOn;
-  stacks?: EntityBonusStack | EntityBonusStack[];
+  stacks?: EntityBonusStack;
 };
 
 export type EntityBuff<T extends EntityBonus<unknown>> = {

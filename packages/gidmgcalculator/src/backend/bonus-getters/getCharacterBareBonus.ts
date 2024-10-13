@@ -1,7 +1,6 @@
 import type { CharacterBonusCore } from "@Src/backend/types";
 import type { BareBonus, GetBonusArgs } from "./bonus-getters.types";
 import { CharacterCalc, EntityCalc, type CalculationInfo } from "@Src/backend/utils";
-import { toArray } from "@Src/utils";
 
 export function getCharacterBareBonus(args: GetBonusArgs<CharacterBonusCore>): BareBonus {
   const { config, info, inputs, fromSelf } = args;
@@ -34,18 +33,16 @@ export function getCharacterBareBonus(args: GetBonusArgs<CharacterBonusCore>): B
   }
 
   // ========== APPLY STACKS ==========
-  if (config.stacks) {
-    for (const stack of toArray(config.stacks)) {
-      if (["NATION", "RESOLVE"].includes(stack.type) && !info.partyData.length) {
-        return {
-          id: "",
-          value: 0,
-          isStable: true,
-        };
-      }
-      bonusValue *= EntityCalc.getStackValue(stack, info, inputs, fromSelf);
-    }
+  const stackValue = EntityCalc.getStackValue(config.stacks, info, inputs, fromSelf);
+
+  if (!stackValue) {
+    return {
+      id: "",
+      value: 0,
+      isStable,
+    };
   }
+  bonusValue *= stackValue;
 
   // ========== APPLY MAX ==========
   if (typeof config.max === "number") {

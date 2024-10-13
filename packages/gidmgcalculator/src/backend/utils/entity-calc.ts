@@ -12,7 +12,7 @@ import type {
 } from "@Src/backend/types";
 import type { CalculationInfo } from "@Src/backend/utils";
 
-import { toArray } from "@Src/utils";
+import { toArray, Utils_ } from "@Src/utils";
 import { GeneralCalc } from "./general-calc";
 import { CharacterCalc } from "./character-calc";
 
@@ -87,12 +87,22 @@ export class EntityCalc {
       case "ELEMENT": {
         const { element } = indexConfig;
         const elementCount = info.partyData.length ? GeneralCalc.countElements(info.partyData, info.appChar) : {};
-        indexValue +=
-          element === "various"
-            ? Object.keys(elementCount).length
-            : typeof element === "string"
-            ? elementCount[element] ?? 0
-            : element.reduce((total, type) => total + (elementCount[type] ?? 0), 0);
+
+        switch (element) {
+          case "various":
+            indexValue += Object.keys(elementCount).length;
+            break;
+          case "different":
+            indexValue += Object.keys(elementCount).reduce((total, type) => {
+              return type !== info.appChar.vision ? total + 1 : total;
+            }, 0);
+            break;
+          default:
+            indexValue +=
+              typeof element === "string"
+                ? elementCount[element] ?? 0
+                : element.reduce((total, type) => total + (elementCount[type] ?? 0), 0);
+        }
         break;
       }
       case "LEVEL": {
@@ -144,8 +154,21 @@ export class EntityCalc {
     };
   }
 
-  static getStackValue(stack: EntityBonusStack, info: CalculationInfo, inputs: number[], fromSelf: boolean): number {
+  static getStackValue(
+    stack: EntityBonusStack | undefined,
+    info: CalculationInfo,
+    inputs: number[],
+    fromSelf: boolean
+  ): number | null {
+    if (!stack) {
+      return 1;
+    }
     const { appChar, partyData } = info;
+    const partyDependentStackTypes: EntityBonusStack["type"][] = ["ELEMENT", "ENERGY", "NATION", "RESOLVE", "MIX"];
+
+    if (partyDependentStackTypes.includes(stack.type) && !partyData.length) {
+      return null;
+    }
     let result = 0;
 
     switch (stack.type) {
@@ -173,18 +196,30 @@ export class EntityCalc {
         break;
       }
       case "ELEMENT": {
-        const { [appChar.vision]: sameCount = 0, ...others } = GeneralCalc.countElements(partyData);
+        const { element } = stack;
+        const elementsCount = GeneralCalc.countElements(partyData);
 
-        switch (stack.element) {
+        switch (element) {
           case "different":
-            result = Object.values(others as Record<string, number>).reduce((total, count) => total + count, 0);
+            result = Utils_.keysOf(elementsCount).reduce((total, type) => {
+              return total + (type !== appChar.vision ? elementsCount[type] ?? 0 : 0);
+            }, 0);
             break;
           case "same_excluded":
-            result = sameCount;
+            result = Utils_.keysOf(elementsCount).reduce((total, type) => {
+              return total + (type === appChar.vision ? elementsCount[type] ?? 0 : 0);
+            }, 0);
             break;
           case "same_included":
-            result = sameCount + 1;
+            result = Utils_.keysOf(elementsCount).reduce((total, type) => {
+              return total + (type === appChar.vision ? elementsCount[type] ?? 0 : 0);
+            }, 1);
             break;
+          default:
+            result = Utils_.keysOf(elementsCount).reduce(
+              (total, type) => total + (type === element ? elementsCount[type] ?? 0 : 0),
+              appChar.vision === element ? 1 : 0
+            );
         }
         break;
       }

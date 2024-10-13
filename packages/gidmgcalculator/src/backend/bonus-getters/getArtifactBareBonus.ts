@@ -1,7 +1,6 @@
 import type { ArtifactBonusCore } from "@Src/backend/types";
 import type { BareBonus, GetBonusArgs } from "./bonus-getters.types";
 import { EntityCalc } from "@Src/backend/utils";
-import { toArray } from "@Src/utils";
 
 export function getArtifactBareBonus(args: GetBonusArgs<ArtifactBonusCore>): BareBonus {
   const { config, info, inputs, fromSelf } = args;
@@ -27,18 +26,16 @@ export function getArtifactBareBonus(args: GetBonusArgs<ArtifactBonusCore>): Bar
   }
 
   // ========== APPLY STACKS ==========
-  if (config.stacks) {
-    for (const stack of toArray(config.stacks)) {
-      if (stack.type === "ELEMENT" && !info.partyData.length) {
-        return {
-          id: "",
-          value: 0,
-          isStable,
-        };
-      }
-      bonusValue *= EntityCalc.getStackValue(stack, info, inputs, fromSelf);
-    }
+  const stackValue = EntityCalc.getStackValue(config.stacks, info, inputs, fromSelf);
+
+  if (!stackValue) {
+    return {
+      id: "",
+      value: 0,
+      isStable,
+    };
   }
+  bonusValue *= stackValue;
 
   // ========== APPLY SUF-EXTRA ==========
   if (typeof config.sufExtra === "number") {
