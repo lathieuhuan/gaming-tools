@@ -58,7 +58,7 @@ export function getWeaponBareBonus(args: GetBonusArgs<WeaponBonusCore> & { refi:
 
   return {
     id: config.id,
-    value: Math.max(bonusValue, 0),
+    value: bonusValue, // bonusValue can be negative (Rust)
     isStable,
   };
 }
