@@ -89,7 +89,7 @@ export class EntityCalc {
         const elementCount = info.partyData.length ? GeneralCalc.countElements(info.partyData, info.appChar) : {};
 
         switch (element) {
-          case "various":
+          case "various_types":
             indexValue += Object.keys(elementCount).length;
             break;
           case "different":
@@ -98,10 +98,13 @@ export class EntityCalc {
             }, 0);
             break;
           default:
-            indexValue +=
-              typeof element === "string"
-                ? elementCount[element] ?? 0
-                : element.reduce((total, type) => total + (elementCount[type] ?? 0), 0);
+            if (typeof element === "string") {
+              indexValue += elementCount[element] ?? 0;
+            } else if (indexConfig.distinct) {
+              indexValue += element.reduce((total, type) => total + (elementCount[type] ? 1 : 0), 0);
+            } else {
+              indexValue += element.reduce((total, type) => total + (elementCount[type] ?? 0), 0);
+            }
         }
         break;
       }

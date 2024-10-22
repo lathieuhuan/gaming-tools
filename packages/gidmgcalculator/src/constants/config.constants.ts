@@ -5,7 +5,7 @@ export const MAX_USER_SETUPS = 50;
 export const MAX_CALC_SETUPS = 4;
 export const DOWNLOADED_DATA_VERSION = 3.1;
 export const EXPORTED_SETUP_VERSION = 1;
-export const MINIMUM_SYSTEM_VERSION = "3.8.5";
+export const MINIMUM_SYSTEM_VERSION = "3.8.6";
 
 export const GENSHIN_DEV_URL = {
   base: "https://genshin.jmp.blue",

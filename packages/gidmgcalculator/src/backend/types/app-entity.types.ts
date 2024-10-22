@@ -20,6 +20,7 @@ export type CalcItemType = "attack" | "healing" | "shield" | "other";
 export type InputCheck = {
   value: number;
   /**
+   * 'various_vision' only on Ballad of the Fjords
    * 'mixed' only on Chain Breaker.
    * Default to 0.
    */
@@ -182,7 +183,15 @@ type InputOptionIndex = {
 };
 type ElementOptionIndex = {
   source: "ELEMENT";
-  element: "various" | "different" | ElementType | ElementType[];
+  /** 
+   * 'various_types' count elements of entire party.
+   * 'different' count teammates of different elements from the character
+   * ElementType count teammates of ElementType
+   * ElementType[] count teammates of one of ElementType[]
+   */
+  element: "various_types" | "different" | ElementType | ElementType[];
+  /** When 'element' is ElementType[]: count distinct elements that are included in ElementType[] */
+  distinct?: boolean;
 };
 /** On Razor */
 type LevelOptionIndex = {
