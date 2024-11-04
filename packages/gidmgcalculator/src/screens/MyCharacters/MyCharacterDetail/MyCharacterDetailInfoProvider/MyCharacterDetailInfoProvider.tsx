@@ -22,13 +22,17 @@ function MyCharacterDetailInfoProviderCore({ char, weapon, artifacts, children }
 
   const characterInfoState = useMemo<MyCharacterDetailInfoState>(() => {
     if (appChar && appWeapon) {
-      const { totalAttr, artAttr } = getCalculationStats({
-        char,
-        appChar,
-        appWeapon,
-        weapon,
-        artifacts,
-      });
+      const { totalAttr, artAttr } = getCalculationStats(
+        {
+          char,
+          weapon,
+          artifacts,
+        },
+        {
+          appChar,
+          appWeapon,
+        }
+      );
 
       return {
         loading: false,

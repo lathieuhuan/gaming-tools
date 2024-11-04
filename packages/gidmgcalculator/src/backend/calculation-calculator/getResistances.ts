@@ -1,13 +1,4 @@
-import type {
-  ArtifactModCtrl,
-  Character,
-  CustomDebuffCtrl,
-  ElementModCtrl,
-  ModifierCtrl,
-  Party,
-  PartyData,
-  Target,
-} from "@Src/types";
+import type { CalcSetup, PartyData, Target } from "@Src/types";
 import type { AppCharacter } from "../types";
 
 import { $AppArtifact, $AppCharacter } from "@Src/services";
@@ -16,31 +7,17 @@ import { EntityCalc } from "../utils";
 import { ResistanceReductionControl, TrackerControl } from "../controls";
 import { CalcDebuffApplier } from "../appliers";
 
-type GetResistancesArgs = {
-  char: Character;
+type AssistantInfo = {
   appChar: AppCharacter;
-  party: Party;
   partyData: PartyData;
-  customDebuffCtrls: CustomDebuffCtrl[];
-  selfDebuffCtrls: ModifierCtrl[];
-  artDebuffCtrls: ArtifactModCtrl[];
-  elmtModCtrls: ElementModCtrl;
-  target: Target;
-  tracker?: TrackerControl;
 };
 
-export default function getResistances({
-  char,
-  appChar,
-  party,
-  partyData,
-  customDebuffCtrls,
-  selfDebuffCtrls,
-  artDebuffCtrls,
-  elmtModCtrls,
-  target,
-  tracker,
-}: GetResistancesArgs) {
+export default function getResistances(
+  { char, party, customDebuffCtrls, selfDebuffCtrls, artDebuffCtrls, elmtModCtrls }: CalcSetup,
+  { appChar, partyData }: AssistantInfo,
+  target: Target,
+  tracker?: TrackerControl
+) {
   const resistReduct = new ResistanceReductionControl(tracker);
 
   const debuffApplier = new CalcDebuffApplier(

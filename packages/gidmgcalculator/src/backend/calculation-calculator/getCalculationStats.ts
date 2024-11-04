@@ -1,29 +1,8 @@
-import type {
-  AppCharacter,
-  AppWeapon,
-  AttackElement,
-  AttackPattern,
-  AttributeStat,
-  ReactionType,
-} from "../types";
-import type {
-  CalcArtifacts,
-  CalcCharacter,
-  CalcWeapon,
-  CustomBuffCtrl,
-  ElementModCtrl,
-  Infusion,
-  ModifierCtrl,
-  Party,
-  PartyData,
-} from "@Src/types";
+import type { PartiallyRequiredOnly } from "rond";
+import type { AppCharacter, AppWeapon, AttackElement, AttackPattern, AttributeStat, ReactionType } from "../types";
+import type { CalcSetup, PartyData } from "@Src/types";
 
-import {
-  RESONANCE_STAT,
-  AMPLIFYING_REACTIONS,
-  QUICKEN_REACTIONS,
-  TRANSFORMATIVE_REACTIONS,
-} from "../constants";
+import { RESONANCE_STAT, AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "../constants";
 
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import { findByIndex } from "@Src/utils";
@@ -31,38 +10,27 @@ import { EntityCalc, GeneralCalc } from "../utils";
 import { AttackBonusControl, TotalAttributeControl, TrackerControl } from "../controls";
 import { CalcBuffApplier } from "../appliers";
 
-type GetCalculationStatsArgs = {
-  char: CalcCharacter;
+type AssistantInfo = {
   appChar: AppCharacter;
-  weapon: CalcWeapon;
   appWeapon: AppWeapon;
-  artifacts: CalcArtifacts;
-  party?: Party;
   partyData?: PartyData;
-  elmtModCtrls?: ElementModCtrl;
-  selfBuffCtrls?: ModifierCtrl[];
-  wpBuffCtrls?: ModifierCtrl[];
-  artBuffCtrls?: ModifierCtrl[];
-  customBuffCtrls?: CustomBuffCtrl[];
-  customInfusion?: Infusion;
-  tracker?: TrackerControl;
 };
 
-export default function getCalculationStats({
-  char,
-  appChar,
-  weapon,
-  appWeapon,
-  artifacts,
-  party = [],
-  partyData = [],
-  elmtModCtrls,
-  selfBuffCtrls = [],
-  wpBuffCtrls,
-  artBuffCtrls,
-  customBuffCtrls,
-  tracker,
-}: GetCalculationStatsArgs) {
+export default function getCalculationStats(
+  {
+    char,
+    weapon,
+    artifacts,
+    party = [],
+    elmtModCtrls,
+    selfBuffCtrls = [],
+    wpBuffCtrls = [],
+    artBuffCtrls = [],
+    customBuffCtrls = [],
+  }: PartiallyRequiredOnly<CalcSetup, "char" | "weapon" | "artifacts">,
+  { appChar, appWeapon, partyData = [] }: AssistantInfo,
+  tracker?: TrackerControl
+) {
   const { refi } = weapon;
   const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
   const { resonances = [], reaction, infuse_reaction } = elmtModCtrls || {};
@@ -149,8 +117,6 @@ export default function getCalculationStats({
   };
 
   const APPLY_CUSTOM_BUFFS = () => {
-    if (!customBuffCtrls?.length) return;
-
     for (const { category, type, subType, value } of customBuffCtrls) {
       switch (category) {
         case "totalAttr":
@@ -241,7 +207,7 @@ export default function getCalculationStats({
   };
 
   const APPLY_MAIN_WEAPON_BUFFS = (isFinal: boolean) => {
-    if (!appWeapon.buffs || !wpBuffCtrls?.length) return;
+    if (!appWeapon.buffs) return;
 
     for (const ctrl of wpBuffCtrls) {
       const buff = findByIndex(appWeapon.buffs, ctrl.index);
@@ -264,7 +230,7 @@ export default function getCalculationStats({
   const APLY_MAIN_ARTIFACT_BUFFS = (isFinal: boolean) => {
     if (!mainArtifactData) return;
 
-    for (const ctrl of artBuffCtrls || []) {
+    for (const ctrl of artBuffCtrls) {
       const buff = mainArtifactData.buffs?.[ctrl.index];
 
       if (ctrl.activated && buff) {
@@ -311,7 +277,7 @@ export default function getCalculationStats({
   APPLY_SELF_BUFFS(true);
   APLY_MAIN_ARTIFACT_BUFFS(true);
 
-  const { transformative, amplifying, quicken } = GeneralCalc.getRxnBonusesFromEM(totalAttr.getTotal("em", "ALL"));
+  const { transformative, amplifying, quicken } = GeneralCalc.getRxnBonusesFromEM(totalAttr.getTotal("em"));
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
     attBonus.add(rxn, "pct_", transformative, "From Elemental Mastery");

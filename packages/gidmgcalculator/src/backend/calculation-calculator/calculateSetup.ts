@@ -9,55 +9,31 @@ import getResistances from "./getResistances";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
-  const {
-    char,
-    weapon,
-    artifacts,
-    party,
-    selfBuffCtrls,
-    selfDebuffCtrls,
-    wpBuffCtrls,
-    artBuffCtrls,
-    artDebuffCtrls,
-    elmtModCtrls,
-    customBuffCtrls,
-    customDebuffCtrls,
-    customInfusion,
-  } = setup;
+  const { char, weapon, party, elmtModCtrls, customInfusion } = setup;
 
   const appChar = $AppCharacter.get(char.name);
   const appWeapon = $AppWeapon.get(weapon.code)!;
   const partyData = $AppCharacter.getPartyData(party);
 
-  const { artAttr, attBonus, totalAttr } = getCalculationStats({
-    char,
-    weapon,
-    artifacts,
-    party,
-    appChar,
-    appWeapon,
-    partyData,
-    selfBuffCtrls,
-    wpBuffCtrls,
-    artBuffCtrls,
-    elmtModCtrls,
-    customBuffCtrls,
-    customInfusion,
-    tracker,
-  });
+  const { artAttr, attBonus, totalAttr } = getCalculationStats(
+    setup,
+    {
+      appChar,
+      appWeapon,
+      partyData,
+    },
+    tracker
+  );
 
-  const resistances = getResistances({
-    char,
-    appChar,
-    party,
-    partyData,
-    customDebuffCtrls,
-    elmtModCtrls,
-    selfDebuffCtrls,
-    artDebuffCtrls,
+  const resistances = getResistances(
+    setup,
+    {
+      appChar,
+      partyData,
+    },
     target,
-    tracker,
-  });
+    tracker
+  );
 
   const normalsConfig = getNormalsConfig(
     {
@@ -65,7 +41,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
       appChar,
       partyData,
     },
-    selfBuffCtrls
+    setup.selfBuffCtrls
   );
 
   const configAttackPattern = AttackPatternConf({
