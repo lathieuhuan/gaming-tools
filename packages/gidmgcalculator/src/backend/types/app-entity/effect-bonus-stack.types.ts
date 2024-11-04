@@ -1,5 +1,5 @@
-import { EffectExtra } from "./effect-extra.types";
-import { EffectMax } from "./effect-max.types";
+import type { EffectExtra } from "./effect-extra.types";
+import type { EffectMax } from "./effect-max.types";
 
 /** Only on Tulaytullah's Remembrance */
 type InputIndex = {

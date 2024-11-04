@@ -1,4 +1,4 @@
-import type { CalculationInfo } from "@Src/backend/utils";
+import type { CalculationInfo } from "../utils";
 import type {
   AppliedBonuses,
   ApplyArtifactBuffArgs,
@@ -6,7 +6,7 @@ import type {
   ApplyWeaponBuffArgs,
 } from "./appliers.types";
 
-import { AttackBonusControl, TotalAttributeControl } from "@Src/backend/controls";
+import { AttackBonusControl, TotalAttributeControl } from "../controls";
 import { BuffApplierCore } from "./buff-applier-core";
 
 export class CalcBuffApplier extends BuffApplierCore {

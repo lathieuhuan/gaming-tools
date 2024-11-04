@@ -1,4 +1,4 @@
-import type { BareBonus, GetBonusArgs } from "@Src/backend/bonus-getters";
+import type { BareBonus, GetBonusArgs } from "../bonus-getters";
 import type {
   ArtifactBonusCore,
   AttackBonusKey,
@@ -7,13 +7,13 @@ import type {
   CharacterBonusCore,
   ElementType,
   EntityBonus,
+  EntityBonusCore,
   EntityBonusTargets,
   EntityBuff,
   WeaponBonusCore,
-  WithBonusTargets,
-} from "@Src/backend/types";
-import type { ResistanceReductionControl } from "@Src/backend/controls";
-import type { CalculationInfo } from "@Src/backend/utils";
+} from "../types";
+import type { ResistanceReductionControl } from "../controls";
+import type { CalculationInfo } from "../utils";
 
 export type AppliedAttributeBonus = BareBonus & {
   toStat: AttributeStat;
@@ -49,16 +49,21 @@ export type ApplyEffectBonuses = (args: ApplyEffectBonusesArgs) => void;
 
 type ApplyBonusArgsPick = Pick<ApplyEffectBonusesArgs, "description" | "inputs">;
 
-type GetAppliedBonusesArgs<T extends EntityBonus> = ApplyBonusArgsPick & {
-  buff: Pick<EntityBuff<T>, "effects" | "trackId">;
-  getBareBonus: (args: Pick<GetBonusArgs<T>, "config" | "getTotalAttrFromSelf">) => BareBonus;
+type GetAppliedBonusesArgs<TEntityBonusCore extends EntityBonusCore> = ApplyBonusArgsPick & {
+  buff: Pick<EntityBuff<TEntityBonusCore>, "effects" | "unstackableId">;
+  getBareBonus: (
+    args: Pick<GetBonusArgs<EntityBonus<TEntityBonusCore>>, "config" | "getTotalAttrFromSelf">
+  ) => BareBonus;
   fromSelf?: boolean;
   isFinal?: boolean;
 };
 
-export type GetAppliedBonuses = (args: GetAppliedBonusesArgs<WithBonusTargets<EntityBonus>>) => AppliedBonuses;
+export type GetAppliedBonuses = (args: GetAppliedBonusesArgs<EntityBonus>) => AppliedBonuses;
 
-type ApplyBuffArgs<T extends EntityBonus> = Omit<GetAppliedBonusesArgs<WithBonusTargets<T>>, "getBareBonus">;
+type ApplyBuffArgs<TEntityBonusCore extends EntityBonusCore> = Omit<
+  GetAppliedBonusesArgs<EntityBonus<TEntityBonusCore>>,
+  "getBareBonus"
+>;
 
 export type ApplyCharacterBuffArgs = ApplyBuffArgs<CharacterBonusCore>;
 

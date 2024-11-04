@@ -1,13 +1,13 @@
 import type { CalcCharacter, CalcWeapon, ElementModCtrl, PartyData } from "@Src/types";
-import type { AttackBonusControl, CalculationFinalResultKey, TotalAttribute } from "@Src/backend/controls";
-import type { AppCharacter, AppWeapon, AttackElement, ResistanceReduction } from "@Src/backend/types";
-import type { ConfigAttackPattern, CalculateCalcItem, CalculationFinalResultItem } from "@Src/backend/calculation";
+import type { AttackBonusControl, CalculationFinalResultKey, TotalAttribute } from "../controls";
+import type { AppCharacter, AppWeapon, AttackElement, ResistanceReduction } from "../types";
+import type { ConfigAttackPattern, CalculateCalcItem, CalculationFinalResultItem } from "../calculation";
 
-import { TrackerControl } from "@Src/backend/controls";
-import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "@Src/backend/constants";
-import { TRANSFORMATIVE_REACTION_INFO } from "@Src/backend/constants/internal";
-import { CharacterCalc, GeneralCalc } from "@Src/backend/utils";
-import { genEmptyResult } from "@Src/backend/calculation";
+import { TrackerControl } from "../controls";
+import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "../constants";
+import { TRANSFORMATIVE_REACTION_INFO } from "../constants/internal";
+import { CharacterCalc, GeneralCalc } from "../utils";
+import { genEmptyResult } from "../calculation";
 
 export type CalculationFinalResultGroup = Record<string, CalculationFinalResultItem>;
 

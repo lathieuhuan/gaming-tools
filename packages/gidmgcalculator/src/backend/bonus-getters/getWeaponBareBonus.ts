@@ -1,6 +1,6 @@
-import type { WeaponBonusCore } from "@Src/backend/types";
+import type { WeaponBonusCore } from "../types";
 import type { BareBonus, GetBonusArgs } from "./bonus-getters.types";
-import { EntityCalc } from "@Src/backend/utils";
+import { EntityCalc } from "../utils";
 import { toArray } from "@Src/utils";
 
 const scaleRefi = (base: number, increment = base / 3, refi: number) => base + increment * refi;

@@ -1,4 +1,5 @@
-import { ElementType, WeaponType } from "../common.types";
+import type { ElementType, WeaponType } from "../common.types";
+import type { CharacterMilestone } from "./app-entity-common.types";
 
 /**
  * For the buff/bonus to be available, the input at the [source] must meet [value] by [type].
@@ -15,7 +16,7 @@ export type InputCheck = {
   type?: "equal" | "min" | "max";
 };
 
-type EffectUsableCondition = {
+export type EffectUsableCondition = {
   /** If number, the input at 0 must equal to the number */
   checkInput?: number | InputCheck;
   /** On Xilonen */
@@ -24,8 +25,6 @@ type EffectUsableCondition = {
     value: ElementType;
   };
 };
-
-export type CharacterMilestone = "A1" | "A4" | "C1" | "C2" | "C4" | "C6";
 
 type CharacterEffectAvailableCondition = {
   grantedAt?: CharacterMilestone;

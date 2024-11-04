@@ -1,8 +1,8 @@
 import type { CalcSetup, Target } from "@Src/types";
-import type { TrackerControl } from "@Src/backend/controls";
+import type { TrackerControl } from "../controls";
 
 import { $AppCharacter, $AppWeapon } from "@Src/services";
-import { AttackPatternConf, CalcItemCalculator, getNormalsConfig } from "@Src/backend/calculation";
+import { AttackPatternConf, CalcItemCalculator, getNormalsConfig } from "../calculation";
 import getCalculationStats from "./getCalculationStats";
 import getFinalResult from "./getFinalResult";
 import getResistances from "./getResistances";

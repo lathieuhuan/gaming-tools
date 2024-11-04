@@ -1,11 +1,11 @@
-import { EntityBonus, EntityBonusCore } from "./entity-bonus.types";
-import { EntityPenalty, EntityPenaltyCore } from "./entity-penalty.types";
+import type { EntityBonus, EntityBonusCore } from "./entity-bonus.types";
+import type { EntityPenalty, EntityPenaltyCore } from "./entity-penalty.types";
 
 export type ModifierAffectType = "SELF" | "TEAMMATE" | "SELF_TEAMMATE" | "PARTY" | "ONE_UNIT" | "ACTIVE_UNIT";
 
-type ModInputType = "LEVEL" | "TEXT" | "CHECK" | "STACKS" | "SELECT" | "ANEMOABLE" | "DENDROABLE" | "ELEMENTAL";
+export type ModInputType = "LEVEL" | "TEXT" | "CHECK" | "STACKS" | "SELECT" | "ANEMOABLE" | "DENDROABLE" | "ELEMENTAL";
 
-type ModInputConfig = {
+export type ModInputConfig = {
   label?: string;
   type: ModInputType;
   for?: "FOR_SELF" | "FOR_TEAM";

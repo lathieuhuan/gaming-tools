@@ -8,13 +8,13 @@ import type {
   PartyData,
   Target,
 } from "@Src/types";
-import type { AppCharacter } from "@Src/backend/types";
+import type { AppCharacter } from "../types";
 
 import { $AppArtifact, $AppCharacter } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { EntityCalc } from "@Src/backend/utils";
-import { ResistanceReductionControl, TrackerControl } from "@Src/backend/controls";
-import { CalcDebuffApplier } from "@Src/backend/appliers";
+import { EntityCalc } from "../utils";
+import { ResistanceReductionControl, TrackerControl } from "../controls";
+import { CalcDebuffApplier } from "../appliers";
 
 type GetResistancesArgs = {
   char: Character;

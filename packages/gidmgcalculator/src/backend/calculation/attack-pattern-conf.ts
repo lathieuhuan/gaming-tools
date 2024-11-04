@@ -9,12 +9,12 @@ import type {
   CalcItemType,
   ActualAttackPattern,
   AppCharacter,
-} from "@Src/backend/types";
-import type { AttackBonusControl, CalcItemRecord, TotalAttribute } from "@Src/backend/controls";
+} from "../types";
+import type { AttackBonusControl, CalcItemRecord, TotalAttribute } from "../controls";
 
 import { toArray } from "@Src/utils";
-import { CharacterCalc, GeneralCalc } from "@Src/backend/utils";
-import { TrackerControl } from "@Src/backend/controls";
+import { CharacterCalc, GeneralCalc } from "../utils";
+import { TrackerControl } from "../controls";
 import { NormalsConfig } from "./getNormalsConfig";
 
 type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorption">;

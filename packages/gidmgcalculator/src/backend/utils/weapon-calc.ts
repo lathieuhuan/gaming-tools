@@ -1,5 +1,5 @@
-import type { Level } from "@Src/backend/types";
-import { LEVELS } from "@Src/backend/constants";
+import type { Level } from "../types";
+import { LEVELS } from "../constants";
 import { GeneralCalc } from "./general-calc";
 
 const BASE_ATTACK_TYPE: Record<string, number[]> = {
@@ -62,12 +62,12 @@ const SUBSTAT_SCALE: Record<string, number[]> = {
 
 export class WeaponCalc {
   static getMainStatValue(level: Level, scale: string): number {
-    return BASE_ATTACK_TYPE[scale][LEVELS.indexOf(level)];
+    return BASE_ATTACK_TYPE[scale]?.[LEVELS.indexOf(level)] || 0;
   }
 
   static getSubStatValue(level: Level, scale: string): number {
     const bareLv = GeneralCalc.getBareLv(level);
     const index = bareLv === 1 ? 0 : bareLv === 20 ? 1 : (bareLv - 20) / 10;
-    return SUBSTAT_SCALE[scale][index];
+    return SUBSTAT_SCALE[scale]?.[index] || 0;
   }
 }

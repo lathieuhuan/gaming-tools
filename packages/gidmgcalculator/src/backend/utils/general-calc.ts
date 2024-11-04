@@ -1,12 +1,5 @@
 import type { CalcArtifacts, PartyData } from "@Src/types";
-import type {
-  AmplifyingReaction,
-  AppCharacter,
-  AttackElement,
-  ElementType,
-  Level,
-  QuickenReaction,
-} from "@Src/backend/types";
+import type { AmplifyingReaction, AppCharacter, AttackElement, ElementType, Level, QuickenReaction } from "../types";
 
 export type ArtifactSetBonus = {
   code: number;

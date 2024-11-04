@@ -6,11 +6,11 @@ import type {
   CalcItemType,
   Level,
   ResistanceReduction,
-} from "@Src/backend/types";
-import type { CalcItemRecord, TotalAttribute } from "@Src/backend/controls";
+} from "../types";
+import type { CalcItemRecord, TotalAttribute } from "../controls";
 
 import { applyToOneOrMany, toMult } from "@Src/utils";
-import { GeneralCalc } from "@Src/backend/utils";
+import { GeneralCalc } from "../utils";
 
 export type CalculationAspect = "nonCrit" | "crit" | "average";
 

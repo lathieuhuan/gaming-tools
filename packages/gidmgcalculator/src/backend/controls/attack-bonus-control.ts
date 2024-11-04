@@ -1,4 +1,4 @@
-import type { AttackBonusType, AttackBonusKey, CalcItem } from "@Src/backend/types";
+import type { AttackBonusKey, AttackBonusType, CalcItem } from "../types";
 import type { CalcItemExclusiveBonus } from "./tracker-control";
 
 type AttackBonusRecord = {
@@ -81,28 +81,26 @@ export class AttackBonusControl {
 
   getExclusiveBonuses = (item: CalcItem): CalcItemExclusiveBonus[] => {
     const filterRecords: CalcItemExclusiveBonus[] = [];
-    const foundBonus = item.id ? this.attBonus.find((bonus) => bonus.type === item.id) : undefined;
+    const bonusRecords = item.id ? this.attBonus.find((bonus) => bonus.type === item.id)?.records || [] : [];
 
-    if (foundBonus) {
-      for (const record of foundBonus.records) {
-        const existed = filterRecords.find((filterRecord) => filterRecord.type === record.to);
-        const newRecord = {
-          value: record.value,
-          desc: record.desc,
-        };
+    for (const record of bonusRecords) {
+      const existed = filterRecords.find((filterRecord) => filterRecord.type === record.to);
+      const newRecord = {
+        value: record.value,
+        desc: record.desc,
+      };
 
-        if (existed) {
-          existed.records.push(newRecord);
-        } else {
-          filterRecords.push({
-            type: record.to,
-            records: [newRecord],
-          });
-        }
+      if (existed) {
+        existed.records.push(newRecord);
+      } else {
+        filterRecords.push({
+          type: record.to,
+          records: [newRecord],
+        });
       }
     }
     return filterRecords;
   };
 
-  serialize = () => [...this.attBonus];
+  serialize = () => ([] as AttackBonus).concat(this.attBonus);
 }

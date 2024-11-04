@@ -1,23 +1,23 @@
 import type { Character } from "@Src/types";
 import type {
-  EntityBonusStack,
-  EntityEffectExtraMax,
-  EntityEffectMax,
-  ApplicableCondition,
-  ElementType,
-  EntityBonusValueOption,
+  EffectApplicableCondition,
+  EffectExtra,
+  EffectMax,
   EffectUsableCondition,
+  ElementType,
   EntityBonusBasedOn,
   EntityBonusBasedOnField,
-} from "@Src/backend/types";
-import type { CalculationInfo } from "@Src/backend/utils";
+  EntityBonusStack,
+  EntityBonusValueByOption,
+} from "../types";
+import type { CalculationInfo } from "../utils";
 
 import { toArray } from "@Src/utils";
-import { GeneralCalc } from "./general-calc";
 import { CharacterCalc } from "./character-calc";
+import { GeneralCalc } from "./general-calc";
 
 export class EntityCalc {
-  static isGrantedEffect(condition: ApplicableCondition, char: Character) {
+  static isGrantedEffect(condition: EffectApplicableCondition, char: Character) {
     if (condition.grantedAt) {
       const [prefix, level] = condition.grantedAt;
       return (prefix === "A" ? GeneralCalc.getAscension(char.level) : char.cons) >= +level;
@@ -26,7 +26,7 @@ export class EntityCalc {
   }
 
   static isApplicableEffect(
-    condition: ApplicableCondition,
+    condition: EffectApplicableCondition,
     info: CalculationInfo,
     inputs: number[],
     fromSelf = false
@@ -72,11 +72,11 @@ export class EntityCalc {
     return true;
   }
 
-  static getBonusValueOptionIndex(config: EntityBonusValueOption, info: CalculationInfo, inputs: number[]) {
+  static getBonusValueOptionIndex(config: EntityBonusValueByOption, info: CalculationInfo, inputs: number[]) {
     const { optIndex = 0 } = config;
     const indexConfig =
       typeof optIndex === "number"
-        ? ({ source: "INPUT", inpIndex: optIndex } satisfies EntityBonusValueOption["optIndex"])
+        ? ({ source: "INPUT", inpIndex: optIndex } satisfies EntityBonusValueByOption["optIndex"])
         : optIndex;
     let indexValue = -1;
 
@@ -109,7 +109,7 @@ export class EntityCalc {
   }
 
   static getTotalExtraMax(
-    extras: EntityEffectExtraMax | EntityEffectExtraMax[],
+    extras: EffectExtra | EffectExtra[],
     info: CalculationInfo,
     inputs: number[],
     fromSelf: boolean
@@ -124,7 +124,7 @@ export class EntityCalc {
     return result;
   }
 
-  static getMax(max: EntityEffectMax, info: CalculationInfo, inputs: number[], fromSelf: boolean) {
+  static getMax(max: EffectMax, info: CalculationInfo, inputs: number[], fromSelf: boolean) {
     return typeof max === "number"
       ? max
       : max.value + (max.extras ? this.getTotalExtraMax(max.extras, info, inputs, fromSelf) : 0);
@@ -258,7 +258,7 @@ export class EntityCalc {
 }
 
 function isUsableEffect(info: CalculationInfo, inputs: number[], usableCondition: EffectUsableCondition) {
-  const { checkInput, checkInfo } = usableCondition;
+  const { checkInput, checkChar } = usableCondition;
 
   if (checkInput !== undefined) {
     const { value, source = 0, type = "equal" } = typeof checkInput === "number" ? { value: checkInput } : checkInput;
@@ -297,10 +297,10 @@ function isUsableEffect(info: CalculationInfo, inputs: number[], usableCondition
         else break;
     }
   }
-  if (checkInfo !== undefined) {
-    switch (checkInfo.type) {
+  if (checkChar !== undefined) {
+    switch (checkChar.type) {
       case "vision":
-        if (info.appChar.vision !== checkInfo.value) return false;
+        if (info.appChar.vision !== checkChar.value) return false;
         break;
     }
   }
@@ -308,7 +308,7 @@ function isUsableEffect(info: CalculationInfo, inputs: number[], usableCondition
 }
 
 function isAvailableEffect(
-  condition: ApplicableCondition,
+  condition: EffectApplicableCondition,
   char: Character,
   inputs: number[],
   fromSelf: boolean

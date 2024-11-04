@@ -4,8 +4,8 @@ import type {
   CharacterBonusCore,
   EntityBonusBasedOn,
   WeaponBonusCore,
-} from "@Src/backend/types";
-import type { GetTotalAttributeType, TotalAttributeControl } from "@Src/backend/controls";
+} from "../types";
+import type { TotalAttributeControl } from "../controls";
 import type {
   AppliedBonuses,
   ApplyArtifactBuffArgs,
@@ -16,12 +16,12 @@ import type {
   IsStackableAppliedBonus,
 } from "./appliers.types";
 
-import { ELEMENT_TYPES } from "@Src/backend/constants";
-import { ECalcStatModule } from "@Src/backend/constants/internal";
+import { ELEMENT_TYPES } from "../constants";
+import { ECalcStatModule } from "../constants/internal";
 import { toArray } from "@Src/utils";
-import { CalculationInfo, EntityCalc } from "@Src/backend/utils";
-import { ModifierStackingControl } from "@Src/backend/controls";
-import { getCharacterBareBonus, getWeaponBareBonus, getArtifactBareBonus } from "@Src/backend/bonus-getters";
+import { CalculationInfo, EntityCalc } from "../utils";
+import { ModifierStackingControl } from "../controls";
+import { getCharacterBareBonus, getWeaponBareBonus, getArtifactBareBonus } from "../bonus-getters";
 
 export class BuffApplierCore {
   protected calcInfo: CalculationInfo;
@@ -42,7 +42,7 @@ export class BuffApplierCore {
       }
 
       switch (target.module) {
-        case ECalcStatModule.ATTR: {
+        case "ATTR": {
           for (const targetPath of toArray(target.path)) {
             let toStat: AttributeStat;
 
@@ -101,7 +101,7 @@ export class BuffApplierCore {
     if (!buff.effects) return result;
 
     const isStackable: IsStackableAppliedBonus = (paths) => {
-      return this.modStackingCtrl?.isStackable({ trackId: buff.trackId, paths }) ?? true;
+      return this.modStackingCtrl?.isStackable({ trackId: buff.unstackableId, paths }) ?? true;
     };
 
     for (const config of toArray(buff.effects)) {

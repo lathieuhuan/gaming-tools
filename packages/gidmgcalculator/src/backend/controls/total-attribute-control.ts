@@ -1,10 +1,12 @@
-import type { PartiallyRequired } from "rond";
 import type { Artifact, Character, Weapon } from "@Src/types";
-import type { AppCharacter, AppWeapon, AttributeStat, CoreStat } from "@Src/backend/types";
+import type { PartiallyRequired } from "rond";
+import type { AppCharacter, AppWeapon, AttributeStat, CoreStat } from "../types";
 
-import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "@Src/backend/constants";
-import { applyPercent, toArray } from "@Src/utils";
-import { GeneralCalc, ArtifactCalc, WeaponCalc } from "@Src/backend/utils";
+import { applyPercent, toArray, Utils_ } from "@Src/utils";
+import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "../constants";
+import { ECalcStatModule } from "../constants/internal";
+import { ArtifactCalc, GeneralCalc, WeaponCalc } from "../utils";
+import { TrackerControl } from "./tracker-control";
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
 type TotalAttributeStat = AttributeStat | "hp_base" | "atk_base" | "def_base";
@@ -23,18 +25,15 @@ type InternalTotalAttribute = Record<
   }
 >;
 
-export type GetTotalAttributeType = "ALL" | "STABLE";
-
-type RecordBonus = (stat: AttributeStat, value: number, description: string) => void;
-
 export class TotalAttributeControl {
   private totalAttr: InternalTotalAttribute;
-  private record?: RecordBonus;
+  private tracker?: TrackerControl;
 
-  constructor(totalAttr?: InternalTotalAttribute, record?: RecordBonus) {
-    if (totalAttr) {
-      this.totalAttr = totalAttr;
-    } else {
+  constructor();
+  constructor(trackerCtrl?: TrackerControl);
+  constructor(totalAttr?: InternalTotalAttribute, trackerCtrl?: TrackerControl);
+  constructor(firstArg?: InternalTotalAttribute | TrackerControl, trackerCtrl?: TrackerControl) {
+    if (!firstArg || firstArg instanceof TrackerControl) {
       this.totalAttr = {} as InternalTotalAttribute;
 
       for (const type of ATTRIBUTE_STAT_TYPES) {
@@ -44,11 +43,17 @@ export class TotalAttributeControl {
           unstableBonus: 0,
         };
       }
+      this.tracker = firstArg;
+    } else {
+      this.totalAttr = firstArg;
     }
-    this.record = record;
+    this.tracker ||= trackerCtrl;
   }
 
-  static getArtifactAttribute(artifacts: Array<Artifact | null>, getBase: (stat: "hp" | "atk" | "def") => number) {
+  static getArtifactAttribute(
+    artifacts: Array<Artifact | null>,
+    coreBaseStat: Pick<TotalAttribute, `${CoreStat}_base`>
+  ) {
     const artAttr: ArtifactAttribute = {
       hp: 0,
       atk: 0,
@@ -58,12 +63,9 @@ export class TotalAttributeControl {
     for (const artifact of artifacts) {
       if (!artifact) continue;
 
-      const { mainStatType, subStats } = artifact;
-      const mainStat = ArtifactCalc.mainStatValueOf(artifact);
+      artAttr[artifact.mainStatType] = (artAttr[artifact.mainStatType] || 0) + ArtifactCalc.mainStatValueOf(artifact);
 
-      artAttr[mainStatType] = (artAttr[mainStatType] || 0) + mainStat;
-
-      for (const subStat of subStats) {
+      for (const subStat of artifact.subStats) {
         artAttr[subStat.type] = (artAttr[subStat.type] || 0) + subStat.value;
       }
     }
@@ -72,7 +74,7 @@ export class TotalAttributeControl {
       const percentStatValue = artAttr[`${statType}_`];
 
       if (percentStatValue) {
-        artAttr[statType] += applyPercent(getBase(statType), percentStatValue);
+        artAttr[statType] += applyPercent(coreBaseStat[`${statType}_base`], percentStatValue);
       }
       delete artAttr[`${statType}_`];
     }
@@ -120,7 +122,11 @@ export class TotalAttributeControl {
 
     // ========== ARTIFACTS ==========
 
-    const attribute = this._getArtifactAttribute(artifacts);
+    const attribute = TotalAttributeControl.getArtifactAttribute(artifacts, {
+      hp_base: this.totalAttr.hp.base,
+      atk_base: this.totalAttr.atk.base,
+      def_base: this.totalAttr.def.base,
+    });
 
     for (const key in attribute) {
       const type = key as keyof typeof attribute;
@@ -137,42 +143,54 @@ export class TotalAttributeControl {
 
   private addBase = (key: AttributeStat, value: number, description = "Character base stat") => {
     this.totalAttr[key].base += value;
-    this.record?.(key, value, description);
+    this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
   };
 
   addStable = (keys: AttributeStat | AttributeStat[], value: number, description: string) => {
     toArray(keys).forEach((key) => {
       this.totalAttr[key].stableBonus += value;
-      this.record?.(key, value, description);
+      this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
     });
   };
 
   addUnstable = (keys: AttributeStat | AttributeStat[], value: number, description: string) => {
     toArray(keys).forEach((key) => {
       this.totalAttr[key].unstableBonus += value;
-      this.record?.(key, value, description);
+      this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
     });
-  };
-
-  private _getArtifactAttribute = (artifacts: Array<Artifact | null>) => {
-    return TotalAttributeControl.getArtifactAttribute(artifacts, this.getBase);
   };
 
   getBase = (key: AttributeStat) => {
     return this.totalAttr[key].base;
   };
 
-  getTotal = (key: AttributeStat | "base_atk", type: "ALL" | "STABLE" = "ALL") => {
+  getTotal = (key: AttributeStat | "base_atk") => {
     if (key === "base_atk") {
       return this.getBase("atk");
     }
 
     const base = this.getBase(key);
-    let total = base + this.totalAttr[key].stableBonus + (type === "ALL" ? this.totalAttr[key].unstableBonus : 0);
+    let total = base + this.totalAttr[key].stableBonus + this.totalAttr[key].unstableBonus;
 
-    if (key === "hp" || key === "atk" || key === "def") {
+    if (Utils_.isCoreStat(key)) {
       const percent = this.totalAttr[`${key}_`];
-      const totalPercent = percent.base + percent.stableBonus + (type === "ALL" ? percent.unstableBonus : 0);
+      const totalPercent = percent.base + percent.stableBonus + percent.unstableBonus;
+      total += (base * totalPercent) / 100;
+    }
+    return total;
+  };
+
+  getTotalStable = (key: AttributeStat | "base_atk") => {
+    if (key === "base_atk") {
+      return this.getBase("atk");
+    }
+
+    const base = this.getBase(key);
+    let total = base + this.totalAttr[key].stableBonus;
+
+    if (Utils_.isCoreStat(key)) {
+      const percent = this.totalAttr[`${key}_`];
+      const totalPercent = percent.base + percent.stableBonus;
       total += (base * totalPercent) / 100;
     }
     return total;
@@ -185,10 +203,10 @@ export class TotalAttributeControl {
       if (key === "hp_" || key === "atk_" || key === "def_") {
         continue;
       }
-      if (key === "hp" || key === "atk" || key === "def") {
+      if (Utils_.isCoreStat(key)) {
         totalAttr[`${key}_base`] = this.getBase(key);
       }
-      totalAttr[key] = this.getTotal(key, "ALL");
+      totalAttr[key] = this.getTotal(key);
     }
     return totalAttr;
   }

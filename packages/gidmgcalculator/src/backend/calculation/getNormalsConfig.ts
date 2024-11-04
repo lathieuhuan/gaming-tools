@@ -2,8 +2,8 @@ import type { ModifierCtrl } from "@Src/types";
 import type { AttackPattern, CharacterBuffNAsConfig } from "../types";
 
 import { findByIndex, toArray } from "@Src/utils";
-import { CalculationInfo, EntityCalc } from "@Src/backend/utils";
-import { NORMAL_ATTACKS } from "@Src/backend/constants";
+import { CalculationInfo, EntityCalc } from "../utils";
+import { NORMAL_ATTACKS } from "../constants";
 
 export type NormalsConfig = Partial<Record<AttackPattern, Omit<CharacterBuffNAsConfig, "forPatt">>>;
 

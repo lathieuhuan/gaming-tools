@@ -1,5 +1,5 @@
-import { EntityBonusBasedOn } from "./app-entity-common.types";
-import { EffectExtra } from "./effect-extra.types";
+import type { EntityBonusBasedOn } from "./app-entity-common.types";
+import type { EffectExtra } from "./effect-extra.types";
 
 type EffectDynamicMax = {
   value: number;

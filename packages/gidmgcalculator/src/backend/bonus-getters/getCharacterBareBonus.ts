@@ -1,6 +1,6 @@
-import type { CharacterBonusCore } from "@Src/backend/types";
+import type { CharacterBonusCore } from "../types";
 import type { BareBonus, GetBonusArgs } from "./bonus-getters.types";
-import { CharacterCalc, EntityCalc, type CalculationInfo } from "@Src/backend/utils";
+import { CharacterCalc, EntityCalc, type CalculationInfo } from "../utils";
 import { toArray } from "@Src/utils";
 
 export function getCharacterBareBonus(args: GetBonusArgs<CharacterBonusCore>): BareBonus {

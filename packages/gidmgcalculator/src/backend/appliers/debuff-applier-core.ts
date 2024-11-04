@@ -7,12 +7,12 @@ import type {
   EntityPenaltyTarget,
   ResistanceReductionKey,
   WithPenaltyTargets,
-} from "@Src/backend/types";
+} from "../types";
 
 import { toArray } from "@Src/utils";
-import { CalculationInfo, EntityCalc } from "@Src/backend/utils";
-import { ELEMENT_TYPES } from "@Src/backend/constants";
-import { GetPenaltyArgs, getPenaltyFromCharacter, getPenaltyFromArtifact } from "@Src/backend/penalty-getters";
+import { CalculationInfo, EntityCalc } from "../utils";
+import { ELEMENT_TYPES } from "../constants";
+import { GetPenaltyArgs, getPenaltyFromCharacter, getPenaltyFromArtifact } from "../penalty-getters";
 
 type ApplyPenaltyArgs = {
   penalty: number;

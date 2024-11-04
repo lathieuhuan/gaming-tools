@@ -1,9 +1,9 @@
 import type { Target } from "@Src/types";
-import type { ResistanceReduction } from "@Src/backend/types";
+import type { ResistanceReduction } from "../types";
 import type { TrackerControl } from "./tracker-control";
 
-import { ATTACK_ELEMENTS } from "@Src/backend/constants";
-import { ECalcStatModule } from "@Src/backend/constants/internal";
+import { ATTACK_ELEMENTS } from "../constants";
+import { ECalcStatModule } from "../constants/internal";
 
 export class ResistanceReductionControl {
   private resistReduct: ResistanceReduction;

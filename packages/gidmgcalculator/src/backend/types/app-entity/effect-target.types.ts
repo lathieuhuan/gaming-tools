@@ -1,4 +1,4 @@
-import { AttackBonusKey, AttackBonusType, AttributeStat } from "../common.types";
+import type { AttackBonusKey, AttackBonusType, AttributeStat } from "../common.types";
 
 // ========== BONUS TARGET ==========
 

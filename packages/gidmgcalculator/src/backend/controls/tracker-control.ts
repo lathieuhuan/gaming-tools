@@ -4,10 +4,10 @@ import type {
   CalcItemType,
   AttackBonusKey,
   LevelableTalentType,
-} from "@Src/backend/types";
+} from "../types";
 
-import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "@Src/backend/constants";
-import { ECalcStatModule } from "@Src/backend/constants/internal";
+import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "../constants";
+import { ECalcStatModule } from "../constants/internal";
 
 export type CalculationFinalResultKey = LevelableTalentType | "RXN_CALC" | "WP_CALC";
 
@@ -106,9 +106,6 @@ export class TrackerControl {
   }
 
   finalize(): TrackerResult {
-    return {
-      ...this.stats,
-      ...this.calcItems,
-    };
+    return Object.assign({}, this.stats, this.calcItems);
   }
 }

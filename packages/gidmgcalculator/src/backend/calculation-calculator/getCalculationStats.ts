@@ -5,7 +5,7 @@ import type {
   AttackPattern,
   AttributeStat,
   ReactionType,
-} from "@Src/backend/types";
+} from "../types";
 import type {
   CalcArtifacts,
   CalcCharacter,
@@ -23,14 +23,13 @@ import {
   AMPLIFYING_REACTIONS,
   QUICKEN_REACTIONS,
   TRANSFORMATIVE_REACTIONS,
-} from "@Src/backend/constants";
-import { ECalcStatModule } from "@Src/backend/constants/internal";
+} from "../constants";
 
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { EntityCalc, GeneralCalc } from "@Src/backend/utils";
-import { AttackBonusControl, TotalAttributeControl, TrackerControl } from "@Src/backend/controls";
-import { CalcBuffApplier } from "@Src/backend/appliers";
+import { EntityCalc, GeneralCalc } from "../utils";
+import { AttackBonusControl, TotalAttributeControl, TrackerControl } from "../controls";
+import { CalcBuffApplier } from "../appliers";
 
 type GetCalculationStatsArgs = {
   char: CalcCharacter;
@@ -68,9 +67,7 @@ export default function getCalculationStats({
   const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
   const { resonances = [], reaction, infuse_reaction } = elmtModCtrls || {};
 
-  const totalAttr = new TotalAttributeControl(undefined, (stat, value, description) => {
-    tracker?.recordStat(ECalcStatModule.ATTR, stat, value, description);
-  });
+  const totalAttr = new TotalAttributeControl(tracker);
   const artAttr = totalAttr.construct(char, appChar, weapon, appWeapon, artifacts);
 
   const attBonus = new AttackBonusControl();

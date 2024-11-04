@@ -1,7 +1,7 @@
-import type { ArtifactPenaltyCore, CharacterPenaltyCore, EntityPenalty } from "@Src/backend/types";
-import { CalculationInfo, CharacterCalc, EntityCalc } from "@Src/backend/utils";
+import type { ArtifactPenaltyCore, CharacterPenaltyCore, EntityPenaltyCore } from "../types";
+import { CalculationInfo, CharacterCalc, EntityCalc } from "../utils";
 
-export type GetPenaltyArgs<T extends EntityPenalty> = {
+export type GetPenaltyArgs<T extends EntityPenaltyCore> = {
   config: T;
   info: CalculationInfo;
   inputs: number[];

@@ -1,10 +1,10 @@
-import { ElementType, LevelableTalentType } from "../common.types";
-import { EntityBonusBasedOn } from "./app-entity-common.types";
-import { EntityBonusStack } from "./effect-bonus-stack.types";
-import { EffectApplicableCondition } from "./effect-condition.types";
-import { EffectExtra } from "./effect-extra.types";
-import { EffectMax } from "./effect-max.types";
-import { EntityBonusTargets } from "./effect-target.types";
+import type { ElementType, LevelableTalentType } from "../common.types";
+import type { EntityBonusBasedOn } from "./app-entity-common.types";
+import type { EntityBonusStack } from "./effect-bonus-stack.types";
+import type { EffectApplicableCondition } from "./effect-condition.types";
+import type { EffectExtra } from "./effect-extra.types";
+import type { EffectMax } from "./effect-max.types";
+import type { EntityBonusTargets } from "./effect-target.types";
 
 type InputOptionIndex = {
   source: "INPUT";
@@ -20,7 +20,7 @@ type LevelOptionIndex = {
   talent: LevelableTalentType;
 };
 
-type EntityBonusValueByOption = {
+export type EntityBonusValueByOption = {
   options: number[];
   /** If number, [source] is "INPUT", [inpIndex] is the number. Default to 0 */
   optIndex?: number | InputOptionIndex | ElementOptionIndex | LevelOptionIndex;
@@ -48,6 +48,6 @@ export type EntityBonusCore<TBonusExtend extends object = object> = TBonusExtend
     sufExtra?: number | EntityBonusCore<TBonusExtend>;
   };
 
-export type EntityBonus<TEntityBonusCore extends EntityBonusCore> = TEntityBonusCore & {
+export type EntityBonus<TEntityBonusCore extends EntityBonusCore = EntityBonusCore> = TEntityBonusCore & {
   targets: EntityBonusTargets;
 };

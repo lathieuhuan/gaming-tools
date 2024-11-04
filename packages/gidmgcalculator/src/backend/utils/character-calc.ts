@@ -1,3 +1,4 @@
+import type { Character, PartyData } from "@Src/types";
 import type {
   ActualAttackPattern,
   AppCharacter,
@@ -5,9 +6,9 @@ import type {
   CharacterEffectLevelScale,
   TalentAttributeType,
   TalentType,
-} from "@Src/backend/types";
-import type { Character, PartyData } from "@Src/types";
-import type { CalculationInfo } from "@Src/backend/utils";
+} from "../types";
+
+import type { CalculationInfo } from "../utils";
 
 import { findByName } from "@Src/utils";
 
@@ -60,7 +61,7 @@ export class CharacterCalc {
   }
 
   static getTalentMult(scale: number, level: number): number {
-    return scale ? TALENT_LV_MULTIPLIERS[scale][level] : 1;
+    return scale ? TALENT_LV_MULTIPLIERS[scale]?.[level] ?? 0 : 1;
   }
 
   static getLevelScale(

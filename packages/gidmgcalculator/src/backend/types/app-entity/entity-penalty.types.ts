@@ -1,5 +1,5 @@
-import { ResistanceReductionKey } from "../common.types";
-import { EffectApplicableCondition } from "./effect-condition.types";
+import type { ResistanceReductionKey } from "../common.types";
+import type { EffectApplicableCondition } from "./effect-condition.types";
 
 export type EntityPenaltyCore<TPenaltyExtend extends object = object> = TPenaltyExtend &
   EffectApplicableCondition & {

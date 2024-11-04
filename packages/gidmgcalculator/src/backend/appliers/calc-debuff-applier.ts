@@ -1,5 +1,5 @@
-import type { CalculationInfo } from "@Src/backend/utils";
-import type { ResistanceReductionControl } from "@Src/backend/controls";
+import type { CalculationInfo } from "../utils";
+import type { ResistanceReductionControl } from "../controls";
 import {
   ApplyArtifactDebuffArgs,
   ApplyCharacterDebuffArgs,

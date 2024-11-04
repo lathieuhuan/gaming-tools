@@ -1,6 +1,6 @@
 import type { AdvancedPick } from "rond";
 import type { Artifact, CalcArtifact, CalcWeapon, Character, UserArtifact, UserWeapon, Weapon } from "@Src/types";
-import { ATTACK_ELEMENTS, ArtifactType, Level, WeaponType } from "@Backend";
+import { ATTACK_ELEMENTS, ArtifactType, AttributeStat, CoreStat, Level, WeaponType } from "@Backend";
 import { $AppSettings, $AppWeapon } from "@Src/services";
 
 // ========== TYPES ==========
@@ -42,6 +42,10 @@ export class Utils_ {
 
   static suffixOf(stat: string) {
     return stat.slice(-1) === "_" || ATTACK_ELEMENTS.includes(stat as any) ? "%" : "";
+  }
+
+  static isCoreStat(key: AttributeStat) {
+    return key === "hp" || key === "atk" || key === "def";
   }
 
   static createCharacter(name: string, info?: Partial<Character>): Character {

@@ -1,4 +1,4 @@
-import type { ActualAttackElement, TransformativeReaction } from "@Src/backend/types";
+import type { ActualAttackElement, TransformativeReaction } from "../types";
 
 export enum ECalcStatModule {
   /** TotalAttribute */

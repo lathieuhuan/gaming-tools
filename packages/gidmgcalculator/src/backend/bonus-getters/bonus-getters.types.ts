@@ -1,5 +1,5 @@
-import type { EntityBonus, EntityBonusBasedOnField } from "@Src/backend/types";
-import type { CalculationInfo } from "@Src/backend/utils";
+import type { EntityBonus, EntityBonusBasedOnField } from "../types";
+import type { CalculationInfo } from "../utils";
 
 export type GetBonusArgs<T extends EntityBonus> = {
   config: T;
