@@ -1,3 +1,4 @@
+import type { ElementType } from "../common.types";
 import type { EffectExtra } from "./effect-extra.types";
 import type { EffectMax } from "./effect-max.types";
 
@@ -23,7 +24,7 @@ type InputStack = {
 
 type ElementStack = {
   type: "ELEMENT";
-  element: "same_included" | "same_excluded" | "different";
+  element: "same_included" | "same_excluded" | "different" | ElementType;
 };
 
 /** On characterss & weapons  */

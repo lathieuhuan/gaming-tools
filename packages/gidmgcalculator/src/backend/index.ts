@@ -24,7 +24,7 @@ export * from "./constants";
 
 export type {
   ArtifactAttribute,
-  AttackBonus,
+  AttackBonuses,
   CalcAtomicRecord,
   CalcItemRecord,
   TotalAttribute,

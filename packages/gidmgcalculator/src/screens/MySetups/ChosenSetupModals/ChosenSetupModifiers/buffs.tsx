@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { ElementType, Level, AttackBonus } from "@Backend";
+import { ElementType, Level, AttackBonuses } from "@Backend";
 
 import type { CustomBuffCtrl, ElementModCtrl, AttackReaction, Infusion } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
@@ -11,7 +11,7 @@ import { renderModifiers, VapMeltBuffItem, QuickenBuffItem, ResonanceBuffItem } 
 interface ElementBuffsDetailProps {
   charLv: Level;
   elmtModCtrls: ElementModCtrl;
-  attBonus: AttackBonus;
+  attBonus: AttackBonuses;
   vision: ElementType;
   customInfusion: Infusion;
 }

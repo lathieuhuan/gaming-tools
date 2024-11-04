@@ -8,6 +8,7 @@ import type { CharacterMilestone } from "./app-entity-common.types";
 export type InputCheck = {
   value: number;
   /**
+   * 'various_vision' only on Ballad of the Fjords
    * 'mixed' only on Chain Breaker.
    * Default to 0.
    */

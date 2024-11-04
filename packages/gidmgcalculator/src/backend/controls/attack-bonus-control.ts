@@ -7,7 +7,7 @@ type AttackBonusRecord = {
   to: AttackBonusKey;
 };
 
-export type AttackBonus = Array<{
+export type AttackBonuses = Array<{
   type: AttackBonusType;
   records: AttackBonusRecord[];
 }>;
@@ -16,14 +16,14 @@ export type AttackBonus = Array<{
 type GetBonusPaths = Array<AttackBonusType | undefined>;
 
 export class AttackBonusControl {
-  private attBonus: AttackBonus = [];
+  private attBonuses: AttackBonuses = [];
 
   private finalizedBonusAll = false;
   private attackBonusAll: Partial<Record<AttackBonusKey, number>> = {};
 
   add = (module: AttackBonusType, path: AttackBonusKey, value: number, description: string) => {
     if (value) {
-      const existedBonus = this.attBonus.find((bonus) => bonus.type === module);
+      const existedBonus = this.attBonuses.find((bonus) => bonus.type === module);
       const record: AttackBonusRecord = {
         desc: description,
         value,
@@ -33,7 +33,7 @@ export class AttackBonusControl {
       if (existedBonus) {
         existedBonus.records.push(record);
       } else {
-        this.attBonus.push({
+        this.attBonuses.push({
           type: module,
           records: [record],
         });
@@ -42,7 +42,7 @@ export class AttackBonusControl {
   };
 
   private finalizeBonusAll = () => {
-    for (const bonus of this.attBonus) {
+    for (const bonus of this.attBonuses) {
       if (bonus.type === "all") {
         for (const record of bonus.records) {
           this.attackBonusAll[record.to] = (this.attackBonusAll[record.to] ?? 0) + record.value;
@@ -51,10 +51,10 @@ export class AttackBonusControl {
     }
   };
 
-  static getBonus = (attBonus: AttackBonus, path: AttackBonusKey, ...paths: GetBonusPaths) => {
+  static getBonus = (attBonuses: AttackBonuses, path: AttackBonusKey, ...paths: GetBonusPaths) => {
     let result = 0;
 
-    for (const bonus of attBonus) {
+    for (const bonus of attBonuses) {
       if (paths.some((path) => path && bonus.type === path)) {
         for (const record of bonus.records) {
           if (record.to === path) {
@@ -72,16 +72,16 @@ export class AttackBonusControl {
       this.finalizedBonusAll = true;
     }
 
-    return (this.attackBonusAll[key] ?? 0) + AttackBonusControl.getBonus(this.attBonus, key, ...paths);
+    return (this.attackBonusAll[key] ?? 0) + AttackBonusControl.getBonus(this.attBonuses, key, ...paths);
   };
 
   getBare = (key: AttackBonusKey, ...paths: GetBonusPaths) => {
-    return AttackBonusControl.getBonus(this.attBonus, key, ...paths);
+    return AttackBonusControl.getBonus(this.attBonuses, key, ...paths);
   };
 
   getExclusiveBonuses = (item: CalcItem): CalcItemExclusiveBonus[] => {
     const filterRecords: CalcItemExclusiveBonus[] = [];
-    const bonusRecords = item.id ? this.attBonus.find((bonus) => bonus.type === item.id)?.records || [] : [];
+    const bonusRecords = item.id ? this.attBonuses.find((bonus) => bonus.type === item.id)?.records || [] : [];
 
     for (const record of bonusRecords) {
       const existed = filterRecords.find((filterRecord) => filterRecord.type === record.to);
@@ -102,5 +102,5 @@ export class AttackBonusControl {
     return filterRecords;
   };
 
-  serialize = () => ([] as AttackBonus).concat(this.attBonus);
+  serialize = () => ([] as AttackBonuses).concat(this.attBonuses);
 }

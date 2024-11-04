@@ -14,6 +14,15 @@ export function getImgSrc(src?: string) {
   return isFromWiki ? `https://static.wikia.nocookie.net/gensin-impact/images/${src}.png` : src;
 }
 
+export function forEachKey<TObject extends Record<PropertyKey, unknown>>(
+  obj: TObject,
+  callback: (key: keyof TObject) => void
+) {
+  for (const key in obj) {
+    callback(key);
+  }
+}
+
 export function pickProps<M, T extends keyof M>(obj: M, keys: T[]) {
   const result = {} as Pick<M, T>;
 

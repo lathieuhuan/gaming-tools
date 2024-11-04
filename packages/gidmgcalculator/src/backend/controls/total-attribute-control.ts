@@ -2,10 +2,10 @@ import type { Artifact, Character, Weapon } from "@Src/types";
 import type { PartiallyRequired } from "rond";
 import type { AppCharacter, AppWeapon, AttributeStat, CoreStat } from "../types";
 
-import { applyPercent, toArray, Utils_ } from "@Src/utils";
-import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "../constants";
+import { applyPercent, forEachKey, toArray, Utils_ } from "@Src/utils";
+import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
-import { ArtifactCalc, GeneralCalc, WeaponCalc } from "../utils";
+import { ArtifactCalc, CharacterCalc, WeaponCalc } from "../utils";
 import { TrackerControl } from "./tracker-control";
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
@@ -85,25 +85,22 @@ export class TotalAttributeControl {
   construct = (
     char: Character,
     appChar: AppCharacter,
-    weapon: Weapon,
-    appWeapon: AppWeapon,
-    artifacts: Array<Artifact | null>
+    weapon?: Weapon,
+    appWeapon?: AppWeapon,
+    artifacts: Array<Artifact | null> = []
   ) => {
-    // ========== CHARACTER ==========
+    const baseStats = CharacterCalc.getBaseStats(char, appChar);
+    const ascensionStat = CharacterCalc.getAscensionStat(char, appChar);
 
-    const [baseHp, baseAtk, baseDef] = appChar.stats[LEVELS.indexOf(char.level)];
-    const scaleIndex = Math.max(GeneralCalc.getAscension(char.level) - 1, 0);
-    const bonusScale = [0, 1, 2, 2, 3, 4][scaleIndex];
-
-    this.addBase("hp", baseHp);
-    this.addBase("atk", baseAtk);
-    this.addBase("def", baseDef);
+    this.addBase("hp", baseStats.hp);
+    this.addBase("atk", baseStats.atk);
+    this.addBase("def", baseStats.def);
     this.addBase("cRate_", 5);
     this.addBase("cDmg_", 50);
     this.addBase("er_", 100);
     this.addBase("naAtkSpd_", 100);
     this.addBase("caAtkSpd_", 100);
-    this.addBase(appChar.statBonus.type, appChar.statBonus.value * bonusScale, "Character ascension stat");
+    this.addBase(appChar.statBonus.type, ascensionStat, "Character ascension stat");
 
     // Kokomi
     if (appChar.code === 42) {
@@ -111,34 +108,38 @@ export class TotalAttributeControl {
       this.addBase("healB_", 25, "Character inner stat");
     }
 
-    // ========== WEAPON ==========
+    this.equipWeapon(weapon, appWeapon);
+    return this.equipArtifacts(artifacts);
+  };
 
-    this.addBase("atk", WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale), "Weapon main stat");
+  clone = () => {
+    return new TotalAttributeControl(structuredClone(this.totalAttr));
+  };
 
-    if (appWeapon.subStat) {
-      const substatValue = WeaponCalc.getSubStatValue(weapon.level, appWeapon.subStat.scale);
-      this.addStable(appWeapon.subStat.type, substatValue, `${appWeapon.name} sub-stat`);
+  equipWeapon = (weapon?: Weapon, appWeapon?: AppWeapon) => {
+    if (weapon && appWeapon) {
+      this.addBase("atk", WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale), "Weapon main stat");
+
+      if (appWeapon.subStat) {
+        const substatValue = WeaponCalc.getSubStatValue(weapon.level, appWeapon.subStat.scale);
+        this.addStable(appWeapon.subStat.type, substatValue, `${appWeapon.name} sub-stat`);
+      }
     }
+  };
 
-    // ========== ARTIFACTS ==========
-
+  equipArtifacts = (artifacts: Array<Artifact | null> = []) => {
     const attribute = TotalAttributeControl.getArtifactAttribute(artifacts, {
       hp_base: this.totalAttr.hp.base,
       atk_base: this.totalAttr.atk.base,
       def_base: this.totalAttr.def.base,
     });
 
-    for (const key in attribute) {
-      const type = key as keyof typeof attribute;
-      const value = attribute[type];
-      if (value) this.addStable(type, value, "Artifact stat");
-    }
+    forEachKey(attribute, (key) => {
+      const value = attribute[key];
+      if (value) this.addStable(key, value, "Artifact stat");
+    });
 
     return attribute;
-  };
-
-  clone = () => {
-    return new TotalAttributeControl(structuredClone(this.totalAttr));
   };
 
   private addBase = (key: AttributeStat, value: number, description = "Character base stat") => {

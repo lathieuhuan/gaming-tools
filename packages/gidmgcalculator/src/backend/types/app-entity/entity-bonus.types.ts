@@ -12,7 +12,15 @@ type InputOptionIndex = {
 };
 type ElementOptionIndex = {
   source: "ELEMENT";
-  element: "various" | ElementType | ElementType[];
+  /**
+   * 'various_types' count elements of entire party.
+   * 'different' count teammates of different elements from the character
+   * ElementType count teammates of ElementType
+   * ElementType[] count teammates of one of ElementType[]
+   */
+  element: "various_types" | "different" | ElementType | ElementType[];
+  /** When 'element' is ElementType[]: count distinct elements that are included in ElementType[] */
+  distinct?: boolean;
 };
 /** On Razor */
 type LevelOptionIndex = {
@@ -41,7 +49,7 @@ export type EntityBonusCore<TBonusExtend extends object = object> = TBonusExtend
     value: number | (EntityBonusValueByOption & CharacterEntityBonusValueByOptionExtend);
     /** Added right before stacks */
     basedOn?: EntityBonusBasedOn;
-    stacks?: EntityBonusStack | EntityBonusStack[];
+    stacks?: EntityBonusStack;
     /** Added before stacks */
     preExtra?: number | EntityBonusCore<TBonusExtend>;
     /** Added after stacks */

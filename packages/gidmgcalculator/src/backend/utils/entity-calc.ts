@@ -12,7 +12,7 @@ import type {
 } from "../types";
 import type { CalculationInfo } from "../utils";
 
-import { toArray, Utils_ } from "@Src/utils";
+import { forEachKey, toArray } from "@Src/utils";
 import { GeneralCalc } from "./general-calc";
 import { CharacterCalc } from "./character-calc";
 
@@ -204,25 +204,26 @@ export class EntityCalc {
 
         switch (element) {
           case "different":
-            result = Utils_.keysOf(elementsCount).reduce((total, type) => {
-              return total + (type !== appChar.vision ? elementsCount[type] ?? 0 : 0);
-            }, 0);
+            forEachKey(elementsCount, (type) => {
+              result += type !== appChar.vision ? elementsCount[type] ?? 0 : 0;
+            });
             break;
           case "same_excluded":
-            result = Utils_.keysOf(elementsCount).reduce((total, type) => {
-              return total + (type === appChar.vision ? elementsCount[type] ?? 0 : 0);
-            }, 0);
+            forEachKey(elementsCount, (type) => {
+              result += type === appChar.vision ? elementsCount[type] ?? 0 : 0;
+            });
             break;
           case "same_included":
-            result = Utils_.keysOf(elementsCount).reduce((total, type) => {
-              return total + (type === appChar.vision ? elementsCount[type] ?? 0 : 0);
-            }, 1);
+            forEachKey(elementsCount, (type) => {
+              result += type === appChar.vision ? elementsCount[type] ?? 0 : 0;
+            });
+            result++;
             break;
           default:
-            result = Utils_.keysOf(elementsCount).reduce(
-              (total, type) => total + (type === element ? elementsCount[type] ?? 0 : 0),
-              appChar.vision === element ? 1 : 0
-            );
+            forEachKey(elementsCount, (type) => {
+              result += type === element ? elementsCount[type] ?? 0 : 0;
+            });
+            if (appChar.vision === element) result++;
         }
         break;
       }

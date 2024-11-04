@@ -1,6 +1,6 @@
 import type { AdvancedPick } from "rond";
 import type { Artifact, CalcArtifact, CalcWeapon, Character, UserArtifact, UserWeapon, Weapon } from "@Src/types";
-import { ATTACK_ELEMENTS, ArtifactType, AttributeStat, CoreStat, Level, WeaponType } from "@Backend";
+import { ATTACK_ELEMENTS, ArtifactType, AttributeStat, Level, WeaponType } from "@Backend";
 import { $AppSettings, $AppWeapon } from "@Src/services";
 
 // ========== TYPES ==========
@@ -145,9 +145,5 @@ export class Utils_ {
   static userItemToCalcItem(item: UserWeapon | UserArtifact): CalcWeapon | CalcArtifact {
     const { owner, setupIDs, ...info } = item;
     return info;
-  }
-
-  static keysOf<T extends Record<PropertyKey, unknown>>(obj: T) {
-    return Object.keys(obj) as (keyof T)[];
   }
 }
