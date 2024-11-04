@@ -1,7 +1,6 @@
 import type { WeaponBonusCore } from "../types";
 import type { BareBonus, GetBonusArgs } from "./bonus-getters.types";
-import { EntityCalc } from "../utils";
-import { toArray } from "@Src/utils";
+import { EntityCalc } from "@Src/backend/utils";
 
 const scaleRefi = (base: number, increment = base / 3, refi: number) => base + increment * refi;
 
@@ -30,18 +29,16 @@ export function getWeaponBareBonus(args: GetBonusArgs<WeaponBonusCore> & { refi:
   }
 
   // ========== APPLY STACKS ==========
-  if (config.stacks) {
-    for (const stack of toArray(config.stacks)) {
-      if (["VISION", "ENERGY", "NATION"].includes(stack.type) && !info.partyData.length) {
-        return {
-          id: "",
-          value: 0,
-          isStable,
-        };
-      }
-      bonusValue *= EntityCalc.getStackValue(stack, info, inputs, fromSelf);
-    }
+  const stackValue = EntityCalc.getStackValue(config.stacks, info, inputs, fromSelf);
+
+  if (!stackValue) {
+    return {
+      id: "",
+      value: 0,
+      isStable,
+    };
   }
+  bonusValue *= stackValue;
 
   // ========== ADD SUF-EXTRA ==========
   if (typeof config.sufExtra === "number") {
@@ -61,7 +58,7 @@ export function getWeaponBareBonus(args: GetBonusArgs<WeaponBonusCore> & { refi:
 
   return {
     id: config.id,
-    value: Math.max(bonusValue, 0),
+    value: bonusValue, // bonusValue can be negative (Rust)
     isStable,
   };
 }
