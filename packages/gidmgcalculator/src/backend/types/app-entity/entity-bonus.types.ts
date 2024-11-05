@@ -45,7 +45,7 @@ type CharacterEntityBonusValueByOptionExtend = {
 
 export type EntityBonusCore<TBonusExtend extends object = object> = TBonusExtend &
   EffectApplicableCondition & {
-    // id: string;
+    id: string;
     value: number | (EntityBonusValueByOption & CharacterEntityBonusValueByOptionExtend);
     /** Added right before stacks */
     basedOn?: EntityBonusBasedOn;

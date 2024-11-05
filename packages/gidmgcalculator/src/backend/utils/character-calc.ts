@@ -38,20 +38,6 @@ const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
 };
 
 export class CharacterCalc {
-  static getBaseStats(char: Character, appChar: AppCharacter) {
-    const baseStats = appChar.stats[LEVELS.indexOf(char.level)];
-    return {
-      hp: baseStats[0] ?? 0,
-      atk: baseStats[1] ?? 0,
-      def: baseStats[2] ?? 0,
-    };
-  }
-
-  static getAscensionStat(char: Character, appChar: AppCharacter) {
-    const scaleIndex = Math.max(GeneralCalc.getAscension(char.level) - 1, 0);
-    return appChar.statBonus.value * ([0, 1, 2, 2, 3, 4][scaleIndex] ?? 0);
-  }
-
   static getTotalXtraTalentLv({ char, appChar, talentType, partyData }: GetTotalXtraTalentArgs): number {
     let result = 0;
 

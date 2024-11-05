@@ -1,7 +1,7 @@
-import type { EntityBonus, EntityBonusBasedOnField } from "../types";
+import type { EntityBonusCore, EntityBonusBasedOnField } from "../types";
 import type { CalculationInfo } from "../utils";
 
-export type GetBonusArgs<T extends EntityBonus> = {
+export type GetBonusArgs<T extends EntityBonusCore> = {
   config: T;
   info: CalculationInfo;
   inputs: number[];

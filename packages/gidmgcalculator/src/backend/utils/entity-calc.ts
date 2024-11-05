@@ -4,7 +4,6 @@ import type {
   EffectExtra,
   EffectMax,
   EffectUsableCondition,
-  ElementType,
   EntityBonusBasedOn,
   EntityBonusBasedOnField,
   EntityBonusStack,
@@ -12,7 +11,7 @@ import type {
 } from "../types";
 import type { CalculationInfo } from "../utils";
 
-import { forEachKey, toArray } from "@Src/utils";
+import { CountMap, toArray } from "@Src/utils";
 import { GeneralCalc } from "./general-calc";
 import { CharacterCalc } from "./character-calc";
 
@@ -31,45 +30,46 @@ export class EntityCalc {
     inputs: number[],
     fromSelf = false
   ): boolean {
-    if (!isUsableEffect(info, inputs, condition)) {
-      return false;
-    }
-    if (!isAvailableEffect(condition, info.char, inputs, fromSelf)) {
-      return false;
-    }
-
-    const { totalPartyElmtCount, partyElmtCount, partyOnlyElmts } = condition;
-
-    if (condition.forWeapons && !condition.forWeapons.includes(info.appChar.weaponType)) {
-      return false;
-    }
-    if (condition.forElmts && !condition.forElmts.includes(info.appChar.vision)) {
-      return false;
-    }
-    const elementCount = GeneralCalc.countElements(info.partyData, info.appChar);
-
-    if (totalPartyElmtCount) {
-      const { elements, value, type } = totalPartyElmtCount;
-      const totalCount = elements.reduce((total, element) => total + (elementCount[element] ?? 0), 0);
-
-      switch (type) {
-        case "max":
-          if (totalCount > value) return false;
+    try {
+      if (!isUsableEffect(info, inputs, condition)) {
+        return false;
       }
-    }
-    if (partyElmtCount) {
-      for (const key in partyElmtCount) {
-        const currentCount = elementCount[key as ElementType] ?? 0;
-        const requiredCount = partyElmtCount[key as ElementType] ?? 0;
-        if (currentCount < requiredCount) return false;
+      if (!isAvailableEffect(condition, info.char, inputs, fromSelf)) {
+        return false;
       }
-    }
-    if (partyOnlyElmts) {
-      for (const type in elementCount) {
-        if (!partyOnlyElmts.includes(type as ElementType)) return false;
+
+      const { totalPartyElmtCount, partyElmtCount, partyOnlyElmts } = condition;
+
+      if (condition.forWeapons && !condition.forWeapons.includes(info.appChar.weaponType)) {
+        return false;
       }
+      if (condition.forElmts && !condition.forElmts.includes(info.appChar.vision)) {
+        return false;
+      }
+      const elementCountMap = GeneralCalc.countElements(info.partyData, info.appChar);
+
+      if (totalPartyElmtCount) {
+        const { elements, value, type } = totalPartyElmtCount;
+
+        switch (type) {
+          case "max":
+            if (elementCountMap.get(elements) > value) return false;
+        }
+      }
+      if (partyElmtCount) {
+        const requiredEntries = new CountMap(partyElmtCount).entries;
+
+        if (requiredEntries.some(([type, value]) => elementCountMap.get(type) < value)) {
+          return false;
+        }
+      }
+      if (partyOnlyElmts && elementCountMap.keys.some((elementType) => !partyOnlyElmts.includes(elementType))) {
+        return false;
+      }
+      return true;
+    } catch (e) {
+      return false;
     }
-    return true;
   }
 
   static getBonusValueOptionIndex(config: EntityBonusValueByOption, info: CalculationInfo, inputs: number[]) {
@@ -86,24 +86,24 @@ export class EntityCalc {
         break;
       case "ELEMENT": {
         const { element } = indexConfig;
-        const elementCount = info.partyData.length ? GeneralCalc.countElements(info.partyData, info.appChar) : {};
+        const elementCount = GeneralCalc.countElements(info.partyData, info.appChar);
 
         switch (element) {
           case "various_types":
-            indexValue += Object.keys(elementCount).length;
+            indexValue += elementCount.keys.length;
             break;
           case "different":
-            indexValue += Object.keys(elementCount).reduce((total, type) => {
-              return type !== info.appChar.vision ? total + 1 : total;
-            }, 0);
+            elementCount.forEach((elementType) => {
+              if (elementType !== info.appChar.vision) indexValue++;
+            });
             break;
           default:
             if (typeof element === "string") {
-              indexValue += elementCount[element] ?? 0;
+              indexValue += elementCount.get(element);
             } else if (indexConfig.distinct) {
-              indexValue += element.reduce((total, type) => total + (elementCount[type] ? 1 : 0), 0);
+              indexValue += element.reduce((total, elementType) => total + (elementCount.has(elementType) ? 1 : 0), 0);
             } else {
-              indexValue += element.reduce((total, type) => total + (elementCount[type] ?? 0), 0);
+              indexValue += element.reduce((total, type) => total + elementCount.get(type), 0);
             }
         }
         break;
@@ -157,143 +157,143 @@ export class EntityCalc {
     };
   }
 
-  static getStackValue(
-    stack: EntityBonusStack | undefined,
-    info: CalculationInfo,
-    inputs: number[],
-    fromSelf: boolean
-  ): number | null {
-    if (!stack) {
-      return 1;
-    }
-    const { appChar, partyData } = info;
-    const partyDependentStackTypes: EntityBonusStack["type"][] = ["ELEMENT", "ENERGY", "NATION", "RESOLVE", "MIX"];
+  // static getStackValue(
+  //   stack: EntityBonusStack | undefined,
+  //   info: CalculationInfo,
+  //   inputs: number[],
+  //   fromSelf: boolean
+  // ): number | null {
+  //   if (!stack) {
+  //     return 1;
+  //   }
+  //   const { appChar, partyData } = info;
+  //   const partyDependentStackTypes: EntityBonusStack["type"][] = ["ELEMENT", "ENERGY", "NATION", "RESOLVE", "MIX"];
 
-    if (partyDependentStackTypes.includes(stack.type) && !partyData.length) {
-      return null;
-    }
-    let result = 0;
+  //   if (partyDependentStackTypes.includes(stack.type) && !partyData.length) {
+  //     return null;
+  //   }
+  //   let result = 0;
 
-    switch (stack.type) {
-      case "INPUT": {
-        const finalIndex = stack.alterIndex !== undefined && !fromSelf ? stack.alterIndex : stack.index ?? 0;
-        let input = 0;
+  //   switch (stack.type) {
+  //     case "INPUT": {
+  //       const finalIndex = stack.alterIndex !== undefined && !fromSelf ? stack.alterIndex : stack.index ?? 0;
+  //       let input = 0;
 
-        if (typeof finalIndex === "number") {
-          input = inputs[finalIndex] ?? 0;
+  //       if (typeof finalIndex === "number") {
+  //         input = inputs[finalIndex] ?? 0;
 
-          if (stack.doubledAt !== undefined && inputs[stack.doubledAt]) {
-            input *= 2;
-          }
-        } else {
-          input = finalIndex.reduce((total, { value, ratio = 1 }) => total + (inputs[value] ?? 0) * ratio, 0);
-        }
+  //         if (stack.doubledAt !== undefined && inputs[stack.doubledAt]) {
+  //           input *= 2;
+  //         }
+  //       } else {
+  //         input = finalIndex.reduce((total, { value, ratio = 1 }) => total + (inputs[value] ?? 0) * ratio, 0);
+  //       }
 
-        if (stack.capacity) {
-          const { value, extra } = stack.capacity;
-          input = value - input;
-          if (EntityCalc.isApplicableEffect(extra, info, inputs, fromSelf)) input += extra.value;
-          input = Math.max(input, 0);
-        }
-        result = input;
-        break;
-      }
-      case "ELEMENT": {
-        const { element } = stack;
-        const elementsCount = GeneralCalc.countElements(partyData);
+  //       if (stack.capacity) {
+  //         const { value, extra } = stack.capacity;
+  //         input = value - input;
+  //         if (EntityCalc.isApplicableEffect(extra, info, inputs, fromSelf)) input += extra.value;
+  //         input = Math.max(input, 0);
+  //       }
+  //       result = input;
+  //       break;
+  //     }
+  //     case "ELEMENT": {
+  //       const { element } = stack;
+  //       const elementsCount = GeneralCalc.countElements(partyData);
 
-        switch (element) {
-          case "different":
-            forEachKey(elementsCount, (type) => {
-              result += type !== appChar.vision ? elementsCount[type] ?? 0 : 0;
-            });
-            break;
-          case "same_excluded":
-            forEachKey(elementsCount, (type) => {
-              result += type === appChar.vision ? elementsCount[type] ?? 0 : 0;
-            });
-            break;
-          case "same_included":
-            forEachKey(elementsCount, (type) => {
-              result += type === appChar.vision ? elementsCount[type] ?? 0 : 0;
-            });
-            result++;
-            break;
-          default:
-            forEachKey(elementsCount, (type) => {
-              result += type === element ? elementsCount[type] ?? 0 : 0;
-            });
-            if (appChar.vision === element) result++;
-        }
-        break;
-      }
-      case "ENERGY": {
-        result = appChar.EBcost;
+  //       switch (element) {
+  //         case "different":
+  //           elementsCount.forEach((type, value) => {
+  //             result += type !== appChar.vision ? value : 0;
+  //           });
+  //           break;
+  //         case "same_excluded":
+  //           elementsCount.forEach((type, value) => {
+  //             result += type === appChar.vision ? value : 0;
+  //           });
+  //           break;
+  //         case "same_included":
+  //           elementsCount.forEach((type, value) => {
+  //             result += type === appChar.vision ? value : 0;
+  //           });
+  //           result++;
+  //           break;
+  //         default:
+  //           elementsCount.forEach((type, value) => {
+  //             result += type === element ? value : 0;
+  //           });
+  //           if (appChar.vision === element) result++;
+  //       }
+  //       break;
+  //     }
+  //     case "ENERGY": {
+  //       result = appChar.EBcost;
 
-        if (stack.scope === "PARTY") {
-          result += partyData.reduce((result, data) => result + (data?.EBcost ?? 0), 0);
-        }
-        break;
-      }
-      case "NATION": {
-        if (stack.nation === "liyue") {
-          result = partyData.reduce(
-            (result, data) => result + (data?.nation === "liyue" ? 1 : 0),
-            appChar.nation === "liyue" ? 1 : 0
-          );
-        } else {
-          result = partyData.reduce((total, teammate) => total + (teammate?.nation === appChar.nation ? 1 : 0), 0);
+  //       if (stack.scope === "PARTY") {
+  //         result += partyData.reduce((result, data) => result + (data?.EBcost ?? 0), 0);
+  //       }
+  //       break;
+  //     }
+  //     case "NATION": {
+  //       if (stack.nation === "liyue") {
+  //         result = partyData.reduce(
+  //           (result, data) => result + (data?.nation === "liyue" ? 1 : 0),
+  //           appChar.nation === "liyue" ? 1 : 0
+  //         );
+  //       } else {
+  //         result = partyData.reduce((total, teammate) => total + (teammate?.nation === appChar.nation ? 1 : 0), 0);
 
-          if (stack.nation === "different") {
-            result = partyData.filter(Boolean).length - result;
-          }
-        }
-        break;
-      }
-      case "RESOLVE": {
-        let [totalEnergy = 0, electroEnergy = 0] = inputs;
-        if (info.char.cons >= 1 && electroEnergy <= totalEnergy) {
-          totalEnergy += electroEnergy * 0.8 + (totalEnergy - electroEnergy) * 0.2;
-        }
-        const level = CharacterCalc.getFinalTalentLv({
-          talentType: "EB",
-          char: info.char,
-          appChar,
-          partyData,
-        });
-        const stackPerEnergy = Math.min(Math.ceil(14.5 + level * 0.5), 20);
-        const stacks = Math.round(totalEnergy * stackPerEnergy) / 100;
-        // const countResolve = (energyCost: number) => Math.round(energyCost * stackPerEnergy) / 100;
+  //         if (stack.nation === "different") {
+  //           result = partyData.filter(Boolean).length - result;
+  //         }
+  //       }
+  //       break;
+  //     }
+  //     case "RESOLVE": {
+  //       let [totalEnergy = 0, electroEnergy = 0] = inputs;
+  //       if (info.char.cons >= 1 && electroEnergy <= totalEnergy) {
+  //         totalEnergy += electroEnergy * 0.8 + (totalEnergy - electroEnergy) * 0.2;
+  //       }
+  //       const level = CharacterCalc.getFinalTalentLv({
+  //         talentType: "EB",
+  //         char: info.char,
+  //         appChar,
+  //         partyData,
+  //       });
+  //       const stackPerEnergy = Math.min(Math.ceil(14.5 + level * 0.5), 20);
+  //       const stacks = Math.round(totalEnergy * stackPerEnergy) / 100;
+  //       // const countResolve = (energyCost: number) => Math.round(energyCost * stackPerEnergy) / 100;
 
-        result = Math.min(stacks, 60);
-        break;
-      }
-      case "MIX": {
-        if (info.appChar.nation === "natlan") result += 1;
+  //       result = Math.min(stacks, 60);
+  //       break;
+  //     }
+  //     case "MIX": {
+  //       if (info.appChar.nation === "natlan") result += 1;
 
-        for (const teammate of info.partyData) {
-          if (teammate && (teammate.nation === "natlan" || teammate.vision !== info.appChar.vision)) {
-            result += 1;
-          }
-        }
-        break;
-      }
-    }
+  //       for (const teammate of info.partyData) {
+  //         if (teammate && (teammate.nation === "natlan" || teammate.vision !== info.appChar.vision)) {
+  //           result += 1;
+  //         }
+  //       }
+  //       break;
+  //     }
+  //   }
 
-    if (stack.baseline) {
-      if (result <= stack.baseline) return 0;
-      result -= stack.baseline;
-    }
-    if (stack.extra && EntityCalc.isApplicableEffect(stack.extra, info, inputs, fromSelf)) {
-      result += stack.extra.value;
-    }
-    if (stack.max) {
-      const max = this.getMax(stack.max, info, inputs, fromSelf);
-      if (result > max) result = max;
-    }
+  //   if (stack.baseline) {
+  //     if (result <= stack.baseline) return 0;
+  //     result -= stack.baseline;
+  //   }
+  //   if (stack.extra && EntityCalc.isApplicableEffect(stack.extra, info, inputs, fromSelf)) {
+  //     result += stack.extra.value;
+  //   }
+  //   if (stack.max) {
+  //     const max = this.getMax(stack.max, info, inputs, fromSelf);
+  //     if (result > max) result = max;
+  //   }
 
-    return Math.max(result, 0);
-  }
+  //   return Math.max(result, 0);
+  // }
 }
 
 function isUsableEffect(info: CalculationInfo, inputs: number[], usableCondition: EffectUsableCondition) {

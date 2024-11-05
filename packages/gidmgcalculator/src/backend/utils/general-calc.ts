@@ -1,5 +1,6 @@
 import type { CalcArtifacts, PartyData } from "@Src/types";
 import type { AmplifyingReaction, AppCharacter, AttackElement, ElementType, Level, QuickenReaction } from "../types";
+import { Array_, CountMap } from "@Src/utils";
 
 export type ArtifactSetBonus = {
   code: number;
@@ -26,17 +27,16 @@ export class GeneralCalc {
   };
 
   static getArtifactSetBonuses(artifacts: CalcArtifacts = []): ArtifactSetBonus[] {
-    const sets = [];
-    const count: Record<number, number> = {};
+    const sets: ArtifactSetBonus[] = [];
+    const count = new CountMap();
 
     for (const artifact of artifacts) {
       if (artifact) {
-        const { code } = artifact;
-        count[code] = (count[code] || 0) + 1;
+        const codeCount = count.add(artifact.code);
 
-        if (count[code] === 2) {
-          sets.push({ code, bonusLv: 0 });
-        } else if (count[code] === 4) {
+        if (codeCount === 2) {
+          sets.push({ code: artifact.code, bonusLv: 0 });
+        } else if (codeCount === 4) {
           sets[0].bonusLv = 1;
         }
       }
@@ -54,7 +54,7 @@ export class GeneralCalc {
   }
 
   static getBaseRxnDmg(level: Level): number {
-    return BASE_REACTION_DAMAGE[this.getBareLv(level)];
+    return BASE_REACTION_DAMAGE[this.getBareLv(level)] ?? 0;
   }
 
   static getQuickenBuffDamage(reaction: QuickenReaction, charLv: Level, pctBonus: number) {
@@ -82,16 +82,11 @@ export class GeneralCalc {
   }
 
   static countElements(partyData: PartyData, appChar?: AppCharacter) {
-    const result: Partial<Record<ElementType, number>> = {};
-    if (appChar) {
-      result[appChar.vision] = 1;
-    }
-    return partyData.reduce((count, teammateData) => {
-      if (teammateData) {
-        count[teammateData.vision] = (count[teammateData.vision] || 0) + 1;
-      }
+    const countMap = new CountMap<ElementType>();
 
-      return count;
-    }, result);
+    if (appChar) countMap.add(appChar.vision);
+    Array_.truthyList(partyData).pickEach("vision").use(countMap.add);
+
+    return countMap;
   }
 }

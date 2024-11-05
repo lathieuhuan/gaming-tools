@@ -196,8 +196,8 @@ export const calculatorSlice = createSlice({
         if (
           oldElement &&
           RESONANCE_ELEMENT_TYPES.includes(oldElement) &&
-          oldElmtCount[oldElement] === 2 &&
-          newElmtCount[oldElement] === 1
+          oldElmtCount.get(oldElement) === 2 &&
+          newElmtCount.get(oldElement) === 1
         ) {
           elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
             return resonance.vision !== oldElement;
@@ -207,8 +207,8 @@ export const calculatorSlice = createSlice({
       // new teammate form new resonance
       if (
         RESONANCE_ELEMENT_TYPES.includes(elementType) &&
-        oldElmtCount[elementType] === 1 &&
-        newElmtCount[elementType] === 2
+        oldElmtCount.get(elementType) === 1 &&
+        newElmtCount.get(elementType) === 2
       ) {
         const newResonance = {
           vision: elementType,
@@ -234,7 +234,7 @@ export const calculatorSlice = createSlice({
         party[teammateIndex] = null;
         const newElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appChar);
 
-        if (newElmtCount[vision] === 1) {
+        if (newElmtCount.get(vision) === 1) {
           elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
             return resonance.vision !== vision;
           });

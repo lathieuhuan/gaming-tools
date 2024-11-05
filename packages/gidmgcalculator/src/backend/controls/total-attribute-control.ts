@@ -2,10 +2,10 @@ import type { Artifact, Character, Weapon } from "@Src/types";
 import type { PartiallyRequired } from "rond";
 import type { AppCharacter, AppWeapon, AttributeStat, CoreStat } from "../types";
 
-import { applyPercent, forEachKey, toArray, Utils_ } from "@Src/utils";
-import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "../constants";
+import { applyPercent, Object_, toArray, Utils_ } from "@Src/utils";
+import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
-import { ArtifactCalc, CharacterCalc, WeaponCalc } from "../utils";
+import { ArtifactCalc, CharacterCalc, GeneralCalc, WeaponCalc } from "../utils";
 import { TrackerControl } from "./tracker-control";
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
@@ -82,6 +82,18 @@ export class TotalAttributeControl {
     return artAttr;
   }
 
+  private getCharacterStats(char: Character, appChar: AppCharacter) {
+    const baseStats = appChar.stats[LEVELS.indexOf(char.level)];
+    const scaleIndex = Math.max(GeneralCalc.getAscension(char.level) - 1, 0);
+
+    return {
+      hp: baseStats[0] ?? 0,
+      atk: baseStats[1] ?? 0,
+      def: baseStats[2] ?? 0,
+      ascensionStat: appChar.statBonus.value * ([0, 1, 2, 2, 3, 4][scaleIndex] ?? 0),
+    };
+  }
+
   construct = (
     char: Character,
     appChar: AppCharacter,
@@ -89,18 +101,17 @@ export class TotalAttributeControl {
     appWeapon?: AppWeapon,
     artifacts: Array<Artifact | null> = []
   ) => {
-    const baseStats = CharacterCalc.getBaseStats(char, appChar);
-    const ascensionStat = CharacterCalc.getAscensionStat(char, appChar);
+    const stats = this.getCharacterStats(char, appChar);
 
-    this.addBase("hp", baseStats.hp);
-    this.addBase("atk", baseStats.atk);
-    this.addBase("def", baseStats.def);
+    this.addBase("hp", stats.hp);
+    this.addBase("atk", stats.atk);
+    this.addBase("def", stats.def);
     this.addBase("cRate_", 5);
     this.addBase("cDmg_", 50);
     this.addBase("er_", 100);
     this.addBase("naAtkSpd_", 100);
     this.addBase("caAtkSpd_", 100);
-    this.addBase(appChar.statBonus.type, ascensionStat, "Character ascension stat");
+    this.addBase(appChar.statBonus.type, stats.ascensionStat, "Character ascension stat");
 
     // Kokomi
     if (appChar.code === 42) {
@@ -134,7 +145,7 @@ export class TotalAttributeControl {
       def_base: this.totalAttr.def.base,
     });
 
-    forEachKey(attribute, (key) => {
+    Object_.forEach(attribute, (key) => {
       const value = attribute[key];
       if (value) this.addStable(key, value, "Artifact stat");
     });

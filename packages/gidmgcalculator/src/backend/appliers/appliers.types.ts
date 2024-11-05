@@ -58,7 +58,7 @@ type GetAppliedBonusesArgs<TEntityBonusCore extends EntityBonusCore> = ApplyBonu
   isFinal?: boolean;
 };
 
-export type GetAppliedBonuses = (args: GetAppliedBonusesArgs<EntityBonus>) => AppliedBonuses;
+export type GetAppliedBonuses = (args: GetAppliedBonusesArgs<EntityBonusCore>) => AppliedBonuses;
 
 type ApplyBuffArgs<TEntityBonusCore extends EntityBonusCore> = Omit<
   GetAppliedBonusesArgs<EntityBonus<TEntityBonusCore>>,

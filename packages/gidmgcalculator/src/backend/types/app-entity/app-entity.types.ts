@@ -18,7 +18,8 @@ export type ModInputConfig = {
 // ========== BUFF ==========
 
 export type EntityBuff<TEntityBonusCore extends EntityBonusCore> = {
-  id: number;
+  /** This is id */
+  index: number;
   affect: ModifierAffectType;
   inputConfigs?: ModInputConfig[];
   effects?: EntityBonus<TEntityBonusCore> | EntityBonus<TEntityBonusCore>[];
@@ -34,7 +35,7 @@ export type EntityBuff<TEntityBonusCore extends EntityBonusCore> = {
 
 export type EntityDebuff<TEntityPenalty extends EntityPenaltyCore> = {
   /** This is id */
-  id: number;
+  index: number;
   inputConfigs?: ModInputConfig[];
   effects?: EntityPenalty<TEntityPenalty>;
 };
