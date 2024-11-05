@@ -1,3 +1,5 @@
+import type { TalentType } from "../common.types";
+
 export type CharacterMilestone = "A1" | "A4" | "C1" | "C2" | "C4" | "C6";
 
 export type CalcItemType = "attack" | "healing" | "shield" | "other";
@@ -16,3 +18,15 @@ export type EntityBonusBasedOn =
        */
       alterIndex?: number;
     };
+
+// ========== CHARACTER EXCLUSIVE ==========
+
+export type CharacterEffectLevelScale = {
+  talent: TalentType;
+  /** If [value] = 0: buff value * level. Otherwise buff value * TALENT_LV_MULTIPLIERS[value][level]. */
+  value: number;
+  /** When this bonus is from teammate, this is input's index to get level. Default to 0 */
+  alterIndex?: number;
+  /** On Raiden */
+  max?: number;
+};

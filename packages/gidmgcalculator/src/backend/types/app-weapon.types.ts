@@ -34,21 +34,7 @@ type WeaponCalcItem = {
 
 // ========== BONUS ==========
 
-export type WeaponBonusCore = EntityBonusCore<{
-  /**
-   * Increment to value after each refinement.
-   * Default to 1/3 of [value]. Fixed buff type has increment = 0.
-   * Added before preExtra
-   */
-  incre?: number;
-  max?:
-    | number
-    // Only on Jadefall's Splendor
-    | {
-        value: number;
-        incre: number;
-      };
-}>;
+export type WeaponBonusCore = EntityBonusCore;
 
 type WeaponBonus = EntityBonus<WeaponBonusCore>;
 

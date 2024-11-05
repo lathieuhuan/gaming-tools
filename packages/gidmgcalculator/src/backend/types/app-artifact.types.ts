@@ -34,9 +34,9 @@ type SetBonus = {
   effects?: ArtifactBuff["effects"];
 };
 
-export type ArtifactBonusCore = EntityBonusCore<{
-  max?: number;
-}>;
+// ========== BUFF / BONUS ==========
+
+export type ArtifactBonusCore = EntityBonusCore;
 
 type ArtifactBonus = EntityBonus<ArtifactBonusCore>;
 
@@ -47,6 +47,8 @@ type ArtifactBuff = EntityBuff<ArtifactBonus> & {
   bonusLv?: number;
   description: ArtifactModifierDescription;
 };
+
+// ============ DEBUFF / PENALTY ============
 
 export type ArtifactPenaltyCore = EntityPenaltyCore;
 

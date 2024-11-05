@@ -3,6 +3,8 @@ import type { EffectExtra } from "./effect-extra.types";
 
 type EffectDynamicMax = {
   value: number;
+  /** On Jadefall's Splendor (weapon) */
+  incre?: number;
   /** On Hu Tao */
   basedOn?: EntityBonusBasedOn;
   extras?: EffectExtra | EffectExtra[];

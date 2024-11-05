@@ -1,21 +1,100 @@
-import type { EntityBonusBasedOn, EntityBonusCore, EntityBonusStack } from "../types";
 import type { TotalAttributeControl } from "../controls";
+import type {
+  EffectExtra,
+  EffectMax,
+  EntityBonusBasedOn,
+  EntityBonusCore,
+  EntityBonusStack,
+  EntityBonusValueByOption,
+} from "../types";
 import type { BareBonus } from "./bonus-getters.types";
-import { CalculationInfo, CharacterCalc, EntityCalc, GeneralCalc } from "../utils";
+
+import { toArray } from "@Src/utils";
+import { type CalculationInfo, CharacterCalc, EntityCalc, GeneralCalc } from "../utils";
 
 export class BonusGetterCore {
-  constructor(protected totalAttrCtrl: TotalAttributeControl, protected info: CalculationInfo) {}
+  constructor(protected info: CalculationInfo) {}
 
-  protected getBasedOn(basedOn: EntityBonusBasedOn, inputs: number[], fromSelf: boolean) {
-    const { field, alterIndex = 0, baseline = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
-    const basedOnValue = fromSelf ? this.totalAttrCtrl.getTotal(field) : inputs[alterIndex] ?? 1;
-    return {
-      basedOnField: field,
-      basedOnValue: Math.max(basedOnValue - baseline, 0),
-    };
+  protected scaleRefi(base: number, refi: number, increment = base / 3) {
+    return base + increment * refi;
   }
 
-  protected getStackValue(stack: EntityBonusStack | undefined, inputs: number[], fromSelf: boolean): number {
+  protected getBonusValueByOption(config: EntityBonusValueByOption, info: CalculationInfo, inputs: number[]) {
+    const { optIndex = 0 } = config;
+    const indexConfig =
+      typeof optIndex === "number"
+        ? ({ source: "INPUT", inpIndex: optIndex } satisfies EntityBonusValueByOption["optIndex"])
+        : optIndex;
+    let indexValue = -1;
+
+    switch (indexConfig.source) {
+      case "INPUT":
+        indexValue += inputs[indexConfig.inpIndex];
+        break;
+      case "ELEMENT": {
+        const { element } = indexConfig;
+        const elementCount = GeneralCalc.countElements(info.partyData, info.appChar);
+
+        switch (element) {
+          case "various_types":
+            indexValue += elementCount.keys.length;
+            break;
+          case "different":
+            elementCount.forEach((elementType) => {
+              if (elementType !== info.appChar.vision) indexValue++;
+            });
+            break;
+          default:
+            if (typeof element === "string") {
+              indexValue += elementCount.get(element);
+            } else if (indexConfig.distinct) {
+              indexValue += element.reduce((total, elementType) => total + (elementCount.has(elementType) ? 1 : 0), 0);
+            } else {
+              indexValue += element.reduce((total, type) => total + elementCount.get(type), 0);
+            }
+        }
+        break;
+      }
+      case "LEVEL": {
+        indexValue += CharacterCalc.getFinalTalentLv({
+          talentType: indexConfig.talent,
+          char: info.char,
+          appChar: info.appChar,
+          partyData: info.partyData,
+        });
+        break;
+      }
+    }
+    return indexValue;
+  }
+
+  getIntialBonusValue(config: EntityBonusCore["value"], info: CalculationInfo, inputs: number[], fromSelf = true) {
+    if (typeof config === "number") {
+      return config;
+    }
+    const { preOptions, options } = config;
+    let index = -1;
+
+    /** Navia */
+    if (preOptions && !inputs[1]) {
+      const preIndex = preOptions[inputs[0]];
+      index += preIndex ?? preOptions[preOptions.length - 1];
+    } else {
+      index = this.getBonusValueByOption(config, info, inputs);
+    }
+
+    if (config.extra && EntityCalc.isApplicableEffect(config.extra, info, inputs, fromSelf)) {
+      index += config.extra.value;
+    }
+    if (config.max) {
+      const max = this.getMax(config.max, info, inputs, fromSelf);
+      if (index > max) index = max;
+    }
+
+    return options[index] ?? (index > 0 ? options[options.length - 1] : 0);
+  }
+
+  protected getStackValue(stack: EntityBonusStack | undefined, inputs: number[], fromSelf = true): number {
     if (!stack) {
       return 1;
     }
@@ -141,45 +220,121 @@ export class BonusGetterCore {
       result += stack.extra.value;
     }
     if (stack.max) {
-      const max = EntityCalc.getMax(stack.max, this.info, inputs, fromSelf);
+      const max = this.getMax(stack.max, this.info, inputs, fromSelf);
       if (result > max) result = max;
     }
 
     return Math.max(result, 0);
   }
 
-  getBonus(config: EntityBonusCore, inputs: number[], fromSelf: boolean, initialValue = 0): BareBonus {
-    let isStable = true;
+  protected getTotalExtraMax(
+    extras: EffectExtra | EffectExtra[],
+    info: CalculationInfo,
+    inputs: number[],
+    fromSelf = true
+  ) {
+    let result = 0;
 
-    // ========== ADD PRE-EXTRA ==========
-    if (typeof config.preExtra === "number") {
-      initialValue += config.preExtra;
-    } //
-    else if (config.preExtra && EntityCalc.isApplicableEffect(config.preExtra, this.info, inputs, fromSelf)) {
-      const preExtra = this.getBonus(config.preExtra, inputs, fromSelf);
-
-      if (preExtra) {
-        initialValue += preExtra.value;
-        // if preExtra is not stable, this whole bonus is not stable
-        if (!preExtra.isStable) isStable = false;
+    for (const extra of toArray(extras)) {
+      if (EntityCalc.isApplicableEffect(extra, info, inputs, fromSelf)) {
+        result += extra.value;
       }
     }
+    return result;
+  }
 
-    // ========== APPLY BASED ON ==========
-    if (config.basedOn) {
-      const { basedOnField, basedOnValue } = this.getBasedOn(config.basedOn, inputs, fromSelf);
+  protected getMax(max: EffectMax, info: CalculationInfo, inputs: number[], fromSelf = true) {
+    return typeof max === "number"
+      ? max
+      : max.value + (max.extras ? this.getTotalExtraMax(max.extras, info, inputs, fromSelf) : 0);
+  }
+}
 
-      initialValue *= basedOnValue;
-      if (basedOnField !== "base_atk") isStable = false;
-    }
+export class BonusGetter extends BonusGetterCore {
+  constructor(private totalAttrCtrl: TotalAttributeControl, protected info: CalculationInfo) {
+    super(info);
+  }
 
-    // ========== APPLY STACKS ==========
-    initialValue *= this.getStackValue(config.stacks, inputs, fromSelf);
-
+  private getBasedOn(basedOn: EntityBonusBasedOn, inputs: number[], fromSelf = true) {
+    const { field, alterIndex = 0, baseline = 0 } = typeof basedOn === "string" ? { field: basedOn } : basedOn;
+    const basedOnValue = fromSelf ? this.totalAttrCtrl.getTotal(field) : inputs[alterIndex] ?? 1;
     return {
-      id: config.id,
-      value: initialValue,
-      isStable,
+      field,
+      value: Math.max(basedOnValue - baseline, 0),
     };
+  }
+
+  private applyBasedOn(bonus: BareBonus, config: EntityBonusBasedOn | undefined, inputs: number[], fromSelf = true) {
+    if (config) {
+      const basedOn = this.getBasedOn(config, inputs, fromSelf);
+
+      bonus.value *= basedOn.value;
+      if (basedOn.field !== "base_atk") bonus.isStable = false;
+    }
+  }
+
+  private applyExtra(
+    bonus: BareBonus,
+    config: number | EntityBonusCore | undefined,
+    inputs: number[],
+    fromSelf = true,
+    refi = 0
+  ) {
+    if (typeof config === "number") {
+      bonus.value += this.scaleRefi(config, refi);
+    } //
+    else if (config && EntityCalc.isApplicableEffect(config, this.info, inputs, fromSelf)) {
+      const extra = this.getBonus(config, inputs, fromSelf);
+
+      if (extra) {
+        bonus.value += extra.value;
+        // if extra is not stable, this whole bonus is not stable
+        if (!extra.isStable) bonus.isStable = false;
+      }
+    }
+  }
+
+  private applyMax(bonus: BareBonus, config: EffectMax | undefined, inputs: number[], fromSelf = true, refi = 0) {
+    if (typeof config === "number") {
+      bonus.value = Math.min(bonus.value, config);
+    } //
+    else if (config) {
+      let finalMax = config.value;
+
+      if (config.basedOn) {
+        const basedOn = this.getBasedOn(config.basedOn, inputs, fromSelf);
+        finalMax *= basedOn.value;
+      }
+      if (config.extras) {
+        finalMax += this.getTotalExtraMax(config.extras, this.info, inputs, fromSelf);
+      }
+      finalMax = this.scaleRefi(finalMax, refi, config.incre);
+
+      bonus.value = Math.min(bonus.value, finalMax);
+    }
+  }
+
+  getBonus(config: EntityBonusCore, inputs: number[], fromSelf = true, refi = 0): BareBonus {
+    const initial: BareBonus = {
+      id: config.id,
+      value: this.getIntialBonusValue(config.value, this.info, inputs, fromSelf),
+      isStable: true,
+    };
+
+    initial.value = this.scaleRefi(initial.value, refi, config.incre);
+
+    initial.value *= CharacterCalc.getLevelScale(config.lvScale, this.info, inputs, fromSelf);
+
+    this.applyExtra(initial, config.preExtra, inputs, fromSelf);
+
+    this.applyBasedOn(initial, config.basedOn, inputs, fromSelf);
+
+    initial.value *= this.getStackValue(config.stacks, inputs, fromSelf);
+
+    this.applyExtra(initial, config.sufExtra, inputs, fromSelf);
+
+    this.applyMax(initial, config.max, inputs, fromSelf);
+
+    return initial;
   }
 }

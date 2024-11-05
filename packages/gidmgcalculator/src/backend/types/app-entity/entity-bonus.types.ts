@@ -1,5 +1,5 @@
 import type { ElementType, LevelableTalentType } from "../common.types";
-import type { EntityBonusBasedOn } from "./app-entity-common.types";
+import type { EntityBonusBasedOn, CharacterEffectLevelScale } from "./app-entity-common.types";
 import type { EntityBonusStack } from "./effect-bonus-stack.types";
 import type { EffectApplicableCondition } from "./effect-condition.types";
 import type { EffectExtra } from "./effect-extra.types";
@@ -47,13 +47,25 @@ export type EntityBonusCore<TBonusExtend extends object = object> = TBonusExtend
   EffectApplicableCondition & {
     id: string;
     value: number | (EntityBonusValueByOption & CharacterEntityBonusValueByOptionExtend);
+    /**
+     * On Characters. Multiplier based on talent level
+     * Added before preExtra
+     */
+    lvScale?: CharacterEffectLevelScale;
+    /**
+     * On Weapons. Increment to value after each refinement.
+     * Default to 1/3 of [value]. Fixed buff type has increment = 0.
+     * Added before preExtra
+     */
+    incre?: number;
+    /** Added before basedOn */
+    preExtra?: number | EntityBonusCore<TBonusExtend>;
     /** Added right before stacks */
     basedOn?: EntityBonusBasedOn;
     stacks?: EntityBonusStack;
-    /** Added before stacks */
-    preExtra?: number | EntityBonusCore<TBonusExtend>;
     /** Added after stacks */
     sufExtra?: number | EntityBonusCore<TBonusExtend>;
+    max?: EffectMax;
   };
 
 export type EntityBonus<TEntityBonusCore extends EntityBonusCore = EntityBonusCore> = TEntityBonusCore & {

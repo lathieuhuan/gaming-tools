@@ -11,6 +11,7 @@ import type {
 } from "./common.types";
 import type {
   CalcItemType,
+  CharacterEffectLevelScale,
   CharacterMilestone,
   EffectMax,
   EntityBonus,
@@ -136,21 +137,7 @@ export type CalcItem = {
 
 // ========== BUFF / BONUS ==========
 
-export type CharacterEffectLevelScale = {
-  talent: TalentType;
-  /** If [value] = 0: buff value * level. Otherwise buff value * TALENT_LV_MULTIPLIERS[value][level]. */
-  value: number;
-  /** When this bonus is from teammate, this is input's index to get level. Default to 0 */
-  alterIndex?: number;
-  /** On Raiden */
-  max?: number;
-};
-
-export type CharacterBonusCore = EntityBonusCore<{
-  /** Multiplier based on talent level */
-  lvScale?: CharacterEffectLevelScale;
-  max?: EffectMax;
-}>;
+export type CharacterBonusCore = EntityBonusCore;
 
 type CharacterBonus = EntityBonus<CharacterBonusCore>;
 
@@ -171,12 +158,7 @@ export type CharacterBuff = EntityBuff<CharacterBonus> &
 
 // ============ DEBUFF / PENALTY ============
 
-export type CharacterPenaltyCore = EntityPenaltyCore<{
-  lvScale?: CharacterEffectLevelScale;
-  /** Added before stacks, after scale */
-  preExtra?: number | CharacterPenaltyCore;
-  max?: number;
-}>;
+export type CharacterPenaltyCore = EntityPenaltyCore;
 
 type CharacterPenalty = EntityPenalty<CharacterPenaltyCore>;
 
