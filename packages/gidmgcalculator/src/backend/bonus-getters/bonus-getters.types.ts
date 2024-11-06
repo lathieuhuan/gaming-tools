@@ -8,9 +8,3 @@ export type GetBonusArgs<T extends EntityBonusCore> = {
   fromSelf: boolean;
   getTotalAttrFromSelf: (field: EntityBonusBasedOnField) => number;
 };
-
-export type BareBonus = {
-  id: string;
-  value: number;
-  isStable: boolean;
-};

@@ -32,6 +32,7 @@ export class Array_ {
 export class CountMap<TKey extends PropertyKey = PropertyKey> {
   private count: Record<TKey, number>;
 
+  /** Only keys with positive count */
   get keys() {
     const keys: TKey[] = [];
     for (const key in this.count) {

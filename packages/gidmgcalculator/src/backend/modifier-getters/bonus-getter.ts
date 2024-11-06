@@ -7,13 +7,18 @@ import type {
   EntityBonusStack,
   EntityBonusValueByOption,
 } from "../types";
-import type { BareBonus } from "./bonus-getters.types";
+import type { BareBonus } from "./modifier-getters.types";
 
 import { toArray } from "@Src/utils";
-import { type CalculationInfo, CharacterCalc, EntityCalc, GeneralCalc } from "../utils";
+import { type CalculationInfo, CharacterCalc, GeneralCalc } from "../utils";
+import { ModifierGetterCore } from "./modifier-getter-core";
 
-export class BonusGetterCore {
-  constructor(protected info: CalculationInfo) {}
+export class BonusGetter extends ModifierGetterCore {
+  constructor(protected info: CalculationInfo, private totalAttrCtrl: TotalAttributeControl) {
+    super(info);
+  }
+
+  // ========== UTILS ==========
 
   protected scaleRefi(base: number, refi: number, increment = base / 3) {
     return base + increment * refi;
@@ -67,6 +72,47 @@ export class BonusGetterCore {
     return indexValue;
   }
 
+  protected getExtra(extras: EffectExtra | EffectExtra[] | undefined, inputs: number[], fromSelf = true) {
+    if (!extras) return 0;
+    let result = 0;
+
+    for (const extra of toArray(extras)) {
+      if (this.isApplicableEffect(extra, inputs, fromSelf)) {
+        result += extra.value;
+      }
+    }
+    return result;
+  }
+
+  private getBasedOn(config: EntityBonusBasedOn, inputs: number[], fromSelf = true) {
+    const { field, alterIndex = 0, baseline = 0 } = typeof config === "string" ? { field: config } : config;
+    const basedOnValue = fromSelf ? this.totalAttrCtrl.getTotal(field) : inputs[alterIndex] ?? 1;
+    return {
+      field,
+      value: Math.max(basedOnValue - baseline, 0),
+    };
+  }
+
+  protected applyMax(value: number, config: EffectMax | undefined, inputs: number[], fromSelf = true, refi = 0) {
+    if (typeof config === "number") {
+      return Math.min(value, config);
+    } //
+    else if (config) {
+      let finalMax = config.value;
+
+      if (config.basedOn) {
+        finalMax *= this.getBasedOn(config.basedOn, inputs, fromSelf).value;
+      }
+      finalMax += this.getExtra(config.extras, inputs, fromSelf);
+      finalMax = this.scaleRefi(finalMax, refi, config.incre);
+
+      return Math.min(value, finalMax);
+    }
+    return value;
+  }
+
+  // ========== MAIN ==========
+
   getIntialBonusValue(config: EntityBonusCore["value"], inputs: number[], fromSelf = true) {
     if (typeof config === "number") {
       return config;
@@ -82,15 +128,31 @@ export class BonusGetterCore {
       index = this.getBonusValueByOption(config, inputs);
     }
 
-    if (config.extra && EntityCalc.isApplicableEffect(config.extra, this.info, inputs, fromSelf)) {
-      index += config.extra.value;
-    }
-    if (config.max) {
-      const max = this.getMax(config.max, inputs, fromSelf);
-      if (index > max) index = max;
-    }
+    index += this.getExtra(config.extra, inputs, fromSelf);
+    index = this.applyMax(index, config.max, inputs, fromSelf);
 
     return options[index] ?? (index > 0 ? options[options.length - 1] : 0);
+  }
+
+  private applyExtra(
+    bonus: BareBonus,
+    config: number | EntityBonusCore | undefined,
+    inputs: number[],
+    fromSelf = true,
+    refi = 0
+  ) {
+    if (typeof config === "number") {
+      bonus.value += this.scaleRefi(config, refi);
+    } //
+    else if (config && this.isApplicableEffect(config, inputs, fromSelf)) {
+      const extra = this.getBonus(config, inputs, fromSelf);
+
+      if (extra) {
+        bonus.value += extra.value;
+        // if extra is not stable, this whole bonus is not stable
+        if (!extra.isStable) bonus.isStable = false;
+      }
+    }
   }
 
   protected getStackValue(stack: EntityBonusStack | undefined, inputs: number[], fromSelf = true): number {
@@ -123,7 +185,7 @@ export class BonusGetterCore {
         if (stack.capacity) {
           const { value, extra } = stack.capacity;
           input = value - input;
-          if (EntityCalc.isApplicableEffect(extra, this.info, inputs, fromSelf)) input += extra.value;
+          if (this.isApplicableEffect(extra, inputs, fromSelf)) input += extra.value;
           input = Math.max(input, 0);
         }
         result = input;
@@ -215,32 +277,40 @@ export class BonusGetterCore {
       if (result <= stack.baseline) return 0;
       result -= stack.baseline;
     }
-    if (stack.extra && EntityCalc.isApplicableEffect(stack.extra, this.info, inputs, fromSelf)) {
+    if (stack.extra && this.isApplicableEffect(stack.extra, inputs, fromSelf)) {
       result += stack.extra.value;
     }
-    if (stack.max) {
-      const max = this.getMax(stack.max, inputs, fromSelf);
-      if (result > max) result = max;
-    }
+    result = this.applyMax(result, stack.max, inputs, fromSelf);
 
     return Math.max(result, 0);
   }
 
-  protected getTotalExtraMax(extras: EffectExtra | EffectExtra[], inputs: number[], fromSelf = true) {
-    let result = 0;
+  getBonus(config: EntityBonusCore, inputs: number[], fromSelf = true, refi = 0): BareBonus {
+    const initial: BareBonus = {
+      id: config.id,
+      value: this.getIntialBonusValue(config.value, inputs, fromSelf),
+      isStable: true,
+    };
 
-    for (const extra of toArray(extras)) {
-      if (EntityCalc.isApplicableEffect(extra, this.info, inputs, fromSelf)) {
-        result += extra.value;
-      }
+    initial.value = this.scaleRefi(initial.value, refi, config.incre);
+
+    initial.value *= CharacterCalc.getLevelScale(config.lvScale, this.info, inputs, fromSelf);
+
+    this.applyExtra(initial, config.preExtra, inputs, fromSelf);
+
+    if (config.basedOn) {
+      const basedOn = this.getBasedOn(config.basedOn, inputs, fromSelf);
+
+      initial.value *= basedOn.value;
+      if (basedOn.field !== "base_atk") initial.isStable = false;
     }
-    return result;
-  }
 
-  protected getMax(max: EffectMax, inputs: number[], fromSelf = true) {
-    return typeof max === "number"
-      ? max
-      : max.value + (max.extras ? this.getTotalExtraMax(max.extras, inputs, fromSelf) : 0);
+    initial.value *= this.getStackValue(config.stacks, inputs, fromSelf);
+
+    this.applyExtra(initial, config.sufExtra, inputs, fromSelf);
+
+    initial.value = this.applyMax(initial.value, config.max, inputs, fromSelf);
+
+    return initial;
   }
 }
-

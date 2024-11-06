@@ -4,14 +4,13 @@ import type {
   AppCharacter,
   AttackPattern,
   CharacterEffectLevelScale,
+  LevelableTalentType,
   TalentAttributeType,
   TalentType,
 } from "../types";
-
-import { GeneralCalc, type CalculationInfo } from "../utils";
+import type { CalculationInfo } from "../utils";
 
 import { findByName } from "@Src/utils";
-import { LEVELS } from "../constants";
 
 interface GetTotalXtraTalentArgs {
   char: Character;
@@ -92,7 +91,7 @@ export class CharacterCalc {
     expectedAttPatt: AttackPattern,
     appChar: AppCharacter
   ): {
-    resultKey: "ES" | "EB" | "NAs";
+    resultKey: LevelableTalentType;
     defaultScale: number;
     defaultBasedOn: TalentAttributeType;
     defaultAttPatt: ActualAttackPattern;
