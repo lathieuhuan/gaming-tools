@@ -38,11 +38,9 @@ type SetBonus = {
 
 export type ArtifactBonusCore = EntityBonusCore;
 
-type ArtifactBonus = EntityBonus<ArtifactBonusCore>;
-
 export type ArtifactModifierDescription = string | number | number[];
 
-type ArtifactBuff = EntityBuff<ArtifactBonus> & {
+type ArtifactBuff = EntityBuff<EntityBonus<ArtifactBonusCore>> & {
   /** 0 is 2-piece set, 1 is 4-piece set. Default to 1 */
   bonusLv?: number;
   description: ArtifactModifierDescription;

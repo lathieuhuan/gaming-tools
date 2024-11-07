@@ -1,17 +1,20 @@
 import type { CalcCharacter, CalcWeapon, ElementModCtrl, PartyData } from "@Src/types";
-import type { AttackBonusControl, CalculationFinalResultKey, TotalAttribute } from "../controls";
-import type { AppCharacter, AppWeapon, AttackElement, ResistanceReduction } from "../types";
-import type { ConfigAttackPattern, CalculateCalcItem, CalculationFinalResultItem } from "../calculation";
+import type { AttackBonusesControl } from "../controls";
+import type {
+  AppCharacter,
+  AppWeapon,
+  AttackElement,
+  CalculationFinalResult,
+  ResistanceReduction,
+  TotalAttribute,
+} from "../types";
+import type { AttackPatternConfig } from "../calculation/getAttackPatternConfig";
 
 import { TrackerControl } from "../controls";
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "../constants";
 import { TRANSFORMATIVE_REACTION_INFO } from "../constants/internal";
-import { CharacterCalc, GeneralCalc } from "../utils";
-import { genEmptyResult } from "../calculation";
-
-export type CalculationFinalResultGroup = Record<string, CalculationFinalResultItem>;
-
-export type CalculationFinalResult = Record<CalculationFinalResultKey, CalculationFinalResultGroup>;
+import { CharacterCalc, GeneralCalc } from "../common-utils";
+import { genEmptyResult, type CalcItemCalculator } from "../calculation/getCalcItemCalculator";
 
 type GetFinalResultArgs = {
   char: CalcCharacter;
@@ -20,12 +23,12 @@ type GetFinalResultArgs = {
   weapon: CalcWeapon;
   appWeapon: AppWeapon;
   totalAttr: TotalAttribute;
-  attBonus: AttackBonusControl;
+  attBonusesCtrl: AttackBonusesControl;
   elmtModCtrls: ElementModCtrl;
   resistances: ResistanceReduction;
   tracker?: TrackerControl;
-  configAttackPattern: ConfigAttackPattern;
-  calculateCalcItem: CalculateCalcItem;
+  configAttackPattern: AttackPatternConfig;
+  calculateCalcItem: CalcItemCalculator;
 };
 
 export default function getFinalResult({
@@ -35,7 +38,7 @@ export default function getFinalResult({
   appWeapon,
   partyData,
   totalAttr,
-  attBonus,
+  attBonusesCtrl,
   elmtModCtrls,
   resistances,
   tracker,
@@ -80,12 +83,12 @@ export default function getFinalResult({
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
     const { mult, dmgType } = TRANSFORMATIVE_REACTION_INFO[rxn];
-    const normalMult = 1 + attBonus.getBare("pct_", rxn) / 100;
+    const normalMult = 1 + attBonusesCtrl.getBare("pct_", rxn) / 100;
     const resMult = dmgType !== "absorb" ? resistances[dmgType] : 1;
     const baseValue = baseRxnDmg * mult;
     const nonCrit = baseValue * normalMult * resMult;
-    const cDmg_ = attBonus.getBare("cDmg_", rxn) / 100;
-    const cRate_ = Math.max(attBonus.getBare("cRate_", rxn), 0) / 100;
+    const cDmg_ = attBonusesCtrl.getBare("cDmg_", rxn) / 100;
+    const cRate_ = Math.max(attBonusesCtrl.getBare("cRate_", rxn), 0) / 100;
 
     finalResult.RXN_CALC[rxn] = {
       type: "attack",
@@ -129,7 +132,7 @@ export default function getFinalResult({
       base: (totalAttr[basedOn] * mult) / 100,
       record,
       rxnMult: 1,
-      getBonus: (key) => attBonus.get(key, attElmt),
+      getBonus: (key) => attBonusesCtrl.get(key, attElmt),
     });
 
     tracker?.recordCalcItem("WP_CALC", name, record);

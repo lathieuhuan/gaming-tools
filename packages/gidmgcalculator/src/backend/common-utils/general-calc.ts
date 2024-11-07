@@ -1,6 +1,6 @@
 import type { CalcArtifacts, PartyData } from "@Src/types";
 import type { AmplifyingReaction, AppCharacter, AttackElement, ElementType, Level, QuickenReaction } from "../types";
-import { Array_, CountMap } from "@Src/utils";
+import { Array_, TypeCounter } from "@Src/utils";
 
 export type ArtifactSetBonus = {
   code: number;
@@ -28,11 +28,11 @@ export class GeneralCalc {
 
   static getArtifactSetBonuses(artifacts: CalcArtifacts = []): ArtifactSetBonus[] {
     const sets: ArtifactSetBonus[] = [];
-    const count = new CountMap();
+    const counter = new TypeCounter();
 
     for (const artifact of artifacts) {
       if (artifact) {
-        const codeCount = count.add(artifact.code);
+        const codeCount = counter.add(artifact.code);
 
         if (codeCount === 2) {
           sets.push({ code: artifact.code, bonusLv: 0 });
@@ -82,11 +82,11 @@ export class GeneralCalc {
   }
 
   static countElements(partyData: PartyData, appChar?: AppCharacter) {
-    const countMap = new CountMap<ElementType>();
+    const counter = new TypeCounter<ElementType>();
 
-    if (appChar) countMap.add(appChar.vision);
-    Array_.truthyList(partyData).pickEach("vision").use(countMap.add);
+    if (appChar) counter.add(appChar.vision);
+    Array_.truthyList(partyData).pickEach("vision").use(counter.add);
 
-    return countMap;
+    return counter;
   }
 }

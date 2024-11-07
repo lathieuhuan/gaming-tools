@@ -2,6 +2,7 @@ import type {
   AppliedBonuses,
   AttributeStat,
   BareBonus,
+  CalculationInfo,
   EntityBonusBasedOn,
   EntityBonusCore,
   EntityBonusTargets,
@@ -12,8 +13,7 @@ import { toArray } from "@Src/utils";
 import { ELEMENT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
 import { ModifierStackingControl } from "../controls";
-import { CalculationInfo } from "../utils";
-import { isApplicableEffect } from "./condition-check";
+import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
 import { BareBonusGetter, type GetBareBonusSupportInfo } from "./bare-bonus-getter";
 
 type ApplyBonusSupportInfo = {

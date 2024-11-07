@@ -8,7 +8,7 @@ import type {
   TalentAttributeType,
   TalentType,
 } from "../types";
-import type { CalculationInfo } from "../utils";
+import type { CalculationInfo } from ".";
 
 import { findByName } from "@Src/utils";
 

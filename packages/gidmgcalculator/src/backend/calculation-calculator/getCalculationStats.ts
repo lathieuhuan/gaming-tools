@@ -6,9 +6,10 @@ import { RESONANCE_STAT, AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE
 
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { GeneralCalc, isGrantedEffect } from "../utils";
+import { GeneralCalc } from "../common-utils";
 import { AttackBonusesControl, TotalAttributeControl, TrackerControl } from "../controls";
-import { AppliedBonusesGetter } from "../modifier-getters";
+import { isGrantedEffect } from "../calculation-utils/isGrantedEffect";
+import { AppliedBonusesGetter } from "../calculation/applied-bonuses-getter";
 
 type AssistantInfo = {
   appChar: AppCharacter;

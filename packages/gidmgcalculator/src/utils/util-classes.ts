@@ -29,7 +29,7 @@ export class Array_ {
   }
 }
 
-export class CountMap<TKey extends PropertyKey = PropertyKey> {
+export class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   private count: Record<TKey, number>;
 
   /** Only keys with positive count */

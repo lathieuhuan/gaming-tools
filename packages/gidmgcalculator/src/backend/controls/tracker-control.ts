@@ -3,13 +3,11 @@ import type {
   ResistanceReductionKey,
   CalcItemType,
   AttackBonusKey,
-  LevelableTalentType,
+  CalculationFinalResultKey,
 } from "../types";
 
 import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
-
-export type CalculationFinalResultKey = LevelableTalentType | "RXN_CALC" | "WP_CALC";
 
 // ========== STAT RECORD ==========
 

@@ -18,7 +18,7 @@ export {
   WeaponCalc,
   type ArtifactSetBonus,
   type CalculationInfo,
-} from "./utils";
+} from "./common-utils";
 
 export * from "./constants";
 

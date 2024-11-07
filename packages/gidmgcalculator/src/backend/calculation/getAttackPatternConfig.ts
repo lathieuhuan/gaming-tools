@@ -9,13 +9,14 @@ import type {
   CalcItemType,
   ActualAttackPattern,
   AppCharacter,
+  TotalAttribute,
+  NormalAttacksConfig,
 } from "../types";
-import type { AttackBonusControl, CalcItemRecord, TotalAttribute } from "../controls";
+import type { AttackBonusesControl, CalcItemRecord } from "../controls";
 
 import { toArray } from "@Src/utils";
-import { CharacterCalc, GeneralCalc } from "../utils";
+import { CharacterCalc, GeneralCalc } from "../common-utils";
 import { TrackerControl } from "../controls";
-import { NormalsConfig } from "./getNormalsConfig";
 
 type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorption">;
 
@@ -30,21 +31,21 @@ export type CalcItemConfig = {
   calculateBaseDamage: (level: number) => number | number[];
 };
 
-export type AttackPatternConfArgs = {
+export type GetAttackPatternConfArgs = {
   appChar: AppCharacter;
-  normalsConfig: NormalsConfig;
+  NAsConfig: NormalAttacksConfig;
   customInfusion: Infusion;
   totalAttr: TotalAttribute;
-  attBonus: AttackBonusControl;
+  attBonusesCtrl: AttackBonusesControl;
 };
 
-export function AttackPatternConf({
+export default function getAttackPatternConfig({
   appChar,
-  normalsConfig,
+  NAsConfig,
   customInfusion,
   totalAttr,
-  attBonus,
-}: AttackPatternConfArgs) {
+  attBonusesCtrl,
+}: GetAttackPatternConfArgs) {
   return (patternKey: AttackPattern) => {
     const {
       resultKey,
@@ -68,7 +69,7 @@ export function AttackPatternConf({
 
       /** ========== Attack Pattern, Attack Element, Reaction ========== */
 
-      const attPatt = item.attPatt ?? normalsConfig[patternKey]?.attPatt ?? defaultAttPatt;
+      const attPatt = item.attPatt ?? NAsConfig[patternKey]?.attPatt ?? defaultAttPatt;
       let attElmt: AttackElement;
       let reaction = elmtModCtrls.reaction;
 
@@ -90,7 +91,7 @@ export function AttackPatternConf({
          */
         reaction = elmtModCtrls.infuse_reaction ?? elmtModCtrls.reaction;
       } else {
-        attElmt = normalsConfig[patternKey]?.attElmt ?? "phys";
+        attElmt = NAsConfig[patternKey]?.attElmt ?? "phys";
       }
 
       const getBonus = (key: AttackBonusKey) => {
@@ -98,9 +99,9 @@ export function AttackPatternConf({
 
         if (type === "attack") {
           const mixedType = finalAttPatt ? (`${finalAttPatt}.${attElmt}` as const) : undefined;
-          return attBonus.get(key, finalAttPatt, attElmt, mixedType, item.id);
+          return attBonusesCtrl.get(key, finalAttPatt, attElmt, mixedType, item.id);
         }
-        return attBonus.get(key, finalAttPatt, item.id);
+        return attBonusesCtrl.get(key, finalAttPatt, item.id);
       };
 
       /** ========== Attack Reaction Multiplier ========== */
@@ -109,7 +110,7 @@ export function AttackPatternConf({
 
       // deal elemental dmg and want amplifying reaction
       if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
-        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, attBonus.getBare("pct_", reaction));
+        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, attBonusesCtrl.getBare("pct_", reaction));
       } else {
         reaction = null;
       }
@@ -118,7 +119,7 @@ export function AttackPatternConf({
         itemType: type,
         multFactors: [],
         normalMult: 1,
-        exclusives: attBonus.getExclusiveBonuses(item),
+        exclusives: attBonusesCtrl.getExclusiveBonuses(item),
       });
 
       const configMultFactor = (factor: CalcItemMultFactor) => {
@@ -180,10 +181,10 @@ export function AttackPatternConf({
 
     return {
       resultKey,
-      disabled: normalsConfig[patternKey]?.disabled,
+      disabled: NAsConfig[patternKey]?.disabled,
       configCalcItem,
     };
   };
 }
 
-export type ConfigAttackPattern = ReturnType<typeof AttackPatternConf>;
+export type AttackPatternConfig = ReturnType<typeof getAttackPatternConfig>;

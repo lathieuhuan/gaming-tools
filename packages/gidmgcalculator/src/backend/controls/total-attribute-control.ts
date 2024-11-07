@@ -5,7 +5,7 @@ import type { AppCharacter, AppliedAttributeBonus, AppWeapon, AttributeStat, Cor
 import { applyPercent, Object_, toArray, Utils_ } from "@Src/utils";
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
-import { ArtifactCalc, GeneralCalc, WeaponCalc } from "../utils";
+import { ArtifactCalc, GeneralCalc, WeaponCalc } from "../common-utils";
 import { TrackerControl } from "./tracker-control";
 
 export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;

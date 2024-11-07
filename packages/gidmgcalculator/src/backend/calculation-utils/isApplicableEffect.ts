@@ -1,7 +1,13 @@
-import type { AppCharacter, EffectApplicableCondition, EffectUsableCondition } from "@Src/backend/types";
-import { type CalculationInfo, GeneralCalc, isGrantedEffect } from "@Src/backend/utils";
-import { Character, PartyData } from "@Src/types";
-import { CountMap } from "@Src/utils";
+import type { Character, PartyData } from "@Src/types";
+import type {
+  AppCharacter,
+  CalculationInfo,
+  EffectApplicableCondition,
+  EffectUsableCondition,
+} from "@Src/backend/types";
+import { TypeCounter } from "@Src/utils";
+import { GeneralCalc } from "@Src/backend/common-utils";
+import { isGrantedEffect } from "./isGrantedEffect";
 
 function isUsableEffect(
   condition: EffectUsableCondition,
@@ -104,7 +110,7 @@ export function isApplicableEffect(
     }
   }
   if (partyElmtCount) {
-    const requiredEntries = new CountMap(partyElmtCount).entries;
+    const requiredEntries = new TypeCounter(partyElmtCount).entries;
 
     if (requiredEntries.some(([type, value]) => elementCountMap.get(type) < value)) {
       return false;

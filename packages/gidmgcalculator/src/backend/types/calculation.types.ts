@@ -1,4 +1,21 @@
-import type { AttackBonusKey, AttackBonusType, AttributeStat } from "./common.types";
+import type { Character, PartyData } from "@Src/types";
+import type {
+  ActualAttackElement,
+  ActualAttackPattern,
+  AttackBonusKey,
+  AttackBonusType,
+  AttackPattern,
+  AttributeStat,
+  LevelableTalentType,
+} from "./common.types";
+import type { AppCharacter, CharacterBuffNormalAttackConfig } from "./app-character.types";
+import type { CalcItemType } from "./app-entity";
+
+export type CalculationInfo = {
+  char: Character;
+  appChar: AppCharacter;
+  partyData: PartyData;
+};
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
 type TotalAttributeStat = AttributeStat | "hp_base" | "atk_base" | "def_base";
@@ -27,3 +44,28 @@ export type AppliedBonuses = {
   attrBonuses: AppliedAttributeBonus[];
   attkBonuses: AppliedAttackBonus[];
 };
+
+//
+
+export type NormalAttacksConfig = Partial<Record<AttackPattern, Omit<CharacterBuffNormalAttackConfig, "forPatt">>>;
+
+export type CalculationAspect = "nonCrit" | "crit" | "average";
+
+type CalculationFinalResultAttackItem = {
+  type: Extract<CalcItemType, "attack">;
+  attElmt: ActualAttackElement;
+  attPatt: ActualAttackPattern;
+};
+
+type CalculationFinalResultOtherItem = {
+  type: Exclude<CalcItemType, "attack">;
+};
+
+export type CalculationFinalResultItem = Record<CalculationAspect, number | number[]> &
+  (CalculationFinalResultAttackItem | CalculationFinalResultOtherItem);
+
+export type CalculationFinalResultKey = LevelableTalentType | "RXN_CALC" | "WP_CALC";
+
+export type CalculationFinalResultGroup = Record<string, CalculationFinalResultItem>;
+
+export type CalculationFinalResult = Record<CalculationFinalResultKey, CalculationFinalResultGroup>;

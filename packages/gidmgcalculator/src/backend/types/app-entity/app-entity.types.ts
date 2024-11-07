@@ -33,7 +33,7 @@ export type EntityBuff<TEntityBonusCore extends EntityBonusCore = EntityBonusCor
 
 // ========== DEBUFF ==========
 
-export type EntityDebuff<TEntityPenalty extends EntityPenaltyCore> = {
+export type EntityDebuff<TEntityPenalty extends EntityPenaltyCore = EntityPenaltyCore> = {
   /** This is id */
   index: number;
   inputConfigs?: ModInputConfig[];

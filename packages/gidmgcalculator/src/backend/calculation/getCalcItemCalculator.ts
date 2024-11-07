@@ -4,28 +4,15 @@ import type {
   AttackBonusKey,
   AttackElement,
   CalcItemType,
+  CalculationFinalResultItem,
   Level,
   ResistanceReduction,
+  TotalAttribute,
 } from "../types";
-import type { CalcItemRecord, TotalAttribute } from "../controls";
+import type { CalcItemRecord } from "../controls";
 
 import { applyToOneOrMany, toMult } from "@Src/utils";
-import { GeneralCalc } from "../utils";
-
-export type CalculationAspect = "nonCrit" | "crit" | "average";
-
-type CalculationFinalResultAttackItem = {
-  type: Extract<CalcItemType, "attack">;
-  attElmt: ActualAttackElement;
-  attPatt: ActualAttackPattern;
-};
-
-type CalculationFinalResultOtherItem = {
-  type: Exclude<CalcItemType, "attack">;
-};
-
-export type CalculationFinalResultItem = Record<CalculationAspect, number | number[]> &
-  (CalculationFinalResultAttackItem | CalculationFinalResultOtherItem);
+import { GeneralCalc } from "../common-utils";
 
 type CalculateArgs = {
   type: CalcItemType;
@@ -36,7 +23,7 @@ type CalculateArgs = {
   record: CalcItemRecord;
   getBonus?: (key: AttackBonusKey) => number;
 };
-export function CalcItemCalculator(
+export default function getCalcItemCalculator(
   charLv: Level,
   targetLv: number,
   totalAttr: TotalAttribute,
@@ -160,4 +147,4 @@ export function genEmptyResult(
       };
 }
 
-export type CalculateCalcItem = ReturnType<typeof CalcItemCalculator>;
+export type CalcItemCalculator = ReturnType<typeof getCalcItemCalculator>;

@@ -95,7 +95,7 @@ type CalcListConfig = {
   attPatt?: ActualAttackPattern;
 };
 
-type CalcItemMultFactor =
+export type CalcItemMultFactor =
   | number
   | {
       root: number;
@@ -105,7 +105,7 @@ type CalcItemMultFactor =
       basedOn?: TalentAttributeType;
     };
 
-type CalcItemFlatFactor =
+export type CalcItemFlatFactor =
   | number
   | {
       root: number;
@@ -139,11 +139,9 @@ export type CalcItem = {
 
 export type CharacterBonusCore = EntityBonusCore;
 
-type CharacterBonus = EntityBonus<CharacterBonusCore>;
-
 type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "unstackableId" | "effects">;
 
-type CharacterBuffNAsConfig = {
+export type CharacterBuffNormalAttackConfig = {
   checkInput?: number | InputCheck;
   forPatt?: "ALL" | NormalAttack;
   attPatt?: AttackPattern;
@@ -151,9 +149,9 @@ type CharacterBuffNAsConfig = {
   disabled?: boolean;
 };
 
-export type CharacterBuff = EntityBuff<CharacterBonus> &
+export type CharacterBuff = EntityBuff<EntityBonus<CharacterBonusCore>> &
   CharacterModifier & {
-    normalsConfig?: CharacterBuffNAsConfig | CharacterBuffNAsConfig[];
+    normalsConfig?: CharacterBuffNormalAttackConfig | CharacterBuffNormalAttackConfig[];
   };
 
 // ============ DEBUFF / PENALTY ============
