@@ -17,7 +17,7 @@ export type ModInputConfig = {
 
 // ========== BUFF ==========
 
-export type EntityBuff<TEntityBonusCore extends EntityBonusCore> = {
+export type EntityBuff<TEntityBonusCore extends EntityBonusCore = EntityBonusCore> = {
   /** This is id */
   index: number;
   affect: ModifierAffectType;

@@ -1,3 +1,4 @@
+import type { PartiallyOptional } from "rond";
 import type { TotalAttributeControl } from "../controls";
 import type {
   EffectExtra,
@@ -7,20 +8,35 @@ import type {
   EntityBonusStack,
   EntityBonusValueByOption,
 } from "../types";
-import type { BareBonus } from "./modifier-getters.types";
 
 import { toArray } from "@Src/utils";
 import { type CalculationInfo, CharacterCalc, GeneralCalc } from "../utils";
 import { ModifierGetterCore } from "./modifier-getter-core";
 
-export class BonusGetter extends ModifierGetterCore {
-  constructor(protected info: CalculationInfo, private totalAttrCtrl: TotalAttributeControl) {
+export type BareBonus = {
+  id: string;
+  value: number;
+  isStable: boolean;
+};
+
+export type GetBareBonusSupportInfo = {
+  inputs: number[];
+  fromSelf: boolean;
+  refi?: number;
+};
+
+type InternalSupportInfo = GetBareBonusSupportInfo & {
+  basedOnStable?: boolean;
+};
+
+export class BareBonusGetter extends ModifierGetterCore {
+  constructor(protected info: CalculationInfo, private totalAttrCtrl?: TotalAttributeControl) {
     super(info);
   }
 
   // ========== UTILS ==========
 
-  protected scaleRefi(base: number, refi: number, increment = base / 3) {
+  protected scaleRefi(base: number, refi = 0, increment = base / 3) {
     return base + increment * refi;
   }
 
@@ -72,28 +88,38 @@ export class BonusGetter extends ModifierGetterCore {
     return indexValue;
   }
 
-  protected getExtra(extras: EffectExtra | EffectExtra[] | undefined, inputs: number[], fromSelf = true) {
+  protected getExtra(extras: EffectExtra | EffectExtra[] | undefined, support: InternalSupportInfo) {
     if (!extras) return 0;
     let result = 0;
 
     for (const extra of toArray(extras)) {
-      if (this.isApplicableEffect(extra, inputs, fromSelf)) {
+      if (this.isApplicableEffect(extra, support.inputs, support.fromSelf)) {
         result += extra.value;
       }
     }
     return result;
   }
 
-  private getBasedOn(config: EntityBonusBasedOn, inputs: number[], fromSelf = true) {
+  protected getBasedOn(config: EntityBonusBasedOn, support: InternalSupportInfo) {
     const { field, alterIndex = 0, baseline = 0 } = typeof config === "string" ? { field: config } : config;
-    const basedOnValue = fromSelf ? this.totalAttrCtrl.getTotal(field) : inputs[alterIndex] ?? 1;
+    let basedOnValue = 1;
+
+    if (support.fromSelf) {
+      if (this.totalAttrCtrl) {
+        basedOnValue = support.basedOnStable
+          ? this.totalAttrCtrl.getTotalStable(field)
+          : this.totalAttrCtrl.getTotal(field);
+      }
+    } else {
+      basedOnValue = support.inputs[alterIndex] ?? 1;
+    }
     return {
       field,
       value: Math.max(basedOnValue - baseline, 0),
     };
   }
 
-  protected applyMax(value: number, config: EffectMax | undefined, inputs: number[], fromSelf = true, refi = 0) {
+  protected applyMax(value: number, config: EffectMax | undefined, support: InternalSupportInfo) {
     if (typeof config === "number") {
       return Math.min(value, config);
     } //
@@ -101,10 +127,10 @@ export class BonusGetter extends ModifierGetterCore {
       let finalMax = config.value;
 
       if (config.basedOn) {
-        finalMax *= this.getBasedOn(config.basedOn, inputs, fromSelf).value;
+        finalMax *= this.getBasedOn(config.basedOn, support).value;
       }
-      finalMax += this.getExtra(config.extras, inputs, fromSelf);
-      finalMax = this.scaleRefi(finalMax, refi, config.incre);
+      finalMax += this.getExtra(config.extras, support);
+      finalMax = this.scaleRefi(finalMax, support.refi, config.incre);
 
       return Math.min(value, finalMax);
     }
@@ -113,7 +139,9 @@ export class BonusGetter extends ModifierGetterCore {
 
   // ========== MAIN ==========
 
-  getIntialBonusValue(config: EntityBonusCore["value"], inputs: number[], fromSelf = true) {
+  getIntialBonusValue(config: EntityBonusCore["value"], support: InternalSupportInfo) {
+    const { inputs } = support;
+
     if (typeof config === "number") {
       return config;
     }
@@ -128,24 +156,18 @@ export class BonusGetter extends ModifierGetterCore {
       index = this.getBonusValueByOption(config, inputs);
     }
 
-    index += this.getExtra(config.extra, inputs, fromSelf);
-    index = this.applyMax(index, config.max, inputs, fromSelf);
+    index += this.getExtra(config.extra, support);
+    index = this.applyMax(index, config.max, support);
 
     return options[index] ?? (index > 0 ? options[options.length - 1] : 0);
   }
 
-  private applyExtra(
-    bonus: BareBonus,
-    config: number | EntityBonusCore | undefined,
-    inputs: number[],
-    fromSelf = true,
-    refi = 0
-  ) {
+  protected applyExtra(bonus: BareBonus, config: number | EntityBonusCore | undefined, support: InternalSupportInfo) {
     if (typeof config === "number") {
-      bonus.value += this.scaleRefi(config, refi);
+      bonus.value += this.scaleRefi(config, support.refi);
     } //
-    else if (config && this.isApplicableEffect(config, inputs, fromSelf)) {
-      const extra = this.getBonus(config, inputs, fromSelf);
+    else if (config && this.isApplicableEffect(config, support.inputs, support.fromSelf)) {
+      const extra = this.getBareBonus(config, support);
 
       if (extra) {
         bonus.value += extra.value;
@@ -155,10 +177,11 @@ export class BonusGetter extends ModifierGetterCore {
     }
   }
 
-  protected getStackValue(stack: EntityBonusStack | undefined, inputs: number[], fromSelf = true): number {
+  protected getStackValue(stack: EntityBonusStack | undefined, support: InternalSupportInfo): number {
     if (!stack) {
       return 1;
     }
+    const { inputs, fromSelf } = support;
     const { char, appChar, partyData } = this.info;
     const partyDependentStackTypes: EntityBonusStack["type"][] = ["ELEMENT", "ENERGY", "NATION", "RESOLVE", "MIX"];
 
@@ -280,15 +303,25 @@ export class BonusGetter extends ModifierGetterCore {
     if (stack.extra && this.isApplicableEffect(stack.extra, inputs, fromSelf)) {
       result += stack.extra.value;
     }
-    result = this.applyMax(result, stack.max, inputs, fromSelf);
+    result = this.applyMax(result, stack.max, support);
 
     return Math.max(result, 0);
   }
 
-  getBonus(config: EntityBonusCore, inputs: number[], fromSelf = true, refi = 0): BareBonus {
+  getBareBonus(
+    config: EntityBonusCore,
+    { inputs, fromSelf = true, refi = 0 }: PartiallyOptional<GetBareBonusSupportInfo, "fromSelf">,
+    basedOnStable = false
+  ): BareBonus {
+    const support: InternalSupportInfo = {
+      inputs,
+      fromSelf,
+      refi,
+      basedOnStable,
+    };
     const initial: BareBonus = {
       id: config.id,
-      value: this.getIntialBonusValue(config.value, inputs, fromSelf),
+      value: this.getIntialBonusValue(config.value, support),
       isStable: true,
     };
 
@@ -296,20 +329,20 @@ export class BonusGetter extends ModifierGetterCore {
 
     initial.value *= CharacterCalc.getLevelScale(config.lvScale, this.info, inputs, fromSelf);
 
-    this.applyExtra(initial, config.preExtra, inputs, fromSelf);
+    this.applyExtra(initial, config.preExtra, support);
 
     if (config.basedOn) {
-      const basedOn = this.getBasedOn(config.basedOn, inputs, fromSelf);
+      const basedOn = this.getBasedOn(config.basedOn, support);
 
       initial.value *= basedOn.value;
       if (basedOn.field !== "base_atk") initial.isStable = false;
     }
 
-    initial.value *= this.getStackValue(config.stacks, inputs, fromSelf);
+    initial.value *= this.getStackValue(config.stacks, support);
 
-    this.applyExtra(initial, config.sufExtra, inputs, fromSelf);
+    this.applyExtra(initial, config.sufExtra, support);
 
-    initial.value = this.applyMax(initial.value, config.max, inputs, fromSelf);
+    initial.value = this.applyMax(initial.value, config.max, support);
 
     return initial;
   }
