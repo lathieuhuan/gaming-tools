@@ -1,18 +1,12 @@
 import type { Artifact, Character, Weapon } from "@Src/types";
-import type { PartiallyRequired } from "rond";
-import type { AppCharacter, AppWeapon, AttributeStat, CoreStat } from "../types";
+import type { PartiallyOptional, PartiallyRequired } from "rond";
+import type { AppCharacter, AppliedAttributeBonus, AppWeapon, AttributeStat, CoreStat, TotalAttribute } from "../types";
 
 import { applyPercent, Object_, toArray, Utils_ } from "@Src/utils";
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
-import { ArtifactCalc, CharacterCalc, GeneralCalc, WeaponCalc } from "../utils";
+import { ArtifactCalc, GeneralCalc, WeaponCalc } from "../utils";
 import { TrackerControl } from "./tracker-control";
-
-/** Actually does not contain "hp_" | "atk_" | "def_" */
-type TotalAttributeStat = AttributeStat | "hp_base" | "atk_base" | "def_base";
-
-/** Actually does not contain "hp_" | "atk_" | "def_" */
-export type TotalAttribute = Record<TotalAttributeStat, number>;
 
 export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;
 
@@ -24,6 +18,9 @@ type InternalTotalAttribute = Record<
     unstableBonus: number;
   }
 >;
+
+/** 'isStable' default to true */
+type BonusToApply = PartiallyOptional<AppliedAttributeBonus, "id" | "isStable">;
 
 export class TotalAttributeControl {
   private totalAttr: InternalTotalAttribute;
@@ -133,7 +130,12 @@ export class TotalAttributeControl {
 
       if (appWeapon.subStat) {
         const substatValue = WeaponCalc.getSubStatValue(weapon.level, appWeapon.subStat.scale);
-        this.addStable(appWeapon.subStat.type, substatValue, `${appWeapon.name} sub-stat`);
+
+        this.applyBonuses({
+          value: substatValue,
+          toStat: appWeapon.subStat.type,
+          description: `${appWeapon.name} sub-stat`,
+        });
       }
     }
   };
@@ -145,9 +147,14 @@ export class TotalAttributeControl {
       def_base: this.totalAttr.def.base,
     });
 
-    Object_.forEach(attribute, (key) => {
-      const value = attribute[key];
-      if (value) this.addStable(key, value, "Artifact stat");
+    Object_.forEach(attribute, (toStat) => {
+      if (attribute[toStat]) {
+        this.applyBonuses({
+          value: attribute[toStat],
+          toStat,
+          description: "Artifact stat",
+        });
+      }
     });
 
     return attribute;
@@ -158,19 +165,30 @@ export class TotalAttributeControl {
     this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
   };
 
-  addStable = (keys: AttributeStat | AttributeStat[], value: number, description: string) => {
-    toArray(keys).forEach((key) => {
-      this.totalAttr[key].stableBonus += value;
-      this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
-    });
+  applyBonuses = (bonuses: BonusToApply | BonusToApply[]) => {
+    for (const bonus of toArray(bonuses)) {
+      if (bonus.isStable ?? true) {
+        this.totalAttr[bonus.toStat].stableBonus += bonus.value;
+      } else {
+        this.totalAttr[bonus.toStat].unstableBonus += bonus.value;
+      }
+      this.tracker?.recordStat(ECalcStatModule.ATTR, bonus.toStat, bonus.value, bonus.description);
+    }
   };
 
-  addUnstable = (keys: AttributeStat | AttributeStat[], value: number, description: string) => {
-    toArray(keys).forEach((key) => {
-      this.totalAttr[key].unstableBonus += value;
-      this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
-    });
-  };
+  // addStable = (keys: AttributeStat | AttributeStat[], value: number, description: string) => {
+  //   toArray(keys).forEach((key) => {
+  //     this.totalAttr[key].stableBonus += value;
+  //     this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
+  //   });
+  // };
+
+  // addUnstable = (keys: AttributeStat | AttributeStat[], value: number, description: string) => {
+  //   toArray(keys).forEach((key) => {
+  //     this.totalAttr[key].unstableBonus += value;
+  //     this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
+  //   });
+  // };
 
   getBase = (key: AttributeStat) => {
     return this.totalAttr[key].base;

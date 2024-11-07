@@ -1,7 +1,7 @@
 import type {
-  AttackBonusKey,
-  AttackBonusType,
+  AppliedBonuses,
   AttributeStat,
+  BareBonus,
   EntityBonusBasedOn,
   EntityBonusCore,
   EntityBonusTargets,
@@ -13,23 +13,8 @@ import { ELEMENT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
 import { ModifierStackingControl } from "../controls";
 import { CalculationInfo } from "../utils";
-import { BareBonusGetter, type BareBonus, type GetBareBonusSupportInfo } from "./bare-bonus-getter";
-
-export type AppliedAttributeBonus = BareBonus & {
-  toStat: AttributeStat;
-  description: string;
-};
-
-export type AppliedAttackBonus = Pick<BareBonus, "id" | "value"> & {
-  toType: AttackBonusType;
-  toKey: AttackBonusKey;
-  description: string;
-};
-
-export type AppliedBonuses = {
-  attrBonuses: AppliedAttributeBonus[];
-  attkBonuses: AppliedAttackBonus[];
-};
+import { isApplicableEffect } from "./condition-check";
+import { BareBonusGetter, type GetBareBonusSupportInfo } from "./bare-bonus-getter";
 
 type ApplyBonusSupportInfo = {
   description: string;
@@ -147,7 +132,7 @@ export class AppliedBonusesGetter extends BareBonusGetter {
     for (const config of toArray(buff.effects)) {
       if (
         (isFinal === undefined || isFinal === this.isTrulyFinalBonus(config)) &&
-        this.isApplicableEffect(config, support.inputs, support.fromSelf)
+        isApplicableEffect(config, this.info, support.inputs, support.fromSelf)
       ) {
         const bonus = this.getBareBonus(
           config,

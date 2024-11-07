@@ -6,9 +6,9 @@ import { RESONANCE_STAT, AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE
 
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import { findByIndex } from "@Src/utils";
-import { EntityCalc, GeneralCalc } from "../utils";
-import { AttackBonusControl, TotalAttributeControl, TrackerControl } from "../controls";
-import { CalcBuffApplier } from "../appliers";
+import { GeneralCalc, isGrantedEffect } from "../utils";
+import { AttackBonusesControl, TotalAttributeControl, TrackerControl } from "../controls";
+import { AppliedBonusesGetter } from "../modifier-getters";
 
 type AssistantInfo = {
   appChar: AppCharacter;
@@ -35,272 +35,330 @@ export default function getCalculationStats(
   const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
   const { resonances = [], reaction, infuse_reaction } = elmtModCtrls || {};
 
-  const totalAttr = new TotalAttributeControl(tracker);
-  const artAttr = totalAttr.construct(char, appChar, weapon, appWeapon, artifacts);
+  const totalAttrCtrl = new TotalAttributeControl(tracker);
+  const artAttr = totalAttrCtrl.construct(char, appChar, weapon, appWeapon, artifacts);
+  const attBonusesCtrl = new AttackBonusesControl();
+  const bonusesGetter = new AppliedBonusesGetter({
+    char,
+    appChar,
+    partyData,
+  });
 
-  const attBonus = new AttackBonusControl();
+  const applyBuff: AppliedBonusesGetter["getAppliedBonuses"] = (...args) => {
+    const result = bonusesGetter.getAppliedBonuses(...args);
+    totalAttrCtrl.applyBonuses(result.attrBonuses);
+    attBonusesCtrl.add(result.attkBonuses);
+    return result;
+  };
 
-  const buffApplier = new CalcBuffApplier(
-    {
-      char,
-      appChar,
-      partyData,
-    },
-    totalAttr,
-    attBonus
-  );
-
-  const APPLY_SELF_BUFFS = (isFinal: boolean) => {
+  const applySelfBuffs = (isFinal: boolean) => {
     const { innateBuffs = [], buffs = [] } = appChar;
-    const inputs: number[] = [];
 
     for (const buff of innateBuffs) {
-      if (EntityCalc.isGrantedEffect(buff, char)) {
-        buffApplier.applyCharacterBuff({
-          description: `Self / ${buff.src}`,
+      if (isGrantedEffect(buff, char)) {
+        applyBuff(
           buff,
-          inputs,
-          fromSelf: true,
-          isFinal,
-        });
+          {
+            inputs: [],
+            fromSelf: true,
+          },
+          `Self / ${buff.src}`,
+          isFinal
+        );
       }
     }
     for (const ctrl of selfBuffCtrls) {
       const buff = findByIndex(buffs, ctrl.index);
 
-      if (ctrl.activated && buff && EntityCalc.isGrantedEffect(buff, char)) {
-        buffApplier.applyCharacterBuff({
-          description: `Self / ${buff.src}`,
+      if (ctrl.activated && buff && isGrantedEffect(buff, char)) {
+        applyBuff(
           buff,
-          inputs: ctrl.inputs ?? [],
-          fromSelf: true,
-          isFinal,
-        });
+          {
+            inputs: ctrl.inputs ?? [],
+            fromSelf: true,
+          },
+          `Self / ${buff.src}`,
+          isFinal
+        );
       }
     }
   };
 
-  const APPLY_WEAPON_BONUSES = (isFinal: boolean) => {
+  const applyWeaponBonuses = (isFinal: boolean) => {
     if (appWeapon.bonuses) {
-      buffApplier.applyWeaponBuff({
-        description: `${appWeapon.name} bonus`,
-        buff: {
-          effects: appWeapon.bonuses,
+      applyBuff(
+        { effects: appWeapon.bonuses },
+        {
+          inputs: [],
+          fromSelf: true,
+          refi,
         },
-        refi,
-        inputs: [],
-        fromSelf: true,
-        isFinal,
-      });
+        `${appWeapon.name} bonus`,
+        isFinal
+      );
     }
   };
 
-  const APPLY_ARTIFACTS_BONUSES = (isFinal: boolean) => {
+  const applyArtifactBonuses = (isFinal: boolean) => {
     for (const { code, bonusLv } of setBonuses) {
       for (let i = 0; i <= bonusLv; i++) {
         const data = $AppArtifact.getSet(code);
         const buff = data?.setBonuses?.[i];
 
         if (buff && buff.effects) {
-          buffApplier.applyArtifactBuff({
-            description: `${data.name} / ${i * 2 + 2}-piece bonus`,
-            buff: {
-              effects: buff.effects,
+          applyBuff(
+            { effects: buff.effects },
+            {
+              inputs: [],
+              fromSelf: true,
             },
-            inputs: [],
-            fromSelf: true,
-            isFinal,
-          });
+            `${data.name} / ${i * 2 + 2}-piece bonus`,
+            isFinal
+          );
         }
       }
     }
   };
 
-  const APPLY_CUSTOM_BUFFS = () => {
-    for (const { category, type, subType, value } of customBuffCtrls) {
-      switch (category) {
-        case "totalAttr":
-          totalAttr.addStable(type as AttributeStat, value, "Custom buff");
-          break;
-        case "attElmtBonus": {
-          if (subType === "pct_") {
-            totalAttr.addStable(type as AttributeStat, value, "Custom buff");
-          } else if (subType) {
-            const key = type as AttackElement;
-            attBonus.add(key, subType, value, "Custom buff");
-          }
-          break;
-        }
-        case "attPattBonus": {
-          if (subType) {
-            const key = type as AttackPattern | "all";
-            attBonus.add(key, subType, value, "Custom buff");
-          }
-          break;
-        }
-        case "rxnBonus": {
-          if (subType) {
-            const key = type as ReactionType;
-            attBonus.add(key, subType, value, "Custom buff");
-          }
-          break;
-        }
-      }
-    }
-  };
-
-  const APPLY_TEAMMATE_BUFFS = () => {
-    for (const teammate of party) {
-      if (!teammate) continue;
-      const { name, buffs = [] } = $AppCharacter.get(teammate.name);
-
-      for (const { index, activated, inputs = [] } of teammate.buffCtrls) {
-        const buff = findByIndex(buffs, index);
-        if (!activated || !buff) continue;
-
-        buffApplier.applyCharacterBuff({
-          description: `${name} / ${buff.src}`,
-          buff,
-          inputs,
-          fromSelf: false,
-        });
-      }
-
-      // #to-check: should be applied before main weapon buffs?
-      (() => {
-        const { code, refi } = teammate.weapon;
-        const { name, buffs = [] } = $AppWeapon.get(code) || {};
-
-        for (const ctrl of teammate.weapon.buffCtrls) {
-          const buff = findByIndex(buffs, ctrl.index);
-
-          if (ctrl.activated && buff) {
-            buffApplier.applyWeaponBuff({
-              description: `${name} activated`,
-              buff,
-              inputs: ctrl.inputs ?? [],
-              refi,
-              fromSelf: false,
-            });
-          }
-        }
-      })();
-
-      (() => {
-        const { code } = teammate.artifact;
-        const { name, buffs = [] } = $AppArtifact.getSet(code) || {};
-
-        for (const ctrl of teammate.artifact.buffCtrls) {
-          const buff = findByIndex(buffs, ctrl.index);
-
-          if (ctrl.activated && buff) {
-            buffApplier.applyArtifactBuff({
-              description: `${name} / 4-Piece activated`,
-              buff,
-              inputs: ctrl.inputs ?? [],
-              fromSelf: false,
-            });
-          }
-        }
-      })();
-    }
-  };
-
-  const APPLY_MAIN_WEAPON_BUFFS = (isFinal: boolean) => {
+  const applyMainWeaponBuffs = (isFinal: boolean) => {
     if (!appWeapon.buffs) return;
 
     for (const ctrl of wpBuffCtrls) {
       const buff = findByIndex(appWeapon.buffs, ctrl.index);
 
       if (ctrl.activated && buff) {
-        buffApplier.applyWeaponBuff({
-          description: `${appWeapon.name} activated`,
+        applyBuff(
           buff,
-          inputs: ctrl.inputs ?? [],
-          refi,
-          fromSelf: true,
-          isFinal,
-          // isStackable
-        });
+          {
+            inputs: ctrl.inputs ?? [],
+            refi,
+            fromSelf: true,
+          },
+          `${appWeapon.name} activated`,
+          isFinal
+        );
       }
     }
   };
 
   const mainArtifactData = setBonuses[0]?.code ? $AppArtifact.getSet(setBonuses[0].code) : undefined;
-  const APLY_MAIN_ARTIFACT_BUFFS = (isFinal: boolean) => {
+  const applyMainArtifactBuffs = (isFinal: boolean) => {
     if (!mainArtifactData) return;
 
     for (const ctrl of artBuffCtrls) {
       const buff = mainArtifactData.buffs?.[ctrl.index];
 
       if (ctrl.activated && buff) {
-        buffApplier.applyArtifactBuff({
-          description: `${mainArtifactData.name} (self) / 4-piece activated`,
+        applyBuff(
           buff,
-          inputs: ctrl.inputs ?? [],
-          isFinal,
-          fromSelf: true,
-        });
+          {
+            inputs: ctrl.inputs ?? [],
+            fromSelf: true,
+          },
+          `${mainArtifactData.name} (self) / 4-piece activated`,
+          isFinal
+        );
       }
     }
   };
 
-  APPLY_SELF_BUFFS(false);
-  APPLY_WEAPON_BONUSES(false);
-  APPLY_ARTIFACTS_BONUSES(false);
-  APPLY_CUSTOM_BUFFS();
+  applySelfBuffs(false);
+  applyWeaponBonuses(false);
+  applyArtifactBonuses(false);
 
+  // APPLY CUSTOM BUFFS
+  for (const { category, type, subType, value } of customBuffCtrls) {
+    switch (category) {
+      case "totalAttr":
+        totalAttrCtrl.applyBonuses({
+          value,
+          toStat: type as AttributeStat,
+          description: "Custom buff",
+        });
+        break;
+      case "attElmtBonus": {
+        if (subType === "pct_") {
+          totalAttrCtrl.applyBonuses({
+            value,
+            toStat: type as AttributeStat,
+            description: "Custom buff",
+          });
+        } else if (subType) {
+          attBonusesCtrl.add({
+            value,
+            toType: type as AttackElement,
+            toKey: subType,
+            description: "Custom buff",
+          });
+        }
+        break;
+      }
+      case "attPattBonus": {
+        if (subType) {
+          attBonusesCtrl.add({
+            value,
+            toType: type as AttackPattern | "all",
+            toKey: subType,
+            description: "Custom buff",
+          });
+        }
+        break;
+      }
+      case "rxnBonus": {
+        if (subType) {
+          attBonusesCtrl.add({ value, toType: type as ReactionType, toKey: subType, description: "Custom buff" });
+        }
+        break;
+      }
+    }
+  }
+
+  // APPLY RESONANCE BONUSES
   for (const { vision: elementType, activated, inputs } of resonances) {
     if (activated) {
       const { key, value } = RESONANCE_STAT[elementType];
       let xtraValue = 0;
-      const desc = `${elementType} resonance`;
+      const description = `${elementType} resonance`;
 
       if (elementType === "dendro" && inputs) {
         if (inputs[0]) xtraValue += 30;
         if (inputs[1]) xtraValue += 20;
       }
 
-      totalAttr.addStable(key, value + xtraValue, desc);
+      totalAttrCtrl.applyBonuses({
+        value: value + xtraValue,
+        toStat: key,
+        description,
+      });
 
-      if (elementType === "geo") attBonus.add("all", "pct_", 15, desc);
+      if (elementType === "geo")
+        attBonusesCtrl.add({
+          value: 15,
+          toType: "all",
+          toKey: "pct_",
+          description,
+        });
     }
   }
 
-  APPLY_TEAMMATE_BUFFS();
-  APPLY_MAIN_WEAPON_BUFFS(false);
-  APLY_MAIN_ARTIFACT_BUFFS(false);
+  // APPLY TEAMMATE BUFFS
+  for (const teammate of party) {
+    if (!teammate) continue;
+    const { name, buffs = [] } = $AppCharacter.get(teammate.name);
 
-  APPLY_ARTIFACTS_BONUSES(true);
-  APPLY_WEAPON_BONUSES(true);
-  APPLY_MAIN_WEAPON_BUFFS(true);
-  APPLY_SELF_BUFFS(true);
-  APLY_MAIN_ARTIFACT_BUFFS(true);
+    for (const { index, activated, inputs = [] } of teammate.buffCtrls) {
+      const buff = findByIndex(buffs, index);
+      if (!activated || !buff) continue;
 
-  const { transformative, amplifying, quicken } = GeneralCalc.getRxnBonusesFromEM(totalAttr.getTotal("em"));
+      applyBuff(
+        buff,
+        {
+          inputs,
+          fromSelf: false,
+        },
+        `${name} / ${buff.src}`
+      );
+    }
+
+    // #to-check: should be applied before main weapon buffs?
+    (() => {
+      const { code, refi } = teammate.weapon;
+      const { name, buffs = [] } = $AppWeapon.get(code) || {};
+
+      for (const ctrl of teammate.weapon.buffCtrls) {
+        const buff = findByIndex(buffs, ctrl.index);
+
+        if (ctrl.activated && buff) {
+          applyBuff(
+            buff,
+            {
+              inputs: ctrl.inputs ?? [],
+              fromSelf: false,
+              refi,
+            },
+            `${name} activated`
+          );
+        }
+      }
+    })();
+
+    (() => {
+      const { code } = teammate.artifact;
+      const { name, buffs = [] } = $AppArtifact.getSet(code) || {};
+
+      for (const ctrl of teammate.artifact.buffCtrls) {
+        const buff = findByIndex(buffs, ctrl.index);
+
+        if (ctrl.activated && buff) {
+          applyBuff(
+            buff,
+            {
+              inputs: ctrl.inputs ?? [],
+              fromSelf: false,
+            },
+            `${name} / 4-Piece activated`
+          );
+        }
+      }
+    })();
+  }
+
+  applyMainWeaponBuffs(false);
+  applyMainArtifactBuffs(false);
+
+  applyArtifactBonuses(true);
+  applyWeaponBonuses(true);
+  applyMainWeaponBuffs(true);
+  applySelfBuffs(true);
+  applyMainArtifactBuffs(true);
+
+  const rxnBonuses = GeneralCalc.getRxnBonusesFromEM(totalAttrCtrl.getTotal("em"));
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
-    attBonus.add(rxn, "pct_", transformative, "From Elemental Mastery");
+    attBonusesCtrl.add({
+      value: rxnBonuses.transformative,
+      toType: rxn,
+      toKey: "pct_",
+      description: "From Elemental Mastery",
+    });
   }
   for (const rxn of AMPLIFYING_REACTIONS) {
-    attBonus.add(rxn, "pct_", amplifying, "From Elemental Mastery");
+    attBonusesCtrl.add({
+      value: rxnBonuses.amplifying,
+      toType: rxn,
+      toKey: "pct_",
+      description: "From Elemental Mastery",
+    });
   }
   for (const rxn of QUICKEN_REACTIONS) {
-    attBonus.add(rxn, "pct_", quicken, "From Elemental Mastery");
+    attBonusesCtrl.add({
+      value: rxnBonuses.quicken,
+      toType: rxn,
+      toKey: "pct_",
+      description: "From Elemental Mastery",
+    });
   }
 
   if (reaction === "spread" || infuse_reaction === "spread") {
-    const bonusValue = GeneralCalc.getQuickenBuffDamage("spread", char.level, attBonus.get("pct_", "spread"));
-    attBonus.add("dendro", "flat", bonusValue, "Spread reaction");
+    attBonusesCtrl.add({
+      value: GeneralCalc.getQuickenBuffDamage("spread", char.level, attBonusesCtrl.get("pct_", "spread")),
+      toType: "dendro",
+      toKey: "flat",
+      description: "Spread reaction",
+    });
   }
   if (reaction === "aggravate" || infuse_reaction === "aggravate") {
-    const bonusValue = GeneralCalc.getQuickenBuffDamage("aggravate", char.level, attBonus.get("pct_", "aggravate"));
-    attBonus.add("electro", "flat", bonusValue, "Aggravate reaction");
+    attBonusesCtrl.add({
+      value: GeneralCalc.getQuickenBuffDamage("aggravate", char.level, attBonusesCtrl.get("pct_", "aggravate")),
+      toType: "electro",
+      toKey: "flat",
+      description: "Aggravate reaction",
+    });
   }
 
   return {
-    totalAttr: totalAttr.finalize(),
-    attBonus,
+    totalAttr: totalAttrCtrl.finalize(),
+    attBonusesCtrl,
     artAttr,
   };
 }

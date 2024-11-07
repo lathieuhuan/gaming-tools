@@ -1,5 +1,7 @@
-import type { AttackBonusKey, AttackBonusType, CalcItem } from "../types";
+import type { PartiallyOptional } from "rond";
+import type { AppliedAttackBonus, AttackBonusKey, AttackBonusType, CalcItem } from "../types";
 import type { CalcItemExclusiveBonus } from "./tracker-control";
+import { toArray } from "@Src/utils";
 
 type AttackBonusRecord = {
   desc: string;
@@ -15,28 +17,32 @@ export type AttackBonuses = Array<{
 /** should not use 'all' in AttackBonusType */
 type GetBonusPaths = Array<AttackBonusType | undefined>;
 
-export class AttackBonusControl {
+type BonusToAdd = PartiallyOptional<AppliedAttackBonus, "id">;
+
+export class AttackBonusesControl {
   private attBonuses: AttackBonuses = [];
 
   private finalizedBonusAll = false;
   private attackBonusAll: Partial<Record<AttackBonusKey, number>> = {};
 
-  add = (module: AttackBonusType, path: AttackBonusKey, value: number, description: string) => {
-    if (value) {
-      const existedBonus = this.attBonuses.find((bonus) => bonus.type === module);
-      const record: AttackBonusRecord = {
-        desc: description,
-        value,
-        to: path,
-      };
+  add = (bonuses: BonusToAdd | BonusToAdd[]) => {
+    for (const bonus of toArray(bonuses)) {
+      if (bonus.value) {
+        const existedBonus = this.attBonuses.find((existBonus) => existBonus.type === bonus.toType);
+        const record: AttackBonusRecord = {
+          desc: bonus.description,
+          value: bonus.value,
+          to: bonus.toKey,
+        };
 
-      if (existedBonus) {
-        existedBonus.records.push(record);
-      } else {
-        this.attBonuses.push({
-          type: module,
-          records: [record],
-        });
+        if (existedBonus) {
+          existedBonus.records.push(record);
+        } else {
+          this.attBonuses.push({
+            type: bonus.toType,
+            records: [record],
+          });
+        }
       }
     }
   };
@@ -51,7 +57,7 @@ export class AttackBonusControl {
     }
   };
 
-  static getBonus = (attBonuses: AttackBonuses, path: AttackBonusKey, ...paths: GetBonusPaths) => {
+  static get = (attBonuses: AttackBonuses, path: AttackBonusKey, ...paths: GetBonusPaths) => {
     let result = 0;
 
     for (const bonus of attBonuses) {
@@ -72,11 +78,11 @@ export class AttackBonusControl {
       this.finalizedBonusAll = true;
     }
 
-    return (this.attackBonusAll[key] ?? 0) + AttackBonusControl.getBonus(this.attBonuses, key, ...paths);
+    return (this.attackBonusAll[key] ?? 0) + AttackBonusesControl.get(this.attBonuses, key, ...paths);
   };
 
   getBare = (key: AttackBonusKey, ...paths: GetBonusPaths) => {
-    return AttackBonusControl.getBonus(this.attBonuses, key, ...paths);
+    return AttackBonusesControl.get(this.attBonuses, key, ...paths);
   };
 
   getExclusiveBonuses = (item: CalcItem): CalcItemExclusiveBonus[] => {

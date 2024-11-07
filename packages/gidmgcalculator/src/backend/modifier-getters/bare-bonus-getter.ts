@@ -1,6 +1,7 @@
 import type { PartiallyOptional } from "rond";
 import type { TotalAttributeControl } from "../controls";
 import type {
+  BareBonus,
   EffectExtra,
   EffectMax,
   EntityBonusBasedOn,
@@ -11,13 +12,7 @@ import type {
 
 import { toArray } from "@Src/utils";
 import { type CalculationInfo, CharacterCalc, GeneralCalc } from "../utils";
-import { ModifierGetterCore } from "./modifier-getter-core";
-
-export type BareBonus = {
-  id: string;
-  value: number;
-  isStable: boolean;
-};
+import { isApplicableEffect } from "./condition-check";
 
 export type GetBareBonusSupportInfo = {
   inputs: number[];
@@ -29,10 +24,8 @@ type InternalSupportInfo = GetBareBonusSupportInfo & {
   basedOnStable?: boolean;
 };
 
-export class BareBonusGetter extends ModifierGetterCore {
-  constructor(protected info: CalculationInfo, private totalAttrCtrl?: TotalAttributeControl) {
-    super(info);
-  }
+export class BareBonusGetter {
+  constructor(protected info: CalculationInfo, private totalAttrCtrl?: TotalAttributeControl) {}
 
   // ========== UTILS ==========
 
@@ -93,7 +86,7 @@ export class BareBonusGetter extends ModifierGetterCore {
     let result = 0;
 
     for (const extra of toArray(extras)) {
-      if (this.isApplicableEffect(extra, support.inputs, support.fromSelf)) {
+      if (isApplicableEffect(extra, this.info, support.inputs, support.fromSelf)) {
         result += extra.value;
       }
     }
@@ -166,7 +159,7 @@ export class BareBonusGetter extends ModifierGetterCore {
     if (typeof config === "number") {
       bonus.value += this.scaleRefi(config, support.refi);
     } //
-    else if (config && this.isApplicableEffect(config, support.inputs, support.fromSelf)) {
+    else if (config && isApplicableEffect(config, this.info, support.inputs, support.fromSelf)) {
       const extra = this.getBareBonus(config, support);
 
       if (extra) {
@@ -208,7 +201,7 @@ export class BareBonusGetter extends ModifierGetterCore {
         if (stack.capacity) {
           const { value, extra } = stack.capacity;
           input = value - input;
-          if (this.isApplicableEffect(extra, inputs, fromSelf)) input += extra.value;
+          if (isApplicableEffect(extra, this.info, inputs, fromSelf)) input += extra.value;
           input = Math.max(input, 0);
         }
         result = input;
@@ -300,7 +293,7 @@ export class BareBonusGetter extends ModifierGetterCore {
       if (result <= stack.baseline) return 0;
       result -= stack.baseline;
     }
-    if (stack.extra && this.isApplicableEffect(stack.extra, inputs, fromSelf)) {
+    if (stack.extra && isApplicableEffect(stack.extra, this.info, inputs, fromSelf)) {
       result += stack.extra.value;
     }
     result = this.applyMax(result, stack.max, support);
