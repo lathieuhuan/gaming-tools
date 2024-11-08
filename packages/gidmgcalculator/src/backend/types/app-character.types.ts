@@ -11,9 +11,7 @@ import type {
 } from "./common.types";
 import type {
   CalcItemType,
-  CharacterEffectLevelScale,
   CharacterMilestone,
-  EffectMax,
   EntityBonus,
   EntityBonusCore,
   EntityBuff,
