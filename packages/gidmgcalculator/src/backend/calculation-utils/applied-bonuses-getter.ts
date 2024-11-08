@@ -12,7 +12,7 @@ import type {
 import Array_ from "@Src/utils/array-utils";
 import { ELEMENT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
-import { ModifierStackingControl } from "../controls";
+import { ModifierStackingControl, TotalAttributeControl } from "../controls";
 import { isApplicableEffect } from "./isApplicableEffect";
 import { BareBonusGetter, type GetBareBonusSupportInfo } from "./bare-bonus-getter";
 
@@ -25,8 +25,8 @@ type ApplyBonusSupportInfo = {
 export class AppliedBonusesGetter extends BareBonusGetter {
   private modStackingCtrl = new ModifierStackingControl();
 
-  constructor(protected info: CalculationInfo) {
-    super(info);
+  constructor(protected info: CalculationInfo, protected totalAttrCtrl?: TotalAttributeControl) {
+    super(info, totalAttrCtrl);
   }
 
   private isFinalBonus(basedOn?: EntityBonusBasedOn) {
@@ -60,7 +60,7 @@ export class AppliedBonusesGetter extends BareBonusGetter {
 
     for (const target of Array_.toArray(targets)) {
       const isStackable =
-        target.module.slice(0, 2) === "id" &&
+        target.module.slice(0, 2) !== "id" &&
         this.modStackingCtrl.isStackable({ trackId: support.unstackableId, paths: target.path });
 
       if (!isStackable) continue;

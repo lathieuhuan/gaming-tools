@@ -26,7 +26,7 @@ type InternalSupportInfo = GetBareBonusSupportInfo & {
 };
 
 export class BareBonusGetter {
-  constructor(protected info: CalculationInfo, private totalAttrCtrl?: TotalAttributeControl) {}
+  constructor(protected info: CalculationInfo, protected totalAttrCtrl?: TotalAttributeControl) {}
 
   // ========== UTILS ==========
 

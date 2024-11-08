@@ -193,7 +193,7 @@ const ArtifactSmith = ({
       onChange={(mold, isConfigStep) => {
         if (mold) {
           if (isConfigStep) {
-            onForgeArtifact(Entity_.createArtifact({ ...mold, type: forcedType || artifactTypes[0] }, 0));
+            setArtifactConfig(Entity_.createArtifact({ ...mold, type: forcedType || artifactTypes[0] }, 0));
             setMaxRarity(mold.rarity);
           } else {
             onForgeArtifact(Entity_.createArtifact({ ...mold, type: artifactTypes[0] }));

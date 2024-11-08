@@ -39,11 +39,14 @@ export default function getCalculationStats(
   const totalAttrCtrl = new TotalAttributeControl(tracker);
   const artAttr = totalAttrCtrl.construct(char, appChar, weapon, appWeapon, artifacts);
   const attBonusesCtrl = new AttackBonusesControl();
-  const bonusesGetter = new AppliedBonusesGetter({
-    char,
-    appChar,
-    partyData,
-  });
+  const bonusesGetter = new AppliedBonusesGetter(
+    {
+      char,
+      appChar,
+      partyData,
+    },
+    totalAttrCtrl
+  );
 
   const applyBuff: AppliedBonusesGetter["getAppliedBonuses"] = (...args) => {
     const result = bonusesGetter.getAppliedBonuses(...args);

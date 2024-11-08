@@ -35,9 +35,6 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
   const possibleMainStatTypes = ArtifactCalc.possibleMainStatTypesOf(artifact.type);
   const mainStatValue = ArtifactCalc.mainStatValueOf(artifact);
 
-  console.log(mainStatType);
-  console.log(possibleMainStatTypes);
-
   return (
     <div className={className}>
       <div className={`px-4 pt-1 bg-rarity-${rarity}`} onDoubleClick={() => console.log(artifact)}>
