@@ -25,7 +25,8 @@ import {
 } from "@Backend";
 import { EXPORTED_SETUP_VERSION } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
-import { Setup_, findByCode } from "@Src/utils";
+import Setup_ from "@Src/utils/setup-utils";
+import Array_ from "@Src/utils/array-utils";
 import { CUSTOM_BUFF_CATEGORIES, DIVIDER } from "./setup-porter-config";
 
 export type DecodeError = "OLD_VERSION" | "UNKNOWN";
@@ -119,7 +120,7 @@ export function decodeSetup(code: string): DecodeSuccessResult | DecodeFailResul
 
     const [charCode, levelIndex, cons, NAs, ES, EB] = split(_charCode, 1);
     const [wpCode, wpTypeIndex, wpLvIndex, wpRefi] = split(_wpCode, 1);
-    const { name = "" } = findByCode(characters, +charCode) || {};
+    const { name = "" } = Array_.findByCode(characters, +charCode) || {};
 
     const decodeArtifact = (str: string | null, artType: ArtifactType): CalcArtifact | null => {
       if (!str) return null;

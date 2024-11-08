@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
 import { MAX_CALC_SETUPS } from "@Src/constants";
-import { Setup_, findById } from "@Src/utils";
+import Setup_ from "@Src/utils/setup-utils";
+import Array_ from "@Src/utils/array-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   NewSetupManageInfo,
@@ -10,6 +11,23 @@ import {
   selectStandardId,
   updateSetups,
 } from "@Store/calculator-slice";
+
+function getNewSetupName(setups: Array<{ name: string }>) {
+  const existedIndexes = [1, 2, 3, 4];
+
+  for (const { name } of setups) {
+    const parts = name.split(" ");
+
+    if (parts.length === 2 && parts[0] === "Setup" && !isNaN(+parts[1])) {
+      const i = existedIndexes.indexOf(+parts[1]);
+
+      if (i !== -1) {
+        existedIndexes.splice(i, 1);
+      }
+    }
+  }
+  return "Setup " + existedIndexes[0];
+}
 
 export function useSetupDirectorKit() {
   const dispatch = useDispatch();
@@ -24,7 +42,7 @@ export function useSetupDirectorKit() {
       isCompared: comparedIds.includes(manageInfos.ID),
     }))
   );
-  const [tempStandardId, setTempStandardId] = useState(findById(tempSetups, standardId)?.ID || 0);
+  const [tempStandardId, setTempStandardId] = useState(Array_.findById(tempSetups, standardId)?.ID || 0);
   const [errorCode, setErrorCode] = useState<"NO_SETUPS" | "">("");
 
   const displayedSetups = tempSetups.filter((tempSetup) => tempSetup.status !== "REMOVED");
@@ -94,7 +112,7 @@ export function useSetupDirectorKit() {
   const addNewSetup = () => {
     setTempSetups((prev) => {
       const newSetup: NewSetupManageInfo = {
-        ...Setup_.getManageInfo({ name: Setup_.getNewSetupName(prev) }),
+        ...Setup_.getManageInfo({ name: getNewSetupName(prev) }),
         status: "NEW",
         isCompared: false,
       };

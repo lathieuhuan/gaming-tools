@@ -5,7 +5,8 @@ import { Badge, Button, VersatileSelect } from "rond";
 import { LEVELS, Level } from "@Backend";
 
 import { $AppWeapon } from "@Src/services";
-import { Utils_, genSequentialOptions } from "@Src/utils";
+import { genSequentialOptions } from "@Src/utils";
+import Entity_ from "@Src/utils/entity-utils";
 import { selectWeapon, changeWeapon, updateWeapon } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
 import { WeaponForge, WeaponInventory, GenshinImage } from "@Src/components";
@@ -101,7 +102,7 @@ export default function SectionWeapon() {
         weaponType={weapon.type}
         buttonText="Select"
         onClickButton={(weapon) => {
-          dispatch(changeWeapon(Utils_.userItemToCalcItem(weapon)));
+          dispatch(changeWeapon(Entity_.userItemToCalcItem(weapon)));
         }}
         onClose={closeModal}
       />

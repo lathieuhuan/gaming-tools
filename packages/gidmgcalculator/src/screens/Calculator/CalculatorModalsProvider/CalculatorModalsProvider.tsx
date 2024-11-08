@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Modal } from "rond";
 
-import { Setup_ } from "@Src/utils";
+import Setup_ from "@Src/utils/setup-utils";
 import { useStoreSnapshot } from "@Src/features";
 import { useDispatch } from "@Store/hooks";
 import { initNewSessionWithCharacter } from "@Store/thunks";

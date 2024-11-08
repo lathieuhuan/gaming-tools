@@ -5,7 +5,9 @@ import { LEVELS, Level, WeaponCalc } from "@Backend";
 import type { CalcWeapon, UserWeapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppWeapon } from "@Src/services";
-import { genSequentialOptions, parseWeaponDescription, Utils_ } from "@Src/utils";
+import { genSequentialOptions } from "@Src/utils";
+import { parseWeaponDescription } from "@Src/utils/description-parsers";
+import Entity_ from "@Src/utils/entity-utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
@@ -81,7 +83,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
               </p>
               <p className={`text-rarity-${rarity} text-1.5xl leading-7 font-bold`}>
                 {WeaponCalc.getSubStatValue(weapon.level, subStat.scale)}
-                {Utils_.suffixOf(subStat.type)}
+                {Entity_.suffixOf(subStat.type)}
               </p>
             </div>
           ) : null}

@@ -3,7 +3,7 @@ import { round } from "rond";
 import { CalculationFinalResultGroup, CalcItemRecord } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
-import { Utils_ } from "@Src/utils";
+import { suffixOf } from "@Src/utils";
 import { Green } from "@Src/components";
 
 interface PartConfig {
@@ -90,7 +90,7 @@ export function CalcItemTracker({
                 <li>
                   <p className="text-primary-1">Exclusive Bonus</p>
                   {record.exclusives.map((bonus, i) => {
-                    const percent = Utils_.suffixOf(bonus.type);
+                    const percent = suffixOf(bonus.type);
 
                     return bonus.records.map((record, j) => {
                       return (

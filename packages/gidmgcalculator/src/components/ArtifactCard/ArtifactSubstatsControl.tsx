@@ -4,7 +4,7 @@ import { AttributeStat } from "@Backend";
 
 import type { ArtifactSubStat } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { Utils_ } from "@Src/utils";
+import Entity_ from "@Src/utils/entity-utils";
 
 // Constant
 import { ARTIFACT_SUBSTAT_TYPES } from "@Src/constants";
@@ -69,7 +69,7 @@ export function ArtifactSubstatsControl({
               onChange={(value) => onChangeSubStat?.(i, { value })}
               onKeyDown={onKeyDownValue(i)}
             />
-            <span className="w-4 pt-2 pb-1">{Utils_.suffixOf(type)}</span>
+            <span className="w-4 pt-2 pb-1">{Entity_.suffixOf(type)}</span>
           </div>
         ) : (
           <div key={i} className="mt-2 pt-2 pb-1 flex items-center bg-surface-2">
@@ -80,7 +80,7 @@ export function ArtifactSubstatsControl({
               </span>{" "}
               <span className={isValid ? "text-bonus-color" : "text-danger-2"}>
                 +{value}
-                {Utils_.suffixOf(type)}
+                {Entity_.suffixOf(type)}
               </span>
             </p>
           </div>

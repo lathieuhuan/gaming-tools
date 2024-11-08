@@ -4,7 +4,7 @@ import { SiTarget } from "react-icons/si";
 import { clsx, ConfirmModal } from "rond";
 
 import { MAX_CALC_SETUPS } from "@Src/constants";
-import { findById } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 
 // Store
 import {
@@ -99,7 +99,7 @@ export function SetupSelect() {
     <>
       <ComplexSelect
         selectId="setup-select"
-        value={findById(setupManageInfos, activeId)?.ID}
+        value={Array_.findById(setupManageInfos, activeId)?.ID}
         options={setupManageInfos.map((setup, i) => {
           return {
             label: setup.name,

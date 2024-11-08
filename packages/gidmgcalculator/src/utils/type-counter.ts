@@ -1,34 +1,3 @@
-type UnknownObject = Record<string | number, unknown>;
-
-export class Object_ {
-  static keys<TObject extends UnknownObject = UnknownObject>(obj: TObject): (keyof TObject)[] {
-    return Object.keys(obj);
-  }
-
-  static forEach<TObject extends UnknownObject = UnknownObject, TKey extends keyof TObject = keyof TObject>(
-    obj: TObject,
-    callback: (key: TKey, value: TObject[TKey]) => void
-  ) {
-    for (const key in obj) callback(key as any, obj[key] as any);
-  }
-}
-
-export class Array_ {
-  static truthyList<TObject extends UnknownObject = UnknownObject>(list: Array<TObject | null | undefined>) {
-    return {
-      pickEach<TKey extends keyof TObject>(key: TKey) {
-        return {
-          use(callback: (value: TObject[TKey]) => void) {
-            for (const item of list) {
-              if (item) callback(item[key]);
-            }
-          },
-        };
-      },
-    };
-  }
-}
-
 export class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   private count: Record<TKey, number>;
 

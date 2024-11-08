@@ -4,7 +4,7 @@ import { ATTACK_ELEMENTS, ATTACK_PATTERNS, REACTIONS } from "@Backend";
 
 import type { CustomBuffCtrl, CustomBuffCtrlCategory, CustomBuffCtrlType } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { Utils_, toCustomBuffLabel } from "@Src/utils";
+import { suffixOf, toCustomBuffLabel } from "@Src/utils";
 import { useDispatch } from "@Store/hooks";
 import { updateCustomBuffCtrls } from "@Store/calculator-slice";
 
@@ -48,7 +48,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
   });
 
   const subTypes = CATEGORIES[config.category].subTypes;
-  const sign = Utils_.suffixOf(config.subType || config.type);
+  const sign = suffixOf(config.subType || config.type);
 
   const onChangeCategory = (category: CustomBuffCtrlCategory) => {
     const subType = CATEGORIES[category].subTypes?.[0] as CustomBuffCtrl["subType"];

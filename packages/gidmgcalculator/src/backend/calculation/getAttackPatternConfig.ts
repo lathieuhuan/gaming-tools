@@ -15,7 +15,7 @@ import type {
 } from "../types";
 import type { AttackBonusesControl, CalcItemRecord } from "../controls";
 
-import { toArray } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { CharacterCalc, GeneralCalc } from "../common-utils";
 import { TrackerControl } from "../controls";
 
@@ -141,7 +141,7 @@ export default function getAttackPatternConfig({
         let bases: number[] = [];
 
         // CALCULATE BASE DAMAGE
-        for (const factor of toArray(item.multFactors)) {
+        for (const factor of Array_.toArray(item.multFactors)) {
           const { root, scale, basedOn } = configMultFactor(factor);
           const finalMult = root * CharacterCalc.getTalentMult(scale, level) + getBonus("mult_");
 

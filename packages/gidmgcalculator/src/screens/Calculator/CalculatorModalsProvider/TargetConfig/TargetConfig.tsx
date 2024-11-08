@@ -4,7 +4,7 @@ import { ATTACK_ELEMENTS, AttackElement, ElementType } from "@Backend";
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
 import { MAX_TARGET_LEVEL } from "@Src/constants";
-import { toArray } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 import { selectTarget, updateTarget } from "@Store/calculator-slice";
@@ -22,7 +22,7 @@ function TargetConfigCore() {
   }
 
   const { variant } = monster;
-  const inputConfigs = monster.inputConfigs ? toArray(monster.inputConfigs) : [];
+  const inputConfigs = monster.inputConfigs ? Array_.toArray(monster.inputConfigs) : [];
 
   const onChangeElementVariant = (value: string | number) => {
     dispatch(updateTarget({ variantType: value as ElementType }));

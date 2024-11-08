@@ -1,7 +1,8 @@
 import type { ElementType, ModInputConfig } from "@Backend";
 
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
-import { parseResonanceDescription, toArray } from "@Src/utils";
+import { parseResonanceDescription } from "@Src/utils/description-parsers";
+import Array_ from "@Src/utils/array-utils";
 
 type RenderInfo = {
   name: string;
@@ -50,7 +51,7 @@ interface ResonanceBuffItemProps extends Omit<GenshinModifierViewProps, "heading
 export function ResonanceBuffItem({ element, ...coreProps }: ResonanceBuffItemProps) {
   const info = RESONANCE_INFO[element] || {};
   const { description = info.description } = coreProps;
-  const parsedDescription = toArray(description)
+  const parsedDescription = Array_.toArray(description)
     .map((part) => parseResonanceDescription(part))
     .join(" ");
 

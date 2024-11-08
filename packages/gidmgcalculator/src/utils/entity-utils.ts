@@ -1,6 +1,6 @@
 import type { AdvancedPick } from "rond";
 import type { Artifact, CalcArtifact, CalcWeapon, Character, UserArtifact, UserWeapon, Weapon } from "@Src/types";
-import { ATTACK_ELEMENTS, ArtifactType, AttributeStat, Level, WeaponType } from "@Backend";
+import { ATTACK_ELEMENTS, ArtifactCalc, ArtifactType, Level, WeaponType } from "@Backend";
 import { $AppSettings, $AppWeapon } from "@Src/services";
 
 // ========== TYPES ==========
@@ -31,17 +31,13 @@ const ARTIFACT_TYPE_ICONS: ArtifactTypeIcon[] = [
   { value: "circlet", icon: "6/64/Icon_Circlet_of_Logos" },
 ];
 
-export class Utils_ {
+export default class Entity_ {
   static splitLv(subject: { level: Level }) {
     return subject.level.split("/").map((lv) => +lv);
   }
 
   static suffixOf(stat: string) {
     return stat.slice(-1) === "_" || ATTACK_ELEMENTS.includes(stat as any) ? "%" : "";
-  }
-
-  static isCoreStat(key: AttributeStat) {
-    return key === "hp" || key === "atk" || key === "def";
   }
 
   static createCharacter(name: string, info?: Partial<Character>): Character {
@@ -89,7 +85,6 @@ export class Utils_ {
       type,
       rarity,
       level = Math.min(artLevel, rarity === 5 ? 20 : 16),
-      mainStatType = "atk_",
       subStats = [
         { type: "def", value: 0 },
         { type: "def_", value: 0 },
@@ -98,13 +93,21 @@ export class Utils_ {
       ],
     } = config;
 
+    const possibleMainStatTypes = ArtifactCalc.possibleMainStatTypesOf(type);
+
+    let mainStatType = config.mainStatType;
+
+    if (!mainStatType || !possibleMainStatTypes.includes(mainStatType)) {
+      mainStatType = possibleMainStatTypes[0];
+    }
+
     return {
       ID,
       type,
       code: config.code,
       rarity,
       level,
-      mainStatType: type === "flower" ? "hp" : type === "plume" ? "atk" : mainStatType,
+      mainStatType,
       subStats,
     };
   }

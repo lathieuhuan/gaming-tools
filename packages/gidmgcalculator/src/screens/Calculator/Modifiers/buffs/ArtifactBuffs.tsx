@@ -8,7 +8,8 @@ import {
   changeArtifactBuffCtrlInput,
   updateTeammateArtifact,
 } from "@Store/calculator-slice";
-import { deepCopy, findByIndex } from "@Src/utils";
+import Object_ from "@Src/utils/object-utils";
+import Array_ from "@Src/utils/array-utils";
 import { ArtifactBuffsView } from "@Src/components";
 
 export default function ArtifactBuffs() {
@@ -44,8 +45,8 @@ export default function ArtifactBuffs() {
       }}
       getTeammateHandlers={({ ctrl, ctrls, teammateIndex }) => {
         const updateBuffCtrl = (value: number | "toggle", inputIndex = 0) => {
-          const newBuffCtrls = deepCopy(ctrls);
-          const buffCtrl = findByIndex(newBuffCtrls, ctrl.index);
+          const newBuffCtrls = Object_.clone(ctrls);
+          const buffCtrl = Array_.findByIndex(newBuffCtrls, ctrl.index);
           if (!buffCtrl) return;
 
           if (value === "toggle") {

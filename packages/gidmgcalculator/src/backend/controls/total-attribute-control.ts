@@ -10,7 +10,9 @@ import type {
   TotalAttribute,
 } from "../types";
 
-import { applyPercent, Object_, toArray, Utils_ } from "@Src/utils";
+import { applyPercent } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
+import Object_ from "@Src/utils/object-utils";
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
 import { ArtifactCalc, GeneralCalc, WeaponCalc } from "../common-utils";
@@ -172,7 +174,7 @@ export class TotalAttributeControl {
   };
 
   applyBonuses = (bonuses: BonusToApply | BonusToApply[]) => {
-    for (const bonus of toArray(bonuses)) {
+    for (const bonus of Array_.toArray(bonuses)) {
       if (bonus.isStable ?? true) {
         this.totalAttr[bonus.toStat].stableBonus += bonus.value;
       } else {
@@ -194,7 +196,7 @@ export class TotalAttributeControl {
     const base = this.getBase(key);
     let total = base + this.totalAttr[key].stableBonus + this.totalAttr[key].unstableBonus;
 
-    if (Utils_.isCoreStat(key)) {
+    if (isCoreStat(key)) {
       const percent = this.totalAttr[`${key}_`];
       const totalPercent = percent.base + percent.stableBonus + percent.unstableBonus;
       total += (base * totalPercent) / 100;
@@ -210,7 +212,7 @@ export class TotalAttributeControl {
     const base = this.getBase(key);
     let total = base + this.totalAttr[key].stableBonus;
 
-    if (Utils_.isCoreStat(key)) {
+    if (isCoreStat(key)) {
       const percent = this.totalAttr[`${key}_`];
       const totalPercent = percent.base + percent.stableBonus;
       total += (base * totalPercent) / 100;
@@ -225,11 +227,15 @@ export class TotalAttributeControl {
       if (key === "hp_" || key === "atk_" || key === "def_") {
         continue;
       }
-      if (Utils_.isCoreStat(key)) {
+      if (isCoreStat(key)) {
         totalAttr[`${key}_base`] = this.getBase(key);
       }
       totalAttr[key] = this.getTotal(key);
     }
     return totalAttr;
   }
+}
+
+function isCoreStat(key: AttributeStat) {
+  return key === "hp" || key === "atk" || key === "def";
 }

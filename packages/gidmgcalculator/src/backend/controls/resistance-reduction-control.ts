@@ -9,9 +9,9 @@ import type {
 } from "../types";
 import type { TrackerControl } from "./tracker-control";
 
+import Array_ from "@Src/utils/array-utils";
 import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
-import { toArray } from "@Src/utils";
 import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
 import { getPenaltyValue } from "../calculation-utils/getPenaltyValue";
 
@@ -51,7 +51,7 @@ export class ResistanceReductionControl {
     const { info } = this;
     const paths = new Set<ResistanceReductionKey>();
 
-    for (const target of toArray(targets)) {
+    for (const target of Array_.toArray(targets)) {
       if (typeof target === "string") {
         paths.add(target);
         continue;
@@ -83,7 +83,7 @@ export class ResistanceReductionControl {
   applyDebuff = (debuff: EntityDebuff, inputs: number[], fromSelf: boolean, description: string) => {
     if (!debuff.effects) return;
 
-    for (const config of toArray(debuff.effects)) {
+    for (const config of Array_.toArray(debuff.effects)) {
       const penalty = getPenaltyValue(config, this.info, inputs, fromSelf);
 
       if (isApplicableEffect(config, this.info, inputs, fromSelf)) {

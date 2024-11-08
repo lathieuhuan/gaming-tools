@@ -4,7 +4,7 @@ import { ArtifactCalc, AttributeStat } from "@Backend";
 import type { ArtifactSubStat, CalcArtifact, UserArtifact } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppArtifact } from "@Src/services";
-import { Utils_ } from "@Src/utils";
+import { suffixOf } from "@Src/utils";
 
 // Component
 import { ArtifactLevelSelect } from "./ArtifactLevelSelect";
@@ -34,6 +34,9 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
   const { rarity = 5, mainStatType } = artifact;
   const possibleMainStatTypes = ArtifactCalc.possibleMainStatTypesOf(artifact.type);
   const mainStatValue = ArtifactCalc.mainStatValueOf(artifact);
+
+  console.log(mainStatType);
+  console.log(possibleMainStatTypes);
 
   return (
     <div className={className}>
@@ -82,7 +85,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
         )}
         <p className={clsx(`text-rarity-${rarity} text-2xl leading-7 font-bold`, mutable ? "pl-6" : "pl-2")}>
           {mainStatValue}
-          {Utils_.suffixOf(mainStatType)}
+          {suffixOf(mainStatType)}
         </p>
       </div>
 

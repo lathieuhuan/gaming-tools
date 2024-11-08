@@ -5,7 +5,8 @@ import type {
   EffectApplicableCondition,
   EffectUsableCondition,
 } from "@Src/backend/types";
-import { TypeCounter } from "@Src/utils";
+
+import { TypeCounter } from "@Src/utils/type-counter";
 import { GeneralCalc } from "@Src/backend/common-utils";
 import { isGrantedEffect } from "./isGrantedEffect";
 

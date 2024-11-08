@@ -1,7 +1,9 @@
 import { GeneralCalc, WeaponType } from "@Backend";
 
 import type { CalcWeapon, ModifierCtrl, UserArtifact, UserCharacter, UserWeapon } from "@Src/types";
-import { Utils_, Modifier_, findById } from "@Src/utils";
+import Modifier_ from "@Src/utils/modifier-utils";
+import Entity_ from "@Src/utils/entity-utils";
+import Array_ from "@Src/utils/array-utils";
 
 export type CharacterForInit = Partial<UserCharacter> & {
   name: string;
@@ -21,25 +23,25 @@ export function parseUserCharacter({
   weaponType,
   seedID,
 }: ParseUserCharacterArgs) {
-  const char = Utils_.createCharacter(name, info);
+  const char = Entity_.createCharacter(name, info);
 
   let weapon: CalcWeapon;
   let wpBuffCtrls: ModifierCtrl[];
-  const existedWeapon = findById(userWps, weaponID);
+  const existedWeapon = Array_.findById(userWps, weaponID);
 
   if (existedWeapon) {
-    weapon = Utils_.userItemToCalcItem(existedWeapon, seedID++);
+    weapon = Entity_.userItemToCalcItem(existedWeapon, seedID++);
     wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, existedWeapon);
   } //
   else {
-    const newWeapon = Utils_.createWeapon({ type: weaponType }, seedID++);
+    const newWeapon = Entity_.createWeapon({ type: weaponType }, seedID++);
     weapon = newWeapon;
     wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, newWeapon);
   }
 
   const artifacts = artifactIDs.map((id) => {
-    const artifact = id ? findById(userArts, id) : undefined;
-    return artifact ? Utils_.userItemToCalcItem(artifact, seedID++) : null;
+    const artifact = id ? Array_.findById(userArts, id) : undefined;
+    return artifact ? Entity_.userItemToCalcItem(artifact, seedID++) : null;
   });
   const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
   const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(setBonuses);

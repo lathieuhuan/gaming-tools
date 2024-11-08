@@ -1,5 +1,6 @@
 import type { Artifact } from "@Src/types";
-import type { ArtifactType, AttackElement, AttributeStat } from "../types";
+import type { ArtifactType, AttributeStat } from "../types";
+import Object_ from "@Src/utils/object-utils";
 
 const percent1 = {
   4: [6.3, 8.1, 9.9, 11.6, 13.4, 15.2, 17, 18.8, 20.6, 22.3, 24.1, 25.9, 27.7, 29.5, 31.3, 33, 34.8],
@@ -23,10 +24,7 @@ const EM = {
   5: [28, 36, 44, 52, 60, 68, 76, 84, 91, 99, 107, 115, 123, 131, 139, 147, 155, 163, 171, 179, 187],
 };
 
-const ARTIFACT_MAIN_STATS: Record<
-  ArtifactType,
-  Partial<Record<AttributeStat | AttackElement, { [k: number]: number[] }>>
-> = {
+const ARTIFACT_MAIN_STATS: Record<ArtifactType, Partial<Record<AttributeStat, { [k: number]: number[] }>>> = {
   flower: {
     hp: {
       4: [645, 828, 1011, 1194, 1377, 1559, 1742, 1925, 2108, 2291, 2474, 2657, 2839, 3022, 3205, 3388, 3571],
@@ -104,7 +102,7 @@ export class ArtifactCalc {
     return ARTIFACT_MAIN_STATS[type][mainStatType]?.[rarity][level] || 0;
   }
 
-  static possibleMainStatTypesOf(artifactType: ArtifactType): string[] {
-    return Object.keys(ARTIFACT_MAIN_STATS[artifactType]);
+  static possibleMainStatTypesOf(artifactType: ArtifactType) {
+    return Object_.keys(ARTIFACT_MAIN_STATS[artifactType]);
   }
 }

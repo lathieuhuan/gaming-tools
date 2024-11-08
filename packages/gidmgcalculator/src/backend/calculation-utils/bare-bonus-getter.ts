@@ -11,7 +11,7 @@ import type {
   EntityBonusValueByOption,
 } from "../types";
 
-import { toArray } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { CharacterCalc, GeneralCalc } from "../common-utils";
 import { isApplicableEffect } from "./isApplicableEffect";
 
@@ -86,7 +86,7 @@ export class BareBonusGetter {
     if (!extras) return 0;
     let result = 0;
 
-    for (const extra of toArray(extras)) {
+    for (const extra of Array_.toArray(extras)) {
       if (isApplicableEffect(extra, this.info, support.inputs, support.fromSelf)) {
         result += extra.value;
       }

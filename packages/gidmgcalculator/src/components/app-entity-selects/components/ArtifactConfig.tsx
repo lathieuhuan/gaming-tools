@@ -1,7 +1,7 @@
 import { Rarity } from "rond";
 
 import type { Artifact } from "@Src/types";
-import { deepCopy } from "@Src/utils";
+import Object_ from "@Src/utils/object-utils";
 import { ArtifactCard, type ArtifactCardAction } from "../../ArtifactCard";
 
 interface ArtifactConfigProps {
@@ -66,7 +66,7 @@ export function ArtifactConfig({
               onUpdateConfig?.({ mainStatType });
             }}
             onChangeSubStat={(index, changes, artifact) => {
-              const subStats = deepCopy(artifact.subStats);
+              const subStats = Object_.clone(artifact.subStats);
               subStats[index] = Object.assign(subStats[index], changes);
               onUpdateConfig?.({ subStats });
             }}

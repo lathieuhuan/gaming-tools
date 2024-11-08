@@ -30,7 +30,11 @@ import type {
 
 import { RESONANCE_ELEMENT_TYPES } from "@Src/constants";
 import { $AppData, $AppCharacter, $AppSettings, $AppArtifact } from "@Src/services";
-import { deepCopy, findById, toArray, findByIndex, Setup_, Modifier_, Utils_ } from "@Src/utils";
+import Setup_ from "@Src/utils/setup-utils";
+import Modifier_ from "@Src/utils/modifier-utils";
+import Object_ from "@Src/utils/object-utils";
+import Array_ from "@Src/utils/array-utils";
+import Entity_ from "@Src/utils/entity-utils";
 import { calculate, getCharDataFromState } from "./calculator-slice.utils";
 
 // const defaultChar = {
@@ -111,7 +115,7 @@ export const calculatorSlice = createSlice({
 
       if (setupsById[sourceId]) {
         const setupID = Date.now();
-        let setupName = findById(setupManageInfos, sourceId)?.name;
+        let setupName = Array_.findById(setupManageInfos, sourceId)?.name;
 
         if (setupName) {
           setupName = Setup_.getCopyName(
@@ -163,7 +167,7 @@ export const calculatorSlice = createSlice({
 
       if (charInfoIsSeparated) {
         if (setupIds) {
-          for (const setupId of toArray(setupIds)) {
+          for (const setupId of Array_.toArray(setupIds)) {
             Object.assign(setupsById[setupId].char, newConfig);
           }
         } else {
@@ -293,7 +297,10 @@ export const calculatorSlice = createSlice({
     },
     toggleTeammateModCtrl: (state, action: ToggleTeammateModCtrlAction) => {
       const { teammateIndex, modCtrlName, ctrlIndex } = action.payload;
-      const ctrl = findByIndex(state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName] || [], ctrlIndex);
+      const ctrl = Array_.findByIndex(
+        state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName] || [],
+        ctrlIndex
+      );
 
       if (ctrl) {
         ctrl.activated = !ctrl.activated;
@@ -302,7 +309,10 @@ export const calculatorSlice = createSlice({
     },
     changeTeammateModCtrlInput: (state, action: ChangeTeammateModCtrlInputAction) => {
       const { teammateIndex, modCtrlName, ctrlIndex, inputIndex, value } = action.payload;
-      const ctrl = findByIndex(state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName] || [], ctrlIndex);
+      const ctrl = Array_.findByIndex(
+        state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName] || [],
+        ctrlIndex
+      );
 
       if (ctrl && ctrl.inputs) {
         ctrl.inputs[inputIndex] = value;
@@ -395,7 +405,7 @@ export const calculatorSlice = createSlice({
     toggleModCtrl: (state, action: ToggleModCtrlAction) => {
       const { modCtrlName, ctrlIndex } = action.payload;
       const ctrls = state.setupsById[state.activeId][modCtrlName];
-      const ctrl = modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : findByIndex(ctrls, ctrlIndex);
+      const ctrl = modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : Array_.findByIndex(ctrls, ctrlIndex);
 
       if (ctrl) {
         ctrl.activated = !ctrl.activated;
@@ -405,7 +415,7 @@ export const calculatorSlice = createSlice({
     changeModCtrlInput: (state, action: ChangeModCtrlInputAction) => {
       const { modCtrlName, ctrlIndex, inputIndex, value } = action.payload;
       const ctrls = state.setupsById[state.activeId][modCtrlName];
-      const ctrl = modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : findByIndex(ctrls, ctrlIndex);
+      const ctrl = modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : Array_.findByIndex(ctrls, ctrlIndex);
 
       if (ctrl?.inputs) {
         ctrl.inputs[inputIndex] = value;
@@ -439,15 +449,15 @@ export const calculatorSlice = createSlice({
 
       switch (actionType) {
         case "ADD":
-          activeSetup.customBuffCtrls.push(...toArray(ctrls));
+          activeSetup.customBuffCtrls.push(...Array_.toArray(ctrls));
           break;
         case "EDIT":
-          for (const { index, ...newInfo } of toArray(ctrls)) {
+          for (const { index, ...newInfo } of Array_.toArray(ctrls)) {
             Object.assign(activeSetup.customBuffCtrls[index], newInfo);
           }
           break;
         case "REPLACE":
-          activeSetup.customBuffCtrls = toArray(ctrls);
+          activeSetup.customBuffCtrls = Array_.toArray(ctrls);
           break;
       }
       calculate(state);
@@ -458,15 +468,15 @@ export const calculatorSlice = createSlice({
 
       switch (actionType) {
         case "ADD":
-          activeSetup.customDebuffCtrls.unshift(...toArray(ctrls));
+          activeSetup.customDebuffCtrls.unshift(...Array_.toArray(ctrls));
           break;
         case "EDIT":
-          for (const { index, ...newInfo } of toArray(ctrls)) {
+          for (const { index, ...newInfo } of Array_.toArray(ctrls)) {
             Object.assign(activeSetup.customDebuffCtrls[index], newInfo);
           }
           break;
         case "REPLACE":
-          activeSetup.customDebuffCtrls = toArray(ctrls);
+          activeSetup.customDebuffCtrls = Array_.toArray(ctrls);
           break;
       }
       calculate(state);
@@ -490,7 +500,7 @@ export const calculatorSlice = createSlice({
       if (monster?.code) {
         const { resistance, variant } = monster;
         const { base, ...otherResistances } = resistance;
-        const inputConfigs = monster.inputConfigs ? toArray(monster.inputConfigs) : [];
+        const inputConfigs = monster.inputConfigs ? Array_.toArray(monster.inputConfigs) : [];
 
         for (const atkElmt of ATTACK_ELEMENTS) {
           target.resistances[atkElmt] = base;
@@ -559,7 +569,7 @@ export const calculatorSlice = createSlice({
       state.comparedIds = [];
 
       const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, appChar.name);
-      const newWeapon = Utils_.createWeapon({ type: appChar.weaponType });
+      const newWeapon = Entity_.createWeapon({ type: appChar.weaponType });
       const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, newWeapon);
       const elmtModCtrls = Modifier_.createElmtModCtrls();
       const tempManageInfos: CalcSetupManageInfo[] = [];
@@ -575,7 +585,7 @@ export const calculatorSlice = createSlice({
             break;
           }
           case "OLD": {
-            const oldInfo = findById(setupManageInfos, ID);
+            const oldInfo = Array_.findById(setupManageInfos, ID);
             if (oldInfo) {
               tempManageInfos.push({
                 ...oldInfo,
@@ -591,7 +601,7 @@ export const calculatorSlice = createSlice({
                 name: newSetupName,
                 type: "original",
               });
-              setupsById[ID] = deepCopy(setupsById[originId]);
+              setupsById[ID] = Object_.clone(setupsById[originId]);
             }
             break;
           }
@@ -626,7 +636,7 @@ export const calculatorSlice = createSlice({
         delete state.resultById[ID];
       }
 
-      const activeSetup = findById(tempManageInfos, activeId);
+      const activeSetup = Array_.findById(tempManageInfos, activeId);
       const newActiveId = activeSetup ? activeSetup.ID : tempManageInfos[0].ID;
 
       // if (state.configs.charInfoIsSeparated && !newConfigs.charInfoIsSeparated) {

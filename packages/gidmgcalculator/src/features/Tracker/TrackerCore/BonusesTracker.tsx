@@ -2,7 +2,7 @@ import { round } from "rond";
 import { ATTACK_ELEMENTS, type AttackBonuses, type AttackBonusKey } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
-import { Utils_ } from "@Src/utils";
+import { suffixOf } from "@Src/utils";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
 interface BonusesTrackerProps {
@@ -50,7 +50,7 @@ export function BonusesTracker({ attBonus }: BonusesTrackerProps) {
 
             <div>
               {list.map((item) => {
-                const suffix = Utils_.suffixOf(item.key);
+                const suffix = suffixOf(item.key);
                 const decimalDigits = suffix ? 2 : 0;
 
                 return (

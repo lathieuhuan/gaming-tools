@@ -5,7 +5,7 @@ import type { CalcSetup, PartyData } from "@Src/types";
 import { RESONANCE_STAT, AMPLIFYING_REACTIONS, QUICKEN_REACTIONS, TRANSFORMATIVE_REACTIONS } from "../constants";
 
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
-import { findByIndex } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { GeneralCalc } from "../common-utils";
 import { AttackBonusesControl, TotalAttributeControl, TrackerControl } from "../controls";
 import { isGrantedEffect } from "../calculation-utils/isGrantedEffect";
@@ -69,7 +69,7 @@ export default function getCalculationStats(
       }
     }
     for (const ctrl of selfBuffCtrls) {
-      const buff = findByIndex(buffs, ctrl.index);
+      const buff = Array_.findByIndex(buffs, ctrl.index);
 
       if (ctrl.activated && buff && isGrantedEffect(buff, char)) {
         applyBuff(
@@ -125,7 +125,7 @@ export default function getCalculationStats(
     if (!appWeapon.buffs) return;
 
     for (const ctrl of wpBuffCtrls) {
-      const buff = findByIndex(appWeapon.buffs, ctrl.index);
+      const buff = Array_.findByIndex(appWeapon.buffs, ctrl.index);
 
       if (ctrl.activated && buff) {
         applyBuff(
@@ -248,7 +248,7 @@ export default function getCalculationStats(
     const { name, buffs = [] } = $AppCharacter.get(teammate.name);
 
     for (const { index, activated, inputs = [] } of teammate.buffCtrls) {
-      const buff = findByIndex(buffs, index);
+      const buff = Array_.findByIndex(buffs, index);
       if (!activated || !buff) continue;
 
       applyBuff(
@@ -267,7 +267,7 @@ export default function getCalculationStats(
       const { name, buffs = [] } = $AppWeapon.get(code) || {};
 
       for (const ctrl of teammate.weapon.buffCtrls) {
-        const buff = findByIndex(buffs, ctrl.index);
+        const buff = Array_.findByIndex(buffs, ctrl.index);
 
         if (ctrl.activated && buff) {
           applyBuff(
@@ -288,7 +288,7 @@ export default function getCalculationStats(
       const { name, buffs = [] } = $AppArtifact.getSet(code) || {};
 
       for (const ctrl of teammate.artifact.buffCtrls) {
-        const buff = findByIndex(buffs, ctrl.index);
+        const buff = Array_.findByIndex(buffs, ctrl.index);
 
         if (ctrl.activated && buff) {
           applyBuff(

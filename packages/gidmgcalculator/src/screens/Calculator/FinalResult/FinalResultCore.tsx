@@ -1,5 +1,5 @@
 import type { RootState } from "@Store/store";
-import { findById } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import {
   selectCalcFinalResult,
   selectCharacter,
@@ -16,7 +16,7 @@ import { useCalcAppCharacter } from "../CalculatorInfoProvider";
 
 const selectActiveSetupName = (state: RootState) => {
   const { activeId, setupManageInfos } = state.calculator;
-  return findById(setupManageInfos, activeId)?.name || "";
+  return Array_.findById(setupManageInfos, activeId)?.name || "";
 };
 
 export function FinalResultCore() {

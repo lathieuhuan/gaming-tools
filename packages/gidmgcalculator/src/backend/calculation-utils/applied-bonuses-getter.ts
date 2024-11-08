@@ -9,7 +9,7 @@ import type {
   EntityBuff,
 } from "../types";
 
-import { toArray } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { ELEMENT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
 import { ModifierStackingControl } from "../controls";
@@ -58,7 +58,7 @@ export class AppliedBonusesGetter extends BareBonusGetter {
 
     const { description } = support;
 
-    for (const target of toArray(targets)) {
+    for (const target of Array_.toArray(targets)) {
       const isStackable =
         target.module.slice(0, 2) === "id" &&
         this.modStackingCtrl.isStackable({ trackId: support.unstackableId, paths: target.path });
@@ -67,7 +67,7 @@ export class AppliedBonusesGetter extends BareBonusGetter {
 
       switch (target.module) {
         case "ATTR": {
-          for (const targetPath of toArray(target.path)) {
+          for (const targetPath of Array_.toArray(target.path)) {
             let toStat: AttributeStat;
 
             switch (targetPath) {
@@ -103,7 +103,7 @@ export class AppliedBonusesGetter extends BareBonusGetter {
           }
           break;
         default:
-          for (const module of toArray(target.module)) {
+          for (const module of Array_.toArray(target.module)) {
             result.attkBonuses.push({
               id: bonus.id,
               toType: module,
@@ -129,7 +129,7 @@ export class AppliedBonusesGetter extends BareBonusGetter {
     };
     if (!buff.effects) return result;
 
-    for (const config of toArray(buff.effects)) {
+    for (const config of Array_.toArray(buff.effects)) {
       if (
         (isFinal === undefined || isFinal === this.isTrulyFinalBonus(config)) &&
         isApplicableEffect(config, this.info, support.inputs, support.fromSelf)

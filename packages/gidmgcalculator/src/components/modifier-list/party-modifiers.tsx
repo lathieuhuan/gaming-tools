@@ -3,7 +3,8 @@ import { CharacterBuff, CharacterDebuff } from "@Backend";
 import type { Character, Party, PartyData, Teammate } from "@Src/types";
 import type { GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 import { $AppCharacter } from "@Src/services";
-import { findByIndex, parseAbilityDescription } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
+import { parseAbilityDescription } from "@Src/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
@@ -35,7 +36,7 @@ function getTeammateModifierElmts(
       <div className="space-y-3">
         {/* {getTeammateModifierElmts(props, teammate, teammateIndex, teammateData, modCtrls, modifiers)} */}
         {modCtrls.map((ctrl, ctrlIndex, ctrls) => {
-          const modifier = findByIndex<CharacterBuff | CharacterDebuff>(modifiers, ctrl.index);
+          const modifier = Array_.findByIndex<CharacterBuff | CharacterDebuff>(modifiers, ctrl.index);
 
           if (modifier) {
             const { inputs = [] } = ctrl;
