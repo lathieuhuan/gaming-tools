@@ -7,7 +7,8 @@ import {
   updateTeammateWeapon,
   type ToggleModCtrlPath,
 } from "@Store/calculator-slice";
-import { deepCopy, findByIndex } from "@Src/utils";
+import Object_ from "@Src/utils/object-utils";
+import Array_ from "@Src/utils/array-utils";
 import { WeaponBuffsView } from "@Src/components";
 
 export default function WeaponBuffs({ party }: { party: Party }) {
@@ -42,8 +43,8 @@ export default function WeaponBuffs({ party }: { party: Party }) {
       }}
       getTeammateHandlers={({ teammateIndex, ctrl, ctrls }) => {
         const updateBuffCtrl = (value: number | "toggle", inputIndex = 0) => {
-          const newBuffCtrls = deepCopy(ctrls);
-          const targetCtrl = findByIndex(newBuffCtrls, ctrl.index);
+          const newBuffCtrls = Object_.clone(ctrls);
+          const targetCtrl = Array_.findByIndex(newBuffCtrls, ctrl.index);
           if (!targetCtrl) return;
 
           if (value === "toggle") {

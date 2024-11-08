@@ -6,7 +6,9 @@ import { Modal, ConfirmModal, Button, VersatileSelect } from "rond";
 import { ArtifactCalc, AttributeStat } from "@Backend";
 
 import type { CalcArtifact } from "@Src/types";
-import { findById, Utils_ } from "@Src/utils";
+import { suffixOf } from "@Src/utils";
+import Entity_ from "@Src/utils/entity-utils";
+import Array_ from "@Src/utils/array-utils";
 import { MAX_USER_ARTIFACTS } from "@Src/constants";
 import { changeArtifact, updateArtifact } from "@Store/calculator-slice";
 import { selectUserArtifacts, addUserArtifact, updateUserArtifact } from "@Store/userdb-slice";
@@ -77,7 +79,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
           )}
           <p className={`pl-6 text-1.5xl leading-7 text-rarity-${rarity} font-bold`}>
             {mainStatValue}
-            {Utils_.suffixOf(mainStatType)}
+            {suffixOf(mainStatType)}
           </p>
         </div>
       </div>
@@ -132,7 +134,7 @@ function ConfirmSaving({ artifact, onClose }: ConfirmSavingProps) {
   const state = useRef<"SUCCESS" | "PENDING" | "EXCEED_MAX" | "">("");
 
   const userArtifacts = useStoreSnapshot(selectUserArtifacts);
-  const existedArtifact = findById(userArtifacts, artifact.ID);
+  const existedArtifact = Array_.findById(userArtifacts, artifact.ID);
 
   if (state.current === "") {
     if (userArtifacts.length + 1 > MAX_USER_ARTIFACTS) {
@@ -140,7 +142,7 @@ function ConfirmSaving({ artifact, onClose }: ConfirmSavingProps) {
     } else if (existedArtifact) {
       state.current = "PENDING";
     } else {
-      dispatch(addUserArtifact(Utils_.calcItemToUserItem(artifact)));
+      dispatch(addUserArtifact(Entity_.calcItemToUserItem(artifact)));
       state.current = "SUCCESS";
     }
   }
@@ -174,13 +176,13 @@ function ConfirmSaving({ artifact, onClose }: ConfirmSavingProps) {
       );
       const noChange = existedArtifact
         ? isEqual(artifact, {
-            ...Utils_.userItemToCalcItem(existedArtifact),
+            ...Entity_.userItemToCalcItem(existedArtifact),
             ID: artifact.ID,
           })
         : false;
 
       const addNew = () => {
-        dispatch(addUserArtifact(Utils_.calcItemToUserItem(artifact, { ID: Date.now() })));
+        dispatch(addUserArtifact(Entity_.calcItemToUserItem(artifact, { ID: Date.now() })));
         onClose();
       };
 
@@ -202,7 +204,7 @@ function ConfirmSaving({ artifact, onClose }: ConfirmSavingProps) {
       }
 
       const overwrite = () => {
-        dispatch(updateUserArtifact(Utils_.calcItemToUserItem(artifact)));
+        dispatch(updateUserArtifact(Entity_.calcItemToUserItem(artifact)));
         onClose();
       };
 

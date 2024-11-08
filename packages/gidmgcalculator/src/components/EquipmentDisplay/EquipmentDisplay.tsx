@@ -3,7 +3,7 @@ import { AppArtifact, AppWeapon, ARTIFACT_TYPES } from "@Backend";
 
 import { Artifact, Weapon } from "@Src/types";
 import { $AppArtifact, $AppWeapon } from "@Src/services";
-import { Utils_ } from "@Src/utils";
+import Entity_ from "@Src/utils/entity-utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
@@ -105,7 +105,7 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
               className={clsx("p-4 w-full h-full flex-center rounded bg-surface-3", props.fillable && " glow-on-hover")}
               onClick={props.fillable ? () => props.onClickEmptyArtifact?.(i) : undefined}
             >
-              <GenshinImage className="w-full" src={Utils_.artifactIconOf(ARTIFACT_TYPES[i])} />
+              <GenshinImage className="w-full" src={Entity_.artifactIconOf(ARTIFACT_TYPES[i])} />
             </EmptyWrap>
           </div>
         );

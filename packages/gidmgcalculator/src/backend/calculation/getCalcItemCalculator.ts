@@ -10,7 +10,8 @@ import type {
 } from "../types";
 import type { CalcItemRecord } from "../controls";
 
-import { applyToOneOrMany, toMult } from "@Src/utils";
+import { toMult } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { GeneralCalc } from "../common-utils";
 import { genEmptyCalcFinalResultItem } from "../calculation-utils/genEmptyCalcFinal";
 
@@ -69,7 +70,7 @@ export default function getCalcItemCalculator(
       const cRate_ = Math.min(Math.max(totalCrit("cRate_"), 0), 100) / 100;
       const cDmg_ = totalCrit("cDmg_") / 100;
 
-      base = applyToOneOrMany(base, (n) => (n + flat) * normalMult * specialMult * rxnMult * defMult * resMult);
+      base = Array_.applyToItem(base, (n) => (n + flat) * normalMult * specialMult * rxnMult * defMult * resMult);
 
       record.totalFlat = flat;
       record.normalMult = normalMult;
@@ -83,8 +84,8 @@ export default function getCalcItemCalculator(
       return {
         type,
         nonCrit: base,
-        crit: applyToOneOrMany(base, (n) => n * (1 + cDmg_)),
-        average: applyToOneOrMany(base, (n) => n * (1 + cRate_ * cDmg_)),
+        crit: Array_.applyToItem(base, (n) => n * (1 + cDmg_)),
+        average: Array_.applyToItem(base, (n) => n * (1 + cRate_ * cDmg_)),
         attPatt,
         attElmt,
       };

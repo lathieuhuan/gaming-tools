@@ -1,7 +1,7 @@
 import type { PartiallyOptional } from "rond";
 import type { AppliedAttackBonus, AttackBonusKey, AttackBonusType, CalcItem } from "../types";
 import type { CalcItemExclusiveBonus } from "./tracker-control";
-import { toArray } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 
 type AttackBonusRecord = {
   desc: string;
@@ -26,7 +26,7 @@ export class AttackBonusesControl {
   private attackBonusAll: Partial<Record<AttackBonusKey, number>> = {};
 
   add = (bonuses: BonusToAdd | BonusToAdd[]) => {
-    for (const bonus of toArray(bonuses)) {
+    for (const bonus of Array_.toArray(bonuses)) {
       if (bonus.value) {
         const existedBonus = this.attBonuses.find((existBonus) => existBonus.type === bonus.toType);
         const record: AttackBonusRecord = {

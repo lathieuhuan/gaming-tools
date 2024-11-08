@@ -5,7 +5,7 @@ import { clsx, message, useScreenWatcher, ButtonGroup, Modal, WarehouseLayout } 
 import type { UserArtifact } from "@Src/types";
 import { MAX_USER_ARTIFACTS } from "@Src/constants";
 import { useArtifactTypeSelect } from "@Src/hooks";
-import { findById, indexById } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -37,7 +37,7 @@ export default function MyArtifacts() {
   });
 
   const filteredArtifacts = useMemo(() => ArtifactFilter.filterArtifacts(userArts, filter), [userArts, filter]);
-  const chosenArtifact = useMemo(() => findById(userArts, chosenId), [filteredArtifacts, chosenId]);
+  const chosenArtifact = useMemo(() => Array_.findById(userArts, chosenId), [filteredArtifacts, chosenId]);
 
   const closeModal = () => setModalType("");
 
@@ -59,7 +59,7 @@ export default function MyArtifacts() {
   };
 
   const onRemoveArtifact = (artifact: UserArtifact) => {
-    const removedIndex = indexById(filteredArtifacts, artifact.ID);
+    const removedIndex = Array_.indexById(filteredArtifacts, artifact.ID);
 
     if (removedIndex !== -1) {
       if (filteredArtifacts.length > 1) {

@@ -3,7 +3,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { ElementType, AppMonster } from "@Backend";
 
-import { toArray } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { $AppData } from "@Src/services";
 
 interface ComboBoxProps {
@@ -34,7 +34,7 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
     if (monster.code !== targetCode) {
       let newVariantType;
       let newInputs = monster.inputConfigs
-        ? toArray(monster.inputConfigs).map((config) => (config.type === "SELECT" ? -1 : 0))
+        ? Array_.toArray(monster.inputConfigs).map((config) => (config.type === "SELECT" ? -1 : 0))
         : [];
 
       if (monster.variant) {

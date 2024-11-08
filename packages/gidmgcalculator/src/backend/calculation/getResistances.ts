@@ -2,7 +2,7 @@ import type { CalcSetup, Target } from "@Src/types";
 import type { CalculationInfo } from "../types";
 
 import { $AppArtifact, $AppCharacter } from "@Src/services";
-import { findByIndex } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { ResistanceReductionControl, TrackerControl } from "../controls";
 import { isGrantedEffect } from "../calculation-utils/isGrantedEffect";
 
@@ -22,7 +22,7 @@ export default function getResistances(
 
   // APPLY SELF DEBUFFS
   for (const ctrl of selfDebuffCtrls) {
-    const debuff = findByIndex(appChar.debuffs || [], ctrl.index);
+    const debuff = Array_.findByIndex(appChar.debuffs || [], ctrl.index);
 
     if (ctrl.activated && debuff?.effects && isGrantedEffect(debuff, char)) {
       resistReductCtrl.applyDebuff(debuff, ctrl.inputs ?? [], true, `Self / ${debuff.src}`);
@@ -35,7 +35,7 @@ export default function getResistances(
     const { debuffs = [] } = $AppCharacter.get(teammate.name);
 
     for (const ctrl of teammate.debuffCtrls) {
-      const debuff = findByIndex(debuffs, ctrl.index);
+      const debuff = Array_.findByIndex(debuffs, ctrl.index);
 
       if (ctrl.activated && debuff?.effects) {
         resistReductCtrl.applyDebuff(debuff, ctrl.inputs ?? [], false, `Self / ${debuff.src}`);

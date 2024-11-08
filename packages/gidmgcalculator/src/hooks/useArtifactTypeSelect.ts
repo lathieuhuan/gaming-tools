@@ -1,8 +1,9 @@
 import { useIconSelect, type IconSelectConfig, type IconSelectInitialValues } from "rond";
 import { ArtifactType } from "@Backend";
-import { Utils_, getImgSrc } from "@Src/utils";
+import {  getImgSrc } from "@Src/utils";
+import Entity_ from "@Src/utils/entity-utils";
 
-const options = Utils_.allArtifactIcons((icon) => {
+const options = Entity_.allArtifactIcons((icon) => {
   return {
     value: icon.value,
     icon: getImgSrc(icon.icon),

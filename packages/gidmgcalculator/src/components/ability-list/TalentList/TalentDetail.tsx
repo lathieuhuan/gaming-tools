@@ -3,7 +3,8 @@ import { FaCaretDown } from "react-icons/fa";
 import { CloseButton, LoadingSpin, StatsTable, VersatileSelect, round } from "rond";
 import { ATTACK_PATTERNS, CharacterCalc, TalentType, AppCharacter } from "@Backend";
 
-import { toArray, genSequentialOptions } from "@Src/utils";
+import { genSequentialOptions } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { useQuery, useTabs, useTranslation } from "@Src/hooks";
 import { $AppCharacter } from "@Src/services";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
@@ -198,7 +199,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
     if (!talent) continue;
 
     for (const stat of appChar.calcList[attPatt]) {
-      const multFactors = toArray(stat.multFactors);
+      const multFactors = Array_.toArray(stat.multFactors);
       const { flatFactor } = stat;
       const factorStrings = [];
 

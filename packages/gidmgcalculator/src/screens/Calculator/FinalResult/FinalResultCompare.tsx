@@ -4,10 +4,10 @@ import { Select, clsx } from "rond";
 import { TALENT_TYPES, CalculationAspect, TalentType, CharacterCalc } from "@Backend";
 
 import type { Weapon } from "@Src/types";
+import Array_ from "@Src/utils/array-utils";
+import { $AppCharacter } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectSetupManageInfos, selectStandardId, updateCharacter } from "@Store/calculator-slice";
-import { findById } from "@Src/utils";
-import { $AppCharacter } from "@Src/services";
 import { useCalcAppCharacter } from "../CalculatorInfoProvider";
 
 //
@@ -176,7 +176,7 @@ function useLayoutProps(comparedIds: number[], standardId: number): LayoutProps 
   }
 
   const headerConfigs: LayoutProps["headerConfigs"] = setupIds.map((id, setupIndex) => {
-    const text = findById(setupManageInfos, id)?.name || "";
+    const text = Array_.findById(setupManageInfos, id)?.name || "";
 
     return {
       content: (talentType) => {

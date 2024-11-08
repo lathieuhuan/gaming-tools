@@ -1,7 +1,7 @@
 import { FaMinus } from "react-icons/fa";
 import { Button, CloseButton, Modal } from "rond";
 
-import { findById } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI, type TrackerState } from "@Store/ui-slice";
 import { TrackerCore } from "./TrackerCore";
@@ -11,7 +11,7 @@ export function Tracker() {
   const trackerState = useSelector((state) => state.ui.trackerState);
   const activeSetupName = useSelector((state) => {
     const { activeId, setupManageInfos } = state.calculator;
-    return findById(setupManageInfos, activeId)?.name || "";
+    return Array_.findById(setupManageInfos, activeId)?.name || "";
   });
 
   const setTrackerState = (newState: TrackerState) => {

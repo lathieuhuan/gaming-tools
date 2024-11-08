@@ -5,7 +5,7 @@ import { ItemCase, clsx, useIntersectionObserver } from "rond";
 import type { UserArtifact, UserItem, UserWeapon } from "@Src/types";
 import type { ArtifactRackProps, InventoryRackProps, MixedRackProps, WeaponRackProps } from "./inventory.types";
 import { $AppArtifact, $AppWeapon } from "@Src/services";
-import { Utils_ } from "@Src/utils";
+import Entity_ from "@Src/utils/entity-utils";
 
 // Component
 import { ItemThumbnail } from "../ItemThumbnail";
@@ -113,7 +113,7 @@ export function InventoryRack<T extends UserItem>({
                           <ItemThumbnail
                             className={className}
                             imgCls={imgCls}
-                            item={Utils_.isUserWeapon(item) ? getWeaponInfo(item) : getArtifactInfo(item)}
+                            item={Entity_.isUserWeapon(item) ? getWeaponInfo(item) : getArtifactInfo(item)}
                           />
                         )}
                       </ItemCase>

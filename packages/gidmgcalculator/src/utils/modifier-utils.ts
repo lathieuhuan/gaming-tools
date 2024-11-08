@@ -13,7 +13,7 @@ const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
   ELEMENTAL: 0,
 };
 
-export class Modifier_ {
+export default class Modifier_ {
   static getDefaultInitialValue(type: ModInputType) {
     return DEFAULT_INITIAL_VALUES[type] ?? 0;
   }

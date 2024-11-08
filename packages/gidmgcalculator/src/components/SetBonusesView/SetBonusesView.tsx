@@ -1,7 +1,8 @@
 import { ArtifactSetBonus } from "@Backend";
 
 import { $AppArtifact } from "@Src/services";
-import { parseArtifactDescription, toArray } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
+import { parseArtifactDescription } from "@Src/utils/description-parsers";
 
 interface SetBonusesViewProps {
   setBonuses: ArtifactSetBonus[];
@@ -22,7 +23,7 @@ export function SetBonusesView({ setBonuses, noTitle }: SetBonusesViewProps) {
 
             for (let i = 0; i <= bonus.bonusLv; i++) {
               const { description = i } = data.setBonuses?.[i] || {};
-              const parsedDescription = toArray(description).reduce((acc, index) => {
+              const parsedDescription = Array_.toArray(description).reduce((acc, index) => {
                 if (descriptions[index]) {
                   const parsedText = parseArtifactDescription(descriptions[index]);
                   return `${acc} ${parsedText}`;

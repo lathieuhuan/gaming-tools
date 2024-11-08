@@ -2,7 +2,8 @@ import { round } from "rond";
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, TrackerResult } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
-import { applyPercent, Utils_ } from "@Src/utils";
+import { applyPercent } from "@Src/utils";
+import Entity_ from "@Src/utils/entity-utils";
 import { useSelector } from "@Store/hooks";
 import { selectTotalAttr } from "@Store/calculator-slice";
 import { recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
@@ -44,7 +45,7 @@ export function AttributesTracker({ result }: { result?: TrackerResult }) {
       })}
 
       {ATTRIBUTE_STAT_TYPES.slice(6).map((statType) => {
-        const percent = Utils_.suffixOf(statType);
+        const percent = Entity_.suffixOf(statType);
 
         return (
           <div key={statType} className="break-inside-avoid">

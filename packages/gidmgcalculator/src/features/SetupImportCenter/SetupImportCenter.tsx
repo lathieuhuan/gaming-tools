@@ -4,7 +4,8 @@ import { notification, Modal, ConfirmModal, LoadingSpin, type PartiallyRequired,
 
 import type { SetupImportInfo } from "@Src/types";
 import { MAX_CALC_SETUPS } from "@Src/constants";
-import { getSearchParam, removeEmpty } from "@Src/utils";
+import { getSearchParam } from "@Src/utils";
+import Object_ from "@Src/utils/object-utils";
 import { decodeSetup, DECODE_ERROR_MSG } from "@Src/utils/setup-porter";
 
 // Store
@@ -52,7 +53,7 @@ function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImport
       return;
     }
     const sameChar = isEqual(char, calcSetup.char);
-    const sameTarget = isEqual(removeEmpty(currentTarget), removeEmpty(target));
+    const sameTarget = isEqual(Object_.omitEmptyProps(currentTarget), Object_.omitEmptyProps(target));
 
     if (sameChar && sameTarget) {
       delayExecute(() =>

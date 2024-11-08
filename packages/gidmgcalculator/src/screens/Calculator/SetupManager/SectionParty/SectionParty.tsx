@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
 import { clsx, message, CollapseSpace } from "rond";
 
-import { findById } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { $AppCharacter } from "@Src/services";
 import { useCalcAppCharacter } from "../../CalculatorInfoProvider";
 
@@ -45,7 +45,7 @@ export default function SectionParty() {
 
   const partyData = useMemo(() => $AppCharacter.getPartyData(party), [party]);
 
-  const isCombined = findById(setupManageInfos, activeId)?.type === "combined";
+  const isCombined = Array_.findById(setupManageInfos, activeId)?.type === "combined";
   const detailTeammate = detailSlot === null ? undefined : party[detailSlot];
 
   useEffect(() => {

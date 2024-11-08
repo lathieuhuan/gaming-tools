@@ -3,7 +3,8 @@ import { AppCharacter, CharacterBuff, CharacterDebuff, isGrantedEffect } from "@
 import type { Character, ModifierCtrl, PartyData } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import { findByIndex, parseAbilityDescription } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
+import { parseAbilityDescription } from "@Src/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
@@ -18,7 +19,7 @@ interface SelfModsViewProps {
 
 function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Array<CharacterBuff | CharacterDebuff>) {
   return props.modCtrls.map((ctrl, ctrlIndex, ctrls) => {
-    const modifier = findByIndex(modifiers, ctrl.index);
+    const modifier = Array_.findByIndex(modifiers, ctrl.index);
 
     if (modifier && isGrantedEffect(modifier, props.char)) {
       const { inputs = [] } = ctrl;

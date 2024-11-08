@@ -6,7 +6,8 @@ import { ARTIFACT_TYPES, CharacterCalc } from "@Backend";
 import type { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
 import type { OpenModalFn } from "../MySetups.types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
-import { Utils_, Setup_ } from "@Src/utils";
+import Setup_ from "@Src/utils/setup-utils";
+import Entity_ from "@Src/utils/entity-utils";
 
 // Store
 import { useDispatch } from "@Store/hooks";
@@ -157,7 +158,7 @@ export function SetupTemplate({ setup, complexSetup, weapon, artifacts = [], ope
               ) : null;
             }
 
-            return <GearIcon key={i} item={{ icon: Utils_.artifactIconOf(ARTIFACT_TYPES[i]) || "" }} />;
+            return <GearIcon key={i} item={{ icon: Entity_.artifactIconOf(ARTIFACT_TYPES[i]) || "" }} />;
           })}
         </div>
       </div>

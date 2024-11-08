@@ -9,7 +9,8 @@ import {
   CalculationInfo,
 } from "@Backend";
 
-import { toArray, toMult } from "./pure-utils";
+import { toMult } from "./pure-utils";
+import Array_ from "./array-utils";
 
 const typeToCls: Record<string, string> = {
   k: "text-bonus-color", // key
@@ -54,7 +55,7 @@ export const parseAbilityDescription = (
     type = type.slice(1, -1);
 
     if (body[0] === "@") {
-      const effect = toArray(ability.effects)[+body[1]];
+      const effect = Array_.toArray(ability.effects)[+body[1]];
 
       if (effect) {
         const { value, preExtra, max } = effect;
@@ -127,7 +128,7 @@ export const getWeaponBuffDescription = (descriptions: AppWeapon["descriptions"]
   if (descriptions?.length) {
     const parsedFrags: string[] = [];
 
-    for (const frag of toArray(buff.description ?? 0)) {
+    for (const frag of Array_.toArray(buff.description ?? 0)) {
       const description = typeof frag === "number" ? descriptions[frag] : frag;
       parsedFrags.push(parseWeaponDescription(description ?? "", refi));
     }

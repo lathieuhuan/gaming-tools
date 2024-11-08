@@ -2,10 +2,11 @@ import { useEffect, useMemo } from "react";
 import { FaInfo } from "react-icons/fa";
 import { clsx, Button, LoadingSpin, WarehouseLayout, useScreenWatcher } from "rond";
 
-import type { UserComplexSetup, UserSetup } from "@Src/types";
+import type { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
 import { useAppCharacter } from "@Src/hooks";
 import { $AppCharacter } from "@Src/services";
-import { Setup_, UserSetupItems, findById } from "@Src/utils";
+import Setup_ from "@Src/utils/setup-utils";
+import Array_ from "@Src/utils/array-utils";
 
 import type { OpenModalFn } from "./MySetups.types";
 import { calculateChosenSetup } from "./MySetups.utils";
@@ -27,11 +28,23 @@ import { ChosenSetupModals } from "./ChosenSetupModals";
 import { MySetupsModals } from "./MySetupsModals";
 import { SetupTemplate } from "./SetupTemplate";
 
+type UserSetupItems = {
+  weapon?: UserWeapon;
+  artifacts: UserArtifacts;
+};
+
 type RenderedSetupConfig = {
   setup: UserSetup;
   items?: UserSetupItems;
   complex?: UserComplexSetup;
 };
+
+function getUserSetupItems(setup: UserSetup, userWeapons: UserWeapon[], userArtifacts: UserArtifacts): UserSetupItems {
+  return {
+    weapon: Array_.findById(userWeapons, setup.weaponID),
+    artifacts: setup.artifactIDs.map((ID) => Array_.findById(userArtifacts, ID) || null),
+  };
+}
 
 export default function MySetups() {
   const dispatch = useDispatch();
@@ -42,8 +55,8 @@ export default function MySetups() {
   const chosenSetupID = useSelector(selectChosenSetupId);
 
   const chosenSetup = (() => {
-    const setup = findById(userSetups, chosenSetupID);
-    return setup && setup.type === "complex" ? (findById(userSetups, setup.shownID) as UserSetup) : setup;
+    const setup = Array_.findById(userSetups, chosenSetupID);
+    return setup && setup.type === "complex" ? (Array_.findById(userSetups, setup.shownID) as UserSetup) : setup;
   })();
 
   const { isLoading, error } = useAppCharacter(chosenSetup?.char.name);
@@ -63,7 +76,7 @@ export default function MySetups() {
 
     for (const setup of userSetups) {
       if (Setup_.isUserSetup(setup)) {
-        result[setup.ID] = Setup_.getUserSetupItems(setup, userWeapons, userArtifacts);
+        result[setup.ID] = getUserSetupItems(setup, userWeapons, userArtifacts);
       }
     }
     return result;

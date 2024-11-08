@@ -2,7 +2,7 @@ import type { ArtifactModCtrl } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import { $AppArtifact } from "@Src/services";
-import { findByIndex } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers, getArtifactDescription } from "./modifiers.utils";
 
@@ -19,7 +19,7 @@ export function ArtifactDebuffsView({ mutable, artDebuffCtrls, getHanlders }: Ar
     if (!data) return;
 
     const { name, debuffs = [] } = data;
-    const debuff = findByIndex(debuffs, ctrl.index);
+    const debuff = Array_.findByIndex(debuffs, ctrl.index);
 
     if (debuff) {
       content.push(

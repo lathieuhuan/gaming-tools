@@ -2,7 +2,7 @@ import { ConfirmModal, Modal } from "rond";
 import { GeneralCalc } from "@Backend";
 
 import type { UserArtifacts, UserSetup, UserWeapon } from "@Src/types";
-import { Setup_ } from "@Src/utils";
+import Setup_ from "@Src/utils/setup-utils";
 import { calculateChosenSetup } from "../MySetups.utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectMySetupModalType, updateUI } from "@Store/ui-slice";

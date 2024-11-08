@@ -5,7 +5,8 @@ import { AppCharacter } from "@Backend";
 import type { UserCharacter } from "@Src/types";
 import { $AppCharacter } from "@Src/services";
 import { useStoreSnapshot } from "@Src/features";
-import { findByName, pickProps } from "@Src/utils";
+import Object_ from "@Src/utils/object-utils";
+import Array_ from "@Src/utils/array-utils";
 import { selectUserCharacters } from "@Store/userdb-slice";
 
 // Component
@@ -39,7 +40,7 @@ const TavernRooms = ({ sourceType, filter: filterFn, onSelectCharacter, onClose,
     switch (sourceType) {
       case "app":
         for (const characterData of $AppCharacter.getAll()) {
-          processedCharacters.push(pickProps(characterData, pickedKey));
+          processedCharacters.push(Object_.pickProps(characterData, pickedKey));
         }
         break;
       case "user":
@@ -47,7 +48,7 @@ const TavernRooms = ({ sourceType, filter: filterFn, onSelectCharacter, onClose,
           const characterData = $AppCharacter.get(userChar.name);
 
           if (characterData) {
-            const character = Object.assign(pickProps(characterData, pickedKey), {
+            const character = Object.assign(Object_.pickProps(characterData, pickedKey), {
               cons: userChar.cons,
               artifactIDs: userChar.artifactIDs,
             });
@@ -57,8 +58,8 @@ const TavernRooms = ({ sourceType, filter: filterFn, onSelectCharacter, onClose,
         break;
       case "mixed":
         for (const characterData of $AppCharacter.getAll()) {
-          const character = pickProps(characterData, pickedKey);
-          const userCharacter = findByName(userChars, character.name);
+          const character = Object_.pickProps(characterData, pickedKey);
+          const userCharacter = Array_.findByName(userChars, character.name);
 
           processedCharacters.push(Object.assign(character, userCharacter));
         }

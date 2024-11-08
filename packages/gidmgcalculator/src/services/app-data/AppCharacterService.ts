@@ -1,11 +1,11 @@
 import { AppCharacter, TalentType } from "@Backend";
 
-import type { Party, PartyData } from "@Src/types";
+import type { PartyData } from "@Src/types";
 import type { StandardResponse } from "../services.types";
 import type { DataControl, ServiceSubscriber } from "./app-data.types";
 
 import { BACKEND_URL, GENSHIN_DEV_URL } from "@Src/constants";
-import { pickProps } from "@Src/utils/pure-utils";
+import Object_ from "@Src/utils/object-utils";
 import { BaseService } from "./BaseService";
 
 type CharacterSubscriber = ServiceSubscriber<AppCharacter>;
@@ -210,7 +210,7 @@ export class AppCharacterService extends BaseService {
     return party.map((teammate) => {
       if (teammate) {
         const keys: Array<keyof AppCharacter> = ["code", "name", "icon", "nation", "vision", "weaponType", "EBcost"];
-        return pickProps(this.getControl(teammate.name)!.data, keys);
+        return Object_.pickProps(this.getControl(teammate.name)!.data, keys);
       }
       return null;
     });

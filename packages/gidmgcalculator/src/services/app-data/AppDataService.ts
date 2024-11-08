@@ -3,7 +3,7 @@ import type { Target } from "@Src/types";
 import type { Metadata, Update } from "./app-data.types";
 
 import { BACKEND_URL } from "@Src/constants";
-import { findByCode, toArray } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { BaseService } from "./BaseService";
 
 type FetchMetadataValidity = {
@@ -70,7 +70,7 @@ export class AppDataService extends BaseService {
   }
 
   getMonster({ code }: { code: number }) {
-    return findByCode(this.monsters, code);
+    return Array_.findByCode(this.monsters, code);
   }
 
   getTargetInfo(target: Target) {
@@ -93,7 +93,7 @@ export class AppDataService extends BaseService {
     }
 
     if (target.inputs?.length && monster?.inputConfigs) {
-      const inputConfigs = toArray(monster.inputConfigs);
+      const inputConfigs = Array_.toArray(monster.inputConfigs);
 
       target.inputs.forEach((input, index) => {
         const { label, type = "check", options = [] } = inputConfigs[index] || {};

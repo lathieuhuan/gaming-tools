@@ -10,7 +10,7 @@ import type {
   TalentType,
 } from "../types";
 
-import { findByName } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 
 interface GetTotalXtraTalentArgs {
   char: Character;
@@ -41,7 +41,7 @@ export class CharacterCalc {
     let result = 0;
 
     if (talentType === "NAs") {
-      if (char.name === "Tartaglia" || (partyData && findByName(partyData, "Tartaglia"))) {
+      if (char.name === "Tartaglia" || (partyData && Array_.findByName(partyData, "Tartaglia"))) {
         result++;
       }
     }

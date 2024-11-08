@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Input, Modal } from "rond";
 
 import type { Party } from "@Src/types";
-import { Setup_, findById } from "@Src/utils";
+import Setup_ from "@Src/utils/setup-utils";
+import Array_ from "@Src/utils/array-utils";
 import { useStoreSnapshot } from "@Src/features";
 import { useCalcAppCharacter } from "../../CalculatorInfoProvider";
 
@@ -13,8 +14,8 @@ import { selectParty } from "@Store/calculator-slice";
 import { selectUserSetups } from "@Store/userdb-slice";
 
 function areDifferentParties(party1: Party, party2: Party) {
-  const team1 = Setup_.teammatesOf(party1);
-  const team2 = Setup_.teammatesOf(party2);
+  const team1 = Array_.truthy(party1);
+  const team2 = Array_.truthy(party2);
   return team1.length !== team2.length || team1.some((t1) => team2.every((t2) => t2.name !== t1.name));
 }
 
@@ -27,7 +28,7 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
   const party = useSelector(selectParty);
 
   const appChar = useCalcAppCharacter();
-  const existedSetup = findById(useStoreSnapshot(selectUserSetups), setupId);
+  const existedSetup = Array_.findById(useStoreSnapshot(selectUserSetups), setupId);
 
   const [input, setInput] = useState(existedSetup ? existedSetup.name : `${appChar.name} setup`);
 

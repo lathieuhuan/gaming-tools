@@ -3,7 +3,7 @@ import { ElementType, Level, AttackBonuses, AttackReaction } from "@Backend";
 
 import type { CustomBuffCtrl, ElementModCtrl, Infusion } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { Utils_, toCustomBuffLabel } from "@Src/utils";
+import { suffixOf, toCustomBuffLabel } from "@Src/utils";
 
 // Component
 import { renderModifiers, VapMeltBuffItem, QuickenBuffItem, ResonanceBuffItem } from "@Src/components";
@@ -95,7 +95,7 @@ export function CustomBuffsDetail({ customBuffCtrls }: CustomBuffsDetailProps) {
       <p className="mr-4">{toCustomBuffLabel(category, type, t)}</p>
       <p className="w-12 shrink-0 text-heading-color text-right">
         {value}
-        {Utils_.suffixOf(subType || type)}
+        {suffixOf(subType || type)}
       </p>
     </div>
   ));
