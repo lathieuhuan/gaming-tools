@@ -13,7 +13,7 @@ import type {
 
 import { toArray } from "@Src/utils";
 import { CharacterCalc, GeneralCalc } from "../common-utils";
-import { isApplicableEffect } from "../calculation-utils";
+import { isApplicableEffect } from "./isApplicableEffect";
 
 export type GetBareBonusSupportInfo = {
   inputs: number[];
@@ -49,24 +49,24 @@ export class BareBonusGetter {
         break;
       case "ELEMENT": {
         const { element } = indexConfig;
-        const elementCount = GeneralCalc.countElements(partyData, appChar);
+        const elmtCount = GeneralCalc.countElements(partyData, appChar);
 
         switch (element) {
           case "various_types":
-            indexValue += elementCount.keys.length;
+            indexValue += elmtCount.keys.length;
             break;
           case "different":
-            elementCount.forEach((elementType) => {
+            elmtCount.forEach((elementType) => {
               if (elementType !== appChar.vision) indexValue++;
             });
             break;
           default:
             if (typeof element === "string") {
-              indexValue += elementCount.get(element);
+              indexValue += elmtCount.get(element);
             } else if (indexConfig.distinct) {
-              indexValue += element.reduce((total, elementType) => total + (elementCount.has(elementType) ? 1 : 0), 0);
+              indexValue += element.reduce((total, elementType) => total + (elmtCount.has(elementType) ? 1 : 0), 0);
             } else {
-              indexValue += element.reduce((total, type) => total + elementCount.get(type), 0);
+              indexValue += element.reduce((total, type) => total + elmtCount.get(type), 0);
             }
         }
         break;
@@ -210,27 +210,27 @@ export class BareBonusGetter {
       }
       case "ELEMENT": {
         const { element } = stack;
-        const elementsCount = GeneralCalc.countElements(partyData);
+        const elmtCount = GeneralCalc.countElements(partyData);
 
         switch (element) {
           case "different":
-            elementsCount.forEach((type, value) => {
+            elmtCount.forEach((type, value) => {
               result += type !== appChar.vision ? value : 0;
             });
             break;
           case "same_excluded":
-            elementsCount.forEach((type, value) => {
+            elmtCount.forEach((type, value) => {
               result += type === appChar.vision ? value : 0;
             });
             break;
           case "same_included":
-            elementsCount.forEach((type, value) => {
+            elmtCount.forEach((type, value) => {
               result += type === appChar.vision ? value : 0;
             });
             result++;
             break;
           default:
-            elementsCount.forEach((type, value) => {
+            elmtCount.forEach((type, value) => {
               result += type === element ? value : 0;
             });
             if (appChar.vision === element) result++;

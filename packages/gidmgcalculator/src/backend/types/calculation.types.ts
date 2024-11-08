@@ -3,15 +3,19 @@ import type { Character, PartyData } from "@Src/types";
 import type {
   ActualAttackElement,
   ActualAttackPattern,
+  AmplifyingReaction,
   AttackBonusKey,
   AttackBonusType,
   AttackPattern,
   AttributeStat,
   CoreStat,
   LevelableTalentType,
+  QuickenReaction,
 } from "./common.types";
 import type { AppCharacter, CharacterBuffNormalAttackConfig } from "./app-character.types";
 import type { CalcItemType } from "./app-entity";
+
+export type AttackReaction = AmplifyingReaction | QuickenReaction | null;
 
 export type CalculationInfo = {
   char: Character;

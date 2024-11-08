@@ -1,6 +1,6 @@
 import type { CalculationInfo, EntityPenaltyCore } from "../types";
 import { CharacterCalc } from "../common-utils";
-import { isApplicableEffect } from "../calculation-utils";
+import { isApplicableEffect } from "./isApplicableEffect";
 
 export function getPenaltyValue(debuff: EntityPenaltyCore, info: CalculationInfo, inputs: number[], fromSelf = true) {
   const { preExtra } = debuff;

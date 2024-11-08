@@ -12,8 +12,8 @@ import type { TrackerControl } from "./tracker-control";
 import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
 import { toArray } from "@Src/utils";
-import { isApplicableEffect } from "../calculation-utils";
-import { getPenaltyValue } from "../calculation/getPenaltyValue";
+import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
+import { getPenaltyValue } from "../calculation-utils/getPenaltyValue";
 
 export class ResistanceReductionControl {
   private resistReduct: ResistanceReduction;

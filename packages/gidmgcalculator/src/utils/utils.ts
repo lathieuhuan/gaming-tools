@@ -5,11 +5,7 @@ import { $AppSettings, $AppWeapon } from "@Src/services";
 
 // ========== TYPES ==========
 
-type CreateWeaponArgs = AdvancedPick<Weapon, "type", "code" | "level" | "refi">;
-
-type CreateArtifactArgs = AdvancedPick<Artifact, "type" | "code" | "rarity", "level" | "mainStatType" | "subStats">;
-
-type Icon = { value: ArtifactType; icon: string };
+type ArtifactTypeIcon = { value: ArtifactType; icon: string };
 
 type CalcItemToUserItemOptions = {
   ID?: number;
@@ -27,7 +23,7 @@ const DEFAULT_WEAPON_CODE = {
   sword: 108,
 };
 
-const ARTIFACT_TYPE_ICONS: Icon[] = [
+const ARTIFACT_TYPE_ICONS: ArtifactTypeIcon[] = [
   { value: "flower", icon: "2/2d/Icon_Flower_of_Life" },
   { value: "plume", icon: "8/8b/Icon_Plume_of_Death" },
   { value: "sands", icon: "9/9f/Icon_Sands_of_Eon" },
@@ -61,7 +57,7 @@ export class Utils_ {
     };
   }
 
-  static createWeapon(config: CreateWeaponArgs, ID = Date.now()): Weapon {
+  static createWeapon(config: AdvancedPick<Weapon, "type", "code" | "level" | "refi">, ID = Date.now()): Weapon {
     const { wpLevel, wpRefi } = $AppSettings.get();
     const { type, code = DEFAULT_WEAPON_CODE[type] } = config;
     const { rarity } = $AppWeapon.get(code)!;
@@ -84,7 +80,10 @@ export class Utils_ {
     return DEFAULT_WEAPON_CODE[type];
   }
 
-  static createArtifact(config: CreateArtifactArgs, ID = Date.now()): Artifact {
+  static createArtifact(
+    config: AdvancedPick<Artifact, "type" | "code" | "rarity", "level" | "mainStatType" | "subStats">,
+    ID = Date.now()
+  ): Artifact {
     const { artLevel } = $AppSettings.get();
     const {
       type,
@@ -114,9 +113,9 @@ export class Utils_ {
     return ARTIFACT_TYPE_ICONS.find((item) => item.value === artifactType)?.icon;
   }
 
-  static allArtifactIcons(): Icon[];
-  static allArtifactIcons<T>(transform: (icons: Icon) => T): T[];
-  static allArtifactIcons<T>(transform?: (icons: Icon) => T): Icon[] | T[] {
+  static allArtifactIcons(): ArtifactTypeIcon[];
+  static allArtifactIcons<T>(transform: (icons: ArtifactTypeIcon) => T): T[];
+  static allArtifactIcons<T>(transform?: (icons: ArtifactTypeIcon) => T): ArtifactTypeIcon[] | T[] {
     return transform ? ARTIFACT_TYPE_ICONS.map(transform) : ARTIFACT_TYPE_ICONS;
   }
 

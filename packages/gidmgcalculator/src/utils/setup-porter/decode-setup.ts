@@ -1,19 +1,6 @@
-import {
-  ATTACK_ELEMENTS,
-  ATTACK_PATTERNS,
-  ATTRIBUTE_STAT_TYPES,
-  ArtifactType,
-  BONUS_KEYS,
-  ELEMENT_TYPES,
-  ElementType,
-  LEVELS,
-  REACTIONS,
-  WEAPON_TYPES,
-} from "@Backend";
-
+import type { ArtifactType, AttackReaction } from "@Backend";
 import type {
   ArtifactModCtrl,
-  AttackReaction,
   CalcArtifact,
   CustomBuffCtrl,
   CustomBuffCtrlType,
@@ -24,6 +11,18 @@ import type {
   Target,
   Teammate,
 } from "@Src/types";
+
+import {
+  ATTACK_ELEMENTS,
+  ATTACK_PATTERNS,
+  ATTRIBUTE_STAT_TYPES,
+  BONUS_KEYS,
+  ELEMENT_TYPES,
+  ElementType,
+  LEVELS,
+  REACTIONS,
+  WEAPON_TYPES,
+} from "@Backend";
 import { EXPORTED_SETUP_VERSION } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
 import { Setup_, findByCode } from "@Src/utils";

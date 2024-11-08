@@ -1,6 +1,4 @@
-import type { AmplifyingReaction, ArtifactType, AttributeStat, Level, QuickenReaction, WeaponType } from "@Backend";
-
-export type AttackReaction = AmplifyingReaction | QuickenReaction | null;
+import type { ArtifactType, AttributeStat, Level, WeaponType } from "@Backend";
 
 /** ========== BASE MODELS ========== */
 

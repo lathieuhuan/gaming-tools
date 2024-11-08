@@ -1,16 +1,17 @@
-import type { AttackReaction, ElementModCtrl, Infusion } from "@Src/types";
+import type { ElementModCtrl, Infusion } from "@Src/types";
 import type {
+  ActualAttackPattern,
+  AppCharacter,
+  AttackBonusKey,
   AttackElement,
   AttackPattern,
-  AttackBonusKey,
+  AttackReaction,
   CalcItem,
   CalcItemFlatFactor,
   CalcItemMultFactor,
   CalcItemType,
-  ActualAttackPattern,
-  AppCharacter,
-  TotalAttribute,
   NormalAttacksConfig,
+  TotalAttribute,
 } from "../types";
 import type { AttackBonusesControl, CalcItemRecord } from "../controls";
 

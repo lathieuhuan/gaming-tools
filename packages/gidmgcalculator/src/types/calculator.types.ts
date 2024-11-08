@@ -1,16 +1,16 @@
 import type {
   AppCharacter,
-  AttackElement,
   AttackBonusKey,
+  AttackElement,
+  AttackPattern,
+  AttackReaction,
   AttributeStat,
   ElementType,
   NormalAttack,
   ReactionType,
   ResistanceReductionKey,
-  WeaponType,
-  AttackPattern,
 } from "@Backend";
-import type { Artifact, AttackReaction, Character, Weapon } from "./global.types";
+import type { Artifact, Character, Weapon } from "./global.types";
 
 type TeammateData = Pick<AppCharacter, "code" | "name" | "icon" | "nation" | "vision" | "weaponType" | "EBcost">;
 

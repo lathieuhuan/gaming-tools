@@ -1,5 +1,4 @@
 import type {
-  ActualAttackElement,
   ActualAttackPattern,
   AttackBonusKey,
   AttackElement,
@@ -13,6 +12,7 @@ import type { CalcItemRecord } from "../controls";
 
 import { applyToOneOrMany, toMult } from "@Src/utils";
 import { GeneralCalc } from "../common-utils";
+import { genEmptyCalcFinalResultItem } from "../calculation-utils/genEmptyCalcFinal";
 
 type CalculateArgs = {
   type: CalcItemType;
@@ -40,7 +40,7 @@ export default function getCalcItemCalculator(
     getBonus = () => 0,
   }: CalculateArgs): CalculationFinalResultItem => {
     if (base === 0) {
-      return genEmptyResult(type, attPatt, attElmt);
+      return genEmptyCalcFinalResultItem(type, attPatt, attElmt);
     }
 
     if (type === "attack") {
@@ -121,30 +121,8 @@ export default function getCalcItemCalculator(
       };
     }
 
-    return genEmptyResult(type, attPatt, attElmt);
+    return genEmptyCalcFinalResultItem(type, attPatt, attElmt);
   };
-}
-
-export function genEmptyResult(
-  type: CalcItemType,
-  attPatt: ActualAttackPattern,
-  attElmt: ActualAttackElement
-): CalculationFinalResultItem {
-  return type === "attack"
-    ? {
-        type,
-        nonCrit: 0,
-        crit: 0,
-        average: 0,
-        attPatt,
-        attElmt,
-      }
-    : {
-        type,
-        nonCrit: 0,
-        crit: 0,
-        average: 0,
-      };
 }
 
 export type CalcItemCalculator = ReturnType<typeof getCalcItemCalculator>;

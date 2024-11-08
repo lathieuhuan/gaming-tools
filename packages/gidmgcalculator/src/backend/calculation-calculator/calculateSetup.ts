@@ -4,10 +4,10 @@ import type { TrackerControl } from "../controls";
 import { $AppCharacter, $AppWeapon } from "@Src/services";
 import getNormalAttacksConfig from "../calculation/getNormalAttacksConfig";
 import getAttackPatternConfig from "../calculation/getAttackPatternConfig";
-import getCalculationStats from "./getCalculationStats";
-import getResistances from "./getResistances";
+import getCalculationStats from "../calculation/getCalculationStats";
+import getResistances from "../calculation/getResistances";
 import getCalcItemCalculator from "../calculation/getCalcItemCalculator";
-import getFinalResult from "./getFinalResult";
+import getFinalResult from "../calculation/getFinalResult";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();

@@ -8,13 +8,14 @@ import type {
   ResistanceReduction,
   TotalAttribute,
 } from "../types";
-import type { AttackPatternConfig } from "../calculation/getAttackPatternConfig";
+import type { AttackPatternConfig } from "./getAttackPatternConfig";
+import type { CalcItemCalculator } from "./getCalcItemCalculator";
 
 import { TrackerControl } from "../controls";
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "../constants";
 import { TRANSFORMATIVE_REACTION_INFO } from "../constants/internal";
 import { CharacterCalc, GeneralCalc } from "../common-utils";
-import { genEmptyResult, type CalcItemCalculator } from "../calculation/getCalcItemCalculator";
+import { genEmptyCalcFinalResultItem } from "../calculation-utils/genEmptyCalcFinal";
 
 type GetFinalResultArgs = {
   char: CalcCharacter;
@@ -61,7 +62,11 @@ export default function getFinalResult({
       const config = configCalcItem(calcItem, elmtModCtrls);
 
       if (disabled && config.type === "attack") {
-        finalResult[resultKey][calcItem.name] = genEmptyResult(config.type, config.attPatt, config.attElmt);
+        finalResult[resultKey][calcItem.name] = genEmptyCalcFinalResultItem(
+          config.type,
+          config.attPatt,
+          config.attElmt
+        );
 
         tracker?.recordCalcItem(resultKey, calcItem.name, config.record);
         continue;

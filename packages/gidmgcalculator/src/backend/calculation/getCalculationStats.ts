@@ -9,7 +9,7 @@ import { findByIndex } from "@Src/utils";
 import { GeneralCalc } from "../common-utils";
 import { AttackBonusesControl, TotalAttributeControl, TrackerControl } from "../controls";
 import { isGrantedEffect } from "../calculation-utils/isGrantedEffect";
-import { AppliedBonusesGetter } from "../calculation/applied-bonuses-getter";
+import { AppliedBonusesGetter } from "../calculation-utils/applied-bonuses-getter";
 
 type AssistantInfo = {
   appChar: AppCharacter;
