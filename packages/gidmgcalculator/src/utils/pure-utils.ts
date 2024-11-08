@@ -14,8 +14,8 @@ export function getImgSrc(src?: string) {
   return isFromWiki ? `https://static.wikia.nocookie.net/gensin-impact/images/${src}.png` : src;
 }
 
-export function pickProps<M, T extends keyof M>(obj: M, keys: T[]) {
-  const result = {} as Pick<M, T>;
+export function pickProps<TObject, TKey extends keyof TObject>(obj: TObject, keys: TKey[]) {
+  const result = {} as Pick<TObject, TKey>;
 
   for (const key of keys) {
     result[key] = obj[key];
@@ -23,8 +23,8 @@ export function pickProps<M, T extends keyof M>(obj: M, keys: T[]) {
   return result;
 }
 
-export function removeEmpty<T extends Record<string, any>>(obj: T): T {
-  const copy = {} as T;
+export function removeEmpty<TObject extends Record<string, any>>(obj: TObject): TObject {
+  const copy = {} as TObject;
 
   for (const key in obj) {
     if (Array.isArray(obj[key])) {

@@ -1,16 +1,24 @@
 import type { Target } from "@Src/types";
-import type { ResistanceReduction } from "@Src/backend/types";
+import type {
+  CalculationInfo,
+  ElementType,
+  EntityDebuff,
+  EntityPenaltyTarget,
+  ResistanceReduction,
+  ResistanceReductionKey,
+} from "../types";
 import type { TrackerControl } from "./tracker-control";
 
-import { ATTACK_ELEMENTS } from "@Src/backend/constants";
-import { ECalcStatModule } from "@Src/backend/constants/internal";
+import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "../constants";
+import { ECalcStatModule } from "../constants/internal";
+import { toArray } from "@Src/utils";
+import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
+import { getPenaltyValue } from "../calculation-utils/getPenaltyValue";
 
 export class ResistanceReductionControl {
   private resistReduct: ResistanceReduction;
-  private tracker?: TrackerControl;
 
-  constructor(tracker?: TrackerControl) {
-    this.tracker = tracker;
+  constructor(private info: CalculationInfo, private tracker?: TrackerControl) {
     this.resistReduct = { def: 0 } as ResistanceReduction;
 
     for (const key of ATTACK_ELEMENTS) {
@@ -32,4 +40,55 @@ export class ResistanceReductionControl {
     }
     return targetResistances;
   }
+
+  private addPenalty = (
+    penalty: number,
+    targets: EntityPenaltyTarget | EntityPenaltyTarget[],
+    inputs: number[],
+    description: string
+  ) => {
+    if (!penalty) return;
+    const { info } = this;
+    const paths = new Set<ResistanceReductionKey>();
+
+    for (const target of toArray(targets)) {
+      if (typeof target === "string") {
+        paths.add(target);
+        continue;
+      }
+      switch (target.type) {
+        case "inp_elmt": {
+          const elmtIndex = inputs[target.inpIndex ?? 0];
+          paths.add(ELEMENT_TYPES[elmtIndex]);
+          break;
+        }
+        case "XILONEN": {
+          const elmts: ElementType[] = ["pyro", "hydro", "cryo", "electro"];
+          let remainingCount = 3;
+
+          for (const teammate of info.partyData.concat(info.appChar)) {
+            if (teammate && elmts.includes(teammate.vision)) {
+              paths.add(teammate.vision);
+              remainingCount--;
+            }
+          }
+          if (remainingCount > 0) paths.add("geo");
+          break;
+        }
+      }
+    }
+    paths.forEach((path) => this.add(path, penalty, description));
+  };
+
+  applyDebuff = (debuff: EntityDebuff, inputs: number[], fromSelf: boolean, description: string) => {
+    if (!debuff.effects) return;
+
+    for (const config of toArray(debuff.effects)) {
+      const penalty = getPenaltyValue(config, this.info, inputs, fromSelf);
+
+      if (isApplicableEffect(config, this.info, inputs, fromSelf)) {
+        this.addPenalty(penalty, config.targets, inputs, description);
+      }
+    }
+  };
 }

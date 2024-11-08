@@ -42,7 +42,7 @@ export function ArtifactsTab() {
   const totalAttr = useSelector(selectTotalAttr);
   const artifacts = useSelector(selectArtifacts);
 
-  const artAttr = TotalAttributeControl.getArtifactAttribute(artifacts, (stat) => totalAttr[`${stat}_base`]);
+  const artAttr = TotalAttributeControl.getArtifactAttribute(artifacts, totalAttr);
 
   const { activeIndex, renderTabs } = useTabs({
     level: 2,

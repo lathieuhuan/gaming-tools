@@ -1,5 +1,5 @@
 import type { AttributeStat, WeaponType } from "./common.types";
-import type { EntityBonus, EntityBuff, CalcItemType, WithBonusTargets } from "./app-entity.types";
+import type { CalcItemType, EntityBonus, EntityBonusCore, EntityBuff } from "./app-entity";
 
 export type AppWeapon = {
   /** This is id */
@@ -34,26 +34,9 @@ type WeaponCalcItem = {
 
 // ========== BONUS ==========
 
-export type WeaponBonusCore = EntityBonus & {
-  /**
-   * Increment to value after each refinement.
-   * Default to 1/3 of [value]. Fixed buff type has increment = 0
-   */
-  incre?: number;
-  /** Added before stacks, after incre. Not implement yet */
-  preExtra?: number | WeaponBonusCore;
-  /** Apply after stacks */
-  sufExtra?: number | WeaponBonusCore;
-  max?:
-    | number
-    // Only on Jadefall's Splendor
-    | {
-        value: number;
-        incre: number;
-      };
-};
+export type WeaponBonusCore = EntityBonusCore;
 
-type WeaponBonus = WithBonusTargets<WeaponBonusCore>;
+type WeaponBonus = EntityBonus<WeaponBonusCore>;
 
 export type WeaponBuff = EntityBuff<WeaponBonus> & {
   /**

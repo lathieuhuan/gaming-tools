@@ -3,13 +3,11 @@ import type {
   ResistanceReductionKey,
   CalcItemType,
   AttackBonusKey,
-  LevelableTalentType,
-} from "@Src/backend/types";
+  CalculationFinalResultKey,
+} from "../types";
 
-import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "@Src/backend/constants";
-import { ECalcStatModule } from "@Src/backend/constants/internal";
-
-export type CalculationFinalResultKey = LevelableTalentType | "RXN_CALC" | "WP_CALC";
+import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "../constants";
+import { ECalcStatModule } from "../constants/internal";
 
 // ========== STAT RECORD ==========
 
@@ -106,9 +104,6 @@ export class TrackerControl {
   }
 
   finalize(): TrackerResult {
-    return {
-      ...this.stats,
-      ...this.calcItems,
-    };
+    return Object.assign({}, this.stats, this.calcItems);
   }
 }

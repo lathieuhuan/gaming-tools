@@ -1,4 +1,4 @@
-import { ATTACK_ELEMENTS, EntityCalc, GeneralCalc, WeaponType } from "@Backend";
+import { ATTACK_ELEMENTS, GeneralCalc, isGrantedEffect, WeaponType } from "@Backend";
 
 import type {
   CalcSetup,
@@ -130,11 +130,11 @@ export class Setup_ {
       artifactIDs: options?.artifactIDs || artifacts.map((artifact) => artifact?.ID ?? null),
       selfBuffCtrls: data.selfBuffCtrls.filter((ctrl) => {
         const buff = findByIndex(buffs, ctrl.index);
-        return buff ? ctrl.activated && EntityCalc.isGrantedEffect(buff, char) : false;
+        return buff ? ctrl.activated && isGrantedEffect(buff, char) : false;
       }),
       selfDebuffCtrls: data.selfDebuffCtrls.filter((ctrl) => {
         const debuff = findByIndex(debuffs, ctrl.index);
-        return debuff ? ctrl.activated && EntityCalc.isGrantedEffect(debuff, char) : false;
+        return debuff ? ctrl.activated && isGrantedEffect(debuff, char) : false;
       }),
       wpBuffCtrls: data.wpBuffCtrls.filter((ctrl) => ctrl.activated),
       party,

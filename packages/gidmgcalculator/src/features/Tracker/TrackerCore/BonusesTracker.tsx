@@ -1,12 +1,12 @@
 import { round } from "rond";
-import { ATTACK_ELEMENTS, type AttackBonus, type AttackBonusKey } from "@Backend";
+import { ATTACK_ELEMENTS, type AttackBonuses, type AttackBonusKey } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
 import { Utils_ } from "@Src/utils";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
 interface BonusesTrackerProps {
-  attBonus: AttackBonus;
+  attBonus: AttackBonuses;
 }
 export function BonusesTracker({ attBonus }: BonusesTrackerProps) {
   const { t } = useTranslation();

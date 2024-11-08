@@ -1,15 +1,14 @@
 import { round } from "rond";
 import {
   CharacterCalc,
-  AppCharacter,
   CharacterBuff,
   CharacterDebuff,
-  getIntialCharacterBonusValue,
   AppWeapon,
   WeaponBuff,
+  BareBonusGetter,
+  CalculationInfo,
 } from "@Backend";
 
-import type { Character, PartyData } from "@Src/types";
 import { toArray, toMult } from "./pure-utils";
 
 const typeToCls: Record<string, string> = {
@@ -43,14 +42,12 @@ export const parseResonanceDescription = (description: string) => {
 
 export const parseAbilityDescription = (
   ability: Pick<CharacterBuff | CharacterDebuff, "description" | "effects">,
-  obj: {
-    char: Character;
-    appChar: AppCharacter;
-    partyData: PartyData;
-  },
+  obj: CalculationInfo,
   inputs: number[],
   fromSelf: boolean
 ) => {
+  const bonusGetter = new BareBonusGetter(obj);
+
   return ability.description.replace(/\{[\w \-/,%^"'*@.[\]]+\}#\[\w*\]/g, (match) => {
     let [body, type = ""] = match.split("#");
     body = body.slice(1, -1);
@@ -61,7 +58,7 @@ export const parseAbilityDescription = (
 
       if (effect) {
         const { value, preExtra, max } = effect;
-        let result = getIntialCharacterBonusValue(value, obj, inputs, fromSelf);
+        let result = bonusGetter.getIntialBonusValue(value, { inputs, fromSelf });
 
         result *= CharacterCalc.getLevelScale(effect.lvScale, obj, inputs, fromSelf);
         if (typeof preExtra === "number") result += preExtra;

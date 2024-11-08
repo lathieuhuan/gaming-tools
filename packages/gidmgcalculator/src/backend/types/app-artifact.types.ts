@@ -1,16 +1,11 @@
 import type {
   EntityBonus,
+  EntityBonusCore,
   EntityBuff,
   EntityDebuff,
   EntityPenalty,
-  WithBonusTargets,
-  WithPenaltyTargets,
-} from "./app-entity.types";
-
-type ArtTypeData = {
-  name: string;
-  icon: string;
-};
+  EntityPenaltyCore,
+} from "./app-entity";
 
 export type AppArtifact = {
   /** This is id */
@@ -18,43 +13,44 @@ export type AppArtifact = {
   beta?: boolean;
   name: string;
   variants: number[];
-  flower: ArtTypeData;
-  plume: ArtTypeData;
-  sands: ArtTypeData;
-  goblet: ArtTypeData;
-  circlet: ArtTypeData;
+  flower: ArtifactTypeData;
+  plume: ArtifactTypeData;
+  sands: ArtifactTypeData;
+  goblet: ArtifactTypeData;
+  circlet: ArtifactTypeData;
   descriptions: string[];
   setBonuses?: SetBonus[];
   buffs?: ArtifactBuff[];
   debuffs?: ArtifactDebuff[];
 };
 
-export type ArtifactBonusCore = EntityBonus & {
-  /** Added before stacks. Not implement yet */
-  preExtra?: number | ArtifactBonusCore;
-  /** Apply after stacks */
-  sufExtra?: number | ArtifactBonusCore;
-  max?: number;
+type ArtifactTypeData = {
+  name: string;
+  icon: string;
 };
-
-type ArtifactBonus = WithBonusTargets<ArtifactBonusCore>;
 
 type SetBonus = {
   description?: number[];
   effects?: ArtifactBuff["effects"];
 };
 
+// ========== BUFF / BONUS ==========
+
+export type ArtifactBonusCore = EntityBonusCore;
+
 export type ArtifactModifierDescription = string | number | number[];
 
-export type ArtifactBuff = EntityBuff<ArtifactBonus> & {
+type ArtifactBuff = EntityBuff<EntityBonus<ArtifactBonusCore>> & {
   /** 0 is 2-piece set, 1 is 4-piece set. Default to 1 */
   bonusLv?: number;
   description: ArtifactModifierDescription;
 };
 
-export type ArtifactPenaltyCore = EntityPenalty;
+// ============ DEBUFF / PENALTY ============
 
-type ArtifactPenalty = WithPenaltyTargets<ArtifactPenaltyCore>;
+export type ArtifactPenaltyCore = EntityPenaltyCore;
+
+type ArtifactPenalty = EntityPenalty<ArtifactPenaltyCore>;
 
 type ArtifactDebuff = EntityDebuff<ArtifactPenalty> & {
   description: ArtifactModifierDescription;

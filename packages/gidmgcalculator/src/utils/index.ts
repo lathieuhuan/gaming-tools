@@ -3,3 +3,4 @@ export * from "./utils";
 export * from "./modifier-utils";
 export * from "./setup-utils";
 export * from "./description-parsers";
+export * from "./util-classes";
