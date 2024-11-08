@@ -86,11 +86,11 @@ export class Modifier_ {
 }
 
 type Modifier = {
-  id: number;
+  index: number;
   inputConfigs?: ModInputConfig[];
 };
 function createModCtrl(mod: Modifier, forSelf: boolean) {
-  const ctrl: ModifierCtrl = { index: mod.id, activated: false };
+  const ctrl: ModifierCtrl = { index: mod.index, activated: false };
 
   if (mod.inputConfigs) {
     const initialValues = [];
@@ -106,7 +106,7 @@ function createModCtrl(mod: Modifier, forSelf: boolean) {
 }
 
 interface RefModifier {
-  id: number;
+  index: number;
   affect: ModifierAffectType;
   inputConfigs?: ModInputConfig[];
 }

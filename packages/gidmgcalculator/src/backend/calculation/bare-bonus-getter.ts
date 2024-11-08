@@ -13,7 +13,7 @@ import type {
 
 import { toArray } from "@Src/utils";
 import { CharacterCalc, GeneralCalc } from "../common-utils";
-import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
+import { isApplicableEffect } from "../calculation-utils";
 
 export type GetBareBonusSupportInfo = {
   inputs: number[];

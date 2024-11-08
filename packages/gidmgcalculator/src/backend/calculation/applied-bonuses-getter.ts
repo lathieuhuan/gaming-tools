@@ -13,7 +13,7 @@ import { toArray } from "@Src/utils";
 import { ELEMENT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
 import { ModifierStackingControl } from "../controls";
-import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
+import { isApplicableEffect } from "../calculation-utils";
 import { BareBonusGetter, type GetBareBonusSupportInfo } from "./bare-bonus-getter";
 
 type ApplyBonusSupportInfo = {

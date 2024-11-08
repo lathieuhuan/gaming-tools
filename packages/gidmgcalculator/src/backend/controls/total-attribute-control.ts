@@ -1,14 +1,20 @@
 import type { Artifact, Character, Weapon } from "@Src/types";
-import type { PartiallyOptional, PartiallyRequired } from "rond";
-import type { AppCharacter, AppliedAttributeBonus, AppWeapon, AttributeStat, CoreStat, TotalAttribute } from "../types";
+import type { PartiallyOptional } from "rond";
+import type {
+  AppCharacter,
+  AppliedAttributeBonus,
+  AppWeapon,
+  ArtifactAttribute,
+  AttributeStat,
+  CoreStat,
+  TotalAttribute,
+} from "../types";
 
 import { applyPercent, Object_, toArray, Utils_ } from "@Src/utils";
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
 import { ArtifactCalc, GeneralCalc, WeaponCalc } from "../common-utils";
 import { TrackerControl } from "./tracker-control";
-
-export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;
 
 type InternalTotalAttribute = Record<
   AttributeStat,
@@ -175,20 +181,6 @@ export class TotalAttributeControl {
       this.tracker?.recordStat(ECalcStatModule.ATTR, bonus.toStat, bonus.value, bonus.description);
     }
   };
-
-  // addStable = (keys: AttributeStat | AttributeStat[], value: number, description: string) => {
-  //   toArray(keys).forEach((key) => {
-  //     this.totalAttr[key].stableBonus += value;
-  //     this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
-  //   });
-  // };
-
-  // addUnstable = (keys: AttributeStat | AttributeStat[], value: number, description: string) => {
-  //   toArray(keys).forEach((key) => {
-  //     this.totalAttr[key].unstableBonus += value;
-  //     this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
-  //   });
-  // };
 
   getBase = (key: AttributeStat) => {
     return this.totalAttr[key].base;

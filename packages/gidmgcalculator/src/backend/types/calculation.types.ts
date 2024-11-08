@@ -1,3 +1,4 @@
+import type { PartiallyRequired } from "rond";
 import type { Character, PartyData } from "@Src/types";
 import type {
   ActualAttackElement,
@@ -6,6 +7,7 @@ import type {
   AttackBonusType,
   AttackPattern,
   AttributeStat,
+  CoreStat,
   LevelableTalentType,
 } from "./common.types";
 import type { AppCharacter, CharacterBuffNormalAttackConfig } from "./app-character.types";
@@ -22,6 +24,8 @@ type TotalAttributeStat = AttributeStat | "hp_base" | "atk_base" | "def_base";
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
 export type TotalAttribute = Record<TotalAttributeStat, number>;
+
+export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;
 
 export type BareBonus = {
   id: string;

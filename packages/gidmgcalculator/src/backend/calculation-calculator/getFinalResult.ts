@@ -79,7 +79,7 @@ export default function getFinalResult({
     }
   });
 
-  const baseRxnDmg = GeneralCalc.getBaseRxnDmg(char.level);
+  const baseRxnDmg = GeneralCalc.getBaseRxnDamage(char.level);
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
     const { mult, dmgType } = TRANSFORMATIVE_REACTION_INFO[rxn];

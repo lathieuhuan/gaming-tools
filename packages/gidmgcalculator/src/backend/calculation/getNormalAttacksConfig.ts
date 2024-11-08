@@ -3,7 +3,7 @@ import type { CalculationInfo, NormalAttacksConfig } from "../types";
 
 import { findByIndex, toArray } from "@Src/utils";
 import { NORMAL_ATTACKS } from "../constants";
-import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
+import { isApplicableEffect } from "../calculation-utils";
 
 export default function getNormalAttacksConfig(selfBuffCtrls: ModifierCtrl[], info: CalculationInfo) {
   const result: NormalAttacksConfig = {};

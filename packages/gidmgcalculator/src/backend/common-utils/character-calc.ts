@@ -3,12 +3,12 @@ import type {
   ActualAttackPattern,
   AppCharacter,
   AttackPattern,
+  CalculationInfo,
   CharacterEffectLevelScale,
   LevelableTalentType,
   TalentAttributeType,
   TalentType,
 } from "../types";
-import type { CalculationInfo } from ".";
 
 import { findByName } from "@Src/utils";
 

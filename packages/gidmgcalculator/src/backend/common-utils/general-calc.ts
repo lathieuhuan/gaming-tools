@@ -53,12 +53,12 @@ export class GeneralCalc {
     };
   }
 
-  static getBaseRxnDmg(level: Level): number {
-    return BASE_REACTION_DAMAGE[this.getBareLv(level)] ?? 0;
+  static getBaseRxnDamage(charLv: Level) {
+    return BASE_REACTION_DAMAGE[this.getBareLv(charLv)] ?? 0;
   }
 
   static getQuickenBuffDamage(reaction: QuickenReaction, charLv: Level, pctBonus: number) {
-    const base = this.getBaseRxnDmg(charLv);
+    const base = this.getBaseRxnDamage(charLv);
 
     switch (reaction) {
       case "aggravate":
@@ -85,7 +85,9 @@ export class GeneralCalc {
     const counter = new TypeCounter<ElementType>();
 
     if (appChar) counter.add(appChar.vision);
-    Array_.truthyList(partyData).pickEach("vision").use(counter.add);
+    Array_.truthyList(partyData)
+      .pickEach("vision")
+      .use((type) => counter.add(type));
 
     return counter;
   }

@@ -1,5 +1,5 @@
 import { round } from "rond";
-import { GeneralCalc, AmplifyingReaction, ElementType, AttackBonuses, AttackBonusControl } from "@Backend";
+import { GeneralCalc, AmplifyingReaction, ElementType, AttackBonuses, AttackBonusesControl } from "@Backend";
 
 import { Green } from "../span";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
@@ -13,7 +13,7 @@ export function VapMeltBuffItem({ reaction, element, attBonus, ...rest }: VapMel
   const mult = GeneralCalc.getAmplifyingMultiplier(
     reaction,
     element,
-    AttackBonusControl.getBonus(attBonus, "pct_", reaction)
+    AttackBonusesControl.get(attBonus, "pct_", reaction)
   );
 
   return (
