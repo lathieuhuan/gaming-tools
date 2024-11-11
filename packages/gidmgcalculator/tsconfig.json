@@ -24,7 +24,8 @@
     "paths": {
       "@Backend": ["src/backend"],
       "@Store/*": ["src/store/*"],
-      "@Src/*": ["src/*"]
+      "@Src/*": ["src/*"],
+      "@Mocks/*": ["mocks/*"]
     }
   },
   "include": ["src"],

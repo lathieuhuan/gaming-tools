@@ -7,5 +7,10 @@ export default {
   testPathIgnorePatterns: [
     "node_modules",
     "e2e"
-  ]
+  ],
+  moduleNameMapper: {
+    '@Src/constants': '<rootDir>/mocks/constants.mock.ts',
+    '@Mocks/(.*)': '<rootDir>/mocks/$1',
+    '@Src/(.*)': '<rootDir>/src/$1',
+  }
 };
