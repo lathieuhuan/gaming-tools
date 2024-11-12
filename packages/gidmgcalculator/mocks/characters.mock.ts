@@ -3,6 +3,8 @@ import { AppCharacter } from "../src/backend";
 export enum EMockCharacter {
   BASIC = "BASIC",
   TARTAGLIA = "Tartaglia",
+  CATALYST = "CATALYST",
+  ES_CALC_CONFIG = "ES_CALC_CONFIG",
 }
 
 const STATS: AppCharacter["stats"] = [
@@ -84,6 +86,55 @@ export const characters: AppCharacter[] = [
     talentLvBonus: {
       ES: 5,
       EB: 3,
+    },
+    calcList: CALC_LIST,
+    activeTalents: ACTIVE_TALENTS,
+    passiveTalents: PASSIVE_TALENTS,
+    constellation: CONSTELLATION,
+  },
+  {
+    code: 3,
+    name: EMockCharacter.CATALYST,
+    icon: "",
+    sideIcon: "",
+    nation: "inazuma",
+    rarity: 5,
+    vision: "electro",
+    weaponType: "catalyst",
+    EBcost: 80,
+    stats: STATS,
+    statBonus: { type: "cDmg_", value: 9.6 },
+    talentLvBonus: {
+      NAs: 3,
+      ES: 5,
+    },
+    calcList: CALC_LIST,
+    activeTalents: ACTIVE_TALENTS,
+    passiveTalents: PASSIVE_TALENTS,
+    constellation: CONSTELLATION,
+  },
+  {
+    code: 4,
+    name: EMockCharacter.ES_CALC_CONFIG,
+    icon: "",
+    sideIcon: "",
+    nation: "sumeru",
+    rarity: 5,
+    vision: "cryo",
+    weaponType: "polearm",
+    EBcost: 90,
+    stats: STATS,
+    statBonus: { type: "def_", value: 9 },
+    talentLvBonus: {
+      NAs: 3,
+      EB: 5,
+    },
+    calcListConfig: {
+      ES: {
+        scale: 3,
+        basedOn: "em",
+        attPatt: "EB",
+      },
     },
     calcList: CALC_LIST,
     activeTalents: ACTIVE_TALENTS,
