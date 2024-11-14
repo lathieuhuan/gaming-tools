@@ -9,13 +9,13 @@ import Array_ from "@Src/utils/array-utils";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectUserArtifacts, addUserArtifact, sortArtifacts } from "@Store/userdb-slice";
+import { selectUserArtifacts, addUserArtifact, updateUserArtifact, sortArtifacts } from "@Store/userdb-slice";
 
 // Component
 import { InventoryRack, ArtifactForge, ArtifactFilter, ArtifactFilterState } from "@Src/components";
 import { ChosenArtifactView } from "./ChosenArtifactView";
 
-type ModalType = "ADD_ARTIFACT" | "FITLER" | "";
+type ModalType = "ADD_ARTIFACT" | "EDIT_ARTIFACT" | "CONFIG_FILTER" | "";
 
 export default function MyArtifacts() {
   const dispatch = useDispatch();
@@ -41,15 +41,16 @@ export default function MyArtifacts() {
 
   const closeModal = () => setModalType("");
 
-  const isMaxArtifactsReached = () => {
-    if (userArts.length >= MAX_USER_ARTIFACTS) {
-      message.error("Number of stored artifacts has reached its limit.");
+  const isNewArtifactAddable = () => {
+    if (userArts.length < MAX_USER_ARTIFACTS) {
       return true;
     }
+    message.error("Number of stored artifacts has reached its limit.");
+    return false;
   };
 
   const onClickAddArtifact = () => {
-    if (!isMaxArtifactsReached()) {
+    if (isNewArtifactAddable()) {
       setModalType("ADD_ARTIFACT");
     }
   };
@@ -95,7 +96,7 @@ export default function MyArtifacts() {
             "pl-3 py-1.5 text-black rounded-2xl glow-on-hover",
             isFiltered ? "pr-2 bg-active-color rounded-r-none" : "pr-3 bg-light-default"
           )}
-          onClick={() => setModalType("FITLER")}
+          onClick={() => setModalType("CONFIG_FILTER")}
         >
           <p className="font-bold text-sm">Filter</p>
         </button>
@@ -126,10 +127,14 @@ export default function MyArtifacts() {
         onChangeItem={(artifact) => setChosenId(artifact?.ID)}
       />
 
-      <ChosenArtifactView artifact={chosenArtifact} onRemoveArtifact={onRemoveArtifact} />
+      <ChosenArtifactView
+        artifact={chosenArtifact}
+        onRemoveArtifact={onRemoveArtifact}
+        onRequestEditArtifact={() => setModalType("EDIT_ARTIFACT")}
+      />
 
       <Modal
-        active={modalType === "FITLER"}
+        active={modalType === "CONFIG_FILTER"}
         preset="large"
         title="Artifact Filter"
         bodyCls="grow hide-scrollbar"
@@ -147,20 +152,30 @@ export default function MyArtifacts() {
       </Modal>
 
       <ArtifactForge
-        active={modalType === "ADD_ARTIFACT"}
-        hasMultipleMode
+        active={modalType === "ADD_ARTIFACT" || modalType === "EDIT_ARTIFACT"}
+        workpiece={modalType === "EDIT_ARTIFACT" ? chosenArtifact : undefined}
+        hasMultipleMode={modalType === "ADD_ARTIFACT"}
         hasConfigStep
         onForgeArtifact={(artifact) => {
-          if (isMaxArtifactsReached()) return;
+          if (modalType === "ADD_ARTIFACT") {
+            if (isNewArtifactAddable()) {
+              const newUserArtifact: UserArtifact = {
+                ...artifact,
+                ID: Date.now(),
+                owner: null,
+              };
 
-          const newUserArtifact: UserArtifact = {
-            ...artifact,
-            ID: Date.now(),
-            owner: null,
-          };
-
-          dispatch(addUserArtifact(newUserArtifact));
-          setChosenId(newUserArtifact.ID);
+              dispatch(addUserArtifact(newUserArtifact));
+              setChosenId(newUserArtifact.ID);
+            }
+          } else if (chosenArtifact) {
+            dispatch(
+              updateUserArtifact({
+                ...artifact,
+                ID: chosenArtifact.ID,
+              })
+            );
+          }
         }}
         onClose={closeModal}
       />

@@ -16,6 +16,7 @@ import { AppEntitySelect, type AppEntitySelectProps, type AfterSelectAppEntity }
 import { ArtifactConfig } from "./components/ArtifactConfig";
 
 export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> {
+  workpiece?: Artifact;
   /** Only works when hasConfigStep */
   allowBatchForging?: boolean;
   /** Only works when hasConfigStep */
@@ -29,6 +30,7 @@ export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMulti
   onClose: () => void;
 }
 const ArtifactSmith = ({
+  workpiece,
   allowBatchForging,
   defaultBatchForging = false,
   forFeature,
@@ -39,7 +41,7 @@ const ArtifactSmith = ({
   onClose,
   ...templateProps
 }: ArtifactForgeProps) => {
-  const [artifactConfig, setArtifactConfig] = useState<Artifact>();
+  const [artifactConfig, setArtifactConfig] = useState<Artifact | undefined>(workpiece);
   const [maxRarity, setMaxRarity] = useState(5);
   const [batchForging, setBatchForging] = useState(defaultBatchForging);
 
@@ -50,7 +52,7 @@ const ArtifactSmith = ({
   };
 
   const { artifactTypes, updateArtifactTypes, renderArtifactTypeSelect } = useArtifactTypeSelect(
-    forcedType || initialTypes,
+    workpiece?.type || forcedType || initialTypes,
     {
       multiple: batchForging,
       required: batchForging,
@@ -193,7 +195,16 @@ const ArtifactSmith = ({
       onChange={(mold, isConfigStep) => {
         if (mold) {
           if (isConfigStep) {
-            onForgeArtifact(Entity_.createArtifact({ ...mold, type: forcedType || artifactTypes[0] }, 0));
+            const newConfig = Entity_.createArtifact(
+              {
+                ...artifactConfig,
+                ...mold,
+                type: forcedType || artifactTypes[0],
+              },
+              0
+            );
+
+            setArtifactConfig(newConfig);
             setMaxRarity(mold.rarity);
           } else {
             onForgeArtifact(Entity_.createArtifact({ ...mold, type: artifactTypes[0] }));
