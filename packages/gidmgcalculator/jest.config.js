@@ -9,8 +9,9 @@ export default {
     "e2e"
   ],
   moduleNameMapper: {
-    '@Src/constants': '<rootDir>/mocks/constants.mock.ts',
-    '@Mocks/(.*)': '<rootDir>/mocks/$1',
+    '@Src/constants': '<rootDir>/unit-test/mocks/constants.mock.ts',
+    '@UnitTest/(.*)': '<rootDir>/unit-test/$1',
     '@Src/(.*)': '<rootDir>/src/$1',
-  }
+  },
+  // globalSetup: '<rootDir>/unit-test/global-setup.ts'
 };

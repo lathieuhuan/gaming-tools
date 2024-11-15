@@ -25,7 +25,7 @@
       "@Backend": ["src/backend"],
       "@Store/*": ["src/store/*"],
       "@Src/*": ["src/*"],
-      "@Mocks/*": ["mocks/*"]
+      "@UnitTest/*": ["unit-test/*"]
     }
   },
   "include": ["src"],

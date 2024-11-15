@@ -1,7 +1,7 @@
-import { characters, EMockCharacter } from "@Mocks/characters.mock";
+import { AppCharacter, AttackPattern, CalculationInfo, TalentType } from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
 import { Character } from "@Src/types";
-import { AppCharacter, AttackPattern, CalculationInfo, TalentType } from "@Src/backend/types";
+import { characters, EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { CharacterCalc } from "../character-calc";
 
 type GetTotalXtraTalentLvTestCase = {

@@ -14,7 +14,8 @@ function isUsableEffect(
   condition: EffectUsableCondition,
   appChar: AppCharacter,
   partyData: PartyData,
-  inputs: number[]
+  inputs: number[],
+  elmtCounter = GeneralCalc.countElements(partyData, appChar)
 ) {
   const { checkInput, checkChar } = condition;
 
@@ -24,11 +25,7 @@ function isUsableEffect(
 
     switch (source) {
       case "various_vision":
-        if (partyData.length) {
-          input = GeneralCalc.countElements(partyData, appChar).keys.length;
-        } else {
-          return false;
-        }
+        input = elmtCounter.keys.length;
         break;
       case "mixed":
         if (appChar.nation === "natlan") input += 1;
@@ -85,7 +82,9 @@ export function isApplicableEffect(
   inputs: number[],
   fromSelf = false
 ): boolean {
-  if (!isUsableEffect(condition, info.appChar, info.partyData, inputs)) {
+  const elmtCounter = GeneralCalc.countElements(info.partyData, info.appChar);
+
+  if (!isUsableEffect(condition, info.appChar, info.partyData, inputs, elmtCounter)) {
     return false;
   }
   if (!isAvailableEffect(condition, info.char, inputs, fromSelf)) {
@@ -100,24 +99,23 @@ export function isApplicableEffect(
   if (condition.forElmts && !condition.forElmts.includes(info.appChar.vision)) {
     return false;
   }
-  const elementCountMap = GeneralCalc.countElements(info.partyData, info.appChar);
 
   if (totalPartyElmtCount) {
     const { elements, value, type } = totalPartyElmtCount;
 
     switch (type) {
       case "max":
-        if (elementCountMap.get(elements) > value) return false;
+        if (elmtCounter.get(elements) > value) return false;
     }
   }
   if (partyElmtCount) {
     const requiredEntries = new TypeCounter(partyElmtCount).entries;
 
-    if (requiredEntries.some(([type, value]) => elementCountMap.get(type) < value)) {
+    if (requiredEntries.some(([type, value]) => elmtCounter.get(type) < value)) {
       return false;
     }
   }
-  if (partyOnlyElmts && elementCountMap.keys.some((elementType) => !partyOnlyElmts.includes(elementType))) {
+  if (partyOnlyElmts && elmtCounter.keys.some((elementType) => !partyOnlyElmts.includes(elementType))) {
     return false;
   }
   return true;

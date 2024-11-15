@@ -1,43 +1,13 @@
+import { ArtifactType } from "@Src/backend/types";
 import { CalcArtifacts } from "@Src/types";
-import { ArtifactType, Level } from "@Src/backend/types";
-import { characters } from "@Mocks/characters.mock";
+import { characters } from "@UnitTest/mocks/characters.mock";
+import { ASCENSION_RANKS } from "@UnitTest/test-constants";
 import { GeneralCalc } from "../general-calc";
 
 test("getAscension", () => {
-  const testCases: Array<{ levels: Level[]; ascension: number }> = [
-    {
-      levels: ["1/20", "20/20"],
-      ascension: 0,
-    },
-    {
-      levels: ["20/40", "40/40"],
-      ascension: 1,
-    },
-    {
-      levels: ["40/50", "50/50"],
-      ascension: 2,
-    },
-    {
-      levels: ["50/60", "60/60"],
-      ascension: 3,
-    },
-    {
-      levels: ["60/70", "70/70"],
-      ascension: 4,
-    },
-    {
-      levels: ["70/80", "80/80"],
-      ascension: 5,
-    },
-    {
-      levels: ["80/90", "90/90"],
-      ascension: 6,
-    },
-  ];
-
-  for (const testCase of testCases) {
+  for (const testCase of ASCENSION_RANKS) {
     for (const level of testCase.levels) {
-      expect(GeneralCalc.getAscension(level)).toBe(testCase.ascension);
+      expect(GeneralCalc.getAscension(level)).toBe(testCase.value);
     }
   }
 });

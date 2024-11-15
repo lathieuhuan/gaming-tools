@@ -1,4 +1,4 @@
-import { AppCharacter } from "../src/backend";
+import { AppCharacter } from "../../src/backend";
 
 export enum EMockCharacter {
   BASIC = "BASIC",
