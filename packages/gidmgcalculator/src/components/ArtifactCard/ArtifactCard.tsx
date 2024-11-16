@@ -48,6 +48,7 @@ export function ArtifactCard<T extends CalcArtifact | UserArtifact>({
         {artifact && withActions && actions?.length ? (
           <ButtonGroup
             className="mt-4"
+            justify="end"
             buttons={actions.map((action) => {
               return {
                 ...action,

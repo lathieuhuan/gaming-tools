@@ -44,6 +44,7 @@ export function WeaponCard<T extends CalcWeapon | UserWeapon>({
         {weapon && withActions && actions?.length ? (
           <ButtonGroup
             className="mt-4"
+            justify="end"
             buttons={actions.map((action) => {
               return {
                 ...action,

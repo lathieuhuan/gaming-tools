@@ -1,6 +1,7 @@
 import { Fragment, useState } from "react";
-import { clsx, ConfirmModal } from "rond";
+import { ConfirmModal } from "rond";
 import { MdEdit } from "react-icons/md";
+import { FaTrashAlt } from "react-icons/fa";
 
 import { UserArtifact } from "@Src/types";
 import { $AppArtifact } from "@Src/services";
@@ -55,19 +56,21 @@ export function ChosenArtifactView({ artifact, onRemoveArtifact, onRequestEditAr
         }}
         actions={[
           {
+            title: "Edit",
             icon: <MdEdit className="text-lg" />,
-            title: 'Edit',
-            className: clsx("mr-auto", artifact?.owner || artifact?.setupIDs?.length ? "hidden" : ""),
+            boneOnly: true,
+            className: artifact?.owner || artifact?.setupIDs?.length ? "hidden" : "",
             onClick: () => onRequestEditArtifact?.(),
           },
           {
-            children: "Remove",
-            title: 'Remove',
+            title: "Remove",
+            icon: <FaTrashAlt />,
+            className: "ml-auto",
             onClick: () => setModalType("REMOVE_ARTIFACT"),
           },
           {
+            title: "Equip",
             children: "Equip",
-            title: 'Equip',
             onClick: () => setModalType("EQUIP_CHARACTER"),
           },
         ]}
