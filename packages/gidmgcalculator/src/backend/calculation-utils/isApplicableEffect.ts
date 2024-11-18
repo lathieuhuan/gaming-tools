@@ -38,6 +38,7 @@ function isUsableEffect(
         break;
       default:
         input = inputs[source];
+        if (input === undefined) return false;
     }
 
     switch (type) {
