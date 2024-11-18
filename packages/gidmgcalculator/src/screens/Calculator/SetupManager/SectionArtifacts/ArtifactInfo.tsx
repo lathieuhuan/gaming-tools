@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import isEqual from "react-fast-compare";
-import { FaSave, FaTrashAlt, FaToolbox, FaSyncAlt } from "react-icons/fa";
+import { FaSave, FaToolbox, FaSyncAlt } from "react-icons/fa";
 import { MdInventory } from "react-icons/md";
 import { Modal, ConfirmModal, Button, VersatileSelect } from "rond";
 import { ArtifactCalc, AttributeStat } from "@Backend";
@@ -20,6 +20,7 @@ import { useStoreSnapshot } from "@Src/features";
 
 // Component
 import { ArtifactLevelSelect, ArtifactSubstatsControl } from "@Src/components";
+import { IconTrashCan } from "@Src/components/icons";
 
 export type ArtifactSourceType = "LOADOUT" | "INVENTORY" | "FORGE";
 
@@ -106,7 +107,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
       <div className="px-2 pt-2 pb-1 flex justify-end items-center gap-4">
         <Button
           title="Remove"
-          icon={<FaTrashAlt />}
+          icon={<IconTrashCan />}
           onClick={() => {
             dispatch(changeArtifact({ pieceIndex, newPiece: null }));
             onRemove();

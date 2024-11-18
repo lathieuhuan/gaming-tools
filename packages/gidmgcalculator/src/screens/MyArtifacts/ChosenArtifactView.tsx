@@ -1,18 +1,22 @@
 import { Fragment, useState } from "react";
-import { ConfirmModal } from "rond";
-import { AttributeStat } from "@Backend";
+import { Button, clsx, ConfirmModal } from "rond";
+import { MdEdit } from "react-icons/md";
 
 import { UserArtifact } from "@Src/types";
 import { $AppArtifact } from "@Src/services";
 import { useDispatch } from "@Store/hooks";
 import { removeArtifact, swapArtifactOwner, updateUserArtifact, updateUserArtifactSubStat } from "@Store/userdb-slice";
+
+// Components
 import { ArtifactCard, Tavern } from "@Src/components";
+import { IconTrashCan } from "@Src/components/icons";
 
 interface ChosenArtifactViewProps {
   artifact?: UserArtifact;
   onRemoveArtifact?: (artifact: UserArtifact) => void;
+  onRequestEditArtifact?: () => void;
 }
-export function ChosenArtifactView({ artifact, onRemoveArtifact }: ChosenArtifactViewProps) {
+export function ChosenArtifactView({ artifact, onRemoveArtifact, onRequestEditArtifact }: ChosenArtifactViewProps) {
   const dispatch = useDispatch();
   const [modalType, setModalType] = useState<"REMOVE_ARTIFACT" | "EQUIP_CHARACTER" | "">("");
   const [newOwner, setNewOwner] = useState("");
@@ -39,7 +43,7 @@ export function ChosenArtifactView({ artifact, onRemoveArtifact }: ChosenArtifac
           dispatch(
             updateUserArtifact({
               ID: artifact.ID,
-              mainStatType: type as AttributeStat,
+              mainStatType: type,
             })
           );
         }}
@@ -52,9 +56,26 @@ export function ChosenArtifactView({ artifact, onRemoveArtifact }: ChosenArtifac
             })
           );
         }}
+        action={
+          <Button
+            title="Reforge"
+            icon={<MdEdit className="text-lg text-black opacity-80" />}
+            boneOnly
+            className={clsx("shrink-0", artifact?.owner || artifact?.setupIDs?.length ? "hidden" : "")}
+            onClick={() => onRequestEditArtifact?.()}
+          />
+        }
         actions={[
-          { children: "Remove", onClick: () => setModalType("REMOVE_ARTIFACT") },
-          { children: "Equip", onClick: () => setModalType("EQUIP_CHARACTER") },
+          {
+            title: "Discard",
+            icon: <IconTrashCan />,
+            onClick: () => setModalType("REMOVE_ARTIFACT"),
+          },
+          {
+            title: "Equip",
+            children: "Equip",
+            onClick: () => setModalType("EQUIP_CHARACTER"),
+          },
         ]}
       />
 
@@ -73,8 +94,7 @@ export function ChosenArtifactView({ artifact, onRemoveArtifact }: ChosenArtifac
           active={newOwner !== ""}
           message={
             <>
-              <b>{artifact.owner}</b> is currently using "
-              <b>{$AppArtifact.get(artifact)?.name || "<name missing>"}</b>
+              <b>{artifact.owner}</b> is currently using "<b>{$AppArtifact.get(artifact)?.name || "<name missing>"}</b>
               ". Swap?
             </>
           }

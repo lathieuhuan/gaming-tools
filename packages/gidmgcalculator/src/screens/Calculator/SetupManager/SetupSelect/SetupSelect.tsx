@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaCopy, FaSave, FaBalanceScaleLeft, FaTrashAlt, FaShareAlt } from "react-icons/fa";
+import { FaCopy, FaSave, FaBalanceScaleLeft, FaShareAlt } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
 import { clsx, ConfirmModal } from "rond";
 
@@ -21,6 +21,7 @@ import { useCalcModalCtrl } from "../../CalculatorModalsProvider";
 
 // Component
 import { ComplexSelect } from "@Src/components";
+import { IconTrashCan } from "@Src/components/icons";
 
 type ModalState = {
   type: "REMOVE_SETUP" | "";
@@ -108,7 +109,7 @@ export function SetupSelect() {
               const actions: ActionButtonAttrs[] = [
                 {
                   className: "hover:bg-danger-1 hover:text-light-default",
-                  children: <FaTrashAlt />,
+                  children: <IconTrashCan />,
                   disabled: setupManageInfos.length < 2,
                   onClick: () => {
                     openModal("REMOVE_SETUP", i);

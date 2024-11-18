@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaPlus, FaTrashAlt } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
 import { clsx, CloseButton, Modal, Button, InputNumber } from "rond";
 
 import type { CustomBuffCtrl, CustomDebuffCtrl } from "@Src/types";
@@ -18,6 +18,7 @@ import {
 } from "@Store/calculator-slice";
 
 // Component
+import { IconTrashCan } from "@Src/components/icons";
 import { CopySection } from "../../components/CopySection";
 import BuffCtrlCreator from "./BuffCtrlCreator";
 import DebuffCtrlCreator from "./DebuffCtrlCreator";
@@ -79,13 +80,20 @@ export default function CustomModifiers({ isBuffs }: CustomModifiersProps) {
     <div className="flex flex-col">
       <div className="mt-3 flex justify-between">
         <Button
-          icon={<FaTrashAlt />}
+          title="Discard all"
+          icon={<IconTrashCan />}
           disabled={modCtrls.length === 0}
           onClick={() => {
             dispatch(updateCustomModCtrls({ actionType: "REPLACE", ctrls: [] }));
           }}
         />
-        <Button icon={<FaPlus />} variant="primary" disabled={modCtrls.length > 9} onClick={() => setModalOn(true)} />
+        <Button
+          title="Add"
+          icon={<FaPlus />}
+          variant="primary"
+          disabled={modCtrls.length > 9}
+          onClick={() => setModalOn(true)}
+        />
       </div>
 
       {copyOptions.length ? <CopySection className="mt-6" options={copyOptions} onClickCopy={copyModCtrls} /> : null}
