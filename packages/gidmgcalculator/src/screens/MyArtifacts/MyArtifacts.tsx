@@ -3,16 +3,15 @@ import { FaTimes } from "react-icons/fa";
 import { clsx, message, useScreenWatcher, ButtonGroup, Modal, WarehouseLayout } from "rond";
 
 import type { UserArtifact } from "@Src/types";
+import { $AppArtifact } from "@Src/services";
 import { MAX_USER_ARTIFACTS } from "@Src/constants";
 import { useArtifactTypeSelect } from "@Src/hooks";
 import Array_ from "@Src/utils/array-utils";
-
-// Store
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectUserArtifacts, addUserArtifact, updateUserArtifact, sortArtifacts } from "@Store/userdb-slice";
 
 // Component
-import { InventoryRack, ArtifactForge, ArtifactFilter, ArtifactFilterState } from "@Src/components";
+import { InventoryRack, ArtifactForge, ArtifactFilter, ArtifactFilterState, ArtifactForgeProps } from "@Src/components";
 import { ChosenArtifactView } from "./ChosenArtifactView";
 
 type ModalType = "ADD_ARTIFACT" | "EDIT_ARTIFACT" | "CONFIG_FILTER" | "";
@@ -117,6 +116,20 @@ export default function MyArtifacts() {
     </div>
   );
 
+  const dynamicForgeProps: Pick<ArtifactForgeProps, "workpiece" | "initialMaxRarity" | "hasMultipleMode"> = {
+    hasMultipleMode: true,
+  };
+
+  if (modalType === "EDIT_ARTIFACT") {
+    const variants = chosenArtifact
+      ? $AppArtifact.getAll().find((artifact) => artifact.code === chosenArtifact.code)?.variants
+      : [];
+
+    dynamicForgeProps.workpiece = chosenArtifact;
+    dynamicForgeProps.initialMaxRarity = variants ? variants[variants.length - 1] : undefined;
+    dynamicForgeProps.hasMultipleMode = false;
+  }
+
   return (
     <WarehouseLayout className="h-full" actions={actions}>
       <InventoryRack
@@ -153,8 +166,7 @@ export default function MyArtifacts() {
 
       <ArtifactForge
         active={modalType === "ADD_ARTIFACT" || modalType === "EDIT_ARTIFACT"}
-        workpiece={modalType === "EDIT_ARTIFACT" ? chosenArtifact : undefined}
-        hasMultipleMode={modalType === "ADD_ARTIFACT"}
+        {...dynamicForgeProps}
         hasConfigStep
         onForgeArtifact={(artifact) => {
           if (modalType === "ADD_ARTIFACT") {

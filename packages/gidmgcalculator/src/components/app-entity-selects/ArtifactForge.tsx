@@ -16,7 +16,9 @@ import { AppEntitySelect, type AppEntitySelectProps, type AfterSelectAppEntity }
 import { ArtifactConfig } from "./components/ArtifactConfig";
 
 export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> {
+  /** Initital config */
   workpiece?: Artifact;
+  initialMaxRarity?: number;
   /** Only works when hasConfigStep */
   allowBatchForging?: boolean;
   /** Only works when hasConfigStep */
@@ -31,6 +33,7 @@ export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMulti
 }
 const ArtifactSmith = ({
   workpiece,
+  initialMaxRarity = 5,
   allowBatchForging,
   defaultBatchForging = false,
   forFeature,
@@ -42,7 +45,7 @@ const ArtifactSmith = ({
   ...templateProps
 }: ArtifactForgeProps) => {
   const [artifactConfig, setArtifactConfig] = useState<Artifact | undefined>(workpiece);
-  const [maxRarity, setMaxRarity] = useState(5);
+  const [maxRarity, setMaxRarity] = useState(initialMaxRarity);
   const [batchForging, setBatchForging] = useState(defaultBatchForging);
 
   const updateConfig = (update: (prevConfig: Artifact) => Artifact) => {
@@ -164,6 +167,7 @@ const ArtifactSmith = ({
     <AppEntitySelect
       title={<p className="text-base sm:text-xl leading-7">Artifact Forge</p>}
       data={allArtifactSets}
+      initialChosenCode={workpiece?.code}
       emptyText="No artifacts found"
       hasSearch
       renderOptionConfig={(afterSelect, selectBody) => {
@@ -173,6 +177,7 @@ const ArtifactSmith = ({
             maxRarity={maxRarity}
             typeSelect={forcedType ? null : renderArtifactTypeSelect()}
             batchConfigNode={renderBatchConfigNode(afterSelect, selectBody)}
+            mainActionLabel={workpiece ? "Reforge" : "Forge"}
             moreButtons={[
               getBackAction(selectBody),
               {

@@ -1,13 +1,15 @@
 import { Fragment, useState } from "react";
-import { ConfirmModal } from "rond";
+import { Button, clsx, ConfirmModal } from "rond";
 import { MdEdit } from "react-icons/md";
-import { FaTrashAlt } from "react-icons/fa";
 
 import { UserArtifact } from "@Src/types";
 import { $AppArtifact } from "@Src/services";
 import { useDispatch } from "@Store/hooks";
 import { removeArtifact, swapArtifactOwner, updateUserArtifact, updateUserArtifactSubStat } from "@Store/userdb-slice";
+
+// Components
 import { ArtifactCard, Tavern } from "@Src/components";
+import { IconTrashCan } from "@Src/components/icons";
 
 interface ChosenArtifactViewProps {
   artifact?: UserArtifact;
@@ -54,18 +56,19 @@ export function ChosenArtifactView({ artifact, onRemoveArtifact, onRequestEditAr
             })
           );
         }}
+        action={
+          <Button
+            title="Reforge"
+            icon={<MdEdit className="text-lg text-black opacity-80" />}
+            boneOnly
+            className={clsx("shrink-0", artifact?.owner || artifact?.setupIDs?.length ? "hidden" : "")}
+            onClick={() => onRequestEditArtifact?.()}
+          />
+        }
         actions={[
           {
-            title: "Edit",
-            icon: <MdEdit className="text-lg" />,
-            boneOnly: true,
-            className: artifact?.owner || artifact?.setupIDs?.length ? "hidden" : "",
-            onClick: () => onRequestEditArtifact?.(),
-          },
-          {
-            title: "Remove",
-            icon: <FaTrashAlt />,
-            className: "ml-auto",
+            title: "Discard",
+            icon: <IconTrashCan />,
             onClick: () => setModalType("REMOVE_ARTIFACT"),
           },
           {
