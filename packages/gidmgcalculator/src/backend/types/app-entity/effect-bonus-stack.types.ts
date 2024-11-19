@@ -12,7 +12,7 @@ type InputStack = {
   /** If number, default to 0 */
   index?: number | InputIndex[];
   /** When this bonus is from teammate, this is input's index to get stacks. On characters */
-  alterIndex?: number;
+  altIndex?: number;
   /** Input's index when activated (equal to 1), value is doubled. On some weapons */
   doubledAt?: number;
   /** Actual stack = capacity - input. On Wanderer */
@@ -24,13 +24,13 @@ type InputStack = {
 
 type ElementStack = {
   type: "ELEMENT";
-  element: "same_included" | "same_excluded" | "different" | ElementType;
+  element: "SAME_INCLUDED" | "SAME_EXCLUDED" | "DIFFERENT" | ElementType;
 };
 
 /** On characterss & weapons  */
 type NationStack = {
   type: "NATION";
-  nation: "same" | "different" | "liyue";
+  nation: "SAME_EXCLUDED" | "DIFFERENT" | "LIYUE";
 };
 
 type EnergyCostStack = {

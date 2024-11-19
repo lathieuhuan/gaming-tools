@@ -71,7 +71,7 @@ export class CharacterCalc {
     fromSelf: boolean
   ): number {
     if (scale) {
-      const { talent, value, alterIndex = 0, max } = scale;
+      const { talent, value, altIndex = 0, max } = scale;
       const level = fromSelf
         ? this.getFinalTalentLv({
             talentType: talent,
@@ -79,7 +79,7 @@ export class CharacterCalc {
             appChar: info.appChar,
             partyData: info.partyData,
           })
-        : inputs[alterIndex] ?? 0;
+        : inputs[altIndex] ?? 0;
 
       const result = value ? this.getTalentMult(value, level) : level;
       return max && result > max ? max : result;

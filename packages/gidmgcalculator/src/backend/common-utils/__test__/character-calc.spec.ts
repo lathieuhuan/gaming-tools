@@ -118,12 +118,12 @@ describe("getLevelScale", () => {
     expect(CharacterCalc.getLevelScale({ talent: "ES", value: 2 }, info, [], true)).toBe(1.8); // TALENT_LV_MULTIPLIERS[2][char.ES]
   });
 
-  test("at scale 2, not fromSelf, alterIndex default (0)", () => {
+  test("at scale 2, not fromSelf, altIndex default (0)", () => {
     expect(CharacterCalc.getLevelScale({ talent: "ES", value: 2 }, info, [7], false)).toBe(1.5); // TALENT_LV_MULTIPLIERS[2][7]
   });
 
-  test("at scale 2, not fromSelf, alterIndex 1", () => {
-    expect(CharacterCalc.getLevelScale({ talent: "ES", value: 2, alterIndex: 1 }, info, [0, 10], false)).toBe(1.8); // TALENT_LV_MULTIPLIERS[2][10]
+  test("at scale 2, not fromSelf, altIndex 1", () => {
+    expect(CharacterCalc.getLevelScale({ talent: "ES", value: 2, altIndex: 1 }, info, [0, 10], false)).toBe(1.8); // TALENT_LV_MULTIPLIERS[2][10]
   });
 });
 

@@ -1,9 +1,12 @@
 import { AppCharacter } from "../../src/backend";
 
 export enum EMockCharacter {
+  /** pyro, sword, mondstadt */
   BASIC = "BASIC",
   TARTAGLIA = "Tartaglia",
+  /** electro, catalyst, inazuma */
   CATALYST = "CATALYST",
+  /** cryo, polearm, sumeru */
   ES_CALC_CONFIG = "ES_CALC_CONFIG",
 }
 

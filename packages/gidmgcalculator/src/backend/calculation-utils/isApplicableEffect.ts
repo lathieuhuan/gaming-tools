@@ -9,6 +9,7 @@ import type {
 import { TypeCounter } from "@Src/utils/type-counter";
 import { GeneralCalc } from "@Src/backend/common-utils";
 import { isGrantedEffect } from "./isGrantedEffect";
+import { isPassedComparison } from "./isPassedComparison";
 
 function isUsableEffect(
   condition: EffectUsableCondition,
@@ -17,17 +18,28 @@ function isUsableEffect(
   inputs: number[],
   elmtCounter = GeneralCalc.countElements(partyData, appChar)
 ) {
-  const { checkInput, checkChar } = condition;
+  const { checkInput, checkParty } = condition;
 
   if (checkInput !== undefined) {
-    const { value, source = 0, type = "equal" } = typeof checkInput === "number" ? { value: checkInput } : checkInput;
+    const {
+      value,
+      inpIndex = 0,
+      comparison = "EQUAL",
+    } = typeof checkInput === "number" ? { value: checkInput } : checkInput;
+    const input = inputs[inpIndex];
+
+    if (input === undefined || !isPassedComparison(input, value, comparison)) {
+      return false;
+    }
+  }
+  if (checkParty !== undefined) {
     let input = 0;
 
-    switch (source) {
-      case "various_vision":
+    switch (checkParty.type) {
+      case "DISTINCT_ELMT":
         input = elmtCounter.keys.length;
         break;
-      case "mixed":
+      case "MIXED":
         if (appChar.nation === "natlan") input += 1;
 
         for (const teammate of partyData) {
@@ -36,28 +48,9 @@ function isUsableEffect(
           }
         }
         break;
-      default:
-        input = inputs[source];
-        if (input === undefined) return false;
     }
-
-    switch (type) {
-      case "equal":
-        if (input !== value) return false;
-        else break;
-      case "min":
-        if (input < value) return false;
-        else break;
-      case "max":
-        if (input > value) return false;
-        else break;
-    }
-  }
-  if (checkChar !== undefined) {
-    switch (checkChar.type) {
-      case "vision":
-        if (appChar.vision !== checkChar.value) return false;
-        break;
+    if (!isPassedComparison(input, checkParty.value, checkParty.comparison)) {
+      return false;
     }
   }
   return true;
@@ -71,7 +64,7 @@ function isAvailableEffect(
 ): boolean {
   if (fromSelf) {
     if (!isGrantedEffect(condition, char)) return false;
-  } else if (condition.alterIndex !== undefined && !inputs[condition.alterIndex]) {
+  } else if (condition.altIndex !== undefined && !inputs[condition.altIndex]) {
     return false;
   }
   return true;
@@ -105,7 +98,7 @@ export function isApplicableEffect(
     const { elements, value, type } = totalPartyElmtCount;
 
     switch (type) {
-      case "max":
+      case "MAX":
         if (elmtCounter.get(elements) > value) return false;
     }
   }

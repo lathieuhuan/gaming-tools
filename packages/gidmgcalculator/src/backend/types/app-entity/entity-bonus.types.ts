@@ -10,17 +10,15 @@ type InputOptionIndex = {
   source: "INPUT";
   inpIndex: number;
 };
+/** Count distinct element types of the party. Ex: [Pyro, Pyro] -> 1 */
 type ElementOptionIndex = {
   source: "ELEMENT";
-  /**
-   * 'various_types' count elements of entire party.
-   * 'different' count teammates of different elements from the character
-   * ElementType count teammates of ElementType
-   * ElementType[] count teammates of one of ElementType[]
-   */
-  element: "various_types" | "different" | ElementType | ElementType[];
-  /** When 'element' is ElementType[]: count distinct elements that are included in ElementType[] */
-  distinct?: boolean;
+  elements?: ElementType[];
+};
+/** Count members of element types of the party. Ex: [Pyro, Pyro] -> 2 */
+type MemberOptionIndex = {
+  source: "MEMBER";
+  element: "DIFFERENT" | ElementType | ElementType[];
 };
 /** On Razor */
 type LevelOptionIndex = {
@@ -31,7 +29,7 @@ type LevelOptionIndex = {
 export type EntityBonusValueByOption = {
   options: number[];
   /** If number, [source] is "INPUT", [inpIndex] is the number. Default to 0 */
-  optIndex?: number | InputOptionIndex | ElementOptionIndex | LevelOptionIndex;
+  optIndex?: number | InputOptionIndex | ElementOptionIndex | MemberOptionIndex | LevelOptionIndex;
 };
 
 type CharacterEntityBonusValueByOptionExtend = {
