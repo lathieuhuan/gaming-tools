@@ -24,8 +24,11 @@ export class IsApplicableEffectTester {
   partyOnlyElmts: EffectApplicableCondition["partyOnlyElmts"];
   partyElmtCount: EffectApplicableCondition["partyElmtCount"];
   totalPartyElmtCount: EffectApplicableCondition["totalPartyElmtCount"];
+  grantedAt: EffectApplicableCondition["grantedAt"];
+  altIndex: EffectApplicableCondition["altIndex"];
 
   inputs: number[] = [];
+  fromSelf = true;
 
   get condition(): Readonly<EffectApplicableCondition> {
     return {
@@ -36,6 +39,8 @@ export class IsApplicableEffectTester {
       partyOnlyElmts: this.partyOnlyElmts,
       partyElmtCount: this.partyElmtCount,
       totalPartyElmtCount: this.totalPartyElmtCount,
+      grantedAt: this.grantedAt,
+      altIndex: this.altIndex,
     };
   }
 
@@ -61,11 +66,11 @@ export class IsApplicableEffectTester {
     };
   }
 
-  expect() {
-    return expect(isApplicableEffect(this.condition, this.info, this.inputs));
+  expectValue<T = any>(value: T) {
+    return expect(isApplicableEffect(this.condition, this.info, this.inputs, this.fromSelf)).toBe<T>(value);
   }
 
-  expectWithInputs(inputs: number[]) {
-    return expect(isApplicableEffect(this.condition, this.info, inputs));
+  expectInputs(inputs: number[]) {
+    return expect(isApplicableEffect(this.condition, this.info, inputs, this.fromSelf));
   }
 }

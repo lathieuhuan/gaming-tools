@@ -46,7 +46,7 @@ type ExtraCondition = {
   totalPartyElmtCount?: {
     elements: ElementType[];
     value: number;
-    type: "MAX";
+    comparison: "MAX";
   };
   /** On Gorou, Nilou, Chevreuse */
   partyElmtCount?: Partial<Record<ElementType, number>>;

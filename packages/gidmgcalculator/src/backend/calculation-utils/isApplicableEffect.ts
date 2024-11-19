@@ -95,9 +95,9 @@ export function isApplicableEffect(
   }
 
   if (totalPartyElmtCount) {
-    const { elements, value, type } = totalPartyElmtCount;
+    const { elements, value, comparison } = totalPartyElmtCount;
 
-    switch (type) {
+    switch (comparison) {
       case "MAX":
         if (elmtCounter.get(elements) > value) return false;
     }
