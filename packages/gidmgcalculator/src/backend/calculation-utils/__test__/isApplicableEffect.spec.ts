@@ -307,4 +307,23 @@ describe("condition: grantedAt", () => {
       }
     }
   });
+
+  test("grantedAt not fromSelf", () => {
+    tester.fromSelf = false;
+    tester.altIndex = 0;
+
+    tester.inputs = [1];
+    tester.expectValue(true);
+
+    tester.inputs = [0];
+    tester.expectValue(false);
+
+    tester.altIndex = 1;
+
+    tester.inputs = [-1, 1];
+    tester.expectValue(true);
+
+    tester.inputs = [-2, 0];
+    tester.expectValue(false);
+  });
 });
