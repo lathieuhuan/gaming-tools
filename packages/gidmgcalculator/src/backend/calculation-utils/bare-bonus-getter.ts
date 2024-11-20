@@ -34,7 +34,7 @@ export class BareBonusGetter {
     return base + increment * refi;
   }
 
-  protected getIndexOfBonusValue(config: EntityBonusValueByOption, inputs: number[]) {
+  protected getIndexOfBonusValue = (config: Pick<EntityBonusValueByOption, "optIndex">, inputs: number[]) => {
     const { appChar, partyData } = this.info;
     const { optIndex = 0 } = config;
     const elmtCount = GeneralCalc.countElements(partyData, appChar);
@@ -46,7 +46,7 @@ export class BareBonusGetter {
 
     switch (indexConfig.source) {
       case "INPUT":
-        indexValue += inputs[indexConfig.inpIndex];
+        indexValue += inputs[indexConfig.inpIndex] || 0;
         break;
       case "ELEMENT": {
         const { elements } = indexConfig;
@@ -85,7 +85,7 @@ export class BareBonusGetter {
       }
     }
     return indexValue;
-  }
+  };
 
   protected getExtra(extras: EffectExtra | EffectExtra[] | undefined, support: InternalSupportInfo) {
     if (!extras) return 0;

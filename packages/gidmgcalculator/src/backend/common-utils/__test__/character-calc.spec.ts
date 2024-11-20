@@ -2,6 +2,7 @@ import { AppCharacter, AttackPattern, CalculationInfo, TalentType } from "@Src/b
 import { $AppCharacter } from "@Src/services";
 import { Character } from "@Src/types";
 import { characters, EMockCharacter } from "@UnitTest/mocks/characters.mock";
+import { genCalculationInfo } from "@UnitTest/test-utils";
 import { CharacterCalc } from "../character-calc";
 
 type GetTotalXtraTalentLvTestCase = {
@@ -18,15 +19,9 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-  char = {
-    name: EMockCharacter.BASIC,
-    level: "1/20",
-    cons: 0,
-    NAs: 1,
-    ES: 1,
-    EB: 1,
-  };
-  appChar = $AppCharacter.get(EMockCharacter.BASIC);
+  const calculationInfo = genCalculationInfo();
+  char = calculationInfo.char;
+  appChar = calculationInfo.appChar;
 });
 
 describe("getTotalXtraTalentLv", () => {
@@ -186,7 +181,7 @@ describe("getTalentDefaultInfo", () => {
     const esCalcConfig = $AppCharacter.get(EMockCharacter.ES_CALC_CONFIG);
     const result = CharacterCalc.getTalentDefaultInfo("ES", esCalcConfig);
     const { ES } = esCalcConfig.calcListConfig || {};
-    
+
     expect(result.defaultScale).toBe(ES?.scale);
     expect(result.defaultBasedOn).toBe(ES?.basedOn);
     expect(result.defaultAttPatt).toBe(ES?.attPatt);

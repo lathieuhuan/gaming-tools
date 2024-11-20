@@ -1,22 +1,13 @@
 import { CalculationInfo, EffectApplicableCondition } from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
+import { Character, PartyData } from "@Src/types";
 import { EMockCharacter } from "@UnitTest/mocks/characters.mock";
+import { genCalculationInfo } from "@UnitTest/test-utils";
 import { isApplicableEffect } from "../isApplicableEffect";
-import { PartyData } from "@Src/types";
+import { BareBonusGetter } from "../bare-bonus-getter";
 
 export class IsApplicableEffectTester {
-  info: CalculationInfo = {
-    char: {
-      name: EMockCharacter.BASIC,
-      level: "1/20",
-      cons: 0,
-      NAs: 1,
-      ES: 1,
-      EB: 1,
-    },
-    appChar: $AppCharacter.get(EMockCharacter.BASIC),
-    partyData: [],
-  };
+  info: CalculationInfo = genCalculationInfo();
   checkInput: EffectApplicableCondition["checkInput"];
   checkParty: EffectApplicableCondition["checkParty"];
   forElmts: EffectApplicableCondition["forElmts"];
@@ -72,5 +63,20 @@ export class IsApplicableEffectTester {
 
   expectInputs(inputs: number[]) {
     return expect(isApplicableEffect(this.condition, this.info, inputs, this.fromSelf));
+  }
+}
+
+export class BareBonusGetterTester extends BareBonusGetter {
+  updateCharacter<TKey extends keyof Character>(key: TKey, value: Character[TKey]) {
+    this.info.char[key] = value;
+  }
+
+  changeCharacter(characterName: EMockCharacter) {
+    this.info.char.name = characterName;
+    this.info.appChar = $AppCharacter.get(characterName);
+  }
+
+  updateParty(partyData: PartyData) {
+    this.info.partyData = partyData;
   }
 }

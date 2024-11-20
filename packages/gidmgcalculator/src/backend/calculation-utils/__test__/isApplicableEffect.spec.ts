@@ -1,9 +1,9 @@
+import { LEVELS } from "@Src/backend/constants";
+import { CharacterMilestone } from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
 import { characters, EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { IsApplicableEffectTester } from "./test-utils";
-import { CharacterMilestone } from "@Src/backend/types";
-import { LEVELS } from "@Src/backend/constants";
 import { ASCENSION_RANKS } from "@UnitTest/test-constants";
+import { IsApplicableEffectTester } from "./test-utils";
 
 let tester: IsApplicableEffectTester;
 
@@ -16,22 +16,20 @@ beforeEach(() => {
 });
 
 describe("condition: checkInput", () => {
-  test("checkInput config as number", () => {
+  test("DEFAULT: only config value, inpIndex default to 0, comparison default to EQUAL", () => {
     tester.checkInput = 2;
 
     tester.expectInputs([tester.checkInputValue]).toBe(true);
     tester.expectInputs([tester.checkInputValue + 1]).toBe(false);
-  });
 
-  test("checkInput config as object with only value", () => {
     tester.checkInput = {
-      value: 2,
+      value: 3,
     };
     tester.expectInputs([tester.checkInputValue]).toBe(true);
     tester.expectInputs([tester.checkInputValue + 1]).toBe(false);
   });
 
-  test("checkInput config as object with value and inpIndex", () => {
+  test("checkInput config with value and inpIndex", () => {
     tester.checkInput = {
       value: 2,
       inpIndex: 1,
@@ -41,7 +39,7 @@ describe("condition: checkInput", () => {
     tester.expectInputs([3, tester.checkInputValue + 1]).toBe(false);
   });
 
-  test("checkInput config as object with value and compare MIN", () => {
+  test("checkInput config with value and comparison MIN", () => {
     tester.checkInput = {
       value: 2,
       comparison: "MIN",
@@ -51,7 +49,7 @@ describe("condition: checkInput", () => {
     tester.expectInputs([tester.checkInputValue - 1]).toBe(false);
   });
 
-  test("checkInput config as object with value and compare MAX", () => {
+  test("checkInput config with value and comparison MAX", () => {
     tester.checkInput = {
       value: 2,
       comparison: "MAX",
@@ -61,7 +59,7 @@ describe("condition: checkInput", () => {
     tester.expectInputs([tester.checkInputValue - 1]).toBe(true);
   });
 
-  test("checkInput config as object with value, inpIndex, and compare MIN", () => {
+  test("checkInput config with value, inpIndex, and comparison MIN", () => {
     tester.checkInput = {
       value: 2,
       inpIndex: 1,
@@ -75,7 +73,7 @@ describe("condition: checkInput", () => {
 });
 
 describe("condition: checkParty", () => {
-  test("check 'DISTINCT_ELMT', compare EQUAL", () => {
+  test("check DISTINCT_ELMT, comparison default to EQUAL", () => {
     tester.checkParty = {
       type: "DISTINCT_ELMT",
       value: 2,
@@ -94,7 +92,7 @@ describe("condition: checkParty", () => {
     tester.expectValue(false);
   });
 
-  test("check 'DISTINCT_ELMT', compare MIN", () => {
+  test("check DISTINCT_ELMT, comparison MIN", () => {
     tester.checkParty = {
       type: "DISTINCT_ELMT",
       value: 2,
@@ -114,7 +112,7 @@ describe("condition: checkParty", () => {
     tester.expectValue(true);
   });
 
-  test("check 'DISTINCT_ELMT', compare MAX", () => {
+  test("check DISTINCT_ELMT, comparison MAX", () => {
     tester.checkParty = {
       type: "DISTINCT_ELMT",
       value: 2,
@@ -179,17 +177,19 @@ describe("condition: forWeapons", () => {
 
 describe("condition: partyOnlyElmts", () => {
   test("all elements of character & teammates must be included in partyOnlyElmts", () => {
+    const electroCharacter = $AppCharacter.get(EMockCharacter.CATALYST);
+
     tester.partyOnlyElmts = ["pyro"];
 
     tester.setInfo(EMockCharacter.BASIC);
     tester.expectValue(true);
 
-    tester.setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.CATALYST)]);
+    tester.setInfo(EMockCharacter.BASIC, [electroCharacter]);
     tester.expectValue(false);
 
     tester.partyOnlyElmts = ["pyro", "electro"];
 
-    tester.setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.CATALYST)]);
+    tester.setInfo(EMockCharacter.BASIC, [electroCharacter]);
     tester.expectValue(true);
   });
 });

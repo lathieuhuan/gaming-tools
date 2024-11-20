@@ -8,6 +8,7 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
+    "type-check": "tsc -p tsconfig.manual.json --noEmit",
     "e2e-test": "npx playwright test",
     "unit-test": "jest"
   },
