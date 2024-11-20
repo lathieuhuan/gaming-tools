@@ -24,6 +24,11 @@ test("scaleRefi", () => {
   expect(scaleRefi(6, undefined, 100)).toBe(6);
 });
 
+/**
+ * Note: party means partyData only.
+ * WHOLE party means the character and partyData.
+ */
+
 describe("getIndexOfBonusValue", () => {
   let getIndexOfBonusValue: BareBonusGetter["getIndexOfBonusValue"];
 
@@ -56,7 +61,7 @@ describe("getIndexOfBonusValue", () => {
     expect(getIndexOfBonusValue({ optIndex }, [])).toBe(-1);
   });
 
-  test("optIndex from talent level (LEVEL)", () => {
+  test("optIndex from character's talent level (LEVEL)", () => {
     const level = 10;
     const talents: LevelableTalentType[] = ["NAs", "ES", "EB"];
 
@@ -71,7 +76,7 @@ describe("getIndexOfBonusValue", () => {
     }
   });
 
-  test("optIndex from party's distinct all elements count (ELEMENT)", () => {
+  test("optIndex from the number of WHOLE party's all distinct elements (ELEMENT)", () => {
     const optIndex: EntityBonusValueByOption["optIndex"] = {
       source: "ELEMENT",
     };
@@ -79,11 +84,14 @@ describe("getIndexOfBonusValue", () => {
     tester.changeCharacter(EMockCharacter.BASIC);
     expect(getIndexOfBonusValue({ optIndex }, [])).toBe(0);
 
+    tester.updateParty([$AppCharacter.get(EMockCharacter.BASIC)]);
+    expect(getIndexOfBonusValue({ optIndex }, [])).toBe(0);
+
     tester.updateParty([$AppCharacter.get(EMockCharacter.CATALYST)]);
     expect(getIndexOfBonusValue({ optIndex }, [])).toBe(1);
   });
 
-  test("optIndex from party's distinct some elements count (ELEMENT)", () => {
+  test("optIndex from the number of WHOLE party's some distinct elements (ELEMENT)", () => {
     const optIndex: EntityBonusValueByOption["optIndex"] = {
       source: "ELEMENT",
       elements: ["pyro"],
@@ -100,5 +108,35 @@ describe("getIndexOfBonusValue", () => {
 
     optIndex.elements = ["pyro", "electro", "anemo"];
     expect(getIndexOfBonusValue({ optIndex }, [])).toBe(1);
+  });
+
+  test("optIndex from the number of party's members whose elements are different from the character (MEMBER)", () => {
+    const electroMember = $AppCharacter.get(EMockCharacter.CATALYST);
+    const optIndex: EntityBonusValueByOption["optIndex"] = {
+      source: "MEMBER",
+      element: "DIFFERENT",
+    };
+
+    tester.changeCharacter(EMockCharacter.BASIC);
+    expect(getIndexOfBonusValue({ optIndex }, [])).toBe(-1);
+
+    tester.updateParty([electroMember]);
+    expect(getIndexOfBonusValue({ optIndex }, [])).toBe(0);
+
+    tester.updateParty([electroMember, $AppCharacter.get(EMockCharacter.BASIC)]);
+    expect(getIndexOfBonusValue({ optIndex }, [])).toBe(0);
+
+    tester.updateParty([electroMember, $AppCharacter.get(EMockCharacter.TARTAGLIA)]);
+    expect(getIndexOfBonusValue({ optIndex }, [])).toBe(1);
+  });
+
+  test("optIndex from the number of WHOLE party's members whose elements are aligned with the condition (MEMBER)", () => {
+    const optIndex: EntityBonusValueByOption["optIndex"] = {
+      source: "MEMBER",
+      element: "pyro",
+    };
+
+    tester.changeCharacter(EMockCharacter.BASIC);
+    expect(getIndexOfBonusValue({ optIndex }, [])).toBe(0);
   });
 });
