@@ -34,7 +34,10 @@ export class BareBonusGetter {
     return base + increment * refi;
   }
 
-  protected getIndexOfBonusValue = (config: Pick<EntityBonusValueByOption, "optIndex">, inputs: number[]) => {
+  /**
+   * @param inputs used when optIndex is number or has INPUT source
+   */
+  protected getIndexOfBonusValue = (config: Pick<EntityBonusValueByOption, "optIndex">, inputs: number[] = []) => {
     const { appChar, partyData } = this.info;
     const { optIndex = 0 } = config;
     const elmtCount = GeneralCalc.countElements(partyData, appChar);
@@ -46,7 +49,7 @@ export class BareBonusGetter {
 
     switch (indexConfig.source) {
       case "INPUT":
-        indexValue += inputs[indexConfig.inpIndex] || 0;
+        indexValue += inputs[indexConfig.inpIndex] ?? 0;
         break;
       case "ELEMENT": {
         const { elements } = indexConfig;
@@ -87,7 +90,10 @@ export class BareBonusGetter {
     return indexValue;
   };
 
-  protected getExtra(extras: EffectExtra | EffectExtra[] | undefined, support: InternalSupportInfo) {
+  protected getExtra(
+    extras: EffectExtra | EffectExtra[] | undefined,
+    support: Pick<InternalSupportInfo, "inputs" | "fromSelf">
+  ) {
     if (!extras) return 0;
     let result = 0;
 
@@ -99,7 +105,7 @@ export class BareBonusGetter {
     return result;
   }
 
-  protected getBasedOn(config: EntityBonusBasedOn, support: InternalSupportInfo) {
+  protected getBasedOn(config: EntityBonusBasedOn, support: Omit<InternalSupportInfo, "refi">) {
     const { field, altIndex = 0, baseline = 0 } = typeof config === "string" ? { field: config } : config;
     let basedOnValue = 1;
 

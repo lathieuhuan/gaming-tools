@@ -1,4 +1,4 @@
-import { CalculationInfo, EffectApplicableCondition } from "@Src/backend/types";
+import { CalculationInfo, EffectApplicableCondition, EntityBonusBasedOn } from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
 import { Character, PartyData } from "@Src/types";
 import { EMockCharacter } from "@UnitTest/mocks/characters.mock";
@@ -67,6 +67,9 @@ export class IsApplicableEffectTester {
 }
 
 export class BareBonusGetterTester extends BareBonusGetter {
+  inputs: number[] = [];
+  fromSelf = true;
+
   updateCharacter<TKey extends keyof Character>(key: TKey, value: Character[TKey]) {
     this.info.char[key] = value;
   }
@@ -76,7 +79,17 @@ export class BareBonusGetterTester extends BareBonusGetter {
     this.info.appChar = $AppCharacter.get(characterName);
   }
 
-  updateParty(partyData: PartyData) {
+  changeParty(partyData: PartyData) {
     this.info.partyData = partyData;
+  }
+
+  expectBasedOn(config: EntityBonusBasedOn, basedOnStable = true) {
+    return expect(
+      this.getBasedOn(config, {
+        inputs: this.inputs,
+        fromSelf: this.fromSelf,
+        basedOnStable,
+      })
+    );
   }
 }
