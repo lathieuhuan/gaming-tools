@@ -38,7 +38,7 @@ export type BareBonus = {
 };
 
 export type AppliedAttributeBonus = BareBonus & {
-  toStat: AttributeStat;
+  toStat: AttributeStat | "base_atk";
   description: string;
 };
 

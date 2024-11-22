@@ -175,6 +175,10 @@ export class TotalAttributeControl {
 
   applyBonuses = (bonuses: BonusToApply | BonusToApply[]) => {
     for (const bonus of Array_.toArray(bonuses)) {
+      if (bonus.toStat === 'base_atk') {
+        this.totalAttr.atk.base += bonus.value;
+        continue;
+      }
       if (bonus.isStable ?? true) {
         this.totalAttr[bonus.toStat].stableBonus += bonus.value;
       } else {

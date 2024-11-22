@@ -49,7 +49,7 @@ export const parseAbilityDescription = (
 ) => {
   const bonusGetter = new BareBonusGetter(obj);
 
-  return ability.description.replace(/\{[\w \-/,%^"'*@.[\]]+\}#\[\w*\]/g, (match) => {
+  return ability.description.replace(/\{[\w \-/,%^"'*@:=.[\]]+\}#\[\w*\]/g, (match) => {
     let [body, type = ""] = match.split("#");
     body = body.slice(1, -1);
     type = type.slice(1, -1);
