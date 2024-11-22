@@ -90,10 +90,10 @@ export class BareBonusGetter {
     return indexValue;
   };
 
-  protected getExtra(
+  protected getExtra = (
     extras: EffectExtra | EffectExtra[] | undefined,
     support: Pick<InternalSupportInfo, "inputs" | "fromSelf">
-  ) {
+  ) => {
     if (!extras) return 0;
     let result = 0;
 
@@ -103,9 +103,9 @@ export class BareBonusGetter {
       }
     }
     return result;
-  }
+  };
 
-  protected getBasedOn(config: EntityBonusBasedOn, support: Omit<InternalSupportInfo, "refi">) {
+  protected getBasedOn = (config: EntityBonusBasedOn, support: Omit<InternalSupportInfo, "refi">) => {
     const { field, altIndex = 0, baseline = 0 } = typeof config === "string" ? { field: config } : config;
     let basedOnValue = 1;
 
@@ -122,13 +122,16 @@ export class BareBonusGetter {
       field,
       value: Math.max(basedOnValue - baseline, 0),
     };
-  }
+  };
 
-  protected applyMax(value: number, config: EffectMax | undefined, support: InternalSupportInfo) {
+  /**
+   * @param support must have when config is EffectDynamicMax
+   */
+  protected applyMax = (value: number, config: EffectMax | undefined, support?: InternalSupportInfo) => {
     if (typeof config === "number") {
       return Math.min(value, config);
     } //
-    else if (config) {
+    else if (config && support) {
       let finalMax = config.value;
 
       if (config.basedOn) {
@@ -140,11 +143,11 @@ export class BareBonusGetter {
       return Math.min(value, finalMax);
     }
     return value;
-  }
+  };
 
   // ========== MAIN ==========
 
-  getIntialBonusValue(config: EntityBonusCore["value"], support: InternalSupportInfo) {
+  getIntialBonusValue = (config: EntityBonusCore["value"], support: InternalSupportInfo) => {
     const { inputs } = support;
 
     if (typeof config === "number") {
@@ -165,9 +168,13 @@ export class BareBonusGetter {
     index = this.applyMax(index, config.max, support);
 
     return options[index] ?? (index > 0 ? options[options.length - 1] : 0);
-  }
+  };
 
-  protected applyExtra(bonus: BareBonus, config: number | EntityBonusCore | undefined, support: InternalSupportInfo) {
+  protected applyExtra = (
+    bonus: BareBonus,
+    config: number | EntityBonusCore | undefined,
+    support: InternalSupportInfo
+  ) => {
     if (typeof config === "number") {
       bonus.value += this.scaleRefi(config, support.refi);
     } //
@@ -180,9 +187,9 @@ export class BareBonusGetter {
         if (!extra.isStable) bonus.isStable = false;
       }
     }
-  }
+  };
 
-  protected getStackValue(stack: EntityBonusStack | undefined, support: InternalSupportInfo): number {
+  protected getStackValue = (stack: EntityBonusStack | undefined, support: InternalSupportInfo): number => {
     if (!stack) {
       return 1;
     }
@@ -311,13 +318,13 @@ export class BareBonusGetter {
     result = this.applyMax(result, stack.max, support);
 
     return Math.max(result, 0);
-  }
+  };
 
-  getBareBonus(
+  getBareBonus = (
     config: EntityBonusCore,
     { inputs, fromSelf = true, refi = 0 }: PartiallyOptional<GetBareBonusSupportInfo, "fromSelf">,
     basedOnStable = false
-  ): BareBonus {
+  ): BareBonus => {
     const support: InternalSupportInfo = {
       inputs,
       fromSelf,
@@ -350,5 +357,5 @@ export class BareBonusGetter {
     initial.value = this.applyMax(initial.value, config.max, support);
 
     return initial;
-  }
+  };
 }

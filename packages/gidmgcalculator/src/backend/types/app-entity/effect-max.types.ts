@@ -1,7 +1,7 @@
 import type { EntityBonusBasedOn } from "./app-entity-common.types";
 import type { EffectExtra } from "./effect-extra.types";
 
-type EffectDynamicMax = {
+export type EffectDynamicMax = {
   value: number;
   /** On Jadefall's Splendor (weapon) */
   incre?: number;

@@ -1,17 +1,17 @@
-import { $AppCharacter } from "@Src/services";
-import { BareBonusGetter } from "../bare-bonus-getter";
-import { characters, EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { genCalculationInfo } from "@UnitTest/test-utils";
+import { TotalAttributeControl } from "@Src/backend/controls";
 import {
+  AttributeStat,
   EffectExtra,
   EntityBonusBasedOn,
   EntityBonusBasedOnField,
   EntityBonusValueByOption,
   LevelableTalentType,
 } from "@Src/backend/types";
+import { $AppCharacter } from "@Src/services";
+import { characters, EMockCharacter } from "@UnitTest/mocks/characters.mock";
+import { genCalculationInfo } from "@UnitTest/test-utils";
+import { BareBonusGetter } from "../bare-bonus-getter";
 import { BareBonusGetterTester } from "./test-utils";
-import { config } from "process";
-import { TotalAttributeControl } from "@Src/backend/controls";
 
 let tester: BareBonusGetterTester;
 
@@ -32,11 +32,6 @@ test("scaleRefi", () => {
   expect(scaleRefi(6, undefined, 100)).toBe(6);
 });
 
-/**
- * Note: party means partyData only.
- * WHOLE party means the character and partyData.
- */
-
 describe("getIndexOfBonusValue", () => {
   let getIndexOfBonusValue: BareBonusGetter["getIndexOfBonusValue"];
 
@@ -44,6 +39,10 @@ describe("getIndexOfBonusValue", () => {
     getIndexOfBonusValue = tester["getIndexOfBonusValue"];
   });
 
+  /**
+   * Note: party means partyData only.
+   * WHOLE party means the character and partyData.
+   */
   test("DEFAULT: optIndex type INPUT, inpIndex is 0", () => {
     const input = 2;
     expect(getIndexOfBonusValue({}, [input])).toBe(input - 1); // input 1 will be mapped to index 0, etc
@@ -179,145 +178,235 @@ test("getExtra", () => {
   expect(tester["getExtra"](extra, support)).toBe(extraValue);
 });
 
-type BasedOn = ReturnType<(typeof tester)["getBasedOn"]>;
-
-describe("getBasedOn, not fromSelf (based on inputs)", () => {
+describe("getBasedOn", () => {
+  let basedOnField: AttributeStat;
   let config: Exclude<EntityBonusBasedOn, EntityBonusBasedOnField>;
-  let expectedBasedOn: BasedOn;
+  let expectedBasedOn: ReturnType<(typeof tester)["getBasedOn"]>;
+  let totalAttrCtrl: TotalAttributeControl;
 
-  function expectBasedOn(configParam: EntityBonusBasedOn = config) {
-    tester.expectBasedOn(configParam).toEqual<BasedOn>(expectedBasedOn);
+  function expectBasedOn(configParam: EntityBonusBasedOn = config, basedOnStable?: boolean) {
+    tester.expectBasedOn(configParam, basedOnStable).toEqual(expectedBasedOn);
   }
 
-  beforeEach(() => {
-    config = {
-      field: "atk",
-    };
-    expectedBasedOn = {
-      field: config.field,
-      value: 1,
-    };
-    tester.fromSelf = false;
+  describe("not fromSelf (based on inputs)", () => {
+    beforeEach(() => {
+      basedOnField = "atk";
+      config = {
+        field: basedOnField,
+      };
+      expectedBasedOn = {
+        field: basedOnField,
+        value: 1,
+      };
+      tester.fromSelf = false;
+    });
+
+    test("altIndex default to 0, no baseline", () => {
+      const input = 100;
+
+      tester.inputs = [input];
+      expectedBasedOn.value = input;
+      expectBasedOn();
+      expectBasedOn(config.field);
+
+      // when no input found, value should be 1
+      tester.inputs = [];
+      expectedBasedOn.value = 1;
+      expectBasedOn();
+    });
+
+    test("altIndex 1, no baseline", () => {
+      const input = 100;
+      config.altIndex = 1;
+
+      tester.inputs = [-3, input];
+      expectedBasedOn.value = input;
+      expectBasedOn();
+    });
+
+    test("baseline 100", () => {
+      const input = 150;
+      const baseline = 100;
+      config.baseline = baseline;
+
+      tester.inputs = [input];
+      expectedBasedOn.value = input - baseline;
+      expectBasedOn();
+
+      tester.inputs = [baseline - 50];
+      expectedBasedOn.value = 0;
+      expectBasedOn();
+
+      config.altIndex = 1;
+
+      tester.inputs = [-2, input];
+      expectedBasedOn.value = input - baseline;
+      expectBasedOn();
+
+      tester.inputs = [-1, baseline - 50];
+      expectedBasedOn.value = 0;
+      expectBasedOn();
+    });
   });
 
-  test("altIndex default to 0, no baseline", () => {
-    const input = 100;
+  describe(" fromSelf (based on TotalAttribute)", () => {
+    beforeEach(() => {
+      totalAttrCtrl = new TotalAttributeControl();
+      tester = new BareBonusGetterTester(genCalculationInfo(), totalAttrCtrl);
 
-    tester.inputs = [input];
-    expectedBasedOn.value = input;
-    expectBasedOn();
-    expectBasedOn(config.field);
+      basedOnField = "atk";
+      config = {
+        field: basedOnField,
+      };
+      expectedBasedOn = {
+        field: basedOnField,
+        value: 1,
+      };
+      tester.fromSelf = true;
+    });
 
-    // when no input found, value should be 1
-    tester.inputs = [];
-    expectedBasedOn.value = 1;
-    expectBasedOn();
-  });
+    test("based on total STABLE attribute, no baseline", () => {
+      totalAttrCtrl.applyBonuses({
+        value: 100,
+        toStat: basedOnField,
+        isStable: true,
+        description: "",
+      });
+      expectedBasedOn.value = totalAttrCtrl.getTotalStable(basedOnField);
+      expectBasedOn(config, true);
+      expectBasedOn(config.field, true);
 
-  test("altIndex 1, no baseline", () => {
-    const input = 100;
-    config.altIndex = 1;
+      totalAttrCtrl.applyBonuses({
+        value: 40,
+        toStat: basedOnField,
+        isStable: false,
+        description: "",
+      });
+      expectedBasedOn.value = totalAttrCtrl.getTotalStable(basedOnField);
+      expectBasedOn(config, true);
+      expectBasedOn(config.field, true);
+    });
 
-    tester.inputs = [-3, input];
-    expectedBasedOn.value = input;
-    expectBasedOn();
-  });
+    test("based on total STABLE attribute, baseline 100", () => {
+      config.baseline = 100;
 
-  test("baseline 100", () => {
-    const input = 150;
-    const baseline = 100;
-    config.baseline = baseline;
+      totalAttrCtrl.applyBonuses({
+        value: 50,
+        toStat: basedOnField,
+        isStable: true,
+        description: "",
+      });
+      expectedBasedOn.value = 0;
+      expectBasedOn(config, true);
 
-    tester.inputs = [input];
-    expectedBasedOn.value = input - baseline;
-    expectBasedOn();
+      totalAttrCtrl.applyBonuses({
+        value: 60,
+        toStat: basedOnField,
+        isStable: false,
+        description: "",
+      });
+      expectedBasedOn.value = 0;
+      expectBasedOn(config, true);
 
-    tester.inputs = [baseline - 50];
-    expectedBasedOn.value = 0;
-    expectBasedOn();
+      totalAttrCtrl.applyBonuses({
+        value: 80,
+        toStat: basedOnField,
+        isStable: true,
+        description: "",
+      });
+      expectedBasedOn.value = totalAttrCtrl.getTotalStable(basedOnField) - config.baseline;
+      expectBasedOn(config, true);
+    });
 
-    config.altIndex = 1;
+    test("based on total (stable & unstable) attribute, no baseline", () => {
+      totalAttrCtrl.applyBonuses({
+        value: 100,
+        toStat: basedOnField,
+        isStable: true,
+        description: "",
+      });
+      expectedBasedOn.value = totalAttrCtrl.getTotal(basedOnField);
+      expectBasedOn(config, false);
+      expectBasedOn(config.field, false);
 
-    tester.inputs = [-2, input];
-    expectedBasedOn.value = input - baseline;
-    expectBasedOn();
+      totalAttrCtrl.applyBonuses({
+        value: 40,
+        toStat: basedOnField,
+        isStable: false,
+        description: "",
+      });
+      expectedBasedOn.value = totalAttrCtrl.getTotal(basedOnField);
+      expectBasedOn(config, false);
+      expectBasedOn(config.field, false);
+    });
 
-    tester.inputs = [-1, baseline - 50];
-    expectedBasedOn.value = 0;
-    expectBasedOn();
+    test("based on total (stable & unstable) attribute, baseline 100", () => {
+      config.baseline = 100;
+
+      totalAttrCtrl.applyBonuses({
+        value: 50,
+        toStat: basedOnField,
+        isStable: true,
+        description: "",
+      });
+      expectedBasedOn.value = 0;
+      expectBasedOn(config, false);
+
+      totalAttrCtrl.applyBonuses({
+        value: 70,
+        toStat: basedOnField,
+        isStable: false,
+        description: "",
+      });
+      expectedBasedOn.value = totalAttrCtrl.getTotal(basedOnField) - config.baseline;
+      expectBasedOn(config, false);
+    });
   });
 });
 
-describe("getBasedOn, fromSelf", () => {
-  let config: Exclude<EntityBonusBasedOn, EntityBonusBasedOnField>;
-  let expectedBasedOn: BasedOn;
-  let totalAttrCtrl: TotalAttributeControl;
-
-  function expectBasedOn(configParam: EntityBonusBasedOn = config) {
-    tester.expectBasedOn(configParam).toEqual<BasedOn>(expectedBasedOn);
-  }
-
-  beforeEach(() => {
-    totalAttrCtrl = new TotalAttributeControl();
-    tester = new BareBonusGetterTester(genCalculationInfo(), totalAttrCtrl);
-
-    config = {
-      field: "atk",
-    };
-    expectedBasedOn = {
-      field: config.field,
-      value: 1,
-    };
-    tester.fromSelf = true;
+describe("applyMax", () => {
+  test("max config as number", () => {
+    expect(tester["applyMax"](17, 10)).toBe(10);
   });
 
-  test("altIndex default to 0, no baseline", () => {
-    totalAttrCtrl.applyBonuses({
+  test("max is based on inputs", () => {
+    const input = 10;
+
+    tester.maxConfig = {
       value: 100,
-      toStat: config.field,
+      basedOn: {
+        // field here is unused
+        field: "atk",
+        altIndex: 1,
+      },
+    };
+    tester.inputs = [-2, input];
+    tester.fromSelf = false;
+
+    tester.expectMax(tester.maxConfig.value * input);
+  });
+
+  test("max is based on TotalAttribute", () => {
+    const totalAttrCtrl = new TotalAttributeControl();
+    const attributeValue = 1000;
+    const attributeType = "atk";
+    tester = tester.clone(totalAttrCtrl);
+
+    totalAttrCtrl.applyBonuses({
+      value: attributeValue,
+      toStat: attributeType,
+      description: "",
     });
 
-    tester.inputs = [input];
-    expectedBasedOn.value = input;
-    expectBasedOn();
-    expectBasedOn(config.field);
-
-    // when no input found, value should be 1
-    tester.inputs = [];
-    expectedBasedOn.value = 1;
-    expectBasedOn();
+    tester.maxConfig = {
+      value: 2,
+      basedOn: {
+        field: attributeType,
+      },
+    };
+    tester.fromSelf = true;
+    tester.expectMax(tester.maxConfig.value * totalAttrCtrl.getTotal(attributeType));
   });
 
-  test("altIndex 1, no baseline", () => {
-    const input = 100;
-    config.altIndex = 1;
-
-    tester.inputs = [-3, input];
-    expectedBasedOn.value = input;
-    expectBasedOn();
-  });
-
-  test("baseline 100", () => {
-    const input = 150;
-    const baseline = 100;
-    config.baseline = baseline;
-
-    tester.inputs = [input];
-    expectedBasedOn.value = input - baseline;
-    expectBasedOn();
-
-    tester.inputs = [baseline - 50];
-    expectedBasedOn.value = 0;
-    expectBasedOn();
-
-    config.altIndex = 1;
-
-    tester.inputs = [-2, input];
-    expectedBasedOn.value = input - baseline;
-    expectBasedOn();
-
-    tester.inputs = [-1, baseline - 50];
-    expectedBasedOn.value = 0;
-    expectBasedOn();
-  });
+  //
 });

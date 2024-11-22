@@ -1,10 +1,11 @@
-import { CalculationInfo, EffectApplicableCondition, EntityBonusBasedOn } from "@Src/backend/types";
+import { TotalAttributeControl } from "@Src/backend/controls";
+import { CalculationInfo, EffectApplicableCondition, EffectDynamicMax, EntityBonusBasedOn } from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
 import { Character, PartyData } from "@Src/types";
 import { EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { genCalculationInfo } from "@UnitTest/test-utils";
-import { isApplicableEffect } from "../isApplicableEffect";
 import { BareBonusGetter } from "../bare-bonus-getter";
+import { isApplicableEffect } from "../isApplicableEffect";
 
 export class IsApplicableEffectTester {
   info: CalculationInfo = genCalculationInfo();
@@ -70,6 +71,10 @@ export class BareBonusGetterTester extends BareBonusGetter {
   inputs: number[] = [];
   fromSelf = true;
 
+  clone(totalAttrCtrl?: TotalAttributeControl) {
+    return new BareBonusGetterTester(this.info, totalAttrCtrl);
+  }
+
   updateCharacter<TKey extends keyof Character>(key: TKey, value: Character[TKey]) {
     this.info.char[key] = value;
   }
@@ -91,5 +96,24 @@ export class BareBonusGetterTester extends BareBonusGetter {
         basedOnStable,
       })
     );
+  }
+
+  // for applyMax
+
+  maxConfig: EffectDynamicMax = {
+    value: 10,
+  };
+  basedOnStable?: boolean;
+  refi?: number;
+
+  expectMax(value: number) {
+    expect(
+      this.applyMax(1000_000_000, this.maxConfig, {
+        inputs: this.inputs,
+        fromSelf: this.fromSelf,
+        basedOnStable: this.basedOnStable,
+        refi: this.refi,
+      })
+    ).toBe(value);
   }
 }

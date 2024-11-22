@@ -7,13 +7,15 @@ export const DOWNLOADED_DATA_VERSION = 3.1;
 export const EXPORTED_SETUP_VERSION = 1;
 export const MINIMUM_SYSTEM_VERSION = "3.8.6";
 
+export const IS_DEV_ENV = import.meta.env.DEV;
+
 export const GENSHIN_DEV_URL = {
   base: "https://genshin.jmp.blue",
   character: (name: string) => `${GENSHIN_DEV_URL.base}/characters/${name}`,
 };
 
 export const BACKEND_URL = {
-  base: import.meta.env.DEV ? "http://localhost:3000/api" : "https://gidmgcalculator.vercel.app/api",
+  base: IS_DEV_ENV ? "http://localhost:3000/api" : "https://gidmgcalculator.vercel.app/api",
   metadata() {
     return `${this.base}/meta-data`;
   },
