@@ -15,15 +15,11 @@ type InputStack = {
   altIndex?: number;
   /** Input's index when activated (equal to 1), value is doubled. On some weapons */
   doubledAt?: number;
-  /** Actual stack = capacity - input. On Wanderer */
-  capacity?: {
-    value: number;
-    extra: EffectExtra;
-  };
 };
 
-type ElementStack = {
-  type: "ELEMENT";
+/** Count members of element types of the party. Ex: [Pyro, Pyro] -> 2 */
+type MemberStack = {
+  type: "MEMBER";
   element: "SAME_INCLUDED" | "SAME_EXCLUDED" | "DIFFERENT" | ElementType;
 };
 
@@ -48,8 +44,13 @@ type MixStack = {
   type: "MIX";
 };
 
-export type EntityBonusStack = (InputStack | ElementStack | NationStack | EnergyCostStack | ResolveStack | MixStack) & {
-  /** actual stacks = stacks - baseline */
+export type EntityBonusStack = (InputStack | MemberStack | NationStack | EnergyCostStack | ResolveStack | MixStack) & {
+  /** Actual stack = capacity - input. On Wanderer */
+  capacity?: {
+    value: number;
+    extra: EffectExtra;
+  };
+  /** Actual stacks = stacks - baseline */
   baseline?: number;
   /** On Furina */
   extra?: EffectExtra;

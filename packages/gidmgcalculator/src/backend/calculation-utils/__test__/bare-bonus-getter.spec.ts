@@ -1,9 +1,11 @@
 import { TotalAttributeControl } from "@Src/backend/controls";
 import {
   AttributeStat,
+  BareBonus,
   EffectExtra,
   EntityBonusBasedOn,
   EntityBonusBasedOnField,
+  EntityBonusCore,
   EntityBonusValueByOption,
   LevelableTalentType,
 } from "@Src/backend/types";
@@ -11,7 +13,7 @@ import { $AppCharacter } from "@Src/services";
 import { characters, EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { genCalculationInfo } from "@UnitTest/test-utils";
 import { BareBonusGetter } from "../bare-bonus-getter";
-import { BareBonusGetterTester } from "./test-utils";
+import { ApplyExtraTester, BareBonusGetterTester, BasedOnTester, GetStackValueTester, MaxTester } from "./test-utils";
 
 let tester: BareBonusGetterTester;
 
@@ -183,10 +185,15 @@ describe("getBasedOn", () => {
   let config: Exclude<EntityBonusBasedOn, EntityBonusBasedOnField>;
   let expectedBasedOn: ReturnType<(typeof tester)["getBasedOn"]>;
   let totalAttrCtrl: TotalAttributeControl;
+  let tester: BasedOnTester;
 
   function expectBasedOn(configParam: EntityBonusBasedOn = config, basedOnStable?: boolean) {
     tester.expectBasedOn(configParam, basedOnStable).toEqual(expectedBasedOn);
   }
+
+  beforeEach(() => {
+    tester = new BasedOnTester();
+  });
 
   describe("not fromSelf (based on inputs)", () => {
     beforeEach(() => {
@@ -249,10 +256,10 @@ describe("getBasedOn", () => {
     });
   });
 
-  describe(" fromSelf (based on TotalAttribute)", () => {
+  describe("fromSelf (based on TotalAttribute)", () => {
     beforeEach(() => {
       totalAttrCtrl = new TotalAttributeControl();
-      tester = new BareBonusGetterTester(genCalculationInfo(), totalAttrCtrl);
+      tester = new BasedOnTester(totalAttrCtrl);
 
       basedOnField = "atk";
       config = {
@@ -365,6 +372,12 @@ describe("getBasedOn", () => {
 });
 
 describe("applyMax", () => {
+  let tester: MaxTester;
+
+  beforeEach(() => {
+    tester = new MaxTester();
+  });
+
   test("max config as number", () => {
     expect(tester["applyMax"](17, 10)).toBe(10);
   });
@@ -408,5 +421,235 @@ describe("applyMax", () => {
     tester.expectMax(tester.maxConfig.value * totalAttrCtrl.getTotal(attributeType));
   });
 
-  //
+  test("max has extra", () => {
+    tester.maxConfig = {
+      value: 2,
+      extras: {
+        value: 1,
+      },
+    };
+    tester.expectMax(3);
+
+    tester.maxConfig = {
+      value: 3,
+      extras: {
+        value: 1,
+        grantedAt: "C2",
+      },
+    };
+    tester.expectMax(3);
+
+    tester.updateCharacter("cons", 5);
+    tester.expectMax(4);
+  });
+
+  test("max increased based on refi", () => {
+    tester.maxConfig = {
+      value: 6,
+    };
+    tester.refi = 1;
+    tester.expectMax(6 + (6 / 3) * tester.refi);
+
+    tester.maxConfig = {
+      value: 6,
+      incre: 3,
+    };
+    tester.refi = 3;
+    tester.expectMax(6 + 3 * tester.refi);
+  });
+});
+
+describe("applyExtra", () => {
+  let tester: ApplyExtraTester;
+
+  beforeEach(() => {
+    tester = new ApplyExtraTester();
+  });
+
+  test("extra is config as number", () => {
+    tester.bonus.value = 100;
+    tester.bonus.isStable = true;
+
+    tester.apply(10);
+    tester.expect(100 + 10, true);
+  });
+
+  test("extra can be check if applicable", () => {
+    tester.bonus.value = 100;
+    tester.extra = {
+      id: "",
+      value: 20,
+      grantedAt: "C1",
+    };
+    tester.applyThenExpect(100);
+
+    tester.updateCharacter("cons", 1);
+    tester.applyThenExpect(120);
+  });
+
+  test("unstable extra makes bonus unstable", () => {
+    const totalAttrCtrl = new TotalAttributeControl();
+    tester = tester.clone(totalAttrCtrl);
+
+    totalAttrCtrl.applyBonuses({
+      value: 1000,
+      toStat: "atk",
+      description: "",
+    });
+
+    tester.bonus.value = 100;
+    tester.extra = {
+      id: "",
+      value: 2,
+      basedOn: "atk",
+    };
+
+    tester.applyThenExpect(100 + 2 * totalAttrCtrl.getTotal("atk"), false);
+  });
+
+  /**
+   * extra is config as EntityBonusCore so it returned should be calculated by getBareBonus
+   */
+});
+
+describe("getStackValue", () => {
+  let tester: GetStackValueTester;
+
+  beforeEach(() => {
+    tester = new GetStackValueTester();
+  });
+
+  test("stack be 0 when stack calculation is involved party and there's no party", () => {
+    // ELEMENT
+
+    tester.stack = {
+      type: "MEMBER",
+      element: "DIFFERENT",
+    };
+    tester.expect(0);
+
+    tester.stack = {
+      type: "MEMBER",
+      element: "SAME_EXCLUDED",
+    };
+    tester.expect(0);
+
+    tester.stack = {
+      type: "MEMBER",
+      element: "SAME_INCLUDED",
+    };
+    tester.expect(0);
+
+    tester.stack = {
+      type: "MEMBER",
+      element: "pyro",
+    };
+    tester.expect(0);
+
+    // ENERGY
+
+    tester.stack = {
+      type: "ENERGY",
+      scope: "ACTIVE",
+    };
+    tester.expect(0);
+
+    tester.stack = {
+      type: "ENERGY",
+      scope: "PARTY",
+    };
+    tester.expect(0);
+
+    // NATION
+
+    tester.stack = {
+      type: "NATION",
+      nation: "DIFFERENT",
+    };
+    tester.expect(0);
+
+    tester.stack = {
+      type: "NATION",
+      nation: "SAME_EXCLUDED",
+    };
+    tester.expect(0);
+
+    tester.stack = {
+      type: "NATION",
+      nation: "LIYUE",
+    };
+    tester.expect(0);
+
+    // OTHERS
+
+    tester.stack = {
+      type: "RESOLVE",
+    };
+    tester.expect(0);
+
+    tester.stack = {
+      type: "MIX",
+    };
+    tester.expect(0);
+  });
+
+  describe("type INPUT: stack calculated from inputs", () => {
+    beforeEach(() => {
+      tester.fromSelf = true;
+    });
+
+    test("fromSelf, index default to 0", () => {
+      tester.stack = {
+        type: "INPUT",
+      };
+      tester.inputs = [10];
+      tester.expect(10);
+    });
+
+    test("fromSelf, index 1", () => {
+      tester.stack = {
+        type: "INPUT",
+        index: 1,
+      };
+      tester.inputs = [-2, 30];
+      tester.expect(30);
+    });
+
+    test("not fromSelf, altIndex default to 0", () => {
+      tester.fromSelf = false;
+      tester.stack = {
+        type: "INPUT",
+      };
+      tester.inputs = [20];
+      tester.expect(20);
+    });
+
+    test("not fromSelf, altIndex 2", () => {
+      tester.fromSelf = false;
+      tester.stack = {
+        type: "INPUT",
+        altIndex: 2,
+      };
+      tester.inputs = [-4, -1, 15];
+      tester.expect(15);
+    });
+  });
+
+  describe("type MEMBER: stack calculated from inputs", () => {
+    test("element DIFFERENT", () => {
+      tester.stack = {
+        type: "MEMBER",
+        element: "DIFFERENT",
+      };
+
+      tester.changeCharacter(EMockCharacter.BASIC);
+      tester.expect(0);
+
+      tester.changeParty([$AppCharacter.get(EMockCharacter.BASIC)]);
+      tester.expect(0);
+
+      tester.changeParty([$AppCharacter.get(EMockCharacter.CATALYST)]);
+      tester.expect(1);
+    });
+  });
 });

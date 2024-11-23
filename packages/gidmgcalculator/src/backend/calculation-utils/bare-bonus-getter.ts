@@ -195,7 +195,7 @@ export class BareBonusGetter {
     }
     const { inputs, fromSelf } = support;
     const { char, appChar, partyData } = this.info;
-    const partyDependentStackTypes: EntityBonusStack["type"][] = ["ELEMENT", "ENERGY", "NATION", "RESOLVE", "MIX"];
+    const partyDependentStackTypes: EntityBonusStack["type"][] = ["MEMBER", "ENERGY", "NATION", "RESOLVE", "MIX"];
 
     if (partyDependentStackTypes.includes(stack.type) && !partyData.length) {
       return 0;
@@ -217,16 +217,10 @@ export class BareBonusGetter {
           input = finalIndex.reduce((total, { value, ratio = 1 }) => total + (inputs[value] ?? 0) * ratio, 0);
         }
 
-        if (stack.capacity) {
-          const { value, extra } = stack.capacity;
-          input = value - input;
-          if (isApplicableEffect(extra, this.info, inputs, fromSelf)) input += extra.value;
-          input = Math.max(input, 0);
-        }
         result = input;
         break;
       }
-      case "ELEMENT": {
+      case "MEMBER": {
         const { element } = stack;
         const elmtCount = GeneralCalc.countElements(partyData);
 
@@ -308,6 +302,14 @@ export class BareBonusGetter {
       }
     }
 
+    if (stack.capacity) {
+      const capacityExtra = stack.capacity.extra;
+      const capacity =
+        stack.capacity.value +
+        (isApplicableEffect(capacityExtra, this.info, inputs, fromSelf) ? capacityExtra.value : 0);
+
+      result = Math.max(capacity - result, 0);
+    }
     if (stack.baseline) {
       if (result <= stack.baseline) return 0;
       result -= stack.baseline;

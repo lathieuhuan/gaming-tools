@@ -1,5 +1,13 @@
 import { TotalAttributeControl } from "@Src/backend/controls";
-import { CalculationInfo, EffectApplicableCondition, EffectDynamicMax, EntityBonusBasedOn } from "@Src/backend/types";
+import {
+  BareBonus,
+  CalculationInfo,
+  EffectApplicableCondition,
+  EffectDynamicMax,
+  EntityBonusBasedOn,
+  EntityBonusCore,
+  EntityBonusStack,
+} from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
 import { Character, PartyData } from "@Src/types";
 import { EMockCharacter } from "@UnitTest/mocks/characters.mock";
@@ -71,8 +79,13 @@ export class BareBonusGetterTester extends BareBonusGetter {
   inputs: number[] = [];
   fromSelf = true;
 
-  clone(totalAttrCtrl?: TotalAttributeControl) {
-    return new BareBonusGetterTester(this.info, totalAttrCtrl);
+  constructor(totalAttrCtrl?: TotalAttributeControl);
+  constructor(info?: CalculationInfo, totalAttrCtrl?: TotalAttributeControl);
+  constructor(info?: CalculationInfo | TotalAttributeControl, totalAttrCtrl?: TotalAttributeControl) {
+    const _info = !info || info instanceof TotalAttributeControl ? genCalculationInfo() : info;
+    const _totalAttrCtrl = info instanceof TotalAttributeControl ? info : totalAttrCtrl;
+
+    super(_info, _totalAttrCtrl);
   }
 
   updateCharacter<TKey extends keyof Character>(key: TKey, value: Character[TKey]) {
@@ -88,6 +101,10 @@ export class BareBonusGetterTester extends BareBonusGetter {
     this.info.partyData = partyData;
   }
 
+  // for applyMax
+}
+
+export class BasedOnTester extends BareBonusGetterTester {
   expectBasedOn(config: EntityBonusBasedOn, basedOnStable = true) {
     return expect(
       this.getBasedOn(config, {
@@ -97,14 +114,18 @@ export class BareBonusGetterTester extends BareBonusGetter {
       })
     );
   }
+}
 
-  // for applyMax
-
+export class MaxTester extends BareBonusGetterTester {
   maxConfig: EffectDynamicMax = {
     value: 10,
   };
   basedOnStable?: boolean;
   refi?: number;
+
+  clone(totalAttrCtrl?: TotalAttributeControl) {
+    return new MaxTester(this.info, totalAttrCtrl);
+  }
 
   expectMax(value: number) {
     expect(
@@ -115,5 +136,58 @@ export class BareBonusGetterTester extends BareBonusGetter {
         refi: this.refi,
       })
     ).toBe(value);
+  }
+}
+
+export class ApplyExtraTester extends BareBonusGetterTester {
+  bonus: BareBonus = {
+    id: "",
+    isStable: true,
+    value: 0,
+  };
+  extra: EntityBonusCore = {
+    id: "",
+    value: 0,
+  };
+
+  apply(extra: number | EntityBonusCore) {
+    this.applyExtra(this.bonus, extra, { inputs: this.inputs, fromSelf: this.fromSelf });
+  }
+
+  expect(value: number, isStable?: boolean) {
+    expect(this.bonus.value).toBe(value);
+
+    if (isStable !== undefined) {
+      expect(this.bonus.isStable).toBe(isStable);
+    }
+  }
+
+  applyThenExpect(value: number, isStable?: boolean) {
+    this.apply(this.extra);
+
+    expect(this.bonus.value).toBe(value);
+
+    if (isStable !== undefined) {
+      expect(this.bonus.isStable).toBe(isStable);
+    }
+  }
+
+  clone(totalAttrCtrl?: TotalAttributeControl) {
+    return new ApplyExtraTester(this.info, totalAttrCtrl);
+  }
+}
+
+export class GetStackValueTester extends BareBonusGetterTester {
+  stack: EntityBonusStack = {
+    type: "INPUT",
+  };
+
+  expect(stackValue: number) {
+    expect(
+      this.getStackValue(this.stack, {
+        inputs: this.inputs,
+        fromSelf: this.fromSelf,
+      })
+    ).toBe(stackValue);
   }
 }
