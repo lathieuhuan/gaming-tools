@@ -6,7 +6,6 @@ import type {
   AppWeapon,
   ArtifactAttribute,
   AttributeStat,
-  CoreStat,
   TotalAttribute,
 } from "../types";
 
@@ -55,10 +54,7 @@ export class TotalAttributeControl {
     this.tracker ||= trackerCtrl;
   }
 
-  static getArtifactAttribute(
-    artifacts: Array<Artifact | null>,
-    coreBaseStat: Pick<TotalAttribute, `${CoreStat}_base`>
-  ) {
+  static getArtifactAttribute(artifacts: Array<Artifact | null>) {
     const artAttr: ArtifactAttribute = {
       hp: 0,
       atk: 0,
@@ -75,6 +71,17 @@ export class TotalAttributeControl {
       }
     }
 
+    return artAttr;
+  }
+
+  static finalizeArtAttr(
+    artAttr: ArtifactAttribute,
+    coreBaseStat: {
+      hp_base: number;
+      atk_base: number;
+      def_base: number;
+    }
+  ) {
     for (const statType of CORE_STAT_TYPES) {
       const percentStatValue = artAttr[`${statType}_`];
 
@@ -83,8 +90,20 @@ export class TotalAttributeControl {
       }
       delete artAttr[`${statType}_`];
     }
+  }
 
-    return artAttr;
+  finalizeArtAttr(artAttr: ArtifactAttribute) {
+    TotalAttributeControl.finalizeArtAttr(artAttr, {
+      hp_base: this.totalAttr.hp.base,
+      atk_base: this.totalAttr.atk.base,
+      def_base: this.totalAttr.def.base,
+    });
+
+    Object_.forEach(artAttr, (toStat) => {
+      if (artAttr[toStat]) {
+        this.tracker?.recordStat(ECalcStatModule.ATTR, toStat, artAttr[toStat], "Artifact stat");
+      }
+    });
   }
 
   private getCharacterStats(char: Character, appChar: AppCharacter) {
@@ -132,7 +151,7 @@ export class TotalAttributeControl {
     return new TotalAttributeControl(structuredClone(this.totalAttr));
   };
 
-  equipWeapon = (weapon?: Weapon, appWeapon?: AppWeapon) => {
+  private equipWeapon = (weapon?: Weapon, appWeapon?: AppWeapon) => {
     if (weapon && appWeapon) {
       this.addBase("atk", WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale), "Weapon main stat");
 
@@ -148,20 +167,12 @@ export class TotalAttributeControl {
     }
   };
 
-  equipArtifacts = (artifacts: Array<Artifact | null> = []) => {
-    const attribute = TotalAttributeControl.getArtifactAttribute(artifacts, {
-      hp_base: this.totalAttr.hp.base,
-      atk_base: this.totalAttr.atk.base,
-      def_base: this.totalAttr.def.base,
-    });
+  private equipArtifacts = (artifacts: Array<Artifact | null> = []) => {
+    const attribute = TotalAttributeControl.getArtifactAttribute(artifacts);
 
     Object_.forEach(attribute, (toStat) => {
       if (attribute[toStat]) {
-        this.applyBonuses({
-          value: attribute[toStat],
-          toStat,
-          description: "Artifact stat",
-        });
+        this.totalAttr[toStat].stableBonus += attribute[toStat];
       }
     });
 
@@ -175,8 +186,8 @@ export class TotalAttributeControl {
 
   applyBonuses = (bonuses: BonusToApply | BonusToApply[]) => {
     for (const bonus of Array_.toArray(bonuses)) {
-      if (bonus.toStat === 'base_atk') {
-        this.totalAttr.atk.base += bonus.value;
+      if (bonus.toStat === "base_atk") {
+        this.addBase("atk", bonus.value, bonus.description);
         continue;
       }
       if (bonus.isStable ?? true) {

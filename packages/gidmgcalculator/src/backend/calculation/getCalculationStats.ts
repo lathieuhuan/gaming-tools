@@ -360,6 +360,8 @@ export default function getCalculationStats(
     });
   }
 
+  totalAttrCtrl.finalizeArtAttr(artAttr);
+
   return {
     totalAttr: totalAttrCtrl.finalize(),
     attBonusesCtrl,

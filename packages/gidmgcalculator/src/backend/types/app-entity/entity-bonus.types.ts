@@ -63,6 +63,7 @@ export type EntityBonusCore<TBonusExtend extends object = object> = TBonusExtend
     stacks?: EntityBonusStack;
     /** Added after stacks */
     sufExtra?: number | EntityBonusCore<TBonusExtend>;
+    /** When max is number on Weapon Bonus, it will auto scale off refi */
     max?: EffectMax;
   };
 

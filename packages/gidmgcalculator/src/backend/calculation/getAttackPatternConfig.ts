@@ -102,7 +102,7 @@ export default function getAttackPatternConfig({
           const mixedType = finalAttPatt ? (`${finalAttPatt}.${attElmt}` as const) : undefined;
           return attBonusesCtrl.get(key, finalAttPatt, attElmt, mixedType, item.id);
         }
-        return attBonusesCtrl.get(key, finalAttPatt, item.id);
+        return attBonusesCtrl.getBare(key, finalAttPatt, item.id);
       };
 
       /** ========== Attack Reaction Multiplier ========== */

@@ -129,7 +129,7 @@ export class BareBonusGetter {
    */
   protected applyMax = (value: number, config: EffectMax | undefined, support?: InternalSupportInfo) => {
     if (typeof config === "number") {
-      return Math.min(value, config);
+      return Math.min(value, this.scaleRefi(config, support?.refi));
     } //
     else if (config && support) {
       let finalMax = config.value;
