@@ -7,7 +7,7 @@ import { BareBonusGetterTester } from "../test-utils";
 class Tester extends BareBonusGetterTester {
   optIndex: EntityBonusValueByOption["optIndex"];
 
-  expect(value: number) {
+  _expect(value: number) {
     expect(this.getIndexOfBonusValue({ optIndex: this.optIndex }, this.inputs)).toBe(value);
   }
 }
@@ -31,7 +31,7 @@ test("[DEFAULT] no optIndex: type INPUT, inpIndex is 0", () => {
   tester.inputs = [input];
   tester.optIndex = undefined;
 
-  tester.expect(input - 1); // input 1 will be mapped to index 0, input 2 mapped to index 1, etc
+  tester._expect(input - 1); // input 1 will be mapped to index 0, input 2 mapped to index 1, etc
 });
 
 test("optIndex config as number: type INPUT, optIndex is the inpIndex", () => {
@@ -39,15 +39,15 @@ test("optIndex config as number: type INPUT, optIndex is the inpIndex", () => {
 
   tester.optIndex = 0;
   tester.inputs = [input];
-  tester.expect(input - 1);
+  tester._expect(input - 1);
 
   tester.optIndex = 1;
   tester.inputs = [-2, input];
-  tester.expect(input - 1);
+  tester._expect(input - 1);
 
   tester.optIndex = 1;
   tester.inputs = [];
-  tester.expect(-1);
+  tester._expect(-1);
 });
 
 test("[type: INPUT] get optIndex from inputs", () => {
@@ -59,10 +59,10 @@ test("[type: INPUT] get optIndex from inputs", () => {
   };
 
   tester.inputs = [input];
-  tester.expect(input - 1);
+  tester._expect(input - 1);
 
   tester.inputs = [];
-  tester.expect(-1);
+  tester._expect(-1);
 });
 
 test("[type: LEVEL] get optIndex from character's talent level", () => {
@@ -75,7 +75,7 @@ test("[type: LEVEL] get optIndex from character's talent level", () => {
       talent: talent,
     };
     tester.updateCharacter(talent, level);
-    tester.expect(level - 1);
+    tester._expect(level - 1);
   }
 });
 
@@ -85,13 +85,13 @@ test("[type: ELEMENT] get optIndex from the number of the party's all distinct e
   };
 
   tester.changeCharacter(EMockCharacter.BASIC);
-  tester.expect(0);
+  tester._expect(0);
 
   tester.changeParty([$AppCharacter.get(EMockCharacter.BASIC)]);
-  tester.expect(0);
+  tester._expect(0);
 
   tester.changeParty([$AppCharacter.get(EMockCharacter.CATALYST)]);
-  tester.expect(1);
+  tester._expect(1);
 });
 
 test("[type: ELEMENT] get optIndex from the number of the party's some distinct elements (ELEMENT)", () => {
@@ -101,16 +101,16 @@ test("[type: ELEMENT] get optIndex from the number of the party's some distinct 
   };
 
   tester.changeCharacter(EMockCharacter.BASIC);
-  tester.expect(0);
+  tester._expect(0);
 
   tester.changeParty([$AppCharacter.get(EMockCharacter.CATALYST)]);
-  tester.expect(0);
+  tester._expect(0);
 
   tester.optIndex.elements = ["pyro", "electro"];
-  tester.expect(1);
+  tester._expect(1);
 
   tester.optIndex.elements = ["pyro", "electro", "anemo"];
-  tester.expect(1);
+  tester._expect(1);
 });
 
 test("[type: MEMBER] get optIndex from the number of teammates whose elements are different from the character", () => {
@@ -122,16 +122,16 @@ test("[type: MEMBER] get optIndex from the number of teammates whose elements ar
   };
 
   tester.changeCharacter(EMockCharacter.BASIC);
-  tester.expect(-1);
+  tester._expect(-1);
 
   tester.changeParty([electroMember]);
-  tester.expect(0);
+  tester._expect(0);
 
   tester.changeParty([electroMember, $AppCharacter.get(EMockCharacter.BASIC)]);
-  tester.expect(0);
+  tester._expect(0);
 
   tester.changeParty([electroMember, $AppCharacter.get(EMockCharacter.TARTAGLIA)]);
-  tester.expect(1);
+  tester._expect(1);
 });
 
 test("optIndex from the number of WHOLE party's members whose elements are aligned with the condition (MEMBER)", () => {
@@ -144,14 +144,14 @@ test("optIndex from the number of WHOLE party's members whose elements are align
   };
 
   tester.changeCharacter(EMockCharacter.BASIC);
-  tester.expect(0);
+  tester._expect(0);
 
   tester.changeParty([pyroMember]);
-  tester.expect(1);
+  tester._expect(1);
 
   tester.changeParty([pyroMember, electroMember]);
-  tester.expect(1);
+  tester._expect(1);
 
   tester.optIndex.element = ["pyro", "electro"];
-  tester.expect(2);
+  tester._expect(2);
 });

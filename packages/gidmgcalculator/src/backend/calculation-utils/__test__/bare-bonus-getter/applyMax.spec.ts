@@ -12,7 +12,11 @@ class Tester extends BareBonusGetterTester {
   basedOnStable?: boolean;
   refi?: number;
 
-  expect(value: number) {
+  _applyMax(...args: Parameters<typeof this.applyMax>) {
+    return this.applyMax(...args);
+  }
+
+  _expect(value: number) {
     expect(
       this.applyMax(1000_000_000, this.config, {
         inputs: this.inputs,
@@ -37,7 +41,37 @@ beforeEach(() => {
 });
 
 test("max config as number", () => {
-  expect(tester["applyMax"](17, 10)).toBe(10);
+  const value = 100;
+  const max = 9;
+  const refi = 2;
+  const incre = 5;
+  const dummies: { inputs: number[]; fromSelf: boolean } = {
+    inputs: [],
+    fromSelf: true,
+  };
+
+  expect(tester._applyMax(value, max)).toBe(max);
+
+  expect(
+    tester._applyMax(value, max, {
+      ...dummies,
+      refi,
+    })
+  ).toBe(max + (max / 3) * refi);
+
+  expect(
+    tester._applyMax(
+      value,
+      {
+        value: max,
+        incre,
+      },
+      {
+        ...dummies,
+        refi,
+      }
+    )
+  ).toBe(max + incre * refi);
 });
 
 test("max is based on inputs", () => {
@@ -54,7 +88,7 @@ test("max is based on inputs", () => {
   tester.inputs = [-2, input];
   tester.fromSelf = false;
 
-  tester.expect(tester.config.value * input);
+  tester._expect(tester.config.value * input);
 });
 
 test("max is based on TotalAttribute", () => {
@@ -73,7 +107,7 @@ test("max is based on TotalAttribute", () => {
     },
   };
   tester.fromSelf = true;
-  tester.expect(tester.config.value * totalAttrCtrl.getTotal(attributeType));
+  tester._expect(tester.config.value * totalAttrCtrl.getTotal(attributeType));
 });
 
 test("max has extra", () => {
@@ -83,7 +117,7 @@ test("max has extra", () => {
       value: 1,
     },
   };
-  tester.expect(3);
+  tester._expect(3);
 
   tester.config = {
     value: 3,
@@ -92,10 +126,10 @@ test("max has extra", () => {
       grantedAt: "C2",
     },
   };
-  tester.expect(3);
+  tester._expect(3);
 
   tester.updateCharacter("cons", 5);
-  tester.expect(4);
+  tester._expect(4);
 });
 
 test("max increased based on refi", () => {
@@ -103,12 +137,12 @@ test("max increased based on refi", () => {
     value: 6,
   };
   tester.refi = 1;
-  tester.expect(6 + (6 / 3) * tester.refi);
+  tester._expect(6 + (6 / 3) * tester.refi);
 
   tester.config = {
     value: 6,
     incre: 3,
   };
   tester.refi = 3;
-  tester.expect(6 + 3 * tester.refi);
+  tester._expect(6 + 3 * tester.refi);
 });

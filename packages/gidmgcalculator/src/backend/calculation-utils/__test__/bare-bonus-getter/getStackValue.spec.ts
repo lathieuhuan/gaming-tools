@@ -9,7 +9,7 @@ class Tester extends BareBonusGetterTester {
     type: "INPUT",
   };
 
-  expect(stackValue: number) {
+  _expect(stackValue: number) {
     expect(
       this.getStackValue(this.stack, {
         inputs: this.inputs,
@@ -36,25 +36,25 @@ test("stack be 0 when stack calculation is involved party and there's no party",
     type: "MEMBER",
     element: "DIFFERENT",
   };
-  tester.expect(0);
+  tester._expect(0);
 
   tester.stack = {
     type: "MEMBER",
     element: "SAME_EXCLUDED",
   };
-  tester.expect(0);
+  tester._expect(0);
 
   tester.stack = {
     type: "MEMBER",
     element: "SAME_INCLUDED",
   };
-  tester.expect(0);
+  tester._expect(0);
 
   tester.stack = {
     type: "MEMBER",
     element: "pyro",
   };
-  tester.expect(0);
+  tester._expect(0);
 
   // ENERGY
 
@@ -62,13 +62,13 @@ test("stack be 0 when stack calculation is involved party and there's no party",
     type: "ENERGY",
     scope: "ACTIVE",
   };
-  tester.expect(0);
+  tester._expect(0);
 
   tester.stack = {
     type: "ENERGY",
     scope: "PARTY",
   };
-  tester.expect(0);
+  tester._expect(0);
 
   // NATION
 
@@ -76,31 +76,31 @@ test("stack be 0 when stack calculation is involved party and there's no party",
     type: "NATION",
     nation: "DIFFERENT",
   };
-  tester.expect(0);
+  tester._expect(0);
 
   tester.stack = {
     type: "NATION",
     nation: "SAME_EXCLUDED",
   };
-  tester.expect(0);
+  tester._expect(0);
 
   tester.stack = {
     type: "NATION",
     nation: "LIYUE",
   };
-  tester.expect(0);
+  tester._expect(0);
 
   // OTHERS
 
   tester.stack = {
     type: "RESOLVE",
   };
-  tester.expect(0);
+  tester._expect(0);
 
   tester.stack = {
     type: "MIX",
   };
-  tester.expect(0);
+  tester._expect(0);
 });
 
 describe("type INPUT: stack calculated from inputs", () => {
@@ -113,7 +113,7 @@ describe("type INPUT: stack calculated from inputs", () => {
       type: "INPUT",
     };
     tester.inputs = [10];
-    tester.expect(10);
+    tester._expect(10);
   });
 
   test("fromSelf, index 1", () => {
@@ -122,7 +122,7 @@ describe("type INPUT: stack calculated from inputs", () => {
       index: 1,
     };
     tester.inputs = [-2, 30];
-    tester.expect(30);
+    tester._expect(30);
   });
 
   test("not fromSelf, altIndex default to 0", () => {
@@ -131,7 +131,7 @@ describe("type INPUT: stack calculated from inputs", () => {
       type: "INPUT",
     };
     tester.inputs = [20];
-    tester.expect(20);
+    tester._expect(20);
   });
 
   test("not fromSelf, altIndex 2", () => {
@@ -141,7 +141,7 @@ describe("type INPUT: stack calculated from inputs", () => {
       altIndex: 2,
     };
     tester.inputs = [-4, -1, 15];
-    tester.expect(15);
+    tester._expect(15);
   });
 });
 
@@ -153,12 +153,12 @@ describe("type MEMBER: stack calculated from inputs", () => {
     };
 
     tester.changeCharacter(EMockCharacter.BASIC);
-    tester.expect(0);
+    tester._expect(0);
 
     tester.changeParty([$AppCharacter.get(EMockCharacter.BASIC)]);
-    tester.expect(0);
+    tester._expect(0);
 
     tester.changeParty([$AppCharacter.get(EMockCharacter.CATALYST)]);
-    tester.expect(1);
+    tester._expect(1);
   });
 });

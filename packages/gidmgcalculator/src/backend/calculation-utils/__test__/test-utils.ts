@@ -47,7 +47,7 @@ export class IsApplicableEffectTester {
     return value;
   }
 
-  setInfo(charName: EMockCharacter, partyData: PartyData = []) {
+  _setInfo(charName: EMockCharacter, partyData: PartyData = []) {
     this.info = {
       char: {
         ...this.info.char,
@@ -58,11 +58,11 @@ export class IsApplicableEffectTester {
     };
   }
 
-  expectValue<T = any>(value: T) {
+  _expectValue<T = any>(value: T) {
     return expect(isApplicableEffect(this.condition, this.info, this.inputs, this.fromSelf)).toBe<T>(value);
   }
 
-  expectInputs(inputs: number[]) {
+  _expectInputs(inputs: number[]) {
     return expect(isApplicableEffect(this.condition, this.info, inputs, this.fromSelf));
   }
 }

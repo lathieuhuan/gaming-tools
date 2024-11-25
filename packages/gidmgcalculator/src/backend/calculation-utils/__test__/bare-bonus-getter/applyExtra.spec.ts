@@ -16,11 +16,11 @@ class Tester extends BareBonusGetterTester {
     value: 0,
   };
 
-  apply(extra: number | EntityBonusCore) {
+  _apply(extra: number | EntityBonusCore) {
     this.applyExtra(this.bonus, extra, { inputs: this.inputs, fromSelf: this.fromSelf });
   }
 
-  expect(value: number, isStable?: boolean) {
+  _expect(value: number, isStable?: boolean) {
     expect(this.bonus.value).toBe(value);
 
     if (isStable !== undefined) {
@@ -28,8 +28,8 @@ class Tester extends BareBonusGetterTester {
     }
   }
 
-  applyThenExpect(value: number, isStable?: boolean) {
-    this.apply(this.extra);
+  _applyThenExpect(value: number, isStable?: boolean) {
+    this._apply(this.extra);
 
     expect(this.bonus.value).toBe(value);
 
@@ -55,8 +55,8 @@ test("extra is config as number", () => {
   tester.bonus.value = 100;
   tester.bonus.isStable = true;
 
-  tester.apply(10);
-  tester.expect(100 + 10, true);
+  tester._apply(10);
+  tester._expect(100 + 10, true);
 });
 
 test("extra can be check if applicable", () => {
@@ -66,10 +66,10 @@ test("extra can be check if applicable", () => {
     value: 20,
     grantedAt: "C1",
   };
-  tester.applyThenExpect(100);
+  tester._applyThenExpect(100);
 
   tester.updateCharacter("cons", 1);
-  tester.applyThenExpect(120);
+  tester._applyThenExpect(120);
 });
 
 test("unstable extra makes bonus unstable", () => {
@@ -86,7 +86,7 @@ test("unstable extra makes bonus unstable", () => {
     basedOn: "atk",
   };
 
-  tester.applyThenExpect(100 + 2 * totalAttrCtrl.getTotal("atk"), false);
+  tester._applyThenExpect(100 + 2 * totalAttrCtrl.getTotal("atk"), false);
 });
 
 /**

@@ -19,14 +19,14 @@ describe("condition: checkInput", () => {
   test("DEFAULT: only config value, inpIndex default to 0, comparison default to EQUAL", () => {
     tester.checkInput = 2;
 
-    tester.expectInputs([tester.checkInputValue]).toBe(true);
-    tester.expectInputs([tester.checkInputValue + 1]).toBe(false);
+    tester._expectInputs([tester.checkInputValue]).toBe(true);
+    tester._expectInputs([tester.checkInputValue + 1]).toBe(false);
 
     tester.checkInput = {
       value: 3,
     };
-    tester.expectInputs([tester.checkInputValue]).toBe(true);
-    tester.expectInputs([tester.checkInputValue + 1]).toBe(false);
+    tester._expectInputs([tester.checkInputValue]).toBe(true);
+    tester._expectInputs([tester.checkInputValue + 1]).toBe(false);
   });
 
   test("checkInput config with value and inpIndex", () => {
@@ -34,9 +34,9 @@ describe("condition: checkInput", () => {
       value: 2,
       inpIndex: 1,
     };
-    tester.expectInputs([-1, tester.checkInputValue]).toBe(true);
-    tester.expectInputs([tester.checkInputValue, 6]).toBe(false);
-    tester.expectInputs([3, tester.checkInputValue + 1]).toBe(false);
+    tester._expectInputs([-1, tester.checkInputValue]).toBe(true);
+    tester._expectInputs([tester.checkInputValue, 6]).toBe(false);
+    tester._expectInputs([3, tester.checkInputValue + 1]).toBe(false);
   });
 
   test("checkInput config with value and comparison MIN", () => {
@@ -44,9 +44,9 @@ describe("condition: checkInput", () => {
       value: 2,
       comparison: "MIN",
     };
-    tester.expectInputs([tester.checkInputValue]).toBe(true);
-    tester.expectInputs([tester.checkInputValue + 1]).toBe(true);
-    tester.expectInputs([tester.checkInputValue - 1]).toBe(false);
+    tester._expectInputs([tester.checkInputValue]).toBe(true);
+    tester._expectInputs([tester.checkInputValue + 1]).toBe(true);
+    tester._expectInputs([tester.checkInputValue - 1]).toBe(false);
   });
 
   test("checkInput config with value and comparison MAX", () => {
@@ -54,9 +54,9 @@ describe("condition: checkInput", () => {
       value: 2,
       comparison: "MAX",
     };
-    tester.expectInputs([tester.checkInputValue]).toBe(true);
-    tester.expectInputs([tester.checkInputValue + 1]).toBe(false);
-    tester.expectInputs([tester.checkInputValue - 1]).toBe(true);
+    tester._expectInputs([tester.checkInputValue]).toBe(true);
+    tester._expectInputs([tester.checkInputValue + 1]).toBe(false);
+    tester._expectInputs([tester.checkInputValue - 1]).toBe(true);
   });
 
   test("checkInput config with value, inpIndex, and comparison MIN", () => {
@@ -65,10 +65,10 @@ describe("condition: checkInput", () => {
       inpIndex: 1,
       comparison: "MIN",
     };
-    tester.expectInputs([-2, tester.checkInputValue]).toBe(true);
-    tester.expectInputs([-4, tester.checkInputValue + 1]).toBe(true);
-    tester.expectInputs([-6, tester.checkInputValue - 1]).toBe(false);
-    tester.expectInputs([tester.checkInputValue]).toBe(false);
+    tester._expectInputs([-2, tester.checkInputValue]).toBe(true);
+    tester._expectInputs([-4, tester.checkInputValue + 1]).toBe(true);
+    tester._expectInputs([-6, tester.checkInputValue - 1]).toBe(false);
+    tester._expectInputs([tester.checkInputValue]).toBe(false);
   });
 });
 
@@ -79,17 +79,17 @@ describe("condition: checkParty", () => {
       value: 2,
     };
 
-    tester.setInfo(EMockCharacter.BASIC);
-    tester.expectValue(false);
+    tester._setInfo(EMockCharacter.BASIC);
+    tester._expectValue(false);
 
-    tester.setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.CATALYST)]);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.CATALYST)]);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.BASIC, [
+    tester._setInfo(EMockCharacter.BASIC, [
       $AppCharacter.get(EMockCharacter.CATALYST),
       $AppCharacter.get(EMockCharacter.TARTAGLIA),
     ]);
-    tester.expectValue(false);
+    tester._expectValue(false);
   });
 
   test("check DISTINCT_ELMT, comparison MIN", () => {
@@ -99,17 +99,17 @@ describe("condition: checkParty", () => {
       comparison: "MIN",
     };
 
-    tester.setInfo(EMockCharacter.BASIC);
-    tester.expectValue(false);
+    tester._setInfo(EMockCharacter.BASIC);
+    tester._expectValue(false);
 
-    tester.setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.CATALYST)]);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.CATALYST)]);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.BASIC, [
+    tester._setInfo(EMockCharacter.BASIC, [
       $AppCharacter.get(EMockCharacter.CATALYST),
       $AppCharacter.get(EMockCharacter.TARTAGLIA),
     ]);
-    tester.expectValue(true);
+    tester._expectValue(true);
   });
 
   test("check DISTINCT_ELMT, comparison MAX", () => {
@@ -119,17 +119,17 @@ describe("condition: checkParty", () => {
       comparison: "MAX",
     };
 
-    tester.setInfo(EMockCharacter.BASIC);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.CATALYST)]);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.CATALYST)]);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.BASIC, [
+    tester._setInfo(EMockCharacter.BASIC, [
       $AppCharacter.get(EMockCharacter.CATALYST),
       $AppCharacter.get(EMockCharacter.TARTAGLIA),
     ]);
-    tester.expectValue(false);
+    tester._expectValue(false);
   });
 
   // check 'MIXED' manually
@@ -139,19 +139,19 @@ describe("condition: forElmts", () => {
   test("app character's element type included in forElmts", () => {
     tester.forElmts = ["pyro"];
 
-    tester.setInfo(EMockCharacter.BASIC);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.CATALYST);
-    tester.expectValue(false);
+    tester._setInfo(EMockCharacter.CATALYST);
+    tester._expectValue(false);
 
     tester.forElmts = ["pyro", "electro"];
 
-    tester.setInfo(EMockCharacter.BASIC);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.CATALYST);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.CATALYST);
+    tester._expectValue(true);
   });
 });
 
@@ -159,19 +159,19 @@ describe("condition: forWeapons", () => {
   test("app character weapon type included in forWeapons", () => {
     tester.forWeapons = ["sword"];
 
-    tester.setInfo(EMockCharacter.BASIC);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.CATALYST);
-    tester.expectValue(false);
+    tester._setInfo(EMockCharacter.CATALYST);
+    tester._expectValue(false);
 
     tester.forWeapons = ["sword", "catalyst"];
 
-    tester.setInfo(EMockCharacter.BASIC);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.CATALYST);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.CATALYST);
+    tester._expectValue(true);
   });
 });
 
@@ -181,16 +181,16 @@ describe("condition: partyOnlyElmts", () => {
 
     tester.partyOnlyElmts = ["pyro"];
 
-    tester.setInfo(EMockCharacter.BASIC);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.BASIC, [electroCharacter]);
-    tester.expectValue(false);
+    tester._setInfo(EMockCharacter.BASIC, [electroCharacter]);
+    tester._expectValue(false);
 
     tester.partyOnlyElmts = ["pyro", "electro"];
 
-    tester.setInfo(EMockCharacter.BASIC, [electroCharacter]);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC, [electroCharacter]);
+    tester._expectValue(true);
   });
 });
 
@@ -202,28 +202,28 @@ describe("condition: partyElmtCount", () => {
       pyro: 1,
     };
 
-    tester.setInfo(EMockCharacter.CATALYST);
-    tester.expectValue(false);
+    tester._setInfo(EMockCharacter.CATALYST);
+    tester._expectValue(false);
 
-    tester.setInfo(EMockCharacter.BASIC);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.BASIC)]);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.BASIC)]);
+    tester._expectValue(true);
 
     tester.partyElmtCount = {
       pyro: 1,
       electro: 2,
     };
 
-    tester.setInfo(EMockCharacter.BASIC);
-    tester.expectValue(false);
+    tester._setInfo(EMockCharacter.BASIC);
+    tester._expectValue(false);
 
-    tester.setInfo(EMockCharacter.BASIC, [electroCharacter]);
-    tester.expectValue(false);
+    tester._setInfo(EMockCharacter.BASIC, [electroCharacter]);
+    tester._expectValue(false);
 
-    tester.setInfo(EMockCharacter.BASIC, [electroCharacter, electroCharacter]);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC, [electroCharacter, electroCharacter]);
+    tester._expectValue(true);
   });
 });
 
@@ -238,14 +238,14 @@ describe("condition: totalPartyElmtCount", () => {
       value: 1,
     };
 
-    tester.setInfo(EMockCharacter.BASIC);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.BASIC, [electroCharacter]);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC, [electroCharacter]);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.BASIC, [pyroCharacter]);
-    tester.expectValue(false);
+    tester._setInfo(EMockCharacter.BASIC, [pyroCharacter]);
+    tester._expectValue(false);
 
     tester.totalPartyElmtCount = {
       elements: ["pyro", "electro"],
@@ -253,20 +253,20 @@ describe("condition: totalPartyElmtCount", () => {
       value: 2,
     };
 
-    tester.setInfo(EMockCharacter.BASIC);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.BASIC, [electroCharacter]);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC, [electroCharacter]);
+    tester._expectValue(true);
 
-    tester.setInfo(EMockCharacter.BASIC, [electroCharacter, electroCharacter]);
-    tester.expectValue(false);
+    tester._setInfo(EMockCharacter.BASIC, [electroCharacter, electroCharacter]);
+    tester._expectValue(false);
 
-    tester.setInfo(EMockCharacter.BASIC, [electroCharacter, pyroCharacter]);
-    tester.expectValue(false);
+    tester._setInfo(EMockCharacter.BASIC, [electroCharacter, pyroCharacter]);
+    tester._expectValue(false);
 
-    tester.setInfo(EMockCharacter.BASIC, [electroCharacter, $AppCharacter.get(EMockCharacter.TARTAGLIA)]);
-    tester.expectValue(true);
+    tester._setInfo(EMockCharacter.BASIC, [electroCharacter, $AppCharacter.get(EMockCharacter.TARTAGLIA)]);
+    tester._expectValue(true);
   });
 });
 
@@ -283,9 +283,9 @@ describe("condition: grantedAt", () => {
       for (const level of LEVELS) {
         tester.info.char.level = level;
         const ascension = ASCENSION_RANKS.find((rank) => rank.levels.includes(level))!.value;
-        const expectValue = ascension >= requiredAscension;
+        const _expectValue = ascension >= requiredAscension;
 
-        tester.expectValue(expectValue);
+        tester._expectValue(_expectValue);
       }
     }
   });
@@ -301,9 +301,9 @@ describe("condition: grantedAt", () => {
 
       for (const constellation of Array.from({ length: 7 }, (_, i) => i)) {
         tester.info.char.cons = constellation;
-        const expectValue = constellation >= requiredConstellation;
+        const _expectValue = constellation >= requiredConstellation;
 
-        tester.expectValue(expectValue);
+        tester._expectValue(_expectValue);
       }
     }
   });
@@ -313,17 +313,17 @@ describe("condition: grantedAt", () => {
     tester.altIndex = 0;
 
     tester.inputs = [1];
-    tester.expectValue(true);
+    tester._expectValue(true);
 
     tester.inputs = [0];
-    tester.expectValue(false);
+    tester._expectValue(false);
 
     tester.altIndex = 1;
 
     tester.inputs = [-1, 1];
-    tester.expectValue(true);
+    tester._expectValue(true);
 
     tester.inputs = [-2, 0];
-    tester.expectValue(false);
+    tester._expectValue(false);
   });
 });
