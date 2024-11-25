@@ -29,21 +29,21 @@ export class AppliedBonusesGetter extends BareBonusGetter {
     super(info, totalAttrCtrl);
   }
 
-  private isFinalBonus(basedOn?: EntityBonusBasedOn) {
+  private isFinalBonus = (basedOn?: EntityBonusBasedOn) => {
     if (basedOn) {
       const field = typeof basedOn === "string" ? basedOn : basedOn.field;
       return field !== "base_atk";
     }
     return false;
-  }
+  };
 
-  private isTrulyFinalBonus(bonus: EntityBonusCore) {
+  private isTrulyFinalBonus = (bonus: EntityBonusCore) => {
     return (
       this.isFinalBonus(bonus.basedOn) ||
       (typeof bonus.preExtra === "object" && this.isFinalBonus(bonus.preExtra.basedOn)) ||
       (typeof bonus.sufExtra === "object" && this.isFinalBonus(bonus.sufExtra.basedOn))
     );
-  }
+  };
 
   private applyBonus(
     bonus: BareBonus,

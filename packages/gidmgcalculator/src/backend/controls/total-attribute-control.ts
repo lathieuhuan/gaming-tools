@@ -6,6 +6,7 @@ import type {
   AppWeapon,
   ArtifactAttribute,
   AttributeStat,
+  Level,
   TotalAttribute,
 } from "../types";
 
@@ -106,9 +107,9 @@ export class TotalAttributeControl {
     });
   }
 
-  private getCharacterStats(char: Character, appChar: AppCharacter) {
-    const baseStats = appChar.stats[LEVELS.indexOf(char.level)];
-    const scaleIndex = Math.max(GeneralCalc.getAscension(char.level) - 1, 0);
+  private getCharacterStats(appChar: AppCharacter, charLv: Level) {
+    const baseStats = appChar.stats[LEVELS.indexOf(charLv)];
+    const scaleIndex = Math.max(GeneralCalc.getAscension(charLv) - 1, 0);
 
     return {
       hp: baseStats[0] ?? 0,
@@ -125,7 +126,7 @@ export class TotalAttributeControl {
     appWeapon?: AppWeapon,
     artifacts: Array<Artifact | null> = []
   ) => {
-    const stats = this.getCharacterStats(char, appChar);
+    const stats = this.getCharacterStats(appChar, char.level);
 
     this.addBase("hp", stats.hp);
     this.addBase("atk", stats.atk);
