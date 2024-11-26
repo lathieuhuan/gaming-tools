@@ -1,8 +1,6 @@
 import { TotalAttributeControl } from "@Src/backend/controls";
 import { BareBonus, EntityBonusCore } from "@Src/backend/types";
-import { $AppCharacter } from "@Src/services";
-import { characters } from "@UnitTest/mocks/characters.mock";
-import { genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCalculationInfo } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "../test-utils";
 
 class Tester extends BareBonusGetterTester {
@@ -42,13 +40,9 @@ class Tester extends BareBonusGetterTester {
 let totalAttrCtrl: TotalAttributeControl;
 let tester: Tester;
 
-beforeAll(() => {
-  $AppCharacter.populate(characters);
-});
-
 beforeEach(() => {
   totalAttrCtrl = new TotalAttributeControl();
-  tester = new Tester(genCalculationInfo(), totalAttrCtrl);
+  tester = new Tester(__genCalculationInfo(), totalAttrCtrl);
 });
 
 test("extra is config as number", () => {

@@ -2,13 +2,13 @@ import { TotalAttributeControl } from "@Src/backend/controls";
 import { CalculationInfo, EffectApplicableCondition } from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
 import { Character, PartyData } from "@Src/types";
-import { EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { genCalculationInfo } from "@UnitTest/test-utils";
+import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
+import { __genCalculationInfo } from "@UnitTest/test-utils";
 import { BareBonusGetter } from "../bare-bonus-getter";
 import { isApplicableEffect } from "../isApplicableEffect";
 
 export class IsApplicableEffectTester {
-  info: CalculationInfo = genCalculationInfo();
+  info: CalculationInfo = __genCalculationInfo();
   checkInput: EffectApplicableCondition["checkInput"];
   checkParty: EffectApplicableCondition["checkParty"];
   forElmts: EffectApplicableCondition["forElmts"];
@@ -47,7 +47,7 @@ export class IsApplicableEffectTester {
     return value;
   }
 
-  _setInfo(charName: EMockCharacter, partyData: PartyData = []) {
+  _setInfo(charName: __EMockCharacter, partyData: PartyData = []) {
     this.info = {
       char: {
         ...this.info.char,
@@ -74,7 +74,7 @@ export class BareBonusGetterTester extends BareBonusGetter {
   constructor(totalAttrCtrl?: TotalAttributeControl);
   constructor(info?: CalculationInfo, totalAttrCtrl?: TotalAttributeControl);
   constructor(info?: CalculationInfo | TotalAttributeControl, totalAttrCtrl?: TotalAttributeControl) {
-    const _info = !info || info instanceof TotalAttributeControl ? genCalculationInfo() : info;
+    const _info = !info || info instanceof TotalAttributeControl ? __genCalculationInfo() : info;
     const _totalAttrCtrl = info instanceof TotalAttributeControl ? info : totalAttrCtrl;
 
     super(_info, _totalAttrCtrl);
@@ -84,7 +84,7 @@ export class BareBonusGetterTester extends BareBonusGetter {
     this.info.char[key] = value;
   }
 
-  changeCharacter(characterName: EMockCharacter) {
+  changeCharacter(characterName: __EMockCharacter) {
     this.info.char.name = characterName;
     this.info.appChar = $AppCharacter.get(characterName);
   }

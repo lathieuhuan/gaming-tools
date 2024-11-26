@@ -1,8 +1,7 @@
 import { ELEMENT_TYPES } from "@Src/backend/constants";
 import { AppliedAttributeBonus, AppliedBonuses, BareBonus, EntityBonusTargets } from "@Src/backend/types";
-import { $AppCharacter } from "@Src/services";
-import { characters, EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { genCalculationInfo } from "@UnitTest/test-utils";
+import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
+import { __genCalculationInfo } from "@UnitTest/test-utils";
 import { AppliedBonusesGetter } from "../../applied-bonuses-getter";
 
 class Tester extends AppliedBonusesGetter {
@@ -19,8 +18,8 @@ class Tester extends AppliedBonusesGetter {
   inputs: number[] = [];
   unstackableId?: string;
 
-  _changeCharacter(name: EMockCharacter) {
-    this.info = genCalculationInfo(name);
+  _changeCharacter(name: __EMockCharacter) {
+    this.info = __genCalculationInfo(name);
   }
 
   _apply() {
@@ -38,12 +37,8 @@ class Tester extends AppliedBonusesGetter {
 
 let tester: Tester;
 
-beforeAll(() => {
-  $AppCharacter.populate(characters);
-});
-
 beforeEach(() => {
-  tester = new Tester(genCalculationInfo());
+  tester = new Tester(__genCalculationInfo());
 });
 
 test("Apply a single Attribute Bonus, to normal ATTR", () => {
@@ -110,7 +105,7 @@ test("Apply a single Attribute Bonus, to character's element (OWN_ELMT)", () => 
     module: "ATTR",
     path: "OWN_ELMT",
   };
-  tester._changeCharacter(EMockCharacter.CATALYST); // Electro
+  tester._changeCharacter(__EMockCharacter.CATALYST); // Electro
 
   tester._expectAppliedBonuses({
     attrBonuses: [
@@ -134,7 +129,7 @@ test("Apply multiple Attribute Bonuses", () => {
     inpIndex: 1,
   };
   tester.inputs = [-2, elementIndex];
-  tester._changeCharacter(EMockCharacter.TARTAGLIA);
+  tester._changeCharacter(__EMockCharacter.TARTAGLIA);
 
   const { attrBonuses } = tester._apply();
 

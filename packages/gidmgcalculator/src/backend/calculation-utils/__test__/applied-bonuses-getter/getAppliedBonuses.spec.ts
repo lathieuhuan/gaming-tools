@@ -1,9 +1,7 @@
 import { TotalAttributeControl } from "@Src/backend/controls";
 import { AppliedAttributeBonus, AppliedBonuses, EntityBuff } from "@Src/backend/types";
-import { $AppCharacter } from "@Src/services";
 import { Character } from "@Src/types";
-import { characters } from "@UnitTest/mocks/characters.mock";
-import { genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCalculationInfo } from "@UnitTest/test-utils";
 import { AppliedBonusesGetter } from "../../applied-bonuses-getter";
 
 /**
@@ -43,13 +41,9 @@ class Tester extends AppliedBonusesGetter {
 let totalAttrCtrl: TotalAttributeControl;
 let tester: Tester;
 
-beforeAll(() => {
-  $AppCharacter.populate(characters);
-});
-
 beforeEach(() => {
   totalAttrCtrl = new TotalAttributeControl();
-  tester = new Tester(genCalculationInfo(), totalAttrCtrl);
+  tester = new Tester(__genCalculationInfo(), totalAttrCtrl);
 });
 
 test("effects is required on buff", () => {

@@ -360,7 +360,7 @@ export default function getCalculationStats(
     });
   }
 
-  totalAttrCtrl.finalizeArtAttr(artAttr);
+  totalAttrCtrl.finalizeArtifactAttribute(artAttr);
 
   return {
     totalAttr: totalAttrCtrl.finalize(),

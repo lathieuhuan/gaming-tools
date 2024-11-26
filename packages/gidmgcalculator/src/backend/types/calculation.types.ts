@@ -24,10 +24,7 @@ export type CalculationInfo = {
 };
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
-type TotalAttributeStat = AttributeStat | "hp_base" | "atk_base" | "def_base";
-
-/** Actually does not contain "hp_" | "atk_" | "def_" */
-export type TotalAttribute = Record<TotalAttributeStat, number>;
+export type TotalAttribute = Record<AttributeStat | "hp_base" | "atk_base" | "def_base", number>;
 
 export type ArtifactAttribute = PartiallyRequired<Partial<Record<AttributeStat, number>>, CoreStat>;
 

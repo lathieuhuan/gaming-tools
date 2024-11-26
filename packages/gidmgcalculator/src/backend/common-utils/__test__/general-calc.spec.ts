@@ -1,6 +1,6 @@
 import { ArtifactType } from "@Src/backend/types";
 import { CalcArtifacts } from "@Src/types";
-import { characters } from "@UnitTest/mocks/characters.mock";
+import { __characters } from "@UnitTest/mocks/characters.mock";
 import { ASCENSION_RANKS } from "@UnitTest/test-constants";
 import { GeneralCalc } from "../general-calc";
 
@@ -71,16 +71,16 @@ describe("getArtifactSetBonuses", () => {
 
 describe("countElements", () => {
   test("without appChar", () => {
-    const elmtCounter = GeneralCalc.countElements([characters[0], characters[1]]);
+    const elmtCounter = GeneralCalc.countElements([__characters[0], __characters[1]]);
 
-    expect(elmtCounter.get(characters[0].vision)).toBe(1);
-    expect(elmtCounter.get(characters[1].vision)).toBe(1);
+    expect(elmtCounter.get(__characters[0].vision)).toBe(1);
+    expect(elmtCounter.get(__characters[1].vision)).toBe(1);
   });
 
   test("with appChar", () => {
-    const elmtCounter = GeneralCalc.countElements([characters[0], characters[0]], characters[2]);
+    const elmtCounter = GeneralCalc.countElements([__characters[0], __characters[0]], __characters[2]);
 
-    expect(elmtCounter.get(characters[0].vision)).toBe(2);
-    expect(elmtCounter.get(characters[2].vision)).toBe(1);
+    expect(elmtCounter.get(__characters[0].vision)).toBe(2);
+    expect(elmtCounter.get(__characters[2].vision)).toBe(1);
   });
 });

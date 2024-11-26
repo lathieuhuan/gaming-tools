@@ -1,7 +1,7 @@
 import { LEVELS } from "@Src/backend/constants";
 import { CharacterMilestone } from "@Src/backend/types";
 import { Character } from "@Src/types";
-import { ASCENSION_RANKS } from "@UnitTest/test-constants";
+import { __findAscensionByLevel } from "@UnitTest/test-utils";
 import { isGrantedEffect } from "../isGrantedEffect";
 
 const character: Character = {
@@ -17,7 +17,7 @@ test("ascension milestones", () => {
   const ascensionMilestones: CharacterMilestone[] = ["A1", "A4"];
 
   for (const level of LEVELS) {
-    const ascension = ASCENSION_RANKS.find((rank) => rank.levels.includes(level))!.value;
+    const ascension = __findAscensionByLevel(level);
     character.level = level;
 
     for (const milestone of ascensionMilestones) {

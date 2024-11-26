@@ -1,19 +1,13 @@
 import { EntityBonusBasedOn, EntityBonusCore } from "@Src/backend/types";
-import { $AppCharacter } from "@Src/services";
-import { characters } from "@UnitTest/mocks/characters.mock";
-import { genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCalculationInfo } from "@UnitTest/test-utils";
 import { AppliedBonusesGetter } from "../../applied-bonuses-getter";
 
 class Tester extends AppliedBonusesGetter {}
 
 let tester: Tester;
 
-beforeAll(() => {
-  $AppCharacter.populate(characters);
-});
-
 beforeEach(() => {
-  tester = new Tester(genCalculationInfo());
+  tester = new Tester(__genCalculationInfo());
 });
 
 test("isFinalBonus", () => {

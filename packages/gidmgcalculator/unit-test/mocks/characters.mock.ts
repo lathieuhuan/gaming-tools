@@ -1,6 +1,7 @@
 import { AppCharacter } from "../../src/backend";
+import { $AppCharacter } from "../../src/services";
 
-export enum EMockCharacter {
+export enum __EMockCharacter {
   /** pyro, sword, mondstadt */
   BASIC = "BASIC",
   TARTAGLIA = "Tartaglia",
@@ -52,10 +53,10 @@ const PASSIVE_TALENTS: AppCharacter["passiveTalents"] = [
 
 const CONSTELLATION: AppCharacter["constellation"] = [];
 
-export const characters: AppCharacter[] = [
+export const __characters: AppCharacter[] = [
   {
     code: 1,
-    name: EMockCharacter.BASIC,
+    name: __EMockCharacter.BASIC,
     icon: "",
     sideIcon: "",
     nation: "mondstadt",
@@ -76,7 +77,7 @@ export const characters: AppCharacter[] = [
   },
   {
     code: 2,
-    name: EMockCharacter.TARTAGLIA,
+    name: __EMockCharacter.TARTAGLIA,
     icon: "",
     sideIcon: "",
     nation: "liyue",
@@ -97,7 +98,7 @@ export const characters: AppCharacter[] = [
   },
   {
     code: 3,
-    name: EMockCharacter.CATALYST,
+    name: __EMockCharacter.CATALYST,
     icon: "",
     sideIcon: "",
     nation: "inazuma",
@@ -118,7 +119,7 @@ export const characters: AppCharacter[] = [
   },
   {
     code: 4,
-    name: EMockCharacter.ES_CALC_CONFIG,
+    name: __EMockCharacter.ES_CALC_CONFIG,
     icon: "",
     sideIcon: "",
     nation: "sumeru",
@@ -145,3 +146,5 @@ export const characters: AppCharacter[] = [
     constellation: CONSTELLATION,
   },
 ];
+
+$AppCharacter.populate(__characters);

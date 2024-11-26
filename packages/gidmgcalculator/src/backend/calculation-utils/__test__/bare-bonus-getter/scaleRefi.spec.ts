@@ -1,14 +1,8 @@
-import { $AppCharacter } from "@Src/services";
-import { characters } from "@UnitTest/mocks/characters.mock";
-import { genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCalculationInfo } from "@UnitTest/test-utils";
 import { BareBonusGetter } from "../../bare-bonus-getter";
 
-beforeAll(() => {
-  $AppCharacter.populate(characters);
-});
-
 test("scaleRefi", () => {
-  const tester = new BareBonusGetter(genCalculationInfo());
+  const tester = new BareBonusGetter(__genCalculationInfo());
   const scaleRefi = tester["scaleRefi"];
 
   expect(scaleRefi(7, 2, 3)).toBe(7 + 2 * 3);

@@ -1,15 +1,11 @@
 import { LEVELS } from "@Src/backend/constants";
 import { CharacterMilestone } from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
-import { characters, EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { ASCENSION_RANKS } from "@UnitTest/test-constants";
+import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
+import { __findAscensionByLevel } from "@UnitTest/test-utils";
 import { IsApplicableEffectTester } from "./test-utils";
 
 let tester: IsApplicableEffectTester;
-
-beforeAll(() => {
-  $AppCharacter.populate(characters);
-});
 
 beforeEach(() => {
   tester = new IsApplicableEffectTester();
@@ -79,15 +75,15 @@ describe("condition: checkParty", () => {
       value: 2,
     };
 
-    tester._setInfo(EMockCharacter.BASIC);
+    tester._setInfo(__EMockCharacter.BASIC);
     tester._expectValue(false);
 
-    tester._setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.CATALYST)]);
+    tester._setInfo(__EMockCharacter.BASIC, [$AppCharacter.get(__EMockCharacter.CATALYST)]);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.BASIC, [
-      $AppCharacter.get(EMockCharacter.CATALYST),
-      $AppCharacter.get(EMockCharacter.TARTAGLIA),
+    tester._setInfo(__EMockCharacter.BASIC, [
+      $AppCharacter.get(__EMockCharacter.CATALYST),
+      $AppCharacter.get(__EMockCharacter.TARTAGLIA),
     ]);
     tester._expectValue(false);
   });
@@ -99,15 +95,15 @@ describe("condition: checkParty", () => {
       comparison: "MIN",
     };
 
-    tester._setInfo(EMockCharacter.BASIC);
+    tester._setInfo(__EMockCharacter.BASIC);
     tester._expectValue(false);
 
-    tester._setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.CATALYST)]);
+    tester._setInfo(__EMockCharacter.BASIC, [$AppCharacter.get(__EMockCharacter.CATALYST)]);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.BASIC, [
-      $AppCharacter.get(EMockCharacter.CATALYST),
-      $AppCharacter.get(EMockCharacter.TARTAGLIA),
+    tester._setInfo(__EMockCharacter.BASIC, [
+      $AppCharacter.get(__EMockCharacter.CATALYST),
+      $AppCharacter.get(__EMockCharacter.TARTAGLIA),
     ]);
     tester._expectValue(true);
   });
@@ -119,15 +115,15 @@ describe("condition: checkParty", () => {
       comparison: "MAX",
     };
 
-    tester._setInfo(EMockCharacter.BASIC);
+    tester._setInfo(__EMockCharacter.BASIC);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.CATALYST)]);
+    tester._setInfo(__EMockCharacter.BASIC, [$AppCharacter.get(__EMockCharacter.CATALYST)]);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.BASIC, [
-      $AppCharacter.get(EMockCharacter.CATALYST),
-      $AppCharacter.get(EMockCharacter.TARTAGLIA),
+    tester._setInfo(__EMockCharacter.BASIC, [
+      $AppCharacter.get(__EMockCharacter.CATALYST),
+      $AppCharacter.get(__EMockCharacter.TARTAGLIA),
     ]);
     tester._expectValue(false);
   });
@@ -139,18 +135,18 @@ describe("condition: forElmts", () => {
   test("app character's element type included in forElmts", () => {
     tester.forElmts = ["pyro"];
 
-    tester._setInfo(EMockCharacter.BASIC);
+    tester._setInfo(__EMockCharacter.BASIC);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.CATALYST);
+    tester._setInfo(__EMockCharacter.CATALYST);
     tester._expectValue(false);
 
     tester.forElmts = ["pyro", "electro"];
 
-    tester._setInfo(EMockCharacter.BASIC);
+    tester._setInfo(__EMockCharacter.BASIC);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.CATALYST);
+    tester._setInfo(__EMockCharacter.CATALYST);
     tester._expectValue(true);
   });
 });
@@ -159,56 +155,56 @@ describe("condition: forWeapons", () => {
   test("app character weapon type included in forWeapons", () => {
     tester.forWeapons = ["sword"];
 
-    tester._setInfo(EMockCharacter.BASIC);
+    tester._setInfo(__EMockCharacter.BASIC);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.CATALYST);
+    tester._setInfo(__EMockCharacter.CATALYST);
     tester._expectValue(false);
 
     tester.forWeapons = ["sword", "catalyst"];
 
-    tester._setInfo(EMockCharacter.BASIC);
+    tester._setInfo(__EMockCharacter.BASIC);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.CATALYST);
+    tester._setInfo(__EMockCharacter.CATALYST);
     tester._expectValue(true);
   });
 });
 
 describe("condition: partyOnlyElmts", () => {
   test("all elements of character & teammates must be included in partyOnlyElmts", () => {
-    const electroCharacter = $AppCharacter.get(EMockCharacter.CATALYST);
+    const electroCharacter = $AppCharacter.get(__EMockCharacter.CATALYST);
 
     tester.partyOnlyElmts = ["pyro"];
 
-    tester._setInfo(EMockCharacter.BASIC);
+    tester._setInfo(__EMockCharacter.BASIC);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.BASIC, [electroCharacter]);
+    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter]);
     tester._expectValue(false);
 
     tester.partyOnlyElmts = ["pyro", "electro"];
 
-    tester._setInfo(EMockCharacter.BASIC, [electroCharacter]);
+    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter]);
     tester._expectValue(true);
   });
 });
 
 describe("condition: partyElmtCount", () => {
   test("the number of characters whose elements are listed must be atleast the listed value", () => {
-    const electroCharacter = $AppCharacter.get(EMockCharacter.CATALYST);
+    const electroCharacter = $AppCharacter.get(__EMockCharacter.CATALYST);
 
     tester.partyElmtCount = {
       pyro: 1,
     };
 
-    tester._setInfo(EMockCharacter.CATALYST);
+    tester._setInfo(__EMockCharacter.CATALYST);
     tester._expectValue(false);
 
-    tester._setInfo(EMockCharacter.BASIC);
+    tester._setInfo(__EMockCharacter.BASIC);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.BASIC, [$AppCharacter.get(EMockCharacter.BASIC)]);
+    tester._setInfo(__EMockCharacter.BASIC, [$AppCharacter.get(__EMockCharacter.BASIC)]);
     tester._expectValue(true);
 
     tester.partyElmtCount = {
@@ -216,21 +212,21 @@ describe("condition: partyElmtCount", () => {
       electro: 2,
     };
 
-    tester._setInfo(EMockCharacter.BASIC);
+    tester._setInfo(__EMockCharacter.BASIC);
     tester._expectValue(false);
 
-    tester._setInfo(EMockCharacter.BASIC, [electroCharacter]);
+    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter]);
     tester._expectValue(false);
 
-    tester._setInfo(EMockCharacter.BASIC, [electroCharacter, electroCharacter]);
+    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter, electroCharacter]);
     tester._expectValue(true);
   });
 });
 
 describe("condition: totalPartyElmtCount", () => {
   test("the total number of characters whose elements are included must pass the comparison", () => {
-    const pyroCharacter = $AppCharacter.get(EMockCharacter.BASIC);
-    const electroCharacter = $AppCharacter.get(EMockCharacter.CATALYST);
+    const pyroCharacter = $AppCharacter.get(__EMockCharacter.BASIC);
+    const electroCharacter = $AppCharacter.get(__EMockCharacter.CATALYST);
 
     tester.totalPartyElmtCount = {
       elements: ["pyro"],
@@ -238,13 +234,13 @@ describe("condition: totalPartyElmtCount", () => {
       value: 1,
     };
 
-    tester._setInfo(EMockCharacter.BASIC);
+    tester._setInfo(__EMockCharacter.BASIC);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.BASIC, [electroCharacter]);
+    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter]);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.BASIC, [pyroCharacter]);
+    tester._setInfo(__EMockCharacter.BASIC, [pyroCharacter]);
     tester._expectValue(false);
 
     tester.totalPartyElmtCount = {
@@ -253,19 +249,19 @@ describe("condition: totalPartyElmtCount", () => {
       value: 2,
     };
 
-    tester._setInfo(EMockCharacter.BASIC);
+    tester._setInfo(__EMockCharacter.BASIC);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.BASIC, [electroCharacter]);
+    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter]);
     tester._expectValue(true);
 
-    tester._setInfo(EMockCharacter.BASIC, [electroCharacter, electroCharacter]);
+    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter, electroCharacter]);
     tester._expectValue(false);
 
-    tester._setInfo(EMockCharacter.BASIC, [electroCharacter, pyroCharacter]);
+    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter, pyroCharacter]);
     tester._expectValue(false);
 
-    tester._setInfo(EMockCharacter.BASIC, [electroCharacter, $AppCharacter.get(EMockCharacter.TARTAGLIA)]);
+    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter, $AppCharacter.get(__EMockCharacter.TARTAGLIA)]);
     tester._expectValue(true);
   });
 });
@@ -282,7 +278,7 @@ describe("condition: grantedAt", () => {
 
       for (const level of LEVELS) {
         tester.info.char.level = level;
-        const ascension = ASCENSION_RANKS.find((rank) => rank.levels.includes(level))!.value;
+        const ascension = __findAscensionByLevel(level);
         const _expectValue = ascension >= requiredAscension;
 
         tester._expectValue(_expectValue);

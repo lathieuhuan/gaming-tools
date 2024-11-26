@@ -75,7 +75,10 @@ export class TotalAttributeControl {
     return artAttr;
   }
 
-  static finalizeArtAttr(
+  /**
+   * @param artAttr will be mutated
+   */
+  static finalizeArtifactAttribute(
     artAttr: ArtifactAttribute,
     coreBaseStat: {
       hp_base: number;
@@ -93,8 +96,8 @@ export class TotalAttributeControl {
     }
   }
 
-  finalizeArtAttr(artAttr: ArtifactAttribute) {
-    TotalAttributeControl.finalizeArtAttr(artAttr, {
+  finalizeArtifactAttribute(artAttr: ArtifactAttribute) {
+    TotalAttributeControl.finalizeArtifactAttribute(artAttr, {
       hp_base: this.totalAttr.hp.base,
       atk_base: this.totalAttr.atk.base,
       def_base: this.totalAttr.def.base,

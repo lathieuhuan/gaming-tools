@@ -1,8 +1,8 @@
 import { AppCharacter, AttackPattern, CalculationInfo, TalentType } from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
 import { Character } from "@Src/types";
-import { characters, EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { genCalculationInfo } from "@UnitTest/test-utils";
+import { __characters, __EMockCharacter } from "@UnitTest/mocks/characters.mock";
+import { __genCalculationInfo } from "@UnitTest/test-utils";
 import { CharacterCalc } from "../character-calc";
 
 type GetTotalXtraTalentLvTestCase = {
@@ -14,12 +14,8 @@ type GetTotalXtraTalentLvTestCase = {
 let char: Character;
 let appChar: AppCharacter;
 
-beforeAll(() => {
-  $AppCharacter.populate(characters);
-});
-
 beforeEach(() => {
-  const calculationInfo = genCalculationInfo();
+  const calculationInfo = __genCalculationInfo();
   char = calculationInfo.char;
   appChar = calculationInfo.appChar;
 });
@@ -52,9 +48,9 @@ describe("getTotalXtraTalentLv", () => {
   });
 
   test("total extra NAs level of Tartaglia", () => {
-    const Tartaglia = characters.find((character) => character.name === EMockCharacter.TARTAGLIA)!;
+    const Tartaglia = __characters.find((character) => character.name === __EMockCharacter.TARTAGLIA)!;
 
-    char.name = EMockCharacter.TARTAGLIA;
+    char.name = __EMockCharacter.TARTAGLIA;
 
     expect(
       CharacterCalc.getTotalXtraTalentLv({
@@ -67,7 +63,7 @@ describe("getTotalXtraTalentLv", () => {
   });
 
   test("total extra NAs level when Tartaglia is in party", () => {
-    const Tartaglia = characters.find((character) => character.name === EMockCharacter.TARTAGLIA) ?? null;
+    const Tartaglia = __characters.find((character) => character.name === __EMockCharacter.TARTAGLIA) ?? null;
     expect(CharacterCalc.getTotalXtraTalentLv({ char, appChar, talentType: "NAs", partyData: [Tartaglia] })).toBe(1);
   });
 });
@@ -167,7 +163,7 @@ describe("getTalentDefaultInfo", () => {
 
   test("defaultScale of any AttackPattern on catalyst wielder, or of ES/EB on other weapons wielder should be 2", () => {
     const attPatts: AttackPattern[] = ["NA", "CA", "PA", "ES", "EB"];
-    const catalystWielder = $AppCharacter.get(EMockCharacter.CATALYST);
+    const catalystWielder = $AppCharacter.get(__EMockCharacter.CATALYST);
 
     for (const attPatt of attPatts) {
       _expect(attPatt, "defaultScale", 2, catalystWielder);
@@ -178,7 +174,7 @@ describe("getTalentDefaultInfo", () => {
   });
 
   test("talentDefaultInfo should be as declared if there is one", () => {
-    const esCalcConfig = $AppCharacter.get(EMockCharacter.ES_CALC_CONFIG);
+    const esCalcConfig = $AppCharacter.get(__EMockCharacter.ES_CALC_CONFIG);
     const result = CharacterCalc.getTalentDefaultInfo("ES", esCalcConfig);
     const { ES } = esCalcConfig.calcListConfig || {};
 
