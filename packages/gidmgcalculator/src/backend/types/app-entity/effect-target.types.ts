@@ -15,6 +15,4 @@ type AttackBonusTarget = {
   path: AttackBonusKey;
 };
 
-type EntityBonusTarget = AttributeTarget | AttackBonusTarget;
-
-export type EntityBonusTargets = EntityBonusTarget | EntityBonusTarget[];
+export type EntityBonusTargets = AttributeTarget | AttackBonusTarget | AttackBonusTarget[];
