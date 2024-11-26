@@ -57,13 +57,17 @@ export class AttackBonusesControl {
     }
   };
 
-  static get = (attBonuses: AttackBonuses, path: AttackBonusKey, ...paths: GetBonusPaths) => {
+  /**
+   * Get all bonuses whose type is included in paths.
+   * Ex: paths = ['ES', 'pyro'] => get ES and pyro bonuses, not ES.pyro
+   */
+  static get = (attBonuses: AttackBonuses, key: AttackBonusKey, ...paths: GetBonusPaths) => {
     let result = 0;
 
     for (const bonus of attBonuses) {
       if (paths.some((path) => path && bonus.type === path)) {
         for (const record of bonus.records) {
-          if (record.to === path) {
+          if (record.to === key) {
             result += record.value;
           }
         }
