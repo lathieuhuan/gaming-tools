@@ -7,13 +7,13 @@ import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinMo
 interface VapMeltBuffItemProps extends Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle"> {
   reaction: AmplifyingReaction;
   element: ElementType;
-  attBonus: AttackBonuses;
+  attkBonuses: AttackBonuses;
 }
-export function VapMeltBuffItem({ reaction, element, attBonus, ...rest }: VapMeltBuffItemProps) {
+export function VapMeltBuffItem({ reaction, element, attkBonuses, ...rest }: VapMeltBuffItemProps) {
   const mult = GeneralCalc.getAmplifyingMultiplier(
     reaction,
     element,
-    AttackBonusesControl.get(attBonus, "pct_", reaction)
+    AttackBonusesControl.get(attkBonuses, "pct_", reaction)
   );
 
   return (

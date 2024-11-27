@@ -61,5 +61,5 @@ export default function getResistances(
   if (elmtModCtrls.superconduct) {
     resistReductCtrl.add("phys", 40, "Superconduct");
   }
-  return resistReductCtrl.apply(target);
+  return resistReductCtrl.applyTo(target);
 }

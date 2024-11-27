@@ -9,6 +9,8 @@ export enum __EMockCharacter {
   CATALYST = "CATALYST",
   /** cryo, polearm, sumeru */
   ES_CALC_CONFIG = "ES_CALC_CONFIG",
+  /** anemo, claymore, natlan */
+  ANEMO = "ANEMO",
 }
 
 const STATS: AppCharacter["stats"] = [
@@ -126,6 +128,34 @@ export const __characters: AppCharacter[] = [
     rarity: 5,
     vision: "cryo",
     weaponType: "polearm",
+    EBcost: 90,
+    stats: STATS,
+    statBonus: { type: "def_", value: 9 },
+    talentLvBonus: {
+      NAs: 3,
+      EB: 5,
+    },
+    calcListConfig: {
+      ES: {
+        scale: 3,
+        basedOn: "em",
+        attPatt: "EB",
+      },
+    },
+    calcList: CALC_LIST,
+    activeTalents: ACTIVE_TALENTS,
+    passiveTalents: PASSIVE_TALENTS,
+    constellation: CONSTELLATION,
+  },
+  {
+    code: 5,
+    name: __EMockCharacter.ANEMO,
+    icon: "",
+    sideIcon: "",
+    nation: "natlan",
+    rarity: 5,
+    vision: "anemo",
+    weaponType: "claymore",
     EBcost: 90,
     stats: STATS,
     statBonus: { type: "def_", value: 9 },

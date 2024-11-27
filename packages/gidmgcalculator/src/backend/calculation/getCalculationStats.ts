@@ -36,9 +36,8 @@ export default function getCalculationStats(
   const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
   const { resonances = [], reaction, infuse_reaction } = elmtModCtrls || {};
 
-  const totalAttrCtrl = new TotalAttributeControl(tracker);
-  const artAttr = totalAttrCtrl.construct(char, appChar, weapon, appWeapon, artifacts);
-  const attBonusesCtrl = new AttackBonusesControl();
+  const totalAttrCtrl = new TotalAttributeControl(tracker).construct(char, appChar, weapon, appWeapon, artifacts);
+  const attkBonusesCtrl = new AttackBonusesControl();
   const bonusesGetter = new AppliedBonusesGetter(
     {
       char,
@@ -51,7 +50,7 @@ export default function getCalculationStats(
   const applyBuff: AppliedBonusesGetter["getAppliedBonuses"] = (...args) => {
     const result = bonusesGetter.getAppliedBonuses(...args);
     totalAttrCtrl.applyBonuses(result.attrBonuses);
-    attBonusesCtrl.add(result.attkBonuses);
+    attkBonusesCtrl.add(result.attkBonuses);
     return result;
   };
 
@@ -188,7 +187,7 @@ export default function getCalculationStats(
             description: "Custom buff",
           });
         } else if (subType) {
-          attBonusesCtrl.add({
+          attkBonusesCtrl.add({
             value,
             toType: type as AttackElement,
             toKey: subType,
@@ -199,7 +198,7 @@ export default function getCalculationStats(
       }
       case "attPattBonus": {
         if (subType) {
-          attBonusesCtrl.add({
+          attkBonusesCtrl.add({
             value,
             toType: type as AttackPattern | "all",
             toKey: subType,
@@ -210,7 +209,7 @@ export default function getCalculationStats(
       }
       case "rxnBonus": {
         if (subType) {
-          attBonusesCtrl.add({ value, toType: type as ReactionType, toKey: subType, description: "Custom buff" });
+          attkBonusesCtrl.add({ value, toType: type as ReactionType, toKey: subType, description: "Custom buff" });
         }
         break;
       }
@@ -236,7 +235,7 @@ export default function getCalculationStats(
       });
 
       if (elementType === "geo")
-        attBonusesCtrl.add({
+        attkBonusesCtrl.add({
           value: 15,
           toType: "all",
           toKey: "pct_",
@@ -319,7 +318,7 @@ export default function getCalculationStats(
   const rxnBonuses = GeneralCalc.getRxnBonusesFromEM(totalAttrCtrl.getTotal("em"));
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
-    attBonusesCtrl.add({
+    attkBonusesCtrl.add({
       value: rxnBonuses.transformative,
       toType: rxn,
       toKey: "pct_",
@@ -327,7 +326,7 @@ export default function getCalculationStats(
     });
   }
   for (const rxn of AMPLIFYING_REACTIONS) {
-    attBonusesCtrl.add({
+    attkBonusesCtrl.add({
       value: rxnBonuses.amplifying,
       toType: rxn,
       toKey: "pct_",
@@ -335,7 +334,7 @@ export default function getCalculationStats(
     });
   }
   for (const rxn of QUICKEN_REACTIONS) {
-    attBonusesCtrl.add({
+    attkBonusesCtrl.add({
       value: rxnBonuses.quicken,
       toType: rxn,
       toKey: "pct_",
@@ -344,27 +343,17 @@ export default function getCalculationStats(
   }
 
   if (reaction === "spread" || infuse_reaction === "spread") {
-    attBonusesCtrl.add({
-      value: GeneralCalc.getQuickenBuffDamage("spread", char.level, attBonusesCtrl.get("pct_", "spread")),
-      toType: "dendro",
-      toKey: "flat",
-      description: "Spread reaction",
-    });
+    attkBonusesCtrl.addSpreadBuff(char.level);
   }
   if (reaction === "aggravate" || infuse_reaction === "aggravate") {
-    attBonusesCtrl.add({
-      value: GeneralCalc.getQuickenBuffDamage("aggravate", char.level, attBonusesCtrl.get("pct_", "aggravate")),
-      toType: "electro",
-      toKey: "flat",
-      description: "Aggravate reaction",
-    });
+    attkBonusesCtrl.addAggravateBuff(char.level);
   }
 
-  totalAttrCtrl.finalizeArtifactAttribute(artAttr);
+  const totalAttr = totalAttrCtrl.finalize();
 
   return {
-    totalAttr: totalAttrCtrl.finalize(),
-    attBonusesCtrl,
-    artAttr,
+    totalAttr,
+    attkBonusesArchive: attkBonusesCtrl.genArchive(),
+    artAttr: totalAttrCtrl.finalizeArtifactAttribute(totalAttr),
   };
 }

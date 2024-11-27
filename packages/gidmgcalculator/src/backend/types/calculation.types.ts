@@ -50,6 +50,13 @@ export type AppliedBonuses = {
   attkBonuses: AppliedAttackBonus[];
 };
 
+type AttackBonusRecord = Pick<AppliedAttackBonus, "value" | "toKey" | "description">;
+
+export type AttackBonuses = Array<{
+  type: AttackBonusType;
+  records: AttackBonusRecord[];
+}>;
+
 //
 
 export type NormalAttacksConfig = Partial<Record<AttackPattern, Omit<CharacterBuffNormalAttackConfig, "forPatt">>>;

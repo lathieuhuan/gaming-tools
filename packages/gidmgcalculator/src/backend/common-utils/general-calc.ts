@@ -1,6 +1,6 @@
 import type { CalcArtifacts, PartyData } from "@Src/types";
 import type { AmplifyingReaction, AppCharacter, AttackElement, ElementType, Level, QuickenReaction } from "../types";
-import { TypeCounter } from "@Src/utils/type-counter";
+import TypeCounter from "@Src/utils/type-counter";
 import Array_ from "@Src/utils/array-utils";
 
 export type ArtifactSetBonus = {

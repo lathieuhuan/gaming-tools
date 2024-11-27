@@ -6,12 +6,12 @@ import { suffixOf } from "@Src/utils";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
 interface BonusesTrackerProps {
-  attBonus: AttackBonuses;
+  attkBonuses: AttackBonuses;
 }
-export function BonusesTracker({ attBonus }: BonusesTrackerProps) {
+export function BonusesTracker({ attkBonuses }: BonusesTrackerProps) {
   const { t } = useTranslation();
 
-  const bonuses = attBonus.filter((bonus) => bonus.type.slice(0, 2) !== "id");
+  const bonuses = attkBonuses.filter((bonus) => bonus.type.slice(0, 2) !== "id");
 
   return bonuses.length ? (
     <div className={`pl-2 mt-1 ${recordListStyles}`}>
@@ -22,13 +22,13 @@ export function BonusesTracker({ attBonus }: BonusesTrackerProps) {
         }> = [];
 
         for (const record of bonus.records) {
-          const existed = list.find((item) => item.key === record.to);
+          const existed = list.find((item) => item.key === record.toKey);
 
           if (existed) {
             existed.records.push(record);
           } else {
             list.push({
-              key: record.to,
+              key: record.toKey,
               records: [record],
             });
           }

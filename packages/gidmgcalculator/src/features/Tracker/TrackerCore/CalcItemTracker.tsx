@@ -95,7 +95,7 @@ export function CalcItemTracker({
                     return bonus.records.map((record, j) => {
                       return (
                         <p key={i + j}>
-                          + {t(bonus.type)}: {record.desc}{" "}
+                          + {t(bonus.type)}: {record.description}{" "}
                           <Green>
                             {round(record.value, percent ? 2 : 0)}
                             {percent}

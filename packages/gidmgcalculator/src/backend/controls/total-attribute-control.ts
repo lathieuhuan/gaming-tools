@@ -32,6 +32,7 @@ type BonusToApply = PartiallyOptional<AppliedAttributeBonus, "id" | "isStable">;
 
 export class TotalAttributeControl {
   private totalAttr: InternalTotalAttribute;
+  private artAttrCtrl = new ArtifactAttributeControl([]);
   private tracker?: TrackerControl;
 
   constructor();
@@ -55,59 +56,21 @@ export class TotalAttributeControl {
     this.tracker ||= trackerCtrl;
   }
 
-  static getArtifactAttribute(artifacts: Array<Artifact | null>) {
-    const artAttr: ArtifactAttribute = {
-      hp: 0,
-      atk: 0,
-      def: 0,
-    };
-
-    for (const artifact of artifacts) {
-      if (!artifact) continue;
-
-      artAttr[artifact.mainStatType] = (artAttr[artifact.mainStatType] || 0) + ArtifactCalc.mainStatValueOf(artifact);
-
-      for (const subStat of artifact.subStats) {
-        artAttr[subStat.type] = (artAttr[subStat.type] || 0) + subStat.value;
-      }
-    }
-
-    return artAttr;
+  static getArtifactAttributes(artifacts: Array<Artifact | null>) {
+    return new ArtifactAttributeControl(artifacts);
   }
 
-  /**
-   * @param artAttr will be mutated
-   */
-  static finalizeArtifactAttribute(
-    artAttr: ArtifactAttribute,
-    coreBaseStat: {
-      hp_base: number;
-      atk_base: number;
-      def_base: number;
-    }
-  ) {
-    for (const statType of CORE_STAT_TYPES) {
-      const percentStatValue = artAttr[`${statType}_`];
-
-      if (percentStatValue) {
-        artAttr[statType] += applyPercent(coreBaseStat[`${statType}_base`], percentStatValue);
-      }
-      delete artAttr[`${statType}_`];
-    }
-  }
-
-  finalizeArtifactAttribute(artAttr: ArtifactAttribute) {
-    TotalAttributeControl.finalizeArtifactAttribute(artAttr, {
-      hp_base: this.totalAttr.hp.base,
-      atk_base: this.totalAttr.atk.base,
-      def_base: this.totalAttr.def.base,
-    });
+  /** If this was not constructed with artifacts or did not equipArtifacts, call this method will return zeroes */
+  finalizeArtifactAttribute(baseStat: Pick<TotalAttribute, "hp_base" | "atk_base" | "def_base">) {
+    const artAttr = this.artAttrCtrl.finalize(baseStat);
 
     Object_.forEach(artAttr, (toStat) => {
       if (artAttr[toStat]) {
         this.tracker?.recordStat(ECalcStatModule.ATTR, toStat, artAttr[toStat], "Artifact stat");
       }
     });
+
+    return artAttr;
   }
 
   private getCharacterStats(appChar: AppCharacter, charLv: Level) {
@@ -148,14 +111,17 @@ export class TotalAttributeControl {
     }
 
     this.equipWeapon(weapon, appWeapon);
-    return this.equipArtifacts(artifacts);
+    this.equipArtifacts(artifacts);
+
+    return this;
   };
 
   clone = () => {
     return new TotalAttributeControl(structuredClone(this.totalAttr));
   };
 
-  private equipWeapon = (weapon?: Weapon, appWeapon?: AppWeapon) => {
+  /** Should not be called more than once per instance of this */
+  equipWeapon = (weapon?: Weapon, appWeapon?: AppWeapon) => {
     if (weapon && appWeapon) {
       this.addBase("atk", WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale), "Weapon main stat");
 
@@ -171,16 +137,17 @@ export class TotalAttributeControl {
     }
   };
 
-  private equipArtifacts = (artifacts: Array<Artifact | null> = []) => {
-    const attribute = TotalAttributeControl.getArtifactAttribute(artifacts);
+  /** Should not be called more than once per instance of this */
+  equipArtifacts = (artifacts: Array<Artifact | null> = []) => {
+    const artAttrCtrl = TotalAttributeControl.getArtifactAttributes(artifacts);
 
-    Object_.forEach(attribute, (toStat) => {
-      if (attribute[toStat]) {
-        this.totalAttr[toStat].stableBonus += attribute[toStat];
+    artAttrCtrl.forEachAttribute((toStat, value) => {
+      if (value) {
+        this.totalAttr[toStat].stableBonus += value;
       }
     });
 
-    return attribute;
+    this.artAttrCtrl = artAttrCtrl;
   };
 
   private addBase = (key: AttributeStat, value: number, description = "Character base stat") => {
@@ -257,4 +224,47 @@ export class TotalAttributeControl {
 
 function isCoreStat(key: AttributeStat) {
   return key === "hp" || key === "atk" || key === "def";
+}
+
+class ArtifactAttributeControl {
+  private artAttr: ArtifactAttribute;
+
+  constructor(artifacts: Array<Artifact | null>) {
+    const artAttr: ArtifactAttribute = {
+      hp: 0,
+      atk: 0,
+      def: 0,
+    };
+
+    for (const artifact of artifacts) {
+      if (!artifact) continue;
+
+      artAttr[artifact.mainStatType] = (artAttr[artifact.mainStatType] || 0) + ArtifactCalc.mainStatValueOf(artifact);
+
+      for (const subStat of artifact.subStats) {
+        artAttr[subStat.type] = (artAttr[subStat.type] || 0) + subStat.value;
+      }
+    }
+
+    this.artAttr = artAttr;
+  }
+
+  forEachAttribute = (callback: (type: keyof ArtifactAttribute, value: number | undefined) => void) => {
+    Object_.forEach(this.artAttr, callback);
+  };
+
+  finalize = (baseStats: { hp_base: number; atk_base: number; def_base: number }) => {
+    const finalArtAttr = Object_.clone(this.artAttr);
+
+    for (const statType of CORE_STAT_TYPES) {
+      const percentStatValue = finalArtAttr[`${statType}_`];
+
+      if (percentStatValue) {
+        finalArtAttr[statType] += applyPercent(baseStats[`${statType}_base`], percentStatValue);
+      }
+      delete finalArtAttr[`${statType}_`];
+    }
+
+    return finalArtAttr;
+  };
 }

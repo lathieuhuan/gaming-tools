@@ -52,7 +52,7 @@ export function DebuffsTracker({ result }: { result?: TrackerResult }) {
                 <ul className="pl-4 list-disc">
                   {renderRecord()(
                     {
-                      desc: `RES base 10% - Reduction ${totalResistReduct[attElmt]}% = ${actualResistance}% or`,
+                      description: `RES base 10% - Reduction ${totalResistReduct[attElmt]}% = ${actualResistance}% or`,
                       value: actualResistance / 100,
                     },
                     0
@@ -60,7 +60,7 @@ export function DebuffsTracker({ result }: { result?: TrackerResult }) {
 
                   {renderRecord((value) => getResMult("equation", value))(
                     {
-                      desc: "Equation",
+                      description: "Equation",
                       value: actualResistance,
                     },
                     1

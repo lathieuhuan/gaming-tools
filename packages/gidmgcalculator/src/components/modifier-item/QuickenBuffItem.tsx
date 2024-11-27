@@ -7,13 +7,13 @@ interface QuickenBuffItemProps extends Pick<GenshinModifierViewProps, "mutable" 
   reaction: QuickenReaction;
   element: ElementType;
   characterLv: Level;
-  attBonus: AttackBonuses;
+  attkBonuses: AttackBonuses;
 }
-export function QuickenBuffItem({ reaction, element, characterLv, attBonus, ...rest }: QuickenBuffItemProps) {
+export function QuickenBuffItem({ reaction, element, characterLv, attkBonuses, ...rest }: QuickenBuffItemProps) {
   const bonusValue = GeneralCalc.getQuickenBuffDamage(
     reaction,
     characterLv,
-    AttackBonusesControl.get(attBonus, "pct_", reaction)
+    AttackBonusesControl.get(attkBonuses, "pct_", reaction)
   );
 
   return (

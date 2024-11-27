@@ -25,7 +25,7 @@ export const selectTarget = (state: RootState) => state.calculator.target;
 
 export const selectTotalAttr = (state: RootState) => state.calculator.resultById[state.calculator.activeId].totalAttr;
 
-export const selectAttBonus = (state: RootState) => state.calculator.resultById[state.calculator.activeId].attBonus;
+export const selectAttkBonuses = (state: RootState) => state.calculator.resultById[state.calculator.activeId].attkBonuses;
 
 export const selectCalcFinalResult = (state: RootState) =>
   state.calculator.resultById[state.calculator.activeId].finalResult;

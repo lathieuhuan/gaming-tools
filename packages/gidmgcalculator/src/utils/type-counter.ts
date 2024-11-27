@@ -1,5 +1,6 @@
-export class TypeCounter<TKey extends PropertyKey = PropertyKey> {
+export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   private count: Record<TKey, number>;
+  private initial: Partial<Record<TKey, number>> = {};
 
   /** Only keys with positive count */
   get keys() {
@@ -19,7 +20,8 @@ export class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   }
 
   constructor(initial: Partial<Record<TKey, number>> = {}) {
-    this.count = initial as Record<TKey, number>;
+    this.initial = structuredClone(initial);
+    this.count = structuredClone(this.initial) as Record<TKey, number>;
   }
 
   private _get = (key: TKey) => {
@@ -40,5 +42,9 @@ export class TypeCounter<TKey extends PropertyKey = PropertyKey> {
 
   forEach = (callback: (key: TKey, count: number) => void) => {
     for (const key in this.count) callback(key, this.count[key]);
+  };
+
+  reset = () => {
+    this.count = structuredClone(this.initial) as Record<TKey, number>;
   };
 }

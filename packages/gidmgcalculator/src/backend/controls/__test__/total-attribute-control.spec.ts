@@ -124,7 +124,7 @@ test("getTotalStable", () => {
   expect(tester.getTotalStable("atk")).toBe(120);
 });
 
-test("static: getArtifactAttribute", () => {
+test("static: getArtifactAttributes => ArtifactAttributeControl", () => {
   const artifacts: Artifact[] = [
     {
       ID: 1,
@@ -140,86 +140,30 @@ test("static: getArtifactAttribute", () => {
       ],
     },
   ];
+  const baseStats = {
+    hp_base: 0,
+    atk_base: 200,
+    def_base: 0,
+  };
+  const artAttrCtrl = TotalAttributeControl.getArtifactAttributes(artifacts);
 
+  const expectedHp = 1000 + ArtifactCalc.mainStatValueOf(artifacts[0]);
   const expected: ArtifactAttribute = {
-    hp: 1000,
+    hp: expectedHp,
     atk: 0,
     atk_: 10,
     def: 0,
     em: 100,
   };
-  expected[artifacts[0].mainStatType] += ArtifactCalc.mainStatValueOf(artifacts[0]);
 
-  expect(TotalAttributeControl.getArtifactAttribute(artifacts)).toEqual(expected);
-});
+  expect(artAttrCtrl["artAttr"]).toEqual(expected);
 
-test("static: finalizeArtifactAttribute", () => {
-  const artifacts: Artifact[] = [
-    {
-      ID: 1,
-      code: __EMockArtifactSet.DEFAULT,
-      level: 1,
-      rarity: 5,
-      type: "flower",
-      mainStatType: "hp",
-      subStats: [
-        { type: "hp", value: 1000 },
-        { type: "atk", value: 100 },
-        { type: "atk_", value: 10 },
-      ],
-    },
-  ];
-  const calcHp = ArtifactCalc.mainStatValueOf(artifacts[0]) + 1000;
-
-  const finalized = TotalAttributeControl.getArtifactAttribute(artifacts);
-
-  expect(finalized).toEqual({
-    hp: calcHp,
-    atk: 100,
-    atk_: 10,
+  expect(artAttrCtrl.finalize(baseStats)).toEqual({
+    hp: expectedHp,
+    atk: 200 * 0.1, // <= atk_ 10(%)
+    // atk_: 10 is removed
     def: 0,
-  });
-
-  TotalAttributeControl.finalizeArtifactAttribute(finalized, {
-    hp_base: 10_000,
-    atk_base: 300,
-    def_base: 0,
-  });
-
-  expect(finalized).toEqual({
-    hp: calcHp,
-    atk: 100 + 300 * 0.1, // 0.1 <=> 10% bonus (atk_)
-    // atk_ is removed
-    def: 0,
-  });
-});
-
-test("finalizeArtifactAttribute", () => {
-  const artifacts: Artifact[] = [
-    {
-      ID: 1,
-      code: __EMockArtifactSet.DEFAULT,
-      level: 1,
-      rarity: 5,
-      type: "flower",
-      mainStatType: "hp",
-      subStats: [
-        { type: "hp", value: 1000 },
-        { type: "atk", value: 100 },
-        { type: "atk_", value: 10 },
-      ],
-    },
-  ];
-  const finalized = TotalAttributeControl.getArtifactAttribute(artifacts);
-
-  tester["totalAttr"].atk.base = 500;
-  tester.finalizeArtifactAttribute(finalized);
-
-  expect(finalized).toEqual({
-    hp: ArtifactCalc.mainStatValueOf(artifacts[0]) + 1000,
-    atk: 100 + 500 * 0.1, // 0.1 <=> 10% bonus (atk_)
-    // atk_ is removed
-    def: 0,
+    em: 100,
   });
 });
 
