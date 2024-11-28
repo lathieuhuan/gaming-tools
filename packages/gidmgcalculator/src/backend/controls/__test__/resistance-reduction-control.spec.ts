@@ -95,13 +95,13 @@ describe("applyDebuff", () => {
     tester._expectReduct("pyro", 20);
   });
 
-  test("target is inp_elmt, inpIndex default to 0", () => {
+  test("target is INP_ELMT, inpIndex default to 0", () => {
     const elmtIndex = 2;
 
     tester.debuff.effects = {
       value: 15,
       targets: {
-        type: "inp_elmt",
+        type: "INP_ELMT",
       },
     };
     tester.inputs = [elmtIndex];
@@ -110,13 +110,13 @@ describe("applyDebuff", () => {
     tester._expectReduct(ELEMENT_TYPES[elmtIndex], 15);
   });
 
-  test("target is inp_elmt, inpIndex 1", () => {
+  test("target is INP_ELMT, inpIndex 1", () => {
     const elmtIndex = 3;
 
     tester.debuff.effects = {
       value: 18,
       targets: {
-        type: "inp_elmt",
+        type: "INP_ELMT",
         inpIndex: 1,
       },
     };

@@ -15,7 +15,7 @@ export type EntityPenaltyCore = EffectApplicableCondition & {
 export type EntityPenaltyTarget =
   | ResistanceReductionKey
   | {
-      type: "inp_elmt";
+      type: "INP_ELMT";
       /** Input's index to get ElementType index. Default to 0 */
       inpIndex?: number;
     }

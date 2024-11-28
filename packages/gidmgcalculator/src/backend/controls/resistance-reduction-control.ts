@@ -52,7 +52,7 @@ export class ResistanceReductionControl {
         continue;
       }
       switch (target.type) {
-        case "inp_elmt": {
+        case "INP_ELMT": {
           const elmtIndex = inputs[target.inpIndex ?? 0];
           paths.add(ELEMENT_TYPES[elmtIndex]);
           break;
