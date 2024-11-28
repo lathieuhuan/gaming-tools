@@ -322,7 +322,7 @@ export class BareBonusGetter {
     return Math.max(result, 0);
   };
 
-  getBareBonus = (
+  protected getBareBonus = (
     config: EntityBonusCore,
     { inputs, fromSelf = true, refi = 0 }: PartiallyOptional<GetBareBonusSupportInfo, "fromSelf">,
     basedOnStable = false

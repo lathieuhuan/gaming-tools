@@ -2,7 +2,6 @@ import type {
   AppliedAttributeBonus,
   AppliedBonuses,
   BareBonus,
-  CalculationInfo,
   EntityBonusBasedOn,
   EntityBonusCore,
   EntityBonusTargets,
@@ -12,7 +11,7 @@ import type {
 import Array_ from "@Src/utils/array-utils";
 import { ELEMENT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
-import { ModifierStackingControl, TotalAttributeControl } from "../controls";
+import { ModifierStackingControl } from "../controls";
 import { isApplicableEffect } from "./isApplicableEffect";
 import { BareBonusGetter, type GetBareBonusSupportInfo } from "./bare-bonus-getter";
 
@@ -24,10 +23,6 @@ type ApplyBonusSupportInfo = {
 
 export class AppliedBonusesGetter extends BareBonusGetter {
   private modStackingCtrl = new ModifierStackingControl();
-
-  constructor(protected info: CalculationInfo, protected totalAttrCtrl?: TotalAttributeControl) {
-    super(info, totalAttrCtrl);
-  }
 
   private isFinalBonus = (basedOn?: EntityBonusBasedOn) => {
     if (basedOn) {

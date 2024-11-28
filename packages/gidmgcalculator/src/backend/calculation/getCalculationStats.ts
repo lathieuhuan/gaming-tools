@@ -343,10 +343,10 @@ export default function getCalculationStats(
   }
 
   if (reaction === "spread" || infuse_reaction === "spread") {
-    attkBonusesCtrl.addSpreadBuff(char.level);
+    attkBonusesCtrl.applySpreadBuff(char.level);
   }
   if (reaction === "aggravate" || infuse_reaction === "aggravate") {
-    attkBonusesCtrl.addAggravateBuff(char.level);
+    attkBonusesCtrl.applyAggravateBuff(char.level);
   }
 
   const totalAttr = totalAttrCtrl.finalize();
