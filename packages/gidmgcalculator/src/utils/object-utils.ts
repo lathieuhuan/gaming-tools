@@ -59,6 +59,10 @@ export default class Object_ {
   }
 
   static clone<T>(item: T): T {
-    return structuredClone(item);
+    try {
+      return structuredClone(item);
+    } catch {
+      return JSON.parse(JSON.stringify(item));
+    }
   }
 }

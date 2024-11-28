@@ -1,49 +1,52 @@
 import type { ElementType, WeaponType } from "../common.types";
 import type { CharacterMilestone } from "./app-entity-common.types";
 
+export type ConditionComparison = "EQUAL" | "MIN" | "MAX";
+
 /**
- * For the buff/bonus to be available, the input at the [source] must meet [value] by [type].
- * On CharacterBonus & WeaponBonus
+ * For the buff/bonus to be available, the input at the [inpIndex]
+ * must meet [value] by [comparison] type.
  */
 export type InputCheck = {
   value: number;
-  /**
-   * 'various_vision' only on Ballad of the Fjords
-   * 'mixed' only on Chain Breaker.
-   * Default to 0.
-   */
-  source?: number | "various_vision" | "mixed";
-  /** Default to 'equal' */
-  type?: "equal" | "min" | "max";
+  /** The index of input to check. Default to 0. */
+  inpIndex?: number;
+  /** Default to 'EQUAL' */
+  comparison?: ConditionComparison;
 };
 
 export type EffectUsableCondition = {
   /** If number, the input at 0 must equal to the number */
   checkInput?: number | InputCheck;
-  /** On Xilonen */
-  checkChar?: {
-    type: "vision";
-    value: ElementType;
+  /**
+   * 'DISTINCT_ELMT' only on Ballad of the Fjords.
+   * 'MIXED' only on Chain Breaker.
+   */
+  checkParty?: {
+    value: number;
+    type: "DISTINCT_ELMT" | "MIXED";
+    /** Default to 'EQUAL' */
+    comparison?: ConditionComparison;
   };
 };
 
 type CharacterEffectAvailableCondition = {
   grantedAt?: CharacterMilestone;
   /** When this bonus is from teammate, this is input's index to check granted. */
-  alterIndex?: number;
+  altIndex?: number;
 };
 
 /** Mostly on characters */
 type ExtraCondition = {
   /** On Chongyun, 2 original artifacts */
   forWeapons?: WeaponType[];
-  /** On Chevreuse */
+  /** On Chevreuse, Xilonen */
   forElmts?: ElementType[];
   /** On Xilonen */
   totalPartyElmtCount?: {
     elements: ElementType[];
     value: number;
-    type: "max";
+    comparison: "MAX";
   };
   /** On Gorou, Nilou, Chevreuse */
   partyElmtCount?: Partial<Record<ElementType, number>>;

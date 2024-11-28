@@ -25,7 +25,7 @@ import type {
 
 type SetupResult = {
   totalAttr: TotalAttribute;
-  attBonus: AttackBonuses;
+  attkBonuses: AttackBonuses;
   finalResult: CalculationFinalResult;
 };
 

@@ -150,7 +150,7 @@ export const Introduction = (props: ModalControl) => {
                   ) : data.updates.length ? (
                     data.updates.map(({ date, patch, content }, i) => (
                       <div key={i}>
-                        <p className="text-heading-color font-bold">{date + (patch ? ` (v${patch})` : "")}</p>
+                        <p className="text-heading-color font-semibold">{date + (patch ? ` (v${patch})` : "")}</p>
                         <ul className="mt-1 space-y-1">
                           {content.map((line, j) => (
                             <li key={j} dangerouslySetInnerHTML={{ __html: `- ${parseContent(line)}` }} />

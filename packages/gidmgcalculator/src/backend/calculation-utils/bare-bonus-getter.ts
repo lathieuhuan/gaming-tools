@@ -26,7 +26,7 @@ type InternalSupportInfo = GetBareBonusSupportInfo & {
 };
 
 export class BareBonusGetter {
-  constructor(protected info: CalculationInfo, private totalAttrCtrl?: TotalAttributeControl) {}
+  constructor(protected info: CalculationInfo, protected totalAttrCtrl?: TotalAttributeControl) {}
 
   // ========== UTILS ==========
 
@@ -34,9 +34,13 @@ export class BareBonusGetter {
     return base + increment * refi;
   }
 
-  protected getBonusValueByOption(config: EntityBonusValueByOption, inputs: number[]) {
+  /**
+   * @param inputs used when optIndex is number or has INPUT source
+   */
+  protected getIndexOfBonusValue = (config: Pick<EntityBonusValueByOption, "optIndex">, inputs: number[] = []) => {
     const { appChar, partyData } = this.info;
     const { optIndex = 0 } = config;
+    const elmtCount = GeneralCalc.countElements(partyData, appChar);
     const indexConfig =
       typeof optIndex === "number"
         ? ({ source: "INPUT", inpIndex: optIndex } satisfies EntityBonusValueByOption["optIndex"])
@@ -45,28 +49,32 @@ export class BareBonusGetter {
 
     switch (indexConfig.source) {
       case "INPUT":
-        indexValue += inputs[indexConfig.inpIndex];
+        indexValue += inputs[indexConfig.inpIndex] ?? 0;
         break;
       case "ELEMENT": {
-        const { element } = indexConfig;
-        const elmtCount = GeneralCalc.countElements(partyData, appChar);
+        const { elements } = indexConfig;
 
-        switch (element) {
-          case "various_types":
-            indexValue += elmtCount.keys.length;
-            break;
-          case "different":
+        if (elements) {
+          elmtCount.forEach((elementType) => {
+            if (elements.includes(elementType)) indexValue++;
+          });
+        } else {
+          indexValue += elmtCount.keys.length;
+        }
+        break;
+      }
+      case "MEMBER": {
+        switch (indexConfig.element) {
+          case "DIFFERENT":
             elmtCount.forEach((elementType) => {
               if (elementType !== appChar.vision) indexValue++;
             });
             break;
           default:
-            if (typeof element === "string") {
-              indexValue += elmtCount.get(element);
-            } else if (indexConfig.distinct) {
-              indexValue += element.reduce((total, elementType) => total + (elmtCount.has(elementType) ? 1 : 0), 0);
+            if (typeof indexConfig.element === "string") {
+              indexValue += elmtCount.get(indexConfig.element);
             } else {
-              indexValue += element.reduce((total, type) => total + elmtCount.get(type), 0);
+              indexValue += indexConfig.element.reduce((total, type) => total + elmtCount.get(type), 0);
             }
         }
         break;
@@ -80,9 +88,12 @@ export class BareBonusGetter {
       }
     }
     return indexValue;
-  }
+  };
 
-  protected getExtra(extras: EffectExtra | EffectExtra[] | undefined, support: InternalSupportInfo) {
+  protected getExtra = (
+    extras: EffectExtra | EffectExtra[] | undefined,
+    support: Pick<InternalSupportInfo, "inputs" | "fromSelf">
+  ) => {
     if (!extras) return 0;
     let result = 0;
 
@@ -92,10 +103,10 @@ export class BareBonusGetter {
       }
     }
     return result;
-  }
+  };
 
-  protected getBasedOn(config: EntityBonusBasedOn, support: InternalSupportInfo) {
-    const { field, alterIndex = 0, baseline = 0 } = typeof config === "string" ? { field: config } : config;
+  protected getBasedOn = (config: EntityBonusBasedOn, support: Omit<InternalSupportInfo, "refi">) => {
+    const { field, altIndex = 0, baseline = 0 } = typeof config === "string" ? { field: config } : config;
     let basedOnValue = 1;
 
     if (support.fromSelf) {
@@ -105,19 +116,22 @@ export class BareBonusGetter {
           : this.totalAttrCtrl.getTotal(field);
       }
     } else {
-      basedOnValue = support.inputs[alterIndex] ?? 1;
+      basedOnValue = support.inputs[altIndex] ?? 1;
     }
     return {
       field,
       value: Math.max(basedOnValue - baseline, 0),
     };
-  }
+  };
 
-  protected applyMax(value: number, config: EffectMax | undefined, support: InternalSupportInfo) {
+  /**
+   * @param support must have when config is EffectDynamicMax
+   */
+  protected applyMax = (value: number, config: EffectMax | undefined, support?: InternalSupportInfo) => {
     if (typeof config === "number") {
-      return Math.min(value, config);
+      return Math.min(value, this.scaleRefi(config, support?.refi));
     } //
-    else if (config) {
+    else if (config && support) {
       let finalMax = config.value;
 
       if (config.basedOn) {
@@ -129,11 +143,11 @@ export class BareBonusGetter {
       return Math.min(value, finalMax);
     }
     return value;
-  }
+  };
 
   // ========== MAIN ==========
 
-  getIntialBonusValue(config: EntityBonusCore["value"], support: InternalSupportInfo) {
+  getIntialBonusValue = (config: EntityBonusCore["value"], support: InternalSupportInfo) => {
     const { inputs } = support;
 
     if (typeof config === "number") {
@@ -147,16 +161,20 @@ export class BareBonusGetter {
       const preIndex = preOptions[inputs[0]];
       index += preIndex ?? preOptions[preOptions.length - 1];
     } else {
-      index = this.getBonusValueByOption(config, inputs);
+      index = this.getIndexOfBonusValue(config, inputs);
     }
 
     index += this.getExtra(config.extra, support);
     index = this.applyMax(index, config.max, support);
 
     return options[index] ?? (index > 0 ? options[options.length - 1] : 0);
-  }
+  };
 
-  protected applyExtra(bonus: BareBonus, config: number | EntityBonusCore | undefined, support: InternalSupportInfo) {
+  protected applyExtra = (
+    bonus: BareBonus,
+    config: number | EntityBonusCore | undefined,
+    support: InternalSupportInfo
+  ) => {
     if (typeof config === "number") {
       bonus.value += this.scaleRefi(config, support.refi);
     } //
@@ -169,15 +187,15 @@ export class BareBonusGetter {
         if (!extra.isStable) bonus.isStable = false;
       }
     }
-  }
+  };
 
-  protected getStackValue(stack: EntityBonusStack | undefined, support: InternalSupportInfo): number {
+  protected getStackValue = (stack: EntityBonusStack | undefined, support: InternalSupportInfo): number => {
     if (!stack) {
       return 1;
     }
     const { inputs, fromSelf } = support;
     const { char, appChar, partyData } = this.info;
-    const partyDependentStackTypes: EntityBonusStack["type"][] = ["ELEMENT", "ENERGY", "NATION", "RESOLVE", "MIX"];
+    const partyDependentStackTypes: EntityBonusStack["type"][] = ["MEMBER", "ENERGY", "NATION", "RESOLVE", "MIX"];
 
     if (partyDependentStackTypes.includes(stack.type) && !partyData.length) {
       return 0;
@@ -186,7 +204,7 @@ export class BareBonusGetter {
 
     switch (stack.type) {
       case "INPUT": {
-        const finalIndex = stack.alterIndex !== undefined && !fromSelf ? stack.alterIndex : stack.index ?? 0;
+        const finalIndex = stack.altIndex !== undefined && !fromSelf ? stack.altIndex : stack.index ?? 0;
         let input = 0;
 
         if (typeof finalIndex === "number") {
@@ -199,31 +217,25 @@ export class BareBonusGetter {
           input = finalIndex.reduce((total, { value, ratio = 1 }) => total + (inputs[value] ?? 0) * ratio, 0);
         }
 
-        if (stack.capacity) {
-          const { value, extra } = stack.capacity;
-          input = value - input;
-          if (isApplicableEffect(extra, this.info, inputs, fromSelf)) input += extra.value;
-          input = Math.max(input, 0);
-        }
         result = input;
         break;
       }
-      case "ELEMENT": {
+      case "MEMBER": {
         const { element } = stack;
         const elmtCount = GeneralCalc.countElements(partyData);
 
         switch (element) {
-          case "different":
+          case "DIFFERENT":
             elmtCount.forEach((type, value) => {
               result += type !== appChar.vision ? value : 0;
             });
             break;
-          case "same_excluded":
+          case "SAME_EXCLUDED":
             elmtCount.forEach((type, value) => {
               result += type === appChar.vision ? value : 0;
             });
             break;
-          case "same_included":
+          case "SAME_INCLUDED":
             elmtCount.forEach((type, value) => {
               result += type === appChar.vision ? value : 0;
             });
@@ -246,7 +258,7 @@ export class BareBonusGetter {
         break;
       }
       case "NATION": {
-        if (stack.nation === "liyue") {
+        if (stack.nation === "LIYUE") {
           result = partyData.reduce(
             (result, data) => result + (data?.nation === "liyue" ? 1 : 0),
             appChar.nation === "liyue" ? 1 : 0
@@ -254,7 +266,7 @@ export class BareBonusGetter {
         } else {
           result = partyData.reduce((total, teammate) => total + (teammate?.nation === appChar.nation ? 1 : 0), 0);
 
-          if (stack.nation === "different") {
+          if (stack.nation === "DIFFERENT") {
             result = partyData.filter(Boolean).length - result;
           }
         }
@@ -290,6 +302,14 @@ export class BareBonusGetter {
       }
     }
 
+    if (stack.capacity) {
+      const capacityExtra = stack.capacity.extra;
+      const capacity =
+        stack.capacity.value +
+        (isApplicableEffect(capacityExtra, this.info, inputs, fromSelf) ? capacityExtra.value : 0);
+
+      result = Math.max(capacity - result, 0);
+    }
     if (stack.baseline) {
       if (result <= stack.baseline) return 0;
       result -= stack.baseline;
@@ -300,13 +320,13 @@ export class BareBonusGetter {
     result = this.applyMax(result, stack.max, support);
 
     return Math.max(result, 0);
-  }
+  };
 
-  getBareBonus(
+  protected getBareBonus = (
     config: EntityBonusCore,
     { inputs, fromSelf = true, refi = 0 }: PartiallyOptional<GetBareBonusSupportInfo, "fromSelf">,
     basedOnStable = false
-  ): BareBonus {
+  ): BareBonus => {
     const support: InternalSupportInfo = {
       inputs,
       fromSelf,
@@ -339,5 +359,5 @@ export class BareBonusGetter {
     initial.value = this.applyMax(initial.value, config.max, support);
 
     return initial;
-  }
+  };
 }

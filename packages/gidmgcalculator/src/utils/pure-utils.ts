@@ -1,4 +1,5 @@
 import { ATTACK_ELEMENTS } from "@Backend";
+import { IS_DEV_ENV } from "@Src/constants";
 
 export function getSearchParam(key: string) {
   const searchParams = new URLSearchParams(window.location.search);
@@ -6,9 +7,8 @@ export function getSearchParam(key: string) {
 }
 
 export function getImgSrc(src?: string) {
-  const isDevEnv = import.meta.env.DEV;
-  // const isDevEnv = false;
-  if (isDevEnv || !src) return "";
+  // const IS_DEV_ENV = false;
+  if (IS_DEV_ENV || !src) return "";
 
   const isFromWiki = src.split("/")[0].length === 1;
   return isFromWiki ? `https://static.wikia.nocookie.net/gensin-impact/images/${src}.png` : src;

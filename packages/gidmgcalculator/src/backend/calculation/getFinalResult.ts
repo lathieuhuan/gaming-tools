@@ -1,5 +1,5 @@
 import type { CalcCharacter, CalcWeapon, ElementModCtrl, PartyData } from "@Src/types";
-import type { AttackBonusesControl } from "../controls";
+import type { AttackBonusesArchive, AttackBonusesControl } from "../controls";
 import type {
   AppCharacter,
   AppWeapon,
@@ -24,7 +24,7 @@ type GetFinalResultArgs = {
   weapon: CalcWeapon;
   appWeapon: AppWeapon;
   totalAttr: TotalAttribute;
-  attBonusesCtrl: AttackBonusesControl;
+  attkBonusesArchive: AttackBonusesArchive;
   elmtModCtrls: ElementModCtrl;
   resistances: ResistanceReduction;
   tracker?: TrackerControl;
@@ -39,7 +39,7 @@ export default function getFinalResult({
   appWeapon,
   partyData,
   totalAttr,
-  attBonusesCtrl,
+  attkBonusesArchive,
   elmtModCtrls,
   resistances,
   tracker,
@@ -88,12 +88,12 @@ export default function getFinalResult({
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
     const { mult, dmgType } = TRANSFORMATIVE_REACTION_INFO[rxn];
-    const normalMult = 1 + attBonusesCtrl.getBare("pct_", rxn) / 100;
+    const normalMult = 1 + attkBonusesArchive.getBare("pct_", rxn) / 100;
     const resMult = dmgType !== "absorb" ? resistances[dmgType] : 1;
     const baseValue = baseRxnDmg * mult;
     const nonCrit = baseValue * normalMult * resMult;
-    const cDmg_ = attBonusesCtrl.getBare("cDmg_", rxn) / 100;
-    const cRate_ = Math.max(attBonusesCtrl.getBare("cRate_", rxn), 0) / 100;
+    const cDmg_ = attkBonusesArchive.getBare("cDmg_", rxn) / 100;
+    const cRate_ = Math.max(attkBonusesArchive.getBare("cRate_", rxn), 0) / 100;
 
     finalResult.RXN_CALC[rxn] = {
       type: "attack",
@@ -137,7 +137,7 @@ export default function getFinalResult({
       base: (totalAttr[basedOn] * mult) / 100,
       record,
       rxnMult: 1,
-      getBonus: (key) => attBonusesCtrl.get(key, attElmt),
+      getBonus: (key) => attkBonusesArchive.get(key, attElmt),
     });
 
     tracker?.recordCalcItem("WP_CALC", name, record);

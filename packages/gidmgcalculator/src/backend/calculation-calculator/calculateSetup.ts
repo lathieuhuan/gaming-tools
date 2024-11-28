@@ -24,7 +24,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     partyData,
   };
 
-  const { artAttr, attBonusesCtrl, totalAttr } = getCalculationStats(setup, calcInfo, tracker);
+  const { artAttr, attkBonusesArchive, totalAttr } = getCalculationStats(setup, calcInfo, tracker);
 
   const resistances = getResistances(setup, calcInfo, target, tracker);
 
@@ -35,7 +35,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     NAsConfig,
     customInfusion,
     totalAttr,
-    attBonusesCtrl,
+    attkBonusesArchive,
   });
 
   const calculateCalcItem = getCalcItemCalculator(char.level, target.level, totalAttr, resistances);
@@ -47,7 +47,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     appWeapon,
     partyData,
     totalAttr,
-    attBonusesCtrl,
+    attkBonusesArchive,
     elmtModCtrls,
     resistances,
     tracker,
@@ -59,7 +59,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   return {
     totalAttr,
     artAttr,
-    attBonus: attBonusesCtrl.serialize(),
+    attkBonuses: attkBonusesArchive.serialize(),
     finalResult,
   };
 };

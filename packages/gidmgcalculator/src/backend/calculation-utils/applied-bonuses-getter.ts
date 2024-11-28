@@ -1,8 +1,7 @@
 import type {
+  AppliedAttributeBonus,
   AppliedBonuses,
-  AttributeStat,
   BareBonus,
-  CalculationInfo,
   EntityBonusBasedOn,
   EntityBonusCore,
   EntityBonusTargets,
@@ -25,25 +24,21 @@ type ApplyBonusSupportInfo = {
 export class AppliedBonusesGetter extends BareBonusGetter {
   private modStackingCtrl = new ModifierStackingControl();
 
-  constructor(protected info: CalculationInfo) {
-    super(info);
-  }
-
-  private isFinalBonus(basedOn?: EntityBonusBasedOn) {
+  private isFinalBonus = (basedOn?: EntityBonusBasedOn) => {
     if (basedOn) {
       const field = typeof basedOn === "string" ? basedOn : basedOn.field;
       return field !== "base_atk";
     }
     return false;
-  }
+  };
 
-  private isTrulyFinalBonus(bonus: EntityBonusCore) {
+  private isTrulyFinalBonus = (bonus: EntityBonusCore) => {
     return (
       this.isFinalBonus(bonus.basedOn) ||
       (typeof bonus.preExtra === "object" && this.isFinalBonus(bonus.preExtra.basedOn)) ||
       (typeof bonus.sufExtra === "object" && this.isFinalBonus(bonus.sufExtra.basedOn))
     );
-  }
+  };
 
   private applyBonus(
     bonus: BareBonus,
@@ -56,19 +51,14 @@ export class AppliedBonusesGetter extends BareBonusGetter {
   ): AppliedBonuses {
     if (!bonus.value) return result;
 
-    const { description } = support;
-
     for (const target of Array_.toArray(targets)) {
-      const isStackable =
-        target.module.slice(0, 2) === "id" &&
-        this.modStackingCtrl.isStackable({ trackId: support.unstackableId, paths: target.path });
-
+      const isStackable = this.modStackingCtrl.isStackable({ trackId: support.unstackableId, paths: target.path });
       if (!isStackable) continue;
 
       switch (target.module) {
         case "ATTR": {
           for (const targetPath of Array_.toArray(target.path)) {
-            let toStat: AttributeStat;
+            let toStat: AppliedAttributeBonus["toStat"];
 
             switch (targetPath) {
               case "INP_ELMT": {
@@ -86,7 +76,7 @@ export class AppliedBonusesGetter extends BareBonusGetter {
             result.attrBonuses.push({
               ...bonus,
               toStat,
-              description,
+              description: support.description,
             });
           }
           break;
@@ -98,7 +88,7 @@ export class AppliedBonusesGetter extends BareBonusGetter {
               toType: `NA.${elmt}`,
               toKey: target.path,
               value: bonus.value,
-              description,
+              description: support.description,
             });
           }
           break;
@@ -109,7 +99,7 @@ export class AppliedBonusesGetter extends BareBonusGetter {
               toType: module,
               toKey: target.path,
               value: bonus.value,
-              description,
+              description: support.description,
             });
           }
       }

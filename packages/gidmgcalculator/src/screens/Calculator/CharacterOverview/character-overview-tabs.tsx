@@ -41,8 +41,7 @@ export function WeaponTab() {
 export function ArtifactsTab() {
   const totalAttr = useSelector(selectTotalAttr);
   const artifacts = useSelector(selectArtifacts);
-
-  const artAttr = TotalAttributeControl.getArtifactAttribute(artifacts, totalAttr);
+  const artifactAttributes = TotalAttributeControl.getArtifactAttributes(artifacts).finalize(totalAttr);
 
   const { activeIndex, renderTabs } = useTabs({
     level: 2,
@@ -55,7 +54,7 @@ export function ArtifactsTab() {
 
       <CarouselSpace className="mt-3 grow" current={activeIndex}>
         <div className="h-full custom-scrollbar">
-          <AttributeTable attributes={artAttr} />
+          <AttributeTable attributes={artifactAttributes} />
         </div>
         <div className="h-full hide-scrollbar">
           <SetBonusesView setBonuses={GeneralCalc.getArtifactSetBonuses(artifacts)} noTitle />

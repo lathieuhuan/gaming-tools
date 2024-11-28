@@ -13,7 +13,7 @@ import type {
   NormalAttacksConfig,
   TotalAttribute,
 } from "../types";
-import type { AttackBonusesControl, CalcItemRecord } from "../controls";
+import type { AttackBonusesArchive, CalcItemRecord } from "../controls";
 
 import Array_ from "@Src/utils/array-utils";
 import { CharacterCalc, GeneralCalc } from "../common-utils";
@@ -37,7 +37,7 @@ export type GetAttackPatternConfArgs = {
   NAsConfig: NormalAttacksConfig;
   customInfusion: Infusion;
   totalAttr: TotalAttribute;
-  attBonusesCtrl: AttackBonusesControl;
+  attkBonusesArchive: AttackBonusesArchive;
 };
 
 export default function getAttackPatternConfig({
@@ -45,7 +45,7 @@ export default function getAttackPatternConfig({
   NAsConfig,
   customInfusion,
   totalAttr,
-  attBonusesCtrl,
+  attkBonusesArchive,
 }: GetAttackPatternConfArgs) {
   return (patternKey: AttackPattern) => {
     const {
@@ -100,9 +100,9 @@ export default function getAttackPatternConfig({
 
         if (type === "attack") {
           const mixedType = finalAttPatt ? (`${finalAttPatt}.${attElmt}` as const) : undefined;
-          return attBonusesCtrl.get(key, finalAttPatt, attElmt, mixedType, item.id);
+          return attkBonusesArchive.get(key, finalAttPatt, attElmt, mixedType, item.id);
         }
-        return attBonusesCtrl.get(key, finalAttPatt, item.id);
+        return attkBonusesArchive.getBare(key, finalAttPatt, item.id);
       };
 
       /** ========== Attack Reaction Multiplier ========== */
@@ -111,7 +111,7 @@ export default function getAttackPatternConfig({
 
       // deal elemental dmg and want amplifying reaction
       if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
-        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, attBonusesCtrl.getBare("pct_", reaction));
+        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, attkBonusesArchive.getBare("pct_", reaction));
       } else {
         reaction = null;
       }
@@ -120,7 +120,7 @@ export default function getAttackPatternConfig({
         itemType: type,
         multFactors: [],
         normalMult: 1,
-        exclusives: attBonusesCtrl.getExclusiveBonuses(item),
+        exclusives: attkBonusesArchive.getExclusiveBonuses(item),
       });
 
       const configMultFactor = (factor: CalcItemMultFactor) => {

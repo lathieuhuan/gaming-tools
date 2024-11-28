@@ -10,32 +10,27 @@ import type {
 import type { TrackerControl } from "./tracker-control";
 
 import Array_ from "@Src/utils/array-utils";
+import TypeCounter from "@Src/utils/type-counter";
+import { getPenaltyValue } from "../calculation-utils/getPenaltyValue";
+import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
 import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
-import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
-import { getPenaltyValue } from "../calculation-utils/getPenaltyValue";
 
 export class ResistanceReductionControl {
-  private resistReduct: ResistanceReduction;
+  private reductCounter = new TypeCounter<ResistanceReductionKey>();
 
-  constructor(private info: CalculationInfo, private tracker?: TrackerControl) {
-    this.resistReduct = { def: 0 } as ResistanceReduction;
+  constructor(private info: CalculationInfo, private tracker?: TrackerControl) {}
 
-    for (const key of ATTACK_ELEMENTS) {
-      this.resistReduct[key] = 0;
-    }
-  }
-
-  add(key: keyof ResistanceReduction, value: number, description: string) {
-    this.resistReduct[key] += value;
+  add(key: ResistanceReductionKey, value: number, description: string) {
+    this.reductCounter.add(key, value);
     this.tracker?.recordStat(ECalcStatModule.RESIST, key, value, description);
   }
 
-  apply(target: Target) {
-    const targetResistances = { def: this.resistReduct.def } as ResistanceReduction;
+  applyTo(target: Target) {
+    const targetResistances = { def: this.reductCounter.get("def") } as ResistanceReduction;
 
-    for (const key of [...ATTACK_ELEMENTS]) {
-      let RES = (target.resistances[key] - this.resistReduct[key]) / 100;
+    for (const key of ATTACK_ELEMENTS) {
+      const RES = (target.resistances[key] - this.reductCounter.get(key)) / 100;
       targetResistances[key] = RES < 0 ? 1 - RES / 2 : RES >= 0.75 ? 1 / (4 * RES + 1) : 1 - RES;
     }
     return targetResistances;
@@ -57,7 +52,7 @@ export class ResistanceReductionControl {
         continue;
       }
       switch (target.type) {
-        case "inp_elmt": {
+        case "INP_ELMT": {
           const elmtIndex = inputs[target.inpIndex ?? 0];
           paths.add(ELEMENT_TYPES[elmtIndex]);
           break;

@@ -2,7 +2,7 @@ import type { AttackBonusKey, AttackBonusType, AttributeStat } from "../common.t
 
 // ========== BONUS TARGET ==========
 
-type AttributeTargetPath = "INP_ELMT" | "OWN_ELMT" | AttributeStat;
+type AttributeTargetPath = "INP_ELMT" | "OWN_ELMT" | AttributeStat | "base_atk";
 
 type AttributeTarget = {
   module: "ATTR";
@@ -15,6 +15,4 @@ type AttackBonusTarget = {
   path: AttackBonusKey;
 };
 
-type EntityBonusTarget = AttributeTarget | AttackBonusTarget;
-
-export type EntityBonusTargets = EntityBonusTarget | EntityBonusTarget[];
+export type EntityBonusTargets = AttributeTarget | AttackBonusTarget | AttackBonusTarget[];

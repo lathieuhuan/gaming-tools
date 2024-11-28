@@ -1,18 +1,10 @@
 import type { PartiallyOptional } from "rond";
-import type { AppliedAttackBonus, AttackBonusKey, AttackBonusType, CalcItem } from "../types";
-import type { CalcItemExclusiveBonus } from "./tracker-control";
+import type { AppliedAttackBonus, AttackBonuses, AttackBonusKey, AttackBonusType, CalcItem, Level } from "../types";
+import type { CalcAtomicRecord, CalcItemExclusiveBonus } from "./tracker-control";
 import Array_ from "@Src/utils/array-utils";
-
-type AttackBonusRecord = {
-  desc: string;
-  value: number;
-  to: AttackBonusKey;
-};
-
-export type AttackBonuses = Array<{
-  type: AttackBonusType;
-  records: AttackBonusRecord[];
-}>;
+import Object_ from "@Src/utils/object-utils";
+import TypeCounter from "@Src/utils/type-counter";
+import { GeneralCalc } from "../common-utils";
 
 /** should not use 'all' in AttackBonusType */
 type GetBonusPaths = Array<AttackBonusType | undefined>;
@@ -20,25 +12,18 @@ type GetBonusPaths = Array<AttackBonusType | undefined>;
 type BonusToAdd = PartiallyOptional<AppliedAttackBonus, "id">;
 
 export class AttackBonusesControl {
-  private attBonuses: AttackBonuses = [];
-
-  private finalizedBonusAll = false;
-  private attackBonusAll: Partial<Record<AttackBonusKey, number>> = {};
+  private attkBonuses: AttackBonuses = [];
 
   add = (bonuses: BonusToAdd | BonusToAdd[]) => {
     for (const bonus of Array_.toArray(bonuses)) {
       if (bonus.value) {
-        const existedBonus = this.attBonuses.find((existBonus) => existBonus.type === bonus.toType);
-        const record: AttackBonusRecord = {
-          desc: bonus.description,
-          value: bonus.value,
-          to: bonus.toKey,
-        };
+        const record = Object_.pickProps(bonus, ["value", "toKey", "description"]);
+        const existedBonus = this.attkBonuses.find((existBonus) => existBonus.type === bonus.toType);
 
         if (existedBonus) {
           existedBonus.records.push(record);
         } else {
-          this.attBonuses.push({
+          this.attkBonuses.push({
             type: bonus.toType,
             records: [record],
           });
@@ -47,23 +32,17 @@ export class AttackBonusesControl {
     }
   };
 
-  private finalizeBonusAll = () => {
-    for (const bonus of this.attBonuses) {
-      if (bonus.type === "all") {
-        for (const record of bonus.records) {
-          this.attackBonusAll[record.to] = (this.attackBonusAll[record.to] ?? 0) + record.value;
-        }
-      }
-    }
-  };
-
-  static get = (attBonuses: AttackBonuses, path: AttackBonusKey, ...paths: GetBonusPaths) => {
+  /**
+   * Get all bonuses whose type is included in paths.
+   * Ex: paths = ['ES', 'pyro'] => get ES and pyro bonuses, not ES.pyro
+   */
+  static get = (attkBonuses: AttackBonuses, key: AttackBonusKey, ...paths: GetBonusPaths) => {
     let result = 0;
 
-    for (const bonus of attBonuses) {
+    for (const bonus of attkBonuses) {
       if (paths.some((path) => path && bonus.type === path)) {
         for (const record of bonus.records) {
-          if (record.to === path) {
+          if (record.toKey === key) {
             result += record.value;
           }
         }
@@ -72,35 +51,85 @@ export class AttackBonusesControl {
     return result;
   };
 
-  get = (key: AttackBonusKey, ...paths: GetBonusPaths) => {
-    if (!this.finalizedBonusAll) {
-      this.finalizeBonusAll();
-      this.finalizedBonusAll = true;
-    }
+  /** Calculate & add Dendro flat bonus from characterLevel & all spread pct_ bonus */
+  applySpreadBuff = (characterLevel: Level) => {
+    this.add({
+      value: GeneralCalc.getQuickenBuffDamage(
+        "spread",
+        characterLevel,
+        AttackBonusesControl.get(this.attkBonuses, "pct_", "spread")
+      ),
+      toType: "dendro",
+      toKey: "flat",
+      description: "Spread reaction",
+    });
+  };
 
-    return (this.attackBonusAll[key] ?? 0) + AttackBonusesControl.get(this.attBonuses, key, ...paths);
+  /** Calculate & add Electro flat bonus from characterLevel & all aggravate pct_ bonus */
+  applyAggravateBuff = (characterLevel: Level) => {
+    this.add({
+      value: GeneralCalc.getQuickenBuffDamage(
+        "aggravate",
+        characterLevel,
+        AttackBonusesControl.get(this.attkBonuses, "pct_", "aggravate")
+      ),
+      toType: "electro",
+      toKey: "flat",
+      description: "Aggravate reaction",
+    });
+  };
+
+  /**
+   * Should not add bonuses after genArchive, the current logic is add no get -> get & no add
+   * */
+  genArchive = () => {
+    return new AttackBonusesArchive(Object_.clone(this.attkBonuses));
+  };
+}
+
+/** AttackBonuses */
+export class AttackBonusesArchive {
+  private allBonuses = new TypeCounter<AttackBonusKey>();
+
+  constructor(private attkBonuses: AttackBonuses) {
+    for (const bonus of this.attkBonuses) {
+      if (bonus.type === "all") {
+        for (const record of bonus.records) {
+          this.allBonuses.add(record.toKey, record.value);
+        }
+      }
+    }
+  }
+
+  /**
+   * Get all bonuses whose type is included in paths.
+   * Ex: paths = ['ES', 'pyro'] => get ES and pyro bonuses, not ES.pyro
+   */
+  get = (key: AttackBonusKey, ...paths: GetBonusPaths) => {
+    return this.allBonuses.get(key) + AttackBonusesControl.get(this.attkBonuses, key, ...paths);
   };
 
   getBare = (key: AttackBonusKey, ...paths: GetBonusPaths) => {
-    return AttackBonusesControl.get(this.attBonuses, key, ...paths);
+    return AttackBonusesControl.get(this.attkBonuses, key, ...paths);
   };
 
-  getExclusiveBonuses = (item: CalcItem): CalcItemExclusiveBonus[] => {
+  getExclusiveBonuses = (entity: CalcItem["id"] | Pick<CalcItem, "id">): CalcItemExclusiveBonus[] => {
     const filterRecords: CalcItemExclusiveBonus[] = [];
-    const bonusRecords = item.id ? this.attBonuses.find((bonus) => bonus.type === item.id)?.records || [] : [];
+    const id = typeof entity === "string" ? entity : entity?.id;
+    const bonusRecords = id ? this.attkBonuses.find((bonus) => bonus.type === id)?.records || [] : [];
 
     for (const record of bonusRecords) {
-      const existed = filterRecords.find((filterRecord) => filterRecord.type === record.to);
-      const newRecord = {
+      const existed = filterRecords.find((filterRecord) => filterRecord.type === record.toKey);
+      const newRecord: CalcAtomicRecord = {
         value: record.value,
-        desc: record.desc,
+        description: record.description,
       };
 
       if (existed) {
         existed.records.push(newRecord);
       } else {
         filterRecords.push({
-          type: record.to,
+          type: record.toKey,
           records: [newRecord],
         });
       }
@@ -108,5 +137,5 @@ export class AttackBonusesControl {
     return filterRecords;
   };
 
-  serialize = () => ([] as AttackBonuses).concat(this.attBonuses);
+  serialize = () => this.attkBonuses;
 }

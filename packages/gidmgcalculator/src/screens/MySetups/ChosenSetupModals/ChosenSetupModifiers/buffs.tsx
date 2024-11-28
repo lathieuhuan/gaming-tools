@@ -11,14 +11,14 @@ import { renderModifiers, VapMeltBuffItem, QuickenBuffItem, ResonanceBuffItem } 
 interface ElementBuffsDetailProps {
   charLv: Level;
   elmtModCtrls: ElementModCtrl;
-  attBonus: AttackBonuses;
+  attkBonuses: AttackBonuses;
   vision: ElementType;
   customInfusion: Infusion;
 }
 export function ElementBuffsDetail({
   charLv,
   elmtModCtrls,
-  attBonus,
+  attkBonuses,
   vision,
   customInfusion,
 }: ElementBuffsDetailProps) {
@@ -39,9 +39,9 @@ export function ElementBuffsDetail({
 
   const renderReaction = (reaction: AttackReaction, element: ElementType) => {
     return reaction === "melt" || reaction === "vaporize" ? (
-      <VapMeltBuffItem mutable={false} {...{ reaction, element, attBonus }} />
+      <VapMeltBuffItem mutable={false} {...{ reaction, element, attkBonuses }} />
     ) : reaction === "spread" || reaction === "aggravate" ? (
-      <QuickenBuffItem mutable={false} {...{ reaction, element, characterLv: charLv, attBonus }} />
+      <QuickenBuffItem mutable={false} {...{ reaction, element, characterLv: charLv, attkBonuses }} />
     ) : null;
   };
 
