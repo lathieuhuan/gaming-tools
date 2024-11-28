@@ -15,6 +15,7 @@ export interface ArtifactViewProps<T extends CalcArtifact | UserArtifact> {
   mutable?: boolean;
   className?: string;
   artifact?: T;
+  action?: React.ReactNode;
   onEnhance?: (level: number, artifact: T) => void;
   onChangeMainStatType?: (type: AttributeStat, artifact: T) => void;
   onChangeSubStat?: (index: number, changes: Partial<ArtifactSubStat>, artifact: T) => void;
@@ -23,6 +24,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
   className,
   artifact,
   mutable,
+  action,
   onEnhance,
   onChangeMainStatType,
   onChangeSubStat,
@@ -37,8 +39,14 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
 
   return (
     <div className={className}>
-      <div className={`px-4 pt-1 bg-rarity-${rarity}`} onDoubleClick={() => console.log(artifact)}>
-        <p className="text-lg font-semibold text-black truncate">{appArtifact?.name}</p>
+      <div className={`bg-rarity-${rarity} flex items-center`}>
+        <p
+          className="mr-auto pl-4 pr-2 py-0.5 text-lg font-semibold text-black truncate"
+          onDoubleClick={() => console.log(artifact)}
+        >
+          {appArtifact?.name}
+        </p>
+        {action}
       </div>
 
       <div className="mt-4 px-3 flex justify-between items-start">

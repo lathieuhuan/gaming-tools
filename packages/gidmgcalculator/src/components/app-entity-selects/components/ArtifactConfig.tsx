@@ -9,6 +9,8 @@ interface ArtifactConfigProps {
   typeSelect?: React.ReactNode;
   maxRarity?: number;
   batchConfigNode?: React.ReactNode;
+  /** Default to 'Forge' */
+  mainActionLabel?: string;
   moreButtons?: ArtifactCardAction[];
   onChangeRarity?: (rarity: number) => void;
   onUpdateConfig?: (properties: Partial<Artifact>) => void;
@@ -19,6 +21,7 @@ export function ArtifactConfig({
   typeSelect,
   maxRarity = 5,
   batchConfigNode,
+  mainActionLabel = "Forge",
   moreButtons = [],
   onChangeRarity,
   onUpdateConfig,
@@ -37,7 +40,7 @@ export function ArtifactConfig({
           <div className="flex items-start justify-between">
             <label className="h-8 flex items-center text-sm">Rarity</label>
             <Rarity
-              className="gap-4"
+              className="gap-4 w-56"
               value={config.rarity}
               mutable={{ min: 4, max: maxRarity }}
               onChange={onClickRarityStar}
@@ -73,7 +76,7 @@ export function ArtifactConfig({
             actions={[
               ...moreButtons,
               {
-                children: "Forge",
+                children: mainActionLabel,
                 variant: "primary",
                 onClick: (_, config) => onSelect?.(config),
               },

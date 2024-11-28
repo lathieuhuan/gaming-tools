@@ -21,6 +21,7 @@ export type AfterSelectAppEntity = (itemCode: number, quantity?: number) => void
 interface SelectOptionsProps<T> {
   className?: string;
   data: T[];
+  initialChosenCode?: number;
   hiddenCodes?: Set<number>;
   /** Default to 'No data' */
   emptyText?: string;
@@ -38,6 +39,7 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
   shouldHideSelected,
   emptyText = "No data",
   hasConfigStep,
+  initialChosenCode = 0,
   hiddenCodes,
   renderOptionConfig,
   onChange,
@@ -51,7 +53,7 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
 
   const [itemCounts, setItemCounts] = useState<Record<number, number>>({});
   const [pickedCodes, setPickedCodes] = useState(new Set<number>());
-  const [chosenCode, setChosenCode] = useState(0);
+  const [chosenCode, setChosenCode] = useState(initialChosenCode);
   const [empty, setEmpty] = useState(false);
   const [overflow, setOverflow] = useState(true);
 
@@ -81,6 +83,10 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
     };
 
     document.addEventListener("keydown", handleEnter);
+
+    if (initialChosenCode) {
+      itemUtils.queryById(initialChosenCode)?.element.scrollIntoView();
+    }
 
     return () => {
       document.removeEventListener("keydown", handleEnter);
@@ -168,7 +174,7 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
         )}
       >
         <div className="item-container flex flex-wrap">
-          {data.map((item, i) => {
+          {data.map((item) => {
             const hidden =
               pickedCodes.has(item.code) ||
               (shouldCheckKeyword && !item.name.toLowerCase().includes(lowerKeyword)) ||
@@ -225,6 +231,7 @@ export interface AppEntitySelectProps<T extends AppEntityOptionModel = AppEntity
 }
 export function AppEntitySelect<T extends AppEntityOptionModel = AppEntityOptionModel>({
   data,
+  initialChosenCode,
   hiddenCodes,
   emptyText,
   hasConfigStep,
@@ -241,7 +248,16 @@ export function AppEntitySelect<T extends AppEntityOptionModel = AppEntityOption
           <AppEntityOptions
             onClose={onClose}
             {...arg}
-            {...{ data, hiddenCodes, emptyText, hasConfigStep, shouldHideSelected, renderOptionConfig, onChange }}
+            {...{
+              data,
+              initialChosenCode,
+              hiddenCodes,
+              emptyText,
+              hasConfigStep,
+              shouldHideSelected,
+              renderOptionConfig,
+              onChange,
+            }}
           />
         );
       }}

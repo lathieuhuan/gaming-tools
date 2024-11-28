@@ -16,6 +16,9 @@ import { AppEntitySelect, type AppEntitySelectProps, type AfterSelectAppEntity }
 import { ArtifactConfig } from "./components/ArtifactConfig";
 
 export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> {
+  /** Initital config */
+  workpiece?: Artifact;
+  initialMaxRarity?: number;
   /** Only works when hasConfigStep */
   allowBatchForging?: boolean;
   /** Only works when hasConfigStep */
@@ -29,6 +32,8 @@ export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMulti
   onClose: () => void;
 }
 const ArtifactSmith = ({
+  workpiece,
+  initialMaxRarity = 5,
   allowBatchForging,
   defaultBatchForging = false,
   forFeature,
@@ -39,8 +44,8 @@ const ArtifactSmith = ({
   onClose,
   ...templateProps
 }: ArtifactForgeProps) => {
-  const [artifactConfig, setArtifactConfig] = useState<Artifact>();
-  const [maxRarity, setMaxRarity] = useState(5);
+  const [artifactConfig, setArtifactConfig] = useState<Artifact | undefined>(workpiece);
+  const [maxRarity, setMaxRarity] = useState(initialMaxRarity);
   const [batchForging, setBatchForging] = useState(defaultBatchForging);
 
   const updateConfig = (update: (prevConfig: Artifact) => Artifact) => {
@@ -50,7 +55,7 @@ const ArtifactSmith = ({
   };
 
   const { artifactTypes, updateArtifactTypes, renderArtifactTypeSelect } = useArtifactTypeSelect(
-    forcedType || initialTypes,
+    workpiece?.type || forcedType || initialTypes,
     {
       multiple: batchForging,
       required: batchForging,
@@ -162,6 +167,7 @@ const ArtifactSmith = ({
     <AppEntitySelect
       title={<p className="text-base sm:text-xl leading-7">Artifact Forge</p>}
       data={allArtifactSets}
+      initialChosenCode={workpiece?.code}
       emptyText="No artifacts found"
       hasSearch
       renderOptionConfig={(afterSelect, selectBody) => {
@@ -171,6 +177,7 @@ const ArtifactSmith = ({
             maxRarity={maxRarity}
             typeSelect={forcedType ? null : renderArtifactTypeSelect()}
             batchConfigNode={renderBatchConfigNode(afterSelect, selectBody)}
+            mainActionLabel={workpiece ? "Reforge" : "Forge"}
             moreButtons={[
               getBackAction(selectBody),
               {
@@ -193,7 +200,16 @@ const ArtifactSmith = ({
       onChange={(mold, isConfigStep) => {
         if (mold) {
           if (isConfigStep) {
-            setArtifactConfig(Entity_.createArtifact({ ...mold, type: forcedType || artifactTypes[0] }, 0));
+            const newConfig = Entity_.createArtifact(
+              {
+                ...artifactConfig,
+                ...mold,
+                type: forcedType || artifactTypes[0],
+              },
+              0
+            );
+
+            setArtifactConfig(newConfig);
             setMaxRarity(mold.rarity);
           } else {
             onForgeArtifact(Entity_.createArtifact({ ...mold, type: artifactTypes[0] }));
