@@ -1,5 +1,6 @@
 import { useRef, useState, useEffect } from "react";
-import { FaCaretRight, FaMinus, FaSquare } from "react-icons/fa";
+import { FaCaretRight, FaMinus } from "react-icons/fa";
+import { TbRectangleVerticalFilled } from "react-icons/tb";
 import { ItemCase, clsx, useIntersectionObserver } from "rond";
 
 import type { UserArtifact, UserItem, UserWeapon } from "@Src/types";
@@ -72,7 +73,7 @@ export function InventoryRack<T extends UserItem>({
   };
 
   return (
-    <div className="w-full flex flex-col" style={{ minWidth: "21rem" }}>
+    <div className="w-full flex flex-col overflow-hidden" style={{ minWidth: "21rem" }}>
       <div ref={observedAreaRef} className="grow custom-scrollbar xm:pr-2" style={{ overflowX: "hidden" }}>
         {!ready && (
           <div ref={pioneerRef} className={clsx("opacity-0", itemCls)}>
@@ -128,27 +129,43 @@ export function InventoryRack<T extends UserItem>({
         {ready && !data.length ? <p className="py-4 text-hint-color text-lg text-center">{emptyText}</p> : null}
       </div>
 
-      {data.length && deadEnd ? (
-        <div className="pt-2 flex-center space-x-2">
-          <button
-            className="w-7 h-7 flex-center glow-on-hover disabled:opacity-50"
-            disabled={pageNo <= 0}
-            onClick={goBack}
-          >
-            {pageNo > 0 ? <FaCaretRight className="rotate-180 text-2xl" /> : <FaSquare className="text-lg" />}
-          </button>
+      {data.length ? (
+        <div className="relative">
+          <div className="absolute bottom-0 left-2 text-sm leading-none text-hint-color">{data.length} items</div>
 
-          <p className="font-semibold">
-            <span className="text-heading-color">{pageNo + 1}</span> / {deadEnd + 1}
-          </p>
+          {deadEnd ? (
+            <div className="pt-2 flex-center space-x-2">
+              <button
+                className="w-7 h-7 flex-center glow-on-hover disabled:opacity-50"
+                disabled={pageNo <= 0}
+                onClick={goBack}
+              >
+                {pageNo > 0 ? (
+                  <FaCaretRight className="rotate-180 text-2xl" />
+                ) : (
+                  <TbRectangleVerticalFilled className="text-lg" />
+                )}
+              </button>
 
-          <button
-            className="w-7 h-7 flex-center glow-on-hover disabled:opacity-50"
-            disabled={pageNo >= deadEnd}
-            onClick={goNext}
-          >
-            {pageNo < deadEnd ? <FaCaretRight className="text-2xl" /> : <FaSquare className="text-lg" />}
-          </button>
+              <p className="font-semibold">
+                <span className="text-heading-color">{pageNo + 1}</span> / {deadEnd + 1}
+              </p>
+
+              <button
+                className="w-7 h-7 flex-center glow-on-hover disabled:opacity-50"
+                disabled={pageNo >= deadEnd}
+                onClick={goNext}
+              >
+                {pageNo < deadEnd ? (
+                  <FaCaretRight className="text-2xl" />
+                ) : (
+                  <TbRectangleVerticalFilled className="text-lg" />
+                )}
+              </button>
+            </div>
+          ) : (
+            <div className="h-7 shrink-0" />
+          )}
         </div>
       ) : null}
     </div>

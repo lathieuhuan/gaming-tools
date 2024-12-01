@@ -54,7 +54,7 @@ export function WeaponCard<T extends CalcWeapon | UserWeapon>({
         ) : null}
       </div>
 
-      {withOwnerLabel ? <OwnerLabel className="mt-4" item={weapon} /> : null}
+      {withOwnerLabel ? <OwnerLabel className="mt-3" item={weapon} /> : null}
     </div>
   );
 }

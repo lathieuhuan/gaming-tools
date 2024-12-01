@@ -154,7 +154,7 @@ const ArtifactInventoryCore = ({
                 </div>
               ) : null}
 
-              <OwnerLabel className="mt-4" item={chosenArtifact} />
+              <OwnerLabel className="mt-3" item={chosenArtifact} />
             </div>
           </div>
         );

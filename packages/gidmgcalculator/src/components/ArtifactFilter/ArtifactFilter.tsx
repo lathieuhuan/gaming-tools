@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
-import { FaEraser, FaSquare } from "react-icons/fa";
-import { FaCaretRight } from "react-icons/fa";
+import { FaEraser, FaCaretRight } from "react-icons/fa";
+import { TbRectangleVerticalFilled } from "react-icons/tb";
 import { Button, Modal, useScreenWatcher, clsx, type ClassValue } from "rond";
 import { ArtifactType } from "@Backend";
 
@@ -36,7 +36,7 @@ const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose 
           disabled={position <= minIndex}
           onClick={() => setActiveIndex((prev) => prev - 1)}
         >
-          {position > minIndex ? <FaCaretRight className="text-2xl rotate-180" /> : <FaSquare className="opacity-50" />}
+          {position > minIndex ? <FaCaretRight className="text-2xl rotate-180" /> : <TbRectangleVerticalFilled className="opacity-50" />}
         </button>
         <p style={{ width: 100 }}>{title}</p>
         <button
@@ -45,7 +45,7 @@ const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose 
           disabled={position >= 2}
           onClick={() => setActiveIndex((prev) => prev + 1)}
         >
-          {position < 2 ? <FaCaretRight className="text-2xl" /> : <FaSquare className="opacity-50" />}
+          {position < 2 ? <FaCaretRight className="text-2xl" /> : <TbRectangleVerticalFilled className="opacity-50" />}
         </button>
       </div>
     );

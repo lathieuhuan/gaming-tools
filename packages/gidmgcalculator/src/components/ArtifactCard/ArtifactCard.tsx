@@ -58,7 +58,7 @@ export function ArtifactCard<T extends CalcArtifact | UserArtifact>({
         ) : null}
       </div>
 
-      {withOwnerLabel ? <OwnerLabel className="mt-4" item={artifact} /> : null}
+      {withOwnerLabel ? <OwnerLabel className="mt-3" item={artifact} /> : null}
     </div>
   );
 }
