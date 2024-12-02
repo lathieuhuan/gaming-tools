@@ -3,6 +3,7 @@ import { FaBars, FaCog, FaDonate, FaDownload, FaInfoCircle, FaQuestionCircle, Fa
 import { BiDetail } from "react-icons/bi";
 import { useClickOutside, Button, Popover, useScreenWatcher, LoadingSpin } from "rond";
 
+import { IS_DEV_ENV } from "@Src/constants";
 import { useMetadata } from "@Src/hooks";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI, type UIState, type AppScreen } from "@Store/ui-slice";
@@ -65,7 +66,7 @@ export function NavBar() {
       </div>
 
       <div className="ml-auto flex">
-        {import.meta.env.DEV && (
+        {IS_DEV_ENV && (
           <Button
             shape="square"
             icon={status === "loading" ? <LoadingSpin size="small" className="text-black" /> : null}

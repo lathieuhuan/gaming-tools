@@ -14,23 +14,20 @@ function isValidVersion(version: string) {
   return versionFrags.every((frag, i) => +frag >= +minVersionFrags[i]);
 }
 
-const currentSec = () => Math.round(Date.now() / 1000);
-
-const lastTryCtrl = {
-  getSecElapsed: () => {
-    return currentSec() - +(localStorage.getItem("lastVersionCheckTime") ?? "");
-  },
-  record: () => {
-    localStorage.setItem("lastVersionCheckTime", `${currentSec()}`);
-  },
-  remove: () => {
+class LastVersionCheck {
+  private static get currentSec() {
+    return Math.round(Date.now() / 1000);
+  }
+  static get secondsElapsed() {
+    return LastVersionCheck.currentSec - +(localStorage.getItem("lastVersionCheckTime") ?? "");
+  }
+  static record = () => {
+    localStorage.setItem("lastVersionCheckTime", `${LastVersionCheck.currentSec}`);
+  };
+  static remove = () => {
     localStorage.removeItem("lastVersionCheckTime");
-  },
-};
-
-type Args = {
-  auto?: boolean;
-};
+  };
+}
 
 type State = {
   status: "loading" | "success" | "error" | "idle";
@@ -38,7 +35,7 @@ type State = {
   cooldown?: number;
 };
 
-export function useMetadata(args?: Args) {
+export function useMetadata(args?: { auto?: boolean }) {
   const { auto = true } = args || {};
 
   const [state, setState] = useState<State>({
@@ -46,15 +43,14 @@ export function useMetadata(args?: Args) {
   });
 
   const getMetadata = async (isForcedRefetch?: boolean) => {
-    const secElapsed = lastTryCtrl.getSecElapsed();
+    const secondsElapsed = LastVersionCheck.secondsElapsed;
 
-    if (secElapsed < COOLDOWN.UPGRADE) {
+    if (secondsElapsed < COOLDOWN.UPGRADE) {
       setState({
         status: "error",
         error: MESSAGE,
-        cooldown: COOLDOWN.UPGRADE - secElapsed,
+        cooldown: COOLDOWN.UPGRADE - secondsElapsed,
       });
-
       return;
     }
 
@@ -64,36 +60,42 @@ export function useMetadata(args?: Args) {
       });
     }
 
-    const res = await $AppData.fetchMetadata((data) => {
-      if (isValidVersion(data.version)) {
-        $AppCharacter.populate(data.characters);
-        $AppWeapon.populate(data.weapons);
-        $AppArtifact.populate(data.artifacts);
-      } else {
-        lastTryCtrl.record();
-        throw "OLD_SYSTEM_VERSION";
-      }
-    }, isForcedRefetch);
+    const response = await $AppData.fetchMetadata(isForcedRefetch);
 
-    if (res.isOk) {
-      setState({
-        status: "success",
-      });
-      lastTryCtrl.remove();
-    } else {
-      if (res.message === "OLD_SYSTEM_VERSION") {
+    switch (response.code) {
+      case 200: {
+        if (!response.data) return;
+        const { data } = response;
+
+        if (isValidVersion(data.version)) {
+          LastVersionCheck.remove();
+          setState({
+            status: "success",
+          });
+
+          $AppCharacter.populate(data.characters);
+          $AppWeapon.populate(data.weapons);
+          $AppArtifact.populate(data.artifacts);
+          return;
+        }
+
+        LastVersionCheck.record();
         setState({
           status: "error",
           error: MESSAGE,
           cooldown: COOLDOWN.UPGRADE,
         });
-      } else {
+        return;
+      }
+      case 400: {
+        return;
+      }
+      default:
         setState({
           status: "error",
-          error: res.message,
+          error: response.message,
           cooldown: COOLDOWN.NORMAL,
         });
-      }
     }
   };
 

@@ -33,9 +33,12 @@ export const Introduction = (props: ModalControl) => {
         updates: $AppData.updates,
         supporters: $AppData.supporters,
       });
-      dispatch(updateUI({ ready: true }));
+
+      if (props.active) {
+        dispatch(updateUI({ ready: true }));
+      }
     }
-  }, [status]);
+  }, [status, props.active]);
 
   const isLoadingMetadata = status === "loading";
   const latestDate: string | undefined = data.updates[0]?.date;

@@ -1,66 +1,42 @@
 import type { AppMonster } from "@Backend";
 import type { Target } from "@Src/types";
+import type { StandardResponse } from "../services.types";
 import type { Metadata, Update } from "./app-data.types";
 
 import { BACKEND_URL } from "@Src/constants";
 import Array_ from "@Src/utils/array-utils";
 import { BaseService } from "./BaseService";
 
-type FetchMetadataValidity = {
-  isOk: boolean;
-  message?: string;
-};
-
 export class AppDataService extends BaseService {
   private isFetchedMetadata = false;
 
   private monsters: AppMonster[] = [];
-  public version: string | undefined;
+  public version?: string;
   public updates: Update[] = [];
   public supporters: string[] = [];
 
-  constructor() {
-    super();
-  }
-
-  public async fetchMetadata(
-    onDoneFetching: (metaData: Metadata) => void,
-    isRefetch?: boolean
-  ): Promise<FetchMetadataValidity> {
+  public async fetchMetadata(isRefetch?: boolean): Promise<StandardResponse<Metadata>> {
     //
     if (this.isFetchedMetadata && !isRefetch) {
       return {
-        isOk: true,
+        code: 400,
+        message: "Metadata has been fetched",
+        data: null,
       };
     }
     const response = await this.fetchData<Metadata>(BACKEND_URL.metadata());
 
     if (response.data) {
       this.isFetchedMetadata = true;
-
-      try {
-        onDoneFetching(response.data);
-      } catch (e) {
-        return {
-          isOk: false,
-          message: `${e}`,
-        };
-      }
-
       this.version = response.data.version;
       this.monsters = response.data.monsters;
       this.updates = response.data.updates;
       this.supporters = response.data.supporters;
 
-      return {
-        isOk: true,
-      };
+      console.log(this.updates[0]);
     }
 
-    return {
-      isOk: false,
-      message: response.message,
-    };
+    return response;
   }
 
   // ========== MONSTERS ==========

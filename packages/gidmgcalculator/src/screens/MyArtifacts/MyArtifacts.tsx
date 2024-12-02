@@ -36,7 +36,7 @@ export default function MyArtifacts() {
   });
 
   const filteredArtifacts = useMemo(() => ArtifactFilter.filterArtifacts(userArts, filter), [userArts, filter]);
-  const chosenArtifact = useMemo(() => Array_.findById(userArts, chosenId), [filteredArtifacts, chosenId]);
+  const chosenArtifact = useMemo(() => Array_.findById(filteredArtifacts, chosenId), [filteredArtifacts, chosenId]);
 
   const closeModal = () => setModalType("");
 
