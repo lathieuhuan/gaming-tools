@@ -130,11 +130,9 @@ export function InventoryRack<T extends UserItem>({
       </div>
 
       {data.length ? (
-        <div className="relative">
-          <div className="absolute bottom-0 left-2 text-sm leading-none text-hint-color">{data.length} items</div>
-
+        <div className="mt-2 h-7 shrink-0 relative">
           {deadEnd ? (
-            <div className="pt-2 flex-center space-x-2">
+            <div className="flex-center space-x-2">
               <button
                 className="w-7 h-7 flex-center glow-on-hover disabled:opacity-50"
                 disabled={pageNo <= 0}
@@ -163,9 +161,9 @@ export function InventoryRack<T extends UserItem>({
                 )}
               </button>
             </div>
-          ) : (
-            <div className="h-7 shrink-0" />
-          )}
+          ) : null}
+
+          <div className="absolute bottom-1 right-4 mr-2 text-sm leading-none text-hint-color">{data.length} items</div>
         </div>
       ) : null}
     </div>

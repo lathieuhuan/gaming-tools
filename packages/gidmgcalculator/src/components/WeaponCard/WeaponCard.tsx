@@ -1,15 +1,15 @@
 import type { CSSProperties, MouseEvent } from "react";
 import { clsx, ButtonGroup, type ButtonGroupItem, type ClassValue } from "rond";
 
-import type { CalcWeapon, UserWeapon } from "@Src/types";
+import type { Weapon } from "@Src/types";
 import { OwnerLabel } from "../OwnerLabel";
 import { WeaponView, WeaponViewProps } from "./WeaponView";
 
-type WeaponCardAction<T extends CalcWeapon | UserWeapon = CalcWeapon> = Omit<ButtonGroupItem, "onClick"> & {
+type WeaponCardAction<T extends Weapon = Weapon> = Omit<ButtonGroupItem, "onClick"> & {
   onClick: (e: MouseEvent<HTMLButtonElement>, weapon: T) => void;
 };
 
-interface WeaponCardProps<T extends CalcWeapon | UserWeapon> extends Omit<WeaponViewProps<T>, "className" | "weapon"> {
+interface WeaponCardProps<T extends Weapon> extends Omit<WeaponViewProps<T>, "className" | "weapon"> {
   wrapperCls?: string;
   className?: ClassValue;
   style?: CSSProperties;
@@ -20,7 +20,7 @@ interface WeaponCardProps<T extends CalcWeapon | UserWeapon> extends Omit<Weapon
   weapon?: T;
   actions?: WeaponCardAction<T>[];
 }
-export function WeaponCard<T extends CalcWeapon | UserWeapon>({
+export function WeaponCard<T extends Weapon>({
   wrapperCls = "",
   className,
   style,

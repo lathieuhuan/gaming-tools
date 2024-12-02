@@ -116,10 +116,11 @@ export default function MyArtifacts() {
     </div>
   );
 
-  const dynamicForgeProps: Pick<ArtifactForgeProps, "workpiece" | "initialMaxRarity" | "hasMultipleMode"> = {
-    hasMultipleMode: true,
-  };
+  const dynamicForgeProps: Pick<ArtifactForgeProps, "workpiece" | "initialMaxRarity" | "hasMultipleMode"> = {};
 
+  if (modalType === "ADD_ARTIFACT") {
+    dynamicForgeProps.hasMultipleMode = true;
+  }
   if (modalType === "EDIT_ARTIFACT") {
     const variants = chosenArtifact
       ? $AppArtifact.getAll().find((artifact) => artifact.code === chosenArtifact.code)?.variants
