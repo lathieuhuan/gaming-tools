@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@Src/services";
 import { MINIMUM_SYSTEM_VERSION } from "@Src/constants";
 
@@ -41,6 +41,7 @@ export function useMetadata(args?: { auto?: boolean }) {
   const [state, setState] = useState<State>({
     status: auto ? "loading" : "idle",
   });
+  // const channel = useRef<BroadcastChannel>();
 
   const getMetadata = async (isForcedRefetch?: boolean) => {
     const secondsElapsed = LastVersionCheck.secondsElapsed;
@@ -100,9 +101,26 @@ export function useMetadata(args?: { auto?: boolean }) {
   };
 
   useEffect(() => {
+    // channel.current = new BroadcastChannel("METADATA");
+
+    // const onMessage = (e: MessageEvent) => {
+    //   if (e.target === channel.current) {
+    //     console.log("same");
+    //   }
+    //   console.log(e);
+    // };
+
+    // channel.current.addEventListener("message", onMessage);
+
     if (auto) {
+      // channel.current.postMessage("gimme metadata");
       getMetadata();
     }
+
+    // return () => {
+    //   channel.current?.removeEventListener("message", onMessage);
+    //   channel.current?.close();
+    // };
   }, []);
 
   return {

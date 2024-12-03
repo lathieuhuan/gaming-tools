@@ -32,8 +32,6 @@ export class AppDataService extends BaseService {
       this.monsters = response.data.monsters;
       this.updates = response.data.updates;
       this.supporters = response.data.supporters;
-
-      console.log(this.updates[0]);
     }
 
     return response;
