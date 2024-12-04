@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useScreenWatcher } from "rond";
 
 import { AppMain, AppModals, NavBar, SetupImportCenter, Tracker } from "@Src/features";
-import { $AppSettings } from "./services";
+import { $AppData, $AppSettings } from "./services";
 
 function App() {
   const screenWatcher = useScreenWatcher();
@@ -18,6 +18,7 @@ function App() {
 
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload, { capture: true });
+      $AppData.close();
     };
   }, []);
 

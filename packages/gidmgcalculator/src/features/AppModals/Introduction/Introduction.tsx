@@ -2,7 +2,7 @@ import { useLayoutEffect, useState } from "react";
 // import { FaExternalLinkAlt } from "react-icons/fa";
 import { clsx, CollapseList, ModalControl, LoadingSpin, Skeleton, Modal } from "rond";
 
-import { $AppData, Update } from "@Src/services";
+import { $AppData } from "@Src/services";
 import { useMetadata } from "@Src/hooks";
 import { useDispatch } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
@@ -10,15 +10,9 @@ import { updateUI } from "@Store/ui-slice";
 import { MetadataRefetcher } from "../../MetadataRefetcher";
 import { VersionRecap, Notes, About } from "./collapse-content";
 
-type State = {
-  version?: string;
-  updates: Update[];
-  supporters: string[];
-};
-
 export const Introduction = (props: ModalControl) => {
   const dispatch = useDispatch();
-  const [data, setData] = useState<State>({
+  const [data, setData] = useState<(typeof $AppData)["generalInfo"]>({
     version: "",
     updates: [],
     supporters: [],
@@ -28,11 +22,7 @@ export const Introduction = (props: ModalControl) => {
 
   useLayoutEffect(() => {
     if (status === "success") {
-      setData({
-        version: $AppData.version,
-        updates: $AppData.updates,
-        supporters: $AppData.supporters,
-      });
+      setData($AppData.generalInfo);
 
       if (props.active) {
         dispatch(updateUI({ ready: true }));
@@ -108,7 +98,7 @@ export const Introduction = (props: ModalControl) => {
             isError={status === "error"}
             error={error}
             cooldown={cooldown}
-            onRefetch={refetch}
+            onRefetch={() => refetch()}
           />
 
           {/* <div className="mb-1 text-center text-light-default text-base font-normal">

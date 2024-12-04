@@ -25,7 +25,7 @@ export function MetadataRefetcher({
   const triesRef = useRef(0);
   timeRef.current = time;
 
-  const start = () => {
+  const startCountdown = () => {
     startTime.current = Date.now();
     setTime(cooldown);
 
@@ -47,7 +47,7 @@ export function MetadataRefetcher({
   useEffect(() => {
     if (isError) {
       triesRef.current++;
-      start();
+      startCountdown();
     }
 
     return () => {
