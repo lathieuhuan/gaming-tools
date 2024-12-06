@@ -656,10 +656,10 @@ export const calculatorSlice = createSlice({
       calculate(state, true);
     },
     applySettings: (state, action: ApplySettingsAction) => {
-      const { doMergeCharInfo } = action.payload;
+      const { mergeCharInfo } = action.payload;
       const activeChar = state.setupsById[state.activeId]?.char;
 
-      if (doMergeCharInfo && activeChar) {
+      if (mergeCharInfo && activeChar) {
         for (const setup of Object.values(state.setupsById)) {
           setup.char = activeChar;
         }

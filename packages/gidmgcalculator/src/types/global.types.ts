@@ -1,5 +1,7 @@
 import type { ArtifactType, AttributeStat, Level, WeaponType } from "@Backend";
 
+export type Traveler = "LUMINE" | "AETHER";
+
 /** ========== BASE MODELS ========== */
 
 export type Character = {

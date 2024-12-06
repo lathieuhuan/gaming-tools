@@ -46,8 +46,6 @@ export class AppDataService extends BaseService {
     this.metadataChannel = new MetadataChannel();
 
     this.metadataChannel.onRequest = () => {
-      console.log("onRequest", this.isFetchedMetadata);
-
       if (this.isFetchedMetadata) {
         this.metadataChannel.response({
           ...this.generalInfo,
@@ -60,8 +58,6 @@ export class AppDataService extends BaseService {
     };
 
     this.metadataChannel.onResponse = (metadata) => {
-      console.log("onResponse", this.isFetchedMetadata);
-
       if (!this.isFetchedMetadata) {
         this.populateData(metadata);
       }
@@ -102,8 +98,6 @@ export class AppDataService extends BaseService {
   };
 
   private async _fetchMetadata(isRefetch?: boolean): Promise<FetchMetadataError | null> {
-    console.log("_fetchMetadata", this.isFetchedMetadata, isRefetch);
-
     if (!this.isFetchedMetadata || isRefetch) {
       const response = await this.fetchData<Metadata>(BACKEND_URL.metadata());
       const { code, message = "Error", data } = response;

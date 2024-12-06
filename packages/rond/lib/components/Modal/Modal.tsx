@@ -85,6 +85,7 @@ type WithModalPropsKey =
   | "title"
   | "id"
   | "className"
+  | "style"
   | "bodyCls"
   | "formId"
   | "withActions"

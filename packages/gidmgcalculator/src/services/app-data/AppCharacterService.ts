@@ -1,6 +1,6 @@
 import { AppCharacter, TalentType } from "@Backend";
 
-import type { PartyData } from "@Src/types";
+import type { PartyData, Traveler } from "@Src/types";
 import type { StandardResponse } from "../services.types";
 import type { DataControl, ServiceSubscriber } from "./app-data.types";
 
@@ -214,5 +214,24 @@ export class AppCharacterService extends BaseService {
       }
       return null;
     });
+  }
+
+  changeTraveler(traveler: Traveler) {
+    const travelerCodes = new Set([99]);
+    const isLumine = traveler === "LUMINE";
+
+    const icon = isLumine ? "9/9c/Lumine_Icon" : "a/a5/Aether_Icon";
+    const sideIcon = isLumine ? "9/9a/Lumine_Side_Icon" : "0/05/Aether_Side_Icon";
+    const multFactorsCA = isLumine ? [55.9, 72.24] : [55.9, 60.72];
+
+    for (const { data } of this.characters) {
+      if (data && travelerCodes.has(data.code)) {
+        data.icon = icon;
+        data.sideIcon = sideIcon;
+
+        const CA = data.calcList?.CA?.[0];
+        if (CA) CA.multFactors = multFactorsCA;
+      }
+    }
   }
 }

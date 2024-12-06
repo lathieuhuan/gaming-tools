@@ -1,6 +1,8 @@
 import { Level } from "@Backend";
+import { Traveler } from "@Src/types";
 
 export type AppSettings = {
+  traveler: Traveler;
   charInfoIsSeparated: boolean;
   doKeepArtStatsOnSwitch: boolean;
   persistingUserData: boolean;
@@ -20,6 +22,7 @@ export type AppSettings = {
 
 export class AppSettingsService {
   private DEFAULT_SETTINGS: AppSettings = {
+    traveler: "LUMINE",
     charInfoIsSeparated: false,
     doKeepArtStatsOnSwitch: false,
     persistingUserData: false,

@@ -30,8 +30,6 @@ export class MetadataChannel {
   }
 
   request = () => {
-    console.log("request");
-
     this.channel.postMessage({ type: "REQUEST" } satisfies MetadataMessageRequest);
   };
 
