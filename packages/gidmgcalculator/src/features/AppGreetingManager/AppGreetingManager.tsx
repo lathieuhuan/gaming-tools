@@ -53,11 +53,14 @@ export const AppGreetingManager = () => {
       setState({
         status: "success",
       });
+      dispatch(updateUI({ ready: true }));
     }
   };
 
   useLayoutEffect(() => {
     //
+    console.log("useLayoutEffect", greeter.isFirstInShift);
+
     getMetadata();
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {

@@ -16,7 +16,7 @@ export function NavBar() {
   const isReadyApp = useSelector(selectIsReadyApp);
   const [menuDropped, setMenuDropped] = useState(false);
 
-  const { status, refetch } = useMetadata({ auto: false });
+  // const { status, refetch } = useMetadata({ auto: false });
 
   const closeMenu = () => setMenuDropped(false);
 
@@ -70,7 +70,7 @@ export function NavBar() {
           <Button
             shape="square"
             icon={status === "loading" ? <LoadingSpin size="small" className="text-black" /> : null}
-            onClick={() => refetch(true)}
+            // onClick={() => refetch(true)}
           >
             Refetch
           </Button>

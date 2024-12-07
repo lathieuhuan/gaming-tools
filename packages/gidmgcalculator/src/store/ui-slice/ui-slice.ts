@@ -36,7 +36,7 @@ export interface UIState extends Pick<AppSettings, "isTabLayout"> {
 const initialState: UIState = {
   isTabLayout: $AppSettings.get("isTabLayout"),
   atScreen: "CALCULATOR",
-  appModalType: "INTRO",
+  appModalType: "",
   mySetupsModalType: "",
   calcTargetConfig: {
     active: false,

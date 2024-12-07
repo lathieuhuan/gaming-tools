@@ -1,6 +1,6 @@
 import { MINIMUM_SYSTEM_VERSION } from "@Src/constants";
 import { $AppData, Metadata, Update } from "@Src/services";
-import { MetadataChannel } from "./AppGreetingManager.utils";
+import { MetadataChannel, StoredTime } from "./AppGreetingManager.utils";
 
 type MetadataGeneralInfo = {
   version: string;
@@ -17,8 +17,10 @@ type FetchMetadataError = {
 export class GreeterService {
   private readonly COOLDOWN_NORMAL = 30;
   private readonly COOLDOWN_UPGRADE = 15;
+  private readonly COOLDOWN_GREETING = 14_400; // 4 hours
   private isFetchedMetadata = false;
-  order: "TBD" | "FIRST" | "OTHERS" = "TBD";
+
+  public isFirstInShift: boolean;
 
   public generalInfo: MetadataGeneralInfo = {
     version: "",
@@ -26,8 +28,9 @@ export class GreeterService {
     supporters: [],
   };
 
-  private greeterChannel = new BroadcastChannel("GREETER");
   private metadataChannel = new MetadataChannel();
+  private lastVersionCheckTime = new StoredTime("lastVersionCheckTime");
+  private lastGreetingTime = new StoredTime("lastGreetingTime");
 
   constructor(private data$: typeof $AppData) {
     this.metadataChannel.onRequest = () => {
@@ -44,18 +47,19 @@ export class GreeterService {
         this.populateData(metadata);
       }
     };
+
+    const currentTime = this.currentTime;
+
+    this.isFirstInShift = currentTime - this.lastGreetingTime.value > this.COOLDOWN_GREETING;
+
+    if (this.isFirstInShift) {
+      this.lastGreetingTime.value = currentTime;
+    }
   }
 
   private get currentTime() {
     return Math.round(Date.now() / 1000);
   }
-  get secFromLastCheck() {
-    const checkTime = localStorage.getItem("lastVersionCheckTime");
-    return this.currentTime - (checkTime ? +checkTime : 0);
-  }
-  private recordVersionCheckTime = () => {
-    localStorage.setItem("lastVersionCheckTime", `${this.currentTime}`);
-  };
   private removeVersionCheckTime = () => {
     localStorage.removeItem("lastVersionCheckTime");
   };
@@ -88,7 +92,7 @@ export class GreeterService {
           return null;
         }
 
-        this.recordVersionCheckTime();
+        this.lastVersionCheckTime.value = this.currentTime;
 
         return {
           code: 503,
@@ -108,7 +112,7 @@ export class GreeterService {
   }
 
   async fetchMetadata(isRefetch?: boolean): Promise<FetchMetadataError | null> {
-    const timeElapsed = this.secFromLastCheck;
+    const timeElapsed = this.currentTime - this.lastVersionCheckTime.value;
 
     if (!isRefetch && timeElapsed < this.COOLDOWN_UPGRADE) {
       return {
