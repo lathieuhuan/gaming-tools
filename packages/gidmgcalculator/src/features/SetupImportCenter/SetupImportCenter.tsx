@@ -10,7 +10,7 @@ import { decodeSetup, DECODE_ERROR_MSG } from "@Src/utils/setup-porter";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateSetupImportInfo, updateUI } from "@Store/ui-slice";
+import { selectIsReadyApp, updateSetupImportInfo, updateUI } from "@Store/ui-slice";
 import { selectCharacter, selectSetupManageInfos, selectTarget, importSetup } from "@Store/calculator-slice";
 import { checkBeforeInitNewSession } from "@Store/thunks";
 
@@ -206,14 +206,14 @@ export function SetupImportCenter() {
 function SetupTransshipmentPort() {
   const dispatch = useDispatch();
   const importCode = useRef(getSearchParam("importCode"));
-  const appReady = useSelector((state) => state.ui.ready);
+  const isReadyApp = useSelector(selectIsReadyApp);
 
   useEffect(() => {
     window.history.replaceState(null, "", window.location.origin);
   }, []);
 
   useEffect(() => {
-    if (appReady) {
+    if (isReadyApp) {
       if (importCode.current) {
         const result = decodeSetup(importCode.current);
 
@@ -233,7 +233,7 @@ function SetupTransshipmentPort() {
     } else {
       window.history.replaceState(null, "", window.location.origin);
     }
-  }, [appReady]);
+  }, [isReadyApp]);
 
   return null;
 }

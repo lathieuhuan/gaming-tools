@@ -10,6 +10,7 @@ import { useCalcModalCtrl } from "../CalculatorModalsProvider";
 // Component
 import { ComplexSelect, CharacterIntro } from "@Src/components";
 import { ArtifactsTab, AttributesTab, ConstellationTab, TalentsTab, WeaponTab } from "./character-overview-tabs";
+import { selectIsReadyApp } from "@Store/ui-slice";
 
 const TABS: SwitchNodeCase<string>[] = [
   { value: "Attributes", element: <AttributesTab /> },
@@ -56,7 +57,7 @@ interface CharacterOverviewProps {
   touched: boolean;
 }
 export function CharacterOverview({ touched }: CharacterOverviewProps) {
-  const appReady = useSelector((state) => state.ui.ready);
+  const isReadyApp = useSelector(selectIsReadyApp);
   const modalCtrl = useCalcModalCtrl();
 
   return (
@@ -65,11 +66,11 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
         <CharacterOverviewCore onClickSwitchCharacter={modalCtrl.requestSwitchCharacter} />
       ) : (
         <div className="w-full flex flex-col items-center space-y-2">
-          <Button variant="primary" disabled={!appReady} onClick={modalCtrl.requestSwitchCharacter}>
+          <Button variant="primary" disabled={!isReadyApp} onClick={modalCtrl.requestSwitchCharacter}>
             Select a character
           </Button>
           <p>or</p>
-          <Button disabled={!appReady} onClick={modalCtrl.requestImportSetup}>
+          <Button disabled={!isReadyApp} onClick={modalCtrl.requestImportSetup}>
             Import a setup
           </Button>
         </div>

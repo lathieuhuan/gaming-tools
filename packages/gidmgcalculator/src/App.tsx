@@ -1,32 +1,15 @@
-import { useEffect } from "react";
 import { useScreenWatcher } from "rond";
-
-import { AppMain, AppModals, NavBar, SetupImportCenter, Tracker } from "@Src/features";
-import { $AppData, $AppSettings } from "./services";
+import { AppMain, AppGreetingManager, AppModals, NavBar, SetupImportCenter, Tracker } from "@Src/features";
 
 function App() {
   const screenWatcher = useScreenWatcher();
 
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if ($AppSettings.get("askBeforeUnload")) {
-        e.preventDefault();
-        return (e.returnValue = "Are you sure you want to exit?");
-      }
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload, { capture: true });
-
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload, { capture: true });
-      $AppData.close();
-    };
-  }, []);
-
   return (
     <div className="App h-screen pt-8 text-light-default bg-light-default">
+      <AppGreetingManager />
+      <AppModals />
       <NavBar />
       {screenWatcher.isFromSize("sm") ? <AppMain.Large /> : <AppMain.Small />}
-      <AppModals />
       <Tracker />
       <SetupImportCenter />
     </div>

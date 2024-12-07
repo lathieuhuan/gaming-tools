@@ -6,14 +6,14 @@ import { useClickOutside, Button, Popover, useScreenWatcher, LoadingSpin } from 
 import { IS_DEV_ENV } from "@Src/constants";
 import { useMetadata } from "@Src/hooks";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI, type UIState, type AppScreen } from "@Store/ui-slice";
+import { updateUI, type UIState, type AppScreen, selectIsReadyApp } from "@Store/ui-slice";
 import { ActionButton, NavTabs, NavTabsProps } from "./navbar-components";
 
 const buttonCls = "w-8 h-8 flex-center";
 
 export function NavBar() {
   const dispatch = useDispatch();
-  const appReady = useSelector((state) => state.ui.ready);
+  const isReadyApp = useSelector(selectIsReadyApp);
   const [menuDropped, setMenuDropped] = useState(false);
 
   const { status, refetch } = useMetadata({ auto: false });
@@ -55,7 +55,7 @@ export function NavBar() {
           screens={screens}
           activeClassName="bg-surface-1"
           idleClassName="bg-surface-3 glow-on-hover"
-          ready={appReady}
+          ready={isReadyApp}
           onClickTab={onClickTab}
         />
       </div>
@@ -93,7 +93,7 @@ export function NavBar() {
                 className="px-4 py-2 xm:hidden font-bold"
                 screens={screens}
                 activeClassName="border-l-4 border-secondary-1 bg-surface-1 text-light-default"
-                ready={appReady}
+                ready={isReadyApp}
                 onClickTab={(tab) => {
                   onClickTab(tab);
                   closeMenu();
@@ -102,11 +102,11 @@ export function NavBar() {
               <ActionButton label="Settings" icon={<FaCog />} onClick={openModal("SETTINGS")} />
               <ActionButton
                 label="Download"
-                disabled={!appReady}
+                disabled={!isReadyApp}
                 icon={<FaDownload />}
                 onClick={openModal("DOWNLOAD")}
               />
-              <ActionButton label="Upload" disabled={!appReady} icon={<FaUpload />} onClick={openModal("UPLOAD")} />
+              <ActionButton label="Upload" disabled={!isReadyApp} icon={<FaUpload />} onClick={openModal("UPLOAD")} />
             </div>
           </Popover>
         </div>

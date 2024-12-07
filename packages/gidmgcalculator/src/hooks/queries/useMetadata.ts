@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { $AppData } from "@Src/services";
 
 type State = {
@@ -36,7 +36,7 @@ export function useMetadata(args?: { auto?: boolean }) {
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (auto) {
       getMetadata();
     }

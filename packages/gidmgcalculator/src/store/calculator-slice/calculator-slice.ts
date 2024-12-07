@@ -656,13 +656,20 @@ export const calculatorSlice = createSlice({
       calculate(state, true);
     },
     applySettings: (state, action: ApplySettingsAction) => {
-      const { mergeCharInfo } = action.payload;
+      const { mergeCharInfo, changeTraveler = false } = action.payload;
       const activeChar = state.setupsById[state.activeId]?.char;
+      const allSetups = Object.values(state.setupsById);
+      let shouldRecalculateAll = false;
 
       if (mergeCharInfo && activeChar) {
-        for (const setup of Object.values(state.setupsById)) {
+        for (const setup of allSetups) {
           setup.char = activeChar;
         }
+        shouldRecalculateAll = true;
+      }
+      shouldRecalculateAll ||= changeTraveler && allSetups.some((setup) => $AppCharacter.isTraveler(setup.char));
+
+      if (shouldRecalculateAll) {
         calculate(state, true);
       }
     },
