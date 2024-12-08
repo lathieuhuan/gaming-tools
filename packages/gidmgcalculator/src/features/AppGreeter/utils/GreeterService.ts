@@ -1,12 +1,8 @@
+import type { MetadataInfo } from "../AppGreeter.types";
 import { MINIMUM_SYSTEM_VERSION } from "@Src/constants";
-import { $AppData, Metadata, Update } from "@Src/services";
-import { MetadataChannel, StoredTime } from "./AppGreetingManager.utils";
-
-type MetadataGeneralInfo = {
-  version: string;
-  updates: Update[];
-  supporters: string[];
-};
+import { $AppData, Metadata } from "@Src/services";
+import { StoredTime } from "./StoreTime";
+import { MetadataChannel } from "./MetadataChannel";
 
 type FetchMetadataError = {
   code: number;
@@ -22,7 +18,7 @@ export class GreeterService {
 
   public isFirstInShift: boolean;
 
-  public generalInfo: MetadataGeneralInfo = {
+  public metadataInfo: MetadataInfo = {
     version: "",
     updates: [],
     supporters: [],
@@ -36,7 +32,7 @@ export class GreeterService {
     this.metadataChannel.onRequest = () => {
       if (this.isFetchedMetadata) {
         this.metadataChannel.response({
-          ...this.generalInfo,
+          ...this.metadataInfo,
           ...this.data$.data,
         });
       }
@@ -72,7 +68,7 @@ export class GreeterService {
 
   private populateData = (data: Metadata) => {
     this.isFetchedMetadata = true;
-    this.generalInfo = {
+    this.metadataInfo = {
       version: data.version,
       updates: data.updates,
       supporters: data.supporters,
@@ -80,8 +76,8 @@ export class GreeterService {
     this.data$.data = data;
   };
 
-  private async _fetchMetadata(isRefetch?: boolean): Promise<FetchMetadataError | null> {
-    if (!this.isFetchedMetadata || isRefetch) {
+  private async _fetchMetadata(): Promise<FetchMetadataError | null> {
+    if (!this.isFetchedMetadata) {
       const response = await this.data$.fetchMetadata();
       const { code, message = "Error", data } = response;
 
@@ -111,10 +107,10 @@ export class GreeterService {
     return null;
   }
 
-  async fetchMetadata(isRefetch?: boolean): Promise<FetchMetadataError | null> {
+  async fetchMetadata(): Promise<FetchMetadataError | null> {
     const timeElapsed = this.currentTime - this.lastVersionCheckTime.value;
 
-    if (!isRefetch && timeElapsed < this.COOLDOWN_UPGRADE) {
+    if (timeElapsed < this.COOLDOWN_UPGRADE) {
       return {
         code: 503,
         message: "The system is being upgraded",
@@ -126,7 +122,7 @@ export class GreeterService {
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(this._fetchMetadata(isRefetch));
+        resolve(this._fetchMetadata());
       }, 100);
     });
   }
