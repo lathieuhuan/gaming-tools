@@ -3,7 +3,7 @@ import { IoDocumentText } from "react-icons/io5";
 import { Button, useScreenWatcher } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { selectTraveler, updateUI } from "@Store/ui-slice";
 
 // Component
 import { SetupSelect } from "./SetupSelect";
@@ -19,6 +19,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const targetConfig = useSelector((state) => state.ui.calcTargetConfig);
+  const traveler = useSelector(selectTraveler);
 
   const isMobile = !screenWatcher.isFromSize("sm");
 
@@ -32,7 +33,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 
   const renderMainContent = (cls = "") => (
     <div className={`hide-scrollbar space-y-2 scroll-smooth ${cls}`}>
-      <SectionParty />
+      <SectionParty key={traveler} />
       <SectionWeapon />
       <SectionArtifacts />
 

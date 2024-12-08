@@ -1,5 +1,5 @@
 import { useScreenWatcher } from "rond";
-import { AppMain, AppGreeter, AppModals, NavBar, SetupImportCenter, Tracker } from "@Src/features";
+import { AppGreeter, AppMainLarge, AppMainSmall, AppModals, NavBar, SetupImportCenter, Tracker } from "@Src/features";
 
 function App() {
   const screenWatcher = useScreenWatcher();
@@ -9,7 +9,7 @@ function App() {
       <AppGreeter />
       <AppModals />
       <NavBar />
-      {screenWatcher.isFromSize("sm") ? <AppMain.Large /> : <AppMain.Small />}
+      {screenWatcher.isFromSize("sm") ? <AppMainLarge /> : <AppMainSmall />}
       <Tracker />
       <SetupImportCenter />
     </div>

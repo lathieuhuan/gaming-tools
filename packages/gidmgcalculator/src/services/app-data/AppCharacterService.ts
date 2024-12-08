@@ -223,7 +223,7 @@ export class AppCharacterService extends BaseService {
     return obj.name.slice(-8) === "Traveler";
   };
 
-  private getTravelerProps = (traveler: Traveler) => {
+  getTravelerProps = (traveler: Traveler) => {
     return traveler === "LUMINE"
       ? {
           icon: "9/9c/Lumine_Icon",

@@ -11,6 +11,7 @@ type MetadataMessageResponse = {
 
 export class MetadataChannel {
   private channel = new BroadcastChannel("METADATA");
+  private isClosedChannel = false;
 
   onRequest = () => {};
 
@@ -30,16 +31,21 @@ export class MetadataChannel {
   }
 
   request = () => {
-    this.channel.postMessage({ type: "REQUEST" } satisfies MetadataMessageRequest);
+    if (!this.isClosedChannel) {
+      this.channel.postMessage({ type: "REQUEST" } satisfies MetadataMessageRequest);
+    }
   };
 
   response = (metadata: Metadata) => {
-    this.channel.postMessage({ type: "RESPONSE", data: metadata } satisfies MetadataMessageResponse);
+    if (!this.isClosedChannel) {
+      this.channel.postMessage({ type: "RESPONSE", data: metadata } satisfies MetadataMessageResponse);
+    }
   };
 
   close = () => {
     try {
       this.channel.close();
+      this.isClosedChannel = true;
     } catch (error) {
       //
     }

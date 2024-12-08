@@ -11,12 +11,9 @@ type FetchMetadataError = {
 };
 
 export class GreeterService {
-  private readonly COOLDOWN_NORMAL = 30;
-  private readonly COOLDOWN_UPGRADE = 15;
-  private readonly COOLDOWN_GREETING = 14_400; // 4 hours
+  private readonly COOLDOWN_NORMAL = 60;
+  private readonly COOLDOWN_UPGRADE = 300;
   private isFetchedMetadata = false;
-
-  public isFirstInShift: boolean;
 
   public metadataInfo: MetadataInfo = {
     version: "",
@@ -26,7 +23,6 @@ export class GreeterService {
 
   private metadataChannel = new MetadataChannel();
   private lastVersionCheckTime = new StoredTime("lastVersionCheckTime");
-  private lastGreetingTime = new StoredTime("lastGreetingTime");
 
   constructor(private data$: typeof $AppData) {
     this.metadataChannel.onRequest = () => {
@@ -43,14 +39,6 @@ export class GreeterService {
         this.populateData(metadata);
       }
     };
-
-    const currentTime = this.currentTime;
-
-    this.isFirstInShift = currentTime - this.lastGreetingTime.value > this.COOLDOWN_GREETING;
-
-    if (this.isFirstInShift) {
-      this.lastGreetingTime.value = currentTime;
-    }
   }
 
   private get currentTime() {
@@ -79,7 +67,7 @@ export class GreeterService {
   private async _fetchMetadata(): Promise<FetchMetadataError | null> {
     if (!this.isFetchedMetadata) {
       const response = await this.data$.fetchMetadata();
-      const { code, message = "Error", data } = response;
+      const { code, message = "Error.", data } = response;
 
       if (data) {
         if (this.isValidDataVersion(data.version)) {
@@ -92,7 +80,7 @@ export class GreeterService {
 
         return {
           code: 503,
-          message: "The system is being upgraded",
+          message: "The system is being upgraded.",
           cooldown: this.COOLDOWN_UPGRADE,
         };
       }
@@ -113,7 +101,7 @@ export class GreeterService {
     if (timeElapsed < this.COOLDOWN_UPGRADE) {
       return {
         code: 503,
-        message: "The system is being upgraded",
+        message: "The system is being upgraded.",
         cooldown: this.COOLDOWN_UPGRADE - timeElapsed,
       };
     }

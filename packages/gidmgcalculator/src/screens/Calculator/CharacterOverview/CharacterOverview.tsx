@@ -2,15 +2,16 @@ import { useState } from "react";
 import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 
 // Store
-import { useDispatch, useSelector } from "@Store/hooks";
+import { $AppCharacter } from "@Src/services";
 import { selectCharacter, updateCharacter } from "@Store/calculator-slice";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { selectIsReadyApp, selectTraveler } from "@Store/ui-slice";
 import { useCalcAppCharacter } from "../CalculatorInfoProvider";
 import { useCalcModalCtrl } from "../CalculatorModalsProvider";
 
 // Component
-import { ComplexSelect, CharacterIntro } from "@Src/components";
+import { CharacterIntro, ComplexSelect } from "@Src/components";
 import { ArtifactsTab, AttributesTab, ConstellationTab, TalentsTab, WeaponTab } from "./character-overview-tabs";
-import { selectIsReadyApp } from "@Store/ui-slice";
 
 const TABS: SwitchNodeCase<string>[] = [
   { value: "Attributes", element: <AttributesTab /> },
@@ -27,9 +28,13 @@ function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
 
   const [activeTab, setActiveTab] = useState("Attributes");
 
+  // This makes component rerender on change Traveler, appChar has new image links
+  useSelector(selectTraveler);
+
   return (
     <div className="h-full flex flex-col gap-4">
       <CharacterIntro
+        // key={$AppCharacter.isTraveler(appChar) ? traveler : "OTHER"}
         char={char}
         appChar={appChar}
         mutable

@@ -114,7 +114,7 @@ export const Introduction = ({
         </ul>
         <p>- Special thanks to these supporters for the bug reports:</p>
         {loading ? (
-          <div className="ml-4 grid grid-cols-4">
+          <div className="ml-4 grid grid-cols-1 md:grid-cols-2 xm:grid-cols-3 lg:grid-cols-4 gap-y-2">
             {Array.from({ length: 4 }, (_, i) => (
               <Skeleton key={i} className="w-28 h-4 rounded" />
             ))}

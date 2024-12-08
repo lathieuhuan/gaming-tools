@@ -5,13 +5,13 @@ import type { MetadataInfo } from "./AppGreeter.types";
 import { $AppCharacter, $AppData, $AppSettings } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
+import { GreeterService } from "./utils/GreeterService";
 
 // Components
 import { Introduction } from "./Introduction";
 import { MetadataRefetcher } from "./MetadataRefetcher";
-import { GreeterService } from "./utils/GreeterService";
 
- function useGreeter() {
+function useGreeter() {
   const ref = useRef<GreeterService>();
   if (!ref.current) {
     ref.current = new GreeterService($AppData);
@@ -41,7 +41,7 @@ export const AppGreeter = () => {
     isConfiged.current = true;
   }
 
-  const isLoadingMetadata = state.status === "loading";
+  const isLoading = state.status === "loading";
 
   const getMetadata = async () => {
     if (state.status !== "loading") {
@@ -68,13 +68,7 @@ export const AppGreeter = () => {
   };
 
   useLayoutEffect(() => {
-    //
-    console.log("useLayoutEffect", greeter.isFirstInShift);
-
-    if (greeter.isFirstInShift) {
-      dispatch(updateUI({ appModalType: "INTRO" }));
-    }
-
+    dispatch(updateUI({ appModalType: "INTRO" }));
     getMetadata();
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -112,7 +106,7 @@ export const AppGreeter = () => {
       <h1 className={clsx("text-heading-color text-center font-bold relative", config.cls)}>
         {config.title}
         <span className={clsx("absolute top-0 left-full ml-2 text-hint-color", config.patchCls)}>
-          {isLoadingMetadata ? (
+          {isLoading ? (
             <Skeleton className={clsx("w-14 rounded", config.skeletonCls)} />
           ) : version ? (
             <span>v{version}</span>
@@ -139,7 +133,7 @@ export const AppGreeter = () => {
 
           <MetadataRefetcher
             className="my-2"
-            isLoading={isLoadingMetadata}
+            isLoading={isLoading}
             isError={state.status === "error"}
             error={state.error}
             cooldown={state.cooldown}
@@ -162,7 +156,7 @@ export const AppGreeter = () => {
       closable={state.status === "success"}
       onClose={() => dispatch(updateUI({ appModalType: "" }))}
     >
-      <Introduction info={state.info} loading={isLoadingMetadata} />
+      <Introduction info={state.info} loading={isLoading} />
     </Modal>
   );
 };

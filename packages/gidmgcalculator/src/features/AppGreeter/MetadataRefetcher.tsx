@@ -62,14 +62,14 @@ export function MetadataRefetcher({
   const secondsToTime = (time: number) => {
     const minutes = time > 60 ? Math.floor(time / 60) : 0;
     const seconds = time - minutes * 60;
-    return `${minutes}:${seconds > 0 ? "" : "0"}${seconds}`;
+    return `${minutes}:${seconds > 9 ? "" : "0"}${seconds}`;
   };
 
   if (isError) {
     return (
       <div className={"flex flex-col items-center " + className}>
-        <p className="text-base text-danger-3 font-normal">
-          {error} <span>{time ? `Try again after ${secondsToTime(time)}s.` : "Please try again."}</span>
+        <p className="text-base text-danger-3 text-center font-normal">
+          {time ? `${error} Try again after ${secondsToTime(time)}s.` : "You can try fetching the data again."}
         </p>
         <Button
           className="mt-1"
@@ -79,7 +79,7 @@ export function MetadataRefetcher({
           disabled={time !== 0}
           onClick={onRefetch}
         >
-          Refetch
+          Retry
         </Button>
       </div>
     );

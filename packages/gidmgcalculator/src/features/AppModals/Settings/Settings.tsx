@@ -1,45 +1,17 @@
-import { useContext, useRef } from "react";
-import { Checkbox, InputNumber, Modal, VersatileSelect, useScreenWatcher } from "rond";
+import { useContext, useRef, useState } from "react";
+import { Checkbox, InputNumber, Modal, useScreenWatcher, VersatileSelect } from "rond";
 import { Level, LEVELS } from "@Backend";
 
-import { $AppSettings, AppSettings } from "@Src/services";
+import type { Traveler } from "@Src/types";
+import type { SettingGroupRender } from "./Settings.types";
+
+import { CharacterPortrait } from "@Src/components";
 import { MAX_TARGET_LEVEL } from "@Src/constants";
+import { $AppCharacter, $AppSettings, AppSettings } from "@Src/services";
 import { applySettings } from "@Store/calculator-slice";
-import { updateUI } from "@Store/ui-slice";
 import { useDispatch } from "@Store/hooks";
+import { updateUI } from "@Store/ui-slice";
 import { DynamicStoreControlContext } from "../../DynamicStoreProvider";
-
-type SettingKey<T extends keyof AppSettings> = Extract<keyof AppSettings, T>;
-
-type SettingItemRenderCheck = {
-  type: "CHECK";
-  key: SettingKey<
-    "charInfoIsSeparated" | "doKeepArtStatsOnSwitch" | "isTabLayout" | "askBeforeUnload" | "persistingUserData"
-  >;
-};
-type SettingItemRenderSelect = {
-  type: "SELECT";
-  key: SettingKey<
-    "traveler" | "charLevel" | "charCons" | "charNAs" | "charES" | "charEB" | "wpLevel" | "wpRefi" | "artLevel"
-  >;
-  options: (string | number)[];
-};
-type SettingItemRenderInput = {
-  type: "INPUT";
-  key: SettingKey<"targetLevel">;
-  max?: number;
-};
-
-type SettingItemRender = (SettingItemRenderSelect | SettingItemRenderInput | SettingItemRenderCheck) & {
-  label: string;
-  description?: string[];
-  isHidden?: boolean;
-};
-
-type SettingGroupRender = {
-  title: string;
-  items: SettingItemRender[];
-};
 
 const genNumberSequence = (count: number, startFromZero?: boolean) => {
   return [...Array(count)].map((_, i) => i + (startFromZero ? 0 : 1));
@@ -63,14 +35,27 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
   const tempSettings = useAppSettings();
   const changeAppStoreConfig = useContext(DynamicStoreControlContext);
 
-  // const travelers: AppSettings["traveler"][] = ["LUMINE", "AETHER"];
+  const groupCls = "px-4 py-2 bg-surface-1 rounded";
+  const titleCls = "text-secondary-1 text-lg font-semibold";
 
   const onConfirmNewSettings = () => {
     const currSettings = $AppSettings.get();
+    const changeTraveler = tempSettings.traveler !== currSettings.traveler;
 
+    if (changeTraveler) {
+      $AppCharacter.changeTraveler(tempSettings.traveler);
+
+      dispatch(
+        updateUI({
+          atScreen: "CALCULATOR",
+          traveler: tempSettings.traveler,
+        })
+      );
+    }
     dispatch(
       applySettings({
         mergeCharInfo: !tempSettings.charInfoIsSeparated && currSettings.charInfoIsSeparated,
+        changeTraveler,
       })
     );
     if (tempSettings.isTabLayout !== currSettings.isTabLayout) {
@@ -79,9 +64,6 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
           isTabLayout: tempSettings.isTabLayout,
         })
       );
-    }
-    if (tempSettings.traveler !== currSettings.traveler) {
-      //
     }
     if (tempSettings.persistingUserData !== currSettings.persistingUserData) {
       changeAppStoreConfig({
@@ -94,17 +76,6 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
   };
 
   const groupRenders = useRef<SettingGroupRender[]>([
-    {
-      title: "Traveler",
-      items: [
-        {
-          key: "traveler",
-          label: "Select the Traveler",
-          options: ["LUMINE", "AETHER"],
-          type: "SELECT",
-        },
-      ],
-    },
     {
       title: "Calculator",
       items: [
@@ -218,20 +189,18 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
         onConfirmNewSettings();
       }}
     >
-      {/* <div className="px-4 py-2 bg-surface-1 rounded">
-        <p className="text-secondary-1 text-lg font-semibold">Traveler</p>
-
-        <div>
-          {travelers.map((traveler) => {
-            return <div key={traveler}>{traveler}</div>;
-          })}
-        </div>
-      </div> */}
+      <div className={`${groupCls} flex justify-between`}>
+        <p className={titleCls}>Traveler</p>
+        <TravelerSelect
+          defaultValue={tempSettings.traveler}
+          onChange={(value) => changeTempSettings("traveler", value)}
+        />
+      </div>
 
       {groupRenders.current.map((group, groupIndex) => {
         return (
-          <div key={groupIndex} className="px-4 py-2 bg-surface-1 rounded">
-            <p className="text-secondary-1 text-lg font-semibold">{group.title}</p>
+          <div key={groupIndex} className={groupCls}>
+            <p className={titleCls}>{group.title}</p>
             <div className="mt-2 space-y-3">
               {group.items.map((item) => {
                 if (item.isHidden) {
@@ -314,6 +283,35 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
     </form>
   );
 };
+
+function TravelerSelect(props: { defaultValue: Traveler; onChange: (value: Traveler) => void }) {
+  const [selected, setSelected] = useState(props.defaultValue);
+  const travelers: Traveler[] = ["LUMINE", "AETHER"];
+
+  return (
+    <div className="py-2 flex gap-3">
+      {travelers.map((traveler) => {
+        const info = $AppCharacter.getTravelerProps(traveler);
+        const isSelected = traveler === selected;
+        return (
+          <CharacterPortrait
+            key={traveler}
+            info={info}
+            className={isSelected ? "shadow-3px-3px shadow-active-color" : ""}
+            size="small"
+            zoomable={false}
+            onClick={() => {
+              if (!isSelected) {
+                setSelected(traveler);
+                props.onChange(traveler);
+              }
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
 
 export const Settings = Modal.wrap(SettingsCore, {
   title: "Settings",

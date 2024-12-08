@@ -14,7 +14,7 @@ interface CharacterPortraitProps {
   className?: ClassValue;
   info?: {
     name?: string;
-    code: number;
+    code?: number;
     icon: string;
     vision?: ElementType;
   };
