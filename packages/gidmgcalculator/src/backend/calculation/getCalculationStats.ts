@@ -144,23 +144,29 @@ export default function getCalculationStats(
     }
   };
 
-  const mainArtifactData = setBonuses[0]?.code ? $AppArtifact.getSet(setBonuses[0].code) : undefined;
   const applyMainArtifactBuffs = (isFinal: boolean) => {
-    if (!mainArtifactData) return;
-
     for (const ctrl of artBuffCtrls) {
-      const buff = mainArtifactData.buffs?.[ctrl.index];
+      if (ctrl.activated) {
+        const { name, buffs = [] } = $AppArtifact.getSet(ctrl.code) || {};
+        const buff = Array_.findByIndex(buffs, ctrl.index);
 
-      if (ctrl.activated && buff) {
-        applyBuff(
-          buff,
-          {
-            inputs: ctrl.inputs ?? [],
-            fromSelf: true,
-          },
-          `${mainArtifactData.name} (self) / 4-piece activated`,
-          isFinal
-        );
+        // Currently only Obsidian Codex has 2 buffs,
+        // buff index 0 is for 2-piece, buff index 1 is for 4-piece,
+        // Other sets only have 1 buff index 0
+
+        if (buff) {
+          const numOfPieces = buffs.length === 2 ? (ctrl.index + 1) * 2 : 4;
+
+          applyBuff(
+            buff,
+            {
+              inputs: ctrl.inputs ?? [],
+              fromSelf: true,
+            },
+            `${name} (self) / ${numOfPieces}-piece bonus`,
+            isFinal
+          );
+        }
       }
     }
   };
