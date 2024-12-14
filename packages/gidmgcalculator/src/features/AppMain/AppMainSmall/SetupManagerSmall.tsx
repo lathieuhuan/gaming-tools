@@ -9,10 +9,10 @@ import { useSelector } from "@Store/hooks";
 import { useCalcModalCtrl, useSetupDirectorKit } from "@Src/screens/Calculator";
 import { IconTrashCan } from "@Src/components/icons";
 
-interface SmallSetupManagerProps {
+interface SetupManagerSmallProps {
   onClose: () => void;
 }
-export function SmallSetupManager({ onClose }: SmallSetupManagerProps) {
+export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
   const activeId = useSelector(selectActiveId);
   const calcModalCtrl = useCalcModalCtrl();
   const { displayedSetups, comparedSetups, canAddMoreSetup, tempStandardId, control, dispatch } = useSetupDirectorKit();

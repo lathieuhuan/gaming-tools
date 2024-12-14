@@ -1,24 +1,13 @@
 import { memo } from "react";
-import { SwitchNode, clsx, useScreenWatcher } from "rond";
+import { clsx, useScreenWatcher } from "rond";
 
 import { useSelector } from "@Store/hooks";
 import { selectComparedIds } from "@Store/calculator-slice";
-import { MyCharactersLarge } from "@Src/screens/MyCharacters";
-import MyWeapons from "@Src/screens/MyWeapons";
-import MyArtifacts from "@Src/screens/MyArtifacts";
-import MySetups from "@Src/screens/MySetups";
-import {
-  CharacterOverview,
-  Modifiers,
-  SetupManager,
-  SetupDirector,
-  FinalResult,
-  CalculatorProviders,
-} from "@Src/screens/Calculator";
+import { CharacterOverview, Modifiers, SetupManager, SetupDirector, FinalResult } from "@Src/screens/Calculator";
 
-import styles from "./AppMain.styles.module.scss";
+import styles from "../AppMain.styles.module.scss";
 
-function LargeCalculatorCore() {
+function LargeCalculator() {
   const screenWatcher = useScreenWatcher();
   const touched = useSelector((state) => state.calculator.setupManageInfos.length !== 0);
 
@@ -90,30 +79,4 @@ const FinalResultPanel = (props: FinalResultPanelProps) => {
   );
 };
 
-const LargeCalculator = memo(LargeCalculatorCore);
-
-export function AppMainLarge() {
-  const atScreen = useSelector((state) => state.ui.atScreen);
-
-  return (
-    <div className="h-full flex-center relative">
-      <CalculatorProviders>
-        <LargeCalculator />
-      </CalculatorProviders>
-
-      {atScreen !== "CALCULATOR" ? (
-        <div className="absolute full-stretch z-30">
-          <SwitchNode
-            value={atScreen}
-            cases={[
-              { value: "MY_CHARACTERS", element: <MyCharactersLarge /> },
-              { value: "MY_WEAPONS", element: <MyWeapons /> },
-              { value: "MY_ARTIFACTS", element: <MyArtifacts /> },
-              { value: "MY_SETUPS", element: <MySetups /> },
-            ]}
-          />
-        </div>
-      ) : null}
-    </div>
-  );
-}
+export const CalculatorLarge = memo(LargeCalculator);

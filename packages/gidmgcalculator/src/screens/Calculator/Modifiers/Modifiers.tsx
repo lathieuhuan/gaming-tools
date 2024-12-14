@@ -58,7 +58,7 @@ export function Modifiers() {
             {
               title: "Artifacts buffs",
               heading: "Artifacts",
-              body: <ArtifactBuffs />,
+              body: <ArtifactBuffs party={party} />,
             },
             {
               title: "Custom buffs",

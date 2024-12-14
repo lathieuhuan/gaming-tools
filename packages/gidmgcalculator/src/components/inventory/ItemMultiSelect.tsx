@@ -49,7 +49,7 @@ const ItemMultiSelectCore = (props: ItemMultiSelectProps) => {
       title={props.title}
       extra={
         <div className="flex items-center gap-3">
-          <p className="text-base text-light-default font-bold">
+          <p className="text-right text-base text-light-default font-bold">
             {chosenCount}/{props.max} selected
           </p>
           <Button

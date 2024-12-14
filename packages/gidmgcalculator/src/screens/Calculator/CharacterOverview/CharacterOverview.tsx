@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 
 // Store
-import { $AppCharacter } from "@Src/services";
 import { selectCharacter, updateCharacter } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectIsReadyApp, selectTraveler } from "@Store/ui-slice";
@@ -34,7 +33,6 @@ function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
   return (
     <div className="h-full flex flex-col gap-4">
       <CharacterIntro
-        // key={$AppCharacter.isTraveler(appChar) ? traveler : "OTHER"}
         char={char}
         appChar={appChar}
         mutable

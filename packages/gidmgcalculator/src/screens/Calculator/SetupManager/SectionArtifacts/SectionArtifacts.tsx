@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { MdInventory } from "react-icons/md";
 import { GiAnvil } from "react-icons/gi";
 import { FaToolbox } from "react-icons/fa";
 import { clsx, notification, Button, CollapseSpace } from "rond";
@@ -22,6 +21,7 @@ import {
   LoadoutStash,
   GenshinImage,
 } from "@Src/components";
+import { IconPouch } from "@Src/components/icons";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
 
@@ -263,7 +263,11 @@ export default function SectionArtifacts() {
       {activeTabIndex < 0 ? (
         <div className="mt-4 px-4 flex justify-end gap-4">
           <Button title="Loadout" icon={<FaToolbox />} onClick={onRequestSelectArtifactLoadout} />
-          <Button title="Inventory" icon={<MdInventory />} onClick={onRequestSelectInventoryArtifact} />
+          <Button
+            title="Inventory"
+            icon={<IconPouch className="text-lg" />}
+            onClick={onRequestSelectInventoryArtifact}
+          />
           <Button title="New" icon={<GiAnvil className="text-lg" />} onClick={onRequestForgeArtifact} />
         </div>
       ) : null}

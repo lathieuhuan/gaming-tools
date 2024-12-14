@@ -1,26 +1,24 @@
 import { useState } from "react";
-import { FaChevronDown } from "react-icons/fa";
-import { BottomSheet, SwitchNode } from "rond";
+import { SwitchNode } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 
-import { MyCharactersSmall } from "@Src/screens/MyCharacters";
-import MyWeapons from "@Src/screens/MyWeapons";
-import MyArtifacts from "@Src/screens/MyArtifacts";
-import MySetups from "@Src/screens/MySetups";
 import {
-  CharacterOverview,
-  Modifiers,
-  SetupManager,
-  SetupDirector,
-  FinalResult,
   CalculatorProviders,
+  CharacterOverview,
+  FinalResult,
+  Modifiers,
+  SetupDirector,
+  SetupManager,
 } from "@Src/screens/Calculator";
-import { MobileBottomNav } from "@Src/components";
-import { SmallSetupManager } from "./SmallSetupManager";
+import MyArtifacts from "@Src/screens/MyArtifacts";
+import { MyCharactersSmall } from "@Src/screens/MyCharacters";
+import MySetups from "@Src/screens/MySetups";
+import MyWeapons from "@Src/screens/MyWeapons";
+import { BottomNavSmall } from "./BottomNavSmall";
 
-import styles from "./AppMain.styles.module.scss";
+import styles from "../AppMain.styles.module.scss";
 
 export function AppMainSmall() {
   const dispatch = useDispatch();
@@ -92,7 +90,7 @@ export function AppMainSmall() {
                 </div>
               </div>
 
-              {touched ? <CalculatorBottomNav activePanelI={activePanelI} onSelectSection={onSelectSection} /> : null}
+              {touched ? <BottomNavSmall activePanelI={activePanelI} onSelectSection={onSelectSection} /> : null}
             </div>
           ) : (
             <div className="h-full flex hide-scrollbar border-t border-surface-border relative snap-x snap-mandatory">
@@ -105,41 +103,5 @@ export function AppMainSmall() {
         </CalculatorProviders>
       }
     />
-  );
-}
-
-interface CalculatorBottomNavProps {
-  activePanelI: number;
-  onSelectSection: (index: number) => void;
-}
-function CalculatorBottomNav({ activePanelI, onSelectSection }: CalculatorBottomNavProps) {
-  const [optionsActive, setOptionsActive] = useState(false);
-
-  const closeOptions = () => setOptionsActive(false);
-
-  return (
-    <>
-      <MobileBottomNav
-        activeI={activePanelI}
-        options={["Overview", "Modifiers", "Setup", "Results"]}
-        extraEnd={
-          <>
-            <div className="my-auto w-px h-2/3 bg-surface-border" />
-            <button
-              type="button"
-              className="shrink-0 w-10 flex-center rotate-180"
-              onClick={() => setOptionsActive(true)}
-            >
-              <FaChevronDown />
-            </button>
-          </>
-        }
-        onSelect={onSelectSection}
-      />
-
-      <BottomSheet active={optionsActive} title="Setups Manager" onClose={closeOptions}>
-        <SmallSetupManager onClose={closeOptions} />
-      </BottomSheet>
-    </>
   );
 }

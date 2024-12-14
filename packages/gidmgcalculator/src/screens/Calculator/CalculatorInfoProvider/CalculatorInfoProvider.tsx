@@ -1,19 +1,22 @@
 import { useMemo } from "react";
 import { $AppCharacter } from "@Src/services";
+import { useSelector } from "@Store/hooks";
+import { selectCharacter } from "@Store/calculator-slice";
 import { CalculatorInfo, CalculatorInfoContext } from "./calculator-info-context";
 
 interface CalculatorInfoProviderProps {
-  characterName: string;
   children: React.ReactNode;
 }
-export function CalculatorInfoProvider({ characterName, children }: CalculatorInfoProviderProps) {
+export function CalculatorInfoProvider({ children }: CalculatorInfoProviderProps) {
+  const character = useSelector(selectCharacter);
+
   const calculatorInfo = useMemo<CalculatorInfo | null>(() => {
-    return characterName
+    return character?.name
       ? {
-          appChar: $AppCharacter.get(characterName),
+          appChar: $AppCharacter.get(character.name),
         }
       : null;
-  }, [characterName]);
+  }, [character?.name]);
 
   return <CalculatorInfoContext.Provider value={calculatorInfo}>{children}</CalculatorInfoContext.Provider>;
 }
