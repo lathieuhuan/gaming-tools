@@ -5,14 +5,14 @@ import Setup_ from "@Src/utils/setup-utils";
 import { useStoreSnapshot } from "@Src/features";
 import { useDispatch } from "@Store/hooks";
 import { initNewSessionWithCharacter } from "@Store/thunks";
+import { CalculatorModalsContext, CalculatorModalsControl } from "../contexts";
 
 // Component
 import { SetupExporterCore, SetupImporter, Tavern } from "@Src/components";
 import { TargetConfig } from "./TargetConfig";
 import { SaveSetup } from "./SaveSetup";
-import { CalculatorModalsContext, type CalculatorModalsControl } from "./calculator-modals-context";
 
-type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "";
+type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "OPTIMIZER" | "";
 
 export function CalculatorModalsProvider(props: { children: React.ReactNode }) {
   const dispatch = useDispatch();
@@ -36,6 +36,9 @@ export function CalculatorModalsProvider(props: { children: React.ReactNode }) {
       requestShareSetup: (setupId: number) => {
         setModalType("SHARE_SETUP");
         setSetupId(setupId);
+      },
+      requestOptimizer: () => {
+        setModalType("OPTIMIZER");
       },
     };
   }, []);

@@ -6,8 +6,9 @@ import { Button, ButtonGroup, Input, type ButtonProps } from "rond";
 
 import { NewSetupManageInfo, selectActiveId, updateCalculator } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
-import { useCalcModalCtrl, useSetupDirectorKit } from "@Src/screens/Calculator";
+import { useSetupDirectorKit } from "@Src/screens/Calculator";
 import { IconTrashCan } from "@Src/components/icons";
+import { useCalcModalCtrl } from "@Src/screens/Calculator/contexts";
 
 interface SetupManagerSmallProps {
   onClose: () => void;

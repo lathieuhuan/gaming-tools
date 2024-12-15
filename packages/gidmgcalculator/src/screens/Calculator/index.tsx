@@ -5,7 +5,7 @@ export * from "./SetupManager";
 export * from "./SetupDirector";
 export * from "./CalculatorModalsProvider";
 
-import { CalculatorInfoProvider } from "./CalculatorInfoProvider";
+import { CharacterDataProvider, PartyDataProvider } from "./CalculatorDataProvider";
 import { CalculatorModalsProvider } from "./CalculatorModalsProvider";
 
 interface CalculatorAllProvidersProps {
@@ -13,8 +13,10 @@ interface CalculatorAllProvidersProps {
 }
 export function CalculatorProviders(props: CalculatorAllProvidersProps) {
   return (
-    <CalculatorInfoProvider>
-      <CalculatorModalsProvider>{props.children}</CalculatorModalsProvider>
-    </CalculatorInfoProvider>
+    <CharacterDataProvider>
+      <PartyDataProvider>
+        <CalculatorModalsProvider>{props.children}</CalculatorModalsProvider>
+      </PartyDataProvider>
+    </CharacterDataProvider>
   );
 }

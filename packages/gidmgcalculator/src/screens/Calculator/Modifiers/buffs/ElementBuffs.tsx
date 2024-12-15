@@ -17,7 +17,7 @@ import {
   ResonanceBuffItem,
   VapMeltBuffItem,
 } from "@Src/components";
-import { useCalcAppCharacter } from "../../CalculatorInfoProvider";
+import { useCharacterData } from "../../contexts";
 
 const hasAbsorbingAttackIn = (items: CalcItem[]) => {
   return items.some((item) => item.attElmt === "absorb");
@@ -30,7 +30,7 @@ export default function ElementBuffs() {
   const attkBonuses = useSelector(selectAttkBonuses);
   const customInfusion = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].customInfusion);
 
-  const { vision, weaponType, calcList } = useCalcAppCharacter();
+  const { vision, weaponType, calcList } = useCharacterData();
 
   const { element: infusedElement } = customInfusion;
   const isInfused = infusedElement !== "phys";

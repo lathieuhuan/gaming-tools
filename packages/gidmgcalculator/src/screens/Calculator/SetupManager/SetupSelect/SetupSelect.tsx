@@ -17,7 +17,7 @@ import {
   updateCalculator,
 } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { useCalcModalCtrl } from "../../CalculatorModalsProvider";
+import { useCalcModalCtrl } from "../../contexts";
 
 // Component
 import { ComplexSelect } from "@Src/components";
