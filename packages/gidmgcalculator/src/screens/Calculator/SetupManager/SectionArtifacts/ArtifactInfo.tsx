@@ -112,11 +112,11 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
             onRemove();
           }}
         />
-        <Button title="Save" icon={<FaSave />} onClick={() => setIsSaving(true)} />
-        <Button title="Loadout" icon={<FaToolbox />} onClick={() => onRequestChange("LOADOUT")} />
+        <Button title="Save" icon={<FaSave className="text-lg" />} onClick={() => setIsSaving(true)} />
+        <Button title="Loadout" icon={<FaToolbox className="text-lg" />} onClick={() => onRequestChange("LOADOUT")} />
         <Button
           title="Inventory"
-          icon={<IconPouch className="text-lg" />}
+          icon={<IconPouch className="text-xl" />}
           onClick={() => onRequestChange("INVENTORY")}
         />
         <Button title="Switch" icon={<FaSyncAlt className="text-lg" />} onClick={() => onRequestChange("FORGE")} />

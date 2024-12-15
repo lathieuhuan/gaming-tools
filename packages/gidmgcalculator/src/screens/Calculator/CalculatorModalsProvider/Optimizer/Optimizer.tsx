@@ -1,27 +1,35 @@
 import { useRef, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
-import { ButtonGroup, SwitchNode } from "rond";
+import { ButtonGroup } from "rond";
 
+import type { ArtifactFilterSet } from "@Src/components/ArtifactFilter/hooks";
+import Modifier_ from "@Src/utils/modifier-utils";
+import { ArtifactBuffConfig, StepArtifactModConfig } from "./StepArtifactModConfig";
 import { StepArtifactSetSelect } from "./StepArtifactSetSelect";
 import { SelectedCalcItem, StepCalcItemSelect } from "./StepCalcItemSelect";
+import { OptimizerExtraConfig, StepExtraConfigs } from "./StepExtraConfigs";
 
 type SavedConfig = {
   calcItem: SelectedCalcItem;
-  artifactCodes: number[];
+  sets: ArtifactFilterSet[];
+  buffs: ArtifactBuffConfig;
+  extra: OptimizerExtraConfig;
 };
 
 export function Optimizer() {
   const savedConfig = useRef<Partial<SavedConfig>>({});
   const [step, setStep] = useState(0);
-  const [stepValids, setStepValids] = useState<boolean[]>([]);
+  const [stepValids, setStepValids] = useState<boolean[]>([false, false, true, true]);
 
-  const FORM_IDS = ["calc-item", "artifact-set"];
+  const FORM_IDS = ["calc-item", "artifact-set", "artifact-modifier", "extra-config"];
+  const currentFormId = FORM_IDS[step];
 
   const navigateStep = (stepDiff: number) => {
     const newStep = step + stepDiff;
 
-    if (newStep > 1) {
+    if (newStep >= FORM_IDS.length) {
       console.log("complete");
+      console.log(savedConfig.current);
       return;
     }
 
@@ -43,37 +51,79 @@ export function Optimizer() {
     navigateStep(1);
   };
 
+  const onSubmitArtifactSets = (sets: ArtifactFilterSet[]) => {
+    saveConfig("sets", sets);
+
+    const newBuffConfigs = {
+      ...savedConfig.current.buffs,
+    };
+
+    for (const { code, data } of sets) {
+      if (!newBuffConfigs[code] && data.buffs) {
+        newBuffConfigs[code] = data.buffs.map<ArtifactBuffConfig[number][number]>((buff) => ({
+          index: buff.index,
+          activated: true,
+          inputs: Modifier_.createModCtrlInpus(buff.inputConfigs, true),
+        }));
+      }
+    }
+
+    savedConfig.current.buffs = newBuffConfigs;
+  };
+
+  let stepRender: React.ReactNode;
+
+  switch (step) {
+    case 0:
+      stepRender = (
+        <StepCalcItemSelect
+          id={currentFormId}
+          initialValue={savedConfig.current?.calcItem}
+          onChangeValid={(valid) => changeValid(0, valid)}
+          onSubmit={(calcItem) => saveConfig("calcItem", calcItem)}
+        />
+      );
+      break;
+    case 1: {
+      stepRender = (
+        <StepArtifactSetSelect
+          id={currentFormId}
+          initialValue={savedConfig.current?.sets?.map((set) => set.code)}
+          onChangeValid={(valid) => changeValid(1, valid)}
+          onSubmit={onSubmitArtifactSets}
+        />
+      );
+      break;
+    }
+    case 2: {
+      stepRender = (
+        <StepArtifactModConfig
+          id={currentFormId}
+          initialValue={{
+            buffs: savedConfig.current.buffs,
+          }}
+          artifactSets={savedConfig.current.sets}
+          onChangeValid={(valid) => changeValid(2, valid)}
+          onSubmit={(config) => saveConfig("buffs", config)}
+        />
+      );
+      break;
+    }
+    case 3:
+      stepRender = (
+        <StepExtraConfigs
+          id={currentFormId}
+          initialValue={savedConfig.current.extra}
+          onChangeValid={(valid) => changeValid(3, valid)}
+          onSubmit={(config) => saveConfig("extra", config)}
+        />
+      );
+      break;
+  }
+
   return (
     <div className="h-full flex flex-col hide-scrollbar" style={{ height: "80vh" }}>
-      <div className="grow hide-scrollbar">
-        <SwitchNode
-          value={step}
-          cases={[
-            {
-              value: 0,
-              element: (
-                <StepCalcItemSelect
-                  id={FORM_IDS[0]}
-                  initialValue={savedConfig.current?.calcItem}
-                  onChangeValid={(valid) => changeValid(0, valid)}
-                  onSubmit={(calcItem) => saveConfig("calcItem", calcItem)}
-                />
-              ),
-            },
-            {
-              value: 1,
-              element: (
-                <StepArtifactSetSelect
-                  id={FORM_IDS[1]}
-                  initialValue={savedConfig.current?.artifactCodes}
-                  onChangeValid={(valid) => changeValid(1, valid)}
-                  onSubmit={(codes) => saveConfig("artifactCodes", codes)}
-                />
-              ),
-            },
-          ]}
-        />
-      </div>
+      <div className="grow hide-scrollbar">{stepRender}</div>
 
       <ButtonGroup
         className="mt-3 mb-1"

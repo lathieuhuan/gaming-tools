@@ -60,13 +60,15 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 
       <div className="mt-4 grid grid-cols-3">
         <div className="flex items-center">
-          {!targetConfig.onOverview ? <Button boneOnly icon={<FaSkull />} onClick={onClickTargetConfigButton} /> : null}
+          {!targetConfig.onOverview ? (
+            <Button boneOnly icon={<FaSkull className="text-lg" />} onClick={onClickTargetConfigButton} />
+          ) : null}
         </div>
 
         <div className="flex-center">
           <Button
             className="mx-auto"
-            icon={<IoDocumentText />}
+            icon={<IoDocumentText className="text-xl" />}
             onClick={() => dispatch(updateUI({ setupDirectorActive: true }))}
           />
         </div>

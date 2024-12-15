@@ -92,7 +92,7 @@ export function StepCalcItemSelect(props: StepCalcItemSelectProps) {
                       <span
                         key={`${subGroup.attPatt}.${index}`}
                         className={clsx(
-                          "px-2 py-1 rounded",
+                          "px-2 py-1 font-medium rounded",
                           isSeleted ? "bg-active-color text-black" : "hover:bg-surface-3"
                         )}
                         onClick={() => onClickItem({ attPatt: subGroup.attPatt, index })}

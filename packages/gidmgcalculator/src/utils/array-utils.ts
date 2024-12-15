@@ -1,11 +1,11 @@
 import type { UnknownObject } from "./utils.types";
 
 function find(key: string) {
-  return <T>(arr: T[], value?: string | number | null): T | undefined => {
+  return <T>(arr?: T[], value?: string | number | null): T | undefined => {
     if (value === undefined) {
       return undefined;
     }
-    return arr.find((item) => (item as any)?.[key] === value);
+    return arr?.find((item) => (item as any)?.[key] === value);
   };
 }
 function findIndex(key: string) {

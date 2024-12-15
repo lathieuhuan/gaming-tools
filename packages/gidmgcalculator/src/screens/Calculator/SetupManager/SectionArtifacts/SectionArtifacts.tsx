@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaToolbox } from "react-icons/fa";
+import { FaSun } from "react-icons/fa6";
 import { GiAnvil } from "react-icons/gi";
-import { GrOptimize } from "react-icons/gr";
 import { Button, clsx, CollapseSpace, notification } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
@@ -21,7 +21,7 @@ import {
   GenshinImage,
   LoadoutStash,
 } from "@Src/components";
-import { IconOptimize, IconPouch } from "@Src/components/icons";
+import { IconPouch } from "@Src/components/icons";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
 
@@ -269,14 +269,14 @@ export default function SectionArtifacts() {
 
       {activeTabIndex < 0 ? (
         <div className="mt-4 px-4 flex justify-end gap-4">
-          <Button title="Optimize" icon={<IconOptimize />} onClick={onRequestOptimization} />
-          <Button title="Loadout" icon={<FaToolbox />} onClick={onRequestSelectArtifactLoadout} />
+          <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={onRequestOptimization} />
+          <Button title="Loadout" icon={<FaToolbox className="text-lg" />} onClick={onRequestSelectArtifactLoadout} />
           <Button
             title="Inventory"
-            icon={<IconPouch className="text-lg" />}
+            icon={<IconPouch className="text-xl" />}
             onClick={onRequestSelectInventoryArtifact}
           />
-          <Button title="New" icon={<GiAnvil className="text-lg" />} onClick={onRequestForgeArtifact} />
+          <Button title="New" icon={<GiAnvil className="text-xl" />} onClick={onRequestForgeArtifact} />
         </div>
       ) : null}
 

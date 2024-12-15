@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import { useArtifactSetFilter } from "@Src/components/ArtifactFilter/hooks";
+import { ArtifactFilterSet, useArtifactSetFilter } from "@Src/components/ArtifactFilter/hooks";
 import { useStoreSnapshot } from "@Src/features";
 
 interface StepArtifactSetSelectProps {
   id: string;
   initialValue?: number[];
   onChangeValid?: (valid: boolean) => void;
-  onSubmit: (artifactCodes: number[]) => void;
+  onSubmit: (filterSets: ArtifactFilterSet[]) => void;
 }
 export function StepArtifactSetSelect(props: StepArtifactSetSelectProps) {
   const data = useStoreSnapshot((state) => {
@@ -31,11 +31,7 @@ export function StepArtifactSetSelect(props: StepArtifactSetSelectProps) {
       className="h-full"
       onSubmit={(e) => {
         e.preventDefault();
-        props.onSubmit(
-          setOptions.reduce<number[]>((codes, option) => {
-            return option.chosen ? codes.concat(option.code) : codes;
-          }, [])
-        );
+        props.onSubmit(setOptions.filter((option) => option.chosen));
       }}
     >
       {renderArtifactSetFilter(null, "pr-2 grid grid-cols-4")}

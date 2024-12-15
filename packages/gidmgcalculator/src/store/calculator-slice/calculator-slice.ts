@@ -297,10 +297,7 @@ export const calculatorSlice = createSlice({
     },
     toggleTeammateModCtrl: (state, action: ToggleTeammateModCtrlAction) => {
       const { teammateIndex, modCtrlName, ctrlIndex } = action.payload;
-      const ctrl = Array_.findByIndex(
-        state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName] || [],
-        ctrlIndex
-      );
+      const ctrl = Array_.findByIndex(state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName], ctrlIndex);
 
       if (ctrl) {
         ctrl.activated = !ctrl.activated;
@@ -309,10 +306,7 @@ export const calculatorSlice = createSlice({
     },
     changeTeammateModCtrlInput: (state, action: ChangeTeammateModCtrlInputAction) => {
       const { teammateIndex, modCtrlName, ctrlIndex, inputIndex, value } = action.payload;
-      const ctrl = Array_.findByIndex(
-        state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName] || [],
-        ctrlIndex
-      );
+      const ctrl = Array_.findByIndex(state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName], ctrlIndex);
 
       if (ctrl && ctrl.inputs) {
         ctrl.inputs[inputIndex] = value;
@@ -339,8 +333,6 @@ export const calculatorSlice = createSlice({
       const { pieceIndex, newPiece, shouldKeepStats } = action.payload;
       const setup = state.setupsById[state.activeId];
       const piece = setup.artifacts[pieceIndex];
-      // const oldSetBonuses = GeneralCalc.getArtifactSetBonuses(setup.artifacts);
-      // const oldBonusLevel = oldSetBonuses[0]?.bonusLv;
 
       if (shouldKeepStats && piece && newPiece) {
         piece.code = newPiece.code;
@@ -348,17 +340,6 @@ export const calculatorSlice = createSlice({
       } else {
         setup.artifacts[pieceIndex] = newPiece;
       }
-
-      // const newSetBonus = GeneralCalc.getArtifactSetBonuses(setup.artifacts)[0];
-
-      // if (newSetBonus) {
-      //   if (oldBonusLevel === 0 && newSetBonus.bonusLv) {
-      //     setup.artBuffCtrls = Modifier_.createArtifactBuffCtrls(true, newSetBonus);
-      //   } //
-      //   else if (oldBonusLevel && !newSetBonus.bonusLv) {
-      //     setup.artBuffCtrls = [];
-      //   }
-      // }
 
       const newSetBonuses = GeneralCalc.getArtifactSetBonuses(setup.artifacts);
       const newArtBuffCtrls = Modifier_.createMainArtifactBuffCtrls(newSetBonuses);

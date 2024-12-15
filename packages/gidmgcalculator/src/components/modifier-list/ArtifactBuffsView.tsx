@@ -27,10 +27,9 @@ function renderArtifactModifiers<T extends ModifierCtrl = ModifierCtrl>({
 }: RenderArtifactBuffsArgs<T>) {
   const data = $AppArtifact.getSet(code);
   if (!data) return [];
-  const { buffs = [] } = data;
 
   return ctrls.map((ctrl, index) => {
-    const buff = Array_.findByIndex(buffs, ctrl.index);
+    const buff = Array_.findByIndex(data.buffs, ctrl.index);
     if (!buff) return null;
 
     const description = getArtifactDescription(data, buff);
