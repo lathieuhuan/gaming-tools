@@ -1,10 +1,14 @@
 import { useState } from "react";
-import { clsx, type ClassValue, VersatileSelect } from "rond";
+import { VersatileSelect, clsx, type ClassValue } from "rond";
 import { ATTACK_ELEMENTS, ArtifactCalc, ArtifactType } from "@Backend";
 
-import type { ArtifactStatFilterState, ArtifactStatFilterOption } from "../ArtifactFilter.types";
 import { ARTIFACT_SUBSTAT_TYPES } from "@Src/constants";
 import { useTranslation } from "@Src/hooks";
+import {
+  ArtifactStatFilterCondition,
+  ArtifactStatFilterOption,
+  DEFAULT_ARTIFACT_FILTER,
+} from "@Src/utils/filter-artifacts";
 import { FilterTemplate } from "../../FilterTemplate";
 
 type RenderSelectArgs = {
@@ -15,17 +19,12 @@ type RenderSelectArgs = {
   onChange: (value: string, no: number) => void;
 };
 
-export const DEFAULT_STAT_FILTER: ArtifactStatFilterState = {
-  main: "All",
-  subs: Array(4).fill("All"),
-};
-
 type Config = {
   artifactType?: ArtifactType;
   title?: React.ReactNode;
 };
 
-export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, config?: Config) {
+export function useArtifactStatFilter(initialFilter: ArtifactStatFilterCondition, config?: Config) {
   const { t } = useTranslation();
   const [filter, setFilter] = useState(initialFilter);
   const [hasDuplicates, setHasDuplicates] = useState(false);
@@ -39,7 +38,7 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
 
   const resetable = filter.main !== "All" || filter.subs.some((s) => s !== "All");
 
-  const checkDuplicate = (filter: ArtifactStatFilterState) => {
+  const checkDuplicate = (filter: ArtifactStatFilterCondition) => {
     const record: Record<string, boolean> = {
       [filter.main]: true,
     };
@@ -53,7 +52,7 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
   };
 
   const changeMainStat = (newStat: string) => {
-    const newFilter: ArtifactStatFilterState = {
+    const newFilter: ArtifactStatFilterCondition = {
       main: newStat as ArtifactStatFilterOption,
       subs: filter.subs,
     };
@@ -74,7 +73,7 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
         newSubs[k] = "All";
       }
     }
-    const newFilter: ArtifactStatFilterState = {
+    const newFilter: ArtifactStatFilterCondition = {
       main: filter.main,
       subs: newSubs,
     };
@@ -87,7 +86,7 @@ export function useArtifactStatFilter(initialFilter: ArtifactStatFilterState, co
   };
 
   const clearFilter = () => {
-    setFilter(DEFAULT_STAT_FILTER);
+    setFilter(DEFAULT_ARTIFACT_FILTER.stats);
     setHasDuplicates(false);
   };
 

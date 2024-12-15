@@ -9,9 +9,10 @@ import { useArtifactTypeSelect } from "@Src/hooks";
 import Array_ from "@Src/utils/array-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectUserArtifacts, addUserArtifact, updateUserArtifact, sortArtifacts } from "@Store/userdb-slice";
+import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@Src/utils/filter-artifacts";
 
 // Component
-import { InventoryRack, ArtifactForge, ArtifactFilter, ArtifactFilterState, ArtifactForgeProps } from "@Src/components";
+import { InventoryRack, ArtifactForge, ArtifactFilter, ArtifactForgeProps } from "@Src/components";
 import { ChosenArtifactView } from "./ChosenArtifactView";
 
 type ModalType = "ADD_ARTIFACT" | "EDIT_ARTIFACT" | "CONFIG_FILTER" | "";
@@ -23,7 +24,7 @@ export default function MyArtifacts() {
 
   const [chosenId, setChosenId] = useState<number>();
   const [modalType, setModalType] = useState<ModalType>("");
-  const [filter, setFilter] = useState<ArtifactFilterState>(ArtifactFilter.DEFAULT_FILTER);
+  const [filter, setFilter] = useState<ArtifactFilterCondition>(DEFAULT_ARTIFACT_FILTER);
 
   const { updateArtifactTypes, renderArtifactTypeSelect } = useArtifactTypeSelect(null, {
     multiple: true,
@@ -35,7 +36,7 @@ export default function MyArtifacts() {
     },
   });
 
-  const filteredArtifacts = useMemo(() => ArtifactFilter.filterArtifacts(userArts, filter), [userArts, filter]);
+  const filteredArtifacts = useMemo(() => filterArtifacts(userArts, filter), [userArts, filter]);
   const chosenArtifact = useMemo(() => Array_.findById(filteredArtifacts, chosenId), [filteredArtifacts, chosenId]);
 
   const closeModal = () => setModalType("");
@@ -104,9 +105,8 @@ export default function MyArtifacts() {
           <div
             className="pl-2 pr-3 rounded-r-2xl text-black bg-light-default flex-center glow-on-hover"
             onClick={() => {
-              const { DEFAULT_FILTER } = ArtifactFilter;
-              setFilter(DEFAULT_FILTER);
-              updateArtifactTypes(DEFAULT_FILTER.types);
+              setFilter(DEFAULT_ARTIFACT_FILTER);
+              updateArtifactTypes(DEFAULT_ARTIFACT_FILTER.types);
             }}
           >
             <FaTimes />

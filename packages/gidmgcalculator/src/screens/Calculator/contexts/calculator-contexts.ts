@@ -1,6 +1,6 @@
-import { AppCharacter } from "@Backend";
-import { PartyData } from "@Src/types";
 import { createContext, useContext } from "react";
+import type { AppCharacter } from "@Backend";
+import type { PartyData } from "@Src/types";
 
 export const CharacterDataContext = createContext<AppCharacter | undefined>(undefined);
 
@@ -27,7 +27,7 @@ export type CalculatorModalsControl = {
   requestImportSetup: () => void;
   requestSaveSetup: (setupId: number) => void;
   requestShareSetup: (setupId: number) => void;
-  requestOptimizer: () => void;
+  requestOptimize: () => void;
 };
 
 export const CalculatorModalsContext = createContext<CalculatorModalsControl | null>(null);

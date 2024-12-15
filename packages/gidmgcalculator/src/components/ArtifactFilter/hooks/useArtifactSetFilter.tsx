@@ -3,7 +3,6 @@ import { clsx, type ClassValue } from "rond";
 import { ArtifactType } from "@Backend";
 
 import type { CalcArtifact } from "@Src/types";
-import type { ArtifactFilterSet } from "../ArtifactFilter.types";
 import { $AppArtifact } from "@Src/services";
 import Array_ from "@Src/utils/array-utils";
 import { GenshinImage } from "@Src/components";
@@ -12,6 +11,12 @@ import { FilterTemplate } from "../../FilterTemplate";
 type Config = {
   artifactType?: ArtifactType;
   title?: React.ReactNode;
+};
+
+type ArtifactFilterSet = {
+  code: number;
+  chosen: boolean;
+  icon: string;
 };
 
 export function useArtifactSetFilter(artifacts: CalcArtifact[], chosenCodes: number[], config?: Config) {

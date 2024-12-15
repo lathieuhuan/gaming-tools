@@ -1,16 +1,16 @@
-import { useState, useEffect } from "react";
-import { GiAnvil } from "react-icons/gi";
+import { useEffect, useState } from "react";
 import { FaToolbox } from "react-icons/fa";
-import { clsx, notification, Button, CollapseSpace } from "rond";
+import { GiAnvil } from "react-icons/gi";
+import { GrOptimize } from "react-icons/gr";
+import { Button, clsx, CollapseSpace, notification } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
-import type { Artifact, CalcArtifact } from "@Src/types";
 import { $AppArtifact, $AppSettings } from "@Src/services";
+import type { Artifact, CalcArtifact } from "@Src/types";
 import Entity_ from "@Src/utils/entity-utils";
-
-// Store
+import { changeArtifact, selectArtifacts } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectArtifacts, changeArtifact } from "@Store/calculator-slice";
+import { useCalcModalCtrl } from "../../contexts";
 
 // Component
 import {
@@ -18,10 +18,10 @@ import {
   ArtifactForgeProps,
   ArtifactInventory,
   ArtifactInventoryProps,
-  LoadoutStash,
   GenshinImage,
+  LoadoutStash,
 } from "@Src/components";
-import { IconPouch } from "@Src/components/icons";
+import { IconOptimize, IconPouch } from "@Src/components/icons";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
 
@@ -43,6 +43,7 @@ const SECTION_ID = "calculator-section-artifacts";
 
 export default function SectionArtifacts() {
   const dispatch = useDispatch();
+  const modalCtrl = useCalcModalCtrl();
 
   const artifacts = useSelector(selectArtifacts);
 
@@ -191,6 +192,12 @@ export default function SectionArtifacts() {
     }
   };
 
+  // ===== OPTIMIZE ARTIFACTS =====
+
+  const onRequestOptimization = () => {
+    modalCtrl.requestOptimize();
+  };
+
   // ===== ACTIONS TOWARDS ACTIVE ARTIFACT =====
 
   const onRequestChangeActiveArtifact = (source: ArtifactSourceType) => {
@@ -262,6 +269,7 @@ export default function SectionArtifacts() {
 
       {activeTabIndex < 0 ? (
         <div className="mt-4 px-4 flex justify-end gap-4">
+          <Button title="Optimize" icon={<IconOptimize />} onClick={onRequestOptimization} />
           <Button title="Loadout" icon={<FaToolbox />} onClick={onRequestSelectArtifactLoadout} />
           <Button
             title="Inventory"

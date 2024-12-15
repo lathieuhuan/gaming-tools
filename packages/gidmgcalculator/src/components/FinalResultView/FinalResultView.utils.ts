@@ -49,7 +49,7 @@ export function getTableKeys(appChar?: AppCharacter, appWeapon?: AppWeapon): Tab
 
 export function displayValue(value?: number | number[]) {
   if (value) {
-    return Array.isArray(value) ? value.map((v) => Math.round(v)).join(" + ") : Math.round(value);
+    return Array.isArray(value) ? value.map(Math.round).join(" + ") : Math.round(value);
   }
   return "-";
 }
