@@ -1,16 +1,16 @@
 import { round } from "rond";
 import {
   CharacterCalc,
-  AppCharacter,
   CharacterBuff,
   CharacterDebuff,
-  getIntialCharacterBonusValue,
   AppWeapon,
   WeaponBuff,
+  BareBonusGetter,
+  CalculationInfo,
 } from "@Backend";
 
-import type { Character, PartyData } from "@Src/types";
-import { toArray, toMult } from "./pure-utils";
+import { toMult } from "./pure-utils";
+import Array_ from "./array-utils";
 
 const typeToCls: Record<string, string> = {
   k: "text-bonus-color", // key
@@ -43,25 +43,23 @@ export const parseResonanceDescription = (description: string) => {
 
 export const parseAbilityDescription = (
   ability: Pick<CharacterBuff | CharacterDebuff, "description" | "effects">,
-  obj: {
-    char: Character;
-    appChar: AppCharacter;
-    partyData: PartyData;
-  },
+  obj: CalculationInfo,
   inputs: number[],
   fromSelf: boolean
 ) => {
-  return ability.description.replace(/\{[\w \-/,%^"'*@.[\]]+\}#\[\w*\]/g, (match) => {
+  const bonusGetter = new BareBonusGetter(obj);
+
+  return ability.description.replace(/\{[\w \-/,%^"'*@:=.[\]]+\}#\[\w*\]/g, (match) => {
     let [body, type = ""] = match.split("#");
     body = body.slice(1, -1);
     type = type.slice(1, -1);
 
     if (body[0] === "@") {
-      const effect = toArray(ability.effects)[+body[1]];
+      const effect = Array_.toArray(ability.effects)[+body[1]];
 
       if (effect) {
         const { value, preExtra, max } = effect;
-        let result = getIntialCharacterBonusValue(value, obj, inputs, fromSelf);
+        let result = bonusGetter.getIntialBonusValue(value, { inputs, fromSelf });
 
         result *= CharacterCalc.getLevelScale(effect.lvScale, obj, inputs, fromSelf);
         if (typeof preExtra === "number") result += preExtra;
@@ -128,9 +126,13 @@ export const parseWeaponDescription = (description: string, refi: number) => {
 
 export const getWeaponBuffDescription = (descriptions: AppWeapon["descriptions"], buff: WeaponBuff, refi: number) => {
   if (descriptions?.length) {
-    let { description = 0 } = buff;
-    description = typeof description === "number" ? descriptions[description] : description;
-    return parseWeaponDescription(description || "", refi);
+    const parsedFrags: string[] = [];
+
+    for (const frag of Array_.toArray(buff.description ?? 0)) {
+      const description = typeof frag === "number" ? descriptions[frag] : frag;
+      parsedFrags.push(parseWeaponDescription(description ?? "", refi));
+    }
+    return parsedFrags.join(" ");
   }
   return "";
 };

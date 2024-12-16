@@ -101,7 +101,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
                 <ElementBuffsDetail
                   charLv={char.level}
                   vision={appChar?.vision}
-                  attBonus={result.attBonus}
+                  attkBonuses={result.attkBonuses}
                   customInfusion={chosenSetup.customInfusion}
                   elmtModCtrls={elmtModCtrls}
                 />

@@ -13,9 +13,20 @@ const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
   ELEMENTAL: 0,
 };
 
-export class Modifier_ {
+export default class Modifier_ {
   static getDefaultInitialValue(type: ModInputType) {
     return DEFAULT_INITIAL_VALUES[type] ?? 0;
+  }
+
+  static createModCtrlInpus(inputConfigs: ModInputConfig[] = [], forSelf = true) {
+    const initialValues = [];
+
+    for (const config of inputConfigs) {
+      if (!config.for || config.for !== (forSelf ? "FOR_TEAM" : "FOR_SELF")) {
+        initialValues.push(config.initialValue ?? Modifier_.getDefaultInitialValue(config.type));
+      }
+    }
+    return initialValues.length ? initialValues : undefined;
   }
 
   static createElmtModCtrls(): ElementModCtrl {
@@ -105,20 +116,14 @@ type Modifier = {
   index: number;
   inputConfigs?: ModInputConfig[];
 };
-function createModCtrl(mod: Modifier, forSelf: boolean) {
-  const ctrl: ModifierCtrl = { index: mod.index, activated: false };
+function createModCtrl(mod: Modifier, forSelf: boolean): ModifierCtrl {
+  const inputs = Modifier_.createModCtrlInpus(mod.inputConfigs, forSelf);
 
-  if (mod.inputConfigs) {
-    const initialValues = [];
-
-    for (const config of mod.inputConfigs) {
-      if (!config.for || config.for !== (forSelf ? "FOR_TEAM" : "FOR_SELF")) {
-        initialValues.push(config.initialValue ?? Modifier_.getDefaultInitialValue(config.type));
-      }
-    }
-    if (initialValues.length) ctrl.inputs = initialValues;
-  }
-  return ctrl;
+  return {
+    index: mod.index,
+    activated: false,
+    ...(inputs ? { inputs } : null),
+  };
 }
 
 interface RefModifier {

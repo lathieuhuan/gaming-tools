@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CollapseList, CollapseListProps } from "rond";
-import { AttackBonus, AttackPattern, GeneralCalc, TrackerControl, TrackerResult, calculateSetup } from "@Backend";
+import { AttackBonuses, AttackPattern, GeneralCalc, TrackerControl, TrackerResult, calculateSetup } from "@Backend";
 
 import type { TrackerState } from "@Store/ui-slice";
 
@@ -17,16 +17,16 @@ import { CalcItemTracker } from "./CalcItemTracker";
 
 type ExtraInfo = {
   inHealB_: number;
-  attBonus: AttackBonus;
+  attkBonuses: AttackBonuses;
 };
 
-function getTotalDefIgnore(talent: AttackPattern | "all", attBonus: AttackBonus) {
+function getTotalDefIgnore(talent: AttackPattern | "all", attkBonuses: AttackBonuses) {
   let result = 0;
 
-  for (const bonus of attBonus ?? []) {
+  for (const bonus of attkBonuses ?? []) {
     if (bonus.type.includes(talent)) {
       for (const record of bonus.records) {
-        if (record.to === "defIgn_") {
+        if (record.toKey === "defIgn_") {
           result += record.value;
         }
       }
@@ -49,7 +49,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const [result, setResult] = useState<TrackerResult>();
   const [xtraInfo, setXtraInfo] = useState<ExtraInfo>({
     inHealB_: 0,
-    attBonus: [],
+    attkBonuses: [],
   });
 
   const charLv = GeneralCalc.getBareLv(activeSetup.char.level);
@@ -63,15 +63,15 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
       setResult(tracker.finalize());
       setXtraInfo({
         inHealB_: finalResult.totalAttr.inHealB_,
-        attBonus: finalResult.attBonus,
+        attkBonuses: finalResult.attkBonuses,
       });
     }
   }, [trackerState]);
 
   const renderDefMultiplier = (talent: AttackPattern | "WP_CALC") => {
     const totalDefIgnore =
-      getTotalDefIgnore("all", xtraInfo.attBonus) +
-      (talent === "WP_CALC" ? 0 : getTotalDefIgnore(talent, xtraInfo.attBonus));
+      getTotalDefIgnore("all", xtraInfo.attkBonuses) +
+      (talent === "WP_CALC" ? 0 : getTotalDefIgnore(talent, xtraInfo.attkBonuses));
 
     return (
       <div className="flex items-center">
@@ -110,7 +110,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     },
     {
       heading: "Bonuses",
-      body: <BonusesTracker attBonus={xtraInfo.attBonus} />,
+      body: <BonusesTracker attkBonuses={xtraInfo.attkBonuses} />,
     },
     {
       heading: "Debuffs on Target",

@@ -2,7 +2,7 @@ import type { PartyData } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectCharacter, changeModCtrlInput, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
 import { SelfDebuffsView } from "@Src/components";
-import { useCalcAppCharacter } from "../../CalculatorInfoProvider";
+import { useCharacterData } from "../../contexts";
 
 export default function SelfDebuffs({ partyData }: { partyData: PartyData }) {
   const dispatch = useDispatch();
@@ -10,7 +10,7 @@ export default function SelfDebuffs({ partyData }: { partyData: PartyData }) {
   const selfDebuffCtrls = useSelector(
     (state) => state.calculator.setupsById[state.calculator.activeId].selfDebuffCtrls
   );
-  const appChar = useCalcAppCharacter();
+  const appChar = useCharacterData();
 
   return (
     <SelfDebuffsView

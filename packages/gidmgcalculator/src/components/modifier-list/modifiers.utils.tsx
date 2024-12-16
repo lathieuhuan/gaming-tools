@@ -1,9 +1,10 @@
 import { AppArtifact, ArtifactModifierDescription } from "@Backend";
-import { parseArtifactDescription, toArray } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
+import { parseArtifactDescription } from "@Src/utils/description-parsers";
 
 export function getArtifactDescription(data: AppArtifact, modifier: { description: ArtifactModifierDescription }) {
   return parseArtifactDescription(
-    toArray(modifier.description).reduce<string>((acc, description) => {
+    Array_.toArray(modifier.description).reduce<string>((acc, description) => {
       return `${acc} ${typeof description === "string" ? description : data.descriptions[description] || ""}`;
     }, "")
   );

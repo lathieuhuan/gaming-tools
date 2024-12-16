@@ -6,7 +6,7 @@ import type { RootState } from "@Store/store";
 
 import { useAppCharacter } from "@Src/hooks";
 import { $AppWeapon } from "@Src/services";
-import { findById, findByName } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { useSelector } from "@Store/hooks";
 import { MyCharacterDetailInfoContext, type MyCharacterDetailInfoState } from "./my-character-detail-info-context";
 
@@ -22,13 +22,17 @@ function MyCharacterDetailInfoProviderCore({ char, weapon, artifacts, children }
 
   const characterInfoState = useMemo<MyCharacterDetailInfoState>(() => {
     if (appChar && appWeapon) {
-      const { totalAttr, artAttr } = getCalculationStats({
-        char,
-        appChar,
-        appWeapon,
-        weapon,
-        artifacts,
-      });
+      const { totalAttr, artAttr } = getCalculationStats(
+        {
+          char,
+          weapon,
+          artifacts,
+        },
+        {
+          appChar,
+          appWeapon,
+        }
+      );
 
       return {
         loading: false,
@@ -60,8 +64,8 @@ function MyCharacterDetailInfoProviderCore({ char, weapon, artifacts, children }
 
 const parseUserdb = (state: RootState) => {
   const { userChars, userWps, userArts, chosenChar } = state.userdb;
-  const chosenCharInfo = findByName(userChars, chosenChar);
-  const weapon = findById(userWps, chosenCharInfo?.weaponID);
+  const chosenCharInfo = Array_.findByName(userChars, chosenChar);
+  const weapon = Array_.findById(userWps, chosenCharInfo?.weaponID);
   const charCount = userChars.length;
 
   if (chosenCharInfo && weapon) {
@@ -71,7 +75,7 @@ const parseUserdb = (state: RootState) => {
       characterInfo: {
         char,
         weapon,
-        artifacts: artifactIDs.map((id) => (id ? findById(userArts, id) ?? null : null)),
+        artifacts: artifactIDs.map((id) => (id ? Array_.findById(userArts, id) ?? null : null)),
       },
       charCount,
     };

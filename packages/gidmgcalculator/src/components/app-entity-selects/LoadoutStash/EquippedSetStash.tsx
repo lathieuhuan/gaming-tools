@@ -4,7 +4,7 @@ import { ElementType } from "@Backend";
 
 import type { UserArtifact } from "@Src/types";
 import { $AppArtifact, $AppCharacter } from "@Src/services";
-import { findById } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { useSelector } from "@Store/hooks";
 import { selectUserArtifacts, selectUserCharacters } from "@Store/userdb-slice";
 
@@ -61,7 +61,7 @@ export function EquippedSetStash({ keyword, onChangeArtifact, onSelectSet }: Equ
         };
 
         for (const id of character.artifactIDs) {
-          const artifact = findById(artifacts, id);
+          const artifact = Array_.findById(artifacts, id);
 
           if (artifact) {
             option.artifacts.push(artifact);

@@ -3,7 +3,8 @@ import type { UserSetup } from "@Src/types";
 import { useDispatch } from "@Store/hooks";
 import { selectUserSetups, addSetupToComplex } from "@Store/userdb-slice";
 import { useStoreSnapshot } from "@Src/features";
-import { Setup_, findById } from "@Src/utils";
+import Setup_ from "@Src/utils/setup-utils";
+import Array_ from "@Src/utils/array-utils";
 import { useCombineManager } from "./hooks";
 
 interface CombineMoreProps {
@@ -14,12 +15,12 @@ export default function CombineMore({ setupID, onClose }: CombineMoreProps) {
   const dispatch = useDispatch();
   const userSetups = useStoreSnapshot(selectUserSetups);
 
-  const targetSetup = findById(userSetups, setupID);
+  const targetSetup = Array_.findById(userSetups, setupID);
   if (!targetSetup || Setup_.isUserSetup(targetSetup)) {
     return null;
   }
 
-  const shownSetup = findById(userSetups, targetSetup.shownID);
+  const shownSetup = Array_.findById(userSetups, targetSetup.shownID);
   if (!shownSetup || !Setup_.isUserSetup(shownSetup)) {
     return null;
   }
@@ -56,7 +57,7 @@ export default function CombineMore({ setupID, onClose }: CombineMoreProps) {
       const existedNames: string[] = [];
 
       for (const pickedID of pickedIDs) {
-        const setup = findById(userSetups, pickedID);
+        const setup = Array_.findById(userSetups, pickedID);
 
         if (setup && Setup_.isUserSetup(setup)) {
           const { name } = setup.char;

@@ -10,21 +10,17 @@ import type {
   WeaponType,
 } from "./common.types";
 import type {
-  EntityBonus,
-  EntityBuff,
-  EntityDebuff,
-  EntityEffectMax,
   CalcItemType,
   CharacterMilestone,
-  ModifierAffectType,
-  WithBonusTargets,
-  WithPenaltyTargets,
-  EntityEffectExtra,
-  InputCheck,
+  EntityBonus,
+  EntityBonusCore,
+  EntityBuff,
+  EntityDebuff,
   EntityPenalty,
-} from "./app-entity.types";
-
-type Nation = "outland" | "mondstadt" | "liyue" | "inazuma" | "sumeru" | "natlan" | "fontaine" | "snezhnaya";
+  EntityPenaltyCore,
+  InputCheck,
+  ModifierAffectType,
+} from "./app-entity";
 
 export type AppCharacter = {
   code: number;
@@ -71,11 +67,15 @@ export type AppCharacter = {
   debuffs?: CharacterDebuff[];
 };
 
+type Nation = "outland" | "mondstadt" | "liyue" | "inazuma" | "sumeru" | "natlan" | "fontaine" | "snezhnaya";
+
 type Ability = {
   name: string;
   image?: string;
   description?: string;
 };
+
+// COMMON
 
 type CharacterModifier = {
   src: string;
@@ -135,42 +135,11 @@ export type CalcItem = {
 
 // ========== BUFF / BONUS ==========
 
-export type CharacterEffectLevelScale = {
-  talent: TalentType;
-  /** If [value] = 0: buff value * level. Otherwise buff value * TALENT_LV_MULTIPLIERS[value][level]. */
-  value: number;
-  /** When this bonus is from teammate, this is input's index to get level. Default to 0 */
-  alterIndex?: number;
-  /** On Raiden */
-  max?: number;
-};
+export type CharacterBonusCore = EntityBonusCore;
 
-type CharacterEffectValueOptionExtends = {
-  /** On Navia */
-  preOptions?: number[];
-  /** Add to optIndex. On Nahida */
-  extra?: EntityEffectExtra;
-  /** Max optIndex. Dynamic on Navia */
-  max?: EntityEffectMax;
-};
+type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "unstackableId" | "effects">;
 
-type CharacterBonusExtends = {
-  /** Multiplier based on talent level */
-  lvScale?: CharacterEffectLevelScale;
-  /** Added before stacks, after scale */
-  preExtra?: number | CharacterBonusCore;
-  /** Added after stacks. Not implement yet */
-  sufExtra?: number | CharacterBonusCore;
-  max?: EntityEffectMax;
-};
-
-export type CharacterBonusCore = EntityBonus<CharacterEffectValueOptionExtends> & CharacterBonusExtends;
-
-type CharacterBonus = WithBonusTargets<CharacterBonusCore>;
-
-type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "trackId" | "effects">;
-
-export type CharacterBuffNAsConfig = {
+export type CharacterBuffNormalAttackConfig = {
   checkInput?: number | InputCheck;
   forPatt?: "ALL" | NormalAttack;
   attPatt?: AttackPattern;
@@ -178,22 +147,16 @@ export type CharacterBuffNAsConfig = {
   disabled?: boolean;
 };
 
-type CharacterBuffExtends = {
-  normalsConfig?: CharacterBuffNAsConfig | CharacterBuffNAsConfig[];
-};
-
-export type CharacterBuff = EntityBuff<CharacterBonus> & CharacterModifier & CharacterBuffExtends;
+export type CharacterBuff = EntityBuff<EntityBonus<CharacterBonusCore>> &
+  CharacterModifier & {
+    normalsConfig?: CharacterBuffNormalAttackConfig | CharacterBuffNormalAttackConfig[];
+  };
 
 // ============ DEBUFF / PENALTY ============
 
-export type CharacterPenaltyCore = EntityPenalty & {
-  lvScale?: CharacterEffectLevelScale;
-  /** Added before stacks, after scale */
-  preExtra?: number | CharacterPenaltyCore;
-  max?: number;
-};
+export type CharacterPenaltyCore = EntityPenaltyCore;
 
-export type CharacterPenalty = WithPenaltyTargets<CharacterPenaltyCore>;
+type CharacterPenalty = EntityPenalty<CharacterPenaltyCore>;
 
 export type CharacterDebuff = EntityDebuff<CharacterPenalty> &
   CharacterModifier & {

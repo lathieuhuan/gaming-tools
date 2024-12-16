@@ -5,7 +5,7 @@ import type { UserSetup } from "@Src/types";
 import { selectUserSetups, combineSetups } from "@Store/userdb-slice";
 import { useDispatch } from "@Store/hooks";
 import { useStoreSnapshot } from "@Src/features";
-import { Setup_, findById } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { useCombineManager } from "./hooks";
 
 export default function FirstCombine(props: { onClose: () => void }) {
@@ -36,7 +36,7 @@ export default function FirstCombine(props: { onClose: () => void }) {
     const all: string[] = [];
 
     for (const ID of pickedIDs) {
-      const { char, party } = findById(setupOptions, ID)!;
+      const { char, party } = Array_.findById(setupOptions, ID)!;
 
       if (mains.includes(char.name)) {
         setIsError(true);
@@ -54,7 +54,7 @@ export default function FirstCombine(props: { onClose: () => void }) {
         }
       }
 
-      for (const teammate of Setup_.teammatesOf(party)) {
+      for (const teammate of Array_.truthy(party)) {
         if (!all.includes(teammate.name)) {
           if (all.length === 4) {
             setIsError(true);

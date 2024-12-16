@@ -1,17 +1,17 @@
 import { round } from "rond";
-import { ATTACK_ELEMENTS, type AttackBonus, type AttackBonusKey } from "@Backend";
+import { ATTACK_ELEMENTS, type AttackBonuses, type AttackBonusKey } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
-import { Utils_ } from "@Src/utils";
+import { suffixOf } from "@Src/utils";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
 
 interface BonusesTrackerProps {
-  attBonus: AttackBonus;
+  attkBonuses: AttackBonuses;
 }
-export function BonusesTracker({ attBonus }: BonusesTrackerProps) {
+export function BonusesTracker({ attkBonuses }: BonusesTrackerProps) {
   const { t } = useTranslation();
 
-  const bonuses = attBonus.filter((bonus) => bonus.type.slice(0, 2) !== "id");
+  const bonuses = attkBonuses.filter((bonus) => bonus.type.slice(0, 2) !== "id");
 
   return bonuses.length ? (
     <div className={`pl-2 mt-1 ${recordListStyles}`}>
@@ -22,13 +22,13 @@ export function BonusesTracker({ attBonus }: BonusesTrackerProps) {
         }> = [];
 
         for (const record of bonus.records) {
-          const existed = list.find((item) => item.key === record.to);
+          const existed = list.find((item) => item.key === record.toKey);
 
           if (existed) {
             existed.records.push(record);
           } else {
             list.push({
-              key: record.to,
+              key: record.toKey,
               records: [record],
             });
           }
@@ -50,7 +50,7 @@ export function BonusesTracker({ attBonus }: BonusesTrackerProps) {
 
             <div>
               {list.map((item) => {
-                const suffix = Utils_.suffixOf(item.key);
+                const suffix = suffixOf(item.key);
                 const decimalDigits = suffix ? 2 : 0;
 
                 return (

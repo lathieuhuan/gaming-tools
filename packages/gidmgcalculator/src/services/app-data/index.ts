@@ -2,9 +2,16 @@ import { AppCharacterService } from "./AppCharacterService";
 import { AppWeaponService } from "./AppWeaponService";
 import { AppArtifactService } from "./AppArtifactService";
 import { AppDataService } from "./AppDataService";
-export type { Update } from "./app-data.types";
+export type { Metadata, Update } from "./app-data.types";
 
-export const $AppCharacter = new AppCharacterService();
-export const $AppWeapon = new AppWeaponService();
-export const $AppArtifact = new AppArtifactService();
-export const $AppData = new AppDataService();
+const $AppCharacter = new AppCharacterService();
+const $AppWeapon = new AppWeaponService();
+const $AppArtifact = new AppArtifactService();
+const $AppData = new AppDataService($AppCharacter, $AppWeapon, $AppArtifact);
+
+export {
+  $AppCharacter,
+  $AppWeapon,
+  $AppArtifact,
+  $AppData
+}

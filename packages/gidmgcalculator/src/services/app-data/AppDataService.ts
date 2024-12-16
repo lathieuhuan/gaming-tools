@@ -1,76 +1,53 @@
 import type { AppMonster } from "@Backend";
 import type { Target } from "@Src/types";
-import type { Metadata, Update } from "./app-data.types";
+import type { Metadata } from "./app-data.types";
+import type { AppCharacterService } from "./AppCharacterService";
+import type { AppWeaponService } from "./AppWeaponService";
+import type { AppArtifactService } from "./AppArtifactService";
 
 import { BACKEND_URL } from "@Src/constants";
-import { findByCode, toArray } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { BaseService } from "./BaseService";
 
-type FetchMetadataValidity = {
-  isOk: boolean;
-  message?: string;
-};
-
 export class AppDataService extends BaseService {
-  private isFetchedMetadata = false;
-
   private monsters: AppMonster[] = [];
-  public version: string | undefined;
-  public updates: Update[] = [];
-  public supporters: string[] = [];
 
-  constructor() {
+  constructor(
+    private character$: AppCharacterService,
+    private weapon$: AppWeaponService,
+    private artifact$: AppArtifactService
+  ) {
     super();
   }
 
-  public async fetchMetadata(
-    onDoneFetching: (metaData: Metadata) => void,
-    isRefetch?: boolean
-  ): Promise<FetchMetadataValidity> {
-    //
-    if (this.isFetchedMetadata && !isRefetch) {
-      return {
-        isOk: true,
-      };
-    }
-    const response = await this.fetchData<Metadata>(BACKEND_URL.metadata());
+  async fetchMetadata() {
+    return await this.fetchData<Metadata>(BACKEND_URL.metadata());
+  }
 
-    if (response.data) {
-      this.isFetchedMetadata = true;
-
-      try {
-        onDoneFetching(response.data);
-      } catch (e) {
-        return {
-          isOk: false,
-          message: `${e}`,
-        };
-      }
-
-      this.version = response.data.version;
-      this.monsters = response.data.monsters;
-      this.updates = response.data.updates;
-      this.supporters = response.data.supporters;
-
-      return {
-        isOk: true,
-      };
-    }
-
+  get data() {
     return {
-      isOk: false,
-      message: response.message,
+      characters: this.character$.getAll(),
+      weapons: this.weapon$.getAll(),
+      artifacts: this.artifact$.getAll(),
+      monsters: this.getAllMonsters(),
     };
   }
 
-  // ========== MONSTERS ==========
+  set data(data: Pick<Metadata, "characters" | "weapons" | "artifacts" | "monsters">) {
+    this.character$.populate(data.characters);
+    this.weapon$.populate(data.weapons);
+    this.artifact$.populate(data.artifacts);
+    this.monsters = data.monsters;
+  }
+
+  // Monster
 
   getAllMonsters() {
     return this.monsters;
   }
 
   getMonster({ code }: { code: number }) {
-    return findByCode(this.monsters, code);
+    return Array_.findByCode(this.monsters, code);
   }
 
   getTargetInfo(target: Target) {
@@ -93,7 +70,7 @@ export class AppDataService extends BaseService {
     }
 
     if (target.inputs?.length && monster?.inputConfigs) {
-      const inputConfigs = toArray(monster.inputConfigs);
+      const inputConfigs = Array_.toArray(monster.inputConfigs);
 
       target.inputs.forEach((input, index) => {
         const { label, type = "check", options = [] } = inputConfigs[index] || {};

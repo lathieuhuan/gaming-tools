@@ -4,12 +4,13 @@ import { notification, Modal, ConfirmModal, LoadingSpin, type PartiallyRequired,
 
 import type { SetupImportInfo } from "@Src/types";
 import { MAX_CALC_SETUPS } from "@Src/constants";
-import { getSearchParam, removeEmpty } from "@Src/utils";
+import { getSearchParam } from "@Src/utils";
+import Object_ from "@Src/utils/object-utils";
 import { decodeSetup, DECODE_ERROR_MSG } from "@Src/utils/setup-porter";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateSetupImportInfo, updateUI } from "@Store/ui-slice";
+import { selectIsReadyApp, updateSetupImportInfo, updateUI } from "@Store/ui-slice";
 import { selectCharacter, selectSetupManageInfos, selectTarget, importSetup } from "@Store/calculator-slice";
 import { checkBeforeInitNewSession } from "@Store/thunks";
 
@@ -52,7 +53,7 @@ function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImport
       return;
     }
     const sameChar = isEqual(char, calcSetup.char);
-    const sameTarget = isEqual(removeEmpty(currentTarget), removeEmpty(target));
+    const sameTarget = isEqual(Object_.omitEmptyProps(currentTarget), Object_.omitEmptyProps(target));
 
     if (sameChar && sameTarget) {
       delayExecute(() =>
@@ -205,14 +206,14 @@ export function SetupImportCenter() {
 function SetupTransshipmentPort() {
   const dispatch = useDispatch();
   const importCode = useRef(getSearchParam("importCode"));
-  const appReady = useSelector((state) => state.ui.ready);
+  const isReadyApp = useSelector(selectIsReadyApp);
 
   useEffect(() => {
     window.history.replaceState(null, "", window.location.origin);
   }, []);
 
   useEffect(() => {
-    if (appReady) {
+    if (isReadyApp) {
       if (importCode.current) {
         const result = decodeSetup(importCode.current);
 
@@ -232,7 +233,7 @@ function SetupTransshipmentPort() {
     } else {
       window.history.replaceState(null, "", window.location.origin);
     }
-  }, [appReady]);
+  }, [isReadyApp]);
 
   return null;
 }

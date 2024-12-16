@@ -19,7 +19,7 @@ export function calculate(state: CalculatorState, all?: boolean) {
 
       state.resultById[id] = {
         totalAttr: result.totalAttr,
-        attBonus: result.attBonus,
+        attkBonuses: result.attkBonuses,
         finalResult: result.finalResult,
       };
     }

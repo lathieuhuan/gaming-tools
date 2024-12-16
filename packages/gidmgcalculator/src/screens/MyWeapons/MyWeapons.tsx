@@ -7,7 +7,7 @@ import type { UserWeapon } from "@Src/types";
 import { MAX_USER_WEAPONS } from "@Src/constants";
 import { useWeaponTypeSelect } from "@Src/hooks";
 import { $AppWeapon } from "@Src/services";
-import { findById, indexById } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -46,7 +46,7 @@ export default function MyWeapons() {
     multiple: true,
   });
   const { filteredWeapons, totalCount } = useSelector((state) => selectWeaponInventory(state, weaponTypes));
-  const chosenWeapon = useMemo(() => findById(filteredWeapons, chosenId), [filteredWeapons, chosenId]);
+  const chosenWeapon = useMemo(() => Array_.findById(filteredWeapons, chosenId), [filteredWeapons, chosenId]);
 
   const checkIfMaxWeaponsReached = () => {
     if (totalCount >= MAX_USER_WEAPONS) {
@@ -73,7 +73,7 @@ export default function MyWeapons() {
   const onConfirmRemoveWeapon = (weapon: UserWeapon) => {
     dispatch(removeWeapon(weapon));
 
-    const removedIndex = indexById(filteredWeapons, weapon.ID);
+    const removedIndex = Array_.indexById(filteredWeapons, weapon.ID);
 
     if (removedIndex !== -1) {
       if (filteredWeapons.length > 1) {

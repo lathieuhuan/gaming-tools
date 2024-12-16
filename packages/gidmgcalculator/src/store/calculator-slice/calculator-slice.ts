@@ -30,7 +30,11 @@ import type {
 
 import { RESONANCE_ELEMENT_TYPES } from "@Src/constants";
 import { $AppData, $AppCharacter, $AppSettings, $AppArtifact } from "@Src/services";
-import { deepCopy, findById, toArray, findByIndex, Setup_, Modifier_, Utils_ } from "@Src/utils";
+import Setup_ from "@Src/utils/setup-utils";
+import Modifier_ from "@Src/utils/modifier-utils";
+import Object_ from "@Src/utils/object-utils";
+import Array_ from "@Src/utils/array-utils";
+import Entity_ from "@Src/utils/entity-utils";
 import { calculate, getCharDataFromState } from "./calculator-slice.utils";
 
 // const defaultChar = {
@@ -111,7 +115,7 @@ export const calculatorSlice = createSlice({
 
       if (setupsById[sourceId]) {
         const setupID = Date.now();
-        let setupName = findById(setupManageInfos, sourceId)?.name;
+        let setupName = Array_.findById(setupManageInfos, sourceId)?.name;
 
         if (setupName) {
           setupName = Setup_.getCopyName(
@@ -163,7 +167,7 @@ export const calculatorSlice = createSlice({
 
       if (charInfoIsSeparated) {
         if (setupIds) {
-          for (const setupId of toArray(setupIds)) {
+          for (const setupId of Array_.toArray(setupIds)) {
             Object.assign(setupsById[setupId].char, newConfig);
           }
         } else {
@@ -196,8 +200,8 @@ export const calculatorSlice = createSlice({
         if (
           oldElement &&
           RESONANCE_ELEMENT_TYPES.includes(oldElement) &&
-          oldElmtCount[oldElement] === 2 &&
-          newElmtCount[oldElement] === 1
+          oldElmtCount.get(oldElement) === 2 &&
+          newElmtCount.get(oldElement) === 1
         ) {
           elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
             return resonance.vision !== oldElement;
@@ -207,8 +211,8 @@ export const calculatorSlice = createSlice({
       // new teammate form new resonance
       if (
         RESONANCE_ELEMENT_TYPES.includes(elementType) &&
-        oldElmtCount[elementType] === 1 &&
-        newElmtCount[elementType] === 2
+        oldElmtCount.get(elementType) === 1 &&
+        newElmtCount.get(elementType) === 2
       ) {
         const newResonance = {
           vision: elementType,
@@ -234,7 +238,7 @@ export const calculatorSlice = createSlice({
         party[teammateIndex] = null;
         const newElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appChar);
 
-        if (newElmtCount[vision] === 1) {
+        if (newElmtCount.get(vision) === 1) {
           elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
             return resonance.vision !== vision;
           });
@@ -293,7 +297,7 @@ export const calculatorSlice = createSlice({
     },
     toggleTeammateModCtrl: (state, action: ToggleTeammateModCtrlAction) => {
       const { teammateIndex, modCtrlName, ctrlIndex } = action.payload;
-      const ctrl = findByIndex(state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName] || [], ctrlIndex);
+      const ctrl = Array_.findByIndex(state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName], ctrlIndex);
 
       if (ctrl) {
         ctrl.activated = !ctrl.activated;
@@ -302,7 +306,7 @@ export const calculatorSlice = createSlice({
     },
     changeTeammateModCtrlInput: (state, action: ChangeTeammateModCtrlInputAction) => {
       const { teammateIndex, modCtrlName, ctrlIndex, inputIndex, value } = action.payload;
-      const ctrl = findByIndex(state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName] || [], ctrlIndex);
+      const ctrl = Array_.findByIndex(state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName], ctrlIndex);
 
       if (ctrl && ctrl.inputs) {
         ctrl.inputs[inputIndex] = value;
@@ -329,8 +333,6 @@ export const calculatorSlice = createSlice({
       const { pieceIndex, newPiece, shouldKeepStats } = action.payload;
       const setup = state.setupsById[state.activeId];
       const piece = setup.artifacts[pieceIndex];
-      // const oldSetBonuses = GeneralCalc.getArtifactSetBonuses(setup.artifacts);
-      // const oldBonusLevel = oldSetBonuses[0]?.bonusLv;
 
       if (shouldKeepStats && piece && newPiece) {
         piece.code = newPiece.code;
@@ -338,17 +340,6 @@ export const calculatorSlice = createSlice({
       } else {
         setup.artifacts[pieceIndex] = newPiece;
       }
-
-      // const newSetBonus = GeneralCalc.getArtifactSetBonuses(setup.artifacts)[0];
-
-      // if (newSetBonus) {
-      //   if (oldBonusLevel === 0 && newSetBonus.bonusLv) {
-      //     setup.artBuffCtrls = Modifier_.createArtifactBuffCtrls(true, newSetBonus);
-      //   } //
-      //   else if (oldBonusLevel && !newSetBonus.bonusLv) {
-      //     setup.artBuffCtrls = [];
-      //   }
-      // }
 
       const newSetBonuses = GeneralCalc.getArtifactSetBonuses(setup.artifacts);
       const newArtBuffCtrls = Modifier_.createMainArtifactBuffCtrls(newSetBonuses);
@@ -395,7 +386,7 @@ export const calculatorSlice = createSlice({
     toggleModCtrl: (state, action: ToggleModCtrlAction) => {
       const { modCtrlName, ctrlIndex } = action.payload;
       const ctrls = state.setupsById[state.activeId][modCtrlName];
-      const ctrl = modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : findByIndex(ctrls, ctrlIndex);
+      const ctrl = modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : Array_.findByIndex(ctrls, ctrlIndex);
 
       if (ctrl) {
         ctrl.activated = !ctrl.activated;
@@ -405,7 +396,7 @@ export const calculatorSlice = createSlice({
     changeModCtrlInput: (state, action: ChangeModCtrlInputAction) => {
       const { modCtrlName, ctrlIndex, inputIndex, value } = action.payload;
       const ctrls = state.setupsById[state.activeId][modCtrlName];
-      const ctrl = modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : findByIndex(ctrls, ctrlIndex);
+      const ctrl = modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : Array_.findByIndex(ctrls, ctrlIndex);
 
       if (ctrl?.inputs) {
         ctrl.inputs[inputIndex] = value;
@@ -439,15 +430,15 @@ export const calculatorSlice = createSlice({
 
       switch (actionType) {
         case "ADD":
-          activeSetup.customBuffCtrls.push(...toArray(ctrls));
+          activeSetup.customBuffCtrls.push(...Array_.toArray(ctrls));
           break;
         case "EDIT":
-          for (const { index, ...newInfo } of toArray(ctrls)) {
+          for (const { index, ...newInfo } of Array_.toArray(ctrls)) {
             Object.assign(activeSetup.customBuffCtrls[index], newInfo);
           }
           break;
         case "REPLACE":
-          activeSetup.customBuffCtrls = toArray(ctrls);
+          activeSetup.customBuffCtrls = Array_.toArray(ctrls);
           break;
       }
       calculate(state);
@@ -458,15 +449,15 @@ export const calculatorSlice = createSlice({
 
       switch (actionType) {
         case "ADD":
-          activeSetup.customDebuffCtrls.unshift(...toArray(ctrls));
+          activeSetup.customDebuffCtrls.unshift(...Array_.toArray(ctrls));
           break;
         case "EDIT":
-          for (const { index, ...newInfo } of toArray(ctrls)) {
+          for (const { index, ...newInfo } of Array_.toArray(ctrls)) {
             Object.assign(activeSetup.customDebuffCtrls[index], newInfo);
           }
           break;
         case "REPLACE":
-          activeSetup.customDebuffCtrls = toArray(ctrls);
+          activeSetup.customDebuffCtrls = Array_.toArray(ctrls);
           break;
       }
       calculate(state);
@@ -490,7 +481,7 @@ export const calculatorSlice = createSlice({
       if (monster?.code) {
         const { resistance, variant } = monster;
         const { base, ...otherResistances } = resistance;
-        const inputConfigs = monster.inputConfigs ? toArray(monster.inputConfigs) : [];
+        const inputConfigs = monster.inputConfigs ? Array_.toArray(monster.inputConfigs) : [];
 
         for (const atkElmt of ATTACK_ELEMENTS) {
           target.resistances[atkElmt] = base;
@@ -559,7 +550,7 @@ export const calculatorSlice = createSlice({
       state.comparedIds = [];
 
       const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, appChar.name);
-      const newWeapon = Utils_.createWeapon({ type: appChar.weaponType });
+      const newWeapon = Entity_.createWeapon({ type: appChar.weaponType });
       const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, newWeapon);
       const elmtModCtrls = Modifier_.createElmtModCtrls();
       const tempManageInfos: CalcSetupManageInfo[] = [];
@@ -575,7 +566,7 @@ export const calculatorSlice = createSlice({
             break;
           }
           case "OLD": {
-            const oldInfo = findById(setupManageInfos, ID);
+            const oldInfo = Array_.findById(setupManageInfos, ID);
             if (oldInfo) {
               tempManageInfos.push({
                 ...oldInfo,
@@ -591,7 +582,7 @@ export const calculatorSlice = createSlice({
                 name: newSetupName,
                 type: "original",
               });
-              setupsById[ID] = deepCopy(setupsById[originId]);
+              setupsById[ID] = Object_.clone(setupsById[originId]);
             }
             break;
           }
@@ -626,7 +617,7 @@ export const calculatorSlice = createSlice({
         delete state.resultById[ID];
       }
 
-      const activeSetup = findById(tempManageInfos, activeId);
+      const activeSetup = Array_.findById(tempManageInfos, activeId);
       const newActiveId = activeSetup ? activeSetup.ID : tempManageInfos[0].ID;
 
       // if (state.configs.charInfoIsSeparated && !newConfigs.charInfoIsSeparated) {
@@ -646,13 +637,20 @@ export const calculatorSlice = createSlice({
       calculate(state, true);
     },
     applySettings: (state, action: ApplySettingsAction) => {
-      const { doMergeCharInfo } = action.payload;
+      const { mergeCharInfo, changeTraveler = false } = action.payload;
       const activeChar = state.setupsById[state.activeId]?.char;
+      const allSetups = Object.values(state.setupsById);
+      let shouldRecalculateAll = false;
 
-      if (doMergeCharInfo && activeChar) {
-        for (const setup of Object.values(state.setupsById)) {
+      if (mergeCharInfo && activeChar) {
+        for (const setup of allSetups) {
           setup.char = activeChar;
         }
+        shouldRecalculateAll = true;
+      }
+      shouldRecalculateAll ||= changeTraveler && allSetups.some((setup) => $AppCharacter.isTraveler(setup.char));
+
+      if (shouldRecalculateAll) {
         calculate(state, true);
       }
     },

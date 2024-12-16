@@ -1,7 +1,7 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { PartiallyRequired } from "rond";
 import type {
-  AttackBonus,
+  AttackBonuses,
   AttributeStat,
   CalculationFinalResult,
   ElementType,
@@ -25,7 +25,7 @@ import type {
 
 type SetupResult = {
   totalAttr: TotalAttribute;
-  attBonus: AttackBonus;
+  attkBonuses: AttackBonuses;
   finalResult: CalculationFinalResult;
 };
 
@@ -182,5 +182,6 @@ export type UpdateSetupsAction = PayloadAction<{
 }>;
 
 export type ApplySettingsAction = PayloadAction<{
-  doMergeCharInfo?: boolean;
+  mergeCharInfo?: boolean;
+  changeTraveler?: boolean;
 }>;

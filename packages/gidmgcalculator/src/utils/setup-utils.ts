@@ -1,5 +1,6 @@
-import { ATTACK_ELEMENTS, EntityCalc, GeneralCalc, WeaponType } from "@Backend";
+import { ATTACK_ELEMENTS, GeneralCalc, isGrantedEffect, WeaponType } from "@Backend";
 
+import { $AppCharacter } from "@Src/services";
 import type {
   CalcSetup,
   CalcSetupManageInfo,
@@ -12,22 +13,17 @@ import type {
   UserSetupCalcInfo,
   UserWeapon,
 } from "@Src/types";
-import { $AppCharacter } from "@Src/services";
-import { deepCopy, findById, findByIndex } from "./pure-utils";
-import { Modifier_ } from "./modifier-utils";
-import { Utils_ } from "./utils";
+import Modifier_ from "./modifier-utils";
+import Array_ from "./array-utils";
+import Entity_ from "./entity-utils";
+import Object_ from "./object-utils";
 
 interface CleanupCalcSetupOptions {
   weaponID?: number;
   artifactIDs?: (number | null)[];
 }
 
-export type UserSetupItems = {
-  weapon?: UserWeapon;
-  artifacts: UserArtifacts;
-};
-
-export class Setup_ {
+export default class Setup_ {
   static isUserSetup(setup: UserSetup | UserComplexSetup): setup is UserSetup {
     return ["original", "combined"].includes(setup.type);
   }
@@ -41,35 +37,11 @@ export class Setup_ {
     const { weaponID, artifactIDs, ID, name, type, target, ...rest } = setup;
     const calcSetup = {
       ...rest,
-      weapon: Utils_.userItemToCalcItem(weapon),
-      artifacts: artifacts.map((artifact) => (artifact ? Utils_.userItemToCalcItem(artifact) : null)),
+      weapon: Entity_.userItemToCalcItem(weapon),
+      artifacts: artifacts.map((artifact) => (artifact ? Entity_.userItemToCalcItem(artifact) : null)),
     };
 
     return shouldRestore ? this.restoreCalcSetup(calcSetup) : calcSetup;
-  }
-
-  static getUserSetupItems(setup: UserSetup, userWeapons: UserWeapon[], userArtifacts: UserArtifacts): UserSetupItems {
-    return {
-      weapon: findById(userWeapons, setup.weaponID),
-      artifacts: setup.artifactIDs.map((ID) => findById(userArtifacts, ID) || null),
-    };
-  }
-
-  static getNewSetupName(setups: Array<{ name: string }>) {
-    const existedIndexes = [1, 2, 3, 4];
-
-    for (const { name } of setups) {
-      const parts = name.split(" ");
-
-      if (parts.length === 2 && parts[0] === "Setup" && !isNaN(+parts[1])) {
-        const i = existedIndexes.indexOf(+parts[1]);
-
-        if (i !== -1) {
-          existedIndexes.splice(i, 1);
-        }
-      }
-    }
-    return "Setup " + existedIndexes[0];
   }
 
   static getCopyName(originalName: string, existedNames: string[]) {
@@ -129,12 +101,12 @@ export class Setup_ {
       weaponID: options?.weaponID || weapon.ID,
       artifactIDs: options?.artifactIDs || artifacts.map((artifact) => artifact?.ID ?? null),
       selfBuffCtrls: data.selfBuffCtrls.filter((ctrl) => {
-        const buff = findByIndex(buffs, ctrl.index);
-        return buff ? ctrl.activated && EntityCalc.isGrantedEffect(buff, char) : false;
+        const buff = Array_.findByIndex(buffs, ctrl.index);
+        return buff ? ctrl.activated && isGrantedEffect(buff, char) : false;
       }),
       selfDebuffCtrls: data.selfDebuffCtrls.filter((ctrl) => {
-        const debuff = findByIndex(debuffs, ctrl.index);
-        return debuff ? ctrl.activated && EntityCalc.isGrantedEffect(debuff, char) : false;
+        const debuff = Array_.findByIndex(debuffs, ctrl.index);
+        return debuff ? ctrl.activated && isGrantedEffect(debuff, char) : false;
       }),
       wpBuffCtrls: data.wpBuffCtrls.filter((ctrl) => ctrl.activated),
       party,
@@ -156,8 +128,8 @@ export class Setup_ {
 
       if (teammate) {
         const [buffCtrls, debuffCtrls] = Modifier_.createCharacterModCtrls(false, teammate.name);
-        const weapon = deepCopy(teammate.weapon);
-        const artifact = deepCopy(teammate.artifact);
+        const weapon = Object_.clone(teammate.weapon);
+        const artifact = Object_.clone(teammate.artifact);
 
         party.push({
           name: teammate.name,
@@ -201,7 +173,7 @@ export class Setup_ {
       buffCtrls,
       debuffCtrls,
       weapon: {
-        code: Utils_.getDefaultWeaponCode(weaponType),
+        code: Entity_.getDefaultWeaponCode(weaponType),
         type: weaponType,
         refi: 1,
         buffCtrls: [],
@@ -212,8 +184,6 @@ export class Setup_ {
       },
     };
   }
-
-  static teammatesOf = (party?: Party) => (party?.filter(Boolean) as Teammate[]) ?? [];
 
   static createTarget(defaultValues?: Partial<Target>) {
     const result = { code: 0, level: 1, resistances: {} } as Target;

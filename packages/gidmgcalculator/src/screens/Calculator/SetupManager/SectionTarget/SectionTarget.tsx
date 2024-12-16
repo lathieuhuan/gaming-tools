@@ -1,7 +1,9 @@
-import { FaEdit, FaMinus } from "react-icons/fa";
+import { FaMinus } from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
 import { Button, InputNumber, VersatileSelect } from "rond";
 
 import { $AppData } from "@Src/services";
+import { MAX_TARGET_LEVEL } from "@Src/constants";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTarget, updateTarget } from "@Store/calculator-slice";
 
@@ -18,9 +20,9 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
 
   return (
     <div className={"px-4 py-3 bg-surface-1 cursor-default relative " + styles.section}>
-      <div className="absolute top-2 bottom-0 right-2 flex flex-col text-xl text-hint-color space-y-1">
-        <Button icon={<FaMinus />} boneOnly onClick={onMinimize} />
-        <Button icon={<FaEdit />} boneOnly onClick={onEdit} />
+      <div className="absolute top-2 bottom-0 right-2 flex flex-col text-xl text-hint-color">
+        <Button icon={<FaMinus className="text-lg" />} boneOnly title="Minimize" onClick={onMinimize} />
+        <Button icon={<MdEdit className="text-lg" />} boneOnly title="Edit" onClick={onEdit} />
       </div>
       <p className="text-sm text-danger-3">Target</p>
 
@@ -54,7 +56,7 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
           <InputNumber
             className="w-14 font-semibold"
             value={target.level}
-            max={100}
+            max={MAX_TARGET_LEVEL}
             onChange={(value) => dispatch(updateTarget({ level: value }))}
           />
         </label>

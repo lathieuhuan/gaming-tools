@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { FaCopy, FaSave, FaBalanceScaleLeft, FaTrashAlt, FaShareAlt } from "react-icons/fa";
+import { FaCopy, FaSave, FaBalanceScaleLeft, FaShareAlt } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
 import { clsx, ConfirmModal } from "rond";
 
 import { MAX_CALC_SETUPS } from "@Src/constants";
-import { findById } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 
 // Store
 import {
@@ -17,10 +17,11 @@ import {
   updateCalculator,
 } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { useCalcModalCtrl } from "../../CalculatorModalsProvider";
+import { useCalcModalCtrl } from "../../contexts";
 
 // Component
 import { ComplexSelect } from "@Src/components";
+import { IconTrashCan } from "@Src/components/icons";
 
 type ModalState = {
   type: "REMOVE_SETUP" | "";
@@ -99,7 +100,7 @@ export function SetupSelect() {
     <>
       <ComplexSelect
         selectId="setup-select"
-        value={findById(setupManageInfos, activeId)?.ID}
+        value={Array_.findById(setupManageInfos, activeId)?.ID}
         options={setupManageInfos.map((setup, i) => {
           return {
             label: setup.name,
@@ -108,7 +109,7 @@ export function SetupSelect() {
               const actions: ActionButtonAttrs[] = [
                 {
                   className: "hover:bg-danger-1 hover:text-light-default",
-                  children: <FaTrashAlt />,
+                  children: <IconTrashCan />,
                   disabled: setupManageInfos.length < 2,
                   onClick: () => {
                     openModal("REMOVE_SETUP", i);

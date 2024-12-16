@@ -1,9 +1,9 @@
 import { Fragment } from "react";
-import { ElementType, Level, AttackBonus } from "@Backend";
+import { ElementType, Level, AttackBonuses, AttackReaction } from "@Backend";
 
-import type { CustomBuffCtrl, ElementModCtrl, AttackReaction, Infusion } from "@Src/types";
+import type { CustomBuffCtrl, ElementModCtrl, Infusion } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { Utils_, toCustomBuffLabel } from "@Src/utils";
+import { suffixOf, toCustomBuffLabel } from "@Src/utils";
 
 // Component
 import { renderModifiers, VapMeltBuffItem, QuickenBuffItem, ResonanceBuffItem } from "@Src/components";
@@ -11,14 +11,14 @@ import { renderModifiers, VapMeltBuffItem, QuickenBuffItem, ResonanceBuffItem } 
 interface ElementBuffsDetailProps {
   charLv: Level;
   elmtModCtrls: ElementModCtrl;
-  attBonus: AttackBonus;
+  attkBonuses: AttackBonuses;
   vision: ElementType;
   customInfusion: Infusion;
 }
 export function ElementBuffsDetail({
   charLv,
   elmtModCtrls,
-  attBonus,
+  attkBonuses,
   vision,
   customInfusion,
 }: ElementBuffsDetailProps) {
@@ -39,9 +39,9 @@ export function ElementBuffsDetail({
 
   const renderReaction = (reaction: AttackReaction, element: ElementType) => {
     return reaction === "melt" || reaction === "vaporize" ? (
-      <VapMeltBuffItem mutable={false} {...{ reaction, element, attBonus }} />
+      <VapMeltBuffItem mutable={false} {...{ reaction, element, attkBonuses }} />
     ) : reaction === "spread" || reaction === "aggravate" ? (
-      <QuickenBuffItem mutable={false} {...{ reaction, element, characterLv: charLv, attBonus }} />
+      <QuickenBuffItem mutable={false} {...{ reaction, element, characterLv: charLv, attkBonuses }} />
     ) : null;
   };
 
@@ -95,7 +95,7 @@ export function CustomBuffsDetail({ customBuffCtrls }: CustomBuffsDetailProps) {
       <p className="mr-4">{toCustomBuffLabel(category, type, t)}</p>
       <p className="w-12 shrink-0 text-heading-color text-right">
         {value}
-        {Utils_.suffixOf(subType || type)}
+        {suffixOf(subType || type)}
       </p>
     </div>
   ));

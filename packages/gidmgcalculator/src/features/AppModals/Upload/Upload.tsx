@@ -11,8 +11,8 @@ import { addUserDatabase } from "@Store/userdb-slice";
 import { ItemMultiSelect } from "@Src/components";
 import { FileUpload } from "./FileUpload";
 
-// const MAX_USER_ARTIFACTS = 3;
 // const MAX_USER_WEAPONS = 3;
+// const MAX_USER_ARTIFACTS = 3;
 
 function UploadCore(props: ModalControl) {
   const dispatch = useDispatch();

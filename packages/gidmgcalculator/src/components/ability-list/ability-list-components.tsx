@@ -1,4 +1,5 @@
-import { FaCaretRight, FaSquare } from "react-icons/fa";
+import { FaCaretRight } from "react-icons/fa";
+import { TbRectangleVerticalFilled } from "react-icons/tb";
 import { clsx, type ClassValue } from "rond";
 import { ElementType } from "@Backend";
 
@@ -55,11 +56,15 @@ export function AbilityCarousel({
 
     return direction === "right" ? (
       <button className={`${caretCls} left-full ml-4`} disabled={disabled} onClick={onClickNext}>
-        {disabled ? <FaSquare className="text-2xl" /> : <FaCaretRight className="text-4xl" />}
+        {disabled ? <TbRectangleVerticalFilled className="text-2xl" /> : <FaCaretRight className="text-4xl" />}
       </button>
     ) : (
       <button className={`${caretCls} right-full mr-4`} disabled={disabled} onClick={onClickBack}>
-        {disabled ? <FaSquare className="text-2xl" /> : <FaCaretRight className="text-4xl rotate-180" />}
+        {disabled ? (
+          <TbRectangleVerticalFilled className="text-2xl" />
+        ) : (
+          <FaCaretRight className="text-4xl rotate-180" />
+        )}
       </button>
     );
   };

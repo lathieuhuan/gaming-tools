@@ -4,7 +4,8 @@ import { AppWeapon, WeaponType } from "@Backend";
 
 import type { Weapon } from "@Src/types";
 import { $AppWeapon } from "@Src/services";
-import { pickProps, Utils_ } from "@Src/utils";
+import Object_ from "@Src/utils/object-utils";
+import Entity_ from "@Src/utils/entity-utils";
 
 // Component
 import { WeaponCard } from "../WeaponCard";
@@ -12,13 +13,14 @@ import { WeaponFilter, WeaponFilterState } from "./components/WeaponFilter";
 import { AppEntitySelect, AppEntitySelectProps } from "./components/AppEntitySelect";
 import { RiArrowGoBackLine } from "react-icons/ri";
 
-const transformWeapon = (weapon: AppWeapon) => pickProps(weapon, ["code", "name", "beta", "icon", "type", "rarity"]);
+const transformWeapon = (weapon: AppWeapon) =>
+  Object_.pickProps(weapon, ["code", "name", "beta", "icon", "type", "rarity"]);
 
 type WeaponData = Array<ReturnType<typeof transformWeapon>>;
 
 interface WeaponForgeProps extends Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> {
   forcedType?: WeaponType;
-  onForgeWeapon: (info: ReturnType<typeof Utils_.createWeapon>) => void;
+  onForgeWeapon: (info: ReturnType<typeof Entity_.createWeapon>) => void;
   onClose: () => void;
 }
 function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: WeaponForgeProps) {
@@ -132,7 +134,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
       }}
       onChange={(mold, isConfigStep) => {
         if (mold) {
-          const weapon = Utils_.createWeapon(mold);
+          const weapon = Entity_.createWeapon(mold);
 
           if (isConfigStep) {
             setWeaponConfig({

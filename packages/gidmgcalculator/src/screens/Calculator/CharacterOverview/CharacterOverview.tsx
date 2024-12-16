@@ -2,13 +2,13 @@ import { useState } from "react";
 import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 
 // Store
-import { useDispatch, useSelector } from "@Store/hooks";
 import { selectCharacter, updateCharacter } from "@Store/calculator-slice";
-import { useCalcAppCharacter } from "../CalculatorInfoProvider";
-import { useCalcModalCtrl } from "../CalculatorModalsProvider";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { selectIsReadyApp, selectTraveler } from "@Store/ui-slice";
+import { useCharacterData, useCalcModalCtrl } from "../contexts";
 
 // Component
-import { ComplexSelect, CharacterIntro } from "@Src/components";
+import { CharacterIntro, ComplexSelect } from "@Src/components";
 import { ArtifactsTab, AttributesTab, ConstellationTab, TalentsTab, WeaponTab } from "./character-overview-tabs";
 
 const TABS: SwitchNodeCase<string>[] = [
@@ -22,9 +22,12 @@ const TABS: SwitchNodeCase<string>[] = [
 function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
   const dispatch = useDispatch();
   const char = useSelector(selectCharacter);
-  const appChar = useCalcAppCharacter();
+  const appChar = useCharacterData();
 
   const [activeTab, setActiveTab] = useState("Attributes");
+
+  // This makes component rerender on change Traveler, appChar has new image links
+  useSelector(selectTraveler);
 
   return (
     <div className="h-full flex flex-col gap-4">
@@ -56,7 +59,7 @@ interface CharacterOverviewProps {
   touched: boolean;
 }
 export function CharacterOverview({ touched }: CharacterOverviewProps) {
-  const appReady = useSelector((state) => state.ui.ready);
+  const isReadyApp = useSelector(selectIsReadyApp);
   const modalCtrl = useCalcModalCtrl();
 
   return (
@@ -65,11 +68,11 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
         <CharacterOverviewCore onClickSwitchCharacter={modalCtrl.requestSwitchCharacter} />
       ) : (
         <div className="w-full flex flex-col items-center space-y-2">
-          <Button variant="primary" disabled={!appReady} onClick={modalCtrl.requestSwitchCharacter}>
+          <Button variant="primary" disabled={!isReadyApp} onClick={modalCtrl.requestSwitchCharacter}>
             Select a character
           </Button>
           <p>or</p>
-          <Button disabled={!appReady} onClick={modalCtrl.requestImportSetup}>
+          <Button disabled={!isReadyApp} onClick={modalCtrl.requestImportSetup}>
             Import a setup
           </Button>
         </div>

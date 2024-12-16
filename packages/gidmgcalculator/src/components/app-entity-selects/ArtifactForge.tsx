@@ -6,7 +6,8 @@ import { AppArtifact, ArtifactType } from "@Backend";
 
 import type { Artifact } from "@Src/types";
 import { $AppArtifact } from "@Src/services";
-import { pickProps, Utils_ } from "@Src/utils";
+import Object_ from "@Src/utils/object-utils";
+import Entity_ from "@Src/utils/entity-utils";
 import { useArtifactTypeSelect } from "@Src/hooks";
 
 // Component
@@ -15,6 +16,9 @@ import { AppEntitySelect, type AppEntitySelectProps, type AfterSelectAppEntity }
 import { ArtifactConfig } from "./components/ArtifactConfig";
 
 export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> {
+  /** Initital config */
+  workpiece?: Artifact;
+  initialMaxRarity?: number;
   /** Only works when hasConfigStep */
   allowBatchForging?: boolean;
   /** Only works when hasConfigStep */
@@ -23,11 +27,13 @@ export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMulti
   forcedType?: ArtifactType;
   /** Default to 'flower' */
   initialTypes?: ArtifactType | ArtifactType[];
-  onForgeArtifact: (info: ReturnType<typeof Utils_.createArtifact>) => void;
+  onForgeArtifact: (info: ReturnType<typeof Entity_.createArtifact>) => void;
   onForgeArtifactBatch?: (code: AppArtifact["code"], types: ArtifactType[], rarity: number) => void;
   onClose: () => void;
 }
 const ArtifactSmith = ({
+  workpiece,
+  initialMaxRarity = 5,
   allowBatchForging,
   defaultBatchForging = false,
   forFeature,
@@ -38,8 +44,8 @@ const ArtifactSmith = ({
   onClose,
   ...templateProps
 }: ArtifactForgeProps) => {
-  const [artifactConfig, setArtifactConfig] = useState<Artifact>();
-  const [maxRarity, setMaxRarity] = useState(5);
+  const [artifactConfig, setArtifactConfig] = useState<Artifact | undefined>(workpiece);
+  const [maxRarity, setMaxRarity] = useState(initialMaxRarity);
   const [batchForging, setBatchForging] = useState(defaultBatchForging);
 
   const updateConfig = (update: (prevConfig: Artifact) => Artifact) => {
@@ -49,14 +55,14 @@ const ArtifactSmith = ({
   };
 
   const { artifactTypes, updateArtifactTypes, renderArtifactTypeSelect } = useArtifactTypeSelect(
-    forcedType || initialTypes,
+    workpiece?.type || forcedType || initialTypes,
     {
       multiple: batchForging,
       required: batchForging,
       onChange: (types) => {
         updateConfig((prevConfig) => {
-          const newConfig = Utils_.createArtifact({ ...prevConfig, type: types[0] as ArtifactType });
-          return Object.assign(newConfig, pickProps(prevConfig, ["ID", "level", "subStats"]));
+          const newConfig = Entity_.createArtifact({ ...prevConfig, type: types[0] });
+          return Object.assign(newConfig, Object_.pickProps(prevConfig, ["ID", "level", "subStats"]));
         });
       },
     }
@@ -161,6 +167,7 @@ const ArtifactSmith = ({
     <AppEntitySelect
       title={<p className="text-base sm:text-xl leading-7">Artifact Forge</p>}
       data={allArtifactSets}
+      initialChosenCode={workpiece?.code}
       emptyText="No artifacts found"
       hasSearch
       renderOptionConfig={(afterSelect, selectBody) => {
@@ -170,6 +177,7 @@ const ArtifactSmith = ({
             maxRarity={maxRarity}
             typeSelect={forcedType ? null : renderArtifactTypeSelect()}
             batchConfigNode={renderBatchConfigNode(afterSelect, selectBody)}
+            mainActionLabel={workpiece ? "Reforge" : "Forge"}
             moreButtons={[
               getBackAction(selectBody),
               {
@@ -191,20 +199,20 @@ const ArtifactSmith = ({
       }}
       onChange={(mold, isConfigStep) => {
         if (mold) {
-          const artifact = Utils_.createArtifact({
-            ...mold,
-            type: artifactTypes[0],
-          });
-
           if (isConfigStep) {
-            setArtifactConfig({
-              ...artifact,
-              ...(forcedType ? { type: forcedType } : undefined),
-              ID: 0,
-            });
+            const newConfig = Entity_.createArtifact(
+              {
+                ...artifactConfig,
+                ...mold,
+                type: forcedType || artifactTypes[0],
+              },
+              0
+            );
+
+            setArtifactConfig(newConfig);
             setMaxRarity(mold.rarity);
           } else {
-            onForgeArtifact(artifact);
+            onForgeArtifact(Entity_.createArtifact({ ...mold, type: artifactTypes[0] }));
           }
         } else {
           setArtifactConfig(undefined);

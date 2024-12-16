@@ -14,7 +14,11 @@ import { updateSetupImportInfo, updateUI } from "./ui-slice";
 import { addUserArtifact, addUserWeapon, saveSetup, updateUserArtifact, updateUserWeapon } from "./userdb-slice";
 
 // Util
-import { findById, findByCode, findByName, deepCopy, getAppDataError, Modifier_, Setup_, Utils_ } from "@Src/utils";
+import Setup_ from "@Src/utils/setup-utils";
+import Modifier_ from "@Src/utils/modifier-utils";
+import Entity_ from "@Src/utils/entity-utils";
+import Object_ from "@Src/utils/object-utils";
+import Array_ from "@Src/utils/array-utils";
 import { parseUserCharacter, type CharacterForInit } from "./store.utils";
 
 type Option = {
@@ -37,7 +41,7 @@ export function checkBeforeInitNewSession(payload: InitNewSessionPayload, option
         dispatch(initNewSession(payload));
         onSuccess?.();
       } else {
-        message.error(getAppDataError("character", response.code));
+        message.error(`Cannot get character config (ERROR_CODE: ${response.code})`);
       }
 
       dispatch(updateUI({ loading: false }));
@@ -109,12 +113,12 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
     let seedID = Date.now();
     let weaponID = weapon.ID;
     const artifactIDs = artifacts.map((artifact) => artifact?.ID ?? null);
-    const userSetup = findById(userSetups, setupID);
-    const existedWeapon = findById(userWps, weapon.ID);
+    const userSetup = Array_.findById(userSetups, setupID);
+    const existedWeapon = Array_.findById(userWps, weapon.ID);
     const isOldSetup = userSetup && Setup_.isUserSetup(userSetup);
 
     if (existedWeapon) {
-      if (isEqual(weapon, Utils_.userItemToCalcItem(existedWeapon))) {
+      if (isEqual(weapon, Entity_.userItemToCalcItem(existedWeapon))) {
         // Nothing changes => add setupID to existedWeapon
         const newSetupIDs = existedWeapon.setupIDs || [];
 
@@ -132,7 +136,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
 
         dispatch(
           addUserWeapon(
-            Utils_.calcItemToUserItem(weapon, {
+            Entity_.calcItemToUserItem(weapon, {
               ID: weaponID,
               setupIDs: [setupID],
             })
@@ -151,7 +155,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
       // Weapon not found => Add new weapon with setupID
       dispatch(
         addUserWeapon(
-          Utils_.calcItemToUserItem(weapon, {
+          Entity_.calcItemToUserItem(weapon, {
             setupIDs: [setupID],
           })
         )
@@ -159,7 +163,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
 
       if (isOldSetup) {
         // Remove setupID from the setup's old weapon
-        const oldWeapon = findById(userWps, userSetup.weaponID);
+        const oldWeapon = Array_.findById(userWps, userSetup.weaponID);
 
         if (oldWeapon) {
           dispatch(
@@ -174,10 +178,10 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
 
     artifacts.forEach((artifact, artifactIndex) => {
       if (!artifact) return;
-      const existedArtifact = findById(userArts, artifact.ID);
+      const existedArtifact = Array_.findById(userArts, artifact.ID);
 
       if (existedArtifact) {
-        if (isEqual(artifact, Utils_.userItemToCalcItem(existedArtifact))) {
+        if (isEqual(artifact, Entity_.userItemToCalcItem(existedArtifact))) {
           // Nothing changes => add setupID to existedArtifact
           const newSetupIDs = existedArtifact.setupIDs || [];
 
@@ -196,7 +200,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
 
           dispatch(
             addUserArtifact(
-              Utils_.calcItemToUserItem(artifact, {
+              Entity_.calcItemToUserItem(artifact, {
                 ID: artifactID,
                 setupIDs: [setupID],
               })
@@ -215,7 +219,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
         // Artifact not found => Add new artifact with setupID
         dispatch(
           addUserArtifact(
-            Utils_.calcItemToUserItem(artifact, {
+            Entity_.calcItemToUserItem(artifact, {
               setupIDs: [setupID],
             })
           )
@@ -224,7 +228,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
         if (isOldSetup) {
           // Remove setupID from the setup's old artifact
           const oldArtifactID = userSetup.artifactIDs[artifactIndex];
-          const oldArtifact = oldArtifactID ? findById(userArts, oldArtifactID) : undefined;
+          const oldArtifact = oldArtifactID ? Array_.findById(userArts, oldArtifactID) : undefined;
 
           if (oldArtifact) {
             dispatch(
@@ -271,10 +275,10 @@ export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeam
       const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, teammate.name);
       let seedID = Date.now();
 
-      const similarWeapon = findByCode(userWps, teammate.weapon.code);
+      const similarWeapon = Array_.findByCode(userWps, teammate.weapon.code);
       const actualWeapon = similarWeapon
-        ? Utils_.userItemToCalcItem(similarWeapon)
-        : Utils_.createWeapon(
+        ? Entity_.userItemToCalcItem(similarWeapon)
+        : Entity_.createWeapon(
             {
               code: weapon.code,
               type: weapon.type,
@@ -290,7 +294,7 @@ export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeam
 
         if (maxRarity) {
           artifacts = ARTIFACT_TYPES.map((type) => {
-            return Utils_.createArtifact(
+            return Entity_.createArtifact(
               {
                 code: artifact.code,
                 rarity: maxRarity,
@@ -302,7 +306,7 @@ export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeam
         }
       }
 
-      const party = deepCopy(setup.party);
+      const party = Object_.clone(setup.party);
       const [tmBuffCtrls, tmDebuffCtrls] = Modifier_.createCharacterModCtrls(false, teammate.name);
 
       party[teammateIndex] = {
@@ -334,7 +338,7 @@ export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeam
           name: "New setup",
           target: setup.target,
           calcSetup: {
-            char: Utils_.createCharacter(teammate.name, findByName(userChars, teammate.name)),
+            char: Entity_.createCharacter(teammate.name, Array_.findByName(userChars, teammate.name)),
             selfBuffCtrls,
             selfDebuffCtrls,
             weapon: actualWeapon,

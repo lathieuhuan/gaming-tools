@@ -1,7 +1,8 @@
-import { FaBalanceScaleLeft, FaCopy, FaTrashAlt } from "react-icons/fa";
+import { FaBalanceScaleLeft, FaCopy } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
 import { Button, Input } from "rond";
 import type { NewSetupManageInfo } from "@Store/calculator-slice";
+import { IconTrashCan } from "@Src/components/icons";
 
 interface SetupControlProps {
   setup: NewSetupManageInfo;
@@ -38,7 +39,7 @@ export function SetupControl({
         onChange={onChangeSetupName}
       />
       <div className="mt-4 flex justify-end gap-4">
-        <Button icon={<FaTrashAlt />} disabled={!removable} onClick={onRemoveSetup} />
+        <Button icon={<IconTrashCan />} disabled={!removable} onClick={onRemoveSetup} />
         <Button icon={<FaCopy />} disabled={!copiable || setup.status === "NEW"} onClick={onCopySetup} />
 
         <Button

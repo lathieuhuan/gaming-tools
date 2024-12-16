@@ -4,7 +4,7 @@ import { ArtifactCalc, AttributeStat } from "@Backend";
 import type { ArtifactSubStat, CalcArtifact, UserArtifact } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppArtifact } from "@Src/services";
-import { Utils_ } from "@Src/utils";
+import { suffixOf } from "@Src/utils";
 
 // Component
 import { ArtifactLevelSelect } from "./ArtifactLevelSelect";
@@ -15,6 +15,7 @@ export interface ArtifactViewProps<T extends CalcArtifact | UserArtifact> {
   mutable?: boolean;
   className?: string;
   artifact?: T;
+  action?: React.ReactNode;
   onEnhance?: (level: number, artifact: T) => void;
   onChangeMainStatType?: (type: AttributeStat, artifact: T) => void;
   onChangeSubStat?: (index: number, changes: Partial<ArtifactSubStat>, artifact: T) => void;
@@ -23,6 +24,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
   className,
   artifact,
   mutable,
+  action,
   onEnhance,
   onChangeMainStatType,
   onChangeSubStat,
@@ -37,8 +39,14 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
 
   return (
     <div className={className}>
-      <div className={`px-4 pt-1 bg-rarity-${rarity}`} onDoubleClick={() => console.log(artifact)}>
-        <p className="text-lg font-semibold text-black truncate">{appArtifact?.name}</p>
+      <div className={`bg-rarity-${rarity} flex items-center`}>
+        <p
+          className="mr-auto pl-4 pr-2 py-0.5 text-lg font-semibold text-black truncate"
+          onDoubleClick={() => console.log(artifact)}
+        >
+          {appArtifact?.name}
+        </p>
+        {action}
       </div>
 
       <div className="mt-4 px-3 flex justify-between items-start">
@@ -66,7 +74,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
         </div>
       </div>
 
-      <div className="mt-2 ml-6 flex flex-col">
+      <div className="mt-1 ml-6 flex flex-col">
         {["flower", "plume"].includes(artifact.type) || !mutable ? (
           <p className={"py-1 text-lg " + (mutable ? "pl-6" : "pl-2")}>{t(mainStatType)}</p>
         ) : (
@@ -82,7 +90,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
         )}
         <p className={clsx(`text-rarity-${rarity} text-2xl leading-7 font-bold`, mutable ? "pl-6" : "pl-2")}>
           {mainStatValue}
-          {Utils_.suffixOf(mainStatType)}
+          {suffixOf(mainStatType)}
         </p>
       </div>
 

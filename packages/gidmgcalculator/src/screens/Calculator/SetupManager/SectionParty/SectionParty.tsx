@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
 import { clsx, message, CollapseSpace } from "rond";
 
-import { findById } from "@Src/utils";
-import { $AppCharacter } from "@Src/services";
-import { useCalcAppCharacter } from "../../CalculatorInfoProvider";
+import Array_ from "@Src/utils/array-utils";
+import { useCharacterData, usePartyData } from "../../contexts";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -34,8 +33,8 @@ export default function SectionParty() {
   const activeId = useSelector(selectActiveId);
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const party = useSelector(selectParty);
-
-  const appChar = useCalcAppCharacter();
+  const appChar = useCharacterData();
+  const partyData = usePartyData();
 
   const [modal, setModal] = useState<ModalState>({
     type: "",
@@ -43,9 +42,7 @@ export default function SectionParty() {
   });
   const [detailSlot, setDetailSlot] = useState<number | null>(null);
 
-  const partyData = useMemo(() => $AppCharacter.getPartyData(party), [party]);
-
-  const isCombined = findById(setupManageInfos, activeId)?.type === "combined";
+  const isCombined = Array_.findById(setupManageInfos, activeId)?.type === "combined";
   const detailTeammate = detailSlot === null ? undefined : party[detailSlot];
 
   useEffect(() => {

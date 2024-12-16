@@ -1,17 +1,23 @@
 import { useMemo, useState } from "react";
 import { clsx, type ClassValue } from "rond";
-import { ArtifactType } from "@Backend";
+import type { AppArtifact, ArtifactType } from "@Backend";
 
 import type { CalcArtifact } from "@Src/types";
-import type { ArtifactFilterSet } from "../ArtifactFilter.types";
 import { $AppArtifact } from "@Src/services";
-import { findByCode } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import { GenshinImage } from "@Src/components";
 import { FilterTemplate } from "../../FilterTemplate";
 
 type Config = {
   artifactType?: ArtifactType;
   title?: React.ReactNode;
+};
+
+export type ArtifactFilterSet = {
+  code: number;
+  chosen: boolean;
+  icon: string;
+  data: AppArtifact;
 };
 
 export function useArtifactSetFilter(artifacts: CalcArtifact[], chosenCodes: number[], config?: Config) {
@@ -21,14 +27,17 @@ export function useArtifactSetFilter(artifacts: CalcArtifact[], chosenCodes: num
     const result: ArtifactFilterSet[] = [];
 
     for (const { code } of artifacts) {
-      if (!findByCode(result, code)) {
-        const { icon = "" } = $AppArtifact.get({ code, type: artifactType }) || {};
+      if (!Array_.findByCode(result, code)) {
+        const data = $AppArtifact.getSet(code);
 
-        result.push({
-          code,
-          chosen: chosenCodes.includes(code),
-          icon,
-        });
+        if (data) {
+          result.push({
+            code,
+            chosen: chosenCodes.includes(code),
+            icon: data[artifactType].icon,
+            data,
+          });
+        }
       }
     }
     return result;
@@ -62,6 +71,7 @@ export function useArtifactSetFilter(artifacts: CalcArtifact[], chosenCodes: num
               return (
                 <div key={i} className="p-2" onClick={() => toggleSet(i)}>
                   <div
+                    title={set.data.name}
                     className={clsx(
                       "rounded-circle",
                       set.chosen ? "shadow-3px-2px shadow-bonus-color bg-surface-1" : "bg-transparent"

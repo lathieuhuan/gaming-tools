@@ -3,7 +3,8 @@ import { ARTIFACT_TYPES, AttributeStat, Level } from "@Backend";
 import type { ArtifactSubStat, UserArtifact, UserCharacter, UserWeapon } from "@Src/types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import { DOWNLOADED_DATA_VERSION } from "@Src/constants";
-import { Utils_, findByName } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
+import Entity_ from "@Src/utils/entity-utils";
 import { goodFormatMap } from "./util-maps";
 
 const convertLevel = (level: any, ascension: any) => {
@@ -119,7 +120,7 @@ export function convertFromGoodFormat(data: any) {
     result.artifacts.push(newArtifact);
 
     if (owner) {
-      const character = findByName(result.characters, owner);
+      const character = Array_.findByName(result.characters, owner);
 
       if (character) {
         character.artifactIDs[ARTIFACT_TYPES.indexOf(slotKey)] = artifactID;
@@ -131,7 +132,7 @@ export function convertFromGoodFormat(data: any) {
     const { code = 0, type = "sword" } = searchWeaponByKey(weapon.key) || {};
     const owner = searchCharacterByKey(weapon.location) || null;
 
-    if (!code || (Utils_.getDefaultWeaponCode(type) === code && !owner)) continue;
+    if (!code || (Entity_.getDefaultWeaponCode(type) === code && !owner)) continue;
 
     const weaponID = seedID++;
     const newWeapon: UserWeapon = {
@@ -145,7 +146,7 @@ export function convertFromGoodFormat(data: any) {
     result.weapons.push(newWeapon);
 
     if (owner) {
-      const character = findByName(result.characters, owner);
+      const character = Array_.findByName(result.characters, owner);
 
       if (character) {
         character.weaponID = weaponID;
@@ -157,7 +158,7 @@ export function convertFromGoodFormat(data: any) {
     if (!char.weaponID) {
       const { weaponType } = $AppCharacter.get(char.name)! || {};
       const weaponID = seedID++;
-      const newWeapon = Utils_.createWeapon({ type: weaponType }, weaponID);
+      const newWeapon = Entity_.createWeapon({ type: weaponType }, weaponID);
 
       result.weapons.unshift({
         ...newWeapon,

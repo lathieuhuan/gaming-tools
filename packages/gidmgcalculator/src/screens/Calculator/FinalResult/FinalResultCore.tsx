@@ -1,5 +1,5 @@
 import type { RootState } from "@Store/store";
-import { findById } from "@Src/utils";
+import Array_ from "@Src/utils/array-utils";
 import {
   selectCalcFinalResult,
   selectCharacter,
@@ -12,11 +12,11 @@ import { useDispatch, useSelector } from "@Store/hooks";
 
 import { FinalResultView } from "@Src/components";
 import { FinalResultCompare } from "./FinalResultCompare";
-import { useCalcAppCharacter } from "../CalculatorInfoProvider";
+import { useCharacterData } from "../contexts";
 
 const selectActiveSetupName = (state: RootState) => {
   const { activeId, setupManageInfos } = state.calculator;
-  return findById(setupManageInfos, activeId)?.name || "";
+  return Array_.findById(setupManageInfos, activeId)?.name || "";
 };
 
 export function FinalResultCore() {
@@ -27,7 +27,7 @@ export function FinalResultCore() {
   const party = useSelector(selectParty);
   const finalResult = useSelector(selectCalcFinalResult);
   const comparedIds = useSelector(selectComparedIds);
-  const appChar = useCalcAppCharacter();
+  const appChar = useCharacterData();
 
   if (comparedIds.length > 1) {
     return <FinalResultCompare comparedIds={comparedIds} {...{ char, weapon, party }} />;

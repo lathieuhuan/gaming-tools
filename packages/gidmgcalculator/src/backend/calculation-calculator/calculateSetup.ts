@@ -1,82 +1,44 @@
 import type { CalcSetup, Target } from "@Src/types";
-import type { TrackerControl } from "@Src/backend/controls";
+import type { TrackerControl } from "../controls";
 
 import { $AppCharacter, $AppWeapon } from "@Src/services";
-import { AttackPatternConf, CalcItemCalculator, getNormalsConfig } from "@Src/backend/calculation";
-import getCalculationStats from "./getCalculationStats";
-import getFinalResult from "./getFinalResult";
-import getResistances from "./getResistances";
+import getNormalAttacksConfig from "../calculation/getNormalAttacksConfig";
+import getAttackPatternConfig from "../calculation/getAttackPatternConfig";
+import getCalculationStats from "../calculation/getCalculationStats";
+import getResistances from "../calculation/getResistances";
+import getCalcItemCalculator from "../calculation/getCalcItemCalculator";
+import getFinalResult from "../calculation/getFinalResult";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
-  const {
-    char,
-    weapon,
-    artifacts,
-    party,
-    selfBuffCtrls,
-    selfDebuffCtrls,
-    wpBuffCtrls,
-    artBuffCtrls,
-    artDebuffCtrls,
-    elmtModCtrls,
-    customBuffCtrls,
-    customDebuffCtrls,
-    customInfusion,
-  } = setup;
+  const { char, weapon, party, elmtModCtrls, customInfusion } = setup;
 
   const appChar = $AppCharacter.get(char.name);
   const appWeapon = $AppWeapon.get(weapon.code)!;
   const partyData = $AppCharacter.getPartyData(party);
 
-  const { artAttr, attBonus, totalAttr } = getCalculationStats({
+  const calcInfo = {
     char,
-    weapon,
-    artifacts,
-    party,
     appChar,
     appWeapon,
     partyData,
-    selfBuffCtrls,
-    wpBuffCtrls,
-    artBuffCtrls,
-    elmtModCtrls,
-    customBuffCtrls,
-    customInfusion,
-    tracker,
-  });
+  };
 
-  const resistances = getResistances({
-    char,
+  const { artAttr, attkBonusesArchive, totalAttr } = getCalculationStats(setup, calcInfo, tracker);
+
+  const resistances = getResistances(setup, calcInfo, target, tracker);
+
+  const NAsConfig = getNormalAttacksConfig(setup.selfBuffCtrls, calcInfo);
+
+  const configAttackPattern = getAttackPatternConfig({
     appChar,
-    party,
-    partyData,
-    customDebuffCtrls,
-    elmtModCtrls,
-    selfDebuffCtrls,
-    artDebuffCtrls,
-    target,
-    tracker,
-  });
-
-  const normalsConfig = getNormalsConfig(
-    {
-      char,
-      appChar,
-      partyData,
-    },
-    selfBuffCtrls
-  );
-
-  const configAttackPattern = AttackPatternConf({
-    appChar,
-    normalsConfig,
+    NAsConfig,
     customInfusion,
     totalAttr,
-    attBonus,
+    attkBonusesArchive,
   });
 
-  const calculateCalcItem = CalcItemCalculator(char.level, target.level, totalAttr, resistances);
+  const calculateCalcItem = getCalcItemCalculator(char.level, target.level, totalAttr, resistances);
 
   const finalResult = getFinalResult({
     char,
@@ -85,7 +47,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     appWeapon,
     partyData,
     totalAttr,
-    attBonus,
+    attkBonusesArchive,
     elmtModCtrls,
     resistances,
     tracker,
@@ -97,7 +59,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   return {
     totalAttr,
     artAttr,
-    attBonus: attBonus.serialize(),
+    attkBonuses: attkBonusesArchive.serialize(),
     finalResult,
   };
 };

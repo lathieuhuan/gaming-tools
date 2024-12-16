@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectCharacter,
   selectElmtModCtrls,
-  selectAttBonus,
+  selectAttkBonuses,
   updateCalcSetup,
   updateResonance,
 } from "@Store/calculator-slice";
@@ -17,7 +17,7 @@ import {
   ResonanceBuffItem,
   VapMeltBuffItem,
 } from "@Src/components";
-import { useCalcAppCharacter } from "../../CalculatorInfoProvider";
+import { useCharacterData } from "../../contexts";
 
 const hasAbsorbingAttackIn = (items: CalcItem[]) => {
   return items.some((item) => item.attElmt === "absorb");
@@ -27,10 +27,10 @@ export default function ElementBuffs() {
   const dispatch = useDispatch();
   const char = useSelector(selectCharacter);
   const elmtModCtrls = useSelector(selectElmtModCtrls);
-  const attBonus = useSelector(selectAttBonus);
+  const attkBonuses = useSelector(selectAttkBonuses);
   const customInfusion = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].customInfusion);
 
-  const { vision, weaponType, calcList } = useCalcAppCharacter();
+  const { vision, weaponType, calcList } = useCharacterData();
 
   const { element: infusedElement } = customInfusion;
   const isInfused = infusedElement !== "phys";
@@ -55,7 +55,7 @@ export default function ElementBuffs() {
         key={reaction}
         mutable
         checked={activated}
-        {...{ reaction, element, attBonus }}
+        {...{ reaction, element, attkBonuses }}
         onToggle={() => {
           dispatch(
             updateCalcSetup({
@@ -82,7 +82,7 @@ export default function ElementBuffs() {
         key={reaction}
         mutable
         checked={activated}
-        {...{ reaction, element, characterLv: char.level, attBonus }}
+        {...{ reaction, element, characterLv: char.level, attkBonuses }}
         onToggle={() => {
           dispatch(
             updateCalcSetup({

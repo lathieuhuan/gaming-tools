@@ -4,11 +4,10 @@ import { Select, clsx } from "rond";
 import { TALENT_TYPES, CalculationAspect, TalentType, CharacterCalc } from "@Backend";
 
 import type { Weapon } from "@Src/types";
+import Array_ from "@Src/utils/array-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectSetupManageInfos, selectStandardId, updateCharacter } from "@Store/calculator-slice";
-import { findById } from "@Src/utils";
-import { $AppCharacter } from "@Src/services";
-import { useCalcAppCharacter } from "../CalculatorInfoProvider";
+import { useCharacterData, usePartyData } from "../contexts";
 
 //
 import { FinalResultLayout, type FinalResultLayoutProps } from "@Src/components";
@@ -141,7 +140,8 @@ type LayoutProps = Pick<
 function useLayoutProps(comparedIds: number[], standardId: number): LayoutProps {
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const setupsById = useSelector((state) => state.calculator.setupsById);
-  const appChar = useCalcAppCharacter();
+  const appChar = useCharacterData();
+  const partyData = usePartyData();
 
   const char = setupsById[standardId].char;
 
@@ -165,7 +165,7 @@ function useLayoutProps(comparedIds: number[], standardId: number): LayoutProps 
         char: setupsById[id].char,
         appChar,
         talentType,
-        partyData: $AppCharacter.getPartyData(setupsById[id].party),
+        partyData,
       });
     });
 
@@ -176,7 +176,7 @@ function useLayoutProps(comparedIds: number[], standardId: number): LayoutProps 
   }
 
   const headerConfigs: LayoutProps["headerConfigs"] = setupIds.map((id, setupIndex) => {
-    const text = findById(setupManageInfos, id)?.name || "";
+    const text = Array_.findById(setupManageInfos, id)?.name || "";
 
     return {
       content: (talentType) => {

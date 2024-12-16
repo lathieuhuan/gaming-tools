@@ -7,13 +7,14 @@ import {
   BONUS_KEYS,
   CORE_STAT_TYPES,
   ELEMENT_TYPES,
+  LEVELS,
   NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
   REACTIONS,
   TALENT_TYPES,
   TRANSFORMATIVE_REACTIONS,
   WEAPON_TYPES,
-} from "@Src/backend/constants";
+} from "../constants";
 
 export type WeaponType = (typeof WEAPON_TYPES)[number];
 
@@ -24,6 +25,8 @@ export type TalentType = (typeof TALENT_TYPES)[number];
 export type LevelableTalentType = Exclude<TalentType, "altSprint">;
 
 export type AttackBonusKey = (typeof BONUS_KEYS)[number];
+
+export type Level = (typeof LEVELS)[number];
 
 // ========== ELEMENTS ==========
 

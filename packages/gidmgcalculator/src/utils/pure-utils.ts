@@ -1,4 +1,5 @@
-export const deepCopy = <T>(item: T): T => JSON.parse(JSON.stringify(item));
+import { ATTACK_ELEMENTS } from "@Backend";
+import { IS_DEV_ENV } from "@Src/constants";
 
 export const uuid = (): string => crypto.randomUUID();
 
@@ -8,44 +9,11 @@ export function getSearchParam(key: string) {
 }
 
 export function getImgSrc(src?: string) {
-  const isDevEnv = import.meta.env.DEV;
-  // const isDevEnv = false;
-  if (isDevEnv || !src) return "";
+  // const IS_DEV_ENV = false;
+  if (IS_DEV_ENV || !src) return "";
 
   const isFromWiki = src.split("/")[0].length === 1;
   return isFromWiki ? `https://static.wikia.nocookie.net/gensin-impact/images/${src}.png` : src;
-}
-
-export function pickProps<M, T extends keyof M>(obj: M, keys: T[]) {
-  const result = {} as Pick<M, T>;
-
-  for (const key of keys) {
-    result[key] = obj[key];
-  }
-  return result;
-}
-
-/**
- * @param obj an object and not array
- * @returns a new object got from deeply removing all null, undefined,
- * empty string or array properties from the original object
- */
-export function removeEmpty<T extends Record<string, any>>(obj: T): T {
-  if (typeof obj === "object" && obj !== null && !Array.isArray(obj)) {
-    const clone = {} as T;
-    for (const key in obj) {
-      const value = obj[key];
-      if (Array.isArray(value)) {
-        if (value.length) {
-          clone[key] = value;
-        }
-      } else if (![null, undefined, ""].includes(value as any)) {
-        clone[key] = removeEmpty(value);
-      }
-    }
-    return clone;
-  }
-  return obj;
 }
 
 export const toMult = (n: number) => 1 + n / 100;
@@ -53,41 +21,15 @@ export const toMult = (n: number) => 1 + n / 100;
 export const applyPercent = (n: number, percent: number) => Math.round((n * percent) / 100);
 
 export function genSequentialOptions(max: number | undefined = 0, startsAt0 = false, min = 1) {
-  const result = [...Array(max)].map((_, i) => {
+  const result = Array.from({ length: max }, (_, i) => {
     const value = i + min;
     return { label: value, value };
   });
   return startsAt0 ? [{ label: 0, value: 0 }].concat(result) : result;
 }
 
-export const toArray = <T>(subject: T | T[]): T[] => (Array.isArray(subject) ? subject : [subject]);
-
-export function applyToOneOrMany<T>(base: T | T[], callback: (base: T, index?: number) => T) {
-  return Array.isArray(base) ? base.map(callback) : callback(base);
-}
-
-function find(key: string) {
-  return <T>(arr: T[], value?: string | number | null): T | undefined => {
-    if (value === undefined) {
-      return undefined;
-    }
-    return arr.find((item) => (item as any)?.[key] === value);
-  };
-}
-function findIndex(key: string) {
-  return <T>(arr: T[], value: string | number) => arr.findIndex((item) => (item as any)[key] === value);
-}
-
-export const findById = find("ID");
-export const findByIndex = find("index");
-export const findByCode = find("code");
-export const findByName = find("name");
-
-export const indexById = findIndex("ID");
-export const indexByName = findIndex("name");
-
-export function getAppDataError(type: "character", code: number | string) {
-  return `Cannot get ${type} config (ERROR_CODE: ${code})`;
+export function suffixOf(stat: string) {
+  return stat.slice(-1) === "_" || ATTACK_ELEMENTS.includes(stat as any) ? "%" : "";
 }
 
 export function toCustomBuffLabel(category: string, type: string, t: (origin: string) => string) {

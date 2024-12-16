@@ -3,19 +3,19 @@ import { GeneralCalc } from "@Backend";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectArtifacts,
-  selectParty,
   toggleArtifactBuffCtrl,
   changeArtifactBuffCtrlInput,
   updateTeammateArtifact,
 } from "@Store/calculator-slice";
-import { deepCopy, findByIndex } from "@Src/utils";
+import Object_ from "@Src/utils/object-utils";
+import Array_ from "@Src/utils/array-utils";
 import { ArtifactBuffsView } from "@Src/components";
+import { Party } from "@Src/types";
 
-export default function ArtifactBuffs() {
+export default function ArtifactBuffs({ party }: { party: Party }) {
   const dispatch = useDispatch();
   const artifacts = useSelector(selectArtifacts);
   const artBuffCtrls = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].artBuffCtrls);
-  const party = useSelector(selectParty);
 
   return (
     <ArtifactBuffsView
@@ -44,8 +44,8 @@ export default function ArtifactBuffs() {
       }}
       getTeammateHandlers={({ ctrl, ctrls, teammateIndex }) => {
         const updateBuffCtrl = (value: number | "toggle", inputIndex = 0) => {
-          const newBuffCtrls = deepCopy(ctrls);
-          const buffCtrl = findByIndex(newBuffCtrls, ctrl.index);
+          const newBuffCtrls = Object_.clone(ctrls);
+          const buffCtrl = Array_.findByIndex(newBuffCtrls, ctrl.index);
           if (!buffCtrl) return;
 
           if (value === "toggle") {

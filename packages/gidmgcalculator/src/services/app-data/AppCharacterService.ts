@@ -1,11 +1,11 @@
 import { AppCharacter, TalentType } from "@Backend";
 
-import type { Party, PartyData } from "@Src/types";
+import type { PartyData, Traveler } from "@Src/types";
 import type { StandardResponse } from "../services.types";
 import type { DataControl, ServiceSubscriber } from "./app-data.types";
 
 import { BACKEND_URL, GENSHIN_DEV_URL } from "@Src/constants";
-import { pickProps } from "@Src/utils/pure-utils";
+import Object_ from "@Src/utils/object-utils";
 import { BaseService } from "./BaseService";
 
 type CharacterSubscriber = ServiceSubscriber<AppCharacter>;
@@ -14,15 +14,18 @@ export class AppCharacterService extends BaseService {
   private readonly NO_DESCRIPTION_MSG = "[Description missing]";
   private characters: Array<DataControl<AppCharacter>> = [];
   private subscribers: Map<string, Set<CharacterSubscriber>> = new Map();
+  private traveler: Traveler = "LUMINE";
 
   constructor() {
     super();
   }
 
   populate(characters: AppCharacter[]) {
+    const props = this.getTravelerProps(this.traveler);
+
     this.characters = characters.map((character) => ({
       status: "fetched",
-      data: character,
+      data: this.updateIfTraveler(character, props),
     }));
   }
 
@@ -210,9 +213,46 @@ export class AppCharacterService extends BaseService {
     return party.map((teammate) => {
       if (teammate) {
         const keys: Array<keyof AppCharacter> = ["code", "name", "icon", "nation", "vision", "weaponType", "EBcost"];
-        return pickProps(this.getControl(teammate.name)!.data, keys);
+        return Object_.pickProps(this.getControl(teammate.name)!.data, keys);
       }
       return null;
     });
+  }
+
+  isTraveler = (obj: { name: string }) => {
+    return obj.name.slice(-8) === "Traveler";
+  };
+
+  getTravelerProps = (traveler: Traveler) => {
+    return traveler === "LUMINE"
+      ? {
+          icon: "9/9c/Lumine_Icon",
+          sideIcon: "9/9a/Lumine_Side_Icon",
+          multFactorsCA: [55.9, 72.24],
+        }
+      : {
+          icon: "a/a5/Aether_Icon",
+          sideIcon: "0/05/Aether_Side_Icon",
+          multFactorsCA: [55.9, 60.72],
+        };
+  };
+
+  private updateIfTraveler = (data: AppCharacter, props: ReturnType<typeof this.getTravelerProps>) => {
+    if (data && this.isTraveler(data)) {
+      data.icon = props.icon;
+      data.sideIcon = props.sideIcon;
+
+      const CA = data.calcList?.CA?.[0];
+      if (CA) CA.multFactors = props.multFactorsCA;
+    }
+    return data;
+  };
+
+  changeTraveler(traveler: Traveler) {
+    if (this.characters.length) {
+      const props = this.getTravelerProps(traveler);
+      this.characters.forEach((control) => this.updateIfTraveler(control.data, props));
+    }
+    this.traveler = traveler;
   }
 }

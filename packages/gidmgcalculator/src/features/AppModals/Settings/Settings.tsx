@@ -1,25 +1,29 @@
 import { useContext, useRef, useState } from "react";
-import { InputNumber, Modal, VersatileSelect, useScreenWatcher } from "rond";
+import { Checkbox, InputNumber, Modal, useScreenWatcher, VersatileSelect } from "rond";
 import { Level, LEVELS } from "@Backend";
 
-import { $AppSettings, AppSettings } from "@Src/services";
-import { applySettings } from "@Store/calculator-slice";
-import { updateUI } from "@Store/ui-slice";
-import { useDispatch } from "@Store/hooks";
-import { DynamicStoreControlContext } from "../../DynamicStoreProvider";
-import { CheckSetting, Section } from "./settings-components";
+import type { Traveler } from "@Src/types";
+import type { SettingGroupRender } from "./Settings.types";
 
-type DefaultValueControl = {
-  key: Exclude<
-    keyof AppSettings,
-    "charInfoIsSeparated" | "doKeepArtStatsOnSwitch" | "persistingUserData" | "isTabLayout"
-  >;
-  label: string;
-  options?: (string | number)[];
-};
+import { CharacterPortrait } from "@Src/components";
+import { MAX_TARGET_LEVEL } from "@Src/constants";
+import { $AppCharacter, $AppSettings, AppSettings } from "@Src/services";
+import { applySettings } from "@Store/calculator-slice";
+import { useDispatch } from "@Store/hooks";
+import { updateUI } from "@Store/ui-slice";
+import { DynamicStoreControlContext } from "../../DynamicStoreProvider";
 
 const genNumberSequence = (count: number, startFromZero?: boolean) => {
   return [...Array(count)].map((_, i) => i + (startFromZero ? 0 : 1));
+};
+
+const useAppSettings = () => {
+  const tempSettings = useRef<AppSettings>();
+
+  if (!tempSettings.current) {
+    tempSettings.current = $AppSettings.get();
+  }
+  return tempSettings.current;
 };
 
 interface SettingsProps {
@@ -28,194 +32,293 @@ interface SettingsProps {
 const SettingsCore = ({ onClose }: SettingsProps) => {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
-  const [tempSettings, setTempSettings] = useState($AppSettings.get());
+  const tempSettings = useAppSettings();
   const changeAppStoreConfig = useContext(DynamicStoreControlContext);
 
-  const onConfirmNewSettings = () => {
-    const { charInfoIsSeparated, persistingUserData, isTabLayout } = $AppSettings.get();
+  const groupCls = "px-4 py-2 bg-surface-1 rounded";
+  const titleCls = "text-secondary-1 text-lg font-semibold";
 
-    if (!tempSettings.charInfoIsSeparated && charInfoIsSeparated) {
+  const onConfirmNewSettings = () => {
+    const currSettings = $AppSettings.get();
+    const changeTraveler = tempSettings.traveler !== currSettings.traveler;
+
+    if (changeTraveler) {
+      $AppCharacter.changeTraveler(tempSettings.traveler);
+
       dispatch(
-        applySettings({
-          doMergeCharInfo: true,
+        updateUI({
+          atScreen: "CALCULATOR",
+          traveler: tempSettings.traveler,
         })
       );
     }
-
-    if (tempSettings.persistingUserData !== persistingUserData) {
-      changeAppStoreConfig({
-        persistingUserData: !persistingUserData,
-      });
-    }
-
-    if (tempSettings.isTabLayout !== isTabLayout) {
+    dispatch(
+      applySettings({
+        mergeCharInfo: !tempSettings.charInfoIsSeparated && currSettings.charInfoIsSeparated,
+        changeTraveler,
+      })
+    );
+    if (tempSettings.isTabLayout !== currSettings.isTabLayout) {
       dispatch(
         updateUI({
           isTabLayout: tempSettings.isTabLayout,
         })
       );
     }
+    if (tempSettings.persistingUserData !== currSettings.persistingUserData) {
+      changeAppStoreConfig({
+        persistingUserData: tempSettings.persistingUserData,
+      });
+    }
 
     $AppSettings.set(tempSettings);
     onClose();
   };
 
-  const defaultValueSettings = useRef<DefaultValueControl[]>([
+  const groupRenders = useRef<SettingGroupRender[]>([
     {
-      key: "charLevel",
-      label: "Character level",
-      options: LEVELS.map((_, i) => LEVELS[LEVELS.length - 1 - i]),
+      title: "Calculator",
+      items: [
+        {
+          key: "charInfoIsSeparated",
+          label: "Separate main character's info on each setup",
+          type: "CHECK",
+        },
+        {
+          key: "doKeepArtStatsOnSwitch",
+          label: "Keep artifact stats when switching to a new set",
+          type: "CHECK",
+        },
+        {
+          key: "isTabLayout",
+          label: "Use tab layout (mobile only)",
+          type: "CHECK",
+          isHidden: screenWatcher.isFromSize("sm"),
+        },
+        {
+          key: "askBeforeUnload",
+          label: "Confirm before leaving the site",
+          type: "CHECK",
+        },
+      ],
     },
     {
-      key: "charCons",
-      label: "Character constellation",
-      options: genNumberSequence(7, true),
+      title: "User Data",
+      items: [
+        {
+          key: "persistingUserData",
+          label: "Auto save my database to browser's local storage",
+          description: [
+            "Your data is available on this browser only and will be lost if the local storage is cleared. Does not work as expected in Incognito mode.",
+          ],
+          type: "CHECK",
+        },
+      ],
     },
     {
-      key: "charNAs",
-      label: "Character Normal Attack level",
-      options: genNumberSequence(10),
-    },
-    {
-      key: "charES",
-      label: "Character Elemental Skill level",
-      options: genNumberSequence(10),
-    },
-    {
-      key: "charEB",
-      label: "Character Elemental Burst level",
-      options: genNumberSequence(10),
-    },
-    {
-      key: "wpLevel",
-      label: "Weapon level",
-      options: LEVELS.map((_, i) => LEVELS[LEVELS.length - 1 - i]),
-    },
-    { key: "wpRefi", label: "Weapon refinement", options: genNumberSequence(5) },
-    {
-      key: "artLevel",
-      label: "Artifact level",
-      options: [...Array(6)].map((_, i) => i * 4),
-    },
-    {
-      key: "targetLevel",
-      label: "Target level",
+      title: "Default values",
+      items: [
+        {
+          key: "charLevel",
+          label: "Character level",
+          options: LEVELS.map((_, i) => LEVELS[LEVELS.length - 1 - i]),
+          type: "SELECT",
+        },
+        {
+          key: "charCons",
+          label: "Character constellation",
+          options: genNumberSequence(7, true),
+          type: "SELECT",
+        },
+        {
+          key: "charNAs",
+          label: "Character Normal Attack level",
+          options: genNumberSequence(10),
+          type: "SELECT",
+        },
+        {
+          key: "charES",
+          label: "Character Elemental Skill level",
+          options: genNumberSequence(10),
+          type: "SELECT",
+        },
+        {
+          key: "charEB",
+          label: "Character Elemental Burst level",
+          options: genNumberSequence(10),
+          type: "SELECT",
+        },
+        {
+          key: "wpLevel",
+          label: "Weapon level",
+          options: LEVELS.map((_, i) => LEVELS[LEVELS.length - 1 - i]),
+          type: "SELECT",
+        },
+        {
+          key: "wpRefi",
+          label: "Weapon refinement",
+          options: genNumberSequence(5),
+          type: "SELECT",
+        },
+        {
+          key: "artLevel",
+          label: "Artifact level",
+          options: [...Array(6)].map((_, i) => i * 4),
+          type: "SELECT",
+        },
+        {
+          key: "targetLevel",
+          label: "Target level",
+          type: "INPUT",
+          max: MAX_TARGET_LEVEL,
+        },
+      ],
     },
   ]);
 
-  const onChangeTempSettings = (key: keyof AppSettings, value: AppSettings[keyof AppSettings]) => {
-    setTempSettings((prevSettings) => ({
-      ...prevSettings,
-      [key]: value,
-    }));
-  };
-
-  const renderDefaultSetting = (key: string, label: string, control: React.ReactNode) => {
-    return (
-      <div key={key} className="flex gap-3 items-center justify-between" style={{ minHeight: "2.25rem" }}>
-        <span>{label}</span>
-        <div className="w-20 flex shrink-0">{control}</div>
-      </div>
-    );
+  const changeTempSettings = <TKey extends keyof AppSettings>(key: TKey, value: AppSettings[TKey]) => {
+    tempSettings[key] = value;
   };
 
   return (
     <form
       id="app-settings-form"
-      className="h-full hide-scrollbar space-y-2"
+      className="h-full overflow-auto space-y-2"
       onSubmit={(e) => {
         e.preventDefault();
         onConfirmNewSettings();
       }}
     >
-      <Section title="Calculator">
-        <CheckSetting
-          label="Separate main character's info on each setup"
-          defaultChecked={tempSettings.charInfoIsSeparated}
-          onChange={() => {
-            onChangeTempSettings("charInfoIsSeparated", !tempSettings.charInfoIsSeparated);
-          }}
+      <div className={`${groupCls} flex justify-between`}>
+        <p className={titleCls}>Traveler</p>
+        <TravelerSelect
+          defaultValue={tempSettings.traveler}
+          onChange={(value) => changeTempSettings("traveler", value)}
         />
-        <CheckSetting
-          label="Keep artifact stats when switching to a new set"
-          defaultChecked={tempSettings.doKeepArtStatsOnSwitch}
-          onChange={() => {
-            onChangeTempSettings("doKeepArtStatsOnSwitch", !tempSettings.doKeepArtStatsOnSwitch);
-          }}
-        />
-        {!screenWatcher.isFromSize("sm") && (
-          <CheckSetting
-            label="Use tab layout (mobile only)"
-            defaultChecked={tempSettings.isTabLayout}
-            onChange={() => {
-              onChangeTempSettings("isTabLayout", !tempSettings.isTabLayout);
-            }}
-          />
-        )}
-      </Section>
+      </div>
 
-      <Section title="User Data">
-        <div>
-          <CheckSetting
-            label="Auto save my database to browser's local storage"
-            defaultChecked={tempSettings.persistingUserData}
-            onChange={() => {
-              onChangeTempSettings("persistingUserData", !tempSettings.persistingUserData);
-            }}
-          />
-          <ul className="mt-1 pl-4 text-sm list-disc space-y-1">
-            <li>Your data is available on this browser only and will be lost if the local storage is cleared.</li>
-            <li className="text-danger-3">Change of this setting can remove your current data and works on the App!</li>
-          </ul>
-        </div>
-      </Section>
+      {groupRenders.current.map((group, groupIndex) => {
+        return (
+          <div key={groupIndex} className={groupCls}>
+            <p className={titleCls}>{group.title}</p>
+            <div className="mt-2 space-y-3">
+              {group.items.map((item) => {
+                if (item.isHidden) {
+                  return null;
+                }
+                let control: React.ReactNode = null;
 
-      <Section title="Default values">
-        {defaultValueSettings.current.map(({ key, label, options }) => {
-          const defaultValue = tempSettings[key];
-
-          if (options) {
-            return renderDefaultSetting(
-              key,
-              label,
-              <VersatileSelect
-                title="Select Default Value"
-                className="font-semibold h-8"
-                dropdownCls="font-medium"
-                align="right"
-                defaultValue={defaultValue}
-                options={options.map((option) => ({ label: option, value: option }))}
-                onChange={(value) => {
-                  const newValue = typeof defaultValue === "string" ? (value as Level) : +value;
-                  onChangeTempSettings(key, newValue);
-                }}
-              />
-            );
-          }
-
-          return renderDefaultSetting(
-            key,
-            label,
-            <InputNumber
-              key={key}
-              className="w-full font-semibold"
-              size="medium"
-              value={tempSettings.targetLevel}
-              max={100}
-              onChange={(newValue) => {
-                onChangeTempSettings(key, newValue);
-              }}
-            />
-          );
-        })}
-      </Section>
+                switch (item.type) {
+                  case "CHECK":
+                    control = (
+                      <label className="flex items-center justify-between glow-on-hover">
+                        <span>{item.label}</span>
+                        <Checkbox
+                          className="ml-4"
+                          defaultChecked={tempSettings[item.key]}
+                          onChange={(checked) => {
+                            changeTempSettings(item.key, checked);
+                          }}
+                        />
+                      </label>
+                    );
+                    break;
+                  case "SELECT":
+                    control = (
+                      <div className="flex gap-3 items-center justify-between" style={{ minHeight: "2.25rem" }}>
+                        <span>{item.label}</span>
+                        <div className="w-20 flex shrink-0">
+                          <VersatileSelect
+                            title="Select Default Value"
+                            className="font-semibold h-8"
+                            dropdownCls="font-medium"
+                            align="right"
+                            defaultValue={tempSettings[item.key]}
+                            options={item.options.map((option) => ({ label: option, value: option }))}
+                            onChange={(value) => {
+                              const newValue = typeof value === "string" ? (value as Level) : +value;
+                              changeTempSettings(item.key, newValue);
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                    break;
+                  case "INPUT":
+                    control = (
+                      <div className="flex gap-3 items-center justify-between" style={{ minHeight: "2.25rem" }}>
+                        <span>{item.label}</span>
+                        <div className="w-20 flex shrink-0">
+                          <InputNumber
+                            className="w-full font-semibold"
+                            size="medium"
+                            defaultValue={tempSettings[item.key]}
+                            max={item.max}
+                            onChange={(newValue) => {
+                              changeTempSettings(item.key, newValue);
+                            }}
+                          />
+                        </div>
+                      </div>
+                    );
+                    break;
+                }
+                return (
+                  <div key={item.key}>
+                    {control}
+                    {item.description ? (
+                      <ul className="mt-1 pl-4 text-sm list-disc space-y-1">
+                        {item.description.map((line, i) => (
+                          <li key={i}>{line}</li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
     </form>
   );
 };
 
+function TravelerSelect(props: { defaultValue: Traveler; onChange: (value: Traveler) => void }) {
+  const [selected, setSelected] = useState(props.defaultValue);
+  const travelers: Traveler[] = ["LUMINE", "AETHER"];
+
+  return (
+    <div className="py-2 flex gap-3">
+      {travelers.map((traveler) => {
+        const info = $AppCharacter.getTravelerProps(traveler);
+        const isSelected = traveler === selected;
+        return (
+          <CharacterPortrait
+            key={traveler}
+            info={info}
+            className={isSelected ? "shadow-3px-3px shadow-active-color" : ""}
+            size="small"
+            zoomable={false}
+            onClick={() => {
+              if (!isSelected) {
+                setSelected(traveler);
+                props.onChange(traveler);
+              }
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
 export const Settings = Modal.wrap(SettingsCore, {
   title: "Settings",
-  className: ["w-96 bg-surface-2", Modal.LARGE_HEIGHT_CLS],
+  className: ["bg-surface-2", Modal.LARGE_HEIGHT_CLS],
+  style: {
+    width: 412,
+  },
   bodyCls: "py-0",
   withHeaderDivider: false,
   withFooterDivider: false,

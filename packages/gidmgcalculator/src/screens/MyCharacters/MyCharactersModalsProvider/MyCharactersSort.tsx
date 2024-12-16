@@ -3,7 +3,8 @@ import { FaChevronDown, FaSort } from "react-icons/fa";
 import { createSelector } from "@reduxjs/toolkit";
 import { Popover, CarouselSpace, Modal } from "rond";
 
-import { findByIndex, Utils_ } from "@Src/utils";
+import Entity_ from "@Src/utils/entity-utils";
+import Array_ from "@Src/utils/array-utils";
 import { $AppCharacter } from "@Src/services";
 import { useStoreSnapshot } from "@Src/features";
 import { useDispatch } from "@Store/hooks";
@@ -62,8 +63,8 @@ function SortCore({ onClose }: { onClose: () => void }) {
       const newList = [...prev];
 
       return newList.sort((a, b) => {
-        const [fA, sA] = Utils_.splitLv(a);
-        const [fB, sB] = Utils_.splitLv(b);
+        const [fA, sA] = Entity_.splitLv(a);
+        const [fB, sB] = Entity_.splitLv(b);
 
         if (fA !== fB) {
           return fB - fA;
@@ -214,7 +215,7 @@ function SortCore({ onClose }: { onClose: () => void }) {
         <div>
           {inMarkingMode &&
             markedList.map((index, i) => {
-              const char = findByIndex(list, index);
+              const char = Array_.findByIndex(list, index);
 
               if (char) {
                 return <Line key={char.name} char={char} marker={i + 1} onClick={() => onClickLine(char.index)} />;

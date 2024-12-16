@@ -1,9 +1,9 @@
 import { CollapseList } from "rond";
 
 import { selectParty } from "@Store/calculator-slice";
-import { $AppCharacter } from "@Src/services";
 import { useSelector } from "@Store/hooks";
 import { useTabs } from "@Src/hooks";
+import { usePartyData } from "../contexts";
 
 // Component
 import ElementBuffs from "./buffs/ElementBuffs";
@@ -19,7 +19,7 @@ import CustomModifiers from "./CustomModifiers";
 
 export function Modifiers() {
   const party = useSelector(selectParty);
-  const partyData = $AppCharacter.getPartyData(party);
+  const partyData = usePartyData();
 
   const { activeIndex, renderTabs } = useTabs({
     defaultIndex: 1,
@@ -58,7 +58,7 @@ export function Modifiers() {
             {
               title: "Artifacts buffs",
               heading: "Artifacts",
-              body: <ArtifactBuffs />,
+              body: <ArtifactBuffs party={party} />,
             },
             {
               title: "Custom buffs",

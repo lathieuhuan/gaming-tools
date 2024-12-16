@@ -21,6 +21,7 @@ export type AfterSelectAppEntity = (itemCode: number, quantity?: number) => void
 interface SelectOptionsProps<T> {
   className?: string;
   data: T[];
+  initialChosenCode?: number;
   hiddenCodes?: Set<number>;
   /** Default to 'No data' */
   emptyText?: string;
@@ -38,6 +39,7 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
   shouldHideSelected,
   emptyText = "No data",
   hasConfigStep,
+  initialChosenCode = 0,
   hiddenCodes,
   renderOptionConfig,
   onChange,
@@ -51,7 +53,7 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
 
   const [itemCounts, setItemCounts] = useState<Record<number, number>>({});
   const [pickedCodes, setPickedCodes] = useState(new Set<number>());
-  const [chosenCode, setChosenCode] = useState(0);
+  const [chosenCode, setChosenCode] = useState(initialChosenCode);
   const [empty, setEmpty] = useState(false);
   const [overflow, setOverflow] = useState(true);
 
@@ -63,8 +65,8 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
   useLayoutEffect(() => {
     const handleEnter = (e: KeyboardEvent) => {
       if (
-        inputRef?.current &&
         e.key === "Enter" &&
+        inputRef?.current &&
         document.activeElement === inputRef.current &&
         inputRef.current.value.length
       ) {
@@ -81,6 +83,10 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
     };
 
     document.addEventListener("keydown", handleEnter);
+
+    if (initialChosenCode) {
+      itemUtils.queryById(initialChosenCode)?.element.scrollIntoView();
+    }
 
     return () => {
       document.removeEventListener("keydown", handleEnter);
@@ -142,14 +148,6 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
     }
   };
 
-  // const onDoubleClickPickerItem = async (item: T) => {
-  //   if (!onChange || !hasConfigStep) return;
-
-  //   if (await onChange(item, false)) {
-  //     afterSelect(item.code);
-  //   }
-  // };
-
   const itemWidthCls = [
     "max-w-1/3 basis-1/3 sm:w-1/4 sm:basis-1/4",
     hasConfigStep
@@ -168,7 +166,7 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
         )}
       >
         <div className="item-container flex flex-wrap">
-          {data.map((item, i) => {
+          {data.map((item) => {
             const hidden =
               pickedCodes.has(item.code) ||
               (shouldCheckKeyword && !item.name.toLowerCase().includes(lowerKeyword)) ||
@@ -225,6 +223,7 @@ export interface AppEntitySelectProps<T extends AppEntityOptionModel = AppEntity
 }
 export function AppEntitySelect<T extends AppEntityOptionModel = AppEntityOptionModel>({
   data,
+  initialChosenCode,
   hiddenCodes,
   emptyText,
   hasConfigStep,
@@ -236,12 +235,21 @@ export function AppEntitySelect<T extends AppEntityOptionModel = AppEntityOption
 }: AppEntitySelectProps<T>) {
   return (
     <EntitySelectTemplate {...restProps} onClose={onClose}>
-      {(arg) => {
+      {(renderProps) => {
         return (
           <AppEntityOptions
             onClose={onClose}
-            {...arg}
-            {...{ data, hiddenCodes, emptyText, hasConfigStep, shouldHideSelected, renderOptionConfig, onChange }}
+            {...renderProps}
+            {...{
+              data,
+              initialChosenCode,
+              hiddenCodes,
+              emptyText,
+              hasConfigStep,
+              shouldHideSelected,
+              renderOptionConfig,
+              onChange,
+            }}
           />
         );
       }}

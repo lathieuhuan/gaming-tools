@@ -1,7 +1,7 @@
 import type { StandardResponse } from "../services.types";
 
 export class BaseService {
-  async fetchData<T>(
+  protected async fetchData<T>(
     url: string,
     options?: { processData?: (res: any) => T; processError?: (res: any) => string }
   ): StandardResponse<T> {

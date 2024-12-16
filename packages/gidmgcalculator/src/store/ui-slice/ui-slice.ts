@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { $AppSettings, AppSettings } from "@Src/services";
-import type { SetupImportInfo } from "@Src/types";
+import type { SetupImportInfo, Traveler } from "@Src/types";
 
 export type MySetupsModalType =
   | "TIPS"
@@ -22,6 +22,7 @@ export interface UIState extends Pick<AppSettings, "isTabLayout"> {
   ready: boolean;
   loading: boolean;
   atScreen: AppScreen;
+  traveler: Traveler;
   appModalType: "" | "INTRO" | "GUIDES" | "SETTINGS" | "UPLOAD" | "DOWNLOAD" | "DONATE";
   calcTargetConfig: {
     active: boolean;
@@ -33,10 +34,13 @@ export interface UIState extends Pick<AppSettings, "isTabLayout"> {
   importInfo: SetupImportInfo;
 }
 
+const { isTabLayout, traveler } = $AppSettings.get();
+
 const initialState: UIState = {
-  isTabLayout: $AppSettings.get("isTabLayout"),
+  isTabLayout,
   atScreen: "CALCULATOR",
-  appModalType: "INTRO",
+  traveler,
+  appModalType: "",
   mySetupsModalType: "",
   calcTargetConfig: {
     active: false,

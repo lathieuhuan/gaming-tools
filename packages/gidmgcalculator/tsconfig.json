@@ -24,8 +24,8 @@
     "paths": {
       "@Backend": ["src/backend"],
       "@Store/*": ["src/store/*"],
-      "@Simulator/*": ["src/screens/Simulator/*"],
-      "@Src/*": ["src/*"]
+      "@Src/*": ["src/*"],
+      "@UnitTest/*": ["unit-test/*"]
     }
   },
   "include": ["src"],

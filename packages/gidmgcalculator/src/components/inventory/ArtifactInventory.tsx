@@ -6,11 +6,12 @@ import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 import type { CalcArtifact, UserArtifact } from "@Src/types";
 import { useStoreSnapshot } from "@Src/features";
 import { selectUserArtifacts } from "@Store/userdb-slice";
+import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@Src/utils/filter-artifacts";
 
 // Conponent
 import { ArtifactCard } from "../ArtifactCard";
 import { OwnerLabel } from "../OwnerLabel";
-import { ArtifactFilter, ArtifactFilterProps, ArtifactFilterState } from "../ArtifactFilter";
+import { ArtifactFilter, ArtifactFilterProps } from "../ArtifactFilter";
 import { InventoryRack } from "./InventoryRack";
 
 export interface ArtifactInventoryProps
@@ -39,8 +40,8 @@ const ArtifactInventoryCore = ({
 
   const [showingCurrent, setShowingCurrent] = useState(false);
   const [chosenArtifact, setChosenArtifact] = useState<UserArtifact>();
-  const [filter, setFilter] = useState<ArtifactFilterState>({
-    ...ArtifactFilter.DEFAULT_FILTER,
+  const [filter, setFilter] = useState<ArtifactFilterCondition>({
+    ...DEFAULT_ARTIFACT_FILTER,
     types: [forcedType || initialType],
   });
 
@@ -49,7 +50,7 @@ const ArtifactInventoryCore = ({
     return forcedType ? userArtifacts.filter((artifact) => artifact.type === forcedType) : userArtifacts;
   });
 
-  const filteredArtifacts = useMemo(() => ArtifactFilter.filterArtifacts(artifacts, filter), [artifacts, filter]);
+  const filteredArtifacts = useMemo(() => filterArtifacts(artifacts, filter), [artifacts, filter]);
   const currentArtifact = chosenArtifact?.type
     ? currentArtifacts[ARTIFACT_TYPES.indexOf(chosenArtifact.type)]
     : undefined;
@@ -154,7 +155,7 @@ const ArtifactInventoryCore = ({
                 </div>
               ) : null}
 
-              <OwnerLabel className="mt-4" item={chosenArtifact} />
+              <OwnerLabel className="mt-3" item={chosenArtifact} />
             </div>
           </div>
         );

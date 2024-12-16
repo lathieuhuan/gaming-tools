@@ -1,14 +1,21 @@
+import { useEffect, useRef } from "react";
 import { Rarity } from "rond";
 
 import type { Artifact } from "@Src/types";
-import { deepCopy } from "@Src/utils";
+import Object_ from "@Src/utils/object-utils";
 import { ArtifactCard, type ArtifactCardAction } from "../../ArtifactCard";
+
+type Handler = {
+  mousedown: (e: KeyboardEvent) => void;
+};
 
 interface ArtifactConfigProps {
   config?: Artifact;
   typeSelect?: React.ReactNode;
   maxRarity?: number;
   batchConfigNode?: React.ReactNode;
+  /** Default to 'Forge' */
+  mainActionLabel?: string;
   moreButtons?: ArtifactCardAction[];
   onChangeRarity?: (rarity: number) => void;
   onUpdateConfig?: (properties: Partial<Artifact>) => void;
@@ -19,16 +26,39 @@ export function ArtifactConfig({
   typeSelect,
   maxRarity = 5,
   batchConfigNode,
+  mainActionLabel = "Forge",
   moreButtons = [],
   onChangeRarity,
   onUpdateConfig,
   onSelect,
 }: ArtifactConfigProps) {
+  const handler = useRef<Handler>({
+    mousedown: () => null,
+  });
+
+  handler.current.mousedown = (e: KeyboardEvent) => {
+    if (e.key === "Enter" && document.activeElement instanceof HTMLBodyElement && config) {
+      onSelect?.(config);
+    }
+  };
+
   const onClickRarityStar = (num: number) => {
     if (num !== config?.rarity) {
       onChangeRarity?.(num);
     }
   };
+
+  useEffect(() => {
+    const handleKeydown = (e: KeyboardEvent) => {
+      handler.current.mousedown(e);
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, []);
 
   return (
     <div className="h-full flex flex-col custom-scrollbar space-y-3">
@@ -37,7 +67,7 @@ export function ArtifactConfig({
           <div className="flex items-start justify-between">
             <label className="h-8 flex items-center text-sm">Rarity</label>
             <Rarity
-              className="gap-4"
+              className="gap-4 w-56"
               value={config.rarity}
               mutable={{ min: 4, max: maxRarity }}
               onChange={onClickRarityStar}
@@ -66,14 +96,14 @@ export function ArtifactConfig({
               onUpdateConfig?.({ mainStatType });
             }}
             onChangeSubStat={(index, changes, artifact) => {
-              const subStats = deepCopy(artifact.subStats);
+              const subStats = Object_.clone(artifact.subStats);
               subStats[index] = Object.assign(subStats[index], changes);
               onUpdateConfig?.({ subStats });
             }}
             actions={[
               ...moreButtons,
               {
-                children: "Forge",
+                children: mainActionLabel,
                 variant: "primary",
                 onClick: (_, config) => onSelect?.(config),
               },

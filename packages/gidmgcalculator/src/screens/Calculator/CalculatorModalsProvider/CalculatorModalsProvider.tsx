@@ -1,18 +1,19 @@
 import { useMemo, useState } from "react";
 import { Modal } from "rond";
 
-import { Setup_ } from "@Src/utils";
+import Setup_ from "@Src/utils/setup-utils";
 import { useStoreSnapshot } from "@Src/features";
 import { useDispatch } from "@Store/hooks";
 import { initNewSessionWithCharacter } from "@Store/thunks";
+import { CalculatorModalsContext, CalculatorModalsControl } from "../contexts";
 
 // Component
 import { SetupExporterCore, SetupImporter, Tavern } from "@Src/components";
 import { TargetConfig } from "./TargetConfig";
 import { SaveSetup } from "./SaveSetup";
-import { CalculatorModalsContext, type CalculatorModalsControl } from "./calculator-modals-context";
+import { Optimizer } from "./Optimizer";
 
-type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "";
+type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "OPTIMIZE" | "";
 
 export function CalculatorModalsProvider(props: { children: React.ReactNode }) {
   const dispatch = useDispatch();
@@ -36,6 +37,9 @@ export function CalculatorModalsProvider(props: { children: React.ReactNode }) {
       requestShareSetup: (setupId: number) => {
         setModalType("SHARE_SETUP");
         setSetupId(setupId);
+      },
+      requestOptimize: () => {
+        setModalType("OPTIMIZE");
       },
     };
   }, []);
@@ -70,6 +74,17 @@ export function CalculatorModalsProvider(props: { children: React.ReactNode }) {
         }}
         onClose={closeModal}
       />
+
+      <Modal
+        active={modalType === "OPTIMIZE"}
+        title="Optimization"
+        preset="small"
+        className="bg-surface-2"
+        bodyCls="py-2"
+        onClose={closeModal}
+      >
+        <Optimizer />
+      </Modal>
     </CalculatorModalsContext.Provider>
   );
 }

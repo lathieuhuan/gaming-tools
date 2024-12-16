@@ -5,7 +5,6 @@ import { updateUI } from "@Store/ui-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 
 // Component
-import { Introduction } from "./Introduction";
 import { Guides } from "./Guides";
 import { Settings } from "./Settings";
 import { Download } from "./Download";
@@ -37,7 +36,6 @@ export function AppModals() {
 
   return (
     <>
-      <Introduction active={appModalType === "INTRO"} onClose={closeModal} />
       <Guides active={appModalType === "GUIDES"} onClose={closeModal} />
       <Settings active={appModalType === "SETTINGS"} onClose={closeModal} />
       <Download active={appModalType === "DOWNLOAD"} onClose={closeModal} />

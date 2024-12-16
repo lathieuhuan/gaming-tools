@@ -3,18 +3,16 @@ import type {
   ResistanceReductionKey,
   CalcItemType,
   AttackBonusKey,
-  LevelableTalentType,
-} from "@Src/backend/types";
+  CalculationFinalResultKey,
+} from "../types";
 
-import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "@Src/backend/constants";
-import { ECalcStatModule } from "@Src/backend/constants/internal";
-
-export type CalculationFinalResultKey = LevelableTalentType | "RXN_CALC" | "WP_CALC";
+import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "../constants";
+import { ECalcStatModule } from "../constants/internal";
 
 // ========== STAT RECORD ==========
 
 export type CalcAtomicRecord = {
-  desc: string;
+  description: string;
   value: number;
 };
 
@@ -88,13 +86,13 @@ export class TrackerControl {
   recordStat(category: ECalcStatModule.RESIST, type: ResistanceReductionKey, value: number, description: string): void;
   recordStat(category: ECalcStatModule, type: StatRecordType, value: number, description: string) {
     const cateRecord = this.stats[category];
-    const existed = cateRecord[type].find((record) => record.desc === description);
+    const existed = cateRecord[type].find((record) => record.description === description);
 
     if (existed) {
       existed.value += value;
       return;
     }
-    cateRecord[type].push({ desc: description, value });
+    cateRecord[type].push({ value, description });
   }
 
   static initCalcItemRecord(initInfo: CalcItemRecord): CalcItemRecord {
@@ -106,9 +104,6 @@ export class TrackerControl {
   }
 
   finalize(): TrackerResult {
-    return {
-      ...this.stats,
-      ...this.calcItems,
-    };
+    return Object.assign({}, this.stats, this.calcItems);
   }
 }

@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { MdInventory } from "react-icons/md";
 import { Badge, Button, VersatileSelect } from "rond";
 import { LEVELS, Level } from "@Backend";
 
 import { $AppWeapon } from "@Src/services";
-import { Utils_, genSequentialOptions } from "@Src/utils";
+import { genSequentialOptions } from "@Src/utils";
+import Entity_ from "@Src/utils/entity-utils";
 import { selectWeapon, changeWeapon, updateWeapon } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
 import { WeaponForge, WeaponInventory, GenshinImage } from "@Src/components";
+import { IconPouch } from "@Src/components/icons";
 
 import styles from "../SetupManager.styles.module.scss";
 
@@ -76,9 +77,8 @@ export default function SectionWeapon() {
       <Button
         title="Inventory"
         className="absolute bottom-1 right-1"
-        size="large"
         boneOnly
-        icon={<MdInventory />}
+        icon={<IconPouch className="text-xl" />}
         onClick={() => setModalType("SELECT_USER_WEAPON")}
       />
 
@@ -101,7 +101,7 @@ export default function SectionWeapon() {
         weaponType={weapon.type}
         buttonText="Select"
         onClickButton={(weapon) => {
-          dispatch(changeWeapon(Utils_.userItemToCalcItem(weapon)));
+          dispatch(changeWeapon(Entity_.userItemToCalcItem(weapon)));
         }}
         onClose={closeModal}
       />

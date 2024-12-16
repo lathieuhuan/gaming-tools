@@ -22,11 +22,11 @@ export function renderHeading(main: ReactNode, extra?: string | number) {
 }
 
 export function renderRecord(calcFn?: (value: number) => string | number, extraDesc?: (value: number) => string) {
-  return ({ desc, value }: CalcAtomicRecord, index: number) =>
+  return ({ description, value }: CalcAtomicRecord, index: number) =>
     value ? (
       <li key={index} className="text-hint-color text-sm">
-        {desc?.[0]?.toUpperCase()}
-        {desc.slice(1)} {extraDesc ? `${extraDesc(value)} ` : ""}
+        {description?.[0]?.toUpperCase()}
+        {description.slice(1)} {extraDesc ? `${extraDesc(value)} ` : ""}
         <Green>{calcFn ? calcFn(value) : value}</Green>
       </li>
     ) : null;
