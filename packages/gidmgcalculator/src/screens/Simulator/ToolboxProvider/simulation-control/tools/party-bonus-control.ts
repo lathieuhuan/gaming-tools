@@ -37,19 +37,19 @@ export class PartyBonusControl {
     }
   }
 
-  updateCommonAttrBonuses = (bonus: AppliedAttributeBonus) => {
+  updateCommonAttrBonuses: typeof this.commonBonusesCtrl.updateAttrBonuses = (bonus) => {
     this.commonBonusesCtrl.updateAttrBonuses(bonus);
   };
 
-  updateCommonAttkBonuses = (bonus: AppliedAttackBonus) => {
+  updateCommonAttkBonuses: typeof this.commonBonusesCtrl.updateAttkBonuses = (bonus) => {
     this.commonBonusesCtrl.updateAttkBonuses(bonus);
   };
 
-  updateOnfieldAttrBonuses = (bonus: AppliedAttributeBonus) => {
+  updateOnfieldAttrBonuses: typeof this.commonBonusesCtrl.updateAttrBonuses = (bonus) => {
     this.onfieldBonusesCtrl.updateAttrBonuses(bonus);
   };
 
-  updateOnfieldAttkBonuses = (bonus: AppliedAttackBonus) => {
+  updateOnfieldAttkBonuses: typeof this.commonBonusesCtrl.updateAttkBonuses = (bonus) => {
     this.onfieldBonusesCtrl.updateAttkBonuses(bonus);
   };
 

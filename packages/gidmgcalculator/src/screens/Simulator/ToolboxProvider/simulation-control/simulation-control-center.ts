@@ -219,8 +219,8 @@ export class SimulationControlCenter extends SimulationChunksControl {
     if (affect) {
       switch (affect) {
         case "SELF": {
-          attrBonuses.forEach((bonus) => performer.updateAttrBonuses(bonus));
-          attkBonuses.forEach((bonus) => performer.updateAttkBonuses(bonus));
+          performer.updateAttrBonuses(attrBonuses);
+          performer.updateAttkBonuses(attkBonuses);
 
           performer.applyBonuses();
 
@@ -230,16 +230,16 @@ export class SimulationControlCenter extends SimulationChunksControl {
           break;
         }
         case "PARTY": {
-          attrBonuses.forEach((bonus) => this.partyBonus.updateCommonAttrBonuses(bonus));
-          attkBonuses.forEach((bonus) => this.partyBonus.updateCommonAttkBonuses(bonus));
+          this.partyBonus.updateCommonAttrBonuses(attrBonuses);
+          this.partyBonus.updateCommonAttkBonuses(attkBonuses);
 
           this.applyPartyBonuses();
           this.activeMemberWatcher.notifySubscribers();
           break;
         }
         case "ACTIVE_UNIT": {
-          attrBonuses.forEach((bonus) => this.partyBonus.updateOnfieldAttrBonuses(bonus));
-          attkBonuses.forEach((bonus) => this.partyBonus.updateOnfieldAttkBonuses(bonus));
+          this.partyBonus.updateOnfieldAttrBonuses(attrBonuses);
+          this.partyBonus.updateOnfieldAttkBonuses(attkBonuses);
 
           this.onfieldMember.applyBonuses();
 

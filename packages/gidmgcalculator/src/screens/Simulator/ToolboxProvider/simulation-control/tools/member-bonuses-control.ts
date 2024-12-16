@@ -1,8 +1,6 @@
 import {
   AppArtifact,
   AppCharacter,
-  AppliedAttackBonus,
-  AppliedAttributeBonus,
   AppliedBonuses,
   AppliedBonusesGetter,
   AppWeapon,
@@ -147,11 +145,11 @@ export class MemberBonusesControl {
     );
   };
 
-  updateAttrBonuses = (bonus: AppliedAttributeBonus) => {
+  updateAttrBonuses: typeof this.bonusesCtrl.updateAttrBonuses = (bonus) => {
     this.bonusesCtrl.updateAttrBonuses(bonus);
   };
 
-  updateAttkBonuses = (bonus: AppliedAttackBonus) => {
+  updateAttkBonuses: typeof this.bonusesCtrl.updateAttkBonuses = (bonus) => {
     this.bonusesCtrl.updateAttkBonuses(bonus);
   };
 
