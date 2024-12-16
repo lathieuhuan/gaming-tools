@@ -24,7 +24,7 @@ type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" 
 export type CalcItemConfig = {
   type: CalcItemType;
   attPatt: ActualAttackPattern;
-  attElmt: "pyro" | "hydro" | "electro" | "cryo" | "geo" | "anemo" | "dendro" | "phys";
+  attElmt: AttackElement;
   reaction: AttackReaction;
   rxnMult: number;
   record: CalcItemRecord;
