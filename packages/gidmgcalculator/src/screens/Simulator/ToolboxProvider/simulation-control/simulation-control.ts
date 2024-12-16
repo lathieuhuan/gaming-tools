@@ -1,11 +1,9 @@
-import type { Simulation, SimulationChunk, SimulationEvent } from "@Src/types";
+import type { SimulationChunk, SimulationEvent } from "@Src/types";
 import type { SimulationProcessedEvent } from "./simulation-control.types";
-
 import { SimulationControlCenter } from "./simulation-control-center";
 
 export class SimulationControl extends SimulationControlCenter {
   //
-
   private checkMissmatched = (chunks: SimulationChunk[]): MissmatchedCheckResult => {
     // console.log("checkMissmatched");
     // console.log(structuredClone(chunks));
@@ -17,10 +15,11 @@ export class SimulationControl extends SimulationControlCenter {
         isMissmatched: true,
       };
     }
-    if (!this.latestChunk.events.length) {
-      this.chunks.pop();
-      // because only the last chunk can be empty, the latest chunk owner can be
-      // used as the new on-field
+
+    const didRemoveBufferChunk = this.removeBufferChunk();
+
+    if (didRemoveBufferChunk) {
+      // ???
       this.switchOnfield(chunks[chunks.length - 1].ownerCode);
     }
     if (this.chunks.length > chunks.length) {
@@ -85,12 +84,7 @@ export class SimulationControl extends SimulationControlCenter {
     // console.log({ ...result });
 
     if (result.isMissmatched) {
-      // Reset
-      this.chunks = [];
-      this.sumary = {
-        damage: 0,
-        duration: 0,
-      };
+      this.resetChunks();
       this.resetBonuses();
 
       for (const chunk of chunks) {
@@ -99,10 +93,7 @@ export class SimulationControl extends SimulationControlCenter {
         if (chunk.events.length) {
           chunk.events.forEach((event, i) => this.processNewEvent(event, chunk));
         } else {
-          this.chunks.push({
-            ...chunk,
-            events: [],
-          });
+          this.addBufferChunk(chunk);
         }
       }
       return this.notifyChunksSubscribers();
@@ -123,10 +114,7 @@ export class SimulationControl extends SimulationControlCenter {
       }
       // Switch character, empty chunk.
       else {
-        this.chunks.push({
-          ...chunk,
-          events: [],
-        });
+        this.addBufferChunk(chunk);
       }
     }
 
@@ -135,7 +123,6 @@ export class SimulationControl extends SimulationControlCenter {
 
   private processNewEvent = (event: SimulationEvent, chunk: SimulationChunk) => {
     let processedEvent: SimulationProcessedEvent;
-    this.sumary.duration += event.duration ?? 0;
 
     for (const appChar of this.partyData) {
       this.member[appChar.code]?.innateModify();
@@ -150,20 +137,10 @@ export class SimulationControl extends SimulationControlCenter {
         break;
       case "HIT":
         processedEvent = this.hit(event);
-        this.sumary.damage += processedEvent.damage.value;
         break;
     }
-    const latestChunk = this.latestChunk;
 
-    // Check if belongs to the latest chunk
-    if (latestChunk && chunk.id === latestChunk.id) {
-      latestChunk.events.push(processedEvent);
-    } else {
-      this.chunks.push({
-        ...chunk,
-        events: [processedEvent],
-      });
-    }
+    this.addEvent(processedEvent, chunk);
   };
 }
 

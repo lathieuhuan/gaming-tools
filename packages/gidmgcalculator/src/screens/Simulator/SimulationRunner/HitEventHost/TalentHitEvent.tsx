@@ -9,7 +9,7 @@ import { ActionButton } from "../components";
 
 interface TalentHitEventProps {
   item: CalcItem;
-  getTalentEventConfig: (attkBonus: SimulationAttackBonus[], elmtModCtrls?: TalentHitEventMod) => TalentEventConfig;
+  getTalentEventConfig: (attkBonuses: SimulationAttackBonus[], elmtModCtrls?: TalentHitEventMod) => TalentEventConfig;
   onPerformEvent: (elmtModCtrls?: TalentHitEventMod, alsoSwitch?: boolean) => void;
 }
 
@@ -17,7 +17,7 @@ export function TalentHitEvent(props: TalentHitEventProps) {
   const { t } = useTranslation();
   const simulation = useActiveSimulation();
 
-  const [attkBonus, setAttkBonus] = useState<SimulationAttackBonus[]>([]);
+  const [attkBonuses, setAttkBonuses] = useState<SimulationAttackBonus[]>([]);
   const [elmtModCtrls, setElmtModCtrls] = useState<TalentHitEventMod>({
     absorption: null,
     reaction: null,
@@ -26,11 +26,11 @@ export function TalentHitEvent(props: TalentHitEventProps) {
 
   useEffect(() => {
     if (simulation) {
-      const { initial, unsubscribe } = simulation.subscribeBonuses((_, attkBonus) => {
-        setAttkBonus(attkBonus);
+      const { initial, unsubscribe } = simulation.subscribeBonuses((_, attkBonuses) => {
+        setAttkBonuses(attkBonuses);
       });
 
-      setAttkBonus(initial.attkBonus);
+      setAttkBonuses(initial.attkBonuses);
       return unsubscribe;
     }
     return undefined;
@@ -38,7 +38,7 @@ export function TalentHitEvent(props: TalentHitEventProps) {
 
   // console.log("render: TalentAttackEvent", props.item.name);
 
-  const config = props.getTalentEventConfig(attkBonus, elmtModCtrls);
+  const config = props.getTalentEventConfig(attkBonuses, elmtModCtrls);
 
   // console.log(config.record);
 

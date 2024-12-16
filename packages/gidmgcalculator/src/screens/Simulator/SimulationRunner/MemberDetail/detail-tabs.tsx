@@ -42,7 +42,8 @@ export function BonusesTab({ simulation }: BonusesTabProps) {
       setBonuses((attrBonus as SimulationBonus[]).concat(attkBonus));
     });
 
-    setBonuses((initial.attrBonus as SimulationBonus[]).concat(initial.attkBonus));
+    setBonuses([...initial.attrBonuses, ...initial.attkBonuses]);
+
     return unsubscribe;
   }, [simulation]);
 

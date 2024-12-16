@@ -10,36 +10,36 @@ import {
   isGrantedEffect,
   TotalAttributeControl,
 } from "@Backend";
-import type {
-  SimulationAttackBonus,
-  SimulationAttributeBonus,
-  SimulationMember,
-  SimulationPartyData,
-} from "@Src/types";
+import type { SimulationMember, SimulationPartyData } from "@Src/types";
 import type { PartyBonusControl } from "./party-bonus-control";
 
 import { CoreBonusesControl } from "./core-bonuses-control";
 
 export class MemberBonusesControl {
-  private rootTotalAttr: TotalAttributeControl;
-  private _totalAttrCtrl: TotalAttributeControl;
-  private innateAttrBonus: SimulationAttributeBonus[] = [];
-  private innateAttkBonus: SimulationAttackBonus[] = [];
+  private rootTotalAttrCtrl: TotalAttributeControl;
+  private currentTotalAttrCtrl: TotalAttributeControl;
+  private innateBonusesCtrl = new CoreBonusesControl();
   private bonusesCtrl = new CoreBonusesControl();
 
-  bonusGetter: AppliedBonusesGetter;
+  protected bonusGetter: AppliedBonusesGetter;
   isOnfield = false;
 
   get totalAttr() {
-    return this._totalAttrCtrl.finalize();
+    return this.currentTotalAttrCtrl.finalize();
   }
 
-  get attrBonus() {
-    return this.innateAttrBonus.concat(this.partyBonus.getAttrBonuses(this.isOnfield), this.bonusesCtrl.attrBonus);
+  get attrBonuses() {
+    return this.innateBonusesCtrl.attrBonuses.concat(
+      this.bonusesCtrl.attrBonuses,
+      this.partyBonusesCtrl.getAttrBonuses(this.isOnfield)
+    );
   }
 
-  get attkBonus() {
-    return this.innateAttkBonus.concat(this.partyBonus.getAttkBonuses(this.isOnfield), this.bonusesCtrl.attkBonus);
+  get attkBonuses() {
+    return this.innateBonusesCtrl.attkBonuses.concat(
+      this.bonusesCtrl.attkBonuses,
+      this.partyBonusesCtrl.getAttkBonuses(this.isOnfield)
+    );
   }
 
   constructor(
@@ -49,10 +49,10 @@ export class MemberBonusesControl {
     appArtifacts: Record<string, AppArtifact>,
     setBonuses: ArtifactSetBonus[],
     protected partyData: SimulationPartyData,
-    private partyBonus: PartyBonusControl
+    private partyBonusesCtrl: PartyBonusControl
   ) {
-    const rootTotalAttr = new TotalAttributeControl().construct(info, data, info.weapon, appWeapon, info.artifacts);
-    const cloneTotalAttrCtrl = rootTotalAttr.clone();
+    const rootTotalAttrCtrl = new TotalAttributeControl().construct(info, data, info.weapon, appWeapon, info.artifacts);
+    const cloneTotalAttrCtrl = rootTotalAttrCtrl.clone();
 
     this.bonusGetter = new AppliedBonusesGetter(
       {
@@ -63,8 +63,8 @@ export class MemberBonusesControl {
       cloneTotalAttrCtrl
     );
 
-    this.rootTotalAttr = rootTotalAttr;
-    this._totalAttrCtrl = cloneTotalAttrCtrl;
+    this.rootTotalAttrCtrl = rootTotalAttrCtrl;
+    this.currentTotalAttrCtrl = cloneTotalAttrCtrl;
 
     const { innateBuffs = [] } = data;
 
@@ -122,10 +122,10 @@ export class MemberBonusesControl {
 
   private applyInnateBonuses = (applied: AppliedBonuses) => {
     for (const bonus of applied.attrBonuses) {
-      this.innateAttrBonus.push(bonus);
+      this.innateBonusesCtrl.updateAttrBonuses(bonus);
     }
     for (const bonus of applied.attkBonuses) {
-      this.innateAttkBonus.push(bonus);
+      this.innateBonusesCtrl.updateAttkBonuses(bonus);
     }
   };
 
@@ -133,20 +133,29 @@ export class MemberBonusesControl {
     this.isOnfield = dir === "in";
   };
 
-  resetBonuses = () => {
-    this.bonusesCtrl.reset();
-  };
-
   applyBonuses = () => {
-    this._totalAttrCtrl = this.rootTotalAttr.clone();
-    this._totalAttrCtrl.applyBonuses(this.attrBonus);
+    this.currentTotalAttrCtrl = this.rootTotalAttrCtrl.clone();
+    this.currentTotalAttrCtrl.applyBonuses(this.attrBonuses);
+
+    this.bonusGetter = new AppliedBonusesGetter(
+      {
+        char: this.info,
+        appChar: this.data,
+        partyData: this.partyData,
+      },
+      this.currentTotalAttrCtrl
+    );
   };
 
-  updateAttrBonus = (bonus: AppliedAttributeBonus) => {
+  updateAttrBonuses = (bonus: AppliedAttributeBonus) => {
     this.bonusesCtrl.updateAttrBonuses(bonus);
   };
 
-  updateAttkBonus = (bonus: AppliedAttackBonus) => {
+  updateAttkBonuses = (bonus: AppliedAttackBonus) => {
     this.bonusesCtrl.updateAttkBonuses(bonus);
+  };
+
+  resetBonuses = () => {
+    this.bonusesCtrl.reset();
   };
 }

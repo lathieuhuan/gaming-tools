@@ -8,15 +8,11 @@ export class PartyBonusControl {
   private fixedAttrBonuses: SimulationAttributeBonus[] = [];
 
   getAttrBonuses = (onfield = false) => {
-    return onfield
-      ? this.commonBonusesCtrl.attrBonus.concat(this.onfieldBonusesCtrl.attrBonus)
-      : this.commonBonusesCtrl.attrBonus;
+    return this.commonBonusesCtrl.attrBonuses.concat(onfield ? this.onfieldBonusesCtrl.attrBonuses : []);
   };
 
   getAttkBonuses = (onfield = false) => {
-    return onfield
-      ? this.commonBonusesCtrl.attkBonus.concat(this.onfieldBonusesCtrl.attkBonus)
-      : this.commonBonusesCtrl.attkBonus;
+    return this.commonBonusesCtrl.attkBonuses.concat(onfield ? this.onfieldBonusesCtrl.attkBonuses : []);
   };
 
   constructor(partyData: SimulationPartyData) {
@@ -36,29 +32,29 @@ export class PartyBonusControl {
         };
 
         this.fixedAttrBonuses.push(bonus);
-        this.commonBonusesCtrl.attrBonus.push(bonus);
+        this.commonBonusesCtrl.updateAttrBonuses(bonus);
       }
     }
   }
 
-  reset = () => {
-    this.commonBonusesCtrl.reset(this.fixedAttrBonuses.concat());
-    this.onfieldBonusesCtrl.reset();
-  };
-
-  updatePartyAttrBonus = (bonus: AppliedAttributeBonus) => {
+  updateCommonAttrBonuses = (bonus: AppliedAttributeBonus) => {
     this.commonBonusesCtrl.updateAttrBonuses(bonus);
   };
 
-  updatePartyAttkBonus = (bonus: AppliedAttackBonus) => {
+  updateCommonAttkBonuses = (bonus: AppliedAttackBonus) => {
     this.commonBonusesCtrl.updateAttkBonuses(bonus);
   };
 
-  updateOnfieldAttrBonus = (bonus: AppliedAttributeBonus) => {
+  updateOnfieldAttrBonuses = (bonus: AppliedAttributeBonus) => {
     this.onfieldBonusesCtrl.updateAttrBonuses(bonus);
   };
 
-  updateOnfieldAttkBonus = (bonus: AppliedAttackBonus) => {
+  updateOnfieldAttkBonuses = (bonus: AppliedAttackBonus) => {
     this.onfieldBonusesCtrl.updateAttkBonuses(bonus);
+  };
+
+  reset = () => {
+    this.commonBonusesCtrl.reset(this.fixedAttrBonuses.concat());
+    this.onfieldBonusesCtrl.reset();
   };
 }

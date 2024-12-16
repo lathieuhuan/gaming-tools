@@ -19,13 +19,13 @@ import {
 export class SimulationControlCenter extends SimulationChunksControl {
   readonly timeOn: boolean;
   readonly partyData: SimulationPartyData = [];
-  readonly target: SimulationTarget;
   readonly member: Record<number, MemberControl> = {};
+  readonly target: SimulationTarget;
 
   private appWeapons: Record<number, AppWeapon> = {};
   private appArtifacts: Record<number, AppArtifact> = {};
-  private partyBonus: PartyBonusControl;
 
+  private partyBonus: PartyBonusControl;
   private onfieldMember: MemberControl;
   private activeMember: MemberControl;
   private activeMemberWatcher: ActiveMemberWatcher;
@@ -159,7 +159,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
           case "geo":
             description = "Geo Resonance / Shielded";
 
-            this.partyBonus.updatePartyAttkBonus({
+            this.partyBonus.updateCommonAttkBonuses({
               id: "geo-live-reso",
               description,
               value: 15,
@@ -170,7 +170,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
           case "dendro_strong":
             description = "Dendro Resonance (30)";
 
-            this.partyBonus.updatePartyAttrBonus({
+            this.partyBonus.updateCommonAttrBonuses({
               id: "dendro-live-reso-strong",
               description,
               value: 30,
@@ -181,7 +181,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
           case "dendro_weak":
             description = "Dendro Resonance (20)";
 
-            this.partyBonus.updatePartyAttrBonus({
+            this.partyBonus.updateCommonAttrBonuses({
               id: "dendro-live-reso-weak",
               description,
               value: 20,
@@ -219,8 +219,8 @@ export class SimulationControlCenter extends SimulationChunksControl {
     if (affect) {
       switch (affect) {
         case "SELF": {
-          attrBonuses.forEach((bonus) => performer.updateAttrBonus(bonus));
-          attkBonuses.forEach((bonus) => performer.updateAttkBonus(bonus));
+          attrBonuses.forEach((bonus) => performer.updateAttrBonuses(bonus));
+          attkBonuses.forEach((bonus) => performer.updateAttkBonuses(bonus));
 
           performer.applyBonuses();
 
@@ -230,16 +230,16 @@ export class SimulationControlCenter extends SimulationChunksControl {
           break;
         }
         case "PARTY": {
-          attrBonuses.forEach((bonus) => this.partyBonus.updatePartyAttrBonus(bonus));
-          attkBonuses.forEach((bonus) => this.partyBonus.updatePartyAttkBonus(bonus));
+          attrBonuses.forEach((bonus) => this.partyBonus.updateCommonAttrBonuses(bonus));
+          attkBonuses.forEach((bonus) => this.partyBonus.updateCommonAttkBonuses(bonus));
 
           this.applyPartyBonuses();
           this.activeMemberWatcher.notifySubscribers();
           break;
         }
         case "ACTIVE_UNIT": {
-          attrBonuses.forEach((bonus) => this.partyBonus.updateOnfieldAttrBonus(bonus));
-          attkBonuses.forEach((bonus) => this.partyBonus.updateOnfieldAttkBonus(bonus));
+          attrBonuses.forEach((bonus) => this.partyBonus.updateOnfieldAttrBonuses(bonus));
+          attkBonuses.forEach((bonus) => this.partyBonus.updateOnfieldAttkBonuses(bonus));
 
           this.onfieldMember.applyBonuses();
 

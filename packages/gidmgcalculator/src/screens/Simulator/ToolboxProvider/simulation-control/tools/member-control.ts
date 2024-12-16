@@ -31,7 +31,7 @@ import Object_ from "@Src/utils/object-utils";
 import { MemberBonusesControl } from "./member-bonuses-control";
 
 export class MemberControl extends MemberBonusesControl {
-  private normalsConfig: NormalAttacksConfig = {};
+  private naConfig: NormalAttacksConfig = {};
 
   // ========== MODIFY ==========
 
@@ -39,7 +39,9 @@ export class MemberControl extends MemberBonusesControl {
     // for innate dynamic buff
   };
 
-  /** return affect: null if cannot find the buff */
+  /**
+   * @return affect: null if cannot find the buff
+   */
   modify = (modifier: ModifyEvent["modifier"], performerWeapon: AppWeapon): ModifyResult => {
     const { inputs = [] } = modifier;
     const characterPerform: Performer = {
@@ -48,12 +50,13 @@ export class MemberControl extends MemberBonusesControl {
       icon: this.data.icon,
     };
 
-    if (modifier.type === "CHARACTER") {
-      // #to-do: check if character can do this event (in case events are imported
-      // but the modifier is not granted because of character's level/constellation)
-      const buff = this.data.buffs?.find((buff) => buff.index === modifier.id);
+    switch (modifier.type) {
+      case "CHARACTER": {
+        // #to-do: check if character can do this event (in case events are imported
+        // but the modifier is not granted because of character's level/constellation)
+        const buff = this.data.buffs?.find((buff) => buff.index === modifier.id);
+        if (!buff) break;
 
-      if (buff) {
         const bonuses = this.bonusGetter.getAppliedBonuses(
           buff,
           {
@@ -70,11 +73,10 @@ export class MemberControl extends MemberBonusesControl {
           source: buff.src,
         };
       }
-    }
-    if (modifier.type === "WEAPON") {
-      const buff = performerWeapon.buffs?.find((buff) => buff.index === modifier.id);
+      case "WEAPON": {
+        const buff = performerWeapon.buffs?.find((buff) => buff.index === modifier.id);
+        if (!buff) break;
 
-      if (buff) {
         const bonuses = this.bonusGetter.getAppliedBonuses(
           buff,
           {
@@ -99,9 +101,8 @@ export class MemberControl extends MemberBonusesControl {
           source: performerWeapon.name,
         };
       }
-    }
-    if (modifier.type === "ARTIFACT") {
-      //
+      case "ARTIFACT":
+        break;
     }
 
     return {
@@ -168,7 +169,7 @@ export class MemberControl extends MemberBonusesControl {
 
     const { disabled, configCalcItem } = getAttackPatternConfig({
       appChar: this.data,
-      NAsConfig: this.normalsConfig,
+      NAsConfig: this.naConfig,
       totalAttr,
       attkBonusesArchive: attkBonusesCtrl.genArchive(),
       customInfusion: {
@@ -221,7 +222,7 @@ export class MemberControl extends MemberBonusesControl {
     const config = this.configTalentHitEvent({
       talent: event.talent,
       ...hitInfo,
-      attkBonus: this.attkBonus,
+      attkBonus: this.attkBonuses,
       elmtModCtrls,
       partyData,
       target,

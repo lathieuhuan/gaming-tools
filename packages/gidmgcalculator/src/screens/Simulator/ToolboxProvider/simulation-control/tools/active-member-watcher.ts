@@ -24,11 +24,11 @@ export class ActiveMemberWatcher {
 
   notifySubscribers = () => {
     const totalAttr = this.activeMember.totalAttr;
-    const attrBonus = this.activeMember.attrBonus;
-    const attkBonus = this.activeMember.attkBonus;
+    const attrBonuses = this.activeMember.attrBonuses;
+    const attkBonuses = this.activeMember.attkBonuses;
 
     this.totalAttrSubscribers.forEach((callback) => callback(totalAttr));
-    this.bonusesSubscribers.forEach((callback) => callback(attrBonus, attkBonus));
+    this.bonusesSubscribers.forEach((callback) => callback(attrBonuses, attkBonuses));
   };
 
   subscribeTotalAttr = (subscribe: OnChangeTotalAttr) => {
@@ -47,8 +47,8 @@ export class ActiveMemberWatcher {
 
     return {
       initial: {
-        attrBonus: this.activeMember.attrBonus,
-        attkBonus: this.activeMember.attkBonus,
+        attrBonuses: this.activeMember.attrBonuses,
+        attkBonuses: this.activeMember.attkBonuses,
       },
       unsubscribe: () => {
         this.bonusesSubscribers.delete(subscribe);

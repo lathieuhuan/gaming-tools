@@ -1,15 +1,15 @@
 import type { AppliedAttackBonus, AppliedAttributeBonus } from "@Backend";
-import type { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
+import type { DeepReadonly, SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
 
 export class CoreBonusesControl {
   private _attr: SimulationAttributeBonus[] = [];
   private _attk: SimulationAttackBonus[] = [];
 
-  get attrBonus() {
+  get attrBonuses(): DeepReadonly<SimulationAttributeBonus[]> {
     return this._attr;
   }
 
-  get attkBonus() {
+  get attkBonuses(): DeepReadonly<SimulationAttackBonus[]> {
     return this._attk;
   }
 
