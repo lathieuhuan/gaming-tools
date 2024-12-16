@@ -6,7 +6,7 @@ import type { SimulationAttackBonus, SimulationAttributeBonus, SimulationMember 
 import type { SimulationManager } from "@Simulator/ToolboxProvider";
 import { ArtifactCard, AttributeTable, EquipmentDisplay, SetBonusesView, WeaponCard } from "@Src/components";
 import { useTranslation } from "@Src/hooks";
-import { Utils_ } from "@Src/utils";
+import { suffixOf } from "@Src/utils";
 
 export function AttributesTab({ simulation }: { simulation: SimulationManager }) {
   const [totalAttr, setTotalAttr] = useState<TotalAttribute | null>(null);
@@ -25,6 +25,10 @@ export function AttributesTab({ simulation }: { simulation: SimulationManager })
 }
 
 type SimulationBonus = SimulationAttributeBonus | SimulationAttackBonus;
+
+const isAttackBonus = (bonus: SimulationBonus): bonus is SimulationAttackBonus => {
+  return "toKey" in bonus;
+};
 
 interface BonusesTabProps {
   simulation: SimulationManager;
@@ -45,7 +49,8 @@ export function BonusesTab({ simulation }: BonusesTabProps) {
   return (
     <div className="h-full hide-scrollbar space-y-2">
       {bonuses.map((bonus, index) => {
-        const valueType = bonus.type === "ATTRIBUTE" ? bonus.toStat : bonus.toKey;
+        const isAttkBonus = isAttackBonus(bonus);
+        const valueType = isAttkBonus ? bonus.toKey : bonus.toStat;
 
         return (
           <Fragment key={index}>
@@ -55,12 +60,12 @@ export function BonusesTab({ simulation }: BonusesTabProps) {
               <div className="text-bonus-color">
                 <span className="text-lg font-semibold">
                   {round(bonus.value, 2)}
-                  {Utils_.suffixOf(valueType)}
+                  {suffixOf(valueType)}
                 </span>{" "}
                 {t(valueType)}
               </div>
 
-              {bonus.type === "ATTACK" && (
+              {isAttkBonus && (
                 <div className="h-6 text-sm text-light-default/60">
                   <span>to</span>{" "}
                   <span className="capitalize">

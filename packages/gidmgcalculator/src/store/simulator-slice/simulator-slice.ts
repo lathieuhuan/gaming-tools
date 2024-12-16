@@ -9,7 +9,10 @@ import type {
   UpdateAssembledSimulationPayload,
   UpdateSimulatorPayload,
 } from "./simulator-slice.types";
-import { Setup_, removeEmpty, uuid } from "@Src/utils";
+
+import { uuid } from "@Src/utils";
+import Object_ from "@Src/utils/object-utils";
+import Setup_ from "@Src/utils/setup-utils";
 import { $AppCharacter, $AppSettings } from "@Src/services";
 import { fillAssembledMembers, getNextEventId, getSimulation } from "./simulator-slice.utils";
 
@@ -136,7 +139,7 @@ export const simulatorSlice = createSlice({
 
       if (simulation && lastChunk) {
         const { alsoSwitch = false, ...eventProps } = action.payload;
-        const event = Object.assign(structuredClone(removeEmpty(eventProps)), {
+        const event = Object.assign(Object_.omitEmptyProps(eventProps), {
           id: getNextEventId(chunks),
         });
 

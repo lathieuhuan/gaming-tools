@@ -3,20 +3,20 @@ import { SimulationAttributeBonus, SimulationPartyData } from "@Src/types";
 import { CoreBonusesControl } from "./core-bonuses-control";
 
 export class PartyBonusControl {
-  private partyBonusCtrl = new CoreBonusesControl();
-  private onfieldBonusCtrl = new CoreBonusesControl();
-  private deadAttrBonuses: SimulationAttributeBonus[] = [];
+  private commonBonusesCtrl = new CoreBonusesControl();
+  private onfieldBonusesCtrl = new CoreBonusesControl();
+  private fixedAttrBonuses: SimulationAttributeBonus[] = [];
 
   getAttrBonuses = (onfield = false) => {
     return onfield
-      ? this.partyBonusCtrl.attrBonus.concat(this.onfieldBonusCtrl.attrBonus)
-      : this.partyBonusCtrl.attrBonus;
+      ? this.commonBonusesCtrl.attrBonus.concat(this.onfieldBonusesCtrl.attrBonus)
+      : this.commonBonusesCtrl.attrBonus;
   };
 
   getAttkBonuses = (onfield = false) => {
     return onfield
-      ? this.partyBonusCtrl.attkBonus.concat(this.onfieldBonusCtrl.attkBonus)
-      : this.partyBonusCtrl.attkBonus;
+      ? this.commonBonusesCtrl.attkBonus.concat(this.onfieldBonusesCtrl.attkBonus)
+      : this.commonBonusesCtrl.attkBonus;
   };
 
   constructor(partyData: SimulationPartyData) {
@@ -25,45 +25,40 @@ export class PartyBonusControl {
     const appliedResonanceElmts: ElementType[] = ["pyro", "hydro", "geo", "dendro"];
 
     for (const elmt of appliedResonanceElmts) {
-      const { [elmt]: elmtCount = 0 } = elmtsCount;
-
-      if (elmtCount >= 2) {
+      if (elmtsCount.get(elmt) >= 2) {
         const resonance = RESONANCE_STAT[elmt];
         const bonus: SimulationAttributeBonus = {
           id: `${elmt}-dead-reso`,
           value: resonance.value,
           isStable: true,
           toStat: resonance.key,
-          type: "ATTRIBUTE",
           description: `${elmt.slice(0, 1).toUpperCase()}${elmt.slice(1)} Resonance`,
         };
 
-        this.deadAttrBonuses.push(bonus);
-        this.partyBonusCtrl.attrBonus.push(bonus);
+        this.fixedAttrBonuses.push(bonus);
+        this.commonBonusesCtrl.attrBonus.push(bonus);
       }
     }
   }
 
   reset = () => {
-    this.partyBonusCtrl.attrBonus = this.deadAttrBonuses.concat();
-    this.partyBonusCtrl.attkBonus = [];
-    this.onfieldBonusCtrl.attrBonus = [];
-    this.onfieldBonusCtrl.attkBonus = [];
+    this.commonBonusesCtrl.reset(this.fixedAttrBonuses.concat());
+    this.onfieldBonusesCtrl.reset();
   };
 
   updatePartyAttrBonus = (bonus: AppliedAttributeBonus) => {
-    this.partyBonusCtrl.updateAttrBonuses(bonus);
+    this.commonBonusesCtrl.updateAttrBonuses(bonus);
   };
 
   updatePartyAttkBonus = (bonus: AppliedAttackBonus) => {
-    this.partyBonusCtrl.updateAttkBonuses(bonus);
+    this.commonBonusesCtrl.updateAttkBonuses(bonus);
   };
 
   updateOnfieldAttrBonus = (bonus: AppliedAttributeBonus) => {
-    this.onfieldBonusCtrl.updateAttrBonuses(bonus);
+    this.onfieldBonusesCtrl.updateAttrBonuses(bonus);
   };
 
   updateOnfieldAttkBonus = (bonus: AppliedAttackBonus) => {
-    this.onfieldBonusCtrl.updateAttkBonuses(bonus);
+    this.onfieldBonusesCtrl.updateAttkBonuses(bonus);
   };
 }

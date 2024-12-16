@@ -4,9 +4,7 @@ import type { SimulationProcessedEvent } from "./simulation-control.types";
 import { SimulationControlCenter } from "./simulation-control-center";
 
 export class SimulationControl extends SimulationControlCenter {
-  constructor(simulation: Simulation) {
-    super(simulation);
-  }
+  //
 
   private checkMissmatched = (chunks: SimulationChunk[]): MissmatchedCheckResult => {
     // console.log("checkMissmatched");

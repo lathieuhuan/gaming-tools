@@ -3,22 +3,21 @@ import {
   AppWeapon,
   AppliedAttackBonus,
   AppliedAttributeBonus,
-  AttackBonusControl,
+  AttackBonusesControl,
   AttackPattern,
-  AttackPatternConf,
+  AttackReaction,
   CalcItem,
-  CalcItemCalculator,
   CalcItemRecord,
   CharacterCalc,
   LevelableTalentType,
   ModifierAffectType,
   NORMAL_ATTACKS,
-  NormalsConfig,
+  NormalAttacksConfig,
   ResistanceReductionControl,
-  // getNormalsConfig,
+  getAttackPatternConfig,
+  getCalcItemCalculator,
 } from "@Backend";
 import type {
-  AttackReaction,
   ElementModCtrl,
   HitEvent,
   ModifyEvent,
@@ -28,11 +27,11 @@ import type {
 } from "@Src/types";
 import type { Performer } from "../simulation-control.types";
 
-import { pickProps, removeEmpty } from "@Src/utils";
+import Object_ from "@Src/utils/object-utils";
 import { MemberBonusesControl } from "./member-bonuses-control";
 
 export class MemberControl extends MemberBonusesControl {
-  private normalsConfig: NormalsConfig = {};
+  private normalsConfig: NormalAttacksConfig = {};
 
   // ========== MODIFY ==========
 
@@ -55,12 +54,14 @@ export class MemberControl extends MemberBonusesControl {
       const buff = this.data.buffs?.find((buff) => buff.index === modifier.id);
 
       if (buff) {
-        const bonuses = this.getAppliedCharacterBonuses({
+        const bonuses = this.bonusGetter.getAppliedBonuses(
           buff,
-          description: `${this.data.name} / ${buff.src}`,
-          inputs,
-          fromSelf: true,
-        });
+          {
+            inputs,
+            fromSelf: true,
+          },
+          `${this.data.name} / ${buff.src}`
+        );
 
         return {
           affect: buff.affect,
@@ -74,13 +75,15 @@ export class MemberControl extends MemberBonusesControl {
       const buff = performerWeapon.buffs?.find((buff) => buff.index === modifier.id);
 
       if (buff) {
-        const bonuses = this.getApplyWeaponBonuses({
+        const bonuses = this.bonusGetter.getAppliedBonuses(
           buff,
-          refi: 1,
-          description: `${this.data.name} / ${performerWeapon.name}`,
-          inputs,
-          fromSelf: true,
-        });
+          {
+            refi: 1,
+            inputs,
+            fromSelf: true,
+          },
+          `${this.data.name} / ${performerWeapon.name}`
+        );
 
         return {
           affect: buff.affect,
@@ -149,10 +152,10 @@ export class MemberControl extends MemberBonusesControl {
   };
 
   configTalentHitEvent = (args: ConfigTalentHitEventArgs): TalentEventConfig => {
-    const attBonus = new AttackBonusControl();
+    const attkBonusesCtrl = new AttackBonusesControl();
 
     for (const bonus of args.attkBonus) {
-      attBonus.add(bonus.toType, bonus.toKey, bonus.value, "");
+      attkBonusesCtrl.add(bonus);
     }
 
     const info = {
@@ -163,11 +166,11 @@ export class MemberControl extends MemberBonusesControl {
     const level = CharacterCalc.getFinalTalentLv({ ...info, talentType: args.talent });
     const totalAttr = this.totalAttr;
 
-    const { disabled, configCalcItem } = AttackPatternConf({
+    const { disabled, configCalcItem } = getAttackPatternConfig({
       appChar: this.data,
-      normalsConfig: this.normalsConfig,
+      NAsConfig: this.normalsConfig,
       totalAttr,
-      attBonus,
+      attkBonusesArchive: attkBonusesCtrl.genArchive(),
       customInfusion: {
         element: "phys",
       },
@@ -179,12 +182,16 @@ export class MemberControl extends MemberBonusesControl {
       absorption: null,
       reaction: null,
       infuse_reaction: null,
-      ...(args.elmtModCtrls ? removeEmpty(args.elmtModCtrls) : undefined),
+      ...(args.elmtModCtrls ? Object_.omitEmptyProps(args.elmtModCtrls) : undefined),
     });
 
-    const resistances = new ResistanceReductionControl().apply(args.target);
+    const resistances = new ResistanceReductionControl({
+      char: this.info,
+      appChar: this.data,
+      partyData: this.partyData,
+    }).applyTo(args.target);
 
-    const calculateCalcItem = CalcItemCalculator(info.char.level, args.target.level, totalAttr, resistances);
+    const calculateCalcItem = getCalcItemCalculator(info.char.level, args.target.level, totalAttr, resistances);
 
     const base = itemConfig.calculateBaseDamage(level);
 
@@ -196,7 +203,7 @@ export class MemberControl extends MemberBonusesControl {
     return {
       damage: result.average,
       disabled: !!disabled,
-      ...pickProps(itemConfig, ["attElmt", "attPatt", "reaction", "record"]),
+      ...Object_.pickProps(itemConfig, ["attElmt", "attPatt", "reaction", "record"]),
     };
   };
 
@@ -208,7 +215,7 @@ export class MemberControl extends MemberBonusesControl {
       absorption: null,
       reaction: null,
       infuse_reaction: null,
-      ...(event.elmtModCtrls ? removeEmpty(event.elmtModCtrls) : undefined),
+      ...(event.elmtModCtrls ? Object_.omitEmptyProps(event.elmtModCtrls) : undefined),
     };
 
     const config = this.configTalentHitEvent({

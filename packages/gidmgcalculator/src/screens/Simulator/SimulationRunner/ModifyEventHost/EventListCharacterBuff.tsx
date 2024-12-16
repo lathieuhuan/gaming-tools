@@ -3,7 +3,7 @@ import { CharacterBuff } from "@Backend";
 import type { ActiveMember, SimulationManager } from "@Simulator/ToolboxProvider";
 import type { InputsByMember } from "./ModifyEventHost.types";
 
-import { parseAbilityDescription } from "@Src/utils";
+import { parseAbilityDescription } from "@Src/utils/description-parsers";
 import { useDispatch } from "@Store/hooks";
 import { addEvent } from "@Store/simulator-slice";
 

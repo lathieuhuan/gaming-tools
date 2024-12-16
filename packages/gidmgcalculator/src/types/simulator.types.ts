@@ -58,13 +58,9 @@ export type SimulationBonusCore = {
   description: string;
 };
 
-export type SimulationAttributeBonus = AppliedAttributeBonus & {
-  type: "ATTRIBUTE";
-};
+export type SimulationAttributeBonus = AppliedAttributeBonus;
 
-export type SimulationAttackBonus = AppliedAttackBonus & {
-  type: "ATTACK";
-};
+export type SimulationAttackBonus = AppliedAttackBonus;
 
 /** ==========*** SIMULATION ***========== */
 

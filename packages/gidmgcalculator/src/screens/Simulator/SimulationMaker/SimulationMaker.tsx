@@ -6,7 +6,7 @@ import { AppCharacter, ARTIFACT_TYPES } from "@Backend";
 import { $AppCharacter } from "@Src/services";
 import { useStore } from "@Src/features";
 import { Artifact, SimulationMember } from "@Src/types";
-import { Utils_ } from "@Src/utils";
+import Entity_ from "@Src/utils/entity-utils";
 import { RootState } from "@Store/store";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { parseUserCharacter } from "@Store/store.utils";
@@ -248,7 +248,7 @@ function SimulationMakerCore({ className }: SimulationMakerProps) {
         weaponType={appMembers[selected.current.memberIndex]?.weaponType}
         buttonText="Select"
         onClickButton={(weapon) => {
-          updateMember(selected.current.memberIndex, { weapon: Utils_.userItemToCalcItem(weapon) });
+          updateMember(selected.current.memberIndex, { weapon: Entity_.userItemToCalcItem(weapon) });
         }}
         onClose={closeModal}
       />
@@ -265,7 +265,7 @@ function SimulationMakerCore({ className }: SimulationMakerProps) {
         buttonText="Select"
         currentArtifacts={getSelectedMember("artifacts", [])}
         onClickButton={(userArtifact) => {
-          switchArtifact(Utils_.userItemToCalcItem(userArtifact));
+          switchArtifact(Entity_.userItemToCalcItem(userArtifact));
         }}
         onClose={closeModal}
       />

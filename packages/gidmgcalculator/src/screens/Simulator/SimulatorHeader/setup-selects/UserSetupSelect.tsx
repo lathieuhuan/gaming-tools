@@ -4,7 +4,8 @@ import { ARTIFACT_TYPES } from "@Backend";
 import type { CalcCharacter, Teammate } from "@Src/types";
 import { useStoreSnapshot } from "@Src/features";
 import { $AppArtifact } from "@Src/services";
-import { Setup_, findById } from "@Src/utils";
+import Setup_ from "@Src/utils/setup-utils";
+import Array_ from "@Src/utils/array-utils";
 import { calcSetupToOption, type CalcSetupOption } from "./setup-selects-utils";
 import { SetupOptions, type SetupOption, type SetupOptionMember } from "./SetupOptions";
 
@@ -36,10 +37,11 @@ export function UserSetupSelect(props: UserSetupSelectProps) {
         option.isComplex = true;
 
         for (const id of Object.values(setup.allIDs)) {
-          const memberSetup = findById(userSetups, id);
+          const memberSetup = Array_.findById(userSetups, id);
 
           if (memberSetup && Setup_.isUserSetup(memberSetup)) {
-            const { weapon, artifacts } = Setup_.getUserSetupItems(memberSetup, userWps, userArts);
+            const weapon = Array_.findById(userWps, memberSetup.weaponID);
+            const artifacts = memberSetup.artifactIDs.map((ID) => Array_.findById(userArts, ID) || null);
 
             if (weapon) {
               option.members.push({
@@ -82,7 +84,8 @@ export function UserSetupSelect(props: UserSetupSelectProps) {
           options.push(option);
         }
       } else {
-        const { weapon, artifacts } = Setup_.getUserSetupItems(setup, userWps, userArts);
+        const weapon = Array_.findById(userWps, setup.weaponID);
+        const artifacts = setup.artifactIDs.map((id) => Array_.findById(userArts, id) || null);
 
         if (weapon) {
           const calcSetup = Setup_.userSetupToCalcSetup(setup, weapon, artifacts);

@@ -1,13 +1,5 @@
-import { AppArtifact, GeneralCalc, type AppWeapon } from "@Backend";
-import type {
-  AttackReaction,
-  HitEvent,
-  ModifyEvent,
-  Simulation,
-  SimulationPartyData,
-  SimulationTarget,
-  SystemEvent,
-} from "@Src/types";
+import { AppArtifact, GeneralCalc, AttackReaction, AppWeapon } from "@Backend";
+import type { HitEvent, ModifyEvent, Simulation, SimulationPartyData, SimulationTarget, SystemEvent } from "@Src/types";
 import type {
   ProcessedHitEvent,
   ProcessedEntityModifyEvent,

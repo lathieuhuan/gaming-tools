@@ -1,12 +1,14 @@
 import {
+  AppArtifact,
+  AppCharacter,
   AppliedAttackBonus,
   AppliedAttributeBonus,
-  TotalAttributeControl,
-  AppWeapon,
   AppliedBonuses,
-  AppCharacter,
+  AppliedBonusesGetter,
+  AppWeapon,
   ArtifactSetBonus,
-  AppArtifact,
+  isGrantedEffect,
+  TotalAttributeControl,
 } from "@Backend";
 import type {
   SimulationAttackBonus,
@@ -16,19 +18,20 @@ import type {
 } from "@Src/types";
 import type { PartyBonusControl } from "./party-bonus-control";
 
-import { BuffApplierCore, EntityCalc } from "@Backend";
 import { CoreBonusesControl } from "./core-bonuses-control";
 
-export class MemberBonusesControl extends BuffApplierCore {
+export class MemberBonusesControl {
   private rootTotalAttr: TotalAttributeControl;
+  private _totalAttrCtrl: TotalAttributeControl;
   private innateAttrBonus: SimulationAttributeBonus[] = [];
   private innateAttkBonus: SimulationAttackBonus[] = [];
   private bonusesCtrl = new CoreBonusesControl();
 
+  bonusGetter: AppliedBonusesGetter;
   isOnfield = false;
 
   get totalAttr() {
-    return this.totalAttrCtrl.finalize();
+    return this._totalAttrCtrl.finalize();
   }
 
   get attrBonus() {
@@ -45,49 +48,53 @@ export class MemberBonusesControl extends BuffApplierCore {
     appWeapon: AppWeapon,
     appArtifacts: Record<string, AppArtifact>,
     setBonuses: ArtifactSetBonus[],
-    partyData: SimulationPartyData,
+    protected partyData: SimulationPartyData,
     private partyBonus: PartyBonusControl
   ) {
-    const rootTotalAttr = new TotalAttributeControl();
+    const rootTotalAttr = new TotalAttributeControl().construct(info, data, info.weapon, appWeapon, info.artifacts);
+    const cloneTotalAttrCtrl = rootTotalAttr.clone();
 
-    rootTotalAttr.construct(info, data, info.weapon, appWeapon, info.artifacts);
-
-    super(
+    this.bonusGetter = new AppliedBonusesGetter(
       {
         char: info,
         appChar: data,
         partyData,
       },
-      rootTotalAttr.clone()
+      cloneTotalAttrCtrl
     );
 
     this.rootTotalAttr = rootTotalAttr;
+    this._totalAttrCtrl = cloneTotalAttrCtrl;
 
     const { innateBuffs = [] } = data;
 
     for (const buff of innateBuffs) {
-      if (EntityCalc.isGrantedEffect(buff, info)) {
-        const appliedBonuses = this.getAppliedCharacterBonuses({
-          description: `Self / ${buff.src}`,
+      if (isGrantedEffect(buff, info)) {
+        const appliedBonuses = this.bonusGetter.getAppliedBonuses(
           buff,
-          inputs: [],
-          fromSelf: true,
-          isFinal: false,
-        });
+          {
+            inputs: [],
+            fromSelf: true,
+          },
+          `Self / ${buff.src}`,
+          false
+        );
         this.applyInnateBonuses(appliedBonuses);
       }
     }
 
-    const appliedWeaponBonuses = this.getApplyWeaponBonuses({
-      description: `${appWeapon.name} bonus`,
-      buff: {
+    const appliedWeaponBonuses = this.bonusGetter.getAppliedBonuses(
+      {
         effects: appWeapon.bonuses,
       },
-      refi: info.weapon.refi,
-      inputs: [],
-      fromSelf: true,
-      isFinal: false,
-    });
+      {
+        refi: info.weapon.refi,
+        inputs: [],
+        fromSelf: true,
+      },
+      `${appWeapon.name} bonus`,
+      false
+    );
     this.applyInnateBonuses(appliedWeaponBonuses);
 
     for (const setBonus of setBonuses) {
@@ -96,15 +103,17 @@ export class MemberBonusesControl extends BuffApplierCore {
         const buff = data?.setBonuses?.[i];
 
         if (buff && buff.effects) {
-          const appliedBonuses = this.getApplyArtifactBonuses({
-            description: `${data.name} / ${i * 2 + 2}-piece bonus`,
-            buff: {
+          const appliedBonuses = this.bonusGetter.getAppliedBonuses(
+            {
               effects: buff.effects,
             },
-            inputs: [],
-            fromSelf: true,
-            isFinal: false,
-          });
+            {
+              inputs: [],
+              fromSelf: true,
+            },
+            `${data.name} / ${i * 2 + 2}-piece bonus`,
+            false
+          );
           this.applyInnateBonuses(appliedBonuses);
         }
       }
@@ -113,10 +122,10 @@ export class MemberBonusesControl extends BuffApplierCore {
 
   private applyInnateBonuses = (applied: AppliedBonuses) => {
     for (const bonus of applied.attrBonuses) {
-      this.innateAttrBonus.push(CoreBonusesControl.processAttributeBonus(bonus));
+      this.innateAttrBonus.push(bonus);
     }
     for (const bonus of applied.attkBonuses) {
-      this.innateAttkBonus.push(CoreBonusesControl.processAttackBonus(bonus));
+      this.innateAttkBonus.push(bonus);
     }
   };
 
@@ -125,17 +134,12 @@ export class MemberBonusesControl extends BuffApplierCore {
   };
 
   resetBonuses = () => {
-    this.bonusesCtrl.attrBonus = [];
-    this.bonusesCtrl.attkBonus = [];
+    this.bonusesCtrl.reset();
   };
 
   applyBonuses = () => {
-    this.totalAttrCtrl = this.rootTotalAttr.clone();
-
-    for (const bonus of this.attrBonus) {
-      const add = bonus.isStable ? this.totalAttrCtrl.addStable : this.totalAttrCtrl.addUnstable;
-      add(bonus.toStat, bonus.value, bonus.description);
-    }
+    this._totalAttrCtrl = this.rootTotalAttr.clone();
+    this._totalAttrCtrl.applyBonuses(this.attrBonus);
   };
 
   updateAttrBonus = (bonus: AppliedAttributeBonus) => {

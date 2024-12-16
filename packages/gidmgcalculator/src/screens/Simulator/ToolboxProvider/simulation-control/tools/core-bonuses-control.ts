@@ -2,40 +2,39 @@ import type { AppliedAttackBonus, AppliedAttributeBonus } from "@Backend";
 import type { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
 
 export class CoreBonusesControl {
-  attrBonus: SimulationAttributeBonus[] = [];
-  attkBonus: SimulationAttackBonus[] = [];
+  private _attr: SimulationAttributeBonus[] = [];
+  private _attk: SimulationAttackBonus[] = [];
 
-  static processAttributeBonus = (bonus: AppliedAttributeBonus): SimulationAttributeBonus => {
-    return {
-      type: "ATTRIBUTE",
-      ...bonus,
-    };
-  };
+  get attrBonus() {
+    return this._attr;
+  }
 
-  static processAttackBonus = (bonus: AppliedAttackBonus): SimulationAttackBonus => {
-    return {
-      type: "ATTACK",
-      ...bonus,
-    };
-  };
+  get attkBonus() {
+    return this._attk;
+  }
 
   updateAttrBonuses = (bonus: AppliedAttributeBonus) => {
-    const existedIndex = this.attrBonus.findIndex((_bonus) => _bonus.id === bonus.id);
+    const existedIndex = this._attr.findIndex((_bonus) => _bonus.id === bonus.id);
 
     if (existedIndex === -1) {
-      this.attrBonus.push(CoreBonusesControl.processAttributeBonus(bonus));
+      this._attr.push(bonus);
     } else {
-      this.attrBonus[existedIndex] = Object.assign(this.attrBonus[existedIndex], bonus);
+      Object.assign(this._attr[existedIndex], bonus);
     }
   };
 
   updateAttkBonuses = (bonus: AppliedAttackBonus) => {
-    const existedIndex = this.attkBonus.findIndex((_bonus) => _bonus.id === bonus.id);
+    const existedIndex = this._attk.findIndex((_bonus) => _bonus.id === bonus.id);
 
     if (existedIndex === -1) {
-      this.attkBonus.push(CoreBonusesControl.processAttackBonus(bonus));
+      this._attk.push(bonus);
     } else {
-      this.attkBonus[existedIndex] = Object.assign(this.attkBonus[existedIndex], bonus);
+      Object.assign(this._attk[existedIndex], bonus);
     }
+  };
+
+  reset = (attrBonuses: SimulationAttributeBonus[] = [], attkBonuses: SimulationAttackBonus[] = []) => {
+    this._attr = attrBonuses;
+    this._attk = attkBonuses;
   };
 }

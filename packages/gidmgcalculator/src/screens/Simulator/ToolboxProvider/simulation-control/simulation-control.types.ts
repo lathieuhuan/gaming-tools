@@ -1,5 +1,5 @@
-import type { AttackElement } from "@Backend";
-import type { AttackReaction, HitEvent, ModifyEvent, SimulationChunk, SystemEvent, BaseEvent } from "@Src/types";
+import type { AttackElement, AttackReaction } from "@Backend";
+import type { HitEvent, ModifyEvent, SimulationChunk, SystemEvent, BaseEvent } from "@Src/types";
 import { PartiallyRequired } from "rond";
 
 type EntityPerformer = {

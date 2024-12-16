@@ -7,7 +7,7 @@ import type { RootState } from "@Store/store";
 
 import { MAX_SIMULATION_NAME_LENGTH } from "@Src/constants";
 import { useStoreSnapshot } from "@Src/features";
-import { Utils_ } from "@Src/utils";
+import Entity_ from "@Src/utils/entity-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   cancelAssembledSimulation,
@@ -74,9 +74,9 @@ export function SimulatorHeader({ stage }: SimulatorHeaderProps) {
   const onSelectSetup = (setup: CalcSetupOption | UserSetupOption) => {
     const members = setup.members.map<SimulationMember>((member) => {
       return {
-        ...Utils_.createCharacter(member.name, member),
-        weapon: Utils_.createWeapon(member.weapon),
-        artifacts: member.artifacts.map((artifact) => (artifact ? Utils_.createArtifact(artifact) : null)),
+        ...Entity_.createCharacter(member.name, member),
+        weapon: Entity_.createWeapon(member.weapon),
+        artifacts: member.artifacts.map((artifact) => (artifact ? Entity_.createArtifact(artifact) : null)),
       };
     });
 

@@ -1,8 +1,8 @@
 import { clsx, type ClassValue } from "rond";
-import { AppWeapon, CharacterBuff, EntityCalc, GeneralCalc } from "@Backend";
+import { AppWeapon, CharacterBuff, GeneralCalc, isGrantedEffect } from "@Backend";
 import type { InputsByMember } from "./ModifyEventHost.types";
 
-import { Modifier_ } from "@Src/utils";
+import Modifier_ from "@Src/utils/modifier-utils";
 import { useActiveMember, SimulationManager } from "@Simulator/ToolboxProvider";
 
 // Component
@@ -22,16 +22,14 @@ export function ModifyEventHost({ className, simulation }: ModifyEventHostProps)
   const artifactBuffAllInputsByMember: InputsByMember = {};
 
   // For Resonance
-  const { geo = 0, dendro = 0 } = GeneralCalc.countElements(simulation.partyData);
+  const elmtCount = GeneralCalc.countElements(simulation.partyData);
 
   for (const data of simulation.partyData) {
     const memberCode = data.code;
     const info = simulation.getMemberInfo(memberCode);
 
     // Character buff
-    const characterBuffs = simulation
-      .getMemberData(memberCode)
-      .buffs?.filter((buff) => EntityCalc.isGrantedEffect(buff, info));
+    const characterBuffs = simulation.getMemberData(memberCode).buffs?.filter((buff) => isGrantedEffect(buff, info));
 
     if (characterBuffs) {
       characterBuffsByMember[memberCode] = characterBuffs;
@@ -60,8 +58,8 @@ export function ModifyEventHost({ className, simulation }: ModifyEventHostProps)
     <ModifyEventHostForActiveMember
       className={className}
       simulation={simulation}
-      geoResonated={geo >= 2}
-      dendroResonated={dendro >= 2}
+      geoResonated={elmtCount.get("geo") >= 2}
+      dendroResonated={elmtCount.get("dendro") >= 2}
       characterBuffsByMember={characterBuffsByMember}
       initalCharacterBuffAllInputsByMember={characterBuffAllInputsByMember}
       appWeaponByMember={appWeaponByMember}
