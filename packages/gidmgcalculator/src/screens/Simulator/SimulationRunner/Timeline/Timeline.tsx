@@ -60,7 +60,7 @@ export function Timeline({ simulation }: TimelineProps) {
               : chunk.events.length;
             const color = colorsByCode[chunk.ownerCode];
             const selected = chunk.id === selectedChunkId;
-            const owner = simulation.getMemberData(chunk.ownerCode);
+            const ownerData = simulation.members[chunk.ownerCode].data;
 
             return (
               <div
@@ -75,7 +75,7 @@ export function Timeline({ simulation }: TimelineProps) {
                   as="div"
                   origin="bottom center"
                 >
-                  <CharacterPortrait className="w-8 h-8" size="custom" info={owner} />
+                  <CharacterPortrait className="w-8 h-8" size="custom" info={ownerData} />
                 </Popover>
 
                 <div

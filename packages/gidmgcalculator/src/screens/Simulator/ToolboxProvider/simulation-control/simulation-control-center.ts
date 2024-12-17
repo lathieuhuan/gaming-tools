@@ -16,16 +16,19 @@ import {
   type TalentEventConfig,
 } from "./tools";
 
+/**
+ * This class
+ */
 export class SimulationControlCenter extends SimulationChunksControl {
-  readonly timeOn: boolean;
-  readonly partyData: SimulationPartyData = [];
-  readonly member: Record<number, MemberControl> = {};
-  readonly target: SimulationTarget;
+  private readonly timeOn: boolean;
+  private readonly target: SimulationTarget;
+  protected readonly partyData: SimulationPartyData = [];
+  protected readonly memberCtrls: Record<number, MemberControl> = {};
 
   private appWeapons: Record<number, AppWeapon> = {};
-  private appArtifacts: Record<number, AppArtifact> = {};
+  // private appArtifacts: Record<number, AppArtifact> = {};
 
-  private partyBonus: PartyBonusControl;
+  private partyBonusesCtrl: PartyBonusControl;
   private onfieldMember: MemberControl;
   private activeMember: MemberControl;
   private activeMemberWatcher: ActiveMemberWatcher;
@@ -39,7 +42,9 @@ export class SimulationControlCenter extends SimulationChunksControl {
     this.partyData = members.map((member) => $AppCharacter.get(member.name));
     this.target = simulation.target;
 
-    this.partyBonus = new PartyBonusControl(this.partyData);
+    this.partyBonusesCtrl = new PartyBonusControl(this.partyData);
+
+    const appArtifacts: Record<number, AppArtifact> = {};
 
     for (let i = 0; i < members.length; i++) {
       const member = members[i];
@@ -53,43 +58,46 @@ export class SimulationControlCenter extends SimulationChunksControl {
       const setBonuses = GeneralCalc.getArtifactSetBonuses(member.artifacts);
 
       for (const setBonus of setBonuses) {
-        if (!this.appArtifacts[setBonus.code]) {
-          this.appArtifacts[setBonus.code] = $AppArtifact.getSet(setBonus.code)!;
+        if (!appArtifacts[setBonus.code]) {
+          appArtifacts[setBonus.code] = $AppArtifact.getSet(setBonus.code)!;
         }
       }
 
-      this.member[memberData.code] = new MemberControl(
+      this.memberCtrls[memberData.code] = new MemberControl(
         member,
         this.partyData[i],
         this.appWeapons[weaponCode],
-        this.appArtifacts,
+        appArtifacts,
         setBonuses,
         this.partyData,
-        this.partyBonus
+        this.partyBonusesCtrl
       );
     }
 
-    this.onfieldMember = this.member[this.partyData[0].code];
-    this.activeMember = this.member[this.partyData[0].code];
+    this.onfieldMember = this.memberCtrls[this.partyData[0].code];
+    this.activeMember = this.memberCtrls[this.partyData[0].code];
     this.activeMemberWatcher = new ActiveMemberWatcher(this.activeMember);
   }
 
   genManager = () => {
-    const getMemberInfo = (code: number) => {
-      return this.member[code].info;
-    };
+    const members: Record<number, Pick<MemberControl, "info" | "data" | "weaponData" | "setBonuses">> = {};
 
-    const getMemberData = (code: number) => {
-      return this.member[code].data;
-    };
+    for (const { code } of this.partyData) {
+      const control = this.memberCtrls[code];
+
+      members[code] = {
+        info: control.info,
+        data: control.data,
+        weaponData: control.weaponData,
+        setBonuses: control.setBonuses,
+      };
+    }
 
     return {
       timeOn: this.timeOn,
       partyData: this.partyData,
+      members,
       target: this.target,
-      getMemberInfo,
-      getMemberData,
-      getAppWeaponOfMember: this.getAppWeaponOfMember,
       subscribeChunks: this.subscribeChunks,
       subscribeTotalAttr: this.activeMemberWatcher.subscribeTotalAttr,
       subscribeBonuses: this.activeMemberWatcher.subscribeBonuses,
@@ -97,7 +105,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
   };
 
   genActiveMember = (memberCode: number) => {
-    this.activeMember = this.member[memberCode];
+    this.activeMember = this.memberCtrls[memberCode];
     this.activeMemberWatcher.changeActiveMember(this.activeMember);
 
     const configTalentHitEvent = (args: Omit<ConfigTalentHitEventArgs, "partyData" | "target">): TalentEventConfig => {
@@ -111,19 +119,17 @@ export class SimulationControlCenter extends SimulationChunksControl {
     return {
       info: this.activeMember.info,
       data: this.activeMember.data,
-      tools: {
-        configTalentHitEvent,
-      },
+      configTalentHitEvent,
     };
   };
 
   private getAppWeaponOfMember = (code: number) => {
-    return this.appWeapons[this.member[code].info.weapon.code];
+    return this.appWeapons[this.memberCtrls[code].info.weapon.code];
   };
 
   private toAllMembers = (cb: (member: MemberControl) => void) => {
     for (const { code } of this.partyData) {
-      cb(this.member[code]);
+      cb(this.memberCtrls[code]);
     }
   };
 
@@ -133,7 +139,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
 
   protected switchOnfield = (memberCode: number) => {
     this.onfieldMember.switch("out");
-    this.onfieldMember = this.member[memberCode];
+    this.onfieldMember = this.memberCtrls[memberCode];
     this.onfieldMember.switch("in");
 
     if (this.onfieldMember === this.activeMember) {
@@ -144,7 +150,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
   };
 
   protected resetBonuses = () => {
-    this.partyBonus.reset();
+    this.partyBonusesCtrl.reset();
     this.toAllMembers((member) => member.resetBonuses());
     this.applyPartyBonuses();
   };
@@ -159,7 +165,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
           case "geo":
             description = "Geo Resonance / Shielded";
 
-            this.partyBonus.updateCommonAttkBonuses({
+            this.partyBonusesCtrl.updateCommonAttkBonuses({
               id: "geo-live-reso",
               description,
               value: 15,
@@ -170,7 +176,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
           case "dendro_strong":
             description = "Dendro Resonance (30)";
 
-            this.partyBonus.updateCommonAttrBonuses({
+            this.partyBonusesCtrl.updateCommonAttrBonuses({
               id: "dendro-live-reso-strong",
               description,
               value: 30,
@@ -181,7 +187,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
           case "dendro_weak":
             description = "Dendro Resonance (20)";
 
-            this.partyBonus.updateCommonAttrBonuses({
+            this.partyBonusesCtrl.updateCommonAttrBonuses({
               id: "dendro-live-reso-weak",
               description,
               value: 20,
@@ -210,7 +216,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
 
   protected entityModify = (event: ModifyEvent): ProcessedEntityModifyEvent => {
     const { duration = 0 } = event;
-    const performer = this.member[event.performerCode];
+    const performer = this.memberCtrls[event.performerCode];
     const { affect, attrBonuses, attkBonuses, performers, source } = performer.modify(
       event.modifier,
       this.getAppWeaponOfMember(event.performerCode)
@@ -230,16 +236,16 @@ export class SimulationControlCenter extends SimulationChunksControl {
           break;
         }
         case "PARTY": {
-          this.partyBonus.updateCommonAttrBonuses(attrBonuses);
-          this.partyBonus.updateCommonAttkBonuses(attkBonuses);
+          this.partyBonusesCtrl.updateCommonAttrBonuses(attrBonuses);
+          this.partyBonusesCtrl.updateCommonAttkBonuses(attkBonuses);
 
           this.applyPartyBonuses();
           this.activeMemberWatcher.notifySubscribers();
           break;
         }
         case "ACTIVE_UNIT": {
-          this.partyBonus.updateOnfieldAttrBonuses(attrBonuses);
-          this.partyBonus.updateOnfieldAttkBonuses(attkBonuses);
+          this.partyBonusesCtrl.updateOnfieldAttrBonuses(attrBonuses);
+          this.partyBonusesCtrl.updateOnfieldAttkBonuses(attkBonuses);
 
           this.onfieldMember.applyBonuses();
 
@@ -277,7 +283,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
 
   protected hit = (event: HitEvent): ProcessedHitEvent => {
     const { duration = 0 } = event;
-    const performer = this.member[event.performerCode];
+    const performer = this.memberCtrls[event.performerCode];
     const result = performer?.hit(event, this.partyData, this.target);
     const damage: ProcessedHitEvent["damage"] = {
       value: 0,

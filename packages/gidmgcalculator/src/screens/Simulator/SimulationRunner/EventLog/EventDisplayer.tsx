@@ -21,7 +21,7 @@ export function EventDisplayer(props: EventDisplayerProps) {
       </div>
     );
   } else {
-    const performer = props.simulation.getMemberData(event.performerCode);
+    const performer = props.simulation.members[event.performerCode].data;
 
     sideIconNode = (
       <GenshinImage

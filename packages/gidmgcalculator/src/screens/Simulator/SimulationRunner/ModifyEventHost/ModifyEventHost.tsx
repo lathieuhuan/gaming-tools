@@ -1,5 +1,5 @@
 import { clsx, type ClassValue } from "rond";
-import { AppWeapon, CharacterBuff, GeneralCalc, isGrantedEffect } from "@Backend";
+import { CharacterBuff, GeneralCalc, isGrantedEffect } from "@Backend";
 import type { InputsByMember } from "./ModifyEventHost.types";
 
 import Modifier_ from "@Src/utils/modifier-utils";
@@ -17,7 +17,6 @@ interface ModifyEventHostProps {
 export function ModifyEventHost({ className, simulation }: ModifyEventHostProps) {
   const characterBuffsByMember: ModifyEventHostForActiveMemberProps["characterBuffsByMember"] = {};
   const characterBuffAllInputsByMember: InputsByMember = {};
-  const appWeaponByMember: ModifyEventHostForActiveMemberProps["appWeaponByMember"] = {};
   const weaponBuffAllInputsByMember: InputsByMember = {};
   const artifactBuffAllInputsByMember: InputsByMember = {};
 
@@ -26,10 +25,10 @@ export function ModifyEventHost({ className, simulation }: ModifyEventHostProps)
 
   for (const data of simulation.partyData) {
     const memberCode = data.code;
-    const info = simulation.getMemberInfo(memberCode);
+    const member = simulation.members[memberCode];
 
     // Character buff
-    const characterBuffs = simulation.getMemberData(memberCode).buffs?.filter((buff) => isGrantedEffect(buff, info));
+    const characterBuffs = data.buffs?.filter((buff) => isGrantedEffect(buff, member.info));
 
     if (characterBuffs) {
       characterBuffsByMember[memberCode] = characterBuffs;
@@ -40,18 +39,16 @@ export function ModifyEventHost({ className, simulation }: ModifyEventHostProps)
     }
 
     // Weapon buff
-    const appWeapon = simulation.getAppWeaponOfMember(memberCode);
+    const weaponBuffs = member.weaponData.buffs;
 
-    appWeaponByMember[memberCode] = appWeapon;
-
-    if (appWeapon.buffs) {
-      weaponBuffAllInputsByMember[memberCode] = appWeapon.buffs.map(
+    if (weaponBuffs) {
+      weaponBuffAllInputsByMember[memberCode] = weaponBuffs.map(
         (buff) => Modifier_.createModCtrl(buff, true).inputs ?? []
       );
     }
 
     // Artifact buff
-    const setBonuses = GeneralCalc.getArtifactSetBonuses(info.artifacts);
+    const setBonuses = member.setBonuses;
   }
 
   return (
@@ -62,7 +59,6 @@ export function ModifyEventHost({ className, simulation }: ModifyEventHostProps)
       dendroResonated={elmtCount.get("dendro") >= 2}
       characterBuffsByMember={characterBuffsByMember}
       initalCharacterBuffAllInputsByMember={characterBuffAllInputsByMember}
-      appWeaponByMember={appWeaponByMember}
       initalWeaponBuffAllInputsByMember={weaponBuffAllInputsByMember}
     />
   );
@@ -73,7 +69,6 @@ interface ModifyEventHostForActiveMemberProps extends EventListResonanceBuffProp
   simulation: SimulationManager;
   characterBuffsByMember: Record<number, CharacterBuff[]>;
   initalCharacterBuffAllInputsByMember: InputsByMember;
-  appWeaponByMember: Record<number, AppWeapon>;
   initalWeaponBuffAllInputsByMember: InputsByMember;
 }
 function ModifyEventHostForActiveMember(props: ModifyEventHostForActiveMemberProps) {
@@ -97,8 +92,8 @@ function ModifyEventHostForActiveMember(props: ModifyEventHostForActiveMemberPro
         />
         <EventListWeaponBuff
           member={activeMember}
-          appWeapon={props.appWeaponByMember[activeMemberCode]}
-          refi={simulation.getMemberInfo(activeMemberCode).weapon.refi}
+          weaponData={simulation.members[activeMemberCode].weaponData}
+          refi={simulation.members[activeMemberCode].info.weapon.refi}
           initalInputsByMember={props.initalWeaponBuffAllInputsByMember}
         />
       </div>

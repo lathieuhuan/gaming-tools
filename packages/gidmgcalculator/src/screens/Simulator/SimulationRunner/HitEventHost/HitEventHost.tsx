@@ -79,7 +79,7 @@ export function HitEventHost({ className }: HitEventHostProps) {
                             <TalentHitEvent
                               item={item}
                               getTalentEventConfig={(attkBonus, elmtModCtrls) => {
-                                return activeMember.tools.configTalentHitEvent({
+                                return activeMember.configTalentHitEvent({
                                   talent: config.type,
                                   pattern: group.type,
                                   item,

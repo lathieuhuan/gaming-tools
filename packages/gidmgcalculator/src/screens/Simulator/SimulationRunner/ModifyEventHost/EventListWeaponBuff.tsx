@@ -14,15 +14,14 @@ import { ActionButton } from "../components";
 interface EventListWeaponBuffProps {
   member: ActiveMember;
   initalInputsByMember?: InputsByMember;
-  appWeapon: AppWeapon;
+  weaponData: AppWeapon;
   refi: number;
 }
-export function EventListWeaponBuff({ member, initalInputsByMember = {}, appWeapon, refi }: EventListWeaponBuffProps) {
+export function EventListWeaponBuff({ member, initalInputsByMember = {}, weaponData, refi }: EventListWeaponBuffProps) {
   const dispatch = useDispatch();
   const [allInputs, setAllInputs] = useState(initalInputsByMember);
 
   const inputsList = allInputs[member.data.code];
-  const { buffs = [] } = appWeapon;
 
   const onMakeEvent = (mod: WeaponBuff, inputs: number[], alsoSwitch?: boolean) => {
     dispatch(
@@ -31,7 +30,7 @@ export function EventListWeaponBuff({ member, initalInputsByMember = {}, appWeap
         performerCode: member.data.code,
         modifier: {
           type: "WEAPON",
-          code: appWeapon.code,
+          code: weaponData.code,
           id: mod.index,
           inputs,
         },
@@ -53,7 +52,7 @@ export function EventListWeaponBuff({ member, initalInputsByMember = {}, appWeap
 
   return (
     <div className="space-y-3">
-      {buffs.map((modifier, modIndex) => {
+      {weaponData.buffs?.map((modifier, modIndex) => {
         const inputs = inputsList[modIndex];
         const inputConfigs = modifier.inputConfigs?.filter((config) => config.for !== "FOR_TEAM");
 
@@ -61,9 +60,9 @@ export function EventListWeaponBuff({ member, initalInputsByMember = {}, appWeap
           <div key={modifier.index}>
             <GenshinModifierView
               mutable
-              heading={appWeapon.name}
+              heading={weaponData.name}
               headingVariant="custom"
-              description={getWeaponBuffDescription(appWeapon.descriptions, modifier, refi)}
+              description={getWeaponBuffDescription(weaponData.descriptions, modifier, refi)}
               checked={false}
               inputs={inputs}
               inputConfigs={inputConfigs}

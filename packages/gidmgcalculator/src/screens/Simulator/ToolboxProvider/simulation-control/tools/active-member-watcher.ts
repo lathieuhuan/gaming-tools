@@ -6,6 +6,9 @@ export type OnChangeTotalAttr = (totalAttrCtrl: TotalAttribute) => void;
 
 export type OnChangeBonuses = (attrBonus: SimulationAttributeBonus[], attkBonus: SimulationAttackBonus[]) => void;
 
+/**
+ * This class is for tracking the active member and notifying subscribers of this member's Total Attribute & bonuses
+ */
 export class ActiveMemberWatcher {
   private totalAttrSubscribers = new Set<OnChangeTotalAttr>();
   private bonusesSubscribers = new Set<OnChangeBonuses>();
@@ -23,12 +26,11 @@ export class ActiveMemberWatcher {
   };
 
   notifySubscribers = () => {
-    const totalAttr = this.activeMember.totalAttr;
-    const attrBonuses = this.activeMember.attrBonuses;
-    const attkBonuses = this.activeMember.attkBonuses;
+    this.totalAttrSubscribers.forEach((callback) => callback(this.activeMember.totalAttr));
 
-    this.totalAttrSubscribers.forEach((callback) => callback(totalAttr));
-    this.bonusesSubscribers.forEach((callback) => callback(attrBonuses, attkBonuses));
+    this.bonusesSubscribers.forEach((callback) => {
+      callback(this.activeMember.attrBonuses, this.activeMember.attkBonuses);
+    });
   };
 
   subscribeTotalAttr = (subscribe: OnChangeTotalAttr) => {

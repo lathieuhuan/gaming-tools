@@ -1,7 +1,14 @@
-import { AppliedAttackBonus, AppliedAttributeBonus, ElementType, GeneralCalc, RESONANCE_STAT } from "@Backend";
+import { ElementType, GeneralCalc, RESONANCE_STAT } from "@Backend";
 import { SimulationAttributeBonus, SimulationPartyData } from "@Src/types";
 import { CoreBonusesControl } from "./core-bonuses-control";
 
+/**
+ * This class is for managing:
+ * - Common bonuses that are applied to all party members. **commonBonusesCtrl**
+ * - On-field bonuses that are only applied to the on-field member. **onfieldBonusesCtrl**
+ * - Fixed attribute bonuses that are applied to all party members (such as resonance),
+ *   only made at the start of the Simulation. **fixedAttrBonuses**
+ */
 export class PartyBonusControl {
   private commonBonusesCtrl = new CoreBonusesControl();
   private onfieldBonusesCtrl = new CoreBonusesControl();

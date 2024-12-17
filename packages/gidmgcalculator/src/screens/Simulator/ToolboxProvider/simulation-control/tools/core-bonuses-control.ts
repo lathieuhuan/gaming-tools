@@ -1,5 +1,6 @@
-import type { AppliedAttackBonus, AppliedAttributeBonus } from "@Backend";
-import type { DeepReadonly, SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
+import type { DeepReadonly } from "rond";
+import type { AppliedAttackBonus, AppliedAttributeBonus, AppliedBonuses } from "@Backend";
+import type { SimulationAttackBonus, SimulationAttributeBonus } from "@Src/types";
 
 export class CoreBonusesControl {
   private _attr: SimulationAttributeBonus[] = [];
@@ -44,6 +45,11 @@ export class CoreBonusesControl {
       ? bonuses.forEach((bonus) => this.addOrUpdateAttkBonus(bonus))
       : this.addOrUpdateAttkBonus(bonuses);
   };
+
+  updateBonuses(applied: AppliedBonuses) {
+    this.updateAttrBonuses(applied.attrBonuses);
+    this.updateAttkBonuses(applied.attkBonuses);
+  }
 
   reset = (attrBonuses: SimulationAttributeBonus[] = [], attkBonuses: SimulationAttackBonus[] = []) => {
     this._attr = attrBonuses;

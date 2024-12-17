@@ -30,6 +30,9 @@ import type { Performer } from "../simulation-control.types";
 import Object_ from "@Src/utils/object-utils";
 import { MemberBonusesControl } from "./member-bonuses-control";
 
+/**
+ * This class is for simulating member's actions
+ */
 export class MemberControl extends MemberBonusesControl {
   private naConfig: NormalAttacksConfig = {};
 

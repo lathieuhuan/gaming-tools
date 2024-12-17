@@ -13,3 +13,7 @@ export type AdvancedPick<
   TRequiredKeys extends keyof TObject,
   TPartialKeys extends Exclude<keyof TObject, TRequiredKeys>
 > = RequiredPick<TObject, TRequiredKeys> & PartialPick<TObject, TPartialKeys>;
+
+export type DeepReadonly<T> = {
+  readonly [P in keyof T]: DeepReadonly<T[P]>;
+};

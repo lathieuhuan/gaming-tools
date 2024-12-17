@@ -1,8 +1,13 @@
-import { DeepReadonly, SimulationChunk } from "@Src/types";
+import type { DeepReadonly } from "rond";
+import type { SimulationChunk } from "@Src/types";
 import type { SimulationProcessedChunk, SimulationProcessedEvent, SimulationSumary } from "../simulation-control.types";
 
 type OnChangeChunks = (chunks: SimulationProcessedChunk[], sumary: SimulationSumary) => void;
 
+/**
+ * This class is for managing SimulationProcessedChunk[] and their SimulationSumary,
+ * also notifying subscribers of such chunks.
+ */
 export class SimulationChunksControl {
   private _chunks: SimulationProcessedChunk[] = [];
   private _sumary: SimulationSumary = {

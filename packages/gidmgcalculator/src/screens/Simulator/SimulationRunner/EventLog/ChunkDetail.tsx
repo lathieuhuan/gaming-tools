@@ -27,7 +27,7 @@ export function ChunkDetail({ simulation, chunk, event }: ChunkDetailProps) {
   const chunkDetails = [
     {
       label: "On-field",
-      value: simulation.getMemberInfo(chunk.ownerCode).name,
+      value: simulation.members[chunk.ownerCode].data.name,
     },
     {
       label: "Total Damage",

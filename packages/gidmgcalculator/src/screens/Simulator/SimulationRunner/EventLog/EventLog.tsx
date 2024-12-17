@@ -2,11 +2,7 @@ import { useEffect, useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
 import { CloseButton, HiddenSpace, clsx, type ClassValue } from "rond";
 
-import {
-  type SimulationProcessedChunk,
-  type SimulationManager,
-  SimulationProcessedEvent,
-} from "@Simulator/ToolboxProvider";
+import type { SimulationProcessedChunk, SimulationManager, SimulationProcessedEvent } from "@Simulator/ToolboxProvider";
 import { useTimelineTracker } from "@Simulator/hooks";
 
 // Component

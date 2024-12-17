@@ -125,7 +125,7 @@ export class SimulationControl extends SimulationControlCenter {
     let processedEvent: SimulationProcessedEvent;
 
     for (const appChar of this.partyData) {
-      this.member[appChar.code]?.innateModify();
+      this.memberCtrls[appChar.code]?.innateModify();
     }
 
     switch (event.type) {
