@@ -3,11 +3,10 @@ import type { TrackerControl } from "../controls";
 
 import { $AppCharacter, $AppWeapon } from "@Src/services";
 import getNormalAttacksConfig from "../calculation/getNormalAttacksConfig";
-import getAttackPatternConfig from "../calculation/getAttackPatternConfig";
 import getCalculationStats from "../calculation/getCalculationStats";
 import getResistances from "../calculation/getResistances";
-import getCalcItemCalculator from "../calculation/getCalcItemCalculator";
 import getFinalResult from "../calculation/getFinalResult";
+import getCalcItemCalculator from "../calculation/getCalcItemCalculator";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
@@ -30,29 +29,28 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
 
   const NAsConfig = getNormalAttacksConfig(setup.selfBuffCtrls, calcInfo);
 
-  const configAttackPattern = getAttackPatternConfig({
-    appChar,
+  const calcItemCalculator = getCalcItemCalculator(
+    target.level,
+    calcInfo,
     NAsConfig,
     customInfusion,
     totalAttr,
     attkBonusesArchive,
-  });
-
-  const calculateCalcItem = getCalcItemCalculator(char.level, target.level, totalAttr, resistances);
+    resistances,
+    tracker
+  );
 
   const finalResult = getFinalResult({
     char,
     weapon,
     appChar,
     appWeapon,
-    partyData,
     totalAttr,
     attkBonusesArchive,
     elmtModCtrls,
     resistances,
+    calcItemCalculator,
     tracker,
-    configAttackPattern,
-    calculateCalcItem,
   });
   // console.timeEnd();
 

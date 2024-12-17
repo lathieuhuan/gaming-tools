@@ -14,7 +14,6 @@ import {
   NORMAL_ATTACKS,
   NormalAttacksConfig,
   ResistanceReductionControl,
-  getAttackPatternConfig,
   getCalcItemCalculator,
 } from "@Backend";
 import type {
@@ -162,52 +161,42 @@ export class MemberControl extends MemberBonusesControl {
       attkBonusesCtrl.add(bonus);
     }
 
-    const info = {
+    const calcInfo = {
       char: this.info,
       appChar: this.data,
       partyData: args.partyData,
     };
-    const level = CharacterCalc.getFinalTalentLv({ ...info, talentType: args.talent });
-    const totalAttr = this.totalAttr;
 
-    const { disabled, configCalcItem } = getAttackPatternConfig({
-      appChar: this.data,
-      NAsConfig: this.naConfig,
-      totalAttr,
-      attkBonusesArchive: attkBonusesCtrl.genArchive(),
-      customInfusion: {
-        element: "phys",
-      },
-    })(args.pattern);
-
-    //
-
-    const itemConfig = configCalcItem(args.item, {
+    const elmtModCtrls = {
       absorption: null,
       reaction: null,
       infuse_reaction: null,
       ...(args.elmtModCtrls ? Object_.omitEmptyProps(args.elmtModCtrls) : undefined),
-    });
+    };
 
-    const resistances = new ResistanceReductionControl({
-      char: this.info,
-      appChar: this.data,
-      partyData: this.partyData,
-    }).applyTo(args.target);
+    const resistances = new ResistanceReductionControl(calcInfo).applyTo(args.target);
 
-    const calculateCalcItem = getCalcItemCalculator(info.char.level, args.target.level, totalAttr, resistances);
+    const calculator = getCalcItemCalculator(
+      args.target.level,
+      calcInfo,
+      this.naConfig,
+      {
+        element: "phys",
+      },
+      this.totalAttr,
+      attkBonusesCtrl.genArchive(),
+      resistances
+    );
 
-    const base = itemConfig.calculateBaseDamage(level);
-
-    const result = calculateCalcItem({
-      base,
-      ...itemConfig,
-    });
+    const { disabled, calculate } = calculator.genAttPattCalculator(args.pattern);
+    const result = calculate(args.item, elmtModCtrls);
 
     return {
       damage: result.average,
-      disabled: !!disabled,
-      ...Object_.pickProps(itemConfig, ["attElmt", "attPatt", "reaction", "record"]),
+      disabled,
+      // ...(result.type === "attack" ? Object_.pickProps(result, ["attElmt", "attPatt", "reaction", "record"]) : {}),
+      attPatt: "none",
+      attElmt: "anemo",
     };
   };
 
@@ -262,6 +251,6 @@ export type TalentEventConfig = {
   disabled: boolean;
   attPatt: ActualAttackPattern;
   attElmt: "pyro" | "hydro" | "electro" | "cryo" | "geo" | "anemo" | "dendro" | "phys";
-  reaction: AttackReaction;
-  record: CalcItemRecord;
+  // reaction: AttackReaction;
+  // record: CalcItemRecord;
 };

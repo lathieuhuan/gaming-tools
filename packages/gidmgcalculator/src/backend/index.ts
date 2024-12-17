@@ -2,9 +2,8 @@ export { calculateSetup } from "./calculation-calculator/calculateSetup";
 export { AppliedBonusesGetter } from "./calculation-utils/applied-bonuses-getter";
 export { BareBonusGetter } from "./calculation-utils/bare-bonus-getter";
 export { isGrantedEffect } from "./calculation-utils/isGrantedEffect";
-export { default as getAttackPatternConfig } from "./calculation/getAttackPatternConfig";
-export { default as getCalcItemCalculator } from "./calculation/getCalcItemCalculator";
 export { default as getCalculationStats } from "./calculation/getCalculationStats";
+export { default as getCalcItemCalculator, type CalcItemCalculator } from "./calculation/getCalcItemCalculator";
 export { ArtifactCalc, CharacterCalc, GeneralCalc, WeaponCalc, type ArtifactSetBonus } from "./common-utils";
 export { AttackBonusesControl, ResistanceReductionControl, TotalAttributeControl, TrackerControl } from "./controls";
 
@@ -56,6 +55,5 @@ export type {
   TotalAttribute,
   TransformativeReaction,
   WeaponBuff,
-  WeaponType
+  WeaponType,
 } from "./types";
-

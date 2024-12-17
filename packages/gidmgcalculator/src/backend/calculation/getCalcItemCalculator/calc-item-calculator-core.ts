@@ -1,4 +1,6 @@
+import type { CalcItemRecord } from "@Src/backend/controls";
 import type {
+  ActualAttackElement,
   ActualAttackPattern,
   AttackBonusKey,
   AttackElement,
@@ -7,31 +9,55 @@ import type {
   Level,
   ResistanceReduction,
   TotalAttribute,
-} from "../types";
-import type { CalcItemRecord } from "../controls";
+} from "@Src/backend/types";
 
 import { toMult } from "@Src/utils";
 import Array_ from "@Src/utils/array-utils";
-import { GeneralCalc } from "../common-utils";
-import { genEmptyCalcFinalResultItem } from "../calculation-utils/genEmptyCalcFinal";
+import { GeneralCalc } from "@Src/backend/common-utils";
 
-type CalculateArgs = {
+export type CalculateCalcItemArgs = {
+  base: number | number[];
   type: CalcItemType;
   attPatt: ActualAttackPattern;
   attElmt: AttackElement;
-  base: number | number[];
   rxnMult: number;
   record: CalcItemRecord;
-  getBonus?: (key: AttackBonusKey) => number;
+  getBonus: (key: AttackBonusKey) => number;
 };
-export default function getCalcItemCalculator(
-  charLv: Level,
-  targetLv: number,
-  totalAttr: TotalAttribute,
-  resistances: ResistanceReduction
-) {
-  //
-  return ({
+
+export class CalcItemCalculatorCore {
+  constructor(
+    private charLv: Level,
+    private targetLv: number,
+    protected totalAttr: TotalAttribute,
+    private resistances: ResistanceReduction
+  ) {
+    //
+  }
+
+  genEmptyCalcFinalResultItem(
+    type: CalcItemType,
+    attPatt: ActualAttackPattern,
+    attElmt: ActualAttackElement
+  ): CalculationFinalResultItem {
+    return type === "attack"
+      ? {
+          type,
+          nonCrit: 0,
+          crit: 0,
+          average: 0,
+          attPatt,
+          attElmt,
+        }
+      : {
+          type,
+          nonCrit: 0,
+          crit: 0,
+          average: 0,
+        };
+  }
+
+  calculate = ({
     base,
     attPatt,
     attElmt,
@@ -39,9 +65,11 @@ export default function getCalcItemCalculator(
     type,
     record,
     getBonus = () => 0,
-  }: CalculateArgs): CalculationFinalResultItem => {
+  }: CalculateCalcItemArgs): CalculationFinalResultItem => {
+    const { charLv, targetLv, totalAttr, resistances } = this;
+
     if (base === 0) {
-      return genEmptyCalcFinalResultItem(type, attPatt, attElmt);
+      return this.genEmptyCalcFinalResultItem(type, attPatt, attElmt);
     }
 
     if (type === "attack") {
@@ -122,8 +150,6 @@ export default function getCalcItemCalculator(
       };
     }
 
-    return genEmptyCalcFinalResultItem(type, attPatt, attElmt);
+    return this.genEmptyCalcFinalResultItem(type, attPatt, attElmt);
   };
 }
-
-export type CalcItemCalculator = ReturnType<typeof getCalcItemCalculator>;
