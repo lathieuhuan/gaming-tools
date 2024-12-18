@@ -28,6 +28,10 @@ type InternalSupportInfo = GetBareBonusSupportInfo & {
 export class BareBonusGetter {
   constructor(protected info: CalculationInfo, protected totalAttrCtrl?: TotalAttributeControl) {}
 
+  updateTotalAttrCtrl(totalAttrCtrl: TotalAttributeControl) {
+    this.totalAttrCtrl = totalAttrCtrl;
+  }
+
   // ========== UTILS ==========
 
   protected scaleRefi(base: number, refi = 0, increment = base / 3) {
