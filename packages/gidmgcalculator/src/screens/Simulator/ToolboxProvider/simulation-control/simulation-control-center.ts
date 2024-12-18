@@ -10,11 +10,11 @@ import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import {
   MemberControl,
   PartyBonusControl,
-  SimulationChunksControl,
   ActiveMemberWatcher,
   type ConfigTalentHitEventArgs,
   type TalentEventConfig,
 } from "./tools";
+import { SimulationChunksControl } from "./simulation-chunks-control";
 
 /**
  * This class is for managing all simulation activities

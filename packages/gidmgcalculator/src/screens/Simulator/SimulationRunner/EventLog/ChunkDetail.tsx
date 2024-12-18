@@ -30,14 +30,14 @@ export function ChunkDetail({ simulation, chunk, event }: ChunkDetailProps) {
       value: simulation.members[chunk.ownerCode].data.name,
     },
     {
-      label: "Total Damage",
+      label: "Total damage",
       value: totalDMG,
     },
   ];
 
   if (simulation.timeOn) {
     chunkDetails.push({
-      label: "Total Duration",
+      label: "Total duration",
       value: `${chunk.events.reduce((total, event) => total + event.duration, 0) / 100}s`,
     });
   }

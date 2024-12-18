@@ -1,6 +1,6 @@
 import type { DeepReadonly } from "rond";
 import type { SimulationChunk } from "@Src/types";
-import type { SimulationProcessedChunk, SimulationProcessedEvent, SimulationSumary } from "../simulation-control.types";
+import type { SimulationProcessedChunk, SimulationProcessedEvent, SimulationSumary } from "./simulation-control.types";
 
 type OnChangeChunks = (chunks: SimulationProcessedChunk[], sumary: SimulationSumary) => void;
 
