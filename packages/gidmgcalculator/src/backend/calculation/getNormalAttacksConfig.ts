@@ -9,7 +9,7 @@ export default function getNormalAttacksConfig(selfBuffCtrls: ModifierCtrl[], in
   const result: NormalAttacksConfig = {};
 
   for (const ctrl of selfBuffCtrls) {
-    const buff = ctrl.activated ? Array_.findByIndex(info.appChar.buffs ?? [], ctrl.index) : undefined;
+    const buff = ctrl.activated ? Array_.findByIndex(info.appChar.buffs, ctrl.index) : undefined;
     const { normalsConfig = [] } = buff || {};
 
     for (const config of Array_.toArray(normalsConfig)) {

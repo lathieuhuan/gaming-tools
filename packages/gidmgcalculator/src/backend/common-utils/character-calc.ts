@@ -92,10 +92,10 @@ export class CharacterCalc {
     appChar: AppCharacter
   ): {
     resultKey: LevelableTalentType;
-    defaultScale: number;
-    defaultBasedOn: TalentAttributeType;
-    defaultAttPatt: ActualAttackPattern;
-    defaultFlatFactorScale: number;
+    scale: number;
+    basedOn: TalentAttributeType;
+    attPatt: ActualAttackPattern;
+    flatFactorScale: number;
   } {
     const resultKey = expectedAttPatt === "ES" || expectedAttPatt === "EB" ? expectedAttPatt : "NAs";
     const defaultScale = resultKey === "NAs" && appChar.weaponType !== "catalyst" ? 7 : 2;
@@ -107,10 +107,10 @@ export class CharacterCalc {
 
     return {
       resultKey,
-      defaultScale: scale,
-      defaultBasedOn: basedOn,
-      defaultAttPatt: attPatt,
-      defaultFlatFactorScale: 3,
+      scale,
+      basedOn,
+      attPatt,
+      flatFactorScale: 3,
     };
   }
 }

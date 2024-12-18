@@ -22,7 +22,7 @@ export default function getResistances(
 
   // APPLY SELF DEBUFFS
   for (const ctrl of selfDebuffCtrls) {
-    const debuff = Array_.findByIndex(appChar.debuffs || [], ctrl.index);
+    const debuff = Array_.findByIndex(appChar.debuffs, ctrl.index);
 
     if (ctrl.activated && debuff?.effects && isGrantedEffect(debuff, char)) {
       resistReductCtrl.applyDebuff(debuff, ctrl.inputs ?? [], true, `Self / ${debuff.src}`);

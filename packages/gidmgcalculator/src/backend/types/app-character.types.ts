@@ -3,14 +3,13 @@ import type {
   ActualAttackPattern,
   AttackPattern,
   AttributeStat,
+  CalcItemCore,
   ElementType,
-  ExclusiveBonusType,
   NormalAttack,
   TalentType,
   WeaponType,
 } from "./common.types";
 import type {
-  CalcItemType,
   CharacterMilestone,
   EntityBonus,
   EntityBonusCore,
@@ -114,10 +113,8 @@ export type CalcItemFlatFactor =
       scale?: number;
     };
 
-export type CalcItem = {
-  id?: ExclusiveBonusType;
+export type CalcItem = CalcItemCore & {
   name: string;
-  type?: CalcItemType;
   notOfficial?: boolean;
   attPatt?: ActualAttackPattern;
   attElmt?: ActualAttackElement;

@@ -8,12 +8,12 @@ import type {
   AttackBonusType,
   AttackPattern,
   AttributeStat,
+  CalcItemType,
   CoreStat,
   LevelableTalentType,
   QuickenReaction,
 } from "./common.types";
 import type { AppCharacter, CharacterBuffNormalAttackConfig } from "./app-character.types";
-import type { CalcItemType } from "./app-entity";
 
 export type AttackReaction = AmplifyingReaction | QuickenReaction | null;
 
@@ -63,18 +63,20 @@ export type NormalAttacksConfig = Partial<Record<AttackPattern, Omit<CharacterBu
 
 export type CalculationAspect = "nonCrit" | "crit" | "average";
 
-type CalculationFinalResultAttackItem = {
+type CalculationFinalResultCommon = Record<CalculationAspect, number | number[]>;
+
+type CalculationFinalResultAttackItem = CalculationFinalResultCommon & {
   type: Extract<CalcItemType, "attack">;
   attElmt: ActualAttackElement;
   attPatt: ActualAttackPattern;
+  reaction: AttackReaction;
 };
 
-type CalculationFinalResultOtherItem = {
+type CalculationFinalResultOtherItem = CalculationFinalResultCommon & {
   type: Exclude<CalcItemType, "attack">;
 };
 
-export type CalculationFinalResultItem = Record<CalculationAspect, number | number[]> &
-  (CalculationFinalResultAttackItem | CalculationFinalResultOtherItem);
+export type CalculationFinalResultItem = CalculationFinalResultAttackItem | CalculationFinalResultOtherItem;
 
 export type CalculationFinalResultKey = LevelableTalentType | "RXN_CALC" | "WP_CALC";
 
