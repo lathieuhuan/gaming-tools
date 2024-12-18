@@ -49,23 +49,23 @@ export class SimulationChunksControl {
   /**
    * @return if there was a buffer chunk (aka. the empty chunk) removed
    */
-  protected removeBufferChunk() {
+  protected removeBufferChunk = () => {
     const lastChunkIsBuffer = !this._chunks.at(-1)?.events.length;
 
     if (lastChunkIsBuffer) {
       this._chunks.pop();
     }
     return lastChunkIsBuffer;
-  }
+  };
 
-  protected addBufferChunk(chunk: Omit<SimulationChunk, "events">) {
+  protected addBufferChunk = (chunk: Omit<SimulationChunk, "events">) => {
     this._chunks.push({
       ...chunk,
       events: [],
     });
-  }
+  };
 
-  protected addEvent(event: SimulationProcessedEvent, chunk: SimulationChunk) {
+  protected addEvent = (event: SimulationProcessedEvent, chunk: SimulationChunk) => {
     const latestChunk = this._chunks.at(-1);
 
     // Check if belongs to the latest chunk
@@ -82,13 +82,13 @@ export class SimulationChunksControl {
       this._sumary.damage += event.damage.value;
     }
     this._sumary.duration += event.duration ?? 0;
-  }
+  };
 
-  protected resetChunks() {
+  protected resetChunks = () => {
     this._chunks = [];
     this._sumary = {
       damage: 0,
       duration: 0,
     };
-  }
+  };
 }

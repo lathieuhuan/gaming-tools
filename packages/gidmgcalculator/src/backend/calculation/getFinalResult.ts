@@ -74,6 +74,7 @@ export default function getFinalResult({
       average: cRate_ ? nonCrit * (1 + cDmg_ * cRate_) : nonCrit,
       attPatt: "none",
       attElmt: dmgType,
+      reaction: null,
     };
 
     tracker?.recordCalcItem("RXN_CALC", rxn, {
@@ -100,17 +101,9 @@ export default function getFinalResult({
       ],
       normalMult: 1,
     });
-    const attElmt: AttackElement = "phys";
+    const baseDmg = (totalAttr[basedOn] * mult) / 100;
 
-    finalResult.WP_CALC[name] = calcItemCalculator.calculate({
-      type,
-      attPatt: "none",
-      attElmt,
-      base: (totalAttr[basedOn] * mult) / 100,
-      record,
-      rxnMult: 1,
-      getBonus: (key) => attkBonusesArchive.get(key, attElmt),
-    });
+    finalResult.WP_CALC[name] = calcItemCalculator.genCalculator(type, "none", "phys").calculate(baseDmg, null, record);
 
     tracker?.recordCalcItem("WP_CALC", name, record);
   });

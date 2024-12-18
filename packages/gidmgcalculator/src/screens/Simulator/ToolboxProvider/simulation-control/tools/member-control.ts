@@ -28,6 +28,7 @@ import type { Performer } from "../simulation-control.types";
 
 import Object_ from "@Src/utils/object-utils";
 import { MemberBonusesControl } from "./member-bonuses-control";
+import { CalculationFinalResultAttackItem, CalculationFinalResultItem } from "@Src/backend/types";
 
 /**
  * This class is for simulating member's actions
@@ -189,14 +190,11 @@ export class MemberControl extends MemberBonusesControl {
     );
 
     const { disabled, calculate } = calculator.genAttPattCalculator(args.pattern);
-    const result = calculate(args.item, elmtModCtrls);
+    const result = calculate(args.item, elmtModCtrls) as CalculationFinalResultAttackItem;
 
     return {
-      damage: result.average,
       disabled,
-      // ...(result.type === "attack" ? Object_.pickProps(result, ["attElmt", "attPatt", "reaction", "record"]) : {}),
-      attPatt: "none",
-      attElmt: "anemo",
+      ...result,
     };
   };
 
@@ -211,7 +209,7 @@ export class MemberControl extends MemberBonusesControl {
       ...(event.elmtModCtrls ? Object_.omitEmptyProps(event.elmtModCtrls) : undefined),
     };
 
-    const config = this.configTalentHitEvent({
+    const result = this.configTalentHitEvent({
       talent: event.talent,
       ...hitInfo,
       attkBonus: this.attkBonuses,
@@ -219,11 +217,12 @@ export class MemberControl extends MemberBonusesControl {
       partyData,
       target,
     });
+    const damage = result.average;
 
     return {
       name: hitInfo.item.name,
-      ...config,
-      damage: Math.round(Array.isArray(config.damage) ? config.damage.reduce((d, t) => t + d, 0) : config.damage),
+      damage: Math.round(Array.isArray(damage) ? damage.reduce((t, d) => t + d, 0) : damage),
+      ...Object_.pickProps(result, ["disabled", "attPatt", "attElmt", "reaction"]),
     };
   };
 }
@@ -246,11 +245,6 @@ export type ConfigTalentHitEventArgs = {
   target: SimulationTarget;
 };
 
-export type TalentEventConfig = {
-  damage: number | number[];
+export type TalentEventConfig = CalculationFinalResultAttackItem & {
   disabled: boolean;
-  attPatt: ActualAttackPattern;
-  attElmt: "pyro" | "hydro" | "electro" | "cryo" | "geo" | "anemo" | "dendro" | "phys";
-  // reaction: AttackReaction;
-  // record: CalcItemRecord;
 };

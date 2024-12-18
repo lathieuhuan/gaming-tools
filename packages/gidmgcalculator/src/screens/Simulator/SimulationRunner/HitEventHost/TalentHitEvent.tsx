@@ -39,6 +39,7 @@ export function TalentHitEvent(props: TalentHitEventProps) {
   // console.log("render: TalentAttackEvent", props.item.name);
 
   const config = props.getTalentEventConfig(attkBonuses, elmtModCtrls);
+  const damage = config.average;
 
   // console.log(config.record);
 
@@ -50,9 +51,7 @@ export function TalentHitEvent(props: TalentHitEventProps) {
       <div className="mt-3 flex justify-end items-center gap-2">
         <span>
           <span className="text-hint-color">Damage</span>{" "}
-          {Array.isArray(config.damage)
-            ? config.damage.map((d) => Math.round(d)).join(" + ")
-            : Math.round(config.damage)}
+          {Array.isArray(damage) ? damage.map((d) => Math.round(d)).join(" + ") : Math.round(damage)}
         </span>
 
         <ActionButton ctaText="Perform" onClick={(alsoSwitch) => props.onPerformEvent(elmtModCtrls, alsoSwitch)} />

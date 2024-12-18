@@ -1,6 +1,7 @@
-import type { AttackElement, AttackReaction } from "@Backend";
+import type { PartiallyRequired } from "rond";
 import type { HitEvent, ModifyEvent, SimulationChunk, SystemEvent, BaseEvent } from "@Src/types";
-import { PartiallyRequired } from "rond";
+import type { AttackReaction } from "@Backend";
+import type { ActualAttackElement } from "@Src/backend/types";
 
 type EntityPerformer = {
   type: "CHARACTER" | "WEAPON" | "ARTIFACT";
@@ -30,7 +31,7 @@ export type ProcessedHitEvent = TransformEntityEvent<HitEvent> &
   ProcessedBaseEvent & {
     damage: {
       value: number;
-      element: AttackElement;
+      element: ActualAttackElement;
     };
     reaction: AttackReaction;
   };

@@ -17,7 +17,7 @@ import {
 } from "./tools";
 
 /**
- * This class
+ * This class is for managing all simulation activities
  */
 export class SimulationControlCenter extends SimulationChunksControl {
   private readonly timeOn: boolean;
@@ -36,18 +36,16 @@ export class SimulationControlCenter extends SimulationChunksControl {
   constructor(simulation: Simulation) {
     super();
 
-    const { members } = simulation;
-
     this.timeOn = simulation.timeOn;
-    this.partyData = members.map((member) => $AppCharacter.get(member.name));
+    this.partyData = simulation.members.map((member) => $AppCharacter.get(member.name));
     this.target = simulation.target;
 
     this.partyBonusesCtrl = new PartyBonusControl(this.partyData);
 
     const appArtifacts: Record<number, AppArtifact> = {};
 
-    for (let i = 0; i < members.length; i++) {
-      const member = members[i];
+    for (let i = 0; i < this.partyData.length; i++) {
+      const member = simulation.members[i];
       const memberData = this.partyData[i];
       const weaponCode = member.weapon.code;
 
@@ -82,16 +80,14 @@ export class SimulationControlCenter extends SimulationChunksControl {
   genManager = () => {
     const members: Record<number, Pick<MemberControl, "info" | "data" | "weaponData" | "setBonuses">> = {};
 
-    for (const { code } of this.partyData) {
-      const control = this.memberCtrls[code];
-
-      members[code] = {
+    this.forEachMember((control) => {
+      members[control.data.code] = {
         info: control.info,
         data: control.data,
         weaponData: control.weaponData,
         setBonuses: control.setBonuses,
       };
-    }
+    });
 
     return {
       timeOn: this.timeOn,
@@ -123,18 +119,14 @@ export class SimulationControlCenter extends SimulationChunksControl {
     };
   };
 
-  private getAppWeaponOfMember = (code: number) => {
-    return this.appWeapons[this.memberCtrls[code].info.weapon.code];
-  };
-
-  private toAllMembers = (cb: (member: MemberControl) => void) => {
-    for (const { code } of this.partyData) {
-      cb(this.memberCtrls[code]);
-    }
-  };
-
   private applyPartyBonuses = () => {
-    this.toAllMembers((member) => member.applyBonuses());
+    this.forEachMember((member) => member.applyBonuses());
+  };
+
+  protected forEachMember = (cb: (member: MemberControl) => void) => {
+    for (const data of this.partyData) {
+      cb(this.memberCtrls[data.code]);
+    }
   };
 
   protected switchOnfield = (memberCode: number) => {
@@ -151,7 +143,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
 
   protected resetBonuses = () => {
     this.partyBonusesCtrl.reset();
-    this.toAllMembers((member) => member.resetBonuses());
+    this.forEachMember((member) => member.resetBonuses());
     this.applyPartyBonuses();
   };
 
@@ -219,7 +211,7 @@ export class SimulationControlCenter extends SimulationChunksControl {
     const performer = this.memberCtrls[event.performerCode];
     const { affect, attrBonuses, attkBonuses, performers, source } = performer.modify(
       event.modifier,
-      this.getAppWeaponOfMember(event.performerCode)
+      this.memberCtrls[event.performerCode].weaponData
     );
 
     if (affect) {

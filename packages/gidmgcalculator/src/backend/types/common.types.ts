@@ -56,6 +56,14 @@ export type AttackBonusType =
   | ReactionType
   | ExclusiveBonusType;
 
+export type CalcItemType = "attack" | "healing" | "shield" | "other";
+
+export type CalcItemCore = {
+  /** Default to 'attack' */
+  type?: CalcItemType;
+  id?: ExclusiveBonusType;
+};
+
 // ========== REACTIONS ==========
 
 export type AmplifyingReaction = (typeof AMPLIFYING_REACTIONS)[number];
