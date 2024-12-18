@@ -1,14 +1,10 @@
 import {
-  ActualAttackPattern,
   AppWeapon,
   AppliedAttackBonus,
   AppliedAttributeBonus,
   AttackBonusesControl,
   AttackPattern,
-  AttackReaction,
   CalcItem,
-  CalcItemRecord,
-  CharacterCalc,
   LevelableTalentType,
   ModifierAffectType,
   NORMAL_ATTACKS,
@@ -28,7 +24,7 @@ import type { Performer } from "../simulation-control.types";
 
 import Object_ from "@Src/utils/object-utils";
 import { MemberBonusesControl } from "./member-bonuses-control";
-import { CalculationFinalResultAttackItem, CalculationFinalResultItem } from "@Src/backend/types";
+import { CalculationFinalResultAttackItem } from "@Src/backend/types";
 
 /**
  * This class is for simulating member's actions
