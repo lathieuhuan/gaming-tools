@@ -9,8 +9,7 @@ import type {
 } from "../types";
 
 import { $AppCharacter, $AppWeapon } from "@Src/services";
-import { CalcItemCalculator } from "../calculation-utils/calc-item-calculator";
-import { OptimizerInputProcessor } from "../calculation/optimizer-input-processor";
+import { SetupOptimizer } from "../calculation/setup-optimizer";
 
 type OptimizeCalculation = {
   artifacts: CalcArtifacts;
@@ -35,31 +34,13 @@ export function optimizeSetup(
   const appWeapon = $AppWeapon.get(weapon.code)!;
   const partyData = $AppCharacter.getPartyData(party);
 
-  const processor = new OptimizerInputProcessor(setup, appChar, appWeapon, partyData).loadInputs(
-    artifacts,
-    artifactBuffConfigs,
-    target
-  );
-
   const calculations: OptimizeCalculation[] = [];
   let bestCalculation: OptimizeCalculation | undefined;
 
-  processor.process((artifacts, totalAttr, attkBonusesArchive, resistances, NAsConfig) => {
-    const result = new CalcItemCalculator(
-      target.level,
-      {
-        char,
-        appChar,
-        partyData,
-      },
-      NAsConfig,
-      customInfusion,
-      totalAttr,
-      attkBonusesArchive,
-      resistances
-    )
-      .genAttPattCalculator(patternCate)
-      .calculate(item, elmtModCtrls);
+  const optimizer = new SetupOptimizer(setup, appChar, appWeapon, partyData).load(artifacts, target);
+
+  optimizer.onOutput = (artifacts, totalAttr, attkBonusesArchive, calculator) => {
+    const result = calculator.genAttPattCalculator(patternCate).calculate(item, elmtModCtrls);
 
     const calculation: OptimizeCalculation = {
       damage: result.average,
@@ -70,10 +51,12 @@ export function optimizeSetup(
 
     calculations.push(calculation);
 
-    if (calculation.damage > (bestCalculation?.damage || 0)) {
+    if (!bestCalculation || calculation.damage > bestCalculation.damage) {
       bestCalculation = calculation;
     }
-  });
+  };
+
+  optimizer.optimize(artifactBuffConfigs);
 
   console.timeEnd();
   console.log(bestCalculation);

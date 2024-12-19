@@ -7,6 +7,7 @@ import type {
   CustomBuffCtrl,
   CustomDebuffCtrl,
   ElementModCtrl,
+  Infusion,
   ModifierCtrl,
   Party,
   PartyData,
@@ -56,6 +57,7 @@ export class InputProcessor {
   protected reaction?: ElementModCtrl["reaction"];
   protected infuse_reaction?: ElementModCtrl["infuse_reaction"];
   protected superconduct?: ElementModCtrl["superconduct"];
+  protected customInfusion: Infusion;
 
   protected calcInfo: CalculationInfo;
 
@@ -81,6 +83,9 @@ export class InputProcessor {
     this.reaction = setup.elmtModCtrls?.reaction;
     this.infuse_reaction = setup.elmtModCtrls?.infuse_reaction;
     this.superconduct = setup.elmtModCtrls?.superconduct;
+    this.customInfusion = setup.customInfusion || {
+      element: "phys",
+    };
 
     this.calcInfo = {
       char: setup.char,
