@@ -113,11 +113,7 @@ export function EquippedSetStash({ keyword, onChangeArtifact, onSelectSet }: Equ
           const opacityCls = `transition-opacity duration-400 ${visible ? "opacity-100" : "opacity-0"}`;
 
           return (
-            <div
-              key={i}
-              style={{ height: "8.75rem" }}
-              {...itemUtils.getProps(character.code, ["break-inside-avoid relative", hidden && "hidden"])}
-            >
+            <div key={i} {...itemUtils.getProps(character.code, ["break-inside-avoid relative", hidden && "hidden"])}>
               <Button
                 className="absolute top-3 right-3"
                 variant={character.code === chosen.characterCode ? "primary" : "default"}

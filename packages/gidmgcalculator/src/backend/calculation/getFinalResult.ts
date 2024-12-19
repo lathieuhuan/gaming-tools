@@ -1,5 +1,5 @@
-import type { CalcCharacter, CalcWeapon, ElementModCtrl, PartyData } from "@Src/types";
-import type { AttackBonusesArchive, AttackBonusesControl } from "../controls";
+import type { CalcCharacter, CalcWeapon, ElementModCtrl } from "@Src/types";
+import type { AttackBonusesArchive } from "../controls";
 import type {
   AppCharacter,
   AppWeapon,
@@ -8,28 +8,24 @@ import type {
   ResistanceReduction,
   TotalAttribute,
 } from "../types";
-import type { AttackPatternConfig } from "./getAttackPatternConfig";
 import type { CalcItemCalculator } from "./getCalcItemCalculator";
 
-import { TrackerControl } from "../controls";
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "../constants";
 import { TRANSFORMATIVE_REACTION_INFO } from "../constants/internal";
-import { CharacterCalc, GeneralCalc } from "../common-utils";
-import { genEmptyCalcFinalResultItem } from "../calculation-utils/genEmptyCalcFinal";
+import { TrackerControl } from "../controls";
+import { GeneralCalc } from "../common-utils";
 
 type GetFinalResultArgs = {
   char: CalcCharacter;
   appChar: AppCharacter;
-  partyData: PartyData;
   weapon: CalcWeapon;
   appWeapon: AppWeapon;
   totalAttr: TotalAttribute;
   attkBonusesArchive: AttackBonusesArchive;
   elmtModCtrls: ElementModCtrl;
   resistances: ResistanceReduction;
+  calcItemCalculator: CalcItemCalculator;
   tracker?: TrackerControl;
-  configAttackPattern: AttackPatternConfig;
-  calculateCalcItem: CalcItemCalculator;
 };
 
 export default function getFinalResult({
@@ -37,14 +33,12 @@ export default function getFinalResult({
   weapon,
   appChar,
   appWeapon,
-  partyData,
   totalAttr,
   attkBonusesArchive,
   elmtModCtrls,
   resistances,
+  calcItemCalculator,
   tracker,
-  configAttackPattern,
-  calculateCalcItem,
 }: GetFinalResultArgs) {
   const finalResult: CalculationFinalResult = {
     NAs: {},
@@ -55,32 +49,10 @@ export default function getFinalResult({
   };
 
   ATTACK_PATTERNS.forEach((ATT_PATT) => {
-    const { resultKey, disabled, configCalcItem } = configAttackPattern(ATT_PATT);
-    const level = CharacterCalc.getFinalTalentLv({ appChar, talentType: resultKey, char, partyData });
+    const calculator = calcItemCalculator.genAttPattCalculator(ATT_PATT);
 
     for (const calcItem of appChar.calcList[ATT_PATT]) {
-      const config = configCalcItem(calcItem, elmtModCtrls);
-
-      if (disabled && config.type === "attack") {
-        finalResult[resultKey][calcItem.name] = genEmptyCalcFinalResultItem(
-          config.type,
-          config.attPatt,
-          config.attElmt
-        );
-
-        tracker?.recordCalcItem(resultKey, calcItem.name, config.record);
-        continue;
-      }
-
-      const base = config.calculateBaseDamage(level);
-
-      // TALENT DMG
-      finalResult[resultKey][calcItem.name] = calculateCalcItem({
-        base,
-        ...config,
-      });
-
-      tracker?.recordCalcItem(resultKey, calcItem.name, config.record);
+      finalResult[calculator.resultKey][calcItem.name] = calculator.calculate(calcItem, elmtModCtrls);
     }
   });
 
@@ -102,6 +74,7 @@ export default function getFinalResult({
       average: cRate_ ? nonCrit * (1 + cDmg_ * cRate_) : nonCrit,
       attPatt: "none",
       attElmt: dmgType,
+      reaction: null,
     };
 
     tracker?.recordCalcItem("RXN_CALC", rxn, {
@@ -128,17 +101,9 @@ export default function getFinalResult({
       ],
       normalMult: 1,
     });
-    const attElmt: AttackElement = "phys";
+    const baseDmg = (totalAttr[basedOn] * mult) / 100;
 
-    finalResult.WP_CALC[name] = calculateCalcItem({
-      type,
-      attPatt: "none",
-      attElmt,
-      base: (totalAttr[basedOn] * mult) / 100,
-      record,
-      rxnMult: 1,
-      getBonus: (key) => attkBonusesArchive.get(key, attElmt),
-    });
+    finalResult.WP_CALC[name] = calcItemCalculator.genCalculator(type, "none", "phys").calculate(baseDmg, null, record);
 
     tracker?.recordCalcItem("WP_CALC", name, record);
   });
