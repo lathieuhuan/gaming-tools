@@ -1,13 +1,8 @@
 import { useRef } from "react";
 import { Checkbox, InputNumber } from "rond";
+import type { OptimizerExtraConfigs } from "@Backend";
 
-export type OptimizerExtraConfig = {
-  useOwnedPiece: boolean;
-  minEr?: number;
-  // minEm?: number;
-};
-
-type ConfigKey<TKey extends keyof OptimizerExtraConfig> = TKey;
+type ConfigKey<TKey extends keyof OptimizerExtraConfigs> = TKey;
 
 type RenderCheck = {
   type: "CHECK";
@@ -25,12 +20,12 @@ type RenderItem = (RenderCheck | RenderInput) & {
 
 interface StepExtraConfigsProps {
   id: string;
-  initialValue?: OptimizerExtraConfig;
+  initialValue?: OptimizerExtraConfigs;
   onChangeValid?: (valid: boolean) => void;
-  onSubmit: (config: OptimizerExtraConfig) => void;
+  onSubmit: (config: OptimizerExtraConfigs) => void;
 }
 export function StepExtraConfigs(props: StepExtraConfigsProps) {
-  const config = useRef<OptimizerExtraConfig>(props.initialValue || { useOwnedPiece: true, minEr: 100 });
+  const config = useRef<OptimizerExtraConfigs>(props.initialValue || { useOwnedPiece: true, minEr: 100 });
 
   const renderItems: RenderItem[] = [
     {
@@ -50,7 +45,7 @@ export function StepExtraConfigs(props: StepExtraConfigsProps) {
     // },
   ];
 
-  const onChange = <TKey extends keyof OptimizerExtraConfig>(key: TKey, value: OptimizerExtraConfig[TKey]) => {
+  const onChange = <TKey extends keyof OptimizerExtraConfigs>(key: TKey, value: OptimizerExtraConfigs[TKey]) => {
     config.current[key] = value;
   };
 

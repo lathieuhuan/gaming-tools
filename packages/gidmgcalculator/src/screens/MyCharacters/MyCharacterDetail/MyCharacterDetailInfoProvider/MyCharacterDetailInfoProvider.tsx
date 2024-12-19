@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { GeneralCalc, getCalculationStats } from "@Backend";
+import { GeneralCalc, InputProcessor } from "@Backend";
 
 import type { Character, UserArtifacts, UserWeapon } from "@Src/types";
 import type { RootState } from "@Store/store";
@@ -16,23 +16,14 @@ interface MyCharacterDetailInfoProviderProps {
   artifacts: UserArtifacts;
   children: React.ReactNode;
 }
-function MyCharacterDetailInfoProviderCore({ char, weapon, artifacts, children }: MyCharacterDetailInfoProviderProps) {
+function MyCharacterDetailInfoProviderCore(props: MyCharacterDetailInfoProviderProps) {
+  const { char, weapon, artifacts } = props;
   const { isLoading, data: appChar } = useAppCharacter(char.name);
   const appWeapon = $AppWeapon.get(weapon.code);
 
   const characterInfoState = useMemo<MyCharacterDetailInfoState>(() => {
     if (appChar && appWeapon) {
-      const { totalAttr, artAttr } = getCalculationStats(
-        {
-          char,
-          weapon,
-          artifacts,
-        },
-        {
-          appChar,
-          appWeapon,
-        }
-      );
+      const { totalAttr, artAttr } = new InputProcessor(props, appChar, appWeapon).getCalculationStats();
 
       return {
         loading: false,
@@ -58,7 +49,9 @@ function MyCharacterDetailInfoProviderCore({ char, weapon, artifacts, children }
   }, [char, appChar, weapon, appWeapon, artifacts]);
 
   return (
-    <MyCharacterDetailInfoContext.Provider value={characterInfoState}>{children}</MyCharacterDetailInfoContext.Provider>
+    <MyCharacterDetailInfoContext.Provider value={characterInfoState}>
+      {props.children}
+    </MyCharacterDetailInfoContext.Provider>
   );
 }
 

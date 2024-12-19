@@ -1,23 +1,30 @@
 import { useRef, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
 import { ButtonGroup } from "rond";
+import { optimizeSetup, OptimizerArtifactBuffConfigs, OptimizerExtraConfigs } from "@Backend";
 
 import type { ArtifactFilterSet } from "@Src/components/ArtifactFilter/hooks";
+import { useStore } from "@Src/features";
 import Modifier_ from "@Src/utils/modifier-utils";
-import { ArtifactBuffConfig, StepArtifactModConfig } from "./StepArtifactModConfig";
+import { selectActiveId, selectCalcSetupsById, selectTarget } from "@Store/calculator-slice";
+import { selectUserArtifacts } from "@Store/userdb-slice";
+import { StepArtifactModConfig } from "./StepArtifactModConfig";
 import { StepArtifactSetSelect } from "./StepArtifactSetSelect";
 import { SelectedCalcItem, StepCalcItemSelect } from "./StepCalcItemSelect";
-import { OptimizerExtraConfig, StepExtraConfigs } from "./StepExtraConfigs";
+import { StepExtraConfigs } from "./StepExtraConfigs";
+import Object_ from "@Src/utils/object-utils";
 
-type SavedConfig = {
+type SavedValues = {
   calcItem: SelectedCalcItem;
-  sets: ArtifactFilterSet[];
-  buffs: ArtifactBuffConfig;
-  extra: OptimizerExtraConfig;
+  filterSets: ArtifactFilterSet[];
+  setCodes: Set<number>;
+  buffConfigs: OptimizerArtifactBuffConfigs;
+  extraConfigs: OptimizerExtraConfigs;
 };
 
 export function Optimizer() {
-  const savedConfig = useRef<Partial<SavedConfig>>({});
+  const store = useStore();
+  const savedValues = useRef<Partial<SavedValues>>({});
   const [step, setStep] = useState(0);
   const [stepValids, setStepValids] = useState<boolean[]>([false, false, true, true]);
 
@@ -28,8 +35,20 @@ export function Optimizer() {
     const newStep = step + stepDiff;
 
     if (newStep >= FORM_IDS.length) {
-      console.log("complete");
-      console.log(savedConfig.current);
+      const config = savedValues.current;
+      const setup = store.select(selectCalcSetupsById)[store.select(selectActiveId)];
+      const artifacts = store.select(selectUserArtifacts).filter((artifact) => config.setCodes!.has(artifact.code));
+      const target = store.select(selectTarget);
+
+      optimizeSetup(
+        config.calcItem!.value,
+        config.calcItem!.patternCate,
+        Object_.clone(setup),
+        artifacts,
+        target,
+        config.buffConfigs!,
+        config.extraConfigs!
+      );
       return;
     }
 
@@ -46,21 +65,23 @@ export function Optimizer() {
     }
   };
 
-  const saveConfig = <TKey extends keyof SavedConfig>(key: TKey, value: SavedConfig[TKey]) => {
-    savedConfig.current[key] = value;
+  const saveConfig = <TKey extends keyof SavedValues>(key: TKey, value: SavedValues[TKey]) => {
+    savedValues.current[key] = value;
     navigateStep(1);
   };
 
   const onSubmitArtifactSets = (sets: ArtifactFilterSet[]) => {
-    saveConfig("sets", sets);
+    const setCodes = new Set<number>();
 
-    const newBuffConfigs = {
-      ...savedConfig.current.buffs,
+    const newBuffConfig = {
+      ...savedValues.current.buffConfigs,
     };
 
     for (const { code, data } of sets) {
-      if (!newBuffConfigs[code] && data.buffs) {
-        newBuffConfigs[code] = data.buffs.map<ArtifactBuffConfig[number][number]>((buff) => ({
+      setCodes.add(code);
+
+      if (!newBuffConfig[code] && data.buffs) {
+        newBuffConfig[code] = data.buffs.map<OptimizerArtifactBuffConfigs[number][number]>((buff) => ({
           index: buff.index,
           activated: true,
           inputs: Modifier_.createModCtrlInpus(buff.inputConfigs, true),
@@ -68,7 +89,9 @@ export function Optimizer() {
       }
     }
 
-    savedConfig.current.buffs = newBuffConfigs;
+    savedValues.current.filterSets = sets;
+    savedValues.current.buffConfigs = newBuffConfig;
+    saveConfig("setCodes", setCodes);
   };
 
   let stepRender: React.ReactNode;
@@ -78,7 +101,7 @@ export function Optimizer() {
       stepRender = (
         <StepCalcItemSelect
           id={currentFormId}
-          initialValue={savedConfig.current?.calcItem}
+          initialValue={savedValues.current?.calcItem}
           onChangeValid={(valid) => changeValid(0, valid)}
           onSubmit={(calcItem) => saveConfig("calcItem", calcItem)}
         />
@@ -88,7 +111,7 @@ export function Optimizer() {
       stepRender = (
         <StepArtifactSetSelect
           id={currentFormId}
-          initialValue={savedConfig.current?.sets?.map((set) => set.code)}
+          initialValue={savedValues.current?.setCodes}
           onChangeValid={(valid) => changeValid(1, valid)}
           onSubmit={onSubmitArtifactSets}
         />
@@ -100,11 +123,11 @@ export function Optimizer() {
         <StepArtifactModConfig
           id={currentFormId}
           initialValue={{
-            buffs: savedConfig.current.buffs,
+            buffs: savedValues.current.buffConfigs,
           }}
-          artifactSets={savedConfig.current.sets}
+          artifactSets={savedValues.current.filterSets}
           onChangeValid={(valid) => changeValid(2, valid)}
-          onSubmit={(config) => saveConfig("buffs", config)}
+          onSubmit={(config) => saveConfig("buffConfigs", config.buffs)}
         />
       );
       break;
@@ -113,9 +136,9 @@ export function Optimizer() {
       stepRender = (
         <StepExtraConfigs
           id={currentFormId}
-          initialValue={savedConfig.current.extra}
+          initialValue={savedValues.current.extraConfigs}
           onChangeValid={(valid) => changeValid(3, valid)}
-          onSubmit={(config) => saveConfig("extra", config)}
+          onSubmit={(config) => saveConfig("extraConfigs", config)}
         />
       );
       break;

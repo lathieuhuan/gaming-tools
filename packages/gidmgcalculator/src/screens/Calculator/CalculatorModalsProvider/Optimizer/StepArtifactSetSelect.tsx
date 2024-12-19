@@ -4,16 +4,16 @@ import { useStoreSnapshot } from "@Src/features";
 
 interface StepArtifactSetSelectProps {
   id: string;
-  initialValue?: number[];
+  initialValue?: Set<number>;
   onChangeValid?: (valid: boolean) => void;
-  onSubmit: (filterSets: ArtifactFilterSet[]) => void;
+  onSubmit: (sets: ArtifactFilterSet[]) => void;
 }
 export function StepArtifactSetSelect(props: StepArtifactSetSelectProps) {
   const data = useStoreSnapshot((state) => {
     const artifacts = state.userdb.userArts;
     return {
       artifacts,
-      codes: props.initialValue || artifacts.map((artifact) => artifact.code),
+      codes: props.initialValue ? [...props.initialValue] : artifacts.map((artifact) => artifact.code),
     };
   });
 

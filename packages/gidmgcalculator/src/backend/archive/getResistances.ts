@@ -12,7 +12,6 @@ export default function getResistances(
   target: Target,
   tracker?: TrackerControl
 ) {
-  const { appChar } = info;
   const resistReductCtrl = new ResistanceReductionControl(info, tracker);
 
   // APPLY CUSTOM DEBUFFS
@@ -22,7 +21,7 @@ export default function getResistances(
 
   // APPLY SELF DEBUFFS
   for (const ctrl of selfDebuffCtrls) {
-    const debuff = Array_.findByIndex(appChar.debuffs, ctrl.index);
+    const debuff = Array_.findByIndex(info.appChar.debuffs, ctrl.index);
 
     if (ctrl.activated && debuff?.effects && isGrantedEffect(debuff, char)) {
       resistReductCtrl.applyDebuff(debuff, ctrl.inputs ?? [], true, `Self / ${debuff.src}`);

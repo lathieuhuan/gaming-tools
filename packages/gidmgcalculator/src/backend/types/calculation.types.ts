@@ -1,5 +1,5 @@
 import type { PartiallyRequired } from "rond";
-import type { Character, PartyData } from "@Src/types";
+import type { ArtifactModCtrl, Character, PartyData } from "@Src/types";
 import type {
   ActualAttackElement,
   ActualAttackPattern,
@@ -83,3 +83,15 @@ export type CalculationFinalResultKey = LevelableTalentType | "RXN_CALC" | "WP_C
 export type CalculationFinalResultGroup = Record<string, CalculationFinalResultItem>;
 
 export type CalculationFinalResult = Record<CalculationFinalResultKey, CalculationFinalResultGroup>;
+
+// OPTIMIZER
+
+export type OptimizerArtifactBuffConfigs = {
+  [code: string]: Pick<ArtifactModCtrl, "index" | "activated" | "inputs">[];
+};
+
+export type OptimizerExtraConfigs = {
+  useOwnedPiece: boolean;
+  minEr?: number;
+  // minEm?: number;
+};

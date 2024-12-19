@@ -3,7 +3,6 @@ import type { AttackBonusesArchive } from "../controls";
 import type {
   AppCharacter,
   AppWeapon,
-  AttackElement,
   CalculationFinalResult,
   ResistanceReduction,
   TotalAttribute,

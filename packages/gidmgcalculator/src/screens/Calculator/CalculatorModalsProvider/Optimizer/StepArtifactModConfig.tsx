@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { OptimizerArtifactBuffConfigs } from "@Backend";
 import type { ArtifactModCtrl } from "@Src/types";
 
 import { GenshinModifierView } from "@Src/components";
@@ -6,21 +7,19 @@ import { ArtifactFilterSet } from "@Src/components/ArtifactFilter/hooks";
 import { getArtifactDescription } from "@Src/components/modifier-list/modifiers.utils";
 import Array_ from "@Src/utils/array-utils";
 
-export type ArtifactBuffConfig = Record<number, Pick<ArtifactModCtrl, "index" | "activated" | "inputs">[]>;
-
 export type ArtifactModifierConfig = {
-  buffs?: ArtifactBuffConfig;
+  buffs: OptimizerArtifactBuffConfigs;
 };
 
 export interface StepArtifactModConfigProps {
   id: string;
-  initialValue: ArtifactModifierConfig;
+  initialValue: Partial<ArtifactModifierConfig>;
   artifactSets?: ArtifactFilterSet[];
   onChangeValid?: (valid: boolean) => void;
   onSubmit: (modConfig: ArtifactModifierConfig) => void;
 }
 export function StepArtifactModConfig(props: StepArtifactModConfigProps) {
-  const [configs, setConfigs] = useState<ArtifactBuffConfig>(props.initialValue.buffs || {});
+  const [configs, setConfigs] = useState<OptimizerArtifactBuffConfigs>(props.initialValue.buffs || {});
 
   useEffect(() => {
     props.onChangeValid?.(true);
@@ -61,7 +60,10 @@ export function StepArtifactModConfig(props: StepArtifactModConfigProps) {
       className="h-full flex flex-col"
       onSubmit={(e) => {
         e.preventDefault();
-        props.onSubmit(configs);
+
+        props.onSubmit({
+          buffs: configs,
+        });
       }}
     >
       <p>Artifact buffs to be activated</p>

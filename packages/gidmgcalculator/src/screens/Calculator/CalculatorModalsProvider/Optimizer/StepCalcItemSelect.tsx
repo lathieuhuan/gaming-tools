@@ -1,19 +1,19 @@
-import { AttackPattern, LevelableTalentType, NORMAL_ATTACKS } from "@Backend";
+import { AttackPattern, CalcItem, LevelableTalentType, NORMAL_ATTACKS } from "@Backend";
 import { useTranslation } from "@Src/hooks";
 import { useCharacterData } from "../../contexts";
 import { useState } from "react";
 import { clsx } from "rond";
 
 export type SelectedCalcItem = {
-  attPatt: AttackPattern;
-  index: number;
+  patternCate: AttackPattern;
+  value: CalcItem;
 };
 
 type RenderGroup = {
   title: LevelableTalentType;
   subGroups: Array<{
     attPatt: AttackPattern;
-    items: string[];
+    items: CalcItem[];
   }>;
 };
 
@@ -21,7 +21,7 @@ interface StepCalcItemSelectProps {
   id: string;
   initialValue?: SelectedCalcItem;
   onChangeValid?: (valid: boolean) => void;
-  onSubmit: (calcItem: SelectedCalcItem) => void;
+  onSubmit: (selected: SelectedCalcItem) => void;
 }
 export function StepCalcItemSelect(props: StepCalcItemSelectProps) {
   const { t } = useTranslation();
@@ -36,27 +36,17 @@ export function StepCalcItemSelect(props: StepCalcItemSelectProps) {
       subGroups: NORMAL_ATTACKS.map((attPatt) => {
         return {
           attPatt,
-          items: appChar.calcList[attPatt].map((item) => item.name),
+          items: appChar.calcList[attPatt],
         };
       }),
     },
     {
       title: "ES",
-      subGroups: [
-        {
-          attPatt: "ES",
-          items: appChar.calcList.ES.map((item) => item.name),
-        },
-      ],
+      subGroups: [{ attPatt: "ES", items: appChar.calcList.ES }],
     },
     {
       title: "EB",
-      subGroups: [
-        {
-          attPatt: "EB",
-          items: appChar.calcList.EB.map((item) => item.name),
-        },
-      ],
+      subGroups: [{ attPatt: "EB", items: appChar.calcList.EB }],
     },
   ];
 
@@ -83,10 +73,10 @@ export function StepCalcItemSelect(props: StepCalcItemSelectProps) {
               <p className="text-secondary-1">{t(group.title)}</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {group.subGroups.map((subGroup) => {
-                  const isSelectedGroup = subGroup.attPatt === selectedItems[0]?.attPatt;
+                  const isSelectedGroup = subGroup.attPatt === selectedItems[0]?.patternCate;
 
                   return subGroup.items.map((item, index) => {
-                    const isSeleted = isSelectedGroup && index === selectedItems[0]?.index;
+                    const isSeleted = isSelectedGroup && item.name === selectedItems[0]?.value.name;
 
                     return (
                       <span
@@ -95,9 +85,9 @@ export function StepCalcItemSelect(props: StepCalcItemSelectProps) {
                           "px-2 py-1 font-medium rounded",
                           isSeleted ? "bg-active-color text-black" : "hover:bg-surface-3"
                         )}
-                        onClick={() => onClickItem({ attPatt: subGroup.attPatt, index })}
+                        onClick={() => onClickItem({ patternCate: subGroup.attPatt, value: item })}
                       >
-                        {item}
+                        {item.name}
                       </span>
                     );
                   });
