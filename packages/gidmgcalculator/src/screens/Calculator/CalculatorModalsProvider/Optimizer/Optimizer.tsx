@@ -1,18 +1,18 @@
 import { useRef, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
 import { ButtonGroup } from "rond";
-import { optimizeSetup, OptimizerArtifactBuffConfigs, OptimizerExtraConfigs } from "@Backend";
+import { OptimizerArtifactBuffConfigs, OptimizerExtraConfigs, optimizeSetup } from "@Backend";
 
-import type { ArtifactFilterSet } from "@Src/components/ArtifactFilter/hooks";
+import type { ArtifactFilterSet } from "@Src/components/ArtifactFilter";
 import { useStore } from "@Src/features";
 import Modifier_ from "@Src/utils/modifier-utils";
+import Object_ from "@Src/utils/object-utils";
 import { selectActiveId, selectCalcSetupsById, selectTarget } from "@Store/calculator-slice";
 import { selectUserArtifacts } from "@Store/userdb-slice";
 import { StepArtifactModConfig } from "./StepArtifactModConfig";
 import { StepArtifactSetSelect } from "./StepArtifactSetSelect";
 import { SelectedCalcItem, StepCalcItemSelect } from "./StepCalcItemSelect";
 import { StepExtraConfigs } from "./StepExtraConfigs";
-import Object_ from "@Src/utils/object-utils";
 
 type SavedValues = {
   calcItem: SelectedCalcItem;

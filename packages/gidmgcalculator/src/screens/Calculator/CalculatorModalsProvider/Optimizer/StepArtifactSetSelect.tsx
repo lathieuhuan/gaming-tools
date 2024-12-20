@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ArtifactFilterSet, useArtifactSetFilter } from "@Src/components/ArtifactFilter/hooks";
+import { useArtifactSetFilter, type ArtifactFilterSet } from "@Src/components/ArtifactFilter";
 import { useStoreSnapshot } from "@Src/features";
 
 interface StepArtifactSetSelectProps {

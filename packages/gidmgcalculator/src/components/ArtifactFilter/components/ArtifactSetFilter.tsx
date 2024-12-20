@@ -9,6 +9,7 @@ export type ArtifactFilterSet = {
   chosen: boolean;
   icon: string;
   data: AppArtifact;
+  count: number;
 };
 
 export interface ArtifactSetFilterProps
@@ -34,7 +35,7 @@ export function ArtifactSetFilter({
         <div className={setsWrapCls}>
           {setOptions.map((set, i) => {
             return (
-              <div key={i} className="p-2" onClick={() => onClickSet?.(i)}>
+              <div key={i} className="p-2 relative" onClick={() => onClickSet?.(i)}>
                 <div
                   title={set.data.name}
                   className={clsx(
@@ -44,6 +45,10 @@ export function ArtifactSetFilter({
                 >
                   <GenshinImage className="p-1" src={set.icon} imgType="artifact" />
                 </div>
+
+                <span className="absolute top-1 left-1 rounded bg-black/60 text-light-default flex">
+                  <span className="px-1 text-sm font-semibold rounded bg-black/30">{set.count}</span>
+                </span>
               </div>
             );
           })}

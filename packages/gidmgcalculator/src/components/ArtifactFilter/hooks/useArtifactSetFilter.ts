@@ -1,40 +1,46 @@
 import { useMemo, useState } from "react";
-import type { AppArtifact, ArtifactType } from "@Backend";
+import type { ArtifactType } from "@Backend";
 import type { CalcArtifact } from "@Src/types";
 
 import { $AppArtifact } from "@Src/services";
-import Array_ from "@Src/utils/array-utils";
 
-import { ArtifactSetFilter, type ArtifactSetFilterProps } from "../components/ArtifactSetFilter";
+import {
+  ArtifactSetFilter,
+  type ArtifactSetFilterProps,
+  type ArtifactFilterSet,
+} from "../components/ArtifactSetFilter";
 
 type Config = {
   artifactType?: ArtifactType;
-};
-
-export type ArtifactFilterSet = {
-  code: number;
-  chosen: boolean;
-  icon: string;
-  data: AppArtifact;
 };
 
 export function useArtifactSetFilter(artifacts: CalcArtifact[], chosenCodes: number[], config?: Config) {
   const { artifactType = "flower" } = config || {};
 
   const initialSets = useMemo(() => {
+    const countMap = new Map<number, ArtifactFilterSet>();
     const result: ArtifactFilterSet[] = [];
 
     for (const { code } of artifacts) {
-      if (!Array_.findByCode(result, code)) {
+      const filterSet = countMap.get(code);
+
+      if (filterSet) {
+        filterSet.count += 1;
+      } //
+      else {
         const data = $AppArtifact.getSet(code);
 
         if (data) {
-          result.push({
+          const filterSet: ArtifactFilterSet = {
             code,
             chosen: chosenCodes.includes(code),
             icon: data[artifactType].icon,
             data,
-          });
+            count: 1,
+          };
+
+          countMap.set(code, filterSet);
+          result.push(filterSet);
         }
       }
     }

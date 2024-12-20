@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import type { OptimizerArtifactBuffConfigs } from "@Backend";
 import type { ArtifactModCtrl } from "@Src/types";
+import type { ArtifactFilterSet } from "@Src/components/ArtifactFilter";
 
 import { GenshinModifierView } from "@Src/components";
-import { ArtifactFilterSet } from "@Src/components/ArtifactFilter/hooks";
 import { getArtifactDescription } from "@Src/components/modifier-list/modifiers.utils";
 import Array_ from "@Src/utils/array-utils";
 
