@@ -17,9 +17,7 @@ export function StepArtifactSetSelect(props: StepArtifactSetSelectProps) {
     };
   });
 
-  const { setOptions, renderArtifactSetFilter } = useArtifactSetFilter(data.artifacts, data.codes, {
-    title: "Artifact Sets to be used",
-  });
+  const { setOptions, setFilterProps, ArtifactSetFilter } = useArtifactSetFilter(data.artifacts, data.codes);
 
   useEffect(() => {
     props.onChangeValid?.(setOptions.some((option) => option.chosen));
@@ -34,7 +32,7 @@ export function StepArtifactSetSelect(props: StepArtifactSetSelectProps) {
         props.onSubmit(setOptions.filter((option) => option.chosen));
       }}
     >
-      {renderArtifactSetFilter(null, "pr-2 grid grid-cols-4")}
+      <ArtifactSetFilter {...setFilterProps} title="Only use Artifact Sets" setsWrapCls="pr-2 grid grid-cols-4" />
     </form>
   );
 }

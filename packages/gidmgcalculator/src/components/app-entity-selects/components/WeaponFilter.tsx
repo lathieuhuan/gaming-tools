@@ -30,9 +30,12 @@ export function WeaponFilter({
   // when the drawer is coming out, so we render the button group later
   const [showActions, setShowActions] = useState(false);
 
-  const { weaponTypes, updateWeaponTypes, renderWeaponTypeSelect } = useWeaponTypeSelect(initialFilter?.types, {
-    multiple: true,
-  });
+  const { weaponTypes, weaponTypeSelectProps, updateWeaponTypes, WeaponTypeSelect } = useWeaponTypeSelect(
+    initialFilter?.types,
+    {
+      multiple: true,
+    }
+  );
   const { selectedRarities, updateRarities, renderRaritySelect } = useRaritySelect(
     [5, 4, 3, 2, 1],
     initialFilter?.rarities
@@ -61,7 +64,7 @@ export function WeaponFilter({
               disabledClearAll={!weaponTypes.length}
               onClickClearAll={() => updateWeaponTypes([])}
             >
-              {renderWeaponTypeSelect("px-1")}
+              <WeaponTypeSelect {...weaponTypeSelectProps} className="px-1" />
             </FilterTemplate>
 
             <div className="w-full h-px bg-surface-border" />

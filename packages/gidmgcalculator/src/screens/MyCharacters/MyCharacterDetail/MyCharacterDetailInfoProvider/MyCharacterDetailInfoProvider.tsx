@@ -16,14 +16,13 @@ interface MyCharacterDetailInfoProviderProps {
   artifacts: UserArtifacts;
   children: React.ReactNode;
 }
-function MyCharacterDetailInfoProviderCore(props: MyCharacterDetailInfoProviderProps) {
-  const { char, weapon, artifacts } = props;
+function MyCharacterDetailInfoProviderCore({ char, weapon, artifacts, children }: MyCharacterDetailInfoProviderProps) {
   const { isLoading, data: appChar } = useAppCharacter(char.name);
   const appWeapon = $AppWeapon.get(weapon.code);
 
   const characterInfoState = useMemo<MyCharacterDetailInfoState>(() => {
     if (appChar && appWeapon) {
-      const { totalAttr, artAttr } = new InputProcessor(props, appChar, appWeapon).getCalculationStats();
+      const stats = new InputProcessor({ char, weapon, artifacts }, appChar, appWeapon).getCalculationStats();
 
       return {
         loading: false,
@@ -34,8 +33,8 @@ function MyCharacterDetailInfoProviderCore(props: MyCharacterDetailInfoProviderP
           appWeapon,
           artifacts,
           setBonuses: GeneralCalc.getArtifactSetBonuses(artifacts),
-          totalAttr,
-          artAttr,
+          totalAttr: stats.totalAttr,
+          artAttr: stats.artAttr,
         },
       };
     }
@@ -49,9 +48,7 @@ function MyCharacterDetailInfoProviderCore(props: MyCharacterDetailInfoProviderP
   }, [char, appChar, weapon, appWeapon, artifacts]);
 
   return (
-    <MyCharacterDetailInfoContext.Provider value={characterInfoState}>
-      {props.children}
-    </MyCharacterDetailInfoContext.Provider>
+    <MyCharacterDetailInfoContext.Provider value={characterInfoState}>{children}</MyCharacterDetailInfoContext.Provider>
   );
 }
 

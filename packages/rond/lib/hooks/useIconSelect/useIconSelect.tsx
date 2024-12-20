@@ -8,14 +8,48 @@ type IconOption<T> = {
   icon: string | JSX.Element;
 };
 
-type SelectSize = "medium" | "large";
+export interface IconSelectProps<T> {
+  className?: ClassValue;
+  iconCls?: ClassValue;
+  selectedCls?: ClassValue;
+  imageProps?: Omit<ImageProps, "src">;
+  /** Default to 'medium' */
+  size?: "medium" | "large";
+  options: IconOption<T>[];
+  selectedIcons: T[];
+  onClickOption?: (value: T, selected: boolean) => void;
+}
+function IconSelect<T>(props: IconSelectProps<T>) {
+  const { size = "medium" } = props;
+
+  return (
+    <div className={clsx("ron-icon-select", props.className)}>
+      {props.options.map((option, i) => {
+        const index = props.selectedIcons.indexOf(option.value);
+        const selected = index !== -1;
+
+        return (
+          <button
+            key={i}
+            type="button"
+            className={clsx(
+              `ron-icon-select-option ron-icon-select-option-${size} ron-flex-center ron-glow-on-hover`,
+              props?.iconCls,
+              selected && props?.selectedCls
+            )}
+            onClick={() => props.onClickOption?.(option.value, selected)}
+          >
+            {typeof option.icon === "string" ? <Image src={option.icon} {...props.imageProps} /> : option.icon}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 export type IconSelectInitialValues<T> = T | T[] | null;
 
 export type IconSelectConfig<T> = {
-  size?: SelectSize;
-  iconCls?: ClassValue;
-  selectedCls?: ClassValue;
   multiple?: boolean;
   required?: boolean;
   onChange?: (selectedIcons: T[]) => void;
@@ -29,7 +63,6 @@ export function useIconSelect<T>(
   const [selectedIcons, setSelectedIcons] = useState<T[]>(
     initialValues ? (Array.isArray(initialValues) ? initialValues : [initialValues]) : []
   );
-  const { size = "medium" } = config || {};
 
   const updateSelectedIcons = (newTypes: T[]) => {
     if (!config?.required || newTypes.length) {
@@ -38,7 +71,7 @@ export function useIconSelect<T>(
     }
   };
 
-  const onClickIcon = (value: T, currentSelected: boolean) => {
+  const onClickOption = (value: T, currentSelected: boolean) => {
     const newTypes = config?.multiple
       ? currentSelected
         ? selectedIcons.filter((type) => type !== value)
@@ -48,33 +81,16 @@ export function useIconSelect<T>(
     updateSelectedIcons(newTypes);
   };
 
-  const renderIconSelect = (className?: ClassValue, imageProps?: Omit<ImageProps, "src">) => (
-    <div className={clsx("ron-icon-select", className)}>
-      {options.map((option, i) => {
-        const index = selectedIcons.indexOf(option.value);
-        const selected = index !== -1;
-
-        return (
-          <button
-            key={i}
-            type="button"
-            className={clsx(
-              `ron-icon-select-option ron-icon-select-option-${size} ron-flex-center ron-glow-on-hover`,
-              config?.iconCls,
-              selected && config?.selectedCls
-            )}
-            onClick={() => onClickIcon(option.value, selected)}
-          >
-            {typeof option.icon === "string" ? <Image src={option.icon} {...imageProps} /> : option.icon}
-          </button>
-        );
-      })}
-    </div>
-  );
+  const selectProps = {
+    options,
+    selectedIcons,
+    onClickOption,
+  } satisfies IconSelectProps<T>;
 
   return {
     selectedIcons,
+    selectProps,
     updateSelectedIcons,
-    renderIconSelect,
+    IconSelect,
   };
 }

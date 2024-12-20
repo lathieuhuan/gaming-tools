@@ -54,7 +54,7 @@ const ArtifactSmith = ({
     }
   };
 
-  const { artifactTypes, updateArtifactTypes, renderArtifactTypeSelect } = useArtifactTypeSelect(
+  const { artifactTypes, artifactTypeSelectProps, updateArtifactTypes, ArtifactTypeSelect } = useArtifactTypeSelect(
     workpiece?.type || forcedType || initialTypes,
     {
       multiple: batchForging,
@@ -175,7 +175,7 @@ const ArtifactSmith = ({
           <ArtifactConfig
             config={artifactConfig}
             maxRarity={maxRarity}
-            typeSelect={forcedType ? null : renderArtifactTypeSelect()}
+            typeSelect={forcedType ? null : <ArtifactTypeSelect {...artifactTypeSelectProps} />}
             batchConfigNode={renderBatchConfigNode(afterSelect, selectBody)}
             mainActionLabel={workpiece ? "Reforge" : "Forge"}
             moreButtons={[

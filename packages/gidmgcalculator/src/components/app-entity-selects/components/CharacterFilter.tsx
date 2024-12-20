@@ -31,17 +31,19 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
 
   const {
     selectedIcons: elementTypes,
+    selectProps: elementSelectProps,
     updateSelectedIcons: updateElementTypes,
-    renderIconSelect: renderElementSelect,
+    IconSelect: ElementSelect,
   } = useIconSelect(ELEMENT_ICONS, initialFilter?.elementTypes, {
     multiple: true,
-    iconCls: "text-2xl",
-    selectedCls: "shadow-3px-3px shadow-active-color",
   });
 
-  const { weaponTypes, updateWeaponTypes, renderWeaponTypeSelect } = useWeaponTypeSelect(initialFilter?.weaponTypes, {
-    multiple: true,
-  });
+  const { weaponTypes, weaponTypeSelectProps, updateWeaponTypes, WeaponTypeSelect } = useWeaponTypeSelect(
+    initialFilter?.weaponTypes,
+    {
+      multiple: true,
+    }
+  );
 
   const { selectedRarities, updateRarities, renderRaritySelect } = useRaritySelect([5, 4], initialFilter?.rarities);
 
@@ -67,7 +69,14 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
           disabledClearAll={!elementTypes.length}
           onClickClearAll={() => updateElementTypes([])}
         >
-          <div className="hide-scrollbar">{renderElementSelect("p-1")}</div>
+          <div className="hide-scrollbar">
+            <ElementSelect
+              {...elementSelectProps}
+              className="p-1"
+              iconCls="text-2xl"
+              selectedCls="shadow-3px-3px shadow-active-color"
+            />
+          </div>
         </FilterTemplate>
 
         <div className="w-full h-px bg-surface-border" />
@@ -77,7 +86,12 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
           disabledClearAll={!weaponTypes.length}
           onClickClearAll={() => updateWeaponTypes([])}
         >
-          {renderWeaponTypeSelect("px-1", { defaultFallback: { cls: "p-1.5" } })}
+          <WeaponTypeSelect
+            {...weaponTypeSelectProps}
+            imageProps={{
+              defaultFallback: { cls: "p-1.5" },
+            }}
+          />
         </FilterTemplate>
 
         <div className="w-full h-px bg-surface-border" />

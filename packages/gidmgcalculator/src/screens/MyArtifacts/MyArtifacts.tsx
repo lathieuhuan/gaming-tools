@@ -26,7 +26,7 @@ export default function MyArtifacts() {
   const [modalType, setModalType] = useState<ModalType>("");
   const [filter, setFilter] = useState<ArtifactFilterCondition>(DEFAULT_ARTIFACT_FILTER);
 
-  const { updateArtifactTypes, renderArtifactTypeSelect } = useArtifactTypeSelect(null, {
+  const { artifactTypeSelectProps, updateArtifactTypes, ArtifactTypeSelect } = useArtifactTypeSelect(null, {
     multiple: true,
     onChange: (selectedTypes) => {
       setFilter((prev) => ({
@@ -88,7 +88,7 @@ export default function MyArtifacts() {
         ]}
       />
 
-      {screenWatcher.isFromSize("md") ? renderArtifactTypeSelect() : null}
+      {screenWatcher.isFromSize("md") ? <ArtifactTypeSelect {...artifactTypeSelectProps} /> : null}
 
       <div className="flex cursor-pointer">
         <button

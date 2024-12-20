@@ -1,16 +1,14 @@
 import { useMemo, useState } from "react";
-import { clsx, type ClassValue } from "rond";
 import type { AppArtifact, ArtifactType } from "@Backend";
-
 import type { CalcArtifact } from "@Src/types";
+
 import { $AppArtifact } from "@Src/services";
 import Array_ from "@Src/utils/array-utils";
-import { GenshinImage } from "@Src/components";
-import { FilterTemplate } from "../../FilterTemplate";
+
+import { ArtifactSetFilter, type ArtifactSetFilterProps } from "../components/ArtifactSetFilter";
 
 type Config = {
   artifactType?: ArtifactType;
-  title?: React.ReactNode;
 };
 
 export type ArtifactFilterSet = {
@@ -21,7 +19,7 @@ export type ArtifactFilterSet = {
 };
 
 export function useArtifactSetFilter(artifacts: CalcArtifact[], chosenCodes: number[], config?: Config) {
-  const { artifactType = "flower", title = "Filter by Set" } = config || {};
+  const { artifactType = "flower" } = config || {};
 
   const initialSets = useMemo(() => {
     const result: ArtifactFilterSet[] = [];
@@ -57,39 +55,16 @@ export function useArtifactSetFilter(artifacts: CalcArtifact[], chosenCodes: num
     setSetOptions(setOptions.map((set) => ({ ...set, chosen: false })));
   };
 
-  const renderArtifactSetFilter = (className?: ClassValue, setsWrapCls = "") => {
-    return (
-      <FilterTemplate
-        className={["h-full flex flex-col", className]}
-        title={title}
-        disabledClearAll={setOptions.every((set) => !set.chosen)}
-        onClickClearAll={clearFilter}
-      >
-        <div className="grow custom-scrollbar">
-          <div className={setsWrapCls}>
-            {setOptions.map((set, i) => {
-              return (
-                <div key={i} className="p-2" onClick={() => toggleSet(i)}>
-                  <div
-                    title={set.data.name}
-                    className={clsx(
-                      "rounded-circle",
-                      set.chosen ? "shadow-3px-2px shadow-bonus-color bg-surface-1" : "bg-transparent"
-                    )}
-                  >
-                    <GenshinImage className="p-1" src={set.icon} imgType="artifact" />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </FilterTemplate>
-    );
-  };
+  const setFilterProps = {
+    title: "Filter by Set",
+    setOptions,
+    onClickSet: toggleSet,
+    onClickClearAll: clearFilter,
+  } satisfies ArtifactSetFilterProps;
 
   return {
     setOptions,
-    renderArtifactSetFilter,
+    setFilterProps,
+    ArtifactSetFilter,
   };
 }

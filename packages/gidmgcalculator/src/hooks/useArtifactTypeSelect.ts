@@ -1,6 +1,6 @@
-import { useIconSelect, type IconSelectConfig, type IconSelectInitialValues } from "rond";
+import { IconSelectProps, useIconSelect, type IconSelectConfig, type IconSelectInitialValues } from "rond";
 import { ArtifactType } from "@Backend";
-import {  getImgSrc } from "@Src/utils";
+import { getImgSrc } from "@Src/utils";
 import Entity_ from "@Src/utils/entity-utils";
 
 const options = Entity_.allArtifactIcons((icon) => {
@@ -12,18 +12,20 @@ const options = Entity_.allArtifactIcons((icon) => {
 
 export function useArtifactTypeSelect(
   initialValues?: IconSelectInitialValues<ArtifactType>,
-  config?: Omit<IconSelectConfig<ArtifactType>, "iconCls" | "selectedCls">
+  config?: IconSelectConfig<ArtifactType>
 ) {
-  const finalConfig: IconSelectConfig<ArtifactType> = {
-    ...config,
+  const { selectedIcons, selectProps, updateSelectedIcons, IconSelect } = useIconSelect(options, initialValues, config);
+
+  const mergeProps = {
+    ...selectProps,
     iconCls: "p-1",
     selectedCls: "bg-active-color",
-  };
-  const { selectedIcons, updateSelectedIcons, renderIconSelect } = useIconSelect(options, initialValues, finalConfig);
+  } satisfies IconSelectProps<ArtifactType>;
 
   return {
     artifactTypes: selectedIcons,
+    artifactTypeSelectProps: mergeProps,
     updateArtifactTypes: updateSelectedIcons,
-    renderArtifactTypeSelect: renderIconSelect,
+    ArtifactTypeSelect: IconSelect,
   };
 }

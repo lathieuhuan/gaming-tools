@@ -52,16 +52,14 @@ export const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, o
     );
   };
 
-  const { artifactTypes, updateArtifactTypes, renderArtifactTypeSelect } = useArtifactTypeSelect(initialFilter.types, {
-    size: "large",
-    multiple: true,
-  });
-  const { statsFilter, hasDuplicates, renderArtifactStatFilter } = useArtifactStatFilter(initialFilter.stats, {
-    title: renderTitle("Filter by Stat", 1),
-    artifactType: forcedType,
-  });
-  const { setOptions, renderArtifactSetFilter } = useArtifactSetFilter(artifacts, initialFilter.codes, {
-    title: renderTitle("Filter by Set", 2),
+  const { artifactTypes, artifactTypeSelectProps, updateArtifactTypes, ArtifactTypeSelect } = useArtifactTypeSelect(
+    initialFilter.types,
+    {
+      multiple: true,
+    }
+  );
+  const { statsFilter, statsFilterProps, ArtifactStatFilter } = useArtifactStatFilter(initialFilter.stats);
+  const { setOptions, setFilterProps, ArtifactSetFilter } = useArtifactSetFilter(artifacts, initialFilter.codes, {
     artifactType: forcedType,
   });
 
@@ -98,7 +96,11 @@ export const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, o
               disabledClearAll={!artifactTypes.length}
               onClickClearAll={() => updateArtifactTypes([])}
             >
-              {renderArtifactTypeSelect("justify-center py-4 hide-scrollbar")}
+              <ArtifactTypeSelect
+                {...artifactTypeSelectProps}
+                size="large"
+                className="justify-center py-4 hide-scrollbar"
+              />
             </FilterTemplate>
           ) : (
             <div className="flex flex-col items-center shrink-0 space-y-4">
@@ -112,7 +114,7 @@ export const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, o
                 onClick={() => updateArtifactTypes([])}
               />
 
-              {renderArtifactTypeSelect("py-2 flex-col hide-scrollbar")}
+              <ArtifactTypeSelect {...artifactTypeSelectProps} size="large" className="py-2 flex-col hide-scrollbar" />
             </div>
           )
         ) : null}
@@ -120,20 +122,25 @@ export const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, o
         {!forcedType && <div className="h-full w-px bg-surface-border hidden md:block" />}
 
         <div className={clsx(wrapperCls(activeIndex !== 1), "shrink-0", !isSmallScreen && "w-56")}>
-          {renderArtifactStatFilter()}
+          <ArtifactStatFilter
+            {...statsFilterProps}
+            title={renderTitle("Filter by Stat", 1)}
+            artifactType={forcedType}
+          />
         </div>
 
         <div className="h-full w-px bg-surface-border hidden md:block" />
 
         <div className={clsx([wrapperCls(activeIndex !== 2), "grow custom-scrollbar"])}>
-          {renderArtifactSetFilter(
-            null,
-            "grid grid-cols-4 sm:grid-cols-6 md:grid-cols-3 xm:grid-cols-5 lg:grid-cols-8"
-          )}
+          <ArtifactSetFilter
+            {...setFilterProps}
+            title={renderTitle("Filter by Set", 2)}
+            setsWrapCls="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-3 xm:grid-cols-5 lg:grid-cols-8"
+          />
         </div>
       </div>
 
-      <Modal.Actions disabledConfirm={hasDuplicates} onCancel={onClose} onConfirm={onConfirmFilter} />
+      <Modal.Actions disabledConfirm={statsFilterProps.hasDuplicates} onCancel={onClose} onConfirm={onConfirmFilter} />
     </div>
   );
 };

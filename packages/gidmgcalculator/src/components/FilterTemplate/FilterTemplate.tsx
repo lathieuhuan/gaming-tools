@@ -1,7 +1,7 @@
 import { clsx, Button, type ClassValue } from "rond";
 import { FaEraser } from "react-icons/fa";
 
-interface FilterTemplateProps {
+export interface FilterTemplateProps {
   className?: ClassValue;
   title?: React.ReactNode;
   description?: React.ReactNode;

@@ -13,6 +13,15 @@ const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
   ELEMENTAL: 0,
 };
 
+type Modifier = {
+  index: number;
+  inputConfigs?: ModInputConfig[];
+};
+
+type RefModifier = Modifier & {
+  affect: ModifierAffectType;
+};
+
 export default class Modifier_ {
   static getDefaultInitialValue(type: ModInputType) {
     return DEFAULT_INITIAL_VALUES[type] ?? 0;
@@ -23,10 +32,20 @@ export default class Modifier_ {
 
     for (const config of inputConfigs) {
       if (!config.for || config.for !== (forSelf ? "FOR_TEAM" : "FOR_SELF")) {
-        initialValues.push(config.initialValue ?? Modifier_.getDefaultInitialValue(config.type));
+        initialValues.push(config.initialValue ?? this.getDefaultInitialValue(config.type));
       }
     }
     return initialValues.length ? initialValues : undefined;
+  }
+
+  static createModCtrl(mod: Modifier, forSelf: boolean): ModifierCtrl {
+    const inputs = this.createModCtrlInpus(mod.inputConfigs, forSelf);
+
+    return {
+      index: mod.index,
+      activated: false,
+      ...(inputs ? { inputs } : null),
+    };
   }
 
   static createElmtModCtrls(): ElementModCtrl {
@@ -48,20 +67,35 @@ export default class Modifier_ {
       const incompatibleAffect: ModifierAffectType = forSelf ? "TEAMMATE" : "SELF";
 
       if (buff.affect !== incompatibleAffect) {
-        buffCtrls.push(createModCtrl(buff, forSelf));
+        buffCtrls.push(this.createModCtrl(buff, forSelf));
       }
     }
     for (const debuff of debuffs) {
       if (!forSelf && debuff.affect === "SELF") {
         continue;
       }
-      debuffCtrls.push(createModCtrl(debuff, forSelf));
+      debuffCtrls.push(this.createModCtrl(debuff, forSelf));
     }
     return [buffCtrls, debuffCtrls];
   }
 
+  static createItemBuffCtrls(forSelf: boolean, entity?: { buffs?: RefModifier[] }) {
+    const buffCtrls: ModifierCtrl[] = [];
+
+    if (entity?.buffs) {
+      for (const buff of entity.buffs) {
+        const incompatibleAffect: ModifierAffectType = forSelf ? "TEAMMATE" : "SELF";
+
+        if (buff.affect !== incompatibleAffect) {
+          buffCtrls.push(this.createModCtrl(buff, forSelf));
+        }
+      }
+    }
+    return buffCtrls;
+  }
+
   static createWeaponBuffCtrls(forSelf: boolean, weapon: { type: WeaponType; code: number }) {
-    return createItemBuffCtrls(forSelf, $AppWeapon.get(weapon.code));
+    return this.createItemBuffCtrls(forSelf, $AppWeapon.get(weapon.code));
   }
 
   static createMainArtifactBuffCtrls(setBonuses: ArtifactSetBonus[]) {
@@ -76,7 +110,7 @@ export default class Modifier_ {
         if (buff.affect !== "TEAMMATE" && setBonus.bonusLv >= bonusLv) {
           ctrls.push({
             code: setBonus.code,
-            ...createModCtrl(buff, true),
+            ...this.createModCtrl(buff, true),
           });
         }
       }
@@ -85,7 +119,7 @@ export default class Modifier_ {
   }
 
   static createArtifactBuffCtrls(forSelf: boolean, artifact?: { code?: number }) {
-    return artifact?.code ? createItemBuffCtrls(forSelf, $AppArtifact.getSet(artifact.code)) : [];
+    return artifact?.code ? this.createItemBuffCtrls(forSelf, $AppArtifact.getSet(artifact.code)) : [];
   }
 
   static createArtifactDebuffCtrls(): ArtifactModCtrl[] {
@@ -94,38 +128,4 @@ export default class Modifier_ {
       { code: 33, activated: false, index: 0 },
     ];
   }
-}
-
-type Modifier = {
-  index: number;
-  inputConfigs?: ModInputConfig[];
-};
-function createModCtrl(mod: Modifier, forSelf: boolean): ModifierCtrl {
-  const inputs = Modifier_.createModCtrlInpus(mod.inputConfigs, forSelf);
-
-  return {
-    index: mod.index,
-    activated: false,
-    ...(inputs ? { inputs } : null),
-  };
-}
-
-interface RefModifier {
-  index: number;
-  affect: ModifierAffectType;
-  inputConfigs?: ModInputConfig[];
-}
-function createItemBuffCtrls(forSelf: boolean, entity?: { buffs?: RefModifier[] }) {
-  const buffCtrls: ModifierCtrl[] = [];
-
-  if (entity?.buffs) {
-    for (const buff of entity.buffs) {
-      const incompatibleAffect: ModifierAffectType = forSelf ? "TEAMMATE" : "SELF";
-
-      if (buff.affect !== incompatibleAffect) {
-        buffCtrls.push(createModCtrl(buff, forSelf));
-      }
-    }
-  }
-  return buffCtrls;
 }
