@@ -1,10 +1,9 @@
 import type { Artifact, CalcArtifacts, Target } from "@Src/types";
-import type { ArtifactType, OptimizerArtifactBuffConfigs } from "../types";
+import type { ArtifactType, OptimizerArtifactBuffConfigs, OptimizerExtraConfigs } from "../types";
 
 import Array_ from "@Src/utils/array-utils";
 import Modifier_ from "@Src/utils/modifier-utils";
 import Object_ from "@Src/utils/object-utils";
-import Setup_ from "@Src/utils/setup-utils";
 import { CalcItemCalculator } from "../calculation-utils/calc-item-calculator";
 import { GeneralCalc } from "../common-utils";
 import { InputProcessor } from "./input-processor";
@@ -20,7 +19,10 @@ type OnOutput = (
 
 export class SetupOptimizer extends InputProcessor {
   private artifactMap = new Map<ArtifactType, Set<Artifact | null>>();
-  private target = Setup_.createTarget();
+
+  constructor(private target: Target, ...args: ConstructorParameters<typeof InputProcessor>) {
+    super(...args);
+  }
 
   private get(type: ArtifactType, initial?: (Artifact | null)[]) {
     return this.artifactMap.get(type) || new Set(initial);
@@ -40,17 +42,28 @@ export class SetupOptimizer extends InputProcessor {
     }
   };
 
-  load = (artifacts: Artifact[], target: Target) => {
+  /**
+   * @returns the total number of possible artifact sets
+   */
+  load = (artifacts: Artifact[]) => {
+    this.artifactMap = new Map();
+
     for (const artifact of artifacts) {
       this.artifactMap.set(artifact.type, this.get(artifact.type).add(artifact));
     }
-    this.target = target;
-    return this;
+
+    return (
+      this.get("flower").size *
+      this.get("plume").size *
+      this.get("sands").size *
+      this.get("goblet").size *
+      this.get("circlet").size
+    );
   };
 
   onOutput: OnOutput = () => {};
 
-  optimize = (artifactBuffConfigs: OptimizerArtifactBuffConfigs) => {
+  optimize = (artifactBuffConfigs: OptimizerArtifactBuffConfigs, extraConfigs: OptimizerExtraConfigs) => {
     this.forEachCombination((set) => {
       const setBonuses = GeneralCalc.getArtifactSetBonuses(set);
       const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(setBonuses);

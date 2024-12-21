@@ -15,15 +15,10 @@ export interface StepArtifactModConfigProps {
   id: string;
   initialValue: Partial<ArtifactModifierConfig>;
   artifactSets?: ArtifactFilterSet[];
-  onChangeValid?: (valid: boolean) => void;
   onSubmit: (modConfig: ArtifactModifierConfig) => void;
 }
 export function StepArtifactModConfig(props: StepArtifactModConfigProps) {
   const [configs, setConfigs] = useState<OptimizerArtifactBuffConfigs>(props.initialValue.buffs || {});
-
-  useEffect(() => {
-    props.onChangeValid?.(true);
-  }, []);
 
   const toggleConfig = (code: number, index: number) => {
     const newConfigs = { ...configs };

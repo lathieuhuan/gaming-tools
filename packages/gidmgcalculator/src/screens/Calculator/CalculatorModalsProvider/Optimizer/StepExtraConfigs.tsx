@@ -21,7 +21,6 @@ type RenderItem = (RenderCheck | RenderInput) & {
 interface StepExtraConfigsProps {
   id: string;
   initialValue?: OptimizerExtraConfigs;
-  onChangeValid?: (valid: boolean) => void;
   onSubmit: (config: OptimizerExtraConfigs) => void;
 }
 export function StepExtraConfigs(props: StepExtraConfigsProps) {

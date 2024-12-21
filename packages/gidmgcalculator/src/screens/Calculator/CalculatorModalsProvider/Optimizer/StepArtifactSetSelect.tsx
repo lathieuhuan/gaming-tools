@@ -1,38 +1,36 @@
-import { useEffect } from "react";
+import { useState } from "react";
+import type { Artifact } from "@Src/types";
 import { useArtifactSetFilter, type ArtifactFilterSet } from "@Src/components/ArtifactFilter";
-import { useStoreSnapshot } from "@Src/features";
 
 interface StepArtifactSetSelectProps {
   id: string;
-  initialValue?: Set<number>;
-  onChangeValid?: (valid: boolean) => void;
-  onSubmit: (sets: ArtifactFilterSet[]) => void;
+  initialValue?: number[];
+  artifacts: Artifact[];
+  onSubmit: (sets: ArtifactFilterSet[]) => string | undefined;
 }
-export function StepArtifactSetSelect(props: StepArtifactSetSelectProps) {
-  const data = useStoreSnapshot((state) => {
-    const artifacts = state.userdb.userArts;
-    return {
-      artifacts,
-      codes: props.initialValue ? [...props.initialValue] : artifacts.map((artifact) => artifact.code),
-    };
-  });
-
-  const { setOptions, setFilterProps, ArtifactSetFilter } = useArtifactSetFilter(data.artifacts, data.codes);
-
-  useEffect(() => {
-    props.onChangeValid?.(setOptions.some((option) => option.chosen));
-  }, [setOptions]);
+export function StepArtifactSetSelect({ id, initialValue = [], artifacts, onSubmit }: StepArtifactSetSelectProps) {
+  const [error, setError] = useState("");
+  const { setOptions, setFilterProps, ArtifactSetFilter } = useArtifactSetFilter(artifacts, initialValue);
 
   return (
     <form
-      id={props.id}
+      id={id}
       className="h-full"
       onSubmit={(e) => {
         e.preventDefault();
-        props.onSubmit(setOptions.filter((option) => option.chosen));
+        const submitError = onSubmit(setOptions.filter((option) => option.chosen));
+        if (submitError) setError(submitError);
       }}
     >
-      <ArtifactSetFilter {...setFilterProps} title="Only use Artifact Sets" setsWrapCls="pr-2 grid grid-cols-4" />
+      <ArtifactSetFilter
+        {...setFilterProps}
+        title="Only use Artifact Sets"
+        setsWrapCls="pr-2 grid grid-cols-4"
+        message={{
+          type: "error",
+          value: error,
+        }}
+      />
     </form>
   );
 }

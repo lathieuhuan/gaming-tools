@@ -13,7 +13,7 @@ export type ArtifactFilterSet = {
 };
 
 export interface ArtifactSetFilterProps
-  extends Pick<FilterTemplateProps, "title" | "description" | "className" | "disabledClearAll" | "onClickClearAll"> {
+  extends Pick<FilterTemplateProps, "title" | "message" | "className" | "disabledClearAll" | "onClickClearAll"> {
   setsWrapCls?: string;
   setOptions: ArtifactFilterSet[];
   onClickSet?: (index: number) => void;

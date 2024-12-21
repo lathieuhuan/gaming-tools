@@ -15,7 +15,7 @@ type RenderSelectArgs = {
 };
 
 export interface ArtifactStatFilterProps
-  extends Pick<FilterTemplateProps, "title" | "description" | "className" | "disabledClearAll" | "onClickClearAll"> {
+  extends Pick<FilterTemplateProps, "title" | "message" | "className" | "disabledClearAll" | "onClickClearAll"> {
   filter: ArtifactStatFilterCondition;
   artifactType?: ArtifactType;
   hasDuplicates?: boolean;
@@ -61,11 +61,7 @@ export function ArtifactStatFilter({
 
   return (
     <FilterTemplate
-      description={
-        <p className="text-sm text-hint-color">
-          Also sort by stats. The priority is Main Stat (if not "All"), then Sub Stat 1, Sub Stat 2, and so on.
-        </p>
-      }
+      message={`Also sort by stats. The priority is Main Stat (if not "All"), then Sub Stat 1, Sub Stat 2, and so on.`}
       disabledClearAll={disabledClearAll}
       {...templateProps}
     >
