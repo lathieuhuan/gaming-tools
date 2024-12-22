@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { OptimizerArtifactBuffConfigs } from "@Backend";
 import type { ArtifactModCtrl } from "@Src/types";
 import type { ArtifactFilterSet } from "@Src/components/ArtifactFilter";
@@ -11,13 +11,13 @@ export type ArtifactModifierConfig = {
   buffs: OptimizerArtifactBuffConfigs;
 };
 
-export interface StepArtifactModConfigProps {
+interface ArtifactModConfigProps {
   id: string;
   initialValue: Partial<ArtifactModifierConfig>;
   artifactSets?: ArtifactFilterSet[];
   onSubmit: (modConfig: ArtifactModifierConfig) => void;
 }
-export function StepArtifactModConfig(props: StepArtifactModConfigProps) {
+export function ArtifactModConfig(props: ArtifactModConfigProps) {
   const [configs, setConfigs] = useState<OptimizerArtifactBuffConfigs>(props.initialValue.buffs || {});
 
   const toggleConfig = (code: number, index: number) => {

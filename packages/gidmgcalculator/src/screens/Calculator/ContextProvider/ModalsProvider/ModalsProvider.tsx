@@ -11,7 +11,6 @@ import { CalculatorModalsContext, type CalculatorModalsControl } from "../contex
 import { SetupExporterCore, SetupImporter, Tavern } from "@Src/components";
 import { TargetConfig } from "./TargetConfig";
 import { SaveSetup } from "./SaveSetup";
-import { OptimizerFrontDesk } from "./OptimizerFrontDesk";
 
 type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "OPTIMIZE" | "";
 
@@ -74,17 +73,6 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
         }}
         onClose={closeModal}
       />
-
-      <Modal
-        active={modalType === "OPTIMIZE"}
-        title="Optimization"
-        preset="small"
-        className="bg-surface-2"
-        bodyCls="py-2"
-        onClose={closeModal}
-      >
-        <OptimizerFrontDesk />
-      </Modal>
     </CalculatorModalsContext.Provider>
   );
 }

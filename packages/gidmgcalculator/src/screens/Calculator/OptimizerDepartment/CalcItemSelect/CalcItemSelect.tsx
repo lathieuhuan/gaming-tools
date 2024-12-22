@@ -3,7 +3,7 @@ import { clsx } from "rond";
 import { AttackPattern, CalcItem, LevelableTalentType, NORMAL_ATTACKS } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
-import { useCharacterData } from "../../hooks";
+import { useCharacterData } from "../../ContextProvider";
 
 export type SelectedCalcItem = {
   patternCate: AttackPattern;
@@ -18,13 +18,13 @@ type RenderGroup = {
   }>;
 };
 
-interface StepCalcItemSelectProps {
+interface CalcItemSelectProps {
   id: string;
   initialValue?: SelectedCalcItem;
   onChangeValid?: (valid: boolean) => void;
   onSubmit: (selected: SelectedCalcItem) => void;
 }
-export function StepCalcItemSelect(props: StepCalcItemSelectProps) {
+export function CalcItemSelect(props: CalcItemSelectProps) {
   const { t } = useTranslation();
   const appChar = useCharacterData();
   const [selectedItems, setSelectedItems] = useState<SelectedCalcItem[]>(

@@ -76,7 +76,7 @@ export class CalcItemCalculator {
         const mixedType = finalAttPatt ? (`${finalAttPatt}.${attElmt}` as const) : undefined;
         return attkBonusesArchive.get(key, finalAttPatt, attElmt, mixedType, itemId);
       }
-      return attkBonusesArchive.getBare(key, finalAttPatt, itemId);
+      return attkBonusesArchive.getBare(key, itemId);
     }
 
     function calculate(
@@ -158,7 +158,7 @@ export class CalcItemCalculator {
             normalMult += totalAttr.healB_ / 100;
             break;
           case "shield":
-            normalMult += getBonus("pct_") / 100;
+            normalMult += (getBonus("pct_") + totalAttr.shieldS_) / 100;
             break;
         }
         base += flat;

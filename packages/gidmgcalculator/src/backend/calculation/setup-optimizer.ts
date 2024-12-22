@@ -4,9 +4,9 @@ import type { ArtifactType, OptimizerArtifactBuffConfigs, OptimizerExtraConfigs 
 import Array_ from "@Src/utils/array-utils";
 import Modifier_ from "@Src/utils/modifier-utils";
 import Object_ from "@Src/utils/object-utils";
-import { CalcItemCalculator } from "../calculation-utils/calc-item-calculator";
 import { GeneralCalc } from "../common-utils";
 import { InputProcessor } from "./input-processor";
+import { CalcItemCalculator } from "./calc-item-calculator";
 
 type CalculationStats = ReturnType<InputProcessor["getCalculationStats"]>;
 

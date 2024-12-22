@@ -87,7 +87,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
             />
           ) : null}
 
-          <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={onRequestOptimization} />
+          {/* <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={onRequestOptimization} /> */}
         </div>
       </div>
     </div>

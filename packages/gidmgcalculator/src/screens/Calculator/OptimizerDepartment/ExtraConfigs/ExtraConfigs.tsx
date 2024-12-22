@@ -18,12 +18,12 @@ type RenderItem = (RenderCheck | RenderInput) & {
   label: string;
 };
 
-interface StepExtraConfigsProps {
+interface ExtraConfigsProps {
   id: string;
   initialValue?: OptimizerExtraConfigs;
   onSubmit: (config: OptimizerExtraConfigs) => void;
 }
-export function StepExtraConfigs(props: StepExtraConfigsProps) {
+export function ExtraConfigs(props: ExtraConfigsProps) {
   const config = useRef<OptimizerExtraConfigs>(props.initialValue || { useOwnedPiece: true, minEr: 100 });
 
   const renderItems: RenderItem[] = [

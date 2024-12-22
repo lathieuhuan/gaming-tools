@@ -2,12 +2,12 @@ import type { CalcSetup, Target } from "@Src/types";
 import type { CalculationFinalResult } from "../types";
 
 import { $AppCharacter, $AppWeapon } from "@Src/services";
-import { CalcItemCalculator } from "../calculation-utils/calc-item-calculator";
 import { GeneralCalc } from "../common-utils";
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "../constants";
 import { TRANSFORMATIVE_REACTION_INFO } from "../constants/internal";
 import { TrackerControl } from "../controls";
 import { InputProcessor } from "../calculation/input-processor";
+import { CalcItemCalculator } from "../calculation/calc-item-calculator";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
