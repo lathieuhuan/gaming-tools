@@ -1,8 +1,9 @@
-import { AttackPattern, CalcItem, LevelableTalentType, NORMAL_ATTACKS } from "@Backend";
-import { useTranslation } from "@Src/hooks";
-import { useCharacterData } from "../../contexts";
 import { useState } from "react";
 import { clsx } from "rond";
+import { AttackPattern, CalcItem, LevelableTalentType, NORMAL_ATTACKS } from "@Backend";
+
+import { useTranslation } from "@Src/hooks";
+import { useCharacterData } from "../../hooks";
 
 export type SelectedCalcItem = {
   patternCate: AttackPattern;

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 
 import {
-  CalculatorProviders,
+  ContextProvider,
   CharacterOverview,
   FinalResult,
   Modifiers,
@@ -75,7 +75,7 @@ export function AppMainSmall() {
         { value: "MY_SETUPS", element: <MySetups /> },
       ]}
       default={
-        <CalculatorProviders>
+        <ContextProvider>
           {isModernUI ? (
             <div className="h-full flex flex-col border-t border-surface-border">
               <div className="grow overflow-hidden relative">
@@ -100,7 +100,7 @@ export function AppMainSmall() {
               {PANEL.Results("snap-center relative")}
             </div>
           )}
-        </CalculatorProviders>
+        </ContextProvider>
       }
     />
   );

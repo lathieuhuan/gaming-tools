@@ -10,6 +10,9 @@ import {
   updateCalcSetup,
   updateResonance,
 } from "@Store/calculator-slice";
+import { useCharacterData } from "../../ContextProvider";
+
+//
 import {
   GenshinModifierView,
   QuickenBuffItem,
@@ -17,7 +20,6 @@ import {
   ResonanceBuffItem,
   VapMeltBuffItem,
 } from "@Src/components";
-import { useCharacterData } from "../../contexts";
 
 const hasAbsorbingAttackIn = (items: CalcItem[]) => {
   return items.some((item) => item.attElmt === "absorb");

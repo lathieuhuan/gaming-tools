@@ -1,8 +1,10 @@
 import type { PartyData } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectCharacter, changeModCtrlInput, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
+import { useCharacterData } from "../../ContextProvider";
+
+//
 import { SelfDebuffsView } from "@Src/components";
-import { useCharacterData } from "../../contexts";
 
 export default function SelfDebuffs({ partyData }: { partyData: PartyData }) {
   const dispatch = useDispatch();

@@ -9,10 +9,10 @@ import {
   updateCharacter,
 } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
+import { useCharacterData } from "../ContextProvider";
 
 import { FinalResultView } from "@Src/components";
 import { FinalResultCompare } from "./FinalResultCompare";
-import { useCharacterData } from "../contexts";
 
 const selectActiveSetupName = (state: RootState) => {
   const { activeId, setupManageInfos } = state.calculator;

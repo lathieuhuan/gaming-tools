@@ -3,7 +3,7 @@ import { CollapseList } from "rond";
 import { selectParty } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
 import { useTabs } from "@Src/hooks";
-import { usePartyData } from "../contexts";
+import { usePartyData } from "../ContextProvider";
 
 // Component
 import ElementBuffs from "./buffs/ElementBuffs";

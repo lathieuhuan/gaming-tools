@@ -1,9 +1,11 @@
 import { FaSkull } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
+import { FaSun } from "react-icons/fa6";
 import { Button, useScreenWatcher } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTraveler, updateUI } from "@Store/ui-slice";
+import { useCalcModalCtrl } from "../ContextProvider";
 
 // Component
 import { SetupSelect } from "./SetupSelect";
@@ -20,8 +22,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
   const screenWatcher = useScreenWatcher();
   const targetConfig = useSelector((state) => state.ui.calcTargetConfig);
   const traveler = useSelector(selectTraveler);
-
-  const isMobile = !screenWatcher.isFromSize("sm");
+  const modalCtrl = useCalcModalCtrl();
 
   const updateTargetConfig = (active: boolean, onOverview: boolean) => {
     dispatch(updateUI({ calcTargetConfig: { active, onOverview } }));
@@ -46,9 +47,15 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
     </div>
   );
 
-  if (isMobile && isModernUI) {
+  if (!screenWatcher.isFromSize("sm") && isModernUI) {
     return renderMainContent("h-full");
   }
+
+  // ===== OPTIMIZE ARTIFACTS =====
+
+  const onRequestOptimization = () => {
+    modalCtrl.requestOptimize();
+  };
 
   return (
     <div className="w-full h-full flex flex-col relative overflow-hidden">
@@ -59,18 +66,28 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
       {renderMainContent("grow")}
 
       <div className="mt-4 grid grid-cols-3">
-        <div className="flex items-center">
-          {!targetConfig.onOverview ? (
-            <Button boneOnly icon={<FaSkull className="text-lg" />} onClick={onClickTargetConfigButton} />
-          ) : null}
-        </div>
+        <div />
 
         <div className="flex-center">
           <Button
             className="mx-auto"
+            title="Setup Manager"
             icon={<IoDocumentText className="text-xl" />}
             onClick={() => dispatch(updateUI({ setupDirectorActive: true }))}
           />
+        </div>
+
+        <div className="flex justify-end gap-3">
+          {!targetConfig.onOverview ? (
+            <Button
+              title="Target"
+              boneOnly
+              icon={<FaSkull className="text-lg" />}
+              onClick={onClickTargetConfigButton}
+            />
+          ) : null}
+
+          <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={onRequestOptimization} />
         </div>
       </div>
     </div>

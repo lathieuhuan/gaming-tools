@@ -7,7 +7,7 @@ import type { Weapon } from "@Src/types";
 import Array_ from "@Src/utils/array-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectSetupManageInfos, selectStandardId, updateCharacter } from "@Store/calculator-slice";
-import { useCharacterData, usePartyData } from "../contexts";
+import { useCharacterData, usePartyData } from "../ContextProvider";
 
 //
 import { FinalResultLayout, type FinalResultLayoutProps } from "@Src/components";

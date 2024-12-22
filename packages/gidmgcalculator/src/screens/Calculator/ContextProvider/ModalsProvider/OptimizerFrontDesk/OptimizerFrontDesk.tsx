@@ -4,12 +4,13 @@ import { ButtonGroup, SwitchNode } from "rond";
 import { OptimizerArtifactBuffConfigs, OptimizerExtraConfigs, SetupOptimizer } from "@Backend";
 
 import type { ArtifactFilterSet } from "@Src/components/ArtifactFilter";
-import type { CalcArtifacts } from "@Src/types";
 
 import { useStoreSnapshot } from "@Src/features";
 import { $AppWeapon } from "@Src/services";
 import Modifier_ from "@Src/utils/modifier-utils";
-import { useCharacterData, usePartyData } from "../../contexts";
+import { useCharacterData, useOptimizer, usePartyData } from "../../hooks";
+
+// Components
 import { StepArtifactModConfig } from "./StepArtifactModConfig";
 import { StepArtifactSetSelect } from "./StepArtifactSetSelect";
 import { SelectedCalcItem, StepCalcItemSelect } from "./StepCalcItemSelect";
@@ -23,12 +24,7 @@ type SavedValues = {
   extraConfigs: OptimizerExtraConfigs;
 };
 
-type SaveCalculation = {
-  damage: number | number[];
-  artifacts: CalcArtifacts;
-};
-
-export function Optimizer() {
+export function OptimizerFrontDesk() {
   const store = useStoreSnapshot(({ calculator, userdb }) => {
     const setup = calculator.setupsById[calculator.activeId];
     const target = calculator.target;
@@ -42,6 +38,7 @@ export function Optimizer() {
   });
   const appChar = useCharacterData();
   const partyData = usePartyData();
+  const optimizerManager = useOptimizer();
 
   const savedValues = useRef<Partial<SavedValues>>({});
   const [step, setStep] = useState(0);
@@ -52,38 +49,50 @@ export function Optimizer() {
 
   const optimizer = useMemo(() => {
     const appWeapon = $AppWeapon.get(store.setup.weapon.code)!;
+    optimizerManager.init(store.target, store.setup, appChar, appWeapon, partyData);
     return new SetupOptimizer(store.target, store.setup, appChar, appWeapon, partyData);
   }, []);
 
   const optimizeSetup = () => {
-    console.time("OPTIMIZER");
+    // console.time("OPTIMIZER");
 
     const { calcItem, setCodes, buffConfigs, extraConfigs } = savedValues.current;
 
-    const calculations: SaveCalculation[] = [];
-    let bestCalculation: SaveCalculation | undefined;
+    //
+    optimizerManager.optimize(
+      {
+        pattern: calcItem!.patternCate,
+        calcItem: calcItem!.value,
+        elmtModCtrls: store.setup.elmtModCtrls,
+      },
+      [buffConfigs!, extraConfigs!]
+    );
+    //
 
-    optimizer.onOutput = (artifacts, totalAttr, attkBonusesArchive, calculator) => {
-      const result = calculator
-        .genAttPattCalculator(calcItem!.patternCate)
-        .calculate(calcItem!.value, store.setup.elmtModCtrls);
+    // const calculations: SaveCalculation[] = [];
+    // let bestCalculation: SaveCalculation | undefined;
 
-      const calculation: SaveCalculation = {
-        damage: result.average,
-        artifacts,
-      };
+    // optimizer.onOutput = (artifacts, totalAttr, attkBonusesArchive, calculator) => {
+    //   const result = calculator
+    //     .genAttPattCalculator(calcItem!.patternCate)
+    //     .calculate(calcItem!.value, store.setup.elmtModCtrls);
 
-      calculations.push(calculation);
+    //   const calculation: SaveCalculation = {
+    //     damage: result.average,
+    //     artifacts,
+    //   };
 
-      if (!bestCalculation || calculation.damage > bestCalculation.damage) {
-        bestCalculation = calculation;
-      }
-    };
+    //   calculations.push(calculation);
 
-    optimizer.optimize(buffConfigs!, extraConfigs!);
+    //   if (!bestCalculation || calculation.damage > bestCalculation.damage) {
+    //     bestCalculation = calculation;
+    //   }
+    // };
 
-    console.timeEnd("OPTIMIZER");
-    console.log(bestCalculation);
+    // optimizer.optimize(buffConfigs!, extraConfigs!);
+
+    // console.timeEnd("OPTIMIZER");
+    // console.log(bestCalculation);
   };
 
   const navigateStep = (stepDiff: number) => {
@@ -135,8 +144,10 @@ export function Optimizer() {
 
     console.log("possibleSetCount", possibleSetCount);
 
-    if (possibleSetCount > 50_000) {
+    if (possibleSetCount > 500_000) {
       return "To many artifact, please narrow their number down.";
+    } else {
+      optimizerManager.load(artifacts);
     }
 
     savedValues.current.filterSets = sets;

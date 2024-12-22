@@ -35,7 +35,7 @@ export function FilterTemplate(props: FilterTemplateProps) {
         </Button>
       </div>
 
-      {message ? <div className={clsx("text-sm", messageClsByType[message.type])}>{message.value}</div> : null}
+      {message?.value ? <div className={clsx("text-sm", messageClsByType[message.type])}>{message.value}</div> : null}
       {props.children}
     </div>
   );

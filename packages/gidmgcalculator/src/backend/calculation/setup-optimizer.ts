@@ -64,6 +64,8 @@ export class SetupOptimizer extends InputProcessor {
   onOutput: OnOutput = () => {};
 
   optimize = (artifactBuffConfigs: OptimizerArtifactBuffConfigs, extraConfigs: OptimizerExtraConfigs) => {
+    console.time("optimize");
+
     this.forEachCombination((set) => {
       const setBonuses = GeneralCalc.getArtifactSetBonuses(set);
       const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(setBonuses);
@@ -92,5 +94,7 @@ export class SetupOptimizer extends InputProcessor {
 
       this.onOutput(set, totalAttr, attkBonusesArchive, calculator);
     });
+
+    console.timeEnd("optimize");
   };
 }

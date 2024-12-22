@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { FaToolbox } from "react-icons/fa";
-import { FaSun } from "react-icons/fa6";
 import { GiAnvil } from "react-icons/gi";
 import { Button, clsx, CollapseSpace, notification } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
@@ -10,7 +9,6 @@ import type { Artifact, CalcArtifact } from "@Src/types";
 import Entity_ from "@Src/utils/entity-utils";
 import { changeArtifact, selectArtifacts } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { useCalcModalCtrl } from "../../contexts";
 
 // Component
 import {
@@ -43,8 +41,6 @@ const SECTION_ID = "calculator-section-artifacts";
 
 export default function SectionArtifacts() {
   const dispatch = useDispatch();
-  const modalCtrl = useCalcModalCtrl();
-
   const artifacts = useSelector(selectArtifacts);
 
   const [modalType, setModalType] = useState<ModalType>("");
@@ -192,12 +188,6 @@ export default function SectionArtifacts() {
     }
   };
 
-  // ===== OPTIMIZE ARTIFACTS =====
-
-  const onRequestOptimization = () => {
-    modalCtrl.requestOptimize();
-  };
-
   // ===== ACTIONS TOWARDS ACTIVE ARTIFACT =====
 
   const onRequestChangeActiveArtifact = (source: ArtifactSourceType) => {
@@ -269,7 +259,6 @@ export default function SectionArtifacts() {
 
       {activeTabIndex < 0 ? (
         <div className="mt-4 px-4 flex justify-end gap-4">
-          <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={onRequestOptimization} />
           <Button title="Loadout" icon={<FaToolbox className="text-lg" />} onClick={onRequestSelectArtifactLoadout} />
           <Button
             title="Inventory"

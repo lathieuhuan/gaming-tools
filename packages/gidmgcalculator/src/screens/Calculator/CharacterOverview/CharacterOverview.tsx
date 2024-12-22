@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 
-// Store
 import { selectCharacter, updateCharacter } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectIsReadyApp, selectTraveler } from "@Store/ui-slice";
-import { useCharacterData, useCalcModalCtrl } from "../contexts";
+import { useCharacterData, useCalcModalCtrl } from "../ContextProvider";
 
 // Component
 import { CharacterIntro, ComplexSelect } from "@Src/components";

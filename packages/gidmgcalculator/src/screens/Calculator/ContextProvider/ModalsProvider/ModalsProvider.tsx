@@ -5,17 +5,17 @@ import Setup_ from "@Src/utils/setup-utils";
 import { useStoreSnapshot } from "@Src/features";
 import { useDispatch } from "@Store/hooks";
 import { initNewSessionWithCharacter } from "@Store/thunks";
-import { CalculatorModalsContext, CalculatorModalsControl } from "../contexts";
+import { CalculatorModalsContext, type CalculatorModalsControl } from "../contexts";
 
 // Component
 import { SetupExporterCore, SetupImporter, Tavern } from "@Src/components";
 import { TargetConfig } from "./TargetConfig";
 import { SaveSetup } from "./SaveSetup";
-import { Optimizer } from "./Optimizer";
+import { OptimizerFrontDesk } from "./OptimizerFrontDesk";
 
 type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "OPTIMIZE" | "";
 
-export function CalculatorModalsProvider(props: { children: React.ReactNode }) {
+export function ModalsProvider(props: { children: React.ReactNode }) {
   const dispatch = useDispatch();
   const [modalType, setModalType] = useState<ModalType>("");
   const [setupId, setSetupId] = useState(0);
@@ -83,7 +83,7 @@ export function CalculatorModalsProvider(props: { children: React.ReactNode }) {
         bodyCls="py-2"
         onClose={closeModal}
       >
-        <Optimizer />
+        <OptimizerFrontDesk />
       </Modal>
     </CalculatorModalsContext.Provider>
   );
