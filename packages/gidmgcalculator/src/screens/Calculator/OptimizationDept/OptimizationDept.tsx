@@ -159,8 +159,11 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
   return (
     <Modal
       active={active}
-      title={`Optimization / ${stepConfig.title}`}
-      style={{ width: "24rem" }}
+      title={<span className="text-lg">Optimization / {stepConfig.title}</span>}
+      style={{
+        height: "95vh",
+        width: "24rem",
+      }}
       className="bg-surface-2"
       bodyCls="py-2"
       closeOnMaskClick={false}
@@ -169,7 +172,7 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
         if (!open) props.onClose();
       }}
     >
-      <div className="h-full flex flex-col hide-scrollbar" style={{ height: "80vh" }}>
+      <div className="h-full flex flex-col hide-scrollbar">
         <div className="grow hide-scrollbar">
           <SwitchNode
             value={step}

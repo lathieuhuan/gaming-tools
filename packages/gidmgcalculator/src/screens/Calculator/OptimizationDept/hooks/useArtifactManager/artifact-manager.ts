@@ -52,9 +52,13 @@ export class ArtifactManager {
     this.sets = sets;
   }
 
-  private getSetThen = (cb: (set: ManagedArtifactSet) => void) => (code: number) => {
-    const set = this.sets.find((item) => item.data.code === code);
-    if (set) cb(set);
+  private getSetThen = (onFoundSet: (set: ManagedArtifactSet) => void) => (codes: number | Set<number>) => {
+    if (typeof codes === "number") {
+      const set = this.sets.find((item) => item.data.code === codes);
+      if (set) onFoundSet(set);
+    } else {
+      codes.forEach((code) => this.getSetThen(onFoundSet)(code));
+    }
     return this.sets.concat();
   };
 

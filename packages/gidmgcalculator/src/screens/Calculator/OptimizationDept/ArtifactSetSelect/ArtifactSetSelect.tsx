@@ -1,9 +1,8 @@
-import { useState } from "react";
-import { FaCog } from "react-icons/fa";
-import { Button } from "rond";
+import { useMemo, useRef, useState } from "react";
+import { Button, Input } from "rond";
 
-import { GenshinImage } from "@Src/components";
 import { ArtifactManager } from "../hooks/useArtifactManager";
+import { SetOption, SetOptionActions } from "./SetOption";
 
 export type ArtifactSetOption = {
   data: {
@@ -21,68 +20,107 @@ interface ArtifactSetSelectProps {
   onSubmit: (sets: ArtifactSetOption[]) => string | undefined;
 }
 export function ArtifactSetSelect({ manager }: ArtifactSetSelectProps) {
+  const timeout = useRef<NodeJS.Timeout>();
   const [sets, setSets] = useState(manager.sets);
-  const [expandedCode, setExpandedCode] = useState(0);
+  const [expandedCode, setExpandedCode] = useState(-1);
+  const [keyword, setKeyword] = useState("");
+  const [detailCode, setDetailCode] = useState(0);
+
+  const all = useMemo(() => {
+    const visibleCodes = new Set<number>();
+    let visibleSelectedCount = 0;
+    let anyEquippedSelected = false;
+
+    for (const set of sets) {
+      if (!keyword || set.data.name.toLowerCase().includes(keyword)) {
+        visibleCodes.add(set.data.code);
+        visibleSelectedCount += set.selectedIds.size;
+
+        if (set.anyEquippedSelected) {
+          anyEquippedSelected = true;
+        }
+      }
+    }
+
+    return {
+      visibleCodes,
+      visibleSelectedCount,
+      anyEquippedSelected,
+    };
+  }, [sets, keyword]);
+
+  const onChangeKeyword = (kw: string) => {
+    clearTimeout(timeout.current);
+
+    timeout.current = setTimeout(() => {
+      setKeyword(kw.toLowerCase());
+    }, 200);
+  };
 
   return (
-    <div>
+    <div className="space-y-3">
+      <div>
+        <Input className="w-full" placeholder="Search" onChange={onChangeKeyword} />
+      </div>
+
+      <div className="flex justify-end gap-3">
+        <Button
+          size="small"
+          disabled={!all.visibleSelectedCount}
+          onClick={() => setSets(manager.unselectAll(all.visibleCodes))}
+        >
+          Unselect All{all.visibleSelectedCount ? ` (${all.visibleSelectedCount})` : ""}
+        </Button>
+        <Button
+          size="small"
+          disabled={!all.anyEquippedSelected}
+          onClick={() => setSets(manager.removeEquipped(all.visibleCodes))}
+        >
+          Remove Equipped
+        </Button>
+      </div>
+
       <div className="space-y-2">
         {sets.map((set) => {
           const { data } = set;
+
+          if (!all.visibleCodes.has(data.code)) {
+            return null;
+          }
           const total = set.pieces.length;
           const selectedCount = set.selectedIds.size;
           const isExpanded = data.code === expandedCode;
 
           return (
-            <div key={data.code}>
-              <div className="py-1 bg-surface-1 rounded-sm flex items-center">
-                <div className="px-2 flex items-center gap-2">
-                  <GenshinImage className="w-7 h-7" src={data.icon} imgType="artifact" />
-                  <span>{data.name}</span>
-                </div>
-
-                <div className="ml-auto flex items-center gap-1">
-                  <p>
-                    {selectedCount ? <span>{selectedCount} / </span> : null}
-                    <span>{total}</span>
-                  </p>
-                  <Button
-                    title="Settings"
-                    icon={<FaCog />}
-                    variant="custom"
-                    className={isExpanded ? "text-active-color" : ""}
-                    onClick={() => setExpandedCode(isExpanded ? 0 : data.code)}
-                  />
-                </div>
-              </div>
-
+            <SetOption
+              key={data.code}
+              icon={data.icon}
+              name={data.name}
+              isExpanded={isExpanded}
+              selectedCount={selectedCount}
+              total={total}
+              onClickExpand={() => setExpandedCode(isExpanded ? -1 : data.code)}
+            >
               {isExpanded && (
-                <div className="p-3 bg-surface-3 rounded-b-sm flex flex-wrap gap-3">
-                  <Button
-                    size="small"
-                    disabled={selectedCount === total}
-                    onClick={() => setSets(manager.selectAll(data.code))}
-                  >
-                    Select All
-                  </Button>
-                  <Button
-                    size="small"
-                    disabled={!selectedCount}
-                    onClick={() => setSets(manager.unselectAll(data.code))}
-                  >
-                    Unselect All
-                  </Button>
-                  <Button
-                    size="small"
-                    disabled={!set.anyEquippedSelected}
-                    onClick={() => setSets(manager.removeEquipped(data.code))}
-                  >
-                    Remove Equipped
-                  </Button>
-                </div>
+                <SetOptionActions
+                  selectAll={{
+                    disabled: selectedCount === total,
+                    onClick: () => setSets(manager.selectAll(data.code)),
+                  }}
+                  unselectAll={{
+                    disabled: !selectedCount,
+                    onClick: () => setSets(manager.unselectAll(data.code)),
+                  }}
+                  removeEquipped={{
+                    disabled: !set.anyEquippedSelected,
+                    onClick: () => setSets(manager.removeEquipped(data.code)),
+                  }}
+                  selectIndividual={{
+                    onClick: () => setDetailCode(data.code),
+                  }}
+                />
               )}
-              {/* <div></div> */}
-            </div>
+            </SetOption>
           );
         })}
       </div>
