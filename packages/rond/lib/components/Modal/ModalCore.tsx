@@ -12,7 +12,7 @@ export interface ModalControl {
 
 export interface ModalCoreProps
   extends ModalControl,
-    Pick<OverlayProps, "state" | "transitionDuration" | "closable" | "closeOnMaskClick"> {
+    Pick<OverlayProps, "state" | "transitionDuration" | "closable" | "closeOnMaskClick" | "onTransitionEnd"> {
   /** Default to 'custom' */
   preset?: ModalPreset;
   id?: string;

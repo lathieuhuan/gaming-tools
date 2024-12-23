@@ -1,7 +1,7 @@
 import { SwitchNode } from "rond";
 
 import { useSelector } from "@Store/hooks";
-import { ContextProvider } from "@Src/screens/Calculator";
+import { ContextProvider, OptimizationDept } from "@Src/screens/Calculator";
 import { MyCharactersLarge } from "@Src/screens/MyCharacters";
 import MyWeapons from "@Src/screens/MyWeapons";
 import MyArtifacts from "@Src/screens/MyArtifacts";
@@ -14,6 +14,7 @@ export function AppMainLarge() {
   return (
     <div className="h-full flex-center relative">
       <ContextProvider>
+        <OptimizationDept />
         <CalculatorLarge />
       </ContextProvider>
 

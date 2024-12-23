@@ -2,31 +2,34 @@ import type { PartiallyOptional } from "rond";
 import type { UserArtifact } from "@Src/types";
 import { $AppArtifact } from "@Src/services";
 
+type InputArtifact = PartiallyOptional<UserArtifact, "owner">;
+
 type ManagedArtifactSet = {
   data: {
     code: number;
     name: string;
     icon: string;
   };
-  total: number;
-  selected: number;
+  pieces: InputArtifact[];
+  selectedIds: Set<number>;
+  anyEquippedSelected: boolean;
 };
 
 export class ArtifactManager {
   sets: ManagedArtifactSet[] = [];
 
-  constructor(artifacts: PartiallyOptional<UserArtifact, "owner">[]) {
+  constructor(artifacts: InputArtifact[]) {
     const countMap = new Map<number, ManagedArtifactSet>();
     const sets: ManagedArtifactSet[] = [];
 
-    for (const { code } of artifacts) {
-      const set = countMap.get(code);
+    for (const artifact of artifacts) {
+      const set = countMap.get(artifact.code);
 
       if (set) {
-        set.total += 1;
+        set.pieces.push(artifact);
       } //
       else {
-        const data = $AppArtifact.getSet(code);
+        const data = $AppArtifact.getSet(artifact.code);
 
         if (data) {
           const filterSet: ManagedArtifactSet = {
@@ -35,11 +38,12 @@ export class ArtifactManager {
               name: data.name,
               icon: data.flower.icon,
             },
-            total: 1,
-            selected: 0,
+            pieces: [artifact],
+            selectedIds: new Set(),
+            anyEquippedSelected: false,
           };
 
-          countMap.set(code, filterSet);
+          countMap.set(artifact.code, filterSet);
           sets.push(filterSet);
         }
       }
@@ -47,4 +51,35 @@ export class ArtifactManager {
 
     this.sets = sets;
   }
+
+  private getSetThen = (cb: (set: ManagedArtifactSet) => void) => (code: number) => {
+    const set = this.sets.find((item) => item.data.code === code);
+    if (set) cb(set);
+    return this.sets.concat();
+  };
+
+  selectAll = this.getSetThen((set) => {
+    set.selectedIds.clear();
+    set.anyEquippedSelected = false;
+
+    for (const piece of set.pieces) {
+      set.selectedIds.add(piece.ID);
+
+      if (piece.owner) set.anyEquippedSelected = true;
+    }
+  });
+
+  unselectAll = this.getSetThen((set) => {
+    set.selectedIds.clear();
+    set.anyEquippedSelected = false;
+  });
+
+  removeEquipped = this.getSetThen((set) => {
+    for (const piece of set.pieces) {
+      if (piece.owner) {
+        set.selectedIds.delete(piece.ID);
+      }
+    }
+    set.anyEquippedSelected = false;
+  });
 }

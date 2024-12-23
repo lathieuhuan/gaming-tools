@@ -17,6 +17,11 @@ import { ArtifactSetSelect } from "./ArtifactSetSelect";
 import { CalcItemSelect, SelectedCalcItem } from "./CalcItemSelect";
 import { ExtraConfigs } from "./ExtraConfigs";
 
+type StepConfig = {
+  title: string;
+  formId: string;
+};
+
 type SavedValues = {
   calcItem: SelectedCalcItem;
   filterSets: ArtifactFilterSet[];
@@ -26,11 +31,15 @@ type SavedValues = {
 };
 
 export function OptimizationDept() {
-  const { value: status } = useOptimizerStatus();
-  return status.active ? <OptimizerFrontDesk /> : null;
+  const { value: status, toggle } = useOptimizerStatus();
+
+  return status.active ? <OptimizerFrontDesk onClose={() => toggle(false)} /> : null;
 }
 
-function OptimizerFrontDesk() {
+interface OptimizerFrontDeskProps {
+  onClose: () => void;
+}
+function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
   const store = useStoreSnapshot(({ calculator, userdb }) => {
     const setup = calculator.setupsById[calculator.activeId];
     const target = calculator.target;
@@ -46,36 +55,55 @@ function OptimizerFrontDesk() {
   const partyData = usePartyData();
 
   const savedValues = useRef<Partial<SavedValues>>({});
+  const [active, setActive] = useState(true);
   const [step, setStep] = useState(0);
 
   const artifactManager = useArtifactManager(store.artifacts);
-  const optimizer = useOptimizer();
+  // const optimizer = useOptimizer();
 
-  const FORM_IDS = ["artifact-set", "artifact-modifier", "calc-item", "extra-config"];
-  const currentFormId = FORM_IDS[step];
+  const STEP_CONFIGS: StepConfig[] = [
+    {
+      title: "Select Artifact Sets",
+      formId: "artifact-set",
+    },
+    {
+      title: "Artifact Modifier Config",
+      formId: "artifact-modifier",
+    },
+    {
+      title: "Select Item",
+      formId: "calc-item",
+    },
+    {
+      title: "Extra Config",
+      formId: "extra-config",
+    },
+  ];
+
+  const stepConfig = STEP_CONFIGS[step];
 
   useEffect(() => {
     const appWeapon = $AppWeapon.get(store.setup.weapon.code)!;
-    optimizer.init(store.target, store.setup, appChar, appWeapon, partyData);
+    // optimizer.init(store.target, store.setup, appChar, appWeapon, partyData);
   }, []);
 
   const optimizeSetup = () => {
     const { calcItem, setCodes, buffConfigs, extraConfigs } = savedValues.current;
 
-    optimizer.optimize(
-      {
-        pattern: calcItem!.patternCate,
-        calcItem: calcItem!.value,
-        elmtModCtrls: store.setup.elmtModCtrls,
-      },
-      [buffConfigs!, extraConfigs!]
-    );
+    // optimizer.optimize(
+    //   {
+    //     pattern: calcItem!.patternCate,
+    //     calcItem: calcItem!.value,
+    //     elmtModCtrls: store.setup.elmtModCtrls,
+    //   },
+    //   [buffConfigs!, extraConfigs!]
+    // );
   };
 
   const navigateStep = (stepDiff: number) => {
     const newStep = step + stepDiff;
 
-    if (newStep >= FORM_IDS.length) {
+    if (newStep >= STEP_CONFIGS.length) {
       return optimizeSetup();
     }
 
@@ -124,15 +152,22 @@ function OptimizerFrontDesk() {
     saveConfig("setCodes", setCodes);
   };
 
+  const closeDept = () => {
+    setActive(false);
+  };
+
   return (
     <Modal
-      active
-      title="Optimization"
-      preset="small"
+      active={active}
+      title={`Optimization / ${stepConfig.title}`}
+      style={{ width: "24rem" }}
       className="bg-surface-2"
       bodyCls="py-2"
       closeOnMaskClick={false}
-      onClose={() => setStep(-1)}
+      onClose={closeDept}
+      onTransitionEnd={(open) => {
+        if (!open) props.onClose();
+      }}
     >
       <div className="h-full flex flex-col hide-scrollbar" style={{ height: "80vh" }}>
         <div className="grow hide-scrollbar">
@@ -143,7 +178,7 @@ function OptimizerFrontDesk() {
                 value: 0,
                 element: (
                   <ArtifactSetSelect
-                    id={currentFormId}
+                    id={stepConfig.formId}
                     manager={artifactManager}
                     onSubmit={() => onSubmitArtifactSets()}
                   />
@@ -153,7 +188,7 @@ function OptimizerFrontDesk() {
                 value: 1,
                 element: (
                   <ArtifactModConfig
-                    id={currentFormId}
+                    id={stepConfig.formId}
                     initialValue={{
                       buffs: savedValues.current.buffConfigs,
                     }}
@@ -166,7 +201,7 @@ function OptimizerFrontDesk() {
                 value: 2,
                 element: (
                   <CalcItemSelect
-                    id={currentFormId}
+                    id={stepConfig.formId}
                     initialValue={savedValues.current?.calcItem}
                     onSubmit={(calcItem) => saveConfig("calcItem", calcItem)}
                   />
@@ -176,7 +211,7 @@ function OptimizerFrontDesk() {
                 value: 3,
                 element: (
                   <ExtraConfigs
-                    id={currentFormId}
+                    id={stepConfig.formId}
                     initialValue={savedValues.current.extraConfigs}
                     onSubmit={(config) => saveConfig("extraConfigs", config)}
                   />
@@ -201,7 +236,7 @@ function OptimizerFrontDesk() {
               icon: <FaCaretRight className="text-lg" />,
               iconPosition: "end",
               // disabled: !stepValids[step],
-              form: FORM_IDS[step],
+              form: stepConfig.formId,
             },
           ]}
         />

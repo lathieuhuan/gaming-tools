@@ -22,6 +22,7 @@ export interface OverlayProps {
   transitionDuration?: number;
   children: (moving: OverlayState["movingDir"], transitionStyle: TransitionStyle) => React.ReactNode;
   onClose: () => void;
+  onTransitionEnd?: (open: boolean) => void;
   getContainer?: () => HTMLElement | null;
 }
 export function Overlay({
@@ -32,6 +33,7 @@ export function Overlay({
   transitionDuration = 200,
   children,
   onClose,
+  onTransitionEnd,
   getContainer,
 }: OverlayProps) {
   const [state, setState] = useState<OverlayState>({
@@ -47,6 +49,7 @@ export function Overlay({
 
       setTimeout(() => {
         setState((prev) => ({ ...prev, mounted: false }));
+        onTransitionEnd?.(false);
         onClose();
       }, transitionDuration);
     }
@@ -72,6 +75,7 @@ export function Overlay({
 
         setTimeout(() => {
           setState((prev) => ({ ...prev, visible: false }));
+          onTransitionEnd?.(false);
         }, transitionDuration);
       }
     }
@@ -103,6 +107,9 @@ export function Overlay({
             style={{
               transitionProperty: "opacity, transform",
               ...transitionStyle,
+            }}
+            onTransitionEnd={() => {
+              if (state.movingDir === "out") onTransitionEnd?.(true);
             }}
             onClick={closeOnMaskClick ? closeOverlay : undefined}
           />
