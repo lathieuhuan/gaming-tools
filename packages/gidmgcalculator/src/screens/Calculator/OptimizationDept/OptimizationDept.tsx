@@ -7,8 +7,11 @@ import type { ArtifactFilterSet } from "@Src/components";
 
 import { $AppWeapon } from "@Src/services";
 import { useStoreSnapshot } from "@Src/features";
-import { useCharacterData, useOptimizer, usePartyData } from "../ContextProvider";
+import { useCharacterData, useOptimizerStatus, usePartyData } from "../ContextProvider";
+import { useArtifactManager } from "./hooks/useArtifactManager";
+import { useOptimizer } from "./hooks/useOptimizer";
 
+// Components
 import { ArtifactModConfig } from "./ArtifactModConfig";
 import { ArtifactSetSelect } from "./ArtifactSetSelect";
 import { CalcItemSelect, SelectedCalcItem } from "./CalcItemSelect";
@@ -22,7 +25,12 @@ type SavedValues = {
   extraConfigs: OptimizerExtraConfigs;
 };
 
-export function OptimizerDepartment() {
+export function OptimizationDept() {
+  const { value: status } = useOptimizerStatus();
+  return status.active ? <OptimizerFrontDesk /> : null;
+}
+
+function OptimizerFrontDesk() {
   const store = useStoreSnapshot(({ calculator, userdb }) => {
     const setup = calculator.setupsById[calculator.activeId];
     const target = calculator.target;
@@ -38,8 +46,9 @@ export function OptimizerDepartment() {
   const partyData = usePartyData();
 
   const savedValues = useRef<Partial<SavedValues>>({});
-  const [step, setStep] = useState(-1);
+  const [step, setStep] = useState(0);
 
+  const artifactManager = useArtifactManager(store.artifacts);
   const optimizer = useOptimizer();
 
   const FORM_IDS = ["artifact-set", "artifact-modifier", "calc-item", "extra-config"];
@@ -133,7 +142,11 @@ export function OptimizerDepartment() {
               {
                 value: 0,
                 element: (
-                  <ArtifactSetSelect id={currentFormId} initialValue={[]} onSubmit={() => onSubmitArtifactSets()} />
+                  <ArtifactSetSelect
+                    id={currentFormId}
+                    manager={artifactManager}
+                    onSubmit={() => onSubmitArtifactSets()}
+                  />
                 ),
               },
               {

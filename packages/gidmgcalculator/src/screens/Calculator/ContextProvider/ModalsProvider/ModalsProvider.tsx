@@ -12,7 +12,7 @@ import { SetupExporterCore, SetupImporter, Tavern } from "@Src/components";
 import { TargetConfig } from "./TargetConfig";
 import { SaveSetup } from "./SaveSetup";
 
-type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "OPTIMIZE" | "";
+type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "";
 
 export function ModalsProvider(props: { children: React.ReactNode }) {
   const dispatch = useDispatch();
@@ -36,9 +36,6 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
       requestShareSetup: (setupId: number) => {
         setModalType("SHARE_SETUP");
         setSetupId(setupId);
-      },
-      requestOptimize: () => {
-        setModalType("OPTIMIZE");
       },
     };
   }, []);

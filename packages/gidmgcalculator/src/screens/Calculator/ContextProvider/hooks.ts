@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { CalculatorModalsContext, CharacterDataContext, OptimizerContext, PartyDataContext } from "./contexts";
+import { CalculatorModalsContext, CharacterDataContext, OptimizerStatusContext, PartyDataContext } from "./contexts";
 
 export function useCharacterData() {
   const context = useContext(CharacterDataContext);
@@ -25,11 +25,11 @@ export function useCalcModalCtrl() {
   return context;
 }
 
-export const useOptimizer = () => {
-  const context = useContext(OptimizerContext);
+export const useOptimizerStatus = () => {
+  const context = useContext(OptimizerStatusContext);
 
   if (!context) {
-    throw new Error("useOptimizer must be used inside Calculator/ContextProvider");
+    throw new Error("useOptimizerStatus must be used inside Calculator/ContextProvider");
   }
   return context;
 };

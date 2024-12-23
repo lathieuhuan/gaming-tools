@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { FaCog } from "react-icons/fa";
 import { Button } from "rond";
+
 import { GenshinImage } from "@Src/components";
+import { ArtifactManager } from "../hooks/useArtifactManager";
 
 export type ArtifactSetOption = {
   data: {
@@ -15,15 +17,15 @@ export type ArtifactSetOption = {
 
 interface ArtifactSetSelectProps {
   id: string;
-  initialValue: ArtifactSetOption[];
+  manager: ArtifactManager;
   onSubmit: (sets: ArtifactSetOption[]) => string | undefined;
 }
-export function ArtifactSetSelect(props: ArtifactSetSelectProps) {
-  const [sets, setSets] = useState(props.initialValue);
+export function ArtifactSetSelect({ manager }: ArtifactSetSelectProps) {
+  const [sets, setSets] = useState(manager.sets);
   const [expandedCode, setExpandedCode] = useState(0);
 
   return (
-    <form >
+    <form>
       {sets.map((set) => {
         const { code } = set.data;
 
@@ -37,8 +39,8 @@ export function ArtifactSetSelect(props: ArtifactSetSelectProps) {
 
               <div className="ml-auto flex gap-3">
                 <p>
-                  {set.selectedCount ? <span>{set.selectedCount} / </span> : null}
-                  <span>{set.totalCount}</span>
+                  {set.selected ? <span>{set.selected} / </span> : null}
+                  <span>{set.total}</span>
                 </p>
                 <Button
                   title="Settings"

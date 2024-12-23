@@ -5,7 +5,7 @@ import { Button, useScreenWatcher } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTraveler, updateUI } from "@Store/ui-slice";
-import { useCalcModalCtrl } from "../ContextProvider";
+import { useCalcModalCtrl, useOptimizerStatus } from "../ContextProvider";
 
 // Component
 import { SetupSelect } from "./SetupSelect";
@@ -51,12 +51,6 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
     return renderMainContent("h-full");
   }
 
-  // ===== OPTIMIZE ARTIFACTS =====
-
-  const onRequestOptimization = () => {
-    modalCtrl.requestOptimize();
-  };
-
   return (
     <div className="w-full h-full flex flex-col relative overflow-hidden">
       <div className="mb-3">
@@ -87,9 +81,14 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
             />
           ) : null}
 
-          {/* <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={onRequestOptimization} /> */}
+          <OptimizerContact />
         </div>
       </div>
     </div>
   );
+}
+
+function OptimizerContact() {
+  const { toggle } = useOptimizerStatus();
+  return <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={() => toggle(true)} />;
 }
