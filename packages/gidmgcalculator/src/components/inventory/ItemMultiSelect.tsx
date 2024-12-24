@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FaCheck } from "react-icons/fa";
-import { Button, Modal, EntitySelectTemplate } from "rond";
+import { Button, Modal, EntitySelectTemplate, type EntitySelectTemplateProps } from "rond";
 
-import type { UserArtifact, UserWeapon } from "@Src/types";
+import type { Artifact, Weapon } from "@Src/types";
 import Entity_ from "@Src/utils/entity-utils";
 
 // Component
@@ -10,37 +10,34 @@ import { ArtifactCard } from "../ArtifactCard";
 import { WeaponCard } from "../WeaponCard";
 import { InventoryRack } from "./InventoryRack";
 
-interface ItemMultiSelectProps {
-  title: string;
-  items: UserWeapon[] | UserArtifact[];
-  max: number;
-  onClose: () => void;
-  onConfirm: (chosenIDs: Record<string, boolean>) => void;
+export type ItemMultiSelectIds = Set<PropertyKey>;
+
+interface ItemMultiSelectProps<T> extends Pick<EntitySelectTemplateProps, "title" | "onClose"> {
+  items: T[];
+  initialValue?: ItemMultiSelectIds;
+  max?: number;
+  onConfirm: (selectedIds: ItemMultiSelectIds) => void;
 }
+function ItemMultiSelectCore<T extends Weapon | Artifact>(props: ItemMultiSelectProps<T>): JSX.Element {
+  const { max, initialValue = new Set() } = props;
 
-const ItemMultiSelectCore = (props: ItemMultiSelectProps) => {
-  const [chosenItem, setChosenItem] = useState<UserWeapon | UserArtifact>();
-  const [chosenIDs, setChosenIDs] = useState<Record<string, boolean>>({});
+  const [chosenItem, setChosenItem] = useState<T>();
+  const [selectedIds, setSelectedIds] = useState<ItemMultiSelectIds>(initialValue);
 
-  const chosenCount = Object.values(chosenIDs).filter(Boolean).length;
+  const chosenCount = Object.values(selectedIds).filter(Boolean).length;
 
-  const onChangeItem = (item?: UserWeapon | UserArtifact) => {
+  const onChangeItem = (item: T) => {
     setChosenItem(item);
 
-    if (item?.ID && !chosenIDs[item.ID] && props.max && chosenCount < props.max) {
-      setChosenIDs((prevChosenIDs) => {
-        const newChosenIDs = { ...prevChosenIDs };
-        newChosenIDs[item.ID] = true;
-        return newChosenIDs;
-      });
+    if (item?.ID && !selectedIds.has(item.ID) && (!max || chosenCount < max)) {
+      setSelectedIds((prevIds) => new Set(prevIds.add(item.ID)));
     }
   };
 
-  const onUnselectItem = (item: UserWeapon | UserArtifact) => {
-    setChosenIDs((prevChosenIDs) => {
-      const newChosenIDs = { ...prevChosenIDs };
-      newChosenIDs[item.ID] = false;
-      return newChosenIDs;
+  const onUnselectItem = (item: T) => {
+    setSelectedIds((prevIds) => {
+      prevIds.delete(item.ID);
+      return new Set(prevIds);
     });
   };
 
@@ -50,13 +47,14 @@ const ItemMultiSelectCore = (props: ItemMultiSelectProps) => {
       extra={
         <div className="flex items-center gap-3">
           <p className="text-right text-base text-light-default font-bold">
-            {chosenCount}/{props.max} selected
+            {chosenCount}
+            {max ? `/${max}` : ""} selected
           </p>
           <Button
             variant="primary"
             icon={<FaCheck />}
-            disabled={chosenCount < props.max}
-            onClick={() => props.onConfirm(chosenIDs)}
+            disabled={!!max && chosenCount < max}
+            onClick={() => props.onConfirm(selectedIds)}
           >
             Confirm
           </Button>
@@ -71,13 +69,13 @@ const ItemMultiSelectCore = (props: ItemMultiSelectProps) => {
               data={props.items}
               itemCls="max-w-1/3 basis-1/3 md:w-1/4 md:basis-1/4 lg:max-w-1/6 lg:basis-1/6"
               chosenID={chosenItem?.ID || 1}
-              chosenIDs={chosenIDs}
+              selectedIds={selectedIds}
               onUnselectItem={onUnselectItem}
               onChangeItem={onChangeItem}
             />
 
             {chosenItem ? (
-              Entity_.isUserWeapon(chosenItem) ? (
+              Entity_.isWeapon(chosenItem) ? (
                 <WeaponCard wrapperCls="w-76 shrink-0" withOwnerLabel weapon={chosenItem} />
               ) : (
                 <ArtifactCard wrapperCls="w-76 shrink-0" withOwnerLabel artifact={chosenItem} />
@@ -90,6 +88,6 @@ const ItemMultiSelectCore = (props: ItemMultiSelectProps) => {
       }}
     </EntitySelectTemplate>
   );
-};
+}
 
 export const ItemMultiSelect = Modal.coreWrap(ItemMultiSelectCore, { preset: "large" });

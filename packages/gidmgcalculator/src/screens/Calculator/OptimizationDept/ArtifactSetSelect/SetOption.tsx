@@ -1,82 +1,112 @@
+import { useRef, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
-import { Button } from "rond";
+import { Button, clsx } from "rond";
 import { GenshinImage } from "@Src/components";
 
-interface SetOptionProps {
+interface SetOptionProps extends Pick<ActionsAnimatorProps, "isClosing" | "afterClosedActions"> {
   icon?: string;
   name: string;
-  isExpanded: boolean;
+  isActive: boolean;
   selectedCount: number;
   total: number;
-  /** Actions */
-  children: React.ReactNode;
-  onClickExpand: () => void;
+  anyEquippedSelected: boolean;
+  onClickLabel: () => void;
+  onClickSelectAll: () => void;
+  onClickUnselectAll: () => void;
+  onClickRemoveEquipped: () => void;
+  onClickSelectPieces: () => void;
 }
 export function SetOption(props: SetOptionProps) {
-  const activeCls = props.isExpanded ? "text-primary-1" : "";
+  const { isActive, selectedCount, total } = props;
+  const activeCls = isActive && !props.isClosing ? "text-primary-1" : "";
+
   return (
     <div>
       <div
-        className="px-2 py-0.5 bg-surface-1 rounded-sm flex items-center cursor-pointer glow-on-hover"
+        className={clsx(
+          "px-2 py-0.5 bg-surface-1 rounded-sm flex items-center cursor-pointer",
+          !isActive && "glow-on-hover"
+        )}
         title={props.name}
-        onClick={props.onClickExpand}
+        onClick={props.onClickLabel}
       >
         <GenshinImage className="w-9 h-9 shrink-0" src={props.icon} imgType="artifact" fallbackCls="p-2" />
         <span className={`ml-2 pr-4 truncate ${activeCls}`}>{props.name}</span>
 
         <p className="ml-auto">
-          {props.selectedCount ? <span className={activeCls}>{props.selectedCount}</span> : null}
+          {selectedCount ? <span className={activeCls}>{selectedCount}</span> : null}
           <span className="text-hint-color">
-            {props.selectedCount ? "/" : ""}
-            {props.total}
+            {selectedCount ? "/" : ""}
+            {total}
           </span>
         </p>
       </div>
 
-      {props.children}
+      {isActive && (
+        <ActionsAnimator isClosing={props.isClosing} afterClosedActions={props.afterClosedActions}>
+          <div className="p-3 bg-surface-3 rounded-b-sm flex gap-3">
+            <div className="space-y-3">
+              <Button size="small" disabled={selectedCount === total} onClick={props.onClickSelectAll}>
+                Select All
+              </Button>
+
+              <Button size="small" disabled={!selectedCount} onClick={props.onClickUnselectAll}>
+                Unselect All
+              </Button>
+            </div>
+
+            <div className="space-y-3">
+              <Button size="small" disabled={!props.anyEquippedSelected} onClick={props.onClickRemoveEquipped}>
+                Remove Equipped
+              </Button>
+
+              <Button
+                size="small"
+                className="gap-0 pr-1"
+                icon={<FaCaretRight className="text-lg" />}
+                iconPosition="end"
+                onClick={props.onClickSelectPieces}
+              >
+                Select Individually
+              </Button>
+            </div>
+          </div>
+        </ActionsAnimator>
+      )}
     </div>
   );
 }
 
-type Action = {
-  disabled?: boolean;
-  onClick: () => void;
-};
+type State = "OPENING" | "CLOSING";
 
-interface SetOptionActionsProps {
-  selectAll: Action;
-  unselectAll: Action;
-  removeEquipped: Action;
-  selectIndividual: Action;
+interface ActionsAnimatorProps {
+  isClosing: boolean;
+  children: React.ReactNode;
+  afterClosedActions: () => void;
 }
-export function SetOptionActions(props: SetOptionActionsProps) {
+function ActionsAnimator(props: ActionsAnimatorProps) {
+  const [expanding, setExpanding] = useState(false);
+  const state = useRef<State>();
+
+  if (!state.current) {
+    setTimeout(() => setExpanding(true), 50);
+    state.current = "OPENING";
+  }
+
+  if (props.isClosing && state.current === "OPENING") {
+    setTimeout(() => setExpanding(false), 0);
+    state.current = "CLOSING";
+  }
+
   return (
-    <div className="p-3 bg-surface-3 rounded-b-sm flex gap-3">
-      <div className="space-y-3">
-        <Button size="small" {...props.selectAll}>
-          Select All
-        </Button>
-
-        <Button size="small" {...props.unselectAll}>
-          Unselect All
-        </Button>
-      </div>
-
-      <div className="space-y-3">
-        <Button size="small" {...props.removeEquipped}>
-          Remove Equipped
-        </Button>
-
-        <Button
-          size="small"
-          className="gap-0 pr-1"
-          icon={<FaCaretRight className="text-lg" />}
-          iconPosition="end"
-          {...props.selectIndividual}
-        >
-          Select Individually
-        </Button>
-      </div>
+    <div
+      className="overflow-hidden transition-size duration-200"
+      style={{ height: expanding ? 84 : 0 }}
+      onTransitionEnd={() => {
+        if (props.isClosing) props.afterClosedActions();
+      }}
+    >
+      {props.children}
     </div>
   );
 }

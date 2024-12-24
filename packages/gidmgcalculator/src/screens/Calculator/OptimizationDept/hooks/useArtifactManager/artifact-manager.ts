@@ -62,6 +62,22 @@ export class ArtifactManager {
     return this.sets.concat();
   };
 
+  getSet = (code: number) => {
+    let artifacts: InputArtifact[] = [];
+    let selected: ManagedArtifactSet["selectedIds"] = new Set();
+
+    this.getSetThen((set) => {
+      artifacts = set.pieces;
+      selected = set.selectedIds;
+    })(code);
+
+    return { artifacts, selected };
+  };
+
+  updateSelectedIds = (code: number, selectedIds: ManagedArtifactSet["selectedIds"]) => {
+    this.getSetThen((set) => (set.selectedIds = selectedIds))(code);
+  };
+
   selectAll = this.getSetThen((set) => {
     set.selectedIds.clear();
     set.anyEquippedSelected = false;

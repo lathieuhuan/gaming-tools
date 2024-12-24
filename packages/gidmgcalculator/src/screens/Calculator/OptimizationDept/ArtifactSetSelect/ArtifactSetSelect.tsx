@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { Button, Input } from "rond";
 
 import { ArtifactManager } from "../hooks/useArtifactManager";
-import { SetOption, SetOptionActions } from "./SetOption";
+import { SetOption } from "./SetOption";
 
 export type ArtifactSetOption = {
   data: {
@@ -15,16 +15,18 @@ export type ArtifactSetOption = {
 };
 
 interface ArtifactSetSelectProps {
-  id: string;
   manager: ArtifactManager;
-  onSubmit: (sets: ArtifactSetOption[]) => string | undefined;
+  onRequestSelectPieces: (code: number) => void;
 }
-export function ArtifactSetSelect({ manager }: ArtifactSetSelectProps) {
+export function ArtifactSetSelect({ manager, onRequestSelectPieces }: ArtifactSetSelectProps) {
   const timeout = useRef<NodeJS.Timeout>();
   const [sets, setSets] = useState(manager.sets);
-  const [expandedCode, setExpandedCode] = useState(-1);
   const [keyword, setKeyword] = useState("");
-  const [detailCode, setDetailCode] = useState(0);
+
+  const [codes, setCodes] = useState({
+    active: new Set<number>(),
+    closing: new Set<number>(),
+  });
 
   const all = useMemo(() => {
     const visibleCodes = new Set<number>();
@@ -57,6 +59,33 @@ export function ArtifactSetSelect({ manager }: ArtifactSetSelectProps) {
     }, 200);
   };
 
+  const onClickOption = (code: number, isActive: boolean) => {
+    if (isActive) {
+      setCodes((prevCodes) => ({
+        ...prevCodes,
+        closing: new Set(prevCodes.closing.add(code)),
+      }));
+    } else {
+      setCodes(({ active }) => {
+        const closing = new Set(active);
+        return {
+          active: new Set(active.add(code)),
+          closing,
+        };
+      });
+    }
+  };
+
+  const afterClosedActions = (code: number) => {
+    setCodes((prevCodes) => {
+      prevCodes.active.delete(code);
+      return {
+        ...prevCodes,
+        active: new Set(prevCodes.active),
+      };
+    });
+  };
+
   return (
     <div className="space-y-3">
       <div>
@@ -87,40 +116,25 @@ export function ArtifactSetSelect({ manager }: ArtifactSetSelectProps) {
           if (!all.visibleCodes.has(data.code)) {
             return null;
           }
-          const total = set.pieces.length;
-          const selectedCount = set.selectedIds.size;
-          const isExpanded = data.code === expandedCode;
+          const isActive = codes.active.has(data.code);
 
           return (
             <SetOption
               key={data.code}
               icon={data.icon}
               name={data.name}
-              isExpanded={isExpanded}
-              selectedCount={selectedCount}
-              total={total}
-              onClickExpand={() => setExpandedCode(isExpanded ? -1 : data.code)}
-            >
-              {isExpanded && (
-                <SetOptionActions
-                  selectAll={{
-                    disabled: selectedCount === total,
-                    onClick: () => setSets(manager.selectAll(data.code)),
-                  }}
-                  unselectAll={{
-                    disabled: !selectedCount,
-                    onClick: () => setSets(manager.unselectAll(data.code)),
-                  }}
-                  removeEquipped={{
-                    disabled: !set.anyEquippedSelected,
-                    onClick: () => setSets(manager.removeEquipped(data.code)),
-                  }}
-                  selectIndividual={{
-                    onClick: () => setDetailCode(data.code),
-                  }}
-                />
-              )}
-            </SetOption>
+              isActive={isActive}
+              isClosing={codes.closing.has(data.code)}
+              selectedCount={set.selectedIds.size}
+              total={set.pieces.length}
+              anyEquippedSelected={set.anyEquippedSelected}
+              onClickLabel={() => onClickOption(data.code, isActive)}
+              onClickSelectAll={() => setSets(manager.selectAll(data.code))}
+              onClickUnselectAll={() => setSets(manager.unselectAll(data.code))}
+              onClickRemoveEquipped={() => setSets(manager.removeEquipped(data.code))}
+              onClickSelectPieces={() => onRequestSelectPieces(data.code)}
+              afterClosedActions={() => afterClosedActions(data.code)}
+            />
           );
         })}
       </div>

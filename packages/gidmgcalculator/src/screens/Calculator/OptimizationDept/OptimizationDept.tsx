@@ -3,12 +3,12 @@ import { FaCaretRight } from "react-icons/fa";
 import { ButtonGroup, Modal, SwitchNode } from "rond";
 
 import type { OptimizerArtifactBuffConfigs, OptimizerExtraConfigs } from "@Backend";
-import type { ArtifactFilterSet } from "@Src/components";
+import { ItemMultiSelect, type ArtifactFilterSet } from "@Src/components";
 
 import { $AppWeapon } from "@Src/services";
 import { useStoreSnapshot } from "@Src/features";
 import { useCharacterData, useOptimizerStatus, usePartyData } from "../ContextProvider";
-import { useArtifactManager } from "./hooks/useArtifactManager";
+import { ArtifactManager, useArtifactManager } from "./hooks/useArtifactManager";
 import { useOptimizer } from "./hooks/useOptimizer";
 
 // Components
@@ -54,9 +54,15 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
   const appChar = useCharacterData();
   const partyData = usePartyData();
 
-  const savedValues = useRef<Partial<SavedValues>>({});
-  const [active, setActive] = useState(true);
+  const [activeMain, setActiveMain] = useState(true);
+  const [activePieceSelect, setActivePieceSelect] = useState(false);
   const [step, setStep] = useState(0);
+
+  const savedValues = useRef<Partial<SavedValues>>({});
+  const selectingSet = useRef<ReturnType<ArtifactManager["getSet"]>>({
+    artifacts: [],
+    selected: new Set(),
+  });
 
   const artifactManager = useArtifactManager(store.artifacts);
   // const optimizer = useOptimizer();
@@ -152,98 +158,118 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
     saveConfig("setCodes", setCodes);
   };
 
+  const toggleArtifactPieceSelect = (active: boolean, code?: number) => {
+    if (active && code) {
+      selectingSet.current = artifactManager.getSet(code);
+    }
+
+    setActivePieceSelect(active);
+    setActiveMain(!active);
+  };
+
   const closeDept = () => {
-    setActive(false);
+    setActiveMain(false);
   };
 
   return (
-    <Modal
-      active={active}
-      title={<span className="text-lg">Optimization / {stepConfig.title}</span>}
-      style={{
-        height: "95vh",
-        width: "24rem",
-      }}
-      className="bg-surface-2"
-      bodyCls="py-2"
-      closeOnMaskClick={false}
-      onClose={closeDept}
-      onTransitionEnd={(open) => {
-        if (!open) props.onClose();
-      }}
-    >
-      <div className="h-full flex flex-col hide-scrollbar">
-        <div className="grow hide-scrollbar">
-          <SwitchNode
-            value={step}
-            cases={[
+    <>
+      <Modal
+        active={activeMain}
+        title={<span className="text-lg">Optimization / {stepConfig?.title}</span>}
+        style={{
+          height: "95vh",
+          width: "24rem",
+        }}
+        className="bg-surface-2"
+        bodyCls="py-2"
+        closeOnMaskClick={false}
+        onClose={closeDept}
+        onTransitionEnd={(open) => {
+          if (!open && !activePieceSelect) {
+            props.onClose();
+          }
+        }}
+      >
+        <div className="h-full flex flex-col hide-scrollbar">
+          <div className="grow hide-scrollbar">
+            <SwitchNode
+              value={step}
+              cases={[
+                {
+                  value: 0,
+                  element: (
+                    <ArtifactSetSelect
+                      manager={artifactManager}
+                      onRequestSelectPieces={(code) => toggleArtifactPieceSelect(true, code)}
+                    />
+                  ),
+                },
+                {
+                  value: 1,
+                  element: (
+                    <ArtifactModConfig
+                      id={stepConfig?.formId}
+                      initialValue={{
+                        buffs: savedValues.current.buffConfigs,
+                      }}
+                      artifactSets={savedValues.current.filterSets}
+                      onSubmit={(config) => saveConfig("buffConfigs", config.buffs)}
+                    />
+                  ),
+                },
+                {
+                  value: 2,
+                  element: (
+                    <CalcItemSelect
+                      id={stepConfig?.formId}
+                      initialValue={savedValues.current?.calcItem}
+                      onSubmit={(calcItem) => saveConfig("calcItem", calcItem)}
+                    />
+                  ),
+                },
+                {
+                  value: 3,
+                  element: (
+                    <ExtraConfigs
+                      id={stepConfig?.formId}
+                      initialValue={savedValues.current.extraConfigs}
+                      onSubmit={(config) => saveConfig("extraConfigs", config)}
+                    />
+                  ),
+                },
+              ]}
+            />
+          </div>
+
+          <ButtonGroup
+            className="mt-3 mb-1"
+            buttons={[
               {
-                value: 0,
-                element: (
-                  <ArtifactSetSelect
-                    id={stepConfig.formId}
-                    manager={artifactManager}
-                    onSubmit={() => onSubmitArtifactSets()}
-                  />
-                ),
+                children: "Back",
+                icon: <FaCaretRight className="text-lg rotate-180" />,
+                disabled: !step,
+                onClick: () => navigateStep(-1),
               },
               {
-                value: 1,
-                element: (
-                  <ArtifactModConfig
-                    id={stepConfig.formId}
-                    initialValue={{
-                      buffs: savedValues.current.buffConfigs,
-                    }}
-                    artifactSets={savedValues.current.filterSets}
-                    onSubmit={(config) => saveConfig("buffConfigs", config.buffs)}
-                  />
-                ),
-              },
-              {
-                value: 2,
-                element: (
-                  <CalcItemSelect
-                    id={stepConfig.formId}
-                    initialValue={savedValues.current?.calcItem}
-                    onSubmit={(calcItem) => saveConfig("calcItem", calcItem)}
-                  />
-                ),
-              },
-              {
-                value: 3,
-                element: (
-                  <ExtraConfigs
-                    id={stepConfig.formId}
-                    initialValue={savedValues.current.extraConfigs}
-                    onSubmit={(config) => saveConfig("extraConfigs", config)}
-                  />
-                ),
+                children: "Next",
+                icon: <FaCaretRight className="text-lg" />,
+                iconPosition: "end",
+                // disabled: !stepValids[step],
+                form: stepConfig?.formId,
               },
             ]}
           />
         </div>
+      </Modal>
 
-        <ButtonGroup
-          className="mt-3 mb-1"
-          buttons={[
-            {
-              children: "Back",
-              icon: <FaCaretRight className="text-lg rotate-180" />,
-              disabled: !step,
-              onClick: () => navigateStep(-1),
-            },
-            {
-              type: "submit",
-              children: "Next",
-              icon: <FaCaretRight className="text-lg" />,
-              iconPosition: "end",
-              // disabled: !stepValids[step],
-              form: stepConfig.formId,
-            },
-          ]}
-        />
-      </div>
-    </Modal>
+      <ItemMultiSelect
+        active={activePieceSelect}
+        title={<span className="text-lg">Optimization / Select Artifacts</span>}
+        items={selectingSet.current.artifacts}
+        initialValue={selectingSet.current.selected}
+        onClose={() => toggleArtifactPieceSelect(false)}
+        onConfirm={(ids) => console.log(ids)}
+      />
+    </>
   );
 }
