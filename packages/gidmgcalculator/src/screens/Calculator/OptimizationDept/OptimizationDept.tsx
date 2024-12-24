@@ -3,7 +3,7 @@ import { FaCaretRight } from "react-icons/fa";
 import { ButtonGroup, Modal, SwitchNode } from "rond";
 
 import type { OptimizerArtifactBuffConfigs, OptimizerExtraConfigs } from "@Backend";
-import { ItemMultiSelect, type ArtifactFilterSet } from "@Src/components";
+import type { ItemMultiSelectIds, ArtifactFilterSet } from "@Src/components";
 
 import { $AppWeapon } from "@Src/services";
 import { useStoreSnapshot } from "@Src/features";
@@ -12,6 +12,7 @@ import { ArtifactManager, useArtifactManager } from "./hooks/useArtifactManager"
 import { useOptimizer } from "./hooks/useOptimizer";
 
 // Components
+import { ItemMultiSelect } from "@Src/components";
 import { ArtifactModConfig } from "./ArtifactModConfig";
 import { ArtifactSetSelect } from "./ArtifactSetSelect";
 import { CalcItemSelect, SelectedCalcItem } from "./CalcItemSelect";
@@ -53,23 +54,20 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
   });
   const appChar = useCharacterData();
   const partyData = usePartyData();
+  const artifactManager = useArtifactManager(store.artifacts);
 
   const [activeMain, setActiveMain] = useState(true);
   const [activePieceSelect, setActivePieceSelect] = useState(false);
   const [step, setStep] = useState(0);
 
   const savedValues = useRef<Partial<SavedValues>>({});
-  const selectingSet = useRef<ReturnType<ArtifactManager["getSet"]>>({
-    artifacts: [],
-    selected: new Set(),
-  });
+  const selectingSet = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
 
-  const artifactManager = useArtifactManager(store.artifacts);
   // const optimizer = useOptimizer();
 
   const STEP_CONFIGS: StepConfig[] = [
     {
-      title: "Select Artifact Sets",
+      title: "Select Artifacts",
       formId: "artifact-set",
     },
     {
@@ -158,13 +156,18 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
     saveConfig("setCodes", setCodes);
   };
 
-  const toggleArtifactPieceSelect = (active: boolean, code?: number) => {
+  const togglePieceSelect = (active: boolean, code?: number) => {
     if (active && code) {
       selectingSet.current = artifactManager.getSet(code);
     }
 
     setActivePieceSelect(active);
     setActiveMain(!active);
+  };
+
+  const onConfirmSelectPieces = (selectedIds: ItemMultiSelectIds) => {
+    artifactManager.updateSelectedIds(selectingSet.current.code, selectedIds);
+    togglePieceSelect(false);
   };
 
   const closeDept = () => {
@@ -200,7 +203,7 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
                   element: (
                     <ArtifactSetSelect
                       manager={artifactManager}
-                      onRequestSelectPieces={(code) => toggleArtifactPieceSelect(true, code)}
+                      onRequestSelectPieces={(code) => togglePieceSelect(true, code)}
                     />
                   ),
                 },
@@ -267,8 +270,8 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
         title={<span className="text-lg">Optimization / Select Artifacts</span>}
         items={selectingSet.current.artifacts}
         initialValue={selectingSet.current.selected}
-        onClose={() => toggleArtifactPieceSelect(false)}
-        onConfirm={(ids) => console.log(ids)}
+        onClose={() => togglePieceSelect(false)}
+        onConfirm={onConfirmSelectPieces}
       />
     </>
   );

@@ -117,7 +117,7 @@ function UploadCore(props: ModalControl) {
         title="Weapons"
         active={props.active && currentStep === "CHECK_WEAPONS"}
         items={filteredWeapons}
-        max={weapons.length - MAX_USER_WEAPONS}
+        required={weapons.length - MAX_USER_WEAPONS}
         onConfirm={(data) => {
           removedWeaponIDs.current = data;
           toNextStep();
@@ -128,7 +128,7 @@ function UploadCore(props: ModalControl) {
         title="Artifacts"
         active={props.active && currentStep === "CHECK_ARTIFACTS"}
         items={filteredArtifacts}
-        max={artifacts.length - MAX_USER_ARTIFACTS}
+        required={artifacts.length - MAX_USER_ARTIFACTS}
         onConfirm={(data) => {
           removedArtifactIDs.current = data;
           toNextStep();

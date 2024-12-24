@@ -5,15 +5,11 @@ import type { Artifact } from "@Src/types";
 import { OwnerLabel } from "../OwnerLabel";
 import { ArtifactView, type ArtifactViewProps } from "./ArtifactView";
 
-export type ArtifactCardAction<T extends Artifact = Artifact> = Omit<
-  ButtonGroupItem,
-  "onClick"
-> & {
+export type ArtifactCardAction<T extends Artifact = Artifact> = Omit<ButtonGroupItem, "onClick"> & {
   onClick: (e: MouseEvent<HTMLButtonElement>, artifact: T) => void;
 };
 
-interface ArtifactCardProps<T extends Artifact>
-  extends Omit<ArtifactViewProps<T>, "className" | "artifact"> {
+interface ArtifactCardProps<T extends Artifact> extends Omit<ArtifactViewProps<T>, "className" | "artifact"> {
   wrapperCls?: string;
   className?: string;
   style?: CSSProperties;

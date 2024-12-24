@@ -108,7 +108,7 @@ function withModal<T>(
 
 function withCoreModal<T>(
   Component: (props: T) => JSX.Element | null,
-  modalProps?: Partial<Pick<ModalCoreProps, "preset" | "className">>
+  modalProps?: Partial<Pick<ModalCoreProps, "preset" | "className" | "style">>
 ) {
   return (props: Pick<ModalProps, "active" | "closable" | "closeOnMaskClick" | "onClose"> & T): JSX.Element => {
     return (

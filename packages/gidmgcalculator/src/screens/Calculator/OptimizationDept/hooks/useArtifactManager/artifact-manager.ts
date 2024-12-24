@@ -4,7 +4,7 @@ import { $AppArtifact } from "@Src/services";
 
 type InputArtifact = PartiallyOptional<UserArtifact, "owner">;
 
-type ManagedArtifactSet = {
+export type ManagedArtifactSet = {
   data: {
     code: number;
     name: string;
@@ -12,7 +12,6 @@ type ManagedArtifactSet = {
   };
   pieces: InputArtifact[];
   selectedIds: Set<number>;
-  anyEquippedSelected: boolean;
 };
 
 export class ArtifactManager {
@@ -40,7 +39,6 @@ export class ArtifactManager {
             },
             pieces: [artifact],
             selectedIds: new Set(),
-            anyEquippedSelected: false,
           };
 
           countMap.set(artifact.code, filterSet);
@@ -52,6 +50,15 @@ export class ArtifactManager {
     this.sets = sets;
   }
 
+  checkAnyEquippedSelected = (set: ManagedArtifactSet) => {
+    for (const piece of set.pieces) {
+      if (piece.owner && set.selectedIds.has(piece.ID)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   private getSetThen = (onFoundSet: (set: ManagedArtifactSet) => void) => (codes: number | Set<number>) => {
     if (typeof codes === "number") {
       const set = this.sets.find((item) => item.data.code === codes);
@@ -62,16 +69,23 @@ export class ArtifactManager {
     return this.sets.concat();
   };
 
+  /** @params code 0 to get the fake set */
   getSet = (code: number) => {
     let artifacts: InputArtifact[] = [];
     let selected: ManagedArtifactSet["selectedIds"] = new Set();
 
-    this.getSetThen((set) => {
-      artifacts = set.pieces;
-      selected = set.selectedIds;
-    })(code);
+    if (code) {
+      this.getSetThen((set) => {
+        artifacts = set.pieces;
+        selected = set.selectedIds;
+      })(code);
+    }
 
-    return { artifacts, selected };
+    return {
+      code,
+      artifacts,
+      selected,
+    };
   };
 
   updateSelectedIds = (code: number, selectedIds: ManagedArtifactSet["selectedIds"]) => {
@@ -80,18 +94,14 @@ export class ArtifactManager {
 
   selectAll = this.getSetThen((set) => {
     set.selectedIds.clear();
-    set.anyEquippedSelected = false;
 
     for (const piece of set.pieces) {
       set.selectedIds.add(piece.ID);
-
-      if (piece.owner) set.anyEquippedSelected = true;
     }
   });
 
   unselectAll = this.getSetThen((set) => {
     set.selectedIds.clear();
-    set.anyEquippedSelected = false;
   });
 
   removeEquipped = this.getSetThen((set) => {
@@ -100,6 +110,5 @@ export class ArtifactManager {
         set.selectedIds.delete(piece.ID);
       }
     }
-    set.anyEquippedSelected = false;
   });
 }

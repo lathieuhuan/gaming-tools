@@ -38,7 +38,7 @@ export function ArtifactSetSelect({ manager, onRequestSelectPieces }: ArtifactSe
         visibleCodes.add(set.data.code);
         visibleSelectedCount += set.selectedIds.size;
 
-        if (set.anyEquippedSelected) {
+        if (!anyEquippedSelected && manager.checkAnyEquippedSelected(set)) {
           anyEquippedSelected = true;
         }
       }
@@ -63,16 +63,13 @@ export function ArtifactSetSelect({ manager, onRequestSelectPieces }: ArtifactSe
     if (isActive) {
       setCodes((prevCodes) => ({
         ...prevCodes,
-        closing: new Set(prevCodes.closing.add(code)),
+        closing: new Set(prevCodes.closing).add(code),
       }));
     } else {
-      setCodes(({ active }) => {
-        const closing = new Set(active);
-        return {
-          active: new Set(active.add(code)),
-          closing,
-        };
-      });
+      setCodes(({ active }) => ({
+        active: new Set(active).add(code),
+        closing: new Set(active),
+      }));
     }
   };
 
@@ -111,29 +108,24 @@ export function ArtifactSetSelect({ manager, onRequestSelectPieces }: ArtifactSe
 
       <div className="space-y-2">
         {sets.map((set) => {
-          const { data } = set;
+          const { code } = set.data;
 
-          if (!all.visibleCodes.has(data.code)) {
+          if (!all.visibleCodes.has(code)) {
             return null;
           }
-          const isActive = codes.active.has(data.code);
+          const isActive = codes.active.has(code);
 
           return (
             <SetOption
-              key={data.code}
-              icon={data.icon}
-              name={data.name}
+              key={code}
               isActive={isActive}
-              isClosing={codes.closing.has(data.code)}
-              selectedCount={set.selectedIds.size}
-              total={set.pieces.length}
-              anyEquippedSelected={set.anyEquippedSelected}
-              onClickLabel={() => onClickOption(data.code, isActive)}
-              onClickSelectAll={() => setSets(manager.selectAll(data.code))}
-              onClickUnselectAll={() => setSets(manager.unselectAll(data.code))}
-              onClickRemoveEquipped={() => setSets(manager.removeEquipped(data.code))}
-              onClickSelectPieces={() => onRequestSelectPieces(data.code)}
-              afterClosedActions={() => afterClosedActions(data.code)}
+              isClosing={codes.closing.has(code)}
+              set={set}
+              manager={manager}
+              onClickLabel={() => onClickOption(code, isActive)}
+              onClickSelectPieces={() => onRequestSelectPieces(code)}
+              onChangeSets={setSets}
+              afterClosedActions={() => afterClosedActions(code)}
             />
           );
         })}

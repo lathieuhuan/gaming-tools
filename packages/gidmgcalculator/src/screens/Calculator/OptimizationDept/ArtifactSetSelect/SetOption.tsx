@@ -1,23 +1,24 @@
 import { useRef, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
 import { Button, clsx } from "rond";
+
+import type { ManagedArtifactSet, ArtifactManager } from "../hooks/useArtifactManager";
 import { GenshinImage } from "@Src/components";
 
 interface SetOptionProps extends Pick<ActionsAnimatorProps, "isClosing" | "afterClosedActions"> {
-  icon?: string;
-  name: string;
   isActive: boolean;
-  selectedCount: number;
-  total: number;
-  anyEquippedSelected: boolean;
+  set: ManagedArtifactSet;
+  manager: ArtifactManager;
   onClickLabel: () => void;
-  onClickSelectAll: () => void;
-  onClickUnselectAll: () => void;
-  onClickRemoveEquipped: () => void;
   onClickSelectPieces: () => void;
+  onChangeSets: (set: ManagedArtifactSet[]) => void;
 }
 export function SetOption(props: SetOptionProps) {
-  const { isActive, selectedCount, total } = props;
+  const { isActive, manager, onChangeSets } = props;
+  const { data } = props.set;
+
+  const selectedCount = props.set.selectedIds.size;
+  const total = props.set.pieces.length;
   const activeCls = isActive && !props.isClosing ? "text-primary-1" : "";
 
   return (
@@ -27,11 +28,11 @@ export function SetOption(props: SetOptionProps) {
           "px-2 py-0.5 bg-surface-1 rounded-sm flex items-center cursor-pointer",
           !isActive && "glow-on-hover"
         )}
-        title={props.name}
+        title={data.name}
         onClick={props.onClickLabel}
       >
-        <GenshinImage className="w-9 h-9 shrink-0" src={props.icon} imgType="artifact" fallbackCls="p-2" />
-        <span className={`ml-2 pr-4 truncate ${activeCls}`}>{props.name}</span>
+        <GenshinImage className="w-9 h-9 shrink-0" src={data.icon} imgType="artifact" fallbackCls="p-2" />
+        <span className={`ml-2 pr-4 truncate ${activeCls}`}>{data.name}</span>
 
         <p className="ml-auto">
           {selectedCount ? <span className={activeCls}>{selectedCount}</span> : null}
@@ -46,17 +47,29 @@ export function SetOption(props: SetOptionProps) {
         <ActionsAnimator isClosing={props.isClosing} afterClosedActions={props.afterClosedActions}>
           <div className="p-3 bg-surface-3 rounded-b-sm flex gap-3">
             <div className="space-y-3">
-              <Button size="small" disabled={selectedCount === total} onClick={props.onClickSelectAll}>
+              <Button
+                size="small"
+                disabled={selectedCount === total}
+                onClick={() => onChangeSets(manager.selectAll(data.code))}
+              >
                 Select All
               </Button>
 
-              <Button size="small" disabled={!selectedCount} onClick={props.onClickUnselectAll}>
+              <Button
+                size="small"
+                disabled={!selectedCount}
+                onClick={() => onChangeSets(manager.unselectAll(data.code))}
+              >
                 Unselect All
               </Button>
             </div>
 
             <div className="space-y-3">
-              <Button size="small" disabled={!props.anyEquippedSelected} onClick={props.onClickRemoveEquipped}>
+              <Button
+                size="small"
+                disabled={!manager.checkAnyEquippedSelected(props.set)}
+                onClick={() => onChangeSets(manager.removeEquipped(data.code))}
+              >
                 Remove Equipped
               </Button>
 
