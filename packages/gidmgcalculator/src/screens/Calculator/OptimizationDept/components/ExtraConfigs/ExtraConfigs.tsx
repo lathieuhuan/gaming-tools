@@ -6,7 +6,7 @@ type ConfigKey<TKey extends keyof OptimizerExtraConfigs> = TKey;
 
 type RenderCheck = {
   type: "CHECK";
-  key: ConfigKey<"useOwnedPiece">;
+  key: ConfigKey<"preferSet">;
 };
 
 type RenderInput = {
@@ -23,12 +23,12 @@ interface ExtraConfigsProps {
   onChange?: (value: OptimizerExtraConfigs) => void;
 }
 export function ExtraConfigs(props: ExtraConfigsProps) {
-  const config = useRef<OptimizerExtraConfigs>(props.initialValue || { useOwnedPiece: true, minEr: 100 });
+  const config = useRef<OptimizerExtraConfigs>(props.initialValue || { preferSet: true, minEr: 100 });
 
   const renderItems: RenderItem[] = [
     {
-      label: "Use artifacts equipped by characters",
-      key: "useOwnedPiece",
+      label: "Prefer combination of same artifact sets",
+      key: "preferSet",
       type: "CHECK",
     },
     {

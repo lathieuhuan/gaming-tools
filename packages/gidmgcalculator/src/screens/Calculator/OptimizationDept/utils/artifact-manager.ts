@@ -1,7 +1,7 @@
 import type { PartiallyOptional } from "rond";
-import type { ArtifactModCtrl, UserArtifact } from "@Src/types";
+import type { AppArtifact, ArtifactType, OptimizerArtifactBuffConfigs } from "@Backend";
+import type { UserArtifact } from "@Src/types";
 
-import { AppArtifact, OptimizerArtifactBuffConfigs } from "@Backend";
 import { $AppArtifact } from "@Src/services";
 import Modifier_ from "@Src/utils/modifier-utils";
 
@@ -16,6 +16,13 @@ export type ManagedArtifactSet = {
 export class ArtifactManager {
   sets: ManagedArtifactSet[] = [];
   buffConfigs: OptimizerArtifactBuffConfigs = {};
+  sumary: Record<ArtifactType, InputArtifact[]> = {
+    flower: [],
+    plume: [],
+    sands: [],
+    goblet: [],
+    circlet: [],
+  };
 
   constructor(artifacts: InputArtifact[]) {
     const countMap = new Map<number, ManagedArtifactSet>();
@@ -149,5 +156,24 @@ export class ArtifactManager {
       return (this.buffConfigs = newConfigsByCode);
     }
     return this.buffConfigs;
+  };
+
+  sumarize = () => {
+    this.sumary = {
+      flower: [],
+      plume: [],
+      sands: [],
+      goblet: [],
+      circlet: [],
+    };
+
+    for (const set of this.sets) {
+      for (const artifact of set.pieces) {
+        if (set.selectedIds.has(artifact.ID)) {
+          this.sumary[artifact.type] = this.sumary[artifact.type].concat(artifact);
+        }
+      }
+    }
+    return this.sumary;
   };
 }

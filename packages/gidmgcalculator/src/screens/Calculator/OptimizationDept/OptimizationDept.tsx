@@ -1,11 +1,11 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { OptimizerExtraConfigs } from "@Backend";
-import type { ItemMultiSelectIds, ArtifactFilterSet } from "@Src/components";
+import type { ItemMultiSelectIds } from "@Src/components";
 import type { ArtifactManager } from "./utils/artifact-manager";
 
-import { $AppWeapon } from "@Src/services";
 import { useStoreSnapshot } from "@Src/features";
+import { $AppWeapon } from "@Src/services";
 import { useCharacterData, useOptimizerStatus, usePartyData } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 import { useOptimizer } from "./hooks/useOptimizer";
@@ -17,6 +17,7 @@ import { ArtifactSetSelect } from "./components/ArtifactSetSelect";
 import { CalcItemSelect, SelectedCalcItem } from "./components/CalcItemSelect";
 import { ExtraConfigs } from "./components/ExtraConfigs";
 import { OptimizationGuide, OptimizationGuideControl, StepConfig } from "./components/OptimizationGuide";
+import { Review } from "./components/Review";
 
 type SavedValues = {
   calcItem: SelectedCalcItem;
@@ -37,10 +38,12 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
     const setup = calculator.setupsById[calculator.activeId];
     const target = calculator.target;
     const artifacts = userdb.userArts;
+    const appWeapon = $AppWeapon.get(setup.weapon.code)!;
 
     return {
       setup,
       target,
+      appWeapon,
       artifacts,
     };
   });
@@ -54,76 +57,30 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
   const savedValues = useRef<Partial<SavedValues>>({});
   const selectingSet = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
 
-  // const optimizer = useOptimizer();
+  const optimizer = useOptimizer(store.target, store.setup, appChar, store.appWeapon, partyData);
 
   // useEffect(() => {
   //   const appWeapon = $AppWeapon.get(store.setup.weapon.code)!;
   //   optimizer.init(store.target, store.setup, appChar, appWeapon, partyData);
   // }, []);
 
+  useEffect(() => {
+    return () => {
+      optimizer.end();
+    };
+  }, []);
+
   const optimizeSetup = () => {
     const { calcItem, extraConfigs } = savedValues.current;
 
-    // optimizer.optimize(
-    //   {
-    //     pattern: calcItem!.patternCate,
-    //     calcItem: calcItem!.value,
-    //     elmtModCtrls: store.setup.elmtModCtrls,
-    //   },
-    //   [buffConfigs!, extraConfigs!]
-    // );
-  };
-
-  // const navigateStep = (stepDiff: number) => {
-  //   const newStep = step + stepDiff;
-
-  //   if (newStep >= STEP_CONFIGS.length) {
-  //     return optimizeSetup();
-  //   }
-
-  //   setStep(newStep);
-  // };
-
-  // const saveConfig = <TKey extends keyof SavedValues>(key: TKey, value: SavedValues[TKey]) => {
-  //   savedValues.current[key] = value;
-  //   navigateStep(1);
-  // };
-
-  const onSubmitArtifactSets = (sets: ArtifactFilterSet[] = []): string | undefined => {
-    const setCodes: number[] = [];
-
-    // const newBuffConfig = {
-    //   ...savedValues.current.buffConfigs,
-    // };
-
-    // for (const { code, data } of sets) {
-    //   setCodes.push(code);
-
-    //   if (!newBuffConfig[code] && data.buffs) {
-    //     newBuffConfig[code] = data.buffs.map<OptimizerArtifactBuffConfigs[number][number]>((buff) => ({
-    //       index: buff.index,
-    //       activated: true,
-    //       inputs: Modifier_.createModCtrlInpus(buff.inputConfigs, true),
-    //     }));
-    //   }
-    // }
-
-    const artifacts = store.artifacts.filter((artifact) => setCodes.includes(artifact.code));
-    // const possibleSetCount = optimizer.load(artifacts);
-
-    // console.log("possibleSetCount", possibleSetCount);
-
-    // if (possibleSetCount > 500_000) {
-    //   return "To many artifact, please narrow their number down.";
-    // } else {
-    //   optimizerManager.load(artifacts);
-    // }
-
-    return "";
-
-    // savedValues.current.filterSets = sets;
-    // savedValues.current.buffConfigs = newBuffConfig;
-    // saveConfig("setCodes", setCodes);
+    optimizer.optimize(
+      {
+        pattern: calcItem!.patternCate,
+        calcItem: calcItem!.value,
+        elmtModCtrls: store.setup.elmtModCtrls,
+      },
+      [artifactManager.buffConfigs, extraConfigs!]
+    );
   };
 
   const togglePieceSelect = (active: boolean, code?: number) => {
@@ -152,7 +109,7 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
       ),
     },
     {
-      title: "Artifact Modifiers Config",
+      title: "Artifact Modifiers",
       initialValid: true,
       render: () => <ArtifactModConfig manager={artifactManager} />,
     },
@@ -177,6 +134,11 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
         />
       ),
     },
+    {
+      title: "Review",
+      initialValid: true,
+      render: () => <Review manager={artifactManager} />,
+    },
   ];
 
   return (
@@ -188,8 +150,11 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
           if (oldStep === 0 && newStep === 1) {
             artifactManager.concludeModConfigs();
           }
+          if (newStep === stepConfigs.length - 1) {
+            optimizer.load(artifactManager.sumarize());
+          }
         }}
-        onComplete={() => console.log("complete")}
+        onComplete={optimizeSetup}
         afterClose={() => {
           if (!activePieceSelect) {
             props.onClose();

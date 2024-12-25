@@ -10,7 +10,7 @@ export type OptimizeResult = { best: OptimizeCalculation; calculations: Optimize
 
 // ========== REQUEST ==========
 
-export type InitRequest = {
+type InitRequest = {
   type: "INIT";
   params: ConstructorParameters<typeof SetupOptimizer>;
 };

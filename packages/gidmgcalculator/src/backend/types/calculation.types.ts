@@ -93,7 +93,7 @@ export type OptimizerArtifactBuffConfigs = {
 };
 
 export type OptimizerExtraConfigs = {
-  useOwnedPiece: boolean;
+  preferSet: boolean;
   minEr?: number;
   // minEm?: number;
 };

@@ -1,15 +1,13 @@
-import { useImperativeHandle, useState } from "react";
+import { useImperativeHandle, useRef, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
 import { ButtonGroup, Modal } from "rond";
 
 type StepStatus = "VALID" | "INVALID";
 
-type ChangeValid = (valid: boolean) => void;
-
 export type StepConfig = {
   title: string;
   initialValid?: boolean;
-  render: (changeValid: ChangeValid) => React.ReactNode;
+  render: (changeValid: (valid: boolean) => void) => React.ReactNode;
 };
 
 export type OptimizationGuideControl = {
@@ -24,64 +22,88 @@ interface OptimizationGuideProps {
   afterClose: () => void;
 }
 export function OptimizationGuide(props: OptimizationGuideProps) {
+  const { stepConfigs } = props;
+  const timeout = useRef<NodeJS.Timeout>();
+  const carouselRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(true);
   const [step, setStep] = useState(0);
   const [stepStatuses, setStepStatuses] = useState<StepStatus[]>(
-    props.stepConfigs.map((config) => (config.initialValid ? "VALID" : "INVALID"))
+    stepConfigs.map((config) => (config.initialValid ? "VALID" : "INVALID"))
   );
+  const [visibleIndexes, setVisibleIndexes] = useState(new Set<number>([0]));
 
-  const stepConfig: StepConfig | undefined = props.stepConfigs[step];
-
-  useImperativeHandle(props.control, () => ({
-    toggle: setActive,
-  }));
-
-  const navigateStep = (stepDiff: number) => {
-    const newStep = step + stepDiff;
-
-    if (newStep >= props.stepConfigs.length) {
-      return props.onComplete();
-    }
-
-    props.onChangStep?.(newStep, step);
-    setStep(newStep);
-  };
-
-  const changeValid: ChangeValid = (valid) => {
+  const changeValidOf = (stepIndex: number) => (valid: boolean) => {
     setStepStatuses((prevStatuses) => {
       const newStatus = valid ? "VALID" : "INVALID";
 
-      if (newStatus !== stepStatuses[step]) {
+      if (newStatus !== stepStatuses[stepIndex]) {
         const newStatuses = [...prevStatuses];
-        newStatuses[step] = newStatus;
+        newStatuses[stepIndex] = newStatus;
         return newStatuses;
       }
       return prevStatuses;
     });
   };
 
-  const onClose = () => {
-    setActive(false);
+  useImperativeHandle(props.control, () => ({
+    toggle: setActive,
+  }));
+
+  const navigate = (dir: "BACK" | "NEXT") => {
+    const newStep = step + (dir === "BACK" ? -1 : 1);
+
+    if (newStep >= stepConfigs.length) {
+      return props.onComplete();
+    }
+
+    const carousel = carouselRef.current;
+    if (carousel) carousel.scrollLeft = newStep * carousel.clientWidth;
+
+    setVisibleIndexes((prev) => new Set(prev).add(newStep));
+    setStep(newStep);
+    props.onChangStep?.(newStep, step);
+  };
+
+  const onScrollCarousel = (e: React.UIEvent<HTMLDivElement>) => {
+    clearTimeout(timeout.current);
+
+    const carousel = e.currentTarget;
+
+    timeout.current = setTimeout(() => {
+      const { scrollLeft, clientWidth } = carousel;
+      const visibleIndex = Math.floor(scrollLeft / clientWidth);
+
+      setVisibleIndexes(new Set([visibleIndex]));
+    }, 100);
   };
 
   return (
     <Modal
       active={active}
-      title={<span className="text-lg">Optimization / {stepConfig?.title}</span>}
+      title={<span className="text-lg">Optimization / {stepConfigs[step]?.title}</span>}
       style={{
         height: "95vh",
+        maxHeight: 1200,
         width: "24rem",
       }}
       className="bg-surface-2"
-      bodyCls="py-2"
+      bodyCls="py-2 px-0"
       closeOnMaskClick={false}
-      onClose={onClose}
+      onClose={() => setActive(false)}
       onTransitionEnd={(open) => {
         if (!open) props.afterClose();
       }}
     >
       <div className="h-full flex flex-col hide-scrollbar">
-        <div className="grow hide-scrollbar">{stepConfig?.render(changeValid)}</div>
+        <div ref={carouselRef} className="grow overflow-hidden scroll-smooth flex" onScroll={onScrollCarousel}>
+          {stepConfigs.map((config, index) => {
+            return (
+              <div key={index} className="w-full h-full px-4 shrink-0 hide-scrollbar">
+                {visibleIndexes.has(index) ? config.render(changeValidOf(index)) : null}
+              </div>
+            );
+          })}
+        </div>
 
         <ButtonGroup
           className="mt-3 mb-1"
@@ -90,14 +112,15 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
               children: "Back",
               icon: <FaCaretRight className="text-lg rotate-180" />,
               disabled: !step,
-              onClick: () => navigateStep(-1),
+              onClick: () => navigate("BACK"),
             },
             {
-              children: "Next",
+              children: step === stepConfigs.length - 1 ? "Proceed" : "Next",
+              variant: step === stepConfigs.length - 1 ? "primary" : "default",
               icon: <FaCaretRight className="text-lg" />,
               iconPosition: "end",
               disabled: stepStatuses[step] !== "VALID",
-              onClick: () => navigateStep(1),
+              onClick: () => navigate("NEXT"),
             },
           ]}
         />

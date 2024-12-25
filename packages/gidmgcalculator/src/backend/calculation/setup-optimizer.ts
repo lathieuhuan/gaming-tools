@@ -17,23 +17,32 @@ type OnOutput = (
   calculator: CalcItemCalculator
 ) => void;
 
+type ArtifactMap = Record<ArtifactType, Artifact[]>;
+
 export class SetupOptimizer extends InputProcessor {
-  private artifactMap = new Map<ArtifactType, Set<Artifact | null>>();
+  private artifactMap: ArtifactMap = {
+    flower: [],
+    plume: [],
+    sands: [],
+    goblet: [],
+    circlet: [],
+  };
 
   constructor(private target: Target, ...args: ConstructorParameters<typeof InputProcessor>) {
     super(...args);
   }
 
-  private get(type: ArtifactType, initial?: (Artifact | null)[]) {
-    return this.artifactMap.get(type) || new Set(initial);
+  private getArtifacts(type: ArtifactType) {
+    const artifacts = this.artifactMap[type];
+    return artifacts.length ? artifacts : [null];
   }
 
   private forEachCombination = (cb: (set: CalcArtifacts) => void) => {
-    for (const flower of this.get("flower", [null])) {
-      for (const plume of this.get("plume", [null])) {
-        for (const sands of this.get("sands", [null])) {
-          for (const goblet of this.get("goblet", [null])) {
-            for (const circlet of this.get("circlet", [null])) {
+    for (const flower of this.getArtifacts("flower")) {
+      for (const plume of this.getArtifacts("plume")) {
+        for (const sands of this.getArtifacts("sands")) {
+          for (const goblet of this.getArtifacts("goblet")) {
+            for (const circlet of this.getArtifacts("circlet")) {
               cb([flower, plume, sands, goblet, circlet]);
             }
           }
@@ -42,23 +51,8 @@ export class SetupOptimizer extends InputProcessor {
     }
   };
 
-  /**
-   * @returns the total number of possible artifact sets
-   */
-  load = (artifacts: Artifact[]) => {
-    this.artifactMap = new Map();
-
-    for (const artifact of artifacts) {
-      this.artifactMap.set(artifact.type, this.get(artifact.type).add(artifact));
-    }
-
-    return (
-      this.get("flower").size *
-      this.get("plume").size *
-      this.get("sands").size *
-      this.get("goblet").size *
-      this.get("circlet").size
-    );
+  load = (artifacts: ArtifactMap) => {
+    this.artifactMap = artifacts;
   };
 
   onOutput: OnOutput = () => {};
