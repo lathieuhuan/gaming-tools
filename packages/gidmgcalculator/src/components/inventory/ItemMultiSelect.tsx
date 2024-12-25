@@ -142,7 +142,4 @@ function ItemMultiSelectCore<T extends Weapon | Artifact>(props: ItemMultiSelect
 
 export const ItemMultiSelect = Modal.coreWrap(ItemMultiSelectCore, {
   preset: "large",
-  style: {
-    height: "95vh",
-  },
 });

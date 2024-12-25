@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Modal } from "rond";
 
 import type { OptimizerExtraConfigs } from "@Backend";
 import type { ItemMultiSelectIds } from "@Src/components";
@@ -18,6 +19,7 @@ import { CalcItemSelect, SelectedCalcItem } from "./components/CalcItemSelect";
 import { ExtraConfigs } from "./components/ExtraConfigs";
 import { OptimizationGuide, OptimizationGuideControl, StepConfig } from "./components/OptimizationGuide";
 import { Review } from "./components/Review";
+import { ResultDisplay } from "./components/ResultDisplay";
 
 type SavedValues = {
   calcItem: SelectedCalcItem;
@@ -52,17 +54,13 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
   const artifactManager = useArtifactManager(store.artifacts);
 
   const [activePieceSelect, setActivePieceSelect] = useState(false);
+  const [activeResult, setActiveResult] = useState(false);
 
   const guideControl = useRef<OptimizationGuideControl>(null);
   const savedValues = useRef<Partial<SavedValues>>({});
   const selectingSet = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
 
-  const optimizer = useOptimizer(store.target, store.setup, appChar, store.appWeapon, partyData);
-
-  // useEffect(() => {
-  //   const appWeapon = $AppWeapon.get(store.setup.weapon.code)!;
-  //   optimizer.init(store.target, store.setup, appChar, appWeapon, partyData);
-  // }, []);
+  const { loading, result, optimizer } = useOptimizer(store.target, store.setup, appChar, store.appWeapon, partyData);
 
   useEffect(() => {
     return () => {
@@ -73,6 +71,10 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
   const optimizeSetup = () => {
     const { calcItem, extraConfigs } = savedValues.current;
 
+    // optimizer.onComplete = () => {
+    //   setActiveResult(true);
+    // };
+
     optimizer.optimize(
       {
         pattern: calcItem!.patternCate,
@@ -81,6 +83,9 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
       },
       [artifactManager.buffConfigs, extraConfigs!]
     );
+
+    guideControl.current?.toggle(false);
+    setActiveResult(true);
   };
 
   const togglePieceSelect = (active: boolean, code?: number) => {
@@ -95,6 +100,16 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
   const onConfirmSelectPieces = (selectedIds: ItemMultiSelectIds) => {
     artifactManager.updateSelectedIds(selectingSet.current.code, selectedIds);
     togglePieceSelect(false);
+  };
+
+  const afterCloseGuide = () => {
+    if (!activePieceSelect && !activeResult) {
+      props.onClose();
+    }
+  };
+
+  const onCloseResult = () => {
+    props.onClose();
   };
 
   const stepConfigs: StepConfig[] = [
@@ -155,11 +170,7 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
           }
         }}
         onComplete={optimizeSetup}
-        afterClose={() => {
-          if (!activePieceSelect) {
-            props.onClose();
-          }
-        }}
+        afterClose={afterCloseGuide}
       />
 
       <ItemMultiSelect
@@ -170,6 +181,20 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
         onClose={() => togglePieceSelect(false)}
         onConfirm={onConfirmSelectPieces}
       />
+
+      <Modal
+        active={activeResult}
+        title={<span className="text-lg">Optimization / Results</span>}
+        className={`bg-surface-2 ${Modal.LARGE_HEIGHT_CLS}`}
+        style={{
+          width: "45rem",
+        }}
+        // withCloseButton={false}
+        closeOnMaskClick={false}
+        onClose={onCloseResult}
+      >
+        <ResultDisplay loading={loading} result={result} />
+      </Modal>
     </>
   );
 }

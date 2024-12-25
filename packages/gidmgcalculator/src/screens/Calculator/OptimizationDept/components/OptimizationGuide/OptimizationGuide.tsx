@@ -1,6 +1,6 @@
 import { useImperativeHandle, useRef, useState } from "react";
-import { FaCaretRight } from "react-icons/fa";
-import { ButtonGroup, Modal } from "rond";
+import { FaCaretRight, FaCaretDown } from "react-icons/fa";
+import { Button, ButtonGroup, Modal, Popover, useClickOutside } from "rond";
 
 type StepStatus = "VALID" | "INVALID";
 
@@ -26,11 +26,14 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
   const timeout = useRef<NodeJS.Timeout>();
   const carouselRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(true);
+  const [showMenu, setShowMenu] = useState(false);
   const [step, setStep] = useState(0);
   const [stepStatuses, setStepStatuses] = useState<StepStatus[]>(
     stepConfigs.map((config) => (config.initialValid ? "VALID" : "INVALID"))
   );
   const [visibleIndexes, setVisibleIndexes] = useState(new Set<number>([0]));
+
+  const triggerRef = useClickOutside<HTMLDivElement>(() => setShowMenu(false));
 
   const changeValidOf = (stepIndex: number) => (valid: boolean) => {
     setStepStatuses((prevStatuses) => {
@@ -82,8 +85,8 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
       active={active}
       title={<span className="text-lg">Optimization / {stepConfigs[step]?.title}</span>}
       style={{
-        height: "95vh",
-        maxHeight: 1200,
+        height: "90vh",
+        maxHeight: 880,
         width: "24rem",
       }}
       className="bg-surface-2"
@@ -105,25 +108,70 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
           })}
         </div>
 
-        <ButtonGroup
-          className="mt-3 mb-1"
-          buttons={[
-            {
-              children: "Back",
-              icon: <FaCaretRight className="text-lg rotate-180" />,
-              disabled: !step,
-              onClick: () => navigate("BACK"),
-            },
-            {
-              children: step === stepConfigs.length - 1 ? "Proceed" : "Next",
-              variant: step === stepConfigs.length - 1 ? "primary" : "default",
-              icon: <FaCaretRight className="text-lg" />,
-              iconPosition: "end",
-              disabled: stepStatuses[step] !== "VALID",
-              onClick: () => navigate("NEXT"),
-            },
-          ]}
-        />
+        <div className="mt-3 mb-1 flex justify-between">
+          {/* <Button
+            icon={<FaCaretRight className="text-lg rotate-180" />}
+            disabled={!step}
+            onClick={() => navigate("BACK")}
+          >
+            Back
+          </Button> */}
+
+          <div ref={triggerRef} className="relative">
+            <Button icon={<FaCaretDown className="text-lg rotate-180" />} onClick={() => setShowMenu(!showMenu)} />
+
+            <Popover
+              className="bottom-full left-1/2 pb-3"
+              origin="bottom left"
+              style={{
+                translate: "-50%",
+              }}
+              active={showMenu}
+            >
+              <div className="bg-light-default text-black rounded-md overflow-hidden">
+                {stepConfigs.map((config, i) => {
+                  return (
+                    <button
+                      key={i}
+                      className="px-2 py-1 w-full text-left font-semibold hover:bg-surface-1 hover:text-light-default whitespace-nowrap"
+                    >
+                      {config.title}
+                    </button>
+                  );
+                })}
+              </div>
+            </Popover>
+          </div>
+
+          {/* <Button
+            variant={step === stepConfigs.length - 1 ? "primary" : "default"}
+            icon={<FaCaretRight className="text-lg" />}
+            iconPosition="end"
+            disabled={stepStatuses[step] !== "VALID"}
+            onClick={() => navigate("NEXT")}
+          >
+            {step === stepConfigs.length - 1 ? "Proceed" : "Next"}
+          </Button> */}
+
+          <ButtonGroup
+            buttons={[
+              {
+                children: "Back",
+                icon: <FaCaretRight className="text-lg rotate-180" />,
+                disabled: !step,
+                onClick: () => navigate("BACK"),
+              },
+              {
+                children: step === stepConfigs.length - 1 ? "Proceed" : "Next",
+                variant: step === stepConfigs.length - 1 ? "primary" : "default",
+                icon: <FaCaretRight className="text-lg" />,
+                iconPosition: "end",
+                disabled: stepStatuses[step] !== "VALID",
+                onClick: () => navigate("NEXT"),
+              },
+            ]}
+          />
+        </div>
       </div>
     </Modal>
   );

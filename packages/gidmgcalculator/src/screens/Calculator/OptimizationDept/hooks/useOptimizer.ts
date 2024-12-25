@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { OptimizerManager } from "../utils/optimizer-manager/optimizer-manager";
+import { useEffect, useRef, useState } from "react";
+import { OptimizeProgress, OptimizerManager } from "../utils/optimizer-manager";
 
 export function useOptimizer(...args: ConstructorParameters<typeof OptimizerManager>) {
   const ref = useRef<OptimizerManager>();
@@ -7,5 +7,17 @@ export function useOptimizer(...args: ConstructorParameters<typeof OptimizerMana
   if (!ref.current) {
     ref.current = new OptimizerManager(...args);
   }
-  return ref.current;
+  const [progress, setProgress] = useState<OptimizeProgress>({
+    loading: false,
+    result: [],
+  });
+
+  useEffect(() => {
+    return ref.current?.subscribe(setProgress);
+  }, []);
+
+  return {
+    ...progress,
+    optimizer: ref.current,
+  };
 }

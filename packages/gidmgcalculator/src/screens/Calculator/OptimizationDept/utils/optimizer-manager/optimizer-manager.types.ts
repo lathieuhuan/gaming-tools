@@ -6,7 +6,8 @@ export type OptimizeCalculation = {
   artifacts: CalcArtifacts;
 };
 
-export type OptimizeResult = { best: OptimizeCalculation; calculations: OptimizeCalculation[] };
+// export type OptimizeResult = { bests: OptimizeCalculation[]; calculations: OptimizeCalculation[] };
+export type OptimizeResult = OptimizeCalculation[];
 
 // ========== REQUEST ==========
 

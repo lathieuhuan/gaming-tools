@@ -6,6 +6,7 @@ import "./Popover.styles.scss";
 export interface PopoverProps {
   className?: ClassValue;
   style?: React.CSSProperties;
+  /** Default to div */
   as?: keyof JSX.IntrinsicElements;
   active?: boolean;
   withTooltipStyle?: boolean;
@@ -16,7 +17,7 @@ export interface PopoverProps {
 export const Popover = ({
   className,
   style = {},
-  as: Tag = "span",
+  as: Tag = "div",
   active,
   withTooltipStyle,
   origin = "bottom right",

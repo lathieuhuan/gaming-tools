@@ -1,7 +1,9 @@
-import type { OptimizeCalculation, OptimizeMessage, OptimizeResult } from "./optimizer-manager.types";
+import type { OptimizeCalculation, OptimizeMessage } from "./optimizer-manager.types";
 import { SetupOptimizer } from "@Backend";
+import { CalculationSorter } from "./calculation-sorter";
 
 let optimizer: SetupOptimizer;
+const sorter = new CalculationSorter();
 
 onmessage = (e: MessageEvent<OptimizeMessage>) => {
   console.log("Message received from main script");
@@ -19,7 +21,6 @@ onmessage = (e: MessageEvent<OptimizeMessage>) => {
     case "OPTIMIZE": {
       const { calculateParams } = e.data;
       const calculations: OptimizeCalculation[] = [];
-      let bestCalculation: OptimizeCalculation | undefined;
 
       optimizer.onOutput = (artifacts, totalAttr, attkBonusesArchive, calculator) => {
         const result = calculator
@@ -32,20 +33,17 @@ onmessage = (e: MessageEvent<OptimizeMessage>) => {
         };
 
         calculations.push(calculation);
-
-        if (!bestCalculation || calculation.damage > bestCalculation.damage) {
-          bestCalculation = calculation;
-        }
+        sorter.add(calculation);
       };
 
       optimizer?.optimize(...e.data.params);
 
-      const result: OptimizeResult = {
-        best: bestCalculation!,
-        calculations,
-      };
+      // const result: OptimizeResult = {
+      //   bests: sorter.get(),
+      //   calculations,
+      // };
 
-      postMessage(result);
+      postMessage(sorter.get());
       break;
     }
   }
