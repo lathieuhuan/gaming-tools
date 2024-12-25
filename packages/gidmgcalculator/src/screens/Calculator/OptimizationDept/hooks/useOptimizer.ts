@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { OptimizerManager } from "./optimizer-manager";
+import { OptimizerManager } from "../utils/optimizer-manager/optimizer-manager";
 
 export function useOptimizer() {
   const ref = useRef<OptimizerManager>();

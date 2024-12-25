@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { clsx } from "rond";
-import { AttackPattern, CalcItem, LevelableTalentType, NORMAL_ATTACKS } from "@Backend";
+import { AppCharacter, AttackPattern, CalcItem, LevelableTalentType, NORMAL_ATTACKS } from "@Backend";
 
 import { useTranslation } from "@Src/hooks";
-import { useCharacterData } from "../../ContextProvider";
+import { useCharacterData } from "../../../ContextProvider";
 
 export type SelectedCalcItem = {
   patternCate: AttackPattern;
@@ -20,13 +20,14 @@ type RenderGroup = {
 
 interface CalcItemSelectProps {
   id: string;
+  appChar: AppCharacter;
   initialValue?: SelectedCalcItem;
   onChangeValid?: (valid: boolean) => void;
   onSubmit: (selected: SelectedCalcItem) => void;
 }
 export function CalcItemSelect(props: CalcItemSelectProps) {
+  const { appChar } = props;
   const { t } = useTranslation();
-  const appChar = useCharacterData();
   const [selectedItems, setSelectedItems] = useState<SelectedCalcItem[]>(
     props.initialValue ? [props.initialValue] : []
   );

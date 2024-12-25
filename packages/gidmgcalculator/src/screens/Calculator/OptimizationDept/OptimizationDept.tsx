@@ -4,19 +4,20 @@ import { ButtonGroup, Modal, SwitchNode } from "rond";
 
 import type { OptimizerArtifactBuffConfigs, OptimizerExtraConfigs } from "@Backend";
 import type { ItemMultiSelectIds, ArtifactFilterSet } from "@Src/components";
+import type { ArtifactManager } from "./utils/artifact-manager";
 
 import { $AppWeapon } from "@Src/services";
 import { useStoreSnapshot } from "@Src/features";
 import { useCharacterData, useOptimizerStatus, usePartyData } from "../ContextProvider";
-import { ArtifactManager, useArtifactManager } from "./hooks/useArtifactManager";
+import { useArtifactManager } from "./hooks/useArtifactManager";
 import { useOptimizer } from "./hooks/useOptimizer";
 
 // Components
 import { ItemMultiSelect } from "@Src/components";
-import { ArtifactModConfig } from "./ArtifactModConfig";
-import { ArtifactSetSelect } from "./ArtifactSetSelect";
-import { CalcItemSelect, SelectedCalcItem } from "./CalcItemSelect";
-import { ExtraConfigs } from "./ExtraConfigs";
+import { ArtifactModConfig } from "./components/ArtifactModConfig";
+import { ArtifactSetSelect } from "./components/ArtifactSetSelect";
+import { CalcItemSelect, SelectedCalcItem } from "./components/CalcItemSelect";
+import { ExtraConfigs } from "./components/ExtraConfigs";
 
 type StepConfig = {
   title: string;
@@ -225,6 +226,7 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
                   element: (
                     <CalcItemSelect
                       id={stepConfig?.formId}
+                      appChar={appChar}
                       initialValue={savedValues.current?.calcItem}
                       onSubmit={(calcItem) => saveConfig("calcItem", calcItem)}
                     />
