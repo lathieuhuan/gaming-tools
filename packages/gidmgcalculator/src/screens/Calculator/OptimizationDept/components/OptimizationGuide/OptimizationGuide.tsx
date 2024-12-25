@@ -1,6 +1,6 @@
 import { useImperativeHandle, useRef, useState } from "react";
 import { FaCaretRight, FaCaretDown } from "react-icons/fa";
-import { Button, ButtonGroup, Modal, Popover, useClickOutside } from "rond";
+import { Button, ButtonGroup, clsx, Modal, Popover, useClickOutside } from "rond";
 
 type StepStatus = "VALID" | "INVALID";
 
@@ -17,6 +17,7 @@ export type OptimizationGuideControl = {
 interface OptimizationGuideProps {
   stepConfigs: StepConfig[];
   control?: React.RefObject<OptimizationGuideControl>;
+  canShowMenu?: boolean;
   onChangStep?: (newStep: number, oldStep: number) => void;
   onComplete: () => void;
   afterClose: () => void;
@@ -48,23 +49,34 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
     });
   };
 
+  const scrollTo = (step: number) => {
+    const carousel = carouselRef.current;
+    if (carousel) carousel.scrollLeft = step * carousel.clientWidth;
+  };
+
   useImperativeHandle(props.control, () => ({
     toggle: setActive,
   }));
 
-  const navigate = (dir: "BACK" | "NEXT") => {
-    const newStep = step + (dir === "BACK" ? -1 : 1);
-
-    if (newStep >= stepConfigs.length) {
+  const navigate = (toStep: number) => {
+    if (toStep >= stepConfigs.length) {
       return props.onComplete();
     }
 
-    const carousel = carouselRef.current;
-    if (carousel) carousel.scrollLeft = newStep * carousel.clientWidth;
+    const moreVisibleSteps: number[] = [];
 
-    setVisibleIndexes((prev) => new Set(prev).add(newStep));
-    setStep(newStep);
-    props.onChangStep?.(newStep, step);
+    for (let i = Math.min(step, toStep); i <= Math.max(step, toStep); i++) {
+      moreVisibleSteps.push(i);
+    }
+
+    scrollTo(toStep);
+    setStep(toStep);
+    setVisibleIndexes((prev) => {
+      const newIndexes = new Set(prev);
+      moreVisibleSteps.forEach((step) => newIndexes.add(step));
+      return newIndexes;
+    });
+    props.onChangStep?.(toStep, step);
   };
 
   const onScrollCarousel = (e: React.UIEvent<HTMLDivElement>) => {
@@ -78,6 +90,11 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
 
       setVisibleIndexes(new Set([visibleIndex]));
     }, 100);
+  };
+
+  const onClickMenuItem = (index: number) => {
+    navigate(index);
+    setShowMenu(false);
   };
 
   return (
@@ -94,7 +111,11 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
       closeOnMaskClick={false}
       onClose={() => setActive(false)}
       onTransitionEnd={(open) => {
-        if (!open) props.afterClose();
+        if (open) {
+          scrollTo(step);
+        } else {
+          props.afterClose();
+        }
       }}
     >
       <div className="h-full flex flex-col hide-scrollbar">
@@ -108,34 +129,41 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
           })}
         </div>
 
-        <div className="mt-3 mb-1 flex justify-between">
-          {/* <Button
-            icon={<FaCaretRight className="text-lg rotate-180" />}
-            disabled={!step}
-            onClick={() => navigate("BACK")}
-          >
-            Back
-          </Button> */}
-
+        <div className="mt-3 mb-1 px-4 flex justify-between">
           <div ref={triggerRef} className="relative">
-            <Button icon={<FaCaretDown className="text-lg rotate-180" />} onClick={() => setShowMenu(!showMenu)} />
+            {props.canShowMenu && (
+              <Button
+                icon={<FaCaretDown className="text-xl rotate-180" />}
+                disabled={stepStatuses[step] === "INVALID"}
+                onClick={() => setShowMenu(!showMenu)}
+              />
+            )}
 
-            <Popover
-              className="bottom-full left-1/2 pb-3"
-              origin="bottom left"
-              style={{
-                translate: "-50%",
-              }}
-              active={showMenu}
-            >
-              <div className="bg-light-default text-black rounded-md overflow-hidden">
-                {stepConfigs.map((config, i) => {
+            <Popover className="bottom-full pb-2" origin="bottom left" active={showMenu}>
+              <div className="bg-light-default text-black rounded-md overflow-hidden shadow-white-glow">
+                {stepConfigs.map((config, index) => {
+                  const isCurrent = index === step;
+                  const disabled = stepStatuses[index] === "INVALID" || isCurrent;
+
                   return (
                     <button
-                      key={i}
-                      className="px-2 py-1 w-full text-left font-semibold hover:bg-surface-1 hover:text-light-default whitespace-nowrap"
+                      key={index}
+                      disabled={disabled}
+                      className={clsx(
+                        "px-3 w-full text-left font-semibold whitespace-nowrap",
+                        isCurrent ? "bg-light-disabled" : "hover:bg-surface-1 hover:text-light-default"
+                      )}
+                      onClick={() => onClickMenuItem(index)}
                     >
-                      {config.title}
+                      <span
+                        className={clsx(
+                          "py-1 block",
+                          index && "border-t border-surface-border",
+                          disabled && "opacity-80"
+                        )}
+                      >
+                        {config.title}
+                      </span>
                     </button>
                   );
                 })}
@@ -143,23 +171,13 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
             </Popover>
           </div>
 
-          {/* <Button
-            variant={step === stepConfigs.length - 1 ? "primary" : "default"}
-            icon={<FaCaretRight className="text-lg" />}
-            iconPosition="end"
-            disabled={stepStatuses[step] !== "VALID"}
-            onClick={() => navigate("NEXT")}
-          >
-            {step === stepConfigs.length - 1 ? "Proceed" : "Next"}
-          </Button> */}
-
           <ButtonGroup
             buttons={[
               {
                 children: "Back",
                 icon: <FaCaretRight className="text-lg rotate-180" />,
                 disabled: !step,
-                onClick: () => navigate("BACK"),
+                onClick: () => navigate(step - 1),
               },
               {
                 children: step === stepConfigs.length - 1 ? "Proceed" : "Next",
@@ -167,7 +185,7 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
                 icon: <FaCaretRight className="text-lg" />,
                 iconPosition: "end",
                 disabled: stepStatuses[step] !== "VALID",
-                onClick: () => navigate("NEXT"),
+                onClick: () => navigate(step + 1),
               },
             ]}
           />

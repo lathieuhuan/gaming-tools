@@ -29,13 +29,13 @@ type SavedValues = {
 export function OptimizationDept() {
   const { value: status, toggle } = useOptimizerStatus();
 
-  return status.active ? <OptimizerFrontDesk onClose={() => toggle(false)} /> : null;
+  return status.active ? <OptimizationFrontDesk onClose={() => toggle(false)} /> : null;
 }
 
-interface OptimizerFrontDeskProps {
+interface OptimizationFrontDeskProps {
   onClose: () => void;
 }
-function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
+function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const store = useStoreSnapshot(({ calculator, userdb }) => {
     const setup = calculator.setupsById[calculator.activeId];
     const target = calculator.target;
@@ -55,10 +55,12 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
 
   const [activePieceSelect, setActivePieceSelect] = useState(false);
   const [activeResult, setActiveResult] = useState(false);
+  const [canShowGuideMenu, setCanShowGuideMenu] = useState(false);
 
   const guideControl = useRef<OptimizationGuideControl>(null);
   const savedValues = useRef<Partial<SavedValues>>({});
   const selectingSet = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
+  const isExiting = useRef(false);
 
   const { loading, result, optimizer } = useOptimizer(store.target, store.setup, appChar, store.appWeapon, partyData);
 
@@ -161,11 +163,13 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
       <OptimizationGuide
         control={guideControl}
         stepConfigs={stepConfigs}
+        canShowMenu={canShowGuideMenu}
         onChangStep={(newStep, oldStep) => {
-          if (oldStep === 0 && newStep === 1) {
+          if (oldStep === 0) {
             artifactManager.concludeModConfigs();
           }
           if (newStep === stepConfigs.length - 1) {
+            setCanShowGuideMenu(true);
             optimizer.load(artifactManager.sumarize());
           }
         }}
@@ -189,11 +193,27 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
         style={{
           width: "45rem",
         }}
-        // withCloseButton={false}
         closeOnMaskClick={false}
-        onClose={onCloseResult}
+        withCloseButton={false}
+        onClose={() => console.log('onClose')}
+        onTransitionEnd={(open) => {
+          if (!open && isExiting.current) props.onClose();
+        }}
       >
-        <ResultDisplay loading={loading} result={result} />
+        <ResultDisplay
+          loading={loading}
+          result={result}
+          onClickReturn={() => {
+            isExiting.current = false;
+            setActiveResult(false);
+            guideControl.current?.toggle(true);
+          }}
+          onClickExit={() => {
+            isExiting.current = true;
+            setActiveResult(false);
+          }}
+          onClickLoadToCalculator={console.log}
+        />
       </Modal>
     </>
   );

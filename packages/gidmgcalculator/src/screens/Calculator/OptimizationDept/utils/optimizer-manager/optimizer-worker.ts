@@ -6,9 +6,6 @@ let optimizer: SetupOptimizer;
 const sorter = new CalculationSorter();
 
 onmessage = (e: MessageEvent<OptimizeMessage>) => {
-  console.log("Message received from main script");
-  console.log(e.data);
-
   switch (e.data.type) {
     case "INIT": {
       optimizer = new SetupOptimizer(...e.data.params);

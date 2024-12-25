@@ -1,6 +1,9 @@
 import { useRef, useState } from "react";
-import { clsx, ItemCase, LoadingSpin } from "rond";
+import { TiArrowBack } from "react-icons/ti";
+import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
+import { ButtonGroup, Checkbox, ItemCase } from "rond";
 import { ARTIFACT_TYPES, type AppArtifact } from "@Backend";
+
 import type { Artifact } from "@Src/types";
 import type { OptimizeResult } from "../../utils/optimizer-manager";
 
@@ -11,64 +14,110 @@ import Entity_ from "@Src/utils/entity-utils";
 interface ResultDisplayProps {
   loading: boolean;
   result: OptimizeResult;
+  onClickReturn: () => void;
+  onClickExit: () => void;
+  onClickLoadToCalculator: (selectedIndexes: number[]) => void;
 }
 export function ResultDisplay(props: ResultDisplayProps) {
   const [selected, setSelected] = useState<Artifact>();
+
+  const selectedIndexes = useRef(new Set<number>());
   const dataBySet = useRef<Record<number, AppArtifact>>({});
+  const suffix = ["st", "nd", "rd"];
+
+  const onToggleCheckCalculation = (index: number, checked: boolean) => {
+    checked ? selectedIndexes.current.add(index) : selectedIndexes.current.delete(index);
+  };
 
   return (
     <div className="h-full flex custom-scrollbar gap-2 scroll-smooth">
-      <div className="grow">
-        {props.result.map((calculation, index) => {
-          return (
-            <div key={index} className="p-4 rounded">
-              {/* <p className={clsx("text-xl font-semibold", index ? "text-secondary-1" : "text-primary-1")}>
-                {Math.round(calculation.damage)}
-              </p> */}
-              <div className="flex gap-2">
-                {calculation.artifacts.map((artifact, artifactI) => {
-                  if (artifact) {
-                    let data = dataBySet.current[artifact.code];
+      <div className="grow flex flex-col" style={{ minWidth: 324 }}>
+        <div className="pr-1 grow custom-scrollbar space-y-2">
+          {props.result.map((calculation, index) => {
+            return (
+              <div key={index} className="p-4 rounded-md bg-surface-1">
+                <div className="flex justify-between items-start">
+                  <p className="text-2xl font-black text-danger-2">
+                    {index + 1}
+                    {suffix[index]}
+                  </p>
 
-                    if (!data) {
-                      data = $AppArtifact.getSet(artifact.code)!;
-                      dataBySet.current[artifact.code] = data;
+                  <Checkbox
+                    size="medium"
+                    defaultChecked
+                    onChange={(checked) => onToggleCheckCalculation(index, checked)}
+                  />
+                </div>
+
+                <div className="mt-2 flex gap-2">
+                  {calculation.artifacts.map((artifact, artifactI) => {
+                    if (artifact) {
+                      let data = dataBySet.current[artifact.code];
+
+                      if (!data) {
+                        data = $AppArtifact.getSet(artifact.code)!;
+                        dataBySet.current[artifact.code] = data;
+                      }
+                      return (
+                        <ItemCase
+                          key={artifact.type}
+                          className="w-full"
+                          chosen={artifact.ID === selected?.ID}
+                          onClick={() => setSelected(artifact)}
+                        >
+                          {(className, imgCls) => (
+                            <ItemThumbnail
+                              compact
+                              className={className}
+                              imgCls={imgCls}
+                              item={{ ...artifact, icon: data[artifact.type].icon }}
+                            />
+                          )}
+                        </ItemCase>
+                      );
                     }
                     return (
-                      <ItemCase
-                        key={artifact.type}
+                      <GenshinImage
+                        key={artifactI}
                         className="w-full"
-                        chosen={artifact.ID === selected?.ID}
-                        onClick={() => setSelected(artifact)}
-                      >
-                        {(className, imgCls) => (
-                          <ItemThumbnail
-                            compact
-                            className={className}
-                            imgCls={imgCls}
-                            item={{ ...artifact, icon: data[artifact.type].icon }}
-                          />
-                        )}
-                      </ItemCase>
+                        src={Entity_.artifactIconOf(ARTIFACT_TYPES[artifactI])}
+                        imgType="artifact"
+                        fallbackCls="p-2"
+                      />
                     );
-                  }
-                  return (
-                    <GenshinImage
-                      key={artifactI}
-                      className="w-full"
-                      src={Entity_.artifactIconOf(ARTIFACT_TYPES[artifactI])}
-                      imgType="artifact"
-                      fallbackCls="p-2"
-                    />
-                  );
-                })}
+                  })}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
+
+        <ButtonGroup
+          className="mt-4 px-2"
+          justify="end"
+          buttons={[
+            {
+              children: "Return",
+              icon: <TiArrowBack className="text-xl" />,
+              className: "gap-1",
+              onClick: props.onClickReturn,
+            },
+            {
+              children: "Exit",
+              icon: <FaSignOutAlt className="text-base" />,
+              onClick: props.onClickExit,
+            },
+            {
+              children: "Load to Calculator",
+              icon: <FaFileUpload className="text-base" />,
+              className: "gap-1",
+              onClick: () => props.onClickLoadToCalculator([...selectedIndexes.current]),
+            },
+          ]}
+        />
       </div>
 
-      <ArtifactCard wrapperCls="w-72 shrink-0" withOwnerLabel artifact={selected} />
+      <ArtifactCard wrapperCls="w-68 shrink-0" withOwnerLabel artifact={selected} />
     </div>
   );
 }
