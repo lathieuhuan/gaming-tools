@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { clsx } from "rond";
 import { AppCharacter, AttackPattern, CalcItem, LevelableTalentType, NORMAL_ATTACKS } from "@Backend";
-
 import { useTranslation } from "@Src/hooks";
-import { useCharacterData } from "../../../ContextProvider";
 
 export type SelectedCalcItem = {
   patternCate: AttackPattern;
@@ -19,14 +17,13 @@ type RenderGroup = {
 };
 
 interface CalcItemSelectProps {
-  id: string;
-  appChar: AppCharacter;
+  calcList: AppCharacter["calcList"];
   initialValue?: SelectedCalcItem;
+  onChange?: (items: SelectedCalcItem[]) => void;
   onChangeValid?: (valid: boolean) => void;
-  onSubmit: (selected: SelectedCalcItem) => void;
 }
 export function CalcItemSelect(props: CalcItemSelectProps) {
-  const { appChar } = props;
+  const { calcList } = props;
   const { t } = useTranslation();
   const [selectedItems, setSelectedItems] = useState<SelectedCalcItem[]>(
     props.initialValue ? [props.initialValue] : []
@@ -38,34 +35,28 @@ export function CalcItemSelect(props: CalcItemSelectProps) {
       subGroups: NORMAL_ATTACKS.map((attPatt) => {
         return {
           attPatt,
-          items: appChar.calcList[attPatt],
+          items: calcList[attPatt],
         };
       }),
     },
     {
       title: "ES",
-      subGroups: [{ attPatt: "ES", items: appChar.calcList.ES }],
+      subGroups: [{ attPatt: "ES", items: calcList.ES }],
     },
     {
       title: "EB",
-      subGroups: [{ attPatt: "EB", items: appChar.calcList.EB }],
+      subGroups: [{ attPatt: "EB", items: calcList.EB }],
     },
   ];
 
   const onClickItem = (item: SelectedCalcItem) => {
     setSelectedItems([item]);
+    props.onChange?.([item]);
     props.onChangeValid?.(true);
   };
 
   return (
-    <form
-      id={props.id}
-      className="h-full flex flex-col"
-      onSubmit={(e) => {
-        e.preventDefault();
-        props.onSubmit(selectedItems[0]);
-      }}
-    >
+    <div className="h-full flex flex-col">
       <p>Damage Instance to be optimized</p>
 
       <div className="mt-2 pr-2 grow space-y-2 custom-scrollbar">
@@ -99,6 +90,6 @@ export function CalcItemSelect(props: CalcItemSelectProps) {
           );
         })}
       </div>
-    </form>
+    </div>
   );
 }

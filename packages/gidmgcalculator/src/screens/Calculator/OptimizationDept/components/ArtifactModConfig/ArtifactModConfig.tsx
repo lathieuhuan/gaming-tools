@@ -1,104 +1,60 @@
 import { useState } from "react";
 import type { OptimizerArtifactBuffConfigs } from "@Backend";
-import type { ArtifactModCtrl } from "@Src/types";
-import type { ArtifactFilterSet } from "@Src/components/ArtifactFilter";
+import type { ArtifactManager } from "../../utils/artifact-manager";
 
 import { GenshinModifierView } from "@Src/components";
 import { getArtifactDescription } from "@Src/components/modifier-list/modifiers.utils";
 import Array_ from "@Src/utils/array-utils";
 
-export type ArtifactModifierConfig = {
-  buffs: OptimizerArtifactBuffConfigs;
-};
-
 interface ArtifactModConfigProps {
-  id: string;
-  initialValue: Partial<ArtifactModifierConfig>;
-  artifactSets?: ArtifactFilterSet[];
-  onSubmit: (modConfig: ArtifactModifierConfig) => void;
+  manager: ArtifactManager;
 }
-export function ArtifactModConfig(props: ArtifactModConfigProps) {
-  const [configs, setConfigs] = useState<OptimizerArtifactBuffConfigs>(props.initialValue.buffs || {});
-
-  const toggleConfig = (code: number, index: number) => {
-    const newConfigs = { ...configs };
-    const newConfig = newConfigs[code];
-
-    if (newConfig[index]) {
-      newConfig[index] = {
-        ...newConfig[index],
-        index,
-        activated: !newConfig[index].activated,
-      };
-
-      setConfigs(newConfigs);
-    }
-  };
-
-  const changeConfig = (code: number, index: number, inputs: ArtifactModCtrl["inputs"]) => {
-    const newConfigs = { ...configs };
-    const newConfig = newConfigs[code];
-
-    if (newConfig[index]) {
-      newConfig[index] = {
-        ...newConfig[index],
-        inputs,
-      };
-
-      setConfigs(newConfigs);
-    }
-  };
+export function ArtifactModConfig({ manager }: ArtifactModConfigProps) {
+  const [configs, setConfigs] = useState<OptimizerArtifactBuffConfigs>(manager.buffConfigs);
 
   return (
-    <form
-      id={props.id}
-      className="h-full flex flex-col"
-      onSubmit={(e) => {
-        e.preventDefault();
-
-        props.onSubmit({
-          buffs: configs,
-        });
-      }}
-    >
-      <p>Artifact buffs to be activated</p>
+    <div className="h-full flex flex-col">
+      <p>Artifact buffs to be activated (if any)</p>
 
       <div className="mt-2 grow custom-scrollbar space-y-2">
-        {props.artifactSets?.map(({ code, data }) => {
-          const configsByCode = configs[code] || [];
+        {manager.sets.map(({ data }) => {
+          const configsByCode = configs[data.code] || [];
           if (!configsByCode.length || !data.buffs) return null;
 
           return (
-            <div key={code} className="p-3 bg-surface-1 rounded space-y-2">
+            <div key={data.code} className="p-3 bg-surface-1 rounded space-y-2">
               {configsByCode.map((config, configIndex) => {
                 const buff = Array_.findByIndex(data.buffs, config.index);
                 if (!buff) return null;
 
                 const description = getArtifactDescription(data, buff);
 
-                const changeThisInputs = (value: number, index: number) => {
+                const changeThisInput = (value: number, inpIndex: number) => {
                   if (config.inputs) {
                     const newInputs = [...config.inputs];
-                    newInputs[index] = value;
-                    changeConfig(code, configIndex, newInputs);
+                    newInputs[inpIndex] = value;
+
+                    setConfigs(manager.changeBuffConfigInputs(data.code, configIndex, newInputs));
                   }
                 };
 
                 return (
                   <GenshinModifierView
-                    key={`${code}-${config.index}`}
+                    key={`${data.code}-${config.index}`}
                     mutable
                     checked={config.activated}
                     heading={data.name}
                     description={description}
                     inputs={config.inputs}
                     inputConfigs={buff.inputConfigs}
-                    onToggle={() => toggleConfig(code, configIndex)}
-                    onToggleCheck={(input, index) => {
-                      changeThisInputs(input ? 0 : 1, index);
+                    onToggle={() => {
+                      setConfigs(manager.toggleBuffConfig(data.code, configIndex));
                     }}
-                    onChangeText={changeThisInputs}
-                    onSelectOption={changeThisInputs}
+                    onToggleCheck={(input, index) => {
+                      changeThisInput(input ? 0 : 1, index);
+                    }}
+                    onChangeText={changeThisInput}
+                    onSelectOption={changeThisInput}
                   />
                 );
               })}
@@ -106,6 +62,6 @@ export function ArtifactModConfig(props: ArtifactModConfigProps) {
           );
         })}
       </div>
-    </form>
+    </div>
   );
 }

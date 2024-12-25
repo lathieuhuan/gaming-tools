@@ -1,8 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { FaCaretRight } from "react-icons/fa";
-import { ButtonGroup, Modal, SwitchNode } from "rond";
+import { useRef, useState } from "react";
 
-import type { OptimizerArtifactBuffConfigs, OptimizerExtraConfigs } from "@Backend";
+import type { OptimizerExtraConfigs } from "@Backend";
 import type { ItemMultiSelectIds, ArtifactFilterSet } from "@Src/components";
 import type { ArtifactManager } from "./utils/artifact-manager";
 
@@ -18,17 +16,10 @@ import { ArtifactModConfig } from "./components/ArtifactModConfig";
 import { ArtifactSetSelect } from "./components/ArtifactSetSelect";
 import { CalcItemSelect, SelectedCalcItem } from "./components/CalcItemSelect";
 import { ExtraConfigs } from "./components/ExtraConfigs";
-
-type StepConfig = {
-  title: string;
-  formId: string;
-};
+import { OptimizationGuide, OptimizationGuideControl, StepConfig } from "./components/OptimizationGuide";
 
 type SavedValues = {
   calcItem: SelectedCalcItem;
-  filterSets: ArtifactFilterSet[];
-  setCodes: number[];
-  buffConfigs: OptimizerArtifactBuffConfigs;
   extraConfigs: OptimizerExtraConfigs;
 };
 
@@ -57,43 +48,21 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
   const partyData = usePartyData();
   const artifactManager = useArtifactManager(store.artifacts);
 
-  const [activeMain, setActiveMain] = useState(true);
   const [activePieceSelect, setActivePieceSelect] = useState(false);
-  const [step, setStep] = useState(0);
 
+  const guideControl = useRef<OptimizationGuideControl>(null);
   const savedValues = useRef<Partial<SavedValues>>({});
   const selectingSet = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
 
   // const optimizer = useOptimizer();
 
-  const STEP_CONFIGS: StepConfig[] = [
-    {
-      title: "Select Artifacts",
-      formId: "artifact-set",
-    },
-    {
-      title: "Artifact Modifier Config",
-      formId: "artifact-modifier",
-    },
-    {
-      title: "Select Item",
-      formId: "calc-item",
-    },
-    {
-      title: "Extra Config",
-      formId: "extra-config",
-    },
-  ];
-
-  const stepConfig = STEP_CONFIGS[step];
-
-  useEffect(() => {
-    const appWeapon = $AppWeapon.get(store.setup.weapon.code)!;
-    // optimizer.init(store.target, store.setup, appChar, appWeapon, partyData);
-  }, []);
+  // useEffect(() => {
+  //   const appWeapon = $AppWeapon.get(store.setup.weapon.code)!;
+  //   optimizer.init(store.target, store.setup, appChar, appWeapon, partyData);
+  // }, []);
 
   const optimizeSetup = () => {
-    const { calcItem, setCodes, buffConfigs, extraConfigs } = savedValues.current;
+    const { calcItem, extraConfigs } = savedValues.current;
 
     // optimizer.optimize(
     //   {
@@ -105,20 +74,20 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
     // );
   };
 
-  const navigateStep = (stepDiff: number) => {
-    const newStep = step + stepDiff;
+  // const navigateStep = (stepDiff: number) => {
+  //   const newStep = step + stepDiff;
 
-    if (newStep >= STEP_CONFIGS.length) {
-      return optimizeSetup();
-    }
+  //   if (newStep >= STEP_CONFIGS.length) {
+  //     return optimizeSetup();
+  //   }
 
-    setStep(newStep);
-  };
+  //   setStep(newStep);
+  // };
 
-  const saveConfig = <TKey extends keyof SavedValues>(key: TKey, value: SavedValues[TKey]) => {
-    savedValues.current[key] = value;
-    navigateStep(1);
-  };
+  // const saveConfig = <TKey extends keyof SavedValues>(key: TKey, value: SavedValues[TKey]) => {
+  //   savedValues.current[key] = value;
+  //   navigateStep(1);
+  // };
 
   const onSubmitArtifactSets = (sets: ArtifactFilterSet[] = []): string | undefined => {
     const setCodes: number[] = [];
@@ -154,7 +123,7 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
 
     // savedValues.current.filterSets = sets;
     // savedValues.current.buffConfigs = newBuffConfig;
-    saveConfig("setCodes", setCodes);
+    // saveConfig("setCodes", setCodes);
   };
 
   const togglePieceSelect = (active: boolean, code?: number) => {
@@ -163,7 +132,7 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
     }
 
     setActivePieceSelect(active);
-    setActiveMain(!active);
+    guideControl.current?.toggle(!active);
   };
 
   const onConfirmSelectPieces = (selectedIds: ItemMultiSelectIds) => {
@@ -171,101 +140,62 @@ function OptimizerFrontDesk(props: OptimizerFrontDeskProps) {
     togglePieceSelect(false);
   };
 
-  const closeDept = () => {
-    setActiveMain(false);
-  };
+  const stepConfigs: StepConfig[] = [
+    {
+      title: "Select Artifacts",
+      render: (changeValid) => (
+        <ArtifactSetSelect
+          manager={artifactManager}
+          onChangeValid={changeValid}
+          onRequestSelectPieces={(code) => togglePieceSelect(true, code)}
+        />
+      ),
+    },
+    {
+      title: "Artifact Modifiers Config",
+      initialValid: true,
+      render: () => <ArtifactModConfig manager={artifactManager} />,
+    },
+    {
+      title: "Select Item",
+      render: (changeValid) => (
+        <CalcItemSelect
+          calcList={appChar.calcList}
+          initialValue={savedValues.current?.calcItem}
+          onChange={(items) => (savedValues.current.calcItem = items[0])}
+          onChangeValid={changeValid}
+        />
+      ),
+    },
+    {
+      title: "Extra Configurations",
+      initialValid: true,
+      render: () => (
+        <ExtraConfigs
+          initialValue={savedValues.current.extraConfigs}
+          onChange={(value) => (savedValues.current.extraConfigs = value)}
+        />
+      ),
+    },
+  ];
 
   return (
     <>
-      <Modal
-        active={activeMain}
-        title={<span className="text-lg">Optimization / {stepConfig?.title}</span>}
-        style={{
-          height: "95vh",
-          width: "24rem",
+      <OptimizationGuide
+        control={guideControl}
+        stepConfigs={stepConfigs}
+        onChangStep={(newStep, oldStep) => {
+          if (oldStep === 0 && newStep === 1) {
+            artifactManager.concludeModConfigs();
+          }
         }}
-        className="bg-surface-2"
-        bodyCls="py-2"
-        closeOnMaskClick={false}
-        onClose={closeDept}
-        onTransitionEnd={(open) => {
-          if (!open && !activePieceSelect) {
+        onComplete={() => console.log("complete")}
+        afterClose={() => {
+          if (!activePieceSelect) {
             props.onClose();
           }
         }}
-      >
-        <div className="h-full flex flex-col hide-scrollbar">
-          <div className="grow hide-scrollbar">
-            <SwitchNode
-              value={step}
-              cases={[
-                {
-                  value: 0,
-                  element: (
-                    <ArtifactSetSelect
-                      manager={artifactManager}
-                      onRequestSelectPieces={(code) => togglePieceSelect(true, code)}
-                    />
-                  ),
-                },
-                {
-                  value: 1,
-                  element: (
-                    <ArtifactModConfig
-                      id={stepConfig?.formId}
-                      initialValue={{
-                        buffs: savedValues.current.buffConfigs,
-                      }}
-                      artifactSets={savedValues.current.filterSets}
-                      onSubmit={(config) => saveConfig("buffConfigs", config.buffs)}
-                    />
-                  ),
-                },
-                {
-                  value: 2,
-                  element: (
-                    <CalcItemSelect
-                      id={stepConfig?.formId}
-                      appChar={appChar}
-                      initialValue={savedValues.current?.calcItem}
-                      onSubmit={(calcItem) => saveConfig("calcItem", calcItem)}
-                    />
-                  ),
-                },
-                {
-                  value: 3,
-                  element: (
-                    <ExtraConfigs
-                      id={stepConfig?.formId}
-                      initialValue={savedValues.current.extraConfigs}
-                      onSubmit={(config) => saveConfig("extraConfigs", config)}
-                    />
-                  ),
-                },
-              ]}
-            />
-          </div>
-
-          <ButtonGroup
-            className="mt-3 mb-1"
-            buttons={[
-              {
-                children: "Back",
-                icon: <FaCaretRight className="text-lg rotate-180" />,
-                disabled: !step,
-                onClick: () => navigateStep(-1),
-              },
-              {
-                children: "Next",
-                icon: <FaCaretRight className="text-lg" />,
-                iconPosition: "end",
-                // disabled: !stepValids[step],
-                form: stepConfig?.formId,
-              },
-            ]}
-          />
-        </div>
-      </Modal>
+      />
 
       <ItemMultiSelect
         active={activePieceSelect}

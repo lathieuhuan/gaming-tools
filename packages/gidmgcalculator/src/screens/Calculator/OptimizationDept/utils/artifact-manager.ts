@@ -1,21 +1,21 @@
 import type { PartiallyOptional } from "rond";
-import type { UserArtifact } from "@Src/types";
+import type { ArtifactModCtrl, UserArtifact } from "@Src/types";
+
+import { AppArtifact, OptimizerArtifactBuffConfigs } from "@Backend";
 import { $AppArtifact } from "@Src/services";
+import Modifier_ from "@Src/utils/modifier-utils";
 
 type InputArtifact = PartiallyOptional<UserArtifact, "owner">;
 
 export type ManagedArtifactSet = {
-  data: {
-    code: number;
-    name: string;
-    icon: string;
-  };
+  data: AppArtifact;
   pieces: InputArtifact[];
   selectedIds: Set<number>;
 };
 
 export class ArtifactManager {
   sets: ManagedArtifactSet[] = [];
+  buffConfigs: OptimizerArtifactBuffConfigs = {};
 
   constructor(artifacts: InputArtifact[]) {
     const countMap = new Map<number, ManagedArtifactSet>();
@@ -32,11 +32,7 @@ export class ArtifactManager {
 
         if (data) {
           const filterSet: ManagedArtifactSet = {
-            data: {
-              code: data.code,
-              name: data.name,
-              icon: data.flower.icon,
-            },
+            data,
             pieces: [artifact],
             selectedIds: new Set(),
           };
@@ -111,4 +107,47 @@ export class ArtifactManager {
       }
     }
   });
+
+  concludeModConfigs = () => {
+    const newBuffConfig: OptimizerArtifactBuffConfigs = {};
+
+    for (const { data, selectedIds } of this.sets) {
+      if (selectedIds.size && !newBuffConfig[data.code] && data.buffs) {
+        newBuffConfig[data.code] = data.buffs.map<OptimizerArtifactBuffConfigs[string][number]>((buff) => ({
+          index: buff.index,
+          activated: true,
+          inputs: Modifier_.createModCtrlInpus(buff.inputConfigs, true),
+        }));
+      }
+    }
+    return (this.buffConfigs = newBuffConfig);
+  };
+
+  toggleBuffConfig = (setCode: number, configIndex: number) => {
+    const newConfigsByCode = { ...this.buffConfigs };
+    const newConfigs = newConfigsByCode[setCode];
+
+    if (newConfigs[configIndex]) {
+      newConfigs[configIndex] = {
+        ...newConfigs[configIndex],
+        activated: !newConfigs[configIndex].activated,
+      };
+      return (this.buffConfigs = newConfigsByCode);
+    }
+    return this.buffConfigs;
+  };
+
+  changeBuffConfigInputs = (setCode: number, configIndex: number, inputs?: number[]) => {
+    const newConfigsByCode = { ...this.buffConfigs };
+    const newConfigs = newConfigsByCode[setCode];
+
+    if (newConfigs[configIndex]) {
+      newConfigs[configIndex] = {
+        ...newConfigs[configIndex],
+        inputs,
+      };
+      return (this.buffConfigs = newConfigsByCode);
+    }
+    return this.buffConfigs;
+  };
 }

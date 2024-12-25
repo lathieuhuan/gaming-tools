@@ -19,9 +19,8 @@ type RenderItem = (RenderCheck | RenderInput) & {
 };
 
 interface ExtraConfigsProps {
-  id: string;
   initialValue?: OptimizerExtraConfigs;
-  onSubmit: (config: OptimizerExtraConfigs) => void;
+  onChange?: (value: OptimizerExtraConfigs) => void;
 }
 export function ExtraConfigs(props: ExtraConfigsProps) {
   const config = useRef<OptimizerExtraConfigs>(props.initialValue || { useOwnedPiece: true, minEr: 100 });
@@ -46,6 +45,7 @@ export function ExtraConfigs(props: ExtraConfigsProps) {
 
   const onChange = <TKey extends keyof OptimizerExtraConfigs>(key: TKey, value: OptimizerExtraConfigs[TKey]) => {
     config.current[key] = value;
+    props.onChange?.(config.current);
   };
 
   const renderControl = (item: RenderItem) => {
@@ -68,26 +68,15 @@ export function ExtraConfigs(props: ExtraConfigsProps) {
   };
 
   return (
-    <form
-      id={props.id}
-      className="h-full flex flex-col"
-      onSubmit={(e) => {
-        e.preventDefault();
-        props.onSubmit(config.current);
-      }}
-    >
-      <p>Extra Configuration</p>
-
-      <div className="mt-2 space-y-2">
-        {renderItems.map((item, index) => {
-          return (
-            <div key={index} className="h-12 px-3 py-2 bg-surface-1 rounded flex justify-between items-center">
-              <p className="text-sm">{item.label}</p>
-              {renderControl(item)}
-            </div>
-          );
-        })}
-      </div>
-    </form>
+    <div className="h-full space-y-2">
+      {renderItems.map((item, index) => {
+        return (
+          <div key={index} className="h-12 px-3 py-2 bg-surface-1 rounded flex justify-between items-center">
+            <p className="text-sm">{item.label}</p>
+            {renderControl(item)}
+          </div>
+        );
+      })}
+    </div>
   );
 }

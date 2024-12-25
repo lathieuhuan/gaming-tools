@@ -72,8 +72,9 @@ function ItemMultiSelectCore<T extends Weapon | Artifact>(props: ItemMultiSelect
 
   const unselectItem = (item: T, shouldScroll = false) => {
     setSelectedIds((prevIds) => {
-      prevIds.delete(item.ID);
-      return new Set(prevIds);
+      const newIds = new Set(prevIds);
+      newIds.delete(item.ID);
+      return newIds;
     });
 
     if (shouldScroll) scrollBody(0);

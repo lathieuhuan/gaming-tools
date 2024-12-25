@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Input } from "rond";
 
 import type { ArtifactManager } from "../../utils/artifact-manager";
@@ -16,9 +16,10 @@ export type ArtifactSetOption = {
 
 interface ArtifactSetSelectProps {
   manager: ArtifactManager;
+  onChangeValid: (valid: boolean) => void;
   onRequestSelectPieces: (code: number) => void;
 }
-export function ArtifactSetSelect({ manager, onRequestSelectPieces }: ArtifactSetSelectProps) {
+export function ArtifactSetSelect({ manager, onChangeValid, onRequestSelectPieces }: ArtifactSetSelectProps) {
   const timeout = useRef<NodeJS.Timeout>();
   const [sets, setSets] = useState(manager.sets);
   const [keyword, setKeyword] = useState("");
@@ -51,6 +52,10 @@ export function ArtifactSetSelect({ manager, onRequestSelectPieces }: ArtifactSe
     };
   }, [sets, keyword]);
 
+  useEffect(() => {
+    onChangeValid(sets.some((set) => set.selectedIds.size));
+  }, [sets]);
+
   const onChangeKeyword = (kw: string) => {
     clearTimeout(timeout.current);
 
@@ -75,10 +80,12 @@ export function ArtifactSetSelect({ manager, onRequestSelectPieces }: ArtifactSe
 
   const afterClosedActions = (code: number) => {
     setCodes((prevCodes) => {
-      prevCodes.active.delete(code);
+      const newActive = new Set(prevCodes.active);
+      newActive.delete(code);
+
       return {
         ...prevCodes,
-        active: new Set(prevCodes.active),
+        active: newActive,
       };
     });
   };

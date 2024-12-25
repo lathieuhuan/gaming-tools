@@ -86,8 +86,10 @@ export type CalculationFinalResult = Record<CalculationFinalResultKey, Calculati
 
 // OPTIMIZER
 
+type BuffConfig = Pick<ArtifactModCtrl, "index" | "activated" | "inputs">;
+
 export type OptimizerArtifactBuffConfigs = {
-  [code: string]: Pick<ArtifactModCtrl, "index" | "activated" | "inputs">[];
+  [code: string]: BuffConfig[];
 };
 
 export type OptimizerExtraConfigs = {

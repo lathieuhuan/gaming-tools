@@ -31,7 +31,7 @@ export function SetOption(props: SetOptionProps) {
         title={data.name}
         onClick={props.onClickLabel}
       >
-        <GenshinImage className="w-9 h-9 shrink-0" src={data.icon} imgType="artifact" fallbackCls="p-2" />
+        <GenshinImage className="w-9 h-9 shrink-0" src={data.flower.icon} imgType="artifact" fallbackCls="p-2" />
         <span className={`ml-2 pr-4 truncate ${activeCls}`}>{data.name}</span>
 
         <p className="ml-auto">
