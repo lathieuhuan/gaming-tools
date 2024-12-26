@@ -17,11 +17,12 @@ export const CalculatorModalsContext = createContext<CalculatorModalsControl | n
 
 export type OptimizerStatus = {
   active: boolean;
+  loading: boolean;
 };
 
-export type OptimizerStatusContextModel = {
-  value: OptimizerStatus;
-  toggle: (active?: boolean) => void;
+export type OptimizerState = {
+  status: OptimizerStatus;
+  toggle: (key: keyof OptimizerStatus, active?: boolean) => void;
 };
 
-export const OptimizerStatusContext = createContext<OptimizerStatusContextModel | null>(null);
+export const OptimizerStateContext = createContext<OptimizerState | null>(null);

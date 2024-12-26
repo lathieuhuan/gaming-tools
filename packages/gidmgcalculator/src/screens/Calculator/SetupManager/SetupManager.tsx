@@ -5,7 +5,7 @@ import { Button, useScreenWatcher } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTraveler, updateUI } from "@Store/ui-slice";
-import { useCalcModalCtrl, useOptimizerStatus } from "../ContextProvider";
+import { useOptimizerState } from "../ContextProvider";
 
 // Component
 import { SetupSelect } from "./SetupSelect";
@@ -22,7 +22,6 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
   const screenWatcher = useScreenWatcher();
   const targetConfig = useSelector((state) => state.ui.calcTargetConfig);
   const traveler = useSelector(selectTraveler);
-  const modalCtrl = useCalcModalCtrl();
 
   const updateTargetConfig = (active: boolean, onOverview: boolean) => {
     dispatch(updateUI({ calcTargetConfig: { active, onOverview } }));
@@ -89,6 +88,6 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 }
 
 function OptimizerContact() {
-  const { toggle } = useOptimizerStatus();
-  return <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={() => toggle(true)} />;
+  const { status, toggle } = useOptimizerState();
+  return <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={() => toggle("active", true)} />;
 }

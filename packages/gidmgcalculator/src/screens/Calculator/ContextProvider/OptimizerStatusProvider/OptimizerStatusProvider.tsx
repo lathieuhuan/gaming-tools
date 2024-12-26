@@ -1,20 +1,21 @@
 import { useState } from "react";
-import { OptimizerStatusContext, OptimizerStatusContextModel, type OptimizerStatus } from "../contexts";
+import { OptimizerStateContext, OptimizerState, type OptimizerStatus } from "../contexts";
 
 export function OptimizerStatusProvider(props: { children: React.ReactNode }) {
   const [status, setStatus] = useState<OptimizerStatus>({
     active: false,
+    loading: false,
   });
 
-  const context: OptimizerStatusContextModel = {
-    value: status,
-    toggle: (active = !status.active) => {
+  const state: OptimizerState = {
+    status,
+    toggle: (key, value = !status[key]) => {
       setStatus((prev) => ({
         ...prev,
-        active,
+        [key]: value,
       }));
     },
   };
 
-  return <OptimizerStatusContext.Provider value={context}>{props.children}</OptimizerStatusContext.Provider>;
+  return <OptimizerStateContext.Provider value={state}>{props.children}</OptimizerStateContext.Provider>;
 }

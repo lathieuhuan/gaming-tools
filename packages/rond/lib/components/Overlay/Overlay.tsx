@@ -18,6 +18,8 @@ export interface OverlayProps {
   closable?: boolean;
   /** Default to true */
   closeOnMaskClick?: boolean;
+  /** Default to true */
+  closeOnEscape?: boolean;
   /** Default to '200' (ms) */
   transitionDuration?: number;
   children: (moving: OverlayState["movingDir"], transitionStyle: TransitionStyle) => React.ReactNode;
@@ -30,6 +32,7 @@ export function Overlay({
   state: stateProps,
   closable = true,
   closeOnMaskClick = true,
+  closeOnEscape = true,
   transitionDuration = 200,
   children,
   onClose,
@@ -81,7 +84,7 @@ export function Overlay({
     }
 
     const handlePressEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && overlayState === "open") {
+      if (e.key === "Escape" && overlayState === "open" && closeOnEscape) {
         closeOverlay();
       }
     };

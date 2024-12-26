@@ -7,7 +7,7 @@ import type { ArtifactManager } from "./utils/artifact-manager";
 
 import { useStoreSnapshot } from "@Src/features";
 import { $AppWeapon } from "@Src/services";
-import { useCharacterData, useOptimizerStatus, usePartyData } from "../ContextProvider";
+import { useCharacterData, useOptimizerState, usePartyData } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 import { useOptimizer } from "./hooks/useOptimizer";
 
@@ -27,9 +27,8 @@ type SavedValues = {
 };
 
 export function OptimizationDept() {
-  const { value: status, toggle } = useOptimizerStatus();
-
-  return status.active ? <OptimizationFrontDesk onClose={() => toggle(false)} /> : null;
+  const { status, toggle } = useOptimizerState();
+  return status.active ? <OptimizationFrontDesk onClose={() => toggle("active", false)} /> : null;
 }
 
 interface OptimizationFrontDeskProps {
@@ -108,10 +107,6 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     if (!activePieceSelect && !activeResult) {
       props.onClose();
     }
-  };
-
-  const onCloseResult = () => {
-    props.onClose();
   };
 
   const stepConfigs: StepConfig[] = [
@@ -195,7 +190,8 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         }}
         closeOnMaskClick={false}
         withCloseButton={false}
-        onClose={() => console.log('onClose')}
+        closeOnEscape={false}
+        onClose={() => {}}
         onTransitionEnd={(open) => {
           if (!open && isExiting.current) props.onClose();
         }}

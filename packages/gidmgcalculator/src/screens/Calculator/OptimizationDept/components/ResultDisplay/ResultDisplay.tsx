@@ -1,15 +1,14 @@
 import { useRef, useState } from "react";
-import { TiArrowBack } from "react-icons/ti";
 import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
-import { ButtonGroup, Checkbox, ItemCase } from "rond";
+import { ButtonGroup, Checkbox, FancyBackSvg, ItemCase } from "rond";
 import { ARTIFACT_TYPES, type AppArtifact } from "@Backend";
 
 import type { Artifact } from "@Src/types";
 import type { OptimizeResult } from "../../utils/optimizer-manager";
 
-import { ArtifactCard, GenshinImage, ItemThumbnail } from "@Src/components";
 import { $AppArtifact } from "@Src/services";
 import Entity_ from "@Src/utils/entity-utils";
+import { ArtifactCard, GenshinImage, ItemThumbnail } from "@Src/components";
 
 interface ResultDisplayProps {
   loading: boolean;
@@ -21,7 +20,7 @@ interface ResultDisplayProps {
 export function ResultDisplay(props: ResultDisplayProps) {
   const [selected, setSelected] = useState<Artifact>();
 
-  const selectedIndexes = useRef(new Set<number>());
+  const selectedIndexes = useRef(new Set(props.result.map((_, i) => i)));
   const dataBySet = useRef<Record<number, AppArtifact>>({});
   const suffix = ["st", "nd", "rd"];
 
@@ -98,8 +97,7 @@ export function ResultDisplay(props: ResultDisplayProps) {
           buttons={[
             {
               children: "Return",
-              icon: <TiArrowBack className="text-xl" />,
-              className: "gap-1",
+              icon: <FancyBackSvg className="text-base" />,
               onClick: props.onClickReturn,
             },
             {

@@ -1,4 +1,4 @@
-import { useImperativeHandle, useRef, useState } from "react";
+import { Fragment, useImperativeHandle, useState } from "react";
 import { FaCaretRight, FaCaretDown } from "react-icons/fa";
 import { Button, ButtonGroup, clsx, Modal, Popover, useClickOutside } from "rond";
 
@@ -24,8 +24,8 @@ interface OptimizationGuideProps {
 }
 export function OptimizationGuide(props: OptimizationGuideProps) {
   const { stepConfigs } = props;
-  const timeout = useRef<NodeJS.Timeout>();
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const stepCount = stepConfigs.length;
+
   const [active, setActive] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [step, setStep] = useState(0);
@@ -49,17 +49,12 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
     });
   };
 
-  const scrollTo = (step: number) => {
-    const carousel = carouselRef.current;
-    if (carousel) carousel.scrollLeft = step * carousel.clientWidth;
-  };
-
   useImperativeHandle(props.control, () => ({
     toggle: setActive,
   }));
 
   const navigate = (toStep: number) => {
-    if (toStep >= stepConfigs.length) {
+    if (toStep >= stepCount) {
       return props.onComplete();
     }
 
@@ -69,7 +64,6 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
       moreVisibleSteps.push(i);
     }
 
-    scrollTo(toStep);
     setStep(toStep);
     setVisibleIndexes((prev) => {
       const newIndexes = new Set(prev);
@@ -79,17 +73,8 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
     props.onChangStep?.(toStep, step);
   };
 
-  const onScrollCarousel = (e: React.UIEvent<HTMLDivElement>) => {
-    clearTimeout(timeout.current);
-
-    const carousel = e.currentTarget;
-
-    timeout.current = setTimeout(() => {
-      const { scrollLeft, clientWidth } = carousel;
-      const visibleIndex = Math.floor(scrollLeft / clientWidth);
-
-      setVisibleIndexes(new Set([visibleIndex]));
-    }, 100);
+  const onTransitionEndSwipe = () => {
+    setVisibleIndexes(new Set([step]));
   };
 
   const onClickMenuItem = (index: number) => {
@@ -111,22 +96,33 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
       closeOnMaskClick={false}
       onClose={() => setActive(false)}
       onTransitionEnd={(open) => {
-        if (open) {
-          scrollTo(step);
-        } else {
+        if (!open) {
           props.afterClose();
         }
       }}
     >
       <div className="h-full flex flex-col hide-scrollbar">
-        <div ref={carouselRef} className="grow overflow-hidden scroll-smooth flex" onScroll={onScrollCarousel}>
-          {stepConfigs.map((config, index) => {
-            return (
-              <div key={index} className="w-full h-full px-4 shrink-0 hide-scrollbar">
-                {visibleIndexes.has(index) ? config.render(changeValidOf(index)) : null}
-              </div>
-            );
-          })}
+        <div className="grow overflow-hidden relative">
+          <div
+            className="absolute left-0 top-0 h-full flex transition-transform duration-200"
+            style={{
+              width: `${stepCount * 100}%`,
+              transform: `translateX(-${(100 / stepCount) * step}%)`,
+            }}
+            onTransitionEnd={onTransitionEndSwipe}
+          >
+            {stepConfigs.map((config, index) => {
+              return (
+                <div
+                  key={index}
+                  className="h-full px-4 shrink-0 hide-scrollbar"
+                  style={{ width: `${100 / stepCount}%` }}
+                >
+                  {visibleIndexes.has(index) ? config.render(changeValidOf(index)) : null}
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <div className="mt-3 mb-1 px-4 flex justify-between">
@@ -140,31 +136,26 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
             )}
 
             <Popover className="bottom-full pb-2" origin="bottom left" active={showMenu}>
-              <div className="bg-light-default text-black rounded-md overflow-hidden shadow-white-glow">
+              <div className="bg-light-default text-black rounded-md flex flex-col overflow-hidden shadow-white-glow">
                 {stepConfigs.map((config, index) => {
                   const isCurrent = index === step;
                   const disabled = stepStatuses[index] === "INVALID" || isCurrent;
 
                   return (
-                    <button
-                      key={index}
-                      disabled={disabled}
-                      className={clsx(
-                        "px-3 w-full text-left font-semibold whitespace-nowrap",
-                        isCurrent ? "bg-light-disabled" : "hover:bg-surface-1 hover:text-light-default"
-                      )}
-                      onClick={() => onClickMenuItem(index)}
-                    >
-                      <span
+                    <Fragment key={index}>
+                      {index ? <div className="h-px bg-light-disabled" /> : null}
+                      <button
+                        disabled={disabled}
                         className={clsx(
-                          "py-1 block",
-                          index && "border-t border-surface-border",
+                          "px-3 py-1 w-full text-left font-semibold whitespace-nowrap",
+                          isCurrent ? "bg-light-disabled" : "hover:bg-surface-1 hover:text-light-default",
                           disabled && "opacity-80"
                         )}
+                        onClick={() => onClickMenuItem(index)}
                       >
                         {config.title}
-                      </span>
-                    </button>
+                      </button>
+                    </Fragment>
                   );
                 })}
               </div>
@@ -180,8 +171,8 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
                 onClick: () => navigate(step - 1),
               },
               {
-                children: step === stepConfigs.length - 1 ? "Proceed" : "Next",
-                variant: step === stepConfigs.length - 1 ? "primary" : "default",
+                children: step === stepCount - 1 ? "Proceed" : "Next",
+                variant: step === stepCount - 1 ? "primary" : "default",
                 icon: <FaCaretRight className="text-lg" />,
                 iconPosition: "end",
                 disabled: stepStatuses[step] !== "VALID",
