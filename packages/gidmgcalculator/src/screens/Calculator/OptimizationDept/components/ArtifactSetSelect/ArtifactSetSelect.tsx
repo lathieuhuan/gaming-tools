@@ -61,7 +61,7 @@ export function ArtifactSetSelect({ manager, onChangeValid, onRequestSelectPiece
 
     timeout.current = setTimeout(() => {
       setKeyword(kw.toLowerCase());
-    }, 200);
+    }, 150);
   };
 
   const onClickOption = (code: number, isActive: boolean) => {
@@ -113,30 +113,34 @@ export function ArtifactSetSelect({ manager, onChangeValid, onRequestSelectPiece
         </Button>
       </div>
 
-      <div className="space-y-2">
-        {sets.map((set) => {
-          const { code } = set.data;
+      {all.visibleCodes.size ? (
+        <div className="space-y-2">
+          {sets.map((set) => {
+            const { code } = set.data;
 
-          if (!all.visibleCodes.has(code)) {
-            return null;
-          }
-          const isActive = codes.active.has(code);
+            if (!all.visibleCodes.has(code)) {
+              return null;
+            }
+            const isActive = codes.active.has(code);
 
-          return (
-            <SetOption
-              key={code}
-              isActive={isActive}
-              isClosing={codes.closing.has(code)}
-              set={set}
-              manager={manager}
-              onClickLabel={() => onClickOption(code, isActive)}
-              onClickSelectPieces={() => onRequestSelectPieces(code)}
-              onChangeSets={setSets}
-              afterClosedActions={() => afterClosedActions(code)}
-            />
-          );
-        })}
-      </div>
+            return (
+              <SetOption
+                key={code}
+                isActive={isActive}
+                isClosing={codes.closing.has(code)}
+                set={set}
+                manager={manager}
+                onClickLabel={() => onClickOption(code, isActive)}
+                onClickSelectPieces={() => onRequestSelectPieces(code)}
+                onChangeSets={setSets}
+                afterClosedActions={() => afterClosedActions(code)}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <div className="py-4 text-center text-hint-color">No Artifact set found</div>
+      )}
     </div>
   );
 }

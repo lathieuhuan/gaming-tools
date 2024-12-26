@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
-import { Button, clsx } from "rond";
+import { Button, Checkbox, clsx } from "rond";
 
 import type { ManagedArtifactSet, ArtifactManager } from "../../utils/artifact-manager/artifact-manager";
 import { GenshinImage } from "@Src/components";
@@ -19,70 +19,66 @@ export function SetOption(props: SetOptionProps) {
 
   const selectedCount = props.set.selectedIds.size;
   const total = props.set.pieces.length;
-  const activeCls = isActive && !props.isClosing ? "text-primary-1" : "";
+
+  const onChangeSelectAll = (checked: boolean) => {
+    onChangeSets(checked ? manager.selectAll(data.code) : manager.unselectAll(data.code));
+  };
 
   return (
     <div>
-      <div
-        className={clsx(
-          "px-2 py-0.5 bg-surface-1 rounded-sm flex items-center cursor-pointer",
-          !isActive && "glow-on-hover"
-        )}
-        title={data.name}
-        onClick={props.onClickLabel}
-      >
-        <GenshinImage className="w-9 h-9 shrink-0" src={data.flower.icon} imgType="artifact" fallbackCls="p-2" />
-        <span className={`ml-2 pr-4 truncate ${activeCls}`}>{data.name}</span>
+      <div className="bg-surface-1 rounded-sm flex">
+        <div
+          className={clsx(
+            "px-2 py-0.5 grow overflow-hidden flex items-center cursor-pointer",
+            !isActive && "glow-on-hover"
+          )}
+          title={data.name}
+          onClick={props.onClickLabel}
+        >
+          <GenshinImage className="w-9 h-9 shrink-0" src={data.flower.icon} imgType="artifact" fallbackCls="p-2" />
+          <span className={`ml-2 pr-4 truncate ${isActive && !props.isClosing && "text-primary-1"}`}>{data.name}</span>
 
-        <p className="ml-auto">
-          {selectedCount ? <span className={activeCls}>{selectedCount}</span> : null}
-          <span className="text-hint-color">
-            {selectedCount ? "/" : ""}
-            {total}
-          </span>
-        </p>
+          <p className="ml-auto">
+            {selectedCount ? <span className="text-light-default">{selectedCount}</span> : null}
+            <span className="text-hint-color">
+              {selectedCount ? "/" : ""}
+              {total}
+            </span>
+          </p>
+        </div>
+
+        <div className="flex items-center shrink-0">
+          <div className="px-2 border-l border-surface-border">
+            <Checkbox
+              size="medium"
+              checked={selectedCount === total}
+              indeterminate={!!selectedCount && selectedCount !== total}
+              onChange={onChangeSelectAll}
+            />
+          </div>
+        </div>
       </div>
 
       {isActive && (
         <ActionsAnimator isClosing={props.isClosing} afterClosedActions={props.afterClosedActions}>
           <div className="p-3 bg-surface-3 rounded-b-sm flex gap-3">
-            <div className="space-y-3">
-              <Button
-                size="small"
-                disabled={selectedCount === total}
-                onClick={() => onChangeSets(manager.selectAll(data.code))}
-              >
-                Select All
-              </Button>
+            <Button
+              size="small"
+              disabled={!manager.checkAnyEquippedSelected(props.set)}
+              onClick={() => onChangeSets(manager.removeEquipped(data.code))}
+            >
+              Remove Equipped
+            </Button>
 
-              <Button
-                size="small"
-                disabled={!selectedCount}
-                onClick={() => onChangeSets(manager.unselectAll(data.code))}
-              >
-                Unselect All
-              </Button>
-            </div>
-
-            <div className="space-y-3">
-              <Button
-                size="small"
-                disabled={!manager.checkAnyEquippedSelected(props.set)}
-                onClick={() => onChangeSets(manager.removeEquipped(data.code))}
-              >
-                Remove Equipped
-              </Button>
-
-              <Button
-                size="small"
-                className="gap-0 pr-1"
-                icon={<FaCaretRight className="text-lg" />}
-                iconPosition="end"
-                onClick={props.onClickSelectPieces}
-              >
-                Select Individually
-              </Button>
-            </div>
+            <Button
+              size="small"
+              className="gap-0 pr-1"
+              icon={<FaCaretRight className="text-lg" />}
+              iconPosition="end"
+              onClick={props.onClickSelectPieces}
+            >
+              Select Individually
+            </Button>
           </div>
         </ActionsAnimator>
       )}
@@ -114,7 +110,7 @@ function ActionsAnimator(props: ActionsAnimatorProps) {
   return (
     <div
       className="overflow-hidden transition-size duration-200"
-      style={{ height: expanding ? 84 : 0 }}
+      style={{ height: expanding ? 48 : 0 }}
       onTransitionEnd={() => {
         if (props.isClosing) props.afterClosedActions();
       }}

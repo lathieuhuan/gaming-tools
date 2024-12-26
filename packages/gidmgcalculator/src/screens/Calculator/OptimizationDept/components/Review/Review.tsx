@@ -26,7 +26,7 @@ export function Review({ manager }: ReviewProps) {
     <div className="pt-2 space-y-4">
       <div>
         <p className="text-lg">
-          Total selected Artifacts: <span className="font-semibold text-primary-1">{count.all}</span>
+          • Total selected Artifacts: <span className="font-semibold text-primary-1">{count.all}</span>
         </p>
 
         <div className="mt-2 px-3 flex justify-between">
@@ -43,7 +43,7 @@ export function Review({ manager }: ReviewProps) {
 
       <div>
         <p className="text-lg">
-          Maximum possible calculations: <span className="font-semibold text-primary-1">{count.maxCalcs}</span>
+          • Maximum possible calculations: <span className="font-semibold text-primary-1">{count.maxCalcs}</span>
         </p>
       </div>
     </div>

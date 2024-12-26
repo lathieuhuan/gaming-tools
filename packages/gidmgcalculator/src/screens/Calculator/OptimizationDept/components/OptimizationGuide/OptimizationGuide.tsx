@@ -99,7 +99,7 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
       style={{
         height: "90vh",
         maxHeight: 880,
-        width: "24rem",
+        width: "25rem",
       }}
       className="bg-surface-2"
       bodyCls="py-2 px-0"
@@ -177,10 +177,13 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
             </div>
 
             <div className="group relative">
-              {noti.message && <Button icon={<FaExclamation />} onClick={() => setShowMenu(!showMenu)} />}
+              {noti.message && <Button icon={<FaExclamation />} />}
 
               <div
-                className="mb-3 px-2 py-1 text-sm bg-black text-danger-3 whitespace-nowrap rounded cursor-default absolute bottom-full z-10 transition-transform duration-200 scale-0 group-hover:scale-100"
+                className={clsx(
+                  "mb-3 px-2 py-1 text-sm bg-black text-danger-3 whitespace-nowrap rounded cursor-default absolute bottom-full z-10 transition-transform duration-200 scale-0",
+                  !showMenu && "group-hover:scale-100"
+                )}
                 style={{ transformOrigin: "bottom left" }}
               >
                 {noti.message}

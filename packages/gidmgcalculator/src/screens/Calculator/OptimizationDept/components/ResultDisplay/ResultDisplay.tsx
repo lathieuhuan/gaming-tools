@@ -97,7 +97,7 @@ export function ResultDisplay(props: ResultDisplayProps) {
           buttons={[
             {
               children: "Return",
-              icon: <FancyBackSvg className="text-base" />,
+              icon: <FancyBackSvg />,
               onClick: props.onClickReturn,
             },
             {
