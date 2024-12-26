@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import isEqual from "react-fast-compare";
 import { FaSave, FaToolbox, FaSyncAlt } from "react-icons/fa";
-import { Modal, ConfirmModal, Button, VersatileSelect } from "rond";
+import { Modal, ConfirmModal, Button, VersatileSelect, PouchSvg, TrashCanSvg } from "rond";
 import { ArtifactCalc, AttributeStat } from "@Backend";
 
 import type { CalcArtifact } from "@Src/types";
@@ -19,7 +19,6 @@ import { useStoreSnapshot } from "@Src/features";
 
 // Component
 import { ArtifactLevelSelect, ArtifactSubstatsControl } from "@Src/components";
-import { IconPouch, IconTrashCan } from "@Src/components/icons";
 
 export type ArtifactSourceType = "LOADOUT" | "INVENTORY" | "FORGE";
 
@@ -106,7 +105,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
       <div className="px-2 pt-2 pb-1 flex justify-end items-center gap-4">
         <Button
           title="Remove"
-          icon={<IconTrashCan />}
+          icon={<TrashCanSvg />}
           onClick={() => {
             dispatch(changeArtifact({ pieceIndex, newPiece: null }));
             onRemove();
@@ -116,7 +115,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
         <Button title="Loadout" icon={<FaToolbox className="text-lg" />} onClick={() => onRequestChange("LOADOUT")} />
         <Button
           title="Inventory"
-          icon={<IconPouch className="text-xl" />}
+          icon={<PouchSvg className="text-xl" />}
           onClick={() => onRequestChange("INVENTORY")}
         />
         <Button title="Switch" icon={<FaSyncAlt className="text-lg" />} onClick={() => onRequestChange("FORGE")} />

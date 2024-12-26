@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { FaLink, FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
-import { clsx, useScreenWatcher, Button, ButtonGroup, Modal, CloseButton } from "rond";
+import { clsx, useScreenWatcher, Button, ButtonGroup, Modal, CloseButton, TrashCanSvg } from "rond";
 import { ARTIFACT_TYPES, CharacterCalc } from "@Backend";
 
 import type { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
@@ -17,7 +17,6 @@ import { chooseUserSetup, switchShownSetupInComplex, uncombineSetups } from "@St
 
 // Component
 import { CharacterPortrait, GenshinImage } from "@Src/components";
-import { IconTrashCan } from "@Src/components/icons";
 import { TeammateDetail } from "./TeammateDetail";
 import { GearIcon } from "./GearIcon";
 
@@ -214,7 +213,7 @@ export function SetupTemplate({ setup, complexSetup, weapon, artifacts = [], ope
           <Button icon={<FaShareAlt />} onClick={openModal("SHARE_SETUP")} />
 
           {isOriginal ? (
-            <Button icon={<IconTrashCan />} onClick={openModal("REMOVE_SETUP")} />
+            <Button icon={<TrashCanSvg />} onClick={openModal("REMOVE_SETUP")} />
           ) : (
             <Button
               icon={<FaPlus />}

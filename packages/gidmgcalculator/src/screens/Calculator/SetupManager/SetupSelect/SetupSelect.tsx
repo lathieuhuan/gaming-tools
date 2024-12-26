@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaCopy, FaSave, FaBalanceScaleLeft, FaShareAlt } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
-import { clsx, ConfirmModal } from "rond";
+import { clsx, ConfirmModal, TrashCanSvg } from "rond";
 
 import { MAX_CALC_SETUPS } from "@Src/constants";
 import Array_ from "@Src/utils/array-utils";
@@ -21,7 +21,6 @@ import { useDispatch, useSelector } from "@Store/hooks";
 
 // Component
 import { ComplexSelect } from "@Src/components";
-import { IconTrashCan } from "@Src/components/icons";
 
 type ModalState = {
   type: "REMOVE_SETUP" | "";
@@ -109,7 +108,7 @@ export function SetupSelect() {
               const actions: ActionButtonAttrs[] = [
                 {
                   className: "hover:bg-danger-1 hover:text-light-default",
-                  children: <IconTrashCan />,
+                  children: <TrashCanSvg />,
                   disabled: setupManageInfos.length < 2,
                   onClick: () => {
                     openModal("REMOVE_SETUP", i);

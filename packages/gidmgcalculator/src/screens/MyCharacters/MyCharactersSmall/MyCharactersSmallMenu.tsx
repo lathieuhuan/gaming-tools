@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import { RiArrowGoBackLine } from "react-icons/ri";
-import { ButtonGroup, Input, useChildListObserver, useIntersectionObserver } from "rond";
+import { ButtonGroup, FancyBackSvg, Input, useChildListObserver, useIntersectionObserver } from "rond";
 
 import { useSelector } from "@Store/hooks";
 import { selectChosenCharacter, selectUserCharacters } from "@Store/userdb-slice";
@@ -94,7 +93,7 @@ export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
         justify="end"
         buttons={[
           {
-            icon: <RiArrowGoBackLine className="text-lg" />,
+            icon: <FancyBackSvg />,
             onClick: props.onClose,
           },
           {

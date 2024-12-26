@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
-import { RiArrowGoBackLine } from "react-icons/ri";
-import { Modal, EntitySelectTemplate } from "rond";
+import { Modal, EntitySelectTemplate, FancyBackSvg } from "rond";
 import { WeaponType } from "@Backend";
 
 import type { UserWeapon } from "@Src/types";
@@ -58,7 +57,7 @@ const WeaponInventoryCore = ({ weaponType, owner, buttonText, onClickButton, onC
               withOwnerLabel
               actions={[
                 {
-                  icon: <RiArrowGoBackLine className="text-lg" />,
+                  icon: <FancyBackSvg />,
                   className: "sm:hidden",
                   onClick: () => {
                     if (bodyRef.current) bodyRef.current.scrollLeft = 0;

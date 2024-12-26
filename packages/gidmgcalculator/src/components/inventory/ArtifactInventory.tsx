@@ -1,6 +1,5 @@
 import { useMemo, useState, useRef } from "react";
-import { RiArrowGoBackLine } from "react-icons/ri";
-import { useElementSize, Modal, EntitySelectTemplate, type EntitySelectTemplateProps } from "rond";
+import { useElementSize, Modal, EntitySelectTemplate, type EntitySelectTemplateProps, FancyBackSvg } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
 import type { CalcArtifact, UserArtifact } from "@Src/types";
@@ -110,7 +109,7 @@ const ArtifactInventoryCore = ({
                   withActions={!!chosenArtifact}
                   actions={[
                     {
-                      icon: <RiArrowGoBackLine className="text-lg" />,
+                      icon: <FancyBackSvg />,
                       className: "sm:hidden",
                       onClick: () => {
                         if (bodyRef.current) bodyRef.current.scrollLeft = 0;

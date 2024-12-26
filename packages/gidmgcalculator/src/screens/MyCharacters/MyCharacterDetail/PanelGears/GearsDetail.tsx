@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-import { RiArrowGoBackLine } from "react-icons/ri";
-import { Button } from "rond";
+import { Button, FancyBackSvg } from "rond";
 import { AttributeStat } from "@Backend";
 
 import type { GearsDetailType } from "./Gears.types";
@@ -21,7 +20,7 @@ export function GearsDetail({ detailType, showCloseBtn, onClose }: GearsDetailPr
   const modalCtrl = useMyCharacterDetailModalsCtrl();
 
   const closeBtnProps = {
-    icon: <RiArrowGoBackLine className="text-lg" />,
+    icon: <FancyBackSvg />,
     className: !showCloseBtn && "hidden",
     onClick: onClose,
   };

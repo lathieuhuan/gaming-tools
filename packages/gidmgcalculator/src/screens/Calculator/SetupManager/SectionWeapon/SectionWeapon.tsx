@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Badge, Button, VersatileSelect } from "rond";
+import { Badge, Button, PouchSvg, VersatileSelect } from "rond";
 import { LEVELS, Level } from "@Backend";
 
 import { $AppWeapon } from "@Src/services";
@@ -9,7 +9,6 @@ import Entity_ from "@Src/utils/entity-utils";
 import { selectWeapon, changeWeapon, updateWeapon } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
 import { WeaponForge, WeaponInventory, GenshinImage } from "@Src/components";
-import { IconPouch } from "@Src/components/icons";
 
 import styles from "../SetupManager.styles.module.scss";
 
@@ -78,7 +77,7 @@ export default function SectionWeapon() {
         title="Inventory"
         className="absolute bottom-1 right-1"
         boneOnly
-        icon={<IconPouch className="text-xl" />}
+        icon={<PouchSvg className="text-xl" />}
         onClick={() => setModalType("SELECT_USER_WEAPON")}
       />
 

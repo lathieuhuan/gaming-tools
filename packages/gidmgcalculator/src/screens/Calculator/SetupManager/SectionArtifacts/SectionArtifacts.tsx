@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaToolbox } from "react-icons/fa";
 import { GiAnvil } from "react-icons/gi";
-import { Button, clsx, CollapseSpace, notification } from "rond";
+import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
 import { $AppArtifact, $AppSettings } from "@Src/services";
@@ -19,7 +19,6 @@ import {
   GenshinImage,
   LoadoutStash,
 } from "@Src/components";
-import { IconPouch } from "@Src/components/icons";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
 
@@ -262,7 +261,7 @@ export default function SectionArtifacts() {
           <Button title="Loadout" icon={<FaToolbox className="text-lg" />} onClick={onRequestSelectArtifactLoadout} />
           <Button
             title="Inventory"
-            icon={<IconPouch className="text-xl" />}
+            icon={<PouchSvg className="text-xl" />}
             onClick={onRequestSelectInventoryArtifact}
           />
           <Button title="New" icon={<GiAnvil className="text-xl" />} onClick={onRequestForgeArtifact} />

@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
-import { RiArrowGoBackLine } from "react-icons/ri";
 import { FaInfoCircle } from "react-icons/fa";
-import { ButtonGroup, Modal } from "rond";
+import { ButtonGroup, FancyBackSvg, Modal } from "rond";
 import { AppArtifact, ArtifactType } from "@Backend";
 
 import type { Artifact } from "@Src/types";
@@ -99,7 +98,7 @@ const ArtifactSmith = ({
   };
 
   const getBackAction = (selectBody: HTMLDivElement | null) => ({
-    icon: <RiArrowGoBackLine className="text-lg" />,
+    icon: <FancyBackSvg />,
     className: "sm:hidden",
     onClick: () => {
       if (selectBody) selectBody.scrollLeft = 0;
