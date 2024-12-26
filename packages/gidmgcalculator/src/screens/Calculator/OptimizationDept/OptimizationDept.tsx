@@ -7,7 +7,7 @@ import type { ArtifactManager } from "./utils/artifact-manager";
 
 import { useStoreSnapshot } from "@Src/features";
 import { $AppWeapon } from "@Src/services";
-import { useCharacterData, useOptimizerState, usePartyData } from "../ContextProvider";
+import { useCharacterData, useOptimizationState, usePartyData } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 import { useOptimizer } from "./hooks/useOptimizer";
 
@@ -27,7 +27,7 @@ type SavedValues = {
 };
 
 export function OptimizationDept() {
-  const { status, toggle } = useOptimizerState();
+  const { status, toggle } = useOptimizationState();
   return status.active ? <OptimizationFrontDesk onClose={() => toggle("active", false)} /> : null;
 }
 

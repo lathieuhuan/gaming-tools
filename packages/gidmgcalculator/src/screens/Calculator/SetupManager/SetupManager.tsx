@@ -5,7 +5,7 @@ import { Button, useScreenWatcher } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTraveler, updateUI } from "@Store/ui-slice";
-import { useOptimizerState } from "../ContextProvider";
+import { useOptimizationState } from "../ContextProvider";
 
 // Component
 import { SetupSelect } from "./SetupSelect";
@@ -80,14 +80,14 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
             />
           ) : null}
 
-          <OptimizerContact />
+          <OptimizationDeptContact />
         </div>
       </div>
     </div>
   );
 }
 
-function OptimizerContact() {
-  const { status, toggle } = useOptimizerState();
+function OptimizationDeptContact() {
+  const { status, toggle } = useOptimizationState();
   return <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={() => toggle("active", true)} />;
 }
