@@ -3,7 +3,7 @@ import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
 import { GenshinImage } from "@Src/components";
 import Entity_ from "@Src/utils/entity-utils";
-import { ArtifactManager } from "../../utils/artifact-manager";
+import { ArtifactManager } from "../../utils/artifact-manager/artifact-manager";
 
 interface ReviewProps {
   manager: ArtifactManager;

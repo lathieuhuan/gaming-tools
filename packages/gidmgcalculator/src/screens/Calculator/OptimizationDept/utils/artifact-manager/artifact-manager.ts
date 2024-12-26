@@ -4,13 +4,14 @@ import type { UserArtifact } from "@Src/types";
 
 import { $AppArtifact } from "@Src/services";
 import Modifier_ from "@Src/utils/modifier-utils";
+import { WatchedSet, Watcher } from "./watched-set";
 
 type InputArtifact = PartiallyOptional<UserArtifact, "owner">;
 
 export type ManagedArtifactSet = {
   data: AppArtifact;
   pieces: InputArtifact[];
-  selectedIds: Set<number>;
+  selectedIds: WatchedSet<number>;
 };
 
 export class ArtifactManager {
@@ -23,6 +24,8 @@ export class ArtifactManager {
     goblet: [],
     circlet: [],
   };
+
+  private watcher = new Watcher();
 
   constructor(artifacts: InputArtifact[]) {
     const countMap = new Map<number, ManagedArtifactSet>();
@@ -41,7 +44,7 @@ export class ArtifactManager {
           const filterSet: ManagedArtifactSet = {
             data,
             pieces: [artifact],
-            selectedIds: new Set(),
+            selectedIds: new WatchedSet(this.watcher),
           };
 
           countMap.set(artifact.code, filterSet);
@@ -51,6 +54,14 @@ export class ArtifactManager {
     }
 
     this.sets = sets;
+  }
+
+  watchChange = () => {
+    this.watcher.start();
+  };
+
+  get didChange() {
+    return this.watcher.changed;
   }
 
   checkAnyEquippedSelected = (set: ManagedArtifactSet) => {
@@ -75,7 +86,7 @@ export class ArtifactManager {
   /** @params code 0 to get the fake set */
   getSet = (code: number) => {
     let artifacts: InputArtifact[] = [];
-    let selected: ManagedArtifactSet["selectedIds"] = new Set();
+    let selected: ManagedArtifactSet["selectedIds"] = new WatchedSet(this.watcher);
 
     if (code) {
       this.getSetThen((set) => {
@@ -91,8 +102,11 @@ export class ArtifactManager {
     };
   };
 
-  updateSelectedIds = (code: number, selectedIds: ManagedArtifactSet["selectedIds"]) => {
-    this.getSetThen((set) => (set.selectedIds = selectedIds))(code);
+  updateSelectedIds = (code: number, selectedIds: Set<number>) => {
+    this.getSetThen((set) => {
+      set.selectedIds.clear();
+      selectedIds.forEach((id) => set.selectedIds.add(id));
+    })(code);
   };
 
   selectAll = this.getSetThen((set) => {

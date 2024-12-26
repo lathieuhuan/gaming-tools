@@ -1,5 +1,5 @@
 import { Fragment, useImperativeHandle, useState } from "react";
-import { FaCaretRight, FaCaretDown } from "react-icons/fa";
+import { FaCaretRight, FaCaretDown, FaExclamation } from "react-icons/fa";
 import { Button, ButtonGroup, clsx, Modal, Popover, useClickOutside } from "rond";
 
 type StepStatus = "VALID" | "INVALID";
@@ -12,6 +12,7 @@ export type StepConfig = {
 
 export type OptimizationGuideControl = {
   toggle: (active: boolean) => void;
+  notify: (msg: string) => void;
 };
 
 interface OptimizationGuideProps {
@@ -33,8 +34,12 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
     stepConfigs.map((config) => (config.initialValid ? "VALID" : "INVALID"))
   );
   const [visibleIndexes, setVisibleIndexes] = useState(new Set<number>([0]));
+  const [noti, setNoti] = useState({
+    active: false,
+    message: "",
+  });
 
-  const triggerRef = useClickOutside<HTMLDivElement>(() => setShowMenu(false));
+  const menuTriggerRef = useClickOutside<HTMLDivElement>(() => setShowMenu(false));
 
   const changeValidOf = (stepIndex: number) => (valid: boolean) => {
     setStepStatuses((prevStatuses) => {
@@ -51,6 +56,11 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
 
   useImperativeHandle(props.control, () => ({
     toggle: setActive,
+    notify: (message) =>
+      setNoti((prev) => ({
+        active: prev.active,
+        message,
+      })),
   }));
 
   const navigate = (toStep: number) => {
@@ -126,17 +136,22 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
         </div>
 
         <div className="mt-3 mb-1 px-4 flex justify-between">
-          <div ref={triggerRef} className="relative">
-            {props.canShowMenu && (
-              <Button
-                icon={<FaCaretDown className="text-xl rotate-180" />}
-                disabled={stepStatuses[step] === "INVALID"}
-                onClick={() => setShowMenu(!showMenu)}
-              />
-            )}
+          <div className="flex">
+            <div ref={menuTriggerRef} className="relative">
+              {props.canShowMenu && (
+                <Button
+                  className="mr-3"
+                  icon={<FaCaretDown className="text-xl rotate-180" />}
+                  disabled={stepStatuses[step] === "INVALID"}
+                  onClick={() => setShowMenu(!showMenu)}
+                />
+              )}
 
-            <Popover className="bottom-full pb-2" origin="bottom left" active={showMenu}>
-              <div className="bg-light-default text-black rounded-md flex flex-col overflow-hidden shadow-white-glow">
+              <Popover
+                active={showMenu}
+                className="bottom-full mb-2 bg-light-default text-black rounded-md flex flex-col overflow-hidden shadow-white-glow"
+                origin="bottom left"
+              >
                 {stepConfigs.map((config, index) => {
                   const isCurrent = index === step;
                   const disabled = stepStatuses[index] === "INVALID" || isCurrent;
@@ -158,8 +173,19 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
                     </Fragment>
                   );
                 })}
+              </Popover>
+            </div>
+
+            <div className="group relative">
+              {noti.message && <Button icon={<FaExclamation />} onClick={() => setShowMenu(!showMenu)} />}
+
+              <div
+                className="mb-3 px-2 py-1 text-sm bg-black text-danger-3 whitespace-nowrap rounded cursor-default absolute bottom-full z-10 transition-transform duration-200 scale-0 group-hover:scale-100"
+                style={{ transformOrigin: "bottom left" }}
+              >
+                {noti.message}
               </div>
-            </Popover>
+            </div>
           </div>
 
           <ButtonGroup

@@ -3,7 +3,7 @@ import { Modal } from "rond";
 
 import type { OptimizerExtraConfigs } from "@Backend";
 import type { ItemMultiSelectIds } from "@Src/components";
-import type { ArtifactManager } from "./utils/artifact-manager";
+import type { ArtifactManager } from "./utils/artifact-manager/artifact-manager";
 
 import { useStoreSnapshot } from "@Src/features";
 import { $AppWeapon } from "@Src/services";
@@ -28,10 +28,16 @@ type SavedValues = {
 
 export function OptimizationDept() {
   const { status, toggle } = useOptimizationState();
-  return status.active ? <OptimizationFrontDesk onClose={() => toggle("active", false)} /> : null;
+  return status.active ? (
+    <OptimizationFrontDesk
+      onChangeLoading={(loading) => toggle("loading", loading)}
+      onClose={() => toggle("active", false)}
+    />
+  ) : null;
 }
 
 interface OptimizationFrontDeskProps {
+  onChangeLoading: (loading: boolean) => void;
   onClose: () => void;
 }
 function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
@@ -72,9 +78,11 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const optimizeSetup = () => {
     const { calcItem, extraConfigs } = savedValues.current;
 
-    // optimizer.onComplete = () => {
-    //   setActiveResult(true);
-    // };
+    props.onChangeLoading(true);
+
+    optimizer.onComplete = () => {
+      props.onChangeLoading(false);
+    };
 
     optimizer.optimize(
       {
@@ -160,8 +168,12 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         stepConfigs={stepConfigs}
         canShowMenu={canShowGuideMenu}
         onChangStep={(newStep, oldStep) => {
-          if (oldStep === 0) {
+          if (oldStep === 0 && artifactManager.didChange) {
+            guideControl.current?.notify("Artifact Modifiers have been reset!");
             artifactManager.concludeModConfigs();
+          }
+          if (newStep === 0) {
+            artifactManager.watchChange();
           }
           if (newStep === stepConfigs.length - 1) {
             setCanShowGuideMenu(true);
