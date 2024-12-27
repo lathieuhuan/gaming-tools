@@ -35,29 +35,35 @@ export function Launcher({ manager }: LauncherProps) {
     };
   }, []);
 
+  const row = {
+    top: ["flower", "plume"] satisfies ArtifactType[],
+    bottom: ["sands", "goblet", "circlet"] satisfies ArtifactType[],
+  };
+
+  const renderArtifactCount = (type: ArtifactType) => {
+    return (
+      <div key={type} className="px-2 py-1 rounded bg-surface-3 flex-center">
+        <GenshinImage
+          className="w-7 h-7 shrink-0"
+          src={Entity_.artifactIconOf(type)}
+          imgType="artifact"
+          fallbackCls="p-1"
+        />
+        <span className="ml-1 text-lg font-medium">{count[type]}</span>
+      </div>
+    );
+  };
+
   return (
     <div className="pt-2 space-y-4">
       <div>
         <p className="text-lg">
-          • Total selected Artifacts: <span className="font-bold text-primary-1">{count.all}</span>
+          • Total selected Artifacts: <span className="font-semibold text-primary-1">{count.all}</span>
         </p>
 
-        <div className="mt-1 py-1 flex justify-center">
-          <div className="w-full grid grid-cols-5 gap-2" style={{ maxWidth: 336 }}>
-            {ARTIFACT_TYPES.map((type) => {
-              return (
-                <div key={type} className="py-1 rounded bg-surface-3 flex-center">
-                  <GenshinImage
-                    className="w-7 h-7"
-                    src={Entity_.artifactIconOf(type)}
-                    imgType="artifact"
-                    fallbackCls="p-1"
-                  />
-                  <span className="ml-1 text-lg font-medium">{count[type]}</span>
-                </div>
-              );
-            })}
-          </div>
+        <div className="mt-1 py-1 space-y-2">
+          <div className="flex justify-center gap-2">{row.top.map(renderArtifactCount)}</div>
+          <div className="flex justify-center gap-2">{row.bottom.map(renderArtifactCount)}</div>
         </div>
       </div>
 
@@ -73,9 +79,12 @@ export function Launcher({ manager }: LauncherProps) {
 
       {status.loading && (
         <div>
-          <p className="text-lg font-medium">Calculating...</p>
-          <div className="mt-3 w-full h-3 bg-surface-3 rounded-md overflow-hidden">
-            <div className="h-full bg-active-color transition-size duration-150" style={{ width: `${percent}%` }} />
+          <p className="text-lg text-center font-medium">Calculating...</p>
+
+          <div className="px-3">
+            <div className="w-full h-3 mt-2 bg-surface-3 rounded-md overflow-hidden">
+              <div className="h-full bg-active-color transition-size duration-150" style={{ width: `${percent}%` }} />
+            </div>
           </div>
         </div>
       )}
