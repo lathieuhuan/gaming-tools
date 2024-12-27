@@ -1,14 +1,14 @@
 import { CharacterDataProvider, PartyDataProvider } from "./DataProvider";
 import { ModalsProvider } from "./ModalsProvider";
-import { OptimizationStateProvider } from "./OptimizationStateProvider";
+import { OptimizerProvider } from "./OptimizerProvider";
 
 export function ContextProvider(props: { children: React.ReactNode }) {
   return (
     <CharacterDataProvider>
       <PartyDataProvider>
-        <OptimizationStateProvider>
+        <OptimizerProvider>
           <ModalsProvider>{props.children}</ModalsProvider>
-        </OptimizationStateProvider>
+        </OptimizerProvider>
       </PartyDataProvider>
     </CharacterDataProvider>
   );

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Input } from "rond";
 
-import type { ArtifactManager } from "../../utils/artifact-manager/artifact-manager";
+import type { ArtifactManager } from "../../utils/artifact-manager";
 import { SetOption } from "./SetOption";
 
 export type ArtifactSetOption = {

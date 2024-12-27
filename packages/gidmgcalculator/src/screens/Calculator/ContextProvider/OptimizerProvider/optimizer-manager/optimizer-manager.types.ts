@@ -11,7 +11,7 @@ export type OptimizeResult = OptimizeCalculation[];
 
 // ========== REQUEST ==========
 
-type InitRequest = {
+export type InitRequest = {
   type: "INIT";
   params: ConstructorParameters<typeof SetupOptimizer>;
 };
@@ -31,4 +31,18 @@ export type OptimizeRequest = {
   params: Parameters<SetupOptimizer["optimize"]>;
 };
 
-export type OptimizeMessage = InitRequest | LoadRequest | OptimizeRequest;
+export type ManagerRequest = InitRequest | LoadRequest | OptimizeRequest;
+
+// ========== RESPONSE ==========
+
+type ProcessResponse = {
+  type: "PROCESS";
+  percent: number;
+};
+
+type CompleteResponse = {
+  type: "COMPLETE";
+  result: OptimizeResult;
+};
+
+export type WorkerResponse = ProcessResponse | CompleteResponse;

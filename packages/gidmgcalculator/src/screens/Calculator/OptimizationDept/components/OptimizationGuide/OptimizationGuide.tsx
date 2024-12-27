@@ -1,5 +1,6 @@
 import { Fragment, useImperativeHandle, useState } from "react";
-import { FaCaretRight, FaCaretDown, FaExclamation } from "react-icons/fa";
+import { FaCaretRight, FaCaretDown, FaExclamation, FaCheck } from "react-icons/fa";
+import { IoFootsteps } from "react-icons/io5";
 import { Button, ButtonGroup, clsx, Modal, Popover, useClickOutside } from "rond";
 
 type StepStatus = "VALID" | "INVALID";
@@ -12,7 +13,7 @@ export type StepConfig = {
 
 export type OptimizationGuideControl = {
   toggle: (active: boolean) => void;
-  notify: (msg: string) => void;
+  notify: (message: string | { message: string; toStep: number }) => void;
 };
 
 interface OptimizationGuideProps {
@@ -35,11 +36,14 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
   );
   const [visibleIndexes, setVisibleIndexes] = useState(new Set<number>([0]));
   const [noti, setNoti] = useState({
-    active: false,
     message: "",
+    toStep: undefined as number | undefined,
   });
 
   const menuTriggerRef = useClickOutside<HTMLDivElement>(() => setShowMenu(false));
+
+  const { toStep: notiToStep } = noti;
+  const isProcessStep = step === stepCount - 1;
 
   const changeValidOf = (stepIndex: number) => (valid: boolean) => {
     setStepStatuses((prevStatuses) => {
@@ -56,11 +60,10 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
 
   useImperativeHandle(props.control, () => ({
     toggle: setActive,
-    notify: (message) =>
-      setNoti((prev) => ({
-        active: prev.active,
-        message,
-      })),
+    notify: (arg) => {
+      const { message, toStep = undefined } = typeof arg === "string" ? { message: arg } : arg;
+      setNoti({ message, toStep });
+    },
   }));
 
   const navigate = (toStep: number) => {
@@ -81,6 +84,10 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
       return newIndexes;
     });
     props.onChangStep?.(toStep, step);
+
+    if (toStep === noti.toStep && noti.message) {
+      closeNoti();
+    }
   };
 
   const onTransitionEndSwipe = () => {
@@ -92,12 +99,16 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
     setShowMenu(false);
   };
 
+  const closeNoti = () => {
+    setNoti({ message: "", toStep: undefined });
+  };
+
   return (
     <Modal
       active={active}
-      title={<span className="text-lg">Optimization / {stepConfigs[step]?.title}</span>}
+      title={<span className="text-lg">Optimize / {stepConfigs[step]?.title}</span>}
       style={{
-        height: "90vh",
+        height: "95vh",
         maxHeight: 880,
         width: "25rem",
       }}
@@ -106,9 +117,7 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
       closeOnMaskClick={false}
       onClose={() => setActive(false)}
       onTransitionEnd={(open) => {
-        if (!open) {
-          props.afterClose();
-        }
+        if (!open) props.afterClose();
       }}
     >
       <div className="h-full flex flex-col hide-scrollbar">
@@ -177,16 +186,30 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
             </div>
 
             <div className="group relative">
-              {noti.message && <Button icon={<FaExclamation />} />}
+              {noti.message && (
+                <div className="w-8 h-8 rounded-circle flex-center text-danger-3 group-hover:bg-light-default group-hover:text-black">
+                  <FaExclamation />
+                </div>
+              )}
 
               <div
                 className={clsx(
-                  "mb-3 px-2 py-1 text-sm bg-black text-danger-3 whitespace-nowrap rounded cursor-default absolute bottom-full z-10 transition-transform duration-200 scale-0",
+                  "pb-3 absolute bottom-full z-10 transition-transform duration-200 scale-0",
                   !showMenu && "group-hover:scale-100"
                 )}
                 style={{ transformOrigin: "bottom left" }}
               >
-                {noti.message}
+                <div className="p-2 bg-black rounded">
+                  <div className=" text-danger-3 whitespace-nowrap cursor-default">{noti.message}</div>
+
+                  <div className="mt-2 flex justify-center gap-3">
+                    {notiToStep !== undefined ? (
+                      <Button icon={<IoFootsteps />} onClick={() => navigate(notiToStep)} />
+                    ) : null}
+
+                    <Button icon={<FaCheck />} onClick={closeNoti} />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -195,14 +218,16 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
             buttons={[
               {
                 children: "Back",
-                icon: <FaCaretRight className="text-lg rotate-180" />,
+                className: "gap-0 pl-2",
+                icon: <FaCaretRight className="text-xl rotate-180" />,
                 disabled: !step,
                 onClick: () => navigate(step - 1),
               },
               {
-                children: step === stepCount - 1 ? "Proceed" : "Next",
-                variant: step === stepCount - 1 ? "primary" : "default",
-                icon: <FaCaretRight className="text-lg" />,
+                children: isProcessStep ? "Proceed" : "Next",
+                variant: isProcessStep ? "primary" : "default",
+                className: "gap-0 pr-2",
+                icon: <FaCaretRight className="text-xl" />,
                 iconPosition: "end",
                 disabled: stepStatuses[step] !== "VALID",
                 onClick: () => navigate(step + 1),

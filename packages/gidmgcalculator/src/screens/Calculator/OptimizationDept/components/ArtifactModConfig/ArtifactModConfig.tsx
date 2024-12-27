@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { OptimizerArtifactBuffConfigs } from "@Backend";
-import type { ArtifactManager } from "../../utils/artifact-manager/artifact-manager";
+import type { ArtifactManager } from "../../utils/artifact-manager";
 
 import { GenshinModifierView } from "@Src/components";
 import { getArtifactDescription } from "@Src/components/modifier-list/modifiers.utils";

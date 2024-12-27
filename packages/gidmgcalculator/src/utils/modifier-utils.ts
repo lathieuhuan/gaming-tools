@@ -27,12 +27,13 @@ export default class Modifier_ {
     return DEFAULT_INITIAL_VALUES[type] ?? 0;
   }
 
-  static createModCtrlInpus(inputConfigs: ModInputConfig[] = [], forSelf = true) {
+  static createModCtrlInpus(inputConfigs: ModInputConfig[] = [], forSelf = true, useMaxValue = false) {
     const initialValues = [];
 
     for (const config of inputConfigs) {
       if (!config.for || config.for !== (forSelf ? "FOR_TEAM" : "FOR_SELF")) {
-        initialValues.push(config.initialValue ?? this.getDefaultInitialValue(config.type));
+        const value = (useMaxValue ? config.max : config.initialValue) ?? this.getDefaultInitialValue(config.type);
+        initialValues.push(value);
       }
     }
     return initialValues.length ? initialValues : undefined;

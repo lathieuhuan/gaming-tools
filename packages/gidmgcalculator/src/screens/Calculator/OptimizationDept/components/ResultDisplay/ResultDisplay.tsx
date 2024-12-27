@@ -4,23 +4,24 @@ import { ButtonGroup, Checkbox, FancyBackSvg, ItemCase } from "rond";
 import { ARTIFACT_TYPES, type AppArtifact } from "@Backend";
 
 import type { Artifact } from "@Src/types";
-import type { OptimizeResult } from "../../utils/optimizer-manager";
 
+import { ArtifactCard, GenshinImage, ItemThumbnail } from "@Src/components";
+import { useOptimizerState } from "@Src/screens/Calculator/ContextProvider";
 import { $AppArtifact } from "@Src/services";
 import Entity_ from "@Src/utils/entity-utils";
-import { ArtifactCard, GenshinImage, ItemThumbnail } from "@Src/components";
 
 interface ResultDisplayProps {
-  loading: boolean;
-  result: OptimizeResult;
   onClickReturn: () => void;
   onClickExit: () => void;
   onClickLoadToCalculator: (selectedIndexes: number[]) => void;
 }
 export function ResultDisplay(props: ResultDisplayProps) {
   const [selected, setSelected] = useState<Artifact>();
+  const {
+    status: { result },
+  } = useOptimizerState();
 
-  const selectedIndexes = useRef(new Set(props.result.map((_, i) => i)));
+  const selectedIndexes = useRef(new Set(result.map((_, i) => i)));
   const dataBySet = useRef<Record<number, AppArtifact>>({});
   const suffix = ["st", "nd", "rd"];
 
@@ -32,7 +33,7 @@ export function ResultDisplay(props: ResultDisplayProps) {
     <div className="h-full flex custom-scrollbar gap-2 scroll-smooth">
       <div className="grow flex flex-col" style={{ minWidth: 324 }}>
         <div className="pr-1 grow custom-scrollbar space-y-2">
-          {props.result.map((calculation, index) => {
+          {result.map((calculation, index) => {
             return (
               <div key={index} className="p-4 rounded-md bg-surface-1">
                 <div className="flex justify-between items-start">
@@ -48,7 +49,7 @@ export function ResultDisplay(props: ResultDisplayProps) {
                   />
                 </div>
 
-                <div className="mt-2 flex gap-2">
+                <div className="mt-2 grid grid-cols-5 gap-2">
                   {calculation.artifacts.map((artifact, artifactI) => {
                     if (artifact) {
                       let data = dataBySet.current[artifact.code];
@@ -60,7 +61,6 @@ export function ResultDisplay(props: ResultDisplayProps) {
                       return (
                         <ItemCase
                           key={artifact.type}
-                          className="w-full"
                           chosen={artifact.ID === selected?.ID}
                           onClick={() => setSelected(artifact)}
                         >
@@ -76,13 +76,14 @@ export function ResultDisplay(props: ResultDisplayProps) {
                       );
                     }
                     return (
-                      <GenshinImage
-                        key={artifactI}
-                        className="w-full"
-                        src={Entity_.artifactIconOf(ARTIFACT_TYPES[artifactI])}
-                        imgType="artifact"
-                        fallbackCls="p-2"
-                      />
+                      <div key={artifactI} className="p-1 bg-surface-2 rounded">
+                        <GenshinImage
+                          className="opacity-50"
+                          src={Entity_.artifactIconOf(ARTIFACT_TYPES[artifactI])}
+                          imgType="artifact"
+                          fallbackCls="p-2"
+                        />
+                      </div>
                     );
                   })}
                 </div>

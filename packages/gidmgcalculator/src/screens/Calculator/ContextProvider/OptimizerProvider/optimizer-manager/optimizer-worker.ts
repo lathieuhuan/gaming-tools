@@ -1,14 +1,25 @@
-import type { OptimizeCalculation, OptimizeMessage } from "./optimizer-manager.types";
+import type { OptimizeCalculation, ManagerRequest, WorkerResponse } from "./optimizer-manager.types";
 import { SetupOptimizer } from "@Backend";
 import { CalculationSorter } from "./calculation-sorter";
 
 let optimizer: SetupOptimizer;
 const sorter = new CalculationSorter();
 
-onmessage = (e: MessageEvent<OptimizeMessage>) => {
+function response(message: WorkerResponse) {
+  postMessage(message);
+}
+
+onmessage = (e: MessageEvent<ManagerRequest>) => {
   switch (e.data.type) {
     case "INIT": {
       optimizer = new SetupOptimizer(...e.data.params);
+
+      optimizer.onReachMilestone = (percent) => [
+        response({
+          type: "PROCESS",
+          percent,
+        }),
+      ];
       break;
     }
     case "LOAD": {
@@ -40,7 +51,10 @@ onmessage = (e: MessageEvent<OptimizeMessage>) => {
       //   calculations,
       // };
 
-      postMessage(sorter.get());
+      response({
+        type: "COMPLETE",
+        result: sorter.get(),
+      });
       break;
     }
   }

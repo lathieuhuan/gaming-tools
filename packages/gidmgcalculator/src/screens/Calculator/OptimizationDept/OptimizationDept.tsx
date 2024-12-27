@@ -3,13 +3,12 @@ import { Modal } from "rond";
 
 import type { OptimizerExtraConfigs } from "@Backend";
 import type { ItemMultiSelectIds } from "@Src/components";
-import type { ArtifactManager } from "./utils/artifact-manager/artifact-manager";
+import type { ArtifactManager } from "./utils/artifact-manager";
 
 import { useStoreSnapshot } from "@Src/features";
 import { $AppWeapon } from "@Src/services";
-import { useCharacterData, useOptimizationState, usePartyData } from "../ContextProvider";
+import { useCharacterData, useOptimizerState, usePartyData } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
-import { useOptimizer } from "./hooks/useOptimizer";
 
 // Components
 import { ItemMultiSelect } from "@Src/components";
@@ -18,29 +17,28 @@ import { ArtifactSetSelect } from "./components/ArtifactSetSelect";
 import { CalcItemSelect, SelectedCalcItem } from "./components/CalcItemSelect";
 import { ExtraConfigs } from "./components/ExtraConfigs";
 import { OptimizationGuide, OptimizationGuideControl, StepConfig } from "./components/OptimizationGuide";
-import { Review } from "./components/Review";
+import { Launcher } from "./components/Launcher";
 import { ResultDisplay } from "./components/ResultDisplay";
+import { OptimizerState } from "../ContextProvider/OptimizerProvider";
 
 type SavedValues = {
-  calcItem: SelectedCalcItem;
-  extraConfigs: OptimizerExtraConfigs;
+  calcItem?: SelectedCalcItem;
+  extraConfigs?: OptimizerExtraConfigs;
 };
 
 export function OptimizationDept() {
-  const { status, toggle } = useOptimizationState();
-  return status.active ? (
-    <OptimizationFrontDesk
-      onChangeLoading={(loading) => toggle("loading", loading)}
-      onClose={() => toggle("active", false)}
-    />
-  ) : null;
+  const { status, optimizer, toggle } = useOptimizerState();
+
+  return status.active ? <OptimizationFrontDesk optimizer={optimizer} onClose={() => toggle("active", false)} /> : null;
 }
 
 interface OptimizationFrontDeskProps {
-  onChangeLoading: (loading: boolean) => void;
+  optimizer: OptimizerState["optimizer"];
   onClose: () => void;
 }
 function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
+  const { optimizer } = props;
+
   const store = useStoreSnapshot(({ calculator, userdb }) => {
     const setup = calculator.setupsById[calculator.activeId];
     const target = calculator.target;
@@ -63,26 +61,25 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const [canShowGuideMenu, setCanShowGuideMenu] = useState(false);
 
   const guideControl = useRef<OptimizationGuideControl>(null);
-  const savedValues = useRef<Partial<SavedValues>>({});
+  const savedValues = useRef<SavedValues>({});
   const selectingSet = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
   const isExiting = useRef(false);
 
-  const { loading, result, optimizer } = useOptimizer(store.target, store.setup, appChar, store.appWeapon, partyData);
-
   useEffect(() => {
+    optimizer.init(store.target, store.setup, appChar, store.appWeapon, partyData);
+
+    const unsubscribe = optimizer.subscribeCompletion(() => {
+      guideControl.current?.toggle(false);
+      setActiveResult(true);
+    });
+
     return () => {
-      optimizer.end();
+      unsubscribe();
     };
   }, []);
 
   const optimizeSetup = () => {
     const { calcItem, extraConfigs } = savedValues.current;
-
-    props.onChangeLoading(true);
-
-    optimizer.onComplete = () => {
-      props.onChangeLoading(false);
-    };
 
     optimizer.optimize(
       {
@@ -92,9 +89,6 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       },
       [artifactManager.buffConfigs, extraConfigs!]
     );
-
-    guideControl.current?.toggle(false);
-    setActiveResult(true);
   };
 
   const togglePieceSelect = (active: boolean, code?: number) => {
@@ -155,9 +149,9 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       ),
     },
     {
-      title: "Review",
+      title: "Launcher",
       initialValid: true,
-      render: () => <Review manager={artifactManager} />,
+      render: () => <Launcher manager={artifactManager} />,
     },
   ];
 
@@ -168,12 +162,18 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         stepConfigs={stepConfigs}
         canShowMenu={canShowGuideMenu}
         onChangStep={(newStep, oldStep) => {
-          if (oldStep === 0 && artifactManager.didChange) {
-            guideControl.current?.notify("Artifact Modifiers have been reset!");
+          if (oldStep === 0) {
             artifactManager.concludeModConfigs();
+
+            if (newStep !== 1 && artifactManager.hasNewSelectedSet) {
+              guideControl.current?.notify({
+                message: "New Artifact modifiers configurations!",
+                toStep: 1,
+              });
+            }
           }
           if (newStep === 0) {
-            artifactManager.watchChange();
+            artifactManager.recordSelectedSets();
           }
           if (newStep === stepConfigs.length - 1) {
             setCanShowGuideMenu(true);
@@ -186,7 +186,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
       <ItemMultiSelect
         active={activePieceSelect}
-        title={<span className="text-lg">Optimization / Select Artifacts</span>}
+        title={<span className="text-lg">Optimize / Select Artifacts</span>}
         items={selectingSet.current.artifacts}
         initialValue={selectingSet.current.selected}
         onClose={() => togglePieceSelect(false)}
@@ -195,7 +195,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
       <Modal
         active={activeResult}
-        title={<span className="text-lg">Optimization / Results</span>}
+        title={<span className="text-lg">Optimize / Results</span>}
         className={`bg-surface-2 ${Modal.LARGE_HEIGHT_CLS}`}
         style={{
           width: "45rem",
@@ -209,8 +209,6 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         }}
       >
         <ResultDisplay
-          loading={loading}
-          result={result}
           onClickReturn={() => {
             isExiting.current = false;
             setActiveResult(false);
