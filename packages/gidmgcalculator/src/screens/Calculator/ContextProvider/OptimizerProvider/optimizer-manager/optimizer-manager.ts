@@ -12,6 +12,7 @@ type OnCompleteOptimize = (state: OptimizeResult) => void;
 
 export class OptimizerManager {
   private worker: Worker;
+  private workerTerminated = false;
   private subscribers = new Set<OnCompleteOptimize>();
 
   onStart = () => {};
@@ -19,20 +20,26 @@ export class OptimizerManager {
   onProcess = (percent: number) => {};
 
   constructor() {
-    this.worker = new Worker(WORKER_URL, { type: "module" });
+    this.worker = this.genWorker();
+  }
 
-    this.worker.onmessage = (e: MessageEvent<WorkerResponse>) => {
+  private genWorker = () => {
+    const worker = new Worker(WORKER_URL, { type: "module" });
+
+    worker.onmessage = (e: MessageEvent<WorkerResponse>) => {
       switch (e.data.type) {
         case "PROCESS":
           this.onProcess(e.data.percent);
           break;
         case "COMPLETE": {
           this.notify(e.data.result);
+          console.log("runTime:", e.data.runTime);
           break;
         }
       }
     };
-  }
+    return worker;
+  };
 
   private notify = (state: OptimizeResult) => {
     this.subscribers.forEach((subscriber) => subscriber(state));
@@ -47,6 +54,12 @@ export class OptimizerManager {
   };
 
   init(...params: InitRequest["params"]) {
+    if (this.workerTerminated) {
+      this.end();
+      this.worker = this.genWorker();
+      this.workerTerminated = false;
+    }
+
     this.worker.postMessage({
       type: "INIT",
       params,
@@ -73,6 +86,7 @@ export class OptimizerManager {
   end() {
     try {
       this.worker.terminate();
+      this.workerTerminated = true;
     } catch (error) {
       //
     }

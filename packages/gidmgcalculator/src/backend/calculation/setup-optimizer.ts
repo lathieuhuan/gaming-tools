@@ -28,6 +28,11 @@ export class SetupOptimizer extends InputProcessor {
     goblet: [],
     circlet: [],
   };
+  runTime = 0;
+
+  onReachMilestone = (percent: number) => {};
+
+  onOutput: OnOutput = () => {};
 
   constructor(private target: Target, ...args: ConstructorParameters<typeof InputProcessor>) {
     super(...args);
@@ -42,8 +47,9 @@ export class SetupOptimizer extends InputProcessor {
    * @param callback return true if this combination is accepted, otherwise false
    */
   private forEachCombination = (callback: (set: CalcArtifacts) => boolean) => {
+    const milestoneStep = this.calculationCount > 100000 ? 10 : 20;
     let processedCount = 0;
-    let nextMs = 0.2;
+    let nextMs = milestoneStep;
 
     for (const flower of this.getArtifacts("flower")) {
       for (const plume of this.getArtifacts("plume")) {
@@ -54,9 +60,9 @@ export class SetupOptimizer extends InputProcessor {
 
               if (isOk) processedCount++;
 
-              if (processedCount / this.calculationCount >= nextMs) {
+              if (processedCount / this.calculationCount >= nextMs / 100) {
                 this.onReachMilestone(nextMs);
-                nextMs += 0.2;
+                nextMs += milestoneStep;
               }
             }
           }
@@ -77,12 +83,8 @@ export class SetupOptimizer extends InputProcessor {
     this.calculationCount = calculationCount;
   };
 
-  onReachMilestone = (percent: number) => {};
-
-  onOutput: OnOutput = () => {};
-
   optimize = (artifactBuffConfigs: OptimizerArtifactBuffConfigs, extraConfigs: OptimizerExtraConfigs) => {
-    console.time("optimize");
+    const startTime = Date.now();
 
     this.forEachCombination((set) => {
       const setBonuses = GeneralCalc.getArtifactSetBonuses(set);
@@ -115,6 +117,6 @@ export class SetupOptimizer extends InputProcessor {
       return true;
     });
 
-    console.timeEnd("optimize");
+    this.runTime = Date.now() - startTime;
   };
 }

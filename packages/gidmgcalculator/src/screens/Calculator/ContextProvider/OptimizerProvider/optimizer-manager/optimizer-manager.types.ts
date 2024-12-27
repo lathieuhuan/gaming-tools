@@ -42,6 +42,7 @@ type ProcessResponse = {
 
 type CompleteResponse = {
   type: "COMPLETE";
+  runTime: number;
   result: OptimizeResult;
 };
 

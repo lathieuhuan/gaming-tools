@@ -29,10 +29,13 @@ type SavedValues = {
 export function OptimizationDept() {
   const { status, optimizer, toggle } = useOptimizerState();
 
-  return status.active ? <OptimizationFrontDesk optimizer={optimizer} onClose={() => toggle("active", false)} /> : null;
+  return status.active ? (
+    <OptimizationFrontDesk processing={status.loading} optimizer={optimizer} onClose={() => toggle("active", false)} />
+  ) : null;
 }
 
 interface OptimizationFrontDeskProps {
+  processing: boolean;
   optimizer: OptimizerState["optimizer"];
   onClose: () => void;
 }
@@ -161,6 +164,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         control={guideControl}
         stepConfigs={stepConfigs}
         canShowMenu={canShowGuideMenu}
+        processing={props.processing}
         onChangStep={(newStep, oldStep) => {
           if (oldStep === 0) {
             artifactManager.concludeModConfigs();

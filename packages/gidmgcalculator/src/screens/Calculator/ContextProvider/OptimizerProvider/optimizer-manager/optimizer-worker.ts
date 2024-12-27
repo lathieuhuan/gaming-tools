@@ -4,6 +4,7 @@ import { CalculationSorter } from "./calculation-sorter";
 
 let optimizer: SetupOptimizer;
 const sorter = new CalculationSorter();
+const COMPLETE_DELAY = 300;
 
 function response(message: WorkerResponse) {
   postMessage(message);
@@ -14,12 +15,12 @@ onmessage = (e: MessageEvent<ManagerRequest>) => {
     case "INIT": {
       optimizer = new SetupOptimizer(...e.data.params);
 
-      optimizer.onReachMilestone = (percent) => [
+      optimizer.onReachMilestone = (percent) => {
         response({
           type: "PROCESS",
           percent,
-        }),
-      ];
+        });
+      };
       break;
     }
     case "LOAD": {
@@ -50,11 +51,16 @@ onmessage = (e: MessageEvent<ManagerRequest>) => {
       //   bests: sorter.get(),
       //   calculations,
       // };
+      const result = sorter.get();
 
-      response({
-        type: "COMPLETE",
-        result: sorter.get(),
-      });
+      setTimeout(() => {
+        response({
+          type: "COMPLETE",
+          runTime: optimizer.runTime,
+          result,
+        });
+      }, COMPLETE_DELAY);
+
       break;
     }
   }

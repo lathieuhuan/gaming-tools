@@ -20,6 +20,7 @@ interface OptimizationGuideProps {
   stepConfigs: StepConfig[];
   control?: React.RefObject<OptimizationGuideControl>;
   canShowMenu?: boolean;
+  processing?: boolean;
   onChangStep?: (newStep: number, oldStep: number) => void;
   onComplete: () => void;
   afterClose: () => void;
@@ -68,6 +69,7 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
 
   const navigate = (toStep: number) => {
     if (toStep >= stepCount) {
+      closeNoti();
       return props.onComplete();
     }
 
@@ -144,7 +146,12 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
           </div>
         </div>
 
-        <div className="mt-3 mb-1 px-4 flex justify-between">
+        <div className="">
+          {/*  */}
+          {/*  */}
+        </div>
+
+        <div className={clsx("mt-3 mb-1 px-4 justify-between", props.processing ? "hidden" : "flex")}>
           <div className="flex">
             <div ref={menuTriggerRef} className="relative">
               {props.canShowMenu && (

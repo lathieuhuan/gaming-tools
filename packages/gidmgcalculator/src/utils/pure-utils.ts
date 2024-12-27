@@ -14,6 +14,10 @@ export function getImgSrc(src?: string) {
   return isFromWiki ? `https://static.wikia.nocookie.net/gensin-impact/images/${src}.png` : src;
 }
 
+const numberFormat = new Intl.NumberFormat("en-EN");
+
+export const formatNumber = (n: number) => numberFormat.format(n);
+
 export const toMult = (n: number) => 1 + n / 100;
 
 export const applyPercent = (n: number, percent: number) => Math.round((n * percent) / 100);

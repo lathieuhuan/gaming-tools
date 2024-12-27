@@ -1,15 +1,27 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 import type { ArtifactManager } from "../../utils/artifact-manager";
 
-import Entity_ from "@Src/utils/entity-utils";
 import { GenshinImage } from "@Src/components";
+import { useOptimizerState } from "@Src/screens/Calculator/ContextProvider";
+import { formatNumber } from "@Src/utils";
+import Entity_ from "@Src/utils/entity-utils";
 
 interface LauncherProps {
   manager: ArtifactManager;
 }
 export function Launcher({ manager }: LauncherProps) {
-  //
+  const { status, optimizer } = useOptimizerState();
+  const [percent, setPercent] = useState(0);
+  const mounted = useRef(false);
+
+  if (!mounted.current) {
+    optimizer.onProcess = (value) => {
+      setPercent(value);
+    };
+    mounted.current = true;
+  }
+
   const count = useMemo(() => {
     const each = {} as Record<ArtifactType, number>;
 
@@ -35,7 +47,12 @@ export function Launcher({ manager }: LauncherProps) {
             {ARTIFACT_TYPES.map((type) => {
               return (
                 <div key={type} className="py-1 rounded bg-surface-3 flex-center">
-                  <GenshinImage className="w-7 h-7" src={Entity_.artifactIconOf(type)} imgType="artifact" />
+                  <GenshinImage
+                    className="w-7 h-7"
+                    src={Entity_.artifactIconOf(type)}
+                    imgType="artifact"
+                    fallbackCls="p-1"
+                  />
                   <span className="ml-1 text-lg font-medium">{count[type]}</span>
                 </div>
               );
@@ -44,13 +61,24 @@ export function Launcher({ manager }: LauncherProps) {
         </div>
       </div>
 
-      <div className="w-1/2 h-px mx-auto bg-surface-border" />
-
-      <div>
-        <p className="text-lg">
-          • Maximum possible calculations: <span className="font-bold text-primary-1">{count.maxCalcs}</span>
-        </p>
+      <div className="text-lg flex gap-2">
+        <span>•</span>
+        <div>
+          <p>Maximum possible calculations:</p>
+          <p className="font-bold text-primary-1">{formatNumber(count.maxCalcs)}</p>
+        </div>
       </div>
+
+      <div className="w-full h-px mx-auto bg-surface-border" />
+
+      {status.loading && (
+        <div>
+          <p className="text-lg font-medium">Calculating...</p>
+          <div className="mt-3 w-full h-3 bg-surface-3 rounded-md overflow-hidden">
+            <div className="h-full bg-active-color transition-size duration-150" style={{ width: `${percent}%` }} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
