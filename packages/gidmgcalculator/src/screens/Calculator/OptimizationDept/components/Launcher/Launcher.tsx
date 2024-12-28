@@ -6,11 +6,14 @@ import { GenshinImage } from "@Src/components";
 import { useOptimizerState } from "@Src/screens/Calculator/ContextProvider";
 import { formatNumber } from "@Src/utils";
 import Entity_ from "@Src/utils/entity-utils";
+import { Button } from "rond";
+import { FaCalculator } from "react-icons/fa";
 
 interface LauncherProps {
   manager: ArtifactManager;
+  onLaunch: () => void;
 }
-export function Launcher({ manager }: LauncherProps) {
+export function Launcher({ manager, onLaunch }: LauncherProps) {
   const { status, optimizer } = useOptimizerState();
   const [percent, setPercent] = useState(0);
   const mounted = useRef(false);
@@ -31,14 +34,9 @@ export function Launcher({ manager }: LauncherProps) {
     return {
       ...each,
       all: each.flower + each.plume + each.sands + each.goblet + each.circlet,
-      maxCalcs: (each.flower || 1) * (each.plume || 1) * (each.sands || 1) * (each.goblet || 1) * (each.circlet || 1),
+      maxCalcs: manager.calcCount,
     };
   }, []);
-
-  const row = {
-    top: ["flower", "plume"] satisfies ArtifactType[],
-    bottom: ["sands", "goblet", "circlet"] satisfies ArtifactType[],
-  };
 
   const renderArtifactCount = (type: ArtifactType) => {
     return (
@@ -62,8 +60,7 @@ export function Launcher({ manager }: LauncherProps) {
         </p>
 
         <div className="mt-1 py-1 space-y-2">
-          <div className="flex justify-center gap-2">{row.top.map(renderArtifactCount)}</div>
-          <div className="flex justify-center gap-2">{row.bottom.map(renderArtifactCount)}</div>
+          <div className="flex flex-wrap justify-center gap-2">{ARTIFACT_TYPES.map(renderArtifactCount)}</div>
         </div>
       </div>
 
@@ -71,23 +68,42 @@ export function Launcher({ manager }: LauncherProps) {
         <span>•</span>
         <div>
           <p>Maximum possible calculations:</p>
-          <p className="font-bold text-primary-1">{formatNumber(count.maxCalcs)}</p>
+          <p className="font-bold text-primary-1">{formatNumber(count.maxCalcs.value)}</p>
+
+          {count.maxCalcs.isExceeded ? (
+            <p className="font-semibold text-danger-2 text-base">
+              This exceeds the limit of {formatNumber(manager.LIMIT_CALC_COUNT)} calculations. Please select less
+              Artifacts.
+            </p>
+          ) : null}
         </div>
       </div>
 
       <div className="w-full h-px mx-auto bg-surface-border" />
 
-      {status.loading && (
-        <div>
-          <p className="text-lg text-center font-medium">Calculating...</p>
+      <div>
+        {status.loading ? (
+          <>
+            <p className="text-lg text-center font-medium">Calculating...</p>
 
-          <div className="px-3">
-            <div className="w-full h-3 mt-2 bg-surface-3 rounded-md overflow-hidden">
-              <div className="h-full bg-active-color transition-size duration-150" style={{ width: `${percent}%` }} />
+            <div className="px-3">
+              <div className="w-full h-3 mt-2 bg-surface-3 rounded-md overflow-hidden">
+                <div className="h-full bg-active-color transition-size duration-150" style={{ width: `${percent}%` }} />
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </>
+        ) : (
+          <Button
+            className="mx-auto"
+            variant="primary"
+            icon={<FaCalculator className="text-base" />}
+            disabled={count.maxCalcs.isExceeded}
+            onClick={onLaunch}
+          >
+            Calculate
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { FaCalculator } from "react-icons/fa";
 import { Modal } from "rond";
 
 import type { OptimizerExtraConfigs } from "@Backend";
@@ -15,7 +16,7 @@ import { ItemMultiSelect } from "@Src/components";
 import { ArtifactModConfig } from "./components/ArtifactModConfig";
 import { ArtifactSetSelect } from "./components/ArtifactSetSelect";
 import { CalcItemSelect, SelectedCalcItem } from "./components/CalcItemSelect";
-import { ExtraConfigs } from "./components/ExtraConfigs";
+// import { ExtraConfigs } from "./components/ExtraConfigs";
 import { OptimizationGuide, OptimizationGuideControl, StepConfig } from "./components/OptimizationGuide";
 import { Launcher } from "./components/Launcher";
 import { ResultDisplay } from "./components/ResultDisplay";
@@ -24,6 +25,13 @@ import { OptimizerState } from "../ContextProvider/OptimizerProvider";
 type SavedValues = {
   calcItem?: SelectedCalcItem;
   extraConfigs?: OptimizerExtraConfigs;
+};
+
+const STEP_KEY = {
+  ARTIFACTS: "ARTIFACTS",
+  MODIFIERS: "MODIFIERS",
+  CALC_ITEMS: "CALC_ITEMS",
+  LAUNCHER: "LAUNCHER",
 };
 
 export function OptimizationDept() {
@@ -72,7 +80,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     optimizer.init(store.target, store.setup, appChar, store.appWeapon, partyData);
 
     const unsubscribe = optimizer.subscribeCompletion(() => {
-      guideControl.current?.toggle(false);
+      guideControl.current?.toggle("ACTIVE", false);
       setActiveResult(true);
     });
 
@@ -100,7 +108,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     }
 
     setActivePieceSelect(active);
-    guideControl.current?.toggle(!active);
+    guideControl.current?.toggle("ACTIVE", !active);
   };
 
   const onConfirmSelectPieces = (selectedIds: ItemMultiSelectIds) => {
@@ -116,6 +124,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
   const stepConfigs: StepConfig[] = [
     {
+      key: STEP_KEY.ARTIFACTS,
       title: "Select Artifacts",
       render: (changeValid) => (
         <ArtifactSetSelect
@@ -126,11 +135,13 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       ),
     },
     {
+      key: STEP_KEY.MODIFIERS,
       title: "Artifact Modifiers",
       initialValid: true,
       render: () => <ArtifactModConfig manager={artifactManager} />,
     },
     {
+      key: STEP_KEY.CALC_ITEMS,
       title: "Select Item",
       render: (changeValid) => (
         <CalcItemSelect
@@ -141,20 +152,29 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         />
       ),
     },
+    // {
+    //   title: "Extra Configurations",
+    //   initialValid: true,
+    //   render: () => (
+    //     <ExtraConfigs
+    //       initialValue={savedValues.current.extraConfigs}
+    //       onChange={(value) => (savedValues.current.extraConfigs = value)}
+    //     />
+    //   ),
+    // },
     {
-      title: "Extra Configurations",
-      initialValid: true,
-      render: () => (
-        <ExtraConfigs
-          initialValue={savedValues.current.extraConfigs}
-          onChange={(value) => (savedValues.current.extraConfigs = value)}
-        />
-      ),
-    },
-    {
+      key: STEP_KEY.LAUNCHER,
       title: "Launcher",
       initialValid: true,
-      render: () => <Launcher manager={artifactManager} />,
+      render: () => (
+        <Launcher
+          manager={artifactManager}
+          onLaunch={() => {
+            guideControl.current?.notify(null);
+            optimizeSetup();
+          }}
+        />
+      ),
     },
   ];
 
@@ -164,27 +184,28 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         control={guideControl}
         stepConfigs={stepConfigs}
         canShowMenu={canShowGuideMenu}
-        processing={props.processing}
+        showActions={props.processing}
         onChangStep={(newStep, oldStep) => {
-          if (oldStep === 0) {
+          if (oldStep === STEP_KEY.ARTIFACTS) {
             artifactManager.concludeModConfigs();
 
-            if (newStep !== 1 && artifactManager.hasNewSelectedSet) {
+            if (newStep !== STEP_KEY.MODIFIERS && artifactManager.hasNewSelectedSet) {
               guideControl.current?.notify({
                 message: "New Artifact modifiers configurations!",
                 toStep: 1,
               });
             }
           }
-          if (newStep === 0) {
+          if (newStep === STEP_KEY.ARTIFACTS) {
             artifactManager.recordSelectedSets();
           }
-          if (newStep === stepConfigs.length - 1) {
+          if (newStep === STEP_KEY.LAUNCHER) {
             setCanShowGuideMenu(true);
-            optimizer.load(artifactManager.sumarize());
+
+            const { sumary, calcCount } = artifactManager.sumarize();
+            optimizer.load(sumary, calcCount.value);
           }
         }}
-        onComplete={optimizeSetup}
         afterClose={afterCloseGuide}
       />
 
@@ -216,7 +237,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
           onClickReturn={() => {
             isExiting.current = false;
             setActiveResult(false);
-            guideControl.current?.toggle(true);
+            guideControl.current?.toggle("ACTIVE", true);
           }}
           onClickExit={() => {
             isExiting.current = true;

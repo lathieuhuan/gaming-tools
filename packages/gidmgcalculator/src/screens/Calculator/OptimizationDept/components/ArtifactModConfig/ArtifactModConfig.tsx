@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { OverflowTrackingContainer } from "rond";
 import type { OptimizerArtifactBuffConfigs } from "@Backend";
 import type { ArtifactManager } from "../../utils/artifact-manager";
 
@@ -16,7 +17,7 @@ export function ArtifactModConfig({ manager }: ArtifactModConfigProps) {
     <div className="h-full flex flex-col">
       <p>Artifact buffs to be activated (if any)</p>
 
-      <div className="mt-2 grow custom-scrollbar space-y-2">
+      <OverflowTrackingContainer className="mt-2 grow custom-scrollbar" overflowedCls="pr-3" wrapCls="space-y-2">
         {manager.sets.map(({ data }) => {
           const configsByCode = configs[data.code] || [];
           if (!configsByCode.length || !data.buffs) return null;
@@ -61,7 +62,7 @@ export function ArtifactModConfig({ manager }: ArtifactModConfigProps) {
             </div>
           );
         })}
-      </div>
+      </OverflowTrackingContainer>
     </div>
   );
 }

@@ -69,6 +69,10 @@
   z-index: 5;
   opacity: 0;
 
+  &:enabled {
+    cursor: pointer;
+  }
+
   &:checked ~ .ron-checkbox__visual {
     opacity: 1;
   }

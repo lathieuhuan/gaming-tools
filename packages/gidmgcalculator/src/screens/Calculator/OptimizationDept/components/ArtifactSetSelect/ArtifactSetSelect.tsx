@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Button, Input } from "rond";
+import { Button, Input, OverflowTrackingContainer } from "rond";
 
 import type { ArtifactManager } from "../../utils/artifact-manager";
 import { SetOption } from "./SetOption";
@@ -91,7 +91,7 @@ export function ArtifactSetSelect({ manager, onChangeValid, onRequestSelectPiece
   };
 
   return (
-    <div className="space-y-3">
+    <div className="h-full flex flex-col gap-3">
       <div>
         <Input className="w-full" placeholder="Search" onChange={onChangeKeyword} />
       </div>
@@ -113,9 +113,9 @@ export function ArtifactSetSelect({ manager, onChangeValid, onRequestSelectPiece
         </Button>
       </div>
 
-      {all.visibleCodes.size ? (
-        <div className="space-y-2">
-          {sets.map((set) => {
+      <OverflowTrackingContainer className="custom-scrollbar grow" wrapCls="space-y-2" overflowedCls="pr-3">
+        {all.visibleCodes.size ? (
+          sets.map((set) => {
             const { code } = set.data;
 
             if (!all.visibleCodes.has(code)) {
@@ -136,11 +136,11 @@ export function ArtifactSetSelect({ manager, onChangeValid, onRequestSelectPiece
                 afterClosedActions={() => afterClosedActions(code)}
               />
             );
-          })}
-        </div>
-      ) : (
-        <div className="py-4 text-center text-hint-color">No Artifact set found</div>
-      )}
+          })
+        ) : (
+          <div className="py-4 text-center text-hint-color">No Artifact set found</div>
+        )}
+      </OverflowTrackingContainer>
     </div>
   );
 }

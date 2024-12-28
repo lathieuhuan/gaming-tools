@@ -1,5 +1,5 @@
 import type { PartiallyOptional } from "rond";
-import type { AppArtifact, ArtifactType, OptimizerArtifactBuffConfigs } from "@Backend";
+import { ARTIFACT_TYPES, type AppArtifact, type ArtifactType, type OptimizerArtifactBuffConfigs } from "@Backend";
 import type { UserArtifact } from "@Src/types";
 
 import { $AppArtifact } from "@Src/services";
@@ -13,7 +13,15 @@ export type ManagedArtifactSet = {
   selectedIds: Set<number>;
 };
 
+type CalculationCount = {
+  isExceeded: boolean;
+  value: number;
+};
+
 export class ArtifactManager {
+  private readonly MAX_ACTUAL_COUNT = 100_000_000_000;
+  readonly LIMIT_CALC_COUNT = 1_000_000;
+
   sets: ManagedArtifactSet[] = [];
   buffConfigs: OptimizerArtifactBuffConfigs = {};
   sumary: Record<ArtifactType, InputArtifact[]> = {
@@ -22,6 +30,10 @@ export class ArtifactManager {
     sands: [],
     goblet: [],
     circlet: [],
+  };
+  calcCount: CalculationCount = {
+    isExceeded: false,
+    value: 1,
   };
 
   private recordedOnce = false;
@@ -199,10 +211,25 @@ export class ArtifactManager {
     for (const set of this.sets) {
       for (const artifact of set.pieces) {
         if (set.selectedIds.has(artifact.ID)) {
-          this.sumary[artifact.type] = this.sumary[artifact.type].concat(artifact);
+          this.sumary[artifact.type].push(artifact);
         }
       }
     }
-    return this.sumary;
+
+    const calcCount: CalculationCount = { isExceeded: false, value: 1 };
+
+    for (const type of ARTIFACT_TYPES) {
+      calcCount.value *= this.sumary[type].length;
+
+      if (!calcCount.isExceeded && calcCount.value > this.LIMIT_CALC_COUNT) {
+        calcCount.isExceeded = true;
+      }
+      if (calcCount.value > this.MAX_ACTUAL_COUNT) {
+        break;
+      }
+    }
+    this.calcCount = calcCount;
+
+    return this;
   };
 }

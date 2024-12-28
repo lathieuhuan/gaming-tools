@@ -1,32 +1,33 @@
 import { Fragment, useImperativeHandle, useState } from "react";
 import { FaCaretRight, FaCaretDown, FaExclamation, FaCheck } from "react-icons/fa";
 import { IoFootsteps } from "react-icons/io5";
-import { Button, ButtonGroup, clsx, Modal, Popover, useClickOutside } from "rond";
+import { Button, ButtonGroup, ButtonGroupProps, clsx, Modal, Popover, useClickOutside } from "rond";
 
 type StepStatus = "VALID" | "INVALID";
 
 export type StepConfig = {
+  key: string;
   title: string;
   initialValid?: boolean;
   render: (changeValid: (valid: boolean) => void) => React.ReactNode;
 };
 
 export type OptimizationGuideControl = {
-  toggle: (active: boolean) => void;
-  notify: (message: string | { message: string; toStep: number }) => void;
+  toggle: (type: "ACTIVE", value: boolean) => void;
+  notify: (message: null | string | { message: string; toStep: number }) => void;
 };
 
 interface OptimizationGuideProps {
   stepConfigs: StepConfig[];
   control?: React.RefObject<OptimizationGuideControl>;
   canShowMenu?: boolean;
-  processing?: boolean;
-  onChangStep?: (newStep: number, oldStep: number) => void;
-  onComplete: () => void;
+  /** Default to true */
+  showActions?: boolean;
+  onChangStep?: (newKey: string, oldKey: string) => void;
   afterClose: () => void;
 }
 export function OptimizationGuide(props: OptimizationGuideProps) {
-  const { stepConfigs } = props;
+  const { showActions = true, stepConfigs } = props;
   const stepCount = stepConfigs.length;
 
   const [active, setActive] = useState(true);
@@ -44,7 +45,6 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
   const menuTriggerRef = useClickOutside<HTMLDivElement>(() => setShowMenu(false));
 
   const { toStep: notiToStep } = noti;
-  const isProcessStep = step === stepCount - 1;
 
   const changeValidOf = (stepIndex: number) => (valid: boolean) => {
     setStepStatuses((prevStatuses) => {
@@ -60,19 +60,20 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
   };
 
   useImperativeHandle(props.control, () => ({
-    toggle: setActive,
+    toggle: (type, value) => {
+      switch (type) {
+        case "ACTIVE":
+          setActive(value);
+          break;
+      }
+    },
     notify: (arg) => {
-      const { message, toStep = undefined } = typeof arg === "string" ? { message: arg } : arg;
+      const { message = "", toStep = undefined } = arg ? (typeof arg === "string" ? { message: arg } : arg) : {};
       setNoti({ message, toStep });
     },
   }));
 
   const navigate = (toStep: number) => {
-    if (toStep >= stepCount) {
-      closeNoti();
-      return props.onComplete();
-    }
-
     const moreVisibleSteps: number[] = [];
 
     for (let i = Math.min(step, toStep); i <= Math.max(step, toStep); i++) {
@@ -85,7 +86,7 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
       moreVisibleSteps.forEach((step) => newIndexes.add(step));
       return newIndexes;
     });
-    props.onChangStep?.(toStep, step);
+    props.onChangStep?.(stepConfigs[toStep].key, stepConfigs[step].key);
 
     if (toStep === noti.toStep && noti.message) {
       closeNoti();
@@ -112,7 +113,7 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
       style={{
         height: "95vh",
         maxHeight: 880,
-        width: "25rem",
+        width: "26rem",
       }}
       className="bg-surface-2"
       bodyCls="py-2 px-0"
@@ -151,7 +152,7 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
           {/*  */}
         </div>
 
-        <div className={clsx("mt-3 mb-1 px-4 justify-between", props.processing ? "hidden" : "flex")}>
+        <div className={clsx("mt-3 mb-1 px-4 justify-between", showActions ? "hidden" : "flex")}>
           <div className="flex">
             <div ref={menuTriggerRef} className="relative">
               {props.canShowMenu && (
@@ -173,7 +174,7 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
                   const disabled = stepStatuses[index] === "INVALID" || isCurrent;
 
                   return (
-                    <Fragment key={index}>
+                    <Fragment key={config.key}>
                       {index ? <div className="h-px bg-light-disabled" /> : null}
                       <button
                         disabled={disabled}
@@ -231,12 +232,12 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
                 onClick: () => navigate(step - 1),
               },
               {
-                children: isProcessStep ? "Proceed" : "Next",
-                variant: isProcessStep ? "primary" : "default",
+                children: "Next",
+                variant: "default",
                 className: "gap-0 pr-2",
                 icon: <FaCaretRight className="text-xl" />,
                 iconPosition: "end",
-                disabled: stepStatuses[step] !== "VALID",
+                disabled: step >= stepConfigs.length - 1 || stepStatuses[step] !== "VALID",
                 onClick: () => navigate(step + 1),
               },
             ]}
