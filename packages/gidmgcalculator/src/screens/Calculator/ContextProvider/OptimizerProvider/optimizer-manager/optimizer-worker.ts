@@ -1,4 +1,4 @@
-import type { OptimizeCalculation, ManagerRequest, WorkerResponse } from "./optimizer-manager.types";
+import type { OptimizeCalculation, OTM_ManagerRequest, OTM_WorkerResponse } from "./optimizer-manager.types";
 import { SetupOptimizer } from "@Backend";
 import { CalculationSorter } from "./calculation-sorter";
 
@@ -6,19 +6,19 @@ let optimizer: SetupOptimizer;
 const sorter = new CalculationSorter();
 const COMPLETE_DELAY = 300;
 
-function response(message: WorkerResponse) {
+function response(message: OTM_WorkerResponse) {
   postMessage(message);
 }
 
-onmessage = (e: MessageEvent<ManagerRequest>) => {
+onmessage = (e: MessageEvent<OTM_ManagerRequest>) => {
   switch (e.data.type) {
     case "INIT": {
       optimizer = new SetupOptimizer(...e.data.params);
 
-      optimizer.onReachMilestone = (percent) => {
+      optimizer.onReachMilestone = (info) => {
         response({
           type: "PROCESS",
-          percent,
+          info,
         });
       };
       break;

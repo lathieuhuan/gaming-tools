@@ -31,7 +31,9 @@ const STEP_KEY = {
   MODIFIERS: "MODIFIERS",
   CALC_ITEMS: "CALC_ITEMS",
   LAUNCHER: "LAUNCHER",
-};
+} as const;
+
+type StepKey = (typeof STEP_KEY)[keyof typeof STEP_KEY];
 
 export function OptimizationDept() {
   const { status, optimizer, toggle } = useOptimizerState();
@@ -67,21 +69,22 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const artifactManager = useArtifactManager(store.artifacts);
 
   const [activePieceSelect, setActivePieceSelect] = useState(false);
-  const [activeResult, setActiveResult] = useState(false);
+  const [resultStatus, setResultStatus] = useState<"EXIT" | "CLOSE" | "OPEN" | "REOPEN">("CLOSE");
   const [canShowGuideMenu, setCanShowGuideMenu] = useState(false);
 
-  const guideControl = useRef<OptimizationGuideControl>(null);
+  const guideControl = useRef<OptimizationGuideControl<StepKey>>(null);
   const savedValues = useRef<SavedValues>({});
   const setForPieceSelecte = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
-  const isExiting = useRef(false);
   const runCount = useRef(0);
+
+  const isActiveResult = resultStatus === "OPEN" || resultStatus === "REOPEN";
 
   useEffect(() => {
     optimizer.init(store.target, store.setup, appChar, store.appWeapon, partyData);
 
     const unsubscribe = optimizer.subscribeCompletion(() => {
       guideControl.current?.toggle("ACTIVE", false);
-      setActiveResult(true);
+      setResultStatus("OPEN");
     });
 
     return () => {
@@ -118,13 +121,40 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     togglePieceSelect(false);
   };
 
-  const afterCloseGuide = () => {
-    if (!activePieceSelect && !activeResult) {
-      props.onClose();
+  const onChangStep = (newStep: string, oldStep: string) => {
+    switch (oldStep) {
+      case STEP_KEY.ARTIFACTS: {
+        const hasAnyNewSelected = artifactManager.concludeModConfigs();
+
+        if (newStep !== STEP_KEY.MODIFIERS) {
+          guideControl.current?.notify(
+            hasAnyNewSelected
+              ? {
+                  message: "New Artifact modifiers configurations!",
+                  toStep: "MODIFIERS",
+                }
+              : null
+          );
+        }
+        break;
+      }
+      case STEP_KEY.MODIFIERS:
+        artifactManager.recordSelectedSets();
+        break;
+    }
+
+    switch (newStep) {
+      case STEP_KEY.LAUNCHER: {
+        setCanShowGuideMenu(true);
+
+        const { sumary, calcCount } = artifactManager.sumarize();
+        optimizer.load(sumary, calcCount.value);
+        break;
+      }
     }
   };
 
-  const stepConfigs: StepConfig[] = [
+  const stepConfigs: StepConfig<StepKey>[] = [
     {
       key: STEP_KEY.ARTIFACTS,
       title: "Select Artifacts",
@@ -178,8 +208,9 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
           }}
           onRequestLastResult={() => {
             guideControl.current?.toggle("ACTIVE", false);
-            setActiveResult(true);
+            setResultStatus("REOPEN");
           }}
+          onRequestCancel={() => {}}
         />
       ),
     },
@@ -191,35 +222,13 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         control={guideControl}
         stepConfigs={stepConfigs}
         canShowMenu={canShowGuideMenu}
-        showActions={props.processing}
-        onChangStep={(newStep, oldStep) => {
-          if (oldStep === STEP_KEY.ARTIFACTS) {
-            artifactManager.concludeModConfigs();
-
-            console.log("hasNewSelectedSet", artifactManager.hasNewSelectedSet);
-
-            if (artifactManager.hasNewSelectedSet) {
-              if (newStep !== STEP_KEY.MODIFIERS) {
-                guideControl.current?.notify({
-                  message: "New Artifact modifiers configurations!",
-                  toStep: 1,
-                });
-              }
-            } else {
-              guideControl.current?.notify(null);
-            }
-          }
-          if (newStep === STEP_KEY.ARTIFACTS) {
-            artifactManager.recordSelectedSets();
-          }
-          if (newStep === STEP_KEY.LAUNCHER) {
-            setCanShowGuideMenu(true);
-
-            const { sumary, calcCount } = artifactManager.sumarize();
-            optimizer.load(sumary, calcCount.value);
+        frozen={props.processing}
+        onChangStep={onChangStep}
+        afterClose={() => {
+          if (!activePieceSelect && !isActiveResult) {
+            props.onClose();
           }
         }}
-        afterClose={afterCloseGuide}
       />
 
       <ItemMultiSelect
@@ -232,8 +241,8 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       />
 
       <Modal
-        active={activeResult}
-        title={<span className="text-lg">Optimize / Results</span>}
+        active={isActiveResult}
+        title={<span className="text-lg">Optimize / Result</span>}
         className={`bg-surface-2 ${Modal.LARGE_HEIGHT_CLS}`}
         style={{
           width: "45rem",
@@ -243,19 +252,15 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         closeOnEscape={false}
         onClose={() => {}}
         onTransitionEnd={(open) => {
-          if (!open && isExiting.current) props.onClose();
+          if (!open && resultStatus === "EXIT") props.onClose();
         }}
       >
         <ResultDisplay
           onClickReturn={() => {
-            isExiting.current = false;
-            setActiveResult(false);
+            setResultStatus("CLOSE");
             guideControl.current?.toggle("ACTIVE", true);
           }}
-          onClickExit={() => {
-            isExiting.current = true;
-            setActiveResult(false);
-          }}
+          onClickExit={() => setResultStatus("EXIT")}
           onClickLoadToCalculator={console.log}
         />
       </Modal>

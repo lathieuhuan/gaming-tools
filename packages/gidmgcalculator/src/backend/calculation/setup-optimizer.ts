@@ -30,7 +30,7 @@ export class SetupOptimizer extends InputProcessor {
   };
   runTime = 0;
 
-  onReachMilestone = (percent: number) => {};
+  onReachMilestone = (data: { percent: number; time: number }) => {};
 
   onOutput: OnOutput = () => {};
 
@@ -48,6 +48,7 @@ export class SetupOptimizer extends InputProcessor {
    */
   private forEachCombination = (callback: (set: CalcArtifacts) => boolean) => {
     const milestoneStep = this.calculationCount > 100000 ? 10 : 20;
+    const startTime = Date.now();
     let processedCount = 0;
     let nextMs = milestoneStep;
 
@@ -61,7 +62,10 @@ export class SetupOptimizer extends InputProcessor {
               if (isOk) processedCount++;
 
               if (processedCount / this.calculationCount >= nextMs / 100) {
-                this.onReachMilestone(nextMs);
+                this.onReachMilestone({
+                  percent: nextMs,
+                  time: Date.now() - startTime,
+                });
                 nextMs += milestoneStep;
               }
             }

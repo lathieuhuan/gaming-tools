@@ -1,9 +1,10 @@
 import type {
-  InitRequest,
-  LoadRequest,
-  OptimizeRequest,
+  OTM_InitRequest,
+  OTM_LoadRequest,
+  OTM_OptimizeRequest,
   OptimizeResult,
-  WorkerResponse,
+  OTM_WorkerResponse,
+  OTM_ProcessInfo,
 } from "./optimizer-manager.types";
 
 const WORKER_URL = new URL("optimizer-worker.ts", import.meta.url);
@@ -17,7 +18,7 @@ export class OptimizerManager {
 
   onStart = () => {};
 
-  onProcess = (percent: number) => {};
+  onProcess = (data: OTM_ProcessInfo) => {};
 
   constructor() {
     this.worker = this.genWorker();
@@ -26,10 +27,10 @@ export class OptimizerManager {
   private genWorker = () => {
     const worker = new Worker(WORKER_URL, { type: "module" });
 
-    worker.onmessage = (e: MessageEvent<WorkerResponse>) => {
+    worker.onmessage = (e: MessageEvent<OTM_WorkerResponse>) => {
       switch (e.data.type) {
         case "PROCESS":
-          this.onProcess(e.data.percent);
+          this.onProcess(e.data.info);
           break;
         case "COMPLETE": {
           this.notify(e.data.result);
@@ -53,7 +54,7 @@ export class OptimizerManager {
     };
   };
 
-  init(...params: InitRequest["params"]) {
+  init(...params: OTM_InitRequest["params"]) {
     if (this.workerTerminated) {
       this.end();
       this.worker = this.genWorker();
@@ -66,14 +67,14 @@ export class OptimizerManager {
     });
   }
 
-  load(...params: LoadRequest["params"]) {
+  load(...params: OTM_LoadRequest["params"]) {
     this.worker.postMessage({
       type: "LOAD",
       params,
     });
   }
 
-  optimize(calculateParams: OptimizeRequest["calculateParams"], params: OptimizeRequest["params"]) {
+  optimize(calculateParams: OTM_OptimizeRequest["calculateParams"], params: OTM_OptimizeRequest["params"]) {
     this.onStart();
 
     this.worker.postMessage({

@@ -1,33 +1,32 @@
 import { Fragment, useImperativeHandle, useState } from "react";
 import { FaCaretRight, FaCaretDown, FaExclamation, FaCheck } from "react-icons/fa";
 import { IoFootsteps } from "react-icons/io5";
-import { Button, ButtonGroup, ButtonGroupProps, clsx, Modal, Popover, useClickOutside } from "rond";
+import { Button, ButtonGroup, clsx, Modal, Popover, useClickOutside } from "rond";
 
 type StepStatus = "VALID" | "INVALID";
 
-export type StepConfig = {
-  key: string;
+export type StepConfig<T extends string> = {
+  key: T;
   title: string;
   initialValid?: boolean;
   render: (changeValid: (valid: boolean) => void) => React.ReactNode;
 };
 
-export type OptimizationGuideControl = {
+export type OptimizationGuideControl<T extends string> = {
   toggle: (type: "ACTIVE", value: boolean) => void;
-  notify: (message: null | string | { message: string; toStep: number }) => void;
+  notify: (message: null | string | { message: string; toStep: T }) => void;
 };
 
-interface OptimizationGuideProps {
-  stepConfigs: StepConfig[];
-  control?: React.RefObject<OptimizationGuideControl>;
+interface OptimizationGuideProps<T extends string> {
+  stepConfigs: StepConfig<T>[];
+  control?: React.RefObject<OptimizationGuideControl<T>>;
   canShowMenu?: boolean;
-  /** Default to true */
-  showActions?: boolean;
+  frozen?: boolean;
   onChangStep?: (newKey: string, oldKey: string) => void;
   afterClose: () => void;
 }
-export function OptimizationGuide(props: OptimizationGuideProps) {
-  const { showActions = true, stepConfigs } = props;
+export function OptimizationGuide<T extends string>(props: OptimizationGuideProps<T>) {
+  const { frozen, stepConfigs } = props;
   const stepCount = stepConfigs.length;
 
   const [active, setActive] = useState(true);
@@ -69,7 +68,9 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
     },
     notify: (arg) => {
       const { message = "", toStep = undefined } = arg ? (typeof arg === "string" ? { message: arg } : arg) : {};
-      setNoti((prevNoti) => (message !== prevNoti.message ? { message, toStep } : prevNoti));
+      const _toStep = toStep ? stepConfigs.findIndex((config) => config.key === toStep) : undefined;
+
+      setNoti((prevNoti) => (message !== prevNoti.message ? { message, toStep: _toStep } : prevNoti));
     },
   }));
 
@@ -118,6 +119,7 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
       className="bg-surface-2"
       bodyCls="py-2 px-0"
       closeOnMaskClick={false}
+      closable={!frozen}
       onClose={() => setActive(false)}
       onTransitionEnd={(open) => {
         if (!open) props.afterClose();
@@ -147,12 +149,7 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
           </div>
         </div>
 
-        <div className="">
-          {/*  */}
-          {/*  */}
-        </div>
-
-        <div className={clsx("mt-3 mb-1 px-4 justify-between", showActions ? "hidden" : "flex")}>
+        <div className={clsx("mt-3 mb-1 px-4 justify-between", frozen ? "hidden" : "flex")}>
           <div className="flex">
             <div ref={menuTriggerRef} className="relative">
               {props.canShowMenu && (

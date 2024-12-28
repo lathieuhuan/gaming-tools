@@ -14,7 +14,7 @@ type TransitionStyle = Pick<React.CSSProperties, "transitionDuration" | "transit
 export interface OverlayProps {
   active?: boolean;
   state?: "open" | "close" | "hidden";
-  /** Default to true */
+  /** Default to true. Dynamic change of this value will not  */
   closable?: boolean;
   /** Default to true */
   closeOnMaskClick?: boolean;
@@ -39,15 +39,27 @@ export function Overlay({
   onTransitionEnd,
   getContainer,
 }: OverlayProps) {
+  const overlayState = stateProps || (active ? "open" : "close");
+
   const [state, setState] = useState<OverlayState>({
     mounted: false,
     visible: true,
     movingDir: "in",
   });
-  const overlayState = stateProps || (active ? "open" : "close");
+  const _ = useRef({
+    overlayState,
+    closable,
+    closeOnEscape,
+  });
+
+  _.current = {
+    overlayState,
+    closable,
+    closeOnEscape,
+  };
 
   const closeOverlay = () => {
-    if (closable) {
+    if (_.current.closable) {
       setState((prev) => ({ ...prev, movingDir: "in" }));
 
       setTimeout(() => {
@@ -82,9 +94,11 @@ export function Overlay({
         }, transitionDuration);
       }
     }
+  }, [overlayState]);
 
+  useEffect(() => {
     const handlePressEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && overlayState === "open" && closeOnEscape) {
+      if (e.key === "Escape" && _.current.overlayState === "open" && _.current.closeOnEscape) {
         closeOverlay();
       }
     };
@@ -93,7 +107,7 @@ export function Overlay({
     return () => {
       document.removeEventListener("keydown", handlePressEsc, true);
     };
-  }, [overlayState]);
+  }, []);
 
   const overlayManager = useOverlayManager();
 

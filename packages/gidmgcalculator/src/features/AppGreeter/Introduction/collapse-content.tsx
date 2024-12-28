@@ -74,7 +74,7 @@ export const Notes = (
 const CONTACTS = [
   {
     Icon: FaDiscord,
-    href: "https://www.reddit.com/user/Ronqueroc",
+    href: "https://discord.com/",
     text: "Ronqueroc#2674",
   },
   {

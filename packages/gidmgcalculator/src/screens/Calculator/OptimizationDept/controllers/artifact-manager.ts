@@ -11,7 +11,6 @@ export type ManagedArtifactSet = {
   data: AppArtifact;
   pieces: InputArtifact[];
   selectedIds: Set<number>;
-  isNew: boolean;
 };
 
 type CalculationCount = {
@@ -38,7 +37,7 @@ export class ArtifactManager {
   };
 
   private recordedOnce = false;
-  private recordedSelectedCodes = new Set<number>();
+  private recordedSelectedCodes: number[] = [];
 
   constructor(artifacts: InputArtifact[]) {
     const countMap = new Map<number, ManagedArtifactSet>();
@@ -58,7 +57,6 @@ export class ArtifactManager {
             data,
             pieces: [artifact],
             selectedIds: new Set(),
-            isNew: false,
           };
 
           countMap.set(artifact.code, filterSet);
@@ -71,23 +69,7 @@ export class ArtifactManager {
   }
 
   private getCurrentSelectedCodes() {
-    return this.sets.reduce(
-      (codes, set) => (set.selectedIds.size ? codes.add(set.data.code) : codes),
-      new Set<number>()
-    );
-  }
-
-  get hasNewSelectedSet() {
-    if (this.recordedOnce) {
-      // let hasAnyNew = false;
-
-      for (const code of this.getCurrentSelectedCodes()) {
-        if (!this.recordedSelectedCodes.has(code)) {
-          return true;
-        }
-      }
-    }
-    return false;
+    return this.sets.reduce<number[]>((codes, set) => (set.selectedIds.size ? codes.concat(set.data.code) : codes), []);
   }
 
   recordSelectedSets = () => {
@@ -162,6 +144,7 @@ export class ArtifactManager {
     }
   });
 
+  /** @returns true if there is any new selected artifact set */
   concludeModConfigs = () => {
     const newBuffConfig: OptimizerArtifactBuffConfigs = {};
 
@@ -174,7 +157,12 @@ export class ArtifactManager {
         }));
       }
     }
-    return (this.buffConfigs = newBuffConfig);
+    this.buffConfigs = newBuffConfig;
+
+    if (this.recordedOnce) {
+      return this.getCurrentSelectedCodes().some((code) => !this.recordedSelectedCodes.includes(code));
+    }
+    return false;
   };
 
   toggleBuffConfig = (setCode: number, configIndex: number) => {

@@ -93,7 +93,7 @@ export function ResultDisplay(props: ResultDisplayProps) {
         </div>
 
         <ButtonGroup
-          className="mt-4 px-2"
+          className="mt-4 px-2 pb-1"
           justify="end"
           buttons={[
             {

@@ -11,17 +11,17 @@ export type OptimizeResult = OptimizeCalculation[];
 
 // ========== REQUEST ==========
 
-export type InitRequest = {
+export type OTM_InitRequest = {
   type: "INIT";
   params: ConstructorParameters<typeof SetupOptimizer>;
 };
 
-export type LoadRequest = {
+export type OTM_LoadRequest = {
   type: "LOAD";
   params: Parameters<SetupOptimizer["load"]>;
 };
 
-export type OptimizeRequest = {
+export type OTM_OptimizeRequest = {
   type: "OPTIMIZE";
   calculateParams: {
     pattern: AttackPattern;
@@ -31,19 +31,21 @@ export type OptimizeRequest = {
   params: Parameters<SetupOptimizer["optimize"]>;
 };
 
-export type ManagerRequest = InitRequest | LoadRequest | OptimizeRequest;
+export type OTM_ManagerRequest = OTM_InitRequest | OTM_LoadRequest | OTM_OptimizeRequest;
 
 // ========== RESPONSE ==========
 
-type ProcessResponse = {
+export type OTM_ProcessInfo = Parameters<SetupOptimizer["onReachMilestone"]>[0];
+
+export type OTM_ProcessResponse = {
   type: "PROCESS";
-  percent: number;
+  info: OTM_ProcessInfo;
 };
 
-type CompleteResponse = {
+type OTM_CompleteResponse = {
   type: "COMPLETE";
   runTime: number;
   result: OptimizeResult;
 };
 
-export type WorkerResponse = ProcessResponse | CompleteResponse;
+export type OTM_WorkerResponse = OTM_ProcessResponse | OTM_CompleteResponse;

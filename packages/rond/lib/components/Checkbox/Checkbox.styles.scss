@@ -51,7 +51,7 @@
     border-left-width: 0;
     transform: rotate(45deg);
     position: relative;
-    top: 20%;
+    top: 15%;
     content: "";
   }
   &.ron-checkbox__visual--indeterminate {
@@ -112,7 +112,6 @@
     height: 13px;
     border-right-width: 4px;
     border-bottom-width: 4px;
-    top: 15%;
   }
   .ron-checkbox__visual.ron-checkbox__visual--indeterminate::after {
     width: 12px;
