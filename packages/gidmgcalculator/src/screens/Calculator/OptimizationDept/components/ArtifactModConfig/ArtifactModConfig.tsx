@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { OverflowTrackingContainer } from "rond";
 import type { OptimizerArtifactBuffConfigs } from "@Backend";
-import type { ArtifactManager } from "../../utils/artifact-manager";
+import type { ArtifactManager } from "../../controllers/artifact-manager";
 
 import { GenshinModifierView } from "@Src/components";
 import { getArtifactDescription } from "@Src/components/modifier-list/modifiers.utils";

@@ -69,7 +69,7 @@ export function OptimizationGuide(props: OptimizationGuideProps) {
     },
     notify: (arg) => {
       const { message = "", toStep = undefined } = arg ? (typeof arg === "string" ? { message: arg } : arg) : {};
-      setNoti({ message, toStep });
+      setNoti((prevNoti) => (message !== prevNoti.message ? { message, toStep } : prevNoti));
     },
   }));
 

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { FaCalculator } from "react-icons/fa";
 import { Modal } from "rond";
 
 import type { OptimizerExtraConfigs } from "@Backend";
 import type { ItemMultiSelectIds } from "@Src/components";
-import type { ArtifactManager } from "./utils/artifact-manager";
+import type { OptimizerState } from "../ContextProvider/OptimizerProvider";
+import type { ArtifactManager } from "./controllers/artifact-manager";
 
 import { useStoreSnapshot } from "@Src/features";
 import { $AppWeapon } from "@Src/services";
@@ -20,7 +20,6 @@ import { CalcItemSelect, SelectedCalcItem } from "./components/CalcItemSelect";
 import { OptimizationGuide, OptimizationGuideControl, StepConfig } from "./components/OptimizationGuide";
 import { Launcher } from "./components/Launcher";
 import { ResultDisplay } from "./components/ResultDisplay";
-import { OptimizerState } from "../ContextProvider/OptimizerProvider";
 
 type SavedValues = {
   calcItem?: SelectedCalcItem;
@@ -73,8 +72,9 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
   const guideControl = useRef<OptimizationGuideControl>(null);
   const savedValues = useRef<SavedValues>({});
-  const selectingSet = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
+  const setForPieceSelecte = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
   const isExiting = useRef(false);
+  const runCount = useRef(0);
 
   useEffect(() => {
     optimizer.init(store.target, store.setup, appChar, store.appWeapon, partyData);
@@ -92,6 +92,8 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const optimizeSetup = () => {
     const { calcItem, extraConfigs } = savedValues.current;
 
+    runCount.current += 1;
+
     optimizer.optimize(
       {
         pattern: calcItem!.patternCate,
@@ -104,7 +106,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
   const togglePieceSelect = (active: boolean, code?: number) => {
     if (active && code) {
-      selectingSet.current = artifactManager.getSet(code);
+      setForPieceSelecte.current = artifactManager.getSet(code);
     }
 
     setActivePieceSelect(active);
@@ -112,7 +114,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   };
 
   const onConfirmSelectPieces = (selectedIds: ItemMultiSelectIds) => {
-    artifactManager.updateSelectedIds(selectingSet.current.code, selectedIds);
+    artifactManager.updateSelectedIds(setForPieceSelecte.current.code, selectedIds);
     togglePieceSelect(false);
   };
 
@@ -169,9 +171,14 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       render: () => (
         <Launcher
           manager={artifactManager}
-          onLaunch={() => {
+          launchedOnce={runCount.current !== 0}
+          onRequestLaunch={() => {
             guideControl.current?.notify(null);
             optimizeSetup();
+          }}
+          onRequestLastResult={() => {
+            guideControl.current?.toggle("ACTIVE", false);
+            setActiveResult(true);
           }}
         />
       ),
@@ -189,11 +196,17 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
           if (oldStep === STEP_KEY.ARTIFACTS) {
             artifactManager.concludeModConfigs();
 
-            if (newStep !== STEP_KEY.MODIFIERS && artifactManager.hasNewSelectedSet) {
-              guideControl.current?.notify({
-                message: "New Artifact modifiers configurations!",
-                toStep: 1,
-              });
+            console.log("hasNewSelectedSet", artifactManager.hasNewSelectedSet);
+
+            if (artifactManager.hasNewSelectedSet) {
+              if (newStep !== STEP_KEY.MODIFIERS) {
+                guideControl.current?.notify({
+                  message: "New Artifact modifiers configurations!",
+                  toStep: 1,
+                });
+              }
+            } else {
+              guideControl.current?.notify(null);
             }
           }
           if (newStep === STEP_KEY.ARTIFACTS) {
@@ -212,8 +225,8 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       <ItemMultiSelect
         active={activePieceSelect}
         title={<span className="text-lg">Optimize / Select Artifacts</span>}
-        items={selectingSet.current.artifacts}
-        initialValue={selectingSet.current.selected}
+        items={setForPieceSelecte.current.artifacts}
+        initialValue={setForPieceSelecte.current.selectedIds}
         onClose={() => togglePieceSelect(false)}
         onConfirm={onConfirmSelectPieces}
       />

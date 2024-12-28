@@ -11,10 +11,11 @@ export type ManagedArtifactSet = {
   data: AppArtifact;
   pieces: InputArtifact[];
   selectedIds: Set<number>;
+  isNew: boolean;
 };
 
 type CalculationCount = {
-  isExceeded: boolean;
+  isExceededLimit: boolean;
   value: number;
 };
 
@@ -32,12 +33,12 @@ export class ArtifactManager {
     circlet: [],
   };
   calcCount: CalculationCount = {
-    isExceeded: false,
+    isExceededLimit: false,
     value: 1,
   };
 
   private recordedOnce = false;
-  private selectedCodes = new Set<number>();
+  private recordedSelectedCodes = new Set<number>();
 
   constructor(artifacts: InputArtifact[]) {
     const countMap = new Map<number, ManagedArtifactSet>();
@@ -57,6 +58,7 @@ export class ArtifactManager {
             data,
             pieces: [artifact],
             selectedIds: new Set(),
+            isNew: false,
           };
 
           countMap.set(artifact.code, filterSet);
@@ -68,7 +70,7 @@ export class ArtifactManager {
     this.sets = sets;
   }
 
-  private getSelectedCodes() {
+  private getCurrentSelectedCodes() {
     return this.sets.reduce(
       (codes, set) => (set.selectedIds.size ? codes.add(set.data.code) : codes),
       new Set<number>()
@@ -77,8 +79,10 @@ export class ArtifactManager {
 
   get hasNewSelectedSet() {
     if (this.recordedOnce) {
-      for (const code of this.getSelectedCodes()) {
-        if (!this.selectedCodes.has(code)) {
+      // let hasAnyNew = false;
+
+      for (const code of this.getCurrentSelectedCodes()) {
+        if (!this.recordedSelectedCodes.has(code)) {
           return true;
         }
       }
@@ -88,8 +92,10 @@ export class ArtifactManager {
 
   recordSelectedSets = () => {
     this.recordedOnce = true;
-    this.selectedCodes = this.getSelectedCodes();
+    this.recordedSelectedCodes = this.getCurrentSelectedCodes();
   };
+
+  //
 
   checkAnyEquippedSelected = (set: ManagedArtifactSet) => {
     for (const piece of set.pieces) {
@@ -113,19 +119,19 @@ export class ArtifactManager {
   /** @params code 0 to get the fake set */
   getSet = (code: number) => {
     let artifacts: InputArtifact[] = [];
-    let selected: ManagedArtifactSet["selectedIds"] = new Set();
+    let selectedIds: ManagedArtifactSet["selectedIds"] = new Set();
 
     if (code) {
       this.getSetThen((set) => {
         artifacts = set.pieces;
-        selected = set.selectedIds;
+        selectedIds = set.selectedIds;
       })(code);
     }
 
     return {
       code,
       artifacts,
-      selected,
+      selectedIds,
     };
   };
 
@@ -216,13 +222,13 @@ export class ArtifactManager {
       }
     }
 
-    const calcCount: CalculationCount = { isExceeded: false, value: 1 };
+    const calcCount: CalculationCount = { isExceededLimit: false, value: 1 };
 
     for (const type of ARTIFACT_TYPES) {
       calcCount.value *= this.sumary[type].length;
 
-      if (!calcCount.isExceeded && calcCount.value > this.LIMIT_CALC_COUNT) {
-        calcCount.isExceeded = true;
+      if (!calcCount.isExceededLimit && calcCount.value > this.LIMIT_CALC_COUNT) {
+        calcCount.isExceededLimit = true;
       }
       if (calcCount.value > this.MAX_ACTUAL_COUNT) {
         break;
