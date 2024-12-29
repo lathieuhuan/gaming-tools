@@ -89,7 +89,7 @@ export class OptimizerManager {
       this.worker.terminate();
       this.workerTerminated = true;
     } catch (error) {
-      //
+      console.error(error);
     }
   }
 }

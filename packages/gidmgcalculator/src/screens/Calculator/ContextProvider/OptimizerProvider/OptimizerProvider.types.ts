@@ -8,6 +8,6 @@ export type OptimizerStatus = {
 
 export type OptimizerState = {
   status: OptimizerStatus;
-  optimizer: Pick<OptimizerManager, "init" | "load" | "optimize" | "subscribeCompletion" | "onProcess">;
+  optimizer: Pick<OptimizerManager, "init" | "load" | "optimize" | "end" | "subscribeCompletion" | "onProcess">;
   toggle: (key: keyof OptimizerStatus, active?: boolean) => void;
 };

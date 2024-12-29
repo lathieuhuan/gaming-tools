@@ -85,6 +85,7 @@ export class SetupOptimizer extends InputProcessor {
 
     this.artifactMap = artifacts;
     this.calculationCount = calculationCount;
+    return this;
   };
 
   optimize = (artifactBuffConfigs: OptimizerArtifactBuffConfigs, extraConfigs: OptimizerExtraConfigs) => {

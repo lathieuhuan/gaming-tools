@@ -39,13 +39,19 @@ export function OptimizationDept() {
   const { status, optimizer, toggle } = useOptimizerState();
 
   return status.active ? (
-    <OptimizationFrontDesk processing={status.loading} optimizer={optimizer} onClose={() => toggle("active", false)} />
+    <OptimizationFrontDesk
+      processing={status.loading}
+      optimizer={optimizer}
+      onCancelProcess={() => toggle("loading", false)}
+      onClose={() => toggle("active", false)}
+    />
   ) : null;
 }
 
 interface OptimizationFrontDeskProps {
   processing: boolean;
   optimizer: OptimizerState["optimizer"];
+  onCancelProcess: () => void;
   onClose: () => void;
 }
 function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
@@ -83,6 +89,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     optimizer.init(store.target, store.setup, appChar, store.appWeapon, partyData);
 
     const unsubscribe = optimizer.subscribeCompletion(() => {
+      runCount.current += 1;
       guideControl.current?.toggle("ACTIVE", false);
       setResultStatus("OPEN");
     });
@@ -94,8 +101,6 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
   const optimizeSetup = () => {
     const { calcItem, extraConfigs } = savedValues.current;
-
-    runCount.current += 1;
 
     optimizer.optimize(
       {
@@ -201,7 +206,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       render: () => (
         <Launcher
           manager={artifactManager}
-          launchedOnce={runCount.current !== 0}
+          runCount={runCount.current}
           onRequestLaunch={() => {
             guideControl.current?.notify(null);
             optimizeSetup();
@@ -210,7 +215,12 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
             guideControl.current?.toggle("ACTIVE", false);
             setResultStatus("REOPEN");
           }}
-          onRequestCancel={() => {}}
+          onCancel={() => {
+            optimizer.end();
+            optimizer.init(store.target, store.setup, appChar, store.appWeapon, partyData);
+            optimizer.load(artifactManager.sumary, artifactManager.calcCount.value);
+            props.onCancelProcess();
+          }}
         />
       ),
     },

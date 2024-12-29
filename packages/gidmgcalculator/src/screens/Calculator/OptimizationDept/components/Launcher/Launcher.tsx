@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaCaretRight, FaCalculator, FaListUl, FaTimes } from "react-icons/fa";
-import { Button, ButtonGroup, clsx } from "rond";
+import { Alert, Button, ButtonGroup, clsx } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
 import type { ArtifactManager } from "../../controllers/artifact-manager";
@@ -12,25 +12,24 @@ import Entity_ from "@Src/utils/entity-utils";
 
 interface LauncherProps {
   manager: ArtifactManager;
-  launchedOnce?: boolean;
+  runCount: number;
   onRequestLastResult: () => void;
   onRequestLaunch: () => void;
-  onRequestCancel: () => void;
+  onCancel: () => void;
 }
-export function Launcher({
-  manager,
-  launchedOnce,
-  onRequestLastResult,
-  onRequestLaunch,
-  onRequestCancel,
-}: LauncherProps) {
+export function Launcher({ manager, runCount, onRequestLastResult, onRequestLaunch, onCancel }: LauncherProps) {
   const { status, optimizer } = useOptimizerState();
   const [process, setProcess] = useState({
     percent: 0,
     time: 0,
   });
   const [waitingCancel, setWaitingCancel] = useState(false);
+  const [activeAlert, setActiveAlert] = useState(false);
   const mounted = useRef(true);
+
+  const timeout = (callback: () => void, time: number) => {
+    setTimeout(() => mounted.current && callback(), time);
+  };
 
   useEffect(() => {
     optimizer.onProcess = (info) => {
@@ -45,6 +44,10 @@ export function Launcher({
     };
   }, []);
 
+  useEffect(() => {
+    setActiveAlert(false);
+  }, [runCount]);
+
   const count = useMemo(() => {
     const each = {} as Record<ArtifactType, number>;
 
@@ -57,6 +60,23 @@ export function Launcher({
       maxCalcs: manager.calcCount,
     };
   }, []);
+
+  const onClickCancel = () => {
+    if (waitingCancel) {
+      setWaitingCancel(false);
+      setActiveAlert(true);
+      setProcess({
+        percent: 0,
+        time: 0,
+      });
+      onCancel();
+
+      return timeout(() => setActiveAlert(false), 2000);
+    }
+
+    setWaitingCancel(true);
+    timeout(() => setWaitingCancel(false), 5000);
+  };
 
   const renderArtifactCount = (type: ArtifactType) => {
     return (
@@ -72,22 +92,8 @@ export function Launcher({
     );
   };
 
-  const onClickCancel = () => {
-    if (waitingCancel) {
-      return onRequestCancel();
-    }
-
-    setWaitingCancel(true);
-
-    setTimeout(() => {
-      if (mounted.current) {
-        setWaitingCancel(false);
-      }
-    }, 5000);
-  };
-
   return (
-    <div className="pt-2 space-y-4">
+    <div className="h-full pt-2 flex flex-col gap-4">
       <div>
         <p>
           • Total selected Artifacts: <span className="font-semibold text-lg text-primary-1">{count.all}</span>
@@ -156,24 +162,30 @@ export function Launcher({
           </div>
         </div>
       ) : (
-        <ButtonGroup
-          buttons={[
-            {
-              children: "Last Result",
-              className: !launchedOnce && "hidden",
-              icon: <FaListUl className="text-base" />,
-              onClick: onRequestLastResult,
-            },
-            {
-              children: launchedOnce ? "Recalculate" : "Calculate",
-              variant: "primary",
-              icon: <FaCalculator className="text-base" />,
-              disabled: count.maxCalcs.isExceededLimit,
-              onClick: onRequestLaunch,
-            },
-          ]}
-        />
+        <div className="space-y-4">
+          <ButtonGroup
+            buttons={[
+              {
+                children: "Last Result",
+                className: !runCount && "hidden",
+                icon: <FaListUl className="text-base" />,
+                onClick: onRequestLastResult,
+              },
+              {
+                children: runCount ? "Recalculate" : "Calculate",
+                variant: "primary",
+                icon: <FaCalculator className="text-base" />,
+                disabled: count.maxCalcs.isExceededLimit,
+                onClick: onRequestLaunch,
+              },
+            ]}
+          />
+        </div>
       )}
+
+      <div className="mt-auto overflow-hidden transition-size duration-200" style={{ height: activeAlert ? 40 : 0 }}>
+        <Alert type="success" content="Task has been cancelled." onClose={() => setActiveAlert(false)} />
+      </div>
     </div>
   );
 }
