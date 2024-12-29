@@ -151,6 +151,7 @@ export class ArtifactManager {
     for (const { data, selectedIds } of this.sets) {
       if (selectedIds.size && !newBuffConfig[data.code] && data.buffs) {
         newBuffConfig[data.code] = data.buffs.map<OptimizerArtifactBuffConfigs[string][number]>((buff) => ({
+          code: data.code,
           index: buff.index,
           activated: true,
           inputs: Modifier_.createModCtrlInpus(buff.inputConfigs, true, true),
@@ -213,7 +214,7 @@ export class ArtifactManager {
     const calcCount: CalculationCount = { isExceededLimit: false, value: 1 };
 
     for (const type of ARTIFACT_TYPES) {
-      calcCount.value *= this.sumary[type].length;
+      calcCount.value *= this.sumary[type].length || 1;
 
       if (!calcCount.isExceededLimit && calcCount.value > this.LIMIT_CALC_COUNT) {
         calcCount.isExceededLimit = true;

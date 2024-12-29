@@ -1,5 +1,11 @@
-import type { ArtifactSetBonus, ModInputConfig, ModInputType, ModifierAffectType, WeaponType } from "@Backend";
-import type { ArtifactModCtrl, ElementModCtrl, ModifierCtrl } from "@Src/types";
+import {
+  GeneralCalc,
+  type ModInputConfig,
+  type ModInputType,
+  type ModifierAffectType,
+  type WeaponType,
+} from "@Backend";
+import type { Artifact, ArtifactModCtrl, ElementModCtrl, ModifierCtrl } from "@Src/types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 
 const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
@@ -99,8 +105,9 @@ export default class Modifier_ {
     return this.createItemBuffCtrls(forSelf, $AppWeapon.get(weapon.code));
   }
 
-  static createMainArtifactBuffCtrls(setBonuses: ArtifactSetBonus[]) {
-    const ctrls: ArtifactModCtrl[] = [];
+  static createMainArtifactBuffCtrls(artifacts: (Artifact | null)[]) {
+    const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
+    const artBuffCtrls: ArtifactModCtrl[] = [];
 
     for (const setBonus of setBonuses) {
       const { buffs = [] } = $AppArtifact.getSet(setBonus.code) || {};
@@ -109,14 +116,17 @@ export default class Modifier_ {
         const { bonusLv = 1 } = buff;
 
         if (buff.affect !== "TEAMMATE" && setBonus.bonusLv >= bonusLv) {
-          ctrls.push({
+          artBuffCtrls.push({
             code: setBonus.code,
             ...this.createModCtrl(buff, true),
           });
         }
       }
     }
-    return ctrls;
+    return {
+      setBonuses,
+      artBuffCtrls,
+    };
   }
 
   static createArtifactBuffCtrls(forSelf: boolean, artifact?: { code?: number }) {

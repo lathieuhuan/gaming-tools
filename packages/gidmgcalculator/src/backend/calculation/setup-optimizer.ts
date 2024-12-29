@@ -92,8 +92,7 @@ export class SetupOptimizer extends InputProcessor {
     const startTime = Date.now();
 
     this.forEachCombination((set) => {
-      const setBonuses = GeneralCalc.getArtifactSetBonuses(set);
-      const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(setBonuses);
+      const { artBuffCtrls } = Modifier_.createMainArtifactBuffCtrls(set);
 
       for (const control of artBuffCtrls) {
         const config = Array_.findByIndex(artifactBuffConfigs[control.code], control.index);

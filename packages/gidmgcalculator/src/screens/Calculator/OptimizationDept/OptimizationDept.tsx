@@ -8,6 +8,7 @@ import type { ArtifactManager } from "./controllers/artifact-manager";
 
 import { useStoreSnapshot } from "@Src/features";
 import { $AppWeapon } from "@Src/services";
+import Object_ from "@Src/utils/object-utils";
 import { useCharacterData, useOptimizerState, usePartyData } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 
@@ -81,6 +82,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const guideControl = useRef<OptimizationGuideControl<StepKey>>(null);
   const savedValues = useRef<SavedValues>({});
   const setForPieceSelecte = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
+  const lastModConfigs = useRef(artifactManager.buffConfigs);
   const runCount = useRef(0);
 
   const isActiveResult = resultStatus === "OPEN" || resultStatus === "REOPEN";
@@ -110,6 +112,8 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       },
       [artifactManager.buffConfigs, extraConfigs!]
     );
+
+    lastModConfigs.current = Object_.clone(artifactManager.buffConfigs);
   };
 
   const togglePieceSelect = (active: boolean, code?: number) => {
@@ -267,7 +271,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       >
         <ResultDisplay
           setup={store.setup}
-          artifactManager={artifactManager}
+          artifactBuffConfigs={lastModConfigs.current}
           onRequestReturn={() => {
             setResultStatus("CLOSE");
             guideControl.current?.toggle("ACTIVE", true);

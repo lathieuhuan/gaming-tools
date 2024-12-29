@@ -1,4 +1,4 @@
-import { ATTACK_ELEMENTS, GeneralCalc, isGrantedEffect, WeaponType } from "@Backend";
+import { ATTACK_ELEMENTS, isGrantedEffect, WeaponType } from "@Backend";
 
 import { $AppCharacter } from "@Src/services";
 import type {
@@ -149,8 +149,7 @@ export default class Setup_ {
       }
     }
 
-    const setBonuses = GeneralCalc.getArtifactSetBonuses(data.artifacts);
-    const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(setBonuses);
+    const { artBuffCtrls } = Modifier_.createMainArtifactBuffCtrls(data.artifacts);
 
     const output: CalcSetup = {
       ...data,

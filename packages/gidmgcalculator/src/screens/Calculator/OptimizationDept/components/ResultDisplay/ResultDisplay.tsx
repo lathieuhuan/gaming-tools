@@ -1,14 +1,14 @@
-import { ARTIFACT_TYPES, type AppArtifact } from "@Backend";
 import { useRef, useState } from "react";
 import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
 import { ButtonGroup, Checkbox, FancyBackSvg, ItemCase } from "rond";
+import { ARTIFACT_TYPES, OptimizerArtifactBuffConfigs, type AppArtifact } from "@Backend";
 
 import type { Artifact, CalcSetup } from "@Src/types";
-import type { ArtifactManager } from "../../controllers/artifact-manager";
 
 import { useOptimizerState } from "@Src/screens/Calculator/ContextProvider";
 import { $AppArtifact } from "@Src/services";
 import Entity_ from "@Src/utils/entity-utils";
+import Modifier_ from "@Src/utils/modifier-utils";
 import Object_ from "@Src/utils/object-utils";
 import { importSetup } from "@Store/calculator-slice";
 import { useDispatch } from "@Store/hooks";
@@ -18,7 +18,7 @@ import { ArtifactCard, GenshinImage, ItemThumbnail } from "@Src/components";
 
 interface ResultDisplayProps {
   setup: CalcSetup;
-  artifactManager: ArtifactManager;
+  artifactBuffConfigs: OptimizerArtifactBuffConfigs;
   onRequestReturn: () => void;
   onRequestExit: () => void;
 }
@@ -32,34 +32,39 @@ export function ResultDisplay(props: ResultDisplayProps) {
 
   const selectedIndexes = useRef(new Set(result.map((_, i) => i)));
   const dataBySet = useRef<Record<number, AppArtifact>>({});
-  const suffix = ["st", "nd", "rd"];
+  const suffixes = ["st", "nd", "rd"];
 
   const onToggleCheckCalculation = (index: number, checked: boolean) => {
     checked ? selectedIndexes.current.add(index) : selectedIndexes.current.delete(index);
   };
 
   const loadResultToCalculator = () => {
-    const { artifactManager } = props;
+    const { artifactBuffConfigs } = props;
     let id = Date.now();
 
     for (const index of selectedIndexes.current) {
+      const { artifacts = [] } = result.at(index) || {};
+      const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts)
+        .artBuffCtrls.map((control) => artifactBuffConfigs[control.code])
+        .flat();
       const calcSetup = Object_.clone(props.setup);
 
-      calcSetup.artifacts = result[index].artifacts;
-
-      // calcSetup.artBuffCtrls;
+      calcSetup.artifacts = artifacts;
+      calcSetup.artBuffCtrls = artBuffCtrls;
 
       dispatch(
         importSetup({
           importInfo: {
             ID: id++,
             type: "original",
-            name: `Optimized ${index + 1}${suffix[index]}`,
+            name: `Optimized ${index + 1}${suffixes[index]}`,
             calcSetup,
           },
         })
       );
     }
+
+    props.onRequestExit();
   };
 
   return (
@@ -72,7 +77,7 @@ export function ResultDisplay(props: ResultDisplayProps) {
                 <div className="flex justify-between items-start">
                   <p className="text-2xl font-black text-danger-2">
                     {index + 1}
-                    {suffix[index]}
+                    {suffixes[index]}
                   </p>
 
                   <Checkbox
