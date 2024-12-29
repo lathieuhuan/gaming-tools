@@ -47,9 +47,9 @@ export type UpdateCalculatorAction = PayloadAction<
 export type InitNewSessionPayload = PartiallyRequired<SetupImportInfo, "calcSetup">;
 
 export type ImportSetupAction = PayloadAction<{
-  importInfo: PartiallyRequired<SetupImportInfo, "calcSetup" | "target">;
-  shouldOverwriteChar: boolean;
-  shouldOverwriteTarget: boolean;
+  importInfo: PartiallyRequired<Pick<SetupImportInfo, "ID" | "name" | "type" | "calcSetup" | "target">, "calcSetup">;
+  shouldOverwriteChar?: boolean;
+  shouldOverwriteTarget?: boolean;
 }>;
 
 export type UpdateCharacterAction = PayloadAction<

@@ -4,20 +4,19 @@ import { Alert, Button, ButtonGroup, clsx } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
 import type { ArtifactManager } from "../../controllers/artifact-manager";
-
 import { GenshinImage } from "@Src/components";
 import { useOptimizerState } from "@Src/screens/Calculator/ContextProvider";
 import { formatNumber } from "@Src/utils";
 import Entity_ from "@Src/utils/entity-utils";
 
 interface LauncherProps {
-  manager: ArtifactManager;
+  artifactManager: ArtifactManager;
   runCount: number;
   onRequestLastResult: () => void;
   onRequestLaunch: () => void;
   onCancel: () => void;
 }
-export function Launcher({ manager, runCount, onRequestLastResult, onRequestLaunch, onCancel }: LauncherProps) {
+export function Launcher({ artifactManager, runCount, onRequestLastResult, onRequestLaunch, onCancel }: LauncherProps) {
   const { status, optimizer } = useOptimizerState();
   const [process, setProcess] = useState({
     percent: 0,
@@ -52,12 +51,12 @@ export function Launcher({ manager, runCount, onRequestLastResult, onRequestLaun
     const each = {} as Record<ArtifactType, number>;
 
     for (const type of ARTIFACT_TYPES) {
-      each[type] = manager.sumary[type].length;
+      each[type] = artifactManager.sumary[type].length;
     }
     return {
       ...each,
       all: each.flower + each.plume + each.sands + each.goblet + each.circlet,
-      maxCalcs: manager.calcCount,
+      maxCalcs: artifactManager.calcCount,
     };
   }, []);
 
@@ -112,8 +111,8 @@ export function Launcher({ manager, runCount, onRequestLastResult, onRequestLaun
 
           {count.maxCalcs.isExceededLimit ? (
             <p className="font-semibold text-danger-2 text-base">
-              This exceeds the limit of {formatNumber(manager.LIMIT_CALC_COUNT)} calculations. Please select less
-              Artifacts.
+              This exceeds the limit of {formatNumber(artifactManager.LIMIT_CALC_COUNT)} calculations. Please select
+              less Artifacts.
             </p>
           ) : null}
         </div>

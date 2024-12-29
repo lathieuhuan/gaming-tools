@@ -165,7 +165,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       title: "Select Artifacts",
       render: (changeValid) => (
         <ArtifactSetSelect
-          manager={artifactManager}
+          artifactManager={artifactManager}
           onChangeValid={changeValid}
           onRequestSelectPieces={(code) => togglePieceSelect(true, code)}
         />
@@ -175,7 +175,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       key: STEP_KEY.MODIFIERS,
       title: "Artifact Modifiers",
       initialValid: true,
-      render: () => <ArtifactModConfig manager={artifactManager} />,
+      render: () => <ArtifactModConfig artifactManager={artifactManager} />,
     },
     {
       key: STEP_KEY.CALC_ITEMS,
@@ -205,7 +205,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       initialValid: true,
       render: () => (
         <Launcher
-          manager={artifactManager}
+          artifactManager={artifactManager}
           runCount={runCount.current}
           onRequestLaunch={() => {
             guideControl.current?.notify(null);
@@ -266,12 +266,13 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         }}
       >
         <ResultDisplay
-          onClickReturn={() => {
+          setup={store.setup}
+          artifactManager={artifactManager}
+          onRequestReturn={() => {
             setResultStatus("CLOSE");
             guideControl.current?.toggle("ACTIVE", true);
           }}
-          onClickExit={() => setResultStatus("EXIT")}
-          onClickLoadToCalculator={console.log}
+          onRequestExit={() => setResultStatus("EXIT")}
         />
       </Modal>
     </>

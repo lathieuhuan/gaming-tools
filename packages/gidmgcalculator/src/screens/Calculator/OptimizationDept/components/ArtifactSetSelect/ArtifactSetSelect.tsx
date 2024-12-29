@@ -15,13 +15,13 @@ export type ArtifactSetOption = {
 };
 
 interface ArtifactSetSelectProps {
-  manager: ArtifactManager;
+  artifactManager: ArtifactManager;
   onChangeValid: (valid: boolean) => void;
   onRequestSelectPieces: (code: number) => void;
 }
-export function ArtifactSetSelect({ manager, onChangeValid, onRequestSelectPieces }: ArtifactSetSelectProps) {
+export function ArtifactSetSelect({ artifactManager, onChangeValid, onRequestSelectPieces }: ArtifactSetSelectProps) {
   const timeout = useRef<NodeJS.Timeout>();
-  const [sets, setSets] = useState(manager.sets);
+  const [sets, setSets] = useState(artifactManager.sets);
   const [keyword, setKeyword] = useState("");
 
   const [codes, setCodes] = useState({
@@ -39,7 +39,7 @@ export function ArtifactSetSelect({ manager, onChangeValid, onRequestSelectPiece
         visibleCodes.add(set.data.code);
         visibleSelectedCount += set.selectedIds.size;
 
-        if (!anyEquippedSelected && manager.checkAnyEquippedSelected(set)) {
+        if (!anyEquippedSelected && artifactManager.checkAnyEquippedSelected(set)) {
           anyEquippedSelected = true;
         }
       }
@@ -100,14 +100,14 @@ export function ArtifactSetSelect({ manager, onChangeValid, onRequestSelectPiece
         <Button
           size="small"
           disabled={!all.visibleSelectedCount}
-          onClick={() => setSets(manager.unselectAll(all.visibleCodes))}
+          onClick={() => setSets(artifactManager.unselectAll(all.visibleCodes))}
         >
           Unselect All{all.visibleSelectedCount ? ` (${all.visibleSelectedCount})` : ""}
         </Button>
         <Button
           size="small"
           disabled={!all.anyEquippedSelected}
-          onClick={() => setSets(manager.removeEquipped(all.visibleCodes))}
+          onClick={() => setSets(artifactManager.removeEquipped(all.visibleCodes))}
         >
           Remove Equipped
         </Button>
@@ -129,7 +129,7 @@ export function ArtifactSetSelect({ manager, onChangeValid, onRequestSelectPiece
                 isActive={isActive}
                 isClosing={codes.closing.has(code)}
                 set={set}
-                manager={manager}
+                manager={artifactManager}
                 onClickLabel={() => onClickOption(code, isActive)}
                 onClickSelectPieces={() => onRequestSelectPieces(code)}
                 onChangeSets={setSets}

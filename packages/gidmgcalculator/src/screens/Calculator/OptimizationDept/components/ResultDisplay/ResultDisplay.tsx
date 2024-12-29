@@ -1,21 +1,30 @@
+import { ARTIFACT_TYPES, type AppArtifact } from "@Backend";
 import { useRef, useState } from "react";
 import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
 import { ButtonGroup, Checkbox, FancyBackSvg, ItemCase } from "rond";
-import { ARTIFACT_TYPES, type AppArtifact } from "@Backend";
 
-import type { Artifact } from "@Src/types";
+import type { Artifact, CalcSetup } from "@Src/types";
+import type { ArtifactManager } from "../../controllers/artifact-manager";
 
-import { ArtifactCard, GenshinImage, ItemThumbnail } from "@Src/components";
 import { useOptimizerState } from "@Src/screens/Calculator/ContextProvider";
 import { $AppArtifact } from "@Src/services";
 import Entity_ from "@Src/utils/entity-utils";
+import Object_ from "@Src/utils/object-utils";
+import { importSetup } from "@Store/calculator-slice";
+import { useDispatch } from "@Store/hooks";
+
+// Component
+import { ArtifactCard, GenshinImage, ItemThumbnail } from "@Src/components";
 
 interface ResultDisplayProps {
-  onClickReturn: () => void;
-  onClickExit: () => void;
-  onClickLoadToCalculator: (selectedIndexes: number[]) => void;
+  setup: CalcSetup;
+  artifactManager: ArtifactManager;
+  onRequestReturn: () => void;
+  onRequestExit: () => void;
 }
 export function ResultDisplay(props: ResultDisplayProps) {
+  const dispatch = useDispatch();
+
   const [selected, setSelected] = useState<Artifact>();
   const {
     status: { result },
@@ -27,6 +36,30 @@ export function ResultDisplay(props: ResultDisplayProps) {
 
   const onToggleCheckCalculation = (index: number, checked: boolean) => {
     checked ? selectedIndexes.current.add(index) : selectedIndexes.current.delete(index);
+  };
+
+  const loadResultToCalculator = () => {
+    const { artifactManager } = props;
+    let id = Date.now();
+
+    for (const index of selectedIndexes.current) {
+      const calcSetup = Object_.clone(props.setup);
+
+      calcSetup.artifacts = result[index].artifacts;
+
+      // calcSetup.artBuffCtrls;
+
+      dispatch(
+        importSetup({
+          importInfo: {
+            ID: id++,
+            type: "original",
+            name: `Optimized ${index + 1}${suffix[index]}`,
+            calcSetup,
+          },
+        })
+      );
+    }
   };
 
   return (
@@ -99,18 +132,18 @@ export function ResultDisplay(props: ResultDisplayProps) {
             {
               children: "Return",
               icon: <FancyBackSvg />,
-              onClick: props.onClickReturn,
+              onClick: props.onRequestReturn,
             },
             {
               children: "Exit",
               icon: <FaSignOutAlt className="text-base" />,
-              onClick: props.onClickExit,
+              onClick: props.onRequestExit,
             },
             {
               children: "Load to Calculator",
               icon: <FaFileUpload className="text-base" />,
               className: "gap-1",
-              onClick: () => props.onClickLoadToCalculator([...selectedIndexes.current]),
+              onClick: loadResultToCalculator,
             },
           ]}
         />

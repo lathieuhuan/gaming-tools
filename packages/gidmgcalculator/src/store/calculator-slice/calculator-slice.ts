@@ -93,7 +93,7 @@ export const calculatorSlice = createSlice({
           setup.char = calcSetup.char;
         }
       }
-      if (shouldOverwriteTarget) {
+      if (shouldOverwriteTarget && target) {
         state.target = target;
       }
 
