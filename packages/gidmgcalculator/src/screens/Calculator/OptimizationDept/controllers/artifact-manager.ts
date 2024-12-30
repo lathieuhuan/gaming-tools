@@ -1,29 +1,23 @@
-import type { PartiallyOptional } from "rond";
-import { ARTIFACT_TYPES, type AppArtifact, type ArtifactType, type OptimizerArtifactBuffConfigs } from "@Backend";
-import type { UserArtifact } from "@Src/types";
+import { ARTIFACT_TYPES } from "@Backend";
+import type { ArtifactType, OptimizerArtifactModConfigs, OptimizerAllArtifactModConfigs } from "@Backend";
+import type {
+  CalculationCount,
+  ChangeModConfigInputs,
+  InputArtifact,
+  ManagedArtifactSet,
+  ToggleModConfig,
+} from "./artifact-manager.types";
 
 import { $AppArtifact } from "@Src/services";
 import Modifier_ from "@Src/utils/modifier-utils";
-
-type InputArtifact = PartiallyOptional<UserArtifact, "owner">;
-
-export type ManagedArtifactSet = {
-  data: AppArtifact;
-  pieces: InputArtifact[];
-  selectedIds: Set<number>;
-};
-
-type CalculationCount = {
-  isExceededLimit: boolean;
-  value: number;
-};
 
 export class ArtifactManager {
   private readonly MAX_ACTUAL_COUNT = 100_000_000_000;
   readonly LIMIT_CALC_COUNT = 1_000_000;
 
   sets: ManagedArtifactSet[] = [];
-  buffConfigs: OptimizerArtifactBuffConfigs = {};
+  buffConfigs: OptimizerArtifactModConfigs = {};
+  debuffConfigs: OptimizerArtifactModConfigs = {};
   sumary: Record<ArtifactType, InputArtifact[]> = {
     flower: [],
     plume: [],
@@ -36,8 +30,15 @@ export class ArtifactManager {
     value: 1,
   };
 
+  get allModConfigs(): OptimizerAllArtifactModConfigs {
+    return {
+      buffs: this.buffConfigs,
+      debuffs: this.debuffConfigs,
+    };
+  }
+
   private recordedOnce = false;
-  private recordedSelectedCodes: number[] = [];
+  private recordedModCodes: string[] = [];
 
   constructor(artifacts: InputArtifact[]) {
     const countMap = new Map<number, ManagedArtifactSet>();
@@ -68,13 +69,13 @@ export class ArtifactManager {
     this.sets = sets;
   }
 
-  private getCurrentSelectedCodes() {
-    return this.sets.reduce<number[]>((codes, set) => (set.selectedIds.size ? codes.concat(set.data.code) : codes), []);
+  private getCurrentModCodes() {
+    return Object.keys(this.buffConfigs).concat(Object.keys(this.debuffConfigs));
   }
 
-  recordSelectedSets = () => {
+  recordPresentMods = () => {
     this.recordedOnce = true;
-    this.recordedSelectedCodes = this.getCurrentSelectedCodes();
+    this.recordedModCodes = this.getCurrentModCodes();
   };
 
   //
@@ -146,27 +147,42 @@ export class ArtifactManager {
 
   /** @returns true if there is any new selected artifact set */
   concludeModConfigs = () => {
-    const newBuffConfig: OptimizerArtifactBuffConfigs = {};
+    const newBuffConfigs: OptimizerArtifactModConfigs = {};
+    const newDebuffConfigs: OptimizerArtifactModConfigs = {};
 
     for (const { data, selectedIds } of this.sets) {
-      if (selectedIds.size && !newBuffConfig[data.code] && data.buffs) {
-        newBuffConfig[data.code] = data.buffs.map<OptimizerArtifactBuffConfigs[string][number]>((buff) => ({
-          code: data.code,
-          index: buff.index,
-          activated: true,
-          inputs: Modifier_.createModCtrlInpus(buff.inputConfigs, true, true),
-        }));
+      if (selectedIds.size) {
+        if (!newBuffConfigs[data.code] && data.buffs) {
+          newBuffConfigs[data.code] = data.buffs.map<OptimizerArtifactModConfigs[string][number]>((buff) => ({
+            code: data.code,
+            index: buff.index,
+            activated: true,
+            inputs: Modifier_.createModCtrlInpus(buff.inputConfigs, true, true),
+          }));
+        }
+        if (!newDebuffConfigs[data.code] && data.debuffs) {
+          newDebuffConfigs[data.code] = data.debuffs.map<OptimizerArtifactModConfigs[string][number]>((buff) => ({
+            code: data.code,
+            index: buff.index,
+            activated: true,
+            inputs: Modifier_.createModCtrlInpus(buff.inputConfigs, true, true),
+          }));
+        }
       }
     }
-    this.buffConfigs = newBuffConfig;
+
+    this.buffConfigs = newBuffConfigs;
+    this.debuffConfigs = newDebuffConfigs;
 
     if (this.recordedOnce) {
-      return this.getCurrentSelectedCodes().some((code) => !this.recordedSelectedCodes.includes(code));
+      return this.getCurrentModCodes().some((code) => !this.recordedModCodes.includes(code));
     }
     return false;
   };
 
-  toggleBuffConfig = (setCode: number, configIndex: number) => {
+  // ===== BUFFS =====
+
+  toggleBuffConfig: ToggleModConfig = (setCode, configIndex) => {
     const newConfigsByCode = { ...this.buffConfigs };
     const newConfigs = newConfigsByCode[setCode];
 
@@ -180,7 +196,7 @@ export class ArtifactManager {
     return this.buffConfigs;
   };
 
-  changeBuffConfigInputs = (setCode: number, configIndex: number, inputs?: number[]) => {
+  changeBuffConfigInputs: ChangeModConfigInputs = (setCode, configIndex, inputs) => {
     const newConfigsByCode = { ...this.buffConfigs };
     const newConfigs = newConfigsByCode[setCode];
 
@@ -192,6 +208,36 @@ export class ArtifactManager {
       return (this.buffConfigs = newConfigsByCode);
     }
     return this.buffConfigs;
+  };
+
+  // ===== DEBUFFS =====
+
+  toggleDebuffConfig: ToggleModConfig = (setCode, configIndex) => {
+    const newConfigsByCode = { ...this.debuffConfigs };
+    const newConfigs = newConfigsByCode[setCode];
+
+    if (newConfigs[configIndex]) {
+      newConfigs[configIndex] = {
+        ...newConfigs[configIndex],
+        activated: !newConfigs[configIndex].activated,
+      };
+      return (this.debuffConfigs = newConfigsByCode);
+    }
+    return this.debuffConfigs;
+  };
+
+  changeDebuffConfigInputs: ChangeModConfigInputs = (setCode, configIndex, inputs) => {
+    const newConfigsByCode = { ...this.debuffConfigs };
+    const newConfigs = newConfigsByCode[setCode];
+
+    if (newConfigs[configIndex]) {
+      newConfigs[configIndex] = {
+        ...newConfigs[configIndex],
+        inputs,
+      };
+      return (this.debuffConfigs = newConfigsByCode);
+    }
+    return this.debuffConfigs;
   };
 
   sumarize = () => {

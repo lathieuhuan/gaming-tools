@@ -4,7 +4,7 @@ import { Modal } from "rond";
 import type { OptimizerExtraConfigs } from "@Backend";
 import type { ItemMultiSelectIds } from "@Src/components";
 import type { OptimizerState } from "../ContextProvider/OptimizerProvider";
-import type { ArtifactManager } from "./controllers/artifact-manager";
+import type { ArtifactManager } from "./controllers";
 
 import { useStoreSnapshot } from "@Src/features";
 import { $AppWeapon } from "@Src/services";
@@ -82,7 +82,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const guideControl = useRef<OptimizationGuideControl<StepKey>>(null);
   const savedValues = useRef<SavedValues>({});
   const setForPieceSelecte = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
-  const lastModConfigs = useRef(artifactManager.buffConfigs);
+  const lastModConfigs = useRef(artifactManager.allModConfigs);
   const runCount = useRef(0);
 
   const isActiveResult = resultStatus === "OPEN" || resultStatus === "REOPEN";
@@ -103,6 +103,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
   const optimizeSetup = () => {
     const { calcItem, extraConfigs } = savedValues.current;
+    const { allModConfigs } = artifactManager;
 
     optimizer.optimize(
       {
@@ -110,10 +111,11 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         calcItem: calcItem!.value,
         elmtModCtrls: store.setup.elmtModCtrls,
       },
-      [artifactManager.buffConfigs, extraConfigs!]
+      allModConfigs,
+      extraConfigs!
     );
 
-    lastModConfigs.current = Object_.clone(artifactManager.buffConfigs);
+    lastModConfigs.current = Object_.clone(allModConfigs);
   };
 
   const togglePieceSelect = (active: boolean, code?: number) => {
@@ -133,11 +135,11 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const onChangStep = (newStep: string, oldStep: string) => {
     switch (oldStep) {
       case STEP_KEY.ARTIFACTS: {
-        const hasAnyNewSelected = artifactManager.concludeModConfigs();
+        const hasAnyNewMod = artifactManager.concludeModConfigs();
 
         if (newStep !== STEP_KEY.MODIFIERS) {
           guideControl.current?.notify(
-            hasAnyNewSelected
+            hasAnyNewMod
               ? {
                   message: "New Artifact modifiers configurations!",
                   toStep: "MODIFIERS",
@@ -148,7 +150,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         break;
       }
       case STEP_KEY.MODIFIERS:
-        artifactManager.recordSelectedSets();
+        artifactManager.recordPresentMods();
         break;
     }
 
@@ -166,7 +168,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const stepConfigs: StepConfig<StepKey>[] = [
     {
       key: STEP_KEY.ARTIFACTS,
-      title: "Select Artifacts",
+      title: "Artifacts",
       render: (changeValid) => (
         <ArtifactSetSelect
           artifactManager={artifactManager}
@@ -183,7 +185,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     },
     {
       key: STEP_KEY.CALC_ITEMS,
-      title: "Select Item",
+      title: "Compared Item",
       render: (changeValid) => (
         <CalcItemSelect
           calcList={appChar.calcList}
@@ -271,7 +273,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       >
         <ResultDisplay
           setup={store.setup}
-          artifactBuffConfigs={lastModConfigs.current}
+          artifactModConfigs={lastModConfigs.current}
           onRequestReturn={() => {
             setResultStatus("CLOSE");
             guideControl.current?.toggle("ACTIVE", true);

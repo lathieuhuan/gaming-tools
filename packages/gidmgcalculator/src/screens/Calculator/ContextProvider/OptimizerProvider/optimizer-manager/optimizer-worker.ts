@@ -28,13 +28,13 @@ onmessage = (e: MessageEvent<OTM_ManagerRequest>) => {
       break;
     }
     case "OPTIMIZE": {
-      const { calculateParams } = e.data;
+      const { calcItemParams } = e.data;
       const calculations: OptimizeCalculation[] = [];
 
       optimizer.onOutput = (artifacts, totalAttr, attkBonusesArchive, calculator) => {
         const result = calculator
-          .genAttPattCalculator(calculateParams.pattern)
-          .calculate(calculateParams.calcItem, calculateParams.elmtModCtrls);
+          .genAttPattCalculator(calcItemParams.pattern)
+          .calculate(calcItemParams.calcItem, calcItemParams.elmtModCtrls);
 
         const calculation: OptimizeCalculation = {
           damage: result.average,
@@ -45,7 +45,7 @@ onmessage = (e: MessageEvent<OTM_ManagerRequest>) => {
         sorter.add(calculation);
       };
 
-      optimizer?.optimize(...e.data.params);
+      optimizer?.optimize(...e.data.optimizeParams);
 
       // const result: OptimizeResult = {
       //   bests: sorter.get(),

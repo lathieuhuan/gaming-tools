@@ -74,13 +74,16 @@ export class OptimizerManager {
     });
   }
 
-  optimize(calculateParams: OTM_OptimizeRequest["calculateParams"], params: OTM_OptimizeRequest["params"]) {
+  optimize(
+    calcItemParams: OTM_OptimizeRequest["calcItemParams"],
+    ...optimizeParams: OTM_OptimizeRequest["optimizeParams"]
+  ) {
     this.onStart();
 
     this.worker.postMessage({
       type: "OPTIMIZE",
-      calculateParams,
-      params,
+      calcItemParams,
+      optimizeParams,
     });
   }
 

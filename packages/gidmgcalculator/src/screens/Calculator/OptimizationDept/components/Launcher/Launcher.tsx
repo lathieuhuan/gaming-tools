@@ -3,7 +3,7 @@ import { FaCaretRight, FaCalculator, FaListUl, FaTimes } from "react-icons/fa";
 import { Alert, Button, ButtonGroup, clsx } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
-import type { ArtifactManager } from "../../controllers/artifact-manager";
+import type { ArtifactManager } from "../../controllers";
 import { GenshinImage } from "@Src/components";
 import { useOptimizerState } from "@Src/screens/Calculator/ContextProvider";
 import { formatNumber } from "@Src/utils";

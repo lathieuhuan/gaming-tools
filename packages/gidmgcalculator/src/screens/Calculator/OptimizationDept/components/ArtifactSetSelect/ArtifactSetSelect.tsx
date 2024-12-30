@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Input, OverflowTrackingContainer } from "rond";
 
-import type { ArtifactManager } from "../../controllers/artifact-manager";
+import type { ArtifactManager } from "../../controllers";
 import { SetOption } from "./SetOption";
 
 export type ArtifactSetOption = {
@@ -93,7 +93,7 @@ export function ArtifactSetSelect({ artifactManager, onChangeValid, onRequestSel
   return (
     <div className="h-full flex flex-col gap-3">
       <div>
-        <Input className="w-full" placeholder="Search" onChange={onChangeKeyword} />
+        <Input className="w-full" placeholder="Search" autoFocus onChange={onChangeKeyword} />
       </div>
 
       <div className="flex justify-end gap-3">

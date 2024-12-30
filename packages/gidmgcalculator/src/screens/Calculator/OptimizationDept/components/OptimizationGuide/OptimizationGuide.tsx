@@ -172,7 +172,7 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
 
                   return (
                     <Fragment key={config.key}>
-                      {index ? <div className="h-px bg-light-disabled" /> : null}
+                      {index ? <div className="h-px bg-black/30" /> : null}
                       <button
                         disabled={disabled}
                         className={clsx(
@@ -192,7 +192,12 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
 
             <div className="group relative">
               {noti.message && (
-                <div className="w-8 h-8 rounded-circle flex-center text-danger-3 group-hover:bg-light-default group-hover:text-black">
+                <div
+                  className={clsx(
+                    "w-8 h-8 rounded-circle flex-center text-danger-3",
+                    !showMenu && "group-hover:bg-light-default group-hover:text-black"
+                  )}
+                >
                   <FaExclamation />
                 </div>
               )}

@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { FaSkull } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 import { FaSun } from "react-icons/fa6";
-import { Button, useScreenWatcher } from "rond";
+import { Button, Modal, useScreenWatcher } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTraveler, updateUI } from "@Store/ui-slice";
+import { selectActiveId, selectSetupManageInfos } from "@Store/calculator-slice";
 import { useOptimizerState } from "../ContextProvider";
 
 // Component
@@ -88,6 +90,47 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 }
 
 function OptimizationDeptContact() {
-  const { status, toggle } = useOptimizerState();
-  return <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={() => toggle("active", true)} />;
+  const { toggle } = useOptimizerState();
+  const [activeConfirm, setActiveConfirm] = useState(false);
+  const infos = useSelector(selectSetupManageInfos);
+  const activeId = useSelector(selectActiveId);
+
+  const activeInfo = infos.find((info) => info.ID === activeId);
+
+  return (
+    <>
+      <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={() => setActiveConfirm(true)} />
+
+      <Modal
+        active={activeConfirm}
+        preset="small"
+        className="bg-surface-1"
+        title="Optimize"
+        withActions
+        confirmButtonProps={{
+          children: "Proceed",
+          autoFocus: true,
+        }}
+        onConfirm={() => {
+          toggle("active", true);
+          setActiveConfirm(false);
+        }}
+        onClose={() => setActiveConfirm(false)}
+      >
+        <ul className="pl-6 pr-2 list-disc space-y-2">
+          <li>
+            <div className="space-y-1">
+              <p>
+                Optimize <span className="text-primary-1">{activeInfo?.name}</span>
+              </p>
+              <p className="text-sm">
+                The Optimizer will use every configuration of this Setup except the main character's Artifacts and
+                Artifact buffs & debuffs.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </Modal>
+    </>
+  );
 }

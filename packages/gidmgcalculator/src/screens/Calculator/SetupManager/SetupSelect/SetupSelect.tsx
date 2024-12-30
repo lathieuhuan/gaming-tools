@@ -138,13 +138,13 @@ export function SetupSelect() {
                   onClick: onClickCopySetup(setup.ID),
                 },
                 {
-                  className: setup.ID === standardId ? "bg-bonus-color" : "bg-light-default",
+                  className: setup.ID === standardId ? "bg-bonus-color" : "bg-light-default hover:bg-primary-1",
                   children: <SiTarget className="text-1.5xl" />,
                   disabled: comparedIds.length < 2 || !comparedIds.includes(setup.ID),
                   onClick: onSelectStandard(setup.ID),
                 },
                 {
-                  className: comparedIds.includes(setup.ID) ? "bg-bonus-color" : "bg-light-default",
+                  className: comparedIds.includes(setup.ID) ? "bg-bonus-color" : "bg-light-default hover:bg-primary-1",
                   children: <FaBalanceScaleLeft className="text-1.5xl" />,
                   disabled: setupManageInfos.length < 2,
                   onClick: onClickToggleCompared(setup.ID),

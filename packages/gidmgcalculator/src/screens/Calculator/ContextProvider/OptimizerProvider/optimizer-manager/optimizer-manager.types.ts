@@ -23,12 +23,12 @@ export type OTM_LoadRequest = {
 
 export type OTM_OptimizeRequest = {
   type: "OPTIMIZE";
-  calculateParams: {
+  calcItemParams: {
     pattern: AttackPattern;
     calcItem: CalcItem;
     elmtModCtrls: ElementModCtrl;
   };
-  params: Parameters<SetupOptimizer["optimize"]>;
+  optimizeParams: Parameters<SetupOptimizer["optimize"]>;
 };
 
 export type OTM_ManagerRequest = OTM_InitRequest | OTM_LoadRequest | OTM_OptimizeRequest;

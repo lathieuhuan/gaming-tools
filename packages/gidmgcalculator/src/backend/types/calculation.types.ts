@@ -86,8 +86,13 @@ export type CalculationFinalResult = Record<CalculationFinalResultKey, Calculati
 
 // OPTIMIZER
 
-export type OptimizerArtifactBuffConfigs = {
+export type OptimizerArtifactModConfigs = {
   [code: string]: ArtifactModCtrl[];
+};
+
+export type OptimizerAllArtifactModConfigs = {
+  buffs: OptimizerArtifactModConfigs;
+  debuffs: OptimizerArtifactModConfigs;
 };
 
 export type OptimizerExtraConfigs = {

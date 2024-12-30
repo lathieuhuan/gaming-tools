@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
 import { Button, Checkbox, clsx } from "rond";
 
-import type { ManagedArtifactSet, ArtifactManager } from "../../controllers/artifact-manager";
+import type { ManagedArtifactSet, ArtifactManager } from "../../controllers";
 import { GenshinImage } from "@Src/components";
 
 interface SetOptionProps extends Pick<ActionsAnimatorProps, "isClosing" | "afterClosedActions"> {

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
 import { ButtonGroup, Checkbox, FancyBackSvg, ItemCase } from "rond";
-import { ARTIFACT_TYPES, OptimizerArtifactBuffConfigs, type AppArtifact } from "@Backend";
+import { ARTIFACT_TYPES, OptimizerAllArtifactModConfigs, AppArtifact } from "@Backend";
 
 import type { Artifact, CalcSetup } from "@Src/types";
 
@@ -18,7 +18,7 @@ import { ArtifactCard, GenshinImage, ItemThumbnail } from "@Src/components";
 
 interface ResultDisplayProps {
   setup: CalcSetup;
-  artifactBuffConfigs: OptimizerArtifactBuffConfigs;
+  artifactModConfigs: OptimizerAllArtifactModConfigs;
   onRequestReturn: () => void;
   onRequestExit: () => void;
 }
@@ -39,13 +39,13 @@ export function ResultDisplay(props: ResultDisplayProps) {
   };
 
   const loadResultToCalculator = () => {
-    const { artifactBuffConfigs } = props;
+    const { buffs, debuffs } = props.artifactModConfigs;
     let id = Date.now();
 
     for (const index of selectedIndexes.current) {
       const { artifacts = [] } = result.at(index) || {};
       const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts)
-        .artBuffCtrls.map((control) => artifactBuffConfigs[control.code])
+        .artBuffCtrls.map((control) => buffs[control.code])
         .flat();
       const calcSetup = Object_.clone(props.setup);
 

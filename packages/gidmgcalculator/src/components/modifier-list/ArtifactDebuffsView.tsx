@@ -2,9 +2,10 @@ import type { ArtifactModCtrl } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import { $AppArtifact } from "@Src/services";
+import { getArtifactDescription } from "@Src/utils/description-parsers";
 import Array_ from "@Src/utils/array-utils";
 import { GenshinModifierView } from "../GenshinModifierView";
-import { renderModifiers, getArtifactDescription } from "./modifiers.utils";
+import { renderModifiers } from "./modifiers.utils";
 
 interface ArtifactDebuffsViewProps {
   mutable?: boolean;

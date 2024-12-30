@@ -1,10 +1,9 @@
 import type { Artifact, CalcArtifacts, Target } from "@Src/types";
-import type { ArtifactType, OptimizerArtifactBuffConfigs, OptimizerExtraConfigs } from "../types";
+import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "../types";
 
 import Array_ from "@Src/utils/array-utils";
 import Modifier_ from "@Src/utils/modifier-utils";
 import Object_ from "@Src/utils/object-utils";
-import { GeneralCalc } from "../common-utils";
 import { InputProcessor } from "./input-processor";
 import { CalcItemCalculator } from "./calc-item-calculator";
 
@@ -88,19 +87,41 @@ export class SetupOptimizer extends InputProcessor {
     return this;
   };
 
-  optimize = (artifactBuffConfigs: OptimizerArtifactBuffConfigs, extraConfigs: OptimizerExtraConfigs) => {
+  optimize = (modConfig: OptimizerAllArtifactModConfigs, extraConfigs: OptimizerExtraConfigs) => {
     const startTime = Date.now();
 
     this.forEachCombination((set) => {
+      // ARTIFACTS
+      this.artifacts = set;
+
+      // ARTIFACT BUFFS
       const { artBuffCtrls } = Modifier_.createMainArtifactBuffCtrls(set);
 
-      for (const control of artBuffCtrls) {
-        const config = Array_.findByIndex(artifactBuffConfigs[control.code], control.index);
-        if (config) Object_.assign(control, config);
-      }
+      this.artBuffCtrls = artBuffCtrls.map((control) => {
+        const config = Array_.findByIndex(modConfig.buffs[control.code], control.index);
+        return config ? Object_.assign(control, config) : control;
+      });
 
-      this.artifacts = set;
-      this.artBuffCtrls = artBuffCtrls;
+      // ARTIFACT DEBUFFS
+      const artDebuffCtrls = Modifier_.createArtifactDebuffCtrls().map((control) => {
+        // Merge control in the setup [this.artDebuffCtrls] & control from config [modConfig.debuffs]
+        // into default control.
+        // Control from config is prioritized.
+
+        const existControl = this.artDebuffCtrls.find(
+          (ctrl) => ctrl.code === control.code && ctrl.index === control.index
+        );
+        if (existControl) Object_.assign(control, existControl);
+
+        const config = Array_.findByIndex(modConfig.debuffs[control.code], control.index);
+        if (config) Object_.assign(control, config);
+
+        return control;
+      });
+
+      // console.log(artDebuffCtrls);
+
+      this.artDebuffCtrls = artDebuffCtrls;
 
       const { totalAttr, attkBonusesArchive } = this.getCalculationStats();
       const resistances = this.getResistances(this.target);

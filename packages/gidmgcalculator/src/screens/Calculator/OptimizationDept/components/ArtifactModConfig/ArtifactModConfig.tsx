@@ -1,17 +1,62 @@
 import { useState } from "react";
 import { OverflowTrackingContainer } from "rond";
-import type { OptimizerArtifactBuffConfigs } from "@Backend";
-import type { ArtifactManager } from "../../controllers/artifact-manager";
+import type { AppArtifact, ArtifactModifierDescription, ModInputConfig, OptimizerArtifactModConfigs } from "@Backend";
+import type { ArtifactModCtrl } from "@Src/types";
+import type { ArtifactManager, ChangeModConfigInputs, ToggleModConfig } from "../../controllers";
 
 import { GenshinModifierView } from "@Src/components";
-import { getArtifactDescription } from "@Src/components/modifier-list/modifiers.utils";
+import { getArtifactDescription } from "@Src/utils/description-parsers";
 import Array_ from "@Src/utils/array-utils";
 
 interface ArtifactModConfigProps {
   artifactManager: ArtifactManager;
 }
 export function ArtifactModConfig({ artifactManager }: ArtifactModConfigProps) {
-  const [configs, setConfigs] = useState<OptimizerArtifactBuffConfigs>(artifactManager.buffConfigs);
+  const [buffConfigs, setBuffConfigs] = useState<OptimizerArtifactModConfigs>(artifactManager.buffConfigs);
+  const [debuffConfigs, setDebuffConfigs] = useState<OptimizerArtifactModConfigs>(artifactManager.debuffConfigs);
+
+  const renderModView = (
+    keyPrefix: string,
+    data: AppArtifact,
+    mods: Array<{ description: ArtifactModifierDescription; inputConfigs?: ModInputConfig[] }> = [],
+    onToggle: ToggleModConfig,
+    onChangeInput: ChangeModConfigInputs,
+    setChange: (value: ReturnType<ChangeModConfigInputs>) => void
+  ) => {
+    return (config: ArtifactModCtrl, configIndex: number) => {
+      const mod = Array_.findByIndex(mods, config.index);
+      if (!mod) return null;
+
+      const description = getArtifactDescription(data, mod);
+
+      const changeThisInput = (value: number, inpIndex: number) => {
+        if (config.inputs) {
+          const newInputs = config.inputs.map((input, index) => (index === inpIndex ? value : input));
+          setChange(onChangeInput(data.code, configIndex, newInputs));
+        }
+      };
+
+      return (
+        <GenshinModifierView
+          key={`${keyPrefix}-${data.code}-${config.index}`}
+          mutable
+          checked={config.activated}
+          heading={data.name}
+          description={description}
+          inputs={config.inputs}
+          inputConfigs={mod.inputConfigs}
+          onToggle={() => {
+            setChange(onToggle(data.code, configIndex));
+          }}
+          onToggleCheck={(input, index) => {
+            changeThisInput(input ? 0 : 1, index);
+          }}
+          onChangeText={changeThisInput}
+          onSelectOption={changeThisInput}
+        />
+      );
+    };
+  };
 
   return (
     <div className="h-full flex flex-col">
@@ -19,46 +64,35 @@ export function ArtifactModConfig({ artifactManager }: ArtifactModConfigProps) {
 
       <OverflowTrackingContainer className="mt-2 grow custom-scrollbar" overflowedCls="pr-3" wrapCls="space-y-2">
         {artifactManager.sets.map(({ data }) => {
-          const configsByCode = configs[data.code] || [];
-          if (!configsByCode.length || !data.buffs) return null;
+          const buffConfigsByCode = buffConfigs[data.code] || [];
+          const debuffConfigsByCode = debuffConfigs[data.code] || [];
+
+          if ((!buffConfigsByCode.length || !data.buffs) && (!debuffConfigsByCode.length || !data.debuffs)) {
+            return null;
+          }
 
           return (
             <div key={data.code} className="p-3 bg-surface-1 rounded space-y-2">
-              {configsByCode.map((config, configIndex) => {
-                const buff = Array_.findByIndex(data.buffs, config.index);
-                if (!buff) return null;
-
-                const description = getArtifactDescription(data, buff);
-
-                const changeThisInput = (value: number, inpIndex: number) => {
-                  if (config.inputs) {
-                    const newInputs = [...config.inputs];
-                    newInputs[inpIndex] = value;
-
-                    setConfigs(artifactManager.changeBuffConfigInputs(data.code, configIndex, newInputs));
-                  }
-                };
-
-                return (
-                  <GenshinModifierView
-                    key={`${data.code}-${config.index}`}
-                    mutable
-                    checked={config.activated}
-                    heading={data.name}
-                    description={description}
-                    inputs={config.inputs}
-                    inputConfigs={buff.inputConfigs}
-                    onToggle={() => {
-                      setConfigs(artifactManager.toggleBuffConfig(data.code, configIndex));
-                    }}
-                    onToggleCheck={(input, index) => {
-                      changeThisInput(input ? 0 : 1, index);
-                    }}
-                    onChangeText={changeThisInput}
-                    onSelectOption={changeThisInput}
-                  />
-                );
-              })}
+              {buffConfigsByCode.map(
+                renderModView(
+                  "B",
+                  data,
+                  data.buffs,
+                  artifactManager.toggleBuffConfig,
+                  artifactManager.changeBuffConfigInputs,
+                  setBuffConfigs
+                )
+              )}
+              {debuffConfigsByCode.map(
+                renderModView(
+                  "D",
+                  data,
+                  data.debuffs,
+                  artifactManager.toggleDebuffConfig,
+                  artifactManager.changeDebuffConfigInputs,
+                  setDebuffConfigs
+                )
+              )}
             </div>
           );
         })}

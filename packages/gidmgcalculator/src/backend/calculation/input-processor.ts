@@ -227,20 +227,14 @@ export class InputProcessor {
           const { name, buffs = [] } = $AppArtifact.getSet(ctrl.code) || {};
           const buff = Array_.findByIndex(buffs, ctrl.index);
 
-          // Currently only Obsidian Codex has 2 buffs,
-          // buff index 0 is for 2-piece, buff index 1 is for 4-piece,
-          // Other sets only have 1 buff index 0
-
           if (buff) {
-            const numOfPieces = buffs.length === 2 ? (ctrl.index + 1) * 2 : 4;
-
             applyBuff(
               buff,
               {
                 inputs: ctrl.inputs ?? [],
                 fromSelf: true,
               },
-              `${name} (self) / ${numOfPieces}-piece bonus`,
+              `${name} (self) / ${(buff.bonusLv ?? 1) * 2 + 2}-piece bonus`,
               isFinal
             );
           }

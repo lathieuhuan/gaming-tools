@@ -57,7 +57,7 @@ export function CalcItemSelect(props: CalcItemSelectProps) {
 
   return (
     <div className="h-full flex flex-col">
-      <p>Damage Instance to be optimized</p>
+      <p>Select the item to be compared</p>
 
       <div className="mt-2 pr-2 grow space-y-2 custom-scrollbar">
         {renderGroups.map((group, groupIndex) => {

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { ArtifactManager } from "../controllers/artifact-manager";
+import { ArtifactManager } from "../controllers";
 
 export function useArtifactManager(...args: ConstructorParameters<typeof ArtifactManager>) {
   const ref = useRef<ArtifactManager>();

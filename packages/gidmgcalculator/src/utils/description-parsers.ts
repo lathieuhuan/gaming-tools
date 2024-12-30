@@ -7,6 +7,8 @@ import {
   WeaponBuff,
   BareBonusGetter,
   CalculationInfo,
+  AppArtifact,
+  ArtifactModifierDescription,
 } from "@Backend";
 
 import { toMult } from "./pure-utils";
@@ -89,15 +91,6 @@ export const parseAbilityDescription = (
   });
 };
 
-export const parseArtifactDescription = (description: string) => {
-  return description.replace(/\{[\w \-,%]+\}#\[[kvm]\]/g, (match) => {
-    let [body, type = ""] = match.split("#");
-    body = body.slice(1, -1);
-    type = type?.slice(1, -1);
-    return wrapText(body, type);
-  });
-};
-
 const scaleRefi = (base: number, refi: number, increment = base / 3) => round(base + increment * refi, 3);
 
 export const parseWeaponDescription = (description: string, refi: number) => {
@@ -136,3 +129,20 @@ export const getWeaponBuffDescription = (descriptions: AppWeapon["descriptions"]
   }
   return "";
 };
+
+export const parseArtifactDescription = (description: string) => {
+  return description.replace(/\{[\w \-,%]+\}#\[[kvm]\]/g, (match) => {
+    let [body, type = ""] = match.split("#");
+    body = body.slice(1, -1);
+    type = type?.slice(1, -1);
+    return wrapText(body, type);
+  });
+};
+
+export function getArtifactDescription(data: AppArtifact, modifier: { description: ArtifactModifierDescription }) {
+  return parseArtifactDescription(
+    Array_.toArray(modifier.description).reduce<string>((acc, description) => {
+      return `${acc} ${typeof description === "string" ? description : data.descriptions[description] || ""}`;
+    }, "")
+  );
+}
