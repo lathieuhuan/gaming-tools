@@ -1,4 +1,4 @@
-import type { Party, PartyData } from "@Src/types";
+import type { Party, CalcAppParty } from "@Src/types";
 import {
   changeTeammateModCtrlInput,
   selectCharacter,
@@ -10,7 +10,7 @@ import { PartyBuffsView } from "@Src/components";
 
 interface PartyBuffsProps {
   party: Party;
-  partyData: PartyData;
+  partyData: CalcAppParty;
 }
 export default function PartyBuffs(props: PartyBuffsProps) {
   const dispatch = useDispatch();

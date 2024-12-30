@@ -1,6 +1,6 @@
 import { AppCharacter, TalentType } from "@Backend";
 
-import type { PartyData, Traveler } from "@Src/types";
+import type { CalcAppParty, Traveler } from "@Src/types";
 import type { StandardResponse } from "../services.types";
 import type { DataControl, ServiceSubscriber } from "./app-data.types";
 
@@ -209,7 +209,7 @@ export class AppCharacterService extends BaseService {
     return control!.data;
   }
 
-  getPartyData(party: Array<{ name: string } | null>): PartyData {
+  getPartyData(party: Array<{ name: string } | null>): CalcAppParty {
     return party.map((teammate) => {
       if (teammate) {
         const keys: Array<keyof AppCharacter> = ["code", "name", "icon", "nation", "vision", "weaponType", "EBcost"];

@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
-import { TALENT_TYPES, LevelableTalentType, CharacterCalc, GeneralCalc } from "@Backend";
+import {
+  TALENT_TYPES,
+  LevelableTalentType,
+  CharacterCalc,
+  GeneralCalc,
+  CalcCharacterRecord,
+  getDataOfSetupCharacters,
+} from "@Backend";
 
 import type { Character, Party } from "@Src/types";
 import { $AppCharacter } from "@Src/services";
@@ -35,6 +42,8 @@ export function TalentList(props: TalentListProps) {
 
   const appChar = $AppCharacter.get(char.name);
   const { weaponType, vision, activeTalents, passiveTalents } = appChar;
+  const appCharacters = getDataOfSetupCharacters(char, props.party);
+  const characterRecord = new CalcCharacterRecord(char, props.party, appCharacters);
   const partyData = props.party ? $AppCharacter.getPartyData(props.party) : undefined;
   const elmtText = `text-${vision}`;
   const numOfActives = Object.keys(activeTalents).length;
@@ -83,12 +92,7 @@ export function TalentList(props: TalentListProps) {
           const talent = activeTalents[talentType];
           if (!talent) return null;
 
-          const xtraLevel = CharacterCalc.getTotalXtraTalentLv({
-            appChar,
-            talentType,
-            char,
-            partyData,
-          });
+          const xtraLevel = CharacterCalc.getTotalXtraTalentLv(characterRecord, talentType);
 
           const mutableLvNode = (
             <VersatileSelect

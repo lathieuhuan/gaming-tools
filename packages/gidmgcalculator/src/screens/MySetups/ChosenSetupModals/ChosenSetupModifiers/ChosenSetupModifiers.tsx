@@ -1,7 +1,7 @@
 import { CollapseList } from "rond";
-import { ArtifactSetBonus } from "@Backend";
+import { ArtifactSetBonus, CalcCharacterRecord } from "@Backend";
 
-import type { UserSetup, UserWeapon } from "@Src/types";
+import type { AppCharactersByName, UserSetup, UserWeapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppCharacter, $AppData } from "@Src/services";
 import { calculateChosenSetup } from "../../MySetups.utils";
@@ -57,8 +57,17 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
     target,
   } = chosenSetup;
   const { appChar } = result;
+  const appCharacters = party.reduce<AppCharactersByName>(
+    (data, teammate) => {
+      if (teammate) data[teammate.name] = $AppCharacter.get(teammate.name);
+      return data;
+    },
+    {
+      [char.name]: appChar,
+    }
+  );
 
-  const partyData = $AppCharacter.getPartyData(party);
+  const characterRecord = new CalcCharacterRecord(char, party, appCharacters);
   const { title, variant, statuses } = $AppData.getTargetInfo(target);
 
   return (
@@ -74,11 +83,11 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
             },
             {
               heading: "Self",
-              body: <SelfDebuffsView mutable={false} modCtrls={selfDebuffCtrls} {...{ char, appChar, partyData }} />,
+              body: <SelfDebuffsView mutable={false} modCtrls={selfDebuffCtrls} characterRecord={characterRecord} />,
             },
             {
               heading: "Party",
-              body: <PartyDebuffsView mutable={false} {...{ char, party, partyData }} />,
+              body: <PartyDebuffsView mutable={false} {...{ char, party, appCharacters }} />,
             },
             {
               heading: "Artifacts",
@@ -109,11 +118,11 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
             },
             {
               heading: "Self",
-              body: <SelfBuffsView mutable={false} modCtrls={selfBuffCtrls} {...{ char, appChar, partyData }} />,
+              body: <SelfBuffsView mutable={false} modCtrls={selfBuffCtrls} characterRecord={characterRecord} />,
             },
             {
               heading: "Party",
-              body: <PartyBuffsView mutable={false} {...{ char, party, partyData }} />,
+              body: <PartyBuffsView mutable={false} {...{ char, party, appCharacters }} />,
             },
             {
               heading: "Weapons",

@@ -1,11 +1,11 @@
 import { createContext } from "react";
 import type { AppCharacter } from "@Backend";
-import type { PartyData } from "@Src/types";
+import type { CalcAppParty } from "@Src/types";
 import type { OptimizerState } from "./OptimizerProvider";
 
 export const CharacterDataContext = createContext<AppCharacter | undefined>(undefined);
 
-export const PartyDataContext = createContext<PartyData | undefined>(undefined);
+export const PartyDataContext = createContext<CalcAppParty | undefined>(undefined);
 
 export type CalculatorModalsControl = {
   requestSwitchCharacter: () => void;

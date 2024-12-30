@@ -2,7 +2,6 @@ import type { PartiallyOptional } from "rond";
 import type { TotalAttributeControl } from "../controls";
 import type {
   BareBonus,
-  CalculationInfo,
   EffectExtra,
   EffectMax,
   EntityBonusBasedOn,
@@ -10,9 +9,10 @@ import type {
   EntityBonusStack,
   EntityBonusValueByOption,
 } from "../types";
+import type { CalcCharacterRecord } from "../common-utils/calc-character-record";
 
 import Array_ from "@Src/utils/array-utils";
-import { CharacterCalc, GeneralCalc } from "../common-utils";
+import { CharacterCalc } from "../common-utils";
 import { isApplicableEffect } from "./isApplicableEffect";
 
 export type GetBareBonusSupportInfo = {
@@ -26,7 +26,7 @@ type InternalSupportInfo = GetBareBonusSupportInfo & {
 };
 
 export class BareBonusGetter {
-  constructor(protected info: CalculationInfo, protected totalAttrCtrl?: TotalAttributeControl) {}
+  constructor(protected record: CalcCharacterRecord, protected totalAttrCtrl?: TotalAttributeControl) {}
 
   updateTotalAttrCtrl(totalAttrCtrl: TotalAttributeControl) {
     this.totalAttrCtrl = totalAttrCtrl;
@@ -42,9 +42,9 @@ export class BareBonusGetter {
    * @param inputs used when optIndex is number or has INPUT source
    */
   protected getIndexOfBonusValue = (config: Pick<EntityBonusValueByOption, "optIndex">, inputs: number[] = []) => {
-    const { appChar, partyData } = this.info;
+    const { record } = this;
     const { optIndex = 0 } = config;
-    const elmtCount = GeneralCalc.countElements(partyData, appChar);
+    const elmtCount = record.allElmtCount;
     const indexConfig =
       typeof optIndex === "number"
         ? ({ source: "INPUT", inpIndex: optIndex } satisfies EntityBonusValueByOption["optIndex"])
@@ -71,7 +71,7 @@ export class BareBonusGetter {
         switch (indexConfig.element) {
           case "DIFFERENT":
             elmtCount.forEach((elementType) => {
-              if (elementType !== appChar.vision) indexValue++;
+              if (elementType !== record.appCharacter.vision) indexValue++;
             });
             break;
           default:
@@ -84,10 +84,7 @@ export class BareBonusGetter {
         break;
       }
       case "LEVEL": {
-        indexValue += CharacterCalc.getFinalTalentLv({
-          talentType: indexConfig.talent,
-          ...this.info,
-        });
+        indexValue += CharacterCalc.getFinalTalentLv(this.record, indexConfig.talent);
         break;
       }
     }
@@ -102,7 +99,7 @@ export class BareBonusGetter {
     let result = 0;
 
     for (const extra of Array_.toArray(extras)) {
-      if (isApplicableEffect(extra, this.info, support.inputs, support.fromSelf)) {
+      if (isApplicableEffect(extra, this.record, support.inputs, support.fromSelf)) {
         result += extra.value;
       }
     }
@@ -182,7 +179,7 @@ export class BareBonusGetter {
     if (typeof config === "number") {
       bonus.value += this.scaleRefi(config, support.refi);
     } //
-    else if (config && isApplicableEffect(config, this.info, support.inputs, support.fromSelf)) {
+    else if (config && isApplicableEffect(config, this.record, support.inputs, support.fromSelf)) {
       const extra = this.getBareBonus(config, support);
 
       if (extra) {
@@ -197,13 +194,16 @@ export class BareBonusGetter {
     if (!stack) {
       return 1;
     }
-    const { inputs, fromSelf } = support;
-    const { char, appChar, partyData } = this.info;
+    const { record } = this;
+    const trueAppParty = Array_.truthy(record.appParty);
     const partyDependentStackTypes: EntityBonusStack["type"][] = ["MEMBER", "ENERGY", "NATION", "RESOLVE", "MIX"];
 
-    if (partyDependentStackTypes.includes(stack.type) && !partyData.length) {
+    if (partyDependentStackTypes.includes(stack.type) && !trueAppParty.length) {
       return 0;
     }
+
+    const { inputs, fromSelf } = support;
+    const { appCharacter } = record;
     let result = 0;
 
     switch (stack.type) {
@@ -226,22 +226,22 @@ export class BareBonusGetter {
       }
       case "MEMBER": {
         const { element } = stack;
-        const elmtCount = GeneralCalc.countElements(partyData);
+        const elmtCount = record.elmtCount;
 
         switch (element) {
           case "DIFFERENT":
             elmtCount.forEach((type, value) => {
-              result += type !== appChar.vision ? value : 0;
+              result += type !== appCharacter.vision ? value : 0;
             });
             break;
           case "SAME_EXCLUDED":
             elmtCount.forEach((type, value) => {
-              result += type === appChar.vision ? value : 0;
+              result += type === appCharacter.vision ? value : 0;
             });
             break;
           case "SAME_INCLUDED":
             elmtCount.forEach((type, value) => {
-              result += type === appChar.vision ? value : 0;
+              result += type === appCharacter.vision ? value : 0;
             });
             result++;
             break;
@@ -249,44 +249,40 @@ export class BareBonusGetter {
             elmtCount.forEach((type, value) => {
               result += type === element ? value : 0;
             });
-            if (appChar.vision === element) result++;
+            if (appCharacter.vision === element) result++;
         }
         break;
       }
       case "ENERGY": {
-        result = appChar.EBcost;
+        result = appCharacter.EBcost;
 
         if (stack.scope === "PARTY") {
-          result += partyData.reduce((result, data) => result + (data?.EBcost ?? 0), 0);
+          trueAppParty.forEach((data) => (result += data.EBcost));
         }
         break;
       }
       case "NATION": {
         if (stack.nation === "LIYUE") {
-          result = partyData.reduce(
-            (result, data) => result + (data?.nation === "liyue" ? 1 : 0),
-            appChar.nation === "liyue" ? 1 : 0
+          result = trueAppParty.reduce(
+            (total, data) => total + (data.nation === "liyue" ? 1 : 0),
+            appCharacter.nation === "liyue" ? 1 : 0
           );
-        } else {
-          result = partyData.reduce((total, teammate) => total + (teammate?.nation === appChar.nation ? 1 : 0), 0);
+        } //
+        else {
+          result = trueAppParty.reduce((total, data) => total + (data.nation === appCharacter.nation ? 1 : 0), 0);
 
           if (stack.nation === "DIFFERENT") {
-            result = partyData.filter(Boolean).length - result;
+            result = trueAppParty.length - result;
           }
         }
         break;
       }
       case "RESOLVE": {
         let [totalEnergy = 0, electroEnergy = 0] = inputs;
-        if (char.cons >= 1 && electroEnergy <= totalEnergy) {
+        if (record.character.cons >= 1 && electroEnergy <= totalEnergy) {
           totalEnergy += electroEnergy * 0.8 + (totalEnergy - electroEnergy) * 0.2;
         }
-        const level = CharacterCalc.getFinalTalentLv({
-          talentType: "EB",
-          char: char,
-          appChar,
-          partyData,
-        });
+        const level = CharacterCalc.getFinalTalentLv(record, "EB");
         const stackPerEnergy = Math.min(Math.ceil(14.5 + level * 0.5), 20);
         const stacks = Math.round(totalEnergy * stackPerEnergy) / 100;
         // const countResolve = (energyCost: number) => Math.round(energyCost * stackPerEnergy) / 100;
@@ -295,13 +291,11 @@ export class BareBonusGetter {
         break;
       }
       case "MIX": {
-        if (appChar.nation === "natlan") result += 1;
+        result = trueAppParty.reduce(
+          (total, data) => total + (data.nation === "natlan" || data.vision !== record.appCharacter.vision ? 1 : 0),
+          appCharacter.nation === "natlan" ? 1 : 0
+        );
 
-        for (const teammate of partyData) {
-          if (teammate && (teammate.nation === "natlan" || teammate.vision !== appChar.vision)) {
-            result += 1;
-          }
-        }
         break;
       }
     }
@@ -309,8 +303,7 @@ export class BareBonusGetter {
     if (stack.capacity) {
       const capacityExtra = stack.capacity.extra;
       const capacity =
-        stack.capacity.value +
-        (isApplicableEffect(capacityExtra, this.info, inputs, fromSelf) ? capacityExtra.value : 0);
+        stack.capacity.value + (isApplicableEffect(capacityExtra, record, inputs, fromSelf) ? capacityExtra.value : 0);
 
       result = Math.max(capacity - result, 0);
     }
@@ -318,7 +311,7 @@ export class BareBonusGetter {
       if (result <= stack.baseline) return 0;
       result -= stack.baseline;
     }
-    if (stack.extra && isApplicableEffect(stack.extra, this.info, inputs, fromSelf)) {
+    if (stack.extra && isApplicableEffect(stack.extra, record, inputs, fromSelf)) {
       result += stack.extra.value;
     }
     result = this.applyMax(result, stack.max, support);
@@ -345,7 +338,7 @@ export class BareBonusGetter {
 
     initial.value = this.scaleRefi(initial.value, refi, config.incre);
 
-    initial.value *= CharacterCalc.getLevelScale(config.lvScale, this.info, inputs, fromSelf);
+    initial.value *= CharacterCalc.getLevelScale(config.lvScale, this.record, inputs, fromSelf);
 
     this.applyExtra(initial, config.preExtra, support);
 

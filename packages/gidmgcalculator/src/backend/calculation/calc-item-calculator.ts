@@ -10,7 +10,6 @@ import type {
   CalcItemMultFactor,
   CalcItemType,
   CalculationFinalResultItem,
-  CalculationInfo,
   NormalAttacksConfig,
   ResistanceReduction,
   TotalAttribute,
@@ -19,7 +18,7 @@ import type { ElementModCtrl, Infusion } from "@Src/types";
 
 import { toMult } from "@Src/utils";
 import Array_ from "@Src/utils/array-utils";
-import { CharacterCalc, GeneralCalc } from "@Src/backend/common-utils";
+import { CalcCharacterRecord, CharacterCalc, GeneralCalc } from "@Src/backend/common-utils";
 import { AttackBonusesArchive, CalcItemRecord, TrackerControl } from "@Src/backend/controls";
 
 type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorption">;
@@ -27,7 +26,7 @@ type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" 
 export class CalcItemCalculator {
   constructor(
     private targetLv: number,
-    private calcInfo: CalculationInfo,
+    private characterRecord: CalcCharacterRecord,
     private NAsConfig: NormalAttacksConfig,
     private customInfusion: Infusion,
     private totalAttr: TotalAttribute,
@@ -42,13 +41,7 @@ export class CalcItemCalculator {
     attElmt: AttackElement,
     itemId?: CalcItemCore["id"]
   ) => {
-    const {
-      calcInfo: { char },
-      targetLv,
-      totalAttr,
-      attkBonusesArchive,
-      resistances,
-    } = this;
+    const { characterRecord, targetLv, totalAttr, attkBonusesArchive, resistances } = this;
 
     function genEmptyResult() {
       return itemType === "attack"
@@ -110,7 +103,7 @@ export class CalcItemCalculator {
 
         // CALCULATE DEFENSE MULTIPLIER
         let defMult = 1;
-        const charPart = GeneralCalc.getBareLv(char.level) + 100;
+        const charPart = GeneralCalc.getBareLv(characterRecord.character.level) + 100;
         const defReduction = 1 - resistances.def / 100;
 
         defMult = 1 - getBonus("defIgn_") / 100;
@@ -191,12 +184,12 @@ export class CalcItemCalculator {
 
   genAttPattCalculator = (patternKey: AttackPattern) => {
     const { NAsConfig, totalAttr, attkBonusesArchive, customInfusion } = this;
-    const { appChar } = this.calcInfo;
+    const { appCharacter } = this.characterRecord;
 
-    const default_ = CharacterCalc.getTalentDefaultInfo(patternKey, appChar);
+    const default_ = CharacterCalc.getTalentDefaultInfo(patternKey, appCharacter);
     const resultKey = default_.resultKey;
     const disabled = NAsConfig[patternKey]?.disabled === true;
-    const level = CharacterCalc.getFinalTalentLv({ ...this.calcInfo, talentType: resultKey });
+    const level = CharacterCalc.getFinalTalentLv(this.characterRecord, resultKey);
 
     const configFlatFactor = (factor: CalcItemFlatFactor) => {
       const { root, scale = default_.flatFactorScale } = typeof factor === "number" ? { root: factor } : factor;
@@ -232,12 +225,12 @@ export class CalcItemCalculator {
       if (item.attElmt) {
         if (item.attElmt === "absorb") {
           // this attack can absorb element (anemo abilities) but user may or may not activate absorption
-          attElmt = elmtModCtrls.absorption || appChar.vision;
+          attElmt = elmtModCtrls.absorption || appCharacter.vision;
         } else {
           attElmt = item.attElmt;
         }
-      } else if (appChar.weaponType === "catalyst" || item.subAttPatt === "FCA" || resultKey !== "NAs") {
-        attElmt = appChar.vision;
+      } else if (appCharacter.weaponType === "catalyst" || item.subAttPatt === "FCA" || resultKey !== "NAs") {
+        attElmt = appCharacter.vision;
       } else if (resultKey === "NAs" && customInfusion.element !== "phys") {
         attElmt = customInfusion.element;
         /**

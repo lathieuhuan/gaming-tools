@@ -20,16 +20,12 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   const processor = new InputProcessor(setup, data, tracker);
 
   const { artAttr, totalAttr, attkBonusesArchive } = processor.getCalculationStats();
-  const resistances = processor.getResistances(target);
   const NAsConfig = processor.getNormalAttacksConfig();
+  const resistances = processor.getResistances(target);
 
   const calcItemCalculator = new CalcItemCalculator(
     target.level,
-    {
-      char,
-      appChar,
-      partyData: data.partyData,
-    },
+    processor.characterRecord,
     NAsConfig,
     setup.customInfusion,
     totalAttr,

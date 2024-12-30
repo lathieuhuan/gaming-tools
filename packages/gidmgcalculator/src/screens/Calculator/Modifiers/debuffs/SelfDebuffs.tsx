@@ -1,4 +1,4 @@
-import type { PartyData } from "@Src/types";
+import type { CalcAppParty } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectCharacter, changeModCtrlInput, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
 import { useCharacterData } from "../../ContextProvider";
@@ -6,7 +6,7 @@ import { useCharacterData } from "../../ContextProvider";
 //
 import { SelfDebuffsView } from "@Src/components";
 
-export default function SelfDebuffs({ partyData }: { partyData: PartyData }) {
+export default function SelfDebuffs({ partyData }: { partyData: CalcAppParty }) {
   const dispatch = useDispatch();
   const char = useSelector(selectCharacter);
   const selfDebuffCtrls = useSelector(

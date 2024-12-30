@@ -1,5 +1,5 @@
 import type { PartiallyRequired } from "rond";
-import type { ArtifactModCtrl, Character, PartyData } from "@Src/types";
+import type { ArtifactModCtrl } from "@Src/types";
 import type {
   ActualAttackElement,
   ActualAttackPattern,
@@ -13,15 +13,9 @@ import type {
   LevelableTalentType,
   QuickenReaction,
 } from "./common.types";
-import type { AppCharacter, CharacterBuffNormalAttackConfig } from "./app-character.types";
+import type { CharacterBuffNormalAttackConfig } from "./app-character.types";
 
 export type AttackReaction = AmplifyingReaction | QuickenReaction | null;
-
-export type CalculationInfo = {
-  char: Character;
-  appChar: AppCharacter;
-  partyData: PartyData;
-};
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
 export type TotalAttribute = Record<AttributeStat | "hp_base" | "atk_base" | "def_base", number>;

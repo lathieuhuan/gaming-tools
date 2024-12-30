@@ -6,9 +6,9 @@ import {
   AppWeapon,
   WeaponBuff,
   BareBonusGetter,
-  CalculationInfo,
   AppArtifact,
   ArtifactModifierDescription,
+  CalcCharacterRecord,
 } from "@Backend";
 
 import { toMult } from "./pure-utils";
@@ -45,11 +45,11 @@ export const parseResonanceDescription = (description: string) => {
 
 export const parseAbilityDescription = (
   ability: Pick<CharacterBuff | CharacterDebuff, "description" | "effects">,
-  obj: CalculationInfo,
+  record: CalcCharacterRecord,
   inputs: number[],
   fromSelf: boolean
 ) => {
-  const bonusGetter = new BareBonusGetter(obj);
+  const bonusGetter = new BareBonusGetter(record);
 
   return ability.description.replace(/\{[\w \-/,%^"'*@:=.[\]]+\}#\[\w*\]/g, (match) => {
     let [body, type = ""] = match.split("#");
@@ -63,7 +63,7 @@ export const parseAbilityDescription = (
         const { value, preExtra, max } = effect;
         let result = bonusGetter.getIntialBonusValue(value, { inputs, fromSelf });
 
-        result *= CharacterCalc.getLevelScale(effect.lvScale, obj, inputs, fromSelf);
+        result *= CharacterCalc.getLevelScale(effect.lvScale, record, inputs, fromSelf);
         if (typeof preExtra === "number") result += preExtra;
         if (typeof max === "number" && result > max) result = max;
 

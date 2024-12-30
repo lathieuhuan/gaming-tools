@@ -1,4 +1,4 @@
-import type { Party, PartyData } from "@Src/types";
+import type { Party, CalcAppParty } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectCharacter,
@@ -10,7 +10,7 @@ import { PartyDebuffsView } from "@Src/components";
 
 interface PartyDebuffsProps {
   party: Party;
-  partyData: PartyData;
+  partyData: CalcAppParty;
 }
 export default function PartyDebuffs(props: PartyDebuffsProps) {
   const dispatch = useDispatch();

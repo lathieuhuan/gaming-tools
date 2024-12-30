@@ -13,21 +13,14 @@ import type {
   Target,
   Weapon,
 } from "@Src/types";
-import type {
-  AttackElement,
-  AttackPattern,
-  AttributeStat,
-  CalculationInfo,
-  NormalAttacksConfig,
-  ReactionType,
-} from "../types";
+import type { AttackElement, AttackPattern, AttributeStat, NormalAttacksConfig, ReactionType } from "../types";
 import type { DataOfSetupEntities } from "../calculation-utils/getDataOfSetupEntities";
 
 import Array_ from "@Src/utils/array-utils";
 import { AppliedBonusesGetter } from "../calculation-utils/applied-bonuses-getter";
 import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
 import { isGrantedEffect } from "../calculation-utils/isGrantedEffect";
-import { GeneralCalc } from "../common-utils";
+import { CalcCharacterRecord, GeneralCalc } from "../common-utils";
 import {
   AMPLIFYING_REACTIONS,
   NORMAL_ATTACKS,
@@ -56,10 +49,9 @@ export class InputProcessor {
   protected superconduct?: ElementModCtrl["superconduct"];
   protected customInfusion: Infusion;
 
-  protected appCharacters: DataOfSetupEntities["appCharacters"];
+  public characterRecord: CalcCharacterRecord;
   protected appWeapons: DataOfSetupEntities["appWeapons"];
   protected appArtifacts: DataOfSetupEntities["appArtifacts"];
-  protected calcInfo: CalculationInfo;
 
   constructor(
     setup: PartiallyRequiredOnly<CalcSetup, "char" | "weapon" | "artifacts">,
@@ -85,15 +77,9 @@ export class InputProcessor {
       element: "phys",
     };
 
-    this.appCharacters = data.appCharacters;
+    this.characterRecord = new CalcCharacterRecord(this.char, this.party, data.appCharacters);
     this.appWeapons = data.appWeapons;
     this.appArtifacts = data.appArtifacts;
-
-    this.calcInfo = {
-      char: setup.char,
-      appChar: data.appCharacters[setup.char.name],
-      partyData: data.partyData,
-    };
   }
 
   getCalculationStats() {
@@ -109,8 +95,8 @@ export class InputProcessor {
       resonances,
       reaction,
       infuse_reaction,
+      characterRecord,
     } = this;
-    const { appChar } = this.calcInfo;
     const appWeapon = this.appWeapons[weapon.code];
 
     const { refi } = weapon;
@@ -118,13 +104,13 @@ export class InputProcessor {
 
     const totalAttrCtrl = new TotalAttributeControl(this.tracker).construct(
       char,
-      appChar,
+      characterRecord.appCharacter,
       weapon,
       appWeapon,
       artifacts
     );
     const attkBonusesCtrl = new AttackBonusesControl();
-    const bonusesGetter = new AppliedBonusesGetter(this.calcInfo, totalAttrCtrl);
+    const bonusesGetter = new AppliedBonusesGetter(characterRecord, totalAttrCtrl);
 
     const applyBuff: AppliedBonusesGetter["getAppliedBonuses"] = (...args) => {
       const result = bonusesGetter.getAppliedBonuses(...args);
@@ -134,7 +120,7 @@ export class InputProcessor {
     };
 
     const applySelfBuffs = (isFinal: boolean) => {
-      const { innateBuffs = [], buffs = [] } = appChar;
+      const { innateBuffs = [], buffs = [] } = characterRecord.appCharacter;
 
       for (const buff of innateBuffs) {
         if (isGrantedEffect(buff, char)) {
@@ -326,7 +312,7 @@ export class InputProcessor {
     // APPLY TEAMMATE BUFFS
     for (const teammate of party) {
       if (!teammate) continue;
-      const { name, buffs = [] } = this.appCharacters[teammate.name];
+      const { name, buffs = [] } = this.characterRecord.getAppTeammate(teammate.name);
 
       for (const { index, activated, inputs = [] } of teammate.buffCtrls) {
         const buff = Array_.findByIndex(buffs, index);
@@ -438,9 +424,10 @@ export class InputProcessor {
   }
 
   getResistances(target: Target) {
-    const { calcInfo, party, customDebuffCtrls, selfDebuffCtrls, artDebuffCtrls, resonances, superconduct } = this;
+    const { party, customDebuffCtrls, selfDebuffCtrls, artDebuffCtrls, resonances, superconduct } = this;
+    const { characterRecord } = this;
 
-    const resistReductCtrl = new ResistanceReductionControl(calcInfo, this.tracker);
+    const resistReductCtrl = new ResistanceReductionControl(characterRecord, this.tracker);
 
     // APPLY CUSTOM DEBUFFS
     for (const control of customDebuffCtrls) {
@@ -449,9 +436,9 @@ export class InputProcessor {
 
     // APPLY SELF DEBUFFS
     for (const ctrl of selfDebuffCtrls) {
-      const debuff = Array_.findByIndex(calcInfo.appChar.debuffs, ctrl.index);
+      const debuff = Array_.findByIndex(characterRecord.appCharacter.debuffs, ctrl.index);
 
-      if (ctrl.activated && debuff?.effects && isGrantedEffect(debuff, calcInfo.char)) {
+      if (ctrl.activated && debuff?.effects && isGrantedEffect(debuff, characterRecord.character)) {
         resistReductCtrl.applyDebuff(debuff, ctrl.inputs ?? [], true, `Self / ${debuff.src}`);
       }
     }
@@ -459,7 +446,7 @@ export class InputProcessor {
     // APPLY PARTY DEBUFFS
     for (const teammate of party) {
       if (!teammate) continue;
-      const { debuffs = [] } = this.appCharacters[teammate.name];
+      const { debuffs = [] } = characterRecord.appCharacter;
 
       for (const ctrl of teammate.debuffCtrls) {
         const debuff = Array_.findByIndex(debuffs, ctrl.index);
@@ -492,17 +479,16 @@ export class InputProcessor {
   }
 
   getNormalAttacksConfig() {
-    const { calcInfo } = this;
     const result: NormalAttacksConfig = {};
 
     for (const ctrl of this.selfBuffCtrls) {
-      const buff = ctrl.activated ? Array_.findByIndex(calcInfo.appChar.buffs, ctrl.index) : undefined;
+      const buff = ctrl.activated ? Array_.findByIndex(this.characterRecord.appCharacter.buffs, ctrl.index) : undefined;
       const { normalsConfig = [] } = buff || {};
 
       for (const config of Array_.toArray(normalsConfig)) {
         const { checkInput, forPatt = "ALL", ...rest } = config;
 
-        if (isApplicableEffect(config, calcInfo, ctrl.inputs ?? [], true)) {
+        if (isApplicableEffect(config, this.characterRecord, ctrl.inputs ?? [], true)) {
           if (forPatt === "ALL") {
             for (const type of NORMAL_ATTACKS) {
               result[type] = rest;

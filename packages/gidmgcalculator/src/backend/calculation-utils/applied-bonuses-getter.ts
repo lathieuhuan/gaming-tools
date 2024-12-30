@@ -11,7 +11,6 @@ import type {
 import Array_ from "@Src/utils/array-utils";
 import { ELEMENT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
-import { ModifierStackingControl } from "../controls";
 import { isApplicableEffect } from "./isApplicableEffect";
 import { BareBonusGetter, type GetBareBonusSupportInfo } from "./bare-bonus-getter";
 
@@ -67,7 +66,7 @@ export class AppliedBonusesGetter extends BareBonusGetter {
                 break;
               }
               case "OWN_ELMT":
-                toStat = this.info.appChar.vision;
+                toStat = this.record.appCharacter.vision;
                 break;
               default:
                 toStat = targetPath;
@@ -122,7 +121,7 @@ export class AppliedBonusesGetter extends BareBonusGetter {
     for (const config of Array_.toArray(buff.effects)) {
       if (
         (isFinal === undefined || isFinal === this.isTrulyFinalBonus(config)) &&
-        isApplicableEffect(config, this.info, support.inputs, support.fromSelf)
+        isApplicableEffect(config, this.record, support.inputs, support.fromSelf)
       ) {
         const bonus = this.getBareBonus(
           config,
@@ -144,4 +143,35 @@ export class AppliedBonusesGetter extends BareBonusGetter {
     }
     return result;
   }
+}
+
+type StackableCheckCondition = {
+  trackId?: string;
+  paths: string | string[];
+};
+
+class ModifierStackingControl {
+  private usedMods: NonNullable<StackableCheckCondition>[] = [];
+
+  isStackable = (condition: StackableCheckCondition) => {
+    if (condition.trackId) {
+      const isUsed = this.usedMods.some((usedMod) => {
+        if (condition.trackId === usedMod.trackId && typeof condition.paths === typeof usedMod.paths) {
+          if (Array.isArray(condition.paths)) {
+            return (
+              condition.paths.length === usedMod.paths.length &&
+              condition.paths.every((target, i) => target === usedMod.paths[i])
+            );
+          }
+          return condition.paths === usedMod.paths;
+        }
+        return false;
+      });
+
+      if (isUsed) return false;
+
+      this.usedMods.push(condition);
+    }
+    return true;
+  };
 }

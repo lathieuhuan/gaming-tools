@@ -1,4 +1,4 @@
-import type { CalcArtifacts, PartyData } from "@Src/types";
+import type { CalcArtifacts, CalcAppParty } from "@Src/types";
 import type { AmplifyingReaction, AppCharacter, AttackElement, ElementType, Level, QuickenReaction } from "../types";
 import TypeCounter from "@Src/utils/type-counter";
 import Array_ from "@Src/utils/array-utils";
@@ -82,11 +82,11 @@ export class GeneralCalc {
     }
   }
 
-  static countElements(partyData: PartyData, appChar?: AppCharacter) {
+  static countElements(appParty: CalcAppParty, appCharacter?: AppCharacter) {
     const counter = new TypeCounter<ElementType>();
 
-    if (appChar) counter.add(appChar.vision);
-    Array_.truthyOp(partyData).useEach("vision", (elmtType) => counter.add(elmtType));
+    if (appCharacter) counter.add(appCharacter.vision);
+    Array_.truthyOp(appParty).useEach("vision", (elmtType) => counter.add(elmtType));
 
     return counter;
   }

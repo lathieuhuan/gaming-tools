@@ -23,6 +23,11 @@ export default class Array_ {
 
   static truthyOp<TObject extends UnknownObject = UnknownObject>(list: Array<TObject | null | undefined>) {
     return {
+      each(callback: (value: TObject) => void) {
+        for (const item of list) {
+          if (item) callback(item);
+        }
+      },
       useEach<TKey extends keyof TObject>(key: TKey, callback: (value: TObject[TKey]) => void) {
         for (const item of list) {
           if (item) callback(item[key]);
