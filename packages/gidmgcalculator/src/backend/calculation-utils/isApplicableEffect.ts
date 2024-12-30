@@ -58,12 +58,12 @@ function isUsableEffect(
 
 function isAvailableEffect(
   condition: EffectApplicableCondition,
-  char: Character,
+  character: Character,
   inputs: number[],
   fromSelf: boolean
 ): boolean {
   if (fromSelf) {
-    if (!isGrantedEffect(condition, char)) return false;
+    if (!isGrantedEffect(condition, character)) return false;
   } else if (condition.altIndex !== undefined && !inputs[condition.altIndex]) {
     return false;
   }

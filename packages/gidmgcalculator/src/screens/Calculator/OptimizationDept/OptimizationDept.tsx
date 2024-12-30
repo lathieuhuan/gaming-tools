@@ -1,15 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Modal } from "rond";
 
-import type { OptimizerExtraConfigs } from "@Backend";
+import { getDataOfSetupEntities, type OptimizerExtraConfigs } from "@Backend";
 import type { ItemMultiSelectIds } from "@Src/components";
 import type { OptimizerState } from "../ContextProvider/OptimizerProvider";
 import type { ArtifactManager } from "./controllers";
 
 import { useStoreSnapshot } from "@Src/features";
-import { $AppWeapon } from "@Src/services";
 import Object_ from "@Src/utils/object-utils";
-import { useCharacterData, useOptimizerState, usePartyData } from "../ContextProvider";
+import { useCharacterData, useOptimizerState } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 
 // Components
@@ -62,17 +61,15 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     const setup = calculator.setupsById[calculator.activeId];
     const target = calculator.target;
     const artifacts = userdb.userArts;
-    const appWeapon = $AppWeapon.get(setup.weapon.code)!;
 
     return {
       setup,
       target,
-      appWeapon,
       artifacts,
+      data: getDataOfSetupEntities(setup),
     };
   });
   const appChar = useCharacterData();
-  const partyData = usePartyData();
   const artifactManager = useArtifactManager(store.artifacts);
 
   const [activePieceSelect, setActivePieceSelect] = useState(false);
@@ -88,7 +85,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const isActiveResult = resultStatus === "OPEN" || resultStatus === "REOPEN";
 
   useEffect(() => {
-    optimizer.init(store.target, store.setup, appChar, store.appWeapon, partyData);
+    optimizer.init(store.target, store.setup, store.data);
 
     const unsubscribe = optimizer.subscribeCompletion(() => {
       runCount.current += 1;
@@ -223,7 +220,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
           }}
           onCancel={() => {
             optimizer.end();
-            optimizer.init(store.target, store.setup, appChar, store.appWeapon, partyData);
+            optimizer.init(store.target, store.setup, store.data);
             optimizer.load(artifactManager.sumary, artifactManager.calcCount.value);
             props.onCancelProcess();
           }}

@@ -10,13 +10,10 @@ import type {
   Infusion,
   ModifierCtrl,
   Party,
-  PartyData,
   Target,
   Weapon,
 } from "@Src/types";
 import type {
-  AppCharacter,
-  AppWeapon,
   AttackElement,
   AttackPattern,
   AttributeStat,
@@ -24,8 +21,8 @@ import type {
   NormalAttacksConfig,
   ReactionType,
 } from "../types";
+import type { DataOfSetupEntities } from "../calculation-utils/getDataOfSetupEntities";
 
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import Array_ from "@Src/utils/array-utils";
 import { AppliedBonusesGetter } from "../calculation-utils/applied-bonuses-getter";
 import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
@@ -59,13 +56,14 @@ export class InputProcessor {
   protected superconduct?: ElementModCtrl["superconduct"];
   protected customInfusion: Infusion;
 
+  protected appCharacters: DataOfSetupEntities["appCharacters"];
+  protected appWeapons: DataOfSetupEntities["appWeapons"];
+  protected appArtifacts: DataOfSetupEntities["appArtifacts"];
   protected calcInfo: CalculationInfo;
 
   constructor(
     setup: PartiallyRequiredOnly<CalcSetup, "char" | "weapon" | "artifacts">,
-    protected appChar: AppCharacter,
-    protected appWeapon: AppWeapon,
-    protected partyData: PartyData = [],
+    data: DataOfSetupEntities,
     protected tracker?: TrackerControl
   ) {
     this.char = setup.char;
@@ -87,10 +85,14 @@ export class InputProcessor {
       element: "phys",
     };
 
+    this.appCharacters = data.appCharacters;
+    this.appWeapons = data.appWeapons;
+    this.appArtifacts = data.appArtifacts;
+
     this.calcInfo = {
       char: setup.char,
-      appChar,
-      partyData,
+      appChar: data.appCharacters[setup.char.name],
+      partyData: data.partyData,
     };
   }
 
@@ -107,9 +109,9 @@ export class InputProcessor {
       resonances,
       reaction,
       infuse_reaction,
-      appWeapon,
     } = this;
     const { appChar } = this.calcInfo;
+    const appWeapon = this.appWeapons[weapon.code];
 
     const { refi } = weapon;
     const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
@@ -182,7 +184,7 @@ export class InputProcessor {
     const applyArtifactBonuses = (isFinal: boolean) => {
       for (const { code, bonusLv } of setBonuses) {
         for (let i = 0; i <= bonusLv; i++) {
-          const data = $AppArtifact.getSet(code);
+          const data = this.appArtifacts[code];
           const buff = data?.setBonuses?.[i];
 
           if (buff && buff.effects) {
@@ -224,7 +226,7 @@ export class InputProcessor {
     const applyMainArtifactBuffs = (isFinal: boolean) => {
       for (const ctrl of artBuffCtrls) {
         if (ctrl.activated) {
-          const { name, buffs = [] } = $AppArtifact.getSet(ctrl.code) || {};
+          const { name, buffs = [] } = this.appArtifacts[ctrl.code] || {};
           const buff = Array_.findByIndex(buffs, ctrl.index);
 
           if (buff) {
@@ -324,7 +326,7 @@ export class InputProcessor {
     // APPLY TEAMMATE BUFFS
     for (const teammate of party) {
       if (!teammate) continue;
-      const { name, buffs = [] } = $AppCharacter.get(teammate.name);
+      const { name, buffs = [] } = this.appCharacters[teammate.name];
 
       for (const { index, activated, inputs = [] } of teammate.buffCtrls) {
         const buff = Array_.findByIndex(buffs, index);
@@ -343,7 +345,7 @@ export class InputProcessor {
       // #to-check: should be applied before main weapon buffs?
       (() => {
         const { code, refi } = teammate.weapon;
-        const { name, buffs = [] } = $AppWeapon.get(code) || {};
+        const { name, buffs = [] } = this.appWeapons[code] || {};
 
         for (const ctrl of teammate.weapon.buffCtrls) {
           const buff = Array_.findByIndex(buffs, ctrl.index);
@@ -364,7 +366,7 @@ export class InputProcessor {
 
       (() => {
         const { code } = teammate.artifact;
-        const { name, buffs = [] } = $AppArtifact.getSet(code) || {};
+        const { name, buffs = [] } = this.appArtifacts[code] || {};
 
         for (const ctrl of teammate.artifact.buffCtrls) {
           const buff = Array_.findByIndex(buffs, ctrl.index);
@@ -457,7 +459,7 @@ export class InputProcessor {
     // APPLY PARTY DEBUFFS
     for (const teammate of party) {
       if (!teammate) continue;
-      const { debuffs = [] } = $AppCharacter.get(teammate.name);
+      const { debuffs = [] } = this.appCharacters[teammate.name];
 
       for (const ctrl of teammate.debuffCtrls) {
         const debuff = Array_.findByIndex(debuffs, ctrl.index);
@@ -470,7 +472,7 @@ export class InputProcessor {
 
     // APPLY ARTIFACT DEBUFFS
     for (const ctrl of artDebuffCtrls) {
-      const { name, debuffs = [] } = $AppArtifact.getSet(ctrl.code) || {};
+      const { name, debuffs = [] } = this.appArtifacts[ctrl.code] || {};
       const debuff = debuffs[ctrl.index];
 
       if (ctrl.activated && debuff?.effects) {

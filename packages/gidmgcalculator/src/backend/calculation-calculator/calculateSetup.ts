@@ -1,22 +1,23 @@
 import type { CalcSetup, Target } from "@Src/types";
 import type { CalculationFinalResult } from "../types";
 
-import { $AppCharacter, $AppWeapon } from "@Src/services";
 import { GeneralCalc } from "../common-utils";
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "../constants";
 import { TRANSFORMATIVE_REACTION_INFO } from "../constants/internal";
 import { TrackerControl } from "../controls";
-import { InputProcessor } from "../calculation/input-processor";
+
+import { getDataOfSetupEntities } from "../calculation-utils/getDataOfSetupEntities";
 import { CalcItemCalculator } from "../calculation/calc-item-calculator";
+import { InputProcessor } from "../calculation/input-processor";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
-  const { char, weapon, party, elmtModCtrls } = setup;
-  const appChar = $AppCharacter.get(char.name);
-  const appWeapon = $AppWeapon.get(weapon.code)!;
-  const partyData = $AppCharacter.getPartyData(party);
+  const { char, weapon, elmtModCtrls } = setup;
+  const data = getDataOfSetupEntities(setup);
+  const appChar = data.appCharacters[char.name];
+  const appWeapon = data.appWeapons[weapon.code];
 
-  const processor = new InputProcessor(setup, appChar, appWeapon, partyData, tracker);
+  const processor = new InputProcessor(setup, data, tracker);
 
   const { artAttr, totalAttr, attkBonusesArchive } = processor.getCalculationStats();
   const resistances = processor.getResistances(target);
@@ -27,7 +28,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     {
       char,
       appChar,
-      partyData,
+      partyData: data.partyData,
     },
     NAsConfig,
     setup.customInfusion,

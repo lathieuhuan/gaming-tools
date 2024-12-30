@@ -1,6 +1,7 @@
 export { calculateSetup } from "./calculation-calculator/calculateSetup";
 export { AppliedBonusesGetter } from "./calculation-utils/applied-bonuses-getter";
 export { BareBonusGetter } from "./calculation-utils/bare-bonus-getter";
+export { getDataOfSetupEntities } from "./calculation-utils/getDataOfSetupEntities";
 export { isGrantedEffect } from "./calculation-utils/isGrantedEffect";
 export { InputProcessor } from "./calculation/input-processor";
 export { SetupOptimizer } from "./calculation/setup-optimizer";
@@ -46,10 +47,7 @@ export type {
   ModInputType,
   ModifierAffectType,
   NormalAttack,
-  NormalAttacksConfig,
-  OptimizerArtifactModConfigs,
-  OptimizerAllArtifactModConfigs,
-  OptimizerExtraConfigs,
+  NormalAttacksConfig, OptimizerAllArtifactModConfigs, OptimizerArtifactModConfigs, OptimizerExtraConfigs,
   QuickenReaction,
   ReactionType,
   ResistanceReduction,
