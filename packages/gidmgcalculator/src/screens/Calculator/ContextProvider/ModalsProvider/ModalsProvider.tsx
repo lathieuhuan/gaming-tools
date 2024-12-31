@@ -5,7 +5,7 @@ import Setup_ from "@Src/utils/setup-utils";
 import { useStoreSnapshot } from "@Src/features";
 import { useDispatch } from "@Store/hooks";
 import { initNewSessionWithCharacter } from "@Store/thunks";
-import { CalculatorModalsContext, type CalculatorModalsControl } from "../contexts";
+import { CalculatorModalsContext, CalculatorModalsControl } from "./Modals.context";
 
 // Component
 import { SetupExporterCore, SetupImporter, Tavern } from "@Src/components";

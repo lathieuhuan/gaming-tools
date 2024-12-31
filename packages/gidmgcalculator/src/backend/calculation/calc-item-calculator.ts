@@ -189,7 +189,7 @@ export class CalcItemCalculator {
     const default_ = CharacterCalc.getTalentDefaultInfo(patternKey, appCharacter);
     const resultKey = default_.resultKey;
     const disabled = NAsConfig[patternKey]?.disabled === true;
-    const level = CharacterCalc.getFinalTalentLv(this.characterRecord, resultKey);
+    const level = this.characterRecord.getFinalTalentLv(resultKey);
 
     const configFlatFactor = (factor: CalcItemFlatFactor) => {
       const { root, scale = default_.flatFactorScale } = typeof factor === "number" ? { root: factor } : factor;

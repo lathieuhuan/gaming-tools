@@ -1,6 +1,5 @@
 import type { EntityPenaltyCore } from "../types";
 import type { CharacterRecord } from "../common-utils/character-record";
-import { CharacterCalc } from "../common-utils";
 import { isApplicableEffect } from "./isApplicableEffect";
 
 export function getPenaltyValue(
@@ -10,7 +9,7 @@ export function getPenaltyValue(
   fromSelf = true
 ) {
   const { preExtra } = debuff;
-  let result = debuff.value * CharacterCalc.getLevelScale(debuff.lvScale, record, inputs, fromSelf);
+  let result = debuff.value * record.getLevelScale(debuff.lvScale, inputs, fromSelf);
 
   if (typeof preExtra === "number") {
     result += preExtra;

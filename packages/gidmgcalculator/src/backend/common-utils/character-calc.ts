@@ -2,12 +2,9 @@ import type {
   ActualAttackPattern,
   AppCharacter,
   AttackPattern,
-  CharacterEffectLevelScale,
   LevelableTalentType,
   TalentAttributeType,
-  TalentType,
 } from "../types";
-import type { CharacterRecord } from "./character-record";
 
 const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
   // some NA, CA, Eula's PA
@@ -27,50 +24,9 @@ const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
 };
 
 export class CharacterCalc {
-  // #TO-DO: check if needed
-  static getTotalXtraTalentLv(record: CharacterRecord, talentType: TalentType): number {
-    let result = 0;
-
-    if (talentType === "NAs") {
-      if (record.character.name === "Tartaglia" || record.party.some((teammate) => teammate?.name === "Tartaglia")) {
-        result++;
-      }
-    }
-    if (talentType !== "altSprint") {
-      const consLv = record.appCharacter.talentLvBonus?.[talentType];
-
-      if (consLv && record.character.cons >= consLv) {
-        result += 3;
-      }
-    }
-    return result;
-  }
-
-  // #TO-DO: check if needed
-  static getFinalTalentLv(record: CharacterRecord, talentType: TalentType): number {
-    const talentLv = talentType === "altSprint" ? 0 : record.character[talentType];
-    return talentLv + this.getTotalXtraTalentLv(record, talentType);
-  }
-
+  //
   static getTalentMult(scale: number, level: number): number {
     return scale ? TALENT_LV_MULTIPLIERS[scale]?.[level] ?? 0 : 1;
-  }
-
-  // #TO-DO: check if needed
-  static getLevelScale(
-    scale: CharacterEffectLevelScale | undefined,
-    record: CharacterRecord,
-    inputs: number[],
-    fromSelf: boolean
-  ): number {
-    if (scale) {
-      const { talent, value, altIndex = 0, max } = scale;
-      const level = fromSelf ? this.getFinalTalentLv(record, talent) : inputs[altIndex] ?? 0;
-
-      const result = value ? this.getTalentMult(value, level) : level;
-      return max && result > max ? max : result;
-    }
-    return 1;
   }
 
   static getTalentDefaultInfo(

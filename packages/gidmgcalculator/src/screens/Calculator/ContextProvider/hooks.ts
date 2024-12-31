@@ -1,25 +1,7 @@
 import { useContext } from "react";
-import { CalculatorModalsContext, CharacterDataContext, PartyDataContext } from "./contexts";
+import { CalculatorModalsContext } from "./ModalsProvider/Modals.context";
 import { CharacterRecordContext } from "./CharacterRecordProvider/CharacterRecord.context";
 import { OptimizerStateContext } from "./OptimizerProvider/OptimizerState.context";
-
-// #TO-DO: check if needed
-export function useCharacterData() {
-  const context = useContext(CharacterDataContext);
-  if (!context) {
-    throw new Error("useCharacterData must be used inside Calculator/ContextProvider");
-  }
-  return context;
-}
-
-// #TO-DO: check if needed
-export function usePartyData() {
-  const context = useContext(PartyDataContext);
-  if (!context) {
-    throw new Error("usePartyData must be used inside Calculator/ContextProvider");
-  }
-  return context;
-}
 
 export function useCharacterRecord() {
   const context = useContext(CharacterRecordContext);

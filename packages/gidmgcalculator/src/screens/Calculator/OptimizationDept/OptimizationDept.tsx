@@ -8,7 +8,7 @@ import type { ArtifactManager } from "./controllers";
 
 import { useStoreSnapshot } from "@Src/features";
 import Object_ from "@Src/utils/object-utils";
-import { useCharacterData, useCharacterRecord, useOptimizerState } from "../ContextProvider";
+import { useCharacterRecord, useOptimizerState } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 
 // Components

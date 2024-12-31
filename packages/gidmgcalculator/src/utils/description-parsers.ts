@@ -62,7 +62,7 @@ export const parseAbilityDescription = (
         const { value, preExtra, max } = effect;
         let result = bonusGetter.getIntialBonusValue(value, { inputs, fromSelf });
 
-        result *= CharacterCalc.getLevelScale(effect.lvScale, record, inputs, fromSelf);
+        result *= record.getLevelScale(effect.lvScale, inputs, fromSelf);
         if (typeof preExtra === "number") result += preExtra;
         if (typeof max === "number" && result > max) result = max;
 
