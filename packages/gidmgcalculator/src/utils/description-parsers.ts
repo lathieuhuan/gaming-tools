@@ -1,6 +1,5 @@
 import { round } from "rond";
 import {
-  CharacterCalc,
   CharacterBuff,
   CharacterDebuff,
   AppWeapon,
