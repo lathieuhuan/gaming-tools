@@ -30,6 +30,8 @@ import {
 } from "../constants";
 import { AttackBonusesControl, ResistanceReductionControl, TotalAttributeControl, TrackerControl } from "../controls";
 
+// This class and its calculation should NOT use any service
+// because it is used in SetupOptimizer which is run by Web Worker
 export class InputProcessor {
   protected character: Character;
   protected party: Party;
@@ -97,6 +99,7 @@ export class InputProcessor {
       infuse_reaction,
       characterRecord,
     } = this;
+    const { appCharacter } = characterRecord;
     const appWeapon = this.appWeapons[weapon.code];
 
     const { refi } = weapon;
@@ -104,7 +107,7 @@ export class InputProcessor {
 
     const totalAttrCtrl = new TotalAttributeControl(this.tracker).construct(
       character,
-      characterRecord.appCharacter,
+      appCharacter,
       weapon,
       appWeapon,
       artifacts
@@ -120,7 +123,7 @@ export class InputProcessor {
     };
 
     const applySelfBuffs = (isFinal: boolean) => {
-      const { innateBuffs = [], buffs = [] } = characterRecord.appCharacter;
+      const { innateBuffs = [], buffs = [] } = appCharacter;
 
       for (const buff of innateBuffs) {
         if (isGrantedEffect(buff, character)) {
@@ -312,7 +315,7 @@ export class InputProcessor {
     // APPLY TEAMMATE BUFFS
     for (const teammate of party) {
       if (!teammate) continue;
-      const { name, buffs = [] } = this.characterRecord.getAppCharacter(teammate.name);
+      const { name, buffs = [] } = characterRecord.getAppCharacter(teammate.name);
 
       for (const { index, activated, inputs = [] } of teammate.buffCtrls) {
         const buff = Array_.findByIndex(buffs, index);
@@ -446,7 +449,7 @@ export class InputProcessor {
     // APPLY PARTY DEBUFFS
     for (const teammate of party) {
       if (!teammate) continue;
-      const { debuffs = [] } = characterRecord.appCharacter;
+      const { debuffs = [] } = characterRecord.getAppCharacter(teammate.name);
 
       for (const ctrl of teammate.debuffCtrls) {
         const debuff = Array_.findByIndex(debuffs, ctrl.index);

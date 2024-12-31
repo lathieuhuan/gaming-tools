@@ -1,5 +1,6 @@
-import type { AttackPattern, CalcItem, SetupOptimizer } from "@Backend";
+import type { AttackPattern, CalcItem } from "@Backend";
 import type { CalcArtifacts, ElementModCtrl } from "@Src/types";
+import type { SetupOptimizer } from "./setup-optimizer";
 
 export type OptimizeCalculation = {
   damage: number | number[];

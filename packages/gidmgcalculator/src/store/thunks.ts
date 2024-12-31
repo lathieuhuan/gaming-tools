@@ -325,7 +325,7 @@ export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeam
         debuffCtrls: tmDebuffCtrls,
       };
 
-      const { artBuffCtrls } = Modifier_.createMainArtifactBuffCtrls(artifacts);
+      const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts);
 
       dispatch(
         updateSetupImportInfo({

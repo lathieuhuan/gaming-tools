@@ -14,18 +14,18 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   // console.time();
   const { char, weapon, elmtModCtrls } = setup;
   const data = getDataOfSetupEntities(setup);
-  const appCharacter = data.appCharacters[char.name];
   const appWeapon = data.appWeapons[weapon.code];
 
   const processor = new InputProcessor(setup, data, tracker);
 
+  const { characterRecord } = processor;
   const { artAttr, totalAttr, attkBonusesArchive } = processor.getCalculationStats();
   const NAsConfig = processor.getNormalAttacksConfig();
   const resistances = processor.getResistances(target);
 
   const calcItemCalculator = new CalcItemCalculator(
     target.level,
-    processor.characterRecord,
+    characterRecord,
     NAsConfig,
     setup.customInfusion,
     totalAttr,
@@ -45,7 +45,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   ATTACK_PATTERNS.forEach((ATT_PATT) => {
     const calculator = calcItemCalculator.genAttPattCalculator(ATT_PATT);
 
-    for (const calcItem of appCharacter.calcList[ATT_PATT]) {
+    for (const calcItem of characterRecord.appCharacter.calcList[ATT_PATT]) {
       finalResult[calculator.resultKey][calcItem.name] = calculator.calculate(calcItem, elmtModCtrls);
     }
   });
@@ -105,6 +105,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   // console.timeEnd();
 
   return {
+    characterRecord,
     totalAttr,
     artAttr,
     attkBonuses: attkBonusesArchive.serialize(),

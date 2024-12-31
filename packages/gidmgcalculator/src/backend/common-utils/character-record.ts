@@ -27,9 +27,7 @@ export class CharacterRecord<T extends Teammate | null = Teammate | null> extend
     return newCounter;
   }
 
-  protected updateParty() {}
-
-  getTotalXtraTalentLv(talentType: TalentType, character?: Character): number {
+  getTotalXtraTalentLv = (talentType: TalentType, character?: Character): number => {
     let _character = this.character;
     let _appCharacter = this._appCharacter;
 
@@ -53,14 +51,14 @@ export class CharacterRecord<T extends Teammate | null = Teammate | null> extend
       }
     }
     return result;
-  }
+  };
 
-  getFinalTalentLv(talentType: TalentType, character = this.character): number {
+  getFinalTalentLv = (talentType: TalentType, character = this.character): number => {
     const talentLv = talentType === "altSprint" ? 0 : character[talentType];
     return talentLv + this.getTotalXtraTalentLv(talentType, character);
-  }
+  };
 
-  getLevelScale(scale: CharacterEffectLevelScale | undefined, inputs: number[], fromSelf: boolean): number {
+  getLevelScale = (scale: CharacterEffectLevelScale | undefined, inputs: number[], fromSelf: boolean): number => {
     if (scale) {
       const { talent, value, altIndex = 0, max } = scale;
       const level = fromSelf ? this.getFinalTalentLv(talent) : inputs[altIndex] ?? 0;
@@ -69,5 +67,5 @@ export class CharacterRecord<T extends Teammate | null = Teammate | null> extend
       return max && result > max ? max : result;
     }
     return 1;
-  }
+  };
 }

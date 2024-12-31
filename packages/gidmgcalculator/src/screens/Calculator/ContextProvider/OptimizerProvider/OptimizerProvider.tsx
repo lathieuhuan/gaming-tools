@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { OptimizerManager } from "./optimizer-manager";
+import { OptimizeManager } from "./optimize-manager";
 import { OptimizerStateContext, OptimizerState, OptimizerStatus } from "./OptimizerState.context";
 
 function useOptimizer() {
-  const ref = useRef<OptimizerManager>();
+  const ref = useRef<OptimizeManager>();
 
   if (!ref.current) {
-    ref.current = new OptimizerManager();
+    ref.current = new OptimizeManager();
   }
   return ref.current;
 }

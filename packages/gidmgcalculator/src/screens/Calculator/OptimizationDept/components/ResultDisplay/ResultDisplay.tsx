@@ -45,7 +45,7 @@ export function ResultDisplay(props: ResultDisplayProps) {
     for (const index of selectedIndexes.current) {
       const { artifacts = [] } = result.at(index) || {};
       const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts)
-        .artBuffCtrls.map((control) => buffs[control.code])
+        .map((control) => buffs[control.code])
         .flat();
       const calcSetup = Object_.clone(props.setup);
 

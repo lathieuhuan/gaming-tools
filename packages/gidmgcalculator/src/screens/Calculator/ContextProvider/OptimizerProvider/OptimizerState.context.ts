@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { OptimizeResult, OptimizerManager } from "./optimizer-manager";
+import type { OptimizeResult, OptimizerManager } from "./optimize-manager";
 
 export type OptimizerStatus = {
   active: boolean;

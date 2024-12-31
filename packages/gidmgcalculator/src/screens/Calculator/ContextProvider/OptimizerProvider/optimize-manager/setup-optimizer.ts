@@ -1,12 +1,10 @@
+import { GeneralCalc, InputProcessor, CalcItemCalculator } from "@Backend";
+import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "@Backend";
 import type { AppArtifactsByCode, Artifact, ArtifactModCtrl, CalcArtifacts, Target } from "@Src/types";
-import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "../types";
 
 import Array_ from "@Src/utils/array-utils";
 import Modifier_ from "@Src/utils/modifier-utils";
 import Object_ from "@Src/utils/object-utils";
-import { GeneralCalc } from "../common-utils";
-import { CalcItemCalculator } from "./calc-item-calculator";
-import { InputProcessor } from "./input-processor";
 
 type CalculationStats = ReturnType<InputProcessor["getCalculationStats"]>;
 

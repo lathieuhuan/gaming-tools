@@ -5,13 +5,13 @@ import type {
   OptimizeResult,
   OTM_WorkerResponse,
   OTM_ProcessInfo,
-} from "./optimizer-manager.types";
+} from "./optimize-manager.types";
 
 const WORKER_URL = new URL("optimizer-worker.ts", import.meta.url);
 
 type OnCompleteOptimize = (state: OptimizeResult) => void;
 
-export class OptimizerManager {
+export class OptimizeManager {
   private worker: Worker;
   private workerTerminated = false;
   private subscribers = new Set<OnCompleteOptimize>();

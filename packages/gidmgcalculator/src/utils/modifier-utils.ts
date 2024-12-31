@@ -123,10 +123,7 @@ export default class Modifier_ {
         }
       }
     }
-    return {
-      setBonuses,
-      artBuffCtrls,
-    };
+    return artBuffCtrls;
   }
 
   static createArtifactBuffCtrls(forSelf: boolean, artifact?: { code?: number }) {

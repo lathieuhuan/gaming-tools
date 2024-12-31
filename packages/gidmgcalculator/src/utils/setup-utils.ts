@@ -149,7 +149,7 @@ export default class Setup_ {
       }
     }
 
-    const { artBuffCtrls } = Modifier_.createMainArtifactBuffCtrls(data.artifacts);
+    const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(data.artifacts);
 
     const output: CalcSetup = {
       ...data,

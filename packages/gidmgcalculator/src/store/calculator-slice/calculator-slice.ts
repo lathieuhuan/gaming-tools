@@ -341,7 +341,7 @@ export const calculatorSlice = createSlice({
         setup.artifacts[pieceIndex] = newPiece;
       }
 
-      const { artBuffCtrls: newArtBuffCtrls } = Modifier_.createMainArtifactBuffCtrls(setup.artifacts);
+      const newArtBuffCtrls = Modifier_.createMainArtifactBuffCtrls(setup.artifacts);
 
       newArtBuffCtrls.forEach((ctrl) => {
         const oldCtrl = setup.artBuffCtrls.find(

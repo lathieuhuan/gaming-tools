@@ -1,12 +1,10 @@
 import type { PartiallyRequiredOnly } from "rond";
-import type { CalcSetup, CalcAppParty, AppCharactersByName } from "@Src/types";
-import type { AppArtifact, AppWeapon } from "../types";
+import type { CalcSetup, CalcAppParty, AppCharactersByName, AppArtifactsByCode } from "@Src/types";
+import type { AppWeapon } from "../types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import Array_ from "@Src/utils/array-utils";
 
 type AppWeaponsByCode = Record<string, AppWeapon>;
-
-type AppArtifactsByCode = Record<string, AppArtifact>;
 
 export type DataOfSetupEntities = {
   appCharacters: AppCharactersByName;
@@ -14,19 +12,6 @@ export type DataOfSetupEntities = {
   appArtifacts: AppArtifactsByCode;
   appParty: CalcAppParty;
 };
-
-export function getDataOfSetupCharacters(character: CalcSetup["char"], party: CalcSetup["party"] = []) {
-  //
-  return party.reduce<AppCharactersByName>(
-    (record, teammate) => {
-      if (teammate) record[teammate.name] = $AppCharacter.get(teammate.name);
-      return record;
-    },
-    {
-      [character.name]: $AppCharacter.get(character.name),
-    }
-  );
-}
 
 export function getDataOfSetupEntities({
   char,
@@ -55,8 +40,8 @@ export function getDataOfSetupEntities({
       const appCharacter = $AppCharacter.get(teammate.name);
 
       appCharacters[teammate.name] = appCharacter;
-      appWeapons[teammate.weapon.code] = $AppWeapon.get(weapon.code)!;
-      appArtifacts[teammate.artifact.code] = $AppArtifact.getSet(teammate.artifact.code)!;
+      appWeapons[teammate.weapon.code] ||= $AppWeapon.get(weapon.code)!;
+      appArtifacts[teammate.artifact.code] ||= $AppArtifact.getSet(teammate.artifact.code)!;
       appParty.push(appCharacter);
     } //
     else {

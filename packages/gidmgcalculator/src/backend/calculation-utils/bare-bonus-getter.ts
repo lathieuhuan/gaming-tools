@@ -197,7 +197,7 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
     const trueAppParty = Array_.truthy(record.appParty);
     const partyDependentStackTypes: EntityBonusStack["type"][] = ["MEMBER", "ENERGY", "NATION", "RESOLVE", "MIX"];
 
-    if (partyDependentStackTypes.includes(stack.type) && !trueAppParty.length) {
+    if (partyDependentStackTypes.includes(stack.type) && !record.party.length) {
       return 0;
     }
 
@@ -294,6 +294,7 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
           (total, data) => total + (data.nation === "natlan" || data.vision !== appCharacter.vision ? 1 : 0),
           appCharacter.nation === "natlan" ? 1 : 0
         );
+        console.log(result);
 
         break;
       }
@@ -313,7 +314,9 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
     if (stack.extra && isApplicableEffect(stack.extra, record, inputs, fromSelf)) {
       result += stack.extra.value;
     }
-    result = this.applyMax(result, stack.max, support);
+
+    // check before applyMax because max stack in number does not auto scale with refi
+    result = typeof stack.max === "number" ? Math.min(result, stack.max) : this.applyMax(result, stack.max, support);
 
     return Math.max(result, 0);
   };

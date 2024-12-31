@@ -3,7 +3,7 @@ export { AppliedBonusesGetter } from "./calculation-utils/applied-bonuses-getter
 export { BareBonusGetter } from "./calculation-utils/bare-bonus-getter";
 export { isGrantedEffect } from "./calculation-utils/isGrantedEffect";
 export { InputProcessor } from "./calculation/input-processor";
-export { SetupOptimizer } from "./calculation/setup-optimizer";
+export { CalcItemCalculator } from "./calculation/calc-item-calculator";
 export {
   ArtifactCalc,
   CharacterCalc,

@@ -43,7 +43,7 @@ export function parseUserCharacter({
     const artifact = id ? Array_.findById(userArts, id) : undefined;
     return artifact ? Entity_.userItemToCalcItem(artifact, seedID++) : null;
   });
-  const { artBuffCtrls } = Modifier_.createMainArtifactBuffCtrls(artifacts);
+  const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts);
 
   return {
     character,

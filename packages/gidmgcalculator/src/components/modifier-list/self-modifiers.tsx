@@ -30,7 +30,7 @@ function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Array<Charact
           key={ctrl.index}
           mutable={props.mutable}
           heading={modifier.src}
-          description={parseAbilityDescription(modifier, inputs, true)}
+          description={parseAbilityDescription(modifier, inputs, true, toCharacterRecord(props.record))}
           checked={ctrl.activated}
           inputs={inputs}
           inputConfigs={modifier.inputConfigs?.filter((config) => config.for !== "FOR_TEAM")}

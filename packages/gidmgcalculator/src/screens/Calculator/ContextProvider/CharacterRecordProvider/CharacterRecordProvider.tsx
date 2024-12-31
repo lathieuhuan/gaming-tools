@@ -9,7 +9,9 @@ export function CharacterRecordProvider(props: { children: React.ReactElement })
   const party = useSelector(selectParty) || [];
   const concatNames = party.reduce((acc, teammate) => `${acc}.${teammate?.name || ""}`, "");
 
-  const characterRecord = useMemo(() => makeUICharacterRecord(character, party), [character?.name, concatNames]);
+  const characterRecord = useMemo(() => {
+    return character ? makeUICharacterRecord(character, party) : undefined;
+  }, [character, concatNames]);
 
   return <CharacterRecordContext.Provider value={characterRecord}>{props.children}</CharacterRecordContext.Provider>;
 }

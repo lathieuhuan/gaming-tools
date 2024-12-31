@@ -1,6 +1,6 @@
-import type { OptimizeCalculation, OTM_ManagerRequest, OTM_WorkerResponse } from "./optimizer-manager.types";
-import { SetupOptimizer } from "@Backend";
+import type { OptimizeCalculation, OTM_ManagerRequest, OTM_WorkerResponse } from "./optimize-manager.types";
 import { CalculationSorter } from "./calculation-sorter";
+import { SetupOptimizer } from "./setup-optimizer";
 
 let optimizer: SetupOptimizer;
 const sorter = new CalculationSorter();

@@ -10,6 +10,7 @@ import type {
 
 import { $AppArtifact } from "@Src/services";
 import Modifier_ from "@Src/utils/modifier-utils";
+import type { AppArtifactsByCode } from "@Src/types";
 
 export class ArtifactManager {
   private readonly MAX_ACTUAL_COUNT = 100_000_000_000;
@@ -25,6 +26,8 @@ export class ArtifactManager {
     goblet: [],
     circlet: [],
   };
+  appArtifacts: AppArtifactsByCode = {};
+
   calcCount: CalculationCount = {
     isExceededLimit: false,
     value: 1,
@@ -252,6 +255,7 @@ export class ArtifactManager {
     for (const set of this.sets) {
       for (const artifact of set.pieces) {
         if (set.selectedIds.has(artifact.ID)) {
+          this.appArtifacts[set.data.code] = set.data;
           this.sumary[artifact.type].push(artifact);
         }
       }

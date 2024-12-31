@@ -102,6 +102,8 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     const { calcItem, extraConfigs } = savedValues.current;
     const { allModConfigs } = artifactManager;
 
+    console.log(artifactManager.sets.filter((set) => set.selectedIds.size));
+
     optimizer.optimize(
       {
         pattern: calcItem!.patternCate,
@@ -155,8 +157,8 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       case STEP_KEY.LAUNCHER: {
         setCanShowGuideMenu(true);
 
-        const { sumary, calcCount } = artifactManager.sumarize();
-        optimizer.load(sumary, calcCount.value);
+        const { sumary, calcCount, appArtifacts } = artifactManager.sumarize();
+        optimizer.load(sumary, appArtifacts, calcCount.value);
         break;
       }
     }
@@ -221,7 +223,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
           onCancel={() => {
             optimizer.end();
             optimizer.init(store.target, store.setup, store.data);
-            optimizer.load(artifactManager.sumary, artifactManager.calcCount.value);
+            optimizer.load(artifactManager.sumary, artifactManager.appArtifacts, artifactManager.calcCount.value);
             props.onCancelProcess();
           }}
         />
