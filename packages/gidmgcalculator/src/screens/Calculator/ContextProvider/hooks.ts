@@ -1,11 +1,7 @@
 import { useContext } from "react";
-import {
-  CalculatorModalsContext,
-  CharacterDataContext,
-  OptimizerStateContext,
-  PartyDataContext,
-  CharacterRecordContext,
-} from "./contexts";
+import { CalculatorModalsContext, CharacterDataContext, PartyDataContext } from "./contexts";
+import { CharacterRecordContext } from "./CharacterRecordProvider/CharacterRecord.context";
+import { OptimizerStateContext } from "./OptimizerProvider/OptimizerState.context";
 
 // #TO-DO: check if needed
 export function useCharacterData() {
@@ -25,7 +21,6 @@ export function usePartyData() {
   return context;
 }
 
-/** Only NOT read  */
 export function useCharacterRecord() {
   const context = useContext(CharacterRecordContext);
   if (!context) {

@@ -1,5 +1,5 @@
 import type { EntityPenaltyCore } from "../types";
-import type { CharacterRecord } from "../common-utils/calc-character-record";
+import type { CharacterRecord } from "../common-utils/character-record";
 import { CharacterCalc } from "../common-utils";
 import { isApplicableEffect } from "./isApplicableEffect";
 

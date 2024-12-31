@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import type { OptimizerState, OptimizerStatus } from "./OptimizerProvider.types";
-import { OptimizerStateContext } from "../contexts";
 import { OptimizerManager } from "./optimizer-manager";
+import { OptimizerStateContext, OptimizerState, OptimizerStatus } from "./OptimizerState.context";
 
 function useOptimizer() {
   const ref = useRef<OptimizerManager>();

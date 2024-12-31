@@ -1,2 +1,2 @@
 export * from "./OptimizerProvider";
-export * from "./OptimizerProvider.types";
+export type { OptimizerState } from "./OptimizerState.context";

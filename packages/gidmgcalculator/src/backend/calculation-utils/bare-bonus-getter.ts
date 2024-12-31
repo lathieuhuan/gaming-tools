@@ -9,7 +9,7 @@ import type {
   EntityBonusStack,
   EntityBonusValueByOption,
 } from "../types";
-import type { CharacterRecord } from "../common-utils/calc-character-record";
+import type { CharacterRecord } from "../common-utils/character-record";
 
 import Array_ from "@Src/utils/array-utils";
 import { CharacterCalc } from "../common-utils";

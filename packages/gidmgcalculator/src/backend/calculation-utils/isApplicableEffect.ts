@@ -1,6 +1,6 @@
 import type { Character } from "@Src/types";
 import type { EffectApplicableCondition, EffectUsableCondition } from "@Src/backend/types";
-import type { CharacterRecord } from "../common-utils/calc-character-record";
+import type { CharacterRecord } from "../common-utils/character-record";
 
 import Array_ from "@Src/utils/array-utils";
 import TypeCounter from "@Src/utils/type-counter";

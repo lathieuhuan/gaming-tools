@@ -1,3 +1,4 @@
+import { createContext } from "react";
 import type { OptimizeResult, OptimizerManager } from "./optimizer-manager";
 
 export type OptimizerStatus = {
@@ -11,3 +12,5 @@ export type OptimizerState = {
   optimizer: Pick<OptimizerManager, "init" | "load" | "optimize" | "end" | "subscribeCompletion" | "onProcess">;
   toggle: (key: keyof OptimizerStatus, active?: boolean) => void;
 };
+
+export const OptimizerStateContext = createContext<OptimizerState | null>(null);

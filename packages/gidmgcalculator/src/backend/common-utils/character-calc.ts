@@ -7,7 +7,7 @@ import type {
   TalentAttributeType,
   TalentType,
 } from "../types";
-import type { CharacterRecord } from "./calc-character-record";
+import type { CharacterRecord } from "./character-record";
 
 const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
   // some NA, CA, Eula's PA
