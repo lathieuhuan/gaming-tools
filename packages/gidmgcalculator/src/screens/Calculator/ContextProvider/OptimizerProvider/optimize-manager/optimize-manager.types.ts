@@ -1,4 +1,4 @@
-import type { AttackPattern, CalcItem } from "@Backend";
+import type { AttackBonuses, AttackPattern, CalcItem, TotalAttribute, CalculationFinalResultItem } from "@Backend";
 import type { CalcArtifacts, ElementModCtrl } from "@Src/types";
 import type { SetupOptimizer } from "./setup-optimizer";
 
@@ -24,6 +24,7 @@ export type OTM_LoadRequest = {
 
 export type OTM_OptimizeRequest = {
   type: "OPTIMIZE";
+  testMode?: boolean;
   calcItemParams: {
     pattern: AttackPattern;
     calcItem: CalcItem;
@@ -49,4 +50,13 @@ type OTM_CompleteResponse = {
   result: OptimizeResult;
 };
 
-export type OTM_WorkerResponse = OTM_ProcessResponse | OTM_CompleteResponse;
+export type OTM_OneRunResponse = {
+  type: "__ONE";
+  artifacts: CalcArtifacts;
+  calcItemParams: OTM_OptimizeRequest["calcItemParams"];
+  totalAttr: TotalAttribute;
+  attkBonuses: AttackBonuses;
+  result: CalculationFinalResultItem;
+};
+
+export type OTM_WorkerResponse = OTM_ProcessResponse | OTM_CompleteResponse | OTM_OneRunResponse;

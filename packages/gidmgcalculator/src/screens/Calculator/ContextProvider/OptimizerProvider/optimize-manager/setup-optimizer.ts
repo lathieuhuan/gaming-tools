@@ -41,10 +41,9 @@ export class SetupOptimizer extends InputProcessor {
     return artifacts.length ? artifacts : [null];
   }
 
-  /**
-   * @param callback return true if this combination is accepted, otherwise false
-   */
-  private forEachCombination = (callback: (set: CalcArtifacts) => boolean) => {
+  /** @param callback returns true if this set is accepted, otherwise false */
+
+  private forEachSet = (callback: (set: CalcArtifacts) => boolean) => {
     const milestoneStep = this.calculationCount > 100000 ? 10 : 20;
     const startTime = Date.now();
     let processedCount = 0;
@@ -108,64 +107,73 @@ export class SetupOptimizer extends InputProcessor {
     return artBuffCtrls;
   };
 
+  /** @returns true if this set is accepted, otherwise false */
+
+  handleSet = (set: CalcArtifacts, modConfig: OptimizerAllArtifactModConfigs) => {
+    // ARTIFACTS
+    this.artifacts = set;
+
+    // ARTIFACT BUFFS
+    const artBuffCtrls = this.createArtifactBuffCtrls(set);
+
+    this.artBuffCtrls = artBuffCtrls.map((control) => {
+      const config = Array_.findByIndex(modConfig.buffs[control.code], control.index);
+      return config ? Object_.assign(control, config) : control;
+    });
+
+    // ARTIFACT DEBUFFS
+    const artDebuffCtrls = Modifier_.createArtifactDebuffCtrls().map((control) => {
+      // Merge control in the setup [this.artDebuffCtrls] & control from config [modConfig.debuffs]
+      // into default control.
+      // Control from config is prioritized.
+
+      const existControl = this.artDebuffCtrls.find(
+        (ctrl) => ctrl.code === control.code && ctrl.index === control.index
+      );
+      if (existControl) Object_.assign(control, existControl);
+
+      const config = Array_.findByIndex(modConfig.debuffs[control.code], control.index);
+      if (config) Object_.assign(control, config);
+
+      return control;
+    });
+
+    this.artDebuffCtrls = artDebuffCtrls;
+
+    const { totalAttr, attkBonusesArchive } = this.getCalculationStats();
+
+    // Will check for totalAttr here according to OptimizerExtraConfigs
+    if (totalAttr.cDmg_ > 1000) {
+      return null;
+    }
+
+    const resistances = this.getResistances(this.target);
+    const NAsConfig = this.getNormalAttacksConfig();
+
+    const calculator = new CalcItemCalculator(
+      this.target.level,
+      this.characterRecord,
+      NAsConfig,
+      this.customInfusion,
+      totalAttr,
+      attkBonusesArchive,
+      resistances
+    );
+
+    return [totalAttr, attkBonusesArchive, calculator] as const;
+  };
+
   optimize = (modConfig: OptimizerAllArtifactModConfigs, extraConfigs: OptimizerExtraConfigs) => {
     const startTime = Date.now();
 
-    this.forEachCombination((set) => {
-      // ARTIFACTS
-      this.artifacts = set;
+    this.forEachSet((set) => {
+      const result = this.handleSet(set, modConfig);
 
-      // ARTIFACT BUFFS
-      const artBuffCtrls = this.createArtifactBuffCtrls(set);
-
-      console.log("=========");
-      console.log([...this.artifacts]);
-      console.log([...artBuffCtrls]);
-
-      this.artBuffCtrls = artBuffCtrls.map((control) => {
-        const config = Array_.findByIndex(modConfig.buffs[control.code], control.index);
-        return config ? Object_.assign(control, config) : control;
-      });
-
-      // ARTIFACT DEBUFFS
-      const artDebuffCtrls = Modifier_.createArtifactDebuffCtrls().map((control) => {
-        // Merge control in the setup [this.artDebuffCtrls] & control from config [modConfig.debuffs]
-        // into default control.
-        // Control from config is prioritized.
-
-        const existControl = this.artDebuffCtrls.find(
-          (ctrl) => ctrl.code === control.code && ctrl.index === control.index
-        );
-        if (existControl) Object_.assign(control, existControl);
-
-        const config = Array_.findByIndex(modConfig.debuffs[control.code], control.index);
-        if (config) Object_.assign(control, config);
-
-        return control;
-      });
-
-      this.artDebuffCtrls = artDebuffCtrls;
-
-      // console.log(this.artBuffCtrls);
-      // console.log(this.artDebuffCtrls);
-
-      const { totalAttr, attkBonusesArchive } = this.getCalculationStats();
-      const resistances = this.getResistances(this.target);
-      const NAsConfig = this.getNormalAttacksConfig();
-
-      const calculator = new CalcItemCalculator(
-        this.target.level,
-        this.characterRecord,
-        NAsConfig,
-        this.customInfusion,
-        totalAttr,
-        attkBonusesArchive,
-        resistances
-      );
-
-      this.onOutput(set, totalAttr, attkBonusesArchive, calculator);
-
-      return true;
+      if (result) {
+        this.onOutput(set, ...result);
+        return true;
+      }
+      return false;
     });
 
     this.runTime = Date.now() - startTime;

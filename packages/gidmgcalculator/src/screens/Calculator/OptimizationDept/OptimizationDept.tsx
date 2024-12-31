@@ -102,7 +102,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     const { calcItem, extraConfigs } = savedValues.current;
     const { allModConfigs } = artifactManager;
 
-    console.log(artifactManager.sets.filter((set) => set.selectedIds.size));
+    // console.log(artifactManager.sets.filter((set) => set.selectedIds.size));
 
     optimizer.optimize(
       {

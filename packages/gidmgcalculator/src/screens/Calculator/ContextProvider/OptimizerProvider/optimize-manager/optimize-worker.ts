@@ -28,7 +28,7 @@ onmessage = (e: MessageEvent<OTM_ManagerRequest>) => {
       break;
     }
     case "OPTIMIZE": {
-      const { calcItemParams } = e.data;
+      const { calcItemParams, testMode } = e.data;
       const calculations: OptimizeCalculation[] = [];
 
       optimizer.onOutput = (artifacts, totalAttr, attkBonusesArchive, calculator) => {
@@ -43,14 +43,21 @@ onmessage = (e: MessageEvent<OTM_ManagerRequest>) => {
 
         calculations.push(calculation);
         sorter.add(calculation);
+
+        if (testMode) {
+          response({
+            type: "__ONE",
+            artifacts,
+            calcItemParams,
+            totalAttr,
+            attkBonuses: attkBonusesArchive.serialize(),
+            result,
+          });
+        }
       };
 
       optimizer?.optimize(...e.data.optimizeParams);
 
-      // const result: OptimizeResult = {
-      //   bests: sorter.get(),
-      //   calculations,
-      // };
       const result = sorter.get();
 
       setTimeout(() => {

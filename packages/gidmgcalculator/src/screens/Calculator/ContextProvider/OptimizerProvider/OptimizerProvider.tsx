@@ -15,6 +15,7 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
   const [status, setStatus] = useState<OptimizerStatus>({
     active: false,
     loading: false,
+    testMode: false,
     result: [],
   });
   const optimizer = useOptimizer();
@@ -46,6 +47,10 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
         ...prev,
         [key]: value,
       }));
+
+      if (key === "testMode") {
+        optimizer.switchTestMode(value);
+      }
     },
   };
 

@@ -15,6 +15,7 @@ import SectionArtifacts from "./SectionArtifacts";
 import SectionParty from "./SectionParty";
 import SectionTarget from "./SectionTarget";
 import SectionWeapon from "./SectionWeapon";
+import { IS_DEV_ENV } from "@Src/constants";
 
 interface SetupManagerProps {
   isModernUI?: boolean;
@@ -97,6 +98,12 @@ function OptimizationDeptContact() {
 
   const activeInfo = infos.find((info) => info.ID === activeId);
 
+  const onConfirm = (testMode = false) => {
+    toggle("testMode", testMode);
+    toggle("active", true);
+    setActiveConfirm(false);
+  };
+
   return (
     <>
       <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={() => setActiveConfirm(true)} />
@@ -107,14 +114,18 @@ function OptimizationDeptContact() {
         className="bg-surface-1"
         title="Optimize"
         withActions
+        moreActions={[
+          {
+            children: "Test Mode",
+            className: !IS_DEV_ENV && "hidden",
+            onClick: () => onConfirm(true),
+          },
+        ]}
         confirmButtonProps={{
           children: "Proceed",
           autoFocus: true,
         }}
-        onConfirm={() => {
-          toggle("active", true);
-          setActiveConfirm(false);
-        }}
+        onConfirm={onConfirm}
         onClose={() => setActiveConfirm(false)}
       >
         <ul className="pl-6 pr-2 list-disc space-y-2">

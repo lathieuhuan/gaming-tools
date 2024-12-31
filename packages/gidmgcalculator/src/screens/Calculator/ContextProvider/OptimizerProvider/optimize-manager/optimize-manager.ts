@@ -1,13 +1,15 @@
 import type {
+  OptimizeResult,
   OTM_InitRequest,
   OTM_LoadRequest,
+  OTM_ManagerRequest,
   OTM_OptimizeRequest,
-  OptimizeResult,
-  OTM_WorkerResponse,
   OTM_ProcessInfo,
+  OTM_WorkerResponse,
 } from "./optimize-manager.types";
+import { OptimizeTester } from "./optimize-tester";
 
-const WORKER_URL = new URL("optimizer-worker.ts", import.meta.url);
+const WORKER_URL = new URL("optimize-worker.ts", import.meta.url);
 
 type OnCompleteOptimize = (state: OptimizeResult) => void;
 
@@ -16,12 +18,23 @@ export class OptimizeManager {
   private workerTerminated = false;
   private subscribers = new Set<OnCompleteOptimize>();
 
+  private tester = new OptimizeTester();
+
   onStart = () => {};
 
   onProcess = (data: OTM_ProcessInfo) => {};
 
-  constructor() {
+  constructor(private testMode = false) {
     this.worker = this.genWorker();
+  }
+
+  switchTestMode(testMode: boolean) {
+    this.testMode = testMode;
+    this.tester = new OptimizeTester(true);
+  }
+
+  private request(message: OTM_ManagerRequest) {
+    this.worker.postMessage(message);
   }
 
   private genWorker = () => {
@@ -35,6 +48,10 @@ export class OptimizeManager {
         case "COMPLETE": {
           this.notify(e.data.result);
           console.log("runTime:", e.data.runTime);
+          break;
+        }
+        case "__ONE": {
+          this.tester.test(e.data);
           break;
         }
       }
@@ -61,17 +78,21 @@ export class OptimizeManager {
       this.workerTerminated = false;
     }
 
-    this.worker.postMessage({
+    this.request({
       type: "INIT",
       params,
     });
+
+    this.tester.init(params);
   }
 
   load(...params: OTM_LoadRequest["params"]) {
-    this.worker.postMessage({
+    this.request({
       type: "LOAD",
       params,
     });
+
+    this.tester.load(params);
   }
 
   optimize(
@@ -80,11 +101,14 @@ export class OptimizeManager {
   ) {
     this.onStart();
 
-    this.worker.postMessage({
+    this.request({
       type: "OPTIMIZE",
+      testMode: this.testMode,
       calcItemParams,
       optimizeParams,
     });
+
+    this.tester.optimize(optimizeParams);
   }
 
   end() {
