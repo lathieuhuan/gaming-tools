@@ -1,21 +1,20 @@
-import { CharacterCalc, CalculationFinalResult } from "@Backend";
+import { CharacterCalc, CalculationFinalResult, CharacterRecord } from "@Backend";
 
-import type { Party } from "@Src/types";
-import { $AppCharacter } from "@Src/services";
 import { useTranslation } from "@Src/hooks";
 import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
 
 interface FinalResultViewProps
-  extends Pick<FinalResultLayoutProps, "char" | "appChar" | "weapon" | "talentMutable" | "onChangeTalentLevel"> {
+  extends Pick<FinalResultLayoutProps, "weapon" | "talentMutable" | "onChangeTalentLevel"> {
+  characterRecord: CharacterRecord;
   finalResult: CalculationFinalResult;
-  party: Party;
 }
-export function FinalResultView({ finalResult, party, ...props }: FinalResultViewProps) {
+export function FinalResultView({ characterRecord, finalResult, ...props }: FinalResultViewProps) {
   const { t } = useTranslation();
 
   return (
     <FinalResultLayout
       {...props}
+      appCharacter={characterRecord.mainAppCharacter}
       showWeaponCalc
       headerConfigs={[
         {
@@ -29,14 +28,7 @@ export function FinalResultView({ finalResult, party, ...props }: FinalResultVie
           className: "text-primary-1",
         },
       ]}
-      getTalentLevel={(talentType) => {
-        return CharacterCalc.getFinalTalentLv({
-          char: props.char,
-          appChar: props.appChar,
-          talentType,
-          partyData: $AppCharacter.getPartyData(party),
-        });
-      }}
+      getTalentLevel={(talentType) => CharacterCalc.getFinalTalentLv(characterRecord, talentType)}
       getRowConfig={(mainKey, subKey) => {
         const result = finalResult[mainKey][subKey];
         let title: string | undefined;

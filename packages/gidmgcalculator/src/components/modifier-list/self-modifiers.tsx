@@ -1,4 +1,4 @@
-import { CalcCharacterRecord, CharacterBuff, CharacterDebuff, isGrantedEffect } from "@Backend";
+import { CharacterRecord, CharacterBuff, CharacterDebuff, isGrantedEffect } from "@Backend";
 
 import type { ModifierCtrl } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
@@ -10,7 +10,7 @@ import { renderModifiers } from "./modifiers.utils";
 
 interface SelfModsViewProps {
   mutable?: boolean;
-  characterRecord: CalcCharacterRecord;
+  characterRecord: CharacterRecord;
   modCtrls: ModifierCtrl[];
   getHanlders?: (args: GetModifierHanldersArgs) => ModifierHanlders;
 }

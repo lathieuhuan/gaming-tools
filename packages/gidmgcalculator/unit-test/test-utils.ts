@@ -1,11 +1,11 @@
-import { CalcCharacterRecord, Level } from "../src/backend";
+import { CharacterRecord, Level } from "../src/backend";
 import { $AppWeapon } from "../src/services";
 import { AppCharactersByName, Weapon } from "../src/types";
 import { __EMockCharacter } from "./mocks/characters.mock";
 import { __EMockWeapon } from "./mocks/weapons.mock";
 import { ASCENSION_RANKS } from "./test-constants";
 
-export class CalcCharacterRecordTester extends CalcCharacterRecord {
+export class CalcCharacterRecordTester extends CharacterRecord {
   updateData = (data: AppCharactersByName) => {
     this.data = {
       ...this.data,

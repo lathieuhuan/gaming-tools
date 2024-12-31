@@ -20,7 +20,7 @@ import Array_ from "@Src/utils/array-utils";
 import { AppliedBonusesGetter } from "../calculation-utils/applied-bonuses-getter";
 import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
 import { isGrantedEffect } from "../calculation-utils/isGrantedEffect";
-import { CalcCharacterRecord, GeneralCalc } from "../common-utils";
+import { CharacterRecord, GeneralCalc } from "../common-utils";
 import {
   AMPLIFYING_REACTIONS,
   NORMAL_ATTACKS,
@@ -49,7 +49,7 @@ export class InputProcessor {
   protected superconduct?: ElementModCtrl["superconduct"];
   protected customInfusion: Infusion;
 
-  public characterRecord: CalcCharacterRecord;
+  public characterRecord: CharacterRecord;
   protected appWeapons: DataOfSetupEntities["appWeapons"];
   protected appArtifacts: DataOfSetupEntities["appArtifacts"];
 
@@ -77,7 +77,7 @@ export class InputProcessor {
       element: "phys",
     };
 
-    this.characterRecord = new CalcCharacterRecord(this.char, this.party, data.appCharacters);
+    this.characterRecord = new CharacterRecord(this.char, this.party, data.appCharacters);
     this.appWeapons = data.appWeapons;
     this.appArtifacts = data.appArtifacts;
   }

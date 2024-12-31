@@ -1,4 +1,4 @@
-import { CalcCharacterRecord, CharacterBuff, CharacterDebuff } from "@Backend";
+import { CharacterRecord, CharacterBuff, CharacterDebuff } from "@Backend";
 
 import type { Character, Party, Teammate, AppCharactersByName } from "@Src/types";
 import type { GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
@@ -39,7 +39,7 @@ function getTeammateModifierElmts(
 
           if (modifier) {
             const { inputs = [] } = ctrl;
-            const record = new CalcCharacterRecord(props.char, props.party, props.appCharacters, teammateData);
+            const record = new CharacterRecord(props.char, props.party, props.appCharacters, teammateData);
 
             return (
               <GenshinModifierView

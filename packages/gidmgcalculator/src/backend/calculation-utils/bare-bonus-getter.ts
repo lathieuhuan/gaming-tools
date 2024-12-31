@@ -9,7 +9,7 @@ import type {
   EntityBonusStack,
   EntityBonusValueByOption,
 } from "../types";
-import type { CalcCharacterRecord } from "../common-utils/calc-character-record";
+import type { CharacterRecord } from "../common-utils/calc-character-record";
 
 import Array_ from "@Src/utils/array-utils";
 import { CharacterCalc } from "../common-utils";
@@ -26,7 +26,7 @@ type InternalSupportInfo = GetBareBonusSupportInfo & {
 };
 
 export class BareBonusGetter {
-  constructor(protected record: CalcCharacterRecord, protected totalAttrCtrl?: TotalAttributeControl) {}
+  constructor(protected record: CharacterRecord, protected totalAttrCtrl?: TotalAttributeControl) {}
 
   updateTotalAttrCtrl(totalAttrCtrl: TotalAttributeControl) {
     this.totalAttrCtrl = totalAttrCtrl;

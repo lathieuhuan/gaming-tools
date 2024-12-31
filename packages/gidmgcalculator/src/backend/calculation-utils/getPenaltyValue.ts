@@ -1,11 +1,11 @@
 import type { EntityPenaltyCore } from "../types";
-import type { CalcCharacterRecord } from "../common-utils/calc-character-record";
+import type { CharacterRecord } from "../common-utils/calc-character-record";
 import { CharacterCalc } from "../common-utils";
 import { isApplicableEffect } from "./isApplicableEffect";
 
 export function getPenaltyValue(
   debuff: EntityPenaltyCore,
-  record: CalcCharacterRecord,
+  record: CharacterRecord,
   inputs: number[],
   fromSelf = true
 ) {

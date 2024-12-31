@@ -7,7 +7,7 @@ import type {
   TalentAttributeType,
   TalentType,
 } from "../types";
-import type { CalcCharacterRecord } from "./calc-character-record";
+import type { CharacterRecord } from "./calc-character-record";
 
 const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
   // some NA, CA, Eula's PA
@@ -27,7 +27,8 @@ const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
 };
 
 export class CharacterCalc {
-  static getTotalXtraTalentLv(record: CalcCharacterRecord, talentType: TalentType): number {
+  // #TO-DO: check if needed
+  static getTotalXtraTalentLv(record: CharacterRecord, talentType: TalentType): number {
     let result = 0;
 
     if (talentType === "NAs") {
@@ -45,7 +46,8 @@ export class CharacterCalc {
     return result;
   }
 
-  static getFinalTalentLv(record: CalcCharacterRecord, talentType: TalentType): number {
+  // #TO-DO: check if needed
+  static getFinalTalentLv(record: CharacterRecord, talentType: TalentType): number {
     const talentLv = talentType === "altSprint" ? 0 : record.character[talentType];
     return talentLv + this.getTotalXtraTalentLv(record, talentType);
   }
@@ -56,7 +58,7 @@ export class CharacterCalc {
 
   static getLevelScale(
     scale: CharacterEffectLevelScale | undefined,
-    record: CalcCharacterRecord,
+    record: CharacterRecord,
     inputs: number[],
     fromSelf: boolean
   ): number {

@@ -1,13 +1,13 @@
 import type { Character } from "@Src/types";
 import type { EffectApplicableCondition, EffectUsableCondition } from "@Src/backend/types";
-import type { CalcCharacterRecord } from "../common-utils/calc-character-record";
+import type { CharacterRecord } from "../common-utils/calc-character-record";
 
 import Array_ from "@Src/utils/array-utils";
 import TypeCounter from "@Src/utils/type-counter";
 import { isGrantedEffect } from "./isGrantedEffect";
 import { isPassedComparison } from "./isPassedComparison";
 
-function isUsableEffect(condition: EffectUsableCondition, record: CalcCharacterRecord, inputs: number[]) {
+function isUsableEffect(condition: EffectUsableCondition, record: CharacterRecord, inputs: number[]) {
   const { checkInput, checkParty } = condition;
 
   if (checkInput !== undefined) {
@@ -62,7 +62,7 @@ function isAvailableEffect(
 
 export function isApplicableEffect(
   condition: EffectApplicableCondition,
-  record: CalcCharacterRecord,
+  record: CharacterRecord,
   inputs: number[],
   fromSelf = false
 ): boolean {

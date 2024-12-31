@@ -6,7 +6,7 @@ import {
   LevelableTalentType,
   CharacterCalc,
   GeneralCalc,
-  CalcCharacterRecord,
+  CharacterRecord,
   getDataOfSetupCharacters,
 } from "@Backend";
 
@@ -43,7 +43,7 @@ export function TalentList(props: TalentListProps) {
   const appChar = $AppCharacter.get(char.name);
   const { weaponType, vision, activeTalents, passiveTalents } = appChar;
   const appCharacters = getDataOfSetupCharacters(char, props.party);
-  const characterRecord = new CalcCharacterRecord(char, props.party, appCharacters);
+  const characterRecord = new CharacterRecord(char, props.party, appCharacters);
   const partyData = props.party ? $AppCharacter.getPartyData(props.party) : undefined;
   const elmtText = `text-${vision}`;
   const numOfActives = Object.keys(activeTalents).length;

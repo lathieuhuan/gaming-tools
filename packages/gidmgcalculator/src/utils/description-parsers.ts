@@ -8,7 +8,7 @@ import {
   BareBonusGetter,
   AppArtifact,
   ArtifactModifierDescription,
-  CalcCharacterRecord,
+  CharacterRecord,
 } from "@Backend";
 
 import { toMult } from "./pure-utils";
@@ -45,7 +45,7 @@ export const parseResonanceDescription = (description: string) => {
 
 export const parseAbilityDescription = (
   ability: Pick<CharacterBuff | CharacterDebuff, "description" | "effects">,
-  record: CalcCharacterRecord,
+  record: CharacterRecord,
   inputs: number[],
   fromSelf: boolean
 ) => {

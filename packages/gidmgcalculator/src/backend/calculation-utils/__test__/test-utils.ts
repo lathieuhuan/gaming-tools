@@ -1,4 +1,4 @@
-import { CalcCharacterRecord } from "@Src/backend/common-utils";
+import { CharacterRecord } from "@Src/backend/common-utils";
 import { TotalAttributeControl } from "@Src/backend/controls";
 import { EffectApplicableCondition } from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
@@ -74,8 +74,8 @@ export class BareBonusGetterTester extends BareBonusGetter {
   fromSelf = true;
 
   constructor(totalAttrCtrl?: TotalAttributeControl);
-  constructor(info?: CalcCharacterRecord, totalAttrCtrl?: TotalAttributeControl);
-  constructor(info?: CalcCharacterRecord | TotalAttributeControl, totalAttrCtrl?: TotalAttributeControl) {
+  constructor(info?: CharacterRecord, totalAttrCtrl?: TotalAttributeControl);
+  constructor(info?: CharacterRecord | TotalAttributeControl, totalAttrCtrl?: TotalAttributeControl) {
     const _info = !info || info instanceof TotalAttributeControl ? __genCalculationInfo() : info;
     const _totalAttrCtrl = info instanceof TotalAttributeControl ? info : totalAttrCtrl;
 

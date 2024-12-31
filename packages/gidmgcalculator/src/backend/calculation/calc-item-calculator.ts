@@ -18,7 +18,7 @@ import type { ElementModCtrl, Infusion } from "@Src/types";
 
 import { toMult } from "@Src/utils";
 import Array_ from "@Src/utils/array-utils";
-import { CalcCharacterRecord, CharacterCalc, GeneralCalc } from "@Src/backend/common-utils";
+import { CharacterRecord, CharacterCalc, GeneralCalc } from "@Src/backend/common-utils";
 import { AttackBonusesArchive, CalcItemRecord, TrackerControl } from "@Src/backend/controls";
 
 type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorption">;
@@ -26,7 +26,7 @@ type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" 
 export class CalcItemCalculator {
   constructor(
     private targetLv: number,
-    private characterRecord: CalcCharacterRecord,
+    private characterRecord: CharacterRecord,
     private NAsConfig: NormalAttacksConfig,
     private customInfusion: Infusion,
     private totalAttr: TotalAttribute,

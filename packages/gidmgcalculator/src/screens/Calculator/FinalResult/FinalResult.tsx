@@ -1,4 +1,5 @@
 import type { RootState } from "@Store/store";
+
 import Array_ from "@Src/utils/array-utils";
 import {
   selectCalcFinalResult,
@@ -11,8 +12,19 @@ import {
 import { useDispatch, useSelector } from "@Store/hooks";
 import { useCharacterData } from "../ContextProvider";
 
+// Components
 import { FinalResultView } from "@Src/components";
 import { FinalResultCompare } from "./FinalResultCompare";
+import { Menu } from "./Menu";
+
+export function FinalResult() {
+  return (
+    <div className="h-full">
+      <Menu />
+      <FinalResultCore />
+    </div>
+  );
+}
 
 const selectActiveSetupName = (state: RootState) => {
   const { activeId, setupManageInfos } = state.calculator;

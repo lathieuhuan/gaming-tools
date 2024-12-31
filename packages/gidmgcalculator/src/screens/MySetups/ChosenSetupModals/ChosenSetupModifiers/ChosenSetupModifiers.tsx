@@ -1,5 +1,5 @@
 import { CollapseList } from "rond";
-import { ArtifactSetBonus, CalcCharacterRecord } from "@Backend";
+import { ArtifactSetBonus, CharacterRecord } from "@Backend";
 
 import type { AppCharactersByName, UserSetup, UserWeapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
@@ -67,7 +67,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
     }
   );
 
-  const characterRecord = new CalcCharacterRecord(char, party, appCharacters);
+  const characterRecord = new CharacterRecord(char, party, appCharacters);
   const { title, variant, statuses } = $AppData.getTargetInfo(target);
 
   return (

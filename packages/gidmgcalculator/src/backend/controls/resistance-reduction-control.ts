@@ -6,7 +6,7 @@ import type {
   ResistanceReduction,
   ResistanceReductionKey,
 } from "../types";
-import type { CalcCharacterRecord } from "../common-utils";
+import type { CharacterRecord } from "../common-utils";
 import type { TrackerControl } from "./tracker-control";
 
 import Array_ from "@Src/utils/array-utils";
@@ -19,7 +19,7 @@ import { ECalcStatModule } from "../constants/internal";
 export class ResistanceReductionControl {
   private reductCounter = new TypeCounter<ResistanceReductionKey>();
 
-  constructor(private characterRecord: CalcCharacterRecord, private tracker?: TrackerControl) {}
+  constructor(private characterRecord: CharacterRecord, private tracker?: TrackerControl) {}
 
   add(key: ResistanceReductionKey, value: number, description: string) {
     this.reductCounter.add(key, value);

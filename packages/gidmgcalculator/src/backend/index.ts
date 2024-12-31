@@ -9,7 +9,7 @@ export {
   CharacterCalc,
   GeneralCalc,
   WeaponCalc,
-  CalcCharacterRecord,
+  CharacterRecord,
   PartyRecord,
   type ArtifactSetBonus,
 } from "./common-utils";

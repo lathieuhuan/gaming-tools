@@ -1,7 +1,9 @@
 import { createContext } from "react";
-import type { AppCharacter } from "@Backend";
+import { CharacterRecord, type AppCharacter } from "@Backend";
 import type { CalcAppParty } from "@Src/types";
 import type { OptimizerState } from "./OptimizerProvider";
+
+export const CharacterRecordContext = createContext<CharacterRecord | undefined>(undefined);
 
 export const CharacterDataContext = createContext<AppCharacter | undefined>(undefined);
 
