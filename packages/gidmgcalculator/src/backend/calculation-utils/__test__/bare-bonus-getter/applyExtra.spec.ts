@@ -62,7 +62,7 @@ test("extra can be check if applicable", () => {
   };
   tester._applyThenExpect(100);
 
-  tester.updateCharacter("cons", 1);
+  tester.__updateCharacter("cons", 1);
   tester._applyThenExpect(120);
 });
 

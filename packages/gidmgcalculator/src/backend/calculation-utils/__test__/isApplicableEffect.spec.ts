@@ -277,7 +277,7 @@ describe("condition: grantedAt", () => {
       tester.grantedAt = milestone;
 
       for (const level of LEVELS) {
-        tester.info.char.level = level;
+        tester.record.character.level = level;
         const ascension = __findAscensionByLevel(level);
         const _expectValue = ascension >= requiredAscension;
 
@@ -296,7 +296,7 @@ describe("condition: grantedAt", () => {
       tester.grantedAt = milestone;
 
       for (const constellation of Array.from({ length: 7 }, (_, i) => i)) {
-        tester.info.char.cons = constellation;
+        tester.record.character.cons = constellation;
         const _expectValue = constellation >= requiredConstellation;
 
         tester._expectValue(_expectValue);

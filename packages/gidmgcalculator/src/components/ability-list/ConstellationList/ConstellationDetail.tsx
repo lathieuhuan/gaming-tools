@@ -9,20 +9,20 @@ import { Green, Dim } from "../../span";
 import { AbilityCarousel } from "../ability-list-components";
 
 interface ConstellationDetailProps {
-  appChar: AppCharacter;
+  appCharacter: AppCharacter;
   consLv: number;
   onChangeConsLv?: (newLv: number) => void;
   onClose?: () => void;
 }
-export function ConstellationDetail({ appChar, consLv, onChangeConsLv, onClose }: ConstellationDetailProps) {
-  const { vision, constellation } = appChar;
+export function ConstellationDetail({ appCharacter, consLv, onChangeConsLv, onClose }: ConstellationDetailProps) {
+  const { vision, constellation } = appCharacter;
   const consInfo = constellation[consLv - 1] || {};
 
   const {
     isLoading,
     isError,
     data: descriptions,
-  } = useQuery([appChar.name], () => $AppCharacter.fetchConsDescriptions(appChar.name));
+  } = useQuery([appCharacter.name], () => $AppCharacter.fetchConsDescriptions(appCharacter.name));
 
   return (
     <div className="h-full flex flex-col hide-scrollbar">

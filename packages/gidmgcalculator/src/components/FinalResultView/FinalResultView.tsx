@@ -1,20 +1,22 @@
-import { CharacterCalc, CalculationFinalResult, CharacterRecord } from "@Backend";
+import { CalculationFinalResult } from "@Backend";
 
+import type { UICharacterRecord } from "@Src/utils/ui-character-record";
 import { useTranslation } from "@Src/hooks";
 import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
 
 interface FinalResultViewProps
   extends Pick<FinalResultLayoutProps, "weapon" | "talentMutable" | "onChangeTalentLevel"> {
-  characterRecord: CharacterRecord;
+  record: UICharacterRecord;
   finalResult: CalculationFinalResult;
 }
-export function FinalResultView({ characterRecord, finalResult, ...props }: FinalResultViewProps) {
+export function FinalResultView({ record, finalResult, ...props }: FinalResultViewProps) {
   const { t } = useTranslation();
 
   return (
     <FinalResultLayout
       {...props}
-      appCharacter={characterRecord.mainAppCharacter}
+      appCharacter={record.appCharacter}
+      getTalentLevel={record.getFinalTalentLv}
       showWeaponCalc
       headerConfigs={[
         {
@@ -28,7 +30,6 @@ export function FinalResultView({ characterRecord, finalResult, ...props }: Fina
           className: "text-primary-1",
         },
       ]}
-      getTalentLevel={(talentType) => CharacterCalc.getFinalTalentLv(characterRecord, talentType)}
       getRowConfig={(mainKey, subKey) => {
         const result = finalResult[mainKey][subKey];
         let title: string | undefined;

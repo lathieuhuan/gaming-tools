@@ -4,7 +4,7 @@ import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 import { selectCharacter, updateCharacter } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectIsReadyApp, selectTraveler } from "@Store/ui-slice";
-import { useCharacterData, useCalcModalCtrl } from "../ContextProvider";
+import { useCalcModalCtrl, useCharacterRecord } from "../ContextProvider";
 
 // Component
 import { CharacterIntro, ComplexSelect } from "@Src/components";
@@ -20,24 +20,24 @@ const TABS: SwitchNodeCase<string>[] = [
 
 function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
-  const appChar = useCharacterData();
+  const character = useSelector(selectCharacter);
+  const record = useCharacterRecord();
 
   const [activeTab, setActiveTab] = useState("Attributes");
 
-  // This makes component rerender on change Traveler, appChar has new image links
+  // This makes component rerender on change Traveler, appCharacter has new image links
   useSelector(selectTraveler);
 
   return (
     <div className="h-full flex flex-col gap-4">
       <CharacterIntro
-        char={char}
-        appChar={appChar}
+        character={character}
+        appCharacter={record.appCharacter}
         mutable
         switchable
         onSwitch={props.onClickSwitchCharacter}
-        onChangeLevel={(level) => level !== char.level && dispatch(updateCharacter({ level }))}
-        onChangeCons={(cons) => cons !== char.cons && dispatch(updateCharacter({ cons }))}
+        onChangeLevel={(level) => level !== character.level && dispatch(updateCharacter({ level }))}
+        onChangeCons={(cons) => cons !== character.cons && dispatch(updateCharacter({ cons }))}
       />
 
       <ComplexSelect

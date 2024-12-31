@@ -46,7 +46,7 @@ export function MyCharacterDetailModalsProvider(props: MyCharacterDetailModalsPr
 
   const renderModals = () => {
     if (!data) return null;
-    const { char, weapon, artifacts } = data;
+    const { character, weapon, artifacts } = data;
 
     return (
       <>
@@ -55,11 +55,11 @@ export function MyCharacterDetailModalsProvider(props: MyCharacterDetailModalsPr
           danger
           message={
             <>
-              Remove <b>{char.name}</b>?
+              Remove <b>{character.name}</b>?
             </>
           }
           focusConfirm
-          onConfirm={() => dispatch(removeUserCharacter(char.name))}
+          onConfirm={() => dispatch(removeUserCharacter(character.name))}
           onClose={closeModal}
         />
 
@@ -74,7 +74,7 @@ export function MyCharacterDetailModalsProvider(props: MyCharacterDetailModalsPr
 
         <WeaponInventory
           active={modalType === "SWITCH_WEAPON"}
-          owner={char.name}
+          owner={character.name}
           weaponType={weapon.type}
           buttonText="Switch"
           onClickButton={(selectedWeapon) => {
@@ -82,7 +82,7 @@ export function MyCharacterDetailModalsProvider(props: MyCharacterDetailModalsPr
               switchWeapon({
                 newOwner: selectedWeapon.owner,
                 newID: selectedWeapon.ID,
-                oldOwner: char.name,
+                oldOwner: character.name,
                 oldID: weapon.ID,
               })
             );
@@ -94,14 +94,14 @@ export function MyCharacterDetailModalsProvider(props: MyCharacterDetailModalsPr
           active={modalType === "SWITCH_ARTIFACT"}
           currentArtifacts={artifacts}
           forcedType={ARTIFACT_TYPES[switchedArtifactI]}
-          owner={char.name}
+          owner={character.name}
           buttonText="Switch"
           onClickButton={(selectedArtifact) => {
             dispatch(
               switchArtifact({
                 newOwner: selectedArtifact.owner,
                 newID: selectedArtifact.ID,
-                oldOwner: char.name,
+                oldOwner: character.name,
                 oldID: artifacts[switchedArtifactI]?.ID || 0,
                 artifactIndex: switchedArtifactI,
               })

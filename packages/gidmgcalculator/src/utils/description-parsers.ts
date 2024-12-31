@@ -45,18 +45,17 @@ export const parseResonanceDescription = (description: string) => {
 
 export const parseAbilityDescription = (
   ability: Pick<CharacterBuff | CharacterDebuff, "description" | "effects">,
-  record: CharacterRecord,
   inputs: number[],
-  fromSelf: boolean
+  fromSelf: boolean,
+  record?: CharacterRecord
 ) => {
-  const bonusGetter = new BareBonusGetter(record);
-
   return ability.description.replace(/\{[\w \-/,%^"'*@:=.[\]]+\}#\[\w*\]/g, (match) => {
     let [body, type = ""] = match.split("#");
     body = body.slice(1, -1);
     type = type.slice(1, -1);
 
-    if (body[0] === "@") {
+    if (body[0] === "@" && record) {
+      const bonusGetter = new BareBonusGetter(record);
       const effect = Array_.toArray(ability.effects)[+body[1]];
 
       if (effect) {

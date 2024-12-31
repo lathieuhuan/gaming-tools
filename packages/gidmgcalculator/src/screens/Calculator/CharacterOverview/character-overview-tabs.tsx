@@ -13,6 +13,7 @@ import {
   updateWeapon,
 } from "@Store/calculator-slice";
 import { AttributeTable, SetBonusesView, WeaponView, TalentList, ConstellationList } from "@Src/components";
+import { useCharacterRecord } from "../ContextProvider";
 
 export function AttributesTab() {
   const totalAttr = useSelector(selectTotalAttr);
@@ -66,24 +67,26 @@ export function ArtifactsTab() {
 
 export function ConstellationTab() {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
+  const character = useSelector(selectCharacter);
   return (
     <ConstellationList
-      char={char}
-      onClickIcon={(i) => dispatch(updateCharacter({ cons: char.cons === i + 1 ? i : i + 1 }))}
+      character={character}
+      onClickIcon={(i) => dispatch(updateCharacter({ cons: character.cons === i + 1 ? i : i + 1 }))}
     />
   );
 }
 
 export function TalentsTab() {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
+  const character = useSelector(selectCharacter);
   const party = useSelector(selectParty);
+  const record = useCharacterRecord();
 
   return (
     <TalentList
-      key={char.name}
-      char={char}
+      key={character.name}
+      character={character}
+      record={record}
       onChangeTalentLevel={(type, level) => {
         dispatch(updateCharacter({ [type]: level }));
       }}

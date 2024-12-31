@@ -27,7 +27,7 @@ const hasAbsorbingAttackIn = (items: CalcItem[]) => {
 
 export default function ElementBuffs() {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
+  const character = useSelector(selectCharacter);
   const elmtModCtrls = useSelector(selectElmtModCtrls);
   const attkBonuses = useSelector(selectAttkBonuses);
   const customInfusion = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].customInfusion);
@@ -84,7 +84,7 @@ export default function ElementBuffs() {
         key={reaction}
         mutable
         checked={activated}
-        {...{ reaction, element, characterLv: char.level, attkBonuses }}
+        {...{ reaction, element, characterLv: character.level, attkBonuses }}
         onToggle={() => {
           dispatch(
             updateCalcSetup({

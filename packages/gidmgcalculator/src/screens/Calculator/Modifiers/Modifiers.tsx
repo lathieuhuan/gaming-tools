@@ -3,7 +3,6 @@ import { CollapseList } from "rond";
 import { selectParty } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
 import { useTabs } from "@Src/hooks";
-import { usePartyData } from "../ContextProvider";
 
 // Component
 import ElementBuffs from "./buffs/ElementBuffs";
@@ -19,7 +18,6 @@ import CustomModifiers from "./CustomModifiers";
 
 export function Modifiers() {
   const party = useSelector(selectParty);
-  const partyData = usePartyData();
 
   const { activeIndex, renderTabs } = useTabs({
     defaultIndex: 1,
@@ -43,12 +41,12 @@ export function Modifiers() {
             {
               title: "Self buffs",
               heading: "Self",
-              body: <SelfBuffs partyData={partyData} />,
+              body: <SelfBuffs />,
             },
             {
               title: "Party buffs",
               heading: "Party",
-              body: <PartyBuffs party={party} partyData={partyData} />,
+              body: <PartyBuffs party={party} />,
             },
             {
               title: "Weapons buffs",
@@ -80,12 +78,12 @@ export function Modifiers() {
             {
               title: "Self debuffs",
               heading: "Self",
-              body: <SelfDebuffs partyData={partyData} />,
+              body: <SelfDebuffs />,
             },
             {
               title: "Party debuffs",
               heading: "Party",
-              body: <PartyDebuffs party={party} partyData={partyData} />,
+              body: <PartyDebuffs party={party} />,
             },
             {
               title: "Artifacts debuffs",

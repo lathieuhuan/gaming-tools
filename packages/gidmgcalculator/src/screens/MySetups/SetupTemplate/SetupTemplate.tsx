@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
 import { FaLink, FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
 import { clsx, useScreenWatcher, Button, ButtonGroup, Modal, CloseButton, TrashCanSvg } from "rond";
-import { ARTIFACT_TYPES, CharacterCalc } from "@Backend";
+import { ARTIFACT_TYPES } from "@Backend";
 
 import type { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
+import type { UICharacterRecord } from "@Src/utils/ui-character-record";
 import type { OpenModalFn } from "../MySetups.types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import Setup_ from "@Src/utils/setup-utils";
@@ -23,11 +24,19 @@ import { GearIcon } from "./GearIcon";
 interface SetupTemplateProps {
   setup: UserSetup;
   complexSetup?: UserComplexSetup;
+  characterRecord: UICharacterRecord;
   weapon: UserWeapon;
   artifacts?: UserArtifacts;
   openModal: OpenModalFn;
 }
-export function SetupTemplate({ setup, complexSetup, weapon, artifacts = [], openModal }: SetupTemplateProps) {
+export function SetupTemplate({
+  setup,
+  complexSetup,
+  characterRecord,
+  weapon,
+  artifacts = [],
+  openModal,
+}: SetupTemplateProps) {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const { type, char, party } = setup;
@@ -71,26 +80,21 @@ export function SetupTemplate({ setup, complexSetup, weapon, artifacts = [], ope
 
   const display = useMemo(() => {
     let mainCharacter = null;
-    const appChar = $AppCharacter.get(char.name);
+    const appCharacter = characterRecord.getAppCharacter(char.name);
     const appWeapon = $AppWeapon.get(weapon.code);
 
-    if (appChar) {
+    if (appCharacter) {
       const talents = (["NAs", "ES", "EB"] as const).map((talentType) => {
-        return CharacterCalc.getFinalTalentLv({
-          char,
-          appChar,
-          talentType,
-          partyData: $AppCharacter.getPartyData(party),
-        });
+        return characterRecord.getFinalTalentLv(talentType);
       });
 
       const renderSpan = (text: string | number) => (
-        <span className={`font-medium text-${appChar.vision}`}>{text}</span>
+        <span className={`font-medium text-${appCharacter.vision}`}>{text}</span>
       );
 
       mainCharacter = (
         <div className="flex">
-          <GenshinImage className="w-20 h-20" src={appChar.icon} imgType="character" />
+          <GenshinImage className="w-20 h-20" src={appCharacter.icon} imgType="character" />
 
           <div className="ml-4 flex-col justify-between">
             <p className="text-lg">Level {renderSpan(char.level)}</p>

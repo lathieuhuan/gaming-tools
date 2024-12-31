@@ -1,6 +1,7 @@
-import { CharacterRecord, CharacterBuff, CharacterDebuff } from "@Backend";
+import { CharacterBuff, CharacterDebuff } from "@Backend";
 
-import type { Character, Party, Teammate, AppCharactersByName } from "@Src/types";
+import type { Party, Teammate } from "@Src/types";
+import type { UICharacterRecord } from "@Src/utils/ui-character-record";
 import type { GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 import Array_ from "@Src/utils/array-utils";
 import { parseAbilityDescription } from "@Src/utils/description-parsers";
@@ -9,9 +10,8 @@ import { renderModifiers } from "./modifiers.utils";
 
 interface PartyModsViewProps {
   mutable?: boolean;
-  char: Character;
   party: Party;
-  appCharacters: AppCharactersByName;
+  record: UICharacterRecord;
   getHanlders?: (args: GetTeammateModifierHanldersArgs) => ModifierHanlders;
 }
 
@@ -21,32 +21,30 @@ function getTeammateModifierElmts(
   teammateIndex: number,
   type: "buffs" | "debuffs"
 ) {
-  const teammateData = props.appCharacters[teammate.name];
+  const appTeammate = props.record.getAppCharacter(teammate.name);
   const modCtrls = type === "buffs" ? teammate?.buffCtrls : teammate?.debuffCtrls;
-  const modifiers = type === "buffs" ? teammateData?.buffs : teammateData?.debuffs;
+  const modifiers = type === "buffs" ? appTeammate?.buffs : appTeammate?.debuffs;
 
   if (!modCtrls?.length || !modifiers?.some((modifier) => modifier.affect !== "SELF")) {
     return null;
   }
 
   return (
-    <div key={teammateData.name}>
-      <p className={`text-lg text-${teammateData.vision} font-bold text-center uppercase`}>{teammate.name}</p>
+    <div key={teammate.name}>
+      <p className={`text-lg text-${appTeammate.vision} font-bold text-center uppercase`}>{teammate.name}</p>
       <div className="space-y-3">
-        {/* {getTeammateModifierElmts(props, teammate, teammateIndex, teammateData, modCtrls, modifiers)} */}
         {modCtrls.map((ctrl, ctrlIndex, ctrls) => {
           const modifier = Array_.findByIndex<CharacterBuff | CharacterDebuff>(modifiers, ctrl.index);
 
           if (modifier) {
             const { inputs = [] } = ctrl;
-            const record = new CharacterRecord(props.char, props.party, props.appCharacters, teammateData);
 
             return (
               <GenshinModifierView
                 key={`${teammate.name}-${ctrl.index}`}
                 mutable={props.mutable}
                 heading={modifier.src}
-                description={parseAbilityDescription(modifier, record, inputs, false)}
+                description={parseAbilityDescription(modifier, inputs, false)}
                 checked={ctrl.activated}
                 inputs={inputs}
                 inputConfigs={modifier.inputConfigs}

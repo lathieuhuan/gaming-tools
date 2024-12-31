@@ -11,23 +11,23 @@ import { ConstellationDetail } from "./ConstellationDetail";
 
 interface ConstellationListProps {
   className?: ClassValue;
-  char: Character;
+  character: Character;
   /** Default to true */
   mutable?: boolean;
   onClickIcon?: (index: number) => void;
 }
 export function ConstellationList(props: ConstellationListProps) {
-  const { char, mutable = true } = props;
+  const { character, mutable = true } = props;
   const [consLv, setConsLv] = useState(0);
   const [atDetail, setAtDetail] = useState(false);
 
-  const appChar = $AppCharacter.get(char.name);
+  const appCharacter = $AppCharacter.get(character.name);
 
   useEffect(() => {
     setAtDetail(false);
-  }, [appChar.code]);
+  }, [appCharacter.code]);
 
-  if (!appChar.constellation.length) {
+  if (!appCharacter.constellation.length) {
     return (
       <p className={clsx("pt-4 px-4 text-xl text-center", props.className)}>
         The time has not yet come for this person's corner of the night sky to light up.
@@ -43,20 +43,20 @@ export function ConstellationList(props: ConstellationListProps) {
   return (
     <CarouselSpace current={atDetail ? 1 : 0} className={props.className}>
       <div className="h-full hide-scrollbar flex flex-col space-y-4">
-        {appChar.constellation.map((cons, i) => {
+        {appCharacter.constellation.map((cons, i) => {
           return (
             <div key={i} className="flex items-center">
               <div className="shrink-0 py-1 pr-2 flex-center">
                 <AbilityIcon
                   className={mutable && "cursor-pointer"}
                   img={cons.image}
-                  active={char.cons >= i + 1}
-                  vision={appChar.vision}
+                  active={character.cons >= i + 1}
+                  vision={appCharacter.vision}
                   onClick={() => props.onClickIcon?.(i)}
                 />
               </div>
               <div className="grow flex group" onClick={() => onClickInfo(i + 1)}>
-                <p className={"px-2 text-lg font-bold" + (char.cons < i + 1 ? " opacity-50" : "")}>{cons.name}</p>
+                <p className={"px-2 text-lg font-bold" + (character.cons < i + 1 ? " opacity-50" : "")}>{cons.name}</p>
                 <Button className="mt-1 ml-auto group-hover:bg-primary-1 shrink-0" size="small" icon={<FaInfo />} />
               </div>
             </div>
@@ -65,7 +65,7 @@ export function ConstellationList(props: ConstellationListProps) {
       </div>
       {consLv ? (
         <ConstellationDetail
-          appChar={appChar}
+          appCharacter={appCharacter}
           consLv={consLv}
           onChangeConsLv={setConsLv}
           onClose={() => {

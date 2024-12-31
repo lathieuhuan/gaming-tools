@@ -56,6 +56,7 @@ export class CharacterCalc {
     return scale ? TALENT_LV_MULTIPLIERS[scale]?.[level] ?? 0 : 1;
   }
 
+  // #TO-DO: check if needed
   static getLevelScale(
     scale: CharacterEffectLevelScale | undefined,
     record: CharacterRecord,
@@ -74,7 +75,7 @@ export class CharacterCalc {
 
   static getTalentDefaultInfo(
     expectedAttPatt: AttackPattern,
-    appChar: AppCharacter
+    appCharacter: AppCharacter
   ): {
     resultKey: LevelableTalentType;
     scale: number;
@@ -83,12 +84,12 @@ export class CharacterCalc {
     flatFactorScale: number;
   } {
     const resultKey = expectedAttPatt === "ES" || expectedAttPatt === "EB" ? expectedAttPatt : "NAs";
-    const defaultScale = resultKey === "NAs" && appChar.weaponType !== "catalyst" ? 7 : 2;
+    const defaultScale = resultKey === "NAs" && appCharacter.weaponType !== "catalyst" ? 7 : 2;
     const {
       scale = defaultScale,
       basedOn = "atk",
       attPatt = expectedAttPatt,
-    } = appChar.calcListConfig?.[expectedAttPatt] || {};
+    } = appCharacter.calcListConfig?.[expectedAttPatt] || {};
 
     return {
       resultKey,

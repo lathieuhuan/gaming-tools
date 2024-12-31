@@ -1,21 +1,20 @@
-import type { CalcAppParty } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectCharacter, changeModCtrlInput, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
-import { useCharacterData } from "../../ContextProvider";
+import { useCharacterRecord } from "../../ContextProvider";
 
-//
 import { SelfBuffsView } from "@Src/components";
 
-export default function SelfBuffs({ partyData }: { partyData: CalcAppParty }) {
+export default function SelfBuffs() {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
+  const character = useSelector(selectCharacter);
   const selfBuffCtrls = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].selfBuffCtrls);
-  const appChar = useCharacterData();
+  const record = useCharacterRecord();
 
   return (
     <SelfBuffsView
       mutable
-      {...{ appChar, char, partyData }}
+      character={character}
+      record={record}
       modCtrls={selfBuffCtrls}
       getHanlders={({ ctrl }) => {
         const path: ToggleModCtrlPath = {

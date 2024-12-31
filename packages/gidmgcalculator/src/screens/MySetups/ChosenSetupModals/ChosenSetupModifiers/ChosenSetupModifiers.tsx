@@ -1,9 +1,9 @@
 import { CollapseList } from "rond";
-import { ArtifactSetBonus, CharacterRecord } from "@Backend";
+import { ArtifactSetBonus } from "@Backend";
 
-import type { AppCharactersByName, UserSetup, UserWeapon } from "@Src/types";
+import type { UserSetup, UserWeapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
-import { $AppCharacter, $AppData } from "@Src/services";
+import { $AppData } from "@Src/services";
 import { calculateChosenSetup } from "../../MySetups.utils";
 
 // Component
@@ -56,18 +56,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
     customDebuffCtrls,
     target,
   } = chosenSetup;
-  const { appChar } = result;
-  const appCharacters = party.reduce<AppCharactersByName>(
-    (data, teammate) => {
-      if (teammate) data[teammate.name] = $AppCharacter.get(teammate.name);
-      return data;
-    },
-    {
-      [char.name]: appChar,
-    }
-  );
-
-  const characterRecord = new CharacterRecord(char, party, appCharacters);
+  const { characterRecord } = result;
   const { title, variant, statuses } = $AppData.getTargetInfo(target);
 
   return (
@@ -83,11 +72,13 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
             },
             {
               heading: "Self",
-              body: <SelfDebuffsView mutable={false} modCtrls={selfDebuffCtrls} characterRecord={characterRecord} />,
+              body: (
+                <SelfDebuffsView mutable={false} modCtrls={selfDebuffCtrls} character={char} record={characterRecord} />
+              ),
             },
             {
               heading: "Party",
-              body: <PartyDebuffsView mutable={false} {...{ char, party, appCharacters }} />,
+              body: <PartyDebuffsView mutable={false} party={party} record={characterRecord} />,
             },
             {
               heading: "Artifacts",
@@ -109,7 +100,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
               body: (
                 <ElementBuffsDetail
                   charLv={char.level}
-                  vision={appChar?.vision}
+                  vision={characterRecord.appCharacter.vision}
                   attkBonuses={result.attkBonuses}
                   customInfusion={chosenSetup.customInfusion}
                   elmtModCtrls={elmtModCtrls}
@@ -118,11 +109,13 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
             },
             {
               heading: "Self",
-              body: <SelfBuffsView mutable={false} modCtrls={selfBuffCtrls} characterRecord={characterRecord} />,
+              body: (
+                <SelfBuffsView mutable={false} modCtrls={selfBuffCtrls} character={char} record={characterRecord} />
+              ),
             },
             {
               heading: "Party",
-              body: <PartyBuffsView mutable={false} {...{ char, party, appCharacters }} />,
+              body: <PartyBuffsView mutable={false} party={party} record={characterRecord} />,
             },
             {
               heading: "Weapons",

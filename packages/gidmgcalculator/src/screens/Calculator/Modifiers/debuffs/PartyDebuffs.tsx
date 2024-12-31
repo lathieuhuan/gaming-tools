@@ -1,26 +1,25 @@
-import type { Party, CalcAppParty } from "@Src/types";
-import { useDispatch, useSelector } from "@Store/hooks";
+import type { Party } from "@Src/types";
+import { useDispatch } from "@Store/hooks";
 import {
-  selectCharacter,
   changeTeammateModCtrlInput,
   toggleTeammateModCtrl,
   type ToggleTeammateModCtrlPath,
 } from "@Store/calculator-slice";
 import { PartyDebuffsView } from "@Src/components";
+import { useCharacterRecord } from "../../ContextProvider";
 
 interface PartyDebuffsProps {
   party: Party;
-  partyData: CalcAppParty;
 }
 export default function PartyDebuffs(props: PartyDebuffsProps) {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
+  const record = useCharacterRecord();
 
   return (
     <PartyDebuffsView
       mutable
       {...props}
-      char={char}
+      record={record}
       getHanlders={({ ctrl, teammateIndex }) => {
         const path: ToggleTeammateModCtrlPath = {
           teammateIndex,

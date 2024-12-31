@@ -1,15 +1,13 @@
-import { CharacterRecord } from "@Src/backend/common-utils";
 import { TotalAttributeControl } from "@Src/backend/controls";
 import { EffectApplicableCondition } from "@Src/backend/types";
-import { $AppCharacter } from "@Src/services";
 import { AppCharactersByName, CalcAppParty, Character } from "@Src/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { __genCalculationInfo, CalcCharacterRecordTester } from "@UnitTest/test-utils";
+import { __genCalculationInfo, CharacterRecordTester } from "@UnitTest/test-utils";
 import { BareBonusGetter } from "../bare-bonus-getter";
 import { isApplicableEffect } from "../isApplicableEffect";
 
 export class IsApplicableEffectTester {
-  record: CalcCharacterRecordTester = __genCalculationInfo();
+  record: CharacterRecordTester = __genCalculationInfo();
   checkInput: EffectApplicableCondition["checkInput"];
   checkParty: EffectApplicableCondition["checkParty"];
   forElmts: EffectApplicableCondition["forElmts"];
@@ -37,7 +35,7 @@ export class IsApplicableEffectTester {
     };
   }
 
-  constructor(record?: CalcCharacterRecordTester) {
+  constructor(record?: CharacterRecordTester) {
     if (record) {
       this.record = record;
     }
@@ -48,16 +46,15 @@ export class IsApplicableEffectTester {
     return value;
   }
 
-  _setInfo(charName: __EMockCharacter, partyData: CalcAppParty = []) {
-    this.record.character.name = charName;
-    this.record.appCharacter = $AppCharacter.get(charName);
+  _setInfo(charName: __EMockCharacter, appParty: CalcAppParty = []) {
+    this.record.__updateCharacter(charName);
 
-    const newAppParty = partyData.reduce<AppCharactersByName>(
+    const newAppParty = appParty.reduce<AppCharactersByName>(
       (result, data) => (data ? { ...result, [data.name]: data } : result),
       {}
     );
 
-    this.record.updateData(newAppParty);
+    this.record.__updateData(newAppParty);
   }
 
   _expectValue<T = any>(value: T) {
@@ -69,29 +66,28 @@ export class IsApplicableEffectTester {
   }
 }
 
-export class BareBonusGetterTester extends BareBonusGetter {
+export class BareBonusGetterTester extends BareBonusGetter<CharacterRecordTester> {
   inputs: number[] = [];
   fromSelf = true;
 
   constructor(totalAttrCtrl?: TotalAttributeControl);
-  constructor(info?: CharacterRecord, totalAttrCtrl?: TotalAttributeControl);
-  constructor(info?: CharacterRecord | TotalAttributeControl, totalAttrCtrl?: TotalAttributeControl) {
+  constructor(info?: CharacterRecordTester, totalAttrCtrl?: TotalAttributeControl);
+  constructor(info?: CharacterRecordTester | TotalAttributeControl, totalAttrCtrl?: TotalAttributeControl) {
     const _info = !info || info instanceof TotalAttributeControl ? __genCalculationInfo() : info;
     const _totalAttrCtrl = info instanceof TotalAttributeControl ? info : totalAttrCtrl;
 
     super(_info, _totalAttrCtrl);
   }
 
-  updateCharacter<TKey extends keyof Character>(key: TKey, value: Character[TKey]) {
+  __updateCharacter<TKey extends keyof Character>(key: TKey, value: Character[TKey]) {
     this.record.character[key] = value;
   }
 
-  changeCharacter(characterName: __EMockCharacter) {
-    this.record.character.name = characterName;
-    this.record.appCharacter = $AppCharacter.get(characterName);
+  __changeCharacter(characterName: __EMockCharacter) {
+    this.record.__updateCharacter(characterName);
   }
 
-  changeParty(appParty: CalcAppParty) {
-    this.record.appParty = appParty;
+  __changeParty(appParty: CalcAppParty) {
+    this.record.__updateParty(appParty);
   }
 }

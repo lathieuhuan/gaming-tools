@@ -8,8 +8,8 @@ import { GenshinImage } from "../GenshinImage";
 
 interface CharacterIntroProps {
   className?: string;
-  char: Character;
-  appChar: AppCharacter;
+  character: Character;
+  appCharacter: AppCharacter;
   switchable?: boolean;
   removable?: boolean;
   /** Default to true */
@@ -20,8 +20,8 @@ interface CharacterIntroProps {
   onChangeCons?: (newCons: number) => void;
 }
 export function CharacterIntro(props: CharacterIntroProps) {
-  const { className = "", char, appChar, mutable = true } = props;
-  const elmtText = `text-${appChar.vision}`;
+  const { className = "", character, appCharacter, mutable = true } = props;
+  const elmtText = `text-${appCharacter.vision}`;
 
   return (
     <div className={`flex relative ${className}`}>
@@ -30,21 +30,21 @@ export function CharacterIntro(props: CharacterIntroProps) {
         onClick={props.switchable ? props.onSwitch : undefined}
         style={{ width: "5.25rem", height: "5.25rem" }}
       >
-        <GenshinImage className="cursor-pointer" src={appChar.icon} imgType="character" fallbackCls="p-2" />
+        <GenshinImage className="cursor-pointer" src={appCharacter.icon} imgType="character" fallbackCls="p-2" />
 
         {props.switchable ? (
           <Button className="absolute -top-1 -left-1 z-10" size="small" icon={<FaSyncAlt />} />
         ) : null}
 
-        <Badge active={appChar.beta} className="absolute -top-1 -right-1 z-10">
+        <Badge active={appCharacter.beta} className="absolute -top-1 -right-1 z-10">
           BETA
         </Badge>
       </div>
 
       <div className="min-w-0 grow">
         <div className="overflow-hidden">
-          <h2 className={`text-2xl truncate ${elmtText} font-black ${props.removable ? "pr-9" : ""}`}>{char.name}</h2>
-          <Rarity value={appChar.rarity} />
+          <h2 className={`text-2xl truncate ${elmtText} font-black ${props.removable ? "pr-9" : ""}`}>{character.name}</h2>
+          <Rarity value={appCharacter.rarity} />
         </div>
 
         <div className="mt-1 pl-1 flex justify-between items-center">
@@ -62,7 +62,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
                 const item = LEVELS[LEVELS.length - 1 - i];
                 return { label: item, value: item };
               })}
-              value={char.level}
+              value={character.level}
               onChange={(value) => props.onChangeLevel?.(value as Level)}
             />
           </div>
@@ -75,7 +75,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
               label: `C${i}`,
               value: i,
             }))}
-            value={char.cons}
+            value={character.cons}
             onChange={(newCons) => props.onChangeCons?.(newCons as number)}
           />
         </div>

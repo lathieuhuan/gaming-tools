@@ -32,8 +32,8 @@ export interface FinalResultLayoutProps {
   showWeaponCalc?: boolean;
   headerConfigs: HeaderConfig[];
   getRowConfig: (mainKey: TableKey["main"], subKey: string) => RowConfig;
-  getTalentLevel?: (talentType: TalentType) => number | undefined;
   talentMutable?: boolean;
+  getTalentLevel?: (talentType: TalentType) => number | undefined;
   onChangeTalentLevel?: (talentType: LevelableTalentType, newLevel: number) => void;
 }
 export function FinalResultLayout({

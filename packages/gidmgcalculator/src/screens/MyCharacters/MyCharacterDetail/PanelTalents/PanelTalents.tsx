@@ -20,14 +20,15 @@ export function PanelTalents(props: PanelTalentsProps) {
     );
   }
   if (!data) return null;
-  const { char } = data;
+  const { character } = data;
 
   return (
     <TalentList
       className={props.className}
-      char={char}
+      character={character}
+      record={data.characterRecord}
       onChangeTalentLevel={(type, level) => {
-        dispatch(updateUserCharacter({ name: char.name, [type]: level }));
+        dispatch(updateUserCharacter({ name: character.name, [type]: level }));
       }}
     />
   );

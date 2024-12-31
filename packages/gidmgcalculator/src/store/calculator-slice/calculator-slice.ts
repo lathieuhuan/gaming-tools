@@ -35,7 +35,7 @@ import Modifier_ from "@Src/utils/modifier-utils";
 import Object_ from "@Src/utils/object-utils";
 import Array_ from "@Src/utils/array-utils";
 import Entity_ from "@Src/utils/entity-utils";
-import { calculate, getCharDataFromState } from "./calculator-slice.utils";
+import { calculate, getAppCharacterFromState } from "./calculator-slice.utils";
 
 // const defaultChar = {
 //   name: "Albedo",
@@ -183,16 +183,16 @@ export const calculatorSlice = createSlice({
     // PARTY
     addTeammate: (state, action: AddTeammateAction) => {
       const { name, elementType, weaponType, teammateIndex } = action.payload;
-      const appChar = getCharDataFromState(state);
+      const appCharacter = getAppCharacterFromState(state);
       const setup = state.setupsById[state.activeId];
       const { party, elmtModCtrls } = setup;
 
-      const oldElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appChar);
+      const oldElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appCharacter);
       const oldTeammate = party[teammateIndex];
       // assign to party
       party[teammateIndex] = Setup_.createTeammate({ name, weaponType });
 
-      const newElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appChar);
+      const newElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appCharacter);
 
       if (oldTeammate) {
         const { vision: oldElement } = $AppCharacter.get(oldTeammate.name) || {};
@@ -229,14 +229,14 @@ export const calculatorSlice = createSlice({
     },
     removeTeammate: (state, action: PayloadAction<number>) => {
       const teammateIndex = action.payload;
-      const appChar = getCharDataFromState(state);
+      const appCharacter = getAppCharacterFromState(state);
       const { party, elmtModCtrls } = state.setupsById[state.activeId];
       const teammate = party[teammateIndex];
 
       if (teammate) {
         const { vision } = $AppCharacter.get(teammate.name);
         party[teammateIndex] = null;
-        const newElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appChar);
+        const newElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appCharacter);
 
         if (newElmtCount.get(vision) === 1) {
           elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
@@ -542,14 +542,14 @@ export const calculatorSlice = createSlice({
     },
     updateSetups: (state, action: UpdateSetupsAction) => {
       const { newSetupManageInfos, newStandardId } = action.payload;
-      const appChar = getCharDataFromState(state);
+      const appCharacter = getAppCharacterFromState(state);
       const { setupManageInfos, setupsById, activeId } = state;
       const removedIds = [];
       // Reset comparedIds before repopulate with newSetupManageInfos
       state.comparedIds = [];
 
-      const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, appChar.name);
-      const newWeapon = Entity_.createWeapon({ type: appChar.weaponType });
+      const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, appCharacter.name);
+      const newWeapon = Entity_.createWeapon({ type: appCharacter.weaponType });
       const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, newWeapon);
       const elmtModCtrls = Modifier_.createElmtModCtrls();
       const tempManageInfos: CalcSetupManageInfo[] = [];

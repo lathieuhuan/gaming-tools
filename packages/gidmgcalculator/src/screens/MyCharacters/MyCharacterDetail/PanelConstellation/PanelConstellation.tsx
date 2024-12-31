@@ -20,17 +20,17 @@ export function PanelConstellation(props: PanelConstellationProps) {
     );
   }
   if (!data) return null;
-  const { char } = data;
+  const { character } = data;
 
   return (
     <ConstellationList
       className={props.className}
-      char={char}
+      character={character}
       onClickIcon={(i) => {
         dispatch(
           updateUserCharacter({
-            name: char.name,
-            cons: char.cons === i + 1 ? i : i + 1,
+            name: character.name,
+            cons: character.cons === i + 1 ? i : i + 1,
           })
         );
       }}

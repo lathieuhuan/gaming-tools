@@ -1,4 +1,4 @@
-import { ModifierStackingControl } from "../modifier-stacking-control";
+import { ModifierStackingControl } from "../../applied-bonuses-getter";
 
 test("path: string", () => {
   const modStackingCtrl = new ModifierStackingControl();

@@ -5,13 +5,19 @@ import { GeneralCalc } from "./general-calc";
 
 export class PartyRecord<T extends Teammate | null = Teammate | null> {
   public readonly elmtCount: TypeCounter<ElementType>;
-  private _appParty: (T extends Teammate | null ? AppCharacter | null : AppCharacter)[] = [];
+  protected _party: T[] = [];
+  protected _appParty: (T extends Teammate | null ? AppCharacter | null : AppCharacter)[] = [];
+
+  get party() {
+    return this._party;
+  }
 
   get appParty() {
     return this._appParty;
   }
 
-  constructor(public readonly party: T[] = [], private data: AppCharactersByName = {}) {
+  constructor(party: T[] = [], protected data: AppCharactersByName = {}) {
+    this._party = party;
     this._appParty = party.map((teammate) => (teammate ? data[teammate.name] : null)) as typeof this._appParty;
     this.elmtCount = GeneralCalc.countElements(this._appParty);
   }

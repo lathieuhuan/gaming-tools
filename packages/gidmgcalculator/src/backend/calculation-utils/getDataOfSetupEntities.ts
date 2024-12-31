@@ -12,7 +12,7 @@ export type DataOfSetupEntities = {
   appCharacters: AppCharactersByName;
   appWeapons: AppWeaponsByCode;
   appArtifacts: AppArtifactsByCode;
-  partyData: CalcAppParty;
+  appParty: CalcAppParty;
 };
 
 export function getDataOfSetupCharacters(character: CalcSetup["char"], party: CalcSetup["party"] = []) {
@@ -42,7 +42,7 @@ export function getDataOfSetupEntities({
     [weapon.code]: $AppWeapon.get(weapon.code)!,
   };
   const appArtifacts: AppArtifactsByCode = {};
-  const partyData: CalcAppParty = [];
+  const appParty: CalcAppParty = [];
 
   for (const artifact of artifacts) {
     if (artifact && !appArtifacts[artifact.code]) {
@@ -57,10 +57,10 @@ export function getDataOfSetupEntities({
       appCharacters[teammate.name] = appCharacter;
       appWeapons[teammate.weapon.code] = $AppWeapon.get(weapon.code)!;
       appArtifacts[teammate.artifact.code] = $AppArtifact.getSet(teammate.artifact.code)!;
-      partyData.push(appCharacter);
+      appParty.push(appCharacter);
     } //
     else {
-      partyData.push(null);
+      appParty.push(null);
     }
   }
 
@@ -68,6 +68,6 @@ export function getDataOfSetupEntities({
     appCharacters,
     appWeapons,
     appArtifacts,
-    partyData,
+    appParty,
   };
 }

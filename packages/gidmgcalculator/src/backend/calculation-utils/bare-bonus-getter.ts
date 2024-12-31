@@ -12,7 +12,6 @@ import type {
 import type { CharacterRecord } from "../common-utils/character-record";
 
 import Array_ from "@Src/utils/array-utils";
-import { CharacterCalc } from "../common-utils";
 import { isApplicableEffect } from "./isApplicableEffect";
 
 export type GetBareBonusSupportInfo = {
@@ -25,8 +24,8 @@ type InternalSupportInfo = GetBareBonusSupportInfo & {
   basedOnStable?: boolean;
 };
 
-export class BareBonusGetter {
-  constructor(protected record: CharacterRecord, protected totalAttrCtrl?: TotalAttributeControl) {}
+export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
+  constructor(protected record: T, protected totalAttrCtrl?: TotalAttributeControl) {}
 
   updateTotalAttrCtrl(totalAttrCtrl: TotalAttributeControl) {
     this.totalAttrCtrl = totalAttrCtrl;
@@ -84,7 +83,7 @@ export class BareBonusGetter {
         break;
       }
       case "LEVEL": {
-        indexValue += CharacterCalc.getFinalTalentLv(this.record, indexConfig.talent);
+        indexValue += record.getFinalTalentLv(indexConfig.talent);
         break;
       }
     }
@@ -282,7 +281,7 @@ export class BareBonusGetter {
         if (record.character.cons >= 1 && electroEnergy <= totalEnergy) {
           totalEnergy += electroEnergy * 0.8 + (totalEnergy - electroEnergy) * 0.2;
         }
-        const level = CharacterCalc.getFinalTalentLv(record, "EB");
+        const level = record.getFinalTalentLv("EB");
         const stackPerEnergy = Math.min(Math.ceil(14.5 + level * 0.5), 20);
         const stacks = Math.round(totalEnergy * stackPerEnergy) / 100;
         // const countResolve = (energyCost: number) => Math.round(energyCost * stackPerEnergy) / 100;
@@ -292,7 +291,7 @@ export class BareBonusGetter {
       }
       case "MIX": {
         result = trueAppParty.reduce(
-          (total, data) => total + (data.nation === "natlan" || data.vision !== record.appCharacter.vision ? 1 : 0),
+          (total, data) => total + (data.nation === "natlan" || data.vision !== appCharacter.vision ? 1 : 0),
           appCharacter.nation === "natlan" ? 1 : 0
         );
 
@@ -338,7 +337,7 @@ export class BareBonusGetter {
 
     initial.value = this.scaleRefi(initial.value, refi, config.incre);
 
-    initial.value *= CharacterCalc.getLevelScale(config.lvScale, this.record, inputs, fromSelf);
+    initial.value *= this.record.getLevelScale(config.lvScale, inputs, fromSelf);
 
     this.applyExtra(initial, config.preExtra, support);
 

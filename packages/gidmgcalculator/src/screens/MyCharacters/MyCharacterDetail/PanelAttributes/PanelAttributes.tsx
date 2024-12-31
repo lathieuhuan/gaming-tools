@@ -23,20 +23,20 @@ export function PanelAttributes(props: PanelAttributesProps) {
   }
   if (!data) return null;
 
-  const { char, totalAttr } = data;
+  const { character, totalAttr } = data;
 
   return (
     <div className={clsx("h-full flex flex-col gap-3", props.className)}>
       <CharacterIntro
-        char={char}
-        appChar={data.appChar}
+        character={character}
+        appCharacter={data.characterRecord.appCharacter}
         switchable
         removable
         mutable
         onSwitch={modalCtrl.requestSwitchCharacter}
         onRemove={modalCtrl.requestRemoveCharacter}
-        onChangeLevel={(level) => dispatch(updateUserCharacter({ name: char.name, level }))}
-        onChangeCons={(cons) => dispatch(updateUserCharacter({ name: char.name, cons }))}
+        onChangeLevel={(level) => dispatch(updateUserCharacter({ name: character.name, level }))}
+        onChangeCons={(cons) => dispatch(updateUserCharacter({ name: character.name, cons }))}
       />
 
       <div className="mt-1 grow custom-scrollbar">

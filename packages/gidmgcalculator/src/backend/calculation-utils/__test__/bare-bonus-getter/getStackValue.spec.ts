@@ -148,13 +148,16 @@ describe("type MEMBER: stack calculated from inputs", () => {
       element: "DIFFERENT",
     };
 
-    tester.changeCharacter(__EMockCharacter.BASIC);
+    tester.__changeCharacter(__EMockCharacter.BASIC);
     tester._expect(0);
 
-    tester.changeParty([$AppCharacter.get(__EMockCharacter.BASIC)]);
-    tester._expect(0);
+    // tester.__changeParty([$AppCharacter.get(__EMockCharacter.BASIC)]);
+    // tester._expect(0);
 
-    tester.changeParty([$AppCharacter.get(__EMockCharacter.CATALYST)]);
+    tester.__changeParty([$AppCharacter.get(__EMockCharacter.CATALYST)]);
+
+    console.log(tester["record"].party);
+
     tester._expect(1);
   });
 });

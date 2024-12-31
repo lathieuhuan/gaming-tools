@@ -70,7 +70,7 @@ test("[type: LEVEL] get optIndex from character's talent level", () => {
       source: "LEVEL",
       talent: talent,
     };
-    tester.updateCharacter(talent, level);
+    tester.__updateCharacter(talent, level);
     tester._expect(level - 1);
   }
 });
@@ -80,13 +80,13 @@ test("[type: ELEMENT] get optIndex from the number of the party's all distinct e
     source: "ELEMENT",
   };
 
-  tester.changeCharacter(__EMockCharacter.BASIC);
+  tester.__changeCharacter(__EMockCharacter.BASIC);
   tester._expect(0);
 
-  tester.changeParty([$AppCharacter.get(__EMockCharacter.BASIC)]);
+  tester.__changeParty([$AppCharacter.get(__EMockCharacter.BASIC)]);
   tester._expect(0);
 
-  tester.changeParty([$AppCharacter.get(__EMockCharacter.CATALYST)]);
+  tester.__changeParty([$AppCharacter.get(__EMockCharacter.CATALYST)]);
   tester._expect(1);
 });
 
@@ -96,10 +96,10 @@ test("[type: ELEMENT] get optIndex from the number of the party's some distinct 
     elements: ["pyro"],
   };
 
-  tester.changeCharacter(__EMockCharacter.BASIC);
+  tester.__changeCharacter(__EMockCharacter.BASIC);
   tester._expect(0);
 
-  tester.changeParty([$AppCharacter.get(__EMockCharacter.CATALYST)]);
+  tester.__changeParty([$AppCharacter.get(__EMockCharacter.CATALYST)]);
   tester._expect(0);
 
   tester.optIndex.elements = ["pyro", "electro"];
@@ -117,16 +117,16 @@ test("[type: MEMBER] get optIndex from the number of teammates whose elements ar
     element: "DIFFERENT",
   };
 
-  tester.changeCharacter(__EMockCharacter.BASIC);
+  tester.__changeCharacter(__EMockCharacter.BASIC);
   tester._expect(-1);
 
-  tester.changeParty([electroMember]);
+  tester.__changeParty([electroMember]);
   tester._expect(0);
 
-  tester.changeParty([electroMember, $AppCharacter.get(__EMockCharacter.BASIC)]);
+  tester.__changeParty([electroMember, $AppCharacter.get(__EMockCharacter.BASIC)]);
   tester._expect(0);
 
-  tester.changeParty([electroMember, $AppCharacter.get(__EMockCharacter.TARTAGLIA)]);
+  tester.__changeParty([electroMember, $AppCharacter.get(__EMockCharacter.TARTAGLIA)]);
   tester._expect(1);
 });
 
@@ -139,13 +139,13 @@ test("optIndex from the number of WHOLE party's members whose elements are align
     element: "pyro",
   };
 
-  tester.changeCharacter(__EMockCharacter.BASIC);
+  tester.__changeCharacter(__EMockCharacter.BASIC);
   tester._expect(0);
 
-  tester.changeParty([pyroMember]);
+  tester.__changeParty([pyroMember]);
   tester._expect(1);
 
-  tester.changeParty([pyroMember, electroMember]);
+  tester.__changeParty([pyroMember, electroMember]);
   tester._expect(1);
 
   tester.optIndex.element = ["pyro", "electro"];

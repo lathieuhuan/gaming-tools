@@ -21,7 +21,7 @@ type SetupImportCenterProps = PartiallyRequired<SetupImportInfo, "calcSetup" | "
 
 function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImportCenterProps) {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
+  const character = useSelector(selectCharacter);
   const currentTarget = useSelector(selectTarget);
   const calcSetupInfos = useSelector(selectSetupManageInfos);
 
@@ -35,11 +35,11 @@ function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImport
     const delayExecute = (fn: () => void) => setTimeout(fn, 0);
 
     // Start of site, no setup in Calculator yet
-    if (!char) {
+    if (!character) {
       delayExecute(startNewSession);
       return;
     }
-    if (char.name !== calcSetup.char.name) {
+    if (character.name !== calcSetup.char.name) {
       delayExecute(() => setPendingCode(1));
       return;
     }
@@ -52,7 +52,7 @@ function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImport
       delayExecute(() => setPendingCode(3));
       return;
     }
-    const sameChar = isEqual(char, calcSetup.char);
+    const sameChar = isEqual(character, calcSetup.char);
     const sameTarget = isEqual(Object_.omitEmptyProps(currentTarget), Object_.omitEmptyProps(target));
 
     if (sameChar && sameTarget) {

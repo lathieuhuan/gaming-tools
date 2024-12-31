@@ -122,7 +122,7 @@ test("max has extra", () => {
   };
   tester._expect(3);
 
-  tester.updateCharacter("cons", 5);
+  tester.__updateCharacter("cons", 5);
   tester._expect(4);
 });
 

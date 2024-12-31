@@ -104,10 +104,10 @@ export const userdbSlice = createSlice({
       const { userChars, userWps, userArts } = state;
       const name = action.payload;
       let charIndex = Array_.indexByName(userChars, name);
-      const char = userChars[charIndex];
+      const character = userChars[charIndex];
 
-      if (char) {
-        const { weaponID, artifactIDs } = char;
+      if (character) {
+        const { weaponID, artifactIDs } = character;
         const wpInfo = Array_.findById(userWps, weaponID);
         if (wpInfo) {
           wpInfo.owner = null;

@@ -1,4 +1,3 @@
-export * from "./_hooks";
 export * from "./CharacterOverview";
 export * from "./Modifiers";
 export * from "./FinalResult";

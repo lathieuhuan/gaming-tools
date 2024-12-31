@@ -23,7 +23,7 @@ export function parseUserCharacter({
   weaponType,
   seedID,
 }: ParseUserCharacterArgs) {
-  const char = Entity_.createCharacter(name, info);
+  const character = Entity_.createCharacter(name, info);
 
   let weapon: CalcWeapon;
   let wpBuffCtrls: ModifierCtrl[];
@@ -46,7 +46,7 @@ export function parseUserCharacter({
   const { artBuffCtrls } = Modifier_.createMainArtifactBuffCtrls(artifacts);
 
   return {
-    char,
+    character,
     weapon,
     wpBuffCtrls,
     artifacts,

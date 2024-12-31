@@ -8,7 +8,7 @@ import type { ArtifactManager } from "./controllers";
 
 import { useStoreSnapshot } from "@Src/features";
 import Object_ from "@Src/utils/object-utils";
-import { useCharacterData, useOptimizerState } from "../ContextProvider";
+import { useCharacterData, useCharacterRecord, useOptimizerState } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 
 // Components
@@ -69,7 +69,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       data: getDataOfSetupEntities(setup),
     };
   });
-  const appChar = useCharacterData();
+  const record = useCharacterRecord();
   const artifactManager = useArtifactManager(store.artifacts);
 
   const [activePieceSelect, setActivePieceSelect] = useState(false);
@@ -185,7 +185,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       title: "Compared Item",
       render: (changeValid) => (
         <CalcItemSelect
-          calcList={appChar.calcList}
+          calcList={record.appCharacter.calcList}
           initialValue={savedValues.current?.calcItem}
           onChange={(items) => (savedValues.current.calcItem = items[0])}
           onChangeValid={changeValid}

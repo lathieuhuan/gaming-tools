@@ -234,7 +234,7 @@ export class CalcItemCalculator {
       } else if (resultKey === "NAs" && customInfusion.element !== "phys") {
         attElmt = customInfusion.element;
         /**
-         * when the customInfusion.element is the same as appChar.vision (e.g. Pyro)
+         * when the customInfusion.element is the same as appCharacter.vision (e.g. Pyro)
          * elmtModCtrls.infuse_reaction will be null, because the reaction of NAs will be the same as ES and EB,
          * so we use elmtModCtrls.reaction instead
          */

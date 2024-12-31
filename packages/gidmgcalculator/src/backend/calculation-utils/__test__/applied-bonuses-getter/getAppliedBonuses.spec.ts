@@ -16,7 +16,7 @@ class Tester extends AppliedBonusesGetter {
   description = "";
 
   _updateCharacter<TKey extends keyof Character>(key: TKey, value: Character[TKey]) {
-    this.info.char[key] = value;
+    this.record.character[key] = value;
   }
 
   _getAppliedBonuses(effects: EntityBuff["effects"]) {

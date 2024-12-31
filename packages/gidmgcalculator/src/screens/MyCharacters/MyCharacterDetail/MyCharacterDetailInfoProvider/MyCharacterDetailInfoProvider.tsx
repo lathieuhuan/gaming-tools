@@ -8,6 +8,7 @@ import type { RootState } from "@Store/store";
 import Array_ from "@Src/utils/array-utils";
 import { useSelector } from "@Store/hooks";
 import { MyCharacterDetailInfoContext, type MyCharacterDetailInfoState } from "./my-character-detail-info-context";
+import { makeUICharacterRecord } from "@Src/utils/ui-character-record";
 
 interface MyCharacterDetailInfoProviderProps {
   setup: {
@@ -23,12 +24,15 @@ function MyCharacterDetailInfoProviderCore({ setup, children }: MyCharacterDetai
   const characterInfoState = useMemo<MyCharacterDetailInfoState>(() => {
     const data = getDataOfSetupEntities(setup);
     const stats = new InputProcessor(setup, data).getCalculationStats();
+    const characterRecord = makeUICharacterRecord(setup.char, []);
 
     return {
       loading: false,
       data: {
-        ...setup,
-        appChar: data.appCharacters[setup.char.name],
+        character: setup.char,
+        weapon: setup.weapon,
+        artifacts: setup.artifacts,
+        characterRecord,
         appWeapon: data.appWeapons[setup.weapon.code],
         setBonuses: GeneralCalc.getArtifactSetBonuses(setup.artifacts),
         totalAttr: stats.totalAttr,

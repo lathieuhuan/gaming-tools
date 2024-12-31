@@ -19,7 +19,7 @@ class Tester extends AppliedBonusesGetter {
   unstackableId?: string;
 
   _changeCharacter(name: __EMockCharacter) {
-    this.info = __genCalculationInfo(name);
+    this.record = __genCalculationInfo(name);
   }
 
   _apply() {

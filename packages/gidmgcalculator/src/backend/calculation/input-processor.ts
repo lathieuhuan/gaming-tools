@@ -31,7 +31,7 @@ import {
 import { AttackBonusesControl, ResistanceReductionControl, TotalAttributeControl, TrackerControl } from "../controls";
 
 export class InputProcessor {
-  protected char: Character;
+  protected character: Character;
   protected party: Party;
   protected weapon: Weapon;
   protected artifacts: CalcArtifacts;
@@ -58,7 +58,7 @@ export class InputProcessor {
     data: DataOfSetupEntities,
     protected tracker?: TrackerControl
   ) {
-    this.char = setup.char;
+    this.character = setup.char;
     this.weapon = setup.weapon;
     this.artifacts = setup.artifacts;
     this.party = setup.party || [];
@@ -77,14 +77,14 @@ export class InputProcessor {
       element: "phys",
     };
 
-    this.characterRecord = new CharacterRecord(this.char, this.party, data.appCharacters);
+    this.characterRecord = new CharacterRecord(this.character, data.appCharacters, this.party);
     this.appWeapons = data.appWeapons;
     this.appArtifacts = data.appArtifacts;
   }
 
   getCalculationStats() {
     const {
-      char,
+      character,
       weapon,
       artifacts,
       party,
@@ -103,7 +103,7 @@ export class InputProcessor {
     const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
 
     const totalAttrCtrl = new TotalAttributeControl(this.tracker).construct(
-      char,
+      character,
       characterRecord.appCharacter,
       weapon,
       appWeapon,
@@ -123,7 +123,7 @@ export class InputProcessor {
       const { innateBuffs = [], buffs = [] } = characterRecord.appCharacter;
 
       for (const buff of innateBuffs) {
-        if (isGrantedEffect(buff, char)) {
+        if (isGrantedEffect(buff, character)) {
           applyBuff(
             buff,
             {
@@ -138,7 +138,7 @@ export class InputProcessor {
       for (const ctrl of selfBuffCtrls) {
         const buff = Array_.findByIndex(buffs, ctrl.index);
 
-        if (ctrl.activated && buff && isGrantedEffect(buff, char)) {
+        if (ctrl.activated && buff && isGrantedEffect(buff, character)) {
           applyBuff(
             buff,
             {
@@ -312,7 +312,7 @@ export class InputProcessor {
     // APPLY TEAMMATE BUFFS
     for (const teammate of party) {
       if (!teammate) continue;
-      const { name, buffs = [] } = this.characterRecord.getAppTeammate(teammate.name);
+      const { name, buffs = [] } = this.characterRecord.getAppCharacter(teammate.name);
 
       for (const { index, activated, inputs = [] } of teammate.buffCtrls) {
         const buff = Array_.findByIndex(buffs, index);
@@ -408,10 +408,10 @@ export class InputProcessor {
     }
 
     if (reaction === "spread" || infuse_reaction === "spread") {
-      attkBonusesCtrl.applySpreadBuff(char.level);
+      attkBonusesCtrl.applySpreadBuff(character.level);
     }
     if (reaction === "aggravate" || infuse_reaction === "aggravate") {
-      attkBonusesCtrl.applyAggravateBuff(char.level);
+      attkBonusesCtrl.applyAggravateBuff(character.level);
     }
 
     const totalAttr = totalAttrCtrl.finalize();

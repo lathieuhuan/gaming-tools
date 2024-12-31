@@ -3,7 +3,7 @@ import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
 import { clsx, message, CollapseSpace } from "rond";
 
 import Array_ from "@Src/utils/array-utils";
-import { useCharacterData, usePartyData } from "../../ContextProvider";
+import { useCharacterData, useCharacterRecord, usePartyData } from "../../ContextProvider";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -33,8 +33,7 @@ export default function SectionParty() {
   const activeId = useSelector(selectActiveId);
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const party = useSelector(selectParty);
-  const appChar = useCharacterData();
-  const partyData = usePartyData();
+  const characterRecord = useCharacterRecord();
 
   const [modal, setModal] = useState<ModalState>({
     type: "",
@@ -42,6 +41,7 @@ export default function SectionParty() {
   });
   const [detailSlot, setDetailSlot] = useState<number | null>(null);
 
+  const { appCharacter } = characterRecord;
   const isCombined = Array_.findById(setupManageInfos, activeId)?.type === "combined";
   const detailTeammate = detailSlot === null ? undefined : party[detailSlot];
 
@@ -83,7 +83,8 @@ export default function SectionParty() {
       {party.length && party.every((teammate) => !teammate) ? <CopySelect /> : null}
 
       <div className="flex">
-        {partyData.map((data, teammateIndex) => {
+        {party.map((teammate, teammateIndex) => {
+          const data = teammate ? characterRecord.getAppCharacter(teammate.name) : undefined;
           const isExpanded = teammateIndex === detailSlot;
 
           return (
@@ -109,7 +110,7 @@ export default function SectionParty() {
               </div>
 
               <CharacterPortrait
-                info={data ?? undefined}
+                info={data}
                 withColorBg
                 recruitable
                 onClick={() => {
@@ -162,7 +163,7 @@ export default function SectionParty() {
       <Tavern
         active={modal.type === "CHARACTER" && modal.teammateIndex !== null}
         sourceType="app"
-        filter={(character) => character.name !== appChar.name && party.every((tm) => tm?.name !== character.name)}
+        filter={(character) => character.name !== appCharacter.name && party.every((tm) => tm?.name !== character.name)}
         onSelectCharacter={(character) => {
           const { teammateIndex } = modal;
 
@@ -184,7 +185,7 @@ export default function SectionParty() {
       {detailSlot !== null && (
         <WeaponForge
           active={modal.type === "WEAPON" && modal.teammateIndex !== null}
-          forcedType={partyData[detailSlot]?.weaponType}
+          forcedType={detailTeammate ? characterRecord.getAppCharacter(detailTeammate.name).weaponType : undefined}
           onForgeWeapon={(weapon) => {
             dispatch(
               updateTeammateWeapon({

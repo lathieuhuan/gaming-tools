@@ -4,7 +4,7 @@ import { calculateSetup } from "@Backend";
 import type { CalculatorState } from "./calculator-slice.types";
 import { $AppCharacter } from "@Src/services";
 
-export function getCharDataFromState(state: CalculatorState) {
+export function getAppCharacterFromState(state: CalculatorState) {
   const setup = state.setupsById[state.activeId];
   return $AppCharacter.get(setup.char.name);
 }

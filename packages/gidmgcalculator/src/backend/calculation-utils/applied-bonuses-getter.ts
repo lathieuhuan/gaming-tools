@@ -150,7 +150,7 @@ type StackableCheckCondition = {
   paths: string | string[];
 };
 
-class ModifierStackingControl {
+export class ModifierStackingControl {
   private usedMods: NonNullable<StackableCheckCondition>[] = [];
 
   isStackable = (condition: StackableCheckCondition) => {

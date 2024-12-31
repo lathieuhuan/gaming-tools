@@ -48,14 +48,14 @@ export function EquippedSetStash({ keyword, onChangeArtifact, onSelectSet }: Equ
 
     for (const character of characters) {
       if (character.artifactIDs.filter(Boolean).length) {
-        const appChar = $AppCharacter.get(character.name);
+        const appCharacter = $AppCharacter.get(character.name);
 
         const option: EquippedSetOption = {
           character: {
-            code: appChar.code,
+            code: appCharacter.code,
             name: character.name,
-            icon: appChar.icon,
-            elementType: appChar.vision,
+            icon: appCharacter.icon,
+            elementType: appCharacter.vision,
           },
           artifacts: [],
         };

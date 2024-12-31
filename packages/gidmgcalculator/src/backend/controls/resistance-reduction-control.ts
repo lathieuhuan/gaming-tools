@@ -16,10 +16,10 @@ import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
 import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
 
-export class ResistanceReductionControl {
+export class ResistanceReductionControl<T extends CharacterRecord = CharacterRecord> {
   private reductCounter = new TypeCounter<ResistanceReductionKey>();
 
-  constructor(private characterRecord: CharacterRecord, private tracker?: TrackerControl) {}
+  constructor(private characterRecord: T, private tracker?: TrackerControl) {}
 
   add(key: ResistanceReductionKey, value: number, description: string) {
     this.reductCounter.add(key, value);

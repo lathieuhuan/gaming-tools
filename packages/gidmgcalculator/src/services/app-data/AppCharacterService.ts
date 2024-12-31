@@ -134,15 +134,15 @@ export class AppCharacterService extends BaseService {
   }
 
   async fetchConsDescriptions(name: string): StandardResponse<string[]> {
-    const appChar = this.get(name);
-    if (!appChar) {
+    const appCharacter = this.get(name);
+    if (!appCharacter) {
       return {
         code: 404,
         message: "Character not found",
         data: null,
       };
     }
-    const { constellation = [] } = appChar;
+    const { constellation = [] } = appCharacter;
 
     if (!constellation.length || !constellation[0]) {
       // Aloy
@@ -157,21 +157,21 @@ export class AppCharacterService extends BaseService {
     }
 
     return await this.fetchData(GENSHIN_DEV_URL.character(name), {
-      processData: (res) => this.parseGenshinDevResponse(res, appChar).consDescriptions,
+      processData: (res) => this.parseGenshinDevResponse(res, appCharacter).consDescriptions,
       processError: (res) => res.error,
     });
   }
 
   async fetchTalentDescriptions(name: string): StandardResponse<string[]> {
-    const appChar = this.get(name);
-    if (!appChar) {
+    const appCharacter = this.get(name);
+    if (!appCharacter) {
       return {
         code: 404,
         message: "Character not found",
         data: null,
       };
     }
-    const { activeTalents, passiveTalents } = appChar;
+    const { activeTalents, passiveTalents } = appCharacter;
 
     if (activeTalents.NAs.description) {
       const coreType: TalentType[] = ["NAs", "ES", "EB"];
@@ -190,7 +190,7 @@ export class AppCharacterService extends BaseService {
     }
 
     return await this.fetchData(GENSHIN_DEV_URL.character(name), {
-      processData: (res) => this.parseGenshinDevResponse(res, appChar).talentDescriptions,
+      processData: (res) => this.parseGenshinDevResponse(res, appCharacter).talentDescriptions,
       processError: (res) => res.error,
     });
   }

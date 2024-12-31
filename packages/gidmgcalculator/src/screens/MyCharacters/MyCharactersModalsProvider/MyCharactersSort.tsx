@@ -11,27 +11,27 @@ import { useDispatch } from "@Store/hooks";
 import { selectUserCharacters, sortCharacters } from "@Store/userdb-slice";
 
 const selectCharacterToBeSorted = createSelector(selectUserCharacters, (userChars) =>
-  userChars.map((char, index) => {
-    const { name, rarity } = $AppCharacter.get(char.name);
-    return { name, level: char.level, rarity, index };
+  userChars.map((character, index) => {
+    const { name, rarity } = $AppCharacter.get(character.name);
+    return { name, level: character.level, rarity, index };
   })
 );
 
 interface LineProps extends React.HTMLAttributes<HTMLDivElement> {
-  char: { name: string; level: string; rarity: number; index: number };
+  character: { name: string; level: string; rarity: number; index: number };
   marker?: React.ReactNode;
   visiblePlot?: boolean;
 }
-const Line = ({ char, marker, visiblePlot, ...rest }: LineProps) => {
+const Line = ({ character, marker, visiblePlot, ...rest }: LineProps) => {
   return (
-    <div key={char.name} className="flex flex-col cursor-default select-none" {...rest}>
+    <div key={character.name} className="flex flex-col cursor-default select-none" {...rest}>
       <div className="px-2 py-1 h-10 bg-surface-3" hidden={!visiblePlot}></div>
 
       <div className="px-2 py-1 flex items-center hover:bg-surface-2">
         <div className="w-8 h-8 mr-2 flex-center text-light-default pointer-events-none">{marker}</div>
 
         <p className="pointer-events-none text-light-default">
-          <span className={`text-rarity-${char.rarity}`}>{char.name}</span> (Lv. {char.level})
+          <span className={`text-rarity-${character.rarity}`}>{character.name}</span> (Lv. {character.level})
         </p>
       </div>
     </div>
@@ -215,26 +215,35 @@ function SortCore({ onClose }: { onClose: () => void }) {
         <div>
           {inMarkingMode &&
             markedList.map((index, i) => {
-              const char = Array_.findByIndex(list, index);
+              const character = Array_.findByIndex(list, index);
 
-              if (char) {
-                return <Line key={char.name} char={char} marker={i + 1} onClick={() => onClickLine(char.index)} />;
+              if (character) {
+                return (
+                  <Line
+                    key={character.name}
+                    character={character}
+                    marker={i + 1}
+                    onClick={() => onClickLine(character.index)}
+                  />
+                );
               }
 
               return null;
             })}
           {inMarkingMode
             ? list
-                .filter((char) => !markedList.includes(char.index))
-                .map((char) => {
-                  return <Line key={char.name} char={char} onClick={() => onClickLine(char.index)} />;
+                .filter((character) => !markedList.includes(character.index))
+                .map((character) => {
+                  return (
+                    <Line key={character.name} character={character} onClick={() => onClickLine(character.index)} />
+                  );
                 })
-            : list.map((char, i) => {
+            : list.map((character, i) => {
                 return (
                   <Line
-                    key={char.name}
+                    key={character.name}
                     id={i.toString()}
-                    char={char}
+                    character={character}
                     visiblePlot={i === dropIndex}
                     draggable={!inMarkingMode}
                     marker={<FaSort size="1.25rem" />}

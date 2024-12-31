@@ -70,14 +70,14 @@ describe("getArtifactSetBonuses", () => {
 });
 
 describe("countElements", () => {
-  test("without appChar", () => {
+  test("without appCharacter", () => {
     const elmtCounter = GeneralCalc.countElements([__characters[0], __characters[1]]);
 
     expect(elmtCounter.get(__characters[0].vision)).toBe(1);
     expect(elmtCounter.get(__characters[1].vision)).toBe(1);
   });
 
-  test("with appChar", () => {
+  test("with appCharacter", () => {
     const elmtCounter = GeneralCalc.countElements([__characters[0], __characters[0]], __characters[2]);
 
     expect(elmtCounter.get(__characters[0].vision)).toBe(2);

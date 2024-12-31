@@ -18,14 +18,14 @@ const useTalentDescriptions = (characterName: string, auto: boolean) => {
 };
 
 interface TalentDetailProps {
-  appChar: AppCharacter;
+  appCharacter: AppCharacter;
   detailIndex: number;
   onChangeDetailIndex: (newIndex: number) => void;
   onClose: () => void;
 }
-export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClose }: TalentDetailProps) {
+export function TalentDetail({ appCharacter, detailIndex, onChangeDetailIndex, onClose }: TalentDetailProps) {
   const { t } = useTranslation();
-  const { weaponType, vision, activeTalents, passiveTalents } = appChar;
+  const { weaponType, vision, activeTalents, passiveTalents } = appCharacter;
   const { ES, EB, altSprint } = activeTalents;
   const isPassiveTalent = detailIndex > Object.keys(activeTalents).length - 1;
   const images = [NORMAL_ATTACK_ICONS[`${weaponType}_${vision}`] || "", ES.image, EB.image];
@@ -39,7 +39,7 @@ export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClos
     configs: [{ text: "Talent Info" }, { text: "Skill Attributes" }],
   });
 
-  const { isLoading, isError, data: descriptions } = useTalentDescriptions(appChar.name, !activeIndex);
+  const { isLoading, isError, data: descriptions } = useTalentDescriptions(appCharacter.name, !activeIndex);
 
   if (altSprint) {
     images.push(altSprint.image);
@@ -55,7 +55,7 @@ export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClos
     }
   }, [isPassiveTalent]);
 
-  const talents = useMemo(() => processTalents(appChar, talentLevel, t), [talentLevel]);
+  const talents = useMemo(() => processTalents(appCharacter, talentLevel, t), [talentLevel]);
 
   const talent = talents[detailIndex];
   const levelable = talent?.type !== "altSprint";
@@ -184,8 +184,12 @@ interface ProcessedTalent {
   type: ProcessedTalentType;
   stats: ProcessedStat[];
 }
-function processTalents(appChar: AppCharacter, level: number, translate: (word: string) => string): ProcessedTalent[] {
-  const { NAs, ES, EB, altSprint } = appChar.activeTalents;
+function processTalents(
+  appCharacter: AppCharacter,
+  level: number,
+  translate: (word: string) => string
+): ProcessedTalent[] {
+  const { NAs, ES, EB, altSprint } = appCharacter.activeTalents;
 
   const result: ProcessedTalent[] = [
     { name: NAs.name, type: "NAs", label: translate("NAs"), stats: [] },
@@ -194,11 +198,11 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
   ];
 
   for (const attPatt of ATTACK_PATTERNS) {
-    const default_ = CharacterCalc.getTalentDefaultInfo(attPatt, appChar);
+    const default_ = CharacterCalc.getTalentDefaultInfo(attPatt, appCharacter);
     const talent = result.find((item) => item.type === default_.resultKey);
     if (!talent) continue;
 
-    for (const stat of appChar.calcList[attPatt]) {
+    for (const stat of appCharacter.calcList[attPatt]) {
       const multFactors = Array_.toArray(stat.multFactors);
       const { flatFactor } = stat;
       const factorStrings = [];
@@ -241,7 +245,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
 
   result[2].stats.push({
     name: "Energy cost",
-    value: appChar.EBcost,
+    value: appCharacter.EBcost,
   });
 
   if (altSprint) {
@@ -257,7 +261,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
   const passiveLabels = ["Ascension 1", "Ascension 4", "Utility"];
 
   result.push(
-    ...appChar.passiveTalents.map<ProcessedTalent>((talent, i) => {
+    ...appCharacter.passiveTalents.map<ProcessedTalent>((talent, i) => {
       return {
         name: talent.name,
         type: passiveTypes[i],

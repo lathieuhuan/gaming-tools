@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
 import { Select, clsx } from "rond";
-import { TALENT_TYPES, CalculationAspect, TalentType, CharacterRecord } from "@Backend";
+import { TALENT_TYPES, CalculationAspect, TalentType } from "@Backend";
 
 import type { Weapon } from "@Src/types";
+import type { UICharacterRecord } from "@Src/utils/ui-character-record";
 import Array_ from "@Src/utils/array-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectSetupManageInfos, selectStandardId, updateCharacter } from "@Store/calculator-slice";
@@ -21,17 +22,17 @@ const ASPECT_LABEL: Record<CalculationAspect, string> = {
 
 interface FinalResultCompareProps {
   comparedIds: number[];
-  characterRecord: CharacterRecord;
+  record: UICharacterRecord;
   weapon: Weapon;
 }
-export function FinalResultCompare({ comparedIds, characterRecord, weapon }: FinalResultCompareProps) {
+export function FinalResultCompare({ comparedIds, record, weapon }: FinalResultCompareProps) {
   const dispatch = useDispatch();
   const resultById = useSelector((state) => state.calculator.resultById);
   const standardId = useSelector(selectStandardId);
 
   const [focusedAspect, setFocusedAspect] = useState<CalculationAspect>("average");
 
-  const { setupIds, ...layoutProps } = useLayoutProps(comparedIds, standardId, characterRecord);
+  const { setupIds, ...layoutProps } = useLayoutProps(comparedIds, standardId, record);
 
   const calculationAspects: CalculationAspect[] = ["nonCrit", "crit", "average"];
 
@@ -59,7 +60,7 @@ export function FinalResultCompare({ comparedIds, characterRecord, weapon }: Fin
       <div className="grow hide-scrollbar">
         <FinalResultLayout
           {...layoutProps}
-          appCharacter={characterRecord.mainAppCharacter}
+          appCharacter={record.appCharacter}
           talentMutable
           weapon={weapon}
           onChangeTalentLevel={(talentType, newLevel) => {
@@ -135,7 +136,7 @@ export function FinalResultCompare({ comparedIds, characterRecord, weapon }: Fin
 type LayoutProps = Pick<FinalResultLayoutProps, "showWeaponCalc" | "headerConfigs" | "getTalentLevel"> & {
   setupIds: number[];
 };
-function useLayoutProps(comparedIds: number[], standardId: number, characterRecord: CharacterRecord): LayoutProps {
+function useLayoutProps(comparedIds: number[], standardId: number, record: UICharacterRecord): LayoutProps {
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const setupsById = useSelector((state) => state.calculator.setupsById);
 
@@ -154,7 +155,7 @@ function useLayoutProps(comparedIds: number[], standardId: number, characterReco
   const talent = {} as Record<TalentType, { areSame: boolean; levels: number[] }>;
 
   for (const talentType of TALENT_TYPES) {
-    const levels = setupIds.map((id) => characterRecord.getFinalTalentLv(talentType, setupsById[id].char));
+    const levels = setupIds.map((id) => record.getFinalTalentLv(talentType, setupsById[id].char));
 
     talent[talentType] = {
       areSame: new Set(levels).size === 1,

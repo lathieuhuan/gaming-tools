@@ -1,16 +1,9 @@
 import type { RootState } from "@Store/store";
 
 import Array_ from "@Src/utils/array-utils";
-import {
-  selectCalcFinalResult,
-  selectCharacter,
-  selectComparedIds,
-  selectParty,
-  selectWeapon,
-  updateCharacter,
-} from "@Store/calculator-slice";
+import { selectCalcFinalResult, selectComparedIds, selectWeapon, updateCharacter } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { useCharacterData } from "../ContextProvider";
+import { useCharacterRecord } from "../ContextProvider";
 
 // Components
 import { FinalResultView } from "@Src/components";
@@ -18,10 +11,12 @@ import { FinalResultCompare } from "./FinalResultCompare";
 import { Menu } from "./Menu";
 
 export function FinalResult() {
+  const finalResultRender = <FinalResultCore />;
+
   return (
     <div className="h-full">
-      <Menu />
-      <FinalResultCore />
+      <Menu finalResult={finalResultRender} />
+      {finalResultRender}
     </div>
   );
 }
@@ -34,15 +29,13 @@ const selectActiveSetupName = (state: RootState) => {
 export function FinalResultCore() {
   const dispatch = useDispatch();
   const activeSetupName = useSelector(selectActiveSetupName);
-  const char = useSelector(selectCharacter);
   const weapon = useSelector(selectWeapon);
-  const party = useSelector(selectParty);
   const finalResult = useSelector(selectCalcFinalResult);
   const comparedIds = useSelector(selectComparedIds);
-  const appChar = useCharacterData();
+  const record = useCharacterRecord();
 
   if (comparedIds.length > 1) {
-    return <FinalResultCompare comparedIds={comparedIds} {...{ char, weapon, party }} />;
+    return <FinalResultCompare {...{ record, weapon, comparedIds }} />;
   }
 
   return (
@@ -52,7 +45,7 @@ export function FinalResultCore() {
       </div>
       <div className="grow hide-scrollbar">
         <FinalResultView
-          {...{ char, weapon, party, finalResult, appChar }}
+          {...{ record, weapon, finalResult }}
           talentMutable
           onChangeTalentLevel={(type, level) => dispatch(updateCharacter({ [type]: level }))}
         />
