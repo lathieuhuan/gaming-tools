@@ -1,3 +1,4 @@
+import type { ElementModCtrl, Infusion } from "@Src/types";
 import type {
   ActualAttackPattern,
   AttackBonusKey,
@@ -13,13 +14,12 @@ import type {
   NormalAttacksConfig,
   ResistanceReduction,
   TotalAttribute,
-} from "@Src/backend/types";
-import type { ElementModCtrl, Infusion } from "@Src/types";
+} from "../types";
 
 import { toMult } from "@Src/utils";
 import Array_ from "@Src/utils/array-utils";
-import { CharacterRecord, CharacterCalc, GeneralCalc } from "@Src/backend/common-utils";
-import { AttackBonusesArchive, CalcItemRecord, TrackerControl } from "@Src/backend/controls";
+import { CharacterCalc, CharacterRecord, GeneralCalc } from "../common-utils";
+import { AttackBonusesArchive, CalcItemRecord, TrackerControl } from "../controls";
 
 type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorption">;
 

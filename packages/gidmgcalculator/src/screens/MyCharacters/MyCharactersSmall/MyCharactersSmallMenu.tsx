@@ -6,7 +6,7 @@ import { useSelector } from "@Store/hooks";
 import { selectChosenCharacter, selectUserCharacters } from "@Store/userdb-slice";
 import { $AppCharacter } from "@Src/services";
 import { GenshinImage } from "@Src/components";
-import { useMyCharactersModalCtrl } from "../MyCharactersModalsProvider";
+import { useMyCharactersModalCtrl } from "../ContextProvider";
 
 interface MyCharactersSmallMenuProps {
   onSelect: (name: string) => void;

@@ -7,15 +7,12 @@ import { TRANSFORMATIVE_REACTION_INFO } from "../constants/internal";
 import { TrackerControl } from "../controls";
 
 import { getDataOfSetupEntities } from "../calculation-utils/getDataOfSetupEntities";
-import { CalcItemCalculator } from "../calculation/calc-item-calculator";
-import { InputProcessor } from "../calculation/input-processor";
+import { CalcItemCalculator } from "./calc-item-calculator";
+import { InputProcessor } from "./input-processor";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
-  const { char, weapon, elmtModCtrls } = setup;
   const data = getDataOfSetupEntities(setup);
-  const appWeapon = data.appWeapons[weapon.code];
-
   const processor = new InputProcessor(setup, data, tracker);
 
   const { characterRecord } = processor;
@@ -46,11 +43,11 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     const calculator = calcItemCalculator.genAttPattCalculator(ATT_PATT);
 
     for (const calcItem of characterRecord.appCharacter.calcList[ATT_PATT]) {
-      finalResult[calculator.resultKey][calcItem.name] = calculator.calculate(calcItem, elmtModCtrls);
+      finalResult[calculator.resultKey][calcItem.name] = calculator.calculate(calcItem, setup.elmtModCtrls);
     }
   });
 
-  const baseRxnDmg = GeneralCalc.getBaseRxnDamage(char.level);
+  const baseRxnDmg = GeneralCalc.getBaseRxnDamage(setup.char.level);
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
     const { mult, dmgType } = TRANSFORMATIVE_REACTION_INFO[rxn];
@@ -81,9 +78,9 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     });
   }
 
-  appWeapon.calcItems?.forEach((calcItem) => {
+  data.appWeapons[setup.weapon.code].calcItems?.forEach((calcItem) => {
     const { name, type = "attack", value, incre = value / 3, basedOn = "atk" } = calcItem;
-    const mult = value + incre * weapon.refi;
+    const mult = value + incre * setup.weapon.refi;
     const record = TrackerControl.initCalcItemRecord({
       itemType: type,
       multFactors: [

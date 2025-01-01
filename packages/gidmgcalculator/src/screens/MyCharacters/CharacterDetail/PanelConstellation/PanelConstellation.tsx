@@ -3,23 +3,22 @@ import { LoadingSpin } from "rond";
 import { useDispatch } from "@Store/hooks";
 import { updateUserCharacter } from "@Store/userdb-slice";
 import { ConstellationList } from "@Src/components";
-import { useMyCharacterDetailInfo } from "../MyCharacterDetailInfoProvider";
+import { useDetailInfo } from "../ContextProvider";
 
 interface PanelConstellationProps {
   className?: string;
 }
 export function PanelConstellation(props: PanelConstellationProps) {
   const dispatch = useDispatch();
-  const { loading, data } = useMyCharacterDetailInfo();
+  const data = useDetailInfo();
 
-  if (loading) {
+  if (!data) {
     return (
       <div className="h-full flex-center">
         <LoadingSpin size="large" />
       </div>
     );
   }
-  if (!data) return null;
   const { character } = data;
 
   return (

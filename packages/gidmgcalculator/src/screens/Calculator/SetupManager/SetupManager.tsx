@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { FaSkull } from "react-icons/fa";
-import { IoDocumentText } from "react-icons/io5";
 import { FaSun } from "react-icons/fa6";
+import { IoDocumentText } from "react-icons/io5";
 import { Button, Modal, useScreenWatcher } from "rond";
 
+import { IS_DEV_ENV } from "@Src/constants";
+import { selectActiveId, selectSetupManageInfos } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTraveler, updateUI } from "@Store/ui-slice";
-import { selectActiveId, selectSetupManageInfos } from "@Store/calculator-slice";
 import { useOptimizerState } from "../ContextProvider";
 
 // Component
-import { SetupSelect } from "./SetupSelect";
 import SectionArtifacts from "./SectionArtifacts";
 import SectionParty from "./SectionParty";
 import SectionTarget from "./SectionTarget";
 import SectionWeapon from "./SectionWeapon";
-import { IS_DEV_ENV } from "@Src/constants";
+import { SetupSelect } from "./SetupSelect";
 
 interface SetupManagerProps {
   isModernUI?: boolean;

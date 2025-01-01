@@ -3,32 +3,30 @@ import { LoadingSpin } from "rond";
 import { useDispatch } from "@Store/hooks";
 import { updateUserCharacter } from "@Store/userdb-slice";
 import { TalentList } from "@Src/components";
-import { useMyCharacterDetailInfo } from "../MyCharacterDetailInfoProvider";
+import { useDetailInfo } from "../ContextProvider";
 
 interface PanelTalentsProps {
   className?: string;
 }
 export function PanelTalents(props: PanelTalentsProps) {
   const dispatch = useDispatch();
-  const { loading, data } = useMyCharacterDetailInfo();
+  const data = useDetailInfo();
 
-  if (loading) {
+  if (!data) {
     return (
       <div className="h-full flex-center">
         <LoadingSpin size="large" />
       </div>
     );
   }
-  if (!data) return null;
-  const { character } = data;
 
   return (
     <TalentList
       className={props.className}
-      character={character}
+      character={data.character}
       record={data.characterRecord}
       onChangeTalentLevel={(type, level) => {
-        dispatch(updateUserCharacter({ name: character.name, [type]: level }));
+        dispatch(updateUserCharacter({ name: data.character.name, [type]: level }));
       }}
     />
   );

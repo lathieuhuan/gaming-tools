@@ -1,9 +1,9 @@
-export { calculateSetup } from "./calculation-calculator/calculateSetup";
 export { AppliedBonusesGetter } from "./calculation-utils/applied-bonuses-getter";
 export { BareBonusGetter } from "./calculation-utils/bare-bonus-getter";
 export { isGrantedEffect } from "./calculation-utils/isGrantedEffect";
 export { CalcItemCalculator } from "./calculation/calc-item-calculator";
 export { InputProcessor } from "./calculation/input-processor";
+export { calculateSetup } from "./calculation/calculateSetup";
 export {
   ArtifactCalc,
   CharacterCalc,

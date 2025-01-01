@@ -6,8 +6,7 @@ import type { GearsDetailType } from "./Gears.types";
 import { useDispatch } from "@Store/hooks";
 import { updateUserArtifactSubStat, updateUserArtifact, updateUserWeapon, unequipArtifact } from "@Store/userdb-slice";
 import { AttributeTable, SetBonusesView, ArtifactCard, WeaponCard } from "@Src/components";
-import { useMyCharacterDetailInfo } from "../MyCharacterDetailInfoProvider";
-import { useMyCharacterDetailModalsCtrl } from "../MyCharacterDetailModalsProvider";
+import { useDetailInfo, useDetailModalCtrl } from "../ContextProvider";
 
 export interface GearsDetailProps {
   detailType: GearsDetailType;
@@ -16,8 +15,8 @@ export interface GearsDetailProps {
 }
 export function GearsDetail({ detailType, showCloseBtn, onClose }: GearsDetailProps) {
   const dispatch = useDispatch();
-  const { data } = useMyCharacterDetailInfo();
-  const modalCtrl = useMyCharacterDetailModalsCtrl();
+  const data = useDetailInfo();
+  const modalCtrl = useDetailModalCtrl();
 
   const closeBtnProps = {
     icon: <FancyBackSvg />,

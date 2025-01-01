@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { FaPlus, FaSortAmountUpAlt } from "react-icons/fa";
-import { clsx, useIntersectionObserver, Button, useChildListObserver } from "rond";
+import { Button, clsx, useChildListObserver, useIntersectionObserver } from "rond";
 
 import { GenshinImage } from "@Src/components";
 import { $AppCharacter } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectChosenCharacter, selectUserCharacters, viewCharacter } from "@Store/userdb-slice";
-import { useMyCharactersModalCtrl } from "../MyCharactersModalsProvider";
+import { useMyCharactersModalCtrl } from "../ContextProvider";
 
 import styles from "./MyCharactersLarge.styles.module.scss";
 

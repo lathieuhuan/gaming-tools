@@ -4,29 +4,23 @@ import { ARTIFACT_TYPES } from "@Backend";
 
 import { useDispatch } from "@Store/hooks";
 import { viewCharacter, removeUserCharacter, switchArtifact, switchWeapon } from "@Store/userdb-slice";
+import { useDetailInfo } from "../hooks";
 
 // Component
 import { ArtifactInventory, Tavern, WeaponInventory } from "@Src/components";
-import { useMyCharacterDetailInfo } from "../MyCharacterDetailInfoProvider";
-import {
-  MyCharacterDetailModalsContext,
-  type MyCharacterDetailModalsControl,
-} from "./my-character-detail-modals-context";
+import { DetailModalContext, type DetailModalControl } from "./DetailModal.context";
 
 type ModalType = "SWITCH_CHARACTER" | "SWITCH_WEAPON" | "SWITCH_ARTIFACT" | "REMOVE_CHARACTER" | "";
 
-interface MyCharacterDetailModalsProviderProps {
-  children: React.ReactNode;
-}
-export function MyCharacterDetailModalsProvider(props: MyCharacterDetailModalsProviderProps) {
+export function DetailModalProvider(props: { children: React.ReactNode }) {
   const dispatch = useDispatch();
   const [modalType, setModalType] = useState<ModalType>("");
   const [switchedArtifactI, setSwitchedArtifactI] = useState(-1);
-  const { data } = useMyCharacterDetailInfo();
+  const detailInfo = useDetailInfo();
 
   const closeModal = () => setModalType("");
 
-  const control: MyCharacterDetailModalsControl = useMemo(() => {
+  const control: DetailModalControl = useMemo(() => {
     return {
       requestSwitchCharacter: () => {
         setModalType("SWITCH_CHARACTER");
@@ -44,8 +38,7 @@ export function MyCharacterDetailModalsProvider(props: MyCharacterDetailModalsPr
     };
   }, []);
 
-  const renderModals = () => {
-    if (!data) return null;
+  const renderModals = (data: NonNullable<typeof detailInfo>) => {
     const { character, weapon, artifacts } = data;
 
     return (
@@ -114,9 +107,9 @@ export function MyCharacterDetailModalsProvider(props: MyCharacterDetailModalsPr
   };
 
   return (
-    <MyCharacterDetailModalsContext.Provider value={control}>
+    <DetailModalContext.Provider value={control}>
       {props.children}
-      {data ? renderModals() : null}
-    </MyCharacterDetailModalsContext.Provider>
+      {detailInfo ? renderModals(detailInfo) : null}
+    </DetailModalContext.Provider>
   );
 }

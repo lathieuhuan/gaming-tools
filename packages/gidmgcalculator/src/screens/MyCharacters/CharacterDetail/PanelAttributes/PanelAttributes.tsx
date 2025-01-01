@@ -3,25 +3,23 @@ import { LoadingSpin, clsx } from "rond";
 
 import { useDispatch } from "@Store/hooks";
 import { updateUserCharacter } from "@Store/userdb-slice";
-import { useMyCharacterDetailInfo } from "../MyCharacterDetailInfoProvider";
-import { useMyCharacterDetailModalsCtrl } from "../MyCharacterDetailModalsProvider";
+import { useDetailInfo, useDetailModalCtrl } from "../ContextProvider";
 
 interface PanelAttributesProps {
   className?: string;
 }
 export function PanelAttributes(props: PanelAttributesProps) {
   const dispatch = useDispatch();
-  const { loading, data } = useMyCharacterDetailInfo();
-  const modalCtrl = useMyCharacterDetailModalsCtrl();
+  const data = useDetailInfo();
+  const modalCtrl = useDetailModalCtrl();
 
-  if (loading) {
+  if (!data) {
     return (
       <div className="h-full flex-center">
         <LoadingSpin size="large" />
       </div>
     );
   }
-  if (!data) return null;
 
   const { character, totalAttr } = data;
 

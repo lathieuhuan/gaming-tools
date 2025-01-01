@@ -260,12 +260,10 @@ function SortCore({ onClose }: { onClose: () => void }) {
   );
 }
 
-const MyCharactersSort = Modal.wrap(SortCore, {
+export const CharacterSort = Modal.wrap(SortCore, {
   preset: "small",
   title: "Sort characters",
   className: "bg-surface-1",
   withActions: true,
   formId: "sort-characters-form",
 });
-
-export default MyCharactersSort;

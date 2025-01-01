@@ -5,19 +5,19 @@ import { useDispatch, useSelector } from "@Store/hooks";
 
 // Component
 import { Tavern } from "@Src/components";
-import { MyCharactersModalsContext, type MyCharactersModalsControl } from "./my-characters-modals-context";
-import MyCharactersSort from "./MyCharactersSort";
+import { ModalContext, type ModalControl } from "./Modal.context";
+import { CharacterSort } from "./CharacterSort";
 
 type ModalType = "ADD_CHARACTER" | "SORT_CHARACTERS" | "";
 
-export function MyCharactersModalsProvider(props: { children: React.ReactNode }) {
+export function ModalProvider(props: { children: React.ReactNode }) {
   const dispatch = useDispatch();
   const [modalType, setModalType] = useState<ModalType>("");
   const userChars = useSelector(selectUserCharacters);
 
   const closeModal = () => setModalType("");
 
-  const control: MyCharactersModalsControl = useMemo(() => {
+  const control: ModalControl = useMemo(() => {
     return {
       requestAddCharacter: () => {
         setModalType("ADD_CHARACTER");
@@ -29,7 +29,7 @@ export function MyCharactersModalsProvider(props: { children: React.ReactNode })
   }, []);
 
   return (
-    <MyCharactersModalsContext.Provider value={control}>
+    <ModalContext.Provider value={control}>
       {props.children}
 
       <Tavern
@@ -46,7 +46,8 @@ export function MyCharactersModalsProvider(props: { children: React.ReactNode })
         onClose={closeModal}
       />
 
-      <MyCharactersSort active={modalType === "SORT_CHARACTERS"} onClose={closeModal} />
-    </MyCharactersModalsContext.Provider>
+      <CharacterSort active={modalType === "SORT_CHARACTERS"} onClose={closeModal} />
+      {/*  */}
+    </ModalContext.Provider>
   );
 }

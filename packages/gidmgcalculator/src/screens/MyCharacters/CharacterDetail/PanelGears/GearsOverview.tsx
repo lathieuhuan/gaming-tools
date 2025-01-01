@@ -4,7 +4,7 @@ import { clsx, Button, CloseButton, LoadingSpin } from "rond";
 import type { GearsDetailType } from "./Gears.types";
 import { $AppArtifact } from "@Src/services";
 import { EquipmentDisplay } from "@Src/components";
-import { useMyCharacterDetailInfo } from "../MyCharacterDetailInfoProvider";
+import { useDetailInfo } from "../ContextProvider";
 
 const bonusStyles = (active: boolean) => {
   return ["p-2 flex justify-between items-center rounded-lg group", active && "bg-surface-2"];
@@ -24,17 +24,15 @@ export function GearsOverview({
   onClickDetail,
   onClickEmptyArtifact,
 }: GearsOverviewProps) {
-  const { loading, data } = useMyCharacterDetailInfo();
+  const data = useDetailInfo();
 
-  if (loading) {
+  if (!data) {
     return (
       <div className="h-full flex-center">
         <LoadingSpin size="large" />
       </div>
     );
   }
-
-  if (!data) return null;
   const { appWeapon, setBonuses } = data;
 
   return (
