@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectCharacter, changeModCtrlInput, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
-import { useCharacterRecord } from "../../ContextProvider";
+import { useCharacterData } from "../../ContextProvider";
 
 //
 import { SelfDebuffsView } from "@Src/components";
@@ -11,13 +11,13 @@ export default function SelfDebuffs() {
   const selfDebuffCtrls = useSelector(
     (state) => state.calculator.setupsById[state.calculator.activeId].selfDebuffCtrls
   );
-  const record = useCharacterRecord();
+  const characterData = useCharacterData();
 
   return (
     <SelfDebuffsView
       mutable
       character={character}
-      record={record}
+      characterData={characterData}
       modCtrls={selfDebuffCtrls}
       getHanlders={({ ctrl }) => {
         const path: ToggleModCtrlPath = {

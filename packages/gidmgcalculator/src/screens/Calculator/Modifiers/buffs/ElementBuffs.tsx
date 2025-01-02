@@ -10,7 +10,7 @@ import {
   updateCalcSetup,
   updateResonance,
 } from "@Store/calculator-slice";
-import { useCharacterRecord } from "../../ContextProvider";
+import { useCharacterData } from "../../ContextProvider";
 
 //
 import {
@@ -32,7 +32,7 @@ export default function ElementBuffs() {
   const attkBonuses = useSelector(selectAttkBonuses);
   const customInfusion = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].customInfusion);
 
-  const { vision, weaponType, calcList } = useCharacterRecord().appCharacter;
+  const { vision, weaponType, calcList } = useCharacterData().appCharacter;
 
   const { element: infusedElement } = customInfusion;
   const isInfused = infusedElement !== "phys";

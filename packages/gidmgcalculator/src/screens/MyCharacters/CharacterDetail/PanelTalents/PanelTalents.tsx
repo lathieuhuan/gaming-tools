@@ -24,7 +24,7 @@ export function PanelTalents(props: PanelTalentsProps) {
     <TalentList
       className={props.className}
       character={data.character}
-      record={data.characterRecord}
+      characterData={data.characterData}
       onChangeTalentLevel={(type, level) => {
         dispatch(updateUserCharacter({ name: data.character.name, [type]: level }));
       }}

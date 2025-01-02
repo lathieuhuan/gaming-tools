@@ -5,7 +5,7 @@ import type { Party } from "@Src/types";
 import Setup_ from "@Src/utils/setup-utils";
 import Array_ from "@Src/utils/array-utils";
 import { useStoreSnapshot } from "@Src/features";
-import { useCharacterRecord } from "../../hooks";
+import { useCharacterData } from "../../hooks";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -27,7 +27,7 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
   const dispatch = useDispatch();
   const party = useSelector(selectParty);
 
-  const record = useCharacterRecord();
+  const record = useCharacterData();
   const existedSetup = Array_.findById(useStoreSnapshot(selectUserSetups), setupId);
 
   const [input, setInput] = useState(existedSetup ? existedSetup.name : `${record.appCharacter.name} setup`);

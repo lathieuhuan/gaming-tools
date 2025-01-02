@@ -13,7 +13,7 @@ import {
   updateWeapon,
 } from "@Store/calculator-slice";
 import { AttributeTable, SetBonusesView, WeaponView, TalentList, ConstellationList } from "@Src/components";
-import { useCharacterRecord } from "../ContextProvider";
+import { useCharacterData } from "../ContextProvider";
 
 export function AttributesTab() {
   const totalAttr = useSelector(selectTotalAttr);
@@ -80,13 +80,13 @@ export function TalentsTab() {
   const dispatch = useDispatch();
   const character = useSelector(selectCharacter);
   const party = useSelector(selectParty);
-  const record = useCharacterRecord();
+  const characterData = useCharacterData();
 
   return (
     <TalentList
       key={character.name}
       character={character}
-      record={record}
+      characterData={characterData}
       onChangeTalentLevel={(type, level) => {
         dispatch(updateCharacter({ [type]: level }));
       }}

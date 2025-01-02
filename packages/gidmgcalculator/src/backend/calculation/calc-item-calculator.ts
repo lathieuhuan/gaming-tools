@@ -18,7 +18,7 @@ import type {
 
 import { toMult } from "@Src/utils";
 import Array_ from "@Src/utils/array-utils";
-import { CharacterCalc, CharacterRecord, GeneralCalc } from "../common-utils";
+import { CharacterCalc, CharacterData, GeneralCalc } from "../common-utils";
 import { AttackBonusesArchive, CalcItemRecord, TrackerControl } from "../controls";
 
 type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorption">;
@@ -26,7 +26,7 @@ type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" 
 export class CalcItemCalculator {
   constructor(
     private targetLv: number,
-    private characterRecord: CharacterRecord,
+    private characterData: CharacterData,
     private NAsConfig: NormalAttacksConfig,
     private customInfusion: Infusion,
     private totalAttr: TotalAttribute,
@@ -41,7 +41,7 @@ export class CalcItemCalculator {
     attElmt: AttackElement,
     itemId?: CalcItemCore["id"]
   ) => {
-    const { characterRecord, targetLv, totalAttr, attkBonusesArchive, resistances } = this;
+    const { characterData, targetLv, totalAttr, attkBonusesArchive, resistances } = this;
 
     function genEmptyResult() {
       return itemType === "attack"
@@ -103,7 +103,7 @@ export class CalcItemCalculator {
 
         // CALCULATE DEFENSE MULTIPLIER
         let defMult = 1;
-        const charPart = GeneralCalc.getBareLv(characterRecord.character.level) + 100;
+        const charPart = GeneralCalc.getBareLv(characterData.character.level) + 100;
         const defReduction = 1 - resistances.def / 100;
 
         defMult = 1 - getBonus("defIgn_") / 100;
@@ -184,12 +184,12 @@ export class CalcItemCalculator {
 
   genAttPattCalculator = (patternKey: AttackPattern) => {
     const { NAsConfig, totalAttr, attkBonusesArchive, customInfusion } = this;
-    const { appCharacter } = this.characterRecord;
+    const { appCharacter } = this.characterData;
 
     const default_ = CharacterCalc.getTalentDefaultInfo(patternKey, appCharacter);
     const resultKey = default_.resultKey;
     const disabled = NAsConfig[patternKey]?.disabled === true;
-    const level = this.characterRecord.getFinalTalentLv(resultKey);
+    const level = this.characterData.getFinalTalentLv(resultKey);
 
     const configFlatFactor = (factor: CalcItemFlatFactor) => {
       const { root, scale = default_.flatFactorScale } = typeof factor === "number" ? { root: factor } : factor;

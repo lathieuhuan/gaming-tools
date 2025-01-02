@@ -26,7 +26,7 @@ import { FinalResultView } from "@Src/components";
 import { ChosenSetupModals } from "./ChosenSetupModals";
 import { MySetupsModals } from "./MySetupsModals";
 import { SetupTemplate } from "./SetupTemplate";
-import { makeUICharacterRecord } from "@Src/utils/ui-character-record";
+import { makeCharacterReadData } from "@Src/utils/makeCharacterReadData";
 
 type UserSetupItems = {
   weapon?: UserWeapon;
@@ -117,7 +117,7 @@ export default function MySetups() {
           </div>
           <div className="mt-2 grow hide-scrollbar">
             {result?.finalResult && weapon && (
-              <FinalResultView weapon={weapon} record={result.characterRecord} finalResult={result.finalResult} />
+              <FinalResultView weapon={weapon} characterData={result.characterData} finalResult={result.finalResult} />
             )}
           </div>
 
@@ -155,7 +155,7 @@ export default function MySetups() {
             const { setup, complex } = config;
             const { weapon, artifacts } = config.items || {};
             const setupId = complex?.ID || setup.ID;
-            const characterRecord = makeUICharacterRecord(setup.char, setup.party);
+            const characterData = makeCharacterReadData(setup.char, setup.party);
 
             return (
               <div key={setupId} id={`setup-${setupId}`} className="w-full p-1">
@@ -169,7 +169,7 @@ export default function MySetups() {
                   {weapon ? (
                     <SetupTemplate
                       setup={setup}
-                      characterRecord={characterRecord}
+                      characterData={characterData}
                       weapon={weapon}
                       artifacts={artifacts}
                       complexSetup={config.complex}

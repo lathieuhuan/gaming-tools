@@ -56,7 +56,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
     customDebuffCtrls,
     target,
   } = chosenSetup;
-  const { characterRecord } = result;
+  const { characterData } = result;
   const { title, variant, statuses } = $AppData.getTargetInfo(target);
 
   return (
@@ -73,12 +73,17 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
             {
               heading: "Self",
               body: (
-                <SelfDebuffsView mutable={false} modCtrls={selfDebuffCtrls} character={char} record={characterRecord} />
+                <SelfDebuffsView
+                  mutable={false}
+                  modCtrls={selfDebuffCtrls}
+                  character={char}
+                  characterData={characterData}
+                />
               ),
             },
             {
               heading: "Party",
-              body: <PartyDebuffsView mutable={false} party={party} record={characterRecord} />,
+              body: <PartyDebuffsView mutable={false} party={party} characterData={characterData} />,
             },
             {
               heading: "Artifacts",
@@ -100,7 +105,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
               body: (
                 <ElementBuffsDetail
                   charLv={char.level}
-                  vision={characterRecord.appCharacter.vision}
+                  vision={characterData.appCharacter.vision}
                   attkBonuses={result.attkBonuses}
                   customInfusion={chosenSetup.customInfusion}
                   elmtModCtrls={elmtModCtrls}
@@ -110,12 +115,17 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
             {
               heading: "Self",
               body: (
-                <SelfBuffsView mutable={false} modCtrls={selfBuffCtrls} character={char} record={characterRecord} />
+                <SelfBuffsView
+                  mutable={false}
+                  modCtrls={selfBuffCtrls}
+                  character={char}
+                  characterData={characterData}
+                />
               ),
             },
             {
               heading: "Party",
-              body: <PartyBuffsView mutable={false} party={party} record={characterRecord} />,
+              body: <PartyBuffsView mutable={false} party={party} characterData={characterData} />,
             },
             {
               heading: "Weapons",

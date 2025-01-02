@@ -6,20 +6,20 @@ import {
 } from "@Store/calculator-slice";
 import { useDispatch } from "@Store/hooks";
 import { PartyBuffsView } from "@Src/components";
-import { useCharacterRecord } from "../../ContextProvider";
+import { useCharacterData } from "../../ContextProvider";
 
 interface PartyBuffsProps {
   party: Party;
 }
 export default function PartyBuffs(props: PartyBuffsProps) {
   const dispatch = useDispatch();
-  const record = useCharacterRecord();
+  const characterData = useCharacterData();
 
   return (
     <PartyBuffsView
       mutable
       {...props}
-      record={record}
+      characterData={characterData}
       getHanlders={({ ctrl, teammateIndex }) => {
         const path: ToggleTeammateModCtrlPath = {
           teammateIndex,

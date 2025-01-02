@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
-import { TALENT_TYPES, LevelableTalentType, GeneralCalc } from "@Backend";
+import { TALENT_TYPES, LevelableTalentType, GeneralCalc, CharacterReadData } from "@Backend";
 
 import type { Character, Party } from "@Src/types";
-import type { UICharacterRecord } from "@Src/utils/ui-character-record";
 import { genSequentialOptions } from "@Src/utils";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
 
@@ -24,14 +23,14 @@ interface TalentListProps {
   className?: ClassValue;
   character: Character;
   party?: Party;
-  record: UICharacterRecord;
+  characterData: CharacterReadData;
   /** Default to true */
   mutable?: boolean;
   onChangeTalentLevel?: (talentType: LevelableTalentType, newLevel: number) => void;
 }
 export function TalentList(props: TalentListProps) {
-  const { character, record, mutable = true } = props;
-  const { appCharacter } = record;
+  const { character, characterData, mutable = true } = props;
+  const { appCharacter } = characterData;
   const [atDetail, setAtDetail] = useState(false);
   const [detailIndex, setDetailIndex] = useState(-1);
 
@@ -83,7 +82,7 @@ export function TalentList(props: TalentListProps) {
           const talent = activeTalents[talentType];
           if (!talent) return null;
 
-          const xtraLevel = record.getTotalXtraTalentLv(talentType);
+          const xtraLevel = characterData.getTotalXtraTalentLv(talentType);
 
           const mutableLvNode = (
             <VersatileSelect

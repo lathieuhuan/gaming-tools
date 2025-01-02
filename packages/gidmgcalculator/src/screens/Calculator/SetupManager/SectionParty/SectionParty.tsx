@@ -3,7 +3,7 @@ import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
 import { clsx, message, CollapseSpace } from "rond";
 
 import Array_ from "@Src/utils/array-utils";
-import { useCharacterRecord } from "../../ContextProvider";
+import { useCharacterData } from "../../ContextProvider";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -33,7 +33,7 @@ export default function SectionParty() {
   const activeId = useSelector(selectActiveId);
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const party = useSelector(selectParty);
-  const characterRecord = useCharacterRecord();
+  const characterRecord = useCharacterData();
 
   const [modal, setModal] = useState<ModalState>({
     type: "",

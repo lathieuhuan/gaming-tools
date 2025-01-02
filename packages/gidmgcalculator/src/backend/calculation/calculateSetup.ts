@@ -15,14 +15,14 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   const data = getDataOfSetupEntities(setup);
   const processor = new InputProcessor(setup, data, tracker);
 
-  const { characterRecord } = processor;
+  const { characterData } = processor;
   const { artAttr, totalAttr, attkBonusesArchive } = processor.getCalculationStats();
   const NAsConfig = processor.getNormalAttacksConfig();
   const resistances = processor.getResistances(target);
 
   const calcItemCalculator = new CalcItemCalculator(
     target.level,
-    characterRecord,
+    characterData,
     NAsConfig,
     setup.customInfusion,
     totalAttr,
@@ -42,7 +42,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   ATTACK_PATTERNS.forEach((ATT_PATT) => {
     const calculator = calcItemCalculator.genAttPattCalculator(ATT_PATT);
 
-    for (const calcItem of characterRecord.appCharacter.calcList[ATT_PATT]) {
+    for (const calcItem of characterData.appCharacter.calcList[ATT_PATT]) {
       finalResult[calculator.resultKey][calcItem.name] = calculator.calculate(calcItem, setup.elmtModCtrls);
     }
   });
@@ -102,7 +102,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   // console.timeEnd();
 
   return {
-    characterRecord,
+    characterData,
     totalAttr,
     artAttr,
     attkBonuses: attkBonusesArchive.serialize(),

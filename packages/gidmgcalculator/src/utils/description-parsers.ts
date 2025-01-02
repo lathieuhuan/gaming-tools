@@ -7,7 +7,7 @@ import {
   BareBonusGetter,
   AppArtifact,
   ArtifactModifierDescription,
-  CharacterRecord,
+  CharacterReadData,
 } from "@Backend";
 
 import { toMult } from "./pure-utils";
@@ -46,22 +46,22 @@ export const parseAbilityDescription = (
   ability: Pick<CharacterBuff | CharacterDebuff, "description" | "effects">,
   inputs: number[],
   fromSelf: boolean,
-  record?: CharacterRecord
+  characterData?: CharacterReadData
 ) => {
   return ability.description.replace(/\{[\w \-/,%^"'*@:=.[\]]+\}#\[\w*\]/g, (match) => {
     let [body, type = ""] = match.split("#");
     body = body.slice(1, -1);
     type = type.slice(1, -1);
 
-    if (body[0] === "@" && record) {
-      const bonusGetter = new BareBonusGetter(record);
+    if (body[0] === "@" && characterData) {
+      const bonusGetter = new BareBonusGetter(characterData.toCharacterData());
       const effect = Array_.toArray(ability.effects)[+body[1]];
 
       if (effect) {
         const { value, preExtra, max } = effect;
         let result = bonusGetter.getIntialBonusValue(value, { inputs, fromSelf });
 
-        result *= record.getLevelScale(effect.lvScale, inputs, fromSelf);
+        result *= characterData.getLevelScale(effect.lvScale, inputs, fromSelf);
         if (typeof preExtra === "number") result += preExtra;
         if (typeof max === "number" && result > max) result = max;
 

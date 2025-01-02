@@ -6,20 +6,20 @@ import {
   type ToggleTeammateModCtrlPath,
 } from "@Store/calculator-slice";
 import { PartyDebuffsView } from "@Src/components";
-import { useCharacterRecord } from "../../ContextProvider";
+import { useCharacterData } from "../../ContextProvider";
 
 interface PartyDebuffsProps {
   party: Party;
 }
 export default function PartyDebuffs(props: PartyDebuffsProps) {
   const dispatch = useDispatch();
-  const record = useCharacterRecord();
+  const characterData = useCharacterData();
 
   return (
     <PartyDebuffsView
       mutable
       {...props}
-      record={record}
+      characterData={characterData}
       getHanlders={({ ctrl, teammateIndex }) => {
         const path: ToggleTeammateModCtrlPath = {
           teammateIndex,

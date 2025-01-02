@@ -20,7 +20,7 @@ import Array_ from "@Src/utils/array-utils";
 import { AppliedBonusesGetter } from "../calculation-utils/applied-bonuses-getter";
 import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
 import { isGrantedEffect } from "../calculation-utils/isGrantedEffect";
-import { CharacterRecord, GeneralCalc } from "../common-utils";
+import { CharacterData, GeneralCalc } from "../common-utils";
 import {
   AMPLIFYING_REACTIONS,
   NORMAL_ATTACKS,
@@ -51,7 +51,7 @@ export class InputProcessor {
   protected superconduct?: ElementModCtrl["superconduct"];
   protected customInfusion: Infusion;
 
-  public characterRecord: CharacterRecord;
+  public characterData: CharacterData;
   protected appWeapons: DataOfSetupEntities["appWeapons"];
   protected appArtifacts: DataOfSetupEntities["appArtifacts"];
 
@@ -79,7 +79,7 @@ export class InputProcessor {
       element: "phys",
     };
 
-    this.characterRecord = new CharacterRecord(this.character, data.appCharacters, this.party);
+    this.characterData = new CharacterData(this.character, data.appCharacters, this.party);
     this.appWeapons = data.appWeapons;
     this.appArtifacts = data.appArtifacts;
   }
@@ -97,9 +97,9 @@ export class InputProcessor {
       resonances,
       reaction,
       infuse_reaction,
-      characterRecord,
+      characterData,
     } = this;
-    const { appCharacter } = characterRecord;
+    const { appCharacter } = characterData;
     const appWeapon = this.appWeapons[weapon.code];
 
     const { refi } = weapon;
@@ -113,7 +113,7 @@ export class InputProcessor {
       artifacts
     );
     const attkBonusesCtrl = new AttackBonusesControl();
-    const bonusesGetter = new AppliedBonusesGetter(characterRecord, totalAttrCtrl);
+    const bonusesGetter = new AppliedBonusesGetter(characterData, totalAttrCtrl);
 
     const applyBuff: AppliedBonusesGetter["getAppliedBonuses"] = (...args) => {
       const result = bonusesGetter.getAppliedBonuses(...args);
@@ -315,7 +315,7 @@ export class InputProcessor {
     // APPLY TEAMMATE BUFFS
     for (const teammate of party) {
       if (!teammate) continue;
-      const { name, buffs = [] } = characterRecord.getAppCharacter(teammate.name);
+      const { name, buffs = [] } = characterData.getAppCharacter(teammate.name);
 
       for (const { index, activated, inputs = [] } of teammate.buffCtrls) {
         const buff = Array_.findByIndex(buffs, index);
@@ -428,9 +428,9 @@ export class InputProcessor {
 
   getResistances(target: Target) {
     const { party, customDebuffCtrls, selfDebuffCtrls, artDebuffCtrls, resonances, superconduct } = this;
-    const { characterRecord } = this;
+    const { characterData } = this;
 
-    const resistReductCtrl = new ResistanceReductionControl(characterRecord, this.tracker);
+    const resistReductCtrl = new ResistanceReductionControl(characterData, this.tracker);
 
     // APPLY CUSTOM DEBUFFS
     for (const control of customDebuffCtrls) {
@@ -439,9 +439,9 @@ export class InputProcessor {
 
     // APPLY SELF DEBUFFS
     for (const ctrl of selfDebuffCtrls) {
-      const debuff = Array_.findByIndex(characterRecord.appCharacter.debuffs, ctrl.index);
+      const debuff = Array_.findByIndex(characterData.appCharacter.debuffs, ctrl.index);
 
-      if (ctrl.activated && debuff?.effects && isGrantedEffect(debuff, characterRecord.character)) {
+      if (ctrl.activated && debuff?.effects && isGrantedEffect(debuff, characterData.character)) {
         resistReductCtrl.applyDebuff(debuff, ctrl.inputs ?? [], true, `Self / ${debuff.src}`);
       }
     }
@@ -449,7 +449,7 @@ export class InputProcessor {
     // APPLY PARTY DEBUFFS
     for (const teammate of party) {
       if (!teammate) continue;
-      const { debuffs = [] } = characterRecord.getAppCharacter(teammate.name);
+      const { debuffs = [] } = characterData.getAppCharacter(teammate.name);
 
       for (const ctrl of teammate.debuffCtrls) {
         const debuff = Array_.findByIndex(debuffs, ctrl.index);
@@ -485,13 +485,13 @@ export class InputProcessor {
     const result: NormalAttacksConfig = {};
 
     for (const ctrl of this.selfBuffCtrls) {
-      const buff = ctrl.activated ? Array_.findByIndex(this.characterRecord.appCharacter.buffs, ctrl.index) : undefined;
+      const buff = ctrl.activated ? Array_.findByIndex(this.characterData.appCharacter.buffs, ctrl.index) : undefined;
       const { normalsConfig = [] } = buff || {};
 
       for (const config of Array_.toArray(normalsConfig)) {
         const { checkInput, forPatt = "ALL", ...rest } = config;
 
-        if (isApplicableEffect(config, this.characterRecord, ctrl.inputs ?? [], true)) {
+        if (isApplicableEffect(config, this.characterData, ctrl.inputs ?? [], true)) {
           if (forPatt === "ALL") {
             for (const type of NORMAL_ATTACKS) {
               result[type] = rest;

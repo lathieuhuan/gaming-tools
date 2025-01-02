@@ -1,9 +1,8 @@
-import { CharacterBuff, CharacterDebuff, isGrantedEffect } from "@Backend";
+import { CharacterBuff, CharacterDebuff, CharacterReadData, isGrantedEffect } from "@Backend";
 
 import type { Character, ModifierCtrl } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import { toCharacterRecord, type UICharacterRecord } from "@Src/utils/ui-character-record";
 import Array_ from "@Src/utils/array-utils";
 import { parseAbilityDescription } from "@Src/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
@@ -12,7 +11,7 @@ import { renderModifiers } from "./modifiers.utils";
 interface SelfModsViewProps {
   mutable?: boolean;
   character: Character;
-  record: UICharacterRecord;
+  characterData: CharacterReadData;
   modCtrls: ModifierCtrl[];
   getHanlders?: (args: GetModifierHanldersArgs) => ModifierHanlders;
 }
@@ -30,7 +29,7 @@ function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Array<Charact
           key={ctrl.index}
           mutable={props.mutable}
           heading={modifier.src}
-          description={parseAbilityDescription(modifier, inputs, true, toCharacterRecord(props.record))}
+          description={parseAbilityDescription(modifier, inputs, true, props.characterData)}
           checked={ctrl.activated}
           inputs={inputs}
           inputConfigs={modifier.inputConfigs?.filter((config) => config.for !== "FOR_TEAM")}
@@ -43,8 +42,8 @@ function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Array<Charact
 }
 
 export function SelfBuffsView(props: SelfModsViewProps) {
-  const { record } = props;
-  const { innateBuffs = [], buffs = [] } = record.appCharacter;
+  const { characterData } = props;
+  const { innateBuffs = [], buffs = [] } = characterData.appCharacter;
   const modifierElmts: (JSX.Element | null)[] = [];
 
   innateBuffs.forEach((buff, index) => {
@@ -54,7 +53,7 @@ export function SelfBuffsView(props: SelfModsViewProps) {
           key={"innate-" + index}
           mutable={false}
           heading={buff.src}
-          description={parseAbilityDescription(buff, [], true, toCharacterRecord(record))}
+          description={parseAbilityDescription(buff, [], true, characterData)}
         />
       );
     }
@@ -66,7 +65,7 @@ export function SelfBuffsView(props: SelfModsViewProps) {
 }
 
 export function SelfDebuffsView(props: SelfModsViewProps) {
-  const { debuffs = [] } = props.record.appCharacter;
+  const { debuffs = [] } = props.characterData.appCharacter;
   const modifierElmts = getSelfModifierElmts(props, debuffs);
 
   return renderModifiers(modifierElmts, "debuffs", props.mutable);

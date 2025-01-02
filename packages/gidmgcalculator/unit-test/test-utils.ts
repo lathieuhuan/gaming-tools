@@ -1,19 +1,19 @@
-import { CharacterRecord, Level } from "../src/backend";
+import { CharacterData, Level } from "../src/backend";
 import { $AppCharacter, $AppWeapon } from "../src/services";
 import { AppCharactersByName, CalcAppParty, Teammate, Weapon } from "../src/types";
 import { __EMockCharacter } from "./mocks/characters.mock";
 import { __EMockWeapon } from "./mocks/weapons.mock";
 import { ASCENSION_RANKS } from "./test-constants";
 
-export class CharacterRecordTester extends CharacterRecord {
+export class CharacterRecordTester extends CharacterData {
   __updateCharacter = (name: string) => {
     this.character.name = name;
-    this._appCharacter = $AppCharacter.get(name);
-    this.data[name] = this._appCharacter;
+    this["_appCharacter"] = $AppCharacter.get(name);
+    this.data[name] = this["_appCharacter"];
   };
 
   __updateParty = (appParty: CalcAppParty) => {
-    this._party = appParty.map<Teammate | null>((data) =>
+    this["_party"] = appParty.map<Teammate | null>((data) =>
       data
         ? {
             name: data.name,
@@ -32,7 +32,6 @@ export class CharacterRecordTester extends CharacterRecord {
           }
         : null
     );
-    this._appParty = appParty;
 
     for (const appTeammate of appParty) {
       if (appTeammate) this.data[appTeammate.name] = appTeammate;

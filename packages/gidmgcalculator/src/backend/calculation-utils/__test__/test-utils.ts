@@ -80,14 +80,14 @@ export class BareBonusGetterTester extends BareBonusGetter<CharacterRecordTester
   }
 
   __updateCharacter<TKey extends keyof Character>(key: TKey, value: Character[TKey]) {
-    this.record.character[key] = value;
+    this.characterData.character[key] = value;
   }
 
   __changeCharacter(characterName: __EMockCharacter) {
-    this.record.__updateCharacter(characterName);
+    this.characterData.__updateCharacter(characterName);
   }
 
   __changeParty(appParty: CalcAppParty) {
-    this.record.__updateParty(appParty);
+    this.characterData.__updateParty(appParty);
   }
 }

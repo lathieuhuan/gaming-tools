@@ -1,13 +1,12 @@
 import type { Character } from "@Src/types";
 import type { EffectApplicableCondition, EffectUsableCondition } from "@Src/backend/types";
-import type { CharacterRecord } from "../common-utils/character-record";
+import type { CharacterData } from "../common-utils/character-data";
 
-import Array_ from "@Src/utils/array-utils";
 import TypeCounter from "@Src/utils/type-counter";
 import { isGrantedEffect } from "./isGrantedEffect";
 import { isPassedComparison } from "./isPassedComparison";
 
-function isUsableEffect(condition: EffectUsableCondition, record: CharacterRecord, inputs: number[]) {
+function isUsableEffect(condition: EffectUsableCondition, characterData: CharacterData, inputs: number[]) {
   const { checkInput, checkParty } = condition;
 
   if (checkInput !== undefined) {
@@ -27,15 +26,13 @@ function isUsableEffect(condition: EffectUsableCondition, record: CharacterRecor
 
     switch (checkParty.type) {
       case "DISTINCT_ELMT":
-        input = record.allElmtCount.keys.length;
+        input = characterData.allElmtCount.keys.length;
         break;
       case "MIXED":
-        if (record.appCharacter.nation === "natlan") input += 1;
+        input = characterData.appCharacter.nation === "natlan" ? 1 : 0;
 
-        Array_.truthyOp(record.appParty).each((data) => {
-          if (data.nation === "natlan" || data.vision !== record.appCharacter.vision) {
-            input += 1;
-          }
+        characterData.forEachTeammate((data) => {
+          input += data.nation === "natlan" || data.vision !== characterData.appCharacter.vision ? 1 : 0;
         });
         break;
     }
@@ -62,25 +59,25 @@ function isAvailableEffect(
 
 export function isApplicableEffect(
   condition: EffectApplicableCondition,
-  record: CharacterRecord,
+  characterData: CharacterData,
   inputs: number[],
   fromSelf = false
 ): boolean {
-  const allElmtCount = record.allElmtCount;
+  const allElmtCount = characterData.allElmtCount;
 
-  if (!isUsableEffect(condition, record, inputs)) {
+  if (!isUsableEffect(condition, characterData, inputs)) {
     return false;
   }
-  if (!isAvailableEffect(condition, record.character, inputs, fromSelf)) {
+  if (!isAvailableEffect(condition, characterData.character, inputs, fromSelf)) {
     return false;
   }
 
   const { totalPartyElmtCount, partyElmtCount, partyOnlyElmts } = condition;
 
-  if (condition.forWeapons && !condition.forWeapons.includes(record.appCharacter.weaponType)) {
+  if (condition.forWeapons && !condition.forWeapons.includes(characterData.appCharacter.weaponType)) {
     return false;
   }
-  if (condition.forElmts && !condition.forElmts.includes(record.appCharacter.vision)) {
+  if (condition.forElmts && !condition.forElmts.includes(characterData.appCharacter.vision)) {
     return false;
   }
 

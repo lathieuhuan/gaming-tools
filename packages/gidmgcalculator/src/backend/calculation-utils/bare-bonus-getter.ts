@@ -9,7 +9,7 @@ import type {
   EntityBonusStack,
   EntityBonusValueByOption,
 } from "../types";
-import type { CharacterRecord } from "../common-utils/character-record";
+import type { CharacterData } from "../common-utils/character-data";
 
 import Array_ from "@Src/utils/array-utils";
 import { isApplicableEffect } from "./isApplicableEffect";
@@ -24,8 +24,8 @@ type InternalSupportInfo = GetBareBonusSupportInfo & {
   basedOnStable?: boolean;
 };
 
-export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
-  constructor(protected record: T, protected totalAttrCtrl?: TotalAttributeControl) {}
+export class BareBonusGetter<T extends CharacterData = CharacterData> {
+  constructor(protected characterData: T, protected totalAttrCtrl?: TotalAttributeControl) {}
 
   updateTotalAttrCtrl(totalAttrCtrl: TotalAttributeControl) {
     this.totalAttrCtrl = totalAttrCtrl;
@@ -41,9 +41,9 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
    * @param inputs used when optIndex is number or has INPUT source
    */
   protected getIndexOfBonusValue = (config: Pick<EntityBonusValueByOption, "optIndex">, inputs: number[] = []) => {
-    const { record } = this;
+    const { characterData } = this;
     const { optIndex = 0 } = config;
-    const elmtCount = record.allElmtCount;
+    const elmtCount = characterData.allElmtCount;
     const indexConfig =
       typeof optIndex === "number"
         ? ({ source: "INPUT", inpIndex: optIndex } satisfies EntityBonusValueByOption["optIndex"])
@@ -70,7 +70,7 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
         switch (indexConfig.element) {
           case "DIFFERENT":
             elmtCount.forEach((elementType) => {
-              if (elementType !== record.appCharacter.vision) indexValue++;
+              if (elementType !== characterData.appCharacter.vision) indexValue++;
             });
             break;
           default:
@@ -83,7 +83,7 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
         break;
       }
       case "LEVEL": {
-        indexValue += record.getFinalTalentLv(indexConfig.talent);
+        indexValue += characterData.getFinalTalentLv(indexConfig.talent);
         break;
       }
     }
@@ -98,7 +98,7 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
     let result = 0;
 
     for (const extra of Array_.toArray(extras)) {
-      if (isApplicableEffect(extra, this.record, support.inputs, support.fromSelf)) {
+      if (isApplicableEffect(extra, this.characterData, support.inputs, support.fromSelf)) {
         result += extra.value;
       }
     }
@@ -178,7 +178,7 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
     if (typeof config === "number") {
       bonus.value += this.scaleRefi(config, support.refi);
     } //
-    else if (config && isApplicableEffect(config, this.record, support.inputs, support.fromSelf)) {
+    else if (config && isApplicableEffect(config, this.characterData, support.inputs, support.fromSelf)) {
       const extra = this.getBareBonus(config, support);
 
       if (extra) {
@@ -193,16 +193,15 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
     if (!stack) {
       return 1;
     }
-    const { record } = this;
-    const trueAppParty = Array_.truthy(record.appParty);
+    const { characterData } = this;
     const partyDependentStackTypes: EntityBonusStack["type"][] = ["MEMBER", "ENERGY", "NATION", "RESOLVE", "MIX"];
 
-    if (partyDependentStackTypes.includes(stack.type) && !record.party.length) {
+    if (partyDependentStackTypes.includes(stack.type) && !characterData.party.length) {
       return 0;
     }
 
     const { inputs, fromSelf } = support;
-    const { appCharacter } = record;
+    const { appCharacter } = characterData;
     let result = 0;
 
     switch (stack.type) {
@@ -225,7 +224,7 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
       }
       case "MEMBER": {
         const { element } = stack;
-        const elmtCount = record.elmtCount;
+        const elmtCount = characterData.elmtCount;
 
         switch (element) {
           case "DIFFERENT":
@@ -256,32 +255,31 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
         result = appCharacter.EBcost;
 
         if (stack.scope === "PARTY") {
-          trueAppParty.forEach((data) => (result += data.EBcost));
+          characterData.forEachTeammate((data) => (result += data.EBcost));
         }
         break;
       }
       case "NATION": {
-        if (stack.nation === "LIYUE") {
-          result = trueAppParty.reduce(
-            (total, data) => total + (data.nation === "liyue" ? 1 : 0),
-            appCharacter.nation === "liyue" ? 1 : 0
-          );
-        } //
-        else {
-          result = trueAppParty.reduce((total, data) => total + (data.nation === appCharacter.nation ? 1 : 0), 0);
-
-          if (stack.nation === "DIFFERENT") {
-            result = trueAppParty.length - result;
-          }
+        switch (stack.nation) {
+          case "LIYUE":
+            result = appCharacter.nation === "liyue" ? 1 : 0;
+            characterData.forEachTeammate((data) => (result += data.nation === "liyue" ? 1 : 0));
+            break;
+          case "SAME_EXCLUDED":
+            characterData.forEachTeammate((data) => (result += data.nation === appCharacter.nation ? 1 : 0));
+            break;
+          case "DIFFERENT":
+            characterData.forEachTeammate((data) => (result += data.nation !== appCharacter.nation ? 1 : 0));
+            break;
         }
         break;
       }
       case "RESOLVE": {
         let [totalEnergy = 0, electroEnergy = 0] = inputs;
-        if (record.character.cons >= 1 && electroEnergy <= totalEnergy) {
+        if (characterData.character.cons >= 1 && electroEnergy <= totalEnergy) {
           totalEnergy += electroEnergy * 0.8 + (totalEnergy - electroEnergy) * 0.2;
         }
-        const level = record.getFinalTalentLv("EB");
+        const level = characterData.getFinalTalentLv("EB");
         const stackPerEnergy = Math.min(Math.ceil(14.5 + level * 0.5), 20);
         const stacks = Math.round(totalEnergy * stackPerEnergy) / 100;
         // const countResolve = (energyCost: number) => Math.round(energyCost * stackPerEnergy) / 100;
@@ -290,12 +288,11 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
         break;
       }
       case "MIX": {
-        result = trueAppParty.reduce(
-          (total, data) => total + (data.nation === "natlan" || data.vision !== appCharacter.vision ? 1 : 0),
-          appCharacter.nation === "natlan" ? 1 : 0
-        );
-        console.log(result);
+        result = appCharacter.nation === "natlan" ? 1 : 0;
 
+        characterData.forEachTeammate((data) => {
+          result += data.nation === "natlan" || data.vision !== appCharacter.vision ? 1 : 0;
+        });
         break;
       }
     }
@@ -303,7 +300,8 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
     if (stack.capacity) {
       const capacityExtra = stack.capacity.extra;
       const capacity =
-        stack.capacity.value + (isApplicableEffect(capacityExtra, record, inputs, fromSelf) ? capacityExtra.value : 0);
+        stack.capacity.value +
+        (isApplicableEffect(capacityExtra, characterData, inputs, fromSelf) ? capacityExtra.value : 0);
 
       result = Math.max(capacity - result, 0);
     }
@@ -311,7 +309,7 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
       if (result <= stack.baseline) return 0;
       result -= stack.baseline;
     }
-    if (stack.extra && isApplicableEffect(stack.extra, record, inputs, fromSelf)) {
+    if (stack.extra && isApplicableEffect(stack.extra, characterData, inputs, fromSelf)) {
       result += stack.extra.value;
     }
 
@@ -340,7 +338,7 @@ export class BareBonusGetter<T extends CharacterRecord = CharacterRecord> {
 
     initial.value = this.scaleRefi(initial.value, refi, config.incre);
 
-    initial.value *= this.record.getLevelScale(config.lvScale, inputs, fromSelf);
+    initial.value *= this.characterData.getLevelScale(config.lvScale, inputs, fromSelf);
 
     this.applyExtra(initial, config.preExtra, support);
 

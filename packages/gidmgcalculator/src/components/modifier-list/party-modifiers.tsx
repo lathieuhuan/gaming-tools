@@ -1,7 +1,6 @@
-import { CharacterBuff, CharacterDebuff } from "@Backend";
+import { CharacterBuff, CharacterDebuff, CharacterReadData } from "@Backend";
 
 import type { Party, Teammate } from "@Src/types";
-import type { UICharacterRecord } from "@Src/utils/ui-character-record";
 import type { GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 import Array_ from "@Src/utils/array-utils";
 import { parseAbilityDescription } from "@Src/utils/description-parsers";
@@ -11,7 +10,7 @@ import { renderModifiers } from "./modifiers.utils";
 interface PartyModsViewProps {
   mutable?: boolean;
   party: Party;
-  record: UICharacterRecord;
+  characterData: CharacterReadData;
   getHanlders?: (args: GetTeammateModifierHanldersArgs) => ModifierHanlders;
 }
 
@@ -21,7 +20,7 @@ function getTeammateModifierElmts(
   teammateIndex: number,
   type: "buffs" | "debuffs"
 ) {
-  const appTeammate = props.record.getAppCharacter(teammate.name);
+  const appTeammate = props.characterData.getAppCharacter(teammate.name);
   const modCtrls = type === "buffs" ? teammate?.buffCtrls : teammate?.debuffCtrls;
   const modifiers = type === "buffs" ? appTeammate?.buffs : appTeammate?.debuffs;
 

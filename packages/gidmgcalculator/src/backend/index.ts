@@ -7,9 +7,9 @@ export { calculateSetup } from "./calculation/calculateSetup";
 export {
   ArtifactCalc,
   CharacterCalc,
-  CharacterRecord,
+  CharacterData,
+  CharacterReadData,
   GeneralCalc,
-  PartyRecord,
   WeaponCalc,
   type ArtifactSetBonus,
 } from "./common-utils";

@@ -152,7 +152,7 @@ export class SetupOptimizer extends InputProcessor {
 
     const calculator = new CalcItemCalculator(
       this.target.level,
-      this.characterRecord,
+      this.characterData,
       NAsConfig,
       this.customInfusion,
       totalAttr,

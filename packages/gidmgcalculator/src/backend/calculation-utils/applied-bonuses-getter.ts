@@ -66,7 +66,7 @@ export class AppliedBonusesGetter extends BareBonusGetter {
                 break;
               }
               case "OWN_ELMT":
-                toStat = this.record.appCharacter.vision;
+                toStat = this.characterData.appCharacter.vision;
                 break;
               default:
                 toStat = targetPath;
@@ -121,7 +121,7 @@ export class AppliedBonusesGetter extends BareBonusGetter {
     for (const config of Array_.toArray(buff.effects)) {
       if (
         (isFinal === undefined || isFinal === this.isTrulyFinalBonus(config)) &&
-        isApplicableEffect(config, this.record, support.inputs, support.fromSelf)
+        isApplicableEffect(config, this.characterData, support.inputs, support.fromSelf)
       ) {
         const bonus = this.getBareBonus(
           config,

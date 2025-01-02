@@ -1,7 +1,7 @@
 import { AppCharacter, AttackPattern, TalentType } from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
 import { Character } from "@Src/types";
-import { __characters, __EMockCharacter } from "@UnitTest/mocks/characters.mock";
+import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __genCalculationInfo } from "@UnitTest/test-utils";
 import { CharacterCalc } from "../character-calc";
 
@@ -55,9 +55,9 @@ describe("getTotalXtraTalentLv", () => {
   });
 
   test("total extra NAs level when Tartaglia is in party", () => {
-    const Tartaglia = __characters.find((character) => character.name === __EMockCharacter.TARTAGLIA)!;
+    const Tartaglia = $AppCharacter.get(__EMockCharacter.TARTAGLIA);
 
-    record.__updateData({ [__EMockCharacter.TARTAGLIA]: Tartaglia });
+    record.__updateParty([Tartaglia]);
     expect(record.getTotalXtraTalentLv("NAs")).toBe(1);
   });
 });

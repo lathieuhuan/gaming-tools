@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectCharacter, changeModCtrlInput, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
-import { useCharacterRecord } from "../../ContextProvider";
+import { useCharacterData } from "../../ContextProvider";
 
 import { SelfBuffsView } from "@Src/components";
 
@@ -8,13 +8,13 @@ export default function SelfBuffs() {
   const dispatch = useDispatch();
   const character = useSelector(selectCharacter);
   const selfBuffCtrls = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].selfBuffCtrls);
-  const record = useCharacterRecord();
+  const characterData = useCharacterData();
 
   return (
     <SelfBuffsView
       mutable
       character={character}
-      record={record}
+      characterData={characterData}
       modCtrls={selfBuffCtrls}
       getHanlders={({ ctrl }) => {
         const path: ToggleModCtrlPath = {

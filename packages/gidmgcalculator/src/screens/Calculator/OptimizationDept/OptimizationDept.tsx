@@ -8,7 +8,7 @@ import type { ArtifactManager } from "./controllers";
 
 import { useStoreSnapshot } from "@Src/features";
 import Object_ from "@Src/utils/object-utils";
-import { useCharacterRecord, useOptimizerState } from "../ContextProvider";
+import { useCharacterData, useOptimizerState } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 
 // Components
@@ -69,7 +69,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       data: getDataOfSetupEntities(setup),
     };
   });
-  const record = useCharacterRecord();
+  const record = useCharacterData();
   const artifactManager = useArtifactManager(store.artifacts);
 
   const [activePieceSelect, setActivePieceSelect] = useState(false);
