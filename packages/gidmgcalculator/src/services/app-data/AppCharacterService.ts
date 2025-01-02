@@ -1,11 +1,10 @@
 import { AppCharacter, TalentType } from "@Backend";
 
-import type { CalcAppParty, Traveler } from "@Src/types";
+import type { Traveler } from "@Src/types";
 import type { StandardResponse } from "../services.types";
 import type { DataControl, ServiceSubscriber } from "./app-data.types";
 
 import { BACKEND_URL, GENSHIN_DEV_URL } from "@Src/constants";
-import Object_ from "@Src/utils/object-utils";
 import { BaseService } from "./BaseService";
 
 type CharacterSubscriber = ServiceSubscriber<AppCharacter>;
@@ -207,16 +206,6 @@ export class AppCharacterService extends BaseService {
   get(name: string) {
     const control = this.getControl(name);
     return control!.data;
-  }
-
-  getPartyData(party: Array<{ name: string } | null>): CalcAppParty {
-    return party.map((teammate) => {
-      if (teammate) {
-        const keys: Array<keyof AppCharacter> = ["code", "name", "icon", "nation", "vision", "weaponType", "EBcost"];
-        return Object_.pickProps(this.getControl(teammate.name)!.data, keys);
-      }
-      return null;
-    });
   }
 
   isTraveler = (obj: { name: string }) => {

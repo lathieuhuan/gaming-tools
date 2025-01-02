@@ -4,7 +4,7 @@ import TypeCounter from "@Src/utils/type-counter";
 import { CharacterCalc } from "./character-calc";
 import { DeepReadonly } from "rond";
 
-export class CharacterReadData<TMember extends Teammate | null> {
+export class CharacterReadData<TMember extends Teammate | null = Teammate | null> {
   protected _character: Character;
   protected _party: TMember[];
   protected _appCharacter: AppCharacter;

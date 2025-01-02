@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { PartiallyOptional } from "rond";
-import { AttackElement, ATTACK_ELEMENTS, GeneralCalc } from "@Backend";
+import { AttackElement, ATTACK_ELEMENTS } from "@Backend";
 
 import type { CalcSetupManageInfo, CalcWeapon, Resonance, Target } from "@Src/types";
 import type {
@@ -35,7 +35,7 @@ import Modifier_ from "@Src/utils/modifier-utils";
 import Object_ from "@Src/utils/object-utils";
 import Array_ from "@Src/utils/array-utils";
 import Entity_ from "@Src/utils/entity-utils";
-import { calculate, getAppCharacterFromState } from "./calculator-slice.utils";
+import { calculate, countAllElements, getAppCharacterFromState } from "./calculator-slice.utils";
 
 // const defaultChar = {
 //   name: "Albedo",
@@ -187,12 +187,12 @@ export const calculatorSlice = createSlice({
       const setup = state.setupsById[state.activeId];
       const { party, elmtModCtrls } = setup;
 
-      const oldElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appCharacter);
+      const oldElmtCount = countAllElements(appCharacter, party);
       const oldTeammate = party[teammateIndex];
       // assign to party
       party[teammateIndex] = Setup_.createTeammate({ name, weaponType });
 
-      const newElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appCharacter);
+      const newElmtCount = countAllElements(appCharacter, party);
 
       if (oldTeammate) {
         const { vision: oldElement } = $AppCharacter.get(oldTeammate.name) || {};
@@ -236,7 +236,7 @@ export const calculatorSlice = createSlice({
       if (teammate) {
         const { vision } = $AppCharacter.get(teammate.name);
         party[teammateIndex] = null;
-        const newElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appCharacter);
+        const newElmtCount = countAllElements(appCharacter, party);
 
         if (newElmtCount.get(vision) === 1) {
           elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
