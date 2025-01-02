@@ -2,7 +2,7 @@ import { AppCharacter, AttackPattern, TalentType } from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
 import { Character } from "@Src/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { __genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCharacterDataTester } from "@UnitTest/test-utils";
 import { CharacterCalc } from "../character-calc";
 
 type GetTotalXtraTalentLvTestCase = {
@@ -13,10 +13,10 @@ type GetTotalXtraTalentLvTestCase = {
 
 let character: Character;
 let appCharacter: AppCharacter;
-let record: ReturnType<typeof __genCalculationInfo>;
+let record: ReturnType<typeof __genCharacterDataTester>;
 
 beforeEach(() => {
-  record = __genCalculationInfo();
+  record = __genCharacterDataTester();
   character = record.character;
   appCharacter = record.appCharacter;
 });
@@ -55,9 +55,7 @@ describe("getTotalXtraTalentLv", () => {
   });
 
   test("total extra NAs level when Tartaglia is in party", () => {
-    const Tartaglia = $AppCharacter.get(__EMockCharacter.TARTAGLIA);
-
-    record.__updateParty([Tartaglia]);
+    record.__updateParty([__EMockCharacter.TARTAGLIA]);
     expect(record.getTotalXtraTalentLv("NAs")).toBe(1);
   });
 });

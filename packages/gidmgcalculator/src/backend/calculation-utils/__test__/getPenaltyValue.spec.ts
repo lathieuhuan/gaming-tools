@@ -1,9 +1,9 @@
 import { EntityPenaltyCore } from "@Src/backend/types";
 import { getPenaltyValue } from "../getPenaltyValue";
-import { __genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCharacterDataTester } from "@UnitTest/test-utils";
 
 class Tester {
-  info = __genCalculationInfo();
+  info = __genCharacterDataTester();
   inputs: number[] = [];
   fromSelf = true;
   config: EntityPenaltyCore = {

@@ -1,53 +1,49 @@
 import { CharacterData, Level } from "../src/backend";
 import { $AppCharacter, $AppWeapon } from "../src/services";
-import { AppCharactersByName, CalcAppParty, Teammate, Weapon } from "../src/types";
+import { Teammate, Weapon } from "../src/types";
 import { __EMockCharacter } from "./mocks/characters.mock";
 import { __EMockWeapon } from "./mocks/weapons.mock";
 import { ASCENSION_RANKS } from "./test-constants";
 
-export class CharacterRecordTester extends CharacterData {
+export class CharacterDataTester extends CharacterData {
   __updateCharacter = (name: string) => {
     this.character.name = name;
     this["_appCharacter"] = $AppCharacter.get(name);
     this.data[name] = this["_appCharacter"];
   };
 
-  __updateParty = (appParty: CalcAppParty) => {
-    this["_party"] = appParty.map<Teammate | null>((data) =>
-      data
-        ? {
-            name: data.name,
-            weapon: {
-              buffCtrls: [],
-              code: 0,
-              refi: 1,
-              type: "sword",
-            },
-            artifact: {
-              code: 0,
-              buffCtrls: [],
-            },
-            buffCtrls: [],
-            debuffCtrls: [],
-          }
-        : null
-    );
+  __updateParty = (names: string[]) => {
+    const party = names.map<Teammate>((name) => ({
+      name: name,
+      weapon: {
+        buffCtrls: [],
+        code: 0,
+        refi: 1,
+        type: "sword",
+      },
+      artifact: {
+        code: 0,
+        buffCtrls: [],
+      },
+      buffCtrls: [],
+      debuffCtrls: [],
+    }));
+    const extraData: typeof this.data = {};
 
-    for (const appTeammate of appParty) {
-      if (appTeammate) this.data[appTeammate.name] = appTeammate;
+    for (const name of names) {
+      if (!this.data[name]) {
+        this.data[name] = $AppCharacter.get(name);
+      }
     }
-  };
 
-  __updateData = (data: AppCharactersByName) => {
-    this.data = {
-      ...this.data,
-      ...data,
-    };
+    this.updateParty(party, extraData);
   };
 }
 
-export function __genCalculationInfo(characterName: __EMockCharacter = __EMockCharacter.BASIC): CharacterRecordTester {
-  return new CharacterRecordTester(
+export function __genCharacterDataTester(
+  characterName: __EMockCharacter = __EMockCharacter.BASIC
+): CharacterDataTester {
+  return new CharacterDataTester(
     {
       name: characterName,
       level: "1/20",

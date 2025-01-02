@@ -1,6 +1,5 @@
-import { $AppCharacter } from "@Src/services";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { __genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCharacterDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "../test-utils";
 import { EntityBonusStack } from "@Src/backend/types";
 
@@ -22,7 +21,7 @@ class Tester extends BareBonusGetterTester {
 let tester: Tester;
 
 beforeEach(() => {
-  tester = new Tester(__genCalculationInfo());
+  tester = new Tester(__genCharacterDataTester());
 });
 
 test("stack be 0 when stack calculation is involved party and there's no party", () => {
@@ -151,12 +150,10 @@ describe("type MEMBER: stack calculated from inputs", () => {
     tester.__changeCharacter(__EMockCharacter.BASIC);
     tester._expect(0);
 
-    // tester.__changeParty([$AppCharacter.get(__EMockCharacter.BASIC)]);
-    // tester._expect(0);
+    tester.__changeParty([__EMockCharacter.BASIC]);
+    tester._expect(0);
 
-    tester.__changeParty([$AppCharacter.get(__EMockCharacter.CATALYST)]);
-
-    console.log(tester["record"].party);
+    tester.__changeParty([__EMockCharacter.CATALYST]);
 
     tester._expect(1);
   });

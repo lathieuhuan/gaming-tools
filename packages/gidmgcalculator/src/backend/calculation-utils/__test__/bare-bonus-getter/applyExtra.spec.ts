@@ -1,6 +1,6 @@
 import { TotalAttributeControl } from "@Src/backend/controls";
 import { BareBonus, EntityBonusCore } from "@Src/backend/types";
-import { __genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCharacterDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "../test-utils";
 
 class Tester extends BareBonusGetterTester {
@@ -42,7 +42,7 @@ let tester: Tester;
 
 beforeEach(() => {
   totalAttrCtrl = new TotalAttributeControl();
-  tester = new Tester(__genCalculationInfo(), totalAttrCtrl);
+  tester = new Tester(__genCharacterDataTester(), totalAttrCtrl);
 });
 
 test("extra is config as number", () => {

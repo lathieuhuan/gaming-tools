@@ -6,7 +6,7 @@ import { Artifact } from "@Src/types";
 import { __EMockArtifactSet } from "@UnitTest/mocks/artifacts.mock";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __EMockWeapon } from "@UnitTest/mocks/weapons.mock";
-import { __findAscensionByLevel, __genCalculationInfo, __genWeaponInfo } from "@UnitTest/test-utils";
+import { __findAscensionByLevel, __genCharacterDataTester, __genWeaponInfo } from "@UnitTest/test-utils";
 import { TotalAttributeControl } from "../total-attribute-control";
 
 type InternalTotalAttribute = Record<
@@ -169,7 +169,7 @@ test("static: getArtifactAttributes => ArtifactAttributeControl", () => {
 
 describe("construct", () => {
   test("with only character", () => {
-  const record = __genCalculationInfo();
+  const record = __genCharacterDataTester();
   const { character, appCharacter } = record;
 
     tester.construct(character, appCharacter);
@@ -178,7 +178,7 @@ describe("construct", () => {
 });
 
 test("equip weapon (construct with character & weapon should be the same)", () => {
-  const record = __genCalculationInfo();
+  const record = __genCharacterDataTester();
   const { character, appCharacter } = record;
 
   const coreTester = new Tester();
@@ -218,7 +218,7 @@ test("equip weapon (construct with character & weapon should be the same)", () =
 });
 
 test("equip artifacts (construct with character & artifacts should be the same)", () => {
-  const record = __genCalculationInfo();
+  const record = __genCharacterDataTester();
   const { character, appCharacter } = record;
 
   tester.construct(character, appCharacter);

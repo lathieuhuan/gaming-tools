@@ -1,13 +1,13 @@
 import { TotalAttributeControl } from "@Src/backend/controls";
 import { EffectApplicableCondition } from "@Src/backend/types";
-import { AppCharactersByName, CalcAppParty, Character } from "@Src/types";
+import { Character } from "@Src/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { __genCalculationInfo, CharacterRecordTester } from "@UnitTest/test-utils";
+import { __genCharacterDataTester, CharacterDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetter } from "../bare-bonus-getter";
 import { isApplicableEffect } from "../isApplicableEffect";
 
 export class IsApplicableEffectTester {
-  record: CharacterRecordTester = __genCalculationInfo();
+  characterData: CharacterDataTester = __genCharacterDataTester();
   checkInput: EffectApplicableCondition["checkInput"];
   checkParty: EffectApplicableCondition["checkParty"];
   forElmts: EffectApplicableCondition["forElmts"];
@@ -35,9 +35,9 @@ export class IsApplicableEffectTester {
     };
   }
 
-  constructor(record?: CharacterRecordTester) {
-    if (record) {
-      this.record = record;
+  constructor(characterData?: CharacterDataTester) {
+    if (characterData) {
+      this.characterData = characterData;
     }
   }
 
@@ -46,34 +46,28 @@ export class IsApplicableEffectTester {
     return value;
   }
 
-  _setInfo(charName: __EMockCharacter, appParty: CalcAppParty = []) {
-    this.record.__updateCharacter(charName);
-
-    const newAppParty = appParty.reduce<AppCharactersByName>(
-      (result, data) => (data ? { ...result, [data.name]: data } : result),
-      {}
-    );
-
-    this.record.__updateData(newAppParty);
+  __setInfo(charName: __EMockCharacter, teammateNames: string[] = []) {
+    this.characterData.__updateCharacter(charName);
+    this.characterData.__updateParty(teammateNames);
   }
 
-  _expectValue<T = any>(value: T) {
-    return expect(isApplicableEffect(this.condition, this.record, this.inputs, this.fromSelf)).toBe<T>(value);
+  __expectValue<T = any>(value: T) {
+    return expect(isApplicableEffect(this.condition, this.characterData, this.inputs, this.fromSelf)).toBe<T>(value);
   }
 
-  _expectInputs(inputs: number[]) {
-    return expect(isApplicableEffect(this.condition, this.record, inputs, this.fromSelf));
+  __expectInputs(inputs: number[]) {
+    return expect(isApplicableEffect(this.condition, this.characterData, inputs, this.fromSelf));
   }
 }
 
-export class BareBonusGetterTester extends BareBonusGetter<CharacterRecordTester> {
+export class BareBonusGetterTester extends BareBonusGetter<CharacterDataTester> {
   inputs: number[] = [];
   fromSelf = true;
 
   constructor(totalAttrCtrl?: TotalAttributeControl);
-  constructor(info?: CharacterRecordTester, totalAttrCtrl?: TotalAttributeControl);
-  constructor(info?: CharacterRecordTester | TotalAttributeControl, totalAttrCtrl?: TotalAttributeControl) {
-    const _info = !info || info instanceof TotalAttributeControl ? __genCalculationInfo() : info;
+  constructor(info?: CharacterDataTester, totalAttrCtrl?: TotalAttributeControl);
+  constructor(info?: CharacterDataTester | TotalAttributeControl, totalAttrCtrl?: TotalAttributeControl) {
+    const _info = !info || info instanceof TotalAttributeControl ? __genCharacterDataTester() : info;
     const _totalAttrCtrl = info instanceof TotalAttributeControl ? info : totalAttrCtrl;
 
     super(_info, _totalAttrCtrl);
@@ -87,7 +81,7 @@ export class BareBonusGetterTester extends BareBonusGetter<CharacterRecordTester
     this.characterData.__updateCharacter(characterName);
   }
 
-  __changeParty(appParty: CalcAppParty) {
-    this.characterData.__updateParty(appParty);
+  __changeParty(names: string[]) {
+    this.characterData.__updateParty(names);
   }
 }

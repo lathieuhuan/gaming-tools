@@ -1,7 +1,6 @@
 import { EntityBonusValueByOption, LevelableTalentType } from "@Src/backend/types";
-import { $AppCharacter } from "@Src/services";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { __genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCharacterDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "../test-utils";
 
 class Tester extends BareBonusGetterTester {
@@ -15,7 +14,7 @@ class Tester extends BareBonusGetterTester {
 let tester: Tester;
 
 beforeEach(() => {
-  tester = new Tester(__genCalculationInfo());
+  tester = new Tester(__genCharacterDataTester());
 });
 
 /**
@@ -83,10 +82,10 @@ test("[type: ELEMENT] get optIndex from the number of the party's all distinct e
   tester.__changeCharacter(__EMockCharacter.BASIC);
   tester._expect(0);
 
-  tester.__changeParty([$AppCharacter.get(__EMockCharacter.BASIC)]);
+  tester.__changeParty([__EMockCharacter.BASIC]);
   tester._expect(0);
 
-  tester.__changeParty([$AppCharacter.get(__EMockCharacter.CATALYST)]);
+  tester.__changeParty([__EMockCharacter.CATALYST]);
   tester._expect(1);
 });
 
@@ -99,7 +98,7 @@ test("[type: ELEMENT] get optIndex from the number of the party's some distinct 
   tester.__changeCharacter(__EMockCharacter.BASIC);
   tester._expect(0);
 
-  tester.__changeParty([$AppCharacter.get(__EMockCharacter.CATALYST)]);
+  tester.__changeParty([__EMockCharacter.CATALYST]);
   tester._expect(0);
 
   tester.optIndex.elements = ["pyro", "electro"];
@@ -110,7 +109,7 @@ test("[type: ELEMENT] get optIndex from the number of the party's some distinct 
 });
 
 test("[type: MEMBER] get optIndex from the number of teammates whose elements are different from the character", () => {
-  const electroMember = $AppCharacter.get(__EMockCharacter.CATALYST);
+  const electroMember = __EMockCharacter.CATALYST;
 
   tester.optIndex = {
     source: "MEMBER",
@@ -123,16 +122,16 @@ test("[type: MEMBER] get optIndex from the number of teammates whose elements ar
   tester.__changeParty([electroMember]);
   tester._expect(0);
 
-  tester.__changeParty([electroMember, $AppCharacter.get(__EMockCharacter.BASIC)]);
+  tester.__changeParty([electroMember, __EMockCharacter.BASIC]);
   tester._expect(0);
 
-  tester.__changeParty([electroMember, $AppCharacter.get(__EMockCharacter.TARTAGLIA)]);
+  tester.__changeParty([electroMember, __EMockCharacter.TARTAGLIA]);
   tester._expect(1);
 });
 
 test("optIndex from the number of WHOLE party's members whose elements are aligned with the condition (MEMBER)", () => {
-  const electroMember = $AppCharacter.get(__EMockCharacter.CATALYST);
-  const pyroMember = $AppCharacter.get(__EMockCharacter.BASIC);
+  const electroMember = __EMockCharacter.CATALYST;
+  const pyroMember = __EMockCharacter.BASIC;
 
   tester.optIndex = {
     source: "MEMBER",

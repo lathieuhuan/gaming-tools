@@ -59,16 +59,14 @@ export class ResistanceReductionControl<T extends CharacterData = CharacterData>
         }
         case "XILONEN": {
           const elmts: ElementType[] = ["pyro", "hydro", "cryo", "electro"];
-          let remainingCount = elmts.includes(characterData.appCharacter.vision) ? 2 : 3;
 
-          characterData.forEachTeammate((data) => {
-            if (elmts.includes(data.vision)) {
-              paths.add(data.vision);
-              remainingCount--;
-            }
+          const allElmtCount = characterData.allElmtCount;
+
+          allElmtCount.forEach((elmt) => {
+            if (elmts.includes(elmt)) paths.add(elmt);
           });
 
-          if (remainingCount > 0) paths.add("geo");
+          if (allElmtCount.get(elmts) < 3) paths.add("geo");
           break;
         }
       }

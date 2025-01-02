@@ -1,6 +1,5 @@
 import { LEVELS } from "@Src/backend/constants";
 import { CharacterMilestone } from "@Src/backend/types";
-import { $AppCharacter } from "@Src/services";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __findAscensionByLevel } from "@UnitTest/test-utils";
 import { IsApplicableEffectTester } from "./test-utils";
@@ -15,14 +14,14 @@ describe("condition: checkInput", () => {
   test("DEFAULT: only config value, inpIndex default to 0, comparison default to EQUAL", () => {
     tester.checkInput = 2;
 
-    tester._expectInputs([tester.checkInputValue]).toBe(true);
-    tester._expectInputs([tester.checkInputValue + 1]).toBe(false);
+    tester.__expectInputs([tester.checkInputValue]).toBe(true);
+    tester.__expectInputs([tester.checkInputValue + 1]).toBe(false);
 
     tester.checkInput = {
       value: 3,
     };
-    tester._expectInputs([tester.checkInputValue]).toBe(true);
-    tester._expectInputs([tester.checkInputValue + 1]).toBe(false);
+    tester.__expectInputs([tester.checkInputValue]).toBe(true);
+    tester.__expectInputs([tester.checkInputValue + 1]).toBe(false);
   });
 
   test("checkInput config with value and inpIndex", () => {
@@ -30,9 +29,9 @@ describe("condition: checkInput", () => {
       value: 2,
       inpIndex: 1,
     };
-    tester._expectInputs([-1, tester.checkInputValue]).toBe(true);
-    tester._expectInputs([tester.checkInputValue, 6]).toBe(false);
-    tester._expectInputs([3, tester.checkInputValue + 1]).toBe(false);
+    tester.__expectInputs([-1, tester.checkInputValue]).toBe(true);
+    tester.__expectInputs([tester.checkInputValue, 6]).toBe(false);
+    tester.__expectInputs([3, tester.checkInputValue + 1]).toBe(false);
   });
 
   test("checkInput config with value and comparison MIN", () => {
@@ -40,9 +39,9 @@ describe("condition: checkInput", () => {
       value: 2,
       comparison: "MIN",
     };
-    tester._expectInputs([tester.checkInputValue]).toBe(true);
-    tester._expectInputs([tester.checkInputValue + 1]).toBe(true);
-    tester._expectInputs([tester.checkInputValue - 1]).toBe(false);
+    tester.__expectInputs([tester.checkInputValue]).toBe(true);
+    tester.__expectInputs([tester.checkInputValue + 1]).toBe(true);
+    tester.__expectInputs([tester.checkInputValue - 1]).toBe(false);
   });
 
   test("checkInput config with value and comparison MAX", () => {
@@ -50,9 +49,9 @@ describe("condition: checkInput", () => {
       value: 2,
       comparison: "MAX",
     };
-    tester._expectInputs([tester.checkInputValue]).toBe(true);
-    tester._expectInputs([tester.checkInputValue + 1]).toBe(false);
-    tester._expectInputs([tester.checkInputValue - 1]).toBe(true);
+    tester.__expectInputs([tester.checkInputValue]).toBe(true);
+    tester.__expectInputs([tester.checkInputValue + 1]).toBe(false);
+    tester.__expectInputs([tester.checkInputValue - 1]).toBe(true);
   });
 
   test("checkInput config with value, inpIndex, and comparison MIN", () => {
@@ -61,10 +60,10 @@ describe("condition: checkInput", () => {
       inpIndex: 1,
       comparison: "MIN",
     };
-    tester._expectInputs([-2, tester.checkInputValue]).toBe(true);
-    tester._expectInputs([-4, tester.checkInputValue + 1]).toBe(true);
-    tester._expectInputs([-6, tester.checkInputValue - 1]).toBe(false);
-    tester._expectInputs([tester.checkInputValue]).toBe(false);
+    tester.__expectInputs([-2, tester.checkInputValue]).toBe(true);
+    tester.__expectInputs([-4, tester.checkInputValue + 1]).toBe(true);
+    tester.__expectInputs([-6, tester.checkInputValue - 1]).toBe(false);
+    tester.__expectInputs([tester.checkInputValue]).toBe(false);
   });
 });
 
@@ -75,17 +74,14 @@ describe("condition: checkParty", () => {
       value: 2,
     };
 
-    tester._setInfo(__EMockCharacter.BASIC);
-    tester._expectValue(false);
+    tester.__setInfo(__EMockCharacter.BASIC);
+    tester.__expectValue(false);
 
-    tester._setInfo(__EMockCharacter.BASIC, [$AppCharacter.get(__EMockCharacter.CATALYST)]);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC, [__EMockCharacter.CATALYST]);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.BASIC, [
-      $AppCharacter.get(__EMockCharacter.CATALYST),
-      $AppCharacter.get(__EMockCharacter.TARTAGLIA),
-    ]);
-    tester._expectValue(false);
+    tester.__setInfo(__EMockCharacter.BASIC, [__EMockCharacter.CATALYST, __EMockCharacter.TARTAGLIA]);
+    tester.__expectValue(false);
   });
 
   test("check DISTINCT_ELMT, comparison MIN", () => {
@@ -95,17 +91,14 @@ describe("condition: checkParty", () => {
       comparison: "MIN",
     };
 
-    tester._setInfo(__EMockCharacter.BASIC);
-    tester._expectValue(false);
+    tester.__setInfo(__EMockCharacter.BASIC);
+    tester.__expectValue(false);
 
-    tester._setInfo(__EMockCharacter.BASIC, [$AppCharacter.get(__EMockCharacter.CATALYST)]);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC, [__EMockCharacter.CATALYST]);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.BASIC, [
-      $AppCharacter.get(__EMockCharacter.CATALYST),
-      $AppCharacter.get(__EMockCharacter.TARTAGLIA),
-    ]);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC, [__EMockCharacter.CATALYST, __EMockCharacter.TARTAGLIA]);
+    tester.__expectValue(true);
   });
 
   test("check DISTINCT_ELMT, comparison MAX", () => {
@@ -115,17 +108,14 @@ describe("condition: checkParty", () => {
       comparison: "MAX",
     };
 
-    tester._setInfo(__EMockCharacter.BASIC);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.BASIC, [$AppCharacter.get(__EMockCharacter.CATALYST)]);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC, [__EMockCharacter.CATALYST]);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.BASIC, [
-      $AppCharacter.get(__EMockCharacter.CATALYST),
-      $AppCharacter.get(__EMockCharacter.TARTAGLIA),
-    ]);
-    tester._expectValue(false);
+    tester.__setInfo(__EMockCharacter.BASIC, [__EMockCharacter.CATALYST, __EMockCharacter.TARTAGLIA]);
+    tester.__expectValue(false);
   });
 
   // check 'MIXED' manually
@@ -135,19 +125,19 @@ describe("condition: forElmts", () => {
   test("app character's element type included in forElmts", () => {
     tester.forElmts = ["pyro"];
 
-    tester._setInfo(__EMockCharacter.BASIC);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.CATALYST);
-    tester._expectValue(false);
+    tester.__setInfo(__EMockCharacter.CATALYST);
+    tester.__expectValue(false);
 
     tester.forElmts = ["pyro", "electro"];
 
-    tester._setInfo(__EMockCharacter.BASIC);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.CATALYST);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.CATALYST);
+    tester.__expectValue(true);
   });
 });
 
@@ -155,78 +145,78 @@ describe("condition: forWeapons", () => {
   test("app character weapon type included in forWeapons", () => {
     tester.forWeapons = ["sword"];
 
-    tester._setInfo(__EMockCharacter.BASIC);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.CATALYST);
-    tester._expectValue(false);
+    tester.__setInfo(__EMockCharacter.CATALYST);
+    tester.__expectValue(false);
 
     tester.forWeapons = ["sword", "catalyst"];
 
-    tester._setInfo(__EMockCharacter.BASIC);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.CATALYST);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.CATALYST);
+    tester.__expectValue(true);
   });
 });
 
 describe("condition: partyOnlyElmts", () => {
   test("all elements of character & teammates must be included in partyOnlyElmts", () => {
-    const electroCharacter = $AppCharacter.get(__EMockCharacter.CATALYST);
+    const electroCharacter = __EMockCharacter.CATALYST;
 
     tester.partyOnlyElmts = ["pyro"];
 
-    tester._setInfo(__EMockCharacter.BASIC);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter]);
-    tester._expectValue(false);
+    tester.__setInfo(__EMockCharacter.BASIC, [electroCharacter]);
+    tester.__expectValue(false);
 
     tester.partyOnlyElmts = ["pyro", "electro"];
 
-    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter]);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC, [electroCharacter]);
+    tester.__expectValue(true);
   });
 });
 
 describe("condition: partyElmtCount", () => {
   test("the number of characters whose elements are listed must be atleast the listed value", () => {
-    const electroCharacter = $AppCharacter.get(__EMockCharacter.CATALYST);
+    const electroCharacter = __EMockCharacter.CATALYST;
 
     tester.partyElmtCount = {
       pyro: 1,
     };
 
-    tester._setInfo(__EMockCharacter.CATALYST);
-    tester._expectValue(false);
+    tester.__setInfo(__EMockCharacter.CATALYST);
+    tester.__expectValue(false);
 
-    tester._setInfo(__EMockCharacter.BASIC);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.BASIC, [$AppCharacter.get(__EMockCharacter.BASIC)]);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC, [__EMockCharacter.BASIC]);
+    tester.__expectValue(true);
 
     tester.partyElmtCount = {
       pyro: 1,
       electro: 2,
     };
 
-    tester._setInfo(__EMockCharacter.BASIC);
-    tester._expectValue(false);
+    tester.__setInfo(__EMockCharacter.BASIC);
+    tester.__expectValue(false);
 
-    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter]);
-    tester._expectValue(false);
+    tester.__setInfo(__EMockCharacter.BASIC, [electroCharacter]);
+    tester.__expectValue(false);
 
-    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter, electroCharacter]);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC, [electroCharacter, electroCharacter]);
+    tester.__expectValue(true);
   });
 });
 
 describe("condition: totalPartyElmtCount", () => {
   test("the total number of characters whose elements are included must pass the comparison", () => {
-    const pyroCharacter = $AppCharacter.get(__EMockCharacter.BASIC);
-    const electroCharacter = $AppCharacter.get(__EMockCharacter.CATALYST);
+    const pyroCharacter = __EMockCharacter.BASIC;
+    const electroCharacter = __EMockCharacter.CATALYST;
 
     tester.totalPartyElmtCount = {
       elements: ["pyro"],
@@ -234,14 +224,14 @@ describe("condition: totalPartyElmtCount", () => {
       value: 1,
     };
 
-    tester._setInfo(__EMockCharacter.BASIC);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter]);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC, [electroCharacter]);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.BASIC, [pyroCharacter]);
-    tester._expectValue(false);
+    tester.__setInfo(__EMockCharacter.BASIC, [pyroCharacter]);
+    tester.__expectValue(false);
 
     tester.totalPartyElmtCount = {
       elements: ["pyro", "electro"],
@@ -249,20 +239,20 @@ describe("condition: totalPartyElmtCount", () => {
       value: 2,
     };
 
-    tester._setInfo(__EMockCharacter.BASIC);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter]);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC, [electroCharacter]);
+    tester.__expectValue(true);
 
-    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter, electroCharacter]);
-    tester._expectValue(false);
+    tester.__setInfo(__EMockCharacter.BASIC, [electroCharacter, electroCharacter]);
+    tester.__expectValue(false);
 
-    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter, pyroCharacter]);
-    tester._expectValue(false);
+    tester.__setInfo(__EMockCharacter.BASIC, [electroCharacter, pyroCharacter]);
+    tester.__expectValue(false);
 
-    tester._setInfo(__EMockCharacter.BASIC, [electroCharacter, $AppCharacter.get(__EMockCharacter.TARTAGLIA)]);
-    tester._expectValue(true);
+    tester.__setInfo(__EMockCharacter.BASIC, [electroCharacter, __EMockCharacter.TARTAGLIA]);
+    tester.__expectValue(true);
   });
 });
 
@@ -277,11 +267,11 @@ describe("condition: grantedAt", () => {
       tester.grantedAt = milestone;
 
       for (const level of LEVELS) {
-        tester.record.character.level = level;
+        tester.characterData.character.level = level;
         const ascension = __findAscensionByLevel(level);
-        const _expectValue = ascension >= requiredAscension;
+        const __expectValue = ascension >= requiredAscension;
 
-        tester._expectValue(_expectValue);
+        tester.__expectValue(__expectValue);
       }
     }
   });
@@ -296,10 +286,10 @@ describe("condition: grantedAt", () => {
       tester.grantedAt = milestone;
 
       for (const constellation of Array.from({ length: 7 }, (_, i) => i)) {
-        tester.record.character.cons = constellation;
-        const _expectValue = constellation >= requiredConstellation;
+        tester.characterData.character.cons = constellation;
+        const __expectValue = constellation >= requiredConstellation;
 
-        tester._expectValue(_expectValue);
+        tester.__expectValue(__expectValue);
       }
     }
   });
@@ -309,17 +299,17 @@ describe("condition: grantedAt", () => {
     tester.altIndex = 0;
 
     tester.inputs = [1];
-    tester._expectValue(true);
+    tester.__expectValue(true);
 
     tester.inputs = [0];
-    tester._expectValue(false);
+    tester.__expectValue(false);
 
     tester.altIndex = 1;
 
     tester.inputs = [-1, 1];
-    tester._expectValue(true);
+    tester.__expectValue(true);
 
     tester.inputs = [-2, 0];
-    tester._expectValue(false);
+    tester.__expectValue(false);
   });
 });

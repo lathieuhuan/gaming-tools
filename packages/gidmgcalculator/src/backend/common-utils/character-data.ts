@@ -4,10 +4,10 @@ import TypeCounter from "@Src/utils/type-counter";
 import { CharacterCalc } from "./character-calc";
 import { DeepReadonly } from "rond";
 
-export class CharacterReadData {
-  private _character: Character;
-  private _party: (Teammate | null)[];
-  private _appCharacter: AppCharacter;
+export class CharacterReadData<TMember extends Teammate | null> {
+  protected _character: Character;
+  protected _party: TMember[];
+  protected _appCharacter: AppCharacter;
 
   get character() {
     return this._character;
@@ -24,7 +24,7 @@ export class CharacterReadData {
   constructor(
     character: Character,
     protected data: AppCharactersByName,
-    party: (Teammate | null)[] = [],
+    party: TMember[] = [],
     mainAppCharacter?: AppCharacter
   ) {
     this._character = character;
@@ -88,21 +88,8 @@ export class CharacterReadData {
   };
 }
 
-export class CharacterData extends CharacterReadData {
+export class CharacterData<TMember extends Teammate | null = Teammate | null> extends CharacterReadData<TMember> {
   public readonly elmtCount: TypeCounter<ElementType> = new TypeCounter();
-
-  constructor(
-    character: Character,
-    data: AppCharactersByName,
-    party: (Teammate | null)[] = [],
-    appCharacter?: AppCharacter
-  ) {
-    super(character, data, party, appCharacter);
-
-    for (const teammate of party) {
-      if (teammate) this.elmtCount.add(this.getAppCharacter(teammate.name).vision);
-    }
-  }
 
   get allElmtCount() {
     const newCounter = new TypeCounter(this.elmtCount.result);
@@ -110,9 +97,32 @@ export class CharacterData extends CharacterReadData {
     return newCounter;
   }
 
+  constructor(character: Character, data: AppCharactersByName, party: TMember[] = [], appCharacter?: AppCharacter) {
+    super(character, data, party, appCharacter);
+
+    this.countElement();
+  }
+
+  private countElement = () => {
+    this.elmtCount.reset();
+
+    for (const teammate of this.party) {
+      if (teammate) this.elmtCount.add(this.getAppCharacter(teammate.name).vision);
+    }
+  };
+
   forEachTeammate = (callback: (data: DeepReadonly<AppCharacter>, teammate: Teammate) => void) => {
     for (const teammate of this.party) {
       if (teammate) callback(this.getAppCharacter(teammate.name), teammate);
     }
+  };
+
+  updateParty = (party: TMember[] = [], data: AppCharactersByName) => {
+    this._party = party;
+    this.data = {
+      ...this.data,
+      ...data,
+    };
+    this.countElement();
   };
 }

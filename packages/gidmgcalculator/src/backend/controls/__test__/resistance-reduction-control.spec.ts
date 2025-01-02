@@ -1,12 +1,11 @@
-import { __genCalculationInfo, CharacterRecordTester } from "@UnitTest/test-utils";
+import { __genCharacterDataTester, CharacterDataTester } from "@UnitTest/test-utils";
 import { ResistanceReductionControl } from "../resistance-reduction-control";
 import { AttackElement, EntityDebuff, ResistanceReductionKey } from "@Src/backend/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "@Src/backend/constants";
-import { CalcAppParty, Target } from "@Src/types";
-import { $AppCharacter } from "@Src/services";
+import { Target } from "@Src/types";
 
-class Tester extends ResistanceReductionControl<CharacterRecordTester> {
+class Tester extends ResistanceReductionControl<CharacterDataTester> {
   inputs: number[] = [];
   fromSelf = true;
   description = "";
@@ -29,11 +28,11 @@ class Tester extends ResistanceReductionControl<CharacterRecordTester> {
   };
 
   __changeCharacter(name: __EMockCharacter) {
-    this["characterRecord"].__updateCharacter(name);
+    this["characterData"].__updateCharacter(name);
   }
 
-  __changeTeammates(appParty: CalcAppParty) {
-    this["characterRecord"].__updateParty(appParty);
+  __changeTeammates(names: string[]) {
+    this["characterData"].__updateParty(names);
   }
 
   __resetReduct() {
@@ -75,7 +74,7 @@ class Tester extends ResistanceReductionControl<CharacterRecordTester> {
 let tester: Tester;
 
 beforeEach(() => {
-  tester = new Tester(__genCalculationInfo());
+  tester = new Tester(__genCharacterDataTester());
 });
 
 test("add", () => {
@@ -139,21 +138,21 @@ describe("applyDebuff", () => {
     //
     tester.__resetReduct();
 
-    tester.__changeTeammates([$AppCharacter.get(__EMockCharacter.BASIC)]);
+    tester.__changeTeammates([__EMockCharacter.BASIC]);
     tester.__applyDebuff();
     tester.__expectReducts(["pyro", "geo"], 18);
 
     //
     tester.__resetReduct();
 
-    tester.__changeTeammates([$AppCharacter.get(__EMockCharacter.CATALYST)]);
+    tester.__changeTeammates([__EMockCharacter.CATALYST]);
     tester.__applyDebuff();
     tester.__expectReducts(["pyro", "electro", "geo"], 18);
 
-    //
+    // //
     tester.__resetReduct();
 
-    tester.__changeTeammates([$AppCharacter.get(__EMockCharacter.ANEMO)]);
+    tester.__changeTeammates([__EMockCharacter.ANEMO]);
     tester.__applyDebuff();
     tester.__expectReducts(["pyro", "geo"], 18);
   });
@@ -167,21 +166,14 @@ describe("applyDebuff", () => {
     };
     tester.__changeCharacter(__EMockCharacter.BASIC);
 
-    tester.__changeTeammates([
-      $AppCharacter.get(__EMockCharacter.CATALYST),
-      $AppCharacter.get(__EMockCharacter.TARTAGLIA),
-    ]);
+    tester.__changeTeammates([__EMockCharacter.CATALYST, __EMockCharacter.TARTAGLIA]);
     tester.__applyDebuff();
     tester.__expectReducts(["pyro", "electro", "hydro"], 22);
 
     //
     tester.__resetReduct();
 
-    tester.__changeTeammates([
-      $AppCharacter.get(__EMockCharacter.CATALYST),
-      $AppCharacter.get(__EMockCharacter.TARTAGLIA),
-      $AppCharacter.get(__EMockCharacter.ES_CALC_CONFIG),
-    ]);
+    tester.__changeTeammates([__EMockCharacter.CATALYST, __EMockCharacter.TARTAGLIA, __EMockCharacter.ES_CALC_CONFIG]);
     tester.__applyDebuff();
     tester.__expectReducts(["pyro", "electro", "hydro", "cryo"], 22);
   });

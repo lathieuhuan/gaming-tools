@@ -1,7 +1,7 @@
 import { ELEMENT_TYPES } from "@Src/backend/constants";
 import { AppliedAttributeBonus, AppliedBonuses, BareBonus, EntityBonusTargets } from "@Src/backend/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { __genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCharacterDataTester } from "@UnitTest/test-utils";
 import { AppliedBonusesGetter } from "../../applied-bonuses-getter";
 
 class Tester extends AppliedBonusesGetter {
@@ -19,7 +19,7 @@ class Tester extends AppliedBonusesGetter {
   unstackableId?: string;
 
   _changeCharacter(name: __EMockCharacter) {
-    this.record = __genCalculationInfo(name);
+    this.characterData = __genCharacterDataTester(name);
   }
 
   _apply() {
@@ -38,7 +38,7 @@ class Tester extends AppliedBonusesGetter {
 let tester: Tester;
 
 beforeEach(() => {
-  tester = new Tester(__genCalculationInfo());
+  tester = new Tester(__genCharacterDataTester());
 });
 
 test("Apply a single Attribute Bonus, to normal ATTR", () => {
