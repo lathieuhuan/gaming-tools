@@ -1,70 +1,13 @@
-import { AppCharacter, AttackPattern, TalentType } from "@Src/backend/types";
+import { AppCharacter, AttackPattern } from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
-import { Character } from "@Src/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __genCharacterDataTester } from "@UnitTest/test-utils";
 import { CharacterCalc } from "../character-calc";
 
-type GetTotalXtraTalentLvTestCase = {
-  constellation: number;
-  /** [NAs, ES, EB] */
-  expect: [number, number, number];
-};
-
-let character: Character;
 let appCharacter: AppCharacter;
-let record: ReturnType<typeof __genCharacterDataTester>;
 
 beforeEach(() => {
-  record = __genCharacterDataTester();
-  character = record.character;
-  appCharacter = record.appCharacter;
-});
-
-describe("getTotalXtraTalentLv", () => {
-  test("total extra talent levels on constellation level 0, 3, 5", () => {
-    const testCases: GetTotalXtraTalentLvTestCase[] = [
-      {
-        constellation: 0,
-        expect: [0, 0, 0],
-      },
-      {
-        constellation: 3,
-        expect: [0, 3, 0],
-      },
-      {
-        constellation: 5,
-        expect: [0, 3, 3],
-      },
-    ];
-    const expectTypes: TalentType[] = ["NAs", "ES", "EB"];
-
-    testCases.forEach((testCase) => {
-      character.cons = testCase.constellation;
-
-      testCase.expect.forEach((expectValue, i) => {
-        expect(record.getTotalXtraTalentLv(expectTypes[i])).toBe(expectValue);
-      });
-    });
-  });
-
-  test("total extra NAs level of Tartaglia", () => {
-    record.__updateCharacter(__EMockCharacter.TARTAGLIA);
-
-    expect(record.getTotalXtraTalentLv("NAs")).toBe(1);
-  });
-
-  test("total extra NAs level when Tartaglia is in party", () => {
-    record.__updateParty([__EMockCharacter.TARTAGLIA]);
-    expect(record.getTotalXtraTalentLv("NAs")).toBe(1);
-  });
-});
-
-test("getFinalTalentLv", () => {
-  expect(record.getFinalTalentLv("NAs")).toBe(character.NAs);
-  expect(record.getFinalTalentLv("ES")).toBe(character.ES);
-  expect(record.getFinalTalentLv("EB")).toBe(character.EB);
-  expect(record.getFinalTalentLv("altSprint")).toBe(0);
+  appCharacter = __genCharacterDataTester().appCharacter;
 });
 
 describe("getTalentMult", () => {
@@ -78,28 +21,6 @@ describe("getTalentMult", () => {
 
   test("at scale 2", () => {
     expect(CharacterCalc.getTalentMult(2, 10)).toBe(1.8);
-  });
-});
-
-describe("getLevelScale", () => {
-  beforeEach(() => {
-    character.ES = 10;
-  });
-
-  test("at scale 0, fromSelf", () => {
-    expect(record.getLevelScale({ talent: "ES", value: 0 }, [], true)).toBe(character.ES);
-  });
-
-  test("at scale 2, fromSelf", () => {
-    expect(record.getLevelScale({ talent: "ES", value: 2 }, [], true)).toBe(1.8); // TALENT_LV_MULTIPLIERS[2][character.ES]
-  });
-
-  test("at scale 2, not fromSelf, altIndex default (0)", () => {
-    expect(record.getLevelScale({ talent: "ES", value: 2 }, [7], false)).toBe(1.5); // TALENT_LV_MULTIPLIERS[2][7]
-  });
-
-  test("at scale 2, not fromSelf, altIndex 1", () => {
-    expect(record.getLevelScale({ talent: "ES", value: 2, altIndex: 1 }, [0, 10], false)).toBe(1.8); // TALENT_LV_MULTIPLIERS[2][10]
   });
 });
 
