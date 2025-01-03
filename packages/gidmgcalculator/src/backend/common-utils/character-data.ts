@@ -83,6 +83,10 @@ export class CharacterReadData<TMember extends Teammate | null = Teammate | null
     return 1;
   };
 
+  clone = (appCharacter = this._appCharacter) => {
+    return new CharacterReadData(this._character, this.data, this.party, appCharacter);
+  };
+
   toCharacterData = () => {
     return new CharacterData(this.character, this.data, this.party, this.appCharacter);
   };

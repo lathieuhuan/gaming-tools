@@ -1,18 +1,4 @@
 import type {
-  ActualAttackElement,
-  ActualAttackPattern,
-  AttackPattern,
-  AttributeStat,
-  CalcItemBasedOn,
-  ElementType,
-  NormalAttack,
-  TalentType,
-  WeaponType,
-  CalcItemType,
-  CalcItemMultFactor,
-  TalentCalcItemBonusId,
-} from "./common.types";
-import type {
   CharacterMilestone,
   EntityBonus,
   EntityBonusCore,
@@ -23,6 +9,20 @@ import type {
   InputCheck,
   ModifierAffectType,
 } from "./app-entity";
+import type {
+  ActualAttackElement,
+  ActualAttackPattern,
+  AttackPattern,
+  AttributeStat,
+  CalcItemBasedOn,
+  CalcItemMultFactor,
+  CalcItemType,
+  ElementType,
+  NormalAttack,
+  TalentCalcItemBonusId,
+  TalentType,
+  WeaponType,
+} from "./common.types";
 
 export type AppCharacter = {
   code: number;
@@ -104,31 +104,27 @@ export type CalcItemFlatFactor =
       scale?: number;
     };
 
-type TalentCalcItemCommon = {
+export type TalentCalcItem = {
   id?: TalentCalcItemBonusId;
+  type?: CalcItemType;
   name: string;
   notOfficial?: boolean;
-};
-
-export type TalentCalcItemAttack = TalentCalcItemCommon & {
-  type: Extract<CalcItemType, "attack">;
   /** Factors multiplying an attribute, scaling off talent level (character) or refinement (weapon) */
   multFactors: CalcItemMultFactor | CalcItemMultFactor[];
-  joinMultFactors?: boolean;
 
+  /** Only on 'attack' */
+  joinMultFactors?: boolean;
+  /** Not on 'attack' */
+  flatFactor?: CalcItemFlatFactor;
+  /** Only on 'attack' */
   attPatt?: ActualAttackPattern;
+  /** Only on 'attack' */
   attElmt?: ActualAttackElement;
+  /** Only on 'attack' */
   subAttPatt?: "FCA";
 };
 
-type TalentCalcItemOther = TalentCalcItemCommon & {
-  type: Exclude<CalcItemType, "attack">;
-  multFactors: CalcItemMultFactor;
-  /** Factor multiplying root, scaling on talent level. Only on ES / EB */
-  flatFactor?: CalcItemFlatFactor;
-};
-
-export type TalentCalcItem = TalentCalcItemAttack | TalentCalcItemOther;
+// type _TalentCalcItem = PartiallyOptional<TalentCalcItem, "type">;
 
 // ========== BUFF / BONUS ==========
 

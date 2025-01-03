@@ -22,7 +22,7 @@ import {
 } from "@Src/components";
 
 const hasAbsorbingAttackIn = (items: TalentCalcItem[]) => {
-  return items.some((item) => item.attElmt === "absorb");
+  return items.some((item) => !item.type || (item.type === "attack" && item.attElmt === "absorb"));
 };
 
 export default function ElementBuffs() {

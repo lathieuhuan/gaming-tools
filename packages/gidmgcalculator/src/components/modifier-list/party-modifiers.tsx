@@ -43,7 +43,7 @@ function getTeammateModifierElmts(
                 key={`${teammate.name}-${ctrl.index}`}
                 mutable={props.mutable}
                 heading={modifier.src}
-                description={parseAbilityDescription(modifier, inputs, false)}
+                description={parseAbilityDescription(modifier, inputs, false, props.characterData.clone(appTeammate))}
                 checked={ctrl.activated}
                 inputs={inputs}
                 inputConfigs={modifier.inputConfigs}

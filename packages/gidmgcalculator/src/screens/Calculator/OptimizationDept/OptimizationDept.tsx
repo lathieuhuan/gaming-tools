@@ -109,6 +109,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         pattern: calcItem!.patternCate,
         calcItem: calcItem!.value,
         elmtModCtrls: store.setup.elmtModCtrls,
+        infusedElmt: store.setup.customInfusion.element, // this should be configurable in the future
       },
       allModConfigs,
       extraConfigs!

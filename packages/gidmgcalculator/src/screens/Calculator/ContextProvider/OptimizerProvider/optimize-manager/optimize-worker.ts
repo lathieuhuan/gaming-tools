@@ -33,8 +33,8 @@ onmessage = (e: MessageEvent<OTM_ManagerRequest>) => {
 
       optimizer.onOutput = (artifacts, totalAttr, attkBonusesArchive, calculator) => {
         const result = calculator
-          .genAttPattCalculator(calcItemParams.pattern)
-          .calculate(calcItemParams.calcItem, calcItemParams.elmtModCtrls);
+          .genTalentCalculator(calcItemParams.pattern)
+          .calculateItem(calcItemParams.calcItem, calcItemParams.elmtModCtrls, calcItemParams.infusedElmt);
 
         const calculation: OptimizeCalculation = {
           damage: result.average,

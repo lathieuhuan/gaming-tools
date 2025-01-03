@@ -1,4 +1,11 @@
-import type { AttackBonuses, AttackPattern, TalentCalcItem, TotalAttribute, CalculationFinalResultItem } from "@Backend";
+import type {
+  AttackBonuses,
+  AttackPattern,
+  TalentCalcItem,
+  TotalAttribute,
+  CalculationFinalResultItem,
+  AttackElement,
+} from "@Backend";
 import type { CalcArtifacts, ElementModCtrl } from "@Src/types";
 import type { SetupOptimizer } from "./setup-optimizer";
 
@@ -29,6 +36,7 @@ export type OTM_OptimizeRequest = {
     pattern: AttackPattern;
     calcItem: TalentCalcItem;
     elmtModCtrls: ElementModCtrl;
+    infusedElmt: AttackElement;
   };
   optimizeParams: Parameters<SetupOptimizer["optimize"]>;
 };

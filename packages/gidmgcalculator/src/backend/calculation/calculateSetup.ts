@@ -45,7 +45,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
       finalResult[calculator.resultKey][calcItem.name] = calculator.calculateItem(
         calcItem,
         setup.elmtModCtrls,
-        setup.customInfusion
+        setup.customInfusion.element
       );
     }
   });
@@ -54,9 +54,10 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
     const { mult, attElmt } = TRANSFORMATIVE_REACTION_CONFIG[rxn];
+    const flat = attkBonusesArchive.getBare("flat", rxn);
+    const baseValue = baseRxnDmg * mult + flat;
     const normalMult = 1 + attkBonusesArchive.getBare("pct_", rxn) / 100;
     const resMult = attElmt !== "absorb" ? resistances[attElmt] : 1;
-    const baseValue = baseRxnDmg * mult;
     const nonCrit = baseValue * normalMult * resMult;
     const cDmg_ = attkBonusesArchive.getBare("cDmg_", rxn) / 100;
     const cRate_ = Math.max(attkBonusesArchive.getBare("cRate_", rxn), 0) / 100;
@@ -74,6 +75,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     tracker?.recordCalcItem("RXN_CALC", rxn, {
       itemType: "attack",
       multFactors: [{ value: Math.round(baseValue), desc: "Base DMG" }],
+      totalFlat: flat,
       normalMult,
       resMult,
       cDmg_,

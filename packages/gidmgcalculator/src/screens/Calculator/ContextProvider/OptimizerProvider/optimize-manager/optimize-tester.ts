@@ -44,8 +44,8 @@ export class OptimizeTester {
       const expectedAttkBonuses = archive.serialize();
 
       const expectedResult = calculator
-        .genAttPattCalculator(calcItemParams.pattern)
-        .calculate(calcItemParams.calcItem, calcItemParams.elmtModCtrls);
+        .genTalentCalculator(calcItemParams.pattern)
+        .calculateItem(calcItemParams.calcItem, calcItemParams.elmtModCtrls, calcItemParams.infusedElmt);
 
       if (!isEqual(result, expectedResult)) {
         console.log("UNEXPECTED RESULT");

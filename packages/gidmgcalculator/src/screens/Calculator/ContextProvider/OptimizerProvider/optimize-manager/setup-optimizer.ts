@@ -1,4 +1,4 @@
-import { GeneralCalc, InputProcessor, CalcItemCalculator } from "@Backend";
+import { GeneralCalc, InputProcessor, ResultCalculator } from "@Backend";
 import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "@Backend";
 import type { AppArtifactsByCode, Artifact, ArtifactModCtrl, CalcArtifacts, Target } from "@Src/types";
 
@@ -12,7 +12,7 @@ type OnOutput = (
   artifacts: CalcArtifacts,
   totalAttr: CalculationStats["totalAttr"],
   attkBonusesArchive: CalculationStats["attkBonusesArchive"],
-  calculator: CalcItemCalculator
+  calculator: ResultCalculator
 ) => void;
 
 type ArtifactMap = Record<ArtifactType, Artifact[]>;
@@ -150,11 +150,10 @@ export class SetupOptimizer extends InputProcessor {
     const resistances = this.getResistances(this.target);
     const NAsConfig = this.getNormalAttacksConfig();
 
-    const calculator = new CalcItemCalculator(
+    const calculator = new ResultCalculator(
       this.target.level,
       this.characterData,
       NAsConfig,
-      this.customInfusion,
       totalAttr,
       attkBonusesArchive,
       resistances

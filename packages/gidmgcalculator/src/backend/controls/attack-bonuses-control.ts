@@ -92,7 +92,7 @@ export class AttackBonusesArchive {
   private allBonuses = new TypeCounter<AttackBonusKey>();
 
   constructor(private attkBonuses: AttackBonuses) {
-    for (const bonus of this.attkBonuses) {
+    for (const bonus of attkBonuses) {
       if (bonus.type === "all") {
         for (const record of bonus.records) {
           this.allBonuses.add(record.toKey, record.value);

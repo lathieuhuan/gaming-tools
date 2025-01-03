@@ -1,5 +1,5 @@
-import type { AttributeStat, CalcItemBasedOn, CalcItemType, WeaponType } from "./common.types";
 import type { EntityBonus, EntityBonusCore, EntityBuff } from "./app-entity";
+import type { AttributeStat, CalcItemBasedOn, CalcItemType, WeaponType } from "./common.types";
 
 export type AppWeapon = {
   /** This is id */

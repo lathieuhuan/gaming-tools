@@ -122,7 +122,7 @@ export class CalcItemCalculator {
       return this.attkBonusesArchive.getBare(key, itemId);
     };
 
-    const calculate = (base: number, record: CalcItemRecord): CalculationFinalResultItem => {
+    const calculate = (base: number | number[], record: CalcItemRecord): CalculationFinalResultItem => {
       //
       if (base === 0) {
         return {
@@ -134,7 +134,7 @@ export class CalcItemCalculator {
       }
 
       let flat = 0;
-      let normalMult = 1;
+      let normalMult = 1 + getBonus("pct_");
 
       switch (itemType) {
         case "healing":
@@ -145,16 +145,18 @@ export class CalcItemCalculator {
           normalMult += (getBonus("pct_") + totalAttr.shieldS_) / 100;
           break;
       }
-      base += flat;
+
+      base = Array_.applyToItem(base, (n) => n + flat);
       record.totalFlat = (record.totalFlat || 0) + flat;
 
       if (normalMult !== 1) {
-        base *= normalMult;
+        base = Array_.applyToItem(base, (n) => n * normalMult);
         record.normalMult = normalMult;
       }
       if (itemType === "healing") {
-        base *= 1 + totalAttr.inHealB_ / 100;
+        base = Array_.applyToItem(base, (n) => n * (1 + totalAttr.inHealB_ / 100));
       }
+
       return {
         type: itemType,
         nonCrit: base,
