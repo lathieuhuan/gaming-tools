@@ -23,7 +23,7 @@ import { ResultDisplay } from "./components/ResultDisplay";
 
 type SavedValues = {
   calcItem?: SelectedCalcItem;
-  extraConfigs?: OptimizerExtraConfigs;
+  extraConfigs: OptimizerExtraConfigs;
 };
 
 const STEP_KEY = {
@@ -77,7 +77,11 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const [canShowGuideMenu, setCanShowGuideMenu] = useState(false);
 
   const guideControl = useRef<OptimizationGuideControl<StepKey>>(null);
-  const savedValues = useRef<SavedValues>({});
+  const savedValues = useRef<SavedValues>({
+    extraConfigs: {
+      preferSet: false,
+    },
+  });
   const setForPieceSelecte = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
   const lastModConfigs = useRef(artifactManager.allModConfigs);
   const runCount = useRef(0);
@@ -112,7 +116,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         infusedElmt: store.setup.customInfusion.element, // this should be configurable in the future
       },
       allModConfigs,
-      extraConfigs!
+      extraConfigs
     );
 
     lastModConfigs.current = Object_.clone(allModConfigs);
@@ -185,7 +189,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     },
     {
       key: STEP_KEY.CALC_ITEMS,
-      title: "Compared Item",
+      title: "Optimized Output",
       render: (changeValid) => (
         <CalcItemSelect
           calcList={record.appCharacter.calcList}

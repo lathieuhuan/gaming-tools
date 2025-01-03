@@ -125,7 +125,7 @@ function OptimizationDeptContact() {
           children: "Proceed",
           autoFocus: true,
         }}
-        onConfirm={onConfirm}
+        onConfirm={() => onConfirm()}
         onClose={() => setActiveConfirm(false)}
       >
         <ul className="pl-6 pr-2 list-disc space-y-2">

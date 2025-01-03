@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
 import { ButtonGroup, Checkbox, FancyBackSvg, ItemCase } from "rond";
-import { ARTIFACT_TYPES, OptimizerAllArtifactModConfigs, AppArtifact } from "@Backend";
+import { ARTIFACT_TYPES, OptimizerAllArtifactModConfigs, AppArtifact, GeneralCalc } from "@Backend";
 
 import type { Artifact, CalcSetup } from "@Src/types";
 
@@ -47,10 +47,14 @@ export function ResultDisplay(props: ResultDisplayProps) {
       const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts)
         .map((control) => buffs[control.code])
         .flat();
+      const artDebuffCtrls = Modifier_.createArtifactDebuffCtrls()
+        .map((control) => debuffs[control.code])
+        .flat();
       const calcSetup = Object_.clone(props.setup);
 
       calcSetup.artifacts = artifacts;
       calcSetup.artBuffCtrls = artBuffCtrls;
+      calcSetup.artDebuffCtrls = artDebuffCtrls;
 
       dispatch(
         importSetup({
@@ -67,18 +71,40 @@ export function ResultDisplay(props: ResultDisplayProps) {
     props.onRequestExit();
   };
 
+  const getSetData = (code: number) => {
+    let data = dataBySet.current[code];
+
+    if (!data) {
+      data = $AppArtifact.getSet(code)!;
+      dataBySet.current[code] = data;
+    }
+    return data;
+  };
+
   return (
     <div className="h-full flex custom-scrollbar gap-2 scroll-smooth">
       <div className="grow flex flex-col" style={{ minWidth: 324 }}>
         <div className="pr-1 grow custom-scrollbar space-y-2">
           {result.map((calculation, index) => {
+            const sets = GeneralCalc.getArtifactSetBonuses(calculation.artifacts).map(
+              (bonus) => `(${bonus.bonusLv * 2 + 2}) ${getSetData(bonus.code).name}`
+            );
+
             return (
               <div key={index} className="p-4 rounded-md bg-surface-1">
                 <div className="flex justify-between items-start">
-                  <p className="text-2xl font-black text-danger-2">
-                    {index + 1}
-                    {suffixes[index]}
-                  </p>
+                  <div className="flex">
+                    <div className="w-12 text-2xl font-black text-danger-2">
+                      {index + 1}
+                      {suffixes[index]}
+                    </div>
+
+                    <div className="ml-4 flex flex-col justify-center text-sm">
+                      {sets.map((set, i) => (
+                        <p key={i}>{set}</p>
+                      ))}
+                    </div>
+                  </div>
 
                   <Checkbox
                     size="medium"

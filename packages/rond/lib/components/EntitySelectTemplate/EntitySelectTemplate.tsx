@@ -185,7 +185,7 @@ export function EntitySelectTemplate({
           closeOnMaskClick={filterToggleable}
           destroyOnClose
           style={{
-            boxShadow: "0 0 1px #b8b8b8",
+            boxShadow: "0 0 1.5px #b8b8b8",
           }}
           onClose={() => toggleFilter(false)}
           getContainer={() => bodyRef.current}

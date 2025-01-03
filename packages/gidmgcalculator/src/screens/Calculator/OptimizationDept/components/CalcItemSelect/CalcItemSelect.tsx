@@ -57,13 +57,13 @@ export function CalcItemSelect(props: CalcItemSelectProps) {
 
   return (
     <div className="h-full flex flex-col">
-      <p>Select the item to be compared</p>
+      <p>Select an output to be optimized</p>
 
       <div className="mt-2 pr-2 grow space-y-2 custom-scrollbar">
         {renderGroups.map((group, groupIndex) => {
           return (
             <div key={groupIndex} className="p-3 text-sm bg-surface-1 cursor-default rounded">
-              <p className="text-secondary-1">{t(group.title)}</p>
+              <p className="text-secondary-1 opacity-80">{t(group.title)}</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {group.subGroups.map((subGroup) => {
                   const isSelectedGroup = subGroup.attPatt === selectedItems[0]?.patternCate;
@@ -75,8 +75,8 @@ export function CalcItemSelect(props: CalcItemSelectProps) {
                       <span
                         key={`${subGroup.attPatt}.${index}`}
                         className={clsx(
-                          "px-2 py-1 font-medium rounded",
-                          isSeleted ? "bg-active-color text-black" : "hover:bg-surface-3"
+                          "px-2 py-1 rounded",
+                          isSeleted ? "bg-active-color text-black font-bold" : "hover:bg-surface-3 font-medium"
                         )}
                         onClick={() => onClickItem({ patternCate: subGroup.attPatt, value: item })}
                       >

@@ -48,14 +48,14 @@ export function SetOption(props: SetOptionProps) {
         </div>
 
         <div className="flex items-center shrink-0">
-          <div className="px-2 border-l border-surface-border">
-            <Checkbox
-              size="medium"
-              checked={selectedCount === total}
-              indeterminate={!!selectedCount && selectedCount !== total}
-              onChange={onChangeSelectAll}
-            />
-          </div>
+          <div className="w-px h-2/3 bg-surface-border" />
+          <Checkbox
+            size="medium"
+            className="w-10 h-10 flex-center"
+            checked={selectedCount === total}
+            indeterminate={!!selectedCount && selectedCount !== total}
+            onChange={onChangeSelectAll}
+          />
         </div>
       </div>
 
