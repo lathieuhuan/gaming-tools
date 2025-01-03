@@ -1,8 +1,8 @@
 import type { AppCharactersByName, Character, Teammate } from "@Src/types";
 import type { AppCharacter, CharacterEffectLevelScale, ElementType, TalentType } from "../types";
+import type { DeepReadonly } from "rond";
 import TypeCounter from "@Src/utils/type-counter";
 import { CharacterCalc } from "./character-calc";
-import { DeepReadonly } from "rond";
 
 export class CharacterReadData<TMember extends Teammate | null = Teammate | null> {
   protected _character: Character;

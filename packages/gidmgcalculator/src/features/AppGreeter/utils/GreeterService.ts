@@ -51,7 +51,19 @@ export class GreeterService {
   private isValidDataVersion(version: string) {
     const versionFrags = version.split(".");
     const minVersionFrags = MINIMUM_SYSTEM_VERSION.split(".");
-    return versionFrags.every((frag, i) => +frag >= +minVersionFrags[i]);
+
+    for (let i = 0; i < 3; i++) {
+      const versionFrag = +versionFrags[i];
+      const minVersionFrag = +minVersionFrags[i];
+
+      if (versionFrag > minVersionFrag) {
+        return true;
+      }
+      if (versionFrag < minVersionFrag) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private populateData = (data: Metadata) => {
