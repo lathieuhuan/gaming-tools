@@ -3,12 +3,12 @@ import type { CalculationFinalResult } from "../types";
 
 import { GeneralCalc } from "../common-utils";
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "../constants";
-import { TRANSFORMATIVE_REACTION_INFO } from "../constants/internal";
+import { TRANSFORMATIVE_REACTION_CONFIG } from "../constants/internal";
 import { TrackerControl } from "../controls";
 
 import { getDataOfSetupEntities } from "../calculation-utils/getDataOfSetupEntities";
-import { CalcItemCalculator } from "./calc-item-calculator";
 import { InputProcessor } from "./input-processor";
+import { ResultCalculator } from "./result-calculator";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
@@ -20,11 +20,10 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   const NAsConfig = processor.getNormalAttacksConfig();
   const resistances = processor.getResistances(target);
 
-  const calcItemCalculator = new CalcItemCalculator(
+  const resultCalculator = new ResultCalculator(
     target.level,
     characterData,
     NAsConfig,
-    setup.customInfusion,
     totalAttr,
     attkBonusesArchive,
     resistances,
@@ -40,19 +39,23 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   };
 
   ATTACK_PATTERNS.forEach((ATT_PATT) => {
-    const calculator = calcItemCalculator.genAttPattCalculator(ATT_PATT);
+    const calculator = resultCalculator.genTalentCalculator(ATT_PATT);
 
     for (const calcItem of characterData.appCharacter.calcList[ATT_PATT]) {
-      finalResult[calculator.resultKey][calcItem.name] = calculator.calculate(calcItem, setup.elmtModCtrls);
+      finalResult[calculator.resultKey][calcItem.name] = calculator.calculateItem(
+        calcItem,
+        setup.elmtModCtrls,
+        setup.customInfusion
+      );
     }
   });
 
   const baseRxnDmg = GeneralCalc.getBaseRxnDamage(setup.char.level);
 
   for (const rxn of TRANSFORMATIVE_REACTIONS) {
-    const { mult, dmgType } = TRANSFORMATIVE_REACTION_INFO[rxn];
+    const { mult, attElmt } = TRANSFORMATIVE_REACTION_CONFIG[rxn];
     const normalMult = 1 + attkBonusesArchive.getBare("pct_", rxn) / 100;
-    const resMult = dmgType !== "absorb" ? resistances[dmgType] : 1;
+    const resMult = attElmt !== "absorb" ? resistances[attElmt] : 1;
     const baseValue = baseRxnDmg * mult;
     const nonCrit = baseValue * normalMult * resMult;
     const cDmg_ = attkBonusesArchive.getBare("cDmg_", rxn) / 100;
@@ -64,7 +67,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
       crit: cDmg_ ? nonCrit * (1 + cDmg_) : 0,
       average: cRate_ ? nonCrit * (1 + cDmg_ * cRate_) : nonCrit,
       attPatt: "none",
-      attElmt: dmgType,
+      attElmt,
       reaction: null,
     };
 
@@ -92,9 +95,12 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
       ],
       normalMult: 1,
     });
-    const baseDmg = (totalAttr[basedOn] * mult) / 100;
+    const base = (totalAttr[basedOn] * mult) / 100;
 
-    finalResult.WP_CALC[name] = calcItemCalculator.genCalculator(type, "none", "phys").calculate(baseDmg, null, record);
+    finalResult.WP_CALC[name] =
+      type === "attack"
+        ? resultCalculator.itemCalculator.genAttackCalculator("none", "phys").calculate(base, null, record)
+        : resultCalculator.itemCalculator.genOtherCalculator(type).calculate(base, record);
 
     tracker?.recordCalcItem("WP_CALC", name, record);
   });

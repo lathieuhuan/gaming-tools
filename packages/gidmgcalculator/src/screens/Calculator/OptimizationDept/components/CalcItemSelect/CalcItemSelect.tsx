@@ -1,18 +1,18 @@
 import { useState } from "react";
 import { clsx } from "rond";
-import { AppCharacter, AttackPattern, CalcItem, LevelableTalentType, NORMAL_ATTACKS } from "@Backend";
+import { AppCharacter, AttackPattern, TalentCalcItem, LevelableTalentType, NORMAL_ATTACKS } from "@Backend";
 import { useTranslation } from "@Src/hooks";
 
 export type SelectedCalcItem = {
   patternCate: AttackPattern;
-  value: CalcItem;
+  value: TalentCalcItem;
 };
 
 type RenderGroup = {
   title: LevelableTalentType;
   subGroups: Array<{
     attPatt: AttackPattern;
-    items: CalcItem[];
+    items: TalentCalcItem[];
   }>;
 };
 

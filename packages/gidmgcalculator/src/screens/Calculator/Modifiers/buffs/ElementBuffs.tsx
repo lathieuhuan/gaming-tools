@@ -1,6 +1,6 @@
 import { Fragment, useState } from "react";
 import { VersatileSelect } from "rond";
-import { ELEMENT_TYPES, AmplifyingReaction, CalcItem, ElementType } from "@Backend";
+import { ELEMENT_TYPES, AmplifyingReaction, TalentCalcItem, ElementType } from "@Backend";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
@@ -21,7 +21,7 @@ import {
   VapMeltBuffItem,
 } from "@Src/components";
 
-const hasAbsorbingAttackIn = (items: CalcItem[]) => {
+const hasAbsorbingAttackIn = (items: TalentCalcItem[]) => {
   return items.some((item) => item.attElmt === "absorb");
 };
 

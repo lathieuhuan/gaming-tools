@@ -1,10 +1,4 @@
-import type {
-  ActualAttackPattern,
-  AppCharacter,
-  AttackPattern,
-  LevelableTalentType,
-  TalentAttributeType,
-} from "../types";
+import type { ActualAttackPattern, AppCharacter, AttackPattern, LevelableTalentType, CalcItemBasedOn } from "../types";
 
 const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
   // some NA, CA, Eula's PA
@@ -35,7 +29,7 @@ export class CharacterCalc {
   ): {
     resultKey: LevelableTalentType;
     scale: number;
-    basedOn: TalentAttributeType;
+    basedOn: CalcItemBasedOn;
     attPatt: ActualAttackPattern;
     flatFactorScale: number;
   } {

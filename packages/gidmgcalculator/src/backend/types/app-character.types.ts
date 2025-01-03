@@ -3,11 +3,14 @@ import type {
   ActualAttackPattern,
   AttackPattern,
   AttributeStat,
-  CalcItemCore,
+  CalcItemBasedOn,
   ElementType,
   NormalAttack,
   TalentType,
   WeaponType,
+  CalcItemType,
+  CalcItemMultFactor,
+  TalentCalcItemBonusId,
 } from "./common.types";
 import type {
   CharacterMilestone,
@@ -47,11 +50,11 @@ export type AppCharacter = {
     EB?: CalcListConfig;
   };
   calcList: {
-    NA: CalcItem[];
-    CA: CalcItem[];
-    PA: CalcItem[];
-    ES: CalcItem[];
-    EB: CalcItem[];
+    NA: TalentCalcItem[];
+    CA: TalentCalcItem[];
+    PA: TalentCalcItem[];
+    ES: TalentCalcItem[];
+    EB: TalentCalcItem[];
   };
   activeTalents: {
     NAs: Ability;
@@ -84,23 +87,11 @@ type CharacterModifier = {
 
 // ========== CALC ITEM ==========
 
-export type TalentAttributeType = "atk" | "def" | "hp" | "em";
-
 type CalcListConfig = {
   scale?: number;
-  basedOn?: TalentAttributeType;
+  basedOn?: CalcItemBasedOn;
   attPatt?: ActualAttackPattern;
 };
-
-export type CalcItemMultFactor =
-  | number
-  | {
-      root: number;
-      /** When 0 stat not scale off talent level */
-      scale?: number;
-      /** Calc default to 'atk'. Only on ES / EB */
-      basedOn?: TalentAttributeType;
-    };
 
 export type CalcItemFlatFactor =
   | number
@@ -113,22 +104,31 @@ export type CalcItemFlatFactor =
       scale?: number;
     };
 
-export type CalcItem = CalcItemCore & {
+type TalentCalcItemCommon = {
+  id?: TalentCalcItemBonusId;
   name: string;
   notOfficial?: boolean;
+};
+
+export type TalentCalcItemAttack = TalentCalcItemCommon & {
+  type: Extract<CalcItemType, "attack">;
+  /** Factors multiplying an attribute, scaling off talent level (character) or refinement (weapon) */
+  multFactors: CalcItemMultFactor | CalcItemMultFactor[];
+  joinMultFactors?: boolean;
+
   attPatt?: ActualAttackPattern;
   attElmt?: ActualAttackElement;
   subAttPatt?: "FCA";
-  /**
-   * Damage factors multiplying an attribute, scaling off talent level
-   */
-  multFactors: CalcItemMultFactor | CalcItemMultFactor[];
-  joinMultFactors?: boolean;
-  /**
-   * Damage factor multiplying root, caling off talent level. Only on ES / EB
-   */
+};
+
+type TalentCalcItemOther = TalentCalcItemCommon & {
+  type: Exclude<CalcItemType, "attack">;
+  multFactors: CalcItemMultFactor;
+  /** Factor multiplying root, scaling on talent level. Only on ES / EB */
   flatFactor?: CalcItemFlatFactor;
 };
+
+export type TalentCalcItem = TalentCalcItemAttack | TalentCalcItemOther;
 
 // ========== BUFF / BONUS ==========
 

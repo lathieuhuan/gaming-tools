@@ -46,7 +46,7 @@ export type ActualAttackPattern = AttackPattern | "none";
 
 //
 
-export type ExclusiveBonusType = `id.${number}`;
+export type TalentCalcItemBonusId = `id.${number}`;
 
 export type AttackBonusType =
   | "all"
@@ -54,15 +54,23 @@ export type AttackBonusType =
   | AttackElement
   | `${AttackPattern}.${AttackElement}`
   | ReactionType
-  | ExclusiveBonusType;
+  | TalentCalcItemBonusId;
 
 export type CalcItemType = "attack" | "healing" | "shield" | "other";
 
-export type CalcItemCore = {
-  /** Default to 'attack' */
-  type?: CalcItemType;
-  id?: ExclusiveBonusType;
-};
+export type CalcItemBasedOn = "atk" | "def" | "hp" | "em";
+
+export type CalcItemMultFactor =
+  | number
+  | {
+      root: number;
+      /** On characters only: When 0 stat not scale off talent level */
+      scale?: number;
+      /** On weapons only: multiplied by refi. Default to 1/3 [root] */
+      incre?: number;
+      /** Default to 'atk' */
+      basedOn?: CalcItemBasedOn;
+    };
 
 // ========== REACTIONS ==========
 
