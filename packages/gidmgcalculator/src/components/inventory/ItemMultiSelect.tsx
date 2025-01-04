@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { FaCheck } from "react-icons/fa";
-import { Button, Modal, EntitySelectTemplate } from "rond";
+import { useRef, useState } from "react";
+import { FaCheck, FaMinus, FaPlus } from "react-icons/fa";
+import { Button, Modal, EntitySelectTemplate, type EntitySelectTemplateProps, useScreenWatcher } from "rond";
 
-import type { UserArtifact, UserWeapon } from "@Src/types";
+import type { Artifact, Weapon } from "@Src/types";
 import Entity_ from "@Src/utils/entity-utils";
 
 // Component
@@ -10,53 +10,91 @@ import { ArtifactCard } from "../ArtifactCard";
 import { WeaponCard } from "../WeaponCard";
 import { InventoryRack } from "./InventoryRack";
 
-interface ItemMultiSelectProps {
-  title: string;
-  items: UserWeapon[] | UserArtifact[];
-  max: number;
-  onClose: () => void;
-  onConfirm: (chosenIDs: Record<string, boolean>) => void;
+export type ItemMultiSelectIds = Set<number>;
+
+interface ItemMultiSelectProps<T> extends Pick<EntitySelectTemplateProps, "title" | "onClose"> {
+  items: T[];
+  initialValue?: ItemMultiSelectIds;
+  required?: number;
+  onConfirm: (selectedIds: ItemMultiSelectIds) => void;
 }
+function ItemMultiSelectCore<T extends Weapon | Artifact>(props: ItemMultiSelectProps<T>): JSX.Element {
+  const { required, initialValue = new Set() } = props;
 
-const ItemMultiSelectCore = (props: ItemMultiSelectProps) => {
-  const [chosenItem, setChosenItem] = useState<UserWeapon | UserArtifact>();
-  const [chosenIDs, setChosenIDs] = useState<Record<string, boolean>>({});
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const screen = useScreenWatcher();
+  const [selectedItem, setSelectedItem] = useState<T>();
+  const [selectedIds, setSelectedIds] = useState<ItemMultiSelectIds>(initialValue);
 
-  const chosenCount = Object.values(chosenIDs).filter(Boolean).length;
+  const actionId = "multi-select_action";
 
-  const onChangeItem = (item?: UserWeapon | UserArtifact) => {
-    setChosenItem(item);
+  function getAction(item: T) {
+    return selectedIds.has(item.ID)
+      ? {
+          id: actionId,
+          children: "Unselect",
+          icon: <FaMinus />,
+          onClick: () => unselectItem(item, true),
+        }
+      : {
+          id: actionId,
+          children: "Select",
+          icon: <FaPlus />,
+          onClick: () => selectItem(item),
+        };
+  }
 
-    if (item?.ID && !chosenIDs[item.ID] && props.max && chosenCount < props.max) {
-      setChosenIDs((prevChosenIDs) => {
-        const newChosenIDs = { ...prevChosenIDs };
-        newChosenIDs[item.ID] = true;
-        return newChosenIDs;
-      });
+  const scrollBody = (value: number) => {
+    if (bodyRef.current) {
+      bodyRef.current.scrollLeft = value;
     }
   };
 
-  const onUnselectItem = (item: UserWeapon | UserArtifact) => {
-    setChosenIDs((prevChosenIDs) => {
-      const newChosenIDs = { ...prevChosenIDs };
-      newChosenIDs[item.ID] = false;
-      return newChosenIDs;
+  const focusAction = () => {
+    const action: HTMLButtonElement | null | undefined = bodyRef.current?.querySelector(`#${actionId}`);
+    action?.focus();
+    return !!action;
+  };
+
+  const onChangeItem = (item: T) => {
+    setSelectedItem(item);
+    scrollBody(9999);
+
+    if (!focusAction()) setTimeout(focusAction, 100);
+  };
+
+  const selectItem = (item: T) => {
+    if (item?.ID && !selectedIds.has(item.ID) && (!required || selectedIds.size < required)) {
+      setSelectedIds((prevIds) => new Set(prevIds).add(item.ID));
+    }
+    scrollBody(0);
+  };
+
+  const unselectItem = (item: T, shouldScroll = false) => {
+    setSelectedIds((prevIds) => {
+      const newIds = new Set(prevIds);
+      newIds.delete(item.ID);
+      return newIds;
     });
+
+    if (shouldScroll) scrollBody(0);
   };
 
   return (
     <EntitySelectTemplate
       title={props.title}
       extra={
-        <div className="flex items-center gap-3">
-          <p className="text-base text-light-default font-bold">
-            {chosenCount}/{props.max} selected
+        <div className={screen.isFromSize("sm") ? "flex items-center gap-3" : "flex flex-col gap-1"}>
+          <p className="text-right text-base text-light-default font-semibold">
+            {selectedIds.size}
+            {required ? `/${required}` : ""} selected
           </p>
           <Button
             variant="primary"
+            size="small"
             icon={<FaCheck />}
-            disabled={chosenCount < props.max}
-            onClick={() => props.onConfirm(chosenIDs)}
+            disabled={!!required && selectedIds.size < required}
+            onClick={() => props.onConfirm(selectedIds)}
           >
             Confirm
           </Button>
@@ -66,21 +104,31 @@ const ItemMultiSelectCore = (props: ItemMultiSelectProps) => {
     >
       {() => {
         return (
-          <div className="h-full flex custom-scrollbar gap-2 scroll-smooth">
+          <div ref={bodyRef} className="h-full flex custom-scrollbar gap-2 scroll-smooth">
             <InventoryRack
               data={props.items}
               itemCls="max-w-1/3 basis-1/3 md:w-1/4 md:basis-1/4 lg:max-w-1/6 lg:basis-1/6"
-              chosenID={chosenItem?.ID || 1}
-              chosenIDs={chosenIDs}
-              onUnselectItem={onUnselectItem}
+              chosenID={selectedItem?.ID || 1}
+              selectedIds={selectedIds}
+              onUnselectItem={unselectItem}
               onChangeItem={onChangeItem}
             />
 
-            {chosenItem ? (
-              Entity_.isUserWeapon(chosenItem) ? (
-                <WeaponCard wrapperCls="w-76 shrink-0" withOwnerLabel weapon={chosenItem} />
+            {selectedItem ? (
+              Entity_.isWeapon(selectedItem) ? (
+                <WeaponCard
+                  wrapperCls="w-76 shrink-0"
+                  withOwnerLabel
+                  weapon={selectedItem}
+                  actions={[getAction(selectedItem)]}
+                />
               ) : (
-                <ArtifactCard wrapperCls="w-76 shrink-0" withOwnerLabel artifact={chosenItem} />
+                <ArtifactCard
+                  wrapperCls="w-76 shrink-0"
+                  withOwnerLabel
+                  artifact={selectedItem}
+                  actions={[getAction(selectedItem)]}
+                />
               )
             ) : (
               <div className="w-76 rounded-lg bg-surface-1 shrink-0" />
@@ -90,6 +138,8 @@ const ItemMultiSelectCore = (props: ItemMultiSelectProps) => {
       }}
     </EntitySelectTemplate>
   );
-};
+}
 
-export const ItemMultiSelect = Modal.coreWrap(ItemMultiSelectCore, { preset: "large" });
+export const ItemMultiSelect = Modal.coreWrap(ItemMultiSelectCore, {
+  preset: "large",
+});

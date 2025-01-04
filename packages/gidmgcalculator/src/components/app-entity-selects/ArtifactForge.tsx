@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
-import { RiArrowGoBackLine } from "react-icons/ri";
 import { FaInfoCircle } from "react-icons/fa";
-import { ButtonGroup, Modal } from "rond";
+import { ButtonGroup, FancyBackSvg, Modal } from "rond";
 import { AppArtifact, ArtifactType } from "@Backend";
 
 import type { Artifact } from "@Src/types";
@@ -54,7 +53,7 @@ const ArtifactSmith = ({
     }
   };
 
-  const { artifactTypes, updateArtifactTypes, renderArtifactTypeSelect } = useArtifactTypeSelect(
+  const { artifactTypes, artifactTypeSelectProps, updateArtifactTypes, ArtifactTypeSelect } = useArtifactTypeSelect(
     workpiece?.type || forcedType || initialTypes,
     {
       multiple: batchForging,
@@ -99,7 +98,7 @@ const ArtifactSmith = ({
   };
 
   const getBackAction = (selectBody: HTMLDivElement | null) => ({
-    icon: <RiArrowGoBackLine className="text-lg" />,
+    icon: <FancyBackSvg />,
     className: "sm:hidden",
     onClick: () => {
       if (selectBody) selectBody.scrollLeft = 0;
@@ -175,7 +174,7 @@ const ArtifactSmith = ({
           <ArtifactConfig
             config={artifactConfig}
             maxRarity={maxRarity}
-            typeSelect={forcedType ? null : renderArtifactTypeSelect()}
+            typeSelect={forcedType ? null : <ArtifactTypeSelect {...artifactTypeSelectProps} />}
             batchConfigNode={renderBatchConfigNode(afterSelect, selectBody)}
             mainActionLabel={workpiece ? "Reforge" : "Forge"}
             moreButtons={[

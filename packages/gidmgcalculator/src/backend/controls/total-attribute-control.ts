@@ -73,26 +73,26 @@ export class TotalAttributeControl {
     return artAttr;
   }
 
-  private getCharacterStats(appChar: AppCharacter, charLv: Level) {
-    const baseStats = appChar.stats[LEVELS.indexOf(charLv)];
+  private getCharacterStats(appCharacter: AppCharacter, charLv: Level) {
+    const baseStats = appCharacter.stats[LEVELS.indexOf(charLv)];
     const scaleIndex = Math.max(GeneralCalc.getAscension(charLv) - 1, 0);
 
     return {
       hp: baseStats[0] ?? 0,
       atk: baseStats[1] ?? 0,
       def: baseStats[2] ?? 0,
-      ascensionStat: appChar.statBonus.value * ([0, 1, 2, 2, 3, 4][scaleIndex] ?? 0),
+      ascensionStat: appCharacter.statBonus.value * ([0, 1, 2, 2, 3, 4][scaleIndex] ?? 0),
     };
   }
 
   construct = (
-    char: Character,
-    appChar: AppCharacter,
+    character: Character,
+    appCharacter: AppCharacter,
     weapon?: Weapon,
     appWeapon?: AppWeapon,
     artifacts: Array<Artifact | null> = []
   ) => {
-    const stats = this.getCharacterStats(appChar, char.level);
+    const stats = this.getCharacterStats(appCharacter, character.level);
 
     this.addBase("hp", stats.hp);
     this.addBase("atk", stats.atk);
@@ -102,10 +102,10 @@ export class TotalAttributeControl {
     this.addBase("er_", 100);
     this.addBase("naAtkSpd_", 100);
     this.addBase("caAtkSpd_", 100);
-    this.addBase(appChar.statBonus.type, stats.ascensionStat, "Character ascension stat");
+    this.addBase(appCharacter.statBonus.type, stats.ascensionStat, "Character ascension stat");
 
     // Kokomi
-    if (appChar.code === 42) {
+    if (appCharacter.code === 42) {
       this.addBase("cRate_", -100, "Character inner stat");
       this.addBase("healB_", 25, "Character inner stat");
     }

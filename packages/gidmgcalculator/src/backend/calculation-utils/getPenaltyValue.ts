@@ -1,15 +1,20 @@
-import type { CalculationInfo, EntityPenaltyCore } from "../types";
-import { CharacterCalc } from "../common-utils";
+import type { EntityPenaltyCore } from "../types";
+import type { CharacterData } from "../common-utils/character-data";
 import { isApplicableEffect } from "./isApplicableEffect";
 
-export function getPenaltyValue(debuff: EntityPenaltyCore, info: CalculationInfo, inputs: number[], fromSelf = true) {
+export function getPenaltyValue(
+  debuff: EntityPenaltyCore,
+  characterData: CharacterData,
+  inputs: number[],
+  fromSelf = true
+) {
   const { preExtra } = debuff;
-  let result = debuff.value * CharacterCalc.getLevelScale(debuff.lvScale, info, inputs, fromSelf);
+  let result = debuff.value * characterData.getLevelScale(debuff.lvScale, inputs, fromSelf);
 
   if (typeof preExtra === "number") {
     result += preExtra;
-  } else if (preExtra && isApplicableEffect(preExtra, info, inputs, fromSelf)) {
-    result += getPenaltyValue(preExtra, info, inputs, fromSelf);
+  } else if (preExtra && isApplicableEffect(preExtra, characterData, inputs, fromSelf)) {
+    result += getPenaltyValue(preExtra, characterData, inputs, fromSelf);
   }
   if (debuff.max) result = Math.min(result, debuff.max);
 

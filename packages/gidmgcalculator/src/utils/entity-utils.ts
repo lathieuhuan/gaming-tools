@@ -122,7 +122,7 @@ export default class Entity_ {
     return transform ? ARTIFACT_TYPE_ICONS.map(transform) : ARTIFACT_TYPE_ICONS;
   }
 
-  static isUserWeapon(item: UserWeapon | UserArtifact): item is UserWeapon {
+  static isWeapon<TWeapon extends Weapon, TArtifact extends Artifact>(item: TWeapon | TArtifact): item is TWeapon {
     return "refi" in item;
   }
 

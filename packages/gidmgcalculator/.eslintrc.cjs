@@ -8,7 +8,7 @@ module.exports = {
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
-  plugins: ['react-refresh'],
+  plugins: ['react-refresh', 'unused-imports'],
   rules: {
     'react-refresh/only-export-components': [
       'warn',
@@ -16,6 +16,7 @@ module.exports = {
     ],
     'react-hooks/exhaustive-deps': 'off',
     '@typescript-eslint/no-explicit-any': ['warn'],
+    'unused-imports/no-unused-imports': 'error',
     '@typescript-eslint/no-unused-vars': ['warn'],
     'prefer-const': ['off']
   },

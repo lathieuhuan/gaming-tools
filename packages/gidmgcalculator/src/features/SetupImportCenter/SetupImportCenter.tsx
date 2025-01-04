@@ -10,7 +10,7 @@ import { decodeSetup, DECODE_ERROR_MSG } from "@Src/utils/setup-porter";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateSetupImportInfo, updateUI } from "@Store/ui-slice";
+import { selectIsReadyApp, updateSetupImportInfo, updateUI } from "@Store/ui-slice";
 import { selectCharacter, selectSetupManageInfos, selectTarget, importSetup } from "@Store/calculator-slice";
 import { checkBeforeInitNewSession } from "@Store/thunks";
 
@@ -21,7 +21,7 @@ type SetupImportCenterProps = PartiallyRequired<SetupImportInfo, "calcSetup" | "
 
 function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImportCenterProps) {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
+  const character = useSelector(selectCharacter);
   const currentTarget = useSelector(selectTarget);
   const calcSetupInfos = useSelector(selectSetupManageInfos);
 
@@ -35,11 +35,11 @@ function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImport
     const delayExecute = (fn: () => void) => setTimeout(fn, 0);
 
     // Start of site, no setup in Calculator yet
-    if (!char) {
+    if (!character) {
       delayExecute(startNewSession);
       return;
     }
-    if (char.name !== calcSetup.char.name) {
+    if (character.name !== calcSetup.char.name) {
       delayExecute(() => setPendingCode(1));
       return;
     }
@@ -52,7 +52,7 @@ function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImport
       delayExecute(() => setPendingCode(3));
       return;
     }
-    const sameChar = isEqual(char, calcSetup.char);
+    const sameChar = isEqual(character, calcSetup.char);
     const sameTarget = isEqual(Object_.omitEmptyProps(currentTarget), Object_.omitEmptyProps(target));
 
     if (sameChar && sameTarget) {
@@ -206,14 +206,14 @@ export function SetupImportCenter() {
 function SetupTransshipmentPort() {
   const dispatch = useDispatch();
   const importCode = useRef(getSearchParam("importCode"));
-  const appReady = useSelector((state) => state.ui.ready);
+  const isReadyApp = useSelector(selectIsReadyApp);
 
   useEffect(() => {
     window.history.replaceState(null, "", window.location.origin);
   }, []);
 
   useEffect(() => {
-    if (appReady) {
+    if (isReadyApp) {
       if (importCode.current) {
         const result = decodeSetup(importCode.current);
 
@@ -233,7 +233,7 @@ function SetupTransshipmentPort() {
     } else {
       window.history.replaceState(null, "", window.location.origin);
     }
-  }, [appReady]);
+  }, [isReadyApp]);
 
   return null;
 }

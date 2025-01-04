@@ -1,8 +1,7 @@
-import { CharacterBuff, CharacterDebuff } from "@Backend";
+import { CharacterBuff, CharacterDebuff, CharacterReadData } from "@Backend";
 
-import type { Character, Party, PartyData, Teammate } from "@Src/types";
+import type { Party, Teammate } from "@Src/types";
 import type { GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
-import { $AppCharacter } from "@Src/services";
 import Array_ from "@Src/utils/array-utils";
 import { parseAbilityDescription } from "@Src/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
@@ -10,9 +9,8 @@ import { renderModifiers } from "./modifiers.utils";
 
 interface PartyModsViewProps {
   mutable?: boolean;
-  char: Character;
   party: Party;
-  partyData: PartyData;
+  characterData: CharacterReadData;
   getHanlders?: (args: GetTeammateModifierHanldersArgs) => ModifierHanlders;
 }
 
@@ -22,19 +20,18 @@ function getTeammateModifierElmts(
   teammateIndex: number,
   type: "buffs" | "debuffs"
 ) {
-  const teammateData = $AppCharacter.get(teammate.name);
+  const appTeammate = props.characterData.getAppCharacter(teammate.name);
   const modCtrls = type === "buffs" ? teammate?.buffCtrls : teammate?.debuffCtrls;
-  const modifiers = type === "buffs" ? teammateData?.buffs : teammateData?.debuffs;
+  const modifiers = type === "buffs" ? appTeammate?.buffs : appTeammate?.debuffs;
 
   if (!modCtrls?.length || !modifiers?.some((modifier) => modifier.affect !== "SELF")) {
     return null;
   }
 
   return (
-    <div key={teammateData.name}>
-      <p className={`text-lg text-${teammateData.vision} font-bold text-center uppercase`}>{teammate.name}</p>
+    <div key={teammate.name}>
+      <p className={`text-lg text-${appTeammate.vision} font-bold text-center uppercase`}>{teammate.name}</p>
       <div className="space-y-3">
-        {/* {getTeammateModifierElmts(props, teammate, teammateIndex, teammateData, modCtrls, modifiers)} */}
         {modCtrls.map((ctrl, ctrlIndex, ctrls) => {
           const modifier = Array_.findByIndex<CharacterBuff | CharacterDebuff>(modifiers, ctrl.index);
 
@@ -46,12 +43,7 @@ function getTeammateModifierElmts(
                 key={`${teammate.name}-${ctrl.index}`}
                 mutable={props.mutable}
                 heading={modifier.src}
-                description={parseAbilityDescription(
-                  modifier,
-                  { char: props.char, appChar: teammateData, partyData: props.partyData },
-                  inputs,
-                  false
-                )}
+                description={parseAbilityDescription(modifier, inputs, false, props.characterData.clone(appTeammate))}
                 checked={ctrl.activated}
                 inputs={inputs}
                 inputConfigs={modifier.inputConfigs}

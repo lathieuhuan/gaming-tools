@@ -1,23 +1,4 @@
-import type { Character, PartyData } from "@Src/types";
-import type {
-  ActualAttackPattern,
-  AppCharacter,
-  AttackPattern,
-  CalculationInfo,
-  CharacterEffectLevelScale,
-  LevelableTalentType,
-  TalentAttributeType,
-  TalentType,
-} from "../types";
-
-import Array_ from "@Src/utils/array-utils";
-
-interface GetTotalXtraTalentArgs {
-  char: Character;
-  appChar: AppCharacter;
-  talentType: TalentType;
-  partyData?: PartyData;
-}
+import type { ActualAttackPattern, AppCharacter, AttackPattern, LevelableTalentType, CalcItemBasedOn } from "../types";
 
 const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
   // some NA, CA, Eula's PA
@@ -37,80 +18,35 @@ const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
 };
 
 export class CharacterCalc {
-  static getTotalXtraTalentLv({ char, appChar, talentType, partyData }: GetTotalXtraTalentArgs): number {
-    let result = 0;
-
-    if (talentType === "NAs") {
-      if (char.name === "Tartaglia" || (partyData && Array_.findByName(partyData, "Tartaglia"))) {
-        result++;
-      }
-    }
-    if (talentType !== "altSprint") {
-      const consLv = appChar.talentLvBonus?.[talentType];
-
-      if (consLv && char.cons >= consLv) {
-        result += 3;
-      }
-    }
-    return result;
-  }
-
-  static getFinalTalentLv(args: GetTotalXtraTalentArgs): number {
-    const talentLv = args.talentType === "altSprint" ? 0 : args.char[args.talentType];
-    return talentLv + this.getTotalXtraTalentLv(args);
-  }
-
+  //
   static getTalentMult(scale: number, level: number): number {
     return scale ? TALENT_LV_MULTIPLIERS[scale]?.[level] ?? 0 : 1;
   }
 
-  static getLevelScale(
-    scale: CharacterEffectLevelScale | undefined,
-    info: CalculationInfo,
-    inputs: number[],
-    fromSelf: boolean
-  ): number {
-    if (scale) {
-      const { talent, value, altIndex = 0, max } = scale;
-      const level = fromSelf
-        ? this.getFinalTalentLv({
-            talentType: talent,
-            char: info.char,
-            appChar: info.appChar,
-            partyData: info.partyData,
-          })
-        : inputs[altIndex] ?? 0;
-
-      const result = value ? this.getTalentMult(value, level) : level;
-      return max && result > max ? max : result;
-    }
-    return 1;
-  }
-
   static getTalentDefaultInfo(
     expectedAttPatt: AttackPattern,
-    appChar: AppCharacter
+    appCharacter: AppCharacter
   ): {
     resultKey: LevelableTalentType;
-    defaultScale: number;
-    defaultBasedOn: TalentAttributeType;
-    defaultAttPatt: ActualAttackPattern;
-    defaultFlatFactorScale: number;
+    scale: number;
+    basedOn: CalcItemBasedOn;
+    attPatt: ActualAttackPattern;
+    flatFactorScale: number;
   } {
     const resultKey = expectedAttPatt === "ES" || expectedAttPatt === "EB" ? expectedAttPatt : "NAs";
-    const defaultScale = resultKey === "NAs" && appChar.weaponType !== "catalyst" ? 7 : 2;
+    const defaultScale = resultKey === "NAs" && appCharacter.weaponType !== "catalyst" ? 7 : 2;
     const {
       scale = defaultScale,
       basedOn = "atk",
       attPatt = expectedAttPatt,
-    } = appChar.calcListConfig?.[expectedAttPatt] || {};
+    } = appCharacter.calcListConfig?.[expectedAttPatt] || {};
 
     return {
       resultKey,
-      defaultScale: scale,
-      defaultBasedOn: basedOn,
-      defaultAttPatt: attPatt,
-      defaultFlatFactorScale: 3,
+      scale,
+      basedOn,
+      attPatt,
+      flatFactorScale: 3,
     };
   }
 }

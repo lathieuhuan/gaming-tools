@@ -1,4 +1,5 @@
 import type {
+  AppArtifact,
   AppCharacter,
   AttackBonusKey,
   AttackElement,
@@ -12,9 +13,11 @@ import type {
 } from "@Backend";
 import type { Artifact, Character, Weapon } from "./global.types";
 
-type TeammateData = Pick<AppCharacter, "code" | "name" | "icon" | "nation" | "vision" | "weaponType" | "EBcost">;
+export type AppCharactersByName = Record<string, AppCharacter>;
 
-export type PartyData = (TeammateData | null)[];
+export type AppArtifactsByCode = Record<string, AppArtifact>;
+
+export type CalcAppParty = (AppCharacter | null)[];
 
 export type Target = {
   code: number;

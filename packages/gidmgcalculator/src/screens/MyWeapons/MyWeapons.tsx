@@ -42,7 +42,7 @@ export default function MyWeapons() {
   const [modalType, setModalType] = useState<ModalType>("");
   const [filterIsActive, setFilterIsActive] = useState(false);
 
-  const { weaponTypes, renderWeaponTypeSelect } = useWeaponTypeSelect(null, {
+  const { weaponTypes, weaponTypeSelectProps, WeaponTypeSelect } = useWeaponTypeSelect(null, {
     multiple: true,
   });
   const { filteredWeapons, totalCount } = useSelector((state) => selectWeaponInventory(state, weaponTypes));
@@ -100,7 +100,7 @@ export default function MyWeapons() {
       />
 
       {screenWatcher.isFromSize("sm") ? (
-        renderWeaponTypeSelect()
+        <WeaponTypeSelect {...weaponTypeSelectProps} />
       ) : (
         <>
           <Button variant={filterIsActive ? "active" : "default"} onClick={() => setFilterIsActive(!filterIsActive)}>
@@ -108,7 +108,9 @@ export default function MyWeapons() {
           </Button>
 
           <CollapseSpace className="w-full absolute top-full left-0 z-20" active={filterIsActive}>
-            <div className="px-4 py-6 shadow-common bg-surface-2">{renderWeaponTypeSelect()}</div>
+            <div className="px-4 py-6 shadow-common bg-surface-2">
+              {<WeaponTypeSelect {...weaponTypeSelectProps} />}
+            </div>
           </CollapseSpace>
         </>
       )}

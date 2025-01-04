@@ -14,9 +14,17 @@ export function getImgSrc(src?: string) {
   return isFromWiki ? `https://static.wikia.nocookie.net/gensin-impact/images/${src}.png` : src;
 }
 
+const numberFormat = new Intl.NumberFormat("en-EN");
+
+export const formatNumber = (n: number) => numberFormat.format(n);
+
 export const toMult = (n: number) => 1 + n / 100;
 
 export const applyPercent = (n: number, percent: number) => Math.round((n * percent) / 100);
+
+export function randomInt(max: number, min = 0, step = 1) {
+  return Math.floor((Math.random() * (max - min)) / step) * step + min;
+}
 
 export function genSequentialOptions(max: number | undefined = 0, startsAt0 = false, min = 1) {
   const result = Array.from({ length: max }, (_, i) => {

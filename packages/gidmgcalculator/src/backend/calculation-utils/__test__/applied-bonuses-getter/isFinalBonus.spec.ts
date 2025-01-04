@@ -1,5 +1,5 @@
 import { EntityBonusBasedOn, EntityBonusCore } from "@Src/backend/types";
-import { __genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCharacterDataTester } from "@UnitTest/test-utils";
 import { AppliedBonusesGetter } from "../../applied-bonuses-getter";
 
 class Tester extends AppliedBonusesGetter {}
@@ -7,7 +7,7 @@ class Tester extends AppliedBonusesGetter {}
 let tester: Tester;
 
 beforeEach(() => {
-  tester = new Tester(__genCalculationInfo());
+  tester = new Tester(__genCharacterDataTester());
 });
 
 test("isFinalBonus", () => {

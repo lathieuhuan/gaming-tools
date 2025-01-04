@@ -1,4 +1,4 @@
-import { GeneralCalc, WeaponType } from "@Backend";
+import { WeaponType } from "@Backend";
 
 import type { CalcWeapon, ModifierCtrl, UserArtifact, UserCharacter, UserWeapon } from "@Src/types";
 import Modifier_ from "@Src/utils/modifier-utils";
@@ -23,7 +23,7 @@ export function parseUserCharacter({
   weaponType,
   seedID,
 }: ParseUserCharacterArgs) {
-  const char = Entity_.createCharacter(name, info);
+  const character = Entity_.createCharacter(name, info);
 
   let weapon: CalcWeapon;
   let wpBuffCtrls: ModifierCtrl[];
@@ -43,11 +43,10 @@ export function parseUserCharacter({
     const artifact = id ? Array_.findById(userArts, id) : undefined;
     return artifact ? Entity_.userItemToCalcItem(artifact, seedID++) : null;
   });
-  const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
-  const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(setBonuses);
+  const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts);
 
   return {
-    char,
+    character,
     weapon,
     wpBuffCtrls,
     artifacts,

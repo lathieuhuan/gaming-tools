@@ -1,12 +1,12 @@
 import type { Target } from "@Src/types";
 import type {
-  CalculationInfo,
   ElementType,
   EntityDebuff,
   EntityPenaltyTarget,
   ResistanceReduction,
   ResistanceReductionKey,
 } from "../types";
+import type { CharacterData } from "../common-utils";
 import type { TrackerControl } from "./tracker-control";
 
 import Array_ from "@Src/utils/array-utils";
@@ -16,10 +16,10 @@ import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
 import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "../constants";
 import { ECalcStatModule } from "../constants/internal";
 
-export class ResistanceReductionControl {
+export class ResistanceReductionControl<T extends CharacterData = CharacterData> {
   private reductCounter = new TypeCounter<ResistanceReductionKey>();
 
-  constructor(private info: CalculationInfo, private tracker?: TrackerControl) {}
+  constructor(private characterData: T, private tracker?: TrackerControl) {}
 
   add(key: ResistanceReductionKey, value: number, description: string) {
     this.reductCounter.add(key, value);
@@ -43,7 +43,7 @@ export class ResistanceReductionControl {
     description: string
   ) => {
     if (!penalty) return;
-    const { info } = this;
+    const { characterData } = this;
     const paths = new Set<ResistanceReductionKey>();
 
     for (const target of Array_.toArray(targets)) {
@@ -59,15 +59,14 @@ export class ResistanceReductionControl {
         }
         case "XILONEN": {
           const elmts: ElementType[] = ["pyro", "hydro", "cryo", "electro"];
-          let remainingCount = 3;
 
-          for (const teammate of info.partyData.concat(info.appChar)) {
-            if (teammate && elmts.includes(teammate.vision)) {
-              paths.add(teammate.vision);
-              remainingCount--;
-            }
-          }
-          if (remainingCount > 0) paths.add("geo");
+          const allElmtCount = characterData.allElmtCount;
+
+          allElmtCount.forEach((elmt) => {
+            if (elmts.includes(elmt)) paths.add(elmt);
+          });
+
+          if (allElmtCount.get(elmts) < 3) paths.add("geo");
           break;
         }
       }
@@ -79,9 +78,9 @@ export class ResistanceReductionControl {
     if (!debuff.effects) return;
 
     for (const config of Array_.toArray(debuff.effects)) {
-      const penalty = getPenaltyValue(config, this.info, inputs, fromSelf);
+      const penalty = getPenaltyValue(config, this.characterData, inputs, fromSelf);
 
-      if (isApplicableEffect(config, this.info, inputs, fromSelf)) {
+      if (isApplicableEffect(config, this.characterData, inputs, fromSelf)) {
         this.addPenalty(penalty, config.targets, inputs, description);
       }
     }

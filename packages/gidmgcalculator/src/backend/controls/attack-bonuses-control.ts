@@ -1,5 +1,5 @@
 import type { PartiallyOptional } from "rond";
-import type { AppliedAttackBonus, AttackBonuses, AttackBonusKey, AttackBonusType, CalcItem, Level } from "../types";
+import type { AppliedAttackBonus, AttackBonuses, AttackBonusKey, AttackBonusType, TalentCalcItem, Level } from "../types";
 import type { CalcAtomicRecord, CalcItemExclusiveBonus } from "./tracker-control";
 import Array_ from "@Src/utils/array-utils";
 import Object_ from "@Src/utils/object-utils";
@@ -92,7 +92,7 @@ export class AttackBonusesArchive {
   private allBonuses = new TypeCounter<AttackBonusKey>();
 
   constructor(private attkBonuses: AttackBonuses) {
-    for (const bonus of this.attkBonuses) {
+    for (const bonus of attkBonuses) {
       if (bonus.type === "all") {
         for (const record of bonus.records) {
           this.allBonuses.add(record.toKey, record.value);
@@ -113,7 +113,7 @@ export class AttackBonusesArchive {
     return AttackBonusesControl.get(this.attkBonuses, key, ...paths);
   };
 
-  getExclusiveBonuses = (entity: CalcItem["id"] | Pick<CalcItem, "id">): CalcItemExclusiveBonus[] => {
+  getExclusiveBonuses = (entity: TalentCalcItem["id"] | Pick<TalentCalcItem, "id">): CalcItemExclusiveBonus[] => {
     const filterRecords: CalcItemExclusiveBonus[] = [];
     const id = typeof entity === "string" ? entity : entity?.id;
     const bonusRecords = id ? this.attkBonuses.find((bonus) => bonus.type === id)?.records || [] : [];

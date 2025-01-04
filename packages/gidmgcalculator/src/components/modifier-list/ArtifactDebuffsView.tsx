@@ -2,9 +2,10 @@ import type { ArtifactModCtrl } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import { $AppArtifact } from "@Src/services";
+import { getArtifactDescription } from "@Src/utils/description-parsers";
 import Array_ from "@Src/utils/array-utils";
 import { GenshinModifierView } from "../GenshinModifierView";
-import { renderModifiers, getArtifactDescription } from "./modifiers.utils";
+import { renderModifiers } from "./modifiers.utils";
 
 interface ArtifactDebuffsViewProps {
   mutable?: boolean;
@@ -18,15 +19,14 @@ export function ArtifactDebuffsView({ mutable, artDebuffCtrls, getHanlders }: Ar
     const data = $AppArtifact.getSet(ctrl.code);
     if (!data) return;
 
-    const { name, debuffs = [] } = data;
-    const debuff = Array_.findByIndex(debuffs, ctrl.index);
+    const debuff = Array_.findByIndex(data.debuffs, ctrl.index);
 
     if (debuff) {
       content.push(
         <GenshinModifierView
           key={`${ctrl.code}-${ctrl.index}`}
           mutable={mutable}
-          heading={name}
+          heading={data.name}
           description={getArtifactDescription(data, debuff)}
           checked={ctrl.activated}
           inputs={ctrl.inputs}

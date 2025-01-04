@@ -1,16 +1,50 @@
-import { CalculationInfo, Level } from "../src/backend";
+import { CharacterData, Level } from "../src/backend";
 import { $AppCharacter, $AppWeapon } from "../src/services";
-import { PartyData, Weapon } from "../src/types";
+import { Teammate, Weapon } from "../src/types";
 import { __EMockCharacter } from "./mocks/characters.mock";
 import { __EMockWeapon } from "./mocks/weapons.mock";
 import { ASCENSION_RANKS } from "./test-constants";
 
-export function __genCalculationInfo(
-  characterName: __EMockCharacter = __EMockCharacter.BASIC,
-  partyData: PartyData = []
-): CalculationInfo {
-  return {
-    char: {
+export class CharacterDataTester extends CharacterData {
+  __updateCharacter = (name: string) => {
+    this.character.name = name;
+    this["_appCharacter"] = $AppCharacter.get(name);
+    this.data[name] = this["_appCharacter"];
+  };
+
+  __updateParty = (names: string[]) => {
+    const party = names.map<Teammate>((name) => ({
+      name: name,
+      weapon: {
+        buffCtrls: [],
+        code: 0,
+        refi: 1,
+        type: "sword",
+      },
+      artifact: {
+        code: 0,
+        buffCtrls: [],
+      },
+      buffCtrls: [],
+      debuffCtrls: [],
+    }));
+    const extraData: typeof this.data = {};
+
+    for (const name of names) {
+      if (!this.data[name]) {
+        this.data[name] = $AppCharacter.get(name);
+      }
+    }
+
+    this.updateParty(party, extraData);
+  };
+}
+
+export function __genCharacterDataTester(
+  characterName: __EMockCharacter = __EMockCharacter.BASIC
+): CharacterDataTester {
+  return new CharacterDataTester(
+    {
       name: characterName,
       level: "1/20",
       cons: 0,
@@ -18,9 +52,10 @@ export function __genCalculationInfo(
       ES: 1,
       EB: 1,
     },
-    appChar: $AppCharacter.get(characterName),
-    partyData,
-  };
+    {
+      [characterName]: $AppCharacter.get(characterName),
+    }
+  );
 }
 
 export function __findAscensionByLevel(level: Level) {

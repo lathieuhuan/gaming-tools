@@ -1,3 +1,5 @@
+import Object_ from "./object-utils";
+
 export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   private count: Record<TKey, number>;
   private initial: Partial<Record<TKey, number>> = {};
@@ -16,12 +18,12 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   }
 
   get result() {
-    return structuredClone(this.count);
+    return Object_.clone(this.count);
   }
 
   constructor(initial: Partial<Record<TKey, number>> = {}) {
-    this.initial = structuredClone(initial);
-    this.count = structuredClone(this.initial) as Record<TKey, number>;
+    this.initial = Object_.clone(initial);
+    this.count = Object_.clone(this.initial) as Record<TKey, number>;
   }
 
   private _get = (key: TKey) => {
@@ -45,6 +47,6 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   };
 
   reset = () => {
-    this.count = structuredClone(this.initial) as Record<TKey, number>;
+    this.count = Object_.clone(this.initial) as Record<TKey, number>;
   };
 }

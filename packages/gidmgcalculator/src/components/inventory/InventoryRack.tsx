@@ -1,34 +1,49 @@
 import { useRef, useState, useEffect } from "react";
-import { FaCaretRight, FaMinus, FaSquare } from "react-icons/fa";
+import { FaCaretRight, FaMinus } from "react-icons/fa";
+import { TbRectangleVerticalFilled } from "react-icons/tb";
 import { ItemCase, clsx, useIntersectionObserver } from "rond";
 
-import type { UserArtifact, UserItem, UserWeapon } from "@Src/types";
-import type { ArtifactRackProps, InventoryRackProps, MixedRackProps, WeaponRackProps } from "./inventory.types";
+import type { Artifact, Weapon } from "@Src/types";
 import { $AppArtifact, $AppWeapon } from "@Src/services";
 import Entity_ from "@Src/utils/entity-utils";
 
 // Component
-import { ItemThumbnail } from "../ItemThumbnail";
+import { ItemThumbnail, type ItemThumbProps } from "../ItemThumbnail";
 
-const getWeaponInfo = ({ code, owner, refi, level, setupIDs }: UserWeapon) => {
-  const { beta, name, icon = "", rarity = 5 } = $AppWeapon.get(code) || {};
-  return { beta, name, icon, rarity, level, refi, owner, setupIDs };
+type ItemModel = ItemThumbProps["item"];
+
+type OptionalOwned<T> = T & {
+  owner?: ItemModel["owner"];
 };
 
-const getArtifactInfo = ({ code, type, owner, rarity, level, setupIDs }: UserArtifact) => {
-  const { beta, name, icon = "" } = $AppArtifact.get({ code, type }) || {};
-  return { beta, name, icon, rarity, level, owner, setupIDs };
-};
+function getWeaponInfo({ code, refi, level, owner }: OptionalOwned<Weapon>): ItemModel {
+  const { icon = "", rarity = 5 } = $AppWeapon.get(code) || {};
+  return { icon, rarity, level, refi, owner };
+}
 
-export function InventoryRack(props: WeaponRackProps): JSX.Element;
-export function InventoryRack(props: ArtifactRackProps): JSX.Element;
-export function InventoryRack(props: MixedRackProps): JSX.Element;
-export function InventoryRack<T extends UserItem>({
+function getArtifactInfo({ code, type, rarity, level, owner }: OptionalOwned<Artifact>): ItemModel {
+  const { icon = "" } = $AppArtifact.get({ code, type }) || {};
+  return { icon, rarity, level, owner };
+}
+
+interface InventoryRackProps<T> {
+  itemCls?: string;
+  emptyText?: string;
+  chosenID?: number;
+  selectedIds?: Set<PropertyKey>;
+  /** Default to 60 */
+  pageSize?: number;
+  data: T[];
+  onUnselectItem?: (item: T) => void;
+  onChangeItem?: (item: T) => void;
+}
+
+export function InventoryRack<T extends Weapon | Artifact>({
   data,
   itemCls,
   emptyText = "No data",
   chosenID,
-  chosenIDs,
+  selectedIds,
   pageSize = 60,
   onUnselectItem,
   onChangeItem,
@@ -72,7 +87,7 @@ export function InventoryRack<T extends UserItem>({
   };
 
   return (
-    <div className="w-full flex flex-col" style={{ minWidth: "21rem" }}>
+    <div className="w-full flex flex-col overflow-hidden" style={{ minWidth: "21rem" }}>
       <div ref={observedAreaRef} className="grow custom-scrollbar xm:pr-2" style={{ overflowX: "hidden" }}>
         {!ready && (
           <div ref={pioneerRef} className={clsx("opacity-0", itemCls)}>
@@ -100,7 +115,7 @@ export function InventoryRack<T extends UserItem>({
                 >
                   {isOnPage && visible ? (
                     <>
-                      {chosenIDs?.[item.ID] && (
+                      {selectedIds?.has(item.ID) && (
                         <button
                           className="absolute z-10 top-1 left-1 w-8 h-8 flex-center bg-danger-1 rounded-md"
                           onClick={() => onUnselectItem?.(item)}
@@ -113,7 +128,7 @@ export function InventoryRack<T extends UserItem>({
                           <ItemThumbnail
                             className={className}
                             imgCls={imgCls}
-                            item={Entity_.isUserWeapon(item) ? getWeaponInfo(item) : getArtifactInfo(item)}
+                            item={Entity_.isWeapon(item) ? getWeaponInfo(item) : getArtifactInfo(item)}
                           />
                         )}
                       </ItemCase>
@@ -128,27 +143,41 @@ export function InventoryRack<T extends UserItem>({
         {ready && !data.length ? <p className="py-4 text-hint-color text-lg text-center">{emptyText}</p> : null}
       </div>
 
-      {data.length && deadEnd ? (
-        <div className="pt-2 flex-center space-x-2">
-          <button
-            className="w-7 h-7 flex-center glow-on-hover disabled:opacity-50"
-            disabled={pageNo <= 0}
-            onClick={goBack}
-          >
-            {pageNo > 0 ? <FaCaretRight className="rotate-180 text-2xl" /> : <FaSquare className="text-lg" />}
-          </button>
+      {data.length ? (
+        <div className="mt-2 h-7 shrink-0 relative">
+          {deadEnd ? (
+            <div className="flex-center space-x-2">
+              <button
+                className="w-7 h-7 flex-center glow-on-hover disabled:opacity-50"
+                disabled={pageNo <= 0}
+                onClick={goBack}
+              >
+                {pageNo > 0 ? (
+                  <FaCaretRight className="rotate-180 text-2xl" />
+                ) : (
+                  <TbRectangleVerticalFilled className="text-lg" />
+                )}
+              </button>
 
-          <p className="font-semibold">
-            <span className="text-heading-color">{pageNo + 1}</span> / {deadEnd + 1}
-          </p>
+              <p className="font-semibold">
+                <span className="text-heading-color">{pageNo + 1}</span> / {deadEnd + 1}
+              </p>
 
-          <button
-            className="w-7 h-7 flex-center glow-on-hover disabled:opacity-50"
-            disabled={pageNo >= deadEnd}
-            onClick={goNext}
-          >
-            {pageNo < deadEnd ? <FaCaretRight className="text-2xl" /> : <FaSquare className="text-lg" />}
-          </button>
+              <button
+                className="w-7 h-7 flex-center glow-on-hover disabled:opacity-50"
+                disabled={pageNo >= deadEnd}
+                onClick={goNext}
+              >
+                {pageNo < deadEnd ? (
+                  <FaCaretRight className="text-2xl" />
+                ) : (
+                  <TbRectangleVerticalFilled className="text-lg" />
+                )}
+              </button>
+            </div>
+          ) : null}
+
+          <div className="absolute bottom-1 right-4 mr-2 text-sm leading-none text-hint-color">{data.length} items</div>
         </div>
       ) : null}
     </div>

@@ -21,8 +21,8 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
   return (
     <div className={"px-4 py-3 bg-surface-1 cursor-default relative " + styles.section}>
       <div className="absolute top-2 bottom-0 right-2 flex flex-col text-xl text-hint-color">
-        <Button icon={<FaMinus />} boneOnly title="Minimize" onClick={onMinimize} />
-        <Button icon={<MdEdit />} boneOnly title="Edit" onClick={onEdit} />
+        <Button icon={<FaMinus className="text-lg" />} boneOnly title="Minimize" onClick={onMinimize} />
+        <Button icon={<MdEdit className="text-lg" />} boneOnly title="Edit" onClick={onEdit} />
       </div>
       <p className="text-sm text-danger-3">Target</p>
 

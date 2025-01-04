@@ -74,7 +74,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
         </div>
       </div>
 
-      <div className="mt-2 ml-6 flex flex-col">
+      <div className="mt-1 ml-6 flex flex-col">
         {["flower", "plume"].includes(artifact.type) || !mutable ? (
           <p className={"py-1 text-lg " + (mutable ? "pl-6" : "pl-2")}>{t(mainStatType)}</p>
         ) : (

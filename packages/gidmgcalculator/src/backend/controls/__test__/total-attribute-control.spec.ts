@@ -6,7 +6,7 @@ import { Artifact } from "@Src/types";
 import { __EMockArtifactSet } from "@UnitTest/mocks/artifacts.mock";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __EMockWeapon } from "@UnitTest/mocks/weapons.mock";
-import { __findAscensionByLevel, __genCalculationInfo, __genWeaponInfo } from "@UnitTest/test-utils";
+import { __findAscensionByLevel, __genCharacterDataTester, __genWeaponInfo } from "@UnitTest/test-utils";
 import { TotalAttributeControl } from "../total-attribute-control";
 
 type InternalTotalAttribute = Record<
@@ -24,7 +24,7 @@ class Tester extends TotalAttributeControl {
   }
 
   _clone() {
-    return new Tester(structuredClone(this["totalAttr"]));
+    return new Tester(JSON.parse(JSON.stringify(this["totalAttr"])));
   }
 }
 
@@ -65,7 +65,7 @@ test("clone", () => {
 });
 
 test("getCharacterStats", () => {
-  const appChar = $AppCharacter.get(__EMockCharacter.BASIC);
+  const appCharacter = $AppCharacter.get(__EMockCharacter.BASIC);
   const ascensionToStatBonusScale: Record<number, number> = {
     0: 0,
     1: 0,
@@ -77,15 +77,15 @@ test("getCharacterStats", () => {
   };
 
   for (let i = 0; i < LEVELS.length; i++) {
-    const [hp, atk, def] = appChar.stats[i];
+    const [hp, atk, def] = appCharacter.stats[i];
     const ascension = __findAscensionByLevel(LEVELS[i]);
     const expected: ReturnType<TotalAttributeControl["getCharacterStats"]> = {
       hp,
       atk,
       def,
-      ascensionStat: appChar.statBonus.value * ascensionToStatBonusScale[ascension],
+      ascensionStat: appCharacter.statBonus.value * ascensionToStatBonusScale[ascension],
     };
-    expect(tester["getCharacterStats"](appChar, LEVELS[i])).toEqual(expected);
+    expect(tester["getCharacterStats"](appCharacter, LEVELS[i])).toEqual(expected);
   }
 });
 
@@ -169,24 +169,27 @@ test("static: getArtifactAttributes => ArtifactAttributeControl", () => {
 
 describe("construct", () => {
   test("with only character", () => {
-    const { char, appChar } = __genCalculationInfo();
+  const record = __genCharacterDataTester();
+  const { character, appCharacter } = record;
 
-    tester.construct(char, appChar);
-    tester._expect(__getExpectedAfterConstructWithCharacter(char.level, appChar));
+    tester.construct(character, appCharacter);
+    tester._expect(__getExpectedAfterConstructWithCharacter(character.level, appCharacter));
   });
 });
 
 test("equip weapon (construct with character & weapon should be the same)", () => {
-  const { char, appChar } = __genCalculationInfo();
+  const record = __genCharacterDataTester();
+  const { character, appCharacter } = record;
+
   const coreTester = new Tester();
-  coreTester.construct(char, appChar);
+  coreTester.construct(character, appCharacter);
 
   const { weapon: sword, appWeapon: appSword } = __genWeaponInfo();
 
   tester = coreTester._clone();
   tester["equipWeapon"](sword, appSword);
 
-  const expectedSword = __getExpectedAfterConstructWithCharacter(char.level, appChar);
+  const expectedSword = __getExpectedAfterConstructWithCharacter(character.level, appCharacter);
 
   expectedSword.atk.base += WeaponCalc.getMainStatValue(sword.level, appSword.mainStatScale);
 
@@ -203,7 +206,7 @@ test("equip weapon (construct with character & weapon should be the same)", () =
   tester = coreTester._clone();
   tester["equipWeapon"](bow, appBow);
 
-  const expectedBow = __getExpectedAfterConstructWithCharacter(char.level, appChar);
+  const expectedBow = __getExpectedAfterConstructWithCharacter(character.level, appCharacter);
 
   expectedBow.atk.base += WeaponCalc.getMainStatValue(bow.level, appBow.mainStatScale);
 
@@ -215,8 +218,10 @@ test("equip weapon (construct with character & weapon should be the same)", () =
 });
 
 test("equip artifacts (construct with character & artifacts should be the same)", () => {
-  const { char, appChar } = __genCalculationInfo();
-  tester.construct(char, appChar);
+  const record = __genCharacterDataTester();
+  const { character, appCharacter } = record;
+
+  tester.construct(character, appCharacter);
 
   const artifacts: Artifact[] = [
     {
@@ -236,7 +241,7 @@ test("equip artifacts (construct with character & artifacts should be the same)"
 
   tester["equipArtifacts"](artifacts);
 
-  const expected = __getExpectedAfterConstructWithCharacter(char.level, appChar);
+  const expected = __getExpectedAfterConstructWithCharacter(character.level, appCharacter);
 
   expected.hp.stableBonus = ArtifactCalc.mainStatValueOf(artifacts[0]) + 1000;
   expected.em.stableBonus = 100;
@@ -306,8 +311,8 @@ function __genInternalTotalAttr(): InternalTotalAttribute {
   };
 }
 
-function __getExpectedAfterConstructWithCharacter(charLevel: Level, appChar: AppCharacter) {
-  const characterStats = tester["getCharacterStats"](appChar, charLevel);
+function __getExpectedAfterConstructWithCharacter(charLevel: Level, appCharacter: AppCharacter) {
+  const characterStats = tester["getCharacterStats"](appCharacter, charLevel);
   const expected = __genInternalTotalAttr();
 
   expected.hp.base = characterStats.hp;
@@ -318,7 +323,7 @@ function __getExpectedAfterConstructWithCharacter(charLevel: Level, appChar: App
   expected.er_.base = 100;
   expected.caAtkSpd_.base = 100;
   expected.naAtkSpd_.base = 100;
-  expected[appChar.statBonus.type].base += characterStats.ascensionStat;
+  expected[appCharacter.statBonus.type].base += characterStats.ascensionStat;
 
   return expected;
 }

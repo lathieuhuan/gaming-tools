@@ -1,11 +1,11 @@
 import type { UnknownObject } from "./utils.types";
 
 function find(key: string) {
-  return <T>(arr: T[], value?: string | number | null): T | undefined => {
+  return <T>(arr?: T[], value?: string | number | null): T | undefined => {
     if (value === undefined) {
       return undefined;
     }
-    return arr.find((item) => (item as any)?.[key] === value);
+    return arr?.find((item) => (item as any)?.[key] === value);
   };
 }
 function findIndex(key: string) {
@@ -23,6 +23,11 @@ export default class Array_ {
 
   static truthyOp<TObject extends UnknownObject = UnknownObject>(list: Array<TObject | null | undefined>) {
     return {
+      each(callback: (value: TObject) => void) {
+        for (const item of list) {
+          if (item) callback(item);
+        }
+      },
       useEach<TKey extends keyof TObject>(key: TKey, callback: (value: TObject[TKey]) => void) {
         for (const item of list) {
           if (item) callback(item[key]);

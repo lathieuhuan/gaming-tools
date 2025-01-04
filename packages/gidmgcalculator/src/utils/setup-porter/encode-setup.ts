@@ -43,12 +43,12 @@ export function encodeSetup(calcSetup: CalcSetup, target: Target) {
   } = calcSetup;
 
   try {
-    const appChar = $AppCharacter.get(char.name);
-    if (!appChar) {
+    const appCharacter = $AppCharacter.get(char.name);
+    if (!appCharacter) {
       throw new Error("Character not found");
     }
 
-    const { code: charCode = 0 } = appChar;
+    const { code: charCode = 0 } = appCharacter;
     const { cons, NAs, ES, EB } = char;
 
     const _charCode = [charCode, LEVELS.indexOf(char.level), cons, NAs, ES, EB].join(DIVIDER[1]);

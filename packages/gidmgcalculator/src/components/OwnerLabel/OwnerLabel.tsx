@@ -76,7 +76,7 @@ export function OwnerLabel({ className = "", style, item }: OwnerLabelProps) {
 
   return (
     <div className={cls} style={style}>
-      <p className="py-1">Equipped: {item.owner || "None"}</p>
+      <p className="py-1">Equipped: {item.owner ? item.owner : <span className="opacity-80">None</span>}</p>
 
       {containingSetups.length ? (
         <>

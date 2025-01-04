@@ -18,14 +18,14 @@ const useTalentDescriptions = (characterName: string, auto: boolean) => {
 };
 
 interface TalentDetailProps {
-  appChar: AppCharacter;
+  appCharacter: AppCharacter;
   detailIndex: number;
   onChangeDetailIndex: (newIndex: number) => void;
   onClose: () => void;
 }
-export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClose }: TalentDetailProps) {
+export function TalentDetail({ appCharacter, detailIndex, onChangeDetailIndex, onClose }: TalentDetailProps) {
   const { t } = useTranslation();
-  const { weaponType, vision, activeTalents, passiveTalents } = appChar;
+  const { weaponType, vision, activeTalents, passiveTalents } = appCharacter;
   const { ES, EB, altSprint } = activeTalents;
   const isPassiveTalent = detailIndex > Object.keys(activeTalents).length - 1;
   const images = [NORMAL_ATTACK_ICONS[`${weaponType}_${vision}`] || "", ES.image, EB.image];
@@ -33,13 +33,9 @@ export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClos
   const [talentLevel, setTalentLevel] = useState(1);
   const intervalRef = useRef<NodeJS.Timeout>();
 
-  const { activeIndex, setActiveIndex, renderTabs } = useTabs({
-    level: 2,
-    defaultIndex: 1,
-    configs: [{ text: "Talent Info" }, { text: "Skill Attributes" }],
-  });
+  const { activeIndex, tabProps, setActiveIndex, Tabs } = useTabs(1);
 
-  const { isLoading, isError, data: descriptions } = useTalentDescriptions(appChar.name, !activeIndex);
+  const { isLoading, isError, data: descriptions } = useTalentDescriptions(appCharacter.name, !activeIndex);
 
   if (altSprint) {
     images.push(altSprint.image);
@@ -55,7 +51,7 @@ export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClos
     }
   }, [isPassiveTalent]);
 
-  const talents = useMemo(() => processTalents(appChar, talentLevel, t), [talentLevel]);
+  const talents = useMemo(() => processTalents(appCharacter, talentLevel, t), [talentLevel]);
 
   const talent = talents[detailIndex];
   const levelable = talent?.type !== "altSprint";
@@ -115,7 +111,19 @@ export function TalentDetail({ appChar, detailIndex, onChangeDetailIndex, onClos
         />
 
         <p className={`text-lg font-semibold text-${vision} text-center`}>{talent.name}</p>
-        {renderTabs("my-2", [false, isPassiveTalent])}
+        <Tabs
+          {...tabProps}
+          className="my-2"
+          configs={[
+            {
+              text: "Talent Info",
+            },
+            {
+              text: "Skill Attributes",
+              disabled: isPassiveTalent,
+            },
+          ]}
+        />
 
         {activeIndex ? (
           <div>
@@ -184,8 +192,12 @@ interface ProcessedTalent {
   type: ProcessedTalentType;
   stats: ProcessedStat[];
 }
-function processTalents(appChar: AppCharacter, level: number, translate: (word: string) => string): ProcessedTalent[] {
-  const { NAs, ES, EB, altSprint } = appChar.activeTalents;
+function processTalents(
+  appCharacter: AppCharacter,
+  level: number,
+  translate: (word: string) => string
+): ProcessedTalent[] {
+  const { NAs, ES, EB, altSprint } = appCharacter.activeTalents;
 
   const result: ProcessedTalent[] = [
     { name: NAs.name, type: "NAs", label: translate("NAs"), stats: [] },
@@ -194,11 +206,11 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
   ];
 
   for (const attPatt of ATTACK_PATTERNS) {
-    const info = CharacterCalc.getTalentDefaultInfo(attPatt, appChar);
-    const talent = result.find((item) => item.type === info.resultKey);
+    const default_ = CharacterCalc.getTalentDefaultInfo(attPatt, appCharacter);
+    const talent = result.find((item) => item.type === default_.resultKey);
     if (!talent) continue;
 
-    for (const stat of appChar.calcList[attPatt]) {
+    for (const stat of appCharacter.calcList[attPatt]) {
       const multFactors = Array_.toArray(stat.multFactors);
       const { flatFactor } = stat;
       const factorStrings = [];
@@ -210,8 +222,8 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
       for (const factor of multFactors) {
         const {
           root,
-          scale = info.defaultScale,
-          basedOn = info.defaultBasedOn,
+          scale = default_.scale,
+          basedOn = default_.basedOn,
         } = typeof factor === "number" ? { root: factor } : factor;
 
         if (scale && root) {
@@ -226,7 +238,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
       }
 
       if (flatFactor) {
-        const { root, scale = info.defaultFlatFactorScale } =
+        const { root, scale = default_.flatFactorScale } =
           typeof flatFactor === "number" ? { root: flatFactor } : flatFactor;
 
         factorStrings.push(Math.round(root * (scale ? CharacterCalc.getTalentMult(scale, level) : 1)));
@@ -241,7 +253,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
 
   result[2].stats.push({
     name: "Energy cost",
-    value: appChar.EBcost,
+    value: appCharacter.EBcost,
   });
 
   if (altSprint) {
@@ -257,7 +269,7 @@ function processTalents(appChar: AppCharacter, level: number, translate: (word: 
   const passiveLabels = ["Ascension 1", "Ascension 4", "Utility"];
 
   result.push(
-    ...appChar.passiveTalents.map<ProcessedTalent>((talent, i) => {
+    ...appCharacter.passiveTalents.map<ProcessedTalent>((talent, i) => {
       return {
         name: talent.name,
         type: passiveTypes[i],

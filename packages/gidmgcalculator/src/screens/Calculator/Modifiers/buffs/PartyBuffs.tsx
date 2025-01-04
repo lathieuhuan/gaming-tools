@@ -1,26 +1,25 @@
-import type { Party, PartyData } from "@Src/types";
+import type { Party } from "@Src/types";
 import {
   changeTeammateModCtrlInput,
-  selectCharacter,
   toggleTeammateModCtrl,
   type ToggleTeammateModCtrlPath,
 } from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
+import { useDispatch } from "@Store/hooks";
 import { PartyBuffsView } from "@Src/components";
+import { useCharacterData } from "../../ContextProvider";
 
 interface PartyBuffsProps {
   party: Party;
-  partyData: PartyData;
 }
 export default function PartyBuffs(props: PartyBuffsProps) {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
+  const characterData = useCharacterData();
 
   return (
     <PartyBuffsView
       mutable
       {...props}
-      char={char}
+      characterData={characterData}
       getHanlders={({ ctrl, teammateIndex }) => {
         const path: ToggleTeammateModCtrlPath = {
           teammateIndex,

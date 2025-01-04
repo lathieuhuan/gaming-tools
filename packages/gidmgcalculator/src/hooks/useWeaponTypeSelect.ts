@@ -1,4 +1,5 @@
-import { useIconSelect, type IconSelectConfig, type IconSelectInitialValues } from "rond";
+import type { IconSelectProps, IconSelectConfig, IconSelectInitialValues } from "rond";
+import { useIconSelect } from "rond";
 import { WeaponType } from "@Backend";
 import { getImgSrc } from "@Src/utils";
 
@@ -12,21 +13,23 @@ const WEAPON_TYPE_ICONS: Array<{ value: WeaponType; icon: string }> = [
 
 export function useWeaponTypeSelect(
   initialValues?: IconSelectInitialValues<WeaponType>,
-  config?: Omit<IconSelectConfig<WeaponType>, "selectedCls">
+  config?: IconSelectConfig<WeaponType>
 ) {
-  const mergedConfig: IconSelectConfig<WeaponType> = {
-    ...config,
-    selectedCls: "shadow-3px-3px shadow-active-color",
-  };
-  const { selectedIcons, updateSelectedIcons, renderIconSelect } = useIconSelect(
+  const { selectedIcons, selectProps, updateSelectedIcons, IconSelect } = useIconSelect(
     WEAPON_TYPE_ICONS,
     initialValues,
-    mergedConfig
+    config
   );
+
+  const mergeProps = {
+    ...selectProps,
+    selectedCls: "shadow-3px-3px shadow-active-color",
+  } satisfies IconSelectProps<WeaponType>;
 
   return {
     weaponTypes: selectedIcons,
+    weaponTypeSelectProps: mergeProps,
     updateWeaponTypes: updateSelectedIcons,
-    renderWeaponTypeSelect: renderIconSelect,
+    WeaponTypeSelect: IconSelect,
   };
 }

@@ -4,7 +4,7 @@ import { MdEdit } from "react-icons/md";
 import { clsx, Button, CollapseSpace, Table, TableThProps } from "rond";
 import { AppCharacter, LevelableTalentType, TalentType } from "@Backend";
 
-import type { CalcCharacter, Weapon } from "@Src/types";
+import type { Weapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppWeapon } from "@Src/services";
 import { displayValue, getTableKeys, type TableKey } from "./FinalResultView.utils";
@@ -27,19 +27,17 @@ type RowConfig = {
 };
 
 export interface FinalResultLayoutProps {
-  char: CalcCharacter;
-  appChar: AppCharacter;
+  appCharacter: AppCharacter;
   weapon: Weapon;
   showWeaponCalc?: boolean;
   headerConfigs: HeaderConfig[];
   getRowConfig: (mainKey: TableKey["main"], subKey: string) => RowConfig;
-  getTalentLevel?: (talentType: TalentType) => number | undefined;
   talentMutable?: boolean;
+  getTalentLevel?: (talentType: TalentType) => number | undefined;
   onChangeTalentLevel?: (talentType: LevelableTalentType, newLevel: number) => void;
 }
 export function FinalResultLayout({
-  char,
-  appChar,
+  appCharacter,
   weapon,
   showWeaponCalc,
   talentMutable,
@@ -54,10 +52,10 @@ export function FinalResultLayout({
   const [lvlingSectionI, setLvlingSectionI] = useState(-1);
 
   const tableKeys = useMemo(() => {
-    return getTableKeys(appChar, showWeaponCalc ? appWeapon : undefined);
-  }, [char.name, appWeapon?.code, showWeaponCalc]);
+    return getTableKeys(appCharacter, showWeaponCalc ? appWeapon : undefined);
+  }, [appCharacter.name, appWeapon?.code, showWeaponCalc]);
 
-  if (!appChar) return null;
+  if (!appCharacter) return null;
 
   const toggleSection = (index: number, forcedClosed?: boolean) => {
     const newClosed = forcedClosed ?? !closedSections[index];

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import { clsx, CloseButton, Modal, Button, InputNumber } from "rond";
+import { clsx, CloseButton, Modal, Button, InputNumber, TrashCanSvg } from "rond";
 
 import type { CustomBuffCtrl, CustomDebuffCtrl } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
@@ -18,7 +18,6 @@ import {
 } from "@Store/calculator-slice";
 
 // Component
-import { IconTrashCan } from "@Src/components/icons";
 import { CopySection } from "../../components/CopySection";
 import BuffCtrlCreator from "./BuffCtrlCreator";
 import DebuffCtrlCreator from "./DebuffCtrlCreator";
@@ -81,7 +80,7 @@ export default function CustomModifiers({ isBuffs }: CustomModifiersProps) {
       <div className="mt-3 flex justify-between">
         <Button
           title="Discard all"
-          icon={<IconTrashCan />}
+          icon={<TrashCanSvg />}
           disabled={modCtrls.length === 0}
           onClick={() => {
             dispatch(updateCustomModCtrls({ actionType: "REPLACE", ctrls: [] }));

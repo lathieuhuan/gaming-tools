@@ -18,7 +18,9 @@ import uiSliceReducers, { uiSlice } from "./ui-slice";
 import userdbSliceReducers, { userdbSlice, initialState } from "./userdb-slice";
 import { migrates } from "./migration";
 
-export type SetupStoreArgs = { persistingUserData?: boolean };
+export type SetupStoreArgs = {
+  persistingUserData?: boolean;
+};
 
 export function setupStore(args?: { persistingUserData?: boolean }) {
   const userdbPersistReducers = persistReducer(

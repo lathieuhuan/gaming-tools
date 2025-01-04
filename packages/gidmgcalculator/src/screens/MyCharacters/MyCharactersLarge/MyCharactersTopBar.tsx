@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { FaPlus, FaSortAmountUpAlt } from "react-icons/fa";
-import { clsx, useIntersectionObserver, Button, useChildListObserver } from "rond";
+import { Button, clsx, useChildListObserver, useIntersectionObserver } from "rond";
 
 import { GenshinImage } from "@Src/components";
 import { $AppCharacter } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectChosenCharacter, selectUserCharacters, viewCharacter } from "@Store/userdb-slice";
-import { useMyCharactersModalCtrl } from "../MyCharactersModalsProvider";
+import { useMyCharactersModalCtrl } from "../ContextProvider";
 
 import styles from "./MyCharactersLarge.styles.module.scss";
 
@@ -18,10 +18,11 @@ export function MyCharactersTopBar() {
 
   const { observedAreaRef: intersectObsArea, visibleMap, itemUtils } = useIntersectionObserver();
   const { observedAreaRef: listObsArea } = useChildListObserver({
-    onNodesAdded: (addedNodes) => {
-      for (const node of addedNodes) {
-        itemUtils.observe(node as Element);
-      }
+    onNodesAdded(addedNodes) {
+      addedNodes.forEach((node) => itemUtils.observe(node as Element));
+    },
+    onNodesRemoved(removedNodes) {
+      removedNodes.forEach((node) => itemUtils.observe(node as Element));
     },
   });
 
@@ -69,8 +70,8 @@ export function MyCharactersTopBar() {
         <div ref={intersectObsArea} className="mt-2 w-full h-20 hide-scrollbar">
           <div ref={listObsArea} className="flex">
             {characters.map(({ name }) => {
-              const appChar = appCharacters.find((appChar) => appChar.name === name);
-              if (!appChar) return null;
+              const appCharacter = appCharacters.find((data) => data.name === name);
+              if (!appCharacter) return null;
               const visible = visibleMap[name];
 
               return (
@@ -86,7 +87,7 @@ export function MyCharactersTopBar() {
                     className={clsx(
                       "rounded-circle border-3 border-light-default/30 bg-black/30",
                       styles["icon-wrapper"],
-                      appChar.sideIcon
+                      appCharacter.sideIcon
                         ? `m-2 ${styles["side-icon-wrapper"]}`
                         : `m-1 overflow-hidden ${styles["beta-icon-wrapper"]}`
                     )}
@@ -96,7 +97,9 @@ export function MyCharactersTopBar() {
                         "w-ful h-full transition-opacity duration-400 " + (visible ? "opacity-100" : "opacity-0")
                       }
                     >
-                      {visible && <GenshinImage src={appChar.sideIcon || appChar.icon} alt="icon" fallbackCls="p-2" />}
+                      {visible && (
+                        <GenshinImage src={appCharacter.sideIcon || appCharacter.icon} alt="icon" fallbackCls="p-2" />
+                      )}
                     </div>
                   </div>
                 </div>

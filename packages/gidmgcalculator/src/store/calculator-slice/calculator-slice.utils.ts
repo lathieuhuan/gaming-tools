@@ -1,12 +1,25 @@
 import { message } from "rond";
-import { calculateSetup } from "@Backend";
+import { AppCharacter, calculateSetup, ElementType } from "@Backend";
 
+import type { Party } from "@Src/types";
 import type { CalculatorState } from "./calculator-slice.types";
 import { $AppCharacter } from "@Src/services";
+import TypeCounter from "@Src/utils/type-counter";
 
-export function getCharDataFromState(state: CalculatorState) {
+export function getAppCharacterFromState(state: CalculatorState) {
   const setup = state.setupsById[state.activeId];
   return $AppCharacter.get(setup.char.name);
+}
+
+export function countAllElements(appCharacter: AppCharacter, party: Party) {
+  const count = new TypeCounter<ElementType>();
+
+  count.add(appCharacter.vision);
+
+  for (const teammate of party) {
+    if (teammate) count.add($AppCharacter.get(teammate.name).vision);
+  }
+  return count;
 }
 
 export function calculate(state: CalculatorState, all?: boolean) {

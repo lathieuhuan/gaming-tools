@@ -58,24 +58,24 @@ export function convertFromGoodFormat(data: any) {
   };
   let seedID = Date.now();
 
-  for (const char of data.characters || []) {
+  for (const character of data.characters || []) {
     let name;
 
-    if (char.key.slice(0, 8) === "Traveler") {
-      name = char.key.slice(8) + " Traveler";
+    if (character.key.slice(0, 8) === "Traveler") {
+      name = character.key.slice(8) + " Traveler";
     } else {
-      name = searchCharacterByKey(char.key);
+      name = searchCharacterByKey(character.key);
     }
 
     if (!name) continue;
 
     const charInfo: UserCharacter = {
       name,
-      level: convertLevel(char.level, char.ascension),
-      NAs: char.talent.auto,
-      ES: char.talent.skill,
-      EB: char.talent.burst,
-      cons: char.constellation,
+      level: convertLevel(character.level, character.ascension),
+      NAs: character.talent.auto,
+      ES: character.talent.skill,
+      EB: character.talent.burst,
+      cons: character.constellation,
       weaponID: 0,
       artifactIDs: [null, null, null, null, null],
     };
@@ -154,18 +154,18 @@ export function convertFromGoodFormat(data: any) {
     }
   }
 
-  for (const char of result.characters) {
-    if (!char.weaponID) {
-      const { weaponType } = $AppCharacter.get(char.name)! || {};
+  for (const character of result.characters) {
+    if (!character.weaponID) {
+      const { weaponType } = $AppCharacter.get(character.name)! || {};
       const weaponID = seedID++;
       const newWeapon = Entity_.createWeapon({ type: weaponType }, weaponID);
 
       result.weapons.unshift({
         ...newWeapon,
-        owner: char.name,
+        owner: character.name,
       });
 
-      char.weaponID = weaponID;
+      character.weaponID = weaponID;
     }
   }
 

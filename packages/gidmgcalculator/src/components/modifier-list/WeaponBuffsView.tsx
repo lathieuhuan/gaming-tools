@@ -25,10 +25,10 @@ function renderWeaponModifiers({
 }: RenderWeaponModifiersArgs) {
   const data = $AppWeapon.get(weapon.code);
   if (!data) return [];
-  const { buffs = [], descriptions = [] } = data;
+  const { descriptions = [] } = data;
 
   return ctrls.map((ctrl, ctrlIndex) => {
-    const buff = Array_.findByIndex(buffs, ctrl.index);
+    const buff = Array_.findByIndex(data.buffs, ctrl.index);
 
     return buff ? (
       <GenshinModifierView

@@ -1,17 +1,14 @@
-import { useState, useEffect } from "react";
-import { MdInventory } from "react-icons/md";
-import { GiAnvil } from "react-icons/gi";
+import { useEffect, useState } from "react";
 import { FaToolbox } from "react-icons/fa";
-import { clsx, notification, Button, CollapseSpace } from "rond";
+import { GiAnvil } from "react-icons/gi";
+import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
-import type { Artifact, CalcArtifact } from "@Src/types";
 import { $AppArtifact, $AppSettings } from "@Src/services";
+import type { Artifact, CalcArtifact } from "@Src/types";
 import Entity_ from "@Src/utils/entity-utils";
-
-// Store
+import { changeArtifact, selectArtifacts } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectArtifacts, changeArtifact } from "@Store/calculator-slice";
 
 // Component
 import {
@@ -19,8 +16,8 @@ import {
   ArtifactForgeProps,
   ArtifactInventory,
   ArtifactInventoryProps,
-  LoadoutStash,
   GenshinImage,
+  LoadoutStash,
 } from "@Src/components";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
@@ -43,7 +40,6 @@ const SECTION_ID = "calculator-section-artifacts";
 
 export default function SectionArtifacts() {
   const dispatch = useDispatch();
-
   const artifacts = useSelector(selectArtifacts);
 
   const [modalType, setModalType] = useState<ModalType>("");
@@ -262,9 +258,13 @@ export default function SectionArtifacts() {
 
       {activeTabIndex < 0 ? (
         <div className="mt-4 px-4 flex justify-end gap-4">
-          <Button title="Loadout" icon={<FaToolbox />} onClick={onRequestSelectArtifactLoadout} />
-          <Button title="Inventory" icon={<MdInventory />} onClick={onRequestSelectInventoryArtifact} />
-          <Button title="New" icon={<GiAnvil className="text-lg" />} onClick={onRequestForgeArtifact} />
+          <Button title="Loadout" icon={<FaToolbox className="text-lg" />} onClick={onRequestSelectArtifactLoadout} />
+          <Button
+            title="Inventory"
+            icon={<PouchSvg className="text-xl" />}
+            onClick={onRequestSelectInventoryArtifact}
+          />
+          <Button title="New" icon={<GiAnvil className="text-xl" />} onClick={onRequestForgeArtifact} />
         </div>
       ) : null}
 

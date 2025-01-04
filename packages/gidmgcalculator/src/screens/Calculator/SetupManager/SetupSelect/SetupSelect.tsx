@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { FaCopy, FaSave, FaBalanceScaleLeft, FaShareAlt } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
-import { clsx, ConfirmModal } from "rond";
+import { clsx, ConfirmModal, TrashCanSvg } from "rond";
 
 import { MAX_CALC_SETUPS } from "@Src/constants";
 import Array_ from "@Src/utils/array-utils";
+import { useCalcModalCtrl } from "../../ContextProvider";
 
 // Store
 import {
@@ -17,11 +18,9 @@ import {
   updateCalculator,
 } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { useCalcModalCtrl } from "../../CalculatorModalsProvider";
 
 // Component
 import { ComplexSelect } from "@Src/components";
-import { IconTrashCan } from "@Src/components/icons";
 
 type ModalState = {
   type: "REMOVE_SETUP" | "";
@@ -109,7 +108,7 @@ export function SetupSelect() {
               const actions: ActionButtonAttrs[] = [
                 {
                   className: "hover:bg-danger-1 hover:text-light-default",
-                  children: <IconTrashCan />,
+                  children: <TrashCanSvg />,
                   disabled: setupManageInfos.length < 2,
                   onClick: () => {
                     openModal("REMOVE_SETUP", i);
@@ -139,13 +138,13 @@ export function SetupSelect() {
                   onClick: onClickCopySetup(setup.ID),
                 },
                 {
-                  className: setup.ID === standardId ? "bg-bonus-color" : "bg-light-default",
+                  className: setup.ID === standardId ? "bg-bonus-color" : "bg-light-default hover:bg-primary-1",
                   children: <SiTarget className="text-1.5xl" />,
                   disabled: comparedIds.length < 2 || !comparedIds.includes(setup.ID),
                   onClick: onSelectStandard(setup.ID),
                 },
                 {
-                  className: comparedIds.includes(setup.ID) ? "bg-bonus-color" : "bg-light-default",
+                  className: comparedIds.includes(setup.ID) ? "bg-bonus-color" : "bg-light-default hover:bg-primary-1",
                   children: <FaBalanceScaleLeft className="text-1.5xl" />,
                   disabled: setupManageInfos.length < 2,
                   onClick: onClickToggleCompared(setup.ID),

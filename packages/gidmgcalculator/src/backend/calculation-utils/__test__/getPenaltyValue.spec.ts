@@ -1,9 +1,9 @@
 import { EntityPenaltyCore } from "@Src/backend/types";
 import { getPenaltyValue } from "../getPenaltyValue";
-import { __genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCharacterDataTester } from "@UnitTest/test-utils";
 
 class Tester {
-  info = __genCalculationInfo();
+  info = __genCharacterDataTester();
   inputs: number[] = [];
   fromSelf = true;
   config: EntityPenaltyCore = {
@@ -27,7 +27,7 @@ test("config with only value", () => {
 });
 
 test("penalty scale with level", () => {
-  tester.info.char.ES = 10;
+  tester.info.character.ES = 10;
   tester.config = {
     value: 2,
     lvScale: {
@@ -54,7 +54,7 @@ test("penalty has preExtra", () => {
   };
   tester._expect(2);
 
-  tester.info.char.cons = 1;
+  tester.info.character.cons = 1;
   tester._expect(2 + 4);
 });
 
@@ -69,6 +69,6 @@ test("penalty has max", () => {
   };
   tester._expect(2);
 
-  tester.info.char.cons = 1;
+  tester.info.character.cons = 1;
   tester._expect(5);
 });

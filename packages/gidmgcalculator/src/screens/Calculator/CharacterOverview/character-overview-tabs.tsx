@@ -13,6 +13,7 @@ import {
   updateWeapon,
 } from "@Store/calculator-slice";
 import { AttributeTable, SetBonusesView, WeaponView, TalentList, ConstellationList } from "@Src/components";
+import { useCharacterData } from "../ContextProvider";
 
 export function AttributesTab() {
   const totalAttr = useSelector(selectTotalAttr);
@@ -43,14 +44,11 @@ export function ArtifactsTab() {
   const artifacts = useSelector(selectArtifacts);
   const artifactAttributes = TotalAttributeControl.getArtifactAttributes(artifacts).finalize(totalAttr);
 
-  const { activeIndex, renderTabs } = useTabs({
-    level: 2,
-    configs: [{ text: "Details" }, { text: "Set Bonus" }],
-  });
+  const { activeIndex, tabProps, Tabs } = useTabs();
 
   return (
     <div className="h-full flex flex-col">
-      {renderTabs()}
+      <Tabs {...tabProps} level={2} configs={["Details", "Set Bonus"]} />
 
       <CarouselSpace className="mt-3 grow" current={activeIndex}>
         <div className="h-full custom-scrollbar">
@@ -66,24 +64,26 @@ export function ArtifactsTab() {
 
 export function ConstellationTab() {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
+  const character = useSelector(selectCharacter);
   return (
     <ConstellationList
-      char={char}
-      onClickIcon={(i) => dispatch(updateCharacter({ cons: char.cons === i + 1 ? i : i + 1 }))}
+      character={character}
+      onClickIcon={(i) => dispatch(updateCharacter({ cons: character.cons === i + 1 ? i : i + 1 }))}
     />
   );
 }
 
 export function TalentsTab() {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
+  const character = useSelector(selectCharacter);
   const party = useSelector(selectParty);
+  const characterData = useCharacterData();
 
   return (
     <TalentList
-      key={char.name}
-      char={char}
+      key={character.name}
+      character={character}
+      characterData={characterData}
       onChangeTalentLevel={(type, level) => {
         dispatch(updateCharacter({ [type]: level }));
       }}

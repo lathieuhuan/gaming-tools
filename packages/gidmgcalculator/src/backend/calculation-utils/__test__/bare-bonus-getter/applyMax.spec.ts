@@ -1,6 +1,6 @@
 import { TotalAttributeControl } from "@Src/backend/controls";
 import { EffectDynamicMax } from "@Src/backend/types";
-import { __genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCharacterDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "../test-utils";
 
 class Tester extends BareBonusGetterTester {
@@ -31,7 +31,7 @@ let tester: Tester;
 
 beforeEach(() => {
   totalAttrCtrl = new TotalAttributeControl();
-  tester = new Tester(__genCalculationInfo(), totalAttrCtrl);
+  tester = new Tester(__genCharacterDataTester(), totalAttrCtrl);
 });
 
 test("max config as number", () => {
@@ -122,7 +122,7 @@ test("max has extra", () => {
   };
   tester._expect(3);
 
-  tester.updateCharacter("cons", 5);
+  tester.__updateCharacter("cons", 5);
   tester._expect(4);
 });
 

@@ -1,8 +1,13 @@
+import { useEffect, useRef } from "react";
 import { Rarity } from "rond";
 
 import type { Artifact } from "@Src/types";
 import Object_ from "@Src/utils/object-utils";
 import { ArtifactCard, type ArtifactCardAction } from "../../ArtifactCard";
+
+type Handler = {
+  mousedown: (e: KeyboardEvent) => void;
+};
 
 interface ArtifactConfigProps {
   config?: Artifact;
@@ -27,11 +32,33 @@ export function ArtifactConfig({
   onUpdateConfig,
   onSelect,
 }: ArtifactConfigProps) {
+  const handler = useRef<Handler>({
+    mousedown: () => null,
+  });
+
+  handler.current.mousedown = (e: KeyboardEvent) => {
+    if (e.key === "Enter" && document.activeElement instanceof HTMLBodyElement && config) {
+      onSelect?.(config);
+    }
+  };
+
   const onClickRarityStar = (num: number) => {
     if (num !== config?.rarity) {
       onChangeRarity?.(num);
     }
   };
+
+  useEffect(() => {
+    const handleKeydown = (e: KeyboardEvent) => {
+      handler.current.mousedown(e);
+    };
+
+    document.addEventListener("keydown", handleKeydown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeydown);
+    };
+  }, []);
 
   return (
     <div className="h-full flex flex-col custom-scrollbar space-y-3">

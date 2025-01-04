@@ -65,8 +65,8 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
   useLayoutEffect(() => {
     const handleEnter = (e: KeyboardEvent) => {
       if (
-        inputRef?.current &&
         e.key === "Enter" &&
+        inputRef?.current &&
         document.activeElement === inputRef.current &&
         inputRef.current.value.length
       ) {
@@ -147,14 +147,6 @@ function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptionModel>
       afterSelect(item.code);
     }
   };
-
-  // const onDoubleClickPickerItem = async (item: T) => {
-  //   if (!onChange || !hasConfigStep) return;
-
-  //   if (await onChange(item, false)) {
-  //     afterSelect(item.code);
-  //   }
-  // };
 
   const itemWidthCls = [
     "max-w-1/3 basis-1/3 sm:w-1/4 sm:basis-1/4",
@@ -243,11 +235,11 @@ export function AppEntitySelect<T extends AppEntityOptionModel = AppEntityOption
 }: AppEntitySelectProps<T>) {
   return (
     <EntitySelectTemplate {...restProps} onClose={onClose}>
-      {(arg) => {
+      {(renderProps) => {
         return (
           <AppEntityOptions
             onClose={onClose}
-            {...arg}
+            {...renderProps}
             {...{
               data,
               initialChosenCode,

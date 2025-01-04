@@ -7,17 +7,17 @@ export enum ECalcStatModule {
   RESIST = "RESIST",
 }
 
-export const TRANSFORMATIVE_REACTION_INFO: Record<
+export const TRANSFORMATIVE_REACTION_CONFIG: Record<
   TransformativeReaction,
-  { mult: number; dmgType: ActualAttackElement }
+  { mult: number; attElmt: ActualAttackElement }
 > = {
-  bloom: { mult: 2, dmgType: "dendro" },
-  hyperbloom: { mult: 3, dmgType: "dendro" },
-  burgeon: { mult: 3, dmgType: "dendro" },
-  burning: { mult: 0.25, dmgType: "pyro" },
-  swirl: { mult: 0.6, dmgType: "absorb" },
-  superconduct: { mult: 1.5, dmgType: "cryo" },
-  electroCharged: { mult: 2, dmgType: "electro" },
-  overloaded: { mult: 2.75, dmgType: "pyro" },
-  shattered: { mult: 3, dmgType: "phys" },
+  bloom: { mult: 2, attElmt: "dendro" },
+  hyperbloom: { mult: 3, attElmt: "dendro" },
+  burgeon: { mult: 3, attElmt: "dendro" },
+  burning: { mult: 0.25, attElmt: "pyro" },
+  swirl: { mult: 0.6, attElmt: "absorb" },
+  superconduct: { mult: 1.5, attElmt: "cryo" },
+  electroCharged: { mult: 2, attElmt: "electro" },
+  overloaded: { mult: 2.75, attElmt: "pyro" },
+  shattered: { mult: 3, attElmt: "phys" },
 };

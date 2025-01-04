@@ -1,5 +1,5 @@
-import type { AttributeStat, WeaponType } from "./common.types";
-import type { CalcItemType, EntityBonus, EntityBonusCore, EntityBuff } from "./app-entity";
+import type { EntityBonus, EntityBonusCore, EntityBuff } from "./app-entity";
+import type { AttributeStat, CalcItemBasedOn, CalcItemType, WeaponType } from "./common.types";
 
 export type AppWeapon = {
   /** This is id */
@@ -29,7 +29,7 @@ type WeaponCalcItem = {
   /** Default to 1/3 [multFactors] */
   incre?: number;
   /** Default to 'atk' */
-  basedOn?: "atk" | "hp";
+  basedOn?: CalcItemBasedOn;
 };
 
 // ========== BONUS ==========

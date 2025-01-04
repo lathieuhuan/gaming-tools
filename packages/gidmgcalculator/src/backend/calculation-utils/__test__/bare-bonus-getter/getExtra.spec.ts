@@ -1,11 +1,11 @@
 import { EffectExtra } from "@Src/backend/types";
-import { __genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCharacterDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "../test-utils";
 
 let getExtra: BareBonusGetterTester["getExtra"];
 
 beforeEach(() => {
-  getExtra = new BareBonusGetterTester(__genCalculationInfo())["getExtra"];
+  getExtra = new BareBonusGetterTester(__genCharacterDataTester())["getExtra"];
 });
 
 test("getExtra", () => {

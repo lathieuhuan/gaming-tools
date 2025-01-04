@@ -24,7 +24,8 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
     unstyled,
     transparent,
     size = "small",
-    value = 0,
+    value,
+    defaultValue = 0,
     min = 0,
     max = 9999,
     maxDecimalDigits = 0,
@@ -33,10 +34,10 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
     onChange,
     ...nativeProps
   } = props;
-  const [localValue, setLocalValue] = useState(`${value}`);
+  const [localValue, setLocalValue] = useState(`${value ?? defaultValue}`);
 
   useEffect(() => {
-    if (localValue !== "-" && value !== +localValue) {
+    if (value !== undefined && localValue !== "-" && value !== +localValue) {
       setLocalValue(`${value}`);
     }
   }, [value]);
@@ -45,7 +46,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
     if (newLocalValue !== localValue) {
       setLocalValue(newLocalValue);
     }
-    if (newValue !== value) {
+    if (value === undefined || newValue !== value) {
       onChange?.(newValue);
     }
   };

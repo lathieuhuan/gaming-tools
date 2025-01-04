@@ -1,21 +1,23 @@
-import type { PartyData } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectCharacter, changeModCtrlInput, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
-import { SelfDebuffsView } from "@Src/components";
-import { useCalcAppCharacter } from "../../CalculatorInfoProvider";
+import { useCharacterData } from "../../ContextProvider";
 
-export default function SelfDebuffs({ partyData }: { partyData: PartyData }) {
+//
+import { SelfDebuffsView } from "@Src/components";
+
+export default function SelfDebuffs() {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
+  const character = useSelector(selectCharacter);
   const selfDebuffCtrls = useSelector(
     (state) => state.calculator.setupsById[state.calculator.activeId].selfDebuffCtrls
   );
-  const appChar = useCalcAppCharacter();
+  const characterData = useCharacterData();
 
   return (
     <SelfDebuffsView
       mutable
-      {...{ char, appChar, partyData }}
+      character={character}
+      characterData={characterData}
       modCtrls={selfDebuffCtrls}
       getHanlders={({ ctrl }) => {
         const path: ToggleModCtrlPath = {

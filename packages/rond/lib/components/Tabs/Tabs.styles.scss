@@ -1,0 +1,30 @@
+.ron-tabs {
+  width: 100%;
+  display: flex;
+  border-radius: 9999px;
+  overflow: hidden;
+
+  & > :not([hidden]) ~ :not([hidden]) {
+    border-right-width: 2px;
+    border-left-width: 2px;
+    border-color: var(--ron-color-dark-surface-3);
+  }
+}
+
+.ron-tab {
+  width: 50%;
+  padding: 0.125rem 0;
+  color: var(--ron-color-on-light);
+  font-weight: 700;
+}
+
+.ron-tab--lv1-active {
+  background-color: var(--ron-color-heading);
+}
+.ron-tab--lv2-active {
+  background-color: var(--ron-color-secondary-1);
+}
+
+.ron-tab--inactive {
+  background-color: var(--ron-color-light-surface-3);
+}

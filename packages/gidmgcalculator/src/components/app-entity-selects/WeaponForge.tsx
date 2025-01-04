@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from "react";
-import { Modal } from "rond";
+import { FancyBackSvg, Modal } from "rond";
 import { AppWeapon, WeaponType } from "@Backend";
 
 import type { Weapon } from "@Src/types";
@@ -11,7 +11,6 @@ import Entity_ from "@Src/utils/entity-utils";
 import { WeaponCard } from "../WeaponCard";
 import { WeaponFilter, WeaponFilterState } from "./components/WeaponFilter";
 import { AppEntitySelect, AppEntitySelectProps } from "./components/AppEntitySelect";
-import { RiArrowGoBackLine } from "react-icons/ri";
 
 const transformWeapon = (weapon: AppWeapon) =>
   Object_.pickProps(weapon, ["code", "name", "beta", "icon", "type", "rarity"]);
@@ -114,7 +113,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
             }}
             actions={[
               {
-                icon: <RiArrowGoBackLine className="text-lg" />,
+                icon: <FancyBackSvg />,
                 className: "sm:hidden",
                 onClick: () => {
                   if (selectBody) selectBody.scrollLeft = 0;

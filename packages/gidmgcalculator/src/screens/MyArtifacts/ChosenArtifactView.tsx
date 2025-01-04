@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { Button, clsx, ConfirmModal } from "rond";
+import { Button, clsx, ConfirmModal, TrashCanSvg } from "rond";
 import { MdEdit } from "react-icons/md";
 
 import { UserArtifact } from "@Src/types";
@@ -9,7 +9,6 @@ import { removeArtifact, swapArtifactOwner, updateUserArtifact, updateUserArtifa
 
 // Components
 import { ArtifactCard, Tavern } from "@Src/components";
-import { IconTrashCan } from "@Src/components/icons";
 
 interface ChosenArtifactViewProps {
   artifact?: UserArtifact;
@@ -68,7 +67,7 @@ export function ChosenArtifactView({ artifact, onRemoveArtifact, onRequestEditAr
         actions={[
           {
             title: "Discard",
-            icon: <IconTrashCan />,
+            icon: <TrashCanSvg />,
             onClick: () => setModalType("REMOVE_ARTIFACT"),
           },
           {

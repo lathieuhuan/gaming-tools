@@ -1,7 +1,7 @@
 import { TotalAttributeControl } from "@Src/backend/controls";
 import { AppliedAttributeBonus, AppliedBonuses, EntityBuff } from "@Src/backend/types";
 import { Character } from "@Src/types";
-import { __genCalculationInfo } from "@UnitTest/test-utils";
+import { __genCharacterDataTester } from "@UnitTest/test-utils";
 import { AppliedBonusesGetter } from "../../applied-bonuses-getter";
 
 /**
@@ -16,7 +16,7 @@ class Tester extends AppliedBonusesGetter {
   description = "";
 
   _updateCharacter<TKey extends keyof Character>(key: TKey, value: Character[TKey]) {
-    this.info.char[key] = value;
+    this.characterData.character[key] = value;
   }
 
   _getAppliedBonuses(effects: EntityBuff["effects"]) {
@@ -43,7 +43,7 @@ let tester: Tester;
 
 beforeEach(() => {
   totalAttrCtrl = new TotalAttributeControl();
-  tester = new Tester(__genCalculationInfo(), totalAttrCtrl);
+  tester = new Tester(__genCharacterDataTester(), totalAttrCtrl);
 });
 
 test("effects is required on buff", () => {

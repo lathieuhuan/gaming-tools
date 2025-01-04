@@ -4,20 +4,20 @@ import {
   PanelConstellation,
   PanelGears,
   PanelTalents,
-  MyCharacterDetailProviders,
-} from "../MyCharacterDetail";
-import { MyCharactersModalsProvider } from "../MyCharactersModalsProvider";
+  ContextProvider as DetailContextProvider,
+} from "../CharacterDetail";
+import { ContextProvider } from "../ContextProvider";
 import { MyCharactersTopBar } from "./MyCharactersTopBar";
 
 export function MyCharactersLarge() {
   const sectionCls = "p-4 rounded-lg bg-surface-1";
 
   return (
-    <MyCharactersModalsProvider>
+    <ContextProvider>
       <div className="h-full flex flex-col bg-surface-3">
         <MyCharactersTopBar />
 
-        <MyCharacterDetailProviders>
+        <DetailContextProvider>
           <div className="grow overflow-auto flex-center">
             <div className="py-4 flex h-98/100 space-x-2 custom-scrollbar" style={{ width: "92%" }}>
               <div className={sectionCls}>
@@ -48,8 +48,8 @@ export function MyCharactersLarge() {
               </div>
             </div>
           </div>
-        </MyCharacterDetailProviders>
+        </DetailContextProvider>
       </div>
-    </MyCharactersModalsProvider>
+    </ContextProvider>
   );
 }

@@ -1,5 +1,5 @@
 import type { PartiallyRequired } from "rond";
-import type { Character, PartyData } from "@Src/types";
+import type { ArtifactModCtrl } from "@Src/types";
 import type {
   ActualAttackElement,
   ActualAttackPattern,
@@ -8,20 +8,14 @@ import type {
   AttackBonusType,
   AttackPattern,
   AttributeStat,
+  CalcItemType,
   CoreStat,
   LevelableTalentType,
   QuickenReaction,
 } from "./common.types";
-import type { AppCharacter, CharacterBuffNormalAttackConfig } from "./app-character.types";
-import type { CalcItemType } from "./app-entity";
+import type { CharacterBuffNormalAttackConfig } from "./app-character.types";
 
 export type AttackReaction = AmplifyingReaction | QuickenReaction | null;
-
-export type CalculationInfo = {
-  char: Character;
-  appChar: AppCharacter;
-  partyData: PartyData;
-};
 
 /** Actually does not contain "hp_" | "atk_" | "def_" */
 export type TotalAttribute = Record<AttributeStat | "hp_base" | "atk_base" | "def_base", number>;
@@ -63,21 +57,40 @@ export type NormalAttacksConfig = Partial<Record<AttackPattern, Omit<CharacterBu
 
 export type CalculationAspect = "nonCrit" | "crit" | "average";
 
-type CalculationFinalResultAttackItem = {
+type CalculationFinalResultCommon = Record<CalculationAspect, number | number[]>;
+
+type CalculationFinalResultAttackItem = CalculationFinalResultCommon & {
   type: Extract<CalcItemType, "attack">;
   attElmt: ActualAttackElement;
   attPatt: ActualAttackPattern;
+  reaction: AttackReaction;
 };
 
-type CalculationFinalResultOtherItem = {
+type CalculationFinalResultOtherItem = CalculationFinalResultCommon & {
   type: Exclude<CalcItemType, "attack">;
 };
 
-export type CalculationFinalResultItem = Record<CalculationAspect, number | number[]> &
-  (CalculationFinalResultAttackItem | CalculationFinalResultOtherItem);
+export type CalculationFinalResultItem = CalculationFinalResultAttackItem | CalculationFinalResultOtherItem;
 
 export type CalculationFinalResultKey = LevelableTalentType | "RXN_CALC" | "WP_CALC";
 
 export type CalculationFinalResultGroup = Record<string, CalculationFinalResultItem>;
 
 export type CalculationFinalResult = Record<CalculationFinalResultKey, CalculationFinalResultGroup>;
+
+// OPTIMIZER
+
+export type OptimizerArtifactModConfigs = {
+  [code: string]: ArtifactModCtrl[];
+};
+
+export type OptimizerAllArtifactModConfigs = {
+  buffs: OptimizerArtifactModConfigs;
+  debuffs: OptimizerArtifactModConfigs;
+};
+
+export type OptimizerExtraConfigs = {
+  preferSet: boolean;
+  minEr?: number;
+  // minEm?: number;
+};

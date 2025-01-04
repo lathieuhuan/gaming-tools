@@ -1,23 +1,12 @@
-import type { Character, PartyData } from "@Src/types";
-import type {
-  AppCharacter,
-  CalculationInfo,
-  EffectApplicableCondition,
-  EffectUsableCondition,
-} from "@Src/backend/types";
+import type { Character } from "@Src/types";
+import type { EffectApplicableCondition, EffectUsableCondition } from "@Src/backend/types";
+import type { CharacterData } from "../common-utils/character-data";
 
 import TypeCounter from "@Src/utils/type-counter";
-import { GeneralCalc } from "@Src/backend/common-utils";
 import { isGrantedEffect } from "./isGrantedEffect";
 import { isPassedComparison } from "./isPassedComparison";
 
-function isUsableEffect(
-  condition: EffectUsableCondition,
-  appChar: AppCharacter,
-  partyData: PartyData,
-  inputs: number[],
-  elmtCounter = GeneralCalc.countElements(partyData, appChar)
-) {
+function isUsableEffect(condition: EffectUsableCondition, characterData: CharacterData, inputs: number[]) {
   const { checkInput, checkParty } = condition;
 
   if (checkInput !== undefined) {
@@ -37,16 +26,14 @@ function isUsableEffect(
 
     switch (checkParty.type) {
       case "DISTINCT_ELMT":
-        input = elmtCounter.keys.length;
+        input = characterData.allElmtCount.keys.length;
         break;
       case "MIXED":
-        if (appChar.nation === "natlan") input += 1;
+        input = characterData.appCharacter.nation === "natlan" ? 1 : 0;
 
-        for (const teammate of partyData) {
-          if (teammate && (teammate.nation === "natlan" || teammate.vision !== appChar.vision)) {
-            input += 1;
-          }
-        }
+        characterData.forEachTeammate((data) => {
+          input += data.nation === "natlan" || data.vision !== characterData.appCharacter.vision ? 1 : 0;
+        });
         break;
     }
     if (!isPassedComparison(input, checkParty.value, checkParty.comparison)) {
@@ -58,12 +45,12 @@ function isUsableEffect(
 
 function isAvailableEffect(
   condition: EffectApplicableCondition,
-  char: Character,
+  character: Character,
   inputs: number[],
   fromSelf: boolean
 ): boolean {
   if (fromSelf) {
-    if (!isGrantedEffect(condition, char)) return false;
+    if (!isGrantedEffect(condition, character)) return false;
   } else if (condition.altIndex !== undefined && !inputs[condition.altIndex]) {
     return false;
   }
@@ -72,25 +59,25 @@ function isAvailableEffect(
 
 export function isApplicableEffect(
   condition: EffectApplicableCondition,
-  info: CalculationInfo,
+  characterData: CharacterData,
   inputs: number[],
   fromSelf = false
 ): boolean {
-  const elmtCounter = GeneralCalc.countElements(info.partyData, info.appChar);
+  const allElmtCount = characterData.allElmtCount;
 
-  if (!isUsableEffect(condition, info.appChar, info.partyData, inputs, elmtCounter)) {
+  if (!isUsableEffect(condition, characterData, inputs)) {
     return false;
   }
-  if (!isAvailableEffect(condition, info.char, inputs, fromSelf)) {
+  if (!isAvailableEffect(condition, characterData.character, inputs, fromSelf)) {
     return false;
   }
 
   const { totalPartyElmtCount, partyElmtCount, partyOnlyElmts } = condition;
 
-  if (condition.forWeapons && !condition.forWeapons.includes(info.appChar.weaponType)) {
+  if (condition.forWeapons && !condition.forWeapons.includes(characterData.appCharacter.weaponType)) {
     return false;
   }
-  if (condition.forElmts && !condition.forElmts.includes(info.appChar.vision)) {
+  if (condition.forElmts && !condition.forElmts.includes(characterData.appCharacter.vision)) {
     return false;
   }
 
@@ -99,17 +86,17 @@ export function isApplicableEffect(
 
     switch (comparison) {
       case "MAX":
-        if (elmtCounter.get(elements) > value) return false;
+        if (allElmtCount.get(elements) > value) return false;
     }
   }
   if (partyElmtCount) {
     const requiredEntries = new TypeCounter(partyElmtCount).entries;
 
-    if (requiredEntries.some(([type, value]) => elmtCounter.get(type) < value)) {
+    if (requiredEntries.some(([type, value]) => allElmtCount.get(type) < value)) {
       return false;
     }
   }
-  if (partyOnlyElmts && elmtCounter.keys.some((elementType) => !partyOnlyElmts.includes(elementType))) {
+  if (partyOnlyElmts && allElmtCount.keys.some((elementType) => !partyOnlyElmts.includes(elementType))) {
     return false;
   }
   return true;

@@ -54,21 +54,21 @@ export function initNewSessionWithCharacter(character: CharacterForInit): AppThu
     const { userWps, userArts } = getState().userdb;
 
     const ID = Date.now();
-    const appChar = $AppCharacter.get(character.name);
+    const appCharacter = $AppCharacter.get(character.name);
     const data = parseUserCharacter({
       character,
       userWps,
       userArts,
-      weaponType: appChar.weaponType,
+      weaponType: appCharacter.weaponType,
       seedID: ID + 1,
     });
-    const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, data.char.name);
+    const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, data.character.name);
 
     dispatch(
       checkBeforeInitNewSession({
         ID,
         calcSetup: {
-          char: data.char,
+          char: data.character,
           selfBuffCtrls: selfBuffCtrls,
           selfDebuffCtrls: selfDebuffCtrls,
           weapon: data.weapon,
@@ -325,12 +325,7 @@ export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeam
         debuffCtrls: tmDebuffCtrls,
       };
 
-      const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls([
-        {
-          code: artifact.code,
-          bonusLv: 1,
-        },
-      ]);
+      const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts);
 
       dispatch(
         updateSetupImportInfo({

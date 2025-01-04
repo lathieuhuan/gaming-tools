@@ -12,9 +12,9 @@ import {
   PanelConstellation,
   PanelGears,
   PanelTalents,
-  MyCharacterDetailProviders,
-} from "../MyCharacterDetail";
-import { MyCharactersModalsProvider } from "../MyCharactersModalsProvider";
+  ContextProvider as DetailContextProvider,
+} from "../CharacterDetail";
+import { ContextProvider } from "../ContextProvider";
 import { MyCharactersSmallMenu } from "./MyCharactersSmallMenu";
 
 export function MyCharactersSmall() {
@@ -25,10 +25,10 @@ export function MyCharactersSmall() {
   const closeMenu = () => setMenuActive(false);
 
   return (
-    <MyCharactersModalsProvider>
+    <ContextProvider>
       <div className="h-full flex flex-col">
         <div className="p-4 grow hide-scrollbar bg-surface-1">
-          <MyCharacterDetailProviders>
+          <DetailContextProvider>
             <SwitchNode
               value={activePanelI}
               cases={[
@@ -58,7 +58,7 @@ export function MyCharactersSmall() {
                 { value: 3, element: <PanelTalents /> },
               ]}
             />
-          </MyCharacterDetailProviders>
+          </DetailContextProvider>
         </div>
 
         <MobileBottomNav
@@ -83,6 +83,6 @@ export function MyCharactersSmall() {
           <MyCharactersSmallMenu onSelect={(name) => dispatch(viewCharacter(name))} onClose={closeMenu} />
         </BottomSheet>
       </div>
-    </MyCharactersModalsProvider>
+    </ContextProvider>
   );
 }

@@ -58,6 +58,10 @@ export default class Object_ {
     return object;
   }
 
+  static assign<TObj extends Record<PropertyKey, unknown>>(obj: TObj, props: Partial<TObj>): TObj {
+    return Object.assign(obj, props);
+  }
+
   static clone<T>(item: T): T {
     try {
       return structuredClone(item);

@@ -1,0 +1,67 @@
+import isEqual from "react-fast-compare";
+
+import type { OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "@Backend";
+import type {
+  OTM_InitRequest,
+  OTM_LoadRequest,
+  OTM_OneRunResponse,
+  OTM_OptimizeRequest,
+} from "./optimize-manager.types";
+import { SetupOptimizer } from "./setup-optimizer";
+
+export class OptimizeTester {
+  private optimizer?: SetupOptimizer;
+  modConfig?: OptimizerAllArtifactModConfigs;
+  extraConfigs?: OptimizerExtraConfigs;
+
+  constructor(private active = false) {}
+
+  init(params: OTM_InitRequest["params"]) {
+    if (this.active) {
+      this.optimizer = new SetupOptimizer(...params);
+    }
+  }
+
+  load(params: OTM_LoadRequest["params"]) {
+    if (this.active) {
+      this.optimizer?.load(...params);
+    }
+  }
+
+  optimize(optimizeParams: OTM_OptimizeRequest["optimizeParams"]) {
+    if (this.active) {
+      this.modConfig = optimizeParams[0];
+      this.extraConfigs = optimizeParams[1];
+    }
+  }
+
+  test(response: OTM_OneRunResponse) {
+    const { artifacts, result, totalAttr, attkBonuses, calcItemParams } = response;
+    const handledResult = this.optimizer!.handleSet(artifacts, this.modConfig!);
+
+    if (handledResult) {
+      const [expectedtotalAttr, archive, calculator] = handledResult;
+      const expectedAttkBonuses = archive.serialize();
+
+      const expectedResult = calculator
+        .genTalentCalculator(calcItemParams.pattern)
+        .calculateItem(calcItemParams.calcItem, calcItemParams.elmtModCtrls, calcItemParams.infusedElmt);
+
+      if (!isEqual(result, expectedResult)) {
+        console.log("UNEXPECTED RESULT");
+        console.log("Expect:", expectedResult);
+        console.log("Actual:", result);
+      }
+      if (!isEqual(totalAttr, expectedtotalAttr)) {
+        console.log("UNEXPECTED TOTAL ATTRIBUTE");
+        console.log("Expect:", expectedtotalAttr);
+        console.log("Actual:", totalAttr);
+      }
+      if (!isEqual(attkBonuses, expectedAttkBonuses)) {
+        console.log("UNEXPECTED ATTACK BONUSES");
+        console.log("Expect:", expectedAttkBonuses);
+        console.log("Actual:", attkBonuses);
+      }
+    }
+  }
+}

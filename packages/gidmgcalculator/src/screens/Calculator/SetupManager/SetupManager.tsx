@@ -1,16 +1,21 @@
+import { useState } from "react";
 import { FaSkull } from "react-icons/fa";
+import { FaSun } from "react-icons/fa6";
 import { IoDocumentText } from "react-icons/io5";
-import { Button, useScreenWatcher } from "rond";
+import { Button, Modal, useScreenWatcher } from "rond";
 
+import { IS_DEV_ENV } from "@Src/constants";
+import { selectActiveId, selectSetupManageInfos } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { selectTraveler, updateUI } from "@Store/ui-slice";
+import { useOptimizerState } from "../ContextProvider";
 
 // Component
-import { SetupSelect } from "./SetupSelect";
 import SectionArtifacts from "./SectionArtifacts";
 import SectionParty from "./SectionParty";
 import SectionTarget from "./SectionTarget";
 import SectionWeapon from "./SectionWeapon";
+import { SetupSelect } from "./SetupSelect";
 
 interface SetupManagerProps {
   isModernUI?: boolean;
@@ -19,8 +24,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const targetConfig = useSelector((state) => state.ui.calcTargetConfig);
-
-  const isMobile = !screenWatcher.isFromSize("sm");
+  const traveler = useSelector(selectTraveler);
 
   const updateTargetConfig = (active: boolean, onOverview: boolean) => {
     dispatch(updateUI({ calcTargetConfig: { active, onOverview } }));
@@ -32,7 +36,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 
   const renderMainContent = (cls = "") => (
     <div className={`hide-scrollbar space-y-2 scroll-smooth ${cls}`}>
-      <SectionParty />
+      <SectionParty key={traveler} />
       <SectionWeapon />
       <SectionArtifacts />
 
@@ -45,7 +49,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
     </div>
   );
 
-  if (isMobile && isModernUI) {
+  if (!screenWatcher.isFromSize("sm") && isModernUI) {
     return renderMainContent("h-full");
   }
 
@@ -58,18 +62,86 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
       {renderMainContent("grow")}
 
       <div className="mt-4 grid grid-cols-3">
-        <div className="flex items-center">
-          {!targetConfig.onOverview ? <Button boneOnly icon={<FaSkull />} onClick={onClickTargetConfigButton} /> : null}
-        </div>
+        <div />
 
         <div className="flex-center">
           <Button
             className="mx-auto"
-            icon={<IoDocumentText />}
+            title="Setup Manager"
+            icon={<IoDocumentText className="text-xl" />}
             onClick={() => dispatch(updateUI({ setupDirectorActive: true }))}
           />
         </div>
+
+        <div className="flex justify-end gap-3">
+          {!targetConfig.onOverview ? (
+            <Button
+              title="Target"
+              boneOnly
+              icon={<FaSkull className="text-lg" />}
+              onClick={onClickTargetConfigButton}
+            />
+          ) : null}
+
+          <OptimizationDeptContact />
+        </div>
       </div>
     </div>
+  );
+}
+
+function OptimizationDeptContact() {
+  const { toggle } = useOptimizerState();
+  const [activeConfirm, setActiveConfirm] = useState(false);
+  const infos = useSelector(selectSetupManageInfos);
+  const activeId = useSelector(selectActiveId);
+
+  const activeInfo = infos.find((info) => info.ID === activeId);
+
+  const onConfirm = (testMode = false) => {
+    toggle("testMode", testMode);
+    toggle("active", true);
+    setActiveConfirm(false);
+  };
+
+  return (
+    <>
+      <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={() => setActiveConfirm(true)} />
+
+      <Modal
+        active={activeConfirm}
+        preset="small"
+        className="bg-surface-1"
+        title="Optimize"
+        withActions
+        moreActions={[
+          {
+            children: "Test Mode",
+            className: !IS_DEV_ENV && "hidden",
+            onClick: () => onConfirm(true),
+          },
+        ]}
+        confirmButtonProps={{
+          children: "Proceed",
+          autoFocus: true,
+        }}
+        onConfirm={() => onConfirm()}
+        onClose={() => setActiveConfirm(false)}
+      >
+        <ul className="pl-6 pr-2 list-disc space-y-2">
+          <li>
+            <div className="space-y-1">
+              <p>
+                Optimize <span className="text-primary-1">{activeInfo?.name}</span>
+              </p>
+              <p className="text-sm">
+                The Optimizer will use every configuration of this Setup except the main character's Artifacts and
+                Artifact buffs & debuffs.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </Modal>
+    </>
   );
 }

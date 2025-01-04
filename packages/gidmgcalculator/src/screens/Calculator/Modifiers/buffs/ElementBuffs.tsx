@@ -1,6 +1,6 @@
 import { Fragment, useState } from "react";
 import { VersatileSelect } from "rond";
-import { ELEMENT_TYPES, AmplifyingReaction, CalcItem, ElementType } from "@Backend";
+import { ELEMENT_TYPES, AmplifyingReaction, TalentCalcItem, ElementType } from "@Backend";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
@@ -10,6 +10,9 @@ import {
   updateCalcSetup,
   updateResonance,
 } from "@Store/calculator-slice";
+import { useCharacterData } from "../../ContextProvider";
+
+//
 import {
   GenshinModifierView,
   QuickenBuffItem,
@@ -17,20 +20,19 @@ import {
   ResonanceBuffItem,
   VapMeltBuffItem,
 } from "@Src/components";
-import { useCalcAppCharacter } from "../../CalculatorInfoProvider";
 
-const hasAbsorbingAttackIn = (items: CalcItem[]) => {
-  return items.some((item) => item.attElmt === "absorb");
+const hasAbsorbingAttackIn = (items: TalentCalcItem[]) => {
+  return items.some((item) => !item.type || (item.type === "attack" && item.attElmt === "absorb"));
 };
 
 export default function ElementBuffs() {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
+  const character = useSelector(selectCharacter);
   const elmtModCtrls = useSelector(selectElmtModCtrls);
   const attkBonuses = useSelector(selectAttkBonuses);
   const customInfusion = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].customInfusion);
 
-  const { vision, weaponType, calcList } = useCalcAppCharacter();
+  const { vision, weaponType, calcList } = useCharacterData().appCharacter;
 
   const { element: infusedElement } = customInfusion;
   const isInfused = infusedElement !== "phys";
@@ -82,7 +84,7 @@ export default function ElementBuffs() {
         key={reaction}
         mutable
         checked={activated}
-        {...{ reaction, element, characterLv: char.level, attkBonuses }}
+        {...{ reaction, element, characterLv: character.level, attkBonuses }}
         onToggle={() => {
           dispatch(
             updateCalcSetup({

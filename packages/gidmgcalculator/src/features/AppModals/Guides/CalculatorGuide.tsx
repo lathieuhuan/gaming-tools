@@ -3,9 +3,9 @@ import { SiTarget } from "react-icons/si";
 import { MdMoreVert } from "react-icons/md";
 import { IoDocumentText } from "react-icons/io5";
 import { BiImport } from "react-icons/bi";
+import { TrashCanSvg } from "rond";
 
 import { Green, Yellow } from "@Src/components";
-import { IconTrashCan } from "@Src/components/icons";
 
 interface ListProps {
   children: React.ReactNode;
@@ -21,7 +21,7 @@ export function ListDisc(props: ListProps) {
 
 export function CalculatorGuide() {
   const quickActions = [
-    { Icon: IconTrashCan, desc: "Remove the setup" },
+    { Icon: TrashCanSvg, desc: "Remove the setup" },
     { Icon: FaShareAlt, desc: "Encode the setup to share it with others" },
     { Icon: FaSave, desc: "Save the setup to My Setups" },
     { Icon: FaCopy, desc: "Duplicate the setup" },

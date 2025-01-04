@@ -4,9 +4,10 @@ import type { ArtifactModCtrl, ModifierCtrl, Party } from "@Src/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import { $AppArtifact } from "@Src/services";
+import { getArtifactDescription } from "@Src/utils/description-parsers";
 import Array_ from "@Src/utils/array-utils";
 import { GenshinModifierView } from "../GenshinModifierView";
-import { renderModifiers, getArtifactDescription } from "./modifiers.utils";
+import { renderModifiers } from "./modifiers.utils";
 
 interface RenderArtifactBuffsArgs<T extends ModifierCtrl = ModifierCtrl> {
   mutable?: boolean;
@@ -27,10 +28,9 @@ function renderArtifactModifiers<T extends ModifierCtrl = ModifierCtrl>({
 }: RenderArtifactBuffsArgs<T>) {
   const data = $AppArtifact.getSet(code);
   if (!data) return [];
-  const { buffs = [] } = data;
 
   return ctrls.map((ctrl, index) => {
-    const buff = Array_.findByIndex(buffs, ctrl.index);
+    const buff = Array_.findByIndex(data.buffs, ctrl.index);
     if (!buff) return null;
 
     const description = getArtifactDescription(data, buff);

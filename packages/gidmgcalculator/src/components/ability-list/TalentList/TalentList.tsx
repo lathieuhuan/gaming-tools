@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
-import { TALENT_TYPES, LevelableTalentType, CharacterCalc, GeneralCalc } from "@Backend";
+import { TALENT_TYPES, LevelableTalentType, GeneralCalc, CharacterReadData } from "@Backend";
 
 import type { Character, Party } from "@Src/types";
-import { $AppCharacter } from "@Src/services";
 import { genSequentialOptions } from "@Src/utils";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
 
@@ -22,20 +21,20 @@ type RenderedTalentConfig = {
 
 interface TalentListProps {
   className?: ClassValue;
-  char: Character;
+  character: Character;
   party?: Party;
+  characterData: CharacterReadData;
   /** Default to true */
   mutable?: boolean;
   onChangeTalentLevel?: (talentType: LevelableTalentType, newLevel: number) => void;
 }
 export function TalentList(props: TalentListProps) {
-  const { char, mutable = true } = props;
+  const { character, characterData, mutable = true } = props;
+  const { appCharacter } = characterData;
   const [atDetail, setAtDetail] = useState(false);
   const [detailIndex, setDetailIndex] = useState(-1);
 
-  const appChar = $AppCharacter.get(char.name);
-  const { weaponType, vision, activeTalents, passiveTalents } = appChar;
-  const partyData = props.party ? $AppCharacter.getPartyData(props.party) : undefined;
+  const { weaponType, vision, activeTalents, passiveTalents } = appCharacter;
   const elmtText = `text-${vision}`;
   const numOfActives = Object.keys(activeTalents).length;
 
@@ -83,18 +82,13 @@ export function TalentList(props: TalentListProps) {
           const talent = activeTalents[talentType];
           if (!talent) return null;
 
-          const xtraLevel = CharacterCalc.getTotalXtraTalentLv({
-            appChar,
-            talentType,
-            char,
-            partyData,
-          });
+          const xtraLevel = characterData.getTotalXtraTalentLv(talentType);
 
           const mutableLvNode = (
             <VersatileSelect
               title="Select Level"
               className={`w-12 ${elmtText} font-bold`}
-              value={isAltSprint ? 1 : char[talentType]}
+              value={isAltSprint ? 1 : character[talentType]}
               transparent
               options={genSequentialOptions(10)}
               onChange={(value) => (isAltSprint ? null : props.onChangeTalentLevel?.(talentType, +value))}
@@ -113,7 +107,7 @@ export function TalentList(props: TalentListProps) {
         })}
 
         {passiveTalents.map((talent, index) => {
-          const active = index === 2 || GeneralCalc.getAscension(char.level) >= (index === 0 ? 1 : 4);
+          const active = index === 2 || GeneralCalc.getAscension(character.level) >= (index === 0 ? 1 : 4);
           return renderTalent(
             {
               name: talent.name,
@@ -126,9 +120,9 @@ export function TalentList(props: TalentListProps) {
         })}
       </div>
 
-      {detailIndex !== -1 && detailIndex < numOfActives + appChar.passiveTalents.length ? (
+      {detailIndex !== -1 && detailIndex < numOfActives + appCharacter.passiveTalents.length ? (
         <TalentDetail
-          appChar={appChar}
+          appCharacter={appCharacter}
           detailIndex={detailIndex}
           onChangeDetailIndex={setDetailIndex}
           onClose={() => {

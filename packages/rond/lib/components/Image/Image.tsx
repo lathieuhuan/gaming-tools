@@ -14,7 +14,7 @@ export interface ImageProps {
   draggable?: boolean;
   /** Default to true */
   showFallbackOnError?: boolean;
-  defaultFallback?: any;
+  defaultFallback?: Record<string, unknown>;
   imgCls?: ClassValue;
   imgStyle?: React.CSSProperties;
   fallback?: React.ReactNode;

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { MdInventory } from "react-icons/md";
-import { Badge, Button, VersatileSelect } from "rond";
+import { Badge, Button, PouchSvg, VersatileSelect } from "rond";
 import { LEVELS, Level } from "@Backend";
 
 import { $AppWeapon } from "@Src/services";
@@ -77,9 +76,8 @@ export default function SectionWeapon() {
       <Button
         title="Inventory"
         className="absolute bottom-1 right-1"
-        size="large"
         boneOnly
-        icon={<MdInventory />}
+        icon={<PouchSvg className="text-xl" />}
         onClick={() => setModalType("SELECT_USER_WEAPON")}
       />
 

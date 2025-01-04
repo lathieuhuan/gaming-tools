@@ -1,26 +1,25 @@
-import type { Party, PartyData } from "@Src/types";
-import { useDispatch, useSelector } from "@Store/hooks";
+import type { Party } from "@Src/types";
+import { useDispatch } from "@Store/hooks";
 import {
-  selectCharacter,
   changeTeammateModCtrlInput,
   toggleTeammateModCtrl,
   type ToggleTeammateModCtrlPath,
 } from "@Store/calculator-slice";
 import { PartyDebuffsView } from "@Src/components";
+import { useCharacterData } from "../../ContextProvider";
 
 interface PartyDebuffsProps {
   party: Party;
-  partyData: PartyData;
 }
 export default function PartyDebuffs(props: PartyDebuffsProps) {
   const dispatch = useDispatch();
-  const char = useSelector(selectCharacter);
+  const characterData = useCharacterData();
 
   return (
     <PartyDebuffsView
       mutable
       {...props}
-      char={char}
+      characterData={characterData}
       getHanlders={({ ctrl, teammateIndex }) => {
         const path: ToggleTeammateModCtrlPath = {
           teammateIndex,

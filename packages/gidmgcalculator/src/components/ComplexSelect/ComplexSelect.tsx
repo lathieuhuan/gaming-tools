@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { clsx, useClickOutside } from "rond";
 
-const CLASS_BY_SIZE: Record<string, { option: string; icon?: string }> = {
+const CLASS_BY_SIZE = {
   small: {
     option: "text-base",
     icon: "text-sm",
@@ -11,12 +11,12 @@ const CLASS_BY_SIZE: Record<string, { option: string; icon?: string }> = {
     option: "text-lg",
     icon: "text-base",
   },
-};
+} satisfies Record<string, { option: string; icon?: string }>;
 
 interface ComplexSelectProps {
   className?: string;
   /** Default to 'medium' */
-  size?: "medium" | "small";
+  // size?: "medium" | "small";
   selectId: string;
   value?: string | number;
   options?: Array<{
@@ -29,7 +29,7 @@ interface ComplexSelectProps {
 }
 export function ComplexSelect({
   className,
-  size = "medium",
+  // size = "medium",
   selectId,
   value,
   options = [],
@@ -38,7 +38,7 @@ export function ComplexSelect({
 }: ComplexSelectProps) {
   const [isDropped, setIsDropped] = useState(false);
 
-  const classes = CLASS_BY_SIZE[size];
+  const classes = CLASS_BY_SIZE["medium"];
 
   const toggleDropdown = (newIsDropped: boolean) => {
     setIsDropped(newIsDropped);
@@ -68,9 +68,10 @@ export function ComplexSelect({
   };
 
   const { label } = options.find((option) => option.value === value) || {};
-  const nonActionOptionHeight = size === "medium" ? 32 : 28;
+  // const nonActionOptionHeight = size === "medium" ? 33.6 : 28;
+  const nonActionOptionHeight = 33.6;
   const dropHeight = options.reduce(
-    (accumulator, option) => accumulator + (option.renderActions ? 68 : nonActionOptionHeight),
+    (accumulator, option) => accumulator + (option.renderActions ? 69.6 : nonActionOptionHeight),
     0
   );
 
@@ -92,7 +93,7 @@ export function ComplexSelect({
       <div
         className={clsx(
           "absolute top-full z-20 w-full rounded-b-md bg-light-default text-black overflow-hidden transition-size duration-100 ease-linear",
-          isDropped && "border border-white"
+          isDropped && "border border-white shadow-common"
         )}
         style={{
           height: isDropped ? dropHeight : 0,
@@ -101,10 +102,10 @@ export function ComplexSelect({
         {options.map((option, i) => {
           return (
             <div key={i} className="group">
-              <div className="group-hover:bg-surface-3 group-hover:text-light-default">
+              <div className={clsx("group-hover:bg-surface-3 group-hover:text-light-default")}>
                 <button
                   className={clsx(
-                    "px-2 py-0.5 w-full text-left font-semibold truncate cursor-default hover:bg-surface-1",
+                    "px-2 py-0.5 w-full border-t border-b border-white text-left font-semibold truncate cursor-default hover:bg-surface-1",
                     classes.option
                   )}
                   onClick={onClickOption(option.value)}

@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import { RiArrowGoBackLine } from "react-icons/ri";
-import { ButtonGroup, Input, useChildListObserver, useIntersectionObserver } from "rond";
+import { ButtonGroup, FancyBackSvg, Input, useChildListObserver, useIntersectionObserver } from "rond";
 
 import { useSelector } from "@Store/hooks";
 import { selectChosenCharacter, selectUserCharacters } from "@Store/userdb-slice";
 import { $AppCharacter } from "@Src/services";
 import { GenshinImage } from "@Src/components";
-import { useMyCharactersModalCtrl } from "../MyCharactersModalsProvider";
+import { useMyCharactersModalCtrl } from "../ContextProvider";
 
 interface MyCharactersSmallMenuProps {
   onSelect: (name: string) => void;
@@ -20,7 +19,7 @@ export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
 
   const [keyword, setKeyword] = useState("");
 
-  const appChars = $AppCharacter.getAll();
+  const appCharacters = $AppCharacter.getAll();
 
   const { observedAreaRef: intersectObsArea, visibleMap, itemUtils } = useIntersectionObserver();
   const { observedAreaRef: listObsArea } = useChildListObserver({
@@ -43,24 +42,24 @@ export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
       ) : null}
 
       <div ref={listObsArea} className="px-4 grow hide-scrollbar">
-        {userChars.map((char) => {
-          const data = appChars.find((appChar) => appChar.name === char.name);
+        {userChars.map((character) => {
+          const data = appCharacters.find((appCharacter) => appCharacter.name === character.name);
 
           if (data) {
             const visible = visibleMap[data.code];
-            const hidden = shouldCheckKeyword && !char.name.toLowerCase().includes(lowerKeyword);
-            const isChosen = char.name === chosenChar;
+            const hidden = shouldCheckKeyword && !character.name.toLowerCase().includes(lowerKeyword);
+            const isChosen = character.name === chosenChar;
 
             return (
               <button
-                key={char.name}
+                key={character.name}
                 {...itemUtils.getProps(data.code, [
                   "w-full py-2 border-b border-surface-border flex items-center gap-3",
                   hidden && "hidden",
                 ])}
                 onClick={() => {
                   if (!isChosen) {
-                    props.onSelect(char.name);
+                    props.onSelect(character.name);
                   }
                   props.onClose();
                 }}
@@ -79,7 +78,7 @@ export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
                     />
                   )}
                 </div>
-                <span className={`font-semibold ${isChosen ? "text-active-color" : ""}`}>{char.name}</span>
+                <span className={`font-semibold ${isChosen ? "text-active-color" : ""}`}>{character.name}</span>
               </button>
             );
           }
@@ -94,7 +93,7 @@ export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
         justify="end"
         buttons={[
           {
-            icon: <RiArrowGoBackLine className="text-lg" />,
+            icon: <FancyBackSvg />,
             onClick: props.onClose,
           },
           {

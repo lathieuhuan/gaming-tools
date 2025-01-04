@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { FaLink, FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
-import { clsx, useScreenWatcher, Button, ButtonGroup, Modal, CloseButton } from "rond";
-import { ARTIFACT_TYPES, CharacterCalc } from "@Backend";
+import { clsx, useScreenWatcher, Button, ButtonGroup, Modal, CloseButton, TrashCanSvg } from "rond";
+import { ARTIFACT_TYPES, CharacterReadData } from "@Backend";
 
 import type { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
 import type { OpenModalFn } from "../MySetups.types";
@@ -17,18 +17,25 @@ import { chooseUserSetup, switchShownSetupInComplex, uncombineSetups } from "@St
 
 // Component
 import { CharacterPortrait, GenshinImage } from "@Src/components";
-import { IconTrashCan } from "@Src/components/icons";
 import { TeammateDetail } from "./TeammateDetail";
 import { GearIcon } from "./GearIcon";
 
 interface SetupTemplateProps {
   setup: UserSetup;
   complexSetup?: UserComplexSetup;
+  characterData: CharacterReadData;
   weapon: UserWeapon;
   artifacts?: UserArtifacts;
   openModal: OpenModalFn;
 }
-export function SetupTemplate({ setup, complexSetup, weapon, artifacts = [], openModal }: SetupTemplateProps) {
+export function SetupTemplate({
+  setup,
+  complexSetup,
+  characterData,
+  weapon,
+  artifacts = [],
+  openModal,
+}: SetupTemplateProps) {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const { type, char, party } = setup;
@@ -72,26 +79,21 @@ export function SetupTemplate({ setup, complexSetup, weapon, artifacts = [], ope
 
   const display = useMemo(() => {
     let mainCharacter = null;
-    const appChar = $AppCharacter.get(char.name);
+    const appCharacter = characterData.getAppCharacter(char.name);
     const appWeapon = $AppWeapon.get(weapon.code);
 
-    if (appChar) {
+    if (appCharacter) {
       const talents = (["NAs", "ES", "EB"] as const).map((talentType) => {
-        return CharacterCalc.getFinalTalentLv({
-          char,
-          appChar,
-          talentType,
-          partyData: $AppCharacter.getPartyData(party),
-        });
+        return characterData.getFinalTalentLv(talentType);
       });
 
       const renderSpan = (text: string | number) => (
-        <span className={`font-medium text-${appChar.vision}`}>{text}</span>
+        <span className={`font-medium text-${appCharacter.vision}`}>{text}</span>
       );
 
       mainCharacter = (
         <div className="flex">
-          <GenshinImage className="w-20 h-20" src={appChar.icon} imgType="character" />
+          <GenshinImage className="w-20 h-20" src={appCharacter.icon} imgType="character" />
 
           <div className="ml-4 flex-col justify-between">
             <p className="text-lg">Level {renderSpan(char.level)}</p>
@@ -214,7 +216,7 @@ export function SetupTemplate({ setup, complexSetup, weapon, artifacts = [], ope
           <Button icon={<FaShareAlt />} onClick={openModal("SHARE_SETUP")} />
 
           {isOriginal ? (
-            <Button icon={<IconTrashCan />} onClick={openModal("REMOVE_SETUP")} />
+            <Button icon={<TrashCanSvg />} onClick={openModal("REMOVE_SETUP")} />
           ) : (
             <Button
               icon={<FaPlus />}

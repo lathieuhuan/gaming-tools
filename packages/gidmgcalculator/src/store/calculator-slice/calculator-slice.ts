@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { PartiallyOptional } from "rond";
-import { AttackElement, ATTACK_ELEMENTS, GeneralCalc } from "@Backend";
+import { AttackElement, ATTACK_ELEMENTS } from "@Backend";
 
 import type { CalcSetupManageInfo, CalcWeapon, Resonance, Target } from "@Src/types";
 import type {
@@ -35,7 +35,7 @@ import Modifier_ from "@Src/utils/modifier-utils";
 import Object_ from "@Src/utils/object-utils";
 import Array_ from "@Src/utils/array-utils";
 import Entity_ from "@Src/utils/entity-utils";
-import { calculate, getCharDataFromState } from "./calculator-slice.utils";
+import { calculate, countAllElements, getAppCharacterFromState } from "./calculator-slice.utils";
 
 // const defaultChar = {
 //   name: "Albedo",
@@ -93,7 +93,7 @@ export const calculatorSlice = createSlice({
           setup.char = calcSetup.char;
         }
       }
-      if (shouldOverwriteTarget) {
+      if (shouldOverwriteTarget && target) {
         state.target = target;
       }
 
@@ -183,16 +183,16 @@ export const calculatorSlice = createSlice({
     // PARTY
     addTeammate: (state, action: AddTeammateAction) => {
       const { name, elementType, weaponType, teammateIndex } = action.payload;
-      const appChar = getCharDataFromState(state);
+      const appCharacter = getAppCharacterFromState(state);
       const setup = state.setupsById[state.activeId];
       const { party, elmtModCtrls } = setup;
 
-      const oldElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appChar);
+      const oldElmtCount = countAllElements(appCharacter, party);
       const oldTeammate = party[teammateIndex];
       // assign to party
       party[teammateIndex] = Setup_.createTeammate({ name, weaponType });
 
-      const newElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appChar);
+      const newElmtCount = countAllElements(appCharacter, party);
 
       if (oldTeammate) {
         const { vision: oldElement } = $AppCharacter.get(oldTeammate.name) || {};
@@ -229,14 +229,14 @@ export const calculatorSlice = createSlice({
     },
     removeTeammate: (state, action: PayloadAction<number>) => {
       const teammateIndex = action.payload;
-      const appChar = getCharDataFromState(state);
+      const appCharacter = getAppCharacterFromState(state);
       const { party, elmtModCtrls } = state.setupsById[state.activeId];
       const teammate = party[teammateIndex];
 
       if (teammate) {
         const { vision } = $AppCharacter.get(teammate.name);
         party[teammateIndex] = null;
-        const newElmtCount = GeneralCalc.countElements($AppCharacter.getPartyData(party), appChar);
+        const newElmtCount = countAllElements(appCharacter, party);
 
         if (newElmtCount.get(vision) === 1) {
           elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
@@ -297,10 +297,7 @@ export const calculatorSlice = createSlice({
     },
     toggleTeammateModCtrl: (state, action: ToggleTeammateModCtrlAction) => {
       const { teammateIndex, modCtrlName, ctrlIndex } = action.payload;
-      const ctrl = Array_.findByIndex(
-        state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName] || [],
-        ctrlIndex
-      );
+      const ctrl = Array_.findByIndex(state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName], ctrlIndex);
 
       if (ctrl) {
         ctrl.activated = !ctrl.activated;
@@ -309,10 +306,7 @@ export const calculatorSlice = createSlice({
     },
     changeTeammateModCtrlInput: (state, action: ChangeTeammateModCtrlInputAction) => {
       const { teammateIndex, modCtrlName, ctrlIndex, inputIndex, value } = action.payload;
-      const ctrl = Array_.findByIndex(
-        state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName] || [],
-        ctrlIndex
-      );
+      const ctrl = Array_.findByIndex(state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName], ctrlIndex);
 
       if (ctrl && ctrl.inputs) {
         ctrl.inputs[inputIndex] = value;
@@ -339,8 +333,6 @@ export const calculatorSlice = createSlice({
       const { pieceIndex, newPiece, shouldKeepStats } = action.payload;
       const setup = state.setupsById[state.activeId];
       const piece = setup.artifacts[pieceIndex];
-      // const oldSetBonuses = GeneralCalc.getArtifactSetBonuses(setup.artifacts);
-      // const oldBonusLevel = oldSetBonuses[0]?.bonusLv;
 
       if (shouldKeepStats && piece && newPiece) {
         piece.code = newPiece.code;
@@ -349,19 +341,7 @@ export const calculatorSlice = createSlice({
         setup.artifacts[pieceIndex] = newPiece;
       }
 
-      // const newSetBonus = GeneralCalc.getArtifactSetBonuses(setup.artifacts)[0];
-
-      // if (newSetBonus) {
-      //   if (oldBonusLevel === 0 && newSetBonus.bonusLv) {
-      //     setup.artBuffCtrls = Modifier_.createArtifactBuffCtrls(true, newSetBonus);
-      //   } //
-      //   else if (oldBonusLevel && !newSetBonus.bonusLv) {
-      //     setup.artBuffCtrls = [];
-      //   }
-      // }
-
-      const newSetBonuses = GeneralCalc.getArtifactSetBonuses(setup.artifacts);
-      const newArtBuffCtrls = Modifier_.createMainArtifactBuffCtrls(newSetBonuses);
+      const newArtBuffCtrls = Modifier_.createMainArtifactBuffCtrls(setup.artifacts);
 
       newArtBuffCtrls.forEach((ctrl) => {
         const oldCtrl = setup.artBuffCtrls.find(
@@ -562,14 +542,14 @@ export const calculatorSlice = createSlice({
     },
     updateSetups: (state, action: UpdateSetupsAction) => {
       const { newSetupManageInfos, newStandardId } = action.payload;
-      const appChar = getCharDataFromState(state);
+      const appCharacter = getAppCharacterFromState(state);
       const { setupManageInfos, setupsById, activeId } = state;
       const removedIds = [];
       // Reset comparedIds before repopulate with newSetupManageInfos
       state.comparedIds = [];
 
-      const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, appChar.name);
-      const newWeapon = Entity_.createWeapon({ type: appChar.weaponType });
+      const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, appCharacter.name);
+      const newWeapon = Entity_.createWeapon({ type: appCharacter.weaponType });
       const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, newWeapon);
       const elmtModCtrls = Modifier_.createElmtModCtrls();
       const tempManageInfos: CalcSetupManageInfo[] = [];
@@ -656,13 +636,20 @@ export const calculatorSlice = createSlice({
       calculate(state, true);
     },
     applySettings: (state, action: ApplySettingsAction) => {
-      const { doMergeCharInfo } = action.payload;
+      const { mergeCharInfo, changeTraveler = false } = action.payload;
       const activeChar = state.setupsById[state.activeId]?.char;
+      const allSetups = Object.values(state.setupsById);
+      let shouldRecalculateAll = false;
 
-      if (doMergeCharInfo && activeChar) {
-        for (const setup of Object.values(state.setupsById)) {
+      if (mergeCharInfo && activeChar) {
+        for (const setup of allSetups) {
           setup.char = activeChar;
         }
+        shouldRecalculateAll = true;
+      }
+      shouldRecalculateAll ||= changeTraveler && allSetups.some((setup) => $AppCharacter.isTraveler(setup.char));
+
+      if (shouldRecalculateAll) {
         calculate(state, true);
       }
     },

@@ -8,18 +8,18 @@ import { useDispatch } from "@Store/hooks";
 import { addUserDatabase } from "@Store/userdb-slice";
 
 // Component
-import { ItemMultiSelect } from "@Src/components";
+import { ItemMultiSelect, ItemMultiSelectIds } from "@Src/components";
 import { FileUpload } from "./FileUpload";
 
-// const MAX_USER_ARTIFACTS = 3;
 // const MAX_USER_WEAPONS = 3;
+// const MAX_USER_ARTIFACTS = 3;
 
 function UploadCore(props: ModalControl) {
   const dispatch = useDispatch();
   const uploadSteps = useRef<UploadStep[]>(["SELECT_OPTION"]);
   const uploadedData = useRef<UploadedData>();
-  const removedWeaponIDs = useRef<Record<string, boolean>>({});
-  const removedArtifactIDs = useRef<Record<string, boolean>>({});
+  const removedWeaponIDs = useRef<ItemMultiSelectIds>(new Set());
+  const removedArtifactIDs = useRef<ItemMultiSelectIds>(new Set());
   const notiId = useRef<number>();
 
   const [stepNo, setStepNo] = useState(-1);
@@ -87,8 +87,8 @@ function UploadCore(props: ModalControl) {
     dispatch(
       addUserDatabase({
         ...uploadedData.current,
-        weapons: weapons.filter((weapon) => !removedWeaponIDs.current[weapon.ID]),
-        artifacts: artifacts.filter((artifact) => !removedArtifactIDs.current[artifact.ID]),
+        weapons: weapons.filter((weapon) => !removedWeaponIDs.current.has(weapon.ID)),
+        artifacts: artifacts.filter((artifact) => !removedArtifactIDs.current.has(artifact.ID)),
       })
     );
 
@@ -117,7 +117,7 @@ function UploadCore(props: ModalControl) {
         title="Weapons"
         active={props.active && currentStep === "CHECK_WEAPONS"}
         items={filteredWeapons}
-        max={weapons.length - MAX_USER_WEAPONS}
+        required={weapons.length - MAX_USER_WEAPONS}
         onConfirm={(data) => {
           removedWeaponIDs.current = data;
           toNextStep();
@@ -128,7 +128,7 @@ function UploadCore(props: ModalControl) {
         title="Artifacts"
         active={props.active && currentStep === "CHECK_ARTIFACTS"}
         items={filteredArtifacts}
-        max={artifacts.length - MAX_USER_ARTIFACTS}
+        required={artifacts.length - MAX_USER_ARTIFACTS}
         onConfirm={(data) => {
           removedArtifactIDs.current = data;
           toNextStep();

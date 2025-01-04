@@ -4,7 +4,7 @@ import { clsx, Button, CloseButton, CollapseSpace, Modal } from "rond";
 
 import { updateUI } from "@Store/ui-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { useCalcModalCtrl } from "../CalculatorModalsProvider";
+import { useCalcModalCtrl } from "../ContextProvider";
 import { useSetupDirectorKit } from "./useSetupDirectorKit";
 
 // Component

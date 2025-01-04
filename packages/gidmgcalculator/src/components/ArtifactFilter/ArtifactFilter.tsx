@@ -1,28 +1,25 @@
-import { useRef, useState } from "react";
-import { FaEraser, FaSquare } from "react-icons/fa";
-import { FaCaretRight } from "react-icons/fa";
+import { useState } from "react";
+import { FaEraser, FaCaretRight } from "react-icons/fa";
+import { TbRectangleVerticalFilled } from "react-icons/tb";
 import { Button, Modal, useScreenWatcher, clsx, type ClassValue } from "rond";
 import { ArtifactType } from "@Backend";
 
 import type { CalcArtifact } from "@Src/types";
-import type { ArtifactFilterState } from "./ArtifactFilter.types";
-
+import type { ArtifactFilterCondition } from "@Src/utils/filter-artifacts";
 import { useArtifactTypeSelect } from "@Src/hooks";
-import { useArtifactSetFilter, useArtifactStatFilter, DEFAULT_STAT_FILTER } from "./hooks";
+import { useArtifactSetFilter, useArtifactStatFilter } from "./hooks";
 import { FilterTemplate } from "../FilterTemplate";
-import { filterArtifacts } from "./filter-artifacts";
 
 export interface ArtifactFilterProps {
   forcedType?: ArtifactType;
   artifacts: CalcArtifact[];
-  initialFilter: ArtifactFilterState;
-  onDone: (filterCondition: ArtifactFilterState) => void;
+  initialFilter: ArtifactFilterCondition;
+  onDone: (filterCondition: ArtifactFilterCondition) => void;
   onClose: () => void;
 }
 /** Only used on Modals */
-const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose }: ArtifactFilterProps) => {
+export const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose }: ArtifactFilterProps) => {
   const screenWatcher = useScreenWatcher();
-  const wrapElmt = useRef<HTMLDivElement>(null);
   const minIndex = forcedType ? 1 : 0;
 
   const [activeIndex, setActiveIndex] = useState(minIndex);
@@ -36,7 +33,11 @@ const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose 
           disabled={position <= minIndex}
           onClick={() => setActiveIndex((prev) => prev - 1)}
         >
-          {position > minIndex ? <FaCaretRight className="text-2xl rotate-180" /> : <FaSquare className="opacity-50" />}
+          {position > minIndex ? (
+            <FaCaretRight className="text-2xl rotate-180" />
+          ) : (
+            <TbRectangleVerticalFilled className="opacity-50" />
+          )}
         </button>
         <p style={{ width: 100 }}>{title}</p>
         <button
@@ -45,22 +46,20 @@ const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose 
           disabled={position >= 2}
           onClick={() => setActiveIndex((prev) => prev + 1)}
         >
-          {position < 2 ? <FaCaretRight className="text-2xl" /> : <FaSquare className="opacity-50" />}
+          {position < 2 ? <FaCaretRight className="text-2xl" /> : <TbRectangleVerticalFilled className="opacity-50" />}
         </button>
       </div>
     );
   };
 
-  const { artifactTypes, updateArtifactTypes, renderArtifactTypeSelect } = useArtifactTypeSelect(initialFilter.types, {
-    size: "large",
-    multiple: true,
-  });
-  const { statsFilter, hasDuplicates, renderArtifactStatFilter } = useArtifactStatFilter(initialFilter.stats, {
-    title: renderTitle("Filter by Stat", 1),
-    artifactType: forcedType,
-  });
-  const { setOptions, renderArtifactSetFilter } = useArtifactSetFilter(artifacts, initialFilter.codes, {
-    title: renderTitle("Filter by Set", 2),
+  const { artifactTypes, artifactTypeSelectProps, updateArtifactTypes, ArtifactTypeSelect } = useArtifactTypeSelect(
+    initialFilter.types,
+    {
+      multiple: true,
+    }
+  );
+  const { statsFilter, statsFilterProps, ArtifactStatFilter } = useArtifactStatFilter(initialFilter.stats);
+  const { setOptions, setFilterProps, ArtifactSetFilter } = useArtifactSetFilter(artifacts, initialFilter.codes, {
     artifactType: forcedType,
   });
 
@@ -87,7 +86,7 @@ const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose 
   };
 
   return (
-    <div ref={wrapElmt} className="h-full flex flex-col">
+    <div className="h-full flex flex-col">
       <div className={clsx("grow overflow-hidden", !isSmallScreen && "xm:px-2 flex space-x-4")}>
         {!forcedType ? (
           isSmallScreen ? (
@@ -97,7 +96,11 @@ const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose 
               disabledClearAll={!artifactTypes.length}
               onClickClearAll={() => updateArtifactTypes([])}
             >
-              {renderArtifactTypeSelect("justify-center py-4 hide-scrollbar")}
+              <ArtifactTypeSelect
+                {...artifactTypeSelectProps}
+                size="large"
+                className="justify-center py-4 hide-scrollbar"
+              />
             </FilterTemplate>
           ) : (
             <div className="flex flex-col items-center shrink-0 space-y-4">
@@ -111,7 +114,7 @@ const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose 
                 onClick={() => updateArtifactTypes([])}
               />
 
-              {renderArtifactTypeSelect("py-2 flex-col hide-scrollbar")}
+              <ArtifactTypeSelect {...artifactTypeSelectProps} size="large" className="py-2 flex-col hide-scrollbar" />
             </div>
           )
         ) : null}
@@ -119,31 +122,25 @@ const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose 
         {!forcedType && <div className="h-full w-px bg-surface-border hidden md:block" />}
 
         <div className={clsx(wrapperCls(activeIndex !== 1), "shrink-0", !isSmallScreen && "w-56")}>
-          {renderArtifactStatFilter()}
+          <ArtifactStatFilter
+            {...statsFilterProps}
+            title={renderTitle("Filter by Stat", 1)}
+            artifactType={forcedType}
+          />
         </div>
 
         <div className="h-full w-px bg-surface-border hidden md:block" />
 
         <div className={clsx([wrapperCls(activeIndex !== 2), "grow custom-scrollbar"])}>
-          {renderArtifactSetFilter(
-            null,
-            "grid grid-cols-4 sm:grid-cols-6 md:grid-cols-3 xm:grid-cols-5 lg:grid-cols-8"
-          )}
+          <ArtifactSetFilter
+            {...setFilterProps}
+            title={renderTitle("Filter by Set", 2)}
+            setsWrapCls="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-3 xm:grid-cols-5 lg:grid-cols-8"
+          />
         </div>
       </div>
 
-      <Modal.Actions disabledConfirm={hasDuplicates} onCancel={onClose} onConfirm={onConfirmFilter} />
+      <Modal.Actions disabledConfirm={statsFilterProps.hasDuplicates} onCancel={onClose} onConfirm={onConfirmFilter} />
     </div>
   );
 };
-
-const DEFAULT_FILTER: ArtifactFilterState = {
-  stats: DEFAULT_STAT_FILTER,
-  codes: [],
-  types: [],
-};
-
-ArtifactFilter.DEFAULT_FILTER = DEFAULT_FILTER;
-ArtifactFilter.filterArtifacts = filterArtifacts;
-
-export { ArtifactFilter };

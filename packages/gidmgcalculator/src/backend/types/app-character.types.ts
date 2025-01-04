@@ -1,16 +1,4 @@
 import type {
-  ActualAttackElement,
-  ActualAttackPattern,
-  AttackPattern,
-  AttributeStat,
-  ElementType,
-  ExclusiveBonusType,
-  NormalAttack,
-  TalentType,
-  WeaponType,
-} from "./common.types";
-import type {
-  CalcItemType,
   CharacterMilestone,
   EntityBonus,
   EntityBonusCore,
@@ -21,6 +9,20 @@ import type {
   InputCheck,
   ModifierAffectType,
 } from "./app-entity";
+import type {
+  ActualAttackElement,
+  ActualAttackPattern,
+  AttackPattern,
+  AttributeStat,
+  CalcItemBasedOn,
+  CalcItemMultFactor,
+  CalcItemType,
+  ElementType,
+  NormalAttack,
+  TalentCalcItemBonusId,
+  TalentType,
+  WeaponType,
+} from "./common.types";
 
 export type AppCharacter = {
   code: number;
@@ -48,11 +50,11 @@ export type AppCharacter = {
     EB?: CalcListConfig;
   };
   calcList: {
-    NA: CalcItem[];
-    CA: CalcItem[];
-    PA: CalcItem[];
-    ES: CalcItem[];
-    EB: CalcItem[];
+    NA: TalentCalcItem[];
+    CA: TalentCalcItem[];
+    PA: TalentCalcItem[];
+    ES: TalentCalcItem[];
+    EB: TalentCalcItem[];
   };
   activeTalents: {
     NAs: Ability;
@@ -85,23 +87,11 @@ type CharacterModifier = {
 
 // ========== CALC ITEM ==========
 
-export type TalentAttributeType = "atk" | "def" | "hp" | "em";
-
 type CalcListConfig = {
   scale?: number;
-  basedOn?: TalentAttributeType;
+  basedOn?: CalcItemBasedOn;
   attPatt?: ActualAttackPattern;
 };
-
-export type CalcItemMultFactor =
-  | number
-  | {
-      root: number;
-      /** When 0 stat not scale off talent level */
-      scale?: number;
-      /** Calc default to 'atk'. Only on ES / EB */
-      basedOn?: TalentAttributeType;
-    };
 
 export type CalcItemFlatFactor =
   | number
@@ -114,24 +104,27 @@ export type CalcItemFlatFactor =
       scale?: number;
     };
 
-export type CalcItem = {
-  id?: ExclusiveBonusType;
-  name: string;
+export type TalentCalcItem = {
+  id?: TalentCalcItemBonusId;
   type?: CalcItemType;
+  name: string;
   notOfficial?: boolean;
-  attPatt?: ActualAttackPattern;
-  attElmt?: ActualAttackElement;
-  subAttPatt?: "FCA";
-  /**
-   * Damage factors multiplying an attribute, scaling off talent level
-   */
+  /** Factors multiplying an attribute, scaling off talent level (character) or refinement (weapon) */
   multFactors: CalcItemMultFactor | CalcItemMultFactor[];
+
+  /** Only on 'attack' */
   joinMultFactors?: boolean;
-  /**
-   * Damage factor multiplying root, caling off talent level. Only on ES / EB
-   */
+  /** Not on 'attack' */
   flatFactor?: CalcItemFlatFactor;
+  /** Only on 'attack' */
+  attPatt?: ActualAttackPattern;
+  /** Only on 'attack' */
+  attElmt?: ActualAttackElement;
+  /** Only on 'attack' */
+  subAttPatt?: "FCA";
 };
+
+// type _TalentCalcItem = PartiallyOptional<TalentCalcItem, "type">;
 
 // ========== BUFF / BONUS ==========
 

@@ -1,78 +1,13 @@
-import { AppCharacter, AttackPattern, CalculationInfo, TalentType } from "@Src/backend/types";
+import { AppCharacter, AttackPattern } from "@Src/backend/types";
 import { $AppCharacter } from "@Src/services";
-import { Character } from "@Src/types";
-import { __characters, __EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { __genCalculationInfo } from "@UnitTest/test-utils";
+import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
+import { __genCharacterDataTester } from "@UnitTest/test-utils";
 import { CharacterCalc } from "../character-calc";
 
-type GetTotalXtraTalentLvTestCase = {
-  constellation: number;
-  /** [NAs, ES, EB] */
-  expect: [number, number, number];
-};
-
-let char: Character;
-let appChar: AppCharacter;
+let appCharacter: AppCharacter;
 
 beforeEach(() => {
-  const calculationInfo = __genCalculationInfo();
-  char = calculationInfo.char;
-  appChar = calculationInfo.appChar;
-});
-
-describe("getTotalXtraTalentLv", () => {
-  test("total extra talent levels on constellation level 0, 3, 5", () => {
-    const testCases: GetTotalXtraTalentLvTestCase[] = [
-      {
-        constellation: 0,
-        expect: [0, 0, 0],
-      },
-      {
-        constellation: 3,
-        expect: [0, 3, 0],
-      },
-      {
-        constellation: 5,
-        expect: [0, 3, 3],
-      },
-    ];
-    const expectTypes: TalentType[] = ["NAs", "ES", "EB"];
-
-    testCases.forEach((testCase) => {
-      char.cons = testCase.constellation;
-
-      testCase.expect.forEach((expectValue, i) => {
-        expect(CharacterCalc.getTotalXtraTalentLv({ char, appChar, talentType: expectTypes[i] })).toBe(expectValue);
-      });
-    });
-  });
-
-  test("total extra NAs level of Tartaglia", () => {
-    const Tartaglia = __characters.find((character) => character.name === __EMockCharacter.TARTAGLIA)!;
-
-    char.name = __EMockCharacter.TARTAGLIA;
-
-    expect(
-      CharacterCalc.getTotalXtraTalentLv({
-        char,
-        appChar: Tartaglia,
-        talentType: "NAs",
-        partyData: [],
-      })
-    ).toBe(1);
-  });
-
-  test("total extra NAs level when Tartaglia is in party", () => {
-    const Tartaglia = __characters.find((character) => character.name === __EMockCharacter.TARTAGLIA) ?? null;
-    expect(CharacterCalc.getTotalXtraTalentLv({ char, appChar, talentType: "NAs", partyData: [Tartaglia] })).toBe(1);
-  });
-});
-
-test("getFinalTalentLv", () => {
-  expect(CharacterCalc.getFinalTalentLv({ char, appChar, talentType: "NAs" })).toBe(char.NAs);
-  expect(CharacterCalc.getFinalTalentLv({ char, appChar, talentType: "ES" })).toBe(char.ES);
-  expect(CharacterCalc.getFinalTalentLv({ char, appChar, talentType: "EB" })).toBe(char.EB);
-  expect(CharacterCalc.getFinalTalentLv({ char, appChar, talentType: "altSprint" })).toBe(0);
+  appCharacter = __genCharacterDataTester().appCharacter;
 });
 
 describe("getTalentMult", () => {
@@ -89,41 +24,12 @@ describe("getTalentMult", () => {
   });
 });
 
-describe("getLevelScale", () => {
-  let info: CalculationInfo;
-
-  beforeEach(() => {
-    char.ES = 10;
-    info = {
-      char,
-      appChar,
-      partyData: [],
-    };
-  });
-
-  test("at scale 0, fromSelf", () => {
-    expect(CharacterCalc.getLevelScale({ talent: "ES", value: 0 }, info, [], true)).toBe(char.ES);
-  });
-
-  test("at scale 2, fromSelf", () => {
-    expect(CharacterCalc.getLevelScale({ talent: "ES", value: 2 }, info, [], true)).toBe(1.8); // TALENT_LV_MULTIPLIERS[2][char.ES]
-  });
-
-  test("at scale 2, not fromSelf, altIndex default (0)", () => {
-    expect(CharacterCalc.getLevelScale({ talent: "ES", value: 2 }, info, [7], false)).toBe(1.5); // TALENT_LV_MULTIPLIERS[2][7]
-  });
-
-  test("at scale 2, not fromSelf, altIndex 1", () => {
-    expect(CharacterCalc.getLevelScale({ talent: "ES", value: 2, altIndex: 1 }, info, [0, 10], false)).toBe(1.8); // TALENT_LV_MULTIPLIERS[2][10]
-  });
-});
-
 describe("getTalentDefaultInfo", () => {
   function _expect(
     expectedAttPatt: AttackPattern,
     resultKey: keyof ReturnType<typeof CharacterCalc.getTalentDefaultInfo>,
     expectValue: unknown,
-    thisAppChar = appChar
+    thisAppChar = appCharacter
   ) {
     expect(CharacterCalc.getTalentDefaultInfo(expectedAttPatt, thisAppChar)[resultKey]).toBe(expectValue);
   }
@@ -141,36 +47,36 @@ describe("getTalentDefaultInfo", () => {
     }
   });
 
-  test("defaultBasedOn should be atk", () => {
-    _expect("NA", "defaultBasedOn", "atk");
+  test("default BasedOn should be atk", () => {
+    _expect("NA", "basedOn", "atk");
   });
 
-  test("defaultAttPatt should be the same as expected first parameter", () => {
+  test("default AttPatt should be the same as expected first parameter", () => {
     const attPatts: AttackPattern[] = ["NA", "CA", "PA", "ES", "EB"];
 
     for (const attPatt of attPatts) {
-      _expect(attPatt, "defaultAttPatt", attPatt);
+      _expect(attPatt, "attPatt", attPatt);
     }
   });
 
-  test("defaultScale of NA, CA, PA on non-catalyst wielder should be 7", () => {
+  test("default scale of NA, CA, PA on non-catalyst wielder should be 7", () => {
     const attPatts: AttackPattern[] = ["NA", "CA", "PA"];
 
     for (const attPatt of attPatts) {
-      _expect(attPatt, "defaultScale", 7);
+      _expect(attPatt, "scale", 7);
     }
   });
 
-  test("defaultScale of any AttackPattern on catalyst wielder, or of ES/EB on other weapons wielder should be 2", () => {
+  test("default scale of any AttackPattern on catalyst wielder, or of ES/EB on other weapons wielder should be 2", () => {
     const attPatts: AttackPattern[] = ["NA", "CA", "PA", "ES", "EB"];
     const catalystWielder = $AppCharacter.get(__EMockCharacter.CATALYST);
 
     for (const attPatt of attPatts) {
-      _expect(attPatt, "defaultScale", 2, catalystWielder);
+      _expect(attPatt, "scale", 2, catalystWielder);
     }
 
-    _expect("ES", "defaultScale", 2);
-    _expect("EB", "defaultScale", 2);
+    _expect("ES", "scale", 2);
+    _expect("EB", "scale", 2);
   });
 
   test("talentDefaultInfo should be as declared if there is one", () => {
@@ -178,8 +84,8 @@ describe("getTalentDefaultInfo", () => {
     const result = CharacterCalc.getTalentDefaultInfo("ES", esCalcConfig);
     const { ES } = esCalcConfig.calcListConfig || {};
 
-    expect(result.defaultScale).toBe(ES?.scale);
-    expect(result.defaultBasedOn).toBe(ES?.basedOn);
-    expect(result.defaultAttPatt).toBe(ES?.attPatt);
+    expect(result.scale).toBe(ES?.scale);
+    expect(result.basedOn).toBe(ES?.basedOn);
+    expect(result.attPatt).toBe(ES?.attPatt);
   });
 });

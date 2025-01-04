@@ -1,7 +1,6 @@
 import { CollapseList } from "rond";
 
 import { selectParty } from "@Store/calculator-slice";
-import { $AppCharacter } from "@Src/services";
 import { useSelector } from "@Store/hooks";
 import { useTabs } from "@Src/hooks";
 
@@ -19,16 +18,11 @@ import CustomModifiers from "./CustomModifiers";
 
 export function Modifiers() {
   const party = useSelector(selectParty);
-  const partyData = $AppCharacter.getPartyData(party);
-
-  const { activeIndex, renderTabs } = useTabs({
-    defaultIndex: 1,
-    configs: [{ text: "Debuffs" }, { text: "Buffs" }],
-  });
+  const { activeIndex, tabProps, Tabs } = useTabs(1);
 
   return (
     <div className="h-full flex flex-col">
-      {renderTabs("text-lg shrink-0")}
+      <Tabs {...tabProps} className="text-lg shrink-0" configs={[{ text: "Debuffs" }, { text: "Buffs" }]} />
 
       <div className="mt-4 grow custom-scrollbar">
         <CollapseList
@@ -43,12 +37,12 @@ export function Modifiers() {
             {
               title: "Self buffs",
               heading: "Self",
-              body: <SelfBuffs partyData={partyData} />,
+              body: <SelfBuffs />,
             },
             {
               title: "Party buffs",
               heading: "Party",
-              body: <PartyBuffs party={party} partyData={partyData} />,
+              body: <PartyBuffs party={party} />,
             },
             {
               title: "Weapons buffs",
@@ -58,7 +52,7 @@ export function Modifiers() {
             {
               title: "Artifacts buffs",
               heading: "Artifacts",
-              body: <ArtifactBuffs />,
+              body: <ArtifactBuffs party={party} />,
             },
             {
               title: "Custom buffs",
@@ -80,12 +74,12 @@ export function Modifiers() {
             {
               title: "Self debuffs",
               heading: "Self",
-              body: <SelfDebuffs partyData={partyData} />,
+              body: <SelfDebuffs />,
             },
             {
               title: "Party debuffs",
               heading: "Party",
-              body: <PartyDebuffs party={party} partyData={partyData} />,
+              body: <PartyDebuffs party={party} />,
             },
             {
               title: "Artifacts debuffs",

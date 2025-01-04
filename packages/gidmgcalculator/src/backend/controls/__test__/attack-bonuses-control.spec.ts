@@ -3,7 +3,7 @@ import { AttackBonusesArchive, AttackBonusesControl } from "../attack-bonuses-co
 
 class Tester extends AttackBonusesControl {
   _expectHas(bonus: AttackBonuses[number]) {
-    expect(this["attBonuses"]).toContainEqual(bonus);
+    expect(this["attkBonuses"]).toContainEqual(bonus);
   }
 }
 

@@ -1,7 +1,6 @@
-import type { CalcArtifacts, PartyData } from "@Src/types";
-import type { AmplifyingReaction, AppCharacter, AttackElement, ElementType, Level, QuickenReaction } from "../types";
+import type { CalcArtifacts } from "@Src/types";
+import type { AmplifyingReaction, AttackElement, Level, QuickenReaction } from "../types";
 import TypeCounter from "@Src/utils/type-counter";
-import Array_ from "@Src/utils/array-utils";
 
 export type ArtifactSetBonus = {
   code: number;
@@ -80,14 +79,5 @@ export class GeneralCalc {
       default:
         return 1;
     }
-  }
-
-  static countElements(partyData: PartyData, appChar?: AppCharacter) {
-    const counter = new TypeCounter<ElementType>();
-
-    if (appChar) counter.add(appChar.vision);
-    Array_.truthyOp(partyData).useEach("vision", (elmtType) => counter.add(elmtType));
-
-    return counter;
   }
 }
