@@ -1,18 +1,18 @@
 import { useMemo, useState } from "react";
 import { Modal } from "rond";
 
-import Setup_ from "@Src/utils/setup-utils";
-import { useStoreSnapshot } from "@Src/features";
 import { useDispatch } from "@Store/hooks";
 import { initNewSessionWithCharacter } from "@Store/thunks";
 import { CalculatorModalsContext, CalculatorModalsControl } from "./Modals.context";
 
 // Component
-import { SetupExporterCore, SetupImporter, Tavern } from "@Src/components";
-import { TargetConfig } from "./TargetConfig";
+import { SetupImporter, Tavern } from "@Src/components";
+import { CalcSetupExporter } from "./CalcSetupExporter";
 import { SaveSetup } from "./SaveSetup";
+import { TargetConfig } from "./TargetConfig";
+import { OptimizationIntro } from "./OptimizationIntro";
 
-type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "";
+type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "OPTIMIZE_INTRO" | "";
 
 export function ModalsProvider(props: { children: React.ReactNode }) {
   const dispatch = useDispatch();
@@ -26,15 +26,19 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
       requestSwitchCharacter: () => {
         setModalType("SWITCH_CHARACTER");
       },
-      requestImportSetup: () => {
-        setModalType("IMPORT_SETUP");
-      },
-      requestSaveSetup: (setupId: number) => {
+      requestSaveSetup: (setupId) => {
         setModalType("SAVE_SETUP");
         setSetupId(setupId);
       },
-      requestShareSetup: (setupId: number) => {
+      requestImportSetup: () => {
+        setModalType("IMPORT_SETUP");
+      },
+      requestShareSetup: (setupId) => {
         setModalType("SHARE_SETUP");
+        setSetupId(setupId);
+      },
+      requestOptimize: (setupId = 0) => {
+        setModalType("OPTIMIZE_INTRO");
         setSetupId(setupId);
       },
     };
@@ -46,7 +50,7 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
 
       <TargetConfig />
 
-      <SetupImporter active={modalType === "IMPORT_SETUP"} onClose={closeModal} />
+      <OptimizationIntro active={modalType === "OPTIMIZE_INTRO"} setupId={setupId} onClose={closeModal} />
 
       <Modal
         active={modalType === "SAVE_SETUP"}
@@ -57,6 +61,8 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
       >
         <SaveSetup setupId={setupId} onClose={closeModal} />
       </Modal>
+
+      <SetupImporter active={modalType === "IMPORT_SETUP"} onClose={closeModal} />
 
       <Modal.Core active={modalType === "SHARE_SETUP"} preset="small" onClose={closeModal}>
         <CalcSetupExporter setupId={setupId} onClose={closeModal} />
@@ -71,28 +77,5 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
         onClose={closeModal}
       />
     </CalculatorModalsContext.Provider>
-  );
-}
-
-interface CalcSetupExporterProps {
-  setupId: number;
-  onClose: () => void;
-}
-function CalcSetupExporter({ setupId, onClose }: CalcSetupExporterProps) {
-  const calculator = useStoreSnapshot((state) => state.calculator);
-  const setup = calculator.setupsById[setupId];
-  const setupName = calculator.setupManageInfos.find((info) => info.ID === setupId)?.name || "";
-
-  return (
-    <SetupExporterCore
-      setupName={setupName}
-      calcSetup={{
-        ...Setup_.cleanupCalcSetup(setup, calculator.target),
-        weapon: setup.weapon,
-        artifacts: setup.artifacts,
-      }}
-      target={calculator.target}
-      onClose={onClose}
-    />
   );
 }

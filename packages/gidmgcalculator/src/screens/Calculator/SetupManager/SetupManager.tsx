@@ -1,14 +1,11 @@
-import { useState } from "react";
 import { FaSkull } from "react-icons/fa";
 import { FaSun } from "react-icons/fa6";
 import { IoDocumentText } from "react-icons/io5";
-import { Button, Modal, useScreenWatcher } from "rond";
+import { Button, useScreenWatcher } from "rond";
 
-import { IS_DEV_ENV } from "@Src/constants";
-import { selectActiveId, selectSetupManageInfos } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTraveler, updateUI } from "@Store/ui-slice";
-import { useOptimizerState } from "../ContextProvider";
+import { useCalcModalCtrl } from "../ContextProvider";
 
 // Component
 import SectionArtifacts from "./SectionArtifacts";
@@ -91,57 +88,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 }
 
 function OptimizationDeptContact() {
-  const { toggle } = useOptimizerState();
-  const [activeConfirm, setActiveConfirm] = useState(false);
-  const infos = useSelector(selectSetupManageInfos);
-  const activeId = useSelector(selectActiveId);
+  const modalCtrl = useCalcModalCtrl();
 
-  const activeInfo = infos.find((info) => info.ID === activeId);
-
-  const onConfirm = (testMode = false) => {
-    toggle("testMode", testMode);
-    toggle("active", true);
-    setActiveConfirm(false);
-  };
-
-  return (
-    <>
-      <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={() => setActiveConfirm(true)} />
-
-      <Modal
-        active={activeConfirm}
-        preset="small"
-        className="bg-surface-1"
-        title="Optimize"
-        withActions
-        moreActions={[
-          {
-            children: "Test Mode",
-            className: !IS_DEV_ENV && "hidden",
-            onClick: () => onConfirm(true),
-          },
-        ]}
-        confirmButtonProps={{
-          children: "Proceed",
-          autoFocus: true,
-        }}
-        onConfirm={() => onConfirm()}
-        onClose={() => setActiveConfirm(false)}
-      >
-        <ul className="pl-6 pr-2 list-disc space-y-2">
-          <li>
-            <div className="space-y-1">
-              <p>
-                Optimize <span className="text-primary-1">{activeInfo?.name}</span>
-              </p>
-              <p className="text-sm">
-                The Optimizer will use every configuration of this Setup except the main character's Artifacts and
-                Artifact buffs & debuffs.
-              </p>
-            </div>
-          </li>
-        </ul>
-      </Modal>
-    </>
-  );
+  return <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={() => modalCtrl.requestOptimize()} />;
 }
