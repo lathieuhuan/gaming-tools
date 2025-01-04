@@ -36,7 +36,7 @@ export function WeaponFilter({
       multiple: true,
     }
   );
-  const { selectedRarities, updateRarities, renderRaritySelect } = useRaritySelect(
+  const { selectedRarities, raritySelectProps, updateRarities, RaritySelect } = useRaritySelect(
     [5, 4, 3, 2, 1],
     initialFilter?.rarities
   );
@@ -76,7 +76,7 @@ export function WeaponFilter({
           disabledClearAll={!selectedRarities.length}
           onClickClearAll={() => updateRarities([])}
         >
-          {renderRaritySelect(undefined, { maxWidth: "14rem" })}
+          <RaritySelect {...raritySelectProps} style={{ maxWidth: "14rem" }} />
         </FilterTemplate>
       </div>
 

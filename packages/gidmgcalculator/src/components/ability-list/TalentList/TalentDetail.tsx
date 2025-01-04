@@ -33,11 +33,7 @@ export function TalentDetail({ appCharacter, detailIndex, onChangeDetailIndex, o
   const [talentLevel, setTalentLevel] = useState(1);
   const intervalRef = useRef<NodeJS.Timeout>();
 
-  const { activeIndex, setActiveIndex, renderTabs } = useTabs({
-    level: 2,
-    defaultIndex: 1,
-    configs: [{ text: "Talent Info" }, { text: "Skill Attributes" }],
-  });
+  const { activeIndex, tabProps, setActiveIndex, Tabs } = useTabs(1);
 
   const { isLoading, isError, data: descriptions } = useTalentDescriptions(appCharacter.name, !activeIndex);
 
@@ -115,7 +111,19 @@ export function TalentDetail({ appCharacter, detailIndex, onChangeDetailIndex, o
         />
 
         <p className={`text-lg font-semibold text-${vision} text-center`}>{talent.name}</p>
-        {renderTabs("my-2", [false, isPassiveTalent])}
+        <Tabs
+          {...tabProps}
+          className="my-2"
+          configs={[
+            {
+              text: "Talent Info",
+            },
+            {
+              text: "Skill Attributes",
+              disabled: isPassiveTalent,
+            },
+          ]}
+        />
 
         {activeIndex ? (
           <div>

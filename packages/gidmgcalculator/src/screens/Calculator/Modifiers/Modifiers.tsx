@@ -18,15 +18,11 @@ import CustomModifiers from "./CustomModifiers";
 
 export function Modifiers() {
   const party = useSelector(selectParty);
-
-  const { activeIndex, renderTabs } = useTabs({
-    defaultIndex: 1,
-    configs: [{ text: "Debuffs" }, { text: "Buffs" }],
-  });
+  const { activeIndex, tabProps, Tabs } = useTabs(1);
 
   return (
     <div className="h-full flex flex-col">
-      {renderTabs("text-lg shrink-0")}
+      <Tabs {...tabProps} className="text-lg shrink-0" configs={[{ text: "Debuffs" }, { text: "Buffs" }]} />
 
       <div className="mt-4 grow custom-scrollbar">
         <CollapseList

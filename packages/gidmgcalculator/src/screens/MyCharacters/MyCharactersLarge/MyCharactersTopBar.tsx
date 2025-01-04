@@ -18,10 +18,11 @@ export function MyCharactersTopBar() {
 
   const { observedAreaRef: intersectObsArea, visibleMap, itemUtils } = useIntersectionObserver();
   const { observedAreaRef: listObsArea } = useChildListObserver({
-    onNodesAdded: (addedNodes) => {
-      for (const node of addedNodes) {
-        itemUtils.observe(node as Element);
-      }
+    onNodesAdded(addedNodes) {
+      addedNodes.forEach((node) => itemUtils.observe(node as Element));
+    },
+    onNodesRemoved(removedNodes) {
+      removedNodes.forEach((node) => itemUtils.observe(node as Element));
     },
   });
 

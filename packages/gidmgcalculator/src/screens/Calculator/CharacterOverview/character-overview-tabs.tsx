@@ -44,14 +44,11 @@ export function ArtifactsTab() {
   const artifacts = useSelector(selectArtifacts);
   const artifactAttributes = TotalAttributeControl.getArtifactAttributes(artifacts).finalize(totalAttr);
 
-  const { activeIndex, renderTabs } = useTabs({
-    level: 2,
-    configs: [{ text: "Details" }, { text: "Set Bonus" }],
-  });
+  const { activeIndex, tabProps, Tabs } = useTabs();
 
   return (
     <div className="h-full flex flex-col">
-      {renderTabs()}
+      <Tabs {...tabProps} level={2} configs={["Details", "Set Bonus"]} />
 
       <CarouselSpace className="mt-3 grow" current={activeIndex}>
         <div className="h-full custom-scrollbar">

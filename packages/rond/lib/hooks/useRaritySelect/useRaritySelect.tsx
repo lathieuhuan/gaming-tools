@@ -4,6 +4,34 @@ import { Checkbox } from "../../components/Checkbox";
 import { Rarity } from "../../components/Rarity";
 import "./RaritySelect.styles.scss";
 
+interface RaritySelectProps {
+  className?: ClassValue;
+  style?: React.CSSProperties;
+  options?: number[];
+  value?: number[];
+  onClickRarity?: (value: number, currentSelected: boolean) => void;
+}
+function RaritySelect(props: RaritySelectProps) {
+  return (
+    <div className={clsx("ron-rarity-select", props.className)} style={props.style}>
+      {props.options?.map((option) => {
+        const selected = props.value?.includes(option) === true;
+
+        return (
+          <Checkbox
+            key={option}
+            className="ron-rarity-select-option"
+            checked={selected}
+            onChange={() => props.onClickRarity?.(option, selected)}
+          >
+            <Rarity value={option} />
+          </Checkbox>
+        );
+      })}
+    </div>
+  );
+}
+
 type Config = {
   onChange?: (rarities: number[]) => void;
 };
@@ -22,30 +50,16 @@ export const useRaritySelect = (options: number[], initialValues?: number[] | nu
     updateRarities(newRarities);
   };
 
-  const renderRaritySelect = (className?: ClassValue, style?: React.CSSProperties) => {
-    return (
-      <div className={clsx("ron-rarity-select", className)} style={style}>
-        {options.map((option) => {
-          const selected = rarities.includes(option);
-
-          return (
-            <Checkbox
-              key={option}
-              className="ron-rarity-select-option"
-              checked={selected}
-              onChange={() => onClickRarity(option, selected)}
-            >
-              <Rarity value={option} />
-            </Checkbox>
-          );
-        })}
-      </div>
-    );
-  };
+  const raritySelectProps = {
+    options,
+    value: rarities,
+    onClickRarity,
+  } satisfies RaritySelectProps;
 
   return {
     selectedRarities: rarities,
+    raritySelectProps,
     updateRarities,
-    renderRaritySelect,
+    RaritySelect,
   };
 };

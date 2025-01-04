@@ -28,5 +28,6 @@ export * from "./Skeleton";
 export * from "./StatsTable";
 export * from "./SwitchNode";
 export * from "./Table";
+export * from "./Tabs";
 export * from "./WarehouseLayout";
 export * from "./svg-icons";

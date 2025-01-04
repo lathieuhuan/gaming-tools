@@ -46,6 +46,10 @@ export function useIntersectionObserver<
     observerRef.current?.observe(element);
   };
 
+  const unobserve = (element: Element) => {
+    observerRef.current?.unobserve(element);
+  };
+
   useEffect(() => {
     if (ready) {
       let visibleMapRef = { ...visibleMap };
@@ -92,6 +96,7 @@ export function useIntersectionObserver<
     visibleMap,
     itemUtils: {
       observe,
+      unobserve,
       getProps: getObservedItemProps,
       queryAll: queryAllObservedItems,
       queryById: queryObservedItem,

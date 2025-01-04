@@ -45,7 +45,12 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
     }
   );
 
-  const { selectedRarities, updateRarities, renderRaritySelect } = useRaritySelect([5, 4], initialFilter?.rarities);
+  const {
+    selectedRarities,
+    raritySelectProps,
+    updateRarities,
+    RaritySelect,
+  } = useRaritySelect([5, 4], initialFilter?.rarities);
 
   useEffect(() => {
     setTimeout(() => {
@@ -101,7 +106,7 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
           disabledClearAll={!selectedRarities.length}
           onClickClearAll={() => updateRarities([])}
         >
-          {renderRaritySelect(undefined, { maxWidth: "14rem" })}
+          <RaritySelect {...raritySelectProps} style={{ maxWidth: "14rem" }} />
         </FilterTemplate>
       </div>
 
