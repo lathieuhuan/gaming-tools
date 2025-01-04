@@ -40,7 +40,7 @@ export function getDataOfSetupEntities({
       const appCharacter = $AppCharacter.get(teammate.name);
 
       appCharacters[teammate.name] = appCharacter;
-      appWeapons[teammate.weapon.code] ||= $AppWeapon.get(weapon.code)!;
+      appWeapons[teammate.weapon.code] ||= $AppWeapon.get(teammate.weapon.code)!;
       appArtifacts[teammate.artifact.code] ||= $AppArtifact.getSet(teammate.artifact.code)!;
       appParty.push(appCharacter);
     } //
