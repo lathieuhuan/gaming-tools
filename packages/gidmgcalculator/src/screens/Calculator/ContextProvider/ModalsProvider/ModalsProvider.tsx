@@ -37,9 +37,8 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
         setModalType("SHARE_SETUP");
         setSetupId(setupId);
       },
-      requestOptimize: (setupId = 0) => {
+      requestOptimizer: () => {
         setModalType("OPTIMIZE_INTRO");
-        setSetupId(setupId);
       },
     };
   }, []);
@@ -50,7 +49,7 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
 
       <TargetConfig />
 
-      <OptimizationIntro active={modalType === "OPTIMIZE_INTRO"} setupId={setupId} onClose={closeModal} />
+      <OptimizationIntro active={modalType === "OPTIMIZE_INTRO"} onClose={closeModal} />
 
       <Modal
         active={modalType === "SAVE_SETUP"}

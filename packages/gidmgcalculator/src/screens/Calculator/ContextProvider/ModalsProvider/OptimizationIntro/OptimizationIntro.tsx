@@ -1,35 +1,100 @@
-import { Modal } from "rond";
+import { useRef, useState } from "react";
+import { FaInfoCircle } from "react-icons/fa";
+import { CollapseSpace, Modal, Select } from "rond";
 
 import { IS_DEV_ENV } from "@Src/constants";
+import { useStore } from "@Src/features";
+import Object_ from "@Src/utils/object-utils";
 import { selectActiveId, selectSetupManageInfos } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
 import { useOptimizerState } from "../../hooks";
 
+interface IntroCoreProps {
+  setupId: number;
+  onChangeSetup: (id: number) => void;
+}
+function IntroCore(props: IntroCoreProps) {
+  const setupInfos = useSelector(selectSetupManageInfos);
+  const [activeIntro, setActiveIntro] = useState(false);
+
+  return (
+    <div>
+      <div className="flex items-center gap-2">
+        <span>Optimize</span>
+        <Select
+          className="font-semibold"
+          defaultValue={props.setupId}
+          options={setupInfos.map((info) => ({
+            label: info.name,
+            value: info.ID,
+          }))}
+          onChange={(id) => props.onChangeSetup(id as number)}
+        />
+      </div>
+
+      <div className="mt-6">
+        <button
+          className={`flex items-center gap-2 ${activeIntro ? "text-active-color" : "text-hint-color"}`}
+          onClick={() => setActiveIntro(!activeIntro)}
+        >
+          <FaInfoCircle className="text-lg" />
+          <span>About Setup Optimizer 1.0</span>
+        </button>
+      </div>
+
+      <CollapseSpace active={activeIntro}>
+        <div className="px-1 py-2">
+          <ul className="text-sm list-disc pl-4 space-y-1">
+            <li>
+              The Optimizer uses every configuration of the Setup except the main character's Artifacts and their
+              Artifact buffs & debuffs.
+            </li>
+            <li>The Artifacts in "My Artifacts" will be used instead.</li>
+            <li>
+              The result contains a maximum of 3 Artifact combinations that result in the highest selected output.
+            </li>
+          </ul>
+        </div>
+      </CollapseSpace>
+    </div>
+  );
+}
+
 interface OptimizationIntroProps {
   active: boolean;
-  setupId?: number;
   onClose: () => void;
 }
 export function OptimizationIntro(props: OptimizationIntroProps) {
-  const { toggle } = useOptimizerState();
-  const infos = useSelector(selectSetupManageInfos);
+  const store = useStore();
+  const { setActive } = useOptimizerState();
   const activeId = useSelector(selectActiveId);
-
-  const setupId = props.setupId || activeId;
-  const activeInfo = infos.find((info) => info.ID === setupId);
+  const selectedId = useRef<number>(0);
 
   const onConfirm = (testMode = false) => {
-    toggle("testMode", testMode);
-    toggle("active", true);
-    props.onClose();
+    const setupId = selectedId.current || activeId;
+    const setup = store.select(({ calculator }) => {
+      const manageInfo = calculator.setupManageInfos.find((info) => info.ID === setupId);
+      const setupInfo = Object_.clone(calculator.setupsById[setupId]);
+
+      return manageInfo ? Object.assign(setupInfo, manageInfo) : undefined;
+    });
+
+    if (setup) {
+      setActive(true, setup, testMode);
+      props.onClose();
+    }
   };
 
   return (
     <Modal
       active={props.active}
+      title="Optimizer"
       preset="small"
-      className="bg-surface-1"
-      title="Optimize"
+      // centered={false}
+      className="bg-surface-2"
+      // style={{
+      //   top: "min(20%, 5rem)",
+      // }}
       withActions
       moreActions={[
         {
@@ -45,19 +110,7 @@ export function OptimizationIntro(props: OptimizationIntroProps) {
       onConfirm={() => onConfirm()}
       onClose={props.onClose}
     >
-      <ul className="pl-6 pr-2 list-disc space-y-2">
-        <li>
-          <div className="space-y-1">
-            <p>
-              Optimize <span className="text-primary-1">{activeInfo?.name}</span>
-            </p>
-            <p className="text-sm">
-              The Optimizer will use every configuration of this Setup except the main character's Artifacts and
-              Artifact buffs & debuffs.
-            </p>
-          </div>
-        </li>
-      </ul>
+      <IntroCore setupId={activeId} onChangeSetup={(id) => (selectedId.current = id)} />
     </Modal>
   );
 }

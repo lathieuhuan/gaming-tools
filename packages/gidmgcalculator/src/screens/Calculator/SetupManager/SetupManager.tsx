@@ -90,5 +90,5 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 function OptimizationDeptContact() {
   const modalCtrl = useCalcModalCtrl();
 
-  return <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={() => modalCtrl.requestOptimize()} />;
+  return <Button title="Optimizer" icon={<FaSun className="text-lg" />} onClick={() => modalCtrl.requestOptimizer()} />;
 }

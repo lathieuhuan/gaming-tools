@@ -3,6 +3,7 @@ import { Modal } from "rond";
 
 import { getDataOfSetupEntities, type OptimizerExtraConfigs } from "@Backend";
 import type { ItemMultiSelectIds } from "@Src/components";
+import type { CalcSetup } from "@Src/types";
 import type { OptimizerState } from "../ContextProvider/OptimizerProvider";
 import type { ArtifactManager } from "./controllers";
 
@@ -13,11 +14,11 @@ import { useArtifactManager } from "./hooks/useArtifactManager";
 
 // Components
 import { ItemMultiSelect } from "@Src/components";
+import { OptimizationGuide, OptimizationGuideControl, StepConfig } from "./components/OptimizationGuide";
 import { ArtifactModConfig } from "./components/ArtifactModConfig";
 import { ArtifactSetSelect } from "./components/ArtifactSetSelect";
 import { CalcItemSelect, SelectedCalcItem } from "./components/CalcItemSelect";
 // import { ExtraConfigs } from "./components/ExtraConfigs";
-import { OptimizationGuide, OptimizationGuideControl, StepConfig } from "./components/OptimizationGuide";
 import { Launcher } from "./components/Launcher";
 import { ResultDisplay } from "./components/ResultDisplay";
 
@@ -36,20 +37,24 @@ const STEP_KEY = {
 type StepKey = (typeof STEP_KEY)[keyof typeof STEP_KEY];
 
 export function OptimizationDept() {
-  const { status, optimizer, toggle } = useOptimizerState();
+  const { status, optimizer, setActive, setLoading } = useOptimizerState();
+
+  console.log(status);
 
   return status.active ? (
     <OptimizationFrontDesk
       processing={status.loading}
+      setup={status.setup}
       optimizer={optimizer}
-      onCancelProcess={() => toggle("loading", false)}
-      onClose={() => toggle("active", false)}
+      onCancelProcess={() => setLoading(false)}
+      onClose={() => setActive(false)}
     />
   ) : null;
 }
 
 interface OptimizationFrontDeskProps {
   processing: boolean;
+  setup?: CalcSetup;
   optimizer: OptimizerState["optimizer"];
   onCancelProcess: () => void;
   onClose: () => void;
@@ -58,7 +63,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const { optimizer } = props;
 
   const store = useStoreSnapshot(({ calculator, userdb }) => {
-    const setup = calculator.setupsById[calculator.activeId];
+    const setup = props.setup || calculator.setupsById[calculator.activeId];
     const target = calculator.target;
     const artifacts = userdb.userArts;
 
@@ -211,7 +216,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     // },
     {
       key: STEP_KEY.LAUNCHER,
-      title: "Launcher",
+      title: "Launching",
       initialValid: true,
       render: () => (
         <Launcher
@@ -253,7 +258,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
       <ItemMultiSelect
         active={activePieceSelect}
-        title={<span className="text-lg">Optimize / Select Artifacts</span>}
+        title={<span className="text-lg">Optimizer / Select Artifacts</span>}
         items={setForPieceSelecte.current.artifacts}
         initialValue={setForPieceSelecte.current.selectedIds}
         onClose={() => togglePieceSelect(false)}
@@ -262,7 +267,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
       <Modal
         active={isActiveResult}
-        title={<span className="text-lg">Optimize / Result</span>}
+        title={<span className="text-lg">Optimizer / Result</span>}
         className={`bg-surface-2 ${Modal.LARGE_HEIGHT_CLS}`}
         style={{
           width: "45rem",

@@ -42,15 +42,23 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
   const state: OptimizerState = {
     status,
     optimizer,
-    toggle: (key, value = !status[key]) => {
+    setActive: (active, setup, testMode = false) => {
       setStatus((prev) => ({
         ...prev,
-        [key]: value,
+        active,
+        testMode,
+        setup,
       }));
 
-      if (key === "testMode") {
-        optimizer.switchTestMode(value);
+      if (active) {
+        optimizer.switchTestMode(testMode);
       }
+    },
+    setLoading: (loading) => {
+      setStatus((prev) => ({
+        ...prev,
+        loading,
+      }));
     },
   };
 

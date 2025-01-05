@@ -110,7 +110,7 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
   return (
     <Modal
       active={active}
-      title={<span className="text-lg">Optimize / {stepConfigs[step]?.title}</span>}
+      title={<span className="text-lg">Optimizer / {stepConfigs[step]?.title}</span>}
       style={{
         height: "95vh",
         maxHeight: 880,

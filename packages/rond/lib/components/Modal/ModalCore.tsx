@@ -18,6 +18,8 @@ export interface ModalCoreProps
     > {
   /** Default to 'custom' */
   preset?: ModalPreset;
+  /** Default to true */
+  centered?: boolean;
   id?: string;
   className?: ClassValue;
   style?: React.CSSProperties;
@@ -29,6 +31,7 @@ export const ModalCore = ({
   id,
   className,
   preset = "custom",
+  centered = true,
   style,
   children,
   ...overlayProps
@@ -44,6 +47,7 @@ export const ModalCore = ({
             className={clsx(
               `ron-modal ron-modal--${preset} ron-modal--${direction}`,
               preset === "large" && LARGE_HEIGHT_CLS,
+              centered && 'ron-modal--centered',
               className
             )}
             style={{

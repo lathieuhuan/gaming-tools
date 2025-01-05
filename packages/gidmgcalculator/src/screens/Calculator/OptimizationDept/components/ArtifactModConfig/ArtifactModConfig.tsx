@@ -60,7 +60,7 @@ export function ArtifactModConfig({ artifactManager }: ArtifactModConfigProps) {
 
   return (
     <div className="h-full flex flex-col">
-      <p>Artifact buffs to be activated (if any)</p>
+      <p>Artifact buffs & debuffs to be activated (if available)</p>
 
       <OverflowTrackingContainer className="mt-2 grow custom-scrollbar" overflowedCls="pr-3" wrapCls="space-y-2">
         {artifactManager.sets.map(({ data }) => {
