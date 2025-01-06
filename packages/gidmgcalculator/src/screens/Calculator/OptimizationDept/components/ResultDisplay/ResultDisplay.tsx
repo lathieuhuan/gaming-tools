@@ -8,22 +8,23 @@ import type { Artifact, CalcSetup } from "@Src/types";
 import { useOptimizerState } from "@Src/screens/Calculator/ContextProvider";
 import { $AppArtifact } from "@Src/services";
 import Entity_ from "@Src/utils/entity-utils";
-import Modifier_ from "@Src/utils/modifier-utils";
-import Object_ from "@Src/utils/object-utils";
-import { importSetup } from "@Store/calculator-slice";
-import { useDispatch } from "@Store/hooks";
+// import Modifier_ from "@Src/utils/modifier-utils";
+// import Object_ from "@Src/utils/object-utils";
+// import { importSetup } from "@Store/calculator-slice";
+// import { useDispatch } from "@Store/hooks";
 
 // Component
 import { ArtifactCard, GenshinImage, ItemThumbnail } from "@Src/components";
 
 interface ResultDisplayProps {
-  setup: CalcSetup;
-  artifactModConfigs: OptimizerAllArtifactModConfigs;
+  // setup: CalcSetup;
+  // artifactModConfigs: OptimizerAllArtifactModConfigs;
   onRequestReturn: () => void;
   onRequestExit: () => void;
+  onRequestLoadToCalculator: (indexes: number[]) => void;
 }
 export function ResultDisplay(props: ResultDisplayProps) {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const [selected, setSelected] = useState<Artifact>();
   const {
@@ -39,36 +40,38 @@ export function ResultDisplay(props: ResultDisplayProps) {
   };
 
   const loadResultToCalculator = () => {
-    const { buffs, debuffs } = props.artifactModConfigs;
-    let id = Date.now();
+    props.onRequestLoadToCalculator([...selectedIndexes.current]);
 
-    for (const index of selectedIndexes.current) {
-      const { artifacts = [] } = result.at(index) || {};
-      const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts)
-        .map((control) => buffs[control.code])
-        .flat();
-      const artDebuffCtrls = Modifier_.createArtifactDebuffCtrls()
-        .map((control) => debuffs[control.code])
-        .flat();
-      const calcSetup = Object_.clone(props.setup);
+    // const { buffs, debuffs } = props.artifactModConfigs;
+    // let id = Date.now();
 
-      calcSetup.artifacts = artifacts;
-      calcSetup.artBuffCtrls = artBuffCtrls;
-      calcSetup.artDebuffCtrls = artDebuffCtrls;
+    // for (const index of selectedIndexes.current) {
+    //   const { artifacts = [] } = result.at(index) || {};
+    //   const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts)
+    //     .map((control) => buffs[control.code])
+    //     .flat();
+    //   const artDebuffCtrls = Modifier_.createArtifactDebuffCtrls()
+    //     .map((control) => debuffs[control.code])
+    //     .flat();
+    //   const calcSetup = Object_.clone(props.setup);
 
-      dispatch(
-        importSetup({
-          importInfo: {
-            ID: id++,
-            type: "original",
-            name: `Optimized ${index + 1}${suffixes[index]}`,
-            calcSetup,
-          },
-        })
-      );
-    }
+    //   calcSetup.artifacts = artifacts;
+    //   calcSetup.artBuffCtrls = artBuffCtrls;
+    //   calcSetup.artDebuffCtrls = artDebuffCtrls;
 
-    props.onRequestExit();
+    //   dispatch(
+    //     importSetup({
+    //       importInfo: {
+    //         ID: id++,
+    //         type: "original",
+    //         name: `Optimized ${index + 1}${suffixes[index]}`,
+    //         calcSetup,
+    //       },
+    //     })
+    //   );
+    // }
+
+    // props.onRequestExit();
   };
 
   const getSetData = (code: number) => {

@@ -73,7 +73,7 @@ const Modal = ({
           className={CLOSE_BTN_CLS}
           boneOnly
           disabled={!closable}
-          onClick={coreProps.onClose}
+          onClick={() => coreProps.onClose()}
         />
       ) : null}
     </ModalCore>

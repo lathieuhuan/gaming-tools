@@ -13,29 +13,29 @@ export type StepConfig<T extends string> = {
 };
 
 export type OptimizationGuideControl<T extends string> = {
-  toggle: (type: "ACTIVE", value: boolean) => void;
   notify: (message: null | string | { message: string; toStep: T }) => void;
 };
 
 interface OptimizationGuideProps<T extends string> {
+  active: boolean;
   stepConfigs: StepConfig<T>[];
-  control?: React.RefObject<OptimizationGuideControl<T>>;
   canShowMenu?: boolean;
   frozen?: boolean;
-  onChangStep?: (newKey: string, oldKey: string) => void;
+  control?: React.RefObject<OptimizationGuideControl<T>>;
+  onChangStep?: (newKey: T, oldKey: T) => void;
+  onClose: () => void;
   afterClose: () => void;
 }
 export function OptimizationGuide<T extends string>(props: OptimizationGuideProps<T>) {
   const { frozen, stepConfigs } = props;
   const stepCount = stepConfigs.length;
 
-  const [active, setActive] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [step, setStep] = useState(0);
   const [stepStatuses, setStepStatuses] = useState<StepStatus[]>(
     stepConfigs.map((config) => (config.initialValid ? "VALID" : "INVALID"))
   );
-  const [visibleIndexes, setVisibleIndexes] = useState(new Set<number>([0]));
+  const [visibleStepIndexes, setVisibleStepIndexes] = useState(new Set<number>([0]));
   const [noti, setNoti] = useState({
     message: "",
     toStep: undefined as number | undefined,
@@ -59,13 +59,6 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
   };
 
   useImperativeHandle(props.control, () => ({
-    toggle: (type, value) => {
-      switch (type) {
-        case "ACTIVE":
-          setActive(value);
-          break;
-      }
-    },
     notify: (arg) => {
       const { message = "", toStep = undefined } = arg ? (typeof arg === "string" ? { message: arg } : arg) : {};
       const _toStep = toStep ? stepConfigs.findIndex((config) => config.key === toStep) : undefined;
@@ -82,7 +75,7 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
     }
 
     setStep(toStep);
-    setVisibleIndexes((prev) => {
+    setVisibleStepIndexes((prev) => {
       const newIndexes = new Set(prev);
       moreVisibleSteps.forEach((step) => newIndexes.add(step));
       return newIndexes;
@@ -95,7 +88,7 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
   };
 
   const onTransitionEndSwipe = () => {
-    setVisibleIndexes(new Set([step]));
+    setVisibleStepIndexes(new Set([step]));
   };
 
   const onClickMenuItem = (index: number) => {
@@ -109,7 +102,7 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
 
   return (
     <Modal
-      active={active}
+      active={props.active}
       title={<span className="text-lg">Optimizer / {stepConfigs[step]?.title}</span>}
       style={{
         height: "95vh",
@@ -120,10 +113,8 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
       bodyCls="py-2 px-0"
       closeOnMaskClick={false}
       closable={!frozen}
-      onClose={() => setActive(false)}
-      onTransitionEnd={(open) => {
-        if (!open) props.afterClose();
-      }}
+      onClose={() => props.onClose()}
+      onTransitionEnd={() => props.afterClose()}
     >
       <div className="h-full flex flex-col hide-scrollbar">
         <div className="grow overflow-hidden relative">
@@ -142,7 +133,7 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
                   className="h-full px-4 shrink-0 hide-scrollbar"
                   style={{ width: `${100 / stepCount}%` }}
                 >
-                  {visibleIndexes.has(index) ? config.render(changeValidOf(index)) : null}
+                  {visibleStepIndexes.has(index) ? config.render(changeValidOf(index)) : null}
                 </div>
               );
             })}

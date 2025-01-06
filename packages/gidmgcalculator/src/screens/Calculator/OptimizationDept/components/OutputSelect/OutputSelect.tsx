@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { clsx } from "rond";
-import { AppCharacter, AttackPattern, TalentCalcItem, LevelableTalentType, NORMAL_ATTACKS } from "@Backend";
-import { useTranslation } from "@Src/hooks";
+import type { AppCharacter, AttackPattern, TalentCalcItem, LevelableTalentType } from "@Backend";
+import type { OptimizedOutput } from "../../OptimizationDept.types";
 
-export type SelectedCalcItem = {
-  patternCate: AttackPattern;
-  value: TalentCalcItem;
-};
+import { NORMAL_ATTACKS } from "@Backend";
+import { useTranslation } from "@Src/hooks";
 
 type RenderGroup = {
   title: LevelableTalentType;
@@ -16,18 +14,16 @@ type RenderGroup = {
   }>;
 };
 
-interface CalcItemSelectProps {
+interface OutputSelectProps {
   calcList: AppCharacter["calcList"];
-  initialValue?: SelectedCalcItem;
-  onChange?: (items: SelectedCalcItem[]) => void;
+  initialValue?: OptimizedOutput;
+  onChange?: (items: OptimizedOutput) => void;
   onChangeValid?: (valid: boolean) => void;
 }
-export function CalcItemSelect(props: CalcItemSelectProps) {
+export function OutputSelect(props: OutputSelectProps) {
   const { calcList } = props;
   const { t } = useTranslation();
-  const [selectedItems, setSelectedItems] = useState<SelectedCalcItem[]>(
-    props.initialValue ? [props.initialValue] : []
-  );
+  const [selectedOutput, setSelectedOutput] = useState<OptimizedOutput | undefined>(props.initialValue);
 
   const renderGroups: RenderGroup[] = [
     {
@@ -49,9 +45,9 @@ export function CalcItemSelect(props: CalcItemSelectProps) {
     },
   ];
 
-  const onClickItem = (item: SelectedCalcItem) => {
-    setSelectedItems([item]);
-    props.onChange?.([item]);
+  const onClickItem = (output: OptimizedOutput) => {
+    setSelectedOutput(output);
+    props.onChange?.(output);
     props.onChangeValid?.(true);
   };
 
@@ -66,10 +62,10 @@ export function CalcItemSelect(props: CalcItemSelectProps) {
               <p className="text-secondary-1 opacity-80">{t(group.title)}</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 {group.subGroups.map((subGroup) => {
-                  const isSelectedGroup = subGroup.attPatt === selectedItems[0]?.patternCate;
+                  const isSelectedGroup = subGroup.attPatt === selectedOutput?.attPatt;
 
                   return subGroup.items.map((item, index) => {
-                    const isSeleted = isSelectedGroup && item.name === selectedItems[0]?.value.name;
+                    const isSeleted = isSelectedGroup && item.name === selectedOutput?.item.name;
 
                     return (
                       <span
@@ -78,7 +74,7 @@ export function CalcItemSelect(props: CalcItemSelectProps) {
                           "px-2 py-1 rounded",
                           isSeleted ? "bg-active-color text-black font-bold" : "hover:bg-surface-3 font-medium"
                         )}
-                        onClick={() => onClickItem({ patternCate: subGroup.attPatt, value: item })}
+                        onClick={() => onClickItem({ attPatt: subGroup.attPatt, item })}
                       >
                         {item.name}
                       </span>

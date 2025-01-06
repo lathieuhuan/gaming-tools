@@ -1,11 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { Modal } from "rond";
+import { ButtonGroup, Checkbox, Modal } from "rond";
 
 import { getDataOfSetupEntities, type OptimizerExtraConfigs } from "@Backend";
 import type { ItemMultiSelectIds } from "@Src/components";
 import type { CalcSetup } from "@Src/types";
 import type { OptimizerState } from "../ContextProvider/OptimizerProvider";
 import type { ArtifactManager } from "./controllers";
+import type {
+  OptimizationGuideControl,
+  OptimizationModalType,
+  OptimizationStepConfig,
+  OptimizationStepKey,
+  OptimizedOutput,
+} from "./OptimizationDept.types";
 
 import { useStoreSnapshot } from "@Src/features";
 import Object_ from "@Src/utils/object-utils";
@@ -14,32 +21,23 @@ import { useArtifactManager } from "./hooks/useArtifactManager";
 
 // Components
 import { ItemMultiSelect } from "@Src/components";
-import { OptimizationGuide, OptimizationGuideControl, StepConfig } from "./components/OptimizationGuide";
 import { ArtifactModConfig } from "./components/ArtifactModConfig";
 import { ArtifactSetSelect } from "./components/ArtifactSetSelect";
-import { CalcItemSelect, SelectedCalcItem } from "./components/CalcItemSelect";
+import { OutputSelect } from "./components/OutputSelect";
+import { OptimizationGuide } from "./components/OptimizationGuide";
 // import { ExtraConfigs } from "./components/ExtraConfigs";
 import { Launcher } from "./components/Launcher";
 import { ResultDisplay } from "./components/ResultDisplay";
 
 type SavedValues = {
-  calcItem?: SelectedCalcItem;
+  output?: OptimizedOutput;
   extraConfigs: OptimizerExtraConfigs;
 };
 
-const STEP_KEY = {
-  ARTIFACTS: "ARTIFACTS",
-  MODIFIERS: "MODIFIERS",
-  CALC_ITEMS: "CALC_ITEMS",
-  LAUNCHER: "LAUNCHER",
-} as const;
-
-type StepKey = (typeof STEP_KEY)[keyof typeof STEP_KEY];
+const MAX_SETUPS = 5;
 
 export function OptimizationDept() {
   const { status, optimizer, setActive, setLoading } = useOptimizerState();
-
-  console.log(status);
 
   return status.active ? (
     <OptimizationFrontDesk
@@ -69,6 +67,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
     return {
       setup,
+      manageInfos: calculator.setupManageInfos,
       target,
       artifacts,
       data: getDataOfSetupEntities(setup),
@@ -77,11 +76,11 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const record = useCharacterData();
   const artifactManager = useArtifactManager(store.artifacts);
 
-  const [activePieceSelect, setActivePieceSelect] = useState(false);
-  const [resultStatus, setResultStatus] = useState<"EXIT" | "CLOSE" | "OPEN" | "REOPEN">("CLOSE");
+  const [modalType, setModalType] = useState<OptimizationModalType>("GUIDE");
   const [canShowGuideMenu, setCanShowGuideMenu] = useState(false);
 
-  const guideControl = useRef<OptimizationGuideControl<StepKey>>(null);
+  const guideControl = useRef<OptimizationGuideControl>(null);
+  const lastModalType = useRef<OptimizationModalType>("");
   const savedValues = useRef<SavedValues>({
     extraConfigs: {
       preferSet: false,
@@ -91,15 +90,18 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const lastModConfigs = useRef(artifactManager.allModConfigs);
   const runCount = useRef(0);
 
-  const isActiveResult = resultStatus === "OPEN" || resultStatus === "REOPEN";
+  console.log(modalType);
+
+  const afterCloseModal = () => {
+    if (modalType === "") props.onClose();
+  };
 
   useEffect(() => {
     optimizer.init(store.target, store.setup, store.data);
 
     const unsubscribe = optimizer.subscribeCompletion(() => {
       runCount.current += 1;
-      guideControl.current?.toggle("ACTIVE", false);
-      setResultStatus("OPEN");
+      setModalType("RESULT");
     });
 
     return () => {
@@ -108,63 +110,56 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   }, []);
 
   const optimizeSetup = () => {
-    const { calcItem, extraConfigs } = savedValues.current;
+    const { output, extraConfigs } = savedValues.current;
     const { allModConfigs } = artifactManager;
 
-    // console.log(artifactManager.sets.filter((set) => set.selectedIds.size));
+    if (output) {
+      // console.log(artifactManager.sets.filter((set) => set.selectedIds.size));
 
-    optimizer.optimize(
-      {
-        pattern: calcItem!.patternCate,
-        calcItem: calcItem!.value,
-        elmtModCtrls: store.setup.elmtModCtrls,
-        infusedElmt: store.setup.customInfusion.element, // this should be configurable in the future
-      },
-      allModConfigs,
-      extraConfigs
-    );
+      optimizer.optimize(
+        {
+          pattern: output.attPatt,
+          calcItem: output.item,
+          elmtModCtrls: store.setup.elmtModCtrls,
+          infusedElmt: store.setup.customInfusion.element, // this should be configurable in the future
+        },
+        allModConfigs,
+        extraConfigs
+      );
 
-    lastModConfigs.current = Object_.clone(allModConfigs);
-  };
-
-  const togglePieceSelect = (active: boolean, code?: number) => {
-    if (active && code) {
-      setForPieceSelecte.current = artifactManager.getSet(code);
+      lastModConfigs.current = Object_.clone(allModConfigs);
     }
-
-    setActivePieceSelect(active);
-    guideControl.current?.toggle("ACTIVE", !active);
   };
 
   const onConfirmSelectPieces = (selectedIds: ItemMultiSelectIds) => {
     artifactManager.updateSelectedIds(setForPieceSelecte.current.code, selectedIds);
-    togglePieceSelect(false);
+    setModalType("GUIDE");
   };
 
-  const onChangStep = (newStep: string, oldStep: string) => {
+  const onChangStep = (newStep: OptimizationStepKey, oldStep: OptimizationStepKey) => {
     switch (oldStep) {
-      case STEP_KEY.ARTIFACTS: {
+      case "ARTIFACT_SELECT": {
         const hasAnyNewMod = artifactManager.concludeModConfigs();
 
-        if (newStep !== STEP_KEY.MODIFIERS) {
+        if (newStep !== "MODIFIER_CONFIG") {
           guideControl.current?.notify(
             hasAnyNewMod
               ? {
                   message: "New Artifact modifiers configurations!",
-                  toStep: "MODIFIERS",
+                  toStep: "MODIFIER_CONFIG",
                 }
               : null
           );
         }
         break;
       }
-      case STEP_KEY.MODIFIERS:
+      case "MODIFIER_CONFIG":
         artifactManager.recordPresentMods();
         break;
     }
 
     switch (newStep) {
-      case STEP_KEY.LAUNCHER: {
+      case "LAUNCH": {
         setCanShowGuideMenu(true);
 
         const { sumary, calcCount, appArtifacts } = artifactManager.sumarize();
@@ -174,32 +169,41 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     }
   };
 
-  const stepConfigs: StepConfig<StepKey>[] = [
+  const onLoadResultToCalculator = (indexes: number[]) => {
+    if (store.manageInfos.length + indexes.length > MAX_SETUPS) {
+      //
+    }
+  };
+
+  const stepConfigs: OptimizationStepConfig[] = [
     {
-      key: STEP_KEY.ARTIFACTS,
+      key: "ARTIFACT_SELECT",
       title: "Artifacts",
       render: (changeValid) => (
         <ArtifactSetSelect
           artifactManager={artifactManager}
           onChangeValid={changeValid}
-          onRequestSelectPieces={(code) => togglePieceSelect(true, code)}
+          onRequestSelectPieces={(code) => {
+            setForPieceSelecte.current = artifactManager.getSet(code);
+            setModalType("PIECE_SELECT");
+          }}
         />
       ),
     },
     {
-      key: STEP_KEY.MODIFIERS,
+      key: "MODIFIER_CONFIG",
       title: "Artifact Modifiers",
       initialValid: true,
       render: () => <ArtifactModConfig artifactManager={artifactManager} />,
     },
     {
-      key: STEP_KEY.CALC_ITEMS,
+      key: "OUTPUT_SELECT",
       title: "Optimized Output",
       render: (changeValid) => (
-        <CalcItemSelect
+        <OutputSelect
           calcList={record.appCharacter.calcList}
-          initialValue={savedValues.current?.calcItem}
-          onChange={(items) => (savedValues.current.calcItem = items[0])}
+          initialValue={savedValues.current?.output}
+          onChange={(items) => (savedValues.current.output = items)}
           onChangeValid={changeValid}
         />
       ),
@@ -215,7 +219,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     //   ),
     // },
     {
-      key: STEP_KEY.LAUNCHER,
+      key: "LAUNCH",
       title: "Launching",
       initialValid: true,
       render: () => (
@@ -226,10 +230,7 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
             guideControl.current?.notify(null);
             optimizeSetup();
           }}
-          onRequestLastResult={() => {
-            guideControl.current?.toggle("ACTIVE", false);
-            setResultStatus("REOPEN");
-          }}
+          onRequestLastResult={() => setModalType("RESULT")}
           onCancel={() => {
             optimizer.end();
             optimizer.init(store.target, store.setup, store.data);
@@ -244,29 +245,27 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   return (
     <>
       <OptimizationGuide
+        active={modalType === "GUIDE"}
         control={guideControl}
         stepConfigs={stepConfigs}
         canShowMenu={canShowGuideMenu}
         frozen={props.processing}
         onChangStep={onChangStep}
-        afterClose={() => {
-          if (!activePieceSelect && !isActiveResult) {
-            props.onClose();
-          }
-        }}
+        onClose={() => setModalType("EXIT_CONFIRM")}
+        afterClose={afterCloseModal}
       />
 
       <ItemMultiSelect
-        active={activePieceSelect}
+        active={modalType === "PIECE_SELECT"}
         title={<span className="text-lg">Optimizer / Select Artifacts</span>}
         items={setForPieceSelecte.current.artifacts}
         initialValue={setForPieceSelecte.current.selectedIds}
-        onClose={() => togglePieceSelect(false)}
+        onClose={() => setModalType("GUIDE")}
         onConfirm={onConfirmSelectPieces}
       />
 
       <Modal
-        active={isActiveResult}
+        active={modalType === "RESULT"}
         title={<span className="text-lg">Optimizer / Result</span>}
         className={`bg-surface-2 ${Modal.LARGE_HEIGHT_CLS}`}
         style={{
@@ -276,19 +275,42 @@ function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         withCloseButton={false}
         closeOnEscape={false}
         onClose={() => {}}
-        onTransitionEnd={(open) => {
-          if (!open && resultStatus === "EXIT") props.onClose();
-        }}
+        onTransitionEnd={afterCloseModal}
       >
         <ResultDisplay
-          setup={store.setup}
-          artifactModConfigs={lastModConfigs.current}
-          onRequestReturn={() => {
-            setResultStatus("CLOSE");
-            guideControl.current?.toggle("ACTIVE", true);
-          }}
-          onRequestExit={() => setResultStatus("EXIT")}
+          // setup={store.setup}
+          // artifactModConfigs={lastModConfigs.current}
+          onRequestReturn={() => setModalType("GUIDE")}
+          onRequestExit={() => setModalType("EXIT_CONFIRM")}
+          onRequestLoadToCalculator={onLoadResultToCalculator}
         />
+      </Modal>
+
+      <Modal
+        active={modalType === "EXIT_CONFIRM"}
+        onTransitionEnd={afterCloseModal}
+        onConfirm={() => setModalType("")}
+        onClose={() => {}}
+      >
+        <div>
+          <p>Exit the Optimizer?</p>
+          <div>
+            <Checkbox>Save the result</Checkbox>
+          </div>
+
+          <ButtonGroup
+            buttons={[
+              {
+                children: "Cancel",
+                onClick: () => setModalType(lastModalType.current),
+              },
+              {
+                children: "Confirm",
+                onClick: () => setModalType(""),
+              },
+            ]}
+          />
+        </div>
       </Modal>
     </>
   );

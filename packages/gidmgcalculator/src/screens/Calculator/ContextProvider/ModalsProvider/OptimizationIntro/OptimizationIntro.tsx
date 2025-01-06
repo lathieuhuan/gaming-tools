@@ -46,12 +46,13 @@ function IntroCore(props: IntroCoreProps) {
         <div className="px-1 py-2">
           <ul className="text-sm list-disc pl-4 space-y-1">
             <li>
-              The Optimizer uses every configuration of the Setup except the main character's Artifacts and their
-              Artifact buffs & debuffs.
+              The Optimizer uses every configuration of the selected Setup except the main character's Artifacts and
+              their Artifact buffs & debuffs.
             </li>
             <li>The Artifacts in "My Artifacts" will be used instead.</li>
             <li>
-              The result contains a maximum of 3 Artifact combinations that result in the highest selected output.
+              The result contains a maximum of 3 Artifact combinations that lead to the highest average value of the
+              selected output.
             </li>
           </ul>
         </div>

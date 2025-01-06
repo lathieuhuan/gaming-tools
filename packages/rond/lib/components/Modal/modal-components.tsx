@@ -9,7 +9,9 @@ export interface ModalHeaderProps {
 export function ModalHeader({ className, children, withDivider }: ModalHeaderProps) {
   return (
     <div className={clsx("ron-modal__header", className)}>
-      <div className={clsx("ron-modal__header__inner", withDivider && "ron-modal__header--with-divider")}>{children}</div>
+      <div className={clsx("ron-modal__header__inner", withDivider && "ron-modal__header--with-divider")}>
+        {children}
+      </div>
     </div>
   );
 }
@@ -65,7 +67,7 @@ export const ModalActions = ({
   if (showCancel) {
     buttons.unshift({
       children: cancelText,
-      onClick: onCancel,
+      onClick: () => onCancel?.(),
       ...cancelButtonProps,
     });
   }
