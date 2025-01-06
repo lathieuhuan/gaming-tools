@@ -4,9 +4,10 @@ import { type ButtonProps } from "../Button";
 
 export type SelectValueType = string | number;
 
-export type SelectOption = {
+export type SelectOption<T extends Record<string, unknown> = Record<string, unknown>> = {
   label: SelectValueType;
   value: SelectValueType;
+  data?: T;
   disabled?: boolean;
   className?: string;
 };
@@ -15,7 +16,7 @@ export type SelectAction = Pick<ButtonProps, "variant" | "icon" | "disabled"> & 
   onClick?: (value: SelectValueType) => void;
 };
 
-export interface SelectCoreProps
+export interface SelectCoreProps<T extends Record<string, unknown> = Record<string, unknown>>
   extends Pick<RcProps, "id" | "open" | "disabled" | "placeholder" | "showSearch" | "getPopupContainer"> {
   className?: ClassValue;
   dropdownCls?: ClassValue;
@@ -28,13 +29,15 @@ export interface SelectCoreProps
   arrowAt?: "start" | "end";
   transparent?: boolean;
   showAllOptions?: boolean;
-  options?: SelectOption[];
+  options?: SelectOption<T>[];
   value?: SelectValueType;
   defaultValue?: SelectValueType;
-  onChange?: (value: SelectValueType) => void;
+  onChange?: (value: SelectValueType, option: SelectOption<T>) => void;
 }
 
-export interface SelectProps extends SelectCoreProps, Pick<RcProps, "title"> {
+export interface SelectProps<T extends Record<string, unknown> = Record<string, unknown>>
+  extends SelectCoreProps<T>,
+    Pick<RcProps, "title"> {
   /** Only when select has action */
   wrapperCls?: string;
   /** Only when select has action */

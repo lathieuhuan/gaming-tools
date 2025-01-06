@@ -42,17 +42,23 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
   const state: OptimizerState = {
     status,
     optimizer,
-    setActive: (active, setup, testMode = false) => {
+    open: (setup, testMode = false) => {
       setStatus((prev) => ({
         ...prev,
-        active,
+        active: true,
         testMode,
         setup,
       }));
 
-      if (active) {
-        optimizer.switchTestMode(testMode);
-      }
+      optimizer.switchTestMode(testMode);
+    },
+    close: (shouldKeepResult) => {
+      setStatus((prev) => ({
+        ...prev,
+        active: false,
+        setup: shouldKeepResult ? prev.setup : undefined,
+        result: shouldKeepResult ? prev.result : [],
+      }));
     },
     setLoading: (loading) => {
       setStatus((prev) => ({

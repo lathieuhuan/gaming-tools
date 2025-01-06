@@ -5,7 +5,7 @@ import { Button, useScreenWatcher } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTraveler, updateUI } from "@Store/ui-slice";
-import { useCalcModalCtrl } from "../ContextProvider";
+import { useCalcModalCtrl, useOptimizerState } from "../ContextProvider";
 
 // Component
 import SectionArtifacts from "./SectionArtifacts";
@@ -89,6 +89,24 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 
 function OptimizationDeptContact() {
   const modalCtrl = useCalcModalCtrl();
+  const { status } = useOptimizerState();
 
-  return <Button title="Optimizer" icon={<FaSun className="text-lg" />} onClick={() => modalCtrl.requestOptimizer()} />;
+  return (
+    <div className="">
+      <Button
+        title="Optimizer"
+        className="relative"
+        icon={
+          <>
+            <FaSun className="text-lg" />
+
+            {!status.active && status.result.length ? (
+              <span className="absolute bg-danger-1 block w-3 h-3 rounded-circle" style={{ top: "-4px", right: 0 }} />
+            ) : null}
+          </>
+        }
+        onClick={() => modalCtrl.requestOptimizer()}
+      />
+    </div>
+  );
 }

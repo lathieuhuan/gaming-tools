@@ -1,24 +1,32 @@
 import { BottomList, type BottomListProps } from "@lib/components";
 import { overlayRoot } from "../common/overlay-root";
 
-type ShowArgs = Omit<BottomListProps, "active" | "onClose">;
+type ShowArgs<T extends Record<string, unknown> = Record<string, unknown>> = Omit<
+  BottomListProps<T>,
+  "active" | "onClose"
+>;
 
-const show = (args: ShowArgs) => {
+function show<T extends Record<string, unknown> = Record<string, unknown>>(args: ShowArgs<T>) {
   const updatePopup = (active: boolean) => {
     const closePopup = () => {
       if (active) updatePopup(false);
     };
 
-    const onSelect = (value: string | number) => {
-      args.onSelect?.(value);
-      closePopup();
-    };
-
-    overlayRoot.render(<BottomList {...args} active={active} onSelect={onSelect} onClose={closePopup} />);
+    overlayRoot.render(
+      <BottomList<T>
+        {...args}
+        active={active}
+        onSelect={(value, item) => {
+          args.onSelect?.(value, item);
+          closePopup();
+        }}
+        onClose={closePopup}
+      />
+    );
   };
 
   updatePopup(true);
-};
+}
 
 export const bottomList = {
   show,

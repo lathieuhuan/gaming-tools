@@ -1,36 +1,75 @@
 import { useRef, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
-import { CollapseSpace, Modal, Select } from "rond";
+import { Checkbox, CollapseSpace, Select } from "rond";
 
+import type { CalcSetupManageInfo } from "@Src/types";
 import { IS_DEV_ENV } from "@Src/constants";
-import { useStore } from "@Src/features";
+import { useStoreSnapshot } from "@Src/features";
 import Object_ from "@Src/utils/object-utils";
-import { selectActiveId, selectSetupManageInfos } from "@Store/calculator-slice";
-import { useSelector } from "@Store/hooks";
 import { useOptimizerState } from "../../hooks";
 
-interface IntroCoreProps {
-  setupId: number;
-  onChangeSetup: (id: number) => void;
+const FORM_ID = "optimizer-preconfig";
+
+interface OptimizationIntroProps {
+  onClose: () => void;
 }
-function IntroCore(props: IntroCoreProps) {
-  const setupInfos = useSelector(selectSetupManageInfos);
+function OptimizationIntro(props: OptimizationIntroProps) {
+  //
+  const snapshot = useStoreSnapshot(({ calculator }) => {
+    return {
+      options: calculator.setupManageInfos.map((info) => ({
+        label: info.name,
+        value: info.ID,
+        data: info,
+      })),
+      activeInfo: calculator.setupManageInfos.find((info) => info.ID === calculator.activeId),
+      setupsById: calculator.setupsById,
+    };
+  });
+  const selectedInfo = useRef<CalcSetupManageInfo | undefined>(snapshot.activeInfo);
+  const testMode = useRef(false);
+  const { open } = useOptimizerState();
+
   const [activeIntro, setActiveIntro] = useState(false);
+
+  const onSubmit = () => {
+    const info = selectedInfo.current;
+    const setup = info ? snapshot.setupsById[info.ID] : undefined;
+
+    if (setup) {
+      const optimizedSetup = Object.assign(Object_.clone(setup), info);
+
+      open(optimizedSetup, testMode.current);
+      props.onClose();
+    }
+  };
 
   return (
     <div>
-      <div className="flex items-center gap-2">
-        <span>Optimize</span>
-        <Select
-          className="font-semibold"
-          defaultValue={props.setupId}
-          options={setupInfos.map((info) => ({
-            label: info.name,
-            value: info.ID,
-          }))}
-          onChange={(id) => props.onChangeSetup(id as number)}
-        />
-      </div>
+      <form
+        id={FORM_ID}
+        className="space-y-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit();
+        }}
+      >
+        <div className="flex items-center gap-2">
+          <span>Optimize</span>
+          <Select
+            className="font-semibold"
+            defaultValue={snapshot.activeInfo?.ID}
+            options={snapshot.options}
+            onChange={(_, option) => (selectedInfo.current = option.data)}
+          />
+        </div>
+
+        {IS_DEV_ENV && (
+          <div>
+            <Checkbox onChange={(checked) => (testMode.current = checked)}>Test Mode</Checkbox>
+          </div>
+        )}
+      </form>
 
       <div className="mt-6">
         <button
@@ -61,57 +100,6 @@ function IntroCore(props: IntroCoreProps) {
   );
 }
 
-interface OptimizationIntroProps {
-  active: boolean;
-  onClose: () => void;
-}
-export function OptimizationIntro(props: OptimizationIntroProps) {
-  const store = useStore();
-  const { setActive } = useOptimizerState();
-  const activeId = useSelector(selectActiveId);
-  const selectedId = useRef<number>(0);
+OptimizationIntro.FORM_ID = FORM_ID;
 
-  const onConfirm = (testMode = false) => {
-    const setupId = selectedId.current || activeId;
-    const setup = store.select(({ calculator }) => {
-      const manageInfo = calculator.setupManageInfos.find((info) => info.ID === setupId);
-      const setupInfo = Object_.clone(calculator.setupsById[setupId]);
-
-      return manageInfo ? Object.assign(setupInfo, manageInfo) : undefined;
-    });
-
-    if (setup) {
-      setActive(true, setup, testMode);
-      props.onClose();
-    }
-  };
-
-  return (
-    <Modal
-      active={props.active}
-      title="Optimizer"
-      preset="small"
-      // centered={false}
-      className="bg-surface-2"
-      // style={{
-      //   top: "min(20%, 5rem)",
-      // }}
-      withActions
-      moreActions={[
-        {
-          children: "Test Mode",
-          className: !IS_DEV_ENV && "hidden",
-          onClick: () => onConfirm(true),
-        },
-      ]}
-      confirmButtonProps={{
-        children: "Proceed",
-        autoFocus: true,
-      }}
-      onConfirm={() => onConfirm()}
-      onClose={props.onClose}
-    >
-      <IntroCore setupId={activeId} onChangeSetup={(id) => (selectedId.current = id)} />
-    </Modal>
-  );
-}
+export { OptimizationIntro };

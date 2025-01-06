@@ -1,10 +1,10 @@
 import clsx from "clsx";
 import { default as RcSelect } from "rc-select";
 import { ChevronDownSvg } from "../svg-icons";
-import type { SelectCoreProps } from "./Select.types";
+import type { SelectCoreProps, SelectOption } from "./Select.types";
 import "./SelectCore.styles.scss";
 
-export function SelectCore({
+export function SelectCore<T extends Record<string, unknown> = Record<string, unknown>>({
   className,
   dropdownCls,
   size = "small",
@@ -12,8 +12,9 @@ export function SelectCore({
   arrowAt = "end",
   transparent,
   showAllOptions,
+  onChange,
   ...rest
-}: SelectCoreProps) {
+}: SelectCoreProps<T>) {
   return (
     <RcSelect
       prefixCls="ron-select"
@@ -32,6 +33,7 @@ export function SelectCore({
       optionFilterProp="label"
       virtual={false}
       menuItemSelectedIcon={null}
+      onChange={(value, option) => onChange?.(value, option as SelectOption<T>)}
       {...rest}
     />
   );

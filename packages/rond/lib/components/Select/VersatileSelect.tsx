@@ -54,11 +54,14 @@ export function MobileSelect(props: VersatileSelectProps) {
         value: localValue,
         height: optionsCount > 10 ? "90%" : optionsCount > 7 ? "70%" : optionsCount > 3 ? "50%" : "30%",
         hasSearch: props.showSearch,
-        onSelect: (value) => {
+        onSelect: (value, item) => {
           if (!isControlled) {
             setLocalValue(value);
           }
-          props.onChange?.(value);
+          props.onChange?.(value, {
+            ...item,
+            label: item.label || item.value,
+          });
         },
       });
     }

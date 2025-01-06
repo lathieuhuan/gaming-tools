@@ -49,7 +49,26 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
 
       <TargetConfig />
 
-      <OptimizationIntro active={modalType === "OPTIMIZE_INTRO"} onClose={closeModal} />
+      <Modal
+        active={modalType === "OPTIMIZE_INTRO"}
+        title="Optimizer"
+        preset="small"
+        // centered={false}
+        className="bg-surface-2"
+        // style={{
+        //   top: "min(20%, 5rem)",
+        // }}
+        withActions
+        confirmButtonProps={{
+          form: OptimizationIntro.FORM_ID,
+          type: "submit",
+          children: "Proceed",
+          autoFocus: true,
+        }}
+        onClose={closeModal}
+      >
+        <OptimizationIntro onClose={closeModal} />
+      </Modal>
 
       <Modal
         active={modalType === "SAVE_SETUP"}

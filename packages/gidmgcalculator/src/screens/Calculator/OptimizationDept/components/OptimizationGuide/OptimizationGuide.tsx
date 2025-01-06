@@ -24,7 +24,7 @@ interface OptimizationGuideProps<T extends string> {
   control?: React.RefObject<OptimizationGuideControl<T>>;
   onChangStep?: (newKey: T, oldKey: T) => void;
   onClose: () => void;
-  afterClose: () => void;
+  // afterClose: () => void;
 }
 export function OptimizationGuide<T extends string>(props: OptimizationGuideProps<T>) {
   const { frozen, stepConfigs } = props;
@@ -114,7 +114,7 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
       closeOnMaskClick={false}
       closable={!frozen}
       onClose={() => props.onClose()}
-      onTransitionEnd={() => props.afterClose()}
+      // onTransitionEnd={() => props.afterClose()}
     >
       <div className="h-full flex flex-col hide-scrollbar">
         <div className="grow overflow-hidden relative">
