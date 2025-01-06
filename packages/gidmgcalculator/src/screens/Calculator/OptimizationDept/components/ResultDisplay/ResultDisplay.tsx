@@ -119,12 +119,8 @@ export function ResultDisplay(props: ResultDisplayProps) {
                 <div className="mt-2 grid grid-cols-5 gap-2">
                   {calculation.artifacts.map((artifact, artifactI) => {
                     if (artifact) {
-                      let data = dataBySet.current[artifact.code];
+                      const data = getSetData(artifact.code);
 
-                      if (!data) {
-                        data = $AppArtifact.getSet(artifact.code)!;
-                        dataBySet.current[artifact.code] = data;
-                      }
                       return (
                         <ItemCase
                           key={artifact.type}
