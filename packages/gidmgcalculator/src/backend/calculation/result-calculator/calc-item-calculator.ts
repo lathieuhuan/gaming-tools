@@ -134,7 +134,7 @@ export class CalcItemCalculator {
       }
 
       let flat = 0;
-      let normalMult = 1 + getBonus("pct_");
+      let normalMult = 1 + getBonus("pct_") / 100;
 
       switch (itemType) {
         case "healing":
@@ -142,7 +142,7 @@ export class CalcItemCalculator {
           normalMult += totalAttr.healB_ / 100;
           break;
         case "shield":
-          normalMult += (getBonus("pct_") + totalAttr.shieldS_) / 100;
+          normalMult += totalAttr.shieldS_ / 100;
           break;
       }
 
