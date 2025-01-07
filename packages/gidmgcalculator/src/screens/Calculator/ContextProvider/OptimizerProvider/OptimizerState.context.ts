@@ -8,6 +8,7 @@ export type OptimizerStatus = {
   active: boolean;
   loading: boolean;
   testMode: boolean;
+  pendingResult: boolean;
   setup?: OptimizedSetup;
   result: OptimizeResult;
 };

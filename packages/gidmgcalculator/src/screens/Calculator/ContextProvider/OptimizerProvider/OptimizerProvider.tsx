@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { OptimizeManager } from "./optimize-manager";
 import { OptimizerStateContext, OptimizerState, OptimizerStatus } from "./OptimizerState.context";
+import { OptimizerAllArtifactModConfigs } from "@Backend";
 
 function useOptimizer() {
   const ref = useRef<OptimizeManager>();
@@ -16,8 +17,10 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
     active: false,
     loading: false,
     testMode: false,
+    pendingResult: false,
     result: [],
   });
+  const lastModConfigs = useRef<OptimizerAllArtifactModConfigs>();
   const optimizer = useOptimizer();
 
   useEffect(() => {
@@ -47,7 +50,7 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
         ...prev,
         active: true,
         testMode,
-        setup,
+        setup: setup ?? prev.setup,
       }));
 
       optimizer.switchTestMode(testMode);
@@ -56,6 +59,7 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
       setStatus((prev) => ({
         ...prev,
         active: false,
+        pendingResult: shouldKeepResult,
         setup: shouldKeepResult ? prev.setup : undefined,
         result: shouldKeepResult ? prev.result : [],
       }));

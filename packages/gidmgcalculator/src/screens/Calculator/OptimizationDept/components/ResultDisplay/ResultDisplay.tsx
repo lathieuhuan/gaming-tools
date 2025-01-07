@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
-import { ButtonGroup, Checkbox, FancyBackSvg, ItemCase } from "rond";
-import { ARTIFACT_TYPES, OptimizerAllArtifactModConfigs, AppArtifact, GeneralCalc } from "@Backend";
+import { Button, ButtonProps, Checkbox, ItemCase, Modal, Popover, TimesSvg, useClickOutside } from "rond";
+import { ARTIFACT_TYPES, AppArtifact, GeneralCalc } from "@Backend";
 
-import type { Artifact, CalcSetup } from "@Src/types";
+import type { Artifact } from "@Src/types";
 
 import { useOptimizerState } from "@Src/screens/Calculator/ContextProvider";
 import { $AppArtifact } from "@Src/services";
@@ -19,19 +19,25 @@ import { ArtifactCard, GenshinImage, ItemThumbnail } from "@Src/components";
 interface ResultDisplayProps {
   // setup: CalcSetup;
   // artifactModConfigs: OptimizerAllArtifactModConfigs;
-  onRequestReturn: () => void;
-  onRequestExit: () => void;
-  onRequestLoadToCalculator: (indexes: number[]) => void;
+  moreActions?: ButtonProps[];
+  // onRequestReturn: () => void;
+  // onRequestExit: () => void;
+  // onRequestLoadToCalculator: (indexes: number[]) => void;
 }
-export function ResultDisplay(props: ResultDisplayProps) {
+export function ResultDisplay({ moreActions = [] }: ResultDisplayProps) {
   // const dispatch = useDispatch();
 
   const [selected, setSelected] = useState<Artifact>();
+  const [exiting, setExiting] = useState(false);
   const {
     status: { result },
+    close,
   } = useOptimizerState();
 
+  const confirmTriggerRef = useClickOutside<HTMLDivElement>(() => setExiting(false));
+
   const selectedIndexes = useRef(new Set(result.map((_, i) => i)));
+  const shouldSaveResult = useRef(false);
   const dataBySet = useRef<Record<number, AppArtifact>>({});
   const suffixes = ["st", "nd", "rd"];
 
@@ -40,11 +46,8 @@ export function ResultDisplay(props: ResultDisplayProps) {
   };
 
   const loadResultToCalculator = () => {
-    props.onRequestLoadToCalculator([...selectedIndexes.current]);
-
     // const { buffs, debuffs } = props.artifactModConfigs;
     // let id = Date.now();
-
     // for (const index of selectedIndexes.current) {
     //   const { artifacts = [] } = result.at(index) || {};
     //   const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts)
@@ -54,11 +57,9 @@ export function ResultDisplay(props: ResultDisplayProps) {
     //     .map((control) => debuffs[control.code])
     //     .flat();
     //   const calcSetup = Object_.clone(props.setup);
-
     //   calcSetup.artifacts = artifacts;
     //   calcSetup.artBuffCtrls = artBuffCtrls;
     //   calcSetup.artDebuffCtrls = artDebuffCtrls;
-
     //   dispatch(
     //     importSetup({
     //       importInfo: {
@@ -70,7 +71,6 @@ export function ResultDisplay(props: ResultDisplayProps) {
     //     })
     //   );
     // }
-
     // props.onRequestExit();
   };
 
@@ -82,6 +82,14 @@ export function ResultDisplay(props: ResultDisplayProps) {
       dataBySet.current[code] = data;
     }
     return data;
+  };
+
+  const onClickExit = () => {
+    if (exiting) {
+      close(shouldSaveResult.current);
+    } else {
+      setExiting(!exiting);
+    }
   };
 
   return (
@@ -155,31 +163,69 @@ export function ResultDisplay(props: ResultDisplayProps) {
           })}
         </div>
 
-        <ButtonGroup
-          className="mt-4 px-2 pb-1"
-          justify="end"
-          buttons={[
-            {
-              children: "Return",
-              icon: <FancyBackSvg />,
-              onClick: props.onRequestReturn,
-            },
-            {
-              children: "Exit",
-              icon: <FaSignOutAlt className="text-base" />,
-              onClick: props.onRequestExit,
-            },
-            {
-              children: "Load to Calculator",
-              icon: <FaFileUpload className="text-base" />,
-              className: "gap-1",
-              onClick: loadResultToCalculator,
-            },
-          ]}
-        />
+        <div className="mt-4 px-2 pb-1 flex justify-end gap-3">
+          <div ref={confirmTriggerRef} className="relative">
+            <Button
+              variant={exiting ? "danger" : "default"}
+              icon={<FaSignOutAlt className="text-base" />}
+              onClick={onClickExit}
+            >
+              Exit
+            </Button>
+
+            <Popover
+              active={exiting}
+              className="bottom-full mb-3 pl-4 pr-1 py-1 bg-black text-light-default rounded-md shadow-white-glow"
+              style={{
+                width: "12.5rem",
+                left: "50%",
+                translate: "-50% 0",
+              }}
+              origin="bottom center"
+            >
+              <div className="flex justify-between items-center">
+                <p className="font-semibold">Tap again to exit.</p>
+                <Button
+                  className="shrink-0"
+                  variant="custom"
+                  size="large"
+                  withShadow={false}
+                  icon={<TimesSvg />}
+                  onClick={() => setExiting(false)}
+                />
+              </div>
+              <div className="py-2">
+                <Checkbox onChange={(checked) => (shouldSaveResult.current = checked)}>Save the result</Checkbox>
+              </div>
+            </Popover>
+          </div>
+
+          <Button className="gap-1" icon={<FaFileUpload className="text-base" />} onClick={loadResultToCalculator}>
+            Load to Calculator
+          </Button>
+        </div>
       </div>
 
       <ArtifactCard wrapperCls="w-68 shrink-0" withOwnerLabel artifact={selected} />
     </div>
+  );
+}
+
+export function ResultModalCase(props: { active: boolean; children: React.ReactNode }) {
+  return (
+    <Modal
+      active={props.active}
+      title={<span className="text-lg">Optimizer / Result</span>}
+      className={`bg-surface-2 ${Modal.LARGE_HEIGHT_CLS}`}
+      style={{
+        width: "45rem",
+      }}
+      closeOnMaskClick={false}
+      withCloseButton={false}
+      closeOnEscape={false}
+      onClose={() => {}}
+    >
+      {props.children}
+    </Modal>
   );
 }

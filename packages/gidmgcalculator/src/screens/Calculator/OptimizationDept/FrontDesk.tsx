@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ButtonGroup, Checkbox, Modal } from "rond";
+import { ButtonGroup, Checkbox, FancyBackSvg, Modal } from "rond";
 import { getDataOfSetupEntities, type OptimizerExtraConfigs } from "@Backend";
 
 import type { ItemMultiSelectIds } from "@Src/components";
@@ -26,14 +26,12 @@ import { OptimizationGuide } from "./components/OptimizationGuide";
 import { OutputSelect } from "./components/OutputSelect";
 // import { ExtraConfigs } from "./components/ExtraConfigs";
 import { Launcher } from "./components/Launcher";
-import { ResultDisplay } from "./components/ResultDisplay";
+import { ResultDisplay, ResultModalCase } from "./components/ResultDisplay";
 
 type SavedValues = {
   output?: OptimizedOutput;
   extraConfigs: OptimizerExtraConfigs;
 };
-
-const MAX_SETUPS = 5;
 
 interface OptimizationFrontDeskProps {
   state: OptimizerState;
@@ -150,12 +148,6 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     }
   };
 
-  const onLoadResultToCalculator = (indexes: number[]) => {
-    if (store.manageInfos.length + indexes.length > MAX_SETUPS) {
-      //
-    }
-  };
-
   const stepConfigs: OptimizationStepConfig[] = [
     {
       key: "ARTIFACT_SELECT",
@@ -244,26 +236,21 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         onConfirm={onConfirmSelectPieces}
       />
 
-      <Modal
-        active={modalType === "RESULT"}
-        title={<span className="text-lg">Optimizer / Result</span>}
-        className={`bg-surface-2 ${Modal.LARGE_HEIGHT_CLS}`}
-        style={{
-          width: "45rem",
-        }}
-        closeOnMaskClick={false}
-        withCloseButton={false}
-        closeOnEscape={false}
-        onClose={() => {}}
-      >
+      <ResultModalCase active={modalType === "RESULT"}>
         <ResultDisplay
           // setup={store.setup}
           // artifactModConfigs={lastModConfigs.current}
-          onRequestReturn={() => changeModalType("GUIDE")}
-          onRequestExit={() => changeModalType("EXIT_CONFIRM")}
-          onRequestLoadToCalculator={onLoadResultToCalculator}
+          // onRequestReturn={() => changeModalType("GUIDE")}
+          // onRequestExit={() => changeModalType("EXIT_CONFIRM")}
+          moreActions={[
+            {
+              children: "Return",
+              icon: <FancyBackSvg />,
+              onClick: () => changeModalType("GUIDE"),
+            },
+          ]}
         />
-      </Modal>
+      </ResultModalCase>
 
       <Modal.Core
         active={modalType === "EXIT_CONFIRM"}

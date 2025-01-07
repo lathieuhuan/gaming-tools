@@ -89,7 +89,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 
 function OptimizationDeptContact() {
   const modalCtrl = useCalcModalCtrl();
-  const { status } = useOptimizerState();
+  const { status, open } = useOptimizerState();
 
   return (
     <div className="">
@@ -105,7 +105,13 @@ function OptimizationDeptContact() {
             ) : null}
           </>
         }
-        onClick={() => modalCtrl.requestOptimizer()}
+        onClick={() => {
+          if (status.result.length) {
+            open();
+          } else {
+            modalCtrl.requestOptimizer();
+          }
+        }}
       />
     </div>
   );
