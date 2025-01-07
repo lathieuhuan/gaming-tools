@@ -127,6 +127,7 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
 
           <div ref={confirmTriggerRef} className="relative">
             <Button
+              className="relative z-20"
               variant={exiting ? "danger" : "default"}
               icon={<FaSignOutAlt className="text-base" />}
               onClick={onClickExit}
@@ -136,7 +137,8 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
 
             <Popover
               active={exiting}
-              className="bottom-full mb-3 pl-4 pr-1 py-1 bg-black text-light-default rounded-md shadow-white-glow"
+              className="z-20 bottom-full mb-3 pl-4 pr-1 py-1 shadow-white-glow"
+              withTooltipStyle
               {...popoverProps}
             >
               <div className="flex justify-between items-center">
@@ -167,6 +169,8 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
       </div>
 
       <ArtifactCard wrapperCls="w-68 shrink-0" withOwnerLabel artifact={selected} />
+
+      {exiting && <div className="absolute full-stretch z-10 bg-black/60" />}
     </div>
   );
 }

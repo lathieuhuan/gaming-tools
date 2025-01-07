@@ -122,6 +122,11 @@ export class OptimizeManager {
   ) {
     this.onStart();
 
+    this.processInfo = {
+      percent: 0,
+      time: 0,
+    };
+
     this.request({
       type: "OPTIMIZE",
       testMode: this.testMode,
