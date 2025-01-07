@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { OptimizerAllArtifactModConfigs } from "@Backend";
 import { OptimizeManager } from "./optimize-manager";
 import { OptimizerStateContext, OptimizerState, OptimizerStatus } from "./OptimizerState.context";
-import { OptimizerAllArtifactModConfigs } from "@Backend";
 
 function useOptimizer() {
   const ref = useRef<OptimizeManager>();
@@ -15,11 +15,9 @@ function useOptimizer() {
 export function OptimizerProvider(props: { children: React.ReactNode }) {
   const [status, setStatus] = useState<OptimizerStatus>({
     active: false,
-    // loading: false,
-    loading: true,
+    loading: false,
     testMode: false,
-    // pendingResult: false,
-    pendingResult: true,
+    pendingResult: false,
     result: [],
   });
   const lastModConfigs = useRef<OptimizerAllArtifactModConfigs>();
@@ -27,7 +25,12 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
 
   useEffect(() => {
     optimizer.onStart = () => {
-      setStatus((prev) => ({ ...prev, loading: true }));
+      setStatus((prev) => ({
+        ...prev,
+        loading: true,
+        pendingResult: false,
+        result: [],
+      }));
     };
 
     const unsubscribe = optimizer.subscribeCompletion((result) => {
@@ -65,14 +68,6 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
         pendingResult: shouldKeepResult,
         setup: shouldKeepResult ? prev.setup : undefined,
         result: shouldKeepResult ? prev.result : [],
-      }));
-    },
-    resetResult: () => {
-      setStatus((prev) => ({
-        ...prev,
-        pendingResult: false,
-        setup: undefined,
-        result: [],
       }));
     },
     setLoading: (loading) => {

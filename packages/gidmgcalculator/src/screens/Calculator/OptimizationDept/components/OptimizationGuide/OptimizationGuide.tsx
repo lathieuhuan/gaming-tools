@@ -20,13 +20,12 @@ interface OptimizationGuideProps<T extends string> {
   active: boolean;
   stepConfigs: StepConfig<T>[];
   canShowMenu?: boolean;
-  processing?: boolean;
   control?: React.RefObject<OptimizationGuideControl<T>>;
   onChangStep?: (newKey: T, oldKey: T) => void;
   onClose: () => void;
 }
 export function OptimizationGuide<T extends string>(props: OptimizationGuideProps<T>) {
-  const { processing, stepConfigs } = props;
+  const { stepConfigs } = props;
   const stepCount = stepConfigs.length;
 
   const [showMenu, setShowMenu] = useState(false);
@@ -111,7 +110,6 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
       className="bg-surface-2"
       bodyCls="py-2 px-0"
       closeOnMaskClick={false}
-      closable={!processing}
       onClose={() => props.onClose()}
     >
       <div className="h-full flex flex-col hide-scrollbar">
@@ -138,7 +136,7 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
           </div>
         </div>
 
-        <div className={clsx("mt-3 mb-1 px-4 justify-between", processing ? "hidden" : "flex")}>
+        <div className="mt-3 mb-1 px-4 flex justify-between">
           <div className="flex">
             <div ref={menuTriggerRef} className="relative">
               {props.canShowMenu && (

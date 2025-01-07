@@ -18,7 +18,6 @@ export type OptimizerState = {
   optimizer: Pick<OptimizeManager, "init" | "load" | "optimize" | "end" | "subscribeCompletion" | "onProcess">;
   open: (setup?: OptimizedSetup, testMode?: boolean) => void;
   close: (keepResult: boolean) => void;
-  resetResult: () => void;
   setLoading: (value: boolean) => void;
 };
 

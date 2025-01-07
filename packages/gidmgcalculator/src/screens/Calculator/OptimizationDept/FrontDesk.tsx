@@ -3,7 +3,6 @@ import { ButtonGroup, Checkbox, FancyBackSvg, Modal } from "rond";
 import { getDataOfSetupEntities, type OptimizerExtraConfigs } from "@Backend";
 
 import type { ItemMultiSelectIds } from "@Src/components";
-import type { OptimizerState } from "../ContextProvider/OptimizerProvider";
 import type { ArtifactManager } from "./controllers";
 import type {
   OptimizationGuideControl,
@@ -15,7 +14,7 @@ import type {
 
 import { useStoreSnapshot } from "@Src/features";
 import Object_ from "@Src/utils/object-utils";
-import { useCharacterData } from "../ContextProvider";
+import { OptimizerState, useCharacterData } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 
 // Components
@@ -24,9 +23,8 @@ import { ArtifactModConfig } from "./components/ArtifactModConfig";
 import { ArtifactSetSelect } from "./components/ArtifactSetSelect";
 import { OptimizationGuide } from "./components/OptimizationGuide";
 import { OutputSelect } from "./components/OutputSelect";
-// import { ExtraConfigs } from "./components/ExtraConfigs";
 import { Launcher } from "./components/Launcher";
-import { ResultDisplay } from "./components/ResultDisplay";
+import { OptimizerOffice } from "./components/OptimizerOffice";
 
 type SavedValues = {
   output?: OptimizedOutput;
@@ -37,7 +35,7 @@ interface OptimizationFrontDeskProps {
   state: OptimizerState;
 }
 export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
-  const { status, optimizer, close: closeDept, setLoading } = props.state;
+  const { status, optimizer, close: closeDept } = props.state;
 
   const store = useStoreSnapshot(({ calculator, userdb }) => {
     const setup = status.setup || calculator.setupsById[calculator.activeId];
@@ -80,7 +78,6 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
     const unsubscribe = optimizer.subscribeCompletion(() => {
       runCount.current += 1;
-      changeModalType("RESULT");
     });
 
     return () => {
@@ -107,12 +104,6 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       );
 
       lastModConfigs.current = Object_.clone(allModConfigs);
-    }
-  };
-
-  const afterCloseTerminalModal = () => {
-    if (modalType === "") {
-      closeDept(shouldKeepResult.current);
     }
   };
 
@@ -187,16 +178,6 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         />
       ),
     },
-    // {
-    //   title: "Extra Configurations",
-    //   initialValid: true,
-    //   render: () => (
-    //     <ExtraConfigs
-    //       initialValue={savedValues.current.extraConfigs}
-    //       onChange={(value) => (savedValues.current.extraConfigs = value)}
-    //     />
-    //   ),
-    // },
     {
       key: "LAUNCH",
       title: "Launching",
@@ -207,15 +188,10 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
           runCount={runCount.current}
           onRequestLaunch={() => {
             guideControl.current?.notify(null);
+            changeModalType("OPTIMIZER");
             optimizeSetup();
           }}
-          onRequestLastResult={() => changeModalType("RESULT")}
-          onCancel={() => {
-            optimizer.end();
-            optimizer.init(store.target, store.setup, store.data);
-            optimizer.load(artifactManager.sumary, artifactManager.appArtifacts, artifactManager.calcCount.value);
-            setLoading(false);
-          }}
+          onRequestLastResult={() => changeModalType("OPTIMIZER")}
         />
       ),
     },
@@ -228,7 +204,6 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         control={guideControl}
         stepConfigs={stepConfigs}
         canShowMenu={canShowGuideMenu}
-        processing={status.loading}
         onChangStep={onChangStep}
         onClose={() => changeModalType("EXIT_CONFIRM")}
       />
@@ -242,23 +217,25 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         onConfirm={onConfirmSelectPieces}
       />
 
-      <ResultDisplay
-        active={modalType === "RESULT"}
+      <OptimizerOffice
+        active={modalType === "OPTIMIZER"}
+        optimizerState={props.state}
+        closeDeptAfterCloseOffice={modalType === ""}
         // setup={store.setup}
         // artifactModConfigs={lastModConfigs.current}
         moreActions={[
           {
             children: "Return",
             icon: <FancyBackSvg />,
+            disabled: status.loading,
             onClick: () => changeModalType("GUIDE"),
           },
         ]}
-        onClose={() => changeModalType("")}
-        afterClose={(shouldKeepResult) => {
-          if (modalType === "") {
-            closeDept(shouldKeepResult);
-          }
+        onCancel={() => {
+          optimizer.init(store.target, store.setup, store.data);
+          optimizer.load(artifactManager.sumary, artifactManager.appArtifacts, artifactManager.calcCount.value);
         }}
+        onClose={() => changeModalType("")}
       />
 
       <Modal.Core
@@ -267,7 +244,11 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         preset="small"
         closeOnEscape={false}
         closeOnMaskClick={false}
-        onTransitionEnd={afterCloseTerminalModal}
+        onTransitionEnd={() => {
+          if (modalType === "") {
+            closeDept(shouldKeepResult.current);
+          }
+        }}
         onClose={() => {}}
       >
         <div>

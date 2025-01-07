@@ -2,28 +2,35 @@ import { useEffect, useState } from "react";
 import { useOptimizerState } from "../ContextProvider";
 
 // Components
-import { ResultDisplay } from "./components/ResultDisplay";
+import { OptimizerOffice } from "./components/OptimizerOffice";
 import { OptimizationFrontDesk } from "./FrontDesk";
 
 export function OptimizationDept() {
   const state = useOptimizerState();
-  const [activeResult, setActiveResult] = useState(false);
+  const [activeOffice, setActiveResult] = useState(false);
 
   const { status } = state;
-  const externalActiveResult = status.pendingResult && status.result.length !== 0;
+  const activeOfficeExpect = status.pendingResult;
 
   useEffect(() => {
-    if (externalActiveResult !== activeResult) {
-      setActiveResult(externalActiveResult);
+    if (activeOfficeExpect !== activeOffice) {
+      setActiveResult(activeOfficeExpect);
     }
-  }, [status.active, externalActiveResult]);
+  }, [status.active, activeOfficeExpect]);
+
+  console.log(status);
 
   if (status.active) {
     return (
       <>
-        <ResultDisplay active={activeResult} onClose={() => setActiveResult(false)} afterClose={state.close} />
+        <OptimizerOffice
+          active={activeOffice}
+          optimizerState={state}
+          closeDeptAfterCloseOffice
+          onClose={() => setActiveResult(false)}
+        />
 
-        {!externalActiveResult && <OptimizationFrontDesk state={state} />}
+        {!activeOfficeExpect && <OptimizationFrontDesk state={state} />}
       </>
     );
   }
