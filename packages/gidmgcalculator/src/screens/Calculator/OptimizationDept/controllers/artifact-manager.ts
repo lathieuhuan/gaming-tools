@@ -33,15 +33,15 @@ export class ArtifactManager {
     value: 1,
   };
 
+  private recordedOnce = false;
+  private recordedModCodes: string[] = [];
+
   get allModConfigs(): OptimizerAllArtifactModConfigs {
     return {
       buffs: this.buffConfigs,
       debuffs: this.debuffConfigs,
     };
   }
-
-  private recordedOnce = false;
-  private recordedModCodes: string[] = [];
 
   constructor(artifacts: InputArtifact[]) {
     const countMap = new Map<number, ManagedArtifactSet>();

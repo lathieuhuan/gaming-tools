@@ -26,7 +26,7 @@ import { OptimizationGuide } from "./components/OptimizationGuide";
 import { OutputSelect } from "./components/OutputSelect";
 // import { ExtraConfigs } from "./components/ExtraConfigs";
 import { Launcher } from "./components/Launcher";
-import { ResultDisplay, ResultModalCase } from "./components/ResultDisplay";
+import { ResultDisplay } from "./components/ResultDisplay";
 
 type SavedValues = {
   output?: OptimizedOutput;
@@ -67,7 +67,7 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const lastModalType = useRef<OptimizationModalType>("");
   const lastModConfigs = useRef(artifactManager.allModConfigs);
   const setForPieceSelect = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
-  const shouldSaveResult = useRef(false);
+  const shouldKeepResult = useRef(false);
   const runCount = useRef(0);
 
   const changeModalType = (type: OptimizationModalType) => {
@@ -107,6 +107,12 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       );
 
       lastModConfigs.current = Object_.clone(allModConfigs);
+    }
+  };
+
+  const afterCloseTerminalModal = () => {
+    if (modalType === "") {
+      closeDept(shouldKeepResult.current);
     }
   };
 
@@ -222,7 +228,7 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         control={guideControl}
         stepConfigs={stepConfigs}
         canShowMenu={canShowGuideMenu}
-        frozen={status.loading}
+        processing={status.loading}
         onChangStep={onChangStep}
         onClose={() => changeModalType("EXIT_CONFIRM")}
       />
@@ -236,21 +242,24 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         onConfirm={onConfirmSelectPieces}
       />
 
-      <ResultModalCase active={modalType === "RESULT"}>
-        <ResultDisplay
-          // setup={store.setup}
-          // artifactModConfigs={lastModConfigs.current}
-          // onRequestReturn={() => changeModalType("GUIDE")}
-          // onRequestExit={() => changeModalType("EXIT_CONFIRM")}
-          moreActions={[
-            {
-              children: "Return",
-              icon: <FancyBackSvg />,
-              onClick: () => changeModalType("GUIDE"),
-            },
-          ]}
-        />
-      </ResultModalCase>
+      <ResultDisplay
+        active={modalType === "RESULT"}
+        // setup={store.setup}
+        // artifactModConfigs={lastModConfigs.current}
+        moreActions={[
+          {
+            children: "Return",
+            icon: <FancyBackSvg />,
+            onClick: () => changeModalType("GUIDE"),
+          },
+        ]}
+        onClose={() => changeModalType("")}
+        afterClose={(shouldKeepResult) => {
+          if (modalType === "") {
+            closeDept(shouldKeepResult);
+          }
+        }}
+      />
 
       <Modal.Core
         active={modalType === "EXIT_CONFIRM"}
@@ -258,18 +267,14 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         preset="small"
         closeOnEscape={false}
         closeOnMaskClick={false}
-        onTransitionEnd={() => {
-          if (modalType === "") {
-            closeDept(shouldSaveResult.current);
-          }
-        }}
+        onTransitionEnd={afterCloseTerminalModal}
         onClose={() => {}}
       >
         <div>
           <div className="flex flex-col items-center gap-3">
             <p className="text-xl">Exit the Optimizer?</p>
             {status.result.length ? (
-              <Checkbox onChange={(checked) => (shouldSaveResult.current = checked)}>Save the result</Checkbox>
+              <Checkbox onChange={(checked) => (shouldKeepResult.current = checked)}>Save the result</Checkbox>
             ) : null}
           </div>
 

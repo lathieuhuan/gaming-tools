@@ -1,7 +1,7 @@
 import { FaSkull } from "react-icons/fa";
 import { FaSun } from "react-icons/fa6";
 import { IoDocumentText } from "react-icons/io5";
-import { Button, useScreenWatcher } from "rond";
+import { Button, LoadingSpin, useScreenWatcher } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTraveler, updateUI } from "@Store/ui-slice";
@@ -98,7 +98,7 @@ function OptimizationDeptContact() {
         className="relative"
         icon={
           <>
-            <FaSun className="text-lg" />
+            {!status.active && status.loading ? <LoadingSpin className="text-black" /> : <FaSun className="text-lg" />}
 
             {!status.active && status.result.length ? (
               <span className="absolute bg-danger-1 block w-3 h-3 rounded-circle" style={{ top: "-4px", right: 0 }} />
@@ -106,7 +106,7 @@ function OptimizationDeptContact() {
           </>
         }
         onClick={() => {
-          if (status.result.length) {
+          if (status.loading || status.result.length) {
             open();
           } else {
             modalCtrl.requestOptimizer();

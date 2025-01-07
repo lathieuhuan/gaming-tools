@@ -20,14 +20,13 @@ interface OptimizationGuideProps<T extends string> {
   active: boolean;
   stepConfigs: StepConfig<T>[];
   canShowMenu?: boolean;
-  frozen?: boolean;
+  processing?: boolean;
   control?: React.RefObject<OptimizationGuideControl<T>>;
   onChangStep?: (newKey: T, oldKey: T) => void;
   onClose: () => void;
-  // afterClose: () => void;
 }
 export function OptimizationGuide<T extends string>(props: OptimizationGuideProps<T>) {
-  const { frozen, stepConfigs } = props;
+  const { processing, stepConfigs } = props;
   const stepCount = stepConfigs.length;
 
   const [showMenu, setShowMenu] = useState(false);
@@ -112,9 +111,8 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
       className="bg-surface-2"
       bodyCls="py-2 px-0"
       closeOnMaskClick={false}
-      closable={!frozen}
+      closable={!processing}
       onClose={() => props.onClose()}
-      // onTransitionEnd={() => props.afterClose()}
     >
       <div className="h-full flex flex-col hide-scrollbar">
         <div className="grow overflow-hidden relative">
@@ -140,7 +138,7 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
           </div>
         </div>
 
-        <div className={clsx("mt-3 mb-1 px-4 justify-between", frozen ? "hidden" : "flex")}>
+        <div className={clsx("mt-3 mb-1 px-4 justify-between", processing ? "hidden" : "flex")}>
           <div className="flex">
             <div ref={menuTriggerRef} className="relative">
               {props.canShowMenu && (

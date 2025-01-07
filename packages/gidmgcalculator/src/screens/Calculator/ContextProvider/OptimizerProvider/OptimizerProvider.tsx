@@ -15,9 +15,11 @@ function useOptimizer() {
 export function OptimizerProvider(props: { children: React.ReactNode }) {
   const [status, setStatus] = useState<OptimizerStatus>({
     active: false,
-    loading: false,
+    // loading: false,
+    loading: true,
     testMode: false,
-    pendingResult: false,
+    // pendingResult: false,
+    pendingResult: true,
     result: [],
   });
   const lastModConfigs = useRef<OptimizerAllArtifactModConfigs>();
@@ -32,6 +34,7 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
       setStatus((prev) => ({
         ...prev,
         loading: false,
+        pendingResult: prev.active ? prev.pendingResult : true,
         result,
       }));
     });
@@ -62,6 +65,14 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
         pendingResult: shouldKeepResult,
         setup: shouldKeepResult ? prev.setup : undefined,
         result: shouldKeepResult ? prev.result : [],
+      }));
+    },
+    resetResult: () => {
+      setStatus((prev) => ({
+        ...prev,
+        pendingResult: false,
+        setup: undefined,
+        result: [],
       }));
     },
     setLoading: (loading) => {

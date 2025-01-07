@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
-import { Button, ButtonProps, Checkbox, ItemCase, Modal, Popover, TimesSvg, useClickOutside } from "rond";
+import { Button, ButtonProps, Checkbox, CloseButton, ItemCase, Modal, Popover, useClickOutside } from "rond";
 import { ARTIFACT_TYPES, AppArtifact, GeneralCalc } from "@Backend";
 
 import type { Artifact } from "@Src/types";
@@ -16,28 +16,25 @@ import Entity_ from "@Src/utils/entity-utils";
 // Component
 import { ArtifactCard, GenshinImage, ItemThumbnail } from "@Src/components";
 
-interface ResultDisplayProps {
+interface ResultDisplayCoreProps {
   // setup: CalcSetup;
   // artifactModConfigs: OptimizerAllArtifactModConfigs;
   moreActions?: ButtonProps[];
-  // onRequestReturn: () => void;
-  // onRequestExit: () => void;
-  // onRequestLoadToCalculator: (indexes: number[]) => void;
+  onChangeKeepResult: (keepResult: boolean) => void;
+  onClose: () => void;
 }
-export function ResultDisplay({ moreActions = [] }: ResultDisplayProps) {
+function ResultDisplayCore({ moreActions = [], onChangeKeepResult, onClose }: ResultDisplayCoreProps) {
   // const dispatch = useDispatch();
 
   const [selected, setSelected] = useState<Artifact>();
   const [exiting, setExiting] = useState(false);
   const {
     status: { result },
-    close,
   } = useOptimizerState();
 
   const confirmTriggerRef = useClickOutside<HTMLDivElement>(() => setExiting(false));
 
   const selectedIndexes = useRef(new Set(result.map((_, i) => i)));
-  const shouldSaveResult = useRef(false);
   const dataBySet = useRef<Record<number, AppArtifact>>({});
   const suffixes = ["st", "nd", "rd"];
 
@@ -86,7 +83,7 @@ export function ResultDisplay({ moreActions = [] }: ResultDisplayProps) {
 
   const onClickExit = () => {
     if (exiting) {
-      close(shouldSaveResult.current);
+      onClose();
     } else {
       setExiting(!exiting);
     }
@@ -164,6 +161,10 @@ export function ResultDisplay({ moreActions = [] }: ResultDisplayProps) {
         </div>
 
         <div className="mt-4 px-2 pb-1 flex justify-end gap-3">
+          {moreActions.map((action, i) => (
+            <Button key={i} {...action} />
+          ))}
+
           <div ref={confirmTriggerRef} className="relative">
             <Button
               variant={exiting ? "danger" : "default"}
@@ -185,17 +186,11 @@ export function ResultDisplay({ moreActions = [] }: ResultDisplayProps) {
             >
               <div className="flex justify-between items-center">
                 <p className="font-semibold">Tap again to exit.</p>
-                <Button
-                  className="shrink-0"
-                  variant="custom"
-                  size="large"
-                  withShadow={false}
-                  icon={<TimesSvg />}
-                  onClick={() => setExiting(false)}
-                />
+                <CloseButton className="shrink-0" boneOnly onClick={() => setExiting(false)} />
               </div>
+
               <div className="py-2">
-                <Checkbox onChange={(checked) => (shouldSaveResult.current = checked)}>Save the result</Checkbox>
+                <Checkbox onChange={onChangeKeepResult}>Reserve the result</Checkbox>
               </div>
             </Popover>
           </div>
@@ -211,10 +206,16 @@ export function ResultDisplay({ moreActions = [] }: ResultDisplayProps) {
   );
 }
 
-export function ResultModalCase(props: { active: boolean; children: React.ReactNode }) {
+interface ResultDisplayProps extends Pick<ResultDisplayCoreProps, "moreActions" | "onClose"> {
+  active: boolean;
+  afterClose: (shouldKeepResult: boolean) => void;
+}
+export function ResultDisplay({ active, moreActions, afterClose, onClose }: ResultDisplayProps) {
+  const shouldKeepResult = useRef(false);
+
   return (
     <Modal
-      active={props.active}
+      active={active}
       title={<span className="text-lg">Optimizer / Result</span>}
       className={`bg-surface-2 ${Modal.LARGE_HEIGHT_CLS}`}
       style={{
@@ -223,9 +224,19 @@ export function ResultModalCase(props: { active: boolean; children: React.ReactN
       closeOnMaskClick={false}
       withCloseButton={false}
       closeOnEscape={false}
+      onTransitionEnd={(open) => {
+        if (!open) {
+          afterClose(shouldKeepResult.current);
+          shouldKeepResult.current = false;
+        }
+      }}
       onClose={() => {}}
     >
-      {props.children}
+      <ResultDisplayCore
+        moreActions={moreActions}
+        onChangeKeepResult={(keepResult) => (shouldKeepResult.current = keepResult)}
+        onClose={onClose}
+      />
     </Modal>
   );
 }
