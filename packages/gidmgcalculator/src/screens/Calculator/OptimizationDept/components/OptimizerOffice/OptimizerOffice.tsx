@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
-import { Button, ButtonProps, Checkbox, CloseButton, Modal, Popover, useClickOutside } from "rond";
+import { Button, ButtonProps, Checkbox, CloseButton, Modal, Popover, PopoverProps, useClickOutside } from "rond";
 
 import type { Artifact } from "@Src/types";
 import type { OptimizerState } from "@Src/screens/Calculator/ContextProvider";
@@ -17,7 +17,7 @@ interface InternalOptimizerOfficeProps {
   moreActions?: ButtonProps[];
   onChangeKeepResult: (keepResult: boolean) => void;
   onClose: () => void;
-  /** Already order the optimizer to end */
+  /** Already ordered the optimizer to end */
   onCancel?: () => void;
 }
 function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
@@ -88,12 +88,29 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
     }
   };
 
+  const popoverProps: Pick<PopoverProps, "style" | "origin"> = moreActions.length
+    ? {
+        style: {
+          width: "12.5rem",
+          left: "50%",
+          translate: "-50% 0",
+        },
+        origin: "bottom center",
+      }
+    : {
+        style: {
+          width: "12.5rem",
+          left: 0,
+        },
+        origin: "bottom left",
+      };
+
   return (
     <div className="h-full flex custom-scrollbar gap-2 scroll-smooth">
       <div className="grow flex flex-col" style={{ minWidth: 324 }}>
         <div className="grow">
           {status.loading || cancelled ? (
-            <ProcessMonitor cancelled={cancelled} onRequestCancel={onCancel} />
+            <ProcessMonitor optimizer={optimizer} cancelled={cancelled} onRequestCancel={onCancel} />
           ) : (
             <ResultDisplayer
               selectedArtifactId={selected?.ID}
@@ -121,12 +138,7 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
             <Popover
               active={exiting}
               className="bottom-full mb-3 pl-4 pr-1 py-1 bg-black text-light-default rounded-md shadow-white-glow"
-              style={{
-                width: "12.5rem",
-                left: "50%",
-                translate: "-50% 0",
-              }}
-              origin="bottom center"
+              {...popoverProps}
             >
               <div className="flex justify-between items-center">
                 <p className="font-semibold">Tap again to exit.</p>
@@ -137,7 +149,7 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
                 {status.loading ? (
                   <Checkbox onChange={onChangeKeepProcess}>Keep the process</Checkbox>
                 ) : (
-                  <Checkbox onChange={props.onChangeKeepResult}>Reserve the result</Checkbox>
+                  <Checkbox onChange={props.onChangeKeepResult}>Keep the result</Checkbox>
                 )}
               </div>
             </Popover>

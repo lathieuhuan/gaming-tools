@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { FaCaretRight, FaTimes } from "react-icons/fa";
 import { Button, clsx } from "rond";
-import { useOptimizerState } from "@Src/screens/Calculator/ContextProvider";
+import type { OptimizerState } from "@Src/screens/Calculator/ContextProvider";
 
 interface ProcessMonitorProps {
+  optimizer: OptimizerState["optimizer"];
   cancelled: boolean;
   onRequestCancel: () => void;
 }
-export function ProcessMonitor({ cancelled, onRequestCancel }: ProcessMonitorProps) {
-  const { optimizer } = useOptimizerState();
+export function ProcessMonitor({ optimizer, cancelled, onRequestCancel }: ProcessMonitorProps) {
   const [process, setProcess] = useState({
     percent: 0,
     time: 0,
@@ -20,8 +20,8 @@ export function ProcessMonitor({ cancelled, onRequestCancel }: ProcessMonitorPro
     setTimeout(() => mounted.current && callback(), time);
   };
 
-  useEffect(() => {
-    optimizer.onProcess = (info) => {
+  useLayoutEffect(() => {
+    const { currentProcess, unsubscribe } = optimizer.subscribeProcess((info) => {
       console.log("process", info.percent);
 
       if (mounted.current) {
@@ -30,10 +30,16 @@ export function ProcessMonitor({ cancelled, onRequestCancel }: ProcessMonitorPro
           time: Math.round(info.time / 100) / 10,
         });
       }
-    };
+    });
+
+    setProcess({
+      percent: Math.min(currentProcess.percent, 100),
+      time: Math.round(currentProcess.time / 100) / 10,
+    });
 
     return () => {
       mounted.current = false;
+      unsubscribe();
     };
   }, []);
 

@@ -1,27 +1,31 @@
-import { Fragment, useImperativeHandle, useState } from "react";
+import { Fragment, useState } from "react";
 import { FaCaretRight, FaCaretDown, FaExclamation, FaCheck } from "react-icons/fa";
 import { IoFootsteps } from "react-icons/io5";
 import { Button, ButtonGroup, clsx, Modal, Popover, useClickOutside } from "rond";
 
 type StepStatus = "VALID" | "INVALID";
 
+type Notify<T> = (message: null | string | { message: string; toStep: T }) => void;
+
 export type StepConfig<T extends string> = {
   key: T;
   title: string;
   initialValid?: boolean;
-  render: (changeValid: (valid: boolean) => void) => React.ReactNode;
+  render: (operation: { changeValid: (valid: boolean) => void; notify: Notify<T> }) => React.ReactNode;
 };
 
-export type OptimizationGuideControl<T extends string> = {
-  notify: (message: null | string | { message: string; toStep: T }) => void;
-};
-
-interface OptimizationGuideProps<T extends string> {
+export interface OptimizationGuideProps<T extends string> {
   active: boolean;
   stepConfigs: StepConfig<T>[];
   canShowMenu?: boolean;
-  control?: React.RefObject<OptimizationGuideControl<T>>;
-  onChangStep?: (newKey: T, oldKey: T) => void;
+  onChangStep?: (
+    newKey: T,
+    oldKey: T,
+    operation: {
+      changeValid: (index: number, valid: boolean) => void;
+      notify: Notify<T>;
+    }
+  ) => void;
   onClose: () => void;
 }
 export function OptimizationGuide<T extends string>(props: OptimizationGuideProps<T>) {
@@ -56,14 +60,12 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
     });
   };
 
-  useImperativeHandle(props.control, () => ({
-    notify: (arg) => {
-      const { message = "", toStep = undefined } = arg ? (typeof arg === "string" ? { message: arg } : arg) : {};
-      const _toStep = toStep ? stepConfigs.findIndex((config) => config.key === toStep) : undefined;
+  const notify: Notify<T> = (arg) => {
+    const { message = "", toStep = undefined } = arg ? (typeof arg === "string" ? { message: arg } : arg) : {};
+    const _toStep = toStep ? stepConfigs.findIndex((config) => config.key === toStep) : undefined;
 
-      setNoti((prevNoti) => (message !== prevNoti.message ? { message, toStep: _toStep } : prevNoti));
-    },
-  }));
+    setNoti((prevNoti) => (message !== prevNoti.message ? { message, toStep: _toStep } : prevNoti));
+  };
 
   const navigate = (toStep: number) => {
     const moreVisibleSteps: number[] = [];
@@ -78,7 +80,11 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
       moreVisibleSteps.forEach((step) => newIndexes.add(step));
       return newIndexes;
     });
-    props.onChangStep?.(stepConfigs[toStep].key, stepConfigs[step].key);
+
+    props.onChangStep?.(stepConfigs[toStep].key, stepConfigs[step].key, {
+      changeValid: (index, valid) => changeValidOf(index)(valid),
+      notify,
+    });
 
     if (toStep === noti.toStep && noti.message) {
       closeNoti();
@@ -129,7 +135,12 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
                   className="h-full px-4 shrink-0 hide-scrollbar"
                   style={{ width: `${100 / stepCount}%` }}
                 >
-                  {visibleStepIndexes.has(index) ? config.render(changeValidOf(index)) : null}
+                  {visibleStepIndexes.has(index)
+                    ? config.render({
+                        changeValid: changeValidOf(index),
+                        notify,
+                      })
+                    : null}
                 </div>
               );
             })}

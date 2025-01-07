@@ -1,13 +1,13 @@
-import { AttackPattern, TalentCalcItem } from "@Backend";
-import { OptimizationGuideControl as GuideControl, StepConfig } from "./components/OptimizationGuide";
+import type { AttackPattern, TalentCalcItem } from "@Backend";
+import type { StepConfig, OptimizationGuideProps } from "./components/OptimizationGuide";
 
 export type OptimizationModalType = "GUIDE" | "PIECE_SELECT" | "OPTIMIZER" | "EXIT_CONFIRM" | "";
 
-export type OptimizationStepKey = "ARTIFACT_SELECT" | "MODIFIER_CONFIG" | "OUTPUT_SELECT" | "LAUNCH";
+type OptimizationStepKey = "ARTIFACT_SELECT" | "MODIFIER_CONFIG" | "OUTPUT_SELECT" | "LAUNCH";
 
 export type OptimizationStepConfig = StepConfig<OptimizationStepKey>;
 
-export type OptimizationGuideControl = GuideControl<OptimizationStepKey>;
+export type OnChangeStep = OptimizationGuideProps<OptimizationStepKey>["onChangStep"];
 
 export type OptimizedOutput = {
   attPatt: AttackPattern;

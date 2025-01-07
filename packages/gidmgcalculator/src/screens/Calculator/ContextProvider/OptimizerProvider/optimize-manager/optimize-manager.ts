@@ -13,16 +13,21 @@ const WORKER_URL = new URL("optimize-worker.ts", import.meta.url);
 
 type OnCompleteOptimize = (state: OptimizeResult) => void;
 
+type OnProcessOptimize = (info: OTM_ProcessInfo) => void;
+
 export class OptimizeManager {
   private worker: Worker;
   private workerTerminated = false;
-  private subscribers = new Set<OnCompleteOptimize>();
+  private processInfo: OTM_ProcessInfo = {
+    percent: 0,
+    time: 0,
+  };
+  private completeSubscribers = new Set<OnCompleteOptimize>();
+  private processSubscribers = new Set<OnProcessOptimize>();
 
   private tester = new OptimizeTester();
 
   onStart = () => {};
-
-  onProcess = (data: OTM_ProcessInfo) => {};
 
   constructor(private testMode = false) {
     this.worker = this.genWorker();
@@ -43,10 +48,11 @@ export class OptimizeManager {
     worker.onmessage = (e: MessageEvent<OTM_WorkerResponse>) => {
       switch (e.data.type) {
         case "PROCESS":
-          this.onProcess(e.data.info);
+          this.processInfo = e.data.info;
+          this.notifyProcess(e.data.info);
           break;
         case "COMPLETE": {
-          this.notify(e.data.result);
+          this.notifyComplete(e.data.result);
           console.log("runTime:", e.data.runTime);
           break;
         }
@@ -59,15 +65,30 @@ export class OptimizeManager {
     return worker;
   };
 
-  private notify = (state: OptimizeResult) => {
-    this.subscribers.forEach((subscriber) => subscriber(state));
+  private notifyComplete = (state: OptimizeResult) => {
+    this.completeSubscribers.forEach((subscriber) => subscriber(state));
+  };
+
+  private notifyProcess = (info: OTM_ProcessInfo) => {
+    this.processSubscribers.forEach((subscriber) => subscriber(info));
   };
 
   subscribeCompletion = (subscriber: OnCompleteOptimize) => {
-    this.subscribers.add(subscriber);
+    this.completeSubscribers.add(subscriber);
 
     return () => {
-      this.subscribers.delete(subscriber);
+      this.completeSubscribers.delete(subscriber);
+    };
+  };
+
+  subscribeProcess = (subscriber: OnProcessOptimize) => {
+    this.processSubscribers.add(subscriber);
+
+    return {
+      currentProcess: this.processInfo,
+      unsubscribe: () => {
+        this.processSubscribers.delete(subscriber);
+      },
     };
   };
 

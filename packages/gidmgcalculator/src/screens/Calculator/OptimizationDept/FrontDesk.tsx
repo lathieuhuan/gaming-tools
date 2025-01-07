@@ -5,10 +5,9 @@ import { getDataOfSetupEntities, type OptimizerExtraConfigs } from "@Backend";
 import type { ItemMultiSelectIds } from "@Src/components";
 import type { ArtifactManager } from "./controllers";
 import type {
-  OptimizationGuideControl,
+  OnChangeStep,
   OptimizationModalType,
   OptimizationStepConfig,
-  OptimizationStepKey,
   OptimizedOutput,
 } from "./OptimizationDept.types";
 
@@ -56,7 +55,6 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const [modalType, setModalType] = useState<OptimizationModalType>("GUIDE");
   const [canShowGuideMenu, setCanShowGuideMenu] = useState(false);
 
-  const guideControl = useRef<OptimizationGuideControl>(null);
   const savedValues = useRef<SavedValues>({
     extraConfigs: {
       preferSet: false,
@@ -112,13 +110,13 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     changeModalType("GUIDE");
   };
 
-  const onChangStep = (newStep: OptimizationStepKey, oldStep: OptimizationStepKey) => {
+  const onChangStep: OnChangeStep = (newStep, oldStep, operation) => {
     switch (oldStep) {
       case "ARTIFACT_SELECT": {
         const hasAnyNewMod = artifactManager.concludeModConfigs();
 
         if (newStep !== "MODIFIER_CONFIG") {
-          guideControl.current?.notify(
+          operation.notify(
             hasAnyNewMod
               ? {
                   message: "New Artifact modifiers configurations!",
@@ -149,10 +147,10 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     {
       key: "ARTIFACT_SELECT",
       title: "Artifacts",
-      render: (changeValid) => (
+      render: (operation) => (
         <ArtifactSetSelect
           artifactManager={artifactManager}
-          onChangeValid={changeValid}
+          onChangeValid={operation.changeValid}
           onRequestSelectPieces={(code) => {
             setForPieceSelect.current = artifactManager.getSet(code);
             changeModalType("PIECE_SELECT");
@@ -169,12 +167,12 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     {
       key: "OUTPUT_SELECT",
       title: "Optimized Output",
-      render: (changeValid) => (
+      render: (operation) => (
         <OutputSelect
           calcList={record.appCharacter.calcList}
           initialValue={savedValues.current?.output}
           onChange={(items) => (savedValues.current.output = items)}
-          onChangeValid={changeValid}
+          onChangeValid={operation.changeValid}
         />
       ),
     },
@@ -182,12 +180,12 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       key: "LAUNCH",
       title: "Launching",
       initialValid: true,
-      render: () => (
+      render: (operation) => (
         <Launcher
           artifactManager={artifactManager}
           runCount={runCount.current}
           onRequestLaunch={() => {
-            guideControl.current?.notify(null);
+            operation.notify(null);
             changeModalType("OPTIMIZER");
             optimizeSetup();
           }}
@@ -201,7 +199,6 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     <>
       <OptimizationGuide
         active={modalType === "GUIDE"}
-        control={guideControl}
         stepConfigs={stepConfigs}
         canShowMenu={canShowGuideMenu}
         onChangStep={onChangStep}
