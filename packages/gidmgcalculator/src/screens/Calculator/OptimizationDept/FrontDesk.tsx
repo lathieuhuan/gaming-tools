@@ -13,7 +13,7 @@ import type {
 
 import { useStoreSnapshot } from "@Src/features";
 import Object_ from "@Src/utils/object-utils";
-import { OptimizerState, useCharacterData } from "../ContextProvider";
+import { OptimizeDirector, useCharacterData } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 
 // Components
@@ -31,13 +31,13 @@ type SavedValues = {
 };
 
 interface OptimizationFrontDeskProps {
-  state: OptimizerState;
+  director: OptimizeDirector;
 }
 export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
-  const { status, optimizer, close: closeDept } = props.state;
+  const { state, optimizer, close: closeDept } = props.director;
 
   const store = useStoreSnapshot(({ calculator, userdb }) => {
-    const setup = status.setup || calculator.setupsById[calculator.activeId];
+    const setup = state.setup || calculator.setupsById[calculator.activeId];
     const target = calculator.target;
     const artifacts = userdb.userArts;
 
@@ -216,7 +216,7 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
       <OptimizerOffice
         active={modalType === "OPTIMIZER"}
-        optimizerState={props.state}
+        director={props.director}
         closeDeptAfterCloseOffice={modalType === ""}
         // setup={store.setup}
         // artifactModConfigs={lastModConfigs.current}
@@ -224,7 +224,7 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
           {
             children: "Return",
             icon: <FancyBackSvg />,
-            disabled: status.loading,
+            disabled: state.optimizerStatus === "WORKING",
             onClick: () => changeModalType("GUIDE"),
           },
         ]}
@@ -251,7 +251,7 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         <div>
           <div className="flex flex-col items-center gap-3">
             <p className="text-xl">Exit the Optimizer?</p>
-            {status.result.length ? (
+            {state.result.length ? (
               <Checkbox onChange={(checked) => (shouldKeepResult.current = checked)}>Save the result</Checkbox>
             ) : null}
           </div>

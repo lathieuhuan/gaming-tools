@@ -3,7 +3,7 @@ import { Checkbox, ItemCase } from "rond";
 import { AppArtifact, ARTIFACT_TYPES, GeneralCalc } from "@Backend";
 
 import type { Artifact } from "@Src/types";
-import { OptimizerStatus } from "@Src/screens/Calculator/ContextProvider";
+import { OptimizeResult } from "@Src/screens/Calculator/ContextProvider";
 import { $AppArtifact } from "@Src/services";
 import Entity_ from "@Src/utils/entity-utils";
 
@@ -11,7 +11,7 @@ import Entity_ from "@Src/utils/entity-utils";
 import { GenshinImage, ItemThumbnail } from "@Src/components";
 
 export interface ResultDisplayerProps {
-  result: OptimizerStatus["result"];
+  result: OptimizeResult;
   selectedArtifactId?: number;
   onSelectArtifact: (artifact: Artifact) => void;
   onToggleCheckCalculation: (index: number, checked: boolean) => void;

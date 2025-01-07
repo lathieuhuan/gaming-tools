@@ -1,3 +1,8 @@
 export * from "./ContextProvider";
 export * from "./hooks";
-export type { OptimizerState, OptimizerStatus } from "./OptimizerProvider/OptimizerState.context";
+export type {
+  OptimizeDirector,
+  OptimizeDirectorState,
+  OptimizeResult,
+  OptimizerStatus,
+} from "./OptimizeDirectorProvider/OptimizeDirector.context";

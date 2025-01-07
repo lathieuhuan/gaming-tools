@@ -6,7 +6,7 @@ import type { CalcSetupManageInfo } from "@Src/types";
 import { IS_DEV_ENV } from "@Src/constants";
 import { useStoreSnapshot } from "@Src/features";
 import Object_ from "@Src/utils/object-utils";
-import { useOptimizerState } from "../../hooks";
+import { useOptimizeDirector } from "../../hooks";
 
 const FORM_ID = "optimizer-preconfig";
 
@@ -28,7 +28,7 @@ function OptimizationIntro(props: OptimizationIntroProps) {
   });
   const selectedInfo = useRef<CalcSetupManageInfo | undefined>(snapshot.activeInfo);
   const testMode = useRef(false);
-  const { open } = useOptimizerState();
+  const director = useOptimizeDirector();
 
   const [activeIntro, setActiveIntro] = useState(false);
 
@@ -39,7 +39,7 @@ function OptimizationIntro(props: OptimizationIntroProps) {
     if (setup) {
       const optimizedSetup = Object.assign(Object_.clone(setup), info);
 
-      open(optimizedSetup, testMode.current);
+      director.open(optimizedSetup, testMode.current);
       props.onClose();
     }
   };

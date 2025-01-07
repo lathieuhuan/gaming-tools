@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { OptimizerAllArtifactModConfigs } from "@Backend";
 import { OptimizeManager } from "./optimize-manager";
-import { OptimizerStateContext, OptimizerState, OptimizerStatus } from "./OptimizerState.context";
+import { OptimizeDirectorContext, OptimizeDirector, OptimizeDirectorState } from "./OptimizeDirector.context";
 
 function useOptimizer() {
   const ref = useRef<OptimizeManager>();
@@ -12,10 +12,10 @@ function useOptimizer() {
   return ref.current;
 }
 
-export function OptimizerProvider(props: { children: React.ReactNode }) {
-  const [status, setStatus] = useState<OptimizerStatus>({
+export function OptimizeDirectorProvider(props: { children: React.ReactNode }) {
+  const [state, setState] = useState<OptimizeDirectorState>({
     active: false,
-    loading: false,
+    optimizerStatus: "IDLE",
     testMode: false,
     pendingResult: false,
     result: [],
@@ -25,18 +25,18 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
 
   useEffect(() => {
     optimizer.onStart = () => {
-      setStatus((prev) => ({
+      setState((prev) => ({
         ...prev,
-        loading: true,
+        optimizerStatus: "WORKING",
         pendingResult: false,
         result: [],
       }));
     };
 
     const unsubscribe = optimizer.subscribeCompletion((result) => {
-      setStatus((prev) => ({
+      setState((prev) => ({
         ...prev,
-        loading: false,
+        optimizerStatus: "IDLE",
         pendingResult: prev.active ? prev.pendingResult : true,
         result,
       }));
@@ -48,11 +48,11 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
     };
   }, []);
 
-  const state: OptimizerState = {
-    status,
+  const context: OptimizeDirector = {
+    state,
     optimizer,
     open: (setup, testMode = false) => {
-      setStatus((prev) => ({
+      setState((prev) => ({
         ...prev,
         active: true,
         testMode,
@@ -62,7 +62,7 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
       optimizer.switchTestMode(testMode);
     },
     close: (shouldKeepResult) => {
-      setStatus((prev) => ({
+      setState((prev) => ({
         ...prev,
         active: false,
         pendingResult: shouldKeepResult,
@@ -70,13 +70,20 @@ export function OptimizerProvider(props: { children: React.ReactNode }) {
         result: shouldKeepResult ? prev.result : [],
       }));
     },
-    setLoading: (loading) => {
-      setStatus((prev) => ({
+    cancel: () => {
+      optimizer.end();
+      setState((prev) => ({
         ...prev,
-        loading,
+        optimizerStatus: "CANCELLED",
       }));
     },
+    // setLoading: (loading) => {
+    //   setState((prev) => ({
+    //     ...prev,
+    //     loading,
+    //   }));
+    // },
   };
 
-  return <OptimizerStateContext.Provider value={state}>{props.children}</OptimizerStateContext.Provider>;
+  return <OptimizeDirectorContext.Provider value={context}>{props.children}</OptimizeDirectorContext.Provider>;
 }

@@ -1,36 +1,36 @@
 import { useEffect, useState } from "react";
-import { useOptimizerState } from "../ContextProvider";
+import { useOptimizeDirector } from "../ContextProvider";
 
 // Components
 import { OptimizerOffice } from "./components/OptimizerOffice";
 import { OptimizationFrontDesk } from "./FrontDesk";
 
 export function OptimizationDept() {
-  const state = useOptimizerState();
-  const [activeOffice, setActiveResult] = useState(false);
+  const director = useOptimizeDirector();
+  const [activeOffice, setActiveOffice] = useState(false);
 
-  const { status } = state;
-  const activeOfficeExpect = status.pendingResult;
+  const { state } = director;
+  const activeOfficeExpect = state.pendingResult;
 
   useEffect(() => {
     if (activeOfficeExpect !== activeOffice) {
-      setActiveResult(activeOfficeExpect);
+      setActiveOffice(activeOfficeExpect);
     }
-  }, [status.active, activeOfficeExpect]);
+  }, [state.active, activeOfficeExpect]);
 
-  console.log(status);
+  console.log(state);
 
-  if (status.active) {
+  if (state.active) {
     return (
       <>
         <OptimizerOffice
           active={activeOffice}
-          optimizerState={state}
+          director={director}
           closeDeptAfterCloseOffice
-          onClose={() => setActiveResult(false)}
+          onClose={() => setActiveOffice(false)}
         />
 
-        {!activeOfficeExpect && <OptimizationFrontDesk state={state} />}
+        {!activeOfficeExpect && <OptimizationFrontDesk director={director} />}
       </>
     );
   }

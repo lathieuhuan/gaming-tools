@@ -3,7 +3,7 @@ import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
 import { Button, ButtonProps, Checkbox, CloseButton, Modal, Popover, PopoverProps, useClickOutside } from "rond";
 
 import type { Artifact } from "@Src/types";
-import type { OptimizerState } from "@Src/screens/Calculator/ContextProvider";
+import type { OptimizeDirector } from "@Src/screens/Calculator/ContextProvider";
 
 // Component
 import { ArtifactCard } from "@Src/components";
@@ -13,7 +13,7 @@ import { ResultDisplayer } from "./ResultDisplayer";
 interface InternalOptimizerOfficeProps {
   // setup: CalcSetup;
   // artifactModConfigs: OptimizerAllArtifactModConfigs;
-  optimizerState: OptimizerState;
+  director: OptimizeDirector;
   moreActions?: ButtonProps[];
   onChangeKeepResult: (keepResult: boolean) => void;
   onClose: () => void;
@@ -21,14 +21,15 @@ interface InternalOptimizerOfficeProps {
   onCancel?: () => void;
 }
 function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
-  const { moreActions = [] } = props;
+  const { director, moreActions = [] } = props;
+  const { state, optimizer } = props.director;
+  const cancelled = state.optimizerStatus === "CANCELLED";
+  const loading = state.optimizerStatus === "WORKING";
 
-  const { status, optimizer, setLoading } = props.optimizerState;
   const [selected, setSelected] = useState<Artifact>();
-  const [cancelled, setCancelled] = useState(false);
   const [exiting, setExiting] = useState(false);
 
-  const selectedIndexes = useRef(new Set(status.result.map((_, i) => i)));
+  const selectedIndexes = useRef(new Set(state.result.map((_, i) => i)));
   const keepProcess = useRef(false);
   const confirmTriggerRef = useClickOutside<HTMLDivElement>(() => setExiting(false));
 
@@ -71,9 +72,7 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
   };
 
   const onCancel = () => {
-    optimizer.end();
-    setCancelled(true);
-    setLoading(false);
+    director.cancel();
     props.onCancel?.();
   };
 
@@ -109,12 +108,12 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
     <div className="h-full flex custom-scrollbar gap-2 scroll-smooth">
       <div className="grow flex flex-col" style={{ minWidth: 324 }}>
         <div className="grow">
-          {status.loading || cancelled ? (
+          {loading || cancelled ? (
             <ProcessMonitor optimizer={optimizer} cancelled={cancelled} onRequestCancel={onCancel} />
           ) : (
             <ResultDisplayer
               selectedArtifactId={selected?.ID}
-              result={status.result}
+              result={state.result}
               onSelectArtifact={setSelected}
               onToggleCheckCalculation={onToggleCheckCalculation}
             />
@@ -146,7 +145,7 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
               </div>
 
               <div className="py-2">
-                {status.loading ? (
+                {loading ? (
                   <Checkbox onChange={onChangeKeepProcess}>Keep the process</Checkbox>
                 ) : (
                   <Checkbox onChange={props.onChangeKeepResult}>Keep the result</Checkbox>
@@ -155,7 +154,7 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
             </Popover>
           </div>
 
-          {!status.loading && status.result.length ? (
+          {!loading && state.result.length ? (
             <Button
               className="ml-auto gap-1"
               icon={<FaFileUpload className="text-base" />}
@@ -173,16 +172,11 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
 }
 
 interface ResultDisplayProps
-  extends Pick<InternalOptimizerOfficeProps, "optimizerState" | "moreActions" | "onCancel" | "onClose"> {
+  extends Pick<InternalOptimizerOfficeProps, "director" | "moreActions" | "onCancel" | "onClose"> {
   active: boolean;
   closeDeptAfterCloseOffice: boolean;
 }
-export function OptimizerOffice({
-  active,
-  optimizerState,
-  closeDeptAfterCloseOffice,
-  ...internalProps
-}: ResultDisplayProps) {
+export function OptimizerOffice({ active, director, closeDeptAfterCloseOffice, ...internalProps }: ResultDisplayProps) {
   const shouldKeepResult = useRef(false);
 
   return (
@@ -199,7 +193,7 @@ export function OptimizerOffice({
       onTransitionEnd={(open) => {
         if (!open) {
           if (closeDeptAfterCloseOffice) {
-            optimizerState.close(shouldKeepResult.current);
+            director.close(shouldKeepResult.current);
           }
           shouldKeepResult.current = false;
         }
@@ -208,7 +202,7 @@ export function OptimizerOffice({
     >
       <InternalOptimizerOffice
         {...internalProps}
-        optimizerState={optimizerState}
+        director={director}
         onChangeKeepResult={(keepResult) => (shouldKeepResult.current = keepResult)}
       />
     </Modal>

@@ -5,7 +5,7 @@ import { Button, clsx, useScreenWatcher } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTraveler, updateUI } from "@Store/ui-slice";
-import { useCalcModalCtrl, useOptimizerState } from "../ContextProvider";
+import { useCalcModalCtrl, useOptimizeDirector } from "../ContextProvider";
 
 // Component
 import SectionArtifacts from "./SectionArtifacts";
@@ -89,7 +89,8 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 
 function OptimizationDeptContact() {
   const modalCtrl = useCalcModalCtrl();
-  const { status, open } = useOptimizerState();
+  const { state, open } = useOptimizeDirector();
+  const loading = state.optimizerStatus === "WORKING";
 
   return (
     <div className="">
@@ -98,15 +99,15 @@ function OptimizationDeptContact() {
         className="relative"
         icon={
           <>
-            <FaSun className={clsx("text-lg", !status.active && status.loading && "animate-spin")} />
+            <FaSun className={clsx("text-lg", !state.active && loading && "animate-spin")} />
 
-            {!status.active && status.result.length ? (
+            {!state.active && state.result.length ? (
               <span className="absolute bg-danger-1 block w-3 h-3 rounded-circle" style={{ top: "-4px", right: 0 }} />
             ) : null}
           </>
         }
         onClick={() => {
-          if (status.loading || status.result.length) {
+          if (loading || state.result.length) {
             open();
           } else {
             modalCtrl.requestOptimizer();

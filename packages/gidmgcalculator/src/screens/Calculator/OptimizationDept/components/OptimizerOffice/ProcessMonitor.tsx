@@ -1,10 +1,10 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { FaCaretRight, FaTimes } from "react-icons/fa";
 import { Button, clsx } from "rond";
-import type { OptimizerState } from "@Src/screens/Calculator/ContextProvider";
+import type { OptimizeDirector } from "@Src/screens/Calculator/ContextProvider";
 
 interface ProcessMonitorProps {
-  optimizer: OptimizerState["optimizer"];
+  optimizer: OptimizeDirector["optimizer"];
   cancelled: boolean;
   onRequestCancel: () => void;
 }
@@ -26,14 +26,14 @@ export function ProcessMonitor({ optimizer, cancelled, onRequestCancel }: Proces
 
       if (mounted.current) {
         setProcess({
-          percent: Math.min(info.percent, 100),
+          percent: info.percent,
           time: Math.round(info.time / 100) / 10,
         });
       }
     });
 
     setProcess({
-      percent: Math.min(currentProcess.percent, 100),
+      percent: currentProcess.percent,
       time: Math.round(currentProcess.time / 100) / 10,
     });
 
