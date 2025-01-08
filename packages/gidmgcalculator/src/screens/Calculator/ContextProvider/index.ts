@@ -1,8 +1,3 @@
 export * from "./ContextProvider";
 export * from "./hooks";
-export type {
-  OptimizeSystem,
-  OptimizeDirectorState,
-  OptimizeResult,
-  OptimizerStatus,
-} from "./OptimizeSystemProvider/OptimizeSystem.context";
+export type { OptimizeSystem, OptimizeResult, OptimizerStatus } from "./OptimizeSystemProvider/OptimizeSystem.context";

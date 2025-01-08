@@ -52,7 +52,7 @@ export function ProcessMonitor({ optimizer, cancelled, onRequestCancel }: Proces
 
   return (
     <div className="px-4">
-      <p className="text-lg text-center font-medium">{cancelled ? "Calculation Cancelled" : "Calculating..."}</p>
+      <p className="text-lg text-center font-medium">{cancelled ? "Calculation cancelled" : "Calculating..."}</p>
 
       <div className="w-full h-3 mt-4 bg-surface-1 shadow-surface-3 shadow-3px-2px rounded-md">
         <div

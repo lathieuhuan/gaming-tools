@@ -26,8 +26,6 @@ export class OptimizeManager {
 
   private tester = new OptimizeTester();
 
-  // onStart = (...params: Parameters<typeof this.optimize>) => {};
-
   constructor(private testMode = false) {
     this.worker = this.genWorker();
   }
@@ -119,8 +117,6 @@ export class OptimizeManager {
     calcItemParams: OTM_OptimizeRequest["calcItemParams"],
     ...optimizeParams: OTM_OptimizeRequest["optimizeParams"]
   ) {
-    // this.onStart(calcItemParams, ...optimizeParams);
-
     this.processInfo = {
       percent: 0,
       time: 0,

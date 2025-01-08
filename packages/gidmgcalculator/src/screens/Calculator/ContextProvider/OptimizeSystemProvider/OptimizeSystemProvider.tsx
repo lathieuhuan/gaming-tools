@@ -33,23 +33,16 @@ export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
   const optimizer = useOptimizer();
 
   useEffect(() => {
-    // optimizer.onStart = (_, modConfigs) => {
-    //   setState((prev) => ({
-    //     ...prev,
-    //     optimizerStatus: "WORKING",
-    //     pendingResult: false,
-    //     result: [],
-    //     artifactModConfigs: Object_.clone(modConfigs),
-    //   }));
-    // };
-
     const unsubscribe = optimizer.subscribeCompletion((result) => {
-      setState((prev) => ({
-        ...prev,
-        optimizerStatus: "IDLE",
-        pendingResult: prev.active ? prev.pendingResult : true,
-        result,
-      }));
+      setState((prev) => {
+        const newState: OptimizeSystemState = {
+          ...prev,
+          status: "IDLE",
+          pendingResult: prev.active ? prev.pendingResult : true,
+          result,
+        };
+        return newState;
+      });
     });
 
     return () => {
@@ -82,29 +75,45 @@ export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
       });
     },
     optimizer: {
-      init: optimizer.init,
-      load: optimizer.load,
+      init: (...params) => {
+        optimizer.init(...params);
+      },
+      load: (...params) => {
+        optimizer.load(...params);
+      },
       optimize: (calcItemParams, modConfigs, extraConfigs) => {
-        setState((prev) => ({
-          ...prev,
-          optimizerStatus: "WORKING",
-          pendingResult: false,
-          result: [],
-          artifactModConfigs: Object_.clone(modConfigs),
-        }));
+        setState((prev) => {
+          const newState: OptimizeSystemState = {
+            ...prev,
+            status: "WORKING",
+            pendingResult: false,
+            result: [],
+            artifactModConfigs: Object_.clone(modConfigs),
+          };
+          return newState;
+        });
 
         optimizer.optimize(calcItemParams, modConfigs, extraConfigs);
       },
-      end: optimizer.end,
-      subscribeCompletion: optimizer.subscribeCompletion,
-      subscribeProcess: optimizer.subscribeProcess,
+      end: () => {
+        optimizer.end();
+      },
+      subscribeCompletion: (subscriber) => {
+        return optimizer.subscribeCompletion(subscriber);
+      },
+      subscribeProcess: (subscriber) => {
+        return optimizer.subscribeProcess(subscriber);
+      },
     },
     cancelProcess: () => {
       optimizer.end();
-      setState((prev) => ({
-        ...prev,
-        optimizerStatus: "CANCELLED",
-      }));
+      setState((prev) => {
+        const newState: OptimizeSystemState = {
+          ...prev,
+          status: "CANCELLED",
+        };
+        return newState;
+      });
     },
   };
 

@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
-import { Button, ButtonProps, Checkbox, CloseButton, Modal, Popover, useClickOutside } from "rond";
+import { Button, ButtonProps, Checkbox, Modal } from "rond";
 import { GeneralCalc } from "@Backend";
 
 import type { Artifact, ArtifactModCtrl } from "@Src/types";
@@ -15,6 +15,7 @@ import Array_ from "@Src/utils/array-utils";
 import { ArtifactCard } from "@Src/components";
 import { ProcessMonitor } from "./ProcessMonitor";
 import { ResultDisplayer } from "./ResultDisplayer";
+import { ConfirmButton } from "./ConfirmButton";
 
 interface InternalOfficeProps {
   system: OptimizeSystem;
@@ -25,19 +26,21 @@ interface InternalOfficeProps {
   onCancel?: () => void;
 }
 function InternalOffice(props: InternalOfficeProps) {
+  const MAX_SETUP_AFTER_LOAD = 5;
   const { system, moreActions = [] } = props;
   const { state, optimizer } = props.system;
   const cancelled = state.status === "CANCELLED";
-  const loading = state.status === "WORKING";
+  const processing = state.status === "WORKING";
+  const loadableToCalc = !processing && state.result.length !== 0;
 
   const store = useStore();
   const [selected, setSelected] = useState<Artifact>();
-  const [exiting, setExiting] = useState(false);
+  const [askingToExit, setAskingToExit] = useState(false);
+  const [askingToLoad, setAskingToLoad] = useState(false);
 
   const selectedIndexes = useRef(new Set(state.result.map((_, i) => i)));
   const keepProcess = useRef(false);
   const bodyRef = useRef<HTMLDivElement>(null);
-  const confirmTriggerRef = useClickOutside<HTMLDivElement>(() => setExiting(false));
 
   const processed: ProcessedResult = useMemo(() => {
     return state.result.map(({ artifacts }) => {
@@ -96,8 +99,16 @@ function InternalOffice(props: InternalOfficeProps) {
     const calculator = store.select((state) => state.calculator);
     const activeSetup = calculator.setupsById[calculator.activeId];
 
-    if (activeSetup && state.setup && activeSetup.char.name !== state.setup.char.name) {
-      //
+    if (activeSetup && state.setup) {
+      if (activeSetup.char.name === state.setup.char.name) {
+        const totalSetupCount = calculator.setupManageInfos.length + state.result.length;
+
+        if (totalSetupCount > MAX_SETUP_AFTER_LOAD) {
+          //
+        } else {
+          //
+        }
+      }
     }
   };
 
@@ -116,20 +127,16 @@ function InternalOffice(props: InternalOfficeProps) {
     props.onChangeKeepResult(keep);
   };
 
-  const onCancel = () => {
+  const cancelProcess = () => {
     system.cancelProcess();
     props.onCancel?.();
   };
 
-  const onClickExit = () => {
-    if (cancelled || exiting) {
-      props.onClose();
+  const exit = () => {
+    props.onClose();
 
-      if (loading && !cancelled && !keepProcess.current) {
-        onCancel();
-      }
-    } else {
-      setExiting(!exiting);
+    if (processing && !cancelled && !keepProcess.current) {
+      cancelProcess();
     }
   };
 
@@ -137,8 +144,8 @@ function InternalOffice(props: InternalOfficeProps) {
     <div className="h-full flex flex-col">
       <div ref={bodyRef} className="grow flex gap-2 hide-scrollbar scroll-smooth">
         <div className="grow custom-scrollbar" style={{ minWidth: 360 }}>
-          {loading || cancelled ? (
-            <ProcessMonitor optimizer={optimizer} cancelled={cancelled} onRequestCancel={onCancel} />
+          {processing || cancelled ? (
+            <ProcessMonitor optimizer={optimizer} cancelled={cancelled} onRequestCancel={cancelProcess} />
           ) : (
             <ResultDisplayer
               selectedArtifactId={selected?.ID}
@@ -160,50 +167,46 @@ function InternalOffice(props: InternalOfficeProps) {
           <Button key={i} {...action} />
         ))}
 
-        <div ref={confirmTriggerRef} className="relative">
-          <Button
-            className="relative z-20"
-            variant={exiting ? "danger" : "default"}
-            icon={<FaSignOutAlt className="text-base" />}
-            onClick={onClickExit}
-          >
-            Exit
-          </Button>
-
-          <Popover
-            active={exiting}
-            className="z-20 bottom-full mb-3 pl-4 pr-1 py-1 shadow-white-glow"
-            withTooltipStyle
-            style={{
-              width: "12.5rem",
-              left: "50%",
-              translate: "-50% 0",
-            }}
-            origin="bottom center"
-          >
-            <div className="flex justify-between items-center">
-              <p className="text-base font-semibold">Tap again to exit.</p>
-              <CloseButton className="shrink-0" boneOnly onClick={() => setExiting(false)} />
-            </div>
-
+        <ConfirmButton
+          variant="danger"
+          popoverWidth="12.5rem"
+          asking={askingToExit}
+          askingTitle="Tap again to exit."
+          askingContent={
             <div className="py-2">
-              {loading ? (
+              {processing ? (
                 <Checkbox onChange={onChangeKeepProcess}>Keep the process</Checkbox>
               ) : (
                 <Checkbox onChange={props.onChangeKeepResult}>Keep the result</Checkbox>
               )}
             </div>
-          </Popover>
-        </div>
+          }
+          disabledAsking={cancelled}
+          icon={<FaSignOutAlt className="text-base" />}
+          toggleAsking={setAskingToExit}
+          onConfirm={exit}
+        >
+          Exit
+        </ConfirmButton>
 
-        {!loading && state.result.length ? (
-          <Button className="gap-1" icon={<FaFileUpload className="text-base" />} onClick={onClickLoadResult}>
+        {loadableToCalc ? (
+          <ConfirmButton
+            variant="primary"
+            popoverWidth="15rem"
+            className="gap-1"
+            asking={askingToLoad}
+            askingTitle="Tap again to load."
+            askingContent={<p className="py-2">The current target is different and will be overwritten.</p>}
+            icon={<FaFileUpload className="text-base" />}
+            toggleAsking={setAskingToLoad}
+            onConfirm={loadResultToCalculator}
+          >
             Load Result
-          </Button>
+          </ConfirmButton>
         ) : null}
       </div>
 
-      {exiting && <div className="absolute full-stretch z-10 bg-black/60" />}
+      {(askingToExit || askingToLoad) && <div className="absolute full-stretch z-10 bg-black/60" />}
     </div>
   );
 }

@@ -69,8 +69,11 @@
 }
 
 .ron-modal--large-height {
-  height: 95%;
+  height: 90%;
   max-height: 768px;
+}
+.ron-modal--max-size {
+  height: 95%;
 }
 
 // Modal only styles
