@@ -7,6 +7,7 @@ import type { Artifact, ArtifactModCtrl } from "@Src/types";
 import type { OptimizeDirector } from "@Src/screens/Calculator/ContextProvider";
 import type { ProcessedResult } from "./OptimizerOffice.types";
 
+import { useStore } from "@Src/features";
 import Modifier_ from "@Src/utils/modifier-utils";
 import Array_ from "@Src/utils/array-utils";
 
@@ -29,6 +30,7 @@ function InternalOffice(props: InternalOfficeProps) {
   const cancelled = state.optimizerStatus === "CANCELLED";
   const loading = state.optimizerStatus === "WORKING";
 
+  const store = useStore();
   const [selected, setSelected] = useState<Artifact>();
   const [exiting, setExiting] = useState(false);
 
@@ -88,6 +90,15 @@ function InternalOffice(props: InternalOfficeProps) {
     //   );
     // }
     // props.onRequestExit();
+  };
+
+  const onClickLoadResult = () => {
+    const calculator = store.select((state) => state.calculator);
+    const activeSetup = calculator.setupsById[calculator.activeId];
+
+    if (activeSetup && state.setup && activeSetup.char.name !== state.setup.char.name) {
+      //
+    }
   };
 
   const onToggleCheckCalculation = (index: number, checked: boolean) => {
@@ -186,7 +197,7 @@ function InternalOffice(props: InternalOfficeProps) {
         </div>
 
         {!loading && state.result.length ? (
-          <Button className="gap-1" icon={<FaFileUpload className="text-base" />} onClick={loadResultToCalculator}>
+          <Button className="gap-1" icon={<FaFileUpload className="text-base" />} onClick={onClickLoadResult}>
             Load Result
           </Button>
         ) : null}

@@ -15,6 +15,8 @@ import Array_ from "@Src/utils/array-utils";
 // Component
 import { GenshinImage, GenshinModifierView, ItemThumbnail } from "@Src/components";
 
+type Modifiers = Array<{ description: ArtifactModifierDescription; inputConfigs?: ModInputConfig[] }> | undefined;
+
 export interface ResultDisplayerProps {
   result: OptimizeResult;
   processedResult: ProcessedResult;
@@ -44,28 +46,29 @@ export function ResultDisplayer({
     return data;
   };
 
-  const renderModView = (
-    keyPrefix: string,
-    config: ArtifactModCtrl,
-    data: AppArtifact,
-    mods: Array<{ description: ArtifactModifierDescription; inputConfigs?: ModInputConfig[] }> = []
-  ) => {
-    const mod = Array_.findByIndex(mods, config.index);
-    if (!mod) return null;
+  const renderModView = (type: "B" | "D") => (config: ArtifactModCtrl) => {
+    if (config.activated) {
+      const data = getSetData(config.code);
+      const mods: Modifiers = type === "B" ? data.buffs : data.debuffs;
+      const mod = Array_.findByIndex(mods, config.index);
 
-    const description = getArtifactDescription(data, mod);
+      if (mod) {
+        const description = getArtifactDescription(data, mod);
 
-    return (
-      <GenshinModifierView
-        key={`${keyPrefix}-${data.code}-${config.index}`}
-        mutable={false}
-        checked={config.activated}
-        heading={data.name}
-        description={description}
-        inputs={config.inputs}
-        inputConfigs={mod.inputConfigs}
-      />
-    );
+        return (
+          <GenshinModifierView
+            key={`${type}-${config.code}-${config.index}`}
+            mutable={false}
+            checked={config.activated}
+            heading={data.name}
+            description={description}
+            inputs={config.inputs}
+            inputConfigs={mod.inputConfigs}
+          />
+        );
+      }
+    }
+    return null;
   };
 
   return (
@@ -75,7 +78,9 @@ export function ResultDisplayer({
         const setBonusesSumary = processed.setBonuses
           .map((bonus) => `(${bonus.bonusLv * 2 + 2}) ${getSetData(bonus.code).name}`)
           .join(" + ");
-        const hasAnyConfig = processed.artBuffCtrls.length !== 0 || processed.artDebuffCtrls.length !== 0;
+        const hasAnyConfig =
+          processed.artBuffCtrls.some((ctrl) => ctrl.activated) ||
+          processed.artDebuffCtrls.some((ctrl) => ctrl.activated);
         const expanded = expandIndexes.includes(index);
 
         return (
@@ -150,14 +155,8 @@ export function ResultDisplayer({
                     <div className="h-px bg-surface-border/80" />
 
                     <div className="mt-2 space-y-2">
-                      {processed.artBuffCtrls.map((config) => {
-                        const data = getSetData(config.code);
-                        return renderModView("B", config, data, data.buffs);
-                      })}
-                      {processed.artDebuffCtrls.map((config) => {
-                        const data = getSetData(config.code);
-                        return renderModView("D", config, data, data.debuffs);
-                      })}
+                      {processed.artBuffCtrls.map(renderModView("B"))}
+                      {processed.artDebuffCtrls.map(renderModView("D"))}
                     </div>
                   </div>
                 </CollapseSpace>

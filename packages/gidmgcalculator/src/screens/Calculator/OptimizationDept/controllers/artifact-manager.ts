@@ -1,5 +1,7 @@
 import { ARTIFACT_TYPES } from "@Backend";
-import type { ArtifactType, OptimizerArtifactModConfigs, OptimizerAllArtifactModConfigs } from "@Backend";
+
+import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerArtifactModConfigs } from "@Backend";
+import type { AppArtifactsByCode } from "@Src/types";
 import type {
   CalculationCount,
   ChangeModConfigInputs,
@@ -10,7 +12,7 @@ import type {
 
 import { $AppArtifact } from "@Src/services";
 import Modifier_ from "@Src/utils/modifier-utils";
-import type { AppArtifactsByCode } from "@Src/types";
+import Object_ from "@Src/utils/object-utils";
 
 export class ArtifactManager {
   private readonly MAX_ACTUAL_COUNT = 100_000_000_000;
@@ -109,8 +111,8 @@ export class ArtifactManager {
 
     if (code) {
       this.getSetThen((set) => {
-        artifacts = set.pieces;
-        selectedIds = set.selectedIds;
+        artifacts = Object_.clone(set.pieces);
+        selectedIds = new Set(set.selectedIds);
       })(code);
     }
 
