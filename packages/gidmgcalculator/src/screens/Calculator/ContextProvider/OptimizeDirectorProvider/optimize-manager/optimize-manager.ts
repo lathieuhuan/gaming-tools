@@ -8,8 +8,7 @@ import type {
   OTM_WorkerResponse,
 } from "./optimize-manager.types";
 import { OptimizeTester } from "./optimize-tester";
-
-const WORKER_URL = new URL("optimize-worker.ts", import.meta.url);
+import WORKER_URL from "./optimize-worker?worker&url";
 
 type OnCompleteOptimize = (state: OptimizeResult) => void;
 
@@ -27,7 +26,7 @@ export class OptimizeManager {
 
   private tester = new OptimizeTester();
 
-  onStart = () => {};
+  onStart = (...params: Parameters<typeof this.optimize>) => {};
 
   constructor(private testMode = false) {
     this.worker = this.genWorker();
@@ -120,7 +119,7 @@ export class OptimizeManager {
     calcItemParams: OTM_OptimizeRequest["calcItemParams"],
     ...optimizeParams: OTM_OptimizeRequest["optimizeParams"]
   ) {
-    this.onStart();
+    this.onStart(calcItemParams, ...optimizeParams);
 
     this.processInfo = {
       percent: 0,

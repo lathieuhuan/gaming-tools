@@ -1,4 +1,5 @@
 import { createContext } from "react";
+import type { OptimizerAllArtifactModConfigs } from "@Backend";
 import type { CalcSetup, CalcSetupManageInfo } from "@Src/types";
 import type { OptimizeResult, OptimizeManager } from "./optimize-manager";
 
@@ -12,6 +13,7 @@ type OptimizeDirectorState = {
   testMode: boolean;
   pendingResult: boolean;
   setup?: OptimizedSetup;
+  artifactModConfigs: OptimizerAllArtifactModConfigs;
   result: OptimizeResult;
 };
 

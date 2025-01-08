@@ -7,6 +7,7 @@ import { GenshinImage } from "@Src/components";
 
 interface SetOptionProps extends Pick<ActionsAnimatorProps, "isClosing" | "afterClosedActions"> {
   isActive: boolean;
+  isVisible: boolean;
   set: ManagedArtifactSet;
   manager: ArtifactManager;
   onClickLabel: () => void;
@@ -35,7 +36,9 @@ export function SetOption(props: SetOptionProps) {
           title={data.name}
           onClick={props.onClickLabel}
         >
-          <GenshinImage className="w-9 h-9 shrink-0" src={data.flower.icon} imgType="artifact" fallbackCls="p-2" />
+          <div className="w-9 h-9 shrink-0">
+            {props.isVisible && <GenshinImage src={data.flower.icon} imgType="artifact" fallbackCls="p-2" />}
+          </div>
           <span className={`ml-2 pr-4 truncate ${isActive && !props.isClosing && "text-primary-1"}`}>{data.name}</span>
 
           <p className="ml-auto">

@@ -170,7 +170,7 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
 
                   return (
                     <Fragment key={config.key}>
-                      {index ? <div className="h-px bg-black/30" /> : null}
+                      {index ? <div className="h-px bg-light-disabled opacity-80" /> : null}
                       <button
                         disabled={disabled}
                         className={clsx(

@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { FaInfoCircle } from "react-icons/fa";
 import { Checkbox, ItemCase } from "rond";
 import { AppArtifact, ARTIFACT_TYPES, GeneralCalc } from "@Backend";
 
@@ -22,6 +23,8 @@ export function ResultDisplayer({
   onSelectArtifact,
   onToggleCheckCalculation,
 }: ResultDisplayerProps) {
+  //
+  const [expandIndexes, setExpandIndexes] = useState<number[]>([]);
   const dataBySet = useRef<Record<number, AppArtifact>>({});
   const suffixes = ["st", "nd", "rd"];
 
@@ -38,30 +41,23 @@ export function ResultDisplayer({
   return (
     <div className="pr-1 h-full custom-scrollbar space-y-2">
       {result.map((calculation, index) => {
-        const sets = GeneralCalc.getArtifactSetBonuses(calculation.artifacts).map(
-          (bonus) => `(${bonus.bonusLv * 2 + 2}) ${getSetData(bonus.code).name}`
-        );
+        const setBonus = GeneralCalc.getArtifactSetBonuses(calculation.artifacts)
+          .map((bonus) => `(${bonus.bonusLv * 2 + 2}) ${getSetData(bonus.code).name}`)
+          .join(" + ");
+        const expanded = expandIndexes.includes(index);
 
         return (
           <div key={index} className="p-4 rounded-md bg-surface-1">
             <div className="flex justify-between items-start">
-              <div className="flex">
-                <div className="w-12 text-2xl font-black text-danger-2">
-                  {index + 1}
-                  {suffixes[index]}
-                </div>
-
-                <div className="ml-4 flex flex-col justify-center text-sm">
-                  {sets.map((set, i) => (
-                    <p key={i}>{set}</p>
-                  ))}
-                </div>
+              <div className="text-2xl font-black text-danger-2">
+                {index + 1}
+                {suffixes[index]}
               </div>
 
               <Checkbox size="medium" defaultChecked onChange={(checked) => onToggleCheckCalculation(index, checked)} />
             </div>
 
-            <div className="mt-2 grid grid-cols-5 gap-2">
+            <div className="mt-3 grid grid-cols-5 gap-2">
               {calculation.artifacts.map((artifact, artifactI) => {
                 if (artifact) {
                   const data = getSetData(artifact.code);
@@ -94,6 +90,25 @@ export function ResultDisplayer({
                   </div>
                 );
               })}
+            </div>
+
+            <div className="mt-4">
+              <button
+                className={`max-w-full text-left flex gap-2 ${expanded ? "text-active-color" : "glow-on-hover"}`}
+                title={setBonus}
+                onClick={() => {
+                  setExpandIndexes(
+                    expanded
+                      ? expandIndexes.filter((expandIndex) => expandIndex !== index)
+                      : expandIndexes.concat(index)
+                  );
+                }}
+              >
+                <div className="h-6 flex items-center">
+                  <FaInfoCircle className="text-lg shrink-0" />
+                </div>
+                <span>{setBonus}</span>
+              </button>
             </div>
           </div>
         );

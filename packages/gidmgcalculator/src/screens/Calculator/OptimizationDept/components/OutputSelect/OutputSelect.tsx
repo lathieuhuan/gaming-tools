@@ -71,8 +71,8 @@ export function OutputSelect(props: OutputSelectProps) {
                       <span
                         key={`${subGroup.attPatt}.${index}`}
                         className={clsx(
-                          "px-2 py-1 rounded",
-                          isSeleted ? "bg-active-color text-black font-bold" : "hover:bg-surface-3 font-medium"
+                          "px-2 py-1 font-semibold rounded",
+                          isSeleted ? "bg-active-color text-black" : "hover:bg-surface-3"
                         )}
                         onClick={() => onClickItem({ attPatt: subGroup.attPatt, item })}
                       >

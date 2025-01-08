@@ -22,14 +22,10 @@ export function ProcessMonitor({ optimizer, cancelled, onRequestCancel }: Proces
 
   useLayoutEffect(() => {
     const { currentProcess, unsubscribe } = optimizer.subscribeProcess((info) => {
-      console.log("process", info.percent);
-
-      if (mounted.current) {
-        setProcess({
-          percent: info.percent,
-          time: Math.round(info.time / 100) / 10,
-        });
-      }
+      setProcess({
+        percent: info.percent,
+        time: Math.round(info.time / 100) / 10,
+      });
     });
 
     setProcess({

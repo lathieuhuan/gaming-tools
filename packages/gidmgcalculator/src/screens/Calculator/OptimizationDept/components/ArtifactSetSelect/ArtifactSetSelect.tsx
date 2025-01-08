@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Button, Input, OverflowTrackingContainer } from "rond";
+import { Button, Input, OverflowTrackingContainer, useIntersectionObserver } from "rond";
 
 import type { ArtifactManager } from "../../controllers";
 import { SetOption } from "./SetOption";
@@ -29,6 +29,9 @@ export function ArtifactSetSelect({ artifactManager, onChangeValid, onRequestSel
     closing: new Set<number>(),
   });
 
+  const { observedAreaRef, itemUtils, visibleMap } = useIntersectionObserver();
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const all = useMemo(() => {
     const visibleCodes = new Set<number>();
     let visibleSelectedCount = 0;
@@ -51,6 +54,19 @@ export function ArtifactSetSelect({ artifactManager, onChangeValid, onRequestSel
       anyEquippedSelected,
     };
   }, [sets, keyword]);
+
+  useEffect(() => {
+    const focus = (e: KeyboardEvent) => {
+      if (e.key.length === 1 && document.activeElement !== inputRef.current) {
+        inputRef.current?.focus();
+      }
+    };
+    document.body.addEventListener("keydown", focus);
+
+    return () => {
+      document.body.removeEventListener("keydown", focus);
+    };
+  }, []);
 
   useEffect(() => {
     onChangeValid(sets.some((set) => set.selectedIds.size));
@@ -91,9 +107,9 @@ export function ArtifactSetSelect({ artifactManager, onChangeValid, onRequestSel
   };
 
   return (
-    <div className="h-full flex flex-col gap-3">
+    <div ref={observedAreaRef} className="h-full flex flex-col gap-3">
       <div>
-        <Input className="w-full" placeholder="Search" autoFocus onChange={onChangeKeyword} />
+        <Input ref={inputRef} className="w-full" placeholder="Search" onChange={onChangeKeyword} />
       </div>
 
       <div className="flex justify-end gap-3">
@@ -124,17 +140,19 @@ export function ArtifactSetSelect({ artifactManager, onChangeValid, onRequestSel
             const isActive = codes.active.has(code);
 
             return (
-              <SetOption
-                key={code}
-                isActive={isActive}
-                isClosing={codes.closing.has(code)}
-                set={set}
-                manager={artifactManager}
-                onClickLabel={() => onClickOption(code, isActive)}
-                onClickSelectPieces={() => onRequestSelectPieces(code)}
-                onChangeSets={setSets}
-                afterClosedActions={() => afterClosedActions(code)}
-              />
+              <div key={code} {...itemUtils.getProps(code)}>
+                <SetOption
+                  isActive={isActive}
+                  isVisible={visibleMap[code]}
+                  isClosing={codes.closing.has(code)}
+                  set={set}
+                  manager={artifactManager}
+                  onClickLabel={() => onClickOption(code, isActive)}
+                  onClickSelectPieces={() => onRequestSelectPieces(code)}
+                  onChangeSets={setSets}
+                  afterClosedActions={() => afterClosedActions(code)}
+                />
+              </div>
             );
           })
         ) : (

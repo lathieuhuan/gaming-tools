@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { OptimizerAllArtifactModConfigs } from "@Backend";
+
+import Object_ from "@Src/utils/object-utils";
 import { OptimizeManager } from "./optimize-manager";
-import { OptimizeDirectorContext, OptimizeDirector, OptimizeDirectorState } from "./OptimizeDirector.context";
+import { OptimizeDirector, OptimizeDirectorContext, OptimizeDirectorState } from "./OptimizeDirector.context";
 
 function useOptimizer() {
   const ref = useRef<OptimizeManager>();
@@ -12,24 +13,33 @@ function useOptimizer() {
   return ref.current;
 }
 
+const DEFAULT_STATE = {
+  result: [],
+  setup: undefined,
+  artifactModConfigs: {
+    buffs: {},
+    debuffs: {},
+  },
+} satisfies Pick<OptimizeDirectorState, "setup" | "artifactModConfigs" | "result">;
+
 export function OptimizeDirectorProvider(props: { children: React.ReactNode }) {
   const [state, setState] = useState<OptimizeDirectorState>({
     active: false,
     optimizerStatus: "IDLE",
     testMode: false,
     pendingResult: false,
-    result: [],
+    ...DEFAULT_STATE,
   });
-  const lastModConfigs = useRef<OptimizerAllArtifactModConfigs>();
   const optimizer = useOptimizer();
 
   useEffect(() => {
-    optimizer.onStart = () => {
+    optimizer.onStart = (_, modConfigs) => {
       setState((prev) => ({
         ...prev,
         optimizerStatus: "WORKING",
         pendingResult: false,
         result: [],
+        artifactModConfigs: Object_.clone(modConfigs),
       }));
     };
 
@@ -62,13 +72,15 @@ export function OptimizeDirectorProvider(props: { children: React.ReactNode }) {
       optimizer.switchTestMode(testMode);
     },
     close: (shouldKeepResult) => {
-      setState((prev) => ({
-        ...prev,
-        active: false,
-        pendingResult: shouldKeepResult,
-        setup: shouldKeepResult ? prev.setup : undefined,
-        result: shouldKeepResult ? prev.result : [],
-      }));
+      setState((prev) => {
+        const newState: OptimizeDirectorState = {
+          ...prev,
+          active: false,
+          pendingResult: shouldKeepResult,
+        };
+
+        return shouldKeepResult ? newState : Object.assign(newState, DEFAULT_STATE);
+      });
     },
     cancel: () => {
       optimizer.end();
@@ -77,12 +89,6 @@ export function OptimizeDirectorProvider(props: { children: React.ReactNode }) {
         optimizerStatus: "CANCELLED",
       }));
     },
-    // setLoading: (loading) => {
-    //   setState((prev) => ({
-    //     ...prev,
-    //     loading,
-    //   }));
-    // },
   };
 
   return <OptimizeDirectorContext.Provider value={context}>{props.children}</OptimizeDirectorContext.Provider>;

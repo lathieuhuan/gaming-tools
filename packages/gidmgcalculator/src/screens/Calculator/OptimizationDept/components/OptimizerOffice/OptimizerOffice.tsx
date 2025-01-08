@@ -11,8 +11,6 @@ import { ProcessMonitor } from "./ProcessMonitor";
 import { ResultDisplayer } from "./ResultDisplayer";
 
 interface InternalOptimizerOfficeProps {
-  // setup: CalcSetup;
-  // artifactModConfigs: OptimizerAllArtifactModConfigs;
   director: OptimizeDirector;
   moreActions?: ButtonProps[];
   onChangeKeepResult: (keepResult: boolean) => void;
@@ -78,10 +76,11 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
 
   const onClickExit = () => {
     if (cancelled || exiting) {
-      if (!cancelled && !keepProcess.current) {
+      props.onClose();
+
+      if (loading && !cancelled && !keepProcess.current) {
         onCancel();
       }
-      props.onClose();
     } else {
       setExiting(!exiting);
     }
@@ -106,7 +105,7 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
 
   return (
     <div className="h-full flex custom-scrollbar gap-2 scroll-smooth">
-      <div className="grow flex flex-col" style={{ minWidth: 324 }}>
+      <div className="grow flex flex-col" style={{ minWidth: 360 }}>
         <div className="grow">
           {loading || cancelled ? (
             <ProcessMonitor optimizer={optimizer} cancelled={cancelled} onRequestCancel={onCancel} />
@@ -120,7 +119,7 @@ function InternalOptimizerOffice(props: InternalOptimizerOfficeProps) {
           )}
         </div>
 
-        <div className="mt-4 px-2 pb-1 flex gap-3">
+        <div className="mt-4 pr-2 pb-1 flex gap-3">
           {moreActions.map((action, i) => (
             <Button key={i} {...action} />
           ))}

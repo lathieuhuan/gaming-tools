@@ -12,7 +12,6 @@ import type {
 } from "./OptimizationDept.types";
 
 import { useStoreSnapshot } from "@Src/features";
-import Object_ from "@Src/utils/object-utils";
 import { OptimizeDirector, useCharacterData } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 
@@ -61,7 +60,6 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     },
   });
   const lastModalType = useRef<OptimizationModalType>("");
-  const lastModConfigs = useRef(artifactManager.allModConfigs);
   const setForPieceSelect = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
   const shouldKeepResult = useRef(false);
   const runCount = useRef(0);
@@ -100,8 +98,6 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         allModConfigs,
         extraConfigs
       );
-
-      lastModConfigs.current = Object_.clone(allModConfigs);
     }
   };
 
@@ -207,7 +203,7 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
       <ItemMultiSelect
         active={modalType === "PIECE_SELECT"}
-        title={<span className="text-lg">Optimizer / Select Artifacts</span>}
+        title={<span className="text-lg">Optimizer / Artifacts</span>}
         items={setForPieceSelect.current.artifacts}
         initialValue={setForPieceSelect.current.selectedIds}
         onClose={() => changeModalType("GUIDE")}
@@ -218,8 +214,6 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
         active={modalType === "OPTIMIZER"}
         director={props.director}
         closeDeptAfterCloseOffice={modalType === ""}
-        // setup={store.setup}
-        // artifactModConfigs={lastModConfigs.current}
         moreActions={[
           {
             children: "Return",
