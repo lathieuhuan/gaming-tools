@@ -109,11 +109,9 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
       active={props.active}
       title={<span className="text-lg">Optimizer / {stepConfigs[step]?.title}</span>}
       style={{
-        height: "95vh",
-        maxHeight: 880,
         width: "26rem",
       }}
-      className="bg-surface-2"
+      className={["bg-surface-2", Modal.LARGE_HEIGHT_CLS, Modal.MAX_SIZE_CLS]}
       bodyCls="py-2 px-0"
       closeOnMaskClick={false}
       onClose={() => props.onClose()}
@@ -147,7 +145,7 @@ export function OptimizationGuide<T extends string>(props: OptimizationGuideProp
           </div>
         </div>
 
-        <div className="mt-3 mb-1 px-4 flex justify-between">
+        <div className="mt-4 mb-1 px-4 flex justify-between">
           <div className="flex">
             <div ref={menuTriggerRef} className="relative">
               {props.canShowMenu && (

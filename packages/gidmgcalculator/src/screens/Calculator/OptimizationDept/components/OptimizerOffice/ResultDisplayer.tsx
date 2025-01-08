@@ -1,24 +1,30 @@
 import { useRef, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
-import { Checkbox, ItemCase } from "rond";
-import { AppArtifact, ARTIFACT_TYPES, GeneralCalc } from "@Backend";
+import { Checkbox, CollapseSpace, ItemCase } from "rond";
+import { AppArtifact, ARTIFACT_TYPES, ArtifactModifierDescription, ModInputConfig } from "@Backend";
 
-import type { Artifact } from "@Src/types";
-import { OptimizeResult } from "@Src/screens/Calculator/ContextProvider";
+import type { Artifact, ArtifactModCtrl } from "@Src/types";
+import type { OptimizeResult } from "@Src/screens/Calculator/ContextProvider";
+import type { ProcessedResult } from "./OptimizerOffice.types";
+
 import { $AppArtifact } from "@Src/services";
+import { getArtifactDescription } from "@Src/utils/description-parsers";
 import Entity_ from "@Src/utils/entity-utils";
+import Array_ from "@Src/utils/array-utils";
 
 // Component
-import { GenshinImage, ItemThumbnail } from "@Src/components";
+import { GenshinImage, GenshinModifierView, ItemThumbnail } from "@Src/components";
 
 export interface ResultDisplayerProps {
   result: OptimizeResult;
+  processedResult: ProcessedResult;
   selectedArtifactId?: number;
   onSelectArtifact: (artifact: Artifact) => void;
   onToggleCheckCalculation: (index: number, checked: boolean) => void;
 }
 export function ResultDisplayer({
   result,
+  processedResult,
   selectedArtifactId,
   onSelectArtifact,
   onToggleCheckCalculation,
@@ -38,16 +44,42 @@ export function ResultDisplayer({
     return data;
   };
 
+  const renderModView = (
+    keyPrefix: string,
+    config: ArtifactModCtrl,
+    data: AppArtifact,
+    mods: Array<{ description: ArtifactModifierDescription; inputConfigs?: ModInputConfig[] }> = []
+  ) => {
+    const mod = Array_.findByIndex(mods, config.index);
+    if (!mod) return null;
+
+    const description = getArtifactDescription(data, mod);
+
+    return (
+      <GenshinModifierView
+        key={`${keyPrefix}-${data.code}-${config.index}`}
+        mutable={false}
+        checked={config.activated}
+        heading={data.name}
+        description={description}
+        inputs={config.inputs}
+        inputConfigs={mod.inputConfigs}
+      />
+    );
+  };
+
   return (
-    <div className="pr-1 h-full custom-scrollbar space-y-2">
+    <div className="h-full custom-scrollbar space-y-2">
       {result.map((calculation, index) => {
-        const setBonus = GeneralCalc.getArtifactSetBonuses(calculation.artifacts)
+        const processed = processedResult[index];
+        const setBonusesSumary = processed.setBonuses
           .map((bonus) => `(${bonus.bonusLv * 2 + 2}) ${getSetData(bonus.code).name}`)
           .join(" + ");
+        const hasAnyConfig = processed.artBuffCtrls.length !== 0 || processed.artDebuffCtrls.length !== 0;
         const expanded = expandIndexes.includes(index);
 
         return (
-          <div key={index} className="p-4 rounded-md bg-surface-1">
+          <div key={index} className="p-4 rounded-md bg-surface-1 space-y-4">
             <div className="flex justify-between items-start">
               <div className="text-2xl font-black text-danger-2">
                 {index + 1}
@@ -57,7 +89,7 @@ export function ResultDisplayer({
               <Checkbox size="medium" defaultChecked onChange={(checked) => onToggleCheckCalculation(index, checked)} />
             </div>
 
-            <div className="mt-3 grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-5 gap-2">
               {calculation.artifacts.map((artifact, artifactI) => {
                 if (artifact) {
                   const data = getSetData(artifact.code);
@@ -92,24 +124,47 @@ export function ResultDisplayer({
               })}
             </div>
 
-            <div className="mt-4">
-              <button
-                className={`max-w-full text-left flex gap-2 ${expanded ? "text-active-color" : "glow-on-hover"}`}
-                title={setBonus}
-                onClick={() => {
-                  setExpandIndexes(
-                    expanded
-                      ? expandIndexes.filter((expandIndex) => expandIndex !== index)
-                      : expandIndexes.concat(index)
-                  );
-                }}
-              >
-                <div className="h-6 flex items-center">
-                  <FaInfoCircle className="text-lg shrink-0" />
+            {hasAnyConfig ? (
+              <div>
+                <div>
+                  <button
+                    className={`max-w-full text-left flex gap-2 ${expanded ? "text-active-color" : "glow-on-hover"}`}
+                    title={setBonusesSumary}
+                    onClick={() => {
+                      setExpandIndexes(
+                        expanded
+                          ? expandIndexes.filter((expandIndex) => expandIndex !== index)
+                          : expandIndexes.concat(index)
+                      );
+                    }}
+                  >
+                    <span className="h-6 flex items-center">
+                      <FaInfoCircle className="text-lg shrink-0" />
+                    </span>
+                    <span>{setBonusesSumary}</span>
+                  </button>
                 </div>
-                <span>{setBonus}</span>
-              </button>
-            </div>
+
+                <CollapseSpace active={expanded}>
+                  <div className="pt-3">
+                    <div className="h-px bg-surface-border/80" />
+
+                    <div className="mt-2 space-y-2">
+                      {processed.artBuffCtrls.map((config) => {
+                        const data = getSetData(config.code);
+                        return renderModView("B", config, data, data.buffs);
+                      })}
+                      {processed.artDebuffCtrls.map((config) => {
+                        const data = getSetData(config.code);
+                        return renderModView("D", config, data, data.debuffs);
+                      })}
+                    </div>
+                  </div>
+                </CollapseSpace>
+              </div>
+            ) : (
+              <div>{setBonusesSumary}</div>
+            )}
           </div>
         );
       })}

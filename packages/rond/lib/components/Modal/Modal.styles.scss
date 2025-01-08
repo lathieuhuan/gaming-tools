@@ -46,6 +46,15 @@
       width: 944px;
     }
   }
+  &.ron-modal--max-size {
+    // just estimate max-width
+    @media (max-width: 376px) {
+      height: 100%;
+      max-height: 832px;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
 
   &.ron-modal--out {
     opacity: 1;
@@ -60,8 +69,8 @@
 }
 
 .ron-modal--large-height {
-  height: 90vh;
-  max-height: 760px;
+  height: 90%;
+  max-height: 768px;
 }
 
 // Modal only styles

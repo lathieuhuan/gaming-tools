@@ -1,11 +1,7 @@
-import {
-  GeneralCalc,
-  type ModInputConfig,
-  type ModInputType,
-  type ModifierAffectType,
-  type WeaponType,
-} from "@Backend";
+import type { ArtifactSetBonus, ModInputConfig, ModInputType, ModifierAffectType, WeaponType } from "@Backend";
 import type { Artifact, ArtifactModCtrl, ElementModCtrl, ModifierCtrl } from "@Src/types";
+
+import { GeneralCalc } from "@Backend";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 
 const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
@@ -105,8 +101,10 @@ export default class Modifier_ {
     return this.createItemBuffCtrls(forSelf, $AppWeapon.get(weapon.code));
   }
 
-  static createMainArtifactBuffCtrls(artifacts: (Artifact | null)[]) {
-    const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
+  static createMainArtifactBuffCtrls(
+    artifacts: (Artifact | null)[],
+    setBonuses: ArtifactSetBonus[] = GeneralCalc.getArtifactSetBonuses(artifacts)
+  ) {
     const artBuffCtrls: ArtifactModCtrl[] = [];
 
     for (const setBonus of setBonuses) {

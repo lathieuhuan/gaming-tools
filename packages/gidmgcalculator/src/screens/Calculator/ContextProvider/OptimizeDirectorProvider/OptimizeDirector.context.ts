@@ -23,7 +23,6 @@ type OptimizeDirector = {
   open: (setup?: OptimizedSetup, testMode?: boolean) => void;
   close: (keepResult: boolean) => void;
   cancel: () => void;
-  // setLoading: (value: boolean) => void;
 };
 
 export type { OptimizerStatus, OptimizeResult, OptimizeDirectorState, OptimizeDirector };
