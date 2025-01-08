@@ -6,14 +6,14 @@ import type { CalcSetupManageInfo } from "@Src/types";
 import { IS_DEV_ENV } from "@Src/constants";
 import { useStoreSnapshot } from "@Src/features";
 import Object_ from "@Src/utils/object-utils";
-import { useOptimizeDirector } from "../../hooks";
+import { useOptimizeSystem } from "../../hooks";
 
 const FORM_ID = "optimizer-preconfig";
 
-interface OptimizationIntroProps {
+interface OptimizeIntroProps {
   onClose: () => void;
 }
-function OptimizationIntro(props: OptimizationIntroProps) {
+function OptimizeIntro(props: OptimizeIntroProps) {
   //
   const snapshot = useStoreSnapshot(({ calculator }) => {
     return {
@@ -28,7 +28,7 @@ function OptimizationIntro(props: OptimizationIntroProps) {
   });
   const selectedInfo = useRef<CalcSetupManageInfo | undefined>(snapshot.activeInfo);
   const testMode = useRef(false);
-  const director = useOptimizeDirector();
+  const { openDept } = useOptimizeSystem();
 
   const [activeIntro, setActiveIntro] = useState(false);
 
@@ -39,7 +39,7 @@ function OptimizationIntro(props: OptimizationIntroProps) {
     if (setup) {
       const optimizedSetup = Object.assign(Object_.clone(setup), info);
 
-      director.open(optimizedSetup, testMode.current);
+      openDept(optimizedSetup, testMode.current);
       props.onClose();
     }
   };
@@ -100,6 +100,6 @@ function OptimizationIntro(props: OptimizationIntroProps) {
   );
 }
 
-OptimizationIntro.FORM_ID = FORM_ID;
+OptimizeIntro.FORM_ID = FORM_ID;
 
-export { OptimizationIntro };
+export { OptimizeIntro };

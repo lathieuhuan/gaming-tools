@@ -3,5 +3,5 @@ export * from "./Modifiers";
 export * from "./FinalResult";
 export * from "./SetupManager";
 export * from "./SetupDirector";
-export * from "./OptimizationDept";
+export * from "./OptimizeDept";
 export * from "./ContextProvider";

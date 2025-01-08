@@ -4,7 +4,7 @@ import { Button, ButtonProps, Checkbox, CloseButton, Modal, Popover, useClickOut
 import { GeneralCalc } from "@Backend";
 
 import type { Artifact, ArtifactModCtrl } from "@Src/types";
-import type { OptimizeDirector } from "@Src/screens/Calculator/ContextProvider";
+import type { OptimizeSystem } from "@Src/screens/Calculator/ContextProvider";
 import type { ProcessedResult } from "./OptimizerOffice.types";
 
 import { useStore } from "@Src/features";
@@ -17,7 +17,7 @@ import { ProcessMonitor } from "./ProcessMonitor";
 import { ResultDisplayer } from "./ResultDisplayer";
 
 interface InternalOfficeProps {
-  director: OptimizeDirector;
+  system: OptimizeSystem;
   moreActions?: ButtonProps[];
   onChangeKeepResult: (keepResult: boolean) => void;
   onClose: () => void;
@@ -25,10 +25,10 @@ interface InternalOfficeProps {
   onCancel?: () => void;
 }
 function InternalOffice(props: InternalOfficeProps) {
-  const { director, moreActions = [] } = props;
-  const { state, optimizer } = props.director;
-  const cancelled = state.optimizerStatus === "CANCELLED";
-  const loading = state.optimizerStatus === "WORKING";
+  const { system, moreActions = [] } = props;
+  const { state, optimizer } = props.system;
+  const cancelled = state.status === "CANCELLED";
+  const loading = state.status === "WORKING";
 
   const store = useStore();
   const [selected, setSelected] = useState<Artifact>();
@@ -117,7 +117,7 @@ function InternalOffice(props: InternalOfficeProps) {
   };
 
   const onCancel = () => {
-    director.cancel();
+    system.cancelProcess();
     props.onCancel?.();
   };
 
@@ -208,11 +208,11 @@ function InternalOffice(props: InternalOfficeProps) {
   );
 }
 
-interface ResultDisplayProps extends Pick<InternalOfficeProps, "director" | "moreActions" | "onCancel" | "onClose"> {
+interface ResultDisplayProps extends Pick<InternalOfficeProps, "system" | "moreActions" | "onCancel" | "onClose"> {
   active: boolean;
   closeDeptAfterCloseOffice: boolean;
 }
-export function OptimizerOffice({ active, director, closeDeptAfterCloseOffice, ...internalProps }: ResultDisplayProps) {
+export function OptimizerOffice({ active, system, closeDeptAfterCloseOffice, ...internalProps }: ResultDisplayProps) {
   const shouldKeepResult = useRef(false);
 
   return (
@@ -229,7 +229,7 @@ export function OptimizerOffice({ active, director, closeDeptAfterCloseOffice, .
       onTransitionEnd={(open) => {
         if (!open) {
           if (closeDeptAfterCloseOffice) {
-            director.close(shouldKeepResult.current);
+            system.closeDept(shouldKeepResult.current);
           }
           shouldKeepResult.current = false;
         }
@@ -238,7 +238,7 @@ export function OptimizerOffice({ active, director, closeDeptAfterCloseOffice, .
     >
       <InternalOffice
         {...internalProps}
-        director={director}
+        system={system}
         onChangeKeepResult={(keepResult) => (shouldKeepResult.current = keepResult)}
       />
     </Modal>

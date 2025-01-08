@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
-import { useOptimizeDirector } from "../ContextProvider";
+import { useOptimizeSystem } from "../ContextProvider";
 
 // Components
 import { OptimizerOffice } from "./components/OptimizerOffice";
-import { OptimizationFrontDesk } from "./FrontDesk";
+import { FrontDesk } from "./FrontDesk";
 
-export function OptimizationDept() {
-  const director = useOptimizeDirector();
+export function OptimizeDept() {
+  const system = useOptimizeSystem();
   const [activeOffice, setActiveOffice] = useState(false);
 
-  const { state } = director;
+  const { state } = system;
   const activeOfficeExpect = state.pendingResult;
 
   useEffect(() => {
@@ -25,12 +25,12 @@ export function OptimizationDept() {
       <>
         <OptimizerOffice
           active={activeOffice}
-          director={director}
+          system={system}
           closeDeptAfterCloseOffice
           onClose={() => setActiveOffice(false)}
         />
 
-        {!activeOfficeExpect && <OptimizationFrontDesk director={director} />}
+        {!activeOfficeExpect && <FrontDesk system={system} />}
       </>
     );
   }

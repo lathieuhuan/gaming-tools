@@ -1,13 +1,13 @@
 import { CharacterDataProvider } from "./CharacterDataProvider";
 import { ModalsProvider } from "./ModalsProvider";
-import { OptimizeDirectorProvider } from "./OptimizeDirectorProvider";
+import { OptimizeSystemProvider } from "./OptimizeSystemProvider";
 
 export function ContextProvider(props: { children: React.ReactNode }) {
   return (
     <CharacterDataProvider>
-      <OptimizeDirectorProvider>
+      <OptimizeSystemProvider>
         <ModalsProvider>{props.children}</ModalsProvider>
-      </OptimizeDirectorProvider>
+      </OptimizeSystemProvider>
     </CharacterDataProvider>
   );
 }

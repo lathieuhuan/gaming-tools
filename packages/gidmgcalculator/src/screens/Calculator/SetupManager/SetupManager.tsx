@@ -5,7 +5,7 @@ import { Button, clsx, useScreenWatcher } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTraveler, updateUI } from "@Store/ui-slice";
-import { useCalcModalCtrl, useOptimizeDirector } from "../ContextProvider";
+import { useCalcModalCtrl, useOptimizeSystem } from "../ContextProvider";
 
 // Component
 import SectionArtifacts from "./SectionArtifacts";
@@ -80,17 +80,17 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
             />
           ) : null}
 
-          <OptimizationDeptContact />
+          <OptimizeDeptContact />
         </div>
       </div>
     </div>
   );
 }
 
-function OptimizationDeptContact() {
+function OptimizeDeptContact() {
   const modalCtrl = useCalcModalCtrl();
-  const { state, open } = useOptimizeDirector();
-  const loading = state.optimizerStatus === "WORKING";
+  const { state, openDept } = useOptimizeSystem();
+  const loading = state.status === "WORKING";
 
   return (
     <div className="">
@@ -108,7 +108,7 @@ function OptimizationDeptContact() {
         }
         onClick={() => {
           if (loading || state.result.length) {
-            open();
+            openDept();
           } else {
             modalCtrl.requestOptimizer();
           }

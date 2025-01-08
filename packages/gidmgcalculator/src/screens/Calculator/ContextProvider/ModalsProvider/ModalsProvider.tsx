@@ -10,7 +10,7 @@ import { SetupImporter, Tavern } from "@Src/components";
 import { CalcSetupExporter } from "./CalcSetupExporter";
 import { SaveSetup } from "./SaveSetup";
 import { TargetConfig } from "./TargetConfig";
-import { OptimizationIntro } from "./OptimizationIntro";
+import { OptimizeIntro } from "./OptimizeIntro";
 
 type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "OPTIMIZE_INTRO" | "";
 
@@ -60,14 +60,14 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
         // }}
         withActions
         confirmButtonProps={{
-          form: OptimizationIntro.FORM_ID,
+          form: OptimizeIntro.FORM_ID,
           type: "submit",
           children: "Proceed",
           autoFocus: true,
         }}
         onClose={closeModal}
       >
-        <OptimizationIntro onClose={closeModal} />
+        <OptimizeIntro onClose={closeModal} />
       </Modal>
 
       <Modal

@@ -6,20 +6,20 @@ import type { ItemMultiSelectIds } from "@Src/components";
 import type { ArtifactManager } from "./controllers";
 import type {
   OnChangeStep,
-  OptimizationModalType,
-  OptimizationStepConfig,
+  OptimizeDeptModalType,
+  OptimizeStepConfig,
   OptimizedOutput,
-} from "./OptimizationDept.types";
+} from "./OptimizeDept.types";
 
 import { useStoreSnapshot } from "@Src/features";
-import { OptimizeDirector, useCharacterData } from "../ContextProvider";
+import { OptimizeSystem, useCharacterData } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 
 // Components
 import { ItemMultiSelect } from "@Src/components";
 import { ArtifactModConfig } from "./components/ArtifactModConfig";
 import { ArtifactSetSelect } from "./components/ArtifactSetSelect";
-import { OptimizationGuide } from "./components/OptimizationGuide";
+import { OptimizeDeptGuide } from "./components/OptimizeDeptGuide";
 import { OutputSelect } from "./components/OutputSelect";
 import { Launcher } from "./components/Launcher";
 import { OptimizerOffice } from "./components/OptimizerOffice";
@@ -29,11 +29,11 @@ type SavedValues = {
   extraConfigs: OptimizerExtraConfigs;
 };
 
-interface OptimizationFrontDeskProps {
-  director: OptimizeDirector;
+interface FrontDeskProps {
+  system: OptimizeSystem;
 }
-export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
-  const { state, optimizer, close: closeDept } = props.director;
+export function FrontDesk(props: FrontDeskProps) {
+  const { state, optimizer, closeDept } = props.system;
 
   const store = useStoreSnapshot(({ calculator, userdb }) => {
     const setup = state.setup || calculator.setupsById[calculator.activeId];
@@ -51,7 +51,7 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
   const record = useCharacterData();
   const artifactManager = useArtifactManager(store.artifacts);
 
-  const [modalType, setModalType] = useState<OptimizationModalType>("GUIDE");
+  const [modalType, setModalType] = useState<OptimizeDeptModalType>("GUIDE");
   const [canShowGuideMenu, setCanShowGuideMenu] = useState(false);
 
   const savedValues = useRef<SavedValues>({
@@ -59,12 +59,12 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
       preferSet: false,
     },
   });
-  const lastModalType = useRef<OptimizationModalType>("");
+  const lastModalType = useRef<OptimizeDeptModalType>("");
   const setForPieceSelect = useRef<ReturnType<ArtifactManager["getSet"]>>(artifactManager.getSet(0));
   const shouldKeepResult = useRef(false);
   const runCount = useRef(0);
 
-  const changeModalType = (type: OptimizationModalType) => {
+  const changeModalType = (type: OptimizeDeptModalType) => {
     lastModalType.current = modalType;
     setModalType(type);
   };
@@ -139,7 +139,7 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
     }
   };
 
-  const stepConfigs: OptimizationStepConfig[] = [
+  const stepConfigs: OptimizeStepConfig[] = [
     {
       key: "ARTIFACT_SELECT",
       title: "Artifacts",
@@ -193,7 +193,7 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
   return (
     <>
-      <OptimizationGuide
+      <OptimizeDeptGuide
         active={modalType === "GUIDE"}
         stepConfigs={stepConfigs}
         canShowMenu={canShowGuideMenu}
@@ -212,13 +212,13 @@ export function OptimizationFrontDesk(props: OptimizationFrontDeskProps) {
 
       <OptimizerOffice
         active={modalType === "OPTIMIZER"}
-        director={props.director}
+        system={props.system}
         closeDeptAfterCloseOffice={modalType === ""}
         moreActions={[
           {
             children: "Return",
             icon: <FancyBackSvg />,
-            disabled: state.optimizerStatus === "WORKING",
+            disabled: state.status === "WORKING",
             onClick: () => changeModalType("GUIDE"),
           },
         ]}

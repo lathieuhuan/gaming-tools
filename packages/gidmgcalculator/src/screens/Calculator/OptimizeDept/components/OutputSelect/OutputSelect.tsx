@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { clsx } from "rond";
 import type { AppCharacter, AttackPattern, TalentCalcItem, LevelableTalentType } from "@Backend";
-import type { OptimizedOutput } from "../../OptimizationDept.types";
+import type { OptimizedOutput } from "../../OptimizeDept.types";
 
 import { NORMAL_ATTACKS } from "@Backend";
 import { useTranslation } from "@Src/hooks";

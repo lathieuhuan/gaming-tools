@@ -14,7 +14,7 @@ export type StepConfig<T extends string> = {
   render: (operation: { changeValid: (valid: boolean) => void; notify: Notify<T> }) => React.ReactNode;
 };
 
-export interface OptimizationGuideProps<T extends string> {
+export interface OptimizeDeptGuideProps<T extends string> {
   active: boolean;
   stepConfigs: StepConfig<T>[];
   canShowMenu?: boolean;
@@ -28,7 +28,7 @@ export interface OptimizationGuideProps<T extends string> {
   ) => void;
   onClose: () => void;
 }
-export function OptimizationGuide<T extends string>(props: OptimizationGuideProps<T>) {
+export function OptimizeDeptGuide<T extends string>(props: OptimizeDeptGuideProps<T>) {
   const { stepConfigs } = props;
   const stepCount = stepConfigs.length;
 
