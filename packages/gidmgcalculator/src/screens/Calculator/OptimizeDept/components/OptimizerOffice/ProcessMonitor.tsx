@@ -1,10 +1,10 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { FaCaretRight, FaTimes } from "react-icons/fa";
 import { Button, clsx } from "rond";
-import type { OptimizeSystem } from "@Src/features";
+import type { OptimizeDept } from "@Src/features";
 
 interface ProcessMonitorProps {
-  optimizer: OptimizeSystem["optimizer"];
+  optimizer: OptimizeDept["optimizer"];
   cancelled: boolean;
   onRequestCancel: () => void;
 }

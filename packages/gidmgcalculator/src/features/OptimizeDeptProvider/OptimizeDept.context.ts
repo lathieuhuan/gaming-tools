@@ -5,7 +5,7 @@ import type { OptimizeResult, OptimizeManager } from "./hooks/useOptimizeManager
 
 type OptimizerStatus = "IDLE" | "OPTIMIZING" | "CANCELLED";
 
-type OptimizeSystemState = {
+type OptimizeDeptState = {
   introducing: boolean;
   /** Front desk 'active' & Optimizer 'status' are seperate things */
   active: boolean;
@@ -22,14 +22,14 @@ type OptimizeSystemState = {
   };
 };
 
-type OptimizeSystem = {
-  state: OptimizeSystemState;
+type OptimizeDept = {
+  state: OptimizeDeptState;
   optimizer: Pick<OptimizeManager, "init" | "load" | "optimize" | "end" | "subscribeCompletion" | "subscribeProcess">;
   onContacted: () => void;
   closeDept: (keepResult: boolean) => void;
   cancelProcess: () => void;
 };
 
-export type { OptimizerStatus, OptimizeResult, OptimizeSystemState, OptimizeSystem };
+export type { OptimizerStatus, OptimizeResult, OptimizeDeptState, OptimizeDept };
 
-export const OptimizeSystemContext = createContext<OptimizeSystem | null>(null);
+export const OptimizeDeptContext = createContext<OptimizeDept | null>(null);

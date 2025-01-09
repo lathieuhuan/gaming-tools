@@ -5,7 +5,7 @@ import { ConfigProvider, ScreenSizeWatcher } from "rond";
 
 import App from "./App.tsx";
 import { GenshinImage } from "./components";
-import { DynamicStoreProvider, OptimizeSystemProvider } from "./features";
+import { DynamicStoreProvider, OptimizeDeptProvider } from "./features";
 import "./assets/css/tailwind.css";
 import "./assets/css/index.css";
 
@@ -16,9 +16,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         {({ store, persistor }) => (
           <StoreProvider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-              <OptimizeSystemProvider>
+              <OptimizeDeptProvider>
                 <App />
-              </OptimizeSystemProvider>
+              </OptimizeDeptProvider>
             </PersistGate>
           </StoreProvider>
         )}

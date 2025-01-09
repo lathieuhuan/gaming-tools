@@ -5,7 +5,7 @@ import { Button, ButtonProps, Checkbox, Modal } from "rond";
 import { GeneralCalc } from "@Backend";
 
 import type { Artifact, ArtifactModCtrl } from "@Src/types";
-import type { OptimizeSystem } from "@Src/features";
+import type { OptimizeDept } from "@Src/features";
 import type { ProcessedResult } from "./OptimizerOffice.types";
 
 import { useStoreSnapshot } from "@Src/features";
@@ -27,7 +27,7 @@ type ProcessedData = {
 };
 
 interface InternalOfficeProps {
-  system: OptimizeSystem;
+  system: OptimizeDept;
   moreActions?: ButtonProps[];
   onChangeKeepResult: (keepResult: boolean) => void;
   onClose: () => void;

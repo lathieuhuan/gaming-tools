@@ -7,7 +7,7 @@ import type { ArtifactManager } from "./controllers";
 import type { OnChangeStep, OptimizeDeptModalType, OptimizeStepConfig, OptimizedOutput } from "./OptimizeDept.types";
 
 import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
-import { useStoreSnapshot, type OptimizeSystem } from "@Src/features";
+import { useStoreSnapshot, type OptimizeDept } from "@Src/features";
 import { useCharacterData } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 
@@ -26,7 +26,7 @@ type SavedValues = {
 };
 
 interface FrontDeskProps {
-  system: OptimizeSystem;
+  system: OptimizeDept;
 }
 export function FrontDesk(props: FrontDeskProps) {
   const { state, optimizer, closeDept } = props.system;

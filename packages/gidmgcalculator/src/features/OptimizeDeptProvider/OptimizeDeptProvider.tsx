@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Modal } from "rond";
 
 import Object_ from "@Src/utils/object-utils";
-import { OptimizeSystem, OptimizeSystemContext, OptimizeSystemState } from "./OptimizeSystem.context";
+import { OptimizeDept, OptimizeDeptContext, OptimizeDeptState } from "./OptimizeDept.context";
 import { useOptimizer } from "./hooks/useOptimizeManager";
 
 // Components
@@ -16,10 +16,10 @@ const DEFAULT_STATE = {
     debuffs: {},
   },
   recreationData: {},
-} satisfies Pick<OptimizeSystemState, "setup" | "artifactModConfigs" | "result" | "recreationData">;
+} satisfies Pick<OptimizeDeptState, "setup" | "artifactModConfigs" | "result" | "recreationData">;
 
-export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
-  const [state, setState] = useState<OptimizeSystemState>({
+export function OptimizeDeptProvider(props: { children: React.ReactNode }) {
+  const [state, setState] = useState<OptimizeDeptState>({
     introducing: false,
     active: false,
     status: "IDLE",
@@ -32,7 +32,7 @@ export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
   useEffect(() => {
     const unsubscribe = optimizer.subscribeCompletion((result) => {
       setState((prev) => {
-        const newState: OptimizeSystemState = {
+        const newState: OptimizeDeptState = {
           ...prev,
           status: "IDLE",
           pendingResult: prev.active ? prev.pendingResult : true,
@@ -48,7 +48,7 @@ export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
     };
   }, []);
 
-  const context: OptimizeSystem = {
+  const context: OptimizeDept = {
     state,
     onContacted: () => {
       setState((prev) => {
@@ -64,7 +64,7 @@ export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
     },
     closeDept: (shouldKeepResult) => {
       setState((prev) => {
-        const newState: OptimizeSystemState = {
+        const newState: OptimizeDeptState = {
           ...prev,
           active: false,
           pendingResult: shouldKeepResult,
@@ -82,7 +82,7 @@ export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
       },
       optimize: (calcItemParams, modConfigs, extraConfigs) => {
         setState((prev) => {
-          const newState: OptimizeSystemState = {
+          const newState: OptimizeDeptState = {
             ...prev,
             status: "OPTIMIZING",
             pendingResult: false,
@@ -107,7 +107,7 @@ export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
     cancelProcess: () => {
       optimizer.end();
       setState((prev) => {
-        const newState: OptimizeSystemState = {
+        const newState: OptimizeDeptState = {
           ...prev,
           status: "CANCELLED",
         };
@@ -136,7 +136,7 @@ export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
   };
 
   return (
-    <OptimizeSystemContext.Provider value={context}>
+    <OptimizeDeptContext.Provider value={context}>
       {props.children}
 
       <Modal
@@ -159,6 +159,6 @@ export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
       >
         <OptimizeIntro onSubmit={startNewOptimization} />
       </Modal>
-    </OptimizeSystemContext.Provider>
+    </OptimizeDeptContext.Provider>
   );
 }
