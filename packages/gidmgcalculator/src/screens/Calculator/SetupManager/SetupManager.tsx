@@ -3,9 +3,9 @@ import { FaSun } from "react-icons/fa6";
 import { IoDocumentText } from "react-icons/io5";
 import { Button, clsx, useScreenWatcher } from "rond";
 
+import { useOptimizeSystem } from "@Src/features";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTraveler, updateUI } from "@Store/ui-slice";
-import { useOptimizeSystem } from "../ContextProvider";
 
 // Component
 import SectionArtifacts from "./SectionArtifacts";

@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import { CalculatorModalsContext } from "./ModalsProvider/Modals.context";
 import { CharacterDataContext } from "./CharacterDataProvider/CharacterData.context";
-import { OptimizeSystemContext } from "./OptimizeSystemProvider/OptimizeSystem.context";
 
 export function useCharacterData() {
   const context = useContext(CharacterDataContext);
@@ -18,12 +17,3 @@ export function useCalcModalCtrl() {
   }
   return context;
 }
-
-export const useOptimizeSystem = () => {
-  const context = useContext(OptimizeSystemContext);
-
-  if (!context) {
-    throw new Error("useOptimizeSystem must be used inside Calculator/ContextProvider");
-  }
-  return context;
-};

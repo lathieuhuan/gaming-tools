@@ -7,8 +7,8 @@ import type { ArtifactManager } from "./controllers";
 import type { OnChangeStep, OptimizeDeptModalType, OptimizeStepConfig, OptimizedOutput } from "./OptimizeDept.types";
 
 import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
-import { useStoreSnapshot } from "@Src/features";
-import { OptimizeSystem, useCharacterData } from "../ContextProvider";
+import { useStoreSnapshot, type OptimizeSystem } from "@Src/features";
+import { useCharacterData } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
 
 // Components

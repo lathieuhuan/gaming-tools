@@ -5,7 +5,7 @@ import { Button, ButtonProps, Checkbox, Modal } from "rond";
 import { GeneralCalc } from "@Backend";
 
 import type { Artifact, ArtifactModCtrl } from "@Src/types";
-import type { OptimizeSystem } from "@Src/screens/Calculator/ContextProvider";
+import type { OptimizeSystem } from "@Src/features";
 import type { ProcessedResult } from "./OptimizerOffice.types";
 
 import { useStoreSnapshot } from "@Src/features";

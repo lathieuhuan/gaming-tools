@@ -1,19 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "rond";
 
 import Object_ from "@Src/utils/object-utils";
-import { OptimizeManager } from "./optimize-manager";
 import { OptimizeSystem, OptimizeSystemContext, OptimizeSystemState } from "./OptimizeSystem.context";
+import { useOptimizer } from "./hooks/useOptimizeManager";
+
+// Components
 import { OptimizeIntro, type OptimizeIntroProps } from "./components";
-
-function useOptimizer() {
-  const ref = useRef<OptimizeManager>();
-
-  if (!ref.current) {
-    ref.current = new OptimizeManager();
-  }
-  return ref.current;
-}
 
 const DEFAULT_STATE = {
   result: [],

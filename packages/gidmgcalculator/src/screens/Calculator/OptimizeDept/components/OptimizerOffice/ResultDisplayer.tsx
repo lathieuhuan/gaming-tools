@@ -4,7 +4,7 @@ import { Checkbox, CollapseSpace, ItemCase } from "rond";
 import { AppArtifact, ARTIFACT_TYPES, ArtifactModifierDescription, ModInputConfig } from "@Backend";
 
 import type { Artifact, ArtifactModCtrl } from "@Src/types";
-import type { OptimizeResult } from "@Src/screens/Calculator/ContextProvider";
+import type { OptimizeResult } from "@Src/features";
 import type { ProcessedResult } from "./OptimizerOffice.types";
 
 import { $AppArtifact } from "@Src/services";

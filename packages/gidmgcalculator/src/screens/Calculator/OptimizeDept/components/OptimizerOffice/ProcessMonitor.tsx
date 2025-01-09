@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { FaCaretRight, FaTimes } from "react-icons/fa";
 import { Button, clsx } from "rond";
-import type { OptimizeSystem } from "@Src/screens/Calculator/ContextProvider";
+import type { OptimizeSystem } from "@Src/features";
 
 interface ProcessMonitorProps {
   optimizer: OptimizeSystem["optimizer"];

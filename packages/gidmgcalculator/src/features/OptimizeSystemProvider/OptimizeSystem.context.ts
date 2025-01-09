@@ -1,9 +1,7 @@
 import { createContext } from "react";
 import type { OptimizerAllArtifactModConfigs } from "@Backend";
-import type { CalcSetup, CalcSetupManageInfo, Target } from "@Src/types";
-import type { OptimizeResult, OptimizeManager } from "./optimize-manager";
-
-type OptimizedSetup = CalcSetup & CalcSetupManageInfo;
+import type { CalcSetup, Target } from "@Src/types";
+import type { OptimizeResult, OptimizeManager } from "./hooks/useOptimizeManager/optimize-manager";
 
 type OptimizerStatus = "IDLE" | "OPTIMIZING" | "CANCELLED";
 
