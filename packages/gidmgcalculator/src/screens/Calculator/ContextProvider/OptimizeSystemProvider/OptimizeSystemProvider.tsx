@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { Modal } from "rond";
 
 import Object_ from "@Src/utils/object-utils";
 import { OptimizeManager } from "./optimize-manager";
 import { OptimizeSystem, OptimizeSystemContext, OptimizeSystemState } from "./OptimizeSystem.context";
+import { OptimizeIntro, type OptimizeIntroProps } from "./components";
 
 function useOptimizer() {
   const ref = useRef<OptimizeManager>();
@@ -25,6 +27,7 @@ const DEFAULT_STATE = {
 
 export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
   const [state, setState] = useState<OptimizeSystemState>({
+    introducing: false,
     active: false,
     status: "IDLE",
     testMode: false,
@@ -54,15 +57,17 @@ export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
 
   const context: OptimizeSystem = {
     state,
-    openDept: (setup, testMode = false) => {
-      setState((prev) => ({
-        ...prev,
-        active: true,
-        testMode,
-        setup: setup ?? prev.setup,
-      }));
+    onContacted: () => {
+      setState((prev) => {
+        const newState = { ...prev };
 
-      optimizer.switchTestMode(testMode);
+        if (prev.status === "OPTIMIZING" || state.result.length) {
+          newState.active = true;
+        } else {
+          newState.introducing = true;
+        }
+        return newState;
+      });
     },
     closeDept: (shouldKeepResult) => {
       setState((prev) => {
@@ -86,7 +91,7 @@ export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
         setState((prev) => {
           const newState: OptimizeSystemState = {
             ...prev,
-            status: "WORKING",
+            status: "OPTIMIZING",
             pendingResult: false,
             result: [],
             artifactModConfigs: Object_.clone(modConfigs),
@@ -118,5 +123,49 @@ export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
     },
   };
 
-  return <OptimizeSystemContext.Provider value={context}>{props.children}</OptimizeSystemContext.Provider>;
+  const closeIntro = () => {
+    setState((prev) => ({
+      ...prev,
+      introducing: false,
+    }));
+  };
+
+  const startNewOptimization: OptimizeIntroProps["onSubmit"] = (setup, _, testMode) => {
+    setState((prev) => ({
+      ...prev,
+      active: true,
+      testMode,
+      setup,
+    }));
+
+    optimizer.switchTestMode(testMode);
+    closeIntro();
+  };
+
+  return (
+    <OptimizeSystemContext.Provider value={context}>
+      {props.children}
+
+      <Modal
+        active={state.introducing}
+        title="Optimizer"
+        preset="small"
+        // centered={false}
+        className="bg-surface-2"
+        // style={{
+        //   top: "min(20%, 5rem)",
+        // }}
+        withActions
+        confirmButtonProps={{
+          form: OptimizeIntro.FORM_ID,
+          type: "submit",
+          children: "Proceed",
+          autoFocus: true,
+        }}
+        onClose={closeIntro}
+      >
+        <OptimizeIntro onSubmit={startNewOptimization} />
+      </Modal>
+    </OptimizeSystemContext.Provider>
+  );
 }

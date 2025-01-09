@@ -1,11 +1,12 @@
 import { useMemo } from "react";
-import { GeneralCalc, getDataOfSetupEntities, InputProcessor } from "@Backend";
+import { GeneralCalc, InputProcessor } from "@Backend";
 
 import type { Character, UserArtifacts, UserWeapon } from "@Src/types";
 import type { RootState } from "@Store/store";
 
 // import { useAppCharacter } from "@Src/hooks";
 import Array_ from "@Src/utils/array-utils";
+import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
 import { useSelector } from "@Store/hooks";
 import { DetailInfoContext, type DetailInfo } from "./DetailInfo.context";
 
@@ -21,7 +22,7 @@ function DetailInfoProviderCore({ setup, children }: DetailInfoProviderProps) {
   // const { isLoading, data: appChar } = useAppCharacter(char.name);
 
   const detailInfo = useMemo<DetailInfo>(() => {
-    const data = getDataOfSetupEntities(setup);
+    const data = getSetupEntitiesData(setup);
     const processor = new InputProcessor(setup, data);
     const stats = processor.getCalculationStats();
 

@@ -1,24 +1,21 @@
 import type { PartiallyRequiredOnly } from "rond";
-import type { CalcSetup, CalcAppParty, AppCharactersByName, AppArtifactsByCode } from "@Src/types";
-import type { AppWeapon } from "../types";
+import type {
+  CalcSetup,
+  CalcAppParty,
+  AppCharactersByName,
+  AppArtifactsByCode,
+  AppWeaponsByCode,
+  SetupEntitiesData,
+} from "@Src/types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import Array_ from "@Src/utils/array-utils";
 
-type AppWeaponsByCode = Record<string, AppWeapon>;
-
-export type DataOfSetupEntities = {
-  appCharacters: AppCharactersByName;
-  appWeapons: AppWeaponsByCode;
-  appArtifacts: AppArtifactsByCode;
-  appParty: CalcAppParty;
-};
-
-export function getDataOfSetupEntities({
+export function getSetupEntitiesData({
   char,
   weapon,
   artifacts = [],
   party = [],
-}: PartiallyRequiredOnly<CalcSetup, "char" | "weapon">) {
+}: PartiallyRequiredOnly<CalcSetup, "char" | "weapon">): SetupEntitiesData {
   //
   const appCharacters: AppCharactersByName = {
     [char.name]: $AppCharacter.get(char.name),

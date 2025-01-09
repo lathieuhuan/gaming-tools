@@ -39,7 +39,7 @@ function InternalOffice(props: InternalOfficeProps) {
   const { system, moreActions = [] } = props;
   const { state, optimizer } = props.system;
   const cancelled = state.status === "CANCELLED";
-  const processing = state.status === "WORKING";
+  const processing = state.status === "OPTIMIZING";
   const loadableToCalc = !processing && state.result.length !== 0;
 
   const store = useStoreSnapshot(({ calculator }) => {

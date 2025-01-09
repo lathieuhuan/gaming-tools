@@ -2,16 +2,15 @@ import { useRef, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { Checkbox, CollapseSpace, Select } from "rond";
 
-import type { CalcSetupManageInfo } from "@Src/types";
+import type { CalcSetup, CalcSetupManageInfo } from "@Src/types";
 import { IS_DEV_ENV } from "@Src/constants";
 import { useStoreSnapshot } from "@Src/features";
 import Object_ from "@Src/utils/object-utils";
-import { useOptimizeSystem } from "../../hooks";
 
 const FORM_ID = "optimizer-preconfig";
 
-interface OptimizeIntroProps {
-  onClose: () => void;
+export interface OptimizeIntroProps {
+  onSubmit: (setup: CalcSetup, manageInfo: CalcSetupManageInfo, testMode: boolean) => void;
 }
 function OptimizeIntro(props: OptimizeIntroProps) {
   //
@@ -28,19 +27,14 @@ function OptimizeIntro(props: OptimizeIntroProps) {
   });
   const selectedInfo = useRef<CalcSetupManageInfo | undefined>(snapshot.activeInfo);
   const testMode = useRef(false);
-  const { openDept } = useOptimizeSystem();
 
   const [activeIntro, setActiveIntro] = useState(false);
 
   const onSubmit = () => {
     const info = selectedInfo.current;
-    const setup = info ? snapshot.setupsById[info.ID] : undefined;
 
-    if (setup) {
-      const optimizedSetup = Object.assign(Object_.clone(setup), info);
-
-      openDept(optimizedSetup, testMode.current);
-      props.onClose();
+    if (info) {
+      props.onSubmit(Object_.clone(snapshot.setupsById[info.ID]), { ...info }, testMode.current);
     }
   };
 

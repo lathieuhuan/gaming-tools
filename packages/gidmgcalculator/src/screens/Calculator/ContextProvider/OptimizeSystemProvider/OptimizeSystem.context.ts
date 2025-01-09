@@ -5,9 +5,10 @@ import type { OptimizeResult, OptimizeManager } from "./optimize-manager";
 
 type OptimizedSetup = CalcSetup & CalcSetupManageInfo;
 
-type OptimizerStatus = "IDLE" | "WORKING" | "CANCELLED";
+type OptimizerStatus = "IDLE" | "OPTIMIZING" | "CANCELLED";
 
 type OptimizeSystemState = {
+  introducing: boolean;
   /** Front desk 'active' & Optimizer 'status' are seperate things */
   active: boolean;
   /** Optimizer 'status' & Front desk 'active' are seperate things */
@@ -26,7 +27,7 @@ type OptimizeSystemState = {
 type OptimizeSystem = {
   state: OptimizeSystemState;
   optimizer: Pick<OptimizeManager, "init" | "load" | "optimize" | "end" | "subscribeCompletion" | "subscribeProcess">;
-  openDept: (setup?: OptimizedSetup, testMode?: boolean) => void;
+  onContacted: () => void;
   closeDept: (keepResult: boolean) => void;
   cancelProcess: () => void;
 };

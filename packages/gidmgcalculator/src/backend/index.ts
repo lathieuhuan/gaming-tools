@@ -20,7 +20,6 @@ export {
   InputProcessor,
 } from "./input-processor";
 
-export * from "./calculation-utils/getDataOfSetupEntities";
 export * from "./constants";
 
 export type { CalcAtomicRecord, CalcItemRecord, TrackerResult } from "./input-processor";

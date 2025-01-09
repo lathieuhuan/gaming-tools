@@ -1,16 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { ButtonGroup, Checkbox, FancyBackSvg, Modal } from "rond";
-import { getDataOfSetupEntities, type OptimizerExtraConfigs } from "@Backend";
+import type { OptimizerExtraConfigs } from "@Backend";
 
 import type { ItemMultiSelectIds } from "@Src/components";
 import type { ArtifactManager } from "./controllers";
-import type {
-  OnChangeStep,
-  OptimizeDeptModalType,
-  OptimizeStepConfig,
-  OptimizedOutput,
-} from "./OptimizeDept.types";
+import type { OnChangeStep, OptimizeDeptModalType, OptimizeStepConfig, OptimizedOutput } from "./OptimizeDept.types";
 
+import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
 import { useStoreSnapshot } from "@Src/features";
 import { OptimizeSystem, useCharacterData } from "../ContextProvider";
 import { useArtifactManager } from "./hooks/useArtifactManager";
@@ -45,7 +41,7 @@ export function FrontDesk(props: FrontDeskProps) {
       manageInfos: calculator.setupManageInfos,
       target,
       artifacts,
-      data: getDataOfSetupEntities(setup),
+      data: getSetupEntitiesData(setup),
     };
   });
   const record = useCharacterData();
@@ -218,7 +214,7 @@ export function FrontDesk(props: FrontDeskProps) {
           {
             children: "Return",
             icon: <FancyBackSvg />,
-            disabled: state.status === "WORKING",
+            disabled: state.status === "OPTIMIZING",
             onClick: () => changeModalType("GUIDE"),
           },
         ]}

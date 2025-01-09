@@ -10,6 +10,7 @@ import type {
   Infusion,
   ModifierCtrl,
   Party,
+  SetupEntitiesData,
   Target,
   Weapon,
 } from "@Src/types";
@@ -20,7 +21,6 @@ import type {
   NormalAttacksConfig,
   ReactionType,
 } from "@Src/backend/types";
-import type { DataOfSetupEntities } from "@Src/backend/calculation-utils/getDataOfSetupEntities";
 
 import Array_ from "@Src/utils/array-utils";
 import { isApplicableEffect } from "@Src/backend/calculation-utils/isApplicableEffect";
@@ -62,12 +62,12 @@ export class InputProcessor {
   protected customInfusion: Infusion;
 
   public characterData: CharacterData;
-  protected appWeapons: DataOfSetupEntities["appWeapons"];
-  protected appArtifacts: DataOfSetupEntities["appArtifacts"];
+  protected appWeapons: SetupEntitiesData["appWeapons"];
+  protected appArtifacts: SetupEntitiesData["appArtifacts"];
 
   constructor(
     setup: PartiallyRequiredOnly<CalcSetup, "char" | "weapon" | "artifacts">,
-    data: DataOfSetupEntities,
+    data: SetupEntitiesData,
     protected tracker?: TrackerControl
   ) {
     this.character = setup.char;

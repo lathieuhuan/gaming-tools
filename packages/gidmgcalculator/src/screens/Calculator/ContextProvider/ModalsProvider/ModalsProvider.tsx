@@ -10,9 +10,8 @@ import { SetupImporter, Tavern } from "@Src/components";
 import { CalcSetupExporter } from "./CalcSetupExporter";
 import { SaveSetup } from "./SaveSetup";
 import { TargetConfig } from "./TargetConfig";
-import { OptimizeIntro } from "./OptimizeIntro";
 
-type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "OPTIMIZE_INTRO" | "";
+type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "";
 
 export function ModalsProvider(props: { children: React.ReactNode }) {
   const dispatch = useDispatch();
@@ -37,9 +36,6 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
         setModalType("SHARE_SETUP");
         setSetupId(setupId);
       },
-      requestOptimizer: () => {
-        setModalType("OPTIMIZE_INTRO");
-      },
     };
   }, []);
 
@@ -48,27 +44,6 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
       {props.children}
 
       <TargetConfig />
-
-      <Modal
-        active={modalType === "OPTIMIZE_INTRO"}
-        title="Optimizer"
-        preset="small"
-        // centered={false}
-        className="bg-surface-2"
-        // style={{
-        //   top: "min(20%, 5rem)",
-        // }}
-        withActions
-        confirmButtonProps={{
-          form: OptimizeIntro.FORM_ID,
-          type: "submit",
-          children: "Proceed",
-          autoFocus: true,
-        }}
-        onClose={closeModal}
-      >
-        <OptimizeIntro onClose={closeModal} />
-      </Modal>
 
       <Modal
         active={modalType === "SAVE_SETUP"}

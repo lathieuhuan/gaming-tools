@@ -1,17 +1,17 @@
 import type { CalcSetup, Target } from "@Src/types";
 import type { CalculationFinalResult } from "../types";
 
+import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
 import { GeneralCalc } from "../common-utils";
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "../constants";
 import { TRANSFORMATIVE_REACTION_CONFIG } from "../constants/internal";
 
-import { getDataOfSetupEntities } from "../calculation-utils/getDataOfSetupEntities";
 import { InputProcessor, TrackerControl } from "../input-processor";
 import { ResultCalculator } from "../result-calculator";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
-  const data = getDataOfSetupEntities(setup);
+  const data = getSetupEntitiesData(setup);
   const processor = new InputProcessor(setup, data, tracker);
 
   const { characterData } = processor;
