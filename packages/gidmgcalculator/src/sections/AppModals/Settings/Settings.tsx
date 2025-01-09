@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Checkbox, InputNumber, Modal, useScreenWatcher, VersatileSelect } from "rond";
 import { Level, LEVELS } from "@Backend";
 
@@ -11,7 +11,7 @@ import { $AppCharacter, $AppSettings, AppSettings } from "@Src/services";
 import { applySettings } from "@Store/calculator-slice";
 import { useDispatch } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
-import { DynamicStoreControlContext } from "../../DynamicStoreProvider";
+import { useDynamicStoreControl } from "@Src/features";
 
 const genNumberSequence = (count: number, startFromZero?: boolean) => {
   return [...Array(count)].map((_, i) => i + (startFromZero ? 0 : 1));
@@ -33,7 +33,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const tempSettings = useAppSettings();
-  const changeAppStoreConfig = useContext(DynamicStoreControlContext);
+  const updateAppStoreConfig = useDynamicStoreControl();
 
   const groupCls = "px-4 py-2 bg-surface-1 rounded";
   const titleCls = "text-secondary-1 text-lg font-semibold";
@@ -66,7 +66,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
       );
     }
     if (tempSettings.persistingUserData !== currSettings.persistingUserData) {
-      changeAppStoreConfig({
+      updateAppStoreConfig({
         persistingUserData: tempSettings.persistingUserData,
       });
     }
