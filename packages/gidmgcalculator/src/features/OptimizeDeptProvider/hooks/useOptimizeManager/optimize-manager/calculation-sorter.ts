@@ -1,4 +1,4 @@
-import type { OptimizeCalculation } from "../../../OptimizeDept.types";
+import type { OptimizeCalculation } from "@OptimizeDept/OptimizeDept.types";
 
 export class CalculationSorter {
   readonly defaultCalculation: OptimizeCalculation = {

@@ -1,4 +1,4 @@
-import type { OptimizeResult } from "../../../OptimizeDept.types";
+import type { OptimizeResult } from "@OptimizeDept/OptimizeDept.types";
 import type {
   OTM_InitRequest,
   OTM_LoadRequest,
@@ -89,7 +89,7 @@ export class OptimizeManager {
     };
   };
 
-  init(...params: OTM_InitRequest["params"]) {
+  init = (...params: OTM_InitRequest["params"]) => {
     if (this.workerTerminated) {
       this.end();
       this.worker = this.genWorker();
@@ -102,21 +102,21 @@ export class OptimizeManager {
     });
 
     this.tester.init(params);
-  }
+  };
 
-  load(...params: OTM_LoadRequest["params"]) {
+  load = (...params: OTM_LoadRequest["params"]) => {
     this.request({
       type: "LOAD",
       params,
     });
 
     this.tester.load(params);
-  }
+  };
 
-  optimize(
+  optimize = (
     calcItemParams: OTM_OptimizeRequest["calcItemParams"],
     ...optimizeParams: OTM_OptimizeRequest["optimizeParams"]
-  ) {
+  ) => {
     this.processInfo = {
       percent: 0,
       time: 0,
@@ -130,14 +130,14 @@ export class OptimizeManager {
     });
 
     this.tester.optimize(optimizeParams);
-  }
+  };
 
-  end() {
+  end = () => {
     try {
       this.worker.terminate();
       this.workerTerminated = true;
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 }

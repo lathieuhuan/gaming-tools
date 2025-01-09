@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { OverflowTrackingContainer } from "rond";
+
 import type { AppArtifact, ArtifactModifierDescription, ModInputConfig, OptimizerArtifactModConfigs } from "@Backend";
 import type { ArtifactModCtrl } from "@Src/types";
-import type { ArtifactManager, ChangeModConfigInputs, ToggleModConfig } from "../../../hooks/useArtifactManager";
+import type { ArtifactManager, ChangeModConfigInputs, ToggleModConfig } from "@OptimizeDept/hooks/useArtifactManager";
 
 import { GenshinModifierView } from "@Src/components";
 import { getArtifactDescription } from "@Src/utils/description-parsers";

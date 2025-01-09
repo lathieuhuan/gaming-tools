@@ -13,6 +13,7 @@ export default defineConfig({
     alias: {
       "@Store": path.resolve(__dirname, "./src/store"),
       "@Backend": path.resolve(__dirname, "./src/backend"),
+      "@OptimizeDept": path.resolve(__dirname, "./src/features/OptimizeDeptProvider"),
       "@Src": path.resolve(__dirname, "./src"),
     },
   },

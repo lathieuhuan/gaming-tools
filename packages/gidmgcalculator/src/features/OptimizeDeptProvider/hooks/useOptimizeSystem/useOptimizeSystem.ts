@@ -1,11 +1,11 @@
 import { useContext } from "react";
-import { OptimizeDeptContext } from "../../OptimizeDept.context";
+import { OptimizeSystemContext } from "../../OptimizeDept.context";
 
 export const useOptimizeSystem = () => {
-  const context = useContext(OptimizeDeptContext);
+  const context = useContext(OptimizeSystemContext);
 
   if (!context) {
-    throw new Error("useOptimizeSystem must be used inside OptimizeSystemProvider");
+    throw new Error("useOptimizeSystem must be used inside OptimizeDeptProvider");
   }
   return context;
 };

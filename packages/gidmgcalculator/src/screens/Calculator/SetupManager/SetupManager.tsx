@@ -88,7 +88,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 }
 
 function OptimizeDeptContact() {
-  const { state, onContacted } = useOptimizeSystem();
+  const { state, contact } = useOptimizeSystem();
 
   return (
     <div className="">
@@ -104,7 +104,7 @@ function OptimizeDeptContact() {
             ) : null}
           </>
         }
-        onClick={onContacted}
+        onClick={contact}
       />
     </div>
   );

@@ -5,10 +5,11 @@ import { Button, ButtonProps, Checkbox, Modal } from "rond";
 import { GeneralCalc } from "@Backend";
 
 import type { Artifact, ArtifactModCtrl } from "@Src/types";
-import type { OptimizeDept } from "../../../OptimizeDept.context";
+import type { OptimizeDeptState } from "@OptimizeDept/OptimizeDept.types";
 import type { ProcessedResult } from "./OptimizerOffice.types";
 
 import { useStoreSnapshot } from "@Src/features";
+import { useOptimizeSystem } from "@OptimizeDept/hooks/useOptimizeSystem";
 import Modifier_ from "@Src/utils/modifier-utils";
 import Array_ from "@Src/utils/array-utils";
 
@@ -27,17 +28,16 @@ type ProcessedData = {
 };
 
 interface InternalOfficeProps {
-  system: OptimizeDept;
+  state: OptimizeDeptState;
   moreActions?: ButtonProps[];
   onChangeKeepResult: (keepResult: boolean) => void;
   onClose: () => void;
   /** Already ordered the optimizer to end */
-  onCancel?: () => void;
+  onRequestCancel: () => void;
 }
 function InternalOffice(props: InternalOfficeProps) {
   const MAX_SETUP_AFTER_LOAD = 5;
-  const { system, moreActions = [] } = props;
-  const { state, optimizer } = props.system;
+  const { state, moreActions = [] } = props;
   const cancelled = state.status === "CANCELLED";
   const processing = state.status === "OPTIMIZING";
   const loadableToCalc = !processing && state.result.length !== 0;
@@ -164,8 +164,7 @@ function InternalOffice(props: InternalOfficeProps) {
   };
 
   const cancelProcess = () => {
-    system.cancelProcess();
-    props.onCancel?.();
+    props.onRequestCancel();
   };
 
   const exit = () => {
@@ -200,7 +199,7 @@ function InternalOffice(props: InternalOfficeProps) {
       <div ref={bodyRef} className="grow flex gap-2 hide-scrollbar scroll-smooth">
         <div className="grow custom-scrollbar" style={{ minWidth: 360 }}>
           {processing || cancelled ? (
-            <ProcessMonitor optimizer={optimizer} cancelled={cancelled} onRequestCancel={cancelProcess} />
+            <ProcessMonitor cancelled={cancelled} onRequestCancel={cancelProcess} />
           ) : (
             <ResultDisplayer
               selectedArtifactId={selected?.ID}
@@ -264,12 +263,26 @@ function InternalOffice(props: InternalOfficeProps) {
   );
 }
 
-interface ResultDisplayProps extends Pick<InternalOfficeProps, "system" | "moreActions" | "onCancel" | "onClose"> {
+interface ResultDisplayProps extends Pick<InternalOfficeProps, "moreActions" | "onClose"> {
   active: boolean;
   closeDeptAfterCloseOffice: boolean;
+  onCancel?: () => void;
+  onCloseDept: (keepResult: boolean) => void;
 }
-export function OptimizerOffice({ active, system, closeDeptAfterCloseOffice, ...internalProps }: ResultDisplayProps) {
+export function OptimizerOffice({
+  active,
+  closeDeptAfterCloseOffice,
+  onCancel,
+  onCloseDept,
+  ...internalProps
+}: ResultDisplayProps) {
   const shouldKeepResult = useRef(false);
+  const system = useOptimizeSystem();
+
+  const cancelProcess = () => {
+    system.cancelProcess();
+    onCancel?.();
+  };
 
   return (
     <Modal
@@ -285,7 +298,7 @@ export function OptimizerOffice({ active, system, closeDeptAfterCloseOffice, ...
       onTransitionEnd={(open) => {
         if (!open) {
           if (closeDeptAfterCloseOffice) {
-            system.closeDept(shouldKeepResult.current);
+            onCloseDept(shouldKeepResult.current);
           }
           shouldKeepResult.current = false;
         }
@@ -294,8 +307,9 @@ export function OptimizerOffice({ active, system, closeDeptAfterCloseOffice, ...
     >
       <InternalOffice
         {...internalProps}
-        system={system}
+        state={system.state}
         onChangeKeepResult={(keepResult) => (shouldKeepResult.current = keepResult)}
+        onRequestCancel={cancelProcess}
       />
     </Modal>
   );

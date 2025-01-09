@@ -1,5 +1,6 @@
 import type { AttackPattern, TalentCalcItem } from "@Backend";
 import type { StepConfig, OptimizeDeptGuideProps } from "./OptimizeDeptGuide";
+import type { OptimizeManager } from "@OptimizeDept/hooks/useOptimizeManager";
 
 export type OptimizeDeptModalType = "GUIDE" | "PIECE_SELECT" | "OPTIMIZER" | "EXIT_CONFIRM" | "";
 
@@ -13,3 +14,5 @@ export type OptimizedOutput = {
   attPatt: AttackPattern;
   item: TalentCalcItem;
 };
+
+export type Optimizer = Pick<OptimizeManager, "init" | "load" | "optimize">;

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Input, OverflowTrackingContainer, useIntersectionObserver } from "rond";
 
-import type { ArtifactManager } from "../../../hooks/useArtifactManager";
+import type { ArtifactManager } from "@OptimizeDept/hooks/useArtifactManager";
 import { SetOption } from "./SetOption";
 
 export type ArtifactSetOption = {

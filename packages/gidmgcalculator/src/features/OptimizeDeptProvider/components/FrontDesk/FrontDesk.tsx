@@ -1,13 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { ButtonGroup, Checkbox, FancyBackSvg, Modal } from "rond";
-import type { AppCharacter, OptimizerExtraConfigs } from "@Backend";
 
-import type { OnChangeStep, OptimizeDeptModalType, OptimizeStepConfig, OptimizedOutput } from "./FrontDesk.types";
+import type { OptimizerExtraConfigs } from "@Backend";
+import type { OptimizeDeptState } from "@OptimizeDept/OptimizeDept.types";
+import type {
+  OnChangeStep,
+  OptimizeDeptModalType,
+  OptimizeStepConfig,
+  OptimizedOutput,
+  Optimizer,
+} from "./FrontDesk.types";
 
 import { useStoreSnapshot } from "@Src/features";
 import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
-import { useArtifactManager } from "../../hooks/useArtifactManager";
-import { OptimizeDept } from "../../OptimizeDept.context";
+import { useArtifactManager } from "@OptimizeDept/hooks/useArtifactManager";
 
 // Components
 import { ItemMultiSelect, type ItemMultiSelectIds } from "@Src/components";
@@ -25,13 +31,13 @@ type SavedValues = {
 
 type SetForPieceSelect = ReturnType<ReturnType<typeof useArtifactManager>["getSet"]>;
 
-interface FrontDeskProps {
-  system: OptimizeDept;
-  calcList: AppCharacter["calcList"];
+export interface FrontDeskProps {
+  state: OptimizeDeptState;
+  optimizer: Optimizer;
+  onCloseDept: (keepResult: boolean) => void;
 }
-export function FrontDesk(props: FrontDeskProps) {
-  const { state, optimizer, closeDept } = props.system;
-
+export function FrontDesk({ state, optimizer, onCloseDept }: FrontDeskProps) {
+  //
   const store = useStoreSnapshot(({ calculator, userdb }) => {
     const setup = state.setup || calculator.setupsById[calculator.activeId];
     const target = calculator.target;
@@ -39,7 +45,6 @@ export function FrontDesk(props: FrontDeskProps) {
 
     return {
       setup,
-      manageInfos: calculator.setupManageInfos,
       target,
       artifacts,
       data: getSetupEntitiesData(setup),
@@ -58,23 +63,14 @@ export function FrontDesk(props: FrontDeskProps) {
   const lastModalType = useRef<OptimizeDeptModalType>("");
   const setForPieceSelect = useRef<SetForPieceSelect>(artifactManager.getSet(0));
   const shouldKeepResult = useRef(false);
-  const runCount = useRef(0);
 
   const changeModalType = (type: OptimizeDeptModalType) => {
     lastModalType.current = modalType;
     setModalType(type);
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     optimizer.init(store.target, store.setup, store.data);
-
-    const unsubscribe = optimizer.subscribeCompletion(() => {
-      runCount.current += 1;
-    });
-
-    return () => {
-      unsubscribe();
-    };
   }, []);
 
   const optimizeSetup = () => {
@@ -161,7 +157,7 @@ export function FrontDesk(props: FrontDeskProps) {
       title: "Optimized Output",
       render: (operation) => (
         <OutputSelect
-          calcList={props.calcList}
+          calcList={state.calcList}
           initialValue={savedValues.current?.output}
           onChange={(items) => (savedValues.current.output = items)}
           onChangeValid={operation.changeValid}
@@ -175,7 +171,7 @@ export function FrontDesk(props: FrontDeskProps) {
       render: (operation) => (
         <Launcher
           artifactManager={artifactManager}
-          runCount={runCount.current}
+          runCount={state.runCount}
           onRequestLaunch={() => {
             operation.notify(null);
             changeModalType("OPTIMIZER");
@@ -208,7 +204,6 @@ export function FrontDesk(props: FrontDeskProps) {
 
       <OptimizerOffice
         active={modalType === "OPTIMIZER"}
-        system={props.system}
         closeDeptAfterCloseOffice={modalType === ""}
         moreActions={[
           {
@@ -223,6 +218,7 @@ export function FrontDesk(props: FrontDeskProps) {
           optimizer.load(artifactManager.sumary, artifactManager.appArtifacts, artifactManager.calcCount.value);
         }}
         onClose={() => changeModalType("")}
+        onCloseDept={onCloseDept}
       />
 
       <Modal.Core
@@ -233,7 +229,7 @@ export function FrontDesk(props: FrontDeskProps) {
         closeOnMaskClick={false}
         onTransitionEnd={() => {
           if (modalType === "") {
-            closeDept(shouldKeepResult.current);
+            onCloseDept(shouldKeepResult.current);
           }
         }}
         onClose={() => {}}

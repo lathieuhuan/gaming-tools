@@ -11,7 +11,6 @@ import {
   Modifiers,
   SetupDirector,
   SetupManager,
-  OptimizeDept,
 } from "@Src/screens/Calculator";
 import MyArtifacts from "@Src/screens/MyArtifacts";
 import { MyCharactersSmall } from "@Src/screens/MyCharacters";
@@ -77,8 +76,6 @@ export function AppMainSmall() {
       ]}
       default={
         <ContextProvider>
-          <OptimizeDept />
-
           {isModernUI ? (
             <div className="h-full flex flex-col border-t border-surface-border">
               <div className="grow overflow-hidden relative">

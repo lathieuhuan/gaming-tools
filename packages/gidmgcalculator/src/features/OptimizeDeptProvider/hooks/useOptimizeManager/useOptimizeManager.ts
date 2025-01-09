@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { OptimizeManager } from "./optimize-manager";
 
-export function useOptimizer() {
+export function useOptimizerManager() {
   const ref = useRef<OptimizeManager>();
 
   if (!ref.current) {

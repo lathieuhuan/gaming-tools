@@ -1,43 +1,21 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FaCaretRight, FaTimes } from "react-icons/fa";
 import { Button, clsx } from "rond";
-import type { OptimizeDept } from "../../../OptimizeDept.context";
+
+import { useOptimizeProcess } from "@OptimizeDept/hooks/useOptimizeProcess";
 
 interface ProcessMonitorProps {
-  optimizer: OptimizeDept["optimizer"];
   cancelled: boolean;
   onRequestCancel: () => void;
 }
-export function ProcessMonitor({ optimizer, cancelled, onRequestCancel }: ProcessMonitorProps) {
-  const [process, setProcess] = useState({
-    percent: 0,
-    time: 0,
-  });
+export function ProcessMonitor({ cancelled, onRequestCancel }: ProcessMonitorProps) {
   const [waitingCancel, setWaitingCancel] = useState(false);
   const mounted = useRef(true);
+  const process = useOptimizeProcess(() => (mounted.current = false));
 
   const timeout = (callback: () => void, time: number) => {
     setTimeout(() => mounted.current && callback(), time);
   };
-
-  useLayoutEffect(() => {
-    const { currentProcess, unsubscribe } = optimizer.subscribeProcess((info) => {
-      setProcess({
-        percent: info.percent,
-        time: Math.round(info.time / 100) / 10,
-      });
-    });
-
-    setProcess({
-      percent: currentProcess.percent,
-      time: Math.round(currentProcess.time / 100) / 10,
-    });
-
-    return () => {
-      mounted.current = false;
-      unsubscribe();
-    };
-  }, []);
 
   const onClickCancel = () => {
     if (waitingCancel) {

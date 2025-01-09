@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { Modal } from "rond";
 
+import type { OptimizeDeptState } from "./OptimizeDept.types";
+
 import Object_ from "@Src/utils/object-utils";
-import { OptimizeDept, OptimizeDeptContext, OptimizeDeptState } from "./OptimizeDept.context";
-import { useOptimizer } from "./hooks/useOptimizeManager";
+import { OptimizeSystemContext, OptimizeSystem } from "./OptimizeDept.context";
+import { useOptimizerManager } from "./hooks/useOptimizeManager";
 
 // Components
-import { OptimizeIntro, type OptimizeIntroProps } from "./components";
+import { OptimizeIntro, FrontDesk, OptimizerOffice, type OptimizeIntroProps, type FrontDeskProps } from "./components";
 
 const DEFAULT_STATE = {
   result: [],
@@ -16,7 +18,18 @@ const DEFAULT_STATE = {
     debuffs: {},
   },
   recreationData: {},
-} satisfies Pick<OptimizeDeptState, "setup" | "artifactModConfigs" | "result" | "recreationData">;
+  calcList: {
+    NA: [],
+    CA: [],
+    PA: [],
+    ES: [],
+    EB: [],
+  },
+  runCount: 0,
+} satisfies Pick<
+  OptimizeDeptState,
+  "setup" | "artifactModConfigs" | "result" | "recreationData" | "calcList" | "runCount"
+>;
 
 export function OptimizeDeptProvider(props: { children: React.ReactNode }) {
   const [state, setState] = useState<OptimizeDeptState>({
@@ -27,16 +40,18 @@ export function OptimizeDeptProvider(props: { children: React.ReactNode }) {
     pendingResult: false,
     ...DEFAULT_STATE,
   });
-  const optimizer = useOptimizer();
+  const [activeOffice, setActiveOffice] = useState(false);
+  const manager = useOptimizerManager();
 
   useEffect(() => {
-    const unsubscribe = optimizer.subscribeCompletion((result) => {
+    const unsubscribe = manager.subscribeCompletion((result) => {
       setState((prev) => {
         const newState: OptimizeDeptState = {
           ...prev,
           status: "IDLE",
           pendingResult: prev.active ? prev.pendingResult : true,
           result,
+          runCount: prev.runCount + 1,
         };
         return newState;
       });
@@ -44,77 +59,9 @@ export function OptimizeDeptProvider(props: { children: React.ReactNode }) {
 
     return () => {
       unsubscribe();
-      optimizer.end();
+      manager.end();
     };
   }, []);
-
-  const context: OptimizeDept = {
-    state,
-    onContacted: () => {
-      setState((prev) => {
-        const newState = { ...prev };
-
-        if (prev.status === "OPTIMIZING" || state.result.length) {
-          newState.active = true;
-        } else {
-          newState.introducing = true;
-        }
-        return newState;
-      });
-    },
-    closeDept: (shouldKeepResult) => {
-      setState((prev) => {
-        const newState: OptimizeDeptState = {
-          ...prev,
-          active: false,
-          pendingResult: shouldKeepResult,
-        };
-
-        return shouldKeepResult ? newState : Object.assign(newState, DEFAULT_STATE);
-      });
-    },
-    optimizer: {
-      init: (target, setup, data) => {
-        optimizer.init(target, setup, data);
-      },
-      load: (...params) => {
-        optimizer.load(...params);
-      },
-      optimize: (calcItemParams, modConfigs, extraConfigs) => {
-        setState((prev) => {
-          const newState: OptimizeDeptState = {
-            ...prev,
-            status: "OPTIMIZING",
-            pendingResult: false,
-            result: [],
-            artifactModConfigs: Object_.clone(modConfigs),
-          };
-          return newState;
-        });
-
-        optimizer.optimize(calcItemParams, modConfigs, extraConfigs);
-      },
-      end: () => {
-        optimizer.end();
-      },
-      subscribeCompletion: (subscriber) => {
-        return optimizer.subscribeCompletion(subscriber);
-      },
-      subscribeProcess: (subscriber) => {
-        return optimizer.subscribeProcess(subscriber);
-      },
-    },
-    cancelProcess: () => {
-      optimizer.end();
-      setState((prev) => {
-        const newState: OptimizeDeptState = {
-          ...prev,
-          status: "CANCELLED",
-        };
-        return newState;
-      });
-    },
-  };
 
   const closeIntro = () => {
     setState((prev) => ({
@@ -131,20 +78,99 @@ export function OptimizeDeptProvider(props: { children: React.ReactNode }) {
       setup,
     }));
 
-    optimizer.switchTestMode(testMode);
+    manager.switchTestMode(testMode);
     closeIntro();
   };
 
+  const closeDept = (shouldKeepResult: boolean) => {
+    setState((prev) => {
+      const newState: OptimizeDeptState = {
+        ...prev,
+        active: false,
+        pendingResult: shouldKeepResult,
+      };
+      return shouldKeepResult ? newState : Object.assign(newState, DEFAULT_STATE);
+    });
+
+    setActiveOffice(false);
+  };
+
+  const optimizer: FrontDeskProps["optimizer"] = {
+    init: (target, setup, data) => {
+      setState((prev) => {
+        const newState: OptimizeDeptState = {
+          ...prev,
+          status: "IDLE",
+          calcList: data.appCharacters[setup.char.name]?.calcList || DEFAULT_STATE.calcList,
+          recreationData: {
+            target,
+          },
+        };
+        return newState;
+      });
+
+      manager.init(target, setup, data);
+    },
+    load: manager.load,
+    optimize: (calcItemParams, modConfigs, extraConfigs) => {
+      setState((prev) => {
+        const newState: OptimizeDeptState = {
+          ...prev,
+          status: "OPTIMIZING",
+          pendingResult: false,
+          result: [],
+          artifactModConfigs: Object_.clone(modConfigs),
+        };
+        return newState;
+      });
+
+      manager.optimize(calcItemParams, modConfigs, extraConfigs);
+    },
+  };
+
+  const system: OptimizeSystem = {
+    state,
+    contact: () => {
+      setState((prev) => {
+        const newState = { ...prev };
+
+        if (prev.status === "OPTIMIZING" || state.result.length) {
+          newState.active = true;
+          setActiveOffice(true);
+        } else {
+          newState.introducing = true;
+        }
+        return newState;
+      });
+    },
+    subscribeProcess: (subscriber) => {
+      return manager.subscribeProcess(subscriber);
+    },
+    cancelProcess: () => {
+      manager.end();
+
+      setState((prev) => {
+        const newState: OptimizeDeptState = {
+          ...prev,
+          status: "CANCELLED",
+        };
+        return newState;
+      });
+    },
+  };
+
+  console.log(state);
+
   return (
-    <OptimizeDeptContext.Provider value={context}>
+    <OptimizeSystemContext.Provider value={system}>
       {props.children}
 
       <Modal
         active={state.introducing}
         title="Optimizer"
         preset="small"
-        // centered={false}
         className="bg-surface-2"
+        // centered={false}
         // style={{
         //   top: "min(20%, 5rem)",
         // }}
@@ -159,6 +185,19 @@ export function OptimizeDeptProvider(props: { children: React.ReactNode }) {
       >
         <OptimizeIntro onSubmit={startNewOptimization} />
       </Modal>
-    </OptimizeDeptContext.Provider>
+
+      {state.active ? (
+        <>
+          <OptimizerOffice
+            active={activeOffice}
+            closeDeptAfterCloseOffice
+            onClose={() => setActiveOffice(false)}
+            onCloseDept={closeDept}
+          />
+
+          {!state.pendingResult && <FrontDesk state={state} optimizer={optimizer} onCloseDept={closeDept} />}
+        </>
+      ) : null}
+    </OptimizeSystemContext.Provider>
   );
 }
