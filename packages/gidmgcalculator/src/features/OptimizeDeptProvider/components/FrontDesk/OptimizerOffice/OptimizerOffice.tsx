@@ -68,7 +68,7 @@ function InternalOffice(props: InternalOfficeProps) {
         if (newSetupCount > MAX_SETUP_AFTER_LOAD) {
           loadType = "MAX_SETUP_EXCEEDED";
         }
-        targetMutated = isEqual(store.target, state.recreationData.target);
+        targetMutated = !isEqual(store.target, state.recreationData.target);
       } else {
         loadType = "CONFLICTED";
       }
@@ -188,7 +188,7 @@ function InternalOffice(props: InternalOfficeProps) {
           disabled: askingToLoad,
         }
       : {
-          variant: "danger",
+          variant: "primary",
           popoverWidth: "15rem",
           ctaText: "Tap again to load.",
           askedContent: "The current target is different and will be overwritten.",
