@@ -4,10 +4,10 @@ import type {
   CalcItemType,
   AttackBonusKey,
   CalculationFinalResultKey,
-} from "../types";
+} from "@Src/backend/types";
 
-import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "../constants";
-import { ECalcStatModule } from "../constants/internal";
+import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "@Src/backend/constants";
+import { ECalcStatModule } from "@Src/backend/constants/internal";
 
 // ========== STAT RECORD ==========
 

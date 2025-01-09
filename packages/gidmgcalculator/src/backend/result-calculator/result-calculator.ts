@@ -1,7 +1,7 @@
-import type { AttackPattern, NormalAttacksConfig, ResistanceReduction, TotalAttribute } from "../../types";
+import type { AttackPattern, NormalAttacksConfig, ResistanceReduction, TotalAttribute } from "../types";
+import type { AttackBonusesArchive, TrackerControl } from "../input-processor";
 
-import { CharacterData, GeneralCalc } from "../../common-utils";
-import { AttackBonusesArchive, TrackerControl } from "../../controls";
+import { CharacterData, GeneralCalc } from "../common-utils";
 import { CalcItemCalculator } from "./calc-item-calculator";
 import { TalentCalculator } from "./talent-calculator";
 

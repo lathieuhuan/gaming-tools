@@ -1,7 +1,7 @@
+import { EntityBonusStack } from "@Src/backend/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __genCharacterDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "../test-utils";
-import { EntityBonusStack } from "@Src/backend/types";
 
 class Tester extends BareBonusGetterTester {
   stack: EntityBonusStack = {

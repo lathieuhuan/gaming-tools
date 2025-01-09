@@ -4,11 +4,10 @@ import type { CalculationFinalResult } from "../types";
 import { GeneralCalc } from "../common-utils";
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "../constants";
 import { TRANSFORMATIVE_REACTION_CONFIG } from "../constants/internal";
-import { TrackerControl } from "../controls";
 
 import { getDataOfSetupEntities } from "../calculation-utils/getDataOfSetupEntities";
-import { InputProcessor } from "./input-processor";
-import { ResultCalculator } from "./result-calculator";
+import { InputProcessor, TrackerControl } from "../input-processor";
+import { ResultCalculator } from "../result-calculator";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();

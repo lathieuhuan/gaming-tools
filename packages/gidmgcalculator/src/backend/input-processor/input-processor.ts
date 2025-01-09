@@ -13,22 +13,32 @@ import type {
   Target,
   Weapon,
 } from "@Src/types";
-import type { AttackElement, AttackPattern, AttributeStat, NormalAttacksConfig, ReactionType } from "../types";
-import type { DataOfSetupEntities } from "../calculation-utils/getDataOfSetupEntities";
+import type {
+  AttackElement,
+  AttackPattern,
+  AttributeStat,
+  NormalAttacksConfig,
+  ReactionType,
+} from "@Src/backend/types";
+import type { DataOfSetupEntities } from "@Src/backend/calculation-utils/getDataOfSetupEntities";
 
 import Array_ from "@Src/utils/array-utils";
-import { AppliedBonusesGetter } from "../calculation-utils/applied-bonuses-getter";
-import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
-import { isGrantedEffect } from "../calculation-utils/isGrantedEffect";
-import { CharacterData, GeneralCalc } from "../common-utils";
+import { isApplicableEffect } from "@Src/backend/calculation-utils/isApplicableEffect";
+import { CharacterCalc, CharacterData, GeneralCalc } from "@Src/backend/common-utils";
 import {
   AMPLIFYING_REACTIONS,
   NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
   RESONANCE_STAT,
   TRANSFORMATIVE_REACTIONS,
-} from "../constants";
-import { AttackBonusesControl, ResistanceReductionControl, TotalAttributeControl, TrackerControl } from "../controls";
+} from "@Src/backend/constants";
+import { AppliedBonusesGetter } from "./bonus-getters";
+import {
+  AttackBonusesControl,
+  ResistanceReductionControl,
+  TotalAttributeControl,
+  TrackerControl,
+} from "./stat-controls";
 
 // This class and its calculation should NOT use any service
 // because it is used in SetupOptimizer which is run by Web Worker
@@ -126,7 +136,7 @@ export class InputProcessor {
       const { innateBuffs = [], buffs = [] } = appCharacter;
 
       for (const buff of innateBuffs) {
-        if (isGrantedEffect(buff, character)) {
+        if (CharacterCalc.isGrantedEffect(buff, character)) {
           applyBuff(
             buff,
             {
@@ -141,7 +151,7 @@ export class InputProcessor {
       for (const ctrl of selfBuffCtrls) {
         const buff = Array_.findByIndex(buffs, ctrl.index);
 
-        if (ctrl.activated && buff && isGrantedEffect(buff, character)) {
+        if (ctrl.activated && buff && CharacterCalc.isGrantedEffect(buff, character)) {
           applyBuff(
             buff,
             {
@@ -441,7 +451,7 @@ export class InputProcessor {
     for (const ctrl of selfDebuffCtrls) {
       const debuff = Array_.findByIndex(characterData.appCharacter.debuffs, ctrl.index);
 
-      if (ctrl.activated && debuff?.effects && isGrantedEffect(debuff, characterData.character)) {
+      if (ctrl.activated && debuff?.effects && CharacterCalc.isGrantedEffect(debuff, characterData.character)) {
         resistReductCtrl.applyDebuff(debuff, ctrl.inputs ?? [], true, `Self / ${debuff.src}`);
       }
     }

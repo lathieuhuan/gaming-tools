@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
+import isEqual from "react-fast-compare";
 import { Button, ButtonProps, Checkbox, Modal } from "rond";
 import { GeneralCalc } from "@Backend";
 
@@ -7,7 +8,7 @@ import type { Artifact, ArtifactModCtrl } from "@Src/types";
 import type { OptimizeSystem } from "@Src/screens/Calculator/ContextProvider";
 import type { ProcessedResult } from "./OptimizerOffice.types";
 
-import { useStore } from "@Src/features";
+import { useStoreSnapshot } from "@Src/features";
 import Modifier_ from "@Src/utils/modifier-utils";
 import Array_ from "@Src/utils/array-utils";
 
@@ -15,7 +16,15 @@ import Array_ from "@Src/utils/array-utils";
 import { ArtifactCard } from "@Src/components";
 import { ProcessMonitor } from "./ProcessMonitor";
 import { ResultDisplayer } from "./ResultDisplayer";
-import { ConfirmButton } from "./ConfirmButton";
+import { ConfirmButton, ConfirmButtonProps } from "./ConfirmButton";
+
+type LoadType = "NO_PROBLEM" | "MAX_SETUP_EXCEEDED" | "CONFLICTED" | "ERROR";
+
+type ProcessedData = {
+  result: ProcessedResult;
+  loadType: LoadType;
+  targetMutated?: boolean;
+};
 
 interface InternalOfficeProps {
   system: OptimizeSystem;
@@ -33,7 +42,13 @@ function InternalOffice(props: InternalOfficeProps) {
   const processing = state.status === "WORKING";
   const loadableToCalc = !processing && state.result.length !== 0;
 
-  const store = useStore();
+  const store = useStoreSnapshot(({ calculator }) => {
+    return {
+      activeSetup: calculator.setupsById[calculator.activeId],
+      setupManageInfos: calculator.setupManageInfos,
+      target: calculator.target,
+    };
+  });
   const [selected, setSelected] = useState<Artifact>();
   const [askingToExit, setAskingToExit] = useState(false);
   const [askingToLoad, setAskingToLoad] = useState(false);
@@ -42,8 +57,26 @@ function InternalOffice(props: InternalOfficeProps) {
   const keepProcess = useRef(false);
   const bodyRef = useRef<HTMLDivElement>(null);
 
-  const processed: ProcessedResult = useMemo(() => {
-    return state.result.map(({ artifacts }) => {
+  const processed: ProcessedData = useMemo(() => {
+    let loadType: LoadType = "NO_PROBLEM";
+    let targetMutated = false;
+
+    if (store.activeSetup && state.setup && state.recreationData.target) {
+      if (store.activeSetup.char.name === state.setup.char.name) {
+        const newSetupCount = store.setupManageInfos.length + state.result.length;
+
+        if (newSetupCount > MAX_SETUP_AFTER_LOAD) {
+          loadType = "MAX_SETUP_EXCEEDED";
+        }
+        targetMutated = isEqual(store.target, state.recreationData.target);
+      } else {
+        loadType = "CONFLICTED";
+      }
+    } else {
+      loadType = "ERROR";
+    }
+
+    const result = state.result.map(({ artifacts }) => {
       const modConfigs = state.artifactModConfigs;
       const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
       const artBuffCtrls: ArtifactModCtrl[] = [];
@@ -64,9 +97,17 @@ function InternalOffice(props: InternalOfficeProps) {
         artDebuffCtrls,
       };
     });
+
+    return {
+      result,
+      loadType,
+      targetMutated,
+    };
   }, [state.result, state.artifactModConfigs]);
 
   const loadResultToCalculator = () => {
+    console.log("loadResultToCalculator");
+
     // const { buffs, debuffs } = props.artifactModConfigs;
     // let id = Date.now();
     // for (const index of selectedIndexes.current) {
@@ -96,19 +137,14 @@ function InternalOffice(props: InternalOfficeProps) {
   };
 
   const onClickLoadResult = () => {
-    const calculator = store.select((state) => state.calculator);
-    const activeSetup = calculator.setupsById[calculator.activeId];
-
-    if (activeSetup && state.setup) {
-      if (activeSetup.char.name === state.setup.char.name) {
-        const totalSetupCount = calculator.setupManageInfos.length + state.result.length;
-
-        if (totalSetupCount > MAX_SETUP_AFTER_LOAD) {
-          //
-        } else {
-          //
-        }
-      }
+    switch (processed.loadType) {
+      case "NO_PROBLEM":
+        loadResultToCalculator();
+        break;
+      case "MAX_SETUP_EXCEEDED":
+        break;
+      case "CONFLICTED":
+        break;
     }
   };
 
@@ -140,6 +176,25 @@ function InternalOffice(props: InternalOfficeProps) {
     }
   };
 
+  const loadConfirmBtnProps: Pick<
+    ConfirmButtonProps,
+    "variant" | "disabled" | "ctaText" | "askedContent" | "popoverWidth"
+  > =
+    processed.loadType === "ERROR"
+      ? {
+          variant: "default",
+          popoverWidth: "12.5rem",
+          ctaText: "Error",
+          askedContent: "Cannot load to Calculator.",
+          disabled: askingToLoad,
+        }
+      : {
+          variant: "danger",
+          popoverWidth: "15rem",
+          ctaText: "Tap again to load.",
+          askedContent: "The current target is different and will be overwritten.",
+        };
+
   return (
     <div className="h-full flex flex-col">
       <div ref={bodyRef} className="grow flex gap-2 hide-scrollbar scroll-smooth">
@@ -150,7 +205,7 @@ function InternalOffice(props: InternalOfficeProps) {
             <ResultDisplayer
               selectedArtifactId={selected?.ID}
               result={state.result}
-              processedResult={processed}
+              processedResult={processed.result}
               onSelectArtifact={onSelectArtifact}
               onToggleCheckCalculation={onToggleCheckCalculation}
             />
@@ -171,18 +226,16 @@ function InternalOffice(props: InternalOfficeProps) {
           variant="danger"
           popoverWidth="12.5rem"
           asking={askingToExit}
-          askingTitle="Tap again to exit."
-          askingContent={
-            <div className="py-2">
-              {processing ? (
-                <Checkbox onChange={onChangeKeepProcess}>Keep the process</Checkbox>
-              ) : (
-                <Checkbox onChange={props.onChangeKeepResult}>Keep the result</Checkbox>
-              )}
-            </div>
+          ctaText="Tap again to exit."
+          askedContent={
+            processing ? (
+              <Checkbox onChange={onChangeKeepProcess}>Keep the process</Checkbox>
+            ) : (
+              <Checkbox onChange={props.onChangeKeepResult}>Keep the result</Checkbox>
+            )
           }
-          disabledAsking={cancelled}
           icon={<FaSignOutAlt className="text-base" />}
+          disabledAsking={cancelled}
           toggleAsking={setAskingToExit}
           onConfirm={exit}
         >
@@ -191,15 +244,15 @@ function InternalOffice(props: InternalOfficeProps) {
 
         {loadableToCalc ? (
           <ConfirmButton
-            variant="primary"
-            popoverWidth="15rem"
+            {...loadConfirmBtnProps}
             className="gap-1"
             asking={askingToLoad}
-            askingTitle="Tap again to load."
-            askingContent={<p className="py-2">The current target is different and will be overwritten.</p>}
             icon={<FaFileUpload className="text-base" />}
+            disabledAsking={
+              !(processed.loadType === "ERROR" || (processed.loadType === "NO_PROBLEM" && processed.targetMutated))
+            }
             toggleAsking={setAskingToLoad}
-            onConfirm={loadResultToCalculator}
+            onConfirm={onClickLoadResult}
           >
             Load Result
           </ConfirmButton>

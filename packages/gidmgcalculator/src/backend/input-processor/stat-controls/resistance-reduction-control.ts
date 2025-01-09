@@ -2,24 +2,38 @@ import type { Target } from "@Src/types";
 import type {
   ElementType,
   EntityDebuff,
+  EntityPenaltyCore,
   EntityPenaltyTarget,
   ResistanceReduction,
   ResistanceReductionKey,
-} from "../types";
-import type { CharacterData } from "../common-utils";
+} from "@Src/backend/types";
+import type { CharacterData } from "@Src/backend/common-utils";
 import type { TrackerControl } from "./tracker-control";
 
 import Array_ from "@Src/utils/array-utils";
 import TypeCounter from "@Src/utils/type-counter";
-import { getPenaltyValue } from "../calculation-utils/getPenaltyValue";
-import { isApplicableEffect } from "../calculation-utils/isApplicableEffect";
-import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "../constants";
-import { ECalcStatModule } from "../constants/internal";
+import { isApplicableEffect } from "@Src/backend/calculation-utils/isApplicableEffect";
+import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "@Src/backend/constants";
+import { ECalcStatModule } from "@Src/backend/constants/internal";
 
 export class ResistanceReductionControl<T extends CharacterData = CharacterData> {
   private reductCounter = new TypeCounter<ResistanceReductionKey>();
 
   constructor(private characterData: T, private tracker?: TrackerControl) {}
+
+  protected getPenaltyValue = (debuff: EntityPenaltyCore, inputs: number[], fromSelf = true) => {
+    const { preExtra } = debuff;
+    let result = debuff.value * this.characterData.getLevelScale(debuff.lvScale, inputs, fromSelf);
+
+    if (typeof preExtra === "number") {
+      result += preExtra;
+    } else if (preExtra && isApplicableEffect(preExtra, this.characterData, inputs, fromSelf)) {
+      result += this.getPenaltyValue(preExtra, inputs, fromSelf);
+    }
+    if (debuff.max) result = Math.min(result, debuff.max);
+
+    return Math.max(result, 0);
+  };
 
   add(key: ResistanceReductionKey, value: number, description: string) {
     this.reductCounter.add(key, value);
@@ -78,7 +92,7 @@ export class ResistanceReductionControl<T extends CharacterData = CharacterData>
     if (!debuff.effects) return;
 
     for (const config of Array_.toArray(debuff.effects)) {
-      const penalty = getPenaltyValue(config, this.characterData, inputs, fromSelf);
+      const penalty = this.getPenaltyValue(config, inputs, fromSelf);
 
       if (isApplicableEffect(config, this.characterData, inputs, fromSelf)) {
         this.addPenalty(penalty, config.targets, inputs, description);

@@ -6,12 +6,12 @@ import type {
   EntityBonusCore,
   EntityBonusTargets,
   EntityBuff,
-} from "../types";
+} from "@Src/backend/types";
 
 import Array_ from "@Src/utils/array-utils";
-import { ELEMENT_TYPES } from "../constants";
-import { ECalcStatModule } from "../constants/internal";
-import { isApplicableEffect } from "./isApplicableEffect";
+import { ELEMENT_TYPES } from "@Src/backend/constants";
+import { ECalcStatModule } from "@Src/backend/constants/internal";
+import { isApplicableEffect } from "@Src/backend/calculation-utils/isApplicableEffect";
 import { BareBonusGetter, type GetBareBonusSupportInfo } from "./bare-bonus-getter";
 
 type ApplyBonusSupportInfo = {

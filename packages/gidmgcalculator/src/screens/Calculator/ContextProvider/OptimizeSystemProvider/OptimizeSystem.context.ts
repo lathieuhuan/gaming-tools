@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import type { OptimizerAllArtifactModConfigs } from "@Backend";
-import type { CalcSetup, CalcSetupManageInfo } from "@Src/types";
+import type { CalcSetup, CalcSetupManageInfo, Target } from "@Src/types";
 import type { OptimizeResult, OptimizeManager } from "./optimize-manager";
 
 type OptimizedSetup = CalcSetup & CalcSetupManageInfo;
@@ -17,10 +17,10 @@ type OptimizeSystemState = {
   result: OptimizeResult;
   setup?: CalcSetup;
   artifactModConfigs: OptimizerAllArtifactModConfigs;
-  // recreationData: {
-  //   manageInfo: CalcSetupManageInfo;
-  //   target: Target;
-  // };
+  recreationData: {
+    // manageInfo: CalcSetupManageInfo;
+    target?: Target;
+  };
 };
 
 type OptimizeSystem = {

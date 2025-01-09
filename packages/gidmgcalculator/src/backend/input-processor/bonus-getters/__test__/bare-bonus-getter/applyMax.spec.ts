@@ -1,4 +1,4 @@
-import { TotalAttributeControl } from "@Src/backend/controls";
+import { TotalAttributeControl } from "@Src/backend/input-processor/stat-controls";
 import { EffectDynamicMax } from "@Src/backend/types";
 import { __genCharacterDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "../test-utils";

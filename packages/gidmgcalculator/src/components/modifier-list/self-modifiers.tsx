@@ -1,4 +1,4 @@
-import { CharacterBuff, CharacterDebuff, CharacterReadData, isGrantedEffect } from "@Backend";
+import { CharacterBuff, CharacterCalc, CharacterDebuff, CharacterReadData } from "@Backend";
 
 import type { Character, ModifierCtrl } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
@@ -21,7 +21,7 @@ function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Array<Charact
   return props.modCtrls.map((ctrl, ctrlIndex, ctrls) => {
     const modifier = Array_.findByIndex(modifiers, ctrl.index);
 
-    if (modifier && isGrantedEffect(modifier, props.character)) {
+    if (modifier && CharacterCalc.isGrantedEffect(modifier, props.character)) {
       const { inputs = [] } = ctrl;
 
       return (
@@ -47,7 +47,7 @@ export function SelfBuffsView(props: SelfModsViewProps) {
   const modifierElmts: (JSX.Element | null)[] = [];
 
   innateBuffs.forEach((buff, index) => {
-    if (isGrantedEffect(buff, props.character)) {
+    if (CharacterCalc.isGrantedEffect(buff, props.character)) {
       modifierElmts.push(
         <GenshinModifierView
           key={"innate-" + index}

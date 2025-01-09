@@ -10,11 +10,12 @@ import type {
   NormalAttacksConfig,
   TalentCalcItem,
   TotalAttribute,
-} from "../../types";
+} from "../types";
+import type { AttackBonusesArchive, CalcItemRecord } from "../input-processor";
 
 import Array_ from "@Src/utils/array-utils";
-import { CharacterCalc, CharacterData } from "../../common-utils";
-import { AttackBonusesArchive, CalcItemRecord, TrackerControl } from "../../controls";
+import { CharacterCalc, CharacterData } from "../common-utils";
+import { TrackerControl } from "../input-processor";
 import { CalcItemCalculator } from "./calc-item-calculator";
 
 type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorption">;

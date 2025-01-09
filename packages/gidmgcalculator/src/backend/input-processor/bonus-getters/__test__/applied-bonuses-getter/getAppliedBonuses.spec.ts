@@ -1,4 +1,4 @@
-import { TotalAttributeControl } from "@Src/backend/controls";
+import { TotalAttributeControl } from "@Src/backend/input-processor/stat-controls";
 import { AppliedAttributeBonus, AppliedBonuses, EntityBuff } from "@Src/backend/types";
 import { Character } from "@Src/types";
 import { __genCharacterDataTester } from "@UnitTest/test-utils";

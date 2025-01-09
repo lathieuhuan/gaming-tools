@@ -20,7 +20,8 @@ const DEFAULT_STATE = {
     buffs: {},
     debuffs: {},
   },
-} satisfies Pick<OptimizeSystemState, "setup" | "artifactModConfigs" | "result">;
+  recreationData: {},
+} satisfies Pick<OptimizeSystemState, "setup" | "artifactModConfigs" | "result" | "recreationData">;
 
 export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
   const [state, setState] = useState<OptimizeSystemState>({
@@ -75,8 +76,8 @@ export function OptimizeSystemProvider(props: { children: React.ReactNode }) {
       });
     },
     optimizer: {
-      init: (...params) => {
-        optimizer.init(...params);
+      init: (target, setup, data) => {
+        optimizer.init(target, setup, data);
       },
       load: (...params) => {
         optimizer.load(...params);

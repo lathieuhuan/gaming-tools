@@ -8,12 +8,12 @@ import type {
   ResistanceReduction,
   TalentCalcItemBonusId,
   TotalAttribute,
-} from "../../types";
+} from "../types";
+import type { AttackBonusesArchive, CalcItemRecord } from "../input-processor";
 
 import { toMult } from "@Src/utils";
 import Array_ from "@Src/utils/array-utils";
-import { GeneralCalc } from "../../common-utils";
-import { AttackBonusesArchive, CalcItemRecord } from "../../controls";
+import { GeneralCalc } from "../common-utils";
 
 export class CalcItemCalculator {
   constructor(

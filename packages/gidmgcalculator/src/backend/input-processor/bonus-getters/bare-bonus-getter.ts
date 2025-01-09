@@ -1,5 +1,4 @@
 import type { PartiallyOptional } from "rond";
-import type { TotalAttributeControl } from "../controls";
 import type {
   BareBonus,
   EffectExtra,
@@ -8,11 +7,12 @@ import type {
   EntityBonusCore,
   EntityBonusStack,
   EntityBonusValueByOption,
-} from "../types";
-import type { CharacterData } from "../common-utils/character-data";
+} from "@Src/backend/types";
+import type { CharacterData } from "@Src/backend/common-utils/character-data";
+import type { TotalAttributeControl } from "../stat-controls";
 
 import Array_ from "@Src/utils/array-utils";
-import { isApplicableEffect } from "./isApplicableEffect";
+import { isApplicableEffect } from "@Src/backend/calculation-utils/isApplicableEffect";
 
 export type GetBareBonusSupportInfo = {
   inputs: number[];

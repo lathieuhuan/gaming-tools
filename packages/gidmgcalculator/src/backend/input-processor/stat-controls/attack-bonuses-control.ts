@@ -1,10 +1,10 @@
 import type { PartiallyOptional } from "rond";
-import type { AppliedAttackBonus, AttackBonuses, AttackBonusKey, AttackBonusType, TalentCalcItem, Level } from "../types";
+import type { AppliedAttackBonus, AttackBonuses, AttackBonusKey, AttackBonusType, TalentCalcItem, Level } from "@Src/backend/types";
 import type { CalcAtomicRecord, CalcItemExclusiveBonus } from "./tracker-control";
 import Array_ from "@Src/utils/array-utils";
 import Object_ from "@Src/utils/object-utils";
 import TypeCounter from "@Src/utils/type-counter";
-import { GeneralCalc } from "../common-utils";
+import { GeneralCalc } from "@Src/backend/common-utils";
 
 /** should not use 'all' in AttackBonusType */
 type GetBonusPaths = Array<AttackBonusType | undefined>;

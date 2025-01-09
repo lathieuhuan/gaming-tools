@@ -8,14 +8,14 @@ import type {
   AttributeStat,
   Level,
   TotalAttribute,
-} from "../types";
+} from "@Src/backend/types";
 
 import { applyPercent } from "@Src/utils";
 import Array_ from "@Src/utils/array-utils";
 import Object_ from "@Src/utils/object-utils";
-import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "../constants";
-import { ECalcStatModule } from "../constants/internal";
-import { ArtifactCalc, GeneralCalc, WeaponCalc } from "../common-utils";
+import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "@Src/backend/constants";
+import { ECalcStatModule } from "@Src/backend/constants/internal";
+import { ArtifactCalc, GeneralCalc, WeaponCalc } from "@Src/backend/common-utils";
 import { TrackerControl } from "./tracker-control";
 
 type InternalTotalAttribute = Record<

@@ -3,7 +3,7 @@ import type { EffectApplicableCondition, EffectUsableCondition } from "@Src/back
 import type { CharacterData } from "../common-utils/character-data";
 
 import TypeCounter from "@Src/utils/type-counter";
-import { isGrantedEffect } from "./isGrantedEffect";
+import { CharacterCalc } from "../common-utils/character-calc";
 import { isPassedComparison } from "./isPassedComparison";
 
 function isUsableEffect(condition: EffectUsableCondition, characterData: CharacterData, inputs: number[]) {
@@ -50,7 +50,7 @@ function isAvailableEffect(
   fromSelf: boolean
 ): boolean {
   if (fromSelf) {
-    if (!isGrantedEffect(condition, character)) return false;
+    if (!CharacterCalc.isGrantedEffect(condition, character)) return false;
   } else if (condition.altIndex !== undefined && !inputs[condition.altIndex]) {
     return false;
   }

@@ -5,10 +5,10 @@ type PopoverPosition = "center" | "right";
 
 type PopoverPropsByPosition = Record<PopoverPosition, Pick<PopoverProps, "style" | "origin">>;
 
-interface ConfirmButtonProps extends Pick<ButtonProps, "className" | "variant" | "icon" | "children"> {
+export interface ConfirmButtonProps extends Pick<ButtonProps, "className" | "variant" | 'disabled' | "icon" | "children"> {
   asking: boolean;
-  askingTitle: string;
-  askingContent: React.ReactNode;
+  ctaText: string;
+  askedContent: React.ReactNode;
   disabledAsking?: boolean;
   popoverWidth: string | number;
   toggleAsking: (asking: boolean) => void;
@@ -18,8 +18,8 @@ export function ConfirmButton({
   className,
   variant,
   asking,
-  askingTitle,
-  askingContent,
+  ctaText,
+  askedContent,
   disabledAsking,
   popoverWidth,
   toggleAsking,
@@ -86,11 +86,11 @@ export function ConfirmButton({
         {...popoverPropsByPosition[position]}
       >
         <div className="flex justify-between items-center">
-          <p className="text-base font-semibold">{askingTitle}</p>
+          <p className="text-base font-semibold">{ctaText}</p>
           <CloseButton className="shrink-0" boneOnly onClick={() => toggleAsking(false)} />
         </div>
 
-        {askingContent}
+        <div className="py-2">{askedContent}</div>
       </Popover>
     </div>
   );
