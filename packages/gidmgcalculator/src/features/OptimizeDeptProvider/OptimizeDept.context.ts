@@ -1,7 +1,9 @@
 import { createContext } from "react";
+
 import type { OptimizerAllArtifactModConfigs } from "@Backend";
 import type { CalcSetup, Target } from "@Src/types";
-import type { OptimizeResult, OptimizeManager } from "./hooks/useOptimizeManager/optimize-manager";
+import type { OptimizeResult } from "./OptimizeDept.types";
+import type { OptimizeManager } from "./hooks/useOptimizeManager/optimize-manager";
 
 type OptimizerStatus = "IDLE" | "OPTIMIZING" | "CANCELLED";
 
@@ -30,6 +32,6 @@ type OptimizeDept = {
   cancelProcess: () => void;
 };
 
-export type { OptimizerStatus, OptimizeResult, OptimizeDeptState, OptimizeDept };
+export type { OptimizeDept, OptimizeDeptState, OptimizeResult, OptimizerStatus };
 
 export const OptimizeDeptContext = createContext<OptimizeDept | null>(null);

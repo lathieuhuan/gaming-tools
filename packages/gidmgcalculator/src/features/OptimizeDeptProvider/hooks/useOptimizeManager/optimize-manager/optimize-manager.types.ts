@@ -7,15 +7,8 @@ import type {
   AttackElement,
 } from "@Backend";
 import type { CalcArtifacts, ElementModCtrl } from "@Src/types";
+import type { OptimizeResult } from "../../../OptimizeDept.types";
 import type { SetupOptimizer } from "./setup-optimizer";
-
-export type OptimizeCalculation = {
-  damage: number | number[];
-  artifacts: CalcArtifacts;
-};
-
-// export type OptimizeResult = { bests: OptimizeCalculation[]; calculations: OptimizeCalculation[] };
-export type OptimizeResult = OptimizeCalculation[];
 
 // ========== REQUEST ==========
 

@@ -1,4 +1,4 @@
-import type { OptimizeCalculation } from "./optimize-manager.types";
+import type { OptimizeCalculation } from "../../../OptimizeDept.types";
 
 export class CalculationSorter {
   readonly defaultCalculation: OptimizeCalculation = {

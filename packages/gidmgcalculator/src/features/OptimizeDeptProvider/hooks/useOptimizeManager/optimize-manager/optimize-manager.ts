@@ -1,5 +1,5 @@
+import type { OptimizeResult } from "../../../OptimizeDept.types";
 import type {
-  OptimizeResult,
   OTM_InitRequest,
   OTM_LoadRequest,
   OTM_ManagerRequest,

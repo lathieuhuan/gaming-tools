@@ -1,4 +1,5 @@
-import type { OptimizeCalculation, OTM_ManagerRequest, OTM_WorkerResponse } from "./optimize-manager.types";
+import type { OptimizeCalculation } from "../../../OptimizeDept.types";
+import type { OTM_ManagerRequest, OTM_WorkerResponse } from "./optimize-manager.types";
 import { CalculationSorter } from "./calculation-sorter";
 import { SetupOptimizer } from "./setup-optimizer";
 
