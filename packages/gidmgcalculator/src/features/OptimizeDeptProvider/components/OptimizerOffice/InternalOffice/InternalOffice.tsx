@@ -1,22 +1,21 @@
 import { useMemo, useRef, useState } from "react";
-import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
 import isEqual from "react-fast-compare";
-import { Button, ButtonProps, Checkbox, Modal } from "rond";
+import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
+import { Button, ButtonProps, Checkbox } from "rond";
 import { GeneralCalc } from "@Backend";
 
-import type { ArtifactModCtrl } from "@Src/types";
 import type { OptimizeDeptState } from "@OptimizeDept/OptimizeDept.types";
-import type { ProcessedResult, ProcessedSetup } from "./OptimizerOffice.types";
+import type { ArtifactModCtrl } from "@Src/types";
+import type { ProcessedResult, ProcessedSetup } from "./InternalOffice.types";
 
 import { useStoreSnapshot } from "@Src/features";
-import { useOptimizeSystem } from "@OptimizeDept/hooks/useOptimizeSystem";
-import Modifier_ from "@Src/utils/modifier-utils";
 import Array_ from "@Src/utils/array-utils";
+import Modifier_ from "@Src/utils/modifier-utils";
 
 // Component
+import { ConfirmButton, ConfirmButtonProps } from "./ConfirmButton";
 import { ProcessMonitor } from "./ProcessMonitor";
 import { ResultDisplayer } from "./ResultDisplayer";
-import { ConfirmButton, ConfirmButtonProps } from "./ConfirmButton";
 
 type ProcessedData = {
   result: ProcessedResult;
@@ -26,7 +25,7 @@ type ProcessedData = {
   >;
 };
 
-interface InternalOfficeProps {
+export interface InternalOfficeProps {
   state: OptimizeDeptState;
   moreActions?: ButtonProps[];
   onChangeKeepResult: (keepResult: boolean) => void;
@@ -34,7 +33,7 @@ interface InternalOfficeProps {
   /** Already ordered the optimizer to end */
   onRequestCancel: () => void;
 }
-function InternalOffice({
+export function InternalOffice({
   state,
   moreActions = [],
   onChangeKeepResult,
@@ -258,59 +257,5 @@ function InternalOffice({
 
       {(askingToExit || askingToLoad) && <div className="absolute full-stretch z-10 bg-black/60" />}
     </div>
-  );
-}
-
-interface ResultDisplayProps extends Pick<InternalOfficeProps, "moreActions" | "onRequestClose"> {
-  active: boolean;
-  closeDeptAfterCloseOffice: boolean;
-  onCancel?: () => void;
-  onCloseDept: (keepResult: boolean) => void;
-}
-export function OptimizerOffice({
-  active,
-  closeDeptAfterCloseOffice,
-  onCancel,
-  onCloseDept,
-  ...internalProps
-}: ResultDisplayProps) {
-  const shouldKeepResult = useRef(false);
-  const system = useOptimizeSystem();
-
-  const cancelProcess = () => {
-    system.cancelProcess();
-    onCancel?.();
-  };
-
-  const afterCloseOffice = () => {
-    if (closeDeptAfterCloseOffice) {
-      onCloseDept(shouldKeepResult.current);
-    }
-    shouldKeepResult.current = false;
-  };
-
-  return (
-    <Modal
-      active={active}
-      title={<span className="text-lg">Optimizer / Processing & Result</span>}
-      className={["bg-surface-2", Modal.LARGE_HEIGHT_CLS, Modal.MAX_SIZE_CLS]}
-      style={{
-        width: "45rem",
-      }}
-      closeOnMaskClick={false}
-      withCloseButton={false}
-      closeOnEscape={false}
-      onTransitionEnd={(open) => {
-        if (!open) afterCloseOffice();
-      }}
-      onClose={() => {}}
-    >
-      <InternalOffice
-        {...internalProps}
-        state={system.state}
-        onChangeKeepResult={(keepResult) => (shouldKeepResult.current = keepResult)}
-        onRequestCancel={cancelProcess}
-      />
-    </Modal>
   );
 }

@@ -16,12 +16,12 @@ import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
 import { useArtifactManager } from "@OptimizeDept/hooks/useArtifactManager";
 
 // Components
+import { OptimizerOffice } from "../OptimizerOffice";
 import { ItemMultiSelect, type ItemMultiSelectIds } from "@Src/components";
 import { ArtifactModConfig } from "./ArtifactModConfig";
 import { ArtifactSetSelect } from "./ArtifactSetSelect";
 import { Launcher } from "./Launcher";
 import { OptimizeDeptGuide } from "./OptimizeDeptGuide";
-import { OptimizerOffice } from "./OptimizerOffice";
 import { OutputSelect } from "./OutputSelect";
 
 type SavedValues = {

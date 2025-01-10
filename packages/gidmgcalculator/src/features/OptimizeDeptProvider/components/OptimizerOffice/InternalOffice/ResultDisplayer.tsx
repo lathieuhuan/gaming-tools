@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { ButtonGroup, Checkbox } from "rond";
 
 import type { Artifact, ArtifactModCtrl } from "@Src/types";
-import type { ProcessedResult, ProcessedSetup } from "./OptimizerOffice.types";
+import type { ProcessedResult, ProcessedSetup } from "./InternalOffice.types";
 
 import { $AppArtifact } from "@Src/services";
 import Array_ from "@Src/utils/array-utils";
