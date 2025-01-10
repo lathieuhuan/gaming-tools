@@ -8,12 +8,15 @@ import type { OptimizeDeptState } from "@OptimizeDept/OptimizeDept.types";
 import type { ArtifactModCtrl } from "@Src/types";
 import type { ProcessedResult, ProcessedSetup } from "./InternalOffice.types";
 
+import { useDispatch } from "@Store/hooks";
+import { importSetup, removeCalcSetup } from "@Store/calculator-slice";
 import { useStoreSnapshot } from "@Src/features";
 import Array_ from "@Src/utils/array-utils";
 import Modifier_ from "@Src/utils/modifier-utils";
+import Object_ from "@Src/utils/object-utils";
 
 // Component
-import { ConfirmButton, ConfirmButtonProps } from "./ConfirmButton";
+import { ConfirmButton, type ConfirmButtonProps } from "./ConfirmButton";
 import { ProcessMonitor } from "./ProcessMonitor";
 import { ResultDisplayer } from "./ResultDisplayer";
 
@@ -45,6 +48,7 @@ export function InternalOffice({
   const processing = state.status === "OPTIMIZING";
   const successful = !processing && state.result.length !== 0;
 
+  const dispatch = useDispatch();
   const store = useStoreSnapshot(({ calculator }) => {
     return {
       activeSetup: calculator.setupsById[calculator.activeId],
@@ -58,43 +62,48 @@ export function InternalOffice({
 
   const keepProcess = useRef(false);
 
-  const loadResultToCalculator = (setups: ProcessedSetup[]) => {
-    console.log("loadResultToCalculator");
+  const loadResultToCalculator = (setups: ProcessedSetup[], processedResult: ProcessedResult) => {
+    const suffixes = ["st", "nd", "rd"];
+    const removedSetupIds = new Set(store.setupManageInfos.map((info) => info.ID));
+    let index = -1;
 
-    console.log(setups);
+    for (const setup of setups) {
+      if (setup.type === "optimized") {
+        const data = processedResult.find((item) => item.manageInfo.ID === setup.ID);
+        if (!data) continue;
+        const calcSetup = Object_.clone(state.setup)!;
 
-    // const { buffs, debuffs } = props.artifactModConfigs;
-    // let id = Date.now();
-    // for (const index of selectedIndexes.current) {
-    //   const { artifacts = [] } = result.at(index) || {};
-    //   const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts)
-    //     .map((control) => buffs[control.code])
-    //     .flat();
-    //   const artDebuffCtrls = Modifier_.createArtifactDebuffCtrls()
-    //     .map((control) => debuffs[control.code])
-    //     .flat();
-    //   const calcSetup = Object_.clone(props.setup);
-    //   calcSetup.artifacts = artifacts;
-    //   calcSetup.artBuffCtrls = artBuffCtrls;
-    //   calcSetup.artDebuffCtrls = artDebuffCtrls;
-    //   dispatch(
-    //     importSetup({
-    //       importInfo: {
-    //         ID: id++,
-    //         type: "original",
-    //         name: `Optimized ${index + 1}${suffixes[index]}`,
-    //         calcSetup,
-    //       },
-    //     })
-    //   );
-    // }
-    // props.onRequestExit();
+        calcSetup.artifacts = data.artifacts;
+        calcSetup.artBuffCtrls = data.artBuffCtrls;
+        calcSetup.artDebuffCtrls = data.artDebuffCtrls;
+        index++;
+
+        dispatch(
+          importSetup({
+            importInfo: {
+              ID: setup.ID,
+              type: "original",
+              name: `Optimized ${index + 1}${suffixes[index]}`,
+              calcSetup,
+              target: state.recreationData.target,
+            },
+            shouldOverwriteTarget: true,
+          })
+        );
+      } else {
+        removedSetupIds.delete(setup.ID);
+      }
+    }
+
+    removedSetupIds.forEach((id) => dispatch(removeCalcSetup(id)));
+
+    onRequestClose();
   };
 
-  const processed: ProcessedData = useMemo(() => {
+  const processedData: ProcessedData = useMemo(() => {
     let id = Date.now();
     //
-    const result: ProcessedData["result"] = state.result.map(({ artifacts }) => {
+    const result: ProcessedResult = state.result.map(({ artifacts }) => {
       const modConfigs = state.artifactModConfigs;
       const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
       const artBuffCtrls: ArtifactModCtrl[] = [];
@@ -146,6 +155,10 @@ export function InternalOffice({
       ctaText: "Tap again to load",
       askedContent: "The current target is different and will be overwritten.",
     };
+    const onConfirm = () => {
+      const setups: ProcessedSetup[] = store.setupManageInfos;
+      loadResultToCalculator(setups.concat(result.map((item) => item.manageInfo)), result);
+    };
 
     switch (loadType) {
       case "ERROR":
@@ -164,7 +177,7 @@ export function InternalOffice({
             <span className="text-danger-2 font-semibold">We will start a new session.</span>
           </>
         );
-        loadBtnProps.onConfirm = () => loadResultToCalculator(result.map((item) => item.manageInfo));
+        loadBtnProps.onConfirm = onConfirm;
         break;
       case "MAX_SETUP_EXCEEDED":
         loadBtnProps.disabledAsking = true;
@@ -172,7 +185,7 @@ export function InternalOffice({
         break;
       case "NO_PROBLEM":
         loadBtnProps.disabledAsking = !targetMutated;
-        loadBtnProps.onConfirm = () => loadResultToCalculator(result.map((item) => item.manageInfo));
+        loadBtnProps.onConfirm = onConfirm;
         break;
     }
 
@@ -199,12 +212,12 @@ export function InternalOffice({
     <div className="h-full flex flex-col">
       {successful ? (
         <ResultDisplayer
-          processedResult={processed.result}
+          processedResult={processedData.result}
           selectingResult={selectingResult}
           setups={store.setupManageInfos}
           maxSelected={MAX_SETUP_AFTER_LOAD}
           onCancelSelecting={() => setSelectingResult(false)}
-          onRequestLoad={loadResultToCalculator}
+          onRequestLoad={(setups) => loadResultToCalculator(setups, processedData.result)}
         />
       ) : (
         <div className="grow flex justify-center">
@@ -248,7 +261,7 @@ export function InternalOffice({
             asking={askingToLoad}
             icon={<FaFileUpload className="text-base" />}
             toggleAsking={setAskingToLoad}
-            {...processed.loadBtnProps}
+            {...processedData.loadBtnProps}
           >
             Load Result
           </ConfirmButton>

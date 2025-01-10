@@ -58,15 +58,13 @@ export function ResultDisplayer({
       const mod = Array_.findByIndex(mods, config.index);
 
       if (mod) {
-        const description = getArtifactDescription(data, mod);
-
         return (
           <GenshinModifierView
             key={`${type}-${config.code}-${config.index}`}
             mutable={false}
             checked={config.activated}
             heading={data.name}
-            description={description}
+            description={getArtifactDescription(data, mod)}
             inputs={config.inputs}
             inputConfigs={mod.inputConfigs}
           />
@@ -91,22 +89,22 @@ export function ResultDisplayer({
     <div ref={bodyRef} className="grow flex gap-2 hide-scrollbar scroll-smooth">
       <div className="grow custom-scrollbar" style={{ minWidth: 360 }}>
         <div className="h-full custom-scrollbar space-y-2">
-          {processedResult.map((processed, index) => {
+          {processedResult.map((processedItem, index) => {
             return (
               <ResultItemDisplayer
                 key={index}
-                item={processed}
+                item={processedItem}
                 title={`${index + 1}${suffixes[index]}`}
                 expanded={expandIndexes.includes(index)}
                 selectedArtifactId={selectedArtifact?.ID}
                 mutedItemCase={selectingResult}
                 keepCheckbox={
-                  selectingResult ? <Checkbox onChange={onSelectSetup(processed.manageInfo)}>Keep</Checkbox> : null
+                  selectingResult ? <Checkbox onChange={onSelectSetup(processedItem.manageInfo)}>Keep</Checkbox> : null
                 }
                 modSection={
                   <div className="mt-2 space-y-2">
-                    {processed.artBuffCtrls.map(renderModView("B"))}
-                    {processed.artDebuffCtrls.map(renderModView("D"))}
+                    {processedItem.artBuffCtrls.map(renderModView("B"))}
+                    {processedItem.artDebuffCtrls.map(renderModView("D"))}
                   </div>
                 }
                 getSetData={getSetData}
