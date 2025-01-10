@@ -217,7 +217,7 @@ export function FrontDesk({ state, optimizer, onCloseDept }: FrontDeskProps) {
           optimizer.init(store.target, store.setup, store.data);
           optimizer.load(artifactManager.sumary, artifactManager.appArtifacts, artifactManager.calcCount.value);
         }}
-        onClose={() => changeModalType("")}
+        onRequestClose={() => changeModalType("")}
         onCloseDept={onCloseDept}
       />
 

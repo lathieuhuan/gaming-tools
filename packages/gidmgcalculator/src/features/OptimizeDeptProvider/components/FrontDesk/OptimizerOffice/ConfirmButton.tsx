@@ -12,7 +12,7 @@ export interface ConfirmButtonProps extends Pick<ButtonProps, "className" | "var
   disabledAsking?: boolean;
   popoverWidth: string | number;
   toggleAsking: (asking: boolean) => void;
-  onConfirm: () => void;
+  onConfirm?: () => void;
 }
 export function ConfirmButton({
   className,
@@ -46,7 +46,7 @@ export function ConfirmButton({
     }
 
     if (asking || disabledAsking) {
-      onConfirm();
+      onConfirm?.();
     } else {
       toggleAsking(true);
     }

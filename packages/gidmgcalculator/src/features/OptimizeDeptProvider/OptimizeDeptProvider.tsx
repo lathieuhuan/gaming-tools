@@ -186,18 +186,18 @@ export function OptimizeDeptProvider(props: { children: React.ReactNode }) {
         <OptimizeIntro onSubmit={startNewOptimization} />
       </Modal>
 
-      {state.active ? (
-        <>
-          <OptimizerOffice
-            active={activeOffice}
-            closeDeptAfterCloseOffice
-            onClose={() => setActiveOffice(false)}
-            onCloseDept={closeDept}
-          />
+      {state.active && (
+        <OptimizerOffice
+          active={activeOffice}
+          closeDeptAfterCloseOffice
+          onRequestClose={() => setActiveOffice(false)}
+          onCloseDept={closeDept}
+        />
+      )}
 
-          {!state.pendingResult && <FrontDesk state={state} optimizer={optimizer} onCloseDept={closeDept} />}
-        </>
-      ) : null}
+      {state.active && !state.pendingResult && (
+        <FrontDesk state={state} optimizer={optimizer} onCloseDept={closeDept} />
+      )}
     </OptimizeSystemContext.Provider>
   );
 }

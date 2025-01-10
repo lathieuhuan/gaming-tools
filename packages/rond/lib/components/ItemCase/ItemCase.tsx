@@ -4,11 +4,12 @@ import "./ItemCase.styles.scss";
 export interface ItemCaseProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
   children: (className: string, imgCls: string) => React.ReactNode;
   chosen?: boolean;
+  muted?: boolean;
 }
-export function ItemCase({ className, chosen, children, onMouseDown, onMouseUp, ...rest }: ItemCaseProps) {
+export function ItemCase({ className, chosen, muted, children, onMouseDown, onMouseUp, ...rest }: ItemCaseProps) {
   return (
     <div
-      className={clsx("ron-item-case", chosen && "ron-item-case--chosen", className)}
+      className={clsx(!muted && ["ron-item-case", chosen && "ron-item-case--chosen"], className)}
       onMouseDown={(e) => {
         e.currentTarget.classList.add("ron-item-case--clicked");
         onMouseDown?.(e);

@@ -1,39 +1,44 @@
+import { AppArtifact, ArtifactModifierDescription, ModInputConfig } from "@Backend";
 import { useRef, useState } from "react";
-import { FaInfoCircle } from "react-icons/fa";
-import { Checkbox, CollapseSpace, ItemCase } from "rond";
-import { AppArtifact, ARTIFACT_TYPES, ArtifactModifierDescription, ModInputConfig } from "@Backend";
+import { ButtonGroup, Checkbox } from "rond";
 
 import type { Artifact, ArtifactModCtrl } from "@Src/types";
-import type { OptimizeResult } from "@OptimizeDept/OptimizeDept.types";
-import type { ProcessedResult } from "./OptimizerOffice.types";
+import type { ProcessedResult, ProcessedSetup } from "./OptimizerOffice.types";
 
 import { $AppArtifact } from "@Src/services";
-import { getArtifactDescription } from "@Src/utils/description-parsers";
-import Entity_ from "@Src/utils/entity-utils";
 import Array_ from "@Src/utils/array-utils";
+import { getArtifactDescription } from "@Src/utils/description-parsers";
 
 // Component
-import { GenshinImage, GenshinModifierView, ItemThumbnail } from "@Src/components";
+import { ArtifactCard, GenshinModifierView } from "@Src/components";
+import { ResultItemDisplayer, type ResultItemDisplayerProps } from "./ResultItemDisplayer";
 
 type Modifiers = Array<{ description: ArtifactModifierDescription; inputConfigs?: ModInputConfig[] }> | undefined;
 
 export interface ResultDisplayerProps {
-  result: OptimizeResult;
   processedResult: ProcessedResult;
-  selectedArtifactId?: number;
-  onSelectArtifact: (artifact: Artifact) => void;
-  onToggleCheckCalculation: (index: number, checked: boolean) => void;
+  selectingResult: boolean;
+  setups: ProcessedSetup[];
+  maxSelected: number;
+  onRequestLoad: (setups: ProcessedSetup[]) => void;
+  onCancelSelecting: () => void;
 }
 export function ResultDisplayer({
-  result,
   processedResult,
-  selectedArtifactId,
-  onSelectArtifact,
-  onToggleCheckCalculation,
+  selectingResult,
+  setups,
+  maxSelected,
+  onCancelSelecting,
+  onRequestLoad,
 }: ResultDisplayerProps) {
   //
+  const [selectedArtifact, setSelectedArtifact] = useState<Artifact>();
   const [expandIndexes, setExpandIndexes] = useState<number[]>([]);
+  const [selectedSetups, setSelectedSetups] = useState<ProcessedSetup[]>([]);
+
   const dataBySet = useRef<Record<number, AppArtifact>>({});
+  const bodyRef = useRef<HTMLDivElement>(null);
+
   const suffixes = ["st", "nd", "rd"];
 
   const getSetData = (code: number) => {
@@ -71,102 +76,103 @@ export function ResultDisplayer({
     return null;
   };
 
+  const onSelectArtifact: ResultItemDisplayerProps["onSelectArtifact"] = (artifact) => {
+    setSelectedArtifact(artifact);
+    if (bodyRef.current) bodyRef.current.scrollLeft = 999;
+  };
+
+  const onSelectSetup = (setup: ProcessedSetup) => (checked: boolean) => {
+    setSelectedSetups((prevSelected) =>
+      checked ? prevSelected.concat(setup) : prevSelected.filter((selectedSetup) => selectedSetup.ID !== setup.ID)
+    );
+  };
+
   return (
-    <div className="h-full custom-scrollbar space-y-2">
-      {result.map((calculation, index) => {
-        const processed = processedResult[index];
-        const setBonusesSumary = processed.setBonuses
-          .map((bonus) => `(${bonus.bonusLv * 2 + 2}) ${getSetData(bonus.code).name}`)
-          .join(" + ");
-        const hasAnyConfig =
-          processed.artBuffCtrls.some((ctrl) => ctrl.activated) ||
-          processed.artDebuffCtrls.some((ctrl) => ctrl.activated);
-        const expanded = expandIndexes.includes(index);
+    <div ref={bodyRef} className="grow flex gap-2 hide-scrollbar scroll-smooth">
+      <div className="grow custom-scrollbar" style={{ minWidth: 360 }}>
+        <div className="h-full custom-scrollbar space-y-2">
+          {processedResult.map((processed, index) => {
+            return (
+              <ResultItemDisplayer
+                key={index}
+                item={processed}
+                title={`${index + 1}${suffixes[index]}`}
+                expanded={expandIndexes.includes(index)}
+                selectedArtifactId={selectedArtifact?.ID}
+                mutedItemCase={selectingResult}
+                keepCheckbox={
+                  selectingResult ? <Checkbox onChange={onSelectSetup(processed.manageInfo)}>Keep</Checkbox> : null
+                }
+                modSection={
+                  <div className="mt-2 space-y-2">
+                    {processed.artBuffCtrls.map(renderModView("B"))}
+                    {processed.artDebuffCtrls.map(renderModView("D"))}
+                  </div>
+                }
+                getSetData={getSetData}
+                onClickExpand={(expanded) => {
+                  setExpandIndexes(
+                    expanded
+                      ? expandIndexes.filter((expandIndex) => expandIndex !== index)
+                      : expandIndexes.concat(index)
+                  );
+                }}
+                onSelectArtifact={onSelectArtifact}
+              />
+            );
+          })}
+        </div>
+      </div>
 
-        return (
-          <div key={index} className="p-4 rounded-md bg-surface-1 space-y-4">
-            <div className="flex justify-between items-start">
-              <div className="text-2xl font-black text-danger-2">
-                {index + 1}
-                {suffixes[index]}
-              </div>
-
-              <Checkbox size="medium" defaultChecked onChange={(checked) => onToggleCheckCalculation(index, checked)} />
+      <div className="w-68 shrink-0">
+        {selectingResult ? (
+          <div className="px-2 py-4 bg-surface-1 rounded">
+            <div className="px-2">
+              <p>
+                The number of Setups after load cannot exceed <span className="font-semibold text-danger-2">5</span>.
+              </p>
+              <p className="mt-1 text-sm text-hint-color">
+                Please select the result and the current setups you want to keep.
+              </p>
             </div>
 
-            <div className="grid grid-cols-5 gap-2">
-              {calculation.artifacts.map((artifact, artifactI) => {
-                if (artifact) {
-                  const data = getSetData(artifact.code);
-
-                  return (
-                    <ItemCase
-                      key={artifact.type}
-                      chosen={artifact.ID === selectedArtifactId}
-                      onClick={() => onSelectArtifact(artifact)}
-                    >
-                      {(className, imgCls) => (
-                        <ItemThumbnail
-                          compact
-                          className={className}
-                          imgCls={imgCls}
-                          item={{ ...artifact, icon: data[artifact.type].icon }}
-                        />
-                      )}
-                    </ItemCase>
-                  );
-                }
+            <div className="mt-4 space-y-2">
+              {setups.map((setup) => {
                 return (
-                  <div key={artifactI} className="p-1 bg-surface-2 rounded">
-                    <GenshinImage
-                      className="opacity-50"
-                      src={Entity_.artifactIconOf(ARTIFACT_TYPES[artifactI])}
-                      imgType="artifact"
-                      fallbackCls="p-2"
-                    />
+                  <div key={setup.ID}>
+                    <Checkbox className="p-2 rounded hover:bg-surface-3" onChange={onSelectSetup(setup)}>
+                      {setup.name}
+                    </Checkbox>
                   </div>
                 );
               })}
             </div>
 
-            {hasAnyConfig ? (
-              <div>
-                <div>
-                  <button
-                    className={`max-w-full text-left flex gap-2 ${expanded ? "text-active-color" : "glow-on-hover"}`}
-                    title={setBonusesSumary}
-                    onClick={() => {
-                      setExpandIndexes(
-                        expanded
-                          ? expandIndexes.filter((expandIndex) => expandIndex !== index)
-                          : expandIndexes.concat(index)
-                      );
-                    }}
-                  >
-                    <span className="h-6 flex items-center">
-                      <FaInfoCircle className="text-lg shrink-0" />
-                    </span>
-                    <span>{setBonusesSumary}</span>
-                  </button>
-                </div>
-
-                <CollapseSpace active={expanded}>
-                  <div className="pt-3">
-                    <div className="h-px bg-surface-border/80" />
-
-                    <div className="mt-2 space-y-2">
-                      {processed.artBuffCtrls.map(renderModView("B"))}
-                      {processed.artDebuffCtrls.map(renderModView("D"))}
-                    </div>
-                  </div>
-                </CollapseSpace>
-              </div>
-            ) : (
-              <div>{setBonusesSumary}</div>
-            )}
+            <ButtonGroup
+              className="mt-6"
+              buttons={[
+                {
+                  children: "Cancel",
+                  onClick: () => {
+                    setSelectedSetups([]);
+                    onCancelSelecting();
+                  },
+                },
+                {
+                  children: `Load (${selectedSetups.length})`,
+                  variant: "primary",
+                  disabled:
+                    selectedSetups.length > maxSelected ||
+                    !selectedSetups.filter((setup) => setup.name === "Optimized").length,
+                  onClick: () => onRequestLoad(selectedSetups),
+                },
+              ]}
+            />
           </div>
-        );
-      })}
+        ) : (
+          <ArtifactCard style={{ height: "28rem" }} withOwnerLabel artifact={selectedArtifact} />
+        )}
+      </div>
     </div>
   );
 }

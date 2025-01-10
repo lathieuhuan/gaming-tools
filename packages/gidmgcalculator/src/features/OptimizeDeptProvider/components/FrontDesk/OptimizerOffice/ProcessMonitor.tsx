@@ -5,10 +5,12 @@ import { Button, clsx } from "rond";
 import { useOptimizeProcess } from "@OptimizeDept/hooks/useOptimizeProcess";
 
 interface ProcessMonitorProps {
+  className?: string;
+  style?: React.CSSProperties;
   cancelled: boolean;
   onRequestCancel: () => void;
 }
-export function ProcessMonitor({ cancelled, onRequestCancel }: ProcessMonitorProps) {
+export function ProcessMonitor({ cancelled, onRequestCancel, ...divProps }: ProcessMonitorProps) {
   const [waitingCancel, setWaitingCancel] = useState(false);
   const mounted = useRef(true);
   const process = useOptimizeProcess(() => (mounted.current = false));
@@ -29,7 +31,7 @@ export function ProcessMonitor({ cancelled, onRequestCancel }: ProcessMonitorPro
   };
 
   return (
-    <div className="px-4">
+    <div {...divProps}>
       <p className="text-lg text-center font-medium">{cancelled ? "Calculation cancelled" : "Calculating..."}</p>
 
       <div className="w-full h-3 mt-4 bg-surface-1 shadow-surface-3 shadow-3px-2px rounded-md">
