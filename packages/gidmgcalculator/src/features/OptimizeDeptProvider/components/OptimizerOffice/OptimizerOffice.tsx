@@ -51,6 +51,7 @@ export function OptimizerOffice({
       <InternalOffice
         {...internalProps}
         state={system.state}
+        onExpectSetups={system.expectSetups}
         onChangeKeepResult={(keepResult) => (shouldKeepResult.current = keepResult)}
         onRequestCancel={cancelProcess}
       />

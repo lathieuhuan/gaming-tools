@@ -34,7 +34,9 @@ export function ResultDisplayer({
   //
   const [selectedArtifact, setSelectedArtifact] = useState<Artifact>();
   const [expandIndexes, setExpandIndexes] = useState<number[]>([]);
-  const [selectedSetups, setSelectedSetups] = useState<ProcessedSetup[]>([]);
+  const [selectedSetups, setSelectedSetups] = useState<ProcessedSetup[]>(
+    processedResult.map((item) => item.manageInfo)
+  );
 
   const dataBySet = useRef<Record<number, AppArtifact>>({});
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -99,7 +101,11 @@ export function ResultDisplayer({
                 selectedArtifactId={selectedArtifact?.ID}
                 mutedItemCase={selectingResult}
                 keepCheckbox={
-                  selectingResult ? <Checkbox onChange={onSelectSetup(processedItem.manageInfo)}>Keep</Checkbox> : null
+                  selectingResult ? (
+                    <Checkbox defaultChecked onChange={onSelectSetup(processedItem.manageInfo)}>
+                      Keep
+                    </Checkbox>
+                  ) : null
                 }
                 modSection={
                   <div className="mt-2 space-y-2">

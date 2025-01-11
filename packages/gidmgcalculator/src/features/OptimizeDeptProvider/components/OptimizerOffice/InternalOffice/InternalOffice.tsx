@@ -31,6 +31,7 @@ type ProcessedData = {
 export interface InternalOfficeProps {
   state: OptimizeDeptState;
   moreActions?: ButtonProps[];
+  onExpectSetups: (ids: number[]) => void;
   onChangeKeepResult: (keepResult: boolean) => void;
   onRequestClose: () => void;
   /** Already ordered the optimizer to end */
@@ -39,6 +40,7 @@ export interface InternalOfficeProps {
 export function InternalOffice({
   state,
   moreActions = [],
+  onExpectSetups,
   onChangeKeepResult,
   onRequestCancel,
   onRequestClose,
@@ -65,6 +67,7 @@ export function InternalOffice({
   const loadResultToCalculator = (setups: ProcessedSetup[], processedResult: ProcessedResult) => {
     const suffixes = ["st", "nd", "rd"];
     const removedSetupIds = new Set(store.setupManageInfos.map((info) => info.ID));
+    const expectedSetupIds: number[] = [];
     let index = -1;
 
     for (const setup of setups) {
@@ -78,6 +81,8 @@ export function InternalOffice({
         calcSetup.artDebuffCtrls = data.artDebuffCtrls;
         index++;
 
+        expectedSetupIds.push(setup.ID);
+
         dispatch(
           importSetup({
             importInfo: {
@@ -85,7 +90,7 @@ export function InternalOffice({
               type: "original",
               name: `Optimized ${index + 1}${suffixes[index]}`,
               calcSetup,
-              target: state.recreationData.target,
+              target: state.target,
             },
             shouldOverwriteTarget: true,
           })
@@ -97,6 +102,7 @@ export function InternalOffice({
 
     removedSetupIds.forEach((id) => dispatch(removeCalcSetup(id)));
 
+    onExpectSetups(expectedSetupIds);
     onRequestClose();
   };
 
@@ -104,17 +110,17 @@ export function InternalOffice({
     let id = Date.now();
     //
     const result: ProcessedResult = state.result.map(({ artifacts }) => {
-      const modConfigs = state.artifactModConfigs;
+      const { artifactModConfigs = { buffs: {}, debuffs: {} } } = state;
       const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
       const artBuffCtrls: ArtifactModCtrl[] = [];
       const artDebuffCtrls: ArtifactModCtrl[] = [];
 
       for (const control of Modifier_.createMainArtifactBuffCtrls(artifacts, setBonuses)) {
-        const buffCtrl = Array_.findByIndex(modConfigs.buffs[control.code], control.index);
+        const buffCtrl = Array_.findByIndex(artifactModConfigs.buffs[control.code], control.index);
         if (buffCtrl) artBuffCtrls.push(buffCtrl);
       }
       for (const control of Modifier_.createArtifactDebuffCtrls()) {
-        const debuffCtrl = Array_.findByIndex(modConfigs.debuffs[control.code], control.index);
+        const debuffCtrl = Array_.findByIndex(artifactModConfigs.debuffs[control.code], control.index);
         if (debuffCtrl) artDebuffCtrls.push(debuffCtrl);
       }
 
@@ -134,14 +140,14 @@ export function InternalOffice({
     let loadType: "NO_PROBLEM" | "MAX_SETUP_EXCEEDED" | "CONFLICTED" | "ERROR" = "NO_PROBLEM";
     let targetMutated = false;
 
-    if (store.activeSetup && state.setup && state.recreationData.target) {
+    if (store.activeSetup && state.setup && state.target) {
       if (store.activeSetup.char.name === state.setup.char.name) {
         const newSetupCount = store.setupManageInfos.length + state.result.length;
 
         if (newSetupCount > MAX_SETUP_AFTER_LOAD) {
           loadType = "MAX_SETUP_EXCEEDED";
         }
-        targetMutated = !isEqual(store.target, state.recreationData.target);
+        targetMutated = !isEqual(store.target, state.target);
       } else {
         loadType = "CONFLICTED";
       }
@@ -153,7 +159,7 @@ export function InternalOffice({
       variant: "primary",
       popoverWidth: "15rem",
       ctaText: "Tap again to load",
-      askedContent: "The current target is different and will be overwritten.",
+      askedContent: "The current Target is different and will be overwritten.",
     };
     const onConfirm = () => {
       const setups: ProcessedSetup[] = store.setupManageInfos;

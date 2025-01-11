@@ -21,11 +21,9 @@ export type OptimizeDeptState = {
   pendingResult: boolean;
   result: OptimizeResult;
   setup?: CalcSetup;
-  artifactModConfigs: OptimizerAllArtifactModConfigs;
-  recreationData: {
-    // manageInfo: CalcSetupManageInfo;
-    target?: Target;
-  };
-  calcList: AppCharacter["calcList"];
+  artifactModConfigs?: OptimizerAllArtifactModConfigs;
+  target?: Target;
+  calcList?: AppCharacter["calcList"];
   runCount: number;
+  expectedSetupIds: number[];
 };

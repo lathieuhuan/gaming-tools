@@ -10,12 +10,12 @@ type RenderGroup = {
   title: LevelableTalentType;
   subGroups: Array<{
     attPatt: AttackPattern;
-    items: TalentCalcItem[];
+    items?: TalentCalcItem[];
   }>;
 };
 
 interface OutputSelectProps {
-  calcList: AppCharacter["calcList"];
+  calcList?: AppCharacter["calcList"];
   initialValue?: OptimizedOutput;
   onChange?: (items: OptimizedOutput) => void;
   onChangeValid?: (valid: boolean) => void;
@@ -31,17 +31,17 @@ export function OutputSelect(props: OutputSelectProps) {
       subGroups: NORMAL_ATTACKS.map((attPatt) => {
         return {
           attPatt,
-          items: calcList[attPatt],
+          items: calcList?.[attPatt],
         };
       }),
     },
     {
       title: "ES",
-      subGroups: [{ attPatt: "ES", items: calcList.ES }],
+      subGroups: [{ attPatt: "ES", items: calcList?.ES }],
     },
     {
       title: "EB",
-      subGroups: [{ attPatt: "EB", items: calcList.EB }],
+      subGroups: [{ attPatt: "EB", items: calcList?.EB }],
     },
   ];
 
@@ -64,7 +64,7 @@ export function OutputSelect(props: OutputSelectProps) {
                 {group.subGroups.map((subGroup) => {
                   const isSelectedGroup = subGroup.attPatt === selectedOutput?.attPatt;
 
-                  return subGroup.items.map((item, index) => {
+                  return subGroup.items?.map((item, index) => {
                     const isSeleted = isSelectedGroup && item.name === selectedOutput?.item.name;
 
                     return (

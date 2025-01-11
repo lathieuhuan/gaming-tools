@@ -7,6 +7,7 @@ export type OptimizeSystem = {
   contact: () => void;
   cancelProcess: () => void;
   subscribeProcess: OptimizeManager["subscribeProcess"];
+  expectSetups: (ids: number[]) => void;
 };
 
 export const OptimizeSystemContext = createContext<OptimizeSystem | null>(null);

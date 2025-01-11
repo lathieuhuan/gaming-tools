@@ -8,28 +8,23 @@ import { OptimizeSystemContext, OptimizeSystem } from "./OptimizeDept.context";
 import { useOptimizerManager } from "./hooks/useOptimizeManager";
 
 // Components
-import { OptimizeIntro, FrontDesk, OptimizerOffice, type OptimizeIntroProps, type FrontDeskProps } from "./components";
+import {
+  OptimizeIntro,
+  FrontDesk,
+  OptimizerOffice,
+  LoadReporter,
+  type OptimizeIntroProps,
+  type FrontDeskProps,
+} from "./components";
 
 const DEFAULT_STATE = {
   result: [],
   setup: undefined,
-  artifactModConfigs: {
-    buffs: {},
-    debuffs: {},
-  },
-  recreationData: {},
-  calcList: {
-    NA: [],
-    CA: [],
-    PA: [],
-    ES: [],
-    EB: [],
-  },
+  target: undefined,
+  artifactModConfigs: undefined,
+  calcList: undefined,
   runCount: 0,
-} satisfies Pick<
-  OptimizeDeptState,
-  "setup" | "artifactModConfigs" | "result" | "recreationData" | "calcList" | "runCount"
->;
+} satisfies Pick<OptimizeDeptState, "setup" | "target" | "artifactModConfigs" | "result" | "calcList" | "runCount">;
 
 export function OptimizeDeptProvider(props: { children: React.ReactNode }) {
   const [state, setState] = useState<OptimizeDeptState>({
@@ -38,6 +33,7 @@ export function OptimizeDeptProvider(props: { children: React.ReactNode }) {
     status: "IDLE",
     testMode: false,
     pendingResult: false,
+    expectedSetupIds: [],
     ...DEFAULT_STATE,
   });
   const [activeOffice, setActiveOffice] = useState(false);
@@ -102,9 +98,7 @@ export function OptimizeDeptProvider(props: { children: React.ReactNode }) {
           ...prev,
           status: "IDLE",
           calcList: data.appCharacters[setup.char.name]?.calcList || DEFAULT_STATE.calcList,
-          recreationData: {
-            target,
-          },
+          target,
         };
         return newState;
       });
@@ -157,6 +151,15 @@ export function OptimizeDeptProvider(props: { children: React.ReactNode }) {
         return newState;
       });
     },
+    expectSetups: (ids) => {
+      setState((prev) => {
+        const newState: OptimizeDeptState = {
+          ...prev,
+          expectedSetupIds: ids,
+        };
+        return newState;
+      });
+    },
   };
 
   console.log(state);
@@ -164,6 +167,8 @@ export function OptimizeDeptProvider(props: { children: React.ReactNode }) {
   return (
     <OptimizeSystemContext.Provider value={system}>
       {props.children}
+
+      <LoadReporter expectedSetupIds={state.expectedSetupIds} onDoneExpect={() => system.expectSetups([])} />
 
       <Modal
         active={state.introducing}
