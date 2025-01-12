@@ -7,12 +7,11 @@ import type {
   ResistanceReduction,
   ResistanceReductionKey,
 } from "@Src/backend/types";
-import type { CharacterData } from "@Src/backend/common-utils";
 import type { TrackerControl } from "./tracker-control";
 
 import Array_ from "@Src/utils/array-utils";
 import TypeCounter from "@Src/utils/type-counter";
-import { isApplicableEffect } from "@Src/backend/calculation-utils/isApplicableEffect";
+import { isApplicableEffect, type CharacterData } from "@Src/backend/common-utils";
 import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "@Src/backend/constants";
 import { ECalcStatModule } from "@Src/backend/constants/internal";
 

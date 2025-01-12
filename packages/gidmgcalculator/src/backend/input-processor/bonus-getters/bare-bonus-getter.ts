@@ -8,11 +8,10 @@ import type {
   EntityBonusStack,
   EntityBonusValueByOption,
 } from "@Src/backend/types";
-import type { CharacterData } from "@Src/backend/common-utils/character-data";
 import type { TotalAttributeControl } from "../stat-controls";
 
 import Array_ from "@Src/utils/array-utils";
-import { isApplicableEffect } from "@Src/backend/calculation-utils/isApplicableEffect";
+import { isApplicableEffect, type CharacterData } from "@Src/backend/common-utils";
 
 export type GetBareBonusSupportInfo = {
   inputs: number[];

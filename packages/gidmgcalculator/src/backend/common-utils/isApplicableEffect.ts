@@ -1,10 +1,20 @@
 import type { Character } from "@Src/types";
-import type { EffectApplicableCondition, EffectUsableCondition } from "@Src/backend/types";
-import type { CharacterData } from "../common-utils/character-data";
+import type { ConditionComparison, EffectApplicableCondition, EffectUsableCondition } from "@Src/backend/types";
+import type { CharacterData } from "./character-data";
 
 import TypeCounter from "@Src/utils/type-counter";
-import { CharacterCalc } from "../common-utils/character-calc";
-import { isPassedComparison } from "./isPassedComparison";
+import { CharacterCalc } from "./character-calc";
+
+function isPassedComparison(value: number, condition: number, comparision: ConditionComparison = "EQUAL"): boolean {
+  switch (comparision) {
+    case "EQUAL":
+      return value === condition;
+    case "MIN":
+      return value >= condition;
+    case "MAX":
+      return value <= condition;
+  }
+}
 
 function isUsableEffect(condition: EffectUsableCondition, characterData: CharacterData, inputs: number[]) {
   const { checkInput, checkParty } = condition;

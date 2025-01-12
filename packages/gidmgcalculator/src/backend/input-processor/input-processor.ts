@@ -23,8 +23,7 @@ import type {
 } from "@Src/backend/types";
 
 import Array_ from "@Src/utils/array-utils";
-import { isApplicableEffect } from "@Src/backend/calculation-utils/isApplicableEffect";
-import { CharacterCalc, CharacterData, GeneralCalc } from "@Src/backend/common-utils";
+import { CharacterCalc, CharacterData, GeneralCalc, isApplicableEffect } from "@Src/backend/common-utils";
 import {
   AMPLIFYING_REACTIONS,
   NORMAL_ATTACKS,

@@ -3,3 +3,4 @@ export * from "./character-calc";
 export * from "./weapon-calc";
 export * from "./artifact-calc";
 export * from "./character-data";
+export * from "./isApplicableEffect";
