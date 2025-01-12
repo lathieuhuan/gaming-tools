@@ -157,7 +157,8 @@ export class TalentCalculator {
           return calculator.emptyResult;
         }
 
-        const bases = this.getBases(item.multFactors, calculator.getBonus("mult_"), record);
+        const bonus = calculator.getBonus("mult_");
+        const bases = this.getBases(item.multFactors, bonus, record);
         const base = item.joinMultFactors ? bases.reduce((accumulator, base) => accumulator + base, 0) : bases;
 
         // TALENT DMG
@@ -167,7 +168,8 @@ export class TalentCalculator {
       }
       default: {
         const calculator = this.itemCalculator.genOtherCalculator(type, item.id);
-        const bases = this.getBases(item.multFactors, calculator.getBonus("mult_"), record);
+        const bonus = this.itemCalculator.getBonus("mult_", item.id);
+        const bases = this.getBases(item.multFactors, bonus, record);
 
         if (item.flatFactor) {
           const { root, scale } = this.configFlatFactor(item.flatFactor);

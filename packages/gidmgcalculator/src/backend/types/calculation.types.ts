@@ -59,7 +59,7 @@ export type CalculationAspect = "nonCrit" | "crit" | "average";
 
 type CalculationFinalResultCommon = Record<CalculationAspect, number | number[]>;
 
-type CalculationFinalResultAttackItem = CalculationFinalResultCommon & {
+export type CalculationFinalResultAttackItem = CalculationFinalResultCommon & {
   type: Extract<CalcItemType, "attack">;
   attElmt: ActualAttackElement;
   attPatt: ActualAttackPattern;

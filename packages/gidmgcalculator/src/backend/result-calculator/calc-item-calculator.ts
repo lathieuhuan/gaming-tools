@@ -24,6 +24,10 @@ export class CalcItemCalculator {
     private resistances: ResistanceReduction
   ) {}
 
+  getBonus: typeof this.attkBonusesArchive.getBare = (...params) => {
+    return this.attkBonusesArchive.getBare(...params);
+  };
+
   genAttackCalculator = (attPatt: ActualAttackPattern, attElmt: AttackElement, itemId?: TalentCalcItemBonusId) => {
     const { totalAttr, attkBonusesArchive, resistances } = this;
 
@@ -118,10 +122,6 @@ export class CalcItemCalculator {
   genOtherCalculator = (itemType: Exclude<CalcItemType, "attack">, itemId?: TalentCalcItemBonusId) => {
     const { totalAttr } = this;
 
-    const getBonus = (key: AttackBonusKey) => {
-      return this.attkBonusesArchive.getBare(key, itemId);
-    };
-
     const calculate = (base: number | number[], record: CalcItemRecord): CalculationFinalResultItem => {
       //
       if (base === 0) {
@@ -134,11 +134,11 @@ export class CalcItemCalculator {
       }
 
       let flat = 0;
-      let normalMult = 1 + getBonus("pct_") / 100;
+      let normalMult = 1 + this.getBonus("pct_", itemId) / 100;
 
       switch (itemType) {
         case "healing":
-          flat = getBonus("flat") ?? 0;
+          flat = this.getBonus("flat", itemId) ?? 0;
           normalMult += totalAttr.healB_ / 100;
           break;
         case "shield":
@@ -166,7 +166,6 @@ export class CalcItemCalculator {
     };
 
     return {
-      getBonus,
       calculate,
     };
   };

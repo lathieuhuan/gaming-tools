@@ -4,6 +4,7 @@ import type { AttackBonusesArchive, TrackerControl } from "../input-processor";
 import { CharacterData, GeneralCalc } from "../common-utils";
 import { CalcItemCalculator } from "./calc-item-calculator";
 import { TalentCalculator } from "./talent-calculator";
+import { ReactionCalculator } from "./reaction-calculator";
 
 export class ResultCalculator {
   itemCalculator: CalcItemCalculator;
@@ -14,7 +15,7 @@ export class ResultCalculator {
     private NAsConfig: NormalAttacksConfig,
     private totalAttr: TotalAttribute,
     private attkBonusesArchive: AttackBonusesArchive,
-    resistances: ResistanceReduction,
+    private resistances: ResistanceReduction,
     private tracker?: TrackerControl
   ) {
     this.itemCalculator = new CalcItemCalculator(
@@ -34,6 +35,15 @@ export class ResultCalculator {
       this.attkBonusesArchive,
       this.characterData,
       this.itemCalculator,
+      this.tracker
+    );
+  };
+
+  genReactionCalculator = () => {
+    return new ReactionCalculator(
+      this.characterData.character.level,
+      this.itemCalculator,
+      this.resistances,
       this.tracker
     );
   };
