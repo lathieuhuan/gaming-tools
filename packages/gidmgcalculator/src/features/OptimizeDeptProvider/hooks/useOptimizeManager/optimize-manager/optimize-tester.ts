@@ -1,6 +1,6 @@
 import isEqual from "react-fast-compare";
 
-import type { OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "@Backend";
+import type { CalculationFinalResultItem, OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "@Backend";
 import type {
   OTM_InitRequest,
   OTM_LoadRequest,
@@ -36,16 +36,24 @@ export class OptimizeTester {
   }
 
   test(response: OTM_OneRunResponse) {
-    const { artifacts, result, totalAttr, attkBonuses, calcItemParams } = response;
+    const { artifacts, result, totalAttr, attkBonuses, output } = response;
     const handledResult = this.optimizer!.handleSet(artifacts, this.modConfig!);
 
     if (handledResult) {
       const [expectedtotalAttr, archive, calculator] = handledResult;
       const expectedAttkBonuses = archive.serialize();
 
-      const expectedResult = calculator
-        .genTalentCalculator(calcItemParams.pattern)
-        .calculateItem(calcItemParams.calcItem, calcItemParams.elmtModCtrls, calcItemParams.infusedElmt);
+      let expectedResult: CalculationFinalResultItem;
+
+      switch (output.type) {
+        case "RXN":
+          expectedResult = calculator.genReactionCalculator().calculate(output.item.name);
+          break;
+        default:
+          expectedResult = calculator
+            .genTalentCalculator(output.type)
+            .calculateItem(output.item, output.elmtModCtrls, output.infusedElmt);
+      }
 
       if (!isEqual(result, expectedResult)) {
         console.log("UNEXPECTED RESULT");

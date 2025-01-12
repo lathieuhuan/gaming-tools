@@ -2,6 +2,7 @@ import type { OptimizeCalculation } from "@OptimizeDept/OptimizeDept.types";
 import type { OTM_ManagerRequest, OTM_WorkerResponse } from "./optimize-manager.types";
 import { CalculationSorter } from "./calculation-sorter";
 import { SetupOptimizer } from "./setup-optimizer";
+import { CalculationFinalResultItem } from "@Backend";
 
 let optimizer: SetupOptimizer;
 const sorter = new CalculationSorter();
@@ -29,13 +30,22 @@ onmessage = (e: MessageEvent<OTM_ManagerRequest>) => {
       break;
     }
     case "OPTIMIZE": {
-      const { calcItemParams, testMode } = e.data;
+      const { output, testMode } = e.data;
       const calculations: OptimizeCalculation[] = [];
 
       optimizer.onOutput = (artifacts, totalAttr, attkBonusesArchive, calculator) => {
-        const result = calculator
-          .genTalentCalculator(calcItemParams.pattern)
-          .calculateItem(calcItemParams.calcItem, calcItemParams.elmtModCtrls, calcItemParams.infusedElmt);
+        let result: CalculationFinalResultItem;
+
+        switch (output.type) {
+          case "RXN":
+            result = calculator.genReactionCalculator().calculate(output.item.name);
+            break;
+          default: {
+            result = calculator
+              .genTalentCalculator(output.type)
+              .calculateItem(output.item, output.elmtModCtrls, output.infusedElmt);
+          }
+        }
 
         const calculation: OptimizeCalculation = {
           damage: result.average,
@@ -49,7 +59,7 @@ onmessage = (e: MessageEvent<OTM_ManagerRequest>) => {
           response({
             type: "__ONE",
             artifacts,
-            calcItemParams,
+            output,
             totalAttr,
             attkBonuses: attkBonusesArchive.serialize(),
             result,

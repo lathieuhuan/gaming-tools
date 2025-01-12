@@ -162,7 +162,7 @@ export function OptimizeDeptProvider(props: { children: React.ReactNode }) {
     },
   };
 
-  console.log(state);
+  // console.log(state);
 
   return (
     <OptimizeSystemContext.Provider value={system}>

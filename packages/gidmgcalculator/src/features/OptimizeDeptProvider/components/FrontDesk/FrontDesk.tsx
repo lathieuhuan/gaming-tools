@@ -3,13 +3,8 @@ import { ButtonGroup, Checkbox, FancyBackSvg, Modal } from "rond";
 
 import type { OptimizerExtraConfigs } from "@Backend";
 import type { OptimizeDeptState } from "@OptimizeDept/OptimizeDept.types";
-import type {
-  OnChangeStep,
-  OptimizeDeptModalType,
-  OptimizeStepConfig,
-  OptimizedOutput,
-  Optimizer,
-} from "./FrontDesk.types";
+import type { OptimizedOutput } from "@OptimizeDept/hooks/useOptimizeManager";
+import type { OnChangeStep, OptimizeDeptModalType, OptimizeStepConfig, Optimizer } from "./FrontDesk.types";
 
 import { useStoreSnapshot } from "@Src/features";
 import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
@@ -82,8 +77,7 @@ export function FrontDesk({ state, optimizer, onCloseDept }: FrontDeskProps) {
 
       optimizer.optimize(
         {
-          pattern: output.attPatt,
-          calcItem: output.item,
+          ...output,
           elmtModCtrls: store.setup.elmtModCtrls,
           infusedElmt: store.setup.customInfusion.element, // this should be configurable in the future
         },

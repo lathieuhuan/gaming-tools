@@ -113,10 +113,7 @@ export class OptimizeManager {
     this.tester.load(params);
   };
 
-  optimize = (
-    calcItemParams: OTM_OptimizeRequest["calcItemParams"],
-    ...optimizeParams: OTM_OptimizeRequest["optimizeParams"]
-  ) => {
+  optimize = (output: OTM_OptimizeRequest["output"], ...optimizeParams: OTM_OptimizeRequest["optimizeParams"]) => {
     this.processInfo = {
       percent: 0,
       time: 0,
@@ -125,7 +122,7 @@ export class OptimizeManager {
     this.request({
       type: "OPTIMIZE",
       testMode: this.testMode,
-      calcItemParams,
+      output,
       optimizeParams,
     });
 

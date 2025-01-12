@@ -107,8 +107,6 @@ export class SetupOptimizer extends InputProcessor {
     return artBuffCtrls;
   };
 
-  /** @returns true if this set is accepted, otherwise false */
-
   handleSet = (set: CalcArtifacts, modConfig: OptimizerAllArtifactModConfigs) => {
     // ARTIFACTS
     this.artifacts = set;

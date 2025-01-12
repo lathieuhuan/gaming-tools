@@ -5,6 +5,7 @@ import type {
   TotalAttribute,
   CalculationFinalResultItem,
   AttackElement,
+  TransformativeReaction,
 } from "@Backend";
 import type { CalcArtifacts, ElementModCtrl } from "@Src/types";
 import type { OptimizeResult } from "@OptimizeDept/OptimizeDept.types";
@@ -22,12 +23,24 @@ export type OTM_LoadRequest = {
   params: Parameters<SetupOptimizer["load"]>;
 };
 
+type OptimizedCalcItemOutput = {
+  type: AttackPattern;
+  item: TalentCalcItem;
+};
+
+type OptimizedReactionOutput = {
+  type: "RXN";
+  item: {
+    name: TransformativeReaction;
+  };
+};
+
+export type OptimizedOutput = OptimizedCalcItemOutput | OptimizedReactionOutput;
+
 export type OTM_OptimizeRequest = {
   type: "OPTIMIZE";
   testMode?: boolean;
-  calcItemParams: {
-    pattern: AttackPattern;
-    calcItem: TalentCalcItem;
+  output: OptimizedOutput & {
     elmtModCtrls: ElementModCtrl;
     infusedElmt: AttackElement;
   };
@@ -54,7 +67,7 @@ type OTM_CompleteResponse = {
 export type OTM_OneRunResponse = {
   type: "__ONE";
   artifacts: CalcArtifacts;
-  calcItemParams: OTM_OptimizeRequest["calcItemParams"];
+  output: OTM_OptimizeRequest["output"];
   totalAttr: TotalAttribute;
   attkBonuses: AttackBonuses;
   result: CalculationFinalResultItem;

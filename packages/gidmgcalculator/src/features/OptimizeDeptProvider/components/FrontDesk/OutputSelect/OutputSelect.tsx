@@ -1,18 +1,10 @@
 import { useState } from "react";
 import { clsx } from "rond";
-import type { AppCharacter, AttackPattern, TalentCalcItem, LevelableTalentType } from "@Backend";
-import type { OptimizedOutput } from "../FrontDesk.types";
+import type { AppCharacter } from "@Backend";
+import type { OptimizedOutput } from "@OptimizeDept/hooks/useOptimizeManager";
 
-import { NORMAL_ATTACKS } from "@Backend";
+import { NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@Backend";
 import { useTranslation } from "@Src/hooks";
-
-type RenderGroup = {
-  title: LevelableTalentType;
-  subGroups: Array<{
-    attPatt: AttackPattern;
-    items?: TalentCalcItem[];
-  }>;
-};
 
 interface OutputSelectProps {
   calcList?: AppCharacter["calcList"];
@@ -25,30 +17,37 @@ export function OutputSelect(props: OutputSelectProps) {
   const { t } = useTranslation();
   const [selectedOutput, setSelectedOutput] = useState<OptimizedOutput | undefined>(props.initialValue);
 
-  const renderGroups: RenderGroup[] = [
-    {
-      title: "NAs",
-      subGroups: NORMAL_ATTACKS.map((attPatt) => {
-        return {
-          attPatt,
-          items: calcList?.[attPatt],
-        };
-      }),
-    },
-    {
-      title: "ES",
-      subGroups: [{ attPatt: "ES", items: calcList?.ES }],
-    },
-    {
-      title: "EB",
-      subGroups: [{ attPatt: "EB", items: calcList?.EB }],
-    },
-  ];
-
   const onClickItem = (output: OptimizedOutput) => {
     setSelectedOutput(output);
     props.onChange?.(output);
     props.onChangeValid?.(true);
+  };
+
+  const renderGroup = (title: string, options: OptimizedOutput[] = []) => {
+    return (
+      <div key={title} className="p-3 text-sm bg-surface-1 cursor-default rounded">
+        <p className="text-secondary-1 opacity-80">{t(title)}</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {options.map((option, i) => {
+            const name = option.item.name;
+            const selected = option.type === selectedOutput?.type && name === selectedOutput.item.name;
+
+            return (
+              <span
+                key={i}
+                className={clsx(
+                  "px-2 py-1 font-semibold rounded",
+                  selected ? "bg-active-color text-black" : "hover:bg-surface-3"
+                )}
+                onClick={() => onClickItem(option)}
+              >
+                {option.type === "RXN" ? t(name) : name}
+              </span>
+            );
+          })}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -56,35 +55,28 @@ export function OutputSelect(props: OutputSelectProps) {
       <p>Select an output to be optimized</p>
 
       <div className="mt-2 pr-2 grow space-y-2 custom-scrollbar">
-        {renderGroups.map((group, groupIndex) => {
-          return (
-            <div key={groupIndex} className="p-3 text-sm bg-surface-1 cursor-default rounded">
-              <p className="text-secondary-1 opacity-80">{t(group.title)}</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {group.subGroups.map((subGroup) => {
-                  const isSelectedGroup = subGroup.attPatt === selectedOutput?.attPatt;
-
-                  return subGroup.items?.map((item, index) => {
-                    const isSeleted = isSelectedGroup && item.name === selectedOutput?.item.name;
-
-                    return (
-                      <span
-                        key={`${subGroup.attPatt}.${index}`}
-                        className={clsx(
-                          "px-2 py-1 font-semibold rounded",
-                          isSeleted ? "bg-active-color text-black" : "hover:bg-surface-3"
-                        )}
-                        onClick={() => onClickItem({ attPatt: subGroup.attPatt, item })}
-                      >
-                        {item.name}
-                      </span>
-                    );
-                  });
-                })}
-              </div>
-            </div>
-          );
-        })}
+        {renderGroup(
+          "NAs",
+          NORMAL_ATTACKS.map((type) => {
+            const items = calcList?.[type] || [];
+            return items.map<OptimizedOutput>((item) => ({ type, item }));
+          }).flat()
+        )}
+        {renderGroup(
+          "ES",
+          calcList?.ES.map((item) => ({ type: "ES", item }))
+        )}
+        {renderGroup(
+          "EB",
+          calcList?.EB.map((item) => ({ type: "EB", item }))
+        )}
+        {renderGroup(
+          "RXN_CALC",
+          TRANSFORMATIVE_REACTIONS.map<OptimizedOutput>((reaction) => ({
+            type: "RXN",
+            item: { name: reaction },
+          }))
+        )}
       </div>
     </div>
   );
