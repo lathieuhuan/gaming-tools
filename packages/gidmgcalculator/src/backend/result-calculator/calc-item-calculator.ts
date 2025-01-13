@@ -28,6 +28,14 @@ export class CalcItemCalculator {
     return this.attkBonusesArchive.getBare(...params);
   };
 
+  getRxnMult = (attElmt: AttackElement, reaction?: AttackReaction) => {
+    if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
+      // deal elemental dmg and want amplifying reaction
+      return GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, this.attkBonusesArchive.getBare("pct_", reaction));
+    }
+    return 1;
+  };
+
   genAttackCalculator = (attPatt: ActualAttackPattern, attElmt: AttackElement, itemId?: TalentCalcItemBonusId) => {
     const { totalAttr, attkBonusesArchive, resistances } = this;
 
@@ -65,12 +73,7 @@ export class CalcItemCalculator {
       specialMult = toMult(specialMult);
 
       // CALCULATE REACTION MULTIPLIER
-      let rxnMult = 1;
-
-      // deal elemental dmg and want amplifying reaction
-      if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
-        rxnMult = GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, attkBonusesArchive.getBare("pct_", reaction));
-      }
+      const rxnMult = this.getRxnMult(attElmt, reaction);
 
       // CALCULATE DEFENSE MULTIPLIER
       let defMult = 1;

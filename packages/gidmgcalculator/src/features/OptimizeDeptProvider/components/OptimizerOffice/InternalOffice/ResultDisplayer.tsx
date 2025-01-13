@@ -1,5 +1,5 @@
 import { AppArtifact, ArtifactModifierDescription, ModInputConfig } from "@Backend";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ButtonGroup, Checkbox } from "rond";
 
 import type { Artifact, ArtifactModCtrl } from "@Src/types";
@@ -31,17 +31,22 @@ export function ResultDisplayer({
   onCancelSelecting,
   onRequestLoad,
 }: ResultDisplayerProps) {
-  //
+  const defaultSelectedSetups = processedResult.map((item) => item.manageInfo);
+
   const [selectedArtifact, setSelectedArtifact] = useState<Artifact>();
   const [expandIndexes, setExpandIndexes] = useState<number[]>([]);
-  const [selectedSetups, setSelectedSetups] = useState<ProcessedSetup[]>(
-    processedResult.map((item) => item.manageInfo)
-  );
+  const [selectedSetups, setSelectedSetups] = useState<ProcessedSetup[]>(defaultSelectedSetups);
 
   const dataBySet = useRef<Record<number, AppArtifact>>({});
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const suffixes = ["st", "nd", "rd"];
+
+  useEffect(() => {
+    if (selectingResult && bodyRef.current) {
+      bodyRef.current.scrollLeft = 999;
+    }
+  }, [selectingResult]);
 
   const getSetData = (code: number) => {
     let data = dataBySet.current[code];
@@ -158,7 +163,7 @@ export function ResultDisplayer({
                 {
                   children: "Cancel",
                   onClick: () => {
-                    setSelectedSetups([]);
+                    setSelectedSetups(defaultSelectedSetups);
                     onCancelSelecting();
                   },
                 },
@@ -167,7 +172,7 @@ export function ResultDisplayer({
                   variant: "primary",
                   disabled:
                     selectedSetups.length > maxSelected ||
-                    !selectedSetups.filter((setup) => setup.name === "Optimized").length,
+                    !selectedSetups.filter((setup) => setup.type === "optimized").length,
                   onClick: () => onRequestLoad(selectedSetups),
                 },
               ]}

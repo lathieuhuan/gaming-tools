@@ -15,7 +15,9 @@ interface LauncherProps {
   onRequestLaunch: () => void;
 }
 export function Launcher({ artifactManager, runCount, onRequestLastResult, onRequestLaunch }: LauncherProps) {
-  //
+  const topTypes: ArtifactType[] = ["flower", "plume"];
+  const bottomTypes: ArtifactType[] = ["sands", "goblet", "circlet"];
+
   const count = useMemo(() => {
     const each = {} as Record<ArtifactType, number>;
 
@@ -51,7 +53,8 @@ export function Launcher({ artifactManager, runCount, onRequestLastResult, onReq
         </p>
 
         <div className="mt-1 py-1 space-y-2">
-          <div className="flex flex-wrap justify-center gap-2">{ARTIFACT_TYPES.map(renderArtifactCount)}</div>
+          <div className="flex justify-center gap-2">{topTypes.map(renderArtifactCount)}</div>
+          <div className="flex justify-center gap-2">{bottomTypes.map(renderArtifactCount)}</div>
         </div>
       </div>
 

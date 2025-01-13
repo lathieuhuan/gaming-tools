@@ -71,7 +71,7 @@ function OptimizeIntro(props: OptimizeIntroProps) {
           onClick={() => setActiveIntro(!activeIntro)}
         >
           <FaInfoCircle className="text-lg" />
-          <span>About Setup Optimizer 1.0</span>
+          <span>Setup Optimizer 1.0</span>
         </button>
       </div>
 
@@ -82,10 +82,10 @@ function OptimizeIntro(props: OptimizeIntroProps) {
               The Optimizer uses every configuration of the selected Setup except the main character's Artifacts and
               their Artifact buffs & debuffs.
             </li>
-            <li>The Artifacts in "My Artifacts" will be used instead.</li>
+            <li>Users select Artifacts in "My Artifacts" to be used instead.</li>
             <li>
               The result contains a maximum of 3 Artifact combinations that lead to the highest average value of the
-              selected output.
+              selected output. They can be loaded to the Calculator with all configurations of the selected Setup.
             </li>
           </ul>
         </div>

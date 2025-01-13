@@ -50,7 +50,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   const reactionCalculator = resultCalculator.genReactionCalculator();
 
   for (const reaction of TRANSFORMATIVE_REACTIONS) {
-    finalResult.RXN_CALC[reaction] = reactionCalculator.calculate(reaction);
+    finalResult.RXN_CALC[reaction] = reactionCalculator.calculate(reaction, setup.elmtModCtrls);
   }
 
   data.appWeapons[setup.weapon.code].calcItems?.forEach((calcItem) => {
