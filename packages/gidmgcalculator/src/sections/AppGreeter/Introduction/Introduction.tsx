@@ -25,7 +25,7 @@ export const Introduction = ({
   };
 
   const parseContent = (content: string) => {
-    return content.replace(/\{[a-zA-Z0-9 _'"-]+\}#\[[euf]\]/g, (match) => {
+    return content.replace(/\{[a-zA-Z0-9ã _'"-]+\}#\[[euf]\]/g, (match) => {
       const [bodyPart, typePart = ""] = match.split("#");
       const body = bodyPart.slice(1, -1);
       const type = typePart?.slice(1, -1);

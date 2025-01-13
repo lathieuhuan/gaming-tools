@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaBars, FaCog, FaDonate, FaDownload, FaInfoCircle, FaQuestionCircle, FaUpload } from "react-icons/fa";
-import { Button, LoadingSpin, Popover, useClickOutside } from "rond";
+import { Button, clsx, LoadingSpin, Popover, useClickOutside } from "rond";
 
 import { IS_DEV_ENV } from "@Src/constants";
 import { $AppData } from "@Src/services";
@@ -8,10 +8,17 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { selectIsReadyApp, updateUI, type AppScreen, type UIState } from "@Store/ui-slice";
 
 // Components
-import { ActionButton, NavTabs, NavTabsProps } from "./navbar-components";
+import { NavTabs, type NavTabsProps } from "./NavTabs";
 import { QuickButtons } from "./QuickButtons";
 
 const buttonCls = "w-8 h-8 flex-center";
+
+type OptionProps = {
+  label: string;
+  icon: React.ReactNode;
+  disabled?: boolean;
+  modalType: UIState["appModalType"];
+};
 
 export function NavBar() {
   const dispatch = useDispatch();
@@ -30,6 +37,37 @@ export function NavBar() {
     { label: "My Setups", value: "MY_SETUPS" },
     { label: "Calculator", value: "CALCULATOR" },
   ];
+
+  const option = {
+    INTRO: {
+      label: "Introduction",
+      icon: <FaInfoCircle size="1.125rem" />,
+      modalType: "INTRO",
+    },
+    GUIDE: {
+      label: "Guides",
+      icon: <FaQuestionCircle />,
+      modalType: "GUIDES",
+    },
+    SETTINGS: {
+      label: "Settings",
+      icon: <FaCog />,
+      modalType: "SETTINGS",
+      disabled: !isReadyApp,
+    },
+    DOWNLOAD: {
+      label: "Download",
+      icon: <FaDownload />,
+      modalType: "DOWNLOAD",
+      disabled: !isReadyApp,
+    },
+    UPLOAD: {
+      label: "Upload",
+      icon: <FaUpload />,
+      modalType: "UPLOAD",
+      disabled: !isReadyApp,
+    },
+  } satisfies Record<string, OptionProps>;
 
   const openModal = (type: UIState["appModalType"]) => () => {
     dispatch(updateUI({ appModalType: type }));
@@ -53,6 +91,22 @@ export function NavBar() {
     }
 
     setRefetching(false);
+  };
+
+  const renderOption = ({ label, icon, modalType, disabled }: OptionProps) => {
+    return (
+      <button
+        className={clsx(
+          "px-4 py-2 flex items-center font-bold cursor-default",
+          disabled ? "text-hint-color" : "hover:text-light-default hover:bg-surface-1"
+        )}
+        disabled={disabled}
+        onClick={openModal(modalType)}
+      >
+        {icon}
+        <span className="ml-2">{label}</span>
+      </button>
+    );
   };
 
   return (
@@ -92,8 +146,8 @@ export function NavBar() {
 
           <Popover as="div" className="z-50 right-0 pt-2 pr-2" active={menuDropped} origin="top right">
             <div className="flex flex-col bg-light-default text-black rounded-md overflow-hidden shadow-common">
-              <ActionButton label="Introduction" icon={<FaInfoCircle size="1.125rem" />} onClick={openModal("INTRO")} />
-              <ActionButton label="Guides" icon={<FaQuestionCircle />} onClick={openModal("GUIDES")} />
+              {renderOption(option.INTRO)}
+              {renderOption(option.GUIDE)}
               <NavTabs
                 className="px-4 py-2 xm:hidden font-bold"
                 screens={screens}
@@ -104,14 +158,9 @@ export function NavBar() {
                   closeMenu();
                 }}
               />
-              <ActionButton label="Settings" icon={<FaCog />} disabled={!isReadyApp} onClick={openModal("SETTINGS")} />
-              <ActionButton
-                label="Download"
-                icon={<FaDownload />}
-                disabled={!isReadyApp}
-                onClick={openModal("DOWNLOAD")}
-              />
-              <ActionButton label="Upload" icon={<FaUpload />} disabled={!isReadyApp} onClick={openModal("UPLOAD")} />
+              {renderOption(option.SETTINGS)}
+              {renderOption(option.DOWNLOAD)}
+              {renderOption(option.UPLOAD)}
             </div>
           </Popover>
         </div>

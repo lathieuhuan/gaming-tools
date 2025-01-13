@@ -120,8 +120,16 @@ export function InternalOffice({
         if (buffCtrl) artBuffCtrls.push(buffCtrl);
       }
       for (const control of Modifier_.createArtifactDebuffCtrls()) {
-        const debuffCtrl = Array_.findByIndex(artifactModConfigs.debuffs[control.code], control.index);
-        if (debuffCtrl) artDebuffCtrls.push(debuffCtrl);
+        // bonusLv 1 is 4-set bonus, debuffs only on this type of bonus
+        if (setBonuses.some((bonus) => bonus.code === control.code && bonus.bonusLv)) {
+          const debuffCtrl = Array_.findByIndex(artifactModConfigs.debuffs[control.code], control.index);
+
+          if (debuffCtrl) {
+            artDebuffCtrls.push(debuffCtrl);
+          }
+        } else {
+          artDebuffCtrls.push(control);
+        }
       }
 
       return {

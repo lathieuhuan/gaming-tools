@@ -1,5 +1,6 @@
 export * from "./useWeaponTypeSelect";
 export * from "./useArtifactTypeSelect";
+export * from "./useArtifactSetData";
 export * from "./useItemBoundSetups";
 export * from "./useTabs";
 export * from "./useTranslation";

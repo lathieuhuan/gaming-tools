@@ -5,7 +5,7 @@ import { Button, clsx, useScreenWatcher } from "rond";
 
 import { useOptimizeSystem } from "@Src/features";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectTraveler, updateUI } from "@Store/ui-slice";
+import { selectTargetConfig, selectTraveler, updateUI } from "@Store/ui-slice";
 
 // Component
 import SectionArtifacts from "./SectionArtifacts";
@@ -20,11 +20,11 @@ interface SetupManagerProps {
 export function SetupManager({ isModernUI = false }: SetupManagerProps) {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
-  const targetConfig = useSelector((state) => state.ui.calcTargetConfig);
+  const targetConfig = useSelector(selectTargetConfig);
   const traveler = useSelector(selectTraveler);
 
-  const updateTargetConfig = (active: boolean, onOverview: boolean) => {
-    dispatch(updateUI({ calcTargetConfig: { active, onOverview } }));
+  const updateTargetConfig = (active: boolean, overviewed: boolean) => {
+    dispatch(updateUI({ targetConfig: { active, overviewed } }));
   };
 
   const onClickTargetConfigButton = () => {
@@ -37,7 +37,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
       <SectionWeapon />
       <SectionArtifacts />
 
-      {targetConfig.onOverview ? (
+      {targetConfig.overviewed ? (
         <SectionTarget
           onMinimize={() => updateTargetConfig(false, false)}
           onEdit={() => updateTargetConfig(true, true)}
@@ -71,7 +71,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
         </div>
 
         <div className="flex justify-end gap-3">
-          {!targetConfig.onOverview ? (
+          {!targetConfig.overviewed ? (
             <Button
               title="Target"
               boneOnly

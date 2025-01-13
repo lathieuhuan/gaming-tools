@@ -1,11 +1,11 @@
-import { AppArtifact, ArtifactModifierDescription, ModInputConfig } from "@Backend";
+import { ArtifactModifierDescription, ModInputConfig } from "@Backend";
 import { useEffect, useRef, useState } from "react";
 import { ButtonGroup, Checkbox } from "rond";
 
 import type { Artifact, ArtifactModCtrl } from "@Src/types";
 import type { ProcessedResult, ProcessedSetup } from "./InternalOffice.types";
 
-import { $AppArtifact } from "@Src/services";
+import { useArtifactSetData } from "@Src/hooks";
 import Array_ from "@Src/utils/array-utils";
 import { getArtifactDescription } from "@Src/utils/description-parsers";
 
@@ -37,7 +37,7 @@ export function ResultDisplayer({
   const [expandIndexes, setExpandIndexes] = useState<number[]>([]);
   const [selectedSetups, setSelectedSetups] = useState<ProcessedSetup[]>(defaultSelectedSetups);
 
-  const dataBySet = useRef<Record<number, AppArtifact>>({});
+  const setData = useArtifactSetData();
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const suffixes = ["st", "nd", "rd"];
@@ -48,19 +48,9 @@ export function ResultDisplayer({
     }
   }, [selectingResult]);
 
-  const getSetData = (code: number) => {
-    let data = dataBySet.current[code];
-
-    if (!data) {
-      data = $AppArtifact.getSet(code)!;
-      dataBySet.current[code] = data;
-    }
-    return data;
-  };
-
   const renderModView = (type: "B" | "D") => (config: ArtifactModCtrl) => {
     if (config.activated) {
-      const data = getSetData(config.code);
+      const data = setData.get(config.code);
       const mods: Modifiers = type === "B" ? data.buffs : data.debuffs;
       const mod = Array_.findByIndex(mods, config.index);
 
@@ -118,7 +108,7 @@ export function ResultDisplayer({
                     {processedItem.artDebuffCtrls.map(renderModView("D"))}
                   </div>
                 }
-                getSetData={getSetData}
+                getSetData={setData.get}
                 onClickExpand={(expanded) => {
                   setExpandIndexes(
                     expanded

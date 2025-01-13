@@ -59,9 +59,10 @@ export function ResultItemDisplayer({
               >
                 {(className, imgCls) => (
                   <ItemThumbnail
-                    compact
                     className={className}
                     imgCls={imgCls}
+                    compact
+                    title={data.name}
                     item={{ ...artifact, icon: data[artifact.type].icon }}
                   />
                 )}

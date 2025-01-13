@@ -1,31 +1,6 @@
 import { clsx } from "rond";
-
 import type { AppScreen } from "@Store/ui-slice";
 import { useSelector } from "@Store/hooks";
-
-interface ActionButtonProps {
-  className?: string;
-  icon?: React.ReactNode;
-  label: string;
-  disabled?: boolean;
-  onClick?: () => void;
-}
-export function ActionButton({ className = "", icon, label, disabled, onClick }: ActionButtonProps) {
-  return (
-    <button
-      className={clsx(
-        "px-4 py-2 flex items-center font-bold cursor-default",
-        disabled ? "text-hint-color" : "hover:text-light-default hover:bg-surface-1",
-        className
-      )}
-      disabled={disabled}
-      onClick={onClick}
-    >
-      {icon}
-      <span className="ml-2">{label}</span>
-    </button>
-  );
-}
 
 export interface NavTabsProps {
   ready?: boolean;

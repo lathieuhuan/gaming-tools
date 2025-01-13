@@ -1,10 +1,12 @@
 import { FaBalanceScaleLeft, FaCopy, FaSave, FaShareAlt, FaArrowUp, FaPlus, FaCheck } from "react-icons/fa";
+import { FaSun } from "react-icons/fa6";
+import { MdDownload } from "react-icons/md";
 import { SiTarget } from "react-icons/si";
-import { BiImport } from "react-icons/bi";
 import { Button, ButtonGroup, FancyBackSvg, Input, TrashCanSvg, type ButtonProps } from "rond";
 
 import { NewSetupManageInfo, selectActiveId, updateCalculator } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
+import { useOptimizeSystem } from "@OptimizeDept/index";
 import { useCalcModalCtrl } from "../../ContextProvider";
 import { useSetupDirectorKit } from "../../SetupDirector";
 
@@ -15,6 +17,7 @@ export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
   const activeId = useSelector(selectActiveId);
   const calcModalCtrl = useCalcModalCtrl();
   const { displayedSetups, comparedSetups, canAddMoreSetup, tempStandardId, control, dispatch } = useSetupDirectorKit();
+  const { state, contact } = useOptimizeSystem();
 
   const onSelectSetup = (id: number) => {
     if (id !== activeId) {
@@ -66,46 +69,68 @@ export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
 
   return (
     <div>
-      <div className="px-4 pt-4 flex flex-col gap-4" style={{ height: "26rem" }}>
-        {displayedSetups.map((setup, setupIndex) => {
-          return (
-            <div key={setup.ID} className="border-b border-surface-border">
-              <div className="flex gap-4">
-                <Input
-                  placeholder="Enter Setup's name"
-                  className="w-full"
-                  value={setup.name}
-                  maxLength={20}
-                  onChange={control.changeSetupName(setupIndex)}
-                />
+      <div className="px-4 pt-4 flex flex-col" style={{ height: "28rem" }}>
+        <div className="space-y-4">
+          {displayedSetups.map((setup, setupIndex) => {
+            return (
+              <div key={setup.ID} className="border-b border-surface-border">
+                <div className="flex gap-4">
+                  <Input
+                    placeholder="Enter Setup's name"
+                    className="w-full"
+                    value={setup.name}
+                    maxLength={20}
+                    onChange={control.changeSetupName(setupIndex)}
+                  />
 
-                <div className="w-8 h-8 shrink-0">
-                  {setup.status === "OLD" ? (
+                  <div className="w-8 h-8 shrink-0">
+                    {setup.status === "OLD" ? (
+                      <Button
+                        shape="square"
+                        variant={setup.ID === activeId ? "active" : "default"}
+                        icon={<FaArrowUp />}
+                        onClick={() => onSelectSetup(setup.ID)}
+                      />
+                    ) : null}
+                  </div>
+                </div>
+
+                <div className="mt-3 flex">
+                  {getActionsConfig(setup, setupIndex).map(({ className = "", ...rest }, i) => (
                     <Button
+                      key={i}
+                      variant="custom"
                       shape="square"
-                      variant={setup.ID === activeId ? "active" : "default"}
-                      icon={<FaArrowUp />}
-                      onClick={() => onSelectSetup(setup.ID)}
+                      withShadow={false}
+                      className={`w-10 h-10 flex-center ${className}`}
+                      {...rest}
                     />
-                  ) : null}
+                  ))}
                 </div>
               </div>
+            );
+          })}
+        </div>
 
-              <div className="mt-3 flex">
-                {getActionsConfig(setup, setupIndex).map(({ className = "", ...rest }, i) => (
-                  <Button
-                    key={i}
-                    variant="custom"
-                    shape="square"
-                    withShadow={false}
-                    className={`w-10 h-10 flex-center ${className}`}
-                    {...rest}
-                  />
-                ))}
-              </div>
-            </div>
-          );
-        })}
+        {canAddMoreSetup && (
+          <div className="mt-auto py-4 flex gap-4">
+            <Button
+              className="w-full text-black"
+              icon={<MdDownload className="text-xl" />}
+              onClick={calcModalCtrl.requestImportSetup}
+            >
+              Import
+            </Button>
+            <Button
+              variant="custom"
+              className="w-full bg-secondary-1 text-black"
+              icon={<FaPlus />}
+              onClick={control.addNewSetup}
+            >
+              Add
+            </Button>
+          </div>
+        )}
       </div>
 
       <ButtonGroup
@@ -117,18 +142,12 @@ export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
             onClick: onClose,
           },
           {
-            children: "Import",
-            icon: <BiImport className="text-lg" />,
+            children: "Optimize",
+            icon: <FaSun className={`text-lg ${state.status === "OPTIMIZING" ? "animate-spin" : ""}`} />,
             onClick: () => {
-              calcModalCtrl.requestImportSetup();
+              contact();
               onClose();
             },
-          },
-          {
-            children: "Add",
-            icon: <FaPlus />,
-            disabled: !canAddMoreSetup,
-            onClick: control.addNewSetup,
           },
           {
             children: "Apply",

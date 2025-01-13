@@ -38,7 +38,7 @@ export default class Modifier_ {
         initialValues.push(value);
       }
     }
-    return initialValues.length ? initialValues : undefined;
+    return initialValues.length ? initialValues : [];
   }
 
   static createModCtrl(mod: Modifier, forSelf: boolean): ModifierCtrl {
@@ -47,7 +47,7 @@ export default class Modifier_ {
     return {
       index: mod.index,
       activated: false,
-      ...(inputs ? { inputs } : null),
+      ...(inputs.length ? { inputs } : null),
     };
   }
 

@@ -24,9 +24,9 @@ export interface UIState extends Pick<AppSettings, "isTabLayout"> {
   atScreen: AppScreen;
   traveler: Traveler;
   appModalType: "" | "INTRO" | "GUIDES" | "SETTINGS" | "UPLOAD" | "DOWNLOAD" | "DONATE";
-  calcTargetConfig: {
+  targetConfig: {
     active: boolean;
-    onOverview: boolean;
+    overviewed: boolean;
   };
   setupDirectorActive: boolean;
   trackerState: TrackerState;
@@ -42,9 +42,9 @@ const initialState: UIState = {
   traveler,
   appModalType: "",
   mySetupsModalType: "",
-  calcTargetConfig: {
+  targetConfig: {
     active: false,
-    onOverview: true,
+    overviewed: true,
   },
   setupDirectorActive: false,
   trackerState: "close",
