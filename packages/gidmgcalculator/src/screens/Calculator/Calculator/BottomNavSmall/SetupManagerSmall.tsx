@@ -5,7 +5,8 @@ import { Button, ButtonGroup, FancyBackSvg, Input, TrashCanSvg, type ButtonProps
 
 import { NewSetupManageInfo, selectActiveId, updateCalculator } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
-import { useCalcModalCtrl, useSetupDirectorKit } from "@Src/screens/Calculator";
+import { useCalcModalCtrl } from "../../ContextProvider";
+import { useSetupDirectorKit } from "../../SetupDirector";
 
 interface SetupManagerSmallProps {
   onClose: () => void;

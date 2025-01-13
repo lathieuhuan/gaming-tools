@@ -1,0 +1,64 @@
+import { BiDetail } from "react-icons/bi";
+import { FaSkull } from "react-icons/fa";
+import { FaSun } from "react-icons/fa6";
+import { clsx, useScreenWatcher } from "rond";
+
+import { useOptimizeSystem } from "@Src/features";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { updateUI } from "@Store/ui-slice";
+
+export function QuickButtons() {
+  const dispatch = useDispatch();
+  const screenWatcher = useScreenWatcher();
+  const isTabLayout = useSelector((state) => state.ui.isTabLayout);
+  const atScreen = useSelector((state) => state.ui.atScreen);
+  const trackerState = useSelector((state) => state.ui.trackerState);
+  const calcTargetConfig = useSelector((state) => state.ui.calcTargetConfig);
+  const { state, contact } = useOptimizeSystem();
+
+  if (atScreen !== "CALCULATOR") {
+    return null;
+  }
+  const isVisibleOnMobileTab = !screenWatcher.isFromSize("sm") && isTabLayout;
+
+  const onClickTargetButton = () => {
+    dispatch(updateUI({ calcTargetConfig: { active: true, onOverview: false } }));
+  };
+
+  const onClickTrackerButton = () => {
+    dispatch(updateUI({ trackerState: "open" }));
+  };
+
+  return (
+    <div className="flex divide-x divide-surface-border">
+      {isVisibleOnMobileTab && !calcTargetConfig.onOverview ? (
+        <button className="w-8 h-8 flex-center bg-surface-3" onClick={onClickTargetButton}>
+          <FaSkull />
+        </button>
+      ) : null}
+
+      {trackerState === "hidden" ? (
+        <button className="w-8 h-8 flex-center text-xl bg-surface-3" onClick={onClickTrackerButton}>
+          <BiDetail />
+        </button>
+      ) : null}
+
+      {isVisibleOnMobileTab && state.pendingResult ? (
+        <button className="w-8 h-8 flex-center bg-surface-3" onClick={contact}>
+          <FaSun
+            className={clsx(
+              "text-lg",
+              !state.active
+                ? state.status === "OPTIMIZING"
+                  ? "animate-spin"
+                  : state.result.length
+                  ? "text-danger-3"
+                  : null
+                : null
+            )}
+          />
+        </button>
+      ) : null}
+    </div>
+  );
+}
