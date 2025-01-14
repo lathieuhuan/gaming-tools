@@ -32,19 +32,19 @@ export function QuickButtons() {
   return (
     <div className="flex divide-x divide-surface-border">
       {isVisibleOnMobileTab && !targetConfig.overviewed ? (
-        <button className="w-8 h-8 flex-center bg-surface-3" onClick={onClickTargetButton}>
+        <button className="w-8 h-8 flex-center bg-surface-3 glow-on-hover" onClick={onClickTargetButton}>
           <FaSkull />
         </button>
       ) : null}
 
       {trackerState === "hidden" ? (
-        <button className="w-8 h-8 flex-center text-xl bg-surface-3" onClick={onClickTrackerButton}>
-          <BiDetail />
+        <button className="w-8 h-8 flex-center bg-surface-3 glow-on-hover" onClick={onClickTrackerButton}>
+          <BiDetail className="text-xl" />
         </button>
       ) : null}
 
       {isVisibleOnMobileTab && state.pendingResult ? (
-        <button className="w-8 h-8 flex-center bg-surface-3" onClick={contact}>
+        <button className="w-8 h-8 flex-center bg-surface-3 glow-on-hover" onClick={contact}>
           <FaSun
             className={clsx(
               "text-lg",

@@ -50,7 +50,7 @@ export class OptimizeManager {
           break;
         case "COMPLETE": {
           this.notifyComplete(e.data.result);
-          console.log("runTime:", e.data.runTime);
+          // console.log("runTime:", e.data.runTime);
           break;
         }
         case "__ONE": {
