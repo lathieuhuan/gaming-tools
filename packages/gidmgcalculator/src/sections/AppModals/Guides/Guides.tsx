@@ -1,7 +1,7 @@
 import { FaBars, FaCog } from "react-icons/fa";
 import { CollapseList, type ModalControl, Modal } from "rond";
 
-import { Red, Yellow } from "@Src/components";
+import { markYellow } from "@Src/components";
 import { CalculatorGuide } from "./CalculatorGuide";
 
 export function Guides(props: ModalControl) {
@@ -17,21 +17,11 @@ export function Guides(props: ModalControl) {
                   <div>
                     <p>- Acronyms used in the App:</p>
                     <ul className="pl-8 mt-1 list-disc space-y-1">
-                      <li>
-                        <Yellow>NA</Yellow>: Normal Attacks
-                      </li>
-                      <li>
-                        <Yellow>ES</Yellow>: Elemental Skill
-                      </li>
-                      <li>
-                        <Yellow>EB</Yellow>: Elemental Burst
-                      </li>
-                      <li>
-                        <Yellow>A</Yellow>: Ascension, e.g. A4 is talent unlocked at Acsension 4
-                      </li>
-                      <li>
-                        <Yellow>C</Yellow>: Constellation, e.g. C1 is skill unlocked at Constellation 1
-                      </li>
+                      <li>{markYellow("NA")}: Normal Attacks</li>
+                      <li>{markYellow("ES")}: Elemental Skill</li>
+                      <li>{markYellow("EB")}: Elemental Burst</li>
+                      <li>{markYellow("A")}: Ascension, e.g. A4 is talent unlocked at Acsension 4</li>
+                      <li>{markYellow("C")}: Constellation, e.g. C1 is skill unlocked at Constellation 1</li>
                     </ul>
                   </div>
                   <p>
@@ -59,12 +49,10 @@ export function Guides(props: ModalControl) {
               body: (
                 <div className="space-y-1 contains-inline-svg">
                   <p>
-                    - You can add and manage your characters and items in <Yellow>My Characters</Yellow>,{" "}
-                    <Yellow>My Weapons</Yellow>, <Yellow>My Artifacts</Yellow>.
+                    - You can add and manage your characters and items in {markYellow("My Characters")},{" "}
+                    {markYellow("My Weapons")}, {markYellow("My Artifacts")}.
                   </p>
-                  <p>
-                    - You can save setups from the Calculator and view them in <Yellow>My Setups</Yellow>.
-                  </p>
+                  <p>- You can save setups from the Calculator and view them in {markYellow("My Setups")}.</p>
                   <p className="text-danger-3">
                     - Your data saved in the App is just temporary. If you wish it to be available in your next visit,
                     you need to download your data and then upload it to the App again.
@@ -74,12 +62,12 @@ export function Guides(props: ModalControl) {
                     Settings.
                   </p>
                   <p>
-                    - Open the <FaBars /> menu at the top right corner to <Yellow>download</Yellow> and{" "}
-                    <Yellow>upload</Yellow> your data.
+                    - Open the <FaBars /> menu at the top right corner to {markYellow("download")} and{" "}
+                    {markYellow("upload")} your data.
                   </p>
                   <p>
-                    - Your saved data is <Red>limited</Red>. When creating new Setup in the Calculator, you should pick
-                    items that you already have if possible to reuse them and save space.
+                    - Your saved data is <span className="text-danger-3">limited</span>. When creating new Setup in the
+                    Calculator, you should pick items that you already have if possible to reuse them and save space.
                   </p>
                 </div>
               ),
@@ -94,8 +82,8 @@ export function Guides(props: ModalControl) {
                   </p>
                   <p>
                     - Be careful when the Calculator is under the effect of{" "}
-                    <Yellow>Separate main character's info on each setup</Yellow> (level, constellation, talents) on
-                    each setup. It can make things complicated.
+                    {markYellow("Separate main character's info on each setup")} (level, constellation, talents) on each
+                    setup. It can make things complicated.
                   </p>
                   <p>
                     - When the "Separate main character's info on each setup" option is deactivated. Info on the current
@@ -103,16 +91,16 @@ export function Guides(props: ModalControl) {
                     calculating session (e.g. when select new main character).
                   </p>
                   <p>
-                    - <Yellow>Auto save my database to browser's local storage</Yellow> will help you store your data
-                    for the next visits. It takes less than 500KB to store 200 weapons & 800 artifacts. Those are
-                    current limits of the user database.
+                    - {markYellow("Auto save my database to browser's local storage")} will help you store your data for
+                    the next visits. It takes less than 500KB to store 200 weapons & 800 artifacts. Those are current
+                    limits of the user database.
                   </p>
                   <p className="text-danger-3">
                     - Change of "Auto save my database to browser's local storage" option can remove your current data
                     and works on the App.
                   </p>
                   <p>
-                    - <Yellow>Default values</Yellow> will be used whenever a new character or item is created in your
+                    - {markYellow("Default values")} will be used whenever a new character or item is created in your
                     data or in the Calculator tab.
                   </p>
                 </div>

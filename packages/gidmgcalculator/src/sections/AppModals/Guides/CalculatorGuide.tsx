@@ -5,7 +5,7 @@ import { IoDocumentText } from "react-icons/io5";
 import { BiImport } from "react-icons/bi";
 import { TrashCanSvg } from "rond";
 
-import { Green, Yellow } from "@Src/components";
+import { markGreen, markYellow } from "@Src/components";
 
 interface ListProps {
   children: React.ReactNode;
@@ -37,28 +37,28 @@ export function CalculatorGuide() {
       <p>The Calculator contains 4 columns, from left to right they are:</p>
       <ListDecimal>
         <li>
-          <Green>Character Overview</Green> displays general information and attributes summary of the character,
+          {markGreen("Character Overview")} displays general information and attributes summary of the character,
           details of the weapon, attributes summary and set bonuses of the artifacts, levels of the constellation and
           talents. Here you can:
           <ListDisc>
             <li>
-              Switch the <Yellow>main character</Yellow> to be calculated by pressing <FaSyncAlt /> or the character's
+              Switch the {markYellow("main character")} to be calculated by pressing <FaSyncAlt /> or the character's
               icon. Change the character level.
             </li>
             <li>
               Change weapon level and refinement via dropdown selects <FaChevronDown />
             </li>
             <li>
-              Change <Yellow>talent levels</Yellow> via dropdown selects <FaChevronDown />. Change{" "}
-              <Yellow>constellation level</Yellow> by pressing their icons.
+              Change {markYellow("talent levels")} via dropdown selects <FaChevronDown />. Change{" "}
+              {markYellow("constellation level")} by pressing their icons.
             </li>
           </ListDisc>
         </li>
         <li>
-          <Green>Modifiers Manager</Green>.
+          {markGreen("Modifiers Manager")}.
           <ListDisc>
             <li>
-              Modifiers are <Yellow>Buffs</Yellow> applied to the character and <Yellow>Debuffs</Yellow> applied to the
+              Modifiers are {markYellow("Buffs")} applied to the character and {markYellow("Debuffs")} applied to the
               target coming from various sources such as teammates, weapons, artifacts...
             </li>
             <li>
@@ -77,12 +77,12 @@ export function CalculatorGuide() {
           </ListDisc>
         </li>
         <li>
-          <Green>Setups Manager</Green>. Here you can
+          {markGreen("Setups Manager")}. Here you can
           <ListDisc>
             <li>
-              Make changes to <Yellow>Teammates</Yellow>, <Yellow>Weapon</Yellow>, <Yellow>Artifacts</Yellow>, and{" "}
-              <Yellow>Target</Yellow>. Press the item / character icons to switch them. Press 2 icons at the bottom
-              right corner to select items from your data <i>(see User Data guide section below)</i>.
+              Make changes to {markYellow("Teammates")}, {markYellow("Weapon")}, {markYellow("Artifacts")}, and{" "}
+              {markYellow("Target")}. Press the item / character icons to switch them. Press 2 icons at the bottom right
+              corner to select items from your data <i>(see User Data guide section below)</i>.
             </li>
             <li>
               Switch setups and perform quick actions to setups, or open the full manager with <IoDocumentText /> and do
@@ -99,17 +99,16 @@ export function CalculatorGuide() {
               </ul>
             </li>
             <li>
-              You can <Yellow>import a setup</Yellow> in 2 ways: (1) Open the full manager, choose <BiImport /> Import
+              You can {markYellow("import a setup")} in 2 ways: (1) Open the full manager, choose <BiImport /> Import
               then paste the code, choose Proceed. (2) Follow the link which contains the code.
             </li>
           </ListDisc>
         </li>
         <li>
-          <Green>Damage Results</Green> shows the calculation results. With the menu <MdMoreVert className="text-xl" />{" "}
-          you can
+          {markGreen("Calculation Results")}. With the menu <MdMoreVert className="text-xl" /> you can
           <ListDisc>
             <li>
-              Call the <Yellow>Tracker</Yellow> to inspect the calculation details: what buffs and debuffs are used,
+              Call the {markYellow("Tracker")} to inspect the calculation details: what buffs and debuffs are used,
               their values, sources...
             </li>
             <li>Expand the results for better view when comparing many setups (not available on small devices).</li>

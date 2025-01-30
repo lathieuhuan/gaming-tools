@@ -5,7 +5,7 @@ import { useQuery } from "@Src/hooks";
 import { CloseButton, LoadingSpin } from "rond";
 
 // Conponent
-import { Green, Dim } from "../../span";
+import { markDim, markGreen } from "../../span";
 import { AbilityCarousel } from "../ability-list-components";
 
 interface ConstellationDetailProps {
@@ -35,13 +35,11 @@ export function ConstellationDetail({ appCharacter, consLv, onChangeConsLv, onCl
         onClickNext={() => onChangeConsLv?.(consLv + 1)}
       />
       <p className={`text-xl text-${vision} font-bold`}>{consInfo.name}</p>
-      <p className="text-sm">
-        Constellation Lv. <Green b>{consLv}</Green>
-      </p>
+      <p className="text-sm">Constellation Lv. {markGreen(consLv, "bold")}</p>
       <div className="mt-3 hide-scrollbar">
         <p className={isLoading ? "py-4 flex justify-center" : "whitespace-pre-wrap"}>
           <LoadingSpin active={isLoading} />
-          {isError && <Dim>Error. Rebooting...</Dim>}
+          {isError && markDim("Error. Rebooting...")}
           {descriptions?.[consLv - 1]}
         </p>
       </div>

@@ -9,7 +9,7 @@ import { selectCalcFinalResult, selectTarget } from "@Store/calculator-slice";
 import { getTotalRecordValue } from "./TrackerCore.utils";
 
 // Component
-import { Green, Dim } from "@Src/components";
+import { markGreen, markDim } from "@Src/components";
 import { AttributesTracker } from "./AttributesTracker";
 import { BonusesTracker } from "./BonusesTracker";
 import { DebuffsTracker } from "./DebuffsTracker";
@@ -79,7 +79,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
 
         <div className="flex flex-col items-center">
           <p>
-            <Dim>char. Lv.</Dim> <Green>{charLv}</Green> + 100
+            {markDim("char. Lv.")} {markGreen(charLv)} + 100
           </p>
 
           <div className="my-1 w-full h-px bg-rarity-1" />
@@ -87,16 +87,15 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
           <p className="px-2 text-center">
             {totalDefReduct ? (
               <>
-                (1 - <Dim>DEF reduction</Dim> <Green>{totalDefReduct}</Green> / 100) *
+                (1 - {markDim("DEF reduction")} {markGreen(totalDefReduct)} / 100) *
               </>
             ) : null}{" "}
             {totalDefIgnore ? (
               <>
-                (1 - <Dim>DEF ignore</Dim> <Green>{totalDefIgnore}</Green> / 100) *
+                (1 - {markDim("DEF ignore")} {markGreen(totalDefIgnore)} / 100) *
               </>
             ) : null}{" "}
-            (<Dim>target Lv.</Dim> <Green>{target.level}</Green> + 100) + <Dim>char. Lv.</Dim> <Green>{charLv}</Green> +
-            100
+            ({markDim("target Lv.")} {markGreen(target.level)} + 100) + {markDim("char. Lv.")} {markGreen(charLv)} + 100
           </p>
         </div>
       </div>
@@ -151,7 +150,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     },
     {
       heading: "Reactions",
-      body: <CalcItemTracker records={result?.RXN_CALC} resultGroup={finalResult.RXN_CALC} />,
+      body: <CalcItemTracker records={result?.RXN_CALC} resultGroup={finalResult.RXN_CALC} forReactions />,
     },
   ];
 

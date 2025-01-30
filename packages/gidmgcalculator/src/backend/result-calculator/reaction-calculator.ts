@@ -23,19 +23,10 @@ export class ReactionCalculator {
   calculate = (reaction: TransformativeReaction, elmtModCtrl?: ElementModCtrl): CalculationFinalResultAttackItem => {
     const config = TRANSFORMATIVE_REACTION_CONFIG[reaction];
     const flat = this.getBonus("flat", reaction);
-    const baseValue = this.baseDmg * config.mult + flat;
+    const baseValue = this.baseDmg * config.mult;
     const normalMult = 1 + this.getBonus("pct_", reaction) / 100;
     let rxnMult = 1;
     let resMult = 1;
-
-    // if (config.attElmt === "absorb") {
-    //   if (elmtModCtrl?.absorption) {
-    //     rxnMult = this.itemCalculator.getRxnMult(elmtModCtrl.absorption, elmtModCtrl.reaction);
-    //     resMult = this.resistances[elmtModCtrl.absorption];
-    //   }
-    // } else {
-    //   resMult = this.resistances[config.attElmt];
-    // }
 
     const attElmt = config.attElmt === "absorb" ? elmtModCtrl?.absorption : config.attElmt;
 
@@ -43,7 +34,7 @@ export class ReactionCalculator {
       resMult = this.resistances[attElmt];
     }
 
-    const nonCrit = baseValue * normalMult * rxnMult * resMult;
+    const nonCrit = (baseValue * normalMult + flat) * rxnMult * resMult;
     const cRate_ = Math.max(this.getBonus("cRate_", reaction), 0) / 100;
     const cDmg_ = this.getBonus("cDmg_", reaction) / 100;
 

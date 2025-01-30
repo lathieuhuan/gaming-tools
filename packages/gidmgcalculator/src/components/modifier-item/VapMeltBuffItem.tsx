@@ -1,7 +1,7 @@
 import { round } from "rond";
 import { GeneralCalc, AmplifyingReaction, ElementType, AttackBonuses, AttackBonusesControl } from "@Backend";
 
-import { Green } from "../span";
+import { markGreen } from "../span";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
 interface VapMeltBuffItemProps extends Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle"> {
@@ -30,7 +30,7 @@ export function VapMeltBuffItem({ reaction, element, attkBonuses, ...rest }: Vap
       description={
         <>
           Increases <span className={`text-${element} capitalize`}>{element} DMG</span> by{" "}
-          <Green b>{round(mult, 3)}</Green> times.
+          {markGreen(round(mult, 3), "bold")} times.
         </>
       }
     />

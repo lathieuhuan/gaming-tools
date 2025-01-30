@@ -1,4 +1,4 @@
-import { Green } from "../span";
+import { markGreen } from "../span";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
 export function GeoResoDebuffItem(props: Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle">) {
@@ -8,8 +8,8 @@ export function GeoResoDebuffItem(props: Pick<GenshinModifierViewProps, "mutable
       heading="Enduring Rock"
       description={
         <>
-          Shielded characters dealing DMG to enemies will decrease their <Green>Geo RES</Green> by <Green b>20%</Green>{" "}
-          for 15s.
+          Shielded characters dealing DMG to enemies will decrease their {markGreen("Geo RES")} by{" "}
+          {markGreen("20%", "bold")} for 15s.
         </>
       }
     />

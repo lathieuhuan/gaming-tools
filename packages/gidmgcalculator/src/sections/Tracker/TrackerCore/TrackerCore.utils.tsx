@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { round } from "rond";
 import { CalcAtomicRecord } from "@Backend";
 
-import { Green } from "@Src/components";
+import { markGreen } from "@Src/components";
 
 export const recordListStyles = "columns-1 md:columns-2 space-y-1";
 
@@ -27,7 +27,7 @@ export function renderRecord(calcFn?: (value: number) => string | number, extraD
       <li key={index} className="text-hint-color text-sm">
         {description?.[0]?.toUpperCase()}
         {description.slice(1)} {extraDesc ? `${extraDesc(value)} ` : ""}
-        <Green>{calcFn ? calcFn(value) : value}</Green>
+        {markGreen(calcFn ? calcFn(value) : value)}
       </li>
     ) : null;
 }

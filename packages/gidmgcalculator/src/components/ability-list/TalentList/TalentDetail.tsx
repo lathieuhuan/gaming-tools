@@ -10,7 +10,7 @@ import { $AppCharacter } from "@Src/services";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
 
 // Component
-import { Dim } from "../../span";
+import { markDim } from "../../span";
 import { AbilityCarousel } from "../ability-list-components";
 
 const useTalentDescriptions = (characterName: string, auto: boolean) => {
@@ -166,7 +166,7 @@ export function TalentDetail({ appCharacter, detailIndex, onChangeDetailIndex, o
         ) : (
           <p className={isLoading ? "py-4 flex justify-center" : "mt-4 whitespace-pre-wrap"}>
             <LoadingSpin active={isLoading} />
-            {isError && <Dim>Error. Rebooting...</Dim>}
+            {isError && markDim("Error. Rebooting...")}
             {descriptions?.[detailIndex]}
           </p>
         )}

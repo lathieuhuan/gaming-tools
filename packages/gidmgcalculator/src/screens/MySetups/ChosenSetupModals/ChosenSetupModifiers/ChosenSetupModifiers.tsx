@@ -7,7 +7,7 @@ import { $AppData } from "@Src/services";
 import { calculateChosenSetup } from "../../MySetups.utils";
 
 // Component
-import { Yellow } from "@Src/components";
+import { markYellow } from "@Src/components";
 import {
   WeaponBuffsView,
   ArtifactBuffsView,
@@ -146,9 +146,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
       <ModifierWrapper title="Target" className="w-68">
         <div className="h-full px-2">
           <p className="text-lg">{title}</p>
-          <p>
-            Level: <Yellow>{target.level}</Yellow>
-          </p>
+          <p>Level: {markYellow(target.level)}</p>
 
           {variant && <p className="capitalize">{variant}</p>}
 

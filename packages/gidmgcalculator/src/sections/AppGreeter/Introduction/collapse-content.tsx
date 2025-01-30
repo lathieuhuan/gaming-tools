@@ -1,6 +1,6 @@
 import { FaBars, FaDiscord, FaPuzzlePiece, FaRedditAlien } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
-import { Yellow } from "@Src/components";
+import { markYellow } from "@Src/components";
 
 export const VersionRecap = (
   <div className="space-y-2 contains-inline-svg">
@@ -92,7 +92,7 @@ const CONTACTS = [
 export const About = (
   <div className="space-y-1">
     <p>
-      - Hello, I'm <Yellow>Ronqueroc</Yellow> the owner of this App. I lost my job at a hotel due to the pandemic and
+      - Hello, I'm {markYellow("Ronqueroc")} the owner of this App. I lost my job at a hotel due to the pandemic and
       started to learn programming on July 2020.
     </p>
     <p>
