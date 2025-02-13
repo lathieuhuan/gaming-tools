@@ -128,7 +128,7 @@ const ArtifactSmith = ({
 
           <div>
             <h5 className="text-secondary-1 text-sm font-semibold">Batch Forging</h5>
-            <p className="text-sm">You now can select multiple Artifact types.</p>
+            <p className="text-sm">You can select multiple Artifact types.</p>
           </div>
         </div>
 

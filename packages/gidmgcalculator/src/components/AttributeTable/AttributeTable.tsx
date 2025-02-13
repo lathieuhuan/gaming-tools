@@ -6,7 +6,7 @@ import { ATTACK_ELEMENTS, CORE_STAT_TYPES, GeneralCalc, CoreStat, TotalAttribute
 import { useTranslation } from "@Src/hooks";
 
 // Component
-import { Green } from "@Src/components";
+import { markGreen } from "@Src/components";
 
 const { Row, Cell } = StatsTable;
 
@@ -31,19 +31,15 @@ const EmSection = ({ em }: EmSectionProps) => {
       </Row>
       <CollapseSpace active={dropped}>
         <ul className="px-2 py-1 text-sm flex flex-col space-y-1">
-          <li>
-            Increases damage dealt by Vaporize and Melt by <Green>{rxnBonusFromEM.amplifying}%</Green>.
-          </li>
+          <li>Increases damage dealt by Vaporize and Melt by {markGreen(rxnBonusFromEM.amplifying)}%.</li>
           <li>
             Increases damage dealt by Overloaded, Superconduct, Electro-Charged, Burning, Shattered, Swirl, Bloom,
-            Hyperbloom, and Burgeon by <Green>{rxnBonusFromEM.transformative}%</Green>.
+            Hyperbloom, and Burgeon by {markGreen(rxnBonusFromEM.transformative)}%.
           </li>
-          <li>
-            Increases the DMG Bonus provided by Aggravate and Spread by <Green>{rxnBonusFromEM.quicken}%</Green>.
-          </li>
+          <li>Increases the DMG Bonus provided by Aggravate and Spread by {markGreen(rxnBonusFromEM.quicken)}%.</li>
           <li>
             Increases the damage absorption power of shields created through Crystallize by{" "}
-            <Green>{rxnBonusFromEM.shield}%</Green>.
+            {markGreen(rxnBonusFromEM.shield)}%.
           </li>
         </ul>
       </CollapseSpace>
@@ -73,7 +69,7 @@ export function AttributeTable({ attributes }: AttributeTableProps) {
               <p className={clsx("mr-2", bonus !== undefined && "group-hover:hidden")}>{total}</p>
               {bonus !== undefined ? (
                 <p className="mr-2 hidden whitespace-nowrap group-hover:block group-hover:absolute group-hover:top-0 group-hover:right-0">
-                  {total - bonus} + <Green>{bonus}</Green>
+                  {total - bonus} + {markGreen(bonus)}
                 </p>
               ) : null}
             </Cell>

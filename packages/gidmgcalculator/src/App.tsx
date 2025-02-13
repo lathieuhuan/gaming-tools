@@ -1,4 +1,4 @@
-import { AppGreeter, AppMain, AppModals, NavBar, SetupImportCenter, Tracker } from "@Src/features";
+import { AppGreeter, AppMain, AppModals, NavBar, SetupImportCenter, Tracker } from "@Src/sections";
 
 function App() {
   return (

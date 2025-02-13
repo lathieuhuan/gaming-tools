@@ -110,7 +110,6 @@ export default function ElementBuffs() {
             {renderMeltVaporize(element, attReaction, "vaporize")}
           </div>
         );
-        break;
       case "hydro":
         return renderMeltVaporize(element, attReaction, "vaporize");
       case "cryo":
@@ -161,62 +160,53 @@ export default function ElementBuffs() {
   }
 
   // ========== ANEMO ABSORPTION ==========
-  if (hasAbsorbingAttack) {
-    renderedElmts.push(
-      <div key="absorption">
-        <GenshinModifierView
-          heading="Anemo Absorption"
-          description="Enable Anemo absorption on attacks that can absorb one of below elements."
-          mutable
-          checked={isAbsorbing}
-          onToggle={() => {
+  renderedElmts.push(
+    <div key="absorption">
+      <GenshinModifierView
+        heading="Anemo Absorption"
+        description="Turns the element of Swirl and absorbing Anemo attacks into one of below elements."
+        mutable
+        checked={isAbsorbing}
+        onToggle={() => {
+          dispatch(
+            updateCalcSetup({
+              elmtModCtrls: {
+                ...elmtModCtrls,
+                absorption: isAbsorbing ? null : absorbedValue,
+              },
+            })
+          );
+        }}
+      />
+      <div className="pt-2 pb-1 pr-1 flex items-center justify-end">
+        <span className="mr-4 text-base leading-6 text-right">Absorbed Element</span>
+        <VersatileSelect
+          title="Select Absorbed Element"
+          className="w-24 h-8 font-bold capitalize"
+          options={["pyro", "hydro", "electro", "cryo"].map((item) => ({
+            label: item,
+            value: item,
+            className: "capitalize",
+          }))}
+          disabled={!isAbsorbing}
+          value={absorbedValue}
+          onChange={(value) => {
+            const absorption = value as ElementType;
+            setAbsorbedValue(absorption);
+
             dispatch(
               updateCalcSetup({
                 elmtModCtrls: {
                   ...elmtModCtrls,
-                  absorption: isAbsorbing ? null : absorbedValue,
+                  absorption,
                 },
               })
             );
           }}
         />
-        <div className="pt-2 pb-1 pr-1 flex items-center justify-end">
-          <span className="mr-4 text-base leading-6 text-right">Absorbed Element</span>
-          <VersatileSelect
-            title="Select Absorbed Element"
-            className="w-24 h-8 font-bold capitalize"
-            options={["pyro", "hydro", "electro", "cryo"].map((item) => ({
-              label: item,
-              value: item,
-              className: "capitalize",
-            }))}
-            disabled={!isAbsorbing}
-            value={absorbedValue}
-            onChange={(value) => {
-              const absorption = value as ElementType;
-              setAbsorbedValue(absorption);
-
-              dispatch(
-                updateCalcSetup({
-                  elmtModCtrls: {
-                    ...elmtModCtrls,
-                    absorption,
-                  },
-                })
-              );
-            }}
-          />
-        </div>
       </div>
-    );
-  }
-
-  // ========== ABSORBING ATTACK REACTION ==========
-  const absorbingAttackReaction = renderAttackReaction("reaction", elmtModCtrls.absorption);
-
-  if (hasAbsorbingAttack && absorbingAttackReaction) {
-    renderedElmts.push(absorbingAttackReaction);
-  }
+    </div>
+  );
 
   // ========== ATTACK REACTION ==========
   const attackReaction = renderAttackReaction("reaction");

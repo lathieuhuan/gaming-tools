@@ -5,7 +5,7 @@ import { SelectWithAction } from "./SelectWithAction";
 
 type OnLocalChange = (value: SelectValueType) => void;
 
-export function Select({
+export function Select<T extends Record<string, unknown> = Record<string, unknown>>({
   wrapperCls,
   className,
   wrapperStyle,
@@ -14,16 +14,16 @@ export function Select({
   action,
   onChange,
   ...rest
-}: SelectProps) {
+}: SelectProps<T>) {
   const renderSelect = (localCls?: ClassValue, onLocalChange?: OnLocalChange) => {
     return (
-      <SelectCore
+      <SelectCore<T>
         className={[className, localCls]}
         style={style}
         size={size}
-        onChange={(value) => {
+        onChange={(value, option) => {
           onLocalChange?.(value);
-          onChange?.(value);
+          onChange?.(value, option);
         }}
         {...rest}
       />

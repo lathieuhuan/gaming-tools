@@ -1,18 +1,15 @@
 import type { CalcSetup, Target } from "@Src/types";
 import type { CalculationFinalResult } from "../types";
 
-import { GeneralCalc } from "../common-utils";
+import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
 import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "../constants";
-import { TRANSFORMATIVE_REACTION_CONFIG } from "../constants/internal";
-import { TrackerControl } from "../controls";
 
-import { getDataOfSetupEntities } from "../calculation-utils/getDataOfSetupEntities";
-import { InputProcessor } from "./input-processor";
-import { ResultCalculator } from "./result-calculator";
+import { InputProcessor, TrackerControl } from "../input-processor";
+import { ResultCalculator } from "../result-calculator";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
-  const data = getDataOfSetupEntities(setup);
+  const data = getSetupEntitiesData(setup);
   const processor = new InputProcessor(setup, data, tracker);
 
   const { characterData } = processor;
@@ -50,37 +47,10 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     }
   });
 
-  const baseRxnDmg = GeneralCalc.getBaseRxnDamage(setup.char.level);
+  const reactionCalculator = resultCalculator.genReactionCalculator();
 
-  for (const rxn of TRANSFORMATIVE_REACTIONS) {
-    const { mult, attElmt } = TRANSFORMATIVE_REACTION_CONFIG[rxn];
-    const flat = attkBonusesArchive.getBare("flat", rxn);
-    const baseValue = baseRxnDmg * mult + flat;
-    const normalMult = 1 + attkBonusesArchive.getBare("pct_", rxn) / 100;
-    const resMult = attElmt !== "absorb" ? resistances[attElmt] : 1;
-    const nonCrit = baseValue * normalMult * resMult;
-    const cDmg_ = attkBonusesArchive.getBare("cDmg_", rxn) / 100;
-    const cRate_ = Math.max(attkBonusesArchive.getBare("cRate_", rxn), 0) / 100;
-
-    finalResult.RXN_CALC[rxn] = {
-      type: "attack",
-      nonCrit,
-      crit: cDmg_ ? nonCrit * (1 + cDmg_) : 0,
-      average: cRate_ ? nonCrit * (1 + cDmg_ * cRate_) : nonCrit,
-      attPatt: "none",
-      attElmt,
-      reaction: null,
-    };
-
-    tracker?.recordCalcItem("RXN_CALC", rxn, {
-      itemType: "attack",
-      multFactors: [{ value: Math.round(baseValue), desc: "Base DMG" }],
-      totalFlat: flat,
-      normalMult,
-      resMult,
-      cDmg_,
-      cRate_,
-    });
+  for (const reaction of TRANSFORMATIVE_REACTIONS) {
+    finalResult.RXN_CALC[reaction] = reactionCalculator.calculate(reaction, setup.elmtModCtrls);
   }
 
   data.appWeapons[setup.weapon.code].calcItems?.forEach((calcItem) => {

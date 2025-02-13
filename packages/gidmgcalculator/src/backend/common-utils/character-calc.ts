@@ -1,4 +1,13 @@
-import type { ActualAttackPattern, AppCharacter, AttackPattern, LevelableTalentType, CalcItemBasedOn } from "../types";
+import type { Character } from "@Src/types";
+import type {
+  ActualAttackPattern,
+  AppCharacter,
+  AttackPattern,
+  CalcItemBasedOn,
+  EffectApplicableCondition,
+  LevelableTalentType,
+} from "../types";
+import { GeneralCalc } from "./general-calc";
 
 const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
   // some NA, CA, Eula's PA
@@ -49,4 +58,12 @@ export class CharacterCalc {
       flatFactorScale: 3,
     };
   }
+
+  static isGrantedEffect = (condition: Pick<EffectApplicableCondition, "grantedAt">, character: Character) => {
+    if (condition.grantedAt) {
+      const [prefix, level] = condition.grantedAt;
+      return (prefix === "A" ? GeneralCalc.getAscension(character.level) : character.cons) >= +level;
+    }
+    return true;
+  };
 }

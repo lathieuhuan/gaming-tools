@@ -8,6 +8,7 @@ export * from "./span";
 export * from "./ArtifactCard";
 export * from "./ArtifactFilter";
 export * from "./AttributeTable";
+export * from "./ButtonPopover";
 export * from "./CharacterIntro";
 export * from "./CharacterPortrait";
 export * from "./ComplexSelect";

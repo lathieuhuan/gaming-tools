@@ -7,25 +7,27 @@ import "./BottomList.styles.scss";
 
 type ValueType = string | number;
 
-export type BottomListItem = {
+export type BottomListItem<T extends Record<string, unknown> = Record<string, unknown>> = {
   label?: ValueType;
   value: ValueType;
+  data?: T;
   className?: string;
 };
 
-export interface BottomListProps extends Pick<BottomSheetProps, "active" | "height" | "onClose"> {
+export interface BottomListProps<T extends Record<string, unknown> = Record<string, unknown>>
+  extends Pick<BottomSheetProps, "active" | "height" | "onClose"> {
   /** Default to 'Select' */
   title?: React.ReactNode;
   value?: ValueType;
-  items?: BottomListItem[];
+  items?: BottomListItem<T>[];
   hasSearch?: boolean;
   /** Default to 'left' */
   align?: "left" | "right";
   actions?: ButtonProps[];
-  renderItem?: (item: BottomListItem) => React.ReactNode;
-  onSelect?: (value: ValueType) => void;
+  renderItem?: (item: BottomListItem<T>) => React.ReactNode;
+  onSelect?: (value: ValueType, item: BottomListItem<T>) => void;
 }
-export function BottomList({
+export function BottomList<T extends Record<string, unknown> = Record<string, unknown>>({
   title = "Select",
   value,
   items = [],
@@ -35,7 +37,7 @@ export function BottomList({
   renderItem,
   onSelect,
   ...sheetProps
-}: BottomListProps) {
+}: BottomListProps<T>) {
   const [keyword, setKeyword] = useState("");
   const shouldFilter = keyword.length > 0;
   const lowerKeyword = keyword.toLowerCase();
@@ -62,7 +64,7 @@ export function BottomList({
                   hidden && "ron-hidden",
                   item.className
                 )}
-                onClick={() => onSelect?.(item.value)}
+                onClick={() => onSelect?.(item.value, item)}
               >
                 {renderItem ? renderItem(item) : item.label ?? item.value}
               </div>

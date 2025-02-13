@@ -58,14 +58,17 @@ export function Overlay({
     closeOnEscape,
   };
 
-  const closeOverlay = () => {
+  const closeOverlay = (shouldSync = true) => {
     if (_.current.closable) {
       setState((prev) => ({ ...prev, movingDir: "in" }));
 
       setTimeout(() => {
         setState((prev) => ({ ...prev, mounted: false }));
         onTransitionEnd?.(false);
-        onClose();
+
+        if (shouldSync) {
+          onClose();
+        }
       }, transitionDuration);
     }
   };
@@ -84,7 +87,7 @@ export function Overlay({
     } //
     else if (state.mounted) {
       if (overlayState === "close") {
-        closeOverlay();
+        closeOverlay(false);
       } else if (overlayState === "hidden") {
         setState((prev) => ({ ...prev, movingDir: "in" }));
 
@@ -128,7 +131,9 @@ export function Overlay({
             onTransitionEnd={() => {
               if (state.movingDir === "out") onTransitionEnd?.(true);
             }}
-            onClick={closeOnMaskClick ? closeOverlay : undefined}
+            onClick={() => {
+              if (closeOnMaskClick) closeOverlay();
+            }}
           />
 
           {children(state.movingDir, transitionStyle)}

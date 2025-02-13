@@ -73,7 +73,7 @@ const Modal = ({
           className={CLOSE_BTN_CLS}
           boneOnly
           disabled={!closable}
-          onClick={coreProps.onClose}
+          onClick={() => coreProps.onClose()}
         />
       ) : null}
     </ModalCore>
@@ -120,6 +120,7 @@ function withCoreModal<T>(
 }
 
 Modal.LARGE_HEIGHT_CLS = LARGE_HEIGHT_CLS;
+Modal.MAX_SIZE_CLS = "ron-modal--max-size";
 Modal.CLOSE_BTN_CLS = CLOSE_BTN_CLS;
 Modal.Core = ModalCore;
 Modal.Header = ModalHeader;

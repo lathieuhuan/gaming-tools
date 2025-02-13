@@ -4,8 +4,9 @@ import { GiAnvil } from "react-icons/gi";
 import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
 
-import { $AppArtifact, $AppSettings } from "@Src/services";
 import type { Artifact, CalcArtifact } from "@Src/types";
+import { $AppArtifact, $AppSettings } from "@Src/services";
+import { useArtifactSetData } from "@Src/hooks";
 import Entity_ from "@Src/utils/entity-utils";
 import { changeArtifact, selectArtifacts } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -41,6 +42,7 @@ const SECTION_ID = "calculator-section-artifacts";
 export default function SectionArtifacts() {
   const dispatch = useDispatch();
   const artifacts = useSelector(selectArtifacts);
+  const setData = useArtifactSetData();
 
   const [modalType, setModalType] = useState<ModalType>("");
   const [activeTabIndex, setActiveTabIndex] = useState(-1);
@@ -218,9 +220,8 @@ export default function SectionArtifacts() {
       <div className="flex">
         {ARTIFACT_TYPES.map((type, index) => {
           const artifact = artifacts[index];
-          const icon = artifact
-            ? $AppArtifact.get({ code: artifact.code, type })?.icon || ""
-            : Entity_.artifactIconOf(type);
+          const data = artifact?.code ? setData.get(artifact.code) : null;
+          const icon = data?.[type].icon || Entity_.artifactIconOf(type);
 
           return (
             <div
@@ -236,6 +237,7 @@ export default function SectionArtifacts() {
                   `h-full bg-gradient-${artifact ? artifact.rarity || 5 : 1} cursor-pointer`,
                   !artifact && "p-2 opacity-80"
                 )}
+                title={data?.name}
                 src={icon}
                 fallbackCls={artifact ? "p-3" : "p-1"}
                 imgType="unknown"

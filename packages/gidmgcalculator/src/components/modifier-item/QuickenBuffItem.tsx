@@ -1,6 +1,6 @@
 import { AttackBonuses, AttackBonusesControl, ElementType, GeneralCalc, Level, QuickenReaction } from "@Backend";
 
-import { Green } from "../span";
+import { markGreen } from "../span";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
 interface QuickenBuffItemProps extends Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle"> {
@@ -30,7 +30,7 @@ export function QuickenBuffItem({ reaction, element, characterLv, attkBonuses, .
       description={
         <>
           Increase base <span className={`text-${element} capitalize`}>{element} DMG</span> by{" "}
-          <Green b>{bonusValue}</Green>.
+          {markGreen(bonusValue, "bold")}.
         </>
       }
     />

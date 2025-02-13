@@ -6,7 +6,7 @@ import { $AppData } from "@Src/services";
 import { MAX_TARGET_LEVEL } from "@Src/constants";
 import Array_ from "@Src/utils/array-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { selectTargetConfig, updateUI } from "@Store/ui-slice";
 import { selectTarget, updateTarget } from "@Store/calculator-slice";
 import { ComboBox } from "./ComboBox";
 
@@ -197,14 +197,14 @@ function TargetConfigCore() {
 
 export function TargetConfig() {
   const dispatch = useDispatch();
-  const targetConfig = useSelector((state) => state.ui.calcTargetConfig);
+  const targetConfig = useSelector(selectTargetConfig);
 
-  const updateTargetConfig = (active: boolean, onOverview: boolean) => {
-    dispatch(updateUI({ calcTargetConfig: { active, onOverview } }));
+  const updateTargetConfig = (active: boolean, overviewed = targetConfig.overviewed) => {
+    dispatch(updateUI({ targetConfig: { active, overviewed } }));
   };
 
   const closeTargetConfig = () => {
-    updateTargetConfig(false, targetConfig.onOverview);
+    updateTargetConfig(false);
   };
 
   return (
@@ -217,12 +217,12 @@ export function TargetConfig() {
       showCancel={false}
       confirmText="Close"
       confirmButtonProps={{ variant: "default" }}
-      onConfirm={() => updateTargetConfig(false, targetConfig.onOverview)}
+      onConfirm={closeTargetConfig}
       cancelText="Overview mode"
       moreActions={[
         {
           children: "Overview mode",
-          className: targetConfig.onOverview && "invisible",
+          className: targetConfig.overviewed && "invisible",
           onClick: () => {
             updateTargetConfig(false, true);
           },

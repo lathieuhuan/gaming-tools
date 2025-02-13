@@ -1,6 +1,7 @@
 import type {
   AppArtifact,
   AppCharacter,
+  AppWeapon,
   AttackBonusKey,
   AttackElement,
   AttackPattern,
@@ -16,6 +17,15 @@ import type { Artifact, Character, Weapon } from "./global.types";
 export type AppCharactersByName = Record<string, AppCharacter>;
 
 export type AppArtifactsByCode = Record<string, AppArtifact>;
+
+export type AppWeaponsByCode = Record<string, AppWeapon>;
+
+export type SetupEntitiesData = {
+  appCharacters: AppCharactersByName;
+  appWeapons: AppWeaponsByCode;
+  appArtifacts: AppArtifactsByCode;
+  appParty: CalcAppParty;
+};
 
 export type CalcAppParty = (AppCharacter | null)[];
 

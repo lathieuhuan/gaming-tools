@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { selectMySetupModalType, updateUI } from "@Store/ui-slice";
 
 // Component
-import { Yellow, Red } from "@Src/components";
+import { markYellow } from "@Src/components";
 import FirstCombine from "./FirstCombine";
 import CombineMore from "./CombineMore";
 
@@ -32,17 +32,17 @@ export function MySetupsModals(props: MySetupsModalsProps) {
       >
         <ul className="pl-4 pr-2 list-disc space-y-1 contains-inline-svg">
           <li>
-            <Yellow>Update setups</Yellow>: When you press <FaWrench /> on a saved setup, you're pushing a{" "}
-            <Red>copy</Red> of it to the Calculator, so don't forget to save the modified copy if you want to apply the
-            changes to that setup.
+            {markYellow("Update setups")}: When you press <FaWrench /> on a saved setup, you're pushing a{" "}
+            <span className="text-danger-3">copy</span> of it to the Calculator, so don't forget to save the modified
+            copy if you want to apply the changes to that setup.
           </li>
           <li>
-            <Yellow>Teammate details</Yellow> on a setup can be viewed when you press a teammate icon. Here you can
-            build a setup for that teammate based on the main setup. Party members and Target will be the same. Some
-            modifiers will remain activated and keep their inputs.
+            {markYellow("Teammate details")} on a setup can be viewed when you press a teammate icon. Here you can build
+            a setup for that teammate based on the main setup. Party members and Target will be the same. Some modifiers
+            will remain activated and keep their inputs.
           </li>
           <li>
-            <Yellow>Complex Setup</Yellow> is the result of combining setups of the same 4 party members. You can break
+            {markYellow("Complex Setup")} is the result of combining setups of the same 4 party members. You can break
             this complex into individual setups again by pressing the <FaUnlink /> before its name. Now at teammate
             details you can switch to that setup.
           </li>

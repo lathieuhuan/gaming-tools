@@ -1,11 +1,18 @@
 .ron-modal {
+  --ron-modal-translate-y: 0;
+  --ron-modal-top: 0;
   position: fixed;
-  top: 50%;
+  top: var(--ron-modal-top);
   left: 50%;
   z-index: 50;
   max-width: 95%;
-  transform: translate(-50%, -50%) scaleX(var(--ron-scale-x)) scaleY(var(--ron-scale-y));
+  transform: translate(-50%, var(--ron-modal-translate-y)) scaleX(var(--ron-modal-scale)) scaleY(var(--ron-modal-scale));
   overflow: hidden;
+
+  &.ron-modal--centered {
+    --ron-modal-translate-y: -50%;
+    --ron-modal-top: 50%;
+  }
 
   &.ron-modal--standard {
     display: flex;
@@ -39,22 +46,34 @@
       width: 944px;
     }
   }
+  &.ron-modal--max-size {
+    // just estimate max-width
+    @media (max-width: 376px) {
+      height: 100%;
+      max-height: 832px;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
 
   &.ron-modal--out {
     opacity: 1;
-    --ron-scale-x: 1;
-    --ron-scale-y: 1;
+    --ron-modal-scale: 1;
+    --ron-modal-scale: 1;
   }
   &.ron-modal--in {
     opacity: 0;
-    --ron-scale-x: 0.95;
-    --ron-scale-y: 0.95;
+    --ron-modal-scale: 0.95;
+    --ron-modal-scale: 0.95;
   }
 }
 
 .ron-modal--large-height {
-  height: 90vh;
-  max-height: 760px;
+  height: 90%;
+  max-height: 768px;
+}
+.ron-modal--max-size {
+  height: 95%;
 }
 
 // Modal only styles
@@ -76,7 +95,7 @@
     padding-bottom: 0.5rem;
   }
   .ron-modal__header--with-divider {
-    border-bottom: 1px solid #535582;
+    border-bottom: 1px solid rgb(83 85 130 / 0.8);
   }
 }
 
@@ -93,6 +112,6 @@
   padding-top: 1rem;
 
   &.ron-modal__actions--with-divider {
-    border-top: 1px solid #535582;
+    border-top: 1px solid rgb(83 85 130 / 0.8);
   }
 }

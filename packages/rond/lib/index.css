@@ -72,7 +72,7 @@ button {
 
 @media (min-width: 480px) {
   .ron-glow-on-hover:not(:disabled) {
-    opacity: 0.9;
+    opacity: 0.88;
   }
   .ron-glow-on-hover:not(:disabled):hover {
     opacity: 1;

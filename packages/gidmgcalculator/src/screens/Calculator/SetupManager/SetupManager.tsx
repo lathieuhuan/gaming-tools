@@ -1,14 +1,11 @@
-import { useState } from "react";
 import { FaSkull } from "react-icons/fa";
 import { FaSun } from "react-icons/fa6";
 import { IoDocumentText } from "react-icons/io5";
-import { Button, Modal, useScreenWatcher } from "rond";
+import { Button, clsx, useScreenWatcher } from "rond";
 
-import { IS_DEV_ENV } from "@Src/constants";
-import { selectActiveId, selectSetupManageInfos } from "@Store/calculator-slice";
+import { useOptimizeSystem } from "@Src/features";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectTraveler, updateUI } from "@Store/ui-slice";
-import { useOptimizerState } from "../ContextProvider";
+import { selectTargetConfig, selectTraveler, updateUI } from "@Store/ui-slice";
 
 // Component
 import SectionArtifacts from "./SectionArtifacts";
@@ -23,11 +20,11 @@ interface SetupManagerProps {
 export function SetupManager({ isModernUI = false }: SetupManagerProps) {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
-  const targetConfig = useSelector((state) => state.ui.calcTargetConfig);
+  const targetConfig = useSelector(selectTargetConfig);
   const traveler = useSelector(selectTraveler);
 
-  const updateTargetConfig = (active: boolean, onOverview: boolean) => {
-    dispatch(updateUI({ calcTargetConfig: { active, onOverview } }));
+  const updateTargetConfig = (active: boolean, overviewed: boolean) => {
+    dispatch(updateUI({ targetConfig: { active, overviewed } }));
   };
 
   const onClickTargetConfigButton = () => {
@@ -40,7 +37,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
       <SectionWeapon />
       <SectionArtifacts />
 
-      {targetConfig.onOverview ? (
+      {targetConfig.overviewed ? (
         <SectionTarget
           onMinimize={() => updateTargetConfig(false, false)}
           onEdit={() => updateTargetConfig(true, true)}
@@ -74,7 +71,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
         </div>
 
         <div className="flex justify-end gap-3">
-          {!targetConfig.onOverview ? (
+          {!targetConfig.overviewed ? (
             <Button
               title="Target"
               boneOnly
@@ -83,65 +80,32 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
             />
           ) : null}
 
-          <OptimizationDeptContact />
+          <OptimizeDeptContact />
         </div>
       </div>
     </div>
   );
 }
 
-function OptimizationDeptContact() {
-  const { toggle } = useOptimizerState();
-  const [activeConfirm, setActiveConfirm] = useState(false);
-  const infos = useSelector(selectSetupManageInfos);
-  const activeId = useSelector(selectActiveId);
-
-  const activeInfo = infos.find((info) => info.ID === activeId);
-
-  const onConfirm = (testMode = false) => {
-    toggle("testMode", testMode);
-    toggle("active", true);
-    setActiveConfirm(false);
-  };
+function OptimizeDeptContact() {
+  const { state, contact } = useOptimizeSystem();
 
   return (
-    <>
-      <Button title="Optimize" icon={<FaSun className="text-lg" />} onClick={() => setActiveConfirm(true)} />
+    <div className="">
+      <Button
+        title="Optimizer"
+        className="relative"
+        icon={
+          <>
+            <FaSun className={clsx("text-lg", !state.active && state.status === "OPTIMIZING" && "animate-spin")} />
 
-      <Modal
-        active={activeConfirm}
-        preset="small"
-        className="bg-surface-1"
-        title="Optimize"
-        withActions
-        moreActions={[
-          {
-            children: "Test Mode",
-            className: !IS_DEV_ENV && "hidden",
-            onClick: () => onConfirm(true),
-          },
-        ]}
-        confirmButtonProps={{
-          children: "Proceed",
-          autoFocus: true,
-        }}
-        onConfirm={() => onConfirm()}
-        onClose={() => setActiveConfirm(false)}
-      >
-        <ul className="pl-6 pr-2 list-disc space-y-2">
-          <li>
-            <div className="space-y-1">
-              <p>
-                Optimize <span className="text-primary-1">{activeInfo?.name}</span>
-              </p>
-              <p className="text-sm">
-                The Optimizer will use every configuration of this Setup except the main character's Artifacts and
-                Artifact buffs & debuffs.
-              </p>
-            </div>
-          </li>
-        </ul>
-      </Modal>
-    </>
+            {!state.active && state.result.length ? (
+              <span className="absolute bg-danger-1 block w-3 h-3 rounded-circle" style={{ top: "-4px", right: 0 }} />
+            ) : null}
+          </>
+        }
+        onClick={contact}
+      />
+    </div>
   );
 }
