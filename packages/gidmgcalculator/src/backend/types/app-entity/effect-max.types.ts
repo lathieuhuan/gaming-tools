@@ -1,10 +1,12 @@
-import type { EntityBonusBasedOn } from "./app-entity-common.types";
+import type { CharacterEffectLevelIncrement, EntityBonusBasedOn } from "./app-entity-common.types";
 import type { EffectExtra } from "./effect-extra.types";
 
 export type EffectDynamicMax = {
   value: number;
-  /** On Jadefall's Splendor (weapon) */
+  /** incre on weapon refine */
   incre?: number;
+  /** incre on character talent level */
+  lvIncre?: CharacterEffectLevelIncrement;
   /** On Hu Tao */
   basedOn?: EntityBonusBasedOn;
   extras?: EffectExtra | EffectExtra[];
