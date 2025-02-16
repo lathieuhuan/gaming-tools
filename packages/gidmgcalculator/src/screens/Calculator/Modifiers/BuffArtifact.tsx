@@ -12,7 +12,7 @@ import Array_ from "@Src/utils/array-utils";
 import { ArtifactBuffsView } from "@Src/components";
 import { Party } from "@Src/types";
 
-export default function ArtifactBuffs({ party }: { party: Party }) {
+export default function BuffArtifact({ party }: { party: Party }) {
   const dispatch = useDispatch();
   const artifacts = useSelector(selectArtifacts);
   const artBuffCtrls = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].artBuffCtrls);

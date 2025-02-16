@@ -10,7 +10,7 @@ import {
   updateCalcSetup,
   updateResonance,
 } from "@Store/calculator-slice";
-import { useCharacterData } from "../../ContextProvider";
+import { useCharacterData } from "../ContextProvider";
 
 //
 import {
@@ -25,7 +25,7 @@ const hasAbsorbingAttackIn = (items: TalentCalcItem[]) => {
   return items.some((item) => !item.type || (item.type === "attack" && item.attElmt === "absorb"));
 };
 
-export default function ElementBuffs() {
+export default function BuffElement() {
   const dispatch = useDispatch();
   const character = useSelector(selectCharacter);
   const elmtModCtrls = useSelector(selectElmtModCtrls);

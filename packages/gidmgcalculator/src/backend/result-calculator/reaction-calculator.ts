@@ -27,11 +27,15 @@ export class ReactionCalculator {
     const normalMult = 1 + this.getBonus("pct_", reaction) / 100;
     let rxnMult = 1;
     let resMult = 1;
+    let attElmt = config.attElmt;
 
-    const attElmt = config.attElmt === "absorb" ? elmtModCtrl?.absorption : config.attElmt;
-
-    if (attElmt) {
-      resMult = this.resistances[attElmt];
+    if (config.attElmt === "absorb") {
+      if (elmtModCtrl?.absorption) {
+        attElmt = elmtModCtrl?.absorption;
+        resMult = this.resistances[attElmt];
+      }
+    } else {
+      resMult = this.resistances[config.attElmt];
     }
 
     const nonCrit = (baseValue * normalMult + flat) * rxnMult * resMult;
@@ -55,7 +59,7 @@ export class ReactionCalculator {
       crit: cDmg_ ? nonCrit * (1 + cDmg_) : 0,
       average: cRate_ ? nonCrit * (1 + cDmg_ * cRate_) : nonCrit,
       attPatt: "none",
-      attElmt: config.attElmt,
+      attElmt,
       reaction: null,
     };
   };

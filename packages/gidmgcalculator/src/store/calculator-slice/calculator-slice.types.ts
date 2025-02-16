@@ -119,33 +119,26 @@ export type ToggleSubWpModCtrlPath = {
   ctrlIndex: number;
 };
 
-type CustomBuffCtrlChange = Partial<CustomDebuffCtrl> & {
+// CUSTOM MODIFIER CONTROL
+
+type CustomModCtrlChange = Partial<CustomDebuffCtrl> & {
   index: number;
 };
-export type UpdateCustomBuffCtrlsAction = PayloadAction<
+
+type UpdateCustomModCtrlsAction<TCtrl> = PayloadAction<
   | {
       actionType: "ADD" | "REPLACE";
-      ctrls: CustomBuffCtrl | CustomBuffCtrl[];
+      ctrls: TCtrl | TCtrl[];
     }
   | {
       actionType: "EDIT";
-      ctrls: CustomBuffCtrlChange | CustomBuffCtrlChange[];
+      ctrls: CustomModCtrlChange | CustomModCtrlChange[];
     }
 >;
 
-type CustomDebuffCtrlChange = Partial<CustomDebuffCtrl> & {
-  index: number;
-};
-export type UpdateCustomDebuffCtrlsAction = PayloadAction<
-  | {
-      actionType: "ADD" | "REPLACE";
-      ctrls: CustomDebuffCtrl | CustomDebuffCtrl[];
-    }
-  | {
-      actionType: "EDIT";
-      ctrls: CustomDebuffCtrlChange | CustomDebuffCtrlChange[];
-    }
->;
+export type UpdateCustomBuffCtrlsAction = UpdateCustomModCtrlsAction<CustomBuffCtrl>;
+
+export type UpdateCustomDebuffCtrlsAction = UpdateCustomModCtrlsAction<CustomDebuffCtrl>;
 
 type CustomModCtrlPath = {
   isBuffs: boolean;

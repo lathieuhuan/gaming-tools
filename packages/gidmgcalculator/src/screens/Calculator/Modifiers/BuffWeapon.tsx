@@ -11,7 +11,7 @@ import Object_ from "@Src/utils/object-utils";
 import Array_ from "@Src/utils/array-utils";
 import { WeaponBuffsView } from "@Src/components";
 
-export default function WeaponBuffs({ party }: { party: Party }) {
+export default function BuffWeapon({ party }: { party: Party }) {
   const dispatch = useDispatch();
   const weapon = useSelector(selectWeapon);
   const weaponBuffCtrls = useSelector((state) => {

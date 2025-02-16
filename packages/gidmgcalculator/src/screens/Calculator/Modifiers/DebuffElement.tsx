@@ -2,7 +2,7 @@ import { GeoResoDebuffItem, SuperconductDebuffItem } from "@Src/components";
 import { selectElmtModCtrls, updateCalcSetup, updateResonance } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 
-export default function ElementDebuffs() {
+export default function DebuffElement() {
   const dispatch = useDispatch();
   const elmtModCtrls = useSelector(selectElmtModCtrls);
 

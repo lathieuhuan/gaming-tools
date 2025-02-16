@@ -1,33 +1,33 @@
 import type { Party } from "@Src/types";
-import { useDispatch } from "@Store/hooks";
 import {
   changeTeammateModCtrlInput,
   toggleTeammateModCtrl,
   type ToggleTeammateModCtrlPath,
 } from "@Store/calculator-slice";
-import { PartyDebuffsView } from "@Src/components";
-import { useCharacterData } from "../../ContextProvider";
+import { useDispatch } from "@Store/hooks";
+import { PartyBuffsView } from "@Src/components";
+import { useCharacterData } from "../ContextProvider";
 
-interface PartyDebuffsProps {
+interface BuffPartyProps {
   party: Party;
 }
-export default function PartyDebuffs(props: PartyDebuffsProps) {
+export default function BuffParty(props: BuffPartyProps) {
   const dispatch = useDispatch();
   const characterData = useCharacterData();
 
   return (
-    <PartyDebuffsView
+    <PartyBuffsView
       mutable
       {...props}
       characterData={characterData}
       getHanlders={({ ctrl, teammateIndex }) => {
         const path: ToggleTeammateModCtrlPath = {
           teammateIndex,
-          modCtrlName: "debuffCtrls",
+          modCtrlName: "buffCtrls",
           ctrlIndex: ctrl.index,
         };
 
-        const updateDebuffCtrlInput = (value: number, inputIndex: number) => {
+        const updateBuffCtrlInput = (value: number, inputIndex: number) => {
           dispatch(changeTeammateModCtrlInput(Object.assign({ value, inputIndex }, path)));
         };
 
@@ -36,10 +36,10 @@ export default function PartyDebuffs(props: PartyDebuffsProps) {
             dispatch(toggleTeammateModCtrl(path));
           },
           onToggleCheck: (currentInput, inputIndex) => {
-            updateDebuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
+            updateBuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
           },
-          onChangeText: updateDebuffCtrlInput,
-          onSelectOption: updateDebuffCtrlInput,
+          onChangeText: updateBuffCtrlInput,
+          onSelectOption: updateBuffCtrlInput,
         };
       }}
     />
