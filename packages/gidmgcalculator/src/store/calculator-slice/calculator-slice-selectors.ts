@@ -21,11 +21,15 @@ export const selectParty = (state: RootState) => state.calculator.setupsById[sta
 export const selectElmtModCtrls = (state: RootState) =>
   state.calculator.setupsById[state.calculator.activeId]?.elmtModCtrls;
 
+export const selectCustomInfusion = (state: RootState) =>
+  state.calculator.setupsById[state.calculator.activeId].customInfusion;
+
 export const selectTarget = (state: RootState) => state.calculator.target;
 
 export const selectTotalAttr = (state: RootState) => state.calculator.resultById[state.calculator.activeId].totalAttr;
 
-export const selectAttkBonuses = (state: RootState) => state.calculator.resultById[state.calculator.activeId].attkBonuses;
+export const selectAttkBonuses = (state: RootState) =>
+  state.calculator.resultById[state.calculator.activeId].attkBonuses;
 
 export const selectCalcFinalResult = (state: RootState) =>
   state.calculator.resultById[state.calculator.activeId].finalResult;

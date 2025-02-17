@@ -3,9 +3,10 @@ import type { SelectProps, SelectValueType } from "./Select.types";
 import { SelectCore } from "./SelectCore";
 import { SelectWithAction } from "./SelectWithAction";
 
-type OnLocalChange = (value: SelectValueType) => void;
-
-export function Select<T extends Record<string, unknown> = Record<string, unknown>>({
+export function Select<
+  TValue extends SelectValueType = SelectValueType,
+  TData extends Record<string, unknown> = Record<string, unknown>
+>({
   wrapperCls,
   className,
   wrapperStyle,
@@ -14,10 +15,10 @@ export function Select<T extends Record<string, unknown> = Record<string, unknow
   action,
   onChange,
   ...rest
-}: SelectProps<T>) {
-  const renderSelect = (localCls?: ClassValue, onLocalChange?: OnLocalChange) => {
+}: SelectProps<TValue, TData>) {
+  const renderSelect = (localCls?: ClassValue, onLocalChange?: (value: TValue) => void) => {
     return (
-      <SelectCore<T>
+      <SelectCore
         className={[className, localCls]}
         style={style}
         size={size}

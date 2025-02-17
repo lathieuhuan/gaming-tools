@@ -1,15 +1,17 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { VersatileSelect } from "rond";
-import { ELEMENT_TYPES, AmplifyingReaction, TalentCalcItem, ElementType } from "@Backend";
+import { AmplifyingReaction, ELEMENT_TYPES, ElementType, QuickenReaction, TalentCalcItem } from "@Backend";
 
-import { useDispatch, useSelector } from "@Store/hooks";
+import { Resonance } from "@Src/types";
 import {
-  selectCharacter,
-  selectElmtModCtrls,
   selectAttkBonuses,
+  selectCharacter,
+  selectCustomInfusion,
+  selectElmtModCtrls,
   updateCalcSetup,
   updateResonance,
 } from "@Store/calculator-slice";
+import { useDispatch, useSelector } from "@Store/hooks";
 import { useCharacterData } from "../ContextProvider";
 
 //
@@ -21,31 +23,25 @@ import {
   VapMeltBuffItem,
 } from "@Src/components";
 
-const hasAbsorbingAttackIn = (items: TalentCalcItem[]) => {
-  return items.some((item) => !item.type || (item.type === "attack" && item.attElmt === "absorb"));
-};
-
 export default function BuffElement() {
   const dispatch = useDispatch();
   const character = useSelector(selectCharacter);
   const elmtModCtrls = useSelector(selectElmtModCtrls);
   const attkBonuses = useSelector(selectAttkBonuses);
-  const customInfusion = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].customInfusion);
+  const customInfusion = useSelector(selectCustomInfusion);
 
   const { vision, weaponType, calcList } = useCharacterData().appCharacter;
 
   const { element: infusedElement } = customInfusion;
   const isInfused = infusedElement !== "phys";
   const isAbsorbing = !!elmtModCtrls.absorption;
-  const hasAbsorbingAttack = hasAbsorbingAttackIn(calcList.ES) || hasAbsorbingAttackIn(calcList.EB);
 
   const [infusedValue, setInfusedValue] = useState(infusedElement === "phys" ? "pyro" : infusedElement);
   const [absorbedValue, setAbsorbedValue] = useState(elmtModCtrls.absorption ?? "pyro");
 
-  const renderedElmts: JSX.Element[] = [];
-
   // ===== Reaction renderers =====
-  const renderMeltVaporize = (
+
+  const renderAmplifying = (
     element: ElementType,
     field: "reaction" | "infuse_reaction",
     reaction: AmplifyingReaction
@@ -72,11 +68,7 @@ export default function BuffElement() {
     );
   };
 
-  const renderSpreadAggravate = (
-    element: ElementType,
-    field: "reaction" | "infuse_reaction",
-    reaction: "spread" | "aggravate"
-  ) => {
+  const renderQuicken = (element: ElementType, field: "reaction" | "infuse_reaction", reaction: QuickenReaction) => {
     const activated = elmtModCtrls[field] === reaction;
 
     return (
@@ -99,125 +91,132 @@ export default function BuffElement() {
     );
   };
 
-  const renderAttackReaction = (attReaction: "reaction" | "infuse_reaction", forceElement?: ElementType | null) => {
-    const element = forceElement === undefined ? (attReaction === "reaction" ? vision : infusedElement) : forceElement;
+  const renderAttackReaction = (attReaction: "reaction" | "infuse_reaction") => {
+    const element = attReaction === "reaction" ? vision : infusedElement;
 
     switch (element) {
       case "pyro":
         return (
-          <div className="space-y-3">
-            {renderMeltVaporize(element, attReaction, "melt")}
-            {renderMeltVaporize(element, attReaction, "vaporize")}
-          </div>
+          <>
+            {renderAmplifying(element, attReaction, "melt")}
+            {renderAmplifying(element, attReaction, "vaporize")}
+          </>
         );
       case "hydro":
-        return renderMeltVaporize(element, attReaction, "vaporize");
+        return renderAmplifying(element, attReaction, "vaporize");
       case "cryo":
-        return renderMeltVaporize(element, attReaction, "melt");
+        return renderAmplifying(element, attReaction, "melt");
       case "electro":
-        return renderSpreadAggravate(element, attReaction, "aggravate");
+        return renderQuicken(element, attReaction, "aggravate");
       case "dendro":
-        return renderSpreadAggravate(element, attReaction, "spread");
+        return renderQuicken(element, attReaction, "spread");
       default:
         return null;
     }
   };
 
-  // ========== RESONANCE ==========
-  if (elmtModCtrls.resonances.length) {
-    renderedElmts.push(
-      <div className="space-y-3">
-        {elmtModCtrls.resonances.map((resonance) => {
-          return (
-            <ResonanceBuffItem
-              key={resonance.vision}
-              mutable
-              element={resonance.vision}
-              checked={resonance.activated}
-              onToggle={() => {
-                dispatch(
-                  updateResonance({
-                    ...resonance,
-                    activated: !resonance.activated,
-                  })
-                );
-              }}
-              inputs={resonance.inputs}
-              inputConfigs={RESONANCE_INFO[resonance.vision]?.inputConfigs}
-              onToggleCheck={(currentInput, inputIndex) => {
-                if (resonance.inputs) {
-                  const newInputs = [...resonance.inputs];
-                  newInputs[inputIndex] = currentInput === 1 ? 0 : 1;
-
-                  dispatch(updateResonance({ ...resonance, inputs: newInputs }));
-                }
-              }}
-            />
-          );
-        })}
-      </div>
-    );
-  }
-
   // ========== ANEMO ABSORPTION ==========
-  renderedElmts.push(
-    <div key="absorption">
-      <GenshinModifierView
-        heading="Anemo Absorption"
-        description="Turns the element of Swirl and absorbing Anemo attacks into one of below elements."
-        mutable
-        checked={isAbsorbing}
-        onToggle={() => {
-          dispatch(
-            updateCalcSetup({
-              elmtModCtrls: {
-                ...elmtModCtrls,
-                absorption: isAbsorbing ? null : absorbedValue,
-              },
-            })
-          );
-        }}
-      />
-      <div className="pt-2 pb-1 pr-1 flex items-center justify-end">
-        <span className="mr-4 text-base leading-6 text-right">Absorbed Element</span>
-        <VersatileSelect
-          title="Select Absorbed Element"
-          className="w-24 h-8 font-bold capitalize"
-          options={["pyro", "hydro", "electro", "cryo"].map((item) => ({
-            label: item,
-            value: item,
-            className: "capitalize",
-          }))}
-          disabled={!isAbsorbing}
-          value={absorbedValue}
-          onChange={(value) => {
-            const absorption = value as ElementType;
-            setAbsorbedValue(absorption);
 
+  let anemoAbsorptionConfig: JSX.Element | null = null;
+
+  const haveAnyAbsorbAttack = (items: TalentCalcItem[]) => {
+    return items.some(({ type = "attack", attElmt }) => attElmt === "absorb" && type === "attack");
+  };
+
+  if (
+    (vision === "anemo" && weaponType === "catalyst") ||
+    haveAnyAbsorbAttack(calcList.ES) ||
+    haveAnyAbsorbAttack(calcList.EB)
+  ) {
+    anemoAbsorptionConfig = (
+      <div>
+        <GenshinModifierView
+          heading="Anemo Absorption"
+          description="Turns the element of Swirl and absorbing Anemo attacks into the selected element."
+          mutable
+          checked={isAbsorbing}
+          onToggle={() => {
             dispatch(
               updateCalcSetup({
                 elmtModCtrls: {
                   ...elmtModCtrls,
-                  absorption,
+                  absorption: isAbsorbing ? null : absorbedValue,
                 },
               })
             );
           }}
         />
+        <div className="pt-2 pb-1 pr-1 flex items-center justify-end">
+          <span className="mr-4 text-base leading-6 text-right">Absorbed Element</span>
+          <VersatileSelect
+            title="Select Absorbed Element"
+            className="w-24 h-8 font-bold capitalize"
+            options={["pyro", "hydro", "electro", "cryo"].map((item) => ({
+              label: item,
+              value: item,
+              className: "capitalize",
+            }))}
+            disabled={!isAbsorbing}
+            value={absorbedValue}
+            onChange={(value) => {
+              const absorption = value as ElementType;
+              setAbsorbedValue(absorption);
+
+              dispatch(
+                updateCalcSetup({
+                  elmtModCtrls: {
+                    ...elmtModCtrls,
+                    absorption,
+                  },
+                })
+              );
+            }}
+          />
+        </div>
       </div>
-    </div>
-  );
-
-  // ========== ATTACK REACTION ==========
-  const attackReaction = renderAttackReaction("reaction");
-
-  if (attackReaction) {
-    renderedElmts.push(attackReaction);
+    );
   }
 
-  // ========== CUSTOM INFUSION & ITS ATTACK REACTION ==========
+  // ========== CUSTOM INFUSION ==========
+
+  let customInfusionConfig: JSX.Element | null = null;
+
   if (weaponType !== "catalyst") {
-    renderedElmts.push(
+    //
+    const onToggleInfusion = () => {
+      dispatch(
+        updateCalcSetup({
+          elmtModCtrls: {
+            ...elmtModCtrls,
+            infuse_reaction: isInfused ? null : elmtModCtrls.infuse_reaction,
+          },
+          customInfusion: {
+            ...customInfusion,
+            element: isInfused ? "phys" : infusedValue,
+          },
+        })
+      );
+    };
+
+    const onChangeInfusedElmt = (element: ElementType) => {
+      //
+      setInfusedValue(element);
+
+      dispatch(
+        updateCalcSetup({
+          elmtModCtrls: {
+            ...elmtModCtrls,
+            infuse_reaction: null,
+          },
+          customInfusion: {
+            ...customInfusion,
+            element,
+          },
+        })
+      );
+    };
+
+    customInfusionConfig = (
       <div>
         <GenshinModifierView
           heading="Custom Infusion"
@@ -229,20 +228,7 @@ export default function BuffElement() {
           }
           mutable
           checked={isInfused}
-          onToggle={() => {
-            dispatch(
-              updateCalcSetup({
-                elmtModCtrls: {
-                  ...elmtModCtrls,
-                  infuse_reaction: isInfused ? null : elmtModCtrls.infuse_reaction,
-                },
-                customInfusion: {
-                  ...customInfusion,
-                  element: isInfused ? "phys" : infusedValue,
-                },
-              })
-            );
-          }}
+          onToggle={onToggleInfusion}
         />
         <div className="pt-2 pb-1 pr-1 flex items-center justify-end">
           <span className="mr-4 text-base leading-6 text-right">Element</span>
@@ -257,43 +243,72 @@ export default function BuffElement() {
             }))}
             disabled={!isInfused}
             value={infusedValue}
-            onChange={(value) => {
-              const element = value as ElementType;
-              setInfusedValue(element);
-
-              dispatch(
-                updateCalcSetup({
-                  elmtModCtrls: {
-                    ...elmtModCtrls,
-                    infuse_reaction: null,
-                  },
-                  customInfusion: {
-                    ...customInfusion,
-                    element,
-                  },
-                })
-              );
-            }}
+            onChange={onChangeInfusedElmt}
           />
         </div>
 
-        {infusedElement !== vision && infusedElement !== "phys" ? (
-          <div className="mt-3">{renderAttackReaction("infuse_reaction")}</div>
+        {infusedElement !== "phys" && infusedElement !== vision ? (
+          <div className="mt-3 space-y-3">{renderAttackReaction("infuse_reaction")}</div>
         ) : null}
       </div>
     );
   }
 
+  // Resonance
+
+  const onToggleResonance = (resonance: Resonance) => {
+    dispatch(
+      updateResonance({
+        ...resonance,
+        activated: !resonance.activated,
+      })
+    );
+  };
+
+  const onToggleResonanceCondition = (resonance: Resonance) => (currentInput: number, inputIndex: number) => {
+    if (resonance.inputs) {
+      const newInputs = [...resonance.inputs];
+      newInputs[inputIndex] = currentInput === 1 ? 0 : 1;
+
+      dispatch(updateResonance({ ...resonance, inputs: newInputs }));
+    }
+  };
+
+  const dividerRender = <div className="peer-empty:hidden mx-auto my-3 w-1/2 h-px bg-surface-3" />;
+
   return (
     <div className="pt-2">
-      {renderedElmts.map((item, i) => {
-        return (
-          <Fragment key={i}>
-            {i ? <div className="mx-auto my-3 w-1/2 h-px bg-surface-3" /> : null}
-            {item}
-          </Fragment>
-        );
-      })}
+      <div>
+        <div className="space-y-3 peer">
+          {elmtModCtrls.resonances.map((resonance) => {
+            return (
+              <ResonanceBuffItem
+                key={resonance.vision}
+                mutable
+                element={resonance.vision}
+                checked={resonance.activated}
+                onToggle={() => onToggleResonance(resonance)}
+                inputs={resonance.inputs}
+                inputConfigs={RESONANCE_INFO[resonance.vision]?.inputConfigs}
+                onToggleCheck={onToggleResonanceCondition(resonance)}
+              />
+            );
+          })}
+        </div>
+        {dividerRender}
+      </div>
+
+      <div>
+        <div className="space-y-3 peer">{renderAttackReaction("reaction")}</div>
+        {dividerRender}
+      </div>
+
+      <div>
+        <div className="peer">{anemoAbsorptionConfig}</div>
+        {dividerRender}
+      </div>
+
+      {customInfusionConfig}
     </div>
   );
 }
