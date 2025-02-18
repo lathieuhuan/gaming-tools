@@ -25,7 +25,7 @@ export class TalentCalculator {
   resultKey: LevelableTalentType;
   disabled: boolean;
   level: number;
-  private default_: ReturnType<typeof CharacterCalc.getTalentDefaultInfo> & {
+  private default_: Omit<ReturnType<typeof CharacterCalc.getTalentDefaultInfo>, "resultKey"> & {
     attElmt?: AttackElement;
   };
   private appCharacter: AppCharacter;
@@ -104,7 +104,7 @@ export class TalentCalculator {
         attElmt = appCharacter.vision;
       } //
       else {
-        attElmt = infusedElmnt;
+        attElmt = infusedElmnt === "phys" ? default_.attElmt || "phys" : infusedElmnt;
         reaction = infusedElmnt === appCharacter.vision ? elmtModCtrls.reaction : elmtModCtrls.infuse_reaction;
       }
     } else {
