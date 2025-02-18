@@ -1,6 +1,13 @@
 import { useState } from "react";
-import { VersatileSelect } from "rond";
-import { AmplifyingReaction, ELEMENT_TYPES, ElementType, QuickenReaction, TalentCalcItem } from "@Backend";
+import { SelectOption, VersatileSelect } from "rond";
+import {
+  AmplifyingReaction,
+  AttackElement,
+  ELEMENT_TYPES,
+  ElementType,
+  QuickenReaction,
+  TalentCalcItem,
+} from "@Backend";
 
 import { Resonance } from "@Src/types";
 import {
@@ -23,6 +30,8 @@ import {
   VapMeltBuffItem,
 } from "@Src/components";
 
+type ReactionConfigType = "reaction" | "infuse_reaction" | "absorb_reaction";
+
 export default function BuffElement() {
   const dispatch = useDispatch();
   const character = useSelector(selectCharacter);
@@ -33,19 +42,15 @@ export default function BuffElement() {
   const { vision, weaponType, calcList } = useCharacterData().appCharacter;
 
   const { element: infusedElement } = customInfusion;
+  const { absorption } = elmtModCtrls;
   const isInfused = infusedElement !== "phys";
-  const isAbsorbing = !!elmtModCtrls.absorption;
 
   const [infusedValue, setInfusedValue] = useState(infusedElement === "phys" ? "pyro" : infusedElement);
-  const [absorbedValue, setAbsorbedValue] = useState(elmtModCtrls.absorption ?? "pyro");
+  const [absorbedValue, setAbsorbedValue] = useState(absorption ?? "pyro");
 
   // ===== Reaction renderers =====
 
-  const renderAmplifying = (
-    element: ElementType,
-    field: "reaction" | "infuse_reaction",
-    reaction: AmplifyingReaction
-  ) => {
+  const renderAmplifying = (element: ElementType, field: ReactionConfigType, reaction: AmplifyingReaction) => {
     const activated = elmtModCtrls[field] === reaction;
 
     return (
@@ -68,7 +73,7 @@ export default function BuffElement() {
     );
   };
 
-  const renderQuicken = (element: ElementType, field: "reaction" | "infuse_reaction", reaction: QuickenReaction) => {
+  const renderQuicken = (element: ElementType, field: ReactionConfigType, reaction: QuickenReaction) => {
     const activated = elmtModCtrls[field] === reaction;
 
     return (
@@ -91,25 +96,37 @@ export default function BuffElement() {
     );
   };
 
-  const renderAttackReaction = (attReaction: "reaction" | "infuse_reaction") => {
-    const element = attReaction === "reaction" ? vision : infusedElement;
+  const renderAttackReaction = (configType: ReactionConfigType) => {
+    let element: AttackElement | null;
+
+    switch (configType) {
+      case "reaction":
+        element = vision;
+        break;
+      case "infuse_reaction":
+        element = infusedElement;
+        break;
+      case "absorb_reaction":
+        element = absorption;
+        break;
+    }
 
     switch (element) {
       case "pyro":
         return (
           <>
-            {renderAmplifying(element, attReaction, "melt")}
-            {renderAmplifying(element, attReaction, "vaporize")}
+            {renderAmplifying(element, configType, "melt")}
+            {renderAmplifying(element, configType, "vaporize")}
           </>
         );
       case "hydro":
-        return renderAmplifying(element, attReaction, "vaporize");
+        return renderAmplifying(element, configType, "vaporize");
       case "cryo":
-        return renderAmplifying(element, attReaction, "melt");
+        return renderAmplifying(element, configType, "melt");
       case "electro":
-        return renderQuicken(element, attReaction, "aggravate");
+        return renderQuicken(element, configType, "aggravate");
       case "dendro":
-        return renderQuicken(element, attReaction, "spread");
+        return renderQuicken(element, configType, "spread");
       default:
         return null;
     }
@@ -128,51 +145,60 @@ export default function BuffElement() {
     haveAnyAbsorbAttack(calcList.ES) ||
     haveAnyAbsorbAttack(calcList.EB)
   ) {
+    const ABSORB_OPTIONS: SelectOption<ElementType>[] = [
+      { label: "pyro", value: "pyro", className: "capitalize" },
+      { label: "hydro", value: "hydro", className: "capitalize" },
+      { label: "electro", value: "electro", className: "capitalize" },
+      { label: "cryo", value: "cryo", className: "capitalize" },
+    ];
+
+    const onToggleAbsorption = () => {
+      dispatch(
+        updateCalcSetup({
+          elmtModCtrls: {
+            ...elmtModCtrls,
+            absorption: absorption ? null : absorbedValue,
+            absorb_reaction: null,
+          },
+        })
+      );
+    };
+
+    const onChangeAbsorbedElmt = (newAbsorption: ElementType) => {
+      setAbsorbedValue(newAbsorption);
+
+      dispatch(
+        updateCalcSetup({
+          elmtModCtrls: {
+            ...elmtModCtrls,
+            absorption: newAbsorption,
+          },
+        })
+      );
+    };
+
     anemoAbsorptionConfig = (
       <div>
         <GenshinModifierView
           heading="Anemo Absorption"
           description="Turns the element of Swirl and absorbing Anemo attacks into the selected element."
           mutable
-          checked={isAbsorbing}
-          onToggle={() => {
-            dispatch(
-              updateCalcSetup({
-                elmtModCtrls: {
-                  ...elmtModCtrls,
-                  absorption: isAbsorbing ? null : absorbedValue,
-                },
-              })
-            );
-          }}
+          checked={absorption !== null}
+          onToggle={onToggleAbsorption}
         />
         <div className="pt-2 pb-1 pr-1 flex items-center justify-end">
           <span className="mr-4 text-base leading-6 text-right">Absorbed Element</span>
           <VersatileSelect
             title="Select Absorbed Element"
             className="w-24 h-8 font-bold capitalize"
-            options={["pyro", "hydro", "electro", "cryo"].map((item) => ({
-              label: item,
-              value: item,
-              className: "capitalize",
-            }))}
-            disabled={!isAbsorbing}
+            options={ABSORB_OPTIONS}
+            disabled={!absorption}
             value={absorbedValue}
-            onChange={(value) => {
-              const absorption = value as ElementType;
-              setAbsorbedValue(absorption);
-
-              dispatch(
-                updateCalcSetup({
-                  elmtModCtrls: {
-                    ...elmtModCtrls,
-                    absorption,
-                  },
-                })
-              );
-            }}
+            onChange={onChangeAbsorbedElmt}
           />
         </div>
+
+        {absorption ? <div className="mt-3 space-y-3">{renderAttackReaction("absorb_reaction")}</div> : null}
       </div>
     );
   }
@@ -188,7 +214,7 @@ export default function BuffElement() {
         updateCalcSetup({
           elmtModCtrls: {
             ...elmtModCtrls,
-            infuse_reaction: isInfused ? null : elmtModCtrls.infuse_reaction,
+            infuse_reaction: null,
           },
           customInfusion: {
             ...customInfusion,

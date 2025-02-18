@@ -271,10 +271,11 @@ export function decodeSetup(code: string): DecodeSuccessResult | DecodeFailResul
         artDebuffCtrls: decodeArtifactModCtrls(_artDCsCode),
         party: [decodeTeammate(_tmCode1), decodeTeammate(_tmCode2), decodeTeammate(_tmCode3)],
         elmtModCtrls: {
-          reaction: (reaction as AttackReaction) || null,
-          infuse_reaction: (infuse_reaction as AttackReaction) || null,
           resonances,
           superconduct: superconduct === "1",
+          reaction: (reaction as AttackReaction) || null,
+          infuse_reaction: (infuse_reaction as AttackReaction) || null,
+          absorb_reaction: null,
           absorption: absorption ? ELEMENT_TYPES[+absorption] : null,
         },
         customInfusion: {

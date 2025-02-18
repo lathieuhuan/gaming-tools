@@ -55,8 +55,9 @@ export type Resonance = {
   inputs?: number[];
 };
 export type ElementModCtrl = {
-  infuse_reaction: AttackReaction;
   reaction: AttackReaction;
+  infuse_reaction: AttackReaction;
+  absorb_reaction: AttackReaction;
   absorption: ElementType | null;
   superconduct: boolean;
   resonances: Resonance[];

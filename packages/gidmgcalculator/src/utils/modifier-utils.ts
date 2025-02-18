@@ -53,10 +53,11 @@ export default class Modifier_ {
 
   static createElmtModCtrls(): ElementModCtrl {
     return {
-      infuse_reaction: null,
-      reaction: null,
-      superconduct: false,
       resonances: [],
+      superconduct: false,
+      reaction: null,
+      infuse_reaction: null,
+      absorb_reaction: null,
       absorption: null,
     };
   }
