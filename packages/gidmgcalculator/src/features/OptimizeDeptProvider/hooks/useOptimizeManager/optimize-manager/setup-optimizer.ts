@@ -145,15 +145,15 @@ export class SetupOptimizer extends InputProcessor {
       return null;
     }
 
+    const attackAlterer = this.getAttackAlterer();
     const resistances = this.getResistances(this.target);
-    const NAsConfig = this.getNormalAttacksConfig();
 
     const calculator = new ResultCalculator(
       this.target.level,
       this.characterData,
-      NAsConfig,
       totalAttr,
       attkBonusesArchive,
+      attackAlterer,
       resistances
     );
 

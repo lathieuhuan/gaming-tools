@@ -14,15 +14,15 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
 
   const { characterData } = processor;
   const { artAttr, totalAttr, attkBonusesArchive } = processor.getCalculationStats();
-  const NAsConfig = processor.getNormalAttacksConfig();
+  const attackAlterer = processor.getAttackAlterer();
   const resistances = processor.getResistances(target);
 
   const resultCalculator = new ResultCalculator(
     target.level,
     characterData,
-    NAsConfig,
     totalAttr,
     attkBonusesArchive,
+    attackAlterer,
     resistances,
     tracker
   );

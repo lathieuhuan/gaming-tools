@@ -273,6 +273,10 @@ export default function BuffElement() {
           />
         </div>
 
+        {/*
+          Checking infusedElement !== vision works because self infusion is always the same as vision for now.
+          If they are different, need to check infusedElement !== self infusion
+        */}
         {infusedElement !== "phys" && infusedElement !== vision ? (
           <div className="mt-3 space-y-3">{renderAttackReaction("infuse_reaction")}</div>
         ) : null}
