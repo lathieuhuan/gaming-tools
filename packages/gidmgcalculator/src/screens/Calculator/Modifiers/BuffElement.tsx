@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SelectOption, VersatileSelect } from "rond";
+import { clsx, SelectOption, VersatileSelect } from "rond";
 import {
   AmplifyingReaction,
   AttackElement,
@@ -304,39 +304,35 @@ export default function BuffElement() {
     }
   };
 
-  const dividerRender = <div className="peer-empty:hidden mx-auto my-3 w-1/2 h-px bg-surface-3" />;
+  const renderDivider = (className?: string) => (
+    <div className={clsx("mx-auto my-3 w-1/2 h-px bg-surface-3", className)} />
+  );
 
   return (
     <div className="pt-2">
-      <div>
-        <div className="space-y-3 peer">
-          {elmtModCtrls.resonances.map((resonance) => {
-            return (
-              <ResonanceBuffItem
-                key={resonance.vision}
-                mutable
-                element={resonance.vision}
-                checked={resonance.activated}
-                onToggle={() => onToggleResonance(resonance)}
-                inputs={resonance.inputs}
-                inputConfigs={RESONANCE_INFO[resonance.vision]?.inputConfigs}
-                onToggleCheck={onToggleResonanceCondition(resonance)}
-              />
-            );
-          })}
-        </div>
-        {dividerRender}
+      <div className="space-y-3 peer/resonance">
+        {elmtModCtrls.resonances.map((resonance) => {
+          return (
+            <ResonanceBuffItem
+              key={resonance.vision}
+              mutable
+              element={resonance.vision}
+              checked={resonance.activated}
+              onToggle={() => onToggleResonance(resonance)}
+              inputs={resonance.inputs}
+              inputConfigs={RESONANCE_INFO[resonance.vision]?.inputConfigs}
+              onToggleCheck={onToggleResonanceCondition(resonance)}
+            />
+          );
+        })}
       </div>
+      {renderDivider("peer-empty/resonance:hidden")}
 
-      <div>
-        <div className="space-y-3 peer">{renderAttackReaction("reaction")}</div>
-        {dividerRender}
-      </div>
+      <div className="space-y-3 peer/attack-reaction">{renderAttackReaction("reaction")}</div>
+      {renderDivider("peer-empty/attack-reaction:hidden")}
 
-      <div>
-        <div className="peer">{anemoAbsorptionConfig}</div>
-        {dividerRender}
-      </div>
+      <div className="peer/absorption">{anemoAbsorptionConfig}</div>
+      {renderDivider("peer-empty/absorption:hidden last:hidden")}
 
       {customInfusionConfig}
     </div>

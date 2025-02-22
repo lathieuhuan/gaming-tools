@@ -24,6 +24,7 @@ type RowConfig = {
   title?: string;
   cells: RowCellConfig[];
   className?: string;
+  onDoubleClick?: () => void;
 };
 
 export interface FinalResultLayoutProps {
@@ -214,6 +215,7 @@ function SectionTable(props: SectionTableProps) {
               title={config.title}
               className={clsx("sticky left-0 z-10", config.className)}
               style={{ background: "inherit" }}
+              onDoubleClick={config.onDoubleClick}
             >
               {label}
             </Table.Td>

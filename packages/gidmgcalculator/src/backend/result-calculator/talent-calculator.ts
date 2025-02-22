@@ -85,16 +85,28 @@ export class TalentCalculator {
      */
     let reaction = elmtModCtrl.reaction;
 
-    if (this.resultKey === "NAs") {
+    // AttElmt priority:
+    // 1. NAs of (catalyst) or FCA
+    // 2. item.attElmt
+    // 3. infusedElmt (custom infusion) (if NAs)
+    // 4. alterConfig (get from CharacterBuffNormalAttackConfig)
+    // 5. phys (if NAs) | appCharacter.vision (otherwise)
+
+    if (item.attElmt === "absorb") {
+      // this attack can absorb element (anemo abilities) but user may not activate absorption
+      attElmt = elmtModCtrl.absorption || "anemo";
+      reaction = elmtModCtrl.absorb_reaction;
+    } //
+    else if (this.resultKey === "NAs") {
       // The element of these attacks is the same as the character's element (vision)
       if (appCharacter.weaponType === "catalyst" || item.subAttPatt === "FCA") {
         attElmt = appCharacter.vision;
-      }
-      // no external infusion
-      else if (infusedElmt === "phys") {
-        attElmt = alterConfig.attElmt || "phys";
       } //
-      else {
+      else if (item.attElmt) {
+        attElmt = item.attElmt;
+      }
+      // There is Custom (external) Infusion
+      else if (infusedElmt !== "phys") {
         attElmt = infusedElmt;
         reaction = elmtModCtrl.infuse_reaction;
 
@@ -103,15 +115,13 @@ export class TalentCalculator {
         if (infusedElmt === alterConfig.attElmt || infusedElmt === appCharacter.vision) {
           reaction = elmtModCtrl.reaction;
         }
+      } //
+      else {
+        attElmt = alterConfig.attElmt || "phys";
       }
     } //
-    else if (item.attElmt === "absorb") {
-      // this attack can absorb element (anemo abilities) but user may not activate absorption
-      attElmt = elmtModCtrl.absorption || "anemo";
-      reaction = elmtModCtrl.absorb_reaction;
-    } //
     else {
-      attElmt = alterConfig.attElmt || item.attElmt || appCharacter.vision;
+      attElmt = item.attElmt || alterConfig.attElmt || appCharacter.vision;
     }
 
     return { attElmt, reaction };
