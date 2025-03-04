@@ -160,7 +160,7 @@ export class TalentCalculator {
     const record = TrackerControl.initCalcItemRecord({
       itemType: type,
       multFactors: [],
-      normalMult: 1,
+      bonusMult: 1,
       exclusives: this.attkBonusesArchive.getExclusiveBonuses(item),
     });
     let result: CalculationFinalResultItem;

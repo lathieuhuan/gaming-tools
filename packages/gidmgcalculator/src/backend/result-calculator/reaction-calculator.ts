@@ -24,7 +24,7 @@ export class ReactionCalculator {
     const config = TRANSFORMATIVE_REACTION_CONFIG[reaction];
     const flat = getBonus("flat", reaction);
     const baseValue = this.baseDmg * config.mult;
-    const normalMult = 1 + getBonus("pct_", reaction) / 100;
+    const bonusMult = 1 + getBonus("pct_", reaction) / 100;
     let attElmt = config.attElmt;
     let rxnMult = 1;
     let resMult = 1;
@@ -39,7 +39,7 @@ export class ReactionCalculator {
       resMult = this.resistances[config.attElmt];
     }
 
-    const nonCrit = (baseValue * normalMult + flat) * rxnMult * resMult;
+    const nonCrit = (baseValue * bonusMult + flat) * rxnMult * resMult;
     const cRate_ = Math.max(getBonus("cRate_", reaction), 0) / 100;
     const cDmg_ = getBonus("cDmg_", reaction) / 100;
 
@@ -47,7 +47,7 @@ export class ReactionCalculator {
       itemType: "attack",
       multFactors: [{ value: Math.round(baseValue), desc: "Base DMG" }],
       totalFlat: flat,
-      normalMult,
+      bonusMult,
       rxnMult,
       resMult,
       cDmg_,

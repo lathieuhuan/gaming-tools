@@ -85,8 +85,8 @@ export function CalcItemTracker({
       processor: Math.round,
     });
     const percentRender = renderPart({
-      label: record.itemType === "healing" ? "Heal Mult." : "Percent Mult.",
-      value: record.normalMult,
+      label: "Bonus Mult.",
+      value: record.bonusMult,
       processor: (value) => `${round(value * 100, 2)}%`,
     });
 
@@ -102,6 +102,12 @@ export function CalcItemTracker({
       <>
         {"("}
         {record.multFactors.map((factor, index) => renderFactor(factor, index ? "+" : null, index))}
+        {renderPart({
+          label: "Base DMG Mult.",
+          value: record.baseMult,
+          nullValue: 1,
+          processor: (value) => round(value, 3),
+        })}
         {flatRender}
         {")"}
         {percentRender}
@@ -115,12 +121,6 @@ export function CalcItemTracker({
         label: "Incoming Heal Mult.",
         value: record.itemType === "healing" ? inHealB_ : 0,
         processor: (value) => `${100 + round(value, 2)}%`,
-      },
-      {
-        label: "Special Mult.",
-        value: record.specialMult,
-        nullValue: 1,
-        processor: (value) => round(value, 3),
       },
       {
         label: "Reaction Mult.",

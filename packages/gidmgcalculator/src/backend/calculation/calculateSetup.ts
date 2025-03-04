@@ -65,7 +65,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
           talentMult: mult,
         },
       ],
-      normalMult: 1,
+      bonusMult: 1,
     });
     const base = (totalAttr[basedOn] * mult) / 100;
 
