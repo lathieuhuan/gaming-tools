@@ -2,7 +2,6 @@ import type { Target } from "@Src/types";
 import type {
   ElementType,
   EntityDebuff,
-  EntityPenaltyCore,
   EntityPenaltyTarget,
   ResistanceReduction,
   ResistanceReductionKey,
@@ -14,25 +13,14 @@ import TypeCounter from "@Src/utils/type-counter";
 import { isApplicableEffect, type CharacterData } from "@Src/backend/common-utils";
 import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "@Src/backend/constants";
 import { ECalcStatModule } from "@Src/backend/constants/internal";
+import { PenaltiesGetter } from "../penalty-getters";
 
-export class ResistanceReductionControl<T extends CharacterData = CharacterData> {
+export class ResistanceReductionControl<T extends CharacterData = CharacterData> extends PenaltiesGetter<T> {
   private reductCounter = new TypeCounter<ResistanceReductionKey>();
 
-  constructor(private characterData: T, private tracker?: TrackerControl) {}
-
-  protected getPenaltyValue = (debuff: EntityPenaltyCore, inputs: number[], fromSelf = true) => {
-    const { preExtra } = debuff;
-    let result = debuff.value * this.characterData.getLevelScale(debuff.lvScale, inputs, fromSelf);
-
-    if (typeof preExtra === "number") {
-      result += preExtra;
-    } else if (preExtra && isApplicableEffect(preExtra, this.characterData, inputs, fromSelf)) {
-      result += this.getPenaltyValue(preExtra, inputs, fromSelf);
-    }
-    if (debuff.max) result = Math.min(result, debuff.max);
-
-    return Math.max(result, 0);
-  };
+  constructor(protected characterData: T, private tracker?: TrackerControl) {
+    super(characterData);
+  }
 
   add(key: ResistanceReductionKey, value: number, description: string) {
     this.reductCounter.add(key, value);
@@ -72,7 +60,6 @@ export class ResistanceReductionControl<T extends CharacterData = CharacterData>
         }
         case "XILONEN": {
           const elmts: ElementType[] = ["pyro", "hydro", "cryo", "electro"];
-
           const allElmtCount = characterData.allElmtCount;
 
           allElmtCount.forEach((elmt) => {
@@ -91,9 +78,9 @@ export class ResistanceReductionControl<T extends CharacterData = CharacterData>
     if (!debuff.effects) return;
 
     for (const config of Array_.toArray(debuff.effects)) {
-      const penalty = this.getPenaltyValue(config, inputs, fromSelf);
-
       if (isApplicableEffect(config, this.characterData, inputs, fromSelf)) {
+        const penalty = this.getPenaltyValue(config, inputs, fromSelf);
+
         this.addPenalty(penalty, config.targets, inputs, description);
       }
     }

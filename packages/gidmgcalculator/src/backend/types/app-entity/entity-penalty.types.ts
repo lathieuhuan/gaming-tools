@@ -1,9 +1,21 @@
-import type { ResistanceReductionKey } from "../common.types";
+import type { ElementType, ResistanceReductionKey } from "../common.types";
 import type { CharacterEffectLevelScale } from "./app-entity-common.types";
 import type { EffectApplicableCondition } from "./effect-condition.types";
 
+/** Count members of element types of the party. Ex: [Pyro, Pyro] -> 2 */
+type MemberOptionIndex = {
+  source: "MEMBER";
+  element: ElementType | ElementType[];
+};
+
+type EntityPenaltyValueByOption = {
+  options: number[];
+  /** If number, [source] is "INPUT", [inpIndex] is the number. Default to 0 */
+  optIndex?: number | MemberOptionIndex;
+};
+
 export type EntityPenaltyCore = EffectApplicableCondition & {
-  value: number;
+  value: number | EntityPenaltyValueByOption;
 
   // ============ CHARACTER PENALTY ONLY ============
   lvScale?: CharacterEffectLevelScale;

@@ -95,6 +95,7 @@ export class CharacterReadData<TMember extends Teammate | null = Teammate | null
 export class CharacterData<TMember extends Teammate | null = Teammate | null> extends CharacterReadData<TMember> {
   public readonly elmtCount: TypeCounter<ElementType> = new TypeCounter();
 
+  // Include the character's element
   get allElmtCount() {
     const newCounter = new TypeCounter(this.elmtCount.result);
     newCounter.add(this.appCharacter.vision);
