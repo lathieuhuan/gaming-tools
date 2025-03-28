@@ -1,20 +1,21 @@
 import { CollapseList } from "rond";
 
+import { useTabs } from "@Src/hooks";
 import { selectParty } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
-import { useTabs } from "@Src/hooks";
 
 // Component
-import ElementBuffs from "./buffs/ElementBuffs";
-import SelfBuffs from "./buffs/SelfBuffs";
-import PartyBuffs from "./buffs/PartyBuffs";
-import WeaponBuffs from "./buffs/WeaponBuffs";
-import ArtifactBuffs from "./buffs/ArtifactBuffs";
-import ElementDebuffs from "./debuffs/ElementDebuffs";
-import SelfDebuffs from "./debuffs/SelfDebuffs";
-import PartyDebuffs from "./debuffs/PartyDebuffs";
-import ArtifactDebuffs from "./debuffs/ArtifactDebuffs";
-import CustomModifiers from "./CustomModifiers";
+import BuffArtifact from "./BuffArtifact";
+import BuffCustom from "./BuffCustom";
+import BuffElement from "./BuffElement";
+import BuffParty from "./BuffParty";
+import BuffSelf from "./BuffSelf";
+import BuffWeapon from "./BuffWeapon";
+import DebuffArtifact from "./DebuffArtifact";
+import DebuffCustom from "./DebuffCustom";
+import DebuffElement from "./DebuffElement";
+import DebuffParty from "./DebuffParty";
+import DebuffSelf from "./DebuffSelf";
 
 export function Modifiers() {
   const party = useSelector(selectParty);
@@ -32,32 +33,32 @@ export function Modifiers() {
             {
               title: "Resonance & Reactions buffs",
               heading: "Resonance & Reactions",
-              body: <ElementBuffs />,
+              body: <BuffElement />,
             },
             {
               title: "Self buffs",
               heading: "Self",
-              body: <SelfBuffs />,
+              body: <BuffSelf />,
             },
             {
               title: "Party buffs",
               heading: "Party",
-              body: <PartyBuffs party={party} />,
+              body: <BuffParty party={party} />,
             },
             {
               title: "Weapons buffs",
               heading: "Weapons",
-              body: <WeaponBuffs party={party} />,
+              body: <BuffWeapon party={party} />,
             },
             {
               title: "Artifacts buffs",
               heading: "Artifacts",
-              body: <ArtifactBuffs party={party} />,
+              body: <BuffArtifact party={party} />,
             },
             {
               title: "Custom buffs",
               heading: "Custom",
-              body: <CustomModifiers isBuffs />,
+              body: <BuffCustom />,
             },
           ]}
         />
@@ -69,27 +70,27 @@ export function Modifiers() {
             {
               title: "Resonance & Reactions debuffs",
               heading: "Resonance & Reactions",
-              body: <ElementDebuffs />,
+              body: <DebuffElement />,
             },
             {
               title: "Self debuffs",
               heading: "Self",
-              body: <SelfDebuffs />,
+              body: <DebuffSelf />,
             },
             {
               title: "Party debuffs",
               heading: "Party",
-              body: <PartyDebuffs party={party} />,
+              body: <DebuffParty party={party} />,
             },
             {
               title: "Artifacts debuffs",
               heading: "Artifacts",
-              body: <ArtifactDebuffs party={party} />,
+              body: <DebuffArtifact party={party} />,
             },
             {
               title: "Custom debuffs",
               heading: "Custom",
-              body: <CustomModifiers isBuffs={false} />,
+              body: <DebuffCustom />,
             },
           ]}
         />

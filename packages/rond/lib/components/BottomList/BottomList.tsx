@@ -5,29 +5,37 @@ import { Input } from "../Input";
 import { ButtonGroup, type ButtonProps } from "../Button";
 import "./BottomList.styles.scss";
 
-type ValueType = string | number;
+export type BottomListValue = string | number;
 
-export type BottomListItem<T extends Record<string, unknown> = Record<string, unknown>> = {
-  label?: ValueType;
-  value: ValueType;
-  data?: T;
+export type BottomListItem<
+  TValue extends BottomListValue = BottomListValue,
+  TData extends Record<string, unknown> = Record<string, unknown>
+> = {
+  label?: BottomListValue;
+  value: TValue;
+  data?: TData;
   className?: string;
 };
 
-export interface BottomListProps<T extends Record<string, unknown> = Record<string, unknown>>
-  extends Pick<BottomSheetProps, "active" | "height" | "onClose"> {
+export interface BottomListProps<
+  TValue extends BottomListValue = BottomListValue,
+  TData extends Record<string, unknown> = Record<string, unknown>
+> extends Pick<BottomSheetProps, "active" | "height" | "onClose"> {
   /** Default to 'Select' */
   title?: React.ReactNode;
-  value?: ValueType;
-  items?: BottomListItem<T>[];
+  value?: BottomListValue;
+  items?: BottomListItem<TValue, TData>[];
   hasSearch?: boolean;
   /** Default to 'left' */
   align?: "left" | "right";
   actions?: ButtonProps[];
-  renderItem?: (item: BottomListItem<T>) => React.ReactNode;
-  onSelect?: (value: ValueType, item: BottomListItem<T>) => void;
+  renderItem?: (item: BottomListItem<TValue, TData>) => React.ReactNode;
+  onSelect?: (value: TValue, item: BottomListItem<TValue, TData>) => void;
 }
-export function BottomList<T extends Record<string, unknown> = Record<string, unknown>>({
+export function BottomList<
+  TValue extends BottomListValue = BottomListValue,
+  TData extends Record<string, unknown> = Record<string, unknown>
+>({
   title = "Select",
   value,
   items = [],
@@ -37,7 +45,7 @@ export function BottomList<T extends Record<string, unknown> = Record<string, un
   renderItem,
   onSelect,
   ...sheetProps
-}: BottomListProps<T>) {
+}: BottomListProps<TValue, TData>) {
   const [keyword, setKeyword] = useState("");
   const shouldFilter = keyword.length > 0;
   const lowerKeyword = keyword.toLowerCase();

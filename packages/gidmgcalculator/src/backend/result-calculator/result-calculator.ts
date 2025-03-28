@@ -1,5 +1,5 @@
-import type { AttackPattern, NormalAttacksConfig, ResistanceReduction, TotalAttribute } from "../types";
-import type { AttackBonusesArchive, TrackerControl } from "../input-processor";
+import type { AttackPattern, ResistanceReduction, TotalAttribute } from "../types";
+import type { AttackAlterer, AttackBonusesArchive, TrackerControl } from "../input-processor";
 
 import { CharacterData, GeneralCalc } from "../common-utils";
 import { CalcItemCalculator } from "./calc-item-calculator";
@@ -12,9 +12,9 @@ export class ResultCalculator {
   constructor(
     targetLv: number,
     private characterData: CharacterData,
-    private NAsConfig: NormalAttacksConfig,
     private totalAttr: TotalAttribute,
     private attkBonusesArchive: AttackBonusesArchive,
+    private attackAlterer: AttackAlterer,
     private resistances: ResistanceReduction,
     private tracker?: TrackerControl
   ) {
@@ -30,7 +30,7 @@ export class ResultCalculator {
   genTalentCalculator = (patternKey: AttackPattern) => {
     return new TalentCalculator(
       patternKey,
-      this.NAsConfig,
+      this.attackAlterer.getConfig(patternKey),
       this.totalAttr,
       this.attkBonusesArchive,
       this.characterData,

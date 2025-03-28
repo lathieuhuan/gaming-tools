@@ -6,7 +6,7 @@ import { changeModCtrlInput, selectArtifacts, toggleModCtrl, type ToggleModCtrlP
 import { useDispatch, useSelector } from "@Store/hooks";
 import { ArtifactDebuffsView } from "@Src/components";
 
-export default function ArtifactDebuffs({ party }: { party: Party }) {
+export default function DebuffArtifact({ party }: { party: Party }) {
   const dispatch = useDispatch();
   const artDebuffCtrls = useSelector((state) => {
     return state.calculator.setupsById[state.calculator.activeId].artDebuffCtrls;

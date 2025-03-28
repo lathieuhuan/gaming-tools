@@ -55,6 +55,9 @@ export function FinalResultView({ characterData, finalResult, ...props }: FinalR
               className: "text-right text-primary-1",
             },
           ],
+          onDoubleClick() {
+            console.log(result);
+          },
         };
       }}
     />

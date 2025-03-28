@@ -1,6 +1,7 @@
 import type { PartiallyOptional } from "rond";
 import type {
   BareBonus,
+  CharacterEffectLevelIncrement,
   EffectExtra,
   EffectMax,
   EntityBonusBasedOn,
@@ -34,6 +35,15 @@ export class BareBonusGetter<T extends CharacterData = CharacterData> {
 
   protected scaleRefi(base: number, refi = 0, increment = base / 3) {
     return base + increment * refi;
+  }
+
+  protected getLvIncre(incre: CharacterEffectLevelIncrement | undefined, support: InternalSupportInfo) {
+    if (incre) {
+      const { talent, value, altIndex = 0 } = incre;
+      const level = support.fromSelf ? this.characterData.getFinalTalentLv(talent) : support.inputs[altIndex] ?? 0;
+      return level * value;
+    }
+    return 0;
   }
 
   /**
@@ -138,6 +148,7 @@ export class BareBonusGetter<T extends CharacterData = CharacterData> {
       }
       finalMax += this.getExtra(config.extras, support);
       finalMax = this.scaleRefi(finalMax, support.refi, config.incre);
+      finalMax += this.getLvIncre(config.lvIncre, support);
 
       return Math.min(value, finalMax);
     }

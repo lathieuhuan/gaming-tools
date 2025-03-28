@@ -66,11 +66,11 @@ export class CalcItemCalculator {
       }
 
       let flat = getBonus("flat");
-      let normalMult = getBonus("pct_") + totalAttr[attElmt];
-      let specialMult = getBonus("multPlus_");
+      let bonusMult = getBonus("pct_") + totalAttr[attElmt];
+      let baseMult = getBonus("multPlus_");
 
-      normalMult = toMult(normalMult);
-      specialMult = toMult(specialMult);
+      bonusMult = toMult(bonusMult);
+      baseMult = toMult(baseMult);
 
       // CALCULATE REACTION MULTIPLIER
       const rxnMult = this.getRxnMult(attElmt, reaction);
@@ -93,11 +93,11 @@ export class CalcItemCalculator {
       const cRate_ = Math.min(Math.max(totalCrit("cRate_"), 0), 100) / 100;
       const cDmg_ = totalCrit("cDmg_") / 100;
 
-      base = Array_.applyToItem(base, (n) => (n + flat) * normalMult * specialMult * rxnMult * defMult * resMult);
+      base = Array_.applyToItem(base, (n) => (n * baseMult + flat) * bonusMult * rxnMult * defMult * resMult);
 
+      record.baseMult = baseMult;
       record.totalFlat = flat;
-      record.normalMult = normalMult;
-      record.specialMult = specialMult;
+      record.bonusMult = bonusMult;
       record.rxnMult = rxnMult;
       record.defMult = defMult;
       record.resMult = resMult;
@@ -137,24 +137,24 @@ export class CalcItemCalculator {
       }
 
       let flat = 0;
-      let normalMult = 1 + this.getBonus("pct_", itemId) / 100;
+      let bonusMult = 1 + this.getBonus("pct_", itemId) / 100;
 
       switch (itemType) {
         case "healing":
           flat = this.getBonus("flat", itemId) ?? 0;
-          normalMult += totalAttr.healB_ / 100;
+          bonusMult += totalAttr.healB_ / 100;
           break;
         case "shield":
-          normalMult += totalAttr.shieldS_ / 100;
+          bonusMult += totalAttr.shieldS_ / 100;
           break;
       }
 
       base = Array_.applyToItem(base, (n) => n + flat);
       record.totalFlat = (record.totalFlat || 0) + flat;
 
-      if (normalMult !== 1) {
-        base = Array_.applyToItem(base, (n) => n * normalMult);
-        record.normalMult = normalMult;
+      if (bonusMult !== 1) {
+        base = Array_.applyToItem(base, (n) => n * bonusMult);
+        record.bonusMult = bonusMult;
       }
       if (itemType === "healing") {
         base = Array_.applyToItem(base, (n) => n * (1 + totalAttr.inHealB_ / 100));

@@ -59,7 +59,6 @@ export type {
   ModInputType,
   ModifierAffectType,
   NormalAttack,
-  NormalAttacksConfig,
   OptimizerAllArtifactModConfigs,
   OptimizerArtifactModConfigs,
   OptimizerExtraConfigs,

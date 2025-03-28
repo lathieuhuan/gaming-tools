@@ -28,3 +28,10 @@ export type CharacterEffectLevelScale = {
   /** On Raiden */
   max?: number;
 };
+
+export type CharacterEffectLevelIncrement = {
+  talent: TalentType;
+  value: number;
+  /** When this bonus is from teammate, this is input's index to get level. Default to 0 */
+  altIndex?: number;
+};

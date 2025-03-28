@@ -8,41 +8,46 @@ import { GeneralCalc } from "../common-utils";
 
 export class ReactionCalculator {
   private baseDmg: number;
-  private getBonus: CalcItemCalculator["getBonus"];
 
   constructor(
     characterLv: Level,
-    itemCalculator: CalcItemCalculator,
+    private itemCalculator: CalcItemCalculator,
     private resistances: ResistanceReduction,
     private tracker?: TrackerControl
   ) {
     this.baseDmg = GeneralCalc.getBaseRxnDamage(characterLv);
-    this.getBonus = itemCalculator.getBonus;
   }
 
   calculate = (reaction: TransformativeReaction, elmtModCtrl?: ElementModCtrl): CalculationFinalResultAttackItem => {
+    const { getBonus, getRxnMult } = this.itemCalculator;
+
     const config = TRANSFORMATIVE_REACTION_CONFIG[reaction];
-    const flat = this.getBonus("flat", reaction);
+    const flat = getBonus("flat", reaction);
     const baseValue = this.baseDmg * config.mult;
-    const normalMult = 1 + this.getBonus("pct_", reaction) / 100;
+    const bonusMult = 1 + getBonus("pct_", reaction) / 100;
+    let attElmt = config.attElmt;
     let rxnMult = 1;
     let resMult = 1;
 
-    const attElmt = config.attElmt === "absorb" ? elmtModCtrl?.absorption : config.attElmt;
-
-    if (attElmt) {
-      resMult = this.resistances[attElmt];
+    if (config.attElmt === "absorb") {
+      if (elmtModCtrl?.absorption) {
+        attElmt = elmtModCtrl?.absorption;
+        rxnMult = getRxnMult(attElmt, elmtModCtrl.absorb_reaction);
+        resMult = this.resistances[attElmt];
+      }
+    } else {
+      resMult = this.resistances[config.attElmt];
     }
 
-    const nonCrit = (baseValue * normalMult + flat) * rxnMult * resMult;
-    const cRate_ = Math.max(this.getBonus("cRate_", reaction), 0) / 100;
-    const cDmg_ = this.getBonus("cDmg_", reaction) / 100;
+    const nonCrit = (baseValue * bonusMult + flat) * rxnMult * resMult;
+    const cRate_ = Math.max(getBonus("cRate_", reaction), 0) / 100;
+    const cDmg_ = getBonus("cDmg_", reaction) / 100;
 
     this.tracker?.recordCalcItem("RXN_CALC", reaction, {
       itemType: "attack",
       multFactors: [{ value: Math.round(baseValue), desc: "Base DMG" }],
       totalFlat: flat,
-      normalMult,
+      bonusMult,
       rxnMult,
       resMult,
       cDmg_,
@@ -55,7 +60,7 @@ export class ReactionCalculator {
       crit: cDmg_ ? nonCrit * (1 + cDmg_) : 0,
       average: cRate_ ? nonCrit * (1 + cDmg_ * cRate_) : nonCrit,
       attPatt: "none",
-      attElmt: config.attElmt,
+      attElmt,
       reaction: null,
     };
   };

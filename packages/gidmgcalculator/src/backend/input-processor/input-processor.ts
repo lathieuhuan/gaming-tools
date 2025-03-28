@@ -14,19 +14,12 @@ import type {
   Target,
   Weapon,
 } from "@Src/types";
-import type {
-  AttackElement,
-  AttackPattern,
-  AttributeStat,
-  NormalAttacksConfig,
-  ReactionType,
-} from "@Src/backend/types";
+import type { AttackElement, AttackPattern, AttributeStat, ReactionType } from "@Src/backend/types";
 
 import Array_ from "@Src/utils/array-utils";
-import { CharacterCalc, CharacterData, GeneralCalc, isApplicableEffect } from "@Src/backend/common-utils";
+import { CharacterCalc, CharacterData, GeneralCalc } from "@Src/backend/common-utils";
 import {
   AMPLIFYING_REACTIONS,
-  NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
   RESONANCE_STAT,
   TRANSFORMATIVE_REACTIONS,
@@ -38,6 +31,7 @@ import {
   TotalAttributeControl,
   TrackerControl,
 } from "./stat-controls";
+import { AttackAlterer } from "./attack-alterer";
 
 // This class and its calculation should NOT use any service
 // because it is used in SetupOptimizer which is run by Web Worker
@@ -435,6 +429,10 @@ export class InputProcessor {
     };
   }
 
+  getAttackAlterer() {
+    return new AttackAlterer(this.characterData, this.selfBuffCtrls);
+  }
+
   getResistances(target: Target) {
     const { party, customDebuffCtrls, selfDebuffCtrls, artDebuffCtrls, resonances, superconduct } = this;
     const { characterData } = this;
@@ -488,29 +486,5 @@ export class InputProcessor {
       resistReductCtrl.add("phys", 40, "Superconduct");
     }
     return resistReductCtrl.applyTo(target);
-  }
-
-  getNormalAttacksConfig() {
-    const result: NormalAttacksConfig = {};
-
-    for (const ctrl of this.selfBuffCtrls) {
-      const buff = ctrl.activated ? Array_.findByIndex(this.characterData.appCharacter.buffs, ctrl.index) : undefined;
-      const { normalsConfig = [] } = buff || {};
-
-      for (const config of Array_.toArray(normalsConfig)) {
-        const { checkInput, forPatt = "ALL", ...rest } = config;
-
-        if (isApplicableEffect(config, this.characterData, ctrl.inputs ?? [], true)) {
-          if (forPatt === "ALL") {
-            for (const type of NORMAL_ATTACKS) {
-              result[type] = rest;
-            }
-          } else {
-            result[forPatt] = rest;
-          }
-        }
-      }
-    }
-    return result;
   }
 }

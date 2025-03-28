@@ -1,31 +1,28 @@
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectCharacter, changeModCtrlInput, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
-import { useCharacterData } from "../../ContextProvider";
+import { useCharacterData } from "../ContextProvider";
 
-//
-import { SelfDebuffsView } from "@Src/components";
+import { SelfBuffsView } from "@Src/components";
 
-export default function SelfDebuffs() {
+export default function BuffSelf() {
   const dispatch = useDispatch();
   const character = useSelector(selectCharacter);
-  const selfDebuffCtrls = useSelector(
-    (state) => state.calculator.setupsById[state.calculator.activeId].selfDebuffCtrls
-  );
+  const selfBuffCtrls = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].selfBuffCtrls);
   const characterData = useCharacterData();
 
   return (
-    <SelfDebuffsView
+    <SelfBuffsView
       mutable
       character={character}
       characterData={characterData}
-      modCtrls={selfDebuffCtrls}
+      modCtrls={selfBuffCtrls}
       getHanlders={({ ctrl }) => {
         const path: ToggleModCtrlPath = {
-          modCtrlName: "selfDebuffCtrls",
+          modCtrlName: "selfBuffCtrls",
           ctrlIndex: ctrl.index,
         };
 
-        const updateDebuffCtrlInput = (value: number, inputIndex: number) => {
+        const updateBuffCtrlInput = (value: number, inputIndex: number) => {
           dispatch(changeModCtrlInput(Object.assign({ value, inputIndex }, path)));
         };
 
@@ -33,11 +30,11 @@ export default function SelfDebuffs() {
           onToggle: () => {
             dispatch(toggleModCtrl(path));
           },
-          onToggleCheck: (currentInput, inputIndex) => {
-            updateDebuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
+          onToggleCheck: (currentinput, inputIndex) => {
+            updateBuffCtrlInput(currentinput === 1 ? 0 : 1, inputIndex);
           },
-          onChangeText: updateDebuffCtrlInput,
-          onSelectOption: updateDebuffCtrlInput,
+          onChangeText: updateBuffCtrlInput,
+          onSelectOption: updateBuffCtrlInput,
         };
       }}
     />

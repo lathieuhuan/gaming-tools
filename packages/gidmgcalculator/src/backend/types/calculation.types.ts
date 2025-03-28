@@ -10,10 +10,10 @@ import type {
   AttributeStat,
   CalcItemType,
   CoreStat,
+  ElementType,
   LevelableTalentType,
   QuickenReaction,
 } from "./common.types";
-import type { CharacterBuffNormalAttackConfig } from "./app-character.types";
 
 export type AttackReaction = AmplifyingReaction | QuickenReaction | null;
 
@@ -53,7 +53,13 @@ export type AttackBonuses = Array<{
 
 //
 
-export type NormalAttacksConfig = Partial<Record<AttackPattern, Omit<CharacterBuffNormalAttackConfig, "forPatt">>>;
+/** This is the changes towards an AttackPattern (the normal) */
+export type AttackAlterConfig = {
+  attPatt?: AttackPattern;
+  /** Self Infusion */
+  attElmt?: ElementType;
+  disabled?: boolean;
+};
 
 export type CalculationAspect = "nonCrit" | "crit" | "average";
 

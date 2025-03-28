@@ -1,13 +1,14 @@
 import type { ElementModCtrl } from "@Src/types";
 import type {
   AppCharacter,
+  AttackAlterConfig,
   AttackElement,
   AttackPattern,
+  AttackReaction,
   CalcItemFlatFactor,
   CalcItemMultFactor,
   CalculationFinalResultItem,
   LevelableTalentType,
-  NormalAttacksConfig,
   TalentCalcItem,
   TotalAttribute,
 } from "../types";
@@ -18,20 +19,18 @@ import { CharacterCalc, CharacterData } from "../common-utils";
 import { TrackerControl } from "../input-processor";
 import { CalcItemCalculator } from "./calc-item-calculator";
 
-type InternalElmtModCtrls = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorption">;
+type InternalElmtModCtrl = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorb_reaction" | "absorption">;
 
 export class TalentCalculator {
   resultKey: LevelableTalentType;
   disabled: boolean;
   level: number;
-  private default_: ReturnType<typeof CharacterCalc.getTalentDefaultInfo> & {
-    attElmt: AttackElement;
-  };
+  private default_: Omit<ReturnType<typeof CharacterCalc.getTalentDefaultInfo>, "resultKey">;
   private appCharacter: AppCharacter;
 
   constructor(
     patternKey: AttackPattern,
-    NAsConfig: NormalAttacksConfig,
+    private alterConfig: AttackAlterConfig = {},
     private totalAttr: TotalAttribute,
     private attkBonusesArchive: AttackBonusesArchive,
     characterData: CharacterData,
@@ -42,14 +41,9 @@ export class TalentCalculator {
 
     const default_ = CharacterCalc.getTalentDefaultInfo(patternKey, this.appCharacter);
 
-    this.default_ = {
-      ...default_,
-      attPatt: NAsConfig[patternKey]?.attPatt ?? default_.attPatt,
-      attElmt: NAsConfig[patternKey]?.attElmt ?? "phys",
-    };
-
+    this.default_ = default_;
     this.resultKey = default_.resultKey;
-    this.disabled = NAsConfig[patternKey]?.disabled === true;
+    this.disabled = alterConfig?.disabled === true;
     this.level = characterData.getFinalTalentLv(this.resultKey);
   }
 
@@ -77,33 +71,57 @@ export class TalentCalculator {
 
   private getElementAttribute = (
     item: TalentCalcItem,
-    elmtModCtrls: InternalElmtModCtrls,
-    infusedElmnt: AttackElement
-  ) => {
-    const { appCharacter, default_ } = this;
-
+    elmtModCtrl: InternalElmtModCtrl,
+    infusedElmt: AttackElement
+  ): {
+    attElmt: AttackElement;
+    reaction: AttackReaction;
+  } => {
+    const { appCharacter, alterConfig } = this;
     let attElmt: AttackElement;
-    let reaction = elmtModCtrls.reaction;
+    /**
+     * This is the reaction expected by user.
+     * No need to validate if this attack can cause this reaction 'cause it will be checked later
+     */
+    let reaction = elmtModCtrl.reaction;
 
-    if (item.attElmt) {
-      if (item.attElmt === "absorb") {
-        // this attack can absorb element (anemo abilities) but user may or may not activate absorption
-        attElmt = elmtModCtrls.absorption || appCharacter.vision;
-      } else {
+    // AttElmt priority:
+    // 1. NAs of (catalyst) or FCA
+    // 2. item.attElmt
+    // 3. infusedElmt (custom infusion) (if NAs)
+    // 4. alterConfig (get from CharacterBuffNormalAttackConfig)
+    // 5. phys (if NAs) | appCharacter.vision (otherwise)
+
+    if (item.attElmt === "absorb") {
+      // this attack can absorb element (anemo abilities) but user may not activate absorption
+      attElmt = elmtModCtrl.absorption || "anemo";
+      reaction = elmtModCtrl.absorb_reaction;
+    } //
+    else if (this.resultKey === "NAs") {
+      // The element of these attacks is the same as the character's element (vision)
+      if (appCharacter.weaponType === "catalyst" || item.subAttPatt === "FCA") {
+        attElmt = appCharacter.vision;
+      } //
+      else if (item.attElmt) {
         attElmt = item.attElmt;
       }
-    } else if (appCharacter.weaponType === "catalyst" || item.subAttPatt === "FCA" || default_.resultKey !== "NAs") {
-      attElmt = appCharacter.vision;
-    } else if (default_.resultKey === "NAs" && infusedElmnt !== "phys") {
-      attElmt = infusedElmnt;
-      /**
-       * when the infusedElmnt is the same as appCharacter.vision (e.g. Pyro)
-       * elmtModCtrls.infuse_reaction will be null, because the reaction of NAs will be the same as ES and EB,
-       * so we use elmtModCtrls.reaction instead
-       */
-      reaction = elmtModCtrls.infuse_reaction ?? elmtModCtrls.reaction;
-    } else {
-      attElmt = default_.attElmt;
+      // There is Custom (external) Infusion
+      else if (infusedElmt !== "phys") {
+        attElmt = infusedElmt;
+        reaction = elmtModCtrl.infuse_reaction;
+
+        // if external infusion is the same as self infusion or character's element,
+        // infuse_reaction should be null and reaction (default) should be used instead
+        if (infusedElmt === alterConfig.attElmt || infusedElmt === appCharacter.vision) {
+          reaction = elmtModCtrl.reaction;
+        }
+      } //
+      else {
+        attElmt = alterConfig.attElmt || "phys";
+      }
+    } //
+    else {
+      attElmt = item.attElmt || alterConfig.attElmt || appCharacter.vision;
     }
 
     return { attElmt, reaction };
@@ -134,23 +152,23 @@ export class TalentCalculator {
 
   calculateItem = (
     item: TalentCalcItem,
-    elmtModCtrls: InternalElmtModCtrls,
-    infusedElmnt: AttackElement
+    elmtModCtrl: InternalElmtModCtrl,
+    infusedElmt: AttackElement
   ): CalculationFinalResultItem => {
     const { type = "attack" } = item;
     //
     const record = TrackerControl.initCalcItemRecord({
       itemType: type,
       multFactors: [],
-      normalMult: 1,
+      bonusMult: 1,
       exclusives: this.attkBonusesArchive.getExclusiveBonuses(item),
     });
     let result: CalculationFinalResultItem;
 
     switch (type) {
       case "attack": {
-        const { attPatt = this.default_.attPatt } = item;
-        const { attElmt, reaction } = this.getElementAttribute(item, elmtModCtrls, infusedElmnt);
+        const attPatt = this.alterConfig.attPatt || item.attPatt || this.default_.attPatt;
+        const { attElmt, reaction } = this.getElementAttribute(item, elmtModCtrl, infusedElmt);
         const calculator = this.itemCalculator.genAttackCalculator(attPatt, attElmt, item.id);
 
         if (this.disabled) {
