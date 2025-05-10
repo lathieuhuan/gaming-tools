@@ -39,8 +39,13 @@ export class IsApplicableEffectTester {
   }
 
   get checkInputValue(): Readonly<number> {
-    const value = typeof this.checkInput === "number" ? this.checkInput : this.checkInput!.value;
-    return value;
+    if (typeof this.checkInput === "number") {
+      return this.checkInput;
+    }
+    if (Array.isArray(this.checkInput)) {
+      return this.checkInput[0].value;
+    }
+    return this.checkInput!.value;
   }
 
   __setInfo(charName: __EMockCharacter, teammateNames: string[] = []) {

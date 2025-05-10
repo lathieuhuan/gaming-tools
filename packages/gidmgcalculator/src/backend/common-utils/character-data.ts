@@ -1,5 +1,5 @@
 import type { AppCharactersByName, Character, Teammate } from "@Src/types";
-import type { AppCharacter, CharacterEffectLevelScale, ElementType, TalentType } from "../types";
+import type { AppCharacter, CharacterEffectLevelScale, ElementType, PartyElementCondition, TalentType } from "../types";
 import type { DeepReadonly } from "rond";
 import TypeCounter from "@Src/utils/type-counter";
 import { CharacterCalc } from "./character-calc";
@@ -8,6 +8,7 @@ export class CharacterReadData<TMember extends Teammate | null = Teammate | null
   protected _character: Character;
   protected _party: TMember[];
   protected _appCharacter: AppCharacter;
+  public readonly elmtCount: TypeCounter<ElementType> = new TypeCounter();
 
   get character() {
     return this._character;
@@ -21,6 +22,13 @@ export class CharacterReadData<TMember extends Teammate | null = Teammate | null
     return this._appCharacter;
   }
 
+  // Include the character's element
+  get allElmtCount() {
+    const newCounter = new TypeCounter(this.elmtCount.result);
+    newCounter.add(this.appCharacter.vision);
+    return newCounter;
+  }
+
   constructor(
     character: Character,
     protected data: AppCharactersByName,
@@ -30,6 +38,7 @@ export class CharacterReadData<TMember extends Teammate | null = Teammate | null
     this._character = character;
     this._party = party;
     this._appCharacter = mainAppCharacter || this.getAppCharacter(character.name);
+    this.countElement();
   }
 
   getAppCharacter(name: string) {
@@ -40,6 +49,14 @@ export class CharacterReadData<TMember extends Teammate | null = Teammate | null
     }
     return data;
   }
+
+  protected countElement = () => {
+    this.elmtCount.reset();
+
+    for (const teammate of this.party) {
+      if (teammate) this.elmtCount.add(this.getAppCharacter(teammate.name).vision);
+    }
+  };
 
   getTotalXtraTalentLv = (talentType: TalentType, character?: Character): number => {
     let _character = this.character;
@@ -52,11 +69,32 @@ export class CharacterReadData<TMember extends Teammate | null = Teammate | null
 
     let result = 0;
 
-    if (talentType === "NAs") {
-      if (_character.name === "Tartaglia" || this.party.some((teammate) => teammate && teammate.name === "Tartaglia")) {
-        result++;
-      }
+    switch (talentType) {
+      case "NAs":
+        if (
+          _character.name === "Tartaglia" ||
+          this.party.some((teammate) => teammate && teammate.name === "Tartaglia")
+        ) {
+          result++;
+        }
+        break;
+      case "ES":
+        if (_character.name === "Skirk" || this.party.some((teammate) => teammate && teammate.name === "Skirk")) {
+          const isValid = this.isValidPartyElmt({
+            partyOnlyElmts: ["hydro", "cryo"],
+            partyElmtCount: {
+              hydro: 1,
+              cryo: 1,
+            },
+          });
+
+          if (isValid) {
+            result++;
+          }
+        }
+        break;
     }
+
     if (talentType !== "altSprint") {
       const consLv = _appCharacter.talentLvBonus?.[talentType];
 
@@ -83,37 +121,33 @@ export class CharacterReadData<TMember extends Teammate | null = Teammate | null
     return 1;
   };
 
+  isValidPartyElmt = (condition: PartyElementCondition) => {
+    const { totalPartyElmtCount, partyElmtCount, partyOnlyElmts } = condition;
+    const allElmtCount = this.allElmtCount;
+
+    if (totalPartyElmtCount) {
+      const { elements, value, comparison } = totalPartyElmtCount;
+
+      switch (comparison) {
+        case "MAX":
+          if (allElmtCount.get(elements) > value) return false;
+      }
+    }
+    if (partyElmtCount) {
+      const requiredEntries = new TypeCounter(partyElmtCount).entries;
+
+      if (requiredEntries.some(([type, value]) => allElmtCount.get(type) < value)) {
+        return false;
+      }
+    }
+    if (partyOnlyElmts && allElmtCount.keys.some((elementType) => !partyOnlyElmts.includes(elementType))) {
+      return false;
+    }
+    return true;
+  };
+
   clone = (appCharacter = this._appCharacter) => {
     return new CharacterReadData(this._character, this.data, this.party, appCharacter);
-  };
-
-  toCharacterData = () => {
-    return new CharacterData(this.character, this.data, this.party, this.appCharacter);
-  };
-}
-
-export class CharacterData<TMember extends Teammate | null = Teammate | null> extends CharacterReadData<TMember> {
-  public readonly elmtCount: TypeCounter<ElementType> = new TypeCounter();
-
-  // Include the character's element
-  get allElmtCount() {
-    const newCounter = new TypeCounter(this.elmtCount.result);
-    newCounter.add(this.appCharacter.vision);
-    return newCounter;
-  }
-
-  constructor(character: Character, data: AppCharactersByName, party: TMember[] = [], appCharacter?: AppCharacter) {
-    super(character, data, party, appCharacter);
-
-    this.countElement();
-  }
-
-  private countElement = () => {
-    this.elmtCount.reset();
-
-    for (const teammate of this.party) {
-      if (teammate) this.elmtCount.add(this.getAppCharacter(teammate.name).vision);
-    }
   };
 
   forEachTeammate = (callback: (data: DeepReadonly<AppCharacter>, teammate: Teammate) => void) => {
@@ -122,6 +156,13 @@ export class CharacterData<TMember extends Teammate | null = Teammate | null> ex
     }
   };
 
+  toCharacterData = () => {
+    return new CharacterData(this.character, this.data, this.party, this.appCharacter);
+  };
+}
+
+export class CharacterData<TMember extends Teammate | null = Teammate | null> extends CharacterReadData<TMember> {
+  //
   updateParty = (party: TMember[] = [], data: AppCharactersByName) => {
     this._party = party;
     this.data = {
