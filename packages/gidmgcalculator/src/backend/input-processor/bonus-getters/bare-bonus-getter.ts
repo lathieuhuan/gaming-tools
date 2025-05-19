@@ -1,4 +1,5 @@
 import type { PartiallyOptional } from "rond";
+
 import type {
   BareBonus,
   CharacterEffectLevelIncrement,
@@ -7,12 +8,12 @@ import type {
   EntityBonusBasedOn,
   EntityBonusCore,
   EntityBonusStack,
-  EntityBonusValueByOption,
 } from "@Src/backend/types";
 import type { TotalAttributeControl } from "../stat-controls";
 
-import Array_ from "@Src/utils/array-utils";
 import { isApplicableEffect, type CharacterData } from "@Src/backend/common-utils";
+import Array_ from "@Src/utils/array-utils";
+import { EffectValueGetter } from "../effect-value-getter";
 
 export type GetBareBonusSupportInfo = {
   inputs: number[];
@@ -24,8 +25,10 @@ type InternalSupportInfo = GetBareBonusSupportInfo & {
   basedOnStable?: boolean;
 };
 
-export class BareBonusGetter<T extends CharacterData = CharacterData> {
-  constructor(protected characterData: T, protected totalAttrCtrl?: TotalAttributeControl) {}
+export class BareBonusGetter<T extends CharacterData = CharacterData> extends EffectValueGetter<T> {
+  constructor(protected characterData: T, protected totalAttrCtrl?: TotalAttributeControl) {
+    super(characterData);
+  }
 
   updateTotalAttrCtrl(totalAttrCtrl: TotalAttributeControl) {
     this.totalAttrCtrl = totalAttrCtrl;
@@ -37,7 +40,10 @@ export class BareBonusGetter<T extends CharacterData = CharacterData> {
     return base + increment * refi;
   }
 
-  protected getLvIncre(incre: CharacterEffectLevelIncrement | undefined, support: InternalSupportInfo) {
+  protected getLvIncre(
+    incre: CharacterEffectLevelIncrement | undefined,
+    support: Pick<InternalSupportInfo, "inputs" | "fromSelf">
+  ) {
     if (incre) {
       const { talent, value, altIndex = 0 } = incre;
       const level = support.fromSelf ? this.characterData.getFinalTalentLv(talent) : support.inputs[altIndex] ?? 0;
@@ -45,59 +51,6 @@ export class BareBonusGetter<T extends CharacterData = CharacterData> {
     }
     return 0;
   }
-
-  /**
-   * @param inputs used when optIndex is number or has INPUT source
-   */
-  protected getIndexOfBonusValue = (config: Pick<EntityBonusValueByOption, "optIndex">, inputs: number[] = []) => {
-    const { characterData } = this;
-    const { optIndex = 0 } = config;
-    const elmtCount = characterData.allElmtCount;
-    const indexConfig =
-      typeof optIndex === "number"
-        ? ({ source: "INPUT", inpIndex: optIndex } satisfies EntityBonusValueByOption["optIndex"])
-        : optIndex;
-    let indexValue = -1;
-
-    switch (indexConfig.source) {
-      case "INPUT":
-        indexValue += inputs[indexConfig.inpIndex] ?? 0;
-        break;
-      case "ELEMENT": {
-        const { elements } = indexConfig;
-
-        if (elements) {
-          elmtCount.forEach((elementType) => {
-            if (elements.includes(elementType)) indexValue++;
-          });
-        } else {
-          indexValue += elmtCount.keys.length;
-        }
-        break;
-      }
-      case "MEMBER": {
-        switch (indexConfig.element) {
-          case "DIFFERENT":
-            elmtCount.forEach((elementType) => {
-              if (elementType !== characterData.appCharacter.vision) indexValue++;
-            });
-            break;
-          default:
-            if (typeof indexConfig.element === "string") {
-              indexValue += elmtCount.get(indexConfig.element);
-            } else {
-              indexValue += indexConfig.element.reduce((total, type) => total + elmtCount.get(type), 0);
-            }
-        }
-        break;
-      }
-      case "LEVEL": {
-        indexValue += characterData.getFinalTalentLv(indexConfig.talent);
-        break;
-      }
-    }
-    return indexValue;
-  };
 
   protected getExtra = (
     extras: EffectExtra | EffectExtra[] | undefined,
@@ -114,7 +67,10 @@ export class BareBonusGetter<T extends CharacterData = CharacterData> {
     return result;
   };
 
-  protected getBasedOn = (config: EntityBonusBasedOn, support: Omit<InternalSupportInfo, "refi">) => {
+  protected getBasedOn = (
+    config: EntityBonusBasedOn,
+    support: Pick<InternalSupportInfo, "inputs" | "fromSelf" | "basedOnStable">
+  ) => {
     const { field, altIndex = 0, baseline = 0 } = typeof config === "string" ? { field: config } : config;
     let basedOnValue = 1;
 
@@ -158,11 +114,10 @@ export class BareBonusGetter<T extends CharacterData = CharacterData> {
   // ========== MAIN ==========
 
   getIntialBonusValue = (config: EntityBonusCore["value"], support: InternalSupportInfo) => {
-    const { inputs } = support;
-
     if (typeof config === "number") {
       return config;
     }
+    const { inputs } = support;
     const { preOptions, options } = config;
     let index = -1;
 
@@ -171,7 +126,7 @@ export class BareBonusGetter<T extends CharacterData = CharacterData> {
       const preIndex = preOptions[inputs[0]];
       index += preIndex ?? preOptions[preOptions.length - 1];
     } else {
-      index = this.getIndexOfBonusValue(config, inputs);
+      index = this.getIndexOfEffectValue(config, inputs);
     }
 
     index += this.getExtra(config.extra, support);

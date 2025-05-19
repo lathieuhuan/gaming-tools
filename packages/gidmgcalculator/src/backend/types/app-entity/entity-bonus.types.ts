@@ -1,36 +1,10 @@
-import type { ElementType, LevelableTalentType } from "../common.types";
-import type { EntityBonusBasedOn, CharacterEffectLevelScale } from "./app-entity-common.types";
+import type { CharacterEffectLevelScale, EntityBonusBasedOn } from "./app-entity-common.types";
 import type { EntityBonusStack } from "./effect-bonus-stack.types";
 import type { EffectApplicableCondition } from "./effect-condition.types";
 import type { EffectExtra } from "./effect-extra.types";
 import type { EffectMax } from "./effect-max.types";
 import type { EntityBonusTargets } from "./effect-target.types";
-
-type InputOptionIndex = {
-  source: "INPUT";
-  inpIndex: number;
-};
-/** Count distinct element types of the party. Ex: [Pyro, Pyro] -> 1 */
-type ElementOptionIndex = {
-  source: "ELEMENT";
-  elements?: ElementType[];
-};
-/** Count members of element types of the party. Ex: [Pyro, Pyro] -> 2 */
-type MemberOptionIndex = {
-  source: "MEMBER";
-  element: "DIFFERENT" | ElementType | ElementType[];
-};
-/** On Razor */
-type LevelOptionIndex = {
-  source: "LEVEL";
-  talent: LevelableTalentType;
-};
-
-export type EntityBonusValueByOption = {
-  options: number[];
-  /** If number, [source] is "INPUT", [inpIndex] is the number. Default to 0 */
-  optIndex?: number | InputOptionIndex | ElementOptionIndex | MemberOptionIndex | LevelOptionIndex;
-};
+import type { EffectValueByOption } from "./effect-value.types";
 
 type CharacterEntityBonusValueByOptionExtend = {
   /** On Navia */
@@ -44,7 +18,7 @@ type CharacterEntityBonusValueByOptionExtend = {
 export type EntityBonusCore<TBonusExtend extends object = object> = TBonusExtend &
   EffectApplicableCondition & {
     id: string;
-    value: number | (EntityBonusValueByOption & CharacterEntityBonusValueByOptionExtend);
+    value: number | (EffectValueByOption & CharacterEntityBonusValueByOptionExtend);
     /**
      * On Characters. Multiplier based on talent level
      * Added before preExtra

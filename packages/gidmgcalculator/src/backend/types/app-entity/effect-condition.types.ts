@@ -17,7 +17,7 @@ export type InputCheck = {
 
 export type EffectUsableCondition = {
   /** If number, the input at 0 must equal to the number */
-  checkInput?: number | InputCheck;
+  checkInput?: number | InputCheck | InputCheck[];
   /**
    * 'DISTINCT_ELMT' only on Ballad of the Fjords.
    * 'MIXED' only on Chain Breaker.
@@ -36,12 +36,7 @@ type CharacterEffectAvailableCondition = {
   altIndex?: number;
 };
 
-/** Mostly on characters */
-type ExtraCondition = {
-  /** On Chongyun, 2 original artifacts */
-  forWeapons?: WeaponType[];
-  /** On Chevreuse, Xilonen */
-  forElmts?: ElementType[];
+export type PartyElementCondition = {
   /** On Xilonen */
   totalPartyElmtCount?: {
     elements: ElementType[];
@@ -54,4 +49,14 @@ type ExtraCondition = {
   partyOnlyElmts?: ElementType[];
 };
 
-export type EffectApplicableCondition = EffectUsableCondition & CharacterEffectAvailableCondition & ExtraCondition;
+type ExtraCondition = {
+  /** On Chongyun, 2 original artifacts */
+  forWeapons?: WeaponType[];
+  /** On Chevreuse, Xilonen */
+  forElmts?: ElementType[];
+};
+
+export type EffectApplicableCondition = EffectUsableCondition &
+  CharacterEffectAvailableCondition &
+  PartyElementCondition &
+  ExtraCondition;

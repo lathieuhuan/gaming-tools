@@ -5,5 +5,7 @@ export * from "./effect-condition.types";
 export * from "./effect-extra.types";
 export * from "./effect-max.types";
 export * from "./effect-target.types";
+export * from "./effect-value.types";
 export * from "./entity-bonus.types";
 export * from "./entity-penalty.types";
+
