@@ -1,9 +1,10 @@
 import type {
-  AttributeStat,
-  ResistanceReductionKey,
-  CalcItemType,
   AttackBonusKey,
+  AttackTag,
+  AttributeStat,
+  CalcItemType,
   CalculationFinalResultKey,
+  ResistanceReductionKey,
 } from "@Src/backend/types";
 
 import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "@Src/backend/constants";
@@ -45,6 +46,7 @@ export type CalcItemRecord = {
   cRate_?: number;
   cDmg_?: number;
   note?: string;
+  tags?: AttackTag[];
   exclusives?: CalcItemExclusiveBonus[];
 };
 

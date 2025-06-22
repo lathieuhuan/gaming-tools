@@ -2,7 +2,7 @@ import type { CalcSetup, Target } from "@Src/types";
 import type { CalculationFinalResult } from "../types";
 
 import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
-import { ATTACK_PATTERNS, TRANSFORMATIVE_REACTIONS } from "../constants";
+import { ATTACK_PATTERNS, LUNAR_REACTIONS, TRANSFORMATIVE_REACTIONS } from "../constants";
 
 import { InputProcessor, TrackerControl } from "../input-processor";
 import { ResultCalculator } from "../result-calculator";
@@ -46,6 +46,16 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
       );
     }
   });
+
+  // Lunar Reaction
+
+  const lunarReactionCalculator = resultCalculator.genLunarReactionCalculator();
+
+  for (const reaction of LUNAR_REACTIONS) {
+    finalResult.RXN_CALC[reaction] = lunarReactionCalculator.calculate(reaction, setup.elmtModCtrls);
+  }
+
+  // Transformative Reaction
 
   const reactionCalculator = resultCalculator.genReactionCalculator();
 

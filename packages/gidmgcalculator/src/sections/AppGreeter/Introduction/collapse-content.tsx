@@ -92,8 +92,7 @@ const CONTACTS = [
 export const About = (
   <div className="space-y-1">
     <p>
-      - Hello, I'm {markYellow("Ronqueroc")} the owner of this App. I lost my job at a hotel due to the pandemic and
-      started to learn programming on July 2020.
+      - Hello, I'm {markYellow("Ronqueroc")} the owner of GI DMG Calculator which was released on August 2021.
     </p>
     <p>
       - This App is for calculating DMG a character in game Genshin Impact can do with their attacks in a specific

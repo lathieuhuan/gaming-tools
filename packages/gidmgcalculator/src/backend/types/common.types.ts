@@ -8,6 +8,7 @@ import {
   CORE_STAT_TYPES,
   ELEMENT_TYPES,
   LEVELS,
+  LUNAR_REACTIONS,
   NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
   REACTIONS,
@@ -44,6 +45,8 @@ export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
 
 export type ActualAttackPattern = AttackPattern | "none";
 
+export type AttackTag = "lunarCharged";
+
 //
 
 export type TalentCalcItemBonusId = `id.${number}`;
@@ -79,6 +82,8 @@ export type AmplifyingReaction = (typeof AMPLIFYING_REACTIONS)[number];
 export type TransformativeReaction = (typeof TRANSFORMATIVE_REACTIONS)[number];
 
 export type QuickenReaction = (typeof QUICKEN_REACTIONS)[number];
+
+export type LunarReaction = (typeof LUNAR_REACTIONS)[number];
 
 export type ReactionType = (typeof REACTIONS)[number];
 

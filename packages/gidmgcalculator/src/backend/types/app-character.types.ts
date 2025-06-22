@@ -13,6 +13,7 @@ import type {
   ActualAttackElement,
   ActualAttackPattern,
   AttackPattern,
+  AttackTag,
   AttributeStat,
   CalcItemBasedOn,
   CalcItemMultFactor,
@@ -69,7 +70,16 @@ export type AppCharacter = {
   debuffs?: CharacterDebuff[];
 };
 
-type Nation = "outland" | "mondstadt" | "liyue" | "inazuma" | "sumeru" | "natlan" | "fontaine" | "snezhnaya";
+type Nation =
+  | "nodkrai"
+  | "outland"
+  | "mondstadt"
+  | "liyue"
+  | "inazuma"
+  | "sumeru"
+  | "natlan"
+  | "fontaine"
+  | "snezhnaya";
 
 type Ability = {
   name: string;
@@ -122,6 +132,7 @@ export type TalentCalcItem = {
   attElmt?: ActualAttackElement;
   /** Only on 'attack' */
   subAttPatt?: "FCA";
+  tags?: AttackTag[];
 };
 
 // type _TalentCalcItem = PartiallyOptional<TalentCalcItem, "type">;

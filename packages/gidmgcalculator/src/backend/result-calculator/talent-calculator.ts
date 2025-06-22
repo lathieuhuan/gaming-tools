@@ -162,14 +162,16 @@ export class TalentCalculator {
       multFactors: [],
       bonusMult: 1,
       exclusives: this.attkBonusesArchive.getExclusiveBonuses(item),
+      tags: item.tags,
     });
     let result: CalculationFinalResultItem;
 
     switch (type) {
       case "attack": {
+        const isLunar = item.tags?.includes("lunarCharged");
         const attPatt = this.alterConfig.attPatt || item.attPatt || this.default_.attPatt;
         const { attElmt, reaction } = this.getElementAttribute(item, elmtModCtrl, infusedElmt);
-        const calculator = this.itemCalculator.genAttackCalculator(attPatt, attElmt, item.id);
+        const calculator = this.itemCalculator.genAttackCalculator(attPatt, attElmt, item.tags, item.id);
 
         if (this.disabled) {
           return calculator.emptyResult;
@@ -180,7 +182,7 @@ export class TalentCalculator {
         const base = item.joinMultFactors ? bases.reduce((accumulator, base) => accumulator + base, 0) : bases;
 
         // TALENT DMG
-        result = calculator.calculate(base, reaction, record);
+        result = calculator.calculate(base, reaction, record, isLunar);
 
         break;
       }

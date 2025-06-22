@@ -1,15 +1,16 @@
+import type { AttackBonusesArchive, CalcItemRecord } from "../input-processor";
 import type {
   ActualAttackPattern,
   AttackBonusKey,
   AttackElement,
   AttackReaction,
+  AttackTag,
   CalcItemType,
   CalculationFinalResultItem,
   ResistanceReduction,
   TalentCalcItemBonusId,
   TotalAttribute,
 } from "../types";
-import type { AttackBonusesArchive, CalcItemRecord } from "../input-processor";
 
 import { toMult } from "@Src/utils";
 import Array_ from "@Src/utils/array-utils";
@@ -36,7 +37,12 @@ export class CalcItemCalculator {
     return 1;
   };
 
-  genAttackCalculator = (attPatt: ActualAttackPattern, attElmt: AttackElement, itemId?: TalentCalcItemBonusId) => {
+  genAttackCalculator = (
+    attPatt: ActualAttackPattern,
+    attElmt: AttackElement,
+    tags: AttackTag[] = [],
+    itemId?: TalentCalcItemBonusId
+  ) => {
     const { totalAttr, attkBonusesArchive, resistances } = this;
 
     const emptyResult: CalculationFinalResultItem = {
@@ -52,13 +58,14 @@ export class CalcItemCalculator {
     const getBonus = (key: AttackBonusKey) => {
       const finalAttPatt = attPatt === "none" ? undefined : attPatt;
       const mixedType = finalAttPatt ? (`${finalAttPatt}.${attElmt}` as const) : undefined;
-      return attkBonusesArchive.get(key, finalAttPatt, attElmt, mixedType, itemId);
+      return attkBonusesArchive.get(key, finalAttPatt, attElmt, mixedType, ...tags, itemId);
     };
 
     const calculate = (
       base: number | number[],
       reaction: AttackReaction,
-      record: CalcItemRecord
+      record: CalcItemRecord,
+      isLunar = false
     ): CalculationFinalResultItem => {
       //
       if (base === 0) {
@@ -72,16 +79,23 @@ export class CalcItemCalculator {
       bonusMult = toMult(bonusMult);
       baseMult = toMult(baseMult);
 
+      if (isLunar) {
+        baseMult += 2;
+      }
+
       // CALCULATE REACTION MULTIPLIER
       const rxnMult = this.getRxnMult(attElmt, reaction);
 
       // CALCULATE DEFENSE MULTIPLIER
       let defMult = 1;
-      const charPart = this.characterBareLv + 100;
-      const defReduction = 1 - resistances.def / 100;
 
-      defMult = 1 - getBonus("defIgn_") / 100;
-      defMult = charPart / (defReduction * defMult * (this.targetLv + 100) + charPart);
+      if (!isLunar) {
+        const charPart = this.characterBareLv + 100;
+        const defReduction = 1 - resistances.def / 100;
+
+        defMult = 1 - getBonus("defIgn_") / 100;
+        defMult = charPart / (defReduction * defMult * (this.targetLv + 100) + charPart);
+      }
 
       // CALCULATE RESISTANCE MULTIPLIER
       const resMult = resistances[attElmt];

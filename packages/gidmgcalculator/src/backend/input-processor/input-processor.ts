@@ -20,6 +20,7 @@ import Array_ from "@Src/utils/array-utils";
 import { CharacterCalc, CharacterData, GeneralCalc } from "@Src/backend/common-utils";
 import {
   AMPLIFYING_REACTIONS,
+  LUNAR_REACTIONS,
   QUICKEN_REACTIONS,
   RESONANCE_STAT,
   TRANSFORMATIVE_REACTIONS,
@@ -391,6 +392,14 @@ export class InputProcessor {
     for (const rxn of TRANSFORMATIVE_REACTIONS) {
       attkBonusesCtrl.add({
         value: rxnBonuses.transformative,
+        toType: rxn,
+        toKey: "pct_",
+        description: "From Elemental Mastery",
+      });
+    }
+    for (const rxn of LUNAR_REACTIONS) {
+      attkBonusesCtrl.add({
+        value: rxnBonuses.lunar,
         toType: rxn,
         toKey: "pct_",
         description: "From Elemental Mastery",

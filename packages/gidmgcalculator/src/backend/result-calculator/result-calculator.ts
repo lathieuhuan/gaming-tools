@@ -5,6 +5,7 @@ import { CharacterData, GeneralCalc } from "../common-utils";
 import { CalcItemCalculator } from "./calc-item-calculator";
 import { TalentCalculator } from "./talent-calculator";
 import { ReactionCalculator } from "./reaction-calculator";
+import { LunarReactionCalculator } from "./lunar-reaction-calculator";
 
 export class ResultCalculator {
   itemCalculator: CalcItemCalculator;
@@ -47,4 +48,13 @@ export class ResultCalculator {
       this.tracker
     );
   };
+
+  genLunarReactionCalculator = () => {
+    return new LunarReactionCalculator(
+      this.characterData.character.level,
+      this.itemCalculator,
+      this.resistances,
+      this.tracker
+    );
+  }
 }

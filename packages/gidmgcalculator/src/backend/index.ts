@@ -69,6 +69,7 @@ export type {
   TalentType,
   TotalAttribute,
   TransformativeReaction,
+  LunarReaction,
   WeaponBuff,
   WeaponType,
 } from "./types";

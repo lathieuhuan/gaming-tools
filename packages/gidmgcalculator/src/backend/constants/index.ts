@@ -32,9 +32,16 @@ export const TRANSFORMATIVE_REACTIONS = [
 
 export const QUICKEN_REACTIONS = ["spread", "aggravate"] as const;
 
+export const LUNAR_REACTIONS = ["lunarCharged"] as const;
+
 export const AMPLIFYING_REACTIONS = ["melt", "vaporize"] as const;
 
-export const REACTIONS = [...TRANSFORMATIVE_REACTIONS, ...QUICKEN_REACTIONS, ...AMPLIFYING_REACTIONS] as const;
+export const REACTIONS = [
+  ...LUNAR_REACTIONS,
+  ...TRANSFORMATIVE_REACTIONS,
+  ...QUICKEN_REACTIONS,
+  ...AMPLIFYING_REACTIONS,
+] as const;
 
 /** ========== STATS ========== */
 

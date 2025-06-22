@@ -84,9 +84,15 @@ export function CalcItemTracker({
       value: record.totalFlat,
       processor: Math.round,
     });
-    const percentRender = renderPart({
+    const bonusMultRender = renderPart({
       label: "Bonus Mult.",
       value: record.bonusMult,
+      processor: (value) => `${round(value * 100, 2)}%`,
+    });
+    const baseMultRender = renderPart({
+      label: "Base DMG Mult.",
+      value: record.baseMult,
+      nullValue: 1,
       processor: (value) => `${round(value * 100, 2)}%`,
     });
 
@@ -94,7 +100,8 @@ export function CalcItemTracker({
       <>
         {"("}
         {renderFactor(record.multFactors[0], null)}
-        {percentRender}
+        {baseMultRender}
+        {bonusMultRender}
         {flatRender}
         {")"}
       </>
@@ -102,15 +109,10 @@ export function CalcItemTracker({
       <>
         {"("}
         {record.multFactors.map((factor, index) => renderFactor(factor, index ? "+" : null, index))}
-        {renderPart({
-          label: "Base DMG Mult.",
-          value: record.baseMult,
-          nullValue: 1,
-          processor: (value) => round(value, 3),
-        })}
+        {baseMultRender}
         {flatRender}
         {")"}
-        {percentRender}
+        {bonusMultRender}
       </>
     );
   };
@@ -152,6 +154,7 @@ export function CalcItemTracker({
       const parts = [];
       if (result.attElmt !== "absorb") parts.push(t(`${result.attElmt}_attElmt`));
       if (result.attPatt !== "none") parts.push(t(result.attPatt));
+      if (record.tags) parts.push(...record.tags.map((tag) => t(tag)));
       if (parts.length) text = `${parts.join(" / ")} DMG`;
     }
 
