@@ -237,13 +237,6 @@ export class InputProcessor {
 
     applySelfBuffs(false);
     applyWeaponBonuses(false);
-    if (appWeapon.code === 212 && character.name.split(" ").at(1) === "Traveler") {
-      totalAttrCtrl.applyBonuses({
-        value: 66,
-        toStat: "atk",
-        description: "Sword of Descension bonus",
-      });
-    }
     applyArtifactBonuses(false);
 
     // APPLY CUSTOM BUFFS

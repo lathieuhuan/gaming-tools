@@ -49,14 +49,16 @@ export type PartyElementCondition = {
   partyOnlyElmts?: ElementType[];
 };
 
-type ExtraCondition = {
+type CharacterPropCondition = {
   /** On Chongyun, 2 original artifacts */
   forWeapons?: WeaponType[];
   /** On Chevreuse, Xilonen */
   forElmts?: ElementType[];
+  /** On outlander weapon series */
+  forName?: string;
 };
 
 export type EffectApplicableCondition = EffectUsableCondition &
   CharacterEffectAvailableCondition &
   PartyElementCondition &
-  ExtraCondition;
+  CharacterPropCondition;

@@ -88,16 +88,21 @@ export function isApplicableEffect(
   inputs: number[],
   fromSelf = false
 ): boolean {
+  const { appCharacter } = characterData;
+
   if (!isUsableEffect(condition, characterData, inputs)) {
     return false;
   }
   if (!isAvailableEffect(condition, characterData.character, inputs, fromSelf)) {
     return false;
   }
-  if (condition.forWeapons && !condition.forWeapons.includes(characterData.appCharacter.weaponType)) {
+  if (condition.forWeapons && !condition.forWeapons.includes(appCharacter.weaponType)) {
     return false;
   }
-  if (condition.forElmts && !condition.forElmts.includes(characterData.appCharacter.vision)) {
+  if (condition.forElmts && !condition.forElmts.includes(appCharacter.vision)) {
+    return false;
+  }
+  if (condition.forName && !appCharacter.name.includes(condition.forName)) {
     return false;
   }
   if (!characterData.isValidPartyElmt(condition)) {
