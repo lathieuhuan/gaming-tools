@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef } from "react";
 import { useElementSize, Modal, EntitySelectTemplate, type EntitySelectTemplateProps, FancyBackSvg } from "rond";
-import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
+import { ARTIFACT_TYPES, ArtifactType } from "@Calculation";
 
 import type { CalcArtifact, UserArtifact } from "@Src/types";
 import { useStoreSnapshot } from "@Src/features";

@@ -1,4 +1,4 @@
-import { ArtifactSetBonus } from "@Backend";
+import { ArtifactSetBonus } from "@Calculation";
 
 import { $AppArtifact } from "@Src/services";
 import Array_ from "@Src/utils/array-utils";

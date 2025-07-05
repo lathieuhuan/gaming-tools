@@ -1,5 +1,5 @@
 import { ConfirmModal, Modal } from "rond";
-import { GeneralCalc } from "@Backend";
+import { GeneralCalc } from "@Calculation";
 
 import type { UserArtifacts, UserSetup, UserWeapon } from "@Src/types";
 import Setup_ from "@Src/utils/setup-utils";

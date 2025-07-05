@@ -1,5 +1,5 @@
 import { clsx } from "rond";
-import { Level } from "@Backend";
+import { Level } from "@Calculation";
 
 import { $AppCharacter } from "@Src/services";
 import { GenshinImage } from "../GenshinImage";

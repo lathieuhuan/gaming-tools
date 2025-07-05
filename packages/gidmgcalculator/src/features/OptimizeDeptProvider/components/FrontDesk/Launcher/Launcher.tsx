@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { FaCalculator, FaListUl } from "react-icons/fa";
 import { ButtonGroup } from "rond";
-import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
+import { ARTIFACT_TYPES, ArtifactType } from "@Calculation";
 
 import type { ArtifactManager } from "@OptimizeDept/hooks/useArtifactManager";
 import { GenshinImage } from "@Src/components";

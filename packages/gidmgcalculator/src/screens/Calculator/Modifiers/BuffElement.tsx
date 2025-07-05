@@ -7,7 +7,7 @@ import {
   ElementType,
   QuickenReaction,
   TalentCalcItem,
-} from "@Backend";
+} from "@Calculation";
 
 import { Resonance } from "@Src/types";
 import {

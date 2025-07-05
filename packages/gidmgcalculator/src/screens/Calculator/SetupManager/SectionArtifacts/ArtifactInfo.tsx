@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import isEqual from "react-fast-compare";
 import { FaSave, FaToolbox, FaSyncAlt } from "react-icons/fa";
 import { Modal, ConfirmModal, Button, VersatileSelect, PouchSvg, TrashCanSvg } from "rond";
-import { ArtifactCalc, AttributeStat } from "@Backend";
+import { ArtifactCalc, AttributeStat } from "@Calculation";
 
 import type { CalcArtifact } from "@Src/types";
 import { suffixOf } from "@Src/utils";

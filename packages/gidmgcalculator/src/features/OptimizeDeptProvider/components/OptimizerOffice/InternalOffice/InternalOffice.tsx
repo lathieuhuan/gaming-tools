@@ -2,7 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import isEqual from "react-fast-compare";
 import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
 import { Button, ButtonProps, Checkbox } from "rond";
-import { GeneralCalc } from "@Backend";
+import { GeneralCalc } from "@Calculation";
 
 import type { OptimizeDeptState } from "@OptimizeDept/OptimizeDept.types";
 import type { ArtifactModCtrl } from "@Src/types";

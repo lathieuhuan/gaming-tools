@@ -1,4 +1,4 @@
-import { AppArtifact } from "@Backend";
+import { AppArtifact } from "@Calculation";
 import { $AppArtifact } from "@Src/services";
 import { useRef } from "react";
 

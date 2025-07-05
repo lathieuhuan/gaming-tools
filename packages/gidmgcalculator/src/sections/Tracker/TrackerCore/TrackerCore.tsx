@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { CollapseList, CollapseListProps } from "rond";
-import { AttackBonuses, AttackPattern, GeneralCalc, TrackerControl, TrackerResult, calculateSetup } from "@Backend";
+import { AttackBonuses, AttackPattern, GeneralCalc, TrackerControl, TrackerResult, calculateSetup } from "@Calculation";
 
 import type { TrackerState } from "@Store/ui-slice";
 

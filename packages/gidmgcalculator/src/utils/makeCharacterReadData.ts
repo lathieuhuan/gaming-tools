@@ -1,4 +1,4 @@
-import { CharacterReadData } from "@Backend";
+import { CharacterReadData } from "@Calculation";
 import { $AppCharacter } from "@Src/services";
 import { AppCharactersByName, CalcCharacter, Party } from "@Src/types";
 

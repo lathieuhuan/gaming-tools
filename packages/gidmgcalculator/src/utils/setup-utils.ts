@@ -1,4 +1,4 @@
-import { ATTACK_ELEMENTS, CharacterCalc, WeaponType } from "@Backend";
+import { ATTACK_ELEMENTS, CharacterCalc, WeaponType } from "@Calculation";
 
 import { $AppCharacter } from "@Src/services";
 import type {

@@ -1,7 +1,7 @@
 import { batch } from "react-redux";
 import isEqual from "react-fast-compare";
 import { message } from "rond";
-import { ARTIFACT_TYPES } from "@Backend";
+import { ARTIFACT_TYPES } from "@Calculation";
 
 import type { CalcArtifacts, UserSetup, UserWeapon } from "@Src/types";
 import type { AppThunk } from "./store";

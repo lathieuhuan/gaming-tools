@@ -1,4 +1,4 @@
-import { Level } from "@Backend";
+import { Level } from "@Calculation";
 import { Traveler } from "@Src/types";
 
 export type AppSettings = {

@@ -1,4 +1,4 @@
-import type { CalculationFinalResult, CharacterReadData } from "@Backend";
+import type { CalculationFinalResult, CharacterReadData } from "@Calculation";
 
 import { useTranslation } from "@Src/hooks";
 import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";

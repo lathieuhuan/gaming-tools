@@ -1,5 +1,5 @@
 import { CollapseList } from "rond";
-import { ArtifactSetBonus } from "@Backend";
+import { ArtifactSetBonus } from "@Calculation";
 
 import type { UserSetup, UserWeapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";

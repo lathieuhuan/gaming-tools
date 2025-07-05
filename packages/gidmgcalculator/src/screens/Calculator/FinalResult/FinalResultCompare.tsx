@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
 import { Select, clsx } from "rond";
-import { TALENT_TYPES, CalculationAspect, TalentType, CharacterReadData } from "@Backend";
+import { TALENT_TYPES, CalculationAspect, TalentType, CharacterReadData } from "@Calculation";
 
 import type { Weapon } from "@Src/types";
 import Array_ from "@Src/utils/array-utils";

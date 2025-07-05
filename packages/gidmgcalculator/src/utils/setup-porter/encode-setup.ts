@@ -10,7 +10,7 @@ import {
   REACTIONS,
   ReactionType,
   WEAPON_TYPES,
-} from "@Backend";
+} from "@Calculation";
 
 import type { CalcSetup, ModifierCtrl, Target } from "@Src/types";
 import { EXPORTED_SETUP_VERSION } from "@Src/constants";

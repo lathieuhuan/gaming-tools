@@ -1,6 +1,6 @@
 import { useState, useRef, FormEvent } from "react";
 import { clsx, InputNumber, VersatileSelect } from "rond";
-import { ATTACK_ELEMENTS, ATTACK_PATTERNS, REACTIONS } from "@Backend";
+import { ATTACK_ELEMENTS, ATTACK_PATTERNS, REACTIONS } from "@Calculation";
 
 import type { CustomBuffCtrl, CustomBuffCtrlCategory, CustomBuffCtrlType } from "@Src/types";
 import { useTranslation } from "@Src/hooks";

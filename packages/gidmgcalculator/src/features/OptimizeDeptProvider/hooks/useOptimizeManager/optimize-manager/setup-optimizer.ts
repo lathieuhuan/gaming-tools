@@ -1,5 +1,5 @@
-import { GeneralCalc, InputProcessor, ResultCalculator } from "@Backend";
-import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "@Backend";
+import { GeneralCalc, InputProcessor, ResultCalculator } from "@Calculation";
+import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "@Calculation";
 import type { AppArtifactsByCode, Artifact, ArtifactModCtrl, CalcArtifacts, Target } from "@Src/types";
 
 import Array_ from "@Src/utils/array-utils";

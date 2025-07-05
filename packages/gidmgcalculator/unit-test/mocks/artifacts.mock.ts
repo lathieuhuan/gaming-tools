@@ -1,4 +1,4 @@
-import { AppArtifact } from "../../src/backend";
+import { AppArtifact } from "../../src/calculation";
 import { $AppArtifact } from "../../src/services";
 
 export enum __EMockArtifactSet {

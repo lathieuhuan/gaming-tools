@@ -1,7 +1,7 @@
 import { FaCaretRight } from "react-icons/fa";
 import { TbRectangleVerticalFilled } from "react-icons/tb";
 import { clsx, type ClassValue } from "rond";
-import { ElementType } from "@Backend";
+import { ElementType } from "@Calculation";
 
 import { GenshinImage } from "../GenshinImage";
 import styles from "./ability-list.styles.module.scss";

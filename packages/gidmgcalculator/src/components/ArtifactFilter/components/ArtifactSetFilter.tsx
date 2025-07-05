@@ -1,5 +1,5 @@
 import { clsx } from "rond";
-import { AppArtifact } from "@Backend";
+import { AppArtifact } from "@Calculation";
 
 import { FilterTemplate, type FilterTemplateProps } from "../../FilterTemplate";
 import { GenshinImage } from "../../GenshinImage";

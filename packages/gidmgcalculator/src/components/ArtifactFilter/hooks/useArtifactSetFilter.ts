@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { ArtifactType } from "@Backend";
+import type { ArtifactType } from "@Calculation";
 import type { CalcArtifact } from "@Src/types";
 
 import { $AppArtifact } from "@Src/services";

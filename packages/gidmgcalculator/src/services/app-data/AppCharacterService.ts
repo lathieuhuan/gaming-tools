@@ -1,4 +1,4 @@
-import { AppCharacter, TalentType } from "@Backend";
+import { AppCharacter, TalentType } from "@Calculation";
 
 import type { Traveler } from "@Src/types";
 import type { StandardResponse } from "../services.types";

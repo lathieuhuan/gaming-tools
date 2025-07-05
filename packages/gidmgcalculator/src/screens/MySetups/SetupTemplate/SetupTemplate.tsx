@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { FaLink, FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
 import { clsx, useScreenWatcher, Button, ButtonGroup, Modal, CloseButton, TrashCanSvg } from "rond";
-import { ARTIFACT_TYPES, CharacterReadData } from "@Backend";
+import { ARTIFACT_TYPES, CharacterReadData } from "@Calculation";
 
 import type { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
 import type { OpenModalFn } from "../MySetups.types";

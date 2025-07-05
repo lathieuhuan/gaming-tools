@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Badge, Button, PouchSvg, VersatileSelect } from "rond";
-import { LEVELS, Level } from "@Backend";
+import { LEVELS, Level } from "@Calculation";
 
 import { $AppWeapon } from "@Src/services";
 import { genSequentialOptions } from "@Src/utils";

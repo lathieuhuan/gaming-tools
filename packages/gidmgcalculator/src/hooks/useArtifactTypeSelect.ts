@@ -1,5 +1,5 @@
 import { IconSelectProps, useIconSelect, type IconSelectConfig, type IconSelectInitialValues } from "rond";
-import { ArtifactType } from "@Backend";
+import { ArtifactType } from "@Calculation";
 import { getImgSrc } from "@Src/utils";
 import Entity_ from "@Src/utils/entity-utils";
 

@@ -1,4 +1,4 @@
-import { CharacterData, Level } from "../src/backend";
+import { CharacterData, Level } from "../src/calculation";
 import { $AppCharacter, $AppWeapon } from "../src/services";
 import { Teammate, Weapon } from "../src/types";
 import { __EMockCharacter } from "./mocks/characters.mock";

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { clsx, useRaritySelect, ButtonGroup, type ClassValue } from "rond";
-import { WeaponType } from "@Backend";
+import { WeaponType } from "@Calculation";
 
 import { useWeaponTypeSelect } from "@Src/hooks";
 import { FilterTemplate } from "@Src/components";

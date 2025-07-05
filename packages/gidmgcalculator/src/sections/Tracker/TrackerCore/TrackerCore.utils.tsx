@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { round } from "rond";
-import { CalcAtomicRecord } from "@Backend";
+import { CalcAtomicRecord } from "@Calculation";
 
 import { markGreen } from "@Src/components";
 

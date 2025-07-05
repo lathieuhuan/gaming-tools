@@ -1,4 +1,4 @@
-import type { ArtifactSetBonus } from "@Backend";
+import type { ArtifactSetBonus } from "@Calculation";
 import type { ArtifactModCtrl, CalcArtifacts, CalcSetupManageInfo } from "@Src/types";
 
 export type ProcessedSetup =

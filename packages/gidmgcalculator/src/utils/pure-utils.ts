@@ -1,4 +1,4 @@
-import { ATTACK_ELEMENTS } from "@Backend";
+import { ATTACK_ELEMENTS } from "@Calculation";
 import { IS_DEV_ENV } from "@Src/constants";
 
 export function getSearchParam(key: string) {

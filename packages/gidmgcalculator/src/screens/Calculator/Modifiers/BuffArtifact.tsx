@@ -1,4 +1,4 @@
-import { GeneralCalc } from "@Backend";
+import { GeneralCalc } from "@Calculation";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import {

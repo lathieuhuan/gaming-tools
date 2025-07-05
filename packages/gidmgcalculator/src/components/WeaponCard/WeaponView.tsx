@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Badge, VersatileSelect, clsx, type ClassValue } from "rond";
-import { LEVELS, Level, WeaponCalc } from "@Backend";
+import { LEVELS, Level, WeaponCalc } from "@Calculation";
 
 import type { CalcWeapon, UserWeapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";

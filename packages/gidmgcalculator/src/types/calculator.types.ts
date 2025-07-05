@@ -10,8 +10,8 @@ import type {
   ElementType,
   NormalAttack,
   ReactionType,
-  ResistanceReductionKey,
-} from "@Backend";
+  ResistReductionKey,
+} from "@Calculation";
 import type { Artifact, Character, Weapon } from "./global.types";
 
 export type AppCharactersByName = Record<string, AppCharacter>;
@@ -74,7 +74,7 @@ export type CustomBuffCtrl = {
   value: number;
 };
 
-export type CustomDebuffCtrlType = ResistanceReductionKey;
+export type CustomDebuffCtrlType = ResistReductionKey;
 
 export type CustomDebuffCtrl = {
   type: CustomDebuffCtrlType;

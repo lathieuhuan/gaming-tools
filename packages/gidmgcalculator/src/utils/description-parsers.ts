@@ -8,7 +8,7 @@ import {
   AppArtifact,
   ArtifactModifierDescription,
   CharacterReadData,
-} from "@Backend";
+} from "@Calculation";
 
 import { toMult } from "./pure-utils";
 import Array_ from "./array-utils";
@@ -54,7 +54,7 @@ export const parseAbilityDescription = (
     type = type.slice(1, -1);
 
     if (body[0] === "@") {
-      const bonusGetter = new BareBonusGetter(characterData.toCharacterData());
+      const bonusGetter = new BareBonusGetter(characterData);
       const effect = Array_.toArray(ability.effects)[+body[1]];
 
       if (effect) {

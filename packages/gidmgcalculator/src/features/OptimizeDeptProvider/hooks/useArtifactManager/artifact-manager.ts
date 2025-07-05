@@ -1,6 +1,6 @@
-import { ARTIFACT_TYPES } from "@Backend";
+import { ARTIFACT_TYPES } from "@Calculation";
 
-import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerArtifactModConfigs } from "@Backend";
+import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerArtifactModConfigs } from "@Calculation";
 import type { AppArtifactsByCode } from "@Src/types";
 import type {
   CalculationCount,

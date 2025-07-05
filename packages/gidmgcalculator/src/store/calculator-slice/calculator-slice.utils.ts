@@ -1,5 +1,5 @@
 import { message } from "rond";
-import { AppCharacter, calculateSetup, ElementType } from "@Backend";
+import { AppCharacter, calculateSetup, ElementType } from "@Calculation";
 
 import type { Party } from "@Src/types";
 import type { CalculatorState } from "./calculator-slice.types";

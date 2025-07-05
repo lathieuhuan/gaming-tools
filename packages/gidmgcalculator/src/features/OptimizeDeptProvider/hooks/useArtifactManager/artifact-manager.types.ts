@@ -1,5 +1,5 @@
 import type { PartiallyOptional } from "rond";
-import type { OptimizerArtifactModConfigs, AppArtifact } from "@Backend";
+import type { OptimizerArtifactModConfigs, AppArtifact } from "@Calculation";
 import type { UserArtifact } from "@Src/types";
 
 export type InputArtifact = PartiallyOptional<UserArtifact, "owner">;

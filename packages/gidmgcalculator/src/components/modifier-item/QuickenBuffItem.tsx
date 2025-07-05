@@ -1,4 +1,4 @@
-import { AttackBonuses, AttackBonusesControl, ElementType, GeneralCalc, Level, QuickenReaction } from "@Backend";
+import { AttackBonuses, AttackBonusesControl, ElementType, GeneralCalc, Level, QuickenReaction } from "@Calculation";
 
 import { markGreen } from "../span";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";

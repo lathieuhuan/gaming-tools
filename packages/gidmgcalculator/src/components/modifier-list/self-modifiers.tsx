@@ -1,4 +1,4 @@
-import { CharacterBuff, CharacterCalc, CharacterDebuff, CharacterReadData } from "@Backend";
+import { CharacterBuff, CharacterCalc, CharacterDebuff, CharacterReadData } from "@Calculation";
 
 import type { Character, ModifierCtrl } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";

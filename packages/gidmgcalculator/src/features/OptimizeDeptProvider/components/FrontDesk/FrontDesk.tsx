@@ -1,7 +1,7 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { ButtonGroup, Checkbox, FancyBackSvg, Modal } from "rond";
 
-import type { OptimizerExtraConfigs } from "@Backend";
+import type { OptimizerExtraConfigs } from "@Calculation";
 import type { OptimizeDeptState } from "@OptimizeDept/OptimizeDept.types";
 import type { OptimizedOutput } from "@OptimizeDept/hooks/useOptimizeManager";
 import type { OnChangeStep, OptimizeDeptModalType, OptimizeStepConfig, Optimizer } from "./FrontDesk.types";

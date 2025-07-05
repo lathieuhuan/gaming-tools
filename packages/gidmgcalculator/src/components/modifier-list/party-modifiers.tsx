@@ -1,4 +1,4 @@
-import { CharacterBuff, CharacterDebuff, CharacterReadData } from "@Backend";
+import { CharacterBuff, CharacterDebuff, CharacterReadData } from "@Calculation";
 
 import type { Party, Teammate } from "@Src/types";
 import type { GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";

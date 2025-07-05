@@ -6,7 +6,7 @@ import type {
   CalculationFinalResultItem,
   AttackElement,
   TransformativeReaction,
-} from "@Backend";
+} from "@Calculation";
 import type { CalcArtifacts, ElementModCtrl } from "@Src/types";
 import type { OptimizeResult } from "@OptimizeDept/OptimizeDept.types";
 import type { SetupOptimizer } from "./setup-optimizer";

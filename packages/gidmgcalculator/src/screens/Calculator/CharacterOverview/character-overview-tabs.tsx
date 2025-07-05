@@ -1,5 +1,5 @@
 import { CarouselSpace } from "rond";
-import { GeneralCalc, TotalAttributeControl } from "@Backend";
+import { GeneralCalc, TotalAttributeControl } from "@Calculation";
 
 import { useTabs } from "@Src/hooks";
 import { useDispatch, useSelector } from "@Store/hooks";

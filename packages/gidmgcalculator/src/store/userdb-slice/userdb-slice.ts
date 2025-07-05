@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { ARTIFACT_TYPES, WeaponType } from "@Backend";
+import { ARTIFACT_TYPES, WeaponType } from "@Calculation";
 
 import type { UserArtifact, UserCharacter, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
 import type {

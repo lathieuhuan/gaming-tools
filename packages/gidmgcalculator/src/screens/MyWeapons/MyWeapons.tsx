@@ -1,7 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo, useState } from "react";
 import { message, useScreenWatcher, Button, ButtonGroup, CollapseSpace, ConfirmModal, WarehouseLayout } from "rond";
-import { WeaponType } from "@Backend";
+import { WeaponType } from "@Calculation";
 
 import type { UserWeapon } from "@Src/types";
 import { MAX_USER_WEAPONS } from "@Src/constants";

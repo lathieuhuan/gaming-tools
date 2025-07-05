@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { PartiallyOptional } from "rond";
-import { AttackElement, ATTACK_ELEMENTS } from "@Backend";
+import { AttackElement, ATTACK_ELEMENTS } from "@Calculation";
 
 import type { CalcSetupManageInfo, CalcWeapon, Resonance, Target } from "@Src/types";
 import type {

@@ -1,6 +1,6 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { PartiallyRequired } from "rond";
-import type { WeaponType, ArtifactType } from "@Backend";
+import type { WeaponType, ArtifactType } from "@Calculation";
 import type {
   ArtifactSubStat,
   UserArtifact,

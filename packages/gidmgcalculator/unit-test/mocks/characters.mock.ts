@@ -1,4 +1,4 @@
-import { AppCharacter } from "../../src/backend";
+import { AppCharacter } from "../../src/calculation";
 import { $AppCharacter } from "../../src/services";
 
 export enum __EMockCharacter {

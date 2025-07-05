@@ -1,4 +1,4 @@
-import { ArtifactModifierDescription, ModInputConfig } from "@Backend";
+import { ArtifactModifierDescription, ModInputConfig } from "@Calculation";
 import { useEffect, useRef, useState } from "react";
 import { ButtonGroup, Checkbox } from "rond";
 

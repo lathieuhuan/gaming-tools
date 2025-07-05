@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaEraser, FaCaretRight } from "react-icons/fa";
 import { TbRectangleVerticalFilled } from "react-icons/tb";
 import { Button, Modal, useScreenWatcher, clsx, type ClassValue } from "rond";
-import { ArtifactType } from "@Backend";
+import { ArtifactType } from "@Calculation";
 
 import type { CalcArtifact } from "@Src/types";
 import type { ArtifactFilterCondition } from "@Src/utils/filter-artifacts";

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { GeneralCalc, InputProcessor } from "@Backend";
+import { GeneralCalc, InputProcessor } from "@Calculation";
 
 import type { Character, UserArtifacts, UserWeapon } from "@Src/types";
 import type { RootState } from "@Store/store";

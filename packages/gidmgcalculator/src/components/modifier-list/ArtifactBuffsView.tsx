@@ -1,4 +1,4 @@
-import { ArtifactSetBonus } from "@Backend";
+import { ArtifactSetBonus } from "@Calculation";
 
 import type { ArtifactModCtrl, ModifierCtrl, Party } from "@Src/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";

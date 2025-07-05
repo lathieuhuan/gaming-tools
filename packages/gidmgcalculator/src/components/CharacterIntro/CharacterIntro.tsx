@@ -1,9 +1,9 @@
 import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
 import { Badge, Button, Rarity, VersatileSelect } from "rond";
-import { AppCharacter, Level } from "@Backend";
+import { AppCharacter, Level } from "@Calculation";
 
 import type { Character } from "@Src/types";
-import { LEVELS } from "@Backend";
+import { LEVELS } from "@Calculation";
 import { GenshinImage } from "../GenshinImage";
 
 interface CharacterIntroProps {

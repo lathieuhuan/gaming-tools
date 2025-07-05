@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { round } from "rond";
-import { CalculationFinalResultGroup, CalcItemRecord } from "@Backend";
+import { CalculationFinalResultGroup, CalcItemRecord } from "@Calculation";
 
 import { useTranslation } from "@Src/hooks";
 import { suffixOf } from "@Src/utils";

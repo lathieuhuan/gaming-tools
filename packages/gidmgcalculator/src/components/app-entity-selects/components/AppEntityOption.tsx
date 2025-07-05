@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { clsx, Badge } from "rond";
-import { ElementType, WeaponType } from "@Backend";
+import { ElementType, WeaponType } from "@Calculation";
 import { GenshinImage, ElementIcon } from "@Src/components";
 
 export type AppEntityOptionModel = {

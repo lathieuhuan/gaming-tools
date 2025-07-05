@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { GeneralCalc } from "@Backend";
+import { GeneralCalc } from "@Calculation";
 
 import type { Party } from "@Src/types";
 import { changeModCtrlInput, selectArtifacts, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";

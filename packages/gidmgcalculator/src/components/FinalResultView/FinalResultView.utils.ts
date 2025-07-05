@@ -6,7 +6,7 @@ import {
   NORMAL_ATTACKS,
   TRANSFORMATIVE_REACTIONS,
   TransformativeReaction,
-} from "@Backend";
+} from "@Calculation";
 
 type TableCalcItemKey = {
   main: "NAs" | "ES" | "EB" | "WP_CALC";

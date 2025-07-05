@@ -1,4 +1,4 @@
-import type { AppArtifact, ArtifactType } from "@Backend";
+import type { AppArtifact, ArtifactType } from "@Calculation";
 import type { DataControl } from "./app-data.types";
 
 export class AppArtifactService {

@@ -1,4 +1,4 @@
-import { ARTIFACT_TYPES, AttributeStat, Level } from "@Backend";
+import { ARTIFACT_TYPES, AttributeStat, Level } from "@Calculation";
 
 import type { ArtifactSubStat, UserArtifact, UserCharacter, UserWeapon } from "@Src/types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";

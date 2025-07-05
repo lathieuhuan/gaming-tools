@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { clsx, round, StatsTable, CollapseSpace, type PartiallyRequired } from "rond";
-import { ATTACK_ELEMENTS, CORE_STAT_TYPES, GeneralCalc, CoreStat, TotalAttribute } from "@Backend";
+import { ATTACK_ELEMENTS, CORE_STAT_TYPES, GeneralCalc, CoreStat, TotalAttribute } from "@Calculation";
 
 import { useTranslation } from "@Src/hooks";
 

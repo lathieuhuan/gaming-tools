@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
-import { TALENT_TYPES, LevelableTalentType, GeneralCalc, CharacterReadData } from "@Backend";
+import { TALENT_TYPES, LevelableTalentType, GeneralCalc, CharacterReadData } from "@Calculation";
 
 import type { Character, Party } from "@Src/types";
 import { genSequentialOptions } from "@Src/utils";

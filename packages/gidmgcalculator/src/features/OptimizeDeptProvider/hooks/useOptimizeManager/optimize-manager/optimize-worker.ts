@@ -2,7 +2,7 @@ import type { OptimizeCalculation } from "@OptimizeDept/OptimizeDept.types";
 import type { OTM_ManagerRequest, OTM_WorkerResponse } from "./optimize-manager.types";
 import { CalculationSorter } from "./calculation-sorter";
 import { SetupOptimizer } from "./setup-optimizer";
-import { CalculationFinalResultItem } from "@Backend";
+import { CalculationFinalResultItem } from "@Calculation";
 
 let optimizer: SetupOptimizer;
 const sorter = new CalculationSorter();
