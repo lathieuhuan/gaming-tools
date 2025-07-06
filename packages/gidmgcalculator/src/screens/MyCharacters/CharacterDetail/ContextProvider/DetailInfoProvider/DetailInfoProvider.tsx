@@ -6,7 +6,7 @@ import type { RootState } from "@Store/store";
 
 // import { useAppCharacter } from "@Src/hooks";
 import Array_ from "@Src/utils/array-utils";
-import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
+import { getSetupAppEntities } from "@Src/utils/getSetupAppEntities";
 import { useSelector } from "@Store/hooks";
 import { DetailInfoContext, type DetailInfo } from "./DetailInfo.context";
 
@@ -22,7 +22,7 @@ function DetailInfoProviderCore({ setup, children }: DetailInfoProviderProps) {
   // const { isLoading, data: appChar } = useAppCharacter(char.name);
 
   const detailInfo = useMemo<DetailInfo>(() => {
-    const data = getSetupEntitiesData(setup);
+    const data = getSetupAppEntities(setup);
     const processor = new InputProcessor(setup, data);
     const stats = processor.getCalculationStats();
 

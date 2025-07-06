@@ -5,17 +5,17 @@ import type {
   AppCharactersByName,
   AppArtifactsByCode,
   AppWeaponsByCode,
-  SetupEntitiesData,
+  SetupAppEntities,
 } from "@Src/types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import Array_ from "@Src/utils/array-utils";
 
-export function getSetupEntitiesData({
+export function getSetupAppEntities({
   char,
   weapon,
   artifacts = [],
   party = [],
-}: PartiallyRequiredOnly<CalcSetup, "char" | "weapon">): SetupEntitiesData {
+}: PartiallyRequiredOnly<CalcSetup, "char" | "weapon">): SetupAppEntities {
   //
   const appCharacters: AppCharactersByName = {
     [char.name]: $AppCharacter.get(char.name),

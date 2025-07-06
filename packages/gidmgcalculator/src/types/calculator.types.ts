@@ -20,7 +20,7 @@ export type AppArtifactsByCode = Record<string, AppArtifact>;
 
 export type AppWeaponsByCode = Record<string, AppWeapon>;
 
-export type SetupEntitiesData = {
+export type SetupAppEntities = {
   appCharacters: AppCharactersByName;
   appWeapons: AppWeaponsByCode;
   appArtifacts: AppArtifactsByCode;

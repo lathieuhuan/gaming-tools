@@ -1,7 +1,7 @@
 import type { CalcSetup, Target } from "@Src/types";
 import type { CalculationFinalResult } from "../types";
 
-import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
+import { getSetupAppEntities } from "@Src/utils/getSetupAppEntities";
 import { ATTACK_PATTERNS, LUNAR_REACTIONS, TRANSFORMATIVE_REACTIONS } from "../constants";
 import { InputProcessor } from "../InputProcessor";
 import { ResultCalculator } from "../ResultCalculator";
@@ -9,7 +9,7 @@ import { TrackerControl } from "../TrackerControl";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
-  const data = getSetupEntitiesData(setup);
+  const data = getSetupAppEntities(setup);
   const processor = new InputProcessor(setup, data, tracker);
 
   const { characterData } = processor;

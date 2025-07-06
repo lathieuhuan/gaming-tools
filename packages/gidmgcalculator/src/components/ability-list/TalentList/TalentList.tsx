@@ -3,7 +3,7 @@ import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
 import { TALENT_TYPES, LevelableTalentType, GeneralCalc, CharacterReadData } from "@Calculation";
 
-import type { Character, Party } from "@Src/types";
+import type { Character } from "@Src/types";
 import { genSequentialOptions } from "@Src/utils";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
 
@@ -22,7 +22,6 @@ type RenderedTalentConfig = {
 interface TalentListProps {
   className?: ClassValue;
   character: Character;
-  party?: Party;
   characterData: CharacterReadData;
   /** Default to true */
   mutable?: boolean;

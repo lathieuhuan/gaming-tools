@@ -10,7 +10,7 @@ import type {
   Infusion,
   ModifierCtrl,
   Party,
-  SetupEntitiesData,
+  SetupAppEntities,
   Target,
   Weapon,
 } from "@Src/types";
@@ -54,12 +54,12 @@ export class InputProcessor {
   protected customInfusion: Infusion;
 
   public characterData: CharacterReadData;
-  protected appWeapons: SetupEntitiesData["appWeapons"];
-  protected appArtifacts: SetupEntitiesData["appArtifacts"];
+  protected appWeapons: SetupAppEntities["appWeapons"];
+  protected appArtifacts: SetupAppEntities["appArtifacts"];
 
   constructor(
     setup: PartiallyRequiredOnly<CalcSetup, "char" | "weapon" | "artifacts">,
-    data: SetupEntitiesData,
+    data: SetupAppEntities,
     protected tracker?: TrackerControl
   ) {
     this.character = setup.char;

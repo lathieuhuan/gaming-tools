@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectArtifacts,
   selectCharacter,
-  selectParty,
   selectTotalAttr,
   selectWeapon,
   updateCharacter,
@@ -76,7 +75,6 @@ export function ConstellationTab() {
 export function TalentsTab() {
   const dispatch = useDispatch();
   const character = useSelector(selectCharacter);
-  const party = useSelector(selectParty);
   const characterData = useCharacterData();
 
   return (
@@ -87,7 +85,6 @@ export function TalentsTab() {
       onChangeTalentLevel={(type, level) => {
         dispatch(updateCharacter({ [type]: level }));
       }}
-      party={party}
     />
   );
 }
