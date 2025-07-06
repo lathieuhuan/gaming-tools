@@ -1,8 +1,7 @@
 import { CollapseList } from "rond";
 
 import { useTabs } from "@Src/hooks";
-import { selectParty } from "@Store/calculator-slice";
-import { useSelector } from "@Store/hooks";
+import { useCharacterData } from "../ContextProvider/hooks";
 
 // Component
 import BuffArtifact from "./BuffArtifact";
@@ -18,7 +17,7 @@ import DebuffParty from "./DebuffParty";
 import DebuffSelf from "./DebuffSelf";
 
 export function Modifiers() {
-  const party = useSelector(selectParty);
+  const { party } = useCharacterData();
   const { activeIndex, tabProps, Tabs } = useTabs(1);
 
   return (

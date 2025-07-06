@@ -74,8 +74,8 @@ export function ConstellationTab() {
 
 export function TalentsTab() {
   const dispatch = useDispatch();
-  const character = useSelector(selectCharacter);
   const characterData = useCharacterData();
+  const { character } = characterData;
 
   return (
     <TalentList

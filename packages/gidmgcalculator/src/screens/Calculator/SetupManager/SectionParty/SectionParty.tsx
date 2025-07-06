@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectActiveId,
   selectSetupManageInfos,
-  selectParty,
   addTeammate,
   removeTeammate,
   updateTeammateArtifact,
@@ -32,7 +31,6 @@ export default function SectionParty() {
   const dispatch = useDispatch();
   const activeId = useSelector(selectActiveId);
   const setupManageInfos = useSelector(selectSetupManageInfos);
-  const party = useSelector(selectParty);
   const characterRecord = useCharacterData();
 
   const [modal, setModal] = useState<ModalState>({
@@ -41,7 +39,7 @@ export default function SectionParty() {
   });
   const [detailSlot, setDetailSlot] = useState<number | null>(null);
 
-  const { appCharacter } = characterRecord;
+  const { appCharacter, party } = characterRecord;
   const isCombined = Array_.findById(setupManageInfos, activeId)?.type === "combined";
   const detailTeammate = detailSlot === null ? undefined : party[detailSlot];
 

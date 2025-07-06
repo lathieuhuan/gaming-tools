@@ -8,9 +8,8 @@ import { useStoreSnapshot } from "@Src/features";
 import { useCharacterData } from "../../hooks";
 
 // Store
-import { useDispatch, useSelector } from "@Store/hooks";
+import { useDispatch } from "@Store/hooks";
 import { saveSetupThunk } from "@Store/thunks";
-import { selectParty } from "@Store/calculator-slice";
 import { selectUserSetups } from "@Store/userdb-slice";
 
 function areDifferentParties(party1: Party, party2: Party) {
@@ -25,7 +24,6 @@ interface SaveSetupProps {
 }
 export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
   const dispatch = useDispatch();
-  const party = useSelector(selectParty);
 
   const record = useCharacterData();
   const existedSetup = Array_.findById(useStoreSnapshot(selectUserSetups), setupId);
@@ -36,7 +34,7 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
     existedSetup &&
     Setup_.isUserSetup(existedSetup) &&
     existedSetup.type === "combined" &&
-    areDifferentParties(existedSetup.party, party)
+    areDifferentParties(existedSetup.party, record.party)
   ) {
     return (
       <div className="space-y-2">
