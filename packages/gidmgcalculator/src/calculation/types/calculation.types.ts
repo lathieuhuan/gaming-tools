@@ -1,5 +1,6 @@
 import type { PartiallyRequired } from "rond";
 import type { ArtifactModCtrl } from "@Src/types";
+import type TypeCounter from "@Src/utils/type-counter";
 import type {
   ActualAttackElement,
   ActualAttackPattern,
@@ -14,6 +15,8 @@ import type {
   LevelableTalentType,
   QuickenReaction,
 } from "./common.types";
+
+export type ElementCount = TypeCounter<ElementType>;
 
 export type AttackReaction = AmplifyingReaction | QuickenReaction | null;
 
@@ -60,6 +63,8 @@ export type AttackAlterConfig = {
   attElmt?: ElementType;
   disabled?: boolean;
 };
+
+export type AttackAlterConfigs = Partial<Record<AttackPattern, AttackAlterConfig>>;
 
 export type CalculationAspect = "nonCrit" | "crit" | "average";
 

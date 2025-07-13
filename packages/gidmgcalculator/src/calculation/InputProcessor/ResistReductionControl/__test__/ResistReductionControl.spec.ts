@@ -1,12 +1,12 @@
 import { ELEMENT_TYPES } from "@Src/calculation/constants";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { __genCharacterDataTester } from "@UnitTest/test-utils";
+import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { ResistanceReductionControlTester } from "./test-utils";
 
 let tester: ResistanceReductionControlTester;
 
 beforeEach(() => {
-  tester = new ResistanceReductionControlTester(__genCharacterDataTester());
+  tester = new ResistanceReductionControlTester(__genMutableTeamDataTester());
 });
 
 describe("getPenaltyValue", () => {
@@ -16,7 +16,7 @@ describe("getPenaltyValue", () => {
   });
 
   test("penalty scale with level", () => {
-    tester["characterData"].character.ES = 10;
+    tester["teamData"].activeMember.ES = 10;
     tester.__penaltyCore = {
       value: 2,
       lvScale: {
@@ -43,7 +43,7 @@ describe("getPenaltyValue", () => {
     };
     tester.__expectPenaltyValue(2);
 
-    tester["characterData"].character.cons = 1;
+    tester["teamData"].activeMember.cons = 1;
     tester.__expectPenaltyValue(2 + 4);
   });
 
@@ -58,7 +58,7 @@ describe("getPenaltyValue", () => {
     };
     tester.__expectPenaltyValue(2);
 
-    tester["characterData"].character.cons = 1;
+    tester["teamData"].activeMember.cons = 1;
     tester.__expectPenaltyValue(5);
   });
 });
@@ -109,14 +109,14 @@ describe("applyDebuff", () => {
     tester.__expectReduct(ELEMENT_TYPES[elmtIndex], 18);
   });
 
-  test("__target is XILONEN, party has 2 PHEC at most", () => {
+  test("__target is XILONEN, team has 2 PHEC at most", () => {
     tester.__debuff.effects = {
       value: 18,
       targets: {
         type: "XILONEN",
       },
     };
-    tester.__changeCharacter(__EMockCharacter.BASIC); // pyro
+    tester.__changeActiveMember(__EMockCharacter.BASIC); // pyro
 
     tester.__applyDebuff();
     tester.__expectReducts(["pyro", "geo"], 18);
@@ -143,14 +143,14 @@ describe("applyDebuff", () => {
     tester.__expectReducts(["pyro", "geo"], 18);
   });
 
-  test("__target is XILONEN, party has more than 2 PHEC", () => {
+  test("__target is XILONEN, team has more than 2 PHEC", () => {
     tester.__debuff.effects = {
       value: 22,
       targets: {
         type: "XILONEN",
       },
     };
-    tester.__changeCharacter(__EMockCharacter.BASIC);
+    tester.__changeActiveMember(__EMockCharacter.BASIC);
 
     tester.__changeTeammates([__EMockCharacter.CATALYST, __EMockCharacter.TARTAGLIA]);
     tester.__applyDebuff();

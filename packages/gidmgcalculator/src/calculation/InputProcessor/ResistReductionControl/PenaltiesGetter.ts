@@ -1,29 +1,30 @@
-import { isApplicableEffect } from "@Src/calculation/common";
-import { EntityPenaltyCore } from "@Src/calculation/types";
-import { EffectValueGetter } from "../EffectValueGetter";
+import { CalcTeamData } from "@Src/calculation/utils/CalcTeamData";
+import { EntityPenaltyEffect } from "@Src/calculation/types";
+import { getIndexOfEffectValue } from "../utils/getIndexOfEffectValue";
+import { getLevelScale } from "../utils/getLevelScale";
 
-export class PenaltiesGetter extends EffectValueGetter {
-  //
+export class PenaltiesGetter {
+  constructor(protected teamData: CalcTeamData) {}
 
-  protected getInitialPenaltyValue = (config: EntityPenaltyCore["value"], inputs: number[] = []) => {
+  protected getInitialPenaltyValue = (config: EntityPenaltyEffect["value"], inputs: number[] = []) => {
     if (typeof config === "number") {
       return config;
     }
     const { options } = config;
-    const index = this.getIndexOfEffectValue(config, inputs);
+    const index = getIndexOfEffectValue(config.optIndex, this.teamData, inputs);
 
     return options[index] ?? (index > 0 ? options[options.length - 1] : 0);
   };
 
-  protected getPenaltyValue = (debuff: EntityPenaltyCore, inputs: number[], fromSelf = true) => {
+  protected getPenaltyValue = (debuff: EntityPenaltyEffect, inputs: number[], fromSelf = true) => {
     const { preExtra } = debuff;
     let result = this.getInitialPenaltyValue(debuff.value, inputs);
 
-    result *= this.characterData.getLevelScale(debuff.lvScale, inputs, fromSelf);
+    result *= getLevelScale(debuff.lvScale, this.teamData, inputs, fromSelf);
 
     if (typeof preExtra === "number") {
       result += preExtra;
-    } else if (preExtra && isApplicableEffect(preExtra, this.characterData, inputs, fromSelf)) {
+    } else if (preExtra && this.teamData.isApplicableEffect(preExtra, inputs, fromSelf)) {
       result += this.getPenaltyValue(preExtra, inputs, fromSelf);
     }
     if (debuff.max) result = Math.min(result, debuff.max);

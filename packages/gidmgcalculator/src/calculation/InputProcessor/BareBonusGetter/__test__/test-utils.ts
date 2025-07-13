@@ -1,31 +1,34 @@
-import { Character } from "@Src/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { __genCharacterDataTester, CharacterDataTester } from "@UnitTest/test-utils";
+import { __genMutableTeamDataTester, MutableTeamDataTester } from "@UnitTest/test-utils";
 import { TotalAttributeControl } from "../../TotalAttributeControl";
 import { BareBonusGetter } from "../BareBonusGetter";
+import { Character } from "@Src/types";
 
-export class BareBonusGetterTester extends BareBonusGetter<CharacterDataTester> {
+export class BareBonusGetterTester extends BareBonusGetter<MutableTeamDataTester> {
   inputs: number[] = [];
-  fromSelf = true;
 
   constructor(totalAttrCtrl?: TotalAttributeControl);
-  constructor(info?: CharacterDataTester, totalAttrCtrl?: TotalAttributeControl);
-  constructor(info?: CharacterDataTester | TotalAttributeControl, totalAttrCtrl?: TotalAttributeControl) {
-    const _info = !info || info instanceof TotalAttributeControl ? __genCharacterDataTester() : info;
+  constructor(info?: MutableTeamDataTester, totalAttrCtrl?: TotalAttributeControl);
+  constructor(info?: MutableTeamDataTester | TotalAttributeControl, totalAttrCtrl?: TotalAttributeControl) {
+    const _info = !info || info instanceof TotalAttributeControl ? __genMutableTeamDataTester() : info;
     const _totalAttrCtrl = info instanceof TotalAttributeControl ? info : totalAttrCtrl;
 
-    super(_info, _totalAttrCtrl);
+    super(true, _info, _totalAttrCtrl);
   }
 
-  __updateCharacter<TKey extends keyof Character>(key: TKey, value: Character[TKey]) {
-    this.characterData.character[key] = value;
+  __changeActiveMember(characterName: __EMockCharacter) {
+    this.teamData.__changeActiveMember(characterName);
   }
 
-  __changeCharacter(characterName: __EMockCharacter) {
-    this.characterData.__updateCharacter(characterName);
+  __updateActiveMember(data: Partial<Character>) {
+    this.teamData.__updateActiveMember(data);
   }
 
-  __changeParty(names: string[]) {
-    this.characterData.__updateParty(names);
+  __changeFromSelf(fromSelf: boolean) {
+    this.fromSelf = fromSelf;
+  }
+
+  __changeTeammates(names: string[]) {
+    this.teamData.__changeTeammates(names);
   }
 }

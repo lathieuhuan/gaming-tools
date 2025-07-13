@@ -1,17 +1,17 @@
-import { CharacterBuff, CharacterCalc, CharacterDebuff, CharacterReadData } from "@Calculation";
+import { CalcTeamData, CharacterBuff, CharacterCalc, CharacterDebuff } from "@Calculation";
 
 import type { Character, ModifierCtrl } from "@Src/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import Array_ from "@Src/utils/array-utils";
-import { parseAbilityDescription } from "@Src/utils/description-parsers";
+import { parseSelfAbilityDescription } from "@Src/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
 interface SelfModsViewProps {
   mutable?: boolean;
   character: Character;
-  characterData: CharacterReadData;
+  teamData: CalcTeamData;
   modCtrls: ModifierCtrl[];
   getHanlders?: (args: GetModifierHanldersArgs) => ModifierHanlders;
 }
@@ -21,7 +21,7 @@ function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Array<Charact
   return props.modCtrls.map((ctrl, ctrlIndex, ctrls) => {
     const modifier = Array_.findByIndex(modifiers, ctrl.index);
 
-    if (modifier && CharacterCalc.isGrantedEffect(modifier, props.character)) {
+    if (modifier && CharacterCalc.isGrantedEffect(modifier.grantedAt, props.character)) {
       const { inputs = [] } = ctrl;
 
       return (
@@ -29,7 +29,7 @@ function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Array<Charact
           key={ctrl.index}
           mutable={props.mutable}
           heading={modifier.src}
-          description={parseAbilityDescription(modifier, inputs, true, props.characterData)}
+          description={parseSelfAbilityDescription(modifier, inputs, props.teamData)}
           checked={ctrl.activated}
           inputs={inputs}
           inputConfigs={modifier.inputConfigs?.filter((config) => config.for !== "FOR_TEAM")}
@@ -42,18 +42,18 @@ function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Array<Charact
 }
 
 export function SelfBuffsView(props: SelfModsViewProps) {
-  const { characterData } = props;
-  const { innateBuffs = [], buffs = [] } = characterData.appCharacter;
+  const { teamData } = props;
+  const { innateBuffs = [], buffs = [] } = teamData.activeAppMember;
   const modifierElmts: (JSX.Element | null)[] = [];
 
   innateBuffs.forEach((buff, index) => {
-    if (CharacterCalc.isGrantedEffect(buff, props.character)) {
+    if (CharacterCalc.isGrantedEffect(buff.grantedAt, props.character)) {
       modifierElmts.push(
         <GenshinModifierView
           key={"innate-" + index}
           mutable={false}
           heading={buff.src}
-          description={parseAbilityDescription(buff, [], true, characterData)}
+          description={parseSelfAbilityDescription(buff, [], teamData)}
         />
       );
     }
@@ -65,7 +65,7 @@ export function SelfBuffsView(props: SelfModsViewProps) {
 }
 
 export function SelfDebuffsView(props: SelfModsViewProps) {
-  const { debuffs = [] } = props.characterData.appCharacter;
+  const { debuffs = [] } = props.teamData.activeAppMember;
   const modifierElmts = getSelfModifierElmts(props, debuffs);
 
   return renderModifiers(modifierElmts, "debuffs", props.mutable);

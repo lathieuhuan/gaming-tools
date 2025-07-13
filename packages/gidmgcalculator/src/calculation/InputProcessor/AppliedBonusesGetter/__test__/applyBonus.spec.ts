@@ -1,7 +1,7 @@
 import { ELEMENT_TYPES } from "@Src/calculation/constants";
 import { AppliedAttributeBonus, AppliedBonuses, BareBonus, EntityBonusTargets } from "@Src/calculation/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { __genCharacterDataTester } from "@UnitTest/test-utils";
+import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { AppliedBonusesGetter } from "../AppliedBonusesGetter";
 
 class Tester extends AppliedBonusesGetter {
@@ -19,7 +19,7 @@ class Tester extends AppliedBonusesGetter {
   unstackableId?: string;
 
   _changeCharacter(name: __EMockCharacter) {
-    this.characterData = __genCharacterDataTester(name);
+    this.teamData = __genMutableTeamDataTester(name);
   }
 
   _apply() {
@@ -38,7 +38,7 @@ class Tester extends AppliedBonusesGetter {
 let tester: Tester;
 
 beforeEach(() => {
-  tester = new Tester(__genCharacterDataTester());
+  tester = new Tester(true, __genMutableTeamDataTester());
 });
 
 test("Apply a single Attribute Bonus, to normal ATTR", () => {

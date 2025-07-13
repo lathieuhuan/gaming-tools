@@ -7,12 +7,12 @@ import type {
   TalentCalcItem,
   Level,
 } from "@Src/calculation/types";
-import type { CalcAtomicRecord, CalcItemExclusiveBonus } from "@Src/calculation/TrackerControl";
+import type { CalcAtomicRecord, CalcItemExclusiveBonus } from "@Src/calculation/utils/TrackerControl";
 
 import Array_ from "@Src/utils/array-utils";
 import Object_ from "@Src/utils/object-utils";
 import TypeCounter from "@Src/utils/type-counter";
-import { GeneralCalc } from "@Src/calculation/common";
+import { GeneralCalc } from "@Src/calculation/utils/calc-utils";
 
 /** should not use 'all' in AttackBonusType */
 type GetBonusPaths = Array<AttackBonusType | undefined>;

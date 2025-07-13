@@ -30,7 +30,7 @@ function DetailInfoProviderCore({ setup, children }: DetailInfoProviderProps) {
       character: setup.char,
       weapon: setup.weapon,
       artifacts: setup.artifacts,
-      characterData: processor.characterData,
+      teamData: processor.teamData,
       appWeapon: data.appWeapons[setup.weapon.code],
       setBonuses: GeneralCalc.getArtifactSetBonuses(setup.artifacts),
       totalAttr: stats.totalAttr,

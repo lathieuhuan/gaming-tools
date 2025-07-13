@@ -1,26 +1,15 @@
-import type { ElementType, ResistReductionKey } from "../common.types";
+import type { ResistReductionKey } from "../common.types";
 import type { CharacterEffectLevelScale } from "./app-entity-common.types";
 import type { EffectApplicableCondition } from "./effect-condition.types";
+import type { EffectValueByOption } from "./effect-value.types";
 
-/** Count members of element types of the party. Ex: [Pyro, Pyro] -> 2 */
-type MemberOptionIndex = {
-  source: "MEMBER";
-  element: ElementType | ElementType[];
-};
-
-type EntityPenaltyValueByOption = {
-  options: number[];
-  /** If number, [source] is "INPUT", [inpIndex] is the number. Default to 0 */
-  optIndex?: number | MemberOptionIndex;
-};
-
-export type EntityPenaltyCore = EffectApplicableCondition & {
-  value: number | EntityPenaltyValueByOption;
+export type EntityPenaltyEffect = EffectApplicableCondition & {
+  value: number | EffectValueByOption;
 
   // ============ CHARACTER PENALTY ONLY ============
   lvScale?: CharacterEffectLevelScale;
   /** Added before stacks, after scale */
-  preExtra?: number | EntityPenaltyCore;
+  preExtra?: number | EntityPenaltyEffect;
   max?: number;
 };
 
@@ -35,6 +24,6 @@ export type EntityPenaltyTarget =
       type: "XILONEN";
     };
 
-export type EntityPenalty<TEntityPenaltyCore extends EntityPenaltyCore> = TEntityPenaltyCore & {
+export type EntityPenalty<TEntityPenaltyCore extends EntityPenaltyEffect> = TEntityPenaltyCore & {
   targets: EntityPenaltyTarget | EntityPenaltyTarget[];
 };

@@ -1,5 +1,5 @@
-import type { EntityBonus, EntityBonusCore } from "./entity-bonus.types";
-import type { EntityPenalty, EntityPenaltyCore } from "./entity-penalty.types";
+import type { EntityBonus, EntityBonusEffect } from "./entity-bonus.types";
+import type { EntityPenalty, EntityPenaltyEffect } from "./entity-penalty.types";
 
 export type ModifierAffectType = "SELF" | "TEAMMATE" | "SELF_TEAMMATE" | "PARTY" | "ONE_UNIT" | "ACTIVE_UNIT";
 
@@ -17,12 +17,12 @@ export type ModInputConfig = {
 
 // ========== BUFF ==========
 
-export type EntityBuff<TEntityBonusCore extends EntityBonusCore = EntityBonusCore> = {
+export type EntityBuff<TEntityEffect extends EntityBonusEffect = EntityBonusEffect> = {
   /** This is id */
   index: number;
   affect: ModifierAffectType;
   inputConfigs?: ModInputConfig[];
-  effects?: EntityBonus<TEntityBonusCore> | EntityBonus<TEntityBonusCore>[];
+  effects?: EntityBonus<TEntityEffect> | EntityBonus<TEntityEffect>[];
   /**
    * id for tracking unstackability.
    * Effects under the same unstackableId and have the same bonus path cannot be stacked.
@@ -33,7 +33,7 @@ export type EntityBuff<TEntityBonusCore extends EntityBonusCore = EntityBonusCor
 
 // ========== DEBUFF ==========
 
-export type EntityDebuff<TEntityPenalty extends EntityPenaltyCore = EntityPenaltyCore> = {
+export type EntityDebuff<TEntityPenalty extends EntityPenaltyEffect = EntityPenaltyEffect> = {
   /** This is id */
   index: number;
   inputConfigs?: ModInputConfig[];

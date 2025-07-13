@@ -1,11 +1,4 @@
-import type {
-  EntityBonus,
-  EntityBonusCore,
-  EntityBuff,
-  EntityDebuff,
-  EntityPenalty,
-  EntityPenaltyCore,
-} from "./app-entity";
+import type { EntityBonusEffect, EntityBuff, EntityDebuff, EntityPenaltyEffect } from "./app-entity";
 
 export type AppArtifact = {
   /** This is id */
@@ -36,11 +29,11 @@ type SetBonus = {
 
 // ========== BUFF / BONUS ==========
 
-export type ArtifactBonusCore = EntityBonusCore;
+type ArtifactBonusEffect = EntityBonusEffect;
 
 export type ArtifactModifierDescription = string | number | number[];
 
-type ArtifactBuff = EntityBuff<EntityBonus<ArtifactBonusCore>> & {
+type ArtifactBuff = EntityBuff<ArtifactBonusEffect> & {
   /** 0 is 2-piece set, 1 is 4-piece set. Default to 1 */
   bonusLv?: number;
   description: ArtifactModifierDescription;
@@ -48,10 +41,8 @@ type ArtifactBuff = EntityBuff<EntityBonus<ArtifactBonusCore>> & {
 
 // ============ DEBUFF / PENALTY ============
 
-export type ArtifactPenaltyCore = EntityPenaltyCore;
+type ArtifactPenaltyEffect = EntityPenaltyEffect;
 
-type ArtifactPenalty = EntityPenalty<ArtifactPenaltyCore>;
-
-type ArtifactDebuff = EntityDebuff<ArtifactPenalty> & {
+type ArtifactDebuff = EntityDebuff<ArtifactPenaltyEffect> & {
   description: ArtifactModifierDescription;
 };

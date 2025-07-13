@@ -10,10 +10,10 @@ import type {
 } from "@Src/calculation/types";
 import type { Artifact, Character, Weapon } from "@Src/types";
 
-import { ArtifactCalc, GeneralCalc, WeaponCalc } from "@Src/calculation/common";
+import { ArtifactCalc, GeneralCalc, WeaponCalc } from "@Src/calculation/utils/calc-utils";
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "@Src/calculation/constants";
 import { ECalcStatModule } from "@Src/calculation/constants/internal";
-import { TrackerControl } from "@Src/calculation/TrackerControl";
+import { TrackerControl } from "@Src/calculation/utils/TrackerControl";
 import { applyPercent } from "@Src/utils";
 import Array_ from "@Src/utils/array-utils";
 import Object_ from "@Src/utils/object-utils";

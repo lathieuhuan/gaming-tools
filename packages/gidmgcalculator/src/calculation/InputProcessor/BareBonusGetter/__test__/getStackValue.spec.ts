@@ -1,6 +1,6 @@
 import { EntityBonusStack } from "@Src/calculation/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { __genCharacterDataTester } from "@UnitTest/test-utils";
+import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "./test-utils";
 
 class Tester extends BareBonusGetterTester {
@@ -8,11 +8,10 @@ class Tester extends BareBonusGetterTester {
     type: "INPUT",
   };
 
-  _expect(stackValue: number) {
+  __expect(stackValue: number) {
     expect(
       this.getStackValue(this.stack, {
         inputs: this.inputs,
-        fromSelf: this.fromSelf,
       })
     ).toBe(stackValue);
   }
@@ -21,35 +20,35 @@ class Tester extends BareBonusGetterTester {
 let tester: Tester;
 
 beforeEach(() => {
-  tester = new Tester(__genCharacterDataTester());
+  tester = new Tester(__genMutableTeamDataTester());
 });
 
-test("stack be 0 when stack calculation is involved party and there's no party", () => {
+test("stack be 0 when stack calculation is involved team and there's no team", () => {
   // ELEMENT
 
   tester.stack = {
     type: "MEMBER",
     element: "DIFFERENT",
   };
-  tester._expect(0);
+  tester.__expect(0);
 
   tester.stack = {
     type: "MEMBER",
     element: "SAME_EXCLUDED",
   };
-  tester._expect(0);
+  tester.__expect(0);
 
   tester.stack = {
     type: "MEMBER",
     element: "SAME_INCLUDED",
   };
-  tester._expect(0);
+  tester.__expect(0);
 
   tester.stack = {
     type: "MEMBER",
     element: "pyro",
   };
-  tester._expect(0);
+  tester.__expect(0);
 
   // ENERGY
 
@@ -57,13 +56,13 @@ test("stack be 0 when stack calculation is involved party and there's no party",
     type: "ENERGY",
     scope: "ACTIVE",
   };
-  tester._expect(0);
+  tester.__expect(0);
 
   tester.stack = {
     type: "ENERGY",
     scope: "PARTY",
   };
-  tester._expect(0);
+  tester.__expect(0);
 
   // NATION
 
@@ -71,36 +70,36 @@ test("stack be 0 when stack calculation is involved party and there's no party",
     type: "NATION",
     nation: "DIFFERENT",
   };
-  tester._expect(0);
+  tester.__expect(0);
 
   tester.stack = {
     type: "NATION",
     nation: "SAME_EXCLUDED",
   };
-  tester._expect(0);
+  tester.__expect(0);
 
   tester.stack = {
     type: "NATION",
     nation: "LIYUE",
   };
-  tester._expect(0);
+  tester.__expect(0);
 
   // OTHERS
 
   tester.stack = {
     type: "RESOLVE",
   };
-  tester._expect(0);
+  tester.__expect(0);
 
   tester.stack = {
     type: "MIX",
   };
-  tester._expect(0);
+  tester.__expect(0);
 });
 
 describe("type INPUT: stack calculated from inputs", () => {
   beforeEach(() => {
-    tester.fromSelf = true;
+    tester.__changeFromSelf(true);
   });
 
   test("fromSelf, index default to 0", () => {
@@ -108,7 +107,7 @@ describe("type INPUT: stack calculated from inputs", () => {
       type: "INPUT",
     };
     tester.inputs = [10];
-    tester._expect(10);
+    tester.__expect(10);
   });
 
   test("fromSelf, index 1", () => {
@@ -117,26 +116,26 @@ describe("type INPUT: stack calculated from inputs", () => {
       index: 1,
     };
     tester.inputs = [-2, 30];
-    tester._expect(30);
+    tester.__expect(30);
   });
 
   test("not fromSelf, altIndex default to 0", () => {
-    tester.fromSelf = false;
+    tester.__changeFromSelf(false);
     tester.stack = {
       type: "INPUT",
     };
     tester.inputs = [20];
-    tester._expect(20);
+    tester.__expect(20);
   });
 
   test("not fromSelf, altIndex 2", () => {
-    tester.fromSelf = false;
+    tester.__changeFromSelf(false);
     tester.stack = {
       type: "INPUT",
       altIndex: 2,
     };
     tester.inputs = [-4, -1, 15];
-    tester._expect(15);
+    tester.__expect(15);
   });
 });
 
@@ -147,14 +146,14 @@ describe("type MEMBER: stack calculated from inputs", () => {
       element: "DIFFERENT",
     };
 
-    tester.__changeCharacter(__EMockCharacter.BASIC);
-    tester._expect(0);
+    tester.__changeActiveMember(__EMockCharacter.BASIC);
+    tester.__expect(0);
 
-    tester.__changeParty([__EMockCharacter.BASIC]);
-    tester._expect(0);
+    tester.__changeTeammates([__EMockCharacter.BASIC]);
+    tester.__expect(0);
 
-    tester.__changeParty([__EMockCharacter.CATALYST]);
+    tester.__changeTeammates([__EMockCharacter.CATALYST]);
 
-    tester._expect(1);
+    tester.__expect(1);
   });
 });

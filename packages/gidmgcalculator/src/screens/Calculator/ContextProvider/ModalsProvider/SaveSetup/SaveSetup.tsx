@@ -1,22 +1,26 @@
 import { useState } from "react";
 import { Input, Modal } from "rond";
 
-import type { Party } from "@Src/types";
-import Setup_ from "@Src/utils/setup-utils";
-import Array_ from "@Src/utils/array-utils";
 import { useStoreSnapshot } from "@Src/features";
-import { useCharacterData } from "../../hooks";
+import type { Teammates } from "@Src/types";
+import Array_ from "@Src/utils/array-utils";
+import Setup_ from "@Src/utils/setup-utils";
 
 // Store
 import { useDispatch } from "@Store/hooks";
 import { saveSetupThunk } from "@Store/thunks";
-import { selectUserSetups } from "@Store/userdb-slice";
 
-function areDifferentParties(party1: Party, party2: Party) {
-  const team1 = Array_.truthy(party1);
-  const team2 = Array_.truthy(party2);
+function areDifferentTeammates(teammates1: Teammates, teammates2: Teammates) {
+  const team1 = Array_.truthy(teammates1);
+  const team2 = Array_.truthy(teammates2);
   return team1.length !== team2.length || team1.some((t1) => team2.every((t2) => t2.name !== t1.name));
 }
+
+type ProcessedResult = {
+  initialSetupName: string;
+  isEligible: boolean;
+  isNewSetup: boolean;
+};
 
 interface SaveSetupProps {
   setupId: number;
@@ -25,17 +29,32 @@ interface SaveSetupProps {
 export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
   const dispatch = useDispatch();
 
-  const record = useCharacterData();
-  const existedSetup = Array_.findById(useStoreSnapshot(selectUserSetups), setupId);
+  const snapshot = useStoreSnapshot<ProcessedResult>((state) => {
+    const existedSetup = Array_.findById(state.userdb.userSetups, setupId);
+    const setup = state.calculator.setupsById[setupId];
 
-  const [input, setInput] = useState(existedSetup ? existedSetup.name : `${record.appCharacter.name} setup`);
+    if (
+      existedSetup &&
+      Setup_.isUserSetup(existedSetup) &&
+      existedSetup.type === "combined" &&
+      areDifferentTeammates(existedSetup.party, setup.party)
+    ) {
+      return {
+        initialSetupName: existedSetup.name,
+        isEligible: false,
+        isNewSetup: false,
+      };
+    }
 
-  if (
-    existedSetup &&
-    Setup_.isUserSetup(existedSetup) &&
-    existedSetup.type === "combined" &&
-    areDifferentParties(existedSetup.party, record.party)
-  ) {
+    return {
+      initialSetupName: existedSetup ? existedSetup.name : `${setup.char.name} setup`,
+      isEligible: true,
+      isNewSetup: !existedSetup,
+    };
+  });
+  const [input, setInput] = useState(snapshot.initialSetupName);
+
+  if (snapshot.isEligible) {
     return (
       <div className="space-y-2">
         <p className="text-lg text-danger-2">Not eligible for update</p>
@@ -54,7 +73,7 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
     <>
       <div className="flex flex-col">
         <p className="mb-2 text-hint-color">
-          {existedSetup ? "Do you what to update this setup" : "Do you what to save this setup as"}
+          {snapshot.isNewSetup ? "Do you what to save this setup as" : "Do you what to update this setup"}
         </p>
         <Input
           className="text-center font-semibold"

@@ -1,11 +1,11 @@
 import { EffectExtra } from "@Src/calculation/types";
-import { __genCharacterDataTester } from "@UnitTest/test-utils";
+import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "./test-utils";
 
 let getExtra: BareBonusGetterTester["getExtra"];
 
 beforeEach(() => {
-  getExtra = new BareBonusGetterTester(__genCharacterDataTester())["getExtra"];
+  getExtra = new BareBonusGetterTester(__genMutableTeamDataTester())["getExtra"];
 });
 
 test("getExtra", () => {
@@ -15,15 +15,12 @@ test("getExtra", () => {
     value: extraValue,
     checkInput: requiredInput,
   };
-  const support = {
-    inputs: [] as number[],
-    fromSelf: true,
-  };
+  let inputs: number[] = [];
 
-  support.inputs = [requiredInput - 1];
-  expect(getExtra(undefined, support)).toBe(0);
-  expect(getExtra(extraConfig, support)).toBe(0);
+  inputs = [requiredInput - 1];
+  expect(getExtra(undefined, inputs)).toBe(0);
+  expect(getExtra(extraConfig, inputs)).toBe(0);
 
-  support.inputs = [requiredInput];
-  expect(getExtra(extraConfig, support)).toBe(extraValue);
+  inputs = [requiredInput];
+  expect(getExtra(extraConfig, inputs)).toBe(extraValue);
 });

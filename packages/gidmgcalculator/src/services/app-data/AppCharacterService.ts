@@ -15,10 +15,6 @@ export class AppCharacterService extends BaseService {
   private subscribers: Map<string, Set<CharacterSubscriber>> = new Map();
   private traveler: Traveler = "LUMINE";
 
-  constructor() {
-    super();
-  }
-
   populate(characters: AppCharacter[]) {
     const props = this.getTravelerProps(this.traveler);
 

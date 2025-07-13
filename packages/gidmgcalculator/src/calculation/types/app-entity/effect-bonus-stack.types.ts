@@ -17,7 +17,7 @@ type InputStack = {
   doubledAt?: number;
 };
 
-/** Count members of element types of the party. Ex: [Pyro, Pyro] -> 2 */
+/** Count members of element types of teammates. Ex: [Pyro, Pyro] -> 2 */
 type MemberStack = {
   type: "MEMBER";
   element: "SAME_INCLUDED" | "SAME_EXCLUDED" | "DIFFERENT" | ElementType;

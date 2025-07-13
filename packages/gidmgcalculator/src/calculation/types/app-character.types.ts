@@ -1,11 +1,9 @@
 import type {
   CharacterMilestone,
-  EntityBonus,
-  EntityBonusCore,
+  EntityBonusEffect,
   EntityBuff,
   EntityDebuff,
-  EntityPenalty,
-  EntityPenaltyCore,
+  EntityPenaltyEffect,
   InputCheck,
   ModifierAffectType,
 } from "./app-entity";
@@ -132,6 +130,7 @@ export type TalentCalcItem = {
   attElmt?: ActualAttackElement;
   /** Only on 'attack' */
   subAttPatt?: "FCA";
+  /** Only on 'attack' */
   tags?: AttackTag[];
 };
 
@@ -139,7 +138,7 @@ export type TalentCalcItem = {
 
 // ========== BUFF / BONUS ==========
 
-export type CharacterBonusCore = EntityBonusCore;
+export type CharacterBonusEffect = EntityBonusEffect;
 
 type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "unstackableId" | "effects">;
 
@@ -151,18 +150,16 @@ export type CharacterBuffNormalAttackConfig = {
   disabled?: boolean;
 };
 
-export type CharacterBuff = EntityBuff<EntityBonus<CharacterBonusCore>> &
+export type CharacterBuff = EntityBuff<CharacterBonusEffect> &
   CharacterModifier & {
     normalsConfig?: CharacterBuffNormalAttackConfig | CharacterBuffNormalAttackConfig[];
   };
 
 // ============ DEBUFF / PENALTY ============
 
-export type CharacterPenaltyCore = EntityPenaltyCore;
+type CharacterPenaltyEffect = EntityPenaltyEffect;
 
-type CharacterPenalty = EntityPenalty<CharacterPenaltyCore>;
-
-export type CharacterDebuff = EntityDebuff<CharacterPenalty> &
+export type CharacterDebuff = EntityDebuff<CharacterPenaltyEffect> &
   CharacterModifier & {
     affect?: ModifierAffectType;
   };

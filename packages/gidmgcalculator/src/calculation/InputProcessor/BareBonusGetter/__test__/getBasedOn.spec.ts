@@ -1,6 +1,6 @@
-import { TotalAttributeControl } from "../../TotalAttributeControl";
+import { TotalAttributeControl } from "@Src/calculation/InputProcessor/TotalAttributeControl";
 import { EntityBonusBasedOn, EntityBonusBasedOnField } from "@Src/calculation/types";
-import { __genCharacterDataTester } from "@UnitTest/test-utils";
+import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "./test-utils";
 
 class Tester extends BareBonusGetterTester {
@@ -12,11 +12,10 @@ class Tester extends BareBonusGetterTester {
     field: this.basedOnField,
   };
 
-  _expectWithBasedOnField(value: number) {
+  __expectWithBasedOnField(value: number) {
     expect(
       this.getBasedOn(this.basedOnField, {
         inputs: this.inputs,
-        fromSelf: this.fromSelf,
         basedOnStable: this.basedOnStable,
       })
     ).toEqual({
@@ -25,7 +24,7 @@ class Tester extends BareBonusGetterTester {
     });
   }
 
-  _expect(value: number) {
+  __expect(value: number) {
     expect(
       this.getBasedOn(
         {
@@ -34,7 +33,6 @@ class Tester extends BareBonusGetterTester {
         },
         {
           inputs: this.inputs,
-          fromSelf: this.fromSelf,
           basedOnStable: this.basedOnStable,
         }
       )
@@ -50,24 +48,24 @@ let tester: Tester;
 
 beforeEach(() => {
   totalAttrCtrl = new TotalAttributeControl();
-  tester = new Tester(__genCharacterDataTester(), totalAttrCtrl);
+  tester = new Tester(__genMutableTeamDataTester(), totalAttrCtrl);
 });
 
 describe("[based on inputs] or not fromSelf", () => {
   beforeEach(() => {
-    tester.fromSelf = false;
+    tester.__changeFromSelf(false);
   });
 
   test("altIndex default to 0, no baseline", () => {
     const input = 100;
 
     tester.inputs = [input];
-    tester._expect(input);
-    tester._expectWithBasedOnField(input);
+    tester.__expect(input);
+    tester.__expectWithBasedOnField(input);
 
     // when no input found, value should be 1, because basedOn value is a multiplier
     tester.inputs = [];
-    tester._expect(1);
+    tester.__expect(1);
   });
 
   test("altIndex 1, no baseline", () => {
@@ -75,7 +73,7 @@ describe("[based on inputs] or not fromSelf", () => {
     tester.config.altIndex = 1;
 
     tester.inputs = [-3, input];
-    tester._expect(input);
+    tester.__expect(input);
   });
 
   test("baseline 100", () => {
@@ -84,24 +82,24 @@ describe("[based on inputs] or not fromSelf", () => {
     tester.config.baseline = baseline;
 
     tester.inputs = [input];
-    tester._expect(input - baseline);
+    tester.__expect(input - baseline);
 
     tester.inputs = [baseline - 50];
-    tester._expect(0);
+    tester.__expect(0);
 
     tester.config.altIndex = 1;
 
     tester.inputs = [-2, input];
-    tester._expect(input - baseline);
+    tester.__expect(input - baseline);
 
     tester.inputs = [-1, baseline - 50];
-    tester._expect(0);
+    tester.__expect(0);
   });
 });
 
 describe("[based on attribute] or fromSelf", () => {
   beforeEach(() => {
-    tester.fromSelf = true;
+    tester.__changeFromSelf(true);
   });
 
   test("based on STABLE attribute, no baseline", () => {
@@ -114,8 +112,8 @@ describe("[based on attribute] or fromSelf", () => {
     tester.basedOnStable = true;
 
     const expectedValue = totalAttrCtrl.getTotalStable(tester.basedOnField);
-    tester._expect(expectedValue);
-    tester._expectWithBasedOnField(expectedValue);
+    tester.__expect(expectedValue);
+    tester.__expectWithBasedOnField(expectedValue);
 
     totalAttrCtrl.applyBonuses({
       value: 40,
@@ -123,8 +121,8 @@ describe("[based on attribute] or fromSelf", () => {
       isStable: false,
       description: "",
     });
-    tester._expect(expectedValue);
-    tester._expectWithBasedOnField(expectedValue);
+    tester.__expect(expectedValue);
+    tester.__expectWithBasedOnField(expectedValue);
   });
 
   test("based on STABLE attribute, baseline 100", () => {
@@ -137,7 +135,7 @@ describe("[based on attribute] or fromSelf", () => {
       description: "",
     });
     tester.basedOnStable = true;
-    tester._expect(0);
+    tester.__expect(0);
 
     totalAttrCtrl.applyBonuses({
       value: 60,
@@ -146,7 +144,7 @@ describe("[based on attribute] or fromSelf", () => {
       description: "",
     });
     tester.basedOnStable = true;
-    tester._expect(0);
+    tester.__expect(0);
 
     totalAttrCtrl.applyBonuses({
       value: 80,
@@ -155,7 +153,7 @@ describe("[based on attribute] or fromSelf", () => {
       description: "",
     });
     tester.basedOnStable = true;
-    tester._expect(totalAttrCtrl.getTotalStable(tester.basedOnField) - tester.config.baseline);
+    tester.__expect(totalAttrCtrl.getTotalStable(tester.basedOnField) - tester.config.baseline);
   });
 
   test("based on STABLE & UNSTABLE attribute, no baseline", () => {
@@ -167,8 +165,8 @@ describe("[based on attribute] or fromSelf", () => {
     });
     tester.basedOnStable = false;
     const expectedValue = totalAttrCtrl.getTotal(tester.basedOnField);
-    tester._expect(expectedValue);
-    tester._expectWithBasedOnField(expectedValue);
+    tester.__expect(expectedValue);
+    tester.__expectWithBasedOnField(expectedValue);
 
     totalAttrCtrl.applyBonuses({
       value: 40,
@@ -178,8 +176,8 @@ describe("[based on attribute] or fromSelf", () => {
     });
     tester.basedOnStable = false;
     const newExpectedValue = totalAttrCtrl.getTotal(tester.basedOnField);
-    tester._expect(newExpectedValue);
-    tester._expectWithBasedOnField(newExpectedValue);
+    tester.__expect(newExpectedValue);
+    tester.__expectWithBasedOnField(newExpectedValue);
   });
 
   test("based on STABLE & UNSTABLE attribute, baseline 100", () => {
@@ -192,7 +190,7 @@ describe("[based on attribute] or fromSelf", () => {
       description: "",
     });
     tester.basedOnStable = false;
-    tester._expect(0);
+    tester.__expect(0);
 
     totalAttrCtrl.applyBonuses({
       value: 70,
@@ -201,6 +199,6 @@ describe("[based on attribute] or fromSelf", () => {
       description: "",
     });
     tester.basedOnStable = false;
-    tester._expect(totalAttrCtrl.getTotal(tester.basedOnField) - tester.config.baseline);
+    tester.__expect(totalAttrCtrl.getTotal(tester.basedOnField) - tester.config.baseline);
   });
 });

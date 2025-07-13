@@ -15,41 +15,33 @@ export type InputCheck = {
   comparison?: ConditionComparison;
 };
 
-export type EffectUsableCondition = {
-  /** If number, the input at 0 must equal to the number */
-  checkInput?: number | InputCheck | InputCheck[];
-  /**
-   * 'DISTINCT_ELMT' only on Ballad of the Fjords.
-   * 'MIXED' only on Chain Breaker.
-   */
-  checkParty?: {
-    value: number;
-    type: "DISTINCT_ELMT" | "MIXED";
-    /** Default to 'EQUAL' */
-    comparison?: ConditionComparison;
-  };
-};
-
-type CharacterEffectAvailableCondition = {
+export type CharacterEffectAvailableCondition = {
   grantedAt?: CharacterMilestone;
   /** When this bonus is from teammate, this is input's index to check granted. */
   altIndex?: number;
 };
 
-export type PartyElementCondition = {
-  /** On Xilonen */
-  totalPartyElmtCount?: {
-    elements: ElementType[];
+export type TeamElementCondition = {
+  /** ['pyro', 'pyro'] => 1. On Ballad of the Fjords */
+  teamTotalElmtCount?: {
     value: number;
-    comparison: "MAX";
+    /** Default to all elements */
+    elements?: ElementType[];
+    comparison: ConditionComparison;
+  };
+  /** ['pyro', 'pyro'] => 2. On Xilonen */
+  teamElmtTotalCount?: {
+    value: number;
+    elements: ElementType[];
+    comparison: ConditionComparison;
   };
   /** On Gorou, Nilou, Chevreuse */
-  partyElmtCount?: Partial<Record<ElementType, number>>;
+  teamEachElmtCount?: Partial<Record<ElementType, number>>;
   /** On Nilou, Chevreuse */
-  partyOnlyElmts?: ElementType[];
+  teamOnlyElmts?: ElementType[];
 };
 
-type CharacterPropCondition = {
+export type CharacterPropertyCondition = {
   /** On Chongyun, 2 original artifacts */
   forWeapons?: WeaponType[];
   /** On Chevreuse, Xilonen */
@@ -58,7 +50,20 @@ type CharacterPropCondition = {
   forName?: string;
 };
 
-export type EffectApplicableCondition = EffectUsableCondition &
-  CharacterEffectAvailableCondition &
-  PartyElementCondition &
-  CharacterPropCondition;
+export type EffectInputCondition = number | InputCheck | InputCheck[];
+
+export type PartyPropertyCondition = {
+  value: number;
+  type: "MIXED";
+  /** Default to 'EQUAL' */
+  comparison?: ConditionComparison;
+};
+
+export type EffectApplicableCondition = CharacterEffectAvailableCondition &
+  TeamElementCondition &
+  CharacterPropertyCondition & {
+    /** If number, the input at 0 must equal to the number */
+    checkInput?: EffectInputCondition;
+    /** On Chain Breaker. */
+    checkParty?: PartyPropertyCondition;
+  };

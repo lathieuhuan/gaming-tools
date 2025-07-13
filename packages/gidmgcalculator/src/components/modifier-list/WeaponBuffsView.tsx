@@ -1,4 +1,4 @@
-import type { CalcWeapon, ModifierCtrl, Party, Weapon } from "@Src/types";
+import type { CalcWeapon, ModifierCtrl, Teammates, Weapon } from "@Src/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import { $AppWeapon } from "@Src/services";
@@ -49,7 +49,7 @@ interface WeaponBuffsViewProps {
   mutable?: boolean;
   weapon: CalcWeapon;
   wpBuffCtrls: ModifierCtrl[];
-  party: Party;
+  teammates: Teammates;
   getSelfHandlers?: RenderWeaponModifiersArgs["getHanlders"];
   getTeammateHandlers?: (args: GetTeammateModifierHanldersArgs) => ModifierHanlders;
 }
@@ -57,7 +57,7 @@ export function WeaponBuffsView({
   mutable,
   weapon,
   wpBuffCtrls,
-  party,
+  teammates,
   getSelfHandlers,
   getTeammateHandlers,
 }: WeaponBuffsViewProps) {
@@ -74,7 +74,7 @@ export function WeaponBuffsView({
     })
   );
 
-  party.forEach((teammate, teammateIndex) => {
+  teammates.forEach((teammate, teammateIndex) => {
     if (teammate) {
       content.push(
         ...renderWeaponModifiers({

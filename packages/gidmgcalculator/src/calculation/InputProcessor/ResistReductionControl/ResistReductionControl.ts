@@ -6,21 +6,20 @@ import type {
   ResistReduction,
   ResistReductionKey,
 } from "@Src/calculation/types";
-import type { CharacterReadData } from "@Src/calculation/common";
-import type { TrackerControl } from "@Src/calculation/TrackerControl";
+import type { CalcTeamData } from "@Src/calculation/utils/CalcTeamData";
+import type { TrackerControl } from "@Src/calculation/utils/TrackerControl";
 
 import Array_ from "@Src/utils/array-utils";
 import TypeCounter from "@Src/utils/type-counter";
-import { isApplicableEffect } from "@Src/calculation/common";
 import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "@Src/calculation/constants";
 import { ECalcStatModule } from "@Src/calculation/constants/internal";
 import { PenaltiesGetter } from "./PenaltiesGetter";
 
-export class ResistReductionControl<T extends CharacterReadData = CharacterReadData> extends PenaltiesGetter {
+export class ResistReductionControl<T extends CalcTeamData = CalcTeamData> extends PenaltiesGetter {
   private reductCounter = new TypeCounter<ResistReductionKey>();
 
-  constructor(protected characterData: T, private tracker?: TrackerControl) {
-    super(characterData);
+  constructor(protected teamData: T, private tracker?: TrackerControl) {
+    super(teamData);
   }
 
   add(key: ResistReductionKey, value: number, description: string) {
@@ -45,7 +44,6 @@ export class ResistReductionControl<T extends CharacterReadData = CharacterReadD
     description: string
   ) => {
     if (!penalty) return;
-    const { characterData } = this;
     const paths = new Set<ResistReductionKey>();
 
     for (const target of Array_.toArray(targets)) {
@@ -61,13 +59,13 @@ export class ResistReductionControl<T extends CharacterReadData = CharacterReadD
         }
         case "XILONEN": {
           const elmts: ElementType[] = ["pyro", "hydro", "cryo", "electro"];
-          const allElmtCount = characterData.allElmtCount;
+          const teamElmtCount = this.teamData.elmtCount;
 
-          allElmtCount.forEach((elmt) => {
+          teamElmtCount.forEach((elmt) => {
             if (elmts.includes(elmt)) paths.add(elmt);
           });
 
-          if (allElmtCount.get(elmts) < 3) paths.add("geo");
+          if (teamElmtCount.get(elmts) < 3) paths.add("geo");
           break;
         }
       }
@@ -79,7 +77,7 @@ export class ResistReductionControl<T extends CharacterReadData = CharacterReadD
     if (!debuff.effects) return;
 
     for (const config of Array_.toArray(debuff.effects)) {
-      if (isApplicableEffect(config, this.characterData, inputs, fromSelf)) {
+      if (this.teamData.isApplicableEffect(config, inputs, fromSelf)) {
         const penalty = this.getPenaltyValue(config, inputs, fromSelf);
 
         this.addPenalty(penalty, config.targets, inputs, description);

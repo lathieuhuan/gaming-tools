@@ -24,10 +24,10 @@ export type SetupAppEntities = {
   appCharacters: AppCharactersByName;
   appWeapons: AppWeaponsByCode;
   appArtifacts: AppArtifactsByCode;
-  appParty: CalcAppParty;
+  appTeammates: CalcAppTeammates;
 };
 
-export type CalcAppParty = (AppCharacter | null)[];
+export type CalcAppTeammates = (AppCharacter | null)[];
 
 export type Target = {
   code: number;
@@ -87,7 +87,7 @@ export type Infusion = {
   range?: NormalAttack[];
 };
 
-// PARTY starts
+// Teammate starts
 export type TeammateWeapon = Pick<Weapon, "code" | "type" | "refi"> & {
   buffCtrls: ModifierCtrl[];
 };
@@ -105,8 +105,8 @@ export type Teammate = {
   artifact: TeammateArtifact;
 };
 
-export type Party = (Teammate | null)[];
-// PARTY ends
+export type Teammates = (Teammate | null)[];
+// Teammate ends
 
 export type CalcWeapon = Weapon;
 
@@ -134,7 +134,7 @@ export type CalcSetup = {
   artBuffCtrls: ArtifactModCtrl[];
   artDebuffCtrls: ArtifactModCtrl[];
 
-  party: Party;
+  party: Teammates;
   elmtModCtrls: ElementModCtrl;
   customBuffCtrls: CustomBuffCtrl[];
   customDebuffCtrls: CustomDebuffCtrl[];

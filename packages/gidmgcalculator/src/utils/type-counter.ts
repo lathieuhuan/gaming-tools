@@ -1,5 +1,3 @@
-import Object_ from "./object-utils";
-
 export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   private count: Record<TKey, number>;
   private initial: Partial<Record<TKey, number>> = {};
@@ -18,12 +16,12 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   }
 
   get result() {
-    return Object_.clone(this.count);
+    return { ...this.count };
   }
 
   constructor(initial: Partial<Record<TKey, number>> = {}) {
-    this.initial = Object_.clone(initial);
-    this.count = Object_.clone(this.initial) as Record<TKey, number>;
+    this.initial = { ...initial };
+    this.count = { ...this.initial } as Record<TKey, number>;
   }
 
   private _get = (key: TKey) => {
@@ -46,7 +44,11 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
     for (const key in this.count) callback(key, this.count[key]);
   };
 
+  clear = () => {
+    this.count = {} as Record<TKey, number>;
+  };
+
   reset = () => {
-    this.count = Object_.clone(this.initial) as Record<TKey, number>;
+    this.count = { ...this.initial } as Record<TKey, number>;
   };
 }

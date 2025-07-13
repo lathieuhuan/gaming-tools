@@ -14,8 +14,8 @@ import {
   ArtifactDebuffsView,
   SelfBuffsView,
   SelfDebuffsView,
-  PartyBuffsView,
-  PartyDebuffsView,
+  TeammateBuffsView,
+  TeammateDebuffsView,
 } from "@Src/components";
 import { CustomBuffsDetail, ElementBuffsDetail } from "./buffs";
 import { CustomDebuffsDetail, ElementDebuffsDetail } from "./debuffs";
@@ -56,7 +56,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
     customDebuffCtrls,
     target,
   } = chosenSetup;
-  const { characterData } = result;
+  const { teamData } = result;
   const { title, variant, statuses } = $AppData.getTargetInfo(target);
 
   return (
@@ -72,18 +72,11 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
             },
             {
               heading: "Self",
-              body: (
-                <SelfDebuffsView
-                  mutable={false}
-                  modCtrls={selfDebuffCtrls}
-                  character={char}
-                  characterData={characterData}
-                />
-              ),
+              body: <SelfDebuffsView mutable={false} modCtrls={selfDebuffCtrls} character={char} teamData={teamData} />,
             },
             {
               heading: "Party",
-              body: <PartyDebuffsView mutable={false} party={party} characterData={characterData} />,
+              body: <TeammateDebuffsView mutable={false} teammates={party} teamData={teamData} />,
             },
             {
               heading: "Artifacts",
@@ -105,7 +98,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
               body: (
                 <ElementBuffsDetail
                   charLv={char.level}
-                  vision={characterData.appCharacter.vision}
+                  vision={teamData.activeAppMember.vision}
                   attkBonuses={result.attkBonuses}
                   customInfusion={chosenSetup.customInfusion}
                   elmtModCtrls={elmtModCtrls}
@@ -114,26 +107,28 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
             },
             {
               heading: "Self",
-              body: (
-                <SelfBuffsView
-                  mutable={false}
-                  modCtrls={selfBuffCtrls}
-                  character={char}
-                  characterData={characterData}
-                />
-              ),
+              body: <SelfBuffsView mutable={false} modCtrls={selfBuffCtrls} character={char} teamData={teamData} />,
             },
             {
               heading: "Party",
-              body: <PartyBuffsView mutable={false} party={party} characterData={characterData} />,
+              body: <TeammateBuffsView mutable={false} teammates={party} teamData={teamData} />,
             },
             {
               heading: "Weapons",
-              body: weapon ? <WeaponBuffsView mutable={false} {...{ weapon, wpBuffCtrls, party }} /> : null,
+              body: weapon ? (
+                <WeaponBuffsView mutable={false} teammates={party} weapon={weapon} wpBuffCtrls={wpBuffCtrls} />
+              ) : null,
             },
             {
               heading: "Artifacts",
-              body: <ArtifactBuffsView mutable={false} {...{ setBonuses, artBuffCtrls, party }} />,
+              body: (
+                <ArtifactBuffsView
+                  mutable={false}
+                  teammates={party}
+                  setBonuses={setBonuses}
+                  artBuffCtrls={artBuffCtrls}
+                />
+              ),
             },
             {
               heading: "Custom",

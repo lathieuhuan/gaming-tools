@@ -1,4 +1,4 @@
-import { ArtifactCalc, WeaponCalc } from "@Src/calculation/common";
+import { ArtifactCalc, WeaponCalc } from "@Src/calculation/utils/calc-utils";
 import { LEVELS } from "@Src/calculation/constants";
 import { AppCharacter, ArtifactAttribute, AttributeStat, Level } from "@Src/calculation/types";
 import { $AppCharacter } from "@Src/services";
@@ -6,7 +6,7 @@ import { Artifact } from "@Src/types";
 import { __EMockArtifactSet } from "@UnitTest/mocks/artifacts.mock";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __EMockWeapon } from "@UnitTest/mocks/weapons.mock";
-import { __findAscensionByLevel, __genCharacterDataTester, __genWeaponInfo } from "@UnitTest/test-utils";
+import { __findAscensionByLevel, __genMutableTeamDataTester, __genWeaponInfo } from "@UnitTest/test-utils";
 import { TotalAttributeControl } from "../TotalAttributeControl";
 
 type InternalTotalAttribute = Record<
@@ -169,27 +169,27 @@ test("static: getArtifactAttributes => ArtifactAttributeControl", () => {
 
 describe("construct", () => {
   test("with only character", () => {
-  const record = __genCharacterDataTester();
-  const { character, appCharacter } = record;
+    const teamData = __genMutableTeamDataTester();
+    const { activeMember, activeAppMember } = teamData;
 
-    tester.construct(character, appCharacter);
-    tester._expect(__getExpectedAfterConstructWithCharacter(character.level, appCharacter));
+    tester.construct(activeMember, activeAppMember);
+    tester._expect(__getExpectedAfterConstructWithCharacter(activeMember.level, activeAppMember));
   });
 });
 
 test("equip weapon (construct with character & weapon should be the same)", () => {
-  const record = __genCharacterDataTester();
-  const { character, appCharacter } = record;
+  const teamData = __genMutableTeamDataTester();
+  const { activeMember, activeAppMember } = teamData;
 
   const coreTester = new Tester();
-  coreTester.construct(character, appCharacter);
+  coreTester.construct(activeMember, activeAppMember);
 
   const { weapon: sword, appWeapon: appSword } = __genWeaponInfo();
 
   tester = coreTester._clone();
   tester["equipWeapon"](sword, appSword);
 
-  const expectedSword = __getExpectedAfterConstructWithCharacter(character.level, appCharacter);
+  const expectedSword = __getExpectedAfterConstructWithCharacter(activeMember.level, activeAppMember);
 
   expectedSword.atk.base += WeaponCalc.getMainStatValue(sword.level, appSword.mainStatScale);
 
@@ -206,7 +206,7 @@ test("equip weapon (construct with character & weapon should be the same)", () =
   tester = coreTester._clone();
   tester["equipWeapon"](bow, appBow);
 
-  const expectedBow = __getExpectedAfterConstructWithCharacter(character.level, appCharacter);
+  const expectedBow = __getExpectedAfterConstructWithCharacter(activeMember.level, activeAppMember);
 
   expectedBow.atk.base += WeaponCalc.getMainStatValue(bow.level, appBow.mainStatScale);
 
@@ -218,10 +218,10 @@ test("equip weapon (construct with character & weapon should be the same)", () =
 });
 
 test("equip artifacts (construct with character & artifacts should be the same)", () => {
-  const record = __genCharacterDataTester();
-  const { character, appCharacter } = record;
+  const teamData = __genMutableTeamDataTester();
+  const { activeMember, activeAppMember } = teamData;
 
-  tester.construct(character, appCharacter);
+  tester.construct(activeMember, activeAppMember);
 
   const artifacts: Artifact[] = [
     {
@@ -241,7 +241,7 @@ test("equip artifacts (construct with character & artifacts should be the same)"
 
   tester["equipArtifacts"](artifacts);
 
-  const expected = __getExpectedAfterConstructWithCharacter(character.level, appCharacter);
+  const expected = __getExpectedAfterConstructWithCharacter(activeMember.level, activeAppMember);
 
   expected.hp.stableBonus = ArtifactCalc.mainStatValueOf(artifacts[0]) + 1000;
   expected.em.stableBonus = 100;

@@ -1,11 +1,11 @@
 import { ATTACK_ELEMENTS } from "@Src/calculation/constants";
-import { AttackElement, EntityDebuff, EntityPenaltyCore, ResistReductionKey } from "@Src/calculation/types";
+import { AttackElement, EntityDebuff, EntityPenaltyEffect, ResistReductionKey } from "@Src/calculation/types";
 import { Target } from "@Src/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
-import { CharacterDataTester } from "@UnitTest/test-utils";
+import { MutableTeamDataTester } from "@UnitTest/test-utils";
 import { ResistReductionControl } from "../ResistReductionControl";
 
-export class ResistanceReductionControlTester extends ResistReductionControl<CharacterDataTester> {
+export class ResistanceReductionControlTester extends ResistReductionControl<MutableTeamDataTester> {
   __inputs: number[] = [];
   __fromSelf = true;
   __description = "";
@@ -26,17 +26,17 @@ export class ResistanceReductionControlTester extends ResistReductionControl<Cha
       pyro: 10,
     },
   };
-  __penaltyCore: EntityPenaltyCore = {
+  __penaltyCore: EntityPenaltyEffect = {
     value: 0,
   };
-  //   characterData = __genCharacterDataTester();
+  //   characterData = __genMutableTeamDataTester();
 
-  __changeCharacter(name: __EMockCharacter) {
-    this["characterData"].__updateCharacter(name);
+  __changeActiveMember(name: __EMockCharacter) {
+    this.teamData.__changeActiveMember(name);
   }
 
   __changeTeammates(names: string[]) {
-    this["characterData"].__updateParty(names);
+    this.teamData.__changeTeammates(names);
   }
 
   __resetReduct() {

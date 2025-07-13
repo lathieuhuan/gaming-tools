@@ -1,21 +1,21 @@
-import type { CalculationFinalResult, CharacterReadData } from "@Calculation";
+import type { CalculationFinalResult, CalcTeamData } from "@Calculation";
 
 import { useTranslation } from "@Src/hooks";
 import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
 
 interface FinalResultViewProps
   extends Pick<FinalResultLayoutProps, "weapon" | "talentMutable" | "onChangeTalentLevel"> {
-  characterData: CharacterReadData;
+  teamData: CalcTeamData;
   finalResult: CalculationFinalResult;
 }
-export function FinalResultView({ characterData, finalResult, ...props }: FinalResultViewProps) {
+export function FinalResultView({ teamData, finalResult, ...props }: FinalResultViewProps) {
   const { t } = useTranslation();
 
   return (
     <FinalResultLayout
       {...props}
-      appCharacter={characterData.appCharacter}
-      getTalentLevel={characterData.getFinalTalentLv}
+      appCharacter={teamData.activeAppMember}
+      getTalentLevel={teamData.getFinalTalentLv}
       showWeaponCalc
       headerConfigs={[
         {

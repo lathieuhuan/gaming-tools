@@ -1,7 +1,7 @@
 import type { PartiallyRequiredOnly } from "rond";
 import type {
   CalcSetup,
-  CalcAppParty,
+  CalcAppTeammates,
   AppCharactersByName,
   AppArtifactsByCode,
   AppWeaponsByCode,
@@ -24,7 +24,7 @@ export function getSetupAppEntities({
     [weapon.code]: $AppWeapon.get(weapon.code)!,
   };
   const appArtifacts: AppArtifactsByCode = {};
-  const appParty: CalcAppParty = [];
+  const appTeammates: CalcAppTeammates = [];
 
   for (const artifact of artifacts) {
     if (artifact && !appArtifacts[artifact.code]) {
@@ -39,10 +39,10 @@ export function getSetupAppEntities({
       appCharacters[teammate.name] = appCharacter;
       appWeapons[teammate.weapon.code] ||= $AppWeapon.get(teammate.weapon.code)!;
       appArtifacts[teammate.artifact.code] ||= $AppArtifact.getSet(teammate.artifact.code)!;
-      appParty.push(appCharacter);
+      appTeammates.push(appCharacter);
     } //
     else {
-      appParty.push(null);
+      appTeammates.push(null);
     }
   }
 
@@ -50,6 +50,6 @@ export function getSetupAppEntities({
     appCharacters,
     appWeapons,
     appArtifacts,
-    appParty,
+    appTeammates,
   };
 }

@@ -1,10 +1,10 @@
-import { CharacterDataProvider } from "./CharacterDataProvider";
+import { TeamDataProvider } from "./TeamDataProvider";
 import { ModalsProvider } from "./ModalsProvider";
 
 export function ContextProvider(props: { children: React.ReactNode }) {
   return (
-    <CharacterDataProvider>
+    <TeamDataProvider>
       <ModalsProvider>{props.children}</ModalsProvider>
-    </CharacterDataProvider>
+    </TeamDataProvider>
   );
 }

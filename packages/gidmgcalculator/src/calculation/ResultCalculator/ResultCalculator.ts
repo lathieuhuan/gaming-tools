@@ -1,8 +1,9 @@
-import type { AttackAlterer, AttackBonusesArchive } from "../InputProcessor";
-import type { TrackerControl } from "../TrackerControl";
-import type { AttackPattern, ResistReduction, TotalAttribute } from "../types";
+import type { AttackBonusesArchive } from "../InputProcessor";
+import type { TrackerControl } from "../utils/TrackerControl";
+import type { AttackAlterConfigs, AttackPattern, ResistReduction, TotalAttribute } from "../types";
 
-import { CharacterReadData, GeneralCalc } from "../common";
+import { CalcTeamData } from "../utils/CalcTeamData";
+import { GeneralCalc } from "../utils/calc-utils";
 import { CalcItemCalculator } from "./CalcItemCalculator";
 import { LunarReactionCalculator } from "./LunarReactionCalculator";
 import { ReactionCalculator } from "./ReactionCalculator";
@@ -13,16 +14,16 @@ export class ResultCalculator {
 
   constructor(
     targetLv: number,
-    private characterData: CharacterReadData,
+    private teamData: CalcTeamData,
     private totalAttr: TotalAttribute,
     private attkBonusesArchive: AttackBonusesArchive,
-    private attackAlterer: AttackAlterer,
+    private attAlterConfigs: AttackAlterConfigs,
     private resistances: ResistReduction,
     private tracker?: TrackerControl
   ) {
     this.itemCalculator = new CalcItemCalculator(
       targetLv,
-      GeneralCalc.getBareLv(characterData.character.level),
+      GeneralCalc.getBareLv(teamData.activeMember.level),
       totalAttr,
       attkBonusesArchive,
       resistances
@@ -32,10 +33,10 @@ export class ResultCalculator {
   genTalentCalculator = (patternKey: AttackPattern) => {
     return new TalentCalculator(
       patternKey,
-      this.attackAlterer.getConfig(patternKey),
+      this.attAlterConfigs[patternKey],
       this.totalAttr,
       this.attkBonusesArchive,
-      this.characterData,
+      this.teamData,
       this.itemCalculator,
       this.tracker
     );
@@ -43,7 +44,7 @@ export class ResultCalculator {
 
   genReactionCalculator = () => {
     return new ReactionCalculator(
-      this.characterData.character.level,
+      this.teamData.activeMember.level,
       this.itemCalculator,
       this.resistances,
       this.tracker
@@ -52,7 +53,7 @@ export class ResultCalculator {
 
   genLunarReactionCalculator = () => {
     return new LunarReactionCalculator(
-      this.characterData.character.level,
+      this.teamData.activeMember.level,
       this.itemCalculator,
       this.resistances,
       this.tracker

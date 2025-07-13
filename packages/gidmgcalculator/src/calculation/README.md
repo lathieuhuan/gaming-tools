@@ -1,3 +1,7 @@
-# Calculation Development Flow (from left to right)
+# Calculation Development Flow (from top to bottom)
 
-constants & types => common-utils & TrackerControl => InputProcessor => ResultCalculator => main-calcs
+constants / types
+  => utils
+    => InputProcessor
+      => ResultCalculator
+        => main

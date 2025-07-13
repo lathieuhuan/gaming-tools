@@ -1,7 +1,7 @@
 import type { ElementModCtrl } from "@Src/types";
-import type { CharacterReadData } from "../common";
+import type { CalcTeamData } from "../utils/CalcTeamData";
 import type { AttackBonusesArchive } from "../InputProcessor";
-import type { CalcItemRecord } from "../TrackerControl";
+import type { CalcItemRecord } from "../utils/TrackerControl";
 import type {
   AppCharacter,
   AttackAlterConfig,
@@ -17,8 +17,8 @@ import type {
 } from "../types";
 
 import Array_ from "@Src/utils/array-utils";
-import { CharacterCalc } from "../common";
-import { TrackerControl } from "../TrackerControl";
+import { CharacterCalc } from "../utils/calc-utils";
+import { TrackerControl } from "../utils/TrackerControl";
 import { CalcItemCalculator } from "./CalcItemCalculator";
 
 type InternalElmtModCtrl = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorb_reaction" | "absorption">;
@@ -35,18 +35,18 @@ export class TalentCalculator {
     private alterConfig: AttackAlterConfig = {},
     private totalAttr: TotalAttribute,
     private attkBonusesArchive: AttackBonusesArchive,
-    characterData: CharacterReadData,
+    teamData: CalcTeamData,
     private itemCalculator: CalcItemCalculator,
     private tracker?: TrackerControl
   ) {
-    this.appCharacter = characterData.appCharacter;
+    this.appCharacter = teamData.activeAppMember;
 
     const default_ = CharacterCalc.getTalentDefaultInfo(patternKey, this.appCharacter);
 
     this.default_ = default_;
     this.resultKey = default_.resultKey;
     this.disabled = alterConfig?.disabled === true;
-    this.level = characterData.getFinalTalentLv(this.resultKey);
+    this.level = teamData.getFinalTalentLv(this.resultKey);
   }
 
   private configFlatFactor = (factor: CalcItemFlatFactor) => {

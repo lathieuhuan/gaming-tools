@@ -1,4 +1,4 @@
-import type { UserSetup } from "@Src/types";
+import type { UserComplexSetup, UserSetup } from "@Src/types";
 
 import { useDispatch } from "@Store/hooks";
 import { selectUserSetups, addSetupToComplex } from "@Store/userdb-slice";
@@ -7,49 +7,67 @@ import Setup_ from "@Src/utils/setup-utils";
 import Array_ from "@Src/utils/array-utils";
 import { useCombineManager } from "./hooks";
 
-interface CombineMoreProps {
-  setupID: number;
-  onClose: () => void;
+interface CombineMoreProcessedResult {
+  userSetups: (UserSetup | UserComplexSetup)[];
+  setupOptions: UserSetup[];
+  remainCharacters: string[];
+  targetSetup?: UserComplexSetup;
 }
-export default function CombineMore({ setupID, onClose }: CombineMoreProps) {
-  const dispatch = useDispatch();
+
+function useCombineMoreProcessor(setupID: number) {
   const userSetups = useStoreSnapshot(selectUserSetups);
+  const result: CombineMoreProcessedResult = {
+    userSetups,
+    setupOptions: [],
+    remainCharacters: [],
+  };
 
   const targetSetup = Array_.findById(userSetups, setupID);
   if (!targetSetup || Setup_.isUserSetup(targetSetup)) {
-    return null;
+    return result;
   }
 
-  const shownSetup = Array_.findById(userSetups, targetSetup.shownID);
-  if (!shownSetup || !Setup_.isUserSetup(shownSetup)) {
-    return null;
+  const displayedSetup = Array_.findById(userSetups, targetSetup.shownID);
+  if (!displayedSetup || !Setup_.isUserSetup(displayedSetup)) {
+    return result;
   }
 
-  const allChars = shownSetup.party.reduce(
+  const allChars = displayedSetup.party.reduce(
     (result, teammate) => {
       if (teammate) {
         result.push(teammate.name);
       }
       return result;
     },
-    [shownSetup.char.name]
+    [displayedSetup.char.name]
   );
 
-  const { name, allIDs } = targetSetup;
-  const remainChars = allChars.filter((name) => !allIDs[name]);
+  result.targetSetup = targetSetup;
+  result.remainCharacters = allChars.filter((name) => !targetSetup.allIDs[name]);
 
-  const setupOptions = userSetups.filter((setup) => {
+  result.setupOptions = userSetups.filter((setup) => {
     return (
       setup.type === "original" &&
       setup.party.length === 3 &&
       setup.party.every((teammate) => teammate && allChars.includes(teammate.name)) &&
-      remainChars.includes(setup.char.name)
+      result.remainCharacters.includes(setup.char.name)
     );
   }) as UserSetup[];
 
+  return result;
+}
+
+interface CombineMoreProps {
+  setupID: number;
+  onClose: () => void;
+}
+export default function CombineMore({ setupID, onClose }: CombineMoreProps) {
+  const dispatch = useDispatch();
+
+  const { userSetups, targetSetup, setupOptions, remainCharacters } = useCombineMoreProcessor(setupID);
   const { isError, pickedIDs, combineMenu, setIsError } = useCombineManager({
     options: setupOptions,
-    limit: remainChars.length,
+    limit: remainCharacters.length,
   });
 
   const tryCombine = () => {
@@ -70,7 +88,7 @@ export default function CombineMore({ setupID, onClose }: CombineMoreProps) {
           }
         }
       }
-      dispatch(addSetupToComplex({ complexID: targetSetup.ID, pickedIDs }));
+      dispatch(addSetupToComplex({ complexID: setupID, pickedIDs }));
       onClose();
     }
   };
@@ -87,7 +105,7 @@ export default function CombineMore({ setupID, onClose }: CombineMoreProps) {
           "These 2 Setups feature the same Character."
         ) : (
           <>
-            Choose setups to be combined into "<b>{name}</b>".
+            Choose setups to be combined into "<b>{targetSetup?.name}</b>".
           </>
         )}
       </p>

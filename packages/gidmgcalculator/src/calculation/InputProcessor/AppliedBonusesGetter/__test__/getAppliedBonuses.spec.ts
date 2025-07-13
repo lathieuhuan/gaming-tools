@@ -1,7 +1,7 @@
 import { TotalAttributeControl } from "../../TotalAttributeControl";
 import { AppliedAttributeBonus, AppliedBonuses, EntityBuff } from "@Src/calculation/types";
 import { Character } from "@Src/types";
-import { __genCharacterDataTester } from "@UnitTest/test-utils";
+import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { AppliedBonusesGetter } from "../AppliedBonusesGetter";
 
 /**
@@ -15,8 +15,8 @@ class Tester extends AppliedBonusesGetter {
   isFinal?: boolean;
   description = "";
 
-  _updateCharacter<TKey extends keyof Character>(key: TKey, value: Character[TKey]) {
-    this.characterData.character[key] = value;
+  _updateActiveMember<TKey extends keyof Character>(key: TKey, value: Character[TKey]) {
+    this.teamData.activeMember[key] = value;
   }
 
   _getAppliedBonuses(effects: EntityBuff["effects"]) {
@@ -25,7 +25,6 @@ class Tester extends AppliedBonusesGetter {
         effects,
       },
       {
-        fromSelf: this.fromSelf,
         inputs: this.inputs,
       },
       this.description,
@@ -43,7 +42,7 @@ let tester: Tester;
 
 beforeEach(() => {
   totalAttrCtrl = new TotalAttributeControl();
-  tester = new Tester(__genCharacterDataTester(), totalAttrCtrl);
+  tester = new Tester(true, __genMutableTeamDataTester(), totalAttrCtrl);
 });
 
 test("effects is required on buff", () => {
@@ -73,7 +72,7 @@ test("effects is required on buff", () => {
   });
 });
 
-// more tests of checking if effect is final can be found in isFinalBonus.spec
+// more tests of checking if effect is final can be found in isFinalEffect.spec
 test("if isFinal is provided, it should meet isFinal on effect", () => {
   const attributeValue = 1000;
   const attributeType = "atk";
@@ -140,13 +139,13 @@ test("effect must be applicable", () => {
     targets: { module: "ATTR", path: "hp" },
   };
 
-  tester._updateCharacter("cons", 1);
+  tester._updateActiveMember("cons", 1);
   tester._expectResult({
     attrBonuses: [],
     attkBonuses: [],
   });
 
-  tester._updateCharacter("cons", 6);
+  tester._updateActiveMember("cons", 6);
   tester._expectResult({
     attrBonuses: [
       {

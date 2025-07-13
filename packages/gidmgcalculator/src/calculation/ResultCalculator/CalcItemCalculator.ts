@@ -1,3 +1,5 @@
+import type { AttackBonusesArchive } from "../InputProcessor";
+import type { CalcItemRecord } from "../utils/TrackerControl";
 import type {
   ActualAttackPattern,
   AttackBonusKey,
@@ -10,12 +12,10 @@ import type {
   TalentCalcItemBonusId,
   TotalAttribute,
 } from "../types";
-import type { AttackBonusesArchive } from "../InputProcessor";
-import type { CalcItemRecord } from "../TrackerControl";
 
 import { toMult } from "@Src/utils";
 import Array_ from "@Src/utils/array-utils";
-import { GeneralCalc } from "../common";
+import { GeneralCalc } from "../utils/calc-utils";
 
 export class CalcItemCalculator {
   constructor(

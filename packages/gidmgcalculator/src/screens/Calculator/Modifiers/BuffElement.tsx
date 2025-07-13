@@ -19,7 +19,7 @@ import {
   updateResonance,
 } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { useCharacterData } from "../ContextProvider";
+import { useTeamData } from "../ContextProvider";
 
 //
 import {
@@ -39,7 +39,7 @@ export default function BuffElement() {
   const attkBonuses = useSelector(selectAttkBonuses);
   const customInfusion = useSelector(selectCustomInfusion);
 
-  const { vision, weaponType, calcList } = useCharacterData().appCharacter;
+  const { vision, weaponType, calcList } = useTeamData().activeAppMember;
 
   const { element: infusedElement } = customInfusion;
   const { absorption } = elmtModCtrls;

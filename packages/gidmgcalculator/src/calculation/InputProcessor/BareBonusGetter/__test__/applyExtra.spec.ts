@@ -1,6 +1,6 @@
-import { TotalAttributeControl } from "../../TotalAttributeControl";
-import { BareBonus, EntityBonusCore } from "@Src/calculation/types";
-import { __genCharacterDataTester } from "@UnitTest/test-utils";
+import { TotalAttributeControl } from "@Src/calculation/InputProcessor/TotalAttributeControl";
+import { BareBonus, EntityBonusEffect } from "@Src/calculation/types";
+import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "./test-utils";
 
 class Tester extends BareBonusGetterTester {
@@ -9,16 +9,16 @@ class Tester extends BareBonusGetterTester {
     isStable: true,
     value: 0,
   };
-  extra: EntityBonusCore = {
+  extra: EntityBonusEffect = {
     id: "",
     value: 0,
   };
 
-  _apply(extra: number | EntityBonusCore) {
-    this.applyExtra(this.bonus, extra, { inputs: this.inputs, fromSelf: this.fromSelf });
+  __apply(extra: number | EntityBonusEffect) {
+    this.applyExtra(this.bonus, extra, { inputs: this.inputs });
   }
 
-  _expect(value: number, isStable?: boolean) {
+  __expect(value: number, isStable?: boolean) {
     expect(this.bonus.value).toBe(value);
 
     if (isStable !== undefined) {
@@ -26,8 +26,8 @@ class Tester extends BareBonusGetterTester {
     }
   }
 
-  _applyThenExpect(value: number, isStable?: boolean) {
-    this._apply(this.extra);
+  __applyThenExpect(value: number, isStable?: boolean) {
+    this.__apply(this.extra);
 
     expect(this.bonus.value).toBe(value);
 
@@ -37,52 +37,54 @@ class Tester extends BareBonusGetterTester {
   }
 }
 
-let totalAttrCtrl: TotalAttributeControl;
-let tester: Tester;
+describe("applyExtra", () => {
+  let totalAttrCtrl: TotalAttributeControl;
+  let tester: Tester;
 
-beforeEach(() => {
-  totalAttrCtrl = new TotalAttributeControl();
-  tester = new Tester(__genCharacterDataTester(), totalAttrCtrl);
-});
-
-test("extra is config as number", () => {
-  tester.bonus.value = 100;
-  tester.bonus.isStable = true;
-
-  tester._apply(10);
-  tester._expect(100 + 10, true);
-});
-
-test("extra can be check if applicable", () => {
-  tester.bonus.value = 100;
-  tester.extra = {
-    id: "",
-    value: 20,
-    grantedAt: "C1",
-  };
-  tester._applyThenExpect(100);
-
-  tester.__updateCharacter("cons", 1);
-  tester._applyThenExpect(120);
-});
-
-test("unstable extra makes bonus unstable", () => {
-  totalAttrCtrl.applyBonuses({
-    value: 1000,
-    toStat: "atk",
-    description: "",
+  beforeEach(() => {
+    totalAttrCtrl = new TotalAttributeControl();
+    tester = new Tester(__genMutableTeamDataTester(), totalAttrCtrl);
   });
 
-  tester.bonus.value = 100;
-  tester.extra = {
-    id: "",
-    value: 2,
-    basedOn: "atk",
-  };
+  test("extra is config as number", () => {
+    tester.bonus.value = 100;
+    tester.bonus.isStable = true;
 
-  tester._applyThenExpect(100 + 2 * totalAttrCtrl.getTotal("atk"), false);
+    tester.__apply(10);
+    tester.__expect(100 + 10, true);
+  });
+
+  test("extra can be check if applicable", () => {
+    tester.bonus.value = 100;
+    tester.extra = {
+      id: "",
+      value: 20,
+      grantedAt: "C1",
+    };
+    tester.__applyThenExpect(100);
+
+    tester.__updateActiveMember({ cons: 1 });
+    tester.__applyThenExpect(120);
+  });
+
+  test("unstable extra makes bonus unstable", () => {
+    totalAttrCtrl.applyBonuses({
+      value: 1000,
+      toStat: "atk",
+      description: "",
+    });
+
+    tester.bonus.value = 100;
+    tester.extra = {
+      id: "",
+      value: 2,
+      basedOn: "atk",
+    };
+
+    tester.__applyThenExpect(100 + 2 * totalAttrCtrl.getTotal("atk"), false);
+  });
 });
 
 /**
- * extra is config as EntityBonusCore so it returned should be calculated by getBareBonus
+ * extra is config as EntityBonusEffect so it returned should be calculated by getBareBonus
  */
