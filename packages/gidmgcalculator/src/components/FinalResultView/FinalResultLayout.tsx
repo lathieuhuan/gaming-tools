@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { clsx, Button, CollapseSpace, Table, TableThProps } from "rond";
-import { AppCharacter, LevelableTalentType, TalentType } from "@Backend";
+import { AppCharacter, LevelableTalentType, TalentType } from "@Calculation";
 
 import type { Weapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";

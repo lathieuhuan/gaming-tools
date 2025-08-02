@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from "react";
 import { clsx, Button, ItemCase, useIntersectionObserver } from "rond";
-import { ElementType } from "@Backend";
+import { ElementType } from "@Calculation";
 
 import type { UserArtifact } from "@Src/types";
 import { $AppArtifact, $AppCharacter } from "@Src/services";

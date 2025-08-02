@@ -1,19 +1,27 @@
-import { CharacterData, Level } from "../src/backend";
+import { MutableTeamData } from "../src/calculation/utils/CalcTeamData";
+import { Level } from "../src/calculation/types";
 import { $AppCharacter, $AppWeapon } from "../src/services";
-import { Teammate, Weapon } from "../src/types";
+import { Character, Teammate, Weapon } from "../src/types";
 import { __EMockCharacter } from "./mocks/characters.mock";
 import { __EMockWeapon } from "./mocks/weapons.mock";
 import { ASCENSION_RANKS } from "./test-constants";
 
-export class CharacterDataTester extends CharacterData {
-  __updateCharacter = (name: string) => {
-    this.character.name = name;
-    this["_appCharacter"] = $AppCharacter.get(name);
-    this.data[name] = this["_appCharacter"];
+export class MutableTeamDataTester extends MutableTeamData {
+  __changeActiveMember = (name: string) => {
+    this.updateActiveMember(name, {
+      [name]: $AppCharacter.get(name),
+    });
   };
 
-  __updateParty = (names: string[]) => {
-    const party = names.map<Teammate>((name) => ({
+  __updateActiveMember = (info: Partial<Character>) => {
+    this._activeMember = {
+      ...this._activeMember,
+      ...info,
+    };
+  };
+
+  __changeTeammates = (names: string[]) => {
+    const teammates = names.map<Teammate>((name) => ({
       name: name,
       weapon: {
         buffCtrls: [],
@@ -28,7 +36,6 @@ export class CharacterDataTester extends CharacterData {
       buffCtrls: [],
       debuffCtrls: [],
     }));
-    const extraData: typeof this.data = {};
 
     for (const name of names) {
       if (!this.data[name]) {
@@ -36,14 +43,12 @@ export class CharacterDataTester extends CharacterData {
       }
     }
 
-    this.updateParty(party, extraData);
+    this.updateTeammates(teammates, {});
   };
 }
 
-export function __genCharacterDataTester(
-  characterName: __EMockCharacter = __EMockCharacter.BASIC
-): CharacterDataTester {
-  return new CharacterDataTester(
+export function __genMutableTeamDataTester(characterName: __EMockCharacter = __EMockCharacter.BASIC) {
+  return new MutableTeamDataTester(
     {
       name: characterName,
       level: "1/20",
@@ -52,6 +57,7 @@ export function __genCharacterDataTester(
       ES: 1,
       EB: 1,
     },
+    [],
     {
       [characterName]: $AppCharacter.get(characterName),
     }

@@ -1,10 +1,10 @@
-import { ATTACK_ELEMENTS, CharacterCalc, WeaponType } from "@Backend";
+import { ATTACK_ELEMENTS, CharacterCalc, WeaponType } from "@Calculation";
 
 import { $AppCharacter } from "@Src/services";
 import type {
   CalcSetup,
   CalcSetupManageInfo,
-  Party,
+  Teammates,
   Target,
   Teammate,
   UserArtifacts,
@@ -72,7 +72,7 @@ export default class Setup_ {
   static cleanupCalcSetup(setup: CalcSetup, target: Target, options?: CleanupCalcSetupOptions): UserSetupCalcInfo {
     const { char, weapon, artifacts, ...data } = setup;
     const { buffs = [], debuffs = [] } = $AppCharacter.get(char.name) || {};
-    const party: Party = [];
+    const party: Teammates = [];
 
     for (const teammate of data.party) {
       if (teammate) {
@@ -102,11 +102,11 @@ export default class Setup_ {
       artifactIDs: options?.artifactIDs || artifacts.map((artifact) => artifact?.ID ?? null),
       selfBuffCtrls: data.selfBuffCtrls.filter((ctrl) => {
         const buff = Array_.findByIndex(buffs, ctrl.index);
-        return buff ? ctrl.activated && CharacterCalc.isGrantedEffect(buff, char) : false;
+        return buff ? ctrl.activated && CharacterCalc.isGrantedEffect(buff.grantedAt, char) : false;
       }),
       selfDebuffCtrls: data.selfDebuffCtrls.filter((ctrl) => {
         const debuff = Array_.findByIndex(debuffs, ctrl.index);
-        return debuff ? ctrl.activated && CharacterCalc.isGrantedEffect(debuff, char) : false;
+        return debuff ? ctrl.activated && CharacterCalc.isGrantedEffect(debuff.grantedAt, char) : false;
       }),
       wpBuffCtrls: data.wpBuffCtrls.filter((ctrl) => ctrl.activated),
       party,
@@ -121,7 +121,7 @@ export default class Setup_ {
   static restoreCalcSetup(data: CalcSetup) {
     const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, data.char.name);
     const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, data.weapon);
-    const party: Party = [];
+    const party: Teammates = [];
 
     for (const index of [0, 1, 2]) {
       const teammate = data.party[index];

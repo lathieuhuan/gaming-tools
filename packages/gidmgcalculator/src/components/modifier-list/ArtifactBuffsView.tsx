@@ -1,6 +1,6 @@
-import { ArtifactSetBonus } from "@Backend";
+import { ArtifactSetBonus } from "@Calculation";
 
-import type { ArtifactModCtrl, ModifierCtrl, Party } from "@Src/types";
+import type { ArtifactModCtrl, ModifierCtrl, Teammates } from "@Src/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import { $AppArtifact } from "@Src/services";
@@ -54,7 +54,7 @@ interface ArtifactBuffsViewProps {
   mutable?: boolean;
   setBonuses: ArtifactSetBonus[];
   artBuffCtrls: ArtifactModCtrl[];
-  party: Party;
+  teammates: Teammates;
   getSelfHandlers?: RenderArtifactBuffsArgs<ArtifactModCtrl>["getHanlders"];
   getTeammateHandlers?: (args: GetTeammateModifierHanldersArgs) => ModifierHanlders;
 }
@@ -62,7 +62,7 @@ export function ArtifactBuffsView({
   mutable,
   setBonuses,
   artBuffCtrls,
-  party,
+  teammates,
   getSelfHandlers,
   getTeammateHandlers,
 }: ArtifactBuffsViewProps) {
@@ -84,7 +84,7 @@ export function ArtifactBuffsView({
     );
   }
 
-  party.forEach((teammate, teammateIndex) => {
+  teammates.forEach((teammate, teammateIndex) => {
     if (teammate) {
       content.push(
         ...renderArtifactModifiers({

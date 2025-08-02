@@ -1,4 +1,4 @@
-import { ATTACK_ELEMENTS, ResistanceReduction, TrackerResult } from "@Backend";
+import { ATTACK_ELEMENTS, ResistReduction, TrackerResult } from "@Calculation";
 
 import { useTranslation } from "@Src/hooks";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
@@ -16,7 +16,7 @@ export function DebuffsTracker({ result }: { result?: TrackerResult }) {
   const { t } = useTranslation();
   const { RESIST } = result || {};
   const hasRecord = RESIST && Object.values(RESIST).some((record) => RESIST.length);
-  const totalResistReduct = {} as ResistanceReduction;
+  const totalResistReduct = {} as ResistReduction;
 
   for (const attElmt of ["def", ...ATTACK_ELEMENTS] as const) {
     totalResistReduct[attElmt] = getTotalRecordValue(RESIST?.[attElmt] || []);

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Button, FancyBackSvg } from "rond";
-import { AttributeStat } from "@Backend";
+import { AttributeStat } from "@Calculation";
 
 import type { GearsDetailType } from "./Gears.types";
 import { useDispatch } from "@Store/hooks";

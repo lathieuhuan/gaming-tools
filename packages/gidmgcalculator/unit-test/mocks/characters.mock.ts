@@ -1,16 +1,19 @@
-import { AppCharacter } from "../../src/backend";
+import { AppCharacter } from "../../src/calculation";
 import { $AppCharacter } from "../../src/services";
 
 export enum __EMockCharacter {
   /** pyro, sword, mondstadt */
   BASIC = "BASIC",
   TARTAGLIA = "Tartaglia",
+  SKIRK = "Skirk",
   /** electro, catalyst, inazuma */
   CATALYST = "CATALYST",
   /** cryo, polearm, sumeru */
   ES_CALC_CONFIG = "ES_CALC_CONFIG",
   /** anemo, claymore, natlan */
   ANEMO = "ANEMO",
+  /** pyro, bow, natlan */
+  PYRO = "PYRO",
 }
 
 const STATS: AppCharacter["stats"] = [
@@ -169,6 +172,48 @@ export const __characters: AppCharacter[] = [
         basedOn: "em",
         attPatt: "EB",
       },
+    },
+    calcList: CALC_LIST,
+    activeTalents: ACTIVE_TALENTS,
+    passiveTalents: PASSIVE_TALENTS,
+    constellation: CONSTELLATION,
+  },
+  {
+    code: 6,
+    name: __EMockCharacter.SKIRK,
+    icon: "",
+    sideIcon: "",
+    nation: "outland",
+    rarity: 5,
+    vision: "cryo",
+    weaponType: "sword",
+    EBcost: 0,
+    stats: STATS,
+    statBonus: { type: "cRate_", value: 4.8 },
+    talentLvBonus: {
+      ES: 5,
+      EB: 3,
+    },
+    calcList: CALC_LIST,
+    activeTalents: ACTIVE_TALENTS,
+    passiveTalents: PASSIVE_TALENTS,
+    constellation: CONSTELLATION,
+  },
+  {
+    code: 7,
+    name: __EMockCharacter.PYRO,
+    icon: "",
+    sideIcon: "",
+    nation: "natlan",
+    rarity: 5,
+    vision: "pyro",
+    weaponType: "bow",
+    EBcost: 0,
+    stats: STATS,
+    statBonus: { type: "cRate_", value: 4.8 },
+    talentLvBonus: {
+      ES: 5,
+      EB: 3,
     },
     calcList: CALC_LIST,
     activeTalents: ACTIVE_TALENTS,

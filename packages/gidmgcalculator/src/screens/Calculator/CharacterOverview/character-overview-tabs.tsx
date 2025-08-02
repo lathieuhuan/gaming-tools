@@ -1,19 +1,18 @@
+import { GeneralCalc, TotalAttributeControl } from "@Calculation";
 import { CarouselSpace } from "rond";
-import { GeneralCalc, TotalAttributeControl } from "@Backend";
 
+import { AttributeTable, ConstellationList, SetBonusesView, TalentList, WeaponView } from "@Src/components";
 import { useTabs } from "@Src/hooks";
-import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectArtifacts,
   selectCharacter,
-  selectParty,
   selectTotalAttr,
   selectWeapon,
   updateCharacter,
   updateWeapon,
 } from "@Store/calculator-slice";
-import { AttributeTable, SetBonusesView, WeaponView, TalentList, ConstellationList } from "@Src/components";
-import { useCharacterData } from "../ContextProvider";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { useCalcTeamData } from "../ContextProvider";
 
 export function AttributesTab() {
   const totalAttr = useSelector(selectTotalAttr);
@@ -75,19 +74,15 @@ export function ConstellationTab() {
 
 export function TalentsTab() {
   const dispatch = useDispatch();
-  const character = useSelector(selectCharacter);
-  const party = useSelector(selectParty);
-  const characterData = useCharacterData();
+  const calcTeamData = useCalcTeamData();
 
   return (
     <TalentList
-      key={character.name}
-      character={character}
-      characterData={characterData}
+      key={calcTeamData.activeMember.name}
+      teamData={calcTeamData}
       onChangeTalentLevel={(type, level) => {
         dispatch(updateCharacter({ [type]: level }));
       }}
-      party={party}
     />
   );
 }

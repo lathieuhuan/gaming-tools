@@ -1,4 +1,4 @@
-import { Level } from "../src/backend";
+import { Level } from "../src/calculation";
 
 export const ASCENSION_RANKS: Array<{ levels: Level[]; value: number }> = [
   {

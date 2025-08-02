@@ -1,13 +1,13 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import { ButtonGroup, Checkbox, FancyBackSvg, Modal } from "rond";
 
-import type { OptimizerExtraConfigs } from "@Backend";
+import type { OptimizerExtraConfigs } from "@Calculation";
 import type { OptimizeDeptState } from "@OptimizeDept/OptimizeDept.types";
 import type { OptimizedOutput } from "@OptimizeDept/hooks/useOptimizeManager";
 import type { OnChangeStep, OptimizeDeptModalType, OptimizeStepConfig, Optimizer } from "./FrontDesk.types";
 
 import { useStoreSnapshot } from "@Src/features";
-import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
+import { getSetupAppEntities } from "@Src/utils/getSetupAppEntities";
 import { useArtifactManager } from "@OptimizeDept/hooks/useArtifactManager";
 
 // Components
@@ -42,7 +42,7 @@ export function FrontDesk({ state, optimizer, onCloseDept }: FrontDeskProps) {
       setup,
       target,
       artifacts,
-      data: getSetupEntitiesData(setup),
+      data: getSetupAppEntities(setup),
     };
   });
   const artifactManager = useArtifactManager(store.artifacts);

@@ -1,4 +1,4 @@
-import { ElementType } from "@Backend";
+import { ElementType } from "@Calculation";
 
 interface ElementIconProps {
   type: ElementType;

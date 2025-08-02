@@ -1,5 +1,5 @@
 import { ModifierView, type ModifierViewProps, type ModifierViewInputConfig } from "rond";
-import { ModInputConfig } from "@Backend";
+import { ModInputConfig } from "@Calculation";
 import { genSequentialOptions } from "@Src/utils";
 
 export interface GenshinModifierViewProps extends Omit<ModifierViewProps, "inputConfigs"> {

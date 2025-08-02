@@ -1,7 +1,7 @@
 import { useState, useRef, useMemo, useEffect } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { CloseButton, LoadingSpin, StatsTable, VersatileSelect, round } from "rond";
-import { ATTACK_PATTERNS, CharacterCalc, TalentType, AppCharacter } from "@Backend";
+import { ATTACK_PATTERNS, CharacterCalc, TalentType, AppCharacter } from "@Calculation";
 
 import { genSequentialOptions } from "@Src/utils";
 import Array_ from "@Src/utils/array-utils";

@@ -7,7 +7,7 @@ import type {
   ElementType,
   TotalAttribute,
   WeaponType,
-} from "@Backend";
+} from "@Calculation";
 
 import type {
   ArtifactSubStat,

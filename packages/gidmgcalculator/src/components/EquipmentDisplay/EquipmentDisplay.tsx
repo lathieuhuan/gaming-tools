@@ -1,5 +1,5 @@
 import { AdvancedPick, clsx, ItemCase, type ClassValue } from "rond";
-import { AppArtifact, AppWeapon, ARTIFACT_TYPES } from "@Backend";
+import { AppArtifact, AppWeapon, ARTIFACT_TYPES } from "@Calculation";
 
 import { Artifact, Weapon } from "@Src/types";
 import { $AppArtifact, $AppWeapon } from "@Src/services";

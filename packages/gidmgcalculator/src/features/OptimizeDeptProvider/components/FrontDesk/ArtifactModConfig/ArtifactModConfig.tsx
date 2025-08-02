@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { OverflowTrackingContainer } from "rond";
 
-import type { AppArtifact, ArtifactModifierDescription, ModInputConfig, OptimizerArtifactModConfigs } from "@Backend";
+import type { AppArtifact, ArtifactModifierDescription, ModInputConfig, OptimizerArtifactModConfigs } from "@Calculation";
 import type { ArtifactModCtrl } from "@Src/types";
 import type { ArtifactManager, ChangeModConfigInputs, ToggleModConfig } from "@OptimizeDept/hooks/useArtifactManager";
 

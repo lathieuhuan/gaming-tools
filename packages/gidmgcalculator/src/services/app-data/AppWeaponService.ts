@@ -1,4 +1,4 @@
-import type { AppWeapon, WeaponType } from "@Backend";
+import type { AppWeapon, WeaponType } from "@Calculation";
 import type { DataControl } from "./app-data.types";
 
 export class AppWeaponService {

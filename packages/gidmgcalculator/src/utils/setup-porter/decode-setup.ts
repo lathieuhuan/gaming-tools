@@ -1,4 +1,4 @@
-import type { ArtifactType, AttackReaction } from "@Backend";
+import type { ArtifactType, AttackReaction } from "@Calculation";
 import type {
   ArtifactModCtrl,
   CalcArtifact,
@@ -22,7 +22,7 @@ import {
   LEVELS,
   REACTIONS,
   WEAPON_TYPES,
-} from "@Backend";
+} from "@Calculation";
 import { EXPORTED_SETUP_VERSION } from "@Src/constants";
 import { $AppCharacter } from "@Src/services";
 import Setup_ from "@Src/utils/setup-utils";

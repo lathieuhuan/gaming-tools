@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { ButtonGroup, FancyBackSvg, Modal } from "rond";
-import { AppArtifact, ArtifactType } from "@Backend";
+import { AppArtifact, ArtifactType } from "@Calculation";
 
 import type { Artifact } from "@Src/types";
 import { $AppArtifact } from "@Src/services";

@@ -1,4 +1,4 @@
-import { AppCharacter } from "@Backend";
+import { AppCharacter } from "@Calculation";
 
 import { $AppCharacter } from "@Src/services";
 import { useQuery } from "@Src/hooks";

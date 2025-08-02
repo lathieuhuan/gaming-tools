@@ -4,7 +4,7 @@ import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 import { selectCharacter, updateCharacter } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectIsReadyApp, selectTraveler } from "@Store/ui-slice";
-import { useCalcModalCtrl, useCharacterData } from "../ContextProvider";
+import { useCalcModalCtrl, useTeamData } from "../ContextProvider";
 
 // Component
 import { CharacterIntro, ComplexSelect } from "@Src/components";
@@ -21,7 +21,7 @@ const TABS: SwitchNodeCase<string>[] = [
 function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
   const dispatch = useDispatch();
   const character = useSelector(selectCharacter);
-  const record = useCharacterData();
+  const record = useTeamData();
 
   const [activeTab, setActiveTab] = useState("Attributes");
 
@@ -32,7 +32,7 @@ function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
     <div className="h-full flex flex-col gap-4">
       <CharacterIntro
         character={character}
-        appCharacter={record.appCharacter}
+        appCharacter={record.activeAppMember}
         mutable
         switchable
         onSwitch={props.onClickSwitchCharacter}

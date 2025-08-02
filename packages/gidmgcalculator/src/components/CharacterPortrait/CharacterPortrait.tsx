@@ -1,6 +1,6 @@
 import { FaPlus } from "react-icons/fa";
 import { clsx, type ClassValue } from "rond";
-import { ElementType } from "@Backend";
+import { ElementType } from "@Calculation";
 import { GenshinImage } from "@Src/components";
 
 type PortraitSize = "small" | "medium" | "custom";

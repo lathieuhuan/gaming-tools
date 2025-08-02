@@ -9,8 +9,8 @@ import { selectTargetConfig, selectTraveler, updateUI } from "@Store/ui-slice";
 
 // Component
 import SectionArtifacts from "./SectionArtifacts";
-import SectionParty from "./SectionParty";
 import SectionTarget from "./SectionTarget";
+import SectionTeammates from "./SectionTeammates";
 import SectionWeapon from "./SectionWeapon";
 import { SetupSelect } from "./SetupSelect";
 
@@ -33,7 +33,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 
   const renderMainContent = (cls = "") => (
     <div className={`hide-scrollbar space-y-2 scroll-smooth ${cls}`}>
-      <SectionParty key={traveler} />
+      <SectionTeammates key={traveler} />
       <SectionWeapon />
       <SectionArtifacts />
 

@@ -1,4 +1,4 @@
-import type { ArtifactType, AttributeStat, Level, WeaponType } from "@Backend";
+import type { ArtifactType, AttributeStat, Level, WeaponType } from "@Calculation";
 
 export type Traveler = "LUMINE" | "AETHER";
 

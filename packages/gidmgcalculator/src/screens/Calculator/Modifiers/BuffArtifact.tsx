@@ -1,4 +1,5 @@
-import { GeneralCalc } from "@Backend";
+import { GeneralCalc } from "@Calculation";
+import type { Teammates } from "@Src/types";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
@@ -10,9 +11,8 @@ import {
 import Object_ from "@Src/utils/object-utils";
 import Array_ from "@Src/utils/array-utils";
 import { ArtifactBuffsView } from "@Src/components";
-import { Party } from "@Src/types";
 
-export default function BuffArtifact({ party }: { party: Party }) {
+export default function BuffArtifact({ teammates }: { teammates: Teammates }) {
   const dispatch = useDispatch();
   const artifacts = useSelector(selectArtifacts);
   const artBuffCtrls = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].artBuffCtrls);
@@ -20,7 +20,8 @@ export default function BuffArtifact({ party }: { party: Party }) {
   return (
     <ArtifactBuffsView
       mutable
-      {...{ party, artBuffCtrls }}
+      teammates={teammates}
+      artBuffCtrls={artBuffCtrls}
       setBonuses={GeneralCalc.getArtifactSetBonuses(artifacts)}
       getSelfHandlers={({ ctrl }) => {
         const path = {

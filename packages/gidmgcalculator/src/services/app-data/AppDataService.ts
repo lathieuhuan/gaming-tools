@@ -1,4 +1,4 @@
-import type { AppMonster } from "@Backend";
+import type { AppMonster } from "@Calculation";
 import type { Target } from "@Src/types";
 import type { Metadata } from "./app-data.types";
 import type { AppCharacterService } from "./AppCharacterService";

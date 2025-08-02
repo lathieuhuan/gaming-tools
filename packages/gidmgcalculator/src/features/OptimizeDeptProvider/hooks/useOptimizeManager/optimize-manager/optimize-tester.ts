@@ -1,6 +1,6 @@
 import isEqual from "react-fast-compare";
 
-import type { CalculationFinalResultItem, OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "@Backend";
+import type { CalculationFinalResultItem, OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "@Calculation";
 import type {
   OTM_InitRequest,
   OTM_LoadRequest,

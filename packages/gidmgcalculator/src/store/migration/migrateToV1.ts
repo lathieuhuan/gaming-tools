@@ -1,7 +1,7 @@
 import { ArtifactModCtrl, CalcArtifacts, UserArtifact } from "@Src/types";
 import { UserdbState, initialState } from "@Store/userdb-slice";
 import { UserDatabaseV0 } from "./migration.types";
-import { GeneralCalc } from "@Backend";
+import { GeneralCalc } from "@Calculation";
 
 export const migrateSetupsToV1 = (
   setups: UserDatabaseV0["userSetups"] = [],

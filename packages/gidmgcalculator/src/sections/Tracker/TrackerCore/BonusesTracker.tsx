@@ -1,5 +1,5 @@
 import { round } from "rond";
-import { ATTACK_ELEMENTS, type AttackBonuses, type AttackBonusKey } from "@Backend";
+import { ATTACK_ELEMENTS, type AttackBonuses, type AttackBonusKey } from "@Calculation";
 
 import { useTranslation } from "@Src/hooks";
 import { suffixOf } from "@Src/utils";

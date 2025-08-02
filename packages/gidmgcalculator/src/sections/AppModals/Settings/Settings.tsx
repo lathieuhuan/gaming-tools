@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Checkbox, InputNumber, Modal, useScreenWatcher, VersatileSelect } from "rond";
-import { Level, LEVELS } from "@Backend";
+import { Level, LEVELS } from "@Calculation";
 
 import type { Traveler } from "@Src/types";
 import type { SettingGroupRender } from "./Settings.types";

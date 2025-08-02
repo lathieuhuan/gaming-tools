@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { FaLink, FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
 import { clsx, useScreenWatcher, Button, ButtonGroup, Modal, CloseButton, TrashCanSvg } from "rond";
-import { ARTIFACT_TYPES, CharacterReadData } from "@Backend";
+import { ARTIFACT_TYPES, CalcTeamData } from "@Calculation";
 
 import type { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
 import type { OpenModalFn } from "../MySetups.types";
@@ -23,7 +23,7 @@ import { GearIcon } from "./GearIcon";
 interface SetupTemplateProps {
   setup: UserSetup;
   complexSetup?: UserComplexSetup;
-  characterData: CharacterReadData;
+  teamData: CalcTeamData;
   weapon: UserWeapon;
   artifacts?: UserArtifacts;
   openModal: OpenModalFn;
@@ -31,7 +31,7 @@ interface SetupTemplateProps {
 export function SetupTemplate({
   setup,
   complexSetup,
-  characterData,
+  teamData,
   weapon,
   artifacts = [],
   openModal,
@@ -79,12 +79,12 @@ export function SetupTemplate({
 
   const display = useMemo(() => {
     let mainCharacter = null;
-    const appCharacter = characterData.getAppCharacter(char.name);
+    const appCharacter = teamData.getAppMember(char.name);
     const appWeapon = $AppWeapon.get(weapon.code);
 
     if (appCharacter) {
       const talents = (["NAs", "ES", "EB"] as const).map((talentType) => {
-        return characterData.getFinalTalentLv(talentType);
+        return teamData.getFinalTalentLv(talentType);
       });
 
       const renderSpan = (text: string | number) => (

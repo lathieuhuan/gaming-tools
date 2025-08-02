@@ -1,4 +1,4 @@
-import { WeaponType } from "@Backend";
+import { WeaponType } from "@Calculation";
 
 import type { CalcWeapon, ModifierCtrl, UserArtifact, UserCharacter, UserWeapon } from "@Src/types";
 import Modifier_ from "@Src/utils/modifier-utils";

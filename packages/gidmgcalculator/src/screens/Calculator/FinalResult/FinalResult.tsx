@@ -3,7 +3,7 @@ import type { RootState } from "@Store/store";
 import Array_ from "@Src/utils/array-utils";
 import { selectCalcFinalResult, selectComparedIds, selectWeapon, updateCharacter } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { useCharacterData } from "../ContextProvider";
+import { useCalcTeamData } from "../ContextProvider";
 
 // Components
 import { FinalResultView } from "@Src/components";
@@ -32,10 +32,10 @@ export function FinalResultCore() {
   const weapon = useSelector(selectWeapon);
   const finalResult = useSelector(selectCalcFinalResult);
   const comparedIds = useSelector(selectComparedIds);
-  const characterData = useCharacterData();
+  const teamData = useCalcTeamData();
 
   if (comparedIds.length > 1) {
-    return <FinalResultCompare {...{ characterData, weapon, comparedIds }} />;
+    return <FinalResultCompare {...{ teamData, weapon, comparedIds }} />;
   }
 
   return (
@@ -45,7 +45,7 @@ export function FinalResultCore() {
       </div>
       <div className="grow hide-scrollbar">
         <FinalResultView
-          {...{ characterData, weapon, finalResult }}
+          {...{ teamData, weapon, finalResult }}
           talentMutable
           onChangeTalentLevel={(type, level) => dispatch(updateCharacter({ [type]: level }))}
         />

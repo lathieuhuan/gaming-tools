@@ -11,7 +11,7 @@ export default {
   moduleNameMapper: {
     '@Src/constants': '<rootDir>/unit-test/mocks/constants.mock.ts',
     '@UnitTest/(.*)': '<rootDir>/unit-test/$1',
-    "@Backend": '<rootDir>/src/backend/$1',
+    "@Calculation": '<rootDir>/src/calculation/$1',
     '@Src/(.*)': '<rootDir>/src/$1',
   },
   // globalSetup: '<rootDir>/unit-test/global-setup.ts'

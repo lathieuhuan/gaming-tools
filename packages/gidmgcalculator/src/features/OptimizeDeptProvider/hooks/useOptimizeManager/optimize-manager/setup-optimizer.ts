@@ -1,6 +1,8 @@
-import { GeneralCalc, InputProcessor, ResultCalculator } from "@Backend";
-import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "@Backend";
+import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "@Calculation";
 import type { AppArtifactsByCode, Artifact, ArtifactModCtrl, CalcArtifacts, Target } from "@Src/types";
+
+import { GeneralCalc, InputProcessor, ResultCalculator } from "@Calculation";
+import { getAttackAlterConfigs } from "@Src/calculation";
 
 import Array_ from "@Src/utils/array-utils";
 import Modifier_ from "@Src/utils/modifier-utils";
@@ -145,15 +147,15 @@ export class SetupOptimizer extends InputProcessor {
       return null;
     }
 
-    const attackAlterer = this.getAttackAlterer();
+    const attAlterConfigs = getAttackAlterConfigs(this.teamData, this.selfBuffCtrls);
     const resistances = this.getResistances(this.target);
 
     const calculator = new ResultCalculator(
       this.target.level,
-      this.characterData,
+      this.teamData,
       totalAttr,
       attkBonusesArchive,
-      attackAlterer,
+      attAlterConfigs,
       resistances
     );
 

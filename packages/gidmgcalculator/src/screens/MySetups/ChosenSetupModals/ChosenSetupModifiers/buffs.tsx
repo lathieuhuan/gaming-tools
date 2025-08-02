@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { ElementType, Level, AttackBonuses, AttackReaction } from "@Backend";
+import { ElementType, Level, AttackBonuses, AttackReaction } from "@Calculation";
 
 import type { CustomBuffCtrl, ElementModCtrl, Infusion } from "@Src/types";
 import { useTranslation } from "@Src/hooks";

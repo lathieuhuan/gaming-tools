@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import { GeneralCalc, InputProcessor } from "@Backend";
+import { GeneralCalc, InputProcessor } from "@Calculation";
 
 import type { Character, UserArtifacts, UserWeapon } from "@Src/types";
 import type { RootState } from "@Store/store";
 
 // import { useAppCharacter } from "@Src/hooks";
 import Array_ from "@Src/utils/array-utils";
-import { getSetupEntitiesData } from "@Src/utils/getSetupEntitiesData";
+import { getSetupAppEntities } from "@Src/utils/getSetupAppEntities";
 import { useSelector } from "@Store/hooks";
 import { DetailInfoContext, type DetailInfo } from "./DetailInfo.context";
 
@@ -22,7 +22,7 @@ function DetailInfoProviderCore({ setup, children }: DetailInfoProviderProps) {
   // const { isLoading, data: appChar } = useAppCharacter(char.name);
 
   const detailInfo = useMemo<DetailInfo>(() => {
-    const data = getSetupEntitiesData(setup);
+    const data = getSetupAppEntities(setup);
     const processor = new InputProcessor(setup, data);
     const stats = processor.getCalculationStats();
 
@@ -30,7 +30,7 @@ function DetailInfoProviderCore({ setup, children }: DetailInfoProviderProps) {
       character: setup.char,
       weapon: setup.weapon,
       artifacts: setup.artifacts,
-      characterData: processor.characterData,
+      teamData: processor.teamData,
       appWeapon: data.appWeapons[setup.weapon.code],
       setBonuses: GeneralCalc.getArtifactSetBonuses(setup.artifacts),
       totalAttr: stats.totalAttr,

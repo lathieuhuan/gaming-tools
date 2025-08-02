@@ -1,5 +1,5 @@
 import { round } from "rond";
-import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, TrackerResult } from "@Backend";
+import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, TrackerResult } from "@Calculation";
 
 import { useTranslation } from "@Src/hooks";
 import { applyPercent } from "@Src/utils";

@@ -27,7 +27,7 @@ export function PanelAttributes(props: PanelAttributesProps) {
     <div className={clsx("h-full flex flex-col gap-3", props.className)}>
       <CharacterIntro
         character={character}
-        appCharacter={data.characterData.appCharacter}
+        appCharacter={data.teamData.activeAppMember}
         switchable
         removable
         mutable

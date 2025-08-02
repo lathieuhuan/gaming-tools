@@ -10,8 +10,8 @@ import type {
   ElementType,
   NormalAttack,
   ReactionType,
-  ResistanceReductionKey,
-} from "@Backend";
+  ResistReductionKey,
+} from "@Calculation";
 import type { Artifact, Character, Weapon } from "./global.types";
 
 export type AppCharactersByName = Record<string, AppCharacter>;
@@ -20,14 +20,14 @@ export type AppArtifactsByCode = Record<string, AppArtifact>;
 
 export type AppWeaponsByCode = Record<string, AppWeapon>;
 
-export type SetupEntitiesData = {
+export type SetupAppEntities = {
   appCharacters: AppCharactersByName;
   appWeapons: AppWeaponsByCode;
   appArtifacts: AppArtifactsByCode;
-  appParty: CalcAppParty;
+  appTeammates: CalcAppTeammates;
 };
 
-export type CalcAppParty = (AppCharacter | null)[];
+export type CalcAppTeammates = (AppCharacter | null)[];
 
 export type Target = {
   code: number;
@@ -74,7 +74,7 @@ export type CustomBuffCtrl = {
   value: number;
 };
 
-export type CustomDebuffCtrlType = ResistanceReductionKey;
+export type CustomDebuffCtrlType = ResistReductionKey;
 
 export type CustomDebuffCtrl = {
   type: CustomDebuffCtrlType;
@@ -87,7 +87,7 @@ export type Infusion = {
   range?: NormalAttack[];
 };
 
-// PARTY starts
+// Teammate starts
 export type TeammateWeapon = Pick<Weapon, "code" | "type" | "refi"> & {
   buffCtrls: ModifierCtrl[];
 };
@@ -105,8 +105,8 @@ export type Teammate = {
   artifact: TeammateArtifact;
 };
 
-export type Party = (Teammate | null)[];
-// PARTY ends
+export type Teammates = (Teammate | null)[];
+// Teammate ends
 
 export type CalcWeapon = Weapon;
 
@@ -134,7 +134,7 @@ export type CalcSetup = {
   artBuffCtrls: ArtifactModCtrl[];
   artDebuffCtrls: ArtifactModCtrl[];
 
-  party: Party;
+  party: Teammates;
   elmtModCtrls: ElementModCtrl;
   customBuffCtrls: CustomBuffCtrl[];
   customDebuffCtrls: CustomDebuffCtrl[];

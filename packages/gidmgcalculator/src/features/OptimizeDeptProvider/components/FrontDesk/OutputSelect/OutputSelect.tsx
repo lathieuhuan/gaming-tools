@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { clsx } from "rond";
-import type { AppCharacter } from "@Backend";
+import type { AppCharacter } from "@Calculation";
 import type { OptimizedOutput } from "@OptimizeDept/hooks/useOptimizeManager";
 
-import { NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@Backend";
+import { NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@Calculation";
 import { useTranslation } from "@Src/hooks";
 
 interface OutputSelectProps {

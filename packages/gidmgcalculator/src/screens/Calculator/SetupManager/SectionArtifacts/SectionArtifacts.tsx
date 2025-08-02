@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FaToolbox } from "react-icons/fa";
 import { GiAnvil } from "react-icons/gi";
 import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
-import { ARTIFACT_TYPES, ArtifactType } from "@Backend";
+import { ARTIFACT_TYPES, ArtifactType } from "@Calculation";
 
 import type { Artifact, CalcArtifact } from "@Src/types";
 import { $AppArtifact, $AppSettings } from "@Src/services";

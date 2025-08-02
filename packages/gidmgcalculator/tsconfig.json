@@ -22,7 +22,7 @@
 
     "baseUrl": ".",
     "paths": {
-      "@Backend": ["src/backend"],
+      "@Calculation": ["src/calculation"],
       "@Store/*": ["src/store/*"],
       "@OptimizeDept/*": ["src/features/OptimizeDeptProvider/*"],
       "@Src/*": ["src/*"],

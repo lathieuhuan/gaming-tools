@@ -1,6 +1,6 @@
 import { useState, useRef, FormEvent } from "react";
 import { InputNumber, VersatileSelect } from "rond";
-import { ATTACK_ELEMENTS } from "@Backend";
+import { ATTACK_ELEMENTS } from "@Calculation";
 
 import type { CustomDebuffCtrl, CustomDebuffCtrlType } from "@Src/types";
 import { useTranslation } from "@Src/hooks";

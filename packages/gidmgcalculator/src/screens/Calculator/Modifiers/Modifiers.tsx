@@ -1,24 +1,24 @@
 import { CollapseList } from "rond";
 
 import { useTabs } from "@Src/hooks";
-import { selectParty } from "@Store/calculator-slice";
+import { selectTeammates } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
 
 // Component
 import BuffArtifact from "./BuffArtifact";
 import BuffCustom from "./BuffCustom";
 import BuffElement from "./BuffElement";
-import BuffParty from "./BuffParty";
 import BuffSelf from "./BuffSelf";
+import BuffTeammates from "./BuffTeammates";
 import BuffWeapon from "./BuffWeapon";
 import DebuffArtifact from "./DebuffArtifact";
 import DebuffCustom from "./DebuffCustom";
 import DebuffElement from "./DebuffElement";
-import DebuffParty from "./DebuffParty";
 import DebuffSelf from "./DebuffSelf";
+import DebuffTeammates from "./DebuffTeammates";
 
 export function Modifiers() {
-  const party = useSelector(selectParty);
+  const teammates = useSelector(selectTeammates);
   const { activeIndex, tabProps, Tabs } = useTabs(1);
 
   return (
@@ -43,17 +43,17 @@ export function Modifiers() {
             {
               title: "Party buffs",
               heading: "Party",
-              body: <BuffParty party={party} />,
+              body: <BuffTeammates teammates={teammates} />,
             },
             {
               title: "Weapons buffs",
               heading: "Weapons",
-              body: <BuffWeapon party={party} />,
+              body: <BuffWeapon teammates={teammates} />,
             },
             {
               title: "Artifacts buffs",
               heading: "Artifacts",
-              body: <BuffArtifact party={party} />,
+              body: <BuffArtifact teammates={teammates} />,
             },
             {
               title: "Custom buffs",
@@ -80,12 +80,12 @@ export function Modifiers() {
             {
               title: "Party debuffs",
               heading: "Party",
-              body: <DebuffParty party={party} />,
+              body: <DebuffTeammates teammates={teammates} />,
             },
             {
               title: "Artifacts debuffs",
               heading: "Artifacts",
-              body: <DebuffArtifact party={party} />,
+              body: <DebuffArtifact teammates={teammates} />,
             },
             {
               title: "Custom debuffs",

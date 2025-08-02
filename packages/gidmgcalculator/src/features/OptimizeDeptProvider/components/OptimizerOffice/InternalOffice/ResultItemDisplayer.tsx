@@ -1,4 +1,4 @@
-import { AppArtifact, ARTIFACT_TYPES } from "@Backend";
+import { AppArtifact, ARTIFACT_TYPES } from "@Calculation";
 import { FaInfoCircle } from "react-icons/fa";
 import { CollapseSpace, ItemCase } from "rond";
 

@@ -1,5 +1,5 @@
 import { clsx, Badge, VersatileSelect } from "rond";
-import { ArtifactCalc, AttributeStat } from "@Backend";
+import { ArtifactCalc, AttributeStat } from "@Calculation";
 
 import type { ArtifactSubStat, CalcArtifact, UserArtifact } from "@Src/types";
 import { useTranslation } from "@Src/hooks";

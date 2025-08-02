@@ -1,4 +1,4 @@
-import type { ElementType, ModInputConfig } from "@Backend";
+import type { ElementType, ModInputConfig } from "@Calculation";
 
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 import { parseResonanceDescription } from "@Src/utils/description-parsers";

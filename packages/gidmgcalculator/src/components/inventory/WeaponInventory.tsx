@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Modal, EntitySelectTemplate, FancyBackSvg } from "rond";
-import { WeaponType } from "@Backend";
+import { WeaponType } from "@Calculation";
 
 import type { UserWeapon } from "@Src/types";
 import { selectUserWeapons } from "@Store/userdb-slice";

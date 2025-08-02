@@ -1,5 +1,5 @@
 import { clsx, VersatileSelect } from "rond";
-import { ArtifactCalc, ArtifactType, ATTACK_ELEMENTS } from "@Backend";
+import { ArtifactCalc, ArtifactType, ATTACK_ELEMENTS } from "@Calculation";
 
 import { ARTIFACT_SUBSTAT_TYPES } from "@Src/constants";
 import { useTranslation } from "@Src/hooks";

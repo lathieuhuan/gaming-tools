@@ -1,6 +1,6 @@
 import type { AdvancedPick } from "rond";
 import type { Artifact, CalcArtifact, CalcWeapon, Character, UserArtifact, UserWeapon, Weapon } from "@Src/types";
-import { ATTACK_ELEMENTS, ArtifactCalc, ArtifactType, Level, WeaponType } from "@Backend";
+import { ATTACK_ELEMENTS, ArtifactCalc, ArtifactType, Level, WeaponType } from "@Calculation";
 import { $AppSettings, $AppWeapon } from "@Src/services";
 
 // ========== TYPES ==========

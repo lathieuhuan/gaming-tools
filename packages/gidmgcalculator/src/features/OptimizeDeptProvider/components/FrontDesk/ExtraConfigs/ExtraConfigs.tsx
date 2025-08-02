@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { Checkbox, InputNumber } from "rond";
-import type { OptimizerExtraConfigs } from "@Backend";
+import type { OptimizerExtraConfigs } from "@Calculation";
 
 type ConfigKey<TKey extends keyof OptimizerExtraConfigs> = TKey;
 

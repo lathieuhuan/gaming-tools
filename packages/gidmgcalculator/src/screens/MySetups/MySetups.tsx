@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { FaInfo } from "react-icons/fa";
 import { clsx, Button, LoadingSpin, WarehouseLayout, useScreenWatcher } from "rond";
+import { CalcTeamData } from "@Calculation";
 
 import type { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
 import { useAppCharacter } from "@Src/hooks";
@@ -9,6 +10,7 @@ import Array_ from "@Src/utils/array-utils";
 
 import type { OpenModalFn } from "./MySetups.types";
 import { calculateChosenSetup } from "./MySetups.utils";
+import { useAppCharactersByName } from "./hooks/useAppCharactersByName";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -26,7 +28,6 @@ import { FinalResultView } from "@Src/components";
 import { ChosenSetupModals } from "./ChosenSetupModals";
 import { MySetupsModals } from "./MySetupsModals";
 import { SetupTemplate } from "./SetupTemplate";
-import { makeCharacterReadData } from "@Src/utils/makeCharacterReadData";
 
 type UserSetupItems = {
   weapon?: UserWeapon;
@@ -53,6 +54,8 @@ export default function MySetups() {
   const userArtifacts = useSelector(selectUserArtifacts);
   const userSetups = useSelector(selectUserSetups);
   const chosenSetupID = useSelector(selectChosenSetupId);
+
+  const appCharactersByName = useAppCharactersByName();
 
   const chosenSetup = (() => {
     const setup = Array_.findById(userSetups, chosenSetupID);
@@ -117,7 +120,7 @@ export default function MySetups() {
           </div>
           <div className="mt-2 grow hide-scrollbar">
             {result?.finalResult && weapon && (
-              <FinalResultView weapon={weapon} characterData={result.characterData} finalResult={result.finalResult} />
+              <FinalResultView weapon={weapon} teamData={result.teamData} finalResult={result.finalResult} />
             )}
           </div>
 
@@ -155,7 +158,11 @@ export default function MySetups() {
             const { setup, complex } = config;
             const { weapon, artifacts } = config.items || {};
             const setupId = complex?.ID || setup.ID;
-            const characterData = makeCharacterReadData(setup.char, setup.party);
+
+            appCharactersByName.register(setup.char.name);
+            setup.party.forEach((teammate) => teammate && appCharactersByName.register(teammate.name));
+
+            const teamData = new CalcTeamData(setup.char, setup.party, appCharactersByName.data);
 
             return (
               <div key={setupId} id={`setup-${setupId}`} className="w-full p-1">
@@ -169,7 +176,7 @@ export default function MySetups() {
                   {weapon ? (
                     <SetupTemplate
                       setup={setup}
-                      characterData={characterData}
+                      teamData={teamData}
                       weapon={weapon}
                       artifacts={artifacts}
                       complexSetup={config.complex}

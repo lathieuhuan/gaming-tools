@@ -1,4 +1,4 @@
-import type { Party } from "@Src/types";
+import type { Teammates } from "@Src/types";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectWeapon,
@@ -11,7 +11,7 @@ import Object_ from "@Src/utils/object-utils";
 import Array_ from "@Src/utils/array-utils";
 import { WeaponBuffsView } from "@Src/components";
 
-export default function BuffWeapon({ party }: { party: Party }) {
+export default function BuffWeapon({ teammates }: { teammates: Teammates }) {
   const dispatch = useDispatch();
   const weapon = useSelector(selectWeapon);
   const weaponBuffCtrls = useSelector((state) => {
@@ -21,7 +21,9 @@ export default function BuffWeapon({ party }: { party: Party }) {
   return (
     <WeaponBuffsView
       mutable
-      {...{ party, weapon, wpBuffCtrls: weaponBuffCtrls }}
+      teammates={teammates}
+      weapon={weapon}
+      wpBuffCtrls={weaponBuffCtrls}
       getSelfHandlers={({ ctrl }) => {
         const path: ToggleModCtrlPath = {
           modCtrlName: "wpBuffCtrls",

@@ -24,6 +24,8 @@ export const Introduction = ({
     f: "text-bonus-color",
   };
 
+  const DONATORS = ["Daniel V.", "Marc (marcdau)", "Akenouille", "Brandon Pride", "apiromz", "aimie"];
+
   const parseContent = (content: string) => {
     return content.replace(/\{[a-zA-Z0-9ã _'"-]+\}#\[[euf]\]/g, (match) => {
       const [bodyPart, typePart = ""] = match.split("#");
@@ -108,7 +110,7 @@ export const Introduction = ({
         </p>
         <p>- Huge and special thanks to the donators!</p>
         <ul className="ml-4 text-primary-1 columns-1 md:columns-2 xm:columns-3 lg:columns-4">
-          {["Marc (marcdau)", "Akenouille", "Brandon Pride", "apiromz", "aimie"].map((name, i) => (
+          {DONATORS.map((name, i) => (
             <li key={i}>{name}</li>
           ))}
         </ul>

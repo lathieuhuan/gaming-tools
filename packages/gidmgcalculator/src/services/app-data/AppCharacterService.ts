@@ -1,4 +1,4 @@
-import { AppCharacter, TalentType } from "@Backend";
+import { AppCharacter, TalentType } from "@Calculation";
 
 import type { Traveler } from "@Src/types";
 import type { StandardResponse } from "../services.types";
@@ -14,10 +14,6 @@ export class AppCharacterService extends BaseService {
   private characters: Array<DataControl<AppCharacter>> = [];
   private subscribers: Map<string, Set<CharacterSubscriber>> = new Map();
   private traveler: Traveler = "LUMINE";
-
-  constructor() {
-    super();
-  }
 
   populate(characters: AppCharacter[]) {
     const props = this.getTravelerProps(this.traveler);

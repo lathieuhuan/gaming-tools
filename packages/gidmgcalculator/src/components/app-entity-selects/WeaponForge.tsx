@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { FancyBackSvg, Modal } from "rond";
-import { AppWeapon, WeaponType } from "@Backend";
+import { AppWeapon, WeaponType } from "@Calculation";
 
 import type { Weapon } from "@Src/types";
 import { $AppWeapon } from "@Src/services";

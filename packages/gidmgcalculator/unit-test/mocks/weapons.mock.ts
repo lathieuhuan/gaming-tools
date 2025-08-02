@@ -1,4 +1,4 @@
-import { AppWeapon } from "../../src/backend";
+import { AppWeapon } from "../../src/calculation";
 import { $AppWeapon } from "../../src/services";
 
 export enum __EMockWeapon {

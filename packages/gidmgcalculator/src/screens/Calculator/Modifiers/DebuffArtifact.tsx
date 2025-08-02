@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import { GeneralCalc } from "@Backend";
+import { GeneralCalc } from "@Calculation";
 
-import type { Party } from "@Src/types";
+import type { Teammates } from "@Src/types";
 import { changeModCtrlInput, selectArtifacts, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { ArtifactDebuffsView } from "@Src/components";
 
-export default function DebuffArtifact({ party }: { party: Party }) {
+export default function DebuffArtifact({ teammates }: { teammates: Teammates }) {
   const dispatch = useDispatch();
   const artDebuffCtrls = useSelector((state) => {
     return state.calculator.setupsById[state.calculator.activeId].artDebuffCtrls;
@@ -14,7 +14,7 @@ export default function DebuffArtifact({ party }: { party: Party }) {
   const artifacts = useSelector(selectArtifacts);
   const { code, bonusLv } = GeneralCalc.getArtifactSetBonuses(artifacts || [])[0] || {};
 
-  const usedArtCodes = party.reduce(
+  const usedArtCodes = teammates.reduce(
     (accumulator, teammate) => {
       if (teammate && teammate.artifact.code) {
         accumulator.push(teammate.artifact.code);
