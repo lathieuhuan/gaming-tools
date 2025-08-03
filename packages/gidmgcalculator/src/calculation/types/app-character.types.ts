@@ -32,6 +32,7 @@ export type AppCharacter = {
   sideIcon: string;
   rarity: number;
   nation: Nation;
+  faction?: Faction | Faction[];
   vision: ElementType;
   weaponType: WeaponType;
   EBcost: number;
@@ -78,6 +79,8 @@ type Nation =
   | "natlan"
   | "fontaine"
   | "snezhnaya";
+
+type Faction = "moonsign";
 
 type Ability = {
   name: string;

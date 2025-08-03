@@ -54,7 +54,7 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
   });
   const [input, setInput] = useState(snapshot.initialSetupName);
 
-  if (snapshot.isEligible) {
+  if (!snapshot.isEligible) {
     return (
       <div className="space-y-2">
         <p className="text-lg text-danger-2">Not eligible for update</p>

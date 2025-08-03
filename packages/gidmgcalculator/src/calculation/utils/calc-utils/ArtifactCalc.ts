@@ -103,6 +103,6 @@ export class ArtifactCalc {
   }
 
   static possibleMainStatTypesOf(artifactType: ArtifactType) {
-    return Object_.keys(ARTIFACT_MAIN_STATS[artifactType]);
+    return Object_.keys(ARTIFACT_MAIN_STATS[artifactType] || {});
   }
 }

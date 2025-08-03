@@ -45,7 +45,7 @@ export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
 
 export type ActualAttackPattern = AttackPattern | "none";
 
-export type AttackTag = "lunarCharged";
+export type AttackTag = LunarReaction | "lunarBloom";
 
 //
 
@@ -53,6 +53,7 @@ export type TalentCalcItemBonusId = `id.${number}`;
 
 export type AttackBonusType =
   | "all"
+  | AttackTag
   | AttackPattern
   | AttackElement
   | `${AttackPattern}.${AttackElement}`

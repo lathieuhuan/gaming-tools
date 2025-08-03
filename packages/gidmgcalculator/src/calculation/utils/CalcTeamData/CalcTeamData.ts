@@ -34,13 +34,13 @@ export class CalcTeamData extends TeamData {
   }
 
   isApplicableEffect(condition: EffectApplicableCondition, inputs: number[], fromSelf = false): boolean {
-    if (!isAvailableEffect(condition, this._activeMember, inputs, fromSelf)) {
+    if (!isAvailableEffect(condition.grantedAt, this._activeMember, inputs, fromSelf)) {
       return false;
     }
     if (!isValidInput(condition.checkInput, inputs)) {
       return false;
     }
-    if (!isValidPartyProps(condition.checkParty, this.activeAppMember, this.appTeammates)) {
+    if (!isValidPartyProps(condition.checkParty, this.activeAppMember, this.appTeammates, this.moonsignLv)) {
       return false;
     }
     if (!isValidCharProps(condition, this.activeAppMember)) {

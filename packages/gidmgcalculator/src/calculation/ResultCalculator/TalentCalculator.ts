@@ -170,7 +170,7 @@ export class TalentCalculator {
 
     switch (type) {
       case "attack": {
-        const isLunar = item.tags?.includes("lunarCharged");
+        const isLunar = item.tags?.some((tag) => tag.startsWith("lunar"));
         const attPatt = this.alterConfig.attPatt || item.attPatt || this.default_.attPatt;
         const { attElmt, reaction } = this.getElementAttribute(item, elmtModCtrl, infusedElmt);
         const calculator = this.itemCalculator.genAttackCalculator(attPatt, attElmt, item.tags, item.id);

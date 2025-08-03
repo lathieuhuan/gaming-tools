@@ -11,7 +11,7 @@ interface BonusesTrackerProps {
 export function BonusesTracker({ attkBonuses }: BonusesTrackerProps) {
   const { t } = useTranslation();
 
-  const bonuses = attkBonuses.filter((bonus) => bonus.type.slice(0, 2) !== "id");
+  const bonuses = attkBonuses.filter((bonus) => !bonus.type.startsWith("id."));
 
   return bonuses.length ? (
     <div className={`pl-2 mt-1 ${recordListStyles}`}>

@@ -9,6 +9,7 @@ export class TeamData {
   protected _activeMemberN: string;
   protected _teammateNs: string[];
   protected _elmtCount: ElementCount = new TypeCounter();
+  protected _moonsignLv = 0;
   protected extraTalentLv = new TypeCounter<TalentType>();
 
   get activeAppMember() {
@@ -29,11 +30,16 @@ export class TeamData {
     return newCounter;
   }
 
+  get moonsignLv() {
+    return this._moonsignLv;
+  }
+
   constructor(activeMemberN: string, teammateNs: string[], public data: AppCharactersByName) {
     this._activeMemberN = activeMemberN;
     this._teammateNs = teammateNs;
     this.countElements();
     this.countExtraTalentLv();
+    this.countMoonsignLv();
   }
 
   getAppMember(memberName: string) {
@@ -53,6 +59,16 @@ export class TeamData {
     this._elmtCount.clear();
     this._teammateNs.forEach((teammateN) => this._elmtCount.add(this.getAppMember(teammateN).vision));
     this._elmtCount.add(this.activeAppMember.vision);
+  };
+
+  protected countMoonsignLv = () => {
+    this._moonsignLv = this.activeAppMember.faction?.includes("moonsign") ? 1 : 0;
+
+    for (const teammate of this.appTeammates) {
+      if (teammate.faction?.includes("moonsign")) {
+        this._moonsignLv++;
+      }
+    }
   };
 
   protected countExtraTalentLv = () => {
