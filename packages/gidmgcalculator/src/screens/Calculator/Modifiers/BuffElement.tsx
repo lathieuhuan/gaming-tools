@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { clsx, SelectOption, VersatileSelect } from "rond";
+import { Fragment, ReactNode, useState } from "react";
+import { SelectOption, VersatileSelect } from "rond";
 import {
   AmplifyingReaction,
   AttackElement,
@@ -39,7 +39,8 @@ export default function BuffElement() {
   const attkBonuses = useSelector(selectAttkBonuses);
   const customInfusion = useSelector(selectCustomInfusion);
 
-  const { vision, weaponType, calcList } = useTeamData().activeAppMember;
+  const teamData = useTeamData();
+  const { vision, weaponType, calcList } = teamData.activeAppMember;
 
   const { element: infusedElement } = customInfusion;
   const { absorption } = elmtModCtrls;
@@ -304,13 +305,24 @@ export default function BuffElement() {
     }
   };
 
-  const renderDivider = (className?: string) => (
-    <div className={clsx("mx-auto my-3 w-1/2 h-px bg-surface-3", className)} />
-  );
+  const nodes: ReactNode[] = [];
 
-  return (
-    <div className="pt-2">
-      <div className="space-y-3 peer/resonance">
+  if (teamData.moonsignLv) {
+    nodes.push(
+      <div key="moonsign" className="space-y-3">
+        <GenshinModifierView
+          heading={`Moonsign Lv.${teamData.moonsignLv}`}
+          description={teamData.moonsignLv === 1 ? "Nascent Gleam" : "Ascendant Gleam"}
+          mutable={false}
+          checked={true}
+        />
+      </div>
+    );
+  }
+
+  if (elmtModCtrls.resonances.length) {
+    nodes.push(
+      <div className="space-y-3">
         {elmtModCtrls.resonances.map((resonance) => {
           return (
             <ResonanceBuffItem
@@ -326,15 +338,24 @@ export default function BuffElement() {
           );
         })}
       </div>
-      {renderDivider("peer-empty/resonance:hidden")}
+    );
+  }
 
-      <div className="space-y-3 peer/attack-reaction">{renderAttackReaction("reaction")}</div>
-      {renderDivider("peer-empty/attack-reaction:hidden")}
+  const attackReaction = renderAttackReaction("reaction");
+  if (attackReaction) {
+    nodes.push(<div className="space-y-3">{attackReaction}</div>);
+  }
 
-      <div className="peer/absorption">{anemoAbsorptionConfig}</div>
-      {renderDivider("peer-empty/absorption:hidden last:hidden")}
+  nodes.push(anemoAbsorptionConfig, customInfusionConfig);
 
-      {customInfusionConfig}
+  return (
+    <div className="pt-2">
+      {nodes.filter(Boolean).map((node, index) => (
+        <Fragment key={index}>
+          {index ? <div className="mx-auto my-3 w-1/2 h-px bg-surface-3" /> : null}
+          {node}
+        </Fragment>
+      ))}
     </div>
   );
 }

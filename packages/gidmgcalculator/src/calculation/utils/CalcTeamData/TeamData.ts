@@ -62,13 +62,15 @@ export class TeamData {
   };
 
   protected countMoonsignLv = () => {
-    this._moonsignLv = this.activeAppMember.faction?.includes("moonsign") ? 1 : 0;
+    let moonsignLv = this.activeAppMember.faction?.includes("moonsign") ? 1 : 0;
 
     for (const teammate of this.appTeammates) {
       if (teammate.faction?.includes("moonsign")) {
-        this._moonsignLv++;
+        moonsignLv++;
       }
     }
+
+    this._moonsignLv = Math.min(moonsignLv, 2);
   };
 
   protected countExtraTalentLv = () => {

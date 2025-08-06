@@ -22,7 +22,8 @@ type ApplyBonusSupportInfo = {
 
 type StackableCheckCondition = {
   trackId?: string;
-  paths: string | string[];
+  module: string | string[];
+  path: string | string[];
 };
 
 export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends BareBonusGetter<T> {
@@ -31,16 +32,11 @@ export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends
   protected isStackable = (condition: StackableCheckCondition) => {
     if (condition.trackId) {
       const isUsed = this.usedMods.some((usedMod) => {
-        if (condition.trackId === usedMod.trackId && typeof condition.paths === typeof usedMod.paths) {
-          if (Array.isArray(condition.paths)) {
-            return (
-              condition.paths.length === usedMod.paths.length &&
-              condition.paths.every((target, i) => target === usedMod.paths[i])
-            );
-          }
-          return condition.paths === usedMod.paths;
-        }
-        return false;
+        return (
+          condition.trackId === usedMod.trackId &&
+          Array_.isEqual(Array_.toArray(condition.module), Array_.toArray(usedMod.module)) &&
+          Array_.isEqual(Array_.toArray(condition.path), Array_.toArray(usedMod.path))
+        );
       });
 
       if (isUsed) return false;
@@ -78,7 +74,7 @@ export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends
     if (!bonus.value) return result;
 
     for (const target of Array_.toArray(targets)) {
-      if (!this.isStackable({ trackId: support.unstackableId, paths: target.path })) {
+      if (!this.isStackable({ trackId: support.unstackableId, ...target })) {
         continue;
       }
 

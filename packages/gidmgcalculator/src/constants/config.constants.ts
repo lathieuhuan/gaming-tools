@@ -5,7 +5,7 @@ export const MAX_USER_SETUPS = 50;
 export const MAX_CALC_SETUPS = 4;
 export const DOWNLOADED_DATA_VERSION = 3.1;
 export const EXPORTED_SETUP_VERSION = 1;
-export const MINIMUM_SYSTEM_VERSION = "3.11.0";
+export const MINIMUM_SYSTEM_VERSION = "3.12.0";
 
 export const IS_DEV_ENV = import.meta.env.DEV;
 
