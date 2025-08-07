@@ -1,6 +1,6 @@
 import type { ElementModCtrl } from "@Src/types";
 import type { TrackerControl } from "../utils/TrackerControl";
-import type { CalculationFinalResultAttackItem, Level, LunarReaction, ResistReduction } from "../types";
+import type { CalculationFinalResultAttackItem, Level, LunarReaction, ResistReduction, TotalAttribute } from "../types";
 import type { CalcItemCalculator } from "./CalcItemCalculator";
 
 import { toMult } from "@Src/utils";
@@ -13,6 +13,7 @@ export class LunarReactionCalculator {
   constructor(
     characterLv: Level,
     private itemCalculator: CalcItemCalculator,
+    private totalAttr: TotalAttribute,
     private resistances: ResistReduction,
     private tracker?: TrackerControl
   ) {
@@ -20,6 +21,7 @@ export class LunarReactionCalculator {
   }
 
   calculate = (reaction: LunarReaction, elmtModCtrl?: ElementModCtrl): CalculationFinalResultAttackItem => {
+    const { totalAttr } = this;
     const { getBonus, getRxnMult } = this.itemCalculator;
 
     const config = LUNAR_REACTION_CONFIG[reaction];
@@ -42,8 +44,9 @@ export class LunarReactionCalculator {
     }
 
     const nonCrit = (baseValue * baseMult * bonusMult + flat) * rxnMult * resMult;
-    const cRate_ = Math.max(getBonus("cRate_", reaction), 0) / 100;
-    const cDmg_ = getBonus("cDmg_", reaction) / 100;
+    let cRate_ = getBonus("cRate_", reaction) + totalAttr.cRate_;
+    cRate_ = Math.min(Math.max(cRate_, 0), 100) / 100;
+    const cDmg_ = (getBonus("cDmg_", reaction) + totalAttr.cDmg_) / 100;
 
     this.tracker?.recordCalcItem("RXN_CALC", reaction, {
       itemType: "attack",
