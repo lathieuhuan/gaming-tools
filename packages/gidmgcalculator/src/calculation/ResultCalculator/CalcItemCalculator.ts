@@ -1,20 +1,21 @@
 import type { AttackBonusesArchive } from "../InputProcessor";
-import type { CalcItemRecord } from "../utils/TrackerControl";
 import type {
   ActualAttackPattern,
   AttackBonusKey,
   AttackElement,
   AttackReaction,
-  AttackTag,
   CalcItemType,
   CalculationFinalResultItem,
+  LunarType,
   ResistReduction,
   TalentCalcItemBonusId,
   TotalAttribute,
 } from "../types";
+import type { CalcItemRecord } from "../utils/TrackerControl";
 
 import { toMult } from "@Src/utils";
 import Array_ from "@Src/utils/array-utils";
+import { LUNAR_ATTACK_COEFFICIENT } from "../constants/internal";
 import { GeneralCalc } from "../utils/calc-utils";
 
 export class CalcItemCalculator {
@@ -38,12 +39,11 @@ export class CalcItemCalculator {
     return 1;
   };
 
-  genAttackCalculator = (
-    attPatt: ActualAttackPattern,
-    attElmt: AttackElement,
-    tags: AttackTag[] = [],
-    itemId?: TalentCalcItemBonusId
-  ) => {
+  limitCRate = (crit: number) => {
+    return Math.min(Math.max(crit, 0), 100);
+  };
+
+  genAttackCalculator = (attPatt: ActualAttackPattern, attElmt: AttackElement, itemId?: TalentCalcItemBonusId) => {
     const { totalAttr, attkBonusesArchive, resistances } = this;
 
     const emptyResult: CalculationFinalResultItem = {
@@ -59,14 +59,13 @@ export class CalcItemCalculator {
     const getBonus = (key: AttackBonusKey) => {
       const finalAttPatt = attPatt === "none" ? undefined : attPatt;
       const mixedType = finalAttPatt ? (`${finalAttPatt}.${attElmt}` as const) : undefined;
-      return attkBonusesArchive.get(key, finalAttPatt, attElmt, mixedType, ...tags, itemId);
+      return attkBonusesArchive.get(key, finalAttPatt, attElmt, mixedType, itemId);
     };
 
     const calculate = (
       base: number | number[],
       reaction: AttackReaction,
-      record: CalcItemRecord,
-      isLunar = false
+      record: CalcItemRecord
     ): CalculationFinalResultItem => {
       //
       if (base === 0) {
@@ -80,33 +79,23 @@ export class CalcItemCalculator {
       bonusMult = toMult(bonusMult);
       baseMult = toMult(baseMult);
 
-      if (isLunar) {
-        baseMult += 2;
-      }
-
       // CALCULATE REACTION MULTIPLIER
       const rxnMult = this.getRxnMult(attElmt, reaction);
 
       // CALCULATE DEFENSE MULTIPLIER
       let defMult = 1;
+      const charPart = this.characterBareLv + 100;
+      const defReduction = 1 - resistances.def / 100;
 
-      if (!isLunar) {
-        const charPart = this.characterBareLv + 100;
-        const defReduction = 1 - resistances.def / 100;
-
-        defMult = 1 - getBonus("defIgn_") / 100;
-        defMult = charPart / (defReduction * defMult * (this.targetLv + 100) + charPart);
-      }
+      defMult = 1 - getBonus("defIgn_") / 100;
+      defMult = charPart / (defReduction * defMult * (this.targetLv + 100) + charPart);
 
       // CALCULATE RESISTANCE MULTIPLIER
       const resMult = resistances[attElmt];
 
       // CALCULATE CRITS
-      const totalCrit = (type: "cRate_" | "cDmg_") => {
-        return getBonus(type) + totalAttr[type];
-      };
-      const cRate_ = Math.min(Math.max(totalCrit("cRate_"), 0), 100) / 100;
-      const cDmg_ = totalCrit("cDmg_") / 100;
+      const cRate_ = this.limitCRate(getBonus("cRate_") + totalAttr.cRate_) / 100;
+      const cDmg_ = (getBonus("cDmg_") + totalAttr.cDmg_) / 100;
 
       base = Array_.applyToItem(base, (n) => (n * baseMult + flat) * bonusMult * rxnMult * defMult * resMult);
 
@@ -127,6 +116,75 @@ export class CalcItemCalculator {
         attPatt,
         attElmt,
         reaction,
+      };
+    };
+
+    return {
+      emptyResult,
+      getBonus,
+      calculate,
+    };
+  };
+
+  genLunarCalculator = (lunar: LunarType, attElmt: AttackElement, itemId?: TalentCalcItemBonusId) => {
+    const { totalAttr, resistances } = this;
+
+    const emptyResult: CalculationFinalResultItem = {
+      type: "attack",
+      nonCrit: 0,
+      crit: 0,
+      average: 0,
+      attPatt: lunar,
+      attElmt,
+      reaction: null,
+    };
+
+    const getBonus = (key: AttackBonusKey) => {
+      return this.getBonus(key, lunar, itemId);
+    };
+
+    const calculate = (base: number | number[], record: CalcItemRecord): CalculationFinalResultItem => {
+      //
+      if (base === 0) {
+        return emptyResult;
+      }
+
+      let flat = getBonus("flat");
+      const bonusMult = toMult(getBonus("pct_"));
+      const baseMult = toMult(LUNAR_ATTACK_COEFFICIENT[lunar]);
+
+      // CALCULATE REACTION MULTIPLIER
+      const rxnMult = 1;
+
+      // CALCULATE DEFENSE MULTIPLIER
+      const defMult = 1;
+
+      // CALCULATE RESISTANCE MULTIPLIER
+      const resMult = resistances[attElmt];
+
+      // CALCULATE CRITS
+      const cRate_ = this.limitCRate(getBonus("cRate_") + totalAttr.cRate_) / 100;
+      const cDmg_ = (getBonus("cDmg_") + totalAttr.cDmg_) / 100;
+
+      base = Array_.applyToItem(base, (n) => (n * baseMult + flat) * bonusMult * rxnMult * defMult * resMult);
+
+      record.baseMult = baseMult;
+      record.totalFlat = flat;
+      record.bonusMult = bonusMult;
+      record.rxnMult = rxnMult;
+      record.defMult = defMult;
+      record.resMult = resMult;
+      record.cRate_ = cRate_;
+      record.cDmg_ = cDmg_;
+
+      return {
+        type: "attack",
+        nonCrit: base,
+        crit: Array_.applyToItem(base, (n) => n * (1 + cDmg_)),
+        average: Array_.applyToItem(base, (n) => n * (1 + cRate_ * cDmg_)),
+        attPatt: lunar,
+        attElmt,
+        reaction: null,
       };
     };
 

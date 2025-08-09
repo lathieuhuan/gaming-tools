@@ -1,6 +1,5 @@
 import type {
   AttackBonusKey,
-  AttackTag,
   AttributeStat,
   CalcItemType,
   CalculationFinalResultKey,
@@ -46,7 +45,6 @@ export type CalcItemRecord = {
   cRate_?: number;
   cDmg_?: number;
   note?: string;
-  tags?: AttackTag[];
   exclusives?: CalcItemExclusiveBonus[];
 };
 

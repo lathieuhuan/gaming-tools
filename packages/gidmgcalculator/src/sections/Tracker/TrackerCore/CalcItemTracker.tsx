@@ -154,7 +154,6 @@ export function CalcItemTracker({
       const parts = [];
       if (result.attElmt !== "absorb") parts.push(t(`${result.attElmt}_attElmt`));
       if (result.attPatt !== "none") parts.push(t(result.attPatt));
-      if (record.tags) parts.push(...record.tags.map((tag) => t(tag)));
       if (parts.length) text = `${parts.join(" / ")} DMG`;
     }
 

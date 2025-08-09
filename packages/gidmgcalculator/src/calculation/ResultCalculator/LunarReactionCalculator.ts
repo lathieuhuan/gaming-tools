@@ -33,15 +33,7 @@ export class LunarReactionCalculator {
     let rxnMult = 1;
     let resMult = 1;
 
-    if (config.attElmt === "absorb") {
-      // if (elmtModCtrl?.absorption) {
-      //   attElmt = elmtModCtrl?.absorption;
-      //   rxnMult = getRxnMult(attElmt, elmtModCtrl.absorb_reaction);
-      //   resMult = this.resistances[attElmt];
-      // }
-    } else {
-      resMult = this.resistances[config.attElmt];
-    }
+    resMult = this.resistances[config.attElmt];
 
     const nonCrit = (baseValue * baseMult * bonusMult + flat) * rxnMult * resMult;
     let cRate_ = getBonus("cRate_", reaction) + totalAttr.cRate_;

@@ -37,6 +37,10 @@ export type AttackElement = (typeof ATTACK_ELEMENTS)[number];
 
 export type ActualAttackElement = AttackElement | "absorb";
 
+type LunarReactionType = (typeof LUNAR_REACTIONS)[number];
+
+export type LunarType = LunarReactionType | "lunarBloom";
+
 // ========== PATTERN ==========
 
 export type NormalAttack = (typeof NORMAL_ATTACKS)[number];
@@ -45,15 +49,13 @@ export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
 
 export type ActualAttackPattern = AttackPattern | "none";
 
-export type AttackTag = LunarReaction | "lunarBloom";
-
 //
 
 export type TalentCalcItemBonusId = `id.${number}`;
 
 export type AttackBonusType =
   | "all"
-  | AttackTag
+  | LunarType
   | AttackPattern
   | AttackElement
   | `${AttackPattern}.${AttackElement}`

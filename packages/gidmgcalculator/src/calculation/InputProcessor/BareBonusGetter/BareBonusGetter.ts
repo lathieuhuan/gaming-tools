@@ -6,7 +6,6 @@ import { InitialBonusGetter } from "./InitialBonusGetter";
 
 export class BareBonusGetter<T extends CalcTeamData = CalcTeamData> extends InitialBonusGetter<T> {
   //
-  
 
   protected applyExtra = (
     bonus: BareBonus,
@@ -62,16 +61,16 @@ export class BareBonusGetter<T extends CalcTeamData = CalcTeamData> extends Init
       }
       case "MEMBER": {
         const { element } = stack;
-        const elmtCount = teamData.elmtCount;
+        const { elmtCount, teammateElmtCount } = teamData;
 
         switch (element) {
           case "DIFFERENT":
-            elmtCount.forEach((type, value) => {
+            teammateElmtCount.forEach((type, value) => {
               result += type !== activeAppMember.vision ? value : 0;
             });
             break;
           case "SAME_EXCLUDED":
-            elmtCount.forEach((type, value) => {
+            teammateElmtCount.forEach((type, value) => {
               result += type === activeAppMember.vision ? value : 0;
             });
             break;
@@ -79,13 +78,11 @@ export class BareBonusGetter<T extends CalcTeamData = CalcTeamData> extends Init
             elmtCount.forEach((type, value) => {
               result += type === activeAppMember.vision ? value : 0;
             });
-            result++;
             break;
           default:
             elmtCount.forEach((type, value) => {
               result += type === element ? value : 0;
             });
-            if (activeAppMember.vision === element) result++;
         }
         break;
       }

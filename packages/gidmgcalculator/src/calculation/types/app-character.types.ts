@@ -11,12 +11,12 @@ import type {
   ActualAttackElement,
   ActualAttackPattern,
   AttackPattern,
-  AttackTag,
   AttributeStat,
   CalcItemBasedOn,
   CalcItemMultFactor,
   CalcItemType,
   ElementType,
+  LunarType,
   NormalAttack,
   TalentCalcItemBonusId,
   TalentType,
@@ -122,19 +122,15 @@ export type TalentCalcItem = {
   notOfficial?: boolean;
   /** Factors multiplying an attribute, scaling off talent level (character) or refinement (weapon) */
   multFactors: CalcItemMultFactor | CalcItemMultFactor[];
-
-  /** Only on 'attack' */
-  joinMultFactors?: boolean;
-  /** Not on 'attack' */
   flatFactor?: CalcItemFlatFactor;
-  /** Only on 'attack' */
+
+  // Only on 'attack'
+
+  joinMultFactors?: boolean;
   attPatt?: ActualAttackPattern;
-  /** Only on 'attack' */
   attElmt?: ActualAttackElement;
-  /** Only on 'attack' */
   subAttPatt?: "FCA";
-  /** Only on 'attack' */
-  tags?: AttackTag[];
+  lunar?: LunarType;
 };
 
 // type _TalentCalcItem = PartiallyOptional<TalentCalcItem, "type">;

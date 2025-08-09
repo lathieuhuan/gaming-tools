@@ -20,10 +20,12 @@ export class TeamData {
     return this._teammateNs.map((teammateN) => this.getAppMember(teammateN));
   }
 
+  /** Count of the whole team */
   get elmtCount() {
     return this._elmtCount;
   }
 
+  /** Count of the team except the active member */
   get teammateElmtCount() {
     const newCounter = new TypeCounter(this._elmtCount.result);
     newCounter.add(this.activeAppMember.vision, -1);

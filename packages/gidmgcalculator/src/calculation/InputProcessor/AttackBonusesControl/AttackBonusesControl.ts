@@ -114,7 +114,7 @@ export class AttackBonusesArchive {
    * Ex: paths = ['ES', 'pyro'] => get ES and pyro bonuses, not ES.pyro
    */
   get = (key: AttackBonusKey, ...paths: GetBonusPaths) => {
-    return this.allBonuses.get(key) + AttackBonusesControl.get(this.attkBonuses, key, ...paths);
+    return this.allBonuses.get(key) + this.getBare(key, ...paths);
   };
 
   getBare = (key: AttackBonusKey, ...paths: GetBonusPaths) => {

@@ -13,6 +13,7 @@ import type {
   CoreStat,
   ElementType,
   LevelableTalentType,
+  LunarType,
   QuickenReaction,
 } from "./common.types";
 
@@ -73,7 +74,7 @@ type CalculationFinalResultCommon = Record<CalculationAspect, number | number[]>
 export type CalculationFinalResultAttackItem = CalculationFinalResultCommon & {
   type: Extract<CalcItemType, "attack">;
   attElmt: ActualAttackElement;
-  attPatt: ActualAttackPattern;
+  attPatt: ActualAttackPattern | LunarType;
   reaction: AttackReaction;
 };
 
