@@ -290,15 +290,15 @@ export class InputProcessor {
     }
 
     // APPLY RESONANCE BONUSES
-    for (const { vision: elementType, activated, inputs } of resonances) {
+    for (const { vision: elementType, activated, inputs = [] } of resonances) {
       if (activated) {
         const { key, value } = RESONANCE_STAT[elementType];
         let xtraValue = 0;
         const description = `${elementType} resonance`;
 
-        if (elementType === "dendro" && inputs) {
-          if (inputs[0]) xtraValue += 30;
-          if (inputs[1]) xtraValue += 20;
+        if (elementType === "dendro") {
+          if (inputs[0]) xtraValue += 20;
+          if (inputs[1]) xtraValue += 30;
         }
 
         totalAttrCtrl.applyBonuses({

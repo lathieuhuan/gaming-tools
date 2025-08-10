@@ -54,6 +54,11 @@ export type CharacterPropertyCondition = {
   forElmts?: ElementType[];
   /** On outlander weapon series */
   forName?: string;
+  /** On Moonweaver's Dawn */
+  forEnergyCap?: {
+    value: number;
+    comparison: ConditionComparison;
+  };
 };
 
 export type EffectInputCondition = number | InputCheck | InputCheck[];
