@@ -36,6 +36,7 @@ export type CalcItemRecord = {
     value: number;
     talentMult?: number;
   }>;
+  coefficient?: number;
   baseMult?: number;
   totalFlat?: number;
   bonusMult: number;

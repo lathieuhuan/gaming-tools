@@ -110,6 +110,10 @@ export function CalcItemTracker({
         {"("}
         {record.multFactors.map((factor, index) => renderFactor(factor, index ? "+" : null, index))}
         {baseMultRender}
+        {renderPart({
+          label: "Coefficient",
+          value: record.coefficient,
+        })}
         {flatRender}
         {")"}
         {bonusMultRender}

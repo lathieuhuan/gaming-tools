@@ -149,9 +149,10 @@ export class CalcItemCalculator {
         return emptyResult;
       }
 
-      let flat = getBonus("flat");
+      const baseMult = toMult(getBonus("multPlus_"));
+      const coefficient = LUNAR_ATTACK_COEFFICIENT[lunar];
       const bonusMult = toMult(getBonus("pct_"));
-      const baseMult = toMult(LUNAR_ATTACK_COEFFICIENT[lunar]);
+      const flat = getBonus("flat");
 
       // CALCULATE REACTION MULTIPLIER
       const rxnMult = 1;
@@ -166,9 +167,13 @@ export class CalcItemCalculator {
       const cRate_ = this.limitCRate(getBonus("cRate_") + totalAttr.cRate_) / 100;
       const cDmg_ = (getBonus("cDmg_") + totalAttr.cDmg_) / 100;
 
-      base = Array_.applyToItem(base, (n) => (n * baseMult + flat) * bonusMult * rxnMult * defMult * resMult);
+      base = Array_.applyToItem(
+        base,
+        (n) => (n * baseMult * coefficient + flat) * bonusMult * rxnMult * defMult * resMult
+      );
 
       record.baseMult = baseMult;
+      record.coefficient = coefficient;
       record.totalFlat = flat;
       record.bonusMult = bonusMult;
       record.rxnMult = rxnMult;
