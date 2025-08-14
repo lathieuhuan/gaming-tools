@@ -22,7 +22,7 @@ import { CharacterCalc, GeneralCalc } from "@Src/calculation/utils/calc-utils";
 import { CalcTeamData } from "@Src/calculation/utils/CalcTeamData";
 import {
   AMPLIFYING_REACTIONS,
-  LUNAR_REACTIONS,
+  LUNAR_TYPES,
   QUICKEN_REACTIONS,
   RESONANCE_STAT,
   TRANSFORMATIVE_REACTIONS,
@@ -395,7 +395,7 @@ export class InputProcessor {
         description: "From Elemental Mastery",
       });
     }
-    for (const rxn of LUNAR_REACTIONS) {
+    for (const rxn of LUNAR_TYPES) {
       attkBonusesCtrl.add({
         value: rxnBonuses.lunar,
         toType: rxn,

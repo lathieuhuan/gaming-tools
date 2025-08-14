@@ -2,16 +2,17 @@ import type {
   CharacterEffectLevelIncrement,
   CharacterEffectLevelScale,
   EffectExtra,
-  EntityBonusBasedOn,
   EffectValueByOption,
+  EntityBonusBasedOn,
 } from "@Src/calculation/types";
 import type { BonusGetterSupport } from "./BareBonusGetter.types";
 
 import { isValidInput } from "@Src/calculation/utils/condition-checking";
 import Array_ from "@Src/utils/array-utils";
-import { AbstractInitialBonusGetter } from "./AbstractInitialBonusGetter";
-import { getTeammateLevelScale } from "../utils/getLevelScale";
 import { parseOptIndex } from "../utils/getIndexOfEffectValue";
+import { getTeammateLevelScale } from "../utils/getLevelScale";
+import { getTmEffectInput } from "../utils/getTmEffectInput";
+import { AbstractInitialBonusGetter } from "./AbstractInitialBonusGetter";
 
 /** This class is not used in src/calculation */
 export class TeammateInitialBonusGetter extends AbstractInitialBonusGetter {
@@ -56,9 +57,15 @@ export class TeammateInitialBonusGetter extends AbstractInitialBonusGetter {
     const indexConfig = parseOptIndex(config.optIndex);
     let indexValue = -1;
 
-    if (indexConfig.source === "INPUT") {
-      indexValue += inputs[indexConfig.inpIndex] ?? 0;
+    switch (indexConfig.source) {
+      case "INPUT":
+        indexValue += inputs[indexConfig.inpIndex] ?? 0;
+        break;
+      case "LEVEL":
+        indexValue += getTmEffectInput(indexConfig, inputs);
+        break;
     }
+
     return indexValue;
   }
 }

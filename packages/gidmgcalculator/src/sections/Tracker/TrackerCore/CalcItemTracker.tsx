@@ -113,6 +113,7 @@ export function CalcItemTracker({
         {renderPart({
           label: "Coefficient",
           value: record.coefficient,
+          nullValue: 1
         })}
         {flatRender}
         {")"}

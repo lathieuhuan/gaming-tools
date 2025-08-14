@@ -2,6 +2,7 @@ import type { CalcTeamData } from "@Src/calculation/utils/CalcTeamData";
 import type {
   AppliedAttributeBonus,
   AppliedBonuses,
+  AttackBonusType,
   BareBonus,
   EntityBonusBasedOn,
   EntityBonusEffect,
@@ -17,13 +18,12 @@ import { BareBonusGetter, BonusGetterSupport } from "../BareBonusGetter";
 type ApplyBonusSupportInfo = {
   description: string;
   inputs: number[];
-  unstackableId?: string;
+  monoId?: string;
 };
 
 type StackableCheckCondition = {
   trackId?: string;
-  module: string | string[];
-  path: string | string[];
+  targetId: string;
 };
 
 export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends BareBonusGetter<T> {
@@ -32,12 +32,11 @@ export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends
   protected isStackable = (condition: StackableCheckCondition) => {
     if (condition.trackId) {
       const isUsed = this.usedMods.some((usedMod) => {
-        return (
-          condition.trackId === usedMod.trackId &&
-          Array_.isEqual(Array_.toArray(condition.module), Array_.toArray(usedMod.module)) &&
-          Array_.isEqual(Array_.toArray(condition.path), Array_.toArray(usedMod.path))
-        );
+        return condition.trackId === usedMod.trackId && condition.targetId === usedMod.targetId;
       });
+
+      console.log(condition.trackId, isUsed);
+      console.log(JSON.parse(JSON.stringify(this.usedMods)));
 
       if (isUsed) return false;
 
@@ -74,10 +73,6 @@ export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends
     if (!bonus.value) return result;
 
     for (const target of Array_.toArray(targets)) {
-      if (!this.isStackable({ trackId: support.unstackableId, ...target })) {
-        continue;
-      }
-
       switch (target.module) {
         case "ATTR": {
           for (const targetPath of Array_.toArray(target.path)) {
@@ -96,6 +91,10 @@ export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends
                 toStat = targetPath;
             }
 
+            if (!this.isStackable({ trackId: support.monoId, targetId: toStat })) {
+              continue;
+            }
+
             result.attrBonuses.push({
               ...bonus,
               toStat,
@@ -106,9 +105,15 @@ export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends
         }
         case "ELMT_NA":
           for (const elmt of ELEMENT_TYPES) {
+            const toType: AttackBonusType = `NA.${elmt}`;
+
+            if (!this.isStackable({ trackId: support.monoId, targetId: `${toType}/${target.path}` })) {
+              continue;
+            }
+
             result.attkBonuses.push({
               id: bonus.id,
-              toType: `NA.${elmt}`,
+              toType,
               toKey: target.path,
               value: bonus.value,
               description: support.description,
@@ -117,6 +122,10 @@ export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends
           break;
         default:
           for (const module of Array_.toArray(target.module)) {
+            if (!this.isStackable({ trackId: support.monoId, targetId: `${module}/${target.path}` })) {
+              continue;
+            }
+
             result.attkBonuses.push({
               id: bonus.id,
               toType: module,
@@ -131,7 +140,7 @@ export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends
   }
 
   getAppliedBonuses(
-    buff: Pick<EntityBuff, "effects" | "unstackableId">,
+    buff: Pick<EntityBuff, "effects">,
     support: Omit<BonusGetterSupport, "basedOnStable">,
     description: string,
     isFinal?: boolean
@@ -157,7 +166,7 @@ export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends
           config.targets,
           {
             description,
-            unstackableId: buff.unstackableId,
+            monoId: config.monoId,
             inputs: support.inputs,
           },
           result

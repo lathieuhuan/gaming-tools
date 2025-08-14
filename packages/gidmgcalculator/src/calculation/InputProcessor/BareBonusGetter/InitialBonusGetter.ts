@@ -73,7 +73,7 @@ export class InitialBonusGetter<T extends CalcTeamData = CalcTeamData> extends A
       const preIndex = preOptions[inputs[0]];
       index += preIndex ?? preOptions[preOptions.length - 1];
     } else {
-      index = getIndexOfEffectValue(config.optIndex, this.teamData, inputs);
+      index = getIndexOfEffectValue(config.optIndex, this.teamData, inputs, this.fromSelf);
     }
 
     return index;

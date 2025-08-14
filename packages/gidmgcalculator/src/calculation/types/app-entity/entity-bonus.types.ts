@@ -7,6 +7,7 @@ import type { EffectValueByOption } from "./effect-value.types";
 
 export type EntityBonusEffect = EffectApplicableCondition & {
   id: string;
+  monoId?: string;
   value: number | EffectValueByOption;
   /**
    * On Characters. Multiplier based on talent level

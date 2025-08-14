@@ -6,19 +6,23 @@ import { getLevelScale } from "../utils/getLevelScale";
 export class PenaltiesGetter {
   constructor(protected teamData: CalcTeamData) {}
 
-  protected getInitialPenaltyValue = (config: EntityPenaltyEffect["value"], inputs: number[] = []) => {
+  protected getInitialPenaltyValue = (
+    config: EntityPenaltyEffect["value"],
+    inputs: number[] = [],
+    fromSelf: boolean
+  ) => {
     if (typeof config === "number") {
       return config;
     }
     const { options } = config;
-    const index = getIndexOfEffectValue(config.optIndex, this.teamData, inputs);
+    const index = getIndexOfEffectValue(config.optIndex, this.teamData, inputs, fromSelf);
 
     return options[index] ?? (index > 0 ? options[options.length - 1] : 0);
   };
 
   protected getPenaltyValue = (debuff: EntityPenaltyEffect, inputs: number[], fromSelf = true) => {
     const { preExtra } = debuff;
-    let result = this.getInitialPenaltyValue(debuff.value, inputs);
+    let result = this.getInitialPenaltyValue(debuff.value, inputs, fromSelf);
 
     result *= getLevelScale(debuff.lvScale, this.teamData, inputs, fromSelf);
 

@@ -28,5 +28,5 @@ export const LUNAR_REACTION_CONFIG: Record<LunarReaction, { mult: number; attElm
 
 export const LUNAR_ATTACK_COEFFICIENT: Record<LunarType, number> = {
   lunarCharged: 3,
-  lunarBloom: 2.8,
+  lunarBloom: 1,
 };

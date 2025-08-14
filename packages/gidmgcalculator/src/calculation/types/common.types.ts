@@ -8,6 +8,7 @@ import {
   CORE_STAT_TYPES,
   ELEMENT_TYPES,
   LEVELS,
+  LUNAR_TYPES,
   LUNAR_REACTIONS,
   NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
@@ -37,9 +38,9 @@ export type AttackElement = (typeof ATTACK_ELEMENTS)[number];
 
 export type ActualAttackElement = AttackElement | "absorb";
 
-type LunarReactionType = (typeof LUNAR_REACTIONS)[number];
+export type LunarReactionType = (typeof LUNAR_REACTIONS)[number];
 
-export type LunarType = LunarReactionType | "lunarBloom";
+export type LunarType = (typeof LUNAR_TYPES)[number];
 
 // ========== PATTERN ==========
 
