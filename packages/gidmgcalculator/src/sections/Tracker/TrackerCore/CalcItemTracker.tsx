@@ -65,6 +65,7 @@ export function CalcItemTracker({
           sign,
           label: t(factor.desc),
           value: factor.value,
+          nullValue: -1,
           processor: Math.round,
         },
         {
@@ -105,7 +106,7 @@ export function CalcItemTracker({
         {flatRender}
         {")"}
       </>
-    ) : (
+    ) : record.specialPatt ? (
       <>
         {"("}
         {record.multFactors.map((factor, index) => renderFactor(factor, index ? "+" : null, index))}
@@ -113,8 +114,17 @@ export function CalcItemTracker({
         {renderPart({
           label: "Coefficient",
           value: record.coefficient,
-          nullValue: 1
+          nullValue: 1,
         })}
+        {bonusMultRender}
+        {flatRender}
+        {")"}
+      </>
+    ) : (
+      <>
+        {"("}
+        {record.multFactors.map((factor, index) => renderFactor(factor, index ? "+" : null, index))}
+        {baseMultRender}
         {flatRender}
         {")"}
         {bonusMultRender}

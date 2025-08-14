@@ -3,6 +3,7 @@ import type {
   AttributeStat,
   CalcItemType,
   CalculationFinalResultKey,
+  LunarType,
   ResistReductionKey,
 } from "@Src/calculation/types";
 
@@ -31,6 +32,7 @@ export type CalcItemExclusiveBonus = {
 
 export type CalcItemRecord = {
   itemType: CalcItemType;
+  specialPatt?: LunarType;
   multFactors: Array<{
     desc: string;
     value: number;

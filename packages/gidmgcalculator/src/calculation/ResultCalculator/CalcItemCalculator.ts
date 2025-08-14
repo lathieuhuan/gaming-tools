@@ -157,9 +157,6 @@ export class CalcItemCalculator {
       // CALCULATE REACTION MULTIPLIER
       const rxnMult = 1;
 
-      // CALCULATE DEFENSE MULTIPLIER
-      const defMult = 1;
-
       // CALCULATE RESISTANCE MULTIPLIER
       const resMult = resistances[attElmt];
 
@@ -167,17 +164,15 @@ export class CalcItemCalculator {
       const cRate_ = this.limitCRate(getBonus("cRate_") + totalAttr.cRate_) / 100;
       const cDmg_ = (getBonus("cDmg_") + totalAttr.cDmg_) / 100;
 
-      base = Array_.applyToItem(
-        base,
-        (n) => (n * baseMult * coefficient + flat) * bonusMult * rxnMult * defMult * resMult
-      );
+      base = Array_.applyToItem(base, (n) => (n * baseMult * coefficient * bonusMult + flat) * rxnMult * resMult);
 
+      record.specialPatt = lunar;
       record.baseMult = baseMult;
       record.coefficient = coefficient;
       record.totalFlat = flat;
       record.bonusMult = bonusMult;
       record.rxnMult = rxnMult;
-      record.defMult = defMult;
+      record.defMult = 0;
       record.resMult = resMult;
       record.cRate_ = cRate_;
       record.cDmg_ = cDmg_;
