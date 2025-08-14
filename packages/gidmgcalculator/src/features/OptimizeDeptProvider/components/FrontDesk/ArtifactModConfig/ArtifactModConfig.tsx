@@ -6,7 +6,7 @@ import type { ArtifactModCtrl } from "@Src/types";
 import type { ArtifactManager, ChangeModConfigInputs, ToggleModConfig } from "@OptimizeDept/hooks/useArtifactManager";
 
 import { GenshinModifierView } from "@Src/components";
-import { getArtifactDescription } from "@Src/utils/description-parsers";
+import { getArtifactDesc } from "@Src/utils/description-parsers";
 import Array_ from "@Src/utils/array-utils";
 
 interface ArtifactModConfigProps {
@@ -28,7 +28,7 @@ export function ArtifactModConfig({ artifactManager }: ArtifactModConfigProps) {
       const mod = Array_.findByIndex(mods, config.index);
       if (!mod) return null;
 
-      const description = getArtifactDescription(data, mod);
+      const description = getArtifactDesc(data, mod);
 
       const changeThisInput = (value: number, inpIndex: number) => {
         if (config.inputs) {

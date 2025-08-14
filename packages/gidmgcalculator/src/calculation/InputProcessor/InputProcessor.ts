@@ -116,18 +116,17 @@ export class InputProcessor {
       artifacts
     );
     const attkBonusesCtrl = new AttackBonusesControl();
-    const selfBonusesGetter = new AppliedBonusesGetter(true, teamData, totalAttrCtrl);
-    const teammateBonusesGetter = new AppliedBonusesGetter(false, teamData, totalAttrCtrl);
+    const bonusesGetter = new AppliedBonusesGetter(teamData, totalAttrCtrl);
 
     const applySelfBuff: AppliedBonusesGetter["getAppliedBonuses"] = (...args) => {
-      const result = selfBonusesGetter.getAppliedBonuses(...args);
+      const result = bonusesGetter.getAppliedBonuses(...args);
       totalAttrCtrl.applyBonuses(result.attrBonuses);
       attkBonusesCtrl.add(result.attkBonuses);
       return result;
     };
 
     const applyTeammateBuff: AppliedBonusesGetter["getAppliedBonuses"] = (...args) => {
-      const result = teammateBonusesGetter.getAppliedBonuses(...args);
+      const result = bonusesGetter.getAppliedBonuses(...args);
       totalAttrCtrl.applyBonuses(result.attrBonuses);
       attkBonusesCtrl.add(result.attkBonuses);
       return result;
@@ -142,6 +141,7 @@ export class InputProcessor {
             buff,
             {
               inputs: [],
+              fromSelf: true,
             },
             `Self / ${buff.src}`,
             isFinal
@@ -156,6 +156,7 @@ export class InputProcessor {
             buff,
             {
               inputs: ctrl.inputs ?? [],
+              fromSelf: true,
             },
             `Self / ${buff.src}`,
             isFinal
@@ -171,6 +172,7 @@ export class InputProcessor {
           {
             inputs: [],
             refi,
+            fromSelf: true,
           },
           `${appWeapon.name} bonus`,
           isFinal
@@ -189,6 +191,7 @@ export class InputProcessor {
               { effects: buff.effects },
               {
                 inputs: [],
+                fromSelf: true,
               },
               `${data.name} / ${i * 2 + 2}-piece bonus`,
               isFinal
@@ -210,6 +213,7 @@ export class InputProcessor {
             {
               inputs: ctrl.inputs ?? [],
               refi,
+              fromSelf: true,
             },
             `${appWeapon.name} activated`,
             isFinal
@@ -229,6 +233,7 @@ export class InputProcessor {
               buff,
               {
                 inputs: ctrl.inputs ?? [],
+                fromSelf: true,
               },
               `${name} (self) / ${(buff.bonusLv ?? 1) * 2 + 2}-piece bonus`,
               isFinal
@@ -330,6 +335,7 @@ export class InputProcessor {
           buff,
           {
             inputs,
+            fromSelf: false,
           },
           `${name} / ${buff.src}`
         );
@@ -349,6 +355,7 @@ export class InputProcessor {
               {
                 inputs: ctrl.inputs ?? [],
                 refi,
+                fromSelf: false,
               },
               `${name} activated`
             );
@@ -368,6 +375,7 @@ export class InputProcessor {
               buff,
               {
                 inputs: ctrl.inputs ?? [],
+                fromSelf: false,
               },
               `${name} / 4-Piece activated`
             );

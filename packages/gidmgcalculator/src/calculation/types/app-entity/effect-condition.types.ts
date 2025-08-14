@@ -15,17 +15,17 @@ export type InputCheck = {
   comparison?: ConditionComparison;
 };
 
-export type EffectGrantedAt =
-  | CharacterMilestone
-  | {
-      value: CharacterMilestone;
-      /** When this bonus is from teammate, this is input's index to check granted. */
-      altIndex?: number;
-      /** Default to 1, or checked */
-      compareValue?: number;
-      /** Default to 'EQUAL' */
-      comparison?: ConditionComparison;
-    };
+export type EffectGrantedAtConfig = {
+  value: CharacterMilestone;
+  /** When this bonus is from teammate, this is input's index to check granted. */
+  altIndex?: number;
+  /** Default to 1, or checked */
+  compareValue?: number;
+  /** Default to 'EQUAL' */
+  comparison?: ConditionComparison;
+};
+
+export type EffectGrantedAt = CharacterMilestone | EffectGrantedAtConfig;
 
 export type TeamElementCondition = {
   /** ['pyro', 'pyro'] => 1. On Ballad of the Fjords */

@@ -15,7 +15,7 @@ class Tester extends BareBonusGetterTester {
   };
 
   __apply(extra: number | EntityBonusEffect) {
-    this.applyExtra(this.bonus, extra, { inputs: this.inputs });
+    this.applyExtra(this.bonus, extra, { inputs: this.inputs, fromSelf: this.fromSelf });
   }
 
   __expect(value: number, isStable?: boolean) {

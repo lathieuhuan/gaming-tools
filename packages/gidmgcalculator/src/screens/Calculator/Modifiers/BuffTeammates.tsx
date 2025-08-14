@@ -6,14 +6,14 @@ import {
 } from "@Store/calculator-slice";
 import { useDispatch } from "@Store/hooks";
 import { TeammateBuffsView } from "@Src/components";
-import { useTeamData } from "../ContextProvider";
+import { useCalcTeamData } from "../ContextProvider";
 
 interface BuffTeammatesProps {
   teammates: Teammates;
 }
 export default function BuffTeammates(props: BuffTeammatesProps) {
   const dispatch = useDispatch();
-  const teamData = useTeamData();
+  const teamData = useCalcTeamData();
 
   return (
     <TeammateBuffsView

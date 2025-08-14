@@ -6,7 +6,7 @@ import type { CalcWeapon, UserWeapon } from "@Src/types";
 import { useTranslation } from "@Src/hooks";
 import { $AppWeapon } from "@Src/services";
 import { genSequentialOptions } from "@Src/utils";
-import { parseWeaponDescription } from "@Src/utils/description-parsers";
+import { parseWeaponDesc } from "@Src/utils/description-parsers";
 import Entity_ from "@Src/utils/entity-utils";
 
 // Component
@@ -35,7 +35,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
     if (!appWeapon?.descriptions || !weapon?.refi) {
       return "";
     }
-    return appWeapon.descriptions.map((content) => parseWeaponDescription(content, weapon.refi)).join(" ");
+    return appWeapon.descriptions.map((content) => parseWeaponDesc(content, weapon.refi)).join(" ");
   }, [appWeapon?.code, weapon?.refi]);
 
   if (!weapon || !appWeapon) return null;

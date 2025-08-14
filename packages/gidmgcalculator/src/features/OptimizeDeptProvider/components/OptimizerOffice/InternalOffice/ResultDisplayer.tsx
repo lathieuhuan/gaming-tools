@@ -7,7 +7,7 @@ import type { ProcessedResult, ProcessedSetup } from "./InternalOffice.types";
 
 import { useArtifactSetData } from "@Src/hooks";
 import Array_ from "@Src/utils/array-utils";
-import { getArtifactDescription } from "@Src/utils/description-parsers";
+import { getArtifactDesc } from "@Src/utils/description-parsers";
 
 // Component
 import { ArtifactCard, GenshinModifierView } from "@Src/components";
@@ -61,7 +61,7 @@ export function ResultDisplayer({
             mutable={false}
             checked={config.activated}
             heading={data.name}
-            description={getArtifactDescription(data, mod)}
+            description={getArtifactDesc(data, mod)}
             inputs={config.inputs}
             inputConfigs={mod.inputConfigs}
           />

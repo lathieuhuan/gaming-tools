@@ -26,6 +26,7 @@ class Tester extends AppliedBonusesGetter {
       },
       {
         inputs: this.inputs,
+        fromSelf: this.fromSelf,
       },
       this.description,
       this.isFinal
@@ -42,7 +43,7 @@ let tester: Tester;
 
 beforeEach(() => {
   totalAttrCtrl = new TotalAttributeControl();
-  tester = new Tester(true, __genMutableTeamDataTester(), totalAttrCtrl);
+  tester = new Tester(__genMutableTeamDataTester(), totalAttrCtrl);
 });
 
 test("effects is required on buff", () => {

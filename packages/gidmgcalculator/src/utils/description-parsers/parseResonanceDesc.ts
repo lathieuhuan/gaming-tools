@@ -1,6 +1,6 @@
 import { wrapText } from "./utils";
 
-export const parseResonanceDescription = (description: string) => {
+export const parseResonanceDesc = (description: string) => {
   return description.replace(/\{[\w %]+\}#\[[kvm]\]/g, (match) => {
     let [body, type = ""] = match.split("#");
     body = body.slice(1, -1);

@@ -1,21 +1,22 @@
 import { round } from "rond";
 import {
-  AbstractInitialBonusGetter,
   CalcTeamData,
   CharacterBuff,
   CharacterDebuff,
   InitialBonusGetter,
-  TeammateInitialBonusGetter,
 } from "@Calculation";
 
 import Array_ from "../array-utils";
 import { toMult } from "../pure-utils";
 import { wrapText } from "./utils";
 
-export const parseAbilityDescription = (
+export const parseAbilityDesc = (
   ability: Pick<CharacterBuff | CharacterDebuff, "description" | "effects">,
-  inputs: number[],
-  bonusGetter: AbstractInitialBonusGetter
+  support: {
+    inputs: number[];
+    fromSelf: boolean;
+  },
+  bonusGetter: InitialBonusGetter
 ) => {
   return ability.description.replace(/\{[\w \-/,%^"'*@:=.[\]]+\}#\[\w*\]/g, (match) => {
     let [body, type = ""] = match.split("#");
@@ -27,8 +28,7 @@ export const parseAbilityDescription = (
 
       if (effect) {
         const { value, preExtra, max } = effect;
-        let result =
-          bonusGetter.getInitialBonusValue(value, { inputs }) * bonusGetter.getLevelScale(effect.lvScale, inputs);
+        let result = bonusGetter.getInitialValue(value, support) * bonusGetter.getLevelScale(effect.lvScale, support);
 
         if (typeof preExtra === "number") result += preExtra;
         if (typeof max === "number" && result > max) result = max;
@@ -57,19 +57,20 @@ export const parseAbilityDescription = (
   });
 };
 
-export const parseSelfAbilityDescription = (
+export const parseSelfAbilityDesc = (
   ability: Pick<CharacterBuff | CharacterDebuff, "description" | "effects">,
   inputs: number[],
   teamData: CalcTeamData
 ) => {
-  const bonusGetter = new InitialBonusGetter(true, teamData);
-  return parseAbilityDescription(ability, inputs, bonusGetter);
+  const bonusGetter = new InitialBonusGetter(teamData);
+  return parseAbilityDesc(ability, { inputs, fromSelf: true }, bonusGetter);
 };
 
-export const parseTeammateAbilityDescription = (
+export const parseTeammateAbilityDesc = (
   ability: Pick<CharacterBuff | CharacterDebuff, "description" | "effects">,
-  inputs: number[]
+  inputs: number[],
+  teamData: CalcTeamData
 ) => {
-  const bonusGetter = new TeammateInitialBonusGetter();
-  return parseAbilityDescription(ability, inputs, bonusGetter);
+  const bonusGetter = new InitialBonusGetter(teamData);
+  return parseAbilityDesc(ability, { inputs, fromSelf: false }, bonusGetter);
 };

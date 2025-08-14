@@ -2,7 +2,7 @@ import { ArtifactSetBonus } from "@Calculation";
 
 import { $AppArtifact } from "@Src/services";
 import Array_ from "@Src/utils/array-utils";
-import { parseArtifactDescription } from "@Src/utils/description-parsers";
+import { parseArtifactDesc } from "@Src/utils/description-parsers";
 
 interface SetBonusesViewProps {
   setBonuses: ArtifactSetBonus[];
@@ -25,7 +25,7 @@ export function SetBonusesView({ setBonuses, noTitle }: SetBonusesViewProps) {
               const { description = i } = data.setBonuses?.[i] || {};
               const parsedDescription = Array_.toArray(description).reduce((acc, index) => {
                 if (descriptions[index]) {
-                  const parsedText = parseArtifactDescription(descriptions[index]);
+                  const parsedText = parseArtifactDesc(descriptions[index]);
                   return `${acc} ${parsedText}`;
                 }
                 return acc;

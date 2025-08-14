@@ -1,10 +1,10 @@
 import type { ResistReductionKey } from "../common.types";
 import type { CharacterEffectLevelScale } from "./app-entity-common.types";
 import type { EffectApplicableCondition } from "./effect-condition.types";
-import type { EffectValueByOption } from "./effect-value.types";
+import type { EffectValue } from "./effect-value.types";
 
 export type EntityPenaltyEffect = EffectApplicableCondition & {
-  value: number | EffectValueByOption;
+  value: EffectValue;
 
   // ============ CHARACTER PENALTY ONLY ============
   lvScale?: CharacterEffectLevelScale;

@@ -3,7 +3,7 @@ import { wrapText } from "./utils";
 
 const scaleRefi = (base: number, refi: number, increment = base / 3) => round(base + increment * refi, 3);
 
-export const parseWeaponDescription = (description: string, refi: number) => {
+export const parseWeaponDesc = (description: string, refi: number) => {
   return description.replace(/\{[\w \-,.%'"^$]+\}(#\[[kvm]\])?/g, (match) => {
     let [body, type = ""] = match.split("#");
     body = body.slice(1, -1);

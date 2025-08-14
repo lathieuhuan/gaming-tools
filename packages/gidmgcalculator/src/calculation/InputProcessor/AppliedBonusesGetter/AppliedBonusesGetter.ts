@@ -35,9 +35,6 @@ export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends
         return condition.trackId === usedMod.trackId && condition.targetId === usedMod.targetId;
       });
 
-      console.log(condition.trackId, isUsed);
-      console.log(JSON.parse(JSON.stringify(this.usedMods)));
-
       if (isUsed) return false;
 
       this.usedMods.push(condition);
@@ -154,7 +151,7 @@ export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends
     for (const config of Array_.toArray(buff.effects)) {
       if (
         (isFinal === undefined || isFinal === this.isTrulyFinalEffect(config)) &&
-        this.teamData.isApplicableEffect(config, support.inputs, this.fromSelf)
+        this.teamData.isApplicableEffect(config, support.inputs, support.fromSelf)
       ) {
         const bonus = this.getBareBonus(config, {
           ...support,

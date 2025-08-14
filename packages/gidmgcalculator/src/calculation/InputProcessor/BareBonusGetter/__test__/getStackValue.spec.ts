@@ -12,6 +12,7 @@ class Tester extends BareBonusGetterTester {
     expect(
       this.getStackValue(this.stack, {
         inputs: this.inputs,
+        fromSelf: this.fromSelf,
       })
     ).toBe(stackValue);
   }
@@ -99,7 +100,7 @@ test("stack be 0 when stack calculation is involved team and there's no team", (
 
 describe("type INPUT: stack calculated from inputs", () => {
   beforeEach(() => {
-    tester.__changeFromSelf(true);
+    tester.fromSelf = true;
   });
 
   test("fromSelf, index default to 0", () => {
@@ -120,7 +121,7 @@ describe("type INPUT: stack calculated from inputs", () => {
   });
 
   test("not fromSelf, altIndex default to 0", () => {
-    tester.__changeFromSelf(false);
+    tester.fromSelf = false;
     tester.stack = {
       type: "INPUT",
     };
@@ -129,7 +130,7 @@ describe("type INPUT: stack calculated from inputs", () => {
   });
 
   test("not fromSelf, altIndex 2", () => {
-    tester.__changeFromSelf(false);
+    tester.fromSelf = false;
     tester.stack = {
       type: "INPUT",
       altIndex: 2,

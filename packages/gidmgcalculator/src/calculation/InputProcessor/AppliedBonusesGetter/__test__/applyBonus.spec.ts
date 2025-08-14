@@ -16,7 +16,7 @@ class Tester extends AppliedBonusesGetter {
   };
   description = "";
   inputs: number[] = [];
-  unstackableId?: string;
+  monoId?: string;
 
   _changeCharacter(name: __EMockCharacter) {
     this.teamData = __genMutableTeamDataTester(name);
@@ -26,7 +26,7 @@ class Tester extends AppliedBonusesGetter {
     return this["applyBonus"](this.bonus, this.target, {
       description: this.description,
       inputs: this.inputs,
-      unstackableId: this.unstackableId,
+      monoId: this.monoId,
     });
   }
 
@@ -38,7 +38,7 @@ class Tester extends AppliedBonusesGetter {
 let tester: Tester;
 
 beforeEach(() => {
-  tester = new Tester(true, __genMutableTeamDataTester());
+  tester = new Tester(__genMutableTeamDataTester());
 });
 
 test("Apply a single Attribute Bonus, to normal ATTR", () => {
@@ -200,7 +200,7 @@ test("Apply multiple Attack Bonuses", () => {
   });
 });
 
-test("Should not _apply bonus when there is already an existing bonus with the same unstackableId ", () => {
+test("Should not _apply bonus when there is already an existing bonus with the same monoId ", () => {
   tester.bonus.value = 35;
   tester.target = {
     module: "ATTR",
@@ -213,7 +213,7 @@ test("Should not _apply bonus when there is already an existing bonus with the s
     description: tester.description,
   };
 
-  tester.unstackableId = "unstackableId";
+  tester.monoId = "monoId";
   tester._expectAppliedBonuses({
     attrBonuses: [attrBonus],
     attkBonuses: [],
@@ -224,8 +224,8 @@ test("Should not _apply bonus when there is already an existing bonus with the s
     attkBonuses: [],
   });
 
-  // when no unstackableId, bonus can be applied again
-  tester.unstackableId = undefined;
+  // when no monoId, bonus can be applied again
+  tester.monoId = undefined;
   tester._expectAppliedBonuses({
     attrBonuses: [attrBonus],
     attkBonuses: [],

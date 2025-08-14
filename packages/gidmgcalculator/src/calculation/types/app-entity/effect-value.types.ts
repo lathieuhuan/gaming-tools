@@ -38,3 +38,5 @@ export type EffectValueByOption = {
   /** Max optIndex. Dynamic on Navia */
   max?: EffectMax;
 };
+
+export type EffectValue = number | EffectValueByOption;

@@ -18,6 +18,7 @@ class Tester extends BareBonusGetterTester {
     expect(
       this.applyMax(1000_000_000, this.config, {
         inputs: this.inputs,
+        fromSelf: this.fromSelf,
         basedOnStable: this.basedOnStable,
         refi: this.refi,
       })
@@ -80,7 +81,7 @@ describe("applyMax", () => {
       },
     };
     tester.inputs = [-2, input];
-    tester.__changeFromSelf(false);
+    tester.fromSelf = false;
 
     tester.__expect(tester.config.value * input);
   });
@@ -100,7 +101,7 @@ describe("applyMax", () => {
         field: attributeType,
       },
     };
-    tester.__changeFromSelf(true);
+    tester.fromSelf = true;
     tester.__expect(tester.config.value * totalAttrCtrl.getTotal(attributeType));
   });
 

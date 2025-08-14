@@ -3,7 +3,7 @@ import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, Modifier
 
 import { $AppWeapon } from "@Src/services";
 import Array_ from "@Src/utils/array-utils";
-import { getWeaponBuffDescription } from "@Src/utils/description-parsers";
+import { getWeaponBuffDesc } from "@Src/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
@@ -36,7 +36,7 @@ function renderWeaponModifiers({
         mutable={mutable}
         checked={ctrl.activated}
         heading={`${data.name} R${weapon.refi} ${fromSelf ? "(self)" : ""}`}
-        description={getWeaponBuffDescription(descriptions, buff, weapon.refi)}
+        description={getWeaponBuffDesc(descriptions, buff, weapon.refi)}
         inputs={ctrl.inputs}
         inputConfigs={buff.inputConfigs}
         {...getHanlders?.({ ctrl, ctrlIndex, ctrls })}

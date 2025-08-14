@@ -6,11 +6,11 @@ import {
   type ToggleTeammateModCtrlPath,
 } from "@Store/calculator-slice";
 import { TeammateDebuffsView } from "@Src/components";
-import { useTeamData } from "../ContextProvider";
+import { useCalcTeamData } from "../ContextProvider";
 
 export default function DebuffTeammates(props: { teammates: Teammates }) {
   const dispatch = useDispatch();
-  const teamData = useTeamData();
+  const teamData = useCalcTeamData();
 
   return (
     <TeammateDebuffsView

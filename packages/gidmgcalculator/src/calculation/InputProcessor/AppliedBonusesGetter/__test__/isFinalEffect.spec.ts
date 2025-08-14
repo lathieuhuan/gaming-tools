@@ -7,7 +7,7 @@ class Tester extends AppliedBonusesGetter {}
 let tester: Tester;
 
 beforeEach(() => {
-  tester = new Tester(true, __genMutableTeamDataTester());
+  tester = new Tester(__genMutableTeamDataTester());
 });
 
 test("isFinalEffect", () => {

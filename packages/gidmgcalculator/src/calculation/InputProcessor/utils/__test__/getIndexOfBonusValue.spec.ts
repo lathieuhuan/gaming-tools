@@ -9,7 +9,7 @@ describe("getIndexOfEffectValue", () => {
   let inputs: number[] = [];
 
   function __expect(value: number) {
-    expect(getIndexOfEffectValue(optIndex, teamData, inputs)).toBe(value);
+    expect(getIndexOfEffectValue(optIndex, teamData, inputs, true)).toBe(value);
   }
 
   beforeEach(() => {
