@@ -5,7 +5,7 @@ import { Button, clsx, LoadingSpin, Popover, useClickOutside } from "rond";
 import { IS_DEV_ENV } from "@Src/constants";
 import { $AppData } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectIsReadyApp, updateUI, type AppScreen, type UIState } from "@Store/ui-slice";
+import { selectIsAppReady, updateUI, type AppScreen, type UIState } from "@Store/ui-slice";
 
 // Components
 import { NavTabs, type NavTabsProps } from "./NavTabs";
@@ -22,7 +22,7 @@ type OptionProps = {
 
 export function NavBar() {
   const dispatch = useDispatch();
-  const isReadyApp = useSelector(selectIsReadyApp);
+  const isAppReady = useSelector(selectIsAppReady);
   const [menuDropped, setMenuDropped] = useState(false);
   const [refetching, setRefetching] = useState(false);
 
@@ -53,19 +53,19 @@ export function NavBar() {
       label: "Settings",
       icon: <FaCog />,
       modalType: "SETTINGS",
-      disabled: !isReadyApp,
+      disabled: !isAppReady,
     },
     DOWNLOAD: {
       label: "Download",
       icon: <FaDownload />,
       modalType: "DOWNLOAD",
-      disabled: !isReadyApp,
+      disabled: !isAppReady,
     },
     UPLOAD: {
       label: "Upload",
       icon: <FaUpload />,
       modalType: "UPLOAD",
-      disabled: !isReadyApp,
+      disabled: !isAppReady,
     },
   } satisfies Record<string, OptionProps>;
 
@@ -117,7 +117,7 @@ export function NavBar() {
           screens={screens}
           activeClassName="bg-surface-1"
           idleClassName="bg-surface-3 glow-on-hover"
-          ready={isReadyApp}
+          ready={isAppReady}
           onClickTab={onClickTab}
         />
       </div>
@@ -152,7 +152,7 @@ export function NavBar() {
                 className="px-4 py-2 xm:hidden font-bold"
                 screens={screens}
                 activeClassName="border-l-4 border-secondary-1 bg-surface-1 text-light-default"
-                ready={isReadyApp}
+                ready={isAppReady}
                 onClickTab={(tab) => {
                   onClickTab(tab);
                   closeMenu();

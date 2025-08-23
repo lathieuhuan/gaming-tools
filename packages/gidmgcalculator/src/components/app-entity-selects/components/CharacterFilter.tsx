@@ -93,6 +93,7 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
         >
           <WeaponTypeSelect
             {...weaponTypeSelectProps}
+            className="px-1"
             imageProps={{
               defaultFallback: { cls: "p-1.5" },
             }}
