@@ -79,10 +79,13 @@ export class CalcItemCalculator {
       bonusMult = toMult(bonusMult);
       baseMult = toMult(baseMult);
 
-      // CALCULATE REACTION MULTIPLIER
+      // ELEVATE MULTIPLIER
+      const elvMult = toMult(getBonus("elvMult_"));
+
+      // REACTION MULTIPLIER
       const rxnMult = this.getRxnMult(attElmt, reaction);
 
-      // CALCULATE DEFENSE MULTIPLIER
+      // DEFENSE MULTIPLIER
       let defMult = 1;
       const charPart = this.characterBareLv + 100;
       const defReduction = 1 - resistances.def / 100;
@@ -90,18 +93,19 @@ export class CalcItemCalculator {
       defMult = 1 - getBonus("defIgn_") / 100;
       defMult = charPart / (defReduction * defMult * (this.targetLv + 100) + charPart);
 
-      // CALCULATE RESISTANCE MULTIPLIER
+      // RESISTANCE MULTIPLIER
       const resMult = resistances[attElmt];
 
-      // CALCULATE CRITS
+      // CRITS
       const cRate_ = this.limitCRate(getBonus("cRate_") + totalAttr.cRate_) / 100;
       const cDmg_ = (getBonus("cDmg_") + totalAttr.cDmg_) / 100;
 
-      base = Array_.applyToItem(base, (n) => (n * baseMult + flat) * bonusMult * rxnMult * defMult * resMult);
+      base = Array_.applyToItem(base, (n) => (n * baseMult + flat) * bonusMult * elvMult * rxnMult * defMult * resMult);
 
       record.baseMult = baseMult;
       record.totalFlat = flat;
       record.bonusMult = bonusMult;
+      record.elvMult = elvMult;
       record.rxnMult = rxnMult;
       record.defMult = defMult;
       record.resMult = resMult;
@@ -154,13 +158,13 @@ export class CalcItemCalculator {
       const bonusMult = toMult(getBonus("pct_"));
       const flat = getBonus("flat");
 
-      // CALCULATE REACTION MULTIPLIER
+      // REACTION MULTIPLIER
       const rxnMult = 1;
 
-      // CALCULATE RESISTANCE MULTIPLIER
+      // RESISTANCE MULTIPLIER
       const resMult = resistances[attElmt];
 
-      // CALCULATE CRITS
+      // CRITS
       const cRate_ = this.limitCRate(getBonus("cRate_") + totalAttr.cRate_) / 100;
       const cDmg_ = (getBonus("cDmg_") + totalAttr.cDmg_) / 100;
 
