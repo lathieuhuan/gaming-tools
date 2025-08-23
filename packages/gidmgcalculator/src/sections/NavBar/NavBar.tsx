@@ -3,6 +3,7 @@ import { FaBars, FaCog, FaDonate, FaDownload, FaInfoCircle, FaQuestionCircle, Fa
 import { Button, clsx, LoadingSpin, Popover, useClickOutside } from "rond";
 
 import { IS_DEV_ENV } from "@Src/constants";
+import { useRouter } from "@Src/features";
 import { $AppData } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectIsAppReady, updateUI, type AppScreen, type UIState } from "@Store/ui-slice";
@@ -22,9 +23,10 @@ type OptionProps = {
 
 export function NavBar() {
   const dispatch = useDispatch();
-  const isAppReady = useSelector(selectIsAppReady);
+  const isReadyApp = useSelector(selectIsAppReady);
   const [menuDropped, setMenuDropped] = useState(false);
   const [refetching, setRefetching] = useState(false);
+  const router = useRouter();
 
   const closeMenu = () => setMenuDropped(false);
 
@@ -53,19 +55,19 @@ export function NavBar() {
       label: "Settings",
       icon: <FaCog />,
       modalType: "SETTINGS",
-      disabled: !isAppReady,
+      disabled: !isReadyApp,
     },
     DOWNLOAD: {
       label: "Download",
       icon: <FaDownload />,
       modalType: "DOWNLOAD",
-      disabled: !isAppReady,
+      disabled: !isReadyApp,
     },
     UPLOAD: {
       label: "Upload",
       icon: <FaUpload />,
       modalType: "UPLOAD",
-      disabled: !isAppReady,
+      disabled: !isReadyApp,
     },
   } satisfies Record<string, OptionProps>;
 
@@ -76,6 +78,7 @@ export function NavBar() {
 
   const onClickTab = (tab: AppScreen) => {
     dispatch(updateUI({ atScreen: tab }));
+    router.navigate("/");
   };
 
   const onClickRefetch = async () => {
@@ -117,7 +120,7 @@ export function NavBar() {
           screens={screens}
           activeClassName="bg-surface-1"
           idleClassName="bg-surface-3 glow-on-hover"
-          ready={isAppReady}
+          ready={isReadyApp}
           onClickTab={onClickTab}
         />
       </div>
@@ -152,7 +155,7 @@ export function NavBar() {
                 className="px-4 py-2 xm:hidden font-bold"
                 screens={screens}
                 activeClassName="border-l-4 border-secondary-1 bg-surface-1 text-light-default"
-                ready={isAppReady}
+                ready={isReadyApp}
                 onClickTab={(tab) => {
                   onClickTab(tab);
                   closeMenu();

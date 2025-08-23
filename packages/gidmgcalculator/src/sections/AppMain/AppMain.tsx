@@ -1,13 +1,15 @@
 import { SwitchNode, useScreenWatcher } from "rond";
 
+import { useRouter } from "@Src/features/BrowserRouter";
 import { useSelector } from "@Store/hooks";
 
 // Screens
 import { CalculatorLarge, CalculatorSmall } from "@Src/screens/Calculator";
-import { MyCharactersLarge, MyCharactersSmall } from "@Src/screens/MyCharacters";
-import MyWeapons from "@Src/screens/MyWeapons";
+import EnkaImport from "@Src/screens/EnkaImport";
 import MyArtifacts from "@Src/screens/MyArtifacts";
+import { MyCharactersLarge, MyCharactersSmall } from "@Src/screens/MyCharacters";
 import MySetups from "@Src/screens/MySetups";
+import MyWeapons from "@Src/screens/MyWeapons";
 
 export function AppMain() {
   const screenWatcher = useScreenWatcher();
@@ -16,6 +18,15 @@ export function AppMain() {
 
 function AppMainLarge() {
   const atScreen = useSelector((state) => state.ui.atScreen);
+  const router = useRouter<{ uid?: string }>();
+
+  if (router.pathname === "/enka") {
+    return (
+      <div className="h-full flex-center">
+        <EnkaImport uid={router.searchParams?.uid} />
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex-center relative">
