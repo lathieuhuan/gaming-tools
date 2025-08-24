@@ -78,7 +78,7 @@ export function ItemThumbnail(props: ItemThumbProps) {
         <GenshinImage
           className={props.imgCls}
           src={item.icon}
-          fallbackCls="p-3"
+          fallbackCls={compact ? "p-2" : "p-3"}
           imgType={item.refi ? "weapon" : "artifact"}
         />
       </div>
@@ -86,7 +86,7 @@ export function ItemThumbnail(props: ItemThumbProps) {
       {lvText ? (
         compact ? (
           <div className="flex-center bg-black/60 w-full absolute bottom-0">
-            <p className="font-bold text-light-default leading-5">{lvText}</p>
+            <p className="font-bold text-light-default text-sm">{lvText}</p>
           </div>
         ) : (
           <div className="flex-center bg-light-default">

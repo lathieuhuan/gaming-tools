@@ -116,7 +116,7 @@ function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImport
               })
             );
 
-            if (manageInfo.importRoute === "URL") {
+            if (["URL", "ENKA"].includes(manageInfo.importRoute || "")) {
               notification.success({
                 content: "Successfully import the setup!",
                 duration: 0,

@@ -1,17 +1,26 @@
 import { SwitchNode, useScreenWatcher } from "rond";
 
+import { useRouter } from "@Src/features/BrowserRouter";
 import { useSelector } from "@Store/hooks";
 
 // Screens
 import { CalculatorLarge, CalculatorSmall } from "@Src/screens/Calculator";
-import { MyCharactersLarge, MyCharactersSmall } from "@Src/screens/MyCharacters";
-import MyWeapons from "@Src/screens/MyWeapons";
+import EnkaImport from "@Src/screens/EnkaImport";
 import MyArtifacts from "@Src/screens/MyArtifacts";
+import { MyCharactersLarge, MyCharactersSmall } from "@Src/screens/MyCharacters";
 import MySetups from "@Src/screens/MySetups";
+import MyWeapons from "@Src/screens/MyWeapons";
 
 export function AppMain() {
   const screenWatcher = useScreenWatcher();
-  return screenWatcher.isFromSize("sm") ? <AppMainLarge /> : <AppMainSmall />;
+  const router = useRouter();
+  const isMobile = !screenWatcher.isFromSize("sm");
+
+  if (router.pathname === "/enka") {
+    return <EnkaImport isMobile={isMobile} />;
+  }
+
+  return isMobile ? <AppMainSmall /> : <AppMainLarge />;
 }
 
 function AppMainLarge() {
