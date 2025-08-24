@@ -116,7 +116,7 @@ function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImport
               })
             );
 
-            if (manageInfo.importRoute === "URL") {
+            if (["URL", "ENKA"].includes(manageInfo.importRoute || "")) {
               notification.success({
                 content: "Successfully import the setup!",
                 duration: 0,
@@ -208,9 +208,9 @@ function SetupTransshipmentPort() {
   const importCode = useRef(getSearchParam("importCode"));
   const isAppReady = useSelector(selectIsAppReady);
 
-  useEffect(() => {
-    window.history.replaceState(null, "", window.location.origin);
-  }, []);
+  // useEffect(() => {
+  //   window.history.replaceState(null, "", window.location.origin);
+  // }, []);
 
   useEffect(() => {
     if (isAppReady) {
@@ -231,7 +231,7 @@ function SetupTransshipmentPort() {
         message.error(DECODE_ERROR_MSG[result.error]);
       }
     } else {
-      window.history.replaceState(null, "", window.location.origin);
+      // window.history.replaceState(null, "", window.location.origin);
     }
   }, [isAppReady]);
 

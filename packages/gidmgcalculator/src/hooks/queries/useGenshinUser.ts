@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
+import { ARTIFACT_TYPES } from "@Calculation";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import { ConvertedArtifact, ConvertedCharacter, ConvertedWeapon } from "@Src/services/app-data";
+import { $Enka } from "@Src/services/enka";
 import Entity_ from "@Src/utils/entity-utils";
 // import { userMock } from "./mock";
-import { ARTIFACT_TYPES } from "@Calculation";
-import { $Enka } from "@Src/services/enka";
 
 export type GenshinUserBuild = {
   name?: string;

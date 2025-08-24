@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { $AppSettings } from "@Src/services";
 import { setupStore } from "@Src/store";
@@ -14,13 +14,10 @@ interface DynamicStoreProviderProps {
 }
 export function DynamicStoreProvider(props: DynamicStoreProviderProps) {
   const [config, setConfig] = useState(setupStore({ persistingUserData: $AppSettings.get("persistingUserData") }));
-  const store = useRef<StoreConfig["store"]>();
-
-  store.current = config.store;
 
   const changeConfig: UpdateStoreConfig = useCallback(({ persistingUserData }) => {
     const newConfig = setupStore({ persistingUserData });
-    const oldStoreState = store.current?.getState();
+    const oldStoreState = config.store.getState();
 
     setConfig(newConfig);
 
@@ -39,7 +36,7 @@ export function DynamicStoreProvider(props: DynamicStoreProviderProps) {
     }
 
     newConfig.store.dispatch(updateUI({ ready: true }));
-  }, []);
+  }, [config]);
 
   return (
     <DynamicStoreControlContext.Provider value={changeConfig}>

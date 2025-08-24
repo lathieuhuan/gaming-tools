@@ -40,11 +40,11 @@ const screens: ScreenOption[] = [
     value: "CALCULATOR",
     path: "/",
   },
-  {
-    label: "Enka Import",
-    value: "ENKA_IMPORT",
-    path: "/enka",
-  },
+  // {
+  //   label: "Enka Import",
+  //   value: "ENKA_IMPORT",
+  //   path: "/enka",
+  // },
 ];
 
 type OptionProps = {
