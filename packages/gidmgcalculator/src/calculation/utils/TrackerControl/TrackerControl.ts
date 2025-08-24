@@ -41,6 +41,7 @@ export type CalcItemRecord = {
   coefficient?: number;
   baseMult?: number;
   totalFlat?: number;
+  elvMult?: number;
   bonusMult: number;
   rxnMult?: number;
   defMult?: number;

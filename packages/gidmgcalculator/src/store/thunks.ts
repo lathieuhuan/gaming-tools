@@ -62,26 +62,15 @@ export function initNewSessionWithCharacter(character: CharacterForInit): AppThu
       weaponType: appCharacter.weaponType,
       seedID: ID + 1,
     });
-    const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, data.character.name);
 
     dispatch(
       checkBeforeInitNewSession({
         ID,
-        calcSetup: {
+        calcSetup: Setup_.createCalcSetup({
           char: data.character,
-          selfBuffCtrls: selfBuffCtrls,
-          selfDebuffCtrls: selfDebuffCtrls,
           weapon: data.weapon,
-          wpBuffCtrls: data.wpBuffCtrls,
           artifacts: data.artifacts,
-          artBuffCtrls: data.artBuffCtrls,
-          artDebuffCtrls: Modifier_.createArtifactDebuffCtrls(),
-          party: [null, null, null],
-          elmtModCtrls: Modifier_.createElmtModCtrls(),
-          customBuffCtrls: [],
-          customDebuffCtrls: [],
-          customInfusion: { element: "phys" },
-        },
+        }),
         target: Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
       })
     );

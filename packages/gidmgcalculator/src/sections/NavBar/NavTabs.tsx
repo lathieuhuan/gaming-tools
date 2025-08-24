@@ -2,18 +2,21 @@ import { clsx } from "rond";
 import type { AppScreen } from "@Store/ui-slice";
 import { useSelector } from "@Store/hooks";
 
+export type ScreenOption = {
+  label: string;
+  value: AppScreen;
+  path: string;
+};
+
 export interface NavTabsProps {
   ready?: boolean;
   className?: string;
-  screens: Array<{
-    label: string;
-    value: AppScreen;
-  }>;
+  screens: ScreenOption[];
   activeClassName?: string;
   idleClassName?: string;
-  onClickTab?: (tab: AppScreen) => void;
+  onSelect?: (option: ScreenOption) => void;
 }
-export function NavTabs({ ready, className = "", screens, activeClassName, idleClassName, onClickTab }: NavTabsProps) {
+export function NavTabs({ ready, className = "", screens, activeClassName, idleClassName, onSelect }: NavTabsProps) {
   const atScreen = useSelector((state) => state.ui.atScreen);
 
   return (
@@ -27,7 +30,7 @@ export function NavTabs({ ready, className = "", screens, activeClassName, idleC
             className
           )}
           disabled={!ready}
-          onClick={() => onClickTab?.(screen.value)}
+          onClick={() => onSelect?.(screen)}
         >
           {screen.label}
         </button>

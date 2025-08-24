@@ -6,7 +6,7 @@ export const ARTIFACT_TYPES = ["flower", "plume", "sands", "goblet", "circlet"] 
 
 export const TALENT_TYPES = ["NAs", "ES", "EB", "altSprint"] as const;
 
-export const BONUS_KEYS = ["pct_", "flat", "cRate_", "cDmg_", "mult_", "defIgn_", "multPlus_"] as const;
+export const BONUS_KEYS = ["pct_", "flat", "cRate_", "cDmg_", "mult_", "defIgn_", "multPlus_", "elvMult_"] as const;
 
 /** ========== ATTACKS ========== */
 

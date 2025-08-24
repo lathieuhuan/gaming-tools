@@ -3,7 +3,7 @@ import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 
 import { selectCharacter, updateCharacter } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectIsReadyApp, selectTraveler } from "@Store/ui-slice";
+import { selectIsAppReady, selectTraveler } from "@Store/ui-slice";
 import { useCalcModalCtrl, useTeamData } from "../ContextProvider";
 
 // Component
@@ -58,7 +58,7 @@ interface CharacterOverviewProps {
   touched: boolean;
 }
 export function CharacterOverview({ touched }: CharacterOverviewProps) {
-  const isReadyApp = useSelector(selectIsReadyApp);
+  const isAppReady = useSelector(selectIsAppReady);
   const modalCtrl = useCalcModalCtrl();
 
   return (
@@ -67,11 +67,11 @@ export function CharacterOverview({ touched }: CharacterOverviewProps) {
         <CharacterOverviewCore onClickSwitchCharacter={modalCtrl.requestSwitchCharacter} />
       ) : (
         <div className="w-full flex flex-col items-center space-y-2">
-          <Button variant="primary" disabled={!isReadyApp} onClick={modalCtrl.requestSwitchCharacter}>
+          <Button variant="primary" disabled={!isAppReady} onClick={modalCtrl.requestSwitchCharacter}>
             Select a character
           </Button>
           <p>or</p>
-          <Button disabled={!isReadyApp} onClick={modalCtrl.requestImportSetup}>
+          <Button disabled={!isAppReady} onClick={modalCtrl.requestImportSetup}>
             Import a setup
           </Button>
         </div>

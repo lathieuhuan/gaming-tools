@@ -1,8 +1,9 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { ARTIFACT_TYPES, WeaponType } from "@Calculation";
+import { ARTIFACT_TYPES } from "@Calculation";
 
 import type { UserArtifact, UserCharacter, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
 import type {
+  AddCharacterAction,
   AddSetupToComplexAction,
   AddUserDatabaseAction,
   CombineSetupsAction,
@@ -19,7 +20,7 @@ import type {
   UpdateUserWeaponAction,
 } from "./userdb-slice.types";
 
-import { $AppArtifact, $AppWeapon } from "@Src/services";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import Setup_ from "@Src/utils/setup-utils";
 import Entity_ from "@Src/utils/entity-utils";
 import Array_ from "@Src/utils/array-utils";
@@ -69,19 +70,30 @@ export const userdbSlice = createSlice({
       }
     },
     // CHARACTER
-    addCharacter: (state, action: PayloadAction<{ name: string; weaponType: WeaponType }>) => {
-      const { name, weaponType } = action.payload;
-      const weaponID = Date.now();
+    /** Overwrite if character already exists */
+    addCharacter: (state, action: AddCharacterAction) => {
+      const { name, weaponID, artifactIDs = [null, null, null, null, null], ...defaultValues } = action.payload;
+      const foundIndex = state.userChars.findIndex((char) => char.name === name);
+      const newChar = {
+        ...Entity_.createCharacter(name, defaultValues),
+        weaponID: weaponID || Date.now(),
+        artifactIDs,
+      };
 
-      state.userChars.push({
-        ...Entity_.createCharacter(name),
-        weaponID,
-        artifactIDs: [null, null, null, null, null],
-      });
-      state.userWps.unshift({
-        owner: name,
-        ...Entity_.createWeapon({ type: weaponType }, weaponID),
-      });
+      if (foundIndex !== -1) {
+        state.userChars[foundIndex] = newChar;
+      } else {
+        state.userChars.push(newChar);
+      }
+
+      if (!weaponID) {
+        const weaponType = $AppCharacter.get(name)?.weaponType;
+
+        state.userWps.unshift({
+          owner: name,
+          ...Entity_.createWeapon({ type: weaponType }),
+        });
+      }
     },
     viewCharacter: (state, action: PayloadAction<string>) => {
       state.chosenChar = action.payload;
@@ -275,8 +287,8 @@ export const userdbSlice = createSlice({
       }
     },
     // ARTIFACT
-    addUserArtifact: (state, action: PayloadAction<UserArtifact>) => {
-      state.userArts.unshift(action.payload);
+    addUserArtifact: (state, action: PayloadAction<UserArtifact | UserArtifact[]>) => {
+      state.userArts.unshift(...Array_.toArray(action.payload));
     },
     updateUserArtifact: (state, action: UpdateUserArtifactAction) => {
       const { ID, ...newInfo } = action.payload;

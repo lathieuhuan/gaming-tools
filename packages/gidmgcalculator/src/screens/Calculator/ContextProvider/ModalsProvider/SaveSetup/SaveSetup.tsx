@@ -73,7 +73,7 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
     <>
       <div className="flex flex-col">
         <p className="mb-2 text-hint-color">
-          {snapshot.isNewSetup ? "Do you what to save this setup as" : "Do you what to update this setup"}
+          {snapshot.isNewSetup ? "Do you want to save this setup as" : "Do you want to update this setup"}
         </p>
         <Input
           className="text-center font-semibold"

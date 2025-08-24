@@ -79,6 +79,12 @@ export function CalcItemTracker({
   };
 
   const renderFirstRecordParts = (record: CalcItemRecord) => {
+    const baseMultRender = renderPart({
+      label: "Base DMG Mult.",
+      value: record.baseMult,
+      nullValue: 1,
+      processor: (value) => `${round(value * 100, 2)}%`,
+    });
     const flatRender = renderPart({
       sign: "+",
       label: "Flat Bonus",
@@ -90,9 +96,9 @@ export function CalcItemTracker({
       value: record.bonusMult,
       processor: (value) => `${round(value * 100, 2)}%`,
     });
-    const baseMultRender = renderPart({
-      label: "Base DMG Mult.",
-      value: record.baseMult,
+    const elvMultRender = renderPart({
+      label: "Elevate Mult.",
+      value: record.elvMult,
       nullValue: 1,
       processor: (value) => `${round(value * 100, 2)}%`,
     });
@@ -128,6 +134,7 @@ export function CalcItemTracker({
         {flatRender}
         {")"}
         {bonusMultRender}
+        {elvMultRender}
       </>
     );
   };

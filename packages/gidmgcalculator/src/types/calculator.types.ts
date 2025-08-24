@@ -142,7 +142,7 @@ export type CalcSetup = {
 };
 
 export type SetupImportInfo = {
-  importRoute?: "URL" | "SETUP_MANAGER";
+  importRoute?: "URL" | "SETUP_MANAGER" | "ENKA";
   ID?: number;
   name?: string;
   type?: "original" | "combined";

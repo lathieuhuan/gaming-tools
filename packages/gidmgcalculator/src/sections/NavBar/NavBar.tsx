@@ -3,15 +3,49 @@ import { FaBars, FaCog, FaDonate, FaDownload, FaInfoCircle, FaQuestionCircle, Fa
 import { Button, clsx, LoadingSpin, Popover, useClickOutside } from "rond";
 
 import { IS_DEV_ENV } from "@Src/constants";
+import { useRouter } from "@Src/features";
 import { $AppData } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectIsReadyApp, updateUI, type AppScreen, type UIState } from "@Store/ui-slice";
+import { selectIsAppReady, updateUI, type UIState } from "@Store/ui-slice";
 
 // Components
-import { NavTabs, type NavTabsProps } from "./NavTabs";
+import { NavTabs, type ScreenOption } from "./NavTabs";
 import { QuickButtons } from "./QuickButtons";
 
 const buttonCls = "w-8 h-8 flex-center";
+
+const screens: ScreenOption[] = [
+  {
+    label: "My Characters",
+    value: "MY_CHARACTERS",
+    path: "/",
+  },
+  {
+    label: "My Weapons",
+    value: "MY_WEAPONS",
+    path: "/",
+  },
+  {
+    label: "My Artifacts",
+    value: "MY_ARTIFACTS",
+    path: "/",
+  },
+  {
+    label: "My Setups",
+    value: "MY_SETUPS",
+    path: "/",
+  },
+  {
+    label: "Calculator",
+    value: "CALCULATOR",
+    path: "/",
+  },
+  // {
+  //   label: "Enka Import",
+  //   value: "ENKA_IMPORT",
+  //   path: "/enka",
+  // },
+];
 
 type OptionProps = {
   label: string;
@@ -22,21 +56,14 @@ type OptionProps = {
 
 export function NavBar() {
   const dispatch = useDispatch();
-  const isReadyApp = useSelector(selectIsReadyApp);
+  const isReadyApp = useSelector(selectIsAppReady);
   const [menuDropped, setMenuDropped] = useState(false);
   const [refetching, setRefetching] = useState(false);
+  const router = useRouter();
 
   const closeMenu = () => setMenuDropped(false);
 
   const menuRef = useClickOutside<HTMLDivElement>(closeMenu);
-
-  const screens: NavTabsProps["screens"] = [
-    { label: "My Characters", value: "MY_CHARACTERS" },
-    { label: "My Weapons", value: "MY_WEAPONS" },
-    { label: "My Artifacts", value: "MY_ARTIFACTS" },
-    { label: "My Setups", value: "MY_SETUPS" },
-    { label: "Calculator", value: "CALCULATOR" },
-  ];
 
   const option = {
     INTRO: {
@@ -74,8 +101,9 @@ export function NavBar() {
     closeMenu();
   };
 
-  const onClickTab = (tab: AppScreen) => {
-    dispatch(updateUI({ atScreen: tab }));
+  const handleSelectTab = (option: ScreenOption) => {
+    dispatch(updateUI({ atScreen: option.value }));
+    router.navigate(option.path);
   };
 
   const onClickRefetch = async () => {
@@ -118,7 +146,7 @@ export function NavBar() {
           activeClassName="bg-surface-1"
           idleClassName="bg-surface-3 glow-on-hover"
           ready={isReadyApp}
-          onClickTab={onClickTab}
+          onSelect={handleSelectTab}
         />
       </div>
 
@@ -148,19 +176,19 @@ export function NavBar() {
             <div className="flex flex-col bg-light-default text-black rounded-md overflow-hidden shadow-common">
               {renderOption(option.INTRO)}
               {renderOption(option.GUIDE)}
+              {renderOption(option.SETTINGS)}
+              {renderOption(option.DOWNLOAD)}
+              {renderOption(option.UPLOAD)}
               <NavTabs
                 className="px-4 py-2 xm:hidden font-bold"
                 screens={screens}
                 activeClassName="border-l-4 border-secondary-1 bg-surface-1 text-light-default"
                 ready={isReadyApp}
-                onClickTab={(tab) => {
-                  onClickTab(tab);
+                onSelect={(option) => {
+                  handleSelectTab(option);
                   closeMenu();
                 }}
               />
-              {renderOption(option.SETTINGS)}
-              {renderOption(option.DOWNLOAD)}
-              {renderOption(option.UPLOAD)}
             </div>
           </Popover>
         </div>

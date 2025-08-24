@@ -14,7 +14,7 @@ import { FileUpload } from "./FileUpload";
 // const MAX_USER_WEAPONS = 3;
 // const MAX_USER_ARTIFACTS = 3;
 
-function UploadCore(props: ModalControl) {
+function UploadCore({ active, onClose }: ModalControl) {
   const dispatch = useDispatch();
   const uploadSteps = useRef<UploadStep[]>(["SELECT_OPTION"]);
   const uploadedData = useRef<UploadedData>();
@@ -26,8 +26,8 @@ function UploadCore(props: ModalControl) {
 
   const currentStep = uploadSteps.current[stepNo];
   const { weapons = [], artifacts = [] } = uploadedData.current || {};
-  const selectingWeapons = props.active && currentStep === "CHECK_WEAPONS";
-  const selectingArtifacts = props.active && currentStep === "CHECK_ARTIFACTS";
+  const selectingWeapons = active && currentStep === "CHECK_WEAPONS";
+  const selectingArtifacts = active && currentStep === "CHECK_ARTIFACTS";
   let filteredWeapons: UserWeapon[] = [];
   let filteredArtifacts: UserArtifact[] = [];
 
@@ -42,7 +42,7 @@ function UploadCore(props: ModalControl) {
     setStepNo(0);
   }, []);
 
-  const onClose = (atStep: UploadStep) => () => {
+  const handleClose = (atStep: UploadStep) => () => {
     if (atStep === currentStep) {
       setStepNo(-1);
 
@@ -50,7 +50,7 @@ function UploadCore(props: ModalControl) {
         notification.destroy(notiId.current);
       }
 
-      setTimeout(props.onClose, 150);
+      setTimeout(onClose, 150);
     }
   };
 
@@ -92,13 +92,13 @@ function UploadCore(props: ModalControl) {
       })
     );
 
-    onClose(currentStep)();
+    handleClose(currentStep)();
   };
 
   return (
     <>
       <FileUpload
-        active={props.active && currentStep === "SELECT_OPTION"}
+        active={active && currentStep === "SELECT_OPTION"}
         onSuccessUploadFile={(data) => {
           uploadedData.current = data;
 
@@ -111,29 +111,29 @@ function UploadCore(props: ModalControl) {
 
           toNextStep();
         }}
-        onClose={onClose("SELECT_OPTION")}
+        onClose={handleClose("SELECT_OPTION")}
       />
       <ItemMultiSelect
         title="Weapons"
-        active={props.active && currentStep === "CHECK_WEAPONS"}
+        active={active && currentStep === "CHECK_WEAPONS"}
         items={filteredWeapons}
         required={weapons.length - MAX_USER_WEAPONS}
         onConfirm={(data) => {
           removedWeaponIDs.current = data;
           toNextStep();
         }}
-        onClose={onClose("CHECK_WEAPONS")}
+        onClose={handleClose("CHECK_WEAPONS")}
       />
       <ItemMultiSelect
         title="Artifacts"
-        active={props.active && currentStep === "CHECK_ARTIFACTS"}
+        active={active && currentStep === "CHECK_ARTIFACTS"}
         items={filteredArtifacts}
         required={artifacts.length - MAX_USER_ARTIFACTS}
         onConfirm={(data) => {
           removedArtifactIDs.current = data;
           toNextStep();
         }}
-        onClose={onClose("CHECK_ARTIFACTS")}
+        onClose={handleClose("CHECK_ARTIFACTS")}
       />
     </>
   );
