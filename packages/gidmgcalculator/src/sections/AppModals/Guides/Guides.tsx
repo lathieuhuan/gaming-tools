@@ -20,8 +20,8 @@ export function Guides(props: ModalControl) {
                       <li>{markYellow("NA")}: Normal Attacks</li>
                       <li>{markYellow("ES")}: Elemental Skill</li>
                       <li>{markYellow("EB")}: Elemental Burst</li>
-                      <li>{markYellow("A")}: Ascension, e.g. A4 is talent unlocked at Acsension 4</li>
-                      <li>{markYellow("C")}: Constellation, e.g. C1 is skill unlocked at Constellation 1</li>
+                      <li>{markYellow("A")}: Ascension, e.g. A4 is the talent unlocked at Acsension 4</li>
+                      <li>{markYellow("C")}: Constellation, e.g. C1 is the skill unlocked at Constellation 1</li>
                     </ul>
                   </div>
                   <p>

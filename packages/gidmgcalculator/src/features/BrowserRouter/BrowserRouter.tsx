@@ -29,15 +29,21 @@ export function BrowserRouter({ children }: BrowserRouterProps) {
     const [pathname, params] = path.split("?");
     const searchParams = params ? searchStringToObject(params) : undefined;
 
+    const navigate = (path: string, searchParams?: SearchParams) => {
+      const search = searchParams ? `?${objectToSearchString(searchParams)}` : "";
+      const newPath = path + search;
+
+      setPath(newPath);
+      window.history.pushState(null, "", window.location.origin + newPath);
+    };
+
     return {
       pathname,
       searchParams,
-      navigate: (path: string, searchParams?: SearchParams) => {
-        const search = searchParams ? `?${objectToSearchString(searchParams)}` : "";
-        const newPath = path + search;
-
-        setPath(newPath);
-        window.history.pushState(null, "", window.location.origin + newPath);
+      navigate,
+      updateSearchParams: (params: SearchParams, replace?: boolean) => {
+        const newParams = replace ? params : { ...searchParams, ...params };
+        navigate(pathname, newParams);
       },
     };
   }, [path]);

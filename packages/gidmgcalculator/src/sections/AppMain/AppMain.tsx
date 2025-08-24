@@ -13,20 +13,18 @@ import MyWeapons from "@Src/screens/MyWeapons";
 
 export function AppMain() {
   const screenWatcher = useScreenWatcher();
-  return screenWatcher.isFromSize("sm") ? <AppMainLarge /> : <AppMainSmall />;
+  const router = useRouter();
+  const isMobile = !screenWatcher.isFromSize("sm");
+
+  if (router.pathname === "/enka") {
+    return <EnkaImport isMobile={isMobile} />;
+  }
+
+  return isMobile ? <AppMainSmall /> : <AppMainLarge />;
 }
 
 function AppMainLarge() {
   const atScreen = useSelector((state) => state.ui.atScreen);
-  const router = useRouter<{ uid?: string }>();
-
-  if (router.pathname === "/enka") {
-    return (
-      <div className="h-full flex-center">
-        <EnkaImport uid={router.searchParams?.uid} />
-      </div>
-    );
-  }
 
   return (
     <div className="h-full flex-center relative">

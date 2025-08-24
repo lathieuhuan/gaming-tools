@@ -1,13 +1,17 @@
 import { AppCharacter, TalentType } from "@Calculation";
 
-import type { Traveler } from "@Src/types";
+import type { Character, Traveler } from "@Src/types";
+import type { GOODCharacter } from "@Src/types/GOOD.types";
 import type { StandardResponse } from "../services.types";
 import type { DataControl, ServiceSubscriber } from "./app-data.types";
 
 import { BACKEND_URL, GENSHIN_DEV_URL } from "@Src/constants";
 import { BaseService } from "./BaseService";
+import { convertGOODLevel } from "./utils";
 
 type CharacterSubscriber = ServiceSubscriber<AppCharacter>;
+
+export type ConvertedCharacter = Character & { data: AppCharacter };
 
 export class AppCharacterService extends BaseService {
   private readonly NO_DESCRIPTION_MSG = "[Description missing]";
@@ -16,11 +20,9 @@ export class AppCharacterService extends BaseService {
   private traveler: Traveler = "LUMINE";
 
   populate(characters: AppCharacter[]) {
-    const props = this.getTravelerProps(this.traveler);
-
     this.characters = characters.map((character) => ({
       status: "fetched",
-      data: this.updateIfTraveler(character, props),
+      data: this.updateIfTraveler(character, this.traveler),
     }));
   }
 
@@ -222,8 +224,9 @@ export class AppCharacterService extends BaseService {
         };
   };
 
-  private updateIfTraveler = (data: AppCharacter, props: ReturnType<typeof this.getTravelerProps>) => {
+  private updateIfTraveler = (data: AppCharacter, traveler: Traveler) => {
     if (data && this.isTraveler(data)) {
+      const props = this.getTravelerProps(traveler);
       data.icon = props.icon;
       data.sideIcon = props.sideIcon;
 
@@ -234,10 +237,25 @@ export class AppCharacterService extends BaseService {
   };
 
   changeTraveler(traveler: Traveler) {
-    if (this.characters.length) {
-      const props = this.getTravelerProps(traveler);
-      this.characters.forEach((control) => this.updateIfTraveler(control.data, props));
-    }
+    this.characters.forEach((control) => this.updateIfTraveler(control.data, traveler));
     this.traveler = traveler;
+  }
+
+  convertGOOD(character: GOODCharacter): ConvertedCharacter | undefined {
+    const data = this.characters.find(({ data }) => data.name === character.key || data.GOOD === character.key)?.data;
+
+    if (!data) {
+      return undefined;
+    }
+
+    return {
+      name: data.name,
+      level: convertGOODLevel(character),
+      cons: character.constellation,
+      NAs: character.talent.auto,
+      ES: character.talent.skill,
+      EB: character.talent.burst,
+      data,
+    };
   }
 }

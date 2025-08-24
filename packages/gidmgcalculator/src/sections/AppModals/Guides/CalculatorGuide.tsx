@@ -72,7 +72,7 @@ export function CalculatorGuide() {
             </li>
             <li>
               For the modifier control to appear its source need to be present, e.g. you need to add a catalyst-wielding
-              teammate and give them Thrilling Tales of Dragon Slayers to have it buff control available.
+              teammate and give them Thrilling Tales of Dragon Slayers to have its buff control available.
             </li>
           </ListDisc>
         </li>
