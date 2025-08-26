@@ -26,6 +26,10 @@ export function randomInt(max: number, min = 0, step = 1) {
   return Math.floor((Math.random() * (max - min)) / step) * step + min;
 }
 
+export function genNumberSequence(count: number, startFrom = 1) {
+  return [...Array(count)].map((_, i) => i + startFrom);
+}
+
 export function genSequentialOptions(max: number | undefined = 0, startsAt0 = false, min = 1) {
   const result = Array.from({ length: max }, (_, i) => {
     const value = i + min;

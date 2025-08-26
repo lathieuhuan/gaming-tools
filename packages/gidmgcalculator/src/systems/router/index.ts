@@ -1,4 +1,4 @@
 export * from "./components";
-export type { RouteConfig, RouteElementProps, SearchParams } from "./types";
-export { objectToSearchString, searchStringToObject } from "./utils";
-
+export type { RootRouteConfig, RouteConfig, RouteElementProps, SearchParams } from "./types";
+// export { objectToSearchString, searchStringToObject } from "./utils";
+export { useRouter } from "./contexts/RouterContext";

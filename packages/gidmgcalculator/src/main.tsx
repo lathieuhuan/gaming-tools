@@ -3,11 +3,13 @@ import { Provider as StoreProvider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { ConfigProvider, ScreenSizeWatcher } from "rond";
 
-import App from "./App.tsx";
+import { route } from "./app/route";
 import { GenshinImage } from "./components";
 import { DynamicStoreProvider, OptimizeDeptProvider } from "./features";
-import "./assets/css/tailwind.css";
+import { RouterProvider } from "./systems/router";
+
 import "./assets/css/index.css";
+import "./assets/css/tailwind.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ScreenSizeWatcher>
@@ -17,7 +19,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <StoreProvider store={store}>
             <PersistGate loading={null} persistor={persistor}>
               <OptimizeDeptProvider>
-                <App />
+                <RouterProvider route={route} />
               </OptimizeDeptProvider>
             </PersistGate>
           </StoreProvider>

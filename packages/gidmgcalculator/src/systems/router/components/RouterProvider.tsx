@@ -2,19 +2,19 @@ import { useEffect, useMemo, useState } from "react";
 
 import { OutletRouteContext } from "../contexts/OutletRouteContext";
 import { getOutletRoute } from "../logic/getOutletRoute";
-import { RouteConfig } from "../types";
-import { checkIsChildSegments, toSegments } from "../utils";
-import { NotFound } from "./NotFound";
+import { RootRouteConfig, SearchParams } from "../types";
+import { checkIsChildSegments, objectToSearchString, searchStringToObject, toSegments } from "../utils";
+import { Router, RouterContext } from "../contexts/RouterContext";
 
 function getPath() {
   return window.location.pathname + window.location.search;
 }
 
 type RouterProviderProps = {
-  routes: RouteConfig[];
+  route: RootRouteConfig;
 };
 
-export function RouterProvider({ routes }: RouterProviderProps) {
+export function RouterProvider({ route }: RouterProviderProps) {
   const [path, setPath] = useState(getPath);
 
   useEffect(() => {
@@ -29,32 +29,59 @@ export function RouterProvider({ routes }: RouterProviderProps) {
     };
   }, []);
 
-  const { children, outlet } = useMemo(() => {
-    const segments = toSegments(path);
-    let root: RouteConfig | undefined;
-    let currentRoute: RouteConfig | undefined;
+  const { children, outlet, router } = useMemo(() => {
+    const [pathname, params] = path.split("?");
+    const segments = toSegments(pathname);
 
-    // TODO: check :segment in path
+    // Outlet
 
-    for (const route of routes) {
-      if (route.path === "/") {
-        root = route;
-      } else if (checkIsChildSegments(toSegments(route.path), segments)) {
-        currentRoute = route;
-        break;
-      }
+    let outlet = getOutletRoute(segments, route.children);
+
+    if (!outlet && route.defaultChild) {
+      outlet = {
+        config: {
+          ...route.defaultChild,
+          path: "/",
+        },
+        nextSegments: segments,
+      };
     }
 
-    currentRoute ||= root;
+    // Router
 
-    const children = currentRoute ? <currentRoute.element /> : <NotFound />;
-    const outlet = getOutletRoute(toSegments(path), currentRoute?.children);
+    const searchParams = params ? searchStringToObject(params) : undefined;
+
+    const navigate = (path: string, searchParams?: SearchParams) => {
+      const search = searchParams ? `?${objectToSearchString(searchParams)}` : "";
+      const newPath = path + search;
+
+      setPath(newPath);
+      window.history.pushState(null, "", window.location.origin + newPath);
+    };
+
+    const router: Router = {
+      pathname,
+      searchParams,
+      navigate,
+      updateSearchParams: (params: SearchParams, replace?: boolean) => {
+        const newParams = replace ? params : { ...searchParams, ...params };
+        navigate(pathname, newParams);
+      },
+      isRouteActive: (path: string) => {
+        return path === "/" ? pathname === "/" : checkIsChildSegments(toSegments(path), segments);
+      },
+    };
 
     return {
-      children,
+      children: <route.component />,
       outlet,
+      router,
     };
   }, [path]);
 
-  return <OutletRouteContext.Provider value={outlet}>{children}</OutletRouteContext.Provider>;
+  return (
+    <RouterContext.Provider value={router}>
+      <OutletRouteContext.Provider value={outlet}>{children}</OutletRouteContext.Provider>
+    </RouterContext.Provider>
+  );
 }

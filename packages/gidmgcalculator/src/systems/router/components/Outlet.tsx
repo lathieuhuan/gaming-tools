@@ -10,8 +10,19 @@ export function Outlet() {
     if (!route) {
       return null;
     }
-    const children = <route.config.element />;
-    const outlet = getOutletRoute(route.nextSegments, route.config.children);
+    const { config, nextSegments } = route;
+    const children = <config.component />;
+    let outlet = getOutletRoute(nextSegments, config.children);
+
+    if (!outlet && config.defaultChild) {
+      outlet = {
+        config: {
+          ...config.defaultChild,
+          path: "/",
+        },
+        nextSegments,
+      };
+    }
 
     return {
       children,

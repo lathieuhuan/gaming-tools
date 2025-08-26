@@ -1,8 +1,8 @@
 import { useRef } from "react";
 import { clsx } from "rond";
 
-import { useRouter } from "@Src/features";
 import { useGenshinUser } from "@Src/hooks/queries/useGenshinUser";
+import { useRouter } from "@Src/systems/router";
 import { useSelector } from "@Store/hooks";
 import { selectIsAppReady } from "@Store/ui-slice";
 import { SearchParams } from "./types";

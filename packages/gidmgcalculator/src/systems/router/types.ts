@@ -8,6 +8,9 @@ export type RouteElementProps = { searchParams?: SearchParams };
 
 export type RouteConfig = {
   path: string;
-  element: ComponentType<RouteElementProps>;
+  component: ComponentType;
+  defaultChild?: Omit<RouteConfig, "path">;
   children?: RouteConfig[];
 };
+
+export type RootRouteConfig = Omit<RouteConfig, "path">;
