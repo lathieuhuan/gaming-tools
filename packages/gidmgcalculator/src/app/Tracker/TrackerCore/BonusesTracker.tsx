@@ -3,11 +3,12 @@ import { ATTACK_ELEMENTS, type AttackBonuses, type AttackBonusKey } from "@Calcu
 
 import { useTranslation } from "@Src/hooks";
 import { suffixOf } from "@Src/utils";
-import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
+import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./_utils";
 
-interface BonusesTrackerProps {
+type BonusesTrackerProps = {
   attkBonuses: AttackBonuses;
-}
+};
+
 export function BonusesTracker({ attkBonuses }: BonusesTrackerProps) {
   const { t } = useTranslation();
 

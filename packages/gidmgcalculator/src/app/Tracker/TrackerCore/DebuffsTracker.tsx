@@ -1,7 +1,7 @@
 import { ATTACK_ELEMENTS, ResistReduction, TrackerResult } from "@Calculation";
 
 import { useTranslation } from "@Src/hooks";
-import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
+import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./_utils";
 
 function getResMult(type: "equation" | "value", value: number) {
   const RES = value / 100;

@@ -9,8 +9,19 @@ export type RouteElementProps = { searchParams?: SearchParams };
 export type RouteConfig = {
   path: string;
   component: ComponentType;
-  defaultChild?: Omit<RouteConfig, "path">;
+  notFound?: ComponentType;
   children?: RouteConfig[];
 };
 
 export type RootRouteConfig = Omit<RouteConfig, "path">;
+
+// Outlet
+
+export type OutletRoute = {
+  config: RouteConfig;
+  nextSegments: string[];
+};
+
+export type NotFoundRoute = {
+  component: ComponentType;
+};

@@ -5,11 +5,11 @@ import type { AppMetadata } from "./types";
 import { $AppCharacter, $AppData, $AppSettings } from "@Src/services";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
-import { GreeterService } from "./utils/GreeterService";
+import { GreeterService } from "./_logic/GreeterService";
 
 // Components
-import { Introduction } from "./components/Introduction";
-import { MetadataRefetcher } from "./components/MetadataRefetcher";
+import { Introduction } from "./Introduction";
+import { MetadataRefetcher } from "./MetadataRefetcher";
 
 function useGreeter() {
   const ref = useRef<GreeterService>();

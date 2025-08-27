@@ -10,7 +10,7 @@ import { OptimizerButton } from "./OptimizerButton";
 import { TargetButton } from "./TargetButton";
 import { TrackerButton } from "./TrackerButton";
 
-export type LeftSideProps = {
+type LeftSideProps = {
   appReady?: boolean;
 };
 

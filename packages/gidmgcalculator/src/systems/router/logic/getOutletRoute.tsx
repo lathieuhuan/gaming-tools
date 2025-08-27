@@ -1,10 +1,5 @@
-import { RouteConfig } from "../types";
+import { OutletRoute, RouteConfig } from "../types";
 import { checkIsChildSegments, toSegments } from "../utils";
-
-export type OutletRoute = {
-  config: RouteConfig;
-  nextSegments: string[];
-};
 
 export function getOutletRoute(segments: string[], childRoutes: RouteConfig[] = []): OutletRoute | null {
   for (const route of childRoutes) {

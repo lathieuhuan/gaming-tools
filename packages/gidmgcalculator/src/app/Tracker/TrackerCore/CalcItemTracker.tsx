@@ -11,7 +11,7 @@ function renderDmg(value: number | number[], callback: (value: number) => string
   return Array.isArray(value) ? callback(value.reduce((total, num) => total + (num ?? 0), 0)) : callback(value);
 }
 
-interface PartConfig {
+type PartConfig = {
   label: React.ReactNode;
   value?: number;
   /** Default to '*' */
@@ -19,9 +19,9 @@ interface PartConfig {
   /** Default to 0 */
   nullValue?: number | null;
   processor?: (value: number) => string | number;
-}
+};
 
-interface CalcItemTrackerProps {
+type CalcItemTrackerProps = {
   /** Default to 'Talent Mult.' */
   coreMultLabel?: string;
   records?: Record<string, CalcItemRecord>;
@@ -29,7 +29,8 @@ interface CalcItemTrackerProps {
   defMultDisplay?: React.ReactNode;
   inHealB_?: number;
   forReactions?: boolean;
-}
+};
+
 export function CalcItemTracker({
   coreMultLabel = "Talent Mult.",
   inHealB_,

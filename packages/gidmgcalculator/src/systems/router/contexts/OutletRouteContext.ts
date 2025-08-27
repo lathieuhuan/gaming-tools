@@ -1,4 +1,4 @@
 import { createContext } from "react";
-import { OutletRoute } from "../logic/getOutletRoute";
+import { NotFoundRoute, OutletRoute } from "../types";
 
-export const OutletRouteContext = createContext<OutletRoute | null>(null);
+export const OutletRouteContext = createContext<OutletRoute | NotFoundRoute | null>(null);

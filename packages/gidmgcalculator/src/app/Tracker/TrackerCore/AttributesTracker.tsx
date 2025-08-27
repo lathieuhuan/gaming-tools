@@ -6,7 +6,7 @@ import { applyPercent } from "@Src/utils";
 import Entity_ from "@Src/utils/entity-utils";
 import { useSelector } from "@Store/hooks";
 import { selectTotalAttr } from "@Store/calculator-slice";
-import { recordListStyles, renderHeading, renderRecord } from "./TrackerCore.utils";
+import { recordListStyles, renderHeading, renderRecord } from "./_utils";
 
 export function AttributesTracker({ result }: { result?: TrackerResult }) {
   const { t } = useTranslation();

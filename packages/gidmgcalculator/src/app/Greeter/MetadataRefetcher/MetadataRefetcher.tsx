@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "rond";
 
-interface MetadataRefetcherProps {
+type MetadataRefetcherProps = {
   className?: string;
   cooldown?: number;
   isLoading: boolean;
   isError: boolean;
   error?: string;
   onRefetch: () => void;
-}
+};
+
 export function MetadataRefetcher({
   className = "",
   cooldown = 10,

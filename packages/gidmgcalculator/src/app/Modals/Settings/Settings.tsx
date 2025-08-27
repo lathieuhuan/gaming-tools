@@ -23,9 +23,10 @@ const useAppSettings = () => {
   return settings.current;
 };
 
-interface SettingsProps {
+type SettingsProps = {
   onClose: () => void;
-}
+};
+
 const SettingsCore = ({ onClose }: SettingsProps) => {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();

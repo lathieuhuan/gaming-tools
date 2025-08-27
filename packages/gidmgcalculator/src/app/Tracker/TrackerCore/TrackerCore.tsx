@@ -6,7 +6,7 @@ import type { TrackerState } from "@Store/ui-slice";
 
 import { useSelector } from "@Store/hooks";
 import { selectCalcFinalResult, selectTarget } from "@Store/calculator-slice";
-import { getTotalRecordValue } from "./TrackerCore.utils";
+import { getTotalRecordValue } from "./_utils";
 
 // Component
 import { markGreen, markDim } from "@Src/components";
@@ -35,9 +35,10 @@ function getTotalDefIgnore(talent: AttackPattern | "all", attkBonuses: AttackBon
   return result;
 }
 
-interface TrackerCoreProps {
+type TrackerCoreProps = {
   trackerState: TrackerState;
-}
+};
+
 export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const activeSetup = useSelector((state) => {
     const { activeId, setupsById } = state.calculator;

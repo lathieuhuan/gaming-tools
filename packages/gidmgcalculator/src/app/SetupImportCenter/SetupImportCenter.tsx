@@ -14,7 +14,7 @@ import { checkBeforeInitNewSession } from "@Store/thunks";
 import { selectIsAppReady, updateSetupImportInfo, updateUI } from "@Store/ui-slice";
 
 // Component
-import { OverwriteOptions, type OverwriteOptionsProps } from "./components/OverwriteOptions";
+import { OverwriteOptions, type OverwriteOptionsProps } from "./OverwriteOptions";
 
 type SetupImportCenterProps = PartiallyRequired<SetupImportInfo, "calcSetup" | "target">;
 

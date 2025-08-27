@@ -2,8 +2,8 @@ import { useSelector } from "@Store/hooks";
 import { selectIsAppReady } from "@Store/ui-slice";
 
 // Components
-import { LeftSide } from "./components/LeftSide";
-import { RightSide } from "./components/RightSide";
+import { LeftSide } from "./LeftSide";
+import { RightSide } from "./RightSide";
 
 export function Navbar() {
   const appReady = useSelector(selectIsAppReady);

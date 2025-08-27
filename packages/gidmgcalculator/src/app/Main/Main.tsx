@@ -1,51 +1,28 @@
 import { useScreenWatcher } from "rond";
 
 import { CalculatorLarge, CalculatorSmall } from "@Src/screens/Calculator";
+import { Outlet, useRouter } from "@Src/systems/router";
 
 export function Main() {
   const screenWatcher = useScreenWatcher();
-  const isMobile = !screenWatcher.isFromSize("sm");
+  const router = useRouter();
 
-  return isMobile ? (
-    <CalculatorSmall />
-  ) : (
+  const isMobile = !screenWatcher.isFromSize("sm");
+  const isAtRoot = router.isRouteActive("/");
+
+  if (isMobile) {
+    return isAtRoot ? <CalculatorSmall /> : <Outlet />;
+  }
+
+  return (
     <div className="h-full flex-center relative">
       <CalculatorLarge />
+
+      {!isAtRoot && (
+        <div className="absolute full-stretch z-30">
+          <Outlet />
+        </div>
+      )}
     </div>
   );
-
-  // if (isMobile) {
-  //   return (
-  //     <SwitchNode
-  //       value={atScreen}
-  //       cases={[
-  //         { value: "MY_CHARACTERS", element: <MyCharactersSmall /> },
-  //         { value: "MY_WEAPONS", element: <MyWeapons /> },
-  //         { value: "MY_ARTIFACTS", element: <MyArtifacts /> },
-  //         { value: "MY_SETUPS", element: <MySetups /> },
-  //       ]}
-  //       default={<CalculatorSmall />}
-  //     />
-  //   );
-  // }
-
-  // return (
-  //   <div className="h-full flex-center relative">
-  //     <CalculatorLarge />
-
-  //     {atScreen !== "CALCULATOR" ? (
-  //       <div className="absolute full-stretch z-30">
-  //         <SwitchNode
-  //           value={atScreen}
-  //           cases={[
-  //             { value: "MY_CHARACTERS", element: <MyCharactersLarge /> },
-  //             { value: "MY_WEAPONS", element: <MyWeapons /> },
-  //             { value: "MY_ARTIFACTS", element: <MyArtifacts /> },
-  //             { value: "MY_SETUPS", element: <MySetups /> },
-  //           ]}
-  //         />
-  //       </div>
-  //     ) : null}
-  //   </div>
-  // );
 }

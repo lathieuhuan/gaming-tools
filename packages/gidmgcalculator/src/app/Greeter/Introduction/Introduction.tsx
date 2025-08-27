@@ -1,12 +1,13 @@
 import { CollapseList, LoadingSpin, Skeleton } from "rond";
 
-import type { AppMetadata } from "../../types";
+import type { AppMetadata } from "../types";
 import { About, Notes, VersionRecap } from "./collapsible-sections";
 
-interface IntroductionProps {
+type IntroductionProps = {
   metadata?: AppMetadata;
   loading?: boolean;
-}
+};
+
 export const Introduction = ({
   metadata = {
     version: "",

@@ -5,13 +5,13 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 
 // Component
-import { Donate } from "./components/Donate";
-import { Download } from "./components/Download";
-import { Guides } from "./components/Guides";
-import { Settings } from "./components/Settings";
-import { Upload } from "./components/Upload";
+import { Donate } from "./Donate";
+import { Download } from "./Download";
+import { Guides } from "./Guides";
+import { Settings } from "./Settings";
+import { Upload } from "./Upload";
 
-const AppLoadingMask = () => {
+const AppLoadingOverlay = () => {
   const loading = useSelector((state) => state.ui.loading);
   let mask = document.getElementById("app-mask");
 
@@ -41,7 +41,7 @@ export function Modals() {
       <Download active={appModalType === "DOWNLOAD"} onClose={closeModal} />
       <Upload active={appModalType === "UPLOAD"} onClose={closeModal} />
       <Donate active={appModalType === "DONATE"} onClose={closeModal} />
-      <AppLoadingMask />
+      <AppLoadingOverlay />
     </>
   );
 }

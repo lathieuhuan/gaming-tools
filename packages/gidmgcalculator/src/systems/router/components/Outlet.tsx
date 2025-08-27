@@ -2,6 +2,17 @@ import { useContext, useMemo } from "react";
 
 import { OutletRouteContext } from "../contexts/OutletRouteContext";
 import { getOutletRoute } from "../logic/getOutletRoute";
+import { NotFoundRoute, OutletRoute } from "../types";
+
+function getRouteKey(route: OutletRoute | NotFoundRoute | null) {
+  if (!route) {
+    return undefined;
+  }
+  if ("component" in route) {
+    return "notfound";
+  }
+  return route.config.path;
+}
 
 export function Outlet() {
   const route = useContext(OutletRouteContext);
@@ -10,25 +21,22 @@ export function Outlet() {
     if (!route) {
       return null;
     }
-    const { config, nextSegments } = route;
-    const children = <config.component />;
-    let outlet = getOutletRoute(nextSegments, config.children);
-
-    if (!outlet && config.defaultChild) {
-      outlet = {
-        config: {
-          ...config.defaultChild,
-          path: "/",
-        },
-        nextSegments,
+    if ("component" in route) {
+      return {
+        children: <route.component />,
+        outlet: null,
       };
     }
+
+    const { config, nextSegments } = route;
+    const children = <config.component />;
+    const outlet = getOutletRoute(nextSegments, config.children);
 
     return {
       children,
       outlet,
     };
-  }, [route?.config.path]);
+  }, [getRouteKey(route)]);
 
   if (!config) {
     return null;

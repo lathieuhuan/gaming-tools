@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { OutletRouteContext } from "../contexts/OutletRouteContext";
+import { Router, RouterContext } from "../contexts/RouterContext";
 import { getOutletRoute } from "../logic/getOutletRoute";
 import { RootRouteConfig, SearchParams } from "../types";
 import { checkIsChildSegments, objectToSearchString, searchStringToObject, toSegments } from "../utils";
-import { Router, RouterContext } from "../contexts/RouterContext";
+
+import { NotFound } from "./NotFound";
 
 function getPath() {
   return window.location.pathname + window.location.search;
@@ -35,17 +37,9 @@ export function RouterProvider({ route }: RouterProviderProps) {
 
     // Outlet
 
-    let outlet = getOutletRoute(segments, route.children);
-
-    if (!outlet && route.defaultChild) {
-      outlet = {
-        config: {
-          ...route.defaultChild,
-          path: "/",
-        },
-        nextSegments: segments,
-      };
-    }
+    const outlet = getOutletRoute(segments, route.children) || {
+      component: route.notFound || NotFound,
+    };
 
     // Router
 
