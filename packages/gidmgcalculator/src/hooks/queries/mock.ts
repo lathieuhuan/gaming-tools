@@ -1,4 +1,4 @@
-import { GenshinUserResponse } from "@Src/services/enka/EnkaService";
+import { GenshinUserResponse } from "@Src/services/enka";
 
 export const userMock: GenshinUserResponse = {
   name: "Algoinde",

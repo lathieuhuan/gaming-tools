@@ -1,6 +1,6 @@
 import { clsx } from "rond";
 
-import { SCREENS, type ScreenConfig } from "../config";
+import { SCREENS, type ScreenConfig } from "./config";
 
 export type NavOptionsProps = {
   className?: string;

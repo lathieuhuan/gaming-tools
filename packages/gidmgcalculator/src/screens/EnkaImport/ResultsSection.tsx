@@ -138,8 +138,8 @@ export function ResultsSection({ className, user, isLoading }: ResultsSectionPro
                 <Skeleton className="h-40 w-[380px] rounded-lg" />
                 <Skeleton className="h-40 w-[380px] rounded-lg" />
               </>
-            ) : (
-              user?.builds.map((build, index) => {
+            ) : user ? (
+              user.builds.map((build, index) => {
                 return (
                   <BuildOverview
                     key={index}
@@ -152,6 +152,10 @@ export function ResultsSection({ className, user, isLoading }: ResultsSectionPro
                   />
                 );
               })
+            ) : (
+              <div className="w-[380px] p-4 py-6 flex-center">
+                <p className="text-hint-color">No results found</p>
+              </div>
             )}
           </div>
         </div>

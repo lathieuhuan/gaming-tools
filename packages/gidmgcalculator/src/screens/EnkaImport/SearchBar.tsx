@@ -1,38 +1,43 @@
 import { useState } from "react";
-import { Button, clsx, Input, SearchSvg, Select } from "rond";
+import { Button, clsx, Input, SearchSvg, Select, LoadingSpin } from "rond";
 
-import { SearchParams } from "./types";
-
-type Input = {
+export type Input = {
   type: "uid" | "profile";
   value: string;
 };
 
-function getInitialInput(params?: SearchParams): Input {
-  if (params?.uid) {
-    return { type: "uid", value: params.uid };
-  }
-  if (params?.profile) {
-    return { type: "profile", value: params.profile };
-  }
-  return { type: "uid", value: "" };
-}
-
 export type SearchBarProps = {
   className?: string;
-  searchParams?: SearchParams;
+  initialInput?: Input;
+  searching?: boolean;
   onSearch: (input: Input) => void;
 };
 
-export function SearchBar({ className, searchParams, onSearch }: SearchBarProps) {
-  const [input, setInput] = useState<Input>(getInitialInput(searchParams));
+export function SearchBar({
+  className,
+  initialInput = {
+    type: "uid",
+    value: "",
+  },
+  searching,
+  onSearch,
+}: SearchBarProps) {
+  const [input, setInput] = useState<Input>(initialInput);
+
+  const trimmedValue = input.value.trim();
 
   const updateInput = (key: keyof Input, value: string) => {
     setInput((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSearch = () => {
-    onSearch(input);
+    const processedInput: Input = {
+      ...input,
+      value: trimmedValue,
+    };
+
+    onSearch(processedInput);
+    setInput(processedInput);
   };
 
   return (
@@ -63,7 +68,14 @@ export function SearchBar({ className, searchParams, onSearch }: SearchBarProps)
           }
         }}
       />
-      <Button className="shrink-0" variant="primary" shape="square" icon={<SearchSvg />} onClick={handleSearch} />
+      <Button
+        className="shrink-0"
+        variant="primary"
+        shape="square"
+        icon={searching ? <LoadingSpin /> : <SearchSvg />}
+        disabled={!trimmedValue || searching}
+        onClick={handleSearch}
+      />
     </div>
   );
 }

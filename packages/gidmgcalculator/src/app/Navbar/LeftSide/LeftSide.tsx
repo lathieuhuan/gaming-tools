@@ -3,7 +3,7 @@ import { useState } from "react";
 import { CloseButton, clsx, Drawer, SideBarSvg, useScreenWatcher } from "rond";
 
 import { useRouter } from "@Src/systems/router";
-import { ScreenConfig } from "../config";
+import { ScreenConfig } from "./config";
 
 import { NavOptions } from "./NavOptions";
 import { OptimizerButton } from "./OptimizerButton";
