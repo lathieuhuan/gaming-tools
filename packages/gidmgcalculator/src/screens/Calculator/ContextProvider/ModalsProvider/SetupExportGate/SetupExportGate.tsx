@@ -1,18 +1,19 @@
-import { SetupExporterCore } from "@Src/components";
+import { SetupExporter } from "@Src/components";
 import { useStoreSnapshot } from "@Src/features";
 import Setup_ from "@Src/utils/setup-utils";
 
-interface CalcSetupExporterProps {
+type SetupExportGateProps = {
   setupId: number;
   onClose: () => void;
-}
-export function CalcSetupExporter({ setupId, onClose }: CalcSetupExporterProps) {
+};
+
+export function SetupExportGate({ setupId, onClose }: SetupExportGateProps) {
   const calculator = useStoreSnapshot((state) => state.calculator);
   const setup = calculator.setupsById[setupId];
   const setupName = calculator.setupManageInfos.find((info) => info.ID === setupId)?.name || "";
 
   return (
-    <SetupExporterCore
+    <SetupExporter
       setupName={setupName}
       calcSetup={{
         ...Setup_.cleanupCalcSetup(setup, calculator.target),

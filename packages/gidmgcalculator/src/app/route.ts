@@ -5,8 +5,8 @@ import MySetups from "@Src/screens/MySetups";
 import MyWeapons from "@Src/screens/MyWeapons";
 import { RootRouteConfig } from "@Src/systems/router";
 
+import { SCREEN_PATH } from "@Src/constants";
 import { App } from "./App";
-import { SCREEN_PATH } from "./config";
 
 export const route: RootRouteConfig = {
   component: App,

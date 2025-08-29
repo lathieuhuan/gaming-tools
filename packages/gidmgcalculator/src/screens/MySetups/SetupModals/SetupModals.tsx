@@ -1,24 +1,26 @@
-import { ConfirmModal, Modal } from "rond";
 import { GeneralCalc } from "@Calculation";
+import { ConfirmModal, Modal } from "rond";
 
 import type { UserArtifacts, UserSetup, UserWeapon } from "@Src/types";
+import type { CalculationResult } from "../types";
+
 import Setup_ from "@Src/utils/setup-utils";
-import { calculateChosenSetup } from "../MySetups.utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectMySetupModalType, updateUI } from "@Store/ui-slice";
 import { removeSetup } from "@Store/userdb-slice";
 
 // Component
 import { ArtifactCard, AttributeTable, SetBonusesView, SetupExporter, WeaponCard } from "@Src/components";
-import { ChosenSetupModifiers } from "./ChosenSetupModifiers";
+import { Modifiers } from "./Modifiers";
 
-interface ChosenSetupModalsProps {
-  chosenSetup: UserSetup;
-  weapon?: UserWeapon;
+type SetupModalsProps = {
+  setup: UserSetup;
+  weapon: UserWeapon;
   artifacts: UserArtifacts;
-  result?: ReturnType<typeof calculateChosenSetup>;
-}
-export function ChosenSetupModals({ chosenSetup, weapon, artifacts, result }: ChosenSetupModalsProps) {
+  result: CalculationResult;
+};
+
+export function SetupModals({ setup, weapon, artifacts, result }: SetupModalsProps) {
   const dispatch = useDispatch();
   const modalType = useSelector(selectMySetupModalType);
 
@@ -35,29 +37,26 @@ export function ChosenSetupModals({ chosenSetup, weapon, artifacts, result }: Ch
         danger
         message={
           <>
-            Remove "<b>{chosenSetup.name}</b>"?
+            Remove "<b>{setup.name}</b>"?
           </>
         }
         focusConfirm
-        onConfirm={() => dispatch(removeSetup(chosenSetup.ID))}
+        onConfirm={() => dispatch(removeSetup(setup.ID))}
         onClose={closeModal}
       />
 
-      {weapon && (
+      <Modal.Core active={modalType === "SHARE_SETUP"} preset="small" onClose={closeModal}>
         <SetupExporter
-          active={modalType === "SHARE_SETUP"}
-          setupName={chosenSetup.name}
-          calcSetup={Setup_.userSetupToCalcSetup(chosenSetup, weapon, artifacts)}
-          target={chosenSetup.target}
+          setupName={setup.name}
+          calcSetup={Setup_.userSetupToCalcSetup(setup, weapon, artifacts)}
+          target={setup.target}
           onClose={closeModal}
         />
-      )}
+      </Modal.Core>
 
-      {weapon && (
-        <Modal active={modalType === "WEAPON"} className="bg-surface-1" title="Weapon" onClose={closeModal}>
-          <WeaponCard wrapperCls="w-76" style={{ height: "30rem" }} withGutter={false} withOwnerLabel weapon={weapon} />
-        </Modal>
-      )}
+      <Modal active={modalType === "WEAPON"} className="bg-surface-1" title="Weapon" onClose={closeModal}>
+        <WeaponCard wrapperCls="w-76" style={{ height: "30rem" }} withGutter={false} withOwnerLabel weapon={weapon} />
+      </Modal>
 
       <Modal active={modalType === "ARTIFACTS"} className="bg-surface-1" title="Artifacts" onClose={closeModal}>
         <div className="flex space-x-1 hide-scrollbar">
@@ -110,17 +109,15 @@ export function ChosenSetupModals({ chosenSetup, weapon, artifacts, result }: Ch
         </div>
       </Modal>
 
-      {result && weapon && (
-        <Modal
-          active={modalType === "MODIFIERS"}
-          className={[Modal.LARGE_HEIGHT_CLS, "bg-surface-1"]}
-          title="Modifiers"
-          bodyCls="grow hide-scrollbar"
-          onClose={closeModal}
-        >
-          <ChosenSetupModifiers {...{ result, chosenSetup, setBonuses, weapon }} />
-        </Modal>
-      )}
+      <Modal
+        active={modalType === "MODIFIERS"}
+        className={[Modal.LARGE_HEIGHT_CLS, "bg-surface-1"]}
+        title="Modifiers"
+        bodyCls="grow hide-scrollbar"
+        onClose={closeModal}
+      >
+        <Modifiers {...{ result, setup, setBonuses, weapon }} />
+      </Modal>
     </>
   );
 }

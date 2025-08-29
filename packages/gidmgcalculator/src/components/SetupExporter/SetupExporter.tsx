@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { Modal } from "rond";
 
 import type { CalcSetup, Target } from "@Src/types";
 import { encodeSetup } from "@Src/utils/setup-porter";
@@ -11,7 +10,7 @@ interface SetupExporterProps {
   target: Target;
   onClose: () => void;
 }
-export const SetupExporterCore = ({ setupName, calcSetup, target, onClose }: SetupExporterProps) => {
+export const SetupExporter = ({ setupName, calcSetup, target, onClose }: SetupExporterProps) => {
   const [status, setStatus] = useState<"SUCCESS" | "NOT_SUPPORT" | "">("");
 
   const encodedData = useMemo(() => encodeSetup(calcSetup, target), []);
@@ -60,5 +59,3 @@ export const SetupExporterCore = ({ setupName, calcSetup, target, onClose }: Set
     />
   );
 };
-
-export const SetupExporter = Modal.coreWrap(SetupExporterCore, { preset: "small" });

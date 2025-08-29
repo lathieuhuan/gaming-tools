@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { $AppSettings, AppSettings } from "@Src/services";
-import type { SetupImportInfo, Traveler } from "@Src/types";
+import type { Traveler } from "@Src/types";
 
 export type MySetupsModalType =
   | "TIPS"
@@ -28,7 +28,6 @@ export interface UIState extends Pick<AppSettings, "isTabLayout"> {
   setupDirectorActive: boolean;
   trackerState: TrackerState;
   mySetupsModalType: MySetupsModalType;
-  importInfo: SetupImportInfo;
 }
 
 const { isTabLayout, traveler } = $AppSettings.get();
@@ -44,7 +43,6 @@ const initialState: UIState = {
   },
   setupDirectorActive: false,
   trackerState: "close",
-  importInfo: {},
   loading: false,
   ready: false,
 };
@@ -59,12 +57,9 @@ export const uiSlice = createSlice({
         ...action.payload,
       };
     },
-    updateSetupImportInfo: (state, action: PayloadAction<SetupImportInfo>) => {
-      state.importInfo = action.payload;
-    },
   },
 });
 
-export const { updateUI, updateSetupImportInfo } = uiSlice.actions;
+export const { updateUI } = uiSlice.actions;
 
 export default uiSlice.reducer;

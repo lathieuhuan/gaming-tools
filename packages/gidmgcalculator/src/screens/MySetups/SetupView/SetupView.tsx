@@ -1,59 +1,59 @@
-import { useMemo, useState } from "react";
-import { FaLink, FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
-import { clsx, useScreenWatcher, Button, ButtonGroup, Modal, CloseButton, TrashCanSvg } from "rond";
 import { ARTIFACT_TYPES, CalcTeamData } from "@Calculation";
+import { useMemo, useState } from "react";
+import { FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
+import { Button, ButtonGroup, CloseButton, clsx, Modal, TrashCanSvg } from "rond";
 
-import type { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
-import type { OpenModalFn } from "../MySetups.types";
+import type { Teammate, UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
+import type { OpenModalFn } from "../types";
+
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
-import Setup_ from "@Src/utils/setup-utils";
 import Entity_ from "@Src/utils/entity-utils";
-
-// Store
 import { useDispatch } from "@Store/hooks";
-import { updateSetupImportInfo } from "@Store/ui-slice";
-import { makeTeammateSetup } from "@Store/thunks";
 import { chooseUserSetup, switchShownSetupInComplex, uncombineSetups } from "@Store/userdb-slice";
 
 // Component
 import { CharacterPortrait, GenshinImage } from "@Src/components";
-import { TeammateDetail } from "./TeammateDetail";
 import { GearIcon } from "./GearIcon";
+import { TeammateDetail } from "./TeammateDetail";
 
-interface SetupTemplateProps {
+type SetupViewProps = {
   setup: UserSetup;
   complexSetup?: UserComplexSetup;
   teamData: CalcTeamData;
   weapon: UserWeapon;
   artifacts?: UserArtifacts;
+  onEditSetup: () => void;
+  onCalcTeammateSetup: (teammateIndex: number) => void;
   openModal: OpenModalFn;
-}
-export function SetupTemplate({
+};
+
+export function SetupView({
   setup,
   complexSetup,
   teamData,
   weapon,
   artifacts = [],
+  onEditSetup,
+  onCalcTeammateSetup,
   openModal,
-}: SetupTemplateProps) {
+}: SetupViewProps) {
   const dispatch = useDispatch();
-  const screenWatcher = useScreenWatcher();
   const { type, char, party } = setup;
   const { allIDs } = complexSetup || {};
 
   const [teammateDetail, setTeammateDetail] = useState({
     index: -1,
-    isCalculated: false,
+    calculated: false,
   });
 
-  const teammateInfo = party[teammateDetail.index];
+  const teammate = party[teammateDetail.index];
   const isOriginal = type === "original";
   const isFetched = $AppCharacter.getStatus(char.name) === "fetched";
 
   const closeTeammateDetail = () => {
     setTeammateDetail({
       index: -1,
-      isCalculated: false,
+      calculated: false,
     });
   };
 
@@ -67,14 +67,18 @@ export function SetupTemplate({
     }
   };
 
-  const onCalculateTeammateSetup = () => {
-    dispatch(
-      makeTeammateSetup({
-        setup,
-        mainWeapon: weapon,
-        teammateIndex: teammateDetail.index,
-      })
-    );
+  const handleSwitchTeammate = (teammate: Teammate) => {
+    const shownId = allIDs ? allIDs[teammate.name] : undefined;
+
+    if (complexSetup && shownId) {
+      dispatch(
+        switchShownSetupInComplex({
+          complexID: complexSetup.ID,
+          shownID: shownId,
+        })
+      );
+      closeTeammateDetail();
+    }
   };
 
   const display = useMemo(() => {
@@ -113,17 +117,17 @@ export function SetupTemplate({
 
           if (teammate) {
             const teammateData = $AppCharacter.get(teammate.name);
-            const isCalculated = !isOriginal && !!allIDs?.[teammate.name];
+            const calculated = !isOriginal && !!allIDs?.[teammate.name];
 
             return (
               <CharacterPortrait
                 key={teammateIndex}
-                className={clsx("cursor-pointer", isCalculated && "shadow-3px-3px shadow-primary-1")}
+                className={clsx("cursor-pointer", calculated && "shadow-3px-3px shadow-primary-1")}
                 info={teammateData}
                 onClick={() => {
                   setTeammateDetail({
                     index: teammateIndex,
-                    isCalculated,
+                    calculated,
                   });
                 }}
               />
@@ -178,40 +182,14 @@ export function SetupTemplate({
     <>
       <div className="pr-1 flex justify-between flex-col lg:flex-row" onDoubleClick={() => console.log(setup)}>
         <div className="flex items-center">
-          {isOriginal ? null : screenWatcher.isFromSize("lg") ? (
-            <Button
-              className="hover:text-danger-2 group shadow-none"
-              variant="custom"
-              icon={
-                <>
-                  <FaUnlink className="hidden group-hover:block" />
-                  <FaLink className="block group-hover:hidden" />
-                </>
-              }
-              onClick={uncombine}
-            />
-          ) : (
+          {!isOriginal && (
             <Button variant="custom" className="text-danger-2" boneOnly icon={<FaUnlink />} onClick={uncombine} />
           )}
           <p className="px-1 text-xl text-heading-color font-semibold truncate">{complexSetup?.name || setup.name}</p>
         </div>
 
         <div className="mt-2 lg:mt-0 pb-2 flex space-x-3 justify-end">
-          <Button
-            icon={<FaWrench />}
-            onClick={() => {
-              const { ID, name, type, target } = setup;
-              dispatch(
-                updateSetupImportInfo({
-                  ID,
-                  name,
-                  type,
-                  calcSetup: Setup_.userSetupToCalcSetup(setup, weapon, artifacts, true),
-                  target,
-                })
-              );
-            }}
-          />
+          <Button icon={<FaWrench />} onClick={onEditSetup} />
 
           <Button icon={<FaShareAlt />} onClick={openModal("SHARE_SETUP")} />
 
@@ -267,25 +245,12 @@ export function SetupTemplate({
       >
         <CloseButton className={Modal.CLOSE_BTN_CLS} boneOnly onClick={closeTeammateDetail} />
 
-        {teammateInfo && (
+        {teammate && (
           <TeammateDetail
-            teammate={teammateInfo}
-            isCalculated={teammateDetail.isCalculated}
-            onSwitchSetup={() => {
-              const { name } = teammateInfo || {};
-              const shownId = allIDs && name ? allIDs[name] : undefined;
-
-              if (complexSetup && shownId) {
-                dispatch(
-                  switchShownSetupInComplex({
-                    complexID: complexSetup.ID,
-                    shownID: shownId,
-                  })
-                );
-                closeTeammateDetail();
-              }
-            }}
-            onCalculateTeammateSetup={onCalculateTeammateSetup}
+            teammate={teammate}
+            calculated={teammateDetail.calculated}
+            onSwitch={() => handleSwitchTeammate(teammate)}
+            onCalculate={() => onCalcTeammateSetup(teammateDetail.index)}
           />
         )}
       </Modal.Core>

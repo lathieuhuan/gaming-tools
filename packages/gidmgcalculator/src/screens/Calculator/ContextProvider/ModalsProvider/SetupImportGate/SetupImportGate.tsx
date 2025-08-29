@@ -1,17 +1,36 @@
 import { useState } from "react";
-import { Modal } from "rond";
 
+import { useSetupImporter } from "@Src/systems/setup-importer";
 import { DECODE_ERROR_MSG, decodeSetup, type DecodeError } from "@Src/utils/setup-porter";
-import { useDispatch } from "@Store/hooks";
-import { updateSetupImportInfo } from "@Store/ui-slice";
-import { PorterLayout } from "./PorterLayout";
+
+import { PorterLayout } from "@Src/components";
 
 type ImportError = "NOT_SUPPORT" | DecodeError;
 
-function SetupImporterCore(props: { onClose: () => void }) {
-  const dispatch = useDispatch();
+export function SetupImportGate(props: { onClose: () => void }) {
+  const setupImporter = useSetupImporter();
   const [code, setCode] = useState("");
   const [error, setError] = useState<ImportError | "">("");
+
+  const handlePaste = () => {
+    navigator.clipboard.readText().then(setCode, () => setError("NOT_SUPPORT"));
+  };
+
+  const handleImport = () => {
+    const actualCode = code.trim();
+
+    if (actualCode.length) {
+      const result = decodeSetup(actualCode);
+
+      if (result.isOk) {
+        setupImporter.import(result.importInfo);
+        props.onClose();
+        return;
+      }
+
+      setError(result.error);
+    }
+  };
 
   return (
     <PorterLayout
@@ -37,32 +56,14 @@ function SetupImporterCore(props: { onClose: () => void }) {
           children: "Paste",
           variant: "primary",
           autoFocus: true,
-          onClick: () => {
-            navigator.clipboard.readText().then(setCode, () => setError("NOT_SUPPORT"));
-          },
+          onClick: handlePaste,
         },
         {
           children: "Proceed",
-          onClick: () => {
-            const actualCode = code.trim();
-
-            if (actualCode.length) {
-              const result = decodeSetup(actualCode);
-
-              if (result.isOk) {
-                dispatch(updateSetupImportInfo(result.importInfo));
-                props.onClose();
-                return;
-              }
-
-              setError(result.error);
-            }
-          },
+          onClick: handleImport,
         },
       ]}
       onClose={props.onClose}
     />
   );
 }
-
-export const SetupImporter = Modal.coreWrap(SetupImporterCore, { preset: "small" });

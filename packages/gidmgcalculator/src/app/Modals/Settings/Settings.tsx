@@ -5,9 +5,8 @@ import { Checkbox, InputNumber, Modal, useScreenWatcher, VersatileSelect } from 
 import type { Traveler } from "@Src/types";
 import type { SettingGroupRender } from "./types";
 
-import { SCREEN_PATH } from "@Src/app/config";
 import { CharacterPortrait } from "@Src/components";
-import { MAX_TARGET_LEVEL } from "@Src/constants";
+import { MAX_TARGET_LEVEL, SCREEN_PATH } from "@Src/constants";
 import { useDynamicStoreControl } from "@Src/features";
 import { $AppCharacter, $AppSettings, AppSettings } from "@Src/services";
 import { useRouter } from "@Src/systems/router";

@@ -2,7 +2,7 @@ import { useSelector } from "@Store/hooks";
 import { useState } from "react";
 import { CloseButton, clsx, Drawer, SideBarSvg, useScreenWatcher } from "rond";
 
-import { SCREEN_PATH } from "@Src/app/config";
+import { SCREEN_PATH } from "@Src/constants";
 import { useRouter } from "@Src/systems/router";
 import { ScreenConfig } from "./config";
 

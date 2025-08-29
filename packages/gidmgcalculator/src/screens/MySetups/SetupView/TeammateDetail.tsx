@@ -7,18 +7,14 @@ import { $AppCharacter } from "@Src/services";
 // Component
 import { CharacterPortrait, TeammateItems } from "@Src/components";
 
-interface TeammateDetailProps {
+type TeammateDetailProps = {
   teammate: Teammate;
-  isCalculated: boolean;
-  onSwitchSetup: () => void;
-  onCalculateTeammateSetup: () => void;
-}
-export function TeammateDetail({
-  teammate,
-  isCalculated,
-  onSwitchSetup,
-  onCalculateTeammateSetup,
-}: TeammateDetailProps) {
+  calculated: boolean;
+  onSwitch: () => void;
+  onCalculate: () => void;
+};
+
+export function TeammateDetail({ teammate, calculated, onSwitch, onCalculate }: TeammateDetailProps) {
   const data = $AppCharacter.get(teammate.name);
   if (!data) return null;
 
@@ -33,17 +29,12 @@ export function TeammateDetail({
         <TeammateItems className="p-4 bg-surface-1" teammate={teammate} />
 
         <div className="mt-4 flex justify-center">
-          {isCalculated ? (
-            <Button variant="primary" className="flex items-center" icon={<FaSyncAlt />} onClick={onSwitchSetup}>
+          {calculated ? (
+            <Button variant="primary" className="flex items-center" icon={<FaSyncAlt />} onClick={onSwitch}>
               Switch
             </Button>
           ) : (
-            <Button
-              variant="primary"
-              className="flex items-center"
-              icon={<FaCalculator />}
-              onClick={onCalculateTeammateSetup}
-            >
+            <Button variant="primary" className="flex items-center" icon={<FaCalculator />} onClick={onCalculate}>
               Calculate
             </Button>
           )}

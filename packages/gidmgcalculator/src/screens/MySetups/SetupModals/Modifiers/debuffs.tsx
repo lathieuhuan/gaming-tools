@@ -2,11 +2,12 @@ import type { CustomDebuffCtrl, Resonance } from "@Src/types";
 import { GeoResoDebuffItem, SuperconductDebuffItem, renderModifiers } from "@Src/components";
 import { useTranslation } from "@Src/hooks";
 
-interface ElementDebuffsDetailProps {
+type ElementDebuffsProps = {
   superconduct: boolean;
   resonances: Resonance[];
 }
-export function ElementDebuffsDetail({ superconduct, resonances }: ElementDebuffsDetailProps) {
+
+export function ElementDebuffs({ superconduct, resonances }: ElementDebuffsProps) {
   const content = [];
 
   if (superconduct) {
@@ -19,10 +20,11 @@ export function ElementDebuffsDetail({ superconduct, resonances }: ElementDebuff
   return renderModifiers(content, "debuffs", false);
 }
 
-interface CustomDebuffsDetailProps {
+type CustomDebuffsProps = {
   customDebuffCtrls: CustomDebuffCtrl[];
-}
-export function CustomDebuffsDetail({ customDebuffCtrls }: CustomDebuffsDetailProps) {
+};
+
+export function CustomDebuffs({ customDebuffCtrls }: CustomDebuffsProps) {
   const { t } = useTranslation();
 
   const content = customDebuffCtrls.map(({ type, value }, i) => (

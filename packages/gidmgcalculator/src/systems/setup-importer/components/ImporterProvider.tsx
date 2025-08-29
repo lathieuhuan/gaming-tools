@@ -1,0 +1,35 @@
+import { ReactNode, useMemo, useState } from "react";
+
+import { ImporterContext } from "../contexts/ImporterContext";
+import { ImportInfo } from "../types";
+import { SetupImportCenter } from "./ImportCenter";
+
+export function ImporterProvider({ children }: { children: ReactNode }) {
+  const [importInfo, setImportInfo] = useState<ImportInfo>({});
+
+  const value = useMemo(() => {
+    return {
+      importInfo,
+      import: setImportInfo,
+    };
+  }, [importInfo]);
+
+  const handleFinish = () => {
+    setImportInfo({});
+  };
+
+  return (
+    <ImporterContext.Provider value={value}>
+      {children}
+
+      {importInfo.calcSetup && importInfo.target ? (
+        <SetupImportCenter
+          {...importInfo}
+          calcSetup={importInfo.calcSetup}
+          target={importInfo.target}
+          onFinish={handleFinish}
+        />
+      ) : null}
+    </ImporterContext.Provider>
+  );
+}

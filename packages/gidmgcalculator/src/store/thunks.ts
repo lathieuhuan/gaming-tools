@@ -1,21 +1,17 @@
-import { ARTIFACT_TYPES } from "@Calculation";
 import isEqual from "react-fast-compare";
 import { batch } from "react-redux";
 
-import { $AppArtifact, $AppCharacter, $AppSettings } from "@Src/services";
-import type { CalcArtifacts, UserSetup, UserWeapon } from "@Src/types";
+import { $AppCharacter, $AppSettings } from "@Src/services";
 import type { AppThunk } from "./store";
 
 // Store
 import { initNewSession } from "./calculator-slice";
-import { updateSetupImportInfo, updateUI } from "./ui-slice";
+import { updateUI } from "./ui-slice";
 import { addUserArtifact, addUserWeapon, saveSetup, updateUserArtifact, updateUserWeapon } from "./userdb-slice";
 
 // Util
 import Array_ from "@Src/utils/array-utils";
 import Entity_ from "@Src/utils/entity-utils";
-import Modifier_ from "@Src/utils/modifier-utils";
-import Object_ from "@Src/utils/object-utils";
 import Setup_ from "@Src/utils/setup-utils";
 import { parseUserCharacter, type CharacterForInit } from "./store.utils";
 
@@ -198,98 +194,5 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
       );
       dispatch(updateUI({ setupDirectorActive: false }));
     });
-  };
-}
-
-interface MakeTeammateSetupArgs {
-  setup: UserSetup;
-  mainWeapon: UserWeapon;
-  teammateIndex: number;
-}
-export function makeTeammateSetup({ setup, mainWeapon, teammateIndex }: MakeTeammateSetupArgs): AppThunk {
-  return (dispatch, getState) => {
-    const teammate = setup.party[teammateIndex];
-
-    if (teammate) {
-      const { userChars, userWps } = getState().userdb;
-      const { weapon, artifact } = teammate;
-      const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, teammate.name);
-      let seedID = Date.now();
-
-      const similarWeapon = Array_.findByCode(userWps, teammate.weapon.code);
-      const actualWeapon = similarWeapon
-        ? Entity_.userItemToCalcItem(similarWeapon)
-        : Entity_.createWeapon(
-            {
-              code: weapon.code,
-              type: weapon.type,
-            },
-            seedID++
-          );
-
-      let artifacts: CalcArtifacts = [null, null, null, null, null];
-
-      if (artifact.code) {
-        const { variants = [] } = $AppArtifact.getSet(artifact.code) || {};
-        const maxRarity = variants.at(-1);
-
-        if (maxRarity) {
-          artifacts = ARTIFACT_TYPES.map((type) => {
-            return Entity_.createArtifact(
-              {
-                code: artifact.code,
-                rarity: maxRarity,
-                type,
-              },
-              seedID++
-            );
-          });
-        }
-      }
-
-      const party = Object_.clone(setup.party);
-      const [tmBuffCtrls, tmDebuffCtrls] = Modifier_.createCharacterModCtrls(false, teammate.name);
-
-      party[teammateIndex] = {
-        name: setup.char.name,
-        weapon: {
-          code: mainWeapon.code,
-          type: mainWeapon.type,
-          refi: mainWeapon.refi,
-          buffCtrls: Modifier_.createWeaponBuffCtrls(false, mainWeapon),
-        },
-        artifact: {
-          code: 0,
-          buffCtrls: [],
-        },
-        buffCtrls: tmBuffCtrls,
-        debuffCtrls: tmDebuffCtrls,
-      };
-
-      const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts);
-
-      dispatch(
-        updateSetupImportInfo({
-          ID: seedID++,
-          name: "New setup",
-          target: setup.target,
-          calcSetup: {
-            char: Entity_.createCharacter(teammate.name, Array_.findByName(userChars, teammate.name)),
-            selfBuffCtrls,
-            selfDebuffCtrls,
-            weapon: actualWeapon,
-            wpBuffCtrls: Modifier_.createWeaponBuffCtrls(true, actualWeapon),
-            artifacts,
-            artBuffCtrls,
-            artDebuffCtrls: Modifier_.createArtifactDebuffCtrls(),
-            party,
-            elmtModCtrls: Modifier_.createElmtModCtrls(),
-            customBuffCtrls: [],
-            customDebuffCtrls: [],
-            customInfusion: { element: "phys" },
-          },
-        })
-      );
-    }
   };
 }

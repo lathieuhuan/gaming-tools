@@ -8,20 +8,15 @@ import { suffixOf, toCustomBuffLabel } from "@Src/utils";
 // Component
 import { renderModifiers, VapMeltBuffItem, QuickenBuffItem, ResonanceBuffItem } from "@Src/components";
 
-interface ElementBuffsDetailProps {
+type ElementBuffsProps = {
   charLv: Level;
   elmtModCtrls: ElementModCtrl;
   attkBonuses: AttackBonuses;
   vision: ElementType;
   customInfusion: Infusion;
-}
-export function ElementBuffsDetail({
-  charLv,
-  elmtModCtrls,
-  attkBonuses,
-  vision,
-  customInfusion,
-}: ElementBuffsDetailProps) {
+};
+
+export function ElementBuffs({ charLv, elmtModCtrls, attkBonuses, vision, customInfusion }: ElementBuffsProps) {
   const content: JSX.Element[] = [];
   const { resonances, reaction, infuse_reaction, absorption } = elmtModCtrls;
   const headingCls = "text-sm text-secondary-1 mb-1";
@@ -84,10 +79,11 @@ export function ElementBuffsDetail({
   );
 }
 
-interface CustomBuffsDetailProps {
+type CustomBuffsProps = {
   customBuffCtrls: CustomBuffCtrl[];
-}
-export function CustomBuffsDetail({ customBuffCtrls }: CustomBuffsDetailProps) {
+};
+
+export function CustomBuffs({ customBuffCtrls }: CustomBuffsProps) {
   const { t } = useTranslation();
 
   const content = customBuffCtrls.map(({ category, type, subType, value }, i) => (

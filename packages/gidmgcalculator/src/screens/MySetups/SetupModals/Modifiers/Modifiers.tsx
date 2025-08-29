@@ -1,30 +1,32 @@
-import { CollapseList } from "rond";
 import { ArtifactSetBonus } from "@Calculation";
+import { CollapseList } from "rond";
 
 import type { UserSetup, UserWeapon } from "@Src/types";
+import type { CalculationResult } from "../../types";
+
 import { useTranslation } from "@Src/hooks";
 import { $AppData } from "@Src/services";
-import { calculateChosenSetup } from "../../MySetups.utils";
 
 // Component
-import { markYellow } from "@Src/components";
 import {
-  WeaponBuffsView,
   ArtifactBuffsView,
   ArtifactDebuffsView,
+  markYellow,
   SelfBuffsView,
   SelfDebuffsView,
   TeammateBuffsView,
   TeammateDebuffsView,
+  WeaponBuffsView,
 } from "@Src/components";
-import { CustomBuffsDetail, ElementBuffsDetail } from "./buffs";
-import { CustomDebuffsDetail, ElementDebuffsDetail } from "./debuffs";
+import { CustomBuffs, ElementBuffs } from "./buffs";
+import { CustomDebuffs, ElementDebuffs } from "./debuffs";
 
-interface ModifierWrapperProps {
+type ModifierWrapperProps = {
   className?: string;
   title: string;
   children: JSX.Element;
-}
+};
+
 const ModifierWrapper = ({ className = "", title, children }: ModifierWrapperProps) => {
   return (
     <div className={"shrink-0 " + className}>
@@ -34,13 +36,14 @@ const ModifierWrapper = ({ className = "", title, children }: ModifierWrapperPro
   );
 };
 
-interface ChosenSetupModifiersProps {
-  chosenSetup: UserSetup;
-  result: NonNullable<ReturnType<typeof calculateChosenSetup>>;
+type ModifiersProps = {
+  setup: UserSetup;
+  result: CalculationResult;
   weapon: UserWeapon;
   setBonuses: ArtifactSetBonus[];
-}
-export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }: ChosenSetupModifiersProps) {
+};
+
+export function Modifiers({ setup, result, weapon, setBonuses }: ModifiersProps) {
   const { t } = useTranslation();
 
   const {
@@ -55,7 +58,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
     customBuffCtrls,
     customDebuffCtrls,
     target,
-  } = chosenSetup;
+  } = setup;
   const { teamData } = result;
   const { title, variant, statuses } = $AppData.getTargetInfo(target);
 
@@ -66,9 +69,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
           items={[
             {
               heading: "Resonance & Reactions",
-              body: (
-                <ElementDebuffsDetail superconduct={elmtModCtrls.superconduct} resonances={elmtModCtrls.resonances} />
-              ),
+              body: <ElementDebuffs superconduct={elmtModCtrls.superconduct} resonances={elmtModCtrls.resonances} />,
             },
             {
               heading: "Self",
@@ -84,7 +85,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
             },
             {
               heading: "Custom",
-              body: <CustomDebuffsDetail customDebuffCtrls={customDebuffCtrls} />,
+              body: <CustomDebuffs customDebuffCtrls={customDebuffCtrls} />,
             },
           ]}
         />
@@ -96,11 +97,11 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
             {
               heading: "Resonance & Reactions",
               body: (
-                <ElementBuffsDetail
+                <ElementBuffs
                   charLv={char.level}
                   vision={teamData.activeAppMember.vision}
                   attkBonuses={result.attkBonuses}
-                  customInfusion={chosenSetup.customInfusion}
+                  customInfusion={setup.customInfusion}
                   elmtModCtrls={elmtModCtrls}
                 />
               ),
@@ -132,7 +133,7 @@ export function ChosenSetupModifiers({ chosenSetup, result, weapon, setBonuses }
             },
             {
               heading: "Custom",
-              body: <CustomBuffsDetail customBuffCtrls={customBuffCtrls} />,
+              body: <CustomBuffs customBuffCtrls={customBuffCtrls} />,
             },
           ]}
         />
