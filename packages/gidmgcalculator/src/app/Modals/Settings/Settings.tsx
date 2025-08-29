@@ -5,10 +5,12 @@ import { Checkbox, InputNumber, Modal, useScreenWatcher, VersatileSelect } from 
 import type { Traveler } from "@Src/types";
 import type { SettingGroupRender } from "./types";
 
+import { SCREEN_PATH } from "@Src/app/config";
 import { CharacterPortrait } from "@Src/components";
 import { MAX_TARGET_LEVEL } from "@Src/constants";
 import { useDynamicStoreControl } from "@Src/features";
 import { $AppCharacter, $AppSettings, AppSettings } from "@Src/services";
+import { useRouter } from "@Src/systems/router";
 import { genNumberSequence } from "@Src/utils/pure-utils";
 import { applySettings } from "@Store/calculator-slice";
 import { useDispatch } from "@Store/hooks";
@@ -30,6 +32,7 @@ type SettingsProps = {
 const SettingsCore = ({ onClose }: SettingsProps) => {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
+  const router = useRouter();
   const newSettings = useAppSettings();
   const updateAppStoreConfig = useDynamicStoreControl();
 
@@ -42,13 +45,9 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
 
     if (changeTraveler) {
       $AppCharacter.changeTraveler(newSettings.traveler);
+      router.navigate(SCREEN_PATH.CALCULATOR);
 
-      dispatch(
-        updateUI({
-          atScreen: "CALCULATOR",
-          traveler: newSettings.traveler,
-        })
-      );
+      dispatch(updateUI({ traveler: newSettings.traveler }));
     }
     dispatch(
       applySettings({

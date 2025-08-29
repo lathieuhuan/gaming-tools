@@ -5,21 +5,29 @@ import { ConfirmModal, LoadingSpin, Modal, type PartiallyRequired, message, noti
 import type { SetupImportInfo } from "@Src/types";
 
 import { MAX_CALC_SETUPS } from "@Src/constants";
+import { useRouter } from "@Src/systems/router";
 import { getSearchParam } from "@Src/utils";
 import Object_ from "@Src/utils/object-utils";
 import { DECODE_ERROR_MSG, decodeSetup } from "@Src/utils/setup-porter";
-import { importSetup, selectCharacter, selectSetupManageInfos, selectTarget } from "@Store/calculator-slice";
+import {
+  importSetup,
+  initNewSession,
+  selectCharacter,
+  selectSetupManageInfos,
+  selectTarget,
+} from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { checkBeforeInitNewSession } from "@Store/thunks";
 import { selectIsAppReady, updateSetupImportInfo, updateUI } from "@Store/ui-slice";
 
 // Component
 import { OverwriteOptions, type OverwriteOptionsProps } from "./OverwriteOptions";
+import { SCREEN_PATH } from "../config";
 
 type SetupImportCenterProps = PartiallyRequired<SetupImportInfo, "calcSetup" | "target">;
 
 function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImportCenterProps) {
   const dispatch = useDispatch();
+  const router = useRouter();
   const character = useSelector(selectCharacter);
   const currentTarget = useSelector(selectTarget);
   const calcSetupInfos = useSelector(selectSetupManageInfos);
@@ -86,45 +94,29 @@ function SetupImportCenterCore({ calcSetup, target, ...manageInfo }: SetupImport
         ...config,
       })
     );
-    dispatch(
-      updateUI({
-        atScreen: "CALCULATOR",
-        setupDirectorActive: false,
-      })
-    );
     endImport();
     dispatch(updateUI({ setupDirectorActive: false }));
   };
 
   const startNewSession = () => {
     dispatch(
-      checkBeforeInitNewSession(
-        {
-          ...manageInfo,
-          calcSetup,
-          target,
-        },
-        {
-          onSuccess: () => {
-            dispatch(updateSetupImportInfo({}));
-
-            dispatch(
-              updateUI({
-                atScreen: "CALCULATOR",
-                setupDirectorActive: false,
-              })
-            );
-
-            if (["URL", "ENKA"].includes(manageInfo.importRoute || "")) {
-              notification.success({
-                content: "Successfully import the setup!",
-                duration: 0,
-              });
-            }
-          },
-        }
-      )
+      initNewSession({
+        ...manageInfo,
+        calcSetup,
+        target,
+      })
     );
+    dispatch(updateSetupImportInfo({}));
+    dispatch(updateUI({ setupDirectorActive: false }));
+
+    router.navigate(SCREEN_PATH.CALCULATOR);
+
+    if (["URL", "ENKA"].includes(manageInfo.importSource || "")) {
+      notification.success({
+        content: "Successfully import the setup!",
+        duration: 0,
+      });
+    }
   };
 
   const resetExistingSetup = () => {
@@ -220,7 +212,7 @@ function SetupTransshipmentPort() {
           dispatch(
             updateSetupImportInfo({
               ...result.importInfo,
-              importRoute: "URL",
+              importSource: "URL",
             })
           );
           importCode.current = "";

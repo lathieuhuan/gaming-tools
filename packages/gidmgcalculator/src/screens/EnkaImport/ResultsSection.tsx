@@ -119,7 +119,7 @@ export function ResultsSection({ className, user, isLoading }: ResultsSectionPro
           artifacts,
         }),
         target: Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
-        importRoute: "ENKA",
+        importSource: "ENKA",
       })
     );
   };

@@ -8,7 +8,7 @@ import { checkIsChildSegments, objectToSearchString, searchStringToObject, toSeg
 
 import { NotFound } from "./NotFound";
 
-function getPath() {
+function getCurrentPath() {
   return window.location.pathname + window.location.search;
 }
 
@@ -17,11 +17,11 @@ type RouterProviderProps = {
 };
 
 export function RouterProvider({ route }: RouterProviderProps) {
-  const [path, setPath] = useState(getPath);
+  const [path, setPath] = useState(getCurrentPath);
 
   useEffect(() => {
     const handlePopState = () => {
-      setPath(getPath);
+      setPath(getCurrentPath);
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -49,8 +49,10 @@ export function RouterProvider({ route }: RouterProviderProps) {
       const search = searchParams ? `?${objectToSearchString(searchParams)}` : "";
       const newPath = path + search;
 
-      setPath(newPath);
-      window.history.pushState(null, "", window.location.origin + newPath);
+      if (newPath !== getCurrentPath()) {
+        setPath(newPath);
+        window.history.pushState(null, "", window.location.origin + newPath);
+      }
     };
 
     const router: Router = {

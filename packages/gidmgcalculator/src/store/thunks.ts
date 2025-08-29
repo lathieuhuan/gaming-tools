@@ -1,53 +1,23 @@
-import { batch } from "react-redux";
-import isEqual from "react-fast-compare";
-import { message } from "rond";
 import { ARTIFACT_TYPES } from "@Calculation";
+import isEqual from "react-fast-compare";
+import { batch } from "react-redux";
 
+import { $AppArtifact, $AppCharacter, $AppSettings } from "@Src/services";
 import type { CalcArtifacts, UserSetup, UserWeapon } from "@Src/types";
 import type { AppThunk } from "./store";
-import { MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@Src/constants";
-import { $AppArtifact, $AppCharacter, $AppSettings } from "@Src/services";
 
 // Store
-import { initNewSession, type InitNewSessionPayload } from "./calculator-slice";
+import { initNewSession } from "./calculator-slice";
 import { updateSetupImportInfo, updateUI } from "./ui-slice";
 import { addUserArtifact, addUserWeapon, saveSetup, updateUserArtifact, updateUserWeapon } from "./userdb-slice";
 
 // Util
-import Setup_ from "@Src/utils/setup-utils";
-import Modifier_ from "@Src/utils/modifier-utils";
-import Entity_ from "@Src/utils/entity-utils";
-import Object_ from "@Src/utils/object-utils";
 import Array_ from "@Src/utils/array-utils";
+import Entity_ from "@Src/utils/entity-utils";
+import Modifier_ from "@Src/utils/modifier-utils";
+import Object_ from "@Src/utils/object-utils";
+import Setup_ from "@Src/utils/setup-utils";
 import { parseUserCharacter, type CharacterForInit } from "./store.utils";
-
-type Option = {
-  onSuccess?: () => void;
-};
-export function checkBeforeInitNewSession(payload: InitNewSessionPayload, options?: Option): AppThunk {
-  return async (dispatch) => {
-    const { char } = payload.calcSetup;
-    const { onSuccess } = options || {};
-
-    if ($AppCharacter.getStatus(char.name) === "fetched") {
-      dispatch(initNewSession(payload));
-      onSuccess?.();
-    } else {
-      dispatch(updateUI({ loading: true }));
-
-      const response = await $AppCharacter.fetch(char.name);
-
-      if (response.code === 200) {
-        dispatch(initNewSession(payload));
-        onSuccess?.();
-      } else {
-        message.error(`Cannot get character config (ERROR_CODE: ${response.code})`);
-      }
-
-      dispatch(updateUI({ loading: false }));
-    }
-  };
-}
 
 export function initNewSessionWithCharacter(character: CharacterForInit): AppThunk {
   return (dispatch, getState) => {
@@ -64,7 +34,7 @@ export function initNewSessionWithCharacter(character: CharacterForInit): AppThu
     });
 
     dispatch(
-      checkBeforeInitNewSession({
+      initNewSession({
         ID,
         calcSetup: Setup_.createCalcSetup({
           char: data.character,
@@ -83,19 +53,6 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
       calculator,
       userdb: { userSetups, userWps, userArts },
     } = getState();
-    let excessType = "";
-
-    if (userSetups.filter((setup) => setup.type !== "complex").length + 1 > MAX_USER_SETUPS) {
-      excessType = "Setup";
-    } else if (userWps.length + 1 > MAX_USER_WEAPONS) {
-      excessType = "Weapon";
-    } else if (userArts.length + 5 > MAX_USER_ARTIFACTS) {
-      excessType = "Artifact";
-    }
-
-    if (excessType) {
-      return message.error(`You're having to many ${excessType}s. Please remove some of them first.`);
-    }
 
     const setup = calculator.setupsById[setupID];
     const { weapon, artifacts } = setup;
@@ -239,12 +196,7 @@ export function saveSetupThunk(setupID: number, name: string): AppThunk {
           data: Setup_.cleanupCalcSetup(setup, calculator.target, { weaponID, artifactIDs }),
         })
       );
-      dispatch(
-        updateUI({
-          atScreen: "MY_SETUPS",
-          setupDirectorActive: false,
-        })
-      );
+      dispatch(updateUI({ setupDirectorActive: false }));
     });
   };
 }

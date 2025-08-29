@@ -14,14 +14,11 @@ export type MySetupsModalType =
   | "ARTIFACTS"
   | "";
 
-export type AppScreen = "CALCULATOR" | "MY_SETUPS" | "MY_WEAPONS" | "MY_ARTIFACTS" | "MY_CHARACTERS" | "ENKA_IMPORT";
-
 export type TrackerState = "open" | "close" | "hidden";
 
 export interface UIState extends Pick<AppSettings, "isTabLayout"> {
   ready: boolean;
   loading: boolean;
-  atScreen: AppScreen;
   traveler: Traveler;
   appModalType: "" | "INTRO" | "GUIDES" | "SETTINGS" | "UPLOAD" | "DOWNLOAD" | "DONATE";
   targetConfig: {
@@ -38,7 +35,6 @@ const { isTabLayout, traveler } = $AppSettings.get();
 
 const initialState: UIState = {
   isTabLayout,
-  atScreen: "CALCULATOR",
   traveler,
   appModalType: "",
   mySetupsModalType: "",

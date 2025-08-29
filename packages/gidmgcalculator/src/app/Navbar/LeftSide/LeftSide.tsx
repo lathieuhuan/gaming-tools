@@ -2,6 +2,7 @@ import { useSelector } from "@Store/hooks";
 import { useState } from "react";
 import { CloseButton, clsx, Drawer, SideBarSvg, useScreenWatcher } from "rond";
 
+import { SCREEN_PATH } from "@Src/app/config";
 import { useRouter } from "@Src/systems/router";
 import { ScreenConfig } from "./config";
 
@@ -16,7 +17,6 @@ type LeftSideProps = {
 
 export function LeftSide({ appReady }: LeftSideProps) {
   const router = useRouter();
-  const atScreen = useSelector((state) => state.ui.atScreen);
   const isTabLayout = useSelector((state) => state.ui.isTabLayout);
   const screenWatcher = useScreenWatcher();
 
@@ -50,7 +50,7 @@ export function LeftSide({ appReady }: LeftSideProps) {
         />
       )}
 
-      {atScreen === "CALCULATOR" && (
+      {router.isRouteActive(SCREEN_PATH.CALCULATOR) && (
         <>
           {showOnMobileTab && <TargetButton />}
           <TrackerButton />
