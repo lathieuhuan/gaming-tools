@@ -1,12 +1,12 @@
 import type { AppMonster } from "@Calculation";
-import type { Target } from "@Src/types";
+import type { Target } from "@/types";
 import type { Metadata } from "./app-data.types";
 import type { AppCharacterService } from "./AppCharacterService";
 import type { AppWeaponService } from "./AppWeaponService";
 import type { AppArtifactService } from "./AppArtifactService";
 
-import { BACKEND_URL } from "@Src/constants";
-import Array_ from "@Src/utils/array-utils";
+import { BACKEND_URL } from "@/constants";
+import Array_ from "@/utils/array-utils";
 import { BaseService } from "./BaseService";
 
 export class AppDataService extends BaseService {

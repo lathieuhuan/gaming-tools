@@ -1,11 +1,11 @@
-import EnkaImport from "@Src/screens/EnkaImport";
-import MyArtifacts from "@Src/screens/MyArtifacts";
-import MyCharacters from "@Src/screens/MyCharacters";
-import MySetups from "@Src/screens/MySetups";
-import MyWeapons from "@Src/screens/MyWeapons";
-import { RootRouteConfig } from "@Src/systems/router";
+import EnkaImport from "@/screens/EnkaImport";
+import MyArtifacts from "@/screens/MyArtifacts";
+import MyCharacters from "@/screens/MyCharacters";
+import MySetups from "@/screens/MySetups";
+import MyWeapons from "@/screens/MyWeapons";
+import { RootRouteConfig } from "@/systems/router";
 
-import { SCREEN_PATH } from "@Src/constants";
+import { SCREEN_PATH } from "@/constants";
 import { App } from "./App";
 
 export const route: RootRouteConfig = {

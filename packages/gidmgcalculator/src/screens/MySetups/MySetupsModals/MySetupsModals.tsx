@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { selectMySetupModalType, updateUI } from "@Store/ui-slice";
 
 // Component
-import { markYellow } from "@Src/components";
+import { markYellow } from "@/components";
 import FirstCombine from "./FirstCombine";
 import CombineMore from "./CombineMore";
 

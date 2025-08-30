@@ -2,15 +2,15 @@ import { ArtifactModifierDescription, ModInputConfig } from "@Calculation";
 import { useEffect, useRef, useState } from "react";
 import { ButtonGroup, Checkbox } from "rond";
 
-import type { Artifact, ArtifactModCtrl } from "@Src/types";
+import type { Artifact, ArtifactModCtrl } from "@/types";
 import type { ProcessedResult, ProcessedSetup } from "./InternalOffice.types";
 
-import { useArtifactSetData } from "@Src/hooks";
-import Array_ from "@Src/utils/array-utils";
-import { getArtifactDesc } from "@Src/utils/description-parsers";
+import { useArtifactSetData } from "@/hooks";
+import Array_ from "@/utils/array-utils";
+import { getArtifactDesc } from "@/utils/description-parsers";
 
 // Component
-import { ArtifactCard, GenshinModifierView } from "@Src/components";
+import { ArtifactCard, GenshinModifierView } from "@/components";
 import { ResultItemDisplayer, type ResultItemDisplayerProps } from "./ResultItemDisplayer";
 
 type Modifiers = Array<{ description: ArtifactModifierDescription; inputConfigs?: ModInputConfig[] }> | undefined;

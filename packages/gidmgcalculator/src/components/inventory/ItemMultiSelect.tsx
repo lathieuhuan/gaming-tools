@@ -2,8 +2,8 @@ import { useRef, useState } from "react";
 import { FaCheck, FaMinus, FaPlus } from "react-icons/fa";
 import { Button, Modal, EntitySelectTemplate, type EntitySelectTemplateProps, useScreenWatcher } from "rond";
 
-import type { Artifact, Weapon } from "@Src/types";
-import Entity_ from "@Src/utils/entity-utils";
+import type { Artifact, Weapon } from "@/types";
+import Entity_ from "@/utils/entity-utils";
 
 // Component
 import { ArtifactCard } from "../ArtifactCard";

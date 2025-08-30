@@ -6,7 +6,7 @@ import { initNewSessionWithCharacter } from "@Store/thunks";
 import { CalculatorModalsContext, CalculatorModalsControl } from "./context";
 
 // Component
-import { Tavern } from "@Src/components";
+import { Tavern } from "@/components";
 import { SaveSetup } from "./SaveSetup";
 import { SetupExportGate } from "./SetupExportGate";
 import { SetupImportGate } from "./SetupImportGate";

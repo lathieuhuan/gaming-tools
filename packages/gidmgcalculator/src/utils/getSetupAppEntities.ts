@@ -6,9 +6,9 @@ import type {
   AppArtifactsByCode,
   AppWeaponsByCode,
   SetupAppEntities,
-} from "@Src/types";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
-import Array_ from "@Src/utils/array-utils";
+} from "@/types";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
+import Array_ from "@/utils/array-utils";
 
 export function getSetupAppEntities({
   char,

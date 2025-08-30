@@ -2,15 +2,15 @@ import { Level, LEVELS } from "@Calculation";
 import { useRef, useState } from "react";
 import { Checkbox, InputNumber, Modal, useScreenWatcher, VersatileSelect } from "rond";
 
-import type { Traveler } from "@Src/types";
+import type { Traveler } from "@/types";
 import type { SettingGroupRender } from "./types";
 
-import { CharacterPortrait } from "@Src/components";
-import { MAX_TARGET_LEVEL, SCREEN_PATH } from "@Src/constants";
-import { useDynamicStoreControl } from "@Src/features";
-import { $AppCharacter, $AppSettings, AppSettings } from "@Src/services";
-import { useRouter } from "@Src/systems/router";
-import { genNumberSequence } from "@Src/utils/pure-utils";
+import { CharacterPortrait } from "@/components";
+import { MAX_TARGET_LEVEL, SCREEN_PATH } from "@/constants";
+import { $AppCharacter, $AppSettings, AppSettings } from "@/services";
+import { useDynamicStoreControl } from "@/systems/dynamic-store";
+import { useRouter } from "@/systems/router";
+import { genNumberSequence } from "@/utils/pure-utils";
 import { applySettings } from "@Store/calculator-slice";
 import { useDispatch } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";

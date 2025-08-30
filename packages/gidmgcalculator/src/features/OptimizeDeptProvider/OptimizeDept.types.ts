@@ -1,4 +1,4 @@
-import type { CalcArtifacts, CalcSetup, Target } from "@Src/types";
+import type { CalcArtifacts, CalcSetup, Target } from "@/types";
 import type { AppCharacter, OptimizerAllArtifactModConfigs } from "@Calculation";
 
 export type OptimizeCalculation = {

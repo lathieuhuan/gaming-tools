@@ -1,8 +1,8 @@
 import type { DeepReadonly } from "rond";
-import type { AppCharactersByName } from "@Src/types";
-import type { AppCharacter, ElementCount, TalentType } from "@Src/calculation/types";
+import type { AppCharactersByName } from "@/types";
+import type { AppCharacter, ElementCount, TalentType } from "@/calculation/types";
 
-import TypeCounter from "@Src/utils/type-counter";
+import TypeCounter from "@/utils/type-counter";
 import { isValidTeamElmt } from "../condition-checking";
 
 export class TeamData {

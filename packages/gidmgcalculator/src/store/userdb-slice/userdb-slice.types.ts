@@ -9,7 +9,7 @@ import type {
   UserSetup,
   UserSetupCalcInfo,
   UserWeapon,
-} from "@Src/types";
+} from "@/types";
 
 export type AddUserDatabaseAction = PayloadAction<{
   characters?: UserCharacter[];

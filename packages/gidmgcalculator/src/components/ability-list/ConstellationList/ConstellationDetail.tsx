@@ -1,7 +1,7 @@
 import { AppCharacter } from "@Calculation";
 
-import { $AppCharacter } from "@Src/services";
-import { useQuery } from "@Src/hooks";
+import { $AppCharacter } from "@/services";
+import { useQuery } from "@/hooks";
 import { CloseButton, LoadingSpin } from "rond";
 
 // Conponent

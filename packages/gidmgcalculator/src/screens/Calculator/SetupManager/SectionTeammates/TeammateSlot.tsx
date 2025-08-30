@@ -2,7 +2,7 @@ import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
 import { clsx } from "rond";
 
 import { AppCharacter } from "@Calculation";
-import { CharacterPortrait } from "@Src/components";
+import { CharacterPortrait } from "@/components";
 
 type TeammateSlotProps = {
   active: boolean;

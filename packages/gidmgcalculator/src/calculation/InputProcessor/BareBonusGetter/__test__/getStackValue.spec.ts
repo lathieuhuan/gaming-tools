@@ -1,4 +1,4 @@
-import { EntityBonusStack } from "@Src/calculation/types";
+import { EntityBonusStack } from "@/calculation/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "./test-utils";

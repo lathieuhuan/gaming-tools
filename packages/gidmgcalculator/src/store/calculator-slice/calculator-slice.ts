@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { PartiallyOptional } from "rond";
 import { AttackElement, ATTACK_ELEMENTS } from "@Calculation";
 
-import type { CalcSetupManageInfo, CalcWeapon, Resonance, Target } from "@Src/types";
+import type { CalcSetupManageInfo, CalcWeapon, Resonance, Target } from "@/types";
 import type {
   CalculatorState,
   AddTeammateAction,
@@ -28,13 +28,13 @@ import type {
   ChangeArtifactBuffCtrlInputAction,
 } from "./calculator-slice.types";
 
-import { RESONANCE_ELEMENT_TYPES } from "@Src/constants";
-import { $AppData, $AppCharacter, $AppSettings, $AppArtifact } from "@Src/services";
-import Setup_ from "@Src/utils/setup-utils";
-import Modifier_ from "@Src/utils/modifier-utils";
-import Object_ from "@Src/utils/object-utils";
-import Array_ from "@Src/utils/array-utils";
-import Entity_ from "@Src/utils/entity-utils";
+import { RESONANCE_ELEMENT_TYPES } from "@/constants";
+import { $AppData, $AppCharacter, $AppSettings, $AppArtifact } from "@/services";
+import Setup_ from "@/utils/setup-utils";
+import Modifier_ from "@/utils/modifier-utils";
+import Object_ from "@/utils/object-utils";
+import Array_ from "@/utils/array-utils";
+import Entity_ from "@/utils/entity-utils";
 import { calculate, countAllElements, getAppCharacterFromState } from "./calculator-slice.utils";
 
 // const defaultChar = {

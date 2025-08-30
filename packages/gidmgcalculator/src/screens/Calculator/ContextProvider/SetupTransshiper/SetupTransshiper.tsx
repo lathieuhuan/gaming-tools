@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { message } from "rond";
 
-import { useRouter } from "@Src/systems/router";
-import { useSetupImporter } from "@Src/systems/setup-importer";
-import { DECODE_ERROR_MSG, decodeSetup } from "@Src/utils/setup-porter";
+import { useRouter } from "@/systems/router";
+import { useSetupImporter } from "@/systems/setup-importer";
+import { DECODE_ERROR_MSG, decodeSetup } from "@/utils/setup-porter";
 import { useSelector } from "@Store/hooks";
 import { selectIsAppReady } from "@Store/ui-slice";
 

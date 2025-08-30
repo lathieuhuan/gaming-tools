@@ -1,10 +1,10 @@
-import type { CalcSetup, UserComplexSetup, UserSetup } from "@Src/types";
+import type { CalcSetup, UserComplexSetup, UserSetup } from "@/types";
 import type { ValidationError } from "./types";
 
-import { MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@Src/constants";
-import Array_ from "@Src/utils/array-utils";
+import { MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@/constants";
+import Array_ from "@/utils/array-utils";
 import { UserdbState } from "@Store/userdb-slice";
-import Setup_ from "@Src/utils/setup-utils";
+import Setup_ from "@/utils/setup-utils";
 
 export function validateTeammates(setup: CalcSetup, existedSetup: UserSetup | UserComplexSetup) {
   const errors: ValidationError[] = [];

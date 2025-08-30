@@ -2,8 +2,8 @@ import { FaMinus } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { Button, InputNumber, VersatileSelect } from "rond";
 
-import { $AppData } from "@Src/services";
-import { MAX_TARGET_LEVEL } from "@Src/constants";
+import { $AppData } from "@/services";
+import { MAX_TARGET_LEVEL } from "@/constants";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTarget, updateTarget } from "@Store/calculator-slice";
 

@@ -3,7 +3,7 @@ import {
   ArtifactStatFilterCondition,
   ArtifactStatFilterOption,
   DEFAULT_ARTIFACT_FILTER,
-} from "@Src/utils/filter-artifacts";
+} from "@/utils/filter-artifacts";
 import { ArtifactStatFilter, ArtifactStatFilterProps } from "../components/ArtifactStatFilter";
 
 export function useArtifactStatFilter(initialFilter: ArtifactStatFilterCondition) {

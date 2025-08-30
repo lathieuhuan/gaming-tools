@@ -1,5 +1,5 @@
 import { Level } from "@Calculation";
-import { Traveler } from "@Src/types";
+import { Traveler } from "@/types";
 
 export type AppSettings = {
   traveler: Traveler;

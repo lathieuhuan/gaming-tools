@@ -1,6 +1,6 @@
 import { ReactNode, useMemo, useState } from "react";
 
-import { SetupImportInfo } from "@Src/types";
+import { SetupImportInfo } from "@/types";
 import { ImporterContext } from "../contexts/ImporterContext";
 import { SetupImportCenter } from "./ImportCenter";
 

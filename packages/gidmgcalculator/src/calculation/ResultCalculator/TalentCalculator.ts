@@ -1,4 +1,4 @@
-import type { ElementModCtrl } from "@Src/types";
+import type { ElementModCtrl } from "@/types";
 import type { CalcTeamData } from "../utils/CalcTeamData";
 import type { AttackBonusesArchive } from "../InputProcessor";
 import type { CalcItemRecord } from "../utils/TrackerControl";
@@ -16,7 +16,7 @@ import type {
   TotalAttribute,
 } from "../types";
 
-import Array_ from "@Src/utils/array-utils";
+import Array_ from "@/utils/array-utils";
 import { CharacterCalc } from "../utils/calc-utils";
 import { TrackerControl } from "../utils/TrackerControl";
 import { CalcItemCalculator } from "./CalcItemCalculator";

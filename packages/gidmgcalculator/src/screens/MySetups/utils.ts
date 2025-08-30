@@ -1,11 +1,11 @@
 import { ARTIFACT_TYPES } from "@Calculation";
-import { $AppArtifact } from "@Src/services";
-import type { CalcArtifacts, SetupImportInfo, UserComplexSetup, UserSetup } from "@Src/types";
-import Array_ from "@Src/utils/array-utils";
-import Entity_ from "@Src/utils/entity-utils";
-import Modifier_ from "@Src/utils/modifier-utils";
-import Object_ from "@Src/utils/object-utils";
-import Setup_ from "@Src/utils/setup-utils";
+import { $AppArtifact } from "@/services";
+import type { CalcArtifacts, SetupImportInfo, UserComplexSetup, UserSetup } from "@/types";
+import Array_ from "@/utils/array-utils";
+import Entity_ from "@/utils/entity-utils";
+import Modifier_ from "@/utils/modifier-utils";
+import Object_ from "@/utils/object-utils";
+import Setup_ from "@/utils/setup-utils";
 import { UserdbState } from "@Store/userdb-slice";
 import { SetupRenderInfo } from "./types";
 

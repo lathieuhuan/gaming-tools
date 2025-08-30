@@ -1,9 +1,9 @@
 import { FormEvent, useState } from "react";
 import { Table } from "rond";
 
-import { useTranslation } from "@Src/hooks";
-import { $AppSettings } from "@Src/services";
-import type { Character, Target } from "@Src/types";
+import { useTranslation } from "@/hooks";
+import { $AppSettings } from "@/services";
+import type { Character, Target } from "@/types";
 import { selectActiveId, selectCalcSetupsById, selectTarget } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
 

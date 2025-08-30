@@ -1,12 +1,12 @@
 import { Fragment } from "react";
 import { ElementType, Level, AttackBonuses, AttackReaction } from "@Calculation";
 
-import type { CustomBuffCtrl, ElementModCtrl, Infusion } from "@Src/types";
-import { useTranslation } from "@Src/hooks";
-import { suffixOf, toCustomBuffLabel } from "@Src/utils";
+import type { CustomBuffCtrl, ElementModCtrl, Infusion } from "@/types";
+import { useTranslation } from "@/hooks";
+import { suffixOf, toCustomBuffLabel } from "@/utils";
 
 // Component
-import { renderModifiers, VapMeltBuffItem, QuickenBuffItem, ResonanceBuffItem } from "@Src/components";
+import { renderModifiers, VapMeltBuffItem, QuickenBuffItem, ResonanceBuffItem } from "@/components";
 
 type ElementBuffsProps = {
   charLv: Level;

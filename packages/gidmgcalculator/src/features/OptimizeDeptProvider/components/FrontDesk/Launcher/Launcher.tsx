@@ -4,9 +4,9 @@ import { ButtonGroup } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Calculation";
 
 import type { ArtifactManager } from "@OptimizeDept/hooks/useArtifactManager";
-import { GenshinImage } from "@Src/components";
-import { formatNumber } from "@Src/utils";
-import Entity_ from "@Src/utils/entity-utils";
+import { GenshinImage } from "@/components";
+import { formatNumber } from "@/utils";
+import Entity_ from "@/utils/entity-utils";
 
 interface LauncherProps {
   artifactManager: ArtifactManager;

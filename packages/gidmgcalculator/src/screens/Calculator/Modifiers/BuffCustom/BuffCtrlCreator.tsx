@@ -2,9 +2,9 @@ import { useState, useRef, FormEvent } from "react";
 import { clsx, InputNumber, VersatileSelect } from "rond";
 import { ATTACK_ELEMENTS, ATTACK_PATTERNS, REACTIONS } from "@Calculation";
 
-import type { CustomBuffCtrl, CustomBuffCtrlCategory, CustomBuffCtrlType } from "@Src/types";
-import { useTranslation } from "@Src/hooks";
-import { suffixOf, toCustomBuffLabel } from "@Src/utils";
+import type { CustomBuffCtrl, CustomBuffCtrlCategory, CustomBuffCtrlType } from "@/types";
+import { useTranslation } from "@/hooks";
+import { suffixOf, toCustomBuffLabel } from "@/utils";
 import { useDispatch } from "@Store/hooks";
 import { updateCustomBuffCtrls } from "@Store/calculator-slice";
 

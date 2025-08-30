@@ -1,11 +1,12 @@
-import { useState, KeyboardEventHandler, FormEvent } from "react";
+import { FormEvent, KeyboardEventHandler, useState } from "react";
 import { Input } from "rond";
 
-import type { UserSetup } from "@Src/types";
-import { selectUserSetups, combineSetups } from "@Store/userdb-slice";
+import type { UserSetup } from "@/types";
+
+import { useStoreSnapshot } from "@/systems/dynamic-store";
+import Array_ from "@/utils/array-utils";
 import { useDispatch } from "@Store/hooks";
-import { useStoreSnapshot } from "@Src/features";
-import Array_ from "@Src/utils/array-utils";
+import { combineSetups, selectUserSetups } from "@Store/userdb-slice";
 import { useCombineManager } from "./hooks";
 
 export default function FirstCombine(props: { onClose: () => void }) {

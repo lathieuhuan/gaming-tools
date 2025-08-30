@@ -2,18 +2,18 @@ import { useMemo, useRef, useState } from "react";
 import isEqual from "react-fast-compare";
 import { FaFileUpload, FaSignOutAlt } from "react-icons/fa";
 import { Button, ButtonProps, Checkbox } from "rond";
-import { GeneralCalc } from "@Calculation";
 
+import type { ArtifactModCtrl } from "@/types";
 import type { OptimizeDeptState } from "@OptimizeDept/OptimizeDept.types";
-import type { ArtifactModCtrl } from "@Src/types";
 import type { ProcessedResult, ProcessedSetup } from "./InternalOffice.types";
 
-import { useDispatch } from "@Store/hooks";
+import { useStoreSnapshot } from "@/systems/dynamic-store";
+import Array_ from "@/utils/array-utils";
+import Modifier_ from "@/utils/modifier-utils";
+import Object_ from "@/utils/object-utils";
+import { GeneralCalc } from "@Calculation";
 import { importSetup, removeCalcSetup } from "@Store/calculator-slice";
-import { useStoreSnapshot } from "@Src/features";
-import Array_ from "@Src/utils/array-utils";
-import Modifier_ from "@Src/utils/modifier-utils";
-import Object_ from "@Src/utils/object-utils";
+import { useDispatch } from "@Store/hooks";
 
 // Component
 import { ConfirmButton, type ConfirmButtonProps } from "./ConfirmButton";

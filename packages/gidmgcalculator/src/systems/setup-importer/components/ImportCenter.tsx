@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import isEqual from "react-fast-compare";
 import { ConfirmModal, LoadingSpin, Modal, type PartiallyRequired, notification } from "rond";
 
-import { MAX_CALC_SETUPS, SCREEN_PATH } from "@Src/constants";
-import { useRouter } from "@Src/systems/router";
-import Object_ from "@Src/utils/object-utils";
+import { MAX_CALC_SETUPS, SCREEN_PATH } from "@/constants";
+import { useRouter } from "@/systems/router";
+import Object_ from "@/utils/object-utils";
 import {
   importSetup,
   initNewSession,
@@ -14,7 +14,7 @@ import {
 } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
-import { SetupImportInfo } from "@Src/types";
+import { SetupImportInfo } from "@/types";
 
 // Component
 import { OverwriteOptions, type OverwriteOptionsProps } from "./OverwriteOptions";

@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { GeneralCalc } from "@Calculation";
 
-import type { Teammates } from "@Src/types";
+import type { Teammates } from "@/types";
 import { changeModCtrlInput, selectArtifacts, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { ArtifactDebuffsView } from "@Src/components";
+import { ArtifactDebuffsView } from "@/components";
 
 export default function DebuffArtifact({ teammates }: { teammates: Teammates }) {
   const dispatch = useDispatch();

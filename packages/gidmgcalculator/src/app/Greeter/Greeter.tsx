@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { clsx, Modal, Skeleton } from "rond";
 
 import type { AppMetadata } from "./types";
-import { $AppCharacter, $AppData, $AppSettings } from "@Src/services";
+import { $AppCharacter, $AppData, $AppSettings } from "@/services";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 import { GreeterService } from "./_logic/GreeterService";

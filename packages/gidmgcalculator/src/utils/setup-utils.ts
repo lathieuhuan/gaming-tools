@@ -1,7 +1,7 @@
 import { ATTACK_ELEMENTS, CharacterCalc, WeaponType } from "@Calculation";
 import { PartiallyRequiredOnly } from "rond";
 
-import { $AppCharacter } from "@Src/services";
+import { $AppCharacter } from "@/services";
 import type {
   CalcSetup,
   CalcSetupManageInfo,
@@ -13,7 +13,7 @@ import type {
   UserSetup,
   UserSetupCalcInfo,
   UserWeapon,
-} from "@Src/types";
+} from "@/types";
 import Modifier_ from "./modifier-utils";
 import Array_ from "./array-utils";
 import Entity_ from "./entity-utils";

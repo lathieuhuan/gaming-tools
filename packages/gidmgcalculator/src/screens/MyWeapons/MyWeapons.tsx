@@ -3,11 +3,11 @@ import { useMemo, useState } from "react";
 import { message, useScreenWatcher, Button, ButtonGroup, CollapseSpace, ConfirmModal, WarehouseLayout } from "rond";
 import { WeaponType } from "@Calculation";
 
-import type { UserWeapon } from "@Src/types";
-import { MAX_USER_WEAPONS } from "@Src/constants";
-import { useWeaponTypeSelect } from "@Src/hooks";
-import { $AppWeapon } from "@Src/services";
-import Array_ from "@Src/utils/array-utils";
+import type { UserWeapon } from "@/types";
+import { MAX_USER_WEAPONS } from "@/constants";
+import { useWeaponTypeSelect } from "@/hooks";
+import { $AppWeapon } from "@/services";
+import Array_ from "@/utils/array-utils";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -21,7 +21,7 @@ import {
 } from "@Store/userdb-slice";
 
 // Component
-import { InventoryRack, Tavern, WeaponCard, WeaponForge } from "@Src/components";
+import { InventoryRack, Tavern, WeaponCard, WeaponForge } from "@/components";
 
 type ModalType = "ADD_WEAPON" | "SELECT_WEAPON_OWNER" | "REMOVE_WEAPON" | "";
 

@@ -2,7 +2,7 @@ import { LoadingSpin } from "rond";
 
 import { useDispatch } from "@Store/hooks";
 import { updateUserCharacter } from "@Store/userdb-slice";
-import { ConstellationList } from "@Src/components";
+import { ConstellationList } from "@/components";
 import { useDetailInfo } from "../ContextProvider";
 
 interface PanelConstellationProps {

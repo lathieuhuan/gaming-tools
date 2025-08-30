@@ -1,6 +1,6 @@
 import type { AppArtifact, ArtifactType } from "@Calculation";
-import type { Artifact } from "@Src/types";
-import type { GOODArtifact } from "@Src/types/GOOD.types";
+import type { Artifact } from "@/types";
+import type { GOODArtifact } from "@/types/GOOD.types";
 import type { DataControl } from "./app-data.types";
 import { convertGOODStatKey, toGOODKey } from "./utils";
 

@@ -1,6 +1,6 @@
-import { SetupExporter } from "@Src/components";
-import { useStoreSnapshot } from "@Src/features";
-import Setup_ from "@Src/utils/setup-utils";
+import { SetupExporter } from "@/components";
+import { useStoreSnapshot } from "@/systems/dynamic-store";
+import Setup_ from "@/utils/setup-utils";
 
 type SetupExportGateProps = {
   setupId: number;

@@ -1,4 +1,4 @@
-import { ModifierCtrl, UserComplexSetup, UserSetup } from "@Src/types";
+import { ModifierCtrl, UserComplexSetup, UserSetup } from "@/types";
 import { UserdbState } from "@Store/userdb-slice";
 
 type UserSetupV0 = Omit<UserSetup, "artBuffCtrls"> & {

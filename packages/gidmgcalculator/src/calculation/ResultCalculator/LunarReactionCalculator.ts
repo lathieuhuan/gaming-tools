@@ -1,9 +1,9 @@
-import type { ElementModCtrl } from "@Src/types";
+import type { ElementModCtrl } from "@/types";
 import type { TrackerControl } from "../utils/TrackerControl";
 import type { CalculationFinalResultAttackItem, Level, LunarReaction, ResistReduction, TotalAttribute } from "../types";
 import type { CalcItemCalculator } from "./CalcItemCalculator";
 
-import { toMult } from "@Src/utils";
+import { toMult } from "@/utils";
 import { GeneralCalc } from "../utils/calc-utils";
 import { LUNAR_REACTION_CONFIG } from "../constants/internal";
 

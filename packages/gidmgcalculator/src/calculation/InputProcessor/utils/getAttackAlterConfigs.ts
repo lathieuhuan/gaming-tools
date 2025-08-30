@@ -1,7 +1,7 @@
 import { NORMAL_ATTACKS, type AttackPattern, type CalcTeamData } from "@Calculation";
-import { AttackAlterConfig } from "@Src/calculation/types";
-import type { ModifierCtrl } from "@Src/types";
-import Array_ from "@Src/utils/array-utils";
+import { AttackAlterConfig } from "@/calculation/types";
+import type { ModifierCtrl } from "@/types";
+import Array_ from "@/utils/array-utils";
 
 export const getAttackAlterConfigs = (teamData: CalcTeamData, selfBuffCtrls: ModifierCtrl[]) => {
   const configs: Partial<Record<AttackPattern, AttackAlterConfig>> = {};

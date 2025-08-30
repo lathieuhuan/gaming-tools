@@ -4,9 +4,9 @@ import { TbRectangleVerticalFilled } from "react-icons/tb";
 import { Button, Modal, useScreenWatcher, clsx, type ClassValue } from "rond";
 import { ArtifactType } from "@Calculation";
 
-import type { CalcArtifact } from "@Src/types";
-import type { ArtifactFilterCondition } from "@Src/utils/filter-artifacts";
-import { useArtifactTypeSelect } from "@Src/hooks";
+import type { CalcArtifact } from "@/types";
+import type { ArtifactFilterCondition } from "@/utils/filter-artifacts";
+import { useArtifactTypeSelect } from "@/hooks";
 import { useArtifactSetFilter, useArtifactStatFilter } from "./hooks";
 import { FilterTemplate } from "../FilterTemplate";
 

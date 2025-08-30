@@ -3,16 +3,16 @@ import { useMemo, useState } from "react";
 import { FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
 import { Button, ButtonGroup, CloseButton, clsx, Modal, TrashCanSvg } from "rond";
 
-import type { Teammate, UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
+import type { Teammate, UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@/types";
 import type { OpenModalFn } from "../types";
 
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
-import Entity_ from "@Src/utils/entity-utils";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
+import Entity_ from "@/utils/entity-utils";
 import { useDispatch } from "@Store/hooks";
 import { chooseUserSetup, switchShownSetupInComplex, uncombineSetups } from "@Store/userdb-slice";
 
 // Component
-import { CharacterPortrait, GenshinImage } from "@Src/components";
+import { CharacterPortrait, GenshinImage } from "@/components";
 import { GearIcon } from "./GearIcon";
 import { TeammateDetail } from "./TeammateDetail";
 

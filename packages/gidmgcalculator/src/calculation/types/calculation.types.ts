@@ -1,6 +1,6 @@
 import type { PartiallyRequired } from "rond";
-import type { ArtifactModCtrl } from "@Src/types";
-import type TypeCounter from "@Src/utils/type-counter";
+import type { ArtifactModCtrl } from "@/types";
+import type TypeCounter from "@/utils/type-counter";
 import type {
   ActualAttackElement,
   ActualAttackPattern,

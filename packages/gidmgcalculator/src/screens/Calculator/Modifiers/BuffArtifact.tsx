@@ -1,5 +1,5 @@
 import { GeneralCalc } from "@Calculation";
-import type { Teammates } from "@Src/types";
+import type { Teammates } from "@/types";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
@@ -8,9 +8,9 @@ import {
   changeArtifactBuffCtrlInput,
   updateTeammateArtifact,
 } from "@Store/calculator-slice";
-import Object_ from "@Src/utils/object-utils";
-import Array_ from "@Src/utils/array-utils";
-import { ArtifactBuffsView } from "@Src/components";
+import Object_ from "@/utils/object-utils";
+import Array_ from "@/utils/array-utils";
+import { ArtifactBuffsView } from "@/components";
 
 export default function BuffArtifact({ teammates }: { teammates: Teammates }) {
   const dispatch = useDispatch();

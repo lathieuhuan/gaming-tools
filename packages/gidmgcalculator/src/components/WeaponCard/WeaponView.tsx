@@ -2,12 +2,12 @@ import { useMemo } from "react";
 import { Badge, VersatileSelect, clsx, type ClassValue } from "rond";
 import { LEVELS, Level, WeaponCalc } from "@Calculation";
 
-import type { CalcWeapon, UserWeapon } from "@Src/types";
-import { useTranslation } from "@Src/hooks";
-import { $AppWeapon } from "@Src/services";
-import { genSequentialOptions } from "@Src/utils";
-import { parseWeaponDesc } from "@Src/utils/description-parsers";
-import Entity_ from "@Src/utils/entity-utils";
+import type { CalcWeapon, UserWeapon } from "@/types";
+import { useTranslation } from "@/hooks";
+import { $AppWeapon } from "@/services";
+import { genSequentialOptions } from "@/utils";
+import { parseWeaponDesc } from "@/utils/description-parsers";
+import Entity_ from "@/utils/entity-utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";

@@ -1,7 +1,7 @@
-import { LEVELS } from "@Src/calculation/constants";
-import { AppCharacter, AttackPattern, CharacterMilestone } from "@Src/calculation/types";
-import { $AppCharacter } from "@Src/services";
-import { Character } from "@Src/types";
+import { LEVELS } from "@/calculation/constants";
+import { AppCharacter, AttackPattern, CharacterMilestone } from "@/calculation/types";
+import { $AppCharacter } from "@/services";
+import { Character } from "@/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __findAscensionByLevel, __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { CharacterCalc } from "../CharacterCalc";

@@ -1,5 +1,5 @@
 import { ATTACK_ELEMENTS } from "@Calculation";
-import { IS_DEV_ENV } from "@Src/constants";
+import { IS_DEV_ENV } from "@/constants";
 
 export function getImgSrc(src?: string) {
   // const IS_DEV_ENV = false;

@@ -6,13 +6,13 @@ import type {
   AttackBonusType,
   TalentCalcItem,
   Level,
-} from "@Src/calculation/types";
-import type { CalcAtomicRecord, CalcItemExclusiveBonus } from "@Src/calculation/utils/TrackerControl";
+} from "@/calculation/types";
+import type { CalcAtomicRecord, CalcItemExclusiveBonus } from "@/calculation/utils/TrackerControl";
 
-import Array_ from "@Src/utils/array-utils";
-import Object_ from "@Src/utils/object-utils";
-import TypeCounter from "@Src/utils/type-counter";
-import { GeneralCalc } from "@Src/calculation/utils/calc-utils";
+import Array_ from "@/utils/array-utils";
+import Object_ from "@/utils/object-utils";
+import TypeCounter from "@/utils/type-counter";
+import { GeneralCalc } from "@/calculation/utils/calc-utils";
 
 /** should not use 'all' in AttackBonusType */
 type GetBonusPaths = Array<AttackBonusType | undefined>;

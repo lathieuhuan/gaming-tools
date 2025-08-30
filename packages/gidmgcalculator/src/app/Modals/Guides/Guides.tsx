@@ -1,7 +1,7 @@
 import { FaBars, FaCog } from "react-icons/fa";
 import { CollapseList, type ModalControl, Modal } from "rond";
 
-import { markYellow } from "@Src/components";
+import { markYellow } from "@/components";
 import { CalculatorGuide } from "./CalculatorGuide";
 
 export function Guides(props: ModalControl) {

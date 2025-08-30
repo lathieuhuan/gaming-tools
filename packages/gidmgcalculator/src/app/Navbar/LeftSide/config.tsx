@@ -1,4 +1,4 @@
-import { SCREEN_PATH } from "@Src/constants";
+import { SCREEN_PATH } from "@/constants";
 
 export type ScreenConfig = {
   label: string;

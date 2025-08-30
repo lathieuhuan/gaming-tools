@@ -1,11 +1,11 @@
 import { AppCharacter, TalentType } from "@Calculation";
 
-import type { Character, Traveler } from "@Src/types";
-import type { GOODCharacter } from "@Src/types/GOOD.types";
+import type { Character, Traveler } from "@/types";
+import type { GOODCharacter } from "@/types/GOOD.types";
 import type { StandardResponse } from "../services.types";
 import type { DataControl, ServiceSubscriber } from "./app-data.types";
 
-import { BACKEND_URL, GENSHIN_DEV_URL } from "@Src/constants";
+import { BACKEND_URL, GENSHIN_DEV_URL } from "@/constants";
 import { BaseService } from "./BaseService";
 import { convertGOODLevel } from "./utils";
 

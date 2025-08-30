@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { SetupImportInfo } from "@Src/types";
+import { SetupImportInfo } from "@/types";
 
 type ImporterContextType = {
   importInfo: SetupImportInfo;

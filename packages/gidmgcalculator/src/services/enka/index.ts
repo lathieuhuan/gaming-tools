@@ -1,5 +1,5 @@
-import { IS_DEV_ENV } from "@Src/constants";
-import { GOODArtifact, GOODCharacter, GOODWeapon } from "@Src/types/GOOD.types";
+import { IS_DEV_ENV } from "@/constants";
+import { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD.types";
 
 const baseUrl = IS_DEV_ENV ? "http://localhost:3001/enka" : "https://gidmgcalculator-backend.onrender.com/enka";
 

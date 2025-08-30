@@ -1,4 +1,4 @@
-import { AppStore, RootState } from "@Src/store";
+import { AppStore, RootState } from "@/store";
 import { useContext, useMemo } from "react";
 import { DynamicStoreContext, DynamicStoreControlContext } from "./DynamicStore.context";
 

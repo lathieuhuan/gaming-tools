@@ -25,7 +25,7 @@
       "@Calculation": ["src/calculation"],
       "@Store/*": ["src/store/*"],
       "@OptimizeDept/*": ["src/features/OptimizeDeptProvider/*"],
-      "@Src/*": ["src/*"],
+      "@/*": ["src/*"],
       "@UnitTest/*": ["unit-test/*"]
     }
   },

@@ -1,7 +1,7 @@
 import { clsx } from "rond";
 import { Level } from "@Calculation";
 
-import { $AppCharacter } from "@Src/services";
+import { $AppCharacter } from "@/services";
 import { GenshinImage } from "../GenshinImage";
 
 export interface ItemThumbProps {

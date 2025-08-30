@@ -3,7 +3,7 @@ import { FaSun } from "react-icons/fa6";
 import { IoDocumentText } from "react-icons/io5";
 import { Button, clsx, useScreenWatcher } from "rond";
 
-import { useOptimizeSystem } from "@Src/features";
+import { useOptimizeSystem } from "@/features";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTargetConfig, selectTraveler, updateUI } from "@Store/ui-slice";
 

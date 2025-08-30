@@ -14,7 +14,7 @@ export default defineConfig({
       "@Store": path.resolve(__dirname, "./src/store"),
       "@Calculation": path.resolve(__dirname, "./src/calculation"),
       "@OptimizeDept": path.resolve(__dirname, "./src/features/OptimizeDeptProvider"),
-      "@Src": path.resolve(__dirname, "./src"),
+      "@": path.resolve(__dirname, "./src"),
     },
   },
 });

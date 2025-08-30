@@ -2,17 +2,17 @@ import { useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { clsx, message, useScreenWatcher, ButtonGroup, Modal, WarehouseLayout } from "rond";
 
-import type { UserArtifact } from "@Src/types";
-import { $AppArtifact } from "@Src/services";
-import { MAX_USER_ARTIFACTS } from "@Src/constants";
-import { useArtifactTypeSelect } from "@Src/hooks";
-import Array_ from "@Src/utils/array-utils";
+import type { UserArtifact } from "@/types";
+import { $AppArtifact } from "@/services";
+import { MAX_USER_ARTIFACTS } from "@/constants";
+import { useArtifactTypeSelect } from "@/hooks";
+import Array_ from "@/utils/array-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectUserArtifacts, addUserArtifact, updateUserArtifact, sortArtifacts } from "@Store/userdb-slice";
-import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@Src/utils/filter-artifacts";
+import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@/utils/filter-artifacts";
 
 // Component
-import { InventoryRack, ArtifactForge, ArtifactFilter, ArtifactForgeProps } from "@Src/components";
+import { InventoryRack, ArtifactForge, ArtifactFilter, ArtifactForgeProps } from "@/components";
 import { ChosenArtifactView } from "./ChosenArtifactView";
 
 type ModalType = "ADD_ARTIFACT" | "EDIT_ARTIFACT" | "CONFIG_FILTER" | "";

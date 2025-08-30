@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 
-import type { CalcSetup, Target } from "@Src/types";
-import { encodeSetup } from "@Src/utils/setup-porter";
+import type { CalcSetup, Target } from "@/types";
+import { encodeSetup } from "@/utils/setup-porter";
 import { PorterLayout } from "./PorterLayout";
 
 interface SetupExporterProps {

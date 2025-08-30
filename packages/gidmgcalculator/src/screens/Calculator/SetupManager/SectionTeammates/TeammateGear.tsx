@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import { WeaponType } from "@Calculation";
-import { ArtifactForge, TeammateItems, WeaponForge } from "@Src/components";
-import { Artifact, Teammate, Weapon } from "@Src/types";
+import { ArtifactForge, TeammateItems, WeaponForge } from "@/components";
+import { Artifact, Teammate, Weapon } from "@/types";
 import { useDispatch } from "@Store/hooks";
 import { updateTeammateArtifact, updateTeammateWeapon } from "@Store/calculator-slice";
 

@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { Rarity } from "rond";
 
-import type { Artifact } from "@Src/types";
-import Object_ from "@Src/utils/object-utils";
+import type { Artifact } from "@/types";
+import Object_ from "@/utils/object-utils";
 import { ArtifactCard, type ArtifactCardAction } from "../../ArtifactCard";
 
 type Handler = {

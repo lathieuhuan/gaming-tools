@@ -1,8 +1,8 @@
 import { useEffect, useRef } from "react";
 import { clsx, notification, useScreenWatcher } from "rond";
 
-import { useGenshinUser } from "@Src/hooks/queries/useGenshinUser";
-import { useRouter } from "@Src/systems/router";
+import { useGenshinUser } from "@/hooks/queries/useGenshinUser";
+import { useRouter } from "@/systems/router";
 import { useSelector } from "@Store/hooks";
 import { selectIsAppReady } from "@Store/ui-slice";
 import { SearchParams } from "./types";

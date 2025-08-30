@@ -1,6 +1,6 @@
 import type { PartiallyOptional } from "rond";
 import type { OptimizerArtifactModConfigs, AppArtifact } from "@Calculation";
-import type { UserArtifact } from "@Src/types";
+import type { UserArtifact } from "@/types";
 
 export type InputArtifact = PartiallyOptional<UserArtifact, "owner">;
 

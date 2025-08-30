@@ -1,5 +1,5 @@
-import { LEVELS } from "@Src/calculation/constants";
-import { EffectGrantedAtConfig, CharacterMilestone } from "@Src/calculation/types";
+import { LEVELS } from "@/calculation/constants";
+import { EffectGrantedAtConfig, CharacterMilestone } from "@/calculation/types";
 import { __findAscensionByLevel, __genMutableTeamDataTester, MutableTeamDataTester } from "@UnitTest/test-utils";
 import { isAvailableEffect } from "../isAvailableEffect";
 

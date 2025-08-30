@@ -1,4 +1,4 @@
-import { AppArtifact, ArtifactModifierDescription } from "@Src/calculation/types";
+import { AppArtifact, ArtifactModifierDescription } from "@/calculation/types";
 import Array_ from "../array-utils";
 import { parseArtifactDesc } from "./parseArtifactDesc";
 

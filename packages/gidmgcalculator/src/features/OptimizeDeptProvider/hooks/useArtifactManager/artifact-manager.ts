@@ -1,7 +1,7 @@
 import { ARTIFACT_TYPES } from "@Calculation";
 
 import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerArtifactModConfigs } from "@Calculation";
-import type { AppArtifactsByCode } from "@Src/types";
+import type { AppArtifactsByCode } from "@/types";
 import type {
   CalculationCount,
   ChangeModConfigInputs,
@@ -10,9 +10,9 @@ import type {
   ToggleModConfig,
 } from "./artifact-manager.types";
 
-import { $AppArtifact } from "@Src/services";
-import Modifier_ from "@Src/utils/modifier-utils";
-import Object_ from "@Src/utils/object-utils";
+import { $AppArtifact } from "@/services";
+import Modifier_ from "@/utils/modifier-utils";
+import Object_ from "@/utils/object-utils";
 
 export class ArtifactManager {
   private readonly MAX_ACTUAL_COUNT = 100_000_000_000;

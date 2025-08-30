@@ -1,5 +1,5 @@
-import { CalcTeamData } from "@Src/calculation/utils/CalcTeamData";
-import { EffectValueByOption } from "@Src/calculation/types";
+import { CalcTeamData } from "@/calculation/utils/CalcTeamData";
+import { EffectValueByOption } from "@/calculation/types";
 import { getTmEffectInput } from "./getTmEffectInput";
 
 export const parseOptIndex = (optIndex: EffectValueByOption["optIndex"] = 0) => {

@@ -1,7 +1,7 @@
 import { useScreenWatcher } from "rond";
 
-import { CalculatorLarge, CalculatorSmall } from "@Src/screens/Calculator";
-import { Outlet, useRouter } from "@Src/systems/router";
+import { CalculatorLarge, CalculatorSmall } from "@/screens/Calculator";
+import { Outlet, useRouter } from "@/systems/router";
 
 export function Main() {
   const screenWatcher = useScreenWatcher();

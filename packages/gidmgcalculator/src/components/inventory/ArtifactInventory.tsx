@@ -1,16 +1,17 @@
-import { useMemo, useState, useRef } from "react";
-import { useElementSize, Modal, EntitySelectTemplate, type EntitySelectTemplateProps, FancyBackSvg } from "rond";
-import { ARTIFACT_TYPES, ArtifactType } from "@Calculation";
+import { useMemo, useRef, useState } from "react";
+import { EntitySelectTemplate, type EntitySelectTemplateProps, FancyBackSvg, Modal, useElementSize } from "rond";
 
-import type { CalcArtifact, UserArtifact } from "@Src/types";
-import { useStoreSnapshot } from "@Src/features";
+import type { CalcArtifact, UserArtifact } from "@/types";
+
+import { useStoreSnapshot } from "@/systems/dynamic-store";
+import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@/utils/filter-artifacts";
+import { ARTIFACT_TYPES, ArtifactType } from "@Calculation";
 import { selectUserArtifacts } from "@Store/userdb-slice";
-import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@Src/utils/filter-artifacts";
 
 // Conponent
 import { ArtifactCard } from "../ArtifactCard";
-import { OwnerLabel } from "../OwnerLabel";
 import { ArtifactFilter, ArtifactFilterProps } from "../ArtifactFilter";
+import { OwnerLabel } from "../OwnerLabel";
 import { InventoryRack } from "./InventoryRack";
 
 export interface ArtifactInventoryProps

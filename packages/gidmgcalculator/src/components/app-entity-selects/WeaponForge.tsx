@@ -2,10 +2,10 @@ import { useMemo, useRef, useState } from "react";
 import { FancyBackSvg, Modal } from "rond";
 import { AppWeapon, WeaponType } from "@Calculation";
 
-import type { Weapon } from "@Src/types";
-import { $AppWeapon } from "@Src/services";
-import Object_ from "@Src/utils/object-utils";
-import Entity_ from "@Src/utils/entity-utils";
+import type { Weapon } from "@/types";
+import { $AppWeapon } from "@/services";
+import Object_ from "@/utils/object-utils";
+import Entity_ from "@/utils/entity-utils";
 
 // Component
 import { WeaponCard } from "../WeaponCard";

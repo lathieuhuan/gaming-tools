@@ -1,6 +1,6 @@
 import { TeamData } from "@Calculation";
-import { $AppCharacter } from "@Src/services";
-import { AppCharactersByName, Character, Teammates } from "@Src/types";
+import { $AppCharacter } from "@/services";
+import { AppCharactersByName, Character, Teammates } from "@/types";
 import Array_ from "./array-utils";
 
 export function makeTeamData(character: Character, teammates: Teammates = []) {

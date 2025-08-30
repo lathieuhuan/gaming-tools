@@ -1,11 +1,11 @@
 import { FaCalculator, FaSyncAlt } from "react-icons/fa";
 import { Button } from "rond";
 
-import type { Teammate } from "@Src/types";
-import { $AppCharacter } from "@Src/services";
+import type { Teammate } from "@/types";
+import { $AppCharacter } from "@/services";
 
 // Component
-import { CharacterPortrait, TeammateItems } from "@Src/components";
+import { CharacterPortrait, TeammateItems } from "@/components";
 
 type TeammateDetailProps = {
   teammate: Teammate;

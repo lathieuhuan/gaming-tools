@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { round } from "rond";
 import { CalcAtomicRecord } from "@Calculation";
 
-import { markGreen } from "@Src/components";
+import { markGreen } from "@/components";
 
 export const recordListStyles = "columns-1 md:columns-2 space-y-1";
 

@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { AppStore } from "@Src/store";
+import type { AppStore } from "@/store";
 
 export type UpdateStoreConfig = (args: Partial<{ persistingUserData: boolean }>) => void;
 

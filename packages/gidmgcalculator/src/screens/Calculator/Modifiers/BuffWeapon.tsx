@@ -1,4 +1,4 @@
-import type { Teammates } from "@Src/types";
+import type { Teammates } from "@/types";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   selectWeapon,
@@ -7,9 +7,9 @@ import {
   updateTeammateWeapon,
   type ToggleModCtrlPath,
 } from "@Store/calculator-slice";
-import Object_ from "@Src/utils/object-utils";
-import Array_ from "@Src/utils/array-utils";
-import { WeaponBuffsView } from "@Src/components";
+import Object_ from "@/utils/object-utils";
+import Array_ from "@/utils/array-utils";
+import { WeaponBuffsView } from "@/components";
 
 export default function BuffWeapon({ teammates }: { teammates: Teammates }) {
   const dispatch = useDispatch();

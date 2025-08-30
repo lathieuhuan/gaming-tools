@@ -1,8 +1,8 @@
 import { clsx, CloseButton, VersatileSelect } from "rond";
 
-import type { Teammate } from "@Src/types";
-import { $AppArtifact, $AppWeapon } from "@Src/services";
-import { genSequentialOptions } from "@Src/utils";
+import type { Teammate } from "@/types";
+import { $AppArtifact, $AppWeapon } from "@/services";
+import { genSequentialOptions } from "@/utils";
 import { GenshinImage } from "../GenshinImage";
 
 interface TeammateItemsProps {

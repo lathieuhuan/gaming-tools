@@ -1,4 +1,4 @@
-import { GenshinImage } from "@Src/components";
+import { GenshinImage } from "@/components";
 
 interface GearIconProps {
   item: { beta?: boolean; icon: string; rarity?: number };

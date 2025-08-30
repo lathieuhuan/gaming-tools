@@ -2,11 +2,11 @@ import { FaCalculator, FaSave } from "react-icons/fa";
 import { Button, ItemCase } from "rond";
 
 import { ARTIFACT_TYPES } from "@Calculation";
-import { GenshinUserBuild } from "@Src/hooks/queries/useGenshinUser";
-import { ConvertedArtifact, ConvertedWeapon } from "@Src/services/app-data";
-import Entity_ from "@Src/utils/entity-utils";
+import { GenshinUserBuild } from "@/hooks/queries/useGenshinUser";
+import { ConvertedArtifact, ConvertedWeapon } from "@/services/app-data";
+import Entity_ from "@/utils/entity-utils";
 
-import { CharacterPortrait, GenshinImage, ItemThumbnail } from "@Src/components";
+import { CharacterPortrait, GenshinImage, ItemThumbnail } from "@/components";
 
 type BuildOverviewProps = GenshinUserBuild & {
   selectedId?: number;

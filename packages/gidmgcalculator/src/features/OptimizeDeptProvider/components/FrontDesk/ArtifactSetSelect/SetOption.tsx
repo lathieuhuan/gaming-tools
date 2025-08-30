@@ -3,7 +3,7 @@ import { FaCaretRight } from "react-icons/fa";
 import { Button, Checkbox, clsx } from "rond";
 
 import type { ArtifactManager, ManagedArtifactSet } from "@OptimizeDept/hooks/useArtifactManager";
-import { GenshinImage } from "@Src/components";
+import { GenshinImage } from "@/components";
 
 interface SetOptionProps extends Pick<ActionsAnimatorProps, "isClosing" | "afterClosedActions"> {
   isActive: boolean;

@@ -1,6 +1,6 @@
 import { FaBars, FaDiscord, FaPuzzlePiece, FaRedditAlien } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
-import { markYellow } from "@Src/components";
+import { markYellow } from "@/components";
 
 export const VersionRecap = (
   <div className="space-y-2 contains-inline-svg">

@@ -1,6 +1,6 @@
-import type { CustomDebuffCtrl, Resonance } from "@Src/types";
-import { GeoResoDebuffItem, SuperconductDebuffItem, renderModifiers } from "@Src/components";
-import { useTranslation } from "@Src/hooks";
+import type { CustomDebuffCtrl, Resonance } from "@/types";
+import { GeoResoDebuffItem, SuperconductDebuffItem, renderModifiers } from "@/components";
+import { useTranslation } from "@/hooks";
 
 type ElementDebuffsProps = {
   superconduct: boolean;

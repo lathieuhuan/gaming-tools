@@ -13,8 +13,8 @@ import type {
 } from "../types";
 import type { CalcItemRecord } from "../utils/TrackerControl";
 
-import { toMult } from "@Src/utils";
-import Array_ from "@Src/utils/array-utils";
+import { toMult } from "@/utils";
+import Array_ from "@/utils/array-utils";
 import { LUNAR_ATTACK_COEFFICIENT } from "../constants/internal";
 import { GeneralCalc } from "../utils/calc-utils";
 

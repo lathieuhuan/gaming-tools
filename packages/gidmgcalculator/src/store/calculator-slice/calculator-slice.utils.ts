@@ -1,10 +1,10 @@
 import { message } from "rond";
 import { AppCharacter, calculateSetup, ElementType } from "@Calculation";
 
-import type { Teammates } from "@Src/types";
+import type { Teammates } from "@/types";
 import type { CalculatorState } from "./calculator-slice.types";
-import { $AppCharacter } from "@Src/services";
-import TypeCounter from "@Src/utils/type-counter";
+import { $AppCharacter } from "@/services";
+import TypeCounter from "@/utils/type-counter";
 
 export function getAppCharacterFromState(state: CalculatorState) {
   const setup = state.setupsById[state.activeId];

@@ -1,4 +1,4 @@
-import { EntityBonusBasedOn, EntityBonusEffect } from "@Src/calculation/types";
+import { EntityBonusBasedOn, EntityBonusEffect } from "@/calculation/types";
 import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { AppliedBonusesGetter } from "../AppliedBonusesGetter";
 

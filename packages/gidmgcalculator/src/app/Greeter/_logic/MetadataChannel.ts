@@ -1,4 +1,4 @@
-import type { Metadata } from "@Src/services";
+import type { Metadata } from "@/services";
 
 type MetadataMessageRequest = {
   type: "REQUEST";

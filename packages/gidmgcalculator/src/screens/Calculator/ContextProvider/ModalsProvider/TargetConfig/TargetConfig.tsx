@@ -1,10 +1,10 @@
 import { Checkbox, InputNumber, Modal, VersatileSelect } from "rond";
 import { ATTACK_ELEMENTS, AttackElement, ElementType } from "@Calculation";
 
-import { useTranslation } from "@Src/hooks";
-import { $AppData } from "@Src/services";
-import { MAX_TARGET_LEVEL } from "@Src/constants";
-import Array_ from "@Src/utils/array-utils";
+import { useTranslation } from "@/hooks";
+import { $AppData } from "@/services";
+import { MAX_TARGET_LEVEL } from "@/constants";
+import Array_ from "@/utils/array-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTargetConfig, updateUI } from "@Store/ui-slice";
 import { selectTarget, updateTarget } from "@Store/calculator-slice";

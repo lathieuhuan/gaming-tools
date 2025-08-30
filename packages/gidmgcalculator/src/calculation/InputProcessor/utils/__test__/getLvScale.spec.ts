@@ -1,4 +1,4 @@
-import { CharacterEffectLevelScale } from "@Src/calculation/types";
+import { CharacterEffectLevelScale } from "@/calculation/types";
 import { __genMutableTeamDataTester, MutableTeamDataTester } from "@UnitTest/test-utils";
 import { getLevelScale } from "../getLevelScale";
 

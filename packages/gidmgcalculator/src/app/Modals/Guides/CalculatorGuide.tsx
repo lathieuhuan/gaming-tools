@@ -5,7 +5,7 @@ import { IoDocumentText } from "react-icons/io5";
 import { BiImport } from "react-icons/bi";
 import { TrashCanSvg } from "rond";
 
-import { markGreen, markYellow } from "@Src/components";
+import { markGreen, markYellow } from "@/components";
 
 interface ListProps {
   children: React.ReactNode;

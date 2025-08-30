@@ -1,6 +1,6 @@
 import { TotalAttributeControl } from "../../TotalAttributeControl";
-import { AppliedAttributeBonus, AppliedBonuses, EntityBuff } from "@Src/calculation/types";
-import { Character } from "@Src/types";
+import { AppliedAttributeBonus, AppliedBonuses, EntityBuff } from "@/calculation/types";
+import { Character } from "@/types";
 import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { AppliedBonusesGetter } from "../AppliedBonusesGetter";
 

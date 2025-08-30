@@ -2,7 +2,7 @@ import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __genMutableTeamDataTester, MutableTeamDataTester } from "@UnitTest/test-utils";
 import { TotalAttributeControl } from "../../TotalAttributeControl";
 import { BareBonusGetter } from "../BareBonusGetter";
-import { Character } from "@Src/types";
+import { Character } from "@/types";
 
 export class BareBonusGetterTester extends BareBonusGetter<MutableTeamDataTester> {
   inputs: number[] = [];

@@ -1,4 +1,4 @@
-import { EffectValueByOption, LevelableTalentType } from "@Src/calculation/types";
+import { EffectValueByOption, LevelableTalentType } from "@/calculation/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __genMutableTeamDataTester, MutableTeamDataTester } from "@UnitTest/test-utils";
 import { getIndexOfEffectValue } from "../getIndexOfEffectValue";

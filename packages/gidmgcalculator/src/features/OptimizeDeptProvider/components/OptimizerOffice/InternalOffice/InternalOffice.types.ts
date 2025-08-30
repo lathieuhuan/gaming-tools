@@ -1,5 +1,5 @@
 import type { ArtifactSetBonus } from "@Calculation";
-import type { ArtifactModCtrl, CalcArtifacts, CalcSetupManageInfo } from "@Src/types";
+import type { ArtifactModCtrl, CalcArtifacts, CalcSetupManageInfo } from "@/types";
 
 export type ProcessedSetup =
   | CalcSetupManageInfo

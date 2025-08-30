@@ -1,17 +1,17 @@
 import { useRef, useState } from "react";
 import { clsx, ConfirmModal, notification, Skeleton } from "rond";
 
-import { useStore } from "@Src/features";
-import { GenshinUser, GenshinUserBuild } from "@Src/hooks/queries/useGenshinUser";
-import { $AppSettings } from "@Src/services";
-import { ConvertedArtifact, ConvertedWeapon } from "@Src/services/app-data";
-import { UserArtifact } from "@Src/types";
-import Setup_ from "@Src/utils/setup-utils";
+import { GenshinUser, GenshinUserBuild } from "@/hooks/queries/useGenshinUser";
+import { $AppSettings } from "@/services";
+import { ConvertedArtifact, ConvertedWeapon } from "@/services/app-data";
+import { useStore } from "@/systems/dynamic-store";
+import { useSetupImporter } from "@/systems/setup-importer";
+import { UserArtifact } from "@/types";
+import Setup_ from "@/utils/setup-utils";
 import { useDispatch } from "@Store/hooks";
 import { addCharacter, addUserArtifact, addUserWeapon } from "@Store/userdb-slice";
-import { useSetupImporter } from "@Src/systems/setup-importer";
 
-import { ArtifactCard, WeaponCard } from "@Src/components";
+import { ArtifactCard, WeaponCard } from "@/components";
 import { BuildOverview } from "./BuildOverview";
 
 type ResultsSectionProps = {

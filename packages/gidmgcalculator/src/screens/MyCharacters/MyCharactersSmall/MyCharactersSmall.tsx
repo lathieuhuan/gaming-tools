@@ -6,7 +6,7 @@ import { useDispatch } from "@Store/hooks";
 import { viewCharacter } from "@Store/userdb-slice";
 
 // Component
-import { MobileBottomNav } from "@Src/components";
+import { MobileBottomNav } from "@/components";
 import {
   PanelAttributes,
   PanelConstellation,

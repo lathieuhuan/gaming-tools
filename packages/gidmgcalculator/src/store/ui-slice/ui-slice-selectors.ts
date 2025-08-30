@@ -1,4 +1,4 @@
-import type { RootState } from "@Src/store";
+import type { RootState } from "@/store";
 
 export const selectMySetupModalType = (state: RootState) => state.ui.mySetupsModalType;
 

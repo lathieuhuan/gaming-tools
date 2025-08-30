@@ -1,5 +1,5 @@
-import { CalcTeamData } from "@Src/calculation/utils/CalcTeamData";
-import { EntityPenaltyEffect } from "@Src/calculation/types";
+import { CalcTeamData } from "@/calculation/utils/CalcTeamData";
+import { EntityPenaltyEffect } from "@/calculation/types";
 import { getIndexOfEffectValue } from "../utils/getIndexOfEffectValue";
 import { getLevelScale } from "../utils/getLevelScale";
 

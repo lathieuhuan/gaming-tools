@@ -1,4 +1,4 @@
-import { UserArtifact, UserCharacter, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
+import { UserArtifact, UserCharacter, UserComplexSetup, UserSetup, UserWeapon } from "@/types";
 
 export interface UploadedData {
   characters: UserCharacter[];

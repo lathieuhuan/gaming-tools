@@ -1,4 +1,4 @@
-import type { ModifierCtrl, Teammate } from "@Src/types";
+import type { ModifierCtrl, Teammate } from "@/types";
 import type { GenshinModifierViewProps } from "../GenshinModifierView";
 
 export type GetModifierHanldersArgs<T extends ModifierCtrl = ModifierCtrl> = {

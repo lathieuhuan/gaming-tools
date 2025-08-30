@@ -1,6 +1,6 @@
 import { CollapseList } from "rond";
 
-import { useTabs } from "@Src/hooks";
+import { useTabs } from "@/hooks";
 import { selectTeammates } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
 

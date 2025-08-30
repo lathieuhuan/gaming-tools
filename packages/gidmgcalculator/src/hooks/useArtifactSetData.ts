@@ -1,5 +1,5 @@
 import { AppArtifact } from "@Calculation";
-import { $AppArtifact } from "@Src/services";
+import { $AppArtifact } from "@/services";
 import { useRef } from "react";
 
 export function useArtifactSetData() {

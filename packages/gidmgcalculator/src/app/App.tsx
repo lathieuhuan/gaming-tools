@@ -1,4 +1,4 @@
-import { ImporterProvider } from "@Src/systems/setup-importer";
+import { ImporterProvider } from "@/systems/setup-importer";
 import { Greeter } from "./Greeter";
 import { Main } from "./Main";
 import { Modals } from "./Modals";

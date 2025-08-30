@@ -1,4 +1,4 @@
-import type { AppCharacter, CharacterPropertyCondition } from "@Src/calculation/types";
+import type { AppCharacter, CharacterPropertyCondition } from "@/calculation/types";
 import { isPassedComparison } from "./isPassedComparison";
 
 export function isValidCharProps(condition: CharacterPropertyCondition, character: AppCharacter) {

@@ -1,9 +1,9 @@
 import { AdvancedPick, clsx, ItemCase, type ClassValue } from "rond";
 import { AppArtifact, AppWeapon, ARTIFACT_TYPES } from "@Calculation";
 
-import { Artifact, Weapon } from "@Src/types";
-import { $AppArtifact, $AppWeapon } from "@Src/services";
-import Entity_ from "@Src/utils/entity-utils";
+import { Artifact, Weapon } from "@/types";
+import { $AppArtifact, $AppWeapon } from "@/services";
+import Entity_ from "@/utils/entity-utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";

@@ -1,4 +1,4 @@
-import type { EffectInputCondition, InputCheck } from "@Src/calculation/types";
+import type { EffectInputCondition, InputCheck } from "@/calculation/types";
 import { isPassedComparison } from "./isPassedComparison";
 
 function isInvalidInput(inputs: number[], inputCheck: InputCheck) {

@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import { notification, type ModalControl } from "rond";
-import type { UserArtifact, UserWeapon } from "@Src/types";
+import type { UserArtifact, UserWeapon } from "@/types";
 import type { UploadedData, UploadStep } from "./types";
 
-import { MAX_USER_ARTIFACTS, MAX_USER_WEAPONS } from "@Src/constants";
+import { MAX_USER_ARTIFACTS, MAX_USER_WEAPONS } from "@/constants";
 import { useDispatch } from "@Store/hooks";
 import { addUserDatabase } from "@Store/userdb-slice";
 
 // Component
-import { ItemMultiSelect, ItemMultiSelectIds } from "@Src/components";
+import { ItemMultiSelect, ItemMultiSelectIds } from "@/components";
 import { FileUpload } from "./components/FileUpload";
 
 // const MAX_USER_WEAPONS = 3;

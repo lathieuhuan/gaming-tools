@@ -1,8 +1,8 @@
 import type { ElementType, ModInputConfig } from "@Calculation";
 
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
-import { parseResonanceDesc } from "@Src/utils/description-parsers";
-import Array_ from "@Src/utils/array-utils";
+import { parseResonanceDesc } from "@/utils/description-parsers";
+import Array_ from "@/utils/array-utils";
 
 type RenderInfo = {
   name: string;

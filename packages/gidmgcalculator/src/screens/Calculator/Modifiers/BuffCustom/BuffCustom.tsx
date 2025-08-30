@@ -1,7 +1,7 @@
 import { clsx } from "rond";
 
-import { useTranslation } from "@Src/hooks";
-import { suffixOf, toCustomBuffLabel } from "@Src/utils";
+import { useTranslation } from "@/hooks";
+import { suffixOf, toCustomBuffLabel } from "@/utils";
 
 // Store
 import {

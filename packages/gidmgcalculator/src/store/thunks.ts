@@ -1,7 +1,7 @@
 import isEqual from "react-fast-compare";
 import { batch } from "react-redux";
 
-import { $AppCharacter, $AppSettings } from "@Src/services";
+import { $AppCharacter, $AppSettings } from "@/services";
 import type { AppThunk } from "./store";
 
 // Store
@@ -10,9 +10,9 @@ import { updateUI } from "./ui-slice";
 import { addUserArtifact, addUserWeapon, saveSetup, updateUserArtifact, updateUserWeapon } from "./userdb-slice";
 
 // Util
-import Array_ from "@Src/utils/array-utils";
-import Entity_ from "@Src/utils/entity-utils";
-import Setup_ from "@Src/utils/setup-utils";
+import Array_ from "@/utils/array-utils";
+import Entity_ from "@/utils/entity-utils";
+import Setup_ from "@/utils/setup-utils";
 import { parseUserCharacter, type CharacterForInit } from "./store.utils";
 
 export function initNewSessionWithCharacter(character: CharacterForInit): AppThunk {

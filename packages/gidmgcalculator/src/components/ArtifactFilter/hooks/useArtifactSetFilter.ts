@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import type { ArtifactType } from "@Calculation";
-import type { CalcArtifact } from "@Src/types";
+import type { CalcArtifact } from "@/types";
 
-import { $AppArtifact } from "@Src/services";
+import { $AppArtifact } from "@/services";
 
 import {
   ArtifactSetFilter,

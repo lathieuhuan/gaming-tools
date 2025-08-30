@@ -1,12 +1,12 @@
 import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "@Calculation";
-import type { AppArtifactsByCode, Artifact, ArtifactModCtrl, CalcArtifacts, Target } from "@Src/types";
+import type { AppArtifactsByCode, Artifact, ArtifactModCtrl, CalcArtifacts, Target } from "@/types";
 
 import { GeneralCalc, InputProcessor, ResultCalculator } from "@Calculation";
-import { getAttackAlterConfigs } from "@Src/calculation";
+import { getAttackAlterConfigs } from "@/calculation";
 
-import Array_ from "@Src/utils/array-utils";
-import Modifier_ from "@Src/utils/modifier-utils";
-import Object_ from "@Src/utils/object-utils";
+import Array_ from "@/utils/array-utils";
+import Modifier_ from "@/utils/modifier-utils";
+import Object_ from "@/utils/object-utils";
 
 type CalculationStats = ReturnType<InputProcessor["getCalculationStats"]>;
 

@@ -3,13 +3,13 @@ import { FaLongArrowAltUp } from "react-icons/fa";
 import { Select, clsx } from "rond";
 import { TALENT_TYPES, CalculationAspect, TalentType, CalcTeamData } from "@Calculation";
 
-import type { Weapon } from "@Src/types";
-import Array_ from "@Src/utils/array-utils";
+import type { Weapon } from "@/types";
+import Array_ from "@/utils/array-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectSetupManageInfos, selectStandardId, updateCharacter } from "@Store/calculator-slice";
 
 //
-import { FinalResultLayout, type FinalResultLayoutProps } from "@Src/components";
+import { FinalResultLayout, type FinalResultLayoutProps } from "@/components";
 
 type CellConfig = ReturnType<FinalResultLayoutProps["getRowConfig"]>["cells"][number];
 

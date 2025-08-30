@@ -1,9 +1,9 @@
-import type { ArtifactModCtrl } from "@Src/types";
+import type { ArtifactModCtrl } from "@/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import { $AppArtifact } from "@Src/services";
-import { getArtifactDesc } from "@Src/utils/description-parsers";
-import Array_ from "@Src/utils/array-utils";
+import { $AppArtifact } from "@/services";
+import { getArtifactDesc } from "@/utils/description-parsers";
+import Array_ from "@/utils/array-utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 

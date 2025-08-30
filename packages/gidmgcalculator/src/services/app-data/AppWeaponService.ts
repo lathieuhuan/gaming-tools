@@ -1,6 +1,6 @@
 import type { AppWeapon, WeaponType } from "@Calculation";
-import type { Weapon } from "@Src/types";
-import type { GOODWeapon } from "@Src/types/GOOD.types";
+import type { Weapon } from "@/types";
+import type { GOODWeapon } from "@/types/GOOD.types";
 import type { DataControl } from "./app-data.types";
 import { convertGOODLevel, toGOODKey } from "./utils";
 

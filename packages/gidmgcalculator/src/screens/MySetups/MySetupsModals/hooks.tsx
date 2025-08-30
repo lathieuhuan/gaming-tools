@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { clsx } from "rond";
 
-import type { UserSetup } from "@Src/types";
-import { $AppCharacter } from "@Src/services";
-import { CharacterPortrait } from "@Src/components";
+import type { UserSetup } from "@/types";
+import { $AppCharacter } from "@/services";
+import { CharacterPortrait } from "@/components";
 
 export type SetupOptions = Array<Pick<UserSetup, "ID" | "type" | "name" | "char" | "party">>;
 

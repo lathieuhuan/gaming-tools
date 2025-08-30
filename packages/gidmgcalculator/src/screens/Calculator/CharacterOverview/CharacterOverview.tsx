@@ -7,7 +7,7 @@ import { selectIsAppReady, selectTraveler } from "@Store/ui-slice";
 import { useCalcModalCtrl, useTeamData } from "../ContextProvider";
 
 // Component
-import { CharacterIntro, ComplexSelect } from "@Src/components";
+import { CharacterIntro, ComplexSelect } from "@/components";
 import { ArtifactsTab, AttributesTab, ConstellationTab, TalentsTab, WeaponTab } from "./character-overview-tabs";
 
 const TABS: SwitchNodeCase<string>[] = [

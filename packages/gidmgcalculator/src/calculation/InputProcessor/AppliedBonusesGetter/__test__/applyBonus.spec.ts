@@ -1,5 +1,5 @@
-import { ELEMENT_TYPES } from "@Src/calculation/constants";
-import { AppliedAttributeBonus, AppliedBonuses, BareBonus, EntityBonusTargets } from "@Src/calculation/types";
+import { ELEMENT_TYPES } from "@/calculation/constants";
+import { AppliedAttributeBonus, AppliedBonuses, BareBonus, EntityBonusTargets } from "@/calculation/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { AppliedBonusesGetter } from "../AppliedBonusesGetter";

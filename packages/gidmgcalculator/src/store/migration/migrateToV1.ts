@@ -1,4 +1,4 @@
-import { ArtifactModCtrl, CalcArtifacts, UserArtifact } from "@Src/types";
+import { ArtifactModCtrl, CalcArtifacts, UserArtifact } from "@/types";
 import { UserdbState, initialState } from "@Store/userdb-slice";
 import { UserDatabaseV0 } from "./migration.types";
 import { GeneralCalc } from "@Calculation";

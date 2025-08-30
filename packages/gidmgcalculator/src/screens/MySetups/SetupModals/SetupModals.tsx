@@ -1,16 +1,16 @@
 import { GeneralCalc } from "@Calculation";
 import { ConfirmModal, Modal } from "rond";
 
-import type { UserArtifacts, UserSetup, UserWeapon } from "@Src/types";
+import type { UserArtifacts, UserSetup, UserWeapon } from "@/types";
 import type { CalculationResult } from "../types";
 
-import Setup_ from "@Src/utils/setup-utils";
+import Setup_ from "@/utils/setup-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectMySetupModalType, updateUI } from "@Store/ui-slice";
 import { removeSetup } from "@Store/userdb-slice";
 
 // Component
-import { ArtifactCard, AttributeTable, SetBonusesView, SetupExporter, WeaponCard } from "@Src/components";
+import { ArtifactCard, AttributeTable, SetBonusesView, SetupExporter, WeaponCard } from "@/components";
 import { Modifiers } from "./Modifiers";
 
 type SetupModalsProps = {

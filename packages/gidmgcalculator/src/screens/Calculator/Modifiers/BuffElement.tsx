@@ -9,7 +9,7 @@ import {
   TalentCalcItem,
 } from "@Calculation";
 
-import { Resonance } from "@Src/types";
+import { Resonance } from "@/types";
 import {
   selectAttkBonuses,
   selectCharacter,
@@ -28,7 +28,7 @@ import {
   RESONANCE_INFO,
   ResonanceBuffItem,
   VapMeltBuffItem,
-} from "@Src/components";
+} from "@/components";
 
 type ReactionConfigType = "reaction" | "infuse_reaction" | "absorb_reaction";
 

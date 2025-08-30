@@ -2,10 +2,11 @@ import { useRef, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { Checkbox, CollapseSpace, Select } from "rond";
 
-import type { CalcSetup, CalcSetupManageInfo } from "@Src/types";
-import { IS_DEV_ENV } from "@Src/constants";
-import { useStoreSnapshot } from "@Src/features";
-import Object_ from "@Src/utils/object-utils";
+import type { CalcSetup, CalcSetupManageInfo } from "@/types";
+
+import { IS_DEV_ENV } from "@/constants";
+import { useStoreSnapshot } from "@/systems/dynamic-store";
+import Object_ from "@/utils/object-utils";
 
 const FORM_ID = "optimizer-preconfig";
 
@@ -97,3 +98,4 @@ function OptimizeIntro(props: OptimizeIntroProps) {
 OptimizeIntro.FORM_ID = FORM_ID;
 
 export { OptimizeIntro };
+

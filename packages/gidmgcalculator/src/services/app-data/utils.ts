@@ -1,5 +1,5 @@
 import { AttributeStat, Level, LEVELS } from "@Calculation";
-import { GOODAscendable, GOODStatKey } from "@Src/types/GOOD.types";
+import { GOODAscendable, GOODStatKey } from "@/types/GOOD.types";
 
 export function toGOODKey(name: string) {
   let result = "";

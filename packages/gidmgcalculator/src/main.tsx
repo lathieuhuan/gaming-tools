@@ -5,12 +5,13 @@ import { ConfigProvider, ScreenSizeWatcher } from "rond";
 
 import { route } from "./app/route";
 import { GenshinImage } from "./components";
-import { DynamicStoreProvider, OptimizeDeptProvider } from "./features";
+import { OptimizeDeptProvider } from "./features";
+import { DynamicStoreProvider } from "./systems/dynamic-store";
+import { QueryClientProvider } from "./systems/react-query";
 import { RouterProvider } from "./systems/router";
 
 import "./assets/css/index.css";
 import "./assets/css/tailwind.css";
-import { QueryClientProvider } from "./systems/react-query";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ScreenSizeWatcher>

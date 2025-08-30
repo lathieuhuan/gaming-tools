@@ -1,4 +1,4 @@
-import type { CalcTeamData } from "@Src/calculation/utils/CalcTeamData";
+import type { CalcTeamData } from "@/calculation/utils/CalcTeamData";
 import type {
   AppliedAttributeBonus,
   AppliedBonuses,
@@ -8,11 +8,11 @@ import type {
   EntityBonusEffect,
   EntityBonusTargets,
   EntityBuff,
-} from "@Src/calculation/types";
+} from "@/calculation/types";
 
-import { ELEMENT_TYPES } from "@Src/calculation/constants";
-import { ECalcStatModule } from "@Src/calculation/constants/internal";
-import Array_ from "@Src/utils/array-utils";
+import { ELEMENT_TYPES } from "@/calculation/constants";
+import { ECalcStatModule } from "@/calculation/constants/internal";
+import Array_ from "@/utils/array-utils";
 import { BareBonusGetter, BonusGetterSupport } from "../BareBonusGetter";
 
 type ApplyBonusSupportInfo = {

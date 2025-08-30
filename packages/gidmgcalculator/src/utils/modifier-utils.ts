@@ -1,8 +1,8 @@
 import type { ArtifactSetBonus, ModInputConfig, ModInputType, ModifierAffectType, WeaponType } from "@Calculation";
-import type { Artifact, ArtifactModCtrl, ElementModCtrl, ModifierCtrl } from "@Src/types";
+import type { Artifact, ArtifactModCtrl, ElementModCtrl, ModifierCtrl } from "@/types";
 
 import { GeneralCalc } from "@Calculation";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 
 const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
   CHECK: 0,

@@ -1,11 +1,11 @@
 import { ArtifactSetBonus } from "@Calculation";
 import { CollapseList } from "rond";
 
-import type { UserSetup, UserWeapon } from "@Src/types";
+import type { UserSetup, UserWeapon } from "@/types";
 import type { CalculationResult } from "../../types";
 
-import { useTranslation } from "@Src/hooks";
-import { $AppData } from "@Src/services";
+import { useTranslation } from "@/hooks";
+import { $AppData } from "@/services";
 
 // Component
 import {
@@ -17,7 +17,7 @@ import {
   TeammateBuffsView,
   TeammateDebuffsView,
   WeaponBuffsView,
-} from "@Src/components";
+} from "@/components";
 import { CustomBuffs, ElementBuffs } from "./buffs";
 import { CustomDebuffs, ElementDebuffs } from "./debuffs";
 

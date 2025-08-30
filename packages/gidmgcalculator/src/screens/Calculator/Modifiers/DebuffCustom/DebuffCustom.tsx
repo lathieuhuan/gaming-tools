@@ -1,4 +1,4 @@
-import { useTranslation } from "@Src/hooks";
+import { useTranslation } from "@/hooks";
 
 // Store
 import {

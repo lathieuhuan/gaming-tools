@@ -4,7 +4,7 @@ import type { AppCharacter } from "@Calculation";
 import type { OptimizedOutput } from "@OptimizeDept/hooks/useOptimizeManager";
 
 import { NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@Calculation";
-import { useTranslation } from "@Src/hooks";
+import { useTranslation } from "@/hooks";
 
 interface OutputSelectProps {
   calcList?: AppCharacter["calcList"];

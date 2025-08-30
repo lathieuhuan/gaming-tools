@@ -1,9 +1,9 @@
 import { CalcTeamData, CharacterBuff, CharacterDebuff } from "@Calculation";
-import type { Teammate, Teammates } from "@Src/types";
+import type { Teammate, Teammates } from "@/types";
 import type { GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import Array_ from "@Src/utils/array-utils";
-import { parseTeammateAbilityDesc } from "@Src/utils/description-parsers";
+import Array_ from "@/utils/array-utils";
+import { parseTeammateAbilityDesc } from "@/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 

@@ -2,11 +2,11 @@ import { AppArtifact, ARTIFACT_TYPES } from "@Calculation";
 import { FaInfoCircle } from "react-icons/fa";
 import { CollapseSpace, ItemCase } from "rond";
 
-import type { Artifact } from "@Src/types";
+import type { Artifact } from "@/types";
 import type { ProcessedResult } from "./InternalOffice.types";
 
-import Entity_ from "@Src/utils/entity-utils";
-import { GenshinImage, ItemThumbnail } from "@Src/components";
+import Entity_ from "@/utils/entity-utils";
+import { GenshinImage, ItemThumbnail } from "@/components";
 
 export interface ResultItemDisplayerProps {
   title: string;

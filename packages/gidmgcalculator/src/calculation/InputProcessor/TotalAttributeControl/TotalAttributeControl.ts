@@ -7,16 +7,16 @@ import type {
   AttributeStat,
   Level,
   TotalAttribute,
-} from "@Src/calculation/types";
-import type { Artifact, Character, Weapon } from "@Src/types";
+} from "@/calculation/types";
+import type { Artifact, Character, Weapon } from "@/types";
 
-import { ArtifactCalc, GeneralCalc, WeaponCalc } from "@Src/calculation/utils/calc-utils";
-import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "@Src/calculation/constants";
-import { ECalcStatModule } from "@Src/calculation/constants/internal";
-import { TrackerControl } from "@Src/calculation/utils/TrackerControl";
-import { applyPercent } from "@Src/utils";
-import Array_ from "@Src/utils/array-utils";
-import Object_ from "@Src/utils/object-utils";
+import { ArtifactCalc, GeneralCalc, WeaponCalc } from "@/calculation/utils/calc-utils";
+import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "@/calculation/constants";
+import { ECalcStatModule } from "@/calculation/constants/internal";
+import { TrackerControl } from "@/calculation/utils/TrackerControl";
+import { applyPercent } from "@/utils";
+import Array_ from "@/utils/array-utils";
+import Object_ from "@/utils/object-utils";
 
 type InternalTotalAttribute = Record<
   AttributeStat,

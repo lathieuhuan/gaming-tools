@@ -3,7 +3,7 @@ import { selectCharacter, changeModCtrlInput, toggleModCtrl, type ToggleModCtrlP
 import { useCalcTeamData } from "../ContextProvider";
 
 //
-import { SelfDebuffsView } from "@Src/components";
+import { SelfDebuffsView } from "@/components";
 
 export default function DebuffSelf() {
   const dispatch = useDispatch();

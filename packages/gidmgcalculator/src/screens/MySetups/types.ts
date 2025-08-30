@@ -1,5 +1,5 @@
 import { calculateSetup } from "@Calculation";
-import { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
+import { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@/types";
 import { MySetupsModalType } from "@Store/ui-slice";
 
 export type OpenModalFn = (type: MySetupsModalType) => () => void;

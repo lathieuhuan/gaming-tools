@@ -1,4 +1,4 @@
-import type { Update } from "@Src/services";
+import type { Update } from "@/services";
 
 export type AppMetadata = {
   version: string;

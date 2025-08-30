@@ -1,7 +1,7 @@
 import { FaDownload } from "react-icons/fa";
 import { Button, Modal } from "rond";
 
-import { DOWNLOADED_DATA_VERSION } from "@Src/constants";
+import { DOWNLOADED_DATA_VERSION } from "@/constants";
 import { useSelector } from "@Store/hooks";
 import { selectUserArtifacts, selectUserCharacters, selectUserSetups, selectUserWeapons } from "@Store/userdb-slice";
 

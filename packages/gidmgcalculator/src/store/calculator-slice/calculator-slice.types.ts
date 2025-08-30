@@ -21,7 +21,7 @@ import type {
   Target,
   TeammateArtifact,
   TeammateWeapon,
-} from "@Src/types";
+} from "@/types";
 
 type SetupResult = {
   totalAttr: TotalAttribute;

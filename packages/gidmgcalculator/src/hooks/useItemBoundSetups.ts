@@ -1,8 +1,8 @@
 import { useEffect, useMemo } from "react";
 
-import type { UserItem, UserSetup } from "@Src/types";
-import Setup_ from "@Src/utils/setup-utils";
-import Array_ from "@Src/utils/array-utils";
+import type { UserItem, UserSetup } from "@/types";
+import Setup_ from "@/utils/setup-utils";
+import Array_ from "@/utils/array-utils";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";

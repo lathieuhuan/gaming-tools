@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, clsx, type ClassValue } from "rond";
 
-import type { Character } from "@Src/types";
-import { $AppCharacter } from "@Src/services";
+import type { Character } from "@/types";
+import { $AppCharacter } from "@/services";
 
 // Conponent
 import { AbilityIcon } from "../ability-list-components";

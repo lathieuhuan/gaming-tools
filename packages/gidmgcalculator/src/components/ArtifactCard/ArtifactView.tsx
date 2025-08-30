@@ -1,10 +1,10 @@
 import { clsx, Badge, VersatileSelect } from "rond";
 import { ArtifactCalc, AttributeStat } from "@Calculation";
 
-import type { ArtifactSubStat, CalcArtifact, UserArtifact } from "@Src/types";
-import { useTranslation } from "@Src/hooks";
-import { $AppArtifact } from "@Src/services";
-import { suffixOf } from "@Src/utils";
+import type { ArtifactSubStat, CalcArtifact, UserArtifact } from "@/types";
+import { useTranslation } from "@/hooks";
+import { $AppArtifact } from "@/services";
+import { suffixOf } from "@/utils";
 
 // Component
 import { ArtifactLevelSelect } from "./ArtifactLevelSelect";

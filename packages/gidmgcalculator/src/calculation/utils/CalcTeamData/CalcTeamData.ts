@@ -1,7 +1,7 @@
-import type { EffectApplicableCondition, TalentType } from "@Src/calculation/types";
-import type { AppCharactersByName, Character, Teammates } from "@Src/types";
+import type { EffectApplicableCondition, TalentType } from "@/calculation/types";
+import type { AppCharactersByName, Character, Teammates } from "@/types";
 
-import Array_ from "@Src/utils/array-utils";
+import Array_ from "@/utils/array-utils";
 import {
   isAvailableEffect,
   isValidCharProps,

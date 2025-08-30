@@ -1,9 +1,9 @@
 import { round } from "rond";
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, TrackerResult } from "@Calculation";
 
-import { useTranslation } from "@Src/hooks";
-import { applyPercent } from "@Src/utils";
-import Entity_ from "@Src/utils/entity-utils";
+import { useTranslation } from "@/hooks";
+import { applyPercent } from "@/utils";
+import Entity_ from "@/utils/entity-utils";
 import { useSelector } from "@Store/hooks";
 import { selectTotalAttr } from "@Store/calculator-slice";
 import { recordListStyles, renderHeading, renderRecord } from "./_utils";

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { clsx, CollapseSpace, message } from "rond";
 
-import Array_ from "@Src/utils/array-utils";
+import Array_ from "@/utils/array-utils";
 import {
   addTeammate,
   removeTeammate,
@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { useTeamData } from "../../ContextProvider";
 
 // Component
-import { CharacterPortrait, Tavern, TavernProps } from "@Src/components";
+import { CharacterPortrait, Tavern, TavernProps } from "@/components";
 import { CopySelect } from "./CopySelect";
 import { TeammateGear } from "./TeammateGear";
 import { TeammateSlot } from "./TeammateSlot";

@@ -7,7 +7,7 @@ import { viewCharacter, removeUserCharacter, switchArtifact, switchWeapon } from
 import { useDetailInfo } from "../hooks";
 
 // Component
-import { ArtifactInventory, Tavern, WeaponInventory } from "@Src/components";
+import { ArtifactInventory, Tavern, WeaponInventory } from "@/components";
 import { DetailModalContext, type DetailModalControl } from "./DetailModal.context";
 
 type ModalType = "SWITCH_CHARACTER" | "SWITCH_WEAPON" | "SWITCH_ARTIFACT" | "REMOVE_CHARACTER" | "";

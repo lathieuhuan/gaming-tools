@@ -2,7 +2,7 @@ import { LoadingSpin } from "rond";
 
 import { useDispatch } from "@Store/hooks";
 import { updateUserCharacter } from "@Store/userdb-slice";
-import { TalentList } from "@Src/components";
+import { TalentList } from "@/components";
 import { useDetailInfo } from "../ContextProvider";
 
 interface PanelTalentsProps {

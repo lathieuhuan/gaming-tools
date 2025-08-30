@@ -4,7 +4,7 @@ import { Button, Modal, notification } from "rond";
 
 import type { UploadedData } from "../types";
 
-import { DOWNLOADED_DATA_VERSION } from "@Src/constants";
+import { DOWNLOADED_DATA_VERSION } from "@/constants";
 import { convertFromGoodFormat } from "../utils/convertFromGoodFormat";
 import { convertToV3_1 } from "../utils/convertToV3_1";
 

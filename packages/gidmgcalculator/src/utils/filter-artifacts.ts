@@ -1,5 +1,5 @@
 import { ArtifactCalc, ArtifactType, AttributeStat } from "@Calculation";
-import type { UserArtifact } from "@Src/types";
+import type { UserArtifact } from "@/types";
 
 export type ArtifactStatFilterOption = "All" | AttributeStat;
 

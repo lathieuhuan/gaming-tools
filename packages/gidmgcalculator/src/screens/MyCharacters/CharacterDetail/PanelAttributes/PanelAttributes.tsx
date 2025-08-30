@@ -1,4 +1,4 @@
-import { AttributeTable, CharacterIntro } from "@Src/components";
+import { AttributeTable, CharacterIntro } from "@/components";
 import { LoadingSpin, clsx } from "rond";
 
 import { useDispatch } from "@Store/hooks";

@@ -2,13 +2,13 @@ import { Fragment, useState } from "react";
 import { Button, clsx, ConfirmModal, TrashCanSvg } from "rond";
 import { MdEdit } from "react-icons/md";
 
-import { UserArtifact } from "@Src/types";
-import { $AppArtifact } from "@Src/services";
+import { UserArtifact } from "@/types";
+import { $AppArtifact } from "@/services";
 import { useDispatch } from "@Store/hooks";
 import { removeArtifact, swapArtifactOwner, updateUserArtifact, updateUserArtifactSubStat } from "@Store/userdb-slice";
 
 // Components
-import { ArtifactCard, Tavern } from "@Src/components";
+import { ArtifactCard, Tavern } from "@/components";
 
 interface ChosenArtifactViewProps {
   artifact?: UserArtifact;

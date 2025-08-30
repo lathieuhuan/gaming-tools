@@ -2,8 +2,8 @@ import { useRef, useState } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { Popover, useClickOutside, type ClickOutsideHandler } from "rond";
 
-import type { UserItem, UserSetup, UserWeapon } from "@Src/types";
-import { useItemBoundSetups, type BoundingItem } from "@Src/hooks";
+import type { UserItem, UserSetup, UserWeapon } from "@/types";
+import { useItemBoundSetups, type BoundingItem } from "@/hooks";
 
 interface SetupListProps {
   setups: UserSetup[];

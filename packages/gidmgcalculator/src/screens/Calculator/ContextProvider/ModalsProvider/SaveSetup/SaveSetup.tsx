@@ -3,10 +3,10 @@ import { Input, Modal } from "rond";
 
 import type { ValidationError } from "./types";
 
-import { SCREEN_PATH } from "@Src/constants";
-import { useStoreSnapshot } from "@Src/features";
-import { useRouter } from "@Src/systems/router";
-import Array_ from "@Src/utils/array-utils";
+import { SCREEN_PATH } from "@/constants";
+import { useStoreSnapshot } from "@/systems/dynamic-store";
+import { useRouter } from "@/systems/router";
+import Array_ from "@/utils/array-utils";
 import { useDispatch } from "@Store/hooks";
 import { saveSetupThunk } from "@Store/thunks";
 import { validateFreeItemSlots, validateTeammates } from "./utils";

@@ -1,10 +1,10 @@
 import { UndefinedInitialDataOptions, useQuery } from "@tanstack/react-query";
 
 import { ARTIFACT_TYPES } from "@Calculation";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
-import { ConvertedArtifact, ConvertedCharacter, ConvertedWeapon } from "@Src/services/app-data";
-import { GenshinUserResponse, getGenshinUser } from "@Src/services/enka";
-import Entity_ from "@Src/utils/entity-utils";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
+import { ConvertedArtifact, ConvertedCharacter, ConvertedWeapon } from "@/services/app-data";
+import { GenshinUserResponse, getGenshinUser } from "@/services/enka";
+import Entity_ from "@/utils/entity-utils";
 // import { userMock } from "./mock";
 
 export type GenshinUserBuild = {

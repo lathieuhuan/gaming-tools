@@ -1,7 +1,7 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { ARTIFACT_TYPES } from "@Calculation";
 
-import type { UserArtifact, UserCharacter, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
+import type { UserArtifact, UserCharacter, UserComplexSetup, UserSetup, UserWeapon } from "@/types";
 import type {
   AddCharacterAction,
   AddSetupToComplexAction,
@@ -20,10 +20,10 @@ import type {
   UpdateUserWeaponAction,
 } from "./userdb-slice.types";
 
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
-import Setup_ from "@Src/utils/setup-utils";
-import Entity_ from "@Src/utils/entity-utils";
-import Array_ from "@Src/utils/array-utils";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
+import Setup_ from "@/utils/setup-utils";
+import Entity_ from "@/utils/entity-utils";
+import Array_ from "@/utils/array-utils";
 
 export type UserdbState = {
   userChars: UserCharacter[];

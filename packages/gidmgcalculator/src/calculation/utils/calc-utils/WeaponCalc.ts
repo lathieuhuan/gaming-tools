@@ -1,5 +1,5 @@
-import type { Level } from "@Src/calculation/types";
-import { LEVELS } from "@Src/calculation/constants";
+import type { Level } from "@/calculation/types";
+import { LEVELS } from "@/calculation/constants";
 import { GeneralCalc } from "./GeneralCalc";
 
 const BASE_ATTACK_TYPE: Record<string, number[]> = {

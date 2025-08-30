@@ -3,7 +3,7 @@ import { Modal } from "rond";
 
 import type { OptimizeDeptState } from "./OptimizeDept.types";
 
-import Object_ from "@Src/utils/object-utils";
+import Object_ from "@/utils/object-utils";
 import { OptimizeSystemContext, OptimizeSystem } from "./OptimizeDept.context";
 import { useOptimizerManager } from "./hooks/useOptimizeManager";
 

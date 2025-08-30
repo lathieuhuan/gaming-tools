@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-import { useSetupImporter } from "@Src/systems/setup-importer";
-import { DECODE_ERROR_MSG, decodeSetup, type DecodeError } from "@Src/utils/setup-porter";
+import { useSetupImporter } from "@/systems/setup-importer";
+import { DECODE_ERROR_MSG, decodeSetup, type DecodeError } from "@/utils/setup-porter";
 
-import { PorterLayout } from "@Src/components";
+import { PorterLayout } from "@/components";
 
 type ImportError = "NOT_SUPPORT" | DecodeError;
 

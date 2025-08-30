@@ -1,4 +1,4 @@
-import { EffectExtra } from "@Src/calculation/types";
+import { EffectExtra } from "@/calculation/types";
 import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "./test-utils";
 

@@ -1,8 +1,8 @@
 import { round } from "rond";
 import { ATTACK_ELEMENTS, type AttackBonuses, type AttackBonusKey } from "@Calculation";
 
-import { useTranslation } from "@Src/hooks";
-import { suffixOf } from "@Src/utils";
+import { useTranslation } from "@/hooks";
+import { suffixOf } from "@/utils";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./_utils";
 
 type BonusesTrackerProps = {

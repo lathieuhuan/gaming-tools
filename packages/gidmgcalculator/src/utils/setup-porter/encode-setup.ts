@@ -12,9 +12,9 @@ import {
   WEAPON_TYPES,
 } from "@Calculation";
 
-import type { CalcSetup, ModifierCtrl, Target } from "@Src/types";
-import { EXPORTED_SETUP_VERSION } from "@Src/constants";
-import { $AppCharacter } from "@Src/services";
+import type { CalcSetup, ModifierCtrl, Target } from "@/types";
+import { EXPORTED_SETUP_VERSION } from "@/constants";
+import { $AppCharacter } from "@/services";
 import { CUSTOM_BUFF_CATEGORIES, DIVIDER } from "./setup-porter-config";
 
 const encodeModCtrl = (mod: ModifierCtrl) => {

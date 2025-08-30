@@ -6,13 +6,13 @@ import type { OptimizeDeptState } from "@OptimizeDept/OptimizeDept.types";
 import type { OptimizedOutput } from "@OptimizeDept/hooks/useOptimizeManager";
 import type { OnChangeStep, OptimizeDeptModalType, OptimizeStepConfig, Optimizer } from "./FrontDesk.types";
 
-import { useStoreSnapshot } from "@Src/features";
-import { getSetupAppEntities } from "@Src/utils/getSetupAppEntities";
+import { useStoreSnapshot } from "@/systems/dynamic-store";
+import { getSetupAppEntities } from "@/utils/getSetupAppEntities";
 import { useArtifactManager } from "@OptimizeDept/hooks/useArtifactManager";
 
 // Components
+import { ItemMultiSelect, type ItemMultiSelectIds } from "@/components";
 import { OptimizerOffice } from "../OptimizerOffice";
-import { ItemMultiSelect, type ItemMultiSelectIds } from "@Src/components";
 import { ArtifactModConfig } from "./ArtifactModConfig";
 import { ArtifactSetSelect } from "./ArtifactSetSelect";
 import { Launcher } from "./Launcher";

@@ -5,10 +5,10 @@ import type {
   CalculationFinalResultKey,
   LunarType,
   ResistReductionKey,
-} from "@Src/calculation/types";
+} from "@/calculation/types";
 
-import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "@Src/calculation/constants";
-import { ECalcStatModule } from "@Src/calculation/constants/internal";
+import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "@/calculation/constants";
+import { ECalcStatModule } from "@/calculation/constants/internal";
 
 // ========== STAT RECORD ==========
 

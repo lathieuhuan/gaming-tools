@@ -1,7 +1,7 @@
 import { FaSun } from "react-icons/fa";
 import { clsx } from "rond";
 
-import { useOptimizeSystem } from "@Src/features";
+import { useOptimizeSystem } from "@/features";
 
 export function OptimizerButton() {
   const { state, contact } = useOptimizeSystem();

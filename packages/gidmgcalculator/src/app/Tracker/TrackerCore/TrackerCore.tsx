@@ -9,7 +9,7 @@ import { selectCalcFinalResult, selectTarget } from "@Store/calculator-slice";
 import { getTotalRecordValue } from "./_utils";
 
 // Component
-import { markGreen, markDim } from "@Src/components";
+import { markGreen, markDim } from "@/components";
 import { AttributesTracker } from "./AttributesTracker";
 import { BonusesTracker } from "./BonusesTracker";
 import { DebuffsTracker } from "./DebuffsTracker";

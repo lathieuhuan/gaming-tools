@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { StandardResponse } from "@Src/services";
+import { StandardResponse } from "@/services";
 
 type State<T> = {
   status: "loading" | "error" | "success" | "idle";

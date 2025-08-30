@@ -1,5 +1,5 @@
-import { TotalAttributeControl } from "@Src/calculation/InputProcessor/TotalAttributeControl";
-import { BareBonus, EntityBonusEffect } from "@Src/calculation/types";
+import { TotalAttributeControl } from "@/calculation/InputProcessor/TotalAttributeControl";
+import { BareBonus, EntityBonusEffect } from "@/calculation/types";
 import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "./test-utils";
 

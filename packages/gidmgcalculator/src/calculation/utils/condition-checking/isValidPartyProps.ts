@@ -1,4 +1,4 @@
-import type { AppCharacter, PartyPropertyCondition } from "@Src/calculation/types";
+import type { AppCharacter, PartyPropertyCondition } from "@/calculation/types";
 import { isPassedComparison } from "./isPassedComparison";
 
 export function isValidPartyProps(

@@ -1,4 +1,4 @@
-import type { ElementModCtrl } from "@Src/types";
+import type { ElementModCtrl } from "@/types";
 import type { TrackerControl } from "../utils/TrackerControl";
 import type { CalculationFinalResultAttackItem, Level, ResistReduction, TransformativeReaction } from "../types";
 import type { CalcItemCalculator } from "./CalcItemCalculator";

@@ -1,5 +1,5 @@
-import type { EffectGrantedAt } from "@Src/calculation/types";
-import { Character } from "@Src/types";
+import type { EffectGrantedAt } from "@/calculation/types";
+import { Character } from "@/types";
 import { CharacterCalc } from "../calc-utils";
 import { isPassedComparison } from "./isPassedComparison";
 

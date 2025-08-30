@@ -1,4 +1,4 @@
-import type { AppSettings } from "@Src/services";
+import type { AppSettings } from "@/services";
 
 type SettingKey<T extends keyof AppSettings> = Extract<keyof AppSettings, T>;
 

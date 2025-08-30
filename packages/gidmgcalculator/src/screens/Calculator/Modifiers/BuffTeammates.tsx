@@ -1,11 +1,11 @@
-import type { Teammates } from "@Src/types";
+import type { Teammates } from "@/types";
 import {
   changeTeammateModCtrlInput,
   toggleTeammateModCtrl,
   type ToggleTeammateModCtrlPath,
 } from "@Store/calculator-slice";
 import { useDispatch } from "@Store/hooks";
-import { TeammateBuffsView } from "@Src/components";
+import { TeammateBuffsView } from "@/components";
 import { useCalcTeamData } from "../ContextProvider";
 
 interface BuffTeammatesProps {

@@ -1,4 +1,4 @@
-import { GeoResoDebuffItem, SuperconductDebuffItem } from "@Src/components";
+import { GeoResoDebuffItem, SuperconductDebuffItem } from "@/components";
 import { selectElmtModCtrls, updateCalcSetup, updateResonance } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 

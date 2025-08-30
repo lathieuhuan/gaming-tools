@@ -1,4 +1,4 @@
-import { AttackBonuses } from "@Src/calculation/types";
+import { AttackBonuses } from "@/calculation/types";
 import { AttackBonusesArchive, AttackBonusesControl } from "../AttackBonusesControl";
 
 class Tester extends AttackBonusesControl {

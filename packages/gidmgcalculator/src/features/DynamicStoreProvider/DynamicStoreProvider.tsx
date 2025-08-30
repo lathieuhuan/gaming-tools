@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 
-import { $AppSettings } from "@Src/services";
-import { setupStore } from "@Src/store";
+import { $AppSettings } from "@/services";
+import { setupStore } from "@/store";
 import { updateCalculator } from "@Store/calculator-slice";
 import { updateUI } from "@Store/ui-slice";
 import { addUserDatabase } from "@Store/userdb-slice";

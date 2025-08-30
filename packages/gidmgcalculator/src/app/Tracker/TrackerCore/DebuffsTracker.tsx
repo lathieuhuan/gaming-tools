@@ -1,6 +1,6 @@
 import { ATTACK_ELEMENTS, ResistReduction, TrackerResult } from "@Calculation";
 
-import { useTranslation } from "@Src/hooks";
+import { useTranslation } from "@/hooks";
 import { getTotalRecordValue, recordListStyles, renderHeading, renderRecord } from "./_utils";
 
 function getResMult(type: "equation" | "value", value: number) {

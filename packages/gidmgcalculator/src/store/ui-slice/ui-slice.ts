@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { $AppSettings, AppSettings } from "@Src/services";
-import type { Traveler } from "@Src/types";
+import { $AppSettings, AppSettings } from "@/services";
+import type { Traveler } from "@/types";
 
 export type MySetupsModalType =
   | "TIPS"
