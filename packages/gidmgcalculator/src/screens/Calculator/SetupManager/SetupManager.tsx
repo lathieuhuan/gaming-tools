@@ -3,7 +3,7 @@ import { FaSun } from "react-icons/fa6";
 import { IoDocumentText } from "react-icons/io5";
 import { Button, clsx, useScreenWatcher } from "rond";
 
-import { useOptimizeSystem } from "@/features";
+import { useOptimizeSystem } from "@/systems/optimize-dept";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTargetConfig, selectTraveler, updateUI } from "@Store/ui-slice";
 
@@ -16,9 +16,10 @@ import { SetupSelect } from "./SetupSelect";
 
 import styles from "./SetupManager.styles.module.scss";
 
-interface SetupManagerProps {
+type SetupManagerProps = {
   isModernUI?: boolean;
-}
+};
+
 export function SetupManager({ isModernUI = false }: SetupManagerProps) {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();

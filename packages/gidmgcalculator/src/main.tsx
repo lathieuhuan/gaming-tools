@@ -5,8 +5,8 @@ import { ConfigProvider, ScreenSizeWatcher } from "rond";
 
 import { route } from "./app/route";
 import { GenshinImage } from "./components";
-import { OptimizeDeptProvider } from "./features";
 import { DynamicStoreProvider } from "./systems/dynamic-store";
+import { OptimizeDeptProvider } from "./systems/optimize-dept";
 import { QueryClientProvider } from "./systems/react-query";
 import { RouterProvider } from "./systems/router";
 import { ImporterProvider } from "./systems/setup-importer";
