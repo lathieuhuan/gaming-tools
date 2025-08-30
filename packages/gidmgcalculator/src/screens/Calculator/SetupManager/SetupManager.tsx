@@ -14,6 +14,8 @@ import SectionTeammates from "./SectionTeammates";
 import SectionWeapon from "./SectionWeapon";
 import { SetupSelect } from "./SetupSelect";
 
+import styles from "./SetupManager.styles.module.scss";
+
 interface SetupManagerProps {
   isModernUI?: boolean;
 }
@@ -33,7 +35,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 
   const renderMainContent = (cls = "") => (
     <div className={`hide-scrollbar space-y-2 scroll-smooth ${cls}`}>
-      <SectionTeammates key={traveler} />
+      <SectionTeammates key={traveler} className={styles.section} />
       <SectionWeapon />
       <SectionArtifacts />
 

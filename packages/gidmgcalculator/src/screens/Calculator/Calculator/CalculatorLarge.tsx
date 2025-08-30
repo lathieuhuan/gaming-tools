@@ -12,7 +12,7 @@ import { SetupManager } from "../SetupManager";
 import { SetupDirector } from "../SetupDirector";
 import { FinalResult } from "../FinalResult";
 
-import styles from "./Calculator.styles.module.scss";
+import styles from "./styles.module.scss";
 
 function LargeCalculator() {
   const screenWatcher = useScreenWatcher();

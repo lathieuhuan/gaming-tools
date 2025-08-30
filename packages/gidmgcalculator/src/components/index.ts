@@ -3,7 +3,7 @@ export * from "./app-entity-selects";
 export * from "./modifier-item";
 export * from "./modifier-list";
 export * from "./inventory";
-export * from "./setup-porter";
+export * from "./SetupExporter";
 export * from "./span";
 export * from "./ArtifactCard";
 export * from "./ArtifactFilter";

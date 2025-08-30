@@ -1,122 +1,106 @@
+import { CalcTeamData, calculateSetup } from "@Calculation";
 import { useEffect, useMemo } from "react";
 import { FaInfo } from "react-icons/fa";
-import { clsx, Button, LoadingSpin, WarehouseLayout, useScreenWatcher } from "rond";
-import { CalcTeamData } from "@Calculation";
+import { Button, LoadingSpin, WarehouseLayout, clsx, useScreenWatcher } from "rond";
 
-import type { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@Src/types";
-import { useAppCharacter } from "@Src/hooks";
-import Setup_ from "@Src/utils/setup-utils";
+import type { UserArtifacts, UserSetup, UserWeapon } from "@Src/types";
+import type { OpenModalFn, SetupRenderInfo } from "./types";
+
+import { useSetupImporter } from "@Src/systems/setup-importer";
 import Array_ from "@Src/utils/array-utils";
-
-import type { OpenModalFn } from "./MySetups.types";
-import { calculateChosenSetup } from "./MySetups.utils";
-import { useAppCharactersByName } from "./hooks/useAppCharactersByName";
-
-// Store
+import Setup_ from "@Src/utils/setup-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
-import {
-  chooseUserSetup,
-  selectChosenSetupId,
-  selectUserArtifacts,
-  selectUserSetups,
-  selectUserWeapons,
-} from "@Store/userdb-slice";
+import { chooseUserSetup, selectChosenSetupId } from "@Store/userdb-slice";
+import { useAppCharactersByName } from "./hooks/useAppCharactersByName";
+import { parseSetup, renderInfoToImportInfo } from "./utils";
 
 // Component
 import { FinalResultView } from "@Src/components";
-import { ChosenSetupModals } from "./ChosenSetupModals";
 import { MySetupsModals } from "./MySetupsModals";
-import { SetupTemplate } from "./SetupTemplate";
-
-type UserSetupItems = {
-  weapon?: UserWeapon;
-  artifacts: UserArtifacts;
-};
-
-type RenderedSetupConfig = {
-  setup: UserSetup;
-  items?: UserSetupItems;
-  complex?: UserComplexSetup;
-};
-
-function getUserSetupItems(setup: UserSetup, userWeapons: UserWeapon[], userArtifacts: UserArtifacts): UserSetupItems {
-  return {
-    weapon: Array_.findById(userWeapons, setup.weaponID),
-    artifacts: setup.artifactIDs.map((ID) => Array_.findById(userArtifacts, ID) || null),
-  };
-}
+import { SetupModals } from "./SetupModals";
+import { SetupView } from "./SetupView";
 
 export default function MySetups() {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
-  const userWeapons = useSelector(selectUserWeapons);
-  const userArtifacts = useSelector(selectUserArtifacts);
-  const userSetups = useSelector(selectUserSetups);
-  const chosenSetupID = useSelector(selectChosenSetupId);
+  const setupImporter = useSetupImporter();
+  const userdb = useSelector((state) => state.userdb);
+  const selectedSetupID = useSelector(selectChosenSetupId);
 
   const appCharactersByName = useAppCharactersByName();
 
-  const chosenSetup = (() => {
-    const setup = Array_.findById(userSetups, chosenSetupID);
-    return setup && setup.type === "complex" ? (Array_.findById(userSetups, setup.shownID) as UserSetup) : setup;
-  })();
-
-  const { isLoading, error } = useAppCharacter(chosenSetup?.char.name);
-  // const isLoading = false;
-  // const error = null;
+  const { userWps: userWeapons, userArts: userArtifacts, userSetups } = userdb;
 
   useEffect(() => {
-    document.getElementById(`setup-${chosenSetupID}`)?.scrollIntoView();
-  }, [chosenSetupID]);
+    document.getElementById(`setup-${selectedSetupID}`)?.scrollIntoView();
+  }, [selectedSetupID]);
 
   const openModal: OpenModalFn = (type) => () => {
     dispatch(updateUI({ mySetupsModalType: type }));
   };
 
-  const itemsBySetupId = useMemo(() => {
-    const result: Record<string, UserSetupItems> = {};
+  const handleEditSetup = (setup: UserSetup, weapon: UserWeapon, artifacts: UserArtifacts) => {
+    const { ID, name, type, target } = setup;
+
+    setupImporter.import({
+      ID,
+      name,
+      type,
+      calcSetup: Setup_.userSetupToCalcSetup(setup, weapon, artifacts, true),
+      target,
+    });
+  };
+
+  const handleCalculateTeammateSetup = (info: SetupRenderInfo, teammateIndex: number) => {
+    const importInfo = renderInfoToImportInfo(info, teammateIndex, userdb);
+
+    if (importInfo) {
+      setupImporter.import(importInfo);
+    }
+  };
+
+  const setupRenderInfos = useMemo(() => {
+    const infos: SetupRenderInfo[] = [];
 
     for (const setup of userSetups) {
-      if (Setup_.isUserSetup(setup)) {
-        result[setup.ID] = getUserSetupItems(setup, userWeapons, userArtifacts);
+      const parsedResult = parseSetup(setup, userSetups);
+
+      if (parsedResult) {
+        const { setup, complexSetup } = parsedResult;
+
+        const info: SetupRenderInfo = {
+          setup,
+          complexSetup,
+          weapon: Array_.findById(userWeapons, setup.weaponID),
+          artifacts: setup.artifactIDs.map((ID) => Array_.findById(userArtifacts, ID) || null),
+        };
+
+        infos.push(info);
       }
     }
-    return result;
-  }, []);
 
-  const renderedSetupConfigs: RenderedSetupConfig[] = [];
+    return infos;
+  }, [userSetups, userWeapons, userArtifacts]);
 
-  for (const setup of userSetups) {
-    if (!Setup_.isUserSetup(setup)) {
-      const actualSetup = userSetups.find((userSetup) => userSetup.ID === setup.shownID);
-
-      if (actualSetup && Setup_.isUserSetup(actualSetup)) {
-        renderedSetupConfigs.push({
-          setup: actualSetup,
-          items: itemsBySetupId[actualSetup.ID],
-          complex: setup,
-        });
-      }
-      continue;
-    }
-    if (setup.type === "original") {
-      renderedSetupConfigs.push({
-        setup,
-        items: itemsBySetupId[setup.ID],
-      });
-    }
-  }
+  // const { isLoading, error } = useAppCharacter(chosenSetup?.char.name);
+  const isLoading = false;
+  const error = null;
 
   const renderChosenSetup = () => {
-    if (chosenSetup) {
-      const { weapon, artifacts } = itemsBySetupId[chosenSetup.ID] || {};
-      const result = calculateChosenSetup(chosenSetup, weapon, artifacts);
+    const selectedInfo = setupRenderInfos.find(
+      (info) => info.setup.ID === selectedSetupID || info.complexSetup?.ID === selectedSetupID
+    );
+
+    if (selectedInfo && selectedInfo.weapon) {
+      const { weapon, artifacts } = selectedInfo;
+      const { name, char, target, ...rest } = selectedInfo.setup;
+      const result = calculateSetup({ char, weapon, artifacts, ...rest }, target);
 
       return (
         <div className="h-full flex flex-col">
           <div>
-            <p className="text-sm text-center truncate">{chosenSetup.name}</p>
+            <p className="text-sm text-center truncate">{name}</p>
           </div>
           <div className="mt-2 grow hide-scrollbar">
             {result?.finalResult && weapon && (
@@ -124,7 +108,7 @@ export default function MySetups() {
             )}
           </div>
 
-          <ChosenSetupModals {...{ chosenSetup, weapon, artifacts, result }} />
+          <SetupModals setup={selectedInfo.setup} {...{ weapon, artifacts, result }} />
         </div>
       );
     }
@@ -153,11 +137,10 @@ export default function MySetups() {
           minWidth: screenWatcher.isFromSize("lg") ? "541px" : "19.5rem",
         }}
       >
-        {renderedSetupConfigs.length ? (
-          renderedSetupConfigs.map((config) => {
-            const { setup, complex } = config;
-            const { weapon, artifacts } = config.items || {};
-            const setupId = complex?.ID || setup.ID;
+        {setupRenderInfos.length ? (
+          setupRenderInfos.map((info) => {
+            const { setup, complexSetup, weapon, artifacts } = info;
+            const setupId = complexSetup?.ID || setup.ID;
 
             appCharactersByName.register(setup.char.name);
             setup.party.forEach((teammate) => teammate && appCharactersByName.register(teammate.name));
@@ -169,17 +152,19 @@ export default function MySetups() {
                 <div
                   className={clsx(
                     "px-2 pt-3 pb-2 rounded-lg bg-surface-3",
-                    setupId === chosenSetupID ? "shadow-5px-1px shadow-active-color" : "shadow-common"
+                    setupId === selectedSetupID ? "shadow-5px-1px shadow-active-color" : "shadow-common"
                   )}
                   onClick={() => dispatch(chooseUserSetup(setupId))}
                 >
                   {weapon ? (
-                    <SetupTemplate
+                    <SetupView
                       setup={setup}
                       teamData={teamData}
                       weapon={weapon}
                       artifacts={artifacts}
-                      complexSetup={config.complex}
+                      complexSetup={complexSetup}
+                      onEditSetup={() => handleEditSetup(setup, weapon, artifacts || [])}
+                      onCalcTeammateSetup={(teammateIndex) => handleCalculateTeammateSetup(info, teammateIndex)}
                       openModal={openModal}
                     />
                   ) : (
@@ -206,7 +191,7 @@ export default function MySetups() {
         )}
       </div>
 
-      <MySetupsModals combineMoreId={chosenSetupID} />
+      <MySetupsModals combineMoreId={selectedSetupID} />
     </WarehouseLayout>
   );
 }

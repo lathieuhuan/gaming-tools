@@ -74,7 +74,7 @@ export const calculatorSlice = createSlice({
       state.activeId = ID;
       state.standardId = 0;
       state.comparedIds = [];
-      $AppSettings.set({ charInfoIsSeparated: false });
+      $AppSettings.set({ isCharInfoSeparated: false });
 
       if (target) {
         state.target = target;
@@ -86,9 +86,9 @@ export const calculatorSlice = createSlice({
       const { importInfo, shouldOverwriteChar, shouldOverwriteTarget } = action.payload;
       const { ID = Date.now(), type, name = "New setup", target, calcSetup } = importInfo;
       const { setupsById } = state;
-      const { charInfoIsSeparated } = $AppSettings.get();
+      const { isCharInfoSeparated } = $AppSettings.get();
 
-      if (shouldOverwriteChar && charInfoIsSeparated) {
+      if (shouldOverwriteChar && isCharInfoSeparated) {
         for (const setup of Object.values(setupsById)) {
           setup.char = calcSetup.char;
         }
@@ -162,10 +162,10 @@ export const calculatorSlice = createSlice({
     // CHARACTER
     updateCharacter: (state, action: UpdateCharacterAction) => {
       const { setupsById } = state;
-      const { charInfoIsSeparated } = $AppSettings.get();
+      const { isCharInfoSeparated } = $AppSettings.get();
       const { setupIds, ...newConfig } = action.payload;
 
-      if (charInfoIsSeparated) {
+      if (isCharInfoSeparated) {
         if (setupIds) {
           for (const setupId of Array_.toArray(setupIds)) {
             Object.assign(setupsById[setupId].char, newConfig);
@@ -178,7 +178,7 @@ export const calculatorSlice = createSlice({
           Object.assign(setup.char, newConfig);
         }
       }
-      calculate(state, !charInfoIsSeparated || !!setupIds);
+      calculate(state, !isCharInfoSeparated || !!setupIds);
     },
     // PARTY
     addTeammate: (state, action: AddTeammateAction) => {
@@ -619,7 +619,7 @@ export const calculatorSlice = createSlice({
       const activeSetup = Array_.findById(tempManageInfos, activeId);
       const newActiveId = activeSetup ? activeSetup.ID : tempManageInfos[0].ID;
 
-      // if (state.configs.charInfoIsSeparated && !newConfigs.charInfoIsSeparated) {
+      // if (state.configs.isCharInfoSeparated && !newConfigs.isCharInfoSeparated) {
       //   const activeChar = setupsById[newActiveId].char;
 
       //   for (const setup of Object.values(setupsById)) {

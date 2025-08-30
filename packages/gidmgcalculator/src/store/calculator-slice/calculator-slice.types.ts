@@ -44,7 +44,13 @@ export type UpdateCalculatorAction = PayloadAction<
   Partial<Pick<CalculatorState, "activeId" | "standardId" | "comparedIds">>
 >;
 
-export type InitNewSessionPayload = PartiallyRequired<SetupImportInfo, "calcSetup">;
+export type InitNewSessionPayload = {
+  ID?: number;
+  name?: string;
+  type?: "original" | "combined";
+  calcSetup: CalcSetup;
+  target?: Target;
+};
 
 export type ImportSetupAction = PayloadAction<{
   importInfo: PartiallyRequired<Pick<SetupImportInfo, "ID" | "name" | "type" | "calcSetup" | "target">, "calcSetup">;

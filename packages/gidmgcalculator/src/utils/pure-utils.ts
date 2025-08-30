@@ -1,11 +1,6 @@
 import { ATTACK_ELEMENTS } from "@Calculation";
 import { IS_DEV_ENV } from "@Src/constants";
 
-export function getSearchParam(key: string) {
-  const searchParams = new URLSearchParams(window.location.search);
-  return searchParams.get(key);
-}
-
 export function getImgSrc(src?: string) {
   // const IS_DEV_ENV = false;
   if (IS_DEV_ENV || !src) return "";
@@ -24,6 +19,10 @@ export const applyPercent = (n: number, percent: number) => Math.round((n * perc
 
 export function randomInt(max: number, min = 0, step = 1) {
   return Math.floor((Math.random() * (max - min)) / step) * step + min;
+}
+
+export function genNumberSequence(count: number, startFrom = 1) {
+  return [...Array(count)].map((_, i) => i + startFrom);
 }
 
 export function genSequentialOptions(max: number | undefined = 0, startsAt0 = false, min = 1) {

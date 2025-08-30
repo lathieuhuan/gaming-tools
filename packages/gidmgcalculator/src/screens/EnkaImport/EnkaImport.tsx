@@ -1,25 +1,46 @@
-import { useRef } from "react";
-import { clsx } from "rond";
+import { useEffect, useRef } from "react";
+import { clsx, notification, useScreenWatcher } from "rond";
 
-import { useRouter } from "@Src/features";
 import { useGenshinUser } from "@Src/hooks/queries/useGenshinUser";
+import { useRouter } from "@Src/systems/router";
 import { useSelector } from "@Store/hooks";
 import { selectIsAppReady } from "@Store/ui-slice";
 import { SearchParams } from "./types";
 
 import { ResultsSection } from "./ResultsSection";
-import { SearchBar, SearchBarProps } from "./SearchBar";
+import { Input, SearchBar, SearchBarProps } from "./SearchBar";
 
-type EnkaImportProps = {
-  isMobile?: boolean;
-};
+function getInitialInput(params?: SearchParams): Input {
+  if (params?.uid) {
+    return { type: "uid", value: params.uid };
+  }
+  if (params?.profile) {
+    return { type: "profile", value: params.profile };
+  }
+  return { type: "uid", value: "" };
+}
 
-export function EnkaImport({ isMobile }: EnkaImportProps) {
+export function EnkaImport() {
   const router = useRouter<SearchParams>();
-  const isAppReady = useSelector(selectIsAppReady);
+  const isMobile = !useScreenWatcher("sm");
+  const appReady = useSelector(selectIsAppReady);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { user, isLoading } = useGenshinUser(router.searchParams?.uid, { enable: isAppReady });
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useGenshinUser(router.searchParams?.uid, {
+    enabled: appReady,
+  });
+
+  useEffect(() => {
+    if (error) {
+      notification.error({
+        content: error.message,
+      });
+    }
+  }, [error]);
 
   const handleSearch: SearchBarProps["onSearch"] = (input) => {
     router.updateSearchParams({ [input.type]: input.value }, true);
@@ -44,10 +65,10 @@ export function EnkaImport({ isMobile }: EnkaImportProps) {
             <p className="text-sm text-hint-color">Use in-game UID or enka profile</p>
           </div>
 
-          <SearchBar className="mt-6" searchParams={router.searchParams} onSearch={handleSearch} />
+          <SearchBar className="mt-6" initialInput={getInitialInput(router.searchParams)} onSearch={handleSearch} />
         </div>
 
-        <div className={clsx(isMobile && "w-full snap-center")}>
+        <div className={clsx(isMobile && "w-full shrink-0 snap-center")}>
           <ResultsSection className="h-full" user={user} isLoading={isLoading} />
         </div>
       </div>
