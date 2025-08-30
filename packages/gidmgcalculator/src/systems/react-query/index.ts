@@ -1,1 +1,1 @@
-export * from "./components/QueryClientProvider";
+export * from "./QueryClientProvider";

@@ -9,6 +9,7 @@ import { OptimizeDeptProvider } from "./features";
 import { DynamicStoreProvider } from "./systems/dynamic-store";
 import { QueryClientProvider } from "./systems/react-query";
 import { RouterProvider } from "./systems/router";
+import { ImporterProvider } from "./systems/setup-importer";
 
 import "./assets/css/index.css";
 import "./assets/css/tailwind.css";
@@ -21,9 +22,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           {({ store, persistor }) => (
             <StoreProvider store={store}>
               <PersistGate loading={null} persistor={persistor}>
-                <OptimizeDeptProvider>
-                  <RouterProvider route={route} />
-                </OptimizeDeptProvider>
+                <ImporterProvider>
+                  <OptimizeDeptProvider>
+                    <RouterProvider route={route} />
+                  </OptimizeDeptProvider>
+                </ImporterProvider>
               </PersistGate>
             </StoreProvider>
           )}
