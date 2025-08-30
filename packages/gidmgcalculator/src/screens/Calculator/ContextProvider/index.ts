@@ -1,2 +1,3 @@
 export * from "./ContextProvider";
-export * from "./hooks";
+export { useCalcModalCtrl } from "./ModalsProvider/context";
+export { useCalcTeamData, useTeamData } from "./TeamDataProvider/context";

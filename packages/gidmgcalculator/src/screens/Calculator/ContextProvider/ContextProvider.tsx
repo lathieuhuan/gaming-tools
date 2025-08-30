@@ -1,10 +1,16 @@
-import { TeamDataProvider } from "./TeamDataProvider";
-import { ModalsProvider } from "./ModalsProvider";
+import { ReactNode } from "react";
 
-export function ContextProvider(props: { children: React.ReactNode }) {
+import { ModalsProvider } from "./ModalsProvider";
+import { SetupTransshiper } from "./SetupTransshiper";
+import { TeamDataProvider } from "./TeamDataProvider";
+
+export function ContextProvider(props: { children: ReactNode }) {
   return (
     <TeamDataProvider>
-      <ModalsProvider>{props.children}</ModalsProvider>
+      <ModalsProvider>
+        {props.children}
+        <SetupTransshiper />
+      </ModalsProvider>
     </TeamDataProvider>
   );
 }

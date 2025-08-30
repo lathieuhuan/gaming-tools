@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { $AppSettings, AppSettings } from "@Src/services";
-import type { SetupImportInfo, Traveler } from "@Src/types";
+import type { Traveler } from "@Src/types";
 
 export type MySetupsModalType =
   | "TIPS"
@@ -14,14 +14,11 @@ export type MySetupsModalType =
   | "ARTIFACTS"
   | "";
 
-export type AppScreen = "CALCULATOR" | "MY_SETUPS" | "MY_WEAPONS" | "MY_ARTIFACTS" | "MY_CHARACTERS" | "ENKA_IMPORT";
-
 export type TrackerState = "open" | "close" | "hidden";
 
 export interface UIState extends Pick<AppSettings, "isTabLayout"> {
   ready: boolean;
   loading: boolean;
-  atScreen: AppScreen;
   traveler: Traveler;
   appModalType: "" | "INTRO" | "GUIDES" | "SETTINGS" | "UPLOAD" | "DOWNLOAD" | "DONATE";
   targetConfig: {
@@ -31,14 +28,12 @@ export interface UIState extends Pick<AppSettings, "isTabLayout"> {
   setupDirectorActive: boolean;
   trackerState: TrackerState;
   mySetupsModalType: MySetupsModalType;
-  importInfo: SetupImportInfo;
 }
 
 const { isTabLayout, traveler } = $AppSettings.get();
 
 const initialState: UIState = {
   isTabLayout,
-  atScreen: "CALCULATOR",
   traveler,
   appModalType: "",
   mySetupsModalType: "",
@@ -48,7 +43,6 @@ const initialState: UIState = {
   },
   setupDirectorActive: false,
   trackerState: "close",
-  importInfo: {},
   loading: false,
   ready: false,
 };
@@ -63,12 +57,9 @@ export const uiSlice = createSlice({
         ...action.payload,
       };
     },
-    updateSetupImportInfo: (state, action: PayloadAction<SetupImportInfo>) => {
-      state.importInfo = action.payload;
-    },
   },
 });
 
-export const { updateUI, updateSetupImportInfo } = uiSlice.actions;
+export const { updateUI } = uiSlice.actions;
 
 export default uiSlice.reducer;

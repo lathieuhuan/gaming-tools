@@ -1,12 +1,13 @@
 import { useMemo } from "react";
 
 import type { Teammates } from "@Src/types";
+
+import { CalcTeamData } from "@Calculation";
+import Array_ from "@Src/utils/array-utils";
 import { makeTeamData } from "@Src/utils/makeTeamData";
 import { selectCharacter, selectTeammates } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
-import { CalcTeamDataContext, TeamDataContext } from "./TeamData.context";
-import { CalcTeamData } from "@Calculation";
-import Array_ from "@Src/utils/array-utils";
+import { CalcTeamDataContext, TeamDataContext } from "./context";
 
 const emptyTeammates: Teammates = [];
 

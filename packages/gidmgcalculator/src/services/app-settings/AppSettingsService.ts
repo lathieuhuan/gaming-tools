@@ -3,7 +3,7 @@ import { Traveler } from "@Src/types";
 
 export type AppSettings = {
   traveler: Traveler;
-  charInfoIsSeparated: boolean;
+  isCharInfoSeparated: boolean;
   doKeepArtStatsOnSwitch: boolean;
   persistingUserData: boolean;
   /** Applied to mobile */
@@ -23,7 +23,7 @@ export type AppSettings = {
 export class AppSettingsService {
   private DEFAULT_SETTINGS: AppSettings = {
     traveler: "LUMINE",
-    charInfoIsSeparated: false,
+    isCharInfoSeparated: false,
     doKeepArtStatsOnSwitch: false,
     persistingUserData: false,
     isTabLayout: true,

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { UndefinedInitialDataOptions, useQuery } from "@tanstack/react-query";
 
 import { ARTIFACT_TYPES } from "@Calculation";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@Src/services";
 import { ConvertedArtifact, ConvertedCharacter, ConvertedWeapon } from "@Src/services/app-data";
-import { $Enka } from "@Src/services/enka";
+import { GenshinUserResponse, getGenshinUser } from "@Src/services/enka";
 import Entity_ from "@Src/utils/entity-utils";
 // import { userMock } from "./mock";
 
@@ -20,80 +20,61 @@ export type GenshinUser = {
   builds: GenshinUserBuild[];
 };
 
-export function useGenshinUser(uid?: string, options: { enable?: boolean } = {}) {
-  const { enable = true } = options;
+type UseGenshinUserOptions = Omit<UndefinedInitialDataOptions<GenshinUserResponse>, "queryKey" | "queryFn">;
 
-  const [user, setUser] = useState<GenshinUser>();
-  const [status, setStatus] = useState("idle");
+export function useGenshinUser(uid: string = "", options: UseGenshinUserOptions) {
+  return useQuery({
+    ...options,
+    queryKey: ["genshin-user", uid],
+    queryFn: () => getGenshinUser(uid),
+    enabled: !!uid && options.enabled,
+    select: (data) => transformResponse(data),
+  });
+}
 
-  useEffect(() => {
-    const fetchUser = async (uid: string) => {
-      const response = await $Enka.fetchGenshinUser(uid);
-      // const response = userMock;
-      const builds: GenshinUserBuild[] = [];
-      let seedId = Date.now();
+function transformResponse(response: GenshinUserResponse): GenshinUser {
+  const builds: GenshinUserBuild[] = [];
+  let seedId = Date.now();
 
-      for (const build of response.builds) {
-        const character = $AppCharacter.convertGOOD(build.character);
+  for (const build of response.builds) {
+    const character = $AppCharacter.convertGOOD(build.character);
 
-        if (character) {
-          const id = seedId++;
-          let weapon = $AppWeapon.convertGOOD(build.weapon, id);
+    if (character) {
+      const id = seedId++;
+      let weapon = $AppWeapon.convertGOOD(build.weapon, id);
 
-          if (!weapon) {
-            const defaultWeapon = Entity_.createWeapon({ type: character.data.weaponType }, id);
+      if (!weapon) {
+        const defaultWeapon = Entity_.createWeapon({ type: character.data.weaponType }, id);
 
-            weapon = {
-              ...defaultWeapon,
-              data: $AppWeapon.get(defaultWeapon.code)!,
-            };
-          }
+        weapon = {
+          ...defaultWeapon,
+          data: $AppWeapon.get(defaultWeapon.code)!,
+        };
+      }
 
-          const artifacts = ARTIFACT_TYPES.map<ConvertedArtifact | null>((type) => {
-            const artifact = build.artifacts.find((artifact) => artifact?.slotKey === type);
-            const converted = artifact ? $AppArtifact.convertGOOD(artifact, seedId) : undefined;
+      const artifacts = ARTIFACT_TYPES.map<ConvertedArtifact | null>((type) => {
+        const artifact = build.artifacts.find((artifact) => artifact?.slotKey === type);
+        const converted = artifact ? $AppArtifact.convertGOOD(artifact, seedId) : undefined;
 
-            if (converted) {
-              seedId++;
-              return converted;
-            }
-
-            return null;
-          });
-
-          builds.push({
-            character,
-            weapon,
-            artifacts,
-          });
+        if (converted) {
+          seedId++;
+          return converted;
         }
-      }
 
-      setUser({
-        name: response.name,
-        level: response.level,
-        builds: builds,
+        return null;
       });
-    };
 
-    if (uid && enable) {
-      setStatus("loading");
-
-      try {
-        fetchUser(uid).then(() => {
-          setStatus("success");
-        });
-      } catch (error) {
-        setStatus("error");
-      }
+      builds.push({
+        character,
+        weapon,
+        artifacts,
+      });
     }
-  }, [uid, enable]);
+  }
 
   return {
-    user,
-    isLoading: status === "loading",
-    isError: status === "error",
-    isSuccess: status === "success",
-    error: null,
+    name: response.name,
+    level: response.level,
+    builds: builds,
   };
 }

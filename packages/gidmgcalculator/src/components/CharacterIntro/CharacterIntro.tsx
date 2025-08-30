@@ -68,7 +68,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
           </div>
 
           <VersatileSelect
-            title="Select Constellation Level"
+            title="Select Constellation"
             className={`ml-auto w-14 text-lg ${elmtText} font-bold bg-surface-2`}
             align="right"
             options={Array.from({ length: 7 }, (_, i) => ({

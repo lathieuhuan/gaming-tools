@@ -12,7 +12,7 @@ import { SetupDirector } from "../SetupDirector";
 import { SetupManager } from "../SetupManager";
 import { BottomNavSmall } from "./BottomNavSmall";
 
-import styles from "./Calculator.styles.module.scss";
+import styles from "./styles.module.scss";
 
 export function CalculatorSmall() {
   const dispatch = useDispatch();

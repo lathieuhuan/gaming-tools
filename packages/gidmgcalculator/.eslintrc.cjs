@@ -15,9 +15,9 @@ module.exports = {
       { allowConstantExport: true },
     ],
     'react-hooks/exhaustive-deps': 'off',
-    '@typescript-eslint/no-explicit-any': ['warn'],
-    'unused-imports/no-unused-imports': 'error',
-    '@typescript-eslint/no-unused-vars': ['warn'],
-    'prefer-const': ['off']
+    '@typescript-eslint/no-explicit-any': 'warn',
+    'unused-imports/no-unused-imports': 'warn',
+    '@typescript-eslint/no-unused-vars': 'warn',
+    'prefer-const': 'off'
   },
 }

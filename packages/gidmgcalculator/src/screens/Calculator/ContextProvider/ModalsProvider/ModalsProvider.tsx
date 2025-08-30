@@ -3,12 +3,13 @@ import { Modal } from "rond";
 
 import { useDispatch } from "@Store/hooks";
 import { initNewSessionWithCharacter } from "@Store/thunks";
-import { CalculatorModalsContext, CalculatorModalsControl } from "./Modals.context";
+import { CalculatorModalsContext, CalculatorModalsControl } from "./context";
 
 // Component
-import { SetupImporter, Tavern } from "@Src/components";
-import { CalcSetupExporter } from "./CalcSetupExporter";
+import { Tavern } from "@Src/components";
 import { SaveSetup } from "./SaveSetup";
+import { SetupExportGate } from "./SetupExportGate";
+import { SetupImportGate } from "./SetupImportGate";
 import { TargetConfig } from "./TargetConfig";
 
 type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "";
@@ -55,10 +56,12 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
         <SaveSetup setupId={setupId} onClose={closeModal} />
       </Modal>
 
-      <SetupImporter active={modalType === "IMPORT_SETUP"} onClose={closeModal} />
+      <Modal.Core active={modalType === "IMPORT_SETUP"} preset="small" onClose={closeModal}>
+        <SetupImportGate onClose={closeModal} />
+      </Modal.Core>
 
       <Modal.Core active={modalType === "SHARE_SETUP"} preset="small" onClose={closeModal}>
-        <CalcSetupExporter setupId={setupId} onClose={closeModal} />
+        <SetupExportGate setupId={setupId} onClose={closeModal} />
       </Modal.Core>
 
       <Tavern

@@ -8,8 +8,8 @@ import { ConvertedArtifact, ConvertedWeapon } from "@Src/services/app-data";
 import { UserArtifact } from "@Src/types";
 import Setup_ from "@Src/utils/setup-utils";
 import { useDispatch } from "@Store/hooks";
-import { updateSetupImportInfo } from "@Store/ui-slice";
 import { addCharacter, addUserArtifact, addUserWeapon } from "@Store/userdb-slice";
+import { useSetupImporter } from "@Src/systems/setup-importer";
 
 import { ArtifactCard, WeaponCard } from "@Src/components";
 import { BuildOverview } from "./BuildOverview";
@@ -23,6 +23,7 @@ type ResultsSectionProps = {
 export function ResultsSection({ className, user, isLoading }: ResultsSectionProps) {
   const dispatch = useDispatch();
   const store = useStore();
+  const setupImporter = useSetupImporter();
 
   const [selectedArtifact, setSelectedArtifact] = useState<ConvertedArtifact>();
   const [selectedWeapon, setSelectedWeapon] = useState<ConvertedWeapon>();
@@ -109,19 +110,17 @@ export function ResultsSection({ className, user, isLoading }: ResultsSectionPro
       return null;
     });
 
-    dispatch(
-      updateSetupImportInfo({
-        name: build.name,
-        type: "original",
-        calcSetup: Setup_.createCalcSetup({
-          char: character,
-          weapon,
-          artifacts,
-        }),
-        target: Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
-        importRoute: "ENKA",
-      })
-    );
+    setupImporter.import({
+      name: build.name,
+      type: "original",
+      calcSetup: Setup_.createCalcSetup({
+        char: character,
+        weapon,
+        artifacts,
+      }),
+      target: Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
+      importSource: "ENKA",
+    });
   };
 
   return (
@@ -138,8 +137,8 @@ export function ResultsSection({ className, user, isLoading }: ResultsSectionPro
                 <Skeleton className="h-40 w-[380px] rounded-lg" />
                 <Skeleton className="h-40 w-[380px] rounded-lg" />
               </>
-            ) : (
-              user?.builds.map((build, index) => {
+            ) : user ? (
+              user.builds.map((build, index) => {
                 return (
                   <BuildOverview
                     key={index}
@@ -152,6 +151,10 @@ export function ResultsSection({ className, user, isLoading }: ResultsSectionPro
                   />
                 );
               })
+            ) : (
+              <div className="w-[380px] p-4 py-6 flex-center">
+                <p className="text-hint-color">No results found</p>
+              </div>
             )}
           </div>
         </div>
