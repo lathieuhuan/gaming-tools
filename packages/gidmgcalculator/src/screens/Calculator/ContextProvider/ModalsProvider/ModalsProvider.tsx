@@ -3,7 +3,7 @@ import { Modal } from "rond";
 
 import { useDispatch } from "@Store/hooks";
 import { initNewSessionWithCharacter } from "@Store/thunks";
-import { CalculatorModalsContext, CalculatorModalsControl } from "./Modals.context";
+import { CalculatorModalsContext, CalculatorModalsControl } from "./context";
 
 // Component
 import { Tavern } from "@Src/components";

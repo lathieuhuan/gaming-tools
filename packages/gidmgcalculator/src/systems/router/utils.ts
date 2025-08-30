@@ -8,8 +8,9 @@ export function checkIsChildSegments(childSegments: string[], segments: string[]
   return childSegments.every((segment, index) => segment === segments[index]);
 }
 
-export function objectToSearchString(params: SearchParams) {
+export function objectToSearchString(params: Partial<SearchParams>) {
   return Object.entries(params)
+    .filter(([_, value]) => value !== undefined)
     .map(([key, value]) => {
       if (Array.isArray(value)) {
         return value.map((v) => `${key}=${v}`).join("&");

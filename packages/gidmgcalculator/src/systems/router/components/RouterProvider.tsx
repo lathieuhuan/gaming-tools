@@ -34,6 +34,7 @@ export function RouterProvider({ route }: RouterProviderProps) {
   const { children, outlet, router } = useMemo(() => {
     const [pathname, params] = path.split("?");
     const segments = toSegments(pathname);
+    const searchParams = params ? searchStringToObject(params) : undefined;
 
     // Outlet
 
@@ -43,10 +44,9 @@ export function RouterProvider({ route }: RouterProviderProps) {
 
     // Router
 
-    const searchParams = params ? searchStringToObject(params) : undefined;
-
-    const navigate = (path: string, searchParams?: SearchParams) => {
-      const search = searchParams ? `?${objectToSearchString(searchParams)}` : "";
+    const navigate = (path: string, searchParams?: Partial<SearchParams>) => {
+      const searchString = searchParams ? objectToSearchString(searchParams) : "";
+      const search = searchString ? `?${searchString}` : "";
       const newPath = path + search;
 
       if (newPath !== getCurrentPath()) {
@@ -59,7 +59,7 @@ export function RouterProvider({ route }: RouterProviderProps) {
       pathname,
       searchParams,
       navigate,
-      updateSearchParams: (params: SearchParams, replace?: boolean) => {
+      updateSearchParams: (params, replace) => {
         const newParams = replace ? params : { ...searchParams, ...params };
         navigate(pathname, newParams);
       },

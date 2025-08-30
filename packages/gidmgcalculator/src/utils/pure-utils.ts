@@ -1,11 +1,6 @@
 import { ATTACK_ELEMENTS } from "@Calculation";
 import { IS_DEV_ENV } from "@Src/constants";
 
-export function getSearchParam(key: string) {
-  const searchParams = new URLSearchParams(window.location.search);
-  return searchParams.get(key);
-}
-
 export function getImgSrc(src?: string) {
   // const IS_DEV_ENV = false;
   if (IS_DEV_ENV || !src) return "";
