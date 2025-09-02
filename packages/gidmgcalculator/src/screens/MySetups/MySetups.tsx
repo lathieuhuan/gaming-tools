@@ -1,7 +1,7 @@
 import { CalcTeamData, calculateSetup } from "@Calculation";
 import { useEffect, useMemo } from "react";
 import { FaInfo } from "react-icons/fa";
-import { Button, LoadingSpin, WarehouseLayout, clsx, useScreenWatcher } from "rond";
+import { Button, LoadingPlate, LoadingSpin, WarehouseLayout, clsx, useScreenWatcher } from "rond";
 
 import type { UserArtifacts, UserSetup, UserWeapon } from "@/types";
 import type { OpenModalFn, SetupRenderInfo } from "./types";
@@ -10,7 +10,7 @@ import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/array-utils";
 import Setup_ from "@/utils/setup-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { selectAppReady, updateUI } from "@Store/ui-slice";
 import { chooseUserSetup, selectChosenSetupId } from "@Store/userdb-slice";
 import { useAppCharactersByName } from "./hooks/useAppCharactersByName";
 import { parseSetup, renderInfoToImportInfo } from "./utils";
@@ -21,7 +21,7 @@ import { MySetupsModals } from "./MySetupsModals";
 import { SetupModals } from "./SetupModals";
 import { SetupView } from "./SetupView";
 
-export default function MySetups() {
+function MySetups() {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const setupImporter = useSetupImporter();
@@ -194,4 +194,20 @@ export default function MySetups() {
       <MySetupsModals combineMoreId={selectedSetupID} />
     </WarehouseLayout>
   );
+}
+
+export function MySetupsWrapper() {
+  const appReady = useSelector(selectAppReady);
+
+  if (!appReady) {
+    return (
+      <WarehouseLayout className="h-full relative">
+        <div className="absolute inset-0 flex-center">
+          <LoadingPlate />
+        </div>
+      </WarehouseLayout>
+    );
+  }
+
+  return <MySetups />;
 }

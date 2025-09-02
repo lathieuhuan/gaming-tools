@@ -1,16 +1,25 @@
+import { WeaponType } from "@Calculation";
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo, useState } from "react";
-import { message, useScreenWatcher, Button, ButtonGroup, CollapseSpace, ConfirmModal, WarehouseLayout } from "rond";
-import { WeaponType } from "@Calculation";
+import {
+  Button,
+  ButtonGroup,
+  CollapseSpace,
+  ConfirmModal,
+  LoadingPlate,
+  message,
+  useScreenWatcher,
+  WarehouseLayout,
+} from "rond";
 
 import type { UserWeapon } from "@/types";
+
 import { MAX_USER_WEAPONS } from "@/constants";
 import { useWeaponTypeSelect } from "@/hooks";
 import { $AppWeapon } from "@/services";
 import Array_ from "@/utils/array-utils";
-
-// Store
 import { useDispatch, useSelector } from "@Store/hooks";
+import { selectAppReady } from "@Store/ui-slice";
 import {
   addUserWeapon,
   removeWeapon,
@@ -34,7 +43,7 @@ const selectWeaponInventory = createSelector(
   })
 );
 
-export default function MyWeapons() {
+function MyWeapons() {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
 
@@ -200,4 +209,20 @@ export default function MyWeapons() {
       ) : null}
     </WarehouseLayout>
   );
+}
+
+export function MyWeaponsWrapper() {
+  const appReady = useSelector(selectAppReady);
+
+  if (!appReady) {
+    return (
+      <WarehouseLayout className="h-full relative">
+        <div className="absolute inset-0 flex-center">
+          <LoadingPlate />
+        </div>
+      </WarehouseLayout>
+    );
+  }
+
+  return <MyWeapons />;
 }

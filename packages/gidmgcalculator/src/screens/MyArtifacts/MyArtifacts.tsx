@@ -1,23 +1,25 @@
 import { useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import { clsx, message, useScreenWatcher, ButtonGroup, Modal, WarehouseLayout } from "rond";
+import { ButtonGroup, clsx, LoadingPlate, message, Modal, useScreenWatcher, WarehouseLayout } from "rond";
 
 import type { UserArtifact } from "@/types";
-import { $AppArtifact } from "@/services";
+
 import { MAX_USER_ARTIFACTS } from "@/constants";
 import { useArtifactTypeSelect } from "@/hooks";
+import { $AppArtifact } from "@/services";
 import Array_ from "@/utils/array-utils";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectUserArtifacts, addUserArtifact, updateUserArtifact, sortArtifacts } from "@Store/userdb-slice";
 import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@/utils/filter-artifacts";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { selectAppReady } from "@Store/ui-slice";
+import { addUserArtifact, selectUserArtifacts, sortArtifacts, updateUserArtifact } from "@Store/userdb-slice";
 
 // Component
-import { InventoryRack, ArtifactForge, ArtifactFilter, ArtifactForgeProps } from "@/components";
+import { ArtifactFilter, ArtifactForge, ArtifactForgeProps, InventoryRack } from "@/components";
 import { ChosenArtifactView } from "./ChosenArtifactView";
 
 type ModalType = "ADD_ARTIFACT" | "EDIT_ARTIFACT" | "CONFIG_FILTER" | "";
 
-export default function MyArtifacts() {
+function MyArtifacts() {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const userArts = useSelector(selectUserArtifacts);
@@ -195,4 +197,20 @@ export default function MyArtifacts() {
       />
     </WarehouseLayout>
   );
+}
+
+export function MyArtifactsWrapper() {
+  const appReady = useSelector(selectAppReady);
+
+  if (!appReady) {
+    return (
+      <WarehouseLayout className="h-full relative">
+        <div className="absolute inset-0 flex-center">
+          <LoadingPlate />
+        </div>
+      </WarehouseLayout>
+    );
+  }
+
+  return <MyArtifacts />;
 }

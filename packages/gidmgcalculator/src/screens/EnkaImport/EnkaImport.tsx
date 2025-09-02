@@ -4,7 +4,7 @@ import { clsx, notification, useScreenWatcher } from "rond";
 import { useGenshinUser } from "@/hooks/queries/useGenshinUser";
 import { useRouter } from "@/systems/router";
 import { useSelector } from "@Store/hooks";
-import { selectIsAppReady } from "@Store/ui-slice";
+import { selectAppReady } from "@Store/ui-slice";
 import { SearchParams } from "./types";
 
 import { ResultsSection } from "./ResultsSection";
@@ -23,7 +23,7 @@ function getInitialInput(params?: SearchParams): Input {
 export function EnkaImport() {
   const router = useRouter<SearchParams>();
   const isMobile = !useScreenWatcher("sm");
-  const appReady = useSelector(selectIsAppReady);
+  const appReady = useSelector(selectAppReady);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const {

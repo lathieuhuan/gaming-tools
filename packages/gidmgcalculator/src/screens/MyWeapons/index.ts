@@ -1,1 +1,1 @@
-export { default } from "./MyWeapons";
+export { MyWeaponsWrapper as default } from "./MyWeapons";

@@ -1,1 +1,1 @@
-export { default } from "./MyArtifacts";
+export { MyArtifactsWrapper as default } from "./MyArtifacts";

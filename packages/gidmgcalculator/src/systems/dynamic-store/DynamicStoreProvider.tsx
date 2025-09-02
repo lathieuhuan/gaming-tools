@@ -35,7 +35,7 @@ export function DynamicStoreProvider(props: DynamicStoreProviderProps) {
       );
     }
 
-    newConfig.store.dispatch(updateUI({ ready: true }));
+    newConfig.store.dispatch(updateUI({ appReady: true }));
   }, [config]);
 
   return (

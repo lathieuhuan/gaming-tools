@@ -63,7 +63,7 @@ export const Greeter = () => {
         status: "success",
         metadata: greeter.metadataInfo,
       });
-      dispatch(updateUI({ ready: true }));
+      dispatch(updateUI({ appReady: true }));
     }
   };
 

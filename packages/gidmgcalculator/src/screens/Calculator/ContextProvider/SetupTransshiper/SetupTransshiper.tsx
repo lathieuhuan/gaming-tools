@@ -5,21 +5,21 @@ import { useRouter } from "@/systems/router";
 import { useSetupImporter } from "@/systems/setup-importer";
 import { DECODE_ERROR_MSG, decodeSetup } from "@/utils/setup-porter";
 import { useSelector } from "@Store/hooks";
-import { selectIsAppReady } from "@Store/ui-slice";
+import { selectAppReady } from "@Store/ui-slice";
 
 type SearchParams = {
   importCode?: string;
 };
 
 export function SetupTransshiper() {
-  const isAppReady = useSelector(selectIsAppReady);
+  const appReady = useSelector(selectAppReady);
   const router = useRouter<SearchParams>();
   const setupImporter = useSetupImporter();
 
   useEffect(() => {
     const importCode = router.searchParams?.importCode;
 
-    if (isAppReady && importCode) {
+    if (appReady && importCode) {
       const result = decodeSetup(importCode);
 
       if (result.isOk) {
@@ -32,7 +32,7 @@ export function SetupTransshiper() {
         message.error(DECODE_ERROR_MSG[result.error]);
       }
     }
-  }, [isAppReady]);
+  }, [appReady]);
 
   return null;
 }

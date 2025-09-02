@@ -17,8 +17,8 @@ export type MySetupsModalType =
 export type TrackerState = "open" | "close" | "hidden";
 
 export interface UIState extends Pick<AppSettings, "isTabLayout"> {
-  ready: boolean;
   loading: boolean;
+  appReady: boolean;
   traveler: Traveler;
   appModalType: "" | "INTRO" | "GUIDES" | "SETTINGS" | "UPLOAD" | "DOWNLOAD" | "DONATE";
   targetConfig: {
@@ -44,7 +44,7 @@ const initialState: UIState = {
   setupDirectorActive: false,
   trackerState: "close",
   loading: false,
-  ready: false,
+  appReady: false,
 };
 
 export const uiSlice = createSlice({

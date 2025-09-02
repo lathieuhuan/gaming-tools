@@ -129,7 +129,7 @@ export function ResultDisplayer({
           <div className="px-2 py-4 bg-surface-1 rounded">
             <div className="px-2">
               <p>
-                The number of Setups after load cannot exceed <span className="font-semibold text-danger-2">5</span>.
+                The number of Setups after loaded cannot exceed <span className="font-semibold text-danger-2">5</span>.
               </p>
               <p className="mt-1 text-sm text-hint-color">
                 Please select the result and the current setups you want to keep.
