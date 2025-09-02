@@ -1,5 +1,5 @@
-import { MODAL_OPTIONS, type ModalOption } from "./config";
-import { MenuOption } from "./MenuOption";
+import { clsx } from "rond";
+import { MODAL_OPTIONS, type ModalOption } from "./_config";
 
 export type ModalOptionsProps = {
   className?: string;
@@ -16,7 +16,17 @@ export function ModalOptions({ className, disabledTypes, onSelect }: ModalOption
 
         return (
           <li key={modalType}>
-            <MenuOption icon={option.icon} label={option.label} disabled={disabled} onSelect={() => onSelect(option)} />
+            <button
+              className={clsx(
+                "w-full px-4 py-2 flex items-center font-bold cursor-default",
+                disabled ? "text-hint-color" : "hover:text-light-default hover:bg-surface-1"
+              )}
+              disabled={disabled}
+              onClick={() => onSelect(option)}
+            >
+              {option.icon}
+              <span className="ml-2">{option.label}</span>
+            </button>
           </li>
         );
       })}

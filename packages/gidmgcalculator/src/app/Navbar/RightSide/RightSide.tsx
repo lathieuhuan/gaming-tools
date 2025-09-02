@@ -7,7 +7,7 @@ import { $AppData } from "@/services";
 // import { useRouter } from "@/systems/router";
 import { useDispatch } from "@Store/hooks";
 import { updateUI, type UIState } from "@Store/ui-slice";
-import { ModalOption } from "./config";
+import { ModalOption } from "./_config";
 
 // import { MenuOption } from "./MenuOption";
 import { ModalOptions } from "./ModalOptions";

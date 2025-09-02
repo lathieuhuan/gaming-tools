@@ -100,4 +100,6 @@ export type ResistReduction = Record<ResistReductionKey, number>;
 
 export type CoreStat = (typeof CORE_STAT_TYPES)[number];
 
+export type BaseAttributeStat = "base_atk" | "base_hp" | "base_def";
+
 export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];

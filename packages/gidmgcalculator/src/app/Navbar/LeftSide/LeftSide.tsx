@@ -4,7 +4,7 @@ import { CloseButton, clsx, Drawer, SideBarSvg, useScreenWatcher } from "rond";
 
 import { SCREEN_PATH } from "@/constants";
 import { useRouter } from "@/systems/router";
-import { ScreenConfig } from "./config";
+import { ScreenConfig } from "./_config";
 
 import { NavOptions } from "./NavOptions";
 import { OptimizerButton } from "./OptimizerButton";

@@ -16,6 +16,7 @@ import storage from "redux-persist/lib/storage";
 import calculatorSliceReducers, { calculatorSlice } from "./calculator-slice";
 import uiSliceReducers, { uiSlice } from "./ui-slice";
 import userdbSliceReducers, { userdbSlice, initialState } from "./userdb-slice";
+import accountSliceReducers, { accountSlice } from "./account-slice";
 import { migrates } from "./migration";
 
 export type SetupStoreArgs = {
@@ -34,17 +35,27 @@ export function setupStore(args?: { persistingUserData?: boolean }) {
     userdbSliceReducers
   );
 
+  const accountPersistReducers = persistReducer(
+    {
+      key: "account",
+      version: 1,
+      storage,
+    },
+    accountSliceReducers
+  );
+
   const rootReducer = combineReducers({
     calculator: calculatorSliceReducers,
     ui: uiSliceReducers,
     userdb: userdbPersistReducers,
+    account: accountPersistReducers,
   });
 
   const persistConfig = {
     key: "root",
     version: 0,
     storage,
-    blacklist: [calculatorSlice.name, uiSlice.name, userdbSlice.name],
+    blacklist: [calculatorSlice.name, uiSlice.name, userdbSlice.name, accountSlice.name],
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);

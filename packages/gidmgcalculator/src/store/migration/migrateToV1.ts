@@ -10,7 +10,7 @@ export const migrateSetupsToV1 = (
   return setups.map((setup) => {
     switch (setup.type) {
       case "original":
-      case "combined":
+      case "combined": {
         const setupArtifacts: CalcArtifacts = [];
 
         for (const id of setup.artifactIDs) {
@@ -33,6 +33,7 @@ export const migrateSetupsToV1 = (
           ...setup,
           artBuffCtrls: newArtBuffCtrls,
         };
+      }
       default:
         return setup;
     }

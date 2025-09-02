@@ -1,4 +1,5 @@
 import type { PartiallyRequired } from "rond";
+
 import type { ArtifactModCtrl } from "@/types";
 import type TypeCounter from "@/utils/type-counter";
 import type {
@@ -9,6 +10,7 @@ import type {
   AttackBonusType,
   AttackPattern,
   AttributeStat,
+  BaseAttributeStat,
   CalcItemType,
   CoreStat,
   ElementType,
@@ -33,7 +35,7 @@ export type BareBonus = {
 };
 
 export type AppliedAttributeBonus = BareBonus & {
-  toStat: AttributeStat | "base_atk";
+  toStat: AttributeStat | BaseAttributeStat;
   description: string;
 };
 
