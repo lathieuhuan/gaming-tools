@@ -1,6 +1,9 @@
 import { FaPlus } from "react-icons/fa";
 import { clsx, type ClassValue } from "rond";
+
+import { $AppCharacter } from "@/services";
 import { ElementType } from "@Calculation";
+
 import { GenshinImage } from "@/components";
 
 type PortraitSize = "small" | "medium" | "custom";
@@ -10,7 +13,7 @@ const sizeCls: Partial<Record<PortraitSize, string>> = {
   medium: "w-18 h-18",
 };
 
-interface CharacterPortraitProps {
+type CharacterPortraitProps = {
   className?: ClassValue;
   info?: {
     name?: string;
@@ -25,12 +28,13 @@ interface CharacterPortraitProps {
   /** Default to true */
   zoomable?: boolean;
   onClick?: () => void;
-}
+};
+
 export function CharacterPortrait(props: CharacterPortraitProps) {
   const { info, size = "medium", zoomable = true, onClick } = props;
-  const { code = 0, icon, vision } = info || {};
+  const { name, icon, vision } = info || {};
 
-  const isTraveler = [1, 12, 46, 57, 75].includes(code);
+  const isTraveler = name ? $AppCharacter.checkIsTraveler({ name }) : false;
   const { withColorBg = isTraveler } = props;
 
   const cls = [

@@ -182,5 +182,5 @@ export type UpdateSetupsAction = PayloadAction<{
 
 export type ApplySettingsAction = PayloadAction<{
   mergeCharInfo?: boolean;
-  changeTraveler?: boolean;
+  travelerChanged?: boolean;
 }>;

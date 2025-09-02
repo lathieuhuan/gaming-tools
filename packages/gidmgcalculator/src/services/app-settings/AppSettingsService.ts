@@ -1,11 +1,11 @@
+import { TravelerKey } from "@/types";
 import { Level } from "@Calculation";
-import { Traveler } from "@/types";
 
 export type AppSettings = {
-  traveler: Traveler;
-  isCharInfoSeparated: boolean;
-  doKeepArtStatsOnSwitch: boolean;
-  persistingUserData: boolean;
+  separateCharInfo: boolean;
+  keepArtStatsOnSwitch: boolean;
+  persistUserData: boolean;
+
   /** Applied to mobile */
   isTabLayout: boolean;
   askBeforeUnload: boolean;
@@ -18,14 +18,21 @@ export type AppSettings = {
   wpRefi: number;
   artLevel: number;
   targetLevel: number;
+
+  // TODO: remove this after 01/11/2025
+  // Old settings
+  traveler?: TravelerKey;
+  charInfoIsSeparated?: boolean;
+  isCharInfoSeparated?: boolean;
+  doKeepArtStatsOnSwitch?: boolean;
+  persistingUserData?: boolean;
 };
 
 export class AppSettingsService {
   private DEFAULT_SETTINGS: AppSettings = {
-    traveler: "LUMINE",
-    isCharInfoSeparated: false,
-    doKeepArtStatsOnSwitch: false,
-    persistingUserData: false,
+    separateCharInfo: false,
+    keepArtStatsOnSwitch: false,
+    persistUserData: false,
     isTabLayout: true,
     askBeforeUnload: true,
     charLevel: "1/20",
@@ -49,10 +56,28 @@ export class AppSettingsService {
           ...(JSON.parse(savedSettings) as AppSettings),
         }
       : this.DEFAULT_SETTINGS;
+
+    // TODO: remove this after 01/11/2025
+    settings.separateCharInfo ||=
+      settings.charInfoIsSeparated || settings.isCharInfoSeparated || this.DEFAULT_SETTINGS.separateCharInfo;
+    settings.keepArtStatsOnSwitch ||= settings.doKeepArtStatsOnSwitch || this.DEFAULT_SETTINGS.keepArtStatsOnSwitch;
+    settings.persistUserData ||= settings.persistingUserData || this.DEFAULT_SETTINGS.persistUserData;
+
+    // TODO: remove this after 01/11/2025
+    delete settings.traveler;
+    delete settings.charInfoIsSeparated;
+    delete settings.isCharInfoSeparated;
+    delete settings.doKeepArtStatsOnSwitch;
+    delete settings.persistingUserData;
+
     return key ? settings[key] : settings;
   }
 
-  set = (newSettings: Partial<AppSettings>) => {
+  set = (newSettings: AppSettings) => {
+    localStorage.setItem("settings", JSON.stringify(newSettings));
+  };
+
+  patch = (newSettings: Partial<AppSettings>) => {
     localStorage.setItem(
       "settings",
       JSON.stringify({

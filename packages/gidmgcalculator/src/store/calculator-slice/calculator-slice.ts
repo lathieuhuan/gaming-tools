@@ -74,7 +74,7 @@ export const calculatorSlice = createSlice({
       state.activeId = ID;
       state.standardId = 0;
       state.comparedIds = [];
-      $AppSettings.set({ isCharInfoSeparated: false });
+      $AppSettings.patch({ separateCharInfo: false });
 
       if (target) {
         state.target = target;
@@ -86,9 +86,10 @@ export const calculatorSlice = createSlice({
       const { importInfo, shouldOverwriteChar, shouldOverwriteTarget } = action.payload;
       const { ID = Date.now(), type, name = "New setup", target, calcSetup } = importInfo;
       const { setupsById } = state;
-      const { isCharInfoSeparated } = $AppSettings.get();
+      const { separateCharInfo } = $AppSettings.get();
 
-      if (shouldOverwriteChar && isCharInfoSeparated) {
+      // TODO: check if condition separateCharInfo is correct
+      if (shouldOverwriteChar && separateCharInfo) {
         for (const setup of Object.values(setupsById)) {
           setup.char = calcSetup.char;
         }
@@ -162,10 +163,10 @@ export const calculatorSlice = createSlice({
     // CHARACTER
     updateCharacter: (state, action: UpdateCharacterAction) => {
       const { setupsById } = state;
-      const { isCharInfoSeparated } = $AppSettings.get();
+      const { separateCharInfo } = $AppSettings.get();
       const { setupIds, ...newConfig } = action.payload;
 
-      if (isCharInfoSeparated) {
+      if (separateCharInfo) {
         if (setupIds) {
           for (const setupId of Array_.toArray(setupIds)) {
             Object.assign(setupsById[setupId].char, newConfig);
@@ -178,7 +179,7 @@ export const calculatorSlice = createSlice({
           Object.assign(setup.char, newConfig);
         }
       }
-      calculate(state, !isCharInfoSeparated || !!setupIds);
+      calculate(state, !separateCharInfo || !!setupIds);
     },
     // PARTY
     addTeammate: (state, action: AddTeammateAction) => {
@@ -619,7 +620,7 @@ export const calculatorSlice = createSlice({
       const activeSetup = Array_.findById(tempManageInfos, activeId);
       const newActiveId = activeSetup ? activeSetup.ID : tempManageInfos[0].ID;
 
-      // if (state.configs.isCharInfoSeparated && !newConfigs.isCharInfoSeparated) {
+      // if (state.configs.separateCharInfo && !newConfigs.separateCharInfo) {
       //   const activeChar = setupsById[newActiveId].char;
 
       //   for (const setup of Object.values(setupsById)) {
@@ -636,7 +637,7 @@ export const calculatorSlice = createSlice({
       calculate(state, true);
     },
     applySettings: (state, action: ApplySettingsAction) => {
-      const { mergeCharInfo, changeTraveler = false } = action.payload;
+      const { mergeCharInfo, travelerChanged = false } = action.payload;
       const activeChar = state.setupsById[state.activeId]?.char;
       const allSetups = Object.values(state.setupsById);
       let shouldRecalculateAll = false;
@@ -647,7 +648,8 @@ export const calculatorSlice = createSlice({
         }
         shouldRecalculateAll = true;
       }
-      shouldRecalculateAll ||= changeTraveler && allSetups.some((setup) => $AppCharacter.isTraveler(setup.char));
+
+      shouldRecalculateAll ||= travelerChanged && allSetups.some((setup) => $AppCharacter.checkIsTraveler(setup.char));
 
       if (shouldRecalculateAll) {
         calculate(state, true);

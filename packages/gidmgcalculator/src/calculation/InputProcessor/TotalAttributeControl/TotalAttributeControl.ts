@@ -106,8 +106,13 @@ export class TotalAttributeControl {
 
     // Kokomi
     if (appCharacter.code === 42) {
-      this.addBase("cRate_", -100, "Character inner stat");
-      this.addBase("healB_", 25, "Character inner stat");
+      this.addBase("cRate_", -100, "Character innate stat");
+      this.addBase("healB_", 25, "Character innate stat");
+    }
+
+    // Lauma
+    if (appCharacter.code === 108) {
+      this.addBase("em", 200, "Character innate stat");
     }
 
     this.equipWeapon(weapon, appWeapon);

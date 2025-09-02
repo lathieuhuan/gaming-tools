@@ -13,10 +13,10 @@ interface DynamicStoreProviderProps {
   children: (config: StoreConfig) => React.ReactElement;
 }
 export function DynamicStoreProvider(props: DynamicStoreProviderProps) {
-  const [config, setConfig] = useState(setupStore({ persistingUserData: $AppSettings.get("persistingUserData") }));
+  const [config, setConfig] = useState(setupStore({ persistUserData: $AppSettings.get("persistUserData") }));
 
-  const changeConfig: UpdateStoreConfig = useCallback(({ persistingUserData }) => {
-    const newConfig = setupStore({ persistingUserData });
+  const changeConfig: UpdateStoreConfig = useCallback(({ persistUserData }) => {
+    const newConfig = setupStore({ persistUserData });
     const oldStoreState = config.store.getState();
 
     setConfig(newConfig);

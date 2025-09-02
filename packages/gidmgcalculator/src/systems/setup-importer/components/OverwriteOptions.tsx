@@ -41,7 +41,7 @@ export function OverwriteOptions({
     cons: [char.cons],
   };
 
-  if ($AppSettings.get("isCharInfoSeparated")) {
+  if ($AppSettings.get("separateCharInfo")) {
     oldChar.level = Object.values(setupsById).map(({ char }) => char.level);
     oldChar.NAs = Object.values(setupsById).map(({ char }) => char.NAs);
     oldChar.ES = Object.values(setupsById).map(({ char }) => char.ES);

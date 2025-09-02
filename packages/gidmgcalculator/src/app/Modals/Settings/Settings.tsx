@@ -1,13 +1,15 @@
 import { useRef } from "react";
 import { Modal } from "rond";
 
+import type { TravelerInfo, TravelerKey } from "@/types";
+
 import { SCREEN_PATH } from "@/constants";
 import { $AppCharacter, $AppSettings, AppSettings } from "@/services";
-import { useDynamicStoreControl, useStore } from "@/systems/dynamic-store";
+import { useDynamicStoreControl } from "@/systems/dynamic-store";
 import { useRouter } from "@/systems/router";
-import { AccountIngame } from "@Store/account-slice/types";
+import { genAccountTravelerKey, selectTraveler, updateTraveler } from "@Store/account-slice";
 import { applySettings } from "@Store/calculator-slice";
-import { useDispatch } from "@Store/hooks";
+import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 
 import { AccountSettingsControls } from "./AccountSettingsControls";
@@ -29,28 +31,31 @@ type SettingsProps = {
 const SettingsCore = ({ onClose }: SettingsProps) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const store = useStore();
+  const traveler = useSelector(selectTraveler);
+
   const newAppSettings = useAppSettings();
-  const newAccountSettings = useRef(store.select((state) => state.account.ingame));
+  const newTraveler = useRef(traveler);
 
   const updateAppStoreConfig = useDynamicStoreControl();
 
   const handleSubmit = () => {
     const currSettings = $AppSettings.get();
-    const changeTraveler = newAppSettings.traveler !== currSettings.traveler;
+    const currTraveler = newTraveler.current;
+    const travelerChanged = genAccountTravelerKey(currTraveler) !== genAccountTravelerKey(traveler);
 
-    if (changeTraveler) {
-      $AppCharacter.changeTraveler(newAppSettings.traveler);
+    if (travelerChanged) {
+      // updateTraveler must run before applySettings
+      dispatch(updateTraveler(currTraveler));
       router.navigate(SCREEN_PATH.CALCULATOR);
-
-      dispatch(updateUI({ traveler: newAppSettings.traveler }));
     }
+
     dispatch(
       applySettings({
-        mergeCharInfo: !currSettings.isCharInfoSeparated && newAppSettings.isCharInfoSeparated,
-        changeTraveler,
+        mergeCharInfo: !currSettings.separateCharInfo && newAppSettings.separateCharInfo,
+        travelerChanged,
       })
     );
+
     if (newAppSettings.isTabLayout !== currSettings.isTabLayout) {
       dispatch(
         updateUI({
@@ -58,9 +63,10 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
         })
       );
     }
-    if (newAppSettings.persistingUserData !== currSettings.persistingUserData) {
+
+    if (newAppSettings.persistUserData !== currSettings.persistUserData) {
       updateAppStoreConfig({
-        persistingUserData: newAppSettings.persistingUserData,
+        persistUserData: newAppSettings.persistUserData,
       });
     }
 
@@ -72,8 +78,18 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
     newAppSettings[key] = value;
   };
 
-  const handleAccountSettingChange = (values: AccountIngame) => {
-    newAccountSettings.current = values;
+  const handleTravelerSelect = (selection: TravelerKey) => {
+    newTraveler.current = { ...newTraveler.current, selection };
+  };
+
+  const handlePowerupsChange = (key: keyof TravelerInfo["powerups"], value: boolean) => {
+    newTraveler.current = {
+      ...newTraveler.current,
+      powerups: {
+        ...newTraveler.current.powerups,
+        [key]: value,
+      },
+    };
   };
 
   return (
@@ -85,7 +101,11 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
         handleSubmit();
       }}
     >
-      <AccountSettingsControls initialValues={newAccountSettings.current} onChange={handleAccountSettingChange} />
+      <AccountSettingsControls
+        initialTraveler={newTraveler.current}
+        onChangeSelection={handleTravelerSelect}
+        onChangePowerups={handlePowerupsChange}
+      />
       <AppSettingsControls initialValues={newAppSettings} onChange={handleAppSettingChange} />
     </form>
   );

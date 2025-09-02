@@ -1,6 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { $AppSettings, AppSettings } from "@/services";
-import type { Traveler } from "@/types";
 
 export type MySetupsModalType =
   | "TIPS"
@@ -19,7 +18,6 @@ export type TrackerState = "open" | "close" | "hidden";
 export interface UIState extends Pick<AppSettings, "isTabLayout"> {
   loading: boolean;
   appReady: boolean;
-  traveler: Traveler;
   appModalType: "" | "INTRO" | "GUIDES" | "SETTINGS" | "UPLOAD" | "DOWNLOAD" | "DONATE";
   targetConfig: {
     active: boolean;
@@ -30,11 +28,10 @@ export interface UIState extends Pick<AppSettings, "isTabLayout"> {
   mySetupsModalType: MySetupsModalType;
 }
 
-const { isTabLayout, traveler } = $AppSettings.get();
+const { isTabLayout } = $AppSettings.get();
 
 const initialState: UIState = {
   isTabLayout,
-  traveler,
   appModalType: "",
   mySetupsModalType: "",
   targetConfig: {

@@ -3,7 +3,7 @@ import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 
 import { selectCharacter, updateCharacter } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectAppReady, selectTraveler } from "@Store/ui-slice";
+import { selectAppReady } from "@Store/ui-slice";
 import { useCalcModalCtrl, useTeamData } from "../ContextProvider";
 // import { $AppCharacter } from "@/services";
 
@@ -25,9 +25,6 @@ function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
   const record = useTeamData();
 
   const [activeTab, setActiveTab] = useState("Attributes");
-
-  // This makes component rerender on change Traveler, appCharacter has new image links
-  useSelector(selectTraveler);
 
   return (
     <div className="h-full flex flex-col gap-4">

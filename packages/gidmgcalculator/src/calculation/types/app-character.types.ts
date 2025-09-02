@@ -139,7 +139,7 @@ export type TalentCalcItem = {
 
 export type CharacterBonusEffect = EntityBonusEffect;
 
-type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "unstackableId" | "effects">;
+export type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "unstackableId" | "effects">;
 
 export type CharacterBuffNormalAttackConfig = {
   checkInput?: number | InputCheck;

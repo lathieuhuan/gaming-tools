@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 import type { AppStore, RootState } from "@/store";
 
-export type UpdateStoreConfig = (args: Partial<{ persistingUserData: boolean }>) => void;
+export type UpdateStoreConfig = (args: Partial<{ persistUserData: boolean }>) => void;
 
 export const DynamicStoreControlContext = createContext<UpdateStoreConfig>(() => {});
 

@@ -1,4 +1,4 @@
-import type { AppArtifact, AppCharacter, AppMonster, AppWeapon } from "@Calculation";
+import type { AppArtifact, AppCharacter, AppMonster, AppWeapon, CharacterInnateBuff } from "@Calculation";
 
 export type DataControl<T> = {
   status: "unfetched" | "fetching" | "fetched";
@@ -21,4 +21,12 @@ export type Metadata = {
   monsters: AppMonster[];
   updates: Update[];
   supporters: string[];
+};
+
+export type TravelerProps = {
+  name: string;
+  icon: string;
+  sideIcon: string;
+  multFactorsCA: number[];
+  innateBuffs: CharacterInnateBuff[];
 };

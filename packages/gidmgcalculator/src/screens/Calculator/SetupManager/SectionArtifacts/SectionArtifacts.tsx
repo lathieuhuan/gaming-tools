@@ -156,7 +156,7 @@ export default function SectionArtifacts() {
       });
     }
 
-    replaceArtifact(artifact.type, newPiece, $AppSettings.get("doKeepArtStatsOnSwitch"));
+    replaceArtifact(artifact.type, newPiece, $AppSettings.get("keepArtStatsOnSwitch"));
   };
 
   const onForgeArtifactBatch: ArtifactForgeProps["onForgeArtifactBatch"] = (code, types, rarity) => {
@@ -169,7 +169,7 @@ export default function SectionArtifacts() {
         changeArtifact({
           pieceIndex: ARTIFACT_TYPES.indexOf(type),
           newPiece: { ...newPiece, ID: rootID++ },
-          shouldKeepStats: $AppSettings.get("doKeepArtStatsOnSwitch"),
+          shouldKeepStats: $AppSettings.get("keepArtStatsOnSwitch"),
         })
       );
     }

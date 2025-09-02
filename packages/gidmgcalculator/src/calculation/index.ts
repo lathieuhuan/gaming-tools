@@ -42,6 +42,7 @@ export type {
   CalculationFinalResultItem,
   CharacterBuff,
   CharacterDebuff,
+  CharacterInnateBuff,
   CharacterMilestone,
   CoreStat,
   ElementType,

@@ -19,17 +19,17 @@ import userdbSliceReducers, { userdbSlice, initialState } from "./userdb-slice";
 import accountSliceReducers, { accountSlice } from "./account-slice";
 import { migrates } from "./migration";
 
-export type SetupStoreArgs = {
-  persistingUserData?: boolean;
+type SetupStoreOptions = {
+  persistUserData?: boolean;
 };
 
-export function setupStore(args?: { persistingUserData?: boolean }) {
+export function setupStore(options?: SetupStoreOptions) {
   const userdbPersistReducers = persistReducer(
     {
       key: "database",
       version: 1,
       storage,
-      blacklist: args?.persistingUserData ? [] : Object.keys(initialState),
+      blacklist: options?.persistUserData ? [] : Object.keys(initialState),
       migrate: createMigrate(migrates, { debug: false }),
     },
     userdbSliceReducers

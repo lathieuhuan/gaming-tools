@@ -31,18 +31,18 @@ export function AppSettingsControls({ className, initialValues, onChange }: AppS
       title: "Calculator",
       items: [
         {
-          key: "isCharInfoSeparated",
+          key: "separateCharInfo",
           label: "Separate main character's info on each setup",
           type: "CHECK",
-          defaultValue: initialValues.isCharInfoSeparated,
-          onChange: (value: boolean) => onChange("isCharInfoSeparated", value),
+          defaultValue: initialValues.separateCharInfo,
+          onChange: (value: boolean) => onChange("separateCharInfo", value),
         },
         {
-          key: "doKeepArtStatsOnSwitch",
+          key: "keepArtStatsOnSwitch",
           label: "Keep artifact stats when switching to a new set",
           type: "CHECK",
-          defaultValue: initialValues.doKeepArtStatsOnSwitch,
-          onChange: (value: boolean) => onChange("doKeepArtStatsOnSwitch", value),
+          defaultValue: initialValues.keepArtStatsOnSwitch,
+          onChange: (value: boolean) => onChange("keepArtStatsOnSwitch", value),
         },
         {
           key: "isTabLayout",
@@ -65,14 +65,14 @@ export function AppSettingsControls({ className, initialValues, onChange }: AppS
       title: "User Data",
       items: [
         {
-          key: "persistingUserData",
+          key: "persistUserData",
           label: "Auto save my database to browser's local storage",
           description: [
             "Your data is available on this browser only and will be lost if the local storage is cleared. Does not work as expected in Incognito mode.",
           ],
           type: "CHECK",
-          defaultValue: initialValues.persistingUserData,
-          onChange: (value: boolean) => onChange("persistingUserData", value),
+          defaultValue: initialValues.persistUserData,
+          onChange: (value: boolean) => onChange("persistUserData", value),
         },
       ],
     },

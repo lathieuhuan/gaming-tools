@@ -1,13 +1,5 @@
-import { Traveler } from "@/types";
-
-export type AccountIngame = {
-  traveler: Traveler;
-  powerups: {
-    cannedKnowledge: boolean;
-    skirksTraining: boolean;
-  };
-};
+import { TravelerInfo } from "@/types";
 
 export type AccountState = {
-  ingame: AccountIngame;
+  traveler: TravelerInfo;
 };

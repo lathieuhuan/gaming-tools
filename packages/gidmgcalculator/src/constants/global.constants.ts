@@ -1,3 +1,5 @@
+import type { TravelerInfo } from "@/types";
+
 export const RESONANCE_ELEMENT_TYPES = ["pyro", "cryo", "geo", "hydro", "dendro"];
 
 export const ARTIFACT_SUBSTAT_TYPES = [
@@ -12,3 +14,11 @@ export const ARTIFACT_SUBSTAT_TYPES = [
   "cRate_",
   "cDmg_",
 ] as const;
+
+export const DEFAULT_TRAVELER: TravelerInfo = {
+  selection: "LUMINE",
+  powerups: {
+    cannedKnowledge: false,
+    skirksTraining: false,
+  },
+};
