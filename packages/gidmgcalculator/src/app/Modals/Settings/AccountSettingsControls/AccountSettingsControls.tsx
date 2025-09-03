@@ -3,7 +3,7 @@ import { FaCaretRight } from "react-icons/fa";
 import { clsx, CollapseSpace } from "rond";
 
 import { $AppCharacter } from "@/services";
-import { TravelerInfo, TravelerKey } from "@/types";
+import { TravelerInfo, TravelerKey, PowerupKey } from "@/types";
 
 import { CharacterPortrait } from "@/components";
 import { SettingsGroupCard, SettingsGroupItem, SettingsGroupItems, SettingsGroupTitle } from "../SettingsGroup";
@@ -12,7 +12,7 @@ type AccountSettingsControlsProps = {
   className?: string;
   initialTraveler: TravelerInfo;
   onChangeSelection: (selection: TravelerKey) => void;
-  onChangePowerups: (key: keyof TravelerInfo["powerups"], value: boolean) => void;
+  onChangePowerups: (key: PowerupKey, value: boolean) => void;
 };
 
 export function AccountSettingsControls({
@@ -21,11 +21,16 @@ export function AccountSettingsControls({
   onChangeSelection,
   onChangePowerups,
 }: AccountSettingsControlsProps) {
-  // const { powerups } = initialTraveler;
   const TRAVELERS: TravelerKey[] = ["AETHER", "LUMINE"];
+  const POWERUPS: PowerupKey[] = ["cannedKnowledge", "skirksTraining"];
 
   const [selectedTraveler, setSelectedTraveler] = useState(initialTraveler.selection);
-  // const [powerupsExpanded, setPowerupsExpanded] = useState(false);
+  const [selectedPowerups, setSelectedPowerups] = useState(() =>
+    Object.entries(initialTraveler.powerups)
+      .filter(([_, value]) => value)
+      .map(([key]) => key)
+  );
+  const [powerupsExpanded, setPowerupsExpanded] = useState(false);
 
   const handleSelectTraveler = (traveler: TravelerKey) => {
     if (traveler !== selectedTraveler) {
@@ -34,26 +39,55 @@ export function AccountSettingsControls({
     }
   };
 
-  // const handlePowerupChange = (powerup: keyof TravelerInfo["powerups"], value: boolean) => {
-  //   onChangePowerups(powerup, value);
-  // };
+  const handlePowerupToggle = (key: PowerupKey, activated: boolean) => {
+    setSelectedPowerups((prev) => (activated ? [...prev, key] : prev.filter((k) => k !== key)));
+    onChangePowerups(key, activated);
+  };
 
-  // const items: SettingsGroupItem[] = [
-  //   {
-  //     key: "cannedKnowledge",
-  //     label: "Canned Knowledge",
-  //     defaultValue: powerups.cannedKnowledge,
-  //     type: "CHECK",
-  //     onChange: (value) => handlePowerupChange("cannedKnowledge", value),
-  //   },
-  //   {
-  //     key: "skirksTraining",
-  //     label: "Skirk's Training",
-  //     defaultValue: powerups.skirksTraining,
-  //     type: "CHECK",
-  //     onChange: (value) => handlePowerupChange("skirksTraining", value),
-  //   },
-  // ];
+  const handleAllPowerupsToggle = (activated: boolean) => {
+    setSelectedPowerups(activated ? POWERUPS : []);
+    POWERUPS.forEach((key) => onChangePowerups(key, activated));
+  };
+
+  const items: SettingsGroupItem[] = [
+    {
+      key: "all",
+      type: "CHECK",
+      label: "All",
+      className: "w-fit",
+      checked: selectedPowerups.length === POWERUPS.length,
+      indeterminate: selectedPowerups.length > 0 && selectedPowerups.length < POWERUPS.length,
+      onChange: (value: boolean) => handleAllPowerupsToggle(value),
+    },
+    {
+      key: "cannedKnowledge",
+      type: "CHECK",
+      label: (
+        <>
+          Canned Knowledge
+          <br />
+          <span className="text-hint-color text-sm">(Archon Quest: Ever So Close)</span>
+        </>
+      ),
+      className: "w-fit",
+      checked: selectedPowerups.includes("cannedKnowledge"),
+      onChange: (value: boolean) => handlePowerupToggle("cannedKnowledge", value),
+    },
+    {
+      key: "skirksTraining",
+      type: "CHECK",
+      label: (
+        <>
+          Skirk's Training
+          <br />
+          <span className="text-hint-color text-sm">(Skirk's Story Quest)</span>
+        </>
+      ),
+      className: "w-fit",
+      checked: selectedPowerups.includes("skirksTraining"),
+      onChange: (value: boolean) => handlePowerupToggle("skirksTraining", value),
+    },
+  ];
 
   return (
     <SettingsGroupCard className={className}>
@@ -79,7 +113,7 @@ export function AccountSettingsControls({
         </div>
       </div>
 
-      {/* <button
+      <button
         type="button"
         className="text-sm font-semibold flex items-center gap-1"
         onClick={() => setPowerupsExpanded(!powerupsExpanded)}
@@ -91,7 +125,7 @@ export function AccountSettingsControls({
       </button>
       <CollapseSpace active={powerupsExpanded}>
         <SettingsGroupItems className="pt-4" items={items} />
-      </CollapseSpace> */}
+      </CollapseSpace>
     </SettingsGroupCard>
   );
 }

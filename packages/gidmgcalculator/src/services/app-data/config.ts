@@ -5,7 +5,6 @@ export const cannedKnowledgeBuff: CharacterInnateBuff = {
   description: "Increases {Base ATK}#[k] by {3}#[v].",
   effects: {
     id: "1",
-    checkInput: 1,
     value: 3,
     targets: { module: "ATTR", path: "base_atk" },
   },
@@ -18,19 +17,16 @@ export const skirksTrainingBuff: CharacterInnateBuff = {
   effects: [
     {
       id: "1",
-      checkInput: { value: 1, inpIndex: 1 },
       value: 7,
       targets: { module: "ATTR", path: "base_atk" },
     },
     {
       id: "2",
-      checkInput: { value: 1, inpIndex: 1 },
       value: 50,
       targets: { module: "ATTR", path: "base_hp" },
     },
     {
       id: "3",
-      checkInput: { value: 1, inpIndex: 1 },
       value: 15,
       targets: { module: "ATTR", path: "em" },
     },

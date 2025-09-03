@@ -1,31 +1,13 @@
-import { Checkbox, InputNumber, SelectOption, VersatileSelect } from "rond";
+import { Checkbox, InputNumber, VersatileSelect } from "rond";
+import { SettingControlProps } from "./types";
 
-export type SettingControlProps<T = unknown> = {
-  type: "CHECK" | "SELECT" | "INPUT";
-  label: string;
-  description?: string[];
-  defaultValue: T;
-  options?: SelectOption<string | number>[];
-  max?: number;
-  onChange: (value: T) => void;
-};
-
-export function SettingControl<T>(props: SettingControlProps<T>) {
-  const { label, description, defaultValue, onChange } = props;
+export function SettingControl(props: SettingControlProps) {
+  const { type, label, description, ...rest } = props;
   let control: React.ReactNode = null;
 
-  switch (props.type) {
+  switch (type) {
     case "CHECK":
-      control = (
-        <label className="flex items-center justify-between glow-on-hover">
-          <span>{label}</span>
-          <Checkbox
-            className="ml-4"
-            defaultChecked={Boolean(defaultValue)}
-            onChange={(checked) => onChange(checked as T)}
-          />
-        </label>
-      );
+      control = <Checkbox {...(rest as any)}>{label}</Checkbox>;
       break;
     case "SELECT":
       control = (
@@ -37,9 +19,7 @@ export function SettingControl<T>(props: SettingControlProps<T>) {
               className="font-semibold h-8"
               dropdownCls="font-medium"
               align="right"
-              defaultValue={`${defaultValue}`}
-              options={props.options}
-              onChange={(value) => onChange(value as T)}
+              {...(rest as any)}
             />
           </div>
         </div>
@@ -50,15 +30,7 @@ export function SettingControl<T>(props: SettingControlProps<T>) {
         <div className="flex gap-3 items-center justify-between" style={{ minHeight: "2.25rem" }}>
           <span>{label}</span>
           <div className="w-20 flex shrink-0">
-            <InputNumber
-              className="w-full font-semibold"
-              size="medium"
-              defaultValue={Number(defaultValue)}
-              max={props.max}
-              onChange={(newValue) => {
-                onChange(newValue as T);
-              }}
-            />
+            <InputNumber className="w-full font-semibold" size="medium" {...(rest as any)} />
           </div>
         </div>
       );

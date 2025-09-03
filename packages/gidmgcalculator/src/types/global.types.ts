@@ -2,11 +2,12 @@ import type { ArtifactType, AttributeStat, Level, WeaponType } from "@Calculatio
 
 export type TravelerKey = "LUMINE" | "AETHER";
 
+export type PowerupKey = "cannedKnowledge" | "skirksTraining";
+
 export type TravelerInfo = {
   selection: TravelerKey;
   powerups: {
-    cannedKnowledge: boolean;
-    skirksTraining: boolean;
+    [key in PowerupKey]: boolean;
   };
 };
 

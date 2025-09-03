@@ -21,9 +21,11 @@ export class AppCharacterService extends BaseService {
   private traveler = DEFAULT_TRAVELER;
 
   populate(characters: AppCharacter[]) {
+    const travelerProps = this.getTravelerProps(this.traveler);
+
     this.characters = characters.map((character) => ({
       status: "fetched",
-      data: this.updateIfTraveler(character),
+      data: this.updateIfTraveler(character, travelerProps),
     }));
   }
 
@@ -243,10 +245,6 @@ export class AppCharacterService extends BaseService {
   };
 
   private syncInnateBuffs = (data: AppCharacter, buffs: CharacterInnateBuff[]) => {
-    if (data.name !== "Anemo Traveler") {
-      return;
-    }
-
     const removedSrcs: string[] = [];
     const addedBuffs: CharacterInnateBuff[] = [];
 
@@ -266,23 +264,24 @@ export class AppCharacterService extends BaseService {
     data.innateBuffs = addedBuffs.concat(data.innateBuffs || []);
   };
 
-  private updateIfTraveler = (data: AppCharacter) => {
+  private updateIfTraveler = (data: AppCharacter, props: TravelerProps) => {
     if (data && this.checkIsTraveler(data)) {
-      const props = this.getTravelerProps(this.traveler);
       data.icon = props.icon;
       data.sideIcon = props.sideIcon;
 
       const CA = data.calcList?.CA?.[0];
       if (CA) CA.multFactors = props.multFactorsCA;
 
-      // this.syncInnateBuffs(data, props.innateBuffs);
+      this.syncInnateBuffs(data, props.innateBuffs);
     }
     return data;
   };
 
   changeTraveler(traveler: TravelerInfo) {
     this.traveler = traveler;
-    this.characters.forEach((control) => this.updateIfTraveler(control.data));
+
+    const travelerProps = this.getTravelerProps(this.traveler);
+    this.characters.forEach((control) => this.updateIfTraveler(control.data, travelerProps));
   }
 
   // ==== CONVERT GOOD ====

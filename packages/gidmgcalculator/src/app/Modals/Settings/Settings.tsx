@@ -3,10 +3,8 @@ import { Modal } from "rond";
 
 import type { TravelerInfo, TravelerKey } from "@/types";
 
-import { SCREEN_PATH } from "@/constants";
-import { $AppCharacter, $AppSettings, AppSettings } from "@/services";
+import { $AppSettings, AppSettings } from "@/services";
 import { useDynamicStoreControl } from "@/systems/dynamic-store";
-import { useRouter } from "@/systems/router";
 import { genAccountTravelerKey, selectTraveler, updateTraveler } from "@Store/account-slice";
 import { applySettings } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -30,7 +28,6 @@ type SettingsProps = {
 
 const SettingsCore = ({ onClose }: SettingsProps) => {
   const dispatch = useDispatch();
-  const router = useRouter();
   const traveler = useSelector(selectTraveler);
 
   const newAppSettings = useAppSettings();
@@ -46,7 +43,6 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
     if (travelerChanged) {
       // updateTraveler must run before applySettings
       dispatch(updateTraveler(currTraveler));
-      router.navigate(SCREEN_PATH.CALCULATOR);
     }
 
     dispatch(

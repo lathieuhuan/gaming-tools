@@ -15,7 +15,7 @@ import {
 import type { UserWeapon } from "@/types";
 
 import { MAX_USER_WEAPONS } from "@/constants";
-import { useWeaponTypeSelect } from "@/hooks";
+import { useTravelerKey, useWeaponTypeSelect } from "@/hooks";
 import { $AppWeapon } from "@/services";
 import Array_ from "@/utils/array-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -213,6 +213,7 @@ function MyWeapons() {
 
 export function MyWeaponsWrapper() {
   const appReady = useSelector(selectAppReady);
+  const travelerKey = useTravelerKey();
 
   if (!appReady) {
     return (
@@ -224,5 +225,5 @@ export function MyWeaponsWrapper() {
     );
   }
 
-  return <MyWeapons />;
+  return <MyWeapons key={travelerKey} />;
 }

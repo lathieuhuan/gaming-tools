@@ -6,6 +6,7 @@ import { Button, LoadingPlate, LoadingSpin, WarehouseLayout, clsx, useScreenWatc
 import type { UserArtifacts, UserSetup, UserWeapon } from "@/types";
 import type { OpenModalFn, SetupRenderInfo } from "./types";
 
+import { useTravelerKey } from "@/hooks";
 import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/array-utils";
 import Setup_ from "@/utils/setup-utils";
@@ -198,6 +199,7 @@ function MySetups() {
 
 export function MySetupsWrapper() {
   const appReady = useSelector(selectAppReady);
+  const travelerKey = useTravelerKey();
 
   if (!appReady) {
     return (
@@ -209,5 +211,5 @@ export function MySetupsWrapper() {
     );
   }
 
-  return <MySetups />;
+  return <MySetups key={travelerKey} />;
 }

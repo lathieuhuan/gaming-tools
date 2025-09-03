@@ -3,7 +3,7 @@ import { forwardRef, useState, useEffect } from "react";
 import { round } from "../../utils";
 import "./InputNumber.styles.scss";
 
-interface InputNumberProps
+export interface InputNumberProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "size" | "max" | "min" | "onChange"> {
   unstyled?: boolean;
   transparent?: boolean;

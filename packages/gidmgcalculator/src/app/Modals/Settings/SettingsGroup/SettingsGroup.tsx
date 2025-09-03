@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
 import { clsx } from "rond";
 
-import { SettingControl, SettingControlProps } from "./SettingControl";
+import { SettingControl } from "./SettingControl";
+import { SettingControlProps } from "./types";
 
 type SettingGroupCardProps = {
   children: ReactNode;
@@ -15,7 +16,7 @@ export function SettingsGroupTitle({ children }: { children: ReactNode }) {
   return <p className="text-secondary-1 text-lg font-semibold">{children}</p>;
 }
 
-export type SettingsGroupItem = SettingControlProps<any> & {
+export type SettingsGroupItem = SettingControlProps & {
   key: string;
   hidden?: boolean;
 };

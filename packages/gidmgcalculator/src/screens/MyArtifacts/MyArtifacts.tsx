@@ -5,7 +5,7 @@ import { ButtonGroup, clsx, LoadingPlate, message, Modal, useScreenWatcher, Ware
 import type { UserArtifact } from "@/types";
 
 import { MAX_USER_ARTIFACTS } from "@/constants";
-import { useArtifactTypeSelect } from "@/hooks";
+import { useArtifactTypeSelect, useTravelerKey } from "@/hooks";
 import { $AppArtifact } from "@/services";
 import Array_ from "@/utils/array-utils";
 import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@/utils/filter-artifacts";
@@ -201,6 +201,7 @@ function MyArtifacts() {
 
 export function MyArtifactsWrapper() {
   const appReady = useSelector(selectAppReady);
+  const travelerKey = useTravelerKey();
 
   if (!appReady) {
     return (
@@ -212,5 +213,5 @@ export function MyArtifactsWrapper() {
     );
   }
 
-  return <MyArtifacts />;
+  return <MyArtifacts key={travelerKey} />;
 }
