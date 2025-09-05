@@ -1,4 +1,4 @@
-import type { PartiallyOptional } from "rond";
+import { round, type PartiallyOptional } from "rond";
 import type {
   AppCharacter,
   AppliedAttributeBonus,
@@ -74,13 +74,27 @@ export class TotalAttributeControl {
   }
 
   private getCharacterStats(appCharacter: AppCharacter, charLv: Level) {
-    const baseStats = appCharacter.stats[LEVELS.indexOf(charLv)];
-    const scaleIndex = Math.max(GeneralCalc.getAscension(charLv) - 1, 0);
+    const bareLv = GeneralCalc.getBareLv(charLv);
+    const ascension = GeneralCalc.getAscension(charLv);
+    const scaleIndex = Math.max(ascension - 1, 0);
+    const { hp, atk, def } = appCharacter.statBases;
+
+    let levelMult = (100 + 9 * bareLv) / 109;
+    levelMult =
+      appCharacter.rarity === 4 || appCharacter.name.slice(-8) === "Traveler"
+        ? levelMult
+        : (levelMult * (1900 + bareLv)) / 1901;
+    levelMult = round(levelMult, 3);
+
+    const ascMultByAsc = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];
+    const ascensionMult = ascMultByAsc[ascension];
+
+    console.log(levelMult, ascensionMult);
 
     return {
-      hp: baseStats[0] ?? 0,
-      atk: baseStats[1] ?? 0,
-      def: baseStats[2] ?? 0,
+      hp: hp.level * levelMult + hp.ascension * ascensionMult,
+      atk: atk.level * levelMult + atk.ascension * ascensionMult,
+      def: def.level * levelMult + def.ascension * ascensionMult,
       ascensionStat: appCharacter.statBonus.value * ([0, 1, 2, 2, 3, 4][scaleIndex] ?? 0),
     };
   }

@@ -23,7 +23,7 @@ export class GeneralCalc {
 
   static getAscension = (level: Level) => {
     const maxLv = +level.slice(-2);
-    return maxLv === 20 ? 0 : maxLv / 10 - 3;
+    return maxLv === 20 ? 0 : Math.max(maxLv / 10 - 3, 6);
   };
 
   static getArtifactSetBonuses(artifacts: CalcArtifacts = []): ArtifactSetBonus[] {

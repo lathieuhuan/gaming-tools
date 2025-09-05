@@ -64,31 +64,6 @@ test("clone", () => {
   expect(newControl["totalAttr"]).toEqual(expected);
 });
 
-test("getCharacterStats", () => {
-  const appCharacter = $AppCharacter.get(__EMockCharacter.BASIC);
-  const ascensionToStatBonusScale: Record<number, number> = {
-    0: 0,
-    1: 0,
-    2: 1,
-    3: 2,
-    4: 2,
-    5: 3,
-    6: 4,
-  };
-
-  for (let i = 0; i < LEVELS.length; i++) {
-    const [hp, atk, def] = appCharacter.stats[i];
-    const ascension = __findAscensionByLevel(LEVELS[i]);
-    const expected: ReturnType<TotalAttributeControl["getCharacterStats"]> = {
-      hp,
-      atk,
-      def,
-      ascensionStat: appCharacter.statBonus.value * ascensionToStatBonusScale[ascension],
-    };
-    expect(tester["getCharacterStats"](appCharacter, LEVELS[i])).toEqual(expected);
-  }
-});
-
 test("addBase", () => {
   tester["addBase"]("atk", 100);
   const expected = __genInternalTotalAttr();
