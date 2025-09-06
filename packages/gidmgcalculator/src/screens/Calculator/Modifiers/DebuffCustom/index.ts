@@ -1,1 +1,1 @@
-export { default } from "./DebuffCustom";
+export { DebuffCustom as default } from "./DebuffCustom";

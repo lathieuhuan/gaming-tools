@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Button, CloseButton, InputNumber, Modal, ModalProps, TrashCanSvg } from "rond";
 import { CopySection } from "../../components/CopySection";
@@ -15,26 +15,33 @@ export type CopyOption = {
   label: string;
 };
 
-interface CustomModifierLayoutProps {
+type CreateFormProps = {
+  id: string;
+  onSubmit: () => void;
+};
+
+type CustomModLayoutProps = {
   copyOptions: CopyOption[];
   items: ModItemRenderConfig[];
-  creatorModalProps?: Pick<ModalProps, "title" | "style" | "formId">;
+  createModalProps?: Pick<ModalProps, "title" | "style">;
   onCopy: (option: CopyOption) => void;
-  onChangeValue: (value: number, index: number) => void;
+  onValueChange: (value: number, index: number) => void;
   onRemoveItem: (index: number) => void;
   onRemoveAll: () => void;
-  children: (close: () => void) => JSX.Element;
-}
-export function CustomModifierLayout({
+  renderCreateForm: (props: CreateFormProps) => JSX.Element;
+};
+
+export function CustomModLayout({
   copyOptions,
   items,
-  creatorModalProps,
+  createModalProps,
   onCopy,
-  onChangeValue,
+  onValueChange,
   onRemoveItem,
   onRemoveAll,
-  children,
-}: CustomModifierLayoutProps) {
+  renderCreateForm,
+}: CustomModLayoutProps) {
+  const id = useId();
   const [modalOn, setModalOn] = useState(false);
 
   const closeModal = () => setModalOn(false);
@@ -70,7 +77,7 @@ export function CustomModifierLayout({
                 maxDecimalDigits={1}
                 step="0.1"
                 value={item.value}
-                onChange={(value) => onChangeValue(value, itemI)}
+                onChange={(value) => onValueChange(value, itemI)}
               />
             </div>
           );
@@ -80,12 +87,13 @@ export function CustomModifierLayout({
       <Modal
         active={modalOn}
         className="bg-surface-1"
-        {...creatorModalProps}
+        formId={id}
+        {...createModalProps}
         withActions
         withHeaderDivider={false}
         onClose={closeModal}
       >
-        {children(closeModal)}
+        {renderCreateForm({ id, onSubmit: closeModal })}
       </Modal>
     </div>
   );

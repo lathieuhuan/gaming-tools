@@ -1,4 +1,4 @@
-import { useState, useRef, FormEvent } from "react";
+import { useState, useRef } from "react";
 import { InputNumber, VersatileSelect } from "rond";
 import { ATTACK_ELEMENTS } from "@Calculation";
 
@@ -7,10 +7,12 @@ import { useTranslation } from "@/hooks";
 import { useDispatch } from "@Store/hooks";
 import { updateCustomDebuffCtrls } from "@Store/calculator-slice";
 
-interface DebuffCtrlCreatorProps {
-  onClose: () => void;
-}
-export default function DebuffCtrlCreator({ onClose }: DebuffCtrlCreatorProps) {
+type DebuffCtrlFormProps = {
+  id: string;
+  onSubmit: () => void;
+};
+
+export function DebuffCtrlForm({ id, onSubmit }: DebuffCtrlFormProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -21,7 +23,7 @@ export default function DebuffCtrlCreator({ onClose }: DebuffCtrlCreatorProps) {
     value: 0,
   });
 
-  const onChangeType = (type: string) => {
+  const handleTypeChange = (type: string) => {
     setConfig((prev) => ({
       ...prev,
       type: type as CustomDebuffCtrlType,
@@ -30,18 +32,20 @@ export default function DebuffCtrlCreator({ onClose }: DebuffCtrlCreatorProps) {
     inputRef.current?.focus();
   };
 
-  const onDone = () => {
+  const handleSubmit = () => {
     dispatch(updateCustomDebuffCtrls({ actionType: "ADD", ctrls: config }));
-    onClose();
-  };
-
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    onDone();
+    onSubmit();
   };
 
   return (
-    <form id="debuff-creator" className="mx-auto py-4 px-2 flex items-center" onSubmit={onSubmit}>
+    <form
+      id={id}
+      className="mx-auto py-4 px-2 flex items-center"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit();
+      }}
+    >
       <VersatileSelect
         title="Select"
         className="h-8"
@@ -54,7 +58,7 @@ export default function DebuffCtrlCreator({ onClose }: DebuffCtrlCreatorProps) {
           value: option,
         }))}
         value={config.type}
-        onChange={(value) => onChangeType(value as string)}
+        onChange={(value) => handleTypeChange(value as string)}
       />
       <InputNumber
         ref={inputRef}
@@ -70,7 +74,7 @@ export default function DebuffCtrlCreator({ onClose }: DebuffCtrlCreatorProps) {
         value={config.value}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            onDone();
+            handleSubmit();
           }
         }}
       />

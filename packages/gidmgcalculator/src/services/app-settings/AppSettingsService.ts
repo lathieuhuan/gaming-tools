@@ -5,7 +5,6 @@ export type AppSettings = {
   separateCharInfo: boolean;
   keepArtStatsOnSwitch: boolean;
   persistUserData: boolean;
-
   /** Applied to mobile */
   isTabLayout: boolean;
   askBeforeUnload: boolean;
@@ -20,11 +19,15 @@ export type AppSettings = {
   targetLevel: number;
 
   // TODO: remove this after 01/11/2025
-  // Old settings
+  /** @deprecated */
   traveler?: TravelerKey;
+  /** @deprecated */
   charInfoIsSeparated?: boolean;
+  /** @deprecated */
   isCharInfoSeparated?: boolean;
+  /** @deprecated */
   doKeepArtStatsOnSwitch?: boolean;
+  /** @deprecated */
   persistingUserData?: boolean;
 };
 

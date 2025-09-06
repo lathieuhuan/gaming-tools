@@ -1,12 +1,12 @@
-import { useState, useRef, FormEvent } from "react";
-import { clsx, InputNumber, VersatileSelect } from "rond";
 import { ATTACK_ELEMENTS, ATTACK_PATTERNS, REACTIONS } from "@Calculation";
+import { useRef, useState } from "react";
+import { clsx, InputNumber, VersatileSelect } from "rond";
 
-import type { CustomBuffCtrl, CustomBuffCtrlCategory, CustomBuffCtrlType } from "@/types";
 import { useTranslation } from "@/hooks";
+import type { CustomBuffCtrl, CustomBuffCtrlCategory, CustomBuffCtrlType } from "@/types";
 import { suffixOf, toCustomBuffLabel } from "@/utils";
-import { useDispatch } from "@Store/hooks";
 import { updateCustomBuffCtrls } from "@Store/calculator-slice";
+import { useDispatch } from "@Store/hooks";
 
 const CATEGORIES: Record<
   CustomBuffCtrlCategory,
@@ -33,10 +33,12 @@ const CATEGORIES: Record<
   },
 };
 
-interface BuffCtrlCreatorProps {
-  onClose: () => void;
-}
-export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
+type BuffCtrlFormProps = {
+  id: string;
+  onSubmit: () => void;
+};
+
+export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -50,7 +52,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
   const subTypes = CATEGORIES[config.category].subTypes;
   const sign = suffixOf(config.subType || config.type);
 
-  const onChangeCategory = (category: CustomBuffCtrlCategory) => {
+  const handleCategoryChange = (category: CustomBuffCtrlCategory) => {
     const subType = CATEGORIES[category].subTypes?.[0] as CustomBuffCtrl["subType"];
 
     setConfig({
@@ -61,7 +63,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
     });
   };
 
-  const onChangeType = (type: string) => {
+  const handleTypeChange = (type: string) => {
     let subType = config.subType;
 
     if (["melt", "vaporize"].includes(type)) {
@@ -77,7 +79,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
     inputRef.current?.focus();
   };
 
-  const onChangeSubType = (subType: string) => {
+  const handleSubTypeChange = (subType: string) => {
     setConfig({
       ...config,
       subType: subType as CustomBuffCtrl["subType"],
@@ -87,14 +89,9 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
     inputRef.current?.focus();
   };
 
-  const onDone = () => {
+  const handleSubmit = () => {
     dispatch(updateCustomBuffCtrls({ actionType: "ADD", ctrls: config }));
-    onClose();
-  };
-
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    onDone();
+    onSubmit();
   };
 
   const widthByCategory: Record<CustomBuffCtrlCategory, string> = {
@@ -120,7 +117,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
         };
       })}
       value={config.type}
-      onChange={(value) => onChangeType(value as string)}
+      onChange={(value) => handleTypeChange(value as string)}
     />
   );
 
@@ -141,7 +138,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
         }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            onDone();
+            handleSubmit();
           }
         }}
       />
@@ -153,7 +150,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
     <div className="flex flex-col">
       <div className="flex flex-col sm:flex-row">
         {Object.entries(CATEGORIES).map(([category, { label }], index) => {
-          const chosen = config.category === category;
+          const selected = config.category === category;
 
           return (
             <button
@@ -162,22 +159,30 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
                 "px-4 py-1",
                 !index && "rounded-t sm:rounded-tr-none sm:rounded-l",
                 index === 3 && "rounded-b sm:rounded-bl-none sm:rounded-r",
-                chosen ? "bg-light-default" : "bg-surface-3"
+                selected ? "bg-light-default" : "bg-surface-3"
               )}
+              // This will prevent the current input from being blurred
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => {
-                if (!chosen) {
-                  onChangeCategory(category as CustomBuffCtrlCategory);
+                if (!selected) {
+                  handleCategoryChange(category as CustomBuffCtrlCategory);
                 }
               }}
             >
-              <p className={clsx("font-semibold text-center", chosen && "text-black")}>{label}</p>
+              <p className={clsx("font-semibold text-center", selected && "text-black")}>{label}</p>
             </button>
           );
         })}
       </div>
 
-      <form id="buff-creator" className="mt-6" onSubmit={onSubmit}>
+      <form
+        id={id}
+        className="mt-6"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit();
+        }}
+      >
         {subTypes ? (
           <div className="flex flex-col sm:flex-row sm:justify-end sm:items-center gap-2">
             {categorySelect}
@@ -195,7 +200,7 @@ export default function BuffCtrlCreator({ onClose }: BuffCtrlCreatorProps) {
                   dropdownCls="z-50"
                   options={subTypes.map((subType) => ({ label: t(subType), value: subType }))}
                   value={config.subType}
-                  onChange={(value) => onChangeSubType(value as string)}
+                  onChange={(value) => handleSubTypeChange(value as string)}
                 />
               )}
 
