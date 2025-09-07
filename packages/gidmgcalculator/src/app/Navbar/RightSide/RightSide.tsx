@@ -61,7 +61,7 @@ export function RightSide({ appReady }: RightSideProps) {
   const handleRefetch = async () => {
     setRefetching(true);
 
-    const response = await $AppData.fetchMetadata();
+    const response = await $AppData.fetchAllData();
 
     if (response.data) {
       $AppData.data = response.data;

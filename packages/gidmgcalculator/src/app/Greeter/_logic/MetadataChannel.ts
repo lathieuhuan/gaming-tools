@@ -1,4 +1,4 @@
-import type { Metadata } from "@/services";
+import type { AllData } from "@/services";
 
 type MetadataMessageRequest = {
   type: "REQUEST";
@@ -6,7 +6,7 @@ type MetadataMessageRequest = {
 
 type MetadataMessageResponse = {
   type: "RESPONSE";
-  data: Metadata;
+  data: AllData;
 };
 
 export class MetadataChannel {
@@ -15,7 +15,7 @@ export class MetadataChannel {
 
   onRequest = () => {};
 
-  onResponse = (data: Metadata) => {};
+  onResponse = (data: AllData) => {};
 
   constructor() {
     this.channel.onmessage = ({ data }: MessageEvent<MetadataMessageRequest | MetadataMessageResponse>) => {
@@ -36,7 +36,7 @@ export class MetadataChannel {
     }
   };
 
-  response = (metadata: Metadata) => {
+  response = (metadata: AllData) => {
     if (!this.isClosedChannel) {
       this.channel.postMessage({ type: "RESPONSE", data: metadata } satisfies MetadataMessageResponse);
     }

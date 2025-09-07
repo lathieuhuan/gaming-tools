@@ -25,7 +25,7 @@ export const GENSHIN_DEV_URL = {
 
 export const BACKEND_URL = {
   base: IS_DEV_ENV ? "http://localhost:3000/api" : "https://gidmgcalculator.vercel.app/api",
-  metadata() {
+  allData() {
     return `${this.base}/meta-data`;
   },
   character: {

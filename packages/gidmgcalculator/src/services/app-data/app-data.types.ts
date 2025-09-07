@@ -13,7 +13,7 @@ export type Update = {
   patch?: string;
 };
 
-export type Metadata = {
+export type AllData = {
   version: string;
   characters: AppCharacter[];
   weapons: AppWeapon[];

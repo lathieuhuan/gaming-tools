@@ -45,7 +45,7 @@ export const Greeter = () => {
       });
     }
 
-    const error = await greeter.fetchMetadata();
+    const error = await greeter.fetchAllData();
 
     if (error) {
       setState({

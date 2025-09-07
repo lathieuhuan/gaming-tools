@@ -1,11 +1,11 @@
 import type { AppMetadata } from "../types";
 
 import { MINIMUM_SYSTEM_VERSION } from "@/constants";
-import { $AppData, Metadata } from "@/services";
+import { $AppData, AllData } from "@/services";
 import { MetadataChannel } from "./MetadataChannel";
 import { StoredTime } from "./StoredTime";
 
-type FetchMetadataError = {
+type FetchAllDataError = {
   code: number;
   message: string;
   cooldown: number;
@@ -67,7 +67,7 @@ export class GreeterService {
     return true;
   }
 
-  private populateData = (data: Metadata) => {
+  private populateData = (data: AllData) => {
     this.isFetchedMetadata = true;
     this.metadataInfo = {
       version: data.version,
@@ -77,9 +77,9 @@ export class GreeterService {
     this.data$.data = data;
   };
 
-  private async _fetchMetadata(): Promise<FetchMetadataError | null> {
+  private async _fetchMetadata(): Promise<FetchAllDataError | null> {
     if (!this.isFetchedMetadata) {
-      const response = await this.data$.fetchMetadata();
+      const response = await this.data$.fetchAllData();
       const { code, message = "Error.", data } = response;
 
       if (data) {
@@ -108,7 +108,7 @@ export class GreeterService {
     return null;
   }
 
-  async fetchMetadata(): Promise<FetchMetadataError | null> {
+  async fetchAllData(): Promise<FetchAllDataError | null> {
     const timeElapsed = this.currentTime - this.lastVersionCheckTime.value;
 
     if (timeElapsed < this.COOLDOWN_UPGRADE) {
