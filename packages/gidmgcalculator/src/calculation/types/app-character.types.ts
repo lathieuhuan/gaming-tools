@@ -37,7 +37,11 @@ export type AppCharacter = {
   weaponType: WeaponType;
   EBcost: number;
   talentLvBonus?: Partial<Record<TalentType, number>>;
-  stats: number[][];
+  statBases: {
+    atk: StatBase;
+    def: StatBase;
+    hp: StatBase;
+  },
   statBonus: {
     type: AttributeStat;
     value: number;
@@ -86,6 +90,11 @@ type Ability = {
   name: string;
   image?: string;
   description?: string;
+};
+
+type StatBase = {
+  level: number;
+  ascension: number;
 };
 
 // COMMON

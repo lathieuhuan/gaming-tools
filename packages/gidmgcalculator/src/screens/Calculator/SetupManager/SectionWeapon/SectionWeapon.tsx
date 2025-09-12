@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Badge, Button, PouchSvg, VersatileSelect } from "rond";
-import { LEVELS, Level } from "@Calculation";
+import { WEAPON_LEVELS, Level } from "@Calculation";
 
 import { $AppWeapon } from "@/services";
 import { genSequentialOptions } from "@/utils";
@@ -20,7 +20,7 @@ export default function SectionWeapon() {
   const [modalType, setModalType] = useState<ModalType>("");
 
   const { beta, name = "", icon = "", rarity = 5 } = $AppWeapon.get(weapon.code) || {};
-  const selectLevels = rarity < 3 ? LEVELS.slice(0, -4) : LEVELS;
+  const selectLevels = rarity < 3 ? WEAPON_LEVELS.slice(0, -4) : WEAPON_LEVELS;
 
   const closeModal = () => setModalType("");
 

@@ -7,6 +7,7 @@ type CheckboxControlProps = CheckboxProps & {
 
 type SelectControlProps = SelectProps & {
   type: "SELECT";
+  subType?: "LEVEL";
 };
 
 type InputControlProps = InputNumberProps & {
