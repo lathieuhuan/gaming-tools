@@ -16,22 +16,11 @@ export enum __EMockCharacter {
   PYRO = "PYRO",
 }
 
-const STATS: AppCharacter["stats"] = [
-  [100, 10, 50],
-  [300, 40, 100],
-  [1000, 60, 120],
-  [2000, 80, 140],
-  [3000, 100, 160],
-  [4000, 120, 180],
-  [5000, 140, 200],
-  [6000, 160, 250],
-  [7000, 180, 300],
-  [8000, 200, 350],
-  [9000, 220, 400],
-  [10000, 240, 450],
-  [11000, 260, 500],
-  [12000, 280, 550],
-];
+const STATS: AppCharacter["statBases"] = {
+  atk: { level: 100, ascension: 10 },
+  def: { level: 50, ascension: 5 },
+  hp: { level: 100, ascension: 10 },
+};
 
 const CALC_LIST: AppCharacter["calcList"] = {
   NA: [
@@ -69,7 +58,7 @@ export const __characters: AppCharacter[] = [
     vision: "pyro",
     weaponType: "sword",
     EBcost: 40,
-    stats: STATS,
+    statBases: STATS,
     statBonus: { type: "atk_", value: 6 },
     talentLvBonus: {
       ES: 3,
@@ -90,7 +79,7 @@ export const __characters: AppCharacter[] = [
     vision: "hydro",
     weaponType: "bow",
     EBcost: 60,
-    stats: STATS,
+    statBases: STATS,
     statBonus: { type: "cRate_", value: 4.8 },
     talentLvBonus: {
       ES: 5,
@@ -111,7 +100,7 @@ export const __characters: AppCharacter[] = [
     vision: "electro",
     weaponType: "catalyst",
     EBcost: 80,
-    stats: STATS,
+    statBases: STATS,
     statBonus: { type: "cDmg_", value: 9.6 },
     talentLvBonus: {
       NAs: 3,
@@ -132,7 +121,7 @@ export const __characters: AppCharacter[] = [
     vision: "cryo",
     weaponType: "polearm",
     EBcost: 90,
-    stats: STATS,
+    statBases: STATS,
     statBonus: { type: "def_", value: 9 },
     talentLvBonus: {
       NAs: 3,
@@ -160,7 +149,7 @@ export const __characters: AppCharacter[] = [
     vision: "anemo",
     weaponType: "claymore",
     EBcost: 90,
-    stats: STATS,
+    statBases: STATS,
     statBonus: { type: "def_", value: 9 },
     talentLvBonus: {
       NAs: 3,
@@ -188,7 +177,7 @@ export const __characters: AppCharacter[] = [
     vision: "cryo",
     weaponType: "sword",
     EBcost: 0,
-    stats: STATS,
+    statBases: STATS,
     statBonus: { type: "cRate_", value: 4.8 },
     talentLvBonus: {
       ES: 5,
@@ -209,7 +198,7 @@ export const __characters: AppCharacter[] = [
     vision: "pyro",
     weaponType: "bow",
     EBcost: 0,
-    stats: STATS,
+    statBases: STATS,
     statBonus: { type: "cRate_", value: 4.8 },
     talentLvBonus: {
       ES: 5,
