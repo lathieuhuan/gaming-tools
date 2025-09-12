@@ -3,7 +3,7 @@ import { clsx, useScreenWatcher } from "rond";
 import { MAX_TARGET_LEVEL } from "@/constants";
 import { AppSettings } from "@/services";
 import { genSequentialOptions } from "@/utils";
-import { Level, LEVELS } from "@Calculation";
+import { Level, LEVELS, WEAPON_LEVELS } from "@Calculation";
 
 import { SettingsGroup, SettingsGroupProps } from "../SettingsGroup";
 
@@ -18,6 +18,11 @@ export function AppSettingsControls({ className, initialValues, onChange }: AppS
 
   const levelOptions = LEVELS.map((_, i) => {
     const value = LEVELS[LEVELS.length - 1 - i];
+    return { label: value, value };
+  });
+
+  const weaponLevelOptions = WEAPON_LEVELS.map((_, i) => {
+    const value = WEAPON_LEVELS[WEAPON_LEVELS.length - 1 - i];
     return { label: value, value };
   });
 
@@ -84,6 +89,7 @@ export function AppSettingsControls({ className, initialValues, onChange }: AppS
           label: "Character level",
           options: levelOptions,
           type: "SELECT",
+          subType: "LEVEL",
           defaultValue: initialValues.charLevel,
           onChange: (value) => onChange("charLevel", value as Level),
         },
@@ -122,8 +128,9 @@ export function AppSettingsControls({ className, initialValues, onChange }: AppS
         {
           key: "wpLevel",
           label: "Weapon level",
-          options: levelOptions,
+          options: weaponLevelOptions,
           type: "SELECT",
+          subType: "LEVEL",
           defaultValue: initialValues.wpLevel,
           onChange: (value) => onChange("wpLevel", value as Level),
         },

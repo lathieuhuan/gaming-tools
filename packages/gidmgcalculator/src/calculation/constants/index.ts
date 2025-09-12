@@ -81,7 +81,7 @@ export const RESONANCE_STAT: Record<string, ResonanceStat> = {
 
 //
 
-export const LEVELS = [
+export const WEAPON_LEVELS = [
   "1/20",
   "20/20",
   "20/40",
@@ -96,6 +96,6 @@ export const LEVELS = [
   "80/80",
   "80/90",
   "90/90",
-  "95/100",
-  "100/100"
 ] as const;
+
+export const LEVELS = [...WEAPON_LEVELS, "95/95", "100/100"] as const;

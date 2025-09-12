@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Badge, VersatileSelect, clsx, type ClassValue } from "rond";
-import { LEVELS, Level, WeaponCalc } from "@Calculation";
+import { WEAPON_LEVELS, Level, WeaponCalc } from "@Calculation";
 
 import type { CalcWeapon, UserWeapon } from "@/types";
 import { useTranslation } from "@/hooks";
@@ -41,7 +41,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
   if (!weapon || !appWeapon) return null;
 
   const { rarity, subStat } = appWeapon;
-  const selectLevels = rarity < 3 ? LEVELS.slice(0, -4) : LEVELS;
+  const selectLevels = rarity < 3 ? WEAPON_LEVELS.slice(0, -4) : WEAPON_LEVELS;
 
   return (
     <div className={clsx("w-full", className)} onDoubleClick={() => console.log(weapon)}>
