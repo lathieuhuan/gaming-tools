@@ -55,8 +55,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
               align="right"
               transparent
               showAllOptions
-              className={`shrink-0 ${elmtText} text-lg font-bold`}
-              style={{ width: "4.75rem" }}
+              className={`w-[98px] shrink-0 ${elmtText} text-lg font-bold`}
               dropdownCls="z-20"
               options={LEVELS.map((_, i) => {
                 const item = LEVELS[LEVELS.length - 1 - i];

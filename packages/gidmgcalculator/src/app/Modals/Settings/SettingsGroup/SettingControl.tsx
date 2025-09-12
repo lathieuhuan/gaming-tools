@@ -1,4 +1,4 @@
-import { Checkbox, InputNumber, VersatileSelect } from "rond";
+import { Checkbox, clsx, InputNumber, VersatileSelect } from "rond";
 import { SettingControlProps } from "./types";
 
 export function SettingControl(props: SettingControlProps) {
@@ -13,7 +13,7 @@ export function SettingControl(props: SettingControlProps) {
       control = (
         <div className="flex gap-3 items-center justify-between" style={{ minHeight: "2.25rem" }}>
           <span>{label}</span>
-          <div className="w-20 flex shrink-0">
+          <div className={clsx("flex shrink-0", props.subType === "LEVEL" ? "w-24" : "w-16")}>
             <VersatileSelect
               title={`Select ${label}`}
               className="font-semibold h-8"
@@ -29,7 +29,7 @@ export function SettingControl(props: SettingControlProps) {
       control = (
         <div className="flex gap-3 items-center justify-between" style={{ minHeight: "2.25rem" }}>
           <span>{label}</span>
-          <div className="w-20 flex shrink-0">
+          <div className="w-16 flex shrink-0">
             <InputNumber className="w-full font-semibold" size="medium" {...(rest as any)} />
           </div>
         </div>
