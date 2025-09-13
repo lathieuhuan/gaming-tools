@@ -10,7 +10,7 @@ export type ModInputConfig = {
   type: ModInputType;
   for?: "FOR_SELF" | "FOR_TEAM";
   /** See ModifierControl model for default value */
-  initialValue?: number;
+  init?: number;
   max?: number;
   options?: string[];
 };
@@ -23,12 +23,6 @@ export type EntityBuff<TEntityEffect extends EntityBonusEffect = EntityBonusEffe
   affect: ModifierAffectType;
   inputConfigs?: ModInputConfig[];
   effects?: EntityBonus<TEntityEffect> | EntityBonus<TEntityEffect>[];
-  /**
-   * id for tracking unstackability.
-   * Effects under the same unstackableId and have the same bonus path cannot be stacked.
-   * CharacterBuff should not have this
-   */
-  unstackableId?: string;
 };
 
 // ========== DEBUFF ==========

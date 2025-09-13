@@ -148,7 +148,7 @@ export type TalentCalcItem = {
 
 export type CharacterBonusEffect = EntityBonusEffect;
 
-export type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "unstackableId" | "effects">;
+export type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "effects">;
 
 export type CharacterBuffNormalAttackConfig = {
   checkInput?: number | InputCheck;

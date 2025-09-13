@@ -42,6 +42,7 @@ export type CalcItemRecord = {
   baseMult?: number;
   totalFlat?: number;
   elvMult?: number;
+  specMult?: number;
   bonusMult: number;
   rxnMult?: number;
   defMult?: number;

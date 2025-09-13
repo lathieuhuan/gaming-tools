@@ -21,9 +21,12 @@ export type EntityBonusBasedOn = EntityBonusBasedOnField | EntityBonusBasedOnCon
 
 export type CharacterEffectLevelScale = {
   talent: TalentType;
-  /** If [value] = 0: buff value * level. Otherwise buff value * TALENT_LV_MULTIPLIERS[value][level]. */
+  /** 
+   * - If 0, scaleValue = level * value.
+   * - Otherwise, scaleValue = TALENT_LV_MULTIPLIERS[value][level].
+   */
   value: number;
-  /** When this bonus is from teammate, this is input's index to get level. Default to 0 */
+  /** When this bonus is from teammate, this is input's index to get level. Default 0 */
   altIndex?: number;
   /** On Raiden */
   max?: number;

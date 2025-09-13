@@ -79,6 +79,9 @@ export class CalcItemCalculator {
       bonusMult = toMult(bonusMult);
       baseMult = toMult(baseMult);
 
+      // SPECIAL MULTIPLIER
+      const specMult = toMult(getBonus("specMult_"));
+
       // ELEVATE MULTIPLIER
       const elvMult = toMult(getBonus("elvMult_"));
 
@@ -100,11 +103,15 @@ export class CalcItemCalculator {
       const cRate_ = this.limitCRate(getBonus("cRate_") + totalAttr.cRate_) / 100;
       const cDmg_ = (getBonus("cDmg_") + totalAttr.cDmg_) / 100;
 
-      base = Array_.applyToItem(base, (n) => (n * baseMult + flat) * bonusMult * elvMult * rxnMult * defMult * resMult);
+      base = Array_.applyToItem(
+        base,
+        (n) => (n * baseMult + flat) * bonusMult * specMult * elvMult * rxnMult * defMult * resMult
+      );
 
       record.baseMult = baseMult;
       record.totalFlat = flat;
       record.bonusMult = bonusMult;
+      record.specMult = specMult;
       record.elvMult = elvMult;
       record.rxnMult = rxnMult;
       record.defMult = defMult;
@@ -158,6 +165,12 @@ export class CalcItemCalculator {
       const bonusMult = toMult(getBonus("pct_"));
       const flat = getBonus("flat");
 
+      // SPECIAL MULTIPLIER
+      const specMult = toMult(getBonus("specMult_"));
+
+      // ELEVATE MULTIPLIER
+      const elvMult = toMult(getBonus("elvMult_"));
+
       // REACTION MULTIPLIER
       const rxnMult = 1;
 
@@ -168,15 +181,20 @@ export class CalcItemCalculator {
       const cRate_ = this.limitCRate(getBonus("cRate_") + totalAttr.cRate_) / 100;
       const cDmg_ = (getBonus("cDmg_") + totalAttr.cDmg_) / 100;
 
-      base = Array_.applyToItem(base, (n) => (n * baseMult * coefficient * bonusMult + flat) * rxnMult * resMult);
+      base = Array_.applyToItem(
+        base,
+        (n) => (n * baseMult * coefficient * bonusMult + flat) * specMult * elvMult * rxnMult * resMult
+      );
 
       record.specialPatt = lunar;
       record.baseMult = baseMult;
       record.coefficient = coefficient;
       record.totalFlat = flat;
       record.bonusMult = bonusMult;
+      record.elvMult = elvMult;
+      record.specMult = specMult;
       record.rxnMult = rxnMult;
-      record.defMult = 0;
+      record.defMult = 1;
       record.resMult = resMult;
       record.cRate_ = cRate_;
       record.cDmg_ = cDmg_;

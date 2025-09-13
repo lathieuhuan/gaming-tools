@@ -35,7 +35,7 @@ export function AttributesTracker({ result }: { result?: TrackerResult }) {
                     const value_ = round(value, 2);
                     const value__ = round(value_ / 100, 4);
 
-                    return `${value_}% = ${calcTotalAttr[`${statType}_base`]} * ${value__} =`;
+                    return `${value_}% = ${round(calcTotalAttr[`${statType}_base`], 1)} * ${value__} =`;
                   }
                 )
               )}

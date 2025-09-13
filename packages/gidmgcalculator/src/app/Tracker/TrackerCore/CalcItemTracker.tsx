@@ -103,6 +103,11 @@ export function CalcItemTracker({
       nullValue: 1,
       processor: (value) => `${round(value * 100, 2)}%`,
     });
+    const specMultRender = renderPart({
+      label: "Special Mult.",
+      value: record.specMult,
+      nullValue: 1,
+    });
 
     return forReactions ? (
       <>
@@ -126,6 +131,8 @@ export function CalcItemTracker({
         {bonusMultRender}
         {flatRender}
         {")"}
+        {specMultRender}
+        {elvMultRender}
       </>
     ) : (
       <>
@@ -135,6 +142,7 @@ export function CalcItemTracker({
         {flatRender}
         {")"}
         {bonusMultRender}
+        {specMultRender}
         {elvMultRender}
       </>
     );

@@ -11,7 +11,7 @@ type AttributeTarget = {
   inpIndex?: number;
 };
 type AttackBonusTarget = {
-  module: "ELMT_NA" | AttackBonusType | AttackBonusType[];
+  module: AttackBonusType | AttackBonusType[];
   path: AttackBonusKey;
 };
 

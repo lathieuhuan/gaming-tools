@@ -18,6 +18,8 @@ import { applyPercent } from "@/utils";
 import Array_ from "@/utils/array-utils";
 import Object_ from "@/utils/object-utils";
 
+const ASC_MULT_BY_ASC = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];
+
 type InternalTotalAttribute = Record<
   AttributeStat,
   {
@@ -80,7 +82,6 @@ export class TotalAttributeControl {
   private getCharacterStats(appCharacter: AppCharacter, charLv: Level) {
     const bareLv = GeneralCalc.getBareLv(charLv);
     const ascension = GeneralCalc.getAscension(charLv);
-    const scaleIndex = Math.max(ascension - 1, 0);
     const { hp, atk, def } = appCharacter.statBases;
     const use4starMult = appCharacter.rarity === 4 || appCharacter.name.slice(-8) === "Traveler";
 
@@ -98,16 +99,14 @@ export class TotalAttributeControl {
       }
     }
 
-    const ascMultByAsc = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];
-    const ascensionMult = ascMultByAsc[ascension];
-
-    console.log(levelMult, ascensionMult);
+    const ascensionMult = ASC_MULT_BY_ASC[ascension];
+    const ascensionStatMult = ascension > 2 ? ascension - 2 : 0;
 
     return {
       hp: hp.level * levelMult + hp.ascension * ascensionMult,
       atk: atk.level * atkLevelMult + atk.ascension * ascensionMult,
       def: def.level * levelMult + def.ascension * ascensionMult,
-      ascensionStat: appCharacter.statBonus.value * ([0, 1, 2, 2, 3, 4][scaleIndex] ?? 0),
+      ascensionStat: appCharacter.statBonus.value * ascensionStatMult,
     };
   }
 

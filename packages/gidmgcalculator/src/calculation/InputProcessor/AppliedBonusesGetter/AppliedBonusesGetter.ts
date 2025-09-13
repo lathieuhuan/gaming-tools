@@ -100,23 +100,6 @@ export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends
           }
           break;
         }
-        case "ELMT_NA":
-          for (const elmt of ELEMENT_TYPES) {
-            const toType: AttackBonusType = `NA.${elmt}`;
-
-            if (!this.isStackable({ trackId: support.monoId, targetId: `${toType}/${target.path}` })) {
-              continue;
-            }
-
-            result.attkBonuses.push({
-              id: bonus.id,
-              toType,
-              toKey: target.path,
-              value: bonus.value,
-              description: support.description,
-            });
-          }
-          break;
         default:
           for (const module of Array_.toArray(target.module)) {
             if (!this.isStackable({ trackId: support.monoId, targetId: `${module}/${target.path}` })) {

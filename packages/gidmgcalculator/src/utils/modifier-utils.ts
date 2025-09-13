@@ -34,7 +34,7 @@ export default class Modifier_ {
 
     for (const config of inputConfigs) {
       if (!config.for || config.for !== (forSelf ? "FOR_TEAM" : "FOR_SELF")) {
-        const value = (useMaxValue ? config.max : config.initialValue) ?? this.getDefaultInitialValue(config.type);
+        const value = (useMaxValue ? config.max : config.init) ?? this.getDefaultInitialValue(config.type);
         initialValues.push(value);
       }
     }
