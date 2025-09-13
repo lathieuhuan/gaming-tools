@@ -16,6 +16,8 @@ const BASE_REACTION_DAMAGE: Record<number, number> = {
   70: 765.64,
   80: 1077.44,
   90: 1446.85,
+  95: 1561.468,
+  100: 1674.8092,
 };
 
 export class GeneralCalc {
