@@ -55,6 +55,7 @@ export class ResultCalculator {
     return new LunarReactionCalculator(
       this.teamData.activeMember.level,
       this.itemCalculator,
+      this.totalAttr,
       this.resistances,
       this.tracker
     );

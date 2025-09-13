@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { PartiallyOptional } from "rond";
 import { AttackElement, ATTACK_ELEMENTS } from "@Calculation";
 
-import type { CalcSetupManageInfo, CalcWeapon, Resonance, Target } from "@Src/types";
+import type { CalcSetupManageInfo, CalcWeapon, Resonance, Target } from "@/types";
 import type {
   CalculatorState,
   AddTeammateAction,
@@ -28,13 +28,13 @@ import type {
   ChangeArtifactBuffCtrlInputAction,
 } from "./calculator-slice.types";
 
-import { RESONANCE_ELEMENT_TYPES } from "@Src/constants";
-import { $AppData, $AppCharacter, $AppSettings, $AppArtifact } from "@Src/services";
-import Setup_ from "@Src/utils/setup-utils";
-import Modifier_ from "@Src/utils/modifier-utils";
-import Object_ from "@Src/utils/object-utils";
-import Array_ from "@Src/utils/array-utils";
-import Entity_ from "@Src/utils/entity-utils";
+import { RESONANCE_ELEMENT_TYPES } from "@/constants";
+import { $AppData, $AppCharacter, $AppSettings, $AppArtifact } from "@/services";
+import Setup_ from "@/utils/setup-utils";
+import Modifier_ from "@/utils/modifier-utils";
+import Object_ from "@/utils/object-utils";
+import Array_ from "@/utils/array-utils";
+import Entity_ from "@/utils/entity-utils";
 import { calculate, countAllElements, getAppCharacterFromState } from "./calculator-slice.utils";
 
 // const defaultChar = {
@@ -74,7 +74,7 @@ export const calculatorSlice = createSlice({
       state.activeId = ID;
       state.standardId = 0;
       state.comparedIds = [];
-      $AppSettings.set({ charInfoIsSeparated: false });
+      $AppSettings.patch({ separateCharInfo: false });
 
       if (target) {
         state.target = target;
@@ -86,9 +86,10 @@ export const calculatorSlice = createSlice({
       const { importInfo, shouldOverwriteChar, shouldOverwriteTarget } = action.payload;
       const { ID = Date.now(), type, name = "New setup", target, calcSetup } = importInfo;
       const { setupsById } = state;
-      const { charInfoIsSeparated } = $AppSettings.get();
+      const { separateCharInfo } = $AppSettings.get();
 
-      if (shouldOverwriteChar && charInfoIsSeparated) {
+      // TODO: check if condition separateCharInfo is correct
+      if (shouldOverwriteChar && separateCharInfo) {
         for (const setup of Object.values(setupsById)) {
           setup.char = calcSetup.char;
         }
@@ -162,10 +163,10 @@ export const calculatorSlice = createSlice({
     // CHARACTER
     updateCharacter: (state, action: UpdateCharacterAction) => {
       const { setupsById } = state;
-      const { charInfoIsSeparated } = $AppSettings.get();
+      const { separateCharInfo } = $AppSettings.get();
       const { setupIds, ...newConfig } = action.payload;
 
-      if (charInfoIsSeparated) {
+      if (separateCharInfo) {
         if (setupIds) {
           for (const setupId of Array_.toArray(setupIds)) {
             Object.assign(setupsById[setupId].char, newConfig);
@@ -178,7 +179,7 @@ export const calculatorSlice = createSlice({
           Object.assign(setup.char, newConfig);
         }
       }
-      calculate(state, !charInfoIsSeparated || !!setupIds);
+      calculate(state, !separateCharInfo || !!setupIds);
     },
     // PARTY
     addTeammate: (state, action: AddTeammateAction) => {
@@ -619,7 +620,7 @@ export const calculatorSlice = createSlice({
       const activeSetup = Array_.findById(tempManageInfos, activeId);
       const newActiveId = activeSetup ? activeSetup.ID : tempManageInfos[0].ID;
 
-      // if (state.configs.charInfoIsSeparated && !newConfigs.charInfoIsSeparated) {
+      // if (state.configs.separateCharInfo && !newConfigs.separateCharInfo) {
       //   const activeChar = setupsById[newActiveId].char;
 
       //   for (const setup of Object.values(setupsById)) {
@@ -636,7 +637,7 @@ export const calculatorSlice = createSlice({
       calculate(state, true);
     },
     applySettings: (state, action: ApplySettingsAction) => {
-      const { mergeCharInfo, changeTraveler = false } = action.payload;
+      const { mergeCharInfo, travelerChanged = false } = action.payload;
       const activeChar = state.setupsById[state.activeId]?.char;
       const allSetups = Object.values(state.setupsById);
       let shouldRecalculateAll = false;
@@ -647,7 +648,8 @@ export const calculatorSlice = createSlice({
         }
         shouldRecalculateAll = true;
       }
-      shouldRecalculateAll ||= changeTraveler && allSetups.some((setup) => $AppCharacter.isTraveler(setup.char));
+
+      shouldRecalculateAll ||= travelerChanged && allSetups.some((setup) => $AppCharacter.checkIsTraveler(setup.char));
 
       if (shouldRecalculateAll) {
         calculate(state, true);

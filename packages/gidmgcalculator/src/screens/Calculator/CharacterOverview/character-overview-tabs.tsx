@@ -1,8 +1,8 @@
 import { GeneralCalc, TotalAttributeControl } from "@Calculation";
 import { CarouselSpace } from "rond";
 
-import { AttributeTable, ConstellationList, SetBonusesView, TalentList, WeaponView } from "@Src/components";
-import { useTabs } from "@Src/hooks";
+import { AttributeTable, ConstellationList, SetBonusesView, TalentList, WeaponView } from "@/components";
+import { useTabs } from "@/hooks";
 import {
   selectArtifacts,
   selectCharacter,

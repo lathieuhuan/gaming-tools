@@ -1,6 +1,7 @@
 import type { PartiallyRequired } from "rond";
-import type { ArtifactModCtrl } from "@Src/types";
-import type TypeCounter from "@Src/utils/type-counter";
+
+import type { ArtifactModCtrl } from "@/types";
+import type TypeCounter from "@/utils/type-counter";
 import type {
   ActualAttackElement,
   ActualAttackPattern,
@@ -9,10 +10,12 @@ import type {
   AttackBonusType,
   AttackPattern,
   AttributeStat,
+  BaseAttributeStat,
   CalcItemType,
   CoreStat,
   ElementType,
   LevelableTalentType,
+  LunarType,
   QuickenReaction,
 } from "./common.types";
 
@@ -32,7 +35,7 @@ export type BareBonus = {
 };
 
 export type AppliedAttributeBonus = BareBonus & {
-  toStat: AttributeStat | "base_atk";
+  toStat: AttributeStat | BaseAttributeStat;
   description: string;
 };
 
@@ -73,7 +76,7 @@ type CalculationFinalResultCommon = Record<CalculationAspect, number | number[]>
 export type CalculationFinalResultAttackItem = CalculationFinalResultCommon & {
   type: Extract<CalcItemType, "attack">;
   attElmt: ActualAttackElement;
-  attPatt: ActualAttackPattern;
+  attPatt: ActualAttackPattern | LunarType;
   reaction: AttackReaction;
 };
 

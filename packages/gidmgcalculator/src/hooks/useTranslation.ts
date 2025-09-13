@@ -1,4 +1,4 @@
-import { resources, NameSpace } from "@Src/locales/i18n";
+import { resources, NameSpace } from "@/locales/i18n";
 
 interface TranslateConfig {
   ns?: NameSpace;

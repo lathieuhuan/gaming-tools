@@ -10,7 +10,7 @@ import type {
   SetupImportInfo,
   Target,
   Teammate,
-} from "@Src/types";
+} from "@/types";
 
 import {
   ATTACK_ELEMENTS,
@@ -23,10 +23,10 @@ import {
   REACTIONS,
   WEAPON_TYPES,
 } from "@Calculation";
-import { EXPORTED_SETUP_VERSION } from "@Src/constants";
-import { $AppCharacter } from "@Src/services";
-import Setup_ from "@Src/utils/setup-utils";
-import Array_ from "@Src/utils/array-utils";
+import { EXPORTED_SETUP_VERSION } from "@/constants";
+import { $AppCharacter } from "@/services";
+import Setup_ from "@/utils/setup-utils";
+import Array_ from "@/utils/array-utils";
 import { CUSTOM_BUFF_CATEGORIES, DIVIDER } from "./setup-porter-config";
 
 export type DecodeError = "OLD_VERSION" | "UNKNOWN";

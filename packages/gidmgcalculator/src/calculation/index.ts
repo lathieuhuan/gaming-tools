@@ -11,11 +11,9 @@ export {
 export { TrackerControl } from "./utils/TrackerControl";
 export { TeamData, CalcTeamData } from "./utils/CalcTeamData";
 export { InitialBonusGetter } from "./InputProcessor/BareBonusGetter/InitialBonusGetter";
-export { TeammateInitialBonusGetter } from "./InputProcessor/BareBonusGetter/TeammateInitialBonusGetter";
 
 export * from "./constants";
 
-export type { AbstractInitialBonusGetter } from "./InputProcessor/BareBonusGetter/AbstractInitialBonusGetter";
 export type { ArtifactSetBonus } from "./utils/calc-utils";
 export type { CalcAtomicRecord, CalcItemRecord, TrackerResult } from "./utils/TrackerControl";
 export type {
@@ -44,6 +42,7 @@ export type {
   CalculationFinalResultItem,
   CharacterBuff,
   CharacterDebuff,
+  CharacterInnateBuff,
   CharacterMilestone,
   CoreStat,
   ElementType,

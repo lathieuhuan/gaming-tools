@@ -1,9 +1,8 @@
 import { WeaponType } from "@Calculation";
 
-import type { CalcWeapon, ModifierCtrl, UserArtifact, UserCharacter, UserWeapon } from "@Src/types";
-import Modifier_ from "@Src/utils/modifier-utils";
-import Entity_ from "@Src/utils/entity-utils";
-import Array_ from "@Src/utils/array-utils";
+import type { CalcWeapon, UserArtifact, UserCharacter, UserWeapon } from "@/types";
+import Array_ from "@/utils/array-utils";
+import Entity_ from "@/utils/entity-utils";
 
 export type CharacterForInit = Partial<UserCharacter> & {
   name: string;
@@ -26,30 +25,24 @@ export function parseUserCharacter({
   const character = Entity_.createCharacter(name, info);
 
   let weapon: CalcWeapon;
-  let wpBuffCtrls: ModifierCtrl[];
   const existedWeapon = Array_.findById(userWps, weaponID);
 
   if (existedWeapon) {
     weapon = Entity_.userItemToCalcItem(existedWeapon, seedID++);
-    wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, existedWeapon);
   } //
   else {
     const newWeapon = Entity_.createWeapon({ type: weaponType }, seedID++);
     weapon = newWeapon;
-    wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, newWeapon);
   }
 
   const artifacts = artifactIDs.map((id) => {
     const artifact = id ? Array_.findById(userArts, id) : undefined;
     return artifact ? Entity_.userItemToCalcItem(artifact, seedID++) : null;
   });
-  const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts);
 
   return {
     character,
     weapon,
-    wpBuffCtrls,
     artifacts,
-    artBuffCtrls,
   };
 }

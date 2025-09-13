@@ -1,9 +1,9 @@
-import type { ArtifactModCtrl } from "@Src/types";
+import type { ArtifactModCtrl } from "@/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import { $AppArtifact } from "@Src/services";
-import { getArtifactDescription } from "@Src/utils/description-parsers";
-import Array_ from "@Src/utils/array-utils";
+import { $AppArtifact } from "@/services";
+import { getArtifactDesc } from "@/utils/description-parsers";
+import Array_ from "@/utils/array-utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
@@ -27,7 +27,7 @@ export function ArtifactDebuffsView({ mutable, artDebuffCtrls, getHanlders }: Ar
           key={`${ctrl.code}-${ctrl.index}`}
           mutable={mutable}
           heading={data.name}
-          description={getArtifactDescription(data, debuff)}
+          description={getArtifactDesc(data, debuff)}
           checked={ctrl.activated}
           inputs={ctrl.inputs}
           inputConfigs={debuff.inputConfigs}

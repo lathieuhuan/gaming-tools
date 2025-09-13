@@ -1,9 +1,7 @@
 import { clsx } from "rond";
 
-import { useTranslation } from "@Src/hooks";
-import { suffixOf, toCustomBuffLabel } from "@Src/utils";
-
-// Store
+import { useTranslation } from "@/hooks";
+import { suffixOf, toCustomBuffLabel } from "@/utils";
 import {
   removeCustomModCtrl,
   selectActiveId,
@@ -13,10 +11,10 @@ import {
 } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 
-import { CopyOption, CustomModifierLayout, ModItemRenderConfig } from "../_components/CustomModifierLayout";
-import BuffCtrlCreator from "./BuffCtrlCreator";
+import { CopyOption, CustomModLayout, ModItemRenderConfig } from "../CustomModLayout";
+import { BuffCtrlForm } from "./BuffCtrlForm";
 
-export default function BuffCustom() {
+export function BuffCustom() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -55,13 +53,15 @@ export default function BuffCustom() {
   }
 
   return (
-    <CustomModifierLayout
+    <CustomModLayout
       items={items}
       copyOptions={copyOptions}
-      creatorModalProps={{
+      createModalProps={{
         title: "Add custom buffs",
         style: { minWidth: 304 },
-        formId: "buff-creator",
+      }}
+      renderCreateForm={(props) => {
+        return <BuffCtrlForm {...props} />;
       }}
       onCopy={(option: CopyOption) => {
         dispatch(
@@ -71,7 +71,7 @@ export default function BuffCustom() {
           })
         );
       }}
-      onChangeValue={(value, index) => {
+      onValueChange={(value, index) => {
         dispatch(
           updateCustomBuffCtrls({
             actionType: "EDIT",
@@ -85,8 +85,6 @@ export default function BuffCustom() {
       onRemoveAll={() => {
         dispatch(updateCustomBuffCtrls({ actionType: "REPLACE", ctrls: [] }));
       }}
-    >
-      {(close) => <BuffCtrlCreator onClose={close} />}
-    </CustomModifierLayout>
+    />
   );
 }

@@ -1,12 +1,12 @@
 import type { RootState } from "@Store/store";
 
-import Array_ from "@Src/utils/array-utils";
+import Array_ from "@/utils/array-utils";
 import { selectCalcFinalResult, selectComparedIds, selectWeapon, updateCharacter } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { useCalcTeamData } from "../ContextProvider";
 
 // Components
-import { FinalResultView } from "@Src/components";
+import { FinalResultView } from "@/components";
 import { FinalResultCompare } from "./FinalResultCompare";
 import { Menu } from "./Menu";
 

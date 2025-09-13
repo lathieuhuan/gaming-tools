@@ -1,5 +1,5 @@
-import { TotalAttributeControl } from "@Src/calculation/InputProcessor/TotalAttributeControl";
-import { BareBonus, EntityBonusEffect } from "@Src/calculation/types";
+import { TotalAttributeControl } from "@/calculation/InputProcessor/TotalAttributeControl";
+import { BareBonus, EntityBonusEffect } from "@/calculation/types";
 import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "./test-utils";
 
@@ -15,7 +15,7 @@ class Tester extends BareBonusGetterTester {
   };
 
   __apply(extra: number | EntityBonusEffect) {
-    this.applyExtra(this.bonus, extra, { inputs: this.inputs });
+    this.applyExtra(this.bonus, extra, { inputs: this.inputs, fromSelf: this.fromSelf });
   }
 
   __expect(value: number, isStable?: boolean) {

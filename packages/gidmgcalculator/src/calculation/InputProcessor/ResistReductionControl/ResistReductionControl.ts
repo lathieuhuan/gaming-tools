@@ -1,18 +1,18 @@
-import type { Target } from "@Src/types";
+import type { Target } from "@/types";
 import type {
   ElementType,
   EntityDebuff,
   EntityPenaltyTarget,
   ResistReduction,
   ResistReductionKey,
-} from "@Src/calculation/types";
-import type { CalcTeamData } from "@Src/calculation/utils/CalcTeamData";
-import type { TrackerControl } from "@Src/calculation/utils/TrackerControl";
+} from "@/calculation/types";
+import type { CalcTeamData } from "@/calculation/utils/CalcTeamData";
+import type { TrackerControl } from "@/calculation/utils/TrackerControl";
 
-import Array_ from "@Src/utils/array-utils";
-import TypeCounter from "@Src/utils/type-counter";
-import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "@Src/calculation/constants";
-import { ECalcStatModule } from "@Src/calculation/constants/internal";
+import Array_ from "@/utils/array-utils";
+import TypeCounter from "@/utils/type-counter";
+import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "@/calculation/constants";
+import { ECalcStatModule } from "@/calculation/constants/internal";
 import { PenaltiesGetter } from "./PenaltiesGetter";
 
 export class ResistReductionControl<T extends CalcTeamData = CalcTeamData> extends PenaltiesGetter {

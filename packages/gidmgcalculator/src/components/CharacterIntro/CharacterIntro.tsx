@@ -2,7 +2,7 @@ import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
 import { Badge, Button, Rarity, VersatileSelect } from "rond";
 import { AppCharacter, Level } from "@Calculation";
 
-import type { Character } from "@Src/types";
+import type { Character } from "@/types";
 import { LEVELS } from "@Calculation";
 import { GenshinImage } from "../GenshinImage";
 
@@ -55,8 +55,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
               align="right"
               transparent
               showAllOptions
-              className={`shrink-0 ${elmtText} text-lg font-bold`}
-              style={{ width: "4.75rem" }}
+              className={`w-[98px] shrink-0 ${elmtText} text-lg font-bold`}
               dropdownCls="z-20"
               options={LEVELS.map((_, i) => {
                 const item = LEVELS[LEVELS.length - 1 - i];
@@ -68,7 +67,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
           </div>
 
           <VersatileSelect
-            title="Select Constellation Level"
+            title="Select Constellation"
             className={`ml-auto w-14 text-lg ${elmtText} font-bold bg-surface-2`}
             align="right"
             options={Array.from({ length: 7 }, (_, i) => ({

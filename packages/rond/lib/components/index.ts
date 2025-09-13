@@ -15,6 +15,7 @@ export * from "./Image";
 export * from "./Input";
 export * from "./InputNumber";
 export * from "./ItemCase";
+export * from "./LoadingPlate";
 export * from "./LoadingSpin";
 export * from "./Modal";
 export * from "./ModifierView";

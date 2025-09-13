@@ -3,9 +3,9 @@ import { FaCaretRight, FaMinus } from "react-icons/fa";
 import { TbRectangleVerticalFilled } from "react-icons/tb";
 import { ItemCase, clsx, useIntersectionObserver } from "rond";
 
-import type { Artifact, Weapon } from "@Src/types";
-import { $AppArtifact, $AppWeapon } from "@Src/services";
-import Entity_ from "@Src/utils/entity-utils";
+import type { Artifact, Weapon } from "@/types";
+import { $AppArtifact, $AppWeapon } from "@/services";
+import Entity_ from "@/utils/entity-utils";
 
 // Component
 import { ItemThumbnail, type ItemThumbProps } from "../ItemThumbnail";

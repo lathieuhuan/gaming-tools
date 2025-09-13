@@ -1,14 +1,14 @@
 import type {
   AttackBonusKey,
-  AttackTag,
   AttributeStat,
   CalcItemType,
   CalculationFinalResultKey,
+  LunarType,
   ResistReductionKey,
-} from "@Src/calculation/types";
+} from "@/calculation/types";
 
-import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "@Src/calculation/constants";
-import { ECalcStatModule } from "@Src/calculation/constants/internal";
+import { ATTACK_ELEMENTS, ATTRIBUTE_STAT_TYPES } from "@/calculation/constants";
+import { ECalcStatModule } from "@/calculation/constants/internal";
 
 // ========== STAT RECORD ==========
 
@@ -32,13 +32,16 @@ export type CalcItemExclusiveBonus = {
 
 export type CalcItemRecord = {
   itemType: CalcItemType;
+  specialPatt?: LunarType;
   multFactors: Array<{
     desc: string;
     value: number;
     talentMult?: number;
   }>;
+  coefficient?: number;
   baseMult?: number;
   totalFlat?: number;
+  elvMult?: number;
   bonusMult: number;
   rxnMult?: number;
   defMult?: number;
@@ -46,7 +49,6 @@ export type CalcItemRecord = {
   cRate_?: number;
   cDmg_?: number;
   note?: string;
-  tags?: AttackTag[];
   exclusives?: CalcItemExclusiveBonus[];
 };
 

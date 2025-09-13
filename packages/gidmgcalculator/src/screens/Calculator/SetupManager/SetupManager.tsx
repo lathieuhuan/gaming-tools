@@ -3,9 +3,9 @@ import { FaSun } from "react-icons/fa6";
 import { IoDocumentText } from "react-icons/io5";
 import { Button, clsx, useScreenWatcher } from "rond";
 
-import { useOptimizeSystem } from "@Src/features";
+import { useOptimizeSystem } from "@/systems/optimize-dept";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectTargetConfig, selectTraveler, updateUI } from "@Store/ui-slice";
+import { selectTargetConfig, updateUI } from "@Store/ui-slice";
 
 // Component
 import SectionArtifacts from "./SectionArtifacts";
@@ -14,14 +14,16 @@ import SectionTeammates from "./SectionTeammates";
 import SectionWeapon from "./SectionWeapon";
 import { SetupSelect } from "./SetupSelect";
 
-interface SetupManagerProps {
+import styles from "./SetupManager.styles.module.scss";
+
+type SetupManagerProps = {
   isModernUI?: boolean;
-}
+};
+
 export function SetupManager({ isModernUI = false }: SetupManagerProps) {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const targetConfig = useSelector(selectTargetConfig);
-  const traveler = useSelector(selectTraveler);
 
   const updateTargetConfig = (active: boolean, overviewed: boolean) => {
     dispatch(updateUI({ targetConfig: { active, overviewed } }));
@@ -33,7 +35,7 @@ export function SetupManager({ isModernUI = false }: SetupManagerProps) {
 
   const renderMainContent = (cls = "") => (
     <div className={`hide-scrollbar space-y-2 scroll-smooth ${cls}`}>
-      <SectionTeammates key={traveler} />
+      <SectionTeammates className={styles.section} />
       <SectionWeapon />
       <SectionArtifacts />
 

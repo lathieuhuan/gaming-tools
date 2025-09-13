@@ -1,6 +1,6 @@
 .ron-checkbox__wrapper {
   display: flex;
-  align-items: center;
+  align-items: start;
   gap: 0.5rem;
 
   &:has(.ron-checkbox__input:enabled) {
@@ -9,6 +9,14 @@
     &:hover .ron-checkbox {
       background-color: var(--ron-color-light-surface-2);
     }
+  }
+
+  & > *:first-child {
+    height: var(--line-height);
+  }
+
+  .ron-checkbox__label {
+    line-height: var(--line-height);
   }
 }
 
@@ -84,6 +92,8 @@
 
 // size config
 .ron-checkbox__wrapper--small {
+  --line-height: 1.5rem;
+
   .ron-checkbox {
     width: 18px;
     height: 18px;
@@ -98,11 +108,12 @@
   }
   .ron-checkbox__label {
     font-size: 1rem;
-    line-height: 1.5rem;
   }
 }
 
 .ron-checkbox__wrapper--medium {
+  --line-height: 1.75rem;
+
   .ron-checkbox {
     width: 22px;
     height: 22px;
@@ -119,6 +130,5 @@
   }
   .ron-checkbox__label {
     font-size: 1.125rem;
-    line-height: 1.75rem;
   }
 }

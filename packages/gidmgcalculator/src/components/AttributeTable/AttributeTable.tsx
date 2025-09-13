@@ -3,10 +3,10 @@ import { FaCaretDown } from "react-icons/fa";
 import { clsx, round, StatsTable, CollapseSpace, type PartiallyRequired } from "rond";
 import { ATTACK_ELEMENTS, CORE_STAT_TYPES, GeneralCalc, CoreStat, TotalAttribute } from "@Calculation";
 
-import { useTranslation } from "@Src/hooks";
+import { useTranslation } from "@/hooks";
 
 // Component
-import { markGreen } from "@Src/components";
+import { markGreen } from "@/components";
 
 const { Row, Cell } = StatsTable;
 

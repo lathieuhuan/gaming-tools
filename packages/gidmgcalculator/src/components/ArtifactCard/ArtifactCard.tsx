@@ -1,7 +1,7 @@
 import type { CSSProperties, MouseEvent } from "react";
 import { clsx, ButtonGroup, ButtonGroupItem } from "rond";
 
-import type { Artifact } from "@Src/types";
+import type { Artifact } from "@/types";
 import { OwnerLabel } from "../OwnerLabel";
 import { ArtifactView, type ArtifactViewProps } from "./ArtifactView";
 

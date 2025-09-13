@@ -1,23 +1,25 @@
 import { useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import { clsx, message, useScreenWatcher, ButtonGroup, Modal, WarehouseLayout } from "rond";
+import { ButtonGroup, clsx, LoadingPlate, message, Modal, useScreenWatcher, WarehouseLayout } from "rond";
 
-import type { UserArtifact } from "@Src/types";
-import { $AppArtifact } from "@Src/services";
-import { MAX_USER_ARTIFACTS } from "@Src/constants";
-import { useArtifactTypeSelect } from "@Src/hooks";
-import Array_ from "@Src/utils/array-utils";
+import type { UserArtifact } from "@/types";
+
+import { MAX_USER_ARTIFACTS } from "@/constants";
+import { useArtifactTypeSelect, useTravelerKey } from "@/hooks";
+import { $AppArtifact } from "@/services";
+import Array_ from "@/utils/array-utils";
+import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@/utils/filter-artifacts";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectUserArtifacts, addUserArtifact, updateUserArtifact, sortArtifacts } from "@Store/userdb-slice";
-import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@Src/utils/filter-artifacts";
+import { selectAppReady } from "@Store/ui-slice";
+import { addUserArtifact, selectUserArtifacts, sortArtifacts, updateUserArtifact } from "@Store/userdb-slice";
 
 // Component
-import { InventoryRack, ArtifactForge, ArtifactFilter, ArtifactForgeProps } from "@Src/components";
+import { ArtifactFilter, ArtifactForge, ArtifactForgeProps, InventoryRack } from "@/components";
 import { ChosenArtifactView } from "./ChosenArtifactView";
 
 type ModalType = "ADD_ARTIFACT" | "EDIT_ARTIFACT" | "CONFIG_FILTER" | "";
 
-export default function MyArtifacts() {
+function MyArtifacts() {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const userArts = useSelector(selectUserArtifacts);
@@ -195,4 +197,21 @@ export default function MyArtifacts() {
       />
     </WarehouseLayout>
   );
+}
+
+export function MyArtifactsWrapper() {
+  const appReady = useSelector(selectAppReady);
+  const travelerKey = useTravelerKey();
+
+  if (!appReady) {
+    return (
+      <WarehouseLayout className="h-full relative">
+        <div className="absolute inset-0 flex-center">
+          <LoadingPlate />
+        </div>
+      </WarehouseLayout>
+    );
+  }
+
+  return <MyArtifacts key={travelerKey} />;
 }

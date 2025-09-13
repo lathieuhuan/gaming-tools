@@ -1,7 +1,7 @@
-import type { CharacterEffectLevelScale } from "@Src/calculation/types";
-import type { CalcTeamData } from "@Src/calculation/utils/CalcTeamData";
+import type { CharacterEffectLevelScale } from "@/calculation/types";
+import type { CalcTeamData } from "@/calculation/utils/CalcTeamData";
 
-import { CharacterCalc } from "@Src/calculation/utils/calc-utils";
+import { CharacterCalc } from "@/calculation/utils/calc-utils";
 
 export const getTeammateLevelScale = (scale: CharacterEffectLevelScale | undefined, inputs: number[]): number => {
   if (scale) {

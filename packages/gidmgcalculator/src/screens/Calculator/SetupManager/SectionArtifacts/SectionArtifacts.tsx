@@ -4,10 +4,10 @@ import { GiAnvil } from "react-icons/gi";
 import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
 import { ARTIFACT_TYPES, ArtifactType } from "@Calculation";
 
-import type { Artifact, CalcArtifact } from "@Src/types";
-import { $AppArtifact, $AppSettings } from "@Src/services";
-import { useArtifactSetData } from "@Src/hooks";
-import Entity_ from "@Src/utils/entity-utils";
+import type { Artifact, CalcArtifact } from "@/types";
+import { $AppArtifact, $AppSettings } from "@/services";
+import { useArtifactSetData } from "@/hooks";
+import Entity_ from "@/utils/entity-utils";
 import { changeArtifact, selectArtifacts } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 
@@ -19,7 +19,7 @@ import {
   ArtifactInventoryProps,
   GenshinImage,
   LoadoutStash,
-} from "@Src/components";
+} from "@/components";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
 
@@ -156,7 +156,7 @@ export default function SectionArtifacts() {
       });
     }
 
-    replaceArtifact(artifact.type, newPiece, $AppSettings.get("doKeepArtStatsOnSwitch"));
+    replaceArtifact(artifact.type, newPiece, $AppSettings.get("keepArtStatsOnSwitch"));
   };
 
   const onForgeArtifactBatch: ArtifactForgeProps["onForgeArtifactBatch"] = (code, types, rarity) => {
@@ -169,7 +169,7 @@ export default function SectionArtifacts() {
         changeArtifact({
           pieceIndex: ARTIFACT_TYPES.indexOf(type),
           newPiece: { ...newPiece, ID: rootID++ },
-          shouldKeepStats: $AppSettings.get("doKeepArtStatsOnSwitch"),
+          shouldKeepStats: $AppSettings.get("keepArtStatsOnSwitch"),
         })
       );
     }

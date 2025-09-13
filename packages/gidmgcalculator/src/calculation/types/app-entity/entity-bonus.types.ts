@@ -3,11 +3,12 @@ import type { EntityBonusStack } from "./effect-bonus-stack.types";
 import type { EffectApplicableCondition } from "./effect-condition.types";
 import type { EffectMax } from "./effect-max.types";
 import type { EntityBonusTargets } from "./effect-target.types";
-import type { EffectValueByOption } from "./effect-value.types";
+import type { EffectValue } from "./effect-value.types";
 
 export type EntityBonusEffect = EffectApplicableCondition & {
   id: string;
-  value: number | EffectValueByOption;
+  monoId?: string;
+  value: EffectValue;
   /**
    * On Characters. Multiplier based on talent level
    * Added before preExtra

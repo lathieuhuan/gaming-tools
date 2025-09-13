@@ -1,8 +1,8 @@
-import type { AttackBonusKey, AttackBonusType, AttributeStat } from "../common.types";
+import type { AttackBonusKey, AttackBonusType, AttributeStat, BaseAttributeStat } from "../common.types";
 
 // ========== BONUS TARGET ==========
 
-type AttributeTargetPath = "INP_ELMT" | "OWN_ELMT" | AttributeStat | "base_atk";
+type AttributeTargetPath = "INP_ELMT" | "OWN_ELMT" | AttributeStat | BaseAttributeStat;
 
 type AttributeTarget = {
   module: "ATTR";

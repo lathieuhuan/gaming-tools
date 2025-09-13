@@ -2,8 +2,8 @@ import { FaInfo } from "react-icons/fa";
 import { clsx, Button, CloseButton, LoadingSpin } from "rond";
 
 import type { GearsDetailType } from "./Gears.types";
-import { $AppArtifact } from "@Src/services";
-import { EquipmentDisplay } from "@Src/components";
+import { $AppArtifact } from "@/services";
+import { EquipmentDisplay } from "@/components";
 import { useDetailInfo } from "../ContextProvider";
 
 const bonusStyles = (active: boolean) => {

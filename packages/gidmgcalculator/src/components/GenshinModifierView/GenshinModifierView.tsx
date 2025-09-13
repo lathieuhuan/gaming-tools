@@ -1,10 +1,21 @@
 import { ModifierView, type ModifierViewProps, type ModifierViewInputConfig } from "rond";
 import { ModInputConfig } from "@Calculation";
-import { genSequentialOptions } from "@Src/utils";
+import { genSequentialOptions } from "@/utils";
 
-export interface GenshinModifierViewProps extends Omit<ModifierViewProps, "inputConfigs"> {
+const genOptions = (config: ModInputConfig) => {
+  let count: number | undefined = undefined;
+
+  if (config.max) {
+    count = config.initialValue === 0 ? config.max + 1 : config.max;
+  }
+
+  return genSequentialOptions(count, config.initialValue);
+};
+
+export type GenshinModifierViewProps = Omit<ModifierViewProps, "inputConfigs"> & {
   inputConfigs?: ModInputConfig[];
-}
+};
+
 export function GenshinModifierView({ inputConfigs, ...viewProps }: GenshinModifierViewProps) {
   const viewInputConfigs = inputConfigs?.map<ModifierViewInputConfig>((config) => {
     const label = config.label || "[missing label]";
@@ -28,14 +39,15 @@ export function GenshinModifierView({ inputConfigs, ...viewProps }: GenshinModif
             style: { maxWidth: "7rem" },
           };
         }
-        return { type: "select", label, options: genSequentialOptions(config.max, config.initialValue === 0) };
+
+        return { type: "select", label, options: genOptions(config) };
       }
       case "STACKS":
         return {
           type: "select",
           label: config.label || "Stacks",
           style: { maxWidth: "3.25rem" },
-          options: genSequentialOptions(config.max, config.initialValue === 0),
+          options: genOptions(config),
         };
       case "ANEMOABLE":
         return {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { BottomSheet } from "rond";
 
-import { MobileBottomNav } from "@Src/components";
+import { MobileBottomNav } from "@/components";
 import { SetupManagerSmall } from "./SetupManagerSmall";
 
 interface BottomNavSmallProps {

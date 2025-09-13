@@ -1,10 +1,5 @@
 import { ATTACK_ELEMENTS } from "@Calculation";
-import { IS_DEV_ENV } from "@Src/constants";
-
-export function getSearchParam(key: string) {
-  const searchParams = new URLSearchParams(window.location.search);
-  return searchParams.get(key);
-}
+import { IS_DEV_ENV } from "@/constants";
 
 export function getImgSrc(src?: string) {
   // const IS_DEV_ENV = false;
@@ -26,12 +21,11 @@ export function randomInt(max: number, min = 0, step = 1) {
   return Math.floor((Math.random() * (max - min)) / step) * step + min;
 }
 
-export function genSequentialOptions(max: number | undefined = 0, startsAt0 = false, min = 1) {
-  const result = Array.from({ length: max }, (_, i) => {
-    const value = i + min;
+export function genSequentialOptions(count: number | undefined = 0, startFrom = 1) {
+  return Array.from({ length: count }, (_, i) => {
+    const value = i + startFrom;
     return { label: value, value };
   });
-  return startsAt0 ? [{ label: 0, value: 0 }].concat(result) : result;
 }
 
 export function suffixOf(stat: string) {

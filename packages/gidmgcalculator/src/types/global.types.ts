@@ -1,6 +1,15 @@
 import type { ArtifactType, AttributeStat, Level, WeaponType } from "@Calculation";
 
-export type Traveler = "LUMINE" | "AETHER";
+export type TravelerKey = "LUMINE" | "AETHER";
+
+export type PowerupKey = "cannedKnowledge" | "skirksTraining";
+
+export type TravelerInfo = {
+  selection: TravelerKey;
+  powerups: {
+    [key in PowerupKey]: boolean;
+  };
+};
 
 /** ========== BASE MODELS ========== */
 

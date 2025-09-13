@@ -1,16 +1,16 @@
-import { CharacterBuff, CharacterDebuff, TeamData } from "@Calculation";
-import type { Teammate, Teammates } from "@Src/types";
+import { CalcTeamData, CharacterBuff, CharacterDebuff } from "@Calculation";
+import type { Teammate, Teammates } from "@/types";
 import type { GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import Array_ from "@Src/utils/array-utils";
-import { parseTeammateAbilityDescription } from "@Src/utils/description-parsers";
+import Array_ from "@/utils/array-utils";
+import { parseTeammateAbilityDesc } from "@/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
 interface TeamModsViewProps {
   mutable?: boolean;
   teammates: Teammates;
-  teamData: TeamData;
+  teamData: CalcTeamData;
   getHanlders?: (args: GetTeammateModifierHanldersArgs) => ModifierHanlders;
 }
 
@@ -43,7 +43,7 @@ function getTeammateModifierElmts(
                 key={`${teammate.name}-${ctrl.index}`}
                 mutable={props.mutable}
                 heading={modifier.src}
-                description={parseTeammateAbilityDescription(modifier, inputs)}
+                description={parseTeammateAbilityDesc(modifier, inputs, props.teamData)}
                 checked={ctrl.activated}
                 inputs={inputs}
                 inputConfigs={modifier.inputConfigs}

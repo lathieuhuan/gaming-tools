@@ -1,8 +1,8 @@
-import { AppCharacterService } from "./AppCharacterService";
-import { AppWeaponService } from "./AppWeaponService";
-import { AppArtifactService } from "./AppArtifactService";
+import { AppCharacterService, ConvertedCharacter } from "./AppCharacterService";
+import { AppWeaponService, ConvertedWeapon } from "./AppWeaponService";
+import { AppArtifactService, ConvertedArtifact } from "./AppArtifactService";
 import { AppDataService } from "./AppDataService";
-export type { Metadata, Update } from "./app-data.types";
+export type { AllData, Update } from "./app-data.types";
 
 const $AppCharacter = new AppCharacterService();
 const $AppWeapon = new AppWeaponService();
@@ -13,5 +13,8 @@ export {
   $AppCharacter,
   $AppWeapon,
   $AppArtifact,
-  $AppData
-}
+  $AppData,
+  type ConvertedCharacter,
+  type ConvertedWeapon,
+  type ConvertedArtifact,
+};

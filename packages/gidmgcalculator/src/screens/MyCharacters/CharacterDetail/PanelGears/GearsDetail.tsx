@@ -5,7 +5,7 @@ import { AttributeStat } from "@Calculation";
 import type { GearsDetailType } from "./Gears.types";
 import { useDispatch } from "@Store/hooks";
 import { updateUserArtifactSubStat, updateUserArtifact, updateUserWeapon, unequipArtifact } from "@Store/userdb-slice";
-import { AttributeTable, SetBonusesView, ArtifactCard, WeaponCard } from "@Src/components";
+import { AttributeTable, SetBonusesView, ArtifactCard, WeaponCard } from "@/components";
 import { useDetailInfo, useDetailModalCtrl } from "../ContextProvider";
 
 export interface GearsDetailProps {

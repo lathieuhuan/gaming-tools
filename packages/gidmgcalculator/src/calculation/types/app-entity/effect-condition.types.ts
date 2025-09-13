@@ -15,11 +15,17 @@ export type InputCheck = {
   comparison?: ConditionComparison;
 };
 
-export type CharacterEffectAvailableCondition = {
-  grantedAt?: CharacterMilestone;
+export type EffectGrantedAtConfig = {
+  value: CharacterMilestone;
   /** When this bonus is from teammate, this is input's index to check granted. */
   altIndex?: number;
+  /** Default to 1, or checked */
+  compareValue?: number;
+  /** Default to 'EQUAL' */
+  comparison?: ConditionComparison;
 };
+
+export type EffectGrantedAt = CharacterMilestone | EffectGrantedAtConfig;
 
 export type TeamElementCondition = {
   /** ['pyro', 'pyro'] => 1. On Ballad of the Fjords */
@@ -48,20 +54,26 @@ export type CharacterPropertyCondition = {
   forElmts?: ElementType[];
   /** On outlander weapon series */
   forName?: string;
+  /** On Moonweaver's Dawn */
+  forEnergyCap?: {
+    value: number;
+    comparison: ConditionComparison;
+  };
 };
 
 export type EffectInputCondition = number | InputCheck | InputCheck[];
 
 export type PartyPropertyCondition = {
   value: number;
-  type: "MIXED";
+  type: "MIXED" | "MOONSIGN";
   /** Default to 'EQUAL' */
   comparison?: ConditionComparison;
 };
 
-export type EffectApplicableCondition = CharacterEffectAvailableCondition &
-  TeamElementCondition &
+export type EffectApplicableCondition = TeamElementCondition &
   CharacterPropertyCondition & {
+    /** On characters */
+    grantedAt?: EffectGrantedAt;
     /** If number, the input at 0 must equal to the number */
     checkInput?: EffectInputCondition;
     /** On Chain Breaker. */

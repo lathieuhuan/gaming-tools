@@ -1,4 +1,4 @@
-import { CharacterPropertyCondition } from "@Src/calculation/types";
+import { CharacterPropertyCondition } from "@/calculation/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __genMutableTeamDataTester, MutableTeamDataTester } from "@UnitTest/test-utils";
 import { isValidCharProps } from "../isValidCharProps";

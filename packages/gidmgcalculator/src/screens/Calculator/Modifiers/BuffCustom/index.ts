@@ -1,1 +1,1 @@
-export { default } from "./BuffCustom";
+export { BuffCustom as default } from "./BuffCustom";

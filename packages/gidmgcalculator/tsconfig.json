@@ -24,8 +24,8 @@
     "paths": {
       "@Calculation": ["src/calculation"],
       "@Store/*": ["src/store/*"],
-      "@OptimizeDept/*": ["src/features/OptimizeDeptProvider/*"],
-      "@Src/*": ["src/*"],
+      "@OptimizeDept/*": ["src/systems/optimize-dept/*"],
+      "@/*": ["src/*"],
       "@UnitTest/*": ["unit-test/*"]
     }
   },

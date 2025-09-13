@@ -1,12 +1,11 @@
-import type { BareBonus, EntityBonusEffect, EntityBonusStack } from "@Src/calculation/types";
+import type { BareBonus, EntityBonusEffect, EntityBonusStack } from "@/calculation/types";
 import type { BonusGetterSupport } from "./BareBonusGetter.types";
 
-import { CalcTeamData } from "@Src/calculation/utils/CalcTeamData";
+import { CalcTeamData } from "@/calculation/utils/CalcTeamData";
 import { InitialBonusGetter } from "./InitialBonusGetter";
 
 export class BareBonusGetter<T extends CalcTeamData = CalcTeamData> extends InitialBonusGetter<T> {
   //
-  
 
   protected applyExtra = (
     bonus: BareBonus,
@@ -16,7 +15,7 @@ export class BareBonusGetter<T extends CalcTeamData = CalcTeamData> extends Init
     if (typeof config === "number") {
       bonus.value += this.scaleRefi(config, support.refi);
     } //
-    else if (config && this.teamData.isApplicableEffect(config, support.inputs, this.fromSelf)) {
+    else if (config && this.teamData.isApplicableEffect(config, support.inputs, support.fromSelf)) {
       const extra = this.getBareBonus(config, support);
 
       if (extra) {
@@ -38,13 +37,13 @@ export class BareBonusGetter<T extends CalcTeamData = CalcTeamData> extends Init
       return 0;
     }
 
-    const { inputs } = support;
+    const { inputs, fromSelf } = support;
     const { activeAppMember } = teamData;
     let result = 0;
 
     switch (stack.type) {
       case "INPUT": {
-        const finalIndex = stack.altIndex !== undefined && !this.fromSelf ? stack.altIndex : stack.index ?? 0;
+        const finalIndex = stack.altIndex !== undefined && !fromSelf ? stack.altIndex : stack.index ?? 0;
         let input = 0;
 
         if (typeof finalIndex === "number") {
@@ -62,16 +61,16 @@ export class BareBonusGetter<T extends CalcTeamData = CalcTeamData> extends Init
       }
       case "MEMBER": {
         const { element } = stack;
-        const elmtCount = teamData.elmtCount;
+        const { elmtCount, teammateElmtCount } = teamData;
 
         switch (element) {
           case "DIFFERENT":
-            elmtCount.forEach((type, value) => {
+            teammateElmtCount.forEach((type, value) => {
               result += type !== activeAppMember.vision ? value : 0;
             });
             break;
           case "SAME_EXCLUDED":
-            elmtCount.forEach((type, value) => {
+            teammateElmtCount.forEach((type, value) => {
               result += type === activeAppMember.vision ? value : 0;
             });
             break;
@@ -79,13 +78,11 @@ export class BareBonusGetter<T extends CalcTeamData = CalcTeamData> extends Init
             elmtCount.forEach((type, value) => {
               result += type === activeAppMember.vision ? value : 0;
             });
-            result++;
             break;
           default:
             elmtCount.forEach((type, value) => {
               result += type === element ? value : 0;
             });
-            if (activeAppMember.vision === element) result++;
         }
         break;
       }
@@ -139,7 +136,7 @@ export class BareBonusGetter<T extends CalcTeamData = CalcTeamData> extends Init
       const capacityExtra = stack.capacity.extra;
       const capacity =
         stack.capacity.value +
-        (teamData.isApplicableEffect(capacityExtra, inputs, this.fromSelf) ? capacityExtra.value : 0);
+        (teamData.isApplicableEffect(capacityExtra, inputs, fromSelf) ? capacityExtra.value : 0);
 
       result = Math.max(capacity - result, 0);
     }
@@ -147,7 +144,7 @@ export class BareBonusGetter<T extends CalcTeamData = CalcTeamData> extends Init
       if (result <= stack.baseline) return 0;
       result -= stack.baseline;
     }
-    if (stack.extra && teamData.isApplicableEffect(stack.extra, inputs, this.fromSelf)) {
+    if (stack.extra && teamData.isApplicableEffect(stack.extra, inputs, fromSelf)) {
       result += stack.extra.value;
     }
 
@@ -159,22 +156,23 @@ export class BareBonusGetter<T extends CalcTeamData = CalcTeamData> extends Init
 
   protected getBareBonus = (
     config: EntityBonusEffect,
-    { inputs, refi = 0, basedOnStable = false }: BonusGetterSupport
+    { inputs, fromSelf, refi = 0, basedOnStable = false }: BonusGetterSupport
   ): BareBonus => {
     const support: BonusGetterSupport = {
       inputs,
+      fromSelf,
       refi,
       basedOnStable,
     };
     const initial: BareBonus = {
       id: config.id,
-      value: this.getInitialBonusValue(config.value, support),
+      value: this.getInitialValue(config.value, support),
       isStable: true,
     };
 
     initial.value = this.scaleRefi(initial.value, refi, config.incre);
 
-    initial.value *= this.getLevelScale(config.lvScale, inputs);
+    initial.value *= this.getLevelScale(config.lvScale, support);
 
     this.applyExtra(initial, config.preExtra, support);
 

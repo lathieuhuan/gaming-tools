@@ -2,7 +2,7 @@ export const IS_DEV_ENV = true;
 
 export const BACKEND_URL = {
   base: "http://localhost:3000/api",
-  metadata() {
+  allData() {
     return `${this.base}/meta-data`;
   },
   character: {

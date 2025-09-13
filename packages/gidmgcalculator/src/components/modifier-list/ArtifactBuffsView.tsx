@@ -1,11 +1,11 @@
 import { ArtifactSetBonus } from "@Calculation";
 
-import type { ArtifactModCtrl, ModifierCtrl, Teammates } from "@Src/types";
+import type { ArtifactModCtrl, ModifierCtrl, Teammates } from "@/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import { $AppArtifact } from "@Src/services";
-import { getArtifactDescription } from "@Src/utils/description-parsers";
-import Array_ from "@Src/utils/array-utils";
+import { $AppArtifact } from "@/services";
+import { getArtifactDesc } from "@/utils/description-parsers";
+import Array_ from "@/utils/array-utils";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
@@ -33,7 +33,7 @@ function renderArtifactModifiers<T extends ModifierCtrl = ModifierCtrl>({
     const buff = Array_.findByIndex(data.buffs, ctrl.index);
     if (!buff) return null;
 
-    const description = getArtifactDescription(data, buff);
+    const description = getArtifactDesc(data, buff);
 
     return (
       <GenshinModifierView

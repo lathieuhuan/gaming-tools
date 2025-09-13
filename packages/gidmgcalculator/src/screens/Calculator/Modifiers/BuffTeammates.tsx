@@ -1,19 +1,19 @@
-import type { Teammates } from "@Src/types";
+import type { Teammates } from "@/types";
 import {
   changeTeammateModCtrlInput,
   toggleTeammateModCtrl,
   type ToggleTeammateModCtrlPath,
 } from "@Store/calculator-slice";
 import { useDispatch } from "@Store/hooks";
-import { TeammateBuffsView } from "@Src/components";
-import { useTeamData } from "../ContextProvider";
+import { TeammateBuffsView } from "@/components";
+import { useCalcTeamData } from "../ContextProvider";
 
 interface BuffTeammatesProps {
   teammates: Teammates;
 }
 export default function BuffTeammates(props: BuffTeammatesProps) {
   const dispatch = useDispatch();
-  const teamData = useTeamData();
+  const teamData = useCalcTeamData();
 
   return (
     <TeammateBuffsView

@@ -6,13 +6,13 @@ import type {
   AttackBonusType,
   TalentCalcItem,
   Level,
-} from "@Src/calculation/types";
-import type { CalcAtomicRecord, CalcItemExclusiveBonus } from "@Src/calculation/utils/TrackerControl";
+} from "@/calculation/types";
+import type { CalcAtomicRecord, CalcItemExclusiveBonus } from "@/calculation/utils/TrackerControl";
 
-import Array_ from "@Src/utils/array-utils";
-import Object_ from "@Src/utils/object-utils";
-import TypeCounter from "@Src/utils/type-counter";
-import { GeneralCalc } from "@Src/calculation/utils/calc-utils";
+import Array_ from "@/utils/array-utils";
+import Object_ from "@/utils/object-utils";
+import TypeCounter from "@/utils/type-counter";
+import { GeneralCalc } from "@/calculation/utils/calc-utils";
 
 /** should not use 'all' in AttackBonusType */
 type GetBonusPaths = Array<AttackBonusType | undefined>;
@@ -114,7 +114,7 @@ export class AttackBonusesArchive {
    * Ex: paths = ['ES', 'pyro'] => get ES and pyro bonuses, not ES.pyro
    */
   get = (key: AttackBonusKey, ...paths: GetBonusPaths) => {
-    return this.allBonuses.get(key) + AttackBonusesControl.get(this.attkBonuses, key, ...paths);
+    return this.allBonuses.get(key) + this.getBare(key, ...paths);
   };
 
   getBare = (key: AttackBonusKey, ...paths: GetBonusPaths) => {

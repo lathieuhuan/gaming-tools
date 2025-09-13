@@ -1,6 +1,6 @@
-import type { Artifact } from "@Src/types";
-import type { ArtifactType, AttributeStat } from "@Src/calculation/types";
-import Object_ from "@Src/utils/object-utils";
+import type { Artifact } from "@/types";
+import type { ArtifactType, AttributeStat } from "@/calculation/types";
+import Object_ from "@/utils/object-utils";
 
 const percent1 = {
   4: [6.3, 8.1, 9.9, 11.6, 13.4, 15.2, 17, 18.8, 20.6, 22.3, 24.1, 25.9, 27.7, 29.5, 31.3, 33, 34.8],
@@ -103,6 +103,6 @@ export class ArtifactCalc {
   }
 
   static possibleMainStatTypesOf(artifactType: ArtifactType) {
-    return Object_.keys(ARTIFACT_MAIN_STATS[artifactType]);
+    return Object_.keys(ARTIFACT_MAIN_STATS[artifactType] || {});
   }
 }

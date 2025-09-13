@@ -2,10 +2,11 @@ import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __genMutableTeamDataTester, MutableTeamDataTester } from "@UnitTest/test-utils";
 import { TotalAttributeControl } from "../../TotalAttributeControl";
 import { BareBonusGetter } from "../BareBonusGetter";
-import { Character } from "@Src/types";
+import { Character } from "@/types";
 
 export class BareBonusGetterTester extends BareBonusGetter<MutableTeamDataTester> {
   inputs: number[] = [];
+  fromSelf: boolean = true;
 
   constructor(totalAttrCtrl?: TotalAttributeControl);
   constructor(info?: MutableTeamDataTester, totalAttrCtrl?: TotalAttributeControl);
@@ -13,7 +14,7 @@ export class BareBonusGetterTester extends BareBonusGetter<MutableTeamDataTester
     const _info = !info || info instanceof TotalAttributeControl ? __genMutableTeamDataTester() : info;
     const _totalAttrCtrl = info instanceof TotalAttributeControl ? info : totalAttrCtrl;
 
-    super(true, _info, _totalAttrCtrl);
+    super(_info, _totalAttrCtrl);
   }
 
   __changeActiveMember(characterName: __EMockCharacter) {
@@ -22,10 +23,6 @@ export class BareBonusGetterTester extends BareBonusGetter<MutableTeamDataTester
 
   __updateActiveMember(data: Partial<Character>) {
     this.teamData.__updateActiveMember(data);
-  }
-
-  __changeFromSelf(fromSelf: boolean) {
-    this.fromSelf = fromSelf;
   }
 
   __changeTeammates(names: string[]) {

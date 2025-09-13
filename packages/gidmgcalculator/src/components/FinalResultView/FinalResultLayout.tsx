@@ -4,9 +4,9 @@ import { MdEdit } from "react-icons/md";
 import { clsx, Button, CollapseSpace, Table, TableThProps } from "rond";
 import { AppCharacter, LevelableTalentType, TalentType } from "@Calculation";
 
-import type { Weapon } from "@Src/types";
-import { useTranslation } from "@Src/hooks";
-import { $AppWeapon } from "@Src/services";
+import type { Weapon } from "@/types";
+import { useTranslation } from "@/hooks";
+import { $AppWeapon } from "@/services";
 import { displayValue, getTableKeys, type TableKey } from "./FinalResultView.utils";
 
 type HeaderConfig = Pick<TableThProps, "className" | "style"> & {

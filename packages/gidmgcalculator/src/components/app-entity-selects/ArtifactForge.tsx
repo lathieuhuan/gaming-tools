@@ -3,15 +3,17 @@ import { FaInfoCircle } from "react-icons/fa";
 import { ButtonGroup, FancyBackSvg, Modal } from "rond";
 import { AppArtifact, ArtifactType } from "@Calculation";
 
-import type { Artifact } from "@Src/types";
-import { $AppArtifact } from "@Src/services";
-import Object_ from "@Src/utils/object-utils";
-import Entity_ from "@Src/utils/entity-utils";
-import { useArtifactTypeSelect } from "@Src/hooks";
+import type { Artifact } from "@/types";
+import type { AfterSelectAppEntity } from "./components/AppEntityOptions";
+
+import { useArtifactTypeSelect } from "@/hooks";
+import { $AppArtifact } from "@/services";
+import Entity_ from "@/utils/entity-utils";
+import Object_ from "@/utils/object-utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
-import { AppEntitySelect, type AppEntitySelectProps, type AfterSelectAppEntity } from "./components/AppEntitySelect";
+import { AppEntitySelect, type AppEntitySelectProps } from "./components/AppEntitySelect";
 import { ArtifactConfig } from "./components/ArtifactConfig";
 
 export interface ArtifactForgeProps extends Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> {

@@ -8,7 +8,7 @@ import {
 } from "@Store/calculator-slice";
 import { useTeamData } from "../ContextProvider";
 
-import { SelfBuffsView } from "@Src/components";
+import { SelfBuffsView } from "@/components";
 import { CalcTeamData } from "@Calculation";
 import { useMemo } from "react";
 

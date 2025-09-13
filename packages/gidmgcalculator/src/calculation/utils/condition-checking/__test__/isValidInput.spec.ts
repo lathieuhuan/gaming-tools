@@ -1,4 +1,4 @@
-import { EffectInputCondition } from "@Src/calculation/types";
+import { EffectInputCondition } from "@/calculation/types";
 import { isValidInput } from "../isValidInput";
 
 describe("isValidInput", () => {

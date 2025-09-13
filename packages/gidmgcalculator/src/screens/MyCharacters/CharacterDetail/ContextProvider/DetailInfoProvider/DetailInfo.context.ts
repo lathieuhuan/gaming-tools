@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import type { AppWeapon, ArtifactAttribute, ArtifactSetBonus, CalcTeamData, TotalAttribute } from "@Calculation";
-import type { Character, UserArtifacts, UserWeapon } from "@Src/types";
+import type { Character, UserArtifacts, UserWeapon } from "@/types";
 
 export type DetailInfo = {
   character: Character;

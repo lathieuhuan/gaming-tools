@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import { $AppCharacter } from "@Src/services";
-import type { AppCharactersByName } from "@Src/types";
+import { $AppCharacter } from "@/services";
+import type { AppCharactersByName } from "@/types";
 
 export function useAppCharactersByName() {
   const appCharactersByName = useRef<AppCharactersByName>({});

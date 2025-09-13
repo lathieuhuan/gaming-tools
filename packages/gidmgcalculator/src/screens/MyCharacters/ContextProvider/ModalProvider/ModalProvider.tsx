@@ -4,7 +4,7 @@ import { addCharacter, selectUserCharacters, viewCharacter } from "@Store/userdb
 import { useDispatch, useSelector } from "@Store/hooks";
 
 // Component
-import { Tavern } from "@Src/components";
+import { Tavern } from "@/components";
 import { ModalContext, type ModalControl } from "./Modal.context";
 import { CharacterSort } from "./CharacterSort";
 

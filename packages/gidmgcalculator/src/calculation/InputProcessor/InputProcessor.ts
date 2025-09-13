@@ -1,7 +1,7 @@
 import type { PartiallyRequiredOnly } from "rond";
 
-import type { TrackerControl } from "@Src/calculation/utils/TrackerControl";
-import type { AttackElement, AttackPattern, AttributeStat, ReactionType } from "@Src/calculation/types";
+import type { TrackerControl } from "@/calculation/utils/TrackerControl";
+import type { AttackElement, AttackPattern, AttributeStat, ReactionType } from "@/calculation/types";
 import type {
   ArtifactModCtrl,
   CalcArtifacts,
@@ -16,18 +16,18 @@ import type {
   Target,
   Teammates,
   Weapon,
-} from "@Src/types";
+} from "@/types";
 
-import { CharacterCalc, GeneralCalc } from "@Src/calculation/utils/calc-utils";
-import { CalcTeamData } from "@Src/calculation/utils/CalcTeamData";
+import { CharacterCalc, GeneralCalc } from "@/calculation/utils/calc-utils";
+import { CalcTeamData } from "@/calculation/utils/CalcTeamData";
 import {
   AMPLIFYING_REACTIONS,
-  LUNAR_REACTIONS,
+  LUNAR_TYPES,
   QUICKEN_REACTIONS,
   RESONANCE_STAT,
   TRANSFORMATIVE_REACTIONS,
-} from "@Src/calculation/constants";
-import Array_ from "@Src/utils/array-utils";
+} from "@/calculation/constants";
+import Array_ from "@/utils/array-utils";
 import { AppliedBonusesGetter } from "./AppliedBonusesGetter";
 import { AttackBonusesControl } from "./AttackBonusesControl";
 import { ResistReductionControl } from "./ResistReductionControl";
@@ -116,18 +116,17 @@ export class InputProcessor {
       artifacts
     );
     const attkBonusesCtrl = new AttackBonusesControl();
-    const selfBonusesGetter = new AppliedBonusesGetter(true, teamData, totalAttrCtrl);
-    const teammateBonusesGetter = new AppliedBonusesGetter(false, teamData, totalAttrCtrl);
+    const bonusesGetter = new AppliedBonusesGetter(teamData, totalAttrCtrl);
 
     const applySelfBuff: AppliedBonusesGetter["getAppliedBonuses"] = (...args) => {
-      const result = selfBonusesGetter.getAppliedBonuses(...args);
+      const result = bonusesGetter.getAppliedBonuses(...args);
       totalAttrCtrl.applyBonuses(result.attrBonuses);
       attkBonusesCtrl.add(result.attkBonuses);
       return result;
     };
 
     const applyTeammateBuff: AppliedBonusesGetter["getAppliedBonuses"] = (...args) => {
-      const result = teammateBonusesGetter.getAppliedBonuses(...args);
+      const result = bonusesGetter.getAppliedBonuses(...args);
       totalAttrCtrl.applyBonuses(result.attrBonuses);
       attkBonusesCtrl.add(result.attkBonuses);
       return result;
@@ -142,6 +141,7 @@ export class InputProcessor {
             buff,
             {
               inputs: [],
+              fromSelf: true,
             },
             `Self / ${buff.src}`,
             isFinal
@@ -156,6 +156,7 @@ export class InputProcessor {
             buff,
             {
               inputs: ctrl.inputs ?? [],
+              fromSelf: true,
             },
             `Self / ${buff.src}`,
             isFinal
@@ -171,6 +172,7 @@ export class InputProcessor {
           {
             inputs: [],
             refi,
+            fromSelf: true,
           },
           `${appWeapon.name} bonus`,
           isFinal
@@ -189,6 +191,7 @@ export class InputProcessor {
               { effects: buff.effects },
               {
                 inputs: [],
+                fromSelf: true,
               },
               `${data.name} / ${i * 2 + 2}-piece bonus`,
               isFinal
@@ -210,6 +213,7 @@ export class InputProcessor {
             {
               inputs: ctrl.inputs ?? [],
               refi,
+              fromSelf: true,
             },
             `${appWeapon.name} activated`,
             isFinal
@@ -229,6 +233,7 @@ export class InputProcessor {
               buff,
               {
                 inputs: ctrl.inputs ?? [],
+                fromSelf: true,
               },
               `${name} (self) / ${(buff.bonusLv ?? 1) * 2 + 2}-piece bonus`,
               isFinal
@@ -290,15 +295,15 @@ export class InputProcessor {
     }
 
     // APPLY RESONANCE BONUSES
-    for (const { vision: elementType, activated, inputs } of resonances) {
+    for (const { vision: elementType, activated, inputs = [] } of resonances) {
       if (activated) {
         const { key, value } = RESONANCE_STAT[elementType];
         let xtraValue = 0;
         const description = `${elementType} resonance`;
 
-        if (elementType === "dendro" && inputs) {
-          if (inputs[0]) xtraValue += 30;
-          if (inputs[1]) xtraValue += 20;
+        if (elementType === "dendro") {
+          if (inputs[0]) xtraValue += 20;
+          if (inputs[1]) xtraValue += 30;
         }
 
         totalAttrCtrl.applyBonuses({
@@ -330,6 +335,7 @@ export class InputProcessor {
           buff,
           {
             inputs,
+            fromSelf: false,
           },
           `${name} / ${buff.src}`
         );
@@ -349,6 +355,7 @@ export class InputProcessor {
               {
                 inputs: ctrl.inputs ?? [],
                 refi,
+                fromSelf: false,
               },
               `${name} activated`
             );
@@ -368,6 +375,7 @@ export class InputProcessor {
               buff,
               {
                 inputs: ctrl.inputs ?? [],
+                fromSelf: false,
               },
               `${name} / 4-Piece activated`
             );
@@ -395,7 +403,7 @@ export class InputProcessor {
         description: "From Elemental Mastery",
       });
     }
-    for (const rxn of LUNAR_REACTIONS) {
+    for (const rxn of LUNAR_TYPES) {
       attkBonusesCtrl.add({
         value: rxnBonuses.lunar,
         toType: rxn,

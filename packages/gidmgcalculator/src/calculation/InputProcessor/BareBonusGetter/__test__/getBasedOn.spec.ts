@@ -1,5 +1,5 @@
-import { TotalAttributeControl } from "@Src/calculation/InputProcessor/TotalAttributeControl";
-import { EntityBonusBasedOn, EntityBonusBasedOnField } from "@Src/calculation/types";
+import { TotalAttributeControl } from "@/calculation/InputProcessor/TotalAttributeControl";
+import { EntityBonusBasedOn, EntityBonusBasedOnField } from "@/calculation/types";
 import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "./test-utils";
 
@@ -16,6 +16,7 @@ class Tester extends BareBonusGetterTester {
     expect(
       this.getBasedOn(this.basedOnField, {
         inputs: this.inputs,
+        fromSelf: this.fromSelf,
         basedOnStable: this.basedOnStable,
       })
     ).toEqual({
@@ -33,6 +34,7 @@ class Tester extends BareBonusGetterTester {
         },
         {
           inputs: this.inputs,
+          fromSelf: this.fromSelf,
           basedOnStable: this.basedOnStable,
         }
       )
@@ -53,7 +55,7 @@ beforeEach(() => {
 
 describe("[based on inputs] or not fromSelf", () => {
   beforeEach(() => {
-    tester.__changeFromSelf(false);
+    tester.fromSelf = false;
   });
 
   test("altIndex default to 0, no baseline", () => {
@@ -99,7 +101,7 @@ describe("[based on inputs] or not fromSelf", () => {
 
 describe("[based on attribute] or fromSelf", () => {
   beforeEach(() => {
-    tester.__changeFromSelf(true);
+    tester.fromSelf = true;
   });
 
   test("based on STABLE attribute, no baseline", () => {

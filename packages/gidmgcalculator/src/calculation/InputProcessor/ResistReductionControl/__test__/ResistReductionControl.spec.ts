@@ -1,4 +1,4 @@
-import { ELEMENT_TYPES } from "@Src/calculation/constants";
+import { ELEMENT_TYPES } from "@/calculation/constants";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { ResistanceReductionControlTester } from "./test-utils";

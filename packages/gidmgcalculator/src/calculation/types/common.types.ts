@@ -8,6 +8,7 @@ import {
   CORE_STAT_TYPES,
   ELEMENT_TYPES,
   LEVELS,
+  LUNAR_TYPES,
   LUNAR_REACTIONS,
   NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
@@ -37,6 +38,10 @@ export type AttackElement = (typeof ATTACK_ELEMENTS)[number];
 
 export type ActualAttackElement = AttackElement | "absorb";
 
+export type LunarReactionType = (typeof LUNAR_REACTIONS)[number];
+
+export type LunarType = (typeof LUNAR_TYPES)[number];
+
 // ========== PATTERN ==========
 
 export type NormalAttack = (typeof NORMAL_ATTACKS)[number];
@@ -45,14 +50,13 @@ export type AttackPattern = (typeof ATTACK_PATTERNS)[number];
 
 export type ActualAttackPattern = AttackPattern | "none";
 
-export type AttackTag = "lunarCharged";
-
 //
 
 export type TalentCalcItemBonusId = `id.${number}`;
 
 export type AttackBonusType =
   | "all"
+  | LunarType
   | AttackPattern
   | AttackElement
   | `${AttackPattern}.${AttackElement}`
@@ -95,5 +99,7 @@ export type ResistReduction = Record<ResistReductionKey, number>;
 //
 
 export type CoreStat = (typeof CORE_STAT_TYPES)[number];
+
+export type BaseAttributeStat = "base_atk" | "base_hp" | "base_def";
 
 export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];

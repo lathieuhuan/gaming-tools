@@ -40,6 +40,10 @@ export default class Array_ {
     return Array.isArray(subject) ? subject : [subject];
   }
 
+  static isEqual(a: unknown[], b: unknown[]) {
+    return a.length === b.length && a.every((item, i) => item === b[i]);
+  }
+
   static findById = find("ID");
   static findByIndex = find("index");
   static findByCode = find("code");

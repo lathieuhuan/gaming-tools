@@ -1,6 +1,6 @@
-import { ATTACK_ELEMENTS } from "@Src/calculation/constants";
-import { AttackElement, EntityDebuff, EntityPenaltyEffect, ResistReductionKey } from "@Src/calculation/types";
-import { Target } from "@Src/types";
+import { ATTACK_ELEMENTS } from "@/calculation/constants";
+import { AttackElement, EntityDebuff, EntityPenaltyEffect, ResistReductionKey } from "@/calculation/types";
+import { Target } from "@/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { MutableTeamDataTester } from "@UnitTest/test-utils";
 import { ResistReductionControl } from "../ResistReductionControl";

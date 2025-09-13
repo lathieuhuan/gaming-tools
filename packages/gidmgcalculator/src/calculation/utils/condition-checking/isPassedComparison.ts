@@ -1,4 +1,4 @@
-import { ConditionComparison } from "@Src/calculation/types";
+import { ConditionComparison } from "@/calculation/types";
 
 export function isPassedComparison(
   value: number,

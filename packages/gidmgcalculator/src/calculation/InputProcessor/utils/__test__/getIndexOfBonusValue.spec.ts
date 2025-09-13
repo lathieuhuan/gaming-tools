@@ -1,4 +1,4 @@
-import { EffectValueByOption, LevelableTalentType } from "@Src/calculation/types";
+import { EffectValueByOption, LevelableTalentType } from "@/calculation/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __genMutableTeamDataTester, MutableTeamDataTester } from "@UnitTest/test-utils";
 import { getIndexOfEffectValue } from "../getIndexOfEffectValue";
@@ -9,7 +9,7 @@ describe("getIndexOfEffectValue", () => {
   let inputs: number[] = [];
 
   function __expect(value: number) {
-    expect(getIndexOfEffectValue(optIndex, teamData, inputs)).toBe(value);
+    expect(getIndexOfEffectValue(optIndex, teamData, inputs, true)).toBe(value);
   }
 
   beforeEach(() => {

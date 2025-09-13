@@ -1,44 +1,73 @@
-import type { CalcTeamData } from "@Src/calculation/utils/CalcTeamData";
+import type { CalcTeamData } from "@/calculation/utils/CalcTeamData";
 import type {
   CharacterEffectLevelIncrement,
   CharacterEffectLevelScale,
   EffectExtra,
+  EffectMax,
+  EffectValue,
   EffectValueByOption,
   EntityBonusBasedOn,
-} from "@Src/calculation/types";
+} from "@/calculation/types";
 import type { TotalAttributeControl } from "../TotalAttributeControl";
-import type { BonusGetterSupport } from "./BareBonusGetter.types";
+import type { BonusGetterSupport, SupportInfo } from "./BareBonusGetter.types";
 
-import Array_ from "@Src/utils/array-utils";
-import { AbstractInitialBonusGetter } from "./AbstractInitialBonusGetter";
+import Array_ from "@/utils/array-utils";
 import { getLevelScale } from "../utils/getLevelScale";
 import { getIndexOfEffectValue } from "../utils/getIndexOfEffectValue";
 
-export class InitialBonusGetter<T extends CalcTeamData = CalcTeamData> extends AbstractInitialBonusGetter {
+export class InitialBonusGetter<T extends CalcTeamData = CalcTeamData> {
   //
-  constructor(protected fromSelf: boolean, protected teamData: T, protected totalAttrCtrl?: TotalAttributeControl) {
-    super();
+  constructor(protected teamData: T, protected totalAttrCtrl?: TotalAttributeControl) {}
+
+  protected scaleRefi(base: number, refi = 0, increment = base / 3) {
+    return base + increment * refi;
   }
 
-  getLvIncre(incre: CharacterEffectLevelIncrement | undefined, inputs: number[]) {
+  protected parseBasedOn = (config: EntityBonusBasedOn) => {
+    return typeof config === "string" ? { field: config } : config;
+  };
+
+  /**
+   * @param support must have when config is EffectDynamicMax
+   */
+  protected applyMax = (value: number, config: EffectMax | undefined, support?: BonusGetterSupport) => {
+    if (typeof config === "number") {
+      return Math.min(value, this.scaleRefi(config, support?.refi));
+    } //
+    else if (config && support) {
+      let finalMax = config.value;
+
+      if (config.basedOn) {
+        finalMax *= this.getBasedOn(config.basedOn, support).value;
+      }
+      finalMax += this.getExtra(config.extras, support);
+      finalMax = this.scaleRefi(finalMax, support.refi, config.incre);
+      finalMax += this.getLvIncre(config.lvIncre, support);
+
+      return Math.min(value, finalMax);
+    }
+    return value;
+  };
+
+  getLvIncre(incre: CharacterEffectLevelIncrement | undefined, support: SupportInfo) {
     if (incre) {
       const { talent, value, altIndex = 0 } = incre;
-      const level = this.fromSelf ? this.teamData.getFinalTalentLv(talent) : inputs[altIndex] ?? 0;
+      const level = support.fromSelf ? this.teamData.getFinalTalentLv(talent) : support.inputs[altIndex] ?? 0;
       return level * value;
     }
     return 0;
   }
 
-  getLevelScale = (scale: CharacterEffectLevelScale | undefined, inputs: number[]): number => {
-    return getLevelScale(scale, this.teamData, inputs, this.fromSelf);
+  getLevelScale = (scale: CharacterEffectLevelScale | undefined, support: SupportInfo): number => {
+    return getLevelScale(scale, this.teamData, support.inputs, support.fromSelf);
   };
 
-  protected getExtra = (extras: EffectExtra | EffectExtra[] | undefined, inputs: number[]) => {
+  protected getExtra = (extras: EffectExtra | EffectExtra[] | undefined, support: SupportInfo) => {
     if (!extras) return 0;
     let result = 0;
 
     for (const extra of Array_.toArray(extras)) {
-      if (this.teamData.isApplicableEffect(extra, inputs, this.fromSelf)) {
+      if (this.teamData.isApplicableEffect(extra, support.inputs, support.fromSelf)) {
         result += extra.value;
       }
     }
@@ -49,7 +78,7 @@ export class InitialBonusGetter<T extends CalcTeamData = CalcTeamData> extends A
     const { field, altIndex = 0, baseline = 0 } = this.parseBasedOn(config);
     let basedOnValue = 1;
 
-    if (this.fromSelf) {
+    if (support.fromSelf) {
       if (this.totalAttrCtrl) {
         basedOnValue = support.basedOnStable
           ? this.totalAttrCtrl.getTotalStable(field)
@@ -64,8 +93,9 @@ export class InitialBonusGetter<T extends CalcTeamData = CalcTeamData> extends A
     };
   };
 
-  protected getIndexOfEffectValue(config: EffectValueByOption, inputs: number[]): number {
+  protected getIndexOfEffectValue(config: EffectValueByOption, support: SupportInfo): number {
     const { preOptions } = config;
+    const { inputs } = support;
     let index = -1;
 
     /** Navia */
@@ -73,9 +103,22 @@ export class InitialBonusGetter<T extends CalcTeamData = CalcTeamData> extends A
       const preIndex = preOptions[inputs[0]];
       index += preIndex ?? preOptions[preOptions.length - 1];
     } else {
-      index = getIndexOfEffectValue(config.optIndex, this.teamData, inputs);
+      index = getIndexOfEffectValue(config.optIndex, this.teamData, inputs, support.fromSelf);
     }
 
     return index;
   }
+
+  getInitialValue = (config: EffectValue, support: BonusGetterSupport) => {
+    if (typeof config === "number") {
+      return config;
+    }
+    const { options } = config;
+    let index = this.getIndexOfEffectValue(config, support);
+
+    index += this.getExtra(config.extra, support);
+    index = this.applyMax(index, config.max, support);
+
+    return options[index] ?? (index > 0 ? options[options.length - 1] : 0);
+  };
 }

@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { GeneralCalc, InputProcessor } from "@Calculation";
 
-import type { Character, UserArtifacts, UserWeapon } from "@Src/types";
+import type { Character, UserArtifacts, UserWeapon } from "@/types";
 import type { RootState } from "@Store/store";
 
-// import { useAppCharacter } from "@Src/hooks";
-import Array_ from "@Src/utils/array-utils";
-import { getSetupAppEntities } from "@Src/utils/getSetupAppEntities";
+// import { useAppCharacter } from "@/hooks";
+import Array_ from "@/utils/array-utils";
+import { getSetupAppEntities } from "@/utils/getSetupAppEntities";
 import { useSelector } from "@Store/hooks";
 import { DetailInfoContext, type DetailInfo } from "./DetailInfo.context";
 

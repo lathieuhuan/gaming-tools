@@ -1,5 +1,5 @@
-import { ArtifactType } from "@Src/calculation/types";
-import { CalcArtifacts } from "@Src/types";
+import { ArtifactType } from "@/calculation/types";
+import { CalcArtifacts } from "@/types";
 import { ASCENSION_RANKS } from "@UnitTest/test-constants";
 import { GeneralCalc } from "../GeneralCalc";
 

@@ -1,4 +1,4 @@
-import type { ElementModCtrl } from "@Src/types";
+import type { ElementModCtrl } from "@/types";
 import type { CalcTeamData } from "../utils/CalcTeamData";
 import type { AttackBonusesArchive } from "../InputProcessor";
 import type { CalcItemRecord } from "../utils/TrackerControl";
@@ -16,7 +16,7 @@ import type {
   TotalAttribute,
 } from "../types";
 
-import Array_ from "@Src/utils/array-utils";
+import Array_ from "@/utils/array-utils";
 import { CharacterCalc } from "../utils/calc-utils";
 import { TrackerControl } from "../utils/TrackerControl";
 import { CalcItemCalculator } from "./CalcItemCalculator";
@@ -130,26 +130,31 @@ export class TalentCalculator {
   };
 
   private getBases = (
-    multFactors: CalcItemMultFactor | CalcItemMultFactor[],
+    factors: CalcItemMultFactor | CalcItemMultFactor[],
     multBonus: number,
     record: CalcItemRecord
   ) => {
     let bases: number[] = [];
 
-    for (const factor of Array_.toArray(multFactors)) {
+    for (const factor of Array_.toArray(factors)) {
       const { root, scale, basedOn } = this.configMultFactor(factor);
-      const finalMult = root * CharacterCalc.getTalentMult(scale, this.level) + multBonus;
       const value = this.totalAttr[basedOn];
+      const finalMult = root * CharacterCalc.getTalentMult(scale, this.level) + multBonus;
+
+      bases.push((value * finalMult) / 100);
 
       record.multFactors.push({
         value,
         desc: basedOn,
         talentMult: finalMult,
       });
-      bases.push((value * finalMult) / 100);
     }
 
     return bases;
+  };
+
+  private joinBases = (bases: number[]) => {
+    return bases.reduce((accumulator, base) => accumulator + base, 0);
   };
 
   calculateItem = (
@@ -164,34 +169,48 @@ export class TalentCalculator {
       multFactors: [],
       bonusMult: 1,
       exclusives: this.attkBonusesArchive.getExclusiveBonuses(item),
-      tags: item.tags,
     });
     let result: CalculationFinalResultItem;
 
     switch (type) {
       case "attack": {
-        const isLunar = item.tags?.includes("lunarCharged");
-        const attPatt = this.alterConfig.attPatt || item.attPatt || this.default_.attPatt;
-        const { attElmt, reaction } = this.getElementAttribute(item, elmtModCtrl, infusedElmt);
-        const calculator = this.itemCalculator.genAttackCalculator(attPatt, attElmt, item.tags, item.id);
+        if (item.lunar) {
+          const { attElmt } = this.getElementAttribute(item, elmtModCtrl, infusedElmt);
+          const calculator = this.itemCalculator.genLunarCalculator(item.lunar, attElmt, item.id);
 
-        if (this.disabled) {
-          return calculator.emptyResult;
+          if (this.disabled) {
+            return calculator.emptyResult;
+          }
+
+          const multBonus = calculator.getBonus("mult_");
+          const bases = this.getBases(item.multFactors, multBonus, record);
+          const base = item.joinMultFactors ? this.joinBases(bases) : bases;
+
+          // TALENT RESULT
+          result = calculator.calculate(base, record);
+        } //
+        else {
+          const attPatt = this.alterConfig.attPatt || item.attPatt || this.default_.attPatt;
+          const { attElmt, reaction } = this.getElementAttribute(item, elmtModCtrl, infusedElmt);
+          const calculator = this.itemCalculator.genAttackCalculator(attPatt, attElmt, item.id);
+
+          if (this.disabled) {
+            return calculator.emptyResult;
+          }
+
+          const multBonus = calculator.getBonus("mult_");
+          const bases = this.getBases(item.multFactors, multBonus, record);
+          const base = item.joinMultFactors ? this.joinBases(bases) : bases;
+
+          // TALENT RESULT
+          result = calculator.calculate(base, reaction, record);
         }
-
-        const bonus = calculator.getBonus("mult_");
-        const bases = this.getBases(item.multFactors, bonus, record);
-        const base = item.joinMultFactors ? bases.reduce((accumulator, base) => accumulator + base, 0) : bases;
-
-        // TALENT DMG
-        result = calculator.calculate(base, reaction, record, isLunar);
-
         break;
       }
       default: {
         const calculator = this.itemCalculator.genOtherCalculator(type, item.id);
-        const bonus = this.itemCalculator.getBonus("mult_", item.id);
-        const bases = this.getBases(item.multFactors, bonus, record);
+        const multBonus = this.itemCalculator.getBonus("mult_", item.id);
+        const bases = this.getBases(item.multFactors, multBonus, record);
 
         if (item.flatFactor) {
           const { root, scale } = this.configFlatFactor(item.flatFactor);
@@ -201,7 +220,7 @@ export class TalentCalculator {
           record.totalFlat = flatBonus;
         }
 
-        // TALENT DMG
+        // TALENT RESULT
         result = calculator.calculate(bases, record);
       }
     }

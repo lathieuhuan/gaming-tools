@@ -1,4 +1,4 @@
-import { EntityBonusBasedOn, EntityBonusEffect } from "@Src/calculation/types";
+import { EntityBonusBasedOn, EntityBonusEffect } from "@/calculation/types";
 import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { AppliedBonusesGetter } from "../AppliedBonusesGetter";
 
@@ -7,7 +7,7 @@ class Tester extends AppliedBonusesGetter {}
 let tester: Tester;
 
 beforeEach(() => {
-  tester = new Tester(true, __genMutableTeamDataTester());
+  tester = new Tester(__genMutableTeamDataTester());
 });
 
 test("isFinalEffect", () => {

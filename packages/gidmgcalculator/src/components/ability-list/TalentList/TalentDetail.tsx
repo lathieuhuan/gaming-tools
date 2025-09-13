@@ -3,10 +3,10 @@ import { FaCaretDown } from "react-icons/fa";
 import { CloseButton, LoadingSpin, StatsTable, VersatileSelect, round } from "rond";
 import { ATTACK_PATTERNS, CharacterCalc, TalentType, AppCharacter } from "@Calculation";
 
-import { genSequentialOptions } from "@Src/utils";
-import Array_ from "@Src/utils/array-utils";
-import { useQuery, useTabs, useTranslation } from "@Src/hooks";
-import { $AppCharacter } from "@Src/services";
+import { genSequentialOptions } from "@/utils";
+import Array_ from "@/utils/array-utils";
+import { useQuery, useTabs, useTranslation } from "@/hooks";
+import { $AppCharacter } from "@/services";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
 
 // Component

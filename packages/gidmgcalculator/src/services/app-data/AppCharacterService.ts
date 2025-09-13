@@ -1,26 +1,31 @@
-import { AppCharacter, TalentType } from "@Calculation";
+import { AppCharacter, CharacterInnateBuff, TalentType } from "@Calculation";
 
-import type { Traveler } from "@Src/types";
+import type { Character, TravelerInfo } from "@/types";
+import type { GOODCharacter } from "@/types/GOOD.types";
 import type { StandardResponse } from "../services.types";
-import type { DataControl, ServiceSubscriber } from "./app-data.types";
+import type { DataControl, ServiceSubscriber, TravelerProps } from "./app-data.types";
 
-import { BACKEND_URL, GENSHIN_DEV_URL } from "@Src/constants";
+import { BACKEND_URL, DEFAULT_TRAVELER, GENSHIN_DEV_URL } from "@/constants";
 import { BaseService } from "./BaseService";
+import { cannedKnowledgeBuff, skirksTrainingBuff } from "./config";
+import { convertGOODLevel } from "./utils";
 
 type CharacterSubscriber = ServiceSubscriber<AppCharacter>;
+
+export type ConvertedCharacter = Character & { data: AppCharacter };
 
 export class AppCharacterService extends BaseService {
   private readonly NO_DESCRIPTION_MSG = "[Description missing]";
   private characters: Array<DataControl<AppCharacter>> = [];
   private subscribers: Map<string, Set<CharacterSubscriber>> = new Map();
-  private traveler: Traveler = "LUMINE";
+  private traveler = DEFAULT_TRAVELER;
 
   populate(characters: AppCharacter[]) {
-    const props = this.getTravelerProps(this.traveler);
+    const travelerProps = this.getTravelerProps(this.traveler);
 
     this.characters = characters.map((character) => ({
       status: "fetched",
-      data: this.updateIfTraveler(character, props),
+      data: this.updateIfTraveler(character, travelerProps),
     }));
   }
 
@@ -204,40 +209,98 @@ export class AppCharacterService extends BaseService {
     return control!.data;
   }
 
-  isTraveler = (obj: { name: string }) => {
+  // ==== TRAVELER ====
+
+  checkIsTraveler = (obj: { name: string }) => {
     return obj.name.slice(-8) === "Traveler";
   };
 
-  getTravelerProps = (traveler: Traveler) => {
-    return traveler === "LUMINE"
+  getTravelerProps = (traveler: Partial<TravelerInfo>): TravelerProps => {
+    const { selection, powerups } = traveler;
+
+    const innateBuffs: TravelerProps["innateBuffs"] = [];
+
+    if (powerups?.cannedKnowledge) {
+      innateBuffs.push(cannedKnowledgeBuff);
+    }
+    if (powerups?.skirksTraining) {
+      innateBuffs.push(skirksTrainingBuff);
+    }
+
+    return selection === "LUMINE"
       ? {
+          name: "Lumine",
           icon: "9/9c/Lumine_Icon",
           sideIcon: "9/9a/Lumine_Side_Icon",
           multFactorsCA: [55.9, 72.24],
+          innateBuffs,
         }
       : {
+          name: "Aether",
           icon: "a/a5/Aether_Icon",
           sideIcon: "0/05/Aether_Side_Icon",
           multFactorsCA: [55.9, 60.72],
+          innateBuffs,
         };
   };
 
-  private updateIfTraveler = (data: AppCharacter, props: ReturnType<typeof this.getTravelerProps>) => {
-    if (data && this.isTraveler(data)) {
+  private syncInnateBuffs = (data: AppCharacter, buffs: CharacterInnateBuff[]) => {
+    const removedSrcs: string[] = [];
+    const addedBuffs: CharacterInnateBuff[] = [];
+
+    for (const src of [cannedKnowledgeBuff.src, skirksTrainingBuff.src]) {
+      const addedBuff = buffs.find((buff) => buff.src === src);
+
+      if (addedBuff) {
+        if (!data.innateBuffs?.some((buff) => buff.src === src)) {
+          addedBuffs.push(addedBuff);
+        }
+      } else {
+        removedSrcs.push(src);
+      }
+    }
+
+    data.innateBuffs = data.innateBuffs?.filter((buff) => !removedSrcs.includes(buff.src));
+    data.innateBuffs = addedBuffs.concat(data.innateBuffs || []);
+  };
+
+  private updateIfTraveler = (data: AppCharacter, props: TravelerProps) => {
+    if (data && this.checkIsTraveler(data)) {
       data.icon = props.icon;
       data.sideIcon = props.sideIcon;
 
       const CA = data.calcList?.CA?.[0];
       if (CA) CA.multFactors = props.multFactorsCA;
+
+      this.syncInnateBuffs(data, props.innateBuffs);
     }
     return data;
   };
 
-  changeTraveler(traveler: Traveler) {
-    if (this.characters.length) {
-      const props = this.getTravelerProps(traveler);
-      this.characters.forEach((control) => this.updateIfTraveler(control.data, props));
-    }
+  changeTraveler(traveler: TravelerInfo) {
     this.traveler = traveler;
+
+    const travelerProps = this.getTravelerProps(this.traveler);
+    this.characters.forEach((control) => this.updateIfTraveler(control.data, travelerProps));
+  }
+
+  // ==== CONVERT GOOD ====
+
+  convertGOOD(character: GOODCharacter): ConvertedCharacter | undefined {
+    const data = this.characters.find(({ data }) => data.name === character.key || data.GOOD === character.key)?.data;
+
+    if (!data) {
+      return undefined;
+    }
+
+    return {
+      name: data.name,
+      level: convertGOODLevel(character),
+      cons: character.constellation,
+      NAs: character.talent.auto,
+      ES: character.talent.skill,
+      EB: character.talent.burst,
+      data,
+    };
   }
 }

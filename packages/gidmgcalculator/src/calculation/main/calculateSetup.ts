@@ -1,7 +1,7 @@
-import type { CalcSetup, Target } from "@Src/types";
+import type { CalcSetup, Target } from "@/types";
 import type { CalculationFinalResult } from "../types";
 
-import { getSetupAppEntities } from "@Src/utils/getSetupAppEntities";
+import { getSetupAppEntities } from "@/utils/getSetupAppEntities";
 import { ATTACK_PATTERNS, LUNAR_REACTIONS, TRANSFORMATIVE_REACTIONS } from "../constants";
 import { InputProcessor, getAttackAlterConfigs } from "../InputProcessor";
 import { ResultCalculator } from "../ResultCalculator";

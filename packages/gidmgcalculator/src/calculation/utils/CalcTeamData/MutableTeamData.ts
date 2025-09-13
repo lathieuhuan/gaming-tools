@@ -1,4 +1,4 @@
-import type { AppCharactersByName, Teammate } from "@Src/types";
+import type { AppCharactersByName, Teammate } from "@/types";
 import { CalcTeamData } from "./CalcTeamData";
 
 export class MutableTeamData extends CalcTeamData {

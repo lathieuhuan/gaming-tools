@@ -1,5 +1,5 @@
-import { TalentType } from "@Src/calculation/types";
-import { Character } from "@Src/types";
+import { TalentType } from "@/calculation/types";
+import { Character } from "@/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 

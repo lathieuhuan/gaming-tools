@@ -5,9 +5,18 @@ export const MAX_USER_SETUPS = 50;
 export const MAX_CALC_SETUPS = 4;
 export const DOWNLOADED_DATA_VERSION = 3.1;
 export const EXPORTED_SETUP_VERSION = 1;
-export const MINIMUM_SYSTEM_VERSION = "3.11.0";
+export const MINIMUM_SYSTEM_VERSION = "3.17.0";
 
 export const IS_DEV_ENV = import.meta.env.DEV;
+
+export const SCREEN_PATH = {
+  CALCULATOR: "/",
+  SETUPS: "/setups",
+  ARTIFACTS: "/artifacts",
+  WEAPONS: "/weapons",
+  CHARACTERS: "/characters",
+  ENKA: "/enka",
+} as const;
 
 export const GENSHIN_DEV_URL = {
   base: "https://genshin.jmp.blue",
@@ -16,7 +25,7 @@ export const GENSHIN_DEV_URL = {
 
 export const BACKEND_URL = {
   base: IS_DEV_ENV ? "http://localhost:3000/api" : "https://gidmgcalculator.vercel.app/api",
-  metadata() {
+  allData() {
     return `${this.base}/meta-data`;
   },
   character: {

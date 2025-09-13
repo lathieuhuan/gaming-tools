@@ -1,6 +1,7 @@
 import { ATTACK_ELEMENTS, CharacterCalc, WeaponType } from "@Calculation";
+import { PartiallyRequiredOnly } from "rond";
 
-import { $AppCharacter } from "@Src/services";
+import { $AppCharacter } from "@/services";
 import type {
   CalcSetup,
   CalcSetupManageInfo,
@@ -12,7 +13,7 @@ import type {
   UserSetup,
   UserSetupCalcInfo,
   UserWeapon,
-} from "@Src/types";
+} from "@/types";
 import Modifier_ from "./modifier-utils";
 import Array_ from "./array-utils";
 import Entity_ from "./entity-utils";
@@ -190,6 +191,34 @@ export default class Setup_ {
       result.resistances[elmt] = 10;
     }
     return Object.assign(result, defaultValues);
+  }
+
+  static createCalcSetup({
+    char,
+    weapon,
+    artifacts,
+    ...rest
+  }: PartiallyRequiredOnly<CalcSetup, "char" | "weapon" | "artifacts">): CalcSetup {
+    const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, char.name);
+    const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, weapon);
+    const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts);
+
+    return {
+      char,
+      weapon,
+      artifacts,
+      selfBuffCtrls,
+      selfDebuffCtrls,
+      wpBuffCtrls,
+      artBuffCtrls,
+      artDebuffCtrls: Modifier_.createArtifactDebuffCtrls(),
+      party: [null, null, null],
+      elmtModCtrls: Modifier_.createElmtModCtrls(),
+      customBuffCtrls: [],
+      customDebuffCtrls: [],
+      customInfusion: { element: "phys" },
+      ...rest,
+    };
   }
 }
 

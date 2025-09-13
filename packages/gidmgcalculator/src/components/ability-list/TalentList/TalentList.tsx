@@ -3,7 +3,7 @@ import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
 import { TALENT_TYPES, LevelableTalentType, GeneralCalc, CalcTeamData } from "@Calculation";
 
-import { genSequentialOptions } from "@Src/utils";
+import { genSequentialOptions } from "@/utils";
 import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
 
 // Component

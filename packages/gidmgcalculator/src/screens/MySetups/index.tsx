@@ -1,1 +1,1 @@
-export { default } from "./MySetups";
+export { MySetupsWrapper as default } from "./MySetups";

@@ -1,12 +1,13 @@
 import { useMemo, useRef, useState } from "react";
 import { Modal } from "rond";
-import { AppCharacter } from "@Calculation";
 
-import type { UserCharacter } from "@Src/types";
-import { $AppCharacter } from "@Src/services";
-import { useStoreSnapshot } from "@Src/features";
-import Object_ from "@Src/utils/object-utils";
-import Array_ from "@Src/utils/array-utils";
+import type { UserCharacter } from "@/types";
+import type { AppCharacter } from "@Calculation";
+
+import { $AppCharacter } from "@/services";
+import { useStoreSnapshot } from "@/systems/dynamic-store";
+import Array_ from "@/utils/array-utils";
+import Object_ from "@/utils/object-utils";
 import { selectUserCharacters } from "@Store/userdb-slice";
 
 // Component

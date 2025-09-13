@@ -1,10 +1,10 @@
 import { CalcTeamData, CharacterBuff, CharacterCalc, CharacterDebuff } from "@Calculation";
 
-import type { Character, ModifierCtrl } from "@Src/types";
+import type { Character, ModifierCtrl } from "@/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import Array_ from "@Src/utils/array-utils";
-import { parseSelfAbilityDescription } from "@Src/utils/description-parsers";
+import Array_ from "@/utils/array-utils";
+import { parseSelfAbilityDesc } from "@/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 
@@ -29,7 +29,7 @@ function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Array<Charact
           key={ctrl.index}
           mutable={props.mutable}
           heading={modifier.src}
-          description={parseSelfAbilityDescription(modifier, inputs, props.teamData)}
+          description={parseSelfAbilityDesc(modifier, inputs, props.teamData)}
           checked={ctrl.activated}
           inputs={inputs}
           inputConfigs={modifier.inputConfigs?.filter((config) => config.for !== "FOR_TEAM")}
@@ -53,7 +53,7 @@ export function SelfBuffsView(props: SelfModsViewProps) {
           key={"innate-" + index}
           mutable={false}
           heading={buff.src}
-          description={parseSelfAbilityDescription(buff, [], teamData)}
+          description={parseSelfAbilityDesc(buff, [], teamData)}
         />
       );
     }

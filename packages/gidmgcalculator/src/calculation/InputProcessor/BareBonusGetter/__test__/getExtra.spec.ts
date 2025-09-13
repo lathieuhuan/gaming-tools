@@ -1,4 +1,4 @@
-import { EffectExtra } from "@Src/calculation/types";
+import { EffectExtra } from "@/calculation/types";
 import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetterTester } from "./test-utils";
 
@@ -18,9 +18,9 @@ test("getExtra", () => {
   let inputs: number[] = [];
 
   inputs = [requiredInput - 1];
-  expect(getExtra(undefined, inputs)).toBe(0);
-  expect(getExtra(extraConfig, inputs)).toBe(0);
+  expect(getExtra(undefined, { inputs, fromSelf: true })).toBe(0);
+  expect(getExtra(extraConfig, { inputs, fromSelf: true })).toBe(0);
 
   inputs = [requiredInput];
-  expect(getExtra(extraConfig, inputs)).toBe(extraValue);
+  expect(getExtra(extraConfig, { inputs, fromSelf: true })).toBe(extraValue);
 });

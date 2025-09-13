@@ -1,4 +1,4 @@
-import { EffectApplicableCondition } from "@Src/calculation/types";
+import { EffectApplicableCondition } from "@/calculation/types";
 import { __EMockCharacter } from "@UnitTest/mocks/characters.mock";
 import { __genMutableTeamDataTester, MutableTeamDataTester } from "@UnitTest/test-utils";
 import { isValidTeamElmt } from "../isValidTeamElmt";

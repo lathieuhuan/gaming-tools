@@ -1,6 +1,6 @@
-import type { ElementCount, TeamElementCondition } from "@Src/calculation/types";
+import type { ElementCount, TeamElementCondition } from "@/calculation/types";
 
-import TypeCounter from "@Src/utils/type-counter";
+import TypeCounter from "@/utils/type-counter";
 import { isPassedComparison } from "./isPassedComparison";
 
 export function isValidTeamElmt(allElmtCount: ElementCount, condition: TeamElementCondition) {

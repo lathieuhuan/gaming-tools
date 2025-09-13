@@ -1,10 +1,10 @@
-import type { UserComplexSetup, UserSetup } from "@Src/types";
+import type { UserComplexSetup, UserSetup } from "@/types";
 
+import { useStoreSnapshot } from "@/systems/dynamic-store";
+import Array_ from "@/utils/array-utils";
+import Setup_ from "@/utils/setup-utils";
 import { useDispatch } from "@Store/hooks";
-import { selectUserSetups, addSetupToComplex } from "@Store/userdb-slice";
-import { useStoreSnapshot } from "@Src/features";
-import Setup_ from "@Src/utils/setup-utils";
-import Array_ from "@Src/utils/array-utils";
+import { addSetupToComplex, selectUserSetups } from "@Store/userdb-slice";
 import { useCombineManager } from "./hooks";
 
 interface CombineMoreProcessedResult {

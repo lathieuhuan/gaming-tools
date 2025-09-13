@@ -1,6 +1,6 @@
 import type { CalculationFinalResult, CalcTeamData } from "@Calculation";
 
-import { useTranslation } from "@Src/hooks";
+import { useTranslation } from "@/hooks";
 import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
 
 interface FinalResultViewProps

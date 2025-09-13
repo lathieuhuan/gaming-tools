@@ -1,12 +1,12 @@
 import type { AppMonster } from "@Calculation";
-import type { Target } from "@Src/types";
-import type { Metadata } from "./app-data.types";
+import type { Target } from "@/types";
+import type { AllData } from "./app-data.types";
 import type { AppCharacterService } from "./AppCharacterService";
 import type { AppWeaponService } from "./AppWeaponService";
 import type { AppArtifactService } from "./AppArtifactService";
 
-import { BACKEND_URL } from "@Src/constants";
-import Array_ from "@Src/utils/array-utils";
+import { BACKEND_URL } from "@/constants";
+import Array_ from "@/utils/array-utils";
 import { BaseService } from "./BaseService";
 
 export class AppDataService extends BaseService {
@@ -20,8 +20,8 @@ export class AppDataService extends BaseService {
     super();
   }
 
-  async fetchMetadata() {
-    return await this.fetchData<Metadata>(BACKEND_URL.metadata());
+  async fetchAllData() {
+    return await this.fetchData<AllData>(BACKEND_URL.allData());
   }
 
   get data() {
@@ -33,7 +33,7 @@ export class AppDataService extends BaseService {
     };
   }
 
-  set data(data: Pick<Metadata, "characters" | "weapons" | "artifacts" | "monsters">) {
+  set data(data: Pick<AllData, "characters" | "weapons" | "artifacts" | "monsters">) {
     this.character$.populate(data.characters);
     this.weapon$.populate(data.weapons);
     this.artifact$.populate(data.artifacts);

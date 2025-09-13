@@ -1,25 +1,21 @@
 import { useState } from "react";
 import { Input, Modal } from "rond";
 
-import { useStoreSnapshot } from "@Src/features";
-import type { Teammates } from "@Src/types";
-import Array_ from "@Src/utils/array-utils";
-import Setup_ from "@Src/utils/setup-utils";
+import type { ValidationError } from "./types";
 
-// Store
+import { SCREEN_PATH } from "@/constants";
+import { useStoreSnapshot } from "@/systems/dynamic-store";
+import { useRouter } from "@/systems/router";
+import Array_ from "@/utils/array-utils";
 import { useDispatch } from "@Store/hooks";
 import { saveSetupThunk } from "@Store/thunks";
+import { validateFreeItemSlots, validateTeammates } from "./utils";
 
-function areDifferentTeammates(teammates1: Teammates, teammates2: Teammates) {
-  const team1 = Array_.truthy(teammates1);
-  const team2 = Array_.truthy(teammates2);
-  return team1.length !== team2.length || team1.some((t1) => team2.every((t2) => t2.name !== t1.name));
-}
-
-type ProcessedResult = {
+type StoreSnapshot = {
   initialSetupName: string;
-  isEligible: boolean;
   isNewSetup: boolean;
+  isError: boolean;
+  errors: ValidationError[];
 };
 
 interface SaveSetupProps {
@@ -28,68 +24,64 @@ interface SaveSetupProps {
 }
 export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
   const dispatch = useDispatch();
+  const router = useRouter();
 
-  const snapshot = useStoreSnapshot<ProcessedResult>((state) => {
+  const snapshot = useStoreSnapshot<StoreSnapshot>((state) => {
     const existedSetup = Array_.findById(state.userdb.userSetups, setupId);
     const setup = state.calculator.setupsById[setupId];
+    const errors = validateFreeItemSlots(state.userdb);
 
-    if (
-      existedSetup &&
-      Setup_.isUserSetup(existedSetup) &&
-      existedSetup.type === "combined" &&
-      areDifferentTeammates(existedSetup.party, setup.party)
-    ) {
-      return {
-        initialSetupName: existedSetup.name,
-        isEligible: false,
-        isNewSetup: false,
-      };
+    if (existedSetup) {
+      errors.push(...validateTeammates(setup, existedSetup));
     }
 
     return {
       initialSetupName: existedSetup ? existedSetup.name : `${setup.char.name} setup`,
-      isEligible: true,
       isNewSetup: !existedSetup,
+      isError: errors.length > 0,
+      errors,
     };
   });
   const [input, setInput] = useState(snapshot.initialSetupName);
 
-  if (snapshot.isEligible) {
-    return (
-      <div className="space-y-2">
-        <p className="text-lg text-danger-2">Not eligible for update</p>
-        <p>This setup is currently in a complex. Please ensure it's party members remain the same before updating.</p>
-        <Modal.Actions showCancel={false} focusConfirm onConfirm={onClose} />
-      </div>
-    );
-  }
-
   const saveSetup = () => {
     dispatch(saveSetupThunk(setupId, input));
+    router.navigate(SCREEN_PATH.SETUPS);
     onClose();
   };
 
   return (
-    <>
-      <div className="flex flex-col">
-        <p className="mb-2 text-hint-color">
-          {snapshot.isNewSetup ? "Do you what to save this setup as" : "Do you what to update this setup"}
-        </p>
-        <Input
-          className="text-center font-semibold"
-          size="large"
-          autoFocus
-          value={input}
-          maxLength={34}
-          onChange={setInput}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              saveSetup();
-            }
-          }}
-        />
-        <Modal.Actions className="mt-4" withDivider onCancel={onClose} onConfirm={saveSetup} />
-      </div>
-    </>
+    <div className="flex flex-col">
+      <p className="mb-2 text-hint-color">
+        {snapshot.isNewSetup ? "Do you want to save this setup as" : "Do you want to update this setup"}
+      </p>
+      <Input
+        className="text-center font-semibold"
+        size="large"
+        autoFocus
+        value={input}
+        maxLength={34}
+        onChange={setInput}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            saveSetup();
+          }
+        }}
+      />
+
+      <ul className="mt-4 pl-4 text-sm text-danger-2 list-disc space-y-1">
+        {snapshot.errors.map((error) => (
+          <li key={error.code}>{error.message}</li>
+        ))}
+      </ul>
+
+      <Modal.Actions
+        className="mt-4"
+        withDivider
+        disabledConfirm={snapshot.isError}
+        onCancel={onClose}
+        onConfirm={saveSetup}
+      />
+    </div>
   );
 }

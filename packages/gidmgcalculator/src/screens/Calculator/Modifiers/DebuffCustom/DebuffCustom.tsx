@@ -1,6 +1,4 @@
-import { useTranslation } from "@Src/hooks";
-
-// Store
+import { useTranslation } from "@/hooks";
 import {
   removeCustomModCtrl,
   selectActiveId,
@@ -10,10 +8,10 @@ import {
 } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 
-import { CopyOption, CustomModifierLayout, ModItemRenderConfig } from "../_components/CustomModifierLayout";
-import DebuffCtrlCreator from "./DebuffCtrlCreator";
+import { CopyOption, CustomModLayout, ModItemRenderConfig } from "../CustomModLayout";
+import { DebuffCtrlForm } from "./DebuffCtrlForm";
 
-export default function DebuffCustom() {
+export function DebuffCustom() {
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
@@ -46,12 +44,14 @@ export default function DebuffCustom() {
   }
 
   return (
-    <CustomModifierLayout
+    <CustomModLayout
       items={items}
       copyOptions={copyOptions}
-      creatorModalProps={{
+      createModalProps={{
         title: "Add custom debuffs",
-        formId: "debuff-creator",
+      }}
+      renderCreateForm={(props) => {
+        return <DebuffCtrlForm {...props} />;
       }}
       onCopy={(option: CopyOption) => {
         dispatch(
@@ -61,7 +61,7 @@ export default function DebuffCustom() {
           })
         );
       }}
-      onChangeValue={(value, index) => {
+      onValueChange={(value, index) => {
         dispatch(
           updateCustomDebuffCtrls({
             actionType: "EDIT",
@@ -75,8 +75,6 @@ export default function DebuffCustom() {
       onRemoveAll={() => {
         dispatch(updateCustomDebuffCtrls({ actionType: "REPLACE", ctrls: [] }));
       }}
-    >
-      {(close) => <DebuffCtrlCreator onClose={close} />}
-    </CustomModifierLayout>
+    />
   );
 }

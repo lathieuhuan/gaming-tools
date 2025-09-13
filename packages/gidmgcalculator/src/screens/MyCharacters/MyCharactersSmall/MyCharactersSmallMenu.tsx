@@ -4,8 +4,8 @@ import { ButtonGroup, FancyBackSvg, Input, useChildListObserver, useIntersection
 
 import { useSelector } from "@Store/hooks";
 import { selectChosenCharacter, selectUserCharacters } from "@Store/userdb-slice";
-import { $AppCharacter } from "@Src/services";
-import { GenshinImage } from "@Src/components";
+import { $AppCharacter } from "@/services";
+import { GenshinImage } from "@/components";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
 
 interface MyCharactersSmallMenuProps {

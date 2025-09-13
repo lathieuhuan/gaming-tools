@@ -1,5 +1,5 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { PartiallyRequired } from "rond";
+import type { PartiallyRequired, PartiallyRequiredOnly } from "rond";
 import type { WeaponType, ArtifactType } from "@Calculation";
 import type {
   ArtifactSubStat,
@@ -9,7 +9,7 @@ import type {
   UserSetup,
   UserSetupCalcInfo,
   UserWeapon,
-} from "@Src/types";
+} from "@/types";
 
 export type AddUserDatabaseAction = PayloadAction<{
   characters?: UserCharacter[];
@@ -84,3 +84,5 @@ export type AddSetupToComplexAction = PayloadAction<{
   complexID: number;
   pickedIDs: number[];
 }>;
+
+export type AddCharacterAction = PayloadAction<PartiallyRequiredOnly<UserCharacter, "name">>;

@@ -11,12 +11,12 @@ import type {
   ActualAttackElement,
   ActualAttackPattern,
   AttackPattern,
-  AttackTag,
   AttributeStat,
   CalcItemBasedOn,
   CalcItemMultFactor,
   CalcItemType,
   ElementType,
+  LunarType,
   NormalAttack,
   TalentCalcItemBonusId,
   TalentType,
@@ -32,11 +32,16 @@ export type AppCharacter = {
   sideIcon: string;
   rarity: number;
   nation: Nation;
+  faction?: Faction | Faction[];
   vision: ElementType;
   weaponType: WeaponType;
   EBcost: number;
   talentLvBonus?: Partial<Record<TalentType, number>>;
-  stats: number[][];
+  statBases: {
+    atk: StatBase;
+    def: StatBase;
+    hp: StatBase;
+  },
   statBonus: {
     type: AttributeStat;
     value: number;
@@ -79,10 +84,17 @@ type Nation =
   | "fontaine"
   | "snezhnaya";
 
+type Faction = "moonsign";
+
 type Ability = {
   name: string;
   image?: string;
   description?: string;
+};
+
+type StatBase = {
+  level: number;
+  ascension: number;
 };
 
 // COMMON
@@ -119,19 +131,15 @@ export type TalentCalcItem = {
   notOfficial?: boolean;
   /** Factors multiplying an attribute, scaling off talent level (character) or refinement (weapon) */
   multFactors: CalcItemMultFactor | CalcItemMultFactor[];
-
-  /** Only on 'attack' */
-  joinMultFactors?: boolean;
-  /** Not on 'attack' */
   flatFactor?: CalcItemFlatFactor;
-  /** Only on 'attack' */
+
+  // Only on 'attack'
+
+  joinMultFactors?: boolean;
   attPatt?: ActualAttackPattern;
-  /** Only on 'attack' */
   attElmt?: ActualAttackElement;
-  /** Only on 'attack' */
   subAttPatt?: "FCA";
-  /** Only on 'attack' */
-  tags?: AttackTag[];
+  lunar?: LunarType;
 };
 
 // type _TalentCalcItem = PartiallyOptional<TalentCalcItem, "type">;
@@ -140,7 +148,7 @@ export type TalentCalcItem = {
 
 export type CharacterBonusEffect = EntityBonusEffect;
 
-type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "unstackableId" | "effects">;
+export type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "unstackableId" | "effects">;
 
 export type CharacterBuffNormalAttackConfig = {
   checkInput?: number | InputCheck;

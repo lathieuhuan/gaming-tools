@@ -2,12 +2,12 @@ import { useRef } from "react";
 import { InputNumber, VersatileSelect } from "rond";
 import { AttributeStat } from "@Calculation";
 
-import type { ArtifactSubStat } from "@Src/types";
-import { useTranslation } from "@Src/hooks";
-import Entity_ from "@Src/utils/entity-utils";
+import type { ArtifactSubStat } from "@/types";
+import { useTranslation } from "@/hooks";
+import Entity_ from "@/utils/entity-utils";
 
 // Constant
-import { ARTIFACT_SUBSTAT_TYPES } from "@Src/constants";
+import { ARTIFACT_SUBSTAT_TYPES } from "@/constants";
 import VALID_SUBSTAT_VALUES from "./valid-substat-values";
 
 interface ArtifactSubstatsControlProps {

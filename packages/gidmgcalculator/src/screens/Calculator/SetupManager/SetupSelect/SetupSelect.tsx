@@ -3,8 +3,8 @@ import { FaCopy, FaSave, FaBalanceScaleLeft, FaShareAlt } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
 import { clsx, ConfirmModal, TrashCanSvg } from "rond";
 
-import { MAX_CALC_SETUPS } from "@Src/constants";
-import Array_ from "@Src/utils/array-utils";
+import { MAX_CALC_SETUPS } from "@/constants";
+import Array_ from "@/utils/array-utils";
 import { useCalcModalCtrl } from "../../ContextProvider";
 
 // Store
@@ -20,7 +20,7 @@ import {
 import { useDispatch, useSelector } from "@Store/hooks";
 
 // Component
-import { ComplexSelect } from "@Src/components";
+import { ComplexSelect } from "@/components";
 
 type ModalState = {
   type: "REMOVE_SETUP" | "";

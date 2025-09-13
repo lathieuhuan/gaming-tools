@@ -1,221 +1,150 @@
 import { useEffect, useState } from "react";
-import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
-import { clsx, message, CollapseSpace } from "rond";
+import { clsx, CollapseSpace, message } from "rond";
 
-import Array_ from "@Src/utils/array-utils";
-import { useTeamData } from "../../ContextProvider";
-
-// Store
-import { useDispatch, useSelector } from "@Store/hooks";
+import Array_ from "@/utils/array-utils";
 import {
-  selectActiveId,
-  selectSetupManageInfos,
   addTeammate,
   removeTeammate,
-  updateTeammateArtifact,
-  updateTeammateWeapon,
+  selectActiveId,
+  selectSetupManageInfos,
   selectTeammates,
 } from "@Store/calculator-slice";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { useTeamData } from "../../ContextProvider";
 
 // Component
-import { TeammateItems, Tavern, WeaponForge, ArtifactForge, CharacterPortrait } from "@Src/components";
+import { CharacterPortrait, Tavern, TavernProps } from "@/components";
 import { CopySelect } from "./CopySelect";
+import { TeammateGear } from "./TeammateGear";
+import { TeammateSlot } from "./TeammateSlot";
 
-import styles from "../SetupManager.styles.module.scss";
+type TavernState = {
+  active: boolean;
+  recruitedIndex: number;
+};
 
-interface ModalState {
-  type: "CHARACTER" | "WEAPON" | "ARTIFACT" | "";
-  teammateIndex: number | null;
-}
+type SectionTeammatesProps = {
+  className?: string;
+};
 
-export default function SectionTeammates() {
+export default function SectionTeammates({ className }: SectionTeammatesProps) {
   const dispatch = useDispatch();
-  const activeId = useSelector(selectActiveId);
+  const activeSetupId = useSelector(selectActiveId);
   const setupManageInfos = useSelector(selectSetupManageInfos);
   const teammates = useSelector(selectTeammates);
   const teamData = useTeamData();
 
-  const [modal, setModal] = useState<ModalState>({
-    type: "",
-    teammateIndex: null,
+  const [tavern, setTavern] = useState<TavernState>({
+    active: false,
+    recruitedIndex: 0,
   });
-  const [detailSlot, setDetailSlot] = useState<number | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const { activeAppMember } = teamData;
-  const isCombined = Array_.findById(setupManageInfos, activeId)?.type === "combined";
-  const detailTeammate = detailSlot === null ? undefined : teammates[detailSlot];
+  const isCombinedSetup = Array_.findById(setupManageInfos, activeSetupId)?.type === "combined";
+  const selectedTeammate = selectedIndex === null ? undefined : teammates[selectedIndex];
 
   useEffect(() => {
-    if (!detailTeammate) {
-      setDetailSlot(null);
+    if (!selectedTeammate) {
+      setSelectedIndex(null);
     }
-  }, [detailTeammate]);
+  }, [selectedTeammate]);
 
-  const closeModal = () => {
-    setModal({ type: "", teammateIndex: null });
+  const closeTavern = () => {
+    setTavern({ active: false, recruitedIndex: 0 });
   };
 
   const warnSetupCombined = () => {
     message.info("This setup is marked as part of a Complex setup, thus teammates cannot be changed.");
   };
 
-  const onClickChangeTeammate = (teammateIndex: number) => {
-    if (isCombined) {
+  const handleShowTavern = (recruitedIndex: number) => {
+    if (isCombinedSetup) {
       warnSetupCombined();
-    } else {
-      setModal({
-        type: "CHARACTER",
-        teammateIndex,
-      });
+      return;
+    }
+
+    setTavern({
+      active: true,
+      recruitedIndex,
+    });
+  };
+
+  const handleRemoveTeammate = () => {
+    if (isCombinedSetup) {
+      warnSetupCombined();
+      return;
+    }
+
+    if (selectedIndex !== null) {
+      dispatch(removeTeammate(selectedIndex));
     }
   };
 
-  const onClickRemoveTeammate = () => {
-    if (isCombined) {
-      warnSetupCombined();
-    } else if (detailSlot !== null) {
-      dispatch(removeTeammate(detailSlot));
+  const handleRecruitTeammate: TavernProps["onSelectCharacter"] = (character) => {
+    const { recruitedIndex } = tavern;
+
+    if (recruitedIndex !== null) {
+      dispatch(
+        addTeammate({
+          name: character.name,
+          elementType: character.vision,
+          weaponType: character.weaponType,
+          teammateIndex: recruitedIndex,
+        })
+      );
+      setSelectedIndex(recruitedIndex);
     }
   };
 
   return (
-    <div className={"pb-3 bg-surface-2 " + styles.section}>
+    <div className={clsx("pb-3 bg-surface-2", className)}>
       {teammates.length && teammates.every((teammate) => !teammate) ? <CopySelect /> : null}
 
-      <div className="flex">
-        {teammates.map((teammate, teammateIndex) => {
-          const data = teammate ? teamData.getAppMember(teammate.name) : undefined;
-          const isExpanded = teammateIndex === detailSlot;
+      <div className="grid grid-cols-3">
+        {teammates.map((teammate, tmIndex) => {
+          if (teammate) {
+            const active = tmIndex === selectedIndex;
+
+            return (
+              <TeammateSlot
+                key={teammate.name}
+                active={active}
+                info={teamData.getAppMember(teammate.name)}
+                onSelect={() => setSelectedIndex(active ? null : tmIndex)}
+                onRequestChange={() => handleShowTavern(tmIndex)}
+                onRemove={handleRemoveTeammate}
+              />
+            );
+          }
 
           return (
-            <div key={teammateIndex} className="w-1/3 flex flex-col items-center" style={{ height: "5.25rem" }}>
-              <div
-                className={clsx(
-                  "flex items-end text-xl shrink-0 overflow-hidden transition-size",
-                  isExpanded ? "h-11" : "h-3"
-                )}
-              >
-                <button
-                  className={"w-10 h-10 glow-on-hover " + (isExpanded ? "flex-center" : "hidden")}
-                  onClick={onClickRemoveTeammate}
-                >
-                  <FaUserSlash />
-                </button>
-                <button
-                  className={"w-10 h-10 glow-on-hover " + (isExpanded ? "flex-center" : "hidden")}
-                  onClick={() => onClickChangeTeammate(teammateIndex)}
-                >
-                  <FaSyncAlt />
-                </button>
-              </div>
-
-              <CharacterPortrait
-                info={data}
-                withColorBg
-                recruitable
-                onClick={() => {
-                  if (data) {
-                    setDetailSlot(isExpanded ? null : teammateIndex);
-                    return;
-                  }
-                  onClickChangeTeammate(teammateIndex);
-                }}
-              />
+            <div key={tmIndex} className="flex justify-center items-end" style={{ height: "5.25rem" }}>
+              <CharacterPortrait withColorBg recruitable onClick={() => handleShowTavern(tmIndex)} />
             </div>
           );
         })}
       </div>
 
-      <CollapseSpace active={detailSlot !== null}>
-        {detailTeammate && (
-          <div className="bg-surface-2 pt-2">
-            <TeammateItems
-              mutable
-              className="bg-surface-1 pt-12 px-2 pb-3"
-              teammate={detailTeammate}
-              onClickWeapon={() => setModal({ type: "WEAPON", teammateIndex: detailSlot })}
-              onChangeWeaponRefinement={(refi: number) => {
-                if (detailSlot !== null) {
-                  dispatch(
-                    updateTeammateWeapon({
-                      teammateIndex: detailSlot,
-                      refi,
-                    })
-                  );
-                }
-              }}
-              onClickArtifact={() => setModal({ type: "ARTIFACT", teammateIndex: detailSlot })}
-              onClickRemoveArtifact={() => {
-                if (detailSlot !== null) {
-                  dispatch(
-                    updateTeammateArtifact({
-                      teammateIndex: detailSlot,
-                      code: -1,
-                    })
-                  );
-                }
-              }}
-            />
-          </div>
+      <CollapseSpace active={selectedIndex !== null}>
+        {selectedTeammate && selectedIndex !== null && (
+          <TeammateGear
+            teammate={selectedTeammate}
+            index={selectedIndex}
+            weaponType={teamData.getAppMember(selectedTeammate.name).weaponType}
+          />
         )}
       </CollapseSpace>
 
       <Tavern
-        active={modal.type === "CHARACTER" && modal.teammateIndex !== null}
+        active={tavern.active}
         sourceType="app"
         filter={(character) =>
           character.name !== activeAppMember.name && teammates.every((tm) => tm?.name !== character.name)
         }
-        onSelectCharacter={(character) => {
-          const { teammateIndex } = modal;
-
-          if (teammateIndex !== null) {
-            dispatch(
-              addTeammate({
-                name: character.name,
-                elementType: character.vision,
-                weaponType: character.weaponType,
-                teammateIndex,
-              })
-            );
-            setDetailSlot(teammateIndex);
-          }
-        }}
-        onClose={closeModal}
+        onSelectCharacter={handleRecruitTeammate}
+        onClose={closeTavern}
       />
-
-      {detailSlot !== null && (
-        <WeaponForge
-          active={modal.type === "WEAPON" && modal.teammateIndex !== null}
-          forcedType={detailTeammate ? teamData.getAppMember(detailTeammate.name).weaponType : undefined}
-          onForgeWeapon={(weapon) => {
-            dispatch(
-              updateTeammateWeapon({
-                teammateIndex: detailSlot,
-                code: weapon.code,
-              })
-            );
-          }}
-          onClose={closeModal}
-        />
-      )}
-
-      {detailSlot !== null && (
-        <ArtifactForge
-          active={modal.type === "ARTIFACT" && modal.teammateIndex !== null}
-          forcedType="flower"
-          forFeature="TEAMMATE_MODIFIERS"
-          onForgeArtifact={(artifact) => {
-            dispatch(
-              updateTeammateArtifact({
-                teammateIndex: detailSlot,
-                code: artifact.code,
-              })
-            );
-          }}
-          onClose={closeModal}
-        />
-      )}
     </div>
   );
 }

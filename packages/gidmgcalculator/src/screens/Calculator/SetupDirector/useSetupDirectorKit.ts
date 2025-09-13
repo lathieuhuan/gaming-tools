@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { MAX_CALC_SETUPS } from "@Src/constants";
-import Setup_ from "@Src/utils/setup-utils";
-import Array_ from "@Src/utils/array-utils";
+import { MAX_CALC_SETUPS } from "@/constants";
+import Setup_ from "@/utils/setup-utils";
+import Array_ from "@/utils/array-utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import {
   NewSetupManageInfo,

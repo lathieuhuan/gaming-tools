@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { clsx, useRaritySelect, ButtonGroup, type ClassValue } from "rond";
 import { WeaponType } from "@Calculation";
 
-import { useWeaponTypeSelect } from "@Src/hooks";
-import { FilterTemplate } from "@Src/components";
+import { useWeaponTypeSelect } from "@/hooks";
+import { FilterTemplate } from "@/components";
 
 export type WeaponFilterState = {
   types: WeaponType[];

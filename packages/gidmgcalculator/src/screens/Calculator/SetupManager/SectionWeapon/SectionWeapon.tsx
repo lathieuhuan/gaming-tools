@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Badge, Button, PouchSvg, VersatileSelect } from "rond";
-import { LEVELS, Level } from "@Calculation";
+import { WEAPON_LEVELS, Level } from "@Calculation";
 
-import { $AppWeapon } from "@Src/services";
-import { genSequentialOptions } from "@Src/utils";
-import Entity_ from "@Src/utils/entity-utils";
+import { $AppWeapon } from "@/services";
+import { genSequentialOptions } from "@/utils";
+import Entity_ from "@/utils/entity-utils";
 import { selectWeapon, changeWeapon, updateWeapon } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
-import { WeaponForge, WeaponInventory, GenshinImage } from "@Src/components";
+import { WeaponForge, WeaponInventory, GenshinImage } from "@/components";
 
 import styles from "../SetupManager.styles.module.scss";
 
@@ -20,7 +20,7 @@ export default function SectionWeapon() {
   const [modalType, setModalType] = useState<ModalType>("");
 
   const { beta, name = "", icon = "", rarity = 5 } = $AppWeapon.get(weapon.code) || {};
-  const selectLevels = rarity < 3 ? LEVELS.slice(0, -4) : LEVELS;
+  const selectLevels = rarity < 3 ? WEAPON_LEVELS.slice(0, -4) : WEAPON_LEVELS;
 
   const closeModal = () => setModalType("");
 

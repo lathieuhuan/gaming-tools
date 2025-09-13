@@ -2,7 +2,7 @@ import { __genMutableTeamDataTester } from "@UnitTest/test-utils";
 import { BareBonusGetter } from "../BareBonusGetter";
 
 test("scaleRefi", () => {
-  const tester = new BareBonusGetter(true, __genMutableTeamDataTester());
+  const tester = new BareBonusGetter(__genMutableTeamDataTester());
   const scaleRefi = tester["scaleRefi"];
 
   expect(scaleRefi(7, 2, 3)).toBe(7 + 2 * 3);

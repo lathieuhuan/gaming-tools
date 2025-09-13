@@ -1,24 +1,23 @@
+import { ArtifactCalc, AttributeStat } from "@Calculation";
 import { useRef, useState } from "react";
 import isEqual from "react-fast-compare";
-import { FaSave, FaToolbox, FaSyncAlt } from "react-icons/fa";
-import { Modal, ConfirmModal, Button, VersatileSelect, PouchSvg, TrashCanSvg } from "rond";
-import { ArtifactCalc, AttributeStat } from "@Calculation";
+import { FaSave, FaSyncAlt, FaToolbox } from "react-icons/fa";
+import { Button, ConfirmModal, Modal, PouchSvg, TrashCanSvg, VersatileSelect } from "rond";
 
-import type { CalcArtifact } from "@Src/types";
-import { suffixOf } from "@Src/utils";
-import Entity_ from "@Src/utils/entity-utils";
-import Array_ from "@Src/utils/array-utils";
-import { MAX_USER_ARTIFACTS } from "@Src/constants";
+import type { CalcArtifact } from "@/types";
+
+import { MAX_USER_ARTIFACTS } from "@/constants";
+import { useTranslation } from "@/hooks";
+import { useStoreSnapshot } from "@/systems/dynamic-store";
+import { suffixOf } from "@/utils";
+import Array_ from "@/utils/array-utils";
+import Entity_ from "@/utils/entity-utils";
 import { changeArtifact, updateArtifact } from "@Store/calculator-slice";
-import { selectUserArtifacts, addUserArtifact, updateUserArtifact } from "@Store/userdb-slice";
-
-// Hook
 import { useDispatch } from "@Store/hooks";
-import { useTranslation } from "@Src/hooks";
-import { useStoreSnapshot } from "@Src/features";
+import { addUserArtifact, selectUserArtifacts, updateUserArtifact } from "@Store/userdb-slice";
 
 // Component
-import { ArtifactLevelSelect, ArtifactSubstatsControl } from "@Src/components";
+import { ArtifactLevelSelect, ArtifactSubstatsControl } from "@/components";
 
 export type ArtifactSourceType = "LOADOUT" | "INVENTORY" | "FORGE";
 

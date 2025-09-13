@@ -1,7 +1,7 @@
 import type { IconSelectProps, IconSelectConfig, IconSelectInitialValues } from "rond";
 import { useIconSelect } from "rond";
 import { WeaponType } from "@Calculation";
-import { getImgSrc } from "@Src/utils";
+import { getImgSrc } from "@/utils";
 
 const WEAPON_TYPE_ICONS: Array<{ value: WeaponType; icon: string }> = [
   { value: "bow", icon: getImgSrc("9/97/Weapon-class-bow-icon") },

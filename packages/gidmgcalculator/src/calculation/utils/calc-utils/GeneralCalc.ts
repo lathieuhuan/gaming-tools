@@ -1,6 +1,6 @@
-import type { CalcArtifacts } from "@Src/types";
-import type { AmplifyingReaction, AttackElement, Level, QuickenReaction } from "@Src/calculation/types";
-import TypeCounter from "@Src/utils/type-counter";
+import type { CalcArtifacts } from "@/types";
+import type { AmplifyingReaction, AttackElement, Level, QuickenReaction } from "@/calculation/types";
+import TypeCounter from "@/utils/type-counter";
 
 export type ArtifactSetBonus = {
   code: number;
@@ -16,14 +16,16 @@ const BASE_REACTION_DAMAGE: Record<number, number> = {
   70: 765.64,
   80: 1077.44,
   90: 1446.85,
+  95: 1561.468,
+  100: 1674.8092,
 };
 
 export class GeneralCalc {
   static getBareLv = (level: Level): number => +level.split("/")[0];
 
   static getAscension = (level: Level) => {
-    const maxLv = +level.slice(-2);
-    return maxLv === 20 ? 0 : maxLv / 10 - 3;
+    const maxLv = +level.split("/")[1];
+    return maxLv === 20 ? 0 : maxLv >= 90 ? 6 : maxLv / 10 - 3;
   };
 
   static getArtifactSetBonuses(artifacts: CalcArtifacts = []): ArtifactSetBonus[] {
@@ -48,7 +50,7 @@ export class GeneralCalc {
     return {
       transformative: Math.round((16000 * EM) / (EM + 2000)) / 10,
       amplifying: Math.round((2780 * EM) / (EM + 1400)) / 10,
-      lunar: Math.round((5000 * EM) / (EM + 2100)) / 10,
+      lunar: Math.round((6000 * EM) / (EM + 2000)) / 10,
       quicken: Math.round((5000 * EM) / (EM + 1200)) / 10,
       shield: Math.round((4440 * EM) / (EM + 1400)) / 10,
     };

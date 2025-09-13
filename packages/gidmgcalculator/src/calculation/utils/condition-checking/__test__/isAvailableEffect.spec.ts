@@ -1,11 +1,11 @@
-import { LEVELS } from "@Src/calculation/constants";
-import { CharacterEffectAvailableCondition, CharacterMilestone } from "@Src/calculation/types";
+import { LEVELS } from "@/calculation/constants";
+import { EffectGrantedAtConfig, CharacterMilestone } from "@/calculation/types";
 import { __findAscensionByLevel, __genMutableTeamDataTester, MutableTeamDataTester } from "@UnitTest/test-utils";
 import { isAvailableEffect } from "../isAvailableEffect";
 
 describe("isAvailableEffect", () => {
   let tester: MutableTeamDataTester;
-  let condition: CharacterEffectAvailableCondition;
+  let condition: EffectGrantedAtConfig;
   let inputs: number[] = [];
   let fromSelf = true;
 
@@ -15,7 +15,9 @@ describe("isAvailableEffect", () => {
 
   beforeEach(() => {
     tester = __genMutableTeamDataTester();
-    condition = {};
+    condition = {
+      value: "A1",
+    };
     inputs = [];
     fromSelf = true;
   });
@@ -25,7 +27,7 @@ describe("isAvailableEffect", () => {
 
     for (const milestone of ascensionMilestones) {
       const requiredAscension = +milestone.slice(-1);
-      condition.grantedAt = milestone;
+      condition.value = milestone;
 
       for (const level of LEVELS) {
         tester.activeMember.level = level;
@@ -46,7 +48,7 @@ describe("isAvailableEffect", () => {
 
     for (const milestone of constellationMilestones) {
       const requiredConstellation = +milestone.slice(-1);
-      condition.grantedAt = milestone;
+      condition.value = milestone;
 
       for (const constellation of Array.from({ length: 7 }, (_, i) => i)) {
         tester.activeMember.cons = constellation;

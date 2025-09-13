@@ -16,35 +16,46 @@ import storage from "redux-persist/lib/storage";
 import calculatorSliceReducers, { calculatorSlice } from "./calculator-slice";
 import uiSliceReducers, { uiSlice } from "./ui-slice";
 import userdbSliceReducers, { userdbSlice, initialState } from "./userdb-slice";
+import accountSliceReducers, { accountSlice } from "./account-slice";
 import { migrates } from "./migration";
 
-export type SetupStoreArgs = {
-  persistingUserData?: boolean;
+type SetupStoreOptions = {
+  persistUserData?: boolean;
 };
 
-export function setupStore(args?: { persistingUserData?: boolean }) {
+export function setupStore(options?: SetupStoreOptions) {
   const userdbPersistReducers = persistReducer(
     {
       key: "database",
       version: 1,
       storage,
-      blacklist: args?.persistingUserData ? [] : Object.keys(initialState),
+      blacklist: options?.persistUserData ? [] : Object.keys(initialState),
       migrate: createMigrate(migrates, { debug: false }),
     },
     userdbSliceReducers
+  );
+
+  const accountPersistReducers = persistReducer(
+    {
+      key: "account",
+      version: 1,
+      storage,
+    },
+    accountSliceReducers
   );
 
   const rootReducer = combineReducers({
     calculator: calculatorSliceReducers,
     ui: uiSliceReducers,
     userdb: userdbPersistReducers,
+    account: accountPersistReducers,
   });
 
   const persistConfig = {
     key: "root",
     version: 0,
     storage,
-    blacklist: [calculatorSlice.name, uiSlice.name, userdbSlice.name],
+    blacklist: [calculatorSlice.name, uiSlice.name, userdbSlice.name, accountSlice.name],
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);

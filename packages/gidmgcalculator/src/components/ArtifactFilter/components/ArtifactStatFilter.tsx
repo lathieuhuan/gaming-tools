@@ -1,9 +1,9 @@
 import { clsx, VersatileSelect } from "rond";
 import { ArtifactCalc, ArtifactType, ATTACK_ELEMENTS } from "@Calculation";
 
-import { ARTIFACT_SUBSTAT_TYPES } from "@Src/constants";
-import { useTranslation } from "@Src/hooks";
-import { ArtifactStatFilterCondition } from "@Src/utils/filter-artifacts";
+import { ARTIFACT_SUBSTAT_TYPES } from "@/constants";
+import { useTranslation } from "@/hooks";
+import { ArtifactStatFilterCondition } from "@/utils/filter-artifacts";
 import { FilterTemplate, FilterTemplateProps } from "../../FilterTemplate";
 
 type RenderSelectArgs = {

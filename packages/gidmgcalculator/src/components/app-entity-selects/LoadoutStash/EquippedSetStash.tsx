@@ -2,14 +2,14 @@ import { useMemo, useState, useEffect } from "react";
 import { clsx, Button, ItemCase, useIntersectionObserver } from "rond";
 import { ElementType } from "@Calculation";
 
-import type { UserArtifact } from "@Src/types";
-import { $AppArtifact, $AppCharacter } from "@Src/services";
-import Array_ from "@Src/utils/array-utils";
+import type { UserArtifact } from "@/types";
+import { $AppArtifact, $AppCharacter } from "@/services";
+import Array_ from "@/utils/array-utils";
 import { useSelector } from "@Store/hooks";
 import { selectUserArtifacts, selectUserCharacters } from "@Store/userdb-slice";
 
 // Component
-import { GenshinImage } from "@Src/components";
+import { GenshinImage } from "@/components";
 import { CharacterPortrait } from "../../CharacterPortrait";
 
 type EquippedSetOption = {

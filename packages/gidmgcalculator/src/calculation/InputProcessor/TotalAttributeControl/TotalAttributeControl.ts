@@ -1,4 +1,4 @@
-import type { PartiallyOptional } from "rond";
+import { round, type PartiallyOptional } from "rond";
 import type {
   AppCharacter,
   AppliedAttributeBonus,
@@ -7,16 +7,16 @@ import type {
   AttributeStat,
   Level,
   TotalAttribute,
-} from "@Src/calculation/types";
-import type { Artifact, Character, Weapon } from "@Src/types";
+} from "@/calculation/types";
+import type { Artifact, Character, Weapon } from "@/types";
 
-import { ArtifactCalc, GeneralCalc, WeaponCalc } from "@Src/calculation/utils/calc-utils";
-import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, LEVELS } from "@Src/calculation/constants";
-import { ECalcStatModule } from "@Src/calculation/constants/internal";
-import { TrackerControl } from "@Src/calculation/utils/TrackerControl";
-import { applyPercent } from "@Src/utils";
-import Array_ from "@Src/utils/array-utils";
-import Object_ from "@Src/utils/object-utils";
+import { ArtifactCalc, GeneralCalc, WeaponCalc } from "@/calculation/utils/calc-utils";
+import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "@/calculation/constants";
+import { ECalcStatModule } from "@/calculation/constants/internal";
+import { TrackerControl } from "@/calculation/utils/TrackerControl";
+import { applyPercent } from "@/utils";
+import Array_ from "@/utils/array-utils";
+import Object_ from "@/utils/object-utils";
 
 type InternalTotalAttribute = Record<
   AttributeStat,
@@ -73,14 +73,40 @@ export class TotalAttributeControl {
     return artAttr;
   }
 
+  // Lv 80/90: 8.739 * x + y = 351.59
+  // Lv 90/90: 7.836 * x + y = 326.88  // 0.903 * x = 24.71
+  // 7.836 * 62.94573 + y = 865.98
+
   private getCharacterStats(appCharacter: AppCharacter, charLv: Level) {
-    const baseStats = appCharacter.stats[LEVELS.indexOf(charLv)];
-    const scaleIndex = Math.max(GeneralCalc.getAscension(charLv) - 1, 0);
+    const bareLv = GeneralCalc.getBareLv(charLv);
+    const ascension = GeneralCalc.getAscension(charLv);
+    const scaleIndex = Math.max(ascension - 1, 0);
+    const { hp, atk, def } = appCharacter.statBases;
+    const use4starMult = appCharacter.rarity === 4 || appCharacter.name.slice(-8) === "Traveler";
+
+    let levelMult = (100 + 9 * bareLv) / 109;
+    levelMult = use4starMult ? levelMult : (levelMult * (1900 + bareLv)) / 1901;
+    levelMult = round(levelMult, 3);
+
+    let atkLevelMult = levelMult;
+
+    if (bareLv > 90) {
+      if (bareLv === 95) {
+        atkLevelMult = use4starMult ? 9.87 : 10.184;
+      } else {
+        atkLevelMult = use4starMult ? 11.392 : 11.629;
+      }
+    }
+
+    const ascMultByAsc = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];
+    const ascensionMult = ascMultByAsc[ascension];
+
+    console.log(levelMult, ascensionMult);
 
     return {
-      hp: baseStats[0] ?? 0,
-      atk: baseStats[1] ?? 0,
-      def: baseStats[2] ?? 0,
+      hp: hp.level * levelMult + hp.ascension * ascensionMult,
+      atk: atk.level * atkLevelMult + atk.ascension * ascensionMult,
+      def: def.level * levelMult + def.ascension * ascensionMult,
       ascensionStat: appCharacter.statBonus.value * ([0, 1, 2, 2, 3, 4][scaleIndex] ?? 0),
     };
   }
@@ -106,8 +132,13 @@ export class TotalAttributeControl {
 
     // Kokomi
     if (appCharacter.code === 42) {
-      this.addBase("cRate_", -100, "Character inner stat");
-      this.addBase("healB_", 25, "Character inner stat");
+      this.addBase("cRate_", -100, "Character innate stat");
+      this.addBase("healB_", 25, "Character innate stat");
+    }
+
+    // Lauma
+    if (appCharacter.code === 108) {
+      this.addBase("em", 200, "Character innate stat");
     }
 
     this.equipWeapon(weapon, appWeapon);
@@ -157,8 +188,9 @@ export class TotalAttributeControl {
 
   applyBonuses = (bonuses: BonusToApply | BonusToApply[]) => {
     for (const bonus of Array_.toArray(bonuses)) {
-      if (bonus.toStat === "base_atk") {
-        this.addBase("atk", bonus.value, bonus.description);
+      if (bonus.toStat === "base_atk" || bonus.toStat === "base_hp" || bonus.toStat === "base_def") {
+        const statType = bonus.toStat.slice(5) as AttributeStat;
+        this.addBase(statType, bonus.value, bonus.description);
         continue;
       }
       if (bonus.isStable ?? true) {

@@ -20,6 +20,8 @@ type MemberOptionIndex = {
 type LevelOptionIndex = {
   source: "LEVEL";
   talent: LevelableTalentType;
+  /** When this bonus is from teammate, this is input's index to check granted. Default to 0 */
+  altIndex?: number;
 };
 
 export type EffectValueByOption = {
@@ -36,3 +38,5 @@ export type EffectValueByOption = {
   /** Max optIndex. Dynamic on Navia */
   max?: EffectMax;
 };
+
+export type EffectValue = number | EffectValueByOption;

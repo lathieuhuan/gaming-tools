@@ -1,4 +1,4 @@
-import type { Character } from "@Src/types";
+import type { Character } from "@/types";
 import type {
   ActualAttackPattern,
   AppCharacter,
@@ -6,7 +6,7 @@ import type {
   CalcItemBasedOn,
   CharacterMilestone,
   LevelableTalentType,
-} from "@Src/calculation/types";
+} from "@/calculation/types";
 import { GeneralCalc } from "./GeneralCalc";
 
 const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {

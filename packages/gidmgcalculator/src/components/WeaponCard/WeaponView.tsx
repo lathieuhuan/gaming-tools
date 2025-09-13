@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { Badge, VersatileSelect, clsx, type ClassValue } from "rond";
-import { LEVELS, Level, WeaponCalc } from "@Calculation";
+import { WEAPON_LEVELS, Level, WeaponCalc } from "@Calculation";
 
-import type { CalcWeapon, UserWeapon } from "@Src/types";
-import { useTranslation } from "@Src/hooks";
-import { $AppWeapon } from "@Src/services";
-import { genSequentialOptions } from "@Src/utils";
-import { parseWeaponDescription } from "@Src/utils/description-parsers";
-import Entity_ from "@Src/utils/entity-utils";
+import type { CalcWeapon, UserWeapon } from "@/types";
+import { useTranslation } from "@/hooks";
+import { $AppWeapon } from "@/services";
+import { genSequentialOptions } from "@/utils";
+import { parseWeaponDesc } from "@/utils/description-parsers";
+import Entity_ from "@/utils/entity-utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
@@ -35,13 +35,13 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
     if (!appWeapon?.descriptions || !weapon?.refi) {
       return "";
     }
-    return appWeapon.descriptions.map((content) => parseWeaponDescription(content, weapon.refi)).join(" ");
+    return appWeapon.descriptions.map((content) => parseWeaponDesc(content, weapon.refi)).join(" ");
   }, [appWeapon?.code, weapon?.refi]);
 
   if (!weapon || !appWeapon) return null;
 
   const { rarity, subStat } = appWeapon;
-  const selectLevels = rarity < 3 ? LEVELS.slice(0, -4) : LEVELS;
+  const selectLevels = rarity < 3 ? WEAPON_LEVELS.slice(0, -4) : WEAPON_LEVELS;
 
   return (
     <div className={clsx("w-full", className)} onDoubleClick={() => console.log(weapon)}>

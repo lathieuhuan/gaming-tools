@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Button, Modal, SwitchNode, EntitySelectTemplate, type ModalControl } from "rond";
 
-import type { CalcArtifact, UserArtifact } from "@Src/types";
-import Entity_ from "@Src/utils/entity-utils";
-import { ArtifactCard } from "@Src/components";
+import type { CalcArtifact, UserArtifact } from "@/types";
+import Entity_ from "@/utils/entity-utils";
+import { ArtifactCard } from "@/components";
 import { EquippedSetStash } from "./EquippedSetStash";
 
 type LoadoutType = "EQUIPPED" | "CUSTOM";

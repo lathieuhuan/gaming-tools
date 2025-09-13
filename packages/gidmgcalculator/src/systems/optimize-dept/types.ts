@@ -1,0 +1,29 @@
+import type { CalcArtifacts, CalcSetup, Target } from "@/types";
+import type { AppCharacter, OptimizerAllArtifactModConfigs } from "@Calculation";
+
+export type OptimizeCalculation = {
+  damage: number | number[];
+  artifacts: CalcArtifacts;
+};
+
+// export type OptimizeResult = { bests: OptimizeCalculation[]; calculations: OptimizeCalculation[] };
+export type OptimizeResult = OptimizeCalculation[];
+
+export type OptimizerStatus = "IDLE" | "OPTIMIZING" | "CANCELLED";
+
+export type OptimizeDeptState = {
+  introducing: boolean;
+  /** Front desk 'active' & Optimizer 'status' are seperate things */
+  active: boolean;
+  /** Optimizer 'status' & Front desk 'active' are seperate things */
+  status: OptimizerStatus;
+  testMode: boolean;
+  pendingResult: boolean;
+  result: OptimizeResult;
+  setup?: CalcSetup;
+  artifactModConfigs?: OptimizerAllArtifactModConfigs;
+  target?: Target;
+  calcList?: AppCharacter["calcList"];
+  runCount: number;
+  expectedSetupIds: number[];
+};
