@@ -34,7 +34,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
 
   const appArtifact = $AppArtifact.get(artifact);
   const { rarity = 5, mainStatType } = artifact;
-  const possibleMainStatTypes = ArtifactCalc.possibleMainStatTypesOf(artifact.type);
+  const allMainStatTypes = ArtifactCalc.allMainStatTypesOf(artifact.type);
   const mainStatValue = ArtifactCalc.mainStatValueOf(artifact);
 
   return (
@@ -83,7 +83,7 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
             className="w-48 h-9 text-lg"
             transparent
             arrowAt="start"
-            options={possibleMainStatTypes.map((type) => ({ label: t(type), value: type }))}
+            options={allMainStatTypes.map((type) => ({ label: t(type), value: type }))}
             value={mainStatType}
             onChange={(value) => onChangeMainStatType?.(value as AttributeStat, artifact)}
           />

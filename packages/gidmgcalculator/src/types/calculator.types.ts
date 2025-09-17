@@ -123,6 +123,12 @@ export type CalcSetupManageInfo = {
   name: string;
 };
 
+export type MoonsignControl = {
+  active: boolean;
+  type: "hp" | "atk" | "def" | "em";
+  value: number;
+};
+
 export type CalcSetup = {
   char: CalcCharacter;
   selfBuffCtrls: ModifierCtrl[];
@@ -133,6 +139,7 @@ export type CalcSetup = {
   artifacts: CalcArtifacts;
   artBuffCtrls: ArtifactModCtrl[];
   artDebuffCtrls: ArtifactModCtrl[];
+  moonsignCtrl?: MoonsignControl;
 
   party: Teammates;
   elmtModCtrls: ElementModCtrl;

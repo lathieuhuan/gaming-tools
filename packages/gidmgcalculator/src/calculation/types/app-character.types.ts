@@ -41,11 +41,9 @@ export type AppCharacter = {
     atk: StatBase;
     def: StatBase;
     hp: StatBase;
-  },
-  statBonus: {
-    type: AttributeStat;
-    value: number;
   };
+  statInnates?: StatOther[];
+  statBonus: StatOther;
   calcListConfig?: {
     NA?: CalcListConfig;
     CA?: CalcListConfig;
@@ -95,6 +93,11 @@ type Ability = {
 type StatBase = {
   level: number;
   ascension: number;
+};
+
+type StatOther = {
+  type: AttributeStat;
+  value: number;
 };
 
 // COMMON

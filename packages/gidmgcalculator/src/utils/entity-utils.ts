@@ -93,12 +93,12 @@ export default class Entity_ {
       ],
     } = config;
 
-    const possibleMainStatTypes = ArtifactCalc.possibleMainStatTypesOf(type);
+    const allMainStatTypes = ArtifactCalc.allMainStatTypesOf(type);
 
     let mainStatType = config.mainStatType;
 
-    if (!mainStatType || !possibleMainStatTypes.includes(mainStatType)) {
-      mainStatType = possibleMainStatTypes[0];
+    if (!mainStatType || !allMainStatTypes.includes(mainStatType)) {
+      mainStatType = allMainStatTypes[0];
     }
 
     return {

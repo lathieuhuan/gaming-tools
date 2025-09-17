@@ -12,6 +12,7 @@ import type {
   ElementModCtrl,
   Infusion,
   ModifierCtrl,
+  MoonsignControl,
   SetupAppEntities,
   Target,
   Teammates,
@@ -49,6 +50,7 @@ export class InputProcessor {
   protected customDebuffCtrls: CustomDebuffCtrl[];
 
   protected resonances: ElementModCtrl["resonances"];
+  protected moonsignCtrl: MoonsignControl;
   protected reaction?: ElementModCtrl["reaction"];
   protected infuse_reaction?: ElementModCtrl["infuse_reaction"];
   protected superconduct?: ElementModCtrl["superconduct"];
@@ -74,6 +76,11 @@ export class InputProcessor {
     this.artDebuffCtrls = setup.artDebuffCtrls || [];
     this.customBuffCtrls = setup.customBuffCtrls || [];
     this.customDebuffCtrls = setup.customDebuffCtrls || [];
+    this.moonsignCtrl = setup.moonsignCtrl || {
+      active: false,
+      type: "hp",
+      value: 0,
+    };
     this.resonances = setup.elmtModCtrls?.resonances || [];
     this.reaction = setup.elmtModCtrls?.reaction;
     this.infuse_reaction = setup.elmtModCtrls?.infuse_reaction;
@@ -97,10 +104,10 @@ export class InputProcessor {
       wpBuffCtrls,
       artBuffCtrls,
       customBuffCtrls,
-      resonances,
       reaction,
       infuse_reaction,
       teamData,
+      moonsignCtrl,
     } = this;
     const { activeAppMember } = teamData;
     const appWeapon = this.appWeapons[weapon.code];
@@ -295,7 +302,7 @@ export class InputProcessor {
     }
 
     // APPLY RESONANCE BONUSES
-    for (const { vision: elementType, activated, inputs = [] } of resonances) {
+    for (const { vision: elementType, activated, inputs = [] } of this.resonances) {
       if (activated) {
         const { key, value } = RESONANCE_STAT[elementType];
         let xtraValue = 0;
@@ -320,6 +327,35 @@ export class InputProcessor {
             description,
           });
       }
+    }
+
+    // APPLY MOONSIGN BONUS
+    if (moonsignCtrl.active) {
+      let bonusValue = 0;
+
+      switch (moonsignCtrl.type) {
+        case "atk":
+          bonusValue = (moonsignCtrl.value / 100) * 0.9;
+          break;
+        case "hp":
+          bonusValue = (moonsignCtrl.value / 1000) * 0.6;
+          break;
+        case "def":
+          bonusValue = moonsignCtrl.value / 100;
+          break;
+        case "em":
+          bonusValue = (moonsignCtrl.value / 100) * 2.25;
+          break;
+      }
+
+      attkBonusesCtrl.add(
+        LUNAR_TYPES.map((type) => ({
+          toKey: "pct_",
+          toType: type,
+          value: bonusValue,
+          description: "Moonsign Lv.2 Team Bonus",
+        }))
+      );
     }
 
     // APPLY TEAMMATE BUFFS
@@ -488,7 +524,7 @@ export class InputProcessor {
       }
     }
 
-    // APPLY RESONANCE DEBUFFS
+    // APPLY RESONANCE & ELEMENT DEBUFFS
     const geoRsn = resonances.find((rsn) => rsn.vision === "geo");
     if (geoRsn && geoRsn.activated) {
       resistReductCtrl.add("geo", 20, "Geo resonance");
@@ -496,6 +532,7 @@ export class InputProcessor {
     if (superconduct) {
       resistReductCtrl.add("phys", 40, "Superconduct");
     }
+
     return resistReductCtrl.applyTo(target);
   }
 }

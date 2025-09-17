@@ -117,6 +117,7 @@ export class TotalAttributeControl {
     appWeapon?: AppWeapon,
     artifacts: Array<Artifact | null> = []
   ) => {
+    const { statBonus, statInnates = [] } = appCharacter;
     const stats = this.getCharacterStats(appCharacter, character.level);
 
     this.addBase("hp", stats.hp);
@@ -127,17 +128,10 @@ export class TotalAttributeControl {
     this.addBase("er_", 100);
     this.addBase("naAtkSpd_", 100);
     this.addBase("caAtkSpd_", 100);
-    this.addBase(appCharacter.statBonus.type, stats.ascensionStat, "Character ascension stat");
+    this.addBase(statBonus.type, stats.ascensionStat, "Character ascension stat");
 
-    // Kokomi
-    if (appCharacter.code === 42) {
-      this.addBase("cRate_", -100, "Character innate stat");
-      this.addBase("healB_", 25, "Character innate stat");
-    }
-
-    // Lauma
-    if (appCharacter.code === 108) {
-      this.addBase("em", 200, "Character innate stat");
+    for (const stat of statInnates) {
+      this.addBase(stat.type, stat.value, "Character innate stat");
     }
 
     this.equipWeapon(weapon, appWeapon);

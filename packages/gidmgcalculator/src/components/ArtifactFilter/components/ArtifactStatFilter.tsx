@@ -33,7 +33,7 @@ export function ArtifactStatFilter({
   const { t } = useTranslation();
 
   const mainStatOptions = artifactType
-    ? ["All", ...ArtifactCalc.possibleMainStatTypesOf(artifactType)]
+    ? ["All", ...ArtifactCalc.allMainStatTypesOf(artifactType)]
     : ["All", "hp", "hp_", "atk", "atk_", "def_", "em", "er_", "cRate_", "cDmg_", ...ATTACK_ELEMENTS, "healB_"];
   const subStatOptions = ["All"].concat(ARTIFACT_SUBSTAT_TYPES);
 
