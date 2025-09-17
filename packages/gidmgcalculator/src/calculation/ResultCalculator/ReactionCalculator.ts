@@ -1,9 +1,9 @@
 import type { ElementModCtrl } from "@/types";
-import type { TrackerControl } from "../utils/TrackerControl";
+import type { TrackerControl } from "../TrackerControl";
 import type { CalculationFinalResultAttackItem, Level, ResistReduction, TransformativeReaction } from "../types";
 import type { CalcItemCalculator } from "./CalcItemCalculator";
 
-import { GeneralCalc } from "../utils/calc-utils";
+import { GeneralCalc } from "../utils";
 import { TRANSFORMATIVE_REACTION_CONFIG } from "../constants/internal";
 
 export class ReactionCalculator {

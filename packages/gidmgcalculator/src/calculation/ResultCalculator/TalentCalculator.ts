@@ -1,7 +1,5 @@
 import type { ElementModCtrl } from "@/types";
-import type { CalcTeamData } from "../utils/CalcTeamData";
 import type { AttackBonusesArchive } from "../InputProcessor";
-import type { CalcItemRecord } from "../utils/TrackerControl";
 import type {
   AppCharacter,
   AttackAlterConfig,
@@ -15,10 +13,12 @@ import type {
   TalentCalcItem,
   TotalAttribute,
 } from "../types";
+import type { CalcTeamData } from "../CalcTeamData";
+import type { CalcItemRecord } from "../TrackerControl";
 
 import Array_ from "@/utils/array-utils";
-import { CharacterCalc } from "../utils/calc-utils";
-import { TrackerControl } from "../utils/TrackerControl";
+import { CharacterCalc } from "../utils";
+import { TrackerControl } from "../TrackerControl";
 import { CalcItemCalculator } from "./CalcItemCalculator";
 
 type InternalElmtModCtrl = Pick<ElementModCtrl, "reaction" | "infuse_reaction" | "absorb_reaction" | "absorption">;

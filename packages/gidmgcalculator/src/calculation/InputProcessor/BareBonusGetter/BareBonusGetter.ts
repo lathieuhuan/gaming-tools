@@ -1,7 +1,7 @@
 import type { BareBonus, EntityBonusEffect, EntityBonusStack } from "@/calculation/types";
 import type { BonusGetterSupport } from "./BareBonusGetter.types";
 
-import { CalcTeamData } from "@/calculation/utils/CalcTeamData";
+import { CalcTeamData } from "@/calculation/CalcTeamData";
 import { InitialBonusGetter } from "./InitialBonusGetter";
 
 export class BareBonusGetter<T extends CalcTeamData = CalcTeamData> extends InitialBonusGetter<T> {

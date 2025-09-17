@@ -1,6 +1,6 @@
 import type { EffectGrantedAt } from "@/calculation/types";
 import { Character } from "@/types";
-import { CharacterCalc } from "../calc-utils";
+import { CharacterCalc } from "@/calculation/utils";
 import { isPassedComparison } from "./isPassedComparison";
 
 export function isAvailableEffect(

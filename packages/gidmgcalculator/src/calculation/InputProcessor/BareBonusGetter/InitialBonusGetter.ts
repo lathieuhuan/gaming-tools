@@ -1,4 +1,4 @@
-import type { CalcTeamData } from "@/calculation/utils/CalcTeamData";
+import type { CalcTeamData } from "@/calculation/CalcTeamData";
 import type {
   CharacterEffectLevelIncrement,
   CharacterEffectLevelScale,

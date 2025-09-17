@@ -1,6 +1,6 @@
 import type { PartiallyRequiredOnly } from "rond";
 
-import type { TrackerControl } from "@/calculation/utils/TrackerControl";
+import type { TrackerControl } from "@/calculation/TrackerControl";
 import type { AttackElement, AttackPattern, AttributeStat, ReactionType } from "@/calculation/types";
 import type {
   ArtifactModCtrl,
@@ -18,8 +18,8 @@ import type {
   Weapon,
 } from "@/types";
 
-import { CharacterCalc, GeneralCalc } from "@/calculation/utils/calc-utils";
-import { CalcTeamData } from "@/calculation/utils/CalcTeamData";
+import { CharacterCalc, GeneralCalc } from "@/calculation/utils";
+import { CalcTeamData } from "@/calculation/CalcTeamData";
 import {
   AMPLIFYING_REACTIONS,
   LUNAR_TYPES,

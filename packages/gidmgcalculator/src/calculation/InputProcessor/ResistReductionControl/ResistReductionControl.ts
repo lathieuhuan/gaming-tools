@@ -6,8 +6,8 @@ import type {
   ResistReduction,
   ResistReductionKey,
 } from "@/calculation/types";
-import type { CalcTeamData } from "@/calculation/utils/CalcTeamData";
-import type { TrackerControl } from "@/calculation/utils/TrackerControl";
+import type { CalcTeamData } from "@/calculation/CalcTeamData";
+import type { TrackerControl } from "@/calculation/TrackerControl";
 
 import Array_ from "@/utils/array-utils";
 import TypeCounter from "@/utils/type-counter";

@@ -1,7 +1,8 @@
 # Calculation Development Flow (from top to bottom)
 
 constants / types
-  => utils
-    => InputProcessor
-      => ResultCalculator
-        => main
+  => utils => condition-checking
+    => CalcTeamData
+      => InputProcessor
+        => ResultCalculator
+          => main

@@ -1,4 +1,4 @@
-import { CalcTeamData } from "@/calculation/utils/CalcTeamData";
+import { CalcTeamData } from "@/calculation/CalcTeamData";
 import { EntityPenaltyEffect } from "@/calculation/types";
 import { getIndexOfEffectValue } from "../utils/getIndexOfEffectValue";
 import { getLevelScale } from "../utils/getLevelScale";

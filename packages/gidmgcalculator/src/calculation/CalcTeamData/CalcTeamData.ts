@@ -1,14 +1,14 @@
 import type { EffectApplicableCondition, TalentType } from "@/calculation/types";
 import type { AppCharactersByName, Character, Teammates } from "@/types";
 
-import Array_ from "@/utils/array-utils";
 import {
   isAvailableEffect,
   isValidCharProps,
   isValidInput,
   isValidPartyProps,
   isValidTeamElmt,
-} from "../condition-checking";
+} from "@/calculation/condition-checking";
+import Array_ from "@/utils/array-utils";
 import { TeamData } from "./TeamData";
 
 export class CalcTeamData extends TeamData {

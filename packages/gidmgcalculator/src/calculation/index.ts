@@ -1,6 +1,8 @@
 export { calculateSetup } from "./main";
+export { TeamData, CalcTeamData } from "./CalcTeamData";
+export { TrackerControl } from "./TrackerControl";
 export { ResultCalculator } from "./ResultCalculator";
-export { ArtifactCalc, CharacterCalc, GeneralCalc, WeaponCalc } from "./utils/calc-utils";
+export { ArtifactCalc, CharacterCalc, GeneralCalc, WeaponCalc } from "./utils";
 export {
   AttackBonusesControl,
   InputProcessor,
@@ -8,14 +10,12 @@ export {
   TotalAttributeControl,
   getAttackAlterConfigs
 } from "./InputProcessor";
-export { TrackerControl } from "./utils/TrackerControl";
-export { TeamData, CalcTeamData } from "./utils/CalcTeamData";
 export { InitialBonusGetter } from "./InputProcessor/BareBonusGetter/InitialBonusGetter";
 
 export * from "./constants";
 
-export type { ArtifactSetBonus } from "./utils/calc-utils";
-export type { CalcAtomicRecord, CalcItemRecord, TrackerResult } from "./utils/TrackerControl";
+export type { ArtifactSetBonus } from "./utils";
+export type { CalcAtomicRecord, CalcItemRecord, TrackerResult } from "./TrackerControl";
 export type {
   ActualAttackPattern,
   AmplifyingReaction,

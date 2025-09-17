@@ -1,9 +1,9 @@
 import type { AttackBonusesArchive } from "../InputProcessor";
-import type { TrackerControl } from "../utils/TrackerControl";
 import type { AttackAlterConfigs, AttackPattern, ResistReduction, TotalAttribute } from "../types";
+import type { TrackerControl } from "../TrackerControl";
 
-import { CalcTeamData } from "../utils/CalcTeamData";
-import { GeneralCalc } from "../utils/calc-utils";
+import { GeneralCalc } from "../utils";
+import { CalcTeamData } from "../CalcTeamData";
 import { CalcItemCalculator } from "./CalcItemCalculator";
 import { LunarReactionCalculator } from "./LunarReactionCalculator";
 import { ReactionCalculator } from "./ReactionCalculator";

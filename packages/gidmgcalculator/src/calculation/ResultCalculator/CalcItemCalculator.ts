@@ -11,12 +11,12 @@ import type {
   TalentCalcItemBonusId,
   TotalAttribute,
 } from "../types";
-import type { CalcItemRecord } from "../utils/TrackerControl";
+import type { CalcItemRecord } from "../TrackerControl";
 
 import { toMult } from "@/utils";
 import Array_ from "@/utils/array-utils";
 import { LUNAR_ATTACK_COEFFICIENT } from "../constants/internal";
-import { GeneralCalc } from "../utils/calc-utils";
+import { GeneralCalc } from "../utils";
 
 export class CalcItemCalculator {
   constructor(

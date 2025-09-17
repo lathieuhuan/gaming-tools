@@ -1,4 +1,4 @@
-import { CalcTeamData } from "@/calculation/utils/CalcTeamData";
+import { CalcTeamData } from "@/calculation/CalcTeamData";
 import { EffectValueByOption } from "@/calculation/types";
 import { getTmEffectInput } from "./getTmEffectInput";
 
