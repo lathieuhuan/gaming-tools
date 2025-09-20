@@ -1,21 +1,21 @@
 import { AppArtifact, ArtifactType } from "@Calculation";
 import { useMemo, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
-import { ButtonGroup, FancyBackSvg, Modal } from "rond";
+import { ButtonGroup, FancyBackSvg, Modal, useValues } from "rond";
 
 import type { Artifact } from "@/types";
 
-import { useArtifactTypeSelect } from "@/hooks";
 import { $AppArtifact } from "@/services";
 import Entity_ from "@/utils/Entity";
 import Object_ from "@/utils/Object";
 
 // Component
 import {
+  AfterSelectAppEntity,
   AppEntitySelect,
   AppEntitySelectProps,
-  AfterSelectAppEntity,
 } from "@/components/AppEntitySelect";
+import { ArtifactTypeSelect } from "@/components/ArtifactTypeSelect";
 import { GenshinImage } from "@/components/GenshinImage";
 import { ArtifactConfig } from "./ArtifactConfig";
 
@@ -66,19 +66,23 @@ const ArtifactSmith = ({
     }
   };
 
-  const { artifactTypes, artifactTypeSelectProps, updateArtifactTypes, ArtifactTypeSelect } =
-    useArtifactTypeSelect(workpiece?.type || forcedType || initialTypes, {
-      multiple: batchForging,
-      required: batchForging,
-      onChange: (types) => {
-        updateConfig((prevConfig) => {
-          const newConfig = Entity_.createArtifact({ ...prevConfig, type: types[0] });
-          const prevConfigKeep = Object_.pickProps(prevConfig, ["ID", "level", "subStats"]);
+  const {
+    values: artifactTypes,
+    toggle: toggleArtifactType,
+    update: updateArtifactTypes,
+  } = useValues({
+    initial: workpiece?.type || forcedType || initialTypes,
+    multiple: batchForging,
+    required: batchForging,
+    onChange: (types) => {
+      updateConfig((prevConfig) => {
+        const newConfig = Entity_.createArtifact({ ...prevConfig, type: types[0] });
+        const prevConfigKeep = Object_.pickProps(prevConfig, ["ID", "level", "subStats"]);
 
-          return Object_.assign(newConfig, prevConfigKeep);
-        });
-      },
-    });
+        return Object_.assign(newConfig, prevConfigKeep);
+      });
+    },
+  });
 
   const allArtifactSets = useMemo(() => {
     const artifacts =
@@ -198,7 +202,11 @@ const ArtifactSmith = ({
           <ArtifactConfig
             config={artifactConfig}
             maxRarity={maxRarity}
-            typeSelect={forcedType ? null : <ArtifactTypeSelect {...artifactTypeSelectProps} />}
+            typeSelect={
+              forcedType ? null : (
+                <ArtifactTypeSelect values={artifactTypes} onSelect={toggleArtifactType} />
+              )
+            }
             batchConfigNode={renderBatchConfigNode(afterSelect, selectBody)}
             mainActionLabel={workpiece ? "Reforge" : "Forge"}
             moreButtons={[

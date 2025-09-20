@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { FaEraser, FaCaretRight } from "react-icons/fa";
-import { TbRectangleVerticalFilled } from "react-icons/tb";
-import { Button, Modal, useScreenWatcher, clsx, type ClassValue } from "rond";
 import { ArtifactType } from "@Calculation";
+import { useState } from "react";
+import { FaCaretRight, FaEraser } from "react-icons/fa";
+import { TbRectangleVerticalFilled } from "react-icons/tb";
+import { Button, clsx, Modal, useScreenWatcher, useValues, type ClassValue } from "rond";
 
 import type { CalcArtifact } from "@/types";
-import type { ArtifactFilterCondition } from "@/utils/filterArtifacts";
-import { useArtifactTypeSelect } from "@/hooks";
 import { useArtifactSetFilter, useArtifactStatFilter } from "./_hooks";
+import type { ArtifactFilterCondition } from "./types";
 
 // Component
+import { ArtifactTypeSelect } from "@/components/ArtifactTypeSelect";
 import { FilterTemplate } from "@/components/FilterTemplate";
 import { ArtifactSetFilter } from "./ArtifactSetFilter";
 import { ArtifactStatFilter } from "./ArtifactStatFilter";
@@ -67,10 +67,14 @@ export const ArtifactFilter = ({
     );
   };
 
-  const { artifactTypes, artifactTypeSelectProps, updateArtifactTypes, ArtifactTypeSelect } =
-    useArtifactTypeSelect(initialFilter.types, {
-      multiple: true,
-    });
+  const {
+    values: artifactTypes,
+    toggle: toggleArtifactType,
+    update: updateArtifactTypes,
+  } = useValues({
+    initial: initialFilter.types,
+    multiple: true,
+  });
 
   const {
     statsFilter,
@@ -122,9 +126,10 @@ export const ArtifactFilter = ({
               onClearAll={() => updateArtifactTypes([])}
             >
               <ArtifactTypeSelect
-                {...artifactTypeSelectProps}
                 size="large"
                 className="justify-center py-4 hide-scrollbar"
+                values={artifactTypes}
+                onSelect={toggleArtifactType}
               />
             </FilterTemplate>
           ) : (
@@ -140,9 +145,10 @@ export const ArtifactFilter = ({
               />
 
               <ArtifactTypeSelect
-                {...artifactTypeSelectProps}
                 size="large"
                 className="py-2 flex-col hide-scrollbar"
+                values={artifactTypes}
+                onSelect={toggleArtifactType}
               />
             </div>
           )

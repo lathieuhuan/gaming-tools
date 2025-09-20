@@ -1,36 +1,42 @@
-import { ArtifactCalc, ArtifactType, AttributeStat } from "@Calculation";
-import type { UserArtifact } from "@/types";
+import { ArtifactCalc, AttributeStat } from "@Calculation";
+import { useMemo, useState } from "react";
 
-export type ArtifactStatFilterOption = "All" | AttributeStat;
+import { Artifact } from "@/types";
+import { DEFAULT_ARTIFACT_FILTER } from "../constants";
+import { ArtifactFilterCondition } from "../types";
 
-export type ArtifactStatFilterCondition = {
-  main: ArtifactStatFilterOption;
-  subs: ArtifactStatFilterOption[];
-};
+export function useArtifactFilter<T extends Artifact>(
+  artifacts: T[],
+  initialFilter: Partial<ArtifactFilterCondition> = {}
+) {
+  const [filter, setFilter] = useState<ArtifactFilterCondition>({
+    ...DEFAULT_ARTIFACT_FILTER,
+    ...initialFilter,
+  });
 
-export type ArtifactFilterCondition = {
-  stats: ArtifactStatFilterCondition;
-  codes: number[];
-  types: ArtifactType[];
-};
+  const filteredArtifacts = useMemo(() => filterArtifacts(artifacts, filter), [artifacts, filter]);
 
-export const DEFAULT_ARTIFACT_FILTER: ArtifactFilterCondition = {
-  stats: {
-    main: "All",
-    subs: Array(4).fill("All"),
-  },
-  codes: [],
-  types: [],
-};
+  return {
+    filter,
+    filteredArtifacts,
+    setFilter,
+  };
+}
 
-export function filterArtifacts(artifacts: UserArtifact[], filterCondition: Partial<ArtifactFilterCondition>) {
+export function filterArtifacts<T extends Artifact>(
+  artifacts: T[],
+  filterCondition: Partial<ArtifactFilterCondition>
+) {
   const { stats = DEFAULT_ARTIFACT_FILTER.stats, codes = [], types = [] } = filterCondition;
   const filterMainstat = stats.main !== "All";
   const noFilterCode = !codes.length;
   const noFilterType = !types.length;
 
   let result = artifacts.filter((artifact) => {
-    return (noFilterCode || codes.includes(artifact.code)) && (noFilterType || types.includes(artifact.type));
+    return (
+      (noFilterCode || codes.includes(artifact.code)) &&
+      (noFilterType || types.includes(artifact.type))
+    );
   });
 
   if (filterMainstat) {
@@ -45,7 +51,7 @@ export function filterArtifacts(artifacts: UserArtifact[], filterCondition: Part
 
   if (filterMainstat || requires.length) {
     //
-    const getValue = (artifact: UserArtifact, type: AttributeStat) => {
+    const getValue = (artifact: T, type: AttributeStat) => {
       return artifact.subStats.find((stat) => stat.type === type)?.value || 0;
     };
 

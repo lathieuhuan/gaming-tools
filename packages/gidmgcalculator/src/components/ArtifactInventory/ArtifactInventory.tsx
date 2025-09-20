@@ -1,16 +1,21 @@
-import { useMemo, useRef, useState } from "react";
-import { EntitySelectTemplate, type EntitySelectTemplateProps, FancyBackSvg, Modal, useElementSize } from "rond";
+import { useRef, useState } from "react";
+import {
+  EntitySelectTemplate,
+  type EntitySelectTemplateProps,
+  FancyBackSvg,
+  Modal,
+  useElementSize,
+} from "rond";
 
 import type { CalcArtifact, UserArtifact } from "@/types";
 
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@/utils/filterArtifacts";
 import { ARTIFACT_TYPES, ArtifactType } from "@Calculation";
 import { selectUserArtifacts } from "@Store/userdb-slice";
 
 // Conponent
 import { ArtifactCard } from "../ArtifactCard";
-import { ArtifactFilter, ArtifactFilterProps } from "../ArtifactFilter";
+import { ArtifactFilter, ArtifactFilterProps, useArtifactFilter } from "../ArtifactFilter";
 import { InventoryRack } from "../InventoryRack";
 import { OwnerLabel } from "../OwnerLabel";
 
@@ -40,17 +45,18 @@ const ArtifactInventoryCore = ({
 
   const [showingCurrent, setShowingCurrent] = useState(false);
   const [chosenArtifact, setChosenArtifact] = useState<UserArtifact>();
-  const [filter, setFilter] = useState<ArtifactFilterCondition>({
-    ...DEFAULT_ARTIFACT_FILTER,
-    types: [forcedType || initialType],
-  });
 
   const artifacts = useStoreSnapshot((state) => {
     const userArtifacts = selectUserArtifacts(state);
-    return forcedType ? userArtifacts.filter((artifact) => artifact.type === forcedType) : userArtifacts;
+    return forcedType
+      ? userArtifacts.filter((artifact) => artifact.type === forcedType)
+      : userArtifacts;
   });
 
-  const filteredArtifacts = useMemo(() => filterArtifacts(artifacts, filter), [artifacts, filter]);
+  const { filteredArtifacts, filter, setFilter } = useArtifactFilter(artifacts, {
+    types: [forcedType || initialType],
+  });
+
   const currentArtifact = chosenArtifact?.type
     ? currentArtifacts[ARTIFACT_TYPES.indexOf(chosenArtifact.type)]
     : undefined;

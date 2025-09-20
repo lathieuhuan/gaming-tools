@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { clsx, useRaritySelect, ButtonGroup, type ClassValue } from "rond";
 import { WeaponType } from "@Calculation";
+import { useEffect, useState } from "react";
+import { ButtonGroup, type ClassValue, clsx, RaritySelect, useValues } from "rond";
 
-import { useWeaponTypeSelect } from "@/hooks";
 import { FilterTemplate } from "@/components/FilterTemplate";
+import { WeaponTypeSelect } from "../WeaponTypeSelect";
 
 export type WeaponFilterState = {
   types: WeaponType[];
@@ -31,14 +31,23 @@ export function WeaponFilter({
   // when the drawer is coming out, so we render the button group later
   const [showActions, setShowActions] = useState(false);
 
-  const { weaponTypes, weaponTypeSelectProps, updateWeaponTypes, WeaponTypeSelect } =
-    useWeaponTypeSelect(initialFilter?.types, {
-      multiple: true,
-    });
-  const { selectedRarities, raritySelectProps, updateRarities, RaritySelect } = useRaritySelect(
-    [5, 4, 3, 2, 1],
-    initialFilter?.rarities
-  );
+  const {
+    values: weaponTypes,
+    toggle: toggleWeaponType,
+    update: updateWeaponTypes,
+  } = useValues({
+    initial: initialFilter?.types,
+    multiple: true,
+  });
+
+  const {
+    values: rarities,
+    toggle: toggleRarity,
+    update: updateRarities,
+  } = useValues({
+    initial: initialFilter?.rarities,
+    multiple: true,
+  });
 
   useEffect(() => {
     setTimeout(() => {
@@ -49,7 +58,7 @@ export function WeaponFilter({
   const handleConfirm = () => {
     onConfirm({
       types: weaponTypes,
-      rarities: selectedRarities,
+      rarities,
     });
   };
 
@@ -63,7 +72,7 @@ export function WeaponFilter({
               clearAllDisabled={!weaponTypes.length}
               onClearAll={() => updateWeaponTypes([])}
             >
-              <WeaponTypeSelect {...weaponTypeSelectProps} className="px-1" />
+              <WeaponTypeSelect className="px-1" values={weaponTypes} onSelect={toggleWeaponType} />
             </FilterTemplate>
 
             <div className="w-full h-px bg-surface-border" />
@@ -72,10 +81,15 @@ export function WeaponFilter({
 
         <FilterTemplate
           title="Filter by Rarity"
-          clearAllDisabled={!selectedRarities.length}
+          clearAllDisabled={!rarities.length}
           onClearAll={() => updateRarities([])}
         >
-          <RaritySelect {...raritySelectProps} style={{ maxWidth: "14rem" }} />
+          <RaritySelect
+            style={{ maxWidth: "14rem" }}
+            options={[5, 4, 3, 2, 1]}
+            values={rarities}
+            onSelect={toggleRarity}
+          />
         </FilterTemplate>
       </div>
 

@@ -7,6 +7,7 @@ export * from "./ArtifactCard";
 export * from "./ArtifactFilter";
 export * from "./ArtifactForge";
 export * from "./ArtifactInventory";
+export * from "./ArtifactTypeSelect";
 export * from "./AttributeTable";
 export * from "./ButtonPopover";
 export * from "./CharacterIntro";
@@ -31,4 +32,5 @@ export * from "./TeammateItems";
 export * from "./WeaponCard";
 export * from "./WeaponForge";
 export * from "./WeaponInventory";
+export * from "./WeaponTypeSelect";
 

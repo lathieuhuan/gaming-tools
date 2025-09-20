@@ -2,7 +2,7 @@ import { ArtifactCalc, ArtifactType, ATTACK_ELEMENTS } from "@Calculation";
 
 import { ARTIFACT_SUBSTAT_TYPES } from "@/constants";
 import { useTranslation } from "@/hooks";
-import { ArtifactStatFilterCondition } from "@/utils/filterArtifacts";
+import { ArtifactStatFilterCondition } from "../types";
 
 import { FilterTemplate, FilterTemplateProps } from "@/components/FilterTemplate";
 import { StatSelect } from "./StatSelect";

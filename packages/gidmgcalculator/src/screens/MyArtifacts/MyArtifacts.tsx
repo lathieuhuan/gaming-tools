@@ -1,20 +1,43 @@
+import { ArtifactType } from "@Calculation";
 import { useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
-import { ButtonGroup, clsx, LoadingPlate, message, Modal, useScreenWatcher, WarehouseLayout } from "rond";
+import {
+  ButtonGroup,
+  clsx,
+  LoadingPlate,
+  message,
+  Modal,
+  useScreenWatcher,
+  useValues,
+  WarehouseLayout,
+} from "rond";
 
-import type { UserArtifact } from "@/types";
+import type { Artifact, UserArtifact } from "@/types";
 
 import { MAX_USER_ARTIFACTS } from "@/constants";
-import { useArtifactTypeSelect, useTravelerKey } from "@/hooks";
+import { useTravelerKey } from "@/hooks";
 import { $AppArtifact } from "@/services";
 import Array_ from "@/utils/Array";
-import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@/utils/filterArtifacts";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectAppReady } from "@Store/ui-slice";
-import { addUserArtifact, selectUserArtifacts, sortArtifacts, updateUserArtifact } from "@Store/userdb-slice";
+import {
+  addUserArtifact,
+  selectUserArtifacts,
+  sortArtifacts,
+  updateUserArtifact,
+} from "@Store/userdb-slice";
 
 // Component
-import { ArtifactFilter, ArtifactForge, ArtifactForgeProps, InventoryRack } from "@/components";
+import {
+  ArtifactFilter,
+  ArtifactFilterCondition,
+  ArtifactForge,
+  ArtifactForgeProps,
+  ArtifactTypeSelect,
+  DEFAULT_ARTIFACT_FILTER,
+  InventoryRack,
+  useArtifactFilter,
+} from "@/components";
 import { ChosenArtifactView } from "./ChosenArtifactView";
 
 type ModalType = "ADD_ARTIFACT" | "EDIT_ARTIFACT" | "CONFIG_FILTER" | "";
@@ -26,9 +49,14 @@ function MyArtifacts() {
 
   const [chosenId, setChosenId] = useState<number>();
   const [modalType, setModalType] = useState<ModalType>("");
-  const [filter, setFilter] = useState<ArtifactFilterCondition>(DEFAULT_ARTIFACT_FILTER);
 
-  const { artifactTypeSelectProps, updateArtifactTypes, ArtifactTypeSelect } = useArtifactTypeSelect(null, {
+  const { filteredArtifacts, filter, setFilter } = useArtifactFilter(userArts);
+
+  const {
+    values: artifactTypes,
+    toggle: toggleArtifactType,
+    update: updateArtifactTypes,
+  } = useValues<ArtifactType>({
     multiple: true,
     onChange: (selectedTypes) => {
       setFilter((prev) => ({
@@ -38,8 +66,10 @@ function MyArtifacts() {
     },
   });
 
-  const filteredArtifacts = useMemo(() => filterArtifacts(userArts, filter), [userArts, filter]);
-  const chosenArtifact = useMemo(() => Array_.findById(filteredArtifacts, chosenId), [filteredArtifacts, chosenId]);
+  const chosenArtifact = useMemo(
+    () => Array_.findById(filteredArtifacts, chosenId),
+    [filteredArtifacts, chosenId]
+  );
 
   const closeModal = () => setModalType("");
 
@@ -47,21 +77,23 @@ function MyArtifacts() {
     if (userArts.length < MAX_USER_ARTIFACTS) {
       return true;
     }
+
     message.error("Number of stored artifacts has reached its limit.");
+
     return false;
   };
 
-  const onClickAddArtifact = () => {
+  const handleAddArtifact = () => {
     if (isNewArtifactAddable()) {
       setModalType("ADD_ARTIFACT");
     }
   };
 
-  const onClickSortArtifact = () => {
+  const handleSortArtifact = () => {
     dispatch(sortArtifacts());
   };
 
-  const onRemoveArtifact = (artifact: UserArtifact) => {
+  const handleRemoveArtifact = (artifact: UserArtifact) => {
     const removedIndex = Array_.indexById(filteredArtifacts, artifact.ID);
 
     if (removedIndex !== -1) {
@@ -75,6 +107,38 @@ function MyArtifacts() {
     }
   };
 
+  const handleConfirmFilter = (newFilter: ArtifactFilterCondition) => {
+    setFilter(newFilter);
+    updateArtifactTypes(newFilter.types);
+  };
+
+  const handleRemoveFilter = () => {
+    setFilter(DEFAULT_ARTIFACT_FILTER);
+    updateArtifactTypes(DEFAULT_ARTIFACT_FILTER.types);
+  };
+
+  const handleForgeArtifact = (artifact: Artifact) => {
+    if (modalType === "ADD_ARTIFACT") {
+      if (isNewArtifactAddable()) {
+        const newUserArtifact: UserArtifact = {
+          ...artifact,
+          ID: Date.now(),
+          owner: null,
+        };
+
+        dispatch(addUserArtifact(newUserArtifact));
+        setChosenId(newUserArtifact.ID);
+      }
+    } else if (chosenArtifact) {
+      dispatch(
+        updateUserArtifact({
+          ...artifact,
+          ID: chosenArtifact.ID,
+        })
+      );
+    }
+  };
+
   const isFiltered =
     filter.types.length ||
     filter.codes.length ||
@@ -85,12 +149,14 @@ function MyArtifacts() {
     <div className="flex items-center space-x-4">
       <ButtonGroup
         buttons={[
-          { children: "Add", onClick: onClickAddArtifact },
-          { children: "Sort", onClick: onClickSortArtifact },
+          { children: "Add", onClick: handleAddArtifact },
+          { children: "Sort", onClick: handleSortArtifact },
         ]}
       />
 
-      {screenWatcher.isFromSize("md") ? <ArtifactTypeSelect {...artifactTypeSelectProps} /> : null}
+      {screenWatcher.isFromSize("md") ? (
+        <ArtifactTypeSelect values={artifactTypes} onSelect={toggleArtifactType} />
+      ) : null}
 
       <div className="flex cursor-pointer">
         <button
@@ -106,10 +172,7 @@ function MyArtifacts() {
         {isFiltered && (
           <div
             className="pl-2 pr-3 rounded-r-2xl text-black bg-light-default flex-center glow-on-hover"
-            onClick={() => {
-              setFilter(DEFAULT_ARTIFACT_FILTER);
-              updateArtifactTypes(DEFAULT_ARTIFACT_FILTER.types);
-            }}
+            onClick={handleRemoveFilter}
           >
             <FaTimes />
           </div>
@@ -118,11 +181,15 @@ function MyArtifacts() {
     </div>
   );
 
-  const dynamicForgeProps: Pick<ArtifactForgeProps, "workpiece" | "initialMaxRarity" | "hasMultipleMode"> = {};
+  const dynamicForgeProps: Pick<
+    ArtifactForgeProps,
+    "workpiece" | "initialMaxRarity" | "hasMultipleMode"
+  > = {};
 
   if (modalType === "ADD_ARTIFACT") {
     dynamicForgeProps.hasMultipleMode = true;
   }
+
   if (modalType === "EDIT_ARTIFACT") {
     const variants = chosenArtifact
       ? $AppArtifact.getAll().find((artifact) => artifact.code === chosenArtifact.code)?.variants
@@ -146,7 +213,7 @@ function MyArtifacts() {
 
       <ChosenArtifactView
         artifact={chosenArtifact}
-        onRemoveArtifact={onRemoveArtifact}
+        onRemoveArtifact={handleRemoveArtifact}
         onRequestEditArtifact={() => setModalType("EDIT_ARTIFACT")}
       />
 
@@ -160,10 +227,7 @@ function MyArtifacts() {
         <ArtifactFilter
           artifacts={userArts}
           initialFilter={filter}
-          onConfirm={(newFilter) => {
-            setFilter(newFilter);
-            updateArtifactTypes(newFilter.types);
-          }}
+          onConfirm={handleConfirmFilter}
           onClose={closeModal}
         />
       </Modal>
@@ -172,27 +236,7 @@ function MyArtifacts() {
         active={modalType === "ADD_ARTIFACT" || modalType === "EDIT_ARTIFACT"}
         {...dynamicForgeProps}
         hasConfigStep
-        onForgeArtifact={(artifact) => {
-          if (modalType === "ADD_ARTIFACT") {
-            if (isNewArtifactAddable()) {
-              const newUserArtifact: UserArtifact = {
-                ...artifact,
-                ID: Date.now(),
-                owner: null,
-              };
-
-              dispatch(addUserArtifact(newUserArtifact));
-              setChosenId(newUserArtifact.ID);
-            }
-          } else if (chosenArtifact) {
-            dispatch(
-              updateUserArtifact({
-                ...artifact,
-                ID: chosenArtifact.ID,
-              })
-            );
-          }
-        }}
+        onForgeArtifact={handleForgeArtifact}
         onClose={closeModal}
       />
     </WarehouseLayout>

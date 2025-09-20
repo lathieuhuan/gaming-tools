@@ -1,10 +1,10 @@
-import { ELEMENT_TYPES, ElementType, WeaponType } from "@Calculation";
+import { ElementType, WeaponType } from "@Calculation";
 import { useEffect, useState } from "react";
-import { ButtonGroup, clsx, useIconSelect, useRaritySelect, type ClassValue } from "rond";
+import { ButtonGroup, clsx, RaritySelect, useValues, type ClassValue } from "rond";
 
-import { ElementIcon } from "@/components/ElementIcon";
 import { FilterTemplate } from "@/components/FilterTemplate";
-import { useWeaponTypeSelect } from "@/hooks";
+import { WeaponTypeSelect } from "../WeaponTypeSelect";
+import { ElementSelect } from "./ElementSelect";
 
 export type CharacterFilterState = {
   weaponTypes: WeaponType[];
@@ -29,31 +29,32 @@ export function CharacterFilter({
   // when the drawer is coming out, so we render the button group later
   const [showActions, setShowActions] = useState(false);
 
-  const ELEMENT_ICONS = ELEMENT_TYPES.map((value) => {
-    return {
-      value,
-      icon: <ElementIcon type={value} />,
-    };
-  });
-
   const {
-    selectedIcons: elementTypes,
-    selectProps: elementSelectProps,
-    updateSelectedIcons: updateElementTypes,
-    IconSelect: ElementSelect,
-  } = useIconSelect(ELEMENT_ICONS, initialFilter?.elementTypes, {
+    values: elementTypes,
+    toggle: toggleElementType,
+    update: updateElementTypes,
+  } = useValues({
+    initial: initialFilter?.elementTypes,
     multiple: true,
   });
 
-  const { weaponTypes, weaponTypeSelectProps, updateWeaponTypes, WeaponTypeSelect } =
-    useWeaponTypeSelect(initialFilter?.weaponTypes, {
-      multiple: true,
-    });
+  const {
+    values: weaponTypes,
+    toggle: toggleWeaponType,
+    update: updateWeaponTypes,
+  } = useValues({
+    initial: initialFilter?.weaponTypes,
+    multiple: true,
+  });
 
-  const { selectedRarities, raritySelectProps, updateRarities, RaritySelect } = useRaritySelect(
-    [5, 4],
-    initialFilter?.rarities
-  );
+  const {
+    values: rarities,
+    toggle: toggleRarity,
+    update: updateRarities,
+  } = useValues({
+    initial: initialFilter?.rarities,
+    multiple: true,
+  });
 
   useEffect(() => {
     setTimeout(() => {
@@ -65,7 +66,7 @@ export function CharacterFilter({
     onConfirm({
       weaponTypes,
       elementTypes,
-      rarities: selectedRarities,
+      rarities,
     });
   };
 
@@ -78,12 +79,7 @@ export function CharacterFilter({
           onClearAll={() => updateElementTypes([])}
         >
           <div className="hide-scrollbar">
-            <ElementSelect
-              {...elementSelectProps}
-              className="p-1"
-              iconCls="text-2xl"
-              selectedCls="shadow-3px-3px shadow-active-color"
-            />
+            <ElementSelect values={elementTypes} onSelect={toggleElementType} />
           </div>
         </FilterTemplate>
 
@@ -95,11 +91,12 @@ export function CharacterFilter({
           onClearAll={() => updateWeaponTypes([])}
         >
           <WeaponTypeSelect
-            {...weaponTypeSelectProps}
             className="px-1"
             imageProps={{
               defaultFallback: { cls: "p-1.5" },
             }}
+            values={weaponTypes}
+            onSelect={toggleWeaponType}
           />
         </FilterTemplate>
 
@@ -107,10 +104,15 @@ export function CharacterFilter({
 
         <FilterTemplate
           title="Filter by Rarity"
-          clearAllDisabled={!selectedRarities.length}
+          clearAllDisabled={!rarities.length}
           onClearAll={() => updateRarities([])}
         >
-          <RaritySelect {...raritySelectProps} style={{ maxWidth: "14rem" }} />
+          <RaritySelect
+            style={{ maxWidth: "14rem" }}
+            values={rarities}
+            options={[5, 4]}
+            onSelect={toggleRarity}
+          />
         </FilterTemplate>
       </div>
 
