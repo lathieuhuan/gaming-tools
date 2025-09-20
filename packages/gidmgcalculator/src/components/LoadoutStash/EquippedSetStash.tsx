@@ -24,16 +24,16 @@ type EquippedSetOption = {
 
 type EquippedSetStashProps = {
   keyword?: string;
-  onChangeArtifact: (artifact?: UserArtifact) => void;
-  onSelectSet: (artifacts: UserArtifact[]) => void;
+  onSelectedArtifactChange: (artifact?: UserArtifact) => void;
+  onSetSelect: (artifacts: UserArtifact[]) => void;
 };
 
 export function EquippedSetStash({
   keyword,
-  onChangeArtifact,
-  onSelectSet,
+  onSelectedArtifactChange,
+  onSetSelect,
 }: EquippedSetStashProps) {
-  const [chosen, setChosen] = useState({
+  const [selection, setSelection] = useState({
     characterCode: 0,
     artifactId: 0,
   });
@@ -86,19 +86,19 @@ export function EquippedSetStash({
   useEffect(() => {
     // Check if any item visible
     let visibleCount = 0;
-    let shouldCheckChosen = !!chosen.characterCode;
+    let shouldCheckChosen = !!selection.characterCode;
 
     for (const item of itemUtils.queryAll()) {
       if (item.isVisible()) {
         visibleCount++;
       }
       // Unselect if not visible
-      else if (shouldCheckChosen && item.getId() === `${chosen.characterCode}`) {
-        setChosen({
+      else if (shouldCheckChosen && item.getId() === `${selection.characterCode}`) {
+        setSelection({
           characterCode: 0,
           artifactId: 0,
         });
-        onChangeArtifact(undefined);
+        onSelectedArtifactChange(undefined);
 
         shouldCheckChosen = false;
       }
@@ -129,9 +129,9 @@ export function EquippedSetStash({
             >
               <Button
                 className="absolute top-3 right-3"
-                variant={character.code === chosen.characterCode ? "primary" : "default"}
+                variant={character.code === selection.characterCode ? "primary" : "default"}
                 size="small"
-                onClick={() => onSelectSet(artifacts)}
+                onClick={() => onSetSelect(artifacts)}
               >
                 Select
               </Button>
@@ -152,13 +152,13 @@ export function EquippedSetStash({
                       <ItemCase
                         key={j}
                         className={`w-12 h-12 cursor-pointer ${opacityCls}`}
-                        chosen={artifact.ID === chosen.artifactId}
+                        chosen={artifact.ID === selection.artifactId}
                         onClick={() => {
-                          setChosen({
+                          setSelection({
                             characterCode: character.code,
                             artifactId: artifact.ID,
                           });
-                          onChangeArtifact(artifact);
+                          onSelectedArtifactChange(artifact);
                         }}
                       >
                         {(className, imgCls) => {

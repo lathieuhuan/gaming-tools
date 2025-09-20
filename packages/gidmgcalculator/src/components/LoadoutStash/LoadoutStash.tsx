@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Modal, SwitchNode, EntitySelectTemplate, type ModalControl } from "rond";
+import { Button, EntitySelectTemplate, Modal, SwitchNode } from "rond";
 
 import type { CalcArtifact, UserArtifact } from "@/types";
 import Entity_ from "@/utils/Entity";
@@ -14,78 +14,74 @@ const LOADOUT_TYPE_OPTIONS: Array<{ label: string; value: LoadoutType }> = [
   { label: "Equipped Set", value: "EQUIPPED" },
 ];
 
-interface LoadoutStashCoreProps {
-  keyword?: string;
+type LoadoutStashCoreProps = {
   onSelect?: (set: CalcArtifact[]) => void;
-}
-export function LoadoutStashCore({ keyword, onSelect }: LoadoutStashCoreProps) {
-  const [chosenType, setChosenType] = useState<LoadoutType>("EQUIPPED");
-  const [chosenArtifact, setChosenArtifact] = useState<UserArtifact>();
+  onClose: () => void;
+};
 
-  const onSelectType = (type: LoadoutType) => {
-    if (type !== chosenType) setChosenType(type);
+export function LoadoutStashCore({ onSelect, onClose }: LoadoutStashCoreProps) {
+  const [selectedType, setSelectedType] = useState<LoadoutType>("EQUIPPED");
+  const [selectedArtifact, setSelectedArtifact] = useState<UserArtifact>();
+
+  const handleTypeSelect = (type: LoadoutType) => {
+    if (type !== selectedType) {
+      setSelectedType(type);
+    }
   };
 
-  const onSelectEquippedSet = (artifacts: UserArtifact[]) => {
+  const handleEquippedSetSelect = (artifacts: UserArtifact[]) => {
     onSelect?.(artifacts.map(Entity_.userItemToCalcItem));
   };
 
   return (
-    <div className="h-full flex flex-col overflow-hidden bg-surface-2">
-      <div className="flex space-x-4">
-        {LOADOUT_TYPE_OPTIONS.map((option) => {
-          return (
-            <Button
-              key={option.value}
-              variant={option.value === chosenType ? "active" : "default"}
-              size="small"
-              onClick={() => onSelectType(option.value)}
+    <EntitySelectTemplate title="Artifact Loadouts" hasSearch onClose={onClose}>
+      {({ keyword }) => (
+        <div className="h-full flex flex-col overflow-hidden bg-surface-2">
+          <div className="flex space-x-4">
+            {LOADOUT_TYPE_OPTIONS.map((option) => {
+              return (
+                <Button
+                  key={option.value}
+                  variant={option.value === selectedType ? "active" : "default"}
+                  size="small"
+                  onClick={() => handleTypeSelect(option.value)}
+                >
+                  {option.label}
+                </Button>
+              );
+            })}
+          </div>
+
+          <div className="pt-3 grow flex space-x-2 hide-scrollbar">
+            <div
+              className="grow hide-scrollbar"
+              style={{
+                minWidth: "18rem",
+              }}
             >
-              {option.label}
-            </Button>
-          );
-        })}
-      </div>
+              <SwitchNode
+                value={selectedType}
+                cases={[
+                  {
+                    value: "EQUIPPED",
+                    element: (
+                      <EquippedSetStash
+                        keyword={keyword}
+                        onSelectedArtifactChange={setSelectedArtifact}
+                        onSetSelect={handleEquippedSetSelect}
+                      />
+                    ),
+                  },
+                ]}
+              />
+            </div>
 
-      <div className="pt-3 grow flex space-x-2 hide-scrollbar">
-        <div
-          className="grow hide-scrollbar"
-          style={{
-            minWidth: "18rem",
-          }}
-        >
-          <SwitchNode
-            value={chosenType}
-            cases={[
-              {
-                value: "EQUIPPED",
-                element: (
-                  <EquippedSetStash
-                    keyword={keyword}
-                    onChangeArtifact={setChosenArtifact}
-                    onSelectSet={onSelectEquippedSet}
-                  />
-                ),
-              },
-            ]}
-          />
+            <ArtifactCard className="w-68 shrink-0" artifact={selectedArtifact} />
+          </div>
         </div>
-
-        <ArtifactCard className="w-68 shrink-0" artifact={chosenArtifact} />
-      </div>
-    </div>
+      )}
+    </EntitySelectTemplate>
   );
 }
 
-export const LoadoutStash = Modal.coreWrap(
-  (props: Omit<LoadoutStashCoreProps, "keyword"> & ModalControl) => {
-    return (
-      <EntitySelectTemplate title="Artifact Loadouts" hasSearch onClose={props.onClose}>
-        {({ keyword }) => {
-          return <LoadoutStashCore keyword={keyword} onSelect={props.onSelect} />;
-        }}
-      </EntitySelectTemplate>
-    );
-  },
-  { preset: "large" }
-);
+export const LoadoutStash = Modal.coreWrap(LoadoutStashCore, { preset: "large" });
