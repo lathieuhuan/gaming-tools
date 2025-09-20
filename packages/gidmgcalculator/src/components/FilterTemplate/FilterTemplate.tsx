@@ -13,29 +13,39 @@ const messageClsByType: Record<MessageType, string> = {
   error: "text-danger-2",
 };
 
-export interface FilterTemplateProps {
+export type FilterTemplateProps = {
   className?: ClassValue;
   title?: React.ReactNode;
-  // Default to type 'hint'
+  /** Default type 'hint' */
   message?: string | Message;
-  disabledClearAll?: boolean;
+  clearAllDisabled?: boolean;
   children: React.ReactNode;
-  onClickClearAll?: () => void;
-}
+  onClearAll?: () => void;
+};
+
 export function FilterTemplate(props: FilterTemplateProps) {
   const message =
-    typeof props.message === "string" ? ({ type: "hint", value: props.message } satisfies Message) : props.message;
+    typeof props.message === "string"
+      ? ({ type: "hint", value: props.message } satisfies Message)
+      : props.message;
 
   return (
     <div className={clsx("space-y-4", props.className)}>
       <div className="flex justify-between items-center">
         <div className="whitespace-nowrap">{props.title}</div>
-        <Button size="small" icon={<FaEraser />} disabled={props.disabledClearAll} onClick={props.onClickClearAll}>
+        <Button
+          size="small"
+          icon={<FaEraser />}
+          disabled={props.clearAllDisabled}
+          onClick={props.onClearAll}
+        >
           Clear all
         </Button>
       </div>
 
-      {message?.value ? <div className={clsx("text-sm", messageClsByType[message.type])}>{message.value}</div> : null}
+      {message?.value ? (
+        <div className={clsx("text-sm", messageClsByType[message.type])}>{message.value}</div>
+      ) : null}
       {props.children}
     </div>
   );

@@ -9,7 +9,10 @@ export type ArtifactCardAction<T extends Artifact = Artifact> = Omit<ButtonGroup
   onClick: (e: MouseEvent<HTMLButtonElement>, artifact: T) => void;
 };
 
-interface ArtifactCardProps<T extends Artifact> extends Omit<ArtifactViewProps<T>, "className" | "artifact"> {
+export type ArtifactCardProps<T extends Artifact = Artifact> = Omit<
+  ArtifactViewProps<T>,
+  "className" | "artifact"
+> & {
   wrapperCls?: string;
   className?: string;
   style?: CSSProperties;
@@ -19,7 +22,8 @@ interface ArtifactCardProps<T extends Artifact> extends Omit<ArtifactViewProps<T
   withOwnerLabel?: boolean;
   artifact?: T;
   actions?: ArtifactCardAction<T>[];
-}
+};
+
 export function ArtifactCard<T extends Artifact>({
   wrapperCls = "",
   className = "",
@@ -34,7 +38,11 @@ export function ArtifactCard<T extends Artifact>({
   return (
     <div className={"flex flex-col " + wrapperCls}>
       <div
-        className={clsx("grow hide-scrollbar bg-surface-1 flex flex-col", withGutter && "p-4 rounded-lg", className)}
+        className={clsx(
+          "grow hide-scrollbar bg-surface-1 flex flex-col",
+          withGutter && "p-4 rounded-lg",
+          className
+        )}
         style={style}
       >
         <div className="grow hide-scrollbar">

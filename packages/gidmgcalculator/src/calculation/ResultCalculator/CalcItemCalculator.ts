@@ -14,7 +14,7 @@ import type {
 import type { CalcItemRecord } from "../TrackerControl";
 
 import { toMult } from "@/utils";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { LUNAR_ATTACK_COEFFICIENT } from "../constants/internal";
 import { GeneralCalc } from "../utils";
 

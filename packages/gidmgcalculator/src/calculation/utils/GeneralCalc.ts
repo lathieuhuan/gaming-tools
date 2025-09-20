@@ -1,6 +1,6 @@
 import type { CalcArtifacts } from "@/types";
 import type { AmplifyingReaction, AttackElement, Level, QuickenReaction } from "@/calculation/types";
-import TypeCounter from "@/utils/type-counter";
+import TypeCounter from "@/utils/TypeCounter";
 
 export type ArtifactSetBonus = {
   code: number;

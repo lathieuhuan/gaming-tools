@@ -5,20 +5,31 @@ import { Button, Modal, useScreenWatcher, clsx, type ClassValue } from "rond";
 import { ArtifactType } from "@Calculation";
 
 import type { CalcArtifact } from "@/types";
-import type { ArtifactFilterCondition } from "@/utils/filter-artifacts";
+import type { ArtifactFilterCondition } from "@/utils/filterArtifacts";
 import { useArtifactTypeSelect } from "@/hooks";
-import { useArtifactSetFilter, useArtifactStatFilter } from "./hooks";
-import { FilterTemplate } from "../FilterTemplate";
+import { useArtifactSetFilter, useArtifactStatFilter } from "./_hooks";
 
-export interface ArtifactFilterProps {
+// Component
+import { FilterTemplate } from "@/components/FilterTemplate";
+import { ArtifactSetFilter } from "./ArtifactSetFilter";
+import { ArtifactStatFilter } from "./ArtifactStatFilter";
+
+export type ArtifactFilterProps = {
   forcedType?: ArtifactType;
   artifacts: CalcArtifact[];
   initialFilter: ArtifactFilterCondition;
-  onDone: (filterCondition: ArtifactFilterCondition) => void;
+  onConfirm: (filterCondition: ArtifactFilterCondition) => void;
   onClose: () => void;
-}
+};
+
 /** Only used on Modals */
-export const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, onClose }: ArtifactFilterProps) => {
+export const ArtifactFilter = ({
+  forcedType,
+  artifacts,
+  initialFilter,
+  onConfirm,
+  onClose,
+}: ArtifactFilterProps) => {
   const screenWatcher = useScreenWatcher();
   const minIndex = forcedType ? 1 : 0;
 
@@ -46,24 +57,38 @@ export const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, o
           disabled={position >= 2}
           onClick={() => setActiveIndex((prev) => prev + 1)}
         >
-          {position < 2 ? <FaCaretRight className="text-2xl" /> : <TbRectangleVerticalFilled className="opacity-50" />}
+          {position < 2 ? (
+            <FaCaretRight className="text-2xl" />
+          ) : (
+            <TbRectangleVerticalFilled className="opacity-50" />
+          )}
         </button>
       </div>
     );
   };
 
-  const { artifactTypes, artifactTypeSelectProps, updateArtifactTypes, ArtifactTypeSelect } = useArtifactTypeSelect(
-    initialFilter.types,
-    {
+  const { artifactTypes, artifactTypeSelectProps, updateArtifactTypes, ArtifactTypeSelect } =
+    useArtifactTypeSelect(initialFilter.types, {
       multiple: true,
-    }
-  );
-  const { statsFilter, statsFilterProps, ArtifactStatFilter } = useArtifactStatFilter(initialFilter.stats);
-  const { setOptions, setFilterProps, ArtifactSetFilter } = useArtifactSetFilter(artifacts, initialFilter.codes, {
+    });
+
+  const {
+    statsFilter,
+    hasDuplicates: hasDuplicatedStats,
+    changeMainStat,
+    changeSubStat,
+    clearFilter: clearStatFilter,
+  } = useArtifactStatFilter(initialFilter.stats);
+
+  const {
+    setOptions,
+    toggleSet,
+    clearFilter: clearSetFilter,
+  } = useArtifactSetFilter(artifacts, initialFilter.codes, {
     artifactType: forcedType,
   });
 
-  const onConfirmFilter = () => {
+  const handleConfirm = () => {
     const filteredCodes = setOptions.reduce((codes: number[], setOption) => {
       if (setOption.chosen) {
         codes.push(setOption.code);
@@ -71,7 +96,7 @@ export const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, o
       return codes;
     }, []);
 
-    onDone({
+    onConfirm({
       stats: statsFilter,
       codes: filteredCodes,
       types: artifactTypes,
@@ -93,8 +118,8 @@ export const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, o
             <FilterTemplate
               className={wrapperCls(activeIndex !== 0)}
               title={renderTitle("Filter by Type", 0)}
-              disabledClearAll={!artifactTypes.length}
-              onClickClearAll={() => updateArtifactTypes([])}
+              clearAllDisabled={!artifactTypes.length}
+              onClearAll={() => updateArtifactTypes([])}
             >
               <ArtifactTypeSelect
                 {...artifactTypeSelectProps}
@@ -114,7 +139,11 @@ export const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, o
                 onClick={() => updateArtifactTypes([])}
               />
 
-              <ArtifactTypeSelect {...artifactTypeSelectProps} size="large" className="py-2 flex-col hide-scrollbar" />
+              <ArtifactTypeSelect
+                {...artifactTypeSelectProps}
+                size="large"
+                className="py-2 flex-col hide-scrollbar"
+              />
             </div>
           )
         ) : null}
@@ -123,9 +152,13 @@ export const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, o
 
         <div className={clsx(wrapperCls(activeIndex !== 1), "shrink-0", !isSmallScreen && "w-56")}>
           <ArtifactStatFilter
-            {...statsFilterProps}
+            filter={statsFilter}
             title={renderTitle("Filter by Stat", 1)}
             artifactType={forcedType}
+            hasDuplicates={hasDuplicatedStats}
+            onMainStatChange={changeMainStat}
+            onSubStatChange={changeSubStat}
+            onClearAll={clearStatFilter}
           />
         </div>
 
@@ -133,14 +166,20 @@ export const ArtifactFilter = ({ forcedType, artifacts, initialFilter, onDone, o
 
         <div className={clsx([wrapperCls(activeIndex !== 2), "grow custom-scrollbar"])}>
           <ArtifactSetFilter
-            {...setFilterProps}
             title={renderTitle("Filter by Set", 2)}
             setsWrapCls="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-3 xm:grid-cols-5 lg:grid-cols-8"
+            setOptions={setOptions}
+            onSetClick={toggleSet}
+            onClearAll={clearSetFilter}
           />
         </div>
       </div>
 
-      <Modal.Actions disabledConfirm={statsFilterProps.hasDuplicates} onCancel={onClose} onConfirm={onConfirmFilter} />
+      <Modal.Actions
+        disabledConfirm={hasDuplicatedStats}
+        onCancel={onClose}
+        onConfirm={handleConfirm}
+      />
     </div>
   );
 };

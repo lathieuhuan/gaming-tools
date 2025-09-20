@@ -6,7 +6,7 @@ import {
   InitialBonusGetter,
 } from "@Calculation";
 
-import Array_ from "../array-utils";
+import Array_ from "../Array";
 import { toMult } from "../pure-utils";
 import { wrapText } from "./utils";
 

@@ -3,7 +3,7 @@ import type { AppCharactersByName } from "@/types";
 import type { DeepReadonly } from "rond";
 
 import { isValidTeamElmt } from "@/calculation/condition-checking";
-import TypeCounter from "@/utils/type-counter";
+import TypeCounter from "@/utils/TypeCounter";
 
 export class TeamData {
   protected _activeMemberN: string;

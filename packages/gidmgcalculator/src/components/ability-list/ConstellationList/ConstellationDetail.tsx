@@ -1,20 +1,26 @@
+import { CloseButton, LoadingSpin } from "rond";
 import { AppCharacter } from "@Calculation";
 
 import { $AppCharacter } from "@/services";
 import { useQuery } from "@/hooks";
-import { CloseButton, LoadingSpin } from "rond";
 
 // Conponent
 import { markDim, markGreen } from "../../span";
-import { AbilityCarousel } from "../ability-list-components";
+import { AbilityCarousel } from "../_components/AbilityCarousel";
 
-interface ConstellationDetailProps {
+type ConstellationDetailProps = {
   appCharacter: AppCharacter;
   consLv: number;
   onChangeConsLv?: (newLv: number) => void;
   onClose?: () => void;
-}
-export function ConstellationDetail({ appCharacter, consLv, onChangeConsLv, onClose }: ConstellationDetailProps) {
+};
+
+export function ConstellationDetail({
+  appCharacter,
+  consLv,
+  onChangeConsLv,
+  onClose,
+}: ConstellationDetailProps) {
   const { vision, constellation } = appCharacter;
   const consInfo = constellation[consLv - 1] || {};
 

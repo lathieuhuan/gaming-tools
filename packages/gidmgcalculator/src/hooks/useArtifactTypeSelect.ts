@@ -1,7 +1,7 @@
 import { IconSelectProps, useIconSelect, type IconSelectConfig, type IconSelectInitialValues } from "rond";
 import { ArtifactType } from "@Calculation";
 import { getImgSrc } from "@/utils";
-import Entity_ from "@/utils/entity-utils";
+import Entity_ from "@/utils/Entity";
 
 const options = Entity_.allArtifactIcons((icon) => {
   return {

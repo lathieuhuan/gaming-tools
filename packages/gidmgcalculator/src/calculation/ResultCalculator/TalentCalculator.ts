@@ -16,7 +16,7 @@ import type {
 import type { CalcTeamData } from "../CalcTeamData";
 import type { CalcItemRecord } from "../TrackerControl";
 
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { CharacterCalc } from "../utils";
 import { TrackerControl } from "../TrackerControl";
 import { CalcItemCalculator } from "./CalcItemCalculator";

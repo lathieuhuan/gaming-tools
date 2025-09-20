@@ -1,15 +1,18 @@
 import { ARTIFACT_TYPES } from "@Calculation";
 import { $AppArtifact } from "@/services";
 import type { CalcArtifacts, SetupImportInfo, UserComplexSetup, UserSetup } from "@/types";
-import Array_ from "@/utils/array-utils";
-import Entity_ from "@/utils/entity-utils";
-import Modifier_ from "@/utils/modifier-utils";
-import Object_ from "@/utils/object-utils";
-import Setup_ from "@/utils/setup-utils";
+import Array_ from "@/utils/Array";
+import Entity_ from "@/utils/Entity";
+import Modifier_ from "@/utils/Modifier";
+import Object_ from "@/utils/Object";
+import Setup_ from "@/utils/Setup";
 import { UserdbState } from "@Store/userdb-slice";
 import { SetupRenderInfo } from "./types";
 
-export function parseSetup(setup: UserSetup | UserComplexSetup, setups: (UserSetup | UserComplexSetup)[]) {
+export function parseSetup(
+  setup: UserSetup | UserComplexSetup,
+  setups: (UserSetup | UserComplexSetup)[]
+) {
   if (Setup_.isUserSetup(setup)) {
     return setup.type === "original" ? { setup } : null;
   }
@@ -29,7 +32,7 @@ export function parseSetup(setup: UserSetup | UserComplexSetup, setups: (UserSet
 export function renderInfoToImportInfo(
   info: SetupRenderInfo,
   teammateIndex: number,
-  userdb: UserdbState
+  { userChars, userWps }: UserdbState
 ): SetupImportInfo | null {
   const { setup } = info;
   const teammate = setup.party[teammateIndex];
@@ -39,9 +42,8 @@ export function renderInfoToImportInfo(
     return null;
   }
 
-  const { userChars, userWps } = userdb;
   const { weapon, artifact } = teammate;
-  const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, teammate.name);
+  const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(teammate.name, true);
   let seedID = Date.now();
 
   const similarWeapon = Array_.findByCode(userWps, teammate.weapon.code);
@@ -76,7 +78,7 @@ export function renderInfoToImportInfo(
   }
 
   const party = Object_.clone(setup.party);
-  const [tmBuffCtrls, tmDebuffCtrls] = Modifier_.createCharacterModCtrls(false, teammate.name);
+  const [tmBuffCtrls, tmDebuffCtrls] = Modifier_.createCharacterModCtrls(teammate.name, false);
 
   party[teammateIndex] = {
     name: setup.char.name,
@@ -84,7 +86,7 @@ export function renderInfoToImportInfo(
       code: mainWeapon.code,
       type: mainWeapon.type,
       refi: mainWeapon.refi,
-      buffCtrls: Modifier_.createWeaponBuffCtrls(false, mainWeapon),
+      buffCtrls: Modifier_.createWeaponBuffCtrls(mainWeapon, false),
     },
     artifact: {
       code: 0,
@@ -105,7 +107,7 @@ export function renderInfoToImportInfo(
       selfBuffCtrls,
       selfDebuffCtrls,
       weapon: actualWeapon,
-      wpBuffCtrls: Modifier_.createWeaponBuffCtrls(true, actualWeapon),
+      wpBuffCtrls: Modifier_.createWeaponBuffCtrls(actualWeapon, true),
       artifacts,
       artBuffCtrls,
       artDebuffCtrls: Modifier_.createArtifactDebuffCtrls(),

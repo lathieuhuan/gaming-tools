@@ -30,11 +30,11 @@ import type {
 
 import { RESONANCE_ELEMENT_TYPES } from "@/constants";
 import { $AppData, $AppCharacter, $AppSettings, $AppArtifact } from "@/services";
-import Setup_ from "@/utils/setup-utils";
-import Modifier_ from "@/utils/modifier-utils";
-import Object_ from "@/utils/object-utils";
-import Array_ from "@/utils/array-utils";
-import Entity_ from "@/utils/entity-utils";
+import Setup_ from "@/utils/Setup";
+import Modifier_ from "@/utils/Modifier";
+import Object_ from "@/utils/Object";
+import Array_ from "@/utils/Array";
+import Entity_ from "@/utils/Entity";
 import { calculate, countAllElements, getAppCharacterFromState } from "./calculator-slice.utils";
 
 // const defaultChar = {
@@ -255,7 +255,7 @@ export const calculatorSlice = createSlice({
         Object.assign(teammate.weapon, newWeaponInfo);
 
         if (newWeaponInfo.code) {
-          teammate.weapon.buffCtrls = Modifier_.createWeaponBuffCtrls(false, teammate.weapon);
+          teammate.weapon.buffCtrls = Modifier_.createWeaponBuffCtrls(teammate.weapon, false);
         }
         calculate(state);
       }
@@ -290,7 +290,7 @@ export const calculatorSlice = createSlice({
             }
             teammate.artifact.buffCtrls = [];
           } else {
-            teammate.artifact.buffCtrls = Modifier_.createArtifactBuffCtrls(false, newArtifactInfo);
+            teammate.artifact.buffCtrls = Modifier_.createArtifactBuffCtrls(newArtifactInfo, false);
           }
         }
         calculate(state);
@@ -319,7 +319,7 @@ export const calculatorSlice = createSlice({
       const weapon = action.payload;
       const setup = state.setupsById[state.activeId];
       setup.weapon = weapon;
-      setup.wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, weapon);
+      setup.wpBuffCtrls = Modifier_.createWeaponBuffCtrls(weapon, true);
 
       calculate(state);
     },
@@ -549,9 +549,9 @@ export const calculatorSlice = createSlice({
       // Reset comparedIds before repopulate with newSetupManageInfos
       state.comparedIds = [];
 
-      const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, appCharacter.name);
+      const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(appCharacter.name, true);
       const newWeapon = Entity_.createWeapon({ type: appCharacter.weaponType });
-      const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, newWeapon);
+      const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(newWeapon, true);
       const elmtModCtrls = Modifier_.createElmtModCtrls();
       const tempManageInfos: CalcSetupManageInfo[] = [];
 

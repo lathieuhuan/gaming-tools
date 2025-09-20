@@ -3,7 +3,7 @@ import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, TrackerResult } from "@Calculati
 
 import { useTranslation } from "@/hooks";
 import { applyPercent } from "@/utils";
-import Entity_ from "@/utils/entity-utils";
+import Entity_ from "@/utils/Entity";
 import { useSelector } from "@Store/hooks";
 import { selectTotalAttr } from "@Store/calculator-slice";
 import { recordListStyles, renderHeading, renderRecord } from "./_utils";

@@ -1,5 +1,5 @@
 import { AppArtifact, ArtifactModifierDescription } from "@/calculation/types";
-import Array_ from "../array-utils";
+import Array_ from "../Array";
 import { parseArtifactDesc } from "./parseArtifactDesc";
 
 export function getArtifactDesc(data: AppArtifact, modifier: { description: ArtifactModifierDescription }) {

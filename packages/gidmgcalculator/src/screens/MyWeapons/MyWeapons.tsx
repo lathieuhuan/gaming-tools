@@ -17,7 +17,7 @@ import type { UserWeapon } from "@/types";
 import { MAX_USER_WEAPONS } from "@/constants";
 import { useTravelerKey, useWeaponTypeSelect } from "@/hooks";
 import { $AppWeapon } from "@/services";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectAppReady } from "@Store/ui-slice";
 import {

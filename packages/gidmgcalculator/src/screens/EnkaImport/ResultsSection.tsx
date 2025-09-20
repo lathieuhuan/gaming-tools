@@ -7,7 +7,7 @@ import { ConvertedArtifact, ConvertedWeapon } from "@/services/app-data";
 import { useStore } from "@/systems/dynamic-store";
 import { useSetupImporter } from "@/systems/setup-importer";
 import { UserArtifact } from "@/types";
-import Setup_ from "@/utils/setup-utils";
+import Setup_ from "@/utils/Setup";
 import { useDispatch } from "@Store/hooks";
 import { addCharacter, addUserArtifact, addUserWeapon } from "@Store/userdb-slice";
 

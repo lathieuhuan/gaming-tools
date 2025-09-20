@@ -1,8 +1,8 @@
 import type { UserComplexSetup, UserSetup } from "@/types";
 
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import Array_ from "@/utils/array-utils";
-import Setup_ from "@/utils/setup-utils";
+import Array_ from "@/utils/Array";
+import Setup_ from "@/utils/Setup";
 import { useDispatch } from "@Store/hooks";
 import { addSetupToComplex, selectUserSetups } from "@Store/userdb-slice";
 import { useCombineManager } from "./hooks";

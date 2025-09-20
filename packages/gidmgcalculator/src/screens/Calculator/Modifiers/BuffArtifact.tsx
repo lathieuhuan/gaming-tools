@@ -8,8 +8,8 @@ import {
   changeArtifactBuffCtrlInput,
   updateTeammateArtifact,
 } from "@Store/calculator-slice";
-import Object_ from "@/utils/object-utils";
-import Array_ from "@/utils/array-utils";
+import Object_ from "@/utils/Object";
+import Array_ from "@/utils/Array";
 import { ArtifactBuffsView } from "@/components";
 
 export default function BuffArtifact({ teammates }: { teammates: Teammates }) {

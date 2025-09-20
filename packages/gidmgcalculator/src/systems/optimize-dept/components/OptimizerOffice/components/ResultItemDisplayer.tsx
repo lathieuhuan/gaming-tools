@@ -5,7 +5,7 @@ import { CollapseSpace, ItemCase } from "rond";
 import type { Artifact } from "@/types";
 import type { ProcessedResult } from "../types";
 
-import Entity_ from "@/utils/entity-utils";
+import Entity_ from "@/utils/Entity";
 import { GenshinImage, ItemThumbnail } from "@/components";
 
 export type ResultItemDisplayerProps = {

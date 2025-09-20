@@ -7,7 +7,7 @@ import { ARTIFACT_TYPES, ArtifactType } from "@Calculation";
 import type { Artifact, CalcArtifact } from "@/types";
 import { $AppArtifact, $AppSettings } from "@/services";
 import { useArtifactSetData } from "@/hooks";
-import Entity_ from "@/utils/entity-utils";
+import Entity_ from "@/utils/Entity";
 import { changeArtifact, selectArtifacts } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 

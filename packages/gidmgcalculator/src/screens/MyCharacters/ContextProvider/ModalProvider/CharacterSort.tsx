@@ -5,8 +5,8 @@ import { CarouselSpace, Modal, Popover } from "rond";
 
 import { $AppCharacter } from "@/services";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import Array_ from "@/utils/array-utils";
-import Entity_ from "@/utils/entity-utils";
+import Array_ from "@/utils/Array";
+import Entity_ from "@/utils/Entity";
 import { useDispatch } from "@Store/hooks";
 import { selectUserCharacters, sortCharacters } from "@Store/userdb-slice";
 

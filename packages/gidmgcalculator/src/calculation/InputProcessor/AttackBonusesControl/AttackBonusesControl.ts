@@ -9,9 +9,9 @@ import type {
 } from "@/calculation/types";
 import type { CalcAtomicRecord, CalcItemExclusiveBonus } from "@/calculation/TrackerControl";
 
-import Array_ from "@/utils/array-utils";
-import Object_ from "@/utils/object-utils";
-import TypeCounter from "@/utils/type-counter";
+import Array_ from "@/utils/Array";
+import Object_ from "@/utils/Object";
+import TypeCounter from "@/utils/TypeCounter";
 import { GeneralCalc } from "@/calculation/utils";
 
 /** should not use 'all' in AttackBonusType */

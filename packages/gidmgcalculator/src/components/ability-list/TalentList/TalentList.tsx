@@ -1,13 +1,13 @@
+import { CalcTeamData, GeneralCalc, LevelableTalentType, TALENT_TYPES } from "@Calculation";
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
-import { TALENT_TYPES, LevelableTalentType, GeneralCalc, CalcTeamData } from "@Calculation";
 
 import { genSequentialOptions } from "@/utils";
-import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
+import { NORMAL_ATTACK_ICONS } from "./_constants";
 
 // Component
-import { AbilityIcon } from "../ability-list-components";
+import { AbilityIcon } from "../_components/AbilityIcon";
 import { TalentDetail } from "./TalentDetail";
 
 type RenderedTalentConfig = {
@@ -18,13 +18,14 @@ type RenderedTalentConfig = {
   xtraLevel?: number;
 };
 
-interface TalentListProps {
+type TalentListProps = {
   className?: ClassValue;
   teamData: CalcTeamData;
   /** Default to true */
   mutable?: boolean;
   onChangeTalentLevel?: (talentType: LevelableTalentType, newLevel: number) => void;
-}
+};
+
 export function TalentList(props: TalentListProps) {
   const { teamData, mutable = true } = props;
   const { activeMember, activeAppMember } = teamData;
@@ -40,7 +41,11 @@ export function TalentList(props: TalentListProps) {
     setDetailIndex(index);
   };
 
-  const renderTalent = (talent: RenderedTalentConfig, index: number, levelNode: React.ReactNode) => {
+  const renderTalent = (
+    talent: RenderedTalentConfig,
+    index: number,
+    levelNode: React.ReactNode
+  ) => {
     const { active = true } = talent;
     return (
       <div key={index} className="flex">
@@ -54,7 +59,9 @@ export function TalentList(props: TalentListProps) {
             <div className="flex items-center">
               <p className="mr-1">Lv.</p>
               {levelNode}
-              {talent.xtraLevel ? <p className="ml-2 font-bold text-bonus-color">+{talent.xtraLevel}</p> : null}
+              {talent.xtraLevel ? (
+                <p className="ml-2 font-bold text-bonus-color">+{talent.xtraLevel}</p>
+              ) : null}
             </div>
           </div>
 
@@ -88,14 +95,19 @@ export function TalentList(props: TalentListProps) {
               value={isAltSprint ? 1 : activeMember[talentType]}
               transparent
               options={genSequentialOptions(10)}
-              onChange={(value) => (isAltSprint ? null : props.onChangeTalentLevel?.(talentType, +value))}
+              onChange={(value) =>
+                isAltSprint ? null : props.onChangeTalentLevel?.(talentType, +value)
+              }
             />
           );
 
           return renderTalent(
             {
               name: talent.name,
-              image: talentType === "NAs" ? NORMAL_ATTACK_ICONS[`${weaponType}_${vision}`] : talent.image,
+              image:
+                talentType === "NAs"
+                  ? NORMAL_ATTACK_ICONS[`${weaponType}_${vision}`]
+                  : talent.image,
               xtraLevel,
             },
             index,
@@ -104,7 +116,8 @@ export function TalentList(props: TalentListProps) {
         })}
 
         {passiveTalents.map((talent, index) => {
-          const active = index === 2 || GeneralCalc.getAscension(activeMember.level) >= (index === 0 ? 1 : 4);
+          const active =
+            index === 2 || GeneralCalc.getAscension(activeMember.level) >= (index === 0 ? 1 : 4);
           return renderTalent(
             {
               name: talent.name,

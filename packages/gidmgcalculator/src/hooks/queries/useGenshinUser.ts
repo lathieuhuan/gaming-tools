@@ -4,7 +4,7 @@ import { ARTIFACT_TYPES } from "@Calculation";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import { ConvertedArtifact, ConvertedCharacter, ConvertedWeapon } from "@/services/app-data";
 import { GenshinUserResponse, getGenshinUser } from "@/services/enka";
-import Entity_ from "@/utils/entity-utils";
+import Entity_ from "@/utils/Entity";
 // import { userMock } from "./mock";
 
 export type GenshinUserBuild = {

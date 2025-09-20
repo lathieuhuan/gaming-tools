@@ -3,7 +3,7 @@ import { AppArtifact, AppWeapon, ARTIFACT_TYPES } from "@Calculation";
 
 import { Artifact, Weapon } from "@/types";
 import { $AppArtifact, $AppWeapon } from "@/services";
-import Entity_ from "@/utils/entity-utils";
+import Entity_ from "@/utils/Entity";
 
 // Component
 import { GenshinImage } from "../GenshinImage";

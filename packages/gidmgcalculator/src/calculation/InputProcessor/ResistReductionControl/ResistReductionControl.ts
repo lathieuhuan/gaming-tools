@@ -9,8 +9,8 @@ import type {
 import type { CalcTeamData } from "@/calculation/CalcTeamData";
 import type { TrackerControl } from "@/calculation/TrackerControl";
 
-import Array_ from "@/utils/array-utils";
-import TypeCounter from "@/utils/type-counter";
+import Array_ from "@/utils/Array";
+import TypeCounter from "@/utils/TypeCounter";
 import { ATTACK_ELEMENTS, ELEMENT_TYPES } from "@/calculation/constants";
 import { ECalcStatModule } from "@/calculation/constants/internal";
 import { PenaltiesGetter } from "./PenaltiesGetter";

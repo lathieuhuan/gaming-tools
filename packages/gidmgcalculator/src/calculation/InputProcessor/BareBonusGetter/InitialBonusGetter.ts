@@ -11,7 +11,7 @@ import type {
 import type { TotalAttributeControl } from "../TotalAttributeControl";
 import type { BonusGetterSupport, SupportInfo } from "./BareBonusGetter.types";
 
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { getLevelScale } from "../utils/getLevelScale";
 import { getIndexOfEffectValue } from "../utils/getIndexOfEffectValue";
 

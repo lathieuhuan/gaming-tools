@@ -3,8 +3,8 @@ import { ARTIFACT_TYPES, AttributeStat, Level } from "@Calculation";
 import type { ArtifactSubStat, UserArtifact, UserCharacter, UserWeapon } from "@/types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import { DOWNLOADED_DATA_VERSION } from "@/constants";
-import Array_ from "@/utils/array-utils";
-import Entity_ from "@/utils/entity-utils";
+import Array_ from "@/utils/Array";
+import Entity_ from "@/utils/Entity";
 import { goodFormatMap } from "./util-maps";
 
 const convertLevel = (level: any, ascension: any) => {

@@ -4,7 +4,7 @@ import { AppCharacter, calculateSetup, ElementType } from "@Calculation";
 import type { Teammates } from "@/types";
 import type { CalculatorState } from "./calculator-slice.types";
 import { $AppCharacter } from "@/services";
-import TypeCounter from "@/utils/type-counter";
+import TypeCounter from "@/utils/TypeCounter";
 
 export function getAppCharacterFromState(state: CalculatorState) {
   const setup = state.setupsById[state.activeId];

@@ -4,7 +4,7 @@ import { ConfirmModal, LoadingSpin, Modal, type PartiallyRequired, notification 
 
 import { MAX_CALC_SETUPS, SCREEN_PATH } from "@/constants";
 import { useRouter } from "@/systems/router";
-import Object_ from "@/utils/object-utils";
+import Object_ from "@/utils/Object";
 import {
   importSetup,
   initNewSession,

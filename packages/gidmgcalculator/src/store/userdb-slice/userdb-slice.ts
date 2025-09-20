@@ -21,9 +21,9 @@ import type {
 } from "./userdb-slice.types";
 
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import Setup_ from "@/utils/setup-utils";
-import Entity_ from "@/utils/entity-utils";
-import Array_ from "@/utils/array-utils";
+import Setup_ from "@/utils/Setup";
+import Entity_ from "@/utils/Entity";
+import Array_ from "@/utils/Array";
 
 export type UserdbState = {
   userChars: UserCharacter[];

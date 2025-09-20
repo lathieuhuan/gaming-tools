@@ -4,7 +4,7 @@ import { Button, ItemCase } from "rond";
 import { ARTIFACT_TYPES } from "@Calculation";
 import { GenshinUserBuild } from "@/hooks/queries/useGenshinUser";
 import { ConvertedArtifact, ConvertedWeapon } from "@/services/app-data";
-import Entity_ from "@/utils/entity-utils";
+import Entity_ from "@/utils/Entity";
 
 import { CharacterPortrait, GenshinImage, ItemThumbnail } from "@/components";
 

@@ -28,7 +28,7 @@ import {
   RESONANCE_STAT,
   TRANSFORMATIVE_REACTIONS,
 } from "@/calculation/constants";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { AppliedBonusesGetter } from "./AppliedBonusesGetter";
 import { AttackBonusesControl } from "./AttackBonusesControl";
 import { ResistReductionControl } from "./ResistReductionControl";

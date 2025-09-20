@@ -11,7 +11,7 @@ import type {
 import type { ArtifactManager, ChangeModConfigInputs, ToggleModConfig } from "@OptimizeDept/logic/ArtifactManager";
 
 import { GenshinModifierView } from "@/components";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { getArtifactDesc } from "@/utils/description-parsers";
 
 type ArtifactModConfigProps = {

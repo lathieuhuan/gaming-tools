@@ -7,7 +7,7 @@ import { useTranslation } from "@/hooks";
 import { $AppWeapon } from "@/services";
 import { genSequentialOptions } from "@/utils";
 import { parseWeaponDesc } from "@/utils/description-parsers";
-import Entity_ from "@/utils/entity-utils";
+import Entity_ from "@/utils/Entity";
 
 // Component
 import { GenshinImage } from "../GenshinImage";

@@ -7,8 +7,8 @@ import type { UserArtifact } from "@/types";
 import { MAX_USER_ARTIFACTS } from "@/constants";
 import { useArtifactTypeSelect, useTravelerKey } from "@/hooks";
 import { $AppArtifact } from "@/services";
-import Array_ from "@/utils/array-utils";
-import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@/utils/filter-artifacts";
+import Array_ from "@/utils/Array";
+import { ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER, filterArtifacts } from "@/utils/filterArtifacts";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectAppReady } from "@Store/ui-slice";
 import { addUserArtifact, selectUserArtifacts, sortArtifacts, updateUserArtifact } from "@Store/userdb-slice";
@@ -160,7 +160,7 @@ function MyArtifacts() {
         <ArtifactFilter
           artifacts={userArts}
           initialFilter={filter}
-          onDone={(newFilter) => {
+          onConfirm={(newFilter) => {
             setFilter(newFilter);
             updateArtifactTypes(newFilter.types);
           }}

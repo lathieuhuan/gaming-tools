@@ -4,7 +4,7 @@ import { SiTarget } from "react-icons/si";
 import { clsx, ConfirmModal, TrashCanSvg } from "rond";
 
 import { MAX_CALC_SETUPS } from "@/constants";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { useCalcModalCtrl } from "../../ContextProvider";
 
 // Store

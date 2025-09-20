@@ -5,7 +5,7 @@ import type { Character, UserArtifacts, UserWeapon } from "@/types";
 import type { RootState } from "@Store/store";
 
 // import { useAppCharacter } from "@/hooks";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { getSetupAppEntities } from "@/utils/getSetupAppEntities";
 import { useSelector } from "@Store/hooks";
 import { DetailInfoContext, type DetailInfo } from "./DetailInfo.context";

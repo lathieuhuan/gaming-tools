@@ -2,7 +2,7 @@ import type { CalcWeapon, ModifierCtrl, Teammates, Weapon } from "@/types";
 import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
 import { $AppWeapon } from "@/services";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { getWeaponBuffDesc } from "@/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";

@@ -10,9 +10,9 @@ import { updateUI } from "./ui-slice";
 import { addUserArtifact, addUserWeapon, saveSetup, updateUserArtifact, updateUserWeapon } from "./userdb-slice";
 
 // Util
-import Array_ from "@/utils/array-utils";
-import Entity_ from "@/utils/entity-utils";
-import Setup_ from "@/utils/setup-utils";
+import Array_ from "@/utils/Array";
+import Entity_ from "@/utils/Entity";
+import Setup_ from "@/utils/Setup";
 import { parseUserCharacter, type CharacterForInit } from "./store.utils";
 
 export function initNewSessionWithCharacter(character: CharacterForInit): AppThunk {

@@ -5,7 +5,7 @@ import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, Modifier
 
 import { $AppArtifact } from "@/services";
 import { getArtifactDesc } from "@/utils/description-parsers";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";
 

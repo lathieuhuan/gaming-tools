@@ -11,7 +11,7 @@ import type {
 
 import { ELEMENT_TYPES } from "@/calculation/constants";
 import { ECalcStatModule } from "@/calculation/constants/internal";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { BareBonusGetter, BonusGetterSupport } from "../BareBonusGetter";
 
 type ApplyBonusSupportInfo = {

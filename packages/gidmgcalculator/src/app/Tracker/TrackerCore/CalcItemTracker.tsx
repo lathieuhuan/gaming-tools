@@ -5,7 +5,7 @@ import { CalculationFinalResultGroup, CalcItemRecord } from "@Calculation";
 import { useTranslation } from "@/hooks";
 import { suffixOf } from "@/utils";
 import { markGreen } from "@/components";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 
 function renderDmg(value: number | number[], callback: (value: number) => string | number = Math.round) {
   return Array.isArray(value) ? callback(value.reduce((total, num) => total + (num ?? 0), 0)) : callback(value);

@@ -4,7 +4,7 @@ import { AttributeStat } from "@Calculation";
 
 import type { ArtifactSubStat } from "@/types";
 import { useTranslation } from "@/hooks";
-import Entity_ from "@/utils/entity-utils";
+import Entity_ from "@/utils/Entity";
 
 // Constant
 import { ARTIFACT_SUBSTAT_TYPES } from "@/constants";

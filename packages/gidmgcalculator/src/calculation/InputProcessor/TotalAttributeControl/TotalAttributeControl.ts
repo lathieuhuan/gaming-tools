@@ -15,8 +15,8 @@ import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "@/calculation/constants";
 import { ECalcStatModule } from "@/calculation/constants/internal";
 import { TrackerControl } from "@/calculation/TrackerControl";
 import { applyPercent } from "@/utils";
-import Array_ from "@/utils/array-utils";
-import Object_ from "@/utils/object-utils";
+import Array_ from "@/utils/Array";
+import Object_ from "@/utils/Object";
 
 const ASC_MULT_BY_ASC = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];
 

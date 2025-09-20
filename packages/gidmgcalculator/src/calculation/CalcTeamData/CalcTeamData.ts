@@ -8,7 +8,7 @@ import {
   isValidPartyProps,
   isValidTeamElmt,
 } from "@/calculation/condition-checking";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { TeamData } from "./TeamData";
 
 export class CalcTeamData extends TeamData {
@@ -26,7 +26,7 @@ export class CalcTeamData extends TeamData {
   constructor(activeMember: Character, teammates: Teammates, public data: AppCharactersByName) {
     super(
       activeMember.name,
-      Array_.truthy(teammates).map((teammate) => teammate.name),
+      Array_.truthify(teammates).map((teammate) => teammate.name),
       data
     );
     this._activeMember = activeMember;

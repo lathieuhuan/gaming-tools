@@ -6,7 +6,7 @@ import type { CalcSetup, CalcSetupManageInfo } from "@/types";
 
 import { IS_DEV_ENV } from "@/constants";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import Object_ from "@/utils/object-utils";
+import Object_ from "@/utils/Object";
 
 const FORM_ID = "optimizer-preconfig";
 

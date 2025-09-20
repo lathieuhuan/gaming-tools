@@ -6,7 +6,7 @@ import type { AppWeaponService } from "./AppWeaponService";
 import type { AppArtifactService } from "./AppArtifactService";
 
 import { BACKEND_URL } from "@/constants";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { BaseService } from "./BaseService";
 
 export class AppDataService extends BaseService {
