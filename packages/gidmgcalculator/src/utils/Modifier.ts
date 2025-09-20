@@ -1,4 +1,10 @@
-import type { ModInputConfig, ModInputType, ModifierAffectType, WeaponType } from "@Calculation";
+import type {
+  AppCharacter,
+  ModInputConfig,
+  ModInputType,
+  ModifierAffectType,
+  WeaponType,
+} from "@Calculation";
 import type { Artifact, ArtifactModCtrl, ElementModCtrl, ModifierCtrl } from "@/types";
 
 import { GeneralCalc } from "@Calculation";
@@ -70,10 +76,14 @@ export default class Modifier_ {
     };
   }
 
-  static createCharacterModCtrls(name: string, forSelf: boolean): [ModifierCtrl[], ModifierCtrl[]] {
+  static createCharacterModCtrls(
+    nameOrData: string | AppCharacter,
+    forSelf: boolean
+  ): [ModifierCtrl[], ModifierCtrl[]] {
+    const data = typeof nameOrData === "string" ? $AppCharacter.get(nameOrData) : nameOrData;
+    const { buffs = [], debuffs = [] } = data || {};
     const buffCtrls: ModifierCtrl[] = [];
     const debuffCtrls: ModifierCtrl[] = [];
-    const { buffs = [], debuffs = [] } = $AppCharacter.get(name) || {};
     const incompatibleAffect: ModifierAffectType = forSelf ? "TEAMMATE" : "SELF";
 
     for (const buff of buffs) {

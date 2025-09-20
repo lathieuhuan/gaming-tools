@@ -43,7 +43,6 @@ export function renderInfoToImportInfo(
   }
 
   const { weapon, artifact } = teammate;
-  const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(teammate.name, true);
   let seedID = Date.now();
 
   const similarWeapon = Array_.findByCode(userWps, teammate.weapon.code);
@@ -96,26 +95,15 @@ export function renderInfoToImportInfo(
     debuffCtrls: tmDebuffCtrls,
   };
 
-  const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts);
-
   return {
     ID: seedID++,
     name: "New setup",
     target: setup.target,
-    calcSetup: {
+    calcSetup: Setup_.createCalcSetup({
       char: Entity_.createCharacter(teammate.name, Array_.findByName(userChars, teammate.name)),
-      selfBuffCtrls,
-      selfDebuffCtrls,
       weapon: actualWeapon,
-      wpBuffCtrls: Modifier_.createWeaponBuffCtrls(actualWeapon, true),
       artifacts,
-      artBuffCtrls,
-      artDebuffCtrls: Modifier_.createArtifactDebuffCtrls(),
       party,
-      elmtModCtrls: Modifier_.createElmtModCtrls(),
-      customBuffCtrls: [],
-      customDebuffCtrls: [],
-      customInfusion: { element: "phys" },
-    },
+    }),
   };
 }

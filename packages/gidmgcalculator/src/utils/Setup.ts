@@ -212,34 +212,39 @@ export default class Setup_ {
 
   static createCalcSetup({
     char,
-    weapon,
-    artifacts,
+    artifacts = [null, null, null, null, null],
+    artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts),
+    artDebuffCtrls = Modifier_.createArtifactDebuffCtrls(),
+    party = [null, null, null],
+    elmtModCtrls = Modifier_.createElmtModCtrls(),
+    customBuffCtrls = [],
+    customDebuffCtrls = [],
+    customInfusion = { element: "phys" },
     ...rest
-  }: PartiallyRequiredOnly<CalcSetup, "char" | "weapon" | "artifacts">): CalcSetup {
-    const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(char.name, true);
-    const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(weapon, true);
-    const artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts);
+  }: PartiallyRequiredOnly<CalcSetup, "char">): CalcSetup {
+    const appCharacter = $AppCharacter.get(char.name);
+    const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(appCharacter, true);
+    const weapon = rest.weapon || Entity_.createWeapon({ type: appCharacter.weaponType });
 
     return {
       char,
       weapon,
       artifacts,
-      selfBuffCtrls,
-      selfDebuffCtrls,
-      wpBuffCtrls,
+      selfBuffCtrls: rest.selfBuffCtrls || selfBuffCtrls,
+      selfDebuffCtrls: rest.selfDebuffCtrls || selfDebuffCtrls,
+      wpBuffCtrls: rest.wpBuffCtrls || Modifier_.createWeaponBuffCtrls(weapon, true),
       artBuffCtrls,
-      artDebuffCtrls: Modifier_.createArtifactDebuffCtrls(),
-      party: [null, null, null],
+      artDebuffCtrls,
+      party,
       // moonsignCtrl: {
       //   active: false,
       //   type: "hp",
       //   value: 0,
       // },
-      elmtModCtrls: Modifier_.createElmtModCtrls(),
-      customBuffCtrls: [],
-      customDebuffCtrls: [],
-      customInfusion: { element: "phys" },
-      ...rest,
+      elmtModCtrls,
+      customBuffCtrls,
+      customDebuffCtrls,
+      customInfusion,
     };
   }
 }
