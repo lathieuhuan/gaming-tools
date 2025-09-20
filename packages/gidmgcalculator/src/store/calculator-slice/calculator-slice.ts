@@ -1,45 +1,46 @@
+import { ATTACK_ELEMENTS, AttackElement } from "@Calculation";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { PartiallyOptional } from "rond";
-import { AttackElement, ATTACK_ELEMENTS } from "@Calculation";
 
-import type { CalcSetupManageInfo, CalcWeapon, Resonance, Target } from "@/types";
 import type {
-  CalculatorState,
+  AppCharactersByName,
+  CalcSetupManageInfo,
+  CalcWeapon,
+  Resonance,
+  Target,
+} from "@/types";
+import type {
   AddTeammateAction,
-  UpdateSetupsAction,
+  ApplySettingsAction,
+  CalculatorState,
   ChangeArtifactAction,
+  ChangeArtifactBuffCtrlInputAction,
   ChangeModCtrlInputAction,
   ChangeTeammateModCtrlInputAction,
   ImportSetupAction,
+  InitNewSessionPayload,
   RemoveCustomModCtrlAction,
+  ToggleArtifactBuffCtrlAction,
   ToggleModCtrlAction,
   ToggleTeammateModCtrlAction,
   UpdateArtifactAction,
-  UpdateCalculatorAction,
   UpdateCalcSetupAction,
+  UpdateCalculatorAction,
+  UpdateCharacterAction,
   UpdateCustomBuffCtrlsAction,
   UpdateCustomDebuffCtrlsAction,
-  UpdateTeammateWeaponAction,
+  UpdateSetupsAction,
   UpdateTeammateArtifactAction,
-  ApplySettingsAction,
-  InitNewSessionPayload,
-  UpdateCharacterAction,
-  ToggleArtifactBuffCtrlAction,
-  ChangeArtifactBuffCtrlInputAction,
+  UpdateTeammateWeaponAction,
 } from "./calculator-slice.types";
 
-import { RESONANCE_ELEMENT_TYPES } from "@/constants";
-import { $AppData, $AppCharacter, $AppSettings, $AppArtifact } from "@/services";
-import Setup_ from "@/utils/Setup";
+import { $AppArtifact, $AppCharacter, $AppData, $AppSettings } from "@/services";
+import Array_ from "@/utils/Array";
 import Modifier_ from "@/utils/Modifier";
 import Object_ from "@/utils/Object";
-import Array_ from "@/utils/Array";
-import { calculate, countAllElements, getAppCharacterFromState } from "./calculator-slice.utils";
-
-// const defaultChar = {
-//   name: "Albedo",
-//   ...createCharInfo(),
-// };
+import Setup_ from "@/utils/Setup";
+import { calculate } from "./utils/calculate";
+import { updateResonanceOnPartyChange } from "./utils/updateResonanceOnPartyChange";
 
 const initialState: CalculatorState = {
   activeId: 0,
@@ -182,69 +183,45 @@ export const calculatorSlice = createSlice({
     },
     // PARTY
     addTeammate: (state, action: AddTeammateAction) => {
-      const { name, elementType, weaponType, teammateIndex } = action.payload;
-      const appCharacter = getAppCharacterFromState(state);
+      const { name, weaponType, teammateIndex } = action.payload;
       const setup = state.setupsById[state.activeId];
-      const { party, elmtModCtrls } = setup;
+      const { party } = setup;
 
-      const oldElmtCount = countAllElements(appCharacter, party);
-      const oldTeammate = party[teammateIndex];
+      const appCharacters: AppCharactersByName = {
+        [name]: $AppCharacter.get(name),
+        [setup.char.name]: $AppCharacter.get(setup.char.name),
+      };
+      for (const teammate of party) {
+        if (teammate) {
+          appCharacters[teammate.name] = $AppCharacter.get(teammate.name);
+        }
+      }
+
       // assign to party
       party[teammateIndex] = Setup_.createTeammate({ name, weaponType });
 
-      const newElmtCount = countAllElements(appCharacter, party);
-
-      if (oldTeammate) {
-        const { vision: oldElement } = $AppCharacter.get(oldTeammate.name) || {};
-        // lose a resonance
-        if (
-          oldElement &&
-          RESONANCE_ELEMENT_TYPES.includes(oldElement) &&
-          oldElmtCount.get(oldElement) === 2 &&
-          newElmtCount.get(oldElement) === 1
-        ) {
-          elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
-            return resonance.vision !== oldElement;
-          });
-        }
-      }
-      // new teammate form new resonance
-      if (
-        RESONANCE_ELEMENT_TYPES.includes(elementType) &&
-        oldElmtCount.get(elementType) === 1 &&
-        newElmtCount.get(elementType) === 2
-      ) {
-        const newResonance = {
-          vision: elementType,
-          activated: ["pyro", "hydro", "dendro"].includes(elementType),
-        } as Resonance;
-
-        if (elementType === "dendro") {
-          newResonance.inputs = [0, 0];
-        }
-        elmtModCtrls.resonances.push(newResonance);
-      }
-
+      updateResonanceOnPartyChange(setup.elmtModCtrls, setup, appCharacters);
       calculate(state);
     },
     removeTeammate: (state, action: PayloadAction<number>) => {
       const teammateIndex = action.payload;
-      const appCharacter = getAppCharacterFromState(state);
-      const { party, elmtModCtrls } = state.setupsById[state.activeId];
-      const teammate = party[teammateIndex];
+      const setup = state.setupsById[state.activeId];
+      const { char, party, elmtModCtrls } = setup;
 
-      if (teammate) {
-        const { vision } = $AppCharacter.get(teammate.name);
-        party[teammateIndex] = null;
-        const newElmtCount = countAllElements(appCharacter, party);
-
-        if (newElmtCount.get(vision) === 1) {
-          elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
-            return resonance.vision !== vision;
-          });
+      const appCharacters: AppCharactersByName = {
+        [char.name]: $AppCharacter.get(char.name),
+      };
+      for (const teammate of party) {
+        if (teammate) {
+          appCharacters[teammate.name] = $AppCharacter.get(teammate.name);
         }
-        calculate(state);
       }
+
+      // remove from party
+      party[teammateIndex] = null;
+
+      updateResonanceOnPartyChange(elmtModCtrls, setup, appCharacters);
+      calculate(state);
     },
     updateTeammateWeapon: (state, action: UpdateTeammateWeaponAction) => {
       const { teammateIndex, ...newWeaponInfo } = action.payload;
