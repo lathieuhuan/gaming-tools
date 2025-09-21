@@ -1,7 +1,12 @@
 import type { PartiallyRequiredOnly } from "rond";
 
 import type { TrackerControl } from "@/calculation/TrackerControl";
-import type { AttackElement, AttackPattern, AttributeStat, ReactionType } from "@/calculation/types";
+import type {
+  AttackElement,
+  AttackPattern,
+  AttributeStat,
+  ReactionType,
+} from "@/calculation/types";
 import type {
   ArtifactModCtrl,
   CalcArtifacts,
@@ -12,9 +17,9 @@ import type {
   ElementModCtrl,
   Infusion,
   ModifierCtrl,
-  MoonsignControl,
   SetupAppEntities,
   Target,
+  TeamBuffCtrl,
   Teammates,
   Weapon,
 } from "@/types";
@@ -50,7 +55,7 @@ export class InputProcessor {
   protected customDebuffCtrls: CustomDebuffCtrl[];
 
   protected resonances: ElementModCtrl["resonances"];
-  protected moonsignCtrl: MoonsignControl;
+  protected teamBuffCtrls: TeamBuffCtrl[];
   protected reaction?: ElementModCtrl["reaction"];
   protected infuse_reaction?: ElementModCtrl["infuse_reaction"];
   protected superconduct?: ElementModCtrl["superconduct"];
@@ -59,6 +64,7 @@ export class InputProcessor {
   public teamData: CalcTeamData;
   protected appWeapons: SetupAppEntities["appWeapons"];
   protected appArtifacts: SetupAppEntities["appArtifacts"];
+  protected appTeamBuffs: SetupAppEntities["appTeamBuffs"];
 
   constructor(
     setup: PartiallyRequiredOnly<CalcSetup, "char" | "weapon" | "artifacts">,
@@ -74,13 +80,9 @@ export class InputProcessor {
     this.wpBuffCtrls = setup.wpBuffCtrls || [];
     this.artBuffCtrls = setup.artBuffCtrls || [];
     this.artDebuffCtrls = setup.artDebuffCtrls || [];
+    this.teamBuffCtrls = setup.teamBuffCtrls || [];
     this.customBuffCtrls = setup.customBuffCtrls || [];
     this.customDebuffCtrls = setup.customDebuffCtrls || [];
-    this.moonsignCtrl = setup.moonsignCtrl || {
-      active: false,
-      type: "hp",
-      value: 0,
-    };
     this.resonances = setup.elmtModCtrls?.resonances || [];
     this.reaction = setup.elmtModCtrls?.reaction;
     this.infuse_reaction = setup.elmtModCtrls?.infuse_reaction;
@@ -92,6 +94,7 @@ export class InputProcessor {
     this.teamData = new CalcTeamData(this.character, this.teammates, data.appCharacters);
     this.appWeapons = data.appWeapons;
     this.appArtifacts = data.appArtifacts;
+    this.appTeamBuffs = data.appTeamBuffs;
   }
 
   getCalculationStats() {
@@ -104,10 +107,10 @@ export class InputProcessor {
       wpBuffCtrls,
       artBuffCtrls,
       customBuffCtrls,
+      teamBuffCtrls,
       reaction,
       infuse_reaction,
       teamData,
-      moonsignCtrl,
     } = this;
     const { activeAppMember } = teamData;
     const appWeapon = this.appWeapons[weapon.code];
@@ -125,14 +128,7 @@ export class InputProcessor {
     const attkBonusesCtrl = new AttackBonusesControl();
     const bonusesGetter = new AppliedBonusesGetter(teamData, totalAttrCtrl);
 
-    const applySelfBuff: AppliedBonusesGetter["getAppliedBonuses"] = (...args) => {
-      const result = bonusesGetter.getAppliedBonuses(...args);
-      totalAttrCtrl.applyBonuses(result.attrBonuses);
-      attkBonusesCtrl.add(result.attkBonuses);
-      return result;
-    };
-
-    const applyTeammateBuff: AppliedBonusesGetter["getAppliedBonuses"] = (...args) => {
+    const applyBuff: AppliedBonusesGetter["getAppliedBonuses"] = (...args) => {
       const result = bonusesGetter.getAppliedBonuses(...args);
       totalAttrCtrl.applyBonuses(result.attrBonuses);
       attkBonusesCtrl.add(result.attkBonuses);
@@ -144,7 +140,7 @@ export class InputProcessor {
 
       for (const buff of innateBuffs) {
         if (CharacterCalc.isGrantedEffect(buff.grantedAt, character)) {
-          applySelfBuff(
+          applyBuff(
             buff,
             {
               inputs: [],
@@ -159,7 +155,7 @@ export class InputProcessor {
         const buff = Array_.findByIndex(buffs, ctrl.index);
 
         if (ctrl.activated && buff && CharacterCalc.isGrantedEffect(buff.grantedAt, character)) {
-          applySelfBuff(
+          applyBuff(
             buff,
             {
               inputs: ctrl.inputs ?? [],
@@ -174,7 +170,7 @@ export class InputProcessor {
 
     const applyWeaponBonuses = (isFinal: boolean) => {
       if (appWeapon.bonuses) {
-        applySelfBuff(
+        applyBuff(
           { effects: appWeapon.bonuses },
           {
             inputs: [],
@@ -194,7 +190,7 @@ export class InputProcessor {
           const buff = data?.setBonuses?.[i];
 
           if (buff && buff.effects) {
-            applySelfBuff(
+            applyBuff(
               { effects: buff.effects },
               {
                 inputs: [],
@@ -215,7 +211,7 @@ export class InputProcessor {
         const buff = Array_.findByIndex(appWeapon.buffs, ctrl.index);
 
         if (ctrl.activated && buff) {
-          applySelfBuff(
+          applyBuff(
             buff,
             {
               inputs: ctrl.inputs ?? [],
@@ -236,7 +232,7 @@ export class InputProcessor {
           const buff = Array_.findByIndex(buffs, ctrl.index);
 
           if (buff) {
-            applySelfBuff(
+            applyBuff(
               buff,
               {
                 inputs: ctrl.inputs ?? [],
@@ -294,7 +290,12 @@ export class InputProcessor {
         }
         case "rxnBonus": {
           if (subType) {
-            attkBonusesCtrl.add({ value, toType: type as ReactionType, toKey: subType, description: "Custom buff" });
+            attkBonusesCtrl.add({
+              value,
+              toType: type as ReactionType,
+              toKey: subType,
+              description: "Custom buff",
+            });
           }
           break;
         }
@@ -329,33 +330,20 @@ export class InputProcessor {
       }
     }
 
-    // APPLY MOONSIGN BONUS
-    if (moonsignCtrl.active) {
-      let bonusValue = 0;
+    // APPLY TEAM BUFFS
+    for (const ctrl of teamBuffCtrls) {
+      const buff = this.appTeamBuffs.find((buff) => buff.id === ctrl.id);
 
-      switch (moonsignCtrl.type) {
-        case "atk":
-          bonusValue = (moonsignCtrl.value / 100) * 0.9;
-          break;
-        case "hp":
-          bonusValue = (moonsignCtrl.value / 1000) * 0.6;
-          break;
-        case "def":
-          bonusValue = moonsignCtrl.value / 100;
-          break;
-        case "em":
-          bonusValue = (moonsignCtrl.value / 100) * 2.25;
-          break;
+      if (ctrl.activated && buff) {
+        applyBuff(
+          buff,
+          {
+            inputs: ctrl.inputs ?? [],
+            fromSelf: false,
+          },
+          `Team Bonus / ${buff.id}`
+        );
       }
-
-      attkBonusesCtrl.add(
-        LUNAR_TYPES.map((type) => ({
-          toKey: "pct_",
-          toType: type,
-          value: bonusValue,
-          description: "Moonsign Lv.2 Team Bonus",
-        }))
-      );
     }
 
     // APPLY TEAMMATE BUFFS
@@ -367,7 +355,7 @@ export class InputProcessor {
         const buff = Array_.findByIndex(buffs, index);
         if (!activated || !buff) continue;
 
-        applyTeammateBuff(
+        applyBuff(
           buff,
           {
             inputs,
@@ -386,7 +374,7 @@ export class InputProcessor {
           const buff = Array_.findByIndex(buffs, ctrl.index);
 
           if (ctrl.activated && buff) {
-            applyTeammateBuff(
+            applyBuff(
               buff,
               {
                 inputs: ctrl.inputs ?? [],
@@ -407,7 +395,7 @@ export class InputProcessor {
           const buff = Array_.findByIndex(buffs, ctrl.index);
 
           if (ctrl.activated && buff) {
-            applyTeammateBuff(
+            applyBuff(
               buff,
               {
                 inputs: ctrl.inputs ?? [],
@@ -481,7 +469,14 @@ export class InputProcessor {
   }
 
   getResistances(target: Target) {
-    const { teammates, customDebuffCtrls, selfDebuffCtrls, artDebuffCtrls, resonances, superconduct } = this;
+    const {
+      teammates,
+      customDebuffCtrls,
+      selfDebuffCtrls,
+      artDebuffCtrls,
+      resonances,
+      superconduct,
+    } = this;
     const { teamData } = this;
 
     const resistReductCtrl = new ResistReductionControl(teamData, this.tracker);
@@ -495,7 +490,11 @@ export class InputProcessor {
     for (const ctrl of selfDebuffCtrls) {
       const debuff = Array_.findByIndex(teamData.activeAppMember.debuffs, ctrl.index);
 
-      if (ctrl.activated && debuff?.effects && CharacterCalc.isGrantedEffect(debuff.grantedAt, teamData.activeMember)) {
+      if (
+        ctrl.activated &&
+        debuff?.effects &&
+        CharacterCalc.isGrantedEffect(debuff.grantedAt, teamData.activeMember)
+      ) {
         resistReductCtrl.applyDebuff(debuff, ctrl.inputs ?? [], true, `Self / ${debuff.src}`);
       }
     }
@@ -520,7 +519,12 @@ export class InputProcessor {
       const debuff = debuffs[ctrl.index];
 
       if (ctrl.activated && debuff?.effects) {
-        resistReductCtrl.applyDebuff(debuff, ctrl.inputs ?? [], false, `${name} / 4-piece activated`);
+        resistReductCtrl.applyDebuff(
+          debuff,
+          ctrl.inputs ?? [],
+          false,
+          `${name} / 4-piece activated`
+        );
       }
     }
 

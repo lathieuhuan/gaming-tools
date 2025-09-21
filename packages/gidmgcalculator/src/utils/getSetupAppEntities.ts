@@ -7,7 +7,7 @@ import type {
   AppWeaponsByCode,
   SetupAppEntities,
 } from "@/types";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
+import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
 
 export function getSetupAppEntities({
@@ -51,5 +51,6 @@ export function getSetupAppEntities({
     appWeapons,
     appArtifacts,
     appTeammates,
+    appTeamBuffs: $AppData.teamBuffs,
   };
 }

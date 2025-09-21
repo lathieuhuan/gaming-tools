@@ -1,15 +1,11 @@
-import { AppCharactersByName, CalcSetup, ElementModCtrl, Resonance } from "@/types";
+import { AppCharactersByName, CalcSetup, Resonance } from "@/types";
 import TypeCounter from "@/utils/TypeCounter";
 import { ElementType } from "@Calculation";
 
 const RESONANCE_ELEMENT_TYPES: ElementType[] = ["pyro", "cryo", "geo", "hydro", "dendro"];
 
-export function updateResonanceOnPartyChange(
-  ctrl: ElementModCtrl,
-  setup: CalcSetup,
-  data: AppCharactersByName
-) {
-  const { char, party } = setup;
+export function checkToUpdateResonance(setup: CalcSetup, data: AppCharactersByName) {
+  const { char, party, elmtModCtrls } = setup;
   const elmtCount = new TypeCounter<ElementType>();
 
   elmtCount.add(data[char.name].vision);
@@ -20,11 +16,13 @@ export function updateResonanceOnPartyChange(
     }
   });
 
-  ctrl.resonances = ctrl.resonances.filter((resonance) => elmtCount.get(resonance.vision) >= 2);
+  elmtModCtrls.resonances = elmtModCtrls.resonances.filter(
+    (resonance) => elmtCount.get(resonance.vision) >= 2
+  );
 
   for (const elmtType of RESONANCE_ELEMENT_TYPES) {
     if (elmtCount.get(elmtType) >= 2) {
-      const exist = ctrl.resonances.find((resonance) => resonance.vision === elmtType);
+      const exist = elmtModCtrls.resonances.find((resonance) => resonance.vision === elmtType);
 
       if (!exist) {
         const newResonance: Resonance = {
@@ -36,7 +34,7 @@ export function updateResonanceOnPartyChange(
           newResonance.inputs = [0, 0];
         }
 
-        ctrl.resonances.push(newResonance);
+        elmtModCtrls.resonances.push(newResonance);
       }
     }
   }

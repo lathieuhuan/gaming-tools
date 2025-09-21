@@ -179,7 +179,11 @@ export default class Setup_ {
       artDebuffCtrls: restoreModCtrls(Modifier_.createArtifactDebuffCtrls(), data.artDebuffCtrls),
     };
 
-    return output;
+    const teamBuffCtrls = Modifier_.createTeamBuffCtrls(output);
+
+    return Object_.assign(output, {
+      teamBuffCtrls: restoreModCtrls(teamBuffCtrls, data.teamBuffCtrls),
+    });
   }
 
   static createTeammate({ name, weaponType }: CreateTeammateArgs): Teammate {
@@ -216,6 +220,7 @@ export default class Setup_ {
     artBuffCtrls = Modifier_.createMainArtifactBuffCtrls(artifacts),
     artDebuffCtrls = Modifier_.createArtifactDebuffCtrls(),
     party = [null, null, null],
+    teamBuffCtrls = [],
     elmtModCtrls = Modifier_.createElmtModCtrls(),
     customBuffCtrls = [],
     customDebuffCtrls = [],
@@ -236,11 +241,7 @@ export default class Setup_ {
       artBuffCtrls,
       artDebuffCtrls,
       party,
-      // moonsignCtrl: {
-      //   active: false,
-      //   type: "hp",
-      //   value: 0,
-      // },
+      teamBuffCtrls,
       elmtModCtrls,
       customBuffCtrls,
       customDebuffCtrls,
@@ -271,22 +272,25 @@ function destructName(name: string) {
 
 type Restorable = {
   activated: boolean;
-  index: number;
+  index?: number; // Required on standard ModifierCtrl
   inputs?: number[];
-  code?: number;
+  code?: number; // Only on ArtifactBuffCtrl
+  id?: string; // Only on TeamBuffCtrl
 };
-function restoreModCtrls<T extends Restorable>(newCtrls: T[], refCtrls: T[]): T[] {
+function restoreModCtrls<T extends Restorable>(newCtrls: T[], refCtrls: T[] = []): T[] {
   for (const refCtrl of refCtrls) {
-    const i = newCtrls.findIndex(({ code, index }) => {
-      return index === refCtrl.index && code === refCtrl.code;
+    const newCtrl = newCtrls.find((ctrl) => {
+      return ctrl.index === refCtrl.index && ctrl.code === refCtrl.code && ctrl.id === refCtrl.id;
     });
 
-    if (i !== -1) {
-      newCtrls[i].activated = true;
-      if (refCtrl.inputs && newCtrls[i].inputs) {
-        newCtrls[i].inputs = refCtrl.inputs;
+    if (newCtrl) {
+      newCtrl.activated = true;
+
+      if (refCtrl.inputs && newCtrl.inputs) {
+        newCtrl.inputs = refCtrl.inputs;
       }
     }
   }
+
   return newCtrls;
 }

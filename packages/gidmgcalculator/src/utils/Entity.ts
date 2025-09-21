@@ -1,5 +1,6 @@
 import type { AdvancedPick } from "rond";
 import type {
+  AppCharactersByName,
   Artifact,
   CalcArtifact,
   CalcWeapon,
@@ -9,7 +10,7 @@ import type {
   Weapon,
 } from "@/types";
 import { ATTACK_ELEMENTS, ArtifactCalc, ArtifactType, Level, WeaponType } from "@Calculation";
-import { $AppSettings, $AppWeapon } from "@/services";
+import { $AppCharacter, $AppSettings, $AppWeapon } from "@/services";
 
 // ========== TYPES ==========
 
@@ -46,6 +47,28 @@ export default class Entity_ {
 
   static suffixOf(stat: string) {
     return stat.slice(-1) === "_" || ATTACK_ELEMENTS.includes(stat as any) ? "%" : "";
+  }
+
+  static getAppCharacters(
+    main: string,
+    teammates: ({ name: string } | null)[],
+    ...extras: string[]
+  ) {
+    const appCharacters: AppCharactersByName = {
+      [main]: $AppCharacter.get(main),
+    };
+
+    for (const teammate of teammates) {
+      if (teammate) {
+        appCharacters[teammate.name] = $AppCharacter.get(teammate.name);
+      }
+    }
+
+    for (const extra of extras) {
+      appCharacters[extra] = $AppCharacter.get(extra);
+    }
+
+    return appCharacters;
   }
 
   static createCharacter(name: string, info?: Partial<Character>): Character {

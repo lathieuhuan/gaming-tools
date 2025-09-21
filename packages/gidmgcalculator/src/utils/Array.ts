@@ -34,6 +34,33 @@ export default class Array_ {
     return a.length === b.length && a.every((item, i) => item === b[i]);
   }
 
+  static sync<T extends object, K>(target: T[], source: T[], key: keyof T | ((obj: T) => K)) {
+    const keyFn = typeof key === "function" ? key : (obj: T) => obj[key];
+
+    const sourceMap = new Map<K | T[keyof T], T>();
+    const syncedMap = new Map<K | T[keyof T], T>();
+
+    for (const obj of source) {
+      sourceMap.set(keyFn(obj), obj);
+    }
+
+    for (const obj of target) {
+      const key = keyFn(obj);
+
+      if (sourceMap.has(key)) {
+        syncedMap.set(key, obj);
+      }
+    }
+
+    for (const obj of sourceMap.values()) {
+      if (!syncedMap.has(keyFn(obj))) {
+        syncedMap.set(keyFn(obj), obj);
+      }
+    }
+
+    return Array.from(syncedMap.values());
+  }
+
   static findById = find("ID");
   static findByIndex = find("index");
   static findByCode = find("code");

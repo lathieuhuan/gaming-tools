@@ -1,29 +1,40 @@
-import type { EffectInputCondition, InputCheck } from "@/calculation/types";
+import type { EffectInputCondition, InputCheck, MultipleInputCheck } from "@/calculation/types";
 import { isPassedComparison } from "./isPassedComparison";
 
-function isInvalidInput(inputs: number[], inputCheck: InputCheck) {
+function isMultipleChecks(inputCheck: EffectInputCondition): inputCheck is MultipleInputCheck {
+  return typeof inputCheck === "object" && "relation" in inputCheck;
+}
+
+function isInvalidInput(inputs: number[], inputCheck: number | InputCheck) {
   const {
     value,
     inpIndex = 0,
     comparison = "EQUAL",
   } = typeof inputCheck === "number" ? { value: inputCheck } : inputCheck;
   const input = inputs[inpIndex];
+
   return input === undefined || !isPassedComparison(input, value, comparison);
 }
 
 export function isValidInput(condition: EffectInputCondition | undefined, inputs: number[]) {
   if (condition !== undefined) {
-    if (Array.isArray(condition)) {
-      if (condition.some((check) => isInvalidInput(inputs, check))) {
-        return false;
+    if (isMultipleChecks(condition)) {
+      switch (condition.relation) {
+        case "AND":
+          if (condition.checks.some((check) => isInvalidInput(inputs, check))) {
+            return false;
+          }
+          break;
+        case "OR":
+          if (condition.checks.every((check) => isInvalidInput(inputs, check))) {
+            return false;
+          }
+          break;
       }
-    } else {
-      const singleCheckInput: InputCheck = typeof condition === "number" ? { value: condition } : condition;
-
-      if (isInvalidInput(inputs, singleCheckInput)) {
-        return false;
-      }
+    } else if (isInvalidInput(inputs, condition)) {
+      return false;
     }
   }
+
   return true;
 }

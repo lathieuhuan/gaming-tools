@@ -7,7 +7,6 @@ type CheckboxControlProps = CheckboxProps & {
 
 type SelectControlProps = SelectProps & {
   type: "SELECT";
-  subType?: "LEVEL";
 };
 
 type InputControlProps = InputNumberProps & {
@@ -16,5 +15,7 @@ type InputControlProps = InputNumberProps & {
 
 export type SettingControlProps = (CheckboxControlProps | SelectControlProps | InputControlProps) & {
   label: ReactNode;
+  /** Only on SELECT type */
+  subType?: "LEVEL";
   description?: string[];
 };

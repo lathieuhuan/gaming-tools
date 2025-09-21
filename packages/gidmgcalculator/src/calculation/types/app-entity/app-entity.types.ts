@@ -13,23 +13,25 @@ export type ModInputConfig = {
   init?: number;
   max?: number;
   options?: string[];
+  note?: string;
+};
+
+export type EntityModifier = {
+  /** This is id */
+  index: number;
+  inputConfigs?: ModInputConfig[];
+  teamBuffId?: string;
 };
 
 // ========== BUFF ==========
 
-export type EntityBuff<TEntityEffect extends EntityBonusEffect = EntityBonusEffect> = {
-  /** This is id */
-  index: number;
+export type EntityBuff<TEntityEffect extends EntityBonusEffect = EntityBonusEffect> = EntityModifier & {
   affect: ModifierAffectType;
-  inputConfigs?: ModInputConfig[];
   effects?: EntityBonus<TEntityEffect> | EntityBonus<TEntityEffect>[];
 };
 
 // ========== DEBUFF ==========
 
-export type EntityDebuff<TEntityPenalty extends EntityPenaltyEffect = EntityPenaltyEffect> = {
-  /** This is id */
-  index: number;
-  inputConfigs?: ModInputConfig[];
+export type EntityDebuff<TEntityPenalty extends EntityPenaltyEffect = EntityPenaltyEffect> = EntityModifier & {
   effects?: EntityPenalty<TEntityPenalty>;
 };

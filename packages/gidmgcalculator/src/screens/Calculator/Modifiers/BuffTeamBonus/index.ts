@@ -1,0 +1,1 @@
+export { BuffTeamBonus as default } from "./BuffTeamBonus";

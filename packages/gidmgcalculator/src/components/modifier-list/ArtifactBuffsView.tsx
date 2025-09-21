@@ -44,6 +44,7 @@ function renderArtifactModifiers<T extends ModifierCtrl = ModifierCtrl>({
         description={description}
         inputs={ctrl.inputs}
         inputConfigs={buff.inputConfigs}
+        isTeamMod={!!buff.teamBuffId}
         {...getHanlders?.({ ctrl, ctrlIndex: index, ctrls })}
       />
     );

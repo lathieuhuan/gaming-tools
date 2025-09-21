@@ -2,13 +2,7 @@ import { ATTACK_ELEMENTS, AttackElement } from "@Calculation";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { PartiallyOptional } from "rond";
 
-import type {
-  AppCharactersByName,
-  CalcSetupManageInfo,
-  CalcWeapon,
-  Resonance,
-  Target,
-} from "@/types";
+import type { CalcSetupManageInfo, CalcWeapon, Resonance, Target, TeamBuffCtrl } from "@/types";
 import type {
   AddTeammateAction,
   ApplySettingsAction,
@@ -36,11 +30,13 @@ import type {
 
 import { $AppArtifact, $AppCharacter, $AppData, $AppSettings } from "@/services";
 import Array_ from "@/utils/Array";
+import Entity_ from "@/utils/Entity";
 import Modifier_ from "@/utils/Modifier";
 import Object_ from "@/utils/Object";
 import Setup_ from "@/utils/Setup";
 import { calculate } from "./utils/calculate";
-import { updateResonanceOnPartyChange } from "./utils/updateResonanceOnPartyChange";
+import { checkToUpdateResonance } from "./utils/checkToUpdateResonance";
+import { checkToUpdateTeamBuffs } from "./utils/checkToUpdateTeamBuffs";
 
 const initialState: CalculatorState = {
   activeId: 0,
@@ -187,40 +183,27 @@ export const calculatorSlice = createSlice({
       const setup = state.setupsById[state.activeId];
       const { party } = setup;
 
-      const appCharacters: AppCharactersByName = {
-        [name]: $AppCharacter.get(name),
-        [setup.char.name]: $AppCharacter.get(setup.char.name),
-      };
-      for (const teammate of party) {
-        if (teammate) {
-          appCharacters[teammate.name] = $AppCharacter.get(teammate.name);
-        }
-      }
+      const appCharacters = Entity_.getAppCharacters(setup.char.name, party, name);
 
       // assign to party
       party[teammateIndex] = Setup_.createTeammate({ name, weaponType });
 
-      updateResonanceOnPartyChange(setup.elmtModCtrls, setup, appCharacters);
+      checkToUpdateResonance(setup, appCharacters);
+      checkToUpdateTeamBuffs(setup, appCharacters);
       calculate(state);
     },
     removeTeammate: (state, action: PayloadAction<number>) => {
       const teammateIndex = action.payload;
       const setup = state.setupsById[state.activeId];
-      const { char, party, elmtModCtrls } = setup;
+      const { char, party } = setup;
 
-      const appCharacters: AppCharactersByName = {
-        [char.name]: $AppCharacter.get(char.name),
-      };
-      for (const teammate of party) {
-        if (teammate) {
-          appCharacters[teammate.name] = $AppCharacter.get(teammate.name);
-        }
-      }
+      const appCharacters = Entity_.getAppCharacters(char.name, party);
 
       // remove from party
       party[teammateIndex] = null;
 
-      updateResonanceOnPartyChange(elmtModCtrls, setup, appCharacters);
+      checkToUpdateResonance(setup, appCharacters);
+      checkToUpdateTeamBuffs(setup, appCharacters);
       calculate(state);
     },
     updateTeammateWeapon: (state, action: UpdateTeammateWeaponAction) => {
@@ -238,7 +221,8 @@ export const calculatorSlice = createSlice({
     },
     updateTeammateArtifact: (state, action: UpdateTeammateArtifactAction) => {
       const { teammateIndex, ...newArtifactInfo } = action.payload;
-      const teammate = state.setupsById[state.activeId].party[teammateIndex];
+      const setup = state.setupsById[state.activeId];
+      const teammate = setup.party[teammateIndex];
 
       if (teammate) {
         const prevArtifactCode = teammate.artifact.code;
@@ -258,7 +242,7 @@ export const calculatorSlice = createSlice({
 
             // Deactivate artifact that has debuff
             if (debuffArtifactCodes.includes(prevArtifactCode)) {
-              const debuffArtifact = state.setupsById[state.activeId].artDebuffCtrls.find(
+              const debuffArtifact = setup.artDebuffCtrls.find(
                 (ctrl) => ctrl.code === prevArtifactCode
               );
 
@@ -271,6 +255,10 @@ export const calculatorSlice = createSlice({
             teammate.artifact.buffCtrls = Modifier_.createArtifactBuffCtrls(newArtifactInfo, false);
           }
         }
+
+        const appCharacters = Entity_.getAppCharacters(setup.char.name, setup.party);
+
+        checkToUpdateTeamBuffs(setup, appCharacters);
         calculate(state);
       }
     },
@@ -340,11 +328,15 @@ export const calculatorSlice = createSlice({
 
       setup.artBuffCtrls = newArtBuffCtrls;
 
+      const appCharacters = Entity_.getAppCharacters(setup.char.name, setup.party);
+
+      checkToUpdateTeamBuffs(setup, appCharacters);
       calculate(state);
     },
     updateArtifact: (state, action: UpdateArtifactAction) => {
       const { pieceIndex, level, mainStatType, subStat } = action.payload;
-      const piece = state.setupsById[state.activeId].artifacts[pieceIndex];
+      const setup = state.setupsById[state.activeId];
+      const piece = setup.artifacts[pieceIndex];
 
       if (piece) {
         piece.level = level ?? piece.level;
@@ -354,9 +346,26 @@ export const calculatorSlice = createSlice({
           Object.assign(piece.subStats[subStat.index], subStat.newInfo);
         }
       }
+
+      const appCharacters = Entity_.getAppCharacters(setup.char.name, setup.party);
+
+      checkToUpdateTeamBuffs(setup, appCharacters);
       calculate(state);
     },
     // MOD CTRLS
+    updateTeamBuffs: (
+      state,
+      action: PayloadAction<PartiallyOptional<TeamBuffCtrl, "activated">>
+    ) => {
+      const { id, ...newInfo } = action.payload;
+      const ctrls = state.setupsById[state.activeId].teamBuffCtrls;
+      const ctrl = ctrls.find((ctrl) => ctrl.id === id);
+
+      if (ctrl) {
+        Object.assign(ctrl, newInfo);
+        calculate(state);
+      }
+    },
     updateResonance: (state, action: PayloadAction<PartiallyOptional<Resonance, "activated">>) => {
       const { vision, ...newInfo } = action.payload;
       const { resonances } = state.setupsById[state.activeId].elmtModCtrls;
@@ -646,6 +655,7 @@ export const {
   updateArtifact,
   changeArtifact,
   updateResonance,
+  updateTeamBuffs,
   toggleModCtrl,
   changeModCtrlInput,
   toggleArtifactBuffCtrl,

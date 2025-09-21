@@ -1,14 +1,25 @@
 import type {
+  Artifact,
+  ArtifactModCtrl,
+  CalcSetup,
+  ElementModCtrl,
+  ModifierCtrl,
+  TeamBuffCtrl,
+} from "@/types";
+import type {
   AppCharacter,
+  EntityModifier,
   ModInputConfig,
   ModInputType,
   ModifierAffectType,
   WeaponType,
 } from "@Calculation";
-import type { Artifact, ArtifactModCtrl, ElementModCtrl, ModifierCtrl } from "@/types";
+import type { PartiallyRequiredOnly } from "rond";
 
+import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
 import { GeneralCalc } from "@Calculation";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
+import Array_ from "./Array";
+import Entity_ from "./Entity";
 
 const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
   CHECK: 0,
@@ -21,16 +32,13 @@ const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
   ELEMENTAL: 0,
 };
 
-type Modifier = {
-  index: number;
-  inputConfigs?: ModInputConfig[];
-};
-
-type RefModifier = Modifier & {
+type RefModifier = EntityModifier & {
   affect: ModifierAffectType;
 };
 
 export default class Modifier_ {
+  static readonly MS_ASCENDANT_BUFF_ID = "moon_ascendant";
+
   static getDefaultInitialValue(type: ModInputType) {
     return DEFAULT_INITIAL_VALUES[type] ?? 0;
   }
@@ -55,14 +63,69 @@ export default class Modifier_ {
     return initialValues;
   }
 
-  static createModCtrl(mod: Modifier, forSelf: boolean): ModifierCtrl {
+  static createModCtrl(mod: EntityModifier, forSelf: boolean): ModifierCtrl {
     const inputs = this.createModCtrlInputs(mod.inputConfigs, forSelf);
 
     return {
       index: mod.index,
       activated: false,
+      ...(mod.teamBuffId ? { teamBuffId: mod.teamBuffId } : null),
       ...(inputs.length ? { inputs } : null),
     };
+  }
+
+  static createTeamBuffCtrls(
+    setup: PartiallyRequiredOnly<CalcSetup, "char" | "party">,
+    data = Entity_.getAppCharacters(setup.char.name, setup.party)
+  ): TeamBuffCtrl[] {
+    const { artBuffCtrls = [] } = setup;
+
+    // Find available team buff ids
+
+    let moonsignLv = data[setup.char.name].faction?.includes("moonsign") ? 1 : 0;
+    const teamBuffIds = new Set<string>();
+    const teammates = Array_.truthify(setup.party);
+
+    for (const teammate of teammates) {
+      if (data[teammate.name].faction?.includes("moonsign")) {
+        moonsignLv++;
+      }
+    }
+
+    if (moonsignLv >= 2) {
+      teamBuffIds.add(this.MS_ASCENDANT_BUFF_ID);
+
+      for (const ctrl of artBuffCtrls) {
+        if (ctrl.teamBuffId) {
+          teamBuffIds.add(ctrl.teamBuffId);
+        }
+      }
+
+      for (const teammate of teammates) {
+        for (const ctrl of teammate.artifact.buffCtrls) {
+          if (ctrl.teamBuffId) {
+            teamBuffIds.add(ctrl.teamBuffId);
+          }
+        }
+      }
+    }
+
+    // Turn ids into ctrls based on $AppData.teamBuffs
+
+    const teamBuffCtrls: TeamBuffCtrl[] = [];
+
+    for (const buff of $AppData.teamBuffs) {
+      if (teamBuffIds.has(buff.id)) {
+        const { index, ...rest } = Modifier_.createModCtrl({ ...buff, index: 0 }, false);
+
+        teamBuffCtrls.push({
+          id: buff.id,
+          ...rest,
+        });
+      }
+    }
+
+    return teamBuffCtrls;
   }
 
   static createElmtModCtrls(): ElementModCtrl {

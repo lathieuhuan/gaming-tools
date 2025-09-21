@@ -125,7 +125,7 @@ export const ModifierView = ({
       );
       break;
     case "custom":
-      headingNode = <span>{heading}</span>;
+      headingNode = heading;
       break;
   }
 

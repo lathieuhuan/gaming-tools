@@ -270,6 +270,7 @@ export function decodeSetup(code: string): DecodeSuccessResult | DecodeFailResul
         artBuffCtrls: decodeArtifactModCtrls(_artBCsCode),
         artDebuffCtrls: decodeArtifactModCtrls(_artDCsCode),
         party: [decodeTeammate(_tmCode1), decodeTeammate(_tmCode2), decodeTeammate(_tmCode3)],
+        teamBuffCtrls: [],
         elmtModCtrls: {
           resonances,
           superconduct: superconduct === "1",

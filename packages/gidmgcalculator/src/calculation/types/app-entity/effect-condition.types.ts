@@ -3,18 +3,6 @@ import type { CharacterMilestone } from "./app-entity-common.types";
 
 export type ConditionComparison = "EQUAL" | "MIN" | "MAX";
 
-/**
- * For the buff/bonus to be available, the input at the [inpIndex]
- * must meet [value] by [comparison] type.
- */
-export type InputCheck = {
-  value: number;
-  /** The index of input to check. Default to 0. */
-  inpIndex?: number;
-  /** Default to 'EQUAL' */
-  comparison?: ConditionComparison;
-};
-
 export type EffectGrantedAtConfig = {
   value: CharacterMilestone;
   /** When this bonus is from teammate, this is input's index to check granted. */
@@ -61,7 +49,24 @@ export type CharacterPropertyCondition = {
   };
 };
 
-export type EffectInputCondition = number | InputCheck | InputCheck[];
+/**
+ * For the buff/bonus to be available, the input at the [inpIndex]
+ * must meet [value] by [comparison] type.
+ */
+export type InputCheck = {
+  value: number;
+  /** The index of input to check. Default to 0. */
+  inpIndex?: number;
+  /** Default to 'EQUAL' */
+  comparison?: ConditionComparison;
+};
+
+export type MultipleInputCheck = {
+  relation: "AND" | "OR";
+  checks: (number | InputCheck)[];
+};
+
+export type EffectInputCondition = number | InputCheck | MultipleInputCheck;
 
 export type PartyPropertyCondition = {
   value: number;

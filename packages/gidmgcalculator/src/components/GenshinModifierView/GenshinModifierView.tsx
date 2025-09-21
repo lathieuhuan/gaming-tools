@@ -14,9 +14,18 @@ const genOptions = (config: ModInputConfig) => {
 
 export type GenshinModifierViewProps = Omit<ModifierViewProps, "inputConfigs"> & {
   inputConfigs?: ModInputConfig[];
+  isTeamMod?: boolean;
 };
 
-export function GenshinModifierView({ inputConfigs, ...viewProps }: GenshinModifierViewProps) {
+export function GenshinModifierView({
+  inputConfigs,
+  isTeamMod,
+  ...viewProps
+}: GenshinModifierViewProps) {
+  if (isTeamMod) {
+    return <ModifierView {...viewProps} mutable={false} headingVariant="custom" />;
+  }
+
   const viewInputConfigs = inputConfigs?.map<ModifierViewInputConfig>((config) => {
     const label = config.label || "[missing label]";
 
