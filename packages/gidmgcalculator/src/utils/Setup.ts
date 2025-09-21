@@ -105,6 +105,7 @@ export default class Setup_ {
     return {
       char,
       ...data,
+      teamBuffCtrls: data.teamBuffCtrls.filter((ctrl) => ctrl.activated),
       weaponID: options?.weaponID || weapon.ID,
       artifactIDs: options?.artifactIDs || artifacts.map((artifact) => artifact?.ID ?? null),
       selfBuffCtrls: data.selfBuffCtrls.filter((ctrl) => {

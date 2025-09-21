@@ -21,18 +21,18 @@ export function BuffElement() {
 
   // ========== ATTACK REACTION ==========
 
-  const attackReaction = (
-    <AttackReactionCtrl
-      configType="reaction"
-      attackElmt={vision}
-      elmtModCtrls={elmtModCtrls}
-      attkBonuses={attkBonuses}
-      characterLv={character.level}
-    />
-  );
-
-  if (attackReaction) {
-    nodes.push(<div className="space-y-3">{attackReaction}</div>);
+  if (["pyro", "cryo", "hydro", "electro", "dendro"].includes(vision)) {
+    nodes.push(
+      <div className="space-y-3">
+        <AttackReactionCtrl
+          configType="reaction"
+          attackElmt={vision}
+          elmtModCtrls={elmtModCtrls}
+          attkBonuses={attkBonuses}
+          characterLv={character.level}
+        />
+      </div>
+    );
   }
 
   // ========== ANEMO ABSORPTION ==========

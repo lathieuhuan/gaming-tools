@@ -94,18 +94,18 @@ export default class Modifier_ {
 
     if (moonsignLv >= 2) {
       teamBuffIds.add(this.MS_ASCENDANT_BUFF_ID);
+    }
 
-      for (const ctrl of artBuffCtrls) {
+    for (const ctrl of artBuffCtrls) {
+      if (ctrl.teamBuffId) {
+        teamBuffIds.add(ctrl.teamBuffId);
+      }
+    }
+
+    for (const teammate of teammates) {
+      for (const ctrl of teammate.artifact.buffCtrls) {
         if (ctrl.teamBuffId) {
           teamBuffIds.add(ctrl.teamBuffId);
-        }
-      }
-
-      for (const teammate of teammates) {
-        for (const ctrl of teammate.artifact.buffCtrls) {
-          if (ctrl.teamBuffId) {
-            teamBuffIds.add(ctrl.teamBuffId);
-          }
         }
       }
     }

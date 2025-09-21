@@ -3,7 +3,7 @@ import { selectElmtModCtrls, updateResonance } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
 
 import { RESONANCE_INFO, ResonanceBuffItem } from "@/components";
-import { ControlGroup } from "../../_types";
+import { ControlGroup } from "../types";
 
 export function useResonanceCtrlGroup(): ControlGroup {
   const dispatch = useDispatch();

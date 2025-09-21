@@ -1,5 +1,5 @@
 import { ArtifactSetBonus } from "@Calculation";
-import { CollapseList } from "rond";
+import { clsx, CollapseList } from "rond";
 
 import type { UserSetup, UserWeapon } from "@/types";
 import type { CalculationResult } from "../../types";
@@ -69,11 +69,23 @@ export function Modifiers({ setup, result, weapon, setBonuses }: ModifiersProps)
           items={[
             {
               heading: "Resonance & Reactions",
-              body: <ElementDebuffs superconduct={elmtModCtrls.superconduct} resonances={elmtModCtrls.resonances} />,
+              body: (
+                <ElementDebuffs
+                  superconduct={elmtModCtrls.superconduct}
+                  resonances={elmtModCtrls.resonances}
+                />
+              ),
             },
             {
               heading: "Self",
-              body: <SelfDebuffsView mutable={false} modCtrls={selfDebuffCtrls} character={char} teamData={teamData} />,
+              body: (
+                <SelfDebuffsView
+                  mutable={false}
+                  modCtrls={selfDebuffCtrls}
+                  character={char}
+                  teamData={teamData}
+                />
+              ),
             },
             {
               heading: "Party",
@@ -108,7 +120,14 @@ export function Modifiers({ setup, result, weapon, setBonuses }: ModifiersProps)
             },
             {
               heading: "Self",
-              body: <SelfBuffsView mutable={false} modCtrls={selfBuffCtrls} character={char} teamData={teamData} />,
+              body: (
+                <SelfBuffsView
+                  mutable={false}
+                  modCtrls={selfBuffCtrls}
+                  character={char}
+                  teamData={teamData}
+                />
+              ),
             },
             {
               heading: "Party",
@@ -117,7 +136,12 @@ export function Modifiers({ setup, result, weapon, setBonuses }: ModifiersProps)
             {
               heading: "Weapons",
               body: weapon ? (
-                <WeaponBuffsView mutable={false} teammates={party} weapon={weapon} wpBuffCtrls={wpBuffCtrls} />
+                <WeaponBuffsView
+                  mutable={false}
+                  teammates={party}
+                  weapon={weapon}
+                  wpBuffCtrls={wpBuffCtrls}
+                />
               ) : null,
             },
             {
@@ -156,7 +180,12 @@ export function Modifiers({ setup, result, weapon, setBonuses }: ModifiersProps)
 
           {Object.entries(target.resistances).map(([key, value], i) => (
             <p key={i} className="mt-1">
-              <span className={"mr-2 capitalize " + (key === "level" ? "text-primary-1" : `text-${key}`)}>
+              <span
+                className={clsx(
+                  "mr-2 capitalize ",
+                  key === "level" ? "text-primary-1" : `text-${key}`
+                )}
+              >
                 {t(key, { ns: "resistance" })}:
               </span>
               <span className="font-medium">{value}%</span>

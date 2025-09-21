@@ -4,7 +4,8 @@ import { TeamBuffCtrl } from "@/types";
 import Modifier_ from "@/utils/Modifier";
 import { selectTeamBuffCtrls, updateTeamBuffs } from "@Store/calculator-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { ControlGroup } from "../../_types";
+import { ControlGroup } from "../types";
+import { parseDescription } from "@/utils/description-parsers";
 
 function reorderCtrls(teamBuffCtrls: TeamBuffCtrl[] = []) {
   let ascendantCtrl: TeamBuffCtrl | undefined;
@@ -58,7 +59,7 @@ export function useTeamBuffCtrlGroup(): ControlGroup {
           key={ctrl.id}
           mutable
           heading={buff.src}
-          description={buff.description}
+          description={parseDescription(buff.description)}
           inputConfigs={buff.inputConfigs}
           checked={ctrl.activated}
           inputs={ctrl.inputs}
