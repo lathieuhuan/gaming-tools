@@ -11,8 +11,16 @@
     "rond:dev": "cd packages/rond && npm run dev",
     "rond:build": "cd packages/rond && npm run build"
   },
-  "dependencies": {},
   "devDependencies": {
-    "typescript": "5.5.2"
+    "@eslint/js": "9.36.0",
+    "ajv": "8.5.0",
+    "eslint": "9.36.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "eslint-plugin-react-refresh": "0.4.20",
+    "globals": "16.0.0",
+    "typescript": "5.8.3",
+    "typescript-eslint": "8.44.0"
   }
 }
