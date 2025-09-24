@@ -1,8 +1,9 @@
 import path from "path";
 // import { fileURLToPath } from "node:url";
 // import { glob } from "glob";
-import { defineConfig } from "vite";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 // import { libInjectCss } from "vite-plugin-lib-inject-css";
 
@@ -10,10 +11,12 @@ import dts from "vite-plugin-dts";
 export default defineConfig({
   plugins: [
     react(),
+    tailwindcss(),
     // libInjectCss(),
     dts({
       include: ["lib"],
-      tsconfigPath: "./tsconfig.app.json",
+      exclude: ["src"],
+      tsconfigPath: "./tsconfig.lib.json",
     }),
   ],
   resolve: {

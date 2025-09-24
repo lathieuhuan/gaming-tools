@@ -90,7 +90,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
 
           <div className={"grow pt-1 flex flex-col justify-center " + groupStyles}>
             <p className="font-semibold">Base ATK</p>
-            <p className={`text-rarity-${rarity} text-2.5xl font-bold`}>
+            <p className={`text-rarity-${rarity} text-[1.75rem] leading-[1.2] font-bold`}>
               {WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale)}
             </p>
           </div>

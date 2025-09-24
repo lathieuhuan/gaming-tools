@@ -1,23 +1,99 @@
-@import 'tailwindcss/base';
-@import 'rond/dist/style.css';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@layer base, rond, components, utilities;
+
+@import "rond/dist/style.css" layer(rond);
+@import "tailwindcss";
+
+@source inline('text-rarity-{1,2,3,4,5}');
+
+@source inline('bg-rarity-{1,2,3,4,5}');
+
+@source inline('text-{pyro,hydro,electro,dendro,geo,cryo,anemo}');
+
+@source inline('bg-{pyro,hydro,electro,dendro,geo,cryo,anemo}');
+
+@utility flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@theme {
+  /* Screens */
+  --breakpoint-xs: 320px;
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 640px;
+  --breakpoint-xm: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+
+  /* Colors */
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-light-default: #ebebeb;
+  --color-light-disabled: #cccccc;
+  --color-hint-color: #b8b8b8;
+  --color-surface-1: #050926;
+  --color-surface-2: #151a40;
+  --color-surface-3: #2c315c;
+  --color-surface-border: #535582;
+  --color-primary-1: #edc73d;
+  --color-primary-2: #f5dc6e;
+  --color-secondary-1: #09bcba;
+  --color-danger-1: #cc0300;
+  --color-danger-2: #ff7370;
+  --color-danger-3: #ff8785;
+  --color-danger-max: #f43f5e;
+  --color-bonus-color: #62f98e;
+  --color-active-color: #89fba9;
+  --color-link-color: #5ca8ff;
+  --color-heading-color: #fc972a;
+  --color-pyro: #ff504a;
+  --color-hydro: #2eaaff;
+  --color-dendro: #49e03e;
+  --color-electro: #cd77ff;
+  --color-anemo: #3effa2;
+  --color-cryo: #75faff;
+  --color-geo: #ffc558;
+  --color-rarity-1: #808080;
+  --color-rarity-2: #49e03e;
+  --color-rarity-3: #8bb6ff;
+  --color-rarity-4: #ff50ff;
+  --color-rarity-5: #ffd700;
+
+  /* Border Radius */
+  --radius-circle: 50%;
+  --radius-2\.5xl: 2rem;
+
+  /* Box Shadow */
+  --shadow-common: 0 3px 3px -2px rgb(0 0 0 / 0.2), 0 3px 4px 0 rgb(0 0 0 / 0.14),
+    0 1px 8px 0 rgb(0 0 0 / 0.12);
+  --shadow-white-glow: 0 0 3px #b8b8b8;
+
+  /* Font Size */
+  --text-1\.5xl: 1.375rem;
+}
 
 @layer base {
   option {
     color: black;
   }
+
   button,
   input,
   select {
     outline: none;
   }
+
   button:disabled {
     cursor: default;
   }
+
   select {
     background: transparent;
   }
+
   a {
     @apply text-link-color;
   }
@@ -27,16 +103,8 @@
   .styled-select {
     @apply px-2 py-1 bg-light-default text-black rounded font-bold;
   }
+
   .load-option {
     @apply pt-2 pb-3 px-4 hover:bg-surface-1;
-  }
-}
-
-@layer utilities {
-  .flex-center {
-    @apply flex justify-center items-center;
-  }
-  .full-stretch {
-    @apply top-0 bottom-0 right-0 left-0;
   }
 }

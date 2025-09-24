@@ -30,7 +30,7 @@ export function Main() {
       <CalculatorLarge key={travelerKey} />
 
       {!isAtRoot && (
-        <div className="absolute full-stretch z-30">
+        <div className="absolute inset-0 z-30">
           <Outlet />
         </div>
       )}
