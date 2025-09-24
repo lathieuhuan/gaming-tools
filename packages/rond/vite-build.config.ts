@@ -11,7 +11,10 @@ export default defineConfig({
   plugins: [
     react(),
     // libInjectCss(),
-    dts({ include: ["lib"] }),
+    dts({
+      include: ["lib"],
+      tsconfigPath: "./tsconfig.app.json",
+    }),
   ],
   resolve: {
     alias: {
@@ -22,6 +25,7 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, "lib/main.ts"),
       formats: ["es"],
+      cssFileName: "style",
     },
     copyPublicDir: false,
     rollupOptions: {

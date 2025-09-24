@@ -20,7 +20,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     active: false,
-    activeWidth: 300,
+    width: 300,
     destroyOnClose: false,
     children: <MountAnnouncer style={{ height: 200, background: "red" }} />,
   },
