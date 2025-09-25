@@ -1,28 +1,33 @@
-import clsx, { type ClassValue } from "clsx";
+import { cn } from "@lib/utils";
+import type { ClassValue } from "clsx";
 import type { ButtonHTMLAttributes } from "react";
-import "./Button.styles.scss";
+import {
+  ButtonShape,
+  ButtonSize,
+  ButtonVariant,
+  CLOSE_ICON_CN_BY_SIZE,
+  CN_BY_BONE_VARIANT,
+  CN_BY_ICON_SIZE,
+  CN_BY_SHAPE,
+  CN_BY_SIZE,
+  CN_BY_VARIANT,
+} from "./config";
 
-type ButtonVariant = "default" | "primary" | "danger" | "active" | "custom";
-
-type ButtonShape = "rounded" | "square" | "custom";
-
-type ButtonSize = "small" | "medium" | "large" | "custom";
-
-export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className"> {
+export type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className"> & {
   className?: ClassValue;
-  /** Default to 'default' */
-  variant?: ButtonVariant;
-  /** Default to 'rounded' */
-  shape?: ButtonShape;
-  /** Default to 'medium' */
-  size?: ButtonSize;
+  /** Default 'default' */
+  variant?: ButtonVariant | "custom";
+  /** Default 'rounded' */
+  shape?: ButtonShape | "custom";
+  /** Default 'medium' */
+  size?: ButtonSize | "custom";
   boneOnly?: boolean;
   icon?: React.ReactNode;
-  /** Default to 'start' */
+  /** Default 'start' */
   iconPosition?: "start" | "end";
-  /** Default to true */
+  /** Default true */
   withShadow?: boolean;
-}
+};
 
 export function Button({
   variant = "default",
@@ -36,44 +41,52 @@ export function Button({
   className,
   ...rest
 }: ButtonProps) {
-  const classes = [
-    `ron-flex-center ron-button`,
-    variant !== "custom" && (boneOnly ? `ron-bone-button--${variant}` : `ron-button--${variant}`),
-    shape !== "custom" && `ron-button--${shape}`,
-    withShadow && "ron-common-shadow",
-    rest.disabled ? "ron-disabled" : "ron-glow-on-hover",
-    className,
-  ];
-
   return (
     <button
       type="button"
-      className={clsx(
-        classes,
-        iconPosition === "end" && "ron-button__icon--last",
-        size !== "custom" ? (children ? `ron-button--${size}` : `ron-icon-button--${size}`) : ""
+      className={cn(
+        "flex-center font-bold text-sm whitespace-nowrap not-disabled:cursor-pointer disabled:is-disabled ron-glow-on-hover",
+        variant !== "custom" && (boneOnly ? CN_BY_BONE_VARIANT[variant] : CN_BY_VARIANT[variant]),
+        shape !== "custom" && CN_BY_SHAPE[shape],
+        withShadow && "shadow-common",
+        iconPosition === "end" && "flex-row-reverse",
+        size !== "custom" && (children ? CN_BY_SIZE[size] : CN_BY_ICON_SIZE[size]),
+        className
       )}
       {...rest}
     >
-      {icon ? <span className="ron-button__icon">{icon}</span> : null}
+      {icon ? <span className="flex shrink-0">{icon}</span> : null}
       {children ? <span>{children}</span> : null}
     </button>
   );
 }
 
-interface CloseButtonProps extends Pick<ButtonProps, "className" | "size" | "boneOnly" | "onClick" | "disabled"> {}
+export type CloseButtonProps = Pick<
+  ButtonProps,
+  "className" | "boneOnly" | "onClick" | "disabled"
+> &
+  ButtonHTMLAttributes<HTMLButtonElement> & {
+    size?: ButtonSize;
+  };
+
 export function CloseButton({ boneOnly, className, size = "medium", ...rest }: CloseButtonProps) {
   return (
     <Button
       variant={boneOnly ? "default" : "danger"}
       icon={
-        <svg className={`ron-close-button--${size}`} viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor">
+        <svg
+          className={CLOSE_ICON_CN_BY_SIZE[size]}
+          viewBox="0 0 24 24"
+          width="1em"
+          height="1em"
+          fill="currentColor"
+        >
           <path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path>
         </svg>
       }
       size={size}
       boneOnly={boneOnly}
-      className={["ron-close-button--default", className]}
+      className={["text-white", className]}
       {...rest}
     />
   );

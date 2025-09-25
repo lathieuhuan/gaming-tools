@@ -25,7 +25,7 @@ export const Alert = (props: AlertProps) => {
       case "success":
         return <CheckCircleSvg className="text-[#2fa80a]" />;
       case "error":
-        return <ExclamationCircleSvg className="text-danger-background" />;
+        return <ExclamationCircleSvg className="text-danger-2" />;
       case "warn":
         return <ExclamationTriangleSvg className="text-orange-500" />;
     }
@@ -33,15 +33,15 @@ export const Alert = (props: AlertProps) => {
 
   return (
     <div
-      className={cn("py-1 px-2 bg-light-surface-3 rounded-lg flex items-start gap-2", props.className)}
+      className={cn("py-1 px-2 bg-light-2 rounded-lg flex items-start gap-2", props.className)}
       style={props.style}
     >
-      <span className="mt-1.5 flex text-xl flex-shrink-0">{renderIcon()}</span>
-      <p className="py-1 flex-grow text-base font-semibold text-on-light">
+      <span className="mt-1.5 flex text-xl shrink-0">{renderIcon()}</span>
+      <p className="py-1 grow-1 text-base font-semibold text-black">
         {props.content}
       </p>
       <Button
-        className="flex-shrink-0 opacity-50 hover:opacity-85 text-on-light"
+        className="shrink-0 opacity-50 hover:opacity-85 text-black"
         variant="custom"
         withShadow={false}
         icon={<TimesSvg />}

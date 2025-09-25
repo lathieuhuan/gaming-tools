@@ -1,30 +1,46 @@
-import clsx, { type ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
 import type { RefObject } from "react";
 import { Button, type ButtonProps } from "./Button";
-import "./ButtonGroup.styles.scss";
+import { cn } from "@lib/utils";
 
 type Justify = "start" | "center" | "end";
 
 export type ButtonGroupItem = ButtonProps;
 
-export interface ButtonGroupProps {
+export type ButtonGroupProps = {
   groupRef?: RefObject<HTMLDivElement>;
   className?: ClassValue;
   /** Default to 'center' */
   justify?: Justify;
   buttons: ButtonGroupItem[];
-}
+};
+
 function ButtonGroup({ groupRef, className, justify = "center", buttons }: ButtonGroupProps) {
   return (
-    <div ref={groupRef} className={clsx(`ron-button-group ron-button-group--${justify}`, className)}>
+    <div
+      ref={groupRef}
+      className={cn(
+        `flex gap-3`,
+        justify === "center" && "justify-center",
+        justify === "end" && "justify-end",
+        className
+      )}
+    >
       {buttons.map(({ className, ...others }, i) => {
-        return <Button key={i} className={clsx("ron-button--focus-shadow", className)} {...others} />;
+        return (
+          <Button
+            key={i}
+            // TODO: check if this shadow is overwritten shadow-common in consuming app
+            className={cn("focus:shadow-[0_0_3px_2px_black,_0_0_2px_3px_white]", className)}
+            {...others}
+          />
+        );
       })}
     </div>
   );
 }
 
-export interface ConfirmButtonGroupProps extends Pick<ButtonGroupProps, "className" | "justify"> {
+export type ConfirmButtonGroupProps = Pick<ButtonGroupProps, "className" | "justify"> & {
   danger?: boolean;
   disabledConfirm?: boolean;
   focusConfirm?: boolean;
@@ -36,7 +52,8 @@ export interface ConfirmButtonGroupProps extends Pick<ButtonGroupProps, "classNa
   confirmButtonProps?: Omit<ButtonGroupItem, "children" | "onClick">;
   onCancel?: () => void;
   onConfirm?: () => void;
-}
+};
+
 ButtonGroup.Confirm = ({
   danger,
   disabledConfirm,

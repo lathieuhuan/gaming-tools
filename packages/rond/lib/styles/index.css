@@ -5,19 +5,20 @@
 @source not '../../src/**/*.{ts,tsx,js,jsx}';
 
 :root {
-  --danger-background: #c20300;
-  --active-background: #89fba9;
+  --black: #000000;
+  --white: #ebebeb;
+  --dark-1: #050926;
+  --dark-2: #151a40;
+  --dark-3: #2c315c;
+  --light-2: #ebebeb;
+  --light-3: #e0e0e0;
+  --danger-2: #c20300;
+  --primary-1: #edc73d;
+  --active-bg: #89fba9;
+
   --active-background-disabled: #a6dfb6;
   --light-surface-2: #f5f5f5;
-  --light-surface-3: #ebebeb;
-  --light-surface-4: #e0e0e0;
   --light-disabled: #cccccc;
-  --dark-surface-1: #050926;
-  --dark-surface-2: #151a40;
-  --dark-surface-3: #2c315c;
-  --on-dark: #ebebeb;
-  --on-light: #000000;
-  --primary-1: #edc73d;
   --primary-2: #f5dc6e;
   --secondary-1: #09bcba;
   --table-row-hover: #7a0200;
@@ -78,6 +79,7 @@
   overflow: auto;
 }
 
+/* TODO: migrate this */
 @media (min-width: 480px) {
   .ron-glow-on-hover:not(:disabled) {
     opacity: 0.88;
