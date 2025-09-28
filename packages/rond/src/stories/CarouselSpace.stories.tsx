@@ -14,7 +14,7 @@ const meta = {
   tags: ["autodocs"],
   render: (args) => {
     return (
-      <div style={{ width: 200, height: 300 }}>
+      <div className="w-50 h-75">
         <CarouselSpace {...args} />
       </div>
     );
