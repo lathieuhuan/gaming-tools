@@ -1,27 +1,39 @@
+import { cn } from "@lib/utils";
 import { CloseButton } from "../Button";
 import { Overlay, type OverlayProps } from "../Overlay";
-import "./BottomSheet.styles.scss";
 
 export interface BottomSheetProps
-  extends Pick<OverlayProps, "active" | "transitionDuration" | "closable" | "closeOnMaskClick" | "onClose"> {
+  extends Pick<
+    OverlayProps,
+    "active" | "transitionDuration" | "closable" | "closeOnMaskClick" | "onClose"
+  > {
   title: React.ReactNode;
   bodyCls?: string;
   height?: "auto" | "30%" | "50%" | "70%" | "90%";
   children?: React.ReactNode;
 }
-export function BottomSheet({ title, bodyCls, height, children, ...overlayProps }: BottomSheetProps) {
+export function BottomSheet({
+  title,
+  bodyCls,
+  height,
+  children,
+  ...overlayProps
+}: BottomSheetProps) {
   return (
     <Overlay {...overlayProps}>
       {(direction, transitionStyle) => (
         <div
-          className={`ron-bottomsheet ron-bottomsheet-${direction}`}
+          className={cn(
+            "absolute bottom-0 left-0 w-full rounded-t-xl bg-dark-2 text-white shadow-popup flex flex-col overflow-hidden",
+            direction === "out" ? "translate-y-0" : "translate-y-full"
+          )}
           style={{ height, transitionProperty: "transform", ...transitionStyle }}
         >
-          <div className="ron-bottomsheet__heading">
-            <div className="ron-bottomsheet__title">{title}</div>
-            <CloseButton boneOnly className="ron-bottomsheet__close" onClick={overlayProps.onClose} />
+          <div className="p-1 bg-dark-1 text-heading min-h-10 flex justify-between items-center">
+            <div className="px-3 text-lg leading-5.5 font-semibold">{title}</div>
+            <CloseButton boneOnly className="text-light-disabled" onClick={overlayProps.onClose} />
           </div>
-          <div className={`ron-bottomsheet__body ${bodyCls ?? ""}`}>{children}</div>
+          <div className={cn("flex-grow overflow-auto", bodyCls)}>{children}</div>
         </div>
       )}
     </Overlay>

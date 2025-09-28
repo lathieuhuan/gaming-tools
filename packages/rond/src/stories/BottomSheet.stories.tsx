@@ -23,15 +23,7 @@ export const Default: Story = {
     active: false,
     title: "Title",
     height: "auto",
-    children: (
-      <MountAnnouncer
-        style={{
-          background: "var(--ron-color-light-surface-3)",
-          color: "var(--ron-color-on-light)",
-          height: 60,
-        }}
-      />
-    ),
+    children: <MountAnnouncer className="bg-light-3 text-black h-16" />,
   },
 };
 
@@ -44,14 +36,6 @@ export const Overflow: Story = {
     active: false,
     title: "Title",
     height: "50%",
-    children: (
-      <MountAnnouncer
-        style={{
-          background: "var(--ron-color-light-surface-3)",
-          color: "var(--ron-color-on-light)",
-          height: 700,
-        }}
-      />
-    ),
+    children: <MountAnnouncer className="bg-light-3 text-black h-200" />,
   },
 };
