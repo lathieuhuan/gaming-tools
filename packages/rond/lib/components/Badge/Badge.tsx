@@ -1,17 +1,24 @@
-import clsx, { type ClassValue } from "clsx";
-import "./Badge.styles.scss";
+import { cn } from "@lib/utils";
+import type { ClassValue } from "clsx";
 
-export interface BadgeProps {
+export type BadgeProps = {
   active?: boolean;
   className?: ClassValue;
   style?: React.CSSProperties;
   children: React.ReactNode;
-}
+};
+
 export function Badge({ active, className, children, ...rest }: BadgeProps) {
   if (!active) return null;
 
   return (
-    <div className={clsx("ron-badge", className)} {...rest}>
+    <div
+      className={cn(
+        "rounded-sm px-1.5 py-px text-xs font-semibold cursor-default text-white bg-danger-2",
+        className
+      )}
+      {...rest}
+    >
       <span>{children}</span>
     </div>
   );
