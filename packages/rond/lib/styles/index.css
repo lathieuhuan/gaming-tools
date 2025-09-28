@@ -1,4 +1,8 @@
 @import "tailwindcss";
+@import "./theme.css";
+
+@source '../../lib/**/*.{ts,tsx,js,jsx}';
+@source not '../../src/**/*.{ts,tsx,js,jsx}';
 
 :root {
   --danger-background: #c20300;
@@ -36,33 +40,6 @@
   --ron-color-secondary-1: #09bcba;
   --ron-color-table-row-hover: #7a0200;
   --ron-color-heading: #fa8a12;
-}
-
-@theme inline {
-  --color-danger-background: var(--danger-background);
-  --color-active-background: var(--active-background);
-  --color-active-background-disabled: var(--active-background-disabled);
-  --color-light-surface-2: var(--light-surface-2);
-  --color-light-surface-3: var(--light-surface-3);
-  --color-light-surface-4: var(--light-surface-4);
-  --color-light-disabled: var(--light-disabled);
-  --color-dark-surface-1: var(--dark-surface-1);
-  --color-dark-surface-2: var(--dark-surface-2);
-  --color-dark-surface-3: var(--dark-surface-3);
-  --color-on-dark: var(--on-dark);
-  --color-on-light: var(--on-light);
-  --color-primary-1: var(--primary-1);
-  --color-primary-2: var(--primary-2);
-  --color-secondary-1: var(--secondary-1);
-  --color-table-row-hover: var(--table-row-hover);
-  --color-heading: var(--heading);
-}
-
-input {
-  outline: none;
-}
-button {
-  background-color: transparent;
 }
 
 .ron-flex-center {

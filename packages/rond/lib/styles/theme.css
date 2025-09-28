@@ -1,0 +1,37 @@
+@theme inline {
+  --color-black: var(--black);
+  --color-white: var(--white);
+  --color-dark-1: var(--dark-1);
+  --color-dark-2: var(--dark-2);
+  --color-dark-3: var(--dark-3);
+  --color-dark-line: var(--dark-line);
+  --color-light-1: var(--light-1);
+  --color-light-2: var(--light-2);
+  --color-light-3: var(--light-3);
+  --color-light-disabled: var(--light-disabled);
+  --color-danger-2: var(--danger-2);
+  --color-primary-1: var(--primary-1);
+  --color-primary-2: var(--primary-2);
+  --color-secondary-1: var(--secondary-1);
+  --color-active-bg: var(--active-bg);
+  --color-active-bg-disabled: var(--active-bg-disabled);
+
+  --color-table-row-hover: var(--table-row-hover);
+  --color-heading: var(--heading);
+
+  --text-xlp: 1.375rem;
+
+  --shadow-common: rgb(0 0 0 / 20%) 0px 3px 3px -2px, rgb(0 0 0 / 14%) 0px 3px 4px 0px,
+    rgb(0 0 0 / 12%) 0px 1px 8px 0px;
+  --shadow-popup: 0 0 1.5px var(--light-4);
+}
+
+@utility flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@utility is-disabled {
+  opacity: 0.55;
+}

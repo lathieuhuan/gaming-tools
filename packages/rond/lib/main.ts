@@ -1,4 +1,4 @@
-import "./index.css";
+import "./styles/index.css";
 import clsx, { type ClassValue } from "clsx";
 
 export * from "./components";

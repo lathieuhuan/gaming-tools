@@ -2,7 +2,7 @@ import { Checkbox } from "@lib/components";
 
 function App() {
   return (
-    <div className="p-4 w-8 min-h-screen">
+    <div className="p-4 min-h-screen bg-dark-2 text-white relative">
       <Checkbox>
         Lorem ipsum dolor.
       </Checkbox>
