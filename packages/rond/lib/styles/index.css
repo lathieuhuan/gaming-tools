@@ -10,17 +10,18 @@
   --dark-1: #050926;
   --dark-2: #151a40;
   --dark-3: #2c315c;
+  --dark-line: #535582;
+  --light-1: #f5f5f5;
   --light-2: #ebebeb;
   --light-3: #e0e0e0;
+  --light-disabled: #cccccc;
   --danger-2: #c20300;
   --primary-1: #edc73d;
-  --active-bg: #89fba9;
-
-  --active-background-disabled: #a6dfb6;
-  --light-surface-2: #f5f5f5;
-  --light-disabled: #cccccc;
   --primary-2: #f5dc6e;
   --secondary-1: #09bcba;
+  --active-bg: #89fba9;
+  --active-bg-disabled: #a6dfb6;
+
   --table-row-hover: #7a0200;
   --heading: #fa8a12;
 
