@@ -1,5 +1,5 @@
-body {
-  background-color: var(--ron-color-dark-surface-2);
-  color: var(--ron-color-on-dark);
-  position: relative;
-}
+@import "tailwindcss";
+@import "../lib/styles/theme.css";
+
+@source not '../../lib/**/*.{ts,tsx,js,jsx}';
+@source '../../src/**/*.{ts,tsx,js,jsx}';
