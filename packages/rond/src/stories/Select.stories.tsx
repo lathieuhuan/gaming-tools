@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { FilterSvg, Select, SelectProps, VersatileSelect } from "@lib/components";
 
 const meta = {

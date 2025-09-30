@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { AlertProps, Button } from "@lib/components";
 import { notification, type NotificatioProps } from "@lib/utils";
 import { useRef } from "react";
