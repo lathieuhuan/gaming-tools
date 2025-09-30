@@ -1,4 +1,4 @@
-import type { Preview } from "@storybook/react";
+import type { Preview } from "@storybook/react-vite";
 import "@lib/styles/index.css";
 import "../src/index.css";
 
@@ -12,27 +12,17 @@ const preview: Preview = {
       },
     },
     backgrounds: {
-      default: "dark-1",
-      values: [
-        {
-          name: "dark-1",
-          value: "#050926",
-        },
-        {
-          name: "dark-2",
-          value: "#151a40",
-        },
-        {
-          name: "dark-3",
-          value: "#2c315c",
-        },
-        {
-          name: "light",
-          value: "#ffffff",
-        },
-      ],
+      options: {
+        dark1: { name: 'Dark 1', value: 'var(--dark-1)' },
+        dark2: { name: 'Dark 2', value: 'var(--dark-2)' },
+        dark3: { name: 'Dark 3', value: 'var(--dark-3)' },
+        light: { name: 'Light', value: 'var(--light-1)' },
+      },
     },
   },
+  initialGlobals: {
+    backgrounds: { value: 'dark1' },
+  }
 };
 
 export default preview;
