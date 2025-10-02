@@ -1,10 +1,8 @@
 import { LoadingSpin } from "../LoadingSpin";
 
-import "./styles.scss";
-
 export function LoadingPlate() {
   return (
-    <div className="ron-flex-center ron-loading-plate">
+    <div className="flex-center size-32 bg-black/40 rounded-lg">
       <LoadingSpin size="large" />
     </div>
   );

@@ -1,12 +1,21 @@
 import clsx from "clsx";
 import "./ItemCase.styles.scss";
 
-export interface ItemCaseProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "children"> {
+export type ItemCaseProps = Omit<React.HTMLAttributes<HTMLDivElement>, "children"> & {
   children: (className: string, imgCls: string) => React.ReactNode;
   chosen?: boolean;
   muted?: boolean;
-}
-export function ItemCase({ className, chosen, muted, children, onMouseDown, onMouseUp, ...rest }: ItemCaseProps) {
+};
+
+export function ItemCase({
+  className,
+  chosen,
+  muted,
+  children,
+  onMouseDown,
+  onMouseUp,
+  ...rest
+}: ItemCaseProps) {
   return (
     <div
       className={clsx(!muted && ["ron-item-case", chosen && "ron-item-case--chosen"], className)}
