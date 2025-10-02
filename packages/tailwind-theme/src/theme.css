@@ -1,0 +1,46 @@
+@theme {
+  --color-black: #000000;
+  --color-white: #ebebeb;
+  --color-dark-1: #050926;
+  --color-dark-2: #151a40;
+  --color-dark-3: #2c315c;
+  --color-dark-line: #535582;
+  --color-light-1: #f5f5f5;
+  --color-light-2: #ebebeb;
+  --color-light-3: #e0e0e0;
+  --color-light-4: #b8b8b8;
+  --color-light-disabled: #cccccc;
+  --color-danger-2: #c20300;
+  --color-primary-1: #edc73d;
+  --color-primary-2: #f5dc6e;
+  --color-secondary-1: #09bcba;
+  --color-active-bg: #89fba9;
+  --color-active-bg-disabled: #a6dfb6;
+
+  --color-table-row-hover: #7a0200;
+  --color-heading: #fa8a12;
+
+  --text-xlp: 1.375rem;
+
+  --shadow-common: rgb(0 0 0 / 20%) 0px 3px 3px -2px, rgb(0 0 0 / 14%) 0px 3px 4px 0px,
+    rgb(0 0 0 / 12%) 0px 1px 8px 0px;
+  --shadow-popup: 0 0 1.5px #b8b8b8;
+
+  --breakpoint-xs: 320px;
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 640px;
+  --breakpoint-xm: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+@utility flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@utility is-disabled {
+  opacity: 0.55;
+}
