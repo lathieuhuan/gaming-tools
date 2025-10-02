@@ -1,7 +1,7 @@
 import clsx, { type ClassValue } from "clsx";
 
-interface DefaultImageFallbackProps {
-  cls?: ClassValue;
+type DefaultImageFallbackProps = {
+  className?: ClassValue;
   style?: React.CSSProperties;
   /** Default to '70%' */
   iconWidth?: string | number;
@@ -10,7 +10,7 @@ interface DefaultImageFallbackProps {
 
 export function DefaultImageFallback(props: DefaultImageFallbackProps) {
   return (
-    <div className={clsx("ron-image__fallback ron-flex-center", props.cls)} style={props?.style}>
+    <div className={clsx("h-full flex-center", props.className)} style={props?.style}>
       <svg
         stroke="currentColor"
         fill="currentColor"
