@@ -1,36 +1,53 @@
-import clsx, { type ClassValue } from "clsx";
-import "./StatsTable.styles.scss";
+import type { ClassValue } from "clsx";
+import { cn } from "@lib/utils";
 
-export interface StatsTableProps extends React.AriaAttributes {
+export type StatsTableProps = React.AriaAttributes & {
   className?: ClassValue;
   style?: React.CSSProperties;
   children: React.ReactNode;
-}
+};
+
 function StatsTable({ className, style, children, ...rest }: StatsTableProps) {
   return (
-    <div className={clsx("ron-stats-table", className)} style={style} role="table" {...rest}>
+    <div
+      className={cn("w-full text-white cursor-default", className)}
+      style={style}
+      role="table"
+      {...rest}
+    >
       {children}
     </div>
   );
 }
 
-export interface StatsTableRowProps extends React.AriaAttributes {
+export type StatsTableRowProps = React.AriaAttributes & {
   className?: ClassValue;
   children?: React.ReactNode;
   role?: React.AriaRole;
   onClick?: () => void;
-}
+};
+
 StatsTable.Row = ({ className, children, onClick, ...rest }: StatsTableRowProps) => {
   return (
-    <div className={clsx("ron-stats-table__row", className)} onClick={onClick} role="row" {...rest}>
+    <div
+      className={cn(
+        "px-2 py-1 flex justify-between hover:bg-table-row-hover [&>*:first-child]:font-medium odd:bg-dark-2 even:bg-dark-1",
+        className
+      )}
+      onClick={onClick}
+      role="row"
+      {...rest}
+    >
       {children}
     </div>
   );
 };
 
-export interface StatsTableCellProps extends React.HTMLAttributes<HTMLDivElement>, React.AriaAttributes {
-  role?: React.AriaRole;
-}
+export type StatsTableCellProps = React.HTMLAttributes<HTMLDivElement> &
+  React.AriaAttributes & {
+    role?: React.AriaRole;
+  };
+
 StatsTable.Cell = (props: StatsTableCellProps) => {
   return <div role="cell" {...props} />;
 };
