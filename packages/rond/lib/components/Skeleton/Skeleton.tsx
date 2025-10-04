@@ -1,12 +1,10 @@
-import clsx, { type ClassValue } from "clsx";
-import "./Skeleton.styles.scss";
+import type { ClassValue } from "clsx";
+import { cn } from "@lib/utils";
 
 interface SkeletonProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "className"> {
   className?: ClassValue;
 }
 
-const Skeleton = ({ className, ...rest }: SkeletonProps) => (
-  <div className={clsx("ron-skeleton", className)} {...rest} />
+export const Skeleton = ({ className, ...rest }: SkeletonProps) => (
+  <div className={cn("animate-pulse bg-light-2", className)} {...rest} />
 );
-
-export { Skeleton };
