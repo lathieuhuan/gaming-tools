@@ -1,6 +1,6 @@
-import { type ClassValue } from "clsx";
-import { type SelectProps as RcProps } from "rc-select";
-import { type ButtonProps } from "../Button";
+import type { ClassValue } from "clsx";
+import type { SelectProps as RcProps } from "rc-select";
+import type { ButtonProps } from "../../Button";
 
 export type SelectValueType = string | number;
 
@@ -22,18 +22,21 @@ export type SelectAction<TValue extends SelectValueType = SelectValueType> = Pic
   onClick?: (value: TValue) => void;
 };
 
-export interface SelectCoreProps<
+export type SelectCoreProps<
   TValue extends SelectValueType = SelectValueType,
   TData extends Record<string, unknown> = Record<string, unknown>
-> extends Pick<RcProps, "id" | "open" | "disabled" | "placeholder" | "showSearch" | "getPopupContainer"> {
+> = Pick<
+  RcProps,
+  "id" | "open" | "disabled" | "placeholder" | "showSearch" | "getPopupContainer"
+> & {
   className?: ClassValue;
   dropdownCls?: ClassValue;
   style?: React.CSSProperties;
-  /** Default to 'small' */
+  /** Default 'small' */
   size?: "small" | "medium";
-  /** Default to 'left' */
+  /** Default 'left' */
   align?: "left" | "right";
-  /** Default to 'end' */
+  /** Default 'end' */
   arrowAt?: "start" | "end";
   transparent?: boolean;
   showAllOptions?: boolean;
@@ -41,16 +44,16 @@ export interface SelectCoreProps<
   value?: TValue;
   defaultValue?: TValue;
   onChange?: (value: TValue, option: SelectOption<TValue, TData>) => void;
-}
+};
 
-export interface SelectProps<
+export type SelectProps<
   TValue extends SelectValueType = SelectValueType,
   TData extends Record<string, unknown> = Record<string, unknown>
-> extends SelectCoreProps<TValue, TData>,
-    Pick<RcProps, "title"> {
+> = SelectCoreProps<TValue, TData> & {
+  title?: RcProps["title"];
   /** Only when select has action */
   wrapperCls?: string;
   /** Only when select has action */
   wrapperStyle?: React.CSSProperties;
   action?: SelectAction<TValue>;
-}
+};

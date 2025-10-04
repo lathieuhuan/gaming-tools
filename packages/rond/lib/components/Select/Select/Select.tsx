@@ -1,7 +1,6 @@
-import { type ClassValue } from "clsx";
-import type { SelectProps, SelectValueType } from "./Select.types";
+import type { SelectProps, SelectValueType } from "./types";
+import { ChildrenRenderProps, SelectWithAction } from "../SelectWithAction";
 import { SelectCore } from "./SelectCore";
-import { SelectWithAction } from "./SelectWithAction";
 
 export function Select<
   TValue extends SelectValueType = SelectValueType,
@@ -16,14 +15,14 @@ export function Select<
   onChange,
   ...rest
 }: SelectProps<TValue, TData>) {
-  const renderSelect = (localCls?: ClassValue, onLocalChange?: (value: TValue) => void) => {
+  const renderSelect = (props?: ChildrenRenderProps<TValue>) => {
     return (
       <SelectCore
-        className={[className, localCls]}
+        className={[props?.className, className]}
         style={style}
         size={size}
         onChange={(value, option) => {
-          onLocalChange?.(value);
+          props?.onChange?.(value);
           onChange?.(value, option);
         }}
         {...rest}
@@ -40,7 +39,7 @@ export function Select<
         initialValue={rest.value ?? rest.defaultValue}
         action={action}
       >
-        {(onChange) => renderSelect("ron-select--half", onChange)}
+        {renderSelect}
       </SelectWithAction>
     );
   }

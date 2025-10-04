@@ -2,8 +2,8 @@
   position: relative;
   width: 100%;
   border-radius: 0.25rem;
-  color: var(--ron-color-on-light);
-  background-color: var(--ron-color-light-surface-3);
+  color: var(--color-black);
+  background-color: var(--color-light-2);
 
   .ron-select-selector {
     position: absolute;
@@ -57,7 +57,7 @@
     cursor: default;
 
     &:focus {
-      background-color: var(--ron-color-light-surface-2);
+      background-color: var(--color-light-1);
     }
   }
 
@@ -76,7 +76,7 @@
 }
 
 .ron-select--transparent {
-  color: var(--ron-color-on-dark);
+  color: var(--color-white);
   background-color: transparent;
 
   .ron-select-selection-search-input:focus {
@@ -139,8 +139,8 @@
   min-height: auto;
   border-radius: 0.25rem;
   overflow: hidden;
-  color: var(--ron-color-on-light);
-  background-color: var(--ron-color-light-surface-3);
+  color: var(--color-black);
+  background-color: var(--color-light-2);
   box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
 
   .rc-virtual-list-holder {
@@ -162,10 +162,10 @@
   }
 
   .ron-select-item-option-active {
-    background-color: var(--ron-color-primary-1);
+    background-color: var(--color-primary-1);
   }
   .ron-select-item-option-selected {
-    background-color: var(--ron-color-light-disabled);
+    background-color: var(--color-light-disabled);
   }
   .ron-select-item,
   .ron-select-item-empty {

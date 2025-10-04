@@ -1,3 +1,4 @@
-export * from "./Select";
+export { Select } from "./Select";
+export type { SelectAction, SelectOption, SelectProps, SelectValueType } from "./Select";
 export * from "./VersatileSelect";
-export type { SelectProps, SelectOption, SelectAction, SelectValueType } from "./Select.types";
+

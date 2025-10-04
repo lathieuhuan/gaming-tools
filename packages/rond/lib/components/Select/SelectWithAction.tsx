@@ -2,31 +2,52 @@ import clsx from "clsx";
 import { useRef } from "react";
 import { useElementSize } from "../../hooks";
 import { Button } from "../Button";
-import type { SelectProps, SelectValueType } from "./Select.types";
-import "./Select.styles.scss";
+import type { SelectProps, SelectValueType } from "./Select";
 
-interface SelectWithActionProps<
+export type ChildrenRenderProps<TValue extends SelectValueType = SelectValueType> = {
+  className?: string;
+  onChange: (value: TValue) => void;
+};
+
+type SelectWithActionProps<
   TValue extends SelectValueType = SelectValueType,
   TData extends Record<string, unknown> = Record<string, unknown>
-> extends Pick<SelectProps<TValue, TData>, "className" | "style" | "size" | "action"> {
+> = Pick<SelectProps<TValue, TData>, "className" | "style" | "size" | "action"> & {
   initialValue?: SelectProps<TValue, TData>["value"];
-  children: (onChange: (value: TValue) => void) => React.ReactNode;
-}
+  children: (props: ChildrenRenderProps<TValue>) => React.ReactNode;
+};
+
 export function SelectWithAction<
   TValue extends SelectValueType = SelectValueType,
   TData extends Record<string, unknown> = Record<string, unknown>
->({ className, style, size = "small", initialValue, action, children }: SelectWithActionProps<TValue, TData>) {
+>({
+  className,
+  style,
+  size = "small",
+  initialValue,
+  action,
+  children,
+}: SelectWithActionProps<TValue, TData>) {
   const valueRef = useRef<TValue | undefined>(initialValue);
   const [ref, { height }] = useElementSize<HTMLDivElement>();
 
   return (
-    <div ref={ref} className={clsx("ron-select__wrapper", className)} style={style}>
-      {children((value) => (valueRef.current = value))}
+    <div
+      ref={ref}
+      className={clsx(
+        "flex [&>:first-child]:!rounded-tr-none [&>:first-child]:!rounded-br-none",
+        className
+      )}
+      style={style}
+    >
+      {children({
+        onChange: (value) => (valueRef.current = value),
+      })}
 
       {height ? (
         <Button
           {...action}
-          className={`ron-select__action ron-select__action--${size}`}
+          className="rounded-tr-sm rounded-br-sm shrink-0"
           style={{ height, width: height }}
           size="custom"
           shape="custom"
