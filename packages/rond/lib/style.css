@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@import "tailwind-theme/theme.css";
+
+@source '../**/*.{ts,tsx,js,jsx}';
+@source not '../../src/**/*.{ts,tsx,js,jsx}';

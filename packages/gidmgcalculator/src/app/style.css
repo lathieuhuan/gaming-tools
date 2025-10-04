@@ -1,15 +1,13 @@
-@layer base, rond, components, utilities;
+@layer base, theme, components, utilities;
 
-@import "rond/dist/style.css" layer(rond);
+@import "rond/components.css" layer(components);
 @import "tailwindcss";
 
 @import "tailwind-theme/theme.css";
 
 @source '../../src/**/*.{ts,tsx,js,jsx}';
 
-@source inline('text-rarity-{1,2,3,4,5}');
-
-@source inline('bg-rarity-{1,2,3,4,5}');
+@source '../../../rond/lib/**/*.{ts,tsx,js,jsx}';
 
 @source inline('text-{pyro,hydro,electro,dendro,geo,cryo,anemo}');
 

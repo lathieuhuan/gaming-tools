@@ -1,18 +1,13 @@
 import path from "path";
-// import { fileURLToPath } from "node:url";
-// import { glob } from "glob";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
-// import { libInjectCss } from "vite-plugin-lib-inject-css";
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    // libInjectCss(),
     dts({
       include: ["lib"],
       exclude: ["src"],
@@ -26,28 +21,28 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: path.resolve(__dirname, "lib/main.ts"),
+      entry: {
+        main: path.resolve(__dirname, "lib/main.ts"),
+        style: path.resolve(__dirname, "lib/style.css"),
+      },
       formats: ["es"],
-      cssFileName: "style",
     },
+    cssCodeSplit: true,
     copyPublicDir: false,
     rollupOptions: {
       external: ["react", "react/jsx-runtime"],
-      // input: Object.fromEntries(
-      //   glob.sync("lib/**/*.{ts,tsx}").map((file) => {
-      //     return [
-      //       // The name of the entry point
-      //       // lib/nested/foo.ts becomes nested/foo
-      //       path.relative("lib", file.slice(0, file.length - path.extname(file).length)),
-      //       // The absolute path to the entry file
-      //       // lib/nested/foo.ts becomes /project/lib/nested/foo.ts
-      //       fileURLToPath(new URL(file, import.meta.url)),
-      //     ];
-      //   })
-      // ),
       output: {
-        // assetFileNames: "assets/[name][extname]",
         entryFileNames: "[name].js",
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.names.includes("main.css")) {
+            return "components.css";
+          }
+          if (assetInfo.names.includes("style.css")) {
+            return "style.css";
+          }
+          // Default naming for other assets
+          return "assets/[name].[ext]";
+        },
       },
     },
   },

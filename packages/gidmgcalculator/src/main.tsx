@@ -11,8 +11,6 @@ import { QueryClientProvider } from "./systems/react-query";
 import { RouterProvider } from "./systems/router";
 import { ImporterProvider } from "./systems/setup-importer";
 
-import "./styles/index.css";
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ScreenSizeWatcher>
     <ConfigProvider config={{ ImageFallback: GenshinImage.Fallback }}>

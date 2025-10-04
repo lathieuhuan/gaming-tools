@@ -4,6 +4,8 @@ import { Modals } from "./Modals";
 import { Navbar } from "./Navbar";
 import { Tracker } from "./Tracker";
 
+import "./style.css";
+
 export function App() {
   return (
     <div className="App h-screen pt-8 text-light-default bg-light-default">
