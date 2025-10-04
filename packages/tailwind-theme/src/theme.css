@@ -20,6 +20,8 @@
   --color-table-row-hover: #7a0200;
   --color-heading: #fa8a12;
 
+  --radius-circle: 50%;
+
   --text-xlp: 1.375rem;
 
   --shadow-common: rgb(0 0 0 / 20%) 0px 3px 3px -2px, rgb(0 0 0 / 14%) 0px 3px 4px 0px,
