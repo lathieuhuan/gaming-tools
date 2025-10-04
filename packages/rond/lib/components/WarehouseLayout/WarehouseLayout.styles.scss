@@ -1,30 +1,4 @@
-.ron-warehouse-layout {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--ron-color-dark-surface-2);
-
-  .ron-warehouse__actions {
-    position: absolute;
-    top: 0;
-    left: 0;
-    padding-left: 0.5rem;
-    width: 100%;
-    height: 2.5rem;
-  }
-
-  .ron-warehouse__body {
-    height: 100%;
-    display: flex;
-    gap: 0.5rem;
-  }
-}
-
 .ron-warehouse {
-  position: relative;
-  height: 100%;
   padding-top: 3rem;
   width: 384px;
   max-width: calc(100% - 2rem);

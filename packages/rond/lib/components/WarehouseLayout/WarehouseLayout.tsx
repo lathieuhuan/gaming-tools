@@ -1,18 +1,26 @@
-import clsx, { type ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
+import { cn } from "@lib/utils";
+
 import "./WarehouseLayout.styles.scss";
 
-interface WarehouseLayoutProps {
+type WarehouseLayoutProps = {
   className?: ClassValue;
   bodyStyle?: React.CSSProperties;
   actions?: React.ReactNode;
   children: React.ReactNode;
-}
-export const WarehouseLayout = ({ className, bodyStyle, actions, children }: WarehouseLayoutProps) => {
+};
+
+export const WarehouseLayout = ({
+  className,
+  bodyStyle,
+  actions,
+  children,
+}: WarehouseLayoutProps) => {
   return (
-    <div className={clsx("ron-warehouse-layout", className)}>
-      <div className="ron-warehouse" style={bodyStyle}>
-        {actions ? <div className="ron-warehouse__actions">{actions}</div> : null}
-        <div className="ron-warehouse__body ron-hide-scrollbar">{children}</div>
+    <div className={cn("py-4 flex-center bg-dark-2 ron-warehouse-layout", className)}>
+      <div className="relative h-full ron-warehouse" style={bodyStyle}>
+        {actions ? <div className="absolute top-0 left-0 pl-2 w-full h-10">{actions}</div> : null}
+        <div className="h-full flex gap-2 ron-hide-scrollbar">{children}</div>
       </div>
     </div>
   );
