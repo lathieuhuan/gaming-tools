@@ -1,22 +1,22 @@
-import clsx, { type ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
+import { cn } from "@lib/utils";
 import { ButtonGroup, type ButtonGroupItem, type ButtonGroupProps } from "../Button";
 
-export interface ModalHeaderProps {
+export type ModalHeaderProps = {
   className?: ClassValue;
   withDivider?: boolean;
   children?: React.ReactNode;
-}
+};
+
 export function ModalHeader({ className, children, withDivider }: ModalHeaderProps) {
   return (
-    <div className={clsx("ron-modal__header", className)}>
-      <div className={clsx("ron-modal__header__inner", withDivider && "ron-modal__header--with-divider")}>
-        {children}
-      </div>
+    <div className={cn("px-4 pt-4 text-xl text-heading font-semibold", className)}>
+      <div className={cn("pb-2", withDivider && "border-b border-dark-line/80")}>{children}</div>
     </div>
   );
 }
 
-export interface ModalActionsProps extends Pick<ButtonGroupProps, "className" | "justify"> {
+export type ModalActionsProps = Pick<ButtonGroupProps, "className" | "justify"> & {
   withDivider?: boolean;
   disabledConfirm?: boolean;
   focusConfirm?: boolean;
@@ -33,7 +33,8 @@ export interface ModalActionsProps extends Pick<ButtonGroupProps, "className" | 
   moreActions?: ButtonGroupItem[];
   onCancel?: () => void;
   onConfirm?: () => void;
-}
+};
+
 export const ModalActions = ({
   className,
   justify = "end",
@@ -74,7 +75,7 @@ export const ModalActions = ({
 
   return (
     <ButtonGroup
-      className={clsx("ron-modal__actions", withDivider && "ron-modal__actions--with-divider", className)}
+      className={cn("pt-4", withDivider && "border-t border-dark-line/80", className)}
       justify={justify}
       buttons={buttons}
     />
