@@ -1,9 +1,9 @@
-import clsx, { type ClassValue } from "clsx";
-import "./Popover.styles.scss";
+import type { ClassValue } from "clsx";
+import { cn } from "@lib/utils";
 
 // Improvement: make Popover a wrapper
 
-export interface PopoverProps {
+export type PopoverProps = {
   className?: ClassValue;
   style?: React.CSSProperties;
   /** Default to div */
@@ -13,7 +13,8 @@ export interface PopoverProps {
   /** style transformOrigin Default to 'bottom right' */
   origin?: string;
   children: React.ReactNode;
-}
+};
+
 export const Popover = ({
   className,
   style = {},
@@ -25,13 +26,13 @@ export const Popover = ({
 }: PopoverProps) => {
   return (
     <Tag
-      className={clsx(
-        `ron-popover`,
-        active && "ron-popover--active",
-        withTooltipStyle && "ron-popover--tooltip",
+      data-active={active}
+      className={cn(
+        'absolute z-10 transition duration-200 ease-linear scale-0 data-[active=true]:scale-100 cursor-default',
+        withTooltipStyle && "rounded-lg text-sm bg-black text-light-3",
         className
       )}
-      style={Object.assign(style, { transformOrigin: origin })}
+      style={{ ...style, transformOrigin: origin }}
     >
       {children}
     </Tag>
