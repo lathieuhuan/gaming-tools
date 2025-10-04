@@ -1,9 +1,16 @@
-import clsx, { type ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
+import { cn } from "@lib/utils";
 import { StarSvg } from "../svg-icons";
 import { Button } from "../Button";
-import "./Rarity.styles.scss";
 
-export interface RarityProps {
+type Size = "small" | "medium";
+
+const classBySize: Record<Size, string> = {
+  small: "text-lg",
+  medium: "text-[1.625rem]",
+};
+
+export type RarityProps = {
   className?: ClassValue;
   value: number;
   mutable?: {
@@ -11,11 +18,18 @@ export interface RarityProps {
     min?: number;
   };
   /** Default to 'medium' if mutable, to 'small' otherwise */
-  size?: "small" | "medium";
+  size?: Size;
   onChange?: (rarity: number) => void;
-}
-export const Rarity = ({ className, mutable, size = mutable ? "medium" : "small", value, onChange }: RarityProps) => {
-  const cls = clsx(`ron-rarity ron-rarity-${value}`, className);
+};
+
+export const Rarity = ({
+  className,
+  mutable,
+  size = mutable ? "medium" : "small",
+  value,
+  onChange,
+}: RarityProps) => {
+  const cls = cn(`flex items-center text-rarity-${value}`, className);
 
   if (mutable) {
     return (
@@ -27,10 +41,10 @@ export const Rarity = ({ className, mutable, size = mutable ? "medium" : "small"
           return (
             <Button
               key={i}
-              className={clsx("ron-rarity__button", inactive && "ron-rarity__button--inactive")}
+              className={inactive ? "text-rarity-1" : "text-inherit"}
               variant="custom"
               withShadow={false}
-              icon={<StarSvg className={`ron-rarity--${size}`} />}
+              icon={<StarSvg className={classBySize[size]} />}
               size={size}
               disabled={!!mutable.min && rarity < mutable.min}
               onClick={() => {
@@ -46,7 +60,7 @@ export const Rarity = ({ className, mutable, size = mutable ? "medium" : "small"
   return (
     <div className={cls}>
       {Array.from({ length: value }, (_, i) => (
-        <StarSvg key={i} className={`ron-rarity--${size}`} />
+        <StarSvg key={i} className={classBySize[size]} />
       ))}
     </div>
   );

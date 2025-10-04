@@ -1,3 +1,8 @@
+
+@source inline('text-rarity-{1,2,3,4,5}');
+
+@source inline('bg-rarity-{1,2,3,4,5}');
+
 @theme {
   --color-black: #000000;
   --color-white: #ebebeb;
@@ -16,6 +21,12 @@
   --color-secondary-1: #09bcba;
   --color-active-bg: #89fba9;
   --color-active-bg-disabled: #a6dfb6;
+
+  --color-rarity-5: #ffd700;
+  --color-rarity-4: #ff50ff;
+  --color-rarity-3: #8bb6ff;
+  --color-rarity-2: #49e03e;
+  --color-rarity-1: #808080;
 
   --color-table-row-hover: #7a0200;
   --color-heading: #fa8a12;
