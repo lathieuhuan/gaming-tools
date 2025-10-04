@@ -159,8 +159,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
       className={clsx(
         !unstyled && [
           `ron-input-number rounded-sm text-right text-black text-base leading-5 ${classBySize[size]}`,
-          "bg-light-3 focus:bg-light-2 disabled:bg-light-disabled",
-          transparent && "bg-transparent",
+          transparent ? "bg-transparent" : "bg-light-3 focus:bg-light-2 disabled:bg-light-disabled",
         ],
         className
       )}

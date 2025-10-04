@@ -6,17 +6,17 @@ import { ModalActions, type ModalActionsProps, ModalHeader } from "./modal-compo
 
 const CLOSE_BTN_CLS = "absolute top-2 right-2 z-20";
 
-export interface ModalProps
-  extends ModalCoreProps,
-    Omit<ModalActionsProps, "className" | "justify" | "withDivider" | "onCancel"> {
-  title?: React.ReactNode;
-  /** Default to true */
-  withCloseButton?: boolean;
-  withHeaderDivider?: boolean;
-  withFooterDivider?: boolean;
-  withActions?: boolean;
-  bodyCls?: ClassValue;
-}
+export type ModalProps = ModalCoreProps &
+  Omit<ModalActionsProps, "className" | "justify" | "withDivider" | "onCancel"> & {
+    title?: React.ReactNode;
+    /** Default to true */
+    withCloseButton?: boolean;
+    withHeaderDivider?: boolean;
+    withFooterDivider?: boolean;
+    withActions?: boolean;
+    bodyCls?: ClassValue;
+  };
+
 const Modal = ({
   className,
   title,
@@ -142,4 +142,3 @@ Modal.wrap = withModal;
 Modal.coreWrap = withCoreModal;
 
 export { Modal };
-

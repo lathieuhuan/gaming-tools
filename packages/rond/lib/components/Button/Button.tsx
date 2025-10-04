@@ -45,7 +45,7 @@ export function Button({
     <button
       type="button"
       className={cn(
-        "flex-center font-bold text-sm whitespace-nowrap not-disabled:cursor-pointer disabled:is-disabled ron-glow-on-hover",
+        "flex-center font-bold text-sm whitespace-nowrap not-disabled:cursor-pointer disabled:is-disabled glow-on-hover",
         variant !== "custom" && (boneOnly ? CN_BY_BONE_VARIANT[variant] : CN_BY_VARIANT[variant]),
         shape !== "custom" && CN_BY_SHAPE[shape],
         withShadow && "shadow-common",

@@ -48,6 +48,12 @@
   --breakpoint-2xl: 1536px;
 }
 
+@layer base {
+  button {
+    cursor: pointer;
+  }
+}
+
 @utility flex-center {
   display: flex;
   justify-content: center;
@@ -67,4 +73,14 @@
       opacity: 1;
     }
   }
+}
+
+@utility hide-scrollbar {
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  overflow: auto;
 }

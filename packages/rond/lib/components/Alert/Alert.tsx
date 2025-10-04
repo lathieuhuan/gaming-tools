@@ -10,13 +10,14 @@ import {
   TimesSvg,
 } from "../svg-icons";
 
-export interface AlertProps {
+export type AlertProps = {
   className?: ClassValue;
   style?: React.CSSProperties;
   type: "info" | "success" | "error" | "warn";
   content: React.ReactNode;
   onClose?: () => void;
-}
+};
+
 export const Alert = (props: AlertProps) => {
   const renderIcon = () => {
     switch (props.type) {
@@ -37,9 +38,7 @@ export const Alert = (props: AlertProps) => {
       style={props.style}
     >
       <span className="mt-1.5 flex text-xl shrink-0">{renderIcon()}</span>
-      <p className="py-1 grow-1 text-base font-semibold text-black">
-        {props.content}
-      </p>
+      <p className="py-1 grow-1 text-base font-semibold text-black">{props.content}</p>
       <Button
         className="shrink-0 opacity-50 hover:opacity-85 text-black"
         variant="custom"

@@ -11,12 +11,12 @@ export type NotificationRequest = Omit<AlertProps, "onClose"> & {
 
 export type NotificatioProps = Omit<NotificationRequest, "id" | "type">;
 
-export interface NotificationAnimatorProps extends PartiallyRequired<NotificationRequest, "afterClose"> {
+export type NotificationAnimatorProps = PartiallyRequired<NotificationRequest, "afterClose"> & {
   children: (operation: { onClose: () => void }) => React.ReactElement;
   onMount: (info: HTMLDivElement) => void;
-}
+};
 
-export interface NotificationCenterProps {
+export type NotificationCenterProps = {
   requests: NotificationRequest[];
   afterCloseNoti: (id: number) => void;
-}
+};

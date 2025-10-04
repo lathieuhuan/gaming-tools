@@ -16,7 +16,7 @@ export type EntitySelectRenderArgs = {
   inputRef: React.RefObject<HTMLInputElement>;
 };
 
-export interface EntitySelectTemplateProps {
+export type EntitySelectTemplateProps = {
   title: React.ReactNode;
   hasMultipleMode?: boolean;
   hasSearch?: boolean;
@@ -31,7 +31,8 @@ export interface EntitySelectTemplateProps {
   children: (args: EntitySelectRenderArgs) => React.ReactNode;
   renderFilter?: (setFilterOn: (on: boolean) => void) => React.ReactNode;
   onClose: () => void;
-}
+};
+
 export function EntitySelectTemplate({
   title,
   hasMultipleMode,

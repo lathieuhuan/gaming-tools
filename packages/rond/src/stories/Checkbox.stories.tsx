@@ -15,7 +15,7 @@ const meta = {
   tags: ["autodocs"],
   render: (args) => {
     return (
-      <div style={{ color: "var(--ron-color-on-dark)" }}>
+      <div className="text-white">
         <Checkbox {...args} />
       </div>
     );

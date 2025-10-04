@@ -23,7 +23,7 @@ export function SelectWithAction<
 >({
   className,
   style,
-  size = "small",
+  // size = "small",
   initialValue,
   action,
   children,
