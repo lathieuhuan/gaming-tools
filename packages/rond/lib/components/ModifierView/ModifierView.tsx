@@ -1,8 +1,8 @@
-import clsx, { ClassValue } from "clsx";
+import clsx, { type ClassValue } from "clsx";
+import { cn } from "@lib/utils";
 import { InputNumber } from "../InputNumber";
 import { Checkbox } from "../Checkbox";
 import { Select } from "../Select";
-import "./ModifierView.styles.scss";
 
 type SelectOption = {
   label: string | number;
@@ -32,7 +32,7 @@ export type ModifierViewInputConfig =
   | ModifierViewInputCheckConfig
   | ModifierViewInputSelectConfig;
 
-export interface ModifierViewProps {
+export type ModifierViewProps = {
   className?: ClassValue;
   mutable?: boolean;
   /** Default to 'toggle' if mutable is true, to 'view' if mutable is false */
@@ -47,7 +47,8 @@ export interface ModifierViewProps {
   onChangeText?: (newValue: number, inputIndex: number) => void;
   onToggleCheck?: (currentInput: number, inputIndex: number) => void;
   onSelectOption?: (value: number, inputIndex: number) => void;
-}
+};
+
 export const ModifierView = ({
   className,
   mutable,
@@ -71,11 +72,11 @@ export const ModifierView = ({
     switch (config.type) {
       case "text":
         if (!mutable) {
-          return <p className="ron-mod-input_readonly-value">{input}</p>;
+          return <p className="text-secondary-1 font-bold capitalize">{input}</p>;
         }
         return (
           <InputNumber
-            className="ron-mod-input__input-number"
+            className="w-20 px-2 py-1.5 text-right font-semibold"
             value={input}
             max={config.max}
             onChange={(value) => onChangeText?.(value, index)}
@@ -95,11 +96,11 @@ export const ModifierView = ({
 
         if (!mutable) {
           const { label } = config.options.find((option) => option.value === input) || {};
-          return label ? <p className="ron-mod-input__readonly-value">{label}</p> : null;
+          return label ? <p className="text-secondary-1 font-bold capitalize">{label}</p> : null;
         }
         return (
           <Select
-            className="ron-mod-input__select"
+            className="max-w-32 h-8 font-semibold"
             style={config.style}
             value={input}
             options={config.options}
@@ -130,27 +131,29 @@ export const ModifierView = ({
   }
 
   return (
-    <div className={clsx("ron-modifier-view", className)}>
-      <div className="ron-mod-heading">
+    <div className={cn("text-white", className)}>
+      <div className="mb-1 flex justify-between items-start gap-2 font-semibold text-primary-1">
         {headingNode}
         {headingSuffix}
       </div>
       {typeof description === "string" ? (
-        <div className="ron-mod-description" dangerouslySetInnerHTML={{ __html: description }} />
+        <div className="text-sm" dangerouslySetInnerHTML={{ __html: description }} />
       ) : (
-        <div className="ron-mod-description">{description}</div>
+        <div className="text-sm">{description}</div>
       )}
 
       {inputConfigs.length ? (
-        <div
-          className={clsx(
-            "ron-mod-input__list ron-list",
-            mutable ? "ron-mod-input__list--mutable" : "ron-mod-input__list--immutable"
-          )}
-        >
+        <div className={clsx("flex flex-col", mutable ? "mt-2 pr-1 pb-1 gap-3" : "mt-1 gap-2")}>
           {inputConfigs.map((config, i) => (
-            <div key={i} className="ron-mod-input__item" aria-label={config.label}>
-              <span className="ron-mod-input__item-label">{config.label}</span>
+            <div
+              key={i}
+              className={clsx(
+                "flex items-center justify-end gap-4",
+                mutable ? "min-h-9" : "min-h-6"
+              )}
+              aria-label={config.label}
+            >
+              <span className="text-base text-right">{config.label}</span>
 
               {renderInput(i)}
             </div>
