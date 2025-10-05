@@ -15,7 +15,7 @@ export function MyCharacters() {
 
   if (!appReady) {
     return (
-      <div className="h-full flex flex-col bg-surface-3 flex-center">
+      <div className="h-full flex flex-col bg-dark-3 flex-center">
         <LoadingPlate />
       </div>
     );

@@ -36,7 +36,7 @@ export function useCombineManager({ options, limit }: UseCombineManagerArgs) {
     <div className="space-y-3">
       {!options.length && (
         <div className="h-40 flex-center">
-          <p className="pr-2 text-lg text-hint-color text-center">No setups available for choosing...</p>
+          <p className="pr-2 text-lg text-light-hint text-center">No setups available for choosing...</p>
         </div>
       )}
       {options.map((setup) => {
@@ -47,9 +47,9 @@ export function useCombineManager({ options, limit }: UseCombineManagerArgs) {
           <div
             key={ID}
             className={clsx(
-              "p-4 rounded-lg bg-surface-1 flex flex-col md:flex-row",
+              "p-4 rounded-lg bg-dark-1 flex flex-col md:flex-row",
               !picked && !notFull && "opacity-50",
-              picked && "shadow-bonus-color"
+              picked && "shadow-bonus"
             )}
             style={{ boxShadow: picked ? "0 0 5px 1px var(--tw-shadow-color) inset" : undefined }}
             onClick={() => onClickOption(ID, picked)}
@@ -60,7 +60,7 @@ export function useCombineManager({ options, limit }: UseCombineManagerArgs) {
 
             <div className="mt-2 md:mt-0 flex gap-4">
               <CharacterPortrait
-                className="shadow-3px-2px shadow-light-default"
+                className="shadow-hightlight-2 shadow-light-1"
                 size="small"
                 info={$AppCharacter.get(setup.char.name)}
               />

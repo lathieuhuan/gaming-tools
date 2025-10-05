@@ -61,14 +61,14 @@ const AppEntityOptionCore = ({
           <p className="absolute bottom-0 right-1 text-black font-bold">{selectedAmount}</p>
         ) : null}
       </div>
-      <p className="px-2 pt-1 rounded-b-lg text-sm truncate bg-light-default text-black font-bold text-center">
+      <p className="px-2 pt-1 rounded-b-lg text-sm truncate bg-light-1 text-black font-bold text-center">
         {item.name}
       </p>
 
       {item.vision && visible && (
         <div
           className={clsx(
-            "absolute -top-1 -right-1 p-1 flex-center rounded-full bg-black shadow-white-glow",
+            "absolute -top-1 -right-1 p-1 flex-center rounded-full bg-black shadow-popup",
             item.cons !== undefined && "flex rounded-2xl pl-1.5"
           )}
         >

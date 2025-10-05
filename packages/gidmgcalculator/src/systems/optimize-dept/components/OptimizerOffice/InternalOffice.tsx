@@ -283,7 +283,7 @@ export function InternalOffice({
         ) : null}
       </div>
 
-      {(askingToExit || askingToLoad) && <div className="absolute full-stretch z-10 bg-black/60" />}
+      {(askingToExit || askingToLoad) && <div className="absolute inset-0 z-10 bg-black/60" />}
     </div>
   );
 }

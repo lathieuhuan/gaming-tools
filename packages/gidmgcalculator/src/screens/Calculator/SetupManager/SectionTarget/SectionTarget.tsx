@@ -6,8 +6,7 @@ import { $AppData } from "@/services";
 import { MAX_TARGET_LEVEL } from "@/constants";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTarget, updateTarget } from "@Store/calculator-slice";
-
-import styles from "../SetupManager.styles.module.scss";
+import { Section } from "../_components/Section";
 
 interface SectionTargetProps {
   onMinimize: () => void;
@@ -19,12 +18,17 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
   const { title, names, variant, statuses } = $AppData.getTargetInfo(target);
 
   return (
-    <div className={"px-4 py-3 bg-surface-1 cursor-default relative " + styles.section}>
-      <div className="absolute top-2 bottom-0 right-2 flex flex-col text-xl text-hint-color">
-        <Button icon={<FaMinus className="text-lg" />} boneOnly title="Minimize" onClick={onMinimize} />
+    <Section className="px-4 py-3 bg-dark-1 cursor-default relative">
+      <div className="absolute top-2 bottom-0 right-2 flex flex-col text-xl text-light-hint">
+        <Button
+          icon={<FaMinus className="text-lg" />}
+          boneOnly
+          title="Minimize"
+          onClick={onMinimize}
+        />
         <Button icon={<MdEdit className="text-lg" />} boneOnly title="Edit" onClick={onEdit} />
       </div>
-      <p className="text-sm text-danger-3">Target</p>
+      <p className="text-sm text-danger-2">Target</p>
 
       <div className="mt-2 pr-6 flex flex-col items-start">
         {names ? (
@@ -61,6 +65,6 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
           />
         </label>
       </div>
-    </div>
+    </Section>
   );
 }

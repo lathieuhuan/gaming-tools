@@ -35,7 +35,7 @@ export function Launcher({ artifactManager, runCount, onLastResultRequested, onL
 
   const renderArtifactCount = (type: ArtifactType) => {
     return (
-      <div key={type} className="px-2 py-1 rounded bg-surface-3 flex-center">
+      <div key={type} className="px-2 py-1 rounded bg-dark-3 flex-center">
         <GenshinImage
           className="w-7 h-7 shrink-0"
           src={Entity_.artifactIconOf(type)}
@@ -75,7 +75,7 @@ export function Launcher({ artifactManager, runCount, onLastResultRequested, onL
         </div>
       </div>
 
-      <div className="w-full h-px mx-auto bg-surface-border" />
+      <div className="w-full h-px mx-auto bg-dark-line" />
 
       <ButtonGroup
         buttons={[

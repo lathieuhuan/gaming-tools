@@ -134,8 +134,8 @@ export function ResultsSection({ className, user, isLoading }: ResultsSectionPro
           <div className="space-y-3">
             {isLoading ? (
               <>
-                <Skeleton className="h-40 w-[380px] rounded-lg" />
-                <Skeleton className="h-40 w-[380px] rounded-lg" />
+                <Skeleton className="h-40 w-95 rounded-lg" />
+                <Skeleton className="h-40 w-95 rounded-lg" />
               </>
             ) : user ? (
               user.builds.map((build, index) => {
@@ -152,8 +152,8 @@ export function ResultsSection({ className, user, isLoading }: ResultsSectionPro
                 );
               })
             ) : (
-              <div className="w-[380px] p-4 py-6 flex-center">
-                <p className="text-hint-color">No results found</p>
+              <div className="w-95 p-4 py-6 flex-center">
+                <p className="text-light-hint">No results found</p>
               </div>
             )}
           </div>
@@ -166,7 +166,7 @@ export function ResultsSection({ className, user, isLoading }: ResultsSectionPro
 
             {!selectedArtifact && !selectedWeapon && (
               <div className="p-4 py-6 flex-center">
-                <p className="text-hint-color">Select an item to see its details</p>
+                <p className="text-light-hint">Select an item to see its details</p>
               </div>
             )}
           </div>

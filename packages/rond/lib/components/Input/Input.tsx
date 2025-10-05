@@ -1,16 +1,25 @@
 import clsx, { type ClassValue } from "clsx";
 import { forwardRef, useState, useEffect } from "react";
-import "./Input.styles.scss";
 
-export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "className" | "type" | "size" | "value" | "onChange"> {
+type Size = "small" | "medium" | "large";
+
+const classBySize: Record<Size, string> = {
+  small: "py-1 px-2 text-base leading-5",
+  medium: "py-1 px-3 text-lg leading-6",
+  large: "py-1 px-3 text-xl leading-7",
+};
+
+export type InputProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "className" | "type" | "size" | "value" | "onChange"
+> & {
   className?: ClassValue;
   /** Default to 'small' */
-  size?: "small" | "medium" | "large";
+  size?: Size;
   unstyled?: boolean;
   value?: string;
   onChange?: (value: string) => void;
-}
+};
 
 export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const { className, size = "small", unstyled, value = "", onChange, ...nativeProps } = props;
@@ -37,7 +46,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       ref={ref}
       {...nativeProps}
       type="text"
-      className={clsx(!unstyled && `ron-input ron-input--${size}`, className)}
+      className={clsx(
+        !unstyled &&
+          `rounded-sm bg-light-2 text-black font-medium focus:bg-light-1 disabled:is-disabled ${classBySize[size]}`,
+        className
+      )}
       value={isControlled ? value : localValue}
       onChange={handleChange}
     />

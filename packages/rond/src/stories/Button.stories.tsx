@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button, ButtonProps } from "@lib/components";
 
 const variants: ButtonProps["variant"][] = ["default", "primary", "active", "danger", "custom"];

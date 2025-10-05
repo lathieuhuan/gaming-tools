@@ -8,9 +8,9 @@ import { genSequentialOptions } from "@/utils";
 import Entity_ from "@/utils/Entity";
 import { selectWeapon, changeWeapon, updateWeapon } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
-import { WeaponForge, WeaponInventory, GenshinImage } from "@/components";
 
-import styles from "../SetupManager.styles.module.scss";
+import { WeaponForge, WeaponInventory, GenshinImage } from "@/components";
+import { Section } from "../_components/Section";
 
 type ModalType = "MAKE_NEW_WEAPON" | "SELECT_USER_WEAPON" | "";
 
@@ -25,7 +25,7 @@ export default function SectionWeapon() {
   const closeModal = () => setModalType("");
 
   return (
-    <div className={"px-2 py-3 bg-surface-1 flex items-start relative " + styles.section}>
+    <Section className="px-2 py-3 bg-dark-1 flex items-start relative">
       <div
         className={`w-20 h-20 shrink-0 relative bg-gradient-${rarity} cursor-pointer rounded-md`}
         onClick={() => setModalType("MAKE_NEW_WEAPON")}
@@ -104,6 +104,6 @@ export default function SectionWeapon() {
         }}
         onClose={closeModal}
       />
-    </div>
+    </Section>
   );
 }

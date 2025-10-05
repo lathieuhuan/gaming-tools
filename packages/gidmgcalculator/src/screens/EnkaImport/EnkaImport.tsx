@@ -54,7 +54,7 @@ export function EnkaImport() {
   };
 
   return (
-    <div className="h-full p-4 pb-2 bg-surface-2">
+    <div className="h-full p-4 pb-2 bg-dark-2">
       <div
         ref={containerRef}
         className={clsx("h-full pb-2 flex gap-4 custom-scrollbar", isMobile && "snap-x snap-mandatory")}
@@ -62,7 +62,7 @@ export function EnkaImport() {
         <div className={clsx("h-full flex flex-col shrink-0 overflow-auto", isMobile ? "w-full snap-center" : "w-80")}>
           <div>
             <h2 className="text-lg font-bold">Import characters</h2>
-            <p className="text-sm text-hint-color">Use in-game UID or enka profile</p>
+            <p className="text-sm text-light-hint">Use in-game UID or enka profile</p>
           </div>
 
           <SearchBar className="mt-6" initialInput={getInitialInput(router.searchParams)} onSearch={handleSearch} />

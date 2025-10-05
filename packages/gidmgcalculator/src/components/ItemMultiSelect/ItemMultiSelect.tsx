@@ -85,7 +85,7 @@ function ItemMultiSelectCore<T extends Weapon | Artifact>(props: ItemMultiSelect
       title={props.title}
       extra={
         <div className={screen.isFromSize("sm") ? "flex items-center gap-3" : "flex flex-col gap-1"}>
-          <p className="text-right text-base text-light-default font-semibold">
+          <p className="text-right text-base text-light-1 font-semibold">
             {selectedIds.size}
             {required ? `/${required}` : ""} selected
           </p>
@@ -131,7 +131,7 @@ function ItemMultiSelectCore<T extends Weapon | Artifact>(props: ItemMultiSelect
                 />
               )
             ) : (
-              <div className="w-76 rounded-lg bg-surface-1 shrink-0" />
+              <div className="w-76 rounded-lg bg-dark-1 shrink-0" />
             )}
           </div>
         );

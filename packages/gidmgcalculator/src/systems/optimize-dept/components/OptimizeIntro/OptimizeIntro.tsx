@@ -69,7 +69,7 @@ function OptimizeIntro(props: OptimizeIntroProps) {
 
       <div className="mt-6">
         <button
-          className={`flex items-center gap-2 ${activeIntro ? "text-active-color" : "text-hint-color"}`}
+          className={`flex items-center gap-2 ${activeIntro ? "text-active" : "text-light-hint"}`}
           onClick={() => setActiveIntro(!activeIntro)}
         >
           <FaInfoCircle className="text-lg" />

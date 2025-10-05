@@ -1,23 +1,37 @@
-import clsx, { type ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
 import type { CSSProperties } from "react";
-import "./LoadingSpin.styles.scss";
+import { cn } from "@lib/utils";
 
-export interface LoadingSpinProps {
+type Size = "small" | "medium" | "large";
+
+const classBySize: Record<Size, string> = {
+  small: "text-lg",
+  medium: "text-xl",
+  large: "text-[2rem]",
+};
+
+export type LoadingSpinProps = {
   className?: ClassValue;
   style?: CSSProperties;
   /** Default to true */
   active?: boolean;
   /** Default to 'medium' */
-  size?: "small" | "medium" | "large";
-}
-export const LoadingSpin = ({ active = true, size = "medium", className, ...rest }: LoadingSpinProps) => {
+  size?: Size;
+};
+
+export const LoadingSpin = ({
+  active = true,
+  size = "medium",
+  className,
+  ...rest
+}: LoadingSpinProps) => {
   return active ? (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="1em"
       height="1em"
       viewBox="0 0 512 512"
-      className={clsx(`ron-loading-spin ron-loading-spin--${size}`, className)}
+      className={cn(`text-white ${classBySize[size]}`, className)}
       {...rest}
     >
       <path

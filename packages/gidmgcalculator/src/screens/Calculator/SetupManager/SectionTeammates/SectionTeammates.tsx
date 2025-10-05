@@ -17,17 +17,14 @@ import { CharacterPortrait, Tavern, TavernProps } from "@/components";
 import { CopySelect } from "./CopySelect";
 import { TeammateGear } from "./TeammateGear";
 import { TeammateSlot } from "./TeammateSlot";
+import { Section } from "../_components/Section";
 
 type TavernState = {
   active: boolean;
   recruitedIndex: number;
 };
 
-type SectionTeammatesProps = {
-  className?: string;
-};
-
-export default function SectionTeammates({ className }: SectionTeammatesProps) {
+export default function SectionTeammates() {
   const dispatch = useDispatch();
   const activeSetupId = useSelector(selectActiveId);
   const setupManageInfos = useSelector(selectSetupManageInfos);
@@ -55,7 +52,9 @@ export default function SectionTeammates({ className }: SectionTeammatesProps) {
   };
 
   const warnSetupCombined = () => {
-    message.info("This setup is marked as part of a Complex setup, thus teammates cannot be changed.");
+    message.info(
+      "This setup is marked as part of a Complex setup, thus teammates cannot be changed."
+    );
   };
 
   const handleShowTavern = (recruitedIndex: number) => {
@@ -98,7 +97,7 @@ export default function SectionTeammates({ className }: SectionTeammatesProps) {
   };
 
   return (
-    <div className={clsx("pb-3 bg-surface-2", className)}>
+    <Section className="pb-3 bg-dark-2">
       {teammates.length && teammates.every((teammate) => !teammate) ? <CopySelect /> : null}
 
       <div className="grid grid-cols-3">
@@ -119,8 +118,16 @@ export default function SectionTeammates({ className }: SectionTeammatesProps) {
           }
 
           return (
-            <div key={tmIndex} className="flex justify-center items-end" style={{ height: "5.25rem" }}>
-              <CharacterPortrait withColorBg recruitable onClick={() => handleShowTavern(tmIndex)} />
+            <div
+              key={tmIndex}
+              className="flex justify-center items-end"
+              style={{ height: "5.25rem" }}
+            >
+              <CharacterPortrait
+                withColorBg
+                recruitable
+                onClick={() => handleShowTavern(tmIndex)}
+              />
             </div>
           );
         })}
@@ -140,11 +147,12 @@ export default function SectionTeammates({ className }: SectionTeammatesProps) {
         active={tavern.active}
         sourceType="app"
         filter={(character) =>
-          character.name !== activeAppMember.name && teammates.every((tm) => tm?.name !== character.name)
+          character.name !== activeAppMember.name &&
+          teammates.every((tm) => tm?.name !== character.name)
         }
         onSelectCharacter={handleRecruitTeammate}
         onClose={closeTavern}
       />
-    </div>
+    </Section>
   );
 }

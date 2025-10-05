@@ -1,11 +1,12 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { AlertProps, Button } from "@lib/components";
 import { notification, type NotificatioProps } from "@lib/utils";
 import { useRef } from "react";
 
-interface NotificationDemoProps extends Pick<NotificatioProps, "content" | "duration"> {
+type NotificationDemoProps = Pick<NotificatioProps, "content" | "duration"> & {
   notiType: AlertProps["type"];
-}
+};
+
 const NotificationDemo = ({ notiType, ...notiProps }: NotificationDemoProps) => {
   const notiId = useRef<number>();
 
@@ -39,7 +40,7 @@ const NotificationDemo = ({ notiType, ...notiProps }: NotificationDemoProps) => 
         </Button>
       </div>
 
-      <p style={{ color: "var(--ron-color-primary-1)"}}>(not auto close, duration 0)</p>
+      <p className="text-primary-1">(not auto close, duration 0)</p>
     </div>
   );
 };

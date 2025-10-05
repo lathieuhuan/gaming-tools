@@ -1,6 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Modal } from "@lib/components";
 import { MountAnnouncer } from "../components";
+import { fn } from "storybook/internal/test";
 
 const meta = {
   title: "ModalCore",
@@ -26,5 +27,6 @@ export const Default: Story = {
     state: "close",
     closeOnMaskClick: true,
     children: <MountAnnouncer />,
+    onClose: fn(),
   },
 };

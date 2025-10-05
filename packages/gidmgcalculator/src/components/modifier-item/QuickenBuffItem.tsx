@@ -22,7 +22,7 @@ export function QuickenBuffItem({ reaction, element, characterLv, attkBonuses, .
       heading={
         <>
           <span className="capitalize">{reaction}</span>{" "}
-          <span className="text-hint-color font-normal">
+          <span className="text-light-hint font-normal">
             ({element === "electro" ? "Electro" : "Dendro"} on Quicken)
           </span>
         </>

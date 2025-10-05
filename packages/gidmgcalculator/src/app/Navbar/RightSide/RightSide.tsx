@@ -89,13 +89,13 @@ export function RightSide({ appReady }: RightSideProps) {
         Donate
       </Button>
 
-      <div ref={menuRef} className="relative text-light-default">
-        <button className="w-8 h-8 flex-center bg-surface-3 text-xl" onClick={() => setMenuActive(!menuActive)}>
+      <div ref={menuRef} className="relative text-light-1">
+        <button className="w-8 h-8 flex-center bg-dark-3 text-xl" onClick={() => setMenuActive(!menuActive)}>
           <FaBars />
         </button>
 
         <Popover as="div" className="z-50 right-0 pt-2 pr-2" active={menuActive} origin="top right">
-          <div className="bg-light-default text-black rounded-md overflow-hidden shadow-common">
+          <div className="bg-light-1 text-black rounded-md overflow-hidden shadow-common">
             <ModalOptions
               disabledTypes={appReady ? [] : ["DOWNLOAD", "UPLOAD", "SETTINGS"]}
               onSelect={(option) => {

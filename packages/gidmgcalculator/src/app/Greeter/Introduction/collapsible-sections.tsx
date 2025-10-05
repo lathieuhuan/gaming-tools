@@ -5,7 +5,7 @@ import { markYellow } from "@/components";
 export const VersionRecap = (
   <div className="space-y-2 contains-inline-svg">
     <div>
-      <h4 className="text-heading-color text-lg font-bold">General</h4>
+      <h4 className="text-heading text-lg font-bold">General</h4>
       <ul className="mt-1 pl-4 space-y-1 list-disc">
         <li>Reduce options for artifact level to 0/4/8/12/16/20.</li>
         <li>Add name searching function for when selecting characters.</li>
@@ -17,7 +17,7 @@ export const VersionRecap = (
     </div>
 
     <div>
-      <h4 className="text-heading-color text-lg font-bold">Calculator</h4>
+      <h4 className="text-heading text-lg font-bold">Calculator</h4>
       <ul className="mt-1 pl-4 space-y-1 list-disc">
         <li>Add a constellation control next to the character level control.</li>
         <li>Move target configuration place to Setups Manager column and give it a new design.</li>
@@ -45,7 +45,7 @@ export const VersionRecap = (
     </div>
 
     <div>
-      <h4 className="text-heading-color text-lg font-bold">User Data</h4>
+      <h4 className="text-heading text-lg font-bold">User Data</h4>
       <ul className="mt-1 pl-4 space-y-1 list-disc">
         <li>Improve character sort in My Characters.</li>
         <li>
@@ -109,6 +109,6 @@ export const About = (
         </li>
       ))}
     </ul>
-    <p className="ml-3 text-hint-color">(yes the email address is real)</p>
+    <p className="ml-3 text-light-hint">(yes the email address is real)</p>
   </div>
 );

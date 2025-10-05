@@ -1,13 +1,23 @@
 import clsx from "clsx";
 import { forwardRef, useState, useEffect } from "react";
 import { round } from "../../utils";
+
 import "./InputNumber.styles.scss";
 
-export interface InputNumberProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "size" | "max" | "min" | "onChange"> {
+type Size = "small" | "medium";
+
+const classBySize: Record<Size, string> = {
+  small: "py-1 px-2",
+  medium: "py-1.5 px-2",
+};
+
+export type InputNumberProps = Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "type" | "value" | "size" | "max" | "min" | "onChange"
+> & {
   unstyled?: boolean;
   transparent?: boolean;
-  size?: "small" | "medium";
+  size?: Size;
   value?: number;
   /** Default to 9999 */
   max?: number;
@@ -16,7 +26,7 @@ export interface InputNumberProps
   /** Default to 0 */
   maxDecimalDigits?: number;
   onChange?: (value: number) => void;
-}
+};
 
 export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props, ref) => {
   const {
@@ -120,7 +130,12 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
       }
     }
 
-    if (newValue !== undefined && newLocalValue !== undefined && newValue >= min && newValue <= max) {
+    if (
+      newValue !== undefined &&
+      newLocalValue !== undefined &&
+      newValue >= min &&
+      newValue <= max
+    ) {
       updateValue(newLocalValue, newValue);
     }
   };
@@ -142,7 +157,10 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
       {...nativeProps}
       type="text"
       className={clsx(
-        !unstyled && [`ron-input-number ron-input-number--${size}`, transparent && "ron-input-number--transparent"],
+        !unstyled && [
+          `ron-input-number rounded-sm text-right text-black text-base leading-5 ${classBySize[size]}`,
+          transparent ? "bg-transparent" : "bg-light-2 focus:bg-light-1 disabled:is-disabled",
+        ],
         className
       )}
       value={localValue}

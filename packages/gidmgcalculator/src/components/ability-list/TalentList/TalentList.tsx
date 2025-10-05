@@ -59,9 +59,7 @@ export function TalentList(props: TalentListProps) {
             <div className="flex items-center">
               <p className="mr-1">Lv.</p>
               {levelNode}
-              {talent.xtraLevel ? (
-                <p className="ml-2 font-bold text-bonus-color">+{talent.xtraLevel}</p>
-              ) : null}
+              {talent.xtraLevel ? <p className="ml-2 font-bold text-bonus">+{talent.xtraLevel}</p> : null}
             </div>
           </div>
 

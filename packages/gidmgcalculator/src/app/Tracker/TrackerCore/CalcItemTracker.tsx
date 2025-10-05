@@ -193,7 +193,7 @@ export function CalcItemTracker({
         <p className="font-medium">{t(name)}</p>
         {text ? <div className="text-sm text-secondary-1">{text}</div> : null}
 
-        <ul className="pl-4 text-hint-color text-sm leading-6 list-disc">
+        <ul className="pl-4 text-light-hint text-sm leading-6 list-disc">
           {record.exclusives?.length ? (
             <li>
               <p className="text-primary-1">Exclusive Bonus</p>
@@ -210,7 +210,7 @@ export function CalcItemTracker({
           ) : null}
 
           <li className="mt-1">
-            Non-crit <span className="text-heading-color font-semibold">{nonCritDmg}</span> ={" "}
+            Non-crit <span className="text-heading font-semibold">{nonCritDmg}</span> ={" "}
             {renderFirstRecordParts(record)}
             {renderLastRecordParts(record)}
             {record.note}
@@ -218,14 +218,14 @@ export function CalcItemTracker({
 
           {cDmg_ ? (
             <li>
-              Crit <span className="text-heading-color font-semibold">{renderDmg(result.crit)}</span> = {nonCritDmg}{" "}
+              Crit <span className="text-heading font-semibold">{renderDmg(result.crit)}</span> = {nonCritDmg}{" "}
               {markGreen("*")} ({markGreen("1 +")} Crit DMG {markGreen(cDmg_)})
             </li>
           ) : null}
 
           {cDmg_ && record.cRate_ ? (
             <li>
-              Average <span className="text-heading-color font-semibold">{renderDmg(result.average)}</span> ={" "}
+              Average <span className="text-heading font-semibold">{renderDmg(result.average)}</span> ={" "}
               {nonCritDmg} {markGreen("*")} ({markGreen("1")}
               {renderParts([
                 {

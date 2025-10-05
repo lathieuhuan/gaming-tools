@@ -54,10 +54,10 @@ export function TeammateGear({ teammate, index, weaponType }: TeammateGearProps)
 
   return (
     <>
-      <div className="bg-surface-2 pt-2">
+      <div className="bg-dark-2 pt-2">
         <TeammateItems
           mutable
-          className="bg-surface-1 pt-12 px-2 pb-3"
+          className="bg-dark-1 pt-12 px-2 pb-3"
           teammate={teammate}
           onClickWeapon={() => setModalType("WEAPON")}
           onChangeWeaponRefinement={handleWeaponRefinementChange}

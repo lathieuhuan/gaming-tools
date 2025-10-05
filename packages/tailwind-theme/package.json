@@ -1,0 +1,19 @@
+{
+  "name": "tailwind-theme",
+  "version": "0.1.0",
+  "description": "Custom Tailwind CSS theme package",
+  "type": "module",
+  "exports": {
+    "./theme.css": "./src/theme.css"
+  },
+  "files": [
+    "src"
+  ],
+  "keywords": [
+    "tailwind",
+    "theme",
+    "css",
+    "design-system"
+  ],
+  "license": "MIT"
+}

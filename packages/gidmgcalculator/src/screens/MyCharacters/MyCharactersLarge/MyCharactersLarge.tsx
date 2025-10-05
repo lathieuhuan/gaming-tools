@@ -10,11 +10,11 @@ import { ContextProvider } from "../ContextProvider";
 import { MyCharactersTopBar } from "./MyCharactersTopBar";
 
 export function MyCharactersLarge() {
-  const sectionCls = "p-4 rounded-lg bg-surface-1";
+  const sectionCls = "p-4 rounded-lg bg-dark-1";
 
   return (
     <ContextProvider>
-      <div className="h-full flex flex-col bg-surface-3">
+      <div className="h-full flex flex-col bg-dark-3">
         <MyCharactersTopBar />
 
         <DetailContextProvider>

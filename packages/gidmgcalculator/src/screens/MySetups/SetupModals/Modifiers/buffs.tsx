@@ -70,7 +70,7 @@ export function ElementBuffs({ charLv, elmtModCtrls, attkBonuses, vision, custom
       {content.map((item, index) => {
         return (
           <Fragment key={index}>
-            {index ? <div className="mx-auto my-3 w-1/2 h-px bg-surface-3" /> : null}
+            {index ? <div className="mx-auto my-3 w-1/2 h-px bg-dark-3" /> : null}
             {item}
           </Fragment>
         );
@@ -89,7 +89,7 @@ export function CustomBuffs({ customBuffCtrls }: CustomBuffsProps) {
   const content = customBuffCtrls.map(({ category, type, subType, value }, i) => (
     <div key={i} className="flex justify-end">
       <p className="mr-4">{toCustomBuffLabel(category, type, t)}</p>
-      <p className="w-12 shrink-0 text-heading-color text-right">
+      <p className="w-12 shrink-0 text-heading text-right">
         {value}
         {suffixOf(subType || type)}
       </p>

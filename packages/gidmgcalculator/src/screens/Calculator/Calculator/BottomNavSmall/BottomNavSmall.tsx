@@ -21,7 +21,7 @@ export function BottomNavSmall({ activePanelI, onSelectSection }: BottomNavSmall
         options={["Overview", "Modifiers", "Setup", "Results"]}
         extraEnd={
           <>
-            <div className="my-auto w-px h-2/3 bg-surface-border" />
+            <div className="my-auto w-px h-2/3 bg-dark-line" />
             <button
               type="button"
               className="shrink-0 w-10 flex-center rotate-180"

@@ -54,15 +54,15 @@ export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
     },
     {
       children: <SiTarget className="text-1.5xl" />,
-      className: setup.ID === tempStandardId ? "text-bonus-color" : "text-light-default",
+      className: setup.ID === tempStandardId ? "text-bonus" : "text-light-1",
       disabled: !setup.isCompared || comparedSetups.length <= 1,
       onClick: control.selectStandardSetup(i),
     },
     {
       children: <FaBalanceScaleLeft className="text-1.5xl" />,
       className: comparedSetups.some((comparedSetup) => comparedSetup.ID === setup.ID)
-        ? "text-bonus-color"
-        : "text-light-default",
+        ? "text-bonus"
+        : "text-light-1",
       onClick: control.toggleSetupCompared(i),
     },
   ];
@@ -73,7 +73,7 @@ export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
         <div className="space-y-4">
           {displayedSetups.map((setup, setupIndex) => {
             return (
-              <div key={setup.ID} className="border-b border-surface-border">
+              <div key={setup.ID} className="border-b border-dark-line">
                 <div className="flex gap-4">
                   <Input
                     placeholder="Enter Setup's name"
@@ -134,7 +134,7 @@ export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
       </div>
 
       <ButtonGroup
-        className="p-4 bg-surface-3"
+        className="p-4 bg-dark-3"
         justify="end"
         buttons={[
           {

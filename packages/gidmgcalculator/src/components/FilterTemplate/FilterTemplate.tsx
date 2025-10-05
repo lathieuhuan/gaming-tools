@@ -9,7 +9,7 @@ type Message = {
 };
 
 const messageClsByType: Record<MessageType, string> = {
-  hint: "text-hint-color",
+  hint: "text-light-hint",
   error: "text-danger-2",
 };
 

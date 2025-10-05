@@ -161,7 +161,7 @@ export function ArtifactSetSelect({
             );
           })
         ) : (
-          <div className="py-4 text-center text-hint-color">No Artifact set found</div>
+          <div className="py-4 text-center text-light-hint">No Artifact set found</div>
         )}
       </OverflowTrackingContainer>
     </div>

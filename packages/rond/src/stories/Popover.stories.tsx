@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Popover } from "@lib/components";
 
 const meta = {
@@ -21,14 +21,15 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     active: false,
-    origin: "bottom-right",
-    children: <div style={{ background: "#fff" }}>Popover content</div>,
+    className: "bottom-full right-4 mb-2",
+    withTooltipStyle: true,
+    children: <span>Popover content</span>,
   },
   render: (args) => {
     return (
-      <div style={{ position: "relative" }}>
-        <p style={{ color: "var(--ron-color-on-dark)" }}>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
-        <Popover {...args} style={{ bottom: "100%", right: "1rem", marginBottom: "0.5rem" }} />
+      <div className="relative">
+        <p className="text-white">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+        <Popover {...args} />
       </div>
     );
   },

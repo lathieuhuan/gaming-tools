@@ -21,8 +21,8 @@ export const Introduction = ({
 
   const typeToCls: Record<string, string> = {
     e: "text-primary-1",
-    u: "text-danger-3",
-    f: "text-bonus-color",
+    u: "text-[#ff8785]",
+    f: "text-bonus",
   };
 
   const DONATORS = ["Daniel V.", "Marc (marcdau)", "Akenouille", "Brandon Pride", "apiromz", "aimie"];
@@ -49,7 +49,7 @@ export const Introduction = ({
                   loading ? (
                     <Skeleton className="w-28 h-4 rounded" />
                   ) : latestDate ? (
-                    <span className="ml-2 px-1 text-sm rounded text-heading-color bg-surface-1">{latestDate}</span>
+                    <span className="ml-2 px-1 text-sm rounded text-heading bg-dark-1">{latestDate}</span>
                   ) : null
                 ) : null}
               </div>
@@ -63,7 +63,7 @@ export const Introduction = ({
                 ) : updates.length ? (
                   updates.map(({ date, patch, content }, i) => (
                     <div key={i}>
-                      <p className="text-heading-color font-semibold">{date + (patch ? ` (v${patch})` : "")}</p>
+                      <p className="text-heading font-semibold">{date + (patch ? ` (v${patch})` : "")}</p>
                       <ul className="mt-1 space-y-1">
                         {content.map((line, j) => (
                           <li key={j} dangerouslySetInnerHTML={{ __html: `- ${parseContent(line)}` }} />
@@ -72,7 +72,7 @@ export const Introduction = ({
                     </div>
                   ))
                 ) : (
-                  <div className="h-20 flex-center text-danger-3">
+                  <div className="h-20 flex-center text-danger-2">
                     <p>Failed to get updates</p>
                   </div>
                 )}
@@ -94,7 +94,7 @@ export const Introduction = ({
         ]}
       />
       <div className="px-2 space-y-1">
-        <p className="text-heading-color font-semibold">Credit</p>
+        <p className="text-heading font-semibold">Credit</p>
         <p>
           - Thank you{" "}
           <a href="https://genshin-impact.fandom.com/wiki/Genshin_Impact_Wiki" rel="noreferrer" target="_blank">
@@ -129,7 +129,7 @@ export const Introduction = ({
             ))}
           </ul>
         ) : (
-          <div className="h-20 flex-center text-danger-3">
+          <div className="h-20 flex-center text-danger-2">
             <p>Failed to get supporters</p>
           </div>
         )}

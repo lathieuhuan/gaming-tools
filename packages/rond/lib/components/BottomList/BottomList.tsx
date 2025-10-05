@@ -1,9 +1,8 @@
-import clsx from "clsx";
+import { cn } from "@lib/utils";
 import { useState } from "react";
 import { BottomSheet, type BottomSheetProps } from "../BottomSheet";
-import { Input } from "../Input";
 import { ButtonGroup, type ButtonProps } from "../Button";
-import "./BottomList.styles.scss";
+import { Input } from "../Input";
 
 export type BottomListValue = string | number;
 
@@ -17,10 +16,10 @@ export type BottomListItem<
   className?: string;
 };
 
-export interface BottomListProps<
+export type BottomListProps<
   TValue extends BottomListValue = BottomListValue,
   TData extends Record<string, unknown> = Record<string, unknown>
-> extends Pick<BottomSheetProps, "active" | "height" | "onClose"> {
+> = Pick<BottomSheetProps, "active" | "height" | "onClose"> & {
   /** Default to 'Select' */
   title?: React.ReactNode;
   value?: BottomListValue;
@@ -31,7 +30,8 @@ export interface BottomListProps<
   actions?: ButtonProps[];
   renderItem?: (item: BottomListItem<TValue, TData>) => React.ReactNode;
   onSelect?: (value: TValue, item: BottomListItem<TValue, TData>) => void;
-}
+};
+
 export function BottomList<
   TValue extends BottomListValue = BottomListValue,
   TData extends Record<string, unknown> = Record<string, unknown>
@@ -51,25 +51,31 @@ export function BottomList<
   const lowerKeyword = keyword.toLowerCase();
 
   return (
-    <BottomSheet {...sheetProps} title={title} bodyCls="ron-list">
-      {hasSearch && (
-        <div className="ron-bottom-list__search">
-          <Input placeholder="Search..." onChange={setKeyword} />
-        </div>
-      )}
+    <BottomSheet {...sheetProps} title={title} bodyCls="flex flex-col">
+      <div
+        className={cn(
+          "px-4 py-2 flex peer",
+          !hasSearch && "hidden",
+          align === "right" && "justify-end"
+        )}
+      >
+        <Input placeholder="Search..." onChange={setKeyword} />
+      </div>
 
-      <div className="ron-bottom-list__body">
+      <div className="flex-grow overflow-y-auto p-4 pt-0 peer-[.hidden]:pt-2">
         <div>
           {items.map((item) => {
-            const hidden = shouldFilter && !`${item.label ?? item.value}`.toLowerCase().includes(lowerKeyword);
+            const hidden =
+              shouldFilter && !`${item.label ?? item.value}`.toLowerCase().includes(lowerKeyword);
 
             return (
               <div
                 key={item.value}
-                className={clsx(
-                  `ron-bottom-list__item ron-bottom-list__item--${align}`,
-                  item.value === value && "ron-bottom-list__item--active",
-                  hidden && "ron-hidden",
+                className={cn(
+                  "pt-2.5 pb-1.5 text-base leading-5 text-white border-b border-dark-line",
+                  align === "right" && "text-right",
+                  item.value === value && "text-active",
+                  hidden && "hidden",
                   item.className
                 )}
                 onClick={() => onSelect?.(item.value, item)}
@@ -81,7 +87,9 @@ export function BottomList<
         </div>
       </div>
 
-      {actions?.length ? <ButtonGroup className="ron-bottom-list__footer" justify="end" buttons={actions} /> : null}
+      {actions?.length ? (
+        <ButtonGroup className="p-4 bg-dark-3" justify="end" buttons={actions} />
+      ) : null}
     </BottomSheet>
   );
 }

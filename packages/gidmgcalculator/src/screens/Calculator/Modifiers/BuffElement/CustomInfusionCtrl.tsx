@@ -64,7 +64,7 @@ export function CustomInfusionCtrl({ elmtModCtrls, attkBonuses, characterLv, cha
         description={
           <>
             This infusion overwrites self infusion but does not overwrite elemental nature of attacks{" "}
-            <span className="text-hint-color">(Catalyst's attacks, Bow's fully-charge aim shot)</span>.
+            <span className="text-light-hint">(Catalyst's attacks, Bow's fully-charge aim shot)</span>.
           </>
         }
         mutable

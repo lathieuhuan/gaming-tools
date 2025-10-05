@@ -1,13 +1,20 @@
 import clsx, { type ClassValue } from "clsx";
-import type { ColHTMLAttributes, HTMLAttributes, TableHTMLAttributes, TdHTMLAttributes, ThHTMLAttributes } from "react";
-import "./Table.styles.scss";
+import type {
+  ColHTMLAttributes,
+  HTMLAttributes,
+  TableHTMLAttributes,
+  TdHTMLAttributes,
+  ThHTMLAttributes,
+} from "react";
+import { cn } from "@lib/utils";
 
-export interface TableProps extends Omit<TableHTMLAttributes<HTMLTableElement>, "className"> {
+export type TableProps = Omit<TableHTMLAttributes<HTMLTableElement>, "className"> & {
   className?: ClassValue;
   colAttrs?: (ColHTMLAttributes<HTMLTableColElement> | null)[];
-}
+};
+
 const Table = ({ className, colAttrs, children, ...rest }: TableProps) => (
-  <table className={clsx("ron-table", className)} {...rest}>
+  <table className={cn("min-w-full border-collapse text-white", className)} {...rest}>
     {colAttrs?.length ? (
       <colgroup>
         {colAttrs.map((attrs, i) => (
@@ -19,19 +26,43 @@ const Table = ({ className, colAttrs, children, ...rest }: TableProps) => (
   </table>
 );
 
-export interface TableTrProps extends Omit<HTMLAttributes<HTMLTableRowElement>, "className"> {
+export type TableTrProps = Omit<HTMLAttributes<HTMLTableRowElement>, "className"> & {
   className?: ClassValue;
-}
-Table.Tr = ({ className, ...rest }: TableTrProps) => <tr className={clsx("ron-table__tr", className)} {...rest} />;
+};
+Table.Tr = ({ className, ...rest }: TableTrProps) => (
+  <tr
+    className={clsx(
+      "odd:bg-dark-1 even:bg-dark-2 hover:bg-table-row-hover first:!bg-dark-0",
+      className
+    )}
+    {...rest}
+  />
+);
 
-export interface TableThProps extends Omit<ThHTMLAttributes<HTMLTableCellElement>, "className"> {
+export type TableThProps = Omit<ThHTMLAttributes<HTMLTableCellElement>, "className"> & {
   className?: ClassValue;
-}
-Table.Th = ({ className, ...rest }: TableThProps) => <th className={clsx("ron-table__th", className)} {...rest} />;
+};
+Table.Th = ({ className, ...rest }: TableThProps) => (
+  <th
+    className={clsx(
+      "px-2 py-1 text-sm border-l border-r border-dark-1 cursor-default font-semibold",
+      className
+    )}
+    {...rest}
+  />
+);
 
-export interface TableTdProps extends Omit<TdHTMLAttributes<HTMLTableCellElement>, "className"> {
+export type TableTdProps = Omit<TdHTMLAttributes<HTMLTableCellElement>, "className"> & {
   className?: ClassValue;
-}
-Table.Td = ({ className, ...rest }: TableTdProps) => <td className={clsx("ron-table__td", className)} {...rest} />;
+};
+Table.Td = ({ className, ...rest }: TableTdProps) => (
+  <td
+    className={clsx(
+      "px-2 py-1 text-sm border-l border-r border-dark-1 cursor-default first:font-semibold",
+      className
+    )}
+    {...rest}
+  />
+);
 
 export { Table };

@@ -17,8 +17,8 @@ function DonateCore() {
         <span>$</span>
       </div>
 
-      <div className="w-1/2 h-0.5 bg-surface-3 relative">
-        <span className="px-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-surface-1">or</span>
+      <div className="w-1/2 h-0.5 bg-dark-3 relative">
+        <span className="px-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-dark-1">or</span>
       </div>
 
       <div className="pb-2">
@@ -34,5 +34,5 @@ export const Donate = Modal.wrap(DonateCore, {
   preset: "small",
   title: <p className="text-center">Donate</p>,
   withHeaderDivider: false,
-  className: "bg-surface-1",
+  className: "bg-dark-1",
 });

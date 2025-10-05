@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Drawer } from "@lib/components";
 import { MountAnnouncer } from "../components";
 
@@ -10,6 +10,7 @@ const meta = {
   },
   argTypes: {
     children: { control: false },
+    onClose: { control: false },
   },
   tags: ["autodocs"],
 } satisfies Meta<typeof Drawer>;
@@ -20,8 +21,9 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     active: false,
-    activeWidth: 300,
+    width: 300,
     destroyOnClose: false,
     children: <MountAnnouncer style={{ height: 200, background: "red" }} />,
+    onClose: () => {},
   },
 };

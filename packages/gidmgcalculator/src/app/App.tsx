@@ -11,7 +11,7 @@ export function App() {
   return (
     <ImporterProvider>
       <OptimizeDeptProvider>
-        <div className="App h-screen pt-8 text-light-default bg-light-default">
+        <div className="App h-screen pt-8 text-light-1 bg-light-1">
           <Navbar />
           <Main />
 

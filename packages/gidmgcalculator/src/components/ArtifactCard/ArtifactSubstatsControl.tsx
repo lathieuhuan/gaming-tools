@@ -50,10 +50,10 @@ export function ArtifactSubstatsControl({
         const isValid = value === 0 || VALID_SUBSTAT_VALUES[type][rarity].includes(value);
 
         return mutable ? (
-          <div key={i} className="h-9 flex-center bg-surface-2 relative">
+          <div key={i} className="h-9 flex-center bg-dark-2 relative">
             <VersatileSelect
               title="Select Sub-stat"
-              className={["w-44 h-full", statTypeCount[type] === 1 ? "text-light-default" : "text-danger-2"]}
+              className={["w-44 h-full", statTypeCount[type] === 1 ? "text-light-1" : "text-danger-2"]}
               transparent
               arrowAt="start"
               options={ARTIFACT_SUBSTAT_TYPES.map((type) => ({ label: t(type), value: type }))}
@@ -63,7 +63,7 @@ export function ArtifactSubstatsControl({
             <span>+</span>
             <InputNumber
               transparent
-              className={`w-14 h-full pt-1.5 ${isValid ? "text-light-default" : "text-danger-2"}`}
+              className={`w-14 h-full pt-1.5 ${isValid ? "text-light-1" : "text-danger-2"}`}
               maxDecimalDigits={1}
               value={value}
               onChange={(value) => onChangeSubStat?.(i, { value })}
@@ -72,13 +72,13 @@ export function ArtifactSubstatsControl({
             <span className="w-4 pt-2 pb-1">{Entity_.suffixOf(type)}</span>
           </div>
         ) : (
-          <div key={i} className="mt-2 pt-2 pb-1 flex items-center bg-surface-2">
+          <div key={i} className="mt-2 pt-2 pb-1 flex items-center bg-dark-2">
             <span className="mx-3">•</span>
             <p>
-              <span className={`mr-1 ${statTypeCount[type] === 1 ? "text-light-default" : "text-danger-2"}`}>
+              <span className={`mr-1 ${statTypeCount[type] === 1 ? "text-light-1" : "text-danger-2"}`}>
                 {t(type)}
               </span>{" "}
-              <span className={isValid ? "text-bonus-color" : "text-danger-2"}>
+              <span className={isValid ? "text-bonus" : "text-danger-2"}>
                 +{value}
                 {Entity_.suffixOf(type)}
               </span>

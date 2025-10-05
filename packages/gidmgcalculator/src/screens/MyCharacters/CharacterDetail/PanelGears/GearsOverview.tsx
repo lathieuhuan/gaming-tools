@@ -7,7 +7,7 @@ import { EquipmentDisplay } from "@/components";
 import { useDetailInfo } from "../ContextProvider";
 
 const bonusStyles = (active: boolean) => {
-  return ["p-2 flex justify-between items-center rounded-lg group", active && "bg-surface-2"];
+  return ["p-2 flex justify-between items-center rounded-lg group", active && "bg-dark-2"];
 };
 
 export interface GearsOverviewProps {
@@ -55,21 +55,21 @@ export function GearsOverview({
         }}
       >
         <div>
-          <p className="text-lg text-heading-color font-semibold">Set bonus</p>
+          <p className="text-lg text-heading font-semibold">Set bonus</p>
           <div className="mt-1 pl-2">
             {setBonuses.length ? (
               <>
-                <p className="text-bonus-color font-medium">
+                <p className="text-bonus font-medium">
                   {$AppArtifact.getSet(setBonuses[0].code)?.name} ({setBonuses[0].bonusLv * 2 + 2})
                 </p>
                 {setBonuses[1] ? (
-                  <p className="mt-1 text-bonus-color font-medium">
+                  <p className="mt-1 text-bonus font-medium">
                     {$AppArtifact.getSet(setBonuses[1].code)?.name} (2)
                   </p>
                 ) : null}
               </>
             ) : (
-              <p className="text-hint-color font-semibold">No Set bonus</p>
+              <p className="text-light-hint font-semibold">No Set bonus</p>
             )}
           </div>
         </div>
@@ -87,7 +87,7 @@ export function GearsOverview({
         className={clsx("mt-2", bonusStyles(detailType === "statsBonus"))}
         onClick={() => onClickDetail("statsBonus")}
       >
-        <p className="text-lg text-heading-color font-semibold">Artifact details</p>
+        <p className="text-lg text-heading font-semibold">Artifact details</p>
 
         {detailType === "statsBonus" ? (
           <CloseButton className="ml-auto" size="small" />

@@ -1,10 +1,11 @@
-interface PlainGroundProps {
+type PlainGroundProps = {
   width?: string | number;
   height?: string | number;
   background?: string;
   color?: string;
   children?: React.ReactNode;
-}
+};
+
 export function PlainGround({
   width = "100%",
   height,

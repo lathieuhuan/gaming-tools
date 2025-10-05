@@ -27,7 +27,7 @@ export function MyCharactersSmall() {
   return (
     <ContextProvider>
       <div className="h-full flex flex-col">
-        <div className="p-4 grow hide-scrollbar bg-surface-1">
+        <div className="p-4 grow hide-scrollbar bg-dark-1">
           <DetailContextProvider>
             <SwitchNode
               value={activePanelI}
@@ -67,7 +67,7 @@ export function MyCharactersSmall() {
           onSelect={setActivePanelI}
           extraEnd={
             <>
-              <div className="my-auto w-px h-2/3 bg-surface-border" />
+              <div className="my-auto w-px h-2/3 bg-dark-line" />
               <button
                 type="button"
                 className="shrink-0 w-10 flex-center rotate-180"

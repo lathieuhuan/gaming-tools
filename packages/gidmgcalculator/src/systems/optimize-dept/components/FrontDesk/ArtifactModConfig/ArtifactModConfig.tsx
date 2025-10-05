@@ -79,7 +79,7 @@ export function ArtifactModConfig({ artifactManager }: ArtifactModConfigProps) {
           }
 
           return (
-            <div key={data.code} className="p-3 bg-surface-1 rounded space-y-2">
+            <div key={data.code} className="p-3 bg-dark-1 rounded space-y-2">
               {buffConfigsByCode.map(
                 renderModView(
                   "B",

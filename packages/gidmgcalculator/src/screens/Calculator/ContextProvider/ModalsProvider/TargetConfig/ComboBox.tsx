@@ -33,7 +33,7 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
   const onClickMonster = (monster: AppMonster) => () => {
     if (monster.code !== targetCode) {
       let newVariantType;
-      let newInputs = monster.inputConfigs
+      const newInputs = monster.inputConfigs
         ? Array_.toArray(monster.inputConfigs).map((config) => (config.type === "SELECT" ? -1 : 0))
         : [];
 
@@ -56,10 +56,10 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
 
   return (
     <div className={"relative " + (className || "")}>
-      <label className="px-2 w-full text-black bg-light-default rounded flex items-center peer">
+      <label className="px-2 w-full text-black bg-light-1 rounded flex items-center peer">
         <input
           ref={inputRef}
-          className="py-1 bg-transparent grow font-semibold placeholder:text-black focus:placeholder:text-hint-color"
+          className="py-1 bg-transparent grow font-semibold placeholder:text-black focus:placeholder:text-light-hint"
           placeholder={targetTitle}
           value={keyword}
           maxLength={10}
@@ -72,7 +72,7 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
 
       <div
         id="monster-list"
-        className="absolute top-full z-10 mt-1 w-full text-black bg-light-default custom-scrollbar cursor-default hidden peer-focus-within:block"
+        className="absolute top-full z-10 mt-1 w-full text-black bg-light-1 custom-scrollbar cursor-default hidden peer-focus-within:block"
         style={{ maxHeight: "50vh" }}
       >
         {$AppData.getAllMonsters().map((monster, i) => {
@@ -90,7 +90,7 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
               id={`monster-${monster.code}`}
               className={clsx(
                 "px-2 py-1 flex flex-col font-semibold",
-                monster.code === targetCode ? "bg-light-disabled" : "hover:bg-primary-1"
+                monster.code === targetCode ? "bg-light-4" : "hover:bg-primary-1"
               )}
               onMouseDown={(e) => e.preventDefault()}
               onClick={onClickMonster(monster)}

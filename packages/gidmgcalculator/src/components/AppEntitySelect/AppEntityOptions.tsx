@@ -161,7 +161,7 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
       <div
         ref={observedAreaRef}
         className={clsx(
-          "h-full w-full shrink-0 md:w-auto md:shrink md:min-w-[400px] xm:min-w-0 grow custom-scrollbar",
+          "h-full w-full shrink-0 md:w-auto md:shrink md:min-w-100 xm:min-w-0 grow custom-scrollbar",
           overflow && "xm:pr-2",
           searchOn && "pt-8"
         )}
@@ -197,7 +197,7 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
           })}
         </div>
 
-        {empty ? <p className="py-4 text-hint-color text-lg text-center">{emptyText}</p> : null}
+        {empty ? <p className="py-4 text-light-hint text-lg text-center">{emptyText}</p> : null}
       </div>
 
       {hasConfigStep ? (

@@ -3,15 +3,19 @@
   "private": false,
   "version": "0.0.1",
   "type": "module",
-  "main": "dist/main.js",
   "types": "dist/main.d.ts",
   "files": [
     "dist"
   ],
+  "exports": {
+    ".": "./dist/main.js",
+    "./style.css": "./dist/style.css",
+    "./components.css": "./dist/components.css"
+  },
   "scripts": {
     "dev": "vite",
     "dev-expose": "vite --host",
-    "build": "tsc --p ./tsconfig-build.json && vite build --config vite-build.config.ts",
+    "build": "tsc -b tsconfig.lib.json && vite build --config vite-build.config.ts",
     "build-demo": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
@@ -22,35 +26,25 @@
     "clsx": "2.1.0",
     "rc-select": "14.13.1",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "tailwind-merge": "3.3.1"
   },
   "devDependencies": {
-    "@storybook/addon-essentials": "7.6.17",
-    "@storybook/addon-interactions": "7.6.17",
-    "@storybook/addon-links": "7.6.17",
-    "@storybook/addon-onboarding": "1.0.11",
-    "@storybook/blocks": "7.6.17",
-    "@storybook/react": "7.6.17",
-    "@storybook/react-vite": "7.6.17",
-    "@storybook/test": "7.6.17",
+    "@storybook/addon-docs": "9.1.9",
+    "@storybook/addon-links": "9.1.9",
+    "@storybook/addon-onboarding": "9.1.9",
+    "@storybook/react-vite": "9.1.9",
+    "@tailwindcss/vite": "4.1.13",
     "@types/node": "20.11.24",
     "@types/react": "18.2.56",
     "@types/react-dom": "18.2.19",
-    "@typescript-eslint/eslint-plugin": "7.0.2",
-    "@typescript-eslint/parser": "7.0.2",
-    "@vitejs/plugin-react": "4.2.1",
-    "autoprefixer": "10.4.19",
-    "eslint": "8.56.0",
-    "eslint-plugin-react-hooks": "4.6.0",
-    "eslint-plugin-react-refresh": "0.4.5",
-    "eslint-plugin-storybook": "0.8.0",
-    "glob": "10.3.10",
-    "postcss": "8.4.38",
+    "@vitejs/plugin-react": "5.0.3",
+    "eslint-plugin-storybook": "9.1.9",
     "sass": "1.71.1",
-    "storybook": "7.6.17",
-    "tailwindcss": "3.4.3",
-    "vite": "5.1.4",
-    "vite-plugin-dts": "3.7.3",
-    "vite-plugin-lib-inject-css": "2.0.0"
+    "storybook": "9.1.9",
+    "tailwindcss": "4.1.13",
+    "tailwind-theme": "0.1.0",
+    "vite": "7.1.7",
+    "vite-plugin-dts": "4.5.4"
   }
 }

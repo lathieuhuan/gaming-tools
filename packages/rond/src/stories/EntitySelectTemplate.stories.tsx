@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Button, EntitySelectTemplate } from "@lib/components";
 import { MountAnnouncer } from "../components";
 import { ScreenSizeWatcher } from "@lib/providers";
@@ -44,12 +44,13 @@ export const Default: Story = {
     },
     children: (args) => {
       return (
-        <div style={{ color: "var(--ron-color-on-dark)" }}>
+        <div className="text-white">
           <p>isMultiSelect: {args.isMultiSelect ? "true" : "false"}</p>
           <p>keyword: [{args.keyword}]</p>
           <p>searchOn: {args.searchOn ? "true" : "false"}</p>
         </div>
       );
     },
+    onClose: () => {},
   },
 };

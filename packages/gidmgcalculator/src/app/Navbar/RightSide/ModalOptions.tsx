@@ -19,7 +19,7 @@ export function ModalOptions({ className, disabledTypes, onSelect }: ModalOption
             <button
               className={clsx(
                 "w-full px-4 py-2 flex items-center font-bold cursor-default",
-                disabled ? "text-hint-color" : "hover:text-light-default hover:bg-surface-1"
+                disabled ? "text-light-hint" : "hover:text-light-1 hover:bg-dark-1"
               )}
               disabled={disabled}
               onClick={() => onSelect(option)}

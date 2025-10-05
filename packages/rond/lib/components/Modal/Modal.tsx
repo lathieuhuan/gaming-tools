@@ -1,22 +1,22 @@
-import clsx, { type ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
+import { cn } from "@lib/utils";
+import { CloseButton } from "../Button";
 import { LARGE_HEIGHT_CLS, ModalCore, type ModalCoreProps } from "./ModalCore";
 import { ModalActions, type ModalActionsProps, ModalHeader } from "./modal-components";
-import { CloseButton } from "../Button";
-import "./Modal.styles.scss";
 
-const CLOSE_BTN_CLS = "ron-modal__close-button";
+const CLOSE_BTN_CLS = "absolute top-2 right-2 z-20";
 
-export interface ModalProps
-  extends ModalCoreProps,
-    Omit<ModalActionsProps, "className" | "justify" | "withDivider" | "onCancel"> {
-  title?: React.ReactNode;
-  /** Default to true */
-  withCloseButton?: boolean;
-  withHeaderDivider?: boolean;
-  withFooterDivider?: boolean;
-  withActions?: boolean;
-  bodyCls?: ClassValue;
-}
+export type ModalProps = ModalCoreProps &
+  Omit<ModalActionsProps, "className" | "justify" | "withDivider" | "onCancel"> & {
+    title?: React.ReactNode;
+    /** Default to true */
+    withCloseButton?: boolean;
+    withHeaderDivider?: boolean;
+    withFooterDivider?: boolean;
+    withActions?: boolean;
+    bodyCls?: ClassValue;
+  };
+
 const Modal = ({
   className,
   title,
@@ -41,13 +41,19 @@ const Modal = ({
   ...coreProps
 }: ModalProps) => {
   return (
-    <ModalCore {...coreProps} className={clsx("ron-modal--standard", className)} closable={closable}>
+    <ModalCore
+      {...coreProps}
+      className={cn("flex flex-col rounded-lg shadow-popup", className)}
+      closable={closable}
+    >
       <ModalHeader withDivider={withHeaderDivider}>{title}</ModalHeader>
 
-      <div className={clsx("ron-modal__body", bodyCls)}>{typeof children === "function" ? children() : children}</div>
+      <div className={cn("p-4 grow overflow-auto", bodyCls)}>
+        {typeof children === "function" ? children() : children}
+      </div>
 
       {withActions && (
-        <div className="ron-modal__footer">
+        <div className="px-4 pb-4">
           <ModalActions
             {...{
               withDivider: withFooterDivider,
@@ -80,7 +86,8 @@ const Modal = ({
   );
 };
 
-type WithModalPropsKey =
+type WithModalProps = Pick<
+  ModalProps,
   | "preset"
   | "title"
   | "id"
@@ -91,13 +98,16 @@ type WithModalPropsKey =
   | "withActions"
   | "withCloseButton"
   | "withHeaderDivider"
-  | "withFooterDivider";
+  | "withFooterDivider"
+>;
 
 function withModal<T>(
   Component: (props: T) => JSX.Element | null,
-  modalProps?: Partial<Pick<ModalProps, WithModalPropsKey>>
+  modalProps?: Partial<WithModalProps>
 ) {
-  return (props: Pick<ModalProps, "active" | "closable" | "closeOnMaskClick" | "onClose"> & T): JSX.Element => {
+  return (
+    props: Pick<ModalProps, "active" | "closable" | "closeOnMaskClick" | "onClose"> & T
+  ): JSX.Element => {
     return (
       <Modal active={props.active} onClose={props.onClose} {...modalProps}>
         <Component {...props} />
@@ -110,7 +120,9 @@ function withCoreModal<T>(
   Component: (props: T) => JSX.Element | null,
   modalProps?: Partial<Pick<ModalCoreProps, "preset" | "className" | "style">>
 ) {
-  return (props: Pick<ModalProps, "active" | "closable" | "closeOnMaskClick" | "onClose"> & T): JSX.Element => {
+  return (
+    props: Pick<ModalProps, "active" | "closable" | "closeOnMaskClick" | "onClose"> & T
+  ): JSX.Element => {
     return (
       <ModalCore active={props.active} onClose={props.onClose} {...modalProps}>
         <Component {...props} />
@@ -120,7 +132,8 @@ function withCoreModal<T>(
 }
 
 Modal.LARGE_HEIGHT_CLS = LARGE_HEIGHT_CLS;
-Modal.MAX_SIZE_CLS = "ron-modal--max-size";
+Modal.MAX_SIZE_CLS =
+  "h-95/100 max-[380px]:h-full max-[380px]:max-h-208 max-[380px]:w-full max-[380px]:max-w-full";
 Modal.CLOSE_BTN_CLS = CLOSE_BTN_CLS;
 Modal.Core = ModalCore;
 Modal.Header = ModalHeader;

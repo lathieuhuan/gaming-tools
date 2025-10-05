@@ -11,10 +11,11 @@ const defaultConfig = {
 
 const RondConfigContext = createContext<RondConfig>(defaultConfig);
 
-interface ConfigProviderProps {
+type ConfigProviderProps = {
   config: Partial<RondConfig>;
   children: React.ReactNode;
-}
+};
+
 export function ConfigProvider(props: ConfigProviderProps) {
   return (
     <RondConfigContext.Provider value={{ ...defaultConfig, ...props.config }}>

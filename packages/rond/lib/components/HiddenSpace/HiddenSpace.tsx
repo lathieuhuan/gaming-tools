@@ -1,7 +1,7 @@
 import { type CSSProperties, useEffect, useState } from "react";
 import { useElementSize } from "../../hooks";
 
-export interface HiddenSpaceProps {
+export type HiddenSpaceProps = {
   active: boolean;
   /** Default to 250 */
   moveDuration?: number;
@@ -11,7 +11,8 @@ export interface HiddenSpaceProps {
   style?: CSSProperties;
   children: React.ReactNode;
   afterClose?: () => void;
-}
+};
+
 export const HiddenSpace = ({
   className,
   active,
@@ -62,7 +63,7 @@ export const HiddenSpace = ({
         }
       }}
     >
-      <div ref={ref} style={{ width: "fit-content" }}>
+      <div ref={ref} className="w-fit">
         {mergedMounted && children}
       </div>
     </div>

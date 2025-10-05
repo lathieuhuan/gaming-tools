@@ -25,10 +25,9 @@ export function AbilityCarousel({
   onClickNext,
 }: AbilityCarouselProps) {
   const renderCaret = (direction: "right" | "left", disabled: boolean) => {
-    const caretCls = clsx(
-      "absolute top-2 w-10 h-10 flex-center text-surface-border flex-center",
-      disabled ? "cursor-pointer opacity-50" : "hover:text-secondary-1"
-    );
+    const caretCls = `absolute top-2 size-10 text-dark-line flex-center ${
+      disabled ? "opacity-50" : "hover:text-secondary-1"
+    }`;
 
     return direction === "right" ? (
       <button className={`${caretCls} left-full ml-4`} disabled={disabled} onClick={onClickNext}>

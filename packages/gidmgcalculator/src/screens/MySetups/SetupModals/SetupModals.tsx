@@ -54,11 +54,11 @@ export function SetupModals({ setup, weapon, artifacts, result }: SetupModalsPro
         />
       </Modal.Core>
 
-      <Modal active={modalType === "WEAPON"} className="bg-surface-1" title="Weapon" onClose={closeModal}>
+      <Modal active={modalType === "WEAPON"} className="bg-dark-1" title="Weapon" onClose={closeModal}>
         <WeaponCard wrapperCls="w-76" style={{ height: "30rem" }} withGutter={false} withOwnerLabel weapon={weapon} />
       </Modal>
 
-      <Modal active={modalType === "ARTIFACTS"} className="bg-surface-1" title="Artifacts" onClose={closeModal}>
+      <Modal active={modalType === "ARTIFACTS"} className="bg-dark-1" title="Artifacts" onClose={closeModal}>
         <div className="flex space-x-1 hide-scrollbar">
           {artifacts?.map((artifact, i) => {
             if (artifact) {
@@ -80,7 +80,7 @@ export function SetupModals({ setup, weapon, artifacts, result }: SetupModalsPro
 
       <Modal
         active={modalType === "STATS"}
-        className={[Modal.LARGE_HEIGHT_CLS, "bg-surface-1"]}
+        className={[Modal.LARGE_HEIGHT_CLS, "bg-dark-1"]}
         title="Stats"
         bodyCls="grow overflow-auto"
         onClose={closeModal}
@@ -111,7 +111,7 @@ export function SetupModals({ setup, weapon, artifacts, result }: SetupModalsPro
 
       <Modal
         active={modalType === "MODIFIERS"}
-        className={[Modal.LARGE_HEIGHT_CLS, "bg-surface-1"]}
+        className={[Modal.LARGE_HEIGHT_CLS, "bg-dark-1"]}
         title="Modifiers"
         bodyCls="grow hide-scrollbar"
         onClose={closeModal}

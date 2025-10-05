@@ -56,7 +56,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
               transparent
               showAllOptions
               className={`w-[98px] shrink-0 ${elmtText} text-lg font-bold`}
-              dropdownCls="z-20"
+              dropdownCls="z-30"
               options={LEVELS.map((_, i) => {
                 const item = LEVELS[LEVELS.length - 1 - i];
                 return { label: item, value: item };
@@ -68,7 +68,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
 
           <VersatileSelect
             title="Select Constellation"
-            className={`ml-auto w-14 text-lg ${elmtText} font-bold bg-surface-2`}
+            className={`ml-auto w-14 text-lg ${elmtText} font-bold bg-dark-2`}
             align="right"
             options={Array.from({ length: 7 }, (_, i) => ({
               label: `C${i}`,

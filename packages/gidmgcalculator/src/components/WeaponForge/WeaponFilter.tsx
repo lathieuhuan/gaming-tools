@@ -63,7 +63,7 @@ export function WeaponFilter({
   };
 
   return (
-    <div className={clsx("p-4 bg-surface-1 flex flex-col", className)}>
+    <div className={clsx("p-4 bg-dark-1 flex flex-col", className)}>
       <div className="grow space-y-4 hide-scrollbar">
         {withTypeSelect ? (
           <>
@@ -75,7 +75,7 @@ export function WeaponFilter({
               <WeaponTypeSelect className="px-1" values={weaponTypes} onSelect={toggleWeaponType} />
             </FilterTemplate>
 
-            <div className="w-full h-px bg-surface-border" />
+            <div className="w-full h-px bg-dark-line" />
           </>
         ) : null}
 

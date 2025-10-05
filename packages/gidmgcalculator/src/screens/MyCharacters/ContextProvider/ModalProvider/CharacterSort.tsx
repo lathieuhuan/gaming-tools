@@ -25,12 +25,12 @@ interface LineProps extends React.HTMLAttributes<HTMLDivElement> {
 const Line = ({ character, marker, visiblePlot, ...rest }: LineProps) => {
   return (
     <div key={character.name} className="flex flex-col cursor-default select-none" {...rest}>
-      <div className="px-2 py-1 h-10 bg-surface-3" hidden={!visiblePlot}></div>
+      <div className="px-2 py-1 h-10 bg-dark-3" hidden={!visiblePlot}></div>
 
-      <div className="px-2 py-1 flex items-center hover:bg-surface-2">
-        <div className="w-8 h-8 mr-2 flex-center text-light-default pointer-events-none">{marker}</div>
+      <div className="px-2 py-1 flex items-center hover:bg-dark-2">
+        <div className="w-8 h-8 mr-2 flex-center text-light-1 pointer-events-none">{marker}</div>
 
-        <p className="pointer-events-none text-light-default">
+        <p className="pointer-events-none text-light-1">
           <span className={`text-rarity-${character.rarity}`}>{character.name}</span> (Lv. {character.level})
         </p>
       </div>
@@ -183,12 +183,12 @@ function SortCore({ onClose }: { onClose: () => void }) {
           </p>
           <Popover
             as="div"
-            className="px-1 py-2 top-full bg-surface-2 rounded group-hover:scale-100 space-y-2"
+            className="px-1 py-2 top-full bg-dark-2 rounded group-hover:scale-100 space-y-2"
             origin="top left"
           >
             {quickSortOptions.map(({ label, onSelect }, i) => {
               return (
-                <p key={i} className="px-2 py-1 rounded-sm hover:bg-surface-3" onClick={onSelect}>
+                <p key={i} className="px-2 py-1 rounded-sm hover:bg-dark-3" onClick={onSelect}>
                   {label}
                 </p>
               );
@@ -199,7 +199,7 @@ function SortCore({ onClose }: { onClose: () => void }) {
         <div className="flex items-center">
           <span>Mode</span>
           <div className="h-full px-2 select-none" style={{ width: 120 }}>
-            <CarouselSpace className="text-center cursor-default bg-surface-2 rounded" current={inMarkingMode ? 1 : 0}>
+            <CarouselSpace className="text-center cursor-default bg-dark-2 rounded" current={inMarkingMode ? 1 : 0}>
               <p className="h-full flex-center" onClick={onToggleMarkingMode}>
                 Drag & drop
               </p>
@@ -263,7 +263,7 @@ function SortCore({ onClose }: { onClose: () => void }) {
 export const CharacterSort = Modal.wrap(SortCore, {
   preset: "small",
   title: "Sort characters",
-  className: "bg-surface-1",
+  className: "bg-dark-1",
   withActions: true,
   formId: "sort-characters-form",
 });

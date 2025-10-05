@@ -30,15 +30,15 @@ export function BuildOverview({
   const buildName = name || character?.name;
 
   return (
-    <div className="p-3 bg-surface-1 rounded-lg">
+    <div className="p-3 bg-dark-1 rounded-lg">
       <div className="flex gap-3">
         <CharacterPortrait info={{ icon: character.data.icon }} size="small" />
 
         <div className="text-sm">
           <p className={`text-lg font-bold text-${character.data.vision}`}>{buildName}</p>
           <p>
-            {character.level} <span className="text-hint-color opacity-50">|</span> C{character.cons}{" "}
-            <span className="text-hint-color opacity-50">|</span> {character.NAs} - {character.ES} - {character.EB}
+            {character.level} <span className="text-light-hint opacity-50">|</span> C{character.cons}{" "}
+            <span className="text-light-hint opacity-50">|</span> {character.NAs} - {character.ES} - {character.EB}
           </p>
         </div>
 
@@ -89,7 +89,7 @@ export function BuildOverview({
           }
 
           return (
-            <div key={index} className="size-14 p-2 bg-surface-3 rounded opacity-50">
+            <div key={index} className="size-14 p-2 bg-dark-3 rounded opacity-50">
               <GenshinImage className="w-full" src={Entity_.artifactIconOf(ARTIFACT_TYPES[index])} />
             </div>
           );

@@ -98,9 +98,9 @@ export const Greeter = () => {
     const version = state.metadata?.version;
 
     return (
-      <h1 className={clsx("text-heading-color text-center font-bold relative", config.cls)}>
+      <h1 className={clsx("text-heading text-center font-bold relative", config.cls)}>
         {config.title}
-        <span className={clsx("absolute top-0 left-full ml-2 text-hint-color", config.patchCls)}>
+        <span className={clsx("absolute top-0 left-full ml-2 text-light-hint", config.patchCls)}>
           {isLoading ? (
             <Skeleton className={clsx("w-14 rounded", config.skeletonCls)} />
           ) : version ? (
@@ -135,7 +135,7 @@ export const Greeter = () => {
             onRefetch={getMetadata}
           />
 
-          {/* <div className="mb-1 text-center text-light-default text-base font-normal">
+          {/* <div className="mb-1 text-center text-light-1 text-base font-normal">
             <span>Please join the version 3.7.1 survey and share you thoughts!</span>
 
             <a

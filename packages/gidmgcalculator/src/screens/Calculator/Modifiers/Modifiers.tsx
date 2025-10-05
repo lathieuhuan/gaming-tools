@@ -29,7 +29,7 @@ export function Modifiers() {
       <div className="mt-4 grow custom-scrollbar">
         <CollapseList
           key="buff"
-          className={!activeIndex && "hidden"}
+          className={!activeIndex ? "hidden" : undefined}
           items={[
             {
               title: "Team Bonus",
@@ -71,7 +71,7 @@ export function Modifiers() {
 
         <CollapseList
           key="debuff"
-          className={activeIndex && "hidden"}
+          className={activeIndex ? "hidden" : undefined}
           items={[
             {
               title: "Resonance & Reactions debuffs",

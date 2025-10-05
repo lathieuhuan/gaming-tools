@@ -54,7 +54,7 @@ export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
               <button
                 key={character.name}
                 {...itemUtils.getProps(data.code, [
-                  "w-full py-2 border-b border-surface-border flex items-center gap-3",
+                  "w-full py-2 border-b border-dark-line flex items-center gap-3",
                   hidden && "hidden",
                 ])}
                 onClick={() => {
@@ -74,22 +74,22 @@ export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
                     <GenshinImage
                       src={data.sideIcon}
                       fallbackCls="p-1"
-                      imgCls="absolute min-w-[2.5rem] h-10 -top-4 -left-2"
+                      imgCls="absolute min-w-10 h-10 -top-4 -left-2"
                     />
                   )}
                 </div>
-                <span className={`font-semibold ${isChosen ? "text-active-color" : ""}`}>{character.name}</span>
+                <span className={`font-semibold ${isChosen ? "text-active" : ""}`}>{character.name}</span>
               </button>
             );
           }
           return null;
         })}
 
-        {!userChars.length && <p className="pt-8 text-center text-hint-color">No characters found</p>}
+        {!userChars.length && <p className="pt-8 text-center text-light-hint">No characters found</p>}
       </div>
 
       <ButtonGroup
-        className="p-4 bg-surface-3"
+        className="p-4 bg-dark-3"
         justify="end"
         buttons={[
           {

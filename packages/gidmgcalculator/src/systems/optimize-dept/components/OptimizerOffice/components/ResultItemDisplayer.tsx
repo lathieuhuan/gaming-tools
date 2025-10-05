@@ -40,7 +40,7 @@ export function ResultItemDisplayer({
     item.artBuffCtrls.some((ctrl) => ctrl.activated) || item.artDebuffCtrls.some((ctrl) => ctrl.activated);
 
   return (
-    <div className="p-4 rounded-md bg-surface-1 space-y-4">
+    <div className="p-4 rounded-md bg-dark-1 space-y-4">
       <div className="flex justify-between items-start">
         <div className="text-2xl font-black text-secondary-1">{title}</div>
         {keepCheckbox}
@@ -71,7 +71,7 @@ export function ResultItemDisplayer({
             );
           }
           return (
-            <div key={artifactI} className="p-1 bg-surface-2 rounded">
+            <div key={artifactI} className="p-1 bg-dark-2 rounded">
               <GenshinImage
                 className="opacity-50"
                 src={Entity_.artifactIconOf(ARTIFACT_TYPES[artifactI])}
@@ -87,7 +87,7 @@ export function ResultItemDisplayer({
         <div>
           <div>
             <button
-              className={`max-w-full text-left flex gap-2 ${expanded ? "text-active-color" : "glow-on-hover"}`}
+              className={`max-w-full text-left flex gap-2 ${expanded ? "text-active" : "glow-on-hover"}`}
               title={setBonusesSumary}
               onClick={() => onExpand(expanded)}
             >
@@ -100,7 +100,7 @@ export function ResultItemDisplayer({
 
           <CollapseSpace active={expanded}>
             <div className="pt-3">
-              <div className="h-px bg-surface-border/80" />
+              <div className="h-px bg-dark-line/80" />
               <div className="mt-2 space-y-2">{modSection}</div>
             </div>
           </CollapseSpace>

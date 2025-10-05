@@ -102,7 +102,7 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
         return (
           <div key={i} className="p-1.5 w-1/3" style={{ minHeight: compact ? 84 : 124 }}>
             <EmptyWrap
-              className={clsx("p-4 w-full h-full flex-center rounded bg-surface-3", props.fillable && "glow-on-hover")}
+              className={clsx("p-4 w-full h-full flex-center rounded bg-dark-3", props.fillable && "glow-on-hover")}
               onClick={props.fillable ? () => props.onClickEmptyArtifact?.(i) : undefined}
             >
               <GenshinImage className="w-full" src={Entity_.artifactIconOf(ARTIFACT_TYPES[i])} />

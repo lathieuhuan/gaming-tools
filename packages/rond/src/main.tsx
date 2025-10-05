@@ -1,8 +1,8 @@
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
-import "@lib/index.css";
-import "./index.css";
 import { ScreenSizeWatcher } from "@lib/main.ts";
+
+import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ScreenSizeWatcher>
