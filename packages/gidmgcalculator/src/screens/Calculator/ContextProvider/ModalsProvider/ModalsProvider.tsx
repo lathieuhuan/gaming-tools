@@ -49,7 +49,7 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
       <Modal
         active={modalType === "SAVE_SETUP"}
         preset="small"
-        className="bg-surface-1"
+        className="bg-dark-1"
         title="Save setup"
         onClose={closeModal}
       >

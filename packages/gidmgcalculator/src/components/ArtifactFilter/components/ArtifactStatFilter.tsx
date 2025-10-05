@@ -43,12 +43,12 @@ export function ArtifactStatFilter({
     const { no = 0, showSelect = true } = args;
 
     return (
-      <div key={no} className="px-4 w-56 h-8 bg-surface-3 flex items-center">
-        <div className="mr-1 pt-0.5 w-2.5 text-base text-light-default shrink-0">{no ? <p>{no}.</p> : null}</div>
+      <div key={no} className="px-4 w-56 h-8 bg-dark-3 flex items-center">
+        <div className="mr-1 pt-0.5 w-2.5 text-base text-light-1 shrink-0">{no ? <p>{no}.</p> : null}</div>
         {showSelect ? (
           <VersatileSelect
             title="Select Stat"
-            className={clsx("w-full", args.value === "All" ? "text-light-default" : "text-bonus-color")}
+            className={clsx("w-full", args.value === "All" ? "text-light-1" : "text-bonus")}
             transparent
             options={args.options.map((type) => ({ label: t(type), value: type }))}
             value={args.value}
@@ -89,7 +89,7 @@ export function ArtifactStatFilter({
         </div>
       </div>
 
-      {hasDuplicates && <p className="mt-4 text-danger-3">Every stat must be unique!</p>}
+      {hasDuplicates && <p className="mt-4 text-danger-2">Every stat must be unique!</p>}
     </FilterTemplate>
   );
 }

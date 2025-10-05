@@ -1,0 +1,80 @@
+@layer base, theme, components, utilities;
+
+@import "rond/components.css" layer(components);
+@import "tailwindcss";
+
+@import "tailwind-theme/theme.css";
+
+@source '../src/**/*.{ts,tsx,js,jsx}';
+
+@source '../../rond/dist/main.js';
+
+@source inline('text-{pyro,hydro,electro,dendro,geo,cryo,anemo}');
+
+@source inline('bg-{pyro,hydro,electro,dendro,geo,cryo,anemo}');
+
+@theme {
+  /* --color-*: initial; */
+  --color-max: #f43f5e;
+  --color-pyro: #ff504a;
+  --color-hydro: #2eaaff;
+  --color-dendro: #49e03e;
+  --color-electro: #cd77ff;
+  --color-anemo: #3effa2;
+  --color-cryo: #75faff;
+  --color-geo: #ffc558;
+}
+
+body {
+  position: relative;
+  font-family: "Nunito", "Helvetica", "Roboto", "Arial", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  @apply text-light-1;
+}
+
+@layer base {
+  option {
+    color: black;
+  }
+
+  select {
+    background: transparent;
+  }
+
+  a {
+    @apply text-link;
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 10px grey;
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(165, 165, 165);
+    border-radius: 8px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(185, 185, 185);
+  }
+}
+
+.bg-gradient-1 {
+  background-image: linear-gradient(to bottom, #6c6969, #8c8989, #9c9a9a);
+}
+.bg-gradient-2 {
+  background-image: linear-gradient(to bottom, #5ca862, #61c370, #63dd7e);
+}
+.bg-gradient-3 {
+  background-image: linear-gradient(to bottom, #5d8fa8, #72aae3, #8bb6ff);
+}
+.bg-gradient-4 {
+  background-image: linear-gradient(to bottom, #7e4da6, #9b4cc6, #bd44e4);
+}
+.bg-gradient-5 {
+  background-image: linear-gradient(to bottom, #a68746, #c5a03c, #e3bb2c);
+}

@@ -23,7 +23,7 @@ export function useWeaponTypeSelect(
 
   const mergeProps = {
     ...selectProps,
-    selectedCls: "shadow-3px-3px shadow-active-color",
+    selectedCls: "shadow-hightlight-2 shadow-active",
   } satisfies IconSelectProps<WeaponType>;
 
   return {

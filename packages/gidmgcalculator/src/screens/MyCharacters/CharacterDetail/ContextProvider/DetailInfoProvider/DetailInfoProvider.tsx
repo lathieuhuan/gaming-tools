@@ -74,7 +74,7 @@ export function DetailInfoProvider(props: Pick<DetailInfoProviderProps, "childre
 
   return (
     <div className="pt-8">
-      <p className="text-center text-lg text-hint-color">No characters found</p>
+      <p className="text-center text-lg text-light-hint">No characters found</p>
     </div>
   );
 }

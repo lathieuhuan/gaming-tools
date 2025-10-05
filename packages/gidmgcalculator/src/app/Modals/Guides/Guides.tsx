@@ -53,7 +53,7 @@ export function Guides(props: ModalControl) {
                     {markYellow("My Weapons")}, {markYellow("My Artifacts")}.
                   </p>
                   <p>- You can save setups from the Calculator and view them in {markYellow("My Setups")}.</p>
-                  <p className="text-danger-3">
+                  <p className="text-danger-2">
                     - Your data saved in the App is just temporary. If you wish it to be available in your next visit,
                     you need to download your data and then upload it to the App again.
                   </p>
@@ -66,7 +66,7 @@ export function Guides(props: ModalControl) {
                     {markYellow("upload")} your data.
                   </p>
                   <p>
-                    - Your saved data is <span className="text-danger-3">limited</span>. When creating new Setup in the
+                    - Your saved data is <span className="text-danger-2">limited</span>. When creating new Setup in the
                     Calculator, you should pick items that you already have if possible to reuse them and save space.
                   </p>
                 </div>
@@ -95,7 +95,7 @@ export function Guides(props: ModalControl) {
                     the next visits. It takes less than 500KB to store 200 weapons & 800 artifacts. Those are current
                     limits of the user database.
                   </p>
-                  <p className="text-danger-3">
+                  <p className="text-danger-2">
                     - Change of "Auto save my database to browser's local storage" option can remove your current data
                     and works on the App.
                   </p>

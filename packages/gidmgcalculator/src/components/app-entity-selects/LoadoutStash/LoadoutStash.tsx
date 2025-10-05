@@ -29,7 +29,7 @@ export function LoadoutStashCore({ keyword, onSelect }: LoadoutStashCoreProps) {
   };
 
   return (
-    <div className="h-full flex flex-col overflow-hidden bg-surface-2">
+    <div className="h-full flex flex-col overflow-hidden bg-dark-2">
       <div className="flex space-x-4">
         {LOADOUT_TYPE_OPTIONS.map((option) => {
           return (

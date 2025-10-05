@@ -70,6 +70,6 @@ export function BonusesTracker({ attkBonuses }: BonusesTrackerProps) {
       })}
     </div>
   ) : (
-    <p className="h-16 flex-center text-hint-color">No bonuses</p>
+    <p className="h-16 flex-center text-light-hint">No bonuses</p>
   );
 }

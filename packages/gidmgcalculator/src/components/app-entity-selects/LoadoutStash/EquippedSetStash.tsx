@@ -104,7 +104,7 @@ export function EquippedSetStash({ keyword, onChangeArtifact, onSelectSet }: Equ
 
   return (
     <div ref={observedAreaRef} className="pr-2 h-full custom-scrollbar">
-      {empty ? <p className="py-4 text-hint-color text-lg text-center">No Loadouts found</p> : null}
+      {empty ? <p className="py-4 text-light-hint text-lg text-center">No Loadouts found</p> : null}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
         {options.map(({ character, artifacts }, i) => {
@@ -123,7 +123,7 @@ export function EquippedSetStash({ keyword, onChangeArtifact, onSelectSet }: Equ
                 Select
               </Button>
 
-              <div className="p-3 rounded-lg bg-surface-1">
+              <div className="p-3 rounded-lg bg-dark-1">
                 <div className="flex items-start space-x-3">
                   <div className={opacityCls}>
                     {visible ? <CharacterPortrait size="small" info={character} /> : null}

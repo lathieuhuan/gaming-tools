@@ -87,7 +87,7 @@ export function SetupSelect() {
       <button
         key={index}
         className={clsx(
-          "h-9 w-9 border-l border-b border-white flex-center shrink-0 disabled:bg-light-disabled disabled:text-black",
+          "h-9 w-9 border-l border-b border-white flex-center shrink-0 disabled:bg-light-4 disabled:text-black",
           className
         )}
         {...rest}
@@ -107,7 +107,7 @@ export function SetupSelect() {
             renderActions: ({ closeSelect }) => {
               const actions: ActionButtonAttrs[] = [
                 {
-                  className: "hover:bg-danger-1 hover:text-light-default",
+                  className: "hover:bg-danger-1 hover:text-light-1",
                   children: <TrashCanSvg />,
                   disabled: setupManageInfos.length < 2,
                   onClick: () => {
@@ -132,19 +132,19 @@ export function SetupSelect() {
                   },
                 },
                 {
-                  className: "hover:bg-primary-1" + (isAtMax ? " bg-light-disabled" : ""),
+                  className: "hover:bg-primary-1" + (isAtMax ? " bg-light-4" : ""),
                   children: <FaCopy />,
                   disabled: isAtMax,
                   onClick: onClickCopySetup(setup.ID),
                 },
                 {
-                  className: setup.ID === standardId ? "bg-bonus-color" : "bg-light-default hover:bg-primary-1",
+                  className: setup.ID === standardId ? "bg-bonus" : "bg-light-1 hover:bg-primary-1",
                   children: <SiTarget className="text-1.5xl" />,
                   disabled: comparedIds.length < 2 || !comparedIds.includes(setup.ID),
                   onClick: onSelectStandard(setup.ID),
                 },
                 {
-                  className: comparedIds.includes(setup.ID) ? "bg-bonus-color" : "bg-light-default hover:bg-primary-1",
+                  className: comparedIds.includes(setup.ID) ? "bg-bonus" : "bg-light-1 hover:bg-primary-1",
                   children: <FaBalanceScaleLeft className="text-1.5xl" />,
                   disabled: setupManageInfos.length < 2,
                   onClick: onClickToggleCompared(setup.ID),

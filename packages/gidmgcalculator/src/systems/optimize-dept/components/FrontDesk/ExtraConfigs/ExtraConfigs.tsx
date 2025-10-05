@@ -72,7 +72,7 @@ export function ExtraConfigs(props: ExtraConfigsProps) {
     <div className="h-full space-y-2">
       {renderItems.map((item, index) => {
         return (
-          <div key={index} className="h-12 px-3 py-2 bg-surface-1 rounded flex justify-between items-center">
+          <div key={index} className="h-12 px-3 py-2 bg-dark-1 rounded flex justify-between items-center">
             <p className="text-sm">{item.label}</p>
             {renderControl(item)}
           </div>

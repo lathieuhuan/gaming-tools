@@ -30,19 +30,19 @@ function LargeCalculator() {
       >
         <div className={clsx("grow flex items-center overflow-auto", styles.calculator)}>
           <div className="w-full flex h-98/100 gap-2">
-            <div className={`p-4 bg-surface-1 ${styles.card}`}>
+            <div className={`p-4 bg-dark-1 ${styles.card}`}>
               {/* ========== PANEL 1 ========== */}
               <CharacterOverview touched={touched} />
             </div>
 
-            <div className={`p-4 bg-surface-1 ${styles.card}`}>
+            <div className={`p-4 bg-dark-1 ${styles.card}`}>
               {touched ? (
                 // ========== PANEL 2 ==========
                 <Modifiers />
               ) : null}
             </div>
 
-            <div className={`p-4 bg-surface-3 relative ${styles.card}`}>
+            <div className={`p-4 bg-dark-3 relative ${styles.card}`}>
               {touched ? (
                 // ========== PANEL 3 ==========
                 <SetupManager />
@@ -54,7 +54,7 @@ function LargeCalculator() {
             {touched ? (
               <FinalResultPanel isHugeScreen={isHugeScreen} />
             ) : (
-              <div className={`bg-surface-3 ${styles.card}`} />
+              <div className={`bg-dark-3 ${styles.card}`} />
             )}
           </div>
         </div>
@@ -77,7 +77,7 @@ const FinalResultPanel = (props: FinalResultPanelProps) => {
 
   return (
     <div
-      className={`px-4 pt-2 pb-4 bg-surface-3 transition-size duration-200 relative ${styles.card}`}
+      className={`px-4 pt-2 pb-4 bg-dark-3 transition-size duration-200 relative ${styles.card}`}
       style={{
         width: `${width}rem`,
         maxWidth: props.isHugeScreen ? "30rem" : "22rem",

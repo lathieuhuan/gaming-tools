@@ -20,7 +20,7 @@ export function ArtifactLevelSelect({
     return (
       <VersatileSelect
         title="Select Level"
-        className={`bg-surface-2 text-rarity-${rarity} font-bold ${className}`}
+        className={`bg-dark-2 text-rarity-${rarity} font-bold ${className}`}
         style={{ width: "4.125rem" }}
         size="medium"
         align="right"
@@ -50,7 +50,7 @@ export function ArtifactLevelSelect({
   }
   return (
     <p
-      className={`px-2 pt-2 pb-1.5 text-lg text-rarity-${rarity} leading-none font-bold rounded bg-surface-3 ${className}`}
+      className={`px-2 pt-2 pb-1.5 text-lg text-rarity-${rarity} leading-none font-bold rounded bg-dark-3 ${className}`}
     >
       +{level}
     </p>

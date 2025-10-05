@@ -33,7 +33,7 @@ export function SetOption(props: SetOptionProps) {
 
   return (
     <div>
-      <div className="bg-surface-1 rounded-sm flex">
+      <div className="bg-dark-1 rounded-sm flex">
         <div
           className={clsx(
             "px-2 py-0.5 grow overflow-hidden flex items-center cursor-pointer",
@@ -48,8 +48,8 @@ export function SetOption(props: SetOptionProps) {
           <span className={`ml-2 pr-4 truncate ${active && !props.closing && "text-primary-1"}`}>{data.name}</span>
 
           <p className="ml-auto">
-            {selectedCount ? <span className="text-light-default">{selectedCount}</span> : null}
-            <span className="text-hint-color">
+            {selectedCount ? <span className="text-light-1">{selectedCount}</span> : null}
+            <span className="text-light-hint">
               {selectedCount ? "/" : ""}
               {total}
             </span>
@@ -57,7 +57,7 @@ export function SetOption(props: SetOptionProps) {
         </div>
 
         <div className="flex items-center shrink-0">
-          <div className="w-px h-2/3 bg-surface-border" />
+          <div className="w-px h-2/3 bg-dark-line" />
           <Checkbox
             size="medium"
             className="w-10 h-10 flex-center"
@@ -70,7 +70,7 @@ export function SetOption(props: SetOptionProps) {
 
       {active && (
         <ActionsAnimator closing={props.closing} afterClosed={props.afterActionsClosed}>
-          <div className="p-3 bg-surface-3 rounded-b-sm flex gap-3">
+          <div className="p-3 bg-dark-3 rounded-b-sm flex gap-3">
             <Button size="small" disabled={!manager.checkAnyEquippedSelected(set)} onClick={handleRemoveEquipped}>
               Remove Equipped
             </Button>

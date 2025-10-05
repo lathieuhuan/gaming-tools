@@ -152,8 +152,8 @@ function MySetups() {
               <div key={setupId} id={`setup-${setupId}`} className="w-full p-1">
                 <div
                   className={clsx(
-                    "px-2 pt-3 pb-2 rounded-lg bg-surface-3",
-                    setupId === selectedSetupID ? "shadow-5px-1px shadow-active-color" : "shadow-common"
+                    "px-2 pt-3 pb-2 rounded-lg bg-dark-3",
+                    setupId === selectedSetupID ? "shadow-hightlight-1 shadow-active" : "shadow-common"
                   )}
                   onClick={() => dispatch(chooseUserSetup(setupId))}
                 >
@@ -176,13 +176,13 @@ function MySetups() {
             );
           })
         ) : (
-          <p className="w-full py-4 text-hint-color text-lg text-center">No setups found</p>
+          <p className="w-full py-4 text-light-hint text-lg text-center">No setups found</p>
         )}
       </div>
 
-      <div className="shrink-0 px-4 pt-2 pb-4 rounded-lg bg-surface-3" style={{ width: "21.75rem" }}>
+      <div className="shrink-0 px-4 pt-2 pb-4 rounded-lg bg-dark-3" style={{ width: "21.75rem" }}>
         {error ? (
-          <p className="text-center text-danger-3">{error}</p>
+          <p className="text-center text-danger-2">{error}</p>
         ) : isLoading ? (
           <div className="w-full h-full flex-center">
             <LoadingSpin size="large" />

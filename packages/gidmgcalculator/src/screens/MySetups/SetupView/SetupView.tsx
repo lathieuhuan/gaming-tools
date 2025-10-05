@@ -122,7 +122,7 @@ export function SetupView({
             return (
               <CharacterPortrait
                 key={teammateIndex}
-                className={clsx("cursor-pointer", calculated && "shadow-3px-3px shadow-primary-1")}
+                className={clsx("cursor-pointer", calculated && "shadow-hightlight-2 shadow-primary-1")}
                 info={teammateData}
                 onClick={() => {
                   setTeammateDetail({
@@ -185,7 +185,7 @@ export function SetupView({
           {!isOriginal && (
             <Button variant="custom" className="text-danger-2" boneOnly icon={<FaUnlink />} onClick={uncombine} />
           )}
-          <p className="px-1 text-xl text-heading-color font-semibold truncate">{complexSetup?.name || setup.name}</p>
+          <p className="px-1 text-xl text-heading font-semibold truncate">{complexSetup?.name || setup.name}</p>
         </div>
 
         <div className="mt-2 lg:mt-0 pb-2 flex space-x-3 justify-end">
@@ -205,13 +205,13 @@ export function SetupView({
         </div>
       </div>
 
-      <div className="px-4 pt-4 pb-3 rounded-lg bg-surface-1 flex flex-col lg:flex-row gap-4">
+      <div className="px-4 pt-4 pb-3 rounded-lg bg-dark-1 flex flex-col lg:flex-row gap-4">
         <div className="flex flex-col gap-4">
           {display.mainCharacter}
           {display.teammates}
         </div>
 
-        <div className="hidden lg:block w-0.5 bg-surface-3" />
+        <div className="hidden lg:block w-0.5 bg-dark-3" />
 
         <div className="flex flex-col gap-4">
           <ButtonGroup
@@ -220,14 +220,14 @@ export function SetupView({
               {
                 children: "Stats",
                 variant: "custom",
-                className: "bg-surface-3",
+                className: "bg-dark-3",
                 disabled: !isFetched,
                 onClick: openModal("STATS"),
               },
               {
                 children: "Modifiers",
                 variant: "custom",
-                className: "bg-surface-3",
+                className: "bg-dark-3",
                 disabled: !isFetched,
                 onClick: openModal("MODIFIERS"),
               },
@@ -240,7 +240,7 @@ export function SetupView({
 
       <Modal.Core
         active={teammateDetail.index !== -1}
-        className="rounded-lg shadow-white-glow"
+        className="rounded-lg shadow-popup"
         onClose={closeTeammateDetail}
       >
         <CloseButton className={Modal.CLOSE_BTN_CLS} boneOnly onClick={closeTeammateDetail} />

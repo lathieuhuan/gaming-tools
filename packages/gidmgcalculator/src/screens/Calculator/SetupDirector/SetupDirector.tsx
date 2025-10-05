@@ -23,7 +23,7 @@ function SetupDirectorCore() {
         onClick={() => dispatch(updateUI({ setupDirectorActive: false }))}
       />
 
-      <p className="my-2 text-1.5xl text-center text-heading-color font-bold">Setups Management</p>
+      <p className="my-2 text-1.5xl text-center text-heading font-bold">Setups Management</p>
 
       <div className="flex-grow hide-scrollbar">
         <div className="space-y-4">
@@ -86,7 +86,7 @@ export function SetupDirector(props: { className?: string }) {
   return (
     <CollapseSpace
       active={setupDirectorActive}
-      className={clsx("absolute bottom-0 left-0 bg-surface-3 z-30", props.className)}
+      className={clsx("absolute bottom-0 left-0 bg-dark-3 z-30", props.className)}
       activeHeight="100%"
       moveDuration={200}
       destroyOnClose

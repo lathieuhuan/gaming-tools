@@ -124,8 +124,8 @@ export function EntitySelectTemplate({
           <Popover
             as="div"
             active={searchOn}
-            className={`mt-4 ${hasMultipleMode ? "left-0" : "right-0"}`}
-            origin={hasMultipleMode ? "top-left" : "top-right"}
+            className={`mt-3 ${hasMultipleMode ? "left-0" : "right-0"}`}
+            origin={hasMultipleMode ? "top left" : "top right"}
           >
             {searchInput}
           </Popover>

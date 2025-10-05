@@ -66,7 +66,7 @@ export function AccountSettingsControls({
         <>
           Canned Knowledge
           <br />
-          <span className="text-hint-color text-sm">(Archon Quest: Ever So Close)</span>
+          <span className="text-light-hint text-sm">(Archon Quest: Ever So Close)</span>
         </>
       ),
       className: "w-fit",
@@ -80,7 +80,7 @@ export function AccountSettingsControls({
         <>
           Skirk's Training
           <br />
-          <span className="text-hint-color text-sm">(Skirk's Story Quest)</span>
+          <span className="text-light-hint text-sm">(Skirk's Story Quest)</span>
         </>
       ),
       className: "w-fit",
@@ -102,7 +102,7 @@ export function AccountSettingsControls({
             return (
               <CharacterPortrait
                 key={traveler}
-                className={selected ? "shadow-3px-3px shadow-active-color" : ""}
+                className={selected ? "shadow-hightlight-2 shadow-active" : ""}
                 size="small"
                 zoomable={false}
                 info={info}

@@ -1,8 +1,8 @@
 const typeToCls: Record<string, string> = {
-  k: "text-bonus-color", // key
-  v: "text-bonus-color font-bold", // value
-  m: "text-danger-max", // max
-  n: "text-hint-color", // note
+  k: "text-bonus", // key
+  v: "text-bonus font-bold", // value
+  m: "text-max", // max
+  n: "text-light-hint", // note
   ms: "text-primary-1", // milestone
   anemo: "text-anemo",
   cryo: "text-cryo",

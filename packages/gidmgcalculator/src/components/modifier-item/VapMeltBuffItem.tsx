@@ -22,7 +22,7 @@ export function VapMeltBuffItem({ reaction, element, attkBonuses, ...rest }: Vap
       heading={
         <>
           <span className="capitalize">{reaction}</span>{" "}
-          <span className="text-hint-color font-normal">
+          <span className="text-light-hint font-normal">
             (vs {element === "pyro" ? (reaction === "melt" ? "Cryo" : "Hydro") : "Pyro"})
           </span>
         </>

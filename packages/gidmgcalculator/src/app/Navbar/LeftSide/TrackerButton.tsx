@@ -13,7 +13,7 @@ export function TrackerButton() {
     };
 
     return (
-      <button className="w-8 h-8 flex-center bg-surface-3 glow-on-hover" onClick={onClick}>
+      <button className="w-8 h-8 flex-center bg-dark-3 glow-on-hover" onClick={onClick}>
         <BiDetail className="text-xl" />
       </button>
     );

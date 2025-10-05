@@ -89,7 +89,7 @@ export function BuffElement() {
     <div className="pt-2">
       {nodes.filter(Boolean).map((node, index) => (
         <Fragment key={index}>
-          {index ? <div className="mx-auto my-3 w-1/2 h-px bg-surface-3" /> : null}
+          {index ? <div className="mx-auto my-3 w-1/2 h-px bg-dark-3" /> : null}
           {node}
         </Fragment>
       ))}

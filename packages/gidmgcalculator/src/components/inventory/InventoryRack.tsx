@@ -140,7 +140,7 @@ export function InventoryRack<T extends Weapon | Artifact>({
           </div>
         ) : null}
 
-        {ready && !data.length ? <p className="py-4 text-hint-color text-lg text-center">{emptyText}</p> : null}
+        {ready && !data.length ? <p className="py-4 text-light-hint text-lg text-center">{emptyText}</p> : null}
       </div>
 
       {data.length ? (
@@ -160,7 +160,7 @@ export function InventoryRack<T extends Weapon | Artifact>({
               </button>
 
               <p className="font-semibold">
-                <span className="text-heading-color">{pageNo + 1}</span> / {deadEnd + 1}
+                <span className="text-heading">{pageNo + 1}</span> / {deadEnd + 1}
               </p>
 
               <button
@@ -177,7 +177,7 @@ export function InventoryRack<T extends Weapon | Artifact>({
             </div>
           ) : null}
 
-          <div className="absolute bottom-1 right-4 mr-2 text-sm leading-none text-hint-color">{data.length} items</div>
+          <div className="absolute bottom-1 right-4 mr-2 text-sm leading-none text-light-hint">{data.length} items</div>
         </div>
       ) : null}
     </div>

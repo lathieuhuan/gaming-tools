@@ -11,7 +11,7 @@ interface SetBonusesViewProps {
 export function SetBonusesView({ setBonuses, noTitle }: SetBonusesViewProps) {
   return (
     <div>
-      {!noTitle && <p className="text-lg leading-relaxed text-heading-color font-semibold">Set bonus</p>}
+      {!noTitle && <p className="text-lg leading-relaxed text-heading font-semibold">Set bonus</p>}
 
       {setBonuses.length > 0 ? (
         <div className="space-y-2">
@@ -40,14 +40,14 @@ export function SetBonusesView({ setBonuses, noTitle }: SetBonusesViewProps) {
             }
             return (
               <div key={index} className="mt-1">
-                <p className="text-lg leading-relaxed font-medium text-heading-color">{data.name}</p>
+                <p className="text-lg leading-relaxed font-medium text-heading">{data.name}</p>
                 <ul className="pl-6 list-disc space-y-1">{content}</ul>
               </div>
             );
           })}
         </div>
       ) : (
-        <p className="text-hint-color font-medium">No set bonus</p>
+        <p className="text-light-hint font-medium">No set bonus</p>
       )}
     </div>
   );

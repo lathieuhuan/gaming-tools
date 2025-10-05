@@ -4,10 +4,11 @@
   max-width: 60%;
 
   .active-cell {
-    @apply border-b-link-color;
+    border-bottom-color: var(--color-link);
 
     .icon-wrapper {
-      @apply border-link-color bg-link-color;
+    border-color: var(--color-link);
+    background-color: var(--color-link);
     }
   }
   .icon-wrapper {

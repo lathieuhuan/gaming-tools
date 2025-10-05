@@ -43,7 +43,7 @@ export function SearchBar({
   return (
     <div className={clsx("flex gap-2", className)}>
       <Select
-        className="w-20 shrink-0 border-b border-surface-border rounded-none"
+        className="w-20 shrink-0 border-b border-dark-line rounded-none"
         transparent
         options={[
           {

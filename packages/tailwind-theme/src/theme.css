@@ -16,11 +16,14 @@
   --color-light-3: #e7e7e7;
   --color-light-4: #cdcdcd;
   --color-light-hint: #b9b9b9;
-  --color-danger-2: #c20300;
+  --color-danger-1: #cc0300;
+  --color-danger-2: #ff7370;
   --color-primary-1: #edc73d;
   --color-primary-2: #f5dc6e;
   --color-secondary-1: #09bcba;
   --color-active: #80ffd0;
+  --color-bonus: #62f98e;
+  --color-link: #5ca8ff;
 
   --color-rarity-5: #ffd700;
   --color-rarity-4: #ff50ff;
@@ -32,12 +35,16 @@
   --color-heading: #fa8a12;
 
   --radius-circle: 50%;
+  --radius-2\.5xl: 2rem;
 
+  --text-1\.5xl: 1.375rem;
   --text-xlp: 1.375rem;
 
   --shadow-common: rgb(0 0 0 / 20%) 0px 3px 3px -2px, rgb(0 0 0 / 14%) 0px 3px 4px 0px,
     rgb(0 0 0 / 12%) 0px 1px 8px 0px;
-  --shadow-popup: 0 0 1.5px #b8b8b8;
+  --shadow-popup: 0 0 1.5px #b9b9b9;
+  --shadow-hightlight-1: 0 0 5px 1px var(--tw-shadow-color);
+  --shadow-hightlight-2: 0 0 3px 2px var(--tw-shadow-color);
 
   --breakpoint-xs: 320px;
   --breakpoint-sm: 480px;
@@ -49,11 +56,14 @@
 }
 
 @layer base {
-  button {
+  button:not(:disabled) {
     cursor: pointer;
   }
 
-  input {
+  button,
+  input,
+  select,
+  textarea {
     outline: none;
   }
 }
@@ -73,9 +83,31 @@
     &:not(:disabled) {
       opacity: 0.88;
     }
+
     &:not(:disabled):hover {
       opacity: 1;
     }
+  }
+}
+
+@utility zoomin-on-hover {
+  @media (min-width: 480px) {
+    &:hover {
+      transform: scale(1.05);
+    }
+    & img {
+      transition: transform 100ms ease-in-out;
+    }
+    &:hover img {
+      transform: scale(1.2);
+    }
+  }
+}
+
+@utility contains-inline-svg {
+  & svg {
+    display: inline;
+    flex-shrink: 0;
   }
 }
 
@@ -87,4 +119,32 @@
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
   overflow: auto;
+}
+
+@utility custom-scrollbar {
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  overflow: auto;
+
+  @media (min-width: 768px) {
+    -ms-overflow-style: auto; /* IE and Edge */
+    scrollbar-width: auto;
+
+    &::-webkit-scrollbar {
+      display: block;
+      width: 10px;
+      height: 10px;
+    }
+    &::-webkit-scrollbar-track {
+      box-shadow: inset 0 0 6px grey;
+      border-radius: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      border-radius: 6px;
+    }
+  }
 }

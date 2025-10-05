@@ -41,7 +41,7 @@ export function CharacterPortrait(props: CharacterPortraitProps) {
     "shrink-0 overflow-hidden rounded-circle",
     info && zoomable && "zoomin-on-hover",
     sizeCls[size],
-    withColorBg && vision ? `bg-${vision}` : "bg-surface-3",
+    withColorBg && vision ? `bg-${vision}` : "bg-dark-3",
     props.className,
   ];
 

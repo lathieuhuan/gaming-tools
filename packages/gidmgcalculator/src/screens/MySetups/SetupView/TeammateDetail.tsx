@@ -19,14 +19,14 @@ export function TeammateDetail({ teammate, calculated, onSwitch, onCalculate }: 
   if (!data) return null;
 
   return (
-    <div className="w-76 bg-surface-2">
+    <div className="w-76 bg-dark-2">
       <div className="pl-4 pt-4 pr-6 flex items-start">
         <CharacterPortrait info={data} />
         <p className={`px-4 text-2xl text-${data.vision} font-bold`}>{teammate.name}</p>
       </div>
 
       <div className="py-4">
-        <TeammateItems className="p-4 bg-surface-1" teammate={teammate} />
+        <TeammateItems className="p-4 bg-dark-1" teammate={teammate} />
 
         <div className="mt-4 flex justify-center">
           {calculated ? (

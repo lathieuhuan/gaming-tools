@@ -9,7 +9,7 @@ type SettingGroupCardProps = {
   className?: string;
 };
 export function SettingsGroupCard(props: SettingGroupCardProps) {
-  return <div className={clsx("px-4 py-2 bg-surface-1 rounded", props.className)}>{props.children}</div>;
+  return <div className={clsx("px-4 py-2 bg-dark-1 rounded", props.className)}>{props.children}</div>;
 }
 
 export function SettingsGroupTitle({ children }: { children: ReactNode }) {

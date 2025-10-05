@@ -14,7 +14,7 @@ export function Badge({ active, className, children, ...rest }: BadgeProps) {
   return (
     <div
       className={cn(
-        "rounded-sm px-1.5 py-px text-xs font-semibold cursor-default text-white bg-danger-2",
+        "rounded-sm px-1.5 py-px text-xs font-semibold cursor-default text-white bg-danger-1",
         className
       )}
       {...rest}

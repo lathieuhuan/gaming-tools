@@ -33,7 +33,7 @@ export function MySetupsModals(props: MySetupsModalsProps) {
         <ul className="pl-4 pr-2 list-disc space-y-1 contains-inline-svg">
           <li>
             {markYellow("Update setups")}: When you press <FaWrench /> on a saved setup, you're pushing a{" "}
-            <span className="text-danger-3">copy</span> of it to the Calculator, so don't forget to save the modified
+            <span className="text-danger-2">copy</span> of it to the Calculator, so don't forget to save the modified
             copy if you want to apply the changes to that setup.
           </li>
           <li>
@@ -56,7 +56,7 @@ export function MySetupsModals(props: MySetupsModalsProps) {
       <Modal
         active={modalType === "FIRST_COMBINE"}
         title="Combine setups"
-        className="bg-surface-2"
+        className="bg-dark-2"
         bodyCls="grow hide-scrollbar"
         withActions
         style={{
@@ -73,7 +73,7 @@ export function MySetupsModals(props: MySetupsModalsProps) {
       <Modal
         active={modalType === "COMBINE_MORE"}
         title="Add setups to the complex"
-        className="bg-surface-2"
+        className="bg-dark-2"
         bodyCls="grow hide-scrollbar"
         withActions
         style={{

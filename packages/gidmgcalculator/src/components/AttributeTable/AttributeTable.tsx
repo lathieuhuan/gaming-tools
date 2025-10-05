@@ -24,7 +24,7 @@ const EmSection = ({ em }: EmSectionProps) => {
         <Cell className="flex items-center">
           <p className="mr-1">Elemental Mastery</p>
           <FaCaretDown
-            className={clsx("duration-150 ease-linear", dropped ? "text-active-color" : "text-light-default rotate-90")}
+            className={clsx("duration-150 ease-linear", dropped ? "text-active" : "text-light-1 rotate-90")}
           />
         </Cell>
         <Cell className="mr-2">{round(em, 1)}</Cell>

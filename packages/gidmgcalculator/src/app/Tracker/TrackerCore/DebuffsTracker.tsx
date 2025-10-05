@@ -23,7 +23,7 @@ export function DebuffsTracker({ result }: { result?: TrackerResult }) {
   }
 
   return (
-    <div className="-mt-1 -mb-3 divide-y divide-surface-border">
+    <div className="-mt-1 -mb-3 divide-y divide-dark-line">
       {hasRecord && (
         <div className={"py-3 " + recordListStyles}>
           {(["def", ...ATTACK_ELEMENTS] as const).map((attElmt) => {
@@ -40,7 +40,7 @@ export function DebuffsTracker({ result }: { result?: TrackerResult }) {
         </div>
       )}
       <div className="py-3">
-        <p className="text-lg text-heading-color">Resistance Multipliers</p>
+        <p className="text-lg text-heading">Resistance Multipliers</p>
         <div className={recordListStyles}>
           {ATTACK_ELEMENTS.map((attElmt) => {
             const actualResistance = 10 - totalResistReduct[attElmt];

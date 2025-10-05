@@ -126,12 +126,12 @@ export function ResultDisplayer({
 
       <div className="w-68 shrink-0">
         {selectingResult ? (
-          <div className="px-2 py-4 bg-surface-1 rounded">
+          <div className="px-2 py-4 bg-dark-1 rounded">
             <div className="px-2">
               <p>
                 The number of Setups after loaded cannot exceed <span className="font-semibold text-danger-2">5</span>.
               </p>
-              <p className="mt-1 text-sm text-hint-color">
+              <p className="mt-1 text-sm text-light-hint">
                 Please select the result and the current setups you want to keep.
               </p>
             </div>
@@ -140,7 +140,7 @@ export function ResultDisplayer({
               {setups.map((setup) => {
                 return (
                   <div key={setup.ID}>
-                    <Checkbox className="p-2 rounded hover:bg-surface-3" onChange={handleSelectSetup(setup)}>
+                    <Checkbox className="p-2 rounded hover:bg-dark-3" onChange={handleSelectSetup(setup)}>
                       {setup.name}
                     </Checkbox>
                   </div>

@@ -26,7 +26,7 @@ export const Alert = (props: AlertProps) => {
       case "success":
         return <CheckCircleSvg className="text-[#2fa80a]" />;
       case "error":
-        return <ExclamationCircleSvg className="text-danger-2" />;
+        return <ExclamationCircleSvg className="text-danger-1" />;
       case "warn":
         return <ExclamationTriangleSvg className="text-[#f97316]" />;
     }

@@ -54,7 +54,7 @@ export function MyCharactersTopBar() {
   }, [chosenChar]);
 
   return (
-    <div className="w-full flex justify-center bg-surface-2">
+    <div className="w-full flex justify-center bg-dark-2">
       <div className={styles["side-icon-carousel"]}>
         {characters.length ? (
           <div className="absolute top-8 right-full flex">
@@ -85,7 +85,7 @@ export function MyCharactersTopBar() {
                 >
                   <div
                     className={clsx(
-                      "rounded-circle border-3 border-light-default/30 bg-black/30",
+                      "rounded-circle border-3 border-light-1/30 bg-black/30",
                       styles["icon-wrapper"],
                       appCharacter.sideIcon
                         ? `m-2 ${styles["side-icon-wrapper"]}`
@@ -112,7 +112,7 @@ export function MyCharactersTopBar() {
           <Button
             variant="custom"
             size="custom"
-            className="w-full h-full bg-surface-3"
+            className="w-full h-full bg-dark-3"
             style={{ width: "3.75rem", height: "3.75rem" }}
             icon={<FaPlus className="text-2xl" />}
             onClick={modalCtrl.requestAddCharacter}
