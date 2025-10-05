@@ -217,7 +217,6 @@ export function TargetConfig() {
       showCancel={false}
       confirmText="Close"
       confirmButtonProps={{ variant: "default" }}
-      onConfirm={closeTargetConfig}
       cancelText="Overview mode"
       moreActions={[
         {
@@ -228,6 +227,7 @@ export function TargetConfig() {
           },
         },
       ]}
+      onConfirm={closeTargetConfig}
       onClose={closeTargetConfig}
     >
       <TargetConfigCore />

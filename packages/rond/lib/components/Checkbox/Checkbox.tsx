@@ -33,7 +33,7 @@ export const Checkbox = ({
         className
       )}
     >
-      <span className="flex-center h-[var(--height)]">
+      <span className="flex-center min-h-[var(--height)]">
         <span
           className={clsx(
             "checkbox bg-light-2 group-hover/checkbox:has-[:enabled]:bg-light-1 rounded-sm overflow-hidden select-none relative shrink-0",
@@ -70,7 +70,7 @@ export const Checkbox = ({
       {children ? (
         <span
           className={clsx(
-            "h-[var(--height)] leading-[var(--height)]",
+            "min-h-[var(--height)] leading-[var(--height)]",
             isSmall ? "text-base" : "text-lg"
           )}
         >
