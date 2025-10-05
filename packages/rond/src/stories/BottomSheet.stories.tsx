@@ -23,7 +23,7 @@ export const Default: Story = {
     active: false,
     title: "Title",
     height: "auto",
-    children: <MountAnnouncer className="bg-light-3 text-black h-16" />,
+    children: <MountAnnouncer className="bg-light-2 text-black h-16" />,
   },
 };
 
@@ -36,6 +36,6 @@ export const Overflow: Story = {
     active: false,
     title: "Title",
     height: "50%",
-    children: <MountAnnouncer className="bg-light-3 text-black h-200" />,
+    children: <MountAnnouncer className="bg-light-2 text-black h-200" />,
   },
 };

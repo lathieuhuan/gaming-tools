@@ -29,7 +29,7 @@ export const Popover = ({
       data-active={active}
       className={cn(
         'absolute z-10 transition duration-200 ease-linear scale-0 data-[active=true]:scale-100 cursor-default',
-        withTooltipStyle && "rounded-lg text-sm bg-black text-light-3",
+        withTooltipStyle && "rounded-lg text-sm bg-black text-light-2",
         className
       )}
       style={{ ...style, transformOrigin: origin }}

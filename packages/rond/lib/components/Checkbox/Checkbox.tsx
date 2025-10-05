@@ -28,7 +28,7 @@ export const Checkbox = ({
     <label
       data-slot="checkbox"
       className={cn(
-        "flex items-start gap-2 has-[:enabled]:cursor-pointer has-[:enabled]:hover:[&_.checkbox]:bg-light-1",
+        "flex items-start gap-2 group/checkbox has-[:enabled]:cursor-pointer has-[:disabled]:is-disabled",
         isSmall ? "[--height:1.5rem]" : "[--height:1.75rem]",
         className
       )}
@@ -36,8 +36,7 @@ export const Checkbox = ({
       <span className="flex-center h-[var(--height)]">
         <span
           className={clsx(
-            "checkbox bg-light-3 rounded-sm overflow-hidden select-none relative shrink-0",
-            "has-[:disabled]:bg-light-disabled",
+            "checkbox bg-light-2 group-hover/checkbox:has-[:enabled]:bg-light-1 rounded-sm overflow-hidden select-none relative shrink-0",
             isSmall ? "size-4.5" : "size-5.5"
           )}
         >
@@ -49,8 +48,8 @@ export const Checkbox = ({
           />
           <span
             className={clsx(
-              "absolute inset-0 select-none bg-active-bg transition-opacity duration-150 flex justify-center",
-              "opacity-0 peer-checked:opacity-100 peer-checked:peer-disabled:bg-active-bg-disabled",
+              "absolute inset-0 select-none bg-active transition-opacity duration-150 flex justify-center",
+              "opacity-0 peer-checked:opacity-100",
               indeterminate && "opacity-100 items-center"
             )}
           >

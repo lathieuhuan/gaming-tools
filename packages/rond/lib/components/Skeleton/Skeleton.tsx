@@ -6,5 +6,5 @@ type SkeletonProps = Omit<React.HTMLAttributes<HTMLDivElement>, "className"> & {
 };
 
 export const Skeleton = ({ className, ...rest }: SkeletonProps) => (
-  <div className={cn("animate-pulse bg-light-2", className)} {...rest} />
+  <div className={cn("animate-pulse bg-light-1", className)} {...rest} />
 );

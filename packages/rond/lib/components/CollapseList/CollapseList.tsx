@@ -27,7 +27,7 @@ export const CollapseList = (props: CollapseListProps) => {
             <div
               className={clsx(
                 "pt-1 px-6 pb-0 font-semibold leading-[1.625] cursor-pointer transition-all duration-200 glow-on-hover",
-                "text-light-2 bg-dark-3 aria-expanded:text-black aria-expanded:bg-primary-2"
+                "text-light-1 bg-dark-3 aria-expanded:text-black aria-expanded:bg-primary-2"
               )}
               onClick={() =>
                 setExpanded((prev) => {

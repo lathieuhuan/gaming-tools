@@ -31,7 +31,7 @@ export function BottomSheet({
         >
           <div className="p-1 bg-dark-1 text-heading min-h-10 flex justify-between items-center">
             <div className="px-3 text-lg leading-5.5 font-semibold">{title}</div>
-            <CloseButton boneOnly className="text-light-disabled" onClick={overlayProps.onClose} />
+            <CloseButton boneOnly onClick={overlayProps.onClose} />
           </div>
           <div className={cn("flex-grow overflow-auto", bodyCls)}>{children}</div>
         </div>

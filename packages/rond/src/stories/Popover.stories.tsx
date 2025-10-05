@@ -22,6 +22,7 @@ export const Default: Story = {
   args: {
     active: false,
     className: "bottom-full right-4 mb-2",
+    withTooltipStyle: true,
     children: <span>Popover content</span>,
   },
   render: (args) => {

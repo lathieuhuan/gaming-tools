@@ -1,17 +1,17 @@
 export type ButtonVariant = "default" | "primary" | "danger" | "active";
 
 export const CN_BY_VARIANT: Record<ButtonVariant, string> = {
-  default: "bg-light-3 text-black",
+  default: "bg-light-2 text-black",
   primary: "bg-primary-1 text-black",
   danger: "bg-danger-2 text-white",
-  active: "bg-active-bg text-black",
+  active: "bg-active text-black",
 };
 
 export const CN_BY_BONE_VARIANT: Record<ButtonVariant, string> = {
   default: "text-white",
   primary: "text-primary-1",
   danger: "text-danger-2",
-  active: "text-active-bg",
+  active: "text-active",
 };
 
 export type ButtonShape = "rounded" | "square";

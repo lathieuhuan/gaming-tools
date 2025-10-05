@@ -3,7 +3,7 @@
   width: 100%;
   border-radius: 0.25rem;
   color: var(--color-black);
-  background-color: var(--color-light-2);
+  background-color: var(--color-light-1);
 
   .ron-select-selector {
     position: absolute;
@@ -140,7 +140,7 @@
   border-radius: 0.25rem;
   overflow: hidden;
   color: var(--color-black);
-  background-color: var(--color-light-2);
+  background-color: var(--color-light-1);
   box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
 
   .rc-virtual-list-holder {
@@ -165,7 +165,7 @@
     background-color: var(--color-primary-1);
   }
   .ron-select-item-option-selected {
-    background-color: var(--color-light-disabled);
+    background-color: var(--color-light-4);
   }
   .ron-select-item,
   .ron-select-item-empty {

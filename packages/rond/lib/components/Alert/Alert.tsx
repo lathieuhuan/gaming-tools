@@ -40,10 +40,10 @@ export const Alert = (props: AlertProps) => {
       <span className="mt-1.5 flex text-xl shrink-0">{renderIcon()}</span>
       <p className="py-1 grow-1 text-base font-semibold text-black">{props.content}</p>
       <Button
-        className="shrink-0 opacity-50 hover:opacity-85 text-black"
+        className="shrink-0 text-black"
         variant="custom"
         withShadow={false}
-        icon={<TimesSvg />}
+        icon={<TimesSvg className="text-lg opacity-80" />}
         onClick={props.onClose}
       />
     </div>

@@ -34,7 +34,7 @@ export function Radio(props: RadioProps) {
       />
       <span
         className={clsx(
-          `flex rounded-circle select-none border-light-4 peer-checked:border-active-bg ${classBySize[size]}`,
+          `flex rounded-circle select-none border-light-2 peer-checked:border-active ${classBySize[size]}`,
           "before:size-full before:rounded-circle before:opacity-0 before:transition-opacity before:duration-200 peer-checked:before:opacity-100"
         )}
       />

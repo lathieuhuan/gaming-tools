@@ -74,7 +74,7 @@ export function BottomList<
                 className={cn(
                   "pt-2.5 pb-1.5 text-base leading-5 text-white border-b border-dark-line",
                   align === "right" && "text-right",
-                  item.value === value && "text-light-disabled",
+                  item.value === value && "text-active",
                   hidden && "hidden",
                   item.className
                 )}

@@ -42,7 +42,7 @@ export function Tabs({
             disabled={disabled}
             className={clsx(
               "w-1/2 py-0.5 text-black font-bold flex-center",
-              index === activeIndex ? classByLevel[level] : "bg-light-2 glow-on-hover",
+              index === activeIndex ? classByLevel[level] : "bg-light-1 glow-on-hover",
               disabled && "is-disabled"
             )}
             onClick={() => onClickTab?.(index)}

@@ -10,17 +10,17 @@
   --color-dark-2: #151a40;
   --color-dark-3: #2c315c;
   --color-dark-line: #535582;
-  --color-light-1: #f5f5f5;
-  --color-light-2: #ebebeb;
-  --color-light-3: #e0e0e0;
-  --color-light-4: #b8b8b8;
-  --color-light-disabled: #cccccc;
+  --color-light-0: #f5f5f5;
+  --color-light-1: #ebebeb;
+  --color-light-2: #e1e1e1;
+  --color-light-3: #e7e7e7;
+  --color-light-4: #cdcdcd;
+  --color-light-hint: #b9b9b9;
   --color-danger-2: #c20300;
   --color-primary-1: #edc73d;
   --color-primary-2: #f5dc6e;
   --color-secondary-1: #09bcba;
-  --color-active-bg: #89fba9;
-  --color-active-bg-disabled: #a6dfb6;
+  --color-active: #80ffd0;
 
   --color-rarity-5: #ffd700;
   --color-rarity-4: #ff50ff;
@@ -52,6 +52,10 @@
   button {
     cursor: pointer;
   }
+
+  input {
+    outline: none;
+  }
 }
 
 @utility flex-center {
@@ -61,7 +65,7 @@
 }
 
 @utility is-disabled {
-  opacity: 0.55;
+  opacity: 0.6;
 }
 
 @utility glow-on-hover {

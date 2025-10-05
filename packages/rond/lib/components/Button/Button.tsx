@@ -1,6 +1,7 @@
-import { cn } from "@lib/utils";
-import type { ClassValue } from "clsx";
+import clsx, { type ClassValue } from "clsx";
 import type { ButtonHTMLAttributes } from "react";
+
+import { cn } from "@lib/utils";
 import {
   ButtonShape,
   ButtonSize,
@@ -75,7 +76,7 @@ export function CloseButton({ boneOnly, className, size = "medium", ...rest }: C
       variant={boneOnly ? "default" : "danger"}
       icon={
         <svg
-          className={CLOSE_ICON_CN_BY_SIZE[size]}
+          className={clsx(boneOnly && "opacity-80", CLOSE_ICON_CN_BY_SIZE[size])}
           viewBox="0 0 24 24"
           width="1em"
           height="1em"
