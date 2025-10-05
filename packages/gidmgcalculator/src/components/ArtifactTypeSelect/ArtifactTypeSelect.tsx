@@ -17,5 +17,5 @@ type ArtifactTypeSelectProps = Omit<
 >;
 
 export function ArtifactTypeSelect(props: ArtifactTypeSelectProps) {
-  return <IconSelect {...props} iconCls="p-1" selectedCls="bg-active-color" options={OPTIONS} />;
+  return <IconSelect {...props} iconCls="p-1" selectedCls="bg-active" options={OPTIONS} />;
 }

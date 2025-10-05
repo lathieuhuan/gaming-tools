@@ -20,7 +20,7 @@ export function ElementSelect(props: ElementSelectProps) {
       {...props}
       className="p-1"
       iconCls="text-2xl"
-      selectedCls="shadow-3px-3px shadow-active-color"
+      selectedCls="shadow-hightlight-2 shadow-active"
       options={OPTIONS}
     />
   );

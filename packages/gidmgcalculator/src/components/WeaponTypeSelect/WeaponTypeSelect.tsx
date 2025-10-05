@@ -14,6 +14,6 @@ type WeaponTypeSelectProps = Omit<IconSelectProps<WeaponType>, "selectedCls" | "
 
 export const WeaponTypeSelect = (props: WeaponTypeSelectProps) => {
   return (
-    <IconSelect {...props} selectedCls="shadow-3px-3px shadow-active-color" options={OPTIONS} />
+    <IconSelect {...props} selectedCls="shadow-hightlight-2 shadow-active" options={OPTIONS} />
   );
 };

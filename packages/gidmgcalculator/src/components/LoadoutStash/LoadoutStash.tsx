@@ -36,7 +36,7 @@ export function LoadoutStashCore({ onSelect, onClose }: LoadoutStashCoreProps) {
   return (
     <EntitySelectTemplate title="Artifact Loadouts" hasSearch onClose={onClose}>
       {({ keyword }) => (
-        <div className="h-full flex flex-col overflow-hidden bg-surface-2">
+        <div className="h-full flex flex-col overflow-hidden bg-dark-2">
           <div className="flex space-x-4">
             {LOADOUT_TYPE_OPTIONS.map((option) => {
               return (

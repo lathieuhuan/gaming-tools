@@ -71,7 +71,7 @@ export function CharacterFilter({
   };
 
   return (
-    <div className={clsx("px-3 py-4 bg-surface-1 flex flex-col", className)}>
+    <div className={clsx("px-3 py-4 bg-dark-1 flex flex-col", className)}>
       <div className="grow space-y-4 hide-scrollbar">
         <FilterTemplate
           title="Filter by Element"
@@ -83,7 +83,7 @@ export function CharacterFilter({
           </div>
         </FilterTemplate>
 
-        <div className="w-full h-px bg-surface-border" />
+        <div className="w-full h-px bg-dark-line" />
 
         <FilterTemplate
           title="Filter by Weapon"
@@ -100,7 +100,7 @@ export function CharacterFilter({
           />
         </FilterTemplate>
 
-        <div className="w-full h-px bg-surface-border" />
+        <div className="w-full h-px bg-dark-line" />
 
         <FilterTemplate
           title="Filter by Rarity"
