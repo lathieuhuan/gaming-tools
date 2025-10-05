@@ -44,12 +44,13 @@ export const Default: Story = {
     },
     children: (args) => {
       return (
-        <div style={{ color: "var(--ron-color-on-dark)" }}>
+        <div className="text-white">
           <p>isMultiSelect: {args.isMultiSelect ? "true" : "false"}</p>
           <p>keyword: [{args.keyword}]</p>
           <p>searchOn: {args.searchOn ? "true" : "false"}</p>
         </div>
       );
     },
+    onClose: () => {},
   },
 };

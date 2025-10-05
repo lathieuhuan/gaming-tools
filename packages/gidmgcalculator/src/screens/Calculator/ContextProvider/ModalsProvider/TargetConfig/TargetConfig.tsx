@@ -81,7 +81,7 @@ function TargetConfigCore() {
 
           {variant?.types.length && target.variantType ? (
             <div className="mt-4 flex justify-end items-center">
-              <p className="mr-4 text-light-default">Variant</p>
+              <p className="mr-4 text-light-1">Variant</p>
 
               <VersatileSelect
                 title="Select Variant"
@@ -161,7 +161,7 @@ function TargetConfigCore() {
           {ATTACK_ELEMENTS.map((attElmt) => {
             return (
               <div key={attElmt} className="flex justify-end items-center">
-                <p className={"mr-4 text-base " + (attElmt === "phys" ? "text-light-default" : `text-${attElmt}`)}>
+                <p className={"mr-4 text-base " + (attElmt === "phys" ? "text-light-1" : `text-${attElmt}`)}>
                   {t(attElmt, { ns: "resistance" })}
                 </p>
                 <InputNumber
@@ -179,7 +179,7 @@ function TargetConfigCore() {
           })}
         </div>
 
-        <p className="mt-4 pr-1 text-sm text-right text-light-default">
+        <p className="mt-4 pr-1 text-sm text-right text-light-1">
           You can search for your target's Resistances on{" "}
           <a
             href="https://genshin-impact.fandom.com/wiki/Resistance#Base_Enemy_Resistances"
@@ -210,14 +210,13 @@ export function TargetConfig() {
   return (
     <Modal
       active={targetConfig.active}
-      className={[Modal.LARGE_HEIGHT_CLS, "bg-surface-1"]}
+      className={[Modal.LARGE_HEIGHT_CLS, "bg-dark-1"]}
       title="Target Configuration (live)"
       bodyCls="grow hide-scrollbar"
       withActions
       showCancel={false}
       confirmText="Close"
       confirmButtonProps={{ variant: "default" }}
-      onConfirm={closeTargetConfig}
       cancelText="Overview mode"
       moreActions={[
         {
@@ -228,6 +227,7 @@ export function TargetConfig() {
           },
         },
       ]}
+      onConfirm={closeTargetConfig}
       onClose={closeTargetConfig}
     >
       <TargetConfigCore />

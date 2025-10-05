@@ -18,7 +18,7 @@ export function NavOptions({ disabled, className, itemClassName, isOptionActive,
           key={i}
           className={clsx(
             "w-full px-2 py-1 font-semibold text-start whitespace-nowrap disabled:opacity-50",
-            isOptionActive?.(screen) ? "bg-surface-1" : "bg-surface-3 glow-on-hover",
+            isOptionActive?.(screen) ? "bg-dark-1" : "bg-dark-3 glow-on-hover",
             itemClassName
           )}
           disabled={disabled}

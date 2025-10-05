@@ -32,10 +32,10 @@ export function LeftSide({ appReady }: LeftSideProps) {
   const closeDrawer = () => setDrawerActive(false);
 
   return (
-    <div className={clsx("flex", isMobile && "divide-x divide-surface-border")}>
+    <div className={clsx("flex", isMobile && "divide-x divide-dark-line")}>
       {isMobile ? (
         <button
-          className="size-8 flex-center bg-surface-3 text-xl disabled:opacity-50"
+          className="size-8 flex-center bg-dark-3 text-xl disabled:opacity-50"
           disabled={!appReady}
           onClick={() => setDrawerActive(true)}
         >
@@ -65,7 +65,7 @@ export function LeftSide({ appReady }: LeftSideProps) {
           boxShadow: "0 0 1.5px #b8b8b8",
         }}
         width={240}
-        className="p-4 bg-surface-2"
+        className="p-4 bg-dark-2"
         position="left"
         onClose={closeDrawer}
       >

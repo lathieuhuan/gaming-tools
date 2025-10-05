@@ -83,7 +83,7 @@ export function ComplexSelect({
     <div ref={ref} className={clsx("flex shrink-0 relative", className)}>
       <button
         id={`complex-select-${selectId}_select`}
-        className="w-full px-8 py-0.5 bg-heading-color text-black rounded-t-2.5xl rounded-b-2.5xl relative cursor-default"
+        className="w-full px-8 py-0.5 bg-heading text-black rounded-t-2.5xl rounded-b-2.5xl relative cursor-default"
         onClick={() => toggleDropdown(!isDropped)}
       >
         <div className={clsx("w-full truncate font-bold text-center relative z-10", classes.option)}>{label}</div>
@@ -92,7 +92,7 @@ export function ComplexSelect({
 
       <div
         className={clsx(
-          "absolute top-full z-20 w-full rounded-b-md bg-light-default text-black overflow-hidden transition-size duration-100 ease-linear",
+          "absolute top-full z-20 w-full rounded-b-md bg-light-1 text-black overflow-hidden transition-size duration-100 ease-linear",
           isDropped && "border border-white shadow-common"
         )}
         style={{
@@ -102,10 +102,10 @@ export function ComplexSelect({
         {options.map((option, i) => {
           return (
             <div key={i} className="group">
-              <div className={clsx("group-hover:bg-surface-3 group-hover:text-light-default")}>
+              <div className={clsx("group-hover:bg-dark-3 group-hover:text-light-1")}>
                 <button
                   className={clsx(
-                    "px-2 py-0.5 w-full border-t border-b border-white text-left font-semibold truncate cursor-default hover:bg-surface-1",
+                    "px-2 py-0.5 w-full border-t border-b border-white text-left font-semibold truncate cursor-default hover:bg-dark-1",
                     classes.option
                   )}
                   onClick={onClickOption(option.value)}

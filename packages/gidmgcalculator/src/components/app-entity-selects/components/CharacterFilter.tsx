@@ -67,7 +67,7 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
   };
 
   return (
-    <div className={clsx("px-3 py-4 bg-surface-1 flex flex-col", className)}>
+    <div className={clsx("px-3 py-4 bg-dark-1 flex flex-col", className)}>
       <div className="grow space-y-4 hide-scrollbar">
         <FilterTemplate
           title="Filter by Element"
@@ -79,12 +79,12 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
               {...elementSelectProps}
               className="p-1"
               iconCls="text-2xl"
-              selectedCls="shadow-3px-3px shadow-active-color"
+              selectedCls="shadow-hightlight-2 shadow-active"
             />
           </div>
         </FilterTemplate>
 
-        <div className="w-full h-px bg-surface-border" />
+        <div className="w-full h-px bg-dark-line" />
 
         <FilterTemplate
           title="Filter by Weapon"
@@ -100,7 +100,7 @@ export function CharacterFilter({ className, initialFilter, onCancel, onDone }: 
           />
         </FilterTemplate>
 
-        <div className="w-full h-px bg-surface-border" />
+        <div className="w-full h-px bg-dark-line" />
 
         <FilterTemplate
           title="Filter by Rarity"

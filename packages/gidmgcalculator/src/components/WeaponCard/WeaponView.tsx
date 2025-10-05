@@ -12,7 +12,7 @@ import Entity_ from "@/utils/entity-utils";
 // Component
 import { GenshinImage } from "../GenshinImage";
 
-const groupStyles = "bg-surface-2 px-3";
+const groupStyles = "bg-dark-2 px-3";
 
 export interface WeaponViewProps<T extends CalcWeapon | UserWeapon> {
   className?: ClassValue;
@@ -126,7 +126,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
         </div>
       </div>
       <div className="mt-3">
-        <p className="text-sm font-semibold text-heading-color">{appWeapon.passiveName}</p>
+        <p className="text-sm font-semibold text-heading">{appWeapon.passiveName}</p>
         <p className="indent-4 text-base" dangerouslySetInnerHTML={{ __html: passiveDescription }} />
       </div>
     </div>

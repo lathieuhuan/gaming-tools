@@ -109,7 +109,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
 
 export const Settings = Modal.wrap(SettingsCore, {
   title: "Settings",
-  className: ["bg-surface-2", Modal.LARGE_HEIGHT_CLS],
+  className: ["bg-dark-2", Modal.LARGE_HEIGHT_CLS],
   style: {
     width: 412,
   },

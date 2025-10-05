@@ -23,12 +23,12 @@ export function CalculatorSmall() {
 
   const PANEL = {
     Overview: (extraCls = "") => (
-      <div className={`p-4 bg-surface-1 ${styles.card} ${extraCls}`}>
+      <div className={`p-4 bg-dark-1 ${styles.card} ${extraCls}`}>
         <CharacterOverview touched={touched} />
       </div>
     ),
     Modifiers: (extraCls = "") => (
-      <div className={`p-4 bg-surface-1 ${styles.card} ${extraCls}`}>
+      <div className={`p-4 bg-dark-1 ${styles.card} ${extraCls}`}>
         {touched ? (
           // ========== PANEL 2 ==========
           <Modifiers />
@@ -36,7 +36,7 @@ export function CalculatorSmall() {
       </div>
     ),
     Setup: (extraCls = "") => (
-      <div className={`p-4 bg-surface-3 relative ${styles.card} ${extraCls}`}>
+      <div className={`p-4 bg-dark-3 relative ${styles.card} ${extraCls}`}>
         {touched ? (
           // ========== PANEL 3 ==========
           <SetupManager isModernUI={isModernUI} />
@@ -45,7 +45,7 @@ export function CalculatorSmall() {
       </div>
     ),
     Results: (extraCls = "") => (
-      <div className={`p-4 bg-surface-3 ${styles.card} ${extraCls}`}>
+      <div className={`p-4 bg-dark-3 ${styles.card} ${extraCls}`}>
         {touched ? (
           // ========== PANEL 4 ==========
           <FinalResult />
@@ -62,7 +62,7 @@ export function CalculatorSmall() {
   return (
     <ContextProvider>
       {isModernUI ? (
-        <div className="h-full flex flex-col border-t border-surface-border">
+        <div className="h-full flex flex-col border-t border-dark-line">
           <div className="grow overflow-hidden relative">
             <div
               className="h-full overflow-auto flex absolute left-0 top-0"
@@ -78,7 +78,7 @@ export function CalculatorSmall() {
           {touched ? <BottomNavSmall activePanelI={activePanelI} onSelectSection={onSelectSection} /> : null}
         </div>
       ) : (
-        <div className="h-full flex hide-scrollbar border-t border-surface-border relative snap-x snap-mandatory">
+        <div className="h-full flex hide-scrollbar border-t border-dark-line relative snap-x snap-mandatory">
           {PANEL.Overview("snap-center")}
           {PANEL.Modifiers("snap-center")}
           {PANEL.Setup("snap-center")}

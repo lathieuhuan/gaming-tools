@@ -1,19 +1,25 @@
-import clsx, { type ClassValue } from "clsx";
-import "./CarouselSpace.styles.scss";
+import { cn } from "@lib/utils";
+import type { ClassValue } from "clsx";
 
-export interface CarouselSpaceProps {
+export type CarouselSpaceProps = {
   className?: ClassValue;
   current?: number;
   children: React.ReactNode;
   onTransitionEnd?: (current: number) => void;
-}
-export const CarouselSpace = ({ className, current = 0, children, onTransitionEnd }: CarouselSpaceProps) => {
+};
+
+export const CarouselSpace = ({
+  className,
+  current = 0,
+  children,
+  onTransitionEnd,
+}: CarouselSpaceProps) => {
   const items = Array.isArray(children) ? children : [children];
 
   return (
-    <div className={clsx("ron-carousel-space", className)}>
+    <div className={cn("relative size-full overflow-hidden", className)}>
       <div
-        className="ron-carousel-list"
+        className="absolute top-0 h-full flex transition-transform duration-300 ease-linear"
         style={{
           width: `calc(${items.length} * 100%)`,
           transform: `translateX(calc(-${current / items.length} * 100%))`,
@@ -22,7 +28,11 @@ export const CarouselSpace = ({ className, current = 0, children, onTransitionEn
       >
         {items.map((item, index) => {
           return (
-            <div key={index} className="ron-carousel-item" style={{ width: `${100 / items.length}%` }}>
+            <div
+              key={index}
+              className="size-full shrink-0"
+              style={{ width: `${100 / items.length}%` }}
+            >
               {item}
             </div>
           );

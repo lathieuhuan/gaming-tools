@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import ReactDOM from "react-dom";
 import { useEffect, useRef, useState } from "react";
-import "./Overlay.styles.scss";
 
 type OverlayState = {
   mounted: boolean;
@@ -11,7 +10,7 @@ type OverlayState = {
 
 type TransitionStyle = Pick<React.CSSProperties, "transitionDuration" | "transitionTimingFunction">;
 
-export interface OverlayProps {
+export type OverlayProps = {
   active?: boolean;
   state?: "open" | "close" | "hidden";
   /** Default to true. Dynamic change of this value will not  */
@@ -22,11 +21,15 @@ export interface OverlayProps {
   closeOnEscape?: boolean;
   /** Default to '200' (ms) */
   transitionDuration?: number;
-  children: (moving: OverlayState["movingDir"], transitionStyle: TransitionStyle) => React.ReactNode;
+  children: (
+    moving: OverlayState["movingDir"],
+    transitionStyle: TransitionStyle
+  ) => React.ReactNode;
   onClose: () => void;
   onTransitionEnd?: (open: boolean) => void;
   getContainer?: () => HTMLElement | null;
-}
+};
+
 export function Overlay({
   active,
   state: stateProps,
@@ -121,9 +124,10 @@ export function Overlay({
 
   return state.mounted
     ? ReactDOM.createPortal(
-        <div className={clsx("ron-overlay", !state.visible && "ron-overlay--invisible")}>
+        <div className={clsx("absolute inset-0 z-50", !state.visible && "invisible")}>
           <div
-            className={`ron-overlay__mask ron-overlay__mask--${state.movingDir} ron-overlay-transition`}
+            data-direction={state.movingDir}
+            className='size-full bg-black opacity-20 data-[direction="out"]:opacity-60'
             style={{
               transitionProperty: "opacity, transform",
               ...transitionStyle,
@@ -143,13 +147,15 @@ export function Overlay({
     : null;
 }
 
-export function findParentOverlay(selectElmt: HTMLElement) {
-  const overlays = Array.from(document.querySelectorAll(".ron-overlay"));
-  return overlays.find((elmt) => elmt.contains(selectElmt)) as HTMLElement;
-}
+// export function findParentOverlay(selectElmt: HTMLElement) {
+//   const overlays = Array.from(document.querySelectorAll(".ron-overlay"));
+//   return overlays.find((elmt) => elmt.contains(selectElmt)) as HTMLElement;
+// }
 
 function useOverlayManager() {
-  const overlayManagerRef = useRef(document.getElementById("ron-overlay-manager") as HTMLDivElement | null);
+  const overlayManagerRef = useRef(
+    document.getElementById("ron-overlay-manager") as HTMLDivElement | null
+  );
 
   if (!overlayManagerRef.current) {
     const manager = document.createElement("div");

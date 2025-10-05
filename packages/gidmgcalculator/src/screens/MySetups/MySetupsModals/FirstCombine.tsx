@@ -83,7 +83,7 @@ export default function FirstCombine(props: { onClose: () => void }) {
 
   return (
     <form id="setup-combine" className="h-full flex flex-col break-words" onSubmit={onSubmit}>
-      <p className={"px-2 " + (isError ? "text-danger-3" : "text-hint-color")}>
+      <p className={"px-2 " + (isError ? "text-danger-2" : "text-light-hint")}>
         {isError ? "You cannot combine these setups." : "Choose at least 2 setups with the same party members."}
       </p>
 

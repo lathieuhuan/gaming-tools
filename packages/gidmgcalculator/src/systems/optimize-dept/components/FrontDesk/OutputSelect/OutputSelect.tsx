@@ -24,7 +24,7 @@ export function OutputSelect(props: OutputSelectProps) {
 
   const renderGroup = (title: string, options: OptimizedOutput[] = []) => {
     return (
-      <div key={title} className="p-3 text-sm bg-surface-1 cursor-default rounded">
+      <div key={title} className="p-3 text-sm bg-dark-1 cursor-default rounded">
         <p className="text-secondary-1 opacity-80">{t(title)}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {options.map((option, i) => {
@@ -36,7 +36,7 @@ export function OutputSelect(props: OutputSelectProps) {
                 key={i}
                 className={clsx(
                   "px-2 py-1 font-semibold rounded",
-                  selected ? "bg-active-color text-black" : "hover:bg-surface-3"
+                  selected ? "bg-active text-black" : "hover:bg-dark-3"
                 )}
                 onClick={() => onClickItem(option)}
               >

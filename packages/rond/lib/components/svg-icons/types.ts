@@ -1,3 +1,3 @@
 import { type SVGAttributes } from "react";
 
-export interface SvgProps extends SVGAttributes<SVGSVGElement> {}
+export type SvgProps = SVGAttributes<SVGSVGElement>;

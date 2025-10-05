@@ -24,7 +24,7 @@ export function OverwriteOption({ visible, label, name, expanded, children, onCl
         <div className="flex items-center">
           <FaChevronRight className={"text-xs" + (expanded ? " rotate-90" : "")} />
           <span
-            className={"ml-1 text-sm cursor-pointer " + (expanded ? "text-bonus-color" : "text-light-default")}
+            className={"ml-1 text-sm cursor-pointer " + (expanded ? "text-bonus" : "text-light-1")}
             onClick={onClickSeeDetails}
           >
             See details

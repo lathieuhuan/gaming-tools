@@ -32,7 +32,7 @@ export function ItemThumbnail(props: ItemThumbProps) {
     return (
       <div
         className={clsx(
-          "absolute -top-1 -right-1 z-10 w-7 h-7 bg-black/60 border-2 border-light-default rounded-circle",
+          "absolute -top-1 -right-1 z-10 w-7 h-7 bg-black/60 border-2 border-light-1 rounded-circle",
           !sideIcon && "overflow-hidden"
         )}
       >
@@ -48,7 +48,7 @@ export function ItemThumbnail(props: ItemThumbProps) {
   return (
     <div
       className={clsx(
-        "bg-light-default rounded flex flex-col relative",
+        "bg-light-1 rounded flex flex-col relative",
         compact && "overflow-hidden",
         !props.muted && "cursor-pointer",
         props.className
@@ -61,7 +61,7 @@ export function ItemThumbnail(props: ItemThumbProps) {
         <p
           className={
             "absolute top-1 left-1 rounded px-1 text-sm font-bold " +
-            (item.refi === 5 ? "bg-black text-heading-color" : "bg-black/60 text-light-default")
+            (item.refi === 5 ? "bg-black text-heading" : "bg-black/60 text-light-1")
           }
         >
           {item.refi}
@@ -86,10 +86,10 @@ export function ItemThumbnail(props: ItemThumbProps) {
       {lvText ? (
         compact ? (
           <div className="flex-center bg-black/60 w-full absolute bottom-0">
-            <p className="font-bold text-light-default text-sm">{lvText}</p>
+            <p className="font-bold text-light-1 text-sm">{lvText}</p>
           </div>
         ) : (
-          <div className="flex-center bg-light-default">
+          <div className="flex-center bg-light-1">
             <p className="font-bold text-black">{lvText}</p>
           </div>
         )

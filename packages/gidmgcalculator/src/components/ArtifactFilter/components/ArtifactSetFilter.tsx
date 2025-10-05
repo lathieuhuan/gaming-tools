@@ -40,13 +40,13 @@ export function ArtifactSetFilter({
                   title={set.data.name}
                   className={clsx(
                     "rounded-circle",
-                    set.chosen ? "shadow-3px-2px shadow-bonus-color bg-surface-1" : "bg-transparent"
+                    set.chosen ? "shadow-hightlight-2 shadow-bonus bg-dark-1" : "bg-transparent"
                   )}
                 >
                   <GenshinImage className="p-1" src={set.icon} imgType="artifact" />
                 </div>
 
-                <span className="absolute top-1 left-1 rounded bg-black/60 text-light-default flex">
+                <span className="absolute top-1 left-1 rounded bg-black/60 text-light-1 flex">
                   <span className="px-1 text-sm font-semibold rounded bg-black/30">{set.count}</span>
                 </span>
               </div>

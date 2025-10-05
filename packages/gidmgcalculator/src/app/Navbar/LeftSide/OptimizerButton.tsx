@@ -8,7 +8,7 @@ export function OptimizerButton() {
 
   if (state.pendingResult) {
     return (
-      <button className="w-8 h-8 flex-center bg-surface-3 glow-on-hover" onClick={contact}>
+      <button className="w-8 h-8 flex-center bg-dark-3 glow-on-hover" onClick={contact}>
         <FaSun
           className={clsx(
             "text-lg",
@@ -16,7 +16,7 @@ export function OptimizerButton() {
               ? state.status === "OPTIMIZING"
                 ? "animate-spin"
                 : state.result.length
-                ? "text-danger-3"
+                ? "text-danger-2"
                 : null
               : null
           )}

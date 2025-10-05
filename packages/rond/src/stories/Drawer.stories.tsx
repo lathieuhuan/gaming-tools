@@ -10,6 +10,7 @@ const meta = {
   },
   argTypes: {
     children: { control: false },
+    onClose: { control: false },
   },
   tags: ["autodocs"],
 } satisfies Meta<typeof Drawer>;
@@ -23,5 +24,6 @@ export const Default: Story = {
     width: 300,
     destroyOnClose: false,
     children: <MountAnnouncer style={{ height: 200, background: "red" }} />,
+    onClose: () => {},
   },
 };

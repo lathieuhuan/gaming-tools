@@ -10,13 +10,14 @@ import {
   TimesSvg,
 } from "../svg-icons";
 
-export interface AlertProps {
+export type AlertProps = {
   className?: ClassValue;
   style?: React.CSSProperties;
   type: "info" | "success" | "error" | "warn";
   content: React.ReactNode;
   onClose?: () => void;
-}
+};
+
 export const Alert = (props: AlertProps) => {
   const renderIcon = () => {
     switch (props.type) {
@@ -25,26 +26,24 @@ export const Alert = (props: AlertProps) => {
       case "success":
         return <CheckCircleSvg className="text-[#2fa80a]" />;
       case "error":
-        return <ExclamationCircleSvg className="text-danger-background" />;
+        return <ExclamationCircleSvg className="text-danger-1" />;
       case "warn":
-        return <ExclamationTriangleSvg className="text-orange-500" />;
+        return <ExclamationTriangleSvg className="text-[#f97316]" />;
     }
   };
 
   return (
     <div
-      className={cn("py-1 px-2 bg-light-surface-3 rounded-lg flex items-start gap-2", props.className)}
+      className={cn("py-1 px-2 bg-light-2 rounded-lg flex items-start gap-2", props.className)}
       style={props.style}
     >
-      <span className="mt-1.5 flex text-xl flex-shrink-0">{renderIcon()}</span>
-      <p className="py-1 flex-grow text-base font-semibold text-on-light">
-        {props.content}
-      </p>
+      <span className="mt-1.5 flex text-xl shrink-0">{renderIcon()}</span>
+      <p className="py-1 grow-1 text-base font-semibold text-black">{props.content}</p>
       <Button
-        className="flex-shrink-0 opacity-50 hover:opacity-85 text-on-light"
+        className="shrink-0 text-black"
         variant="custom"
         withShadow={false}
-        icon={<TimesSvg />}
+        icon={<TimesSvg className="text-lg opacity-80" />}
         onClick={props.onClose}
       />
     </div>

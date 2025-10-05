@@ -1,12 +1,10 @@
 import clsx, { type ClassValue } from "clsx";
 import { Overlay, type OverlayProps } from "../Overlay";
-import "./Drawer.styles.scss";
 
-export interface DrawerProps
-  extends Pick<
-    OverlayProps,
-    "active" | "transitionDuration" | "closable" | "closeOnMaskClick" | "getContainer" | "onClose"
-  > {
+export type DrawerProps = Pick<
+  OverlayProps,
+  "active" | "transitionDuration" | "closable" | "closeOnMaskClick" | "getContainer" | "onClose"
+> & {
   className?: ClassValue;
   style?: React.CSSProperties;
   /** Default to 'right' */
@@ -16,7 +14,8 @@ export interface DrawerProps
   /** Default to true */
   destroyOnClose?: boolean;
   children: React.ReactNode;
-}
+};
+
 export const Drawer = ({
   className,
   style,
@@ -32,12 +31,20 @@ export const Drawer = ({
       {(direction, transitionStyle) => {
         return (
           <div
-            className={clsx(`ron-drawer ron-drawer--${position}`, className)}
+            className={clsx(
+              "absolute top-0 z-10 h-full overflow-hidden",
+              position === "left" ? "left-0" : "right-0",
+              className
+            )}
             style={{
               width,
               transitionProperty: "transform",
               transform:
-                direction === "out" ? "translateX(0)" : position === "left" ? "translateX(-100%)" : "translateX(100%)",
+                direction === "out"
+                  ? "translateX(0)"
+                  : position === "left"
+                  ? "translateX(-100%)"
+                  : "translateX(100%)",
               ...transitionStyle,
               ...style,
             }}

@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { Table } from "rond";
+import { clsx, Table } from "rond";
 
 import { useTranslation } from "@/hooks";
 import { $AppSettings } from "@/services";
@@ -76,7 +76,10 @@ export function OverwriteOptions({
 
       return (
         <Table.Tr key={type}>
-          <Table.Td className={"capitalize" + (value1 !== value2 ? " text-danger-3" : "")}>{t(type, { ns })}</Table.Td>
+          <Table.Td className={clsx("capitalize", value1 !== value2 && "text-danger-2")}>
+            {t(type, { ns })}
+          </Table.Td>
+
           {type === "name" ? (
             <Table.Td colSpan={2} style={{ textAlign: "center" }}>
               {oldChar.name}
@@ -98,7 +101,8 @@ export function OverwriteOptions({
   return (
     <form id="overwrite-configuration" onSubmit={onSubmit}>
       <p className="text-base">
-        We detect difference(s) between the Calculator and this Setup. Choose what you want to overwrite.
+        We detect difference(s) between the Calculator and this Setup. Choose what you want to
+        overwrite.
       </p>
       <div className="mt-4 space-y-4">
         <OverwriteOption

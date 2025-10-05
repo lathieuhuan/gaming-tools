@@ -1,12 +1,13 @@
 import { notification } from "@lib/utils";
 import { type CSSProperties, useEffect } from "react";
 
-interface MountAnnouncerProps {
+type MountAnnouncerProps = {
   className?: string;
   mountMsg?: string;
   unmountMsg?: string;
   style?: CSSProperties;
-}
+};
+
 export function MountAnnouncer({
   mountMsg = "Component mounted",
   unmountMsg = "Component unmounted",

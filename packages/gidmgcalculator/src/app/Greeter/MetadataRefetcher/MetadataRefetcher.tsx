@@ -57,7 +57,7 @@ export function MetadataRefetcher({
   }, [isError]);
 
   if (isLoading) {
-    return <p className={"text-base text-light-default text-center font-normal " + className}>Loading App Data...</p>;
+    return <p className={"text-base text-light-1 text-center font-normal " + className}>Loading App Data...</p>;
   }
 
   const secondsToTime = (time: number) => {
@@ -69,7 +69,7 @@ export function MetadataRefetcher({
   if (isError) {
     return (
       <div className={"flex flex-col items-center " + className}>
-        <p className="text-base text-danger-3 text-center font-normal">
+        <p className="text-base text-danger-2 text-center font-normal">
           {time ? `${error} Try again after ${secondsToTime(time)}s.` : "You can try fetching the data again."}
         </p>
         <Button

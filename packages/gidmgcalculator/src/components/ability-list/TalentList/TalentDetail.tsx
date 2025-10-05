@@ -84,7 +84,7 @@ export function TalentDetail({ appCharacter, detailIndex, onChangeDetailIndex, o
     return (
       <button
         className={
-          "w-7 h-7 flex-center rounded border-2 border-surface-border text-surface-border text-1.5xl " +
+          "w-7 h-7 flex-center rounded border-2 border-dark-line text-dark-line text-1.5xl " +
           (disabled ? "opacity-50" : "hover:border-secondary-1 hover:text-secondary-1")
         }
         disabled={disabled}
@@ -127,7 +127,7 @@ export function TalentDetail({ appCharacter, detailIndex, onChangeDetailIndex, o
 
         {activeIndex ? (
           <div>
-            <div className="py-2 flex-center bg-surface-1 sticky -top-1">
+            <div className="py-2 flex-center bg-dark-1 sticky -top-1">
               {levelable ? (
                 <div className="flex items-center space-x-4">
                   {renderLevelButton(false, talentLevel <= 1)}

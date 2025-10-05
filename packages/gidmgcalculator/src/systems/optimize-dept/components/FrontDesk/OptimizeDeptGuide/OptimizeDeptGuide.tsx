@@ -103,7 +103,7 @@ export function OptimizeDeptGuide<T extends string>(props: OptimizeDeptGuideProp
       style={{
         width: "26rem",
       }}
-      className={["bg-surface-2", Modal.LARGE_HEIGHT_CLS, Modal.MAX_SIZE_CLS]}
+      className={["bg-dark-2", Modal.LARGE_HEIGHT_CLS, Modal.MAX_SIZE_CLS]}
       bodyCls="py-2 px-0"
       closeOnMaskClick={false}
       onClose={() => props.onClose()}
@@ -151,7 +151,7 @@ export function OptimizeDeptGuide<T extends string>(props: OptimizeDeptGuideProp
 
               <Popover
                 active={showMenu}
-                className="bottom-full mb-2 bg-light-default text-black rounded-md flex flex-col overflow-hidden shadow-white-glow"
+                className="bottom-full mb-2 bg-light-1 text-black rounded-md flex flex-col overflow-hidden shadow-popup"
                 origin="bottom left"
               >
                 {stepConfigs.map((config, index) => {
@@ -160,12 +160,12 @@ export function OptimizeDeptGuide<T extends string>(props: OptimizeDeptGuideProp
 
                   return (
                     <Fragment key={config.key}>
-                      {index ? <div className="h-px bg-light-disabled opacity-80" /> : null}
+                      {index ? <div className="h-px bg-light-4 opacity-80" /> : null}
                       <button
                         disabled={disabled}
                         className={clsx(
                           "px-3 py-1 w-full text-left font-semibold whitespace-nowrap",
-                          isCurrent ? "bg-light-disabled" : "hover:bg-surface-1 hover:text-light-default",
+                          isCurrent ? "bg-light-4" : "hover:bg-dark-1 hover:text-light-1",
                           disabled && "opacity-80"
                         )}
                         onClick={() => onClickMenuItem(index)}
@@ -182,8 +182,8 @@ export function OptimizeDeptGuide<T extends string>(props: OptimizeDeptGuideProp
               {noti.message && (
                 <div
                   className={clsx(
-                    "w-8 h-8 rounded-circle flex-center text-danger-3",
-                    !showMenu && "group-hover:bg-light-default group-hover:text-black"
+                    "w-8 h-8 rounded-circle flex-center text-danger-2",
+                    !showMenu && "group-hover:bg-light-1 group-hover:text-black"
                   )}
                 >
                   <FaExclamation />
@@ -198,7 +198,7 @@ export function OptimizeDeptGuide<T extends string>(props: OptimizeDeptGuideProp
                 style={{ transformOrigin: "bottom left" }}
               >
                 <div className="p-2 bg-black rounded">
-                  <div className=" text-danger-3 whitespace-nowrap cursor-default">{noti.message}</div>
+                  <div className=" text-danger-2 whitespace-nowrap cursor-default">{noti.message}</div>
 
                   <div className="mt-2 flex justify-center gap-3">
                     {notiToStep !== undefined ? (

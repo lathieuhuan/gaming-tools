@@ -39,7 +39,7 @@ export function Menu(props: { finalResult: React.ReactNode }) {
   return (
     <div ref={wrapperRef} className="absolute top-2 right-2 w-8">
       <button
-        className={"w-8 h-8 flex-center rounded-md text-2xl" + (menuDropped ? " bg-active-color text-black" : "")}
+        className={"w-8 h-8 flex-center rounded-md text-2xl" + (menuDropped ? " bg-active text-black" : "")}
         onClick={() => setMenuDropped(!menuDropped)}
       >
         <MdMoreVert />
@@ -47,7 +47,7 @@ export function Menu(props: { finalResult: React.ReactNode }) {
 
       <div
         className={
-          "absolute right-0 z-10 mt-1 rounded bg-light-default text-black hide-scrollbar" +
+          "absolute right-0 z-10 mt-1 rounded bg-light-1 text-black hide-scrollbar" +
           (menuDropped ? "" : " max-h-0")
         }
       >
@@ -72,7 +72,7 @@ export function Menu(props: { finalResult: React.ReactNode }) {
 
       <Modal.Core
         active={resultsEnlarged}
-        className={[Modal.LARGE_HEIGHT_CLS, "p-4 pt-2 rounded shadow-white-glow bg-surface-3"]}
+        className={[Modal.LARGE_HEIGHT_CLS, "p-4 pt-2 rounded shadow-popup bg-dark-3"]}
         onClose={closeEnlargedView}
       >
         <CloseButton className={Modal.CLOSE_BTN_CLS} boneOnly onClick={closeEnlargedView} />

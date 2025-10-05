@@ -6,7 +6,7 @@ import { Tracker } from "./Tracker";
 
 export function App() {
   return (
-    <div className="App h-screen pt-8 text-light-default bg-light-default">
+    <div className="App h-screen pt-8 text-light-1 bg-light-1">
       <Navbar />
       <Main />
 

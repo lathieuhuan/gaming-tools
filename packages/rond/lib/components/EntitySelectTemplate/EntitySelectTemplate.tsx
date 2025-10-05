@@ -9,8 +9,6 @@ import { Popover } from "../Popover";
 import { Checkbox } from "../Checkbox";
 import { FilterSvg, SearchSvg } from "../svg-icons";
 
-import "./EntitySelectTemplate.styles.scss";
-
 export type EntitySelectRenderArgs = {
   isMultiSelect: boolean;
   searchOn: boolean;
@@ -18,7 +16,7 @@ export type EntitySelectRenderArgs = {
   inputRef: React.RefObject<HTMLInputElement>;
 };
 
-export interface EntitySelectTemplateProps {
+export type EntitySelectTemplateProps = {
   title: React.ReactNode;
   hasMultipleMode?: boolean;
   hasSearch?: boolean;
@@ -33,7 +31,8 @@ export interface EntitySelectTemplateProps {
   children: (args: EntitySelectRenderArgs) => React.ReactNode;
   renderFilter?: (setFilterOn: (on: boolean) => void) => React.ReactNode;
   onClose: () => void;
-}
+};
+
 export function EntitySelectTemplate({
   title,
   hasMultipleMode,
@@ -92,7 +91,7 @@ export function EntitySelectTemplate({
   const searchInput = (
     <Input
       ref={inputRef}
-      className="ron-entity-select__search ron-common-shadow"
+      className="w-28 px-2 py-1 text-base leading-5 font-semibold shadow-common"
       placeholder="Search..."
       disabled={filterOn}
       value={keyword}
@@ -125,8 +124,8 @@ export function EntitySelectTemplate({
           <Popover
             as="div"
             active={searchOn}
-            className={`mt-4 ${hasMultipleMode ? "left-0" : "right-0"}`}
-            origin={hasMultipleMode ? "top-left" : "top-right"}
+            className={`mt-3 ${hasMultipleMode ? "left-0" : "right-0"}`}
+            origin={hasMultipleMode ? "top left" : "top right"}
           >
             {searchInput}
           </Popover>
@@ -136,17 +135,17 @@ export function EntitySelectTemplate({
   }
 
   return (
-    <div className="ron-entity-select-template">
-      <CloseButton className="ron-modal__close-button" boneOnly onClick={onClose} />
+    <div className="h-full flex flex-col rounded-lg">
+      <CloseButton className="absolute top-2 right-2 z-20" boneOnly onClick={onClose} />
 
       <Modal.Header withDivider>
-        <div className="ron-entity-select__header">
+        <div className="text-center flex items-center justify-between relative">
           <div>{title}</div>
 
-          <div className="ron-entity-select__toolbar">
+          <div className="mr-6 pr-4 flex items-center">
             {extra}
 
-            <div className="ron-entity-select__search-filter">
+            <div className="flex items-center gap-3 peer">
               {searchTool}
 
               {hasFilter ? (
@@ -162,7 +161,7 @@ export function EntitySelectTemplate({
             </div>
 
             {hasMultipleMode ? (
-              <span className="ron-entity-select__multi-toggle">
+              <span className="ml-2 h-6 text-white peer-not-empty:pl-2 border-l border-dark-line">
                 <Checkbox onChange={setIsMultiSelect}>Multiple</Checkbox>
               </span>
             ) : null}
@@ -170,7 +169,7 @@ export function EntitySelectTemplate({
         </div>
       </Modal.Header>
 
-      <div ref={bodyRef} className="ron-entity-select__body">
+      <div ref={bodyRef} className="p-3 pb-4 grow overflow-hidden relative sm:p-4">
         {children({
           isMultiSelect,
           searchOn,
@@ -180,13 +179,11 @@ export function EntitySelectTemplate({
 
         <Drawer
           active={filterOn}
+          className="shadow-popup"
           width={screenWatcher.isFromSize("sm") ? filterWrapWidth : "100%"}
           transitionDuration={filterTransitionDuration}
           closeOnMaskClick={filterToggleable}
           destroyOnClose
-          style={{
-            boxShadow: "0 0 1.5px #b8b8b8",
-          }}
           onClose={() => toggleFilter(false)}
           getContainer={() => bodyRef.current}
         >

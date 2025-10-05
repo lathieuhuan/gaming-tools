@@ -33,7 +33,7 @@ function IconSelect<T>(props: IconSelectProps<T>) {
             key={i}
             type="button"
             className={clsx(
-              `ron-icon-select-option ron-icon-select-option-${size} ron-flex-center ron-glow-on-hover`,
+              `ron-icon-select-option ron-icon-select-option-${size} flex-center glow-on-hover`,
               props?.iconCls,
               selected && props?.selectedCls
             )}

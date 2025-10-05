@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useElementSize } from "../../hooks";
 
-export interface CollapseSpaceProps {
+export type CollapseSpaceProps = {
   active: boolean;
   activeHeight?: string | number;
   /** Default to 250 */
@@ -12,7 +12,8 @@ export interface CollapseSpaceProps {
   style?: React.CSSProperties;
   children: React.ReactNode;
   afterClose?: () => void;
-}
+};
+
 export const CollapseSpace = ({
   active,
   className,

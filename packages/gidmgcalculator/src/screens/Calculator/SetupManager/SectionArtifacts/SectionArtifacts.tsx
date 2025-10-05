@@ -22,8 +22,7 @@ import {
 } from "@/components";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
-
-import styles from "../SetupManager.styles.module.scss";
+import { Section } from "../_components/Section";
 
 type ModalType = "ARTIFACT_LOADOUT" | "";
 
@@ -214,7 +213,7 @@ export default function SectionArtifacts() {
   };
 
   return (
-    <div id={SECTION_ID} className={`py-3 bg-surface-1 ${styles.section}`}>
+    <Section id={SECTION_ID} className="py-3 bg-dark-1">
       {artifacts.length && artifacts.every((artifact) => artifact === null) ? <CopySelect /> : null}
 
       <div className="flex">
@@ -228,7 +227,7 @@ export default function SectionArtifacts() {
               key={index}
               className={clsx(
                 "w-1/5 border-2",
-                index === activeTabIndex ? "border-light-default" : "border-transparent"
+                index === activeTabIndex ? "border-light-1" : "border-transparent"
               )}
               onClick={() => onClickTab(index)}
             >
@@ -294,6 +293,6 @@ export default function SectionArtifacts() {
       />
 
       <LoadoutStash active={modalType === "ARTIFACT_LOADOUT"} onSelect={onSelectLoadout} onClose={closeModal} />
-    </div>
+    </Section>
   );
 }

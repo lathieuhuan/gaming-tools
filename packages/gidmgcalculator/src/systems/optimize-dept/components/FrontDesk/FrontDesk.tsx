@@ -219,7 +219,7 @@ export function FrontDesk({ state, optimizer, onCloseDept }: FrontDeskProps) {
 
       <Modal.Core
         active={modalType === "EXIT_CONFIRM"}
-        className="p-4 bg-surface-2"
+        className="p-4 bg-dark-2"
         preset="small"
         closeOnEscape={false}
         closeOnMaskClick={false}

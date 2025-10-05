@@ -16,7 +16,7 @@ export function getTotalRecordValue(list: Array<{ value: number }>) {
 export function renderHeading(main: ReactNode, extra?: string | number) {
   return (
     <p className="font-medium">
-      {main} <span className="text-heading-color">{extra}</span>
+      {main} <span className="text-heading">{extra}</span>
     </p>
   );
 }
@@ -24,7 +24,7 @@ export function renderHeading(main: ReactNode, extra?: string | number) {
 export function renderRecord(calcFn?: (value: number) => string | number, extraDesc?: (value: number) => string) {
   return ({ description, value }: CalcAtomicRecord, index: number) =>
     value ? (
-      <li key={index} className="text-hint-color text-sm">
+      <li key={index} className="text-light-hint text-sm">
         {description?.[0]?.toUpperCase()}
         {description.slice(1)} {extraDesc ? `${extraDesc(value)} ` : ""}
         {markGreen(calcFn ? calcFn(value) : value)}

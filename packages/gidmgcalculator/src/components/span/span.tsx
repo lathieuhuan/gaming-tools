@@ -1,5 +1,5 @@
 export function markGreen(children: React.ReactNode, b?: "bold", cls = "") {
-  return <span className={`text-bonus-color${b ? " font-bold" : ""} ${cls}`}>{children}</span>;
+  return <span className={`text-bonus${b ? " font-bold" : ""} ${cls}`}>{children}</span>;
 }
 
 export function markYellow(children: React.ReactNode, b?: "bold", cls = "") {
@@ -7,5 +7,5 @@ export function markYellow(children: React.ReactNode, b?: "bold", cls = "") {
 }
 
 export function markDim(children: React.ReactNode, b?: "bold", cls = "") {
-  return <span className={`text-hint-color${b ? " font-bold" : ""} ${cls}`}>{children}</span>;
+  return <span className={`text-light-hint${b ? " font-bold" : ""} ${cls}`}>{children}</span>;
 }

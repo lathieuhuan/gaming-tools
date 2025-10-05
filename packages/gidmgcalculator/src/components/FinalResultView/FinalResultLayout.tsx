@@ -111,7 +111,7 @@ export function FinalResultLayout({
             <div className="flex gap-3">
               <button
                 type="button"
-                className="pl-2 pr-3 text-base text-black bg-heading-color leading-none font-bold flex items-center gap-2 rounded-2xl overflow-hidden"
+                className="pl-2 pr-3 text-base text-black bg-heading leading-none font-bold flex items-center gap-2 rounded-2xl overflow-hidden"
                 onClick={() => toggleSection(sectionIndex)}
               >
                 <div className="py-1.5 flex items-center gap-1">
@@ -124,7 +124,7 @@ export function FinalResultLayout({
                 </div>
 
                 {talentLevel ? (
-                  <span className="px-1 rounded-sm bg-black/60 text-light-default text-sm">{talentLevel}</span>
+                  <span className="px-1 rounded-sm bg-black/60 text-light-1 text-sm">{talentLevel}</span>
                 ) : null}
               </button>
 
@@ -133,7 +133,7 @@ export function FinalResultLayout({
                   <Button
                     boneOnly
                     size="custom"
-                    className={`w-7 h-7 text-lg ${isLvling ? "text-active-color" : "text-light-disabled"}`}
+                    className={`w-7 h-7 text-lg ${isLvling ? "text-active" : "text-light-4"}`}
                     icon={<MdEdit />}
                     onClick={() => onRequestChangeLevel(sectionIndex, isLvling)}
                   />
@@ -152,7 +152,7 @@ export function FinalResultLayout({
             <CollapseSpace key={tableKey.main} active={!closedSections[sectionIndex]}>
               {tableKey.subs.length === 0 ? (
                 <div className="pt-2">
-                  <p className="pt-2 pb-1 bg-surface-2 text-center text-hint-color">
+                  <p className="pt-2 pb-1 bg-dark-2 text-center text-light-hint">
                     This talent does not deal damage.
                   </p>
                 </div>

@@ -19,7 +19,7 @@ export function useArtifactTypeSelect(
   const mergeProps = {
     ...selectProps,
     iconCls: "p-1",
-    selectedCls: "bg-active-color",
+    selectedCls: "bg-active",
   } satisfies IconSelectProps<ArtifactType>;
 
   return {

@@ -11,8 +11,7 @@ import { QueryClientProvider } from "./systems/react-query";
 import { RouterProvider } from "./systems/router";
 import { ImporterProvider } from "./systems/setup-importer";
 
-import "./assets/css/index.css";
-import "./assets/css/tailwind.css";
+import "./style.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ScreenSizeWatcher>

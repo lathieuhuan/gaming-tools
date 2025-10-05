@@ -170,7 +170,7 @@ export function OptimizeDeptProvider(props: { children: ReactNode }) {
         active={state.introducing}
         title="Optimizer"
         preset="small"
-        className="bg-surface-2"
+        className="bg-dark-2"
         // centered={false}
         // style={{
         //   top: "min(20%, 5rem)",

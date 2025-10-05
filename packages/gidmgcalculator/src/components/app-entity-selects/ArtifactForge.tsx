@@ -139,7 +139,7 @@ const ArtifactSmith = ({
           <div className="mt-1 flex">
             {artifactTypes.map((type) => (
               <div key={type} className="w-1/5 p-1">
-                <GenshinImage className="bg-surface-3 rounded" fallbackCls="p-2" src={artifactSet[type].icon} />
+                <GenshinImage className="bg-dark-3 rounded" fallbackCls="p-2" src={artifactSet[type].icon} />
               </div>
             ))}
           </div>

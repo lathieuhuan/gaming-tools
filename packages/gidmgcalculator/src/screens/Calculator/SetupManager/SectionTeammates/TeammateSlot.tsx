@@ -16,8 +16,8 @@ export function TeammateSlot({ active, info, onSelect, onRemove, onRequestChange
   const buttonClass = clsx("w-10 h-10 glow-on-hover", active ? "flex-center" : "hidden");
 
   return (
-    <div className="flex flex-col items-center" style={{ height: "5.25rem" }}>
-      <div className={clsx("flex items-end text-xl shrink-0 overflow-hidden transition-size", active ? "h-11" : "h-3")}>
+    <div className="h-21 flex flex-col items-center">
+      <div className={clsx("flex items-end text-xl shrink-0 overflow-hidden transition-all", active ? "h-11" : "h-3")}>
         <button className={buttonClass} onClick={onRemove}>
           <FaUserSlash />
         </button>

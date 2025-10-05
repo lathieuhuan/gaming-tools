@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { FilterSvg, Select, SelectProps, VersatileSelect } from "@lib/components";
+import { ScreenSizeWatcher } from "@lib/providers";
 
 const meta = {
   title: "Select",
@@ -36,8 +37,9 @@ export const Default: Story = {
   },
   render: (args) => {
     return (
-      <div className="color-on-dark grid grid-col-2 gap-4" style={{ width: 300 }}>
+      <div className="w-60 flex flex-col gap-4">
         <Select {...args} />
+        <Select {...args} action={{ icon: <FilterSvg /> }} />
       </div>
     );
   },
@@ -46,11 +48,7 @@ export const Default: Story = {
 export const Versatile: Story = {
   argTypes: {
     options: { control: false },
-    size: { control: false },
-    align: { control: false },
-    arrowAt: { control: false },
     transparent: { control: false },
-    disabled: { control: false },
     defaultValue: { control: false },
     value: { control: false },
   },
@@ -59,29 +57,27 @@ export const Versatile: Story = {
       { label: "Option 1", value: 1 },
       { label: "Option 2", value: 2 },
     ],
+    defaultValue: 2,
+    size: "small",
+    align: "left",
+    arrowAt: "end",
+    transparent: false,
+    disabled: false,
   },
-  render: () => {
-    const args: SelectProps = {
-      disabled: false,
-      options: [
-        { label: "Option 1", value: 1 },
-        { label: "Option 2", value: 2 },
-      ],
-      defaultValue: 2,
-      size: "small",
-      align: "left",
-      arrowAt: "end",
-      transparent: false,
-    };
+  render: (props) => {
     return (
-      <div className="color-on-dark grid grid-col-2 gap-4" style={{ width: 288 }}>
-        <span>Select</span>
-        <span>VersatileSelect</span>
-        <Select {...args} />
-        <VersatileSelect {...args} title="Select" />
-        <Select {...args} action={{ icon: <FilterSvg /> }} />
-        <VersatileSelect {...args} title="Select" action={{ icon: <FilterSvg /> }} />
-      </div>
+      <ScreenSizeWatcher>
+        <div className="text-white flex flex-wrap gap-4">
+          <div className="min-w-40">
+            <span>Select</span>
+            <Select {...props} />
+          </div>
+          <div className="min-w-40">
+            <span>VersatileSelect</span>
+            <VersatileSelect {...props} title="Select" />
+          </div>
+        </div>
+      </ScreenSizeWatcher>
     );
   },
 };

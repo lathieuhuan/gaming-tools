@@ -37,7 +37,7 @@ export function OptimizerOffice({
     <Modal
       active={active}
       title={<span className="text-lg">Optimizer / Processing & Result</span>}
-      className={["bg-surface-2", Modal.LARGE_HEIGHT_CLS, Modal.MAX_SIZE_CLS]}
+      className={["bg-dark-2", Modal.LARGE_HEIGHT_CLS, Modal.MAX_SIZE_CLS]}
       style={{
         width: "45rem",
       }}

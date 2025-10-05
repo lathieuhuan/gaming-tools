@@ -159,7 +159,7 @@ export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
                 "px-4 py-1",
                 !index && "rounded-t sm:rounded-tr-none sm:rounded-l",
                 index === 3 && "rounded-b sm:rounded-bl-none sm:rounded-r",
-                selected ? "bg-light-default" : "bg-surface-3"
+                selected ? "bg-light-1" : "bg-dark-3"
               )}
               // This will prevent the current input from being blurred
               onMouseDown={(e) => e.preventDefault()}

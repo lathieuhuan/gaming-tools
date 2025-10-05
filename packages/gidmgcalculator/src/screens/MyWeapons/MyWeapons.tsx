@@ -117,7 +117,7 @@ function MyWeapons() {
           </Button>
 
           <CollapseSpace className="w-full absolute top-full left-0 z-20" active={filterIsActive}>
-            <div className="px-4 py-6 shadow-common bg-surface-2">
+            <div className="px-4 py-6 shadow-common bg-dark-2">
               {<WeaponTypeSelect {...weaponTypeSelectProps} />}
             </div>
           </CollapseSpace>

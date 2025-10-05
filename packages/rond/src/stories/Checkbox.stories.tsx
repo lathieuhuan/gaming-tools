@@ -9,11 +9,13 @@ const meta = {
   },
   argTypes: {
     size: { control: "radio", options: ["small", "medium"] },
+    disabled: { control: "boolean" },
+    indeterminate: { control: "boolean" },
   },
   tags: ["autodocs"],
   render: (args) => {
     return (
-      <div style={{ color: "var(--ron-color-on-dark)" }}>
+      <div className="text-white">
         <Checkbox {...args} />
       </div>
     );
@@ -27,6 +29,8 @@ export const Default: Story = {
   args: {
     size: "small",
     checked: false,
+    indeterminate: false,
+    disabled: false,
     children: "Checkbox",
   },
 };

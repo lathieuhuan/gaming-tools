@@ -1,20 +1,20 @@
 import { useRef } from "react";
 import { Modal, type ModalControl } from "../Modal";
 import type { ModalActionsProps } from "../Modal/modal-components";
-import "./ConfirmModal.styles.scss";
 
-export interface ConfirmModalBodyProps extends Omit<ModalActionsProps, "className" | "justify" | "formId"> {
+export type ConfirmModalBodyProps = Omit<ModalActionsProps, "className" | "justify" | "formId"> & {
   danger?: boolean;
   message: string | JSX.Element;
-}
+};
+
 const ConfirmModalBody = ({ message, ...actionsProps }: ConfirmModalBodyProps) => {
   const contentRef = useRef(
     <>
-      <div className="ron-confirm-modal__content">{message}</div>
+      <div className="px-0.5 text-center text-xl text-white">{message}</div>
       <Modal.Actions justify="center" {...actionsProps} />
     </>
   );
-  return <div className="ron-confirm-modal__body">{contentRef.current}</div>;
+  return <div className="p-4 bg-dark-2">{contentRef.current}</div>;
 };
 
 const ConfirmModal = ({

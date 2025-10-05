@@ -86,7 +86,7 @@ export function CustomModLayout({
 
       <Modal
         active={modalOn}
-        className="bg-surface-1"
+        className="bg-dark-1"
         formId={id}
         {...createModalProps}
         withActions

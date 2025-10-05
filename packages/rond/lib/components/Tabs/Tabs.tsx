@@ -1,5 +1,10 @@
+import { cn } from "@lib/utils";
 import clsx, { type ClassValue } from "clsx";
-import "./Tabs.styles.scss";
+
+const classByLevel = {
+  1: "bg-heading",
+  2: "bg-secondary-1",
+};
 
 export type TabConfig =
   | string
@@ -8,17 +13,25 @@ export type TabConfig =
       disabled?: boolean;
     };
 
-export interface TabsProps {
+export type TabsProps = {
   className?: ClassValue;
   style?: React.CSSProperties;
-  level?: number;
+  level?: 1 | 2;
   activeIndex?: number;
   configs?: TabConfig[];
   onClickTab?: (index: number) => void;
-}
-export function Tabs({ className, style, level = 1, configs, activeIndex = 0, onClickTab }: TabsProps) {
+};
+
+export function Tabs({
+  className,
+  style,
+  level = 1,
+  configs,
+  activeIndex = 0,
+  onClickTab,
+}: TabsProps) {
   return (
-    <div className={clsx("ron-tabs", className)} style={style}>
+    <div className={cn("w-full flex rounded-full overflow-hidden divide-x-2 divide-dark-3", className)} style={style}>
       {configs?.map((config, index) => {
         const { text, disabled = false } = typeof config === "string" ? { text: config } : config;
 
@@ -28,9 +41,9 @@ export function Tabs({ className, style, level = 1, configs, activeIndex = 0, on
             type="button"
             disabled={disabled}
             className={clsx(
-              "ron-tab ron-flex-center",
-              index === activeIndex ? `ron-tab--lv${level}-active` : "ron-tab--inactive ron-glow-on-hover",
-              disabled && "ron-disabled"
+              "w-1/2 py-0.5 text-black font-bold flex-center",
+              index === activeIndex ? classByLevel[level] : "bg-light-1 glow-on-hover",
+              disabled && "is-disabled"
             )}
             onClick={() => onClickTab?.(index)}
           >

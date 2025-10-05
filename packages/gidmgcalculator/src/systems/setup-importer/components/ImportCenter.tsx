@@ -161,7 +161,7 @@ export function SetupImportCenter({ calcSetup, target, onFinish, ...manageInfo }
         <Modal
           active
           preset="small"
-          className="bg-surface-3"
+          className="bg-dark-3"
           title="Overwrite Configuration"
           withActions
           formId="overwrite-configuration"
