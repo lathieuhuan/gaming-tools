@@ -1,7 +1,15 @@
 import { useEffect, useRef } from "react";
+import clsx from "clsx";
 import type { NotificationAnimatorProps } from "./notification.types";
 
 const ANIMATION_DURATION = 200;
+const DEFAULT_CLASSES = ["-translate-y-8", "opacity-20"];
+const MOUNTED_CLASSES = ["translate-y-0", "opacity-100"];
+
+const replaceClasses = (element: HTMLDivElement, oldClasses: string[], newClasses: string[]) => {
+  element.classList.remove(...oldClasses);
+  element.classList.add(...newClasses);
+};
 
 export const NotificationAnimator = ({
   id,
@@ -16,7 +24,7 @@ export const NotificationAnimator = ({
 
   const onClose = () => {
     if (ref.current) {
-      ref.current.classList.remove("ron-notification-animator--mounted");
+      replaceClasses(ref.current, MOUNTED_CLASSES, DEFAULT_CLASSES);
     }
 
     noti.onClose?.(id);
@@ -29,7 +37,7 @@ export const NotificationAnimator = ({
 
     if (ref.current) {
       onMount?.(ref.current);
-      ref.current.classList.add("ron-notification-animator--mounted");
+      replaceClasses(ref.current, DEFAULT_CLASSES, MOUNTED_CLASSES);
     }
 
     if (duration) {
@@ -52,7 +60,11 @@ export const NotificationAnimator = ({
   }, [isClosing]);
 
   return (
-    <div ref={ref} className="ron-notification-animator" style={{ transitionDuration: `${ANIMATION_DURATION}ms` }}>
+    <div
+      ref={ref}
+      className={clsx(DEFAULT_CLASSES, "transition-all")}
+      style={{ transitionDuration: `${ANIMATION_DURATION}ms` }}
+    >
       {children({ onClose })}
     </div>
   );

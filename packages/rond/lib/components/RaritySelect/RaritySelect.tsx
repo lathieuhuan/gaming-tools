@@ -1,7 +1,7 @@
-import clsx, { ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
+import { cn } from "@lib/utils";
 import { Checkbox } from "../Checkbox";
 import { Rarity } from "../Rarity";
-import "./RaritySelect.styles.scss";
 
 export type RaritySelectProps = {
   className?: ClassValue;
@@ -13,14 +13,14 @@ export type RaritySelectProps = {
 
 export function RaritySelect(props: RaritySelectProps) {
   return (
-    <div className={clsx("ron-rarity-select", props.className)} style={props.style}>
+    <div className={cn("flex flex-col gap-3", props.className)} style={props.style}>
       {props.options?.map((option) => {
         const selected = props.values?.includes(option) === true;
 
         return (
           <Checkbox
             key={option}
-            className="ron-rarity-select-option"
+            className="rounded-sm border border-dark-3 p-2"
             checked={selected}
             onChange={() => props.onSelect?.(option, selected)}
           >

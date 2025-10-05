@@ -1,10 +1,17 @@
 import clsx, { type ClassValue } from "clsx";
+import { cn } from "@lib/utils";
 import { Image, type ImageProps } from "../Image";
-import "./IconSelect.styles.scss";
 
 type IconOption<T> = {
   value: T;
   icon: string | JSX.Element;
+};
+
+type IconSelectSize = "medium" | "large";
+
+const OPTION_CN_BY_SIZE: Record<IconSelectSize, string> = {
+  medium: "size-8",
+  large: "size-10",
 };
 
 export type IconSelectProps<T> = {
@@ -13,7 +20,7 @@ export type IconSelectProps<T> = {
   selectedCls?: ClassValue;
   imageProps?: Omit<ImageProps, "src">;
   /** Default to 'medium' */
-  size?: "medium" | "large";
+  size?: IconSelectSize;
   options: IconOption<T>[];
   values: T[];
   onSelect?: (value: T, selected: boolean) => void;
@@ -23,7 +30,7 @@ export function IconSelect<T>(props: IconSelectProps<T>) {
   const { size = "medium" } = props;
 
   return (
-    <div className={clsx("ron-icon-select", props.className)}>
+    <div className={cn("flex items-center gap-4", props.className)}>
       {props.options.map((option, i) => {
         const selected = props.values.indexOf(option.value) !== -1;
 
@@ -32,7 +39,7 @@ export function IconSelect<T>(props: IconSelectProps<T>) {
             key={i}
             type="button"
             className={clsx(
-              `ron-icon-select-option ron-icon-select-option-${size} flex-center glow-on-hover`,
+              `rounded-circle transition-all ${OPTION_CN_BY_SIZE[size]} flex-center glow-on-hover`,
               props?.iconCls,
               selected && props?.selectedCls
             )}

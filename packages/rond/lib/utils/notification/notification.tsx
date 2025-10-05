@@ -1,7 +1,6 @@
 import type { NotificatioProps, NotificationRequest } from "./notification.types";
 import { notifRoot, location } from "./notification-root";
 import { NotificationCenter } from "./NotificationCenter";
-import "./notification.styles.scss";
 
 let notiRequests: NotificationRequest[] = [];
 

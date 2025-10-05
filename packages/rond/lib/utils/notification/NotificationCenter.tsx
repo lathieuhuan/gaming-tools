@@ -7,7 +7,7 @@ export const NotificationCenter = (props: NotificationCenterProps) => {
   const heights = useRef<number[]>([]);
 
   return (
-    <div className="ron-notification-center">
+    <div className="w-80 max-w-95/100 relative">
       {props.requests.map((request, i, all) => {
         const { id } = request;
 
@@ -18,7 +18,7 @@ export const NotificationCenter = (props: NotificationCenterProps) => {
         return (
           <div
             key={id}
-            className="ron-notification-item"
+            className="absolute w-full"
             style={{
               top: 16 * (i + 1) + extraDistance,
             }}
@@ -34,7 +34,7 @@ export const NotificationCenter = (props: NotificationCenterProps) => {
               }}
             >
               {({ onClose }) => (
-                <Alert {...request} className={["ron-notification-alert", request.className]} onClose={onClose} />
+                <Alert {...request} className={["shadow-dropdown", request.className]} onClose={onClose} />
               )}
             </NotificationAnimator>
           </div>
