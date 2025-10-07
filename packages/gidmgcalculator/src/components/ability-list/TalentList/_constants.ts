@@ -17,7 +17,7 @@ export const NORMAL_ATTACK_ICONS: Record<`${WeaponType}_${ElementType}`, string>
   catalyst_dendro: "c/c4/Catalyst_Dendro",
   claymore_pyro: "5/57/Claymore_Pyro",
   claymore_cryo: "9/99/Claymore_Cryo",
-  claymore_hydro: "",
+  claymore_hydro: "2/2c/Claymore_Hydro",
   claymore_geo: "6/65/Claymore_Geo",
   claymore_electro: "0/0f/Claymore_Electro",
   claymore_dendro: "5/5a/Claymore_Dendro",

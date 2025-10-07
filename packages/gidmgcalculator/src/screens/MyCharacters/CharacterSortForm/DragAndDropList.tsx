@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { FaSort } from "react-icons/fa";
 
 import { CharacterLabel } from "./CharacterLabel";
