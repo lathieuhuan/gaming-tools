@@ -15,7 +15,7 @@ export type InputProps = Omit<
   "className" | "type" | "size" | "value" | "onChange"
 > & {
   className?: ClassValue;
-  /** Default to 'small' */
+  /** Default 'small' */
   size?: Size;
   unstyled?: boolean;
   value?: string;

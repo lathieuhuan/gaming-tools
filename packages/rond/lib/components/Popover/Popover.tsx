@@ -6,11 +6,11 @@ import { cn } from "@lib/utils";
 export type PopoverProps = {
   className?: ClassValue;
   style?: React.CSSProperties;
-  /** Default to div */
+  /** Default div */
   as?: keyof JSX.IntrinsicElements;
   active?: boolean;
   withTooltipStyle?: boolean;
-  /** style transformOrigin Default to 'bottom right' */
+  /** style transformOrigin Default 'bottom right' */
   origin?: string;
   children: React.ReactNode;
 };

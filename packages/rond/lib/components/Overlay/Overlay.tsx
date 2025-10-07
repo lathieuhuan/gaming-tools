@@ -13,13 +13,13 @@ type TransitionStyle = Pick<React.CSSProperties, "transitionDuration" | "transit
 export type OverlayProps = {
   active?: boolean;
   state?: "open" | "close" | "hidden";
-  /** Default to true. Dynamic change of this value will not  */
+  /** Default true. Dynamic change of this value will not  */
   closable?: boolean;
-  /** Default to true */
+  /** Default true */
   closeOnMaskClick?: boolean;
-  /** Default to true */
+  /** Default true */
   closeOnEscape?: boolean;
-  /** Default to '200' (ms) */
+  /** Default '200' (ms) */
   transitionDuration?: number;
   children: (
     moving: OverlayState["movingDir"],

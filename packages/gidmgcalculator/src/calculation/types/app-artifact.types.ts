@@ -34,7 +34,7 @@ type ArtifactBonusEffect = EntityBonusEffect;
 export type ArtifactModifierDescription = string | number | number[];
 
 type ArtifactBuff = EntityBuff<ArtifactBonusEffect> & {
-  /** 0 is 2-piece set, 1 is 4-piece set. Default to 1 */
+  /** 0 is 2-piece set, 1 is 4-piece set. Default 1 */
   bonusLv?: number;
   description: ArtifactModifierDescription;
 };

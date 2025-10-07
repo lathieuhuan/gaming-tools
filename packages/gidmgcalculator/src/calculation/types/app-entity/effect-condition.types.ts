@@ -7,9 +7,9 @@ export type EffectGrantedAtConfig = {
   value: CharacterMilestone;
   /** When this bonus is from teammate, this is input's index to check granted. */
   altIndex?: number;
-  /** Default to 1, or checked */
+  /** Default 1, or checked */
   compareValue?: number;
-  /** Default to 'EQUAL' */
+  /** Default 'EQUAL' */
   comparison?: ConditionComparison;
 };
 
@@ -19,7 +19,7 @@ export type TeamElementCondition = {
   /** ['pyro', 'pyro'] => 1. On Ballad of the Fjords */
   teamTotalElmtCount?: {
     value: number;
-    /** Default to all elements */
+    /** Default all elements */
     elements?: ElementType[];
     comparison: ConditionComparison;
   };
@@ -55,9 +55,9 @@ export type CharacterPropertyCondition = {
  */
 export type InputCheck = {
   value: number;
-  /** The index of input to check. Default to 0. */
+  /** The index of input to check. Default 0. */
   inpIndex?: number;
-  /** Default to 'EQUAL' */
+  /** Default 'EQUAL' */
   comparison?: ConditionComparison;
 };
 
@@ -71,7 +71,7 @@ export type EffectInputCondition = number | InputCheck | MultipleInputCheck;
 export type PartyPropertyCondition = {
   value: number;
   type: "MIXED" | "MOONSIGN";
-  /** Default to 'EQUAL' */
+  /** Default 'EQUAL' */
   comparison?: ConditionComparison;
 };
 

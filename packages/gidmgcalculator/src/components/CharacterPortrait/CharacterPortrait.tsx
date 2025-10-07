@@ -21,11 +21,11 @@ type CharacterPortraitProps = {
     icon: string;
     vision?: ElementType;
   };
-  /** Default to 'medium' */
+  /** Default 'medium' */
   size?: PortraitSize;
   withColorBg?: boolean;
   recruitable?: boolean;
-  /** Default to true */
+  /** Default true */
   zoomable?: boolean;
   onClick?: () => void;
 };

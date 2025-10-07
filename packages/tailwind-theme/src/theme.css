@@ -2,6 +2,8 @@
 
 @source inline('bg-rarity-{1,2,3,4,5}');
 
+/* When update this theme, don't forget to update twMerge function for cn util */
+
 @theme {
   --color-black: #000000;
   --color-white: #ebebeb;

@@ -23,12 +23,12 @@ export type AppWeapon = {
 
 type WeaponCalcItem = {
   name: string;
-  /** Default to 'attack' */
+  /** Default 'attack' */
   type?: CalcItemType;
   value: number;
-  /** Default to 1/3 [multFactors] */
+  /** Default 1/3 [multFactors] */
   incre?: number;
-  /** Default to 'atk' */
+  /** Default 'atk' */
   basedOn?: CalcItemBasedOn;
 };
 
@@ -39,7 +39,7 @@ type WeaponBonusEffect = EntityBonusEffect;
 export type WeaponBuff = EntityBuff<WeaponBonusEffect> & {
   /**
    * If number, it's the index of weapon's descriptions (AppWeapon.descriptions).
-   * Default to 0.
+   * Default 0.
    */
   description?: number | string | (number | string)[];
 };

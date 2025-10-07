@@ -10,9 +10,9 @@ export type AppEntitySelectProps<T extends AppEntityOptionModel = AppEntityOptio
     hasMultipleMode?: boolean;
     hasSearch?: boolean;
     hasFilter?: boolean;
-    /** Default to 360px */
+    /** Default 360px */
     filterWrapWidth?: DrawerProps["width"];
-    /** Default to true */
+    /** Default true */
     filterToggleable?: boolean;
     initialFilterOn?: boolean;
     renderFilter?: (setFilterOn: (on: boolean) => void) => ReactNode;

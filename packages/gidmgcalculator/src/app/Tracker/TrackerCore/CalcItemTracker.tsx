@@ -14,15 +14,15 @@ function renderDmg(value: number | number[], callback: (value: number) => string
 type PartConfig = {
   label: React.ReactNode;
   value?: number;
-  /** Default to '*' */
+  /** Default '*' */
   sign?: string | null;
-  /** Default to 0 */
+  /** Default 0 */
   nullValue?: number | null;
   processor?: (value: number) => string | number;
 };
 
 type CalcItemTrackerProps = {
-  /** Default to 'Talent Mult.' */
+  /** Default 'Talent Mult.' */
   coreMultLabel?: string;
   records?: Record<string, CalcItemRecord>;
   resultGroup: CalculationFinalResultGroup;

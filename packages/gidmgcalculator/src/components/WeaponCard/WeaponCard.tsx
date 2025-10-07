@@ -13,7 +13,7 @@ interface WeaponCardProps<T extends Weapon> extends Omit<WeaponViewProps<T>, "cl
   wrapperCls?: string;
   className?: ClassValue;
   style?: CSSProperties;
-  /** Default to true */
+  /** Default true */
   withGutter?: boolean;
   withActions?: boolean;
   withOwnerLabel?: boolean;

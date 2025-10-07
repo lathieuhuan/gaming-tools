@@ -8,11 +8,11 @@ export type DrawerProps = Pick<
 > & {
   className?: ClassValue;
   style?: React.CSSProperties;
-  /** Default to 'right' */
+  /** Default 'right' */
   position?: "right" | "left";
-  /** Default to '20rem' */
+  /** Default '20rem' */
   width?: string | number;
-  /** Default to true */
+  /** Default true */
   destroyOnClose?: boolean;
   children: React.ReactNode;
 };

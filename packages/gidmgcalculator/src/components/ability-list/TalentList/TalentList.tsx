@@ -13,7 +13,7 @@ import { TalentDetail } from "./TalentDetail";
 type RenderedTalentConfig = {
   name?: string;
   image?: string;
-  /** Default to true */
+  /** Default true */
   active?: boolean;
   xtraLevel?: number;
 };
@@ -21,7 +21,7 @@ type RenderedTalentConfig = {
 type TalentListProps = {
   className?: ClassValue;
   teamData: CalcTeamData;
-  /** Default to true */
+  /** Default true */
   mutable?: boolean;
   onChangeTalentLevel?: (talentType: LevelableTalentType, newLevel: number) => void;
 };

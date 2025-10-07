@@ -10,7 +10,7 @@ export type EntityBonusBasedOnConfig = {
   baseline?: number;
   /**
    * When this bonus is from teammate, this is input's index to get value.
-   * On characters. Default to 0
+   * On characters. Default 0
    */
   altIndex?: number;
 };
@@ -35,6 +35,6 @@ export type CharacterEffectLevelScale = {
 export type CharacterEffectLevelIncrement = {
   talent: TalentType;
   value: number;
-  /** When this bonus is from teammate, this is input's index to get level. Default to 0 */
+  /** When this bonus is from teammate, this is input's index to get level. Default 0 */
   altIndex?: number;
 };

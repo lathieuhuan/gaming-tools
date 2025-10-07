@@ -21,11 +21,11 @@ export type InputNumberProps = Omit<
   transparent?: boolean;
   size?: Size;
   value?: number;
-  /** Default to 9999 */
+  /** Default 9999 */
   max?: number;
-  /** Default to 0 */
+  /** Default 0 */
   min?: number;
-  /** Default to 0 */
+  /** Default 0 */
   maxDecimalDigits?: number;
   onChange?: (value: number) => void;
 };

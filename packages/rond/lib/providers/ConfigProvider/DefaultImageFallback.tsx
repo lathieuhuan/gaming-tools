@@ -4,7 +4,7 @@ import { cn } from "@lib/utils";
 type DefaultImageFallbackProps = {
   className?: ClassValue;
   style?: React.CSSProperties;
-  /** Default to '70%' */
+  /** Default '70%' */
   iconWidth?: string | number;
   iconHeight?: string | number;
 }

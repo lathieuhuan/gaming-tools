@@ -30,7 +30,7 @@ export interface ArtifactForgeProps
   defaultBatchForging?: boolean;
   forFeature?: "TEAMMATE_MODIFIERS";
   forcedType?: ArtifactType;
-  /** Default to 'flower' */
+  /** Default 'flower' */
   initialTypes?: ArtifactType | ArtifactType[];
   onForgeArtifact: (info: ReturnType<typeof Entity_.createArtifact>) => void;
   onForgeArtifactBatch?: (code: AppArtifact["code"], types: ArtifactType[], rarity: number) => void;

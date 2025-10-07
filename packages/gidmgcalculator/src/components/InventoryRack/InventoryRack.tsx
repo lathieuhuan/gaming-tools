@@ -31,7 +31,7 @@ type InventoryRackProps<T> = {
   emptyText?: string;
   chosenID?: number;
   selectedIds?: Set<PropertyKey>;
-  /** Default to 60 */
+  /** Default 60 */
   pageSize?: number;
   data: T[];
   onUnselectItem?: (item: T) => void;

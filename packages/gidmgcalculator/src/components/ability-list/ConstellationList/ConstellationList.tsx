@@ -12,7 +12,7 @@ import { ConstellationDetail } from "./ConstellationDetail";
 type ConstellationListProps = {
   className?: ClassValue;
   character: Character;
-  /** Default to true */
+  /** Default true */
   mutable?: boolean;
   onClickIcon?: (index: number) => void;
 };

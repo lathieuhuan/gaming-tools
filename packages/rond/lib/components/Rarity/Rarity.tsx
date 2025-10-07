@@ -17,7 +17,7 @@ export type RarityProps = {
     max: number;
     min?: number;
   };
-  /** Default to 'medium' if mutable, to 'small' otherwise */
+  /** Default 'medium' if mutable, to 'small' otherwise */
   size?: Size;
   onChange?: (rarity: number) => void;
 };

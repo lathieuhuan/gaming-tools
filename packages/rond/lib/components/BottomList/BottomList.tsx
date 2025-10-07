@@ -20,12 +20,12 @@ export type BottomListProps<
   TValue extends BottomListValue = BottomListValue,
   TData extends Record<string, unknown> = Record<string, unknown>
 > = Pick<BottomSheetProps, "active" | "height" | "onClose"> & {
-  /** Default to 'Select' */
+  /** Default 'Select' */
   title?: React.ReactNode;
   value?: BottomListValue;
   items?: BottomListItem<TValue, TData>[];
   hasSearch?: boolean;
-  /** Default to 'left' */
+  /** Default 'left' */
   align?: "left" | "right";
   actions?: ButtonProps[];
   renderItem?: (item: BottomListItem<TValue, TData>) => React.ReactNode;

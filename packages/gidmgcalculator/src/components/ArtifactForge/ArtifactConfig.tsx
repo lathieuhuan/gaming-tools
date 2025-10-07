@@ -13,7 +13,7 @@ type ArtifactConfigProps = {
   typeSelect?: React.ReactNode;
   maxRarity?: number;
   batchConfigNode?: React.ReactNode;
-  /** Default to 'Forge' */
+  /** Default 'Forge' */
   mainActionLabel?: string;
   moreButtons?: ArtifactCardAction[];
   onRarityChange?: (rarity: number) => void;

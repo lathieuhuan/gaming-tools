@@ -21,9 +21,9 @@ export type ModalCoreProps = ModalControl &
     | "closeOnEscape"
     | "onTransitionEnd"
   > & {
-    /** Default to 'custom' */
+    /** Default 'custom' */
     preset?: ModalPreset;
-    /** Default to true */
+    /** Default true */
     centered?: boolean;
     id?: string;
     className?: ClassValue;

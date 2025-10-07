@@ -16,7 +16,7 @@ export type ArtifactCardProps<T extends Artifact = Artifact> = Omit<
   wrapperCls?: string;
   className?: string;
   style?: CSSProperties;
-  /** Default to true */
+  /** Default true */
   withGutter?: boolean;
   withActions?: boolean;
   withOwnerLabel?: boolean;

@@ -20,13 +20,13 @@ type MemberOptionIndex = {
 type LevelOptionIndex = {
   source: "LEVEL";
   talent: LevelableTalentType;
-  /** When this bonus is from teammate, this is input's index to check granted. Default to 0 */
+  /** When this bonus is from teammate, this is input's index to check granted. Default 0 */
   altIndex?: number;
 };
 
 export type EffectValueByOption = {
   options: number[];
-  /** If number, [source] is "INPUT", [inpIndex] is the number. Default to 0 */
+  /** If number, [source] is "INPUT", [inpIndex] is the number. Default 0 */
   optIndex?: number | InputOptionIndex | ElementOptionIndex | MemberOptionIndex | LevelOptionIndex;
 
   // ===== On BUFF / BONUS =====

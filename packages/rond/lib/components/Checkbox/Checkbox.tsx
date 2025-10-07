@@ -4,7 +4,7 @@ import clsx, { ClassValue } from "clsx";
 export type CheckboxProps = {
   className?: ClassValue;
   name?: string;
-  /** Default to 'small' */
+  /** Default 'small' */
   size?: "small" | "medium";
   defaultChecked?: boolean;
   checked?: boolean;

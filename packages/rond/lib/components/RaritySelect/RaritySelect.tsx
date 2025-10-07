@@ -24,7 +24,7 @@ export function RaritySelect(props: RaritySelectProps) {
             checked={selected}
             onChange={() => props.onSelect?.(option, selected)}
           >
-            <Rarity value={option} />
+            <Rarity className="min-h-[var(--height)]" value={option} />
           </Checkbox>
         );
       })}

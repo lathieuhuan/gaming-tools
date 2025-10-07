@@ -19,7 +19,7 @@ export type IconSelectProps<T> = {
   iconCls?: ClassValue;
   selectedCls?: ClassValue;
   imageProps?: Omit<ImageProps, "src">;
-  /** Default to 'medium' */
+  /** Default 'medium' */
   size?: IconSelectSize;
   options: IconOption<T>[];
   values: T[];

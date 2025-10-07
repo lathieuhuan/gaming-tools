@@ -22,7 +22,7 @@ import { OwnerLabel } from "../OwnerLabel";
 export interface ArtifactInventoryProps
   extends Pick<ArtifactFilterProps, "forcedType">,
     Pick<EntitySelectTemplateProps, "hasMultipleMode"> {
-  /** Default to 'flower' */
+  /** Default 'flower' */
   initialType?: ArtifactType;
   currentArtifacts?: (CalcArtifact | null)[];
   owner?: string | null;

@@ -10,9 +10,9 @@ export type ImageProps = {
   style?: React.CSSProperties;
   width?: string | number;
   height?: string | number;
-  /** Default to false */
+  /** Default false */
   draggable?: boolean;
-  /** Default to true */
+  /** Default true */
   showFallbackOnError?: boolean;
   defaultFallback?: Record<string, unknown>;
   imgCls?: ClassValue;

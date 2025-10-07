@@ -22,9 +22,9 @@ export type EntitySelectTemplateProps = {
   hasSearch?: boolean;
   hasFilter?: boolean;
   filterTransitionDuration?: DrawerProps["transitionDuration"];
-  /** Default to 360px */
+  /** Default 360px */
   filterWrapWidth?: DrawerProps["width"];
-  /** Default to true */
+  /** Default true */
   filterToggleable?: boolean;
   initialFilterOn?: boolean;
   extra?: React.ReactNode;

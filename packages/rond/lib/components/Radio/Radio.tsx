@@ -11,7 +11,7 @@ const classBySize: Record<Size, string> = {
 export type RadioProps = {
   id?: string;
   name?: string;
-  /** Default to 'small' */
+  /** Default 'small' */
   size?: Size;
   checked?: boolean;
   onChange?: (checked: boolean) => void;

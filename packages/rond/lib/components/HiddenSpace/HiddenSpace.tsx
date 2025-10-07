@@ -3,9 +3,9 @@ import { useElementSize } from "../../hooks";
 
 export type HiddenSpaceProps = {
   active: boolean;
-  /** Default to 250 */
+  /** Default 250 */
   moveDuration?: number;
-  /** Default to false */
+  /** Default false */
   destroyOnClose?: boolean;
   className?: string;
   style?: CSSProperties;

@@ -16,7 +16,7 @@ export type AppEntityOptionsProps<T> = {
   data: T[];
   initialChosenCode?: number;
   hiddenCodes?: Set<number>;
-  /** Default to 'No data' */
+  /** Default 'No data' */
   emptyText?: string;
   hasConfigStep?: boolean;
   /** Only in multiple mode, implemented in afterSelect */
