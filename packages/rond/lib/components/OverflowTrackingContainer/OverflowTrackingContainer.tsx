@@ -1,14 +1,18 @@
-import clsx from "clsx";
+import type { ClassValue } from "clsx";
 import { useEffect, useState } from "react";
+
 import { useElementSize } from "@lib/hooks";
 import { useScreenWatcher } from "@lib/providers";
+import { cn } from "@lib/utils";
 
-export function OverflowTrackingContainer(props: {
-  className?: string;
-  overflowedCls: string;
+export type OverflowTrackingContainerProps = {
+  className?: ClassValue;
+  overflowedCls: ClassValue;
   wrapCls?: string;
   children: React.ReactNode;
-}) {
+};
+
+export function OverflowTrackingContainer(props: OverflowTrackingContainerProps) {
   const screen = useScreenWatcher();
   const [ref, size] = useElementSize<HTMLDivElement>();
   const [overflowed, setOverflowed] = useState(false);
@@ -19,7 +23,9 @@ export function OverflowTrackingContainer(props: {
   }, [size.height]);
 
   return (
-    <div className={clsx(props.className, screen.isFromSize("xm") && overflowed && props.overflowedCls)}>
+    <div
+      className={cn(props.className, screen.isFromSize("xm") && overflowed && props.overflowedCls)}
+    >
       <div ref={ref} className={props.wrapCls}>
         {props.children}
       </div>

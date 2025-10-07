@@ -1,4 +1,4 @@
-import clsx, { type ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
 import { cn } from "@lib/utils";
 import { Image, type ImageProps } from "../Image";
 
@@ -38,7 +38,7 @@ export function IconSelect<T>(props: IconSelectProps<T>) {
           <button
             key={i}
             type="button"
-            className={clsx(
+            className={cn(
               `rounded-circle transition-all ${OPTION_CN_BY_SIZE[size]} flex-center glow-on-hover`,
               props?.iconCls,
               selected && props?.selectedCls

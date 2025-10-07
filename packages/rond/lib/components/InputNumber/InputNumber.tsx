@@ -1,4 +1,5 @@
-import clsx from "clsx";
+import type { ClassValue } from "clsx";
+import { cn } from "@lib/utils";
 import { forwardRef, useState, useEffect } from "react";
 import { round } from "../../utils";
 
@@ -15,6 +16,7 @@ export type InputNumberProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "type" | "value" | "size" | "max" | "min" | "onChange"
 > & {
+  className?: ClassValue;
   unstyled?: boolean;
   transparent?: boolean;
   size?: Size;
@@ -156,7 +158,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>((props
       ref={ref}
       {...nativeProps}
       type="text"
-      className={clsx(
+      className={cn(
         !unstyled && [
           `ron-input-number rounded-sm text-right text-black text-base leading-5 ${classBySize[size]}`,
           transparent ? "bg-transparent" : "bg-light-2 focus:bg-light-1 disabled:is-disabled",

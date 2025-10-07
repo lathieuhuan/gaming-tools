@@ -1,5 +1,6 @@
-import clsx, { type ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
 import { Overlay, type OverlayProps } from "../Overlay";
+import { cn } from "@lib/utils";
 
 export type DrawerProps = Pick<
   OverlayProps,
@@ -31,7 +32,7 @@ export const Drawer = ({
       {(direction, transitionStyle) => {
         return (
           <div
-            className={clsx(
+            className={cn(
               "absolute top-0 z-10 h-full overflow-hidden",
               position === "left" ? "left-0" : "right-0",
               className

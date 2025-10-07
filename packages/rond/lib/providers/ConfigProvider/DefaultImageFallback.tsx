@@ -1,4 +1,5 @@
-import clsx, { type ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
+import { cn } from "@lib/utils";
 
 type DefaultImageFallbackProps = {
   className?: ClassValue;
@@ -10,7 +11,7 @@ type DefaultImageFallbackProps = {
 
 export function DefaultImageFallback(props: DefaultImageFallbackProps) {
   return (
-    <div className={clsx("h-full flex-center", props.className)} style={props?.style}>
+    <div className={cn("h-full flex-center", props.className)} style={props?.style}>
       <svg
         stroke="currentColor"
         fill="currentColor"

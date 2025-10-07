@@ -1,6 +1,7 @@
-import clsx, { type ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
 import { useEffect, useState } from "react";
 
+import { cn } from "@lib/utils";
 import { bottomList } from "../../utils";
 import { ChevronDownSvg } from "../svg-icons";
 import type { SelectProps, SelectValueType } from "./Select";
@@ -62,7 +63,7 @@ export function MobileSelect<
     return (
       <div
         id={props.id}
-        className={clsx(
+        className={cn(
           `ron-select ron-select-single ron-select-show-arrow`,
           getSelectVariantCls({ size, align, arrowAt, transparent: props.transparent }),
           disabled && "ron-select-disabled",

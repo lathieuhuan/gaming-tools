@@ -1,4 +1,5 @@
-import clsx, { type ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
+import { cn } from "@lib/utils";
 import { forwardRef, useState, useEffect } from "react";
 
 type Size = "small" | "medium" | "large";
@@ -46,7 +47,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       ref={ref}
       {...nativeProps}
       type="text"
-      className={clsx(
+      className={cn(
         !unstyled &&
           `rounded-sm bg-light-2 text-black font-medium focus:bg-light-1 disabled:is-disabled ${classBySize[size]}`,
         className

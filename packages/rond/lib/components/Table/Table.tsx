@@ -1,4 +1,4 @@
-import clsx, { type ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
 import type {
   ColHTMLAttributes,
   HTMLAttributes,
@@ -31,7 +31,7 @@ export type TableTrProps = Omit<HTMLAttributes<HTMLTableRowElement>, "className"
 };
 Table.Tr = ({ className, ...rest }: TableTrProps) => (
   <tr
-    className={clsx(
+    className={cn(
       "odd:bg-dark-1 even:bg-dark-2 hover:bg-table-row-hover first:!bg-dark-0",
       className
     )}
@@ -44,7 +44,7 @@ export type TableThProps = Omit<ThHTMLAttributes<HTMLTableCellElement>, "classNa
 };
 Table.Th = ({ className, ...rest }: TableThProps) => (
   <th
-    className={clsx(
+    className={cn(
       "px-2 py-1 text-sm border-l border-r border-dark-1 cursor-default font-semibold",
       className
     )}
@@ -57,7 +57,7 @@ export type TableTdProps = Omit<TdHTMLAttributes<HTMLTableCellElement>, "classNa
 };
 Table.Td = ({ className, ...rest }: TableTdProps) => (
   <td
-    className={clsx(
+    className={cn(
       "px-2 py-1 text-sm border-l border-r border-dark-1 cursor-default first:font-semibold",
       className
     )}
