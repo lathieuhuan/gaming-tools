@@ -1,5 +1,6 @@
-import clsx, { type ClassValue } from "clsx";
+import type { ClassValue } from "clsx";
 import { useState } from "react";
+import { cn } from "@lib/utils";
 import { useRondConfig } from "../../providers/ConfigProvider";
 
 export type ImageProps = {
@@ -44,7 +45,7 @@ export const Image = ({
   return (
     <div
       title={title}
-      className={clsx("ron-image", isError && "ron-image-error", className)}
+      className={cn("ron-image", isError && "ron-image-error", className)}
       style={{
         ...style,
         width,
@@ -55,7 +56,7 @@ export const Image = ({
       <img
         src={src}
         alt={alt}
-        className={clsx("w-full h-auto align-middle", showFallback && "hidden", imgCls)}
+        className={cn("w-full h-auto align-middle", showFallback && "hidden", imgCls)}
         style={imgStyle}
         draggable={draggable}
         onError={(e) => {

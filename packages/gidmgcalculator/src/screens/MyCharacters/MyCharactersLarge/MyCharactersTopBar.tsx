@@ -8,8 +8,6 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { selectChosenCharacter, selectUserCharacters, viewCharacter } from "@Store/userdb-slice";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
 
-import styles from "./MyCharactersLarge.styles.module.scss";
-
 export function MyCharactersTopBar() {
   const dispatch = useDispatch();
   const characters = useSelector(selectUserCharacters);
@@ -55,7 +53,7 @@ export function MyCharactersTopBar() {
 
   return (
     <div className="w-full flex justify-center bg-dark-2">
-      <div className={styles["side-icon-carousel"]}>
+      <div className="relative w-full max-w-60/100 xm:max-w-70/100">
         {characters.length ? (
           <div className="absolute top-8 right-full flex">
             <Button
@@ -77,28 +75,35 @@ export function MyCharactersTopBar() {
               return (
                 <div
                   key={name}
-                  {...itemUtils.getProps(name, [
-                    "mx-1 border-b-3 border-transparent cursor-pointer",
-                    name === chosenChar && styles["active-cell"],
-                  ])}
+                  data-selected={name === chosenChar}
+                  {...itemUtils.getProps(
+                    name,
+                    "mx-1 border-b-3 border-transparent cursor-pointer group/cell data-[selected=true]/cell:border-link"
+                  )}
                   onClick={() => dispatch(viewCharacter(name))}
                 >
                   <div
                     className={clsx(
-                      "rounded-circle border-3 border-light-1/30 bg-black/30",
-                      styles["icon-wrapper"],
-                      appCharacter.sideIcon
-                        ? `m-2 ${styles["side-icon-wrapper"]}`
-                        : `m-1 overflow-hidden ${styles["beta-icon-wrapper"]}`
+                      "size-15 min-w-15 rounded-circle border-3 border-light-1/30 bg-black/30",
+                      "group-data-[selected=true]/cell:border-link group-data-[selected=true]/cell:bg-link",
+                      appCharacter.sideIcon ? "m-2" : "m-1 overflow-hidden"
                     )}
                   >
                     <div
-                      className={
-                        "w-ful h-full transition-opacity duration-400 " + (visible ? "opacity-100" : "opacity-0")
-                      }
+                      data-visible={visible}
+                      className="w-ful h-full transition-opacity duration-400 opacity-0 data-[visible=true]:opacity-100"
                     >
                       {visible && (
-                        <GenshinImage src={appCharacter.sideIcon || appCharacter.icon} alt="icon" fallbackCls="p-2" />
+                        <GenshinImage
+                          src={appCharacter.sideIcon || appCharacter.icon}
+                          alt="icon"
+                          imgCls={`max-w-none ${
+                            appCharacter.sideIcon
+                              ? "w-[85px] translate-x-[-15px] translate-y-[-32px]"
+                              : "w-15 translate-x-[-2.5px] translate-y-0"
+                          }`}
+                          fallbackCls="p-2"
+                        />
                       )}
                     </div>
                   </div>
@@ -112,8 +117,7 @@ export function MyCharactersTopBar() {
           <Button
             variant="custom"
             size="custom"
-            className="w-full h-full bg-dark-3"
-            style={{ width: "3.75rem", height: "3.75rem" }}
+            className="size-15 bg-dark-3"
             icon={<FaPlus className="text-2xl" />}
             onClick={modalCtrl.requestAddCharacter}
           />

@@ -22,7 +22,7 @@ export function LeftSide({ appReady }: LeftSideProps) {
 
   const [drawerActive, setDrawerActive] = useState(false);
 
-  const isMobile = !screenWatcher.isFromSize("sm");
+  const isMobile = !screenWatcher.isFromSize("md");
   const showOnMobileTab = isMobile && isTabLayout;
 
   const handleSelectScreen = (option: ScreenConfig) => {
