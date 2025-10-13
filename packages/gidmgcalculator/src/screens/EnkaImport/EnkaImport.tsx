@@ -1,16 +1,16 @@
 import { useEffect, useRef } from "react";
 import { clsx, notification, useScreenWatcher } from "rond";
 
-import { useGenshinUser } from "@/hooks/queries/useGenshinUser";
 import { useRouter } from "@/systems/router";
 import { useSelector } from "@Store/hooks";
 import { selectAppReady } from "@Store/ui-slice";
+import { useGenshinUser } from "./_hooks/useGenshinUser";
 import { SearchParams } from "./types";
 
 import { ResultsSection } from "./ResultsSection";
-import { Input, SearchBar, SearchBarProps } from "./SearchBar";
+import { SearchInput, SearchBar, SearchBarProps } from "./SearchBar";
 
-function getInitialInput(params?: SearchParams): Input {
+function getInitialInput(params?: SearchParams): SearchInput {
   if (params?.uid) {
     return { type: "uid", value: params.uid };
   }
@@ -57,15 +57,27 @@ export function EnkaImport() {
     <div className="h-full p-4 pb-2 bg-dark-2">
       <div
         ref={containerRef}
-        className={clsx("h-full pb-2 flex gap-4 custom-scrollbar", isMobile && "snap-x snap-mandatory")}
+        className={clsx(
+          "h-full pb-2 flex gap-4 custom-scrollbar",
+          isMobile && "snap-x snap-mandatory"
+        )}
       >
-        <div className={clsx("h-full flex flex-col shrink-0 overflow-auto", isMobile ? "w-full snap-center" : "w-80")}>
+        <div
+          className={clsx(
+            "h-full flex flex-col shrink-0 overflow-auto",
+            isMobile ? "w-full snap-center" : "w-80"
+          )}
+        >
           <div>
             <h2 className="text-lg font-bold">Import characters</h2>
             <p className="text-sm text-light-hint">Use in-game UID or enka profile</p>
           </div>
 
-          <SearchBar className="mt-6" initialInput={getInitialInput(router.searchParams)} onSearch={handleSearch} />
+          <SearchBar
+            className="mt-6"
+            initialInput={getInitialInput(router.searchParams)}
+            onSearch={handleSearch}
+          />
         </div>
 
         <div className={clsx(isMobile && "w-full shrink-0 snap-center")}>

@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { Button, clsx, Input, SearchSvg, Select, LoadingSpin } from "rond";
 
-export type Input = {
+export type SearchInput = {
   type: "uid" | "profile";
   value: string;
 };
 
 export type SearchBarProps = {
   className?: string;
-  initialInput?: Input;
+  initialInput?: SearchInput;
   searching?: boolean;
-  onSearch: (input: Input) => void;
+  onSearch: (input: SearchInput) => void;
 };
 
 export function SearchBar({
@@ -22,16 +22,16 @@ export function SearchBar({
   searching,
   onSearch,
 }: SearchBarProps) {
-  const [input, setInput] = useState<Input>(initialInput);
+  const [input, setInput] = useState<SearchInput>(initialInput);
 
   const trimmedValue = input.value.trim();
 
-  const updateInput = (key: keyof Input, value: string) => {
+  const updateInput = (key: keyof SearchInput, value: string) => {
     setInput((prev) => ({ ...prev, [key]: value }));
   };
 
   const handleSearch = () => {
-    const processedInput: Input = {
+    const processedInput: SearchInput = {
       ...input,
       value: trimmedValue,
     };

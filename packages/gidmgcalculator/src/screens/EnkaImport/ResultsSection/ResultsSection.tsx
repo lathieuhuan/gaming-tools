@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { clsx, ConfirmModal, notification, Skeleton } from "rond";
 
-import { GenshinUser, GenshinUserBuild } from "@/hooks/queries/useGenshinUser";
+import { GenshinUser, GenshinUserBuild } from "@/screens/EnkaImport/_hooks/useGenshinUser";
 import { $AppSettings } from "@/services";
 import { ConvertedArtifact, ConvertedWeapon } from "@/services/app-data";
 import { useStore } from "@/systems/dynamic-store";

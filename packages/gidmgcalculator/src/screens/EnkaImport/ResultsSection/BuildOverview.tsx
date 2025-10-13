@@ -2,7 +2,7 @@ import { FaCalculator, FaSave } from "react-icons/fa";
 import { Button, ItemCase } from "rond";
 
 import { ARTIFACT_TYPES } from "@Calculation";
-import { GenshinUserBuild } from "@/hooks/queries/useGenshinUser";
+import { GenshinUserBuild } from "@/screens/EnkaImport/_hooks/useGenshinUser";
 import { ConvertedArtifact, ConvertedWeapon } from "@/services/app-data";
 import Entity_ from "@/utils/Entity";
 
