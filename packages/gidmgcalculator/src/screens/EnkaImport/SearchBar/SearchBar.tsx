@@ -1,28 +1,44 @@
-import { useState } from "react";
-import { Button, clsx, Input, SearchSvg, Select, LoadingSpin } from "rond";
+import { useEffect, useState } from "react";
+import { Button, clsx, Input, LoadingSpin, SearchSvg, Select } from "rond";
 
-export type SearchInput = {
+import { useRouter } from "@/systems/router";
+import { useDataImportState } from "../DataImportProvider";
+import { SearchParams } from "../types";
+
+function parseSearchParams(params?: SearchParams): SearchInput {
+  if (params?.uid) {
+    return { type: "uid", value: params.uid };
+  }
+
+  if (params?.profile) {
+    return { type: "profile", value: params.profile };
+  }
+
+  return { type: "uid", value: "" };
+}
+
+type SearchInput = {
   type: "uid" | "profile";
   value: string;
 };
 
 export type SearchBarProps = {
   className?: string;
-  initialInput?: SearchInput;
-  searching?: boolean;
-  onSearch: (input: SearchInput) => void;
+  onSearch?: (input: SearchInput) => void;
 };
 
-export function SearchBar({
-  className,
-  initialInput = {
+export function SearchBar({ className, onSearch }: SearchBarProps) {
+  const router = useRouter<SearchParams>();
+  const { isLoading } = useDataImportState();
+
+  const [input, setInput] = useState<SearchInput>({
     type: "uid",
     value: "",
-  },
-  searching,
-  onSearch,
-}: SearchBarProps) {
-  const [input, setInput] = useState<SearchInput>(initialInput);
+  });
+
+  useEffect(() => {
+    setInput(parseSearchParams(router.searchParams));
+  }, [router.searchParams]);
 
   const trimmedValue = input.value.trim();
 
@@ -36,8 +52,8 @@ export function SearchBar({
       value: trimmedValue,
     };
 
-    onSearch(processedInput);
-    setInput(processedInput);
+    router.updateSearchParams({ [input.type]: input.value }, true);
+    onSearch?.(processedInput);
   };
 
   return (
@@ -50,10 +66,10 @@ export function SearchBar({
             label: "UID",
             value: "uid",
           },
-          {
-            label: "Profile",
-            value: "profile",
-          },
+          // {
+          //   label: "Profile",
+          //   value: "profile",
+          // },
         ]}
         value={input.type}
         onChange={(value) => updateInput("type", value)}
@@ -72,8 +88,8 @@ export function SearchBar({
         className="shrink-0"
         variant="primary"
         shape="square"
-        icon={searching ? <LoadingSpin className="text-black" /> : <SearchSvg />}
-        disabled={!trimmedValue || searching}
+        icon={isLoading ? <LoadingSpin className="text-black" /> : <SearchSvg />}
+        disabled={!trimmedValue || isLoading}
         onClick={handleSearch}
       />
     </div>

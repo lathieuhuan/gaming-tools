@@ -1,77 +1,25 @@
-import { useState } from "react";
-import { Button, clsx, ConfirmModal, FancyBackSvg, notification } from "rond";
+import { clsx } from "rond";
 
 import { $AppSettings } from "@/services";
 import { GenshinUser, GenshinUserBuild } from "@/services/enka";
-import { useStore } from "@/systems/dynamic-store";
 import { useSetupImporter } from "@/systems/setup-importer";
-import { UserArtifact } from "@/types";
 import Setup_ from "@/utils/Setup";
-import { useDispatch } from "@Store/hooks";
-import { addCharacter, addUserArtifact, addUserWeapon } from "@Store/userdb-slice";
+import { useDataImportState } from "../DataImportProvider";
+import { useSaver } from "../SaverProvider";
 
-import { BuildOverviews } from "./BuildOverviews";
 import { TabHeader } from "../_components/TabHeader";
+import { BuildOverviews } from "./BuildOverviews";
 
 type ResultsSectionProps = {
   className?: string;
-  user?: GenshinUser;
-  isLoading?: boolean;
+  isMobile?: boolean;
   onBack?: () => void;
 };
 
-export function ResultsSection({
-  className,
-  user,
-  isLoading,
-  onBack,
-}: ResultsSectionProps) {
-  const dispatch = useDispatch();
-  const store = useStore();
+export function ResultsSection({ className, isMobile, onBack }: ResultsSectionProps) {
   const setupImporter = useSetupImporter();
-
-  const [pendingBuild, setPendingBuild] = useState<GenshinUserBuild>();
-
-  const handleSave = (build: GenshinUserBuild) => {
-    const existCharacter = store.select((state) =>
-      state.userdb.userChars.find((char) => char.name === build.character.name)
-    );
-
-    if (existCharacter && !pendingBuild) {
-      setPendingBuild(build);
-      return;
-    }
-
-    const userArtifacts: UserArtifact[] = [];
-
-    for (const artifact of build.artifacts) {
-      if (artifact) {
-        userArtifacts.push({
-          ...artifact,
-          owner: build.character.name,
-        });
-      }
-    }
-
-    dispatch(
-      addCharacter({
-        weaponID: build.weapon.ID,
-        artifactIDs: build.artifacts.map((artifact) => artifact?.ID || null),
-        ...build.character,
-      })
-    );
-    dispatch(
-      addUserWeapon({
-        ...build.weapon,
-        owner: build.character.name,
-      })
-    );
-    dispatch(addUserArtifact(userArtifacts));
-
-    notification.success({
-      content: `Successfully saved ${build.character.name}`,
-    });
-  };
+  const saver = useSaver();
+  const { data: genshinUser, isLoading } = useDataImportState();
 
   const handleCalculate = (build: GenshinUserBuild) => {
     const { data: _, ...character } = build.character;
@@ -99,31 +47,18 @@ export function ResultsSection({
 
   return (
     <div className={clsx("flex flex-col", className)}>
-      <TabHeader onBack={onBack}>
-        <p className="font-semibold">Results</p>
-        <p className="text-sm text-light-hint">Select a character or an item to see more.</p>
+      <TabHeader sub="Select a character or an item to see more." onBack={onBack}>
+        Results
       </TabHeader>
 
-      <div className="mt-2 grow space-y-2 custom-scrollbar">
+      <div className={clsx("mt-2 grow space-y-2 custom-scrollbar", !isMobile && "w-[410px]")}>
         <BuildOverviews
-          // className="w-95"
-          builds={user?.builds}
+          builds={genshinUser?.builds}
           isLoading={isLoading}
-          onSave={handleSave}
+          onSave={saver.save}
           onCalculate={handleCalculate}
         />
       </div>
-
-      <ConfirmModal
-        active={!!pendingBuild}
-        message={`${pendingBuild?.character.name} is already saved in your characters. Overwrite?`}
-        confirmButtonProps={{
-          variant: "danger",
-        }}
-        focusConfirm
-        onConfirm={() => handleSave(pendingBuild!)}
-        onClose={() => setPendingBuild(undefined)}
-      />
     </div>
   );
 }

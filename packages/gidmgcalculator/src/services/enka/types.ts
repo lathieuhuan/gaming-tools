@@ -26,4 +26,5 @@ export type GenshinUser = {
   name: string;
   level: number;
   builds: GenshinUserBuild[];
+  signature?: string;
 };

@@ -16,5 +16,5 @@ export async function getGenshinUser(uid: string) {
     return transformResponse(res);
   }
 
-  throw new Error("Bad Request");
+  throw await response.json();
 }

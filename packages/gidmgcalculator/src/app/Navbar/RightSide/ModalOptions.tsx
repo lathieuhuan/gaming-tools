@@ -43,7 +43,7 @@ export function MenuOption(props: MenuOptionProps) {
       onClick={() => props.onSelect()}
     >
       {props.icon}
-      <span className="ml-2">{props.label}</span>
+      <span className="ml-2 whitespace-nowrap">{props.label}</span>
     </button>
   );
 }

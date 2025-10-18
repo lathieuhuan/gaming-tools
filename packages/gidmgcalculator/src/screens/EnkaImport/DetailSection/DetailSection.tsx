@@ -1,16 +1,16 @@
 import { ReactNode } from "react";
-import { FaSave } from "react-icons/fa";
-import { Button, clsx } from "rond";
+import { clsx } from "rond";
 
 import { useTranslation } from "@/hooks";
 import { ARTIFACT_TYPES } from "@Calculation";
 import { calculationStatsOfBuild } from "../_logic/calculationStatsOfBuild";
-import { useSelectedBuildState } from "../SelectedBuildProvider";
+import { useSaver } from "../SaverProvider";
+import { useSelectedBuildState } from "../DataImportProvider";
 
 import { AttributeTable } from "@/components";
 import { ArtifactCard } from "@/components/ArtifactCard";
 import { WeaponCard } from "@/components/WeaponCard";
-import { BuildArtifacts } from "../_components/BuildArtifacts";
+import { BuildArtifact } from "../_components/BuildArtifact";
 import { TabHeader } from "../_components/TabHeader";
 
 type DetailSectionProps = {
@@ -21,56 +21,71 @@ type DetailSectionProps = {
 
 export function DetailSection({ className, isMobile, onBack }: DetailSectionProps) {
   const { t } = useTranslation();
-  const [selectedBuild] = useSelectedBuildState();
+  const saver = useSaver();
+  const [selectedBuild, setSelectedBuild] = useSelectedBuildState();
 
   if (!selectedBuild) {
     return <div className={className} />;
   }
 
-  const { character, weapon, artifacts } = selectedBuild;
+  const { character, weapon, artifacts, detailType } = selectedBuild;
   let extraTitle = "";
   let content: ReactNode;
+  let saveType: "WEAPON" | number | undefined;
 
-  switch (selectedBuild.detailType) {
+  switch (detailType) {
     case "CHARACTER":
-      content = <AttributeTable attributes={calculationStatsOfBuild(selectedBuild).totalAttr} />;
+      extraTitle = "Attributes";
+      content = (
+        <AttributeTable
+          className="max-h-full hide-scrollbar border-2 border-dark-3 rounded"
+          attributes={calculationStatsOfBuild(selectedBuild).totalAttr}
+        />
+      );
       break;
     case "WEAPON":
       extraTitle = "Weapon";
       content = <WeaponCard wrapperCls="max-h-full hide-scrollbar" weapon={weapon} />;
+      saveType = "WEAPON";
       break;
     default:
-      extraTitle = t(ARTIFACT_TYPES[selectedBuild.detailType]);
-      content = <ArtifactCard artifact={artifacts[selectedBuild.detailType] ?? undefined} />;
+      extraTitle = t(ARTIFACT_TYPES[detailType]);
+      content = <ArtifactCard artifact={artifacts[detailType] ?? undefined} />;
+      saveType = detailType;
       break;
   }
 
   const handleSave = () => {
-    console.log("save");
+    saver.save(selectedBuild, saveType);
   };
 
   return (
     <div className={clsx("flex flex-col", className)}>
-      <TabHeader className="flex items-center" onBack={onBack}>
-        <p className="text-lg">
-          <span className={`font-bold text-${character.data.vision}`}>{character.name}</span>
-          {extraTitle && ` / ${extraTitle}`}
-        </p>
+      <div className="flex">
+        <TabHeader sub={extraTitle} onBack={onBack}>
+          <span className={`text-${character.data.vision}`}>{character.name}</span>
+        </TabHeader>
 
-        <Button icon={<FaSave />} boneOnly onClick={handleSave} />
-      </TabHeader>
-
-      <div
-        className={clsx(
-          "mt-3 grow hide-scrollbar",
-          selectedBuild.detailType === "CHARACTER" && "border-t border-dark-line"
-        )}
-      >
-        {content}
+        {/* <Button icon={<FaSave />} boneOnly onClick={handleSave} /> */}
       </div>
 
+      <div className="mt-2 grow hide-scrollbar">{content}</div>
+
       {isMobile && typeof selectedBuild.detailType === "number" && (
-        <BuildArtifacts showLevel={false} build={selectedBuild} />
+        <div className="mt-4 flex justify-center">
+          <div className="w-[342px] flex gap-2">
+            {selectedBuild.artifacts.map((artifact, index) => (
+              <BuildArtifact
+                key={index}
+                showLevel={false}
+                artifact={artifact}
+                selectedBuild={selectedBuild}
+                artifactType={ARTIFACT_TYPES[index]}
+                onClick={() => setSelectedBuild({ ...selectedBuild, detailType: index })}
+              />
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

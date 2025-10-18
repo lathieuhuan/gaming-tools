@@ -1,50 +1,21 @@
-import { useEffect, useRef } from "react";
-import { clsx, notification, useScreenWatcher } from "rond";
+import { useRef } from "react";
+import { clsx, useScreenWatcher } from "rond";
 
-import { useRouter } from "@/systems/router";
-import { useSelector } from "@Store/hooks";
-import { selectAppReady } from "@Store/ui-slice";
-import { useGenshinUser } from "./_hooks/useGenshinUser";
-import { SearchParams } from "./types";
-
-import { SelectedBuildProvider } from "./SelectedBuildProvider";
+import { EnkaSvg } from "@/components/icons/EnkaSvg";
+import { TabHeader } from "./_components/TabHeader";
+import { AccountInfo } from "./AccountInfo";
+import { DataImportProvider } from "./DataImportProvider";
 import { DetailSection } from "./DetailSection";
 import { ResultsSection } from "./ResultsSection";
-import { SearchBar, SearchBarProps, SearchInput } from "./SearchBar";
+import { SaverProvider } from "./SaverProvider";
+import { SearchBar } from "./SearchBar";
 
 const MOBILE_TAB_CLASS = "w-full shrink-0 snap-center";
 
-function getInitialInput(params?: SearchParams): SearchInput {
-  if (params?.uid) {
-    return { type: "uid", value: params.uid };
-  }
-  if (params?.profile) {
-    return { type: "profile", value: params.profile };
-  }
-  return { type: "uid", value: "" };
-}
-
 export function EnkaImport() {
-  const router = useRouter<SearchParams>();
   const isMobile = !useScreenWatcher("sm");
-  const appReady = useSelector(selectAppReady);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const {
-    data: user,
-    isLoading,
-    error,
-  } = useGenshinUser(router.searchParams?.uid, {
-    enabled: appReady,
-  });
-
-  useEffect(() => {
-    if (error) {
-      notification.error({
-        content: error.message,
-      });
-    }
-  }, [error]);
+  // const timeoutRef = useRef<NodeJS.Timeout>();
 
   /** Mobile only */
   const scrollToTabNo = (no: number) => {
@@ -60,56 +31,79 @@ export function EnkaImport() {
     }
   };
 
-  const handleSearch: SearchBarProps["onSearch"] = (input) => {
-    router.updateSearchParams({ [input.type]: input.value }, true);
-    scrollToTabNo(1);
-  };
+  // const isAtTab = (no: number) => {
+  //   if (!containerRef.current) {
+  //     return false;
+  //   }
 
-  const handleSelectBuild = () => {
-    scrollToTabNo(2);
-  };
+  //   const { scrollLeft, clientWidth } = containerRef.current;
+  //   const min = clientWidth * no;
+
+  //   return scrollLeft >= min && scrollLeft <= min + clientWidth;
+  // };
+
+  // const delayScroll = (no: number) => {
+  //   clearTimeout(timeoutRef.current);
+
+  //   timeoutRef.current = setTimeout(() => {
+  //     if (!isAtTab(no)) {
+  //       scrollToTabNo(no);
+  //     }
+  //   }, 200);
+  // };
 
   return (
-    <div
-      ref={containerRef}
-      className={clsx(
-        "h-full flex bg-dark-2",
-        isMobile ? "hide-scrollbar snap-x snap-mandatory" : "gap-4"
-      )}
-    >
+    <DataImportProvider onSelectBuild={() => scrollToTabNo(2)}>
       <div
+        ref={containerRef}
         className={clsx(
-          "p-4 flex flex-col shrink-0 overflow-auto",
-          isMobile ? MOBILE_TAB_CLASS : "w-80"
+          "h-full flex bg-dark-2",
+          isMobile && "hide-scrollbar snap-x snap-mandatory"
         )}
       >
-        <div>
-          <h2 className="text-lg font-bold">Import characters</h2>
-          <p className="text-sm text-light-hint">use in-game UID or enka profile</p>
+        <div
+          className={clsx(
+            "p-4 flex flex-col gap-6 shrink-0 overflow-auto",
+            isMobile ? MOBILE_TAB_CLASS : "w-80"
+          )}
+        >
+          <div className="flex justify-between">
+            <TabHeader sub="Use in-game UID">
+              <h2 className="font-bold">Import data</h2>
+            </TabHeader>
+
+            <div className="flex flex-col items-end">
+              <p className="text-light-hint text-sm">Powered by</p>
+              <a
+                className="text-light-2 flex items-center gap-1"
+                href="https://enka.network"
+                target="_blank"
+              >
+                <EnkaSvg className="text-2xl" />
+                <span className="text-xl font-bold">Enka.Network</span>
+              </a>
+            </div>
+          </div>
+
+          <SearchBar />
+
+          <AccountInfo isMobile={isMobile} onSeeBuilds={() => scrollToTabNo(1)} />
         </div>
 
-        <SearchBar
-          className="mt-6"
-          initialInput={getInitialInput(router.searchParams)}
-          searching={isLoading}
-          onSearch={handleSearch}
-        />
+        <SaverProvider>
+          <ResultsSection
+            className={clsx("p-4 h-full custom-scrollbar", isMobile && MOBILE_TAB_CLASS)}
+            isMobile={isMobile}
+            onBack={() => scrollToTabNo(0)}
+          />
+
+          <DetailSection
+            className={clsx("p-4", isMobile ? MOBILE_TAB_CLASS : "w-80")}
+            isMobile={isMobile}
+            onBack={() => scrollToTabNo(1)}
+          />
+        </SaverProvider>
       </div>
-
-      <SelectedBuildProvider onSelectBuild={handleSelectBuild}>
-        <ResultsSection
-          className={clsx("p-4 h-full custom-scrollbar", isMobile && MOBILE_TAB_CLASS)}
-          user={user}
-          isLoading={isLoading}
-          onBack={() => scrollToTabNo(0)}
-        />
-
-        <DetailSection
-          className={clsx("p-4", isMobile && MOBILE_TAB_CLASS)}
-          isMobile={isMobile}
-          onBack={() => scrollToTabNo(1)}
-        />
-      </SelectedBuildProvider>
-    </div>
+    </DataImportProvider>
   );
 }

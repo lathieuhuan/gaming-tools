@@ -1,6 +1,6 @@
 import { GenshinUserBuild } from "@/services/enka";
 import { clsx, Skeleton, useScreenWatcher } from "rond";
-import { BuildOverview } from "./BuildOverview";
+import { BuildOverview, BuildOverviewMobile } from "./BuildOverview";
 
 type BuildOverviewsProps = {
   className?: string;
@@ -18,12 +18,13 @@ export function BuildOverviews({
   onCalculate,
 }: BuildOverviewsProps) {
   const isMobile = !useScreenWatcher("sm");
+  const OverviewComponent = isMobile ? BuildOverviewMobile : BuildOverview;
 
   if (isLoading) {
     return (
       <div className={clsx("space-y-2", className)}>
-        <Skeleton className="h-40 rounded-lg" />
-        <Skeleton className="h-40 rounded-lg" />
+        <Skeleton className="h-44 rounded-lg" />
+        <Skeleton className="h-44 rounded-lg" />
       </div>
     );
   }
@@ -33,7 +34,7 @@ export function BuildOverviews({
       <div className={clsx("space-y-2", className)}>
         {builds.map((build, index) => {
           return (
-            <BuildOverview
+            <OverviewComponent
               key={index}
               build={build}
               onSave={() => onSave?.(build)}
