@@ -1,9 +1,8 @@
-import { useRef, useState } from "react";
-import { clsx, ConfirmModal, notification, Skeleton } from "rond";
+import { useState } from "react";
+import { Button, clsx, ConfirmModal, FancyBackSvg, notification } from "rond";
 
-import { GenshinUser, GenshinUserBuild } from "@/screens/EnkaImport/_hooks/useGenshinUser";
 import { $AppSettings } from "@/services";
-import { ConvertedArtifact, ConvertedWeapon } from "@/services/app-data";
+import { GenshinUser, GenshinUserBuild } from "@/services/enka";
 import { useStore } from "@/systems/dynamic-store";
 import { useSetupImporter } from "@/systems/setup-importer";
 import { UserArtifact } from "@/types";
@@ -11,52 +10,27 @@ import Setup_ from "@/utils/Setup";
 import { useDispatch } from "@Store/hooks";
 import { addCharacter, addUserArtifact, addUserWeapon } from "@Store/userdb-slice";
 
-import { ArtifactCard, WeaponCard } from "@/components";
-import { BuildOverview } from "./BuildOverview";
+import { BuildOverviews } from "./BuildOverviews";
+import { TabHeader } from "../_components/TabHeader";
 
 type ResultsSectionProps = {
   className?: string;
   user?: GenshinUser;
   isLoading?: boolean;
+  onBack?: () => void;
 };
 
-export function ResultsSection({ className, user, isLoading }: ResultsSectionProps) {
+export function ResultsSection({
+  className,
+  user,
+  isLoading,
+  onBack,
+}: ResultsSectionProps) {
   const dispatch = useDispatch();
   const store = useStore();
   const setupImporter = useSetupImporter();
 
-  const [selectedArtifact, setSelectedArtifact] = useState<ConvertedArtifact>();
-  const [selectedWeapon, setSelectedWeapon] = useState<ConvertedWeapon>();
   const [pendingBuild, setPendingBuild] = useState<GenshinUserBuild>();
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const handleSelectArtifact = (artifact: ConvertedArtifact) => {
-    const isSelected = artifact.ID === selectedArtifact?.ID;
-
-    setSelectedArtifact(isSelected ? undefined : artifact);
-    setSelectedWeapon(undefined);
-
-    if (!isSelected) {
-      containerRef.current?.scrollTo({
-        left: containerRef.current.clientWidth,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  const handleSelectWeapon = (weapon: ConvertedWeapon) => {
-    const isSelected = weapon.ID === selectedWeapon?.ID;
-
-    setSelectedWeapon(isSelected ? undefined : weapon);
-    setSelectedArtifact(undefined);
-
-    if (!isSelected) {
-      containerRef.current?.scrollTo({
-        left: 9999,
-        behavior: "smooth",
-      });
-    }
-  };
 
   const handleSave = (build: GenshinUserBuild) => {
     const existCharacter = store.select((state) =>
@@ -125,52 +99,19 @@ export function ResultsSection({ className, user, isLoading }: ResultsSectionPro
 
   return (
     <div className={clsx("flex flex-col", className)}>
-      <div>
+      <TabHeader onBack={onBack}>
         <p className="font-semibold">Results</p>
-      </div>
+        <p className="text-sm text-light-hint">Select a character or an item to see more.</p>
+      </TabHeader>
 
-      <div ref={containerRef} className="mt-2 grow flex gap-4 custom-scrollbar">
-        <div className="h-full space-y-2 shrink-0 custom-scrollbar">
-          <div className="space-y-3">
-            {isLoading ? (
-              <>
-                <Skeleton className="h-40 w-95 rounded-lg" />
-                <Skeleton className="h-40 w-95 rounded-lg" />
-              </>
-            ) : user ? (
-              user.builds.map((build, index) => {
-                return (
-                  <BuildOverview
-                    key={index}
-                    {...build}
-                    selectedId={selectedWeapon?.ID || selectedArtifact?.ID}
-                    onSelectArtifact={handleSelectArtifact}
-                    onSelectWeapon={handleSelectWeapon}
-                    onSave={() => handleSave(build)}
-                    onCalculate={() => handleCalculate(build)}
-                  />
-                );
-              })
-            ) : (
-              <div className="w-95 p-4 py-6 flex-center">
-                <p className="text-light-hint">No results found</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {user && !isLoading && (
-          <div className="w-80 h-full shrink-0 custom-scrollbar">
-            {selectedWeapon && <WeaponCard weapon={selectedWeapon} />}
-            {selectedArtifact && <ArtifactCard artifact={selectedArtifact} />}
-
-            {!selectedArtifact && !selectedWeapon && (
-              <div className="p-4 py-6 flex-center">
-                <p className="text-light-hint">Select an item to see its details</p>
-              </div>
-            )}
-          </div>
-        )}
+      <div className="mt-2 grow space-y-2 custom-scrollbar">
+        <BuildOverviews
+          // className="w-95"
+          builds={user?.builds}
+          isLoading={isLoading}
+          onSave={handleSave}
+          onCalculate={handleCalculate}
+        />
       </div>
 
       <ConfirmModal

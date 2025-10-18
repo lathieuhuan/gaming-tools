@@ -1,4 +1,4 @@
-import type { PartiallyRequiredOnly } from "rond";
+import type { PartiallyOptional, PartiallyRequiredOnly } from "rond";
 
 import type { TrackerControl } from "@/calculation/TrackerControl";
 import type {
@@ -68,7 +68,7 @@ export class InputProcessor {
 
   constructor(
     setup: PartiallyRequiredOnly<CalcSetup, "char" | "weapon" | "artifacts">,
-    data: SetupAppEntities,
+    data: PartiallyOptional<SetupAppEntities, "appTeammates" | "appTeamBuffs">,
     protected tracker?: TrackerControl
   ) {
     this.character = setup.char;
@@ -94,7 +94,7 @@ export class InputProcessor {
     this.teamData = new CalcTeamData(this.character, this.teammates, data.appCharacters);
     this.appWeapons = data.appWeapons;
     this.appArtifacts = data.appArtifacts;
-    this.appTeamBuffs = data.appTeamBuffs;
+    this.appTeamBuffs = data.appTeamBuffs || [];
   }
 
   getCalculationStats() {

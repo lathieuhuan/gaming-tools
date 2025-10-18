@@ -1,26 +1,8 @@
 import { UndefinedInitialDataOptions, useQuery } from "@tanstack/react-query";
 
-import { ARTIFACT_TYPES } from "@Calculation";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import { ConvertedArtifact, ConvertedCharacter, ConvertedWeapon } from "@/services/app-data";
-import { GenshinUserResponse, getGenshinUser } from "@/services/enka";
-import Entity_ from "@/utils/Entity";
-// import { userMock } from "./mock";
+import { GenshinUser, getGenshinUser } from "@/services/enka";
 
-export type GenshinUserBuild = {
-  name?: string;
-  character: ConvertedCharacter;
-  weapon: ConvertedWeapon;
-  artifacts: (ConvertedArtifact | null)[];
-};
-
-export type GenshinUser = {
-  name: string;
-  level: number;
-  builds: GenshinUserBuild[];
-};
-
-type UseGenshinUserOptions = Omit<UndefinedInitialDataOptions<GenshinUserResponse>, "queryKey" | "queryFn">;
+type UseGenshinUserOptions = Omit<UndefinedInitialDataOptions<GenshinUser>, "queryKey" | "queryFn">;
 
 export function useGenshinUser(uid: string = "", options: UseGenshinUserOptions) {
   return useQuery({
@@ -28,53 +10,6 @@ export function useGenshinUser(uid: string = "", options: UseGenshinUserOptions)
     queryKey: ["genshin-user", uid],
     queryFn: () => getGenshinUser(uid),
     enabled: !!uid && options.enabled,
-    select: (data) => transformResponse(data),
+    staleTime: Infinity,
   });
-}
-
-function transformResponse(response: GenshinUserResponse): GenshinUser {
-  const builds: GenshinUserBuild[] = [];
-  let seedId = Date.now();
-
-  for (const build of response.builds) {
-    const character = $AppCharacter.convertGOOD(build.character);
-
-    if (character) {
-      const id = seedId++;
-      let weapon = $AppWeapon.convertGOOD(build.weapon, id);
-
-      if (!weapon) {
-        const defaultWeapon = Entity_.createWeapon({ type: character.data.weaponType }, id);
-
-        weapon = {
-          ...defaultWeapon,
-          data: $AppWeapon.get(defaultWeapon.code)!,
-        };
-      }
-
-      const artifacts = ARTIFACT_TYPES.map<ConvertedArtifact | null>((type) => {
-        const artifact = build.artifacts.find((artifact) => artifact?.slotKey === type);
-        const converted = artifact ? $AppArtifact.convertGOOD(artifact, seedId) : undefined;
-
-        if (converted) {
-          seedId++;
-          return converted;
-        }
-
-        return null;
-      });
-
-      builds.push({
-        character,
-        weapon,
-        artifacts,
-      });
-    }
-  }
-
-  return {
-    name: response.name,
-    level: response.level,
-    builds: builds,
-  };
 }

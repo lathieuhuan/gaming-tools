@@ -1,5 +1,6 @@
 import { clsx } from "rond";
 import { MODAL_OPTIONS, type ModalOption } from "./_config";
+import { ReactNode } from "react";
 
 export type ModalOptionsProps = {
   className?: string;
@@ -16,20 +17,33 @@ export function ModalOptions({ className, disabledTypes, onSelect }: ModalOption
 
         return (
           <li key={modalType}>
-            <button
-              className={clsx(
-                "w-full px-4 py-2 flex items-center font-bold cursor-default",
-                disabled ? "text-light-hint" : "hover:text-light-1 hover:bg-dark-1"
-              )}
-              disabled={disabled}
-              onClick={() => onSelect(option)}
-            >
-              {option.icon}
-              <span className="ml-2">{option.label}</span>
-            </button>
+            <MenuOption {...option} disabled={disabled} onSelect={() => onSelect(option)} />
           </li>
         );
       })}
     </ul>
+  );
+}
+
+export type MenuOptionProps = {
+  icon: ReactNode;
+  label: string;
+  disabled?: boolean;
+  onSelect: () => void;
+};
+
+export function MenuOption(props: MenuOptionProps) {
+  return (
+    <button
+      className={clsx(
+        "w-full px-4 py-2 flex items-center font-bold cursor-default",
+        props.disabled ? "text-light-hint" : "hover:text-light-1 hover:bg-dark-1"
+      )}
+      disabled={props.disabled}
+      onClick={() => props.onSelect()}
+    >
+      {props.icon}
+      <span className="ml-2">{props.label}</span>
+    </button>
   );
 }

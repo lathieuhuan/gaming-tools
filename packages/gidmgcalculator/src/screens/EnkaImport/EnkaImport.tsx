@@ -7,8 +7,12 @@ import { selectAppReady } from "@Store/ui-slice";
 import { useGenshinUser } from "./_hooks/useGenshinUser";
 import { SearchParams } from "./types";
 
+import { SelectedBuildProvider } from "./SelectedBuildProvider";
+import { DetailSection } from "./DetailSection";
 import { ResultsSection } from "./ResultsSection";
-import { SearchInput, SearchBar, SearchBarProps } from "./SearchBar";
+import { SearchBar, SearchBarProps, SearchInput } from "./SearchBar";
+
+const MOBILE_TAB_CLASS = "w-full shrink-0 snap-center";
 
 function getInitialInput(params?: SearchParams): SearchInput {
   if (params?.uid) {
@@ -42,48 +46,70 @@ export function EnkaImport() {
     }
   }, [error]);
 
-  const handleSearch: SearchBarProps["onSearch"] = (input) => {
-    router.updateSearchParams({ [input.type]: input.value }, true);
+  /** Mobile only */
+  const scrollToTabNo = (no: number) => {
+    if (!isMobile) {
+      return;
+    }
 
     if (containerRef.current) {
       containerRef.current.scrollTo({
-        left: containerRef.current.clientWidth,
+        left: containerRef.current.clientWidth * no,
         behavior: "smooth",
       });
     }
   };
 
+  const handleSearch: SearchBarProps["onSearch"] = (input) => {
+    router.updateSearchParams({ [input.type]: input.value }, true);
+    scrollToTabNo(1);
+  };
+
+  const handleSelectBuild = () => {
+    scrollToTabNo(2);
+  };
+
   return (
-    <div className="h-full p-4 pb-2 bg-dark-2">
+    <div
+      ref={containerRef}
+      className={clsx(
+        "h-full flex bg-dark-2",
+        isMobile ? "hide-scrollbar snap-x snap-mandatory" : "gap-4"
+      )}
+    >
       <div
-        ref={containerRef}
         className={clsx(
-          "h-full pb-2 flex gap-4 custom-scrollbar",
-          isMobile && "snap-x snap-mandatory"
+          "p-4 flex flex-col shrink-0 overflow-auto",
+          isMobile ? MOBILE_TAB_CLASS : "w-80"
         )}
       >
-        <div
-          className={clsx(
-            "h-full flex flex-col shrink-0 overflow-auto",
-            isMobile ? "w-full snap-center" : "w-80"
-          )}
-        >
-          <div>
-            <h2 className="text-lg font-bold">Import characters</h2>
-            <p className="text-sm text-light-hint">Use in-game UID or enka profile</p>
-          </div>
-
-          <SearchBar
-            className="mt-6"
-            initialInput={getInitialInput(router.searchParams)}
-            onSearch={handleSearch}
-          />
+        <div>
+          <h2 className="text-lg font-bold">Import characters</h2>
+          <p className="text-sm text-light-hint">use in-game UID or enka profile</p>
         </div>
 
-        <div className={clsx(isMobile && "w-full shrink-0 snap-center")}>
-          <ResultsSection className="h-full" user={user} isLoading={isLoading} />
-        </div>
+        <SearchBar
+          className="mt-6"
+          initialInput={getInitialInput(router.searchParams)}
+          searching={isLoading}
+          onSearch={handleSearch}
+        />
       </div>
+
+      <SelectedBuildProvider onSelectBuild={handleSelectBuild}>
+        <ResultsSection
+          className={clsx("p-4 h-full custom-scrollbar", isMobile && MOBILE_TAB_CLASS)}
+          user={user}
+          isLoading={isLoading}
+          onBack={() => scrollToTabNo(0)}
+        />
+
+        <DetailSection
+          className={clsx("p-4", isMobile && MOBILE_TAB_CLASS)}
+          isMobile={isMobile}
+          onBack={() => scrollToTabNo(1)}
+        />
+      </SelectedBuildProvider>
     </div>
   );
 }

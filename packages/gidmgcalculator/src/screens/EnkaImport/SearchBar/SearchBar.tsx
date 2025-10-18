@@ -72,7 +72,7 @@ export function SearchBar({
         className="shrink-0"
         variant="primary"
         shape="square"
-        icon={searching ? <LoadingSpin /> : <SearchSvg />}
+        icon={searching ? <LoadingSpin className="text-black" /> : <SearchSvg />}
         disabled={!trimmedValue || searching}
         onClick={handleSearch}
       />

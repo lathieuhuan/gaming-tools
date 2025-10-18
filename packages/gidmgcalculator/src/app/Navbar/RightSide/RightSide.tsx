@@ -4,30 +4,29 @@ import { Button, LoadingSpin, Popover, useClickOutside } from "rond";
 
 import { IS_DEV_ENV, SCREEN_PATH } from "@/constants";
 import { $AppData } from "@/services";
-// import { useRouter } from "@/systems/router";
+import { useRouter } from "@/systems/router";
 import { useDispatch } from "@Store/hooks";
 import { updateUI, type UIState } from "@Store/ui-slice";
 import { ModalOption } from "./_config";
 
-// import { MenuOption } from "./MenuOption";
-import { ModalOptions } from "./ModalOptions";
+import { MenuOption, ModalOptions } from "./ModalOptions";
 
-// const enkaIcon = (
-//   <svg
-//     stroke="currentColor"
-//     fill="currentColor"
-//     strokeWidth="0"
-//     viewBox="0 0 16 16"
-//     height="1em"
-//     width="1em"
-//     xmlns="http://www.w3.org/2000/svg"
-//   >
-//     <path
-//       fillRule="evenodd"
-//       d="M7.022 1.566a1.13 1.13 0 0 1 1.96 0l6.857 11.667c.457.778-.092 1.767-.98 1.767H1.144c-.889 0-1.437-.99-.98-1.767z"
-//     ></path>
-//   </svg>
-// );
+const enkaIcon = (
+  <svg
+    stroke="currentColor"
+    fill="currentColor"
+    strokeWidth="0"
+    viewBox="0 0 16 16"
+    height="1em"
+    width="1em"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fillRule="evenodd"
+      d="M7.022 1.566a1.13 1.13 0 0 1 1.96 0l6.857 11.667c.457.778-.092 1.767-.98 1.767H1.144c-.889 0-1.437-.99-.98-1.767z"
+    ></path>
+  </svg>
+);
 
 type RightSideProps = {
   appReady?: boolean;
@@ -35,7 +34,7 @@ type RightSideProps = {
 
 export function RightSide({ appReady }: RightSideProps) {
   const dispatch = useDispatch();
-  // const router = useRouter();
+  const router = useRouter();
   const [menuActive, setMenuActive] = useState(false);
   const [refetching, setRefetching] = useState(false);
 
@@ -53,10 +52,10 @@ export function RightSide({ appReady }: RightSideProps) {
     closeMenu();
   };
 
-  // const handleSelectEnkaImport = () => {
-  //   router.navigate(SCREEN_PATH.ENKA);
-  //   closeMenu();
-  // };
+  const handleSelectEnkaImport = () => {
+    router.navigate(SCREEN_PATH.ENKA);
+    closeMenu();
+  };
 
   const handleRefetch = async () => {
     setRefetching(true);
@@ -90,7 +89,10 @@ export function RightSide({ appReady }: RightSideProps) {
       </Button>
 
       <div ref={menuRef} className="relative text-light-1">
-        <button className="w-8 h-8 flex-center bg-dark-3 text-xl" onClick={() => setMenuActive(!menuActive)}>
+        <button
+          className="w-8 h-8 flex-center bg-dark-3 text-xl"
+          onClick={() => setMenuActive(!menuActive)}
+        >
           <FaBars />
         </button>
 
@@ -103,7 +105,12 @@ export function RightSide({ appReady }: RightSideProps) {
                 closeMenu();
               }}
             />
-            {/* <MenuOption icon={enkaIcon} label="Enka Import" disabled={!appReady} onSelect={handleSelectEnkaImport} /> */}
+            <MenuOption
+              icon={enkaIcon}
+              label="Enka Import"
+              disabled={!appReady}
+              onSelect={handleSelectEnkaImport}
+            />
           </div>
         </Popover>
       </div>
