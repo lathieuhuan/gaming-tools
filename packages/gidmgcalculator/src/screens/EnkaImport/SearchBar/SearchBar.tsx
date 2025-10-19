@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import { Button, clsx, Input, LoadingSpin, SearchSvg, Select } from "rond";
 
-import { useRouter } from "@/systems/router";
+import { useSearchParams } from "@/systems/router";
+import Object_ from "@/utils/Object";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { selectEnkaParams, updateEnkaParams } from "@Store/ui-slice";
 import { useDataImportState } from "../DataImportProvider";
 import { SearchParams } from "../types";
 
@@ -28,7 +31,9 @@ export type SearchBarProps = {
 };
 
 export function SearchBar({ className, onSearch }: SearchBarProps) {
-  const router = useRouter<SearchParams>();
+  const dispatch = useDispatch();
+  const [searchParams, setSearchParams] = useSearchParams<SearchParams>();
+  const enkaParams = useSelector(selectEnkaParams);
   const { isLoading } = useDataImportState();
 
   const [input, setInput] = useState<SearchInput>({
@@ -37,8 +42,22 @@ export function SearchBar({ className, onSearch }: SearchBarProps) {
   });
 
   useEffect(() => {
-    setInput(parseSearchParams(router.searchParams));
-  }, [router.searchParams]);
+    if (Object_.isEmpty(searchParams)) {
+      if (Object_.isNotEmpty(enkaParams)) {
+        setSearchParams(enkaParams, true);
+      }
+    } else {
+      dispatch(updateEnkaParams(searchParams));
+    }
+  }, []);
+
+  useEffect(() => {
+    const newInput = parseSearchParams(searchParams);
+
+    if (newInput.type !== input.type || newInput.value !== input.value) {
+      setInput(newInput);
+    }
+  }, [searchParams]);
 
   const trimmedValue = input.value.trim();
 
@@ -51,8 +70,10 @@ export function SearchBar({ className, onSearch }: SearchBarProps) {
       ...input,
       value: trimmedValue,
     };
+    const newParams = { [input.type]: input.value };
 
-    router.updateSearchParams({ [input.type]: input.value }, true);
+    setSearchParams(newParams);
+    dispatch(updateEnkaParams(newParams));
     onSearch?.(processedInput);
   };
 

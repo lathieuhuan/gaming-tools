@@ -1,6 +1,6 @@
 import { SearchParams } from "./types";
 
-export function toSegments(path: string) {
+export function toPathSegments(path: string) {
   return path.split("/").filter(Boolean);
 }
 
@@ -37,4 +37,9 @@ export function searchStringToObject(search: string): SearchParams {
   }
 
   return params;
+}
+
+export function getSearchParams() {
+  const params = window.location.search.replace("?", "");
+  return searchStringToObject(params);
 }

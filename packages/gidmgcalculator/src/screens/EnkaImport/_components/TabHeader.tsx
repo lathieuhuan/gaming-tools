@@ -19,7 +19,7 @@ export function TabHeader({ className, children, sub, onBack }: TabHeaderProps) 
         </div>
       )}
 
-      <div className={cn("h-12 grow", className)}>
+      <div className={cn("min-h-12 grow", className)}>
         <div className="text-lg font-semibold">{children}</div>
         {sub && <div className="text-sm text-light-hint">{sub}</div>}
       </div>

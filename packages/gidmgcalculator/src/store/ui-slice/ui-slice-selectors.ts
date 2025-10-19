@@ -5,3 +5,5 @@ export const selectMySetupModalType = (state: RootState) => state.ui.mySetupsMod
 export const selectAppReady = (state: RootState) => state.ui.appReady;
 
 export const selectTargetConfig = (state: RootState) => state.ui.targetConfig;
+
+export const selectEnkaParams = (state: RootState) => state.ui.enkaParams;

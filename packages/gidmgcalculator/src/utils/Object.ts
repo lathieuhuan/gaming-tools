@@ -10,6 +10,14 @@ export default class Object_ {
     return value === null || value === undefined;
   }
 
+  static isEmpty(value?: object | null): boolean {
+    return this.isNil(value) || !Object.keys(value).length;
+  }
+
+  static isNotEmpty(value?: object | null): value is object {
+    return !this.isEmpty(value);
+  }
+
   static keys<TObject extends UnknownObject = UnknownObject>(obj: TObject): (keyof TObject)[] {
     return Object.keys(obj);
   }

@@ -45,9 +45,7 @@ export function transformResponse(response: GenshinUserResponse): GenshinUser {
   }
 
   return {
-    name: response.name,
-    level: response.level,
-    signature: response.signature,
-    builds: builds,
+    ...response,
+    builds,
   };
 }

@@ -15,7 +15,6 @@ const MOBILE_TAB_CLASS = "w-full shrink-0 snap-center";
 export function EnkaImport() {
   const isMobile = !useScreenWatcher("sm");
   const containerRef = useRef<HTMLDivElement>(null);
-  // const timeoutRef = useRef<NodeJS.Timeout>();
 
   /** Mobile only */
   const scrollToTabNo = (no: number) => {
@@ -31,26 +30,6 @@ export function EnkaImport() {
     }
   };
 
-  // const isAtTab = (no: number) => {
-  //   if (!containerRef.current) {
-  //     return false;
-  //   }
-
-  //   const { scrollLeft, clientWidth } = containerRef.current;
-  //   const min = clientWidth * no;
-
-  //   return scrollLeft >= min && scrollLeft <= min + clientWidth;
-  // };
-
-  // const delayScroll = (no: number) => {
-  //   clearTimeout(timeoutRef.current);
-
-  //   timeoutRef.current = setTimeout(() => {
-  //     if (!isAtTab(no)) {
-  //       scrollToTabNo(no);
-  //     }
-  //   }, 200);
-  // };
 
   return (
     <DataImportProvider onSelectBuild={() => scrollToTabNo(2)}>
@@ -64,7 +43,7 @@ export function EnkaImport() {
         <div
           className={clsx(
             "p-4 flex flex-col gap-6 shrink-0 overflow-auto",
-            isMobile ? MOBILE_TAB_CLASS : "w-80"
+            isMobile ? MOBILE_TAB_CLASS : "w-84"
           )}
         >
           <div className="flex justify-between">
@@ -79,8 +58,8 @@ export function EnkaImport() {
                 href="https://enka.network"
                 target="_blank"
               >
-                <EnkaSvg className="text-2xl" />
-                <span className="text-xl font-bold">Enka.Network</span>
+                <EnkaSvg className="text-xl" />
+                <span className="text-lg font-bold">Enka.Network</span>
               </a>
             </div>
           </div>

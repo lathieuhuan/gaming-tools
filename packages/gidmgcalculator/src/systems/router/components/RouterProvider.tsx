@@ -2,26 +2,30 @@ import { useEffect, useMemo, useState } from "react";
 
 import { OutletRouteContext } from "../contexts/OutletRouteContext";
 import { Router, RouterContext } from "../contexts/RouterContext";
+import {
+  SearchParamsContext,
+  SearchParamsContextState,
+  SetSearchParams,
+} from "../contexts/SearchParamsContext";
 import { getOutletRoute } from "../logic/getOutletRoute";
-import { RootRouteConfig, SearchParams } from "../types";
-import { checkIsChildSegments, objectToSearchString, searchStringToObject, toSegments } from "../utils";
+import { navigate } from "../logic/navigate";
+import { RootRouteConfig } from "../types";
+import { checkIsChildSegments, getSearchParams, toPathSegments } from "../utils";
 
 import { NotFound } from "./NotFound";
-
-function getCurrentPath() {
-  return window.location.pathname + window.location.search;
-}
 
 type RouterProviderProps = {
   route: RootRouteConfig;
 };
 
 export function RouterProvider({ route }: RouterProviderProps) {
-  const [path, setPath] = useState(getCurrentPath);
+  const [pathname, setPathname] = useState(window.location.pathname);
+  const [searchParams, setSearchParams] = useState(getSearchParams());
 
   useEffect(() => {
     const handlePopState = () => {
-      setPath(getCurrentPath);
+      setPathname(window.location.pathname);
+      setSearchParams(getSearchParams());
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -31,40 +35,33 @@ export function RouterProvider({ route }: RouterProviderProps) {
     };
   }, []);
 
-  const { children, outlet, router } = useMemo(() => {
-    const [pathname, params] = path.split("?");
-    const segments = toSegments(pathname);
-    const searchParams = params ? searchStringToObject(params) : undefined;
+  const searchParamsState = useMemo<SearchParamsContextState>(() => {
+    const setFn: SetSearchParams = (value, replaceHistory = false) => {
+      const newParams = typeof value === "function" ? value(searchParams) : value;
 
-    // Outlet
+      setSearchParams(newParams);
+      navigate(pathname, newParams, replaceHistory);
+    };
+
+    return [searchParams, setFn];
+  }, [pathname, searchParams]);
+
+  const { children, outlet, router } = useMemo(() => {
+    const segments = toPathSegments(pathname);
 
     const outlet = getOutletRoute(segments, route.children) || {
       component: route.notFound || NotFound,
     };
 
-    // Router
-
-    const navigate = (path: string, searchParams?: Partial<SearchParams>) => {
-      const searchString = searchParams ? objectToSearchString(searchParams) : "";
-      const search = searchString ? `?${searchString}` : "";
-      const newPath = path + search;
-
-      if (newPath !== getCurrentPath()) {
-        setPath(newPath);
-        window.history.pushState(null, "", window.location.origin + newPath);
-      }
-    };
-
     const router: Router = {
       pathname,
-      searchParams,
-      navigate,
-      updateSearchParams: (params, replace) => {
-        const newParams = replace ? params : { ...searchParams, ...params };
-        navigate(pathname, newParams);
+      navigate: (pathname, searchParams = {}, replaceHistory) => {
+        setPathname(pathname);
+        setSearchParams(searchParams);
+        navigate(pathname, searchParams, replaceHistory);
       },
       isRouteActive: (path: string) => {
-        return path === "/" ? pathname === "/" : checkIsChildSegments(toSegments(path), segments);
+        return path === "/" ? pathname === "/" : checkIsChildSegments(toPathSegments(path), segments);
       },
     };
 
@@ -73,11 +70,13 @@ export function RouterProvider({ route }: RouterProviderProps) {
       outlet,
       router,
     };
-  }, [path]);
+  }, [pathname]);
 
   return (
     <RouterContext.Provider value={router}>
-      <OutletRouteContext.Provider value={outlet}>{children}</OutletRouteContext.Provider>
+      <SearchParamsContext.Provider value={searchParamsState}>
+        <OutletRouteContext.Provider value={outlet}>{children}</OutletRouteContext.Provider>
+      </SearchParamsContext.Provider>
     </RouterContext.Provider>
   );
 }

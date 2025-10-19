@@ -21,6 +21,8 @@ export function ResultsSection({ className, isMobile, onBack }: ResultsSectionPr
   const saver = useSaver();
   const { data: genshinUser, isLoading } = useDataImportState();
 
+  const hasAnyBuild = !!genshinUser?.builds?.length;
+
   const handleCalculate = (build: GenshinUserBuild) => {
     const { data: _, ...character } = build.character;
     const { data: __, ...weapon } = build.weapon;
@@ -47,7 +49,7 @@ export function ResultsSection({ className, isMobile, onBack }: ResultsSectionPr
 
   return (
     <div className={clsx("flex flex-col", className)}>
-      <TabHeader sub="Select a character or an item to see more." onBack={onBack}>
+      <TabHeader sub={hasAnyBuild && "Select a character or an item to see more."} onBack={onBack}>
         Results
       </TabHeader>
 

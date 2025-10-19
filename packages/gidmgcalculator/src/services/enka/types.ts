@@ -9,10 +9,13 @@ type GOODBuild = {
 };
 
 export type GenshinUserResponse = {
+  uid: string;
   name: string;
   level: number;
-  signature: string;
+  worldLevel: number;
+  signature: string | null;
   builds: GOODBuild[];
+  ttl?: number;
 };
 
 export type GenshinUserBuild = {
@@ -22,9 +25,6 @@ export type GenshinUserBuild = {
   artifacts: (ConvertedArtifact | null)[];
 };
 
-export type GenshinUser = {
-  name: string;
-  level: number;
+export type GenshinUser = Omit<GenshinUserResponse, "builds"> & {
   builds: GenshinUserBuild[];
-  signature?: string;
 };
