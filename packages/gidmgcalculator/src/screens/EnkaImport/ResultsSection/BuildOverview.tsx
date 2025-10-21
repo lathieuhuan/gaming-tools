@@ -41,13 +41,12 @@ export function BuildOverview({ build, onSave, onCalculate }: BuildOverviewProps
         </div>
       </div>
 
-      <div className="mt-4 flex gap-2">
-        <BuildWeapon className="size-14" build={build} />
+      <div className="mt-4 grid grid-cols-6 gap-2">
+        <BuildWeapon build={build} />
 
         {build.artifacts.map((artifact, index) => (
           <BuildArtifact
             key={index}
-            className="size-14"
             artifact={artifact}
             selectedBuild={selectedBuild}
             artifactType={ARTIFACT_TYPES[index]}
@@ -85,7 +84,7 @@ export function BuildOverviewMobile({ build, onSave, onCalculate }: BuildOvervie
           <BuildWeapon className="ml-auto size-16" build={build} />
         </div>
 
-        <div className="mt-4 flex gap-2">
+        <div className="mt-4 grid grid-cols-5 gap-2">
           {build.artifacts.map((artifact, index) => (
             <BuildArtifact
               key={index}

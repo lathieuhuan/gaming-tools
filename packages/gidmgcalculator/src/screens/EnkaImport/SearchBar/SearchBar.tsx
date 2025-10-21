@@ -62,7 +62,9 @@ export function SearchBar({ className, onSearch }: SearchBarProps) {
   const trimmedValue = input.value.trim();
 
   const updateInput = (key: keyof SearchInput, value: string) => {
-    setInput((prev) => ({ ...prev, [key]: value }));
+    if (!isLoading) {
+      setInput((prev) => ({ ...prev, [key]: value }));
+    }
   };
 
   const handleSearch = () => {
@@ -100,7 +102,7 @@ export function SearchBar({ className, onSearch }: SearchBarProps) {
         value={input.value}
         onChange={(value) => updateInput("value", value)}
         onKeyDown={(e) => {
-          if (e.key === "Enter") {
+          if (e.key === "Enter" && !isLoading) {
             handleSearch();
           }
         }}
