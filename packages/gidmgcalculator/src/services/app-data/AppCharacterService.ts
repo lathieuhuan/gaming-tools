@@ -104,7 +104,8 @@ export class AppCharacterService extends BaseService {
 
       const processDescription = (talent: TalentType, type: string | undefined) => {
         const description =
-          response.skillTalents.find((item: any) => item.type === type)?.description || this.NO_DESCRIPTION_MSG;
+          response.skillTalents.find((item: any) => item.type === type)?.description ||
+          this.NO_DESCRIPTION_MSG;
         talentDescriptions.push(description);
 
         const activeTalent = activeTalents[talent];
@@ -179,9 +180,12 @@ export class AppCharacterService extends BaseService {
         return activeTalents[type]?.description || this.NO_DESCRIPTION_MSG;
       });
 
-      if (activeTalents.altSprint) descriptions.push(activeTalents.altSprint.description || this.NO_DESCRIPTION_MSG);
+      if (activeTalents.altSprint)
+        descriptions.push(activeTalents.altSprint.description || this.NO_DESCRIPTION_MSG);
 
-      descriptions.push(...passiveTalents.map((talent) => talent.description || this.NO_DESCRIPTION_MSG));
+      descriptions.push(
+        ...passiveTalents.map((talent) => talent.description || this.NO_DESCRIPTION_MSG)
+      );
 
       return {
         code: 200,
@@ -287,7 +291,9 @@ export class AppCharacterService extends BaseService {
   // ==== CONVERT GOOD ====
 
   convertGOOD(character: GOODCharacter): ConvertedCharacter | undefined {
-    const data = this.characters.find(({ data }) => data.name === character.key || data.GOOD === character.key)?.data;
+    const data = this.characters.find(({ data }) => {
+      return data.name === character.key || data.GOOD === character.key;
+    })?.data;
 
     if (!data) {
       return undefined;

@@ -11,6 +11,7 @@ import { ModalOption } from "./_config";
 
 import { EnkaSvg } from "@/components/icons/EnkaSvg";
 import { MenuOption, ModalOptions } from "./ModalOptions";
+// import { updateCache } from "@/services/enka";
 
 type RightSideProps = {
   appReady?: boolean;
@@ -56,6 +57,13 @@ export function RightSide({ appReady }: RightSideProps) {
     setRefetching(false);
   };
 
+  // const handleUpdateCache = async () => {
+  //   console.log("Updating cache...");
+  //   const response = await updateCache();
+  //   console.log("Completed!");
+  //   console.log(response);
+  // };
+
   return (
     <div className="flex">
       {IS_DEV_ENV && (
@@ -67,6 +75,10 @@ export function RightSide({ appReady }: RightSideProps) {
           Refetch
         </Button>
       )}
+
+      {/* <Button variant="primary" shape="square" icon={<FaDonate />} onClick={handleUpdateCache}>
+        Update Cache
+      </Button> */}
 
       <Button variant="primary" shape="square" icon={<FaDonate />} onClick={openModal("DONATE")}>
         Donate

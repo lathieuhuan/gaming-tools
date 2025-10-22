@@ -26,6 +26,7 @@ export default defineConfig([
     rules: {
       "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/no-unused-vars": ["warn", { ignoreRestSiblings: true }],
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   },
 ]);
