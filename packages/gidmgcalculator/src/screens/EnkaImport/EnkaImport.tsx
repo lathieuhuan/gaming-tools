@@ -43,12 +43,12 @@ export function EnkaImport() {
         <div
           className={clsx(
             "p-4 flex flex-col gap-6 shrink-0 overflow-auto",
-            isMobile ? MOBILE_TAB_CLASS : "w-84"
+            isMobile ? MOBILE_TAB_CLASS : "w-85"
           )}
         >
           <div className="flex justify-between">
             <TabHeader sub="Use in-game UID">
-              <h2 className="font-bold">Import data</h2>
+              <h2 className="font-bold text-heading">Import data</h2>
             </TabHeader>
 
             <div className="flex flex-col items-end">
