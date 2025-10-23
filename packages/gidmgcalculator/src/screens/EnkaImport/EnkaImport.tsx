@@ -1,77 +1,88 @@
-import { useEffect, useRef } from "react";
-import { clsx, notification, useScreenWatcher } from "rond";
+import { useRef } from "react";
+import { clsx, useScreenWatcher } from "rond";
 
-import { useGenshinUser } from "@/hooks/queries/useGenshinUser";
-import { useRouter } from "@/systems/router";
-import { useSelector } from "@Store/hooks";
-import { selectAppReady } from "@Store/ui-slice";
-import { SearchParams } from "./types";
-
+import { EnkaSvg } from "@/components/icons/EnkaSvg";
+import { TabHeader } from "./_components/TabHeader";
+import { AccountInfo } from "./AccountInfo";
+import { DataImportProvider } from "./DataImportProvider";
+import { DetailSection } from "./DetailSection";
 import { ResultsSection } from "./ResultsSection";
-import { Input, SearchBar, SearchBarProps } from "./SearchBar";
+import { SaverProvider } from "./SaverProvider";
+import { SearchBar } from "./SearchBar";
 
-function getInitialInput(params?: SearchParams): Input {
-  if (params?.uid) {
-    return { type: "uid", value: params.uid };
-  }
-  if (params?.profile) {
-    return { type: "profile", value: params.profile };
-  }
-  return { type: "uid", value: "" };
-}
+const MOBILE_TAB_CLASS = "w-full shrink-0 snap-center";
 
 export function EnkaImport() {
-  const router = useRouter<SearchParams>();
   const isMobile = !useScreenWatcher("sm");
-  const appReady = useSelector(selectAppReady);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const {
-    data: user,
-    isLoading,
-    error,
-  } = useGenshinUser(router.searchParams?.uid, {
-    enabled: appReady,
-  });
-
-  useEffect(() => {
-    if (error) {
-      notification.error({
-        content: error.message,
-      });
+  /** Mobile only */
+  const scrollToTabNo = (no: number) => {
+    if (!isMobile) {
+      return;
     }
-  }, [error]);
-
-  const handleSearch: SearchBarProps["onSearch"] = (input) => {
-    router.updateSearchParams({ [input.type]: input.value }, true);
 
     if (containerRef.current) {
       containerRef.current.scrollTo({
-        left: containerRef.current.clientWidth,
+        left: containerRef.current.clientWidth * no,
         behavior: "smooth",
       });
     }
   };
 
+
   return (
-    <div className="h-full p-4 pb-2 bg-dark-2">
+    <DataImportProvider onSelectBuild={() => scrollToTabNo(2)}>
       <div
         ref={containerRef}
-        className={clsx("h-full pb-2 flex gap-4 custom-scrollbar", isMobile && "snap-x snap-mandatory")}
+        className={clsx(
+          "h-full flex bg-dark-2",
+          isMobile && "hide-scrollbar snap-x snap-mandatory"
+        )}
       >
-        <div className={clsx("h-full flex flex-col shrink-0 overflow-auto", isMobile ? "w-full snap-center" : "w-80")}>
-          <div>
-            <h2 className="text-lg font-bold">Import characters</h2>
-            <p className="text-sm text-light-hint">Use in-game UID or enka profile</p>
+        <div
+          className={clsx(
+            "p-4 flex flex-col gap-6 shrink-0 overflow-auto",
+            isMobile ? MOBILE_TAB_CLASS : "w-85"
+          )}
+        >
+          <div className="flex justify-between">
+            <TabHeader sub="Use in-game UID">
+              <h2 className="font-bold text-heading">Import data</h2>
+            </TabHeader>
+
+            <div className="flex flex-col items-end">
+              <p className="text-light-hint text-sm">Powered by</p>
+              <a
+                className="text-light-2 flex items-center gap-1"
+                href="https://enka.network"
+                target="_blank"
+              >
+                <EnkaSvg className="text-xl" />
+                <span className="text-lg font-bold">Enka.Network</span>
+              </a>
+            </div>
           </div>
 
-          <SearchBar className="mt-6" initialInput={getInitialInput(router.searchParams)} onSearch={handleSearch} />
+          <SearchBar />
+
+          <AccountInfo isMobile={isMobile} onSeeBuilds={() => scrollToTabNo(1)} />
         </div>
 
-        <div className={clsx(isMobile && "w-full shrink-0 snap-center")}>
-          <ResultsSection className="h-full" user={user} isLoading={isLoading} />
-        </div>
+        <SaverProvider>
+          <ResultsSection
+            className={clsx("p-4 h-full custom-scrollbar", isMobile && MOBILE_TAB_CLASS)}
+            isMobile={isMobile}
+            onBack={() => scrollToTabNo(0)}
+          />
+
+          <DetailSection
+            className={clsx("p-4", isMobile ? MOBILE_TAB_CLASS : "w-80")}
+            isMobile={isMobile}
+            onBack={() => scrollToTabNo(1)}
+          />
+        </SaverProvider>
       </div>
-    </div>
+    </DataImportProvider>
   );
 }

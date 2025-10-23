@@ -20,13 +20,13 @@ export type ModalActionsProps = Pick<ButtonGroupProps, "className" | "justify"> 
   withDivider?: boolean;
   disabledConfirm?: boolean;
   focusConfirm?: boolean;
-  /** Default to true */
+  /** Default true */
   showCancel?: boolean;
   /** For inside form */
   formId?: string;
-  /** Default to 'Cancel' */
+  /** Default 'Cancel' */
   cancelText?: string;
-  /** Default to 'Confirm' */
+  /** Default 'Confirm' */
   confirmText?: string;
   cancelButtonProps?: Omit<ButtonGroupItem, "text" | "onClick">;
   confirmButtonProps?: Omit<ButtonGroupItem, "text" | "onClick">;

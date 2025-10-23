@@ -6,17 +6,26 @@ const genOptions = (config: ModInputConfig) => {
   let count: number | undefined = undefined;
 
   if (config.max) {
-    count = config.initialValue === 0 ? config.max + 1 : config.max;
+    count = config.init === 0 ? config.max + 1 : config.max;
   }
 
-  return genSequentialOptions(count, config.initialValue);
+  return genSequentialOptions(count, config.init);
 };
 
 export type GenshinModifierViewProps = Omit<ModifierViewProps, "inputConfigs"> & {
   inputConfigs?: ModInputConfig[];
+  isTeamMod?: boolean;
 };
 
-export function GenshinModifierView({ inputConfigs, ...viewProps }: GenshinModifierViewProps) {
+export function GenshinModifierView({
+  inputConfigs,
+  isTeamMod,
+  ...viewProps
+}: GenshinModifierViewProps) {
+  if (isTeamMod) {
+    return <ModifierView {...viewProps} mutable={false} headingVariant="custom" />;
+  }
+
   const viewInputConfigs = inputConfigs?.map<ModifierViewInputConfig>((config) => {
     const label = config.label || "[missing label]";
 

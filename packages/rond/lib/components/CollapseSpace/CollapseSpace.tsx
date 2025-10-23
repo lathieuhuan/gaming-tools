@@ -4,9 +4,9 @@ import { useElementSize } from "../../hooks";
 export type CollapseSpaceProps = {
   active: boolean;
   activeHeight?: string | number;
-  /** Default to 250 */
+  /** Default 250 */
   moveDuration?: number;
-  /** Default to false */
+  /** Default false */
   destroyOnClose?: boolean;
   className?: string;
   style?: React.CSSProperties;

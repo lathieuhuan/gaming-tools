@@ -1,0 +1,142 @@
+import { AppCharacter } from "@Calculation";
+import { useMemo, useRef, useState } from "react";
+import { Modal } from "rond";
+
+import { $AppCharacter } from "@/services";
+import { useStoreSnapshot } from "@/systems/dynamic-store";
+import type { UserCharacter } from "@/types";
+import Array_ from "@/utils/Array";
+import Object_ from "@/utils/Object";
+import { selectUserCharacters } from "@Store/userdb-slice";
+
+// Component
+import { AppEntitySelect, AppEntitySelectProps } from "@/components/AppEntitySelect";
+import { CharacterFilter, CharacterFilterState } from "./CharacterFilter";
+
+type SelectedCharacterKey = "code" | "beta" | "name" | "icon" | "rarity" | "vision" | "weaponType";
+
+type SelectedCharacter = Pick<AppCharacter, SelectedCharacterKey> &
+  Partial<Pick<UserCharacter, "level" | "NAs" | "ES" | "EB" | "cons" | "artifactIDs">>;
+
+export type TavernProps = Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> & {
+  sourceType: "app" | "user" | "mixed";
+  filter?: (character: SelectedCharacter) => boolean;
+  onSelectCharacter: (character: SelectedCharacter) => void;
+  onClose: () => void;
+};
+
+const TavernHall = ({
+  sourceType,
+  filter: filterFn,
+  onSelectCharacter,
+  onClose,
+  ...templateProps
+}: TavernProps) => {
+  const filterRef = useRef<CharacterFilterState>({
+    elementTypes: [],
+    weaponTypes: [],
+    rarities: [],
+  });
+
+  const userChars = useStoreSnapshot(selectUserCharacters);
+
+  const allCharacters = useMemo(() => {
+    const pickedKey: SelectedCharacterKey[] = [
+      "code",
+      "beta",
+      "name",
+      "icon",
+      "rarity",
+      "vision",
+      "weaponType",
+    ];
+    const processedCharacters: SelectedCharacter[] = [];
+
+    switch (sourceType) {
+      case "app":
+        for (const characterData of $AppCharacter.getAll()) {
+          processedCharacters.push(Object_.pickProps(characterData, pickedKey));
+        }
+        break;
+      case "user":
+        for (const userChar of userChars) {
+          const characterData = $AppCharacter.get(userChar.name);
+
+          if (characterData) {
+            const character = Object.assign(Object_.pickProps(characterData, pickedKey), {
+              cons: userChar.cons,
+              artifactIDs: userChar.artifactIDs,
+            });
+            processedCharacters.push(character);
+          }
+        }
+        break;
+      case "mixed":
+        for (const characterData of $AppCharacter.getAll()) {
+          const character = Object_.pickProps(characterData, pickedKey);
+          const userCharacter = Array_.findByName(userChars, character.name);
+
+          processedCharacters.push(Object.assign(character, userCharacter));
+        }
+        break;
+    }
+
+    return filterFn ? processedCharacters.filter(filterFn) : processedCharacters;
+  }, []);
+
+  const [hiddenCodes, setHiddenCodes] = useState(new Set<number>());
+
+  const handleConfirmFilter = (filter: CharacterFilterState) => {
+    const newHiddenCodes = new Set<number>();
+    const elementFiltered = filter.elementTypes.length !== 0;
+    const weaponFiltered = filter.weaponTypes.length !== 0;
+    const rarityFiltered = filter.rarities.length !== 0;
+
+    allCharacters.forEach((character) => {
+      if (
+        (elementFiltered && !filter.elementTypes.includes(character.vision)) ||
+        (weaponFiltered && !filter.weaponTypes.includes(character.weaponType)) ||
+        (rarityFiltered && !filter.rarities.includes(character.rarity))
+      ) {
+        newHiddenCodes.add(character.code);
+      }
+    });
+    setHiddenCodes(newHiddenCodes);
+    filterRef.current = filter;
+  };
+
+  return (
+    <AppEntitySelect
+      title="Tavern"
+      data={allCharacters}
+      hiddenCodes={hiddenCodes}
+      emptyText="No characters found"
+      hasSearch
+      hasFilter
+      shouldHideSelected={templateProps.hasMultipleMode}
+      renderFilter={(setFilterOn) => {
+        return (
+          <CharacterFilter
+            className="h-full"
+            initialFilter={filterRef.current}
+            onCancel={() => setFilterOn(false)}
+            onConfirm={(filter) => {
+              handleConfirmFilter(filter);
+              setFilterOn(false);
+            }}
+          />
+        );
+      }}
+      onChange={(character) => {
+        if (character) {
+          onSelectCharacter(character);
+        }
+        return true;
+      }}
+      onClose={onClose}
+      {...templateProps}
+    />
+  );
+};
+
+export const Tavern = Modal.coreWrap(TavernHall, { preset: "large" });

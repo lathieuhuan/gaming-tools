@@ -19,6 +19,10 @@ export function toGOODKey(name: string) {
 }
 
 export function convertGOODLevel(entity: GOODAscendable): Level {
+  if (entity.level > 90) {
+    return `${entity.level}/${entity.level}` as Level;
+  }
+
   const levelCaps = [20, 40, 50, 60, 70, 80, 90];
   const level = `${entity.level}/${levelCaps[entity.ascension]}` as Level;
   return LEVELS.includes(level) ? level : "1/20";

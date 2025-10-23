@@ -35,7 +35,7 @@ export type ModifierViewInputConfig =
 export type ModifierViewProps = {
   className?: ClassValue;
   mutable?: boolean;
-  /** Default to 'toggle' if mutable is true, to 'view' if mutable is false */
+  /** Default 'toggle' if mutable is true, to 'view' if mutable is false */
   headingVariant?: "toggle" | "view" | "custom";
   headingSuffix?: React.ReactNode;
   checked?: boolean;
@@ -126,7 +126,7 @@ export const ModifierView = ({
       );
       break;
     case "custom":
-      headingNode = <span>{heading}</span>;
+      headingNode = heading;
       break;
   }
 

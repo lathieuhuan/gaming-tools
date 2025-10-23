@@ -10,8 +10,8 @@ import { MAX_USER_ARTIFACTS } from "@/constants";
 import { useTranslation } from "@/hooks";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import { suffixOf } from "@/utils";
-import Array_ from "@/utils/array-utils";
-import Entity_ from "@/utils/entity-utils";
+import Array_ from "@/utils/Array";
+import Entity_ from "@/utils/Entity";
 import { changeArtifact, updateArtifact } from "@Store/calculator-slice";
 import { useDispatch } from "@Store/hooks";
 import { addUserArtifact, selectUserArtifacts, updateUserArtifact } from "@Store/userdb-slice";
@@ -34,7 +34,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
   const [isSaving, setIsSaving] = useState(false);
 
   const { type, rarity = 5, level, mainStatType } = artifact;
-  const possibleMainStatTypes = ArtifactCalc.possibleMainStatTypesOf(type);
+  const allMainStatTypes = ArtifactCalc.allMainStatTypesOf(type);
   const mainStatValue = ArtifactCalc.mainStatValueOf(artifact);
 
   const closeModal = () => {
@@ -63,7 +63,7 @@ export function ArtifactInfo({ artifact, pieceIndex, onRemove, onRequestChange }
               className="h-9 text-lg"
               transparent
               arrowAt="start"
-              options={possibleMainStatTypes.map((type) => ({ label: t(type), value: type }))}
+              options={allMainStatTypes.map((type) => ({ label: t(type), value: type }))}
               value={mainStatType}
               onChange={(value) => {
                 dispatch(

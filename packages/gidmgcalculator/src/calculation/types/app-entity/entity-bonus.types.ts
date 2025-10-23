@@ -16,7 +16,7 @@ export type EntityBonusEffect = EffectApplicableCondition & {
   lvScale?: CharacterEffectLevelScale;
   /**
    * On Weapons. Increment to value after each refinement.
-   * Default to 1/3 of [value]. Fixed buff type has increment = 0.
+   * Default 1/3 of [value]. Fixed buff type has increment = 0.
    * Added before preExtra
    */
   incre?: number;

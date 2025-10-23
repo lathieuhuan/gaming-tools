@@ -18,6 +18,9 @@ export const selectWeapon = (state: RootState) => state.calculator.setupsById[st
 
 export const selectTeammates = (state: RootState) => state.calculator.setupsById[state.calculator.activeId]?.party;
 
+export const selectTeamBuffCtrls = (state: RootState) =>
+  state.calculator.setupsById[state.calculator.activeId]?.teamBuffCtrls;
+
 export const selectElmtModCtrls = (state: RootState) =>
   state.calculator.setupsById[state.calculator.activeId]?.elmtModCtrls;
 

@@ -48,14 +48,16 @@ const EmSection = ({ em }: EmSectionProps) => {
 };
 
 interface AttributeTableProps {
+  className?: string;
   attributes: PartiallyRequired<Partial<TotalAttribute>, CoreStat>;
 }
-export function AttributeTable({ attributes }: AttributeTableProps) {
+
+export function AttributeTable({ className, attributes }: AttributeTableProps) {
   const { t } = useTranslation();
   if (!attributes) return null;
 
   return (
-    <StatsTable aria-label="attribute-table">
+    <StatsTable className={className} aria-label="attribute-table">
       {CORE_STAT_TYPES.map((type) => {
         const total = Math.round(attributes[type]);
         const base = attributes[`${type}_base`];

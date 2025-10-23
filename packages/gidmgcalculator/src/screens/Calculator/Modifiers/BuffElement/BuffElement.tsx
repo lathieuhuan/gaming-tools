@@ -5,11 +5,9 @@ import { selectAttkBonuses, selectCharacter, selectElmtModCtrls } from "@Store/c
 import { useSelector } from "@Store/hooks";
 import { useTeamData } from "../../ContextProvider";
 
-import { GenshinModifierView } from "@/components";
 import { AnemoAbsorptionCtrl } from "./AnemoAbsorptionCtrl";
 import { AttackReactionCtrl } from "./AttackReactionCtrl";
 import { CustomInfusionCtrl } from "./CustomInfusionCtrl";
-import { ResonanceCtrl } from "./ResonanceCtrl";
 
 export function BuffElement() {
   const character = useSelector(selectCharacter);
@@ -21,39 +19,20 @@ export function BuffElement() {
 
   const nodes: ReactNode[] = [];
 
-  // Resonance
-
-  if (elmtModCtrls.resonances.length) {
-    nodes.push(<ResonanceCtrl resonances={elmtModCtrls.resonances} />);
-  }
-
-  if (teamData.moonsignLv) {
-    nodes.push(
-        <div key="moonsign" className="space-y-3">
-          <GenshinModifierView
-            heading={`Moonsign Lv.${teamData.moonsignLv}`}
-            description={teamData.moonsignLv === 1 ? "Nascent Gleam" : "Ascendant Gleam"}
-            mutable={false}
-            checked={true}
-          />
-        </div>
-    );
-  }
-
   // ========== ATTACK REACTION ==========
 
-  const attackReaction = (
-    <AttackReactionCtrl
-      configType="reaction"
-      attackElmt={vision}
-      elmtModCtrls={elmtModCtrls}
-      attkBonuses={attkBonuses}
-      characterLv={character.level}
-    />
-  );
-
-  if (attackReaction) {
-    nodes.push(<div className="space-y-3">{attackReaction}</div>);
+  if (["pyro", "cryo", "hydro", "electro", "dendro"].includes(vision)) {
+    nodes.push(
+      <div className="space-y-3">
+        <AttackReactionCtrl
+          configType="reaction"
+          attackElmt={vision}
+          elmtModCtrls={elmtModCtrls}
+          attkBonuses={attkBonuses}
+          characterLv={character.level}
+        />
+      </div>
+    );
   }
 
   // ========== ANEMO ABSORPTION ==========
@@ -68,7 +47,11 @@ export function BuffElement() {
     haveAnyAbsorbAttack(calcList.EB)
   ) {
     nodes.push(
-      <AnemoAbsorptionCtrl elmtModCtrls={elmtModCtrls} attkBonuses={attkBonuses} characterLv={character.level} />
+      <AnemoAbsorptionCtrl
+        elmtModCtrls={elmtModCtrls}
+        attkBonuses={attkBonuses}
+        characterLv={character.level}
+      />
     );
   }
 

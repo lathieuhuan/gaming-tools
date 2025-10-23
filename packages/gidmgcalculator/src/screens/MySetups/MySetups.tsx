@@ -8,8 +8,8 @@ import type { OpenModalFn, SetupRenderInfo } from "./types";
 
 import { useTravelerKey } from "@/hooks";
 import { useSetupImporter } from "@/systems/setup-importer";
-import Array_ from "@/utils/array-utils";
-import Setup_ from "@/utils/setup-utils";
+import Array_ from "@/utils/Array";
+import Setup_ from "@/utils/Setup";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectAppReady, updateUI } from "@Store/ui-slice";
 import { chooseUserSetup, selectChosenSetupId } from "@Store/userdb-slice";

@@ -25,8 +25,8 @@ import {
 } from "@Calculation";
 import { EXPORTED_SETUP_VERSION } from "@/constants";
 import { $AppCharacter } from "@/services";
-import Setup_ from "@/utils/setup-utils";
-import Array_ from "@/utils/array-utils";
+import Setup_ from "@/utils/Setup";
+import Array_ from "@/utils/Array";
 import { CUSTOM_BUFF_CATEGORIES, DIVIDER } from "./setup-porter-config";
 
 export type DecodeError = "OLD_VERSION" | "UNKNOWN";
@@ -270,6 +270,7 @@ export function decodeSetup(code: string): DecodeSuccessResult | DecodeFailResul
         artBuffCtrls: decodeArtifactModCtrls(_artBCsCode),
         artDebuffCtrls: decodeArtifactModCtrls(_artDCsCode),
         party: [decodeTeammate(_tmCode1), decodeTeammate(_tmCode2), decodeTeammate(_tmCode3)],
+        teamBuffCtrls: [],
         elmtModCtrls: {
           resonances,
           superconduct: superconduct === "1",

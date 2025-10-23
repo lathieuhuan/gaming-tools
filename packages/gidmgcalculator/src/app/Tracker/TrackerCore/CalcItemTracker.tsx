@@ -5,7 +5,7 @@ import { CalculationFinalResultGroup, CalcItemRecord } from "@Calculation";
 import { useTranslation } from "@/hooks";
 import { suffixOf } from "@/utils";
 import { markGreen } from "@/components";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 
 function renderDmg(value: number | number[], callback: (value: number) => string | number = Math.round) {
   return Array.isArray(value) ? callback(value.reduce((total, num) => total + (num ?? 0), 0)) : callback(value);
@@ -14,15 +14,15 @@ function renderDmg(value: number | number[], callback: (value: number) => string
 type PartConfig = {
   label: React.ReactNode;
   value?: number;
-  /** Default to '*' */
+  /** Default '*' */
   sign?: string | null;
-  /** Default to 0 */
+  /** Default 0 */
   nullValue?: number | null;
   processor?: (value: number) => string | number;
 };
 
 type CalcItemTrackerProps = {
-  /** Default to 'Talent Mult.' */
+  /** Default 'Talent Mult.' */
   coreMultLabel?: string;
   records?: Record<string, CalcItemRecord>;
   resultGroup: CalculationFinalResultGroup;
@@ -103,6 +103,11 @@ export function CalcItemTracker({
       nullValue: 1,
       processor: (value) => `${round(value * 100, 2)}%`,
     });
+    const specMultRender = renderPart({
+      label: "Special Mult.",
+      value: record.specMult,
+      nullValue: 1,
+    });
 
     return forReactions ? (
       <>
@@ -126,6 +131,8 @@ export function CalcItemTracker({
         {bonusMultRender}
         {flatRender}
         {")"}
+        {specMultRender}
+        {elvMultRender}
       </>
     ) : (
       <>
@@ -135,6 +142,7 @@ export function CalcItemTracker({
         {flatRender}
         {")"}
         {bonusMultRender}
+        {specMultRender}
         {elvMultRender}
       </>
     );

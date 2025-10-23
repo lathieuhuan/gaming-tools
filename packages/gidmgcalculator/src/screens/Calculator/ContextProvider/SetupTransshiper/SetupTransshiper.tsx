@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { message } from "rond";
 
-import { useRouter } from "@/systems/router";
+import { useSearchParams } from "@/systems/router";
 import { useSetupImporter } from "@/systems/setup-importer";
 import { DECODE_ERROR_MSG, decodeSetup } from "@/utils/setup-porter";
 import { useSelector } from "@Store/hooks";
@@ -13,11 +13,11 @@ type SearchParams = {
 
 export function SetupTransshiper() {
   const appReady = useSelector(selectAppReady);
-  const router = useRouter<SearchParams>();
+  const [searchParams, setSearchParams] = useSearchParams<SearchParams>();
   const setupImporter = useSetupImporter();
 
   useEffect(() => {
-    const importCode = router.searchParams?.importCode;
+    const importCode = searchParams.importCode;
 
     if (appReady && importCode) {
       const result = decodeSetup(importCode);
@@ -27,7 +27,7 @@ export function SetupTransshiper() {
           ...result.importInfo,
           importSource: "URL",
         });
-        router.updateSearchParams({ importCode: undefined });
+        setSearchParams({ importCode: undefined }, true);
       } else {
         message.error(DECODE_ERROR_MSG[result.error]);
       }

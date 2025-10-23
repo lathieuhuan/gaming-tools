@@ -1,6 +1,7 @@
 import type {
   AppArtifact,
   AppCharacter,
+  AppTeamBuff,
   AppWeapon,
   AttackBonusKey,
   AttackElement,
@@ -25,6 +26,7 @@ export type SetupAppEntities = {
   appWeapons: AppWeaponsByCode;
   appArtifacts: AppArtifactsByCode;
   appTeammates: CalcAppTeammates;
+  appTeamBuffs: AppTeamBuff[];
 };
 
 export type CalcAppTeammates = (AppCharacter | null)[];
@@ -43,10 +45,18 @@ export type ModifierCtrl = {
   /** This is WeaponBuff.index / ArtifactBuff.index / CharacterModifier.index */
   index: number;
   inputs?: number[];
+  /** Control with teamBuffId is just a placeholder for the actual control in setup.teamBuffCtrls */
+  teamBuffId?: string;
 };
 
 export type ArtifactModCtrl = ModifierCtrl & {
   code: number;
+};
+
+export type TeamBuffCtrl = {
+  id: string;
+  activated: boolean;
+  inputs?: number[];
 };
 
 export type Resonance = {
@@ -54,6 +64,7 @@ export type Resonance = {
   activated: boolean;
   inputs?: number[];
 };
+
 export type ElementModCtrl = {
   reaction: AttackReaction;
   infuse_reaction: AttackReaction;
@@ -133,6 +144,7 @@ export type CalcSetup = {
   artifacts: CalcArtifacts;
   artBuffCtrls: ArtifactModCtrl[];
   artDebuffCtrls: ArtifactModCtrl[];
+  teamBuffCtrls: TeamBuffCtrl[];
 
   party: Teammates;
   elmtModCtrls: ElementModCtrl;

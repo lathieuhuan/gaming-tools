@@ -1,8 +1,7 @@
-import type { CalcTeamData } from "@/calculation/utils/CalcTeamData";
+import type { CalcTeamData } from "@/calculation/CalcTeamData";
 import type {
   AppliedAttributeBonus,
   AppliedBonuses,
-  AttackBonusType,
   BareBonus,
   EntityBonusBasedOn,
   EntityBonusEffect,
@@ -12,7 +11,7 @@ import type {
 
 import { ELEMENT_TYPES } from "@/calculation/constants";
 import { ECalcStatModule } from "@/calculation/constants/internal";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { BareBonusGetter, BonusGetterSupport } from "../BareBonusGetter";
 
 type ApplyBonusSupportInfo = {
@@ -100,23 +99,6 @@ export class AppliedBonusesGetter<T extends CalcTeamData = CalcTeamData> extends
           }
           break;
         }
-        case "ELMT_NA":
-          for (const elmt of ELEMENT_TYPES) {
-            const toType: AttackBonusType = `NA.${elmt}`;
-
-            if (!this.isStackable({ trackId: support.monoId, targetId: `${toType}/${target.path}` })) {
-              continue;
-            }
-
-            result.attkBonuses.push({
-              id: bonus.id,
-              toType,
-              toKey: target.path,
-              value: bonus.value,
-              description: support.description,
-            });
-          }
-          break;
         default:
           for (const module of Array_.toArray(target.module)) {
             if (!this.isStackable({ trackId: support.monoId, targetId: `${module}/${target.path}` })) {

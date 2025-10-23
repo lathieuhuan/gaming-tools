@@ -10,32 +10,28 @@ export type ModInputConfig = {
   type: ModInputType;
   for?: "FOR_SELF" | "FOR_TEAM";
   /** See ModifierControl model for default value */
-  initialValue?: number;
+  init?: number;
   max?: number;
   options?: string[];
+  note?: string;
+};
+
+export type EntityModifier = {
+  /** This is id */
+  index: number;
+  inputConfigs?: ModInputConfig[];
+  teamBuffId?: string;
 };
 
 // ========== BUFF ==========
 
-export type EntityBuff<TEntityEffect extends EntityBonusEffect = EntityBonusEffect> = {
-  /** This is id */
-  index: number;
+export type EntityBuff<TEntityEffect extends EntityBonusEffect = EntityBonusEffect> = EntityModifier & {
   affect: ModifierAffectType;
-  inputConfigs?: ModInputConfig[];
   effects?: EntityBonus<TEntityEffect> | EntityBonus<TEntityEffect>[];
-  /**
-   * id for tracking unstackability.
-   * Effects under the same unstackableId and have the same bonus path cannot be stacked.
-   * CharacterBuff should not have this
-   */
-  unstackableId?: string;
 };
 
 // ========== DEBUFF ==========
 
-export type EntityDebuff<TEntityPenalty extends EntityPenaltyEffect = EntityPenaltyEffect> = {
-  /** This is id */
-  index: number;
-  inputConfigs?: ModInputConfig[];
+export type EntityDebuff<TEntityPenalty extends EntityPenaltyEffect = EntityPenaltyEffect> = EntityModifier & {
   effects?: EntityPenalty<TEntityPenalty>;
 };

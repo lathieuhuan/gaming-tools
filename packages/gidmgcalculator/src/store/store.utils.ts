@@ -1,8 +1,8 @@
 import { WeaponType } from "@Calculation";
 
 import type { CalcWeapon, UserArtifact, UserCharacter, UserWeapon } from "@/types";
-import Array_ from "@/utils/array-utils";
-import Entity_ from "@/utils/entity-utils";
+import Array_ from "@/utils/Array";
+import Entity_ from "@/utils/Entity";
 
 export type CharacterForInit = Partial<UserCharacter> & {
   name: string;

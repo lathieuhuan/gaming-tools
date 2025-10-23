@@ -15,7 +15,7 @@ const CLASS_BY_SIZE = {
 
 interface ComplexSelectProps {
   className?: string;
-  /** Default to 'medium' */
+  /** Default 'medium' */
   // size?: "medium" | "small";
   selectId: string;
   value?: string | number;

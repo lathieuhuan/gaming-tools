@@ -3,7 +3,7 @@ import { CalcTeamData, CharacterBuff, CharacterCalc, CharacterDebuff } from "@Ca
 import type { Character, ModifierCtrl } from "@/types";
 import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
 
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { parseSelfAbilityDesc } from "@/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { renderModifiers } from "./modifiers.utils";

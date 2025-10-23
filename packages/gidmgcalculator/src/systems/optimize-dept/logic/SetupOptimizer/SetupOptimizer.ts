@@ -3,9 +3,9 @@ import type { AppArtifactsByCode, Artifact, ArtifactModCtrl, CalcArtifacts, Targ
 
 import { GeneralCalc, InputProcessor, ResultCalculator, getAttackAlterConfigs } from "@Calculation";
 
-import Array_ from "@/utils/array-utils";
-import Modifier_ from "@/utils/modifier-utils";
-import Object_ from "@/utils/object-utils";
+import Array_ from "@/utils/Array";
+import Modifier_ from "@/utils/Modifier";
+import Object_ from "@/utils/Object";
 
 type CalculationStats = ReturnType<InputProcessor["getCalculationStats"]>;
 

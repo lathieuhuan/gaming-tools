@@ -12,7 +12,7 @@ interface CharacterIntroProps {
   appCharacter: AppCharacter;
   switchable?: boolean;
   removable?: boolean;
-  /** Default to true */
+  /** Default true */
   mutable?: boolean;
   onSwitch?: () => void;
   onRemove?: () => void;

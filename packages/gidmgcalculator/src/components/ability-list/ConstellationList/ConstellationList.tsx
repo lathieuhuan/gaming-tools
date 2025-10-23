@@ -2,20 +2,21 @@ import { useEffect, useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, clsx, type ClassValue } from "rond";
 
-import type { Character } from "@/types";
 import { $AppCharacter } from "@/services";
+import type { Character } from "@/types";
 
 // Conponent
-import { AbilityIcon } from "../ability-list-components";
+import { AbilityIcon } from "../_components/AbilityIcon";
 import { ConstellationDetail } from "./ConstellationDetail";
 
-interface ConstellationListProps {
+type ConstellationListProps = {
   className?: ClassValue;
   character: Character;
-  /** Default to true */
+  /** Default true */
   mutable?: boolean;
   onClickIcon?: (index: number) => void;
-}
+};
+
 export function ConstellationList(props: ConstellationListProps) {
   const { character, mutable = true } = props;
   const [consLv, setConsLv] = useState(0);
@@ -56,8 +57,18 @@ export function ConstellationList(props: ConstellationListProps) {
                 />
               </div>
               <div className="grow flex group" onClick={() => onClickInfo(i + 1)}>
-                <p className={"px-2 text-lg font-bold" + (character.cons < i + 1 ? " opacity-50" : "")}>{cons.name}</p>
-                <Button className="mt-1 ml-auto group-hover:bg-primary-1 shrink-0" size="small" icon={<FaInfo />} />
+                <p
+                  className={
+                    "px-2 text-lg font-bold" + (character.cons < i + 1 ? " opacity-50" : "")
+                  }
+                >
+                  {cons.name}
+                </p>
+                <Button
+                  className="mt-1 ml-auto group-hover:bg-primary-1 shrink-0"
+                  size="small"
+                  icon={<FaInfo />}
+                />
               </div>
             </div>
           );

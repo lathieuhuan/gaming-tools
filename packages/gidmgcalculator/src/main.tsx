@@ -6,10 +6,8 @@ import { ConfigProvider, ScreenSizeWatcher } from "rond";
 import { route } from "./app/route";
 import { GenshinImage } from "./components";
 import { DynamicStoreProvider } from "./systems/dynamic-store";
-import { OptimizeDeptProvider } from "./systems/optimize-dept";
 import { QueryClientProvider } from "./systems/react-query";
 import { RouterProvider } from "./systems/router";
-import { ImporterProvider } from "./systems/setup-importer";
 
 import "./style.css";
 
@@ -21,11 +19,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           {({ store, persistor }) => (
             <StoreProvider store={store}>
               <PersistGate loading={null} persistor={persistor}>
-                <ImporterProvider>
-                  <OptimizeDeptProvider>
-                    <RouterProvider route={route} />
-                  </OptimizeDeptProvider>
-                </ImporterProvider>
+                <RouterProvider route={route} />
               </PersistGate>
             </StoreProvider>
           )}

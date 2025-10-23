@@ -7,7 +7,7 @@ import type { Teammate, UserArtifacts, UserComplexSetup, UserSetup, UserWeapon }
 import type { OpenModalFn } from "../types";
 
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import Entity_ from "@/utils/entity-utils";
+import Entity_ from "@/utils/Entity";
 import { useDispatch } from "@Store/hooks";
 import { chooseUserSetup, switchShownSetupInComplex, uncombineSetups } from "@Store/userdb-slice";
 

@@ -4,7 +4,7 @@ import { Input } from "rond";
 import type { UserSetup } from "@/types";
 
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { useDispatch } from "@Store/hooks";
 import { combineSetups, selectUserSetups } from "@Store/userdb-slice";
 import { useCombineManager } from "./hooks";
@@ -55,7 +55,7 @@ export default function FirstCombine(props: { onClose: () => void }) {
         }
       }
 
-      for (const teammate of Array_.truthy(party)) {
+      for (const teammate of Array_.truthify(party)) {
         if (!all.includes(teammate.name)) {
           if (all.length === 4) {
             setIsError(true);

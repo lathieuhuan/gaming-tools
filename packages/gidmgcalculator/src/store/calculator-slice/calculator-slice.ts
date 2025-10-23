@@ -1,46 +1,42 @@
+import { ATTACK_ELEMENTS, AttackElement } from "@Calculation";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { PartiallyOptional } from "rond";
-import { AttackElement, ATTACK_ELEMENTS } from "@Calculation";
 
-import type { CalcSetupManageInfo, CalcWeapon, Resonance, Target } from "@/types";
+import type { CalcSetupManageInfo, CalcWeapon, Resonance, Target, TeamBuffCtrl } from "@/types";
 import type {
-  CalculatorState,
   AddTeammateAction,
-  UpdateSetupsAction,
+  ApplySettingsAction,
+  CalculatorState,
   ChangeArtifactAction,
+  ChangeArtifactBuffCtrlInputAction,
   ChangeModCtrlInputAction,
   ChangeTeammateModCtrlInputAction,
   ImportSetupAction,
+  InitNewSessionPayload,
   RemoveCustomModCtrlAction,
+  ToggleArtifactBuffCtrlAction,
   ToggleModCtrlAction,
   ToggleTeammateModCtrlAction,
   UpdateArtifactAction,
-  UpdateCalculatorAction,
   UpdateCalcSetupAction,
+  UpdateCalculatorAction,
+  UpdateCharacterAction,
   UpdateCustomBuffCtrlsAction,
   UpdateCustomDebuffCtrlsAction,
-  UpdateTeammateWeaponAction,
+  UpdateSetupsAction,
   UpdateTeammateArtifactAction,
-  ApplySettingsAction,
-  InitNewSessionPayload,
-  UpdateCharacterAction,
-  ToggleArtifactBuffCtrlAction,
-  ChangeArtifactBuffCtrlInputAction,
+  UpdateTeammateWeaponAction,
 } from "./calculator-slice.types";
 
-import { RESONANCE_ELEMENT_TYPES } from "@/constants";
-import { $AppData, $AppCharacter, $AppSettings, $AppArtifact } from "@/services";
-import Setup_ from "@/utils/setup-utils";
-import Modifier_ from "@/utils/modifier-utils";
-import Object_ from "@/utils/object-utils";
-import Array_ from "@/utils/array-utils";
-import Entity_ from "@/utils/entity-utils";
-import { calculate, countAllElements, getAppCharacterFromState } from "./calculator-slice.utils";
-
-// const defaultChar = {
-//   name: "Albedo",
-//   ...createCharInfo(),
-// };
+import { $AppArtifact, $AppCharacter, $AppData, $AppSettings } from "@/services";
+import Array_ from "@/utils/Array";
+import Entity_ from "@/utils/Entity";
+import Modifier_ from "@/utils/Modifier";
+import Object_ from "@/utils/Object";
+import Setup_ from "@/utils/Setup";
+import { calculate } from "./utils/calculate";
+import { checkToUpdateResonance } from "./utils/checkToUpdateResonance";
+import { checkToUpdateTeamBuffs } from "./utils/checkToUpdateTeamBuffs";
 
 const initialState: CalculatorState = {
   activeId: 0,
@@ -183,69 +179,32 @@ export const calculatorSlice = createSlice({
     },
     // PARTY
     addTeammate: (state, action: AddTeammateAction) => {
-      const { name, elementType, weaponType, teammateIndex } = action.payload;
-      const appCharacter = getAppCharacterFromState(state);
+      const { name, weaponType, teammateIndex } = action.payload;
       const setup = state.setupsById[state.activeId];
-      const { party, elmtModCtrls } = setup;
+      const { party } = setup;
 
-      const oldElmtCount = countAllElements(appCharacter, party);
-      const oldTeammate = party[teammateIndex];
+      const appCharacters = Entity_.getAppCharacters(setup.char.name, party, name);
+
       // assign to party
       party[teammateIndex] = Setup_.createTeammate({ name, weaponType });
 
-      const newElmtCount = countAllElements(appCharacter, party);
-
-      if (oldTeammate) {
-        const { vision: oldElement } = $AppCharacter.get(oldTeammate.name) || {};
-        // lose a resonance
-        if (
-          oldElement &&
-          RESONANCE_ELEMENT_TYPES.includes(oldElement) &&
-          oldElmtCount.get(oldElement) === 2 &&
-          newElmtCount.get(oldElement) === 1
-        ) {
-          elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
-            return resonance.vision !== oldElement;
-          });
-        }
-      }
-      // new teammate form new resonance
-      if (
-        RESONANCE_ELEMENT_TYPES.includes(elementType) &&
-        oldElmtCount.get(elementType) === 1 &&
-        newElmtCount.get(elementType) === 2
-      ) {
-        const newResonance = {
-          vision: elementType,
-          activated: ["pyro", "hydro", "dendro"].includes(elementType),
-        } as Resonance;
-
-        if (elementType === "dendro") {
-          newResonance.inputs = [0, 0];
-        }
-        elmtModCtrls.resonances.push(newResonance);
-      }
-
+      checkToUpdateResonance(setup, appCharacters);
+      checkToUpdateTeamBuffs(setup, appCharacters);
       calculate(state);
     },
     removeTeammate: (state, action: PayloadAction<number>) => {
       const teammateIndex = action.payload;
-      const appCharacter = getAppCharacterFromState(state);
-      const { party, elmtModCtrls } = state.setupsById[state.activeId];
-      const teammate = party[teammateIndex];
+      const setup = state.setupsById[state.activeId];
+      const { char, party } = setup;
 
-      if (teammate) {
-        const { vision } = $AppCharacter.get(teammate.name);
-        party[teammateIndex] = null;
-        const newElmtCount = countAllElements(appCharacter, party);
+      const appCharacters = Entity_.getAppCharacters(char.name, party);
 
-        if (newElmtCount.get(vision) === 1) {
-          elmtModCtrls.resonances = elmtModCtrls.resonances.filter((resonance) => {
-            return resonance.vision !== vision;
-          });
-        }
-        calculate(state);
-      }
+      // remove from party
+      party[teammateIndex] = null;
+
+      checkToUpdateResonance(setup, appCharacters);
+      checkToUpdateTeamBuffs(setup, appCharacters);
+      calculate(state);
     },
     updateTeammateWeapon: (state, action: UpdateTeammateWeaponAction) => {
       const { teammateIndex, ...newWeaponInfo } = action.payload;
@@ -255,14 +214,15 @@ export const calculatorSlice = createSlice({
         Object.assign(teammate.weapon, newWeaponInfo);
 
         if (newWeaponInfo.code) {
-          teammate.weapon.buffCtrls = Modifier_.createWeaponBuffCtrls(false, teammate.weapon);
+          teammate.weapon.buffCtrls = Modifier_.createWeaponBuffCtrls(teammate.weapon, false);
         }
         calculate(state);
       }
     },
     updateTeammateArtifact: (state, action: UpdateTeammateArtifactAction) => {
       const { teammateIndex, ...newArtifactInfo } = action.payload;
-      const teammate = state.setupsById[state.activeId].party[teammateIndex];
+      const setup = state.setupsById[state.activeId];
+      const teammate = setup.party[teammateIndex];
 
       if (teammate) {
         const prevArtifactCode = teammate.artifact.code;
@@ -271,16 +231,18 @@ export const calculatorSlice = createSlice({
 
         if (newArtifactInfo.code) {
           if (newArtifactInfo.code === -1) {
-            const debuffArtifactCodes = $AppArtifact.getAll().reduce<number[]>((accumulator, artifact) => {
-              if (artifact.debuffs?.length) {
-                accumulator.push(artifact.code);
-              }
-              return accumulator;
-            }, []);
+            const debuffArtifactCodes = $AppArtifact
+              .getAll()
+              .reduce<number[]>((accumulator, artifact) => {
+                if (artifact.debuffs?.length) {
+                  accumulator.push(artifact.code);
+                }
+                return accumulator;
+              }, []);
 
             // Deactivate artifact that has debuff
             if (debuffArtifactCodes.includes(prevArtifactCode)) {
-              const debuffArtifact = state.setupsById[state.activeId].artDebuffCtrls.find(
+              const debuffArtifact = setup.artDebuffCtrls.find(
                 (ctrl) => ctrl.code === prevArtifactCode
               );
 
@@ -290,15 +252,22 @@ export const calculatorSlice = createSlice({
             }
             teammate.artifact.buffCtrls = [];
           } else {
-            teammate.artifact.buffCtrls = Modifier_.createArtifactBuffCtrls(false, newArtifactInfo);
+            teammate.artifact.buffCtrls = Modifier_.createArtifactBuffCtrls(newArtifactInfo, false);
           }
         }
+
+        const appCharacters = Entity_.getAppCharacters(setup.char.name, setup.party);
+
+        checkToUpdateTeamBuffs(setup, appCharacters);
         calculate(state);
       }
     },
     toggleTeammateModCtrl: (state, action: ToggleTeammateModCtrlAction) => {
       const { teammateIndex, modCtrlName, ctrlIndex } = action.payload;
-      const ctrl = Array_.findByIndex(state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName], ctrlIndex);
+      const ctrl = Array_.findByIndex(
+        state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName],
+        ctrlIndex
+      );
 
       if (ctrl) {
         ctrl.activated = !ctrl.activated;
@@ -307,7 +276,10 @@ export const calculatorSlice = createSlice({
     },
     changeTeammateModCtrlInput: (state, action: ChangeTeammateModCtrlInputAction) => {
       const { teammateIndex, modCtrlName, ctrlIndex, inputIndex, value } = action.payload;
-      const ctrl = Array_.findByIndex(state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName], ctrlIndex);
+      const ctrl = Array_.findByIndex(
+        state.setupsById[state.activeId].party[teammateIndex]?.[modCtrlName],
+        ctrlIndex
+      );
 
       if (ctrl && ctrl.inputs) {
         ctrl.inputs[inputIndex] = value;
@@ -319,7 +291,7 @@ export const calculatorSlice = createSlice({
       const weapon = action.payload;
       const setup = state.setupsById[state.activeId];
       setup.weapon = weapon;
-      setup.wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, weapon);
+      setup.wpBuffCtrls = Modifier_.createWeaponBuffCtrls(weapon, true);
 
       calculate(state);
     },
@@ -356,11 +328,15 @@ export const calculatorSlice = createSlice({
 
       setup.artBuffCtrls = newArtBuffCtrls;
 
+      const appCharacters = Entity_.getAppCharacters(setup.char.name, setup.party);
+
+      checkToUpdateTeamBuffs(setup, appCharacters);
       calculate(state);
     },
     updateArtifact: (state, action: UpdateArtifactAction) => {
       const { pieceIndex, level, mainStatType, subStat } = action.payload;
-      const piece = state.setupsById[state.activeId].artifacts[pieceIndex];
+      const setup = state.setupsById[state.activeId];
+      const piece = setup.artifacts[pieceIndex];
 
       if (piece) {
         piece.level = level ?? piece.level;
@@ -370,9 +346,26 @@ export const calculatorSlice = createSlice({
           Object.assign(piece.subStats[subStat.index], subStat.newInfo);
         }
       }
+
+      const appCharacters = Entity_.getAppCharacters(setup.char.name, setup.party);
+
+      checkToUpdateTeamBuffs(setup, appCharacters);
       calculate(state);
     },
     // MOD CTRLS
+    updateTeamBuffs: (
+      state,
+      action: PayloadAction<PartiallyOptional<TeamBuffCtrl, "activated">>
+    ) => {
+      const { id, ...newInfo } = action.payload;
+      const ctrls = state.setupsById[state.activeId].teamBuffCtrls;
+      const ctrl = ctrls.find((ctrl) => ctrl.id === id);
+
+      if (ctrl) {
+        Object.assign(ctrl, newInfo);
+        calculate(state);
+      }
+    },
     updateResonance: (state, action: PayloadAction<PartiallyOptional<Resonance, "activated">>) => {
       const { vision, ...newInfo } = action.payload;
       const { resonances } = state.setupsById[state.activeId].elmtModCtrls;
@@ -386,7 +379,8 @@ export const calculatorSlice = createSlice({
     toggleModCtrl: (state, action: ToggleModCtrlAction) => {
       const { modCtrlName, ctrlIndex } = action.payload;
       const ctrls = state.setupsById[state.activeId][modCtrlName];
-      const ctrl = modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : Array_.findByIndex(ctrls, ctrlIndex);
+      const ctrl =
+        modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : Array_.findByIndex(ctrls, ctrlIndex);
 
       if (ctrl) {
         ctrl.activated = !ctrl.activated;
@@ -396,7 +390,8 @@ export const calculatorSlice = createSlice({
     changeModCtrlInput: (state, action: ChangeModCtrlInputAction) => {
       const { modCtrlName, ctrlIndex, inputIndex, value } = action.payload;
       const ctrls = state.setupsById[state.activeId][modCtrlName];
-      const ctrl = modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : Array_.findByIndex(ctrls, ctrlIndex);
+      const ctrl =
+        modCtrlName === "artDebuffCtrls" ? ctrls[ctrlIndex] : Array_.findByIndex(ctrls, ctrlIndex);
 
       if (ctrl?.inputs) {
         ctrl.inputs[inputIndex] = value;
@@ -543,16 +538,11 @@ export const calculatorSlice = createSlice({
     },
     updateSetups: (state, action: UpdateSetupsAction) => {
       const { newSetupManageInfos, newStandardId } = action.payload;
-      const appCharacter = getAppCharacterFromState(state);
       const { setupManageInfos, setupsById, activeId } = state;
       const removedIds = [];
       // Reset comparedIds before repopulate with newSetupManageInfos
       state.comparedIds = [];
 
-      const [selfBuffCtrls, selfDebuffCtrls] = Modifier_.createCharacterModCtrls(true, appCharacter.name);
-      const newWeapon = Entity_.createWeapon({ type: appCharacter.weaponType });
-      const wpBuffCtrls = Modifier_.createWeaponBuffCtrls(true, newWeapon);
-      const elmtModCtrls = Modifier_.createElmtModCtrls();
       const tempManageInfos: CalcSetupManageInfo[] = [];
 
       for (const { ID, name, status, originId, isCompared } of newSetupManageInfos) {
@@ -592,21 +582,10 @@ export const calculatorSlice = createSlice({
               name: newSetupName,
               type: "original",
             });
-            setupsById[ID] = {
+
+            setupsById[ID] = Setup_.createCalcSetup({
               char: setupsById[activeId].char,
-              selfBuffCtrls,
-              selfDebuffCtrls,
-              weapon: newWeapon,
-              wpBuffCtrls,
-              artifacts: [null, null, null, null, null],
-              artBuffCtrls: [],
-              artDebuffCtrls: Modifier_.createArtifactDebuffCtrls(),
-              party: [null, null, null],
-              elmtModCtrls,
-              customBuffCtrls: [],
-              customDebuffCtrls: [],
-              customInfusion: { element: "phys" },
-            };
+            });
             break;
           }
         }
@@ -649,7 +628,8 @@ export const calculatorSlice = createSlice({
         shouldRecalculateAll = true;
       }
 
-      shouldRecalculateAll ||= travelerChanged && allSetups.some((setup) => $AppCharacter.checkIsTraveler(setup.char));
+      shouldRecalculateAll ||=
+        travelerChanged && allSetups.some((setup) => $AppCharacter.checkIsTraveler(setup.char));
 
       if (shouldRecalculateAll) {
         calculate(state, true);
@@ -675,6 +655,7 @@ export const {
   updateArtifact,
   changeArtifact,
   updateResonance,
+  updateTeamBuffs,
   toggleModCtrl,
   changeModCtrlInput,
   toggleArtifactBuffCtrl,

@@ -7,8 +7,8 @@ import type {
   AppWeaponsByCode,
   SetupAppEntities,
 } from "@/types";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import Array_ from "@/utils/array-utils";
+import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
+import Array_ from "@/utils/Array";
 
 export function getSetupAppEntities({
   char,
@@ -32,7 +32,7 @@ export function getSetupAppEntities({
     }
   }
 
-  for (const teammate of Array_.truthy(party)) {
+  for (const teammate of Array_.truthify(party)) {
     if (teammate) {
       const appCharacter = $AppCharacter.get(teammate.name);
 
@@ -51,5 +51,6 @@ export function getSetupAppEntities({
     appWeapons,
     appArtifacts,
     appTeammates,
+    appTeamBuffs: $AppData.teamBuffs,
   };
 }

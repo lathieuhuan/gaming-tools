@@ -3,7 +3,7 @@ import { ChangeEvent, useRef, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { ElementType, AppMonster } from "@Calculation";
 
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { $AppData } from "@/services";
 
 interface ComboBoxProps {

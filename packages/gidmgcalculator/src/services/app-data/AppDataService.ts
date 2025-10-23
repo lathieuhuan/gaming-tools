@@ -1,4 +1,4 @@
-import type { AppMonster } from "@Calculation";
+import type { AppMonster, AppTeamBuff } from "@Calculation";
 import type { Target } from "@/types";
 import type { AllData } from "./app-data.types";
 import type { AppCharacterService } from "./AppCharacterService";
@@ -6,10 +6,12 @@ import type { AppWeaponService } from "./AppWeaponService";
 import type { AppArtifactService } from "./AppArtifactService";
 
 import { BACKEND_URL } from "@/constants";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { BaseService } from "./BaseService";
 
 export class AppDataService extends BaseService {
+  teamBuffs: AppTeamBuff[] = [];
+
   private monsters: AppMonster[] = [];
 
   constructor(
@@ -30,13 +32,15 @@ export class AppDataService extends BaseService {
       weapons: this.weapon$.getAll(),
       artifacts: this.artifact$.getAll(),
       monsters: this.getAllMonsters(),
+      teamBuffs: this.teamBuffs,
     };
   }
 
-  set data(data: Pick<AllData, "characters" | "weapons" | "artifacts" | "monsters">) {
+  set data(data: Pick<AllData, "characters" | "weapons" | "artifacts" | "teamBuffs" | "monsters">) {
     this.character$.populate(data.characters);
     this.weapon$.populate(data.weapons);
     this.artifact$.populate(data.artifacts);
+    this.teamBuffs = data.teamBuffs;
     this.monsters = data.monsters;
   }
 

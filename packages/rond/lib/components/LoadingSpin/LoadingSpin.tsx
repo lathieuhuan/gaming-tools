@@ -13,9 +13,9 @@ const classBySize: Record<Size, string> = {
 export type LoadingSpinProps = {
   className?: ClassValue;
   style?: CSSProperties;
-  /** Default to true */
+  /** Default true */
   active?: boolean;
-  /** Default to 'medium' */
+  /** Default 'medium' */
   size?: Size;
 };
 

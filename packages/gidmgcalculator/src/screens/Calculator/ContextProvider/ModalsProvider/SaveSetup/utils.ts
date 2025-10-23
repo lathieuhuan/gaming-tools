@@ -2,16 +2,16 @@ import type { CalcSetup, UserComplexSetup, UserSetup } from "@/types";
 import type { ValidationError } from "./types";
 
 import { MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@/constants";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { UserdbState } from "@Store/userdb-slice";
-import Setup_ from "@/utils/setup-utils";
+import Setup_ from "@/utils/Setup";
 
 export function validateTeammates(setup: CalcSetup, existedSetup: UserSetup | UserComplexSetup) {
   const errors: ValidationError[] = [];
 
   if (Setup_.isUserSetup(existedSetup) && existedSetup.type === "combined") {
-    const team1 = Array_.truthy(existedSetup.party);
-    const team2 = Array_.truthy(setup.party);
+    const team1 = Array_.truthify(existedSetup.party);
+    const team2 = Array_.truthify(setup.party);
     const teamMutated = team1.length !== team2.length || team1.some((t1) => team2.every((t2) => t2.name !== t1.name));
 
     if (teamMutated) {

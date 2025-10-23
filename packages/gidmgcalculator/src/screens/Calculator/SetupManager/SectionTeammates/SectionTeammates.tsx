@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { clsx, CollapseSpace, message } from "rond";
 
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import {
   addTeammate,
   removeTeammate,

@@ -1,5 +1,6 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { $AppSettings, AppSettings } from "@/services";
+import { SearchParams } from "@/systems/router";
 
 export type MySetupsModalType =
   | "TIPS"
@@ -26,6 +27,7 @@ export interface UIState extends Pick<AppSettings, "isTabLayout"> {
   setupDirectorActive: boolean;
   trackerState: TrackerState;
   mySetupsModalType: MySetupsModalType;
+  enkaParams?: SearchParams;
 }
 
 const { isTabLayout } = $AppSettings.get();
@@ -54,9 +56,15 @@ export const uiSlice = createSlice({
         ...action.payload,
       };
     },
+    updateEnkaParams: (state, action: PayloadAction<SearchParams>) => {
+      return {
+        ...state,
+        enkaParams: action.payload,
+      };
+    },
   },
 });
 
-export const { updateUI } = uiSlice.actions;
+export const { updateUI, updateEnkaParams } = uiSlice.actions;
 
 export default uiSlice.reducer;

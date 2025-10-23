@@ -73,9 +73,9 @@ export type CalcItemMultFactor =
       root: number;
       /** On characters only: When 0 stat not scale off talent level */
       scale?: number;
-      /** On weapons only: multiplied by refi. Default to 1/3 [root] */
+      /** On weapons only: multiplied by refi. Default 1/3 [root] */
       incre?: number;
-      /** Default to 'atk' */
+      /** Default 'atk' */
       basedOn?: CalcItemBasedOn;
     };
 

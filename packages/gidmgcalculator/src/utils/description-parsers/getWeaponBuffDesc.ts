@@ -1,5 +1,5 @@
 import { AppWeapon, WeaponBuff } from "@/calculation/types";
-import Array_ from "../array-utils";
+import Array_ from "../Array";
 import { parseWeaponDesc } from "./parseWeaponDesc";
 
 export const getWeaponBuffDesc = (descriptions: AppWeapon["descriptions"], buff: WeaponBuff, refi: number) => {

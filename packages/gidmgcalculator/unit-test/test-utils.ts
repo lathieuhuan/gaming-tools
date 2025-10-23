@@ -1,4 +1,4 @@
-import { MutableTeamData } from "../src/calculation/utils/CalcTeamData";
+import { MutableTeamData } from "../src/calculation/CalcTeamData";
 import { Level } from "../src/calculation/types";
 import { $AppCharacter, $AppWeapon } from "../src/services";
 import { Character, Teammate, Weapon } from "../src/types";

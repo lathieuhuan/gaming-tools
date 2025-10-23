@@ -5,7 +5,7 @@ import { WEAPON_LEVELS, Level } from "@Calculation";
 
 import { $AppWeapon } from "@/services";
 import { genSequentialOptions } from "@/utils";
-import Entity_ from "@/utils/entity-utils";
+import Entity_ from "@/utils/Entity";
 import { selectWeapon, changeWeapon, updateWeapon } from "@Store/calculator-slice";
 import { useSelector } from "@Store/hooks";
 

@@ -6,7 +6,7 @@ import type { ValidationError } from "./types";
 import { SCREEN_PATH } from "@/constants";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import { useRouter } from "@/systems/router";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { useDispatch } from "@Store/hooks";
 import { saveSetupThunk } from "@Store/thunks";
 import { validateFreeItemSlots, validateTeammates } from "./utils";

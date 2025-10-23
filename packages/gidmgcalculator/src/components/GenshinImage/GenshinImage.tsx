@@ -25,7 +25,7 @@ function DefaultFallback({ type, className, ...rest }: DefaultImageFallbackProps
 }
 
 interface GiImageProps extends Omit<ImageProps, "fallback" | "defaultFallback"> {
-  /** Default to 'unknown' */
+  /** Default 'unknown' */
   imgType?: "character" | "weapon" | "artifact" | "unknown";
   fallbackCls?: string;
 }

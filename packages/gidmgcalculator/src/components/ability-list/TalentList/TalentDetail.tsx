@@ -1,29 +1,37 @@
-import { useState, useRef, useMemo, useEffect } from "react";
+import { ATTACK_PATTERNS, AppCharacter, CharacterCalc, TalentType } from "@Calculation";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { CloseButton, LoadingSpin, StatsTable, VersatileSelect, round } from "rond";
-import { ATTACK_PATTERNS, CharacterCalc, TalentType, AppCharacter } from "@Calculation";
 
-import { genSequentialOptions } from "@/utils";
-import Array_ from "@/utils/array-utils";
 import { useQuery, useTabs, useTranslation } from "@/hooks";
 import { $AppCharacter } from "@/services";
-import NORMAL_ATTACK_ICONS from "./normal-attack-icons";
+import { genSequentialOptions } from "@/utils";
+import Array_ from "@/utils/Array";
+import { NORMAL_ATTACK_ICONS } from "./_constants";
 
 // Component
 import { markDim } from "../../span";
-import { AbilityCarousel } from "../ability-list-components";
+import { AbilityCarousel } from "../_components/AbilityCarousel";
 
 const useTalentDescriptions = (characterName: string, auto: boolean) => {
-  return useQuery([characterName], () => $AppCharacter.fetchTalentDescriptions(characterName), { auto });
+  return useQuery([characterName], () => $AppCharacter.fetchTalentDescriptions(characterName), {
+    auto,
+  });
 };
 
-interface TalentDetailProps {
+type TalentDetailProps = {
   appCharacter: AppCharacter;
   detailIndex: number;
   onChangeDetailIndex: (newIndex: number) => void;
   onClose: () => void;
-}
-export function TalentDetail({ appCharacter, detailIndex, onChangeDetailIndex, onClose }: TalentDetailProps) {
+};
+
+export function TalentDetail({
+  appCharacter,
+  detailIndex,
+  onChangeDetailIndex,
+  onClose,
+}: TalentDetailProps) {
   const { t } = useTranslation();
   const { weaponType, vision, activeTalents, passiveTalents } = appCharacter;
   const { ES, EB, altSprint } = activeTalents;
@@ -35,7 +43,11 @@ export function TalentDetail({ appCharacter, detailIndex, onChangeDetailIndex, o
 
   const { activeIndex, tabProps, setActiveIndex, Tabs } = useTabs(1);
 
-  const { isLoading, isError, data: descriptions } = useTalentDescriptions(appCharacter.name, !activeIndex);
+  const {
+    isLoading,
+    isError,
+    data: descriptions,
+  } = useTalentDescriptions(appCharacter.name, !activeIndex);
 
   if (altSprint) {
     images.push(altSprint.image);
@@ -215,7 +227,10 @@ function processTalents(
       const { flatFactor } = stat;
       const factorStrings = [];
 
-      if (stat.notOfficial || multFactors.some((factor) => typeof factor !== "number" && factor.scale === 0)) {
+      if (
+        stat.notOfficial ||
+        multFactors.some((factor) => typeof factor !== "number" && factor.scale === 0)
+      ) {
         continue;
       }
 
@@ -241,7 +256,9 @@ function processTalents(
         const { root, scale = default_.flatFactorScale } =
           typeof flatFactor === "number" ? { root: flatFactor } : flatFactor;
 
-        factorStrings.push(Math.round(root * (scale ? CharacterCalc.getTalentMult(scale, level) : 1)));
+        factorStrings.push(
+          Math.round(root * (scale ? CharacterCalc.getTalentMult(scale, level) : 1))
+        );
       }
 
       talent.stats.push({

@@ -2,5 +2,4 @@ export * from "./useChildListObserver";
 export * from "./useClickOutside";
 export * from "./useElementSize";
 export * from "./useIntersectionObserver";
-export * from "./useIconSelect";
-export * from "./useRaritySelect";
+export * from "./useValues";

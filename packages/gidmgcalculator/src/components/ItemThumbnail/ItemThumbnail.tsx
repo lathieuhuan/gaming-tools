@@ -12,7 +12,7 @@ export interface ItemThumbProps {
   muted?: boolean;
   /** Smaller layout by placing level at absolute bottom */
   compact?: boolean;
-  /** Default to true */
+  /** Default true */
   showOwner?: boolean;
   item: {
     icon: string;

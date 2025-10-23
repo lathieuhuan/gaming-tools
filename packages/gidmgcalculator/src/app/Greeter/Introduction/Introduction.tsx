@@ -21,7 +21,7 @@ export const Introduction = ({
 
   const typeToCls: Record<string, string> = {
     e: "text-primary-1",
-    u: "text-[#ff8785]",
+    u: "text-danger-2",
     f: "text-bonus",
   };
 

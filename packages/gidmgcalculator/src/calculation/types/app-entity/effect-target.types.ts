@@ -7,11 +7,11 @@ type AttributeTargetPath = "INP_ELMT" | "OWN_ELMT" | AttributeStat | BaseAttribu
 type AttributeTarget = {
   module: "ATTR";
   path: AttributeTargetPath | AttributeTargetPath[];
-  /** Input's index to get element's index if path is 'INP_ELMT'. Default to 0 */
+  /** Input's index to get element's index if path is 'INP_ELMT'. Default 0 */
   inpIndex?: number;
 };
 type AttackBonusTarget = {
-  module: "ELMT_NA" | AttackBonusType | AttackBonusType[];
+  module: AttackBonusType | AttackBonusType[];
   path: AttackBonusKey;
 };
 

@@ -8,6 +8,7 @@ import {
   ConfirmModal,
   LoadingPlate,
   message,
+  useValues,
   useScreenWatcher,
   WarehouseLayout,
 } from "rond";
@@ -15,9 +16,9 @@ import {
 import type { UserWeapon } from "@/types";
 
 import { MAX_USER_WEAPONS } from "@/constants";
-import { useTravelerKey, useWeaponTypeSelect } from "@/hooks";
+import { useTravelerKey } from "@/hooks";
 import { $AppWeapon } from "@/services";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectAppReady } from "@Store/ui-slice";
 import {
@@ -30,7 +31,7 @@ import {
 } from "@Store/userdb-slice";
 
 // Component
-import { InventoryRack, Tavern, WeaponCard, WeaponForge } from "@/components";
+import { InventoryRack, Tavern, WeaponCard, WeaponForge, WeaponTypeSelect } from "@/components";
 
 type ModalType = "ADD_WEAPON" | "SELECT_WEAPON_OWNER" | "REMOVE_WEAPON" | "";
 
@@ -51,11 +52,16 @@ function MyWeapons() {
   const [modalType, setModalType] = useState<ModalType>("");
   const [filterIsActive, setFilterIsActive] = useState(false);
 
-  const { weaponTypes, weaponTypeSelectProps, WeaponTypeSelect } = useWeaponTypeSelect(null, {
+  const { values: weaponTypes, toggle: toggleWeaponType } = useValues<WeaponType>({
     multiple: true,
   });
-  const { filteredWeapons, totalCount } = useSelector((state) => selectWeaponInventory(state, weaponTypes));
-  const chosenWeapon = useMemo(() => Array_.findById(filteredWeapons, chosenId), [filteredWeapons, chosenId]);
+  const { filteredWeapons, totalCount } = useSelector((state) =>
+    selectWeaponInventory(state, weaponTypes)
+  );
+  const chosenWeapon = useMemo(
+    () => Array_.findById(filteredWeapons, chosenId),
+    [filteredWeapons, chosenId]
+  );
 
   const checkIfMaxWeaponsReached = () => {
     if (totalCount >= MAX_USER_WEAPONS) {
@@ -109,16 +115,19 @@ function MyWeapons() {
       />
 
       {screenWatcher.isFromSize("sm") ? (
-        <WeaponTypeSelect {...weaponTypeSelectProps} />
+        <WeaponTypeSelect values={weaponTypes} onSelect={toggleWeaponType} />
       ) : (
         <>
-          <Button variant={filterIsActive ? "active" : "default"} onClick={() => setFilterIsActive(!filterIsActive)}>
+          <Button
+            variant={filterIsActive ? "active" : "default"}
+            onClick={() => setFilterIsActive(!filterIsActive)}
+          >
             Filter
           </Button>
 
           <CollapseSpace className="w-full absolute top-full left-0 z-20" active={filterIsActive}>
             <div className="px-4 py-6 shadow-common bg-dark-2">
-              {<WeaponTypeSelect {...weaponTypeSelectProps} />}
+              <WeaponTypeSelect values={weaponTypes} onSelect={toggleWeaponType} />
             </div>
           </CollapseSpace>
         </>
@@ -179,7 +188,9 @@ function MyWeapons() {
           active={modalType === "SELECT_WEAPON_OWNER"}
           sourceType="user"
           filter={(character) => {
-            return character.weaponType === chosenWeapon.type && character.name !== chosenWeapon.owner;
+            return (
+              character.weaponType === chosenWeapon.type && character.name !== chosenWeapon.owner
+            );
           }}
           onSelectCharacter={(character) => {
             dispatch(swapWeaponOwner({ weaponID: chosenWeapon.ID, newOwner: character.name }));

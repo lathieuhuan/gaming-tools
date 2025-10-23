@@ -35,3 +35,9 @@ export function suffixOf(stat: string) {
 export function toCustomBuffLabel(category: string, type: string, t: (origin: string) => string) {
   return category === "attElmtBonus" ? (type === "phys" ? "physical" : type) : t(type);
 }
+
+export function secondsToTimeString(time: number) {
+  const minutes = time >= 60 ? Math.floor(time / 60) : 0;
+  const seconds = time - minutes * 60;
+  return `${minutes}:${seconds > 9 ? "" : "0"}${seconds}`;
+}

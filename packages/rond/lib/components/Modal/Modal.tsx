@@ -9,7 +9,7 @@ const CLOSE_BTN_CLS = "absolute top-2 right-2 z-20";
 export type ModalProps = ModalCoreProps &
   Omit<ModalActionsProps, "className" | "justify" | "withDivider" | "onCancel"> & {
     title?: React.ReactNode;
-    /** Default to true */
+    /** Default true */
     withCloseButton?: boolean;
     withHeaderDivider?: boolean;
     withFooterDivider?: boolean;

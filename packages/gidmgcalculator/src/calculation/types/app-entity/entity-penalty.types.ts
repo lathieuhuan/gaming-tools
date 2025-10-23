@@ -17,7 +17,7 @@ export type EntityPenaltyTarget =
   | ResistReductionKey
   | {
       type: "INP_ELMT";
-      /** Input's index to get ElementType index. Default to 0 */
+      /** Input's index to get ElementType index. Default 0 */
       inpIndex?: number;
     }
   | {

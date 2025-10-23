@@ -1,6 +1,6 @@
 import { SearchParams } from "./types";
 
-export function toSegments(path: string) {
+export function toPathSegments(path: string) {
   return path.split("/").filter(Boolean);
 }
 
@@ -12,9 +12,12 @@ export function objectToSearchString(params: Partial<SearchParams>) {
   return Object.entries(params)
     .filter(([_, value]) => value !== undefined)
     .map(([key, value]) => {
-      if (Array.isArray(value)) {
-        return value.map((v) => `${key}=${v}`).join("&");
-      }
+      // let valueString = value;
+
+      // if (Array.isArray(value)) {
+      //   valueString = value.map((v) => `${v}`).join(",");
+      // }
+
       return `${key}=${value}`;
     })
     .join("&");
@@ -30,22 +33,13 @@ export function searchStringToObject(search: string): SearchParams {
       continue;
     }
 
-    if (value === "true") {
-      params[key] = true;
-    } else if (value === "false") {
-      params[key] = false;
-    } else {
-      const num = Number(value);
-      const _value = isNaN(num) ? value : num;
-
-      if (key in params) {
-        const existValue = params[key];
-        params[key] = Array.isArray(existValue) ? [...existValue, _value] : [existValue, _value];
-      } else {
-        params[key] = _value;
-      }
-    }
+    params[key] = value;
   }
 
   return params;
+}
+
+export function getSearchParams() {
+  const params = window.location.search.replace("?", "");
+  return searchStringToObject(params);
 }

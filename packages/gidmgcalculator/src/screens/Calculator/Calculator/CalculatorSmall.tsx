@@ -2,17 +2,11 @@ import { useState } from "react";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
+import { getCards } from "./config";
 
 // Components
 import { ContextProvider } from "../ContextProvider";
-import { CharacterOverview } from "../CharacterOverview";
-import { FinalResult } from "../FinalResult";
-import { Modifiers } from "../Modifiers";
-import { SetupDirector } from "../SetupDirector";
-import { SetupManager } from "../SetupManager";
 import { BottomNavSmall } from "./BottomNavSmall";
-
-import styles from "./styles.module.scss";
 
 export function CalculatorSmall() {
   const dispatch = useDispatch();
@@ -21,38 +15,7 @@ export function CalculatorSmall() {
 
   const [activePanelI, setActivePanelI] = useState(0);
 
-  const PANEL = {
-    Overview: (extraCls = "") => (
-      <div className={`p-4 bg-dark-1 ${styles.card} ${extraCls}`}>
-        <CharacterOverview touched={touched} />
-      </div>
-    ),
-    Modifiers: (extraCls = "") => (
-      <div className={`p-4 bg-dark-1 ${styles.card} ${extraCls}`}>
-        {touched ? (
-          // ========== PANEL 2 ==========
-          <Modifiers />
-        ) : null}
-      </div>
-    ),
-    Setup: (extraCls = "") => (
-      <div className={`p-4 bg-dark-3 relative ${styles.card} ${extraCls}`}>
-        {touched ? (
-          // ========== PANEL 3 ==========
-          <SetupManager isModernUI={isModernUI} />
-        ) : null}
-        <SetupDirector className={styles.card} />
-      </div>
-    ),
-    Results: (extraCls = "") => (
-      <div className={`p-4 bg-dark-3 ${styles.card} ${extraCls}`}>
-        {touched ? (
-          // ========== PANEL 4 ==========
-          <FinalResult />
-        ) : null}
-      </div>
-    ),
-  };
+  const Cards = getCards({ touched, isModernUI });
 
   const onSelectSection = (index: number) => {
     setActivePanelI(index);
@@ -68,21 +31,23 @@ export function CalculatorSmall() {
               className="h-full overflow-auto flex absolute left-0 top-0"
               style={{ width: "400%", transform: `translateX(calc(-25% * ${activePanelI}))` }}
             >
-              {PANEL.Overview("w-1/4")}
-              {PANEL.Modifiers("w-1/4")}
-              {PANEL.Setup("w-1/4")}
-              {PANEL.Results("w-1/4")}
+              {Cards.Overview({ className: "w-1/4" })}
+              {Cards.Modifiers({ className: "w-1/4" })}
+              {Cards.Setup({ className: "w-1/4" })}
+              {Cards.Results({ className: "w-1/4" })}
             </div>
           </div>
 
-          {touched ? <BottomNavSmall activePanelI={activePanelI} onSelectSection={onSelectSection} /> : null}
+          {touched ? (
+            <BottomNavSmall activePanelI={activePanelI} onSelectSection={onSelectSection} />
+          ) : null}
         </div>
       ) : (
         <div className="h-full flex hide-scrollbar border-t border-dark-line relative snap-x snap-mandatory">
-          {PANEL.Overview("snap-center")}
-          {PANEL.Modifiers("snap-center")}
-          {PANEL.Setup("snap-center")}
-          {PANEL.Results("snap-center relative")}
+          {Cards.Overview({ className: "snap-center" })}
+          {Cards.Modifiers({ className: "snap-center" })}
+          {Cards.Setup({ className: "snap-center" })}
+          {Cards.Results({ className: "snap-center relative" })}
         </div>
       )}
     </ContextProvider>

@@ -8,7 +8,8 @@ import { useSelector } from "@Store/hooks";
 import BuffArtifact from "./BuffArtifact";
 import BuffCustom from "./BuffCustom";
 import BuffElement from "./BuffElement";
-import BuffSelf from "./BuffSelf";
+import BuffSelf from "./BuffSelf";  
+import BuffTeamBonus from "./BuffTeamBonus";
 import BuffTeammates from "./BuffTeammates";
 import BuffWeapon from "./BuffWeapon";
 import DebuffArtifact from "./DebuffArtifact";
@@ -31,8 +32,13 @@ export function Modifiers() {
           className={!activeIndex ? "hidden" : undefined}
           items={[
             {
-              title: "Resonance & Reactions buffs",
-              heading: "Resonance & Reactions",
+              title: "Team Bonus",
+              heading: "Team Bonus",
+              body: <BuffTeamBonus />,
+            },
+            {
+              title: "Elemental Event buffs",
+              heading: "Elemental Events",
               body: <BuffElement />,
             },
             {

@@ -11,8 +11,8 @@ import type {
 } from "./types";
 
 import { $AppArtifact } from "@/services";
-import Modifier_ from "@/utils/modifier-utils";
-import Object_ from "@/utils/object-utils";
+import Modifier_ from "@/utils/Modifier";
+import Object_ from "@/utils/Object";
 
 export class ArtifactManager {
   private readonly MAX_ACTUAL_COUNT = 100_000_000_000;
@@ -162,7 +162,7 @@ export class ArtifactManager {
             code: data.code,
             index: buff.index,
             activated: true,
-            inputs: Modifier_.createModCtrlInpus(buff.inputConfigs, true, true),
+            inputs: Modifier_.createModCtrlInputs(buff.inputConfigs, true, true),
           }));
         }
         if (!newDebuffConfigs[data.code] && data.debuffs) {
@@ -170,7 +170,7 @@ export class ArtifactManager {
             code: data.code,
             index: buff.index,
             activated: true,
-            inputs: Modifier_.createModCtrlInpus(buff.inputConfigs, true, true),
+            inputs: Modifier_.createModCtrlInputs(buff.inputConfigs, true, true),
           }));
         }
       }

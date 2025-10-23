@@ -4,7 +4,7 @@ import { ConfirmModal, Modal } from "rond";
 import type { UserArtifacts, UserSetup, UserWeapon } from "@/types";
 import type { CalculationResult } from "../types";
 
-import Setup_ from "@/utils/setup-utils";
+import Setup_ from "@/utils/Setup";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectMySetupModalType, updateUI } from "@Store/ui-slice";
 import { removeSetup } from "@Store/userdb-slice";

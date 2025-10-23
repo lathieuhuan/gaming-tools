@@ -9,7 +9,7 @@ import type {
 } from "./types";
 
 import { OptimizeTester } from "./OptimizeTester";
-import WORKER_URL from "./optimize-worker?worker&url";
+import WORKER_URL from "./optimize.worker?worker&url";
 
 type OnCompleteOptimize = (state: OptimizeResult) => void;
 
@@ -37,7 +37,7 @@ export class OptimizeManager {
   }
 
   private request(message: OTM_ManagerRequest) {
-    this.worker.postMessage(message);
+    // this.worker.postMessage(message);
   }
 
   private genWorker = () => {
@@ -93,7 +93,7 @@ export class OptimizeManager {
   init = (...params: OTM_InitRequest["params"]) => {
     if (this.workerTerminated) {
       this.end();
-      this.worker = this.genWorker();
+      // this.worker = this.genWorker();
       this.workerTerminated = false;
     }
 
@@ -132,7 +132,7 @@ export class OptimizeManager {
 
   end = () => {
     try {
-      this.worker.terminate();
+      // this.worker.terminate();
       this.workerTerminated = true;
     } catch (error) {
       console.error(error);

@@ -1,7 +1,5 @@
 import type { TravelerInfo } from "@/types";
 
-export const RESONANCE_ELEMENT_TYPES = ["pyro", "cryo", "geo", "hydro", "dendro"];
-
 export const ARTIFACT_SUBSTAT_TYPES = [
   "hp",
   "hp_",

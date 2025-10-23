@@ -21,9 +21,9 @@ import type {
 } from "./userdb-slice.types";
 
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import Setup_ from "@/utils/setup-utils";
-import Entity_ from "@/utils/entity-utils";
-import Array_ from "@/utils/array-utils";
+import Setup_ from "@/utils/Setup";
+import Entity_ from "@/utils/Entity";
+import Array_ from "@/utils/Array";
 
 export type UserdbState = {
   userChars: UserCharacter[];
@@ -89,9 +89,9 @@ export const userdbSlice = createSlice({
       if (!weaponID) {
         const weaponType = $AppCharacter.get(name)?.weaponType;
 
-        state.userWps.unshift({
+        state.userWps.push({
           owner: name,
-          ...Entity_.createWeapon({ type: weaponType }),
+          ...Entity_.createWeapon({ type: weaponType }, newChar.weaponID),
         });
       }
     },
@@ -197,7 +197,7 @@ export const userdbSlice = createSlice({
     },
     // WEAPON
     addUserWeapon: (state, action: PayloadAction<UserWeapon>) => {
-      state.userWps.unshift(action.payload);
+      state.userWps.push(action.payload);
     },
     /** Require index (prioritized) or ID */
     updateUserWeapon: (state, action: UpdateUserWeaponAction) => {
@@ -274,7 +274,7 @@ export const userdbSlice = createSlice({
         if (owner) {
           const newWpID = Date.now();
 
-          userWps.unshift({
+          userWps.push({
             owner,
             ...Entity_.createWeapon({ type }, newWpID),
           });
@@ -288,7 +288,7 @@ export const userdbSlice = createSlice({
     },
     // ARTIFACT
     addUserArtifact: (state, action: PayloadAction<UserArtifact | UserArtifact[]>) => {
-      state.userArts.unshift(...Array_.toArray(action.payload));
+      state.userArts.push(...Array_.toArray(action.payload));
     },
     updateUserArtifact: (state, action: UpdateUserArtifactAction) => {
       const { ID, ...newInfo } = action.payload;

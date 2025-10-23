@@ -4,7 +4,7 @@ import { Select, clsx } from "rond";
 import { TALENT_TYPES, CalculationAspect, TalentType, CalcTeamData } from "@Calculation";
 
 import type { Weapon } from "@/types";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectSetupManageInfos, selectStandardId, updateCharacter } from "@Store/calculator-slice";
 

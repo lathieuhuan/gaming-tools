@@ -1,4 +1,4 @@
-import type { AppArtifact, AppCharacter, AppMonster, AppWeapon, CharacterInnateBuff } from "@Calculation";
+import type { AppArtifact, AppCharacter, AppMonster, AppTeamBuff, AppWeapon, CharacterInnateBuff } from "@Calculation";
 
 export type DataControl<T> = {
   status: "unfetched" | "fetching" | "fetched";
@@ -18,6 +18,7 @@ export type AllData = {
   characters: AppCharacter[];
   weapons: AppWeapon[];
   artifacts: AppArtifact[];
+  teamBuffs: AppTeamBuff[];
   monsters: AppMonster[];
   updates: Update[];
   supporters: string[];

@@ -8,9 +8,9 @@ import type { OptimizeDeptState } from "@OptimizeDept/types";
 import type { ProcessedResult, ProcessedSetup } from "./types";
 
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import Array_ from "@/utils/array-utils";
-import Modifier_ from "@/utils/modifier-utils";
-import Object_ from "@/utils/object-utils";
+import Array_ from "@/utils/Array";
+import Modifier_ from "@/utils/Modifier";
+import Object_ from "@/utils/Object";
 import { GeneralCalc } from "@Calculation";
 import { importSetup, removeCalcSetup } from "@Store/calculator-slice";
 import { useDispatch } from "@Store/hooks";

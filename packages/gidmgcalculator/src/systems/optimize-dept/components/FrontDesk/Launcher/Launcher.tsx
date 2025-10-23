@@ -6,7 +6,7 @@ import type { ArtifactManager } from "@OptimizeDept/logic/ArtifactManager";
 
 import { GenshinImage } from "@/components";
 import { formatNumber } from "@/utils";
-import Entity_ from "@/utils/entity-utils";
+import Entity_ from "@/utils/Entity";
 import { ARTIFACT_TYPES, ArtifactType } from "@Calculation";
 
 type LauncherProps = {

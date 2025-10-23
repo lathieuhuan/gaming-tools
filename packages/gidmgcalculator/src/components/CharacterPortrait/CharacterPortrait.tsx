@@ -15,17 +15,18 @@ const sizeCls: Partial<Record<PortraitSize, string>> = {
 
 type CharacterPortraitProps = {
   className?: ClassValue;
+  imgCls?: ClassValue;
   info?: {
     name?: string;
     code?: number;
     icon: string;
     vision?: ElementType;
   };
-  /** Default to 'medium' */
+  /** Default 'medium' */
   size?: PortraitSize;
   withColorBg?: boolean;
   recruitable?: boolean;
-  /** Default to true */
+  /** Default true */
   zoomable?: boolean;
   onClick?: () => void;
 };
@@ -50,14 +51,20 @@ export function CharacterPortrait(props: CharacterPortraitProps) {
 
     return (
       <button className={clsx(cls)} title={info?.name} onClick={onClick}>
-        {info ? <GenshinImage src={icon} imgType="character" fallbackCls="p-2" /> : <FaPlus className="text-2xl" />}
+        {info ? (
+          <GenshinImage src={icon} imgType="character" imgCls={props.imgCls} fallbackCls="p-2" />
+        ) : (
+          <FaPlus className="text-2xl" />
+        )}
       </button>
     );
   }
 
   return (
     <div className={clsx(cls)} title={info?.name} onClick={onClick}>
-      {info ? <GenshinImage src={icon} imgType="character" fallbackCls="p-2" /> : null}
+      {info ? (
+        <GenshinImage src={icon} imgType="character" imgCls={props.imgCls} fallbackCls="p-2" />
+      ) : null}
     </div>
   );
 }

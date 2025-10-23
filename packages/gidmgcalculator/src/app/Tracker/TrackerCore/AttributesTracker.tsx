@@ -3,7 +3,7 @@ import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES, TrackerResult } from "@Calculati
 
 import { useTranslation } from "@/hooks";
 import { applyPercent } from "@/utils";
-import Entity_ from "@/utils/entity-utils";
+import Entity_ from "@/utils/Entity";
 import { useSelector } from "@Store/hooks";
 import { selectTotalAttr } from "@Store/calculator-slice";
 import { recordListStyles, renderHeading, renderRecord } from "./_utils";
@@ -35,7 +35,7 @@ export function AttributesTracker({ result }: { result?: TrackerResult }) {
                     const value_ = round(value, 2);
                     const value__ = round(value_ / 100, 4);
 
-                    return `${value_}% = ${calcTotalAttr[`${statType}_base`]} * ${value__} =`;
+                    return `${value_}% = ${round(calcTotalAttr[`${statType}_base`], 1)} * ${value__} =`;
                   }
                 )
               )}

@@ -1,71 +1,51 @@
-import { memo } from "react";
-import { clsx, useScreenWatcher } from "rond";
+import { CSSProperties, memo, ReactNode } from "react";
+import { useScreenWatcher } from "rond";
 
-import { useSelector } from "@Store/hooks";
 import { selectComparedIds } from "@Store/calculator-slice";
+import { useSelector } from "@Store/hooks";
+import { getCards } from "./config";
 
 // Components
 import { ContextProvider } from "../ContextProvider";
-import { CharacterOverview } from "../CharacterOverview";
-import { Modifiers } from "../Modifiers";
-import { SetupManager } from "../SetupManager";
-import { SetupDirector } from "../SetupDirector";
-import { FinalResult } from "../FinalResult";
-
-import styles from "./styles.module.scss";
+import { Card } from "./Card";
 
 function LargeCalculator() {
-  const screenWatcher = useScreenWatcher();
   const touched = useSelector((state) => state.calculator.setupManageInfos.length !== 0);
 
-  const isHugeScreen = screenWatcher.isFromSize("2xl");
+  const Cards = getCards({ touched });
 
   return (
-    <div
-      className={clsx("flex flex-col relative", styles["calculator-container"])}
-      style={{
-        maxWidth: isHugeScreen ? "none" : "98%",
-      }}
-    >
-      <div className={clsx("grow flex items-center overflow-auto", styles.calculator)}>
+    <div className="flex flex-col relative max-w-98/100 2xl:max-w-none h-full sm:h-[calc(100vh_-_3rem)]">
+      <div className="grow flex items-center overflow-auto snap-x snap-mandatory sm:snap-none">
         <div className="w-full flex h-98/100 gap-2">
-          <div className={`p-4 bg-dark-1 ${styles.card}`}>
-            {/* ========== PANEL 1 ========== */}
-            <CharacterOverview touched={touched} />
-          </div>
+          {Cards.Overview()}
+          {Cards.Modifiers()}
+          {Cards.Setup()}
 
-          <div className={`p-4 bg-dark-1 ${styles.card}`}>
-            {touched ? (
-              // ========== PANEL 2 ==========
-              <Modifiers />
-            ) : null}
-          </div>
-
-          <div className={`p-4 bg-dark-3 relative ${styles.card}`}>
-            {touched ? (
-              // ========== PANEL 3 ==========
-              <SetupManager />
-            ) : null}
-            <SetupDirector className={styles.card} />
-          </div>
-
-          {/* ========== PANEL 4 ========== */}
-          {touched ? (
-            <FinalResultPanel isHugeScreen={isHugeScreen} />
-          ) : (
-            <div className={`bg-dark-3 ${styles.card}`} />
-          )}
+          <FlexibleWrapper>
+            {({ className, style }) =>
+              Cards.Results({
+                className: ["pt-2 relative", className],
+                style,
+                placeholder: <Card dark={3} />,
+              })
+            }
+          </FlexibleWrapper>
         </div>
       </div>
     </div>
   );
 }
 
-interface FinalResultPanelProps {
-  isHugeScreen: boolean;
-}
-const FinalResultPanel = (props: FinalResultPanelProps) => {
+type FlexibleWrapperRenderProps = {
+  className?: string;
+  style?: CSSProperties;
+};
+
+const FlexibleWrapper = (props: { children: (props: FlexibleWrapperRenderProps) => ReactNode }) => {
   const comparedCount = useSelector(selectComparedIds).length;
+  const screenWatcher = useScreenWatcher();
+  const isHugeScreen = screenWatcher.isFromSize("2xl");
 
   let width = 22;
 
@@ -73,17 +53,13 @@ const FinalResultPanel = (props: FinalResultPanelProps) => {
     width += (comparedCount - 1) * 2;
   }
 
-  return (
-    <div
-      className={`px-4 pt-2 pb-4 bg-dark-3 transition-size duration-200 relative ${styles.card}`}
-      style={{
-        width: `${width}rem`,
-        maxWidth: props.isHugeScreen ? "30rem" : "22rem",
-      }}
-    >
-      <FinalResult />
-    </div>
-  );
+  return props.children({
+    className: "transition-size duration-200",
+    style: {
+      width: `${width}rem`,
+      maxWidth: isHugeScreen ? "30rem" : "22rem",
+    },
+  });
 };
 
 export const CalculatorLarge = memo(() => {

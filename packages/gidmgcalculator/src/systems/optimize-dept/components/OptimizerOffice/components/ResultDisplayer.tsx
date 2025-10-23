@@ -6,7 +6,7 @@ import type { Artifact, ArtifactModCtrl } from "@/types";
 import type { ProcessedResult, ProcessedSetup } from "../types";
 
 import { useArtifactSetData } from "@/hooks";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { getArtifactDesc } from "@/utils/description-parsers";
 
 // Component

@@ -2,10 +2,14 @@ import type { CalcSetup, Target } from "@/types";
 import type { CalculationFinalResult } from "../types";
 
 import { getSetupAppEntities } from "@/utils/getSetupAppEntities";
-import { ATTACK_PATTERNS, LUNAR_REACTIONS, TRANSFORMATIVE_REACTIONS } from "../constants";
+import {
+  ATTACK_PATTERNS,
+  LUNAR_REACTIONS,
+  TRANSFORMATIVE_REACTIONS,
+} from "../constants";
 import { InputProcessor, getAttackAlterConfigs } from "../InputProcessor";
 import { ResultCalculator } from "../ResultCalculator";
-import { TrackerControl } from "../utils/TrackerControl";
+import { TrackerControl } from "../TrackerControl";
 
 export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: TrackerControl) => {
   // console.time();
@@ -52,7 +56,10 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
   const lunarReactionCalculator = resultCalculator.genLunarReactionCalculator();
 
   for (const reaction of LUNAR_REACTIONS) {
-    finalResult.RXN_CALC[reaction] = lunarReactionCalculator.calculate(reaction, setup.elmtModCtrls);
+    finalResult.RXN_CALC[reaction] = lunarReactionCalculator.calculate(
+      reaction,
+      setup.elmtModCtrls
+    );
   }
 
   // Transformative Reaction
@@ -81,7 +88,9 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
 
     finalResult.WP_CALC[name] =
       type === "attack"
-        ? resultCalculator.itemCalculator.genAttackCalculator("none", "phys").calculate(base, null, record)
+        ? resultCalculator.itemCalculator
+            .genAttackCalculator("none", "phys")
+            .calculate(base, null, record)
         : resultCalculator.itemCalculator.genOtherCalculator(type).calculate(base, record);
 
     tracker?.recordCalcItem("WP_CALC", name, record);

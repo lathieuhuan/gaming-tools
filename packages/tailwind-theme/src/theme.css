@@ -2,6 +2,8 @@
 
 @source inline('bg-rarity-{1,2,3,4,5}');
 
+/* When update this theme, don't forget to update twMerge function for cn util */
+
 @theme {
   --color-black: #000000;
   --color-white: #ebebeb;
@@ -42,6 +44,8 @@
 
   --shadow-common: rgb(0 0 0 / 20%) 0px 3px 3px -2px, rgb(0 0 0 / 14%) 0px 3px 4px 0px,
     rgb(0 0 0 / 12%) 0px 1px 8px 0px;
+  --shadow-dropdown: 0 6px 16px 0 rgb(0 0 0 / 8%), 0 3px 6px -4px rgb(0 0 0 / 12%),
+    0 9px 28px 8px rgb(0 0 0 / 5%);
   --shadow-popup: 0 0 1.5px #b9b9b9;
   --shadow-hightlight-1: 0 0 5px 1px var(--tw-shadow-color);
   --shadow-hightlight-2: 0 0 3px 2px var(--tw-shadow-color);

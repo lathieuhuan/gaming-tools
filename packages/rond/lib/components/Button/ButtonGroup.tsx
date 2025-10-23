@@ -10,7 +10,7 @@ export type ButtonGroupItem = ButtonProps;
 export type ButtonGroupProps = {
   groupRef?: RefObject<HTMLDivElement>;
   className?: ClassValue;
-  /** Default to 'center' */
+  /** Default 'center' */
   justify?: Justify;
   buttons: ButtonGroupItem[];
 };
@@ -44,9 +44,9 @@ export type ConfirmButtonGroupProps = Pick<ButtonGroupProps, "className" | "just
   danger?: boolean;
   disabledConfirm?: boolean;
   focusConfirm?: boolean;
-  /** Default to 'Cancel' */
+  /** Default 'Cancel' */
   cancelText?: string;
-  /** Default to 'Confirm' */
+  /** Default 'Confirm' */
   confirmText?: string;
   cancelButtonProps?: Omit<ButtonGroupItem, "children" | "onClick">;
   confirmButtonProps?: Omit<ButtonGroupItem, "children" | "onClick">;

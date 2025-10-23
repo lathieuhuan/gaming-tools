@@ -1,7 +1,7 @@
 import { ArtifactSetBonus } from "@Calculation";
 
 import { $AppArtifact } from "@/services";
-import Array_ from "@/utils/array-utils";
+import Array_ from "@/utils/Array";
 import { parseArtifactDesc } from "@/utils/description-parsers";
 
 interface SetBonusesViewProps {

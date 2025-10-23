@@ -1,10 +1,12 @@
-import clsx from "clsx";
+import type { ClassValue } from "clsx";
+import { cn } from "@lib/utils";
 import "./ItemCase.styles.scss";
 
 export type ItemCaseProps = Omit<React.HTMLAttributes<HTMLDivElement>, "children"> & {
-  children: (className: string, imgCls: string) => React.ReactNode;
+  className?: ClassValue;
   chosen?: boolean;
   muted?: boolean;
+  children: (className: string, imgCls: string) => React.ReactNode;
 };
 
 export function ItemCase({
@@ -18,7 +20,7 @@ export function ItemCase({
 }: ItemCaseProps) {
   return (
     <div
-      className={clsx(!muted && ["ron-item-case", chosen && "ron-item-case--chosen"], className)}
+      className={cn(!muted && ["ron-item-case", chosen && "ron-item-case--chosen"], className)}
       onMouseDown={(e) => {
         e.currentTarget.classList.add("ron-item-case--clicked");
         onMouseDown?.(e);
