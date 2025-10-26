@@ -7,7 +7,7 @@ import type {
   AttackPattern,
   AttackReaction,
   CalcItemFlatFactor,
-  CalcItemMultFactor,
+  CalcItemFactor,
   CalculationFinalResultItem,
   LevelableTalentType,
   TalentCalcItem,
@@ -57,7 +57,7 @@ export class TalentCalculator {
     };
   };
 
-  private configMultFactor = (factor: CalcItemMultFactor) => {
+  private configMultFactor = (factor: CalcItemFactor) => {
     const {
       root,
       scale = this.default_.scale,
@@ -130,11 +130,11 @@ export class TalentCalculator {
   };
 
   private getBases = (
-    factors: CalcItemMultFactor | CalcItemMultFactor[],
+    factors: CalcItemFactor | CalcItemFactor[],
     multBonus: number,
     record: CalcItemRecord
   ) => {
-    let bases: number[] = [];
+    const bases: number[] = [];
 
     for (const factor of Array_.toArray(factors)) {
       const { root, scale, basedOn } = this.configMultFactor(factor);
@@ -143,7 +143,7 @@ export class TalentCalculator {
 
       bases.push((value * finalMult) / 100);
 
-      record.multFactors.push({
+      record.factors.push({
         value,
         desc: basedOn,
         talentMult: finalMult,
@@ -166,7 +166,7 @@ export class TalentCalculator {
     //
     const record = TrackerControl.initCalcItemRecord({
       itemType: type,
-      multFactors: [],
+      factors: [],
       bonusMult: 1,
       exclusives: this.attkBonusesArchive.getExclusiveBonuses(item),
     });
@@ -183,8 +183,8 @@ export class TalentCalculator {
           }
 
           const multBonus = calculator.getBonus("mult_");
-          const bases = this.getBases(item.multFactors, multBonus, record);
-          const base = item.joinMultFactors ? this.joinBases(bases) : bases;
+          const bases = this.getBases(item.factor, multBonus, record);
+          const base = item.jointFactors ? this.joinBases(bases) : bases;
 
           // TALENT RESULT
           result = calculator.calculate(base, record);
@@ -199,8 +199,8 @@ export class TalentCalculator {
           }
 
           const multBonus = calculator.getBonus("mult_");
-          const bases = this.getBases(item.multFactors, multBonus, record);
-          const base = item.joinMultFactors ? this.joinBases(bases) : bases;
+          const bases = this.getBases(item.factor, multBonus, record);
+          const base = item.jointFactors ? this.joinBases(bases) : bases;
 
           // TALENT RESULT
           result = calculator.calculate(base, reaction, record);
@@ -210,7 +210,7 @@ export class TalentCalculator {
       default: {
         const calculator = this.itemCalculator.genOtherCalculator(type, item.id);
         const multBonus = this.itemCalculator.getBonus("mult_", item.id);
-        const bases = this.getBases(item.multFactors, multBonus, record);
+        const bases = this.getBases(item.factor, multBonus, record);
 
         if (item.flatFactor) {
           const { root, scale } = this.configFlatFactor(item.flatFactor);

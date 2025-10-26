@@ -47,6 +47,7 @@ export type CharacterPropertyCondition = {
     value: number;
     comparison: ConditionComparison;
   };
+  forEnhanced?: boolean;
 };
 
 /**
@@ -70,7 +71,7 @@ export type EffectInputCondition = number | InputCheck | MultipleInputCheck;
 
 export type PartyPropertyCondition = {
   value: number;
-  type: "MIXED" | "MOONSIGN";
+  type: "MIXED" | "MOONSIGN" | "WITCH_RITE";
   /** Default 'EQUAL' */
   comparison?: ConditionComparison;
 };

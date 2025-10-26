@@ -28,6 +28,6 @@ export type TravelerProps = {
   name: string;
   icon: string;
   sideIcon: string;
-  multFactorsCA: number[];
+  factorsCA: number[];
   innateBuffs: CharacterInnateBuff[];
 };

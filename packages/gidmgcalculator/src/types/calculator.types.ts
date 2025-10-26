@@ -110,6 +110,7 @@ export type TeammateArtifact = {
 
 export type Teammate = {
   name: string;
+  enhanced?: boolean;
   buffCtrls: ModifierCtrl[];
   debuffCtrls: ModifierCtrl[];
   weapon: TeammateWeapon;

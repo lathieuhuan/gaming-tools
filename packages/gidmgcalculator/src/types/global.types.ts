@@ -20,6 +20,7 @@ export type Character = {
   ES: number;
   EB: number;
   cons: number;
+  enhanced?: boolean;
 };
 
 export type ArtifactSubStat = {

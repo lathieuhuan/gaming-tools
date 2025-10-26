@@ -19,6 +19,7 @@ import type {
   CustomDebuffCtrl,
   SetupImportInfo,
   Target,
+  Teammate,
   TeammateArtifact,
   TeammateWeapon,
 } from "@/types";
@@ -70,6 +71,10 @@ export type AddTeammateAction = PayloadAction<{
   weaponType: WeaponType;
   teammateIndex: number;
 }>;
+
+export type UpdateTeammateAction = PayloadAction<{
+  teammateIndex: number;
+} & Pick<Teammate, "enhanced">>;
 
 export type UpdateTeammateWeaponAction = PayloadAction<
   {

@@ -5,7 +5,8 @@ export function isValidPartyProps(
   condition: PartyPropertyCondition | undefined,
   activeAppMember: AppCharacter,
   appTeammates: AppCharacter[],
-  moonsignLv: number
+  moonsignLv: number,
+  witchRiteLv: number
 ) {
   if (condition !== undefined) {
     let input = 0;
@@ -21,6 +22,9 @@ export function isValidPartyProps(
       // Temporary check for moonsign
       case "MOONSIGN":
         input = moonsignLv;
+        break;
+      case "WITCH_RITE":
+        input = witchRiteLv;
         break;
     }
     if (!isPassedComparison(input, condition.value, condition.comparison)) {

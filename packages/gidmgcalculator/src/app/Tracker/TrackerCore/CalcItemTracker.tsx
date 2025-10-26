@@ -59,7 +59,7 @@ export function CalcItemTracker({
     return <Fragment key={key}>{Array_.toArray(parts).map(renderPart)}</Fragment>;
   };
 
-  const renderFactor = (factor: CalcItemRecord["multFactors"][number], sign?: string | null, key?: string | number) => {
+  const renderFactor = (factor: CalcItemRecord["factors"][number], sign?: string | null, key?: string | number) => {
     return renderParts(
       [
         {
@@ -112,7 +112,7 @@ export function CalcItemTracker({
     return forReactions ? (
       <>
         {"("}
-        {renderFactor(record.multFactors[0], null)}
+        {renderFactor(record.factors[0], null)}
         {baseMultRender}
         {bonusMultRender}
         {flatRender}
@@ -121,7 +121,7 @@ export function CalcItemTracker({
     ) : record.specialPatt ? (
       <>
         {"("}
-        {record.multFactors.map((factor, index) => renderFactor(factor, index ? "+" : null, index))}
+        {record.factors.map((factor, index) => renderFactor(factor, index ? "+" : null, index))}
         {baseMultRender}
         {renderPart({
           label: "Coefficient",
@@ -137,7 +137,7 @@ export function CalcItemTracker({
     ) : (
       <>
         {"("}
-        {record.multFactors.map((factor, index) => renderFactor(factor, index ? "+" : null, index))}
+        {record.factors.map((factor, index) => renderFactor(factor, index ? "+" : null, index))}
         {baseMultRender}
         {flatRender}
         {")"}

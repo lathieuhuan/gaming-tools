@@ -45,7 +45,7 @@ export class ReactionCalculator {
 
     this.tracker?.recordCalcItem("RXN_CALC", reaction, {
       itemType: "attack",
-      multFactors: [{ value: Math.round(baseValue), desc: "Base DMG" }],
+      factors: [{ value: Math.round(baseValue), desc: "Base DMG" }],
       totalFlat: flat,
       bonusMult,
       rxnMult,

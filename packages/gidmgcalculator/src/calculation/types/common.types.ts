@@ -67,7 +67,7 @@ export type CalcItemType = "attack" | "healing" | "shield" | "other";
 
 export type CalcItemBasedOn = "atk" | "def" | "hp" | "em";
 
-export type CalcItemMultFactor =
+export type CalcItemFactor =
   | number
   | {
       root: number;

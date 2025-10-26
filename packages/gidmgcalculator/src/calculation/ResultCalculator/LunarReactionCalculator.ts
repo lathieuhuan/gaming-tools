@@ -29,8 +29,8 @@ export class LunarReactionCalculator {
     const baseMult = toMult(getBonus("multPlus_", reaction));
     const bonusMult = 1 + getBonus("pct_", reaction) / 100;
     const flat = getBonus("flat", reaction);
-    let attElmt = config.attElmt;
-    let rxnMult = 1;
+    const attElmt = config.attElmt;
+    const rxnMult = 1;
     let resMult = 1;
 
     resMult = this.resistances[config.attElmt];
@@ -42,7 +42,7 @@ export class LunarReactionCalculator {
 
     this.tracker?.recordCalcItem("RXN_CALC", reaction, {
       itemType: "attack",
-      multFactors: [{ value: Math.round(baseValue), desc: "Base DMG" }],
+      factors: [{ value: Math.round(baseValue), desc: "Base DMG" }],
       totalFlat: flat,
       baseMult,
       bonusMult,

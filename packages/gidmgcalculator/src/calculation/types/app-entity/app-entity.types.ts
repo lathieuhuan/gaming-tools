@@ -12,7 +12,7 @@ export type ModInputConfig = {
   /** See ModifierControl model for default value */
   init?: number;
   max?: number;
-  options?: string[];
+  options?: (string | number)[];
   note?: string;
 };
 

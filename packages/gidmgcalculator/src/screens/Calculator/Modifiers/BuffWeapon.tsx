@@ -68,6 +68,9 @@ export default function BuffWeapon({ teammates }: { teammates: Teammates }) {
           onToggle: () => {
             updateBuffCtrl("toggle");
           },
+          onToggleCheck: (currentInput, inputIndex) => {
+            updateBuffCtrl(currentInput === 1 ? 0 : 1, inputIndex);
+          },
           onChangeText: updateBuffCtrl,
           onSelectOption: updateBuffCtrl,
         };

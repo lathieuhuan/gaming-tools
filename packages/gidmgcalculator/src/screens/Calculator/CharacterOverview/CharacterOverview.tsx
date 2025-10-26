@@ -39,8 +39,9 @@ function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
         mutable
         switchable
         onSwitch={props.onClickSwitchCharacter}
-        onChangeLevel={(level) => level !== character.level && dispatch(updateCharacter({ level }))}
-        onChangeCons={(cons) => cons !== character.cons && dispatch(updateCharacter({ cons }))}
+        onChangeLevel={(level) => dispatch(updateCharacter({ level }))}
+        onChangeCons={(cons) => dispatch(updateCharacter({ cons }))}
+        onEnhanceToggle={(enhanced) => dispatch(updateCharacter({ enhanced }))}
       />
 
       <ComplexSelect

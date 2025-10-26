@@ -75,7 +75,7 @@ export const calculateSetup = (setup: CalcSetup, target: Target, tracker?: Track
     const mult = value + incre * setup.weapon.refi;
     const record = TrackerControl.initCalcItemRecord({
       itemType: type,
-      multFactors: [
+      factors: [
         {
           value: totalAttr[basedOn],
           desc: basedOn,

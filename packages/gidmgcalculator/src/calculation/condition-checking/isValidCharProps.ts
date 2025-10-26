@@ -1,7 +1,7 @@
 import type { AppCharacter, CharacterPropertyCondition } from "@/calculation/types";
 import { isPassedComparison } from "./isPassedComparison";
 
-export function isValidCharProps(condition: CharacterPropertyCondition, character: AppCharacter) {
+export function isValidCharProps(condition: CharacterPropertyCondition, character: AppCharacter, enhanced = false) {
   if (condition.forWeapons && !condition.forWeapons.includes(character.weaponType)) {
     return false;
   }
@@ -16,6 +16,9 @@ export function isValidCharProps(condition: CharacterPropertyCondition, characte
     if (!isPassedComparison(character.EBcost, value, comparison)) {
       return false;
     }
+  }
+  if (condition.forEnhanced && !enhanced) {
+    return false;
   }
   return true;
 }

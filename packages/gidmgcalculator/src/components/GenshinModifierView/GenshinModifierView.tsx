@@ -79,20 +79,26 @@ export function GenshinModifierView({
             { label: "Electro", value: 2 },
           ],
         };
-      case "ELEMENTAL":
+      case "ELEMENTAL": {
+        const options = [
+          { label: "Pyro", value: 0 },
+          { label: "Hydro", value: 1 },
+          { label: "Electro", value: 2 },
+          { label: "Cryo", value: 3 },
+          { label: "Geo", value: 4 },
+          { label: "Anemo", value: 5 },
+          { label: "Dendro", value: 6 },
+        ];
+
         return {
           type: "select",
           label,
-          options: [
-            { label: "Pyro", value: 0 },
-            { label: "Hydro", value: 1 },
-            { label: "Electro", value: 2 },
-            { label: "Cryo", value: 3 },
-            { label: "Geo", value: 4 },
-            { label: "Anemo", value: 5 },
-            { label: "Dendro", value: 6 },
-          ],
+          options: config.options
+            ? options.filter((option) => config.options?.includes(option.value))
+            : options,
+          style: { maxWidth: config.options ? "6rem" : undefined },
         };
+      }
       default:
         return {
           label: "[unmatched type]",

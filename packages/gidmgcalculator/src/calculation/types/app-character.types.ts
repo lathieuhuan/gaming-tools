@@ -13,7 +13,7 @@ import type {
   AttackPattern,
   AttributeStat,
   CalcItemBasedOn,
-  CalcItemMultFactor,
+  CalcItemFactor,
   CalcItemType,
   ElementType,
   LunarType,
@@ -35,6 +35,7 @@ export type AppCharacter = {
   faction?: Faction | Faction[];
   vision: ElementType;
   weaponType: WeaponType;
+  enhanceType?: "WITCH";
   EBcost: number;
   talentLvBonus?: Partial<Record<TalentType, number>>;
   statBases: {
@@ -133,12 +134,12 @@ export type TalentCalcItem = {
   name: string;
   notOfficial?: boolean;
   /** Factors multiplying an attribute, scaling off talent level (character) or refinement (weapon) */
-  multFactors: CalcItemMultFactor | CalcItemMultFactor[];
+  factor: CalcItemFactor | CalcItemFactor[];
   flatFactor?: CalcItemFlatFactor;
 
   // Only on 'attack'
 
-  joinMultFactors?: boolean;
+  jointFactors?: boolean;
   attPatt?: ActualAttackPattern;
   attElmt?: ActualAttackElement;
   subAttPatt?: "FCA";

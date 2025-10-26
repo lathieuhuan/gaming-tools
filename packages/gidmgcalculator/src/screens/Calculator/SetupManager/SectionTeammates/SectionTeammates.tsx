@@ -138,7 +138,7 @@ export default function SectionTeammates() {
           <TeammateGear
             teammate={selectedTeammate}
             index={selectedIndex}
-            weaponType={teamData.getAppMember(selectedTeammate.name).weaponType}
+            info={teamData.getAppMember(selectedTeammate.name)}
           />
         )}
       </CollapseSpace>

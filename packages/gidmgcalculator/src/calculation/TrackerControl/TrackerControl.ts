@@ -33,7 +33,7 @@ export type CalcItemExclusiveBonus = {
 export type CalcItemRecord = {
   itemType: CalcItemType;
   specialPatt?: LunarType;
-  multFactors: Array<{
+  factors: Array<{
     desc: string;
     value: number;
     talentMult?: number;
