@@ -34,7 +34,11 @@ export class CalcItemCalculator {
   getRxnMult = (attElmt: AttackElement, reaction?: AttackReaction) => {
     if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
       // deal elemental dmg and want amplifying reaction
-      return GeneralCalc.getAmplifyingMultiplier(reaction, attElmt, this.attkBonusesArchive.getBare("pct_", reaction));
+      return GeneralCalc.getAmplifyingMultiplier(
+        reaction,
+        attElmt,
+        this.attkBonusesArchive.getBare("pct_", reaction)
+      );
     }
     return 1;
   };
@@ -43,7 +47,11 @@ export class CalcItemCalculator {
     return Math.min(Math.max(crit, 0), 100);
   };
 
-  genAttackCalculator = (attPatt: ActualAttackPattern, attElmt: AttackElement, itemId?: TalentCalcItemBonusId) => {
+  genAttackCalculator = (
+    attPatt: ActualAttackPattern,
+    attElmt: AttackElement,
+    itemId?: TalentCalcItemBonusId
+  ) => {
     const { totalAttr, attkBonusesArchive, resistances } = this;
 
     const emptyResult: CalculationFinalResultItem = {
@@ -72,7 +80,7 @@ export class CalcItemCalculator {
         return emptyResult;
       }
 
-      let flat = getBonus("flat");
+      const flat = getBonus("flat");
       let bonusMult = getBonus("pct_") + totalAttr[attElmt];
       let baseMult = getBonus("multPlus_");
 
@@ -137,7 +145,11 @@ export class CalcItemCalculator {
     };
   };
 
-  genLunarCalculator = (lunar: LunarType, attElmt: AttackElement, itemId?: TalentCalcItemBonusId) => {
+  genLunarCalculator = (
+    lunar: LunarType,
+    attElmt: AttackElement,
+    itemId?: TalentCalcItemBonusId
+  ) => {
     const { totalAttr, resistances } = this;
 
     const emptyResult: CalculationFinalResultItem = {
@@ -154,7 +166,10 @@ export class CalcItemCalculator {
       return this.getBonus(key, lunar, itemId);
     };
 
-    const calculate = (base: number | number[], record: CalcItemRecord): CalculationFinalResultItem => {
+    const calculate = (
+      base: number | number[],
+      record: CalcItemRecord
+    ): CalculationFinalResultItem => {
       //
       if (base === 0) {
         return emptyResult;
@@ -183,7 +198,8 @@ export class CalcItemCalculator {
 
       base = Array_.applyToItem(
         base,
-        (n) => (n * baseMult * coefficient * bonusMult + flat) * specMult * elvMult * rxnMult * resMult
+        (n) =>
+          (n * baseMult * coefficient * bonusMult + flat) * specMult * elvMult * rxnMult * resMult
       );
 
       record.specialPatt = lunar;
@@ -217,10 +233,16 @@ export class CalcItemCalculator {
     };
   };
 
-  genOtherCalculator = (itemType: Exclude<CalcItemType, "attack">, itemId?: TalentCalcItemBonusId) => {
+  genOtherCalculator = (
+    itemType: Exclude<CalcItemType, "attack">,
+    itemId?: TalentCalcItemBonusId
+  ) => {
     const { totalAttr } = this;
 
-    const calculate = (base: number | number[], record: CalcItemRecord): CalculationFinalResultItem => {
+    const calculate = (
+      base: number | number[],
+      record: CalcItemRecord
+    ): CalculationFinalResultItem => {
       //
       if (base === 0) {
         return {
@@ -244,13 +266,15 @@ export class CalcItemCalculator {
           break;
       }
 
-      base = Array_.applyToItem(base, (n) => n + flat);
-      record.totalFlat = (record.totalFlat || 0) + flat;
+      // SPECIAL MULTIPLIER
+      const specMult = toMult(this.getBonus("specMult_", itemId));
 
-      if (bonusMult !== 1) {
-        base = Array_.applyToItem(base, (n) => n * bonusMult);
-        record.bonusMult = bonusMult;
-      }
+      base = Array_.applyToItem(base, (n) => (n + flat) * bonusMult * specMult);
+
+      record.totalFlat = (record.totalFlat || 0) + flat;
+      record.bonusMult = bonusMult;
+      record.specMult = specMult;
+
       if (itemType === "healing") {
         base = Array_.applyToItem(base, (n) => n * (1 + totalAttr.inHealB_ / 100));
       }

@@ -17,6 +17,7 @@ import type {
   CalcItemType,
   ElementType,
   LunarType,
+  Nation,
   NormalAttack,
   TalentCalcItemBonusId,
   TalentType,
@@ -71,17 +72,6 @@ export type AppCharacter = {
   buffs?: CharacterBuff[];
   debuffs?: CharacterDebuff[];
 };
-
-type Nation =
-  | "nodkrai"
-  | "outland"
-  | "mondstadt"
-  | "liyue"
-  | "inazuma"
-  | "sumeru"
-  | "natlan"
-  | "fontaine"
-  | "snezhnaya";
 
 type Faction = "moonsign";
 

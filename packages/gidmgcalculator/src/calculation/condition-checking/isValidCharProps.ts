@@ -2,6 +2,9 @@ import type { AppCharacter, CharacterPropertyCondition } from "@/calculation/typ
 import { isPassedComparison } from "./isPassedComparison";
 
 export function isValidCharProps(condition: CharacterPropertyCondition, character: AppCharacter, enhanced = false) {
+  if (condition.forNation && condition.forNation !== character.nation) {
+    return false;
+  }
   if (condition.forWeapons && !condition.forWeapons.includes(character.weaponType)) {
     return false;
   }

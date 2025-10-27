@@ -1,4 +1,4 @@
-import type { ElementType, WeaponType } from "../common.types";
+import type { ElementType, Nation, WeaponType } from "../common.types";
 import type { CharacterMilestone } from "./app-entity-common.types";
 
 export type ConditionComparison = "EQUAL" | "MIN" | "MAX";
@@ -36,6 +36,7 @@ export type TeamElementCondition = {
 };
 
 export type CharacterPropertyCondition = {
+  forNation?: Nation;
   /** On Chongyun, 2 original artifacts */
   forWeapons?: WeaponType[];
   /** On Chevreuse, Xilonen */
