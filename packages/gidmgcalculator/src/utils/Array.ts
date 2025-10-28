@@ -20,9 +20,7 @@ export default class Array_ {
     return Array.isArray(base) ? base.map(callback) : callback(base);
   }
 
-  static truthify<TObject extends UnknownObject = UnknownObject>(
-    list: Array<TObject | null | undefined> | null = []
-  ) {
+  static truthify<TObject>(list: Array<TObject | null | undefined> | null = []) {
     return list ? (list.filter((item) => !Object_.isNil(item)) as TObject[]) : [];
   }
 
