@@ -1,4 +1,4 @@
-import { ATTACK_ELEMENTS, CharacterCalc, WeaponType } from "@Calculation";
+import { ATTACK_ELEMENTS, CalcTeamData, CharacterCalc, WeaponType } from "@Calculation";
 import { PartiallyRequiredOnly } from "rond";
 
 import { $AppCharacter } from "@/services";
@@ -102,6 +102,8 @@ export default class Setup_ {
       party.push(...Array(3 - party.length).fill(null));
     }
 
+    const teamData = new CalcTeamData(char, party, Entity_.getAppCharacters(char.name, party));
+
     return {
       char,
       ...data,
@@ -110,13 +112,11 @@ export default class Setup_ {
       artifactIDs: options?.artifactIDs || artifacts.map((artifact) => artifact?.ID ?? null),
       selfBuffCtrls: data.selfBuffCtrls.filter((ctrl) => {
         const buff = Array_.findByIndex(buffs, ctrl.index);
-        return buff ? ctrl.activated && CharacterCalc.isGrantedEffect(buff.grantedAt, char) : false;
+        return buff ? ctrl.activated && CharacterCalc.isGrantedMod(buff, teamData) : false;
       }),
       selfDebuffCtrls: data.selfDebuffCtrls.filter((ctrl) => {
         const debuff = Array_.findByIndex(debuffs, ctrl.index);
-        return debuff
-          ? ctrl.activated && CharacterCalc.isGrantedEffect(debuff.grantedAt, char)
-          : false;
+        return debuff ? ctrl.activated && CharacterCalc.isGrantedMod(debuff, teamData) : false;
       }),
       wpBuffCtrls: data.wpBuffCtrls.filter((ctrl) => ctrl.activated),
       party,

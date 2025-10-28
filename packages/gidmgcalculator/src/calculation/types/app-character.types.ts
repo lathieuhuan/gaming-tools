@@ -6,6 +6,7 @@ import type {
   EntityPenaltyEffect,
   InputCheck,
   ModifierAffectType,
+  PartyMilestone,
 } from "./app-entity";
 import type {
   ActualAttackElement,
@@ -95,7 +96,8 @@ type StatOther = {
 
 type CharacterModifier = {
   src: string;
-  grantedAt?: CharacterMilestone | undefined;
+  grantedAt?: CharacterMilestone;
+  partyMs?: PartyMilestone;
   description: string;
 };
 

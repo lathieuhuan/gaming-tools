@@ -1,33 +1,27 @@
-import { useDispatch, useSelector } from "@Store/hooks";
 import {
-  selectCharacter,
   changeModCtrlInput,
+  selectCharacter,
   toggleModCtrl,
   type ToggleModCtrlPath,
-  selectTeammates,
 } from "@Store/calculator-slice";
-import { useTeamData } from "../ContextProvider";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { useCalcTeamData } from "../ContextProvider";
 
 import { SelfBuffsView } from "@/components";
-import { CalcTeamData } from "@Calculation";
-import { useMemo } from "react";
 
 export default function BuffSelf() {
   const dispatch = useDispatch();
   const character = useSelector(selectCharacter);
-  const selfBuffCtrls = useSelector((state) => state.calculator.setupsById[state.calculator.activeId].selfBuffCtrls);
-  const teammates = useSelector(selectTeammates);
-  const teamData = useTeamData();
-
-  const calcTeamData = useMemo(() => {
-    return new CalcTeamData(character, teammates, teamData.data);
-  }, [character, teammates, teamData]);
+  const selfBuffCtrls = useSelector(
+    (state) => state.calculator.setupsById[state.calculator.activeId].selfBuffCtrls
+  );
+  const teamData = useCalcTeamData();
 
   return (
     <SelfBuffsView
       mutable
       character={character}
-      teamData={calcTeamData}
+      teamData={teamData}
       modCtrls={selfBuffCtrls}
       getHanlders={({ ctrl }) => {
         const path: ToggleModCtrlPath = {

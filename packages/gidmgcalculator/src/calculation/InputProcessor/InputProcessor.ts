@@ -139,7 +139,7 @@ export class InputProcessor {
       const { innateBuffs = [], buffs = [] } = activeAppMember;
 
       for (const buff of innateBuffs) {
-        if (CharacterCalc.isGrantedEffect(buff.grantedAt, character)) {
+        if (CharacterCalc.isGrantedMod(buff, teamData)) {
           applyBuff(
             buff,
             {
@@ -154,7 +154,7 @@ export class InputProcessor {
       for (const ctrl of selfBuffCtrls) {
         const buff = Array_.findByIndex(buffs, ctrl.index);
 
-        if (ctrl.activated && buff && CharacterCalc.isGrantedEffect(buff.grantedAt, character)) {
+        if (ctrl.activated && buff && CharacterCalc.isGrantedMod(buff, teamData)) {
           applyBuff(
             buff,
             {
@@ -490,11 +490,7 @@ export class InputProcessor {
     for (const ctrl of selfDebuffCtrls) {
       const debuff = Array_.findByIndex(teamData.activeAppMember.debuffs, ctrl.index);
 
-      if (
-        ctrl.activated &&
-        debuff?.effects &&
-        CharacterCalc.isGrantedEffect(debuff.grantedAt, teamData.activeMember)
-      ) {
+      if (ctrl.activated && debuff?.effects && CharacterCalc.isGrantedMod(debuff, teamData)) {
         resistReductCtrl.applyDebuff(debuff, ctrl.inputs ?? [], true, `Self / ${debuff.src}`);
       }
     }
