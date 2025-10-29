@@ -65,11 +65,11 @@ export function TeammateGear({ teammate, index, info }: TeammateGearProps) {
     <>
       <div className="bg-dark-2 pt-2">
         <div className="bg-dark-1 pt-12 px-2 pb-3">
-          <div className="mb-4 flex" hidden={!info.enhanceType}>
+          {/* <div className="mb-4 flex" hidden={!info.enhanceType}>
             <Checkbox checked={!!teammate.enhanced} onChange={handleEnhanceToggle}>
               Witch's Buff
             </Checkbox>
-          </div>
+          </div> */}
 
           <TeammateItems
             mutable

@@ -104,11 +104,11 @@ export function CharacterIntro(props: CharacterIntroProps) {
         )}
       </div>
 
-      <div className="mt-4 flex" hidden={!appCharacter.enhanceType}>
+      {/* <div className="mt-4 flex" hidden={!appCharacter.enhanceType}>
         <Checkbox checked={!!character.enhanced} onChange={props.onEnhanceToggle}>
           Witch's Buff
         </Checkbox>
-      </div>
+      </div> */}
     </div>
   );
 }
