@@ -29,7 +29,7 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   };
 
   has = (key: TKey) => {
-    return this._get(key) !== 0;
+    return !!this.count[key];
   };
 
   get = (keys: TKey | TKey[]) => {
@@ -42,8 +42,19 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
     return (this.count[key] = this._get(key) + value);
   };
 
+  merge = (data: TypeCounter<TKey> | Partial<Record<TKey, number>>) => {
+    const _data = data instanceof TypeCounter ? data.result : data;
+
+    for (const key in _data) {
+      this.add(key, _data[key]);
+    }
+
+    return this;
+  };
+
   forEach = (callback: (key: TKey, count: number) => void) => {
     for (const key in this.count) {
+      // TOCHECK: not callback when this.count[key] is 0
       callback(key, this.count[key]);
     }
   };

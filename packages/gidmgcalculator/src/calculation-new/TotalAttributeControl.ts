@@ -17,8 +17,7 @@ import Array_ from "@/utils/Array";
 import Object_ from "@/utils/Object";
 import { CharacterC, ICharacterArtifacts } from "./Character";
 import { WeaponC } from "./Weapon";
-
-const ASC_MULT_BY_ASC = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];
+import { TrackerC } from "./Tracker";
 
 type InternalTotalAttribute = Record<
   AttributeStat,
@@ -29,171 +28,57 @@ type InternalTotalAttribute = Record<
   }
 >;
 
-/** 'isStable' default to true */
-type BonusToApply = PartiallyOptional<AppliedAttributeBonus, "id" | "isStable">;
+type BonusToApply = {
+  toStat: AttributeStat;
+  value: number;
+  description: string;
+  isUnstable?: boolean;
+};
 
 export class TotalAttributeControl {
-  private totalAttr: InternalTotalAttribute;
-  private artAttrCtrl = new ArtifactAttributeControl([]);
-  private tracker?: TrackerControl;
+  totalAttr: InternalTotalAttribute;
+  tracker?: TrackerC;
 
-  constructor();
-  constructor(trackerCtrl?: TrackerControl);
-  constructor(totalAttr?: InternalTotalAttribute, trackerCtrl?: TrackerControl);
-  constructor(firstArg?: InternalTotalAttribute | TrackerControl, trackerCtrl?: TrackerControl) {
-    if (!firstArg || firstArg instanceof TrackerControl) {
-      this.totalAttr = {} as InternalTotalAttribute;
-
-      for (const type of ATTRIBUTE_STAT_TYPES) {
-        this.totalAttr[type] = {
-          base: 0,
-          stableBonus: 0,
-          unstableBonus: 0,
-        };
-      }
-      this.tracker = firstArg;
-    } else {
-      this.totalAttr = firstArg;
-    }
-    this.tracker ||= trackerCtrl;
+  constructor(tracker?: TrackerC) {
+    this.totalAttr = this.reset(tracker);
   }
 
-  static getArtifactAttributes(artifacts: ICharacterArtifacts) {
-    return new ArtifactAttributeControl(artifacts);
-  }
+  reset = (tracker?: TrackerC) => {
+    this.tracker = tracker;
+    this.totalAttr = {} as InternalTotalAttribute;
 
-  /** If this was not constructed with artifacts or did not equipArtifacts, call this method will return zeroes */
-  finalizeArtifactAttribute(baseStat: Pick<TotalAttribute, "hp_base" | "atk_base" | "def_base">) {
-    const artAttr = this.artAttrCtrl.finalize(baseStat);
-
-    Object_.forEach(artAttr, (toStat) => {
-      if (artAttr[toStat]) {
-        this.tracker?.recordStat(ECalcStatModule.ATTR, toStat, artAttr[toStat], "Artifact stat");
-      }
-    });
-
-    return artAttr;
-  }
-
-  // Lv 80/90: 8.739 * x + y = 351.59
-  // Lv 90/90: 7.836 * x + y = 326.88  // 0.903 * x = 24.71
-  // 7.836 * 62.94573 + y = 865.98
-
-  private getCharacterStats(appCharacter: AppCharacter, charLv: Level) {
-    const bareLv = GeneralCalc.getBareLv(charLv);
-    const ascension = GeneralCalc.getAscension(charLv);
-    const { hp, atk, def } = appCharacter.statBases;
-    const use4starMult = appCharacter.rarity === 4 || appCharacter.name.slice(-8) === "Traveler";
-
-    let levelMult = (100 + 9 * bareLv) / 109;
-    levelMult = use4starMult ? levelMult : (levelMult * (1900 + bareLv)) / 1901;
-    levelMult = round(levelMult, 3);
-
-    let atkLevelMult = levelMult;
-
-    if (bareLv > 90) {
-      if (bareLv === 95) {
-        atkLevelMult = use4starMult ? 9.87 : 10.184;
-      } else {
-        atkLevelMult = use4starMult ? 11.392 : 11.629;
-      }
+    for (const type of ATTRIBUTE_STAT_TYPES) {
+      this.totalAttr[type] = {
+        base: 0,
+        stableBonus: 0,
+        unstableBonus: 0,
+      };
     }
 
-    const ascensionMult = ASC_MULT_BY_ASC[ascension];
-    const ascensionStatMult = ascension > 2 ? ascension - 2 : 0;
-
-    return {
-      hp: hp.level * levelMult + hp.ascension * ascensionMult,
-      atk: atk.level * atkLevelMult + atk.ascension * ascensionMult,
-      def: def.level * levelMult + def.ascension * ascensionMult,
-      ascensionStat: appCharacter.statBonus.value * ascensionStatMult,
-    };
-  }
-
-  construct = (character: CharacterC) => {
-    const { statBonus, statInnates = [] } = character.data;
-    const stats = this.getCharacterStats(character.data, character.level);
-
-    this.addBase("hp", stats.hp);
-    this.addBase("atk", stats.atk);
-    this.addBase("def", stats.def);
-    this.addBase("cRate_", 5);
-    this.addBase("cDmg_", 50);
-    this.addBase("er_", 100);
-    this.addBase("naAtkSpd_", 100);
-    this.addBase("caAtkSpd_", 100);
-    this.addBase(statBonus.type, stats.ascensionStat, "Character ascension stat");
-
-    for (const stat of statInnates) {
-      this.addBase(stat.type, stat.value, "Character innate stat");
-    }
-
-    this.equipWeapon(character.weapon);
-    this.equipArtifacts(character.artifacts);
-
-    return this;
+    return this.totalAttr;
   };
 
-  clone = () => {
-    return new TotalAttributeControl(Object_.clone(this.totalAttr));
-  };
-
-  /** Should not be called more than once per instance of this */
-  equipWeapon = (weapon: WeaponC) => {
-    const { data } = weapon;
-
-    this.addBase(
-      "atk",
-      WeaponCalc.getMainStatValue(weapon.level, data.mainStatScale),
-      "Weapon main stat"
-    );
-
-    if (data.subStat) {
-      const substatValue = WeaponCalc.getSubStatValue(weapon.level, data.subStat.scale);
-
-      this.applyBonuses({
-        value: substatValue,
-        toStat: data.subStat.type,
-        description: `${data.name} sub-stat`,
-      });
-    }
-  };
-
-  /** Should not be called more than once per instance of this control */
-  equipArtifacts = (artifacts: ICharacterArtifacts = []) => {
-    const artAttrCtrl = TotalAttributeControl.getArtifactAttributes(artifacts);
-
-    Object_.forEach(artAttrCtrl.artAttr, (toStat, value) => {
-      if (value) {
-        this.totalAttr[toStat].stableBonus += value;
-      }
-    });
-
-    this.artAttrCtrl = artAttrCtrl;
-  };
-
-  private addBase = (key: AttributeStat, value: number, description = "Character base stat") => {
+  addBase = (key: AttributeStat, value: number, description = "Character base stat") => {
     this.totalAttr[key].base += value;
-    this.tracker?.recordStat(ECalcStatModule.ATTR, key, value, description);
+    this.tracker?.recordATTR(key, value, description);
   };
 
   applyBonuses = (bonuses: BonusToApply | BonusToApply[]) => {
     for (const bonus of Array_.toArray(bonuses)) {
-      if (
-        bonus.toStat === "base_atk" ||
-        bonus.toStat === "base_hp" ||
-        bonus.toStat === "base_def"
-      ) {
-        const statType = bonus.toStat.slice(5) as AttributeStat;
+      const statType = bonus.toStat.slice(5);
+
+      if (isCoreStat(statType)) {
         this.addBase(statType, bonus.value, bonus.description);
         continue;
       }
-      if (bonus.isStable ?? true) {
-        this.totalAttr[bonus.toStat].stableBonus += bonus.value;
-      } else {
+
+      if (bonus.isUnstable) {
         this.totalAttr[bonus.toStat].unstableBonus += bonus.value;
+      } else {
+        this.totalAttr[bonus.toStat].stableBonus += bonus.value;
       }
-      this.tracker?.recordStat(ECalcStatModule.ATTR, bonus.toStat, bonus.value, bonus.description);
+
+      this.tracker?.recordATTR(bonus.toStat, bonus.value, bonus.description);
     }
   };
 
@@ -249,7 +134,7 @@ export class TotalAttributeControl {
   }
 }
 
-function isCoreStat(key: AttributeStat) {
+function isCoreStat(key: string) {
   return key === "hp" || key === "atk" || key === "def";
 }
 
