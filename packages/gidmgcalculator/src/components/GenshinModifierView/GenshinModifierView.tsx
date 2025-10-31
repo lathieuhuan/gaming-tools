@@ -9,7 +9,7 @@ const genOptions = (config: ModInputConfig) => {
     count = config.init === 0 ? config.max + 1 : config.max;
   }
 
-  return genSequentialOptions(count, config.init);
+  return genSequentialOptions(count, config.init === 0 ? 0 : 1);
 };
 
 export type GenshinModifierViewProps = Omit<ModifierViewProps, "inputConfigs"> & {
