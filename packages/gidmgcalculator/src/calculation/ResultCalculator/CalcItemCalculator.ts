@@ -82,10 +82,11 @@ export class CalcItemCalculator {
 
       const flat = getBonus("flat");
       let bonusMult = getBonus("pct_") + totalAttr[attElmt];
-      let baseMult = getBonus("multPlus_");
-
       bonusMult = toMult(bonusMult);
-      baseMult = toMult(baseMult);
+
+      // BASE MULTIPLIER
+      let baseMult = getBonus("multPlus_");
+      baseMult = baseMult >= 0 ? toMult(baseMult) : -baseMult / 100;
 
       // SPECIAL MULTIPLIER
       const specMult = toMult(getBonus("specMult_"));
@@ -116,7 +117,7 @@ export class CalcItemCalculator {
         (n) => (n * baseMult + flat) * bonusMult * specMult * elvMult * rxnMult * defMult * resMult
       );
 
-      record.baseMult = baseMult;
+      record.baseMult = Math.abs(baseMult);
       record.totalFlat = flat;
       record.bonusMult = bonusMult;
       record.specMult = specMult;

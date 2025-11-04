@@ -9,6 +9,7 @@ import type {
   AttackReaction,
   AttributeStat,
   ElementType,
+  LunarType,
   NormalAttack,
   ReactionType,
   ResistReductionKey,
@@ -76,7 +77,7 @@ export type ElementModCtrl = {
 
 export type CustomBuffCtrlCategory = "totalAttr" | "attPattBonus" | "attElmtBonus" | "rxnBonus";
 
-export type CustomBuffCtrlType = AttributeStat | "all" | AttackPattern | ReactionType;
+export type CustomBuffCtrlType = AttributeStat | "all" | AttackPattern | ReactionType | LunarType;
 
 export type CustomBuffCtrl = {
   category: CustomBuffCtrlCategory;

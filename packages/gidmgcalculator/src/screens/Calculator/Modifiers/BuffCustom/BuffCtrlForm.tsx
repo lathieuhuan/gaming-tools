@@ -14,7 +14,20 @@ const CATEGORIES: Record<
 > = {
   totalAttr: {
     label: "Attributes",
-    types: ["hp", "hp_", "atk", "atk_", "def", "def_", "em", "er_", "cRate_", "cDmg_", "shieldS_", "healB_"],
+    types: [
+      "hp",
+      "hp_",
+      "atk",
+      "atk_",
+      "def",
+      "def_",
+      "em",
+      "er_",
+      "cRate_",
+      "cDmg_",
+      "shieldS_",
+      "healB_",
+    ],
   },
   attElmtBonus: {
     label: "Elements",
@@ -28,7 +41,7 @@ const CATEGORIES: Record<
   },
   rxnBonus: {
     label: "Reactions",
-    types: REACTIONS,
+    types: ["lunarBloom", ...REACTIONS],
     subTypes: ["pct_", "cRate_", "cDmg_"],
   },
 };

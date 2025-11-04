@@ -51,6 +51,7 @@ export type {
   Level,
   LevelableTalentType,
   LunarReaction,
+  LunarType,
   ModifierAffectType,
   ModInputConfig,
   ModInputType,
