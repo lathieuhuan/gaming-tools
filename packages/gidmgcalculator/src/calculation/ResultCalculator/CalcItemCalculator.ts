@@ -179,6 +179,7 @@ export class CalcItemCalculator {
       const baseMult = toMult(getBonus("multPlus_"));
       const coefficient = LUNAR_ATTACK_COEFFICIENT[lunar];
       const bonusMult = toMult(getBonus("pct_"));
+      const veilMult = toMult(getBonus("veil_"));
       const flat = getBonus("flat");
 
       // SPECIAL MULTIPLIER
@@ -200,12 +201,17 @@ export class CalcItemCalculator {
       base = Array_.applyToItem(
         base,
         (n) =>
-          (n * baseMult * coefficient * bonusMult + flat) * specMult * elvMult * rxnMult * resMult
+          (n * baseMult * coefficient * bonusMult * veilMult + flat) *
+          specMult *
+          elvMult *
+          rxnMult *
+          resMult
       );
 
       record.specialPatt = lunar;
       record.baseMult = baseMult;
       record.coefficient = coefficient;
+      record.veilMult = veilMult;
       record.totalFlat = flat;
       record.bonusMult = bonusMult;
       record.elvMult = elvMult;

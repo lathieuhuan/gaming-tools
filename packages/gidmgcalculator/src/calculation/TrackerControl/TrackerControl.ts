@@ -40,6 +40,7 @@ export type CalcItemRecord = {
   }>;
   coefficient?: number;
   baseMult?: number;
+  veilMult?: number;
   totalFlat?: number;
   elvMult?: number;
   specMult?: number;
