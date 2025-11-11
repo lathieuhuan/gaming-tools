@@ -164,7 +164,9 @@ export class CalcItemCalculator {
     };
 
     const getBonus = (key: AttackBonusKey) => {
-      return this.getBonus(key, lunar, itemId);
+      return key === "pct_"
+        ? this.getBonus(key, lunar, itemId)
+        : this.getBonus(key, lunar, attElmt, itemId);
     };
 
     const calculate = (
