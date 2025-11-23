@@ -9,6 +9,11 @@ import { goodFormatMap } from "./util-maps";
 
 const convertLevel = (level: any, ascension: any) => {
   const roundedLevel = Math.round(+level / 10) * 10;
+
+  if (level > 90) {
+    return `${level}/${level}` as Level;
+  }
+
   return `${roundedLevel || 1}/${ascension ? ascension * 10 + 30 : 20}` as Level;
 };
 
@@ -30,7 +35,9 @@ const convertName = (str: string) => {
 };
 
 const searchCharacterByKey = (key: any) => {
-  return key ? $AppCharacter.getAll().find(({ name, GOOD }) => name === key || GOOD === key)?.name : undefined;
+  return key
+    ? $AppCharacter.getAll().find(({ name, GOOD }) => name === key || GOOD === key)?.name
+    : undefined;
 };
 
 const searchWeaponByKey = (key: any) => {
@@ -62,7 +69,8 @@ export function convertFromGoodFormat(data: any) {
     let name;
 
     if (character.key.slice(0, 8) === "Traveler") {
-      name = character.key.slice(8) + " Traveler";
+      const prefix = character.key.slice(8);
+      name = prefix ? `${prefix} Traveler` : undefined;
     } else {
       name = searchCharacterByKey(character.key);
     }
@@ -89,7 +97,8 @@ export function convertFromGoodFormat(data: any) {
 
     if (!code || (rarity !== 4 && rarity !== 5)) continue;
 
-    let mainStatType: AttributeStat = slotKey === "flower" ? "hp" : slotKey === "plume" ? "atk" : "atk_";
+    let mainStatType: AttributeStat =
+      slotKey === "flower" ? "hp" : slotKey === "plume" ? "atk" : "atk_";
     const subStats: ArtifactSubStat[] = [];
     const owner = searchCharacterByKey(artifact.location) || null;
 

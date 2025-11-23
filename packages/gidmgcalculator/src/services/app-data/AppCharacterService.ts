@@ -210,7 +210,7 @@ export class AppCharacterService extends BaseService {
 
   get(name: string) {
     const control = this.getControl(name);
-    return control!.data;
+    return control?.data!;
   }
 
   // ==== TRAVELER ====
