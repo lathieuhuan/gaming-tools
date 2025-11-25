@@ -9,8 +9,8 @@ let optimizer: SetupOptimizer;
 const sorter = new CalculationSorter();
 const COMPLETE_DELAY = 300;
 
-console.log(this);
-console.log(window);
+// console.log(typeof this);
+// console.log(typeof window);
 
 function response(message: OTM_WorkerResponse) {
   postMessage(message);

@@ -155,7 +155,7 @@ export const Greeter = () => {
       <Introduction className="grow" metadata={state.metadata} loading={isLoading} />
 
       <div className="mt-4 flex justify-end">
-        <a href="https://discord.gg/VAbFat7H" target="_blank">
+        <a href="https://discord.gg/gRxYCHqAAC" target="_blank">
           <Button icon={<FaDiscord />}>Discord</Button>
         </a>
       </div>

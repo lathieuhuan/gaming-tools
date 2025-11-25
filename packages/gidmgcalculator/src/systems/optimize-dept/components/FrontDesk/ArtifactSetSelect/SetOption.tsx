@@ -60,7 +60,7 @@ export function SetOption(props: SetOptionProps) {
           <div className="w-px h-2/3 bg-dark-line" />
           <Checkbox
             size="medium"
-            className="w-10 h-10 flex-center"
+            className="w-10 h-10 flex-center items-center"
             checked={selectedCount === total}
             indeterminate={!!selectedCount && selectedCount !== total}
             onChange={onSelectAllChange}

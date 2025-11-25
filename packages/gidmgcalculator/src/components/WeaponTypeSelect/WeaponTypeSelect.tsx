@@ -1,4 +1,4 @@
-import { getImgSrc } from "@/utils";
+import { getImgSrc } from "@/utils/getImgSrc";
 import { WeaponType } from "@Calculation";
 import { IconSelect, IconSelectProps } from "rond";
 

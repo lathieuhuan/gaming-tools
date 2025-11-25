@@ -37,7 +37,7 @@ export class OptimizeManager {
   }
 
   private request(message: OTM_ManagerRequest) {
-    // this.worker.postMessage(message);
+    this.worker.postMessage(message);
   }
 
   private genWorker = () => {

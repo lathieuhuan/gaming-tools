@@ -2,7 +2,7 @@ import type { IconBaseProps, IconType } from "react-icons";
 import { FaUser, FaQuestion } from "react-icons/fa";
 import { RiSwordFill } from "react-icons/ri";
 import { Image, type ImageProps } from "rond";
-import { getImgSrc } from "@/utils";
+import { getImgSrc } from "@/utils/getImgSrc";
 
 const ICONS_BY_TYPE: Record<string, IconType> = {
   character: FaUser,

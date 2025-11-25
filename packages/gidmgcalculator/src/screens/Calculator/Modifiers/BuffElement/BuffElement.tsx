@@ -1,4 +1,3 @@
-import { TalentCalcItem } from "@Calculation";
 import { Fragment, ReactNode } from "react";
 
 import { selectAttkBonuses, selectCharacter, selectElmtModCtrls } from "@Store/calculator-slice";
@@ -15,7 +14,7 @@ export function BuffElement() {
   const attkBonuses = useSelector(selectAttkBonuses);
   const teamData = useTeamData();
 
-  const { vision, weaponType, calcList } = teamData.activeAppMember;
+  const { vision, weaponType } = teamData.activeAppMember;
 
   const nodes: ReactNode[] = [];
 
@@ -37,15 +36,7 @@ export function BuffElement() {
 
   // ========== ANEMO ABSORPTION ==========
 
-  const haveAnyAbsorbAttack = (items: TalentCalcItem[]) => {
-    return items.some(({ type = "attack", attElmt }) => attElmt === "absorb" && type === "attack");
-  };
-
-  if (
-    (vision === "anemo" && weaponType === "catalyst") ||
-    haveAnyAbsorbAttack(calcList.ES) ||
-    haveAnyAbsorbAttack(calcList.EB)
-  ) {
+  if (vision === "anemo") {
     nodes.push(
       <AnemoAbsorptionCtrl
         elmtModCtrls={elmtModCtrls}

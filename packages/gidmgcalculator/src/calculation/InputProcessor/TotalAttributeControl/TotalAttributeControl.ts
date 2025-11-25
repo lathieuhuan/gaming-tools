@@ -1,4 +1,3 @@
-import { round, type PartiallyOptional } from "rond";
 import type {
   AppCharacter,
   AppliedAttributeBonus,
@@ -9,12 +8,13 @@ import type {
   TotalAttribute,
 } from "@/calculation/types";
 import type { Artifact, Character, Weapon } from "@/types";
+import type { PartiallyOptional } from "rond";
 
-import { ArtifactCalc, GeneralCalc, WeaponCalc } from "@/calculation/utils";
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "@/calculation/constants";
 import { ECalcStatModule } from "@/calculation/constants/internal";
 import { TrackerControl } from "@/calculation/TrackerControl";
-import { applyPercent } from "@/utils";
+import { ArtifactCalc, GeneralCalc, WeaponCalc } from "@/calculation/utils";
+import { applyPercent, round } from "@/utils";
 import Array_ from "@/utils/Array";
 import Object_ from "@/utils/Object";
 

@@ -1,17 +1,11 @@
-import { ATTACK_ELEMENTS } from "@Calculation";
-import { IS_DEV_ENV } from "@/constants";
-
-export function getImgSrc(src?: string) {
-  // const IS_DEV_ENV = false;
-  if (IS_DEV_ENV || !src) return "";
-
-  const isFromWiki = src.split("/")[0].length === 1;
-  return isFromWiki ? `https://static.wikia.nocookie.net/gensin-impact/images/${src}.png` : src;
-}
-
 const numberFormat = new Intl.NumberFormat("en-EN");
 
 export const formatNumber = (n: number) => numberFormat.format(n);
+
+export const round = (n: number, precision = 1) => {
+  const multiplier = 10 ** precision;
+  return Math.round(n * multiplier) / multiplier;
+};
 
 export const toMult = (n: number) => 1 + n / 100;
 
@@ -29,7 +23,10 @@ export function genSequentialOptions(count: number | undefined = 0, startFrom = 
 }
 
 export function suffixOf(stat: string) {
-  return stat.slice(-1) === "_" || ATTACK_ELEMENTS.includes(stat as any) ? "%" : "";
+  return stat.slice(-1) === "_" ||
+    ["pyro", "hydro", "electro", "cryo", "geo", "anemo", "dendro", "phys"].includes(stat)
+    ? "%"
+    : "";
 }
 
 export function toCustomBuffLabel(category: string, type: string, t: (origin: string) => string) {
