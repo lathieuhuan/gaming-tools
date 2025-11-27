@@ -1,17 +1,18 @@
-import { clsx, Badge, VersatileSelect } from "rond";
-import { ArtifactCalc, AttributeStat } from "@Calculation";
+import { Badge, clsx, VersatileSelect } from "rond";
 
-import type { ArtifactSubStat, CalcArtifact, UserArtifact } from "@/types";
+import type { Artifact } from "@/models/base";
+import type { ArtifactSubStat, AttributeStat } from "@/types";
+
 import { useTranslation } from "@/hooks";
 import { $AppArtifact } from "@/services";
 import { suffixOf } from "@/utils";
 
 // Component
+import { GenshinImage } from "../GenshinImage";
 import { ArtifactLevelSelect } from "./ArtifactLevelSelect";
 import { ArtifactSubstatsControl } from "./ArtifactSubstatsControl";
-import { GenshinImage } from "../GenshinImage";
 
-export interface ArtifactViewProps<T extends CalcArtifact | UserArtifact> {
+export interface ArtifactViewProps<T extends Artifact> {
   mutable?: boolean;
   className?: string;
   artifact?: T;
@@ -20,7 +21,7 @@ export interface ArtifactViewProps<T extends CalcArtifact | UserArtifact> {
   onChangeMainStatType?: (type: AttributeStat, artifact: T) => void;
   onChangeSubStat?: (index: number, changes: Partial<ArtifactSubStat>, artifact: T) => void;
 }
-export function ArtifactView<T extends CalcArtifact | UserArtifact>({
+export function ArtifactView<T extends Artifact>({
   className,
   artifact,
   mutable,
@@ -34,8 +35,10 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
 
   const appArtifact = $AppArtifact.get(artifact);
   const { rarity = 5, mainStatType } = artifact;
-  const allMainStatTypes = ArtifactCalc.allMainStatTypesOf(artifact.type);
-  const mainStatValue = ArtifactCalc.mainStatValueOf(artifact);
+  const mainStatTypeOptions = artifact.possibleMainStatTypes.map((type) => ({
+    label: t(type),
+    value: type,
+  }));
 
   return (
     <div className={className}>
@@ -83,13 +86,18 @@ export function ArtifactView<T extends CalcArtifact | UserArtifact>({
             className="w-48 h-9 text-lg"
             transparent
             arrowAt="start"
-            options={allMainStatTypes.map((type) => ({ label: t(type), value: type }))}
+            options={mainStatTypeOptions}
             value={mainStatType}
             onChange={(value) => onChangeMainStatType?.(value as AttributeStat, artifact)}
           />
         )}
-        <p className={clsx(`text-rarity-${rarity} text-2xl leading-7 font-bold`, mutable ? "pl-6" : "pl-2")}>
-          {mainStatValue}
+        <p
+          className={clsx(
+            `text-rarity-${rarity} text-2xl leading-7 font-bold`,
+            mutable ? "pl-6" : "pl-2"
+          )}
+        >
+          {artifact.mainStatValue}
           {suffixOf(mainStatType)}
         </p>
       </div>

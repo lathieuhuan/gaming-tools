@@ -12,7 +12,7 @@ import {
   WarehouseLayout,
 } from "rond";
 
-import type { Artifact, UserArtifact } from "@/types";
+import type { Artifact, IUserArtifact } from "@/types";
 
 import { MAX_USER_ARTIFACTS } from "@/constants";
 import { useTravelerKey } from "@/hooks";
@@ -93,7 +93,7 @@ function MyArtifacts() {
     dispatch(sortArtifacts());
   };
 
-  const handleRemoveArtifact = (artifact: UserArtifact) => {
+  const handleRemoveArtifact = (artifact: IUserArtifact) => {
     const removedIndex = Array_.indexById(filteredArtifacts, artifact.ID);
 
     if (removedIndex !== -1) {
@@ -120,7 +120,7 @@ function MyArtifacts() {
   const handleForgeArtifact = (artifact: Artifact) => {
     if (modalType === "ADD_ARTIFACT") {
       if (isNewArtifactAddable()) {
-        const newUserArtifact: UserArtifact = {
+        const newUserArtifact: IUserArtifact = {
           ...artifact,
           ID: Date.now(),
           owner: null,

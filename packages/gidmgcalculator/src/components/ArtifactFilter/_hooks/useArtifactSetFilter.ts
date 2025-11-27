@@ -1,16 +1,15 @@
-import type { ArtifactType } from "@Calculation";
+import type { ArtifactType } from "@/types";
 import { useMemo, useState } from "react";
 
-import { $AppArtifact } from "@/services";
-import type { CalcArtifact } from "@/types";
 import { ArtifactFilterSet } from "../types";
+import { Artifact } from "@/models/base";
 
 type Config = {
   artifactType?: ArtifactType;
 };
 
-export function useArtifactSetFilter(
-  artifacts: CalcArtifact[],
+export function useArtifactSetFilter<T extends Artifact = Artifact>(
+  artifacts: T[],
   chosenCodes: number[],
   config?: Config
 ) {
@@ -21,27 +20,23 @@ export function useArtifactSetFilter(
     const countMap = new Map<number, ArtifactFilterSet>();
     const result: ArtifactFilterSet[] = [];
 
-    for (const { code } of artifacts) {
+    for (const { code, data } of artifacts) {
       const filterSet = countMap.get(code);
 
       if (filterSet) {
         filterSet.count += 1;
       } //
       else {
-        const data = $AppArtifact.getSet(code);
+        const filterSet: ArtifactFilterSet = {
+          code,
+          chosen: chosenCodes.includes(code),
+          icon: data[artifactType].icon,
+          data,
+          count: 1,
+        };
 
-        if (data) {
-          const filterSet: ArtifactFilterSet = {
-            code,
-            chosen: chosenCodes.includes(code),
-            icon: data[artifactType].icon,
-            data,
-            count: 1,
-          };
-
-          countMap.set(code, filterSet);
-          result.push(filterSet);
-        }
+        countMap.set(code, filterSet);
+        result.push(filterSet);
       }
     }
     return result;

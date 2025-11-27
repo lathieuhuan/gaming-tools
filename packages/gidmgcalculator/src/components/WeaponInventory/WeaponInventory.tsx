@@ -1,39 +1,51 @@
 import { useRef, useState } from "react";
 import { EntitySelectTemplate, FancyBackSvg, Modal } from "rond";
 
-import type { UserWeapon } from "@/types";
+import type { IUserWeapon, WeaponType } from "@/types";
 
+import { UserWeapon } from "@/models/userdb";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import { WeaponType } from "@Calculation";
 import { selectUserWeapons } from "@Store/userdb-slice";
 
 // Component
+import { InventoryRack, ItemOption } from "../InventoryRack";
 import { WeaponCard } from "../WeaponCard";
-import { InventoryRack } from "../InventoryRack";
 
-interface WeaponInventoryProps {
+type WeaponInventoryProps = {
   weaponType: WeaponType;
   owner?: string | null;
   buttonText: string;
   onClickButton: (chosen: UserWeapon) => void;
   onClose: () => void;
-}
-const WeaponInventoryCore = ({ weaponType, owner, buttonText, onClickButton, onClose }: WeaponInventoryProps) => {
-  const items = useStoreSnapshot((state) => selectUserWeapons(state).filter((weapon) => weapon.type === weaponType));
+};
+
+const WeaponInventoryCore = ({
+  weaponType,
+  owner,
+  buttonText,
+  onClickButton,
+  onClose,
+}: WeaponInventoryProps) => {
+  const items = useStoreSnapshot((state) =>
+    selectUserWeapons(state).filter((weapon) => weapon.type === weaponType)
+  );
 
   const bodyRef = useRef<HTMLDivElement>(null);
   const [chosenWeapon, setChosenWeapon] = useState<UserWeapon>();
 
-  const onChangeItem = (weapon?: UserWeapon) => {
-    if (weapon) {
-      if (!chosenWeapon || weapon.ID !== chosenWeapon.ID) {
-        setChosenWeapon(weapon);
+  const onChangeItem = (option?: ItemOption<IUserWeapon>) => {
+    if (option) {
+      if (!chosenWeapon || option.userData.ID !== chosenWeapon.ID) {
+        setChosenWeapon(new UserWeapon(option.userData, option.data));
       }
+
       if (bodyRef.current) {
         bodyRef.current.scrollLeft = 9999;
       }
+
       return;
     }
+
     setChosenWeapon(undefined);
   };
 

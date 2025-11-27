@@ -1,20 +1,18 @@
 import { Fragment, ReactNode } from "react";
 
-import { selectAttkBonuses, selectCharacter, selectElmtModCtrls } from "@Store/calculator-slice";
-import { useSelector } from "@Store/hooks";
-import { useTeamData } from "../../ContextProvider";
+import Object_ from "@/utils/Object";
+import { useShallowCalcStore } from "@Store/calculator";
+import { selectSetup } from "@Store/calculator/selectors";
 
 import { AnemoAbsorptionCtrl } from "./AnemoAbsorptionCtrl";
 import { AttackReactionCtrl } from "./AttackReactionCtrl";
 import { CustomInfusionCtrl } from "./CustomInfusionCtrl";
 
 export function BuffElement() {
-  const character = useSelector(selectCharacter);
-  const elmtModCtrls = useSelector(selectElmtModCtrls);
-  const attkBonuses = useSelector(selectAttkBonuses);
-  const teamData = useTeamData();
-
-  const { vision, weaponType } = teamData.activeAppMember;
+  const { char: character, elmtEvent } = useShallowCalcStore((state) =>
+    Object_.pickProps(selectSetup(state), ["char", "elmtEvent"])
+  );
+  const { vision, weaponType } = character.data;
 
   const nodes: ReactNode[] = [];
 
@@ -26,9 +24,8 @@ export function BuffElement() {
         <AttackReactionCtrl
           configType="reaction"
           attackElmt={vision}
-          elmtModCtrls={elmtModCtrls}
-          attkBonuses={attkBonuses}
-          characterLv={character.level}
+          character={character}
+          elmtEvent={elmtEvent}
         />
       </div>
     );
@@ -37,26 +34,13 @@ export function BuffElement() {
   // ========== ANEMO ABSORPTION ==========
 
   if (vision === "anemo") {
-    nodes.push(
-      <AnemoAbsorptionCtrl
-        elmtModCtrls={elmtModCtrls}
-        attkBonuses={attkBonuses}
-        characterLv={character.level}
-      />
-    );
+    nodes.push(<AnemoAbsorptionCtrl elmtEvent={elmtEvent} character={character} />);
   }
 
   // ========== CUSTOM INFUSION ==========
 
   if (weaponType !== "catalyst") {
-    nodes.push(
-      <CustomInfusionCtrl
-        elmtModCtrls={elmtModCtrls}
-        attkBonuses={attkBonuses}
-        characterLv={character.level}
-        characterElmt={vision}
-      />
-    );
+    nodes.push(<CustomInfusionCtrl elmtEvent={elmtEvent} character={character} />);
   }
 
   return (

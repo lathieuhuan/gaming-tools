@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 
-import { selectCharacter, updateCharacter } from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
+import { useCalcStore } from "@Store/calculator";
+import { updateCharacter } from "@Store/calculator/actions";
+import { selectActiveCharacter } from "@Store/calculator/selectors";
+import { useSelector } from "@Store/hooks";
 import { selectAppReady } from "@Store/ui-slice";
-import { useCalcModalCtrl, useTeamData } from "../ContextProvider";
+import { useCalcModalCtrl } from "../ContextProvider";
 
 // Component
 import { CharacterIntro, ComplexSelect } from "@/components";
@@ -14,7 +16,7 @@ import {
   ConstellationTab,
   TalentsTab,
   WeaponTab,
-} from "./character-overview-tabs";
+} from "./tab-components";
 
 const TABS: SwitchNodeCase<string>[] = [
   { value: "Attributes", element: <AttributesTab /> },
@@ -25,9 +27,7 @@ const TABS: SwitchNodeCase<string>[] = [
 ];
 
 function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
-  const dispatch = useDispatch();
-  const character = useSelector(selectCharacter);
-  const record = useTeamData();
+  const character = useCalcStore(selectActiveCharacter);
 
   const [activeTab, setActiveTab] = useState("Attributes");
 
@@ -35,13 +35,12 @@ function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
     <div className="h-full flex flex-col gap-4">
       <CharacterIntro
         character={character}
-        appCharacter={record.activeAppMember}
         mutable
         switchable
         onSwitch={props.onClickSwitchCharacter}
-        onChangeLevel={(level) => dispatch(updateCharacter({ level }))}
-        onChangeCons={(cons) => dispatch(updateCharacter({ cons }))}
-        onEnhanceToggle={(enhanced) => dispatch(updateCharacter({ enhanced }))}
+        onChangeLevel={(level) => updateCharacter({ level })}
+        onChangeCons={(cons) => updateCharacter({ cons })}
+        onEnhanceToggle={(enhanced) => updateCharacter({ enhanced })}
       />
 
       <ComplexSelect
@@ -58,9 +57,10 @@ function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
   );
 }
 
-interface CharacterOverviewProps {
+type CharacterOverviewProps = {
   touched: boolean;
-}
+};
+
 export function CharacterOverview({ touched }: CharacterOverviewProps) {
   const appReady = useSelector(selectAppReady);
   const modalCtrl = useCalcModalCtrl();

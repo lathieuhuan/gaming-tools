@@ -1,7 +1,7 @@
 import type { CSSProperties, MouseEvent } from "react";
 import { clsx, ButtonGroup, ButtonGroupItem } from "rond";
 
-import type { Artifact } from "@/types";
+import type { Artifact } from "@/models/base";
 import { OwnerLabel } from "../OwnerLabel";
 import { ArtifactView, type ArtifactViewProps } from "./ArtifactView";
 
@@ -24,7 +24,7 @@ export type ArtifactCardProps<T extends Artifact = Artifact> = Omit<
   actions?: ArtifactCardAction<T>[];
 };
 
-export function ArtifactCard<T extends Artifact>({
+export function ArtifactCard<T extends Artifact = Artifact>({
   wrapperCls = "",
   className = "",
   style,

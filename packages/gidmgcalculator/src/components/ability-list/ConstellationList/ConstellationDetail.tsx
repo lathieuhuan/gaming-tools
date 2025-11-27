@@ -1,34 +1,34 @@
 import { CloseButton, LoadingSpin } from "rond";
-import { AppCharacter } from "@Calculation";
 
-import { $AppCharacter } from "@/services";
+import type { AppCharacter } from "@/types";
 import { useQuery } from "@/hooks";
+import { $AppCharacter } from "@/services";
 
 // Conponent
 import { markDim, markGreen } from "../../span";
 import { AbilityCarousel } from "../_components/AbilityCarousel";
 
 type ConstellationDetailProps = {
-  appCharacter: AppCharacter;
+  character: AppCharacter;
   consLv: number;
   onChangeConsLv?: (newLv: number) => void;
   onClose?: () => void;
 };
 
 export function ConstellationDetail({
-  appCharacter,
+  character,
   consLv,
   onChangeConsLv,
   onClose,
 }: ConstellationDetailProps) {
-  const { vision, constellation } = appCharacter;
+  const { vision, constellation } = character;
   const consInfo = constellation[consLv - 1] || {};
 
   const {
     isLoading,
     isError,
     data: descriptions,
-  } = useQuery([appCharacter.name], () => $AppCharacter.fetchConsDescriptions(appCharacter.name));
+  } = useQuery([character.name], () => $AppCharacter.fetchConsDescriptions(character.name));
 
   return (
     <div className="h-full flex flex-col hide-scrollbar">

@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
 import { Button, ButtonGroup, CloseButton, clsx, Modal, TrashCanSvg } from "rond";
 
-import type { Teammate, UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@/types";
+import type { Teammate, UserArtifacts, UserComplexSetup, UserSetup, IUserWeapon } from "@/types";
 import type { OpenModalFn } from "../types";
 
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
@@ -20,7 +20,7 @@ type SetupViewProps = {
   setup: UserSetup;
   complexSetup?: UserComplexSetup;
   teamData: CalcTeamData;
-  weapon: UserWeapon;
+  weapon: IUserWeapon;
   artifacts?: UserArtifacts;
   onEditSetup: () => void;
   onCalcTeammateSetup: (teammateIndex: number) => void;

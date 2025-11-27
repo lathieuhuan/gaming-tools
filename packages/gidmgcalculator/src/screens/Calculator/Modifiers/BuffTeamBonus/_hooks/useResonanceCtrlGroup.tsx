@@ -1,52 +1,51 @@
-import { Resonance } from "@/types";
-import { selectElmtModCtrls, updateResonance } from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
+import type { ResonanceModCtrl } from "@/types";
+import type { ControlGroup } from "../types";
 
-import { RESONANCE_INFO, ResonanceBuffItem } from "@/components";
-import { ControlGroup } from "../types";
+import { AutoResonanceBuffs, ResonanceBuffItem } from "@/components";
+import { useCalcStore } from "@Store/calculator";
+import { updateActiveSetup } from "@Store/calculator/actions";
+import { selectSetup } from "@Store/calculator/selectors";
+import { toggleRsnModCtrl, updateRsnModCtrlInputs } from "@Store/calculator/utils";
 
 export function useResonanceCtrlGroup(): ControlGroup {
-  const dispatch = useDispatch();
-  const { resonances } = useSelector(selectElmtModCtrls);
+  const rsnBuffCtrls = useCalcStore((state) => selectSetup(state).rsnBuffCtrls);
+  const team = useCalcStore((state) => selectSetup(state).team);
 
-  if (!resonances.length) {
+  if (!rsnBuffCtrls.length && !team.resonances.length) {
     return {
       isEmpty: true,
     };
   }
 
-  const handleToggleResonance = (resonance: Resonance) => {
-    dispatch(
-      updateResonance({
-        ...resonance,
-        activated: !resonance.activated,
-      })
-    );
+  const handleToggle = (ctrl: ResonanceModCtrl) => {
+    updateActiveSetup((setup) => {
+      setup.rsnBuffCtrls = toggleRsnModCtrl(rsnBuffCtrls, ctrl.element);
+    });
   };
 
-  const handleToggleResonanceInput =
-    (resonance: Resonance) => (currentInput: number, inputIndex: number) => {
-      if (resonance.inputs) {
-        const newInputs = [...resonance.inputs];
-        newInputs[inputIndex] = currentInput === 1 ? 0 : 1;
+  const handleToggleInput =
+    (ctrl: ResonanceModCtrl) => (currentInput: number, inputIndex: number) => {
+      const input = currentInput === 1 ? 0 : 1;
 
-        dispatch(updateResonance({ ...resonance, inputs: newInputs }));
-      }
+      updateActiveSetup((setup) => {
+        setup.rsnBuffCtrls = updateRsnModCtrlInputs(rsnBuffCtrls, ctrl.element, inputIndex, input);
+      });
     };
 
   const render = (className?: string) => (
     <div className={className}>
-      {resonances.map((resonance) => {
+      <AutoResonanceBuffs resonances={team.resonances} />
+
+      {rsnBuffCtrls.map((ctrl) => {
         return (
           <ResonanceBuffItem
-            key={resonance.vision}
+            key={ctrl.element}
             mutable
-            element={resonance.vision}
-            checked={resonance.activated}
-            onToggle={() => handleToggleResonance(resonance)}
-            inputs={resonance.inputs}
-            inputConfigs={RESONANCE_INFO[resonance.vision]?.inputConfigs}
-            onToggleCheck={handleToggleResonanceInput(resonance)}
+            element={ctrl.element}
+            checked={ctrl.activated}
+            onToggle={() => handleToggle(ctrl)}
+            inputs={ctrl.inputs}
+            onToggleCheck={handleToggleInput(ctrl)}
           />
         );
       })}

@@ -13,7 +13,7 @@ import {
   WarehouseLayout,
 } from "rond";
 
-import type { UserWeapon } from "@/types";
+import type { IUserWeapon } from "@/types";
 
 import { MAX_USER_WEAPONS } from "@/constants";
 import { useTravelerKey } from "@/hooks";
@@ -78,14 +78,14 @@ function MyWeapons() {
     }
   };
 
-  const onClickRemoveWeapon = (weapon: UserWeapon) => {
+  const onClickRemoveWeapon = (weapon: IUserWeapon) => {
     if (weapon.setupIDs?.length) {
       return message.info("This weapon cannot be deleted. It is used by some Setups.");
     }
     setModalType("REMOVE_WEAPON");
   };
 
-  const onConfirmRemoveWeapon = (weapon: UserWeapon) => {
+  const onConfirmRemoveWeapon = (weapon: IUserWeapon) => {
     dispatch(removeWeapon(weapon));
 
     const removedIndex = Array_.indexById(filteredWeapons, weapon.ID);
@@ -172,7 +172,7 @@ function MyWeapons() {
         onForgeWeapon={(weapon) => {
           if (checkIfMaxWeaponsReached()) return;
 
-          const newUserWeapon: UserWeapon = {
+          const newUserWeapon: IUserWeapon = {
             ...weapon,
             ID: Date.now(),
             owner: null,

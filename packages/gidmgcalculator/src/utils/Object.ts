@@ -27,14 +27,14 @@ export default class Object_ {
     TKey extends keyof TObject = keyof TObject
   >(obj: TObject, callback: (key: TKey, value: TObject[TKey]) => void) {
     for (const key in obj) {
-      callback(key as any, obj[key] as any);
+      callback(key as unknown as TKey, obj[key] as unknown as TObject[TKey]);
     }
   }
 
-  static pickProps<
-    TObject extends UnknownObject = UnknownObject,
-    TKey extends keyof TObject = keyof TObject
-  >(obj: TObject, keys: TKey[]) {
+  static pickProps<TObject, TKey extends keyof TObject = keyof TObject>(
+    obj: TObject,
+    keys: TKey[]
+  ) {
     const result = {} as Pick<TObject, TKey>;
 
     for (const key of keys) {

@@ -1,24 +1,28 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { PartiallyRequired, PartiallyRequiredOnly } from "rond";
-import type { WeaponType, ArtifactType } from "@Calculation";
+
 import type {
   ArtifactSubStat,
-  UserArtifact,
-  UserCharacter,
-  UserComplexSetup,
-  UserSetup,
-  UserSetupCalcInfo,
-  UserWeapon,
+  ArtifactType,
+  IUserArtifact,
+  IUserComplexSetup,
+  IUserSetup,
+  IUserSetupCalc,
+  IUserWeapon,
+  IUserCharacter,
+  WeaponType,
 } from "@/types";
 
 export type AddUserDatabaseAction = PayloadAction<{
-  characters?: UserCharacter[];
-  weapons?: UserWeapon[];
-  artifacts?: UserArtifact[];
-  setups?: (UserSetup | UserComplexSetup)[];
+  characters?: IUserCharacter[];
+  weapons?: IUserWeapon[];
+  artifacts?: IUserArtifact[];
+  setups?: (IUserSetup | IUserComplexSetup)[];
 }>;
 
-export type UpdateUserCharacterAction = PayloadAction<PartiallyRequired<Partial<UserCharacter>, "name">>;
+export type UpdateUserCharacterAction = PayloadAction<
+  PartiallyRequired<Partial<IUserCharacter>, "name">
+>;
 
 export type UpdateUserArtifactSubStatAction = PayloadAction<
   { ID: number; subStatIndex: number } & Partial<ArtifactSubStat>
@@ -30,9 +34,11 @@ export type RemoveArtifactAction = PayloadAction<{
   type: ArtifactType;
 }>;
 
-export type UpdateUserWeaponAction = PayloadAction<PartiallyRequired<Partial<UserWeapon>, "ID">>;
+export type UpdateUserWeaponAction = PayloadAction<PartiallyRequired<Partial<IUserWeapon>, "ID">>;
 
-export type UpdateUserArtifactAction = PayloadAction<PartiallyRequired<Partial<UserArtifact>, "ID">>;
+export type UpdateUserArtifactAction = PayloadAction<
+  PartiallyRequired<Partial<IUserArtifact>, "ID">
+>;
 
 export type RemoveWeaponAction = PayloadAction<{
   ID: number;
@@ -67,7 +73,7 @@ export type SwitchArtifactAction = PayloadAction<
 export type SaveSetupAction = PayloadAction<{
   ID: number;
   name: string;
-  data: UserSetupCalcInfo;
+  data: IUserSetupCalc;
 }>;
 
 export type CombineSetupsAction = PayloadAction<{
@@ -85,4 +91,4 @@ export type AddSetupToComplexAction = PayloadAction<{
   pickedIDs: number[];
 }>;
 
-export type AddCharacterAction = PayloadAction<PartiallyRequiredOnly<UserCharacter, "name">>;
+export type AddCharacterAction = PayloadAction<PartiallyRequiredOnly<IUserCharacter, "name">>;

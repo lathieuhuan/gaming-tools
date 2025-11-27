@@ -6,12 +6,13 @@ export type Option = {
   label: string;
 };
 
-interface CopySectionProps<TOption> {
+type CopySectionProps<TOption> = {
   className?: string;
   options: TOption[];
   defaultIndex?: number;
   onClickCopy: (option: TOption) => void;
-}
+};
+
 export function CopySection<TOption extends Option>({
   className,
   options,

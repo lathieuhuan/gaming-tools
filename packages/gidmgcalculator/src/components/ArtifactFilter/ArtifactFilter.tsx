@@ -1,12 +1,13 @@
-import { ArtifactType } from "@Calculation";
 import { useState } from "react";
 import { FaCaretRight, FaEraser } from "react-icons/fa";
 import { TbRectangleVerticalFilled } from "react-icons/tb";
 import { Button, clsx, Modal, useScreenWatcher, useValues, type ClassValue } from "rond";
 
-import type { CalcArtifact } from "@/types";
-import { useArtifactSetFilter, useArtifactStatFilter } from "./_hooks";
+import type { Artifact } from "@/models/base";
+import type { ArtifactType } from "@/types";
 import type { ArtifactFilterCondition } from "./types";
+
+import { useArtifactSetFilter, useArtifactStatFilter } from "./_hooks";
 
 // Component
 import { ArtifactTypeSelect } from "@/components/ArtifactTypeSelect";
@@ -14,22 +15,22 @@ import { FilterTemplate } from "@/components/FilterTemplate";
 import { ArtifactSetFilter } from "./ArtifactSetFilter";
 import { ArtifactStatFilter } from "./ArtifactStatFilter";
 
-export type ArtifactFilterProps = {
+export type ArtifactFilterProps<T extends Artifact = Artifact> = {
   forcedType?: ArtifactType;
-  artifacts: CalcArtifact[];
+  artifacts: T[];
   initialFilter: ArtifactFilterCondition;
   onConfirm: (filterCondition: ArtifactFilterCondition) => void;
   onClose: () => void;
 };
 
 /** Only used on Modals */
-export const ArtifactFilter = ({
+export const ArtifactFilter = <T extends Artifact = Artifact>({
   forcedType,
   artifacts,
   initialFilter,
   onConfirm,
   onClose,
-}: ArtifactFilterProps) => {
+}: ArtifactFilterProps<T>) => {
   const screenWatcher = useScreenWatcher();
   const minIndex = forcedType ? 1 : 0;
 

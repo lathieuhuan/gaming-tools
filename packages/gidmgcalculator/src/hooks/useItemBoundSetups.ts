@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 
-import type { UserItem, UserSetup } from "@/types";
+import type { IUserItem, UserSetup } from "@/types";
 import Setup_ from "@/utils/Setup";
 import Array_ from "@/utils/Array";
 
@@ -8,7 +8,7 @@ import Array_ from "@/utils/Array";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUserArtifact, updateUserWeapon, selectUserSetups } from "@Store/userdb-slice";
 
-export type BoundingItem = Pick<UserItem, "ID" | "setupIDs">;
+export type BoundingItem = Pick<IUserItem, "ID" | "setupIDs">;
 
 export function useItemBoundSetups(item?: BoundingItem, isWeapon?: boolean): UserSetup[] {
   const dispatch = useDispatch();

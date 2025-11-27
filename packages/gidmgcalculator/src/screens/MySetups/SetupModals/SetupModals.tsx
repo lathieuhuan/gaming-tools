@@ -1,7 +1,7 @@
 import { GeneralCalc } from "@Calculation";
 import { ConfirmModal, Modal } from "rond";
 
-import type { UserArtifacts, UserSetup, UserWeapon } from "@/types";
+import type { UserArtifacts, UserSetup, IUserWeapon } from "@/types";
 import type { CalculationResult } from "../types";
 
 import Setup_ from "@/utils/Setup";
@@ -15,7 +15,7 @@ import { Modifiers } from "./Modifiers";
 
 type SetupModalsProps = {
   setup: UserSetup;
-  weapon: UserWeapon;
+  weapon: IUserWeapon;
   artifacts: UserArtifacts;
   result: CalculationResult;
 };

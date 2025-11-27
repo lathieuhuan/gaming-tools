@@ -1,4 +1,4 @@
-import type { AppArtifact, ArtifactType } from "@Calculation";
+import type { AppArtifact, ArtifactType } from "@/types";
 import type { Artifact } from "@/types";
 import type { GOODArtifact } from "@/types/GOOD.types";
 import type { DataControl } from "./app-data.types";

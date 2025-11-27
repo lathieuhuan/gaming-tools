@@ -1,42 +1,40 @@
-import type { Teammates } from "@/types";
-import { useDispatch } from "@Store/hooks";
+import { useCalcStore } from "@Store/calculator";
 import {
-  changeTeammateModCtrlInput,
   toggleTeammateModCtrl,
-  type ToggleTeammateModCtrlPath,
-} from "@Store/calculator-slice";
-import { TeammateDebuffsView } from "@/components";
-import { useCalcTeamData } from "../ContextProvider";
+  ToggleTeammateModCtrlPath,
+  updateTeammateModCtrlInput,
+} from "@Store/calculator/actions";
+import { selectSetup } from "@Store/calculator/selectors";
 
-export default function DebuffTeammates(props: { teammates: Teammates }) {
-  const dispatch = useDispatch();
-  const teamData = useCalcTeamData();
+import { TeammateDebuffsView } from "@/components";
+
+export default function DebuffTeammates() {
+  const teammates = useCalcStore((state) => selectSetup(state).teammates);
 
   return (
     <TeammateDebuffsView
       mutable
-      teamData={teamData}
-      teammates={props.teammates}
-      getHanlders={({ ctrl, teammateIndex }) => {
+      teammates={teammates}
+      getHanlders={(teammate, ctrl) => {
         const path: ToggleTeammateModCtrlPath = {
-          teammateIndex,
+          teammateCode: teammate.data.code,
           modCtrlName: "debuffCtrls",
-          ctrlIndex: ctrl.index,
+          ctrlId: ctrl.id,
         };
 
-        const updateDebuffCtrlInput = (value: number, inputIndex: number) => {
-          dispatch(changeTeammateModCtrlInput(Object.assign({ value, inputIndex }, path)));
+        const updateBuffCtrlInput = (value: number, inputIndex: number) => {
+          updateTeammateModCtrlInput(path, inputIndex, value);
         };
 
         return {
           onToggle: () => {
-            dispatch(toggleTeammateModCtrl(path));
+            toggleTeammateModCtrl(path);
           },
           onToggleCheck: (currentInput, inputIndex) => {
-            updateDebuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
+            updateBuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
           },
-          onChangeText: updateDebuffCtrlInput,
-          onSelectOption: updateDebuffCtrlInput,
+          onChangeText: updateBuffCtrlInput,
+          onSelectOption: updateBuffCtrlInput,
         };
       }}
     />

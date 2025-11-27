@@ -1,3 +1,4 @@
+// TODO remove
 export function renderModifiers(modifiers: (JSX.Element | null)[], type: "buffs" | "debuffs", mutable?: boolean) {
   return modifiers.some((modifier) => modifier !== null) ? (
     <div className={`pt-2 ${mutable ? "space-y-3" : "space-y-2"}`}>{modifiers}</div>

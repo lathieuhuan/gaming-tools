@@ -1,21 +1,27 @@
-import type { CalculationFinalResult, CalcTeamData } from "@Calculation";
+import type { CalcResult } from "@/calculation-new/calculator/types";
+import type { ActualAttackElement } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
+import { displayValues } from "./utils";
 
-interface FinalResultViewProps
-  extends Pick<FinalResultLayoutProps, "weapon" | "talentMutable" | "onChangeTalentLevel"> {
-  teamData: CalcTeamData;
-  finalResult: CalculationFinalResult;
-}
-export function FinalResultView({ teamData, finalResult, ...props }: FinalResultViewProps) {
+type FinalResultViewProps = Pick<
+  FinalResultLayoutProps,
+  "character" | "talentMutable" | "onTalentLevelChange"
+> & {
+  finalResult: CalcResult;
+};
+
+export function FinalResultView({ finalResult, ...props }: FinalResultViewProps) {
   const { t } = useTranslation();
+
+  const displayAttElmt = (attElmt: ActualAttackElement) => {
+    return attElmt === "phys" ? "physical" : attElmt;
+  };
 
   return (
     <FinalResultLayout
       {...props}
-      appCharacter={teamData.activeAppMember}
-      getTalentLevel={teamData.getFinalTalentLv}
       showWeaponCalc
       headerConfigs={[
         {
@@ -33,25 +39,37 @@ export function FinalResultView({ teamData, finalResult, ...props }: FinalResult
         const result = finalResult[mainKey][subKey];
         let title: string | undefined;
 
-        if (result.type === "attack") {
-          const elmt = result.attElmt === "phys" ? "physical" : result.attElmt;
-          const patt = result.attPatt !== "none" ? ` / ${t(result.attPatt).toLowerCase()}` : "";
-          title = `${elmt}${patt}`;
+        switch (result.type) {
+          case "attack": {
+            const elmt = displayAttElmt(result.attElmt);
+            const patt = result.attPatt !== "none" ? ` / ${t(result.attPatt).toLowerCase()}` : "";
+            title = `${elmt}${patt}`;
+            break;
+          }
+          case "reaction": {
+            const elmt = displayAttElmt(result.attElmt);
+            const reaction = result.reaction ? ` / ${result.reaction}` : "";
+            title = `${elmt}${reaction}`;
+            break;
+          }
+          default: {
+            break;
+          }
         }
 
         return {
           title,
           cells: [
             {
-              value: result.nonCrit,
+              value: displayValues(result.values, "base"),
               className: "text-right",
             },
             {
-              value: result.crit,
+              value: displayValues(result.values, "crit"),
               className: "text-right",
             },
             {
-              value: result.average,
+              value: displayValues(result.values, "average"),
               className: "text-right text-primary-1",
             },
           ],

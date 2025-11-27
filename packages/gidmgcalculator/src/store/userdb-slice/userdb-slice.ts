@@ -1,7 +1,13 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { ARTIFACT_TYPES } from "@Calculation";
 
-import type { UserArtifact, UserCharacter, UserComplexSetup, UserSetup, UserWeapon } from "@/types";
+import type {
+  IUserArtifact,
+  IUserComplexSetup,
+  IUserSetup,
+  IUserWeapon,
+  IUserCharacter,
+} from "@/types";
 import type {
   AddCharacterAction,
   AddSetupToComplexAction,
@@ -26,10 +32,10 @@ import Entity_ from "@/utils/Entity";
 import Array_ from "@/utils/Array";
 
 export type UserdbState = {
-  userChars: UserCharacter[];
-  userWps: UserWeapon[];
-  userArts: UserArtifact[];
-  userSetups: (UserSetup | UserComplexSetup)[];
+  userChars: IUserCharacter[];
+  userWps: IUserWeapon[];
+  userArts: IUserArtifact[];
+  userSetups: (IUserSetup | IUserComplexSetup)[];
   chosenChar: string;
   chosenSetupID: number;
 };
@@ -72,7 +78,12 @@ export const userdbSlice = createSlice({
     // CHARACTER
     /** Overwrite if character already exists */
     addCharacter: (state, action: AddCharacterAction) => {
-      const { name, weaponID, artifactIDs = [null, null, null, null, null], ...defaultValues } = action.payload;
+      const {
+        name,
+        weaponID,
+        artifactIDs = [null, null, null, null, null],
+        ...defaultValues
+      } = action.payload;
       const foundIndex = state.userChars.findIndex((char) => char.name === name);
       const newChar = {
         ...Entity_.createCharacter(name, defaultValues),
@@ -196,7 +207,7 @@ export const userdbSlice = createSlice({
       }
     },
     // WEAPON
-    addUserWeapon: (state, action: PayloadAction<UserWeapon>) => {
+    addUserWeapon: (state, action: PayloadAction<IUserWeapon>) => {
       state.userWps.push(action.payload);
     },
     /** Require index (prioritized) or ID */
@@ -287,7 +298,7 @@ export const userdbSlice = createSlice({
       }
     },
     // ARTIFACT
-    addUserArtifact: (state, action: PayloadAction<UserArtifact | UserArtifact[]>) => {
+    addUserArtifact: (state, action: PayloadAction<IUserArtifact | IUserArtifact[]>) => {
       state.userArts.push(...Array_.toArray(action.payload));
     },
     updateUserArtifact: (state, action: UpdateUserArtifactAction) => {
@@ -450,7 +461,9 @@ export const userdbSlice = createSlice({
         const lastIndex = visibleIDs.length - 1;
 
         state.chosenSetupID =
-          removedIndexInVisible === lastIndex ? visibleIDs[lastIndex - 1] || 0 : visibleIDs[removedIndexInVisible + 1];
+          removedIndexInVisible === lastIndex
+            ? visibleIDs[lastIndex - 1] || 0
+            : visibleIDs[removedIndexInVisible + 1];
       }
     },
     combineSetups: (state, action: CombineSetupsAction) => {

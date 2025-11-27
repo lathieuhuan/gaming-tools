@@ -18,6 +18,7 @@ type RenderCardProps = {
   placeholder?: ReactNode;
 };
 
+// TODO move Card inside each component
 export const getCards = ({ touched, isModernUI }: GetCardsOptions) => {
   return {
     Overview: (props?: RenderCardProps) => (

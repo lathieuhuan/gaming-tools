@@ -1,9 +1,13 @@
-import { ATTACK_PATTERNS, AppCharacter, CharacterCalc, TalentType } from "@Calculation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { CloseButton, LoadingSpin, StatsTable, VersatileSelect, round } from "rond";
 
+import type { AppCharacter, TalentType } from "@/types";
+
+import { getTalentDefaultValues } from "@/calculation-new/calculator/getTalentDefaultValues";
+import { ATTACK_PATTERNS } from "@/constants";
 import { useQuery, useTabs, useTranslation } from "@/hooks";
+import { Character } from "@/models/base";
 import { $AppCharacter } from "@/services";
 import { genSequentialOptions } from "@/utils";
 import Array_ from "@/utils/Array";
@@ -20,20 +24,20 @@ const useTalentDescriptions = (characterName: string, auto: boolean) => {
 };
 
 type TalentDetailProps = {
-  appCharacter: AppCharacter;
+  character: AppCharacter;
   detailIndex: number;
   onChangeDetailIndex: (newIndex: number) => void;
   onClose: () => void;
 };
 
 export function TalentDetail({
-  appCharacter,
+  character,
   detailIndex,
   onChangeDetailIndex,
   onClose,
 }: TalentDetailProps) {
   const { t } = useTranslation();
-  const { weaponType, vision, activeTalents, passiveTalents } = appCharacter;
+  const { weaponType, vision, activeTalents, passiveTalents } = character;
   const { ES, EB, altSprint } = activeTalents;
   const isPassiveTalent = detailIndex > Object.keys(activeTalents).length - 1;
   const images = [NORMAL_ATTACK_ICONS[`${weaponType}_${vision}`] || "", ES.image, EB.image];
@@ -47,7 +51,7 @@ export function TalentDetail({
     isLoading,
     isError,
     data: descriptions,
-  } = useTalentDescriptions(appCharacter.name, !activeIndex);
+  } = useTalentDescriptions(character.name, !activeIndex);
 
   if (altSprint) {
     images.push(altSprint.image);
@@ -63,7 +67,7 @@ export function TalentDetail({
     }
   }, [isPassiveTalent]);
 
-  const talents = useMemo(() => processTalents(appCharacter, talentLevel, t), [talentLevel]);
+  const talents = useMemo(() => processTalents(character, talentLevel, t), [talentLevel]);
 
   const talent = talents[detailIndex];
   const levelable = talent?.type !== "altSprint";
@@ -198,18 +202,19 @@ type ProcessedStat = {
 
 type ProcessedTalentType = TalentType | "A1" | "A4" | "utility";
 
-interface ProcessedTalent {
+type ProcessedTalent = {
   name: string;
   label: string;
   type: ProcessedTalentType;
   stats: ProcessedStat[];
-}
+};
+
 function processTalents(
-  appCharacter: AppCharacter,
+  character: AppCharacter,
   level: number,
   translate: (word: string) => string
 ): ProcessedTalent[] {
-  const { NAs, ES, EB, altSprint } = appCharacter.activeTalents;
+  const { NAs, ES, EB, altSprint } = character.activeTalents;
 
   const result: ProcessedTalent[] = [
     { name: NAs.name, type: "NAs", label: translate("NAs"), stats: [] },
@@ -218,19 +223,21 @@ function processTalents(
   ];
 
   for (const attPatt of ATTACK_PATTERNS) {
-    const default_ = CharacterCalc.getTalentDefaultInfo(attPatt, appCharacter);
-    const talent = result.find((item) => item.type === default_.resultKey);
+    const default_ = getTalentDefaultValues(
+      character,
+      attPatt,
+      attPatt === "ES" || attPatt === "EB"
+    );
+    const resultKey = attPatt === "ES" || attPatt === "EB" ? attPatt : "NAs";
+    const talent = result.find((item) => item.type === resultKey);
     if (!talent) continue;
 
-    for (const stat of appCharacter.calcList[attPatt]) {
+    for (const stat of character.calcList[attPatt]) {
       const factors = Array_.toArray(stat.factor);
       const { flatFactor } = stat;
       const factorStrings = [];
 
-      if (
-        stat.notOfficial ||
-        factors.some((factor) => typeof factor !== "number" && factor.scale === 0)
-      ) {
+      if (factors.some((factor) => typeof factor !== "number" && factor.scale === 0)) {
         continue;
       }
 
@@ -242,7 +249,7 @@ function processTalents(
         } = typeof factor === "number" ? { root: factor } : factor;
 
         if (scale && root) {
-          let string = round(root * CharacterCalc.getTalentMult(scale, level), 2) + "%";
+          let string = round(root * Character.getTalentMult(scale, level), 2) + "%";
 
           if (basedOn) {
             string += ` ${translate(basedOn)}`;
@@ -256,9 +263,7 @@ function processTalents(
         const { root, scale = default_.flatFactorScale } =
           typeof flatFactor === "number" ? { root: flatFactor } : flatFactor;
 
-        factorStrings.push(
-          Math.round(root * (scale ? CharacterCalc.getTalentMult(scale, level) : 1))
-        );
+        factorStrings.push(Math.round(root * (scale ? Character.getTalentMult(scale, level) : 1)));
       }
 
       talent.stats.push({
@@ -270,7 +275,7 @@ function processTalents(
 
   result[2].stats.push({
     name: "Energy cost",
-    value: appCharacter.EBcost,
+    value: character.EBcost,
   });
 
   if (altSprint) {
@@ -286,7 +291,7 @@ function processTalents(
   const passiveLabels = ["Ascension 1", "Ascension 4", "Utility"];
 
   result.push(
-    ...appCharacter.passiveTalents.map<ProcessedTalent>((talent, i) => {
+    ...character.passiveTalents.map<ProcessedTalent>((talent, i) => {
       return {
         name: talent.name,
         type: passiveTypes[i],

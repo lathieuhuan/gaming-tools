@@ -12,7 +12,7 @@ import type {
   UserComplexSetup,
   UserSetup,
   UserSetupCalcInfo,
-  UserWeapon,
+  IUserWeapon,
 } from "@/types";
 import Modifier_ from "./Modifier";
 import Array_ from "./Array";
@@ -31,7 +31,7 @@ export default class Setup_ {
 
   static userSetupToCalcSetup(
     setup: UserSetup,
-    weapon: UserWeapon,
+    weapon: IUserWeapon,
     artifacts: UserArtifacts,
     shouldRestore?: boolean
   ): CalcSetup {

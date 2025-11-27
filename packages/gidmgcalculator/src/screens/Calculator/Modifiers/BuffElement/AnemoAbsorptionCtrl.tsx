@@ -1,23 +1,21 @@
-import { AttackBonuses, ElementType, Level } from "@Calculation";
 import { useState } from "react";
 import { SelectOption, VersatileSelect } from "rond";
 
-import { ElementModCtrl } from "@/types";
-import { updateCalcSetup } from "@Store/calculator-slice";
-import { useDispatch } from "@Store/hooks";
+import type { ElementType, ElementalEvent } from "@/types";
+import type { CalcCharacter } from "@/models/base";
+
+import { updateElementalEvent } from "@Store/calculator/actions";
 
 import { GenshinModifierView } from "@/components";
 import { AttackReactionCtrl } from "./AttackReactionCtrl";
 
 type AnemoAbsorptionCtrlProps = {
-  elmtModCtrls: ElementModCtrl;
-  attkBonuses: AttackBonuses;
-  characterLv: Level;
+  elmtEvent: ElementalEvent;
+  character: CalcCharacter;
 };
 
-export function AnemoAbsorptionCtrl({ elmtModCtrls, attkBonuses, characterLv }: AnemoAbsorptionCtrlProps) {
-  const { absorption } = elmtModCtrls;
-  const dispatch = useDispatch();
+export function AnemoAbsorptionCtrl({ elmtEvent, character }: AnemoAbsorptionCtrlProps) {
+  const { absorption } = elmtEvent;
 
   const [absorbedValue, setAbsorbedValue] = useState(absorption ?? "pyro");
 
@@ -29,28 +27,18 @@ export function AnemoAbsorptionCtrl({ elmtModCtrls, attkBonuses, characterLv }: 
   ];
 
   const onToggleAbsorption = () => {
-    dispatch(
-      updateCalcSetup({
-        elmtModCtrls: {
-          ...elmtModCtrls,
-          absorption: absorption ? null : absorbedValue,
-          absorb_reaction: null,
-        },
-      })
-    );
+    updateElementalEvent({
+      absorption: absorption ? null : absorbedValue,
+      absorbReaction: null,
+    });
   };
 
   const onChangeAbsorbedElmt = (newAbsorption: ElementType) => {
     setAbsorbedValue(newAbsorption);
 
-    dispatch(
-      updateCalcSetup({
-        elmtModCtrls: {
-          ...elmtModCtrls,
-          absorption: newAbsorption,
-        },
-      })
-    );
+    updateElementalEvent({
+      absorption: newAbsorption,
+    });
   };
 
   return (
@@ -77,11 +65,10 @@ export function AnemoAbsorptionCtrl({ elmtModCtrls, attkBonuses, characterLv }: 
       {absorption ? (
         <div className="mt-3 space-y-3">
           <AttackReactionCtrl
-            configType="absorb_reaction"
+            configType="absorbReaction"
             attackElmt={absorption}
-            elmtModCtrls={elmtModCtrls}
-            attkBonuses={attkBonuses}
-            characterLv={characterLv}
+            elmtEvent={elmtEvent}
+            character={character}
           />
         </div>
       ) : null}

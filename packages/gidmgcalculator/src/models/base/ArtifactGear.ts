@@ -1,0 +1,132 @@
+import type {
+  ArtifactType,
+  IArtifact,
+  IArtifactGear,
+  IArtifactGearPieces,
+  IArtifactGearSet,
+  TotalAttributes,
+} from "@/types";
+import type { Artifact } from "./Artifact";
+
+import { ARTIFACT_TYPES, CORE_STAT_TYPES } from "@/constants";
+import { applyPercent } from "@/utils/pure-utils";
+import TypeCounter from "@/utils/TypeCounter";
+
+class PiecesIterator<TArtifact extends IArtifact> implements Iterator<TArtifact> {
+  private index = 0;
+
+  constructor(private pieces: IArtifactGearPieces<TArtifact>) {}
+
+  private getNextPiece(): TArtifact | undefined {
+    const type = ARTIFACT_TYPES.at(this.index);
+
+    if (!type) {
+      return undefined;
+    }
+
+    this.index++;
+
+    return this.pieces[type] || this.getNextPiece();
+  }
+
+  next(): IteratorResult<TArtifact, undefined> {
+    const value = this.getNextPiece();
+    return value ? { value, done: false } : { value: undefined, done: true };
+  }
+}
+
+export class ArtifactGearPieces<TArtifact extends IArtifact>
+  implements IArtifactGearPieces<TArtifact>
+{
+  flower?: TArtifact;
+  plume?: TArtifact;
+  sands?: TArtifact;
+  goblet?: TArtifact;
+  circlet?: TArtifact;
+
+  constructor(pieces?: Partial<Record<ArtifactType, TArtifact>>) {
+    this.flower = pieces?.flower;
+    this.plume = pieces?.plume;
+    this.sands = pieces?.sands;
+    this.goblet = pieces?.goblet;
+    this.circlet = pieces?.circlet;
+  }
+
+  [Symbol.iterator](): Iterator<TArtifact> {
+    return new PiecesIterator(this);
+  }
+}
+
+export class ArtifactGear<TArtifact extends Artifact = Artifact>
+  implements IArtifactGear<TArtifact>
+{
+  pieces: ArtifactGearPieces<TArtifact>;
+  orderedPieces: (TArtifact | null)[] = [];
+  sets: IArtifactGearSet[] = [];
+  attributes: TotalAttributes = new TypeCounter();
+
+  constructor(pieces?: IArtifactGearPieces<TArtifact> | TArtifact[]) {
+    const gearPieces: Partial<Record<ArtifactType, TArtifact>> = {};
+    const orderedPieces: (TArtifact | null)[] = [];
+
+    const getPiece = Array.isArray(pieces)
+      ? (type: ArtifactType) => pieces.find((piece) => piece.type === type)
+      : (type: ArtifactType) => pieces?.[type];
+
+    for (const type of ARTIFACT_TYPES) {
+      gearPieces[type] = getPiece(type);
+      orderedPieces.push(gearPieces[type] || null);
+    }
+
+    this.pieces = new ArtifactGearPieces(gearPieces);
+    this.orderedPieces = orderedPieces;
+
+    if (!pieces) {
+      return;
+    }
+
+    const sets: IArtifactGearSet[] = [];
+    const attributes: TotalAttributes = new TypeCounter();
+    const counter = new TypeCounter();
+
+    for (const artifact of pieces) {
+      const codeCount = counter.add(artifact.code);
+
+      if (codeCount === 2) {
+        sets.push({
+          bonusLv: 0,
+          pieceCount: 2,
+          data: artifact.data,
+        });
+      } else if (codeCount === 4) {
+        sets[0].bonusLv = 1;
+        sets[0].pieceCount = 4;
+      }
+
+      attributes.add(artifact.mainStatType, artifact.mainStatValue);
+
+      artifact.subStats.forEach((subStat) => {
+        attributes.add(subStat.type, subStat.value);
+      });
+    }
+
+    this.sets = sets;
+    this.attributes = attributes;
+  }
+
+  finalizeAttributes = (baseStats: { hp_base: number; atk_base: number; def_base: number }) => {
+    const result = { ...this.attributes.result };
+
+    for (const statType of CORE_STAT_TYPES) {
+      const percentStatValue = this.attributes.get(`${statType}_`);
+
+      if (percentStatValue) {
+        result[statType] += applyPercent(baseStats[`${statType}_base`], percentStatValue);
+      }
+
+      delete result[`${statType}_`];
+    }
+
+    return new TypeCounter(result);
+  };
+}

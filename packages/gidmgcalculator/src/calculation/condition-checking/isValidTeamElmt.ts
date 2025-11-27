@@ -1,9 +1,9 @@
-import type { ElementCount, TeamElementCondition } from "@/calculation/types";
+import type { ElementCount, TeamElementConditions } from "@/calculation/types";
 
 import TypeCounter from "@/utils/TypeCounter";
 import { isPassedComparison } from "./isPassedComparison";
 
-export function isValidTeamElmt(allElmtCount: ElementCount, condition: TeamElementCondition) {
+export function isValidTeamElmt(allElmtCount: ElementCount, condition: TeamElementConditions) {
   const { teamOnlyElmts, teamEachElmtCount, teamElmtTotalCount, teamTotalElmtCount } = condition;
 
   if (teamOnlyElmts && allElmtCount.keys.some((elementType) => !teamOnlyElmts.includes(elementType))) {

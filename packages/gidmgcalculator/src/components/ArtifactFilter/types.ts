@@ -1,4 +1,4 @@
-import { AppArtifact, ArtifactType, AttributeStat } from "@Calculation";
+import type { AppArtifact, ArtifactType, AttributeStat } from "@/types";
 
 export type ArtifactFilterSet = {
   code: number;

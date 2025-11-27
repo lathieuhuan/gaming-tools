@@ -1,8 +1,7 @@
 import { FaCaretRight } from "react-icons/fa";
 import { TbRectangleVerticalFilled } from "react-icons/tb";
-import { clsx } from "rond";
 
-import { ElementType } from "@Calculation";
+import type { ElementType } from "@/types";
 import { ABILITY_ICON_SIZE, AbilityIcon } from "./AbilityIcon";
 
 type AbilityCarouselProps = {

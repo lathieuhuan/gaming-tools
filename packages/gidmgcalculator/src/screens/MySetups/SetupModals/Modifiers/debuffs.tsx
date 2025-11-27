@@ -1,5 +1,5 @@
 import type { CustomDebuffCtrl, Resonance } from "@/types";
-import { GeoResoDebuffItem, SuperconductDebuffItem, renderModifiers } from "@/components";
+import { SuperconductDebuffItem, renderModifiers } from "@/components";
 import { useTranslation } from "@/hooks";
 
 type ElementDebuffsProps = {
@@ -14,7 +14,7 @@ export function ElementDebuffs({ superconduct, resonances }: ElementDebuffsProps
     content.push(<SuperconductDebuffItem key="sc" mutable={false} />);
   }
   if (resonances.some((rsn) => rsn.vision === "geo")) {
-    content.push(<GeoResoDebuffItem key="geo" mutable={false} />);
+    // content.push(<GeoResoDebuffItem key="geo" mutable={false} />);
   }
 
   return renderModifiers(content, "debuffs", false);

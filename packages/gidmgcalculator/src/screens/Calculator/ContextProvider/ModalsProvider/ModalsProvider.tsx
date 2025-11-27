@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { Modal } from "rond";
 
-import { useDispatch } from "@Store/hooks";
-import { initNewSessionWithCharacter } from "@Store/thunks";
+import { useStore } from "@/systems/dynamic-store";
+import { initSessionWithCharacter } from "./_actions/initSessionWithCharacter";
 import { CalculatorModalsContext, CalculatorModalsControl } from "./context";
 
 // Component
@@ -15,7 +15,8 @@ import { TargetConfig } from "./TargetConfig";
 type ModalType = "SWITCH_CHARACTER" | "SAVE_SETUP" | "IMPORT_SETUP" | "SHARE_SETUP" | "";
 
 export function ModalsProvider(props: { children: React.ReactNode }) {
-  const dispatch = useDispatch();
+  const store = useStore();
+
   const [modalType, setModalType] = useState<ModalType>("");
   const [setupId, setSetupId] = useState(0);
 
@@ -68,7 +69,10 @@ export function ModalsProvider(props: { children: React.ReactNode }) {
         active={modalType === "SWITCH_CHARACTER"}
         sourceType="mixed"
         onSelectCharacter={(character) => {
-          dispatch(initNewSessionWithCharacter(character));
+          initSessionWithCharacter(
+            character,
+            store.select((state) => state.userdb)
+          );
         }}
         onClose={closeModal}
       />

@@ -1,4 +1,4 @@
-import { AppCharacter, CharacterInnateBuff, TalentType } from "@Calculation";
+import { AppCharacter, CharacterInnateBuff, TalentType } from "@/types";
 
 import type { Character, TravelerInfo } from "@/types";
 import type { GOODCharacter } from "@/types/GOOD.types";

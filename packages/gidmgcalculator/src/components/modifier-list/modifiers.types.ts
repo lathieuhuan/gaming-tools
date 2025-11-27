@@ -1,16 +1,15 @@
-import type { ModifierCtrl, Teammate } from "@/types";
+import type { IModifierCtrlBasic, ITeammate } from "@/types";
 import type { GenshinModifierViewProps } from "../GenshinModifierView";
+import { CalcTeammate } from "@/models/calculator";
 
-export type GetModifierHanldersArgs<T extends ModifierCtrl = ModifierCtrl> = {
-  ctrl: T;
-  ctrlIndex: number;
-  ctrls: T[];
-};
+// TODO remove
+// export type GetModifierHanldersArgs<T extends IModifierCtrlBasic = IModifierCtrlBasic> = {
+//   ctrl: T;
+// };
 
-export type GetTeammateModifierHanldersArgs = GetModifierHanldersArgs & {
-  teammate: Teammate;
-  teammateIndex: number;
-};
+// export type GetTeammateModifierHanldersArgs = GetModifierHanldersArgs & {
+//   teammate: CalcTeammate;
+// };
 
 export type ModifierHanlders = Pick<
   GenshinModifierViewProps,

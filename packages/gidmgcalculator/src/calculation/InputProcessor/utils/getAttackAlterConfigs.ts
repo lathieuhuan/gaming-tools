@@ -1,12 +1,11 @@
 import type { CalcTeamData } from "@/calculation/CalcTeamData";
-import type { AttackAlterConfig, AttackPattern } from "@/calculation/types";
-import type { ModifierCtrl } from "@/types";
 
 import { NORMAL_ATTACKS } from "@/calculation/constants";
 import Array_ from "@/utils/Array";
+import type { IModifierCtrlBasic } from "@/types";
 
-export const getAttackAlterConfigs = (teamData: CalcTeamData, selfBuffCtrls: ModifierCtrl[]) => {
-  const configs: Partial<Record<AttackPattern, AttackAlterConfig>> = {};
+export const getAttackAlterConfigs = (teamData: CalcTeamData, selfBuffCtrls: IModifierCtrlBasic[]) => {
+  const configs: AttackAlterConfigs = {};
 
   for (const ctrl of selfBuffCtrls) {
     const buff = ctrl.activated

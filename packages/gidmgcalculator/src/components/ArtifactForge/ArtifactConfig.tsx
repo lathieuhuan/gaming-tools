@@ -1,10 +1,15 @@
 import { useEffect, useRef } from "react";
 import { Rarity } from "rond";
 
-import type { Artifact } from "@/types";
+import type { Artifact } from "@/models/base";
+import type { IArtifact } from "@/types";
 import Object_ from "@/utils/Object";
 
-import { ArtifactCard, ArtifactCardProps, type ArtifactCardAction } from "@/components/ArtifactCard";
+import {
+  ArtifactCard,
+  ArtifactCardProps,
+  type ArtifactCardAction,
+} from "@/components/ArtifactCard";
 
 type Mousedown = (e: KeyboardEvent) => void;
 
@@ -17,7 +22,7 @@ type ArtifactConfigProps = {
   mainActionLabel?: string;
   moreButtons?: ArtifactCardAction[];
   onRarityChange?: (rarity: number) => void;
-  onConfigUpdate?: (properties: Partial<Artifact>) => void;
+  onConfigUpdate?: (properties: Partial<IArtifact>) => void;
   onSelect?: (config: Artifact) => void;
 };
 

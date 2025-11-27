@@ -1,39 +1,34 @@
-import type { Teammates } from "@/types";
+import { useCalcStore } from "@Store/calculator";
 import {
-  changeTeammateModCtrlInput,
   toggleTeammateModCtrl,
-  type ToggleTeammateModCtrlPath,
-} from "@Store/calculator-slice";
-import { useDispatch } from "@Store/hooks";
-import { TeammateBuffsView } from "@/components";
-import { useCalcTeamData } from "../ContextProvider";
+  ToggleTeammateModCtrlPath,
+  updateTeammateModCtrlInput,
+} from "@Store/calculator/actions";
+import { selectSetup } from "@Store/calculator/selectors";
 
-interface BuffTeammatesProps {
-  teammates: Teammates;
-}
-export default function BuffTeammates(props: BuffTeammatesProps) {
-  const dispatch = useDispatch();
-  const teamData = useCalcTeamData();
+import { TeammateBuffsView } from "@/components";
+
+export default function BuffTeammates() {
+  const teammates = useCalcStore((state) => selectSetup(state).teammates);
 
   return (
     <TeammateBuffsView
       mutable
-      teammates={props.teammates}
-      teamData={teamData}
-      getHanlders={({ ctrl, teammateIndex }) => {
+      teammates={teammates}
+      getHanlders={(teammate, ctrl) => {
         const path: ToggleTeammateModCtrlPath = {
-          teammateIndex,
+          teammateCode: teammate.data.code,
           modCtrlName: "buffCtrls",
-          ctrlIndex: ctrl.index,
+          ctrlId: ctrl.id,
         };
 
         const updateBuffCtrlInput = (value: number, inputIndex: number) => {
-          dispatch(changeTeammateModCtrlInput(Object.assign({ value, inputIndex }, path)));
+          updateTeammateModCtrlInput(path, inputIndex, value);
         };
 
         return {
           onToggle: () => {
-            dispatch(toggleTeammateModCtrl(path));
+            toggleTeammateModCtrl(path);
           },
           onToggleCheck: (currentInput, inputIndex) => {
             updateBuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);

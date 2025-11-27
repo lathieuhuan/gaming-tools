@@ -1,6 +1,6 @@
 import { WeaponType } from "@Calculation";
 
-import type { CalcWeapon, UserArtifact, UserCharacter, UserWeapon } from "@/types";
+import type { CalcWeapon, IUserArtifact, UserCharacter, IUserWeapon } from "@/types";
 import Array_ from "@/utils/Array";
 import Entity_ from "@/utils/Entity";
 
@@ -10,8 +10,8 @@ export type CharacterForInit = Partial<UserCharacter> & {
 
 type ParseUserCharacterArgs = {
   character: CharacterForInit;
-  userWps: UserWeapon[];
-  userArts: UserArtifact[];
+  userWps: IUserWeapon[];
+  userArts: IUserArtifact[];
   weaponType: WeaponType;
   seedID: number;
 };

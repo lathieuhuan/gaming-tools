@@ -1,11 +1,11 @@
-import { ArtifactModCtrl, CalcArtifacts, UserArtifact } from "@/types";
+import { ArtifactModCtrl, CalcArtifacts, IUserArtifact } from "@/types";
 import { UserdbState, initialState } from "@Store/userdb-slice";
 import { UserDatabaseV0 } from "./migration.types";
 import { GeneralCalc } from "@Calculation";
 
 export const migrateSetupsToV1 = (
   setups: UserDatabaseV0["userSetups"] = [],
-  artifacts: UserArtifact[]
+  artifacts: IUserArtifact[]
 ): UserdbState["userSetups"] => {
   return setups.map((setup) => {
     switch (setup.type) {

@@ -1,4 +1,4 @@
-import type { AppWeapon, WeaponType } from "@Calculation";
+import type { AppWeapon, WeaponType } from "@/types";
 import type { Weapon } from "@/types";
 import type { GOODWeapon } from "@/types/GOOD.types";
 import type { DataControl } from "./app-data.types";

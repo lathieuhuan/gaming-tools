@@ -3,7 +3,7 @@ import { useEffect, useMemo } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, LoadingPlate, LoadingSpin, WarehouseLayout, clsx, useScreenWatcher } from "rond";
 
-import type { UserArtifacts, UserSetup, UserWeapon } from "@/types";
+import type { UserArtifacts, UserSetup, IUserWeapon } from "@/types";
 import type { OpenModalFn, SetupRenderInfo } from "./types";
 
 import { useTravelerKey } from "@/hooks";
@@ -41,7 +41,7 @@ function MySetups() {
     dispatch(updateUI({ mySetupsModalType: type }));
   };
 
-  const handleEditSetup = (setup: UserSetup, weapon: UserWeapon, artifacts: UserArtifacts) => {
+  const handleEditSetup = (setup: UserSetup, weapon: IUserWeapon, artifacts: UserArtifacts) => {
     const { ID, name, type, target } = setup;
 
     setupImporter.import({

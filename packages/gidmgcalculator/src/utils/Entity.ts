@@ -5,8 +5,8 @@ import type {
   CalcArtifact,
   CalcWeapon,
   Character,
-  UserArtifact,
-  UserWeapon,
+  IUserArtifact,
+  IUserWeapon,
   Weapon,
 } from "@/types";
 import { ATTACK_ELEMENTS, ArtifactCalc, ArtifactType, Level, WeaponType } from "@Calculation";
@@ -166,12 +166,12 @@ export default class Entity_ {
     return "refi" in item;
   }
 
-  static calcItemToUserItem(item: CalcArtifact, options?: CalcItemToUserItemOptions): UserArtifact;
-  static calcItemToUserItem(item: CalcWeapon, options?: CalcItemToUserItemOptions): UserWeapon;
+  static calcItemToUserItem(item: CalcArtifact, options?: CalcItemToUserItemOptions): IUserArtifact;
+  static calcItemToUserItem(item: CalcWeapon, options?: CalcItemToUserItemOptions): IUserWeapon;
   static calcItemToUserItem(
     item: CalcArtifact | CalcWeapon,
     options?: CalcItemToUserItemOptions
-  ): UserArtifact | UserWeapon {
+  ): IUserArtifact | IUserWeapon {
     const { ID = item.ID, owner = null, setupIDs } = options || {};
 
     return {
@@ -182,9 +182,9 @@ export default class Entity_ {
     };
   }
 
-  static userItemToCalcItem(item: UserWeapon, newID?: number): CalcWeapon;
-  static userItemToCalcItem(item: UserArtifact, newID?: number): CalcArtifact;
-  static userItemToCalcItem(item: UserWeapon | UserArtifact): CalcWeapon | CalcArtifact {
+  static userItemToCalcItem(item: IUserWeapon, newID?: number): CalcWeapon;
+  static userItemToCalcItem(item: IUserArtifact, newID?: number): CalcArtifact;
+  static userItemToCalcItem(item: IUserWeapon | IUserArtifact): CalcWeapon | CalcArtifact {
     const { owner, setupIDs, ...info } = item;
     return info;
   }

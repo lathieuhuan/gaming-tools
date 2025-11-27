@@ -1,4 +1,4 @@
-import { AppWeapon, WeaponBuff } from "@/calculation/types";
+import type { AppWeapon, WeaponBuff } from "@/types";
 import Array_ from "../Array";
 import { parseWeaponDesc } from "./parseWeaponDesc";
 

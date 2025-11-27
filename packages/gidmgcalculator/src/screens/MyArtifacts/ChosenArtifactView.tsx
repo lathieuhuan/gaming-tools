@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import { Button, clsx, ConfirmModal, TrashCanSvg } from "rond";
 import { MdEdit } from "react-icons/md";
 
-import { UserArtifact } from "@/types";
+import { IUserArtifact } from "@/types";
 import { $AppArtifact } from "@/services";
 import { useDispatch } from "@Store/hooks";
 import { removeArtifact, swapArtifactOwner, updateUserArtifact, updateUserArtifactSubStat } from "@Store/userdb-slice";
@@ -11,8 +11,8 @@ import { removeArtifact, swapArtifactOwner, updateUserArtifact, updateUserArtifa
 import { ArtifactCard, Tavern } from "@/components";
 
 interface ChosenArtifactViewProps {
-  artifact?: UserArtifact;
-  onRemoveArtifact?: (artifact: UserArtifact) => void;
+  artifact?: IUserArtifact;
+  onRemoveArtifact?: (artifact: IUserArtifact) => void;
   onRequestEditArtifact?: () => void;
 }
 export function ChosenArtifactView({ artifact, onRemoveArtifact, onRequestEditArtifact }: ChosenArtifactViewProps) {

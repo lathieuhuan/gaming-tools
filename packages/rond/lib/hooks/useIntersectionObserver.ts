@@ -19,7 +19,7 @@ export class ObservedItem<ObservedElement extends HTMLElement = HTMLDivElement> 
 }
 
 type UseIntersectionObserverOptions = {
-  dependecies?: React.DependencyList;
+  dependencies?: React.DependencyList;
   ready?: boolean;
 };
 export function useIntersectionObserver<
@@ -30,7 +30,7 @@ export function useIntersectionObserver<
   const observerRef = useRef<IntersectionObserver>();
   const [visibleMap, setVisibleItems] = useState<Record<string, boolean>>({});
 
-  const { dependecies = [], ready = true } = options || {};
+  const { dependencies = [], ready = true } = options || {};
 
   const queryObservedItem = (id: ObservedItemId): ObservedItem<ObservedElement> | null => {
     const element = observedAreaRef.current?.querySelector(`.${observedItemCls}[${observedIdKey}="${id}"]`);
@@ -82,7 +82,7 @@ export function useIntersectionObserver<
       return () => observerRef.current?.disconnect();
     }
     return;
-  }, dependecies);
+  }, dependencies);
 
   const getObservedItemProps = (id: string | number, className?: ClassValue) => {
     return {

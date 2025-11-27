@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, clsx, type ClassValue } from "rond";
 
-import { $AppCharacter } from "@/services";
-import type { Character } from "@/types";
+import type { Character } from "@/models/base";
 
 // Conponent
 import { AbilityIcon } from "../_components/AbilityIcon";
@@ -19,16 +18,15 @@ type ConstellationListProps = {
 
 export function ConstellationList(props: ConstellationListProps) {
   const { character, mutable = true } = props;
+  const { vision, constellation } = character.data;
   const [consLv, setConsLv] = useState(0);
   const [atDetail, setAtDetail] = useState(false);
 
-  const appCharacter = $AppCharacter.get(character.name);
-
   useEffect(() => {
     setAtDetail(false);
-  }, [appCharacter.code]);
+  }, [character.name]);
 
-  if (!appCharacter.constellation.length) {
+  if (!constellation.length) {
     return (
       <p className={clsx("pt-4 px-4 text-xl text-center", props.className)}>
         The time has not yet come for this person's corner of the night sky to light up.
@@ -44,7 +42,7 @@ export function ConstellationList(props: ConstellationListProps) {
   return (
     <CarouselSpace current={atDetail ? 1 : 0} className={props.className}>
       <div className="h-full hide-scrollbar flex flex-col space-y-4">
-        {appCharacter.constellation.map((cons, i) => {
+        {constellation.map((cons, i) => {
           return (
             <div key={i} className="flex items-center">
               <div className="shrink-0 py-1 pr-2 flex-center">
@@ -52,7 +50,7 @@ export function ConstellationList(props: ConstellationListProps) {
                   className={mutable && "cursor-pointer"}
                   img={cons.image}
                   active={character.cons >= i + 1}
-                  vision={appCharacter.vision}
+                  vision={vision}
                   onClick={() => props.onClickIcon?.(i)}
                 />
               </div>
@@ -76,7 +74,7 @@ export function ConstellationList(props: ConstellationListProps) {
       </div>
       {consLv ? (
         <ConstellationDetail
-          appCharacter={appCharacter}
+          character={character.data}
           consLv={consLv}
           onChangeConsLv={setConsLv}
           onClose={() => {

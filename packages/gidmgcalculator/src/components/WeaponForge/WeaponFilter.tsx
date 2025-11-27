@@ -1,7 +1,7 @@
-import { WeaponType } from "@Calculation";
 import { useEffect, useState } from "react";
 import { ButtonGroup, type ClassValue, clsx, RaritySelect, useValues } from "rond";
 
+import type { WeaponType } from "@/types";
 import { FilterTemplate } from "@/components/FilterTemplate";
 import { WeaponTypeSelect } from "../WeaponTypeSelect";
 

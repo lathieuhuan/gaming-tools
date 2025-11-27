@@ -2,12 +2,6 @@ import { CalcTeamData } from "@/calculation/CalcTeamData";
 import { EffectValueByOption } from "@/calculation/types";
 import { getTmEffectInput } from "./getTmEffectInput";
 
-export const parseOptIndex = (optIndex: EffectValueByOption["optIndex"] = 0) => {
-  return typeof optIndex === "number"
-    ? ({ source: "INPUT", inpIndex: optIndex } satisfies EffectValueByOption["optIndex"])
-    : optIndex;
-};
-
 /**
  * @param inputs used when optIndex is number or has INPUT source
  */
@@ -18,7 +12,10 @@ export const getIndexOfEffectValue = (
   fromSelf: boolean
 ) => {
   const elmtCount = teamData.elmtCount;
-  const indexConfig = parseOptIndex(config);
+  const indexConfig = config || {
+    source: "INPUT",
+    inpIndex: 0,
+  };
   let indexValue = -1;
 
   switch (indexConfig.source) {
@@ -48,13 +45,18 @@ export const getIndexOfEffectValue = (
           if (typeof indexConfig.element === "string") {
             indexValue += elmtCount.get(indexConfig.element);
           } else {
-            indexValue += indexConfig.element.reduce((total, type) => total + elmtCount.get(type), 0);
+            indexValue += indexConfig.element.reduce(
+              (total, type) => total + elmtCount.get(type),
+              0
+            );
           }
       }
       break;
     }
     case "LEVEL": {
-      indexValue += fromSelf ? teamData.getFinalTalentLv(indexConfig.talent) : getTmEffectInput(indexConfig, inputs);
+      indexValue += fromSelf
+        ? teamData.getFinalTalentLv(indexConfig.talent)
+        : getTmEffectInput(indexConfig, inputs);
       break;
     }
   }
