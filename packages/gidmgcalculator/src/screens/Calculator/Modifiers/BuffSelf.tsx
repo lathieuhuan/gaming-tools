@@ -13,7 +13,7 @@ export default function BuffSelf() {
     Object_.pickProps(selectSetup(state), ["char", "selfBuffCtrls"])
   );
 
-  const handleUpdateBuffCtrls = (newCtrls: IAbilityBuffCtrl[]) => {
+  const handleUpdateCtrls = (newCtrls: IAbilityBuffCtrl[]) => {
     updateActiveSetup((setup) => {
       setup.selfBuffCtrls = newCtrls;
     });
@@ -26,12 +26,12 @@ export default function BuffSelf() {
       modCtrls={selfBuffCtrls}
       getHanlders={(ctrl) => {
         const updateBuffCtrlInput = (value: number, inputIndex: number) => {
-          handleUpdateBuffCtrls(updateModCtrlInputs(selfBuffCtrls, ctrl.id, inputIndex, value));
+          handleUpdateCtrls(updateModCtrlInputs(selfBuffCtrls, ctrl.id, inputIndex, value));
         };
 
         return {
           onToggle: () => {
-            handleUpdateBuffCtrls(toggleModCtrl(selfBuffCtrls, ctrl.id));
+            handleUpdateCtrls(toggleModCtrl(selfBuffCtrls, ctrl.id));
           },
           onToggleCheck: (currentInput, inputIndex) => {
             updateBuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);

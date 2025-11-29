@@ -22,6 +22,10 @@ export default class Object_ {
     return Object.keys(obj);
   }
 
+  static entries<TObject extends object>(obj: TObject): [keyof TObject, TObject[keyof TObject]][] {
+    return Object.entries(obj) as [keyof TObject, TObject[keyof TObject]][];
+  }
+
   static forEach<
     TObject extends UnknownObject = UnknownObject,
     TKey extends keyof TObject = keyof TObject

@@ -48,7 +48,7 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
         {variant && <p className="mt-1">{variant}</p>}
 
         {statuses.length ? (
-          <ul className="mt-1 pl-4 list-disc">
+          <ul className="pl-4 list-disc text-sm">
             {statuses.map((status, i) => {
               return <li key={i}>{status}</li>;
             })}

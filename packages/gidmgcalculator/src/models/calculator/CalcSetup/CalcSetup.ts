@@ -30,6 +30,7 @@ import {
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
   createArtifactBuffCtrls,
+  createArtifactDebuffCtrls,
   createElementalEvent,
   createMainArtifactBuffCtrls,
   createRsnModCtrls,
@@ -71,9 +72,9 @@ export class CalcSetup implements ICalcSetup<MainCharacter, CalcTeammate, CalcTe
       selfBuffCtrls = createAbilityBuffCtrls(char.data, true),
       selfDebuffCtrls = createAbilityDebuffCtrls(char.data, true),
       wpBuffCtrls = createWeaponBuffCtrls(char.weapon.data, true),
-      artBuffCtrls = createMainArtifactBuffCtrls(char.artifact),
-      artDebuffCtrls = [],
       teammates = [],
+      artBuffCtrls = createMainArtifactBuffCtrls(char.artifact.sets),
+      artDebuffCtrls = createArtifactDebuffCtrls(char.artifact.sets, teammates),
       team = new CalcTeam(char, teammates),
       elmtEvent = createElementalEvent(),
       customBuffCtrls = [],
@@ -157,6 +158,8 @@ export class CalcSetup implements ICalcSetup<MainCharacter, CalcTeammate, CalcTe
     });
   }
 
+  // ===== MODIFIERS UPDATE FOLLOW-UPS =====
+
   updateRsnModCtrls() {
     const rsnModCtrls = createRsnModCtrls(this.team);
 
@@ -167,6 +170,11 @@ export class CalcSetup implements ICalcSetup<MainCharacter, CalcTeammate, CalcTe
   updateTeamBuffCtrls() {
     const teamBuffCtrls = createTeamBuffCtrls(this);
     this.teamBuffCtrls = Array_.sync(this.teamBuffCtrls, teamBuffCtrls, (ctrl) => ctrl.data.index);
+  }
+
+  updateArtifactDebuffCtrls() {
+    const artDebuffCtrls = createArtifactDebuffCtrls(this.char.artifact.sets, this.teammates);
+    this.artDebuffCtrls = Array_.sync(this.artDebuffCtrls, artDebuffCtrls, (ctrl) => ctrl.code);
   }
 
   // ===== TEAMMATES =====
@@ -186,6 +194,7 @@ export class CalcSetup implements ICalcSetup<MainCharacter, CalcTeammate, CalcTe
     this.teammates = newTeammates;
     this.updateRsnModCtrls();
     this.updateTeamBuffCtrls();
+    this.updateArtifactDebuffCtrls();
   }
 
   removeTeammate(teammate: CalcTeammate) {
@@ -201,6 +210,7 @@ export class CalcSetup implements ICalcSetup<MainCharacter, CalcTeammate, CalcTe
     this.teammates = newTeammates;
     this.updateRsnModCtrls();
     this.updateTeamBuffCtrls();
+    this.updateArtifactDebuffCtrls();
   }
 
   updateTeammate(
@@ -216,6 +226,8 @@ export class CalcSetup implements ICalcSetup<MainCharacter, CalcTeammate, CalcTe
 
       return teammate;
     });
+
+    this.updateArtifactDebuffCtrls();
   }
 
   // ===== ARTIFACTS =====
@@ -227,5 +239,6 @@ export class CalcSetup implements ICalcSetup<MainCharacter, CalcTeammate, CalcTe
       .map((set) => createArtifactBuffCtrls(set.data, true, set.bonusLv))
       .flat();
     this.updateTeamBuffCtrls();
+    this.updateArtifactDebuffCtrls();
   }
 }

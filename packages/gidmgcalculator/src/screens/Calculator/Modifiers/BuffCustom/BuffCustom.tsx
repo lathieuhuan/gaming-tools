@@ -1,30 +1,22 @@
 import { clsx } from "rond";
 
+import type { CustomBuffCtrl } from "@/types";
+
 import { useTranslation } from "@/hooks";
 import { suffixOf, toCustomBuffLabel } from "@/utils";
-import {
-  removeCustomModCtrl,
-  selectActiveId,
-  selectCalcSetupsById,
-  selectSetupManageInfos,
-  updateCustomBuffCtrls,
-} from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
+import { useCalcStore } from "@Store/calculator";
+import { updateActiveSetup } from "@Store/calculator/actions";
+import { selectSetup } from "@Store/calculator/selectors";
 
-import { CopyOption, CustomModLayout, ModItemRenderConfig } from "../CustomModLayout";
+import { CustomModLayout, CopySelect, ModItemRenderConfig } from "../CustomModLayout";
 import { BuffCtrlForm } from "./BuffCtrlForm";
 
 export function BuffCustom() {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
 
-  const activeId = useSelector(selectActiveId);
-  const setupsById = useSelector(selectCalcSetupsById);
-  const setupManageInfos = useSelector(selectSetupManageInfos);
+  const customBuffCtrls = useCalcStore((state) => selectSetup(state).customBuffCtrls);
 
-  const buffCtrls = setupsById[activeId].customBuffCtrls;
-
-  const items = buffCtrls.map<ModItemRenderConfig>((ctrl) => {
+  const items = customBuffCtrls.map<ModItemRenderConfig>((ctrl) => {
     const sign = suffixOf(ctrl.subType || ctrl.type);
 
     return {
@@ -39,51 +31,39 @@ export function BuffCustom() {
     };
   });
 
-  const copyOptions: CopyOption[] = [];
-
-  if (!items.length) {
-    for (const { ID, name } of setupManageInfos) {
-      if (setupsById[ID].customBuffCtrls.length) {
-        copyOptions.push({
-          label: name,
-          value: ID,
-        });
-      }
-    }
-  }
+  const handleUpdateCtrls = (newCtrls: CustomBuffCtrl[]) => {
+    updateActiveSetup((setup) => {
+      setup.customBuffCtrls = newCtrls;
+    });
+  };
 
   return (
     <CustomModLayout
       items={items}
-      copyOptions={copyOptions}
+      copySelect={items.length === 0 && <CopySelect type="customBuffCtrls" />}
       createModalProps={{
         title: "Add custom buffs",
         style: { minWidth: 304 },
       }}
-      renderCreateForm={(props) => {
-        return <BuffCtrlForm {...props} />;
-      }}
-      onCopy={(option: CopyOption) => {
-        dispatch(
-          updateCustomBuffCtrls({
-            actionType: "REPLACE",
-            ctrls: setupsById[option.value].customBuffCtrls,
-          })
-        );
-      }}
+      renderCreateForm={(props) => (
+        <BuffCtrlForm
+          {...props}
+          onSubmit={(config) => {
+            handleUpdateCtrls(customBuffCtrls.concat(config));
+            props.onSubmit();
+          }}
+        />
+      )}
       onValueChange={(value, index) => {
-        dispatch(
-          updateCustomBuffCtrls({
-            actionType: "EDIT",
-            ctrls: { index, value },
-          })
+        handleUpdateCtrls(
+          customBuffCtrls.map((ctrl, i) => (i === index ? { ...ctrl, value } : ctrl))
         );
       }}
       onRemoveItem={(ctrlIndex) => {
-        dispatch(removeCustomModCtrl({ isBuffs: true, ctrlIndex }));
+        handleUpdateCtrls(customBuffCtrls.filter((_, index) => index !== ctrlIndex));
       }}
       onRemoveAll={() => {
-        dispatch(updateCustomBuffCtrls({ actionType: "REPLACE", ctrls: [] }));
+        handleUpdateCtrls([]);
       }}
     />
   );

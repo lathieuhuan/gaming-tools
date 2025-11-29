@@ -1,12 +1,11 @@
-import { ATTACK_ELEMENTS, ATTACK_PATTERNS, REACTIONS } from "@Calculation";
 import { useRef, useState } from "react";
 import { clsx, InputNumber, VersatileSelect } from "rond";
 
-import { useTranslation } from "@/hooks";
 import type { CustomBuffCtrl, CustomBuffCtrlCategory, CustomBuffCtrlType } from "@/types";
+
+import { ATTACK_ELEMENTS, ATTACK_PATTERNS, REACTIONS } from "@/constants";
+import { useTranslation } from "@/hooks";
 import { suffixOf, toCustomBuffLabel } from "@/utils";
-import { updateCustomBuffCtrls } from "@Store/calculator-slice";
-import { useDispatch } from "@Store/hooks";
 
 const CATEGORIES: Record<
   CustomBuffCtrlCategory,
@@ -48,11 +47,10 @@ const CATEGORIES: Record<
 
 type BuffCtrlFormProps = {
   id: string;
-  onSubmit: () => void;
+  onSubmit: (config: CustomBuffCtrl) => void;
 };
 
 export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -103,8 +101,7 @@ export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
   };
 
   const handleSubmit = () => {
-    dispatch(updateCustomBuffCtrls({ actionType: "ADD", ctrls: config }));
-    onSubmit();
+    onSubmit(config);
   };
 
   const widthByCategory: Record<CustomBuffCtrlCategory, string> = {

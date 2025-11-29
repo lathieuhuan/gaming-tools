@@ -14,13 +14,13 @@ export default function BuffArtifact() {
     return Object_.pickProps(selectSetup(state), ["artBuffCtrls", "teammates"]);
   });
 
-  const handleUpdateSelfBuffCtrls = (newCtrls: IArtifactBuffCtrl[]) => {
+  const handleUpdateSelfCtrls = (newCtrls: IArtifactBuffCtrl[]) => {
     updateActiveSetup((setup) => {
       setup.artBuffCtrls = newCtrls;
     });
   };
 
-  const handleUpdateTeammateBuffCtrls = (teammate: CalcTeammate, newCtrls: IArtifactBuffCtrl[]) => {
+  const handleUpdateTeammateCtrls = (teammate: CalcTeammate, newCtrls: IArtifactBuffCtrl[]) => {
     updateTeammateArtifact(teammate.data.code, {
       buffCtrls: newCtrls,
     });
@@ -34,21 +34,21 @@ export default function BuffArtifact() {
       getSelfHandlers={(ctrl) => {
         const extraCheck = (ctrlItem: IArtifactBuffCtrl) => ctrlItem.code === ctrl.code;
 
-        const updateBuffCtrlInput = (value: number, inputIndex: number) => {
-          handleUpdateSelfBuffCtrls(
+        const updateCtrlInput = (value: number, inputIndex: number) => {
+          handleUpdateSelfCtrls(
             updateModCtrlInputs(artBuffCtrls, ctrl.id, inputIndex, value, extraCheck)
           );
         };
 
         return {
           onToggle: () => {
-            handleUpdateSelfBuffCtrls(toggleModCtrl(artBuffCtrls, ctrl.id, extraCheck));
+            handleUpdateSelfCtrls(toggleModCtrl(artBuffCtrls, ctrl.id, extraCheck));
           },
           onToggleCheck: (currentInput, inputIndex) => {
-            updateBuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
+            updateCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
           },
-          onChangeText: updateBuffCtrlInput,
-          onSelectOption: updateBuffCtrlInput,
+          onChangeText: updateCtrlInput,
+          onSelectOption: updateCtrlInput,
         };
       }}
       getTeammateHandlers={(teammate, ctrl) => {
@@ -58,8 +58,8 @@ export default function BuffArtifact() {
           return {};
         }
 
-        const updateBuffCtrlInput = (value: number, inputIndex: number) => {
-          handleUpdateTeammateBuffCtrls(
+        const updateCtrlInput = (value: number, inputIndex: number) => {
+          handleUpdateTeammateCtrls(
             teammate,
             updateModCtrlInputs(buffCtrls, ctrl.id, inputIndex, value)
           );
@@ -67,13 +67,13 @@ export default function BuffArtifact() {
 
         return {
           onToggle: () => {
-            handleUpdateTeammateBuffCtrls(teammate, toggleModCtrl(buffCtrls, ctrl.id));
+            handleUpdateTeammateCtrls(teammate, toggleModCtrl(buffCtrls, ctrl.id));
           },
           onToggleCheck: (currentInput, inputIndex) => {
-            updateBuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
+            updateCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
           },
-          onChangeText: updateBuffCtrlInput,
-          onSelectOption: updateBuffCtrlInput,
+          onChangeText: updateCtrlInput,
+          onSelectOption: updateCtrlInput,
         };
       }}
     />

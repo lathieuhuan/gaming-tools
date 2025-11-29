@@ -9,12 +9,20 @@ import {
 } from "@/models/calculator";
 import Object_ from "@/utils/Object";
 import { useCalcStore } from "../calculator-store";
-import { onActiveSetup, toggleModCtrl, updateModCtrlInputs } from "../utils";
+import { onActiveSetup } from "../utils";
 
 export const setTeammate = (teammate: AppCharacter, index: number) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
       setup.setTeammate({ name: teammate.name }, index, teammate);
+    })
+  );
+};
+
+export const updateTeammate: ForwardedAction<CalcSetup["updateTeammate"]> = (...args) => {
+  useCalcStore.setState(
+    onActiveSetup((setup) => {
+      setup.updateTeammate(...args);
     })
   );
 };
@@ -104,56 +112,6 @@ export const updateTeammateArtifact = (
           ...data,
         },
       }));
-    })
-  );
-};
-
-// ===== Modifier =====
-
-export type ToggleTeammateModCtrlPath = {
-  teammateCode: number;
-  modCtrlName: "buffCtrls" | "debuffCtrls";
-  ctrlId: number;
-};
-
-export const toggleTeammateModCtrl = (path: ToggleTeammateModCtrlPath) => {
-  useCalcStore.setState(
-    onActiveSetup((setup) => {
-      setup.updateTeammate(path.teammateCode, (teammate) => {
-        switch (path.modCtrlName) {
-          case "buffCtrls":
-            return {
-              buffCtrls: toggleModCtrl(teammate.buffCtrls, path.ctrlId),
-            };
-          case "debuffCtrls":
-            return {
-              debuffCtrls: toggleModCtrl(teammate.debuffCtrls, path.ctrlId),
-            };
-        }
-      });
-    })
-  );
-};
-
-export const updateTeammateModCtrlInput = (
-  path: ToggleTeammateModCtrlPath,
-  inputIndex: number,
-  value: number
-) => {
-  useCalcStore.setState(
-    onActiveSetup((setup) => {
-      setup.updateTeammate(path.teammateCode, ({ buffCtrls, debuffCtrls }) => {
-        switch (path.modCtrlName) {
-          case "buffCtrls":
-            return {
-              buffCtrls: updateModCtrlInputs(buffCtrls, path.ctrlId, inputIndex, value),
-            };
-          case "debuffCtrls":
-            return {
-              debuffCtrls: updateModCtrlInputs(debuffCtrls, path.ctrlId, inputIndex, value),
-            };
-        }
-      });
     })
   );
 };

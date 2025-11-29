@@ -13,7 +13,7 @@ export default function DebuffSelf() {
     return Object_.pickProps(selectSetup(state), ["char", "selfDebuffCtrls"]);
   });
 
-  const handleUpdateDebuffCtrls = (newCtrls: IAbilityDebuffCtrl[]) => {
+  const handleUpdateCtrls = (newCtrls: IAbilityDebuffCtrl[]) => {
     updateActiveSetup((setup) => {
       setup.selfDebuffCtrls = newCtrls;
     });
@@ -26,12 +26,12 @@ export default function DebuffSelf() {
       modCtrls={selfDebuffCtrls}
       getHanlders={(ctrl) => {
         const updateDebuffCtrlInput = (value: number, inputIndex: number) => {
-          handleUpdateDebuffCtrls(updateModCtrlInputs(selfDebuffCtrls, ctrl.id, inputIndex, value));
+          handleUpdateCtrls(updateModCtrlInputs(selfDebuffCtrls, ctrl.id, inputIndex, value));
         };
 
         return {
           onToggle: () => {
-            handleUpdateDebuffCtrls(toggleModCtrl(selfDebuffCtrls, ctrl.id));
+            handleUpdateCtrls(toggleModCtrl(selfDebuffCtrls, ctrl.id));
           },
           onToggleCheck: (currentInput, inputIndex) => {
             updateDebuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);

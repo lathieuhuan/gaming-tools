@@ -1,19 +1,47 @@
-import type { AppArtifact, ArtifactType } from "@/types";
-import type { Artifact } from "@/types";
+import type { AppArtifact, ArtifactDebuff, ArtifactType } from "@/types";
+import type { IArtifact } from "@/types";
 import type { GOODArtifact } from "@/types/GOOD.types";
 import type { DataControl } from "./app-data.types";
 import { convertGOODStatKey, toGOODKey } from "./utils";
 
-export type ConvertedArtifact = Artifact & { data: AppArtifact };
+export type ConvertedArtifact = IArtifact & { data: AppArtifact };
+
+type DebuffArtifact = {
+  data: AppArtifact;
+  debuff?: ArtifactDebuff;
+};
 
 export class AppArtifactService {
   private artifacts: Array<DataControl<AppArtifact>> = [];
 
+  vvArtifact?: DebuffArtifact;
+  deepwoodArtifact?: DebuffArtifact;
+
   populate(artifacts: AppArtifact[]) {
-    this.artifacts = artifacts.map((dataArtifact) => ({
-      status: "fetched",
-      data: dataArtifact,
-    }));
+    const artifactCtrls: DataControl<AppArtifact>[] = [];
+
+    for (const artifact of artifacts) {
+      artifactCtrls.push({
+        status: "fetched",
+        data: artifact,
+      });
+
+      if (artifact.code === 15) {
+        this.vvArtifact = {
+          data: artifact,
+          debuff: artifact.debuffs?.[0],
+        };
+      }
+
+      if (artifact.code === 33) {
+        this.deepwoodArtifact = {
+          data: artifact,
+          debuff: artifact.debuffs?.[0],
+        };
+      }
+    }
+
+    this.artifacts = artifactCtrls;
   }
 
   getAll<T>(transform: (data: AppArtifact) => T): T[];

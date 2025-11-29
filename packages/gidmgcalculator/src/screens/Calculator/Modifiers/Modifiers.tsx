@@ -1,8 +1,6 @@
 import { CollapseList } from "rond";
 
 import { useTabs } from "@/hooks";
-import { selectTeammates } from "@Store/calculator-slice";
-import { useSelector } from "@Store/hooks";
 
 // Component
 import BuffArtifact from "./BuffArtifact";
@@ -64,46 +62,44 @@ export function Modifiers() {
               heading: "Artifacts",
               body: <BuffArtifact />,
             },
-            // {
-            //   title: "Custom buffs",
-            //   heading: "Custom",
-            //   body: <BuffCustom />,
-            // },
+            {
+              title: "Custom buffs",
+              heading: "Custom",
+              body: <BuffCustom />,
+            },
           ]}
         />
 
         <CollapseList
           key="debuff"
           className={activeIndex ? "hidden" : undefined}
-          items={
-            [
-              {
-                title: "Elemental Event debuffs",
-                heading: "Elemental Events",
-                body: <DebuffElement />,
-              },
-              {
-                title: "Self debuffs",
-                heading: "Self",
-                body: <DebuffSelf />,
-              },
-              {
-                title: "Teammates debuffs",
-                heading: "Teammates",
-                body: <DebuffTeammates />,
-              },
-              // {
-              //   title: "Artifacts debuffs",
-              //   heading: "Artifacts",
-              //   body: <DebuffArtifact teammates={teammates} />,
-              // },
-              // {
-              //   title: "Custom debuffs",
-              //   heading: "Custom",
-              //   body: <DebuffCustom />,
-              // },
-            ]
-          }
+          items={[
+            {
+              title: "Elemental Event debuffs",
+              heading: "Elemental Events",
+              body: <DebuffElement />,
+            },
+            {
+              title: "Self debuffs",
+              heading: "Self",
+              body: <DebuffSelf />,
+            },
+            {
+              title: "Teammates debuffs",
+              heading: "Teammates",
+              body: <DebuffTeammates />,
+            },
+            {
+              title: "Artifacts debuffs",
+              heading: "Artifacts",
+              body: <DebuffArtifact />,
+            },
+            {
+              title: "Custom debuffs",
+              heading: "Custom",
+              body: <DebuffCustom />,
+            },
+          ]}
         />
       </div>
     </div>

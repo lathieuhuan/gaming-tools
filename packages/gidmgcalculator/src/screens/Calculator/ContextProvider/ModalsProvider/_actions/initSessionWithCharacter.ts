@@ -65,7 +65,7 @@ export function initSessionWithCharacter(
     calcSetup: new CalcSetup({
       ID: seedID++,
       char: character,
-      target: new MainTarget(),
+      target: MainTarget.DEFAULT(),
     }),
   });
 }

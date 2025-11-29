@@ -1,40 +1,43 @@
+import type { CalcTeammate } from "@/models/calculator";
+import type { IAbilityDebuffCtrl } from "@/types";
+
 import { useCalcStore } from "@Store/calculator";
-import {
-  toggleTeammateModCtrl,
-  ToggleTeammateModCtrlPath,
-  updateTeammateModCtrlInput,
-} from "@Store/calculator/actions";
+import { updateTeammate } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
+import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
 import { TeammateDebuffsView } from "@/components";
 
 export default function DebuffTeammates() {
   const teammates = useCalcStore((state) => selectSetup(state).teammates);
 
+  const handleUpdateCtrls = (teammate: CalcTeammate, ctrls: IAbilityDebuffCtrl[]) => {
+    updateTeammate(teammate.data.code, {
+      debuffCtrls: ctrls,
+    });
+  };
+
   return (
     <TeammateDebuffsView
       mutable
       teammates={teammates}
       getHanlders={(teammate, ctrl) => {
-        const path: ToggleTeammateModCtrlPath = {
-          teammateCode: teammate.data.code,
-          modCtrlName: "debuffCtrls",
-          ctrlId: ctrl.id,
-        };
-
-        const updateBuffCtrlInput = (value: number, inputIndex: number) => {
-          updateTeammateModCtrlInput(path, inputIndex, value);
+        const updateCtrlInput = (value: number, inputIndex: number) => {
+          handleUpdateCtrls(
+            teammate,
+            updateModCtrlInputs(teammate.debuffCtrls, ctrl.id, inputIndex, value)
+          );
         };
 
         return {
           onToggle: () => {
-            toggleTeammateModCtrl(path);
+            handleUpdateCtrls(teammate, toggleModCtrl(teammate.debuffCtrls, ctrl.id));
           },
           onToggleCheck: (currentInput, inputIndex) => {
-            updateBuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
+            updateCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
           },
-          onChangeText: updateBuffCtrlInput,
-          onSelectOption: updateBuffCtrlInput,
+          onChangeText: updateCtrlInput,
+          onSelectOption: updateCtrlInput,
         };
       }}
     />

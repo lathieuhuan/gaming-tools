@@ -23,7 +23,7 @@ export function CopySection<TOption extends Option>({
     <div className={clsx("flex justify-end", className)}>
       <VersatileSelect
         title="Select Setup"
-        className="w-24 h-8 font-semibold"
+        className="w-30 h-8 font-semibold"
         defaultValue={options[defaultIndex]?.value}
         options={options}
         action={{

@@ -1,53 +1,53 @@
-import { Checkbox, InputNumber, Modal, VersatileSelect } from "rond";
-import { ATTACK_ELEMENTS, AttackElement, ElementType } from "@Calculation";
+import { clsx, InputNumber, Modal, VersatileSelect } from "rond";
 
+import type { AttackElement, ElementType } from "@/types";
+
+import { ATTACK_ELEMENTS, MAX_TARGET_LEVEL } from "@/constants";
 import { useTranslation } from "@/hooks";
-import { $AppData } from "@/services";
-import { MAX_TARGET_LEVEL } from "@/constants";
 import Array_ from "@/utils/Array";
+import { useCalcStore } from "@Store/calculator";
+import { updateTarget } from "@Store/calculator/actions";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectTargetConfig, updateUI } from "@Store/ui-slice";
-import { selectTarget, updateTarget } from "@Store/calculator-slice";
+
 import { ComboBox } from "./ComboBox";
+import { InputControl } from "./InputControl";
 
 function TargetConfigCore() {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
+  const target = useCalcStore((state) => state.target);
 
-  const target = useSelector(selectTarget);
-  const monster = $AppData.getMonster(target);
-
-  if (!monster) {
-    return null;
-  }
-
-  const { variant } = monster;
+  const monster = target.data;
+  const variantTypes = monster.variant?.types;
   const inputConfigs = monster.inputConfigs ? Array_.toArray(monster.inputConfigs) : [];
 
-  const onChangeElementVariant = (value: string | number) => {
-    dispatch(updateTarget({ variantType: value as ElementType }));
+  const onChangeElementVariant = (value: string) => {
+    updateTarget({ variantType: value as ElementType });
   };
 
   const onChangeTargetResistance = (attElmt: AttackElement) => {
     return (value: number) => {
-      const newResistances = { ...target.resistances };
-      newResistances[attElmt] = value;
-
-      dispatch(updateTarget({ resistances: newResistances }));
+      updateTarget({
+        resistances: {
+          ...target.resistances,
+          [attElmt]: value,
+        },
+      });
     };
   };
 
-  const onChangeTargetInputs = (value: number, index: number) => {
-    if (target.inputs) {
-      const newInputs = [...target.inputs];
+  const onChangeInput = (value: number, index: number) => {
+    const { inputs = [] } = target;
+    inputs[index] = value;
 
-      newInputs[index] = value;
-      dispatch(updateTarget({ inputs: newInputs }));
-    }
+    updateTarget({ inputs });
   };
 
   return (
-    <div className="h-full px-2 flex gap-4 hide-scrollbar" onDoubleClick={() => console.log(target)}>
+    <div
+      className="h-full px-2 flex gap-4 hide-scrollbar"
+      onDoubleClick={() => console.log(target)}
+    >
       <div className="w-76 flex flex-col shrink-0">
         <div className="grow overflow-auto flex flex-col">
           <div className="flex">
@@ -59,7 +59,7 @@ function TargetConfigCore() {
                 value={target.level}
                 max={MAX_TARGET_LEVEL}
                 maxDecimalDigits={0}
-                onChange={(value) => dispatch(updateTarget({ level: value }))}
+                onChange={(value) => updateTarget({ level: value })}
               />
             </label>
           </div>
@@ -69,24 +69,22 @@ function TargetConfigCore() {
             targetCode={target.code}
             targetTitle={monster.title}
             onSelectMonster={({ monsterCode, inputs, variantType }) => {
-              dispatch(
-                updateTarget({
-                  code: monsterCode,
-                  inputs,
-                  variantType,
-                })
-              );
+              updateTarget({
+                code: monsterCode,
+                inputs,
+                variantType,
+              });
             }}
           />
 
-          {variant?.types.length && target.variantType ? (
+          {variantTypes?.length && target.variantType ? (
             <div className="mt-4 flex justify-end items-center">
               <p className="mr-4 text-light-1">Variant</p>
 
               <VersatileSelect
                 title="Select Variant"
                 className="w-24 h-8 font-bold capitalize"
-                options={variant.types.map((variantType) => {
+                options={variantTypes.map((variantType) => {
                   const item = typeof variantType === "string" ? variantType : variantType.value;
                   return {
                     label: item,
@@ -101,55 +99,14 @@ function TargetConfigCore() {
           ) : null}
 
           {inputConfigs.map((config, index) => {
-            let inputElement;
-            const { type: configType = "CHECK" } = config;
-
-            switch (configType) {
-              case "CHECK": {
-                const checked = target.inputs?.[index] === 1;
-
-                inputElement = (
-                  <Checkbox
-                    className="mr-1.5"
-                    checked={checked}
-                    onChange={() => onChangeTargetInputs(checked ? 0 : 1, index)}
-                  />
-                );
-                break;
-              }
-              case "SELECT":
-                if (config.options) {
-                  const options = config.options.map((option, optionIndex) => {
-                    return {
-                      label: typeof option === "string" ? option : option.label,
-                      value: `${optionIndex}`,
-                      className: "capitalize",
-                    };
-                  });
-
-                  inputElement = (
-                    <VersatileSelect
-                      title={`Select ${config.label}`}
-                      className="w-32 font-bold capitalize"
-                      options={[
-                        {
-                          label: "None",
-                          value: "-1",
-                        },
-                        ...options,
-                      ]}
-                      value={`${target.inputs?.[index] || 0}`}
-                      onChange={(value) => onChangeTargetInputs(+value, index)}
-                    />
-                  );
-                }
-                break;
-            }
-
             return (
               <div key={index} className="mt-4 flex justify-end items-center">
                 <label className="mr-4">{config.label}</label>
-                {inputElement}
+                <InputControl
+                  config={config}
+                  input={target.inputs?.[index] || 0}
+                  onChange={(value) => onChangeInput(value, index)}
+                />
               </div>
             );
           })}
@@ -161,7 +118,12 @@ function TargetConfigCore() {
           {ATTACK_ELEMENTS.map((attElmt) => {
             return (
               <div key={attElmt} className="flex justify-end items-center">
-                <p className={"mr-4 text-base " + (attElmt === "phys" ? "text-light-1" : `text-${attElmt}`)}>
+                <p
+                  className={clsx(
+                    "mr-4 text-base",
+                    attElmt === "phys" ? "text-light-1" : `text-${attElmt}`
+                  )}
+                >
                   {t(attElmt, { ns: "resistance" })}
                 </p>
                 <InputNumber

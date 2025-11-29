@@ -1,5 +1,4 @@
-import type { ArtifactGear } from "@/models/base";
-import type { CalcTeam, ICalcSetup } from "@/models/calculator";
+import type { CalcTeam, CalcTeammate, ICalcSetup } from "@/models/calculator";
 import type {
   AppArtifact,
   AppCharacter,
@@ -9,6 +8,8 @@ import type {
   IAbilityBuffCtrl,
   IAbilityDebuffCtrl,
   IArtifactBuffCtrl,
+  IArtifactDebuffCtrl,
+  IArtifactGearSet,
   IModifierCtrlBasic,
   ITeamBuffCtrl,
   IWeaponBuffCtrl,
@@ -18,7 +19,7 @@ import type {
   ResonanceModCtrl,
 } from "@/types";
 
-import { $AppData } from "@/services";
+import { $AppData, $AppArtifact } from "@/services";
 import Array_ from "@/utils/Array";
 import { isManualRsnElmt } from "../base/utils/isManualRsnElmt";
 
@@ -141,10 +142,10 @@ export function createWeaponBuffCtrls(
   return Array_.filterMap(buffs, filterFor(forSelf), createModCtrl(forSelf));
 }
 
-export function createMainArtifactBuffCtrls(artifact: ArtifactGear): IArtifactBuffCtrl[] {
+export function createMainArtifactBuffCtrls(sets: IArtifactGearSet[]): IArtifactBuffCtrl[] {
   const ctrls: IArtifactBuffCtrl[] = [];
 
-  for (const set of artifact.sets) {
+  for (const set of sets) {
     const { buffs = [] } = set.data;
 
     for (const buff of buffs) {
@@ -183,12 +184,49 @@ export function createArtifactBuffCtrls(
   return [];
 }
 
-// export function createArtifactDebuffCtrls(): ArtifactModCtrl[] {
-//   return [
-//     { code: 15, activated: false, index: 0, inputs: [0] },
-//     { code: 33, activated: false, index: 0 },
-//   ];
-// }
+export function createArtifactDebuffCtrls(sets: IArtifactGearSet[], teammates: CalcTeammate[]) {
+  const ctrls: IArtifactDebuffCtrl[] = [];
+  const vvArtifact = $AppArtifact.vvArtifact;
+  const deepwoodArtifact = $AppArtifact.deepwoodArtifact;
+  const usedCodeSet = new Set<number>();
+
+  const [firstSet] = sets;
+
+  if (firstSet?.bonusLv === 1) {
+    usedCodeSet.add(firstSet.data.code);
+  }
+
+  for (const teammate of teammates) {
+    const code = teammate.artifact?.code;
+
+    if (code) {
+      usedCodeSet.add(code);
+    }
+  }
+
+  if (vvArtifact?.debuff && usedCodeSet.has(vvArtifact.data.code)) {
+    ctrls.push({
+      id: 0,
+      code: vvArtifact.data.code,
+      activated: false,
+      inputs: [0],
+      setData: vvArtifact.data,
+      data: vvArtifact.debuff,
+    });
+  }
+
+  if (deepwoodArtifact?.debuff && usedCodeSet.has(deepwoodArtifact.data.code)) {
+    ctrls.push({
+      id: 0,
+      code: deepwoodArtifact.data.code,
+      activated: false,
+      setData: deepwoodArtifact.data,
+      data: deepwoodArtifact.debuff,
+    });
+  }
+
+  return ctrls;
+}
 
 export function createRsnModCtrls(team: CalcTeam) {
   const buffCtrls: ResonanceModCtrl[] = [];

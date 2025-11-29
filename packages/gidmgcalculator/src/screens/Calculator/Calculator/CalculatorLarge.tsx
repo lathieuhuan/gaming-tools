@@ -2,8 +2,6 @@ import { CSSProperties, memo, ReactNode } from "react";
 import { useScreenWatcher } from "rond";
 
 import { useCalcStore } from "@Store/calculator";
-import { selectComparedIds } from "@Store/calculator-slice";
-import { useSelector } from "@Store/hooks";
 import { getCards } from "./config";
 
 // Components
@@ -11,7 +9,6 @@ import { ContextProvider } from "../ContextProvider";
 import { Card } from "./Card";
 
 function LargeCalculator() {
-  // const touched = useSelector((state) => state.calculator.setupManageInfos.length !== 0);
   const touched = useCalcStore((state) => state.setupManagers.length !== 0);
 
   const Cards = getCards({ touched });
@@ -45,7 +42,7 @@ type FlexibleWrapperRenderProps = {
 };
 
 const FlexibleWrapper = (props: { children: (props: FlexibleWrapperRenderProps) => ReactNode }) => {
-  const comparedCount = useSelector(selectComparedIds).length;
+  const comparedCount = useCalcStore((state) => state.comparedIds.length);
   const screenWatcher = useScreenWatcher();
   const isHugeScreen = screenWatcher.isFromSize("2xl");
 

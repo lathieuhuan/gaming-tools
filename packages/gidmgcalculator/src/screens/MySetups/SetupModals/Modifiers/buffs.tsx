@@ -6,7 +6,12 @@ import { useTranslation } from "@/hooks";
 import { suffixOf, toCustomBuffLabel } from "@/utils";
 
 // Component
-import { renderModifiers, VapMeltBuffItem, QuickenBuffItem, ResonanceBuffItem } from "@/components";
+import {
+  VapMeltBuffItem,
+  QuickenBuffItem,
+  ResonanceBuffItem,
+  ModifierContainer,
+} from "@/components";
 
 type ElementBuffsProps = {
   charLv: Level;
@@ -16,7 +21,13 @@ type ElementBuffsProps = {
   customInfusion: Infusion;
 };
 
-export function ElementBuffs({ charLv, elmtModCtrls, attkBonuses, vision, customInfusion }: ElementBuffsProps) {
+export function ElementBuffs({
+  charLv,
+  elmtModCtrls,
+  attkBonuses,
+  vision,
+  customInfusion,
+}: ElementBuffsProps) {
   const content: JSX.Element[] = [];
   const { resonances, reaction, infuse_reaction, absorption } = elmtModCtrls;
   const headingCls = "text-sm text-secondary-1 mb-1";
@@ -36,7 +47,10 @@ export function ElementBuffs({ charLv, elmtModCtrls, attkBonuses, vision, custom
     return reaction === "melt" || reaction === "vaporize" ? (
       <VapMeltBuffItem mutable={false} {...{ reaction, element, attkBonuses }} />
     ) : reaction === "spread" || reaction === "aggravate" ? (
-      <QuickenBuffItem mutable={false} {...{ reaction, element, characterLv: charLv, attkBonuses }} />
+      <QuickenBuffItem
+        mutable={false}
+        {...{ reaction, element, characterLv: charLv, attkBonuses }}
+      />
     ) : null;
   };
 
@@ -86,15 +100,17 @@ type CustomBuffsProps = {
 export function CustomBuffs({ customBuffCtrls }: CustomBuffsProps) {
   const { t } = useTranslation();
 
-  const content = customBuffCtrls.map(({ category, type, subType, value }, i) => (
-    <div key={i} className="flex justify-end">
-      <p className="mr-4">{toCustomBuffLabel(category, type, t)}</p>
-      <p className="w-12 shrink-0 text-heading text-right">
-        {value}
-        {suffixOf(subType || type)}
-      </p>
-    </div>
-  ));
-
-  return renderModifiers(content, "buffs", false);
+  return (
+    <ModifierContainer type="buffs" mutable={false}>
+      {customBuffCtrls.map(({ category, type, subType, value }, index) => (
+        <div key={index} className="flex justify-end">
+          <p className="mr-4">{toCustomBuffLabel(category, type, t)}</p>
+          <p className="w-12 shrink-0 text-heading text-right">
+            {value}
+            {suffixOf(subType || type)}
+          </p>
+        </div>
+      ))}
+    </ModifierContainer>
+  );
 }

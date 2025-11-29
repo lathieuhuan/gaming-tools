@@ -1,17 +1,25 @@
 import { clsx } from "rond";
 import { ChangeEvent, useRef, useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
-import { ElementType, AppMonster } from "@Calculation";
+
+import type { ElementType, AppMonster } from "@/types";
 
 import Array_ from "@/utils/Array";
 import { $AppData } from "@/services";
 
-interface ComboBoxProps {
+const LIST_ID = "monster-list";
+
+type ComboBoxProps = {
   className: string;
   targetCode: number;
   targetTitle: string;
-  onSelectMonster: (args: { monsterCode: number; inputs: number[]; variantType?: ElementType }) => void;
-}
+  onSelectMonster: (args: {
+    monsterCode: number;
+    inputs: number[];
+    variantType?: ElementType;
+  }) => void;
+};
+
 export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }: ComboBoxProps) {
   const [keyword, setKeyword] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -23,7 +31,7 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
   const onChangeSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value);
 
-    const monsterList = document.querySelector("#monster-list");
+    const monsterList = document.querySelector(`#${LIST_ID}`);
 
     if (monsterList) {
       monsterList.scrollTop = 0;
@@ -71,7 +79,7 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
       </label>
 
       <div
-        id="monster-list"
+        id={LIST_ID}
         className="absolute top-full z-10 mt-1 w-full text-black bg-light-1 custom-scrollbar cursor-default hidden peer-focus-within:block"
         style={{ maxHeight: "50vh" }}
       >
@@ -97,7 +105,9 @@ export function ComboBox({ className, targetCode, targetTitle, onSelectMonster }
             >
               <p>{monster.title}</p>
               {monster.subtitle && <p className="text-sm italic">* {monster.subtitle}</p>}
-              {monster.names?.length && <p className="text-sm italic">{monster.names.join(", ")}</p>}
+              {monster.names?.length && (
+                <p className="text-sm italic">{monster.names.join(", ")}</p>
+              )}
             </div>
           );
         })}

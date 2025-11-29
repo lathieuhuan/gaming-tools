@@ -1,6 +1,6 @@
 import type { CalcTeammate } from "@/models/calculator";
 import type { IArtifactBuffCtrl } from "@/types";
-import type { ModifierHanlders } from "./modifiers.types";
+import type { ModifierHanlders } from "./types";
 
 import { getArtifactDesc } from "@/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";

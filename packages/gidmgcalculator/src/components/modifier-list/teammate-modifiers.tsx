@@ -1,6 +1,6 @@
 import type { CalcTeammate } from "@/models/calculator";
 import type { IAbilityBuffCtrl, IAbilityDebuffCtrl, IModifierCtrlBasic } from "@/types";
-import type { ModifierHanlders } from "./modifiers.types";
+import type { ModifierHanlders } from "./types";
 
 import { GenshinModifierView } from "../GenshinModifierView";
 import { ModifierContainer } from "./ModifierContainer";

@@ -19,13 +19,13 @@ export default function BuffWeapon() {
     };
   });
 
-  const handleUpdateSelfBuffCtrls = (newCtrls: IWeaponBuffCtrl[]) => {
+  const handleUpdateSelfCtrls = (newCtrls: IWeaponBuffCtrl[]) => {
     updateActiveSetup((setup) => {
       setup.wpBuffCtrls = newCtrls;
     });
   };
 
-  const handleUpdateTeammateBuffCtrls = (teammate: CalcTeammate, newCtrls: IWeaponBuffCtrl[]) => {
+  const handleUpdateTeammateCtrls = (teammate: CalcTeammate, newCtrls: IWeaponBuffCtrl[]) => {
     updateTeammateWeapon(teammate.data.code, {
       buffCtrls: newCtrls,
     });
@@ -39,12 +39,12 @@ export default function BuffWeapon() {
       wpBuffCtrls={wpBuffCtrls}
       getSelfHandlers={(ctrl) => {
         const updateCtrlInput = (value: number, inputIndex: number) => {
-          handleUpdateSelfBuffCtrls(updateModCtrlInputs(wpBuffCtrls, ctrl.id, inputIndex, value));
+          handleUpdateSelfCtrls(updateModCtrlInputs(wpBuffCtrls, ctrl.id, inputIndex, value));
         };
 
         return {
           onToggle: () => {
-            handleUpdateSelfBuffCtrls(toggleModCtrl(wpBuffCtrls, ctrl.id));
+            handleUpdateSelfCtrls(toggleModCtrl(wpBuffCtrls, ctrl.id));
           },
           onToggleCheck: (currentInput, inputIndex) => {
             updateCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
@@ -55,7 +55,7 @@ export default function BuffWeapon() {
       }}
       getTeammateHandlers={(teammate, ctrl) => {
         const updateCtrlInput = (value: number, inputIndex: number) => {
-          handleUpdateTeammateBuffCtrls(
+          handleUpdateTeammateCtrls(
             teammate,
             updateModCtrlInputs(teammate.buffCtrls, ctrl.id, inputIndex, value)
           );
@@ -63,7 +63,7 @@ export default function BuffWeapon() {
 
         return {
           onToggle: () => {
-            handleUpdateTeammateBuffCtrls(teammate, toggleModCtrl(teammate.buffCtrls, ctrl.id));
+            handleUpdateTeammateCtrls(teammate, toggleModCtrl(teammate.buffCtrls, ctrl.id));
           },
           onToggleCheck: (currentInput, inputIndex) => {
             updateCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);

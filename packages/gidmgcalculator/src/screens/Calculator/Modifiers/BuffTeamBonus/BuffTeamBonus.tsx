@@ -1,6 +1,5 @@
 import { Fragment } from "react";
 
-// import { useCalcTeamData } from "../../ContextProvider";
 import { useResonanceCtrlGroup } from "./_hooks/useResonanceCtrlGroup";
 import { useTeamBuffCtrlGroup } from "./_hooks/useTeamBuffCtrlGroup";
 // import { GenshinModifierView } from "@/components";
@@ -14,7 +13,6 @@ import { useTeamBuffCtrlGroup } from "./_hooks/useTeamBuffCtrlGroup";
 
 export function BuffTeamBonus() {
   const groups = [useResonanceCtrlGroup(), useTeamBuffCtrlGroup()];
-  // const teamDate = useCalcTeamData();
 
   // if (teamDate.witchRiteLv === 2) {
   //   groups.push({

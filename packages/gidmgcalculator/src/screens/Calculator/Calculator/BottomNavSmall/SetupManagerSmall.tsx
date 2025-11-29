@@ -1,32 +1,42 @@
-import { FaBalanceScaleLeft, FaCopy, FaSave, FaShareAlt, FaArrowUp, FaPlus, FaCheck } from "react-icons/fa";
+import {
+  FaArrowUp,
+  FaBalanceScaleLeft,
+  FaCheck,
+  FaCopy,
+  FaPlus,
+  FaSave,
+  FaShareAlt,
+} from "react-icons/fa";
 import { FaSun } from "react-icons/fa6";
 import { MdDownload } from "react-icons/md";
 import { SiTarget } from "react-icons/si";
 import { Button, ButtonGroup, FancyBackSvg, Input, TrashCanSvg, type ButtonProps } from "rond";
 
-import { NewSetupManageInfo, selectActiveId, updateCalculator } from "@Store/calculator-slice";
-import { useSelector } from "@Store/hooks";
-import { useOptimizeSystem } from "@OptimizeDept/index";
+import { useOptimizeSystem } from "@/systems/optimize-dept";
+import { useCalcStore } from "@Store/calculator";
+import { MultiSetupChange, updateCalculator } from "@Store/calculator/actions";
 import { useCalcModalCtrl } from "../../ContextProvider";
 import { useSetupDirectorKit } from "../../SetupDirector";
 
-interface SetupManagerSmallProps {
+type SetupManagerSmallProps = {
   onClose: () => void;
-}
+};
+
 export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
-  const activeId = useSelector(selectActiveId);
+  const activeId = useCalcStore((state) => state.activeId);
   const calcModalCtrl = useCalcModalCtrl();
-  const { displayedSetups, comparedSetups, canAddMoreSetup, tempStandardId, control, dispatch } = useSetupDirectorKit();
+  const { displayedSetups, comparedSetups, canAddMoreSetup, tempStandardId, control } =
+    useSetupDirectorKit();
   const { state, contact } = useOptimizeSystem();
 
   const onSelectSetup = (id: number) => {
     if (id !== activeId) {
-      dispatch(updateCalculator({ activeId: id }));
+      updateCalculator({ activeId: id });
     }
     onClose();
   };
 
-  const getActionsConfig = (setup: NewSetupManageInfo, i: number): ButtonProps[] => [
+  const getActionsConfig = (setup: MultiSetupChange, i: number): ButtonProps[] => [
     {
       children: <TrashCanSvg />,
       disabled: displayedSetups.length <= 1,
@@ -96,13 +106,13 @@ export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
                 </div>
 
                 <div className="mt-3 flex">
-                  {getActionsConfig(setup, setupIndex).map(({ className = "", ...rest }, i) => (
+                  {getActionsConfig(setup, setupIndex).map(({ className, ...rest }, i) => (
                     <Button
                       key={i}
                       variant="custom"
                       shape="square"
                       withShadow={false}
-                      className={`w-10 h-10 flex-center ${className}`}
+                      className={["w-10 h-10 flex-center", className]}
                       {...rest}
                     />
                   ))}
@@ -143,7 +153,9 @@ export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
           },
           {
             children: "Optimize",
-            icon: <FaSun className={`text-lg ${state.status === "OPTIMIZING" ? "animate-spin" : ""}`} />,
+            icon: (
+              <FaSun className={`text-lg ${state.status === "OPTIMIZING" ? "animate-spin" : ""}`} />
+            ),
             onClick: () => {
               contact();
               onClose();

@@ -1,6 +1,6 @@
 import type { CalcCharacter } from "@/models/base";
 import type { IAbilityBuffCtrl, IAbilityDebuffCtrl } from "@/types";
-import type { ModifierHanlders } from "./modifiers.types";
+import type { ModifierHanlders } from "./types";
 
 import { GenshinModifierView } from "../GenshinModifierView";
 import { ModifierContainer } from "./ModifierContainer";

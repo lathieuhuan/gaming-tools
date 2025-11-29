@@ -11,7 +11,7 @@ export const initialState: CalculatorState = {
   comparedIds: [],
   setupManagers: [],
   setupsById: {},
-  target: new MainTarget(),
+  target: MainTarget.DEFAULT(),
 };
 
 export const useCalcStore = create<CalculatorState>()(immer(() => initialState));

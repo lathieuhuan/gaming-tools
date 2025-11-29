@@ -94,21 +94,14 @@ export function applyDebuffs(
     }
   }
 
-  // TODO: Implement artifact debuffs
   // APPLY ARTIFACT DEBUFFS
-  // for (const ctrl of this.artDebuffCtrls) {
-  //   const { name, debuffs = [] } = this.appArtifacts[ctrl.code] || {};
-  //   const debuff = debuffs[ctrl.index];
+  for (const ctrl of setup.artDebuffCtrls) {
+    if (ctrl.activated) {
+      const label = `${ctrl.setData.name} / 4-piece activated`;
 
-  //   if (ctrl.activated && debuff?.effects) {
-  //     resistReductCtrl.applyDebuff(
-  //       debuff,
-  //       ctrl.inputs ?? [],
-  //       false,
-  //       `${name} / 4-piece activated`
-  //     );
-  //   }
-  // }
+      applyPenalty(label, main, ctrl.data.effects, ctrl.inputs);
+    }
+  }
 
   // APPLY RESONANCE & ELEMENT DEBUFFS
   const geoDebuffCtrl = setup.rsnDebuffCtrls.find((ctrl) => ctrl.element === "geo");

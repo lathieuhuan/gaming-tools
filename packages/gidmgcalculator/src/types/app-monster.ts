@@ -9,9 +9,9 @@ type MonsterVariant = {
   change?: number;
 };
 
-type MonsterInputChanges = Partial<Record<"base" | "variant" | AttackElement, number>>;
+export type MonsterInputChanges = Partial<Record<"base" | "variant" | AttackElement, number>>;
 
-type MonsterInputConfig = {
+export type MonsterInputConfig = {
   label: string;
   type?: "CHECK" | "SELECT";
   changes?: MonsterInputChanges;

@@ -1,7 +1,7 @@
 import type { Weapon } from "@/models/base";
 import type { CalcTeammate } from "@/models/calculator";
 import type { AppWeapon, IWeaponBasic, IWeaponBuffCtrl } from "@/types";
-import type { ModifierHanlders } from "./modifiers.types";
+import type { ModifierHanlders } from "./types";
 
 import { getWeaponBuffDesc } from "@/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";

@@ -1,4 +1,3 @@
-import { TravelerKey } from "@/types";
 import { Level } from "@Calculation";
 
 export type AppSettings = {
@@ -17,18 +16,6 @@ export type AppSettings = {
   wpRefi: number;
   artLevel: number;
   targetLevel: number;
-
-  // TODO: remove this after 01/11/2025
-  /** @deprecated */
-  traveler?: TravelerKey;
-  /** @deprecated */
-  charInfoIsSeparated?: boolean;
-  /** @deprecated */
-  isCharInfoSeparated?: boolean;
-  /** @deprecated */
-  doKeepArtStatsOnSwitch?: boolean;
-  /** @deprecated */
-  persistingUserData?: boolean;
 };
 
 export class AppSettingsService {
@@ -59,19 +46,6 @@ export class AppSettingsService {
           ...(JSON.parse(savedSettings) as AppSettings),
         }
       : this.DEFAULT_SETTINGS;
-
-    // TODO: remove this after 01/11/2025
-    settings.separateCharInfo ||=
-      settings.charInfoIsSeparated || settings.isCharInfoSeparated || this.DEFAULT_SETTINGS.separateCharInfo;
-    settings.keepArtStatsOnSwitch ||= settings.doKeepArtStatsOnSwitch || this.DEFAULT_SETTINGS.keepArtStatsOnSwitch;
-    settings.persistUserData ||= settings.persistingUserData || this.DEFAULT_SETTINGS.persistUserData;
-
-    // TODO: remove this after 01/11/2025
-    delete settings.traveler;
-    delete settings.charInfoIsSeparated;
-    delete settings.isCharInfoSeparated;
-    delete settings.doKeepArtStatsOnSwitch;
-    delete settings.persistingUserData;
 
     return key ? settings[key] : settings;
   }
