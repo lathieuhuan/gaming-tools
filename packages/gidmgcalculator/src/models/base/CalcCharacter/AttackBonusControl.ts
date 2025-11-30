@@ -19,6 +19,10 @@ export class AttackBonusControl {
   constructor(initial: Partial<AttackBonusGroup> = {}) {
     this.group = initial as AttackBonusGroup;
   }
+  
+  get records() {
+    return this.group;
+  }
 
   add(bonus: AttackBonus) {
     const current = this.group[bonus.toType] || [];
@@ -73,5 +77,4 @@ export class AttackBonusControl {
   reset() {
     this.group = {} as AttackBonusGroup;
   }
-
 }

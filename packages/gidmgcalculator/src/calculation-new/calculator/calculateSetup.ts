@@ -33,7 +33,7 @@ export function calculateSetup(setup: ICalcSetup, options: CalculateSetupOptions
   const teammates = setup.teammates.map(
     (teammate) => new TeammateCalc(teammate, teammate.data, setup.team)
   );
-  const target = new CalcTarget(setup.target, options);
+  const target = new CalcTarget(setup.target, setup.target.data, options);
 
   const { calcList } = main.data;
   const { elmtEvent } = setup;
@@ -135,12 +135,12 @@ export function calculateSetup(setup: ICalcSetup, options: CalculateSetupOptions
   const rxnCalculator = makeReactionCalc(main, target);
 
   for (const reaction of LUNAR_REACTIONS) {
-    const recorder = new ResultRecorder();
+    const recorder = new ResultRecorder({}, options?.shouldRecord);
     result.RXN[reaction] = rxnCalculator.calcLunarReaction(reaction, recorder);
   }
 
   for (const reaction of TRANSFORMATIVE_REACTIONS) {
-    const recorder = new ResultRecorder();
+    const recorder = new ResultRecorder({}, options?.shouldRecord);
     result.RXN[reaction] = rxnCalculator.calcReaction(reaction, recorder, elmtEvent);
   }
 

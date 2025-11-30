@@ -39,6 +39,7 @@ export function makeOtherItemCalc(performer: CharacterCalc) {
     });
 
     return {
+      exclusiveBonusId: itemId,
       type,
       values: [{ base, crit: 0, average: base }],
       recorder,

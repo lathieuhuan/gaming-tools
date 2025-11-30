@@ -2,16 +2,18 @@ import { FaMinus } from "react-icons/fa";
 import { Button, CloseButton, Modal } from "rond";
 
 import Array_ from "@/utils/Array";
+import { useCalcStore } from "@Store/calculator";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI, type TrackerState } from "@Store/ui-slice";
+
 import { TrackerCore } from "./TrackerCore";
 
 export function Tracker() {
   const dispatch = useDispatch();
   const trackerState = useSelector((state) => state.ui.trackerState);
-  const activeSetupName = useSelector((state) => {
-    const { activeId, setupManageInfos } = state.calculator;
-    return Array_.findById(setupManageInfos, activeId)?.name || "";
+  const activeSetupName = useCalcStore((state) => {
+    const { activeId, setupManagers } = state;
+    return Array_.findById(setupManagers, activeId)?.name || "";
   });
 
   const setTrackerState = (newState: TrackerState) => {
@@ -19,7 +21,12 @@ export function Tracker() {
   };
 
   return (
-    <Modal.Core state={trackerState} preset="large" className="flex flex-col" onClose={() => setTrackerState("close")}>
+    <Modal.Core
+      state={trackerState}
+      preset="large"
+      className="flex flex-col"
+      onClose={() => setTrackerState("close")}
+    >
       <div className="absolute top-1 right-1 flex">
         <Button boneOnly icon={<FaMinus />} onClick={() => setTrackerState("hidden")} />
         <CloseButton boneOnly onClick={() => setTrackerState("close")} />

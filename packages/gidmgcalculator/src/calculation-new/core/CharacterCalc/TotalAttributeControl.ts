@@ -9,7 +9,7 @@ export type TotalAttributeControlOptions = {
   shouldRecord?: boolean;
 };
 
-type TotalAttributeRecord = {
+export type TotalAttributeRecord = {
   label: string;
   value: number;
 };
@@ -47,6 +47,10 @@ export class TotalAttributeControl {
     }
 
     return this.totalAttr;
+  }
+
+  getRecords(key: AttributeStat) {
+    return this.totalAttr[key].records || [];
   }
 
   private record(key: AttributeStat, value: number, label: string) {

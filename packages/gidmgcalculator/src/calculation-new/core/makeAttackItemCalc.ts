@@ -91,6 +91,7 @@ export function makeAttackItemCalc(
     });
 
     return {
+      exclusiveBonusId: itemId,
       type: "attack",
       values,
       attElmt,

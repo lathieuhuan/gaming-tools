@@ -13,6 +13,7 @@ import type {
   EntityPenaltyEffect,
   ExclusiveAttackBonusGroup,
   LunarType,
+  TalentCalcItemBonusId,
 } from "@/types";
 import type { ResultRecorder } from "./core/ResultRecorder";
 
@@ -40,7 +41,7 @@ export type AttackAlterConfig = {
 // RESULT CALCULATION - OUTPUT
 
 export type ResultItemRecord = {
-  // specPatt?: LunarType;
+  specPatt?: LunarType;
   factors: Array<{
     label: string;
     value: number;
@@ -67,6 +68,7 @@ export type CalcAspect = "base" | "crit" | "average";
 export type CalcResultItemValue = Record<CalcAspect, number>;
 
 export type CalcResultItem = {
+  exclusiveBonusId?: TalentCalcItemBonusId;
   values: CalcResultItemValue[];
 };
 

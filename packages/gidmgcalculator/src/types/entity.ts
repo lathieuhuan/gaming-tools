@@ -7,6 +7,7 @@ import type {
   TeamElementConditions,
   TeamPropertyCondition,
 } from "./app-entity";
+import type { AppMonster } from "./app-monster";
 import type { ElementCount, TotalAttributes } from "./calculation";
 import type {
   ArtifactType,
@@ -101,4 +102,5 @@ export type ITarget = {
   variantType?: ElementType;
   inputs?: number[];
   resistances: Record<AttackElement, number>;
+  data: AppMonster;
 };

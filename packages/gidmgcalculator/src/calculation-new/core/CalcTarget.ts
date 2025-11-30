@@ -1,4 +1,4 @@
-import type { AttackElement, ITarget, ResistReductionKey } from "@/types";
+import type { AppMonster, AttackElement, ITarget, ResistReductionKey } from "@/types";
 
 import { Target } from "@/models/base";
 import { ATTACK_ELEMENTS } from "@/constants";
@@ -36,10 +36,10 @@ export class CalcTarget extends Target {
     phys: 1,
   };
 
-  constructor(info: ITarget, options: CalcTargetOptions = {}) {
+  constructor(info: ITarget, data: AppMonster, options: CalcTargetOptions = {}) {
     const { shouldRecord = false } = options;
 
-    super(info);
+    super(info, data);
     this.shouldRecord = shouldRecord;
   }
 
@@ -58,6 +58,12 @@ export class CalcTarget extends Target {
     }
 
     this.reductions[key] = reduction;
+  }
+
+  getResistMultEquation(key: AttackElement) {
+    const RES = (this.resistances[key] - this.getReduction(key).value) / 100;
+
+    return `${RES < 0 ? `1 - (${RES} / 2)` : RES >= 0.75 ? `1 / (4 * ${RES} + 1)` : `1 - ${RES}`}`;
   }
 
   finalize() {
