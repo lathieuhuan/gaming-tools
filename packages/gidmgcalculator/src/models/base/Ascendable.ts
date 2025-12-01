@@ -5,10 +5,19 @@ export class Ascendable {
   ascension: number;
 
   constructor(level: Level) {
+    const { bareLv, ascension } = Ascendable.splitLevel(level);
+
+    this.bareLv = bareLv;
+    this.ascension = ascension;
+  }
+
+  static splitLevel(level: Level) {
     const [bareLvString, maxLvString] = level.split("/");
     const maxLv = +maxLvString;
 
-    this.bareLv = +bareLvString;
-    this.ascension = maxLv === 20 ? 0 : maxLv >= 90 ? 6 : maxLv / 10 - 3;
+    return {
+      bareLv: +bareLvString,
+      ascension: maxLv === 20 ? 0 : maxLv >= 90 ? 6 : maxLv / 10 - 3,
+    };
   }
 }

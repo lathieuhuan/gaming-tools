@@ -7,26 +7,23 @@ import type {
   ITeam,
   ITeammate,
   ITeammateArtifact,
+  ITeammateBasic,
   ITeammateWeapon,
-  ITeamMember,
 } from "@/types";
-import type { PartiallyRequiredOnly } from "rond";
 
 import { isPassedComparison } from "./utils/isPassedComparison";
 import { isValidInput } from "./utils/isValidInput";
 
-export type TeammateConstructInfo = PartiallyRequiredOnly<ITeammate, "name">;
-
-export class Teammate<TTeam extends ITeam = ITeam> implements ITeamMember<TTeam>, ITeammate {
+export class Teammate<TTeam extends ITeam = ITeam> implements ITeammate<TTeam> {
   name: string;
-  enhanced?: boolean;
+  enhanced: boolean;
   buffCtrls: IAbilityBuffCtrl[];
   debuffCtrls: IAbilityDebuffCtrl[];
   weapon: ITeammateWeapon;
   artifact?: ITeammateArtifact;
   // inputs: TeammateInput[] = [];
 
-  constructor(info: ITeammate, public data: AppCharacter, protected team: TTeam) {
+  constructor(info: ITeammateBasic, public data: AppCharacter, protected team: TTeam) {
     this.name = info.name;
     this.enhanced = info.enhanced;
     this.buffCtrls = info.buffCtrls;

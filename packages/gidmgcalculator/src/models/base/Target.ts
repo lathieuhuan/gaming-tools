@@ -1,4 +1,4 @@
-import type { AppMonster, AttackElement, ElementType, ITarget } from "@/types";
+import type { AppMonster, AttackElement, ElementType, ITarget, ITargetBasic } from "@/types";
 
 export class Target implements ITarget {
   code: number;
@@ -9,7 +9,7 @@ export class Target implements ITarget {
 
   data: AppMonster;
 
-  constructor(info: ITarget, data: AppMonster) {
+  constructor(info: ITargetBasic, data: AppMonster) {
     this.code = info.code;
     this.level = info.level;
     this.variantType = info.variantType;

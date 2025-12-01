@@ -40,11 +40,12 @@ export function ModalProvider(props: { children: React.ReactNode }) {
         sourceType="app"
         hasMultipleMode
         filter={(character) => userChars.every((userChar) => userChar.name !== character.name)}
-        onSelectCharacter={(character) => {
+        onSelectCharacter={({ data }) => {
           if (!userChars.length) {
-            dispatch(viewCharacter(character.name));
+            dispatch(viewCharacter(data.name));
           }
-          dispatch(addCharacter(character));
+
+          dispatch(addCharacter({ name: data.name, data }));
         }}
         onClose={closeModal}
       />

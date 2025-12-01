@@ -1,2 +1,2 @@
 export * from "./CalcSetup";
-export type { CalcSetupConstructParams, ICalcSetup } from "./types";
+export type { CalcSetupConstructParams } from "./types";

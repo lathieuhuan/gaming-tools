@@ -11,7 +11,7 @@ import { ItemThumbnail, type ItemThumbProps } from "../ItemThumbnail";
 
 type ArtifactProps = AdvancedPick<Artifact, "code" | "type" | "rarity", "level">;
 
-export interface EquipmentDisplayProps extends Pick<ItemThumbProps, "muted" | "compact" | "showOwner"> {
+export type EquipmentDisplayProps = Pick<ItemThumbProps, "muted" | "compact" | "showOwner"> & {
   className?: ClassValue;
   style?: React.CSSProperties;
   weapon: AdvancedPick<Weapon, "code" | "type", "level" | "refi">;
@@ -24,7 +24,8 @@ export interface EquipmentDisplayProps extends Pick<ItemThumbProps, "muted" | "c
   selectedIndex?: number;
   /** 0-4 is artifact, 5 is weapon */
   onClickItem?: (itemIndex: number) => void;
-}
+};
+
 export function EquipmentDisplay(props: EquipmentDisplayProps) {
   const { weapon, appWeapon = $AppWeapon.get(weapon.code)!, artifacts = [], compact } = props;
   const EmptyWrap: keyof JSX.IntrinsicElements = props.fillable ? "button" : "div";
@@ -92,7 +93,9 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
                 renderArtifact(artifact, appArtifactSet)
               ) : (
                 <ItemCase chosen={props.selectedIndex === i} onClick={() => props.onClickItem?.(i)}>
-                  {(className, imgCls) => renderArtifact(artifact, appArtifactSet, className, imgCls)}
+                  {(className, imgCls) =>
+                    renderArtifact(artifact, appArtifactSet, className, imgCls)
+                  }
                 </ItemCase>
               )}
             </div>
@@ -102,7 +105,10 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
         return (
           <div key={i} className="p-1.5 w-1/3" style={{ minHeight: compact ? 84 : 124 }}>
             <EmptyWrap
-              className={clsx("p-4 w-full h-full flex-center rounded bg-dark-3", props.fillable && "glow-on-hover")}
+              className={clsx(
+                "p-4 w-full h-full flex-center rounded bg-dark-3",
+                props.fillable && "glow-on-hover"
+              )}
               onClick={props.fillable ? () => props.onClickEmptyArtifact?.(i) : undefined}
             >
               <GenshinImage className="w-full" src={Entity_.artifactIconOf(ARTIFACT_TYPES[i])} />

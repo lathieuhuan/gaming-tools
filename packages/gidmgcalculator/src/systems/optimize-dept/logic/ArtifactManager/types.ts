@@ -1,8 +1,8 @@
 import type { PartiallyOptional } from "rond";
 import type { OptimizerArtifactModConfigs, AppArtifact } from "@Calculation";
-import type { IUserArtifact } from "@/types";
+import type { IDbArtifact } from "@/types";
 
-export type InputArtifact = PartiallyOptional<IUserArtifact, "owner">;
+export type InputArtifact = PartiallyOptional<IDbArtifact, "owner">;
 
 export type ManagedArtifactSet = {
   data: AppArtifact;

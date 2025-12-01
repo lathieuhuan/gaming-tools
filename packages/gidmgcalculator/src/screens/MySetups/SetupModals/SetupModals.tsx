@@ -1,7 +1,7 @@
 import { GeneralCalc } from "@Calculation";
 import { ConfirmModal, Modal } from "rond";
 
-import type { UserArtifacts, UserSetup, IUserWeapon } from "@/types";
+import type { IDbArtifact, IDbWeapon, IUserSetup } from "@/types";
 import type { CalculationResult } from "../types";
 
 import Setup_ from "@/utils/Setup";
@@ -10,13 +10,19 @@ import { selectMySetupModalType, updateUI } from "@Store/ui-slice";
 import { removeSetup } from "@Store/userdb-slice";
 
 // Component
-import { ArtifactCard, AttributeTable, SetBonusesView, SetupExporter, WeaponCard } from "@/components";
+import {
+  ArtifactCard,
+  AttributeTable,
+  SetBonusesView,
+  SetupExporter,
+  WeaponCard,
+} from "@/components";
 import { Modifiers } from "./Modifiers";
 
 type SetupModalsProps = {
-  setup: UserSetup;
-  weapon: IUserWeapon;
-  artifacts: UserArtifacts;
+  setup: IUserSetup;
+  weapon: IDbWeapon;
+  artifacts: IDbArtifact[];
   result: CalculationResult;
 };
 
@@ -54,11 +60,27 @@ export function SetupModals({ setup, weapon, artifacts, result }: SetupModalsPro
         />
       </Modal.Core>
 
-      <Modal active={modalType === "WEAPON"} className="bg-dark-1" title="Weapon" onClose={closeModal}>
-        <WeaponCard wrapperCls="w-76" style={{ height: "30rem" }} withGutter={false} withOwnerLabel weapon={weapon} />
+      <Modal
+        active={modalType === "WEAPON"}
+        className="bg-dark-1"
+        title="Weapon"
+        onClose={closeModal}
+      >
+        <WeaponCard
+          wrapperCls="w-76"
+          style={{ height: "30rem" }}
+          withGutter={false}
+          withOwnerLabel
+          weapon={weapon}
+        />
       </Modal>
 
-      <Modal active={modalType === "ARTIFACTS"} className="bg-dark-1" title="Artifacts" onClose={closeModal}>
+      <Modal
+        active={modalType === "ARTIFACTS"}
+        className="bg-dark-1"
+        title="Artifacts"
+        onClose={closeModal}
+      >
         <div className="flex space-x-1 hide-scrollbar">
           {artifacts?.map((artifact, i) => {
             if (artifact) {

@@ -1,26 +1,13 @@
 import type { CalcResult } from "@/calculation-new/calculator/types";
-import type {
-  AppCharacter,
-  CustomBuffCtrl,
-  CustomDebuffCtrl,
-  ElementalEvent,
-  IAbilityBuffCtrl,
-  IAbilityDebuffCtrl,
-  IArtifactBuffCtrl,
-  IArtifactDebuffCtrl,
-  IArtifactModCtrlBasic,
-  IModifierCtrlBasic,
-  ITeamBuffCtrl,
-  ITeammate,
-  IWeaponBuffCtrl,
-  ResonanceModCtrl,
-  TotalAttributes,
-} from "@/types";
+import type { AppCharacter, ITeammate, TotalAttributes } from "@/types";
+import type { MainArtifactGear } from "../MainArtifactGear";
 import type { MainCharacter } from "../MainCharacter";
 import type { MainTarget } from "../MainTarget";
-import type { CalcSetupConstructParams, CloneOptions, ICalcSetup } from "./types";
+import type { CalcSetupConstructParams, CloneOptions } from "./types";
 
 import { calculateSetup } from "@/calculation-new/calculator";
+import { Setup } from "@/models/base/Setup";
+import { isAutoRsnElmt } from "@/models/base/utils/isAutoRsnElmt";
 import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
 import TypeCounter from "@/utils/TypeCounter";
@@ -37,31 +24,12 @@ import {
   createTeamBuffCtrls,
   createWeaponBuffCtrls,
 } from "../modifier";
-import { isAutoRsnElmt } from "@/models/base/utils/isAutoRsnElmt";
-import { MainArtifactGear } from "../MainArtifactGear";
 
 type TeammateUpdateData = Partial<
   Pick<ITeammate, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls">
 >;
 
-export class CalcSetup implements ICalcSetup<MainCharacter, CalcTeammate, CalcTeam> {
-  ID: number;
-  char: MainCharacter;
-  selfBuffCtrls: IAbilityBuffCtrl[];
-  selfDebuffCtrls: IAbilityDebuffCtrl[];
-  wpBuffCtrls: IWeaponBuffCtrl[];
-  artBuffCtrls: IArtifactBuffCtrl[];
-  artDebuffCtrls: IArtifactDebuffCtrl[];
-  teamBuffCtrls: ITeamBuffCtrl[];
-  rsnBuffCtrls: ResonanceModCtrl[];
-  rsnDebuffCtrls: ResonanceModCtrl[];
-  elmtEvent: ElementalEvent;
-  customBuffCtrls: CustomBuffCtrl[];
-  customDebuffCtrls: CustomDebuffCtrl[];
-
-  teammates: CalcTeammate[];
-  team: CalcTeam;
-  target: MainTarget;
+export class CalcSetup extends Setup<MainCharacter, CalcTeammate, CalcTeam, MainTarget> {
   artifactAttrs: TotalAttributes;
   result: CalcResult;
 
@@ -93,21 +61,25 @@ export class CalcSetup implements ICalcSetup<MainCharacter, CalcTeammate, CalcTe
       rsnDebuffCtrls = defaultRsnModCtrls.debuffCtrls,
     } = setup;
 
-    this.ID = ID;
-    this.char = setup.char;
-    this.selfBuffCtrls = selfBuffCtrls;
-    this.selfDebuffCtrls = selfDebuffCtrls;
-    this.wpBuffCtrls = wpBuffCtrls;
-    this.artBuffCtrls = artBuffCtrls;
-    this.artDebuffCtrls = artDebuffCtrls;
-    this.rsnBuffCtrls = rsnBuffCtrls;
-    this.rsnDebuffCtrls = rsnDebuffCtrls;
-    this.elmtEvent = elmtEvent;
-    this.customBuffCtrls = customBuffCtrls;
-    this.customDebuffCtrls = customDebuffCtrls;
-    this.teammates = teammates;
-    this.team = team;
-    this.target = setup.target;
+    super({
+      ID,
+      char,
+      selfBuffCtrls,
+      selfDebuffCtrls,
+      wpBuffCtrls,
+      artBuffCtrls,
+      artDebuffCtrls,
+      rsnBuffCtrls,
+      rsnDebuffCtrls,
+      elmtEvent,
+      customBuffCtrls,
+      customDebuffCtrls,
+      teamBuffCtrls: [],
+      teammates,
+      team,
+      target: setup.target,
+    });
+
     this.teamBuffCtrls = createTeamBuffCtrls(this);
 
     this.artifactAttrs = new TypeCounter(setup.artifactAttrs?.result);
@@ -128,13 +100,6 @@ export class CalcSetup implements ICalcSetup<MainCharacter, CalcTeammate, CalcTe
       team,
     });
   }
-
-  // update(data: UpdateData) {
-  //   return new CalcSetup({
-  //     ...this,
-  //     ...data,
-  //   });
-  // }
 
   calculate(shouldRecord?: boolean) {
     const { main, result, target } = calculateSetup(this, { shouldRecord: true });

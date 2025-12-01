@@ -2,7 +2,9 @@ import type {
   AppCharacter,
   IAbilityBuffCtrl,
   IAbilityDebuffCtrl,
+  ICalcTeammate,
   ITeammate,
+  ITeammateBasic,
   IWeaponBuffCtrl,
 } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
@@ -16,15 +18,16 @@ import { createAbilityBuffCtrls, createAbilityDebuffCtrls } from "../modifier";
 import { BonusCalc } from "./BonusCalc";
 import { PenaltyCalc } from "./PenaltyCalc";
 
-export type CalcTeammateConstructInfo = PartiallyRequiredOnly<ITeammate, "name">;
+export type CalcTeammateConstructInfo = PartiallyRequiredOnly<ITeammateBasic, "name">;
 
 type CloneOptions = {
   team?: CalcTeam;
 };
 
-export class CalcTeammate extends Teammate<CalcTeam> {
+export class CalcTeammate extends Teammate<CalcTeam> implements ICalcTeammate<CalcTeam> {
   constructor(info: CalcTeammateConstructInfo, public data: AppCharacter, team: CalcTeam) {
     const {
+      enhanced = false,
       buffCtrls = createAbilityBuffCtrls(data, false),
       debuffCtrls = createAbilityDebuffCtrls(data, false),
     } = info;
@@ -44,7 +47,7 @@ export class CalcTeammate extends Teammate<CalcTeam> {
       };
     }
 
-    super({ ...info, buffCtrls, debuffCtrls, weapon }, data, team);
+    super({ ...info, enhanced, buffCtrls, debuffCtrls, weapon }, data, team);
   }
 
   update(data: Partial<ITeammate>) {

@@ -1,3 +1,4 @@
+import type TypeCounter from "@/utils/TypeCounter";
 import {
   AMPLIFYING_REACTIONS,
   ARTIFACT_TYPES,
@@ -8,8 +9,8 @@ import {
   CORE_STAT_TYPES,
   ELEMENT_TYPES,
   LEVELS,
-  LUNAR_TYPES,
   LUNAR_REACTIONS,
+  LUNAR_TYPES,
   NORMAL_ATTACKS,
   QUICKEN_REACTIONS,
   REACTIONS,
@@ -45,7 +46,7 @@ export type Level = (typeof LEVELS)[number];
 
 export type ElementType = (typeof ELEMENT_TYPES)[number];
 
-export type AutoRsnElmtType =  "pyro" | "hydro" | "geo" | "dendro";
+export type AutoRsnElmtType = "pyro" | "hydro" | "geo" | "dendro";
 export type ManualRsnElmType = "cryo" | "geo" | "dendro";
 
 export type AttackElement = (typeof ATTACK_ELEMENTS)[number];
@@ -117,3 +118,7 @@ export type CoreStat = (typeof CORE_STAT_TYPES)[number];
 export type BaseAttributeStat = "base_atk" | "base_hp" | "base_def";
 
 export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];
+
+export type ElementCount = TypeCounter<ElementType>;
+
+export type TotalAttributes = TypeCounter<AttributeStat | BaseAttributeStat>;

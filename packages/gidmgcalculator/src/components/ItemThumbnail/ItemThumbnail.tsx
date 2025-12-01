@@ -1,10 +1,10 @@
 import { clsx } from "rond";
-import { Level } from "@Calculation";
 
 import { $AppCharacter } from "@/services";
+import type { Level } from "@/types";
 import { GenshinImage } from "../GenshinImage";
 
-export interface ItemThumbProps {
+export type ItemThumbProps = {
   className?: string;
   imgCls?: string;
   title?: string;
@@ -21,11 +21,14 @@ export interface ItemThumbProps {
     refi?: number;
     owner?: string | null;
   };
-}
+};
+
 export function ItemThumbnail(props: ItemThumbProps) {
   const { showOwner = true, compact, item } = props;
   const lvText =
-    item.level === undefined ? null : `Lv. ${typeof item.level === "string" ? item.level.split("/")[0] : item.level}`;
+    item.level === undefined
+      ? null
+      : `Lv. ${typeof item.level === "string" ? item.level.split("/")[0] : item.level}`;
 
   const renderSideIcon = (owner: string) => {
     const { icon = "", sideIcon } = $AppCharacter.get(owner) || {};
@@ -37,7 +40,10 @@ export function ItemThumbnail(props: ItemThumbProps) {
         )}
       >
         <GenshinImage
-          className={clsx("max-w-none w-10 h-10 -translate-x-2 -translate-y-4", !sideIcon && "-translate-y-2")}
+          className={clsx(
+            "max-w-none w-10 h-10 -translate-x-2 -translate-y-4",
+            !sideIcon && "-translate-y-2"
+          )}
           src={sideIcon || icon}
           fallbackCls="mt-4 p-1 h-6"
         />
@@ -57,7 +63,7 @@ export function ItemThumbnail(props: ItemThumbProps) {
     >
       {showOwner && item.owner && !compact ? renderSideIcon(item.owner) : null}
 
-      {item.refi !== undefined ? (
+      {item.refi !== undefined && (
         <p
           className={
             "absolute top-1 left-1 rounded px-1 text-sm font-bold " +
@@ -66,7 +72,7 @@ export function ItemThumbnail(props: ItemThumbProps) {
         >
           {item.refi}
         </p>
-      ) : null}
+      )}
 
       <div
         className={clsx(
@@ -83,8 +89,8 @@ export function ItemThumbnail(props: ItemThumbProps) {
         />
       </div>
 
-      {lvText ? (
-        compact ? (
+      {lvText &&
+        (compact ? (
           <div className="flex-center bg-black/60 w-full absolute bottom-0">
             <p className="font-bold text-light-1 text-sm">{lvText}</p>
           </div>
@@ -92,8 +98,7 @@ export function ItemThumbnail(props: ItemThumbProps) {
           <div className="flex-center bg-light-1">
             <p className="font-bold text-black">{lvText}</p>
           </div>
-        )
-      ) : null}
+        ))}
     </div>
   );
 }

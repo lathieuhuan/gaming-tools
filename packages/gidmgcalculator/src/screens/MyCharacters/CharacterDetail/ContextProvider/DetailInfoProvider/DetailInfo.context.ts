@@ -1,11 +1,11 @@
 import { createContext } from "react";
 import type { AppWeapon, ArtifactAttribute, ArtifactSetBonus, CalcTeamData, TotalAttribute } from "@Calculation";
-import type { Character, UserArtifacts, IUserWeapon } from "@/types";
+import type { Character, UserArtifacts, IDbWeapon } from "@/types";
 
 export type DetailInfo = {
   character: Character;
   teamData: CalcTeamData;
-  weapon: IUserWeapon;
+  weapon: IDbWeapon;
   appWeapon: AppWeapon;
   artifacts: UserArtifacts;
   setBonuses: ArtifactSetBonus[];

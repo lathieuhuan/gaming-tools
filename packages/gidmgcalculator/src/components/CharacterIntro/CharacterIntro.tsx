@@ -1,10 +1,11 @@
 import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
-import { Badge, Button, Checkbox, Rarity, VersatileSelect } from "rond";
+import { Badge, Button, Rarity, VersatileSelect } from "rond";
 
 import type { Level } from "@/types";
-import { LEVELS } from "@Calculation";
-import { GenshinImage } from "../GenshinImage";
+
+import { LEVELS } from "@/constants";
 import { CalcCharacter } from "@/models/base";
+import { GenshinImage } from "../GenshinImage";
 
 type CharacterIntroProps = {
   className?: string;

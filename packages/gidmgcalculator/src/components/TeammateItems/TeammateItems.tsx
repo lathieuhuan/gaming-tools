@@ -1,10 +1,11 @@
 import { CloseButton, clsx, VersatileSelect } from "rond";
 
-import { ITeammate } from "@/types";
+import type { ITeammate } from "@/types";
 import { genSequentialOptions } from "@/utils";
+
 import { GenshinImage } from "../GenshinImage";
 
-interface TeammateItemsProps {
+type TeammateItemsProps = {
   className?: string;
   mutable?: boolean;
   teammate: ITeammate;
@@ -12,7 +13,8 @@ interface TeammateItemsProps {
   onChangeWeaponRefinement?: (newRefinement: number) => void;
   onClickArtifact?: () => void;
   onClickRemoveArtifact?: () => void;
-}
+};
+
 export function TeammateItems({
   className = "",
   mutable,
@@ -88,9 +90,7 @@ export function TeammateItems({
           {artifactSetName || "No artifact buff / debuff"}
         </p>
 
-        {artifactSetName && mutable ? (
-          <CloseButton boneOnly onClick={onClickRemoveArtifact} />
-        ) : null}
+        {artifactSetName && mutable && <CloseButton boneOnly onClick={onClickRemoveArtifact} />}
       </div>
     </div>
   );

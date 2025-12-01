@@ -57,29 +57,42 @@ export class ArtifactGearPieces<TArtifact extends IArtifact>
   }
 }
 
+type ArtifactGearSlot<TArtifact extends Artifact = Artifact> =
+  | {
+      isFilled: true;
+      piece: TArtifact;
+    }
+  | {
+      isFilled: false;
+      type: ArtifactType;
+    };
+
 export class ArtifactGear<TArtifact extends Artifact = Artifact>
   implements IArtifactGear<TArtifact>
 {
   pieces: ArtifactGearPieces<TArtifact>;
-  orderedPieces: (TArtifact | null)[] = [];
+  slots: ArtifactGearSlot[] = [];
   sets: IArtifactGearSet[] = [];
   attributes: TotalAttributes = new TypeCounter();
 
   constructor(pieces?: IArtifactGearPieces<TArtifact> | TArtifact[]) {
     const gearPieces: Partial<Record<ArtifactType, TArtifact>> = {};
-    const orderedPieces: (TArtifact | null)[] = [];
+    const slots: ArtifactGearSlot<TArtifact>[] = [];
 
     const getPiece = Array.isArray(pieces)
       ? (type: ArtifactType) => pieces.find((piece) => piece.type === type)
       : (type: ArtifactType) => pieces?.[type];
 
     for (const type of ARTIFACT_TYPES) {
-      gearPieces[type] = getPiece(type);
-      orderedPieces.push(gearPieces[type] || null);
+      const piece = getPiece(type);
+
+      gearPieces[type] = piece;
+
+      slots.push(piece ? { isFilled: true, piece } : { isFilled: false, type });
     }
 
     this.pieces = new ArtifactGearPieces(gearPieces);
-    this.orderedPieces = orderedPieces;
+    this.slots = slots;
 
     if (!pieces) {
       return;

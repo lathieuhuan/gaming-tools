@@ -1,7 +1,6 @@
 import { Fragment } from "react";
-import { ElementType, Level, AttackBonuses, AttackReaction } from "@Calculation";
 
-import type { CustomBuffCtrl, ElementModCtrl, Infusion } from "@/types";
+import type { CustomBuffCtrl, ElementType, Level, AttackBonus, AttackReaction } from "@/types";
 import { useTranslation } from "@/hooks";
 import { suffixOf, toCustomBuffLabel } from "@/utils";
 

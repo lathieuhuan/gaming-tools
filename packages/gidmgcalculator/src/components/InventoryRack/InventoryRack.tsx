@@ -3,28 +3,28 @@ import { FaCaretRight, FaMinus } from "react-icons/fa";
 import { TbRectangleVerticalFilled } from "react-icons/tb";
 import { ItemCase, clsx, useIntersectionObserver } from "rond";
 
-import type { AppArtifact, AppWeapon, IUserArtifact, IUserWeapon } from "@/types";
+import type { AppArtifact, AppWeapon, IDbArtifact, IDbWeapon } from "@/types";
 
 import { $AppArtifact, $AppWeapon } from "@/services";
 
 // Component
 import { ItemThumbnail, type ItemThumbProps } from "../ItemThumbnail";
 
-export function isWeapon(item: IUserWeapon | IUserArtifact): item is IUserWeapon {
+export function isWeapon(item: IDbWeapon | IDbArtifact): item is IDbWeapon {
   return "refi" in item;
 }
 
 export type ItemOption<
-  T extends IUserWeapon | IUserArtifact,
-  U = T extends IUserWeapon ? AppWeapon : AppArtifact
+  T extends IDbWeapon | IDbArtifact,
+  U = T extends IDbWeapon ? AppWeapon : AppArtifact
 > = ItemThumbProps["item"] & {
   userData: T;
   data: U;
 };
 
 export type InventoryRackProps<
-  T extends IUserWeapon | IUserArtifact,
-  U = T extends IUserWeapon ? AppWeapon : AppArtifact
+  T extends IDbWeapon | IDbArtifact,
+  U = T extends IDbWeapon ? AppWeapon : AppArtifact
 > = {
   itemCls?: string;
   emptyText?: string;
@@ -38,8 +38,8 @@ export type InventoryRackProps<
 };
 
 export function InventoryRack<
-  T extends IUserWeapon | IUserArtifact,
-  U = T extends IUserWeapon ? AppWeapon : AppArtifact
+  T extends IDbWeapon | IDbArtifact,
+  U = T extends IDbWeapon ? AppWeapon : AppArtifact
 >({
   data,
   itemCls,
@@ -52,7 +52,7 @@ export function InventoryRack<
 }: InventoryRackProps<T, U>): JSX.Element {
   const pioneerRef = useRef<HTMLDivElement>(null);
   const heightRef = useRef(0);
-  // const dataByCode = useRef<Record<number, T extends IUserWeapon ? AppWeapon : AppArtifact>>({});
+  // const dataByCode = useRef<Record<number, T extends IDbWeapon ? AppWeapon : AppArtifact>>({});
 
   const [ready, setReady] = useState(false);
   const [pageNo, setPageNo] = useState(0);

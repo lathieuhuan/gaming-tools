@@ -2,7 +2,7 @@ import { FaPlus } from "react-icons/fa";
 import { clsx, type ClassValue } from "rond";
 
 import { $AppCharacter } from "@/services";
-import { ElementType } from "@Calculation";
+import type { ElementType } from "@/types";
 
 import { GenshinImage } from "@/components";
 
@@ -47,10 +47,12 @@ export function CharacterPortrait(props: CharacterPortraitProps) {
   ];
 
   if (props.recruitable) {
-    if (!info) cls.push("flex-center glow-on-hover");
-
     return (
-      <button className={clsx(cls)} title={info?.name} onClick={onClick}>
+      <button
+        className={clsx(cls, !info && "flex-center glow-on-hover")}
+        title={info?.name}
+        onClick={onClick}
+      >
         {info ? (
           <GenshinImage src={icon} imgType="character" imgCls={props.imgCls} fallbackCls="p-2" />
         ) : (
@@ -62,9 +64,9 @@ export function CharacterPortrait(props: CharacterPortraitProps) {
 
   return (
     <div className={clsx(cls)} title={info?.name} onClick={onClick}>
-      {info ? (
+      {info && (
         <GenshinImage src={icon} imgType="character" imgCls={props.imgCls} fallbackCls="p-2" />
-      ) : null}
+      )}
     </div>
   );
 }

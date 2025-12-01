@@ -9,10 +9,10 @@ import type {
   Target,
   Teammate,
   UserArtifacts,
-  UserComplexSetup,
-  UserSetup,
+  IDbComplexSetup,
+  IDbSetup,
   UserSetupCalcInfo,
-  IUserWeapon,
+  IDbWeapon,
 } from "@/types";
 import Modifier_ from "./Modifier";
 import Array_ from "./Array";
@@ -24,6 +24,10 @@ type CleanupCalcSetupOptions = {
   artifactIDs?: (number | null)[];
 };
 
+export function isDbSetup(setup: IDbSetup | IDbComplexSetup): setup is IDbSetup {
+  return ["original", "combined"].includes(setup.type);
+}
+
 export default class Setup_ {
   static isUserSetup(setup: UserSetup | UserComplexSetup): setup is UserSetup {
     return ["original", "combined"].includes(setup.type);
@@ -31,7 +35,7 @@ export default class Setup_ {
 
   static userSetupToCalcSetup(
     setup: UserSetup,
-    weapon: IUserWeapon,
+    weapon: IDbWeapon,
     artifacts: UserArtifacts,
     shouldRestore?: boolean
   ): CalcSetup {

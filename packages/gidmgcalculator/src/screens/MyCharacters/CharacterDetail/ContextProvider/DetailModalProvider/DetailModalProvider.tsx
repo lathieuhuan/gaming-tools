@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { ConfirmModal } from "rond";
-import { ARTIFACT_TYPES } from "@Calculation";
 
+import { ARTIFACT_TYPES } from "@/constants";
 import { useDispatch } from "@Store/hooks";
-import { viewCharacter, removeUserCharacter, switchArtifact, switchWeapon } from "@Store/userdb-slice";
+import { removeUserCharacter, switchArtifact, switchWeapon, viewCharacter } from "@Store/userdb-slice";
 import { useDetailInfo } from "../hooks";
 
 // Component
@@ -60,7 +60,7 @@ export function DetailModalProvider(props: { children: React.ReactNode }) {
           active={modalType === "SWITCH_CHARACTER"}
           sourceType="user"
           onSelectCharacter={(character) => {
-            dispatch(viewCharacter(character.name));
+            dispatch(viewCharacter(character.data.name));
           }}
           onClose={closeModal}
         />

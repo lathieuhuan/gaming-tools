@@ -1,8 +1,6 @@
-import type { PartiallyRequiredOnly } from "rond";
-import type { AppWeapon, IWeapon, Level, WeaponType } from "@/types";
+import type { AppWeapon, IWeapon, IWeaponBasic, Level, WeaponType } from "@/types";
 
 import { LEVELS } from "@/constants";
-import { $AppSettings } from "@/services";
 import { Ascendable } from "./Ascendable";
 
 const BASE_ATTACK_TYPE: Record<string, number[]> = {
@@ -65,8 +63,6 @@ const SUBSTAT_SCALE: Record<string, number[]> = {
   58: [58, 102, 148, 172, 195, 218, 241, 265],
 };
 
-export type WeaponConstructInfo = PartiallyRequiredOnly<IWeapon, "code" | "type">;
-
 export class Weapon extends Ascendable implements IWeapon {
   ID: number;
   type: WeaponType;
@@ -100,10 +96,8 @@ export class Weapon extends Ascendable implements IWeapon {
     return 0;
   }
 
-  constructor(info: WeaponConstructInfo, data: AppWeapon) {
-    const { wpLevel, wpRefi } = $AppSettings.get();
-    const { ID = Date.now(), code, type, refi = wpRefi } = info;
-    let { level = wpLevel } = info;
+  constructor(info: IWeaponBasic, data: AppWeapon) {
+    let { level } = info;
 
     if (+level.split("/")[1] > 70 && data.rarity < 3) {
       level = "70/70";
@@ -111,11 +105,21 @@ export class Weapon extends Ascendable implements IWeapon {
 
     super(level);
 
-    this.ID = ID;
-    this.type = type;
-    this.code = code;
+    this.ID = info.ID;
+    this.type = info.type;
+    this.code = info.code;
     this.level = level;
-    this.refi = refi;
+    this.refi = info.refi;
     this.data = data;
+  }
+
+  serialize(): IWeaponBasic {
+    return {
+      ID: this.ID,
+      code: this.code,
+      type: this.type,
+      level: this.level,
+      refi: this.refi,
+    };
   }
 }

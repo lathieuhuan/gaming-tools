@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { EntitySelectTemplate, FancyBackSvg, Modal } from "rond";
 
-import type { IUserWeapon, WeaponType } from "@/types";
+import type { IDbWeapon, WeaponType } from "@/types";
 
 import { UserWeapon } from "@/models/userdb";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
@@ -33,7 +33,7 @@ const WeaponInventoryCore = ({
   const bodyRef = useRef<HTMLDivElement>(null);
   const [chosenWeapon, setChosenWeapon] = useState<UserWeapon>();
 
-  const onChangeItem = (option?: ItemOption<IUserWeapon>) => {
+  const onChangeItem = (option?: ItemOption<IDbWeapon>) => {
     if (option) {
       if (!chosenWeapon || option.userData.ID !== chosenWeapon.ID) {
         setChosenWeapon(new UserWeapon(option.userData, option.data));

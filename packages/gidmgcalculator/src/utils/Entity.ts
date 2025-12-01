@@ -1,20 +1,29 @@
-import type { AdvancedPick } from "rond";
-import type {
+import type { AdvancedPick, PartiallyRequiredOnly } from "rond";
+import {
+  AppArtifact,
   AppCharactersByName,
-  Artifact,
   CalcArtifact,
   CalcWeapon,
   Character,
-  IUserArtifact,
-  IUserWeapon,
-  Weapon,
+  IArtifactBasic,
+  ICharacterBasic,
+  IDbArtifact,
+  IDbWeapon,
+  IWeapon,
+  IWeaponBasic,
 } from "@/types";
-import { ATTACK_ELEMENTS, ArtifactCalc, ArtifactType, Level, WeaponType } from "@Calculation";
-import { $AppCharacter, $AppSettings, $AppWeapon } from "@/services";
+import {
+  ATTACK_ELEMENTS,
+  AppWeapon,
+  ArtifactCalc,
+  ArtifactType,
+  Level,
+  WeaponType,
+} from "@Calculation";
+import { $AppArtifact, $AppCharacter, $AppSettings, $AppWeapon } from "@/services";
+import { Artifact, Weapon } from "@/models/base";
 
 // ========== TYPES ==========
-
-type ArtifactTypeIcon = { value: ArtifactType; icon: string };
 
 type CalcItemToUserItemOptions = {
   ID?: number;
@@ -22,23 +31,88 @@ type CalcItemToUserItemOptions = {
   setupIDs?: number[];
 };
 
-// ========== CONSTANTS ==========
+// ========== ARTIFACT ==========
 
-const DEFAULT_WEAPON_CODE = {
-  bow: 11,
-  catalyst: 36,
-  claymore: 59,
-  polearm: 84,
-  sword: 108,
+export type CreateArtifactParams = AdvancedPick<
+  IArtifactBasic,
+  "type" | "code" | "rarity",
+  "ID" | "level" | "mainStatType" | "subStats"
+>;
+
+export const createArtifactBasic = (params: CreateArtifactParams): IArtifactBasic => {
+  const {
+    ID = Date.now(),
+    level = $AppSettings.get("artLevel"),
+    mainStatType = "hp",
+    subStats = [
+      { type: "def", value: 0 },
+      { type: "def_", value: 0 },
+      { type: "cRate_", value: 0 },
+      { type: "cDmg_", value: 0 },
+    ],
+  } = params;
+
+  return {
+    ID,
+    type: params.type,
+    rarity: params.rarity,
+    code: params.code,
+    level,
+    mainStatType,
+    subStats,
+  };
 };
 
-const ARTIFACT_TYPE_ICONS: ArtifactTypeIcon[] = [
-  { value: "flower", icon: "2/2d/Icon_Flower_of_Life" },
-  { value: "plume", icon: "8/8b/Icon_Plume_of_Death" },
-  { value: "sands", icon: "9/9f/Icon_Sands_of_Eon" },
-  { value: "goblet", icon: "3/37/Icon_Goblet_of_Eonothem" },
-  { value: "circlet", icon: "6/64/Icon_Circlet_of_Logos" },
-];
+export const createArtifact = (
+  params: CreateArtifactParams,
+  data: AppArtifact = $AppArtifact.getSet(params.code)!
+) => {
+  return new Artifact(createArtifactBasic(params), data);
+};
+
+// ========== WEAPON ==========
+
+export type CreateWeaponParams = PartiallyRequiredOnly<IWeaponBasic, "type">;
+
+export const createWeaponBasic = (params: CreateWeaponParams): IWeaponBasic => {
+  const { wpLevel, wpRefi } = $AppSettings.get();
+  const { ID = Date.now(), type, level = wpLevel, refi = wpRefi } = params;
+  const code = params.code || Weapon.DEFAULT_CODE[type];
+
+  return {
+    ID,
+    type,
+    code,
+    level,
+    refi,
+  };
+};
+
+export const createWeapon = (params: CreateWeaponParams, data?: AppWeapon) => {
+  const basic = createWeaponBasic(params);
+  const data_ = data ?? $AppWeapon.get(basic.code)!;
+
+  return new Weapon(basic, data_);
+};
+
+// ========== CHARACTER ==========
+
+export type CreateCharacterParams = PartiallyRequiredOnly<ICharacterBasic, "name">;
+
+export const createCharacterBasic = (params: CreateCharacterParams): ICharacterBasic => {
+  const { charLevel, charCons, charNAs, charES, charEB } = $AppSettings.get();
+  const {
+    name,
+    level = charLevel,
+    NAs = charNAs,
+    ES = charES,
+    EB = charEB,
+    cons = charCons,
+    enhanced = false,
+  } = params;
+
+  return { name, level, NAs, ES, EB, cons, enhanced };
+};
 
 export default class Entity_ {
   static splitLv(subject: { level: Level }) {
@@ -166,12 +240,12 @@ export default class Entity_ {
     return "refi" in item;
   }
 
-  static calcItemToUserItem(item: CalcArtifact, options?: CalcItemToUserItemOptions): IUserArtifact;
-  static calcItemToUserItem(item: CalcWeapon, options?: CalcItemToUserItemOptions): IUserWeapon;
+  static calcItemToUserItem(item: CalcArtifact, options?: CalcItemToUserItemOptions): IDbArtifact;
+  static calcItemToUserItem(item: CalcWeapon, options?: CalcItemToUserItemOptions): IDbWeapon;
   static calcItemToUserItem(
     item: CalcArtifact | CalcWeapon,
     options?: CalcItemToUserItemOptions
-  ): IUserArtifact | IUserWeapon {
+  ): IDbArtifact | IDbWeapon {
     const { ID = item.ID, owner = null, setupIDs } = options || {};
 
     return {
@@ -182,9 +256,9 @@ export default class Entity_ {
     };
   }
 
-  static userItemToCalcItem(item: IUserWeapon, newID?: number): CalcWeapon;
-  static userItemToCalcItem(item: IUserArtifact, newID?: number): CalcArtifact;
-  static userItemToCalcItem(item: IUserWeapon | IUserArtifact): CalcWeapon | CalcArtifact {
+  static userItemToCalcItem(item: IDbWeapon, newID?: number): CalcWeapon;
+  static userItemToCalcItem(item: IDbArtifact, newID?: number): CalcArtifact;
+  static userItemToCalcItem(item: IDbWeapon | IDbArtifact): CalcWeapon | CalcArtifact {
     const { owner, setupIDs, ...info } = item;
     return info;
   }

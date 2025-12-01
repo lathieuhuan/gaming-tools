@@ -1,6 +1,6 @@
 import type { Weapon } from "@/models/base";
 import type { CalcTeammate } from "@/models/calculator";
-import type { AppWeapon, IWeaponBasic, IWeaponBuffCtrl } from "@/types";
+import type { IWeapon, IWeaponBuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
 import { getWeaponBuffDesc } from "@/utils/description-parsers";
@@ -11,7 +11,7 @@ type RenderWeaponModifiersArgs = {
   keyPrefix: string | number;
   headingSuffix?: string;
   mutable?: boolean;
-  weapon: IWeaponBasic & { data: AppWeapon };
+  weapon: Pick<IWeapon, "code" | "type" | "refi" | "data">;
   ctrls: IWeaponBuffCtrl[];
   getHanlders?: (ctrl: IWeaponBuffCtrl, ctrls: IWeaponBuffCtrl[]) => ModifierHanlders;
 };

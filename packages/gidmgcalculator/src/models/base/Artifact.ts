@@ -1,7 +1,12 @@
-import type { AdvancedPick } from "rond";
-import type { AppArtifact, ArtifactSubStat, ArtifactType, AttributeStat, IArtifact } from "@/types";
+import type {
+  AppArtifact,
+  ArtifactSubStat,
+  ArtifactType,
+  AttributeStat,
+  IArtifact,
+  IArtifactBasic,
+} from "@/types";
 
-import { $AppSettings } from "@/services";
 import Object_ from "@/utils/Object";
 
 const percent1 = {
@@ -135,12 +140,6 @@ const ARTIFACT_TYPE_ICONS: ArtifactTypeIcon[] = [
   { value: "circlet", icon: "6/64/Icon_Circlet_of_Logos" },
 ];
 
-export type ArtifactConstructInfo = AdvancedPick<
-  Artifact,
-  "type" | "code" | "rarity",
-  "ID" | "level" | "mainStatType" | "subStats"
->;
-
 export class Artifact implements IArtifact {
   ID: number;
   code: number;
@@ -153,44 +152,47 @@ export class Artifact implements IArtifact {
   data: AppArtifact;
 
   get mainStatValue(): number {
-    const { type, level, rarity = 5, mainStatType } = this;
-    return ARTIFACT_MAIN_STATS[type][mainStatType]?.[rarity][level] || 0;
+    return Artifact.mainStatValueOf(this);
   }
 
   get possibleMainStatTypes() {
     return Object_.keys(ARTIFACT_MAIN_STATS[this.type] || {});
   }
 
-  constructor(info: ArtifactConstructInfo, data: AppArtifact) {
-    const { artLevel } = $AppSettings.get();
-    const {
-      ID = Date.now(),
-      type,
-      rarity,
-      level = artLevel,
-      subStats = [
-        { type: "def", value: 0 },
-        { type: "def_", value: 0 },
-        { type: "cRate_", value: 0 },
-        { type: "cDmg_", value: 0 },
-      ],
-    } = info;
+  constructor(info: IArtifactBasic, data: AppArtifact) {
+    const { rarity, type } = info;
     const mainStat = ARTIFACT_MAIN_STATS[type];
-
     let mainStatType = info.mainStatType;
 
-    if (!mainStatType || !(mainStatType in mainStat)) {
+    if (!(mainStatType in mainStat)) {
       mainStatType = Object_.keys(mainStat)[0];
     }
 
-    this.ID = ID;
+    this.ID = info.ID;
     this.code = info.code;
     this.type = type;
-    this.rarity = rarity;
-    this.level = Math.min(level, rarity === 5 ? 20 : 16);
+    this.rarity = info.rarity;
+    this.level = Math.min(info.level, rarity === 5 ? 20 : 16);
     this.mainStatType = mainStatType;
-    this.subStats = subStats;
+    this.subStats = info.subStats;
     this.data = data;
+  }
+
+  serialize(): IArtifactBasic {
+    return {
+      ID: this.ID,
+      code: this.code,
+      type: this.type,
+      rarity: this.rarity,
+      level: this.level,
+      mainStatType: this.mainStatType,
+      subStats: this.subStats,
+    };
+  }
+
+  static mainStatValueOf(artifact: IArtifactBasic) {
+    const { type, rarity = 5, mainStatType } = artifact;
+    return ARTIFACT_MAIN_STATS[type][mainStatType]?.[rarity][artifact.level] || 0;
   }
 
   static allMainStatTypesOf(type: ArtifactType) {

@@ -1,5 +1,4 @@
-import type { ICalcSetup } from "@/models/calculator";
-import type { AttackPattern } from "@/types";
+import type { AttackPattern, ISetup } from "@/types";
 import type { AttackAlterConfig, CalcResultAttackItem } from "../types";
 import type { CalcResult } from "./types";
 
@@ -26,7 +25,7 @@ type CalculateSetupOptions = {
   shouldRecord?: boolean;
 };
 
-export function calculateSetup(setup: ICalcSetup, options: CalculateSetupOptions = {}) {
+export function calculateSetup(setup: ISetup, options: CalculateSetupOptions = {}) {
   const main = new CharacterCalc(setup.char, setup.char.data, setup.team, {
     shouldRecord: options.shouldRecord,
   });

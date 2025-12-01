@@ -1,4 +1,3 @@
-import type { ICalcSetup } from "@/models/calculator";
 import type {
   AttackElement,
   AttackPattern,
@@ -8,6 +7,7 @@ import type {
   EntityBonus,
   EntityBonusEffect,
   EntityBuff,
+  ISetup,
   ReactionType,
 } from "@/types";
 import type { CharacterCalc, ReceivedAttributeBonus } from "../core/CharacterCalc";
@@ -24,7 +24,7 @@ import {
 import Array_ from "@/utils/Array";
 import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";
 
-export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup: ICalcSetup) {
+export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup: ISetup) {
   main.initTotalAttr();
 
   const { weapon, totalAttrCtrl, attkBonusCtrl } = main;

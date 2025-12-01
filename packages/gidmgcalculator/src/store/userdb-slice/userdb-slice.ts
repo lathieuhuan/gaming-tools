@@ -1,41 +1,36 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { ARTIFACT_TYPES } from "@Calculation";
 
+import type { IDbArtifact, IDbCharacter, IDbComplexSetup, IDbSetup, IDbWeapon } from "@/types";
 import type {
-  IUserArtifact,
-  IUserComplexSetup,
-  IUserSetup,
-  IUserWeapon,
-  IUserCharacter,
-} from "@/types";
-import type {
-  AddCharacterAction,
+  AddDbCharacterAction,
   AddSetupToComplexAction,
   AddUserDatabaseAction,
   CombineSetupsAction,
-  RemoveArtifactAction,
-  RemoveWeaponAction,
+  RemoveDbArtifactAction,
+  RemoveDbWeaponAction,
   SaveSetupAction,
   SwitchArtifactAction,
   SwitchShownSetupInComplexAction,
   SwitchWeaponAction,
   UnequipArtifactAction,
-  UpdateUserArtifactAction,
-  UpdateUserArtifactSubStatAction,
-  UpdateUserCharacterAction,
-  UpdateUserWeaponAction,
+  UpdateDbArtifactAction,
+  UpdateDbArtifactSubStatAction,
+  UpdateDbCharacterAction,
+  UpdateDbWeaponAction,
 } from "./userdb-slice.types";
 
+import { ARTIFACT_TYPES } from "@/constants";
+import { Ascendable } from "@/models/base";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import Setup_ from "@/utils/Setup";
-import Entity_ from "@/utils/Entity";
 import Array_ from "@/utils/Array";
+import { isDbSetup } from "@/utils/Setup";
+import { createCharacterBasic, createWeaponBasic } from "@/utils/Entity";
 
 export type UserdbState = {
-  userChars: IUserCharacter[];
-  userWps: IUserWeapon[];
-  userArts: IUserArtifact[];
-  userSetups: (IUserSetup | IUserComplexSetup)[];
+  userChars: IDbCharacter[];
+  userWps: IDbWeapon[];
+  userArts: IDbArtifact[];
+  userSetups: (IDbSetup | IDbComplexSetup)[];
   chosenChar: string;
   chosenSetupID: number;
 };
@@ -77,16 +72,18 @@ export const userdbSlice = createSlice({
     },
     // CHARACTER
     /** Overwrite if character already exists */
-    addCharacter: (state, action: AddCharacterAction) => {
+    addCharacter: (state, action: AddDbCharacterAction) => {
       const {
         name,
         weaponID,
-        artifactIDs = [null, null, null, null, null],
+        artifactIDs = [],
+        data = $AppCharacter.get(name),
         ...defaultValues
       } = action.payload;
+
       const foundIndex = state.userChars.findIndex((char) => char.name === name);
       const newChar = {
-        ...Entity_.createCharacter(name, defaultValues),
+        ...createCharacterBasic({ name, ...defaultValues }),
         weaponID: weaponID || Date.now(),
         artifactIDs,
       };
@@ -98,11 +95,12 @@ export const userdbSlice = createSlice({
       }
 
       if (!weaponID) {
-        const weaponType = $AppCharacter.get(name)?.weaponType;
-
         state.userWps.push({
           owner: name,
-          ...Entity_.createWeapon({ type: weaponType }, newChar.weaponID),
+          ...createWeaponBasic({
+            ID: newChar.weaponID,
+            type: data.weaponType,
+          }),
         });
       }
     },
@@ -112,7 +110,7 @@ export const userdbSlice = createSlice({
     sortCharacters: (state, action: PayloadAction<number[]>) => {
       state.userChars = action.payload.map((index) => state.userChars[index]);
     },
-    updateUserCharacter: (state, action: UpdateUserCharacterAction) => {
+    updateUserCharacter: (state, action: UpdateDbCharacterAction) => {
       const { name, ...newInfo } = action.payload;
       const charIndex = Array_.indexByName(state.userChars, name);
 
@@ -131,22 +129,21 @@ export const userdbSlice = createSlice({
 
       if (character) {
         const { weaponID, artifactIDs } = character;
-        const wpInfo = Array_.findById(userWps, weaponID);
-        if (wpInfo) {
-          wpInfo.owner = null;
-        }
+
+        delete Array_.findById(userWps, weaponID)?.owner;
+
         for (const id of artifactIDs) {
           if (id) {
-            const artInfo = Array_.findById(userArts, id);
-            if (artInfo) {
-              artInfo.owner = null;
-            }
+            delete Array_.findById(userArts, id)?.owner;
           }
         }
+
         userChars.splice(charIndex, 1);
+
         if (charIndex === userChars.length) {
           charIndex--;
         }
+
         state.chosenChar = userChars[charIndex]?.name || "";
       }
     },
@@ -202,16 +199,16 @@ export const userdbSlice = createSlice({
       const artifactInfo = Array_.findById(state.userArts, artifactID);
 
       if (ownerInfo && artifactInfo) {
-        ownerInfo.artifactIDs[artifactIndex] = null;
-        artifactInfo.owner = null;
+        ownerInfo.artifactIDs.splice(artifactIndex, 1);
+        delete artifactInfo.owner;
       }
     },
     // WEAPON
-    addUserWeapon: (state, action: PayloadAction<IUserWeapon>) => {
+    addUserWeapon: (state, action: PayloadAction<IDbWeapon>) => {
       state.userWps.push(action.payload);
     },
     /** Require index (prioritized) or ID */
-    updateUserWeapon: (state, action: UpdateUserWeaponAction) => {
+    updateUserWeapon: (state, action: UpdateDbWeaponAction) => {
       const { ID, ...newInfo } = action.payload;
       const weaponIndex = Array_.indexById(state.userWps, ID);
 
@@ -256,10 +253,10 @@ export const userdbSlice = createSlice({
           return rB - rA;
         }
 
-        const [fA, sA] = Entity_.splitLv(a);
-        const [fB, sB] = Entity_.splitLv(b);
-        if (fA !== fB) {
-          return fB - fA;
+        const { bareLv: lvA, ascension: ascA } = Ascendable.splitLevel(a.level);
+        const { bareLv: lvB, ascension: ascB } = Ascendable.splitLevel(b.level);
+        if (lvA !== lvB) {
+          return lvB - lvA;
         }
 
         if (a.type !== b.type) {
@@ -272,36 +269,36 @@ export const userdbSlice = createSlice({
           };
           return type[b.type] - type[a.type];
         }
-        return sB - sA;
+
+        return ascB - ascA;
       });
     },
-    removeWeapon: ({ userWps, userChars }, action: RemoveWeaponAction) => {
-      const { ID, owner, type } = action.payload;
+    removeWeapon: ({ userWps, userChars }, action: RemoveDbWeaponAction) => {
+      const { ID } = action.payload;
       const removedIndex = Array_.indexById(userWps, ID);
 
       if (removedIndex !== -1) {
+        const { owner, type } = userWps[removedIndex];
+        const ownerInfo = owner ? Array_.findByName(userChars, owner) : undefined;
+
         userWps.splice(removedIndex, 1);
 
-        if (owner) {
-          const newWpID = Date.now();
-
-          userWps.push({
+        if (ownerInfo) {
+          const newWeapon: IDbWeapon = {
             owner,
-            ...Entity_.createWeapon({ type }, newWpID),
-          });
+            ...createWeaponBasic({ type }),
+          };
 
-          const ownerInfo = Array_.findByName(userChars, owner);
-          if (ownerInfo) {
-            ownerInfo.weaponID = newWpID;
-          }
+          userWps.push(newWeapon);
+          ownerInfo.weaponID = newWeapon.ID;
         }
       }
     },
     // ARTIFACT
-    addUserArtifact: (state, action: PayloadAction<IUserArtifact | IUserArtifact[]>) => {
+    addUserArtifact: (state, action: PayloadAction<IDbArtifact | IDbArtifact[]>) => {
       state.userArts.push(...Array_.toArray(action.payload));
     },
-    updateUserArtifact: (state, action: UpdateUserArtifactAction) => {
+    updateUserArtifact: (state, action: UpdateDbArtifactAction) => {
       const { ID, ...newInfo } = action.payload;
       const artifactIndex = Array_.indexById(state.userArts, ID);
 
@@ -312,7 +309,7 @@ export const userdbSlice = createSlice({
         };
       }
     },
-    updateUserArtifactSubStat: (state, action: UpdateUserArtifactSubStatAction) => {
+    updateUserArtifactSubStat: (state, action: UpdateDbArtifactSubStatAction) => {
       const { ID, subStatIndex, ...newInfo } = action.payload;
       const artifact = Array_.findById(state.userArts, ID);
       if (artifact) {
@@ -372,17 +369,18 @@ export const userdbSlice = createSlice({
         return bName.localeCompare(aName);
       });
     },
-    removeArtifact: ({ userArts, userChars }, action: RemoveArtifactAction) => {
-      const { ID, owner, type } = action.payload;
+    removeArtifact: ({ userArts, userChars }, action: RemoveDbArtifactAction) => {
+      const { ID } = action.payload;
       const removedIndex = Array_.indexById(userArts, ID);
 
       if (removedIndex !== -1) {
-        userArts.splice(removedIndex, 1);
+        const { owner } = userArts[removedIndex];
         const ownerInfo = owner ? Array_.findByName(userChars, owner) : undefined;
 
+        userArts.splice(removedIndex, 1);
+
         if (ownerInfo) {
-          const artIndex = ARTIFACT_TYPES.indexOf(type);
-          ownerInfo.artifactIDs[artIndex] = null;
+          ownerInfo.artifactIDs = ownerInfo.artifactIDs.filter((id) => id !== ID);
         }
       }
     },
@@ -392,34 +390,35 @@ export const userdbSlice = createSlice({
     },
     saveSetup: (state, action: SaveSetupAction) => {
       const { userSetups } = state;
-      const { ID, name, data } = action.payload;
-      const existed = Array_.findById(userSetups, ID);
-      let newChosenID;
+      const data = action.payload;
+      const foundIndex = Array_.indexById(userSetups, data.ID);
 
-      if (existed?.type === "combined") {
+      if (foundIndex === -1) {
+        userSetups.unshift({
+          ...data,
+          type: "original",
+        });
+
+        state.chosenSetupID = data.ID;
+        return;
+      }
+
+      const existed = userSetups[foundIndex];
+      let newChosenID = data.ID;
+
+      if (existed.type === "combined") {
         for (const setup of userSetups) {
-          if (setup.type === "complex" && setup.allIDs[existed.char.name] === ID) {
+          if (setup.type === "complex" && setup.allIDs[existed.char.name] === data.ID) {
             newChosenID = setup.ID;
-            setup.shownID = ID;
+            setup.shownID = data.ID;
             break;
           }
         }
       }
 
-      const newSetup = {
-        ID,
-        type: existed ? (existed.type as "original" | "combined") : "original",
-        name,
-        ...data,
-      };
+      userSetups[foundIndex] = data;
 
-      if (existed) {
-        userSetups[Array_.indexById(userSetups, ID)] = newSetup;
-      } else {
-        userSetups.unshift(newSetup);
-      }
-
-      state.chosenSetupID = newChosenID || ID;
+      state.chosenSetupID = newChosenID;
     },
     removeSetup: (state, action: PayloadAction<number>) => {
       const removedID = action.payload;
@@ -436,7 +435,7 @@ export const userdbSlice = createSlice({
         const setup = userSetups[removedIndex];
 
         // Disconnect weapon & artifacts from removed setup
-        if (Setup_.isUserSetup(setup)) {
+        if (isDbSetup(setup)) {
           const { weaponID, artifactIDs } = setup;
           const foundWeapon = Array_.findById(userWps, weaponID);
 
@@ -478,7 +477,7 @@ export const userdbSlice = createSlice({
         if (setup) {
           setup.type = "combined";
 
-          if (Setup_.isUserSetup(setup)) {
+          if (isDbSetup(setup)) {
             allIDs[setup.char.name] = ID;
           }
         }
@@ -497,21 +496,19 @@ export const userdbSlice = createSlice({
       const { complexID, shownID } = action.payload;
       const complexSetup = Array_.findById(state.userSetups, complexID);
 
-      if (complexSetup && !Setup_.isUserSetup(complexSetup)) {
+      if (complexSetup && !isDbSetup(complexSetup)) {
         complexSetup.shownID = shownID;
       }
     },
     addSetupToComplex: ({ userSetups }, action: AddSetupToComplexAction) => {
       const { complexID, pickedIDs } = action.payload;
-      const complexSetup = userSetups.find(
-        (setup) => setup.ID === complexID && setup.type === "complex"
-      ) as UserComplexSetup;
+      const complexSetup = userSetups.find((setup) => setup.ID === complexID && !isDbSetup(setup));
 
-      if (complexSetup) {
+      if (complexSetup && !isDbSetup(complexSetup)) {
         pickedIDs.forEach((ID) => {
           const setup = Array_.findById(userSetups, ID);
 
-          if (setup && Setup_.isUserSetup(setup)) {
+          if (setup && isDbSetup(setup)) {
             setup.type = "combined";
             complexSetup.allIDs[setup.char.name] = ID;
           }
@@ -522,7 +519,7 @@ export const userdbSlice = createSlice({
       const index = Array_.indexById(userSetups, action.payload);
       const targetSetup = userSetups[index];
 
-      if (targetSetup && !Setup_.isUserSetup(targetSetup)) {
+      if (targetSetup && !isDbSetup(targetSetup)) {
         for (const ID of Object.values(targetSetup.allIDs)) {
           const combinedSetup = Array_.findById(userSetups, ID);
 

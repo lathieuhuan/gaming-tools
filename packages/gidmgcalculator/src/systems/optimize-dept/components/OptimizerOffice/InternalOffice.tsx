@@ -12,19 +12,25 @@ import Array_ from "@/utils/Array";
 import Modifier_ from "@/utils/Modifier";
 import Object_ from "@/utils/Object";
 import { GeneralCalc } from "@Calculation";
-import { importSetup, removeCalcSetup } from "@Store/calculator-slice";
 import { useDispatch } from "@Store/hooks";
 
 // Component
 import { ConfirmButton, type ConfirmButtonProps } from "./components/ConfirmButton";
 import { ProcessMonitor } from "./components/ProcessMonitor";
 import { ResultDisplayer } from "./components/ResultDisplayer";
+import { importSetup } from "@Store/calculator/actions";
 
 type ProcessedData = {
   result: ProcessedResult;
   loadBtnProps: Pick<
     ConfirmButtonProps,
-    "variant" | "popoverWidth" | "ctaText" | "askedContent" | "disabled" | "disabledAsking" | "onConfirm"
+    | "variant"
+    | "popoverWidth"
+    | "ctaText"
+    | "askedContent"
+    | "disabled"
+    | "disabledAsking"
+    | "onConfirm"
   >;
 };
 
@@ -84,24 +90,25 @@ export function InternalOffice({
 
         expectedSetupIds.push(setup.ID);
 
-        dispatch(
-          importSetup({
-            importInfo: {
-              ID: setup.ID,
-              type: "original",
-              name: `Optimized ${index + 1}${suffixes[index]}`,
-              calcSetup,
-              target: state.target,
-            },
-            shouldOverwriteTarget: true,
-          })
+        // TODO
+        importSetup(
+          calcSetup,
+          {
+            ID: setup.ID,
+            type: "original",
+            name: `Optimized ${index + 1}${suffixes[index]}`,
+          },
+          {
+            overwriteTarget: true,
+          }
         );
       } else {
         removedSetupIds.delete(setup.ID);
       }
     }
 
-    removedSetupIds.forEach((id) => dispatch(removeCalcSetup(id)));
+    // TODO
+    // removedSetupIds.forEach((id) => dispatch(removeCalcSetup(id)));
 
     onExpectedSetupsChange(expectedSetupIds);
     onClose();
@@ -123,7 +130,10 @@ export function InternalOffice({
       for (const control of Modifier_.createArtifactDebuffCtrls()) {
         // bonusLv 1 is 4-set bonus, debuffs only on this type of bonus
         if (setBonuses.some((bonus) => bonus.code === control.code && bonus.bonusLv)) {
-          const debuffCtrl = Array_.findByIndex(artifactModConfigs.debuffs[control.code], control.index);
+          const debuffCtrl = Array_.findByIndex(
+            artifactModConfigs.debuffs[control.code],
+            control.index
+          );
 
           if (debuffCtrl) {
             artDebuffCtrls.push(debuffCtrl);

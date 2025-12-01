@@ -1,7 +1,7 @@
 import type { CalcSetup, MainTarget } from "@/models/calculator";
 import type { SetupType } from "@/types";
 
-export type CalcSetupManager = {
+export type ISetupManager = {
   ID: number;
   type: SetupType;
   name: string;
@@ -11,7 +11,7 @@ export type CalculatorState = {
   activeId: number;
   standardId: number;
   comparedIds: number[];
-  setupManagers: CalcSetupManager[];
+  setupManagers: ISetupManager[];
   setupsById: Record<string, CalcSetup>;
   target: MainTarget;
 };

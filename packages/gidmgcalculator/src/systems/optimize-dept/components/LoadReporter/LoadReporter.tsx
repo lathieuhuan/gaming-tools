@@ -1,8 +1,7 @@
 import { useLayoutEffect } from "react";
 import { notification } from "rond";
 
-import { selectSetupManageInfos } from "@Store/calculator-slice";
-import { useSelector } from "@Store/hooks";
+import { useCalcStore } from "@Store/calculator";
 
 type LoadReporterProps = {
   expectedSetupIds: number[];
@@ -11,7 +10,7 @@ type LoadReporterProps = {
 
 /** Check if setups are loaded to the Calculator*/
 export function LoadReporter({ expectedSetupIds, afterChecking }: LoadReporterProps) {
-  const setups = useSelector(selectSetupManageInfos);
+  const setups = useCalcStore((state) => state.setupManagers);
 
   useLayoutEffect(() => {
     if (expectedSetupIds.length) {

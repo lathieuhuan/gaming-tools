@@ -1,31 +1,65 @@
-import type { AppArtifact } from "../app-artifact";
+import type TypeCounter from "@/utils/TypeCounter";
+import type { AppArtifact, ArtifactBuff } from "../app-artifact";
+import type { AppCharacter } from "../app-character";
+import type {
+  EffectPerformableCondition,
+  TeamConditions,
+  TeamElementConditions,
+  TeamPropertyCondition,
+} from "../app-entity";
 import type { AppWeapon } from "../app-weapon";
-import type { ITeammateBasic, ITeamMember, IWeaponBasic } from "../entity";
+import type { ElementCount, ElementType, TalentType } from "../common";
+import type { ITeammateArtifactBasic, ITeammateWeaponBasic } from "../entity";
 import type {
   IAbilityBuffCtrl,
   IAbilityDebuffCtrl,
-  IArtifactBuffCtrl,
+  IModifierCtrl,
   IWeaponBuffCtrl,
 } from "./modifiers";
+
+// ========== TEAM ==========
+
+export type ITeamMember<TTeam extends ITeam = ITeam> = {
+  name: string;
+  enhanced: boolean;
+  data: AppCharacter;
+  join(team: TTeam): void;
+  isPerformableEffect(condition?: EffectPerformableCondition, inputs?: number[]): boolean;
+};
+
+export type ITeam = {
+  members: ITeamMember[];
+  elmtCount: ElementCount;
+  resonances: ElementType[];
+  extraTalentLv: TypeCounter<TalentType>;
+  moonsignLv: number;
+  witchRiteLv: number;
+  checkTeamElmt(condition: TeamElementConditions): boolean;
+  checkTeamProps(condition: TeamPropertyCondition): boolean;
+  isAvailableEffect(condition: TeamConditions): boolean;
+  getMixedCount(performerElmt: ElementType): number;
+};
+
+// ========== TEAMMATE ==========
+
+export type ITeammateWeapon = ITeammateWeaponBasic & {
+  buffCtrls: IWeaponBuffCtrl[];
+  data: AppWeapon;
+};
+
+export type ITeammateArtifact = ITeammateArtifactBasic & {
+  buffCtrls: IModifierCtrl<ArtifactBuff>[];
+  data: AppArtifact;
+};
 
 // type TeammateInput = {
 //   id: string;
 //   value: number;
 // };
 
-export type ITeammateWeapon = IWeaponBasic & {
-  buffCtrls: IWeaponBuffCtrl[];
-  data: AppWeapon;
-};
-
-export type ITeammateArtifact = {
-  code: number;
-  buffCtrls: IArtifactBuffCtrl[];
-  // TODO add debuffCtrls
-  data: AppArtifact;
-};
-
-export type ITeammate = ITeammateBasic & {
+export type ITeammateBasic = {
+  name: string;
+  enhanced: boolean;
   buffCtrls: IAbilityBuffCtrl[];
   debuffCtrls: IAbilityDebuffCtrl[];
   weapon: ITeammateWeapon;
@@ -33,4 +67,6 @@ export type ITeammate = ITeammateBasic & {
   // inputs: TeammateInput[];
 };
 
-export type ICalcTeammate = ITeammate & ITeamMember;
+export type ITeammate<TTeam extends ITeam = ITeam> = ITeammateBasic & ITeamMember<TTeam> & {};
+
+export type ICalcTeammate<TTeam extends ITeam = ITeam> = ITeammate<TTeam>;

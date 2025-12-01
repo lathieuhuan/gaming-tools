@@ -1,19 +1,21 @@
 import type { ICalcTeam, ITeamMember } from "@/types";
-import type { MainCharacter } from "./MainCharacter";
 
-import { Team } from "@/models/base";
+import { CalcCharacter, Team } from "@/models/base";
 
-type UpdateData = {
-  main?: MainCharacter;
+type UpdateData<TMain extends CalcCharacter = CalcCharacter> = {
+  main?: TMain;
   teammates?: ITeamMember[];
 };
 
-export class CalcTeam extends Team implements ICalcTeam {
-  constructor(private main: MainCharacter, private teammates: ITeamMember[] = []) {
+export class CalcTeam<TMain extends CalcCharacter = CalcCharacter>
+  extends Team
+  implements ICalcTeam
+{
+  constructor(private main: TMain, private teammates: ITeamMember[] = []) {
     super([main, ...teammates]);
   }
 
-  update(data: UpdateData) {
+  update(data: UpdateData<TMain>) {
     const { main = this.main, teammates = this.teammates } = data;
 
     return new CalcTeam(main, teammates);

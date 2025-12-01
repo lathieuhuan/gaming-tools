@@ -19,36 +19,30 @@ export type IModifierCtrlBasic = {
   inputs?: number[];
 };
 
-export type IAbilityBuffCtrl = IModifierCtrlBasic & {
-  data: CharacterBuff;
+export type IModifierCtrl<T> = IModifierCtrlBasic & {
+  data: T;
 };
 
-export type IAbilityDebuffCtrl = IModifierCtrlBasic & {
-  data: CharacterDebuff;
-};
+export type IAbilityBuffCtrl = IModifierCtrl<CharacterBuff>;
 
-export type IWeaponBuffCtrl = IModifierCtrlBasic & {
-  data: WeaponBuff;
-};
+export type IAbilityDebuffCtrl = IModifierCtrl<CharacterDebuff>;
+
+export type IWeaponBuffCtrl = IModifierCtrl<WeaponBuff>;
 
 export type IArtifactModCtrlBasic = IModifierCtrlBasic & {
   /** set code */
   code: number;
 };
 
-export type IArtifactBuffCtrl = IArtifactModCtrlBasic & {
+export type IArtifactBuffCtrl = IModifierCtrl<ArtifactBuff> & {
   setData: AppArtifact;
-  data: ArtifactBuff;
 };
 
-export type IArtifactDebuffCtrl = IArtifactModCtrlBasic & {
+export type IArtifactDebuffCtrl = IModifierCtrl<ArtifactDebuff> & {
   setData: AppArtifact;
-  data: ArtifactDebuff;
 };
 
-export type ITeamBuffCtrl = IModifierCtrlBasic & {
-  data: AppTeamBuff;
-};
+export type ITeamBuffCtrl = IModifierCtrl<AppTeamBuff>;
 
 export type ResonanceModCtrl = {
   element: ElementType;

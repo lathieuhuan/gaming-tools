@@ -1,8 +1,15 @@
-import type { AppArtifact, ArtifactSubStat, ArtifactType, IArtifact } from "@/types";
+import type {
+  AppArtifact,
+  ArtifactSubStat,
+  ArtifactType,
+  IArtifact,
+  IArtifactBasic,
+} from "@/types";
 
-import { Artifact, ArtifactConstructInfo } from "@/models/base";
+import { Artifact } from "@/models/base";
 import { ArtifactGear } from "@/models/base";
 import { $AppArtifact } from "@/services";
+import { createArtifactBasic, CreateArtifactParams } from "@/utils/Entity";
 
 export type UpdateData = Partial<Pick<IArtifact, "level" | "mainStatType">> & {
   subStat?: Partial<ArtifactSubStat> & {
@@ -12,25 +19,25 @@ export type UpdateData = Partial<Pick<IArtifact, "level" | "mainStatType">> & {
 
 export class MainArtifactGear extends ArtifactGear {
   setPiece(
-    artifact: ArtifactConstructInfo,
+    artifact: CreateArtifactParams,
     data: AppArtifact = $AppArtifact.getSet(artifact.code)!,
     shouldKeepStats = false
   ) {
     const oldPiece = this.pieces[artifact.type];
-    let newPiece: ArtifactConstructInfo;
+    let newPiece: IArtifactBasic;
 
     if (shouldKeepStats && oldPiece) {
-      newPiece = {
+      newPiece = createArtifactBasic({
         ...oldPiece,
         code: artifact.code,
         rarity: artifact.rarity,
         ID: Date.now(),
-      };
+      });
     } else {
-      newPiece = {
+      newPiece = createArtifactBasic({
         ...artifact,
         ID: Date.now(),
-      };
+      });
     }
 
     this.pieces[artifact.type] = new Artifact(newPiece, data);

@@ -1,5 +1,5 @@
 import type { WritableDraft } from "immer/src/internal.js";
-import type { CalcSetupManager } from "../types";
+import type { ISetupManager } from "../types";
 
 import { CalcSetup } from "@/models/calculator";
 import Array_ from "@/utils/Array";
@@ -73,7 +73,7 @@ export const removeSetup = (removeId: number) => {
   });
 };
 
-export type MultiSetupChange = CalcSetupManager & {
+export type MultiSetupChange = ISetupManager & {
   status: "REMOVED" | "OLD" | "NEW" | "DUPLICATE";
   originId?: number;
   isCompared: boolean;
@@ -83,7 +83,7 @@ export const updateMultiSetups = (changes: MultiSetupChange[], newStandardId: nu
   useCalcStore.setState((state) => {
     const { setupManagers, setupsById, activeId, target } = state;
     const removedIds: number[] = [];
-    const tempManagers: CalcSetupManager[] = [];
+    const tempManagers: ISetupManager[] = [];
 
     // Reset comparedIds before repopulate with changes
     state.comparedIds = [];

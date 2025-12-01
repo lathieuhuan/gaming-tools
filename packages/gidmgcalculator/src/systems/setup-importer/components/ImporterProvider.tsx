@@ -22,14 +22,9 @@ export function ImporterProvider({ children }: { children: ReactNode }) {
     <ImporterContext.Provider value={value}>
       {children}
 
-      {importInfo.calcSetup && importInfo.target ? (
-        <SetupImportCenter
-          {...importInfo}
-          calcSetup={importInfo.calcSetup}
-          target={importInfo.target}
-          onFinish={handleFinish}
-        />
-      ) : null}
+      {importInfo.params && (
+        <SetupImportCenter {...importInfo} params={importInfo.params} onFinish={handleFinish} />
+      )}
     </ImporterContext.Provider>
   );
 }

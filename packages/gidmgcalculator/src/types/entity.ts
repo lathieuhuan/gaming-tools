@@ -1,51 +1,39 @@
-import type TypeCounter from "@/utils/TypeCounter";
 import type { AppArtifact } from "./app-artifact";
 import type { AppCharacter } from "./app-character";
-import type {
-  EffectPerformableCondition,
-  TeamConditions,
-  TeamElementConditions,
-  TeamPropertyCondition,
-} from "./app-entity";
 import type { AppMonster } from "./app-monster";
-import type { ElementCount, TotalAttributes } from "./calculation";
+import type { AppWeapon } from "./app-weapon";
 import type {
   ArtifactType,
   AttackElement,
   AttributeStat,
   ElementType,
   Level,
-  TalentType,
+  TotalAttributes,
   WeaponType,
 } from "./common";
 
-export type ICharacterBasic = {
-  name: string;
-  level: Level;
-  NAs: number;
-  ES: number;
-  EB: number;
-  cons: number;
-  enhanced: boolean;
-};
+// ========== WEAPON ==========
 
 export type IWeaponBasic = {
+  ID: number;
   code: number;
   type: WeaponType;
+  level: Level;
   refi: number;
 };
 
 export type IWeapon = IWeaponBasic & {
-  ID: number;
-  level: Level;
+  data: AppWeapon;
 };
+
+// ========== ARTIFACT ==========
 
 export type ArtifactSubStat = {
   type: AttributeStat;
   value: number;
 };
 
-export type IArtifact = {
+export type IArtifactBasic = {
   ID: number;
   code: number;
   type: ArtifactType;
@@ -53,6 +41,10 @@ export type IArtifact = {
   level: number;
   mainStatType: AttributeStat;
   subStats: ArtifactSubStat[];
+};
+
+export type IArtifact = IArtifactBasic & {
+  data: AppArtifact;
 };
 
 export type IArtifactGearSet = {
@@ -72,35 +64,49 @@ export type IArtifactGear<T extends IArtifact = IArtifact> = {
   attributes: TotalAttributes;
 };
 
-export type ITeammateBasic = {
+// ========== CHARACTER ==========
+
+export type ICharacterBasic = {
   name: string;
-  enhanced?: boolean;
+  level: Level;
+  NAs: number;
+  ES: number;
+  EB: number;
+  cons: number;
+  enhanced: boolean;
 };
 
-export type ITeamMember<TTeam extends ITeam = ITeam> = ITeammateBasic & {
-  data: AppCharacter;
-  join(team: TTeam): void;
-  isPerformableEffect(condition?: EffectPerformableCondition, inputs?: number[]): boolean;
+export type ICharacter<
+  TWeapon extends IWeapon = IWeapon,
+  TArtifact extends IArtifactGear = IArtifactGear
+> = ICharacterBasic & {
+  // data: AppCharacter;
+  weapon: TWeapon;
+  artifact: TArtifact;
 };
 
-export type ITeam = {
-  members: ITeamMember[];
-  elmtCount: ElementCount;
-  resonances: ElementType[];
-  extraTalentLv: TypeCounter<TalentType>;
-  moonsignLv: number;
-  witchRiteLv: number;
-  checkTeamElmt(condition: TeamElementConditions): boolean;
-  checkTeamProps(condition: TeamPropertyCondition): boolean;
-  isAvailableEffect(condition: TeamConditions): boolean;
-  getMixedCount(performerElmt: ElementType): number;
+// ========== TEAMMATE ==========
+
+export type ITeammateWeaponBasic = {
+  code: number;
+  type: WeaponType;
+  refi: number;
 };
 
-export type ITarget = {
+export type ITeammateArtifactBasic = {
+  code: number;
+};
+
+// ========== TARGET ==========
+
+export type ITargetBasic = {
   code: number;
   level: number;
   variantType?: ElementType;
   inputs?: number[];
   resistances: Record<AttackElement, number>;
+};
+
+export type ITarget = ITargetBasic & {
   data: AppMonster;
 };

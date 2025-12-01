@@ -1,7 +1,6 @@
 import type { PartiallyRequiredOnly } from "rond";
 
 import type { CalcResult } from "@/calculation-new/calculator/types";
-import type { CalcCharacter } from "@/models/base";
 import type {
   CustomBuffCtrl,
   CustomDebuffCtrl,
@@ -20,13 +19,14 @@ import type {
 } from "@/types";
 import type { CalcTeam } from "../CalcTeam";
 import type { CalcTeammate } from "../CalcTeammate";
-import type { MainCharacter } from "../MainCharacter";
 import type { MainTarget } from "../MainTarget";
+import type { MainCharacter } from "../MainCharacter";
 
 export type ICalcSetup<
-  TCharacter extends CalcCharacter = CalcCharacter,
+  TCharacter extends MainCharacter = MainCharacter,
   TTeammate extends ICalcTeammate = ICalcTeammate,
-  TTeam extends ICalcTeam = ICalcTeam
+  TTeam extends ICalcTeam = ICalcTeam,
+  TTarget extends ITarget = ITarget
 > = {
   ID?: number;
   char: TCharacter;
@@ -46,12 +46,7 @@ export type ICalcSetup<
 
   teammates: TTeammate[];
   team: TTeam;
-  target: ITarget;
-};
-
-export type UpdateData = Partial<ICalcSetup<MainCharacter, CalcTeammate, CalcTeam>> & {
-  artifactAttrs?: TotalAttributes;
-  result?: CalcResult;
+  target: TTarget;
 };
 
 export type CloneOptions = {
@@ -59,10 +54,9 @@ export type CloneOptions = {
 };
 
 export type CalcSetupConstructParams = PartiallyRequiredOnly<
-  ICalcSetup<MainCharacter, CalcTeammate, CalcTeam>,
-  "char"
+  ICalcSetup<MainCharacter, CalcTeammate, CalcTeam, MainTarget>,
+  "char" | "target"
 > & {
-  target: MainTarget;
   artifactAttrs?: TotalAttributes;
   result?: CalcResult;
 };

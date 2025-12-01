@@ -8,8 +8,7 @@ import type {
   EffectPerformableCondition,
   EffectPerformerConditions,
   EffectReceiverConditions,
-  IAbilityBuffCtrl,
-  IAbilityDebuffCtrl,
+  ICharacter,
   ITeam,
   ITeamMember,
   QuickenReaction,
@@ -21,7 +20,7 @@ import type { ArtifactGear } from "../ArtifactGear";
 import type { Weapon } from "../Weapon";
 
 import TypeCounter from "@/utils/TypeCounter";
-import { Character, type ICharacter } from "../Character";
+import { Character } from "../Character";
 import { Team } from "../Team";
 import { isPassedComparison } from "../utils/isPassedComparison";
 import { isValidInput } from "../utils/isValidInput";
@@ -34,6 +33,7 @@ export type ICalcCharacter<
   TWeapon extends Weapon = Weapon,
   TArtifact extends ArtifactGear = ArtifactGear
 > = ICharacter<TWeapon, TArtifact> & {
+  data: AppCharacter;
   totalAttrs: TotalAttributes;
   attkBonusCtrl: AttackBonusControl;
 };
@@ -41,7 +41,10 @@ export type ICalcCharacter<
 export type CalcCharacterConstructInfo<
   TWeapon extends Weapon = Weapon,
   TArtifact extends ArtifactGear = ArtifactGear
-> = PartiallyOptional<ICalcCharacter<TWeapon, TArtifact>, "totalAttrs" | "attkBonusCtrl">;
+> = ICharacter<TWeapon, TArtifact> & {
+  totalAttrs?: TotalAttributes;
+  attkBonusCtrl?: AttackBonusControl;
+};
 
 export class CalcCharacter<
     TWeapon extends Weapon = Weapon,

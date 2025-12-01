@@ -9,14 +9,4 @@ export * from "./calculation";
 export * from "./common";
 export * from "./entity";
 export * from "./global.types";
-export * from "./user-entity";
-
-// TODO: move
-export type SetupImportInfo = {
-  importSource?: "URL" | "SETUP_MANAGER" | "MY_SETUPS" | "ENKA";
-  ID?: number;
-  name?: string;
-  type?: "original" | "combined";
-  // calcSetup?: CalcSetup;
-  // target?: Target;
-};
+export * from "./db-entity";

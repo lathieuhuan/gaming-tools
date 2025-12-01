@@ -1,10 +1,11 @@
 import { FaBalanceScaleLeft, FaCopy } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
 import { Button, Input, TrashCanSvg } from "rond";
-import type { NewSetupManageInfo } from "@Store/calculator-slice";
 
-interface SetupControlProps {
-  setup: NewSetupManageInfo;
+import type { MultiSetupChange } from "@Store/calculator/actions";
+
+type SetupControlProps = {
+  setup: MultiSetupChange;
   isStandard: boolean;
   choosableAsStandard: boolean;
   removable?: boolean;
@@ -14,7 +15,8 @@ interface SetupControlProps {
   onCopySetup: () => void;
   onToggleCompared: () => void;
   onChooseStandard: () => void;
-}
+};
+
 export function SetupControl({
   setup,
   isStandard,
@@ -39,7 +41,11 @@ export function SetupControl({
       />
       <div className="mt-4 flex justify-end gap-4">
         <Button icon={<TrashCanSvg />} disabled={!removable} onClick={onRemoveSetup} />
-        <Button icon={<FaCopy />} disabled={!copiable || setup.status === "NEW"} onClick={onCopySetup} />
+        <Button
+          icon={<FaCopy />}
+          disabled={!copiable || setup.status === "NEW"}
+          onClick={onCopySetup}
+        />
 
         <Button
           className="w-8 h-8"

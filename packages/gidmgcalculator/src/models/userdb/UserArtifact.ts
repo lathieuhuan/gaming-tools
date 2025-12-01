@@ -1,12 +1,7 @@
-import type { AppArtifact } from "@/types";
-import type { IUserArtifact } from "@/types/user-entity";
+import type { AppArtifact, IDbArtifact } from "@/types";
 
-import { Artifact, ArtifactConstructInfo } from "@/models/base";
-
-type UserArtifactConstructInfo = ArtifactConstructInfo & {
-  owner?: string;
-  setupIDs?: number[];
-};
+import { Artifact } from "@/models/base";
+import Object_ from "@/utils/Object";
 
 type UserArtifactFromOptions = {
   ID?: number;
@@ -14,25 +9,31 @@ type UserArtifactFromOptions = {
   setupIDs?: number[];
 };
 
-export class UserArtifact extends Artifact implements IUserArtifact {
+export class UserArtifact extends Artifact implements IDbArtifact {
   owner?: string;
   setupIDs?: number[];
 
-  constructor(info: UserArtifactConstructInfo, data: AppArtifact) {
+  constructor(info: IDbArtifact, data: AppArtifact) {
     super(info, data);
 
-    this.owner = info.owner;
-    this.setupIDs = info.setupIDs;
+    Object_.optionalAssign<UserArtifact>(this, {
+      owner: info.owner,
+      setupIDs: info.setupIDs,
+    });
   }
 
-  static from(artifact: Artifact, options: UserArtifactFromOptions = {}): IUserArtifact {
+  static from(artifact: Artifact, options: UserArtifactFromOptions = {}): IDbArtifact {
     const { ID = artifact.ID, owner, setupIDs } = options;
 
-    return {
-      ...artifact,
-      ID,
-      ...(owner && { owner }),
-      ...(setupIDs && { setupIDs }),
-    };
+    return new UserArtifact({ ...artifact, ID, owner, setupIDs }, artifact.data);
+  }
+
+  serialize(): IDbArtifact {
+    const basic = super.serialize();
+
+    return Object_.optionalAssign<IDbArtifact>(basic, {
+      owner: this.owner,
+      setupIDs: this.setupIDs,
+    });
   }
 }

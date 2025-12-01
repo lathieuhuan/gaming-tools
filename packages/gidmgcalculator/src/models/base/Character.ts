@@ -1,7 +1,13 @@
-import type { AppCharacter, ICharacterBasic, Level, TalentType } from "@/types";
-import type { Weapon } from "./Weapon";
+import type {
+  AppCharacter,
+  IArtifactGear,
+  ICharacter,
+  ICharacterBasic,
+  IWeapon,
+  Level,
+  TalentType,
+} from "@/types";
 
-import { ArtifactGear } from "./ArtifactGear";
 import { Ascendable } from "./Ascendable";
 
 const BASE_REACTION_DAMAGE: Record<number, number> = {
@@ -49,17 +55,9 @@ const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
   ],
 };
 
-export type ICharacter<
-  TWeapon extends Weapon = Weapon,
-  TArtifact extends ArtifactGear = ArtifactGear
-> = ICharacterBasic & {
-  weapon: TWeapon;
-  artifact: TArtifact;
-};
-
 export class Character<
-    TWeapon extends Weapon = Weapon,
-    TArtifact extends ArtifactGear = ArtifactGear
+    TWeapon extends IWeapon = IWeapon,
+    TArtifact extends IArtifactGear = IArtifactGear
   >
   extends Ascendable
   implements ICharacter<TWeapon, TArtifact>
@@ -118,5 +116,17 @@ export class Character<
 
   static getTalentMult(scale: number, talentLv: number) {
     return scale ? TALENT_LV_MULTIPLIERS[scale]?.[talentLv] ?? 0 : 1;
+  }
+
+  serialize(): ICharacterBasic {
+    return {
+      name: this.name,
+      level: this.level,
+      NAs: this.NAs,
+      ES: this.ES,
+      EB: this.EB,
+      cons: this.cons,
+      enhanced: this.enhanced,
+    };
   }
 }

@@ -85,6 +85,18 @@ export default class Object_ {
     return Object.assign(obj, props);
   }
 
+  static optionalAssign<TObj extends object>(obj: TObj, props: Partial<TObj>): TObj {
+    const result = obj;
+
+    for (const [key, value] of Object_.entries(props)) {
+      if (value !== undefined) {
+        result[key] = value;
+      }
+    }
+
+    return result;
+  }
+
   static clone<T>(item: T): T {
     try {
       return structuredClone(item);

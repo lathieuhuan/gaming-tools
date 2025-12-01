@@ -1,26 +1,28 @@
-import type { ArtifactType } from "@/types";
 import { useMemo, useState } from "react";
 
-import { ArtifactFilterSet } from "../types";
-import { Artifact } from "@/models/base";
+import type { ArtifactType, IArtifactBasic } from "@/types";
+import type { ArtifactFilterSet } from "../types";
+
+import { useArtifactSetData } from "@/hooks";
 
 type Config = {
   artifactType?: ArtifactType;
 };
 
-export function useArtifactSetFilter<T extends Artifact = Artifact>(
+export function useArtifactSetFilter<T extends IArtifactBasic = IArtifactBasic>(
   artifacts: T[],
   chosenCodes: number[],
   config?: Config
 ) {
   const { artifactType = "flower" } = config || {};
+  const setData = useArtifactSetData();
 
-  // TODO: turn into function and move outside
   const initialSets = useMemo(() => {
     const countMap = new Map<number, ArtifactFilterSet>();
     const result: ArtifactFilterSet[] = [];
 
-    for (const { code, data } of artifacts) {
+    for (const { code } of artifacts) {
+      const data = setData.get(code);
       const filterSet = countMap.get(code);
 
       if (filterSet) {

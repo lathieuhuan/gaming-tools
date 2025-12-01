@@ -2,11 +2,13 @@ import type { IWeapon, WeaponType } from "@/types";
 
 import { Weapon } from "@/models/base";
 import { $AppWeapon } from "@/services";
+import { createWeaponBasic } from "@/utils/Entity";
 
 export class MainWeapon extends Weapon {
   static DEFAULT(type: WeaponType, ID?: number) {
-    const code = Weapon.DEFAULT_CODE[type];
-    return new MainWeapon({ ID, code, type }, $AppWeapon.get(code)!);
+    const basic = createWeaponBasic({ type, ID });
+
+    return new MainWeapon(basic, $AppWeapon.get(basic.code)!);
   }
 
   update(info: Partial<IWeapon>) {

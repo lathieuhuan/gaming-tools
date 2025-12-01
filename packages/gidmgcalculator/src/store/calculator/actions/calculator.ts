@@ -1,6 +1,6 @@
-import type { CalculatorState } from "../types";
+import type { ISetupManager, CalculatorState } from "../types";
 
-import { CalcSetup } from "@/models/calculator";
+import { CalcSetup, CalcSetupConstructParams } from "@/models/calculator";
 import { $AppCharacter, $AppSettings } from "@/services";
 import { initialState, useCalcStore } from "../calculator-store";
 
@@ -51,5 +51,54 @@ export const applySettings = (unifyCharacters: boolean, travelerChanged: boolean
         setupsById[id] = setup.calculate();
       }
     }
+  });
+};
+
+type ImportSetupOptions = {
+  overwriteChar?: boolean;
+  overwriteTarget?: boolean;
+};
+
+export const importSetup = (
+  params: CalcSetupConstructParams,
+  /** ID in manageInfo is prioritized over params.ID */
+  manageInfo: Partial<ISetupManager> = {},
+  options: ImportSetupOptions = {}
+) => {
+  const { overwriteChar = false, overwriteTarget = false } = options;
+  const { type = "original", name = "New setup" } = manageInfo;
+
+  useCalcStore.setState((state) => {
+    const { setupsById } = state;
+
+    if (overwriteChar) {
+      for (const setup of Object.values(setupsById)) {
+        setup.char = params.char;
+      }
+    }
+
+    if (overwriteTarget) {
+      state.target = params.target;
+
+      for (const setup of Object.values(setupsById)) {
+        setup.target = params.target;
+      }
+    }
+
+    if (overwriteChar || overwriteTarget) {
+      for (const { ID } of state.setupManagers) {
+        setupsById[ID] = setupsById[ID].calculate();
+      }
+    }
+
+    const setupId = manageInfo.ID ?? params.ID ?? Date.now();
+    const newSetup = new CalcSetup({
+      ...params,
+      ID: setupId,
+    });
+
+    state.setupManagers.push({ ID: setupId, name, type });
+    state.setupsById[setupId] = newSetup.calculate();
+    state.activeId = setupId;
   });
 };

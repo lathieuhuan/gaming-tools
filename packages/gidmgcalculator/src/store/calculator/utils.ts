@@ -2,7 +2,7 @@ import type { WritableDraft } from "immer/src/internal.js";
 
 import type { CalcSetup } from "@/models/calculator";
 import type { ElementType, IModifierCtrlBasic, ResonanceModCtrl } from "@/types";
-import type { CalcSetupManager, CalculatorState } from "./types";
+import type { ISetupManager, CalculatorState } from "./types";
 
 export function onActiveSetup(callback: (setup: WritableDraft<CalcSetup>) => boolean | void) {
   return (state: WritableDraft<CalculatorState>) => {
@@ -34,7 +34,7 @@ function destructName(name: string) {
   };
 }
 
-export function getCopyName(originalName: string, setupManagers: CalcSetupManager[]) {
+export function getCopyName(originalName: string, setupManagers: ISetupManager[]) {
   const { nameRoot } = destructName(originalName);
   const versions = [];
 

@@ -4,12 +4,14 @@ import type { GOODArtifact } from "@/types/GOOD.types";
 import type { DataControl } from "./app-data.types";
 import { convertGOODStatKey, toGOODKey } from "./utils";
 
-export type ConvertedArtifact = IArtifact & { data: AppArtifact };
+export type ConvertedArtifact = IArtifact;
 
 type DebuffArtifact = {
   data: AppArtifact;
   debuff?: ArtifactDebuff;
 };
+
+const map = new Map<number, AppArtifact>();
 
 export class AppArtifactService {
   private artifacts: Array<DataControl<AppArtifact>> = [];
@@ -18,6 +20,8 @@ export class AppArtifactService {
   deepwoodArtifact?: DebuffArtifact;
 
   populate(artifacts: AppArtifact[]) {
+    map.clear();
+
     const artifactCtrls: DataControl<AppArtifact>[] = [];
 
     for (const artifact of artifacts) {
@@ -54,7 +58,24 @@ export class AppArtifactService {
 
   getSet(code: number) {
     // no artifact with code 0
-    return code ? this.artifacts.find((artifact) => artifact.data.code === code)?.data : undefined;
+    if (!code) {
+      return undefined;
+    }
+
+    const cached = map.get(code);
+
+    if (cached) {
+      return cached;
+    }
+
+    const data = this.artifacts.find((artifact) => artifact.data.code === code)?.data;
+
+    if (data) {
+      map.set(code, data);
+      return data;
+    }
+
+    return undefined;
   }
 
   get(artifact: { code: number; type: ArtifactType }) {

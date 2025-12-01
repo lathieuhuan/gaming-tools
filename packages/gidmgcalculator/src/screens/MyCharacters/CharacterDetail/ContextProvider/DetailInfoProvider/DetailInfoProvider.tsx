@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { GeneralCalc, InputProcessor } from "@Calculation";
 
-import type { Character, UserArtifacts, IUserWeapon } from "@/types";
+import type { Character, UserArtifacts, IDbWeapon } from "@/types";
 import type { RootState } from "@Store/store";
 
 // import { useAppCharacter } from "@/hooks";
@@ -13,7 +13,7 @@ import { DetailInfoContext, type DetailInfo } from "./DetailInfo.context";
 interface DetailInfoProviderProps {
   setup: {
     char: Character;
-    weapon: IUserWeapon;
+    weapon: IDbWeapon;
     artifacts: UserArtifacts;
   };
   children: React.ReactNode;

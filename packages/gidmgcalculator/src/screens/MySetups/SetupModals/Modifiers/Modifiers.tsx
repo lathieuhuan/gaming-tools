@@ -1,7 +1,7 @@
 import { ArtifactSetBonus } from "@Calculation";
 import { clsx, CollapseList } from "rond";
 
-import type { UserSetup, IUserWeapon } from "@/types";
+import type { UserSetup, IDbWeapon } from "@/types";
 import type { CalculationResult } from "../../types";
 
 import { useTranslation } from "@/hooks";
@@ -39,7 +39,7 @@ const ModifierWrapper = ({ className = "", title, children }: ModifierWrapperPro
 type ModifiersProps = {
   setup: UserSetup;
   result: CalculationResult;
-  weapon: IUserWeapon;
+  weapon: IDbWeapon;
   setBonuses: ArtifactSetBonus[];
 };
 

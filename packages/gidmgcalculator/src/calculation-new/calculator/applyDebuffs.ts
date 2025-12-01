@@ -1,5 +1,10 @@
-import type { ICalcSetup } from "@/models/calculator";
-import type { ElementType, EntityDebuff, EntityPenaltyTarget, ResistReductionKey } from "@/types";
+import type {
+  ElementType,
+  EntityDebuff,
+  EntityPenaltyTarget,
+  ISetup,
+  ResistReductionKey,
+} from "@/types";
 import type { CalcTarget } from "../core/CalcTarget";
 import type { CharacterCalc } from "../core/CharacterCalc";
 import type { IEffectPerformer } from "../types";
@@ -11,7 +16,7 @@ import Array_ from "@/utils/Array";
 export function applyDebuffs(
   main: CharacterCalc,
   teammates: TeammateCalc[],
-  setup: ICalcSetup,
+  setup: ISetup,
   target: CalcTarget
 ) {
   // ↓↓↓↓↓ HELPERS ↓↓↓↓↓

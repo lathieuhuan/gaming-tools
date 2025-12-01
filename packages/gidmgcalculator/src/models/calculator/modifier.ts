@@ -1,4 +1,4 @@
-import type { CalcTeam, CalcTeammate, ICalcSetup } from "@/models/calculator";
+import type { CalcTeam, CalcTeammate } from "@/models/calculator";
 import type {
   AppArtifact,
   AppCharacter,
@@ -11,6 +11,7 @@ import type {
   IArtifactDebuffCtrl,
   IArtifactGearSet,
   IModifierCtrlBasic,
+  ISetup,
   ITeamBuffCtrl,
   IWeaponBuffCtrl,
   ModifierAffectType,
@@ -79,7 +80,7 @@ export function createModCtrl(forSelf: boolean) {
   };
 }
 
-export function createTeamBuffCtrls(setup: ICalcSetup): ITeamBuffCtrl[] {
+export function createTeamBuffCtrls(setup: ISetup): ITeamBuffCtrl[] {
   const { team, artBuffCtrls = [] } = setup;
 
   // Find available team buff ids
