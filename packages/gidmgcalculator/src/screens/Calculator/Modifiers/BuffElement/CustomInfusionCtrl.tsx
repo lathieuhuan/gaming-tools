@@ -31,18 +31,6 @@ export function CustomInfusionCtrl({ elmtEvent, character }: CustomInfusionCtrlP
       infusion: isInfused ? null : infusedValue,
       infuseReaction: null,
     });
-    // dispatch(
-    //   updateCalcSetup({
-    //     elmtModCtrls: {
-    //       ...elmtModCtrls,
-    //       infuse_reaction: null,
-    //     },
-    //     customInfusion: {
-    //       ...customInfusion,
-    //       element: isInfused ? "phys" : infusedValue,
-    //     },
-    //   })
-    // );
   };
 
   const onChangeInfusedElmt = (element: ElementType) => {
@@ -53,18 +41,6 @@ export function CustomInfusionCtrl({ elmtEvent, character }: CustomInfusionCtrlP
       infusion: element,
       infuseReaction: null,
     });
-    // dispatch(
-    //   updateCalcSetup({
-    //     elmtModCtrls: {
-    //       ...elmtModCtrls,
-    //       infuse_reaction: null,
-    //     },
-    //     customInfusion: {
-    //       ...customInfusion,
-    //       element,
-    //     },
-    //   })
-    // );
   };
 
   return (

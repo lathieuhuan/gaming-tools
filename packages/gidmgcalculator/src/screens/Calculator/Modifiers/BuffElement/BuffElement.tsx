@@ -16,8 +16,6 @@ export function BuffElement() {
 
   const nodes: ReactNode[] = [];
 
-  // ========== ATTACK REACTION ==========
-
   if (["pyro", "cryo", "hydro", "electro", "dendro"].includes(vision)) {
     nodes.push(
       <div className="space-y-3">
@@ -31,13 +29,9 @@ export function BuffElement() {
     );
   }
 
-  // ========== ANEMO ABSORPTION ==========
-
   if (vision === "anemo") {
     nodes.push(<AnemoAbsorptionCtrl elmtEvent={elmtEvent} character={character} />);
   }
-
-  // ========== CUSTOM INFUSION ==========
 
   if (weaponType !== "catalyst") {
     nodes.push(<CustomInfusionCtrl elmtEvent={elmtEvent} character={character} />);

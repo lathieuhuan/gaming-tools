@@ -10,6 +10,7 @@ import { enhanceCtrls } from "@/models/userdb/utils/enhanceCtrls";
 import { $AppData } from "@/services";
 
 import { FinalResultView } from "@/components";
+import { SetupModals } from "../SetupModals";
 
 type SelectedResultProps = {
   setup: SetupOverviewInfo["setup"];
@@ -64,7 +65,12 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
         <FinalResultView character={calcSetup.char} finalResult={result} />
       </div>
 
-      {/* <SetupModals setup={selectedInfo.setup} {...{ weapon, artifacts, result }} /> */}
+      <SetupModals
+        setupName={setup.name}
+        setup={calcSetup}
+        artifactAttrs={calcSetup.char.totalAttrs}
+        result={result}
+      />
     </div>
   );
 }

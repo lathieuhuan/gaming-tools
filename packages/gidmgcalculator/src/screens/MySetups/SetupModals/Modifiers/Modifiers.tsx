@@ -1,8 +1,8 @@
 import { ArtifactSetBonus } from "@Calculation";
 import { clsx, CollapseList } from "rond";
 
-import type { UserSetup, IDbWeapon } from "@/types";
-import type { CalculationResult } from "../../types";
+import type { IDbWeapon } from "@/types";
+import type { CalculationResult, IUserSetup } from "../../types";
 
 import { useTranslation } from "@/hooks";
 import { $AppData } from "@/services";
@@ -10,15 +10,15 @@ import { $AppData } from "@/services";
 // Component
 import {
   ArtifactBuffsView,
-  ArtifactDebuffsView,
   markYellow,
   SelfBuffsView,
-  SelfDebuffsView,
   TeammateBuffsView,
-  TeammateDebuffsView,
   WeaponBuffsView,
+  ArtifactDebuffsView,
+  SelfDebuffsView,
+  TeammateDebuffsView,
 } from "@/components";
-import { CustomBuffs, ElementBuffs } from "./buffs";
+import { CustomBuffs, TeamBuffs, ElementBuffs } from "./buffs";
 import { CustomDebuffs, ElementDebuffs } from "./debuffs";
 
 type ModifierWrapperProps = {
@@ -37,34 +37,17 @@ const ModifierWrapper = ({ className = "", title, children }: ModifierWrapperPro
 };
 
 type ModifiersProps = {
-  setup: UserSetup;
-  result: CalculationResult;
-  weapon: IDbWeapon;
-  setBonuses: ArtifactSetBonus[];
+  setup: IUserSetup;
 };
 
-export function Modifiers({ setup, result, weapon, setBonuses }: ModifiersProps) {
+export function Modifiers({ setup }: ModifiersProps) {
   const { t } = useTranslation();
 
-  const {
-    char,
-    party,
-    selfBuffCtrls,
-    selfDebuffCtrls,
-    wpBuffCtrls,
-    artBuffCtrls,
-    artDebuffCtrls,
-    elmtModCtrls,
-    customBuffCtrls,
-    customDebuffCtrls,
-    target,
-  } = setup;
-  const { teamData } = result;
-  const { title, variant, statuses } = $AppData.getTargetInfo(target);
+  const { char, target } = setup;
 
   return (
     <div className="h-full px-4 flex space-x-4">
-      <ModifierWrapper title="Debuffs used" className="w-76 flex flex-col">
+      {/* <ModifierWrapper title="Debuffs used" className="w-76 flex flex-col">
         <CollapseList
           items={[
             {
@@ -101,69 +84,59 @@ export function Modifiers({ setup, result, weapon, setBonuses }: ModifiersProps)
             },
           ]}
         />
-      </ModifierWrapper>
+      </ModifierWrapper> */}
 
       <ModifierWrapper title="Buffs used" className="w-76 flex flex-col">
         <CollapseList
           items={[
             {
+              heading: "Team Bonuses",
+              body: <TeamBuffs setup={setup} />,
+            },
+            {
               heading: "Resonance & Reactions",
-              body: (
-                <ElementBuffs
-                  charLv={char.level}
-                  vision={teamData.activeAppMember.vision}
-                  attkBonuses={result.attkBonuses}
-                  customInfusion={setup.customInfusion}
-                  elmtModCtrls={elmtModCtrls}
-                />
-              ),
+              body: <ElementBuffs character={char} elmtEvent={setup.elmtEvent} />,
             },
             {
               heading: "Self",
               body: (
-                <SelfBuffsView
-                  mutable={false}
-                  modCtrls={selfBuffCtrls}
-                  character={char}
-                  teamData={teamData}
-                />
+                <SelfBuffsView mutable={false} character={char} modCtrls={setup.selfBuffCtrls} />
               ),
             },
             {
               heading: "Party",
-              body: <TeammateBuffsView mutable={false} teammates={party} teamData={teamData} />,
+              body: <TeammateBuffsView mutable={false} teammates={setup.teammates} />,
             },
             {
               heading: "Weapons",
-              body: weapon ? (
+              body: (
                 <WeaponBuffsView
                   mutable={false}
-                  teammates={party}
-                  weapon={weapon}
-                  wpBuffCtrls={wpBuffCtrls}
+                  teammates={setup.teammates}
+                  weapon={char.weapon}
+                  wpBuffCtrls={setup.wpBuffCtrls}
                 />
-              ) : null,
+              ),
             },
             {
               heading: "Artifacts",
               body: (
                 <ArtifactBuffsView
                   mutable={false}
-                  teammates={party}
-                  setBonuses={setBonuses}
-                  artBuffCtrls={artBuffCtrls}
+                  teammates={setup.teammates}
+                  artBuffCtrls={setup.artBuffCtrls}
                 />
               ),
             },
             {
               heading: "Custom",
-              body: <CustomBuffs customBuffCtrls={customBuffCtrls} />,
+              body: <CustomBuffs customBuffCtrls={setup.customBuffCtrls} />,
             },
           ]}
         />
       </ModifierWrapper>
 
-      <ModifierWrapper title="Target" className="w-68">
+      {/* <ModifierWrapper title="Target" className="w-68">
         <div className="h-full px-2">
           <p className="text-lg">{title}</p>
           <p>Level: {markYellow(target.level)}</p>
@@ -192,7 +165,7 @@ export function Modifiers({ setup, result, weapon, setBonuses }: ModifiersProps)
             </p>
           ))}
         </div>
-      </ModifierWrapper>
+      </ModifierWrapper> */}
     </div>
   );
 }

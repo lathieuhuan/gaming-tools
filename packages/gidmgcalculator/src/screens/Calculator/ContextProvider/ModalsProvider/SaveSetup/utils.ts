@@ -1,18 +1,17 @@
-import type { CalcSetup, UserComplexSetup, UserSetup } from "@/types";
+import type { CalcSetup } from "@/models/calculator";
+import type { IDbComplexSetup, IDbSetup } from "@/types";
+import type { UserdbState } from "@Store/userdb-slice";
 import type { ValidationError } from "./types";
 
 import { MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@/constants";
 import Array_ from "@/utils/Array";
-import { UserdbState } from "@Store/userdb-slice";
-import Setup_ from "@/utils/Setup";
+import { isDbSetup } from "@/utils/Setup";
 
-export function validateTeammates(setup: CalcSetup, existedSetup: UserSetup | UserComplexSetup) {
+export function validateTeammates(setup: CalcSetup, existedSetup: IDbSetup | IDbComplexSetup) {
   const errors: ValidationError[] = [];
 
-  if (Setup_.isUserSetup(existedSetup) && existedSetup.type === "combined") {
-    const team1 = Array_.truthify(existedSetup.party);
-    const team2 = Array_.truthify(setup.party);
-    const teamMutated = team1.length !== team2.length || team1.some((t1) => team2.every((t2) => t2.name !== t1.name));
+  if (isDbSetup(existedSetup) && existedSetup.type === "combined") {
+    const teamMutated = !Array_.isEqual(setup.teammates, existedSetup.teammates);
 
     if (teamMutated) {
       errors.push({
@@ -35,12 +34,14 @@ export function validateFreeItemSlots(userdb: UserdbState) {
       message: `Too many saved setups. You need to free up at least 1 setup.`,
     });
   }
+
   if (userWps.length + 1 > MAX_USER_WEAPONS) {
     errors.push({
       code: "EXCESSIVE_WEAPON",
       message: `Too many saved weapons. You need to free up at least 1 weapon.`,
     });
   }
+
   if (userArts.length + 5 > MAX_USER_ARTIFACTS) {
     errors.push({
       code: "EXCESSIVE_ARTIFACT",

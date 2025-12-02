@@ -55,6 +55,26 @@ export class ArtifactGearPieces<TArtifact extends IArtifact>
   [Symbol.iterator](): Iterator<TArtifact> {
     return new PiecesIterator(this);
   }
+
+  forEach(callback: (piece: TArtifact, index: number) => void): void {
+    for (let index = 0; index < ARTIFACT_TYPES.length; index++) {
+      const type = ARTIFACT_TYPES[index];
+
+      if (this[type]) {
+        callback(this[type], index);
+      }
+    }
+  }
+
+  map<U>(callback: (piece: TArtifact, index: number) => U): U[] {
+    const result: U[] = [];
+
+    this.forEach((piece, index) => {
+      result.push(callback(piece, index));
+    });
+
+    return result;
+  }
 }
 
 type ArtifactGearSlot<TArtifact extends Artifact = Artifact> =

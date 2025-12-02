@@ -1,8 +1,8 @@
 import { GeneralCalc } from "@Calculation";
 import { ConfirmModal, Modal } from "rond";
 
-import type { IDbArtifact, IDbWeapon, IUserSetup } from "@/types";
-import type { CalculationResult } from "../types";
+import type { IDbArtifact, IDbWeapon, TotalAttributes } from "@/types";
+import type { CalculationResult, IUserSetup } from "../types";
 
 import Setup_ from "@/utils/Setup";
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -18,19 +18,20 @@ import {
   WeaponCard,
 } from "@/components";
 import { Modifiers } from "./Modifiers";
+import { CalcResult } from "@/calculation-new/calculator/types";
 
 type SetupModalsProps = {
+  setupName: string;
   setup: IUserSetup;
-  weapon: IDbWeapon;
-  artifacts: IDbArtifact[];
-  result: CalculationResult;
+  artifactAttrs: TotalAttributes;
+  result: CalcResult;
 };
 
-export function SetupModals({ setup, weapon, artifacts, result }: SetupModalsProps) {
+export function SetupModals({ setupName, setup, artifactAttrs, result }: SetupModalsProps) {
   const dispatch = useDispatch();
   const modalType = useSelector(selectMySetupModalType);
 
-  const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
+  const { char, target } = setup;
 
   const closeModal = () => {
     dispatch(updateUI({ mySetupsModalType: "" }));
@@ -43,7 +44,7 @@ export function SetupModals({ setup, weapon, artifacts, result }: SetupModalsPro
         danger
         message={
           <>
-            Remove "<b>{setup.name}</b>"?
+            Remove "<b>{setupName}</b>"?
           </>
         }
         focusConfirm
@@ -51,14 +52,14 @@ export function SetupModals({ setup, weapon, artifacts, result }: SetupModalsPro
         onClose={closeModal}
       />
 
-      <Modal.Core active={modalType === "SHARE_SETUP"} preset="small" onClose={closeModal}>
+      {/* <Modal.Core active={modalType === "SHARE_SETUP"} preset="small" onClose={closeModal}>
         <SetupExporter
           setupName={setup.name}
           calcSetup={Setup_.userSetupToCalcSetup(setup, weapon, artifacts)}
           target={setup.target}
           onClose={closeModal}
         />
-      </Modal.Core>
+      </Modal.Core> */}
 
       <Modal
         active={modalType === "WEAPON"}
@@ -71,7 +72,7 @@ export function SetupModals({ setup, weapon, artifacts, result }: SetupModalsPro
           style={{ height: "30rem" }}
           withGutter={false}
           withOwnerLabel
-          weapon={weapon}
+          weapon={char.weapon}
         />
       </Modal>
 
@@ -82,20 +83,17 @@ export function SetupModals({ setup, weapon, artifacts, result }: SetupModalsPro
         onClose={closeModal}
       >
         <div className="flex space-x-1 hide-scrollbar">
-          {artifacts?.map((artifact, i) => {
-            if (artifact) {
-              return (
-                <ArtifactCard
-                  key={i}
-                  wrapperCls="shrink-0"
-                  className="w-60"
-                  withGutter={false}
-                  withOwnerLabel
-                  artifact={artifact}
-                />
-              );
-            }
-            return null;
+          {char.artifact.pieces.map((piece, i) => {
+            return (
+              <ArtifactCard
+                key={i}
+                wrapperCls="shrink-0"
+                className="w-60"
+                withGutter={false}
+                withOwnerLabel
+                artifact={piece}
+              />
+            );
           })}
         </div>
       </Modal>
@@ -111,21 +109,21 @@ export function SetupModals({ setup, weapon, artifacts, result }: SetupModalsPro
           <div className="w-76 flex flex-col shrink-0">
             <p className="text-lg text-center font-semibold">Final Attributes</p>
             <div className="mt-1 custom-scrollbar">
-              {result?.totalAttr && <AttributeTable attributes={result.totalAttr} />}
+              <AttributeTable attributes={char.totalAttrs} />
             </div>
           </div>
 
           <div className="w-76 flex flex-col shrink-0">
             <p className="text-lg text-center font-semibold">Artifact Stats</p>
             <div className="mt-1 custom-scrollbar">
-              {result?.artAttr && <AttributeTable attributes={result.artAttr} />}
+              <AttributeTable attributes={artifactAttrs} />
             </div>
           </div>
 
           <div className="w-72 flex flex-col shrink-0">
             <p className="text-lg text-center font-semibold">Set bonus</p>
             <div className="grow custom-scrollbar">
-              <SetBonusesView noTitle setBonuses={setBonuses} />
+              <SetBonusesView noTitle sets={char.artifact.sets} />
             </div>
           </div>
         </div>
@@ -138,7 +136,7 @@ export function SetupModals({ setup, weapon, artifacts, result }: SetupModalsPro
         bodyCls="grow hide-scrollbar"
         onClose={closeModal}
       >
-        <Modifiers {...{ result, setup, setBonuses, weapon }} />
+        <Modifiers setup={setup} />
       </Modal>
     </>
   );
