@@ -9,6 +9,7 @@ import type {
   Resonance,
   SetupImportInfo,
   Target,
+  TeamBuffCtrl,
   Teammate,
 } from "@/types";
 
@@ -101,14 +102,14 @@ export function decodeSetup(code: string): DecodeSuccessResult | DecodeFailResul
     _tmCode3,
     _elmtMCsCode,
     _resonancesCode,
+    _teamBuffCodes,
     _infuseElmtIndex,
     _customBuffsCode,
     _customDebuffCodes,
     _targetCode,
   ] = code.split(DIVIDER[0]);
-  const [, versionNo] = version;
 
-  if (version.at(0) !== "V" || +versionNo !== EXPORTED_SETUP_VERSION) {
+  if (version.at(0) !== "V" || version.slice(1) !== EXPORTED_SETUP_VERSION) {
     return {
       isOk: false,
       error: "OLD_VERSION",
@@ -178,11 +179,21 @@ export function decodeSetup(code: string): DecodeSuccessResult | DecodeFailResul
             activated: activated === "1",
           };
           if (inputs) {
-            resonance.inputs = inputs.split(DIVIDER[3]).map(Number);
+            resonance.inputs = inputs.split(DIVIDER.MC_INPUTS).map(Number);
           }
           return resonance;
         })
       : [];
+
+    const teamBuffCtrls: TeamBuffCtrl[] = split(_teamBuffCodes, 1).map((ctrl) => {
+      const [id, activated, inputs] = split(ctrl, 2);
+      return {
+        id: id,
+        activated: activated === "1",
+        inputs: inputs ? inputs.split(DIVIDER.MC_INPUTS).map(Number) : [],
+      };
+    });
+
     const [tgCode, tgLevel, tgVariant, tgInputs, tgResistances] = split(_targetCode, 1);
 
     const customBuffCtrls: CustomBuffCtrl[] = split(_customBuffsCode, 1).map((codes) => {
@@ -270,7 +281,7 @@ export function decodeSetup(code: string): DecodeSuccessResult | DecodeFailResul
         artBuffCtrls: decodeArtifactModCtrls(_artBCsCode),
         artDebuffCtrls: decodeArtifactModCtrls(_artDCsCode),
         party: [decodeTeammate(_tmCode1), decodeTeammate(_tmCode2), decodeTeammate(_tmCode3)],
-        teamBuffCtrls: [],
+        teamBuffCtrls: teamBuffCtrls,
         elmtModCtrls: {
           resonances,
           superconduct: superconduct === "1",

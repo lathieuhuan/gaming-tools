@@ -18,6 +18,17 @@ import {
   WEAPON_TYPES,
 } from "../constants";
 
+export type Nation =
+  | "nodkrai"
+  | "outland"
+  | "mondstadt"
+  | "liyue"
+  | "inazuma"
+  | "sumeru"
+  | "natlan"
+  | "fontaine"
+  | "snezhnaya";
+
 export type WeaponType = (typeof WEAPON_TYPES)[number];
 
 export type ArtifactType = (typeof ARTIFACT_TYPES)[number];
@@ -67,7 +78,7 @@ export type CalcItemType = "attack" | "healing" | "shield" | "other";
 
 export type CalcItemBasedOn = "atk" | "def" | "hp" | "em";
 
-export type CalcItemMultFactor =
+export type CalcItemFactor =
   | number
   | {
       root: number;

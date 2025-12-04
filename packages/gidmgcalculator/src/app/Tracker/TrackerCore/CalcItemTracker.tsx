@@ -7,8 +7,13 @@ import { suffixOf } from "@/utils";
 import { markGreen } from "@/components";
 import Array_ from "@/utils/Array";
 
-function renderDmg(value: number | number[], callback: (value: number) => string | number = Math.round) {
-  return Array.isArray(value) ? callback(value.reduce((total, num) => total + (num ?? 0), 0)) : callback(value);
+function renderDmg(
+  value: number | number[],
+  callback: (value: number) => string | number = Math.round
+) {
+  return Array.isArray(value)
+    ? callback(value.reduce((total, num) => total + (num ?? 0), 0))
+    : callback(value);
 }
 
 type PartConfig = {
@@ -59,7 +64,11 @@ export function CalcItemTracker({
     return <Fragment key={key}>{Array_.toArray(parts).map(renderPart)}</Fragment>;
   };
 
-  const renderFactor = (factor: CalcItemRecord["multFactors"][number], sign?: string | null, key?: string | number) => {
+  const renderFactor = (
+    factor: CalcItemRecord["factors"][number],
+    sign?: string | null,
+    key?: string | number
+  ) => {
     return renderParts(
       [
         {
@@ -112,7 +121,7 @@ export function CalcItemTracker({
     return forReactions ? (
       <>
         {"("}
-        {renderFactor(record.multFactors[0], null)}
+        {renderFactor(record.factors[0], null)}
         {baseMultRender}
         {bonusMultRender}
         {flatRender}
@@ -121,7 +130,7 @@ export function CalcItemTracker({
     ) : record.specialPatt ? (
       <>
         {"("}
-        {record.multFactors.map((factor, index) => renderFactor(factor, index ? "+" : null, index))}
+        {record.factors.map((factor, index) => renderFactor(factor, index ? "+" : null, index))}
         {baseMultRender}
         {renderPart({
           label: "Coefficient",
@@ -129,6 +138,12 @@ export function CalcItemTracker({
           nullValue: 1,
         })}
         {bonusMultRender}
+        {renderPart({
+          label: "Veil Mult.",
+          value: record.veilMult,
+          nullValue: 1,
+          processor: (value) => `${round(value * 100, 2)}%`,
+        })}
         {flatRender}
         {")"}
         {specMultRender}
@@ -137,7 +152,7 @@ export function CalcItemTracker({
     ) : (
       <>
         {"("}
-        {record.multFactors.map((factor, index) => renderFactor(factor, index ? "+" : null, index))}
+        {record.factors.map((factor, index) => renderFactor(factor, index ? "+" : null, index))}
         {baseMultRender}
         {flatRender}
         {")"}
@@ -202,7 +217,8 @@ export function CalcItemTracker({
 
                 return bonus.records.map((record, j) => (
                   <p key={i + j}>
-                    + {t(bonus.type)}: {record.description} {markGreen(round(record.value, percent ? 2 : 0) + percent)}
+                    + {t(bonus.type)}: {record.description}{" "}
+                    {markGreen(round(record.value, percent ? 2 : 0) + percent)}
                   </p>
                 ));
               })}
@@ -218,14 +234,15 @@ export function CalcItemTracker({
 
           {cDmg_ ? (
             <li>
-              Crit <span className="text-heading font-semibold">{renderDmg(result.crit)}</span> = {nonCritDmg}{" "}
-              {markGreen("*")} ({markGreen("1 +")} Crit DMG {markGreen(cDmg_)})
+              Crit <span className="text-heading font-semibold">{renderDmg(result.crit)}</span> ={" "}
+              {nonCritDmg} {markGreen("*")} ({markGreen("1 +")} Crit DMG {markGreen(cDmg_)})
             </li>
           ) : null}
 
           {cDmg_ && record.cRate_ ? (
             <li>
-              Average <span className="text-heading font-semibold">{renderDmg(result.average)}</span> ={" "}
+              Average{" "}
+              <span className="text-heading font-semibold">{renderDmg(result.average)}</span> ={" "}
               {nonCritDmg} {markGreen("*")} ({markGreen("1")}
               {renderParts([
                 {

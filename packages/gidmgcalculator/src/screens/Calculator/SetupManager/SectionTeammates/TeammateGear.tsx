@@ -1,18 +1,23 @@
 import { useState } from "react";
 
-import { WeaponType } from "@Calculation";
+import { AppCharacter, WeaponType } from "@Calculation";
 import { ArtifactForge, TeammateItems, WeaponForge } from "@/components";
 import { Artifact, Teammate, Weapon } from "@/types";
 import { useDispatch } from "@Store/hooks";
-import { updateTeammateArtifact, updateTeammateWeapon } from "@Store/calculator-slice";
+import {
+  updateTeammate,
+  updateTeammateArtifact,
+  updateTeammateWeapon,
+} from "@Store/calculator-slice";
+import { Checkbox } from "rond";
 
 type TeammateGearProps = {
   teammate: Teammate;
   index: number;
-  weaponType: WeaponType;
+  info: AppCharacter;
 };
 
-export function TeammateGear({ teammate, index, weaponType }: TeammateGearProps) {
+export function TeammateGear({ teammate, index, info }: TeammateGearProps) {
   const dispatch = useDispatch();
   const [modalType, setModalType] = useState<"WEAPON" | "ARTIFACT" | null>(null);
 
@@ -52,23 +57,34 @@ export function TeammateGear({ teammate, index, weaponType }: TeammateGearProps)
     );
   };
 
+  const handleEnhanceToggle = (enhanced: boolean) => {
+    dispatch(updateTeammate({ teammateIndex: index, enhanced }));
+  };
+
   return (
     <>
       <div className="bg-dark-2 pt-2">
-        <TeammateItems
-          mutable
-          className="bg-dark-1 pt-12 px-2 pb-3"
-          teammate={teammate}
-          onClickWeapon={() => setModalType("WEAPON")}
-          onChangeWeaponRefinement={handleWeaponRefinementChange}
-          onClickArtifact={() => setModalType("ARTIFACT")}
-          onClickRemoveArtifact={handleArtifactRemove}
-        />
+        <div className="bg-dark-1 pt-12 px-2 pb-3">
+          {/* <div className="mb-4 flex" hidden={!info.enhanceType}>
+            <Checkbox checked={!!teammate.enhanced} onChange={handleEnhanceToggle}>
+              Witch's Buff
+            </Checkbox>
+          </div> */}
+
+          <TeammateItems
+            mutable
+            teammate={teammate}
+            onClickWeapon={() => setModalType("WEAPON")}
+            onChangeWeaponRefinement={handleWeaponRefinementChange}
+            onClickArtifact={() => setModalType("ARTIFACT")}
+            onClickRemoveArtifact={handleArtifactRemove}
+          />
+        </div>
       </div>
 
       <WeaponForge
         active={modalType === "WEAPON"}
-        forcedType={weaponType}
+        forcedType={info.weaponType}
         onForgeWeapon={handleWeaponChange}
         onClose={() => setModalType(null)}
       />

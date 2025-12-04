@@ -1,11 +1,17 @@
-import type { ArtifactType, OptimizerAllArtifactModConfigs, OptimizerExtraConfigs } from "@Calculation";
+import type {
+  ArtifactType,
+  OptimizerAllArtifactModConfigs,
+  OptimizerExtraConfigs,
+} from "@Calculation";
 import type { AppArtifactsByCode, Artifact, ArtifactModCtrl, CalcArtifacts, Target } from "@/types";
 
-import { GeneralCalc, InputProcessor, ResultCalculator, getAttackAlterConfigs } from "@Calculation";
-
+// import { InputProcessor, ResultCalculator, getAttackAlterConfigs } from "@Calculation";
+import { ResultCalculator } from "@/calculation/ResultCalculator";
+import { getAttackAlterConfigs } from "@/calculation/InputProcessor/utils/getAttackAlterConfigs";
+import { InputProcessor } from "@/calculation/InputProcessor/InputProcessor";
 import Array_ from "@/utils/Array";
-import Modifier_ from "@/utils/Modifier";
 import Object_ from "@/utils/Object";
+import { createArtifactDebuffCtrls, createModCtrl, getArtifactSetBonuses } from "./utils";
 
 type CalculationStats = ReturnType<InputProcessor["getCalculationStats"]>;
 
@@ -88,7 +94,7 @@ export class SetupOptimizer extends InputProcessor {
   };
 
   private createArtifactBuffCtrls = (artifacts: CalcArtifacts) => {
-    const setBonuses = GeneralCalc.getArtifactSetBonuses(artifacts);
+    const setBonuses = getArtifactSetBonuses(artifacts);
     const artBuffCtrls: ArtifactModCtrl[] = [];
 
     for (const setBonus of setBonuses) {
@@ -100,7 +106,7 @@ export class SetupOptimizer extends InputProcessor {
         if (buff.affect !== "TEAMMATE" && setBonus.bonusLv >= bonusLv) {
           artBuffCtrls.push({
             code: setBonus.code,
-            ...Modifier_.createModCtrl(buff, true),
+            ...createModCtrl(buff, true),
           });
         }
       }
@@ -121,7 +127,7 @@ export class SetupOptimizer extends InputProcessor {
     });
 
     // ARTIFACT DEBUFFS
-    const artDebuffCtrls = Modifier_.createArtifactDebuffCtrls().map((control) => {
+    const artDebuffCtrls = createArtifactDebuffCtrls().map((control) => {
       // Merge control in the setup [this.artDebuffCtrls] & control from config [modConfig.debuffs]
       // into default control.
       // Control from config is prioritized.

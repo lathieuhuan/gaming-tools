@@ -14,6 +14,7 @@ import { TeamData } from "./TeamData";
 export class CalcTeamData extends TeamData {
   protected _activeMember: Character;
   protected _teammates: Teammates;
+  witchRiteLv = 0;
 
   get activeMember() {
     return this._activeMember;
@@ -24,26 +25,48 @@ export class CalcTeamData extends TeamData {
   }
 
   constructor(activeMember: Character, teammates: Teammates, public data: AppCharactersByName) {
+    const trueTeammates = Array_.truthify(teammates);
+
     super(
       activeMember.name,
-      Array_.truthify(teammates).map((teammate) => teammate.name),
+      trueTeammates.map((teammate) => teammate.name),
       data
     );
     this._activeMember = activeMember;
     this._teammates = teammates;
+
+    const witchRiteLv = trueTeammates.reduce(
+      (total, teammate) => total + (teammate.enhanced ? 1 : 0),
+      activeMember.enhanced ? 1 : 0
+    );
+
+    this.witchRiteLv = Math.min(witchRiteLv, 2);
   }
 
-  isApplicableEffect(condition: EffectApplicableCondition, inputs: number[], fromSelf = false): boolean {
+  isApplicableEffect(
+    condition: EffectApplicableCondition,
+    inputs: number[],
+    fromSelf = false
+  ): boolean {
     if (!isAvailableEffect(condition.grantedAt, this._activeMember, inputs, fromSelf)) {
       return false;
     }
     if (!isValidInput(condition.checkInput, inputs)) {
       return false;
     }
-    if (!isValidPartyProps(condition.checkParty, this.activeAppMember, this.appTeammates, this.moonsignLv)) {
+    if (
+      !isValidPartyProps(
+        condition.checkParty,
+        this.activeAppMember,
+        this.appTeammates,
+        this.moonsignLv,
+        this.witchRiteLv
+      )
+    ) {
       return false;
     }
-    if (!isValidCharProps(condition, this.activeAppMember)) {
+    // TOCHECK: this does not work when condition is from teammate and the active member is not enhanced
+    if (!isValidCharProps(condition, this.activeAppMember, this._activeMember.enhanced)) {
       return false;
     }
     if (!isValidTeamElmt(this.elmtCount, condition)) {

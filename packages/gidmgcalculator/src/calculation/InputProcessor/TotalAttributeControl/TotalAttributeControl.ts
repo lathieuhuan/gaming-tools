@@ -1,4 +1,3 @@
-import { round, type PartiallyOptional } from "rond";
 import type {
   AppCharacter,
   AppliedAttributeBonus,
@@ -9,12 +8,13 @@ import type {
   TotalAttribute,
 } from "@/calculation/types";
 import type { Artifact, Character, Weapon } from "@/types";
+import type { PartiallyOptional } from "rond";
 
-import { ArtifactCalc, GeneralCalc, WeaponCalc } from "@/calculation/utils";
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "@/calculation/constants";
 import { ECalcStatModule } from "@/calculation/constants/internal";
 import { TrackerControl } from "@/calculation/TrackerControl";
-import { applyPercent } from "@/utils";
+import { ArtifactCalc, GeneralCalc, WeaponCalc } from "@/calculation/utils";
+import { applyPercent, round } from "@/utils";
 import Array_ from "@/utils/Array";
 import Object_ from "@/utils/Object";
 
@@ -147,7 +147,11 @@ export class TotalAttributeControl {
   /** Should not be called more than once per instance of this */
   equipWeapon = (weapon?: Weapon, appWeapon?: AppWeapon) => {
     if (weapon && appWeapon) {
-      this.addBase("atk", WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale), "Weapon main stat");
+      this.addBase(
+        "atk",
+        WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale),
+        "Weapon main stat"
+      );
 
       if (appWeapon.subStat) {
         const substatValue = WeaponCalc.getSubStatValue(weapon.level, appWeapon.subStat.scale);
@@ -181,7 +185,11 @@ export class TotalAttributeControl {
 
   applyBonuses = (bonuses: BonusToApply | BonusToApply[]) => {
     for (const bonus of Array_.toArray(bonuses)) {
-      if (bonus.toStat === "base_atk" || bonus.toStat === "base_hp" || bonus.toStat === "base_def") {
+      if (
+        bonus.toStat === "base_atk" ||
+        bonus.toStat === "base_hp" ||
+        bonus.toStat === "base_def"
+      ) {
         const statType = bonus.toStat.slice(5) as AttributeStat;
         this.addBase(statType, bonus.value, bonus.description);
         continue;
@@ -264,7 +272,8 @@ class ArtifactAttributeControl {
     for (const artifact of artifacts) {
       if (!artifact) continue;
 
-      artAttr[artifact.mainStatType] = (artAttr[artifact.mainStatType] || 0) + ArtifactCalc.mainStatValueOf(artifact);
+      artAttr[artifact.mainStatType] =
+        (artAttr[artifact.mainStatType] || 0) + ArtifactCalc.mainStatValueOf(artifact);
 
       for (const subStat of artifact.subStats) {
         artAttr[subStat.type] = (artAttr[subStat.type] || 0) + subStat.value;
@@ -274,7 +283,9 @@ class ArtifactAttributeControl {
     this.artAttr = artAttr;
   }
 
-  forEachAttribute = (callback: (type: keyof ArtifactAttribute, value: number | undefined) => void) => {
+  forEachAttribute = (
+    callback: (type: keyof ArtifactAttribute, value: number | undefined) => void
+  ) => {
     Object_.forEach(this.artAttr, callback);
   };
 

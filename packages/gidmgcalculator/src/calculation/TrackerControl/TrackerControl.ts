@@ -33,13 +33,14 @@ export type CalcItemExclusiveBonus = {
 export type CalcItemRecord = {
   itemType: CalcItemType;
   specialPatt?: LunarType;
-  multFactors: Array<{
+  factors: Array<{
     desc: string;
     value: number;
     talentMult?: number;
   }>;
   coefficient?: number;
   baseMult?: number;
+  veilMult?: number;
   totalFlat?: number;
   elvMult?: number;
   specMult?: number;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { clsx, CollapseSpace, message } from "rond";
+import { CollapseSpace, message } from "rond";
 
 import Array_ from "@/utils/Array";
 import {
@@ -14,14 +14,14 @@ import { useTeamData } from "../../ContextProvider";
 
 // Component
 import { CharacterPortrait, Tavern, TavernProps } from "@/components";
+import { Section } from "../_components/Section";
 import { CopySelect } from "./CopySelect";
 import { TeammateGear } from "./TeammateGear";
 import { TeammateSlot } from "./TeammateSlot";
-import { Section } from "../_components/Section";
 
 type TavernState = {
   active: boolean;
-  recruitedIndex: number;
+  recruitIndex: number | null;
 };
 
 export default function SectionTeammates() {
@@ -33,7 +33,7 @@ export default function SectionTeammates() {
 
   const [tavern, setTavern] = useState<TavernState>({
     active: false,
-    recruitedIndex: 0,
+    recruitIndex: null,
   });
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
@@ -48,7 +48,7 @@ export default function SectionTeammates() {
   }, [selectedTeammate]);
 
   const closeTavern = () => {
-    setTavern({ active: false, recruitedIndex: 0 });
+    setTavern({ active: false, recruitIndex: null });
   };
 
   const warnSetupCombined = () => {
@@ -57,7 +57,7 @@ export default function SectionTeammates() {
     );
   };
 
-  const handleShowTavern = (recruitedIndex: number) => {
+  const handleShowTavern = (recruitIndex: number) => {
     if (isCombinedSetup) {
       warnSetupCombined();
       return;
@@ -65,7 +65,7 @@ export default function SectionTeammates() {
 
     setTavern({
       active: true,
-      recruitedIndex,
+      recruitIndex,
     });
   };
 
@@ -81,18 +81,18 @@ export default function SectionTeammates() {
   };
 
   const handleRecruitTeammate: TavernProps["onSelectCharacter"] = (character) => {
-    const { recruitedIndex } = tavern;
+    const { recruitIndex } = tavern;
 
-    if (recruitedIndex !== null) {
+    if (recruitIndex !== null) {
       dispatch(
         addTeammate({
           name: character.name,
           elementType: character.vision,
           weaponType: character.weaponType,
-          teammateIndex: recruitedIndex,
+          teammateIndex: recruitIndex,
         })
       );
-      setSelectedIndex(recruitedIndex);
+      setSelectedIndex(recruitIndex);
     }
   };
 
@@ -138,7 +138,7 @@ export default function SectionTeammates() {
           <TeammateGear
             teammate={selectedTeammate}
             index={selectedIndex}
-            weaponType={teamData.getAppMember(selectedTeammate.name).weaponType}
+            info={teamData.getAppMember(selectedTeammate.name)}
           />
         )}
       </CollapseSpace>

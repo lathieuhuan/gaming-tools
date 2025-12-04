@@ -18,7 +18,11 @@ import { $AppCharacter } from "@/services";
 import { CUSTOM_BUFF_CATEGORIES, DIVIDER } from "./setup-porter-config";
 
 const encodeModCtrl = (mod: ModifierCtrl) => {
-  return [+mod.activated, mod.index, mod.inputs?.length ? mod.inputs.join(DIVIDER.MC_INPUTS) : ""].join(DIVIDER.MC);
+  return [
+    +mod.activated,
+    mod.index,
+    mod.inputs?.length ? mod.inputs.join(DIVIDER.MC_INPUTS) : "",
+  ].join(DIVIDER.MC);
 };
 
 const encodeModCtrls = (mods: ModifierCtrl[], divideLv: number) => {
@@ -40,6 +44,7 @@ export function encodeSetup(calcSetup: CalcSetup, target: Target) {
     customInfusion,
     customBuffCtrls,
     customDebuffCtrls,
+    teamBuffCtrls,
   } = calcSetup;
 
   try {
@@ -53,9 +58,12 @@ export function encodeSetup(calcSetup: CalcSetup, target: Target) {
 
     const _charCode = [charCode, LEVELS.indexOf(char.level), cons, NAs, ES, EB].join(DIVIDER[1]);
 
-    const _wpCode = [weapon.code, WEAPON_TYPES.indexOf(weapon.type), LEVELS.indexOf(weapon.level), weapon.refi].join(
-      DIVIDER[1]
-    );
+    const _wpCode = [
+      weapon.code,
+      WEAPON_TYPES.indexOf(weapon.type),
+      LEVELS.indexOf(weapon.level),
+      weapon.refi,
+    ].join(DIVIDER[1]);
 
     const _artifactCodes = artifacts.map((artifact, i) => {
       return artifact
@@ -66,14 +74,18 @@ export function encodeSetup(calcSetup: CalcSetup, target: Target) {
             artifact.level,
             ATTRIBUTE_STAT_TYPES.indexOf(artifact.mainStatType),
             artifact.subStats
-              .map((subStat) => [ATTRIBUTE_STAT_TYPES.indexOf(subStat.type), subStat.value].join(DIVIDER[3]))
+              .map((subStat) =>
+                [ATTRIBUTE_STAT_TYPES.indexOf(subStat.type), subStat.value].join(DIVIDER[3])
+              )
               .join(DIVIDER[2]),
           ].join(DIVIDER[1])
         : "";
     });
-    const _artBCsCode = artBuffCtrls.map((ctrl) => `${ctrl.code}${DIVIDER[2]}${encodeModCtrl(ctrl)}}`).join(DIVIDER[1]);
+    const _artBCsCode = artBuffCtrls
+      .map((ctrl) => `${ctrl.code}${DIVIDER[2]}${encodeModCtrl(ctrl)}`)
+      .join(DIVIDER[1]);
     const _artDCsCode = artDebuffCtrls
-      .map((ctrl) => `${ctrl.code}${DIVIDER[2]}${encodeModCtrl(ctrl)}}`)
+      .map((ctrl) => `${ctrl.code}${DIVIDER[2]}${encodeModCtrl(ctrl)}`)
       .join(DIVIDER[1]);
 
     const _teammateCodes = party.map((tm, i) => {
@@ -85,9 +97,12 @@ export function encodeSetup(calcSetup: CalcSetup, target: Target) {
           tmCode,
           encodeModCtrls(tm.buffCtrls, 2),
           encodeModCtrls(tm.debuffCtrls, 2),
-          [weapon.code, WEAPON_TYPES.indexOf(weapon.type), weapon.refi, encodeModCtrls(weapon.buffCtrls, 3)].join(
-            DIVIDER[2]
-          ),
+          [
+            weapon.code,
+            WEAPON_TYPES.indexOf(weapon.type),
+            weapon.refi,
+            encodeModCtrls(weapon.buffCtrls, 3),
+          ].join(DIVIDER[2]),
           [artifact.code, encodeModCtrls(artifact.buffCtrls, 3)].join(DIVIDER[2]),
         ].join(DIVIDER[1]);
       }
@@ -102,8 +117,20 @@ export function encodeSetup(calcSetup: CalcSetup, target: Target) {
     ].join(DIVIDER[1]);
 
     const _resonancesCode = elmtModCtrls.resonances
-      .map((rsn) => [rsn.vision, +rsn.activated, rsn.inputs ? rsn.inputs.join(DIVIDER[3]) : ""].join(DIVIDER[2]))
+      .map((rsn) =>
+        [rsn.vision, +rsn.activated, rsn.inputs ? rsn.inputs.join(DIVIDER.MC_INPUTS) : ""].join(
+          DIVIDER[2]
+        )
+      )
       .join(DIVIDER[1]);
+
+    const _teamBuffCodes = teamBuffCtrls.map((ctrl) => {
+      return [
+        ctrl.id,
+        +ctrl.activated,
+        ctrl.inputs?.length ? ctrl.inputs.join(DIVIDER.MC_INPUTS) : "",
+      ].join(DIVIDER[2]);
+    });
 
     const _customBuffCodes = customBuffCtrls.map((ctrl) => {
       let typeCode = 0;
@@ -141,7 +168,9 @@ export function encodeSetup(calcSetup: CalcSetup, target: Target) {
       target.variantType || "",
       target.inputs?.length ? target.inputs.join(DIVIDER[2]) : "",
       Object.entries(target.resistances)
-        .map(([key, value]) => [ATTACK_ELEMENTS.indexOf(key as AttackElement), value].join(DIVIDER[3]))
+        .map(([key, value]) =>
+          [ATTACK_ELEMENTS.indexOf(key as AttackElement), value].join(DIVIDER[3])
+        )
         .join(DIVIDER[2]),
     ].join(DIVIDER[1]);
 
@@ -158,6 +187,7 @@ export function encodeSetup(calcSetup: CalcSetup, target: Target) {
       ..._teammateCodes,
       _elmtMCsCode,
       _resonancesCode,
+      _teamBuffCodes.join(DIVIDER[1]),
       ATTACK_ELEMENTS.indexOf(customInfusion.element),
       _customBuffCodes.join(DIVIDER[1]),
       _customDebuffCodes.join(DIVIDER[1]),

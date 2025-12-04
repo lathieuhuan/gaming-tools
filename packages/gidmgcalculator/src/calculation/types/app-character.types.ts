@@ -6,6 +6,7 @@ import type {
   EntityPenaltyEffect,
   InputCheck,
   ModifierAffectType,
+  PartyMilestone,
 } from "./app-entity";
 import type {
   ActualAttackElement,
@@ -13,10 +14,11 @@ import type {
   AttackPattern,
   AttributeStat,
   CalcItemBasedOn,
-  CalcItemMultFactor,
+  CalcItemFactor,
   CalcItemType,
   ElementType,
   LunarType,
+  Nation,
   NormalAttack,
   TalentCalcItemBonusId,
   TalentType,
@@ -35,6 +37,7 @@ export type AppCharacter = {
   faction?: Faction | Faction[];
   vision: ElementType;
   weaponType: WeaponType;
+  enhanceType?: "WITCH";
   EBcost: number;
   talentLvBonus?: Partial<Record<TalentType, number>>;
   statBases: {
@@ -71,17 +74,6 @@ export type AppCharacter = {
   debuffs?: CharacterDebuff[];
 };
 
-type Nation =
-  | "nodkrai"
-  | "outland"
-  | "mondstadt"
-  | "liyue"
-  | "inazuma"
-  | "sumeru"
-  | "natlan"
-  | "fontaine"
-  | "snezhnaya";
-
 type Faction = "moonsign";
 
 type Ability = {
@@ -104,7 +96,8 @@ type StatOther = {
 
 type CharacterModifier = {
   src: string;
-  grantedAt?: CharacterMilestone | undefined;
+  grantedAt?: CharacterMilestone;
+  partyMs?: PartyMilestone;
   description: string;
 };
 
@@ -133,12 +126,12 @@ export type TalentCalcItem = {
   name: string;
   notOfficial?: boolean;
   /** Factors multiplying an attribute, scaling off talent level (character) or refinement (weapon) */
-  multFactors: CalcItemMultFactor | CalcItemMultFactor[];
+  factor: CalcItemFactor | CalcItemFactor[];
   flatFactor?: CalcItemFlatFactor;
 
   // Only on 'attack'
 
-  joinMultFactors?: boolean;
+  jointFactors?: boolean;
   attPatt?: ActualAttackPattern;
   attElmt?: ActualAttackElement;
   subAttPatt?: "FCA";

@@ -2,7 +2,14 @@ import { ATTACK_ELEMENTS, AttackElement } from "@Calculation";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { PartiallyOptional } from "rond";
 
-import type { CalcSetupManageInfo, CalcWeapon, Resonance, Target, TeamBuffCtrl } from "@/types";
+import type {
+  CalcSetupManageInfo,
+  CalcWeapon,
+  Resonance,
+  Target,
+  TeamBuffCtrl,
+  Teammate,
+} from "@/types";
 import type {
   AddTeammateAction,
   ApplySettingsAction,
@@ -24,6 +31,7 @@ import type {
   UpdateCustomBuffCtrlsAction,
   UpdateCustomDebuffCtrlsAction,
   UpdateSetupsAction,
+  UpdateTeammateAction,
   UpdateTeammateArtifactAction,
   UpdateTeammateWeaponAction,
 } from "./calculator-slice.types";
@@ -191,6 +199,19 @@ export const calculatorSlice = createSlice({
       checkToUpdateResonance(setup, appCharacters);
       checkToUpdateTeamBuffs(setup, appCharacters);
       calculate(state);
+    },
+    updateTeammate: (state, action: UpdateTeammateAction) => {
+      const { teammateIndex, ...newInfo } = action.payload;
+      const setup = state.setupsById[state.activeId];
+      const teammate = setup.party[teammateIndex];
+
+      if (teammate) {
+        const appCharacters = Entity_.getAppCharacters(setup.char.name, setup.party);
+
+        Object.assign(teammate, newInfo);
+        checkToUpdateTeamBuffs(setup, appCharacters);
+        calculate(state);
+      }
     },
     removeTeammate: (state, action: PayloadAction<number>) => {
       const teammateIndex = action.payload;
@@ -647,6 +668,7 @@ export const {
   removeCalcSetup,
   updateCharacter,
   addTeammate,
+  updateTeammate,
   removeTeammate,
   updateTeammateWeapon,
   updateTeammateArtifact,

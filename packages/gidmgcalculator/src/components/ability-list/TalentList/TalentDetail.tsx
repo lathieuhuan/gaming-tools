@@ -223,18 +223,18 @@ function processTalents(
     if (!talent) continue;
 
     for (const stat of appCharacter.calcList[attPatt]) {
-      const multFactors = Array_.toArray(stat.multFactors);
+      const factors = Array_.toArray(stat.factor);
       const { flatFactor } = stat;
       const factorStrings = [];
 
       if (
         stat.notOfficial ||
-        multFactors.some((factor) => typeof factor !== "number" && factor.scale === 0)
+        factors.some((factor) => typeof factor !== "number" && factor.scale === 0)
       ) {
         continue;
       }
 
-      for (const factor of multFactors) {
+      for (const factor of factors) {
         const {
           root,
           scale = default_.scale,

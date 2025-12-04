@@ -53,8 +53,17 @@ export default class Modifier_ {
 
     for (const config of inputConfigs) {
       if (!config.for || config.for !== forTarget) {
-        const value =
-          (useMaxValue ? config.max : config.init) ?? this.getDefaultInitialValue(config.type);
+        let value = useMaxValue ? config.max : config.init;
+
+        if (value === undefined) {
+          const [firstOption] = config.options ?? [];
+
+          if (typeof firstOption === "number") {
+            value = firstOption;
+          } else {
+            value = this.getDefaultInitialValue(config.type);
+          }
+        }
 
         initialValues.push(value);
       }

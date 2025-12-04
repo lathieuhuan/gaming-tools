@@ -26,7 +26,7 @@ type WeaponCalcItem = {
   /** Default 'attack' */
   type?: CalcItemType;
   value: number;
-  /** Default 1/3 [multFactors] */
+  /** Default 1/3 [value] */
   incre?: number;
   /** Default 'atk' */
   basedOn?: CalcItemBasedOn;

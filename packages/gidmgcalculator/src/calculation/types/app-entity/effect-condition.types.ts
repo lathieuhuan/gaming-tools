@@ -1,4 +1,4 @@
-import type { ElementType, WeaponType } from "../common.types";
+import type { ElementType, Nation, WeaponType } from "../common.types";
 import type { CharacterMilestone } from "./app-entity-common.types";
 
 export type ConditionComparison = "EQUAL" | "MIN" | "MAX";
@@ -36,6 +36,7 @@ export type TeamElementCondition = {
 };
 
 export type CharacterPropertyCondition = {
+  forNation?: Nation;
   /** On Chongyun, 2 original artifacts */
   forWeapons?: WeaponType[];
   /** On Chevreuse, Xilonen */
@@ -47,6 +48,7 @@ export type CharacterPropertyCondition = {
     value: number;
     comparison: ConditionComparison;
   };
+  forEnhanced?: boolean;
 };
 
 /**
@@ -70,7 +72,7 @@ export type EffectInputCondition = number | InputCheck | MultipleInputCheck;
 
 export type PartyPropertyCondition = {
   value: number;
-  type: "MIXED" | "MOONSIGN";
+  type: "MIXED" | "MOONSIGN" | "WITCH_RITE";
   /** Default 'EQUAL' */
   comparison?: ConditionComparison;
 };

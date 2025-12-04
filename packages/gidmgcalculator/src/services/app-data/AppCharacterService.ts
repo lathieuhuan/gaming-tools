@@ -210,7 +210,7 @@ export class AppCharacterService extends BaseService {
 
   get(name: string) {
     const control = this.getControl(name);
-    return control!.data;
+    return control?.data!;
   }
 
   // ==== TRAVELER ====
@@ -236,14 +236,14 @@ export class AppCharacterService extends BaseService {
           name: "Lumine",
           icon: "9/9c/Lumine_Icon",
           sideIcon: "9/9a/Lumine_Side_Icon",
-          multFactorsCA: [55.9, 72.24],
+          factorsCA: [55.9, 72.24],
           innateBuffs,
         }
       : {
           name: "Aether",
           icon: "a/a5/Aether_Icon",
           sideIcon: "0/05/Aether_Side_Icon",
-          multFactorsCA: [55.9, 60.72],
+          factorsCA: [55.9, 60.72],
           innateBuffs,
         };
   };
@@ -274,7 +274,7 @@ export class AppCharacterService extends BaseService {
       data.sideIcon = props.sideIcon;
 
       const CA = data.calcList?.CA?.[0];
-      if (CA) CA.multFactors = props.multFactorsCA;
+      if (CA) CA.factor = props.factorsCA;
 
       this.syncInnateBuffs(data, props.innateBuffs);
     }

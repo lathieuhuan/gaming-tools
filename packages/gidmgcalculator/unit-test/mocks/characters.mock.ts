@@ -24,13 +24,13 @@ const STATS: AppCharacter["statBases"] = {
 
 const CALC_LIST: AppCharacter["calcList"] = {
   NA: [
-    { name: "Hit 1", multFactors: 10 },
-    { name: "Hit 2", multFactors: 12 },
+    { name: "Hit 1", factor: 10 },
+    { name: "Hit 2", factor: 12 },
   ],
-  CA: [{ name: "Charged", multFactors: 14 }],
-  PA: [{ name: "Plunging", multFactors: 18 }],
-  ES: [{ name: "Skill", multFactors: 20 }],
-  EB: [{ name: "Burst", multFactors: 30 }],
+  CA: [{ name: "Charged", factor: 14 }],
+  PA: [{ name: "Plunging", factor: 18 }],
+  ES: [{ name: "Skill", factor: 20 }],
+  EB: [{ name: "Burst", factor: 30 }],
 };
 
 const ACTIVE_TALENTS: AppCharacter["activeTalents"] = {

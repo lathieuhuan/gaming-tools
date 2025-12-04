@@ -1,5 +1,6 @@
 import { useLayoutEffect, useRef, useState } from "react";
-import { clsx, Modal, Skeleton } from "rond";
+import { FaDiscord } from "react-icons/fa";
+import { Button, clsx, Modal, Skeleton } from "rond";
 
 import type { AppMetadata } from "./types";
 
@@ -116,7 +117,7 @@ export const Greeter = () => {
       active={appModalType === "INTRO"}
       preset="large"
       withHeaderDivider={false}
-      bodyCls="pt-0"
+      bodyCls="pt-0 flex flex-col"
       title={
         <>
           <div className="flex flex-col items-center">
@@ -151,7 +152,13 @@ export const Greeter = () => {
       closable={state.status === "success"}
       onClose={() => dispatch(updateUI({ appModalType: "" }))}
     >
-      <Introduction metadata={state.metadata} loading={isLoading} />
+      <Introduction className="grow" metadata={state.metadata} loading={isLoading} />
+
+      <div className="mt-4 flex justify-end">
+        <a href="https://discord.gg/gRxYCHqAAC" target="_blank">
+          <Button icon={<FaDiscord />}>Discord</Button>
+        </a>
+      </div>
     </Modal>
   );
 };

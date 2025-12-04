@@ -21,7 +21,7 @@ function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Array<Charact
   return props.modCtrls.map((ctrl, ctrlIndex, ctrls) => {
     const modifier = Array_.findByIndex(modifiers, ctrl.index);
 
-    if (modifier && CharacterCalc.isGrantedEffect(modifier.grantedAt, props.character)) {
+    if (modifier && CharacterCalc.isGrantedMod(modifier, props.teamData)) {
       const { inputs = [] } = ctrl;
 
       return (
@@ -47,7 +47,7 @@ export function SelfBuffsView(props: SelfModsViewProps) {
   const modifierElmts: (JSX.Element | null)[] = [];
 
   innateBuffs.forEach((buff, index) => {
-    if (CharacterCalc.isGrantedEffect(buff.grantedAt, props.character)) {
+    if (CharacterCalc.isGrantedMod(buff, teamData)) {
       modifierElmts.push(
         <GenshinModifierView
           key={"innate-" + index}
