@@ -175,8 +175,8 @@ export class TalentCalculator {
     switch (type) {
       case "attack": {
         if (item.lunar) {
-          const { attElmt } = this.getElementAttribute(item, elmtModCtrl, infusedElmt);
-          const calculator = this.itemCalculator.genLunarCalculator(item.lunar, attElmt, item.id);
+          // const { attElmt } = this.getElementAttribute(item, elmtModCtrl, infusedElmt);
+          const calculator = this.itemCalculator.genLunarCalculator(item.lunar, item.id);
 
           if (this.disabled) {
             return calculator.emptyResult;

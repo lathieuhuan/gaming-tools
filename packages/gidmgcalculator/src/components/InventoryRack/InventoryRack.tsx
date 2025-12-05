@@ -56,7 +56,7 @@ export function InventoryRack<T extends Weapon | Artifact>({
 
   const { observedAreaRef, visibleMap, itemUtils } = useIntersectionObserver({
     ready,
-    dependecies: [ready, data, pageNo, pageSize],
+    dependencies: [ready, data, pageNo, pageSize],
   });
 
   useEffect(() => {

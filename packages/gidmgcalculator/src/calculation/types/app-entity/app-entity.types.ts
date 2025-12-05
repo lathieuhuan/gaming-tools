@@ -13,6 +13,8 @@ export type ModInputConfig = {
   init?: number;
   max?: number;
   options?: (string | number)[];
+  /** For config with options */
+  menuWidth?: number;
   note?: string;
 };
 

@@ -1,4 +1,10 @@
-import type { ActualAttackElement, AttackElement, LunarReaction, LunarType, TransformativeReaction } from "../types";
+import type {
+  ActualAttackElement,
+  AttackElement,
+  LunarReaction,
+  LunarType,
+  TransformativeReaction,
+} from "../types";
 
 export enum ECalcStatModule {
   /** TotalAttribute */
@@ -22,11 +28,19 @@ export const TRANSFORMATIVE_REACTION_CONFIG: Record<
   shattered: { mult: 3, attElmt: "phys" },
 };
 
-export const LUNAR_REACTION_CONFIG: Record<LunarReaction, { mult: number; attElmt: AttackElement }> = {
-  lunarCharged: { mult: 1.8, attElmt: "electro" },
+export const LUNAR_ATTACK_ELEMENT: Record<LunarType, AttackElement> = {
+  lunarCharged: "electro",
+  lunarBloom: "dendro",
+  lunarCryst: "geo",
+};
+
+export const LUNAR_REACTION_COEFFICIENT: Record<LunarReaction, number> = {
+  lunarCharged: 1.8,
+  lunarCryst: 0.96,
 };
 
 export const LUNAR_ATTACK_COEFFICIENT: Record<LunarType, number> = {
   lunarCharged: 3,
   lunarBloom: 1,
+  lunarCryst: 1.6,
 };

@@ -15,7 +15,7 @@ import type { CalcItemRecord } from "../TrackerControl";
 
 import { toMult } from "@/utils";
 import Array_ from "@/utils/Array";
-import { LUNAR_ATTACK_COEFFICIENT } from "../constants/internal";
+import { LUNAR_ATTACK_COEFFICIENT, LUNAR_ATTACK_ELEMENT } from "../constants/internal";
 import { GeneralCalc } from "../utils";
 
 export class CalcItemCalculator {
@@ -148,10 +148,10 @@ export class CalcItemCalculator {
 
   genLunarCalculator = (
     lunar: LunarType,
-    attElmt: AttackElement,
     itemId?: TalentCalcItemBonusId
   ) => {
     const { totalAttr, resistances } = this;
+    const attElmt = LUNAR_ATTACK_ELEMENT[lunar];
 
     const emptyResult: CalculationFinalResultItem = {
       type: "attack",

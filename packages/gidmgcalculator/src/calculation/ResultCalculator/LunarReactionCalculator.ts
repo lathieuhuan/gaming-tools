@@ -5,7 +5,7 @@ import type { CalcItemCalculator } from "./CalcItemCalculator";
 
 import { toMult } from "@/utils";
 import { GeneralCalc } from "../utils";
-import { LUNAR_REACTION_CONFIG } from "../constants/internal";
+import { LUNAR_ATTACK_ELEMENT, LUNAR_REACTION_COEFFICIENT } from "../constants/internal";
 
 export class LunarReactionCalculator {
   private baseDmg: number;
@@ -24,16 +24,16 @@ export class LunarReactionCalculator {
     const { totalAttr } = this;
     const { getBonus, getRxnMult } = this.itemCalculator;
 
-    const config = LUNAR_REACTION_CONFIG[reaction];
-    const baseValue = this.baseDmg * config.mult;
+    const coefficient = LUNAR_REACTION_COEFFICIENT[reaction];
+    const baseValue = this.baseDmg * coefficient;
     const baseMult = toMult(getBonus("multPlus_", reaction));
     const bonusMult = 1 + getBonus("pct_", reaction) / 100;
     const flat = getBonus("flat", reaction);
-    const attElmt = config.attElmt;
+    const attElmt = LUNAR_ATTACK_ELEMENT[reaction];
     const rxnMult = 1;
     let resMult = 1;
 
-    resMult = this.resistances[config.attElmt];
+    resMult = this.resistances[attElmt];
 
     const nonCrit = (baseValue * baseMult * bonusMult + flat) * rxnMult * resMult;
     let cRate_ = getBonus("cRate_", reaction) + totalAttr.cRate_;

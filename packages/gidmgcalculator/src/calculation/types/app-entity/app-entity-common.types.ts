@@ -1,6 +1,6 @@
 import type { TalentType } from "../common.types";
 
-export type CharacterMilestone = "A1" | "A4" | "C1" | "C2" | "C4" | "C6";
+export type CharacterMilestone = "A1" | "A4" | "C1" | "C2" | "C3" | "C4" | "C5" | "C6";
 
 export type PartyMilestone = "SECRET_RITE";
 
