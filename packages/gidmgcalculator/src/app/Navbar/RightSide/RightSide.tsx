@@ -58,6 +58,7 @@ export function RightSide({ appReady }: RightSideProps) {
   };
 
   // const handleUpdateCache = async () => {
+  //   // UID 801256452
   //   console.log("Updating cache...");
   //   const response = await updateCache();
   //   console.log("Completed!");
@@ -76,7 +77,7 @@ export function RightSide({ appReady }: RightSideProps) {
         </Button>
       )}
 
-      {/* <Button variant="primary" shape="square" icon={<FaDonate />} onClick={handleUpdateCache}>
+      {/* <Button shape="square" onClick={handleUpdateCache}>
         Update Cache
       </Button> */}
 
