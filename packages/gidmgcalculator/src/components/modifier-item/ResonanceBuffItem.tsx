@@ -23,7 +23,7 @@ export const RESONANCE_INFO: Record<string, RenderInfo> = {
     name: "Geo Resonance",
     description: [
       "Increases {Shield Strength}#[k] by {15%}#[v].",
-      "Increases {DMG}#[k] dealt by characters that protected by a shield by {15%}#[v].",
+      "Increases {DMG}#[k] dealt by characters that protected by a shield, or nearby Moondrifts, by {15%}#[v].",
     ],
   },
   hydro: {

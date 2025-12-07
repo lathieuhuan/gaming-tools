@@ -8,6 +8,8 @@ export type RequiredPick<TObject, TRequiredKeys extends keyof TObject> = Require
 
 export type PartialPick<TObject, TPartialKeys extends keyof TObject> = Partial<Pick<TObject, TPartialKeys>>;
 
+export type ExactOmit<TObject, TOmitKeys extends keyof TObject> = Omit<TObject, TOmitKeys>;
+
 export type AdvancedPick<
   TObject,
   TRequiredKeys extends keyof TObject,
