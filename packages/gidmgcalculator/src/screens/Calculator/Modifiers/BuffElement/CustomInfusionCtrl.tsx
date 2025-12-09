@@ -1,60 +1,46 @@
-import { AttackBonuses, ELEMENT_TYPES, ElementType, Level } from "@Calculation";
 import { useState } from "react";
 import { VersatileSelect } from "rond";
 
-import { ElementModCtrl } from "@/types";
-import { selectCustomInfusion, updateCalcSetup } from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
+import type { CalcCharacter } from "@/models/base";
+import type { ElementalEvent, ElementType } from "@/types";
+
+import { ELEMENT_TYPES } from "@/constants";
+import { updateElementalEvent } from "@Store/calculator/actions";
 
 import { GenshinModifierView } from "@/components";
 import { AttackReactionCtrl } from "./AttackReactionCtrl";
 
 type CustomInfusionCtrlProps = {
-  elmtModCtrls: ElementModCtrl;
-  attkBonuses: AttackBonuses;
-  characterLv: Level;
-  characterElmt: ElementType;
+  elmtEvent: ElementalEvent;
+  character: CalcCharacter;
 };
 
-export function CustomInfusionCtrl({ elmtModCtrls, attkBonuses, characterLv, characterElmt }: CustomInfusionCtrlProps) {
-  const dispatch = useDispatch();
-  const customInfusion = useSelector(selectCustomInfusion);
-  const { element: infusedElement } = customInfusion;
-  const isInfused = infusedElement !== "phys";
+export function CustomInfusionCtrl({ elmtEvent, character }: CustomInfusionCtrlProps) {
+  const [infusedValue, setInfusedValue] = useState(elmtEvent.infusion ?? "pyro");
 
-  const [infusedValue, setInfusedValue] = useState(infusedElement === "phys" ? "pyro" : infusedElement);
+  const isInfused = !!elmtEvent.infusion;
+
+  const elmtOptions = ELEMENT_TYPES.map((item) => ({
+    label: item,
+    value: item,
+    className: "capitalize",
+  }));
 
   const onToggleInfusion = () => {
-    dispatch(
-      updateCalcSetup({
-        elmtModCtrls: {
-          ...elmtModCtrls,
-          infuse_reaction: null,
-        },
-        customInfusion: {
-          ...customInfusion,
-          element: isInfused ? "phys" : infusedValue,
-        },
-      })
-    );
+    updateElementalEvent({
+      infusion: isInfused ? null : infusedValue,
+      infuseReaction: null,
+    });
   };
 
   const onChangeInfusedElmt = (element: ElementType) => {
     //
     setInfusedValue(element);
 
-    dispatch(
-      updateCalcSetup({
-        elmtModCtrls: {
-          ...elmtModCtrls,
-          infuse_reaction: null,
-        },
-        customInfusion: {
-          ...customInfusion,
-          element,
-        },
-      })
-    );
+    updateElementalEvent({
+      infusion: element,
+      infuseReaction: null,
+    });
   };
 
   return (
@@ -63,8 +49,12 @@ export function CustomInfusionCtrl({ elmtModCtrls, attkBonuses, characterLv, cha
         heading="Custom Infusion"
         description={
           <>
-            This infusion overwrites self infusion but does not overwrite elemental nature of attacks{" "}
-            <span className="text-light-hint">(Catalyst's attacks, Bow's fully-charge aim shot)</span>.
+            This infusion overwrites self infusion but does not overwrite elemental nature of
+            attacks{" "}
+            <span className="text-light-hint">
+              (Catalyst's attacks, Bow's fully-charge aim shot)
+            </span>
+            .
           </>
         }
         mutable
@@ -77,11 +67,7 @@ export function CustomInfusionCtrl({ elmtModCtrls, attkBonuses, characterLv, cha
         <VersatileSelect
           title="Select Element"
           className="w-24 h-8 font-bold capitalize"
-          options={ELEMENT_TYPES.map((item) => ({
-            label: item,
-            value: item,
-            className: "capitalize",
-          }))}
+          options={elmtOptions}
           disabled={!isInfused}
           value={infusedValue}
           onChange={onChangeInfusedElmt}
@@ -92,14 +78,13 @@ export function CustomInfusionCtrl({ elmtModCtrls, attkBonuses, characterLv, cha
         Checking infusedElement !== characterElmt because self infusion is always the same as characterElmt for now.
         If they are different, need to check infusedElement !== self infusion
       */}
-      {infusedElement !== "phys" && infusedElement !== characterElmt ? (
+      {isInfused && elmtEvent.infusion !== character.data.vision ? (
         <div className="mt-3 space-y-3">
           <AttackReactionCtrl
-            configType="infuse_reaction"
-            attackElmt={infusedElement}
-            elmtModCtrls={elmtModCtrls}
-            attkBonuses={attkBonuses}
-            characterLv={characterLv}
+            configType="infuseReaction"
+            attackElmt={elmtEvent.infusion}
+            character={character}
+            elmtEvent={elmtEvent}
           />
         </div>
       ) : null}

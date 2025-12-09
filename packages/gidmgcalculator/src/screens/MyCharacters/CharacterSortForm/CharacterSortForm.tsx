@@ -3,13 +3,13 @@ import { FaChevronDown } from "react-icons/fa";
 import { CarouselSpace, Popover } from "rond";
 
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import Entity_ from "@/utils/Entity";
 import { useDispatch } from "@Store/hooks";
 import { sortCharacters } from "@Store/userdb-slice";
 import { selectCharacterToBeSorted } from "./utils";
 
 import { DragAndDropList } from "./DragAndDropList";
 import { MarkedList } from "./MarkedList";
+import { Ascendable } from "@/models/base";
 
 type CharacterSortFormProps = {
   id?: string;
@@ -37,23 +37,17 @@ export function CharacterSortForm({ id, onClose }: CharacterSortFormProps) {
       const newList = [...prev];
 
       return newList.sort((a, b) => {
-        const [fA, sA] = Entity_.splitLv(a);
-        const [fB, sB] = Entity_.splitLv(b);
+        const { bareLv: lvA, ascension: ascA } = Ascendable.splitLevel(a.level);
+        const { bareLv: lvB, ascension: ascB } = Ascendable.splitLevel(b.level);
 
-        if (fA !== fB) {
-          return fB - fA;
-        }
-
-        return sB - sA;
+        return lvA !== lvB ? lvB - lvA : ascA - ascB;
       });
     });
   };
 
   const handleSortByRarity = () => {
     setList((prev) => {
-      const newList = [...prev];
-
-      return newList.sort((a, b) => b.rarity - a.rarity);
+      return [...prev].sort((a, b) => b.data.rarity - a.data.rarity);
     });
   };
 

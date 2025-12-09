@@ -6,12 +6,13 @@ export type Option = {
   label: string;
 };
 
-interface CopySectionProps<TOption> {
+type CopySectionProps<TOption> = {
   className?: string;
   options: TOption[];
   defaultIndex?: number;
   onClickCopy: (option: TOption) => void;
-}
+};
+
 export function CopySection<TOption extends Option>({
   className,
   options,
@@ -22,7 +23,7 @@ export function CopySection<TOption extends Option>({
     <div className={clsx("flex justify-end", className)}>
       <VersatileSelect
         title="Select Setup"
-        className="w-24 h-8 font-semibold"
+        className="w-30 h-8 font-semibold"
         defaultValue={options[defaultIndex]?.value}
         options={options}
         action={{

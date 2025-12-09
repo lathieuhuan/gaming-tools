@@ -1,9 +1,9 @@
-import { UserArtifact, UserCharacter, UserComplexSetup, UserSetup, UserWeapon } from "@/types";
+import { IDbArtifact, UserCharacter, UserComplexSetup, UserSetup, IDbWeapon } from "@/types";
 
 export interface UploadedData {
   characters: UserCharacter[];
-  weapons: UserWeapon[];
-  artifacts: UserArtifact[];
+  weapons: IDbWeapon[];
+  artifacts: IDbArtifact[];
   setups: (UserSetup | UserComplexSetup)[];
 }
 

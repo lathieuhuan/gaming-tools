@@ -2,19 +2,19 @@ import { FaMinus } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { Button, InputNumber, VersatileSelect } from "rond";
 
-import { $AppData } from "@/services";
 import { MAX_TARGET_LEVEL } from "@/constants";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectTarget, updateTarget } from "@Store/calculator-slice";
+import { $AppData } from "@/services";
+import { useCalcStore } from "@Store/calculator";
+import { updateTarget } from "@Store/calculator/actions";
 import { Section } from "../_components/Section";
 
-interface SectionTargetProps {
+type SectionTargetProps = {
   onMinimize: () => void;
   onEdit: () => void;
-}
+};
+
 export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps) {
-  const dispatch = useDispatch();
-  const target = useSelector(selectTarget);
+  const target = useCalcStore((state) => state.target);
   const { title, names, variant, statuses } = $AppData.getTargetInfo(target);
 
   return (
@@ -48,7 +48,7 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
         {variant && <p className="mt-1">{variant}</p>}
 
         {statuses.length ? (
-          <ul className="mt-1 pl-4 list-disc">
+          <ul className="pl-4 list-disc text-sm">
             {statuses.map((status, i) => {
               return <li key={i}>{status}</li>;
             })}
@@ -61,7 +61,7 @@ export default function SectionTarget({ onMinimize, onEdit }: SectionTargetProps
             className="w-14 font-semibold"
             value={target.level}
             max={MAX_TARGET_LEVEL}
-            onChange={(value) => dispatch(updateTarget({ level: value }))}
+            onChange={(value) => updateTarget({ level: value })}
           />
         </label>
       </div>

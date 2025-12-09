@@ -7,6 +7,8 @@ import { SCREEN_PATH } from "@/constants";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import { useRouter } from "@/systems/router";
 import Array_ from "@/utils/Array";
+import { useCalcStore } from "@Store/calculator";
+import { selectSetup } from "@Store/calculator/selectors";
 import { useDispatch } from "@Store/hooks";
 import { saveSetupThunk } from "@Store/thunks";
 import { validateFreeItemSlots, validateTeammates } from "./utils";
@@ -18,17 +20,18 @@ type StoreSnapshot = {
   errors: ValidationError[];
 };
 
-interface SaveSetupProps {
+type SaveSetupProps = {
   setupId: number;
   onClose: () => void;
-}
+};
+
 export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
   const dispatch = useDispatch();
   const router = useRouter();
+  const setup = useCalcStore(selectSetup);
 
   const snapshot = useStoreSnapshot<StoreSnapshot>((state) => {
     const existedSetup = Array_.findById(state.userdb.userSetups, setupId);
-    const setup = state.calculator.setupsById[setupId];
     const errors = validateFreeItemSlots(state.userdb);
 
     if (existedSetup) {
@@ -36,7 +39,7 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
     }
 
     return {
-      initialSetupName: existedSetup ? existedSetup.name : `${setup.char.name} setup`,
+      initialSetupName: existedSetup ? existedSetup.name : `${setup.main.name} setup`,
       isNewSetup: !existedSetup,
       isError: errors.length > 0,
       errors,
@@ -45,7 +48,7 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
   const [input, setInput] = useState(snapshot.initialSetupName);
 
   const saveSetup = () => {
-    dispatch(saveSetupThunk(setupId, input));
+    dispatch(saveSetupThunk(setup, input));
     router.navigate(SCREEN_PATH.SETUPS);
     onClose();
   };
@@ -53,7 +56,9 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
   return (
     <div className="flex flex-col">
       <p className="mb-2 text-light-hint">
-        {snapshot.isNewSetup ? "Do you want to save this setup as" : "Do you want to update this setup"}
+        {snapshot.isNewSetup
+          ? "Do you want to save this setup as"
+          : "Do you want to update this setup"}
       </p>
       <Input
         className="text-center font-semibold"

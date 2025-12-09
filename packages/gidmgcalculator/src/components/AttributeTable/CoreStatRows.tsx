@@ -1,17 +1,16 @@
 import { useEffect, useId, useState } from "react";
-import { clsx, PartiallyRequired } from "rond";
+import { clsx } from "rond";
 
+import { CORE_STAT_TYPES } from "@/constants";
+import { CoreStat, TotalAttributes } from "@/types";
 import { useTranslation } from "@/hooks";
-import { CORE_STAT_TYPES, CoreStat, TotalAttribute } from "@Calculation";
 
 // Component
 import { markGreen } from "@/components";
 import { CoreStatRow } from "./CoreStatRow";
 
-type AttributesProp = PartiallyRequired<Partial<TotalAttribute>, CoreStat>;
-
 export type CoreStatRowsProps = {
-  attributes: AttributesProp;
+  attributes: TotalAttributes;
 };
 
 export function CoreStatRows({ attributes }: CoreStatRowsProps) {
@@ -21,14 +20,14 @@ export function CoreStatRows({ attributes }: CoreStatRowsProps) {
     <>
       {CORE_STAT_TYPES.map((type) => {
         const label = t(type);
-        const base = attributes[`${type}_base`];
+        const base = attributes.get(`base_${type}`);
 
         return (
           <CoreStatRow
             key={type}
             className="group"
             label={label}
-            total={attributes[type]}
+            total={attributes.get(type)}
             base={base}
             renderValue={(total, bonus = 0) => {
               return (
@@ -77,14 +76,14 @@ export function CoreStatRowsMobile({ attributes }: CoreStatRowsProps) {
     <>
       {CORE_STAT_TYPES.map((type) => {
         const label = t(type);
-        const base = attributes[`${type}_base`];
+        const base = attributes.get(`base_${type}`);
 
         return (
           <CoreStatRow
             key={type}
             data-id={id}
             label={label}
-            total={attributes[type]}
+            total={attributes.get(type)}
             base={base}
             onClick={() => {
               if (base !== undefined) {

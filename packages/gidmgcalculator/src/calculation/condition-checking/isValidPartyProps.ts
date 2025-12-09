@@ -1,8 +1,8 @@
-import type { AppCharacter, PartyPropertyCondition } from "@/calculation/types";
+import type { AppCharacter, TeamPropertyCondition } from "@/calculation/types";
 import { isPassedComparison } from "./isPassedComparison";
 
 export function isValidPartyProps(
-  condition: PartyPropertyCondition | undefined,
+  condition: TeamPropertyCondition | undefined,
   activeAppMember: AppCharacter,
   appTeammates: AppCharacter[],
   moonsignLv: number,
@@ -12,13 +12,13 @@ export function isValidPartyProps(
     let input = 0;
 
     switch (condition.type) {
-      case "MIXED":
-        input = activeAppMember.nation === "natlan" ? 1 : 0;
+      // case "MIXED":
+      //   input = activeAppMember.nation === "natlan" ? 1 : 0;
 
-        appTeammates.forEach((data) => {
-          input += data.nation === "natlan" || data.vision !== activeAppMember.vision ? 1 : 0;
-        });
-        break;
+      //   appTeammates.forEach((data) => {
+      //     input += data.nation === "natlan" || data.vision !== activeAppMember.vision ? 1 : 0;
+      //   });
+      //   break;
       // Temporary check for moonsign
       case "MOONSIGN":
         input = moonsignLv;

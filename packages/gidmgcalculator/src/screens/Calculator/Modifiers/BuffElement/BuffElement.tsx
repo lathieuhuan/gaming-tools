@@ -1,24 +1,20 @@
 import { Fragment, ReactNode } from "react";
 
-import { selectAttkBonuses, selectCharacter, selectElmtModCtrls } from "@Store/calculator-slice";
-import { useSelector } from "@Store/hooks";
-import { useTeamData } from "../../ContextProvider";
+import Object_ from "@/utils/Object";
+import { useShallowCalcStore } from "@Store/calculator";
+import { selectSetup } from "@Store/calculator/selectors";
 
 import { AnemoAbsorptionCtrl } from "./AnemoAbsorptionCtrl";
 import { AttackReactionCtrl } from "./AttackReactionCtrl";
 import { CustomInfusionCtrl } from "./CustomInfusionCtrl";
 
 export function BuffElement() {
-  const character = useSelector(selectCharacter);
-  const elmtModCtrls = useSelector(selectElmtModCtrls);
-  const attkBonuses = useSelector(selectAttkBonuses);
-  const teamData = useTeamData();
-
-  const { vision, weaponType } = teamData.activeAppMember;
+  const { main, elmtEvent } = useShallowCalcStore((state) =>
+    Object_.pickProps(selectSetup(state), ["main", "elmtEvent"])
+  );
+  const { vision, weaponType } = main.data;
 
   const nodes: ReactNode[] = [];
-
-  // ========== ATTACK REACTION ==========
 
   if (["pyro", "cryo", "hydro", "electro", "dendro"].includes(vision)) {
     nodes.push(
@@ -26,37 +22,19 @@ export function BuffElement() {
         <AttackReactionCtrl
           configType="reaction"
           attackElmt={vision}
-          elmtModCtrls={elmtModCtrls}
-          attkBonuses={attkBonuses}
-          characterLv={character.level}
+          character={main}
+          elmtEvent={elmtEvent}
         />
       </div>
     );
   }
 
-  // ========== ANEMO ABSORPTION ==========
-
   if (vision === "anemo") {
-    nodes.push(
-      <AnemoAbsorptionCtrl
-        elmtModCtrls={elmtModCtrls}
-        attkBonuses={attkBonuses}
-        characterLv={character.level}
-      />
-    );
+    nodes.push(<AnemoAbsorptionCtrl elmtEvent={elmtEvent} character={main} />);
   }
 
-  // ========== CUSTOM INFUSION ==========
-
   if (weaponType !== "catalyst") {
-    nodes.push(
-      <CustomInfusionCtrl
-        elmtModCtrls={elmtModCtrls}
-        attkBonuses={attkBonuses}
-        characterLv={character.level}
-        characterElmt={vision}
-      />
-    );
+    nodes.push(<CustomInfusionCtrl elmtEvent={elmtEvent} character={main} />);
   }
 
   return (

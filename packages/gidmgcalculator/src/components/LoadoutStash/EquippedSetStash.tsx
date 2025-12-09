@@ -1,16 +1,22 @@
-import { ElementType } from "@Calculation";
 import { useEffect, useMemo, useState } from "react";
 import { Button, clsx, ItemCase, useIntersectionObserver } from "rond";
 
-import { $AppArtifact, $AppCharacter } from "@/services";
-import type { UserArtifact } from "@/types";
+import type { AppArtifact, ElementType, IDbArtifact } from "@/types";
+
+import { useArtifactSetData } from "@/hooks";
+import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
 import { useSelector } from "@Store/hooks";
-import { selectUserArtifacts, selectUserCharacters } from "@Store/userdb-slice";
+import { selectDbArtifacts, selectDbCharacters } from "@Store/userdb-slice";
 
 // Component
 import { CharacterPortrait } from "@/components/CharacterPortrait";
 import { GenshinImage } from "@/components/GenshinImage";
+
+export type ArtifactOption = {
+  userData: IDbArtifact;
+  data: AppArtifact;
+};
 
 type EquippedSetOption = {
   character: {
@@ -19,68 +25,70 @@ type EquippedSetOption = {
     icon: string;
     elementType: ElementType;
   };
-  artifacts: UserArtifact[];
+  artifacts: ArtifactOption[];
 };
 
-type EquippedSetStashProps = {
+export type EquippedSetStashProps = {
   keyword?: string;
-  onSelectedArtifactChange: (artifact?: UserArtifact) => void;
-  onSetSelect: (artifacts: UserArtifact[]) => void;
+  onSelectArtifact: (artifact?: ArtifactOption) => void;
+  onSelectSet: (set: ArtifactOption[]) => void;
 };
 
 export function EquippedSetStash({
   keyword,
-  onSelectedArtifactChange,
-  onSetSelect,
+  onSelectArtifact,
+  onSelectSet,
 }: EquippedSetStashProps) {
   const [selection, setSelection] = useState({
     characterCode: 0,
     artifactId: 0,
   });
   const [empty, setEmpty] = useState(false);
+  const setData = useArtifactSetData();
 
-  const characters = useSelector(selectUserCharacters);
-  const artifacts = useSelector(selectUserArtifacts);
+  const characters = useSelector(selectDbCharacters);
+  const artifacts = useSelector(selectDbArtifacts);
 
   const { observedAreaRef, visibleMap, itemUtils } = useIntersectionObserver();
 
   const shouldCheckKeyword = keyword && keyword.length >= 1;
   const lowerKeyword = keyword?.toLowerCase() ?? "";
 
-  const { options, imgMap } = useMemo(() => {
+  const setOptions = useMemo(() => {
     const options: EquippedSetOption[] = [];
-    const imgMap: Record<string, string> = {};
 
-    for (const character of characters) {
-      if (character.artifactIDs.filter(Boolean).length) {
-        const appCharacter = $AppCharacter.get(character.name);
-
-        const option: EquippedSetOption = {
-          character: {
-            code: appCharacter.code,
-            name: character.name,
-            icon: appCharacter.icon,
-            elementType: appCharacter.vision,
-          },
-          artifacts: [],
-        };
-
-        for (const id of character.artifactIDs) {
-          const artifact = Array_.findById(artifacts, id);
-
-          if (artifact) {
-            option.artifacts.push(artifact);
-            imgMap[`${artifact.code}-${artifact.type}`] = $AppArtifact.get(artifact)?.icon ?? "";
-          }
-        }
-        options.push(option);
+    for (const { name, artifactIDs } of characters) {
+      if (!artifactIDs.length) {
+        continue;
       }
+
+      const appCharacter = $AppCharacter.get(name);
+
+      const option: EquippedSetOption = {
+        character: {
+          code: appCharacter.code,
+          name,
+          icon: appCharacter.icon,
+          elementType: appCharacter.vision,
+        },
+        artifacts: [],
+      };
+
+      for (const id of artifactIDs) {
+        const artifact = Array_.findById(artifacts, id);
+
+        if (artifact) {
+          option.artifacts.push({
+            userData: artifact,
+            data: setData.get(artifact.code),
+          });
+        }
+      }
+
+      options.push(option);
     }
 
-    return {
-      options,
-      imgMap,
-    };
+    return options;
   }, []);
 
   useEffect(() => {
@@ -98,7 +106,7 @@ export function EquippedSetStash({
           characterCode: 0,
           artifactId: 0,
         });
-        onSelectedArtifactChange(undefined);
+        onSelectArtifact(undefined);
 
         shouldCheckChosen = false;
       }
@@ -112,7 +120,7 @@ export function EquippedSetStash({
       {empty ? <p className="py-4 text-light-hint text-lg text-center">No Loadouts found</p> : null}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-2">
-        {options.map(({ character, artifacts }, i) => {
+        {setOptions.map(({ character, artifacts }, i) => {
           const visible = visibleMap[character.code];
           const hidden = shouldCheckKeyword && !character.name.toLowerCase().includes(lowerKeyword);
           const opacityCls = `transition-opacity duration-400 ${
@@ -121,7 +129,7 @@ export function EquippedSetStash({
 
           return (
             <div
-              key={i}
+              key={character.code}
               {...itemUtils.getProps(character.code, [
                 "break-inside-avoid relative",
                 hidden && "hidden",
@@ -131,7 +139,7 @@ export function EquippedSetStash({
                 className="absolute top-3 right-3"
                 variant={character.code === selection.characterCode ? "primary" : "default"}
                 size="small"
-                onClick={() => onSetSelect(artifacts)}
+                onClick={() => onSelectSet(artifacts)}
               >
                 Select
               </Button>
@@ -146,19 +154,21 @@ export function EquippedSetStash({
                   </p>
                 </div>
 
-                <div className={`mt-3 flex space-x-2`}>
-                  {artifacts.map((artifact, j) => {
+                <div className="mt-3 h-12 flex space-x-2">
+                  {artifacts.map((artifact) => {
+                    const { ID } = artifact.userData;
+
                     return (
                       <ItemCase
-                        key={j}
+                        key={ID}
                         className={`w-12 h-12 cursor-pointer ${opacityCls}`}
-                        chosen={artifact.ID === selection.artifactId}
+                        chosen={ID === selection.artifactId}
                         onClick={() => {
                           setSelection({
                             characterCode: character.code,
-                            artifactId: artifact.ID,
+                            artifactId: ID,
                           });
-                          onSelectedArtifactChange(artifact);
+                          onSelectArtifact(artifact);
                         }}
                       >
                         {(className, imgCls) => {
@@ -166,7 +176,7 @@ export function EquippedSetStash({
                             <GenshinImage
                               className={clsx("p-1 rounded-circle", className)}
                               imgCls={imgCls}
-                              src={imgMap[`${artifact.code}-${artifact.type}`]}
+                              src={artifact.data[artifact.userData.type].icon}
                               imgType="artifact"
                             />
                           ) : null;

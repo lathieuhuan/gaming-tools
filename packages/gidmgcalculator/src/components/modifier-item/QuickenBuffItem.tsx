@@ -1,20 +1,17 @@
-import { AttackBonuses, AttackBonusesControl, ElementType, GeneralCalc, Level, QuickenReaction } from "@Calculation";
+import type { CalcCharacter } from "@/models/base";
+import type { ElementType, QuickenReaction } from "@/types";
 
-import { markGreen } from "../span";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
+import { markGreen } from "../span";
 
-interface QuickenBuffItemProps extends Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle"> {
+type QuickenBuffItemProps = Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle"> & {
   reaction: QuickenReaction;
   element: ElementType;
-  characterLv: Level;
-  attkBonuses: AttackBonuses;
-}
-export function QuickenBuffItem({ reaction, element, characterLv, attkBonuses, ...rest }: QuickenBuffItemProps) {
-  const bonusValue = GeneralCalc.getQuickenBuffDamage(
-    reaction,
-    characterLv,
-    AttackBonusesControl.get(attkBonuses, "pct_", reaction)
-  );
+  character: CalcCharacter;
+};
+
+export function QuickenBuffItem({ reaction, element, character, ...rest }: QuickenBuffItemProps) {
+  const bonusValue = character.getQuickenBuffDamage(reaction);
 
   return (
     <GenshinModifierView

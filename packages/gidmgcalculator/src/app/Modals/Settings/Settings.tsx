@@ -6,7 +6,7 @@ import type { TravelerInfo, TravelerKey } from "@/types";
 import { $AppSettings, AppSettings } from "@/services";
 import { useDynamicStoreControl } from "@/systems/dynamic-store";
 import { genAccountTravelerKey, selectTraveler, updateTraveler } from "@Store/account-slice";
-import { applySettings } from "@Store/calculator-slice";
+import { applySettings } from "@Store/calculator/actions";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 
@@ -30,7 +30,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
   const dispatch = useDispatch();
   const traveler = useSelector(selectTraveler);
 
-  const newAppSettings = useAppSettings();
+  const newSettings = useAppSettings();
   const newTraveler = useRef(traveler);
 
   const updateAppStoreConfig = useDynamicStoreControl();
@@ -45,33 +45,31 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
       dispatch(updateTraveler(currTraveler));
     }
 
-    dispatch(
-      applySettings({
-        mergeCharInfo: !currSettings.separateCharInfo && newAppSettings.separateCharInfo,
-        travelerChanged,
-      })
-    );
+    applySettings(currSettings.separateCharInfo && !newSettings.separateCharInfo, travelerChanged);
 
-    if (newAppSettings.isTabLayout !== currSettings.isTabLayout) {
+    if (newSettings.isTabLayout !== currSettings.isTabLayout) {
       dispatch(
         updateUI({
-          isTabLayout: newAppSettings.isTabLayout,
+          isTabLayout: newSettings.isTabLayout,
         })
       );
     }
 
-    if (newAppSettings.persistUserData !== currSettings.persistUserData) {
+    if (newSettings.persistUserData !== currSettings.persistUserData) {
       updateAppStoreConfig({
-        persistUserData: newAppSettings.persistUserData,
+        persistUserData: newSettings.persistUserData,
       });
     }
 
-    $AppSettings.set(newAppSettings);
+    $AppSettings.set(newSettings);
     onClose();
   };
 
-  const handleAppSettingChange = <TKey extends keyof AppSettings>(key: TKey, value: AppSettings[TKey]) => {
-    newAppSettings[key] = value;
+  const handleAppSettingChange = <TKey extends keyof AppSettings>(
+    key: TKey,
+    value: AppSettings[TKey]
+  ) => {
+    newSettings[key] = value;
   };
 
   const handleTravelerSelect = (selection: TravelerKey) => {
@@ -102,7 +100,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
         onChangeSelection={handleTravelerSelect}
         onChangePowerups={handlePowerupsChange}
       />
-      <AppSettingsControls initialValues={newAppSettings} onChange={handleAppSettingChange} />
+      <AppSettingsControls initialValues={newSettings} onChange={handleAppSettingChange} />
     </form>
   );
 };

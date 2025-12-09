@@ -1,70 +1,52 @@
 import { useState } from "react";
 
-import { AppCharacter, WeaponType } from "@Calculation";
-import { ArtifactForge, TeammateItems, WeaponForge } from "@/components";
-import { Artifact, Teammate, Weapon } from "@/types";
-import { useDispatch } from "@Store/hooks";
+import type { AppCharacter, ITeammate } from "@/types";
 import {
-  updateTeammate,
-  updateTeammateArtifact,
+  changeTeammateArtifact,
+  changeTeammateWeapon,
   updateTeammateWeapon,
-} from "@Store/calculator-slice";
-import { Checkbox } from "rond";
+} from "@Store/calculator/actions";
+
+import {
+  ArtifactForge,
+  ArtifactForgeProps,
+  TeammateItems,
+  WeaponForge,
+  WeaponForgeProps,
+} from "@/components";
 
 type TeammateGearProps = {
-  teammate: Teammate;
-  index: number;
+  teammate: ITeammate;
   info: AppCharacter;
 };
 
-export function TeammateGear({ teammate, index, info }: TeammateGearProps) {
-  const dispatch = useDispatch();
+export function TeammateGear({ teammate, info }: TeammateGearProps) {
   const [modalType, setModalType] = useState<"WEAPON" | "ARTIFACT" | null>(null);
 
   const handleWeaponRefinementChange = (refi: number) => {
-    dispatch(
-      updateTeammateWeapon({
-        teammateIndex: index,
-        refi,
-      })
-    );
+    updateTeammateWeapon(teammate.data.code, { refi });
   };
 
   const handleArtifactRemove = () => {
-    dispatch(
-      updateTeammateArtifact({
-        teammateIndex: index,
-        code: -1,
-      })
-    );
+    changeTeammateArtifact(teammate.data.code, undefined);
   };
 
-  const handleWeaponChange = (weapon: Weapon) => {
-    dispatch(
-      updateTeammateWeapon({
-        teammateIndex: index,
-        code: weapon.code,
-      })
-    );
+  const handleWeaponChange: WeaponForgeProps["onForgeWeapon"] = (weapon) => {
+    changeTeammateWeapon(teammate.data.code, weapon);
   };
 
-  const handleArtifactChange = (artifact: Artifact) => {
-    dispatch(
-      updateTeammateArtifact({
-        teammateIndex: index,
-        code: artifact.code,
-      })
-    );
+  const handleArtifactChange: ArtifactForgeProps["onForgeArtifact"] = (artifact) => {
+    changeTeammateArtifact(teammate.data.code, artifact);
   };
 
-  const handleEnhanceToggle = (enhanced: boolean) => {
-    dispatch(updateTeammate({ teammateIndex: index, enhanced }));
-  };
+  // const handleEnhanceToggle = (enhanced: boolean) => {
+  //   dispatch(updateTeammate({ teammateIndex: index, enhanced }));
+  // };
 
   return (
     <>
       <div className="bg-dark-2 pt-2">
-        <div className="bg-dark-1 pt-12 px-2 pb-3">
+        <div className="bg-dark-1 pt-12 px-2 pb-3" onDoubleClick={() => console.log(teammate)}>
           {/* <div className="mb-4 flex" hidden={!info.enhanceType}>
             <Checkbox checked={!!teammate.enhanced} onChange={handleEnhanceToggle}>
               Witch's Buff

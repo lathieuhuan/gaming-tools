@@ -2,21 +2,32 @@ import { Fragment, useState } from "react";
 import { Button, clsx, ConfirmModal, TrashCanSvg } from "rond";
 import { MdEdit } from "react-icons/md";
 
-import { UserArtifact } from "@/types";
-import { $AppArtifact } from "@/services";
 import { useDispatch } from "@Store/hooks";
-import { removeArtifact, swapArtifactOwner, updateUserArtifact, updateUserArtifactSubStat } from "@Store/userdb-slice";
+import {
+  removeArtifact,
+  swapArtifactOwner,
+  updateUserArtifact,
+  updateUserArtifactSubStat,
+} from "@Store/userdb-slice";
+import { Artifact } from "@/models/base";
+import { useArtifactSetData } from "@/hooks";
 
 // Components
 import { ArtifactCard, Tavern } from "@/components";
 
-interface ChosenArtifactViewProps {
-  artifact?: UserArtifact;
-  onRemoveArtifact?: (artifact: UserArtifact) => void;
+type ChosenArtifactViewProps = {
+  artifact?: Artifact;
+  onRemoveArtifact?: (artifact: Artifact) => void;
   onRequestEditArtifact?: () => void;
-}
-export function ChosenArtifactView({ artifact, onRemoveArtifact, onRequestEditArtifact }: ChosenArtifactViewProps) {
+};
+
+export function ChosenArtifactView({
+  artifact,
+  onRemoveArtifact,
+  onRequestEditArtifact,
+}: ChosenArtifactViewProps) {
   const dispatch = useDispatch();
+  const setData = useArtifactSetData();
   const [modalType, setModalType] = useState<"REMOVE_ARTIFACT" | "EQUIP_CHARACTER" | "">("");
   const [newOwner, setNewOwner] = useState("");
 
@@ -60,7 +71,10 @@ export function ChosenArtifactView({ artifact, onRemoveArtifact, onRequestEditAr
             title="Reforge"
             icon={<MdEdit className="text-lg text-black opacity-80" />}
             boneOnly
-            className={clsx("shrink-0", artifact?.owner || artifact?.setupIDs?.length ? "hidden" : "")}
+            className={clsx(
+              "shrink-0",
+              artifact?.owner || artifact?.setupIDs?.length ? "hidden" : ""
+            )}
             onClick={() => onRequestEditArtifact?.()}
           />
         }
@@ -83,7 +97,9 @@ export function ChosenArtifactView({ artifact, onRemoveArtifact, onRequestEditAr
         sourceType="user"
         filter={(character) => character.name !== artifact?.owner}
         onSelectCharacter={(character) => {
-          artifact?.owner ? setNewOwner(character.name) : swapOwner(character.name);
+          const name = character.data.name;
+
+          artifact?.owner ? setNewOwner(name) : swapOwner(name);
         }}
         onClose={closeModal}
       />
@@ -93,7 +109,8 @@ export function ChosenArtifactView({ artifact, onRemoveArtifact, onRequestEditAr
           active={newOwner !== ""}
           message={
             <>
-              <b>{artifact.owner}</b> is currently using "<b>{$AppArtifact.get(artifact)?.name || "<name missing>"}</b>
+              <b>{artifact.owner}</b> is currently using "
+              <b>{setData.getSlot(artifact).name || "<name missing>"}</b>
               ". Swap?
             </>
           }
@@ -109,7 +126,7 @@ export function ChosenArtifactView({ artifact, onRemoveArtifact, onRequestEditAr
           danger
           message={
             <>
-              Remove "<b>{$AppArtifact.getSet(artifact.code)?.name}</b>" ({artifact.type})?{" "}
+              Remove "<b>{setData.getSlot(artifact).name}</b>" ({artifact.type})?{" "}
               {artifact.owner ? (
                 <>
                   It is currently used by <b>{artifact.owner}</b>.
@@ -119,7 +136,7 @@ export function ChosenArtifactView({ artifact, onRemoveArtifact, onRequestEditAr
           }
           focusConfirm
           onConfirm={() => {
-            dispatch(removeArtifact(artifact));
+            dispatch(removeArtifact({ ID: artifact.ID }));
             onRemoveArtifact?.(artifact);
           }}
           onClose={closeModal}

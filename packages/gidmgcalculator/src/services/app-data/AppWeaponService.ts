@@ -1,15 +1,19 @@
-import type { AppWeapon, WeaponType } from "@Calculation";
-import type { Weapon } from "@/types";
+import type { AppWeapon, WeaponType } from "@/types";
+import type { IWeapon } from "@/types";
 import type { GOODWeapon } from "@/types/GOOD.types";
 import type { DataControl } from "./app-data.types";
 import { convertGOODLevel, toGOODKey } from "./utils";
 
-export type ConvertedWeapon = Weapon & { data: AppWeapon };
+export type ConvertedWeapon = IWeapon;
+
+const map = new Map<number, AppWeapon>();
 
 export class AppWeaponService {
   private weapons: Array<DataControl<AppWeapon>> = [];
 
   populate(weapons: AppWeapon[]) {
+    map.clear();
+
     this.weapons = weapons.map((dataWeapon) => ({
       status: "fetched",
       data: dataWeapon,
@@ -35,8 +39,24 @@ export class AppWeaponService {
   }
 
   get(code: number) {
-    const control = this.weapons.find((weapon) => weapon.data.code === code);
-    return control?.data;
+    if (!code) {
+      return undefined;
+    }
+
+    const cached = map.get(code);
+
+    if (cached) {
+      return cached;
+    }
+
+    const data = this.weapons.find((weapon) => weapon.data.code === code)?.data;
+
+    if (data) {
+      map.set(code, data);
+      return data;
+    }
+
+    return undefined;
   }
 
   convertGOOD(weapon: GOODWeapon, seedId: number): ConvertedWeapon | undefined {

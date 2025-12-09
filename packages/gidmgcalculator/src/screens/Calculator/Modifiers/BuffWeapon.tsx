@@ -1,78 +1,77 @@
-import type { Teammates } from "@/types";
-import { useDispatch, useSelector } from "@Store/hooks";
-import {
-  selectWeapon,
-  changeModCtrlInput,
-  toggleModCtrl,
-  updateTeammateWeapon,
-  type ToggleModCtrlPath,
-} from "@Store/calculator-slice";
-import Object_ from "@/utils/Object";
-import Array_ from "@/utils/Array";
+import type { CalcTeammate } from "@/models/calculator";
+import type { IWeaponBuffCtrl } from "@/types";
+
+import { useShallowCalcStore } from "@Store/calculator";
+import { updateActiveSetup, updateTeammateWeapon } from "@Store/calculator/actions";
+import { selectSetup } from "@Store/calculator/selectors";
+import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
+
 import { WeaponBuffsView } from "@/components";
 
-export default function BuffWeapon({ teammates }: { teammates: Teammates }) {
-  const dispatch = useDispatch();
-  const weapon = useSelector(selectWeapon);
-  const weaponBuffCtrls = useSelector((state) => {
-    return state.calculator.setupsById[state.calculator.activeId].wpBuffCtrls;
+export default function BuffWeapon() {
+  const { weapon, wpBuffCtrls, teammates } = useShallowCalcStore((state) => {
+    const setup = selectSetup(state);
+
+    return {
+      weapon: setup.main.weapon,
+      wpBuffCtrls: setup.wpBuffCtrls,
+      teammates: setup.teammates,
+    };
   });
+
+  const handleUpdateSelfCtrls = (newCtrls: IWeaponBuffCtrl[]) => {
+    updateActiveSetup((setup) => {
+      setup.wpBuffCtrls = newCtrls;
+    });
+  };
+
+  const handleUpdateTeammateCtrls = (teammate: CalcTeammate, newCtrls: IWeaponBuffCtrl[]) => {
+    updateTeammateWeapon(teammate.data.code, {
+      buffCtrls: newCtrls,
+    });
+  };
 
   return (
     <WeaponBuffsView
       mutable
       teammates={teammates}
       weapon={weapon}
-      wpBuffCtrls={weaponBuffCtrls}
-      getSelfHandlers={({ ctrl }) => {
-        const path: ToggleModCtrlPath = {
-          modCtrlName: "wpBuffCtrls",
-          ctrlIndex: ctrl.index,
+      wpBuffCtrls={wpBuffCtrls}
+      getSelfHandlers={(ctrl) => {
+        const updateCtrlInput = (value: number, inputIndex: number) => {
+          handleUpdateSelfCtrls(updateModCtrlInputs(wpBuffCtrls, ctrl.id, inputIndex, value));
         };
-        const updateBuffCtrlInput = (value: number, inputIndex: number) => {
-          dispatch(changeModCtrlInput(Object.assign({ value, inputIndex }, path)));
-        };
+
         return {
           onToggle: () => {
-            dispatch(toggleModCtrl(path));
+            handleUpdateSelfCtrls(toggleModCtrl(wpBuffCtrls, ctrl.id));
           },
           onToggleCheck: (currentInput, inputIndex) => {
-            updateBuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
+            updateCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
           },
-          onChangeText: updateBuffCtrlInput,
-          onSelectOption: updateBuffCtrlInput,
+          onChangeText: updateCtrlInput,
+          onSelectOption: updateCtrlInput,
         };
       }}
-      getTeammateHandlers={({ teammateIndex, ctrl, ctrls }) => {
-        const updateBuffCtrl = (value: number | "toggle", inputIndex = 0) => {
-          const newBuffCtrls = Object_.clone(ctrls);
-          const targetCtrl = Array_.findByIndex(newBuffCtrls, ctrl.index);
-          if (!targetCtrl) return;
+      getTeammateHandlers={(teammate, ctrl) => {
+        const buffCtrls = teammate.weapon.buffCtrls;
 
-          if (value === "toggle") {
-            targetCtrl.activated = !ctrl.activated;
-          } else if (targetCtrl?.inputs) {
-            targetCtrl.inputs[inputIndex] = value;
-          } else {
-            return;
-          }
-
-          dispatch(
-            updateTeammateWeapon({
-              teammateIndex,
-              buffCtrls: newBuffCtrls,
-            })
+        const updateCtrlInput = (value: number, inputIndex: number) => {
+          handleUpdateTeammateCtrls(
+            teammate,
+            updateModCtrlInputs(buffCtrls, ctrl.id, inputIndex, value)
           );
         };
+
         return {
           onToggle: () => {
-            updateBuffCtrl("toggle");
+            handleUpdateTeammateCtrls(teammate, toggleModCtrl(buffCtrls, ctrl.id));
           },
           onToggleCheck: (currentInput, inputIndex) => {
-            updateBuffCtrl(currentInput === 1 ? 0 : 1, inputIndex);
+            updateCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
           },
-          onChangeText: updateBuffCtrl,
-          onSelectOption: updateBuffCtrl,
+          onChangeText: updateCtrlInput,
+          onSelectOption: updateCtrlInput,
         };
       }}
     />

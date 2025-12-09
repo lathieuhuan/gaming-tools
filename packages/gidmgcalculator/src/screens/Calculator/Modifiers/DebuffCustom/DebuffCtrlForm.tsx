@@ -1,19 +1,17 @@
 import { useState, useRef } from "react";
 import { InputNumber, VersatileSelect } from "rond";
-import { ATTACK_ELEMENTS } from "@Calculation";
 
 import type { CustomDebuffCtrl, CustomDebuffCtrlType } from "@/types";
+
+import { ATTACK_ELEMENTS } from "@/constants";
 import { useTranslation } from "@/hooks";
-import { useDispatch } from "@Store/hooks";
-import { updateCustomDebuffCtrls } from "@Store/calculator-slice";
 
 type DebuffCtrlFormProps = {
   id: string;
-  onSubmit: () => void;
+  onSubmit: (config: CustomDebuffCtrl) => void;
 };
 
 export function DebuffCtrlForm({ id, onSubmit }: DebuffCtrlFormProps) {
-  const dispatch = useDispatch();
   const { t } = useTranslation();
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -33,8 +31,7 @@ export function DebuffCtrlForm({ id, onSubmit }: DebuffCtrlFormProps) {
   };
 
   const handleSubmit = () => {
-    dispatch(updateCustomDebuffCtrls({ actionType: "ADD", ctrls: config }));
-    onSubmit();
+    onSubmit(config);
   };
 
   return (

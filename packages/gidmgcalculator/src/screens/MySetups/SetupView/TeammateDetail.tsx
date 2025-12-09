@@ -1,22 +1,24 @@
 import { FaCalculator, FaSyncAlt } from "react-icons/fa";
 import { Button } from "rond";
 
-import type { Teammate } from "@/types";
-import { $AppCharacter } from "@/services";
+import type { CalcTeammate } from "@/models/calculator";
 
-// Component
 import { CharacterPortrait, TeammateItems } from "@/components";
 
 type TeammateDetailProps = {
-  teammate: Teammate;
+  teammate: CalcTeammate;
   calculated: boolean;
   onSwitch: () => void;
   onCalculate: () => void;
 };
 
-export function TeammateDetail({ teammate, calculated, onSwitch, onCalculate }: TeammateDetailProps) {
-  const data = $AppCharacter.get(teammate.name);
-  if (!data) return null;
+export function TeammateDetail({
+  teammate,
+  calculated,
+  onSwitch,
+  onCalculate,
+}: TeammateDetailProps) {
+  const data = teammate.data;
 
   return (
     <div className="w-76 bg-dark-2">
@@ -30,11 +32,21 @@ export function TeammateDetail({ teammate, calculated, onSwitch, onCalculate }: 
 
         <div className="mt-4 flex justify-center">
           {calculated ? (
-            <Button variant="primary" className="flex items-center" icon={<FaSyncAlt />} onClick={onSwitch}>
+            <Button
+              variant="primary"
+              className="flex items-center"
+              icon={<FaSyncAlt />}
+              onClick={onSwitch}
+            >
               Switch
             </Button>
           ) : (
-            <Button variant="primary" className="flex items-center" icon={<FaCalculator />} onClick={onCalculate}>
+            <Button
+              variant="primary"
+              className="flex items-center"
+              icon={<FaCalculator />}
+              onClick={onCalculate}
+            >
               Calculate
             </Button>
           )}

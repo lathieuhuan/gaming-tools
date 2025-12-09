@@ -1,42 +1,43 @@
-import type { Teammates } from "@/types";
-import { useDispatch } from "@Store/hooks";
-import {
-  changeTeammateModCtrlInput,
-  toggleTeammateModCtrl,
-  type ToggleTeammateModCtrlPath,
-} from "@Store/calculator-slice";
-import { TeammateDebuffsView } from "@/components";
-import { useCalcTeamData } from "../ContextProvider";
+import type { CalcTeammate } from "@/models/calculator";
+import type { IAbilityDebuffCtrl } from "@/types";
 
-export default function DebuffTeammates(props: { teammates: Teammates }) {
-  const dispatch = useDispatch();
-  const teamData = useCalcTeamData();
+import { useCalcStore } from "@Store/calculator";
+import { updateTeammate } from "@Store/calculator/actions";
+import { selectSetup } from "@Store/calculator/selectors";
+import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
+
+import { TeammateDebuffsView } from "@/components";
+
+export default function DebuffTeammates() {
+  const teammates = useCalcStore((state) => selectSetup(state).teammates);
+
+  const handleUpdateCtrls = (teammate: CalcTeammate, ctrls: IAbilityDebuffCtrl[]) => {
+    updateTeammate(teammate.data.code, {
+      debuffCtrls: ctrls,
+    });
+  };
 
   return (
     <TeammateDebuffsView
       mutable
-      teamData={teamData}
-      teammates={props.teammates}
-      getHanlders={({ ctrl, teammateIndex }) => {
-        const path: ToggleTeammateModCtrlPath = {
-          teammateIndex,
-          modCtrlName: "debuffCtrls",
-          ctrlIndex: ctrl.index,
-        };
-
-        const updateDebuffCtrlInput = (value: number, inputIndex: number) => {
-          dispatch(changeTeammateModCtrlInput(Object.assign({ value, inputIndex }, path)));
+      teammates={teammates}
+      getHanlders={(teammate, ctrl) => {
+        const updateCtrlInput = (value: number, inputIndex: number) => {
+          handleUpdateCtrls(
+            teammate,
+            updateModCtrlInputs(teammate.debuffCtrls, ctrl.id, inputIndex, value)
+          );
         };
 
         return {
           onToggle: () => {
-            dispatch(toggleTeammateModCtrl(path));
+            handleUpdateCtrls(teammate, toggleModCtrl(teammate.debuffCtrls, ctrl.id));
           },
           onToggleCheck: (currentInput, inputIndex) => {
-            updateDebuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
+            updateCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
           },
-          onChangeText: updateDebuffCtrlInput,
-          onSelectOption: updateDebuffCtrlInput,
+          onChangeText: updateCtrlInput,
+          onSelectOption: updateCtrlInput,
         };
       }}
     />

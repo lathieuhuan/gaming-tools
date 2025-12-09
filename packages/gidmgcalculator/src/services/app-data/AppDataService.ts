@@ -1,11 +1,11 @@
-import type { AppMonster, AppTeamBuff } from "@Calculation";
-import type { Target } from "@/types";
+import type { AppMonster, ITarget } from "@/types";
 import type { AllData } from "./app-data.types";
+import type { AppArtifactService } from "./AppArtifactService";
 import type { AppCharacterService } from "./AppCharacterService";
 import type { AppWeaponService } from "./AppWeaponService";
-import type { AppArtifactService } from "./AppArtifactService";
 
 import { BACKEND_URL } from "@/constants";
+import { AppTeamBuff } from "@/types";
 import Array_ from "@/utils/Array";
 import { BaseService } from "./BaseService";
 
@@ -54,9 +54,9 @@ export class AppDataService extends BaseService {
     return Array_.findByCode(this.monsters, code);
   }
 
-  getTargetInfo(target: Target) {
+  getTargetInfo(target: ITarget) {
     const monster = this.getMonster(target);
-    let variant = "";
+    let variant: string | undefined;
     const statuses: string[] = [];
 
     if (target.variantType && monster?.variant) {

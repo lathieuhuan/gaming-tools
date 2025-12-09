@@ -1,4 +1,3 @@
-import { ArtifactType } from "@Calculation";
 import { useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import {
@@ -12,17 +11,18 @@ import {
   WarehouseLayout,
 } from "rond";
 
-import type { Artifact, UserArtifact } from "@/types";
+import type { ArtifactType, IDbArtifact } from "@/types";
 
 import { MAX_USER_ARTIFACTS } from "@/constants";
-import { useTravelerKey } from "@/hooks";
+import { useArtifactSetData, useTravelerKey } from "@/hooks";
+import { Artifact } from "@/models/base";
 import { $AppArtifact } from "@/services";
 import Array_ from "@/utils/Array";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectAppReady } from "@Store/ui-slice";
 import {
   addUserArtifact,
-  selectUserArtifacts,
+  selectDbArtifacts,
   sortArtifacts,
   updateUserArtifact,
 } from "@Store/userdb-slice";
@@ -45,12 +45,13 @@ type ModalType = "ADD_ARTIFACT" | "EDIT_ARTIFACT" | "CONFIG_FILTER" | "";
 function MyArtifacts() {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
-  const userArts = useSelector(selectUserArtifacts);
+  const userArtifacts = useSelector(selectDbArtifacts);
+  const setData = useArtifactSetData();
 
   const [chosenId, setChosenId] = useState<number>();
   const [modalType, setModalType] = useState<ModalType>("");
 
-  const { filteredArtifacts, filter, setFilter } = useArtifactFilter(userArts);
+  const { filteredArtifacts, filter, setFilter } = useArtifactFilter(userArtifacts);
 
   const {
     values: artifactTypes,
@@ -66,15 +67,17 @@ function MyArtifacts() {
     },
   });
 
-  const chosenArtifact = useMemo(
-    () => Array_.findById(filteredArtifacts, chosenId),
-    [filteredArtifacts, chosenId]
-  );
+  const chosenArtifact = useMemo(() => {
+    const data = Array_.findById(filteredArtifacts, chosenId);
+
+    return data && new Artifact(data, setData.get(data.code));
+    //
+  }, [filteredArtifacts, chosenId]);
 
   const closeModal = () => setModalType("");
 
   const isNewArtifactAddable = () => {
-    if (userArts.length < MAX_USER_ARTIFACTS) {
+    if (userArtifacts.length < MAX_USER_ARTIFACTS) {
       return true;
     }
 
@@ -93,7 +96,7 @@ function MyArtifacts() {
     dispatch(sortArtifacts());
   };
 
-  const handleRemoveArtifact = (artifact: UserArtifact) => {
+  const handleRemoveArtifact = (artifact: IDbArtifact) => {
     const removedIndex = Array_.indexById(filteredArtifacts, artifact.ID);
 
     if (removedIndex !== -1) {
@@ -120,10 +123,9 @@ function MyArtifacts() {
   const handleForgeArtifact = (artifact: Artifact) => {
     if (modalType === "ADD_ARTIFACT") {
       if (isNewArtifactAddable()) {
-        const newUserArtifact: UserArtifact = {
+        const newUserArtifact: IDbArtifact = {
           ...artifact,
           ID: Date.now(),
-          owner: null,
         };
 
         dispatch(addUserArtifact(newUserArtifact));
@@ -208,7 +210,7 @@ function MyArtifacts() {
         itemCls="max-w-1/3 basis-1/3 xm:max-w-1/4 xm:basis-1/4 lg:max-w-1/6 lg:basis-1/6 xl:max-w-1/8 xl:basis-1/8"
         pageSize={screenWatcher.isFromSize("xl") ? 80 : 60}
         chosenID={chosenId}
-        onChangeItem={(artifact) => setChosenId(artifact?.ID)}
+        onChangeItem={(artifact) => setChosenId(artifact?.userData.ID)}
       />
 
       <ChosenArtifactView
@@ -225,7 +227,7 @@ function MyArtifacts() {
         onClose={closeModal}
       >
         <ArtifactFilter
-          artifacts={userArts}
+          artifacts={userArtifacts}
           initialFilter={filter}
           onConfirm={handleConfirmFilter}
           onClose={closeModal}

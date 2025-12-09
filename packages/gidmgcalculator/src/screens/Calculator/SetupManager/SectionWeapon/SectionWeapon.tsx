@@ -1,31 +1,44 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
 import { Badge, Button, PouchSvg, VersatileSelect } from "rond";
-import { WEAPON_LEVELS, Level } from "@Calculation";
 
+import { WEAPON_LEVELS } from "@/constants";
 import { $AppWeapon } from "@/services";
+import { Level } from "@/types";
 import { genSequentialOptions } from "@/utils";
-import Entity_ from "@/utils/Entity";
-import { selectWeapon, changeWeapon, updateWeapon } from "@Store/calculator-slice";
-import { useSelector } from "@Store/hooks";
+import { useCalcStore } from "@Store/calculator";
+import { updateMainWeapon } from "@Store/calculator/actions";
+import { selectActiveMain } from "@Store/calculator/selectors";
 
-import { WeaponForge, WeaponInventory, GenshinImage } from "@/components";
+import { GenshinImage, WeaponForge, WeaponForgeProps, WeaponInventory } from "@/components";
 import { Section } from "../_components/Section";
 
 type ModalType = "MAKE_NEW_WEAPON" | "SELECT_USER_WEAPON" | "";
 
 export default function SectionWeapon() {
-  const dispatch = useDispatch();
-  const weapon = useSelector(selectWeapon);
+  const weapon = useCalcStore((state) => selectActiveMain(state).weapon);
   const [modalType, setModalType] = useState<ModalType>("");
 
   const { beta, name = "", icon = "", rarity = 5 } = $AppWeapon.get(weapon.code) || {};
   const selectLevels = rarity < 3 ? WEAPON_LEVELS.slice(0, -4) : WEAPON_LEVELS;
+  const levelOptions = selectLevels.map((_, i) => {
+    const item = selectLevels[selectLevels.length - 1 - i];
+    return { label: item, value: item };
+  });
 
   const closeModal = () => setModalType("");
 
+  const handleForgeWeapon: WeaponForgeProps["onForgeWeapon"] = (weapon) => {
+    updateMainWeapon({
+      ...weapon,
+      ID: Date.now(),
+    });
+  };
+
   return (
-    <Section className="px-2 py-3 bg-dark-1 flex items-start relative">
+    <Section
+      className="px-2 py-3 bg-dark-1 flex items-start relative"
+      onDoubleClick={() => console.log(weapon)}
+    >
       <div
         className={`w-20 h-20 shrink-0 relative bg-gradient-${rarity} cursor-pointer rounded-md`}
         onClick={() => setModalType("MAKE_NEW_WEAPON")}
@@ -47,12 +60,9 @@ export default function SectionWeapon() {
             transparent
             align="right"
             disabled={name === ""}
-            options={selectLevels.map((_, i) => {
-              const item = selectLevels[selectLevels.length - 1 - i];
-              return { label: item, value: item };
-            })}
+            options={levelOptions}
             value={weapon.level}
-            onChange={(value) => dispatch(updateWeapon({ level: value as Level }))}
+            onChange={(value) => updateMainWeapon({ level: value as Level })}
           />
         </div>
 
@@ -67,7 +77,7 @@ export default function SectionWeapon() {
               disabled={name === ""}
               options={genSequentialOptions(5)}
               value={weapon.refi}
-              onChange={(value) => dispatch(updateWeapon({ refi: +value }))}
+              onChange={(value) => updateMainWeapon({ refi: +value })}
             />
           </div>
         )}
@@ -84,14 +94,7 @@ export default function SectionWeapon() {
       <WeaponForge
         active={modalType === "MAKE_NEW_WEAPON"}
         forcedType={weapon.type}
-        onForgeWeapon={(weapon) => {
-          dispatch(
-            changeWeapon({
-              ...weapon,
-              ID: Date.now(),
-            })
-          );
-        }}
+        onForgeWeapon={handleForgeWeapon}
         onClose={closeModal}
       />
 
@@ -99,9 +102,7 @@ export default function SectionWeapon() {
         active={modalType === "SELECT_USER_WEAPON"}
         weaponType={weapon.type}
         buttonText="Select"
-        onClickButton={(weapon) => {
-          dispatch(changeWeapon(Entity_.userItemToCalcItem(weapon)));
-        }}
+        onClickButton={updateMainWeapon}
         onClose={closeModal}
       />
     </Section>

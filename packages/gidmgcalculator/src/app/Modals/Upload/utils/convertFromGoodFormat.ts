@@ -1,6 +1,6 @@
 import { ARTIFACT_TYPES, AttributeStat, Level } from "@Calculation";
 
-import type { ArtifactSubStat, UserArtifact, UserCharacter, UserWeapon } from "@/types";
+import type { ArtifactSubStat, IDbArtifact, UserCharacter, IDbWeapon } from "@/types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import { DOWNLOADED_DATA_VERSION } from "@/constants";
 import Array_ from "@/utils/Array";
@@ -52,8 +52,8 @@ const searchArtifactByKey = (key: any) => {
 type Result = {
   version: number;
   characters: UserCharacter[];
-  weapons: UserWeapon[];
-  artifacts: UserArtifact[];
+  weapons: IDbWeapon[];
+  artifacts: IDbArtifact[];
 };
 
 export function convertFromGoodFormat(data: any) {
@@ -115,7 +115,7 @@ export function convertFromGoodFormat(data: any) {
       subStats.push({ type, value });
     }
     const artifactID = seedID++;
-    const newArtifact: UserArtifact = {
+    const newArtifact: IDbArtifact = {
       ID: artifactID,
       type: slotKey,
       rarity,
@@ -144,7 +144,7 @@ export function convertFromGoodFormat(data: any) {
     if (!code || (Entity_.getDefaultWeaponCode(type) === code && !owner)) continue;
 
     const weaponID = seedID++;
-    const newWeapon: UserWeapon = {
+    const newWeapon: IDbWeapon = {
       ID: weaponID,
       type,
       level: convertLevel(weapon.level, weapon.ascension),

@@ -1,103 +1,86 @@
-import { ArtifactSetBonus } from "@Calculation";
+import type { CalcTeammate } from "@/models/calculator";
+import type { IArtifactBuffCtrl } from "@/types";
+import type { ModifierHanlders } from "./types";
 
-import type { ArtifactModCtrl, ModifierCtrl, Teammates } from "@/types";
-import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
-
-import { $AppArtifact } from "@/services";
 import { getArtifactDesc } from "@/utils/description-parsers";
-import Array_ from "@/utils/Array";
 import { GenshinModifierView } from "../GenshinModifierView";
-import { renderModifiers } from "./modifiers.utils";
+import { ModifierContainer } from "./ModifierContainer";
 
-interface RenderArtifactBuffsArgs<T extends ModifierCtrl = ModifierCtrl> {
+type RenderArtifactBuffsArgs = {
   mutable?: boolean;
-  fromSelf?: boolean;
   keyPrefix: string | number;
-  code: number;
+  headingSuffix?: string;
   bonusLv?: number;
-  ctrls: T[];
-  getHanlders?: (args: GetModifierHanldersArgs<T>) => ModifierHanlders;
-}
-function renderArtifactModifiers<T extends ModifierCtrl = ModifierCtrl>({
-  fromSelf,
+  ctrls: IArtifactBuffCtrl[];
+  getHanlders?: (ctrl: IArtifactBuffCtrl) => ModifierHanlders;
+};
+
+function renderArtifactModifiers({
   keyPrefix,
+  headingSuffix,
   mutable,
-  code,
   ctrls,
   getHanlders,
-}: RenderArtifactBuffsArgs<T>) {
-  const data = $AppArtifact.getSet(code);
-  if (!data) return [];
-
-  return ctrls.map((ctrl, index) => {
-    const buff = Array_.findByIndex(data.buffs, ctrl.index);
-    if (!buff) return null;
-
-    const description = getArtifactDesc(data, buff);
+}: RenderArtifactBuffsArgs) {
+  return ctrls.map((ctrl) => {
+    const { data, setData } = ctrl;
 
     return (
       <GenshinModifierView
-        key={`${keyPrefix}-${code}-${ctrl.index}`}
+        key={`${keyPrefix}-${ctrl.code}-${ctrl.id}`}
         mutable={mutable}
         checked={ctrl.activated}
-        heading={`${data.name} ${fromSelf ? "(self)" : ""}`}
-        description={description}
+        heading={`${setData.name} / ${headingSuffix}`}
+        description={getArtifactDesc(setData, data)}
         inputs={ctrl.inputs}
-        inputConfigs={buff.inputConfigs}
-        isTeamMod={!!buff.teamBuffId}
-        {...getHanlders?.({ ctrl, ctrlIndex: index, ctrls })}
+        inputConfigs={data.inputConfigs}
+        isTeamMod={!!data.teamBuffId}
+        {...getHanlders?.(ctrl)}
       />
     );
   });
 }
 
-interface ArtifactBuffsViewProps {
+type ArtifactBuffsViewProps = {
   mutable?: boolean;
-  setBonuses: ArtifactSetBonus[];
-  artBuffCtrls: ArtifactModCtrl[];
-  teammates: Teammates;
-  getSelfHandlers?: RenderArtifactBuffsArgs<ArtifactModCtrl>["getHanlders"];
-  getTeammateHandlers?: (args: GetTeammateModifierHanldersArgs) => ModifierHanlders;
-}
+  artBuffCtrls: IArtifactBuffCtrl[];
+  teammates: CalcTeammate[];
+  getSelfHandlers?: (ctrl: IArtifactBuffCtrl) => ModifierHanlders;
+  getTeammateHandlers?: (teammate: CalcTeammate, ctrl: IArtifactBuffCtrl) => ModifierHanlders;
+};
+
 export function ArtifactBuffsView({
   mutable,
-  setBonuses,
   artBuffCtrls,
   teammates,
   getSelfHandlers,
   getTeammateHandlers,
 }: ArtifactBuffsViewProps) {
-  const content = [];
-
-  for (const setBonus of setBonuses) {
-    const ctrls = artBuffCtrls.filter((ctrl) => ctrl.code === setBonus.code);
-
-    content.push(
-      ...renderArtifactModifiers({
-        fromSelf: true,
-        keyPrefix: "main",
+  return (
+    <ModifierContainer type="buffs" mutable={mutable}>
+      {renderArtifactModifiers({
         mutable,
-        code: setBonus.code,
-        bonusLv: setBonus.bonusLv,
-        ctrls,
+        keyPrefix: "main",
+        headingSuffix: "self",
+        ctrls: artBuffCtrls,
         getHanlders: getSelfHandlers,
-      })
-    );
-  }
+      })}
 
-  teammates.forEach((teammate, teammateIndex) => {
-    if (teammate) {
-      content.push(
-        ...renderArtifactModifiers({
-          mutable,
-          keyPrefix: teammate.name,
-          code: teammate.artifact.code,
-          ctrls: teammate.artifact.buffCtrls,
-          getHanlders: (args) => getTeammateHandlers?.({ ...args, teammate, teammateIndex }) || {},
+      {teammates
+        .map((teammate) => {
+          if (!teammate.artifact) {
+            return null;
+          }
+
+          return renderArtifactModifiers({
+            mutable,
+            keyPrefix: teammate.name,
+            headingSuffix: teammate.name,
+            ctrls: teammate.artifact?.buffCtrls,
+            getHanlders: (ctrl) => getTeammateHandlers?.(teammate, ctrl) || {},
+          });
         })
-      );
-    }
-  });
-
-  return renderModifiers(content, "buffs", mutable);
+        .flat()}
+    </ModifierContainer>
+  );
 }

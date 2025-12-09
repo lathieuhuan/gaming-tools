@@ -1,5 +1,8 @@
-import { ModifierView, type ModifierViewProps, type ModifierViewInputConfig } from "rond";
-import { ModInputConfig } from "@Calculation";
+import { ModifierView } from "rond";
+
+import type { ModInputConfig } from "@/types";
+import type { ModifierViewInputConfig, ModifierViewProps } from "rond";
+
 import { genSequentialOptions } from "@/utils";
 
 const genOptions = (config: ModInputConfig) => {

@@ -1,46 +1,50 @@
 import { useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
 import { Select, clsx } from "rond";
-import { TALENT_TYPES, CalculationAspect, TalentType, CalcTeamData } from "@Calculation";
 
-import type { Weapon } from "@/types";
+import type { CalcResult } from "@/calculation-new/calculator/types";
+import type { CalcAspect, CalcResultItemValue } from "@/calculation-new/types";
+import type { TalentType } from "@/types";
+import type { CalculatorState } from "@Store/calculator/types";
+
+import { TALENT_TYPES } from "@/constants";
+
+import { displayValues } from "@/components/FinalResultView";
 import Array_ from "@/utils/Array";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectSetupManageInfos, selectStandardId, updateCharacter } from "@Store/calculator-slice";
+import Object_ from "@/utils/Object";
+import { useShallowCalcStore } from "@Store/calculator";
+import { updateMain } from "@Store/calculator/actions";
 
-//
 import { FinalResultLayout, type FinalResultLayoutProps } from "@/components";
 
 type CellConfig = ReturnType<FinalResultLayoutProps["getRowConfig"]>["cells"][number];
 
-const ASPECT_LABEL: Record<CalculationAspect, string> = {
-  nonCrit: "Non-crit",
-  crit: "Crit",
-  average: "Average",
+type CalcAspectOption = {
+  label: string;
+  value: CalcAspect;
 };
 
-interface FinalResultCompareProps {
+const CALC_ASPECT_OPTIONS: CalcAspectOption[] = [
+  { label: "Non-crit", value: "base" },
+  { label: "Crit", value: "crit" },
+  { label: "Average", value: "average" },
+];
+
+type FinalResultCompareProps = {
   comparedIds: number[];
-  teamData: CalcTeamData;
-  weapon: Weapon;
-}
-export function FinalResultCompare({ comparedIds, teamData, weapon }: FinalResultCompareProps) {
-  const dispatch = useDispatch();
-  const resultById = useSelector((state) => state.calculator.resultById);
-  const standardId = useSelector(selectStandardId);
+};
 
-  const [focusedAspect, setFocusedAspect] = useState<CalculationAspect>("average");
+export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
+  const [focusedAspect, setFocusedAspect] = useState<CalcAspect>("average");
 
-  const { setupIds, ...layoutProps } = useLayoutProps(comparedIds, standardId, teamData);
+  const { setupIds, standardId, setupsById, ...layoutProps } = useLayoutProps(comparedIds);
 
-  const calculationAspects: CalculationAspect[] = ["nonCrit", "crit", "average"];
-
-  const getValue = (setupId: number, mainKey: "NAs" | "ES" | "EB" | "WP_CALC" | "RXN_CALC", subKey: string) => {
-    return resultById[setupId].finalResult[mainKey][subKey][focusedAspect];
+  const getValues = (setupId: number, mainKey: keyof CalcResult, subKey: string) => {
+    return setupsById[setupId].result[mainKey][subKey].values;
   };
 
-  const getComparedValue = (value: number | number[]) => {
-    return Array.isArray(value) ? value[0] : value;
+  const getComparedValue = (values: CalcResultItemValue[]) => {
+    return values.at(0)?.[focusedAspect] || 0;
   };
 
   return (
@@ -51,52 +55,51 @@ export function FinalResultCompare({ comparedIds, teamData, weapon }: FinalResul
           className="w-24 h-6 overflow-hidden text-primary-1"
           dropdownCls="z-20"
           transparent
-          options={calculationAspects.map((aspect) => ({ label: ASPECT_LABEL[aspect], value: aspect }))}
+          options={CALC_ASPECT_OPTIONS}
           value={focusedAspect}
-          onChange={(value) => setFocusedAspect(value as CalculationAspect)}
+          onChange={(value) => setFocusedAspect(value as CalcAspect)}
         />
       </div>
       <div className="grow hide-scrollbar">
         <FinalResultLayout
           {...layoutProps}
-          appCharacter={teamData.activeAppMember}
           talentMutable
-          weapon={weapon}
-          onChangeTalentLevel={(talentType, newLevel) => {
-            dispatch(
-              updateCharacter({
+          showTalentLv={false}
+          onTalentLevelChange={(talentType, newLevel) => {
+            updateMain(
+              {
                 [talentType]: newLevel,
-                setupIds: comparedIds,
-              })
+              },
+              comparedIds
             );
           }}
           getRowConfig={(mainKey, subKey) => {
-            const standardValue = getValue(standardId, mainKey, subKey);
+            const standardValues = getValues(standardId, mainKey, subKey);
 
             const cells = setupIds.map<CellConfig>((id, index) => {
               if (!index) {
                 return {
-                  value: standardValue,
+                  value: displayValues(standardValues, focusedAspect),
                   className: "text-right",
                 };
               }
 
-              const value = resultById[id].finalResult[mainKey][subKey][focusedAspect];
-              const comparedStandardValue = getComparedValue(standardValue);
-              const diff = getComparedValue(value) - comparedStandardValue;
+              const values = getValues(id, mainKey, subKey);
+              const comparedStandardValue = getComparedValue(standardValues);
+              const diff = getComparedValue(values) - comparedStandardValue;
               const percenttDiff = comparedStandardValue
                 ? Math.round((Math.abs(diff) * 1000) / comparedStandardValue) / 10
                 : 0;
 
               if (percenttDiff < 0.1) {
                 return {
-                  value,
+                  value: displayValues(values, focusedAspect),
                   className: "text-right",
                 };
               }
 
               return {
-                value,
+                value: displayValues(values, focusedAspect),
                 className: "text-right relative group",
                 style: {
                   minWidth: "5rem",
@@ -132,29 +135,29 @@ export function FinalResultCompare({ comparedIds, teamData, weapon }: FinalResul
   );
 }
 
-type LayoutProps = Pick<FinalResultLayoutProps, "showWeaponCalc" | "headerConfigs" | "getTalentLevel"> & {
-  setupIds: number[];
-};
-function useLayoutProps(comparedIds: number[], standardId: number, teamData: CalcTeamData): LayoutProps {
-  const setupManageInfos = useSelector(selectSetupManageInfos);
-  const setupsById = useSelector((state) => state.calculator.setupsById);
+type UseLayoutPropsReturn = Pick<
+  FinalResultLayoutProps,
+  "showWeaponCalc" | "headerConfigs" | "character"
+> &
+  Pick<CalculatorState, "setupsById" | "standardId"> & {
+    setupIds: number[];
+  };
 
-  const standardWeapon = setupsById[standardId].weapon.code;
-  let showWeaponCalc = true;
+function useLayoutProps(comparedIds: number[]): UseLayoutPropsReturn {
+  const { setupManagers, setupsById, standardId } = useShallowCalcStore((state) =>
+    Object_.pickProps(state, ["setupManagers", "setupsById", "standardId"])
+  );
 
-  for (const id of comparedIds) {
-    if (setupsById[id].weapon.code !== standardWeapon) {
-      showWeaponCalc = false;
-      break;
-    }
-  }
-
+  const standardWeapon = setupsById[standardId].main.weapon.code;
+  const showWeaponCalc = comparedIds.some(
+    (id) => setupsById[id].main.weapon.code !== standardWeapon
+  );
   const setupIds = [standardId].concat(comparedIds.filter((id) => id !== standardId));
 
   const talent = {} as Record<TalentType, { areSame: boolean; levels: number[] }>;
 
   for (const talentType of TALENT_TYPES) {
-    const levels = setupIds.map((id) => teamData.getFinalTalentLv(talentType, setupsById[id].char));
+    const levels = setupIds.map((id) => setupsById[id].main.getFinalTalentLv(talentType));
 
     talent[talentType] = {
       areSame: new Set(levels).size === 1,
@@ -162,19 +165,22 @@ function useLayoutProps(comparedIds: number[], standardId: number, teamData: Cal
     };
   }
 
-  const headerConfigs: LayoutProps["headerConfigs"] = setupIds.map((id, setupIndex) => {
-    const text = Array_.findById(setupManageInfos, id)?.name || "";
+  const headerConfigs: UseLayoutPropsReturn["headerConfigs"] = setupIds.map((id, setupIndex) => {
+    const text = Array_.findById(setupManagers, id)?.name || "";
 
     return {
       content: (talentType) => {
         const talentCalc = talentType ? talent[talentType] : undefined;
-        const talentLevel = talentCalc && !talentCalc.areSame ? talentCalc.levels[setupIndex] : undefined;
+        const talentLevel =
+          talentCalc && !talentCalc.areSame ? talentCalc.levels[setupIndex] : undefined;
 
         if (talentLevel) {
           return (
             <div className="flex flex-col items-center">
               <span>{text}</span>
-              <span className="px-1 rounded-sm text-xs font-bold text-secondary-1">Lv.{talentLevel}</span>
+              <span className="px-1 rounded-sm text-xs font-bold text-secondary-1">
+                Lv.{talentLevel}
+              </span>
             </div>
           );
         }
@@ -185,9 +191,11 @@ function useLayoutProps(comparedIds: number[], standardId: number, teamData: Cal
   });
 
   return {
+    character: setupsById[standardId].main,
     showWeaponCalc,
     headerConfigs,
     setupIds,
-    getTalentLevel: (talentType) => (talent[talentType].areSame ? talent[talentType].levels[0] : 0),
+    standardId,
+    setupsById,
   };
 }

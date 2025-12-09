@@ -1,10 +1,11 @@
 import { GenshinImage } from "@/components";
 
-interface GearIconProps {
-  item: { beta?: boolean; icon: string; rarity?: number };
+type GearIconProps = {
+  item: { beta?: boolean; icon?: string; rarity?: number };
   disabled?: boolean;
   onClick?: () => void;
-}
+};
+
 export function GearIcon({ item, disabled, onClick }: GearIconProps) {
   return (
     <button

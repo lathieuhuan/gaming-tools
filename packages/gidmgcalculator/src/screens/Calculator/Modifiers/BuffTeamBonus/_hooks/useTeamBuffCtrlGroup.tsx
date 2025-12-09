@@ -1,81 +1,71 @@
-import { GenshinModifierView } from "@/components";
-import { $AppData } from "@/services";
-import { TeamBuffCtrl } from "@/types";
-import Modifier_ from "@/utils/Modifier";
-import { selectTeamBuffCtrls, updateTeamBuffs } from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { ControlGroup } from "../types";
+import type { ITeamBuffCtrl } from "@/types";
+import type { ControlGroup } from "../types";
+
+import { MS_ASCENDANT_BUFF_ID } from "@/models/calculator";
 import { parseDescription } from "@/utils/description-parsers";
+import { useCalcStore } from "@Store/calculator";
+import { updateActiveSetup } from "@Store/calculator/actions";
+import { selectSetup } from "@Store/calculator/selectors";
+import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
-function reorderCtrls(teamBuffCtrls: TeamBuffCtrl[] = []) {
-  let ascendantCtrl: TeamBuffCtrl | undefined;
-  const otherCtrls: TeamBuffCtrl[] = [];
+import { GenshinModifierView } from "@/components";
 
-  for (const ctrl of teamBuffCtrls) {
-    if (ctrl.id === Modifier_.MS_ASCENDANT_BUFF_ID) {
+function reorderCtrls(teamBuffCtrls: ITeamBuffCtrl[] = []) {
+  let ascendantCtrl: ITeamBuffCtrl | undefined;
+
+  const otherCtrls = teamBuffCtrls.filter((ctrl) => {
+    if (ctrl.data.index === MS_ASCENDANT_BUFF_ID) {
       ascendantCtrl = ctrl;
-    } else {
-      otherCtrls.push(ctrl);
+      return false;
     }
-  }
+    return true;
+  });
 
   return ascendantCtrl ? [ascendantCtrl, ...otherCtrls] : otherCtrls;
 }
 
 export function useTeamBuffCtrlGroup(): ControlGroup {
-  const dispatch = useDispatch();
-  const teamBuffCtrls = useSelector(selectTeamBuffCtrls);
+  const teamBuffCtrls = useCalcStore((state) => selectSetup(state).teamBuffCtrls);
   const reorderedCtrls = reorderCtrls(teamBuffCtrls);
 
-  const nodes: JSX.Element[] = [];
+  if (reorderedCtrls.length) {
+    const handleToggle = (ctrl: ITeamBuffCtrl) => () => {
+      updateActiveSetup((setup) => {
+        setup.teamBuffCtrls = toggleModCtrl(teamBuffCtrls, ctrl.id);
+      });
+    };
 
-  const updateCtrl = (id: string, data: Partial<TeamBuffCtrl>) => {
-    dispatch(
-      updateTeamBuffs({
-        id,
-        ...data,
-      })
-    );
-  };
+    const handleUpdateInput = (ctrl: ITeamBuffCtrl) => (value: number, inputIndex: number) => {
+      updateActiveSetup((setup) => {
+        setup.teamBuffCtrls = updateModCtrlInputs(teamBuffCtrls, ctrl.id, inputIndex, value);
+      });
+    };
 
-  const handleToggle = (ctrl: TeamBuffCtrl) => () => {
-    updateCtrl(ctrl.id, { activated: !ctrl.activated });
-  };
-
-  const handleUpdateInput = (ctrl: TeamBuffCtrl) => (value: number, inputIndex: number) => {
-    const { inputs = [] } = ctrl;
-    const newInputs = [...inputs];
-    newInputs[inputIndex] = value;
-
-    updateCtrl(ctrl.id, { inputs: newInputs });
-  };
-
-  for (const ctrl of reorderedCtrls) {
-    const buff = $AppData.teamBuffs.find((buff) => buff.id === ctrl.id);
-
-    if (buff) {
-      nodes.push(
-        <GenshinModifierView
-          key={ctrl.id}
-          mutable
-          heading={buff.src}
-          description={parseDescription(buff.description)}
-          inputConfigs={buff.inputConfigs}
-          checked={ctrl.activated}
-          inputs={ctrl.inputs}
-          onToggle={handleToggle(ctrl)}
-          onSelectOption={handleUpdateInput(ctrl)}
-          onChangeText={handleUpdateInput(ctrl)}
-        />
-      );
-    }
-  }
-
-  if (nodes.length) {
     return {
       isEmpty: false,
       key: "team-buffs",
-      render: (className?: string) => <div className={className}>{nodes}</div>,
+      render: (className?: string) => (
+        <div className={className}>
+          {reorderedCtrls.map((ctrl) => {
+            const data = ctrl.data;
+
+            return (
+              <GenshinModifierView
+                key={data.index}
+                mutable
+                heading={data.src}
+                description={parseDescription(data.description)}
+                inputConfigs={data.inputConfigs}
+                checked={ctrl.activated}
+                inputs={ctrl.inputs}
+                onToggle={handleToggle(ctrl)}
+                onSelectOption={handleUpdateInput(ctrl)}
+                onChangeText={handleUpdateInput(ctrl)}
+              />
+            );
+          })}
+        </div>
+      ),
     };
   }
 

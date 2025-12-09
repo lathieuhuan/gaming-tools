@@ -1,11 +1,10 @@
-import { ArtifactSetBonus } from "@Calculation";
-import { clsx, CollapseList } from "rond";
+import { CollapseList } from "rond";
 
-import type { UserSetup, UserWeapon } from "@/types";
-import type { CalculationResult } from "../../types";
+import type { CalcSetup } from "@/models/calculator";
 
 import { useTranslation } from "@/hooks";
 import { $AppData } from "@/services";
+import Object_ from "@/utils/Object";
 
 // Component
 import {
@@ -18,16 +17,16 @@ import {
   TeammateDebuffsView,
   WeaponBuffsView,
 } from "@/components";
-import { CustomBuffs, ElementBuffs } from "./buffs";
+import { CustomBuffs, ElementBuffs, TeamBuffs } from "./buffs";
 import { CustomDebuffs, ElementDebuffs } from "./debuffs";
 
-type ModifierWrapperProps = {
+type SectionLayoutProps = {
   className?: string;
-  title: string;
+  title?: string;
   children: JSX.Element;
 };
 
-const ModifierWrapper = ({ className = "", title, children }: ModifierWrapperProps) => {
+const SectionLayout = ({ className = "", title, children }: SectionLayoutProps) => {
   return (
     <div className={"shrink-0 " + className}>
       <p className="mb-2 text-lg text-center font-semibold">{title}</p>
@@ -37,42 +36,26 @@ const ModifierWrapper = ({ className = "", title, children }: ModifierWrapperPro
 };
 
 type ModifiersProps = {
-  setup: UserSetup;
-  result: CalculationResult;
-  weapon: UserWeapon;
-  setBonuses: ArtifactSetBonus[];
+  setup: CalcSetup;
 };
 
-export function Modifiers({ setup, result, weapon, setBonuses }: ModifiersProps) {
+export function Modifiers({ setup }: ModifiersProps) {
   const { t } = useTranslation();
 
-  const {
-    char,
-    party,
-    selfBuffCtrls,
-    selfDebuffCtrls,
-    wpBuffCtrls,
-    artBuffCtrls,
-    artDebuffCtrls,
-    elmtModCtrls,
-    customBuffCtrls,
-    customDebuffCtrls,
-    target,
-  } = setup;
-  const { teamData } = result;
+  const { main, target } = setup;
   const { title, variant, statuses } = $AppData.getTargetInfo(target);
 
   return (
-    <div className="h-full px-4 flex space-x-4">
-      <ModifierWrapper title="Debuffs used" className="w-76 flex flex-col">
+    <div className="h-full px-4 flex space-x-4" onDoubleClick={() => console.log(setup)}>
+      <SectionLayout title="Debuffs used" className="w-76 flex flex-col">
         <CollapseList
           items={[
             {
               heading: "Resonance & Reactions",
               body: (
                 <ElementDebuffs
-                  superconduct={elmtModCtrls.superconduct}
-                  resonances={elmtModCtrls.resonances}
+                  superconduct={setup.elmtEvent.superconduct}
+                  rsnDebuffCtrls={setup.rsnDebuffCtrls}
                 />
               ),
             },
@@ -81,92 +64,81 @@ export function Modifiers({ setup, result, weapon, setBonuses }: ModifiersProps)
               body: (
                 <SelfDebuffsView
                   mutable={false}
-                  modCtrls={selfDebuffCtrls}
-                  character={char}
-                  teamData={teamData}
+                  modCtrls={setup.selfDebuffCtrls}
+                  character={main}
                 />
               ),
             },
             {
-              heading: "Party",
-              body: <TeammateDebuffsView mutable={false} teammates={party} teamData={teamData} />,
+              heading: "Teammates",
+              body: <TeammateDebuffsView mutable={false} teammates={setup.teammates} />,
             },
             {
               heading: "Artifacts",
-              body: <ArtifactDebuffsView mutable={false} artDebuffCtrls={artDebuffCtrls} />,
+              body: <ArtifactDebuffsView mutable={false} artDebuffCtrls={setup.artDebuffCtrls} />,
             },
             {
               heading: "Custom",
-              body: <CustomDebuffs customDebuffCtrls={customDebuffCtrls} />,
+              body: <CustomDebuffs customDebuffCtrls={setup.customDebuffCtrls} />,
             },
           ]}
         />
-      </ModifierWrapper>
+      </SectionLayout>
 
-      <ModifierWrapper title="Buffs used" className="w-76 flex flex-col">
+      <SectionLayout title="Buffs used" className="w-76 flex flex-col">
         <CollapseList
           items={[
             {
-              heading: "Resonance & Reactions",
-              body: (
-                <ElementBuffs
-                  charLv={char.level}
-                  vision={teamData.activeAppMember.vision}
-                  attkBonuses={result.attkBonuses}
-                  customInfusion={setup.customInfusion}
-                  elmtModCtrls={elmtModCtrls}
-                />
-              ),
+              heading: "Team Bonuses",
+              body: <TeamBuffs setup={setup} />,
+            },
+            {
+              heading: "Elemental Events",
+              body: <ElementBuffs character={main} elmtEvent={setup.elmtEvent} />,
             },
             {
               heading: "Self",
               body: (
-                <SelfBuffsView
-                  mutable={false}
-                  modCtrls={selfBuffCtrls}
-                  character={char}
-                  teamData={teamData}
-                />
+                <SelfBuffsView mutable={false} character={main} modCtrls={setup.selfBuffCtrls} />
               ),
             },
             {
-              heading: "Party",
-              body: <TeammateBuffsView mutable={false} teammates={party} teamData={teamData} />,
+              heading: "Teammates",
+              body: <TeammateBuffsView mutable={false} teammates={setup.teammates} />,
             },
             {
               heading: "Weapons",
-              body: weapon ? (
+              body: (
                 <WeaponBuffsView
                   mutable={false}
-                  teammates={party}
-                  weapon={weapon}
-                  wpBuffCtrls={wpBuffCtrls}
+                  teammates={setup.teammates}
+                  weapon={main.weapon}
+                  wpBuffCtrls={setup.wpBuffCtrls}
                 />
-              ) : null,
+              ),
             },
             {
               heading: "Artifacts",
               body: (
                 <ArtifactBuffsView
                   mutable={false}
-                  teammates={party}
-                  setBonuses={setBonuses}
-                  artBuffCtrls={artBuffCtrls}
+                  teammates={setup.teammates}
+                  artBuffCtrls={setup.artBuffCtrls}
                 />
               ),
             },
             {
               heading: "Custom",
-              body: <CustomBuffs customBuffCtrls={customBuffCtrls} />,
+              body: <CustomBuffs customBuffCtrls={setup.customBuffCtrls} />,
             },
           ]}
         />
-      </ModifierWrapper>
+      </SectionLayout>
 
-      <ModifierWrapper title="Target" className="w-68">
+      <SectionLayout title="Target" className="w-68">
         <div className="h-full px-2">
           <p className="text-lg">{title}</p>
-          <p>Level: {markYellow(target.level)}</p>
+          <p className="my-1">Level: {markYellow(target.level)}</p>
 
           {variant && <p className="capitalize">{variant}</p>}
 
@@ -178,21 +150,14 @@ export function Modifiers({ setup, result, weapon, setBonuses }: ModifiersProps)
             </ul>
           ) : null}
 
-          {Object.entries(target.resistances).map(([key, value], i) => (
+          {Object_.entries(target.resistances).map(([key, value], i) => (
             <p key={i} className="mt-1">
-              <span
-                className={clsx(
-                  "mr-2 capitalize ",
-                  key === "level" ? "text-primary-1" : `text-${key}`
-                )}
-              >
-                {t(key, { ns: "resistance" })}:
-              </span>
-              <span className="font-medium">{value}%</span>
+              <span className={"mr-2 capitalize"}>{t(key, { ns: "resistance" })}:</span>
+              <span className={`font-medium text-${key}`}>{value}%</span>
             </p>
           ))}
         </div>
-      </ModifierWrapper>
+      </SectionLayout>
     </div>
   );
 }

@@ -1,27 +1,29 @@
 import { useMemo } from "react";
 import { Badge, VersatileSelect, clsx, type ClassValue } from "rond";
-import { WEAPON_LEVELS, Level, WeaponCalc } from "@Calculation";
 
-import type { CalcWeapon, UserWeapon } from "@/types";
+import type { Weapon } from "@/models/base";
+import type { Level } from "@/types";
+
+import { WEAPON_LEVELS } from "@/constants";
 import { useTranslation } from "@/hooks";
 import { $AppWeapon } from "@/services";
-import { genSequentialOptions } from "@/utils";
+import { genSequentialOptions, suffixOf } from "@/utils";
 import { parseWeaponDesc } from "@/utils/description-parsers";
-import Entity_ from "@/utils/Entity";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
 
 const groupStyles = "bg-dark-2 px-3";
 
-export interface WeaponViewProps<T extends CalcWeapon | UserWeapon> {
+export type WeaponViewProps<T extends Weapon> = {
   className?: ClassValue;
   weapon?: T;
   mutable?: boolean;
   upgrade?: (newLevel: Level, weapon: T) => void;
   refine?: (newRefi: number, weapon: T) => void;
-}
-export function WeaponView<T extends CalcWeapon | UserWeapon>({
+};
+
+export function WeaponView<T extends Weapon>({
   className,
   weapon,
   mutable,
@@ -76,14 +78,15 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
             <div className={"grow pt-1 flex flex-col justify-center " + groupStyles}>
               <p
                 className={
-                  "font-semibold leading-6 " + (["er_", "em"].includes(subStat.type) ? "text-sm" : "text-base")
+                  "font-semibold leading-6 " +
+                  (["er_", "em"].includes(subStat.type) ? "text-sm" : "text-base")
                 }
               >
                 {t(subStat.type)}
               </p>
               <p className={`text-rarity-${rarity} text-1.5xl leading-7 font-bold`}>
-                {WeaponCalc.getSubStatValue(weapon.level, subStat.scale)}
-                {Entity_.suffixOf(subStat.type)}
+                {weapon.subStatValue}
+                {suffixOf(subStat.type)}
               </p>
             </div>
           ) : null}
@@ -91,7 +94,7 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
           <div className={"grow pt-1 flex flex-col justify-center " + groupStyles}>
             <p className="font-semibold">Base ATK</p>
             <p className={`text-rarity-${rarity} text-[1.75rem] leading-[1.2] font-bold`}>
-              {WeaponCalc.getMainStatValue(weapon.level, appWeapon.mainStatScale)}
+              {weapon.mainStatValue}
             </p>
           </div>
         </div>
@@ -127,7 +130,10 @@ export function WeaponView<T extends CalcWeapon | UserWeapon>({
       </div>
       <div className="mt-3">
         <p className="text-sm font-semibold text-heading">{appWeapon.passiveName}</p>
-        <p className="indent-4 text-base" dangerouslySetInnerHTML={{ __html: passiveDescription }} />
+        <p
+          className="indent-4 text-base"
+          dangerouslySetInnerHTML={{ __html: passiveDescription }}
+        />
       </div>
     </div>
   );

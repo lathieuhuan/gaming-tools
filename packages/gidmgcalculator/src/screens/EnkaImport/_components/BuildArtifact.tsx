@@ -1,10 +1,13 @@
 import { clsx, ItemCase } from "rond";
 
-import { GenshinImage, ItemThumbnail } from "@/components";
-import { ConvertedArtifact } from "@/services";
+import type { ConvertedArtifact } from "@/services";
+import type { ArtifactType } from "@/types";
+import type { SelectedBuild } from "../types";
+
+import { ARTIFACT_TYPES } from "@/constants";
 import Entity_ from "@/utils/Entity";
-import { ARTIFACT_TYPES, ArtifactType } from "@Calculation";
-import { SelectedBuild } from "../types";
+
+import { GenshinImage, ItemThumbnail } from "@/components";
 
 type BuildArtifactProps = {
   className?: string;

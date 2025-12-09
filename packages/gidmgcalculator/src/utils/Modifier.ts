@@ -21,6 +21,8 @@ import { GeneralCalc } from "@Calculation";
 import Array_ from "./Array";
 import Entity_ from "./Entity";
 
+// TODO remove this file
+
 const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
   CHECK: 0,
   LEVEL: 1,

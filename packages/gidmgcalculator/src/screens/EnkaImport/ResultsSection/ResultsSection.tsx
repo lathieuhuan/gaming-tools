@@ -9,6 +9,7 @@ import { useSaver } from "../SaverProvider";
 
 import { TabHeader } from "../_components/TabHeader";
 import { BuildOverviews } from "./BuildOverviews";
+import { createTarget } from "@/utils/Entity";
 
 type ResultsSectionProps = {
   className?: string;
@@ -42,7 +43,7 @@ export function ResultsSection({ className, isMobile, onBack }: ResultsSectionPr
         weapon,
         artifacts,
       }),
-      target: Setup_.createTarget({ level: $AppSettings.get("targetLevel") }),
+      target: createTarget({ code: 0 }),
       importSource: "ENKA",
     });
   };

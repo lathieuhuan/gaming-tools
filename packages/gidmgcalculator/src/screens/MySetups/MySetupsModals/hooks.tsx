@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { clsx } from "rond";
 
-import type { UserSetup } from "@/types";
+import type { IDbSetup } from "@/types";
 import { $AppCharacter } from "@/services";
 import { CharacterPortrait } from "@/components";
 
-export type SetupOptions = Array<Pick<UserSetup, "ID" | "type" | "name" | "char" | "party">>;
+export type SetupOptions = Array<Pick<IDbSetup, "ID" | "type" | "name" | "main" | "teammates">>;
 
 interface UseCombineManagerArgs {
   options: SetupOptions;
@@ -36,7 +36,9 @@ export function useCombineManager({ options, limit }: UseCombineManagerArgs) {
     <div className="space-y-3">
       {!options.length && (
         <div className="h-40 flex-center">
-          <p className="pr-2 text-lg text-light-hint text-center">No setups available for choosing...</p>
+          <p className="pr-2 text-lg text-light-hint text-center">
+            No setups available for choosing...
+          </p>
         </div>
       )}
       {options.map((setup) => {
@@ -62,12 +64,12 @@ export function useCombineManager({ options, limit }: UseCombineManagerArgs) {
               <CharacterPortrait
                 className="shadow-hightlight-2 shadow-light-1"
                 size="small"
-                info={$AppCharacter.get(setup.char.name)}
+                info={$AppCharacter.get(setup.main.name)}
               />
-              {setup.party.map((teammate, j) => {
-                return teammate ? (
+              {setup.teammates.map((teammate, j) => {
+                return (
                   <CharacterPortrait key={j} size="small" info={$AppCharacter.get(teammate.name)} />
-                ) : null;
+                );
               })}
             </div>
           </div>

@@ -1,4 +1,4 @@
-import type { EffectApplicableCondition, TalentType } from "@/calculation/types";
+import type { EffectCondition, TalentType } from "@/calculation/types";
 import type { AppCharactersByName, Character, Teammates } from "@/types";
 
 import {
@@ -44,7 +44,7 @@ export class CalcTeamData extends TeamData {
   }
 
   isApplicableEffect(
-    condition: EffectApplicableCondition,
+    condition: EffectCondition,
     inputs: number[],
     fromSelf = false
   ): boolean {

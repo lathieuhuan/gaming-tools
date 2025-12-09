@@ -12,10 +12,10 @@ import {
   WEAPON_TYPES,
 } from "@Calculation";
 
-import type { CalcSetup, ModifierCtrl, Target } from "@/types";
 import { EXPORTED_SETUP_VERSION } from "@/constants";
 import { $AppCharacter } from "@/services";
 import { CUSTOM_BUFF_CATEGORIES, DIVIDER } from "./setup-porter-config";
+import { ISetup } from "@/types";
 
 const encodeModCtrl = (mod: ModifierCtrl) => {
   return [
@@ -29,7 +29,7 @@ const encodeModCtrls = (mods: ModifierCtrl[], divideLv: number) => {
   return mods.map(encodeModCtrl).join(DIVIDER[divideLv]);
 };
 
-export function encodeSetup(calcSetup: CalcSetup, target: Target) {
+export function encodeSetup(calcSetup: ISetup, target: Target) {
   const {
     char,
     selfBuffCtrls,

@@ -1,17 +1,17 @@
-import { AppArtifact, ArtifactType } from "@Calculation";
 import { useMemo, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { ButtonGroup, FancyBackSvg, Modal, useValues } from "rond";
 
-import type { Artifact } from "@/types";
+import type { AppArtifact, ArtifactType, IArtifact } from "@/types";
 
+import { Artifact } from "@/models/base";
 import { $AppArtifact } from "@/services";
-import Entity_ from "@/utils/Entity";
-import Object_ from "@/utils/Object";
+import { createArtifact } from "@/utils/Entity";
 
 // Component
 import {
   AfterSelectAppEntity,
+  AppEntityOptionModel,
   AppEntitySelect,
   AppEntitySelectProps,
 } from "@/components/AppEntitySelect";
@@ -19,8 +19,12 @@ import { ArtifactTypeSelect } from "@/components/ArtifactTypeSelect";
 import { GenshinImage } from "@/components/GenshinImage";
 import { ArtifactConfig } from "./ArtifactConfig";
 
-export interface ArtifactForgeProps
-  extends Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> {
+type ArtifactOption = AppEntityOptionModel & {
+  rarity: number;
+  data: AppArtifact;
+};
+
+export type ArtifactForgeProps = Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> & {
   /** Initital config */
   workpiece?: Artifact;
   initialMaxRarity?: number;
@@ -32,10 +36,11 @@ export interface ArtifactForgeProps
   forcedType?: ArtifactType;
   /** Default 'flower' */
   initialTypes?: ArtifactType | ArtifactType[];
-  onForgeArtifact: (info: ReturnType<typeof Entity_.createArtifact>) => void;
-  onForgeArtifactBatch?: (code: AppArtifact["code"], types: ArtifactType[], rarity: number) => void;
+  onForgeArtifact: (info: Artifact) => void;
+  onForgeArtifactBatch?: (types: ArtifactType[], rarity: number, data: AppArtifact) => void;
   onClose: () => void;
-}
+};
+
 const ArtifactSmith = ({
   workpiece,
   initialMaxRarity = 5,
@@ -54,15 +59,23 @@ const ArtifactSmith = ({
   const [batchForging, setBatchForging] = useState(defaultBatchForging);
 
   const updateConfig = (
-    changesOrUpdater: Partial<Artifact> | ((prevConfig: Artifact) => Artifact)
+    changesOrUpdater: Partial<IArtifact> | ((prevConfig: Artifact) => Partial<IArtifact>)
   ) => {
     if (artifactConfig) {
       const newConfig =
         typeof changesOrUpdater === "function"
           ? changesOrUpdater(artifactConfig)
-          : { ...artifactConfig, ...changesOrUpdater };
+          : changesOrUpdater;
 
-      setArtifactConfig(newConfig);
+      setArtifactConfig(
+        new Artifact(
+          {
+            ...artifactConfig,
+            ...newConfig,
+          },
+          artifactConfig.data
+        )
+      );
     }
   };
 
@@ -75,26 +88,20 @@ const ArtifactSmith = ({
     multiple: batchForging,
     required: batchForging,
     onChange: (types) => {
-      updateConfig((prevConfig) => {
-        const newConfig = Entity_.createArtifact({ ...prevConfig, type: types[0] });
-        const prevConfigKeep = Object_.pickProps(prevConfig, ["ID", "level", "subStats"]);
-
-        return Object_.assign(newConfig, prevConfigKeep);
-      });
+      updateConfig({ type: types[0] });
     },
   });
 
-  const allArtifactSets = useMemo(() => {
-    const artifacts =
-      forFeature === "TEAMMATE_MODIFIERS"
-        ? $AppArtifact
-            .getAll()
-            .filter(
-              (set) => set.buffs?.some((buff) => buff.affect !== "SELF") || set.debuffs?.length
-            )
-        : $AppArtifact.getAll();
+  const artifactOptions = useMemo(() => {
+    let artifacts = $AppArtifact.getAll();
 
-    return artifacts.map((artifact) => {
+    if (forFeature === "TEAMMATE_MODIFIERS") {
+      artifacts = artifacts.filter(
+        (set) => set.buffs?.some((buff) => buff.affect !== "SELF") || set.debuffs?.length
+      );
+    }
+
+    return artifacts.map<ArtifactOption>((artifact) => {
       const { code, beta, name, variants, flower } = artifact;
       return {
         code,
@@ -102,6 +109,7 @@ const ArtifactSmith = ({
         name,
         rarity: variants[variants.length - 1],
         icon: forcedType ? artifact[forcedType].icon : flower.icon,
+        data: artifact,
       };
     });
   }, []);
@@ -109,11 +117,46 @@ const ArtifactSmith = ({
   const handleRarityChange = (rarity: number) => {
     updateConfig((prevConfig) => {
       return {
-        ...prevConfig,
         rarity,
         level: Math.min(prevConfig.level, rarity === 5 ? 20 : 16),
       };
     });
+  };
+
+  const handleSelectChange: AppEntitySelectProps<ArtifactOption>["onChange"] = (
+    mold,
+    isConfigStep
+  ) => {
+    if (mold) {
+      if (isConfigStep) {
+        const artifact = createArtifact(
+          {
+            ...artifactConfig,
+            ...mold,
+            type: forcedType || artifactTypes[0],
+          },
+          mold.data
+        );
+
+        setArtifactConfig(artifact);
+        setMaxRarity(mold.rarity);
+        return true;
+      }
+
+      const artifact = createArtifact(
+        {
+          ...mold,
+          type: artifactTypes[0],
+        },
+        mold.data
+      );
+
+      onForgeArtifact(artifact);
+      return true;
+    }
+
+    setArtifactConfig(undefined);
+    return true;
   };
 
   const getBackAction = (selectBody: HTMLDivElement | null) => ({
@@ -139,7 +182,7 @@ const ArtifactSmith = ({
     };
 
     const onBatchForge = () => {
-      onForgeArtifactBatch?.(artifactConfig.code, artifactTypes, artifactConfig.rarity);
+      onForgeArtifactBatch?.(artifactTypes, artifactConfig.rarity, artifactSet);
       afterSelect(artifactConfig.code, artifactTypes.length);
     };
 
@@ -193,7 +236,7 @@ const ArtifactSmith = ({
   return (
     <AppEntitySelect
       title={<p className="text-base sm:text-xl leading-7">Artifact Forge</p>}
-      data={allArtifactSets}
+      data={artifactOptions}
       initialChosenCode={workpiece?.code}
       emptyText="No artifacts found"
       hasSearch
@@ -226,28 +269,7 @@ const ArtifactSmith = ({
           />
         );
       }}
-      onChange={(mold, isConfigStep) => {
-        if (mold) {
-          if (isConfigStep) {
-            const newConfig = Entity_.createArtifact(
-              {
-                ...artifactConfig,
-                ...mold,
-                type: forcedType || artifactTypes[0],
-              },
-              0
-            );
-
-            setArtifactConfig(newConfig);
-            setMaxRarity(mold.rarity);
-          } else {
-            onForgeArtifact(Entity_.createArtifact({ ...mold, type: artifactTypes[0] }));
-          }
-        } else {
-          setArtifactConfig(undefined);
-        }
-        return true;
-      }}
+      onChange={handleSelectChange}
       onClose={onClose}
       {...templateProps}
     />

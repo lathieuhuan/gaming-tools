@@ -25,7 +25,7 @@ export function SetupTransshiper() {
       if (result.isOk) {
         setupImporter.import({
           ...result.importInfo,
-          importSource: "URL",
+          source: "URL",
         });
         setSearchParams({ importCode: undefined }, true);
       } else {

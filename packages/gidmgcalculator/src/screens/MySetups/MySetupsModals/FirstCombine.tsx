@@ -1,23 +1,26 @@
 import { FormEvent, KeyboardEventHandler, useState } from "react";
 import { Input } from "rond";
 
-import type { UserSetup } from "@/types";
-
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import Array_ from "@/utils/Array";
+import { isDbSetup } from "@/utils/Setup";
 import { useDispatch } from "@Store/hooks";
 import { combineSetups, selectUserSetups } from "@Store/userdb-slice";
 import { useCombineManager } from "./hooks";
 
 export default function FirstCombine(props: { onClose: () => void }) {
   const dispatch = useDispatch();
-  const userSetups = useStoreSnapshot(selectUserSetups);
+  const dbSetups = useStoreSnapshot(selectUserSetups);
 
   const [input, setInput] = useState("Team Setup");
 
-  const setupOptions = userSetups.filter((setup) => {
-    return setup.type === "original" && setup.party.length === 3 && setup.party.every((teammate) => teammate);
-  }) as UserSetup[];
+  const setupOptions = dbSetups.filter(isDbSetup).filter((setup) => {
+    return (
+      setup.type === "original" &&
+      setup.teammates.length === 3 &&
+      setup.teammates.every((teammate) => teammate.name)
+    );
+  });
 
   const { isError, pickedIDs, combineMenu, setIsError } = useCombineManager({
     options: setupOptions,
@@ -37,25 +40,25 @@ export default function FirstCombine(props: { onClose: () => void }) {
     const all: string[] = [];
 
     for (const ID of pickedIDs) {
-      const { char, party } = Array_.findById(setupOptions, ID)!;
+      const { main, teammates } = Array_.findById(setupOptions, ID)!;
 
-      if (mains.includes(char.name)) {
+      if (mains.includes(main.name)) {
         setIsError(true);
         return;
       } else {
-        mains.push(char.name);
+        mains.push(main.name);
       }
 
-      if (!all.includes(char.name)) {
+      if (!all.includes(main.name)) {
         if (all.length === 4) {
           setIsError(true);
           return;
         } else {
-          all.push(char.name);
+          all.push(main.name);
         }
       }
 
-      for (const teammate of Array_.truthify(party)) {
+      for (const teammate of teammates) {
         if (!all.includes(teammate.name)) {
           if (all.length === 4) {
             setIsError(true);
@@ -84,7 +87,9 @@ export default function FirstCombine(props: { onClose: () => void }) {
   return (
     <form id="setup-combine" className="h-full flex flex-col break-words" onSubmit={onSubmit}>
       <p className={"px-2 " + (isError ? "text-danger-2" : "text-light-hint")}>
-        {isError ? "You cannot combine these setups." : "Choose at least 2 setups with the same party members."}
+        {isError
+          ? "You cannot combine these setups."
+          : "Choose at least 2 setups with the same party members."}
       </p>
 
       <div className="mt-2 px-2 grow custom-scrollbar">{combineMenu}</div>

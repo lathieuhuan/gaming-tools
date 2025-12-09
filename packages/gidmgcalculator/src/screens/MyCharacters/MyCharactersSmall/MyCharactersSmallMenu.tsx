@@ -3,7 +3,7 @@ import { FaPlus } from "react-icons/fa";
 import { ButtonGroup, FancyBackSvg, Input, useChildListObserver, useIntersectionObserver } from "rond";
 
 import { useSelector } from "@Store/hooks";
-import { selectChosenCharacter, selectUserCharacters } from "@Store/userdb-slice";
+import { selectChosenCharacter, selectDbCharacters } from "@Store/userdb-slice";
 import { $AppCharacter } from "@/services";
 import { GenshinImage } from "@/components";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
@@ -13,7 +13,7 @@ interface MyCharactersSmallMenuProps {
   onClose: () => void;
 }
 export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
-  const userChars = useSelector(selectUserCharacters);
+  const userChars = useSelector(selectDbCharacters);
   const chosenChar = useSelector(selectChosenCharacter);
   const modalCtrl = useMyCharactersModalCtrl();
 

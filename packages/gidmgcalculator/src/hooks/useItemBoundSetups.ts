@@ -1,16 +1,16 @@
 import { useEffect, useMemo } from "react";
 
-import type { UserItem, UserSetup } from "@/types";
-import Setup_ from "@/utils/Setup";
+import type { IDbItem, IDbSetup } from "@/types";
+import { isDbSetup } from "@/utils/Setup";
 import Array_ from "@/utils/Array";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUserArtifact, updateUserWeapon, selectUserSetups } from "@Store/userdb-slice";
 
-export type BoundingItem = Pick<UserItem, "ID" | "setupIDs">;
+export type BoundingItem = Pick<IDbItem, "ID" | "setupIDs">;
 
-export function useItemBoundSetups(item?: BoundingItem, isWeapon?: boolean): UserSetup[] {
+export function useItemBoundSetups(item?: BoundingItem, isWeapon?: boolean): IDbSetup[] {
   const dispatch = useDispatch();
   const userSetups = useSelector(selectUserSetups);
 
@@ -23,7 +23,7 @@ export function useItemBoundSetups(item?: BoundingItem, isWeapon?: boolean): Use
       };
     }
 
-    const validSetups: UserSetup[] = [];
+    const validSetups: IDbSetup[] = [];
     const validSetupIDs: number[] = [];
     const invalidSetupIDs: number[] = [];
 
@@ -31,8 +31,10 @@ export function useItemBoundSetups(item?: BoundingItem, isWeapon?: boolean): Use
       for (const id of item.setupIDs) {
         const containerSetup = Array_.findById(userSetups, id);
 
-        if (containerSetup && Setup_.isUserSetup(containerSetup)) {
-          const isValid = isWeapon ? containerSetup.weaponID === item.ID : containerSetup.artifactIDs.includes(item.ID);
+        if (containerSetup && isDbSetup(containerSetup)) {
+          const isValid = isWeapon
+            ? containerSetup.main.weaponID === item.ID
+            : containerSetup.main.artifactIDs.includes(item.ID);
 
           if (isValid) {
             validSetups.push(containerSetup);

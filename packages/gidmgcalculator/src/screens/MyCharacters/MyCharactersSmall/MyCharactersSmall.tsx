@@ -7,14 +7,12 @@ import { viewCharacter } from "@Store/userdb-slice";
 
 // Component
 import { MobileBottomNav } from "@/components";
-import {
-  PanelAttributes,
-  PanelConstellation,
-  PanelGears,
-  PanelTalents,
-  ContextProvider as DetailContextProvider,
-} from "../CharacterDetail";
+import { ActiveCharProvider } from "../ActiveCharProvider";
 import { ContextProvider } from "../ContextProvider";
+import { PanelAttributes } from "../PanelAttributes";
+import { PanelConstellation } from "../PanelConstellation";
+import { PanelGears } from "../PanelGears";
+import { PanelTalents } from "../PanelTalents";
 import { MyCharactersSmallMenu } from "./MyCharactersSmallMenu";
 
 export function MyCharactersSmall() {
@@ -28,7 +26,7 @@ export function MyCharactersSmall() {
     <ContextProvider>
       <div className="h-full flex flex-col">
         <div className="p-4 grow hide-scrollbar bg-dark-1">
-          <DetailContextProvider>
+          <ActiveCharProvider>
             <SwitchNode
               value={activePanelI}
               cases={[
@@ -58,7 +56,7 @@ export function MyCharactersSmall() {
                 { value: 3, element: <PanelTalents /> },
               ]}
             />
-          </DetailContextProvider>
+          </ActiveCharProvider>
         </div>
 
         <MobileBottomNav

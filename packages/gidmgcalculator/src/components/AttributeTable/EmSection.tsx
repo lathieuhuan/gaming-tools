@@ -2,8 +2,8 @@ import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { clsx, CollapseSpace, round, StatsTable } from "rond";
 
+import { getRxnBonusesFromEM } from "@/calculation-new/core/getRxnBonusesFromEM";
 import { markGreen } from "@/components";
-import { GeneralCalc } from "@Calculation";
 
 const { Row, Cell } = StatsTable;
 
@@ -13,7 +13,7 @@ type EmSectionProps = {
 
 export function EmSection({ value = 0 }: EmSectionProps) {
   const [dropped, setDropped] = useState(false);
-  const rxnBonusFromEM = GeneralCalc.getRxnBonusesFromEM(value);
+  const rxnBonusesFromEM = getRxnBonusesFromEM(value);
 
   return (
     <div>
@@ -37,19 +37,20 @@ export function EmSection({ value = 0 }: EmSectionProps) {
       <CollapseSpace active={dropped}>
         <ul className="px-2 py-1 text-sm flex flex-col space-y-1">
           <li>
-            Increases damage dealt by Vaporize and Melt by {markGreen(rxnBonusFromEM.amplifying)}%.
+            Increases damage dealt by Vaporize and Melt by {markGreen(rxnBonusesFromEM.amplifying)}
+            %.
           </li>
           <li>
             Increases damage dealt by Overloaded, Superconduct, Electro-Charged, Burning, Shattered,
-            Swirl, Bloom, Hyperbloom, and Burgeon by {markGreen(rxnBonusFromEM.transformative)}%.
+            Swirl, Bloom, Hyperbloom, and Burgeon by {markGreen(rxnBonusesFromEM.transformative)}%.
           </li>
           <li>
             Increases the DMG Bonus provided by Aggravate and Spread by{" "}
-            {markGreen(rxnBonusFromEM.quicken)}%.
+            {markGreen(rxnBonusesFromEM.quicken)}%.
           </li>
           <li>
             Increases the damage absorption power of shields created through Crystallize by{" "}
-            {markGreen(rxnBonusFromEM.shield)}%.
+            {markGreen(rxnBonusesFromEM.shield)}%.
           </li>
         </ul>
       </CollapseSpace>

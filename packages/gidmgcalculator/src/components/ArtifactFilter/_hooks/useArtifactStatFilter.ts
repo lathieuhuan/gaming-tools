@@ -1,6 +1,7 @@
 import { useState } from "react";
+
+import type { ArtifactStatFilterCondition, ArtifactStatFilterOption } from "../types";
 import { DEFAULT_ARTIFACT_FILTER } from "../constants";
-import { ArtifactStatFilterCondition, ArtifactStatFilterOption } from "../types";
 
 export function useArtifactStatFilter(initialFilter: ArtifactStatFilterCondition) {
   const [filter, setFilter] = useState(initialFilter);

@@ -3,12 +3,12 @@ import { Button, Modal } from "rond";
 
 import { DOWNLOADED_DATA_VERSION } from "@/constants";
 import { useSelector } from "@Store/hooks";
-import { selectUserArtifacts, selectUserCharacters, selectUserSetups, selectUserWeapons } from "@Store/userdb-slice";
+import { selectDbArtifacts, selectDbCharacters, selectUserSetups, selectDbWeapons } from "@Store/userdb-slice";
 
 function DownloadCore() {
-  const userChars = useSelector(selectUserCharacters);
-  const userWps = useSelector(selectUserWeapons);
-  const userArts = useSelector(selectUserArtifacts);
+  const userChars = useSelector(selectDbCharacters);
+  const userWps = useSelector(selectDbWeapons);
+  const userArts = useSelector(selectDbArtifacts);
   const userSetups = useSelector(selectUserSetups);
 
   const onClickDownload = () => {

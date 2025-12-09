@@ -1,6 +1,6 @@
-import { ATTACK_ELEMENTS } from "@Calculation";
 import { StatsTable, useScreenWatcher } from "rond";
 
+import { ATTACK_ELEMENTS } from "@/constants";
 import { useTranslation } from "@/hooks";
 
 // Component
@@ -30,14 +30,14 @@ export function AttributeTable({ className, attributes }: AttributeTableProps) {
         <CoreStatRows attributes={attributes} />
       )}
 
-      <EmSection value={attributes.em} />
+      <EmSection value={attributes.get("em")} />
 
       {(["cRate_", "cDmg_", "er_", "healB_", "inHealB_", "shieldS_"] as const).map((type) => {
         const label = t(type);
         return (
           <Row key={type} aria-label={label}>
             <Cell>{label}</Cell>
-            <Cell className="mr-2">{Math.round((attributes[type] || 0) * 10) / 10}%</Cell>
+            <Cell className="mr-2">{Math.round(attributes.get(type) * 10) / 10}%</Cell>
           </Row>
         );
       })}
@@ -47,7 +47,7 @@ export function AttributeTable({ className, attributes }: AttributeTableProps) {
         return (
           <Row key={type} aria-label={label}>
             <Cell>{label}</Cell>
-            <Cell className="mr-2">{Math.round((attributes[type] || 0) * 10) / 10}%</Cell>
+            <Cell className="mr-2">{Math.round(attributes.get(type) * 10) / 10}%</Cell>
           </Row>
         );
       })}
@@ -57,7 +57,7 @@ export function AttributeTable({ className, attributes }: AttributeTableProps) {
         return (
           <Row key={type} aria-label={label}>
             <Cell>{label}</Cell>
-            <Cell className="mr-2">{Math.round((attributes[type] || 0) * 10) / 10}%</Cell>
+            <Cell className="mr-2">{Math.round(attributes.get(type) * 10) / 10}%</Cell>
           </Row>
         );
       })}

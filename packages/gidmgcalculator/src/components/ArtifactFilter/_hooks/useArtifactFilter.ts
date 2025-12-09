@@ -1,11 +1,12 @@
-import { ArtifactCalc, AttributeStat } from "@Calculation";
 import { useMemo, useState } from "react";
 
-import { Artifact } from "@/types";
-import { DEFAULT_ARTIFACT_FILTER } from "../constants";
-import { ArtifactFilterCondition } from "../types";
+import type { AttributeStat, IArtifactBasic } from "@/types";
+import type { ArtifactFilterCondition } from "../types";
 
-export function useArtifactFilter<T extends Artifact>(
+import { Artifact } from "@/models/base";
+import { DEFAULT_ARTIFACT_FILTER } from "../constants";
+
+export function useArtifactFilter<T extends IArtifactBasic = IArtifactBasic>(
   artifacts: T[],
   initialFilter: Partial<ArtifactFilterCondition> = {}
 ) {
@@ -23,12 +24,17 @@ export function useArtifactFilter<T extends Artifact>(
   };
 }
 
-export function filterArtifacts<T extends Artifact>(
+export function filterArtifacts<T extends IArtifactBasic = IArtifactBasic>(
   artifacts: T[],
   filterCondition: Partial<ArtifactFilterCondition>
 ) {
-  const { stats = DEFAULT_ARTIFACT_FILTER.stats, codes = [], types = [] } = filterCondition;
-  const filterMainstat = stats.main !== "All";
+  const {
+    stats: statsFilter = DEFAULT_ARTIFACT_FILTER.stats,
+    codes = [],
+    types = [],
+  } = filterCondition;
+
+  const shouldFilterMainstat = statsFilter.main !== "All";
   const noFilterCode = !codes.length;
   const noFilterType = !types.length;
 
@@ -39,30 +45,34 @@ export function filterArtifacts<T extends Artifact>(
     );
   });
 
-  if (filterMainstat) {
-    result = result.filter((p) => p.mainStatType === stats.main);
+  if (shouldFilterMainstat) {
+    result = result.filter((item) => item.mainStatType === statsFilter.main);
   }
 
-  const requires = stats.subs.filter((s) => s !== "All") as AttributeStat[];
+  const requiredSubstats = statsFilter.subs.filter((s) => s !== "All") as AttributeStat[];
 
-  if (requires.length) {
-    result = result.filter((p) => requires.every((rq) => p.subStats.some((ss) => ss.type === rq)));
+  if (requiredSubstats.length) {
+    result = result.filter((item) =>
+      requiredSubstats.every((requiredSS) => item.subStats.some((ss) => ss.type === requiredSS))
+    );
   }
 
-  if (filterMainstat || requires.length) {
+  if (shouldFilterMainstat || requiredSubstats.length) {
     //
-    const getValue = (artifact: T, type: AttributeStat) => {
-      return artifact.subStats.find((stat) => stat.type === type)?.value || 0;
+    const getValue = (piece: T, ssType: AttributeStat) => {
+      return piece.subStats.find((ss) => ss.type === ssType)?.value || 0;
     };
 
     result.sort((a, b) => {
-      if (filterMainstat) {
-        const msResult = ArtifactCalc.mainStatValueOf(b) - ArtifactCalc.mainStatValueOf(a);
-        if (msResult) return msResult;
+      if (shouldFilterMainstat) {
+        const mainstatCompare = Artifact.mainStatValueOf(b) - Artifact.mainStatValueOf(a);
+
+        if (mainstatCompare) return mainstatCompare;
       }
-      for (const rq of requires) {
-        const ssResult = getValue(b, rq) - getValue(a, rq);
-        if (ssResult) return ssResult;
+      for (const requiredSS of requiredSubstats) {
+        const substatCompare = getValue(b, requiredSS) - getValue(a, requiredSS);
+
+        if (substatCompare) return substatCompare;
       }
       return 0;
     });

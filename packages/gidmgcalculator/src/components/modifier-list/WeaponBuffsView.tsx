@@ -1,58 +1,58 @@
-import type { CalcWeapon, ModifierCtrl, Teammates, Weapon } from "@/types";
-import type { GetModifierHanldersArgs, GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
+import type { Weapon } from "@/models/base";
+import type { CalcTeammate } from "@/models/calculator";
+import type { IWeapon, IWeaponBuffCtrl } from "@/types";
+import type { ModifierHanlders } from "./types";
 
-import { $AppWeapon } from "@/services";
-import Array_ from "@/utils/Array";
 import { getWeaponBuffDesc } from "@/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
-import { renderModifiers } from "./modifiers.utils";
+import { ModifierContainer } from "./ModifierContainer";
 
-interface RenderWeaponModifiersArgs {
-  fromSelf?: boolean;
+type RenderWeaponModifiersArgs = {
   keyPrefix: string | number;
+  headingSuffix?: string;
   mutable?: boolean;
-  weapon: Pick<Weapon, "code" | "type" | "refi">;
-  ctrls: ModifierCtrl[];
-  getHanlders?: (args: GetModifierHanldersArgs) => ModifierHanlders;
-}
+  weapon: Pick<IWeapon, "code" | "type" | "refi" | "data">;
+  ctrls: IWeaponBuffCtrl[];
+  getHanlders?: (ctrl: IWeaponBuffCtrl, ctrls: IWeaponBuffCtrl[]) => ModifierHanlders;
+};
+
 function renderWeaponModifiers({
-  fromSelf,
   keyPrefix,
+  headingSuffix,
   mutable,
   weapon,
   ctrls,
   getHanlders,
 }: RenderWeaponModifiersArgs) {
-  const data = $AppWeapon.get(weapon.code);
-  if (!data) return [];
-  const { descriptions = [] } = data;
+  const { data } = weapon;
 
-  return ctrls.map((ctrl, ctrlIndex) => {
-    const buff = Array_.findByIndex(data.buffs, ctrl.index);
+  return ctrls.map((ctrl) => {
+    const buff = ctrl.data;
 
-    return buff ? (
+    return (
       <GenshinModifierView
-        key={`${keyPrefix}-${data.code}-${ctrl.index}`}
+        key={`${keyPrefix}-${weapon.code}-${ctrl.id}`}
         mutable={mutable}
         checked={ctrl.activated}
-        heading={`${data.name} R${weapon.refi} ${fromSelf ? "(self)" : ""}`}
-        description={getWeaponBuffDesc(descriptions, buff, weapon.refi)}
+        heading={`${data.name} R${weapon.refi} / ${headingSuffix}`}
+        description={getWeaponBuffDesc(data.descriptions, buff, weapon.refi)}
         inputs={ctrl.inputs}
         inputConfigs={buff.inputConfigs}
-        {...getHanlders?.({ ctrl, ctrlIndex, ctrls })}
+        {...getHanlders?.(ctrl, ctrls)}
       />
-    ) : null;
+    );
   });
 }
 
-interface WeaponBuffsViewProps {
+type WeaponBuffsViewProps = {
   mutable?: boolean;
-  weapon: CalcWeapon;
-  wpBuffCtrls: ModifierCtrl[];
-  teammates: Teammates;
+  weapon: Weapon;
+  wpBuffCtrls: IWeaponBuffCtrl[];
+  teammates: CalcTeammate[];
   getSelfHandlers?: RenderWeaponModifiersArgs["getHanlders"];
-  getTeammateHandlers?: (args: GetTeammateModifierHanldersArgs) => ModifierHanlders;
-}
+  getTeammateHandlers?: (teammate: CalcTeammate, ctrl: IWeaponBuffCtrl) => ModifierHanlders;
+};
+
 export function WeaponBuffsView({
   mutable,
   weapon,
@@ -61,33 +61,29 @@ export function WeaponBuffsView({
   getSelfHandlers,
   getTeammateHandlers,
 }: WeaponBuffsViewProps) {
-  const content = [];
+  return (
+    <ModifierContainer type="buffs" mutable={mutable}>
+      {renderWeaponModifiers({
+        mutable,
+        keyPrefix: "main",
+        headingSuffix: "self",
+        weapon,
+        ctrls: wpBuffCtrls,
+        getHanlders: getSelfHandlers,
+      })}
 
-  content.push(
-    ...renderWeaponModifiers({
-      mutable,
-      fromSelf: true,
-      keyPrefix: "main",
-      weapon,
-      ctrls: wpBuffCtrls,
-      getHanlders: getSelfHandlers,
-    })
-  );
-
-  teammates.forEach((teammate, teammateIndex) => {
-    if (teammate) {
-      content.push(
-        ...renderWeaponModifiers({
-          mutable,
-          fromSelf: false,
-          keyPrefix: teammate.name,
-          weapon: teammate.weapon,
-          ctrls: teammate.weapon.buffCtrls,
-          getHanlders: (args) => getTeammateHandlers?.({ ...args, teammate, teammateIndex }) || {},
+      {teammates
+        .map((teammate) => {
+          return renderWeaponModifiers({
+            mutable,
+            keyPrefix: teammate.name,
+            headingSuffix: teammate.name,
+            weapon: teammate.weapon,
+            ctrls: teammate.weapon.buffCtrls,
+            getHanlders: (ctrl) => getTeammateHandlers?.(teammate, ctrl) || {},
+          });
         })
-      );
-    }
-  });
-
-  return renderModifiers(content, "buffs", mutable);
+        .flat()}
+    </ModifierContainer>
+  );
 }

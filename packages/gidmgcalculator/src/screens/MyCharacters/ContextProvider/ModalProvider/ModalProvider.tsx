@@ -1,12 +1,12 @@
 import { useId, useMemo, useState } from "react";
+import { Modal } from "rond";
 
-import { addCharacter, selectUserCharacters, viewCharacter } from "@Store/userdb-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
+import { addCharacter, selectDbCharacters, viewCharacter } from "@Store/userdb-slice";
+import { ModalContext, type ModalControl } from "./Modal.context";
 
 // Component
 import { Tavern } from "@/components";
-import { ModalContext, type ModalControl } from "./Modal.context";
-import { Modal } from "rond";
 import { CharacterSortForm } from "../../CharacterSortForm";
 
 type ModalType = "ADD_CHARACTER" | "SORT_CHARACTERS" | "";
@@ -16,7 +16,7 @@ export function ModalProvider(props: { children: React.ReactNode }) {
   const sortFormId = useId();
   const [modalType, setModalType] = useState<ModalType>("");
   const [resetCount, setResetCount] = useState(0);
-  const userChars = useSelector(selectUserCharacters);
+  const dbChars = useSelector(selectDbCharacters);
 
   const closeModal = () => setModalType("");
 
@@ -39,12 +39,13 @@ export function ModalProvider(props: { children: React.ReactNode }) {
         active={modalType === "ADD_CHARACTER"}
         sourceType="app"
         hasMultipleMode
-        filter={(character) => userChars.every((userChar) => userChar.name !== character.name)}
-        onSelectCharacter={(character) => {
-          if (!userChars.length) {
-            dispatch(viewCharacter(character.name));
+        filter={(character) => dbChars.every((dbChar) => dbChar.name !== character.name)}
+        onSelectCharacter={({ data }) => {
+          dispatch(addCharacter({ name: data.name, data }));
+
+          if (!dbChars.length) {
+            dispatch(viewCharacter(data.name));
           }
-          dispatch(addCharacter(character));
         }}
         onClose={closeModal}
       />

@@ -1,33 +1,38 @@
-import { AppCharacter } from "@Calculation";
 import { useMemo, useRef, useState } from "react";
 import { Modal } from "rond";
 
+import type { AppCharacter, IDbCharacter } from "@/types";
+
 import { $AppCharacter } from "@/services";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import type { UserCharacter } from "@/types";
 import Array_ from "@/utils/Array";
-import Object_ from "@/utils/Object";
-import { selectUserCharacters } from "@Store/userdb-slice";
+import { selectDbCharacters } from "@Store/userdb-slice";
 
 // Component
-import { AppEntitySelect, AppEntitySelectProps } from "@/components/AppEntitySelect";
+import {
+  AppEntityOptionModel,
+  AppEntitySelect,
+  AppEntitySelectProps,
+} from "@/components/AppEntitySelect";
 import { CharacterFilter, CharacterFilterState } from "./CharacterFilter";
 
-type SelectedCharacterKey = "code" | "beta" | "name" | "icon" | "rarity" | "vision" | "weaponType";
+export type TavernSelectedCharacter = {
+  userData?: IDbCharacter;
+  data: AppCharacter;
+};
 
-type SelectedCharacter = Pick<AppCharacter, SelectedCharacterKey> &
-  Partial<Pick<UserCharacter, "level" | "NAs" | "ES" | "EB" | "cons" | "artifactIDs">>;
+type CharacterOption = AppEntityOptionModel & TavernSelectedCharacter;
 
 export type TavernProps = Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> & {
   sourceType: "app" | "user" | "mixed";
-  filter?: (character: SelectedCharacter) => boolean;
-  onSelectCharacter: (character: SelectedCharacter) => void;
+  filter?: (character: CharacterOption) => boolean;
+  onSelectCharacter: (character: TavernSelectedCharacter) => void;
   onClose: () => void;
 };
 
 const TavernHall = ({
   sourceType,
-  filter: filterFn,
+  filter: filterFn = () => true,
   onSelectCharacter,
   onClose,
   ...templateProps
@@ -38,50 +43,65 @@ const TavernHall = ({
     rarities: [],
   });
 
-  const userChars = useStoreSnapshot(selectUserCharacters);
+  const userChars = useStoreSnapshot(selectDbCharacters);
 
-  const allCharacters = useMemo(() => {
-    const pickedKey: SelectedCharacterKey[] = [
-      "code",
-      "beta",
-      "name",
-      "icon",
-      "rarity",
-      "vision",
-      "weaponType",
-    ];
-    const processedCharacters: SelectedCharacter[] = [];
+  const characterOptions = useMemo(() => {
+    const options: CharacterOption[] = [];
 
     switch (sourceType) {
       case "app":
-        for (const characterData of $AppCharacter.getAll()) {
-          processedCharacters.push(Object_.pickProps(characterData, pickedKey));
+        for (const data of $AppCharacter.getAll()) {
+          const option: CharacterOption = {
+            name: data.name,
+            icon: data.icon,
+            rarity: data.rarity,
+            vision: data.vision,
+            code: data.code,
+            data,
+          };
+
+          filterFn(option) && options.push(option);
         }
         break;
       case "user":
         for (const userChar of userChars) {
-          const characterData = $AppCharacter.get(userChar.name);
+          const data = $AppCharacter.get(userChar.name);
+          if (!data) continue;
 
-          if (characterData) {
-            const character = Object.assign(Object_.pickProps(characterData, pickedKey), {
-              cons: userChar.cons,
-              artifactIDs: userChar.artifactIDs,
-            });
-            processedCharacters.push(character);
-          }
+          const option: CharacterOption = {
+            name: data.name,
+            icon: data.icon,
+            rarity: data.rarity,
+            vision: data.vision,
+            code: data.code,
+            cons: userChar.cons,
+            data,
+            userData: userChar,
+          };
+
+          filterFn(option) && options.push(option);
         }
         break;
       case "mixed":
-        for (const characterData of $AppCharacter.getAll()) {
-          const character = Object_.pickProps(characterData, pickedKey);
-          const userCharacter = Array_.findByName(userChars, character.name);
+        for (const data of $AppCharacter.getAll()) {
+          const userChar = Array_.findByName(userChars, data.name);
+          const option: CharacterOption = {
+            name: data.name,
+            icon: data.icon,
+            rarity: data.rarity,
+            vision: data.vision,
+            code: data.code,
+            cons: userChar?.cons,
+            data,
+            userData: userChar,
+          };
 
-          processedCharacters.push(Object.assign(character, userCharacter));
+          filterFn(option) && options.push(option);
         }
         break;
     }
 
-    return filterFn ? processedCharacters.filter(filterFn) : processedCharacters;
+    return options;
   }, []);
 
   const [hiddenCodes, setHiddenCodes] = useState(new Set<number>());
@@ -92,23 +112,25 @@ const TavernHall = ({
     const weaponFiltered = filter.weaponTypes.length !== 0;
     const rarityFiltered = filter.rarities.length !== 0;
 
-    allCharacters.forEach((character) => {
+    characterOptions.forEach(({ data }) => {
       if (
-        (elementFiltered && !filter.elementTypes.includes(character.vision)) ||
-        (weaponFiltered && !filter.weaponTypes.includes(character.weaponType)) ||
-        (rarityFiltered && !filter.rarities.includes(character.rarity))
+        (elementFiltered && !filter.elementTypes.includes(data.vision)) ||
+        (weaponFiltered && !filter.weaponTypes.includes(data.weaponType)) ||
+        (rarityFiltered && !filter.rarities.includes(data.rarity))
       ) {
-        newHiddenCodes.add(character.code);
+        newHiddenCodes.add(data.code);
       }
     });
+
     setHiddenCodes(newHiddenCodes);
+
     filterRef.current = filter;
   };
 
   return (
     <AppEntitySelect
       title="Tavern"
-      data={allCharacters}
+      data={characterOptions}
       hiddenCodes={hiddenCodes}
       emptyText="No characters found"
       hasSearch

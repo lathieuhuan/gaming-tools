@@ -1,4 +1,11 @@
-import type { AppArtifact, AppCharacter, AppMonster, AppTeamBuff, AppWeapon, CharacterInnateBuff } from "@Calculation";
+import type {
+  AppArtifact,
+  AppCharacter,
+  AppMonster,
+  AppTeamBuff,
+  AppWeapon,
+  CharacterInnateBuff,
+} from "@/types";
 
 export type DataControl<T> = {
   status: "unfetched" | "fetching" | "fetched";

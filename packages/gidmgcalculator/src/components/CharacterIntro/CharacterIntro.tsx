@@ -1,15 +1,15 @@
 import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
-import { Badge, Button, Checkbox, Rarity, VersatileSelect } from "rond";
-import { AppCharacter, Level } from "@Calculation";
+import { Badge, Button, Rarity, VersatileSelect } from "rond";
 
-import type { Character } from "@/types";
-import { LEVELS } from "@Calculation";
+import type { Level } from "@/types";
+
+import { LEVELS } from "@/constants";
+import { CalcCharacter } from "@/models/base";
 import { GenshinImage } from "../GenshinImage";
 
 type CharacterIntroProps = {
   className?: string;
-  character: Character;
-  appCharacter: AppCharacter;
+  character: CalcCharacter;
   switchable?: boolean;
   removable?: boolean;
   /** Default true */
@@ -22,8 +22,9 @@ type CharacterIntroProps = {
 };
 
 export function CharacterIntro(props: CharacterIntroProps) {
-  const { className = "", character, appCharacter, mutable = true } = props;
-  const elmtText = `text-${appCharacter.vision}`;
+  const { className = "", character, mutable = true } = props;
+  const { data } = character;
+  const elmtText = `text-${data.vision}`;
 
   return (
     <div>
@@ -35,7 +36,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
         >
           <GenshinImage
             className="cursor-pointer"
-            src={appCharacter.icon}
+            src={data.icon}
             imgType="character"
             fallbackCls="p-2"
           />
@@ -44,7 +45,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
             <Button className="absolute -top-1 -left-1 z-10" size="small" icon={<FaSyncAlt />} />
           ) : null}
 
-          <Badge active={appCharacter.beta} className="absolute -top-1 -right-1 z-10">
+          <Badge active={data.beta} className="absolute -top-1 -right-1 z-10">
             BETA
           </Badge>
         </div>
@@ -55,10 +56,11 @@ export function CharacterIntro(props: CharacterIntroProps) {
               className={`text-2xl truncate ${elmtText} font-black ${
                 props.removable ? "pr-9" : ""
               }`}
+              onDoubleClick={() => console.log(character)}
             >
-              {character.name}
+              {data.name}
             </h2>
-            <Rarity value={appCharacter.rarity} />
+            <Rarity value={data.rarity} />
           </div>
 
           <div className="mt-1 pl-1 flex justify-between items-center">

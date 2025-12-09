@@ -1,16 +1,9 @@
 import { useEffect, useState } from "react";
 import { CollapseSpace, message } from "rond";
 
-import Array_ from "@/utils/Array";
-import {
-  addTeammate,
-  removeTeammate,
-  selectActiveId,
-  selectSetupManageInfos,
-  selectTeammates,
-} from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { useTeamData } from "../../ContextProvider";
+import { useShallowCalcStore } from "@Store/calculator";
+import { selectSetup, selectSetupManager } from "@Store/calculator/selectors";
+import { setTeammate, removeTeammate } from "@Store/calculator/actions";
 
 // Component
 import { CharacterPortrait, Tavern, TavernProps } from "@/components";
@@ -25,11 +18,17 @@ type TavernState = {
 };
 
 export default function SectionTeammates() {
-  const dispatch = useDispatch();
-  const activeSetupId = useSelector(selectActiveId);
-  const setupManageInfos = useSelector(selectSetupManageInfos);
-  const teammates = useSelector(selectTeammates);
-  const teamData = useTeamData();
+  //
+  const { isCombinedSetup, teammates, mainData } = useShallowCalcStore((state) => {
+    const manager = selectSetupManager(state);
+    const setup = selectSetup(state);
+
+    return {
+      isCombinedSetup: manager?.type === "combined",
+      teammates: setup.teammates,
+      mainData: setup.main.data,
+    };
+  });
 
   const [tavern, setTavern] = useState<TavernState>({
     active: false,
@@ -37,8 +36,6 @@ export default function SectionTeammates() {
   });
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
-  const { activeAppMember } = teamData;
-  const isCombinedSetup = Array_.findById(setupManageInfos, activeSetupId)?.type === "combined";
   const selectedTeammate = selectedIndex === null ? undefined : teammates[selectedIndex];
 
   useEffect(() => {
@@ -75,33 +72,28 @@ export default function SectionTeammates() {
       return;
     }
 
-    if (selectedIndex !== null) {
-      dispatch(removeTeammate(selectedIndex));
+    if (selectedTeammate) {
+      removeTeammate(selectedTeammate);
     }
   };
 
-  const handleRecruitTeammate: TavernProps["onSelectCharacter"] = (character) => {
+  const handleRecruitTeammate: TavernProps["onSelectCharacter"] = ({ data }) => {
     const { recruitIndex } = tavern;
 
     if (recruitIndex !== null) {
-      dispatch(
-        addTeammate({
-          name: character.name,
-          elementType: character.vision,
-          weaponType: character.weaponType,
-          teammateIndex: recruitIndex,
-        })
-      );
+      setTeammate(data, recruitIndex);
       setSelectedIndex(recruitIndex);
     }
   };
 
   return (
     <Section className="pb-3 bg-dark-2">
-      {teammates.length && teammates.every((teammate) => !teammate) ? <CopySelect /> : null}
+      {!teammates.length && <CopySelect />}
 
       <div className="grid grid-cols-3">
-        {teammates.map((teammate, tmIndex) => {
+        {[0, 1, 2].map((tmIndex) => {
+          const teammate = teammates[tmIndex];
+
           if (teammate) {
             const active = tmIndex === selectedIndex;
 
@@ -109,12 +101,17 @@ export default function SectionTeammates() {
               <TeammateSlot
                 key={teammate.name}
                 active={active}
-                info={teamData.getAppMember(teammate.name)}
+                info={teammate.data}
                 onSelect={() => setSelectedIndex(active ? null : tmIndex)}
                 onRequestChange={() => handleShowTavern(tmIndex)}
                 onRemove={handleRemoveTeammate}
               />
             );
+          }
+
+          // Must fill the previous slot first
+          if (tmIndex && !teammates[tmIndex - 1]) {
+            return null;
           }
 
           return (
@@ -135,11 +132,7 @@ export default function SectionTeammates() {
 
       <CollapseSpace active={selectedIndex !== null}>
         {selectedTeammate && selectedIndex !== null && (
-          <TeammateGear
-            teammate={selectedTeammate}
-            index={selectedIndex}
-            info={teamData.getAppMember(selectedTeammate.name)}
-          />
+          <TeammateGear teammate={selectedTeammate} info={selectedTeammate.data} />
         )}
       </CollapseSpace>
 
@@ -147,8 +140,7 @@ export default function SectionTeammates() {
         active={tavern.active}
         sourceType="app"
         filter={(character) =>
-          character.name !== activeAppMember.name &&
-          teammates.every((tm) => tm?.name !== character.name)
+          character.name !== mainData.name && teammates.every((tm) => tm?.name !== character.name)
         }
         onSelectCharacter={handleRecruitTeammate}
         onClose={closeTavern}

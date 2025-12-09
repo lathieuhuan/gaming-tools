@@ -13,7 +13,6 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import calculatorSliceReducers, { calculatorSlice } from "./calculator-slice";
 import uiSliceReducers, { uiSlice } from "./ui-slice";
 import userdbSliceReducers, { userdbSlice, initialState } from "./userdb-slice";
 import accountSliceReducers, { accountSlice } from "./account-slice";
@@ -45,7 +44,6 @@ export function setupStore(options?: SetupStoreOptions) {
   );
 
   const rootReducer = combineReducers({
-    calculator: calculatorSliceReducers,
     ui: uiSliceReducers,
     userdb: userdbPersistReducers,
     account: accountPersistReducers,
@@ -55,7 +53,7 @@ export function setupStore(options?: SetupStoreOptions) {
     key: "root",
     version: 0,
     storage,
-    blacklist: [calculatorSlice.name, uiSlice.name, userdbSlice.name, accountSlice.name],
+    blacklist: [uiSlice.name, userdbSlice.name, accountSlice.name],
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);

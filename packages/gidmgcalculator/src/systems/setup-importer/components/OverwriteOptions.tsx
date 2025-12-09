@@ -1,61 +1,40 @@
 import { FormEvent, useState } from "react";
 import { clsx, Table } from "rond";
 
-import { useTranslation } from "@/hooks";
-import { $AppSettings } from "@/services";
-import type { Character, Target } from "@/types";
-import { selectActiveId, selectCalcSetupsById, selectTarget } from "@Store/calculator-slice";
-import { useSelector } from "@Store/hooks";
+import type { ICharacterBasic, ITargetBasic } from "@/types";
 
+import { useTranslation } from "@/hooks";
 import { OverwriteOption } from "./OverwriteOption";
 
 export type OverwriteOptionsProps = {
-  importedChar: Character;
-  importedTarget: Target;
+  currentMain: ICharacterBasic;
+  currentTarget: ITargetBasic;
+  importedMain: ICharacterBasic;
+  importedTarget: ITargetBasic;
   askForCharacter: boolean;
   askForTarget: boolean;
-  onDone: (data: { shouldOverwriteChar: boolean; shouldOverwriteTarget: boolean }) => void;
+  onDone: (options: { overwriteChar: boolean; overwriteTarget: boolean }) => void;
 };
 
 export function OverwriteOptions({
-  importedChar,
+  currentMain,
+  currentTarget,
+  importedMain,
   importedTarget,
   askForCharacter,
   askForTarget,
   onDone,
 }: OverwriteOptionsProps) {
   const { t } = useTranslation();
-  const setupsById = useSelector(selectCalcSetupsById);
-  const activeId = useSelector(selectActiveId);
-  const target = useSelector(selectTarget);
-
   const [expandedSection, setExpandedSection] = useState<"" | "char" | "target">("");
-
-  const { char } = setupsById[activeId];
-  const oldChar = {
-    name: char.name,
-    level: [char.level],
-    NAs: [char.NAs],
-    ES: [char.ES],
-    EB: [char.EB],
-    cons: [char.cons],
-  };
-
-  if ($AppSettings.get("separateCharInfo")) {
-    oldChar.level = Object.values(setupsById).map(({ char }) => char.level);
-    oldChar.NAs = Object.values(setupsById).map(({ char }) => char.NAs);
-    oldChar.ES = Object.values(setupsById).map(({ char }) => char.ES);
-    oldChar.EB = Object.values(setupsById).map(({ char }) => char.EB);
-    oldChar.cons = Object.values(setupsById).map(({ char }) => char.cons);
-  }
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
 
     onDone({
-      shouldOverwriteChar: !!formData.get("shouldOverwriteChar"),
-      shouldOverwriteTarget: !!formData.get("shouldOverwriteTarget"),
+      overwriteChar: !!formData.get("overwriteChar"),
+      overwriteTarget: !!formData.get("overwriteTarget"),
     });
   };
 
@@ -82,7 +61,7 @@ export function OverwriteOptions({
 
           {type === "name" ? (
             <Table.Td colSpan={2} style={{ textAlign: "center" }}>
-              {oldChar.name}
+              {currentMain.name}
             </Table.Td>
           ) : (
             <>
@@ -95,9 +74,6 @@ export function OverwriteOptions({
     });
   };
 
-  const oldTarget = { level: target?.level, ...target?.resistances };
-  const newTarget = { level: importedTarget?.level, ...importedTarget?.resistances };
-
   return (
     <form id="overwrite-configuration" onSubmit={onSubmit}>
       <p className="text-base">
@@ -108,21 +84,21 @@ export function OverwriteOptions({
         <OverwriteOption
           visible={askForCharacter}
           label="Character's Info"
-          name="shouldOverwriteChar"
+          name="overwriteChar"
           expanded={expandedSection === "char"}
           onClickSeeDetails={() => onClickSeeDetails("char")}
         >
-          {renderCompareRow(oldChar, importedChar, "common")}
+          {renderCompareRow(currentMain, importedMain, "common")}
         </OverwriteOption>
 
         <OverwriteOption
           visible={askForTarget}
           label="Target's Info"
-          name="shouldOverwriteTarget"
+          name="overwriteTarget"
           expanded={expandedSection === "target"}
           onClickSeeDetails={() => onClickSeeDetails("target")}
         >
-          {renderCompareRow(oldTarget, newTarget, "resistance")}
+          {renderCompareRow(currentTarget, importedTarget, "resistance")}
         </OverwriteOption>
       </div>
     </form>

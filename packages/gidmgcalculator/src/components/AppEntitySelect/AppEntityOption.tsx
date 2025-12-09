@@ -1,6 +1,7 @@
-import { ElementType, WeaponType } from "@Calculation";
 import { memo } from "react";
 import { Badge, clsx } from "rond";
+
+import type { ElementType } from "@/types";
 
 import { ElementIcon } from "@/components/ElementIcon";
 import { GenshinImage } from "@/components/GenshinImage";
@@ -12,11 +13,7 @@ export type AppEntityOptionModel = {
   icon: string;
   rarity?: number;
   vision?: ElementType;
-  /** Weapon type or Artifact type */
-  type?: string;
-  weaponType?: WeaponType;
   cons?: number;
-  artifactIDs?: (number | null)[];
 };
 
 type AppEntityOptionProps = {

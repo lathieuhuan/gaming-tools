@@ -1,9 +1,10 @@
 import { clsx, useScreenWatcher } from "rond";
 
-import { MAX_TARGET_LEVEL } from "@/constants";
+import type { Level } from "@/types";
+
+import { LEVELS, MAX_TARGET_LEVEL, WEAPON_LEVELS } from "@/constants";
 import { AppSettings } from "@/services";
 import { genSequentialOptions } from "@/utils";
-import { Level, LEVELS, WEAPON_LEVELS } from "@Calculation";
 
 import { SettingsGroup, SettingsGroupProps } from "../SettingsGroup";
 
@@ -13,7 +14,11 @@ type AppSettingsControlsProps = {
   onChange: <TKey extends keyof AppSettings>(key: TKey, value: AppSettings[TKey]) => void;
 };
 
-export function AppSettingsControls({ className, initialValues, onChange }: AppSettingsControlsProps) {
+export function AppSettingsControls({
+  className,
+  initialValues,
+  onChange,
+}: AppSettingsControlsProps) {
   const screenWatcher = useScreenWatcher();
 
   const levelOptions = LEVELS.map((_, i) => {

@@ -4,12 +4,13 @@ import type { CalcSetup, Target } from "@/types";
 import { encodeSetup } from "@/utils/setup-porter";
 import { PorterLayout } from "./PorterLayout";
 
-interface SetupExporterProps {
+type SetupExporterProps = {
   setupName: string;
   calcSetup: CalcSetup;
   target: Target;
   onClose: () => void;
-}
+};
+
 export const SetupExporter = ({ setupName, calcSetup, target, onClose }: SetupExporterProps) => {
   const [status, setStatus] = useState<"SUCCESS" | "NOT_SUPPORT" | "">("");
 
@@ -37,10 +38,12 @@ export const SetupExporter = ({ setupName, calcSetup, target, onClose }: SetupEx
         {
           children: "Copy URL",
           onClick: () => {
-            navigator.clipboard.writeText(`${window.location.origin}?importCode=${encodedData}`).then(
-              () => setStatus("SUCCESS"),
-              () => setStatus("NOT_SUPPORT")
-            );
+            navigator.clipboard
+              .writeText(`${window.location.origin}?importCode=${encodedData}`)
+              .then(
+                () => setStatus("SUCCESS"),
+                () => setStatus("NOT_SUPPORT")
+              );
           },
         },
         {

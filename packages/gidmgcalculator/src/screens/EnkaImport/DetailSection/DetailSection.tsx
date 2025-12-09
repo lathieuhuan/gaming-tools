@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { clsx } from "rond";
 
 import { useTranslation } from "@/hooks";
-import { ARTIFACT_TYPES } from "@Calculation";
+import { ARTIFACT_TYPES } from "@/constants";
 import { calculationStatsOfBuild } from "../_logic/calculationStatsOfBuild";
 import { useSaver } from "../SaverProvider";
 import { useSelectedBuildState } from "../DataImportProvider";
