@@ -8,24 +8,24 @@ import { FinalResultCompare } from "./FinalResultCompare";
 import { Menu } from "./Menu";
 
 export function FinalResult() {
-  const finalResultRender = <FinalResultCore />;
+  const calcResultRender = <FinalResultCore />;
 
   return (
     <div className="h-full">
-      <Menu finalResult={finalResultRender} />
-      {finalResultRender}
+      <Menu calcResultRender={calcResultRender} />
+      {calcResultRender}
     </div>
   );
 }
 
 export function FinalResultCore() {
-  const { activeSetupName, main, finalResult, comparedIds } = useShallowCalcStore((state) => {
+  const { activeSetupName, main, calcResult, comparedIds } = useShallowCalcStore((state) => {
     const setup = selectSetup(state);
 
     return {
       activeSetupName: state.setupManagers.find((info) => info.ID === state.activeId)?.name || "",
       main: setup.main,
-      finalResult: setup.result,
+      calcResult: setup.result,
       comparedIds: state.comparedIds,
     };
   });
@@ -43,7 +43,7 @@ export function FinalResultCore() {
         <FinalResultView
           talentMutable
           character={main}
-          finalResult={finalResult}
+          finalResult={calcResult}
           onTalentLevelChange={(type, level) => updateMain({ [type]: level })}
         />
       </div>

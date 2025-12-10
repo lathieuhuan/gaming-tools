@@ -10,6 +10,9 @@ import type {
   TotalAttributes,
   WeaponType,
 } from "./common";
+import { CustomDebuffCtrl, CustomBuffCtrl, ElementalEvent, ResonanceModCtrl } from "./modifiers";
+import { IArtifactModCtrlBasic } from "./modifiers";
+import { IModifierCtrlBasic } from "./modifiers";
 
 // ========== WEAPON ==========
 
@@ -111,7 +114,7 @@ export type ITeammateArtifactBasic = {
   code: number;
 };
 
-export type ITeammateBasic = {
+export type ITeammateBasicCore = {
   name: string;
   enhanced: boolean;
 };
@@ -128,4 +131,37 @@ export type ITargetBasic = {
 
 export type ITarget = ITargetBasic & {
   data: AppMonster;
+};
+
+// ========== SETUP ==========
+
+export type ITeammateBasic = ITeammateBasicCore & {
+  buffCtrls: IModifierCtrlBasic[];
+  debuffCtrls: IModifierCtrlBasic[];
+  weapon: ITeammateWeaponBasic & {
+    buffCtrls: IModifierCtrlBasic[];
+  };
+  artifact?: ITeammateArtifactBasic & {
+    buffCtrls: IModifierCtrlBasic[];
+  };
+};
+
+export type ISetupBasic = {
+  main: ICharacterBasic;
+  selfBuffCtrls: IModifierCtrlBasic[];
+  selfDebuffCtrls: IModifierCtrlBasic[];
+
+  wpBuffCtrls: IModifierCtrlBasic[];
+  artBuffCtrls: IArtifactModCtrlBasic[];
+  artDebuffCtrls: IArtifactModCtrlBasic[];
+
+  teammates: ITeammateBasic[];
+  teamBuffCtrls: IModifierCtrlBasic[];
+  rsnBuffCtrls: ResonanceModCtrl[];
+  rsnDebuffCtrls: ResonanceModCtrl[];
+
+  elmtEvent: ElementalEvent;
+  customBuffCtrls: CustomBuffCtrl[];
+  customDebuffCtrls: CustomDebuffCtrl[];
+  target: ITargetBasic;
 };

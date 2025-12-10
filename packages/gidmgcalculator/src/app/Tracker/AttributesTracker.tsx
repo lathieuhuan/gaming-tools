@@ -17,7 +17,7 @@ type AttributesTrackerProps = {
 
 export function AttributesTracker({ listClassName, totalAttrCtrl }: AttributesTrackerProps) {
   const { t } = useTranslation();
-  const totalAttrs = useCalcStore((state) => selectSetup(state).char.totalAttrs);
+  const totalAttrs = useCalcStore((state) => selectSetup(state).main.totalAttrs);
 
   return (
     <div className={clsx("pl-2 pt-2 pr-4", listClassName)}>

@@ -78,11 +78,13 @@ export const importSetup = (
       }
     }
 
-    if (overwriteTarget) {
-      state.target = params.target;
+    const { target } = params;
+
+    if (overwriteTarget && target) {
+      state.target = target;
 
       for (const setup of Object.values(setupsById)) {
-        setup.target = params.target;
+        setup.target = target;
       }
     }
 

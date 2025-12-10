@@ -7,7 +7,7 @@ import { useClickOutside, Modal, CloseButton } from "rond";
 import { useDispatch } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 
-export function Menu(props: { finalResult: React.ReactNode }) {
+export function Menu(props: { calcResultRender: React.ReactNode }) {
   const dispatch = useDispatch();
 
   const [menuDropped, setMenuDropped] = useState(false);
@@ -76,7 +76,7 @@ export function Menu(props: { finalResult: React.ReactNode }) {
         onClose={closeEnlargedView}
       >
         <CloseButton className={Modal.CLOSE_BTN_CLS} boneOnly onClick={closeEnlargedView} />
-        {props.finalResult}
+        {props.calcResultRender}
       </Modal.Core>
     </div>
   );

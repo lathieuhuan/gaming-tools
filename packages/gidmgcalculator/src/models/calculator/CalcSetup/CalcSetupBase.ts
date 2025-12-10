@@ -34,6 +34,8 @@ export type CalcSetupBaseConstructInfo = {
   teammates: CalcTeammate[];
   team: Team;
   target: Target;
+
+  result: CalcResult;
 };
 
 export class CalcSetupBase {
@@ -57,13 +59,7 @@ export class CalcSetupBase {
   team: Team;
   target: Target;
 
-  result: CalcResult = {
-    NAs: {},
-    ES: {},
-    EB: {},
-    RXN: {},
-    WP: {},
-  };
+  result: CalcResult;
 
   constructor(info: CalcSetupBaseConstructInfo) {
     this.ID = info.ID;
@@ -82,5 +78,6 @@ export class CalcSetupBase {
     this.teammates = info.teammates;
     this.team = info.team;
     this.target = info.target;
+    this.result = info.result;
   }
 }

@@ -3,6 +3,8 @@ import type {
   ArtifactModCtrl,
   CalcSetup,
   ElementModCtrl,
+  IModifierCtrl,
+  IModifierCtrlBasic,
   ModifierCtrl,
   TeamBuffCtrl,
 } from "@/types";
@@ -21,7 +23,21 @@ import { GeneralCalc } from "@Calculation";
 import Array_ from "./Array";
 import Entity_ from "./Entity";
 
-// TODO remove this file
+export function enhanceCtrls<T extends EntityModifier, TExtra extends object = never>(
+  ctrls: IModifierCtrlBasic[],
+  mods?: T[],
+  extraProps: TExtra = {} as TExtra,
+  extraCheck: (ctrl: IModifierCtrlBasic, mod: T) => boolean = () => true
+) {
+  if (mods) {
+    return ctrls.reduce<(IModifierCtrl<T> & TExtra)[]>((result, ctrl) => {
+      const data = mods.find((mod) => mod.index === ctrl.id && extraCheck(ctrl, mod));
+      return data ? result.concat({ ...ctrl, data, ...extraProps }) : result;
+    }, []);
+  }
+
+  return [];
+}
 
 const DEFAULT_INITIAL_VALUES: Record<ModInputType, number> = {
   CHECK: 0,

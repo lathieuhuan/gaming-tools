@@ -1,20 +1,19 @@
 import { useMemo, useState } from "react";
 
-import type { CalcSetup, Target } from "@/types";
+import type { CalcSetup } from "@/models/calculator";
 import { encodeSetup } from "@/utils/setup-porter";
 import { PorterLayout } from "./PorterLayout";
 
 type SetupExporterProps = {
   setupName: string;
   calcSetup: CalcSetup;
-  target: Target;
   onClose: () => void;
 };
 
-export const SetupExporter = ({ setupName, calcSetup, target, onClose }: SetupExporterProps) => {
+export const SetupExporter = ({ setupName, calcSetup, onClose }: SetupExporterProps) => {
   const [status, setStatus] = useState<"SUCCESS" | "NOT_SUPPORT" | "">("");
 
-  const encodedData = useMemo(() => encodeSetup(calcSetup, target), []);
+  const encodedData = useMemo(() => encodeSetup(calcSetup), []);
 
   return (
     <PorterLayout

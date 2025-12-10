@@ -39,7 +39,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
 
   const { result, target } = state;
   const { attkBonusCtrl, totalAttrCtrl } = state.main;
-  const charLv = activeSetup.char.bareLv;
+  const charLv = activeSetup.main.bareLv;
   const totalDefReduct = target.getReduction("def").value;
 
   const renderDefMultiplier = (talent: AttackPattern | "WP") => {

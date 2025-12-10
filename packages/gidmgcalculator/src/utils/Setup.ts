@@ -13,11 +13,11 @@ import {
   IArtifactBasic,
   IDbComplexSetup,
   IDbSetup,
-  IDbTeammate,
   IDbWeapon,
   IModifierCtrlBasic,
   ISetupManager,
   ITeammateArtifact,
+  ITeammateBasic,
   ITeammateWeapon,
   IWeaponBasic,
   Target,
@@ -142,7 +142,7 @@ function restoreModCtrls<T extends Restorable, K extends keyof T>(
   return newCtrls;
 }
 
-function restoreTeammate(teammate: IDbTeammate, team: Team) {
+function restoreTeammate(teammate: ITeammateBasic, team: Team) {
   const weaponData = $AppWeapon.get(teammate.weapon.code)!;
   const weapon: ITeammateWeapon = {
     code: teammate.weapon.code,

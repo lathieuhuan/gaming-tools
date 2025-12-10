@@ -1,20 +1,5 @@
-import type {
-  CustomBuffCtrl,
-  CustomDebuffCtrl,
-  ElementalEvent,
-  IArtifactModCtrlBasic,
-  IModifierCtrlBasic,
-  ResonanceModCtrl,
-} from "./modifiers";
-import type { SetupType } from "./calculator";
-import type {
-  IArtifactBasic,
-  ICharacterBasic,
-  ITargetBasic,
-  ITeammateArtifactBasic,
-  ITeammateWeaponBasic,
-  IWeaponBasic,
-} from "./entity";
+import type { BasicSetupType } from "./calculator";
+import type { IArtifactBasic, ICharacterBasic, ISetupBasic, IWeaponBasic } from "./entity";
 
 // TODO remove, use IWeaponBasic
 export type IDbWeapon = IWeaponBasic;
@@ -24,52 +9,17 @@ export type IDbArtifact = IArtifactBasic;
 
 export type IDbItem = IDbWeapon | IDbArtifact;
 
-export type IDbTeammateWeapon = ITeammateWeaponBasic & {
-  buffCtrls: IModifierCtrlBasic[];
-};
-
-export type IDbTeammateArtifact = ITeammateArtifactBasic & {
-  buffCtrls: IModifierCtrlBasic[];
-};
-
-export type IDbTeammate = {
-  name: string;
-  enhanced: boolean;
-  buffCtrls: IModifierCtrlBasic[];
-  debuffCtrls: IModifierCtrlBasic[];
-  weapon: IDbTeammateWeapon;
-  artifact?: IDbTeammateArtifact;
-};
-
 export type IDbCharacter = ICharacterBasic & {
   weaponID: number;
   artifactIDs: number[];
 };
 
-export type IDbTarget = ITargetBasic & {};
-
-export type IDbSetup = {
+export type IDbSetup = Omit<ISetupBasic, "main"> & {
   ID: number;
-  type: Exclude<SetupType, "complex">;
+  type: BasicSetupType;
   name: string;
 
   main: IDbCharacter;
-  selfBuffCtrls: IModifierCtrlBasic[];
-  selfDebuffCtrls: IModifierCtrlBasic[];
-
-  wpBuffCtrls: IModifierCtrlBasic[];
-  artBuffCtrls: IArtifactModCtrlBasic[];
-  artDebuffCtrls: IArtifactModCtrlBasic[];
-
-  teammates: IDbTeammate[];
-  teamBuffCtrls: IModifierCtrlBasic[];
-  rsnBuffCtrls: ResonanceModCtrl[];
-  rsnDebuffCtrls: ResonanceModCtrl[];
-
-  elmtEvent: ElementalEvent;
-  customBuffCtrls: CustomBuffCtrl[];
-  customDebuffCtrls: CustomDebuffCtrl[];
-  target: IDbTarget;
 };
 
 export type IDbComplexSetup = {
