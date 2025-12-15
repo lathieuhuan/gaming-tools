@@ -13,7 +13,7 @@ import { calculateSetup } from "@/calculation-new/calculator";
 import { Artifact, ArtifactGear, CalcCharacter, Team, Weapon } from "@/models/base";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
-import { createArtifactBasic, CreateArtifactParams, createTarget } from "@/utils/Entity";
+import { createArtifactBasic, CreateArtifactParams, createTarget } from "@/utils/entity";
 import { CalcTeammate, type CalcTeammateConstructInfo } from "../CalcTeammate";
 import {
   createAbilityBuffCtrls,

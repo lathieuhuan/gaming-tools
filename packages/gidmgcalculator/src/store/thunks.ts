@@ -15,8 +15,8 @@ import {
 
 // Util
 import Array_ from "@/utils/Array";
-import { createArtifactBasic, createWeaponBasic } from "@/utils/Entity";
-import { isDbSetup, toDbSetup } from "@/utils/Setup";
+import { createArtifactBasic, createWeaponBasic } from "@/utils/entity";
+import { isDbSetup, toDbSetup } from "@/utils/setup";
 
 export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
   return (dispatch, getState) => {

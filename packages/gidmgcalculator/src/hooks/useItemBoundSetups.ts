@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 
 import type { IDbItem, IDbSetup } from "@/types";
-import { isDbSetup } from "@/utils/Setup";
+import { isDbSetup } from "@/utils/setup";
 import Array_ from "@/utils/Array";
 
 // Store

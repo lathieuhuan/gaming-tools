@@ -19,10 +19,10 @@ import {
   createTarget,
   createWeapon,
   createWeaponBasic,
-} from "@/utils/Entity";
+} from "@/utils/entity";
 import IdStore from "@/utils/IdStore";
-import { enhanceCtrls } from "@/utils/Modifier";
-import { isDbSetup } from "@/utils/Setup";
+import { enhanceCtrls } from "@/utils/modifier";
+import { isDbSetup } from "@/utils/setup";
 import { makeCalcCharacterFromDb } from "@/utils/userdb";
 
 export function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOverviewInfo["setup"] {

@@ -4,7 +4,7 @@ import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 import { DOWNLOADED_DATA_VERSION } from "@/constants";
 import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
-import { createWeaponBasic } from "@/utils/Entity";
+import { createWeaponBasic } from "@/utils/entity";
 import {
   convertGOODArtifact,
   convertGOODCharacter,

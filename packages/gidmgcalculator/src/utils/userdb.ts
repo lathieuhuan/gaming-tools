@@ -3,7 +3,7 @@ import type { IArtifactBasic, IDbArtifact, IDbCharacter, IDbWeapon, WeaponType }
 import { ArtifactGear, CalcCharacter, Team } from "@/models/base";
 import { $AppCharacter } from "@/services";
 import Array_ from "./Array";
-import { createArtifact, createArtifactBasic, createWeapon, createWeaponBasic } from "./Entity";
+import { createArtifact, createArtifactBasic, createWeapon, createWeaponBasic } from "./entity";
 import IdStore from "./IdStore";
 
 export function parseDbWeapon(weaponID: number, dbWeapons: IDbWeapon[], weaponType: WeaponType) {
