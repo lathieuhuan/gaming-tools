@@ -95,6 +95,11 @@ export function renderInfoToImportInfo(
     debuffCtrls: tmDebuffCtrls,
   };
 
+  const elmtModCtrls = Modifier_.createElmtModCtrls();
+
+  elmtModCtrls.resonances = setup.elmtModCtrls.resonances;
+  elmtModCtrls.superconduct = setup.elmtModCtrls.superconduct;
+
   return {
     ID: seedID++,
     name: "New setup",
@@ -104,6 +109,7 @@ export function renderInfoToImportInfo(
       weapon: actualWeapon,
       artifacts,
       party,
+      elmtModCtrls,
     }),
   };
 }
