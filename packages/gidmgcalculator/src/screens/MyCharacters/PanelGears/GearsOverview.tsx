@@ -27,8 +27,8 @@ export function GearsOverview({
   onClickDetail,
   onClickEmptyAtfSlot,
 }: GearsOverviewProps) {
-  const { weapon, artifact } = useActiveChar();
-  const atfGearSets = artifact.sets;
+  const { weapon, atfGear } = useActiveChar();
+  const atfGearSets = atfGear.sets;
 
   const renderSet = (set?: IArtifactGearSet) => {
     return (
@@ -51,7 +51,7 @@ export function GearsOverview({
         showOwner={false}
         selectedType={isEquipmentType(detailType) ? detailType : undefined}
         weapon={weapon}
-        atfSlots={artifact.slots}
+        atfSlots={atfGear.slots}
         onClickItem={onClickDetail}
         onClickEmptyAtfSlot={onClickEmptyAtfSlot}
       />

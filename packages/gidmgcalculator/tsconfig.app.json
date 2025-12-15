@@ -24,9 +24,7 @@
 
     "baseUrl": ".",
     "paths": {
-      "@Calculation": ["src/calculation"],
       "@Store/*": ["src/store/*"],
-      "@OptimizeDept/*": ["src/systems/optimize-dept/*"],
       "@/*": ["src/*"],
       "@UnitTest/*": ["unit-test/*"]
     }

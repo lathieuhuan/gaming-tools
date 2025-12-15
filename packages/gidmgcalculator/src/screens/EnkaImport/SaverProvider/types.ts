@@ -1,9 +1,9 @@
 import type { ArtifactType } from "@/types";
-import type { IDbArtifact, IUserCharacter, IDbWeapon } from "@/types/db-entity";
+import type { IDbArtifact, IDbCharacter, IDbWeapon } from "@/types/db-entity";
 import type { PartiallyOptional } from "rond";
 
 export type ExistedItems = Partial<Record<ArtifactType, IDbArtifact>> & {
-  character?: IUserCharacter;
+  character?: IDbCharacter;
   weapon?: IDbWeapon;
 };
 

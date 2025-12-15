@@ -1,10 +1,5 @@
 import type { AppWeapon, WeaponType } from "@/types";
-import type { IWeapon } from "@/types";
-import type { GOODWeapon } from "@/types/GOOD.types";
 import type { DataControl } from "./app-data.types";
-import { convertGOODLevel, toGOODKey } from "./utils";
-
-export type ConvertedWeapon = IWeapon;
 
 const map = new Map<number, AppWeapon>();
 
@@ -57,22 +52,5 @@ export class AppWeaponService {
     }
 
     return undefined;
-  }
-
-  convertGOOD(weapon: GOODWeapon, seedId: number): ConvertedWeapon | undefined {
-    const data = this.weapons.find(({ data }) => toGOODKey(data.name) === weapon.key)?.data;
-
-    if (!data) {
-      return undefined;
-    }
-
-    return {
-      ID: seedId,
-      code: data.code,
-      type: data.type,
-      level: convertGOODLevel(weapon),
-      refi: weapon.refinement,
-      data,
-    };
   }
 }

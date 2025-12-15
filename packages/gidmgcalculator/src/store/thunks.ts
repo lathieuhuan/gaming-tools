@@ -155,7 +155,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
       }
     });
 
-    const newDbSetup = toDbSetup(setup);
+    const newDbSetup = toDbSetup(setup, { name });
 
     newDbSetup.main.weaponID = weaponID;
     newDbSetup.main.artifactIDs = artifactIDs;

@@ -1,11 +1,9 @@
 import { FaCalculator } from "react-icons/fa";
 import { Button } from "rond";
 
-import { GenshinUserBuild } from "@/services/enka";
-import { ARTIFACT_TYPES } from "@Calculation";
-import { useSelectedBuildState } from "../DataImportProvider";
+import type { GenshinUserBuild } from "@/services/enka";
 
-import { BuildArtifact } from "../_components/BuildArtifact";
+import { BuildArtifacts } from "../_components/BuildArtifacts";
 import { BuildCharacter } from "./BuildCharacter";
 import { BuildWeapon } from "./BuildWeapon";
 
@@ -16,10 +14,9 @@ type BuildOverviewProps = {
 };
 
 export function BuildOverview({ build, onSave, onCalculate }: BuildOverviewProps) {
-  const { name, character } = build;
-  const buildName = name || character?.name;
-
-  const [selectedBuild, setSelectedBuild] = useSelectedBuildState();
+  const { name } = build;
+  const { basic, data } = build.character;
+  const buildName = name || data.name;
 
   return (
     <div className="px-3 py-4 bg-dark-1 rounded-lg overflow-hidden">
@@ -27,11 +24,11 @@ export function BuildOverview({ build, onSave, onCalculate }: BuildOverviewProps
         <BuildCharacter build={build} />
 
         <div className="ml-3 text-sm">
-          <p className={`text-lg font-bold text-${character.data.vision}`}>{buildName}</p>
+          <p className={`text-lg font-bold text-${data.vision}`}>{buildName}</p>
           <p>
-            {character.level} <span className="text-light-hint opacity-50">|</span> C
-            {character.cons} <span className="text-light-hint opacity-50">|</span> {character.NAs} -{" "}
-            {character.ES} - {character.EB}
+            {basic.level} <span className="text-light-hint opacity-50">|</span> C{basic.cons}{" "}
+            <span className="text-light-hint opacity-50">|</span> {basic.NAs} - {basic.ES} -{" "}
+            {basic.EB}
           </p>
         </div>
 
@@ -43,26 +40,16 @@ export function BuildOverview({ build, onSave, onCalculate }: BuildOverviewProps
 
       <div className="mt-4 grid grid-cols-6 gap-2">
         <BuildWeapon build={build} />
-
-        {build.artifacts.map((artifact, index) => (
-          <BuildArtifact
-            key={index}
-            artifact={artifact}
-            selectedBuild={selectedBuild}
-            artifactType={ARTIFACT_TYPES[index]}
-            onClick={() => setSelectedBuild({ ...build, detailType: index })}
-          />
-        ))}
+        <BuildArtifacts build={build} />
       </div>
     </div>
   );
 }
 
 export function BuildOverviewMobile({ build, onSave, onCalculate }: BuildOverviewProps) {
-  const { name, character } = build;
-  const buildName = name || character?.name;
-
-  const [selectedBuild, setSelectedBuild] = useSelectedBuildState();
+  const { name } = build;
+  const { basic, data } = build.character;
+  const buildName = name || data.name;
 
   return (
     <div className="rounded-lg overflow-hidden">
@@ -71,13 +58,12 @@ export function BuildOverviewMobile({ build, onSave, onCalculate }: BuildOvervie
           <BuildCharacter build={build} />
 
           <div className="ml-3 text-sm">
-            <p className={`text-lg font-bold text-${character.data.vision}`}>{buildName}</p>
+            <p className={`text-lg font-bold text-${data.vision}`}>{buildName}</p>
             <p>
-              {character.level} <span className="text-light-hint opacity-50">|</span> C
-              {character.cons}
+              {basic.level} <span className="text-light-hint opacity-50">|</span> C{basic.cons}
             </p>
             <p>
-              {character.NAs} - {character.ES} - {character.EB}
+              {basic.NAs} - {basic.ES} - {basic.EB}
             </p>
           </div>
 
@@ -85,15 +71,7 @@ export function BuildOverviewMobile({ build, onSave, onCalculate }: BuildOvervie
         </div>
 
         <div className="mt-4 grid grid-cols-5 gap-2">
-          {build.artifacts.map((artifact, index) => (
-            <BuildArtifact
-              key={index}
-              artifact={artifact}
-              selectedBuild={selectedBuild}
-              artifactType={ARTIFACT_TYPES[index]}
-              onClick={() => setSelectedBuild({ ...build, detailType: index })}
-            />
-          ))}
+          <BuildArtifacts build={build} />
         </div>
       </div>
 

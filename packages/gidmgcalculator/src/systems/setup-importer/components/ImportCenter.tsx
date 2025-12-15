@@ -81,10 +81,11 @@ export function SetupImportCenter({ params, onFinish, ...manageInfo }: SetupImpo
 
     const currentMain = main.serialize();
     const importedMain = params.main.serialize();
-    const currentTarget = target.serialize();
-    const importedTarget = params.target.serialize();
     const sameChar = isEqual(main, importedMain);
-    const sameTarget = isEqual(currentTarget, importedTarget);
+
+    const currentTarget = target.serialize();
+    const importedTarget = params.target?.serialize();
+    const sameTarget = !importedTarget || isEqual(currentTarget, importedTarget);
 
     if (sameChar && sameTarget) {
       delay(() =>
@@ -100,7 +101,7 @@ export function SetupImportCenter({ params, onFinish, ...manageInfo }: SetupImpo
       currentMain,
       currentTarget,
       importedMain,
-      importedTarget,
+      importedTarget: importedTarget ?? currentTarget,
       askForCharacter: !sameChar,
       askForTarget: !sameTarget,
     };

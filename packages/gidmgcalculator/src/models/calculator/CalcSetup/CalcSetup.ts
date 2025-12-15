@@ -1,3 +1,4 @@
+import type { PartiallyRequiredOnly } from "rond";
 import type {
   AppArtifact,
   AppCharacter,
@@ -10,7 +11,6 @@ import type { ArtifactPieceUpdateData, CloneOptions, MainUpdateData } from "./ty
 
 import { calculateSetup } from "@/calculation-new/calculator";
 import { Artifact, ArtifactGear, CalcCharacter, Team, Weapon } from "@/models/base";
-import { isAutoRsnElmt } from "@/models/base/utils/isAutoRsnElmt";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
 import { createArtifactBasic, CreateArtifactParams, createTarget } from "@/utils/Entity";
@@ -27,13 +27,12 @@ import {
   createWeaponBuffCtrls,
 } from "../modifier";
 import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
-import { PartiallyRequiredOnly } from "rond";
 
 type TeammateUpdateData = Partial<
   Pick<ITeammate, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls">
 >;
 
-type CalcSetupConstructInfo = PartiallyRequiredOnly<CalcSetupBaseConstructInfo, "main">;
+export type CalcSetupConstructInfo = PartiallyRequiredOnly<CalcSetupBaseConstructInfo, "main">;
 
 export class CalcSetup extends CalcSetupBase {
   //
@@ -52,6 +51,13 @@ export class CalcSetup extends CalcSetupBase {
       customBuffCtrls = [],
       customDebuffCtrls = [],
       target = createTarget({ code: 0 }),
+      result = {
+        NAs: {},
+        ES: {},
+        EB: {},
+        RXN: {},
+        WP: {},
+      },
     } = info;
     const defaultRsnModCtrls = createRsnModCtrls(team);
     const {
@@ -76,6 +82,7 @@ export class CalcSetup extends CalcSetupBase {
       teammates,
       team,
       target,
+      result,
     });
 
     this.teamBuffCtrls = info.teamBuffCtrls || createTeamBuffCtrls(this);
@@ -270,14 +277,8 @@ export class CalcSetup extends CalcSetupBase {
   }
 
   removeTeammate(teammate: CalcTeammate) {
-    // const removedElmt = teammate.data.vision;
     const newTeammates = this.teammates.filter((tm) => tm.name !== teammate.name);
     const newTeam = new Team([this.main, ...newTeammates]);
-
-    // TODO: check if we need this
-    // if (isAutoRsnElmt(removedElmt) && !newTeam.resonances.includes(removedElmt)) {
-    //   this.rsnBuffCtrls = this.rsnBuffCtrls.filter((ctrl) => ctrl.element !== removedElmt);
-    // }
 
     this.team = newTeam;
     this.teammates = newTeammates;

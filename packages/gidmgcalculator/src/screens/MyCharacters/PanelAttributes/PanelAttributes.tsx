@@ -1,4 +1,4 @@
-import { LoadingSpin, clsx } from "rond";
+import { clsx } from "rond";
 
 import { AttributeTable, CharacterIntro } from "@/components";
 import { useDispatch } from "@Store/hooks";

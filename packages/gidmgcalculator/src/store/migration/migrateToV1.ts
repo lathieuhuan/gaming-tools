@@ -1,7 +1,6 @@
-import { IArtifactModCtrlBasic, IArtifactBasic, IDbArtifact } from "@/types";
+import { IDbArtifact } from "@/types";
 import { UserdbState, initialState } from "@Store/userdb-slice";
 import { UserDatabaseV0 } from "./migration.types";
-import { GeneralCalc } from "@Calculation";
 
 export const migrateSetupsToV1 = (
   setups: UserDatabaseV0["userSetups"] = [],

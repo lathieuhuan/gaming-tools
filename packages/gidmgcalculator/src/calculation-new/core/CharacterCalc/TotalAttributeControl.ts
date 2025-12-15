@@ -95,7 +95,7 @@ export class TotalAttributeControl {
     const base = this.totalAttr[key].base;
     let total = base + this.totalAttr[key].fixedBonus;
 
-    if (fixedOnly) {
+    if (!fixedOnly) {
       total += this.totalAttr[key].dynamicBonus;
     }
 
@@ -103,7 +103,7 @@ export class TotalAttributeControl {
       const percent = this.totalAttr[`${key}_`];
       let totalPercent = percent.base + percent.fixedBonus;
 
-      if (fixedOnly) {
+      if (!fixedOnly) {
         totalPercent += percent.dynamicBonus;
       }
 
@@ -114,7 +114,7 @@ export class TotalAttributeControl {
   }
 
   finalize() {
-    const totalAttrs = {} as Record<TypeCounterKey<TotalAttributes>, number>;
+    const totalAttrs = new TypeCounter<TypeCounterKey<TotalAttributes>>();
 
     for (const key of ATTRIBUTE_STAT_TYPES) {
       if (key === "hp_" || key === "atk_" || key === "def_") {
@@ -122,13 +122,13 @@ export class TotalAttributeControl {
       }
 
       if (isCoreStat(key)) {
-        totalAttrs[`base_${key}`] = this.totalAttr[key].base;
+        totalAttrs.add(`base_${key}`, this.totalAttr[key].base);
       }
 
-      totalAttrs[key] = this.getTotal(key);
+      totalAttrs.add(key, this.getTotal(key));
     }
 
-    return new TypeCounter(totalAttrs);
+    return totalAttrs;
   }
 
   clone() {

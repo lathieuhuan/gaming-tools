@@ -1,4 +1,4 @@
-import { Level } from "@Calculation";
+import type { Level } from "@/types";
 
 export type AppSettings = {
   separateCharInfo: boolean;

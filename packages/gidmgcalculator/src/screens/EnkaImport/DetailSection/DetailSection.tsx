@@ -1,16 +1,18 @@
 import { ReactNode } from "react";
 import { clsx } from "rond";
 
-import { useTranslation } from "@/hooks";
+import { CharacterCalc } from "@/calculation-new/core/CharacterCalc";
 import { ARTIFACT_TYPES } from "@/constants";
-import { calculationStatsOfBuild } from "../_logic/calculationStatsOfBuild";
-import { useSaver } from "../SaverProvider";
+import { useTranslation } from "@/hooks";
+import { Artifact, ArtifactGear, CalcCharacter, Weapon } from "@/models/base";
+import Array_ from "@/utils/Array";
 import { useSelectedBuildState } from "../DataImportProvider";
+import { useSaver } from "../SaverProvider";
 
 import { AttributeTable } from "@/components";
 import { ArtifactCard } from "@/components/ArtifactCard";
 import { WeaponCard } from "@/components/WeaponCard";
-import { BuildArtifact } from "../_components/BuildArtifact";
+import { BuildArtifacts } from "../_components/BuildArtifacts";
 import { TabHeader } from "../_components/TabHeader";
 
 type DetailSectionProps = {
@@ -34,25 +36,51 @@ export function DetailSection({ className, isMobile, onBack }: DetailSectionProp
   let saveType: "WEAPON" | number | undefined;
 
   switch (detailType) {
-    case "CHARACTER":
+    case "CHARACTER": {
+      const atfPieces = Array_.truthify(artifacts).map(
+        (artifact) => new Artifact(artifact, artifact.data)
+      );
+      const calcCharacter = new CalcCharacter(
+        {
+          ...character.basic,
+          weapon: new Weapon(weapon, weapon.data),
+          atfGear: new ArtifactGear(atfPieces),
+        },
+        character.data
+      );
+      const calc = new CharacterCalc(calcCharacter, calcCharacter.data, calcCharacter.team);
+
+      calc.initTotalAttr();
+
       extraTitle = "Attributes";
       content = (
         <AttributeTable
           className="max-h-full hide-scrollbar border-2 border-dark-3 rounded"
-          attributes={calculationStatsOfBuild(selectedBuild).totalAttr}
+          attributes={calc.totalAttrCtrl.finalize()}
         />
       );
       break;
+    }
     case "WEAPON":
       extraTitle = "Weapon";
-      content = <WeaponCard wrapperCls="max-h-full hide-scrollbar" weapon={weapon} />;
+      content = (
+        <WeaponCard
+          wrapperCls="max-h-full hide-scrollbar"
+          weapon={new Weapon(weapon, weapon.data)}
+        />
+      );
       saveType = "WEAPON";
       break;
-    default:
+    default: {
+      const artifact = artifacts[detailType];
+
       extraTitle = t(ARTIFACT_TYPES[detailType]);
-      content = <ArtifactCard artifact={artifacts[detailType] ?? undefined} />;
+      content = (
+        <ArtifactCard artifact={artifact ? new Artifact(artifact, artifact?.data) : undefined} />
+      );
       saveType = detailType;
       break;
+    }
   }
 
   const handleSave = () => {
@@ -63,7 +91,7 @@ export function DetailSection({ className, isMobile, onBack }: DetailSectionProp
     <div className={clsx("flex flex-col", className)}>
       <div className="flex">
         <TabHeader sub={extraTitle} onBack={onBack}>
-          <span className={`text-${character.data.vision}`}>{character.name}</span>
+          <span className={`text-${character.data.vision}`}>{character.data.name}</span>
         </TabHeader>
 
         {/* <Button icon={<FaSave />} boneOnly onClick={handleSave} /> */}
@@ -74,16 +102,7 @@ export function DetailSection({ className, isMobile, onBack }: DetailSectionProp
       {isMobile && typeof selectedBuild.detailType === "number" && (
         <div className="mt-4 flex justify-center">
           <div className="w-[342px] flex gap-2">
-            {selectedBuild.artifacts.map((artifact, index) => (
-              <BuildArtifact
-                key={index}
-                showLevel={false}
-                artifact={artifact}
-                selectedBuild={selectedBuild}
-                artifactType={ARTIFACT_TYPES[index]}
-                onClick={() => setSelectedBuild({ ...selectedBuild, detailType: index })}
-              />
-            ))}
+            <BuildArtifacts build={selectedBuild} showLevel={false} />
           </div>
         </div>
       )}

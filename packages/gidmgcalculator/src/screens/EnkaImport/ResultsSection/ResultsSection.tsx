@@ -1,15 +1,16 @@
 import { clsx } from "rond";
 
-import { $AppSettings } from "@/services";
-import { GenshinUser, GenshinUserBuild } from "@/services/enka";
+import { ArtifactGear, CalcCharacter } from "@/models/base";
+import { GenshinUserBuild } from "@/services/enka";
 import { useSetupImporter } from "@/systems/setup-importer";
-import Setup_ from "@/utils/Setup";
+import Array_ from "@/utils/Array";
+import { createArtifact, createWeapon } from "@/utils/Entity";
+import IdStore from "@/utils/IdStore";
 import { useDataImportState } from "../DataImportProvider";
 import { useSaver } from "../SaverProvider";
 
 import { TabHeader } from "../_components/TabHeader";
 import { BuildOverviews } from "./BuildOverviews";
-import { createTarget } from "@/utils/Entity";
 
 type ResultsSectionProps = {
   className?: string;
@@ -25,26 +26,30 @@ export function ResultsSection({ className, isMobile, onBack }: ResultsSectionPr
   const hasAnyBuild = !!genshinUser?.builds?.length;
 
   const handleCalculate = (build: GenshinUserBuild) => {
-    const { data: _, ...character } = build.character;
-    const { data: __, ...weapon } = build.weapon;
-    const artifacts = build.artifacts.map((artifact) => {
-      if (artifact) {
-        const { data, ...rest } = artifact;
-        return rest;
-      }
-      return null;
-    });
+    const idStore = new IdStore();
+    const weapon = createWeapon(build.weapon, build.weapon.data, idStore);
+    const artifacts = Array_.truthify(build.artifacts).map((artifact) =>
+      createArtifact(artifact, artifact.data, idStore)
+    );
+    const atfGear = new ArtifactGear(artifacts);
+    const { basic, data } = build.character;
+    const character = new CalcCharacter(
+      {
+        ...basic,
+        weapon,
+        atfGear,
+      },
+      data
+    );
 
     setupImporter.import({
       name: build.name,
       type: "original",
-      calcSetup: Setup_.createCalcSetup({
-        char: character,
-        weapon,
-        artifacts,
-      }),
-      target: createTarget({ code: 0 }),
-      importSource: "ENKA",
+      ID: idStore.gen(),
+      params: {
+        main: character,
+      },
+      source: "ENKA",
     });
   };
 

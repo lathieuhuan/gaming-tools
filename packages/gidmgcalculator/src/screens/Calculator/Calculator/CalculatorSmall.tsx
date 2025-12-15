@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { useCalcStore } from "@Store/calculator";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 import { getCards } from "./config";
@@ -10,7 +11,7 @@ import { BottomNavSmall } from "./BottomNavSmall";
 
 export function CalculatorSmall() {
   const dispatch = useDispatch();
-  const touched = useSelector((state) => state.calculator.setupManageInfos.length !== 0);
+  const touched = useCalcStore((state) => state.setupManagers.length !== 0);
   const isModernUI = useSelector((state) => state.ui.isTabLayout);
 
   const [activePanelI, setActivePanelI] = useState(0);

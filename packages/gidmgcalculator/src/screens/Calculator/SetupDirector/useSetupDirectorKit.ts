@@ -135,8 +135,6 @@ export function useSetupDirectorKit() {
       return;
     }
 
-    console.log(tempSetups, tempStandardId);
-
     updateMultiSetups(tempSetups, tempStandardId);
     onSuccess?.();
   };

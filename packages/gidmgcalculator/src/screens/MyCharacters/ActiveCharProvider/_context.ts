@@ -1,9 +1,9 @@
 import { createContext } from "react";
 
-import type { Artifact, Character } from "@/models/base";
+import type { Artifact, CalcCharacter } from "@/models/base";
 import type { IArtifactGearSlot } from "@/types";
 
-export const ActiveCharContext = createContext<Character | null>(null);
+export const ActiveCharContext = createContext<CalcCharacter | null>(null);
 
 export type ActiveCharAction = {
   requestSwitchCharacter: () => void;

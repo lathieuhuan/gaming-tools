@@ -5,7 +5,7 @@ import { Button, Modal, notification } from "rond";
 import type { UploadedData } from "../types";
 
 import { DOWNLOADED_DATA_VERSION } from "@/constants";
-import { convertFromGoodFormat } from "../utils/convertFromGoodFormat";
+import { convertGOODData } from "../utils/convertGOODData";
 import { convertToV3_1 } from "../utils/convertToV3_1";
 
 interface FileUploadProps {
@@ -25,7 +25,7 @@ const FileUploadCore = ({ onSuccessUploadFile }: FileUploadProps) => {
       reader.onload = function (event) {
         try {
           let data = JSON.parse((event.target?.result as string) || "");
-          if (isJson) data = convertFromGoodFormat(data);
+          if (isJson) data = convertGOODData(data);
 
           const version = +data.version;
 

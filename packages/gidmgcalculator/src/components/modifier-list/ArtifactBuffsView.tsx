@@ -1,52 +1,20 @@
 import type { CalcTeammate } from "@/models/calculator";
-import type { IArtifactBuffCtrl } from "@/types";
+import type { IArtifactBuffCtrl, ITeammateArtifactBuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
 import { getArtifactDesc } from "@/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { ModifierContainer } from "./ModifierContainer";
 
-type RenderArtifactBuffsArgs = {
-  mutable?: boolean;
-  keyPrefix: string | number;
-  headingSuffix?: string;
-  bonusLv?: number;
-  ctrls: IArtifactBuffCtrl[];
-  getHanlders?: (ctrl: IArtifactBuffCtrl) => ModifierHanlders;
-};
-
-function renderArtifactModifiers({
-  keyPrefix,
-  headingSuffix,
-  mutable,
-  ctrls,
-  getHanlders,
-}: RenderArtifactBuffsArgs) {
-  return ctrls.map((ctrl) => {
-    const { data, setData } = ctrl;
-
-    return (
-      <GenshinModifierView
-        key={`${keyPrefix}-${ctrl.code}-${ctrl.id}`}
-        mutable={mutable}
-        checked={ctrl.activated}
-        heading={`${setData.name} / ${headingSuffix}`}
-        description={getArtifactDesc(setData, data)}
-        inputs={ctrl.inputs}
-        inputConfigs={data.inputConfigs}
-        isTeamMod={!!data.teamBuffId}
-        {...getHanlders?.(ctrl)}
-      />
-    );
-  });
-}
-
 type ArtifactBuffsViewProps = {
   mutable?: boolean;
   artBuffCtrls: IArtifactBuffCtrl[];
   teammates: CalcTeammate[];
   getSelfHandlers?: (ctrl: IArtifactBuffCtrl) => ModifierHanlders;
-  getTeammateHandlers?: (teammate: CalcTeammate, ctrl: IArtifactBuffCtrl) => ModifierHanlders;
+  getTeammateHandlers?: (
+    teammate: CalcTeammate,
+    ctrl: ITeammateArtifactBuffCtrl
+  ) => ModifierHanlders;
 };
 
 export function ArtifactBuffsView({
@@ -58,26 +26,48 @@ export function ArtifactBuffsView({
 }: ArtifactBuffsViewProps) {
   return (
     <ModifierContainer type="buffs" mutable={mutable}>
-      {renderArtifactModifiers({
-        mutable,
-        keyPrefix: "main",
-        headingSuffix: "self",
-        ctrls: artBuffCtrls,
-        getHanlders: getSelfHandlers,
+      {artBuffCtrls.map((ctrl) => {
+        const { data, setData } = ctrl;
+
+        return (
+          <GenshinModifierView
+            key={`main-${ctrl.code}-${ctrl.id}`}
+            mutable={mutable}
+            checked={ctrl.activated}
+            heading={`${setData.name} / self`}
+            description={getArtifactDesc(setData, data)}
+            inputs={ctrl.inputs}
+            inputConfigs={data.inputConfigs}
+            isTeamMod={!!data.teamBuffId}
+            {...getSelfHandlers?.(ctrl)}
+          />
+        );
       })}
 
       {teammates
         .map((teammate) => {
-          if (!teammate.artifact) {
+          const { artifact } = teammate;
+
+          if (!artifact) {
             return null;
           }
 
-          return renderArtifactModifiers({
-            mutable,
-            keyPrefix: teammate.name,
-            headingSuffix: teammate.name,
-            ctrls: teammate.artifact?.buffCtrls,
-            getHanlders: (ctrl) => getTeammateHandlers?.(teammate, ctrl) || {},
+          return artifact.buffCtrls.map((ctrl) => {
+            const { data } = ctrl;
+
+            return (
+              <GenshinModifierView
+                key={`${teammate.name}-${artifact.data.code}-${ctrl.id}`}
+                mutable={mutable}
+                checked={ctrl.activated}
+                heading={`${artifact.data.name} / ${teammate.name}`}
+                description={getArtifactDesc(artifact.data, data)}
+                inputs={ctrl.inputs}
+                inputConfigs={data.inputConfigs}
+                isTeamMod={!!data.teamBuffId}
+                {...getTeammateHandlers?.(teammate, ctrl)}
+              />
+            );
           });
         })
         .flat()}

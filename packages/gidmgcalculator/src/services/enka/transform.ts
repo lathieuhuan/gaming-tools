@@ -1,47 +1,45 @@
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import { ConvertedArtifact } from "@/services/app-data";
-import Entity_ from "@/utils/Entity";
-import { ARTIFACT_TYPES } from "@Calculation";
-import { GenshinUser, GenshinUserBuild, GenshinUserResponse } from "./types";
+import type { IArtifact } from "@/types";
+import type { GenshinUser, GenshinUserBuild, GenshinUserResponse } from "./types";
+
+import { ARTIFACT_TYPES } from "@/constants";
+import { createArtifact, createWeapon } from "@/utils/Entity";
+import { convertGOODArtifact, convertGOODCharacter, convertGOODWeapon } from "@/utils/GOOD";
+import IdStore from "@/utils/IdStore";
 
 export function transformResponse(response: GenshinUserResponse): GenshinUser {
   const builds: GenshinUserBuild[] = [];
-  let seedId = Date.now();
+  const idStore = new IdStore();
 
   for (const build of response.builds) {
-    const character = $AppCharacter.convertGOOD(build.character);
+    const character = convertGOODCharacter(build.character);
 
-    if (character) {
-      const id = seedId++;
-      let weapon = $AppWeapon.convertGOOD(build.weapon, id);
+    if (!character) {
+      continue;
+    }
 
-      if (!weapon) {
-        const defaultWeapon = Entity_.createWeapon({ type: character.data.weaponType }, id);
+    const convertedWeapon = convertGOODWeapon(build.weapon, idStore.gen());
 
-        weapon = {
-          ...defaultWeapon,
-          data: $AppWeapon.get(defaultWeapon.code)!,
-        };
+    const weapon = convertedWeapon
+      ? createWeapon(convertedWeapon, convertedWeapon.data, idStore)
+      : createWeapon({ type: character.data.weaponType }, undefined, idStore);
+
+    const artifacts = ARTIFACT_TYPES.map<IArtifact | null>((type) => {
+      const GOODArtifact = build.artifacts.find((artifact) => artifact?.slotKey === type);
+
+      if (!GOODArtifact) {
+        return null;
       }
 
-      const artifacts = ARTIFACT_TYPES.map<ConvertedArtifact | null>((type) => {
-        const artifact = build.artifacts.find((artifact) => artifact?.slotKey === type);
-        const converted = artifact ? $AppArtifact.convertGOOD(artifact, seedId) : undefined;
+      const converted = convertGOODArtifact(GOODArtifact, idStore.gen());
 
-        if (converted) {
-          seedId++;
-          return converted;
-        }
+      return converted ? createArtifact(converted, converted.data, idStore) : null;
+    });
 
-        return null;
-      });
-
-      builds.push({
-        character,
-        weapon,
-        artifacts,
-      });
-    }
+    builds.push({
+      character,
+      weapon,
+      artifacts,
+    });
   }
 
   return {

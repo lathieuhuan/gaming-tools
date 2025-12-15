@@ -1,17 +1,18 @@
 import { clsx, ItemCase } from "rond";
 
-import type { ConvertedArtifact } from "@/services";
-import type { ArtifactType } from "@/types";
+import type { ArtifactType, IArtifact } from "@/types";
 import type { SelectedBuild } from "../types";
 
 import { ARTIFACT_TYPES } from "@/constants";
-import Entity_ from "@/utils/Entity";
+import { Artifact } from "@/models/base";
+import { GenshinUserBuild } from "@/services/enka";
+import { useSelectedBuildState } from "../DataImportProvider";
 
 import { GenshinImage, ItemThumbnail } from "@/components";
 
 type BuildArtifactProps = {
   className?: string;
-  artifact?: ConvertedArtifact | null;
+  artifact?: IArtifact | null;
   selectedBuild?: SelectedBuild;
   artifactType: ArtifactType;
   showLevel?: boolean;
@@ -29,7 +30,7 @@ export function BuildArtifact({
   if (!artifact) {
     return (
       <div className={clsx("p-2 bg-dark-3 rounded opacity-50", className)}>
-        <GenshinImage className="w-full" src={Entity_.artifactIconOf(artifactType)} />
+        <GenshinImage className="w-full" src={Artifact.iconOf(artifactType)} />
       </div>
     );
   }
@@ -54,5 +55,29 @@ export function BuildArtifact({
         />
       )}
     </ItemCase>
+  );
+}
+
+type BuildArtifactsProps = {
+  build: GenshinUserBuild;
+  showLevel?: boolean;
+};
+
+export function BuildArtifacts({ build, showLevel }: BuildArtifactsProps) {
+  const [selectedBuild, setSelectedBuild] = useSelectedBuildState();
+
+  return (
+    <>
+      {build.artifacts.map((artifact, index) => (
+        <BuildArtifact
+          key={index}
+          showLevel={showLevel}
+          artifact={artifact}
+          selectedBuild={selectedBuild}
+          artifactType={ARTIFACT_TYPES[index]}
+          onClick={() => setSelectedBuild({ ...build, detailType: index })}
+        />
+      ))}
+    </>
   );
 }

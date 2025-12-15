@@ -1,10 +1,5 @@
 import type { AppArtifact, ArtifactDebuff, ArtifactType } from "@/types";
-import type { IArtifact } from "@/types";
-import type { GOODArtifact } from "@/types/GOOD.types";
 import type { DataControl } from "./app-data.types";
-import { convertGOODStatKey, toGOODKey } from "./utils";
-
-export type ConvertedArtifact = IArtifact;
 
 type DebuffArtifact = {
   data: AppArtifact;
@@ -85,27 +80,5 @@ export class AppArtifactService {
       return { beta: data.beta, name, icon };
     }
     return undefined;
-  }
-
-  convertGOOD(artifact: GOODArtifact, seedId: number): ConvertedArtifact | undefined {
-    const data = this.artifacts.find(({ data }) => toGOODKey(data.name) === artifact.setKey)?.data;
-
-    if (!data) {
-      return undefined;
-    }
-
-    return {
-      ID: seedId++,
-      code: data.code,
-      type: artifact.slotKey,
-      rarity: artifact.rarity,
-      mainStatType: convertGOODStatKey(artifact.mainStatKey) || "atk",
-      subStats: artifact.substats.map((substat) => ({
-        type: convertGOODStatKey(substat.key) || "atk",
-        value: substat.value,
-      })),
-      level: artifact.level,
-      data,
-    };
   }
 }

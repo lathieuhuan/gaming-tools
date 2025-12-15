@@ -1,14 +1,15 @@
 import { ReactNode, useId, useState } from "react";
 import { Modal } from "rond";
 
-import { ConvertedArtifact, ConvertedWeapon } from "@/services/app-data";
-import { GenshinUserBuild } from "@/services/enka";
+import type { GenshinUserBuild } from "@/services/enka";
+import type { IArtifactBasic, IWeaponBasic } from "@/types";
+import type { ExistedItems } from "./types";
+
 import { useStore } from "@/systems/dynamic-store";
 import Array_ from "@/utils/Array";
 import Object_ from "@/utils/Object";
 import { useDispatch } from "@Store/hooks";
 import { updateUserWeapon } from "@Store/userdb-slice";
-import { ExistedItems } from "./types";
 import { SaverContext } from "./context";
 
 import { SaveForm, SaveFormProps } from "./SaveForm";
@@ -33,7 +34,7 @@ export function SaverProvider({ children }: SaverProviderProps) {
     const userdb = store.select((state) => state.userdb);
 
     const result: ExistedItems = {
-      character: userdb.userChars.find((char) => char.name === build.character.name),
+      character: userdb.userChars.find((char) => char.name === build.character.data.name),
       weapon: userdb.userWps.find((wp) => wp.ID === build.weapon.ID),
     };
 
@@ -51,7 +52,7 @@ export function SaverProvider({ children }: SaverProviderProps) {
   const handleSaveFormSubmit: SaveFormProps["onSubmit"] = (selections, build) => {
     // Get existed items again for the case user changed the userdb in other tabs
     const existedItems = getExistedItems(build);
-    const characterName = build.character.name;
+    const characterName = build.character.data.name;
 
     if (selections.weapon === "OVERWRITE") {
       // There must be an existed weapon -> Update this weapon
@@ -74,11 +75,11 @@ export function SaverProvider({ children }: SaverProviderProps) {
     }
   };
 
-  const saveWeapon = (weapon: ConvertedWeapon) => {
+  const saveWeapon = (weapon: IWeaponBasic) => {
     //
   };
 
-  const saveArtifact = (artifact: ConvertedArtifact) => {
+  const saveArtifact = (artifact: IArtifactBasic) => {
     //
   };
 

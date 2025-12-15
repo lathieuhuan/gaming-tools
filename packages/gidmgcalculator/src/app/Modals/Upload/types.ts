@@ -1,10 +1,10 @@
-import { IDbArtifact, UserCharacter, UserComplexSetup, UserSetup, IDbWeapon } from "@/types";
+import type { IDbArtifact, IDbCharacter, IDbComplexSetup, IDbSetup, IDbWeapon } from "@/types";
 
 export interface UploadedData {
-  characters: UserCharacter[];
+  characters: IDbCharacter[];
   weapons: IDbWeapon[];
   artifacts: IDbArtifact[];
-  setups: (UserSetup | UserComplexSetup)[];
+  setups: (IDbSetup | IDbComplexSetup)[];
 }
 
 export type UploadStep = "SELECT_OPTION" | "CHECK_WEAPONS" | "CHECK_ARTIFACTS" | "FINISH";

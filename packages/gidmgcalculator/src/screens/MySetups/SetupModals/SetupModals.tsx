@@ -46,15 +46,13 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
         onClose={closeModal}
       />
 
-      {/* TODO */}
-      {/* <Modal.Core active={modalType === "SHARE_SETUP"} preset="small" onClose={closeModal}>
+      <Modal.Core active={modalType === "SHARE_SETUP"} preset="small" onClose={closeModal}>
         <SetupExporter
-          setupName={setup.name}
-          calcSetup={Setup_.userSetupToCalcSetup(setup, weapon, artifacts)}
-          target={setup.target}
+          setupName={setupName}
+          calcSetup={setup}
           onClose={closeModal}
         />
-      </Modal.Core> */}
+      </Modal.Core>
 
       <Modal
         active={modalType === "WEAPON"}

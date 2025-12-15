@@ -1,4 +1,3 @@
-import { OptimizeDeptProvider } from "@/systems/optimize-dept";
 import { ImporterProvider } from "@/systems/setup-importer";
 
 import { Greeter } from "./Greeter";
@@ -10,16 +9,14 @@ import { Tracker } from "./Tracker";
 export function App() {
   return (
     <ImporterProvider>
-      <OptimizeDeptProvider>
-        <div className="App h-screen pt-8 text-light-1 bg-light-1">
-          <Navbar />
-          <Main />
+      <div className="App h-screen pt-8 text-light-1 bg-light-1">
+        <Navbar />
+        <Main />
 
-          <Greeter />
-          <Modals />
-          <Tracker />
-        </div>
-      </OptimizeDeptProvider>
+        <Greeter />
+        <Modals />
+        <Tracker />
+      </div>
     </ImporterProvider>
   );
 }

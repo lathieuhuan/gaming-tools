@@ -1,4 +1,4 @@
-import { ArtifactType } from "@Calculation";
+import type { ArtifactType } from "@/types";
 
 export type GOODStatKey =
   | "hp"
@@ -44,7 +44,7 @@ export type GOODArtifact = {
   mainStatKey: GOODStatKey;
   substats: GOODSubstat[];
   lock: boolean;
-  location: string;
+  location: string; // CharacterKey | ""
 };
 
 type GOODSubstat = {
@@ -56,5 +56,5 @@ export type GOODWeapon = GOODAscendable & {
   key: string;
   refinement: number;
   lock: boolean;
-  location: string;
+  location: string; // CharacterKey | ""
 };

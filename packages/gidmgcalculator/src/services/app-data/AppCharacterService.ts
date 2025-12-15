@@ -1,18 +1,14 @@
 import { AppCharacter, CharacterInnateBuff, TalentType } from "@/types";
 
-import type { Character, TravelerInfo } from "@/types";
-import type { GOODCharacter } from "@/types/GOOD.types";
+import type { TravelerInfo } from "@/types";
 import type { StandardResponse } from "../services.types";
 import type { DataControl, ServiceSubscriber, TravelerProps } from "./app-data.types";
 
 import { BACKEND_URL, DEFAULT_TRAVELER, GENSHIN_DEV_URL } from "@/constants";
 import { BaseService } from "./BaseService";
 import { cannedKnowledgeBuff, skirksTrainingBuff } from "./config";
-import { convertGOODLevel } from "./utils";
 
 type CharacterSubscriber = ServiceSubscriber<AppCharacter>;
-
-export type ConvertedCharacter = Character & { data: AppCharacter };
 
 export class AppCharacterService extends BaseService {
   private readonly NO_DESCRIPTION_MSG = "[Description missing]";
@@ -286,27 +282,5 @@ export class AppCharacterService extends BaseService {
 
     const travelerProps = this.getTravelerProps(this.traveler);
     this.characters.forEach((control) => this.updateIfTraveler(control.data, travelerProps));
-  }
-
-  // ==== CONVERT GOOD ====
-
-  convertGOOD(character: GOODCharacter): ConvertedCharacter | undefined {
-    const data = this.characters.find(({ data }) => {
-      return data.name === character.key || data.GOOD === character.key;
-    })?.data;
-
-    if (!data) {
-      return undefined;
-    }
-
-    return {
-      name: data.name,
-      level: convertGOODLevel(character),
-      cons: character.constellation,
-      NAs: character.talent.auto,
-      ES: character.talent.skill,
-      EB: character.talent.burst,
-      data,
-    };
   }
 }

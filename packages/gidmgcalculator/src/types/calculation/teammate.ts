@@ -9,7 +9,7 @@ import type {
 } from "../app-entity";
 import type { AppWeapon } from "../app-weapon";
 import type { ElementCount, ElementType, TalentType } from "../common";
-import type { ITeammateArtifactBasic, ITeammateBasic, ITeammateWeaponBasic } from "../entity";
+import type { ITeammateArtifactBasic, ITeammateBasicCore, ITeammateWeaponBasic } from "../entity";
 import type {
   IAbilityBuffCtrl,
   IAbilityDebuffCtrl,
@@ -59,7 +59,7 @@ export type ITeammateArtifact = ITeammateArtifactBasic & {
 //   value: number;
 // };
 
-export type ITeammateInfo = ITeammateBasic & {
+export type ITeammateInfo = ITeammateBasicCore & {
   buffCtrls: IAbilityBuffCtrl[];
   debuffCtrls: IAbilityDebuffCtrl[];
   weapon: ITeammateWeapon;

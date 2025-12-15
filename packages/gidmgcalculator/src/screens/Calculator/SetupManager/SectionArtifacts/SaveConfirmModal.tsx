@@ -2,13 +2,13 @@ import { useRef } from "react";
 import isEqual from "react-fast-compare";
 import { ConfirmModal, Modal } from "rond";
 
-import { Artifact } from "@/models/base";
+import type { Artifact } from "@/models/base";
 
 import { MAX_USER_ARTIFACTS } from "@/constants";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import Array_ from "@/utils/Array";
 import { useDispatch } from "@Store/hooks";
-import { addUserArtifact, selectDbArtifacts } from "@Store/userdb-slice";
+import { addUserArtifact, selectDbArtifacts, updateUserArtifact } from "@Store/userdb-slice";
 
 type SaveConfirmProps = {
   artifact: Artifact;
@@ -61,14 +61,19 @@ function SaveConfirm({ artifact, onClose }: SaveConfirmProps) {
         </>
       );
       const noChange = existedArtifact
-        ? isEqual(artifact, {
-            // ...Entity_.userItemToCalcItem(existedArtifact),
+        ? isEqual(artifact.serialize(), {
+            ...existedArtifact,
             ID: artifact.ID,
           })
         : false;
 
       const addNew = () => {
-        // dispatch(addUserArtifact(Entity_.calcItemToUserItem(artifact, { ID: Date.now() })));
+        dispatch(
+          addUserArtifact({
+            ...artifact.serialize(),
+            ID: Date.now(),
+          })
+        );
         onClose();
       };
 
@@ -90,7 +95,7 @@ function SaveConfirm({ artifact, onClose }: SaveConfirmProps) {
       }
 
       const overwrite = () => {
-        // dispatch(updateUserArtifact(Entity_.calcItemToUserItem(artifact)));
+        dispatch(updateUserArtifact(artifact.serialize()));
         onClose();
       };
 

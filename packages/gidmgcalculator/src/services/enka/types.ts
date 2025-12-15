@@ -1,5 +1,6 @@
-import { ConvertedArtifact, ConvertedCharacter, ConvertedWeapon } from "@/services/app-data";
-import { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD.types";
+import { IArtifact, IWeapon } from "@/types";
+import { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
+import { GOODCharacterConvertReturn } from "@/utils/GOOD";
 
 type GOODBuild = {
   name?: string;
@@ -20,9 +21,9 @@ export type GenshinUserResponse = {
 
 export type GenshinUserBuild = {
   name?: string;
-  character: ConvertedCharacter;
-  weapon: ConvertedWeapon;
-  artifacts: (ConvertedArtifact | null)[];
+  character: GOODCharacterConvertReturn;
+  weapon: IWeapon;
+  artifacts: (IArtifact | null)[];
 };
 
 export type GenshinUser = Omit<GenshinUserResponse, "builds"> & {

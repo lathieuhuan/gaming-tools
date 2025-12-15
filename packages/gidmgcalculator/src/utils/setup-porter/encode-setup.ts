@@ -1,130 +1,137 @@
+import type { CalcSetup } from "@/models/calculator";
+import type {
+  AttackElement,
+  AttributeStat,
+  ElementType,
+  IModifierCtrlBasic,
+  ReactionType,
+} from "@/types";
+
 import {
   ATTACK_ELEMENTS,
   ATTACK_PATTERNS,
   ATTRIBUTE_STAT_TYPES,
-  AttackElement,
-  AttributeStat,
   BONUS_KEYS,
   ELEMENT_TYPES,
+  EXPORTED_SETUP_VERSION,
   LEVELS,
   REACTIONS,
-  ReactionType,
   WEAPON_TYPES,
-} from "@Calculation";
-
-import { EXPORTED_SETUP_VERSION } from "@/constants";
-import { $AppCharacter } from "@/services";
+} from "@/constants";
 import { CUSTOM_BUFF_CATEGORIES, DIVIDER } from "./setup-porter-config";
-import { ISetup } from "@/types";
 
-const encodeModCtrl = (mod: ModifierCtrl) => {
-  return [
-    +mod.activated,
-    mod.index,
-    mod.inputs?.length ? mod.inputs.join(DIVIDER.MC_INPUTS) : "",
-  ].join(DIVIDER.MC);
-};
-
-const encodeModCtrls = (mods: ModifierCtrl[], divideLv: number) => {
-  return mods.map(encodeModCtrl).join(DIVIDER[divideLv]);
-};
-
-export function encodeSetup(calcSetup: ISetup, target: Target) {
+export function encodeSetup(calcSetup: CalcSetup) {
   const {
-    char,
+    main,
     selfBuffCtrls,
     selfDebuffCtrls,
-    weapon,
     wpBuffCtrls,
-    artifacts,
     artBuffCtrls,
     artDebuffCtrls,
-    party,
-    elmtModCtrls,
-    customInfusion,
+    teammates,
+    elmtEvent,
     customBuffCtrls,
     customDebuffCtrls,
     teamBuffCtrls,
+    rsnBuffCtrls,
+    rsnDebuffCtrls,
+    target,
   } = calcSetup;
 
+  const encodeModCtrl = (mod: IModifierCtrlBasic) => {
+    return [
+      mod.id,
+      +mod.activated,
+      mod.inputs?.length ? mod.inputs.join(DIVIDER.MC_INPUTS) : "",
+    ].join(DIVIDER.MC);
+  };
+
+  const encodeModCtrls = (mods: IModifierCtrlBasic[], divideLv: number) => {
+    return mods.map(encodeModCtrl).join(DIVIDER[divideLv]);
+  };
+
+  const encodeElement = (elmt?: ElementType | null) => {
+    return elmt ? ELEMENT_TYPES.indexOf(elmt) : "";
+  };
+
   try {
-    const appCharacter = $AppCharacter.get(char.name);
-    if (!appCharacter) {
-      throw new Error("Character not found");
-    }
+    const { cons, NAs, ES, EB, weapon, atfGear } = main;
 
-    const { code: charCode = 0 } = appCharacter;
-    const { cons, NAs, ES, EB } = char;
+    const mainStr = [main.data.code, LEVELS.indexOf(main.level), cons, NAs, ES, EB].join(
+      DIVIDER[1]
+    );
 
-    const _charCode = [charCode, LEVELS.indexOf(char.level), cons, NAs, ES, EB].join(DIVIDER[1]);
-
-    const _wpCode = [
+    const weaponStr = [
       weapon.code,
       WEAPON_TYPES.indexOf(weapon.type),
       LEVELS.indexOf(weapon.level),
       weapon.refi,
     ].join(DIVIDER[1]);
 
-    const _artifactCodes = artifacts.map((artifact, i) => {
-      return artifact
-        ? [
-            artifact.code,
-            // artifact.type,
-            artifact.rarity,
-            artifact.level,
-            ATTRIBUTE_STAT_TYPES.indexOf(artifact.mainStatType),
-            artifact.subStats
-              .map((subStat) =>
-                [ATTRIBUTE_STAT_TYPES.indexOf(subStat.type), subStat.value].join(DIVIDER[3])
-              )
-              .join(DIVIDER[2]),
-          ].join(DIVIDER[1])
-        : "";
-    });
-    const _artBCsCode = artBuffCtrls
-      .map((ctrl) => `${ctrl.code}${DIVIDER[2]}${encodeModCtrl(ctrl)}`)
-      .join(DIVIDER[1]);
-    const _artDCsCode = artDebuffCtrls
-      .map((ctrl) => `${ctrl.code}${DIVIDER[2]}${encodeModCtrl(ctrl)}`)
-      .join(DIVIDER[1]);
-
-    const _teammateCodes = party.map((tm, i) => {
-      if (tm) {
-        const { code: tmCode } = $AppCharacter.get(tm.name) || {};
-        const { weapon, artifact } = tm;
-
-        return [
-          tmCode,
-          encodeModCtrls(tm.buffCtrls, 2),
-          encodeModCtrls(tm.debuffCtrls, 2),
-          [
-            weapon.code,
-            WEAPON_TYPES.indexOf(weapon.type),
-            weapon.refi,
-            encodeModCtrls(weapon.buffCtrls, 3),
-          ].join(DIVIDER[2]),
-          [artifact.code, encodeModCtrls(artifact.buffCtrls, 3)].join(DIVIDER[2]),
-        ].join(DIVIDER[1]);
+    const artifactStrs = atfGear.slots.map((slot) => {
+      if (!slot.isFilled) {
+        return "";
       }
-      return "";
+
+      const { piece } = slot;
+
+      return [
+        piece.code,
+        // artifact.type,
+        piece.rarity,
+        piece.level,
+        ATTRIBUTE_STAT_TYPES.indexOf(piece.mainStatType),
+        piece.subStats
+          .map((subStat) =>
+            [ATTRIBUTE_STAT_TYPES.indexOf(subStat.type), subStat.value].join(DIVIDER[3])
+          )
+          .join(DIVIDER[2]),
+      ].join(DIVIDER[1]);
     });
 
-    const _elmtMCsCode = [
-      elmtModCtrls.reaction,
-      elmtModCtrls.infuse_reaction,
-      +elmtModCtrls.superconduct,
-      elmtModCtrls.absorption ? ELEMENT_TYPES.indexOf(elmtModCtrls.absorption) : "",
+    const atfBcStrs = artBuffCtrls
+      .map((ctrl) => `${ctrl.code}${DIVIDER[2]}${encodeModCtrl(ctrl)}`)
+      .join(DIVIDER[1]);
+    const atfDcStrs = artDebuffCtrls
+      .map((ctrl) => `${ctrl.code}${DIVIDER[2]}${encodeModCtrl(ctrl)}`)
+      .join(DIVIDER[1]);
+
+    const teammateStrs = [0, 1, 2].map((i) => {
+      const tm = teammates[i];
+
+      if (!tm) {
+        return "";
+      }
+
+      const { weapon, artifact } = tm;
+      const artifactCode = artifact
+        ? [artifact.code, encodeModCtrls(artifact.buffCtrls, 3)].join(DIVIDER[2])
+        : "";
+
+      return [
+        tm.data.code,
+        encodeModCtrls(tm.buffCtrls, 2),
+        encodeModCtrls(tm.debuffCtrls, 2),
+        [
+          weapon.code,
+          WEAPON_TYPES.indexOf(weapon.type),
+          weapon.refi,
+          encodeModCtrls(weapon.buffCtrls, 3),
+        ].join(DIVIDER[2]),
+        artifactCode,
+      ].join(DIVIDER[1]);
+    });
+
+    const elmtMcStr = [
+      elmtEvent.reaction,
+      encodeElement(elmtEvent.infusion),
+      elmtEvent.infuseReaction,
+      encodeElement(elmtEvent.absorption),
+      elmtEvent.absorbReaction,
+      +elmtEvent.superconduct,
     ].join(DIVIDER[1]);
 
-    const _resonancesCode = elmtModCtrls.resonances
-      .map((rsn) =>
-        [rsn.vision, +rsn.activated, rsn.inputs ? rsn.inputs.join(DIVIDER.MC_INPUTS) : ""].join(
-          DIVIDER[2]
-        )
-      )
-      .join(DIVIDER[1]);
-
-    const _teamBuffCodes = teamBuffCtrls.map((ctrl) => {
+    const teamBuffStr = teamBuffCtrls.map((ctrl) => {
       return [
         ctrl.id,
         +ctrl.activated,
@@ -132,7 +139,23 @@ export function encodeSetup(calcSetup: ISetup, target: Target) {
       ].join(DIVIDER[2]);
     });
 
-    const _customBuffCodes = customBuffCtrls.map((ctrl) => {
+    const rsnBcStr = rsnBuffCtrls.map((ctrl) => {
+      return [
+        encodeElement(ctrl.element),
+        +ctrl.activated,
+        ctrl.inputs?.length ? ctrl.inputs.join(DIVIDER.MC_INPUTS) : "",
+      ].join(DIVIDER[2]);
+    });
+
+    const rsnDcStr = rsnDebuffCtrls.map((ctrl) => {
+      return [
+        encodeElement(ctrl.element),
+        +ctrl.activated,
+        ctrl.inputs?.length ? ctrl.inputs.join(DIVIDER.MC_INPUTS) : "",
+      ].join(DIVIDER[2]);
+    });
+
+    const customBcStr = customBuffCtrls.map((ctrl) => {
       let typeCode = 0;
 
       switch (ctrl.category) {
@@ -157,12 +180,12 @@ export function encodeSetup(calcSetup: ISetup, target: Target) {
       ].join(DIVIDER[2]);
     });
 
-    const _customDebuffCodes = customDebuffCtrls.map((ctrl) => {
+    const customDcStr = customDebuffCtrls.map((ctrl) => {
       const typeCode = ["def"].concat(ATTACK_ELEMENTS).indexOf(ctrl.type);
       return [typeCode, ctrl.value].join(DIVIDER[2]);
     });
 
-    const _targetCode = [
+    const targetStr = [
       target.code,
       target.level,
       target.variantType || "",
@@ -176,26 +199,26 @@ export function encodeSetup(calcSetup: ISetup, target: Target) {
 
     return [
       `V${EXPORTED_SETUP_VERSION}`,
-      _charCode,
+      mainStr,
+      weaponStr,
+      ...artifactStrs,
       encodeModCtrls(selfBuffCtrls, 1),
       encodeModCtrls(selfDebuffCtrls, 1),
-      _wpCode,
       encodeModCtrls(wpBuffCtrls, 1),
-      ..._artifactCodes,
-      _artBCsCode,
-      _artDCsCode,
-      ..._teammateCodes,
-      _elmtMCsCode,
-      _resonancesCode,
-      _teamBuffCodes.join(DIVIDER[1]),
-      ATTACK_ELEMENTS.indexOf(customInfusion.element),
-      _customBuffCodes.join(DIVIDER[1]),
-      _customDebuffCodes.join(DIVIDER[1]),
-      _targetCode,
+      atfBcStrs,
+      atfDcStrs,
+      ...teammateStrs,
+      elmtMcStr,
+      rsnBcStr.join(DIVIDER[1]),
+      rsnDcStr.join(DIVIDER[1]),
+      teamBuffStr.join(DIVIDER[1]),
+      customBcStr.join(DIVIDER[1]),
+      customDcStr.join(DIVIDER[1]),
+      targetStr,
     ].join(DIVIDER[0]);
     //
   } catch (e) {
-    console.log(e);
+    console.error(e);
     return "";
   }
 }

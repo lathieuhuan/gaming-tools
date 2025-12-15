@@ -77,7 +77,7 @@ export function EnkaImport() {
           />
 
           <DetailSection
-            className={clsx("p-4", isMobile ? MOBILE_TAB_CLASS : "w-80")}
+            className={clsx("p-4 shrink-0", isMobile ? MOBILE_TAB_CLASS : "w-80")}
             isMobile={isMobile}
             onBack={() => scrollToTabNo(1)}
           />

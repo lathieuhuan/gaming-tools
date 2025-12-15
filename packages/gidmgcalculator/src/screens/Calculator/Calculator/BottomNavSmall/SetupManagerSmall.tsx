@@ -7,12 +7,10 @@ import {
   FaSave,
   FaShareAlt,
 } from "react-icons/fa";
-import { FaSun } from "react-icons/fa6";
 import { MdDownload } from "react-icons/md";
 import { SiTarget } from "react-icons/si";
 import { Button, ButtonGroup, FancyBackSvg, Input, TrashCanSvg, type ButtonProps } from "rond";
 
-import { useOptimizeSystem } from "@/systems/optimize-dept";
 import { useCalcStore } from "@Store/calculator";
 import { MultiSetupChange, updateCalculator } from "@Store/calculator/actions";
 import { useCalcModalCtrl } from "../../ContextProvider";
@@ -27,7 +25,6 @@ export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
   const calcModalCtrl = useCalcModalCtrl();
   const { displayedSetups, comparedSetups, canAddMoreSetup, tempStandardId, control } =
     useSetupDirectorKit();
-  const { state, contact } = useOptimizeSystem();
 
   const onSelectSetup = (id: number) => {
     if (id !== activeId) {
@@ -150,16 +147,6 @@ export function SetupManagerSmall({ onClose }: SetupManagerSmallProps) {
           {
             icon: <FancyBackSvg />,
             onClick: onClose,
-          },
-          {
-            children: "Optimize",
-            icon: (
-              <FaSun className={`text-lg ${state.status === "OPTIMIZING" ? "animate-spin" : ""}`} />
-            ),
-            onClick: () => {
-              contact();
-              onClose();
-            },
           },
           {
             children: "Apply",

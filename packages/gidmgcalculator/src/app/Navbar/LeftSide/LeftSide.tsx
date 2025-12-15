@@ -7,7 +7,6 @@ import { useRouter } from "@/systems/router";
 import { ScreenConfig } from "./_config";
 
 import { NavOptions } from "./NavOptions";
-import { OptimizerButton } from "./OptimizerButton";
 import { TargetButton } from "./TargetButton";
 import { TrackerButton } from "./TrackerButton";
 
@@ -54,7 +53,6 @@ export function LeftSide({ appReady }: LeftSideProps) {
         <>
           {showOnMobileTab && <TargetButton />}
           <TrackerButton />
-          {showOnMobileTab && <OptimizerButton />}
         </>
       )}
 

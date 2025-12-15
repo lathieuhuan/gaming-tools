@@ -1,11 +1,4 @@
-import type {
-  EntityModifier,
-  IDbComplexSetup,
-  IDbSetup,
-  IModifierCtrl,
-  IModifierCtrlBasic,
-  ITeammateArtifact,
-} from "@/types";
+import type { IDbComplexSetup, IDbSetup, ITeammateArtifact } from "@/types";
 import type { UserdbState } from "@Store/userdb-slice";
 import type { SetupOverviewInfo } from "./types";
 
@@ -28,24 +21,9 @@ import {
   createWeaponBasic,
 } from "@/utils/Entity";
 import IdStore from "@/utils/IdStore";
+import { enhanceCtrls } from "@/utils/Modifier";
 import { isDbSetup } from "@/utils/Setup";
 import { makeCalcCharacterFromDb } from "@/utils/userdb";
-
-export function enhanceCtrls<T extends EntityModifier, TExtra extends object = never>(
-  ctrls: IModifierCtrlBasic[],
-  mods?: T[],
-  extraProps: TExtra = {} as TExtra,
-  extraCheck: (ctrl: IModifierCtrlBasic, mod: T) => boolean = () => true
-) {
-  if (mods) {
-    return ctrls.reduce<(IModifierCtrl<T> & TExtra)[]>((result, ctrl) => {
-      const data = mods.find((mod) => mod.index === ctrl.id && extraCheck(ctrl, mod));
-      return data ? result.concat({ ...ctrl, data, ...extraProps }) : result;
-    }, []);
-  }
-
-  return [];
-}
 
 export function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOverviewInfo["setup"] {
   const { userWps, userArts } = userDb;

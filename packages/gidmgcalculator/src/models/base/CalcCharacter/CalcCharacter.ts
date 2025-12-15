@@ -53,7 +53,7 @@ export class CalcCharacter<
   extends Character<W, A>
   implements ICalcCharacter<W, A>, ITeamMember<TTeam>
 {
-  protected team: ITeam;
+  team: ITeam;
   protected inntateStats = new TypeCounter<AttributeStat>();
 
   totalAttrs: TotalAttributes;
