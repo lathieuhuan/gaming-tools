@@ -1,6 +1,12 @@
 import type { ElementModCtrl } from "@/types";
 import type { TrackerControl } from "../TrackerControl";
-import type { CalculationFinalResultAttackItem, Level, LunarReaction, ResistReduction, TotalAttribute } from "../types";
+import type {
+  CalculationFinalResultAttackItem,
+  Level,
+  LunarReaction,
+  ResistReduction,
+  TotalAttribute,
+} from "../types";
 import type { CalcItemCalculator } from "./CalcItemCalculator";
 
 import { toMult } from "@/utils";
@@ -20,7 +26,10 @@ export class LunarReactionCalculator {
     this.baseDmg = GeneralCalc.getBaseRxnDamage(characterLv);
   }
 
-  calculate = (reaction: LunarReaction, elmtModCtrl?: ElementModCtrl): CalculationFinalResultAttackItem => {
+  calculate = (
+    reaction: LunarReaction,
+    elmtModCtrl?: ElementModCtrl
+  ): CalculationFinalResultAttackItem => {
     const { totalAttr } = this;
     const { getBonus, getRxnMult } = this.itemCalculator;
 
@@ -28,6 +37,7 @@ export class LunarReactionCalculator {
     const baseValue = this.baseDmg * coefficient;
     const baseMult = toMult(getBonus("multPlus_", reaction));
     const bonusMult = 1 + getBonus("pct_", reaction) / 100;
+    const elvMult = toMult(getBonus("elvMult_", reaction));
     const flat = getBonus("flat", reaction);
     const attElmt = LUNAR_ATTACK_ELEMENT[reaction];
     const rxnMult = 1;
@@ -35,7 +45,7 @@ export class LunarReactionCalculator {
 
     resMult = this.resistances[attElmt];
 
-    const nonCrit = (baseValue * baseMult * bonusMult + flat) * rxnMult * resMult;
+    const nonCrit = (baseValue * baseMult * bonusMult * elvMult + flat) * rxnMult * resMult;
     let cRate_ = getBonus("cRate_", reaction) + totalAttr.cRate_;
     cRate_ = Math.min(Math.max(cRate_, 0), 100) / 100;
     const cDmg_ = (getBonus("cDmg_", reaction) + totalAttr.cDmg_) / 100;
@@ -46,6 +56,7 @@ export class LunarReactionCalculator {
       totalFlat: flat,
       baseMult,
       bonusMult,
+      elvMult,
       rxnMult,
       resMult,
       cDmg_,

@@ -124,6 +124,7 @@ export function CalcItemTracker({
         {renderFactor(record.factors[0], null)}
         {baseMultRender}
         {bonusMultRender}
+        {elvMultRender}
         {flatRender}
         {")"}
       </>
