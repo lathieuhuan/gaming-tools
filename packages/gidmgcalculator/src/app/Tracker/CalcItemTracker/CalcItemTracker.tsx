@@ -5,7 +5,7 @@ import type {
   CalcResultOtherItem,
   CalcResultReactionItem,
   ResultItemRecord,
-} from "@/calculation-new/types";
+} from "@/calculation/types";
 
 import { useTranslation } from "@/hooks";
 import { AttackBonusControl } from "@/models/base";

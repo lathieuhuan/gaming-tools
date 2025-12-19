@@ -1,6 +1,6 @@
 import { clsx } from "rond";
 
-import type { TotalAttributeControl } from "@/calculation-new/core/CharacterCalc";
+import type { TotalAttributeControl } from "@/calculation/core/CharacterCalc";
 
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "@/constants";
 import { useTranslation } from "@/hooks";

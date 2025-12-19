@@ -48,7 +48,7 @@ export function RightSide({ appReady }: RightSideProps) {
     const response = await $AppData.fetchAllData();
 
     if (response.data) {
-      $AppData.data = response.data;
+      $AppData.populate(response.data);
       alert(`Refetched version: ${response.data.version}`);
     } else {
       alert(`Refetching has failed!`);

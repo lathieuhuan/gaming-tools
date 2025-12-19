@@ -1,4 +1,4 @@
-import type { CalcResult } from "@/calculation-new/calculator/types";
+import type { CalcResult } from "@/calculation/calculator/types";
 import type { ActualAttackElement } from "@/types";
 
 import { useTranslation } from "@/hooks";

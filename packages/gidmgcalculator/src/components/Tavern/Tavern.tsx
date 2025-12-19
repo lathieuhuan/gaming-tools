@@ -53,6 +53,7 @@ const TavernHall = ({
         for (const data of $AppCharacter.getAll()) {
           const option: CharacterOption = {
             name: data.name,
+            beta: data.beta,
             icon: data.icon,
             rarity: data.rarity,
             vision: data.vision,
@@ -70,6 +71,7 @@ const TavernHall = ({
 
           const option: CharacterOption = {
             name: data.name,
+            beta: data.beta,
             icon: data.icon,
             rarity: data.rarity,
             vision: data.vision,
@@ -87,6 +89,7 @@ const TavernHall = ({
           const userChar = Array_.findByName(userChars, data.name);
           const option: CharacterOption = {
             name: data.name,
+            beta: data.beta,
             icon: data.icon,
             rarity: data.rarity,
             vision: data.vision,

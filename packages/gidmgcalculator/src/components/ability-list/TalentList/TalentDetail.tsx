@@ -1,12 +1,13 @@
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
 import { CloseButton, LoadingSpin, StatsTable, VersatileSelect, round } from "rond";
 
 import type { AppCharacter, TalentType } from "@/types";
 
-import { getTalentDefaultValues } from "@/calculation-new/calculator/getTalentDefaultValues";
+import { getTalentDefaultValues } from "@/calculation/calculator/getTalentDefaultValues";
 import { ATTACK_PATTERNS } from "@/constants";
-import { useQuery, useTabs, useTranslation } from "@/hooks";
+import { useTabs, useTranslation } from "@/hooks";
 import { Character } from "@/models/base";
 import { $AppCharacter } from "@/services";
 import { genSequentialOptions } from "@/utils";
@@ -17,9 +18,11 @@ import { NORMAL_ATTACK_ICONS } from "./_constants";
 import { markDim } from "../../span";
 import { AbilityCarousel } from "../_components/AbilityCarousel";
 
-const useTalentDescriptions = (characterName: string, auto: boolean) => {
-  return useQuery([characterName], () => $AppCharacter.fetchTalentDescriptions(characterName), {
-    auto,
+const useTalentDescriptions = (characterName: string, enabled: boolean) => {
+  return useQuery({
+    queryKey: ["talent-description", characterName],
+    queryFn: () => $AppCharacter.fetchTalentDescriptions(characterName),
+    enabled,
   });
 };
 

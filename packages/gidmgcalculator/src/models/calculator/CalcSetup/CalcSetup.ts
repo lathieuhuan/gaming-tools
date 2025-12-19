@@ -9,7 +9,7 @@ import type {
 } from "@/types";
 import type { ArtifactPieceUpdateData, CloneOptions, MainUpdateData } from "./types";
 
-import { calculateSetup } from "@/calculation-new/calculator";
+import { calculateSetup } from "@/calculation/calculator";
 import { Artifact, ArtifactGear, CalcCharacter, Team, Weapon } from "@/models/base";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";

@@ -1,6 +1,6 @@
 import type { RootState } from "@Store/store";
 
-import { CharacterCalc } from "@/calculation-new/core/CharacterCalc";
+import { CharacterCalc } from "@/calculation/core/CharacterCalc";
 import { Team } from "@/models/base";
 import Array_ from "@/utils/Array";
 import { makeCalcCharacterFromDb } from "@/utils/userdb";

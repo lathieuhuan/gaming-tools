@@ -7,11 +7,6 @@ import type {
   CharacterInnateBuff,
 } from "@/types";
 
-export type DataControl<T> = {
-  status: "unfetched" | "fetching" | "fetched";
-  data: T;
-};
-
 export type Update = {
   date: string;
   content: string[];
@@ -35,4 +30,19 @@ export type TravelerProps = {
   sideIcon: string;
   factorsCA: number[];
   innateBuffs: CharacterInnateBuff[];
+};
+
+type Item = {
+  description: string;
+};
+
+export type GenshinDevCharacterSuccessResponse = {
+  name: string;
+  skillTalents: Item[];
+  passiveTalents: Item[];
+  constellation: Item[];
+};
+
+export type GenshinDevErrorResponse = {
+  error: string;
 };

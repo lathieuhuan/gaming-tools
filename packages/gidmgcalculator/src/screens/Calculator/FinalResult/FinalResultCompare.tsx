@@ -2,8 +2,8 @@ import { useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
 import { Select, clsx } from "rond";
 
-import type { CalcResult } from "@/calculation-new/calculator/types";
-import type { CalcAspect, CalcResultItemValue } from "@/calculation-new/types";
+import type { CalcResult } from "@/calculation/calculator/types";
+import type { CalcAspect, CalcResultItemValue } from "@/calculation/types";
 import type { TalentType } from "@/types";
 import type { CalculatorState } from "@Store/calculator/types";
 

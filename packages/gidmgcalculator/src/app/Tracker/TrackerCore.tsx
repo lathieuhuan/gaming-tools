@@ -4,7 +4,7 @@ import { CollapseList, CollapseListProps } from "rond";
 import type { AttackPattern } from "@/types";
 import type { TrackerState } from "@Store/ui-slice";
 
-import { calculateSetup } from "@/calculation-new/calculator";
+import { calculateSetup } from "@/calculation/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 
 // Component

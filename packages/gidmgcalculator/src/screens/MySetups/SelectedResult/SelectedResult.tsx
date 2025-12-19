@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import type { IArtifactBuffCtrl, IArtifactDebuffCtrl, IDbSetup } from "@/types";
 import type { SetupOverviewInfo } from "../types";
 
-import { calculateSetup } from "@/calculation-new/calculator";
+import { calculateSetup } from "@/calculation/calculator";
 import { Target, Team } from "@/models/base";
 import { CalcSetup } from "@/models/calculator";
 import { $AppArtifact, $AppData } from "@/services";

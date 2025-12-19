@@ -1,16 +1,16 @@
 import type { AllData } from "@/services";
 
-type MetadataMessageRequest = {
+type AllDataMessageRequest = {
   type: "REQUEST";
 };
 
-type MetadataMessageResponse = {
+type AllDataMessageResponse = {
   type: "RESPONSE";
   data: AllData;
 };
 
-export class MetadataChannel {
-  private channel = new BroadcastChannel("METADATA");
+export class AllDataChannel {
+  private channel = new BroadcastChannel("ALL_DATA");
   private isClosedChannel = false;
 
   onRequest = () => {};
@@ -18,7 +18,7 @@ export class MetadataChannel {
   onResponse = (data: AllData) => {};
 
   constructor() {
-    this.channel.onmessage = ({ data }: MessageEvent<MetadataMessageRequest | MetadataMessageResponse>) => {
+    this.channel.onmessage = ({ data }: MessageEvent<AllDataMessageRequest | AllDataMessageResponse>) => {
       switch (data.type) {
         case "REQUEST":
           this.onRequest();
@@ -32,13 +32,13 @@ export class MetadataChannel {
 
   request = () => {
     if (!this.isClosedChannel) {
-      this.channel.postMessage({ type: "REQUEST" } satisfies MetadataMessageRequest);
+      this.channel.postMessage({ type: "REQUEST" } satisfies AllDataMessageRequest);
     }
   };
 
-  response = (metadata: AllData) => {
+  response = (allData: AllData) => {
     if (!this.isClosedChannel) {
-      this.channel.postMessage({ type: "RESPONSE", data: metadata } satisfies MetadataMessageResponse);
+      this.channel.postMessage({ type: "RESPONSE", data: allData } satisfies AllDataMessageResponse);
     }
   };
 

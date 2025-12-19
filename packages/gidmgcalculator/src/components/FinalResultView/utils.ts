@@ -1,4 +1,4 @@
-import type { CalcAspect, CalcResultItemValue } from "@/calculation-new/types";
+import type { CalcAspect, CalcResultItemValue } from "@/calculation/types";
 import type { AppCharacter, AppWeapon, LunarReaction, TransformativeReaction } from "@/types";
 
 import { LUNAR_REACTIONS, NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@/constants";

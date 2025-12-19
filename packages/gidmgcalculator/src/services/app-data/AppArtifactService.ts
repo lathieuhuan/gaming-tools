@@ -1,5 +1,4 @@
 import type { AppArtifact, ArtifactDebuff, ArtifactType } from "@/types";
-import type { DataControl } from "./app-data.types";
 
 type DebuffArtifact = {
   data: AppArtifact;
@@ -8,77 +7,76 @@ type DebuffArtifact = {
 
 const map = new Map<number, AppArtifact>();
 
-export class AppArtifactService {
-  private artifacts: Array<DataControl<AppArtifact>> = [];
+let artifacts_: AppArtifact[] = [];
 
-  vvArtifact?: DebuffArtifact;
-  deepwoodArtifact?: DebuffArtifact;
+let vvArtifact: DebuffArtifact | undefined;
+let deepwoodArtifact: DebuffArtifact | undefined;
 
-  populate(artifacts: AppArtifact[]) {
-    map.clear();
+function populate(artifacts: AppArtifact[]) {
+  map.clear();
+  artifacts_ = artifacts;
 
-    const artifactCtrls: DataControl<AppArtifact>[] = [];
-
-    for (const artifact of artifacts) {
-      artifactCtrls.push({
-        status: "fetched",
+  for (const artifact of artifacts) {
+    if (artifact.code === 15) {
+      vvArtifact = {
         data: artifact,
-      });
-
-      if (artifact.code === 15) {
-        this.vvArtifact = {
-          data: artifact,
-          debuff: artifact.debuffs?.[0],
-        };
-      }
-
-      if (artifact.code === 33) {
-        this.deepwoodArtifact = {
-          data: artifact,
-          debuff: artifact.debuffs?.[0],
-        };
-      }
+        debuff: artifact.debuffs?.[0],
+      };
     }
 
-    this.artifacts = artifactCtrls;
-  }
-
-  getAll<T>(transform: (data: AppArtifact) => T): T[];
-  getAll(): AppArtifact[];
-  getAll<T>(transform?: (data: AppArtifact) => T): T[] | AppArtifact[] {
-    return transform
-      ? this.artifacts.map((artifact) => transform(artifact.data))
-      : this.artifacts.map((artifact) => artifact.data);
-  }
-
-  getSet(code: number) {
-    // no artifact with code 0
-    if (!code) {
-      return undefined;
+    if (artifact.code === 33) {
+      deepwoodArtifact = {
+        data: artifact,
+        debuff: artifact.debuffs?.[0],
+      };
     }
-
-    const cached = map.get(code);
-
-    if (cached) {
-      return cached;
-    }
-
-    const data = this.artifacts.find((artifact) => artifact.data.code === code)?.data;
-
-    if (data) {
-      map.set(code, data);
-      return data;
-    }
-
-    return undefined;
-  }
-
-  get(artifact: { code: number; type: ArtifactType }) {
-    const data = this.getSet(artifact.code);
-    if (data && data[artifact.type]) {
-      const { name, icon } = data[artifact.type];
-      return { beta: data.beta, name, icon };
-    }
-    return undefined;
   }
 }
+
+function getAll<T>(transform: (data: AppArtifact) => T): T[];
+function getAll(): AppArtifact[];
+function getAll<T>(transform?: (data: AppArtifact) => T): T[] | AppArtifact[] {
+  return transform ? artifacts_.map((artifact) => transform(artifact)) : artifacts_;
+}
+
+function getSet(code: number) {
+  // no artifact with code 0
+  if (!code) {
+    return undefined;
+  }
+
+  const cached = map.get(code);
+
+  if (cached) {
+    return cached;
+  }
+
+  const data = artifacts_.find((artifact) => artifact.code === code);
+
+  if (data) {
+    map.set(code, data);
+    return data;
+  }
+
+  return undefined;
+}
+
+function get(artifact: { code: number; type: ArtifactType }) {
+  const data = getSet(artifact.code);
+
+  if (data && data[artifact.type]) {
+    const { name, icon } = data[artifact.type];
+    return { beta: data.beta, name, icon };
+  }
+
+  return undefined;
+}
+
+export const $AppArtifact = {
+  vvArtifact,
+  deepwoodArtifact,
+  populate,
+  getAll,
+  getSet,
+  get,
+};

@@ -1,56 +1,55 @@
 import type { AppWeapon, WeaponType } from "@/types";
-import type { DataControl } from "./app-data.types";
 
 const map = new Map<number, AppWeapon>();
+let weapons_: AppWeapon[] = [];
 
-export class AppWeaponService {
-  private weapons: Array<DataControl<AppWeapon>> = [];
+function populate(weapons: AppWeapon[]) {
+  map.clear();
+  weapons_ = weapons;
+}
 
-  populate(weapons: AppWeapon[]) {
-    map.clear();
+function getAll(type?: WeaponType): AppWeapon[];
+function getAll<T>(transform: (weapon: AppWeapon) => T): T[];
+function getAll<T>(arg?: WeaponType | ((weapon: AppWeapon) => T)): AppWeapon[] | T[] {
+  if (typeof arg === "string") {
+    const weaponsByType = weapons_.reduce<AppWeapon[]>((acc, weapon) => {
+      return weapon.type === arg ? acc.concat(weapon) : acc;
+    }, []);
 
-    this.weapons = weapons.map((dataWeapon) => ({
-      status: "fetched",
-      data: dataWeapon,
-    }));
+    return weaponsByType;
   }
 
-  getAll(type?: WeaponType): AppWeapon[];
-  getAll<T>(transform: (weapon: AppWeapon) => T): T[];
-  getAll<T>(arg?: WeaponType | ((weapon: AppWeapon) => T)): AppWeapon[] | T[] {
-    if (typeof arg === "string") {
-      return this.weapons.reduce<AppWeapon[]>((acc, weapon) => {
-        if (weapon.data.type === arg) {
-          acc.push(weapon.data);
-        }
-        return acc;
-      }, []);
-    }
-    if (typeof arg === "function") {
-      return this.weapons.map((weapon) => arg(weapon.data));
-    }
-
-    return this.weapons.map((weapon) => weapon.data);
+  if (typeof arg === "function") {
+    return weapons_.map((weapon) => arg(weapon));
   }
 
-  get(code: number) {
-    if (!code) {
-      return undefined;
-    }
+  return weapons_.map((weapon) => weapon);
+}
 
-    const cached = map.get(code);
-
-    if (cached) {
-      return cached;
-    }
-
-    const data = this.weapons.find((weapon) => weapon.data.code === code)?.data;
-
-    if (data) {
-      map.set(code, data);
-      return data;
-    }
-
+function get(code: number) {
+  if (!code) {
+    // no weapon with code 0
     return undefined;
   }
+
+  const cachedWeapon = map.get(code);
+
+  if (cachedWeapon) {
+    return cachedWeapon;
+  }
+
+  const data = weapons_.find((weapon) => weapon.code === code);
+
+  if (data) {
+    map.set(code, data);
+    return data;
+  }
+
+  return undefined;
 }
+
+export const $AppWeapon = {
+  populate,
+  getAll,
+  get,
+};

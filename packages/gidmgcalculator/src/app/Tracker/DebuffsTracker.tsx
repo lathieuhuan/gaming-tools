@@ -1,6 +1,6 @@
 import { clsx } from "rond";
 
-import type { CalcTarget } from "@/calculation-new/core/CalcTarget";
+import type { CalcTarget } from "@/calculation/core/CalcTarget";
 
 import { ATTACK_ELEMENTS } from "@/constants";
 import { useTranslation } from "@/hooks";

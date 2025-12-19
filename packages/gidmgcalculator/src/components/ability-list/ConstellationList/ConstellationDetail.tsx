@@ -1,12 +1,12 @@
 import { CloseButton, LoadingSpin } from "rond";
 
 import type { AppCharacter } from "@/types";
-import { useQuery } from "@/hooks";
 import { $AppCharacter } from "@/services";
 
 // Conponent
 import { markDim, markGreen } from "../../span";
 import { AbilityCarousel } from "../_components/AbilityCarousel";
+import { useQuery } from "@tanstack/react-query";
 
 type ConstellationDetailProps = {
   character: AppCharacter;
@@ -28,7 +28,10 @@ export function ConstellationDetail({
     isLoading,
     isError,
     data: descriptions,
-  } = useQuery([character.name], () => $AppCharacter.fetchConsDescriptions(character.name));
+  } = useQuery({
+    queryKey: ["cons-description", character.name],
+    queryFn: () => $AppCharacter.fetchConsDescriptions(character.name),
+  });
 
   return (
     <div className="h-full flex flex-col hide-scrollbar">

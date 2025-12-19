@@ -1,6 +1,0 @@
-import { $AppCharacter } from "@/services";
-import { useQuery } from "./useQuery";
-
-export function useAppCharacter(name = "") {
-  return useQuery([name], ([name]) => $AppCharacter.fetch(name), { auto: name !== "" });
-}

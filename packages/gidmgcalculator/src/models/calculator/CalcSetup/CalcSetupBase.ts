@@ -1,4 +1,4 @@
-import type { CalcResult } from "@/calculation-new/calculator/types";
+import type { CalcResult } from "@/calculation/calculator/types";
 import type { CalcCharacter, Target, Team } from "@/models/base";
 import type {
   CustomBuffCtrl,

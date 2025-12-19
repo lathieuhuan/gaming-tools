@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { clsx } from "rond";
 
-import { CharacterCalc } from "@/calculation-new/core/CharacterCalc";
+import { CharacterCalc } from "@/calculation/core/CharacterCalc";
 import { ARTIFACT_TYPES } from "@/constants";
 import { useTranslation } from "@/hooks";
 import { Artifact, ArtifactGear, CalcCharacter, Weapon } from "@/models/base";
