@@ -16,6 +16,7 @@ import type {
   CalcItemFactor,
   CalcItemType,
   ElementType,
+  EnhanceType,
   LunarType,
   Nation,
   NormalAttack,
@@ -36,7 +37,7 @@ export type AppCharacter = {
   faction?: Faction | Faction[];
   vision: ElementType;
   weaponType: WeaponType;
-  enhanceType?: "WITCH";
+  enhanceType?: EnhanceType;
   EBcost: number;
   talentLvBonus?: Partial<Record<TalentType, number>>;
   statBases: {

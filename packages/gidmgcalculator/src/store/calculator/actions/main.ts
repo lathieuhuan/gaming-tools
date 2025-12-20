@@ -8,6 +8,7 @@ import { createTarget } from "@/utils/entity";
 import Object_ from "@/utils/Object";
 import { useCalcStore } from "../calculator-store";
 import { onActiveSetup } from "../utils";
+import { Team } from "@/models/base";
 
 // ===== CHARACTER =====
 
@@ -22,8 +23,17 @@ export const updateMain = (data: MainUpdateData, setupIds?: number[]) => {
     const { setupsById } = state;
 
     for (const setupId of ids) {
-      setupsById[setupId].main = setupsById[setupId].updateMain(data);
-      setupsById[setupId] = setupsById[setupId].calculate();
+      const setup = setupsById[setupId];
+      const prevEnhanced = setup.main.enhanced;
+      const newMain = setup.updateMain(data);
+
+      setup.main = newMain;
+
+      if (data.enhanced !== undefined && data.enhanced !== prevEnhanced) {
+        setup.team = new Team([newMain, ...setup.teammates]);
+      }
+
+      setupsById[setupId] = setup.calculate();
     }
   });
 

@@ -101,7 +101,7 @@ export default function SectionTeammates() {
               <TeammateSlot
                 key={teammate.name}
                 active={active}
-                info={teammate.data}
+                teammate={teammate}
                 onSelect={() => setSelectedIndex(active ? null : tmIndex)}
                 onRequestChange={() => handleShowTavern(tmIndex)}
                 onRemove={handleRemoveTeammate}

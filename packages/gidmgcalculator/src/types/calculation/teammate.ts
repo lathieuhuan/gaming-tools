@@ -8,7 +8,7 @@ import type {
   TeamPropertyCondition,
 } from "../app-entity";
 import type { AppWeapon } from "../app-weapon";
-import type { ElementCount, ElementType, TalentType } from "../common";
+import type { AutoRsnElmtType, ElementCount, ElementType, TalentType } from "../common";
 import type { ITeammateArtifactBasic, ITeammateBasicCore, ITeammateWeaponBasic } from "../entity";
 import type {
   IAbilityBuffCtrl,
@@ -30,7 +30,7 @@ export type ITeamMember<TTeam extends ITeam = ITeam> = {
 export type ITeam = {
   members: ITeamMember[];
   elmtCount: ElementCount;
-  resonances: ElementType[];
+  resonances: AutoRsnElmtType[];
   extraTalentLv: TypeCounter<TalentType>;
   moonsignLv: number;
   witchRiteLv: number;

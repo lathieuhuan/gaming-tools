@@ -27,6 +27,24 @@ export const updateTeammate: ForwardedAction<CalcSetup["updateTeammate"]> = (...
   );
 };
 
+export const toggleTeammateEnhance = (tmCode: number) => {
+  useCalcStore.setState(
+    onActiveSetup((setup) => {
+      const teammate = setup.teammates.find((teammate) => teammate.data.code === tmCode);
+
+      if (!teammate) {
+        return false;
+      }
+
+      setup.updateTeammate(tmCode, {
+        enhanced: !teammate.enhanced,
+      });
+
+      setup.team = new Team([setup.main, ...setup.teammates]);
+    })
+  );
+};
+
 export const removeTeammate: ForwardedAction<CalcSetup["removeTeammate"]> = (teammate) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {

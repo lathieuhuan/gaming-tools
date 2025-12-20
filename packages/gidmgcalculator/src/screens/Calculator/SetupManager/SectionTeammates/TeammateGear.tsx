@@ -4,6 +4,7 @@ import type { AppCharacter, ITeammate } from "@/types";
 import {
   changeTeammateArtifact,
   changeTeammateWeapon,
+  toggleTeammateEnhance,
   updateTeammateWeapon,
 } from "@Store/calculator/actions";
 
@@ -14,6 +15,7 @@ import {
   WeaponForge,
   WeaponForgeProps,
 } from "@/components";
+import { Checkbox } from "rond";
 
 type TeammateGearProps = {
   teammate: ITeammate;
@@ -22,38 +24,40 @@ type TeammateGearProps = {
 
 export function TeammateGear({ teammate, info }: TeammateGearProps) {
   const [modalType, setModalType] = useState<"WEAPON" | "ARTIFACT" | null>(null);
+  const { data } = teammate;
 
   const handleWeaponRefinementChange = (refi: number) => {
-    updateTeammateWeapon(teammate.data.code, { refi });
+    updateTeammateWeapon(data.code, { refi });
   };
 
   const handleArtifactRemove = () => {
-    changeTeammateArtifact(teammate.data.code, undefined);
+    changeTeammateArtifact(data.code, undefined);
   };
 
   const handleWeaponChange: WeaponForgeProps["onForgeWeapon"] = (weapon) => {
-    changeTeammateWeapon(teammate.data.code, weapon);
+    changeTeammateWeapon(data.code, weapon);
   };
 
   const handleArtifactChange: ArtifactForgeProps["onForgeArtifact"] = (artifact) => {
-    changeTeammateArtifact(teammate.data.code, artifact);
+    changeTeammateArtifact(data.code, artifact);
   };
 
-  // const handleEnhanceToggle = (enhanced: boolean) => {
-  //   dispatch(updateTeammate({ teammateIndex: index, enhanced }));
-  // };
+  const handleEnhanceToggle = () => {
+    toggleTeammateEnhance(data.code);
+  };
 
   return (
     <>
       <div className="bg-dark-2 pt-2">
         <div className="bg-dark-1 pt-12 px-2 pb-3" onDoubleClick={() => console.log(teammate)}>
-          {/* <div className="mb-4 flex" hidden={!info.enhanceType}>
-            <Checkbox checked={!!teammate.enhanced} onChange={handleEnhanceToggle}>
-              Witch's Buff
+          <div className="mb-4 flex" hidden={!data.enhanceType}>
+            <Checkbox checked={teammate.enhanced} onChange={handleEnhanceToggle}>
+              Hexerei
             </Checkbox>
-          </div> */}
+          </div>
 
           <TeammateItems
+            className="space-y-3"
             mutable
             teammate={teammate}
             onClickWeapon={() => setModalType("WEAPON")}

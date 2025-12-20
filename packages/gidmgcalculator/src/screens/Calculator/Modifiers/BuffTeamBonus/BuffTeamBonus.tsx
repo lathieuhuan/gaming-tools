@@ -1,34 +1,24 @@
 import { Fragment } from "react";
 
+import { useCalcStore } from "@Store/calculator";
+import { selectSetup } from "@Store/calculator/selectors";
 import { useResonanceCtrlGroup } from "./_hooks/useResonanceCtrlGroup";
 import { useTeamBuffCtrlGroup } from "./_hooks/useTeamBuffCtrlGroup";
-// import { GenshinModifierView } from "@/components";
 
-// const SECRET_RITE_DESCRIPTION = (
-//   <>
-//     When the party has at least 2 members with Witch's Buff, Magic: Secret Rite is granted,
-//     enhancing members under the buff.
-//   </>
-// );
+import { GenshinModifierView } from "@/components";
+import { SECRET_RITE_BUFF_CONFIG } from "@/components/modifier-item/configs";
 
 export function BuffTeamBonus() {
-  const groups = [useResonanceCtrlGroup(), useTeamBuffCtrlGroup()];
+  const team = useCalcStore((state) => selectSetup(state).team);
+  const groups = [useResonanceCtrlGroup(team), useTeamBuffCtrlGroup()];
 
-  // if (teamDate.witchRiteLv === 2) {
-  //   groups.push({
-  //     isEmpty: false,
-  //     key: "witch-rite",
-  //     render: () => (
-  //       <div>
-  //         <GenshinModifierView
-  //           mutable={false}
-  //           heading="Magic: Secret Rite"
-  //           description={SECRET_RITE_DESCRIPTION}
-  //         />
-  //       </div>
-  //     ),
-  //   });
-  // }
+  if (team.witchRiteLv === 2) {
+    groups.push({
+      isEmpty: false,
+      key: "witch-rite",
+      render: () => <GenshinModifierView mutable={false} {...SECRET_RITE_BUFF_CONFIG} />,
+    });
+  }
 
   if (groups.every((group) => group.isEmpty)) {
     return <div className="py-4 text-center text-hint-color">No buffs found.</div>;

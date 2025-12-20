@@ -29,7 +29,7 @@ import {
 import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
 
 type TeammateUpdateData = Partial<
-  Pick<ITeammate, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls">
+  Pick<ITeammate, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
 >;
 
 export type CalcSetupConstructInfo = PartiallyRequiredOnly<CalcSetupBaseConstructInfo, "main">;
@@ -278,9 +278,8 @@ export class CalcSetup extends CalcSetupBase {
 
   removeTeammate(teammate: CalcTeammate) {
     const newTeammates = this.teammates.filter((tm) => tm.name !== teammate.name);
-    const newTeam = new Team([this.main, ...newTeammates]);
 
-    this.team = newTeam;
+    this.team = new Team([this.main, ...newTeammates]);
     this.teammates = newTeammates;
     this.updateRsnModCtrls();
     this.updateTeamBuffCtrls();

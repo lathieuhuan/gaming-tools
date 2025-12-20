@@ -1,6 +1,8 @@
 import type { CustomDebuffCtrl, ResonanceModCtrl } from "@/types";
-import { SuperconductDebuffItem, ModifierContainer, ResonanceDebuffItem } from "@/components";
 import { useTranslation } from "@/hooks";
+
+import { ModifierContainer, ResonanceDebuffItem, GenshinModifierView } from "@/components";
+import { SUPERCONDUCT_DEBUFF_CONFIG } from "@/components/modifier-item/configs";
 
 type ElementDebuffsProps = {
   superconduct: boolean;
@@ -20,7 +22,7 @@ export function ElementDebuffs({ superconduct, rsnDebuffCtrls }: ElementDebuffsP
           />
         );
       })}
-      {superconduct && <SuperconductDebuffItem mutable={false} />}
+      {superconduct && <GenshinModifierView mutable={false} {...SUPERCONDUCT_DEBUFF_CONFIG} />}
     </ModifierContainer>
   );
 }

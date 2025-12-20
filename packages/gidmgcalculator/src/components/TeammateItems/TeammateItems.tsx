@@ -16,7 +16,7 @@ type TeammateItemsProps = {
 };
 
 export function TeammateItems({
-  className = "",
+  className,
   mutable,
   teammate,
   onClickWeapon,
@@ -30,7 +30,7 @@ export function TeammateItems({
   const { icon: artifactSetIcon } = flower || {};
 
   return (
-    <div className={`space-y-3 ${className}`}>
+    <div className={className}>
       <div className="flex space-x-2">
         <button
           className={`w-14 h-14 rounded bg-gradient-${weaponData.rarity} shrink-0`}

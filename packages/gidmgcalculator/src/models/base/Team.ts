@@ -50,14 +50,20 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
     let witchRiteLv = 0;
 
     for (const member of members) {
-      elmtCount.add(member.data.vision);
+      const { data } = member;
 
-      if (member.data.faction?.includes("moonsign")) {
+      elmtCount.add(data.vision);
+
+      if (data.faction?.includes("moonsign")) {
         moonsignLv++;
       }
 
       if (member.enhanced) {
-        witchRiteLv++;
+        if (data.enhanceType === "HEXEREI") {
+          witchRiteLv++;
+        }
+
+        // More future enhance types
       }
     }
 

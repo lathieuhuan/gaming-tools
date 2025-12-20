@@ -5,7 +5,8 @@ import { updateActiveSetup, updateElementalEvent } from "@Store/calculator/actio
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleRsnModCtrl } from "@Store/calculator/utils";
 
-import { ResonanceDebuffItem, SuperconductDebuffItem } from "@/components";
+import { GenshinModifierView, ResonanceDebuffItem } from "@/components";
+import { SUPERCONDUCT_DEBUFF_CONFIG } from "@/components/modifier-item/configs";
 
 export default function DebuffElement() {
   const { superconduct, rsnDebuffCtrls } = useShallowCalcStore((state) => {
@@ -36,7 +37,8 @@ export default function DebuffElement() {
           />
         );
       })}
-      <SuperconductDebuffItem
+      <GenshinModifierView
+        {...SUPERCONDUCT_DEBUFF_CONFIG}
         mutable
         checked={superconduct}
         onToggle={() => {

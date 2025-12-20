@@ -27,90 +27,93 @@ export function CharacterIntro(props: CharacterIntroProps) {
   const elmtText = `text-${data.vision}`;
 
   return (
-    <div>
-      <div className={`flex relative ${className}`}>
-        <div
-          className="mr-3 relative shrink-0"
-          onClick={props.switchable ? props.onSwitch : undefined}
-          style={{ width: "5.25rem", height: "5.25rem" }}
-        >
-          <GenshinImage
-            className="cursor-pointer"
-            src={data.icon}
-            imgType="character"
-            fallbackCls="p-2"
-          />
+    <div className={`flex relative ${className}`}>
+      <div
+        className="mr-2 relative shrink-0"
+        onClick={props.switchable ? props.onSwitch : undefined}
+        style={{ width: "5.25rem", height: "5.25rem" }}
+      >
+        <GenshinImage
+          className="cursor-pointer"
+          src={data.icon}
+          imgType="character"
+          fallbackCls="p-2"
+        />
 
-          {props.switchable ? (
-            <Button className="absolute -top-1 -left-1 z-10" size="small" icon={<FaSyncAlt />} />
-          ) : null}
+        {props.switchable ? (
+          <Button className="absolute -top-1 -left-1 z-10" size="small" icon={<FaSyncAlt />} />
+        ) : null}
 
-          <Badge active={data.beta} className="absolute -top-1 -right-1 z-10">
-            BETA
-          </Badge>
-        </div>
-
-        <div className="min-w-0 grow">
-          <div className="overflow-hidden">
-            <h2
-              className={`text-2xl truncate ${elmtText} font-black ${
-                props.removable ? "pr-9" : ""
-              }`}
-              onDoubleClick={() => console.log(character)}
-            >
-              {data.name}
-            </h2>
-            <Rarity value={data.rarity} />
-          </div>
-
-          <div className="mt-1 pl-1 flex justify-between items-center">
-            <div className="flex items-center text-lg" aria-label="calculator_character-level">
-              <label className="mr-1">Level</label>
-              <VersatileSelect
-                title="Select Level"
-                align="right"
-                transparent
-                showAllOptions
-                className={`w-[98px] shrink-0 ${elmtText} text-lg font-bold`}
-                dropdownCls="z-30"
-                options={LEVELS.map((_, i) => {
-                  const item = LEVELS[LEVELS.length - 1 - i];
-                  return { label: item, value: item };
-                })}
-                value={character.level}
-                onChange={(value) => props.onChangeLevel?.(value as Level)}
-              />
-            </div>
-
-            <VersatileSelect
-              title="Select Constellation"
-              className={`ml-auto w-14 text-lg ${elmtText} font-bold bg-dark-2`}
-              align="right"
-              options={Array.from({ length: 7 }, (_, i) => ({
-                label: `C${i}`,
-                value: i,
-              }))}
-              value={character.cons}
-              onChange={(newCons) => props.onChangeCons?.(newCons as number)}
-            />
-          </div>
-        </div>
-
-        {props.removable && (
-          <Button
-            className="absolute top-0 right-0"
-            boneOnly
-            icon={<FaUserSlash />}
-            onClick={props.onRemove}
-          />
-        )}
+        <Badge active={data.beta} className="absolute -top-1 -right-1 z-10">
+          BETA
+        </Badge>
       </div>
 
-      {/* <div className="mt-4 flex" hidden={!appCharacter.enhanceType}>
-        <Checkbox checked={!!character.enhanced} onChange={props.onEnhanceToggle}>
-          Witch's Buff
-        </Checkbox>
-      </div> */}
+      <div className="min-w-0 grow">
+        <div className="overflow-hidden">
+          <h2
+            className={`text-2xl leading-7 truncate ${elmtText} font-black ${
+              props.removable ? "pr-9" : ""
+            }`}
+            onDoubleClick={() => console.log(character)}
+          >
+            {data.name}
+          </h2>
+
+          <div className="flex items-center">
+            <Rarity value={data.rarity} />
+
+            <div
+              className="ml-2 pl-2 border-l border-dark-line leading-none cursor-pointer"
+              hidden={!data.enhanceType}
+              onClick={() => props.onEnhanceToggle?.(!character.enhanced)}
+            >
+              <p className={character.enhanced ? "text-active" : "text-light-hint/80"}>Hexerei</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-2 pl-1 flex justify-between items-center">
+          <div className="flex items-center text-lg" aria-label="calculator_character-level">
+            <label className="mr-1">Level</label>
+            <VersatileSelect
+              title="Select Level"
+              align="right"
+              transparent
+              showAllOptions
+              className={`w-[98px] shrink-0 ${elmtText} text-lg font-bold`}
+              dropdownCls="z-30"
+              options={LEVELS.map((_, i) => {
+                const item = LEVELS[LEVELS.length - 1 - i];
+                return { label: item, value: item };
+              })}
+              value={character.level}
+              onChange={(value) => props.onChangeLevel?.(value as Level)}
+            />
+          </div>
+
+          <VersatileSelect
+            title="Select Constellation"
+            className={`ml-auto w-14 text-lg ${elmtText} font-bold bg-dark-2`}
+            align="right"
+            options={Array.from({ length: 7 }, (_, i) => ({
+              label: `C${i}`,
+              value: i,
+            }))}
+            value={character.cons}
+            onChange={(newCons) => props.onChangeCons?.(newCons as number)}
+          />
+        </div>
+      </div>
+
+      {props.removable && (
+        <Button
+          className="absolute top-0 right-0"
+          boneOnly
+          icon={<FaUserSlash />}
+          onClick={props.onRemove}
+        />
+      )}
     </div>
   );
 }

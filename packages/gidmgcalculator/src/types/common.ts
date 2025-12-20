@@ -42,6 +42,8 @@ export type AttackBonusKey = (typeof BONUS_KEYS)[number];
 
 export type Level = (typeof LEVELS)[number];
 
+export type EnhanceType = "HEXEREI";
+
 // ========== ELEMENTS ==========
 
 export type ElementType = (typeof ELEMENT_TYPES)[number];
