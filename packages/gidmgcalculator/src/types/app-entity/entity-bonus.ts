@@ -1,11 +1,6 @@
-import type {
-  AttackBonusKey,
-  AttackBonusType,
-  AttributeStat,
-  BaseAttributeStat,
-} from "../common";
+import type { AttackBonusKey, AttackBonusType, AttributeStat, BaseAttributeStat } from "../common";
 import type { CharacterEffectLevelScale, EntityBonusBasedOn } from "./app-entity-common";
-import type { EntityBonusStack } from "./effect-bonus-stack";
+import type { EnergyCostStack, EntityBonusStack } from "./effect-bonus-stack";
 import type { EffectCondition } from "./effect-condition";
 import type { EffectMax } from "./effect-max";
 import type { EffectValue } from "./effect-value";
@@ -34,6 +29,9 @@ export type EntityBonusEffect = EffectCondition & {
   sufExtra?: number | EntityBonusEffect;
   /** When max is number on Weapon Bonus, it will auto scale off refi */
   max?: EffectMax;
+  outsource?: {
+    stacks?: EnergyCostStack;
+  };
 };
 
 type AttributeTargetPath = "INP_ELMT" | "OWN_ELMT" | AttributeStat | BaseAttributeStat;

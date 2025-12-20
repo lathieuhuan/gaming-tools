@@ -34,6 +34,7 @@ export type EnergyCostStack = {
   /** 'ACTIVE' on Raiden Shogun. 'PARTY' on Watatsumi series */
   scope: "ACTIVE" | "PARTY";
 };
+
 /** On Raiden Shogun */
 export type ResolveStack = {
   type: "RESOLVE";

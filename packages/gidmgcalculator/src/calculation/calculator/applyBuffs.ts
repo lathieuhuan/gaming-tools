@@ -21,6 +21,7 @@ import {
   QUICKEN_REACTIONS,
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants";
+import { BonusCalc } from "@/models/base";
 import Array_ from "@/utils/Array";
 import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";
 
@@ -38,6 +39,12 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
     label: string
   ) {
     if (!bonus.value) return;
+
+    const { outsource } = bonus.config;
+
+    if (outsource) {
+      bonus.value *= new BonusCalc(main, setup.team, { inputs }).getStackValue(outsource.stacks);
+    }
 
     for (const target of Array_.toArray(effect.targets)) {
       switch (target.module) {

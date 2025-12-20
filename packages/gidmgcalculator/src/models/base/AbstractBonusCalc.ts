@@ -130,7 +130,7 @@ export abstract class AbstractBonusCalc<
 
   protected abstract getInputIndex(stack: InputStack): NonNullable<InputStack["index"]>;
 
-  protected getStackValue(stack?: EntityBonusStack) {
+  getStackValue(stack?: EntityBonusStack) {
     if (!stack) {
       return 1;
     }
@@ -267,6 +267,7 @@ export abstract class AbstractBonusCalc<
       // id: config.id,
       value: this.getInitialValue(config),
       isDynamic: false,
+      config,
     };
 
     bonus.value = this.scaleRefi(bonus.value, config.incre);
@@ -277,8 +278,7 @@ export abstract class AbstractBonusCalc<
       const basedOn = this.getBasedOn(config.basedOn);
 
       bonus.value *= basedOn.value;
-
-      if (basedOn.field !== "base_atk") bonus.isDynamic = true;
+      bonus.isDynamic = basedOn.field !== "base_atk";
     }
 
     bonus.value *= this.getStackValue(config.stacks);
