@@ -1,5 +1,5 @@
 import type { CalcCharacter } from "@/models/base";
-import type { IAbilityBuffCtrl, IAbilityDebuffCtrl } from "@/types";
+import type { IAbilityBuffCtrl, IAbilityDebuffCtrl, ITeam } from "@/types";
 import type { ModifierHanlders } from "./types";
 
 import { GenshinModifierView } from "../GenshinModifierView";
@@ -8,6 +8,7 @@ import { ModifierContainer } from "./ModifierContainer";
 type SelfModsViewProps<T extends IAbilityBuffCtrl | IAbilityDebuffCtrl> = {
   mutable?: boolean;
   character: CalcCharacter;
+  team: ITeam;
   modCtrls: T[];
   getHanlders?: (ctrl: T) => ModifierHanlders;
 };
@@ -22,7 +23,7 @@ function getSelfModifierElmts<T extends IAbilityBuffCtrl | IAbilityDebuffCtrl>(
   return props.modCtrls.map((ctrl) => {
     const modifier = ctrl.data;
 
-    if (props.character.isPerformableEffect(modifier)) {
+    if (props.team.isAvailableEffect(modifier) && props.character.isPerformableEffect(modifier)) {
       return (
         <GenshinModifierView
           key={ctrl.id}
@@ -42,7 +43,7 @@ function getSelfModifierElmts<T extends IAbilityBuffCtrl | IAbilityDebuffCtrl>(
 }
 
 export function SelfBuffsView(props: SelfModsViewProps<IAbilityBuffCtrl>) {
-  const { character } = props;
+  const { character, team } = props;
   const { innateBuffs = [] } = character.data;
 
   const renderDesc: RenderDescFn<IAbilityBuffCtrl> = (ctrl) => {
@@ -52,7 +53,7 @@ export function SelfBuffsView(props: SelfModsViewProps<IAbilityBuffCtrl>) {
   return (
     <ModifierContainer type="buffs" mutable={props.mutable}>
       {innateBuffs.map((buff, index) => {
-        if (character.isPerformableEffect(buff)) {
+        if (team.isAvailableEffect(buff) && character.isPerformableEffect(buff)) {
           return (
             <GenshinModifierView
               key={"innate-" + index}

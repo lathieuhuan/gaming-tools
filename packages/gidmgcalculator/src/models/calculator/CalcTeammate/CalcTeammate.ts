@@ -24,7 +24,7 @@ type CloneOptions = {
 };
 
 export class CalcTeammate extends Teammate {
-  constructor(info: CalcTeammateConstructInfo, public data: AppCharacter, team: ITeam) {
+  constructor(info: CalcTeammateConstructInfo, public data: AppCharacter, public team: ITeam) {
     const {
       enhanced = false,
       buffCtrls = createAbilityBuffCtrls(data, false),

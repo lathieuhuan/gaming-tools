@@ -9,8 +9,8 @@ import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 import { SelfBuffsView } from "@/components";
 
 export default function BuffSelf() {
-  const { main, selfBuffCtrls } = useShallowCalcStore((state) =>
-    Object_.pickProps(selectSetup(state), ["main", "selfBuffCtrls"])
+  const { main, team, selfBuffCtrls } = useShallowCalcStore((state) =>
+    Object_.pickProps(selectSetup(state), ["main", "team", "selfBuffCtrls"])
   );
 
   const handleUpdateCtrls = (newCtrls: IAbilityBuffCtrl[]) => {
@@ -23,6 +23,7 @@ export default function BuffSelf() {
     <SelfBuffsView
       mutable
       character={main}
+      team={team}
       modCtrls={selfBuffCtrls}
       getHanlders={(ctrl) => {
         const updateBuffCtrlInput = (value: number, inputIndex: number) => {

@@ -115,9 +115,18 @@ export class CalcCharacter<
   protected canPerformEffect(condition: EffectPerformerConditions) {
     const { grantedAt } = condition;
 
-    if (typeof grantedAt === "string") {
-      const [prefix, level] = grantedAt;
-      return (prefix === "A" ? this.ascension : this.cons) >= +level;
+    if (grantedAt) {
+      const { value } = typeof grantedAt === "string" ? { value: grantedAt } : grantedAt;
+      const [prefix, level] = value;
+      const isGranted = (prefix === "A" ? this.ascension : this.cons) >= +level;
+
+      if (!isGranted) {
+        return false;
+      }
+    }
+
+    if (condition.beEnhanced && !this.enhanced) {
+      return false;
     }
 
     if (condition.checkMixed) {
@@ -136,9 +145,9 @@ export class CalcCharacter<
       return true;
     }
 
-    if (!this.team.isAvailableEffect(condition)) {
-      return false;
-    }
+    // if (!this.team.isAvailableEffect(condition)) {
+    //   return false;
+    // }
     if (!this.canPerformEffect(condition)) {
       return false;
     }
@@ -170,8 +179,10 @@ export class CalcCharacter<
         return false;
       }
     }
-    if (condition.forEnhanced && !this.enhanced) {
-      return false;
+    if (condition.forEnhance) {
+      if (!this.enhanced || this.data.enhanceType !== condition.forEnhance) {
+        return false;
+      }
     }
 
     return true;

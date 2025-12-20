@@ -33,5 +33,5 @@ export type EntityBuff<TEntityEffect extends EntityBonusEffect = EntityBonusEffe
 // ========== DEBUFF ==========
 
 export type EntityDebuff<TEntityPenalty extends EntityPenaltyEffect = EntityPenaltyEffect> = EntityModifier & {
-  effects?: EntityPenalty<TEntityPenalty>;
+  effects?: EntityPenalty<TEntityPenalty> | EntityPenalty<TEntityPenalty>[];
 };

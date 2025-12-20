@@ -1,4 +1,4 @@
-import type { ElementType, Nation, WeaponType } from "../common";
+import type { ElementType, EnhanceType, Nation, WeaponType } from "../common";
 import type { CharacterMilestone } from "./app-entity-common";
 
 export type ConditionComparison = "EQUAL" | "MIN" | "MAX";
@@ -25,16 +25,20 @@ export type TeamElementConditions = {
   teamOnlyElmts?: ElementType[];
 };
 
-export type TeamPropertyCondition = {
-  value: number;
-  type: "MOONSIGN" | "WITCH_RITE";
-  /** Default 'EQUAL' */
-  comparison?: ConditionComparison;
-};
+export type TeamMilestoneType = "MOONSIGN" | "WITCH_RITE";
+
+export type TeamMilestoneCondition =
+  | TeamMilestoneType
+  | {
+      type: TeamMilestoneType;
+      /** Default 2 */
+      value?: number;
+      /** Default 'EQUAL' */
+      comparison?: ConditionComparison;
+    };
 
 export type TeamConditions = TeamElementConditions & {
-  // TODO: rename to checkTeamProps
-  checkParty?: TeamPropertyCondition;
+  checkTeamMs?: TeamMilestoneCondition;
 };
 
 // ===== Performer Condition =====
@@ -53,6 +57,7 @@ export type EffectGrantedAt = CharacterMilestone | EffectGrantedAtConfig;
 
 export type EffectPerformerConditions = {
   grantedAt?: EffectGrantedAt;
+  beEnhanced?: boolean;
   /** Special for Chain Breaker (bow) */
   checkMixed?: boolean;
 };
@@ -98,7 +103,7 @@ export type EffectReceiverConditions = {
     value: number;
     comparison: ConditionComparison;
   };
-  forEnhanced?: boolean;
+  forEnhance?: EnhanceType;
 };
 
 // ===== Conclusion =====

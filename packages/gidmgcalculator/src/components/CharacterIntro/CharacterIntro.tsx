@@ -64,11 +64,11 @@ export function CharacterIntro(props: CharacterIntroProps) {
             <Rarity value={data.rarity} />
 
             <div
-              className="ml-2 pl-2 border-l border-dark-line leading-none cursor-pointer"
+              className="ml-2 pl-2 border-l border-dark-line font-semibold leading-none cursor-pointer"
               hidden={!data.enhanceType}
               onClick={() => props.onEnhanceToggle?.(!character.enhanced)}
             >
-              <p className={character.enhanced ? "text-active" : "text-light-hint/80"}>Hexerei</p>
+              <p className={character.enhanced ? elmtText : "text-light-hint/80"}>Hexerei</p>
             </div>
           </div>
         </div>

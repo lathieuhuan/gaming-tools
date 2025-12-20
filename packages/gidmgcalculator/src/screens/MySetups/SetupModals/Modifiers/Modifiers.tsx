@@ -64,6 +64,7 @@ export function Modifiers({ setup }: ModifiersProps) {
               body: (
                 <SelfDebuffsView
                   mutable={false}
+                  team={setup.team}
                   modCtrls={setup.selfDebuffCtrls}
                   character={main}
                 />
@@ -71,7 +72,13 @@ export function Modifiers({ setup }: ModifiersProps) {
             },
             {
               heading: "Teammates",
-              body: <TeammateDebuffsView mutable={false} teammates={setup.teammates} />,
+              body: (
+                <TeammateDebuffsView
+                  mutable={false}
+                  teammates={setup.teammates}
+                  team={setup.team}
+                />
+              ),
             },
             {
               heading: "Artifacts",
@@ -99,12 +106,19 @@ export function Modifiers({ setup }: ModifiersProps) {
             {
               heading: "Self",
               body: (
-                <SelfBuffsView mutable={false} character={main} modCtrls={setup.selfBuffCtrls} />
+                <SelfBuffsView
+                  mutable={false}
+                  character={main}
+                  team={setup.team}
+                  modCtrls={setup.selfBuffCtrls}
+                />
               ),
             },
             {
               heading: "Teammates",
-              body: <TeammateBuffsView mutable={false} teammates={setup.teammates} />,
+              body: (
+                <TeammateBuffsView mutable={false} teammates={setup.teammates} team={setup.team} />
+              ),
             },
             {
               heading: "Weapons",

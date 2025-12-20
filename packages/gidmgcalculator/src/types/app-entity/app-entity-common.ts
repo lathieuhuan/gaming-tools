@@ -2,7 +2,7 @@ import type { LevelableTalentType, TalentType } from "../common";
 
 export type CharacterMilestone = "A1" | "A4" | "C1" | "C2" | "C4" | "C6";
 
-export type PartyMilestone = "SECRET_RITE";
+export type TeamMilestone = "SECRET_RITE";
 
 export type EntityBonusBasedOnField = "base_atk" | "hp" | "atk" | "def" | "em" | "er_" | "healB_";
 

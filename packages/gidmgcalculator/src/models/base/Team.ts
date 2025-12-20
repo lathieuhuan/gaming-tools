@@ -7,7 +7,7 @@ import type {
   TalentType,
   TeamConditions,
   TeamElementConditions,
-  TeamPropertyCondition,
+  TeamMilestoneCondition,
 } from "@/types";
 
 import TypeCounter from "@/utils/TypeCounter";
@@ -151,10 +151,15 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
     return true;
   }
 
-  checkTeamProps(condition: TeamPropertyCondition) {
+  checkTeamProps(condition: TeamMilestoneCondition) {
     let input = 0;
+    const {
+      type,
+      value = 2,
+      comparison = "EQUAL",
+    } = typeof condition === "object" ? condition : { type: condition };
 
-    switch (condition.type) {
+    switch (type) {
       case "MOONSIGN":
         input = this.moonsignLv;
         break;
@@ -163,18 +168,22 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
         break;
     }
 
-    if (!isPassedComparison(input, condition.value, condition.comparison)) {
+    if (!isPassedComparison(input, value, comparison)) {
       return false;
     }
 
     return true;
   }
 
-  isAvailableEffect(condition: TeamConditions) {
+  isAvailableEffect(condition?: TeamConditions) {
+    if (!condition) {
+      return true;
+    }
+
     if (!this.checkTeamElmt(condition)) {
       return false;
     }
-    if (condition.checkParty && !this.checkTeamProps(condition.checkParty)) {
+    if (condition.checkTeamMs && !this.checkTeamProps(condition.checkTeamMs)) {
       return false;
     }
 

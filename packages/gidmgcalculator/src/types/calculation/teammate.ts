@@ -5,7 +5,7 @@ import type {
   EffectPerformableCondition,
   TeamConditions,
   TeamElementConditions,
-  TeamPropertyCondition,
+  TeamMilestoneCondition,
 } from "../app-entity";
 import type { AppWeapon } from "../app-weapon";
 import type { AutoRsnElmtType, ElementCount, ElementType, TalentType } from "../common";
@@ -35,8 +35,8 @@ export type ITeam = {
   moonsignLv: number;
   witchRiteLv: number;
   checkTeamElmt(condition: TeamElementConditions): boolean;
-  checkTeamProps(condition: TeamPropertyCondition): boolean;
-  isAvailableEffect(condition: TeamConditions): boolean;
+  checkTeamProps(condition: TeamMilestoneCondition): boolean;
+  isAvailableEffect(condition?: TeamConditions): boolean;
   getMixedCount(performerElmt: ElementType): number;
 };
 

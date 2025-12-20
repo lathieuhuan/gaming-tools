@@ -1,11 +1,10 @@
 import type {
-  CharacterMilestone,
+  EffectCondition,
   EntityBonusEffect,
   EntityBuff,
   EntityDebuff,
   EntityPenaltyEffect,
   InputCheck,
-  PartyMilestone,
 } from "./app-entity";
 import type {
   ActualAttackElement,
@@ -94,10 +93,8 @@ type StatOther = {
 
 // COMMON
 
-type CharacterModifier = {
+type CharacterModifier = EffectCondition & {
   src: string;
-  grantedAt?: CharacterMilestone;
-  partyMs?: PartyMilestone;
   description: string;
 };
 

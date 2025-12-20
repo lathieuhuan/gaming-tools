@@ -42,10 +42,17 @@ export class Teammate<TTeam extends ITeam = ITeam> implements ITeammate<TTeam> {
 
     if (grantedAt && typeof grantedAt !== "string") {
       const { altIndex = undefined, compareValue = 1, comparison = "EQUAL" } = grantedAt;
-      return (
+      const granted =
         altIndex === undefined ||
-        isPassedComparison(inputs[altIndex] ?? 0, compareValue, comparison)
-      );
+        isPassedComparison(inputs[altIndex] ?? 0, compareValue, comparison);
+
+      if (!granted) {
+        return false;
+      }
+    }
+
+    if (condition.beEnhanced && !this.enhanced) {
+      return false;
     }
 
     return true;
@@ -56,9 +63,9 @@ export class Teammate<TTeam extends ITeam = ITeam> implements ITeammate<TTeam> {
       return true;
     }
 
-    if (!this.team.isAvailableEffect(condition)) {
-      return false;
-    }
+    // if (!this.team.isAvailableEffect(condition)) {
+    //   return false;
+    // }
     if (!this.canPerformEffect(condition, inputs)) {
       return false;
     }

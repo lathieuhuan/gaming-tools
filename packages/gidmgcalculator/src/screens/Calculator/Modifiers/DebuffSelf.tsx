@@ -9,8 +9,8 @@ import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 import { SelfDebuffsView } from "@/components";
 
 export default function DebuffSelf() {
-  const { main, selfDebuffCtrls } = useShallowCalcStore((state) => {
-    return Object_.pickProps(selectSetup(state), ["main", "selfDebuffCtrls"]);
+  const { main, team, selfDebuffCtrls } = useShallowCalcStore((state) => {
+    return Object_.pickProps(selectSetup(state), ["main", "team", "selfDebuffCtrls"]);
   });
 
   const handleUpdateCtrls = (newCtrls: IAbilityDebuffCtrl[]) => {
@@ -23,6 +23,7 @@ export default function DebuffSelf() {
     <SelfDebuffsView
       mutable
       character={main}
+      team={team}
       modCtrls={selfDebuffCtrls}
       getHanlders={(ctrl) => {
         const updateDebuffCtrlInput = (value: number, inputIndex: number) => {

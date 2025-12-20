@@ -4,6 +4,7 @@ import type {
   CharacterEffectLevelIncrement,
   EffectExtra,
   EffectMax,
+  EffectPerformableCondition,
   EntityBonusBasedOn,
   EntityBonusBasedOnField,
   EntityBonusEffect,
@@ -40,6 +41,13 @@ export abstract class AbstractBonusCalc<
 
     this.refi = refi;
     this.basedOnFixed = basedOnFixed;
+  }
+
+  private isPerformableEffect(condition?: EffectPerformableCondition) {
+    return (
+      this.team.isAvailableEffect(condition) &&
+      this.performer.isPerformableEffect(condition, this.inputs)
+    );
   }
 
   protected scaleRefi(base: number, increment = base / 3) {
@@ -81,7 +89,7 @@ export abstract class AbstractBonusCalc<
     let result = 0;
 
     for (const extra of Array_.toArray(extras)) {
-      if (this.performer.isPerformableEffect(extra, this.inputs)) {
+      if (this.isPerformableEffect(extra)) {
         result += extra.value;
       }
     }
@@ -111,7 +119,7 @@ export abstract class AbstractBonusCalc<
     if (typeof config === "number") {
       bonus.value += this.scaleRefi(config);
     } //
-    else if (config && this.performer.isPerformableEffect(config, this.inputs)) {
+    else if (config && this.isPerformableEffect(config)) {
       const extra = this.makeBonus(config);
 
       if (extra) {
@@ -236,8 +244,7 @@ export abstract class AbstractBonusCalc<
     if (stack.capacity) {
       const capacityExtra = stack.capacity.extra;
       const capacity =
-        stack.capacity.value +
-        (performer.isPerformableEffect(capacityExtra, inputs) ? capacityExtra.value : 0);
+        stack.capacity.value + (this.isPerformableEffect(capacityExtra) ? capacityExtra.value : 0);
 
       result = Math.max(capacity - result, 0);
     }
@@ -247,7 +254,7 @@ export abstract class AbstractBonusCalc<
       result -= stack.baseline;
     }
 
-    if (stack.extra && performer.isPerformableEffect(stack.extra, inputs)) {
+    if (stack.extra && this.isPerformableEffect(stack.extra)) {
       result += stack.extra.value;
     }
 

@@ -1,10 +1,5 @@
 import type { CalcSetup } from "@/models/calculator";
-import type {
-  ElementType,
-  EntityDebuff,
-  EntityPenaltyTarget,
-  ResistReductionKey,
-} from "@/types";
+import type { ElementType, EntityDebuff, EntityPenaltyTarget, ResistReductionKey } from "@/types";
 import type { CalcTarget } from "../core/CalcTarget";
 import type { CharacterCalc } from "../core/CharacterCalc";
 import type { IEffectPerformer } from "../types";
@@ -19,6 +14,8 @@ export function applyDebuffs(
   setup: CalcSetup,
   target: CalcTarget
 ) {
+  const { team } = setup;
+
   // ↓↓↓↓↓ HELPERS ↓↓↓↓↓
 
   function getReductionPaths(targets: EntityPenaltyTarget[], inputs: number[]) {
@@ -39,7 +36,7 @@ export function applyDebuffs(
         }
         case "XILONEN": {
           const elmts: ElementType[] = ["pyro", "hydro", "cryo", "electro"];
-          const { elmtCount } = setup.team;
+          const { elmtCount } = team;
 
           elmtCount.forEach((elmt) => {
             if (elmts.includes(elmt)) paths.add(elmt);
@@ -59,14 +56,16 @@ export function applyDebuffs(
   function applyPenalty(
     label: string,
     performer: IEffectPerformer,
-    effect: EntityDebuff["effects"],
+    effects: EntityDebuff["effects"] = [],
     inputs: number[] = []
   ) {
-    if (effect && performer.isPerformableEffect(effect, inputs)) {
-      const penalty = performer.performPenalty(effect, inputs);
-      const reductionPaths = getReductionPaths(Array_.toArray(effect.targets), inputs);
+    for (const effect of Array_.toArray(effects)) {
+      if (team.isAvailableEffect(effect) && performer.isPerformableEffect(effect, inputs)) {
+        const penalty = performer.performPenalty(effect, inputs);
+        const reductionPaths = getReductionPaths(Array_.toArray(effect.targets), inputs);
 
-      reductionPaths.forEach((path) => target.takeReduction(path, penalty, label));
+        reductionPaths.forEach((path) => target.takeReduction(path, penalty, label));
+      }
     }
   }
 
@@ -81,7 +80,11 @@ export function applyDebuffs(
   for (const ctrl of setup.selfDebuffCtrls) {
     const debuff = ctrl.data;
 
-    if (ctrl.activated && main.isPerformableEffect(debuff, ctrl.inputs)) {
+    if (
+      ctrl.activated &&
+      team.isAvailableEffect(debuff) &&
+      main.isPerformableEffect(debuff, ctrl.inputs)
+    ) {
       applyPenalty(`Self / ${debuff.src}`, main, ctrl.data.effects, ctrl.inputs);
     }
   }
@@ -93,7 +96,7 @@ export function applyDebuffs(
     for (const ctrl of teammate.debuffCtrls) {
       const debuff = Array_.findByIndex(debuffs, ctrl.data.index);
 
-      if (ctrl.activated && debuff) {
+      if (ctrl.activated && debuff && team.isAvailableEffect(debuff)) {
         applyPenalty(`${name} / ${debuff.src}`, teammate, debuff.effects, ctrl.inputs);
       }
     }

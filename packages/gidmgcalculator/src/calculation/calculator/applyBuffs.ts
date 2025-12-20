@@ -28,6 +28,7 @@ import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";
 export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup: CalcSetup) {
   main.initTotalAttr();
 
+  const { team } = setup;
   const { weapon, totalAttrCtrl, attkBonusCtrl } = main;
 
   // ↓↓↓↓↓ HELPERS ↓↓↓↓↓
@@ -43,7 +44,7 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
     const { outsource } = bonus.config;
 
     if (outsource) {
-      bonus.value *= new BonusCalc(main, setup.team, { inputs }).getStackValue(outsource.stacks);
+      bonus.value *= new BonusCalc(main, team, { inputs }).getStackValue(outsource.stacks);
     }
 
     for (const target of Array_.toArray(effect.targets)) {
@@ -101,6 +102,7 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
 
       if (
         (isFinalStage === undefined || isFinalStage === isFinalEffect(config)) &&
+        team.isAvailableEffect(config) &&
         performer.isPerformableEffect(config, support.inputs)
       ) {
         const { targets } = config;
@@ -123,7 +125,7 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
     const { innateBuffs = [] } = main.data;
 
     for (const buff of innateBuffs) {
-      if (main.isPerformableEffect(buff)) {
+      if (team.isAvailableEffect(buff) && main.isPerformableEffect(buff)) {
         applyBonus(`Self / ${buff.src}`, main, buff.effects, {}, isFinalStage);
       }
     }
@@ -131,7 +133,7 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
     for (const ctrl of setup.selfBuffCtrls) {
       const buff = ctrl.data;
 
-      if (ctrl.activated && main.isPerformableEffect(buff)) {
+      if (ctrl.activated && team.isAvailableEffect(buff) && main.isPerformableEffect(buff)) {
         applyBonus(`Self / ${buff.src}`, main, buff.effects, { inputs: ctrl.inputs }, isFinalStage);
       }
     }
@@ -282,7 +284,11 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
   for (const teammate of teammates) {
     //
     for (const ctrl of teammate.buffCtrls) {
-      if (ctrl.activated) {
+      if (
+        ctrl.activated &&
+        team.isAvailableEffect(ctrl.data) &&
+        teammate.isPerformableEffect(ctrl.data)
+      ) {
         const buff = ctrl.data;
         const label = `${teammate.name} / ${buff.src}`;
         applyBonus(label, teammate, buff.effects, { inputs: ctrl.inputs });

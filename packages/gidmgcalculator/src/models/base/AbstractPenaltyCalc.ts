@@ -27,8 +27,13 @@ export abstract class AbstractPenaltyCalc<
 
     if (typeof preExtra === "number") {
       result += preExtra;
-    } else if (preExtra && this.performer.isPerformableEffect(preExtra)) {
-      result += this.makePenalty(preExtra);
+    } else if (preExtra) {
+      if (
+        this.team.isAvailableEffect(preExtra) &&
+        this.performer.isPerformableEffect(preExtra, this.inputs)
+      ) {
+        result += this.makePenalty(preExtra);
+      }
     }
     if (debuff.max) result = Math.min(result, debuff.max);
 

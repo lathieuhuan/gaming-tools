@@ -27,11 +27,12 @@ type CalculateSetupOptions = {
 };
 
 export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions = {}) {
-  const main = new CharacterCalc(setup.main, setup.main.data, setup.team, {
+  const { team } = setup;
+  const main = new CharacterCalc(setup.main, setup.main.data, team, {
     shouldRecord: options.shouldRecord,
   });
   const teammates = setup.teammates.map(
-    (teammate) => new TeammateCalc(teammate, teammate.data, setup.team)
+    (teammate) => new TeammateCalc(teammate, teammate.data, team)
   );
   const target = new CalcTarget(setup.target, setup.target.data, options);
 
