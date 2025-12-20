@@ -10,7 +10,7 @@ import type {
 } from "@/types";
 import type { AdvancedPick, PartiallyRequiredOnly } from "rond";
 
-import { ATTACK_ELEMENTS } from "@/constants";
+import { ATTACK_ELEMENTS } from "@/constants/global";
 import { Artifact, Target, Weapon } from "@/models/base";
 import { $AppArtifact, $AppData, $AppSettings, $AppWeapon } from "@/services";
 import Array_ from "./Array";

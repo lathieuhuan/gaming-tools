@@ -4,7 +4,7 @@ import { ConfirmModal, Modal } from "rond";
 
 import type { Artifact } from "@/models/base";
 
-import { MAX_USER_ARTIFACTS } from "@/constants";
+import { MAX_USER_ARTIFACTS } from "@/constants/config";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import Array_ from "@/utils/Array";
 import { useDispatch } from "@Store/hooks";

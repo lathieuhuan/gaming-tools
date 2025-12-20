@@ -3,7 +3,7 @@ import { clsx, ItemCase } from "rond";
 import type { ArtifactType, IArtifact } from "@/types";
 import type { SelectedBuild } from "../types";
 
-import { ARTIFACT_TYPES } from "@/constants";
+import { ARTIFACT_TYPES } from "@/constants/global";
 import { Artifact } from "@/models/base";
 import { GenshinUserBuild } from "@/services/enka";
 import { useSelectedBuildState } from "../DataImportProvider";

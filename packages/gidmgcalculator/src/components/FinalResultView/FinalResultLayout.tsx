@@ -6,7 +6,7 @@ import { Button, clsx, CollapseSpace, Table, TableThProps } from "rond";
 import type { Character } from "@/models/base";
 import type { LevelableTalentType, TalentType } from "@/types";
 
-import { EMPTY_VALUE } from "@/constants";
+import { EMPTY_VALUE } from "@/constants/ui";
 import { useTranslation } from "@/hooks";
 import { getTableKeys, type TableKey } from "./utils";
 

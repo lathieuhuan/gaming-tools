@@ -2,7 +2,7 @@ import { clsx } from "rond";
 
 import type { TotalAttributeControl } from "@/calculation/core/CharacterCalc";
 
-import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "@/constants";
+import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { round, suffixOf } from "@/utils";
 import { useCalcStore } from "@Store/calculator";

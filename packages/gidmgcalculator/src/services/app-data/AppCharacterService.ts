@@ -1,15 +1,21 @@
-import { AppCharacter, CharacterInnateBuff, TalentType } from "@/types";
-
-import type { TravelerInfo } from "@/types";
+import type { AppCharacter, CharacterInnateBuff, TalentType, TravelerInfo } from "@/types";
 import type {
   GenshinDevCharacterSuccessResponse,
   GenshinDevErrorResponse,
   TravelerProps,
 } from "./types";
 
-import { DEFAULT_TRAVELER, GENSHIN_DEV_URL } from "@/constants";
+import { GENSHIN_DEV_URL } from "@/constants/config";
 import { fetchData } from "./BaseService";
 import { cannedKnowledgeBuff, skirksTrainingBuff } from "./config";
+
+const DEFAULT_TRAVELER: TravelerInfo = {
+  selection: "LUMINE",
+  powerups: {
+    cannedKnowledge: false,
+    skirksTraining: false,
+  },
+};
 
 const NO_DESCRIPTION_MSG = "[Description missing]";
 let characters_: AppCharacter[] = [];
@@ -224,6 +230,7 @@ function changeTraveler(traveler: TravelerInfo) {
 }
 
 export const $AppCharacter = {
+  DEFAULT_TRAVELER,
   populate,
   get,
   getAll,

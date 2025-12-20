@@ -1,7 +1,7 @@
 import type { IDbArtifact, IDbCharacter, IDbWeapon } from "@/types";
 import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 
-import { DOWNLOADED_DATA_VERSION } from "@/constants";
+import { DOWNLOADED_DATA_VERSION } from "@/constants/config";
 import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
 import { createWeaponBasic } from "@/utils/entity";

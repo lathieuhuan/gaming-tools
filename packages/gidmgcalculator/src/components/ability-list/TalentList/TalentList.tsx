@@ -5,7 +5,7 @@ import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
 import type { Character } from "@/models/base";
 import type { LevelableTalentType } from "@/types";
 
-import { TALENT_TYPES } from "@/constants";
+import { TALENT_TYPES } from "@/constants/global";
 import { genSequentialOptions } from "@/utils";
 import { NORMAL_ATTACK_ICONS } from "./_constants";
 

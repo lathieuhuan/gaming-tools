@@ -2,7 +2,8 @@ import { clsx, useScreenWatcher } from "rond";
 
 import type { Level } from "@/types";
 
-import { LEVELS, MAX_TARGET_LEVEL, WEAPON_LEVELS } from "@/constants";
+import { MAX_TARGET_LEVEL } from "@/constants/config";
+import { LEVELS, WEAPON_LEVELS } from "@/constants/global";
 import { AppSettings } from "@/services";
 import { genSequentialOptions } from "@/utils";
 

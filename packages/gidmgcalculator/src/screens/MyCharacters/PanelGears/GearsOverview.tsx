@@ -5,7 +5,7 @@ import type { ArtifactType, IArtifactGearSet } from "@/types";
 import type { GearsDetailType } from "./Gears.types";
 
 import { EquipmentDisplay, EquipmentDisplayProps, EquipmentType } from "@/components";
-import { ARTIFACT_TYPES } from "@/constants";
+import { ARTIFACT_TYPES } from "@/constants/global";
 import { useActiveChar } from "../ActiveCharProvider";
 
 const bonusStyles = (active: boolean) => {

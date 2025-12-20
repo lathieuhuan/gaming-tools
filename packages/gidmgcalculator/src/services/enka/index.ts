@@ -1,4 +1,4 @@
-import { IS_DEV_ENV } from "@/constants";
+import { IS_DEV_ENV } from "@/constants/config";
 import { GenshinUserResponse } from "./types";
 import { transformResponse } from "./transform";
 export * from "./types";

@@ -8,7 +8,7 @@ import {
   LUNAR_REACTIONS,
   NORMAL_ATTACKS,
   TRANSFORMATIVE_REACTIONS,
-} from "@/constants";
+} from "@/constants/global";
 import Array_ from "@/utils/Array";
 import { CalcTarget } from "../core/CalcTarget";
 import { CharacterCalc } from "../core/CharacterCalc";

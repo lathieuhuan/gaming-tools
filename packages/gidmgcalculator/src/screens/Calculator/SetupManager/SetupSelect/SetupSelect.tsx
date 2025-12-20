@@ -3,7 +3,7 @@ import { FaBalanceScaleLeft, FaCopy, FaSave, FaShareAlt } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
 import { clsx, ConfirmModal, TrashCanSvg } from "rond";
 
-import { MAX_CALC_SETUPS } from "@/constants";
+import { MAX_CALC_SETUPS } from "@/constants/config";
 import Array_ from "@/utils/Array";
 import Object_ from "@/utils/Object";
 import { useShallowCalcStore } from "@Store/calculator";

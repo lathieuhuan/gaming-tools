@@ -1,6 +1,6 @@
 import type { AppMetadata } from "../types";
 
-import { MINIMUM_SYSTEM_VERSION } from "@/constants";
+import { MINIMUM_SYSTEM_VERSION } from "@/constants/config";
 import { $AppData, AllData } from "@/services";
 import { AllDataChannel } from "./AllDataChannel";
 import { StoredTime } from "./StoredTime";

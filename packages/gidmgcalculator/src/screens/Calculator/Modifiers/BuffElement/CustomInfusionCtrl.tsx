@@ -4,7 +4,7 @@ import { VersatileSelect } from "rond";
 import type { CalcCharacter } from "@/models/base";
 import type { ElementalEvent, ElementType } from "@/types";
 
-import { ELEMENT_TYPES } from "@/constants";
+import { ELEMENT_TYPES } from "@/constants/global";
 import { updateElementalEvent } from "@Store/calculator/actions";
 
 import { GenshinModifierView } from "@/components";

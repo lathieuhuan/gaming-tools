@@ -14,7 +14,7 @@ import {
 
 import type { IDbWeapon, WeaponType } from "@/types";
 
-import { MAX_USER_WEAPONS } from "@/constants";
+import { MAX_USER_WEAPONS } from "@/constants/config";
 import { useTravelerKey, useWeaponData } from "@/hooks";
 import { Weapon } from "@/models/base";
 import Array_ from "@/utils/Array";

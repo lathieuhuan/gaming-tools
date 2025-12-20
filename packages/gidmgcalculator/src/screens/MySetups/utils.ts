@@ -2,7 +2,7 @@ import type { IDbComplexSetup, IDbSetup, ITeammateArtifact } from "@/types";
 import type { UserdbState } from "@Store/userdb-slice";
 import type { SetupOverviewInfo } from "./types";
 
-import { ARTIFACT_TYPES } from "@/constants";
+import { ARTIFACT_TYPES } from "@/constants/global";
 import { Artifact, ArtifactGear, CalcCharacter, Team } from "@/models/base";
 import {
   CalcSetup,

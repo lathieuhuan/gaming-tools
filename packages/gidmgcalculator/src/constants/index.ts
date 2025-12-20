@@ -1,3 +1,3 @@
-export * from "./config.constants";
+export * from "./config";
 export * from "./global";
 export * from "./ui";

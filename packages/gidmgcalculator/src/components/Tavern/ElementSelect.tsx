@@ -1,7 +1,7 @@
 import { IconSelect, IconSelectProps } from "rond";
 
 import type { ElementType } from "@/types";
-import { ELEMENT_TYPES } from "@/constants";
+import { ELEMENT_TYPES } from "@/constants/global";
 import { ElementIcon } from "../ElementIcon";
 
 const OPTIONS = ELEMENT_TYPES.map((value) => {

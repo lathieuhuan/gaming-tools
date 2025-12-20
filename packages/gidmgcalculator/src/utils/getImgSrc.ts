@@ -1,4 +1,4 @@
-import { IS_DEV_ENV } from "@/constants";
+import { IS_DEV_ENV } from "@/constants/config";
 
 export function getImgSrc(src?: string) {
   // const IS_DEV_ENV = false;

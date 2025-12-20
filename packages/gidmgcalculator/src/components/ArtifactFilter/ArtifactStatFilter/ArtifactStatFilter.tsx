@@ -1,7 +1,7 @@
 import type { ArtifactType } from "@/types";
 import type { ArtifactStatFilterCondition } from "../types";
 
-import { ARTIFACT_SUBSTAT_TYPES, ATTACK_ELEMENTS } from "@/constants";
+import { ARTIFACT_SUBSTAT_TYPES, ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { Artifact } from "@/models/base";
 

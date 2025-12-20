@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaBars, FaDonate } from "react-icons/fa";
 import { Button, LoadingSpin, Popover, useClickOutside } from "rond";
 
-import { IS_DEV_ENV, SCREEN_PATH } from "@/constants";
+import { IS_DEV_ENV, SCREEN_PATH } from "@/constants/config";
 import { $AppData } from "@/services";
 import { useRouter } from "@/systems/router";
 import { useDispatch } from "@Store/hooks";

@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { clsx } from "rond";
 
 import { CharacterCalc } from "@/calculation/core/CharacterCalc";
-import { ARTIFACT_TYPES } from "@/constants";
+import { ARTIFACT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { Artifact, ArtifactGear, CalcCharacter, Weapon } from "@/models/base";
 import Array_ from "@/utils/Array";

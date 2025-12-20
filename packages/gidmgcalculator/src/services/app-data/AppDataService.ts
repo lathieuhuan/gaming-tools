@@ -1,7 +1,7 @@
 import type { AppMonster, AppTeamBuff, ITarget } from "@/types";
 import type { AllData } from "./types";
 
-import { BACKEND_URL } from "@/constants";
+import { BACKEND_URL } from "@/constants/config";
 import Array_ from "@/utils/Array";
 import { $AppArtifact } from "./AppArtifactService";
 import { $AppCharacter } from "./AppCharacterService";

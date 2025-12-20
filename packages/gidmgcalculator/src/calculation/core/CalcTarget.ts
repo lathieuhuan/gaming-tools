@@ -1,7 +1,7 @@
 import type { AppMonster, AttackElement, ITarget, ResistReductionKey } from "@/types";
 
 import { Target } from "@/models/base";
-import { ATTACK_ELEMENTS } from "@/constants";
+import { ATTACK_ELEMENTS } from "@/constants/global";
 
 type ReductionRecord = {
   label: string;

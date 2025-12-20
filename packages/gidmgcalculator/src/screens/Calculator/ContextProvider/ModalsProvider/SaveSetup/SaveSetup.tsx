@@ -3,7 +3,7 @@ import { Input, Modal } from "rond";
 
 import type { ValidationError } from "./types";
 
-import { SCREEN_PATH } from "@/constants";
+import { SCREEN_PATH } from "@/constants/config";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import { useRouter } from "@/systems/router";
 import Array_ from "@/utils/Array";

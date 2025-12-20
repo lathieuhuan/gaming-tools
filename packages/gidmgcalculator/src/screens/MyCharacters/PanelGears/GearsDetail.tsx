@@ -5,7 +5,7 @@ import type { ArtifactType, AttributeStat } from "@/types";
 import type { GearsDetailType } from "./Gears.types";
 
 import { ArtifactCard, AttributeTable, SetBonusesView, WeaponCard } from "@/components";
-import { ARTIFACT_TYPES } from "@/constants";
+import { ARTIFACT_TYPES } from "@/constants/global";
 import { useDispatch } from "@Store/hooks";
 import {
   unequipArtifact,

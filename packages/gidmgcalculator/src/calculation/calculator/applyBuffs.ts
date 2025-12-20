@@ -20,7 +20,7 @@ import {
   LUNAR_TYPES,
   QUICKEN_REACTIONS,
   TRANSFORMATIVE_REACTIONS,
-} from "@/constants";
+} from "@/constants/global";
 import { BonusCalc } from "@/models/base";
 import Array_ from "@/utils/Array";
 import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";

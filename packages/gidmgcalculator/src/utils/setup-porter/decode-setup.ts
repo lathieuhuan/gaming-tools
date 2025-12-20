@@ -17,17 +17,17 @@ import type {
   SetupImportInfo,
 } from "@/types";
 
+import { EXPORTED_SETUP_VERSION } from "@/constants/config";
 import {
   ATTACK_ELEMENTS,
   ATTACK_PATTERNS,
   ATTRIBUTE_STAT_TYPES,
   BONUS_KEYS,
   ELEMENT_TYPES,
-  EXPORTED_SETUP_VERSION,
   LEVELS,
   REACTIONS,
   WEAPON_TYPES,
-} from "@/constants";
+} from "@/constants/global";
 import { Artifact, ArtifactGear, CalcCharacter, Target, Team } from "@/models/base";
 import { CalcSetup, CalcTeammate } from "@/models/calculator";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
@@ -319,7 +319,7 @@ export function decodeSetup(code: string): DecodeSuccessResult | DecodeFailResul
 
     // ===== ELEMENTAL EVENT =====
 
-    const decodeElement = (indexStr = ''): ElementType | undefined => {
+    const decodeElement = (indexStr = ""): ElementType | undefined => {
       return indexStr ? ELEMENT_TYPES[+indexStr] : undefined;
     };
 

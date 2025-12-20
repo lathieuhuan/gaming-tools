@@ -2,7 +2,7 @@ import { FaMinus } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { Button, InputNumber, VersatileSelect } from "rond";
 
-import { MAX_TARGET_LEVEL } from "@/constants";
+import { MAX_TARGET_LEVEL } from "@/constants/config";
 import { $AppData } from "@/services";
 import { useCalcStore } from "@Store/calculator";
 import { updateTarget } from "@Store/calculator/actions";

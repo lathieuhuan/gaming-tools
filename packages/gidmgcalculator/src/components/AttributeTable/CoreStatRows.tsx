@@ -1,8 +1,9 @@
 import { useEffect, useId, useState } from "react";
 import { clsx } from "rond";
 
-import { CORE_STAT_TYPES } from "@/constants";
-import { CoreStat, TotalAttributes } from "@/types";
+import type { CoreStat, TotalAttributes } from "@/types";
+
+import { CORE_STAT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 
 // Component

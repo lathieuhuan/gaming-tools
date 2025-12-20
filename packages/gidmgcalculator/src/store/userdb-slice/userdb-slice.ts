@@ -18,7 +18,7 @@ import type {
   UpdateDbWeaponAction,
 } from "./userdb-slice.types";
 
-import { ARTIFACT_TYPES } from "@/constants";
+import { ARTIFACT_TYPES } from "@/constants/global";
 import { Ascendable } from "@/models/base";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";

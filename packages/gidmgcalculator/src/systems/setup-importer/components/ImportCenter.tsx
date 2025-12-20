@@ -4,7 +4,7 @@ import { ConfirmModal, LoadingSpin, Modal, type PartiallyRequired, notification 
 
 import type { SetupImportInfo } from "@/types";
 
-import { MAX_CALC_SETUPS, SCREEN_PATH } from "@/constants";
+import { MAX_CALC_SETUPS, SCREEN_PATH } from "@/constants/config";
 import { CalcSetup } from "@/models/calculator";
 import { useRouter } from "@/systems/router";
 import { useShallowCalcStore } from "@Store/calculator";

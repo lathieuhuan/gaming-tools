@@ -3,7 +3,7 @@ import type { IDbComplexSetup, IDbSetup } from "@/types";
 import type { UserdbState } from "@Store/userdb-slice";
 import type { ValidationError } from "./types";
 
-import { MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@/constants";
+import { MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@/constants/config";
 import Array_ from "@/utils/Array";
 import { isDbSetup } from "@/utils/setup";
 

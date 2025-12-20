@@ -3,7 +3,7 @@ import { Badge, Button, Rarity, VersatileSelect } from "rond";
 
 import type { Level } from "@/types";
 
-import { LEVELS } from "@/constants";
+import { LEVELS } from "@/constants/global";
 import { CalcCharacter } from "@/models/base";
 import { GenshinImage } from "../GenshinImage";
 

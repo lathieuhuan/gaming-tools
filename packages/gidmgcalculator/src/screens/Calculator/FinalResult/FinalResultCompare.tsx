@@ -7,9 +7,8 @@ import type { CalcAspect, CalcResultItemValue } from "@/calculation/types";
 import type { TalentType } from "@/types";
 import type { CalculatorState } from "@Store/calculator/types";
 
-import { TALENT_TYPES } from "@/constants";
-
 import { displayValues } from "@/components/FinalResultView";
+import { TALENT_TYPES } from "@/constants/global";
 import Array_ from "@/utils/Array";
 import Object_ from "@/utils/Object";
 import { useShallowCalcStore } from "@Store/calculator";

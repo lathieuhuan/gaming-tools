@@ -4,7 +4,7 @@ import { Badge, VersatileSelect, clsx, type ClassValue } from "rond";
 import type { Weapon } from "@/models/base";
 import type { Level } from "@/types";
 
-import { WEAPON_LEVELS } from "@/constants";
+import { WEAPON_LEVELS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { $AppWeapon } from "@/services";
 import { genSequentialOptions, suffixOf } from "@/utils";

@@ -2,10 +2,10 @@ import { useLayoutEffect, useMemo } from "react";
 import { useScreenWatcher } from "rond";
 
 import { CalculatorLarge, CalculatorSmall } from "@/screens/Calculator";
+import { $AppCharacter } from "@/services";
 import { Outlet, useRouter } from "@/systems/router";
 import { genAccountTravelerKey, selectTraveler } from "@Store/account-slice";
 import { useSelector } from "@Store/hooks";
-import { $AppCharacter } from "@/services";
 
 export function Main() {
   const screenWatcher = useScreenWatcher();

@@ -3,7 +3,7 @@ import { notification, type ModalControl } from "rond";
 import type { IDbArtifact, IDbWeapon } from "@/types";
 import type { UploadedData, UploadStep } from "./types";
 
-import { MAX_USER_ARTIFACTS, MAX_USER_WEAPONS } from "@/constants";
+import { MAX_USER_ARTIFACTS, MAX_USER_WEAPONS } from "@/constants/config";
 import { useDispatch } from "@Store/hooks";
 import { addUserDatabase } from "@Store/userdb-slice";
 

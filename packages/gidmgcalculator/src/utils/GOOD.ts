@@ -15,7 +15,7 @@ import type {
   GOODWeapon,
 } from "@/types/GOOD";
 
-import { ELEMENT_TYPES, LEVELS } from "@/constants";
+import { ELEMENT_TYPES, LEVELS } from "@/constants/global";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 
 export function toGOODKey(name: string) {

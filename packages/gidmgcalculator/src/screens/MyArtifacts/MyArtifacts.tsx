@@ -13,7 +13,7 @@ import {
 
 import type { ArtifactType, IDbArtifact } from "@/types";
 
-import { MAX_USER_ARTIFACTS } from "@/constants";
+import { MAX_USER_ARTIFACTS } from "@/constants/config";
 import { useArtifactSetData, useTravelerKey } from "@/hooks";
 import { Artifact } from "@/models/base";
 import { $AppArtifact } from "@/services";

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Badge, Button, PouchSvg, VersatileSelect } from "rond";
 
-import { WEAPON_LEVELS } from "@/constants";
+import { WEAPON_LEVELS } from "@/constants/global";
 import { $AppWeapon } from "@/services";
 import { Level } from "@/types";
 import { genSequentialOptions } from "@/utils";

@@ -10,7 +10,7 @@ import type { CharacterCalc } from "../core/CharacterCalc";
 import type { IEffectPerformer } from "../types";
 import type { TeammateCalc } from "./TeammateCalc";
 
-import { ELEMENT_TYPES } from "@/constants";
+import { ELEMENT_TYPES } from "@/constants/global";
 import Array_ from "@/utils/Array";
 
 export function applyDebuffs(

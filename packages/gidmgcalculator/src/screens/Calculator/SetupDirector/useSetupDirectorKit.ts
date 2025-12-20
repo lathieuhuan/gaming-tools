@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { MAX_CALC_SETUPS } from "@/constants";
+import { MAX_CALC_SETUPS } from "@/constants/config";
 import Array_ from "@/utils/Array";
 import Object_ from "@/utils/Object";
 import { MultiSetupChange, updateMultiSetups } from "@Store/calculator/actions";

@@ -9,7 +9,7 @@ import type {
 } from "@/types";
 import type { Artifact } from "./Artifact";
 
-import { ARTIFACT_TYPES, CORE_STAT_TYPES } from "@/constants";
+import { ARTIFACT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
 import { applyPercent } from "@/utils/pure-utils";
 import TypeCounter from "@/utils/TypeCounter";
 

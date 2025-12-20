@@ -1,7 +1,7 @@
 import type { CalcAspect, CalcResultItemValue } from "@/calculation/types";
 import type { AppCharacter, AppWeapon, LunarReaction, TransformativeReaction } from "@/types";
 
-import { LUNAR_REACTIONS, NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@/constants";
+import { LUNAR_REACTIONS, NORMAL_ATTACKS, TRANSFORMATIVE_REACTIONS } from "@/constants/global";
 
 type TableCalcItemKey = {
   main: "NAs" | "ES" | "EB" | "WP";

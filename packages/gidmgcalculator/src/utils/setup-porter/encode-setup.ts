@@ -7,17 +7,17 @@ import type {
   ReactionType,
 } from "@/types";
 
+import { EXPORTED_SETUP_VERSION } from "@/constants/config";
 import {
   ATTACK_ELEMENTS,
   ATTACK_PATTERNS,
   ATTRIBUTE_STAT_TYPES,
   BONUS_KEYS,
   ELEMENT_TYPES,
-  EXPORTED_SETUP_VERSION,
   LEVELS,
   REACTIONS,
   WEAPON_TYPES,
-} from "@/constants";
+} from "@/constants/global";
 import { CUSTOM_BUFF_CATEGORIES, DIVIDER } from "./setup-porter-config";
 
 export function encodeSetup(calcSetup: CalcSetup) {

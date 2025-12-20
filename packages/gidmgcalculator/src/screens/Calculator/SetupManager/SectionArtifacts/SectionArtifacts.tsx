@@ -5,7 +5,7 @@ import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
 
 import type { ArtifactType } from "@/types";
 
-import { ARTIFACT_TYPES } from "@/constants";
+import { ARTIFACT_TYPES } from "@/constants/global";
 import { Artifact } from "@/models/base";
 import { $AppSettings } from "@/services";
 import { setArtifactPiece } from "@Store/calculator/actions";

@@ -1,6 +1,6 @@
 import type { AttributeBonus, AttributeStat, TotalAttributes } from "@/types";
 
-import { ATTRIBUTE_STAT_TYPES } from "@/constants";
+import { ATTRIBUTE_STAT_TYPES } from "@/constants/global";
 import Object_ from "@/utils/Object";
 import TypeCounter, { TypeCounterKey } from "@/utils/TypeCounter";
 

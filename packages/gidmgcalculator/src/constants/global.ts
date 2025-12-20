@@ -1,14 +1,3 @@
-import type { TravelerInfo } from "@/types";
-
-// TODO: move
-export const DEFAULT_TRAVELER: TravelerInfo = {
-  selection: "LUMINE",
-  powerups: {
-    cannedKnowledge: false,
-    skirksTraining: false,
-  },
-};
-
 export const ELEMENT_TYPES = [
   "pyro",
   "hydro",

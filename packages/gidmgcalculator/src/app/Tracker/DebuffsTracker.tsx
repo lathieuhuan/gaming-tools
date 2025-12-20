@@ -2,7 +2,7 @@ import { clsx } from "rond";
 
 import type { CalcTarget } from "@/calculation/core/CalcTarget";
 
-import { ATTACK_ELEMENTS } from "@/constants";
+import { ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 
 import { Heading, RecordContainer, RecordItem, RecordList } from "./_components";

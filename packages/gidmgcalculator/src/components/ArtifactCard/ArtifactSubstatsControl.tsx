@@ -6,7 +6,7 @@ import { useTranslation } from "@/hooks";
 import { suffixOf } from "@/utils";
 
 // Constant
-import { ARTIFACT_SUBSTAT_TYPES } from "@/constants";
+import { ARTIFACT_SUBSTAT_TYPES } from "@/constants/global";
 import VALID_SUBSTAT_VALUES from "./valid-substat-values";
 
 type ArtifactSubstatsControlProps = {

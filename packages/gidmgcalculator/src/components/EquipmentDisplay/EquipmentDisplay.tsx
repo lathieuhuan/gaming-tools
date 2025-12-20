@@ -1,7 +1,7 @@
 import { clsx, ItemCase, type ClassValue } from "rond";
 
 import type { ArtifactType, IArtifact, IArtifactGearSlot, IWeapon } from "@/types";
-import { ARTIFACT_TYPES } from "@/constants";
+import { ARTIFACT_TYPES } from "@/constants/global";
 import { Artifact } from "@/models/base";
 
 // Component

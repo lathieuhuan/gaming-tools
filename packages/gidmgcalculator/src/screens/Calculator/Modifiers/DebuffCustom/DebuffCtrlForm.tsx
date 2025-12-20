@@ -3,7 +3,7 @@ import { InputNumber, VersatileSelect } from "rond";
 
 import type { CustomDebuffCtrl, CustomDebuffCtrlType } from "@/types";
 
-import { ATTACK_ELEMENTS } from "@/constants";
+import { ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 
 type DebuffCtrlFormProps = {

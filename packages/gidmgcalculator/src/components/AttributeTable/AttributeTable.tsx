@@ -1,6 +1,6 @@
 import { StatsTable, useScreenWatcher } from "rond";
 
-import { ATTACK_ELEMENTS } from "@/constants";
+import { ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 
 // Component

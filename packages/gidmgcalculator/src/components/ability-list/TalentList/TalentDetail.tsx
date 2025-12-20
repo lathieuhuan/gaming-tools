@@ -6,7 +6,7 @@ import { CloseButton, LoadingSpin, StatsTable, VersatileSelect, round } from "ro
 import type { AppCharacter, TalentType } from "@/types";
 
 import { getTalentDefaultValues } from "@/calculation/calculator/getTalentDefaultValues";
-import { ATTACK_PATTERNS } from "@/constants";
+import { ATTACK_PATTERNS } from "@/constants/global";
 import { useTabs, useTranslation } from "@/hooks";
 import { Character } from "@/models/base";
 import { $AppCharacter } from "@/services";

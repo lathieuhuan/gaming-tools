@@ -1,6 +1,6 @@
 import type { AppWeapon, IWeapon, IWeaponBasic, Level, WeaponType } from "@/types";
 
-import { LEVELS } from "@/constants";
+import { LEVELS } from "@/constants/global";
 import { Ascendable } from "./Ascendable";
 import Object_ from "@/utils/Object";
 
