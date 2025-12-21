@@ -69,7 +69,6 @@ export function InventoryRack<
     }
   }, []);
 
-  // TODO: enhance with dataByCode cache
   const toItemOption = (item: T): ItemOption<T, U> => {
     if (isWeapon(item)) {
       const data = $AppWeapon.get(item.code)!;

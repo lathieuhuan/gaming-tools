@@ -281,7 +281,7 @@ export default function SectionArtifacts() {
       <ArtifactInventory
         {...inventory}
         hasMultipleMode
-        currentArtifact={atfGear}
+        currentAtfGear={atfGear}
         buttonText="Select"
         onClickButton={handleSelectInventoryArtifact}
         onClose={() => setInventory((prevInventory) => ({ ...prevInventory, active: false }))}

@@ -38,7 +38,7 @@ export type RemoveDbWeaponAction = PayloadAction<{
   ID: number;
 }>;
 
-type SwitchArgs = {
+type SwitchPayload = {
   /**
    * Owner of the target item
    */
@@ -48,13 +48,9 @@ type SwitchArgs = {
   oldID: number;
 };
 
-export type SwitchWeaponAction = PayloadAction<SwitchArgs>;
+export type SwitchWeaponAction = PayloadAction<SwitchPayload>;
 
-export type SwitchArtifactAction = PayloadAction<
-  SwitchArgs & {
-    artifactIndex: number;
-  }
->;
+export type SwitchArtifactAction = PayloadAction<SwitchPayload>;
 
 export type SaveSetupAction = PayloadAction<IDbSetup>;
 

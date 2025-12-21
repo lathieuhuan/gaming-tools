@@ -1,6 +1,14 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import type { IDbArtifact, IDbCharacter, IDbComplexSetup, IDbSetup, IDbWeapon } from "@/types";
+import type { WritableDraft } from "immer/src/internal.js";
+import type {
+  IArtifactBasic,
+  IDbArtifact,
+  IDbCharacter,
+  IDbComplexSetup,
+  IDbSetup,
+  IDbWeapon,
+} from "@/types";
 import type {
   AddDbCharacterAction,
   AddSetupToComplexAction,
@@ -170,26 +178,48 @@ export const userdbSlice = createSlice({
       }
     },
     switchArtifact: ({ userArts, userChars }, action: SwitchArtifactAction) => {
-      const { newOwner, newID, oldOwner, oldID, artifactIndex } = action.payload;
+      const { newOwner, newID, oldOwner, oldID } = action.payload;
 
-      const newArtInfo = Array_.findById(userArts, newID);
-      if (newArtInfo) {
-        newArtInfo.owner = oldOwner;
+      let newAtf: WritableDraft<IArtifactBasic> | undefined;
+      let oldAtf: WritableDraft<IArtifactBasic> | undefined;
+
+      if (oldID) {
+        for (const atf of userArts) {
+          if (atf.ID === newID) {
+            newAtf = atf;
+          }
+          if (atf.ID === oldID) {
+            oldAtf = atf;
+          }
+          if (newAtf && oldAtf) {
+            break;
+          }
+        }
+      } else {
+        newAtf = Array_.findById(userArts, newID);
       }
 
-      const oldArtInfo = Array_.findById(userArts, oldID);
-      if (oldArtInfo) {
-        oldArtInfo.owner = newOwner;
+      if (newAtf) {
+        newAtf.owner = oldOwner;
+      }
+      if (oldAtf) {
+        oldAtf.owner = newOwner;
       }
 
-      const oldOwnerInfo = Array_.findByName(userChars, oldOwner);
-      if (oldOwnerInfo) {
-        oldOwnerInfo.artifactIDs[artifactIndex] = newID;
+      const oldChar = Array_.findByName(userChars, oldOwner);
+      if (oldChar) {
+        oldChar.artifactIDs = oldChar.artifactIDs.length
+          ? oldChar.artifactIDs.map((id) => (id === oldID ? newID : id))
+          : [newID];
+        // remove null from old db
+        oldChar.artifactIDs = Array_.truthify(oldChar.artifactIDs);
       }
 
-      const newOwnerInfo = newOwner ? Array_.findByName(userChars, newOwner) : undefined;
-      if (newOwnerInfo) {
-        newOwnerInfo.artifactIDs[artifactIndex] = oldID;
+      const newChar = Array_.findByName(userChars, newOwner);
+      if (newChar) {
+        newChar.artifactIDs = newChar.artifactIDs.map((id) => (id === oldID ? newID : id));
+        // remove null from old db
+        newChar.artifactIDs = Array_.truthify(newChar.artifactIDs);
       }
     },
     unequipArtifact: (state, action: PayloadAction<number>) => {

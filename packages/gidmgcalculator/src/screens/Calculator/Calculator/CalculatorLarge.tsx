@@ -1,47 +1,14 @@
-import { CSSProperties, memo, ReactNode } from "react";
+import { memo } from "react";
 import { useScreenWatcher } from "rond";
 
 import { useCalcStore } from "@Store/calculator";
-import { getCards } from "./config";
 
 // Components
+import { Card } from "../_components/Card";
 import { ContextProvider } from "../ContextProvider";
-import { Card } from "./Card";
+import { ModifiersCard, OverviewCard, ResultsCard, SetupCard } from "./_cards";
 
-function LargeCalculator() {
-  const touched = useCalcStore((state) => state.setupManagers.length !== 0);
-
-  const Cards = getCards({ touched });
-
-  return (
-    <div className="flex flex-col relative max-w-98/100 2xl:max-w-none h-full sm:h-[calc(100vh_-_3rem)]">
-      <div className="grow flex items-center overflow-auto snap-x snap-mandatory sm:snap-none">
-        <div className="w-full flex h-98/100 gap-2">
-          {Cards.Overview()}
-          {Cards.Modifiers()}
-          {Cards.Setup()}
-
-          <FlexibleWrapper>
-            {({ className, style }) =>
-              Cards.Results({
-                className: ["pt-2 relative", className],
-                style,
-                placeholder: <Card dark={3} />,
-              })
-            }
-          </FlexibleWrapper>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-type FlexibleWrapperRenderProps = {
-  className?: string;
-  style?: CSSProperties;
-};
-
-const FlexibleWrapper = (props: { children: (props: FlexibleWrapperRenderProps) => ReactNode }) => {
+const FlexibleCard: typeof Card = ({ className, style, ...restProps }) => {
   const comparedCount = useCalcStore((state) => state.comparedIds.length);
   const screenWatcher = useScreenWatcher();
   const isHugeScreen = screenWatcher.isFromSize("2xl");
@@ -52,19 +19,36 @@ const FlexibleWrapper = (props: { children: (props: FlexibleWrapperRenderProps) 
     width += (comparedCount - 1) * 2;
   }
 
-  return props.children({
-    className: "transition-size duration-200",
-    style: {
-      width: `${width}rem`,
-      maxWidth: isHugeScreen ? "30rem" : "22rem",
-    },
-  });
+  return (
+    <Card
+      className={["transition-size duration-200", className]}
+      style={{
+        ...style,
+        width: `${width}rem`,
+        maxWidth: isHugeScreen ? "30rem" : "22rem",
+      }}
+      {...restProps}
+    />
+  );
 };
 
-export const CalculatorLarge = memo(() => {
+function LargeCalculator() {
+  const touched = useCalcStore((state) => state.setupManagers.length !== 0);
+
   return (
     <ContextProvider>
-      <LargeCalculator />
+      <div className="flex flex-col relative max-w-98/100 2xl:max-w-none h-full sm:h-[calc(100vh_-_3rem)]">
+        <div className="grow flex items-center overflow-auto snap-x snap-mandatory sm:snap-none">
+          <div className="w-full flex h-98/100 gap-2">
+            <OverviewCard touched={touched} />
+            <ModifiersCard touched={touched} />
+            <SetupCard touched={touched} />
+            <ResultsCard touched={touched} className="pt-2" CardComponent={FlexibleCard} />
+          </div>
+        </div>
+      </div>
     </ContextProvider>
   );
-});
+}
+
+export const CalculatorLarge = memo(LargeCalculator);

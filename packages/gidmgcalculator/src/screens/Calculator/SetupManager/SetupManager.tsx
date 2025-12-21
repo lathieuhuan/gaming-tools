@@ -12,14 +12,11 @@ import SectionTeammates from "./SectionTeammates";
 import SectionWeapon from "./SectionWeapon";
 import { SetupSelect } from "./SetupSelect";
 
-type SetupManagerProps = {
-  isModernUI?: boolean;
-};
-
-export function SetupManager({ isModernUI = false }: SetupManagerProps) {
+export function SetupManager() {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
   const targetConfig = useSelector(selectTargetConfig);
+  const isModernUI = useSelector((state) => state.ui.isTabLayout);
 
   const updateTargetConfig = (active: boolean, overviewed: boolean) => {
     dispatch(updateUI({ targetConfig: { active, overviewed } }));

@@ -201,7 +201,6 @@ export abstract class AbstractBonusCalc<
         if (stack.scope === "PARTY") {
           result = members.reduce((total, { data }) => total + data.EBcost, 0);
         } else {
-          // TODO: This will cause bug in Simulator because it should be EBcost of the receiver
           result = performer.data.EBcost;
         }
         break;

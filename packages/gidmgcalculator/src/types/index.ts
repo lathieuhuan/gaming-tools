@@ -9,5 +9,6 @@ export * from "./calculator";
 export * from "./common";
 export * from "./db-entity";
 export * from "./entity";
-export * from "./global.types";
 export * from "./modifiers";
+export * from "./settings";
+

@@ -24,8 +24,7 @@ export type ArtifactInventoryProps = Pick<ArtifactFilterProps<Artifact>, "forced
   Pick<EntitySelectTemplateProps, "hasMultipleMode"> & {
     /** Default 'flower' */
     initialType?: ArtifactType;
-    // TODO: change to currentAtfGear
-    currentArtifact?: ArtifactGear;
+    currentAtfGear?: ArtifactGear;
     owner?: string | null;
     buttonText: string;
     onClickButton: (chosen: Artifact, isMultiSelect: boolean) => void;
@@ -36,7 +35,7 @@ const ArtifactInventoryCore = ({
   forcedType,
   hasMultipleMode,
   initialType = "flower",
-  currentArtifact,
+  currentAtfGear,
   owner,
   buttonText,
   onClickButton,
@@ -72,7 +71,7 @@ const ArtifactInventoryCore = ({
   });
 
   const currentPiece = selectedArtifact?.type
-    ? currentArtifact?.pieces[selectedArtifact.type]
+    ? currentAtfGear?.pieces[selectedArtifact.type]
     : undefined;
 
   const onChangeItem: InventoryRackProps<Artifact>["onChangeItem"] = (item) => {
@@ -142,7 +141,7 @@ const ArtifactInventoryCore = ({
                       children: "Compare",
                       variant: showingCurrent ? "active" : "default",
                       className: chosenIsCurrent && "hidden",
-                      disabled: !currentArtifact,
+                      disabled: !currentAtfGear,
                       onClick: () => setShowingCurrent(!showingCurrent),
                     },
                     {
@@ -158,7 +157,7 @@ const ArtifactInventoryCore = ({
                 />
               </div>
 
-              {currentArtifact ? (
+              {currentAtfGear ? (
                 <div
                   className={
                     "absolute top-0 z-10 h-full hide-scrollbar transition-size duration-200 " +

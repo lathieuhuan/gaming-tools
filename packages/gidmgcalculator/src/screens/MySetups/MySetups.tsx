@@ -87,15 +87,14 @@ function MySetups() {
       <div
         className={clsx(
           userSetups.length && "p-1 xm:pr-3",
-          "shrink-0 flex flex-col items-start custom-scrollbar scroll-smooth space-y-3"
+          "shrink-0 custom-scrollbar scroll-smooth"
         )}
         style={{
           minWidth: screenWatcher.isFromSize("lg") ? "541px" : "19.5rem",
         }}
       >
-        {/* TODO improve UI */}
-        {overviewInfos.length ? (
-          overviewInfos.map((info) => {
+        <div className="flex flex-col items-start space-y-3 peer">
+          {overviewInfos.map((info) => {
             const { setup, complexSetup } = info;
             const setupId = complexSetup?.ID || setup.ID;
 
@@ -120,10 +119,12 @@ function MySetups() {
                 </div>
               </div>
             );
-          })
-        ) : (
-          <p className="w-full py-4 text-light-hint text-lg text-center">No setups found</p>
-        )}
+          })}
+        </div>
+
+        <p className="py-4 text-light-hint text-lg text-center hidden peer-empty:block">
+          No setups found
+        </p>
       </div>
 
       <div className="shrink-0 px-4 pt-2 pb-4 rounded-lg bg-dark-3" style={{ width: "21.75rem" }}>

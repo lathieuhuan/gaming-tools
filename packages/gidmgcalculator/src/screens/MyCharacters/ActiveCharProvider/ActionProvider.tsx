@@ -94,7 +94,7 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
 
       <ArtifactInventory
         active={modalType === "SWITCH_ARTIFACT"}
-        currentArtifact={atfGear}
+        currentAtfGear={atfGear}
         forcedType={switchedSlot?.type}
         owner={character.name}
         buttonText="Switch"
@@ -103,16 +103,16 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
             return;
           }
 
-          // TODO
-          // dispatch(
-          //   switchArtifact({
-          //     newOwner: selectedArtifact.owner,
-          //     newID: selectedArtifact.ID,
-          //     oldOwner: character.name,
-          //     oldID: currentPiece?.ID || 0,
-          //     artifactIndex: switchedArtifactI,
-          //   })
-          // );
+          const currentPiece = atfGear?.pieces[switchedSlot.type];
+
+          dispatch(
+            switchArtifact({
+              newOwner: selectedArtifact.owner,
+              newID: selectedArtifact.ID,
+              oldOwner: character.name,
+              oldID: currentPiece?.ID || 0,
+            })
+          );
         }}
         onClose={closeModal}
       />
