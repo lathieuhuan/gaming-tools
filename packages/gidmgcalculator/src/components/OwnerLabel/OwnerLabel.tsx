@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { Popover, useClickOutside, type ClickOutsideHandler } from "rond";
 
-import type { IDbItem, IDbSetup, IDbWeapon } from "@/types";
+import type { IDbItem, IDbSetup, IWeaponBasic } from "@/types";
 import { useItemBoundSetups, type BoundingItem } from "@/hooks";
 
 type SetupListProps = {
@@ -31,7 +31,7 @@ type OwnerLabelProps = {
   style?: React.CSSProperties;
   item?: BoundingItem & {
     owner?: IDbItem["owner"];
-    refi?: IDbWeapon["refi"];
+    refi?: IWeaponBasic["refi"];
   };
 };
 

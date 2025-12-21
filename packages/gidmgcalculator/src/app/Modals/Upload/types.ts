@@ -1,9 +1,9 @@
-import type { IDbArtifact, IDbCharacter, IDbComplexSetup, IDbSetup, IDbWeapon } from "@/types";
+import type { IArtifactBasic, IDbCharacter, IDbComplexSetup, IDbSetup, IWeaponBasic } from "@/types";
 
 export interface UploadedData {
   characters: IDbCharacter[];
-  weapons: IDbWeapon[];
-  artifacts: IDbArtifact[];
+  weapons: IWeaponBasic[];
+  artifacts: IArtifactBasic[];
   setups: (IDbSetup | IDbComplexSetup)[];
 }
 

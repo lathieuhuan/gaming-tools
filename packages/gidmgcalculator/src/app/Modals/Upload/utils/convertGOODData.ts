@@ -1,4 +1,4 @@
-import type { IDbArtifact, IDbCharacter, IDbWeapon } from "@/types";
+import type { IArtifactBasic, IDbCharacter, IWeaponBasic } from "@/types";
 import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 
 import { DOWNLOADED_DATA_VERSION } from "@/constants/config";
@@ -22,8 +22,8 @@ type GOODData = {
 type Result = {
   version: number;
   characters: IDbCharacter[];
-  weapons: IDbWeapon[];
-  artifacts: IDbArtifact[];
+  weapons: IWeaponBasic[];
+  artifacts: IArtifactBasic[];
 };
 
 export function convertGOODData(data: GOODData) {

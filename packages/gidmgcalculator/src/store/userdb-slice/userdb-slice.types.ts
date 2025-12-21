@@ -4,17 +4,17 @@ import type { PartiallyRequired, PartiallyRequiredOnly } from "rond";
 import type {
   AppCharacter,
   ArtifactSubStat,
-  IDbArtifact,
+  IArtifactBasic,
   IDbCharacter,
   IDbComplexSetup,
   IDbSetup,
-  IDbWeapon,
+  IWeaponBasic,
 } from "@/types";
 
 export type AddUserDatabaseAction = PayloadAction<{
   characters?: IDbCharacter[];
-  weapons?: IDbWeapon[];
-  artifacts?: IDbArtifact[];
+  weapons?: IWeaponBasic[];
+  artifacts?: IArtifactBasic[];
   setups?: (IDbSetup | IDbComplexSetup)[];
 }>;
 
@@ -30,9 +30,9 @@ export type RemoveDbArtifactAction = PayloadAction<{
   ID: number;
 }>;
 
-export type UpdateDbWeaponAction = PayloadAction<PartiallyRequired<Partial<IDbWeapon>, "ID">>;
+export type UpdateDbWeaponAction = PayloadAction<PartiallyRequired<Partial<IWeaponBasic>, "ID">>;
 
-export type UpdateDbArtifactAction = PayloadAction<PartiallyRequired<Partial<IDbArtifact>, "ID">>;
+export type UpdateDbArtifactAction = PayloadAction<PartiallyRequired<Partial<IArtifactBasic>, "ID">>;
 
 export type RemoveDbWeaponAction = PayloadAction<{
   ID: number;

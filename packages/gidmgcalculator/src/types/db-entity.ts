@@ -1,13 +1,7 @@
 import type { BasicSetupType } from "./calculator";
 import type { IArtifactBasic, ICharacterBasic, ISetupBasic, IWeaponBasic } from "./entity";
 
-// TODO remove, use IWeaponBasic
-export type IDbWeapon = IWeaponBasic;
-
-// TODO remove, use IArtifactBasic
-export type IDbArtifact = IArtifactBasic;
-
-export type IDbItem = IDbWeapon | IDbArtifact;
+export type IDbItem = IWeaponBasic | IArtifactBasic;
 
 export type IDbCharacter = ICharacterBasic & {
   weaponID: number;

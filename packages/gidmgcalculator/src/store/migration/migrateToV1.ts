@@ -1,10 +1,10 @@
-import { IDbArtifact } from "@/types";
+import { IArtifactBasic } from "@/types";
 import { UserdbState, initialState } from "@Store/userdb-slice";
 import { UserDatabaseV0 } from "./migration.types";
 
 export const migrateSetupsToV1 = (
   setups: UserDatabaseV0["userSetups"] = [],
-  artifacts: IDbArtifact[]
+  artifacts: IArtifactBasic[]
 ): UserdbState["userSetups"] => {
   // TODO announce about this
   return [];

@@ -1,4 +1,4 @@
-import type { IArtifactBasic, IDbArtifact, IDbCharacter, IDbWeapon, WeaponType } from "@/types";
+import type { IArtifactBasic, IDbCharacter, IWeaponBasic, WeaponType } from "@/types";
 
 import { ArtifactGear, CalcCharacter, Team } from "@/models/base";
 import { $AppCharacter } from "@/services";
@@ -6,7 +6,7 @@ import Array_ from "./Array";
 import { createArtifact, createArtifactBasic, createWeapon, createWeaponBasic } from "./entity";
 import IdStore from "./IdStore";
 
-export function parseDbWeapon(weaponID: number, dbWeapons: IDbWeapon[], weaponType: WeaponType) {
+export function parseDbWeapon(weaponID: number, dbWeapons: IWeaponBasic[], weaponType: WeaponType) {
   const dbWeapon = Array_.findById(dbWeapons, weaponID);
 
   const weapon = dbWeapon
@@ -16,7 +16,7 @@ export function parseDbWeapon(weaponID: number, dbWeapons: IDbWeapon[], weaponTy
   return weapon;
 }
 
-export function parseDbArtifacts(artifactIDs: number[] = [], dbArtifacts: IDbArtifact[]) {
+export function parseDbArtifacts(artifactIDs: number[] = [], dbArtifacts: IArtifactBasic[]) {
   const artifacts: IArtifactBasic[] = [];
 
   for (const artifactID of artifactIDs) {
@@ -32,8 +32,8 @@ export function parseDbArtifacts(artifactIDs: number[] = [], dbArtifacts: IDbArt
 
 export function makeCalcCharacterFromDb(
   character: IDbCharacter,
-  dbWeapons: IDbWeapon[],
-  dbArtifacts: IDbArtifact[],
+  dbWeapons: IWeaponBasic[],
+  dbArtifacts: IArtifactBasic[],
   data = $AppCharacter.get(character.name)!,
   team?: Team
 ) {

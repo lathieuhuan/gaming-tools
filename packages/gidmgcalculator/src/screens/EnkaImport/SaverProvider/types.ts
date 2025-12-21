@@ -1,10 +1,9 @@
-import type { ArtifactType } from "@/types";
-import type { IDbArtifact, IDbCharacter, IDbWeapon } from "@/types/db-entity";
 import type { PartiallyOptional } from "rond";
+import type { ArtifactType, IArtifactBasic, IDbCharacter, IWeaponBasic } from "@/types";
 
-export type ExistedItems = Partial<Record<ArtifactType, IDbArtifact>> & {
+export type ExistedItems = Partial<Record<ArtifactType, IArtifactBasic>> & {
   character?: IDbCharacter;
-  weapon?: IDbWeapon;
+  weapon?: IWeaponBasic;
 };
 
 export type SaveSelectionType = "NEW" | "OVERWRITE" | "IGNORE";

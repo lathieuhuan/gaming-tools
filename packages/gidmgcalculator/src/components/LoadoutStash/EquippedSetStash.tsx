@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button, clsx, ItemCase, useIntersectionObserver } from "rond";
 
-import type { AppArtifact, ElementType, IDbArtifact } from "@/types";
+import type { AppArtifact, ElementType, IArtifactBasic } from "@/types";
 
 import { useArtifactSetData } from "@/hooks";
 import { $AppCharacter } from "@/services";
@@ -14,7 +14,7 @@ import { CharacterPortrait } from "@/components/CharacterPortrait";
 import { GenshinImage } from "@/components/GenshinImage";
 
 export type ArtifactOption = {
-  userData: IDbArtifact;
+  userData: IArtifactBasic;
   data: AppArtifact;
 };
 

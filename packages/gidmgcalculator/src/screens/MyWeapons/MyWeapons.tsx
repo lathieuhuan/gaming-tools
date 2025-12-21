@@ -12,7 +12,7 @@ import {
   WarehouseLayout,
 } from "rond";
 
-import type { IDbWeapon, WeaponType } from "@/types";
+import type { IWeaponBasic, WeaponType } from "@/types";
 
 import { MAX_USER_WEAPONS } from "@/constants/config";
 import { useTravelerKey, useWeaponData } from "@/hooks";
@@ -79,7 +79,7 @@ function MyWeapons() {
     }
   };
 
-  const onClickRemoveWeapon = (weapon: IDbWeapon) => {
+  const onClickRemoveWeapon = (weapon: IWeaponBasic) => {
     if (weapon.setupIDs?.length) {
       return message.info("This weapon cannot be deleted. It is used by some Setups.");
     }
@@ -173,7 +173,7 @@ function MyWeapons() {
         onForgeWeapon={(weapon) => {
           if (checkIfMaxWeaponsReached()) return;
 
-          const newUserWeapon: IDbWeapon = {
+          const newUserWeapon: IWeaponBasic = {
             ...weapon,
             ID: Date.now(),
           };

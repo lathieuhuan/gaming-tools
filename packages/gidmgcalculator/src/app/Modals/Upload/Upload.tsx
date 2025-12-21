@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { notification, type ModalControl } from "rond";
-import type { IDbArtifact, IDbWeapon } from "@/types";
+import type { IArtifactBasic, IWeaponBasic } from "@/types";
 import type { UploadedData, UploadStep } from "./types";
 
 import { MAX_USER_ARTIFACTS, MAX_USER_WEAPONS } from "@/constants/config";
@@ -28,8 +28,8 @@ function UploadCore({ active, onClose }: ModalControl) {
   const { weapons = [], artifacts = [] } = uploadedData.current || {};
   const selectingWeapons = active && currentStep === "CHECK_WEAPONS";
   const selectingArtifacts = active && currentStep === "CHECK_ARTIFACTS";
-  let filteredWeapons: IDbWeapon[] = [];
-  let filteredArtifacts: IDbArtifact[] = [];
+  let filteredWeapons: IWeaponBasic[] = [];
+  let filteredArtifacts: IArtifactBasic[] = [];
 
   if (selectingWeapons) {
     filteredWeapons = weapons.filter((weapon) => !weapon.owner && !weapon.setupIDs?.length);

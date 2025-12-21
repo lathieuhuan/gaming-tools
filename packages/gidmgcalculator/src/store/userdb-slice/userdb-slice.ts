@@ -3,11 +3,10 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { WritableDraft } from "immer/src/internal.js";
 import type {
   IArtifactBasic,
-  IDbArtifact,
   IDbCharacter,
   IDbComplexSetup,
   IDbSetup,
-  IDbWeapon,
+  IWeaponBasic,
 } from "@/types";
 import type {
   AddDbCharacterAction,
@@ -30,13 +29,13 @@ import { ARTIFACT_TYPES } from "@/constants/global";
 import { Ascendable } from "@/models/base";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
-import { isDbSetup } from "@/utils/setup";
 import { createCharacterBasic, createWeaponBasic } from "@/utils/entity";
+import { isDbSetup } from "@/utils/setup";
 
 export type UserdbState = {
   userChars: IDbCharacter[];
-  userWps: IDbWeapon[];
-  userArts: IDbArtifact[];
+  userWps: IWeaponBasic[];
+  userArts: IArtifactBasic[];
   userSetups: (IDbSetup | IDbComplexSetup)[];
   chosenChar: string;
   chosenSetupID: number;
@@ -239,7 +238,7 @@ export const userdbSlice = createSlice({
       delete artifact.owner;
     },
     // WEAPON
-    addUserWeapon: (state, action: PayloadAction<IDbWeapon>) => {
+    addUserWeapon: (state, action: PayloadAction<IWeaponBasic>) => {
       state.userWps.push(action.payload);
     },
     /** Require index (prioritized) or ID */
@@ -319,7 +318,7 @@ export const userdbSlice = createSlice({
         userWps.splice(removedIndex, 1);
 
         if (ownerInfo) {
-          const newWeapon: IDbWeapon = {
+          const newWeapon: IWeaponBasic = {
             owner,
             ...createWeaponBasic({ type }),
           };
@@ -330,7 +329,7 @@ export const userdbSlice = createSlice({
       }
     },
     // ARTIFACT
-    addUserArtifact: (state, action: PayloadAction<IDbArtifact | IDbArtifact[]>) => {
+    addUserArtifact: (state, action: PayloadAction<IArtifactBasic | IArtifactBasic[]>) => {
       state.userArts.push(...Array_.toArray(action.payload));
     },
     updateUserArtifact: (state, action: UpdateDbArtifactAction) => {
