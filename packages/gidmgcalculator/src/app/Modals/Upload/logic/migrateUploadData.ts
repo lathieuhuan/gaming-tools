@@ -1,7 +1,7 @@
-import type { CurrentDatabaseData } from "../types/current";
+import type { CurrentDatabaseData } from "@/mirgration/types/current";
 
-import { convertToV3_1 } from "./convertToV3_1";
-import { convertToV4 } from "./convertToV4";
+import { convertToV3_1 } from "@/mirgration/convertToV3_1";
+import { convertToV4 } from "@/mirgration/convertToV4";
 
 type MigrationFn = (data: any) => any;
 
@@ -33,7 +33,7 @@ type MigrateResult =
       data: CurrentDatabaseData;
     };
 
-export function migrateDatabaseData(data: OldData): MigrateResult {
+export function migrateUploadData(data: OldData): MigrateResult {
   if (data.version < 3) {
     return {
       status: "FAILED",

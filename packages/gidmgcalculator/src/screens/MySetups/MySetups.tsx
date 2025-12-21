@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { MySetupsModalType, selectAppReady, updateUI } from "@Store/ui-slice";
 import { chooseUserSetup, selectChosenSetupId } from "@Store/userdb-slice";
 import { toOverviewInfo, createSetupForTeammate } from "./utils";
-import { restoreCalcSetup } from "@/utils/setup";
+import { restoreCalcSetup } from "@/utils/setup-utils";
 import { parseDbArtifacts, parseDbWeapon } from "@/utils/userdb";
 
 // Component

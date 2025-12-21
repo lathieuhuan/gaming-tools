@@ -1,10 +1,10 @@
 import type { CurrentDatabaseData } from "@/mirgration/types/current";
 import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 
-import { DOWNLOADED_DATA_VERSION } from "@/constants/config";
+import { DATABASE_DATA_VERSION } from "@/constants/config";
 import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
-import { createWeaponBasic } from "@/utils/entity";
+import { createWeaponBasic } from "@/utils/entity-utils";
 import {
   convertGOODArtifact,
   convertGOODCharacter,
@@ -21,7 +21,7 @@ type GOODData = {
 
 export function convertGOODData(data: GOODData) {
   const result: CurrentDatabaseData = {
-    version: DOWNLOADED_DATA_VERSION,
+    version: DATABASE_DATA_VERSION,
     characters: [],
     weapons: [],
     artifacts: [],

@@ -1,22 +1,23 @@
 import type { Action, ThunkAction } from "@reduxjs/toolkit";
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import {
-  persistStore,
-  persistReducer,
   createMigrate,
   FLUSH,
-  REHYDRATE,
   PAUSE,
   PERSIST,
+  persistReducer,
+  persistStore,
   PURGE,
   REGISTER,
+  REHYDRATE,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import uiSliceReducers, { uiSlice } from "./ui-slice";
-import userdbSliceReducers, { userdbSlice, initialState } from "./userdb-slice";
+import { DATABASE_DATA_VERSION } from "@/constants";
 import accountSliceReducers, { accountSlice } from "./account-slice";
 import { migrates } from "./migration";
+import uiSliceReducers, { uiSlice } from "./ui-slice";
+import userdbSliceReducers, { initialState, userdbSlice } from "./userdb-slice";
 
 type SetupStoreOptions = {
   persistUserData?: boolean;
@@ -26,7 +27,7 @@ export function setupStore(options?: SetupStoreOptions) {
   const userdbPersistReducers = persistReducer(
     {
       key: "database",
-      version: 4,
+      version: DATABASE_DATA_VERSION,
       storage,
       blacklist: options?.persistUserData ? [] : Object.keys(initialState),
       migrate: createMigrate(migrates, { debug: false }),

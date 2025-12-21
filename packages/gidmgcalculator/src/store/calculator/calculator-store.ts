@@ -4,7 +4,7 @@ import { useShallow } from "zustand/shallow";
 
 import type{ CalculatorState } from "./types";
 
-import { createTarget } from "@/utils/entity";
+import { createTarget } from "@/utils/entity-utils";
 
 export const initialState: CalculatorState = {
   activeId: 0,

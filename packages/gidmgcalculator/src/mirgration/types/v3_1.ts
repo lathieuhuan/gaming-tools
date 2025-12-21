@@ -86,7 +86,7 @@ type Setup = {
   wpBuffCtrls: ModifierCtrl[];
   artBuffCtrls: ArtifactModifierCtrl[];
   artDebuffCtrls: ArtifactModifierCtrl[];
-  teamBuffCtrls: TeamBuffCtrl[];
+  teamBuffCtrls?: TeamBuffCtrl[];
 
   party: (IDbTeammate | null)[];
   elmtModCtrls: ElementModCtrl;

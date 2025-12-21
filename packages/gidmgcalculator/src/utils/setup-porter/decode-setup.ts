@@ -32,9 +32,9 @@ import { Artifact, ArtifactGear, CalcCharacter, Target, Team } from "@/models/ba
 import { CalcSetup, CalcTeammate } from "@/models/calculator";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
-import { createArtifact, createTarget, createWeapon } from "../entity";
+import { createArtifact, createTarget, createWeapon } from "../entity-utils";
 import IdStore from "../IdStore";
-import { enhanceCtrls } from "../modifier";
+import { enhanceCtrls } from "../modifier-utils";
 import { CUSTOM_BUFF_CATEGORIES, DIVIDER } from "./setup-porter-config";
 
 export type DecodeError = "OLD_VERSION" | "MAIN_NOT_FOUND" | "UNKNOWN";

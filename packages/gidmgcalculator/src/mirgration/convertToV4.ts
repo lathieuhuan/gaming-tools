@@ -7,8 +7,8 @@ import type {
   ITeammateBasic,
   ResonanceModCtrl,
 } from "@/types";
-import type { DatabaseDataV3_1 } from "../types/v3_1";
-import type { DatabaseDataV4 } from "../types/v4";
+import type { DatabaseDataV3_1 } from "./types/v3_1";
+import type { DatabaseDataV4 } from "./types/v4";
 
 import Array_ from "@/utils/Array";
 
@@ -35,6 +35,8 @@ function convertArtifactModifierCtrl(ctrl: V3_1ArtifactModifierCtrl): IArtifactM
 }
 
 function convertTeammate(teammate: V3_1Teammate): ITeammateBasic {
+  const atfCode = teammate.artifact.code;
+
   return {
     name: teammate.name,
     enhanced: teammate.enhanced ?? false,
@@ -46,10 +48,12 @@ function convertTeammate(teammate: V3_1Teammate): ITeammateBasic {
       refi: teammate.weapon.refi,
       buffCtrls: teammate.weapon.buffCtrls.map(convertModifierCtrl),
     },
-    artifact: {
-      code: teammate.artifact.code,
-      buffCtrls: teammate.artifact.buffCtrls.map(convertModifierCtrl),
-    },
+    artifact: atfCode
+      ? {
+          code: atfCode,
+          buffCtrls: teammate.artifact.buffCtrls.map(convertModifierCtrl),
+        }
+      : undefined,
   };
 }
 
@@ -96,7 +100,7 @@ function convertSetup(setup: V3_1Setup): IDbSetup {
     artDebuffCtrls: setup.artDebuffCtrls.map(convertArtifactModifierCtrl),
 
     teammates: Array_.truthify(setup.party).map(convertTeammate),
-    teamBuffCtrls: setup.teamBuffCtrls,
+    teamBuffCtrls: setup.teamBuffCtrls || [],
     rsnBuffCtrls,
     rsnDebuffCtrls: [],
 

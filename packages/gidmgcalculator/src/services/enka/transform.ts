@@ -2,7 +2,7 @@ import type { IArtifact } from "@/types";
 import type { GenshinUser, GenshinUserBuild, GenshinUserResponse } from "./types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
-import { createArtifact, createWeapon } from "@/utils/entity";
+import { createArtifact, createWeapon } from "@/utils/entity-utils";
 import { convertGOODArtifact, convertGOODCharacter, convertGOODWeapon } from "@/utils/GOOD";
 import IdStore from "@/utils/IdStore";
 

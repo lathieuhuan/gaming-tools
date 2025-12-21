@@ -1,16 +1,19 @@
-import { convertToV4 } from "@/mirgration/logic/convertToV4";
+import { convertToV4 } from "@/mirgration/convertToV4";
 import { initialState, UserdbState } from "@Store/userdb-slice";
 
 export const migrateToV4 = (state?: any): UserdbState => {
-  console.log("migrateToV4");
-  console.log(state);
-
   if (!state) {
     return initialState;
   }
 
   try {
-    const migrateResult = convertToV4(state);
+    const migrateResult = convertToV4({
+      version: 3.1,
+      characters: state.userChars,
+      weapons: state.userWps,
+      artifacts: state.userArts,
+      setups: state.userSetups,
+    });
 
     return {
       ...state,

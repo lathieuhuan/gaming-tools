@@ -5,7 +5,7 @@ import { Button, Modal, notification } from "rond";
 import type { CurrentDatabaseData } from "@/mirgration/types/current";
 
 import { convertGOODData } from "../logic/convertGOODData";
-import { migrateDatabaseData } from "@/mirgration/logic/migrateDatabaseData";
+import { migrateUploadData } from "../logic/migrateUploadData";
 
 type GetFileResult =
   | {
@@ -19,7 +19,6 @@ type GetFileResult =
 
 const getFile = (input: HTMLInputElement | null): GetFileResult => {
   const file = input?.files?.[0];
-
   if (!file) {
     return { status: "FAILED" };
   }
@@ -56,7 +55,7 @@ const FileUploadCore = ({ onSuccessUploadFile }: FileUploadProps) => {
         let data = JSON.parse((event.target?.result as string) || "");
         if (isJson) data = convertGOODData(data);
 
-        const migrateResult = migrateDatabaseData(data);
+        const migrateResult = migrateUploadData(data);
 
         if (migrateResult.status === "FAILED") {
           notification.error({
@@ -67,15 +66,19 @@ const FileUploadCore = ({ onSuccessUploadFile }: FileUploadProps) => {
 
         onSuccessUploadFile(migrateResult.data);
       } catch (err) {
-        console.log(err);
+        console.error(err);
 
         notification.error({
           content: "An error occurred while reading your data.",
         });
       }
 
-      reader.readAsText(file);
+      if (inputRef.current) {
+        inputRef.current.files = null;
+      }
     };
+
+    reader.readAsText(file);
   };
 
   return (

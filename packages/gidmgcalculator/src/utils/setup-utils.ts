@@ -21,7 +21,7 @@ import {
   createWeaponBuffCtrls,
 } from "@/models/calculator";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import { createArtifact, createTarget, createWeapon } from "./entity";
+import { createArtifact, createTarget, createWeapon } from "./entity-utils";
 import IdStore from "./IdStore";
 import Object_ from "./Object";
 

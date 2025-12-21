@@ -7,7 +7,7 @@ import { calculateSetup } from "@/calculation/calculator";
 import { Target, Team } from "@/models/base";
 import { CalcSetup } from "@/models/calculator";
 import { $AppArtifact, $AppData } from "@/services";
-import { enhanceCtrls } from "@/utils/modifier";
+import { enhanceCtrls } from "@/utils/modifier-utils";
 
 import { FinalResultView } from "@/components";
 import { SetupModals } from "../SetupModals";

@@ -1,7 +1,7 @@
 import { FaDownload } from "react-icons/fa";
 import { Button, Modal } from "rond";
 
-import { DOWNLOADED_DATA_VERSION } from "@/constants/config";
+import { DATABASE_DATA_VERSION } from "@/constants/config";
 import { useSelector } from "@Store/hooks";
 import { selectDbArtifacts, selectDbCharacters, selectUserSetups, selectDbWeapons } from "@Store/userdb-slice";
 
@@ -13,7 +13,7 @@ function DownloadCore() {
 
   const onClickDownload = () => {
     const downloadData = JSON.stringify({
-      version: DOWNLOADED_DATA_VERSION,
+      version: DATABASE_DATA_VERSION,
       characters: userChars,
       weapons: userWps,
       artifacts: userArts,
