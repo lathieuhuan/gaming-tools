@@ -2,58 +2,80 @@ import { useRef } from "react";
 import { FaUpload } from "react-icons/fa";
 import { Button, Modal, notification } from "rond";
 
-import type { UploadedData } from "../types";
+import type { CurrentDatabaseData } from "@/mirgration/types/current";
 
-import { DOWNLOADED_DATA_VERSION } from "@/constants/config";
-import { convertGOODData } from "../utils/convertGOODData";
-import { convertToV3_1 } from "../utils/convertToV3_1";
+import { convertGOODData } from "../logic/convertGOODData";
+import { migrateDatabaseData } from "@/mirgration/logic/migrateDatabaseData";
 
-interface FileUploadProps {
-  onSuccessUploadFile: (data: UploadedData) => void;
-}
+type GetFileResult =
+  | {
+      status: "FAILED";
+    }
+  | {
+      status: "SUCCESS";
+      file: File;
+      isJson: boolean;
+    };
+
+const getFile = (input: HTMLInputElement | null): GetFileResult => {
+  const file = input?.files?.[0];
+
+  if (!file) {
+    return { status: "FAILED" };
+  }
+
+  const isText = /text.*/.test(file.type);
+  const isJson = /application.*/.test(file.type);
+
+  if (!isText && !isJson) {
+    return { status: "FAILED" };
+  }
+
+  return { status: "SUCCESS", file, isJson };
+};
+
+type FileUploadProps = {
+  onSuccessUploadFile: (data: CurrentDatabaseData) => void;
+};
+
 const FileUploadCore = ({ onSuccessUploadFile }: FileUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const onUploadFile = () => {
-    const file = inputRef.current?.files?.[0];
-    if (!file) return;
+  const handleFileUpload = () => {
+    const result = getFile(inputRef.current);
 
-    const reader = new FileReader();
-    const isJson = /application.*/.test(file.type);
-
-    if (/text.*/.test(file.type) || isJson) {
-      reader.onload = function (event) {
-        try {
-          let data = JSON.parse((event.target?.result as string) || "");
-          if (isJson) data = convertGOODData(data);
-
-          const version = +data.version;
-
-          if (version < 3) {
-            notification.error({
-              content: "Your data are too old and cannot be converted to the current version.",
-            });
-          }
-          if (version === 3) {
-            return onSuccessUploadFile(convertToV3_1(data));
-          }
-          if (version === DOWNLOADED_DATA_VERSION) {
-            return onSuccessUploadFile(data);
-          }
-
-          notification.error({
-            content: "Your version of data cannot be recognised.",
-          });
-        } catch (err) {
-          console.log(err);
-
-          notification.error({
-            content: "An error occurred while reading your data.",
-          });
-        }
-      };
-      reader.readAsText(file);
+    if (result.status === "FAILED") {
+      return;
     }
+
+    const { file, isJson } = result;
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+      try {
+        let data = JSON.parse((event.target?.result as string) || "");
+        if (isJson) data = convertGOODData(data);
+
+        const migrateResult = migrateDatabaseData(data);
+
+        if (migrateResult.status === "FAILED") {
+          notification.error({
+            content: migrateResult.error,
+          });
+          return;
+        }
+
+        onSuccessUploadFile(migrateResult.data);
+      } catch (err) {
+        console.log(err);
+
+        notification.error({
+          content: "An error occurred while reading your data.",
+        });
+      }
+
+      reader.readAsText(file);
+    };
   };
 
   return (
@@ -64,12 +86,19 @@ const FileUploadCore = ({ onSuccessUploadFile }: FileUploadProps) => {
         type="file"
         // accept="text/*"
         accept="text/*,application/json"
-        onChange={onUploadFile}
+        onChange={handleFileUpload}
       />
-      <Button className="mx-auto" variant="primary" icon={<FaUpload />} onClick={() => inputRef.current?.click()}>
+      <Button
+        className="mx-auto"
+        variant="primary"
+        icon={<FaUpload />}
+        onClick={() => inputRef.current?.click()}
+      >
         Select File
       </Button>
-      <p className="px-6 text-center text-light-1">Upload a .txt file of GIDC or a .json file in GOOD format</p>
+      <p className="px-6 text-center text-light-1">
+        Upload a .txt file of GIDC or a .json file in GOOD format
+      </p>
     </div>
   );
 };

@@ -26,7 +26,7 @@ export function setupStore(options?: SetupStoreOptions) {
   const userdbPersistReducers = persistReducer(
     {
       key: "database",
-      version: 1,
+      version: 4,
       storage,
       blacklist: options?.persistUserData ? [] : Object.keys(initialState),
       migrate: createMigrate(migrates, { debug: false }),

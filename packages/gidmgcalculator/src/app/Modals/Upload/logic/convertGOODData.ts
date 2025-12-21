@@ -1,4 +1,4 @@
-import type { IArtifactBasic, IDbCharacter, IWeaponBasic } from "@/types";
+import type { CurrentDatabaseData } from "@/mirgration/types/current";
 import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 
 import { DOWNLOADED_DATA_VERSION } from "@/constants/config";
@@ -19,19 +19,13 @@ type GOODData = {
   artifacts?: GOODArtifact[];
 };
 
-type Result = {
-  version: number;
-  characters: IDbCharacter[];
-  weapons: IWeaponBasic[];
-  artifacts: IArtifactBasic[];
-};
-
 export function convertGOODData(data: GOODData) {
-  const result: Result = {
+  const result: CurrentDatabaseData = {
     version: DOWNLOADED_DATA_VERSION,
     characters: [],
     weapons: [],
     artifacts: [],
+    setups: [],
   };
   const idStore = new IdStore();
 

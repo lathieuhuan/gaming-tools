@@ -1,0 +1,65 @@
+import type { CurrentDatabaseData } from "../types/current";
+
+import { convertToV3_1 } from "./convertToV3_1";
+import { convertToV4 } from "./convertToV4";
+
+type MigrationFn = (data: any) => any;
+
+type Migration = {
+  version: number;
+  fn: MigrationFn;
+};
+
+const MIGRATIONS: Migration[] = [
+  { version: 3, fn: convertToV3_1 },
+  { version: 3.1, fn: convertToV4 },
+];
+
+type OldData = {
+  version: number;
+  characters: unknown[];
+  weapons: unknown[];
+  artifacts: unknown[];
+  setups?: unknown[];
+};
+
+type MigrateResult =
+  | {
+      status: "FAILED";
+      error: string;
+    }
+  | {
+      status: "SUCCESS";
+      data: CurrentDatabaseData;
+    };
+
+export function migrateDatabaseData(data: OldData): MigrateResult {
+  if (data.version < 3) {
+    return {
+      status: "FAILED",
+      error: "Your data are too old and cannot be converted to the current version.",
+    };
+  }
+
+  let currentIndex = MIGRATIONS.findIndex((migration) => migration.version === data.version);
+  let currentData = data;
+
+  if (currentIndex === -1) {
+    return {
+      status: "FAILED",
+      error: "Your version of data cannot be recognised.",
+    };
+  }
+
+  while (currentIndex < MIGRATIONS.length) {
+    const currentMigration = MIGRATIONS[currentIndex];
+
+    currentData = currentMigration.fn(currentData);
+    currentIndex++;
+  }
+
+  return {
+    status: "SUCCESS",
+    data: currentData as CurrentDatabaseData,
+  };
+}

@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { notification, type ModalControl } from "rond";
+
+import type { CurrentDatabaseData } from "@/mirgration/types/current";
 import type { IArtifactBasic, IWeaponBasic } from "@/types";
-import type { UploadedData, UploadStep } from "./types";
 
 import { MAX_USER_ARTIFACTS, MAX_USER_WEAPONS } from "@/constants/config";
 import { useDispatch } from "@Store/hooks";
@@ -14,10 +15,12 @@ import { FileUpload } from "./components/FileUpload";
 // const MAX_USER_WEAPONS = 3;
 // const MAX_USER_ARTIFACTS = 3;
 
+export type UploadStep = "SELECT_OPTION" | "CHECK_WEAPONS" | "CHECK_ARTIFACTS" | "FINISH";
+
 function UploadCore({ active, onClose }: ModalControl) {
   const dispatch = useDispatch();
   const uploadSteps = useRef<UploadStep[]>(["SELECT_OPTION"]);
-  const uploadedData = useRef<UploadedData>();
+  const uploadedData = useRef<CurrentDatabaseData>();
   const removedWeaponIDs = useRef<ItemMultiSelectIds>(new Set());
   const removedArtifactIDs = useRef<ItemMultiSelectIds>(new Set());
   const notiId = useRef<number>();
@@ -35,7 +38,9 @@ function UploadCore({ active, onClose }: ModalControl) {
     filteredWeapons = weapons.filter((weapon) => !weapon.owner && !weapon.setupIDs?.length);
   }
   if (selectingArtifacts) {
-    filteredArtifacts = artifacts.filter((artifact) => !artifact.owner && !artifact.setupIDs?.length);
+    filteredArtifacts = artifacts.filter(
+      (artifact) => !artifact.owner && !artifact.setupIDs?.length
+    );
   }
 
   useEffect(() => {
@@ -83,12 +88,18 @@ function UploadCore({ active, onClose }: ModalControl) {
     });
 
     const { weapons = [], artifacts = [] } = uploadedData.current || {};
+    const dbWeapons = removedWeaponIDs.current.size
+      ? weapons.filter((weapon) => !removedWeaponIDs.current.has(weapon.ID))
+      : weapons;
+    const dbArtifacts = removedArtifactIDs.current.size
+      ? artifacts.filter((artifact) => !removedArtifactIDs.current.has(artifact.ID))
+      : artifacts;
 
     dispatch(
       addUserDatabase({
         ...uploadedData.current,
-        weapons: weapons.filter((weapon) => !removedWeaponIDs.current.has(weapon.ID)),
-        artifacts: artifacts.filter((artifact) => !removedArtifactIDs.current.has(artifact.ID)),
+        weapons: dbWeapons,
+        artifacts: dbArtifacts,
       })
     );
 
