@@ -3,7 +3,6 @@ import { FaTimes } from "react-icons/fa";
 import {
   ButtonGroup,
   clsx,
-  LoadingPlate,
   message,
   Modal,
   useScreenWatcher,
@@ -14,12 +13,11 @@ import {
 import type { ArtifactType, IArtifactBasic } from "@/types";
 
 import { MAX_USER_ARTIFACTS } from "@/constants/config";
-import { useArtifactSetData, useTravelerKey } from "@/hooks";
+import { useArtifactSetData } from "@/hooks";
 import { Artifact } from "@/models/base";
 import { $AppArtifact } from "@/services";
 import Array_ from "@/utils/Array";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectAppReady } from "@Store/ui-slice";
 import {
   addUserArtifact,
   selectDbArtifacts,
@@ -38,6 +36,7 @@ import {
   InventoryRack,
   useArtifactFilter,
 } from "@/components";
+import { WarehouseWrapper } from "../_components/WarehouseWrapper";
 import { ChosenArtifactView } from "./ChosenArtifactView";
 
 type ModalType = "ADD_ARTIFACT" | "EDIT_ARTIFACT" | "CONFIG_FILTER" | "";
@@ -246,18 +245,9 @@ function MyArtifacts() {
 }
 
 export function MyArtifactsWrapper() {
-  const appReady = useSelector(selectAppReady);
-  const travelerKey = useTravelerKey();
-
-  if (!appReady) {
-    return (
-      <WarehouseLayout className="h-full relative">
-        <div className="absolute inset-0 flex-center">
-          <LoadingPlate />
-        </div>
-      </WarehouseLayout>
-    );
-  }
-
-  return <MyArtifacts key={travelerKey} />;
+  return (
+    <WarehouseWrapper>
+      <MyArtifacts />
+    </WarehouseWrapper>
+  );
 }

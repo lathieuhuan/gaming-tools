@@ -5,7 +5,6 @@ import {
   ButtonGroup,
   CollapseSpace,
   ConfirmModal,
-  LoadingPlate,
   message,
   useScreenWatcher,
   useValues,
@@ -15,11 +14,10 @@ import {
 import type { IWeaponBasic, WeaponType } from "@/types";
 
 import { MAX_USER_WEAPONS } from "@/constants/config";
-import { useTravelerKey, useWeaponData } from "@/hooks";
+import { useWeaponData } from "@/hooks";
 import { Weapon } from "@/models/base";
 import Array_ from "@/utils/Array";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectAppReady } from "@Store/ui-slice";
 import {
   addUserWeapon,
   removeWeapon,
@@ -31,6 +29,7 @@ import {
 
 // Component
 import { InventoryRack, Tavern, WeaponCard, WeaponForge, WeaponTypeSelect } from "@/components";
+import { WarehouseWrapper } from "../_components/WarehouseWrapper";
 
 type ModalType = "ADD_WEAPON" | "SELECT_WEAPON_OWNER" | "REMOVE_WEAPON" | "";
 
@@ -227,18 +226,9 @@ function MyWeapons() {
 }
 
 export function MyWeaponsWrapper() {
-  const appReady = useSelector(selectAppReady);
-  const travelerKey = useTravelerKey();
-
-  if (!appReady) {
-    return (
-      <WarehouseLayout className="h-full relative">
-        <div className="absolute inset-0 flex-center">
-          <LoadingPlate />
-        </div>
-      </WarehouseLayout>
-    );
-  }
-
-  return <MyWeapons key={travelerKey} />;
+  return (
+    <WarehouseWrapper>
+      <MyWeapons />
+    </WarehouseWrapper>
+  );
 }

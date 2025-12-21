@@ -78,7 +78,10 @@ export function MyCharactersSmall() {
         />
 
         <BottomSheet active={menuActive} height="90%" title="Switch to" onClose={closeMenu}>
-          <MyCharactersSmallMenu onSelect={(name) => dispatch(viewCharacter(name))} onClose={closeMenu} />
+          <MyCharactersSmallMenu
+            onSelect={(name) => dispatch(viewCharacter(name))}
+            onClose={closeMenu}
+          />
         </BottomSheet>
       </div>
     </ContextProvider>

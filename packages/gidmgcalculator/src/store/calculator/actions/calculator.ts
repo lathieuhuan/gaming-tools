@@ -42,6 +42,11 @@ export const applySettings = (unifyCharacters: boolean, travelerChanged: boolean
   useCalcStore.setState((state) => {
     const { setupsById } = state;
     const activeMain = setupsById[state.activeId]?.main;
+
+    if (!activeMain) {
+      return;
+    }
+
     const shouldRecalculateAll = travelerChanged && $AppCharacter.checkIsTraveler(activeMain);
 
     for (const [id, setup] of Object.entries(setupsById)) {

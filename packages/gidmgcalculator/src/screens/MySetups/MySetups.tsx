@@ -1,23 +1,23 @@
 import { useEffect, useMemo } from "react";
 import { FaInfo } from "react-icons/fa";
-import { Button, LoadingPlate, WarehouseLayout, clsx, useScreenWatcher } from "rond";
+import { Button, WarehouseLayout, clsx, useScreenWatcher } from "rond";
 
 import type { SetupOverviewInfo } from "./types";
 
-import { useTravelerKey } from "@/hooks";
 import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/Array";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { MySetupsModalType, selectAppReady, updateUI } from "@Store/ui-slice";
-import { chooseUserSetup, selectChosenSetupId } from "@Store/userdb-slice";
-import { toOverviewInfo, createSetupForTeammate } from "./utils";
 import { restoreCalcSetup } from "@/utils/setup-utils";
 import { parseDbArtifacts, parseDbWeapon } from "@/utils/userdb";
+import { useDispatch, useSelector } from "@Store/hooks";
+import { MySetupsModalType, updateUI } from "@Store/ui-slice";
+import { chooseUserSetup, selectChosenSetupId } from "@Store/userdb-slice";
+import { createSetupForTeammate, toOverviewInfo } from "./utils";
 
 // Component
+import { WarehouseWrapper } from "../_components/WarehouseWrapper";
 import { MySetupsModals } from "./MySetupsModals";
-import { SetupView } from "./SetupView";
 import { SelectedResult } from "./SelectedResult";
+import { SetupView } from "./SetupView";
 
 function MySetups() {
   const dispatch = useDispatch();
@@ -139,18 +139,9 @@ function MySetups() {
 }
 
 export function MySetupsWrapper() {
-  const appReady = useSelector(selectAppReady);
-  const travelerKey = useTravelerKey();
-
-  if (!appReady) {
-    return (
-      <WarehouseLayout className="h-full relative">
-        <div className="absolute inset-0 flex-center">
-          <LoadingPlate />
-        </div>
-      </WarehouseLayout>
-    );
-  }
-
-  return <MySetups key={travelerKey} />;
+  return (
+    <WarehouseWrapper>
+      <MySetups />
+    </WarehouseWrapper>
+  );
 }
