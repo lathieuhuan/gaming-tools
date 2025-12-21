@@ -41,6 +41,8 @@ export function GenshinModifierView({
         return { type: "check", label };
       case "SELECT": {
         if (config.options) {
+          const { menuWidth = 7 } = config;
+
           return {
             type: "select",
             label,
@@ -48,7 +50,7 @@ export function GenshinModifierView({
               label: option,
               value: optionIndex,
             })),
-            style: { maxWidth: "7rem" },
+            style: { maxWidth: `${menuWidth}rem` },
           };
         }
 

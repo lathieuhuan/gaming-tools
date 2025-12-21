@@ -33,6 +33,7 @@ export type SearchBarProps = {
 export function SearchBar({ className, onSearch }: SearchBarProps) {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams<SearchParams>();
+  const [onCooldown, setOnCooldown] = useState(false);
   const enkaParams = useSelector(selectEnkaParams);
   const { isLoading } = useDataImportState();
 
@@ -77,6 +78,12 @@ export function SearchBar({ className, onSearch }: SearchBarProps) {
     setSearchParams(newParams);
     dispatch(updateEnkaParams(newParams));
     onSearch?.(processedInput);
+
+    setOnCooldown(true);
+
+    setTimeout(() => {
+      setOnCooldown(false);
+    }, 3000);
   };
 
   return (
@@ -100,6 +107,7 @@ export function SearchBar({ className, onSearch }: SearchBarProps) {
       <Input
         className="w-full"
         value={input.value}
+        disabled={onCooldown}
         onChange={(value) => updateInput("value", value)}
         onKeyDown={(e) => {
           if (e.key === "Enter" && !isLoading) {

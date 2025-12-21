@@ -133,8 +133,8 @@ function TargetConfigCore() {
                   disabled={target.code !== 0}
                   value={target.resistances[attElmt]}
                   maxDecimalDigits={0}
-                  max={100}
-                  min={-100}
+                  max={200}
+                  min={-200}
                   onChange={onChangeTargetResistance(attElmt)}
                 />
               </div>

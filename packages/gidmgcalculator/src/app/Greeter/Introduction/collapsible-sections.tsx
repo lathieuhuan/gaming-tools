@@ -80,18 +80,8 @@ export const Notes = (
 const CONTACTS = [
   {
     Icon: FaDiscord,
-    href: "https://discord.com/",
+    href: "https://discord.com/users/769038026608869387",
     text: "Ronqueroc#2674",
-  },
-  {
-    Icon: FaRedditAlien,
-    href: "https://www.reddit.com/user/Ronqueroc",
-    text: "u/Ronqueroc",
-  },
-  {
-    Icon: MdEmail,
-    href: "https://mail.google.com",
-    text: "nothingthen11@gmail.com",
   },
 ];
 
@@ -106,8 +96,8 @@ export const About = (
       in a specific scenario (Setup). It is not affiliated with or endorsed by Hoyoverse.
     </p>
     <p>
-      - Feel free to contact me if you encounter bugs or have any questions regarding the
-      Calculator.
+      - Feel free to contact me, or join the App's Discord server, if you encounter bugs or have any
+      questions regarding the Calculator.
     </p>
     <ul className="pl-3 space-y-2">
       {CONTACTS.map(({ Icon, href, text }, i) => (
@@ -119,7 +109,6 @@ export const About = (
         </li>
       ))}
     </ul>
-    <p className="ml-3 text-light-hint">(yes the email address is real)</p>
   </div>
 );
 

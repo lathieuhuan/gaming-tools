@@ -17,7 +17,7 @@ export const RESONANCE_BUFFS: Record<string, RenderInfo> = {
   },
   geo: {
     heading: "Geo Resonance",
-    desc: "Increases {DMG}#[k] of shielded characters by {15%}#[v].",
+    desc: "Increases {DMG}#[k] of shielded characters, or characters nearby Moondrifts, by {15%}#[v].",
   },
   dendro: {
     heading: "Dendro Resonance",

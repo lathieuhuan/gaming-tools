@@ -1,7 +1,6 @@
 import type {
   ActualAttackElement,
   AttackBonusKey,
-  AttackElement,
   ElementalEvent,
   LunarReaction,
   TransformativeReaction,
@@ -13,6 +12,7 @@ import type { ResultRecorder } from "./ResultRecorder";
 import { toMult } from "@/utils/pure-utils";
 import { CalcResultReactionItem } from "../types";
 import { limitCRate } from "./utils";
+import { LUNAR_ATTACK_ELEMENT, LUNAR_REACTION_COEFFICIENT } from "../constants";
 
 const TRANSFORMATIVE_REACTION_CONFIG: Record<
   TransformativeReaction,
@@ -29,10 +29,6 @@ const TRANSFORMATIVE_REACTION_CONFIG: Record<
   shattered: { mult: 3, attElmt: "phys" },
 };
 
-const LUNAR_REACTION_CONFIG: Record<LunarReaction, { mult: number; attElmt: AttackElement }> = {
-  lunarCharged: { mult: 1.8, attElmt: "electro" },
-};
-
 export function makeReactionCalc(performer: CharacterCalc, target: CalcTarget) {
   const { attkBonusCtrl, totalAttrs, baseRxnDamage } = performer;
 
@@ -44,17 +40,18 @@ export function makeReactionCalc(performer: CharacterCalc, target: CalcTarget) {
       return attkBonusCtrl.get(key, reaction);
     }
 
-    const { mult, attElmt } = LUNAR_REACTION_CONFIG[reaction];
+    const mult = LUNAR_REACTION_COEFFICIENT[reaction];
     const baseValue = baseRxnDamage * mult;
     const baseMult = toMult(getBonus("multPlus_"));
     const bonusMult = 1 + getBonus("pct_") / 100;
+    const elvMult = toMult(getBonus("elvMult_"));
     const flat = getBonus("flat");
     const rxnMult = 1;
-    let resMult = 1;
 
-    resMult = target.resistMults[attElmt];
+    const attElmt = LUNAR_ATTACK_ELEMENT[reaction];
+    const resMult = target.resistMults[attElmt];
 
-    const base = (baseValue * baseMult * bonusMult + flat) * rxnMult * resMult;
+    const base = (baseValue * baseMult * bonusMult * elvMult + flat) * rxnMult * resMult;
     const cRate_ = limitCRate(getBonus("cRate_") + totalAttrs.get("cRate_")) / 100;
     const cDmg_ = (getBonus("cDmg_") + totalAttrs.get("cDmg_")) / 100;
 

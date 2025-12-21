@@ -73,6 +73,12 @@ export function CalcItemTracker({
       value: data.bonusMult,
       process: (value) => `${round(value * 100, 2)}%`,
     };
+    const elvMult: PartConfig = {
+      label: "Elevate Mult.",
+      value: data.elvMult,
+      nullValue: 1,
+      process: (value) => `${round(value * 100, 2)}%`,
+    };
     const flat: PartConfig = {
       sign: "+",
       label: "Flat Bonus",
@@ -88,17 +94,11 @@ export function CalcItemTracker({
       return [
         {
           containers: ["(", ")"],
-          parts: [...makeFactorParts(data.factors[0], null), baseMult, bonusMult, flat],
+          parts: [...makeFactorParts(data.factors[0], null), baseMult, bonusMult, elvMult, flat],
         },
       ];
     }
 
-    const elvMult: PartConfig = {
-      label: "Elevate Mult.",
-      value: data.elvMult,
-      nullValue: 1,
-      process: (value) => `${round(value * 100, 2)}%`,
-    };
     const specMult: PartConfig = {
       label: "Special Mult.",
       value: data.specMult,

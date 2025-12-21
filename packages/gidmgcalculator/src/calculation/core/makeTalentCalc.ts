@@ -24,11 +24,7 @@ import { toMult } from "@/utils/pure-utils";
 import { makeAttackItemCalc } from "./makeAttackItemCalc";
 import { makeOtherItemCalc } from "./makeOtherItemCalc";
 import { limitCRate } from "./utils";
-
-const LUNAR_CONFIG: Record<LunarType, { attElmt: AttackElement; coefficient: number }> = {
-  lunarCharged: { attElmt: "electro", coefficient: 3 },
-  lunarBloom: { attElmt: "dendro", coefficient: 1 },
-};
+import { LUNAR_ATTACK_COEFFICIENT, LUNAR_ATTACK_ELEMENT } from "../constants";
 
 export function makeTalentCalc(
   performer: CharacterCalc,
@@ -152,7 +148,7 @@ export function makeTalentCalc(
     recorder: ResultRecorder
   ): CalcResultAttackItem {
     const attPatt = alterConfig.attPatt || item.attPatt || default_.attPatt;
-    const { attElmt, coefficient } = LUNAR_CONFIG[lunar];
+    const attElmt = LUNAR_ATTACK_ELEMENT[lunar];
 
     function getBonus(key: AttackBonusKey) {
       return key === "pct_"
@@ -164,6 +160,7 @@ export function makeTalentCalc(
     let bases = getBases(item, extraTalentMult, recorder);
 
     const baseMult = toMult(getBonus("multPlus_"));
+    const coefficient = LUNAR_ATTACK_COEFFICIENT[lunar];
     const bonusMult = toMult(getBonus("pct_"));
     const veilMult = toMult(getBonus("veil_"));
     const flat = getBonus("flat");
