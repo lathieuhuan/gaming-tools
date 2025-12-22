@@ -10,11 +10,14 @@ import {
 import Object_ from "@/utils/Object";
 import { useCalcStore } from "../calculator-store";
 import { onActiveSetup } from "../utils";
+import { $AppSettings } from "@/services";
 
 export const setTeammate = (teammate: AppCharacter, index: number) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
-      setup.setTeammate({ name: teammate.name }, index, teammate);
+      const { charEnhanced } = $AppSettings.get();
+
+      setup.setTeammate({ name: teammate.name, enhanced: charEnhanced }, index, teammate);
     })
   );
 };

@@ -81,7 +81,7 @@ export function SetupImportCenter({ params, onFinish, ...manageInfo }: SetupImpo
 
     const currentMain = main.serialize();
     const importedMain = params.main.serialize();
-    const sameChar = isEqual(main, importedMain);
+    const sameChar = isEqual(currentMain, importedMain);
 
     const currentTarget = target.serialize();
     const importedTarget = params.target?.serialize();

@@ -108,6 +108,14 @@ export function AppSettingsControls({
           onChange: (value) => onChange("charCons", value as number),
         },
         {
+          key: "charEnhanced",
+          label: "Character enhanced",
+          type: "CHECK",
+          align: "right",
+          defaultChecked: initialValues.charEnhanced,
+          onChange: (value) => onChange("charEnhanced", value),
+        },
+        {
           key: "charNAs",
           label: "Character Normal Attack level",
           options: genSequentialOptions(10),

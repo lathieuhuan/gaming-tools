@@ -151,9 +151,9 @@ export function makeTalentCalc(
     const attElmt = LUNAR_ATTACK_ELEMENT[lunar];
 
     function getBonus(key: AttackBonusKey) {
-      return key === "pct_"
-        ? attkBonusCtrl.get(key, lunar, item.id)
-        : attkBonusCtrl.get(key, lunar, item.id, attElmt); // Only ignore "pct_" bonus on attElmt
+      return key === "cRate_" || key === "cDmg_"
+        ? attkBonusCtrl.get(key, lunar, item.id, attElmt) // Only get "cRate_" and "cDmg_" bonus from attElmt
+        : attkBonusCtrl.get(key, lunar, item.id);
     }
 
     const extraTalentMult = getBonus("mult_");
@@ -201,7 +201,7 @@ export function makeTalentCalc(
     return {
       type: "attack",
       values,
-      attElmt,
+      attElmt: lunar,
       attPatt,
       reaction: null,
       recorder,

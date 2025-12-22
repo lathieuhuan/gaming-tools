@@ -11,6 +11,7 @@ import { Guides } from "./Guides";
 import { Settings } from "./Settings";
 import { Upload } from "./Upload";
 
+// TODO check if this is still needed
 const AppLoadingOverlay = () => {
   const loading = useSelector((state) => state.ui.loading);
   let mask = document.getElementById("app-mask");

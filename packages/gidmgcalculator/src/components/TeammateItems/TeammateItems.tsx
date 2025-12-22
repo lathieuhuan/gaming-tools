@@ -1,4 +1,4 @@
-import { CloseButton, clsx, VersatileSelect } from "rond";
+import { CloseButton, clsx, cn, VersatileSelect } from "rond";
 
 import type { ITeammate } from "@/types";
 import { genSequentialOptions } from "@/utils";
@@ -30,7 +30,7 @@ export function TeammateItems({
   const { icon: artifactSetIcon } = flower || {};
 
   return (
-    <div className={className}>
+    <div className={cn("space-y-3", className)}>
       <div className="flex space-x-2">
         <button
           className={`w-14 h-14 rounded bg-gradient-${weaponData.rarity} shrink-0`}

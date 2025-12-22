@@ -74,8 +74,8 @@ export type CalcResultItem = {
 
 export type CalcResultAttackItem = CalcResultItem & {
   type: "attack";
-  attElmt: ActualAttackElement;
-  attPatt: ActualAttackPattern | LunarType;
+  attElmt: ActualAttackElement | LunarType;
+  attPatt: ActualAttackPattern;
   reaction: AttackReaction;
   recorder: ResultRecorder;
 };

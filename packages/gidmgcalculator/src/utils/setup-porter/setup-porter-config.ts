@@ -15,3 +15,9 @@ export const CUSTOM_BUFF_CATEGORIES: CustomBuffCtrlCategory[] = [
   "attPattBonus",
   "rxnBonus",
 ];
+
+export const DECODE_ERROR_MSG = {
+  MAIN_NOT_FOUND: "The main character data is not found.",
+  UNKNOWN: "An unknown error has occurred. This setup cannot be imported.",
+  OLD_VERSION: "This version of Setup is not supported.",
+};

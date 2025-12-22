@@ -25,6 +25,7 @@ type TeammateGearProps = {
 export function TeammateGear({ teammate, info }: TeammateGearProps) {
   const [modalType, setModalType] = useState<"WEAPON" | "ARTIFACT" | null>(null);
   const { data } = teammate;
+  const elmtText = `text-${data.vision}`;
 
   const handleWeaponRefinementChange = (refi: number) => {
     updateTeammateWeapon(data.code, { refi });
@@ -50,14 +51,19 @@ export function TeammateGear({ teammate, info }: TeammateGearProps) {
     <>
       <div className="bg-dark-2 pt-2">
         <div className="bg-dark-1 pt-12 px-2 pb-3" onDoubleClick={() => console.log(teammate)}>
-          <div className="mb-4 flex" hidden={!data.enhanceType}>
-            <Checkbox checked={teammate.enhanced} onChange={handleEnhanceToggle}>
-              Hexerei
-            </Checkbox>
+          <div className="mb-4 pl-1 flex items-center">
+            <p className={`leading-none text-xl font-semibold ${elmtText}`}>{teammate.name}</p>
+
+            <div
+              className="ml-2 pl-2 border-l border-dark-line font-semibold leading-none cursor-pointer"
+              hidden={!data.enhanceType}
+              onClick={handleEnhanceToggle}
+            >
+              <p className={teammate.enhanced ? elmtText : "text-light-hint/80"}>Hexerei</p>
+            </div>
           </div>
 
           <TeammateItems
-            className="space-y-3"
             mutable
             teammate={teammate}
             onClickWeapon={() => setModalType("WEAPON")}

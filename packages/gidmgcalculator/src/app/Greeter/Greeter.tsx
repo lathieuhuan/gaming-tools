@@ -39,6 +39,8 @@ export const Greeter = () => {
 
     const error = await $Greeter.fetchAllData();
 
+    console.log(error);
+
     if (error) {
       setState({
         status: "error",

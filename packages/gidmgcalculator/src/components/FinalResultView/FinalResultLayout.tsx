@@ -179,12 +179,13 @@ export function FinalResultLayout({
   );
 }
 
-interface SectionTableProps extends Pick<FinalResultLayoutProps, "getRowConfig" | "headerConfigs"> {
+type SectionTableProps = Pick<FinalResultLayoutProps, "getRowConfig" | "headerConfigs"> & {
   tableKey: TableKey;
   talentType?: TalentType;
   label?: string;
   getRowTitle: (key: string) => string;
-}
+};
+
 function SectionTable(props: SectionTableProps) {
   return (
     <Table

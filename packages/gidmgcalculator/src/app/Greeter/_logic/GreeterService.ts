@@ -8,31 +8,113 @@ import { StoredTime } from "./StoredTime";
 const COOLDOWN_NORMAL = 60;
 const COOLDOWN_UPGRADE = 300;
 const SYSTEM_UPGRADE_MESSAGE = "The system is being upgraded.";
-let isFetchedMetadata = false;
 
-let metadata: AppMetadata = {
-  version: "",
-  updates: [],
-  supporters: [],
+type FetchAllDataError = {
+  code: number;
+  message: string;
+  cooldown: number;
 };
 
-const allDataChannel = new AllDataChannel();
-const lastVersionCheckTime = new StoredTime("lastVersionCheckTime");
+class GreeterService {
+  isFetchedMetadata = false;
 
-allDataChannel.onRequest = () => {
-  if (isFetchedMetadata) {
-    allDataChannel.response({
-      ...metadata,
-      ...$AppData.getAll(),
+  metadata: AppMetadata = {
+    version: "",
+    updates: [],
+    supporters: [],
+  };
+
+  allDataChannel: AllDataChannel;
+  lastVersionCheckTime = new StoredTime("lastVersionCheckTime");
+
+  constructor() {
+    this.allDataChannel = new AllDataChannel();
+
+    this.allDataChannel.onRequest = () => {
+      if (this.isFetchedMetadata) {
+        this.allDataChannel.response({
+          ...this.metadata,
+          ...$AppData.getAll(),
+        });
+      }
+    };
+
+    this.allDataChannel.onResponse = (metadata) => {
+      if (!this.isFetchedMetadata) {
+        this.populateData(metadata);
+      }
+    };
+  }
+
+  populateData(data: AllData) {
+    this.isFetchedMetadata = true;
+    this.metadata = {
+      version: data.version,
+      updates: data.updates,
+      supporters: data.supporters,
+    };
+    $AppData.populate(data);
+  }
+
+  async _fetchAllData(): Promise<FetchAllDataError | null> {
+    if (!this.isFetchedMetadata) {
+      const response = await $AppData.fetchAllData();
+      const { code, message = "Error.", data } = response;
+
+      if (data) {
+        if (isValidDataVersion(data.version)) {
+          this.populateData(data);
+          removeVersionCheckTime();
+          return null;
+        }
+
+        // Data is outdated, set cooldown and return error
+        this.lastVersionCheckTime.value = getCurrentTime();
+
+        return {
+          code: 503,
+          message: SYSTEM_UPGRADE_MESSAGE,
+          cooldown: COOLDOWN_UPGRADE,
+        };
+      }
+
+      return {
+        code,
+        message,
+        cooldown: COOLDOWN_NORMAL,
+      };
+    }
+
+    removeVersionCheckTime();
+    return null;
+  }
+
+  fetchAllData(): Promise<FetchAllDataError | null> {
+    const timeElapsed = getCurrentTime() - this.lastVersionCheckTime.value;
+
+    if (timeElapsed < COOLDOWN_UPGRADE) {
+      // Still in cooldown of refetching data
+      return Promise.resolve({
+        code: 503,
+        message: SYSTEM_UPGRADE_MESSAGE,
+        cooldown: COOLDOWN_UPGRADE - timeElapsed,
+      });
+    }
+
+    // Request data from other tabs
+    this.allDataChannel.request();
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(this._fetchAllData());
+      }, 200);
     });
   }
-};
 
-allDataChannel.onResponse = (metadata) => {
-  if (!isFetchedMetadata) {
-    populateData(metadata);
+  endShift() {
+    this.allDataChannel.close();
   }
-};
+}
 
 function getCurrentTime() {
   return Math.round(Date.now() / 1000);
@@ -59,83 +141,4 @@ function isValidDataVersion(version: string) {
   return true;
 }
 
-function populateData(data: AllData) {
-  isFetchedMetadata = true;
-  metadata = {
-    version: data.version,
-    updates: data.updates,
-    supporters: data.supporters,
-  };
-  $AppData.populate(data);
-}
-
-type FetchAllDataError = {
-  code: number;
-  message: string;
-  cooldown: number;
-};
-
-async function _fetchAllData(): Promise<FetchAllDataError | null> {
-  if (!isFetchedMetadata) {
-    const response = await $AppData.fetchAllData();
-    const { code, message = "Error.", data } = response;
-
-    if (data) {
-      if (isValidDataVersion(data.version)) {
-        populateData(data);
-        removeVersionCheckTime();
-        return null;
-      }
-
-      // Data is outdated, set cooldown and return error
-      lastVersionCheckTime.value = getCurrentTime();
-
-      return {
-        code: 503,
-        message: SYSTEM_UPGRADE_MESSAGE,
-        cooldown: COOLDOWN_UPGRADE,
-      };
-    }
-
-    return {
-      code,
-      message,
-      cooldown: COOLDOWN_NORMAL,
-    };
-  }
-
-  removeVersionCheckTime();
-  return null;
-}
-
-async function fetchAllData(): Promise<FetchAllDataError | null> {
-  const timeElapsed = getCurrentTime() - lastVersionCheckTime.value;
-
-  if (timeElapsed < COOLDOWN_UPGRADE) {
-    // Still in cooldown of refetching data
-    return {
-      code: 503,
-      message: SYSTEM_UPGRADE_MESSAGE,
-      cooldown: COOLDOWN_UPGRADE - timeElapsed,
-    };
-  }
-
-  // Request data from other tabs
-  allDataChannel.request();
-
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(_fetchAllData());
-    }, 200);
-  });
-}
-
-function endShift() {
-  allDataChannel.close();
-}
-
-export const $Greeter = {
-  metadata,
-  fetchAllData,
-  endShift,
-};
+export const $Greeter = new GreeterService();

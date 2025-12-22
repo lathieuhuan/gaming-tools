@@ -1,9 +1,11 @@
 import type { CalcResult } from "@/calculation/calculator/types";
-import type { ActualAttackElement } from "@/types";
+import type { CalcResultAttackItem } from "@/calculation/types";
 
 import { useTranslation } from "@/hooks";
 import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
 import { displayValues } from "./utils";
+import { LUNAR_TYPES } from "@/constants";
+import { LunarType } from "@/types";
 
 type FinalResultViewProps = Pick<
   FinalResultLayoutProps,
@@ -15,8 +17,13 @@ type FinalResultViewProps = Pick<
 export function FinalResultView({ finalResult, ...props }: FinalResultViewProps) {
   const { t } = useTranslation();
 
-  const displayAttElmt = (attElmt: ActualAttackElement) => {
-    return attElmt === "phys" ? "physical" : attElmt;
+  const displayAttElmt = (attElmt: CalcResultAttackItem["attElmt"]) => {
+    // TODO improve this
+    return attElmt === "phys"
+      ? "physical"
+      : LUNAR_TYPES.includes(attElmt as LunarType)
+      ? t(attElmt).toLowerCase()
+      : attElmt;
   };
 
   return (

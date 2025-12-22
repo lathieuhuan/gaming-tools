@@ -72,7 +72,7 @@ export function Menu(props: { calcResultRender: React.ReactNode }) {
 
       <Modal.Core
         active={resultsEnlarged}
-        className={[Modal.LARGE_HEIGHT_CLS, "p-4 pt-2 rounded shadow-popup bg-dark-3"]}
+        className={[Modal.LARGE_HEIGHT_CLS, "p-4 pt-2 rounded-lg shadow-popup bg-dark-3"]}
         onClose={closeEnlargedView}
       >
         <CloseButton className={Modal.CLOSE_BTN_CLS} boneOnly onClick={closeEnlargedView} />

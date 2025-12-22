@@ -12,6 +12,7 @@ export type AppSettings = {
   charNAs: number;
   charES: number;
   charEB: number;
+  charEnhanced: boolean;
   wpLevel: Level;
   wpRefi: number;
   artLevel: number;
@@ -30,6 +31,7 @@ export class AppSettingsService {
     charNAs: 1,
     charES: 1,
     charEB: 1,
+    charEnhanced: false,
     wpLevel: "1/20",
     wpRefi: 1,
     artLevel: 0,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
 import { Select, clsx } from "rond";
 
@@ -34,6 +34,7 @@ type FinalResultCompareProps = {
 };
 
 export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [focusedAspect, setFocusedAspect] = useState<CalcAspect>("average");
 
   const { setupIds, standardId, setupsById, ...layoutProps } = useLayoutProps(comparedIds);
@@ -47,7 +48,7 @@ export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col" ref={containerRef}>
       <div className="mb-4 flex">
         <p className="mr-2">Choose a focus</p>
         <Select
@@ -57,6 +58,7 @@ export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
           options={CALC_ASPECT_OPTIONS}
           value={focusedAspect}
           onChange={(value) => setFocusedAspect(value as CalcAspect)}
+          getPopupContainer={() => containerRef.current!}
         />
       </div>
       <div className="grow hide-scrollbar">

@@ -1,19 +1,19 @@
 import { useState } from "react";
 
 import { useSetupImporter } from "@/systems/setup-importer";
-import { DECODE_ERROR_MSG, decodeSetup, type DecodeError } from "@/utils/setup-porter";
+import { decodeSetup } from "@/utils/setup-porter/decode-setup";
 
 import { PorterLayout } from "@/components";
-
-type ImportError = "NOT_SUPPORT" | DecodeError;
 
 export function SetupImportGate(props: { onClose: () => void }) {
   const setupImporter = useSetupImporter();
   const [code, setCode] = useState("");
-  const [error, setError] = useState<ImportError | "">("");
+  const [error, setError] = useState("");
 
   const handlePaste = () => {
-    navigator.clipboard.readText().then(setCode, () => setError("NOT_SUPPORT"));
+    navigator.clipboard
+      .readText()
+      .then(setCode, () => setError("Sorry, your browser does not allow/support this function."));
   };
 
   const handleImport = () => {
@@ -43,10 +43,7 @@ export function SetupImportGate(props: { onClose: () => void }) {
       message={
         error
           ? {
-              text:
-                error === "NOT_SUPPORT"
-                  ? "Sorry, your browser does not allow/support this function."
-                  : DECODE_ERROR_MSG[error],
+              text: error,
               type: "error",
             }
           : undefined

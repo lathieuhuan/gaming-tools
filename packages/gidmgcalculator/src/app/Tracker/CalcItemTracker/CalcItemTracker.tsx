@@ -6,7 +6,9 @@ import type {
   CalcResultReactionItem,
   ResultItemRecord,
 } from "@/calculation/types";
+import type { LunarType } from "@/types";
 
+import { LUNAR_TYPES } from "@/constants";
 import { useTranslation } from "@/hooks";
 import { AttackBonusControl } from "@/models/base";
 import { round, suffixOf } from "@/utils";
@@ -188,8 +190,13 @@ export function CalcItemTracker({
     let text = "";
 
     if (item.type === "attack") {
+      // TODO improve this
       const parts = [
-        item.attElmt !== "absorb" && t(`${item.attElmt}_attElmt`),
+        item.attElmt !== "absorb"
+          ? LUNAR_TYPES.includes(item.attElmt as LunarType)
+            ? t(item.attElmt)
+            : t(`${item.attElmt}_attElmt`)
+          : "",
         item.attPatt !== "none" && t(item.attPatt),
       ].filter(Boolean);
 

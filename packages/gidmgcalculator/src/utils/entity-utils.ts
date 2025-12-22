@@ -110,7 +110,7 @@ export const createWeapon = (params: CreateWeaponParams, data?: AppWeapon, idSto
 export type CreateCharacterParams = PartiallyRequiredOnly<ICharacterBasic, "name">;
 
 export const createCharacterBasic = (params: CreateCharacterParams): ICharacterBasic => {
-  const { charLevel, charCons, charNAs, charES, charEB } = $AppSettings.get();
+  const { charLevel, charCons, charNAs, charES, charEB, charEnhanced } = $AppSettings.get();
   const {
     name,
     level = charLevel,
@@ -118,7 +118,7 @@ export const createCharacterBasic = (params: CreateCharacterParams): ICharacterB
     ES = charES,
     EB = charEB,
     cons = charCons,
-    enhanced = false,
+    enhanced = !!charEnhanced,
   } = params;
 
   return { name, level, NAs, ES, EB, cons, enhanced };

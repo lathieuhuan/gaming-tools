@@ -77,6 +77,7 @@ export type AttackBonusType =
   | AttackPattern
   | AttackElement
   | `${AttackPattern}.${AttackElement}`
+  | `${AttackPattern}.${LunarType}`
   | ReactionType
   | TalentCalcItemBonusId;
 

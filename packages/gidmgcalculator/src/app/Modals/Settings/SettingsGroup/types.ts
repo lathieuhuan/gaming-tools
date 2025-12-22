@@ -17,5 +17,7 @@ export type SettingControlProps = (CheckboxControlProps | SelectControlProps | I
   label: ReactNode;
   /** Only on SELECT type */
   subType?: "LEVEL";
+  /** Only on CHECK type */
+  align?: "left" | "right";
   description?: string[];
 };

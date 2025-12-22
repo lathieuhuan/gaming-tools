@@ -55,11 +55,11 @@ export function encodeSetup(calcSetup: CalcSetup) {
   };
 
   try {
-    const { cons, NAs, ES, EB, weapon, atfGear } = main;
+    const { cons, NAs, ES, EB, enhanced, weapon, atfGear } = main;
+    const levelCode = LEVELS.indexOf(main.level);
+    const enhancedCode = enhanced ? "1" : "0";
 
-    const mainStr = [main.data.code, LEVELS.indexOf(main.level), cons, NAs, ES, EB].join(
-      DIVIDER[1]
-    );
+    const mainStr = [main.data.code, levelCode, cons, enhancedCode, NAs, ES, EB].join(DIVIDER[1]);
 
     const weaponStr = [
       weapon.code,
@@ -103,13 +103,14 @@ export function encodeSetup(calcSetup: CalcSetup) {
         return "";
       }
 
-      const { weapon, artifact } = tm;
+      const { enhanced, weapon, artifact } = tm;
       const artifactCode = artifact
         ? [artifact.code, encodeModCtrls(artifact.buffCtrls, 3)].join(DIVIDER[2])
         : "";
 
       return [
         tm.data.code,
+        enhanced ? "1" : "0",
         encodeModCtrls(tm.buffCtrls, 2),
         encodeModCtrls(tm.debuffCtrls, 2),
         [
