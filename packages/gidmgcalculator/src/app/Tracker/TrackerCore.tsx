@@ -27,8 +27,6 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
     if (trackerState === "open") {
       const state = calculateSetup(activeSetup, { shouldRecord: true });
 
-      console.log("state", state);
-
       setState(state);
     }
   }, [trackerState]);

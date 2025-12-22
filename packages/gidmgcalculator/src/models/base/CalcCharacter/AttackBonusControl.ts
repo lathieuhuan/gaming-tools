@@ -11,7 +11,7 @@ import Object_ from "@/utils/Object";
 
 type AttackBonusGroup = Record<AttackBonusType, AttackBonus[]>;
 
-type GetBonusPaths = Array<AttackBonusType | undefined>;
+type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
 
 export class AttackBonusControl {
   protected group = {} as AttackBonusGroup;
@@ -19,7 +19,7 @@ export class AttackBonusControl {
   constructor(initial: Partial<AttackBonusGroup> = {}) {
     this.group = initial as AttackBonusGroup;
   }
-  
+
   get records() {
     return this.group;
   }
@@ -73,7 +73,7 @@ export class AttackBonusControl {
   clone() {
     return new AttackBonusControl(Object_.clone(this.group));
   }
-  
+
   reset() {
     this.group = {} as AttackBonusGroup;
   }

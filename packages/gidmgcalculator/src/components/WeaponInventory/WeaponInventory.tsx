@@ -31,12 +31,12 @@ const WeaponInventoryCore = ({
   );
 
   const bodyRef = useRef<HTMLDivElement>(null);
-  const [chosenWeapon, setChosenWeapon] = useState<Weapon>();
+  const [selectedWeapon, setSelectedWeapon] = useState<Weapon>();
 
   const onChangeItem = (option?: ItemOption<IWeaponBasic>) => {
     if (option) {
-      if (!chosenWeapon || option.userData.ID !== chosenWeapon.ID) {
-        setChosenWeapon(new Weapon(option.userData, option.data));
+      if (!selectedWeapon || option.userData.ID !== selectedWeapon.ID) {
+        setSelectedWeapon(new Weapon(option.userData, option.data));
       }
 
       if (bodyRef.current) {
@@ -46,10 +46,10 @@ const WeaponInventoryCore = ({
       return;
     }
 
-    setChosenWeapon(undefined);
+    setSelectedWeapon(undefined);
   };
 
-  const chosenIsCurrent = chosenWeapon && chosenWeapon.owner === owner;
+  const isCurrentSelected = selectedWeapon?.owner && selectedWeapon.owner === owner;
 
   return (
     <EntitySelectTemplate title="Weapon Inventory" onClose={onClose}>
@@ -60,13 +60,13 @@ const WeaponInventoryCore = ({
               data={items}
               itemCls="max-w-1/3 basis-1/3 md:w-1/4 md:basis-1/4 lg:max-w-1/6 lg:basis-1/6"
               emptyText="No weapons found"
-              chosenID={chosenWeapon?.ID}
+              chosenID={selectedWeapon?.ID}
               onChangeItem={onChangeItem}
             />
             <WeaponCard
               wrapperCls="w-76 shrink-0"
-              weapon={chosenWeapon}
-              withActions={!!chosenWeapon}
+              weapon={selectedWeapon}
+              withActions={!!selectedWeapon}
               withOwnerLabel
               actions={[
                 {
@@ -79,7 +79,7 @@ const WeaponInventoryCore = ({
                 {
                   children: buttonText,
                   variant: "primary",
-                  className: chosenIsCurrent && "hidden",
+                  className: isCurrentSelected && "hidden",
                   onClick: (_, weapon) => {
                     onClickButton(weapon);
                     onClose();

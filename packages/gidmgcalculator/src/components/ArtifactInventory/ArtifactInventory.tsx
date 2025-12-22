@@ -89,7 +89,7 @@ const ArtifactInventoryCore = ({
     }
   };
 
-  const chosenIsCurrent = selectedArtifact && selectedArtifact.owner === owner;
+  const isCurrentSelected = selectedArtifact?.owner && selectedArtifact.owner === owner;
 
   return (
     <EntitySelectTemplate
@@ -140,14 +140,14 @@ const ArtifactInventoryCore = ({
                     {
                       children: "Compare",
                       variant: showingCurrent ? "active" : "default",
-                      className: chosenIsCurrent && "hidden",
+                      className: isCurrentSelected && "hidden",
                       disabled: !currentAtfGear,
                       onClick: () => setShowingCurrent(!showingCurrent),
                     },
                     {
                       children: buttonText,
                       variant: "primary",
-                      className: chosenIsCurrent && "hidden",
+                      className: isCurrentSelected && "hidden",
                       onClick: (_, artifact) => {
                         onClickButton(artifact, isMultiSelect);
                         if (!isMultiSelect) onClose();

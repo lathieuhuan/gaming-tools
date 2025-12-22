@@ -25,6 +25,9 @@ export function PanelAttributes(props: PanelAttributesProps) {
         onRemove={actions.requestRemoveCharacter}
         onChangeLevel={(level) => dispatch(updateUserCharacter({ name: character.name, level }))}
         onChangeCons={(cons) => dispatch(updateUserCharacter({ name: character.name, cons }))}
+        onEnhanceToggle={(enhanced) =>
+          dispatch(updateUserCharacter({ name: character.name, enhanced }))
+        }
       />
 
       <div className="mt-1 grow custom-scrollbar">

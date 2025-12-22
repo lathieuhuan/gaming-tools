@@ -115,22 +115,28 @@ function isComplexSetup(setup: DatabaseDataV3_1["setups"][number]): setup is IDb
   return setup.type === "complex";
 }
 
+const parseArray = <T>(array: T[]): T[] => {
+  return array && Array.isArray(array) ? array : [];
+};
+
 export function convertToV4(data: DatabaseDataV3_1): DatabaseDataV4 {
   return {
     version: 4,
-    characters: data.characters.map((char) => ({
+    characters: parseArray(data.characters).map((char) => ({
       ...char,
       enhanced: false,
       artifactIDs: Array_.truthify(char.artifactIDs),
     })),
-    weapons: data.weapons.map(({ owner, ...rest }) => ({
+    weapons: parseArray(data.weapons).map(({ owner, ...rest }) => ({
       ...rest,
       owner: owner ?? undefined,
     })),
-    artifacts: data.artifacts.map(({ owner, ...rest }) => ({
+    artifacts: parseArray(data.artifacts).map(({ owner, ...rest }) => ({
       ...rest,
       owner: owner ?? undefined,
     })),
-    setups: data.setups.map((setup) => (isComplexSetup(setup) ? setup : convertSetup(setup))),
+    setups: parseArray(data.setups).map((setup) =>
+      isComplexSetup(setup) ? setup : convertSetup(setup)
+    ),
   };
 }

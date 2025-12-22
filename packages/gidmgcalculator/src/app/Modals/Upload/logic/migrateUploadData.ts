@@ -1,5 +1,6 @@
 import type { CurrentDatabaseData } from "@/mirgration/types/current";
 
+import { DATABASE_DATA_VERSION } from "@/constants";
 import { convertToV3_1 } from "@/mirgration/convertToV3_1";
 import { convertToV4 } from "@/mirgration/convertToV4";
 
@@ -38,6 +39,13 @@ export function migrateUploadData(data: OldData): MigrateResult {
     return {
       status: "FAILED",
       error: "Your data are too old and cannot be converted to the current version.",
+    };
+  }
+
+  if (data.version === DATABASE_DATA_VERSION) {
+    return {
+      status: "SUCCESS",
+      data: data as CurrentDatabaseData,
     };
   }
 
