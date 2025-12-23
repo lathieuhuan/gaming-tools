@@ -13,33 +13,40 @@ type DynamicStoreProviderProps = {
 };
 
 export function DynamicStoreProvider(props: DynamicStoreProviderProps) {
-  const [config, setConfig] = useState(setupStore({ persistUserData: $AppSettings.get("persistUserData") }));
+  const [config, setConfig] = useState(
+    setupStore({ persistUserData: $AppSettings.get("persistUserData") })
+  );
 
-  const changeConfig: UpdateStoreConfig = useCallback(({ persistUserData }) => {
-    const newConfig = setupStore({ persistUserData });
-    const oldStoreState = config.store.getState();
+  const changeConfig: UpdateStoreConfig = useCallback(
+    ({ persistUserData }) => {
+      const newConfig = setupStore({ persistUserData });
+      const oldStoreState = config.store.getState();
 
-    setConfig(newConfig);
+      setConfig(newConfig);
 
-    if (oldStoreState) {
-      const { userdb } = oldStoreState;
+      if (oldStoreState) {
+        const { userdb } = oldStoreState;
 
-      newConfig.store.dispatch(
-        addUserDatabase({
-          characters: userdb.userChars,
-          weapons: userdb.userWps,
-          artifacts: userdb.userArts,
-          setups: userdb.userSetups,
-        })
-      );
-    }
+        newConfig.store.dispatch(
+          addUserDatabase({
+            characters: userdb.userChars,
+            weapons: userdb.userWps,
+            artifacts: userdb.userArts,
+            setups: userdb.userSetups,
+          })
+        );
+      }
 
-    newConfig.store.dispatch(updateUI({ appReady: true }));
-  }, [config]);
+      newConfig.store.dispatch(updateUI({ appReady: true }));
+    },
+    [config]
+  );
 
   return (
     <DynamicStoreControlContext.Provider value={changeConfig}>
-      <DynamicStoreContext.Provider value={config.store}>{props.children(config)}</DynamicStoreContext.Provider>
+      <DynamicStoreContext.Provider value={config}>
+        {props.children(config)}
+      </DynamicStoreContext.Provider>
     </DynamicStoreControlContext.Provider>
   );
 }

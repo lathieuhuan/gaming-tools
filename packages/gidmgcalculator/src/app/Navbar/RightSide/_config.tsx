@@ -1,5 +1,12 @@
 import { ReactNode } from "react";
-import { FaCog, FaDownload, FaInfoCircle, FaQuestionCircle, FaUpload } from "react-icons/fa";
+import {
+  FaCog,
+  FaDownload,
+  FaInfoCircle,
+  FaQuestionCircle,
+  FaUpload,
+  FaWrench,
+} from "react-icons/fa";
 
 import { UIState } from "@Store/ui-slice";
 
@@ -34,5 +41,10 @@ export const MODAL_OPTIONS: ModalOption[] = [
     label: "Upload",
     icon: <FaUpload />,
     modalType: "UPLOAD",
+  },
+  {
+    label: "Fix my data",
+    icon: <FaWrench />,
+    modalType: "DATA_FIX",
   },
 ];

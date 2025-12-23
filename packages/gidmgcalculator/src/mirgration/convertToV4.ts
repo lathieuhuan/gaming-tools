@@ -48,12 +48,13 @@ function convertTeammate(teammate: V3_1Teammate): ITeammateBasic {
       refi: teammate.weapon.refi,
       buffCtrls: teammate.weapon.buffCtrls.map(convertModifierCtrl),
     },
-    artifact: atfCode
-      ? {
-          code: atfCode,
-          buffCtrls: teammate.artifact.buffCtrls.map(convertModifierCtrl),
-        }
-      : undefined,
+    artifact:
+      atfCode > 0
+        ? {
+            code: atfCode,
+            buffCtrls: teammate.artifact.buffCtrls.map(convertModifierCtrl),
+          }
+        : undefined,
   };
 }
 

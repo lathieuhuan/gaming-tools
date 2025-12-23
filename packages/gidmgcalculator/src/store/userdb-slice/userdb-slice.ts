@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 import type { WritableDraft } from "immer/src/internal.js";
 import type {
+  ArtifactType,
   IArtifactBasic,
   IDbCharacter,
   IDbComplexSetup,
@@ -31,6 +32,7 @@ import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
 import { createCharacterBasic, createWeaponBasic } from "@/utils/entity-utils";
 import { isDbSetup } from "@/utils/setup-utils";
+import { logStore } from "../utils";
 
 export type UserdbState = {
   userChars: IDbCharacter[];
@@ -207,18 +209,22 @@ export const userdbSlice = createSlice({
 
       const oldChar = Array_.findByName(userChars, oldOwner);
       if (oldChar) {
-        oldChar.artifactIDs = oldChar.artifactIDs.length
-          ? oldChar.artifactIDs.map((id) => (id === oldID ? newID : id))
-          : [newID];
-        // remove null from old db
-        oldChar.artifactIDs = Array_.truthify(oldChar.artifactIDs);
+        const newArtifactIDs = new Set<number | undefined>(oldChar.artifactIDs);
+
+        newArtifactIDs.delete(oldID);
+        newArtifactIDs.add(newID);
+
+        oldChar.artifactIDs = Array_.truthify([...newArtifactIDs]);
       }
 
       const newChar = Array_.findByName(userChars, newOwner);
       if (newChar) {
-        newChar.artifactIDs = newChar.artifactIDs.map((id) => (id === oldID ? newID : id));
-        // remove null from old db
-        newChar.artifactIDs = Array_.truthify(newChar.artifactIDs);
+        const newArtifactIDs = new Set<number | undefined>(newChar.artifactIDs);
+
+        newArtifactIDs.delete(newID);
+        newArtifactIDs.add(oldID);
+
+        newChar.artifactIDs = Array_.truthify(Array.from(newArtifactIDs));
       }
     },
     unequipArtifact: (state, action: PayloadAction<number>) => {
@@ -564,6 +570,75 @@ export const userdbSlice = createSlice({
         userSetups.splice(index, 1);
       }
     },
+    fixV4MigrationError: (state) => {
+      for (const setup of state.userSetups) {
+        if (isDbSetup(setup)) {
+          for (const teammate of setup.teammates) {
+            if (teammate.artifact?.code === -1) {
+              teammate.artifact = undefined;
+            }
+          }
+        }
+      }
+    },
+    fixMultipleEquippedWeapons: (state) => {
+      const { userChars, userWps } = state;
+
+      const validWeaponsByChar = new Map<string, number>();
+
+      for (const char of userChars) {
+        validWeaponsByChar.set(char.name, char.weaponID);
+      }
+
+      for (const weapon of userWps) {
+        if (weapon.owner && validWeaponsByChar.get(weapon.owner) !== weapon.ID) {
+          delete weapon.owner;
+        }
+      }
+    },
+    fixMultipleEquippedArtifacts: (state) => {
+      const { userChars, userArts } = state;
+
+      const artifactsByOwnerByType = new Map<string, Map<ArtifactType, IArtifactBasic>>();
+
+      for (const artifact of userArts) {
+        if (!artifact.owner) {
+          continue;
+        }
+
+        const artifactsByOwner = artifactsByOwnerByType.get(artifact.owner);
+        const exist = artifactsByOwner?.get(artifact.type);
+
+        if (exist) {
+          delete artifact.owner;
+          continue;
+        }
+
+        if (artifactsByOwner) {
+          artifactsByOwner.set(artifact.type, artifact);
+          continue;
+        }
+
+        const newArtifactsByOwner = new Map<ArtifactType, IArtifactBasic>();
+
+        newArtifactsByOwner.set(artifact.type, artifact);
+        artifactsByOwnerByType.set(artifact.owner, newArtifactsByOwner);
+      }
+
+      for (const char of userChars) {
+        const artifactsByOwner = artifactsByOwnerByType.get(char.name);
+
+        if (!artifactsByOwner) {
+          char.artifactIDs = [];
+          continue;
+        }
+
+        const artifacts = Array.from(artifactsByOwner.values());
+        const artifactIDs = new Set(artifacts.map((artifact) => artifact.ID));
+
+        char.artifactIDs = Array_.truthify(Array.from(artifactIDs));
+      }
+    },
   },
 });
 
@@ -595,6 +670,9 @@ export const {
   switchShownSetupInComplex,
   addSetupToComplex,
   uncombineSetups,
+  fixV4MigrationError,
+  fixMultipleEquippedWeapons,
+  fixMultipleEquippedArtifacts,
 } = userdbSlice.actions;
 
 export default userdbSlice.reducer;

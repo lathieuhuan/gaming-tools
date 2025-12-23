@@ -110,7 +110,7 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
               newOwner: selectedArtifact.owner,
               newID: selectedArtifact.ID,
               oldOwner: character.name,
-              oldID: currentPiece?.ID || 0,
+              oldID: currentPiece?.ID,
             })
           );
         }}

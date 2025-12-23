@@ -19,7 +19,15 @@ export type TrackerState = "open" | "close" | "hidden";
 export interface UIState extends Pick<AppSettings, "isTabLayout"> {
   loading: boolean;
   appReady: boolean;
-  appModalType: "" | "INTRO" | "GUIDES" | "SETTINGS" | "UPLOAD" | "DOWNLOAD" | "DONATE";
+  appModalType:
+    | ""
+    | "INTRO"
+    | "GUIDES"
+    | "SETTINGS"
+    | "UPLOAD"
+    | "DOWNLOAD"
+    | "DONATE"
+    | "DATA_FIX";
   targetConfig: {
     active: boolean;
     overviewed: boolean;

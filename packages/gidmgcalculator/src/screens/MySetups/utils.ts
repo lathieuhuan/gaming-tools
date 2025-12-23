@@ -24,6 +24,7 @@ import IdStore from "@/utils/IdStore";
 import { enhanceCtrls } from "@/utils/modifier-utils";
 import { isDbSetup } from "@/utils/setup-utils";
 import { makeCalcCharacterFromDb } from "@/utils/userdb";
+import { SystemError } from "@/utils/SystemError";
 
 export function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOverviewInfo["setup"] {
   const { userWps, userArts } = userDb;
@@ -36,13 +37,21 @@ export function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOver
     let artifact: ITeammateArtifact | undefined;
 
     if (teammate.artifact) {
-      const data = $AppArtifact.getSet(teammate.artifact.code)!;
+      if (teammate.artifact.code === -1) {
+        throw new SystemError({
+          type: "V4_MIGRATION_ERROR",
+        });
+      }
 
-      artifact = {
-        code: teammate.artifact.code,
-        buffCtrls: enhanceCtrls(teammate.artifact.buffCtrls, data.buffs),
-        data,
-      };
+      const setData = $AppArtifact.getSet(teammate.artifact.code)!;
+
+      if (setData) {
+        artifact = {
+          code: teammate.artifact.code,
+          buffCtrls: enhanceCtrls(teammate.artifact.buffCtrls, setData.buffs),
+          data: setData,
+        };
+      }
     }
 
     return new CalcTeammate(

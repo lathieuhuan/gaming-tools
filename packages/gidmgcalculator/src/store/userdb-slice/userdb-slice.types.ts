@@ -1,5 +1,5 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { PartiallyRequired, PartiallyRequiredOnly } from "rond";
+import type { PartiallyOptional, PartiallyRequired, PartiallyRequiredOnly } from "rond";
 
 import type {
   AppCharacter,
@@ -32,7 +32,9 @@ export type RemoveDbArtifactAction = PayloadAction<{
 
 export type UpdateDbWeaponAction = PayloadAction<PartiallyRequired<Partial<IWeaponBasic>, "ID">>;
 
-export type UpdateDbArtifactAction = PayloadAction<PartiallyRequired<Partial<IArtifactBasic>, "ID">>;
+export type UpdateDbArtifactAction = PayloadAction<
+  PartiallyRequired<Partial<IArtifactBasic>, "ID">
+>;
 
 export type RemoveDbWeaponAction = PayloadAction<{
   ID: number;
@@ -50,7 +52,7 @@ type SwitchPayload = {
 
 export type SwitchWeaponAction = PayloadAction<SwitchPayload>;
 
-export type SwitchArtifactAction = PayloadAction<SwitchPayload>;
+export type SwitchArtifactAction = PayloadAction<PartiallyOptional<SwitchPayload, "oldID">>;
 
 export type SaveSetupAction = PayloadAction<IDbSetup>;
 

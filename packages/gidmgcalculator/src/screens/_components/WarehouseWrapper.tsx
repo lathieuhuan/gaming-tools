@@ -7,7 +7,11 @@ import { useSelector } from "@Store/hooks";
 import { selectAppReady } from "@Store/ui-slice";
 import { WarehouseError } from "./WarehouseError";
 
-export function WarehouseWrapper({ children }: { children: ReactElement }) {
+type WarehouseWrapperProps = {
+  children: ReactElement;
+};
+
+export function WarehouseWrapper({ children }: WarehouseWrapperProps) {
   const appReady = useSelector(selectAppReady);
   const travelerKey = useTravelerKey();
 
