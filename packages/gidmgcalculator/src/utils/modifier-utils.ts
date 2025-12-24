@@ -1,6 +1,6 @@
 import type { EntityModifier, IModifierCtrl, IModifierCtrlBasic } from "@/types";
 
-export function enhanceCtrls<T extends EntityModifier, TExtra extends object = never>(
+export function enhanceCtrls<T extends EntityModifier, TExtra extends object = {}>(
   ctrls: IModifierCtrlBasic[],
   mods?: T[],
   extraProps: TExtra = {} as TExtra,

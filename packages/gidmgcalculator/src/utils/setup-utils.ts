@@ -3,6 +3,7 @@ import { ExactOmit } from "rond";
 import type {
   BasicSetupType,
   IArtifactBasic,
+  IArtifactBuffCtrl,
   IDbComplexSetup,
   IDbSetup,
   IModifierCtrlBasic,
@@ -11,6 +12,7 @@ import type {
   ITeammateBasic,
   ITeammateWeapon,
   IWeaponBasic,
+  IWeaponBuffCtrl,
 } from "@/types";
 
 import { ArtifactGear, CalcCharacter, Team } from "@/models/base";
@@ -23,12 +25,8 @@ import {
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import { createArtifact, createTarget, createWeapon } from "./entity-utils";
 import IdStore from "./IdStore";
+import { enhanceCtrls } from "./modifier-utils";
 import Object_ from "./Object";
-
-type CleanupCalcSetupOptions = {
-  weaponID?: number;
-  artifactIDs?: (number | null)[];
-};
 
 export function isDbSetup(setup: IDbSetup | IDbComplexSetup): setup is IDbSetup {
   return ["original", "combined"].includes(setup.type);
@@ -137,11 +135,14 @@ function restoreModCtrls<T extends Restorable, K extends keyof T>(
 
 function restoreTeammate(teammate: ITeammateBasic, team: Team) {
   const weaponData = $AppWeapon.get(teammate.weapon.code)!;
+  const weaponBuffs = weaponData.buffs || [];
+  const weaponBuffCtrls: IWeaponBuffCtrl[] = enhanceCtrls(teammate.weapon.buffCtrls, weaponBuffs);
+
   const weapon: ITeammateWeapon = {
     code: teammate.weapon.code,
     type: weaponData.type,
     refi: teammate.weapon.refi,
-    buffCtrls: createWeaponBuffCtrls(weaponData, false),
+    buffCtrls: restoreModCtrls(createWeaponBuffCtrls(weaponData, false), weaponBuffCtrls),
     data: weaponData,
   };
 
@@ -149,10 +150,15 @@ function restoreTeammate(teammate: ITeammateBasic, team: Team) {
 
   if (teammate.artifact) {
     const artifactData = $AppArtifact.getSet(teammate.artifact.code)!;
+    const artifactBuffs = artifactData.buffs || [];
+    const artifactBuffCtrls: IArtifactBuffCtrl[] = enhanceCtrls(
+      teammate.artifact.buffCtrls,
+      artifactBuffs
+    );
 
     artifact = {
       code: teammate.artifact.code,
-      buffCtrls: createArtifactBuffCtrls(artifactData, false),
+      buffCtrls: restoreModCtrls(createArtifactBuffCtrls(artifactData, false), artifactBuffCtrls),
       data: artifactData,
     };
   }

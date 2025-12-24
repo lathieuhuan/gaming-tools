@@ -3,7 +3,12 @@ import { Button, Modal, notification } from "rond";
 import { useDispatch } from "@Store/hooks";
 import { fixMultipleEquippedArtifacts, fixMultipleEquippedWeapons } from "@Store/userdb-slice";
 
-function Option({ description, onFix }: { description: string; onFix: () => void }) {
+type OptionProps = {
+  description: string;
+  onFix: () => void;
+};
+
+function Option({ description, onFix }: OptionProps) {
   return (
     <div className="pb-4 flex items-start gap-4">
       <p className="text-light-hint">{description}</p>
@@ -17,6 +22,7 @@ export function DataFixingCore() {
 
   const fixDuplicatedWeapons = () => {
     dispatch(fixMultipleEquippedWeapons());
+
     notification.success({
       content: "Your weapon data has been fixed!",
     });
@@ -24,6 +30,7 @@ export function DataFixingCore() {
 
   const fixDuplicatedArtifacts = () => {
     dispatch(fixMultipleEquippedArtifacts());
+
     notification.success({
       content: "Your artifact data has been fixed!",
     });

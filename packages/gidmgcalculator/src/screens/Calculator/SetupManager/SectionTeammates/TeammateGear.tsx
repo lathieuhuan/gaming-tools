@@ -11,11 +11,11 @@ import {
 import {
   ArtifactForge,
   ArtifactForgeProps,
+  EnhanceTag,
   TeammateItems,
   WeaponForge,
   WeaponForgeProps,
 } from "@/components";
-import { Checkbox } from "rond";
 
 type TeammateGearProps = {
   teammate: ITeammate;
@@ -54,13 +54,12 @@ export function TeammateGear({ teammate, info }: TeammateGearProps) {
           <div className="mb-4 pl-1 flex items-center">
             <p className={`leading-none text-xl font-semibold ${elmtText}`}>{teammate.name}</p>
 
-            <div
-              className="ml-2 pl-2 border-l border-dark-line font-semibold leading-none cursor-pointer"
-              hidden={!data.enhanceType}
-              onClick={handleEnhanceToggle}
-            >
-              <p className={teammate.enhanced ? elmtText : "text-light-hint/80"}>Hexerei</p>
-            </div>
+            <EnhanceTag
+              className="ml-2 pl-2 border-l border-dark-line"
+              mutable={true}
+              character={teammate}
+              onToggle={handleEnhanceToggle}
+            />
           </div>
 
           <TeammateItems

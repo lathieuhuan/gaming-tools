@@ -5,6 +5,7 @@ import type { Level } from "@/types";
 
 import { LEVELS } from "@/constants/global";
 import { CalcCharacter } from "@/models/base";
+import { EnhanceTag } from "../EnhanceTag";
 import { GenshinImage } from "../GenshinImage";
 
 type CharacterIntroProps = {
@@ -63,13 +64,12 @@ export function CharacterIntro(props: CharacterIntroProps) {
           <div className="flex items-center">
             <Rarity value={data.rarity} />
 
-            <div
-              className="ml-2 pl-2 border-l border-dark-line font-semibold leading-none cursor-pointer"
-              hidden={!data.enhanceType}
-              onClick={() => props.onEnhanceToggle?.(!character.enhanced)}
-            >
-              <p className={character.enhanced ? elmtText : "text-light-hint/80"}>Hexerei</p>
-            </div>
+            <EnhanceTag
+              className="ml-2 pl-2 border-l border-dark-line"
+              mutable={props.mutable}
+              character={character}
+              onToggle={() => props.onEnhanceToggle?.(!character.enhanced)}
+            />
           </div>
         </div>
 

@@ -3,7 +3,7 @@ import { Button } from "rond";
 
 import type { CalcTeammate } from "@/models/calculator";
 
-import { CharacterPortrait, TeammateItems } from "@/components";
+import { CharacterPortrait, EnhanceTag, TeammateItems } from "@/components";
 
 type TeammateDetailProps = {
   teammate: CalcTeammate;
@@ -24,7 +24,11 @@ export function TeammateDetail({
     <div className="w-76 bg-dark-2">
       <div className="pl-4 pt-4 pr-6 flex items-start">
         <CharacterPortrait info={data} />
-        <p className={`px-4 text-2xl text-${data.vision} font-bold`}>{teammate.name}</p>
+
+        <div className="px-4">
+          <p className={`text-2xl text-${data.vision} font-bold`}>{teammate.name}</p>
+          {teammate.enhanced && <EnhanceTag mutable={false} character={teammate} />}
+        </div>
       </div>
 
       <div className="py-4">

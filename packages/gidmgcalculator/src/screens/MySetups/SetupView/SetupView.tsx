@@ -11,7 +11,7 @@ import { MySetupsModalType, updateUI } from "@Store/ui-slice";
 import { chooseUserSetup, switchShownSetupInComplex, uncombineSetups } from "@Store/userdb-slice";
 
 // Component
-import { CharacterPortrait, GenshinImage } from "@/components";
+import { CharacterPortrait, EnhanceTag, GenshinImage } from "@/components";
 import { GearIcon } from "./GearIcon";
 import { TeammateDetail } from "./TeammateDetail";
 
@@ -113,24 +113,28 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
       <div className="px-4 pt-4 pb-3 rounded-lg bg-dark-1 flex flex-col lg:flex-row gap-4">
         <div className="flex flex-col gap-4">
           <div className="flex">
-            <GenshinImage className="w-20 h-20" src={mainData.icon} imgType="character" />
+            <GenshinImage className="size-18" src={mainData.icon} imgType="character" />
 
-            <div className="ml-4 flex-col justify-between">
-              <p className="text-lg">
-                Level <span className={mainColorText}>{main.level}</span>
-              </p>
-              <p>
-                Constellation <span className={mainColorText}>{main.cons}</span>
-              </p>
+            <div className="ml-4 grow">
+              <div className="text-lg flex items-center">
+                <p>
+                  Level <span className={mainColorText}>{main.level}</span>
+                </p>
+                <div className="ml-auto mr-2 w-px h-4 bg-dark-line" />
+                <p className={mainColorText}>C{main.cons}</p>
+              </div>
+
               <p>
                 Talents: <span className={mainColorText}>{main.getFinalTalentLv("NAs")}</span> /{" "}
                 <span className={mainColorText}>{main.getFinalTalentLv("ES")}</span> /{" "}
                 <span className={mainColorText}>{main.getFinalTalentLv("EB")}</span>
               </p>
+
+              {main.enhanced && <EnhanceTag className="mt-1" mutable={false} character={main} />}
             </div>
           </div>
 
-          <div className="flex space-x-4">
+          <div className="mt-1 flex space-x-4">
             {[0, 1, 2].map((teammateIndex) => {
               const teammate = teammates[teammateIndex];
 

@@ -14,6 +14,7 @@ export * from "./CharacterIntro";
 export * from "./CharacterPortrait";
 export * from "./ComplexSelect";
 export * from "./ElementIcon";
+export * from "./EnhanceTag";
 export * from "./EquipmentDisplay";
 export * from "./FilterTemplate";
 export * from "./FinalResultView";

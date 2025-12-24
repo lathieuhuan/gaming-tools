@@ -37,22 +37,26 @@ export function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOver
     let artifact: ITeammateArtifact | undefined;
 
     if (teammate.artifact) {
-      if (teammate.artifact.code === -1) {
+      const { code, buffCtrls } = teammate.artifact;
+
+      if (code === -1) {
         throw new SystemError({
           type: "V4_MIGRATION_ERROR",
         });
       }
 
-      const setData = $AppArtifact.getSet(teammate.artifact.code)!;
+      const setData = $AppArtifact.getSet(code)!;
 
       if (setData) {
         artifact = {
-          code: teammate.artifact.code,
-          buffCtrls: enhanceCtrls(teammate.artifact.buffCtrls, setData.buffs),
+          code,
+          buffCtrls: enhanceCtrls(buffCtrls, setData.buffs),
           data: setData,
         };
       }
     }
+
+    const weaponData = $AppWeapon.get(teammate.weapon.code)!;
 
     return new CalcTeammate(
       {
@@ -62,8 +66,8 @@ export function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOver
           code: teammate.weapon.code,
           type: teammate.weapon.type,
           refi: teammate.weapon.refi,
-          buffCtrls: enhanceCtrls(teammate.weapon.buffCtrls, data.buffs),
-          data: $AppWeapon.get(teammate.weapon.code)!,
+          buffCtrls: enhanceCtrls(teammate.weapon.buffCtrls, weaponData.buffs),
+          data: weaponData,
         },
         artifact,
         buffCtrls: enhanceCtrls(teammate.buffCtrls, data.buffs),
