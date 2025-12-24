@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { clsx, useScreenWatcher } from "rond";
 
-import { EnkaSvg } from "@/components/icons/EnkaSvg";
+import { EnkaLogo } from "@/assets/icons";
 import { TabHeader } from "./_components/TabHeader";
 import { AccountInfo } from "./AccountInfo";
 import { DataImportProvider } from "./DataImportProvider";
@@ -58,7 +58,7 @@ export function EnkaImport() {
                 href="https://enka.network"
                 target="_blank"
               >
-                <EnkaSvg className="text-xl" />
+                <EnkaLogo className="text-xl" />
                 <span className="text-lg font-bold">Enka.Network</span>
               </a>
             </div>

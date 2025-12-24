@@ -9,7 +9,7 @@ import { useDispatch } from "@Store/hooks";
 import { updateUI, type UIState } from "@Store/ui-slice";
 import { ModalOption } from "./_config";
 
-import { EnkaSvg } from "@/components/icons/EnkaSvg";
+import { EnkaLogo } from "@/assets/icons";
 import { MenuOption, ModalOptions } from "./ModalOptions";
 // import { updateCache } from "@/services/enka";
 
@@ -102,7 +102,7 @@ export function RightSide({ appReady }: RightSideProps) {
               }}
             />
             <MenuOption
-              icon={<EnkaSvg className="-mr-1 mb-1 text-xl shrink-0" />}
+              icon={<EnkaLogo className="-mr-1 mb-1 text-xl shrink-0" />}
               label="Enka Import"
               disabled={!appReady}
               onSelect={handleSelectEnkaImport}

@@ -39,6 +39,7 @@
     "tailwind-theme": "0.1.0",
     "tailwindcss": "4.1.13",
     "ts-jest": "29.2.5",
-    "vite": "7.1.7"
+    "vite": "7.1.7",
+    "vite-plugin-svgr": "4.5.0"
   }
 }
