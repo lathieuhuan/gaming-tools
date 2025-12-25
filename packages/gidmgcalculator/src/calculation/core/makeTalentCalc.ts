@@ -200,6 +200,7 @@ export function makeTalentCalc(
       resMult,
       cRate_,
       cDmg_,
+      specPatt: lunar,
     });
 
     return {
