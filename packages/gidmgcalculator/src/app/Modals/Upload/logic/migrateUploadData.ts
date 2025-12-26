@@ -1,6 +1,6 @@
 import type { CurrentDatabaseData } from "@/mirgration/types/current";
 
-import { DATABASE_DATA_VERSION } from "@/constants";
+import { DATABASE_DATA_VERSION } from "@/constants/config";
 import { convertToV3_1 } from "@/mirgration/convertToV3_1";
 import { convertToV4 } from "@/mirgration/convertToV4";
 

@@ -13,7 +13,7 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import { DATABASE_DATA_VERSION } from "@/constants";
+import { DATABASE_DATA_VERSION } from "@/constants/config";
 import accountSliceReducers, { accountSlice } from "./account-slice";
 import { migrates } from "./migration";
 import uiSliceReducers, { uiSlice } from "./ui-slice";

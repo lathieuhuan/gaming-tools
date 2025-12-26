@@ -1,5 +1,4 @@
-import { FaBars, FaDiscord, FaPuzzlePiece, FaRedditAlien } from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
+import { FaBars, FaDiscord, FaPuzzlePiece } from "react-icons/fa";
 import { Skeleton } from "rond";
 
 import { markYellow } from "@/components";

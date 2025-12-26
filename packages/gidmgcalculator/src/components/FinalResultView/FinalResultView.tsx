@@ -1,11 +1,12 @@
 import type { CalcResult } from "@/calculation/calculator/types";
 import type { CalcResultAttackItem } from "@/calculation/types";
 
+import { LUNAR_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
-import { displayValues } from "./utils";
-import { LUNAR_TYPES } from "@/constants";
 import { LunarType } from "@/types";
+import { displayValues } from "./utils";
+
+import { FinalResultLayout, type FinalResultLayoutProps } from "./FinalResultLayout";
 
 type FinalResultViewProps = Pick<
   FinalResultLayoutProps,

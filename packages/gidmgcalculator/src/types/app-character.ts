@@ -121,7 +121,6 @@ export type TalentCalcItem = {
   id?: TalentCalcItemBonusId;
   type?: CalcItemType;
   name: string;
-  notOfficial?: boolean;
   /** Factors multiplying an attribute, scaling off talent level (character) or refinement (weapon) */
   factor: CalcItemFactor | CalcItemFactor[];
   flatFactor?: CalcItemFlatFactor;
