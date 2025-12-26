@@ -6,7 +6,7 @@ import type { SetupOverviewInfo } from "./types";
 
 import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/Array";
-import { restoreCalcSetup } from "@/utils/setup-utils";
+import { restoreCalcSetup } from "@/utils/setup";
 import { parseDbArtifacts, parseDbWeapon } from "@/utils/userdb";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui-slice";

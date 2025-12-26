@@ -1,4 +1,4 @@
-import { convertToV4 } from "@/mirgration/convertToV4";
+import { convertToV4 } from "@/migration/convertToV4";
 import { initialState, UserdbState } from "@Store/userdb-slice";
 
 export const migrateToV4 = (state?: any): UserdbState => {

@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { FaUpload } from "react-icons/fa";
 import { Button, Modal, notification } from "rond";
 
-import type { CurrentDatabaseData } from "@/mirgration/types/current";
+import type { CurrentDatabaseData } from "@/migration/types/current";
 
 import { convertGOODData } from "../logic/convertGOODData";
 import { migrateUploadData } from "../logic/migrateUploadData";

@@ -8,7 +8,7 @@ import {
   createCharacterBasic,
   createWeapon,
   createWeaponBasic,
-} from "@/utils/entity-utils";
+} from "@/utils/entity";
 import IdStore from "@/utils/IdStore";
 import { parseDbArtifacts, parseDbWeapon } from "@/utils/userdb";
 import { initSession } from "@Store/calculator/actions";

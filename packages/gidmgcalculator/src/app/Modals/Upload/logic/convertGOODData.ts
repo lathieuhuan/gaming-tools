@@ -1,10 +1,10 @@
-import type { CurrentDatabaseData } from "@/mirgration/types/current";
+import type { CurrentDatabaseData } from "@/migration/types/current";
 import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 
 import { DATABASE_DATA_VERSION } from "@/constants/config";
 import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
-import { createWeaponBasic } from "@/utils/entity-utils";
+import { createWeaponBasic } from "@/utils/entity";
 import {
   convertGOODArtifact,
   convertGOODCharacter,

@@ -4,7 +4,7 @@ import { ArtifactGear, CalcCharacter } from "@/models/base";
 import { GenshinUserBuild } from "@/services/enka";
 import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/Array";
-import { createArtifact, createWeapon } from "@/utils/entity-utils";
+import { createArtifact, createWeapon } from "@/utils/entity";
 import IdStore from "@/utils/IdStore";
 import { useDataImportState } from "../DataImportProvider";
 import { useSaver } from "../SaverProvider";

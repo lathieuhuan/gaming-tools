@@ -5,7 +5,7 @@ import type { ValidationError } from "./types";
 
 import { MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@/constants/config";
 import Array_ from "@/utils/Array";
-import { isDbSetup } from "@/utils/setup-utils";
+import { isDbSetup } from "@/utils/setup";
 
 export function validateTeammates(setup: CalcSetup, existedSetup: IDbSetup | IDbComplexSetup) {
   const errors: ValidationError[] = [];

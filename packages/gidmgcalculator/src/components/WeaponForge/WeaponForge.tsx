@@ -5,7 +5,7 @@ import type { AppWeapon, WeaponType } from "@/types";
 
 import { Weapon } from "@/models/base";
 import { $AppWeapon } from "@/services";
-import { createWeapon } from "@/utils/entity-utils";
+import { createWeapon } from "@/utils/entity";
 
 // Component
 import {

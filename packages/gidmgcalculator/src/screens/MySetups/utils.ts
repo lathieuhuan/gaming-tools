@@ -19,10 +19,10 @@ import {
   createTarget,
   createWeapon,
   createWeaponBasic,
-} from "@/utils/entity-utils";
+} from "@/utils/entity";
 import IdStore from "@/utils/IdStore";
-import { enhanceCtrls } from "@/utils/modifier-utils";
-import { isDbSetup } from "@/utils/setup-utils";
+import { enhanceCtrls } from "@/utils/modifier";
+import { isDbSetup } from "@/utils/setup";
 import { makeCalcCharacterFromDb } from "@/utils/userdb";
 import { SystemError } from "@/utils/SystemError";
 

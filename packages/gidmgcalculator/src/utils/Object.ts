@@ -81,7 +81,7 @@ export default class Object_ {
     return object;
   }
 
-  static assign<TObj extends Record<PropertyKey, unknown>>(obj: TObj, props: Partial<TObj>): TObj {
+  static assign<TObj extends UnknownObject>(obj: TObj, props: Partial<TObj>): TObj {
     return Object.assign(obj, props);
   }
 

@@ -4,7 +4,7 @@ import type { ForwardedAction } from "../types";
 
 import { createWeaponBuffCtrls } from "@/models/calculator";
 import { $AppSettings } from "@/services";
-import { createTarget } from "@/utils/entity-utils";
+import { createTarget } from "@/utils/entity";
 import Object_ from "@/utils/Object";
 import { useCalcStore } from "../calculator-store";
 import { onActiveSetup } from "../utils";

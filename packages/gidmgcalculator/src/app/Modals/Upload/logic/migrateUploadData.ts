@@ -1,8 +1,8 @@
-import type { CurrentDatabaseData } from "@/mirgration/types/current";
+import type { CurrentDatabaseData } from "@/migration/types/current";
 
 import { DATABASE_DATA_VERSION } from "@/constants/config";
-import { convertToV3_1 } from "@/mirgration/convertToV3_1";
-import { convertToV4 } from "@/mirgration/convertToV4";
+import { convertToV3_1 } from "@/migration/convertToV3_1";
+import { convertToV4 } from "@/migration/convertToV4";
 
 type MigrationFn = (data: any) => any;
 

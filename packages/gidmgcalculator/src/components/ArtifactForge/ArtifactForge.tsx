@@ -6,7 +6,7 @@ import type { AppArtifact, ArtifactType, IArtifact } from "@/types";
 
 import { Artifact } from "@/models/base";
 import { $AppArtifact } from "@/services";
-import { createArtifact } from "@/utils/entity-utils";
+import { createArtifact } from "@/utils/entity";
 
 // Component
 import {

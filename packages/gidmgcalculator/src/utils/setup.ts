@@ -23,9 +23,9 @@ import {
   createWeaponBuffCtrls,
 } from "@/models/calculator";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import { createArtifact, createTarget, createWeapon } from "./entity-utils";
+import { createArtifact, createTarget, createWeapon } from "./entity";
 import IdStore from "./IdStore";
-import { enhanceCtrls } from "./modifier-utils";
+import { enhanceCtrls } from "./modifier";
 import Object_ from "./Object";
 
 export function isDbSetup(setup: IDbSetup | IDbComplexSetup): setup is IDbSetup {

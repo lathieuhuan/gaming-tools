@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { notification, type ModalControl } from "rond";
 
-import type { CurrentDatabaseData } from "@/mirgration/types/current";
+import type { CurrentDatabaseData } from "@/migration/types/current";
 import type { IArtifactBasic, IWeaponBasic } from "@/types";
 
 import { MAX_USER_ARTIFACTS, MAX_USER_WEAPONS } from "@/constants/config";

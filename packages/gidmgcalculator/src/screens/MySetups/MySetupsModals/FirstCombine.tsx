@@ -3,7 +3,7 @@ import { Input } from "rond";
 
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import Array_ from "@/utils/Array";
-import { isDbSetup } from "@/utils/setup-utils";
+import { isDbSetup } from "@/utils/setup";
 import { useDispatch } from "@Store/hooks";
 import { combineSetups, selectUserSetups } from "@Store/userdb-slice";
 import { useCombineManager } from "./hooks";
