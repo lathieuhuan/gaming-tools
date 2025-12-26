@@ -5,7 +5,7 @@ import MySetups from "@/screens/MySetups";
 import MyWeapons from "@/screens/MyWeapons";
 import { RootRouteConfig } from "@/systems/router";
 
-import { SCREEN_PATH } from "@/constants";
+import { SCREEN_PATH } from "@/constants/config";
 import { App } from "./App";
 
 export const route: RootRouteConfig = {

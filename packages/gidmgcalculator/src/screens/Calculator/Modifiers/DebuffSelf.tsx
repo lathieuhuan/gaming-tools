@@ -1,37 +1,38 @@
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectCharacter, changeModCtrlInput, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
-import { useCalcTeamData } from "../ContextProvider";
+import type { IAbilityDebuffCtrl } from "@/types";
 
-//
+import Object_ from "@/utils/Object";
+import { useShallowCalcStore } from "@Store/calculator";
+import { updateActiveSetup } from "@Store/calculator/actions";
+import { selectSetup } from "@Store/calculator/selectors";
+import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
+
 import { SelfDebuffsView } from "@/components";
 
 export default function DebuffSelf() {
-  const dispatch = useDispatch();
-  const character = useSelector(selectCharacter);
-  const selfDebuffCtrls = useSelector(
-    (state) => state.calculator.setupsById[state.calculator.activeId].selfDebuffCtrls
-  );
-  const teamData = useCalcTeamData();
+  const { main, team, selfDebuffCtrls } = useShallowCalcStore((state) => {
+    return Object_.pickProps(selectSetup(state), ["main", "team", "selfDebuffCtrls"]);
+  });
+
+  const handleUpdateCtrls = (newCtrls: IAbilityDebuffCtrl[]) => {
+    updateActiveSetup((setup) => {
+      setup.selfDebuffCtrls = newCtrls;
+    });
+  };
 
   return (
     <SelfDebuffsView
       mutable
-      character={character}
-      teamData={teamData}
+      character={main}
+      team={team}
       modCtrls={selfDebuffCtrls}
-      getHanlders={({ ctrl }) => {
-        const path: ToggleModCtrlPath = {
-          modCtrlName: "selfDebuffCtrls",
-          ctrlIndex: ctrl.index,
-        };
-
+      getHanlders={(ctrl) => {
         const updateDebuffCtrlInput = (value: number, inputIndex: number) => {
-          dispatch(changeModCtrlInput(Object.assign({ value, inputIndex }, path)));
+          handleUpdateCtrls(updateModCtrlInputs(selfDebuffCtrls, ctrl.id, inputIndex, value));
         };
 
         return {
           onToggle: () => {
-            dispatch(toggleModCtrl(path));
+            handleUpdateCtrls(toggleModCtrl(selfDebuffCtrls, ctrl.id));
           },
           onToggleCheck: (currentInput, inputIndex) => {
             updateDebuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);

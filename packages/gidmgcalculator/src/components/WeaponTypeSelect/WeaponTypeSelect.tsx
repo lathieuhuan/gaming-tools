@@ -1,6 +1,7 @@
-import { getImgSrc } from "@/utils/getImgSrc";
-import { WeaponType } from "@Calculation";
 import { IconSelect, IconSelectProps } from "rond";
+
+import type { WeaponType } from "@/types";
+import { getImgSrc } from "@/utils/getImgSrc";
 
 const OPTIONS: Array<{ value: WeaponType; icon: string }> = [
   { value: "bow", icon: getImgSrc("9/97/Weapon-class-bow-icon") },

@@ -1,23 +1,23 @@
 import { useRef } from "react";
 import { InputNumber, VersatileSelect } from "rond";
-import { AttributeStat } from "@Calculation";
 
-import type { ArtifactSubStat } from "@/types";
+import type { ArtifactSubStat, AttributeStat } from "@/types";
 import { useTranslation } from "@/hooks";
-import Entity_ from "@/utils/Entity";
+import { suffixOf } from "@/utils";
 
 // Constant
-import { ARTIFACT_SUBSTAT_TYPES } from "@/constants";
+import { ARTIFACT_SUBSTAT_TYPES } from "@/constants/global";
 import VALID_SUBSTAT_VALUES from "./valid-substat-values";
 
-interface ArtifactSubstatsControlProps {
+type ArtifactSubstatsControlProps = {
   className?: string;
   mutable?: boolean;
   rarity: number;
   mainStatType: AttributeStat;
   subStats: ArtifactSubStat[];
   onChangeSubStat?: (index: number, changes: Partial<ArtifactSubStat>) => void;
-}
+};
+
 export function ArtifactSubstatsControl({
   className = "",
   mutable,
@@ -37,7 +37,9 @@ export function ArtifactSubstatsControl({
 
   const onKeyDownValue = (index: number) => (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && wrapper.current) {
-      const inputs = wrapper.current.querySelectorAll(".ron-input-number") as NodeListOf<HTMLInputElement>;
+      const inputs = wrapper.current.querySelectorAll(
+        ".ron-input-number"
+      ) as NodeListOf<HTMLInputElement>;
       const nextInput = inputs[index + (e.shiftKey ? -1 : 1)];
 
       if (nextInput) nextInput.focus?.();
@@ -53,7 +55,10 @@ export function ArtifactSubstatsControl({
           <div key={i} className="h-9 flex-center bg-dark-2 relative">
             <VersatileSelect
               title="Select Sub-stat"
-              className={["w-44 h-full", statTypeCount[type] === 1 ? "text-light-1" : "text-danger-2"]}
+              className={[
+                "w-44 h-full",
+                statTypeCount[type] === 1 ? "text-light-1" : "text-danger-2",
+              ]}
               transparent
               arrowAt="start"
               options={ARTIFACT_SUBSTAT_TYPES.map((type) => ({ label: t(type), value: type }))}
@@ -69,18 +74,20 @@ export function ArtifactSubstatsControl({
               onChange={(value) => onChangeSubStat?.(i, { value })}
               onKeyDown={onKeyDownValue(i)}
             />
-            <span className="w-4 pt-2 pb-1">{Entity_.suffixOf(type)}</span>
+            <span className="w-4 pt-2 pb-1">{suffixOf(type)}</span>
           </div>
         ) : (
           <div key={i} className="mt-2 pt-2 pb-1 flex items-center bg-dark-2">
             <span className="mx-3">•</span>
             <p>
-              <span className={`mr-1 ${statTypeCount[type] === 1 ? "text-light-1" : "text-danger-2"}`}>
+              <span
+                className={`mr-1 ${statTypeCount[type] === 1 ? "text-light-1" : "text-danger-2"}`}
+              >
                 {t(type)}
               </span>{" "}
               <span className={isValid ? "text-bonus" : "text-danger-2"}>
                 +{value}
-                {Entity_.suffixOf(type)}
+                {suffixOf(type)}
               </span>
             </p>
           </div>

@@ -1,40 +1,37 @@
-import type { ArtifactModCtrl } from "@/types";
-import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
+import type { IArtifactDebuffCtrl } from "@/types";
+import type { ModifierHanlders } from "./types";
 
-import { $AppArtifact } from "@/services";
 import { getArtifactDesc } from "@/utils/description-parsers";
-import Array_ from "@/utils/Array";
 import { GenshinModifierView } from "../GenshinModifierView";
-import { renderModifiers } from "./modifiers.utils";
+import { ModifierContainer } from "./ModifierContainer";
 
-interface ArtifactDebuffsViewProps {
+type ArtifactDebuffsViewProps = {
   mutable?: boolean;
-  artDebuffCtrls: ArtifactModCtrl[];
-  getHanlders?: (args: GetModifierHanldersArgs<ArtifactModCtrl>) => ModifierHanlders;
-}
-export function ArtifactDebuffsView({ mutable, artDebuffCtrls, getHanlders }: ArtifactDebuffsViewProps) {
-  const content: JSX.Element[] = [];
+  artDebuffCtrls: IArtifactDebuffCtrl[];
+  getHanlders?: (ctrl: IArtifactDebuffCtrl) => ModifierHanlders;
+};
 
-  artDebuffCtrls.forEach((ctrl, ctrlIndex, ctrls) => {
-    const data = $AppArtifact.getSet(ctrl.code);
-    if (!data) return;
-
-    const debuff = Array_.findByIndex(data.debuffs, ctrl.index);
-
-    if (debuff) {
-      content.push(
-        <GenshinModifierView
-          key={`${ctrl.code}-${ctrl.index}`}
-          mutable={mutable}
-          heading={data.name}
-          description={getArtifactDesc(data, debuff)}
-          checked={ctrl.activated}
-          inputs={ctrl.inputs}
-          inputConfigs={debuff.inputConfigs}
-          {...getHanlders?.({ ctrl, ctrlIndex, ctrls })}
-        />
-      );
-    }
-  });
-  return renderModifiers(content, "debuffs", mutable);
+export function ArtifactDebuffsView({
+  mutable,
+  artDebuffCtrls,
+  getHanlders,
+}: ArtifactDebuffsViewProps) {
+  return (
+    <ModifierContainer type="debuffs" mutable={mutable}>
+      {artDebuffCtrls.map((ctrl) => {
+        return (
+          <GenshinModifierView
+            key={`${ctrl.code}-${ctrl.id}`}
+            mutable={mutable}
+            heading={ctrl.setData.name}
+            description={getArtifactDesc(ctrl.setData, ctrl.data)}
+            checked={ctrl.activated}
+            inputs={ctrl.inputs}
+            inputConfigs={ctrl.data.inputConfigs}
+            {...getHanlders?.(ctrl)}
+          />
+        );
+      })}
+    </ModifierContainer>
+  );
 }

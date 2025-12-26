@@ -1,0 +1,1 @@
+export { useCalcStore, useShallowCalcStore } from "./calculator-store";

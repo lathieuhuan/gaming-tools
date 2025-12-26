@@ -1,4 +1,3 @@
-import { WeaponType } from "@Calculation";
 import { createSelector } from "@reduxjs/toolkit";
 import { useMemo, useState } from "react";
 import {
@@ -6,25 +5,23 @@ import {
   ButtonGroup,
   CollapseSpace,
   ConfirmModal,
-  LoadingPlate,
   message,
-  useValues,
   useScreenWatcher,
+  useValues,
   WarehouseLayout,
 } from "rond";
 
-import type { UserWeapon } from "@/types";
+import type { IWeaponBasic, WeaponType } from "@/types";
 
-import { MAX_USER_WEAPONS } from "@/constants";
-import { useTravelerKey } from "@/hooks";
-import { $AppWeapon } from "@/services";
+import { MAX_USER_WEAPONS } from "@/constants/config";
+import { useWeaponData } from "@/hooks";
+import { Weapon } from "@/models/base";
 import Array_ from "@/utils/Array";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectAppReady } from "@Store/ui-slice";
 import {
   addUserWeapon,
   removeWeapon,
-  selectUserWeapons,
+  selectDbWeapons,
   sortWeapons,
   swapWeaponOwner,
   updateUserWeapon,
@@ -32,11 +29,12 @@ import {
 
 // Component
 import { InventoryRack, Tavern, WeaponCard, WeaponForge, WeaponTypeSelect } from "@/components";
+import { WarehouseWrapper } from "../_components/WarehouseWrapper";
 
 type ModalType = "ADD_WEAPON" | "SELECT_WEAPON_OWNER" | "REMOVE_WEAPON" | "";
 
 const selectWeaponInventory = createSelector(
-  selectUserWeapons,
+  selectDbWeapons,
   (_: unknown, types: WeaponType[]) => types,
   (userWps, types) => ({
     filteredWeapons: types.length ? userWps.filter((wp) => types.includes(wp.type)) : userWps,
@@ -47,6 +45,7 @@ const selectWeaponInventory = createSelector(
 function MyWeapons() {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
+  const weaponData = useWeaponData();
 
   const [chosenId, setChosenId] = useState<number>();
   const [modalType, setModalType] = useState<ModalType>("");
@@ -58,10 +57,11 @@ function MyWeapons() {
   const { filteredWeapons, totalCount } = useSelector((state) =>
     selectWeaponInventory(state, weaponTypes)
   );
-  const chosenWeapon = useMemo(
-    () => Array_.findById(filteredWeapons, chosenId),
-    [filteredWeapons, chosenId]
-  );
+
+  const chosenWeapon = useMemo(() => {
+    const data = Array_.findById(filteredWeapons, chosenId);
+    return data && new Weapon(data, weaponData.get(data.code));
+  }, [filteredWeapons, chosenId]);
 
   const checkIfMaxWeaponsReached = () => {
     if (totalCount >= MAX_USER_WEAPONS) {
@@ -78,15 +78,15 @@ function MyWeapons() {
     }
   };
 
-  const onClickRemoveWeapon = (weapon: UserWeapon) => {
+  const onClickRemoveWeapon = (weapon: IWeaponBasic) => {
     if (weapon.setupIDs?.length) {
       return message.info("This weapon cannot be deleted. It is used by some Setups.");
     }
     setModalType("REMOVE_WEAPON");
   };
 
-  const onConfirmRemoveWeapon = (weapon: UserWeapon) => {
-    dispatch(removeWeapon(weapon));
+  const onConfirmRemoveWeapon = (weapon: Weapon) => {
+    dispatch(removeWeapon({ ID: weapon.ID }));
 
     const removedIndex = Array_.indexById(filteredWeapons, weapon.ID);
 
@@ -143,7 +143,7 @@ function MyWeapons() {
         itemCls="max-w-1/3 basis-1/3 xm:max-w-1/4 xm:basis-1/4 lg:max-w-1/6 lg:basis-1/6 xl:max-w-1/8 xl:basis-1/8"
         pageSize={screenWatcher.isFromSize("xl") ? 80 : 60}
         chosenID={chosenWeapon?.ID}
-        onChangeItem={(weapon) => setChosenId(weapon?.ID)}
+        onChangeItem={(weapon) => setChosenId(weapon?.userData.ID)}
       />
 
       <WeaponCard
@@ -172,11 +172,11 @@ function MyWeapons() {
         onForgeWeapon={(weapon) => {
           if (checkIfMaxWeaponsReached()) return;
 
-          const newUserWeapon: UserWeapon = {
+          const newUserWeapon: IWeaponBasic = {
             ...weapon,
             ID: Date.now(),
-            owner: null,
           };
+
           dispatch(addUserWeapon(newUserWeapon));
           setChosenId(newUserWeapon.ID);
         }}
@@ -187,54 +187,48 @@ function MyWeapons() {
         <Tavern
           active={modalType === "SELECT_WEAPON_OWNER"}
           sourceType="user"
-          filter={(character) => {
-            return (
-              character.weaponType === chosenWeapon.type && character.name !== chosenWeapon.owner
-            );
+          filter={({ data }) => {
+            return data.weaponType === chosenWeapon.type && data.name !== chosenWeapon.owner;
           }}
           onSelectCharacter={(character) => {
-            dispatch(swapWeaponOwner({ weaponID: chosenWeapon.ID, newOwner: character.name }));
+            dispatch(
+              swapWeaponOwner({
+                weaponID: chosenWeapon.ID,
+                newOwner: character.data.name,
+              })
+            );
           }}
           onClose={closeModal}
         />
       )}
 
-      {chosenWeapon ? (
+      {chosenWeapon && (
         <ConfirmModal
           active={modalType === "REMOVE_WEAPON"}
           danger
           message={
             <>
-              Remove "<b>{$AppWeapon.get(chosenWeapon.code)?.name}</b>"?{" "}
-              {chosenWeapon.owner ? (
+              Remove "<b>{weaponData.get(chosenWeapon.code)?.name}</b>"?{" "}
+              {chosenWeapon.owner && (
                 <>
                   It is currently used by <b>{chosenWeapon.owner}</b>.
                 </>
-              ) : null}
+              )}
             </>
           }
           focusConfirm
           onConfirm={() => onConfirmRemoveWeapon(chosenWeapon)}
           onClose={closeModal}
         />
-      ) : null}
+      )}
     </WarehouseLayout>
   );
 }
 
 export function MyWeaponsWrapper() {
-  const appReady = useSelector(selectAppReady);
-  const travelerKey = useTravelerKey();
-
-  if (!appReady) {
-    return (
-      <WarehouseLayout className="h-full relative">
-        <div className="absolute inset-0 flex-center">
-          <LoadingPlate />
-        </div>
-      </WarehouseLayout>
-    );
-  }
-
-  return <MyWeapons key={travelerKey} />;
+  return (
+    <WarehouseWrapper>
+      <MyWeapons />
+    </WarehouseWrapper>
+  );
 }

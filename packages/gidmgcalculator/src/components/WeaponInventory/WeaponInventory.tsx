@@ -1,43 +1,55 @@
 import { useRef, useState } from "react";
 import { EntitySelectTemplate, FancyBackSvg, Modal } from "rond";
 
-import type { UserWeapon } from "@/types";
+import type { IWeaponBasic, WeaponType } from "@/types";
 
+import { Weapon } from "@/models/base";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import { WeaponType } from "@Calculation";
-import { selectUserWeapons } from "@Store/userdb-slice";
+import { selectDbWeapons } from "@Store/userdb-slice";
 
 // Component
+import { InventoryRack, ItemOption } from "../InventoryRack";
 import { WeaponCard } from "../WeaponCard";
-import { InventoryRack } from "../InventoryRack";
 
-interface WeaponInventoryProps {
+type WeaponInventoryProps = {
   weaponType: WeaponType;
   owner?: string | null;
   buttonText: string;
-  onClickButton: (chosen: UserWeapon) => void;
+  onClickButton: (chosen: Weapon) => void;
   onClose: () => void;
-}
-const WeaponInventoryCore = ({ weaponType, owner, buttonText, onClickButton, onClose }: WeaponInventoryProps) => {
-  const items = useStoreSnapshot((state) => selectUserWeapons(state).filter((weapon) => weapon.type === weaponType));
+};
+
+const WeaponInventoryCore = ({
+  weaponType,
+  owner,
+  buttonText,
+  onClickButton,
+  onClose,
+}: WeaponInventoryProps) => {
+  const items = useStoreSnapshot((state) =>
+    selectDbWeapons(state).filter((weapon) => weapon.type === weaponType)
+  );
 
   const bodyRef = useRef<HTMLDivElement>(null);
-  const [chosenWeapon, setChosenWeapon] = useState<UserWeapon>();
+  const [selectedWeapon, setSelectedWeapon] = useState<Weapon>();
 
-  const onChangeItem = (weapon?: UserWeapon) => {
-    if (weapon) {
-      if (!chosenWeapon || weapon.ID !== chosenWeapon.ID) {
-        setChosenWeapon(weapon);
+  const onChangeItem = (option?: ItemOption<IWeaponBasic>) => {
+    if (option) {
+      if (!selectedWeapon || option.userData.ID !== selectedWeapon.ID) {
+        setSelectedWeapon(new Weapon(option.userData, option.data));
       }
+
       if (bodyRef.current) {
         bodyRef.current.scrollLeft = 9999;
       }
+
       return;
     }
-    setChosenWeapon(undefined);
+
+    setSelectedWeapon(undefined);
   };
 
-  const chosenIsCurrent = chosenWeapon && chosenWeapon.owner === owner;
+  const isCurrentSelected = selectedWeapon?.owner && selectedWeapon.owner === owner;
 
   return (
     <EntitySelectTemplate title="Weapon Inventory" onClose={onClose}>
@@ -48,13 +60,13 @@ const WeaponInventoryCore = ({ weaponType, owner, buttonText, onClickButton, onC
               data={items}
               itemCls="max-w-1/3 basis-1/3 md:w-1/4 md:basis-1/4 lg:max-w-1/6 lg:basis-1/6"
               emptyText="No weapons found"
-              chosenID={chosenWeapon?.ID}
+              chosenID={selectedWeapon?.ID}
               onChangeItem={onChangeItem}
             />
             <WeaponCard
               wrapperCls="w-76 shrink-0"
-              weapon={chosenWeapon}
-              withActions={!!chosenWeapon}
+              weapon={selectedWeapon}
+              withActions={!!selectedWeapon}
               withOwnerLabel
               actions={[
                 {
@@ -67,7 +79,7 @@ const WeaponInventoryCore = ({ weaponType, owner, buttonText, onClickButton, onC
                 {
                   children: buttonText,
                   variant: "primary",
-                  className: chosenIsCurrent && "hidden",
+                  className: isCurrentSelected && "hidden",
                   onClick: (_, weapon) => {
                     onClickButton(weapon);
                     onClose();

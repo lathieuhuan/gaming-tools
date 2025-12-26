@@ -6,6 +6,7 @@ interface PorterLayoutProps {
     text: string;
     type?: "success" | "error";
   };
+  warning?: React.ReactNode;
   textareaAttrs: React.TextareaHTMLAttributes<HTMLTextAreaElement>;
   moreButtons: ButtonGroupItem[];
   onClose: () => void;
@@ -13,6 +14,7 @@ interface PorterLayoutProps {
 export function PorterLayout({
   heading,
   message,
+  warning,
   textareaAttrs,
   moreButtons,
   onClose,
@@ -21,10 +23,12 @@ export function PorterLayout({
     <div className="bg-dark-1 relative">
       <Modal.Header>{heading}</Modal.Header>
 
+      {warning !== undefined && <div className="mb-2 px-4 text-sm">{warning}</div>}
+
       <div className="px-4 flex flex-col">
         <textarea
           className="w-full p-2 bg-light-2 text-black rounded resize-none"
-          rows={15}
+          rows={12}
           {...textareaAttrs}
         />
 

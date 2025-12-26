@@ -7,34 +7,35 @@ import {
   useElementSize,
 } from "rond";
 
-import type { CalcArtifact, UserArtifact } from "@/types";
+import type { ArtifactType } from "@/types";
+import { type ArtifactGear, Artifact } from "@/models/base";
 
+import { useArtifactSetData } from "@/hooks";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import { ARTIFACT_TYPES, ArtifactType } from "@Calculation";
-import { selectUserArtifacts } from "@Store/userdb-slice";
+import { selectDbArtifacts } from "@Store/userdb-slice";
 
 // Conponent
 import { ArtifactCard } from "../ArtifactCard";
 import { ArtifactFilter, ArtifactFilterProps, useArtifactFilter } from "../ArtifactFilter";
-import { InventoryRack } from "../InventoryRack";
+import { InventoryRack, InventoryRackProps } from "../InventoryRack";
 import { OwnerLabel } from "../OwnerLabel";
 
-export interface ArtifactInventoryProps
-  extends Pick<ArtifactFilterProps, "forcedType">,
-    Pick<EntitySelectTemplateProps, "hasMultipleMode"> {
-  /** Default 'flower' */
-  initialType?: ArtifactType;
-  currentArtifacts?: (CalcArtifact | null)[];
-  owner?: string | null;
-  buttonText: string;
-  onClickButton: (chosen: UserArtifact, isMultiSelect: boolean) => void;
-  onClose: () => void;
-}
+export type ArtifactInventoryProps = Pick<ArtifactFilterProps<Artifact>, "forcedType"> &
+  Pick<EntitySelectTemplateProps, "hasMultipleMode"> & {
+    /** Default 'flower' */
+    initialType?: ArtifactType;
+    currentAtfGear?: ArtifactGear;
+    owner?: string | null;
+    buttonText: string;
+    onClickButton: (chosen: Artifact, isMultiSelect: boolean) => void;
+    onClose: () => void;
+  };
+
 const ArtifactInventoryCore = ({
   forcedType,
   hasMultipleMode,
   initialType = "flower",
-  currentArtifacts = [],
+  currentAtfGear,
   owner,
   buttonText,
   onClickButton,
@@ -44,37 +45,51 @@ const ArtifactInventoryCore = ({
   const bodyRef = useRef<HTMLDivElement>(null);
 
   const [showingCurrent, setShowingCurrent] = useState(false);
-  const [chosenArtifact, setChosenArtifact] = useState<UserArtifact>();
+  const [selectedArtifact, setSelectedArtifact] = useState<Artifact>();
+  const setData = useArtifactSetData();
 
   const artifacts = useStoreSnapshot((state) => {
-    const userArtifacts = selectUserArtifacts(state);
-    return forcedType
-      ? userArtifacts.filter((artifact) => artifact.type === forcedType)
-      : userArtifacts;
+    const userArtifacts = selectDbArtifacts(state);
+
+    if (forcedType) {
+      const results: Artifact[] = [];
+
+      for (const artifact of userArtifacts) {
+        if (artifact.type === forcedType) {
+          results.push(new Artifact(artifact, setData.get(artifact.code)));
+        }
+      }
+
+      return results;
+    }
+
+    return userArtifacts.map((artifact) => new Artifact(artifact, setData.get(artifact.code)));
   });
 
   const { filteredArtifacts, filter, setFilter } = useArtifactFilter(artifacts, {
     types: [forcedType || initialType],
   });
 
-  const currentArtifact = chosenArtifact?.type
-    ? currentArtifacts[ARTIFACT_TYPES.indexOf(chosenArtifact.type)]
+  const currentPiece = selectedArtifact?.type
+    ? currentAtfGear?.pieces[selectedArtifact.type]
     : undefined;
 
-  const onChangeItem = (artifact?: UserArtifact) => {
-    if (artifact) {
-      if (!chosenArtifact || artifact.ID !== chosenArtifact.ID) {
-        setChosenArtifact(artifact);
-      }
-      if (bodyRef.current) {
-        bodyRef.current.scrollLeft = 9999;
-      }
+  const onChangeItem: InventoryRackProps<Artifact>["onChangeItem"] = (item) => {
+    if (!item) {
+      setSelectedArtifact(undefined);
       return;
     }
-    setChosenArtifact(undefined);
+
+    if (item.userData.ID !== selectedArtifact?.ID) {
+      setSelectedArtifact(item.userData);
+    }
+
+    if (bodyRef.current) {
+      bodyRef.current.scrollLeft = 9999;
+    }
   };
 
-  const chosenIsCurrent = chosenArtifact && chosenArtifact.owner === owner;
+  const isCurrentSelected = selectedArtifact?.owner && selectedArtifact.owner === owner;
 
   return (
     <EntitySelectTemplate
@@ -104,7 +119,7 @@ const ArtifactInventoryCore = ({
               data={filteredArtifacts}
               itemCls="max-w-1/3 basis-1/3 md:w-1/4 md:basis-1/4 lg:max-w-1/6 lg:basis-1/6"
               emptyText="No artifacts found"
-              chosenID={chosenArtifact?.ID}
+              chosenID={selectedArtifact?.ID}
               onChangeItem={onChangeItem}
             />
 
@@ -112,8 +127,8 @@ const ArtifactInventoryCore = ({
               <div ref={ref} className="grow">
                 <ArtifactCard
                   wrapperCls="w-72 h-full"
-                  artifact={chosenArtifact}
-                  withActions={!!chosenArtifact}
+                  artifact={selectedArtifact}
+                  withActions={!!selectedArtifact}
                   actions={[
                     {
                       icon: <FancyBackSvg />,
@@ -125,14 +140,14 @@ const ArtifactInventoryCore = ({
                     {
                       children: "Compare",
                       variant: showingCurrent ? "active" : "default",
-                      className: chosenIsCurrent && "hidden",
-                      disabled: !currentArtifact,
+                      className: isCurrentSelected && "hidden",
+                      disabled: !currentAtfGear,
                       onClick: () => setShowingCurrent(!showingCurrent),
                     },
                     {
                       children: buttonText,
                       variant: "primary",
-                      className: chosenIsCurrent && "hidden",
+                      className: isCurrentSelected && "hidden",
                       onClick: (_, artifact) => {
                         onClickButton(artifact, isMultiSelect);
                         if (!isMultiSelect) onClose();
@@ -142,7 +157,7 @@ const ArtifactInventoryCore = ({
                 />
               </div>
 
-              {currentArtifact ? (
+              {currentAtfGear ? (
                 <div
                   className={
                     "absolute top-0 z-10 h-full hide-scrollbar transition-size duration-200 " +
@@ -154,14 +169,14 @@ const ArtifactInventoryCore = ({
                   }}
                 >
                   <div className="w-64 pr-2 pb-2 h-full flex flex-col bg-dark-1 rounded-l-lg">
-                    <ArtifactCard mutable={false} artifact={currentArtifact} />
+                    <ArtifactCard mutable={false} artifact={currentPiece} />
 
                     <p className="mt-4 text-center text-heading">Current equipment</p>
                   </div>
                 </div>
               ) : null}
 
-              <OwnerLabel className="mt-3" item={chosenArtifact} />
+              <OwnerLabel className="mt-3" item={selectedArtifact} />
             </div>
           </div>
         );

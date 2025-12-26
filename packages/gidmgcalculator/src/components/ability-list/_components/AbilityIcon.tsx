@@ -1,7 +1,8 @@
-import { ElementType } from "@Calculation";
 import { clsx, type ClassValue } from "rond";
 
+import type { ElementType } from "@/types";
 import { GenshinImage } from "@/components/GenshinImage";
+
 import styles from "../styles.module.scss";
 
 export const ABILITY_ICON_SIZE = "3.25rem";

@@ -1,14 +1,15 @@
-import { calculateSetup } from "@Calculation";
-import { UserArtifacts, UserComplexSetup, UserSetup, UserWeapon } from "@/types";
-import { MySetupsModalType } from "@Store/ui-slice";
+import type { CalcCharacter } from "@/models/base";
+import type { CalcTeammate } from "@/models/calculator";
+import type { BasicSetupType, IDbComplexSetup, IDbSetup } from "@/types";
 
-export type OpenModalFn = (type: MySetupsModalType) => () => void;
-
-export type CalculationResult = ReturnType<typeof calculateSetup>;
-
-export type SetupRenderInfo = {
-  setup: UserSetup;
-  weapon?: UserWeapon;
-  artifacts: UserArtifacts;
-  complexSetup?: UserComplexSetup;
+export type SetupOverviewInfo = {
+  setup: {
+    ID: number;
+    type: BasicSetupType;
+    name: string;
+    main: CalcCharacter;
+    teammates: CalcTeammate[];
+  };
+  dbSetup: IDbSetup;
+  complexSetup?: IDbComplexSetup;
 };

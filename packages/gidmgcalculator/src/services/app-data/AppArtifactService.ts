@@ -1,62 +1,76 @@
-import type { AppArtifact, ArtifactType } from "@Calculation";
-import type { Artifact } from "@/types";
-import type { GOODArtifact } from "@/types/GOOD.types";
-import type { DataControl } from "./app-data.types";
-import { convertGOODStatKey, toGOODKey } from "./utils";
+import type { AppArtifact, ArtifactDebuff, ArtifactType } from "@/types";
 
-export type ConvertedArtifact = Artifact & { data: AppArtifact };
+type DebuffArtifact = {
+  data: AppArtifact;
+  debuff?: ArtifactDebuff;
+};
 
-export class AppArtifactService {
-  private artifacts: Array<DataControl<AppArtifact>> = [];
+const map = new Map<number, AppArtifact>();
+
+class AppArtifactService {
+  artifacts: AppArtifact[] = [];
+  vvArtifact: DebuffArtifact | undefined;
+  deepwoodArtifact: DebuffArtifact | undefined;
 
   populate(artifacts: AppArtifact[]) {
-    this.artifacts = artifacts.map((dataArtifact) => ({
-      status: "fetched",
-      data: dataArtifact,
-    }));
+    map.clear();
+    this.artifacts = artifacts;
+
+    for (const artifact of artifacts) {
+      if (artifact.code === 15) {
+        this.vvArtifact = {
+          data: artifact,
+          debuff: artifact.debuffs?.[0],
+        };
+      }
+
+      if (artifact.code === 33) {
+        this.deepwoodArtifact = {
+          data: artifact,
+          debuff: artifact.debuffs?.[0],
+        };
+      }
+    }
   }
 
   getAll<T>(transform: (data: AppArtifact) => T): T[];
   getAll(): AppArtifact[];
   getAll<T>(transform?: (data: AppArtifact) => T): T[] | AppArtifact[] {
-    return transform
-      ? this.artifacts.map((artifact) => transform(artifact.data))
-      : this.artifacts.map((artifact) => artifact.data);
+    return transform ? this.artifacts.map((artifact) => transform(artifact)) : this.artifacts;
   }
 
   getSet(code: number) {
     // no artifact with code 0
-    return code ? this.artifacts.find((artifact) => artifact.data.code === code)?.data : undefined;
+    if (!code) {
+      return undefined;
+    }
+
+    const cached = map.get(code);
+
+    if (cached) {
+      return cached;
+    }
+
+    const data = this.artifacts.find((artifact) => artifact.code === code);
+
+    if (data) {
+      map.set(code, data);
+      return data;
+    }
+
+    return undefined;
   }
 
   get(artifact: { code: number; type: ArtifactType }) {
     const data = this.getSet(artifact.code);
+
     if (data && data[artifact.type]) {
       const { name, icon } = data[artifact.type];
       return { beta: data.beta, name, icon };
     }
+
     return undefined;
   }
-
-  convertGOOD(artifact: GOODArtifact, seedId: number): ConvertedArtifact | undefined {
-    const data = this.artifacts.find(({ data }) => toGOODKey(data.name) === artifact.setKey)?.data;
-
-    if (!data) {
-      return undefined;
-    }
-
-    return {
-      ID: seedId++,
-      code: data.code,
-      type: artifact.slotKey,
-      rarity: artifact.rarity,
-      mainStatType: convertGOODStatKey(artifact.mainStatKey) || "atk",
-      subStats: artifact.substats.map((substat) => ({
-        type: convertGOODStatKey(substat.key) || "atk",
-        value: substat.value,
-      })),
-      level: artifact.level,
-      data,
-    };
-  }
 }
+
+export const $AppArtifact = new AppArtifactService();

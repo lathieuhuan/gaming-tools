@@ -1,74 +1,60 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { PartiallyRequired, PartiallyRequiredOnly } from "rond";
-import type { WeaponType, ArtifactType } from "@Calculation";
+import type { PartiallyOptional, PartiallyRequired, PartiallyRequiredOnly } from "rond";
+
 import type {
+  AppCharacter,
   ArtifactSubStat,
-  UserArtifact,
-  UserCharacter,
-  UserComplexSetup,
-  UserSetup,
-  UserSetupCalcInfo,
-  UserWeapon,
+  IArtifactBasic,
+  IDbCharacter,
+  IDbComplexSetup,
+  IDbSetup,
+  IWeaponBasic,
 } from "@/types";
 
 export type AddUserDatabaseAction = PayloadAction<{
-  characters?: UserCharacter[];
-  weapons?: UserWeapon[];
-  artifacts?: UserArtifact[];
-  setups?: (UserSetup | UserComplexSetup)[];
+  characters?: IDbCharacter[];
+  weapons?: IWeaponBasic[];
+  artifacts?: IArtifactBasic[];
+  setups?: (IDbSetup | IDbComplexSetup)[];
 }>;
 
-export type UpdateUserCharacterAction = PayloadAction<PartiallyRequired<Partial<UserCharacter>, "name">>;
+export type UpdateDbCharacterAction = PayloadAction<
+  PartiallyRequired<Partial<IDbCharacter>, "name">
+>;
 
-export type UpdateUserArtifactSubStatAction = PayloadAction<
+export type UpdateDbArtifactSubStatAction = PayloadAction<
   { ID: number; subStatIndex: number } & Partial<ArtifactSubStat>
 >;
 
-export type RemoveArtifactAction = PayloadAction<{
+export type RemoveDbArtifactAction = PayloadAction<{
   ID: number;
-  owner: string | null;
-  type: ArtifactType;
 }>;
 
-export type UpdateUserWeaponAction = PayloadAction<PartiallyRequired<Partial<UserWeapon>, "ID">>;
+export type UpdateDbWeaponAction = PayloadAction<PartiallyRequired<Partial<IWeaponBasic>, "ID">>;
 
-export type UpdateUserArtifactAction = PayloadAction<PartiallyRequired<Partial<UserArtifact>, "ID">>;
+export type UpdateDbArtifactAction = PayloadAction<
+  PartiallyRequired<Partial<IArtifactBasic>, "ID">
+>;
 
-export type RemoveWeaponAction = PayloadAction<{
+export type RemoveDbWeaponAction = PayloadAction<{
   ID: number;
-  owner: string | null;
-  type: WeaponType;
 }>;
 
-export type UnequipArtifactAction = PayloadAction<{
-  owner: string | null;
-  artifactID: number;
-  artifactIndex: number;
-}>;
-
-type SwitchArgs = {
+type SwitchPayload = {
   /**
    * Owner of the target item
    */
-  newOwner: string | null;
+  newOwner: string | undefined;
   newID: number;
   oldOwner: string;
   oldID: number;
 };
 
-export type SwitchWeaponAction = PayloadAction<SwitchArgs>;
+export type SwitchWeaponAction = PayloadAction<SwitchPayload>;
 
-export type SwitchArtifactAction = PayloadAction<
-  SwitchArgs & {
-    artifactIndex: number;
-  }
->;
+export type SwitchArtifactAction = PayloadAction<PartiallyOptional<SwitchPayload, "oldID">>;
 
-export type SaveSetupAction = PayloadAction<{
-  ID: number;
-  name: string;
-  data: UserSetupCalcInfo;
-}>;
+export type SaveSetupAction = PayloadAction<IDbSetup>;
 
 export type CombineSetupsAction = PayloadAction<{
   name: string;
@@ -85,4 +71,8 @@ export type AddSetupToComplexAction = PayloadAction<{
   pickedIDs: number[];
 }>;
 
-export type AddCharacterAction = PayloadAction<PartiallyRequiredOnly<UserCharacter, "name">>;
+export type AddDbCharacterAction = PayloadAction<
+  PartiallyRequiredOnly<IDbCharacter, "name"> & {
+    data?: AppCharacter;
+  }
+>;

@@ -1,63 +1,51 @@
-import { CalcTeamData, CharacterBuff, CharacterDebuff } from "@Calculation";
-import type { Teammate, Teammates } from "@/types";
-import type { GetTeammateModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
+import type { CalcTeammate } from "@/models/calculator";
+import type { IAbilityBuffCtrl, IAbilityDebuffCtrl, IModifierCtrlBasic, ITeam } from "@/types";
+import type { ModifierHanlders } from "./types";
 
-import Array_ from "@/utils/Array";
-import { parseTeammateAbilityDesc } from "@/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
-import { renderModifiers } from "./modifiers.utils";
+import { ModifierContainer } from "./ModifierContainer";
 
-interface TeamModsViewProps {
+type TeamModsViewProps = {
   mutable?: boolean;
-  teammates: Teammates;
-  teamData: CalcTeamData;
-  getHanlders?: (args: GetTeammateModifierHanldersArgs) => ModifierHanlders;
-}
+  teammates: CalcTeammate[];
+  team: ITeam;
+  getHanlders?: (teammate: CalcTeammate, ctrl: IModifierCtrlBasic) => ModifierHanlders;
+};
 
-function getTeammateModifierElmts(
+function getTeammateModifierElmts<TModCtrl extends IAbilityBuffCtrl | IAbilityDebuffCtrl>(
   props: TeamModsViewProps,
-  teammate: Teammate,
-  teammateIndex: number,
-  type: "buffs" | "debuffs"
+  teammate: CalcTeammate,
+  modCtrls: TModCtrl[],
+  renderDesc: (ctrl: TModCtrl) => string
 ) {
-  const appTeammate = props.teamData.getAppMember(teammate.name);
-  const modCtrls = type === "buffs" ? teammate?.buffCtrls : teammate?.debuffCtrls;
-  const modifiers = type === "buffs" ? appTeammate?.buffs : appTeammate?.debuffs;
+  const { vision } = teammate.data;
+  const availableCtrls = modCtrls.filter(
+    (ctrl) => props.team.isAvailableEffect(ctrl.data) && teammate.isPerformableEffect(ctrl.data)
+  );
 
-  if (!modCtrls?.length || !modifiers?.some((modifier) => modifier.affect !== "SELF")) {
+  if (!availableCtrls.length) {
     return null;
   }
 
   return (
     <div key={teammate.name}>
-      <p className={`text-lg text-${appTeammate.vision} font-bold text-center uppercase`}>{teammate.name}</p>
-      <div className="space-y-3">
-        {modCtrls.map((ctrl, ctrlIndex, ctrls) => {
-          const modifier = Array_.findByIndex<CharacterBuff | CharacterDebuff>(modifiers, ctrl.index);
+      <p className={`text-lg text-${vision} font-bold text-center uppercase`}>{teammate.name}</p>
+      <div className="space-y-3 peer">
+        {availableCtrls.map((ctrl) => {
+          const { data } = ctrl;
 
-          if (modifier) {
-            const { inputs = [] } = ctrl;
-
-            return (
-              <GenshinModifierView
-                key={`${teammate.name}-${ctrl.index}`}
-                mutable={props.mutable}
-                heading={modifier.src}
-                description={parseTeammateAbilityDesc(modifier, inputs, props.teamData)}
-                checked={ctrl.activated}
-                inputs={inputs}
-                inputConfigs={modifier.inputConfigs}
-                {...props.getHanlders?.({
-                  ctrl,
-                  ctrlIndex,
-                  ctrls,
-                  teammate,
-                  teammateIndex,
-                })}
-              />
-            );
-          }
-          return null;
+          return (
+            <GenshinModifierView
+              key={`${teammate.name}-${ctrl.id}`}
+              mutable={props.mutable}
+              heading={data.src}
+              description={renderDesc(ctrl)}
+              checked={ctrl.activated}
+              inputs={ctrl.inputs}
+              inputConfigs={data.inputConfigs}
+              {...props.getHanlders?.(teammate, ctrl)}
+            />
+          );
         })}
       </div>
     </div>
@@ -65,15 +53,25 @@ function getTeammateModifierElmts(
 }
 
 export function TeammateBuffsView(props: TeamModsViewProps) {
-  const content = props.teammates.map((teammate, teammateIndex) => {
-    return teammate ? getTeammateModifierElmts(props, teammate, teammateIndex, "buffs") : null;
-  });
-  return renderModifiers(content, "buffs", props.mutable);
+  return (
+    <ModifierContainer type="buffs" mutable={props.mutable}>
+      {props.teammates.map((teammate) => {
+        return getTeammateModifierElmts(props, teammate, teammate.buffCtrls, (ctrl) =>
+          teammate.parseBuffDesc(ctrl)
+        );
+      })}
+    </ModifierContainer>
+  );
 }
 
 export function TeammateDebuffsView(props: TeamModsViewProps) {
-  const content = props.teammates.map((teammate, teammateIndex) => {
-    return teammate ? getTeammateModifierElmts(props, teammate, teammateIndex, "debuffs") : null;
-  });
-  return renderModifiers(content, "debuffs", props.mutable);
+  return (
+    <ModifierContainer type="debuffs" mutable={props.mutable}>
+      {props.teammates.map((teammate) => {
+        return getTeammateModifierElmts(props, teammate, teammate.debuffCtrls, (ctrl) =>
+          teammate.parseDebuffDesc(ctrl)
+        );
+      })}
+    </ModifierContainer>
+  );
 }

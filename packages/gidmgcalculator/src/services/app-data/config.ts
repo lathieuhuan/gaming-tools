@@ -1,4 +1,4 @@
-import { CharacterInnateBuff } from "@Calculation";
+import type { CharacterInnateBuff } from "@/types";
 
 export const cannedKnowledgeBuff: CharacterInnateBuff = {
   src: "Canned Knowledge",

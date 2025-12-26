@@ -1,14 +1,12 @@
 import { CollapseList } from "rond";
 
 import { useTabs } from "@/hooks";
-import { selectTeammates } from "@Store/calculator-slice";
-import { useSelector } from "@Store/hooks";
 
 // Component
 import BuffArtifact from "./BuffArtifact";
 import BuffCustom from "./BuffCustom";
 import BuffElement from "./BuffElement";
-import BuffSelf from "./BuffSelf";  
+import BuffSelf from "./BuffSelf";
 import BuffTeamBonus from "./BuffTeamBonus";
 import BuffTeammates from "./BuffTeammates";
 import BuffWeapon from "./BuffWeapon";
@@ -19,12 +17,15 @@ import DebuffSelf from "./DebuffSelf";
 import DebuffTeammates from "./DebuffTeammates";
 
 export function Modifiers() {
-  const teammates = useSelector(selectTeammates);
   const { activeIndex, tabProps, Tabs } = useTabs(1);
 
   return (
     <div className="h-full flex flex-col">
-      <Tabs {...tabProps} className="text-lg shrink-0" configs={[{ text: "Debuffs" }, { text: "Buffs" }]} />
+      <Tabs
+        {...tabProps}
+        className="text-lg shrink-0"
+        configs={[{ text: "Debuffs" }, { text: "Buffs" }]}
+      />
 
       <div className="mt-4 grow custom-scrollbar">
         <CollapseList
@@ -47,19 +48,19 @@ export function Modifiers() {
               body: <BuffSelf />,
             },
             {
-              title: "Party buffs",
-              heading: "Party",
-              body: <BuffTeammates teammates={teammates} />,
+              title: "Teammates buffs",
+              heading: "Teammates",
+              body: <BuffTeammates />,
             },
             {
               title: "Weapons buffs",
               heading: "Weapons",
-              body: <BuffWeapon teammates={teammates} />,
+              body: <BuffWeapon />,
             },
             {
               title: "Artifacts buffs",
               heading: "Artifacts",
-              body: <BuffArtifact teammates={teammates} />,
+              body: <BuffArtifact />,
             },
             {
               title: "Custom buffs",
@@ -74,8 +75,8 @@ export function Modifiers() {
           className={activeIndex ? "hidden" : undefined}
           items={[
             {
-              title: "Resonance & Reactions debuffs",
-              heading: "Resonance & Reactions",
+              title: "Elemental Event debuffs",
+              heading: "Elemental Events",
               body: <DebuffElement />,
             },
             {
@@ -84,14 +85,14 @@ export function Modifiers() {
               body: <DebuffSelf />,
             },
             {
-              title: "Party debuffs",
-              heading: "Party",
-              body: <DebuffTeammates teammates={teammates} />,
+              title: "Teammates debuffs",
+              heading: "Teammates",
+              body: <DebuffTeammates />,
             },
             {
               title: "Artifacts debuffs",
               heading: "Artifacts",
-              body: <DebuffArtifact teammates={teammates} />,
+              body: <DebuffArtifact />,
             },
             {
               title: "Custom debuffs",

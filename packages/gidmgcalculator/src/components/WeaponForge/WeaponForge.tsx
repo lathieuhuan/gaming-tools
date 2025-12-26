@@ -1,25 +1,42 @@
-import { AppWeapon, WeaponType } from "@Calculation";
 import { useMemo, useRef, useState } from "react";
 import { FancyBackSvg, Modal } from "rond";
 
+import type { AppWeapon, WeaponType } from "@/types";
+
+import { Weapon } from "@/models/base";
 import { $AppWeapon } from "@/services";
-import type { Weapon } from "@/types";
-import Entity_ from "@/utils/Entity";
-import Object_ from "@/utils/Object";
+import { createWeapon } from "@/utils/entity";
 
 // Component
+import {
+  AppEntityOptionModel,
+  AppEntitySelect,
+  AppEntitySelectProps,
+} from "@/components/AppEntitySelect";
 import { WeaponCard } from "@/components/WeaponCard";
-import { AppEntitySelect, AppEntitySelectProps } from "@/components/AppEntitySelect";
 import { WeaponFilter, WeaponFilterState } from "./WeaponFilter";
 
-const transformWeapon = (weapon: AppWeapon) =>
-  Object_.pickProps(weapon, ["code", "name", "beta", "icon", "type", "rarity"]);
+type WeaponOption = AppEntityOptionModel & {
+  type: WeaponType;
+  rarity: number;
+  data: AppWeapon;
+};
 
-type WeaponData = ReturnType<typeof transformWeapon>;
+const weaponToOption = (weapon: AppWeapon): WeaponOption => {
+  return {
+    code: weapon.code,
+    name: weapon.name,
+    beta: weapon.beta,
+    icon: weapon.icon,
+    rarity: weapon.rarity,
+    type: weapon.type,
+    data: weapon,
+  };
+};
 
-type WeaponForgeProps = Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> & {
+export type WeaponForgeProps = Pick<AppEntitySelectProps, "hasMultipleMode" | "hasConfigStep"> & {
   forcedType?: WeaponType;
-  onForgeWeapon: (info: ReturnType<typeof Entity_.createWeapon>) => void;
+  onForgeWeapon: (weapon: Weapon) => void;
   onClose: () => void;
 };
 
@@ -36,25 +53,25 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
         }
   );
 
-  const allWeapons = useMemo(() => {
+  const weaponOptions = useMemo(() => {
     const weapons = $AppWeapon.getAll();
 
     if (forcedType) {
-      return weapons.reduce<WeaponData[]>((accumulator, weapon) => {
+      return weapons.reduce<WeaponOption[]>((accumulator, weapon) => {
         if (weapon.type === forcedType) {
-          accumulator.push(transformWeapon(weapon));
+          accumulator.push(weaponToOption(weapon));
         }
         return accumulator;
       }, []);
     }
 
-    return weapons.map(transformWeapon);
+    return weapons.map(weaponToOption);
   }, []);
 
   const [selectReady, setSelectReady] = useState(!!forcedType);
   const [weaponConfig, setWeaponConfig] = useState<Weapon>();
   const [hiddenCodes, setHiddenCodes] = useState(
-    new Set(forcedType ? [] : allWeapons.map((weapon) => weapon.code))
+    new Set(forcedType ? [] : weaponOptions.map((weapon) => weapon.code))
   );
 
   const handleConfirmFilter = (filter: WeaponFilterState) => {
@@ -62,7 +79,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
     const typeFiltered = filter.types.length !== 0;
     const rarityFiltered = filter.rarities.length !== 0;
 
-    allWeapons.forEach((weapon) => {
+    weaponOptions.forEach((weapon) => {
       if (
         (typeFiltered && !filter.types.includes(weapon.type)) ||
         (rarityFiltered && !filter.rarities.includes(weapon.rarity))
@@ -76,15 +93,15 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
     if (!selectReady) setSelectReady(true);
   };
 
-  const handleSelectChange: AppEntitySelectProps<WeaponData>["onChange"] = (mold, isConfigStep) => {
+  const handleSelectChange: AppEntitySelectProps<WeaponOption>["onChange"] = (
+    mold,
+    isConfigStep
+  ) => {
     if (mold) {
-      const weapon = Entity_.createWeapon(mold);
+      const weapon = createWeapon(mold, mold.data);
 
       if (isConfigStep) {
-        setWeaponConfig({
-          ...weapon,
-          ID: 0,
-        });
+        setWeaponConfig(weapon);
       } else {
         onForgeWeapon(weapon);
       }
@@ -98,7 +115,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
   return (
     <AppEntitySelect
       title={<p className="text-base sm:text-xl leading-7">Weapon Forge</p>}
-      data={allWeapons}
+      data={weaponOptions}
       hiddenCodes={hiddenCodes}
       emptyText="No weapons found"
       hasSearch
@@ -128,10 +145,10 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
             mutable
             weapon={weaponConfig}
             refine={(refi, config) => {
-              setWeaponConfig({ ...config, refi });
+              setWeaponConfig(new Weapon({ ...config, refi }, config.data));
             }}
             upgrade={(level, config) => {
-              setWeaponConfig({ ...config, level });
+              setWeaponConfig(new Weapon({ ...config, level }, config.data));
             }}
             actions={[
               {
@@ -145,7 +162,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
                 children: "Forge",
                 variant: "primary",
                 onClick: (_, config) => {
-                  onForgeWeapon(config);
+                  onForgeWeapon(new Weapon(config, config.data));
                   afterSelect(config.code);
                 },
               },

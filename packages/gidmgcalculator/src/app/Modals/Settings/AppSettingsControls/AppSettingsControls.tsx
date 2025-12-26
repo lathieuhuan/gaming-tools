@@ -1,9 +1,11 @@
 import { clsx, useScreenWatcher } from "rond";
 
-import { MAX_TARGET_LEVEL } from "@/constants";
+import type { Level } from "@/types";
+
+import { MAX_TARGET_LEVEL } from "@/constants/config";
+import { LEVELS, WEAPON_LEVELS } from "@/constants/global";
 import { AppSettings } from "@/services";
 import { genSequentialOptions } from "@/utils";
-import { Level, LEVELS, WEAPON_LEVELS } from "@Calculation";
 
 import { SettingsGroup, SettingsGroupProps } from "../SettingsGroup";
 
@@ -13,7 +15,11 @@ type AppSettingsControlsProps = {
   onChange: <TKey extends keyof AppSettings>(key: TKey, value: AppSettings[TKey]) => void;
 };
 
-export function AppSettingsControls({ className, initialValues, onChange }: AppSettingsControlsProps) {
+export function AppSettingsControls({
+  className,
+  initialValues,
+  onChange,
+}: AppSettingsControlsProps) {
   const screenWatcher = useScreenWatcher();
 
   const levelOptions = LEVELS.map((_, i) => {
@@ -100,6 +106,14 @@ export function AppSettingsControls({ className, initialValues, onChange }: AppS
           type: "SELECT",
           defaultValue: initialValues.charCons,
           onChange: (value) => onChange("charCons", value as number),
+        },
+        {
+          key: "charEnhanced",
+          label: "Character enhanced",
+          type: "CHECK",
+          align: "right",
+          defaultChecked: initialValues.charEnhanced,
+          onChange: (value) => onChange("charEnhanced", value),
         },
         {
           key: "charNAs",

@@ -1,4 +1,4 @@
-import { AppArtifact } from "@Calculation";
+import type { AppArtifact, IArtifact } from "@/types";
 import { $AppArtifact } from "@/services";
 import { useRef } from "react";
 
@@ -12,5 +12,11 @@ export function useArtifactSetData() {
     return setData.current[code];
   };
 
-  return { get };
+  const getSlot = (piece: IArtifact) => {
+    const data = get(piece.code);
+    const { name, icon } = data[piece.type];
+    return { beta: data.beta, name, icon, data };
+  };
+
+  return { get, getSlot };
 }

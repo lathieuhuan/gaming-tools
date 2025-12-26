@@ -22,19 +22,23 @@ export default class Object_ {
     return Object.keys(obj);
   }
 
+  static entries<TObject extends object>(obj: TObject): [keyof TObject, TObject[keyof TObject]][] {
+    return Object.entries(obj) as [keyof TObject, TObject[keyof TObject]][];
+  }
+
   static forEach<
     TObject extends UnknownObject = UnknownObject,
     TKey extends keyof TObject = keyof TObject
   >(obj: TObject, callback: (key: TKey, value: TObject[TKey]) => void) {
     for (const key in obj) {
-      callback(key as any, obj[key] as any);
+      callback(key as unknown as TKey, obj[key] as unknown as TObject[TKey]);
     }
   }
 
-  static pickProps<
-    TObject extends UnknownObject = UnknownObject,
-    TKey extends keyof TObject = keyof TObject
-  >(obj: TObject, keys: TKey[]) {
+  static pickProps<TObject, TKey extends keyof TObject = keyof TObject>(
+    obj: TObject,
+    keys: TKey[]
+  ) {
     const result = {} as Pick<TObject, TKey>;
 
     for (const key of keys) {
@@ -77,8 +81,20 @@ export default class Object_ {
     return object;
   }
 
-  static assign<TObj extends Record<PropertyKey, unknown>>(obj: TObj, props: Partial<TObj>): TObj {
+  static assign<TObj extends UnknownObject>(obj: TObj, props: Partial<TObj>): TObj {
     return Object.assign(obj, props);
+  }
+
+  static optionalAssign<TObj extends object>(obj: TObj, props: Partial<TObj>): TObj {
+    const result = obj;
+
+    for (const [key, value] of Object_.entries(props)) {
+      if (value !== undefined) {
+        result[key] = value;
+      }
+    }
+
+    return result;
   }
 
   static clone<T>(item: T): T {

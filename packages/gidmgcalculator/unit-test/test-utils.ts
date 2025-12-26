@@ -1,7 +1,7 @@
 import { MutableTeamData } from "../src/calculation/CalcTeamData";
-import { Level } from "../src/calculation/types";
-import { $AppCharacter, $AppWeapon } from "../src/services";
-import { Character, Teammate, Weapon } from "../src/types";
+import { IWeaponBasic, Level } from "../src/types";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "../src/services";
+import { ICharacter, ITeammate, IWeapon } from "../src/types";
 import { __EMockCharacter } from "./mocks/characters.mock";
 import { __EMockWeapon } from "./mocks/weapons.mock";
 import { ASCENSION_RANKS } from "./test-constants";
@@ -13,7 +13,7 @@ export class MutableTeamDataTester extends MutableTeamData {
     });
   };
 
-  __updateActiveMember = (info: Partial<Character>) => {
+  __updateActiveMember = (info: Partial<ICharacter>) => {
     this._activeMember = {
       ...this._activeMember,
       ...info,
@@ -21,20 +21,26 @@ export class MutableTeamDataTester extends MutableTeamData {
   };
 
   __changeTeammates = (names: string[]) => {
-    const teammates = names.map<Teammate>((name) => ({
+    const teammates = names.map<ITeammate>((name) => ({
       name: name,
       weapon: {
         buffCtrls: [],
         code: 0,
         refi: 1,
         type: "sword",
+        data: $AppWeapon.get(0)!,
       },
       artifact: {
         code: 0,
         buffCtrls: [],
+        data: $AppArtifact.getSet(0)!,
       },
       buffCtrls: [],
       debuffCtrls: [],
+      enhanced: false,
+      data: $AppCharacter.get(name)!,
+      join: () => {},
+      isPerformableEffect: () => false,
     }));
 
     for (const name of names) {
@@ -47,7 +53,9 @@ export class MutableTeamDataTester extends MutableTeamData {
   };
 }
 
-export function __genMutableTeamDataTester(characterName: __EMockCharacter = __EMockCharacter.BASIC) {
+export function __genMutableTeamDataTester(
+  characterName: __EMockCharacter = __EMockCharacter.BASIC
+) {
   return new MutableTeamDataTester(
     {
       name: characterName,
@@ -69,7 +77,7 @@ export function __findAscensionByLevel(level: Level) {
 }
 
 export function __genWeaponInfo(code: __EMockWeapon = __EMockWeapon.SWORD) {
-  const weapon: Weapon = {
+  const weapon: IWeaponBasic = {
     code: code,
     type: "sword",
     ID: 1,

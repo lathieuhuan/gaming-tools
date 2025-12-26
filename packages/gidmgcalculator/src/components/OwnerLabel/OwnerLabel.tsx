@@ -2,13 +2,14 @@ import { useRef, useState } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { Popover, useClickOutside, type ClickOutsideHandler } from "rond";
 
-import type { UserItem, UserSetup, UserWeapon } from "@/types";
+import type { IDbItem, IDbSetup, IWeaponBasic } from "@/types";
 import { useItemBoundSetups, type BoundingItem } from "@/hooks";
 
-interface SetupListProps {
-  setups: UserSetup[];
+type SetupListProps = {
+  setups: IDbSetup[];
   onClickOutside: ClickOutsideHandler;
-}
+};
+
 const SetupList = ({ setups, onClickOutside }: SetupListProps) => {
   const listRef = useClickOutside<HTMLDivElement>(onClickOutside);
 
@@ -25,14 +26,15 @@ const SetupList = ({ setups, onClickOutside }: SetupListProps) => {
   );
 };
 
-interface OwnerLabelProps {
+type OwnerLabelProps = {
   className?: string;
   style?: React.CSSProperties;
   item?: BoundingItem & {
-    owner?: UserItem["owner"];
-    refi?: UserWeapon["refi"];
+    owner?: IDbItem["owner"];
+    refi?: IWeaponBasic["refi"];
   };
-}
+};
+
 export function OwnerLabel({ className = "", style, item }: OwnerLabelProps) {
   const puzzleBtnRef = useRef<HTMLButtonElement>(null);
   const [list, setList] = useState({
@@ -76,7 +78,9 @@ export function OwnerLabel({ className = "", style, item }: OwnerLabelProps) {
 
   return (
     <div className={cls} style={style}>
-      <p className="py-1">Equipped: {item.owner ? item.owner : <span className="opacity-80">None</span>}</p>
+      <p className="py-1">
+        Equipped: {item.owner ? item.owner : <span className="opacity-80">None</span>}
+      </p>
 
       {containingSetups.length ? (
         <>
@@ -90,7 +94,9 @@ export function OwnerLabel({ className = "", style, item }: OwnerLabelProps) {
             active={list.isVisible}
             withTooltipStyle
           >
-            {list.isMounted && <SetupList setups={containingSetups} onClickOutside={onClickOutsideList} />}
+            {list.isMounted && (
+              <SetupList setups={containingSetups} onClickOutside={onClickOutsideList} />
+            )}
           </Popover>
         </>
       ) : null}

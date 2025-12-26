@@ -2,12 +2,11 @@ import { useSelector } from "@Store/hooks";
 import { useState } from "react";
 import { CloseButton, clsx, Drawer, SideBarSvg, useScreenWatcher } from "rond";
 
-import { SCREEN_PATH } from "@/constants";
+import { SCREEN_PATH } from "@/constants/config";
 import { useRouter } from "@/systems/router";
 import { ScreenConfig } from "./_config";
 
 import { NavOptions } from "./NavOptions";
-import { OptimizerButton } from "./OptimizerButton";
 import { TargetButton } from "./TargetButton";
 import { TrackerButton } from "./TrackerButton";
 
@@ -54,7 +53,6 @@ export function LeftSide({ appReady }: LeftSideProps) {
         <>
           {showOnMobileTab && <TargetButton />}
           <TrackerButton />
-          {showOnMobileTab && <OptimizerButton />}
         </>
       )}
 

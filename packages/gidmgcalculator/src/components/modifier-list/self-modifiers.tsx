@@ -1,72 +1,84 @@
-import { CalcTeamData, CharacterBuff, CharacterCalc, CharacterDebuff } from "@Calculation";
+import type { CalcCharacter } from "@/models/base";
+import type { IAbilityBuffCtrl, IAbilityDebuffCtrl, ITeam } from "@/types";
+import type { ModifierHanlders } from "./types";
 
-import type { Character, ModifierCtrl } from "@/types";
-import type { GetModifierHanldersArgs, ModifierHanlders } from "./modifiers.types";
-
-import Array_ from "@/utils/Array";
-import { parseSelfAbilityDesc } from "@/utils/description-parsers";
 import { GenshinModifierView } from "../GenshinModifierView";
-import { renderModifiers } from "./modifiers.utils";
+import { ModifierContainer } from "./ModifierContainer";
 
-interface SelfModsViewProps {
+type SelfModsViewProps<T extends IAbilityBuffCtrl | IAbilityDebuffCtrl> = {
   mutable?: boolean;
-  character: Character;
-  teamData: CalcTeamData;
-  modCtrls: ModifierCtrl[];
-  getHanlders?: (args: GetModifierHanldersArgs) => ModifierHanlders;
-}
+  character: CalcCharacter;
+  team: ITeam;
+  modCtrls: T[];
+  getHanlders?: (ctrl: T) => ModifierHanlders;
+};
 
-function getSelfModifierElmts(props: SelfModsViewProps, modifiers: Array<CharacterBuff | CharacterDebuff>) {
+type RenderDescFn<T> = (ctrl: T) => string;
+
+function getSelfModifierElmts<T extends IAbilityBuffCtrl | IAbilityDebuffCtrl>(
+  props: SelfModsViewProps<T>,
+  renderDesc: RenderDescFn<T>
+) {
   //
-  return props.modCtrls.map((ctrl, ctrlIndex, ctrls) => {
-    const modifier = Array_.findByIndex(modifiers, ctrl.index);
+  return props.modCtrls.map((ctrl) => {
+    const modifier = ctrl.data;
 
-    if (modifier && CharacterCalc.isGrantedMod(modifier, props.teamData)) {
-      const { inputs = [] } = ctrl;
-
+    if (props.team.isAvailableEffect(modifier) && props.character.isPerformableEffect(modifier)) {
       return (
         <GenshinModifierView
-          key={ctrl.index}
+          key={ctrl.id}
           mutable={props.mutable}
           heading={modifier.src}
-          description={parseSelfAbilityDesc(modifier, inputs, props.teamData)}
+          description={renderDesc(ctrl)}
           checked={ctrl.activated}
-          inputs={inputs}
+          inputs={ctrl.inputs}
           inputConfigs={modifier.inputConfigs?.filter((config) => config.for !== "FOR_TEAM")}
-          {...props.getHanlders?.({ ctrl, ctrlIndex, ctrls })}
+          {...props.getHanlders?.(ctrl)}
         />
       );
     }
+
     return null;
   });
 }
 
-export function SelfBuffsView(props: SelfModsViewProps) {
-  const { teamData } = props;
-  const { innateBuffs = [], buffs = [] } = teamData.activeAppMember;
-  const modifierElmts: (JSX.Element | null)[] = [];
+export function SelfBuffsView(props: SelfModsViewProps<IAbilityBuffCtrl>) {
+  const { character, team } = props;
+  const { innateBuffs = [] } = character.data;
 
-  innateBuffs.forEach((buff, index) => {
-    if (CharacterCalc.isGrantedMod(buff, teamData)) {
-      modifierElmts.push(
-        <GenshinModifierView
-          key={"innate-" + index}
-          mutable={false}
-          heading={buff.src}
-          description={parseSelfAbilityDesc(buff, [], teamData)}
-        />
-      );
-    }
-  });
+  const renderDesc: RenderDescFn<IAbilityBuffCtrl> = (ctrl) => {
+    return character.parseBuffDesc(ctrl.data, ctrl.inputs);
+  };
 
-  modifierElmts.push(...getSelfModifierElmts(props, buffs));
+  return (
+    <ModifierContainer type="buffs" mutable={props.mutable}>
+      {innateBuffs.map((buff, index) => {
+        if (team.isAvailableEffect(buff) && character.isPerformableEffect(buff)) {
+          return (
+            <GenshinModifierView
+              key={"innate-" + index}
+              mutable={false}
+              heading={buff.src}
+              description={character.parseBuffDesc(buff)}
+            />
+          );
+        }
 
-  return renderModifiers(modifierElmts, "buffs", props.mutable);
+        return null;
+      })}
+      {getSelfModifierElmts(props, renderDesc)}
+    </ModifierContainer>
+  );
 }
 
-export function SelfDebuffsView(props: SelfModsViewProps) {
-  const { debuffs = [] } = props.teamData.activeAppMember;
-  const modifierElmts = getSelfModifierElmts(props, debuffs);
+export function SelfDebuffsView(props: SelfModsViewProps<IAbilityDebuffCtrl>) {
+  const renderDesc: RenderDescFn<IAbilityDebuffCtrl> = (ctrl) => {
+    return props.character.parseDebuffDesc(ctrl.data, ctrl.inputs);
+  };
 
-  return renderModifiers(modifierElmts, "debuffs", props.mutable);
+  return (
+    <ModifierContainer type="debuffs" mutable={props.mutable}>
+      {getSelfModifierElmts(props, renderDesc)}
+    </ModifierContainer>
+  );
 }

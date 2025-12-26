@@ -1,47 +1,44 @@
-import type { ArtifactType } from "@Calculation";
 import { useMemo, useState } from "react";
 
-import { $AppArtifact } from "@/services";
-import type { CalcArtifact } from "@/types";
-import { ArtifactFilterSet } from "../types";
+import type { ArtifactType, IArtifactBasic } from "@/types";
+import type { ArtifactFilterSet } from "../types";
+
+import { useArtifactSetData } from "@/hooks";
 
 type Config = {
   artifactType?: ArtifactType;
 };
 
-export function useArtifactSetFilter(
-  artifacts: CalcArtifact[],
+export function useArtifactSetFilter<T extends IArtifactBasic = IArtifactBasic>(
+  artifacts: T[],
   chosenCodes: number[],
   config?: Config
 ) {
   const { artifactType = "flower" } = config || {};
+  const setData = useArtifactSetData();
 
-  // TODO: turn into function and move outside
   const initialSets = useMemo(() => {
     const countMap = new Map<number, ArtifactFilterSet>();
     const result: ArtifactFilterSet[] = [];
 
     for (const { code } of artifacts) {
+      const data = setData.get(code);
       const filterSet = countMap.get(code);
 
       if (filterSet) {
         filterSet.count += 1;
       } //
       else {
-        const data = $AppArtifact.getSet(code);
+        const filterSet: ArtifactFilterSet = {
+          code,
+          chosen: chosenCodes.includes(code),
+          icon: data[artifactType].icon,
+          data,
+          count: 1,
+        };
 
-        if (data) {
-          const filterSet: ArtifactFilterSet = {
-            code,
-            chosen: chosenCodes.includes(code),
-            icon: data[artifactType].icon,
-            data,
-            count: 1,
-          };
-
-          countMap.set(code, filterSet);
-          result.push(filterSet);
-        }
+        countMap.set(code, filterSet);
+        result.push(filterSet);
       }
     }
     return result;

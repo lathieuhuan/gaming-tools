@@ -1,58 +1,54 @@
-import type { AppWeapon, WeaponType } from "@Calculation";
-import type { Weapon } from "@/types";
-import type { GOODWeapon } from "@/types/GOOD.types";
-import type { DataControl } from "./app-data.types";
-import { convertGOODLevel, toGOODKey } from "./utils";
+import type { AppWeapon, WeaponType } from "@/types";
 
-export type ConvertedWeapon = Weapon & { data: AppWeapon };
+const map = new Map<number, AppWeapon>();
 
-export class AppWeaponService {
-  private weapons: Array<DataControl<AppWeapon>> = [];
+class AppWeaponService {
+  weapons: AppWeapon[] = [];
 
   populate(weapons: AppWeapon[]) {
-    this.weapons = weapons.map((dataWeapon) => ({
-      status: "fetched",
-      data: dataWeapon,
-    }));
+    map.clear();
+    this.weapons = weapons;
   }
 
   getAll(type?: WeaponType): AppWeapon[];
   getAll<T>(transform: (weapon: AppWeapon) => T): T[];
   getAll<T>(arg?: WeaponType | ((weapon: AppWeapon) => T)): AppWeapon[] | T[] {
     if (typeof arg === "string") {
-      return this.weapons.reduce<AppWeapon[]>((acc, weapon) => {
-        if (weapon.data.type === arg) {
-          acc.push(weapon.data);
-        }
-        return acc;
+      const weaponsByType = this.weapons.reduce<AppWeapon[]>((acc, weapon) => {
+        return weapon.type === arg ? acc.concat(weapon) : acc;
       }, []);
-    }
-    if (typeof arg === "function") {
-      return this.weapons.map((weapon) => arg(weapon.data));
+
+      return weaponsByType;
     }
 
-    return this.weapons.map((weapon) => weapon.data);
+    if (typeof arg === "function") {
+      return this.weapons.map((weapon) => arg(weapon));
+    }
+
+    return this.weapons.map((weapon) => weapon);
   }
 
   get(code: number) {
-    const control = this.weapons.find((weapon) => weapon.data.code === code);
-    return control?.data;
-  }
-
-  convertGOOD(weapon: GOODWeapon, seedId: number): ConvertedWeapon | undefined {
-    const data = this.weapons.find(({ data }) => toGOODKey(data.name) === weapon.key)?.data;
-
-    if (!data) {
+    if (!code) {
+      // no weapon with code 0
       return undefined;
     }
 
-    return {
-      ID: seedId,
-      code: data.code,
-      type: data.type,
-      level: convertGOODLevel(weapon),
-      refi: weapon.refinement,
-      data,
-    };
+    const cachedWeapon = map.get(code);
+
+    if (cachedWeapon) {
+      return cachedWeapon;
+    }
+
+    const data = this.weapons.find((weapon) => weapon.code === code);
+
+    if (data) {
+      map.set(code, data);
+      return data;
+    }
+
+    return undefined;
   }
 }
+
+export const $AppWeapon = new AppWeaponService();

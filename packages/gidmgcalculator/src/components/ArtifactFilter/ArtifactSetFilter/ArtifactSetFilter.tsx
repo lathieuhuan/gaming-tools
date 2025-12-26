@@ -1,6 +1,6 @@
-import { AppArtifact } from "@Calculation";
 import { clsx } from "rond";
 
+import type { AppArtifact } from "@/types";
 import { FilterTemplate, type FilterTemplateProps } from "@/components/FilterTemplate";
 import { GenshinImage } from "@/components/GenshinImage";
 

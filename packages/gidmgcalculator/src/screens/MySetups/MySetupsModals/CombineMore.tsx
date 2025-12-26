@@ -1,70 +1,67 @@
-import type { UserComplexSetup, UserSetup } from "@/types";
+import type { IDbComplexSetup, IDbSetup } from "@/types";
 
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import Array_ from "@/utils/Array";
-import Setup_ from "@/utils/Setup";
+import { isDbSetup } from "@/utils/setup";
 import { useDispatch } from "@Store/hooks";
 import { addSetupToComplex, selectUserSetups } from "@Store/userdb-slice";
 import { useCombineManager } from "./hooks";
 
-interface CombineMoreProcessedResult {
-  userSetups: (UserSetup | UserComplexSetup)[];
-  setupOptions: UserSetup[];
+type CombineMoreProcessedResult = {
+  dbSetups: (IDbSetup | IDbComplexSetup)[];
+  setupOptions: IDbSetup[];
   remainCharacters: string[];
-  targetSetup?: UserComplexSetup;
-}
+  targetSetup?: IDbComplexSetup;
+};
 
 function useCombineMoreProcessor(setupID: number) {
-  const userSetups = useStoreSnapshot(selectUserSetups);
+  const dbSetups = useStoreSnapshot(selectUserSetups);
   const result: CombineMoreProcessedResult = {
-    userSetups,
+    dbSetups,
     setupOptions: [],
     remainCharacters: [],
   };
 
-  const targetSetup = Array_.findById(userSetups, setupID);
-  if (!targetSetup || Setup_.isUserSetup(targetSetup)) {
+  const targetSetup = Array_.findById(dbSetups, setupID);
+  if (!targetSetup || isDbSetup(targetSetup)) {
     return result;
   }
 
-  const displayedSetup = Array_.findById(userSetups, targetSetup.shownID);
-  if (!displayedSetup || !Setup_.isUserSetup(displayedSetup)) {
+  const displayedSetup = Array_.findById(dbSetups, targetSetup.shownID);
+  if (!displayedSetup || !isDbSetup(displayedSetup)) {
     return result;
   }
 
-  const allChars = displayedSetup.party.reduce(
-    (result, teammate) => {
-      if (teammate) {
-        result.push(teammate.name);
-      }
-      return result;
-    },
-    [displayedSetup.char.name]
-  );
+  const allChars = [
+    displayedSetup.main.name,
+    ...displayedSetup.teammates.map((teammate) => teammate.name),
+  ];
 
   result.targetSetup = targetSetup;
   result.remainCharacters = allChars.filter((name) => !targetSetup.allIDs[name]);
 
-  result.setupOptions = userSetups.filter((setup) => {
+  result.setupOptions = dbSetups.filter(isDbSetup).filter((setup) => {
     return (
       setup.type === "original" &&
-      setup.party.length === 3 &&
-      setup.party.every((teammate) => teammate && allChars.includes(teammate.name)) &&
-      result.remainCharacters.includes(setup.char.name)
+      setup.teammates.length === 3 &&
+      setup.teammates.every((teammate) => teammate && allChars.includes(teammate.name)) &&
+      result.remainCharacters.includes(setup.main.name)
     );
-  }) as UserSetup[];
+  });
 
   return result;
 }
 
-interface CombineMoreProps {
+type CombineMoreProps = {
   setupID: number;
   onClose: () => void;
-}
+};
+
 export default function CombineMore({ setupID, onClose }: CombineMoreProps) {
   const dispatch = useDispatch();
 
-  const { userSetups, targetSetup, setupOptions, remainCharacters } = useCombineMoreProcessor(setupID);
+  const { dbSetups, targetSetup, setupOptions, remainCharacters } =
+    useCombineMoreProcessor(setupID);
   const { isError, pickedIDs, combineMenu, setIsError } = useCombineManager({
     options: setupOptions,
     limit: remainCharacters.length,
@@ -75,10 +72,10 @@ export default function CombineMore({ setupID, onClose }: CombineMoreProps) {
       const existedNames: string[] = [];
 
       for (const pickedID of pickedIDs) {
-        const setup = Array_.findById(userSetups, pickedID);
+        const setup = Array_.findById(dbSetups, pickedID);
 
-        if (setup && Setup_.isUserSetup(setup)) {
-          const { name } = setup.char;
+        if (setup && isDbSetup(setup)) {
+          const { name } = setup.main;
 
           if (existedNames.includes(name)) {
             setIsError(true);

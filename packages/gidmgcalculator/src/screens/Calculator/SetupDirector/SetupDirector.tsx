@@ -1,6 +1,6 @@
 import { FaPlus } from "react-icons/fa";
 import { BiImport } from "react-icons/bi";
-import { clsx, Button, CloseButton, CollapseSpace, Modal } from "rond";
+import { Button, CloseButton, CollapseSpace, Modal } from "rond";
 
 import { updateUI } from "@Store/ui-slice";
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -9,14 +9,16 @@ import { useSetupDirectorKit } from "./useSetupDirectorKit";
 
 // Component
 import { SetupControl } from "./SetupControl";
+import { Card } from "../_components/Card";
 
 function SetupDirectorCore() {
   const dispatch = useDispatch();
   const calcModalCtrl = useCalcModalCtrl();
-  const { displayedSetups, comparedSetups, canAddMoreSetup, tempStandardId, control } = useSetupDirectorKit();
+  const { displayedSetups, comparedSetups, canAddMoreSetup, tempStandardId, control } =
+    useSetupDirectorKit();
 
   return (
-    <div className="p-4 h-full flex flex-col">
+    <Card className="h-full flex flex-col">
       <CloseButton
         className={Modal.CLOSE_BTN_CLS}
         boneOnly
@@ -72,11 +74,13 @@ function SetupDirectorCore() {
       <Button
         className="mt-4 mx-auto group relative"
         variant="primary"
-        onClick={() => control.tryApplyNewSettings(() => dispatch(updateUI({ setupDirectorActive: false })))}
+        onClick={() =>
+          control.tryApplyNewSettings(() => dispatch(updateUI({ setupDirectorActive: false })))
+        }
       >
         Apply
       </Button>
-    </div>
+    </Card>
   );
 }
 
@@ -86,7 +90,7 @@ export function SetupDirector(props: { className?: string }) {
   return (
     <CollapseSpace
       active={setupDirectorActive}
-      className={clsx("absolute bottom-0 left-0 bg-dark-3 z-30", props.className)}
+      className="absolute bottom-0 left-0 right-0 bg-dark-3 z-30 rounded-[inherit]"
       activeHeight="100%"
       moveDuration={200}
       destroyOnClose

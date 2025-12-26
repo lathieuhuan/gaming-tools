@@ -1,13 +1,14 @@
 import { useMemo, useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { clsx, Button, CollapseSpace, Table, TableThProps } from "rond";
-import { AppCharacter, LevelableTalentType, TalentType } from "@Calculation";
+import { Button, clsx, CollapseSpace, Table, TableThProps } from "rond";
 
-import type { Weapon } from "@/types";
+import type { Character } from "@/models/base";
+import type { LevelableTalentType, TalentType } from "@/types";
+
+import { EMPTY_VALUE } from "@/constants/ui";
 import { useTranslation } from "@/hooks";
-import { $AppWeapon } from "@/services";
-import { displayValue, getTableKeys, type TableKey } from "./FinalResultView.utils";
+import { getTableKeys, type TableKey } from "./utils";
 
 type HeaderConfig = Pick<TableThProps, "className" | "style"> & {
   content: React.ReactNode | ((talentType: TalentType | undefined) => React.ReactNode);
@@ -16,7 +17,7 @@ type HeaderConfig = Pick<TableThProps, "className" | "style"> & {
 type RowCellConfig = {
   className?: string;
   style?: React.CSSProperties;
-  value: number | number[];
+  value?: string | number | null;
   extra?: React.ReactNode;
 };
 
@@ -27,36 +28,36 @@ type RowConfig = {
   onDoubleClick?: () => void;
 };
 
-export interface FinalResultLayoutProps {
-  appCharacter: AppCharacter;
-  weapon: Weapon;
+export type FinalResultLayoutProps = {
+  character: Character;
+  /** Default true */
+  showTalentLv?: boolean;
   showWeaponCalc?: boolean;
   headerConfigs: HeaderConfig[];
-  getRowConfig: (mainKey: TableKey["main"], subKey: string) => RowConfig;
   talentMutable?: boolean;
-  getTalentLevel?: (talentType: TalentType) => number | undefined;
-  onChangeTalentLevel?: (talentType: LevelableTalentType, newLevel: number) => void;
-}
+  getRowConfig: (mainKey: TableKey["main"], subKey: string) => RowConfig;
+  onTalentLevelChange?: (talentType: LevelableTalentType, newLevel: number) => void;
+};
+
 export function FinalResultLayout({
-  appCharacter,
-  weapon,
+  character,
+  showTalentLv = true,
   showWeaponCalc,
   talentMutable,
-  getTalentLevel,
-  onChangeTalentLevel,
+  onTalentLevelChange,
   ...sectionProps
 }: FinalResultLayoutProps) {
   const { t } = useTranslation();
-  const appWeapon = $AppWeapon.get(weapon.code);
 
   const [closedSections, setClosedSections] = useState<boolean[]>([]);
   const [lvlingSectionI, setLvlingSectionI] = useState(-1);
 
   const tableKeys = useMemo(() => {
-    return getTableKeys(appCharacter, showWeaponCalc ? appWeapon : undefined);
-  }, [appCharacter.name, appWeapon?.code, showWeaponCalc]);
-
-  if (!appCharacter) return null;
+    return getTableKeys(
+      character.data.calcList,
+      showWeaponCalc ? character.weapon.data.calcItems : undefined
+    );
+  }, [character.name, character.weapon.code, showWeaponCalc]);
 
   const toggleSection = (index: number, forcedClosed?: boolean) => {
     const newClosed = forcedClosed ?? !closedSections[index];
@@ -86,7 +87,7 @@ export function FinalResultLayout({
           size="custom"
           className="w-8 h-8"
           onClick={() => {
-            onChangeTalentLevel?.(talent, level);
+            onTalentLevelChange?.(talent, level);
             setLvlingSectionI(-1);
           }}
         >
@@ -100,11 +101,11 @@ export function FinalResultLayout({
     <div className="flex flex-col gap-4">
       {tableKeys.map((tableKey, sectionIndex) => {
         const mainKey = tableKey.main;
-        const isReactionDmg = mainKey === "RXN_CALC";
+        const isReactionDmg = mainKey === "RXN";
         const isLvling = sectionIndex === lvlingSectionI;
-        const talentType = !isReactionDmg && mainKey !== "WP_CALC" ? mainKey : undefined;
-        const talentLevel = talentType ? getTalentLevel?.(talentType) : 0;
-        const sectionLabel = tableKey.main === "WP_CALC" ? "Weapon" : t(tableKey.main);
+        const talentType = !isReactionDmg && mainKey !== "WP" ? mainKey : undefined;
+        const talentLevel = showTalentLv && talentType ? character.getFinalTalentLv(talentType) : 0;
+        const sectionLabel = tableKey.main === "WP" ? "Weapon" : t(tableKey.main);
 
         return (
           <div key={tableKey.main}>
@@ -117,15 +118,18 @@ export function FinalResultLayout({
                 <div className="py-1.5 flex items-center gap-1">
                   <FaCaretRight
                     className={
-                      "text-base duration-150 ease-linear" + (closedSections[sectionIndex] ? "" : " rotate-90")
+                      "text-base duration-150 ease-linear" +
+                      (closedSections[sectionIndex] ? "" : " rotate-90")
                     }
                   />
                   <span>{sectionLabel}</span>
                 </div>
 
-                {talentLevel ? (
-                  <span className="px-1 rounded-sm bg-black/60 text-light-1 text-sm">{talentLevel}</span>
-                ) : null}
+                {talentLevel !== 0 && (
+                  <span className="px-1 rounded-sm bg-black/60 text-light-1 text-sm">
+                    {talentLevel}
+                  </span>
+                )}
               </button>
 
               <div className="flex">
@@ -175,12 +179,13 @@ export function FinalResultLayout({
   );
 }
 
-interface SectionTableProps extends Pick<FinalResultLayoutProps, "getRowConfig" | "headerConfigs"> {
+type SectionTableProps = Pick<FinalResultLayoutProps, "getRowConfig" | "headerConfigs"> & {
   tableKey: TableKey;
   talentType?: TalentType;
   label?: string;
   getRowTitle: (key: string) => string;
-}
+};
+
 function SectionTable(props: SectionTableProps) {
   return (
     <Table
@@ -223,7 +228,7 @@ function SectionTable(props: SectionTableProps) {
             {config.cells.map((cell, cellIndex) => {
               return (
                 <Table.Td key={cellIndex} className={cell.className} style={cell.style}>
-                  {displayValue(cell.value)}
+                  {cell.value || EMPTY_VALUE}
                   {cell.extra}
                 </Table.Td>
               );

@@ -10,10 +10,10 @@ type BuildCharacterProps = {
 
 export function BuildCharacter({ build }: BuildCharacterProps) {
   const [selectedBuild, setSelectedBuild] = useSelectedBuildState();
+  const { data } = build.character;
 
   const selected =
-    build.character.name === selectedBuild?.character.name &&
-    selectedBuild?.detailType === "CHARACTER";
+    data.name === selectedBuild?.character.data.name && selectedBuild?.detailType === "CHARACTER";
 
   return (
     <ItemCase
@@ -25,7 +25,7 @@ export function BuildCharacter({ build }: BuildCharacterProps) {
           className={className}
           imgCls={imgCls}
           zoomable
-          info={{ icon: build.character.data.icon }}
+          info={{ icon: data.icon }}
         />
       )}
     </ItemCase>

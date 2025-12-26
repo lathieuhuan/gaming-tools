@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { Button, EntitySelectTemplate, Modal, SwitchNode } from "rond";
 
-import type { CalcArtifact, UserArtifact } from "@/types";
-import Entity_ from "@/utils/Entity";
+import { Artifact } from "@/models/base";
 
 // Component
 import { ArtifactCard } from "@/components/ArtifactCard";
-import { EquippedSetStash } from "./EquippedSetStash";
+import { ArtifactOption, EquippedSetStash, EquippedSetStashProps } from "./EquippedSetStash";
 
 type LoadoutType = "EQUIPPED" | "CUSTOM";
 
@@ -14,14 +13,14 @@ const LOADOUT_TYPE_OPTIONS: Array<{ label: string; value: LoadoutType }> = [
   { label: "Equipped Set", value: "EQUIPPED" },
 ];
 
-type LoadoutStashCoreProps = {
-  onSelect?: (set: CalcArtifact[]) => void;
+export type LoadoutStashProps = {
+  onSelect?: EquippedSetStashProps["onSelectSet"];
   onClose: () => void;
 };
 
-export function LoadoutStashCore({ onSelect, onClose }: LoadoutStashCoreProps) {
+export function LoadoutStashCore({ onSelect, onClose }: LoadoutStashProps) {
   const [selectedType, setSelectedType] = useState<LoadoutType>("EQUIPPED");
-  const [selectedArtifact, setSelectedArtifact] = useState<UserArtifact>();
+  const [selectedArtifact, setSelectedArtifact] = useState<Artifact>();
 
   const handleTypeSelect = (type: LoadoutType) => {
     if (type !== selectedType) {
@@ -29,8 +28,12 @@ export function LoadoutStashCore({ onSelect, onClose }: LoadoutStashCoreProps) {
     }
   };
 
-  const handleEquippedSetSelect = (artifacts: UserArtifact[]) => {
-    onSelect?.(artifacts.map(Entity_.userItemToCalcItem));
+  const handleSelectArtifact = (artifact?: ArtifactOption) => {
+    setSelectedArtifact(artifact && new Artifact(artifact.userData, artifact.data));
+  };
+
+  const handleSelectSet = (artifacts: ArtifactOption[]) => {
+    onSelect?.(artifacts);
   };
 
   return (
@@ -67,8 +70,8 @@ export function LoadoutStashCore({ onSelect, onClose }: LoadoutStashCoreProps) {
                     element: (
                       <EquippedSetStash
                         keyword={keyword}
-                        onSelectedArtifactChange={setSelectedArtifact}
-                        onSetSelect={handleEquippedSetSelect}
+                        onSelectArtifact={handleSelectArtifact}
+                        onSelectSet={handleSelectSet}
                       />
                     ),
                   },

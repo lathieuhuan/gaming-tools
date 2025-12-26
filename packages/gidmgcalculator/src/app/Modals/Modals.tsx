@@ -5,12 +5,14 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
 
 // Component
+import { DataFixing } from "./DataFixing";
 import { Donate } from "./Donate";
 import { Download } from "./Download";
 import { Guides } from "./Guides";
 import { Settings } from "./Settings";
 import { Upload } from "./Upload";
 
+// TODO check if this is still needed
 const AppLoadingOverlay = () => {
   const loading = useSelector((state) => state.ui.loading);
   let mask = document.getElementById("app-mask");
@@ -41,6 +43,7 @@ export function Modals() {
       <Download active={appModalType === "DOWNLOAD"} onClose={closeModal} />
       <Upload active={appModalType === "UPLOAD"} onClose={closeModal} />
       <Donate active={appModalType === "DONATE"} onClose={closeModal} />
+      <DataFixing active={appModalType === "DATA_FIX"} onClose={closeModal} />
       <AppLoadingOverlay />
     </>
   );

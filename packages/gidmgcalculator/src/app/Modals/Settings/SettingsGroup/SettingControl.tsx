@@ -7,7 +7,16 @@ export function SettingControl(props: SettingControlProps) {
 
   switch (type) {
     case "CHECK":
-      control = <Checkbox {...(rest as any)}>{label}</Checkbox>;
+      control = (
+        <div className="min-h-9 flex items-center">
+          <Checkbox
+            {...(rest as any)}
+            className={props.align === "right" ? "w-full flex-row-reverse justify-between" : ""}
+          >
+            {label}
+          </Checkbox>
+        </div>
+      );
       break;
     case "SELECT":
       control = (

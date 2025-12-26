@@ -1,23 +1,14 @@
 import { useState } from "react";
-import { FaCopy, FaSave, FaBalanceScaleLeft, FaShareAlt } from "react-icons/fa";
+import { FaBalanceScaleLeft, FaCopy, FaSave, FaShareAlt } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
 import { clsx, ConfirmModal, TrashCanSvg } from "rond";
 
-import { MAX_CALC_SETUPS } from "@/constants";
+import { MAX_CALC_SETUPS } from "@/constants/config";
 import Array_ from "@/utils/Array";
+import Object_ from "@/utils/Object";
+import { useShallowCalcStore } from "@Store/calculator";
+import { duplicateSetup, removeSetup, updateCalculator } from "@Store/calculator/actions";
 import { useCalcModalCtrl } from "../../ContextProvider";
-
-// Store
-import {
-  selectActiveId,
-  selectComparedIds,
-  selectStandardId,
-  selectSetupManageInfos,
-  duplicateCalcSetup,
-  removeCalcSetup,
-  updateCalculator,
-} from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
 
 // Component
 import { ComplexSelect } from "@/components";
@@ -30,39 +21,41 @@ type ModalState = {
 type ActionButtonAttrs = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function SetupSelect() {
-  const dispatch = useDispatch();
   const calcModalCtrl = useCalcModalCtrl();
-  const activeId = useSelector(selectActiveId);
-  const setupManageInfos = useSelector(selectSetupManageInfos);
-  const standardId = useSelector(selectStandardId);
-  const comparedIds = useSelector(selectComparedIds);
+
+  const { activeId, setupManagers, standardId, comparedIds } = useShallowCalcStore((state) =>
+    Object_.pickProps(state, ["activeId", "setupManagers", "standardId", "comparedIds"])
+  );
 
   const [modal, setModal] = useState<ModalState>({
     type: "",
     setupIndex: 0,
   });
 
-  const isAtMax = setupManageInfos.length === MAX_CALC_SETUPS;
+  const isAtMax = setupManagers.length === MAX_CALC_SETUPS;
 
-  const openModal = (type: ModalState["type"], setupIndex: number) => setModal({ type, setupIndex });
+  const openModal = (type: ModalState["type"], setupIndex: number) =>
+    setModal({ type, setupIndex });
 
   const closeModal = () => setModal({ type: "", setupIndex: 0 });
 
-  const onClickSetupName = (newID: string | number) => {
+  const handleClickSetupName = (newID: string | number) => {
     if (+newID !== activeId) {
-      dispatch(updateCalculator({ activeId: +newID }));
+      updateCalculator({ activeId: +newID });
     }
   };
 
-  const onSelectStandard = (ID: number) => () => {
+  const handleSelectStandard = (ID: number) => () => {
     if (ID !== standardId) {
-      dispatch(updateCalculator({ standardId: ID }));
+      updateCalculator({ standardId: ID });
     }
   };
 
-  const onClickToggleCompared = (ID: number) => () => {
+  const handleToggleCompared = (ID: number) => () => {
     let newStandardId = standardId;
-    const newComparedIds = comparedIds.includes(ID) ? comparedIds.filter((id) => id !== ID) : comparedIds.concat(ID);
+    const newComparedIds = comparedIds.includes(ID)
+      ? comparedIds.filter((id) => id !== ID)
+      : comparedIds.concat(ID);
 
     if (newComparedIds.length === 0) {
       newStandardId = 0;
@@ -70,16 +63,10 @@ export function SetupSelect() {
       newStandardId = newComparedIds[0];
     }
 
-    dispatch(
-      updateCalculator({
-        standardId: newStandardId,
-        comparedIds: newComparedIds,
-      })
-    );
-  };
-
-  const onClickCopySetup = (ID: number) => () => {
-    dispatch(duplicateCalcSetup(ID));
+    updateCalculator({
+      standardId: newStandardId,
+      comparedIds: newComparedIds,
+    });
   };
 
   const renderActionButton = ({ className, ...rest }: ActionButtonAttrs, index?: number) => {
@@ -99,8 +86,8 @@ export function SetupSelect() {
     <>
       <ComplexSelect
         selectId="setup-select"
-        value={Array_.findById(setupManageInfos, activeId)?.ID}
-        options={setupManageInfos.map((setup, i) => {
+        value={Array_.findById(setupManagers, activeId)?.ID}
+        options={setupManagers.map((setup, i) => {
           return {
             label: setup.name,
             value: setup.ID,
@@ -109,7 +96,7 @@ export function SetupSelect() {
                 {
                   className: "hover:bg-danger-1 hover:text-light-1",
                   children: <TrashCanSvg />,
-                  disabled: setupManageInfos.length < 2,
+                  disabled: setupManagers.length < 2,
                   onClick: () => {
                     openModal("REMOVE_SETUP", i);
                     closeSelect();
@@ -135,27 +122,31 @@ export function SetupSelect() {
                   className: "hover:bg-primary-1" + (isAtMax ? " bg-light-4" : ""),
                   children: <FaCopy />,
                   disabled: isAtMax,
-                  onClick: onClickCopySetup(setup.ID),
+                  onClick: () => duplicateSetup(setup.ID),
                 },
                 {
                   className: setup.ID === standardId ? "bg-bonus" : "bg-light-1 hover:bg-primary-1",
                   children: <SiTarget className="text-1.5xl" />,
                   disabled: comparedIds.length < 2 || !comparedIds.includes(setup.ID),
-                  onClick: onSelectStandard(setup.ID),
+                  onClick: handleSelectStandard(setup.ID),
                 },
                 {
-                  className: comparedIds.includes(setup.ID) ? "bg-bonus" : "bg-light-1 hover:bg-primary-1",
+                  className: comparedIds.includes(setup.ID)
+                    ? "bg-bonus"
+                    : "bg-light-1 hover:bg-primary-1",
                   children: <FaBalanceScaleLeft className="text-1.5xl" />,
-                  disabled: setupManageInfos.length < 2,
-                  onClick: onClickToggleCompared(setup.ID),
+                  disabled: setupManagers.length < 2,
+                  onClick: handleToggleCompared(setup.ID),
                 },
               ];
 
-              return <div className="ml-auto flex justify-end">{actions.map(renderActionButton)}</div>;
+              return (
+                <div className="ml-auto flex justify-end">{actions.map(renderActionButton)}</div>
+              );
             },
           };
         })}
-        onChange={onClickSetupName}
+        onChange={handleClickSetupName}
       />
 
       <ConfirmModal
@@ -163,11 +154,11 @@ export function SetupSelect() {
         danger
         message={
           <>
-            Remove <b>{setupManageInfos[modal.setupIndex]?.name}</b>?
+            Remove <b>{setupManagers[modal.setupIndex]?.name}</b>?
           </>
         }
         focusConfirm
-        onConfirm={() => dispatch(removeCalcSetup(setupManageInfos[modal.setupIndex]?.ID))}
+        onConfirm={() => removeSetup(setupManagers[modal.setupIndex]?.ID)}
         onClose={closeModal}
       />
     </>

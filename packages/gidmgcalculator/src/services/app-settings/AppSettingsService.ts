@@ -1,5 +1,4 @@
-import { TravelerKey } from "@/types";
-import { Level } from "@Calculation";
+import type { Level } from "@/types";
 
 export type AppSettings = {
   separateCharInfo: boolean;
@@ -13,22 +12,11 @@ export type AppSettings = {
   charNAs: number;
   charES: number;
   charEB: number;
+  charEnhanced: boolean;
   wpLevel: Level;
   wpRefi: number;
   artLevel: number;
   targetLevel: number;
-
-  // TODO: remove this after 01/11/2025
-  /** @deprecated */
-  traveler?: TravelerKey;
-  /** @deprecated */
-  charInfoIsSeparated?: boolean;
-  /** @deprecated */
-  isCharInfoSeparated?: boolean;
-  /** @deprecated */
-  doKeepArtStatsOnSwitch?: boolean;
-  /** @deprecated */
-  persistingUserData?: boolean;
 };
 
 export class AppSettingsService {
@@ -43,6 +31,7 @@ export class AppSettingsService {
     charNAs: 1,
     charES: 1,
     charEB: 1,
+    charEnhanced: false,
     wpLevel: "1/20",
     wpRefi: 1,
     artLevel: 0,
@@ -59,19 +48,6 @@ export class AppSettingsService {
           ...(JSON.parse(savedSettings) as AppSettings),
         }
       : this.DEFAULT_SETTINGS;
-
-    // TODO: remove this after 01/11/2025
-    settings.separateCharInfo ||=
-      settings.charInfoIsSeparated || settings.isCharInfoSeparated || this.DEFAULT_SETTINGS.separateCharInfo;
-    settings.keepArtStatsOnSwitch ||= settings.doKeepArtStatsOnSwitch || this.DEFAULT_SETTINGS.keepArtStatsOnSwitch;
-    settings.persistUserData ||= settings.persistingUserData || this.DEFAULT_SETTINGS.persistUserData;
-
-    // TODO: remove this after 01/11/2025
-    delete settings.traveler;
-    delete settings.charInfoIsSeparated;
-    delete settings.isCharInfoSeparated;
-    delete settings.doKeepArtStatsOnSwitch;
-    delete settings.persistingUserData;
 
     return key ? settings[key] : settings;
   }

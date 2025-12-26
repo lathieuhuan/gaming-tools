@@ -1,7 +1,7 @@
 import type { CSSProperties, MouseEvent } from "react";
-import { clsx, ButtonGroup, type ButtonGroupItem, type ClassValue } from "rond";
+import { ButtonGroup, clsx, type ButtonGroupItem, type ClassValue } from "rond";
 
-import type { Weapon } from "@/types";
+import type { Weapon } from "@/models/base";
 import { OwnerLabel } from "../OwnerLabel";
 import { WeaponView, WeaponViewProps } from "./WeaponView";
 
@@ -9,7 +9,7 @@ type WeaponCardAction<T extends Weapon = Weapon> = Omit<ButtonGroupItem, "onClic
   onClick: (e: MouseEvent<HTMLButtonElement>, weapon: T) => void;
 };
 
-interface WeaponCardProps<T extends Weapon> extends Omit<WeaponViewProps<T>, "className" | "weapon"> {
+type WeaponCardProps<T extends Weapon> = Omit<WeaponViewProps<T>, "className" | "weapon"> & {
   wrapperCls?: string;
   className?: ClassValue;
   style?: CSSProperties;
@@ -19,7 +19,8 @@ interface WeaponCardProps<T extends Weapon> extends Omit<WeaponViewProps<T>, "cl
   withOwnerLabel?: boolean;
   weapon?: T;
   actions?: WeaponCardAction<T>[];
-}
+};
+
 export function WeaponCard<T extends Weapon>({
   wrapperCls = "",
   className,
@@ -34,7 +35,11 @@ export function WeaponCard<T extends Weapon>({
   return (
     <div className={"flex flex-col " + wrapperCls}>
       <div
-        className={clsx("grow hide-scrollbar bg-dark-1 flex flex-col", withGutter && "p-4 rounded-lg", className)}
+        className={clsx(
+          "grow hide-scrollbar bg-dark-1 flex flex-col",
+          withGutter && "p-4 rounded-lg",
+          className
+        )}
         style={style}
       >
         <div className="grow hide-scrollbar">

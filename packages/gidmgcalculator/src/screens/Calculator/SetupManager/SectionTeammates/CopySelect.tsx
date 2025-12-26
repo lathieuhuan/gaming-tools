@@ -1,31 +1,39 @@
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectCalcSetupsById, selectSetupManageInfos, updateCalcSetup } from "@Store/calculator-slice";
-import { CopySection } from "../../components/CopySection";
+import Object_ from "@/utils/Object";
+import { useShallowCalcStore } from "@Store/calculator";
+import { copyTeammates } from "@Store/calculator/actions";
+
+import { CopySection } from "@/screens/Calculator/_components/CopySection";
+
+type Option = {
+  value: number;
+  label: string;
+};
 
 export function CopySelect() {
-  const dispatch = useDispatch();
-  const setupManageInfos = useSelector(selectSetupManageInfos);
-  const setupsById = useSelector(selectCalcSetupsById);
+  const { setupManagers, setupsById } = useShallowCalcStore((state) =>
+    Object_.pickProps(state, ["setupManagers", "setupsById"])
+  );
 
-  const allParties = setupManageInfos.map(({ ID }) => setupsById[ID].party);
-  const copyOptions = [];
+  const copyOptions = setupManagers.reduce<Option[]>((results, manager) => {
+    const { teammates } = setupsById[manager.ID];
 
-  for (const partyIndex in allParties) {
-    if (allParties[partyIndex].some((tm) => tm)) {
-      copyOptions.push({
-        label: setupManageInfos[partyIndex].name,
-        value: setupManageInfos[partyIndex].ID,
+    if (teammates.length) {
+      results.push({
+        label: manager.name,
+        value: manager.ID,
       });
     }
-  }
 
-  const onClickCopyTeammates = ({ value: sourceId }: { value: number }) => {
-    const { party, elmtModCtrls } = setupsById[sourceId];
+    return results;
+  }, []);
 
-    dispatch(updateCalcSetup({ party, elmtModCtrls }));
-  };
-
-  return copyOptions.length ? (
-    <CopySection className="mt-3 mb-1 px-4" options={copyOptions} onClickCopy={onClickCopyTeammates} />
-  ) : null;
+  return (
+    copyOptions.length !== 0 && (
+      <CopySection
+        className="mt-3 mb-1 px-4"
+        options={copyOptions}
+        onClickCopy={({ value }) => copyTeammates(value)}
+      />
+    )
+  );
 }

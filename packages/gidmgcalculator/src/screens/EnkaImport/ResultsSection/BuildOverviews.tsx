@@ -1,5 +1,6 @@
-import { GenshinUserBuild } from "@/services/enka";
 import { clsx, Skeleton, useScreenWatcher } from "rond";
+
+import type { GenshinUserBuild } from "@/services/enka";
 import { BuildOverview, BuildOverviewMobile } from "./BuildOverview";
 
 type BuildOverviewsProps = {

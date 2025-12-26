@@ -1,25 +1,17 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { FaDiscord } from "react-icons/fa";
 import { Button, clsx, Modal, Skeleton } from "rond";
 
 import type { AppMetadata } from "./types";
 
-import { $AppData, $AppSettings } from "@/services";
+import { $AppSettings } from "@/services";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
-import { GreeterService } from "./_logic/GreeterService";
+import { $Greeter } from "./_logic/GreeterService";
 
 // Components
 import { Introduction } from "./Introduction";
 import { MetadataRefetcher } from "./MetadataRefetcher";
-
-function useGreeter() {
-  const ref = useRef<GreeterService>();
-  if (!ref.current) {
-    ref.current = new GreeterService($AppData);
-  }
-  return ref.current;
-}
 
 type State = {
   status: "loading" | "success" | "error";
@@ -31,7 +23,6 @@ type State = {
 export const Greeter = () => {
   const dispatch = useDispatch();
   const appModalType = useSelector((state) => state.ui.appModalType);
-  const greeter = useGreeter();
 
   const [state, setState] = useState<State>({
     status: "loading",
@@ -46,7 +37,7 @@ export const Greeter = () => {
       });
     }
 
-    const error = await greeter.fetchAllData();
+    const error = await $Greeter.fetchAllData();
 
     if (error) {
       setState({
@@ -57,7 +48,7 @@ export const Greeter = () => {
     } else {
       setState({
         status: "success",
-        metadata: greeter.metadataInfo,
+        metadata: $Greeter.metadata,
       });
       dispatch(updateUI({ appReady: true }));
     }
@@ -76,7 +67,7 @@ export const Greeter = () => {
     window.addEventListener("beforeunload", handleBeforeUnload, { capture: true });
 
     return () => {
-      greeter.endShift();
+      $Greeter.endShift();
       window.removeEventListener("beforeunload", handleBeforeUnload, { capture: true });
     };
   }, []);

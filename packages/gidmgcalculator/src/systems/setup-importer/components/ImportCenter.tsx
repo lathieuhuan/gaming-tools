@@ -2,112 +2,135 @@ import { useEffect, useRef, useState } from "react";
 import isEqual from "react-fast-compare";
 import { ConfirmModal, LoadingSpin, Modal, type PartiallyRequired, notification } from "rond";
 
-import { MAX_CALC_SETUPS, SCREEN_PATH } from "@/constants";
+import type { SetupImportInfo } from "@/types";
+
+import { MAX_CALC_SETUPS, SCREEN_PATH } from "@/constants/config";
+import { CalcSetup } from "@/models/calculator";
 import { useRouter } from "@/systems/router";
-import Object_ from "@/utils/Object";
-import {
-  importSetup,
-  initNewSession,
-  selectCharacter,
-  selectSetupManageInfos,
-  selectTarget,
-} from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
+import { useShallowCalcStore } from "@Store/calculator";
+import { importSetup, initSession } from "@Store/calculator/actions";
+import { useDispatch } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
-import { SetupImportInfo } from "@/types";
 
 // Component
 import { OverwriteOptions, type OverwriteOptionsProps } from "./OverwriteOptions";
 
 type PendingCode = "INIT" | "DIFFERENT_CHAR" | "EXISTED" | "MAX_SETUPS" | "DIFFERENT_INFO/TARGET";
 
-type SetupImportCenterProps = PartiallyRequired<SetupImportInfo, "calcSetup" | "target"> & {
+type SetupImportCenterProps = PartiallyRequired<SetupImportInfo, "params"> & {
   onFinish: () => void;
 };
 
-export function SetupImportCenter({ calcSetup, target, onFinish, ...manageInfo }: SetupImportCenterProps) {
+export function SetupImportCenter({ params, onFinish, ...manageInfo }: SetupImportCenterProps) {
   const dispatch = useDispatch();
   const router = useRouter();
-  const character = useSelector(selectCharacter);
-  const currentTarget = useSelector(selectTarget);
-  const calcSetupInfos = useSelector(selectSetupManageInfos);
+  const { main, target, setupManagers } = useShallowCalcStore((state) => {
+    const { activeId = "", setupsById } = state;
+
+    return {
+      main: setupsById[activeId]?.main,
+      target: state.target,
+      setupManagers: state.setupManagers,
+    };
+  });
 
   const [pendingCode, setPendingCode] = useState<PendingCode>("INIT");
-  const overwriteToAsk = useRef({
-    character: false,
-    target: true,
+  const overwriteProps = useRef<
+    Pick<
+      OverwriteOptionsProps,
+      | "currentMain"
+      | "currentTarget"
+      | "importedMain"
+      | "importedTarget"
+      | "askForCharacter"
+      | "askForTarget"
+    >
+  >({
+    currentMain: main,
+    currentTarget: target,
+    importedMain: params.main,
+    importedTarget: target,
+    askForCharacter: false,
+    askForTarget: true,
   });
 
   useEffect(() => {
-    const delayExecute = (fn: () => void) => setTimeout(fn, 0);
+    const delay = (fn: () => void) => setTimeout(fn, 0);
 
     // Start of site, no setup in Calculator yet
-    if (!character) {
-      delayExecute(startNewSession);
+    if (!main) {
+      delay(startNewSession);
       return;
     }
-    if (character.name !== calcSetup.char.name) {
-      delayExecute(() => setPendingCode("DIFFERENT_CHAR"));
+
+    if (main.name !== params.main.name) {
+      delay(() => setPendingCode("DIFFERENT_CHAR"));
       return;
     }
+
     // The imported is from My Setups and already imported
-    if (manageInfo.ID && calcSetupInfos.some((info) => info.ID === manageInfo.ID)) {
-      delayExecute(() => setPendingCode("EXISTED"));
+    if (manageInfo.ID && setupManagers.some((manager) => manager.ID === manageInfo.ID)) {
+      delay(() => setPendingCode("EXISTED"));
       return;
     }
-    if (calcSetupInfos.length === MAX_CALC_SETUPS) {
-      delayExecute(() => setPendingCode("MAX_SETUPS"));
+
+    if (setupManagers.length === MAX_CALC_SETUPS) {
+      delay(() => setPendingCode("MAX_SETUPS"));
       return;
     }
-    const sameChar = isEqual(character, calcSetup.char);
-    const sameTarget = isEqual(Object_.omitEmptyProps(currentTarget), Object_.omitEmptyProps(target));
+
+    const currentMain = main.serialize();
+    const importedMain = params.main.serialize();
+    const sameChar = isEqual(currentMain, importedMain);
+
+    const currentTarget = target.serialize();
+    const importedTarget = params.target?.serialize();
+    const sameTarget = !importedTarget || isEqual(currentTarget, importedTarget);
 
     if (sameChar && sameTarget) {
-      delayExecute(() =>
+      delay(() =>
         addImportedSetup({
-          shouldOverwriteChar: false,
-          shouldOverwriteTarget: false,
+          overwriteChar: false,
+          overwriteTarget: false,
         })
       );
       return;
     }
-    overwriteToAsk.current = {
-      character: !sameChar,
-      target: !sameTarget,
+
+    overwriteProps.current = {
+      currentMain,
+      currentTarget,
+      importedMain,
+      importedTarget: importedTarget ?? currentTarget,
+      askForCharacter: !sameChar,
+      askForTarget: !sameTarget,
     };
 
     setPendingCode("DIFFERENT_INFO/TARGET");
   }, []);
 
   const addImportedSetup: OverwriteOptionsProps["onDone"] = (config) => {
-    dispatch(
-      importSetup({
-        importInfo: {
-          ...manageInfo,
-          calcSetup,
-          target,
-        },
-        ...config,
-      })
-    );
+    importSetup(params, manageInfo, config);
     dispatch(updateUI({ setupDirectorActive: false }));
     onFinish();
   };
 
   const startNewSession = () => {
-    dispatch(
-      initNewSession({
-        ...manageInfo,
-        calcSetup,
-        target,
-      })
-    );
+    initSession({
+      name: manageInfo.name,
+      type: manageInfo.type,
+      calcSetup: new CalcSetup({
+        ...params,
+        ID: manageInfo.ID,
+      }),
+    });
+
     dispatch(updateUI({ setupDirectorActive: false }));
     onFinish();
 
     router.navigate(SCREEN_PATH.CALCULATOR);
 
-    if (["URL", "ENKA"].includes(manageInfo.importSource || "")) {
+    if (["URL", "ENKA"].includes(manageInfo.source || "")) {
       notification.success({
         content: "Successfully import the setup!",
         duration: 0,
@@ -167,13 +190,7 @@ export function SetupImportCenter({ calcSetup, target, onFinish, ...manageInfo }
           formId="overwrite-configuration"
           onClose={onFinish}
         >
-          <OverwriteOptions
-            askForCharacter={overwriteToAsk.current.character}
-            askForTarget={overwriteToAsk.current.target}
-            importedChar={calcSetup?.char}
-            importedTarget={target}
-            onDone={addImportedSetup}
-          />
+          <OverwriteOptions {...overwriteProps.current} onDone={addImportedSetup} />
         </Modal>
       );
     default:

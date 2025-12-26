@@ -1,9 +1,13 @@
 import type { AppMetadata } from "../types";
 
-import { MINIMUM_SYSTEM_VERSION } from "@/constants";
+import { MINIMUM_SYSTEM_VERSION } from "@/constants/config";
 import { $AppData, AllData } from "@/services";
-import { MetadataChannel } from "./MetadataChannel";
+import { AllDataChannel } from "./AllDataChannel";
 import { StoredTime } from "./StoredTime";
+
+const COOLDOWN_NORMAL = 60;
+const COOLDOWN_UPGRADE = 300;
+const SYSTEM_UPGRADE_MESSAGE = "The system is being upgraded.";
 
 type FetchAllDataError = {
   code: number;
@@ -11,124 +15,130 @@ type FetchAllDataError = {
   cooldown: number;
 };
 
-export class GreeterService {
-  private readonly COOLDOWN_NORMAL = 60;
-  private readonly COOLDOWN_UPGRADE = 300;
-  private isFetchedMetadata = false;
+class GreeterService {
+  isFetchedMetadata = false;
 
-  public metadataInfo: AppMetadata = {
+  metadata: AppMetadata = {
     version: "",
     updates: [],
     supporters: [],
   };
 
-  private metadataChannel = new MetadataChannel();
-  private lastVersionCheckTime = new StoredTime("lastVersionCheckTime");
+  allDataChannel: AllDataChannel;
+  lastVersionCheckTime = new StoredTime("lastVersionCheckTime");
 
-  constructor(private data$: typeof $AppData) {
-    this.metadataChannel.onRequest = () => {
+  constructor() {
+    this.allDataChannel = new AllDataChannel();
+
+    this.allDataChannel.onRequest = () => {
       if (this.isFetchedMetadata) {
-        this.metadataChannel.response({
-          ...this.metadataInfo,
-          ...this.data$.data,
+        this.allDataChannel.response({
+          ...this.metadata,
+          ...$AppData.getAll(),
         });
       }
     };
 
-    this.metadataChannel.onResponse = (metadata) => {
+    this.allDataChannel.onResponse = (metadata) => {
       if (!this.isFetchedMetadata) {
         this.populateData(metadata);
       }
     };
   }
 
-  private get currentTime() {
-    return Math.round(Date.now() / 1000);
-  }
-  private removeVersionCheckTime = () => {
-    localStorage.removeItem("lastVersionCheckTime");
-  };
-
-  private isValidDataVersion(version: string) {
-    const versionFrags = version.split(".");
-    const minVersionFrags = MINIMUM_SYSTEM_VERSION.split(".");
-
-    for (let i = 0; i < 3; i++) {
-      const versionFrag = +versionFrags[i];
-      const minVersionFrag = +minVersionFrags[i];
-
-      if (versionFrag > minVersionFrag) {
-        return true;
-      }
-      if (versionFrag < minVersionFrag) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  private populateData = (data: AllData) => {
+  populateData(data: AllData) {
     this.isFetchedMetadata = true;
-    this.metadataInfo = {
+    this.metadata = {
       version: data.version,
       updates: data.updates,
       supporters: data.supporters,
     };
-    this.data$.data = data;
-  };
+    $AppData.populate(data);
+  }
 
-  private async _fetchMetadata(): Promise<FetchAllDataError | null> {
+  async _fetchAllData(): Promise<FetchAllDataError | null> {
     if (!this.isFetchedMetadata) {
-      const response = await this.data$.fetchAllData();
+      const response = await $AppData.fetchAllData();
       const { code, message = "Error.", data } = response;
 
       if (data) {
-        if (this.isValidDataVersion(data.version)) {
+        if (isValidDataVersion(data.version)) {
           this.populateData(data);
-          this.removeVersionCheckTime();
+          removeVersionCheckTime();
           return null;
         }
 
-        this.lastVersionCheckTime.value = this.currentTime;
+        // Data is outdated, set cooldown and return error
+        this.lastVersionCheckTime.value = getCurrentTime();
 
         return {
           code: 503,
-          message: "The system is being upgraded.",
-          cooldown: this.COOLDOWN_UPGRADE,
+          message: SYSTEM_UPGRADE_MESSAGE,
+          cooldown: COOLDOWN_UPGRADE,
         };
       }
+
       return {
         code,
         message,
-        cooldown: this.COOLDOWN_NORMAL,
+        cooldown: COOLDOWN_NORMAL,
       };
     }
 
-    this.removeVersionCheckTime();
+    removeVersionCheckTime();
     return null;
   }
 
-  async fetchAllData(): Promise<FetchAllDataError | null> {
-    const timeElapsed = this.currentTime - this.lastVersionCheckTime.value;
+  fetchAllData(): Promise<FetchAllDataError | null> {
+    const timeElapsed = getCurrentTime() - this.lastVersionCheckTime.value;
 
-    if (timeElapsed < this.COOLDOWN_UPGRADE) {
-      return {
+    if (timeElapsed < COOLDOWN_UPGRADE) {
+      // Still in cooldown of refetching data
+      return Promise.resolve({
         code: 503,
-        message: "The system is being upgraded.",
-        cooldown: this.COOLDOWN_UPGRADE - timeElapsed,
-      };
+        message: SYSTEM_UPGRADE_MESSAGE,
+        cooldown: COOLDOWN_UPGRADE - timeElapsed,
+      });
     }
 
-    this.metadataChannel.request();
+    // Request data from other tabs
+    this.allDataChannel.request();
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(this._fetchMetadata());
-      }, 100);
+        resolve(this._fetchAllData());
+      }, 200);
     });
   }
 
-  endShift = () => {
-    this.metadataChannel.close();
-  };
+  endShift() {
+    this.allDataChannel.close();
+  }
 }
+
+function getCurrentTime() {
+  return Math.round(Date.now() / 1000);
+}
+function removeVersionCheckTime() {
+  localStorage.removeItem("lastVersionCheckTime");
+}
+
+function isValidDataVersion(version: string) {
+  const versionFrags = version.split(".");
+  const minVersionFrags = MINIMUM_SYSTEM_VERSION.split(".");
+
+  for (let i = 0; i < 3; i++) {
+    const versionFrag = +versionFrags[i];
+    const minVersionFrag = +minVersionFrags[i];
+
+    if (versionFrag > minVersionFrag) {
+      return true;
+    }
+    if (versionFrag < minVersionFrag) {
+      return false;
+    }
+  }
+  return true;
+}
+
+export const $Greeter = new GreeterService();

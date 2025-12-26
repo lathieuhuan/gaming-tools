@@ -1,64 +1,35 @@
-import { useEffect } from "react";
-import { GeneralCalc } from "@Calculation";
+import type { IArtifactDebuffCtrl } from "@/types";
 
-import type { Teammates } from "@/types";
-import { changeModCtrlInput, selectArtifacts, toggleModCtrl, type ToggleModCtrlPath } from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
+import Object_ from "@/utils/Object";
+import { useShallowCalcStore } from "@Store/calculator";
+import { updateActiveSetup } from "@Store/calculator/actions";
+import { selectSetup } from "@Store/calculator/selectors";
+import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
+
 import { ArtifactDebuffsView } from "@/components";
 
-export default function DebuffArtifact({ teammates }: { teammates: Teammates }) {
-  const dispatch = useDispatch();
-  const artDebuffCtrls = useSelector((state) => {
-    return state.calculator.setupsById[state.calculator.activeId].artDebuffCtrls;
-  });
-  const artifacts = useSelector(selectArtifacts);
-  const { code, bonusLv } = GeneralCalc.getArtifactSetBonuses(artifacts || [])[0] || {};
-
-  const usedArtCodes = teammates.reduce(
-    (accumulator, teammate) => {
-      if (teammate && teammate.artifact.code) {
-        accumulator.push(teammate.artifact.code);
-      }
-      return accumulator;
-    },
-    [code && bonusLv === 1 ? code : 0]
+export default function DebuffArtifact() {
+  const { artDebuffCtrls } = useShallowCalcStore((state) =>
+    Object_.pickProps(selectSetup(state), ["artDebuffCtrls"])
   );
 
-  useEffect(() => {
-    artDebuffCtrls.forEach((ctrl, ctrlIndex) => {
-      if (ctrl.activated && !usedArtCodes.includes(ctrl.code)) {
-        dispatch(
-          toggleModCtrl({
-            modCtrlName: "artDebuffCtrls",
-            ctrlIndex,
-          })
-        );
-      }
+  const handleUpdateCtrls = (newCtrls: IArtifactDebuffCtrl[]) => {
+    updateActiveSetup((setup) => {
+      setup.artDebuffCtrls = newCtrls;
     });
-  }, [JSON.stringify(usedArtCodes)]);
+  };
 
   return (
     <ArtifactDebuffsView
       mutable
-      artDebuffCtrls={artDebuffCtrls.filter((ctrl) => usedArtCodes.includes(ctrl.code))}
-      getHanlders={({ ctrl }) => {
-        const path: ToggleModCtrlPath = {
-          modCtrlName: "artDebuffCtrls",
-          ctrlIndex: artDebuffCtrls.findIndex((debuffCtrl) => debuffCtrl.code === ctrl.code),
-        };
-
+      artDebuffCtrls={artDebuffCtrls}
+      getHanlders={(ctrl) => {
         return {
           onToggle: () => {
-            dispatch(toggleModCtrl(path));
+            handleUpdateCtrls(toggleModCtrl(artDebuffCtrls, ctrl.id));
           },
           onSelectOption: (value, inputIndex) => {
-            dispatch(
-              changeModCtrlInput({
-                ...path,
-                inputIndex,
-                value,
-              })
-            );
+            handleUpdateCtrls(updateModCtrlInputs(artDebuffCtrls, ctrl.id, inputIndex, value));
           },
         };
       }}

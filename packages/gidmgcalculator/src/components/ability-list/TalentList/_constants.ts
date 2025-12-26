@@ -1,4 +1,4 @@
-import { ElementType, WeaponType } from "@Calculation";
+import type { ElementType, WeaponType } from "@/types";
 
 export const NORMAL_ATTACK_ICONS: Record<`${WeaponType}_${ElementType}`, string> = {
   bow_pyro: "7/7f/Bow_Pyro",

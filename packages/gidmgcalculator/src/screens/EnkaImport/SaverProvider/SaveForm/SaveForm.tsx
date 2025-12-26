@@ -1,7 +1,7 @@
-import { ARTIFACT_TYPES } from "@Calculation";
 import { useState } from "react";
 import { clsx, Table } from "rond";
 
+import { ARTIFACT_TYPES } from "@/constants/global";
 import { GenshinUserBuild } from "@/services/enka";
 import { ExistedItems, SaveSelections, SaveSelectionType } from "../types";
 

@@ -1,225 +1,137 @@
-import { AppCharacter, CharacterInnateBuff, TalentType } from "@Calculation";
+import type { AppCharacter, CharacterInnateBuff, TalentType, TravelerInfo } from "@/types";
+import type {
+  GenshinDevCharacterSuccessResponse,
+  GenshinDevErrorResponse,
+  TravelerProps,
+} from "./types";
 
-import type { Character, TravelerInfo } from "@/types";
-import type { GOODCharacter } from "@/types/GOOD.types";
-import type { StandardResponse } from "../services.types";
-import type { DataControl, ServiceSubscriber, TravelerProps } from "./app-data.types";
-
-import { BACKEND_URL, DEFAULT_TRAVELER, GENSHIN_DEV_URL } from "@/constants";
-import { BaseService } from "./BaseService";
+import { GENSHIN_DEV_URL } from "@/constants/config";
+import { fetchData } from "./BaseService";
 import { cannedKnowledgeBuff, skirksTrainingBuff } from "./config";
-import { convertGOODLevel } from "./utils";
 
-type CharacterSubscriber = ServiceSubscriber<AppCharacter>;
+const NO_DESCRIPTION_MSG = "[Description missing]";
 
-export type ConvertedCharacter = Character & { data: AppCharacter };
-
-export class AppCharacterService extends BaseService {
-  private readonly NO_DESCRIPTION_MSG = "[Description missing]";
-  private characters: Array<DataControl<AppCharacter>> = [];
-  private subscribers: Map<string, Set<CharacterSubscriber>> = new Map();
-  private traveler = DEFAULT_TRAVELER;
+class AppCharacterService {
+  readonly DEFAULT_TRAVELER: TravelerInfo = {
+    selection: "LUMINE",
+    powerups: {
+      cannedKnowledge: false,
+      skirksTraining: false,
+    },
+  };
+  characters: AppCharacter[] = [];
+  traveler: TravelerInfo = this.DEFAULT_TRAVELER;
 
   populate(characters: AppCharacter[]) {
     const travelerProps = this.getTravelerProps(this.traveler);
 
-    this.characters = characters.map((character) => ({
-      status: "fetched",
-      data: this.updateIfTraveler(character, travelerProps),
-    }));
+    this.characters = characters.map((character) => {
+      return this.updateIfTraveler(character, travelerProps);
+    });
   }
-
-  private getControl(name: string) {
-    return this.characters.find((character) => character.data.name === name);
-  }
-
-  public subscribe(name: string, subscriber: CharacterSubscriber) {
-    const existSubscribers = this.subscribers.get(name);
-
-    if (existSubscribers) {
-      existSubscribers.add(subscriber);
-    } else {
-      this.subscribers.set(name, new Set([subscriber]));
-    }
-
-    return () => this.unsubscribe(name, subscriber);
-  }
-
-  private unsubscribe(name: string, subscriber: CharacterSubscriber) {
-    this.subscribers.get(name)?.delete(subscriber);
-  }
-
-  async fetch(name: string): StandardResponse<AppCharacter> {
-    const control = this.getControl(name);
-
-    if (!control) {
-      return {
-        code: 404,
-        message: "Character not found",
-        data: null,
-      };
-    }
-    if (control.status === "fetched") {
-      return {
-        code: 200,
-        data: control.data,
-      };
-    }
-
-    control.status = "fetching";
-    const response = await this.fetchData<AppCharacter>(BACKEND_URL.character.byName(name));
-
-    if (response.data) {
-      control.status = "fetched";
-      Object.assign(control.data, response.data);
-
-      const subscribers = this.subscribers.get(name);
-
-      if (subscribers) {
-        subscribers.forEach((subscriber) => {
-          subscriber(control.data);
-        });
-      }
-
-      return {
-        ...response,
-        data: control.data,
-      };
-    }
-
-    return response;
-  }
-
-  private parseGenshinDevResponse(response: any, appCharacter: AppCharacter) {
-    try {
-      const { constellation = [], activeTalents, passiveTalents = [] } = appCharacter;
-      const consDescriptions: string[] = [];
-      const talentDescriptions: string[] = [];
-
-      constellation.forEach((cons, i) => {
-        const description = response.constellations[i]?.description || this.NO_DESCRIPTION_MSG;
-        consDescriptions.push(description);
-        cons.description = description;
-      });
-
-      const processDescription = (talent: TalentType, type: string | undefined) => {
-        const description =
-          response.skillTalents.find((item: any) => item.type === type)?.description ||
-          this.NO_DESCRIPTION_MSG;
-        talentDescriptions.push(description);
-
-        const activeTalent = activeTalents[talent];
-        if (activeTalent) activeTalent.description = description;
-      };
-
-      processDescription("NAs", "NORMAL_ATTACK");
-      processDescription("ES", "ELEMENTAL_SKILL");
-      processDescription("EB", "ELEMENTAL_BURST");
-      if (activeTalents.altSprint) processDescription("altSprint", undefined);
-
-      response.passiveTalents.forEach((item: any, i: number) => {
-        const description = item?.description || this.NO_DESCRIPTION_MSG;
-        talentDescriptions.push(description);
-
-        if (passiveTalents[i]) passiveTalents[i].description = description;
-      });
-
-      return {
-        consDescriptions,
-        talentDescriptions,
-      };
-    } catch (e) {
-      console.error(e);
-      throw new Error("Internal Error");
-    }
-  }
-
-  async fetchConsDescriptions(name: string): StandardResponse<string[]> {
+  async fetchConsDescriptions(name: string): Promise<string[]> {
     const appCharacter = this.get(name);
+
     if (!appCharacter) {
-      return {
-        code: 404,
-        message: "Character not found",
-        data: null,
-      };
+      throw new Error("Character not found");
     }
     const { constellation = [] } = appCharacter;
 
-    if (!constellation.length || !constellation[0]) {
+    if (!constellation.length) {
       // Aloy
-      return { code: 200, data: [] };
+      return [];
     }
 
     if (constellation[0].description) {
-      return {
-        code: 200,
-        data: constellation.map((cons) => cons.description || this.NO_DESCRIPTION_MSG),
-      };
+      return constellation.map((cons) => cons.description || NO_DESCRIPTION_MSG);
     }
 
-    return await this.fetchData(GENSHIN_DEV_URL.character(name), {
-      processData: (res) => this.parseGenshinDevResponse(res, appCharacter).consDescriptions,
-      processError: (res) => res.error,
+    const response = await fetchData(GENSHIN_DEV_URL.character(name), {
+      processData: (res: GenshinDevCharacterSuccessResponse) => {
+        return parseGenshinDevResponse(res, appCharacter).consDescriptions;
+      },
+      processError: (res: GenshinDevErrorResponse) => res.error,
     });
+
+    if (response.data) {
+      return response.data;
+    }
+
+    throw new Error(response.message);
   }
 
-  async fetchTalentDescriptions(name: string): StandardResponse<string[]> {
+  async fetchTalentDescriptions(name: string): Promise<string[]> {
     const appCharacter = this.get(name);
+
     if (!appCharacter) {
-      return {
-        code: 404,
-        message: "Character not found",
-        data: null,
-      };
+      throw new Error("Character not found");
     }
     const { activeTalents, passiveTalents } = appCharacter;
 
     if (activeTalents.NAs.description) {
       const coreType: TalentType[] = ["NAs", "ES", "EB"];
       const descriptions: string[] = coreType.map((type) => {
-        return activeTalents[type]?.description || this.NO_DESCRIPTION_MSG;
+        return activeTalents[type]?.description || NO_DESCRIPTION_MSG;
       });
 
-      if (activeTalents.altSprint)
-        descriptions.push(activeTalents.altSprint.description || this.NO_DESCRIPTION_MSG);
+      if (activeTalents.altSprint) {
+        descriptions.push(activeTalents.altSprint.description || NO_DESCRIPTION_MSG);
+      }
 
       descriptions.push(
-        ...passiveTalents.map((talent) => talent.description || this.NO_DESCRIPTION_MSG)
+        ...passiveTalents.map((talent) => talent.description || NO_DESCRIPTION_MSG)
       );
 
-      return {
-        code: 200,
-        data: descriptions,
-      };
+      return descriptions;
     }
 
-    return await this.fetchData(GENSHIN_DEV_URL.character(name), {
-      processData: (res) => this.parseGenshinDevResponse(res, appCharacter).talentDescriptions,
-      processError: (res) => res.error,
+    const response = await fetchData(GENSHIN_DEV_URL.character(name), {
+      processData: (res) => parseGenshinDevResponse(res, appCharacter).talentDescriptions,
+      processError: (res: GenshinDevErrorResponse) => res.error,
     });
+
+    if (response.data) {
+      return response.data;
+    }
+
+    throw new Error(response.message);
   }
 
   getAll(): AppCharacter[] {
-    return this.characters.map((control) => control.data);
-  }
-
-  getStatus(name: string) {
-    const control = this.getControl(name);
-    return control?.status || "unfetched";
+    return this.characters;
   }
 
   get(name: string) {
-    const control = this.getControl(name);
-    return control?.data!;
+    return this.characters.find((character) => character.name === name)!;
   }
 
   // ==== TRAVELER ====
 
-  checkIsTraveler = (obj: { name: string }) => {
+  checkIsTraveler(obj: { name: string }) {
     return obj.name.slice(-8) === "Traveler";
-  };
+  }
 
-  getTravelerProps = (traveler: Partial<TravelerInfo>): TravelerProps => {
+  updateIfTraveler(data: AppCharacter, props: TravelerProps) {
+    if (data && this.checkIsTraveler(data)) {
+      data.icon = props.icon;
+      data.sideIcon = props.sideIcon;
+
+      const CA = data.calcList?.CA?.[0];
+      if (CA) CA.factor = props.factorsCA;
+
+      syncInnateBuffs(data, props.innateBuffs);
+    }
+    return data;
+  }
+
+  changeTraveler(traveler: TravelerInfo) {
+    this.traveler = traveler;
+
+    const travelerProps = this.getTravelerProps(traveler);
+    this.characters.forEach((character) => this.updateIfTraveler(character, travelerProps));
+  }
+
+  getTravelerProps(traveler: Partial<TravelerInfo>): TravelerProps {
     const { selection, powerups } = traveler;
 
     const innateBuffs: TravelerProps["innateBuffs"] = [];
@@ -246,67 +158,73 @@ export class AppCharacterService extends BaseService {
           factorsCA: [55.9, 60.72],
           innateBuffs,
         };
-  };
+  }
+}
 
-  private syncInnateBuffs = (data: AppCharacter, buffs: CharacterInnateBuff[]) => {
-    const removedSrcs: string[] = [];
-    const addedBuffs: CharacterInnateBuff[] = [];
+function syncInnateBuffs(data: AppCharacter, buffs: CharacterInnateBuff[]) {
+  const removedSrcs: string[] = [];
+  const addedBuffs: CharacterInnateBuff[] = [];
 
-    for (const src of [cannedKnowledgeBuff.src, skirksTrainingBuff.src]) {
-      const addedBuff = buffs.find((buff) => buff.src === src);
+  for (const src of [cannedKnowledgeBuff.src, skirksTrainingBuff.src]) {
+    const addedBuff = buffs.find((buff) => buff.src === src);
 
-      if (addedBuff) {
-        if (!data.innateBuffs?.some((buff) => buff.src === src)) {
-          addedBuffs.push(addedBuff);
-        }
-      } else {
-        removedSrcs.push(src);
+    if (addedBuff) {
+      if (!data.innateBuffs?.some((buff) => buff.src === src)) {
+        addedBuffs.push(addedBuff);
       }
+    } else {
+      removedSrcs.push(src);
     }
-
-    data.innateBuffs = data.innateBuffs?.filter((buff) => !removedSrcs.includes(buff.src));
-    data.innateBuffs = addedBuffs.concat(data.innateBuffs || []);
-  };
-
-  private updateIfTraveler = (data: AppCharacter, props: TravelerProps) => {
-    if (data && this.checkIsTraveler(data)) {
-      data.icon = props.icon;
-      data.sideIcon = props.sideIcon;
-
-      const CA = data.calcList?.CA?.[0];
-      if (CA) CA.factor = props.factorsCA;
-
-      this.syncInnateBuffs(data, props.innateBuffs);
-    }
-    return data;
-  };
-
-  changeTraveler(traveler: TravelerInfo) {
-    this.traveler = traveler;
-
-    const travelerProps = this.getTravelerProps(this.traveler);
-    this.characters.forEach((control) => this.updateIfTraveler(control.data, travelerProps));
   }
 
-  // ==== CONVERT GOOD ====
+  data.innateBuffs = data.innateBuffs?.filter((buff) => !removedSrcs.includes(buff.src));
+  data.innateBuffs = addedBuffs.concat(data.innateBuffs || []);
+}
 
-  convertGOOD(character: GOODCharacter): ConvertedCharacter | undefined {
-    const data = this.characters.find(({ data }) => {
-      return data.name === character.key || data.GOOD === character.key;
-    })?.data;
+export const $AppCharacter = new AppCharacterService();
 
-    if (!data) {
-      return undefined;
-    }
+function parseGenshinDevResponse(response: any, appCharacter: AppCharacter) {
+  try {
+    const { constellation = [], activeTalents, passiveTalents = [] } = appCharacter;
+    const consDescriptions: string[] = [];
+    const talentDescriptions: string[] = [];
+
+    constellation.forEach((cons, i) => {
+      const description = response.constellations[i]?.description || NO_DESCRIPTION_MSG;
+
+      consDescriptions.push(description);
+      cons.description = description;
+    });
+
+    const processDescription = (talent: TalentType, type: string | undefined) => {
+      const description =
+        response.skillTalents.find((item: any) => item.type === type)?.description ||
+        NO_DESCRIPTION_MSG;
+
+      talentDescriptions.push(description);
+
+      const activeTalent = activeTalents[talent];
+      if (activeTalent) activeTalent.description = description;
+    };
+
+    processDescription("NAs", "NORMAL_ATTACK");
+    processDescription("ES", "ELEMENTAL_SKILL");
+    processDescription("EB", "ELEMENTAL_BURST");
+    if (activeTalents.altSprint) processDescription("altSprint", undefined);
+
+    response.passiveTalents.forEach((item: any, i: number) => {
+      const description = item?.description || NO_DESCRIPTION_MSG;
+
+      talentDescriptions.push(description);
+      if (passiveTalents[i]) passiveTalents[i].description = description;
+    });
 
     return {
-      name: data.name,
-      level: convertGOODLevel(character),
-      cons: character.constellation,
-      NAs: character.talent.auto,
-      ES: character.talent.skill,
-      EB: character.talent.burst,
-      data,
+      consDescriptions,
+      talentDescriptions,
     };
+  } catch (e) {
+    console.error(e);
+    throw new Error("Internal Error");
   }
 }

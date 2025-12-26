@@ -1,8 +1,9 @@
-import { ArtifactCalc, ArtifactType, ATTACK_ELEMENTS } from "@Calculation";
+import type { ArtifactType } from "@/types";
+import type { ArtifactStatFilterCondition } from "../types";
 
-import { ARTIFACT_SUBSTAT_TYPES } from "@/constants";
+import { ARTIFACT_SUBSTAT_TYPES, ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { ArtifactStatFilterCondition } from "../types";
+import { Artifact } from "@/models/base";
 
 import { FilterTemplate, FilterTemplateProps } from "@/components/FilterTemplate";
 import { StatSelect } from "./StatSelect";
@@ -29,7 +30,7 @@ export function ArtifactStatFilter({
   const { t } = useTranslation();
 
   const mainStatOptions = artifactType
-    ? ["All", ...ArtifactCalc.allMainStatTypesOf(artifactType)]
+    ? ["All", ...Artifact.allMainStatTypesOf(artifactType)]
     : [
         "All",
         "hp",

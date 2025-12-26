@@ -1,39 +1,50 @@
-import { GeoResoDebuffItem, SuperconductDebuffItem } from "@/components";
-import { selectElmtModCtrls, updateCalcSetup, updateResonance } from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
+import type { ResonanceModCtrl } from "@/types";
+
+import { useShallowCalcStore } from "@Store/calculator";
+import { updateActiveSetup, updateElementalEvent } from "@Store/calculator/actions";
+import { selectSetup } from "@Store/calculator/selectors";
+import { toggleRsnModCtrl } from "@Store/calculator/utils";
+
+import { GenshinModifierView, ResonanceDebuffItem } from "@/components";
+import { SUPERCONDUCT_DEBUFF_CONFIG } from "@/components/modifier-item/configs";
 
 export default function DebuffElement() {
-  const dispatch = useDispatch();
-  const elmtModCtrls = useSelector(selectElmtModCtrls);
+  const { superconduct, rsnDebuffCtrls } = useShallowCalcStore((state) => {
+    const setup = selectSetup(state);
 
-  const { resonances, superconduct } = elmtModCtrls;
-  const geoResonance = resonances.find((resonance) => resonance.vision === "geo");
+    return {
+      superconduct: setup.elmtEvent.superconduct,
+      rsnDebuffCtrls: setup.rsnDebuffCtrls,
+    };
+  });
+
+  const handleToggleRsnCtrls = (ctrl: ResonanceModCtrl) => {
+    updateActiveSetup((setup) => {
+      setup.rsnDebuffCtrls = toggleRsnModCtrl(setup.rsnDebuffCtrls, ctrl.element);
+    });
+  };
 
   return (
     <div className="pt-2 space-y-3">
-      <SuperconductDebuffItem
+      {rsnDebuffCtrls.map((ctrl) => {
+        return (
+          <ResonanceDebuffItem
+            key={ctrl.element}
+            mutable
+            element={ctrl.element}
+            checked={ctrl.activated}
+            onToggle={() => handleToggleRsnCtrls(ctrl)}
+          />
+        );
+      })}
+      <GenshinModifierView
+        {...SUPERCONDUCT_DEBUFF_CONFIG}
         mutable
         checked={superconduct}
         onToggle={() => {
-          dispatch(
-            updateCalcSetup({
-              elmtModCtrls: {
-                ...elmtModCtrls,
-                superconduct: !superconduct,
-              },
-            })
-          );
+          updateElementalEvent({ superconduct: !superconduct });
         }}
       />
-      {geoResonance ? (
-        <GeoResoDebuffItem
-          mutable
-          checked={geoResonance.activated}
-          onToggle={() => {
-            dispatch(updateResonance({ ...geoResonance, activated: !geoResonance.activated }));
-          }}
-        />
-      ) : null}
     </div>
   );
 }

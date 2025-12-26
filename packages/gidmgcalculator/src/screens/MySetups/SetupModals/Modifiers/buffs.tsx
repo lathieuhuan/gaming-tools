@@ -1,72 +1,75 @@
 import { Fragment } from "react";
-import { ElementType, Level, AttackBonuses, AttackReaction } from "@Calculation";
 
-import type { CustomBuffCtrl, ElementModCtrl, Infusion } from "@/types";
+import type { CalcCharacter } from "@/models/base";
+import type { CalcSetup } from "@/models/calculator";
+import type { AttackReaction, CustomBuffCtrl, ElementalEvent, ElementType } from "@/types";
+
 import { useTranslation } from "@/hooks";
 import { suffixOf, toCustomBuffLabel } from "@/utils";
+import { parseDescription } from "@/utils/description-parsers";
 
 // Component
-import { renderModifiers, VapMeltBuffItem, QuickenBuffItem, ResonanceBuffItem } from "@/components";
+import {
+  AutoResonanceBuffs,
+  GenshinModifierView,
+  ModifierContainer,
+  QuickenBuffItem,
+  ResonanceBuffItem,
+  VapMeltBuffItem,
+  WithEmptyMessage,
+} from "@/components";
 
-type ElementBuffsProps = {
-  charLv: Level;
-  elmtModCtrls: ElementModCtrl;
-  attkBonuses: AttackBonuses;
-  vision: ElementType;
-  customInfusion: Infusion;
+type TeamBuffsProps = {
+  setup: CalcSetup;
 };
 
-export function ElementBuffs({ charLv, elmtModCtrls, attkBonuses, vision, customInfusion }: ElementBuffsProps) {
+export function TeamBuffs({ setup }: TeamBuffsProps) {
+  const { team, rsnBuffCtrls, teamBuffCtrls } = setup;
   const content: JSX.Element[] = [];
-  const { resonances, reaction, infuse_reaction, absorption } = elmtModCtrls;
-  const headingCls = "text-sm text-secondary-1 mb-1";
 
-  if (resonances.length) {
+  if (team.resonances.length || rsnBuffCtrls.length) {
     content.push(
-      <div>
-        <p className={headingCls}>Resonance</p>
-        {resonances.map(({ vision: resonanceType }) => {
-          return <ResonanceBuffItem key={resonanceType} mutable={false} element={resonanceType} />;
+      <div className="space-y-2">
+        <AutoResonanceBuffs resonances={team.resonances} />
+
+        {rsnBuffCtrls.map((ctrl) => {
+          return (
+            <ResonanceBuffItem
+              key={ctrl.element}
+              mutable={false}
+              element={ctrl.element}
+              inputs={ctrl.inputs}
+            />
+          );
         })}
       </div>
     );
   }
 
-  const renderReaction = (reaction: AttackReaction, element: ElementType) => {
-    return reaction === "melt" || reaction === "vaporize" ? (
-      <VapMeltBuffItem mutable={false} {...{ reaction, element, attkBonuses }} />
-    ) : reaction === "spread" || reaction === "aggravate" ? (
-      <QuickenBuffItem mutable={false} {...{ reaction, element, characterLv: charLv, attkBonuses }} />
-    ) : null;
-  };
+  if (teamBuffCtrls.length) {
+    content.push(
+      <div className="space-y-2">
+        {teamBuffCtrls.map((ctrl) => {
+          const data = ctrl.data;
 
-  if (absorption) {
-    content.push(
-      <div>
-        <p className={headingCls}>Reaction by element-absorbing attacks</p>
-        {renderReaction(reaction, absorption)}
-      </div>
-    );
-  } else if (reaction) {
-    content.push(
-      <div>
-        <p className={headingCls}>Reaction by elemental attacks</p>
-        {renderReaction(reaction, vision)}
-      </div>
-    );
-  }
-
-  if (customInfusion.element !== "phys") {
-    content.push(
-      <div>
-        <p className={headingCls}>Reaction by infused attacks</p>
-        {renderReaction(infuse_reaction, customInfusion.element)}
+          return (
+            <GenshinModifierView
+              key={ctrl.id}
+              mutable={false}
+              heading={data.src}
+              description={parseDescription(data.description)}
+              inputConfigs={data.inputConfigs}
+              checked={ctrl.activated}
+              inputs={ctrl.inputs}
+            />
+          );
+        })}
       </div>
     );
   }
 
   return (
-    <div className="space-y-2">
+    <WithEmptyMessage message="No buffs found">
       {content.map((item, index) => {
         return (
           <Fragment key={index}>
@@ -75,7 +78,114 @@ export function ElementBuffs({ charLv, elmtModCtrls, attkBonuses, vision, custom
           </Fragment>
         );
       })}
+    </WithEmptyMessage>
+  );
+}
+
+type ElementBuffProps = {
+  element: ElementType;
+  heading: string;
+  reaction: AttackReaction;
+  character: CalcCharacter;
+  showElement?: boolean;
+};
+
+function ElementBuff({
+  element,
+  heading,
+  reaction,
+  character,
+  showElement = true,
+}: ElementBuffProps) {
+  let reactionRender: JSX.Element | null = null;
+
+  if (reaction === "melt" || reaction === "vaporize") {
+    reactionRender = (
+      <VapMeltBuffItem
+        mutable={false}
+        reaction={reaction}
+        element={element}
+        character={character}
+      />
+    );
+  }
+
+  if (reaction === "spread" || reaction === "aggravate") {
+    reactionRender = (
+      <QuickenBuffItem
+        mutable={false}
+        reaction={reaction}
+        element={element}
+        character={character}
+      />
+    );
+  }
+
+  return (
+    <div>
+      <div className="mb-2">
+        <p className="text-sm text-heading">{heading}</p>
+        {showElement && <p className={`capitalize text-${element}`}>{element}</p>}
+      </div>
+      {reactionRender}
     </div>
+  );
+}
+
+type ElementBuffsProps = {
+  character: CalcCharacter;
+  elmtEvent: ElementalEvent;
+};
+
+export function ElementBuffs({ character, elmtEvent }: ElementBuffsProps) {
+  const { absorption, absorbReaction, reaction, infusion, infuseReaction } = elmtEvent;
+  const content: JSX.Element[] = [];
+
+  if (absorption) {
+    content.push(
+      <ElementBuff
+        element={absorption}
+        heading="Anemo Swirl / Element Absorption"
+        reaction={absorbReaction}
+        character={character}
+      />
+    );
+  }
+
+  if (reaction) {
+    content.push(
+      <ElementBuff
+        element={character.data.vision}
+        heading="Reaction by elemental attacks"
+        reaction={reaction}
+        character={character}
+        showElement={false}
+      />
+    );
+  }
+
+  if (infusion) {
+    content.push(
+      <ElementBuff
+        element={infusion}
+        heading="Infusion"
+        reaction={infuseReaction}
+        character={character}
+      />
+    );
+  }
+
+  return (
+    <WithEmptyMessage className="space-y-2" message="No buffs found">
+      {content.map((item, index) => {
+        return (
+          <Fragment key={index}>
+            {index ? <div className="mx-auto my-3 w-1/2 h-px bg-dark-3" /> : null}
+            {item}
+          </Fragment>
+        );
+      })}
+    </WithEmptyMessage>
   );
 }
 
@@ -86,15 +196,17 @@ type CustomBuffsProps = {
 export function CustomBuffs({ customBuffCtrls }: CustomBuffsProps) {
   const { t } = useTranslation();
 
-  const content = customBuffCtrls.map(({ category, type, subType, value }, i) => (
-    <div key={i} className="flex justify-end">
-      <p className="mr-4">{toCustomBuffLabel(category, type, t)}</p>
-      <p className="w-12 shrink-0 text-heading text-right">
-        {value}
-        {suffixOf(subType || type)}
-      </p>
-    </div>
-  ));
-
-  return renderModifiers(content, "buffs", false);
+  return (
+    <ModifierContainer type="buffs" mutable={false}>
+      {customBuffCtrls.map(({ category, type, subType, value }, index) => (
+        <div key={index} className="flex justify-end">
+          <p className="mr-4">{toCustomBuffLabel(category, type, t)}</p>
+          <p className="w-12 shrink-0 text-secondary-1 text-right">
+            {value}
+            {suffixOf(subType || type)}
+          </p>
+        </div>
+      ))}
+    </ModifierContainer>
+  );
 }

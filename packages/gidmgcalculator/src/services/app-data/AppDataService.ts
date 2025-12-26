@@ -1,47 +1,37 @@
-import type { AppMonster, AppTeamBuff } from "@Calculation";
-import type { Target } from "@/types";
-import type { AllData } from "./app-data.types";
-import type { AppCharacterService } from "./AppCharacterService";
-import type { AppWeaponService } from "./AppWeaponService";
-import type { AppArtifactService } from "./AppArtifactService";
+import type { AppMonster, AppTeamBuff, ITarget } from "@/types";
+import type { AllData } from "./types";
 
-import { BACKEND_URL } from "@/constants";
+import { BACKEND_URL } from "@/constants/config";
 import Array_ from "@/utils/Array";
-import { BaseService } from "./BaseService";
+import { $AppArtifact } from "./AppArtifactService";
+import { $AppCharacter } from "./AppCharacterService";
+import { $AppWeapon } from "./AppWeaponService";
+import { fetchData } from "./BaseService";
 
-export class AppDataService extends BaseService {
+class AppDataService {
   teamBuffs: AppTeamBuff[] = [];
-
-  private monsters: AppMonster[] = [];
-
-  constructor(
-    private character$: AppCharacterService,
-    private weapon$: AppWeaponService,
-    private artifact$: AppArtifactService
-  ) {
-    super();
-  }
+  monsters: AppMonster[] = [];
 
   async fetchAllData() {
-    return await this.fetchData<AllData>(BACKEND_URL.allData());
+    return await fetchData<AllData>(BACKEND_URL.allData());
   }
 
-  get data() {
-    return {
-      characters: this.character$.getAll(),
-      weapons: this.weapon$.getAll(),
-      artifacts: this.artifact$.getAll(),
-      monsters: this.getAllMonsters(),
-      teamBuffs: this.teamBuffs,
-    };
-  }
-
-  set data(data: Pick<AllData, "characters" | "weapons" | "artifacts" | "teamBuffs" | "monsters">) {
-    this.character$.populate(data.characters);
-    this.weapon$.populate(data.weapons);
-    this.artifact$.populate(data.artifacts);
+  populate(data: Pick<AllData, "characters" | "weapons" | "artifacts" | "teamBuffs" | "monsters">) {
+    $AppCharacter.populate(data.characters);
+    $AppWeapon.populate(data.weapons);
+    $AppArtifact.populate(data.artifacts);
     this.teamBuffs = data.teamBuffs;
     this.monsters = data.monsters;
+  }
+
+  getAll() {
+    return {
+      characters: $AppCharacter.getAll(),
+      weapons: $AppWeapon.getAll(),
+      artifacts: $AppArtifact.getAll(),
+      teamBuffs: this.teamBuffs,
+      monsters: this.monsters,
+    };
   }
 
   // Monster
@@ -54,9 +44,9 @@ export class AppDataService extends BaseService {
     return Array_.findByCode(this.monsters, code);
   }
 
-  getTargetInfo(target: Target) {
+  getTargetInfo(target: ITarget) {
     const monster = this.getMonster(target);
-    let variant = "";
+    let variant: string | undefined;
     const statuses: string[] = [];
 
     if (target.variantType && monster?.variant) {
@@ -106,3 +96,5 @@ export class AppDataService extends BaseService {
     };
   }
 }
+
+export const $AppData = new AppDataService();

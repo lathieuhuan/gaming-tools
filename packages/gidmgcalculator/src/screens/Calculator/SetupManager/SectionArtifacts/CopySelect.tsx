@@ -1,44 +1,39 @@
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectCalcSetupsById, selectSetupManageInfos, updateCalcSetup } from "@Store/calculator-slice";
-import { CopySection, Option } from "../../components/CopySection";
+import Object_ from "@/utils/Object";
+import { useShallowCalcStore } from "@Store/calculator";
+import { copyArtifacts } from "@Store/calculator/actions";
+
+import { CopySection } from "@/screens/Calculator/_components/CopySection";
+
+type Option = {
+  value: number;
+  label: string;
+};
 
 export function CopySelect() {
-  const dispatch = useDispatch();
+  const { setupManagers, setupsById } = useShallowCalcStore((state) =>
+    Object_.pickProps(state, ["setupManagers", "setupsById"])
+  );
 
-  const setupManageInfos = useSelector(selectSetupManageInfos);
-  const setupsById = useSelector(selectCalcSetupsById);
+  const copyOptions = setupManagers.reduce<Option[]>((results, manager) => {
+    const { pieces } = setupsById[manager.ID].main.atfGear;
 
-  const allArtifacts = setupManageInfos.map(({ ID }) => setupsById[ID].artifacts);
-  const copyOptions = allArtifacts.reduce((results: Option[], artifacts, index) => {
-    if (artifacts.some((artifact) => artifact !== null)) {
+    if (Array.from(pieces).length) {
       results.push({
-        label: setupManageInfos[index].name,
-        value: setupManageInfos[index].ID,
+        label: manager.name,
+        value: manager.ID,
       });
     }
+
     return results;
   }, []);
 
-  const onClickCopyArtifacts = ({ value: sourceId }: Option) => {
-    const { artifacts, artBuffCtrls } = setupsById[sourceId];
-    let seedID = Date.now();
-
-    dispatch(
-      updateCalcSetup({
-        artifacts: artifacts.map((artifact) =>
-          artifact
-            ? {
-                ...artifact,
-                ID: seedID++,
-              }
-            : null
-        ),
-        artBuffCtrls,
-      })
-    );
-  };
-
-  return copyOptions.length ? (
-    <CopySection className="mb-4 px-4" options={copyOptions} onClickCopy={onClickCopyArtifacts} />
-  ) : null;
+  return (
+    copyOptions.length !== 0 && (
+      <CopySection
+        className="mb-4 px-4"
+        options={copyOptions}
+        onClickCopy={({ value }) => copyArtifacts(value)}
+      />
+    )
+  );
 }

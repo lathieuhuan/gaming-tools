@@ -1,21 +1,20 @@
 import { useState } from "react";
 
+import { useCalcStore } from "@Store/calculator";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui-slice";
-import { getCards } from "./config";
 
 // Components
 import { ContextProvider } from "../ContextProvider";
 import { BottomNavSmall } from "./BottomNavSmall";
+import { ModifiersCard, ResultsCard, SetupCard, OverviewCard } from "./_cards";
 
 export function CalculatorSmall() {
   const dispatch = useDispatch();
-  const touched = useSelector((state) => state.calculator.setupManageInfos.length !== 0);
+  const touched = useCalcStore((state) => state.setupManagers.length !== 0);
   const isModernUI = useSelector((state) => state.ui.isTabLayout);
 
   const [activePanelI, setActivePanelI] = useState(0);
-
-  const Cards = getCards({ touched, isModernUI });
 
   const onSelectSection = (index: number) => {
     setActivePanelI(index);
@@ -31,10 +30,10 @@ export function CalculatorSmall() {
               className="h-full overflow-auto flex absolute left-0 top-0"
               style={{ width: "400%", transform: `translateX(calc(-25% * ${activePanelI}))` }}
             >
-              {Cards.Overview({ className: "w-1/4" })}
-              {Cards.Modifiers({ className: "w-1/4" })}
-              {Cards.Setup({ className: "w-1/4" })}
-              {Cards.Results({ className: "w-1/4" })}
+              <OverviewCard touched={touched} className="w-1/4" />
+              <ModifiersCard touched={touched} className="w-1/4" />
+              <SetupCard touched={touched} className="w-1/4" />
+              <ResultsCard touched={touched} className="w-1/4" />
             </div>
           </div>
 
@@ -44,10 +43,10 @@ export function CalculatorSmall() {
         </div>
       ) : (
         <div className="h-full flex hide-scrollbar border-t border-dark-line relative snap-x snap-mandatory">
-          {Cards.Overview({ className: "snap-center" })}
-          {Cards.Modifiers({ className: "snap-center" })}
-          {Cards.Setup({ className: "snap-center" })}
-          {Cards.Results({ className: "snap-center relative" })}
+          <OverviewCard touched={touched} />
+          <ModifiersCard touched={touched} />
+          <SetupCard touched={touched} />
+          <ResultsCard touched={touched} />
         </div>
       )}
     </ContextProvider>

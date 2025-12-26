@@ -1,0 +1,1 @@
+export { default as EnkaLogo } from "./enka-logo.svg?react";

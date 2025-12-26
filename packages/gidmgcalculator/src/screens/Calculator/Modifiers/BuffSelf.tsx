@@ -1,44 +1,41 @@
-import {
-  changeModCtrlInput,
-  selectCharacter,
-  toggleModCtrl,
-  type ToggleModCtrlPath,
-} from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { useCalcTeamData } from "../ContextProvider";
+import type { IAbilityBuffCtrl } from "@/types";
+
+import Object_ from "@/utils/Object";
+import { useShallowCalcStore } from "@Store/calculator";
+import { updateActiveSetup } from "@Store/calculator/actions";
+import { selectSetup } from "@Store/calculator/selectors";
+import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 
 import { SelfBuffsView } from "@/components";
 
 export default function BuffSelf() {
-  const dispatch = useDispatch();
-  const character = useSelector(selectCharacter);
-  const selfBuffCtrls = useSelector(
-    (state) => state.calculator.setupsById[state.calculator.activeId].selfBuffCtrls
+  const { main, team, selfBuffCtrls } = useShallowCalcStore((state) =>
+    Object_.pickProps(selectSetup(state), ["main", "team", "selfBuffCtrls"])
   );
-  const teamData = useCalcTeamData();
+
+  const handleUpdateCtrls = (newCtrls: IAbilityBuffCtrl[]) => {
+    updateActiveSetup((setup) => {
+      setup.selfBuffCtrls = newCtrls;
+    });
+  };
 
   return (
     <SelfBuffsView
       mutable
-      character={character}
-      teamData={teamData}
+      character={main}
+      team={team}
       modCtrls={selfBuffCtrls}
-      getHanlders={({ ctrl }) => {
-        const path: ToggleModCtrlPath = {
-          modCtrlName: "selfBuffCtrls",
-          ctrlIndex: ctrl.index,
-        };
-
+      getHanlders={(ctrl) => {
         const updateBuffCtrlInput = (value: number, inputIndex: number) => {
-          dispatch(changeModCtrlInput(Object.assign({ value, inputIndex }, path)));
+          handleUpdateCtrls(updateModCtrlInputs(selfBuffCtrls, ctrl.id, inputIndex, value));
         };
 
         return {
           onToggle: () => {
-            dispatch(toggleModCtrl(path));
+            handleUpdateCtrls(toggleModCtrl(selfBuffCtrls, ctrl.id));
           },
-          onToggleCheck: (currentinput, inputIndex) => {
-            updateBuffCtrlInput(currentinput === 1 ? 0 : 1, inputIndex);
+          onToggleCheck: (currentInput, inputIndex) => {
+            updateBuffCtrlInput(currentInput === 1 ? 0 : 1, inputIndex);
           },
           onChangeText: updateBuffCtrlInput,
           onSelectOption: updateBuffCtrlInput,

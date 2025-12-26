@@ -1,16 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { MAX_CALC_SETUPS } from "@/constants";
-import Setup_ from "@/utils/Setup";
+import { MAX_CALC_SETUPS } from "@/constants/config";
 import Array_ from "@/utils/Array";
-import { useDispatch, useSelector } from "@Store/hooks";
-import {
-  NewSetupManageInfo,
-  selectComparedIds,
-  selectSetupManageInfos,
-  selectStandardId,
-  updateSetups,
-} from "@Store/calculator-slice";
+import Object_ from "@/utils/Object";
+import { MultiSetupChange, updateMultiSetups } from "@Store/calculator/actions";
+import { useShallowCalcStore } from "@Store/calculator/calculator-store";
+import { getCopyName } from "@Store/calculator/utils";
 
 function getNewSetupName(setups: Array<{ name: string }>) {
   const existedIndexes = [1, 2, 3, 4];
@@ -30,19 +25,20 @@ function getNewSetupName(setups: Array<{ name: string }>) {
 }
 
 export function useSetupDirectorKit() {
-  const dispatch = useDispatch();
-  const setupManageInfos = useSelector(selectSetupManageInfos);
-  const comparedIds = useSelector(selectComparedIds);
-  const standardId = useSelector(selectStandardId);
+  const { setupManagers, comparedIds, standardId } = useShallowCalcStore((state) =>
+    Object_.pickProps(state, ["setupManagers", "comparedIds", "standardId"])
+  );
 
-  const [tempSetups, setTempSetups] = useState<NewSetupManageInfo[]>(
-    setupManageInfos.map((manageInfos) => ({
-      ...manageInfos,
+  const [tempSetups, setTempSetups] = useState<MultiSetupChange[]>(
+    setupManagers.map((manager) => ({
+      ...manager,
       status: "OLD",
-      isCompared: comparedIds.includes(manageInfos.ID),
+      isCompared: comparedIds.includes(manager.ID),
     }))
   );
-  const [tempStandardId, setTempStandardId] = useState(Array_.findById(tempSetups, standardId)?.ID || 0);
+  const [tempStandardId, setTempStandardId] = useState(
+    Array_.findById(tempSetups, standardId)?.ID || 0
+  );
   const [errorCode, setErrorCode] = useState<"NO_SETUPS" | "">("");
 
   const displayedSetups = tempSetups.filter((tempSetup) => tempSetup.status !== "REMOVED");
@@ -91,15 +87,12 @@ export function useSetupDirectorKit() {
 
   const copySetup = (index: number) => () => {
     setTempSetups((prev) => {
-      const newSetupName = Setup_.getCopyName(
-        prev[index].name,
-        displayedSetups.map(({ name }) => name)
-      );
+      const newSetupName = getCopyName(prev[index].name, displayedSetups) || "New setup";
 
-      const newSetup: NewSetupManageInfo = {
+      const newSetup: MultiSetupChange = {
         ...prev[index],
         ID: Date.now(),
-        name: newSetupName || "New setup",
+        name: newSetupName,
         type: "original",
         originId: prev[index].ID,
         status: "DUPLICATE",
@@ -111,8 +104,10 @@ export function useSetupDirectorKit() {
 
   const addNewSetup = () => {
     setTempSetups((prev) => {
-      const newSetup: NewSetupManageInfo = {
-        ...Setup_.getManageInfo({ name: getNewSetupName(prev) }),
+      const newSetup: MultiSetupChange = {
+        ID: Date.now(),
+        name: getNewSetupName(prev),
+        type: "original",
         status: "NEW",
         isCompared: false,
       };
@@ -140,12 +135,7 @@ export function useSetupDirectorKit() {
       return;
     }
 
-    dispatch(
-      updateSetups({
-        newSetupManageInfos: tempSetups,
-        newStandardId: tempStandardId,
-      })
-    );
+    updateMultiSetups(tempSetups, tempStandardId);
     onSuccess?.();
   };
 
@@ -163,6 +153,5 @@ export function useSetupDirectorKit() {
       toggleSetupCompared,
       selectStandardSetup,
     },
-    dispatch,
   };
 }

@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { FaToolbox } from "react-icons/fa";
 import { GiAnvil } from "react-icons/gi";
 import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
-import { ARTIFACT_TYPES, ArtifactType } from "@Calculation";
 
-import type { Artifact, CalcArtifact } from "@/types";
-import { $AppArtifact, $AppSettings } from "@/services";
-import { useArtifactSetData } from "@/hooks";
-import Entity_ from "@/utils/Entity";
-import { changeArtifact, selectArtifacts } from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
+import type { ArtifactType } from "@/types";
+
+import { ARTIFACT_TYPES } from "@/constants/global";
+import { Artifact } from "@/models/base";
+import { $AppSettings } from "@/services";
+import { setArtifactPiece } from "@Store/calculator/actions";
+import { selectActiveMain } from "@Store/calculator/selectors";
 
 // Component
 import {
@@ -19,10 +19,12 @@ import {
   ArtifactInventoryProps,
   GenshinImage,
   LoadoutStash,
+  LoadoutStashProps,
 } from "@/components";
+import { useCalcStore } from "@Store/calculator";
+import { Section } from "../_components/Section";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
-import { Section } from "../_components/Section";
 
 type ModalType = "ARTIFACT_LOADOUT" | "";
 
@@ -39,12 +41,10 @@ type ForgeState = Pick<ArtifactForgeProps, "hasConfigStep"> & {
 const SECTION_ID = "calculator-section-artifacts";
 
 export default function SectionArtifacts() {
-  const dispatch = useDispatch();
-  const artifacts = useSelector(selectArtifacts);
-  const setData = useArtifactSetData();
-
   const [modalType, setModalType] = useState<ModalType>("");
-  const [activeTabIndex, setActiveTabIndex] = useState(-1);
+  const [activeArtifactType, setActiveArtifactType] = useState<ArtifactType>();
+
+  const atfGear = useCalcStore((state) => selectActiveMain(state).atfGear);
 
   const [inventory, setInventory] = useState<InventoryState>({
     active: false,
@@ -53,87 +53,73 @@ export default function SectionArtifacts() {
     active: false,
   });
 
-  const activeArtifact = artifacts[activeTabIndex];
+  const { pieces } = atfGear;
+  const activePiece = activeArtifactType ? pieces[activeArtifactType] : undefined;
 
   const closeModal = () => setModalType("");
 
   useEffect(() => {
-    if (activeTabIndex >= 0) {
+    if (activeArtifactType) {
       setTimeout(() => {
         document.querySelector(`#${SECTION_ID}`)?.scrollIntoView();
       }, 200);
     }
-  }, [activeTabIndex]);
+  }, [activeArtifactType]);
 
   useEffect(() => {
-    if (!activeArtifact && activeTabIndex !== -1) {
-      setActiveTabIndex(-1);
+    if (!activePiece && activeArtifactType !== null) {
+      setActiveArtifactType(undefined);
     }
-  }, [!activeArtifact]);
+  }, [!activePiece]);
 
-  const onClickTab = (tabIndex: number) => {
-    // there's already an artifact at tabIndex (or activeArtifact !== null after this excution)
-    if (artifacts[tabIndex]) {
+  const handleClickTab = (type: ArtifactType) => {
+    // there's already an artifact at tabIndex (or activePiece !== null after this excution)
+    if (pieces[type]) {
       // if click on the activeTab close it, otherwise change tab
-      setActiveTabIndex(tabIndex === activeTabIndex ? -1 : tabIndex);
+      setActiveArtifactType(activeArtifactType === type ? undefined : type);
     } else {
       setForge({
         active: true,
-        initialType: ARTIFACT_TYPES[tabIndex],
+        initialType: type,
       });
     }
   };
 
-  const replaceArtifact = (type: ArtifactType, newPiece: Artifact, shouldKeepStats = false) => {
-    const pieceIndex = ARTIFACT_TYPES.indexOf(type);
-
-    dispatch(changeArtifact({ pieceIndex, newPiece, shouldKeepStats }));
-    setActiveTabIndex(pieceIndex);
-  };
-
   // ===== CHANGE ARTIFACTS WITH LOADOUTS =====
 
-  const onRequestSelectArtifactLoadout = () => {
+  const handleRequestSelectArtifactLoadout = () => {
     setModalType("ARTIFACT_LOADOUT");
   };
 
-  const onSelectLoadout = (artifacts: CalcArtifact[]) => {
-    for (const artifact of artifacts) {
-      dispatch(
-        changeArtifact({
-          pieceIndex: ARTIFACT_TYPES.indexOf(artifact.type),
-          newPiece: artifact,
-        })
-      );
+  const handleSelectLoadout: LoadoutStashProps["onSelect"] = (pieces) => {
+    for (const piece of pieces) {
+      setArtifactPiece(piece.userData, piece.data);
     }
     closeModal();
   };
 
   // ===== CHANGE ARTIFACT(S) WITH INVENTORY =====
 
-  const onRequestSelectInventoryArtifact = () => {
+  const handleRequestArtifactInventory = () => {
     setInventory({
       active: true,
       initialType: "flower",
     });
   };
 
-  const onSelectInventoryArtifact: ArtifactInventoryProps["onClickButton"] = (artifact) => {
-    replaceArtifact(artifact.type, Entity_.userItemToCalcItem(artifact));
+  const handleSelectInventoryArtifact: ArtifactInventoryProps["onClickButton"] = (artifact) => {
+    notification.destroy("ALL");
+    notification.success({
+      content: `Selected ${artifact.data.name} (${artifact.type})`,
+    });
 
-    const artifactSet = $AppArtifact.getSet(artifact.code);
-
-    if (artifactSet) {
-      notification.destroy("ALL");
-      notification.success({
-        content: `Selected ${artifactSet.name} (${artifact.type})`,
-      });
-    }
+    setArtifactPiece(artifact, artifact.data);
+    setActiveArtifactType(artifact.type);
   };
 
   // ===== CHANGE ARTIFACT(S) WITH FORGE =====
 
-  const onRequestForgeArtifact = () => {
+  const handleRequestArtifactForge = () => {
     setForge({
       active: true,
       initialType: "flower",
@@ -141,51 +127,54 @@ export default function SectionArtifacts() {
     });
   };
 
-  const onForgeArtifact: ArtifactForgeProps["onForgeArtifact"] = (artifact) => {
-    const newPiece = {
-      ...artifact,
-      ID: Date.now(),
-    };
-    const artifactSet = $AppArtifact.getSet(artifact.code);
+  const handleForgeArtifact: ArtifactForgeProps["onForgeArtifact"] = (artifact) => {
+    notification.destroy("ALL");
+    notification.success({
+      content: `Forged ${artifact.data.name} (${artifact.type})`,
+    });
 
-    if (artifactSet) {
-      notification.destroy("ALL");
-      notification.success({
-        content: `Forged ${artifactSet.name} (${artifact.type})`,
-      });
-    }
-
-    replaceArtifact(artifact.type, newPiece, $AppSettings.get("keepArtStatsOnSwitch"));
+    setArtifactPiece(artifact, artifact.data, $AppSettings.get("keepArtStatsOnSwitch"));
+    setActiveArtifactType(artifact.type);
   };
 
-  const onForgeArtifactBatch: ArtifactForgeProps["onForgeArtifactBatch"] = (code, types, rarity) => {
+  const handleForgeArtifactBatch: ArtifactForgeProps["onForgeArtifactBatch"] = (
+    types,
+    rarity,
+    data
+  ) => {
     let rootID = Date.now();
+    let leftMostIndex = Infinity;
 
     for (const type of types) {
-      const newPiece = Entity_.createArtifact({ code, type, rarity });
-
-      dispatch(
-        changeArtifact({
-          pieceIndex: ARTIFACT_TYPES.indexOf(type),
-          newPiece: { ...newPiece, ID: rootID++ },
-          shouldKeepStats: $AppSettings.get("keepArtStatsOnSwitch"),
-        })
+      setArtifactPiece(
+        {
+          ID: rootID++,
+          code: data.code,
+          type,
+          rarity,
+        },
+        data,
+        $AppSettings.get("keepArtStatsOnSwitch")
       );
-    }
-    if (activeTabIndex === -1 && types[0]) {
-      setActiveTabIndex(Math.min(...types.map((type) => ARTIFACT_TYPES.indexOf(type))));
-    }
-    const artifactSet = $AppArtifact.getSet(code);
 
-    if (artifactSet) {
-      notification.success({
-        content: (
-          <>
-            Forged {artifactSet.name}: <span className="capitalize">{types.join(", ")}</span>
-          </>
-        ),
-      });
+      const index = ARTIFACT_TYPES.indexOf(type);
+
+      if (index < leftMostIndex) {
+        leftMostIndex = index;
+      }
     }
+
+    if (!activeArtifactType && leftMostIndex !== Infinity) {
+      setActiveArtifactType(ARTIFACT_TYPES[leftMostIndex]);
+    }
+
+    notification.success({
+      content: (
+        <>
+          Forged {data.name}: <span className="capitalize">{types.join(", ")}</span>
+        </>
+      ),
+    });
   };
 
   // ===== ACTIONS TOWARDS ACTIVE ARTIFACT =====
@@ -193,11 +182,11 @@ export default function SectionArtifacts() {
   const onRequestChangeActiveArtifact = (source: ArtifactSourceType) => {
     const newState = {
       active: true,
-      initialType: ARTIFACT_TYPES[activeTabIndex],
+      initialType: activeArtifactType,
     };
     switch (source) {
       case "LOADOUT":
-        onRequestSelectArtifactLoadout();
+        handleRequestSelectArtifactLoadout();
         break;
       case "INVENTORY":
         setInventory(newState);
@@ -208,37 +197,36 @@ export default function SectionArtifacts() {
     }
   };
 
-  const onRemoveArtifact = () => {
-    setActiveTabIndex(-1);
+  const handleRemoveArtifact = () => {
+    setActiveArtifactType(undefined);
   };
 
   return (
     <Section id={SECTION_ID} className="py-3 bg-dark-1">
-      {artifacts.length && artifacts.every((artifact) => artifact === null) ? <CopySelect /> : null}
+      {Array.from(pieces).length === 0 && <CopySelect />}
 
       <div className="flex">
-        {ARTIFACT_TYPES.map((type, index) => {
-          const artifact = artifacts[index];
-          const data = artifact?.code ? setData.get(artifact.code) : null;
-          const icon = data?.[type].icon || Entity_.artifactIconOf(type);
+        {ARTIFACT_TYPES.map((type) => {
+          const piece = pieces[type];
+          const icon = piece?.data?.[type].icon || Artifact.iconOf(type);
 
           return (
             <div
-              key={index}
+              key={type}
               className={clsx(
                 "w-1/5 border-2",
-                index === activeTabIndex ? "border-light-1" : "border-transparent"
+                type === activeArtifactType ? "border-light-1" : "border-transparent"
               )}
-              onClick={() => onClickTab(index)}
+              onClick={() => handleClickTab(type)}
             >
               <GenshinImage
                 className={clsx(
-                  `h-full bg-gradient-${artifact ? artifact.rarity || 5 : 1} cursor-pointer`,
-                  !artifact && "p-2 opacity-80"
+                  `h-full bg-gradient-${piece ? piece.rarity || 5 : 1} cursor-pointer`,
+                  !piece && "p-2 opacity-80"
                 )}
-                title={data?.name}
+                title={piece?.data?.name}
                 src={icon}
-                fallbackCls={artifact ? "p-3" : "p-1"}
+                fallbackCls={piece ? "p-3" : "p-1"}
                 imgType="unknown"
               />
             </div>
@@ -246,28 +234,35 @@ export default function SectionArtifacts() {
         })}
       </div>
 
-      <CollapseSpace active={activeTabIndex !== -1}>
-        {activeArtifact && (
+      <CollapseSpace active={activeArtifactType !== null}>
+        {activePiece && (
           <ArtifactInfo
-            artifact={activeArtifact}
-            pieceIndex={activeTabIndex}
+            artifact={activePiece}
             onRequestChange={onRequestChangeActiveArtifact}
-            onRemove={onRemoveArtifact}
+            onRemove={handleRemoveArtifact}
           />
         )}
       </CollapseSpace>
 
-      {activeTabIndex < 0 ? (
+      {!activeArtifactType && (
         <div className="mt-4 px-4 flex justify-end gap-4">
-          <Button title="Loadout" icon={<FaToolbox className="text-lg" />} onClick={onRequestSelectArtifactLoadout} />
+          <Button
+            title="Loadout"
+            icon={<FaToolbox className="text-lg" />}
+            onClick={handleRequestSelectArtifactLoadout}
+          />
           <Button
             title="Inventory"
             icon={<PouchSvg className="text-xl" />}
-            onClick={onRequestSelectInventoryArtifact}
+            onClick={handleRequestArtifactInventory}
           />
-          <Button title="New" icon={<GiAnvil className="text-xl" />} onClick={onRequestForgeArtifact} />
+          <Button
+            title="New"
+            icon={<GiAnvil className="text-xl" />}
+            onClick={handleRequestArtifactForge}
+          />
         </div>
-      ) : null}
+      )}
 
       <ArtifactForge
         active={forge.active}
@@ -278,21 +273,25 @@ export default function SectionArtifacts() {
         hasMultipleMode={forge.hasConfigStep}
         allowBatchForging
         defaultBatchForging
-        onForgeArtifact={onForgeArtifact}
-        onForgeArtifactBatch={onForgeArtifactBatch}
+        onForgeArtifact={handleForgeArtifact}
+        onForgeArtifactBatch={handleForgeArtifactBatch}
         onClose={() => setForge((prevForge) => ({ ...prevForge, active: false }))}
       />
 
       <ArtifactInventory
         {...inventory}
         hasMultipleMode
-        currentArtifacts={artifacts}
+        currentAtfGear={atfGear}
         buttonText="Select"
-        onClickButton={onSelectInventoryArtifact}
+        onClickButton={handleSelectInventoryArtifact}
         onClose={() => setInventory((prevInventory) => ({ ...prevInventory, active: false }))}
       />
 
-      <LoadoutStash active={modalType === "ARTIFACT_LOADOUT"} onSelect={onSelectLoadout} onClose={closeModal} />
+      <LoadoutStash
+        active={modalType === "ARTIFACT_LOADOUT"}
+        onSelect={handleSelectLoadout}
+        onClose={closeModal}
+      />
     </Section>
   );
 }

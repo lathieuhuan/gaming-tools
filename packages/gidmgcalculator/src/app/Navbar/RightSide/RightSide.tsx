@@ -2,14 +2,14 @@ import { useState } from "react";
 import { FaBars, FaDonate } from "react-icons/fa";
 import { Button, LoadingSpin, Popover, useClickOutside } from "rond";
 
-import { IS_DEV_ENV, SCREEN_PATH } from "@/constants";
+import { IS_DEV_ENV, SCREEN_PATH } from "@/constants/config";
 import { $AppData } from "@/services";
 import { useRouter } from "@/systems/router";
 import { useDispatch } from "@Store/hooks";
 import { updateUI, type UIState } from "@Store/ui-slice";
 import { ModalOption } from "./_config";
 
-import { EnkaSvg } from "@/components/icons/EnkaSvg";
+import { EnkaLogo } from "@/assets/icons";
 import { MenuOption, ModalOptions } from "./ModalOptions";
 // import { updateCache } from "@/services/enka";
 
@@ -48,7 +48,7 @@ export function RightSide({ appReady }: RightSideProps) {
     const response = await $AppData.fetchAllData();
 
     if (response.data) {
-      $AppData.data = response.data;
+      $AppData.populate(response.data);
       alert(`Refetched version: ${response.data.version}`);
     } else {
       alert(`Refetching has failed!`);
@@ -102,7 +102,7 @@ export function RightSide({ appReady }: RightSideProps) {
               }}
             />
             <MenuOption
-              icon={<EnkaSvg className="-mr-1 mb-1 text-xl shrink-0" />}
+              icon={<EnkaLogo className="-mr-1 mb-1 text-xl shrink-0" />}
               label="Enka Import"
               disabled={!appReady}
               onSelect={handleSelectEnkaImport}

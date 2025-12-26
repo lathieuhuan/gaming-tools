@@ -1,9 +1,6 @@
-import type { RootState } from "@Store/store";
-
-import Array_ from "@/utils/Array";
-import { selectCalcFinalResult, selectComparedIds, selectWeapon, updateCharacter } from "@Store/calculator-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { useCalcTeamData } from "../ContextProvider";
+import { useShallowCalcStore } from "@Store/calculator";
+import { updateMain } from "@Store/calculator/actions";
+import { selectSetup } from "@Store/calculator/selectors";
 
 // Components
 import { FinalResultView } from "@/components";
@@ -11,31 +8,30 @@ import { FinalResultCompare } from "./FinalResultCompare";
 import { Menu } from "./Menu";
 
 export function FinalResult() {
-  const finalResultRender = <FinalResultCore />;
+  const calcResultRender = <FinalResultCore />;
 
   return (
     <div className="h-full">
-      <Menu finalResult={finalResultRender} />
-      {finalResultRender}
+      <Menu calcResultRender={calcResultRender} />
+      {calcResultRender}
     </div>
   );
 }
 
-const selectActiveSetupName = (state: RootState) => {
-  const { activeId, setupManageInfos } = state.calculator;
-  return Array_.findById(setupManageInfos, activeId)?.name || "";
-};
-
 export function FinalResultCore() {
-  const dispatch = useDispatch();
-  const activeSetupName = useSelector(selectActiveSetupName);
-  const weapon = useSelector(selectWeapon);
-  const finalResult = useSelector(selectCalcFinalResult);
-  const comparedIds = useSelector(selectComparedIds);
-  const teamData = useCalcTeamData();
+  const { activeSetupName, main, calcResult, comparedIds } = useShallowCalcStore((state) => {
+    const setup = selectSetup(state);
+
+    return {
+      activeSetupName: state.setupManagers.find((info) => info.ID === state.activeId)?.name || "",
+      main: setup.main,
+      calcResult: setup.result,
+      comparedIds: state.comparedIds,
+    };
+  });
 
   if (comparedIds.length > 1) {
-    return <FinalResultCompare {...{ teamData, weapon, comparedIds }} />;
+    return <FinalResultCompare comparedIds={comparedIds} />;
   }
 
   return (
@@ -45,9 +41,10 @@ export function FinalResultCore() {
       </div>
       <div className="grow hide-scrollbar">
         <FinalResultView
-          {...{ teamData, weapon, finalResult }}
           talentMutable
-          onChangeTalentLevel={(type, level) => dispatch(updateCharacter({ [type]: level }))}
+          character={main}
+          finalResult={calcResult}
+          onTalentLevelChange={(type, level) => updateMain({ [type]: level })}
         />
       </div>
     </div>

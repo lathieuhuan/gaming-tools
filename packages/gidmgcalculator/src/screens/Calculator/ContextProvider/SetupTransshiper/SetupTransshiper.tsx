@@ -3,7 +3,7 @@ import { message } from "rond";
 
 import { useSearchParams } from "@/systems/router";
 import { useSetupImporter } from "@/systems/setup-importer";
-import { DECODE_ERROR_MSG, decodeSetup } from "@/utils/setup-porter";
+import { decodeSetup } from "@/utils/setup-porter";
 import { useSelector } from "@Store/hooks";
 import { selectAppReady } from "@Store/ui-slice";
 
@@ -25,11 +25,11 @@ export function SetupTransshiper() {
       if (result.isOk) {
         setupImporter.import({
           ...result.importInfo,
-          importSource: "URL",
+          source: "URL",
         });
         setSearchParams({ importCode: undefined }, true);
       } else {
-        message.error(DECODE_ERROR_MSG[result.error]);
+        message.error(result.error);
       }
     }
   }, [appReady]);

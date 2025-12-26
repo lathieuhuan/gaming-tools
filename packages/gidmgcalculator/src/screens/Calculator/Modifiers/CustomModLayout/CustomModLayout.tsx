@@ -1,7 +1,6 @@
-import { useId, useState } from "react";
+import { ReactNode, useId, useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { Button, CloseButton, InputNumber, Modal, ModalProps, TrashCanSvg } from "rond";
-import { CopySection } from "../../components/CopySection";
 
 export type ModItemRenderConfig = {
   label: string;
@@ -10,21 +9,15 @@ export type ModItemRenderConfig = {
   max: number;
 };
 
-export type CopyOption = {
-  value: number;
-  label: string;
-};
-
 type CreateFormProps = {
   id: string;
   onSubmit: () => void;
 };
 
 type CustomModLayoutProps = {
-  copyOptions: CopyOption[];
   items: ModItemRenderConfig[];
   createModalProps?: Pick<ModalProps, "title" | "style">;
-  onCopy: (option: CopyOption) => void;
+  copySelect: ReactNode;
   onValueChange: (value: number, index: number) => void;
   onRemoveItem: (index: number) => void;
   onRemoveAll: () => void;
@@ -32,10 +25,9 @@ type CustomModLayoutProps = {
 };
 
 export function CustomModLayout({
-  copyOptions,
   items,
   createModalProps,
-  onCopy,
+  copySelect,
   onValueChange,
   onRemoveItem,
   onRemoveAll,
@@ -49,7 +41,12 @@ export function CustomModLayout({
   return (
     <div className="flex flex-col">
       <div className="mt-3 flex justify-between">
-        <Button title="Discard all" icon={<TrashCanSvg />} disabled={items.length === 0} onClick={onRemoveAll} />
+        <Button
+          title="Discard all"
+          icon={<TrashCanSvg />}
+          disabled={items.length === 0}
+          onClick={onRemoveAll}
+        />
         <Button
           title="Add"
           icon={<FaPlus />}
@@ -59,9 +56,12 @@ export function CustomModLayout({
         />
       </div>
 
-      {copyOptions.length ? <CopySection className="mt-6" options={copyOptions} onClickCopy={onCopy} /> : null}
+      {copySelect}
 
-      <div className="mt-6 flex flex-col-reverse space-y-4 space-y-reverse" style={{ marginLeft: "-0.5rem" }}>
+      <div
+        className="mt-6 flex flex-col-reverse space-y-4 space-y-reverse"
+        style={{ marginLeft: "-0.5rem" }}
+      >
         {items.map((item, itemI) => {
           return (
             <div key={itemI} className="flex items-center">

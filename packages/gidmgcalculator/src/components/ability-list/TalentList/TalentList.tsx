@@ -1,8 +1,11 @@
-import { CalcTeamData, GeneralCalc, LevelableTalentType, TALENT_TYPES } from "@Calculation";
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
 
+import type { Character } from "@/models/base";
+import type { LevelableTalentType } from "@/types";
+
+import { TALENT_TYPES } from "@/constants/global";
 import { genSequentialOptions } from "@/utils";
 import { NORMAL_ATTACK_ICONS } from "./_constants";
 
@@ -20,19 +23,22 @@ type RenderedTalentConfig = {
 
 type TalentListProps = {
   className?: ClassValue;
-  teamData: CalcTeamData;
+  character: Character;
   /** Default true */
   mutable?: boolean;
   onChangeTalentLevel?: (talentType: LevelableTalentType, newLevel: number) => void;
 };
 
-export function TalentList(props: TalentListProps) {
-  const { teamData, mutable = true } = props;
-  const { activeMember, activeAppMember } = teamData;
+export function TalentList({
+  className,
+  character,
+  mutable = true,
+  onChangeTalentLevel,
+}: TalentListProps) {
   const [atDetail, setAtDetail] = useState(false);
   const [detailIndex, setDetailIndex] = useState(-1);
 
-  const { weaponType, vision, activeTalents, passiveTalents } = activeAppMember;
+  const { weaponType, vision, activeTalents, passiveTalents } = character.data;
   const elmtText = `text-${vision}`;
   const numOfActives = Object.keys(activeTalents).length;
 
@@ -59,7 +65,9 @@ export function TalentList(props: TalentListProps) {
             <div className="flex items-center">
               <p className="mr-1">Lv.</p>
               {levelNode}
-              {talent.xtraLevel ? <p className="ml-2 font-bold text-bonus">+{talent.xtraLevel}</p> : null}
+              {talent.xtraLevel ? (
+                <p className="ml-2 font-bold text-bonus">+{talent.xtraLevel}</p>
+              ) : null}
             </div>
           </div>
 
@@ -77,25 +85,23 @@ export function TalentList(props: TalentListProps) {
   const immutableLvNode = <p className={`ml-1 ${elmtText} font-bold`}>1</p>;
 
   return (
-    <CarouselSpace current={atDetail ? 1 : 0} className={props.className}>
+    <CarouselSpace current={atDetail ? 1 : 0} className={className}>
       <div className="h-full hide-scrollbar flex flex-col space-y-3">
         {TALENT_TYPES.map((talentType, index) => {
           const isAltSprint = talentType === "altSprint";
           const talent = activeTalents[talentType];
           if (!talent) return null;
 
-          const xtraLevel = teamData.getTotalXtraTalentLv(talentType);
+          const xtraLevel = character.getTotalXtraTalentLv(talentType);
 
           const mutableLvNode = (
             <VersatileSelect
               title="Select Level"
               className={`w-12 ${elmtText} font-bold`}
-              value={isAltSprint ? 1 : activeMember[talentType]}
+              value={isAltSprint ? 1 : character[talentType]}
               transparent
               options={genSequentialOptions(10)}
-              onChange={(value) =>
-                isAltSprint ? null : props.onChangeTalentLevel?.(talentType, +value)
-              }
+              onChange={(value) => (isAltSprint ? null : onChangeTalentLevel?.(talentType, +value))}
             />
           );
 
@@ -114,8 +120,7 @@ export function TalentList(props: TalentListProps) {
         })}
 
         {passiveTalents.map((talent, index) => {
-          const active =
-            index === 2 || GeneralCalc.getAscension(activeMember.level) >= (index === 0 ? 1 : 4);
+          const active = index === 2 || character.ascension >= (index === 0 ? 1 : 4);
           return renderTalent(
             {
               name: talent.name,
@@ -128,9 +133,9 @@ export function TalentList(props: TalentListProps) {
         })}
       </div>
 
-      {detailIndex !== -1 && detailIndex < numOfActives + activeAppMember.passiveTalents.length ? (
+      {detailIndex !== -1 && detailIndex < numOfActives + passiveTalents.length ? (
         <TalentDetail
-          appCharacter={activeAppMember}
+          character={character.data}
           detailIndex={detailIndex}
           onChangeDetailIndex={setDetailIndex}
           onClose={() => {

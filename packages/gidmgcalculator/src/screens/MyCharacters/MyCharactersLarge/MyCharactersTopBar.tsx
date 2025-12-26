@@ -5,12 +5,12 @@ import { Button, clsx, useChildListObserver, useIntersectionObserver } from "ron
 import { GenshinImage } from "@/components";
 import { $AppCharacter } from "@/services";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectChosenCharacter, selectUserCharacters, viewCharacter } from "@Store/userdb-slice";
+import { selectChosenCharacter, selectDbCharacters, viewCharacter } from "@Store/userdb-slice";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
 
 export function MyCharactersTopBar() {
   const dispatch = useDispatch();
-  const characters = useSelector(selectUserCharacters);
+  const characters = useSelector(selectDbCharacters);
   const chosenChar = useSelector(selectChosenCharacter);
   const modalCtrl = useMyCharactersModalCtrl();
 

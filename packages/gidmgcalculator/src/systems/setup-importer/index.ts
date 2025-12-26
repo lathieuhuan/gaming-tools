@@ -1,2 +1,2 @@
-export * from "./components/ImporterProvider";
+export * from "./ImporterProvider";
 export { useSetupImporter } from "./contexts/ImporterContext";
