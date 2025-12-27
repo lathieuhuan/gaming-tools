@@ -76,3 +76,8 @@ export type AddDbCharacterAction = PayloadAction<
     data?: AppCharacter;
   }
 >;
+
+export type DbItemSortPayload = {
+  option: "time_added" | "level";
+  direction: "asc" | "desc";
+};

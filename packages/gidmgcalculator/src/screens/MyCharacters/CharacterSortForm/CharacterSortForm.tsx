@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { CarouselSpace, Popover } from "rond";
 
+import { Ascendable } from "@/models/base";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import { useDispatch } from "@Store/hooks";
 import { sortCharacters } from "@Store/userdb-slice";
@@ -9,7 +10,6 @@ import { selectCharacterToBeSorted } from "./utils";
 
 import { DragAndDropList } from "./DragAndDropList";
 import { MarkedList } from "./MarkedList";
-import { Ascendable } from "@/models/base";
 
 type CharacterSortFormProps = {
   id?: string;
@@ -87,7 +87,6 @@ export function CharacterSortForm({ id, onClose }: CharacterSortFormProps) {
             <FaChevronDown className="text-sm" />
           </p>
           <Popover
-            as="div"
             className="p-2 top-full bg-light-2 text-black font-bold rounded group-hover:scale-100"
             origin="top center"
           >

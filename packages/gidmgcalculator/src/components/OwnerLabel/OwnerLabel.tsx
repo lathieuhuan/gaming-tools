@@ -89,7 +89,6 @@ export function OwnerLabel({ className = "", style, item }: OwnerLabelProps) {
           </button>
 
           <Popover
-            as="div"
             className="bottom-full right-2 mb-2 shadow-popup"
             active={list.isVisible}
             withTooltipStyle

@@ -13,6 +13,7 @@ import type {
   AddDbCharacterAction,
   AddSetupToComplexAction,
   AddUserDatabaseAction,
+  DbItemSortPayload,
   CombineSetupsAction,
   RemoveDbArtifactAction,
   RemoveDbWeaponAction,
@@ -24,7 +25,7 @@ import type {
   UpdateDbArtifactSubStatAction,
   UpdateDbCharacterAction,
   UpdateDbWeaponAction,
-} from "./userdb-slice.types";
+} from "./types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { Ascendable } from "@/models/base";
@@ -389,25 +390,22 @@ export const userdbSlice = createSlice({
         artifactIDs[index] = artifactID;
       }
     },
-    sortArtifacts: (state) => {
-      state.userArts.sort((a, b) => {
-        if (a.level !== b.level) {
-          return b.level - a.level;
-        }
-        if (a.type !== b.type) {
-          const type = {
-            flower: 5,
-            plume: 4,
-            sands: 3,
-            goblet: 2,
-            circlet: 1,
-          };
-          return type[b.type] - type[a.type];
-        }
-        const aName = $AppArtifact.getSet(a.code)?.name || "";
-        const bName = $AppArtifact.getSet(b.code)?.name || "";
-        return bName.localeCompare(aName);
-      });
+    sortArtifacts: (state, action: PayloadAction<DbItemSortPayload>) => {
+      const { option, direction } = action.payload;
+      const isAsc = direction === "asc";
+
+      switch (option) {
+        case "time_added":
+          state.userArts.sort((a, b) => {
+            return isAsc ? a.ID - b.ID : b.ID - a.ID;
+          });
+          break;
+        case "level":
+          state.userArts.sort((a, b) => {
+            return isAsc ? a.level - b.level : b.level - a.level;
+          });
+          break;
+      }
     },
     removeArtifact: ({ userArts, userChars }, action: RemoveDbArtifactAction) => {
       const { ID } = action.payload;

@@ -1,40 +1,38 @@
 import type { ClassValue } from "clsx";
+import { forwardRef } from "react";
+
 import { cn } from "@lib/utils";
 
 // Improvement: make Popover a wrapper
 
-export type PopoverProps = {
+export type PopoverProps = Omit<React.HTMLAttributes<HTMLDivElement>, "className"> & {
   className?: ClassValue;
-  style?: React.CSSProperties;
-  /** Default div */
-  as?: keyof JSX.IntrinsicElements;
   active?: boolean;
   withTooltipStyle?: boolean;
   /** style transformOrigin Default 'bottom right' */
   origin?: string;
-  children: React.ReactNode;
 };
 
-export const Popover = ({
-  className,
-  style = {},
-  as: Tag = "div",
-  active,
-  withTooltipStyle,
-  origin = "bottom right",
-  children,
-}: PopoverProps) => {
-  return (
-    <Tag
-      data-active={active}
-      className={cn(
-        'absolute z-10 transition duration-200 ease-linear scale-0 data-[active=true]:scale-100 cursor-default',
-        withTooltipStyle && "rounded-lg text-sm bg-black text-light-2",
-        className
-      )}
-      style={{ ...style, transformOrigin: origin }}
-    >
-      {children}
-    </Tag>
-  );
-};
+export const Popover = forwardRef<HTMLDivElement, PopoverProps>(
+  (
+    { className, active, withTooltipStyle, origin = "bottom right", style, children, ...props },
+    ref
+  ) => {
+    return (
+      <div
+        ref={ref}
+        data-slot="popover"
+        className={cn(
+          "absolute z-10 transition duration-200 ease-linear cursor-default",
+          active ? "scale-100" : "scale-0",
+          withTooltipStyle && "rounded-lg text-sm bg-black text-light-2",
+          className
+        )}
+        style={{ ...style, transformOrigin: origin }}
+        {...props}
+      >
+        {children}
+      </div>
+    );
+  }
+);

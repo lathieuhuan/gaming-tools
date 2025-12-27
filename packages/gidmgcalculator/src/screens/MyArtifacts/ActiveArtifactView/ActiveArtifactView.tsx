@@ -1,7 +1,8 @@
 import { Fragment, useState } from "react";
-import { Button, clsx, ConfirmModal, TrashCanSvg } from "rond";
-import { MdEdit } from "react-icons/md";
+import { ConfirmModal, TrashCanSvg } from "rond";
 
+import { useArtifactSetData } from "@/hooks";
+import { Artifact } from "@/models/base";
 import { useDispatch } from "@Store/hooks";
 import {
   removeArtifact,
@@ -9,23 +10,17 @@ import {
   updateUserArtifact,
   updateUserArtifactSubStat,
 } from "@Store/userdb-slice";
-import { Artifact } from "@/models/base";
-import { useArtifactSetData } from "@/hooks";
 
 // Components
 import { ArtifactCard, Tavern } from "@/components";
+import { ReforgeButton } from "./ReforgeButton";
 
-type ChosenArtifactViewProps = {
+type ActiveArtifactViewProps = {
   artifact?: Artifact;
   onRemoveArtifact?: (artifact: Artifact) => void;
-  onRequestEditArtifact?: () => void;
 };
 
-export function ChosenArtifactView({
-  artifact,
-  onRemoveArtifact,
-  onRequestEditArtifact,
-}: ChosenArtifactViewProps) {
+export function ActiveArtifactView({ artifact, onRemoveArtifact }: ActiveArtifactViewProps) {
   const dispatch = useDispatch();
   const setData = useArtifactSetData();
   const [modalType, setModalType] = useState<"REMOVE_ARTIFACT" | "EQUIP_CHARACTER" | "">("");
@@ -67,16 +62,9 @@ export function ChosenArtifactView({
           );
         }}
         action={
-          <Button
-            title="Reforge"
-            icon={<MdEdit className="text-lg text-black opacity-80" />}
-            boneOnly
-            className={clsx(
-              "shrink-0",
-              artifact?.owner || artifact?.setupIDs?.length ? "hidden" : ""
-            )}
-            onClick={() => onRequestEditArtifact?.()}
-          />
+          artifact?.owner || artifact?.setupIDs?.length ? (
+            <ReforgeButton artifact={artifact} />
+          ) : null
         }
         actions={[
           {
