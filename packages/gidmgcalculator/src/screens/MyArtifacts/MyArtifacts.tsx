@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { useScreenWatcher, useValues, WarehouseLayout } from "rond";
 
-import type { ArtifactType, IArtifactBasic } from "@/types";
+import type { Artifact } from "@/models/base";
+import type { ArtifactType } from "@/types";
 
 import Array_ from "@/utils/Array";
 import { createArtifact } from "@/utils/entity";
@@ -15,7 +16,7 @@ import {
   InventoryRack,
   useArtifactFilter,
 } from "@/components";
-import { DbItemSortButton } from "../_components/DbItemSortButton";
+import { UserItemSortButton } from "../_components/UserItemSortButton";
 import { WarehouseWrapper } from "../_components/WarehouseWrapper";
 import { ActiveArtifactView } from "./ActiveArtifactView";
 import { AddButton } from "./AddButton";
@@ -50,7 +51,7 @@ function MyArtifacts() {
     //
   }, [filteredArtifacts, activeId]);
 
-  const handleRemoveArtifact = (artifact: IArtifactBasic) => {
+  const handleRemoveArtifact = (artifact: Artifact) => {
     const removedIndex = Array_.indexById(filteredArtifacts, artifact.ID);
 
     if (removedIndex !== -1) {
@@ -75,7 +76,7 @@ function MyArtifacts() {
     <div className="flex items-center space-x-4">
       <AddButton currentArtifactsCount={userArtifacts.length} />
 
-      <DbItemSortButton onSelectSort={(sort) => dispatch(sortArtifacts(sort))} />
+      <UserItemSortButton onSelectSort={(sort) => dispatch(sortArtifacts(sort))} />
 
       {screenWatcher.isFromSize("md") && (
         <ArtifactTypeSelect values={artifactTypes} onSelect={toggleArtifactType} />

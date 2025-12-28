@@ -286,33 +286,30 @@ export const userdbSlice = createSlice({
         }
       }
     },
-    sortWeapons: (state) => {
-      state.userWps.sort((a, b) => {
-        const rA = $AppWeapon.get(a.code)?.rarity || 4;
-        const rB = $AppWeapon.get(b.code)?.rarity || 4;
-        if (rA !== rB) {
-          return rB - rA;
-        }
+    sortWeapons: (state, action: PayloadAction<DbItemSortPayload>) => {
+      const { option, direction } = action.payload;
+      const isAsc = direction === "asc";
 
-        const { bareLv: lvA, ascension: ascA } = Ascendable.splitLevel(a.level);
-        const { bareLv: lvB, ascension: ascB } = Ascendable.splitLevel(b.level);
-        if (lvA !== lvB) {
-          return lvB - lvA;
-        }
+      switch (option) {
+        case "time_added":
+          state.userWps.sort((a, b) => {
+            return isAsc ? a.ID - b.ID : b.ID - a.ID;
+          });
+          break;
+        case "level":
+          state.userWps.sort((a, b) => {
+            const { bareLv: lvA, ascension: ascA } = Ascendable.splitLevel(a.level);
+            const { bareLv: lvB, ascension: ascB } = Ascendable.splitLevel(b.level);
 
-        if (a.type !== b.type) {
-          const type = {
-            bow: 5,
-            catalyst: 4,
-            polearm: 3,
-            claymore: 2,
-            sword: 1,
-          };
-          return type[b.type] - type[a.type];
-        }
+            if (lvA !== lvB) {
+              return isAsc ? lvA - lvB : lvB - lvA;
+            }
 
-        return ascB - ascA;
-      });
+            return isAsc ? ascA - ascB : ascB - ascA;
+          });
+          break;
+        // old code has sort by rarity, and type
+      }
     },
     removeWeapon: ({ userWps, userChars }, action: RemoveDbWeaponAction) => {
       const { ID } = action.payload;

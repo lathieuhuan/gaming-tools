@@ -27,7 +27,7 @@ export function AddButton({ currentArtifactsCount }: AddButtonProps) {
     return false;
   };
 
-  const handleAddArtifact = () => {
+  const handleClickAdd = () => {
     if (isNewArtifactAddable()) {
       setOpen(true);
     }
@@ -46,7 +46,7 @@ export function AddButton({ currentArtifactsCount }: AddButtonProps) {
 
   return (
     <>
-      <Button icon={<FaPlus />} onClick={handleAddArtifact}>
+      <Button icon={<FaPlus />} onClick={handleClickAdd}>
         Add
       </Button>
 

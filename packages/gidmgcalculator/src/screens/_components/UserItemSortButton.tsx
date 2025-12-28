@@ -29,7 +29,7 @@ function OptionGroup({ title, value, options, onSelectSort }: OptionGroupProps) 
         {options.map((option) => (
           <div
             key={option.value}
-            className="px-2 py-1 whitespace-nowrap hover:bg-dark-1 hover:text-light-2 rounded-md"
+            className="px-2 py-1 whitespace-nowrap font-medium hover:bg-dark-1 hover:text-light-2 rounded-md"
             onClick={() => onSelectSort?.(value, option.value)}
           >
             <span className="whitespace-nowrap">{option.label}</span>
@@ -40,11 +40,11 @@ function OptionGroup({ title, value, options, onSelectSort }: OptionGroupProps) 
   );
 }
 
-type DbItemSortButtonProps = {
+type UserItemSortButtonProps = {
   onSelectSort?: (sort: DbItemSortPayload) => void;
 };
 
-export function DbItemSortButton({ onSelectSort }: DbItemSortButtonProps) {
+export function UserItemSortButton({ onSelectSort }: UserItemSortButtonProps) {
   const optionGroups: OptionGroupProps[] = [
     {
       title: "By time added",

@@ -1,7 +1,6 @@
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { ConfirmModal, TrashCanSvg } from "rond";
 
-import { useArtifactSetData } from "@/hooks";
 import { Artifact } from "@/models/base";
 import { useDispatch } from "@Store/hooks";
 import {
@@ -22,7 +21,6 @@ type ActiveArtifactViewProps = {
 
 export function ActiveArtifactView({ artifact, onRemoveArtifact }: ActiveArtifactViewProps) {
   const dispatch = useDispatch();
-  const setData = useArtifactSetData();
   const [modalType, setModalType] = useState<"REMOVE_ARTIFACT" | "EQUIP_CHARACTER" | "">("");
   const [newOwner, setNewOwner] = useState("");
 
@@ -34,8 +32,13 @@ export function ActiveArtifactView({ artifact, onRemoveArtifact }: ActiveArtifac
     }
   };
 
+  const handleConfirmRemove = (artifact: Artifact) => {
+    dispatch(removeArtifact({ ID: artifact.ID }));
+    onRemoveArtifact?.(artifact);
+  };
+
   return (
-    <Fragment>
+    <>
       <ArtifactCard
         wrapperCls="w-76 shrink-0"
         artifact={artifact}
@@ -62,7 +65,7 @@ export function ActiveArtifactView({ artifact, onRemoveArtifact }: ActiveArtifac
           );
         }}
         action={
-          artifact?.owner || artifact?.setupIDs?.length ? (
+          !artifact?.owner && !artifact?.setupIDs?.length ? (
             <ReforgeButton artifact={artifact} />
           ) : null
         }
@@ -92,21 +95,17 @@ export function ActiveArtifactView({ artifact, onRemoveArtifact }: ActiveArtifac
         onClose={closeModal}
       />
 
-      {artifact ? (
-        <ConfirmModal
-          active={newOwner !== ""}
-          message={
-            <>
-              <b>{artifact.owner}</b> is currently using "
-              <b>{setData.getSlot(artifact).name || "<name missing>"}</b>
-              ". Swap?
-            </>
-          }
-          focusConfirm
-          onConfirm={() => swapOwner(newOwner)}
-          onClose={() => setNewOwner("")}
-        />
-      ) : null}
+      <ConfirmModal
+        active={newOwner !== ""}
+        message={
+          <>
+            <b>{artifact?.owner}</b> is currently using this artifact. Equip to <b>{newOwner}</b>?
+          </>
+        }
+        focusConfirm
+        onConfirm={() => swapOwner(newOwner)}
+        onClose={() => setNewOwner("")}
+      />
 
       {artifact ? (
         <ConfirmModal
@@ -114,7 +113,7 @@ export function ActiveArtifactView({ artifact, onRemoveArtifact }: ActiveArtifac
           danger
           message={
             <>
-              Remove "<b>{setData.getSlot(artifact).name}</b>" ({artifact.type})?{" "}
+              Remove "<b>{artifact.data.name}</b>" ({artifact.type})?{" "}
               {artifact.owner ? (
                 <>
                   It is currently used by <b>{artifact.owner}</b>.
@@ -123,13 +122,10 @@ export function ActiveArtifactView({ artifact, onRemoveArtifact }: ActiveArtifac
             </>
           }
           focusConfirm
-          onConfirm={() => {
-            dispatch(removeArtifact({ ID: artifact.ID }));
-            onRemoveArtifact?.(artifact);
-          }}
+          onConfirm={() => handleConfirmRemove(artifact)}
           onClose={closeModal}
         />
       ) : null}
-    </Fragment>
+    </>
   );
 }
