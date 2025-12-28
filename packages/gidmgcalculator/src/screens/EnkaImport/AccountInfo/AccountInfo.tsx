@@ -12,7 +12,7 @@ type AccountInfoProps = {
 
 export function AccountInfo({ className, isMobile, onSeeBuilds }: AccountInfoProps) {
   const { data: genshinUser, isLoading, isError, error } = useDataImportState();
-  const cls = ["p-3 rounded bg-dark-1", className];
+  const cls = ["p-3 rounded-lg bg-dark-1", className];
 
   if (isLoading) {
     return (

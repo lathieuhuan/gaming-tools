@@ -1,11 +1,13 @@
 import { useRef } from "react";
-import { clsx, useScreenWatcher } from "rond";
+import { ErrorBoundary } from "react-error-boundary";
+import { clsx, ExclamationCircleSvg, useScreenWatcher } from "rond";
 
 import { EnkaLogo } from "@/assets/icons";
 import { TabHeader } from "./_components/TabHeader";
 import { AccountInfo } from "./AccountInfo";
 import { DataImportProvider } from "./DataImportProvider";
 import { DetailSection } from "./DetailSection";
+import { Error } from "./Error";
 import { ResultsSection } from "./ResultsSection";
 import { SaverProvider } from "./SaverProvider";
 import { SearchBar } from "./SearchBar";
@@ -30,59 +32,68 @@ export function EnkaImport() {
     }
   };
 
-
   return (
-    <DataImportProvider onSelectBuild={() => scrollToTabNo(2)}>
-      <div
-        ref={containerRef}
-        className={clsx(
-          "h-full flex bg-dark-2",
-          isMobile && "hide-scrollbar snap-x snap-mandatory"
-        )}
-      >
+    <ErrorBoundary FallbackComponent={Error}>
+      <DataImportProvider onSelectBuild={() => scrollToTabNo(2)}>
         <div
+          ref={containerRef}
           className={clsx(
-            "p-4 flex flex-col gap-6 shrink-0 overflow-auto",
-            isMobile ? MOBILE_TAB_CLASS : "w-85"
+            "h-full flex bg-dark-2",
+            isMobile && "hide-scrollbar snap-x snap-mandatory"
           )}
         >
-          <div className="flex justify-between">
-            <TabHeader sub="Use in-game UID">
-              <h2 className="font-bold text-heading">Import data</h2>
-            </TabHeader>
+          <div
+            className={clsx(
+              "p-4 flex flex-col gap-6 shrink-0 overflow-auto",
+              isMobile ? MOBILE_TAB_CLASS : "w-85"
+            )}
+          >
+            <div className="flex justify-between">
+              <TabHeader sub="Use in-game UID">
+                <h2 className="font-bold text-heading">Import data</h2>
+              </TabHeader>
 
-            <div className="flex flex-col items-end">
-              <p className="text-light-hint text-sm">Powered by</p>
-              <a
-                className="text-light-2 flex items-center gap-1"
-                href="https://enka.network"
-                target="_blank"
-              >
-                <EnkaLogo className="text-xl" />
-                <span className="text-lg font-bold">Enka.Network</span>
-              </a>
+              <div className="flex flex-col items-end">
+                <p className="text-light-hint text-sm">Powered by</p>
+                <a
+                  className="text-light-2 flex items-center gap-1"
+                  href="https://enka.network"
+                  target="_blank"
+                >
+                  <EnkaLogo className="text-xl" />
+                  <span className="text-lg font-bold">Enka.Network</span>
+                </a>
+              </div>
+            </div>
+
+            <SearchBar />
+            <AccountInfo isMobile={isMobile} onSeeBuilds={() => scrollToTabNo(1)} />
+
+            <div className="p-3 rounded-lg bg-dark-1 flex items-start gap-2">
+              <div className="h-6 flex items-center shrink-0">
+                <ExclamationCircleSvg className="text-xl" />
+              </div>
+              <span className="text-light-4">
+                Artifacts with rarity less than 4-star are not supported.
+              </span>
             </div>
           </div>
 
-          <SearchBar />
+          <SaverProvider>
+            <ResultsSection
+              className={clsx("p-4 h-full custom-scrollbar", isMobile && MOBILE_TAB_CLASS)}
+              isMobile={isMobile}
+              onBack={() => scrollToTabNo(0)}
+            />
 
-          <AccountInfo isMobile={isMobile} onSeeBuilds={() => scrollToTabNo(1)} />
+            <DetailSection
+              className={clsx("p-4 shrink-0", isMobile ? MOBILE_TAB_CLASS : "w-80")}
+              isMobile={isMobile}
+              onBack={() => scrollToTabNo(1)}
+            />
+          </SaverProvider>
         </div>
-
-        <SaverProvider>
-          <ResultsSection
-            className={clsx("p-4 h-full custom-scrollbar", isMobile && MOBILE_TAB_CLASS)}
-            isMobile={isMobile}
-            onBack={() => scrollToTabNo(0)}
-          />
-
-          <DetailSection
-            className={clsx("p-4 shrink-0", isMobile ? MOBILE_TAB_CLASS : "w-80")}
-            isMobile={isMobile}
-            onBack={() => scrollToTabNo(1)}
-          />
-        </SaverProvider>
-      </div>
-    </DataImportProvider>
+      </DataImportProvider>
+    </ErrorBoundary>
   );
 }

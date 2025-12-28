@@ -133,6 +133,10 @@ export function convertGOODWeapon(weapon: GOODWeapon, ID: number): IWeapon | und
 }
 
 export function convertGOODArtifact(artifact: GOODArtifact, ID: number): IArtifact | undefined {
+  if (artifact.rarity < 4) {
+    return undefined;
+  }
+
   const data = $AppArtifact.getAll().find((data) => toGOODKey(data.name) === artifact.setKey);
 
   if (!data) {
