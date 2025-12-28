@@ -128,7 +128,7 @@ function ItemMultiSelectCore<T extends IWeaponBasic | IArtifactBasic>(
             <InventoryRack
               data={items}
               itemCls="max-w-1/3 basis-1/3 md:w-1/4 md:basis-1/4 lg:max-w-1/6 lg:basis-1/6"
-              chosenID={selectedItem?.ID || 1}
+              activeId={selectedItem?.ID || 1}
               selectedIds={selectedIds}
               onUnselectItem={(item) => unselectItem(item.userData.ID)}
               onChangeItem={onChangeItem}

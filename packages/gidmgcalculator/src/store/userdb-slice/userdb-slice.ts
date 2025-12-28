@@ -1,6 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
-import type { WritableDraft } from "immer/src/internal.js";
 import type {
   ArtifactType,
   IArtifactBasic,
@@ -9,12 +8,13 @@ import type {
   IDbSetup,
   IWeaponBasic,
 } from "@/types";
+import type { WritableDraft } from "immer/src/internal.js";
 import type {
   AddDbCharacterAction,
   AddSetupToComplexAction,
   AddUserDatabaseAction,
-  DbItemSortPayload,
   CombineSetupsAction,
+  DbItemSortPayload,
   RemoveDbArtifactAction,
   RemoveDbWeaponAction,
   SaveSetupAction,
@@ -29,11 +29,10 @@ import type {
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { Ascendable } from "@/models/base";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
+import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
 import { createCharacterBasic, createWeaponBasic } from "@/utils/entity";
 import { isDbSetup } from "@/utils/setup";
-import { logStore } from "../utils";
 
 export type UserdbState = {
   userChars: IDbCharacter[];
@@ -439,12 +438,12 @@ export const userdbSlice = createSlice({
       }
 
       const existed = userSetups[foundIndex];
-      let newChosenID = data.ID;
+      let newActiveId = data.ID;
 
       if (existed.type === "combined") {
         for (const setup of userSetups) {
           if (setup.type === "complex" && setup.allIDs[existed.main.name] === data.ID) {
-            newChosenID = setup.ID;
+            newActiveId = setup.ID;
             setup.shownID = data.ID;
             break;
           }
@@ -453,7 +452,7 @@ export const userdbSlice = createSlice({
 
       userSetups[foundIndex] = data;
 
-      state.chosenSetupID = newChosenID;
+      state.chosenSetupID = newActiveId;
     },
     removeSetup: (state, action: PayloadAction<number>) => {
       const removedID = action.payload;

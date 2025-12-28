@@ -17,7 +17,7 @@ export function BuildCharacter({ build }: BuildCharacterProps) {
 
   return (
     <ItemCase
-      chosen={selected}
+      selected={selected}
       onClick={() => setSelectedBuild({ ...build, detailType: "CHARACTER" })}
     >
       {(className, imgCls) => (

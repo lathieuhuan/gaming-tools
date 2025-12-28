@@ -237,7 +237,7 @@ const ArtifactSmith = ({
     <AppEntitySelect
       title={<p className="text-base sm:text-xl leading-7">Artifact Forge</p>}
       data={artifactOptions}
-      initialChosenCode={workpiece?.code}
+      initialActiveCode={workpiece?.code}
       emptyText="No artifacts found"
       hasSearch
       renderOptionConfig={(afterSelect, selectBody) => {

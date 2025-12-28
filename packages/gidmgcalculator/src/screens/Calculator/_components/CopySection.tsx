@@ -30,9 +30,9 @@ export function CopySection<TOption extends Option>({
           variant: "primary",
           icon: <FaCopy className="text-base" />,
           onClick: (value) => {
-            const chosen = options.find((option) => option.value === value);
+            const selectedOption = options.find((option) => option.value === value);
 
-            if (chosen) onClickCopy(chosen);
+            if (selectedOption) onClickCopy(selectedOption);
           },
         }}
       />

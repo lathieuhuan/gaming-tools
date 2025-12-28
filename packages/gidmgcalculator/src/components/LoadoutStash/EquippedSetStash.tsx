@@ -94,21 +94,21 @@ export function EquippedSetStash({
   useEffect(() => {
     // Check if any item visible
     let visibleCount = 0;
-    let shouldCheckChosen = !!selection.characterCode;
+    let shouldCheckSelected = !!selection.characterCode;
 
     for (const item of itemUtils.queryAll()) {
       if (item.isVisible()) {
         visibleCount++;
       }
       // Unselect if not visible
-      else if (shouldCheckChosen && item.getId() === `${selection.characterCode}`) {
+      else if (shouldCheckSelected && item.getId() === `${selection.characterCode}`) {
         setSelection({
           characterCode: 0,
           artifactId: 0,
         });
         onSelectArtifact(undefined);
 
-        shouldCheckChosen = false;
+        shouldCheckSelected = false;
       }
     }
 
@@ -162,7 +162,7 @@ export function EquippedSetStash({
                       <ItemCase
                         key={ID}
                         className={`w-12 h-12 cursor-pointer ${opacityCls}`}
-                        chosen={ID === selection.artifactId}
+                        selected={ID === selection.artifactId}
                         onClick={() => {
                           setSelection({
                             characterCode: character.code,

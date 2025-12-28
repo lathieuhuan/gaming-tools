@@ -15,7 +15,7 @@ type WeaponInventoryProps = {
   weaponType: WeaponType;
   owner?: string | null;
   buttonText: string;
-  onClickButton: (chosen: Weapon) => void;
+  onClickButton: (selectedWeapon: Weapon) => void;
   onClose: () => void;
 };
 
@@ -60,7 +60,7 @@ const WeaponInventoryCore = ({
               data={items}
               itemCls="max-w-1/3 basis-1/3 md:w-1/4 md:basis-1/4 lg:max-w-1/6 lg:basis-1/6"
               emptyText="No weapons found"
-              chosenID={selectedWeapon?.ID}
+              activeId={selectedWeapon?.ID}
               onChangeItem={onChangeItem}
             />
             <WeaponCard

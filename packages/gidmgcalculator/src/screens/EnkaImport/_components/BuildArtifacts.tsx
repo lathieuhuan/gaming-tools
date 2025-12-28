@@ -41,7 +41,7 @@ export function BuildArtifact({
     selectedBuild?.detailType === index && selectedBuild?.artifacts[index]?.ID === artifact.ID;
 
   return (
-    <ItemCase className={clsx("grow", className)} chosen={selected} onClick={onClick}>
+    <ItemCase className={clsx("grow", className)} selected={selected} onClick={onClick}>
       {(className, imgCls) => (
         <ItemThumbnail
           className={className}

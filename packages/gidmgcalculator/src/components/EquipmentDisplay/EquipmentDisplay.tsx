@@ -70,7 +70,7 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
           renderWeapon()
         ) : (
           <ItemCase
-            chosen={selectedType === "weapon"}
+            selected={selectedType === "weapon"}
             onClick={() => props.onClickItem?.("weapon")}
           >
             {renderWeapon}
@@ -86,7 +86,7 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
                 renderArtifact(slot.piece)
               ) : (
                 <ItemCase
-                  chosen={selectedType === slot.type}
+                  selected={selectedType === slot.type}
                   onClick={() => props.onClickItem?.(slot.type)}
                 >
                   {(className, imgCls) => renderArtifact(slot.piece, className, imgCls)}

@@ -28,7 +28,7 @@ export type InventoryRackProps<
 > = {
   itemCls?: string;
   emptyText?: string;
-  chosenID?: number;
+  activeId?: number;
   selectedIds?: Set<PropertyKey>;
   /** Default 60 */
   pageSize?: number;
@@ -44,7 +44,7 @@ export function InventoryRack<
   data,
   itemCls,
   emptyText = "No data",
-  chosenID,
+  activeId,
   selectedIds,
   pageSize = 60,
   onUnselectItem,
@@ -160,7 +160,7 @@ export function InventoryRack<
                         </button>
                       )}
                       <ItemCase
-                        chosen={item.ID === chosenID}
+                        selected={item.ID === activeId}
                         onClick={() => onChangeItem?.(option)}
                       >
                         {(className, imgCls) => (

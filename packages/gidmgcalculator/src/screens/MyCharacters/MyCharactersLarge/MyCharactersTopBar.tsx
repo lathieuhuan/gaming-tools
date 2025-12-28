@@ -5,13 +5,13 @@ import { Button, clsx, useChildListObserver, useIntersectionObserver } from "ron
 import { GenshinImage } from "@/components";
 import { $AppCharacter } from "@/services";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectChosenCharacter, selectDbCharacters, viewCharacter } from "@Store/userdb-slice";
+import { selectActiveCharacter, selectDbCharacters, viewCharacter } from "@Store/userdb-slice";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
 
 export function MyCharactersTopBar() {
   const dispatch = useDispatch();
   const characters = useSelector(selectDbCharacters);
-  const chosenChar = useSelector(selectChosenCharacter);
+  const activeChar = useSelector(selectActiveCharacter);
   const modalCtrl = useMyCharactersModalCtrl();
 
   const { observedAreaRef: intersectObsArea, visibleMap, itemUtils } = useIntersectionObserver();
@@ -48,8 +48,8 @@ export function MyCharactersTopBar() {
   }, []);
 
   useEffect(() => {
-    scrollList(chosenChar);
-  }, [chosenChar]);
+    scrollList(activeChar);
+  }, [activeChar]);
 
   return (
     <div className="w-full flex justify-center bg-dark-2">
@@ -75,7 +75,7 @@ export function MyCharactersTopBar() {
               return (
                 <div
                   key={name}
-                  data-selected={name === chosenChar}
+                  data-selected={name === activeChar}
                   {...itemUtils.getProps(
                     name,
                     "mx-1 border-b-3 border-transparent cursor-pointer group/cell data-[selected=true]/cell:border-link"

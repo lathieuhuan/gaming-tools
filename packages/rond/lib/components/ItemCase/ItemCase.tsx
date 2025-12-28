@@ -4,14 +4,14 @@ import "./ItemCase.styles.scss";
 
 export type ItemCaseProps = Omit<React.HTMLAttributes<HTMLDivElement>, "children"> & {
   className?: ClassValue;
-  chosen?: boolean;
+  selected?: boolean;
   muted?: boolean;
   children: (className: string, imgCls: string) => React.ReactNode;
 };
 
 export function ItemCase({
   className,
-  chosen,
+  selected,
   muted,
   children,
   onMouseDown,
@@ -20,7 +20,7 @@ export function ItemCase({
 }: ItemCaseProps) {
   return (
     <div
-      className={cn(!muted && ["ron-item-case", chosen && "ron-item-case--chosen"], className)}
+      className={cn(!muted && ["ron-item-case", selected && "ron-item-case--selected"], className)}
       onMouseDown={(e) => {
         e.currentTarget.classList.add("ron-item-case--clicked");
         onMouseDown?.(e);

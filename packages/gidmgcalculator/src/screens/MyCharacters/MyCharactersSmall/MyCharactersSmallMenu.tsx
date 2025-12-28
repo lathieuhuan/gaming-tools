@@ -3,7 +3,7 @@ import { FaPlus } from "react-icons/fa";
 import { ButtonGroup, FancyBackSvg, Input, useChildListObserver, useIntersectionObserver } from "rond";
 
 import { useSelector } from "@Store/hooks";
-import { selectChosenCharacter, selectDbCharacters } from "@Store/userdb-slice";
+import { selectActiveCharacter, selectDbCharacters } from "@Store/userdb-slice";
 import { $AppCharacter } from "@/services";
 import { GenshinImage } from "@/components";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
@@ -14,7 +14,7 @@ interface MyCharactersSmallMenuProps {
 }
 export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
   const userChars = useSelector(selectDbCharacters);
-  const chosenChar = useSelector(selectChosenCharacter);
+  const activeChar = useSelector(selectActiveCharacter);
   const modalCtrl = useMyCharactersModalCtrl();
 
   const [keyword, setKeyword] = useState("");
@@ -48,7 +48,7 @@ export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
           if (data) {
             const visible = visibleMap[data.code];
             const hidden = shouldCheckKeyword && !character.name.toLowerCase().includes(lowerKeyword);
-            const isChosen = character.name === chosenChar;
+            const isActive = character.name === activeChar;
 
             return (
               <button
@@ -58,7 +58,7 @@ export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
                   hidden && "hidden",
                 ])}
                 onClick={() => {
-                  if (!isChosen) {
+                  if (!isActive) {
                     props.onSelect(character.name);
                   }
                   props.onClose();
@@ -78,7 +78,7 @@ export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
                     />
                   )}
                 </div>
-                <span className={`font-semibold ${isChosen ? "text-active" : ""}`}>{character.name}</span>
+                <span className={`font-semibold ${isActive ? "text-active" : ""}`}>{character.name}</span>
               </button>
             );
           }

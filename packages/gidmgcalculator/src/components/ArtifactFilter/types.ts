@@ -2,7 +2,7 @@ import type { AppArtifact, ArtifactType, AttributeStat } from "@/types";
 
 export type ArtifactFilterSet = {
   code: number;
-  chosen: boolean;
+  selected: boolean;
   icon: string;
   data: AppArtifact;
   count: number;

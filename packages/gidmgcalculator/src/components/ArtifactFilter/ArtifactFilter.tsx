@@ -94,7 +94,7 @@ export const ArtifactFilter = <T extends IArtifactBasic = IArtifactBasic>({
 
   const handleConfirm = () => {
     const filteredCodes = setOptions.reduce((codes: number[], setOption) => {
-      if (setOption.chosen) {
+      if (setOption.selected) {
         codes.push(setOption.code);
       }
       return codes;

@@ -19,7 +19,7 @@ export function BuildWeapon({ className, build }: BuildWeaponProps) {
   return (
     <ItemCase
       className={className}
-      chosen={selected}
+      selected={selected}
       onClick={() => setSelectedBuild({ ...build, detailType: "WEAPON" })}
     >
       {(className, imgCls) => (

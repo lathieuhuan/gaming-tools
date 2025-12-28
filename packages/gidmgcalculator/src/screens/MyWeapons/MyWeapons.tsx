@@ -94,7 +94,7 @@ function MyWeapons() {
         emptyText="No weapons found"
         itemCls="max-w-1/3 basis-1/3 xm:max-w-1/4 xm:basis-1/4 lg:max-w-1/6 lg:basis-1/6 xl:max-w-1/8 xl:basis-1/8"
         pageSize={screenWatcher.isFromSize("xl") ? 80 : 60}
-        chosenID={activeWeapon?.ID}
+        activeId={activeWeapon?.ID}
         onChangeItem={(weapon) => setActiveId(weapon?.userData.ID)}
       />
       <ActiveWeaponView weapon={activeWeapon} onRemoveWeapon={handleRemoveWeapon} />

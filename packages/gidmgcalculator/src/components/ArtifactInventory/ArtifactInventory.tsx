@@ -27,7 +27,7 @@ export type ArtifactInventoryProps = Pick<ArtifactFilterProps<Artifact>, "forced
     currentAtfGear?: ArtifactGear;
     owner?: string | null;
     buttonText: string;
-    onClickButton: (chosen: Artifact, isMultiSelect: boolean) => void;
+    onClickButton: (selectedArtifact: Artifact, isMultiSelect: boolean) => void;
     onClose: () => void;
   };
 
@@ -119,7 +119,7 @@ const ArtifactInventoryCore = ({
               data={filteredArtifacts}
               itemCls="max-w-1/3 basis-1/3 md:w-1/4 md:basis-1/4 lg:max-w-1/6 lg:basis-1/6"
               emptyText="No artifacts found"
-              chosenID={selectedArtifact?.ID}
+              activeId={selectedArtifact?.ID}
               onChangeItem={onChangeItem}
             />
 

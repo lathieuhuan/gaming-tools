@@ -10,7 +10,7 @@ import { restoreCalcSetup } from "@/utils/setup";
 import { parseDbArtifacts, parseDbWeapon } from "@/utils/userdb";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui-slice";
-import { chooseUserSetup, selectChosenSetupId } from "@Store/userdb-slice";
+import { chooseUserSetup, selectActiveSetupId } from "@Store/userdb-slice";
 import { createSetupForTeammate, toOverviewInfo } from "./utils";
 
 // Component
@@ -24,7 +24,7 @@ function MySetups() {
   const screenWatcher = useScreenWatcher();
   const setupImporter = useSetupImporter();
   const userdb = useSelector((state) => state.userdb);
-  const selectedSetupId = useSelector(selectChosenSetupId);
+  const selectedSetupId = useSelector(selectActiveSetupId);
 
   const { userWps: userWeapons, userArts: userArtifacts, userSetups } = userdb;
 
