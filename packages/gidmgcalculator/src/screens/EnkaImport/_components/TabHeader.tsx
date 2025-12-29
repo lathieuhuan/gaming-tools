@@ -1,21 +1,33 @@
 import { ReactNode } from "react";
-import { Button, cn, FancyBackSvg, useScreenWatcher } from "rond";
+import { Button, cn, FancyBackSvg } from "rond";
+
+import type { EnkaImportSection } from "../types";
+
+import { useContainerState } from "../Container";
 
 type TabHeaderProps = {
   className?: string;
   children: ReactNode;
   sub?: ReactNode;
-  onBack?: () => void;
+  prevSection?: EnkaImportSection;
 };
 
-export function TabHeader({ className, children, sub, onBack }: TabHeaderProps) {
-  const isMobile = !useScreenWatcher("sm");
+export function TabHeader({ className, children, sub, prevSection }: TabHeaderProps) {
+  const { isMobile, goToSection } = useContainerState();
+
+  const handleBack = (section: EnkaImportSection) => {
+    goToSection(section);
+  };
 
   return (
     <div className="flex gap-2 divide-x divide-dark-line">
-      {isMobile && onBack && (
+      {isMobile && prevSection !== undefined && (
         <div>
-          <Button icon={<FancyBackSvg className="text-light-hint" />} boneOnly onClick={onBack} />
+          <Button
+            icon={<FancyBackSvg className="text-light-hint" />}
+            boneOnly
+            onClick={() => handleBack(prevSection)}
+          />
         </div>
       )}
 

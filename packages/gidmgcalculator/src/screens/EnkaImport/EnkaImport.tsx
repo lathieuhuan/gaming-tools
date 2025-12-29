@@ -1,99 +1,32 @@
-import { useRef } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { clsx, ExclamationCircleSvg, useScreenWatcher } from "rond";
+import { useScreenWatcher } from "rond";
 
-import { EnkaLogo } from "@/assets/icons";
-import { TabHeader } from "./_components/TabHeader";
-import { AccountInfo } from "./AccountInfo";
+import { Container, MOBILE_SECTION_CLASS } from "./Container";
 import { DataImportProvider } from "./DataImportProvider";
-import { DetailSection } from "./DetailSection";
 import { Error } from "./Error";
-import { ResultsSection } from "./ResultsSection";
 import { SaverProvider } from "./SaverProvider";
-import { SearchBar } from "./SearchBar";
-
-const MOBILE_TAB_CLASS = "w-full shrink-0 snap-center";
+import { SectionCover } from "./SectionCover";
+import { SectionDetail } from "./SectionDetail";
+import { SectionResults } from "./SectionResults";
 
 export function EnkaImport() {
   const isMobile = !useScreenWatcher("sm");
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  /** Mobile only */
-  const scrollToTabNo = (no: number) => {
-    if (!isMobile) {
-      return;
-    }
-
-    if (containerRef.current) {
-      containerRef.current.scrollTo({
-        left: containerRef.current.clientWidth * no,
-        behavior: "smooth",
-      });
-    }
-  };
 
   return (
     <ErrorBoundary FallbackComponent={Error}>
-      <DataImportProvider onSelectBuild={() => scrollToTabNo(2)}>
-        <div
-          ref={containerRef}
-          className={clsx(
-            "h-full flex bg-dark-2",
-            isMobile && "hide-scrollbar snap-x snap-mandatory"
-          )}
-        >
-          <div
-            className={clsx(
-              "p-4 flex flex-col gap-6 shrink-0 overflow-auto",
-              isMobile ? MOBILE_TAB_CLASS : "w-85"
-            )}
-          >
-            <div className="flex justify-between">
-              <TabHeader sub="Use in-game UID">
-                <h2 className="font-bold text-heading">Import data</h2>
-              </TabHeader>
-
-              <div className="flex flex-col items-end">
-                <p className="text-light-hint text-sm">Powered by</p>
-                <a
-                  className="text-light-2 flex items-center gap-1"
-                  href="https://enka.network"
-                  target="_blank"
-                >
-                  <EnkaLogo className="text-xl" />
-                  <span className="text-lg font-bold">Enka.Network</span>
-                </a>
-              </div>
-            </div>
-
-            <SearchBar />
-            <AccountInfo isMobile={isMobile} onSeeBuilds={() => scrollToTabNo(1)} />
-
-            <div className="p-3 rounded-lg bg-dark-1 flex items-start gap-2">
-              <div className="h-6 flex items-center shrink-0">
-                <ExclamationCircleSvg className="text-xl" />
-              </div>
-              <span className="text-light-4">
-                Artifacts with rarity less than 4-star are not supported.
-              </span>
-            </div>
-          </div>
+      <Container isMobile={isMobile}>
+        <DataImportProvider>
+          <SectionCover className={isMobile ? MOBILE_SECTION_CLASS : "w-85"} />
 
           <SaverProvider>
-            <ResultsSection
-              className={clsx("p-4 h-full custom-scrollbar", isMobile && MOBILE_TAB_CLASS)}
-              isMobile={isMobile}
-              onBack={() => scrollToTabNo(0)}
+            <SectionResults
+              className={["h-full custom-scrollbar", isMobile && MOBILE_SECTION_CLASS]}
             />
 
-            <DetailSection
-              className={clsx("p-4 shrink-0", isMobile ? MOBILE_TAB_CLASS : "w-80")}
-              isMobile={isMobile}
-              onBack={() => scrollToTabNo(1)}
-            />
+            <SectionDetail className={["shrink-0", isMobile ? MOBILE_SECTION_CLASS : "w-80"]} />
           </SaverProvider>
-        </div>
-      </DataImportProvider>
+        </DataImportProvider>
+      </Container>
     </ErrorBoundary>
   );
 }

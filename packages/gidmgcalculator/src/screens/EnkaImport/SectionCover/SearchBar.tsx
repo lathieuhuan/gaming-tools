@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Button, clsx, Input, LoadingSpin, SearchSvg, Select } from "rond";
 
+import type { SearchParams } from "../types";
+
 import { useSearchParams } from "@/systems/router";
 import Object_ from "@/utils/Object";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectEnkaParams, updateEnkaParams } from "@Store/ui-slice";
 import { useDataImportState } from "../DataImportProvider";
-import { SearchParams } from "../types";
 
 function parseSearchParams(params?: SearchParams): SearchInput {
   if (params?.uid) {

@@ -1,4 +1,4 @@
-import { clsx } from "rond";
+import { ClassValue, clsx } from "rond";
 
 import { ArtifactGear, CalcCharacter } from "@/models/base";
 import { GenshinUserBuild } from "@/services/enka";
@@ -6,21 +6,21 @@ import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/Array";
 import { createArtifact, createWeapon } from "@/utils/entity";
 import IdStore from "@/utils/IdStore";
+import { useContainerState } from "../Container";
 import { useDataImportState } from "../DataImportProvider";
 import { useSaver } from "../SaverProvider";
 
 import { TabHeader } from "../_components/TabHeader";
 import { BuildOverviews } from "./BuildOverviews";
 
-type ResultsSectionProps = {
-  className?: string;
-  isMobile?: boolean;
-  onBack?: () => void;
+type SectionResultsProps = {
+  className?: ClassValue;
 };
 
-export function ResultsSection({ className, isMobile, onBack }: ResultsSectionProps) {
+export function SectionResults({ className }: SectionResultsProps) {
   const setupImporter = useSetupImporter();
   const saver = useSaver();
+  const { isMobile } = useContainerState();
   const { data: genshinUser, isLoading } = useDataImportState();
 
   const hasAnyBuild = !!genshinUser?.builds?.length;
@@ -54,8 +54,11 @@ export function ResultsSection({ className, isMobile, onBack }: ResultsSectionPr
   };
 
   return (
-    <div className={clsx("flex flex-col", className)}>
-      <TabHeader sub={hasAnyBuild && "Select a character or an item to see more."} onBack={onBack}>
+    <div className={clsx("p-4 flex flex-col", className)}>
+      <TabHeader
+        sub={hasAnyBuild && "Select a character or an item to see more."}
+        prevSection="COVER"
+      >
         Results
       </TabHeader>
 

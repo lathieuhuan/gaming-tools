@@ -1,4 +1,6 @@
-import { GenshinUserBuild } from "@/services/enka";
+import type { GenshinUserBuild } from "@/services/enka";
+
+export type EnkaImportSection = "COVER" | "RESULTS" | "DETAIL";
 
 export type SearchParams = {
   uid?: string;

@@ -1,16 +1,19 @@
-import { FaCaretRight } from "react-icons/fa";
+import { useEffect } from "react";
+import { FaCaretRight, FaRedoAlt } from "react-icons/fa";
 import { Button, clsx, Skeleton } from "rond";
 
+import { useTimer } from "@/hooks/useTimer";
+import { secondsToTimeString } from "@/utils/pure-utils";
+import { STALE_TIME } from "../_hooks/useGenshinUser";
+import { useContainerState } from "../Container";
 import { useDataImportState } from "../DataImportProvider";
-import { RefreshButton } from "./RefreshButton";
 
-type AccountInfoProps = {
+export type AccountInfoProps = {
   className?: string;
-  isMobile?: boolean;
-  onSeeBuilds?: () => void;
 };
 
-export function AccountInfo({ className, isMobile, onSeeBuilds }: AccountInfoProps) {
+export function AccountInfo({ className }: AccountInfoProps) {
+  const { isMobile, goToSection } = useContainerState();
   const { data: genshinUser, isLoading, isError, error } = useDataImportState();
   const cls = ["p-3 rounded-lg bg-dark-1", className];
 
@@ -32,7 +35,10 @@ export function AccountInfo({ className, isMobile, onSeeBuilds }: AccountInfoPro
       <RefreshButton />
 
       {isMobile && !isError && (
-        <Button icon={<FaCaretRight className="text-2xl" />} onClick={onSeeBuilds} />
+        <Button
+          icon={<FaCaretRight className="text-2xl" />}
+          onClick={() => goToSection("RESULTS")}
+        />
       )}
     </div>
   );
@@ -59,4 +65,21 @@ export function AccountInfo({ className, isMobile, onSeeBuilds }: AccountInfoPro
       </div>
     );
   }
+}
+
+export function RefreshButton() {
+  const { dataUpdatedAt, isRefetching, isError, refetch } = useDataImportState();
+  const { seconds, start } = useTimer();
+
+  const actionText = isError ? "Retry" : "Refresh";
+
+  useEffect(() => {
+    start(STALE_TIME / 1000, dataUpdatedAt || Date.now());
+  }, [dataUpdatedAt]);
+
+  return (
+    <Button icon={<FaRedoAlt />} disabled={seconds > 0 || isRefetching} onClick={() => refetch()}>
+      {seconds > 0 ? `${actionText} in ${secondsToTimeString(seconds)}` : actionText}
+    </Button>
+  );
 }

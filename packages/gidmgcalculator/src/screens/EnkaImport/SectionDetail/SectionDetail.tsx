@@ -1,11 +1,12 @@
 import { ReactNode } from "react";
-import { clsx } from "rond";
+import { ClassValue, clsx } from "rond";
 
 import { CharacterCalc } from "@/calculation/core/CharacterCalc";
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { Artifact, ArtifactGear, CalcCharacter, Weapon } from "@/models/base";
 import Array_ from "@/utils/Array";
+import { useContainerState } from "../Container/_context";
 import { useSelectedBuildState } from "../DataImportProvider";
 import { useSaver } from "../SaverProvider";
 
@@ -15,19 +16,18 @@ import { WeaponCard } from "@/components/WeaponCard";
 import { BuildArtifacts } from "../_components/BuildArtifacts";
 import { TabHeader } from "../_components/TabHeader";
 
-type DetailSectionProps = {
-  className?: string;
-  isMobile?: boolean;
-  onBack?: () => void;
+type SectionDetailProps = {
+  className?: ClassValue;
 };
 
-export function DetailSection({ className, isMobile, onBack }: DetailSectionProps) {
+export function SectionDetail({ className }: SectionDetailProps) {
   const { t } = useTranslation();
+  const { isMobile } = useContainerState();
   const saver = useSaver();
-  const [selectedBuild, setSelectedBuild] = useSelectedBuildState();
+  const [selectedBuild] = useSelectedBuildState();
 
   if (!selectedBuild) {
-    return <div className={className} />;
+    return <div className={clsx(className)} />;
   }
 
   const { character, weapon, artifacts, detailType } = selectedBuild;
@@ -83,14 +83,14 @@ export function DetailSection({ className, isMobile, onBack }: DetailSectionProp
     }
   }
 
-  const handleSave = () => {
-    saver.save(selectedBuild, saveType);
-  };
+  // const handleSave = () => {
+  //   saver.save(selectedBuild, saveType);
+  // };
 
   return (
-    <div className={clsx("flex flex-col", className)}>
+    <div className={clsx("p-4 flex flex-col", className)}>
       <div className="flex">
-        <TabHeader sub={extraTitle} onBack={onBack}>
+        <TabHeader sub={extraTitle} prevSection="RESULTS">
           <span className={`text-${character.data.vision}`}>{character.data.name}</span>
         </TabHeader>
 

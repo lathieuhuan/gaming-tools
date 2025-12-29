@@ -1,20 +1,23 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
+import type { SearchParams, SelectedBuild } from "../types";
+
 import { useSearchParams } from "@/systems/router";
 import { selectAppReady } from "@Store/ui-slice";
 import { useGenshinUser } from "../_hooks/useGenshinUser";
-import { SearchParams, SelectedBuild } from "../types";
+import { useContainerState } from "../Container";
 import { DataImportContext, SelectedBuildContext, SelectedBuildContextState } from "./context";
 
 type DataImportProviderProps = {
   children: ReactNode;
-  onSelectBuild?: () => void;
 };
 
 export function DataImportProvider(props: DataImportProviderProps) {
   const [searchParams] = useSearchParams<SearchParams>();
   const appReady = useSelector(selectAppReady);
+  const { goToSection } = useContainerState();
+  
   const [selectedBuild, setSelectedBuild] = useState<SelectedBuild>();
 
   const queryResult = useGenshinUser(searchParams.uid, {
@@ -29,7 +32,7 @@ export function DataImportProvider(props: DataImportProviderProps) {
 
   const handleSelectBuild: SelectedBuildContextState[1] = (data) => {
     setSelectedBuild(data);
-    props.onSelectBuild?.();
+    goToSection("DETAIL");
   };
 
   return (

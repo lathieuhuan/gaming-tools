@@ -10,7 +10,7 @@ type GOODBuild = {
 };
 
 export type GenshinUserResponse = {
-  uid: string;
+  uid: string | number;
   name: string;
   level: number;
   worldLevel: number;
