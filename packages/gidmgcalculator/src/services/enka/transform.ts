@@ -5,10 +5,13 @@ import { ARTIFACT_TYPES } from "@/constants/global";
 import { createArtifact, createWeapon } from "@/utils/entity";
 import { convertGOODArtifact, convertGOODCharacter, convertGOODWeapon } from "@/utils/GOOD";
 import IdStore from "@/utils/IdStore";
+import Object_ from "@/utils/Object";
 
-export function transformResponse(response: GenshinUserResponse): GenshinUser {
+export function transformResponse(
+  response: GenshinUserResponse,
+  idStore = new IdStore()
+): GenshinUser {
   const builds: GenshinUserBuild[] = [];
-  const idStore = new IdStore();
 
   for (const build of response.builds) {
     const character = convertGOODCharacter(build.character);
@@ -23,6 +26,8 @@ export function transformResponse(response: GenshinUserResponse): GenshinUser {
       ? createWeapon(convertedWeapon, convertedWeapon.data, idStore)
       : createWeapon({ type: character.data.weaponType }, undefined, idStore);
 
+    Object_.optionalAssign(weapon, { owner: character.data.name });
+
     const artifacts = ARTIFACT_TYPES.map<IArtifact | null>((type) => {
       const GOODArtifact = build.artifacts.find((artifact) => artifact?.slotKey === type);
 
@@ -32,7 +37,12 @@ export function transformResponse(response: GenshinUserResponse): GenshinUser {
 
       const converted = convertGOODArtifact(GOODArtifact, idStore.gen());
 
-      return converted ? createArtifact(converted, converted.data, idStore) : null;
+      if (converted) {
+        const artifact = createArtifact(converted, converted.data, idStore);
+        return Object_.optionalAssign(artifact, { owner: character.data.name });
+      }
+
+      return null;
     });
 
     builds.push({

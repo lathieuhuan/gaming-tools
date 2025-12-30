@@ -35,6 +35,7 @@ export function WeaponCard<T extends Weapon>({
   return (
     <div className={"flex flex-col " + wrapperCls}>
       <div
+        data-slot="weapon-card"
         className={clsx(
           "grow hide-scrollbar bg-dark-1 flex flex-col",
           withGutter && "p-4 rounded-lg",

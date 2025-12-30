@@ -72,7 +72,23 @@ export function convertGOODStatKey(key: GOODStatKey): AttributeStat | undefined 
 }
 
 export function findGOODCharacter(key: string): AppCharacter | undefined {
-  return $AppCharacter.getAll().find((item) => item.name === key || item.GOOD === key);
+  if (!key) {
+    return undefined;
+  }
+
+  let GOODName: string | undefined;
+
+  if (key.slice(0, 8) === "Traveler") {
+    const prefix = key.slice(8); // e.g. "TravelerAnemo" -> "Anemo"
+
+    if (prefix && ELEMENT_TYPES.includes(prefix.toLowerCase() as ElementType)) {
+      GOODName = prefix ? `${prefix} Traveler` : undefined;
+    }
+  } else {
+    GOODName = key;
+  }
+
+  return $AppCharacter.getAll().find((item) => item.name === GOODName || item.GOOD === GOODName);
 }
 
 export type GOODCharacterConvertReturn = {
@@ -83,19 +99,8 @@ export type GOODCharacterConvertReturn = {
 export function convertGOODCharacter(
   character: GOODCharacter
 ): GOODCharacterConvertReturn | undefined {
-  let name: string | undefined;
-
-  if (character.key.slice(0, 8) === "Traveler") {
-    const prefix = character.key.slice(8); // e.g. "TravelerAnemo" -> "Anemo"
-
-    if (prefix && ELEMENT_TYPES.includes(prefix.toLowerCase() as ElementType)) {
-      name = prefix ? `${prefix} Traveler` : undefined;
-    }
-  } else {
-    name = character.key;
-  }
-
-  const data = name ? findGOODCharacter(name) : undefined;
+  //
+  const data = findGOODCharacter(character.key);
 
   if (!data) {
     return undefined;

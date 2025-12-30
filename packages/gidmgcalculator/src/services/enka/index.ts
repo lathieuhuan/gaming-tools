@@ -1,22 +1,39 @@
 import { IS_DEV_ENV } from "@/constants/config";
+import { mock } from "./mock";
 import { GenshinUserResponse } from "./types";
 import { transformResponse } from "./transform";
+import IdStore from "@/utils/IdStore";
+import { delay } from "@/utils/pure-utils";
+
 export * from "./types";
 
-const baseUrl = IS_DEV_ENV
-  ? "http://localhost:3001"
-  : "https://gicalculator.ronqueroc.com";
+const baseUrl = IS_DEV_ENV ? "http://localhost:3001" : "https://gicalculator.ronqueroc.com";
 
 export async function getGenshinUser(uid: string) {
-  const response = await fetch(`${baseUrl}/enka/uid/${uid}`);
+  const timeStart = Date.now();
+  const idStore = new IdStore(timeStart);
 
-  if (response.ok) {
-    const res: GenshinUserResponse = await response.json();
+  const user = transformResponse(mock, idStore);
+  const timeEnd = Date.now();
+  const elapsedTime = timeEnd - idStore.latest;
 
-    return transformResponse(res);
+  // If the number of ids generated is more than the time this transformResponse took,
+  // we need to wait to avoid generating duplicate ids
+  if (elapsedTime < 0) {
+    await delay(-elapsedTime);
   }
 
-  throw await response.json();
+  return user;
+
+  // const response = await fetch(`${baseUrl}/enka/uid/${uid}`);
+
+  // if (response.ok) {
+  //   const res: GenshinUserResponse = await response.json();
+
+  //   return transformResponse(res);
+  // }
+
+  // throw await response.json();
 }
 
 export async function updateCache() {

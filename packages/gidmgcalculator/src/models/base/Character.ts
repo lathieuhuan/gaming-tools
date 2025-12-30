@@ -109,15 +109,19 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
     return scale ? TALENT_LV_MULTIPLIERS[scale]?.[talentLv] ?? 0 : 1;
   }
 
-  serialize(): ICharacterBasic {
+  static toBasic(character: ICharacterBasic): ICharacterBasic {
     return {
-      name: this.name,
-      level: this.level,
-      NAs: this.NAs,
-      ES: this.ES,
-      EB: this.EB,
-      cons: this.cons,
-      enhanced: this.enhanced,
+      name: character.name,
+      level: character.level,
+      NAs: character.NAs,
+      ES: character.ES,
+      EB: character.EB,
+      cons: character.cons,
+      enhanced: character.enhanced,
     };
+  }
+
+  serialize(): ICharacterBasic {
+    return Character.toBasic(this);
   }
 }

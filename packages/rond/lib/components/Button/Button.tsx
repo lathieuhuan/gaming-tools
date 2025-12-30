@@ -1,5 +1,5 @@
 import clsx, { type ClassValue } from "clsx";
-import type { ButtonHTMLAttributes } from "react";
+import type { ButtonHTMLAttributes, Ref } from "react";
 
 import { cn } from "@lib/utils";
 import {
@@ -15,6 +15,7 @@ import {
 } from "./config";
 
 export type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className"> & {
+  refProp?: Ref<HTMLButtonElement>;
   className?: ClassValue;
   /** Default 'default' */
   variant?: ButtonVariant | "custom";
@@ -40,10 +41,12 @@ export function Button({
   withShadow = !boneOnly,
   children,
   className,
+  refProp,
   ...rest
 }: ButtonProps) {
   return (
     <button
+      ref={refProp}
       type="button"
       className={cn(
         "flex-center font-bold text-sm whitespace-nowrap not-disabled:cursor-pointer disabled:is-disabled glow-on-hover",

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { FaSave } from "react-icons/fa";
 import { ClassValue, clsx } from "rond";
 
 import { CharacterCalc } from "@/calculation/core/CharacterCalc";
@@ -6,9 +7,9 @@ import { ARTIFACT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { Artifact, ArtifactGear, CalcCharacter, Weapon } from "@/models/base";
 import Array_ from "@/utils/Array";
-import { useContainerState } from "../Container/_context";
+import { useContainerState } from "../Container";
 import { useSelectedBuildState } from "../DataImportProvider";
-import { useSaver } from "../SaverProvider";
+import { useRequestSaveItem } from "../DataSaver/ItemSaver";
 
 import { AttributeTable } from "@/components";
 import { ArtifactCard } from "@/components/ArtifactCard";
@@ -23,7 +24,7 @@ type SectionDetailProps = {
 export function SectionDetail({ className }: SectionDetailProps) {
   const { t } = useTranslation();
   const { isMobile } = useContainerState();
-  const saver = useSaver();
+  const requestSave = useRequestSaveItem();
   const [selectedBuild] = useSelectedBuildState();
 
   if (!selectedBuild) {
@@ -33,7 +34,6 @@ export function SectionDetail({ className }: SectionDetailProps) {
   const { character, weapon, artifacts, detailType } = selectedBuild;
   let extraTitle = "";
   let content: ReactNode;
-  let saveType: "WEAPON" | number | undefined;
 
   switch (detailType) {
     case "CHARACTER": {
@@ -67,25 +67,36 @@ export function SectionDetail({ className }: SectionDetailProps) {
         <WeaponCard
           wrapperCls="max-h-full hide-scrollbar"
           weapon={new Weapon(weapon, weapon.data)}
+          actions={[
+            {
+              children: "Save",
+              icon: <FaSave />,
+              onClick: () => requestSave(selectedBuild, "WEAPON"),
+            },
+          ]}
         />
       );
-      saveType = "WEAPON";
       break;
+
     default: {
       const artifact = artifacts[detailType];
 
       extraTitle = t(ARTIFACT_TYPES[detailType]);
       content = (
-        <ArtifactCard artifact={artifact ? new Artifact(artifact, artifact?.data) : undefined} />
+        <ArtifactCard
+          artifact={artifact ? new Artifact(artifact, artifact?.data) : undefined}
+          actions={[
+            {
+              children: "Save",
+              icon: <FaSave />,
+              onClick: () => requestSave(selectedBuild, detailType),
+            },
+          ]}
+        />
       );
-      saveType = detailType;
       break;
     }
   }
-
-  // const handleSave = () => {
-  //   saver.save(selectedBuild, saveType);
-  // };
 
   return (
     <div className={clsx("p-4 flex flex-col", className)}>
@@ -93,8 +104,6 @@ export function SectionDetail({ className }: SectionDetailProps) {
         <TabHeader sub={extraTitle} prevSection="RESULTS">
           <span className={`text-${character.data.vision}`}>{character.data.name}</span>
         </TabHeader>
-
-        {/* <Button icon={<FaSave />} boneOnly onClick={handleSave} /> */}
       </div>
 
       <div className="mt-2 grow hide-scrollbar">{content}</div>

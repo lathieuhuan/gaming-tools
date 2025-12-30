@@ -44,6 +44,7 @@ export function ArtifactCard<T extends Artifact = Artifact>({
           className
         )}
         style={style}
+        data-slot="artifact-card"
       >
         <div className="grow hide-scrollbar">
           <ArtifactView artifact={artifact} {...viewProps} />

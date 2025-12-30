@@ -64,7 +64,7 @@ export function ActiveArtifactView({ artifact, onRemoveArtifact }: ActiveArtifac
             })
           );
         }}
-        action={
+        headerAction={
           !artifact?.owner && !artifact?.setupIDs?.length ? (
             <ReforgeButton artifact={artifact} />
           ) : null

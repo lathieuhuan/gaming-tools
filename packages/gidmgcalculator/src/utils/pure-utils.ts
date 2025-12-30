@@ -38,3 +38,7 @@ export function secondsToTimeString(time: number) {
   const seconds = time - minutes * 60;
   return `${minutes}:${seconds > 9 ? "" : "0"}${seconds}`;
 }
+
+export function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}

@@ -1,6 +1,8 @@
-import { clsx, Skeleton, useScreenWatcher } from "rond";
+import { clsx, Skeleton } from "rond";
 
 import type { GenshinUserBuild } from "@/services/enka";
+import { useContainerState } from "../Container";
+
 import { BuildOverview, BuildOverviewMobile } from "./BuildOverview";
 
 type BuildOverviewsProps = {
@@ -18,7 +20,7 @@ export function BuildOverviews({
   onSave,
   onCalculate,
 }: BuildOverviewsProps) {
-  const isMobile = !useScreenWatcher("sm");
+  const { isMobile } = useContainerState();
   const OverviewComponent = isMobile ? BuildOverviewMobile : BuildOverview;
 
   if (isLoading) {

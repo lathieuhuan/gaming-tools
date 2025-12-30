@@ -9,6 +9,10 @@ export default class IdStore {
     this.id = initialId;
   }
 
+  reset(id = Date.now()) {
+    this.id = id;
+  }
+
   gen() {
     return this.id++;
   }

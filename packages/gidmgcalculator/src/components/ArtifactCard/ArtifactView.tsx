@@ -16,7 +16,7 @@ export interface ArtifactViewProps<T extends Artifact> {
   mutable?: boolean;
   className?: string;
   artifact?: T;
-  action?: React.ReactNode;
+  headerAction?: React.ReactNode;
   onEnhance?: (level: number, artifact: T) => void;
   onChangeMainStatType?: (type: AttributeStat, artifact: T) => void;
   onChangeSubStat?: (index: number, changes: Partial<ArtifactSubStat>, artifact: T) => void;
@@ -25,7 +25,7 @@ export function ArtifactView<T extends Artifact>({
   className,
   artifact,
   mutable,
-  action,
+  headerAction,
   onEnhance,
   onChangeMainStatType,
   onChangeSubStat,
@@ -49,7 +49,7 @@ export function ArtifactView<T extends Artifact>({
         >
           {appArtifact?.name}
         </p>
-        {action}
+        {headerAction}
       </div>
 
       <div className="mt-4 px-3 flex justify-between items-start">

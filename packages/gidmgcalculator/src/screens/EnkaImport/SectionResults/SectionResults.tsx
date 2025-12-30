@@ -8,7 +8,7 @@ import { createArtifact, createWeapon } from "@/utils/entity";
 import IdStore from "@/utils/IdStore";
 import { useContainerState } from "../Container";
 import { useDataImportState } from "../DataImportProvider";
-import { useSaver } from "../SaverProvider";
+import { useRequestSaveBuild } from "../DataSaver/BuildSaver";
 
 import { TabHeader } from "../_components/TabHeader";
 import { BuildOverviews } from "./BuildOverviews";
@@ -19,7 +19,7 @@ type SectionResultsProps = {
 
 export function SectionResults({ className }: SectionResultsProps) {
   const setupImporter = useSetupImporter();
-  const saver = useSaver();
+  const requestSave = useRequestSaveBuild();
   const { isMobile } = useContainerState();
   const { data: genshinUser, isLoading } = useDataImportState();
 
@@ -66,7 +66,7 @@ export function SectionResults({ className }: SectionResultsProps) {
         <BuildOverviews
           builds={genshinUser?.builds}
           isLoading={isLoading}
-          onSave={saver.save}
+          onSave={requestSave}
           onCalculate={handleCalculate}
         />
       </div>
