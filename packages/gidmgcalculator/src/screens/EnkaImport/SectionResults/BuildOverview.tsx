@@ -33,7 +33,7 @@ export function BuildOverview({ build, onSave, onCalculate }: BuildOverviewProps
         </div>
 
         <div className="ml-auto flex gap-2">
-          <Button icon={<FaSave />} onClick={onSave} />
+          {/* <Button icon={<FaSave />} onClick={onSave} /> */}
           <Button icon={<FaCalculator />} onClick={onCalculate} />
         </div>
       </div>
@@ -82,7 +82,7 @@ export function BuildOverviewMobile({ build, onSave, onCalculate }: BuildOvervie
         </div>
 
         <div className="pt-2 pb-3 px-3 bg-dark-1 rounded-b-lg flex gap-2">
-          <Button icon={<FaSave />} onClick={onSave} />
+          {/* <Button icon={<FaSave />} onClick={onSave} /> */}
           <Button icon={<FaCalculator />} onClick={onCalculate} />
         </div>
 

@@ -1,7 +1,7 @@
 import type { CurrentDatabaseData } from "@/migration/types/current";
 import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 
-import { DATABASE_DATA_VERSION } from "@/constants/config";
+import { DOWNLOAD_DATA_VERSION } from "@/constants/config";
 import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
 import { createWeaponBasic } from "@/utils/entity";
@@ -21,7 +21,7 @@ type GOODData = {
 
 export function convertGOODData(data: GOODData) {
   const result: CurrentDatabaseData = {
-    version: DATABASE_DATA_VERSION,
+    version: DOWNLOAD_DATA_VERSION,
     characters: [],
     weapons: [],
     artifacts: [],

@@ -28,7 +28,7 @@ import type {
 } from "./types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
-import { Ascendable } from "@/models/base";
+import { Artifact, Ascendable, Weapon } from "@/models/base";
 import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
 import { createCharacterBasic, createWeaponBasic } from "@/utils/entity";
@@ -59,8 +59,8 @@ export const userdbSlice = createSlice({
     addUserDatabase: (state, action: AddUserDatabaseAction) => {
       const { characters = [], weapons = [], artifacts = [], setups = [] } = action.payload;
       state.userChars = characters;
-      state.userWps = weapons;
-      state.userArts = artifacts;
+      state.userWps = weapons.map((weapon) => Weapon.toBasic(weapon));
+      state.userArts = artifacts.map((artifact) => Artifact.toBasic(artifact));
       state.userSetups = setups;
 
       if (characters.length) {
@@ -245,7 +245,7 @@ export const userdbSlice = createSlice({
     },
     // WEAPON
     addUserWeapon: (state, action: PayloadAction<IWeaponBasic>) => {
-      state.userWps.push(action.payload);
+      state.userWps.push(Weapon.toBasic(action.payload));
     },
     /** Require index (prioritized) or ID */
     updateUserWeapon: (state, action: UpdateDbWeaponAction) => {
@@ -253,10 +253,10 @@ export const userdbSlice = createSlice({
       const weaponIndex = Array_.indexById(state.userWps, ID);
 
       if (weaponIndex !== -1) {
-        state.userWps[weaponIndex] = {
+        state.userWps[weaponIndex] = Weapon.toBasic({
           ...state.userWps[weaponIndex],
           ...newInfo,
-        };
+        });
       }
     },
     swapWeaponOwner: (state, action: PayloadAction<{ newOwner: string; weaponID: number }>) => {
@@ -333,17 +333,19 @@ export const userdbSlice = createSlice({
     },
     // ARTIFACT
     addUserArtifact: (state, action: PayloadAction<IArtifactBasic | IArtifactBasic[]>) => {
-      state.userArts.push(...Array_.toArray(action.payload));
+      for (const artifact of Array_.toArray(action.payload)) {
+        state.userArts.push(Artifact.toBasic(artifact));
+      }
     },
     updateUserArtifact: (state, action: UpdateDbArtifactAction) => {
       const { ID, ...newInfo } = action.payload;
       const artifactIndex = Array_.indexById(state.userArts, ID);
 
       if (artifactIndex !== -1) {
-        state.userArts[artifactIndex] = {
+        state.userArts[artifactIndex] = Artifact.toBasic({
           ...state.userArts[artifactIndex],
           ...newInfo,
-        };
+        });
       }
     },
     updateUserArtifactSubStat: (state, action: UpdateDbArtifactSubStatAction) => {

@@ -76,7 +76,7 @@ export function SavingStepper({ steps, onComplete }: SavingStepperProps) {
     handleCompleteStep();
   };
 
-  const getStepContent = (step: SavingStep, shouldFocus: boolean): React.JSX.Element => {
+  const getStepContent = (step: SavingStep, shouldFocus: boolean): React.ReactNode => {
     //
     const ctaRef: RefCallback<HTMLButtonElement> = (button) => {
       if (shouldFocus) {
@@ -98,19 +98,22 @@ export function SavingStepper({ steps, onComplete }: SavingStepperProps) {
           />
         );
 
-      case "ARTIFACT": {
-        return (
-          <SaveArtifactStep
-            className="h-full custom-scrollbar"
-            {...step}
-            store={store}
-            idStore={idStore.current}
-            onSave={handleSaveArtifact}
-            onSkip={handleCompleteStep}
-            ctaRef={ctaRef}
-          />
-        );
-      }
+      // case "ARTIFACT": {
+      //   return (
+      //     <SaveArtifactStep
+      //       className="h-full custom-scrollbar"
+      //       {...step}
+      //       store={store}
+      //       idStore={idStore.current}
+      //       onSave={handleSaveArtifact}
+      //       onSkip={handleCompleteStep}
+      //       ctaRef={ctaRef}
+      //     />
+      //   );
+      // }
+
+      default:
+        return null;
     }
   };
 

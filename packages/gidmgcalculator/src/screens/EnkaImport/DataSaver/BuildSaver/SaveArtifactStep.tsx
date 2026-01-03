@@ -50,7 +50,7 @@ export function SaveArtifactStep({
         <SavingStepLayout
           className={className}
           message="This artifact has already been saved."
-          skipRef={ctaRef}
+          continueRef={ctaRef}
           actions={[
             {
               children: "Duplicate",
@@ -62,7 +62,7 @@ export function SaveArtifactStep({
                 }),
             },
           ]}
-          onSkip={onSkip}
+          onContinue={onSkip}
         >
           <ArtifactCard artifact={createArtifact(artifact)} />
         </SavingStepLayout>
@@ -86,7 +86,7 @@ export function SaveArtifactStep({
               }),
           },
         ]}
-        onSkip={onSkip}
+        onContinue={onSkip}
       >
         <div className="grow space-y-2">
           {sameArtifacts.map((atf, index) => (
@@ -125,7 +125,7 @@ export function SaveArtifactStep({
           onClick: () => onSave?.(getArtifactBasic()),
         },
       ]}
-      onSkip={onSkip}
+      onContinue={onSkip}
     >
       <ArtifactCard artifact={artifact} />
     </SavingStepLayout>

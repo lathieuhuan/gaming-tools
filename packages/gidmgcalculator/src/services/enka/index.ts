@@ -10,30 +10,28 @@ export * from "./types";
 const baseUrl = IS_DEV_ENV ? "http://localhost:3001" : "https://gicalculator.ronqueroc.com";
 
 export async function getGenshinUser(uid: string) {
-  const timeStart = Date.now();
-  const idStore = new IdStore(timeStart);
+  const response = await fetch(`${baseUrl}/enka/uid/${uid}`);
 
-  const user = transformResponse(mock, idStore);
-  const timeEnd = Date.now();
-  const elapsedTime = timeEnd - idStore.latest;
+  if (response.ok) {
+    const res: GenshinUserResponse = await response.json();
 
-  // If the number of ids generated is more than the time this transformResponse took,
-  // we need to wait to avoid generating duplicate ids
-  if (elapsedTime < 0) {
-    await delay(-elapsedTime);
+    const timeStart = Date.now();
+    const idStore = new IdStore(timeStart);
+
+    const user = transformResponse(res, idStore);
+    const timeEnd = Date.now();
+    const elapsedTime = timeEnd - idStore.latest;
+
+    // If the number of ids generated is more than the time this transformResponse took,
+    // we need to wait to avoid generating duplicate ids
+    if (elapsedTime < 0) {
+      await delay(-elapsedTime);
+    }
+
+    return user;
   }
 
-  return user;
-
-  // const response = await fetch(`${baseUrl}/enka/uid/${uid}`);
-
-  // if (response.ok) {
-  //   const res: GenshinUserResponse = await response.json();
-
-  //   return transformResponse(res);
-  // }
-
-  // throw await response.json();
+  throw await response.json();
 }
 
 export async function updateCache() {

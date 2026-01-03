@@ -118,19 +118,23 @@ export class Weapon extends Ascendable implements IWeapon {
     this.data = data;
   }
 
-  serialize(): IWeaponBasic {
+  static toBasic(weapon: IWeaponBasic): IWeaponBasic {
     return Object_.optionalAssign<IWeaponBasic>(
       {
-        ID: this.ID,
-        code: this.code,
-        type: this.type,
-        level: this.level,
-        refi: this.refi,
+        ID: weapon.ID,
+        code: weapon.code,
+        type: weapon.type,
+        level: weapon.level,
+        refi: weapon.refi,
       },
       {
-        owner: this.owner,
-        setupIDs: this.setupIDs,
+        owner: weapon.owner,
+        setupIDs: weapon.setupIDs,
       }
     );
+  }
+
+  serialize(): IWeaponBasic {
+    return Weapon.toBasic(this);
   }
 }

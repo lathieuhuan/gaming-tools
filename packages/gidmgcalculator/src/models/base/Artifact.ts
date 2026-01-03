@@ -182,22 +182,26 @@ export class Artifact implements IArtifact {
     this.data = data;
   }
 
-  serialize() {
+  static toBasic(artifact: IArtifactBasic): IArtifactBasic {
     return Object_.optionalAssign<IArtifactBasic>(
       {
-        ID: this.ID,
-        code: this.code,
-        type: this.type,
-        rarity: this.rarity,
-        level: this.level,
-        mainStatType: this.mainStatType,
-        subStats: this.subStats,
+        ID: artifact.ID,
+        code: artifact.code,
+        type: artifact.type,
+        rarity: artifact.rarity,
+        level: artifact.level,
+        mainStatType: artifact.mainStatType,
+        subStats: artifact.subStats,
       },
       {
-        owner: this.owner,
-        setupIDs: this.setupIDs,
+        owner: artifact.owner,
+        setupIDs: artifact.setupIDs,
       }
     );
+  }
+
+  serialize(): IArtifactBasic {
+    return Artifact.toBasic(this);
   }
 
   static mainStatValueOf(artifact: IArtifactBasic) {

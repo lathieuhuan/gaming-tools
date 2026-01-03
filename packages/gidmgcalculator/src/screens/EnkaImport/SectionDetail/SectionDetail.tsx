@@ -67,13 +67,13 @@ export function SectionDetail({ className }: SectionDetailProps) {
         <WeaponCard
           wrapperCls="max-h-full hide-scrollbar"
           weapon={new Weapon(weapon, weapon.data)}
-          actions={[
-            {
-              children: "Save",
-              icon: <FaSave />,
-              onClick: () => requestSave(selectedBuild, "WEAPON"),
-            },
-          ]}
+          // actions={[
+          //   {
+          //     children: "Save",
+          //     icon: <FaSave />,
+          //     onClick: () => requestSave(selectedBuild, "WEAPON"),
+          //   },
+          // ]}
         />
       );
       break;
@@ -85,13 +85,13 @@ export function SectionDetail({ className }: SectionDetailProps) {
       content = (
         <ArtifactCard
           artifact={artifact ? new Artifact(artifact, artifact?.data) : undefined}
-          actions={[
-            {
-              children: "Save",
-              icon: <FaSave />,
-              onClick: () => requestSave(selectedBuild, detailType),
-            },
-          ]}
+          // actions={[
+          //   {
+          //     children: "Save",
+          //     icon: <FaSave />,
+          //     onClick: () => requestSave(selectedBuild, detailType),
+          //   },
+          // ]}
         />
       );
       break;
