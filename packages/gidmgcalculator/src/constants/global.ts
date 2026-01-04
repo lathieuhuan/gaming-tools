@@ -21,7 +21,7 @@ export const BONUS_KEYS = [
   "cDmg_",
   "mult_",
   "defIgn_",
-  "multPlus_",
+  "baseMult_",
   "elvMult_",
   "specMult_",
   "veil_",

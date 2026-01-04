@@ -16,7 +16,6 @@ type WeaponCompareMenuProps = {
 export function WeaponCompareMenu({ className, weapon, sameWeapons, onSelect }: WeaponCompareMenuProps) {
   const [selectedId, setSelectedId] = useState<number>();
 
-  console.log("sameWeapons", sameWeapons);
   const handleSelect = (weapon: IWeaponBasic) => {
     setSelectedId(weapon.ID);
     onSelect?.(weapon);

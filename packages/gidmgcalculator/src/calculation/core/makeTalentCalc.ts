@@ -163,7 +163,7 @@ export function makeTalentCalc(
     const extraTalentMult = getBonus("mult_");
     let bases = getBases(item, extraTalentMult, recorder);
 
-    const baseMult = toMult(getBonus("multPlus_"));
+    const baseMult = toMult(getBonus("baseMult_"));
     const coefficient = LUNAR_ATTACK_COEFFICIENT[lunar];
     const bonusMult = toMult(getBonus("pct_"));
     const veilMult = toMult(getBonus("veil_"));

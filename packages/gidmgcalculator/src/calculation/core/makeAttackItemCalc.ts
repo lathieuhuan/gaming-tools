@@ -36,7 +36,7 @@ export function makeAttackItemCalc(
 
   function calculate(bases: number[], recorder: ResultRecorder): CalcResultAttackItem {
     // BASE MULTIPLIER
-    let baseMult = getBonus("multPlus_");
+    let baseMult = getBonus("baseMult_");
     baseMult = baseMult >= 0 ? toMult(baseMult) : -baseMult / 100;
 
     const flat = getBonus("flat");

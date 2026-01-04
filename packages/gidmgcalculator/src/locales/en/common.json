@@ -56,6 +56,7 @@
   "defIgn_": "Def Ignore",
   "multPlus_": "Base DMG Multiplier",
   "elvMult_": "Elevate Multiplier",
+  "baseMult_": "Base DMG Multiplier",
   "specMult_": "Special Multiplier",
   "pyro_attElmt": "Pyro",
   "hydro_attElmt": "Hydro",

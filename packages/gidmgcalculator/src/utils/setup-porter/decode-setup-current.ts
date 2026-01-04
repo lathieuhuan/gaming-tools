@@ -462,6 +462,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
       elmtEvent,
       customBuffCtrls,
       customDebuffCtrls,
+      target,
     }),
   };
 

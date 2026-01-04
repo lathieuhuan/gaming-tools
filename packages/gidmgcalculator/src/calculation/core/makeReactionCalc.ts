@@ -42,7 +42,7 @@ export function makeReactionCalc(performer: CharacterCalc, target: CalcTarget) {
 
     const mult = LUNAR_REACTION_COEFFICIENT[reaction];
     const baseValue = baseRxnDamage * mult;
-    const baseMult = toMult(getBonus("multPlus_"));
+    const baseMult = toMult(getBonus("baseMult_"));
     const bonusMult = 1 + getBonus("pct_") / 100;
     const elvMult = toMult(getBonus("elvMult_"));
     const flat = getBonus("flat");

@@ -1,28 +1,22 @@
 import { ReactNode, useCallback, useRef, useState } from "react";
-import isEqual from "react-fast-compare";
 import { CloseButton, Modal } from "rond";
 
 import type { GenshinUserBuild } from "@/services/enka";
-import type { ICharacterBasic, IWeapon, IWeaponBasic } from "@/types";
-import type { GOODCharacterConvertReturn } from "@/utils/GOOD";
-import type { CharacterSavingStep, SavingStep, WeaponSavingStep } from "./_types";
+import type { SavingStep } from "./_types";
 
 import { useStore } from "@/systems/dynamic-store";
 import { createWeapon } from "@/utils/entity";
 import IdStore from "@/utils/IdStore";
-import Object_ from "@/utils/Object";
 import { useDispatch } from "@Store/hooks";
-import { BuildSaverContext, BuildSaverContextState } from "./_context";
-
-import { SavingStepper } from "./SavingStepper";
-import { Weapon } from "@/models/base";
 import {
   getCharacterSaveConfig,
+  getNewBuildArtifactSaveConfigs,
   getNewBuildWeaponSaveConfig,
   getOldBuildWeaponSaveConfig,
 } from "./_logic";
 
-const charComparedFields: (keyof ICharacterBasic)[] = ["level", "NAs", "ES", "EB", "cons"];
+import { BuildSaverContext, BuildSaverContextState } from "./_context";
+import { SavingStepper } from "./SavingStepper";
 
 export function BuildSaver({ children }: { children: ReactNode }) {
   const dispatch = useDispatch();
@@ -79,36 +73,10 @@ export function BuildSaver({ children }: { children: ReactNode }) {
       });
     }
 
+    savingSteps.push(...getNewBuildArtifactSaveConfigs(artifacts, userArts));
+
     setSavingSteps(savingSteps);
     setSaveModalOpen(true);
-
-    // const makeArtifactSavingStep = (atfIndex: number): ArtifactSavingStep | null => {
-    //   const artifact = build.artifacts[atfIndex];
-
-    //   return artifact
-    //     ? {
-    //         type: "ARTIFACT",
-    //         data: createArtifact(artifact, artifact.data, idStore),
-    //       }
-    //     : null;
-    // };
-
-    // const atfSavingSteps = build.artifacts.reduce<ArtifactSavingStep[]>((steps, _, index) => {
-    //   const atfSavingStep = makeArtifactSavingStep(index);
-    //   return atfSavingStep ? steps.concat(atfSavingStep) : steps;
-    // }, []);
-
-    // if (isSavingBuild) {
-    //   const savingSteps: SavingStep[] = [
-    //     ...atfSavingSteps,
-    //     makeWeaponSavingStep(),
-    //     {
-    //       type: "CHARACTER",
-    //       data: build.character,
-    //     },
-    //   ];
-
-    // }
   }, []);
 
   return (

@@ -177,8 +177,8 @@ export function CalcItemTracker({
     ];
   };
 
-  const renderRecord = (name: string, item: CalcResultItem) => {
-    if (!item.values[0].base) {
+  const renderRecord = (name: string, item?: CalcResultItem) => {
+    if (!item?.values[0]?.base) {
       return null;
     }
 

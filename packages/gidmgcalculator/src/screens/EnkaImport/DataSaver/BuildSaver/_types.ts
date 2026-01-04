@@ -48,8 +48,7 @@ export type WeaponSavingStep = {
 export type ArtifactSavingStep = {
   type: "ARTIFACT";
   data: Artifact;
-  saveStatus: "NEW";
-  sameArtifacts?: IArtifactBasic[];
+  sameArtifacts: IArtifactBasic[];
 };
 
 export type SavingStep = CharacterSavingStep | WeaponSavingStep | ArtifactSavingStep;

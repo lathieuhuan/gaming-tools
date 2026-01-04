@@ -145,7 +145,7 @@ export const createTargetBasic = (params: CreateTargetParams): ITargetBasic => {
     },
   } = params;
 
-  return { ...params, level, resistances };
+  return { ...params, level, resistances: { ...resistances } };
 };
 
 export const createTarget = (
@@ -161,7 +161,8 @@ export const createTarget = (
 
   // Target is preset monster, update resistances based on target's inputs and monster data
 
-  const { variantType, inputs = [], resistances } = basic;
+  const { variantType, inputs = [] } = basic;
+  const resistances = { ...basic.resistances };
   const { resistance, variant } = data;
   const { base, ...otherResistances } = resistance;
   const inputConfigs = data.inputConfigs ? Array_.toArray(data.inputConfigs) : [];

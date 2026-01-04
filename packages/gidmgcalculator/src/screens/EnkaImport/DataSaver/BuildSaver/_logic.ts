@@ -1,12 +1,22 @@
 import isEqual from "react-fast-compare";
 
-import type { ICharacterBasic, IDbCharacter, IWeaponBasic } from "@/types";
+import type {
+  ArtifactType,
+  IArtifactBasic,
+  ICharacterBasic,
+  IDbCharacter,
+  IWeaponBasic,
+} from "@/types";
 import type { GOODCharacterConvertReturn } from "@/utils/GOOD";
-import type { CharacterSaveConfig, WeaponSaveConfig } from "./_types";
+import type { ArtifactSavingStep, CharacterSaveConfig, WeaponSaveConfig } from "./_types";
 
-import { Weapon } from "@/models/base";
+import { Artifact, Weapon } from "@/models/base";
 import { $AppWeapon } from "@/services";
 import Object_ from "@/utils/Object";
+import { GenshinUserBuild } from "@/services/enka";
+import { createArtifact } from "@/utils/entity";
+import { ARTIFACT_TYPES } from "@/constants";
+import Array_ from "@/utils/Array";
 
 const charComparedFields: (keyof ICharacterBasic)[] = ["level", "NAs", "ES", "EB", "cons"];
 
@@ -56,6 +66,45 @@ export const getNewBuildWeaponSaveConfig = (
   };
 };
 
+const isSameArtifact = (artifact1: IArtifactBasic, artifact2: IArtifactBasic) => {
+  return (
+    artifact1.code === artifact2.code &&
+    artifact1.type === artifact2.type &&
+    artifact1.rarity === artifact2.rarity &&
+    artifact1.mainStatType === artifact2.mainStatType
+  );
+};
+
+export const getNewBuildArtifactSaveConfigs = (
+  artifacts: GenshinUserBuild["artifacts"],
+  userAtfs: IArtifactBasic[]
+): ArtifactSavingStep[] => {
+  const configByType = artifacts.reduce<Partial<Record<ArtifactType, ArtifactSavingStep>>>(
+    (acc, artifact) => {
+      if (artifact) {
+        acc[artifact.type] = {
+          type: "ARTIFACT",
+          data: createArtifact(artifact, artifact.data),
+          sameArtifacts: [],
+        };
+      }
+
+      return acc;
+    },
+    {}
+  );
+
+  for (const userAtf of userAtfs) {
+    const config = configByType[userAtf.type];
+
+    if (config && isSameArtifact(config.data, userAtf)) {
+      config.sameArtifacts.push(userAtf);
+    }
+  }
+
+  return Array_.truthify(ARTIFACT_TYPES.map((type) => configByType[type]));
+};
+
 // ===== OLD BUILD =====
 
 export const getOldBuildWeaponSaveConfig = (
@@ -64,8 +113,6 @@ export const getOldBuildWeaponSaveConfig = (
   currentWeaponId: number
 ): WeaponSaveConfig => {
   let currentWeapon: IWeaponBasic | undefined;
-
-  console.log("userWps", userWps);
 
   const sameFreeWeapons = userWps.filter((userWp) => {
     if (userWp.ID === currentWeaponId) {

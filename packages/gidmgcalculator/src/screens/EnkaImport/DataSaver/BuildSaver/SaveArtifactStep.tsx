@@ -1,47 +1,22 @@
-import { RefCallback, useMemo } from "react";
-import isEqual from "react-fast-compare";
+import { RefCallback } from "react";
 import { FaCopy, FaPlus, FaSave } from "react-icons/fa";
-import { Button } from "rond";
 
-import type { IArtifactBasic } from "@/types";
 import type { ArtifactSavingStep } from "./_types";
 
-import { useStore } from "@/systems/dynamic-store";
 import { createArtifact } from "@/utils/entity";
-import IdStore from "@/utils/IdStore";
-import Object_ from "@/utils/Object";
 
 import { ArtifactCard } from "@/components";
 import { SavingStepLayout } from "../_components/SavingStepLayout";
 
-type SaveArtifactStepProps = Omit<ArtifactSavingStep, "type"> & {
+type SaveArtifactStepProps = {
   className?: string;
-  store: ReturnType<typeof useStore>;
-  idStore: IdStore;
+  step: ArtifactSavingStep;
   ctaRef?: RefCallback<HTMLButtonElement>;
-  onSave?: (artifact: IArtifactBasic) => void;
-  onSkip?: () => void;
+  // onAction?: (output: NonNullable<SaveOutput["artifact"]>) => void;
 };
 
-export function SaveArtifactStep({
-  className,
-  data: artifact,
-  sameArtifacts = [],
-  store,
-  idStore,
-  ctaRef,
-  onSave,
-  onSkip,
-}: SaveArtifactStepProps) {
-  // const sameArtifacts = useMemo(() => {
-  //   const userArts = store.select((state) => state.userdb.userArts);
-  //   return userArts.filter((userArt) => areSameArtifacts(userArt, artifact));
-  // }, []);
-
-  const getArtifactBasic = () => {
-    const { owner, ...artifactToSave } = artifact.serialize();
-    return artifactToSave;
-  };
+export function SaveArtifactStep({ className, step, ctaRef }: SaveArtifactStepProps) {
+  const { data: artifact, sameArtifacts } = step;
 
   if (sameArtifacts.length) {
     // Exact match
@@ -55,14 +30,14 @@ export function SaveArtifactStep({
             {
               children: "Duplicate",
               icon: <FaCopy />,
-              onClick: () =>
-                onSave?.({
-                  ...getArtifactBasic(),
-                  ID: idStore.gen(),
-                }),
+              onClick: () => {
+                //
+              },
             },
           ]}
-          onContinue={onSkip}
+          onContinue={() => {
+            //
+          }}
         >
           <ArtifactCard artifact={createArtifact(artifact)} />
         </SavingStepLayout>
@@ -79,14 +54,14 @@ export function SaveArtifactStep({
           {
             children: "Add new",
             icon: <FaPlus />,
-            onClick: () =>
-              onSave?.({
-                ...getArtifactBasic(),
-                ID: idStore.gen(),
-              }),
+            onClick: () => {
+              //
+            },
           },
         ]}
-        onContinue={onSkip}
+        onContinue={() => {
+          //
+        }}
       >
         <div className="grow space-y-2">
           {sameArtifacts.map((atf, index) => (
@@ -122,10 +97,14 @@ export function SaveArtifactStep({
           refProp: ctaRef,
           children: "Save",
           icon: <FaSave />,
-          onClick: () => onSave?.(getArtifactBasic()),
+          onClick: () => {
+            //
+          },
         },
       ]}
-      onContinue={onSkip}
+      onContinue={() => {
+        //
+      }}
     >
       <ArtifactCard artifact={artifact} />
     </SavingStepLayout>
