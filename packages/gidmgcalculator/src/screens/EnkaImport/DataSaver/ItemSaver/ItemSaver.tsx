@@ -32,7 +32,7 @@ export function ItemSaver({ children }: { children: ReactNode }) {
   const requestSave = useCallback<ItemSaverContextState>(({ weapon, artifacts }, type) => {
     switch (type) {
       case "WEAPON": {
-        const similarWeapons = store.select((state) =>
+        const sameWeapons = store.select((state) =>
           state.userdb.userWps.filter((userWeapon) => userWeapon.code === weapon.code)
         );
 
@@ -40,8 +40,7 @@ export function ItemSaver({ children }: { children: ReactNode }) {
           {
             type: "WEAPON",
             data: createWeapon(weapon, weapon.data),
-            saveStatus: similarWeapons.length ? "POSSIBLE_DUP" : "NEW",
-            similarWeapons,
+            sameWeapons,
           },
         ]);
         break;
@@ -56,7 +55,7 @@ export function ItemSaver({ children }: { children: ReactNode }) {
           return;
         }
 
-        const similarArtifacts = store.select((state) =>
+        const sameArtifacts = store.select((state) =>
           state.userdb.userArts.filter((userAtf) => areSimilarArtifacts(userAtf, artifact))
         );
 
@@ -64,8 +63,7 @@ export function ItemSaver({ children }: { children: ReactNode }) {
           {
             type: "ARTIFACT",
             data: createArtifact(artifact, artifact.data),
-            saveStatus: similarArtifacts.length ? "POSSIBLE_DUP" : "NEW",
-            similarArtifacts,
+            sameArtifacts,
           },
         ]);
         break;
@@ -81,9 +79,21 @@ export function ItemSaver({ children }: { children: ReactNode }) {
     const [step] = savingSteps;
 
     if (step.type === "WEAPON") {
-      savingFlow = <WeaponSaver {...step} onComplete={closeSaveModal} />;
+      savingFlow = (
+        <WeaponSaver
+          weapon={step.data}
+          sameWeapons={step.sameWeapons}
+          onComplete={closeSaveModal}
+        />
+      );
     } else {
-      savingFlow = <ArtifactSaver {...step} onComplete={closeSaveModal} />;
+      savingFlow = (
+        <ArtifactSaver
+          artifact={step.data}
+          sameArtifacts={step.sameArtifacts}
+          onComplete={closeSaveModal}
+        />
+      );
     }
   }
 

@@ -55,6 +55,11 @@ export type SavingStep = CharacterSavingStep | WeaponSavingStep | ArtifactSaving
 
 // ===== Save Output =====
 
+export type ArtifactSaveOutput = {
+  action: "CREATE" | "UPDATE" | "NONE";
+  artifact: IArtifactBasic;
+}
+
 export type SaveOutput = {
   character?: {
     action: "CREATE" | "UPDATE" | "NONE";
@@ -64,4 +69,5 @@ export type SaveOutput = {
     action: "CREATE" | "UPDATE" | "NONE";
     weapon: IWeaponBasic;
   };
+  artifacts?: ArtifactSaveOutput[];
 };

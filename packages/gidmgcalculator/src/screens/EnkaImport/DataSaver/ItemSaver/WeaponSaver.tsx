@@ -1,36 +1,39 @@
-import { FaPlus, FaSave } from "react-icons/fa";
+import { useState } from "react";
+import { FaPlus, FaSave, FaTimes } from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
 import { notification } from "rond";
 
-import type { WeaponSavingStep } from "./_types";
+import type { Weapon } from "@/models/base";
+import type { IWeaponBasic } from "@/types";
 
 import { useDispatch } from "@Store/hooks";
-import { addUserWeapon } from "@Store/userdb-slice";
-import { genNewEntityMessage, genSimilarEntityMessage } from "../_config";
+import { addUserWeapon, updateUserWeapon } from "@Store/userdb-slice";
+import { CONTINUE_MSG, genNewEntityMessage, genSameEntityMessage } from "../_config";
+import { isExactWeapon } from "../_utils";
 
-import { WeaponCard } from "@/components/WeaponCard";
 import { SaverLayout } from "../_components/SaverLayout";
 import { SavingStepLayout } from "../_components/SavingStepLayout";
-import { WeaponSaveMenu } from "./WeaponSaveMenu";
+import { WeaponSummary } from "../_components/WeaponSummary";
 
-type WeaponSaverProps = Omit<WeaponSavingStep, "type"> & {
+type WeaponSaverProps = {
+  weapon: Weapon;
+  sameWeapons: IWeaponBasic[];
   onComplete?: () => void;
 };
 
-export function WeaponSaver({
-  data: weapon,
-  saveStatus,
-  similarWeapons = [],
-  onComplete,
-}: WeaponSaverProps) {
+export function WeaponSaver({ weapon, sameWeapons, onComplete }: WeaponSaverProps) {
   const dispatch = useDispatch();
-
-  const getWeaponBasic = () => {
-    const { owner, ...weaponToSave } = weapon.serialize();
-    return weaponToSave;
-  };
+  const [selectedWeapon, setSelectedWeapon] = useState<IWeaponBasic>();
 
   const handleSave = () => {
-    dispatch(addUserWeapon(getWeaponBasic()));
+    const { owner, ...weaponToSave } = weapon.serialize();
+
+    dispatch(
+      addUserWeapon({
+        ...weaponToSave,
+        ID: Date.now(),
+      })
+    );
 
     notification.success({
       content: "Weapon saved successfully!",
@@ -38,60 +41,100 @@ export function WeaponSaver({
     onComplete?.();
   };
 
-  const handleAddNew = () => {
+  const handleUpdate = () => {
+    if (!selectedWeapon) {
+      return;
+    }
+
     dispatch(
-      addUserWeapon({
-        ...getWeaponBasic(),
-        ID: Date.now(),
+      updateUserWeapon({
+        ID: selectedWeapon?.ID,
+        level: weapon.level,
+        refi: weapon.refi,
       })
     );
 
     notification.success({
-      content: "Weapon added successfully!",
+      content: "Weapon updated successfully!",
     });
     onComplete?.();
   };
 
-  switch (saveStatus) {
-    case "NEW":
-      return (
-        <SaverLayout type="WEAPON">
-          <SavingStepLayout
-            className="grow"
-            message={genNewEntityMessage("Weapon")}
-            actions={[
-              {
-                children: "Add",
-                autoFocus: true,
-                icon: <FaSave />,
-                onClick: handleSave,
-              },
-            ]}
-            onContinue={onComplete}
-          >
-            <WeaponCard wrapperCls="max-h-full custom-scrollbar" weapon={weapon} />
-          </SavingStepLayout>
-        </SaverLayout>
-      );
+  if (sameWeapons.length) {
+    const message = genSameEntityMessage("Weapon");
 
-    case "POSSIBLE_DUP":
-      return (
-        <SaverLayout type="WEAPON">
-          <SavingStepLayout
-            className="grow"
-            message={genSimilarEntityMessage("Weapon")}
-            actions={[
-              {
-                children: "Add new",
-                icon: <FaPlus />,
-                onClick: handleAddNew,
-              },
-            ]}
-            onContinue={onComplete}
-          >
-            <WeaponSaveMenu items={similarWeapons} weapon={weapon} onUpdate={onComplete} />
-          </SavingStepLayout>
-        </SaverLayout>
-      );
+    return (
+      <SaverLayout type="WEAPON">
+        <SavingStepLayout
+          className="grow"
+          actions={[
+            {
+              children: "Cancel",
+              icon: <FaTimes />,
+              onClick: onComplete,
+            },
+            {
+              children: "Update",
+              icon: <MdEdit />,
+              disabled: !selectedWeapon || isExactWeapon(selectedWeapon, weapon),
+              onClick: handleUpdate,
+            },
+          ]}
+          continueProps={{
+            children: "Add new",
+            icon: <FaPlus />,
+          }}
+          onContinue={handleSave}
+        >
+          <WeaponSummary variant="primary" label={weapon.data.name} weapon={weapon} />
+
+          <div className="mx-auto my-4 h-px w-1/2 bg-dark-line" />
+
+          <p className="text-light-3 text-sm">{message.main}</p>
+          <p className="mt-1 text-light-hint text-sm">{message.hint}</p>
+
+          <div className="mt-2 space-y-2">
+            {sameWeapons.map((item, index) => (
+              <WeaponSummary
+                key={item.ID}
+                label={
+                  <span>
+                    <span>Weapon {index + 1}</span>{" "}
+                    {item.owner && <span className="text-light-4">({item.owner})</span>}
+                  </span>
+                }
+                weapon={item}
+                selectable
+                selected={selectedWeapon?.ID === item.ID}
+                onSelect={() => setSelectedWeapon(item)}
+              />
+            ))}
+          </div>
+        </SavingStepLayout>
+      </SaverLayout>
+    );
   }
+
+  return (
+    <SaverLayout type="WEAPON">
+      <SavingStepLayout
+        className="grow"
+        message={`${genNewEntityMessage("Weapon")} ${CONTINUE_MSG}`}
+        actions={[
+          {
+            children: "Cancel",
+            icon: <FaTimes />,
+            onClick: onComplete,
+          },
+        ]}
+        continueProps={{
+          icon: <FaSave />,
+          autoFocus: true,
+        }}
+        onContinue={handleSave}
+      >
+        <WeaponSummary variant="primary" label={weapon.data.name} weapon={weapon} />
+      </SavingStepLayout>
+    </SaverLayout>
+  );
 }

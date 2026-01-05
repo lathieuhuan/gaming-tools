@@ -8,6 +8,7 @@ type SavingStepLayoutProps = {
   children: React.ReactNode;
   actions?: ButtonProps[];
   continueProps?: ButtonProps;
+  /** Default "Continue" */
   continueText?: string;
   continueRef?: RefCallback<HTMLButtonElement>;
   onContinue?: () => void;

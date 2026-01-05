@@ -12,7 +12,7 @@ import IdStore from "@/utils/IdStore";
 import { useDispatch } from "@Store/hooks";
 import { addUserArtifact, addUserWeapon } from "@Store/userdb-slice";
 
-import { SaveArtifactStep } from "./SaveArtifactStep";
+import { SaveArtifactStep, SaveArtifactStepProps } from "./SaveArtifactStep";
 import { SaveCharacterStep, SaveCharacterStepProps } from "./SaveCharacterStep";
 import { SaveWeaponStep, SaveWeaponStepProps } from "./SaveWeaponStep";
 import { SaverLayout } from "../_components/SaverLayout";
@@ -32,17 +32,8 @@ type SavingStepperProps = {
 };
 
 export function SavingStepper({ steps, onComplete }: SavingStepperProps) {
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const store = useStore();
-  const idStore = useRef(new IdStore());
-  const saveOutput = useRef<SaveOutput>({});
-
   const [currIndex, setCurrIndex] = useState(0);
-
-  const tempData = useRef<TempData>({
-    equippedAtfIds: [],
-  });
+  const saveOutput = useRef<SaveOutput>({});
 
   const handleCompleteStep = () => {
     const nextIndex = currIndex + 1;
@@ -66,13 +57,11 @@ export function SavingStepper({ steps, onComplete }: SavingStepperProps) {
     handleCompleteStep();
   };
 
-  const handleSaveArtifact = (artifact: IArtifactBasic) => {
-    tempData.current.equippedAtfIds.push(artifact.ID);
-    dispatch(addUserArtifact(artifact));
+  const handleSaveArtifact: SaveArtifactStepProps["onAction"] = (output) => {
+    const newArtifacts = saveOutput.current.artifacts ?? [];
+    newArtifacts.push(output);
 
-    notification.success({
-      content: "Artifact saved successfully!",
-    });
+    saveOutput.current.artifacts = newArtifacts;
     handleCompleteStep();
   };
 
@@ -98,19 +87,16 @@ export function SavingStepper({ steps, onComplete }: SavingStepperProps) {
           />
         );
 
-      // case "ARTIFACT": {
-      //   return (
-      //     <SaveArtifactStep
-      //       className="h-full custom-scrollbar"
-      //       {...step}
-      //       store={store}
-      //       idStore={idStore.current}
-      //       onSave={handleSaveArtifact}
-      //       onSkip={handleCompleteStep}
-      //       ctaRef={ctaRef}
-      //     />
-      //   );
-      // }
+      case "ARTIFACT": {
+        return (
+          <SaveArtifactStep
+            className="h-full custom-scrollbar"
+            step={step}
+            ctaRef={ctaRef}
+            onAction={handleSaveArtifact}
+          />
+        );
+      }
 
       default:
         return null;

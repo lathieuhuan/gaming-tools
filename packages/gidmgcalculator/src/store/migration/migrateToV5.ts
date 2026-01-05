@@ -7,7 +7,7 @@ export const migrateToV5 = (state?: UserdbState): UserdbState => {
   }
 
   try {
-    const { userWps, userArts } = state;
+    const { userWps = [], userArts = [] } = state;
 
     return {
       ...state,

@@ -6,13 +6,14 @@ import { Checkbox } from "rond";
 import type { IWeaponBasic } from "@/types";
 import type { SaveOutput, WeaponSavingStep } from "./_types";
 
-import { genNewEntityMessage, genSimilarEntityMessage, LETS_CONTINUE_MSG } from "../_config";
+import { genNewEntityMessage, genSameEntityMessage, CONTINUE_MSG } from "../_config";
 
 import { EquipmentIcon } from "@/assets/icons";
 import { EntityComparer } from "../_components/EntityComparer";
 import { SavingStepLayout } from "../_components/SavingStepLayout";
 import { WeaponCompareMenu } from "../_components/WeaponCompareMenu";
 import { WeaponSummary } from "../_components/WeaponSummary";
+import { isExactWeapon } from "../_utils";
 
 export type SaveWeaponStepProps = {
   className?: string;
@@ -25,10 +26,6 @@ export function SaveWeaponStep({ className, step, ctaRef, onAction }: SaveWeapon
   const { config, data: weapon } = step;
   const [selectedWeapon, setSelectedWeapon] = useState<IWeaponBasic>();
   const [shouldUpdate, setShouldUpdate] = useState(true);
-
-  const isChanged = (weapon1: IWeaponBasic, weapon2: IWeaponBasic) => {
-    return weapon1.level !== weapon2.level || weapon1.refi !== weapon2.refi;
-  };
 
   const handleSelectSameWeapon = (weapon: IWeaponBasic) => {
     setSelectedWeapon(weapon);
@@ -45,7 +42,7 @@ export function SaveWeaponStep({ className, step, ctaRef, onAction }: SaveWeapon
       return (
         <SavingStepLayout
           className={className}
-          message={`${message} ${LETS_CONTINUE_MSG}`}
+          message={`${message} ${CONTINUE_MSG}`}
           continueRef={ctaRef}
           onContinue={() => {
             onAction?.({
@@ -54,7 +51,7 @@ export function SaveWeaponStep({ className, step, ctaRef, onAction }: SaveWeapon
             });
           }}
         >
-          <WeaponSummary className="p-4 rounded-md bg-dark-1" weapon={weapon} />
+          <WeaponSummary label={weapon.data.name} weapon={weapon} />
         </SavingStepLayout>
       );
     }
@@ -75,6 +72,8 @@ export function SaveWeaponStep({ className, step, ctaRef, onAction }: SaveWeapon
           });
         }
       };
+
+      const message = genSameEntityMessage("Weapon");
 
       return (
         <SavingStepLayout
@@ -115,13 +114,14 @@ export function SaveWeaponStep({ className, step, ctaRef, onAction }: SaveWeapon
                   {weapon.owner} is currently equipped with the following weapon. This step can be
                   skipped.
                 </p>
-                <WeaponSummary className="p-4 rounded-md bg-dark-1" weapon={currentWeapon} />
+                <WeaponSummary label={currentWeapon.data.name} weapon={currentWeapon} />
 
                 <div className="mx-auto my-4 h-px w-1/2 bg-dark-line" />
               </div>
             )}
 
-            <p className="mb-3 text-light-3 text-sm">{genSimilarEntityMessage("Weapon", true)}</p>
+            <p className="text-light-3 text-sm">{message.main}</p>
+            <p className="mt-1 text-light-hint text-sm">{message.hint}</p>
 
             <WeaponCompareMenu
               className="grow custom-scrollbar"
@@ -130,7 +130,7 @@ export function SaveWeaponStep({ className, step, ctaRef, onAction }: SaveWeapon
               onSelect={handleSelectSameWeapon}
             />
 
-            {selectedWeapon && isChanged(selectedWeapon, weapon) && (
+            {selectedWeapon && !isExactWeapon(selectedWeapon, weapon) && (
               <div>
                 <Checkbox checked={shouldUpdate} onChange={() => setShouldUpdate(!shouldUpdate)}>
                   <span>Also update the selected weapon</span>
@@ -192,13 +192,11 @@ export function SaveWeaponStep({ className, step, ctaRef, onAction }: SaveWeapon
             items={[
               {
                 label: "Current",
-                children: (
-                  <WeaponSummary className="p-4 rounded-md bg-dark-1" weapon={currentWeapon} />
-                ),
+                children: <WeaponSummary label={weapon.data.name} weapon={currentWeapon} />,
               },
               {
                 label: "To be saved",
-                children: <WeaponSummary className="p-4 rounded-md bg-dark-1" weapon={weapon} />,
+                children: <WeaponSummary label={weapon.data.name} weapon={weapon} />,
               },
             ]}
           />
