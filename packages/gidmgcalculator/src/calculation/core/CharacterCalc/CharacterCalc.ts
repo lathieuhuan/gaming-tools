@@ -88,8 +88,8 @@ export class CharacterCalc extends CalcCharacter implements IEffectPerformer {
     }
 
     // ===== Innate stats =====
-    this.inntateStats.entries.forEach(([stat, value]) => {
-      totalAttrCtrl.addBase(stat, value, "Character innate stat");
+    this.data.statInnates?.forEach((stat) => {
+      totalAttrCtrl.addBase(stat.type, stat.value, "Character innate stat");
     });
 
     // ===== Ascension stats =====

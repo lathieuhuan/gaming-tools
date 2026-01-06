@@ -54,7 +54,6 @@ export class CalcCharacter<
   implements ICalcCharacter<W, A>, ITeamMember<TTeam>
 {
   team: ITeam;
-  protected inntateStats = new TypeCounter<AttributeStat>();
 
   totalAttrs: TotalAttributes;
   attkBonusCtrl: AttackBonusControl;
@@ -67,10 +66,6 @@ export class CalcCharacter<
     this.totalAttrs = totalAttrs;
     this.attkBonusCtrl = attkBonusCtrl;
     this.team = team || new Team([this]);
-
-    data.statInnates?.forEach((stat) => {
-      this.inntateStats.add(stat.type, stat.value);
-    });
   }
 
   join(team: TTeam) {

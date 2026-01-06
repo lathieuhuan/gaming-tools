@@ -4,7 +4,7 @@ import { MdEdit } from "react-icons/md";
 import type { AppCharacter, ICharacterBasic } from "@/types";
 import type { CharacterSavingStep, SaveOutput } from "./_types";
 
-import { genNewEntityMessage, getDifferentEntityMessage, LETS_CONTINUE_MSG } from "../_config";
+import { genNewEntityMessage, getDifferentEntityMessage, CONTINUE_MSG } from "../_config";
 
 import { CharacterPortrait } from "@/components";
 import { EntityComparer } from "../_components/EntityComparer";
@@ -28,7 +28,7 @@ export function SaveCharacterStep({ step, ctaRef, onAction }: SaveCharacterStepP
       return (
         <SavingStepLayout
           className="h-full p-4"
-          message={`${message} ${LETS_CONTINUE_MSG}`}
+          message={`${message} ${CONTINUE_MSG}`}
           continueRef={ctaRef}
           onContinue={() => {
             onAction?.({

@@ -114,7 +114,10 @@ export class TotalAttributeControl {
   }
 
   finalize() {
-    const totalAttrs = new TypeCounter<TypeCounterKey<TotalAttributes>>();
+    const totalAttrs = new TypeCounter<TypeCounterKey<TotalAttributes>>(
+      {},
+      { allowNegative: true }
+    );
 
     for (const key of ATTRIBUTE_STAT_TYPES) {
       if (key === "hp_" || key === "atk_" || key === "def_") {

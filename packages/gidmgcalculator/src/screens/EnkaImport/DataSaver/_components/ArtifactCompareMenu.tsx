@@ -30,7 +30,7 @@ export function ArtifactCompareMenu({
 
   return (
     <div className={className}>
-      <ArtifactSummary className="mb-2" artifact={artifact} />
+      <ArtifactSummary className="mb-2" label={artifact.data.name} artifact={artifact} />
 
       <div className="space-y-2">
         {sameArtifacts.map((item, index) => {

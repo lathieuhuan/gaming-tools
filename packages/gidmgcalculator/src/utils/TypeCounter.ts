@@ -1,8 +1,13 @@
 import Object_ from "./Object";
 
+type TypeCounterOptions = {
+  allowNegative?: boolean;
+};
+
 export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   private count: Record<TKey, number>;
   private initial: Partial<Record<TKey, number>> = {};
+  private min: number;
 
   /** Only keys with positive count */
   get keys() {
@@ -23,20 +28,25 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
     return this.count;
   }
 
-  constructor(initial: Partial<Record<TKey, number>> = {}) {
-    const data = this.filter(initial);
+  constructor(
+    initial: Partial<Record<TKey, number>> = {},
+    private options: TypeCounterOptions = {}
+  ) {
+    const min = options.allowNegative ? -Infinity : 0;
+    const data = this.filter(initial, min);
 
     this.initial = { ...data };
     this.count = { ...data };
+    this.min = min;
   }
 
-  private filter(data: Partial<Record<TKey, number>>) {
+  private filter(data: Partial<Record<TKey, number>>, min = 0) {
     const filtered = {} as Record<TKey, number>;
 
     for (const key of Object_.keys(data)) {
       const value = data[key];
 
-      if (value && value > 0) {
+      if (value && value > min) {
         filtered[key] = value;
       }
     }
@@ -61,7 +71,7 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   add = (key: TKey, value = 1) => {
     const newCount = this._get(key) + value;
 
-    if (newCount > 0) {
+    if (newCount > this.min) {
       this.count[key] = newCount;
     } else {
       delete this.count[key];
@@ -102,7 +112,7 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   };
 
   clone = () => {
-    return new TypeCounter(this.count);
+    return new TypeCounter(this.count, this.options);
   };
 
   reset = () => {
