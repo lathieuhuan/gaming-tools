@@ -8,7 +8,12 @@ import type {
   IWeaponBasic,
 } from "@/types";
 import type { GOODCharacterConvertReturn } from "@/utils/GOOD";
-import type { ArtifactSavingStep, CharacterSaveConfig, WeaponSaveConfig } from "./_types";
+import type {
+  ArtifactSavingStep,
+  CharacterSaveConfig,
+  WeaponSaveConfig,
+  WeaponSavingStep,
+} from "./_types";
 
 import { Artifact, Weapon } from "@/models/base";
 import { $AppWeapon } from "@/services";
@@ -165,5 +170,29 @@ export const getOldBuildWeaponSaveConfig = (
     instruct: "COMPARABLE",
     isSame: false,
     currentWeapon: current,
+  };
+};
+
+//
+
+export const getWeaponSavingStep = (weapon: Weapon, userWps: IWeaponBasic[]): WeaponSavingStep => {
+  let currentWeapon: IWeaponBasic | undefined;
+
+  const sameWeapons = userWps.filter((userWp) => {
+    const isSameCode = userWp.code === weapon.code;
+
+    if (isSameCode && userWp.owner === weapon.owner) {
+      currentWeapon = userWp;
+      return false;
+    }
+
+    return isSameCode && !userWp.owner;
+  });
+
+  return {
+    type: "WEAPON",
+    data: weapon,
+    currentWeapon,
+    sameWeapons,
   };
 };

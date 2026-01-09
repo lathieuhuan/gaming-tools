@@ -1,7 +1,7 @@
 import { RefCallback, useState } from "react";
 import { FaPlus, FaSyncAlt } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { Checkbox } from "rond";
+import { ButtonProps, Checkbox, OverflowTrackingContainer } from "rond";
 
 import type { IWeaponBasic } from "@/types";
 import type { SaveOutput, WeaponSavingStep } from "./_types";
@@ -14,6 +14,7 @@ import { SavingStepLayout } from "../_components/SavingStepLayout";
 import { WeaponCompareMenu } from "../_components/WeaponCompareMenu";
 import { WeaponSummary } from "../_components/WeaponSummary";
 import { isExactWeapon } from "../_utils";
+import { WeaponSaver } from "../_components/WeaponSaver";
 
 export type SaveWeaponStepProps = {
   className?: string;
@@ -23,185 +24,93 @@ export type SaveWeaponStepProps = {
 };
 
 export function SaveWeaponStep({ className, step, ctaRef, onAction }: SaveWeaponStepProps) {
-  const { config, data: weapon } = step;
+  const { data: weapon } = step;
   const [selectedWeapon, setSelectedWeapon] = useState<IWeaponBasic>();
   const [shouldUpdate, setShouldUpdate] = useState(true);
 
-  const handleSelectSameWeapon = (weapon: IWeaponBasic) => {
-    setSelectedWeapon(weapon);
-    setShouldUpdate(true);
+  const isDifferentToWeapon = (comparedWeapon: IWeaponBasic) => {
+    return !isExactWeapon(comparedWeapon, weapon);
   };
 
-  switch (config.instruct) {
-    case "CONTINUABLE": {
-      const isNew = config.status === "NEW";
-      const message = isNew
-        ? genNewEntityMessage("Weapon")
-        : `${weapon.owner} is currently equipped with this weapon and it is unchanged.`;
+  const handleSelectSameWeapon = (weapon: IWeaponBasic) => {
+    setSelectedWeapon(weapon);
+  };
 
-      return (
-        <SavingStepLayout
-          className={className}
-          message={`${message} ${CONTINUE_MSG}`}
-          continueRef={ctaRef}
-          onContinue={() => {
-            onAction?.({
-              action: isNew ? "CREATE" : "NONE",
-              weapon: weapon.serialize(),
-            });
-          }}
-        >
-          <WeaponSummary label={weapon.data.name} weapon={weapon} />
-        </SavingStepLayout>
-      );
-    }
+  const handleUpdate = (weapon: IWeaponBasic) => {
+    onAction?.({
+      action: "UPDATE",
+      weapon,
+    });
+  };
 
-    case "EQUIPPABLE": {
-      const { currentWeapon } = config;
+  const { actions, continueText, showUpdateCheckbox } = getLayoutConfig(step, selectedWeapon);
 
-      const handleEquip = () => {
-        if (selectedWeapon) {
-          onAction?.({
-            action: "UPDATE",
-            weapon: shouldUpdate
-              ? {
-                  ...weapon.serialize(),
-                  ID: selectedWeapon.ID,
-                }
-              : selectedWeapon,
-          });
-        }
-      };
-
-      const message = genSameEntityMessage("Weapon");
-
-      return (
-        <SavingStepLayout
-          className={className}
-          actions={[
-            {
-              children: "Equip",
-              icon: <EquipmentIcon className="text-xl" />,
-              disabled: !selectedWeapon,
-              onClick: handleEquip,
-            },
-            {
-              children: "Add new",
-              icon: <FaPlus />,
-              onClick: () => {
-                onAction?.({
-                  action: "CREATE",
-                  weapon: weapon.serialize(),
-                });
-              },
-            },
-          ]}
-          continueProps={{
-            children: "Skip",
-            hidden: !currentWeapon,
-          }}
-          onContinue={() => {
-            onAction?.({
-              action: "NONE",
-              weapon: weapon.serialize(),
-            });
-          }}
-        >
-          <div className="h-full flex flex-col">
-            {currentWeapon && (
-              <div>
-                <p className="mb-2 text-light-3 text-sm">
-                  {weapon.owner} is currently equipped with the following weapon. This step can be
-                  skipped.
-                </p>
-                <WeaponSummary label={currentWeapon.data.name} weapon={currentWeapon} />
-
-                <div className="mx-auto my-4 h-px w-1/2 bg-dark-line" />
-              </div>
-            )}
-
-            <p className="text-light-3 text-sm">{message.main}</p>
-            <p className="mt-1 text-light-hint text-sm">{message.hint}</p>
-
-            <WeaponCompareMenu
-              className="grow custom-scrollbar"
-              weapon={weapon}
-              sameWeapons={config.sameWeapons}
-              onSelect={handleSelectSameWeapon}
-            />
-
-            {selectedWeapon && !isExactWeapon(selectedWeapon, weapon) && (
-              <div>
-                <Checkbox checked={shouldUpdate} onChange={() => setShouldUpdate(!shouldUpdate)}>
-                  <span>Also update the selected weapon</span>
-                </Checkbox>
-              </div>
-            )}
-          </div>
-        </SavingStepLayout>
-      );
-    }
-
-    case "COMPARABLE": {
-      const { isSame, currentWeapon } = config;
-      const message = isSame
-        ? `${weapon.owner} is currently equipped with a different version of this weapon.`
-        : `${weapon.owner} is currently equipped with a different weapon.`;
-
-      const handleUpdate = () => {
+  return (
+    <SavingStepLayout
+      className={className}
+      actions={actions}
+      continueText={continueText}
+      onContinue={() => {
         onAction?.({
-          action: "UPDATE",
-          weapon: {
-            ...weapon.serialize(),
-            ID: currentWeapon.ID,
-          },
+          action: "NONE",
+          weapon: weapon.serialize(),
         });
-      };
-
-      return (
-        <SavingStepLayout
-          className={className}
-          message={message}
-          actions={[
-            isSame
-              ? {
-                  children: "Update",
-                  icon: <MdEdit />,
-                  onClick: handleUpdate,
-                }
-              : {
-                  children: "Add & Switch",
-                  icon: <FaSyncAlt />,
-                  onClick: () => {
-                    onAction?.({
-                      action: "CREATE",
-                      weapon: weapon.serialize(),
-                    });
-                  },
-                },
-          ]}
-          continueText={isSame ? "Keep" : "Skip"}
-          onContinue={() => {
-            onAction?.({
-              action: "NONE",
-              weapon: weapon.serialize(),
-            });
-          }}
-        >
-          <EntityComparer
-            items={[
-              {
-                label: "Current",
-                children: <WeaponSummary label={weapon.data.name} weapon={currentWeapon} />,
-              },
-              {
-                label: "To be saved",
-                children: <WeaponSummary label={weapon.data.name} weapon={weapon} />,
-              },
-            ]}
+      }}
+    >
+      <div className="h-full flex flex-col justify-between">
+        <OverflowTrackingContainer className="grow custom-scrollbar" overflowedCls="pr-2">
+          <WeaponSaver
+            {...step}
+            sameWeaponsAreWithoutOwner
+            weapon={weapon}
+            selectedWeapon={selectedWeapon}
+            onSelectWeapon={handleSelectSameWeapon}
           />
-        </SavingStepLayout>
-      );
-    }
-  }
+        </OverflowTrackingContainer>
+
+        {showUpdateCheckbox && (
+          <div className="mt-4">
+            <Checkbox checked={shouldUpdate} onChange={() => setShouldUpdate(!shouldUpdate)}>
+              <span>Also update the selected weapon</span>
+            </Checkbox>
+          </div>
+        )}
+      </div>
+    </SavingStepLayout>
+  );
 }
+
+const getLayoutConfig = (
+  { data: weapon, currentWeapon, sameWeapons }: WeaponSavingStep,
+  selectedWeapon?: IWeaponBasic
+) => {
+  let actions: ButtonProps[] = [];
+  let continueText: string | undefined;
+  let showUpdateCheckbox = selectedWeapon && !isExactWeapon(selectedWeapon, weapon);
+
+  if (currentWeapon || sameWeapons.length) {
+    const currentWeaponIsSelected = currentWeapon && currentWeapon.ID === selectedWeapon?.ID;
+    const firstAction: ButtonProps = currentWeaponIsSelected
+      ? {
+          children: "Update",
+          icon: <MdEdit />,
+        }
+      : {
+          children: "Equip",
+          icon: <EquipmentIcon className="text-xl" />,
+        };
+
+    actions.push({
+      ...firstAction,
+      hidden: !selectedWeapon,
+    });
+
+    showUpdateCheckbox = showUpdateCheckbox && !currentWeaponIsSelected;
+  }
+
+  return {
+    actions,
+    continueText,
+    showUpdateCheckbox,
+  };
+};

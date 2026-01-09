@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useScreenWatcher, useValues, WarehouseLayout } from "rond";
 
 import type { IWeaponBasic, WeaponType } from "@/types";
@@ -15,7 +15,7 @@ import { ComplexFilterButton } from "../_components/ComplexFilterButton";
 import { UserItemSortButton } from "../_components/UserItemSortButton";
 import { WarehouseWrapper } from "../_components/WarehouseWrapper";
 import { ActionContainer } from "./ActionContainer";
-import { ActiveWeaponView } from "./ActiveWeaponView";
+import { ActiveWeaponView, ActiveWeaponViewControlRef } from "./ActiveWeaponView";
 import { AddButton } from "./AddButton";
 
 const selectWeaponInventory = createSelector(
@@ -30,6 +30,7 @@ const selectWeaponInventory = createSelector(
 function MyWeapons() {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
+  const activeWeaponViewRef = useRef<ActiveWeaponViewControlRef>(null);
 
   const [activeId, setActiveId] = useState<number>();
 
@@ -48,6 +49,38 @@ function MyWeapons() {
     const data = Array_.findById(filteredWeapons, activeId);
     return data && createWeapon(data);
   }, [filteredWeapons, activeId]);
+
+  const handleRemoveWeapon = (weapon: IWeaponBasic) => {
+    const removedIndex = Array_.indexById(filteredWeapons, weapon.ID);
+
+    if (removedIndex !== -1) {
+      let newActiveId: number | undefined = undefined;
+
+      if (filteredWeapons.length > 1) {
+        const move = removedIndex === filteredWeapons.length - 1 ? -1 : 1;
+
+        newActiveId = filteredWeapons[removedIndex + move]?.ID;
+      }
+
+      setActiveId(newActiveId);
+    }
+  };
+
+  useEffect(() => {
+    if (activeWeapon) {
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === "Delete") {
+          activeWeaponViewRef.current?.remove();
+        }
+      };
+
+      document.addEventListener("keydown", handleKeyDown);
+
+      return () => {
+        document.removeEventListener("keydown", handleKeyDown);
+      };
+    }
+  }, [activeWeapon]);
 
   const actions = (
     <ActionContainer extra={<WeaponTypeSelect values={weaponTypes} onSelect={toggleWeaponType} />}>
@@ -71,22 +104,6 @@ function MyWeapons() {
     </ActionContainer>
   );
 
-  const handleRemoveWeapon = (weapon: IWeaponBasic) => {
-    const removedIndex = Array_.indexById(filteredWeapons, weapon.ID);
-
-    if (removedIndex !== -1) {
-      let newActiveId: number | undefined = undefined;
-
-      if (filteredWeapons.length > 1) {
-        const move = removedIndex === filteredWeapons.length - 1 ? -1 : 1;
-
-        newActiveId = filteredWeapons[removedIndex + move]?.ID;
-      }
-
-      setActiveId(newActiveId);
-    }
-  };
-
   return (
     <WarehouseLayout className="h-full" actions={actions}>
       <InventoryRack
@@ -97,7 +114,11 @@ function MyWeapons() {
         activeId={activeWeapon?.ID}
         onChangeItem={(weapon) => setActiveId(weapon?.userData.ID)}
       />
-      <ActiveWeaponView weapon={activeWeapon} onRemoveWeapon={handleRemoveWeapon} />
+      <ActiveWeaponView
+        ref={activeWeaponViewRef}
+        weapon={activeWeapon}
+        onRemoveWeapon={handleRemoveWeapon}
+      />
     </WarehouseLayout>
   );
 }

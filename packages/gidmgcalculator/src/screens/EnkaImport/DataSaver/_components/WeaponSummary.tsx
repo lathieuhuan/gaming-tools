@@ -27,7 +27,10 @@ export function WeaponSummary(props: WeaponSummaryProps) {
   const { variant = "default", weapon } = props;
 
   return (
-    <div className={clsx("px-3 py-2 rounded-md bg-dark-1 relative", props.className)}>
+    <div
+      className={clsx("px-3 py-2 rounded-md bg-dark-1 relative", props.className)}
+      data-slot="weapon-summary"
+    >
       <p
         className={
           variant === "primary" ? "text-primary-1 font-semibold" : "text-light-1 font-medium"

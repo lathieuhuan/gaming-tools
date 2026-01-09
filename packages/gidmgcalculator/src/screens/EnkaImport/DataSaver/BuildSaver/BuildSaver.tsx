@@ -13,6 +13,7 @@ import {
   getNewBuildArtifactSaveConfigs,
   getNewBuildWeaponSaveConfig,
   getOldBuildWeaponSaveConfig,
+  getWeaponSavingStep,
 } from "./_logic";
 
 import { BuildSaverContext, BuildSaverContextState } from "./_context";
@@ -55,23 +56,7 @@ export function BuildSaver({ children }: { children: ReactNode }) {
 
     const weapon = createWeapon(build.weapon, build.weapon.data, idStore);
 
-    if (characterSaveConfig.status === "NEW") {
-      savingSteps.push({
-        type: "WEAPON",
-        data: weapon,
-        config: getNewBuildWeaponSaveConfig(weapon, userWps),
-      });
-    } else {
-      savingSteps.push({
-        type: "WEAPON",
-        data: weapon,
-        config: getOldBuildWeaponSaveConfig(
-          weapon,
-          userWps,
-          characterSaveConfig.existedCharacter.weaponID
-        ),
-      });
-    }
+    savingSteps.push(getWeaponSavingStep(weapon, userWps));
 
     savingSteps.push(...getNewBuildArtifactSaveConfigs(artifacts, userArts));
 

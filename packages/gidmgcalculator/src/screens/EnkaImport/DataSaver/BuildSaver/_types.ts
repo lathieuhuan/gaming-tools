@@ -40,7 +40,9 @@ export type WeaponSaveConfig =
 export type WeaponSavingStep = {
   type: "WEAPON";
   data: Weapon;
-  config: WeaponSaveConfig;
+  currentWeapon?: IWeaponBasic;
+  sameWeapons: IWeaponBasic[];
+  // config: WeaponSaveConfig;
 };
 
 // ===== Artifact Saving Step =====
@@ -58,7 +60,7 @@ export type SavingStep = CharacterSavingStep | WeaponSavingStep | ArtifactSaving
 export type ArtifactSaveOutput = {
   action: "CREATE" | "UPDATE" | "NONE";
   artifact: IArtifactBasic;
-}
+};
 
 export type SaveOutput = {
   character?: {

@@ -128,7 +128,10 @@ export class TotalAttributeControl {
         totalAttrs.add(`base_${key}`, this.totalAttr[key].base);
       }
 
-      totalAttrs.add(key, this.getTotal(key));
+      const total = this.getTotal(key);
+      const isSpeedStat = key === "naAtkSpd_" || key === "caAtkSpd_";
+
+      totalAttrs.add(key, isSpeedStat ? Math.min(total, 160) : total);
     }
 
     return totalAttrs;

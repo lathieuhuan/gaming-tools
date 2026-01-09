@@ -1,12 +1,18 @@
-export const CONTINUE_MSG = "Press Continue to save it.";
+export const CONTINUE_MSG = "Press Continue to save.";
 
 export const genNewEntityMessage = (entity: string) => {
   return `This is a new ${entity}.`;
 };
 
-export const genSameEntityMessage = (entity: string) => {
+type SameEntityMessageOptions = {
+  withoutOwner?: boolean;
+};
+
+export const genSameEntityMessage = (entity: string, options: SameEntityMessageOptions = {}) => {
+  const withoutOwner = options.withoutOwner ? " without owner" : "";
+
   return {
-    main: `Similar ${entity}s are found. Reuse is recommended.`,
+    main: `Similar ${entity}s${withoutOwner} are found. Reuse is recommended.`,
     hint: `You can select 1 ${entity} and update it if different.`,
   };
 };
