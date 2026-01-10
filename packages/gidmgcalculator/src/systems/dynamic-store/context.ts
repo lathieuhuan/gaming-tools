@@ -44,6 +44,8 @@ export function useStore() {
   };
 }
 
+export type DynamicStore = ReturnType<typeof useStore>;
+
 export function useStoreSnapshot<T>(
   selector: (state: RootState) => T,
   deps: React.DependencyList = []

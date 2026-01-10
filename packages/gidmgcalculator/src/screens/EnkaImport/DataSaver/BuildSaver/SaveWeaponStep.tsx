@@ -1,20 +1,22 @@
 import { RefCallback, useState } from "react";
-import { FaPlus, FaSyncAlt } from "react-icons/fa";
+import { FaAngleDoubleRight, FaPlus } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { ButtonProps, Checkbox, OverflowTrackingContainer } from "rond";
+import { ButtonProps, Checkbox, notification } from "rond";
 
+import type { Weapon } from "@/models/base";
 import type { IWeaponBasic } from "@/types";
 import type { SaveOutput, WeaponSavingStep } from "./_types";
 
-import { genNewEntityMessage, genSameEntityMessage, CONTINUE_MSG } from "../_config";
+import { useStoreCheck } from "@/hooks/useStoreCheck";
+import { genCaseConfigs } from "../_config";
+import { isExactWeapon, isSameWeapon } from "../_logic";
 
 import { EquipmentIcon } from "@/assets/icons";
-import { EntityComparer } from "../_components/EntityComparer";
+import { CaseNewWeapon } from "../_components/CaseNewWeapon";
+import { CaseSameWeapons } from "../_components/CaseSameWeapons";
+import { SavingCase } from "../_components/SavingCase";
 import { SavingStepLayout } from "../_components/SavingStepLayout";
-import { WeaponCompareMenu } from "../_components/WeaponCompareMenu";
 import { WeaponSummary } from "../_components/WeaponSummary";
-import { isExactWeapon } from "../_utils";
-import { WeaponSaver } from "../_components/WeaponSaver";
 
 export type SaveWeaponStepProps = {
   className?: string;
@@ -24,49 +26,128 @@ export type SaveWeaponStepProps = {
 };
 
 export function SaveWeaponStep({ className, step, ctaRef, onAction }: SaveWeaponStepProps) {
-  const { data: weapon } = step;
+  const { data: weapon, currentWeapon, sameWeapons } = step;
+  const { isAbleToAddWeapon } = useStoreCheck();
   const [selectedWeapon, setSelectedWeapon] = useState<IWeaponBasic>();
   const [shouldUpdate, setShouldUpdate] = useState(true);
 
-  const isDifferentToWeapon = (comparedWeapon: IWeaponBasic) => {
-    return !isExactWeapon(comparedWeapon, weapon);
-  };
-
-  const handleSelectSameWeapon = (weapon: IWeaponBasic) => {
+  const handleSelectWeapon = (weapon: IWeaponBasic) => {
     setSelectedWeapon(weapon);
+    setShouldUpdate(true);
   };
 
-  const handleUpdate = (weapon: IWeaponBasic) => {
+  const handleCreate = () => {
+    const error = isAbleToAddWeapon(1);
+
+    if (error) {
+      notification.error({ content: error.message });
+      return;
+    }
+
     onAction?.({
-      action: "UPDATE",
-      weapon,
+      action: "CREATE",
+      weapon: weapon.serialize(),
     });
   };
 
-  const { actions, continueText, showUpdateCheckbox } = getLayoutConfig(step, selectedWeapon);
+  const handleUpdate = () => {
+    if (selectedWeapon) {
+      onAction?.({
+        action: "UPDATE",
+        weapon: {
+          ...(shouldUpdate ? weapon.serialize() : selectedWeapon),
+          ID: selectedWeapon.ID,
+        },
+      });
+    }
+  };
+
+  const handleSkip = () => {
+    if (currentWeapon) {
+      onAction?.({
+        action: "NONE",
+        weapon: currentWeapon.serialize(),
+      });
+    }
+  };
+
+  let actions: ButtonProps[] = [];
+  let showUpdateCheckbox = selectedWeapon && !isExactWeapon(selectedWeapon, weapon);
+
+  if (currentWeapon || sameWeapons.length) {
+    const currentIsSelected = currentWeapon && currentWeapon.ID === selectedWeapon?.ID;
+
+    actions.push(
+      currentIsSelected
+        ? {
+            children: "Update",
+            icon: <MdEdit />,
+            hidden: !selectedWeapon,
+            onClick: handleUpdate,
+          }
+        : {
+            children: "Equip",
+            icon: <EquipmentIcon className="text-xl" />,
+            hidden: !selectedWeapon,
+            onClick: handleUpdate,
+          }
+    );
+
+    // We already Update button, do not need checkbox for this case
+    showUpdateCheckbox = showUpdateCheckbox && !currentIsSelected;
+  }
+
+  const hasNoSameWeapons =
+    (!currentWeapon || !isSameWeapon(currentWeapon, weapon)) && !sameWeapons.length;
+
+  const caseConfigs = genCaseConfigs("Weapon", {
+    hasNoSameEntities: hasNoSameWeapons,
+    withoutOwner: true,
+  });
 
   return (
     <SavingStepLayout
       className={className}
-      actions={actions}
-      continueText={continueText}
-      onContinue={() => {
-        onAction?.({
-          action: "NONE",
-          weapon: weapon.serialize(),
-        });
-      }}
+      actions={actions.concat(
+        {
+          children: "Add new",
+          icon: <FaPlus />,
+          refProp: hasNoSameWeapons ? ctaRef : undefined,
+          onClick: handleCreate,
+        },
+        {
+          children: "Skip",
+          icon: <FaAngleDoubleRight />,
+          hidden: !currentWeapon,
+          onClick: handleSkip,
+        }
+      )}
     >
-      <div className="h-full flex flex-col justify-between">
-        <OverflowTrackingContainer className="grow custom-scrollbar" overflowedCls="pr-2">
-          <WeaponSaver
-            {...step}
-            sameWeaponsAreWithoutOwner
-            weapon={weapon}
-            selectedWeapon={selectedWeapon}
-            onSelectWeapon={handleSelectSameWeapon}
-          />
-        </OverflowTrackingContainer>
+      <div className="h-full flex flex-col">
+        <div className="grow custom-scrollbar">
+          <CaseNewWeapon {...caseConfigs.toSaveCase} weapon={weapon} />
+
+          {currentWeapon && (
+            <CaseCurrentWeapon
+              currentWeapon={currentWeapon}
+              isOldVersion={
+                isSameWeapon(currentWeapon, weapon) && !isExactWeapon(currentWeapon, weapon)
+              }
+              selected={selectedWeapon?.ID === currentWeapon.ID}
+              onSelect={() => handleSelectWeapon(currentWeapon)}
+            />
+          )}
+
+          {sameWeapons.length > 0 && (
+            <CaseSameWeapons
+              {...caseConfigs.sameCase}
+              withDivider
+              sameWeapons={sameWeapons}
+              selectedWeapon={selectedWeapon}
+              onSelectWeapon={handleSelectWeapon}
+            />
+          )}
+        </div>
 
         {showUpdateCheckbox && (
           <div className="mt-4">
@@ -80,37 +161,37 @@ export function SaveWeaponStep({ className, step, ctaRef, onAction }: SaveWeapon
   );
 }
 
-const getLayoutConfig = (
-  { data: weapon, currentWeapon, sameWeapons }: WeaponSavingStep,
-  selectedWeapon?: IWeaponBasic
-) => {
-  let actions: ButtonProps[] = [];
-  let continueText: string | undefined;
-  let showUpdateCheckbox = selectedWeapon && !isExactWeapon(selectedWeapon, weapon);
-
-  if (currentWeapon || sameWeapons.length) {
-    const currentWeaponIsSelected = currentWeapon && currentWeapon.ID === selectedWeapon?.ID;
-    const firstAction: ButtonProps = currentWeaponIsSelected
-      ? {
-          children: "Update",
-          icon: <MdEdit />,
-        }
-      : {
-          children: "Equip",
-          icon: <EquipmentIcon className="text-xl" />,
-        };
-
-    actions.push({
-      ...firstAction,
-      hidden: !selectedWeapon,
-    });
-
-    showUpdateCheckbox = showUpdateCheckbox && !currentWeaponIsSelected;
-  }
-
-  return {
-    actions,
-    continueText,
-    showUpdateCheckbox,
-  };
+type CaseCurrentWeaponProps = {
+  currentWeapon: Weapon;
+  isOldVersion: boolean;
+  selected?: boolean;
+  onSelect?: () => void;
 };
+
+function CaseCurrentWeapon({
+  currentWeapon,
+  isOldVersion,
+  selected,
+  onSelect,
+}: CaseCurrentWeaponProps) {
+  return (
+    <SavingCase
+      message={`${currentWeapon.owner} is currently equipped with this Weapon.`}
+      hint={
+        <span>
+          Select <b>Skip</b> to keep using it{isOldVersion && ", or select it to update"}.
+        </span>
+      }
+      withDivider
+    >
+      <WeaponSummary
+        variant="primary"
+        label={`Current: ${currentWeapon.data.name}`}
+        weapon={currentWeapon}
+        selectable={isOldVersion}
+        selected={selected}
+        onSelect={onSelect}
+      />
+    </SavingCase>
+  );
+}

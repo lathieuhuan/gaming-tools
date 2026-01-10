@@ -1,10 +1,12 @@
 import { RefCallback } from "react";
+import { FaAngleDoubleRight, FaPlus } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 
 import type { AppCharacter, ICharacterBasic } from "@/types";
 import type { CharacterSavingStep, SaveOutput } from "./_types";
 
-import { genNewEntityMessage, getDifferentEntityMessage, CONTINUE_MSG } from "../_config";
+import { genNewEntityText, getDifferentEntityMessage } from "../_config";
+import { isExactCharacter } from "../_logic";
 
 import { CharacterPortrait } from "@/components";
 import { EntityComparer } from "../_components/EntityComparer";
@@ -17,73 +19,99 @@ export type SaveCharacterStepProps = {
 };
 
 export function SaveCharacterStep({ step, ctaRef, onAction }: SaveCharacterStepProps) {
-  const { config, data: character } = step;
+  const { data: character, current } = step;
 
-  switch (config.status) {
-    case "NEW":
-    case "UNCHANGED":
-      const isNew = config.status === "NEW";
-      const message = isNew ? genNewEntityMessage("Character") : "This character is unchanged.";
+  const skip = () => {
+    onAction?.({
+      action: "NONE",
+      character: character.basic,
+    });
+  };
 
-      return (
-        <SavingStepLayout
-          className="h-full p-4"
-          message={`${message} ${CONTINUE_MSG}`}
-          continueRef={ctaRef}
-          onContinue={() => {
-            onAction?.({
-              action: isNew ? "CREATE" : "NONE",
-              character: character.basic,
-            });
-          }}
-        >
-          <Overview character={character.basic} data={character.data} />
-        </SavingStepLayout>
-      );
-    case "CHANGED": {
-      return (
-        <SavingStepLayout
-          className="h-full p-4"
-          message={getDifferentEntityMessage("Character")}
-          actions={[
-            {
-              refProp: ctaRef,
-              children: "Update",
-              icon: <MdEdit />,
-              onClick: () => {
-                onAction?.({
-                  action: "UPDATE",
-                  character: character.basic,
-                });
-              },
+  if (!current) {
+    return (
+      <SavingStepLayout
+        className="h-full p-4"
+        message={genNewEntityText("Character").message}
+        actions={[
+          {
+            children: "Add new",
+            icon: <FaPlus />,
+            refProp: ctaRef,
+            onClick: () => {
+              onAction?.({
+                action: "CREATE",
+                character: character.basic,
+              });
             },
-          ]}
-          continueText="Keep"
-          onContinue={() => {
+          },
+        ]}
+      >
+        <Overview character={character.basic} data={character.data} />
+      </SavingStepLayout>
+    );
+  }
+
+  if (isExactCharacter(character.basic, current)) {
+    return (
+      <SavingStepLayout
+        className="h-full p-4"
+        message={
+          <span>
+            This character is unchanged. Let's <b>Continue.</b>
+          </span>
+        }
+        actions={[
+          {
+            children: "Continue",
+            icon: <FaAngleDoubleRight />,
+            refProp: ctaRef,
+            onClick: skip,
+          },
+        ]}
+      >
+        <Overview character={character.basic} data={character.data} />
+      </SavingStepLayout>
+    );
+  }
+
+  return (
+    <SavingStepLayout
+      className="h-full p-4"
+      message={getDifferentEntityMessage("Character")}
+      actions={[
+        {
+          refProp: ctaRef,
+          children: "Update",
+          icon: <MdEdit />,
+          onClick: () => {
             onAction?.({
-              action: "NONE",
+              action: "UPDATE",
               character: character.basic,
             });
-          }}
-        >
-          <EntityComparer
-            items={[
-              {
-                label: "Current",
-                children: <Overview character={config.existedCharacter} data={character.data} />,
-              },
-              {
-                label: "To be saved",
-                children: <Overview character={character.basic} data={character.data} />,
-              },
-            ]}
-          />
-        </SavingStepLayout>
-      );
-    }
-    default:
-      return null;
-  }
+          },
+        },
+        {
+          children: "Keep",
+          icon: <FaAngleDoubleRight />,
+          onClick: skip,
+        },
+      ]}
+    >
+      <EntityComparer
+        items={[
+          {
+            label: "Current",
+            children: <Overview character={current} data={character.data} />,
+          },
+          {
+            label: "To be saved",
+            children: <Overview character={character.basic} data={character.data} />,
+          },
+        ]}
+      />
+    </SavingStepLayout>
+  );
 }
 
 type OverviewProps = {

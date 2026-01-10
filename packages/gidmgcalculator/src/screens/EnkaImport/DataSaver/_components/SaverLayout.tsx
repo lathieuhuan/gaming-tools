@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 
+import type{ ArtifactType } from "@/types";
 import { useTranslation } from "@/hooks/useTranslation";
-import { ArtifactType } from "@/types";
 
 type SaverLayoutProps = {
   type: "ARTIFACT" | "WEAPON" | "CHARACTER";

@@ -47,114 +47,114 @@ export const mock: GenshinUserResponse = {
             },
           ],
         },
-        {
-          setKey: "BlizzardStrayer",
-          slotKey: "plume",
-          level: 20,
-          rarity: 5,
-          mainStatKey: "atk",
-          location: "Ganyu",
-          lock: false,
-          substats: [
-            {
-              key: "def_",
-              value: 5.8,
-            },
-            {
-              key: "critDMG_",
-              value: 29.5,
-            },
-            {
-              key: "enerRech_",
-              value: 9.7,
-            },
-            {
-              key: "critRate_",
-              value: 7.4,
-            },
-          ],
-        },
-        {
-          setKey: "BlizzardStrayer",
-          slotKey: "sands",
-          level: 20,
-          rarity: 5,
-          mainStatKey: "atk_",
-          location: "Ganyu",
-          lock: false,
-          substats: [
-            {
-              key: "def",
-              value: 46,
-            },
-            {
-              key: "critDMG_",
-              value: 25.6,
-            },
-            {
-              key: "eleMas",
-              value: 21,
-            },
-            {
-              key: "hp_",
-              value: 4.7,
-            },
-          ],
-        },
-        {
-          setKey: "DeepwoodMemories",
-          slotKey: "goblet",
-          level: 20,
-          rarity: 5,
-          mainStatKey: "cryo_dmg_",
-          location: "Ganyu",
-          lock: false,
-          substats: [
-            {
-              key: "def",
-              value: 44,
-            },
-            {
-              key: "critDMG_",
-              value: 20.2,
-            },
-            {
-              key: "critRate_",
-              value: 3.9,
-            },
-            {
-              key: "atk_",
-              value: 9.3,
-            },
-          ],
-        },
-        {
-          setKey: "BlizzardStrayer",
-          slotKey: "circlet",
-          level: 20,
-          rarity: 5,
-          mainStatKey: "critRate_",
-          location: "Ganyu",
-          lock: false,
-          substats: [
-            {
-              key: "eleMas",
-              value: 23,
-            },
-            {
-              key: "hp",
-              value: 299,
-            },
-            {
-              key: "atk",
-              value: 54,
-            },
-            {
-              key: "critDMG_",
-              value: 20.2,
-            },
-          ],
-        },
+        // {
+        //   setKey: "BlizzardStrayer",
+        //   slotKey: "plume",
+        //   level: 20,
+        //   rarity: 5,
+        //   mainStatKey: "atk",
+        //   location: "Ganyu",
+        //   lock: false,
+        //   substats: [
+        //     {
+        //       key: "def_",
+        //       value: 5.8,
+        //     },
+        //     {
+        //       key: "critDMG_",
+        //       value: 29.5,
+        //     },
+        //     {
+        //       key: "enerRech_",
+        //       value: 9.7,
+        //     },
+        //     {
+        //       key: "critRate_",
+        //       value: 7.4,
+        //     },
+        //   ],
+        // },
+        // {
+        //   setKey: "BlizzardStrayer",
+        //   slotKey: "sands",
+        //   level: 20,
+        //   rarity: 5,
+        //   mainStatKey: "atk_",
+        //   location: "Ganyu",
+        //   lock: false,
+        //   substats: [
+        //     {
+        //       key: "def",
+        //       value: 46,
+        //     },
+        //     {
+        //       key: "critDMG_",
+        //       value: 25.6,
+        //     },
+        //     {
+        //       key: "eleMas",
+        //       value: 21,
+        //     },
+        //     {
+        //       key: "hp_",
+        //       value: 4.7,
+        //     },
+        //   ],
+        // },
+        // {
+        //   setKey: "DeepwoodMemories",
+        //   slotKey: "goblet",
+        //   level: 20,
+        //   rarity: 5,
+        //   mainStatKey: "cryo_dmg_",
+        //   location: "Ganyu",
+        //   lock: false,
+        //   substats: [
+        //     {
+        //       key: "def",
+        //       value: 44,
+        //     },
+        //     {
+        //       key: "critDMG_",
+        //       value: 20.2,
+        //     },
+        //     {
+        //       key: "critRate_",
+        //       value: 3.9,
+        //     },
+        //     {
+        //       key: "atk_",
+        //       value: 9.3,
+        //     },
+        //   ],
+        // },
+        // {
+        //   setKey: "BlizzardStrayer",
+        //   slotKey: "circlet",
+        //   level: 20,
+        //   rarity: 5,
+        //   mainStatKey: "critRate_",
+        //   location: "Ganyu",
+        //   lock: false,
+        //   substats: [
+        //     {
+        //       key: "eleMas",
+        //       value: 23,
+        //     },
+        //     {
+        //       key: "hp",
+        //       value: 299,
+        //     },
+        //     {
+        //       key: "atk",
+        //       value: 54,
+        //     },
+        //     {
+        //       key: "critDMG_",
+        //       value: 20.2,
+        //     },
+        //   ],
+        // },
       ],
       weapon: {
         key: "AmosBow",

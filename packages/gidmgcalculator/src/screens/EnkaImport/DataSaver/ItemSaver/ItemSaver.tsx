@@ -1,27 +1,18 @@
 import { ReactNode, useCallback, useState } from "react";
-import { CloseButton, Modal } from "rond";
+import { CloseButton, Modal, notification } from "rond";
 
-import type { IArtifactBasic } from "@/types";
 import type { ItemSavingStep } from "./_types";
 
-import { useStore } from "@/systems/dynamic-store";
+import { useStoreCheck } from "@/hooks/useStoreCheck";
 import { createArtifact, createWeapon } from "@/utils/entity";
+import { isSameArtifact, isSameWeapon } from "../_logic";
 import { ItemSaverContext, ItemSaverContextState } from "./_context";
 
 import { ArtifactSaver } from "./ArtifactSaver";
 import { WeaponSaver } from "./WeaponSaver";
 
-const areSimilarArtifacts = (artifact1: IArtifactBasic, artifact2: IArtifactBasic) => {
-  return (
-    artifact1.code === artifact2.code &&
-    artifact1.type === artifact2.type &&
-    artifact1.rarity === artifact2.rarity &&
-    artifact1.mainStatType === artifact2.mainStatType
-  );
-};
-
 export function ItemSaver({ children }: { children: ReactNode }) {
-  const store = useStore();
+  const { store, isAbleToAddWeapon, isAbleToAddArtifact } = useStoreCheck();
   const [savingSteps, setSavingSteps] = useState<ItemSavingStep[]>([]);
   const [saveModalOpen, setSaveModalOpen] = useState(false);
 
@@ -32,8 +23,15 @@ export function ItemSaver({ children }: { children: ReactNode }) {
   const requestSave = useCallback<ItemSaverContextState>(({ weapon, artifacts }, type) => {
     switch (type) {
       case "WEAPON": {
+        const error = isAbleToAddWeapon(1);
+
+        if (error) {
+          notification.error({ content: error.message });
+          return;
+        }
+
         const sameWeapons = store.select((state) =>
-          state.userdb.userWps.filter((userWeapon) => userWeapon.code === weapon.code)
+          state.userdb.userWps.filter((userWeapon) => isSameWeapon(userWeapon, weapon))
         );
 
         setSavingSteps([
@@ -55,8 +53,15 @@ export function ItemSaver({ children }: { children: ReactNode }) {
           return;
         }
 
+        const error = isAbleToAddArtifact(1);
+
+        if (error) {
+          notification.error({ content: error.message });
+          return;
+        }
+
         const sameArtifacts = store.select((state) =>
-          state.userdb.userArts.filter((userAtf) => areSimilarArtifacts(userAtf, artifact))
+          state.userdb.userArts.filter((userAtf) => isSameArtifact(userAtf, artifact))
         );
 
         setSavingSteps([
@@ -73,29 +78,31 @@ export function ItemSaver({ children }: { children: ReactNode }) {
     setSaveModalOpen(true);
   }, []);
 
-  let savingFlow: ReactNode = null;
-
-  if (savingSteps.length === 1) {
+  const renderSavingContent = () => {
     const [step] = savingSteps;
 
+    if (!step) {
+      return null;
+    }
+
     if (step.type === "WEAPON") {
-      savingFlow = (
+      return (
         <WeaponSaver
           weapon={step.data}
           sameWeapons={step.sameWeapons}
           onComplete={closeSaveModal}
         />
       );
-    } else {
-      savingFlow = (
-        <ArtifactSaver
-          artifact={step.data}
-          sameArtifacts={step.sameArtifacts}
-          onComplete={closeSaveModal}
-        />
-      );
     }
-  }
+
+    return (
+      <ArtifactSaver
+        artifact={step.data}
+        sameArtifacts={step.sameArtifacts}
+        onComplete={closeSaveModal}
+      />
+    );
+  };
 
   return (
     <ItemSaverContext.Provider value={requestSave}>
@@ -107,8 +114,7 @@ export function ItemSaver({ children }: { children: ReactNode }) {
         onClose={closeSaveModal}
       >
         <CloseButton className={Modal.CLOSE_BTN_CLS} boneOnly onClick={closeSaveModal} />
-
-        {savingFlow}
+        {renderSavingContent()}
       </Modal.Core>
     </ItemSaverContext.Provider>
   );

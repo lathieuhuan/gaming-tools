@@ -1,0 +1,218 @@
+import type { ArtifactType } from "@/types";
+import type {
+  ArtifactSaveOutput,
+  CharacterSaveOutput,
+  SavingSteps,
+  WeaponSaveOutput,
+} from "./_types";
+
+import { useStore } from "@/systems/dynamic-store";
+import IdStore from "@/utils/IdStore";
+import { useDispatch } from "@Store/hooks";
+import {
+  addCharacter,
+  addUserArtifact,
+  addUserWeapon,
+  updateUserArtifact,
+  updateUserCharacter,
+  updateUserWeapon,
+} from "@Store/userdb-slice";
+
+export function useSaveOutputHandler() {
+  const store = useStore();
+  const dispatch = useDispatch();
+
+  const handleCharacterSaveOutput = (
+    output: CharacterSaveOutput,
+    weaponID: number,
+    artifactIDs: number[]
+  ) => {
+    switch (output.action) {
+      case "CREATE":
+        dispatch(
+          addCharacter({
+            ...output.character,
+            weaponID,
+            artifactIDs,
+          })
+        );
+        return;
+      case "UPDATE":
+        dispatch(
+          updateUserCharacter({
+            ...output.character,
+            weaponID,
+            artifactIDs,
+          })
+        );
+        return;
+      case "NONE":
+        dispatch(
+          updateUserCharacter({
+            name: output.character.name,
+            weaponID,
+            artifactIDs,
+          })
+        );
+        return;
+    }
+  };
+
+  const handleWeaponSaveOutput = (
+    output: WeaponSaveOutput,
+    owner: string,
+    idStore: IdStore,
+    currentWeaponID?: number
+  ) => {
+    switch (output.action) {
+      case "CREATE":
+        const weaponId = idStore.gen();
+
+        dispatch(
+          addUserWeapon({
+            ...output.weapon,
+            ID: weaponId,
+            owner,
+          })
+        );
+
+        if (currentWeaponID) {
+          dispatch(
+            updateUserWeapon({
+              ID: currentWeaponID,
+              owner: undefined,
+            })
+          );
+        }
+
+        return weaponId;
+      case "UPDATE":
+        dispatch(
+          updateUserWeapon({
+            ...output.weapon,
+            owner,
+          })
+        );
+
+        if (currentWeaponID && currentWeaponID !== output.weapon.ID) {
+          dispatch(
+            updateUserWeapon({
+              ID: currentWeaponID,
+              owner: undefined,
+            })
+          );
+        }
+
+        return output.weapon.ID;
+      default:
+        return output.weapon.ID;
+    }
+  };
+
+  const handleArtifactSaveOutput = (
+    output: ArtifactSaveOutput,
+    owner: string,
+    idStore: IdStore,
+    currentArtifactID?: number
+  ) => {
+    switch (output.action) {
+      case "CREATE": {
+        const artifactId = idStore.gen();
+
+        dispatch(
+          addUserArtifact({
+            ...output.artifact,
+            ID: artifactId,
+            owner,
+          })
+        );
+
+        if (currentArtifactID) {
+          dispatch(
+            updateUserArtifact({
+              ID: currentArtifactID,
+              owner: undefined,
+            })
+          );
+        }
+
+        return artifactId;
+      }
+      case "UPDATE": {
+        const { owner: currentOwner, ID: artifactID } = output.artifact;
+
+        dispatch(
+          updateUserArtifact({
+            ...output.artifact,
+            owner,
+          })
+        );
+
+        // TODO: improve this handler
+        if (currentOwner && currentOwner !== owner) {
+          const currentCharacter = store.select((state) =>
+            state.userdb.userChars.find((char) => char.name === currentOwner)
+          );
+          const newArtifactIDs =
+            currentCharacter?.artifactIDs.filter((id) => id !== artifactID) || [];
+
+          dispatch(
+            updateUserCharacter({
+              name: currentOwner,
+              artifactIDs: newArtifactIDs,
+            })
+          );
+        }
+
+        if (currentArtifactID && currentArtifactID !== artifactID) {
+          dispatch(
+            updateUserArtifact({
+              ID: currentArtifactID,
+              owner: undefined,
+            })
+          );
+        }
+
+        return artifactID;
+      }
+      default:
+        return output.artifact.ID;
+    }
+  };
+
+  const handleSaveOutput = (
+    characterOutput: CharacterSaveOutput,
+    weaponOutput: WeaponSaveOutput,
+    artifactsOutput: ArtifactSaveOutput[],
+    steps: SavingSteps
+  ) => {
+    const [, { currentWeapon }, ...artifactSteps] = steps;
+    const currentArtifactIds = artifactSteps.reduce<Partial<Record<ArtifactType, number>>>(
+      (acc, step) => {
+        acc[step.data.type] = step.currentArtifact?.ID;
+        return acc;
+      },
+      {}
+    );
+    const idStore = new IdStore();
+
+    const weaponID = handleWeaponSaveOutput(
+      weaponOutput,
+      characterOutput.character.name,
+      idStore,
+      currentWeapon?.ID
+    );
+    const artifactIDs = artifactsOutput.map((artifact) =>
+      handleArtifactSaveOutput(
+        artifact,
+        characterOutput.character.name,
+        idStore,
+        currentArtifactIds[artifact.artifact.type]
+      )
+    );
+
+    handleCharacterSaveOutput(characterOutput, weaponID, artifactIDs);
+  };
+
+  return handleSaveOutput;
+}

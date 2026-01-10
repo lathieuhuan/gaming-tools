@@ -1,18 +1,19 @@
 import { useState } from "react";
-import { FaPlus, FaSave, FaTimes } from "react-icons/fa";
+import { FaSave } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { notification } from "rond";
 
 import type { Artifact } from "@/models/base/Artifact";
 import type { IArtifactBasic } from "@/types";
 
-import { createArtifact } from "@/utils/entity";
+import { useStoreCheck } from "@/hooks/useStoreCheck";
 import { useDispatch } from "@Store/hooks";
 import { addUserArtifact, updateUserArtifact } from "@Store/userdb-slice";
-import { CONTINUE_MSG, genNewEntityMessage, genSameEntityMessage } from "../_config";
-import { isExactArtifact } from "../_utils";
+import { genCaseConfigs } from "../_config";
+import { isExactArtifact } from "../_logic";
 
-import { ArtifactSummary } from "../_components/ArtifactSummary";
+import { CaseNewArtifact } from "../_components/CaseNewArtifact";
+import { CaseSameArtifacts } from "../_components/CaseSameArtifact";
 import { SaverLayout } from "../_components/SaverLayout";
 import { SavingStepLayout } from "../_components/SavingStepLayout";
 
@@ -24,9 +25,17 @@ type ArtifactSaverProps = {
 
 export function ArtifactSaver({ artifact, sameArtifacts, onComplete }: ArtifactSaverProps) {
   const dispatch = useDispatch();
+  const { isAbleToAddArtifact } = useStoreCheck();
   const [selectedArtifact, setSelectedArtifact] = useState<IArtifactBasic>();
 
   const handleSave = () => {
+    const error = isAbleToAddArtifact(1);
+
+    if (error) {
+      notification.error({ content: error.message });
+      return;
+    }
+
     const { owner, ...artifactToSave } = artifact.serialize();
 
     dispatch(
@@ -61,80 +70,61 @@ export function ArtifactSaver({ artifact, sameArtifacts, onComplete }: ArtifactS
     onComplete?.();
   };
 
-  if (sameArtifacts.length) {
-    const message = genSameEntityMessage("Artifact");
+  const selectedIsSame = selectedArtifact && isExactArtifact(selectedArtifact, artifact);
+  const hasNoSameArtifacts = !sameArtifacts.length;
 
-    return (
-      <SaverLayout type="ARTIFACT" atfType={artifact.type}>
-        <SavingStepLayout
-          className="grow"
-          actions={[
-            {
-              children: "Cancel",
-              icon: <FaTimes />,
-              onClick: onComplete,
-            },
-            {
-              children: "Update",
-              icon: <MdEdit />,
-              disabled: !selectedArtifact || isExactArtifact(selectedArtifact, artifact),
-              onClick: handleUpdate,
-            },
-          ]}
-          continueProps={{
-            children: "Add new",
-            icon: <FaPlus />,
-          }}
-          onContinue={handleSave}
-        >
-          <ArtifactSummary variant="primary" label={artifact.data.name} artifact={artifact} />
-
-          <div className="mx-auto my-4 h-px w-1/2 bg-dark-line" />
-
-          <p className="text-light-3 text-sm">{message.main}</p>
-          <p className="mt-1 text-light-hint text-sm">{message.hint}</p>
-
-          <div className="mt-2 space-y-2">
-            {sameArtifacts.map((item, index) => (
-              <ArtifactSummary
-                key={item.ID}
-                label={
-                  <span>
-                    <span>Artifact {index + 1}</span>{" "}
-                    {item.owner && <span className="text-light-4">({item.owner})</span>}
-                  </span>
-                }
-                artifact={createArtifact(item, artifact.data)}
-                selectable
-                selected={selectedArtifact?.ID === item.ID}
-                onSelect={() => setSelectedArtifact(item)}
-              />
-            ))}
-          </div>
-        </SavingStepLayout>
-      </SaverLayout>
-    );
-  }
+  const caseConfigs = genCaseConfigs("Artifact", {
+    hasNoSameEntities: hasNoSameArtifacts,
+    withoutOwner: false,
+  });
 
   return (
     <SaverLayout type="ARTIFACT" atfType={artifact.type}>
       <SavingStepLayout
         className="grow"
-        message={`${genNewEntityMessage("Artifact")} ${CONTINUE_MSG}`}
         actions={[
           {
             children: "Cancel",
-            icon: <FaTimes />,
+            className: "mr-auto",
             onClick: onComplete,
           },
+          {
+            children: "Update",
+            icon: <MdEdit />,
+            hidden: hasNoSameArtifacts,
+            disabled: !selectedArtifact || selectedIsSame,
+            onClick: handleUpdate,
+          },
+          {
+            children: "Add new",
+            icon: <FaSave />,
+            autoFocus: hasNoSameArtifacts,
+            onClick: handleSave,
+          },
         ]}
-        continueProps={{
-          icon: <FaSave />,
-          autoFocus: true,
-        }}
-        onContinue={handleSave}
       >
-        <ArtifactSummary variant="primary" label={artifact.data.name} artifact={artifact} />
+        <div className="h-full flex flex-col justify-between">
+          <div className="grow custom-scrollbar">
+            <CaseNewArtifact {...caseConfigs.toSaveCase} artifact={artifact} />
+
+            {sameArtifacts.length > 0 && (
+              <CaseSameArtifacts
+                {...caseConfigs.sameCase}
+                data={artifact.data}
+                withDivider
+                sameArtifacts={sameArtifacts}
+                selectedArtifact={selectedArtifact}
+                onSelectArtifact={setSelectedArtifact}
+              />
+            )}
+          </div>
+
+          {selectedIsSame && (
+            <div className="mt-4 text-sm">
+              The selected artifact is already the same as the artifact to save.
+            </div>
+          )}
+        </div>
       </SavingStepLayout>
     </SaverLayout>
   );

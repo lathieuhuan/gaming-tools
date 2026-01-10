@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import { MouseEvent, MouseEventHandler } from "react";
 
 type Size = "small" | "medium" | "large";
 
@@ -16,11 +17,21 @@ export type RadioProps = {
   checked?: boolean;
   disabled?: boolean;
   onChange?: (checked: boolean) => void;
-  onClick?: React.MouseEventHandler<HTMLInputElement>;
+  onClick?: MouseEventHandler<HTMLElement>;
 };
 
 export function Radio(props: RadioProps) {
   const { size = "small" } = props;
+
+  const handleClick = (e: MouseEvent<HTMLElement>) => {
+    const isInputClicked = e.target instanceof HTMLInputElement;
+
+    if (isInputClicked) {
+      props.onClick?.(e);
+    } else {
+      e.currentTarget.querySelector("input")?.click();
+    }
+  };
 
   return (
     <span
@@ -28,6 +39,7 @@ export function Radio(props: RadioProps) {
         `relative overflow-hidden cursor-pointer flex-center rounded-circle select-none border-light-3 has-checked:border-light-3/70 ${classBySize[size]}`,
         props.disabled && "is-disabled"
       )}
+      onClick={handleClick}
     >
       <input
         type="radio"
@@ -37,7 +49,6 @@ export function Radio(props: RadioProps) {
         checked={props.checked}
         disabled={props.disabled}
         onChange={(e) => props.onChange?.(e.target.checked)}
-        onClick={props.onClick}
       />
       <span className="bg-active rounded-circle transition-all duration-200 size-0 peer-checked:size-2/3 opacity-80 peer-checked:opacity-100" />
     </span>

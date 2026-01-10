@@ -1,217 +1,163 @@
-import { RefCallback, useRef, useState } from "react";
-import isEqual from "react-fast-compare";
-import { FaPlus, FaSave } from "react-icons/fa";
+import { RefCallback, useState } from "react";
+import { FaAngleDoubleRight, FaPlus } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { Checkbox } from "rond";
+import { ButtonProps, Checkbox, notification } from "rond";
 
+import type { Artifact } from "@/models/base";
 import type { IArtifactBasic } from "@/types";
 import type { ArtifactSaveOutput, ArtifactSavingStep } from "./_types";
 
-import { createArtifact } from "@/utils/entity";
-import Object_ from "@/utils/Object";
+import { useStoreCheck } from "@/hooks/useStoreCheck";
+import { genCaseConfigs } from "../_config";
+import { isExactArtifact, isSameArtifact } from "../_logic";
 
 import { EquipmentIcon } from "@/assets/icons";
-import { ArtifactCompareMenu } from "../_components/ArtifactCompareMenu";
-import { ArtifactSummary } from "../_components/ArtifactSummary";
-import { EntityComparer } from "../_components/EntityComparer";
+import { CaseNewArtifact } from "../_components/CaseNewArtifact";
+import { CaseSameArtifacts } from "../_components/CaseSameArtifact";
+import { SavingCase } from "../_components/SavingCase";
 import { SavingStepLayout } from "../_components/SavingStepLayout";
-import { genNewEntityMessage } from "../_config";
-
-const isSameArtifact = (artifact1: IArtifactBasic, artifact2: IArtifactBasic) => {
-  return isEqual(
-    Object_.pickProps(artifact1, ["level", "subStats"]),
-    Object_.pickProps(artifact2, ["level", "subStats"])
-  );
-};
+import { ArtifactSummary } from "../_components/ArtifactSummary";
 
 export type SaveArtifactStepProps = {
   className?: string;
   step: ArtifactSavingStep;
+  savePendingCount?: number;
   ctaRef?: RefCallback<HTMLButtonElement>;
-  onAction?: (output: ArtifactSaveOutput) => void;
+  onAction: (output: ArtifactSaveOutput) => void;
 };
 
-export function SaveArtifactStep({ className, step, ctaRef, onAction }: SaveArtifactStepProps) {
-  const { data: artifact, sameArtifacts } = step;
-
-  const diffMap = useRef(new Map<number, boolean>());
+export function SaveArtifactStep({
+  className,
+  step,
+  savePendingCount = 0,
+  ctaRef,
+  onAction,
+}: SaveArtifactStepProps) {
+  const { data: artifact, currentArtifact, sameArtifacts } = step;
+  const { isAbleToAddArtifact } = useStoreCheck();
   const [selectedArtifact, setSelectedArtifact] = useState<IArtifactBasic>();
   const [shouldUpdate, setShouldUpdate] = useState(true);
 
-  const next = () => {
-    onAction?.({
-      action: "NONE",
-      artifact: artifact.serialize(),
-    });
-  };
-
-  if (!sameArtifacts.length) {
-    return (
-      <SavingStepLayout
-        className={className}
-        message={`${genNewEntityMessage("Artifact")} Press Continue save it.`}
-        actions={[
-          {
-            refProp: ctaRef,
-            children: "Continue",
-            icon: <FaSave />,
-            onClick: () => {
-              onAction?.({
-                action: "CREATE",
-                artifact: artifact.serialize(),
-              });
-            },
-          },
-        ]}
-        continueText="Skip"
-        onContinue={next}
-      >
-        <ArtifactSummary label={artifact.data.name} artifact={artifact} />
-      </SavingStepLayout>
-    );
-  }
-
-  const current = sameArtifacts.find((atf) => atf.owner && atf.owner === artifact.owner);
-
-  if (current) {
-    if (isSameArtifact(current, artifact)) {
-      // ===== EQUIPPED + UNCHANGED =====
-      return (
-        <SavingStepLayout
-          className={className}
-          message={`${artifact.owner} is already equipped with this artifact.`}
-          continueRef={ctaRef}
-          onContinue={next}
-        >
-          <ArtifactSummary label={artifact.data.name} artifact={artifact} />
-        </SavingStepLayout>
-      );
-    }
-
-    // ===== EQUIPPED + CHANGED =====
-    return (
-      <SavingStepLayout
-        className={className}
-        message={`${artifact.owner} seems to be equipped with the old version of this artifact.`}
-        actions={[
-          {
-            children: "Update",
-            icon: <MdEdit />,
-            refProp: ctaRef,
-            onClick: () => {
-              onAction?.({
-                action: "UPDATE",
-                artifact: {
-                  ...artifact.serialize(),
-                  ID: current.ID,
-                },
-              });
-            },
-          },
-          {
-            children: "Add new",
-            icon: <FaPlus />,
-            onClick: () => {
-              onAction?.({
-                action: "CREATE",
-                artifact: artifact.serialize(),
-              });
-            },
-          },
-        ]}
-        continueText="Skip"
-        onContinue={next}
-      >
-        <EntityComparer
-          items={[
-            {
-              label: "Current",
-              children: (
-                <ArtifactSummary
-                  label={artifact.data.name}
-                  artifact={createArtifact(current, artifact.data)}
-                />
-              ),
-            },
-            {
-              label: "To be saved",
-              children: <ArtifactSummary label={artifact.data.name} artifact={artifact} />,
-            },
-          ]}
-        />
-      </SavingStepLayout>
-    );
-  }
-
-  // ===== DIFFERENT LEVEL/SUBSTATS + NOT EQUIPPED =====
-
-  const isDifferentToAtf = (comparedAtf: IArtifactBasic) => {
-    const cachedDiff = diffMap.current.get(comparedAtf.ID);
-
-    if (cachedDiff !== undefined) {
-      return cachedDiff;
-    }
-
-    const isDiff = !isSameArtifact(comparedAtf, artifact);
-    diffMap.current.set(comparedAtf.ID, isDiff);
-
-    return isDiff;
-  };
-
-  const handleSelectSameArtifact = (artifact: IArtifactBasic) => {
+  const handleSelectArtifact = (artifact: IArtifactBasic) => {
     setSelectedArtifact(artifact);
     setShouldUpdate(true);
   };
 
-  const handleEquip = () => {
+  const handleCreate = () => {
+    const error = isAbleToAddArtifact(savePendingCount + 1);
+
+    if (error) {
+      notification.error({ content: error.message });
+      return;
+    }
+
+    onAction?.({
+      action: "CREATE",
+      artifact: artifact.serialize(),
+    });
+  };
+
+  const handleUpdate = () => {
     if (selectedArtifact) {
       onAction?.({
         action: "UPDATE",
-        artifact: shouldUpdate
-          ? {
-              ...artifact.serialize(),
-              ID: selectedArtifact.ID,
-            }
-          : selectedArtifact,
+        artifact: {
+          ...(shouldUpdate ? artifact.serialize() : selectedArtifact),
+          owner: selectedArtifact.owner,
+          ID: selectedArtifact.ID,
+        },
       });
     }
   };
 
+  const handleSkip = () => {
+    onAction?.({
+      action: "NONE",
+      artifact: (currentArtifact || artifact).serialize(),
+    });
+  };
+
+  let actions: ButtonProps[] = [];
+  let showUpdateCheckbox = selectedArtifact && !isExactArtifact(selectedArtifact, artifact);
+
+  if (currentArtifact || sameArtifacts.length) {
+    const currentIsSelected = currentArtifact && currentArtifact.ID === selectedArtifact?.ID;
+
+    actions.push(
+      currentIsSelected
+        ? {
+            children: "Update",
+            icon: <MdEdit />,
+            hidden: !selectedArtifact,
+            onClick: handleUpdate,
+          }
+        : {
+            children: "Equip",
+            icon: <EquipmentIcon className="text-xl" />,
+            hidden: !selectedArtifact,
+            onClick: handleUpdate,
+          }
+    );
+
+    // We already Update button, do not need checkbox for this case
+    showUpdateCheckbox = showUpdateCheckbox && !currentIsSelected;
+  }
+
+  const hasNoSameWeapons =
+    (!currentArtifact || !isSameArtifact(currentArtifact, artifact)) && !sameArtifacts.length;
+
+  const caseConfigs = genCaseConfigs("Artifact", {
+    hasNoSameEntities: hasNoSameWeapons,
+    withoutOwner: false,
+  });
+
   return (
     <SavingStepLayout
       className={className}
-      message="We found some artifacts that are similar to this one. Users are recommended to re-use."
-      actions={[
-        {
-          children: "Equip",
-          icon: <EquipmentIcon className="text-xl" />,
-          disabled: !selectedArtifact,
-          onClick: handleEquip,
-        },
+      actions={actions.concat(
         {
           children: "Add new",
           icon: <FaPlus />,
-          onClick: () => {
-            onAction?.({
-              action: "CREATE",
-              artifact: artifact.serialize(),
-            });
-          },
+          refProp: hasNoSameWeapons ? ctaRef : undefined,
+          onClick: handleCreate,
         },
-      ]}
-      continueText="Skip"
-      onContinue={next}
+        {
+          children: "Skip",
+          icon: <FaAngleDoubleRight />,
+          onClick: handleSkip,
+        }
+      )}
     >
       <div className="h-full flex flex-col">
-        <ArtifactCompareMenu
-          className="grow custom-scrollbar"
-          artifact={artifact}
-          sameArtifacts={sameArtifacts}
-          onSelect={handleSelectSameArtifact}
-        />
+        <div className="grow custom-scrollbar">
+          <CaseNewArtifact {...caseConfigs.toSaveCase} artifact={artifact} />
 
-        {selectedArtifact && isDifferentToAtf(selectedArtifact) && (
-          <div>
+          {currentArtifact && (
+            <CaseCurrentArtifact
+              currentArtifact={currentArtifact}
+              isOldVersion={
+                isSameArtifact(currentArtifact, artifact) &&
+                !isExactArtifact(currentArtifact, artifact)
+              }
+              selected={selectedArtifact?.ID === currentArtifact.ID}
+              onSelect={() => handleSelectArtifact(currentArtifact)}
+            />
+          )}
+
+          {sameArtifacts.length > 0 && (
+            <CaseSameArtifacts
+              {...caseConfigs.sameCase}
+              data={artifact.data}
+              withDivider
+              sameArtifacts={sameArtifacts}
+              selectedArtifact={selectedArtifact}
+              onSelectArtifact={handleSelectArtifact}
+            />
+          )}
+        </div>
+
+        {showUpdateCheckbox && (
+          <div className="mt-4">
             <Checkbox checked={shouldUpdate} onChange={() => setShouldUpdate(!shouldUpdate)}>
               <span>Also update the selected artifact</span>
             </Checkbox>
@@ -219,5 +165,36 @@ export function SaveArtifactStep({ className, step, ctaRef, onAction }: SaveArti
         )}
       </div>
     </SavingStepLayout>
+  );
+}
+
+type CaseCurrentArtifactProps = {
+  currentArtifact: Artifact;
+  isOldVersion: boolean;
+  selected?: boolean;
+  onSelect?: () => void;
+};
+
+function CaseCurrentArtifact({
+  currentArtifact,
+  isOldVersion,
+  selected,
+  onSelect,
+}: CaseCurrentArtifactProps) {
+  return (
+    <SavingCase
+      message={`${currentArtifact.owner} is currently equipped with this Artifact.`}
+      hint={isOldVersion && "Select it to update."}
+      withDivider
+    >
+      <ArtifactSummary
+        variant="primary"
+        label={`Current: ${currentArtifact.data.name}`}
+        artifact={currentArtifact}
+        selectable={isOldVersion}
+        selected={selected}
+        onSelect={onSelect}
+      />
+    </SavingCase>
   );
 }

@@ -1,2 +1,2 @@
 export * from "./DynamicStoreProvider";
-export { useStore, useStoreSnapshot, useDynamicStoreControl } from "./context";
+export { useStore, useStoreSnapshot, useDynamicStoreControl, type DynamicStore } from "./context";

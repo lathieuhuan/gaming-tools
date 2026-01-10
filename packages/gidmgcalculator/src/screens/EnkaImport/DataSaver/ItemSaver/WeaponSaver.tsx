@@ -1,19 +1,21 @@
 import { useState } from "react";
-import { FaPlus, FaSave, FaTimes } from "react-icons/fa";
+import { FaSave } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { notification } from "rond";
+import { notification, OverflowWatcher } from "rond";
 
 import type { Weapon } from "@/models/base";
 import type { IWeaponBasic } from "@/types";
 
+import { useStoreCheck } from "@/hooks/useStoreCheck";
 import { useDispatch } from "@Store/hooks";
 import { addUserWeapon, updateUserWeapon } from "@Store/userdb-slice";
-import { CONTINUE_MSG, genNewEntityMessage, genSameEntityMessage } from "../_config";
-import { isExactWeapon } from "../_utils";
+import { genCaseConfigs } from "../_config";
+import { isExactWeapon } from "../_logic";
 
+import { CaseNewWeapon } from "../_components/CaseNewWeapon";
+import { CaseSameWeapons } from "../_components/CaseSameWeapons";
 import { SaverLayout } from "../_components/SaverLayout";
 import { SavingStepLayout } from "../_components/SavingStepLayout";
-import { WeaponSummary } from "../_components/WeaponSummary";
 
 type WeaponSaverProps = {
   weapon: Weapon;
@@ -23,9 +25,17 @@ type WeaponSaverProps = {
 
 export function WeaponSaver({ weapon, sameWeapons, onComplete }: WeaponSaverProps) {
   const dispatch = useDispatch();
+  const { isAbleToAddWeapon } = useStoreCheck();
   const [selectedWeapon, setSelectedWeapon] = useState<IWeaponBasic>();
 
   const handleSave = () => {
+    const error = isAbleToAddWeapon(1);
+
+    if (error) {
+      notification.error({ content: error.message });
+      return;
+    }
+
     const { owner, ...weaponToSave } = weapon.serialize();
 
     dispatch(
@@ -60,80 +70,60 @@ export function WeaponSaver({ weapon, sameWeapons, onComplete }: WeaponSaverProp
     onComplete?.();
   };
 
-  if (sameWeapons.length) {
-    const message = genSameEntityMessage("Weapon");
+  const selectedIsSame = selectedWeapon && isExactWeapon(selectedWeapon, weapon);
+  const hasNoSameWeapons = !sameWeapons.length;
 
-    return (
-      <SaverLayout type="WEAPON">
-        <SavingStepLayout
-          className="grow"
-          actions={[
-            {
-              children: "Cancel",
-              icon: <FaTimes />,
-              onClick: onComplete,
-            },
-            {
-              children: "Update",
-              icon: <MdEdit />,
-              disabled: !selectedWeapon || isExactWeapon(selectedWeapon, weapon),
-              onClick: handleUpdate,
-            },
-          ]}
-          continueProps={{
-            children: "Add new",
-            icon: <FaPlus />,
-          }}
-          onContinue={handleSave}
-        >
-          <WeaponSummary variant="primary" label={weapon.data.name} weapon={weapon} />
-
-          <div className="mx-auto my-4 h-px w-1/2 bg-dark-line" />
-
-          <p className="text-light-3 text-sm">{message.main}</p>
-          <p className="mt-1 text-light-hint text-sm">{message.hint}</p>
-
-          <div className="mt-2 space-y-2">
-            {sameWeapons.map((item, index) => (
-              <WeaponSummary
-                key={item.ID}
-                label={
-                  <span>
-                    <span>Weapon {index + 1}</span>{" "}
-                    {item.owner && <span className="text-light-4">({item.owner})</span>}
-                  </span>
-                }
-                weapon={item}
-                selectable
-                selected={selectedWeapon?.ID === item.ID}
-                onSelect={() => setSelectedWeapon(item)}
-              />
-            ))}
-          </div>
-        </SavingStepLayout>
-      </SaverLayout>
-    );
-  }
+  const caseConfigs = genCaseConfigs("Weapon", {
+    hasNoSameEntities: hasNoSameWeapons,
+    withoutOwner: false,
+  });
 
   return (
     <SaverLayout type="WEAPON">
       <SavingStepLayout
         className="grow"
-        message={`${genNewEntityMessage("Weapon")} ${CONTINUE_MSG}`}
         actions={[
           {
             children: "Cancel",
-            icon: <FaTimes />,
+            className: "mr-auto",
             onClick: onComplete,
           },
+          {
+            children: "Update",
+            icon: <MdEdit />,
+            hidden: hasNoSameWeapons,
+            disabled: !selectedWeapon || selectedIsSame,
+            onClick: handleUpdate,
+          },
+          {
+            children: "Add new",
+            icon: <FaSave />,
+            autoFocus: hasNoSameWeapons,
+            onClick: handleSave,
+          },
         ]}
-        continueProps={{
-          icon: <FaSave />,
-          autoFocus: true,
-        }}
-        onContinue={handleSave}
       >
-        <WeaponSummary variant="primary" label={weapon.data.name} weapon={weapon} />
+        <div className="h-full flex flex-col justify-between">
+          <OverflowWatcher className="grow custom-scrollbar" overflowedCls="pr-2">
+            <CaseNewWeapon {...caseConfigs.toSaveCase} weapon={weapon} />
+
+            {sameWeapons.length > 0 && (
+              <CaseSameWeapons
+                {...caseConfigs.sameCase}
+                withDivider
+                sameWeapons={sameWeapons}
+                selectedWeapon={selectedWeapon}
+                onSelectWeapon={setSelectedWeapon}
+              />
+            )}
+          </OverflowWatcher>
+
+          {selectedIsSame && (
+            <div className="mt-4 text-sm">
+              The selected weapon is already the same as the weapon to save.
+            </div>
+          )}
+        </div>
       </SavingStepLayout>
     </SaverLayout>
   );

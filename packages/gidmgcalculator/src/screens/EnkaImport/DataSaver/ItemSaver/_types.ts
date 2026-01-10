@@ -11,7 +11,6 @@ export type WeaponSavingStep = {
 export type ArtifactSavingStep = {
   type: "ARTIFACT";
   data: Artifact;
-  /** Artifacts with same code & type & rarity & mainStatType */
   sameArtifacts: IArtifactBasic[];
 };
 

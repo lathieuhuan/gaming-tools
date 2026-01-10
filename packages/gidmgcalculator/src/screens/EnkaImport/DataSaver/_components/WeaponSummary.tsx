@@ -1,6 +1,9 @@
+import type { MouseEvent } from "react";
 import { clsx, Radio } from "rond";
 
-import type { IWeapon, IWeaponBasic } from "@/types";
+import type { IWeaponBasic } from "@/types";
+
+const SLOT_NAME = "weapon-summary";
 
 export function WeaponSubtitle({ item }: { item: IWeaponBasic }) {
   return (
@@ -26,10 +29,16 @@ type WeaponSummaryProps = {
 export function WeaponSummary(props: WeaponSummaryProps) {
   const { variant = "default", weapon } = props;
 
+  const handleClick = (e: MouseEvent<HTMLElement>) => {
+    e.currentTarget
+      .closest(`div[data-slot='${SLOT_NAME}']`)
+      ?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div
+      data-slot={SLOT_NAME}
       className={clsx("px-3 py-2 rounded-md bg-dark-1 relative", props.className)}
-      data-slot="weapon-summary"
     >
       <p
         className={
@@ -47,7 +56,12 @@ export function WeaponSummary(props: WeaponSummaryProps) {
 
       {props.selectable && (
         <div className="absolute top-4 right-4">
-          <Radio size="medium" checked={props.selected} onChange={props.onSelect} />
+          <Radio
+            size="medium"
+            checked={props.selected}
+            onChange={props.onSelect}
+            onClick={handleClick}
+          />
         </div>
       )}
     </div>

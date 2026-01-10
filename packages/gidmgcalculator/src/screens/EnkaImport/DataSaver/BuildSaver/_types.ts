@@ -2,60 +2,41 @@ import type { Artifact, Weapon } from "@/models/base";
 import type { IArtifactBasic, ICharacterBasic, IDbCharacter, IWeaponBasic } from "@/types";
 import type { GOODCharacterConvertReturn } from "@/utils/GOOD";
 
-// ===== Character Saving Step =====
-
-export type CharacterSaveConfig =
-  | {
-      status: "NEW";
-    }
-  | {
-      status: "UNCHANGED" | "CHANGED";
-      existedCharacter: IDbCharacter;
-    };
+// ===== Saving Step =====
 
 export type CharacterSavingStep = {
   type: "CHARACTER";
   data: GOODCharacterConvertReturn;
-  config: CharacterSaveConfig;
+  current?: IDbCharacter;
 };
-
-// ===== Weapon Saving Step =====
-
-export type WeaponSaveConfig =
-  | {
-      instruct: "CONTINUABLE";
-      status: "NEW" | "UNCHANGED";
-    }
-  | {
-      instruct: "EQUIPPABLE";
-      sameWeapons: IWeaponBasic[];
-      currentWeapon?: Weapon;
-    }
-  | {
-      instruct: "COMPARABLE";
-      isSame: boolean;
-      currentWeapon: Weapon;
-    };
 
 export type WeaponSavingStep = {
   type: "WEAPON";
   data: Weapon;
-  currentWeapon?: IWeaponBasic;
+  currentWeapon?: Weapon;
   sameWeapons: IWeaponBasic[];
-  // config: WeaponSaveConfig;
 };
-
-// ===== Artifact Saving Step =====
 
 export type ArtifactSavingStep = {
   type: "ARTIFACT";
   data: Artifact;
+  currentArtifact?: Artifact;
   sameArtifacts: IArtifactBasic[];
 };
 
-export type SavingStep = CharacterSavingStep | WeaponSavingStep | ArtifactSavingStep;
+export type SavingSteps = [CharacterSavingStep, WeaponSavingStep, ...ArtifactSavingStep[]];
 
 // ===== Save Output =====
+
+export type CharacterSaveOutput = {
+  action: "CREATE" | "UPDATE" | "NONE";
+  character: ICharacterBasic;
+};
+
+export type WeaponSaveOutput = {
+  action: "CREATE" | "UPDATE" | "NONE";
+  weapon: IWeaponBasic;
+};
 
 export type ArtifactSaveOutput = {
   action: "CREATE" | "UPDATE" | "NONE";
@@ -63,13 +44,7 @@ export type ArtifactSaveOutput = {
 };
 
 export type SaveOutput = {
-  character?: {
-    action: "CREATE" | "UPDATE" | "NONE";
-    character: ICharacterBasic;
-  };
-  weapon?: {
-    action: "CREATE" | "UPDATE" | "NONE";
-    weapon: IWeaponBasic;
-  };
+  character?: CharacterSaveOutput;
+  weapon?: WeaponSaveOutput;
   artifacts?: ArtifactSaveOutput[];
 };

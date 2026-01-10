@@ -1,39 +1,26 @@
 import { RefCallback, useRef, useState } from "react";
 import { CarouselSpace, notification } from "rond";
 
-import type { IArtifactBasic, ICharacterBasic, IWeaponBasic } from "@/types";
-import type { SaveOutput, SavingStep } from "./_types";
+import type { SaveOutput, SavingSteps } from "./_types";
 
-import { useTranslation } from "@/hooks/useTranslation";
-import { Weapon } from "@/models/base";
-import { GenshinUserBuild } from "@/services/enka";
-import { useStore } from "@/systems/dynamic-store";
-import IdStore from "@/utils/IdStore";
-import { useDispatch } from "@Store/hooks";
-import { addUserArtifact, addUserWeapon } from "@Store/userdb-slice";
+import { useSaveOutputHandler } from "./_hooks";
 
-import { SaveArtifactStep, SaveArtifactStepProps } from "./SaveArtifactStep";
-import { SaveCharacterStep, SaveCharacterStepProps } from "./SaveCharacterStep";
-import { SaveWeaponStep, SaveWeaponStepProps } from "./SaveWeaponStep";
 import { SaverLayout } from "../_components/SaverLayout";
-
-/**
- * When the character is gonna be saved, we keep the items' ids for when
- * the character is actually saved, we can update the items' owner.
- * If users do not save the character, these items will not have owner.
- */
-type TempData = {
-  equippedAtfIds: number[];
-};
+import { SaveArtifactStep } from "./SaveArtifactStep";
+import { SaveCharacterStep } from "./SaveCharacterStep";
+import { SaveWeaponStep } from "./SaveWeaponStep";
 
 type SavingStepperProps = {
-  steps: SavingStep[];
+  steps: SavingSteps;
   onComplete?: () => void;
 };
 
 export function SavingStepper({ steps, onComplete }: SavingStepperProps) {
   const [currIndex, setCurrIndex] = useState(0);
+  const [atfSavePendingCount, setAtfSavePendingCount] = useState(0);
   const saveOutput = useRef<SaveOutput>({});
+
+  const handleSaveOutput = useSaveOutputHandler();
 
   const handleCompleteStep = () => {
     const nextIndex = currIndex + 1;
@@ -43,57 +30,73 @@ export function SavingStepper({ steps, onComplete }: SavingStepperProps) {
       return;
     }
 
-    console.log(saveOutput.current);
+    const {
+      character: characterOutput,
+      weapon: weaponOutput,
+      artifacts: artifactsOutput = [],
+    } = saveOutput.current;
+
+    if (characterOutput && weaponOutput) {
+      handleSaveOutput(characterOutput, weaponOutput, artifactsOutput, steps);
+
+      notification.success({
+        content: `This ${characterOutput.character.name}'s build has been saved successfully.`,
+      });
+    }
+
     onComplete?.();
   };
 
-  const handleCharacterSave: SaveCharacterStepProps["onAction"] = (output) => {
-    saveOutput.current.character = output;
-    handleCompleteStep();
-  };
-
-  const handleSaveWeapon: SaveWeaponStepProps["onAction"] = (output) => {
-    saveOutput.current.weapon = output;
-    handleCompleteStep();
-  };
-
-  const handleSaveArtifact: SaveArtifactStepProps["onAction"] = (output) => {
-    const newArtifacts = saveOutput.current.artifacts ?? [];
-    newArtifacts.push(output);
-
-    saveOutput.current.artifacts = newArtifacts;
-    handleCompleteStep();
-  };
-
-  const getStepContent = (step: SavingStep, shouldFocus: boolean): React.ReactNode => {
+  const getStepContent = (step: SavingSteps[number], shouldFocus: boolean): React.ReactNode => {
     //
     const ctaRef: RefCallback<HTMLButtonElement> = (button) => {
-      if (shouldFocus) {
-        button?.focus({ preventScroll: true });
-      }
+      // if (shouldFocus) {
+      //   button?.focus({ preventScroll: true });
+      // }
     };
 
     switch (step.type) {
       case "CHARACTER":
-        return <SaveCharacterStep step={step} ctaRef={ctaRef} onAction={handleCharacterSave} />;
-
+        return (
+          <SaveCharacterStep
+            step={step}
+            ctaRef={ctaRef}
+            onAction={(output) => {
+              saveOutput.current.character = output;
+              handleCompleteStep();
+            }}
+          />
+        );
       case "WEAPON":
         return (
           <SaveWeaponStep
             className="h-full custom-scrollbar"
             step={step}
             ctaRef={ctaRef}
-            onAction={handleSaveWeapon}
+            onAction={(output) => {
+              saveOutput.current.weapon = output;
+              handleCompleteStep();
+            }}
           />
         );
-
       case "ARTIFACT": {
         return (
           <SaveArtifactStep
             className="h-full custom-scrollbar"
             step={step}
+            savePendingCount={atfSavePendingCount}
             ctaRef={ctaRef}
-            onAction={handleSaveArtifact}
+            onAction={(output) => {
+              if (output.action === "CREATE") {
+                setAtfSavePendingCount(atfSavePendingCount + 1);
+              }
+
+              const newArtifacts = saveOutput.current.artifacts ?? [];
+              newArtifacts.push(output);
+
+              saveOutput.current.artifacts = newArtifacts;
+              handleCompleteStep();
+            }}
           />
         );
       }
