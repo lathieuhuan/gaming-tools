@@ -6,8 +6,8 @@ import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/Array";
 import { createArtifact, createWeapon } from "@/utils/entity";
 import IdStore from "@/utils/IdStore";
-import { useContainerState } from "../Container";
-import { useDataImportState } from "../DataImportProvider";
+import { useLayoutState } from "../Layout";
+import { useDataImportState } from "../DataImporter";
 import { useRequestSaveBuild } from "../DataSaver/BuildSaver";
 
 import { TabHeader } from "../_components/TabHeader";
@@ -20,7 +20,7 @@ type SectionResultsProps = {
 export function SectionResults({ className }: SectionResultsProps) {
   const setupImporter = useSetupImporter();
   const requestSave = useRequestSaveBuild();
-  const { isMobile } = useContainerState();
+  const { isMobile } = useLayoutState();
   const { data: genshinUser, isLoading } = useDataImportState();
 
   const hasAnyBuild = !!genshinUser?.builds?.length;

@@ -6,17 +6,17 @@ import type { SearchParams, SelectedBuild } from "../types";
 import { useSearchParams } from "@/systems/router";
 import { selectAppReady } from "@Store/ui-slice";
 import { useGenshinUser } from "../_hooks/useGenshinUser";
-import { useContainerState } from "../Container";
+import { useLayoutState } from "../Layout";
 import { DataImportContext, SelectedBuildContext, SelectedBuildContextState } from "./context";
 
-type DataImportProviderProps = {
+type DataImporterProps = {
   children: ReactNode;
 };
 
-export function DataImportProvider(props: DataImportProviderProps) {
+export function DataImporter(props: DataImporterProps) {
   const [searchParams] = useSearchParams<SearchParams>();
   const appReady = useSelector(selectAppReady);
-  const { goToSection } = useContainerState();
+  const { goToSection } = useLayoutState();
   
   const [selectedBuild, setSelectedBuild] = useState<SelectedBuild>();
 

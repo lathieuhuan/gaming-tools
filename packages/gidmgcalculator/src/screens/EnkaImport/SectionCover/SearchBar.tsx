@@ -7,31 +7,31 @@ import { useSearchParams } from "@/systems/router";
 import Object_ from "@/utils/Object";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectEnkaParams, updateEnkaParams } from "@Store/ui-slice";
-import { useDataImportState } from "../DataImportProvider";
+import { useDataImportState } from "../DataImporter";
+
+type SearchInput = {
+  type: "uid" | "hoyo";
+  value: string;
+};
 
 function parseSearchParams(params?: SearchParams): SearchInput {
   if (params?.uid) {
     return { type: "uid", value: params.uid };
   }
 
-  if (params?.profile) {
-    return { type: "profile", value: params.profile };
+  if (params?.hoyo) {
+    return { type: "hoyo", value: params.hoyo };
   }
 
   return { type: "uid", value: "" };
 }
 
-type SearchInput = {
-  type: "uid" | "profile";
-  value: string;
-};
-
 export type SearchBarProps = {
   className?: string;
-  onSearch?: (input: SearchInput) => void;
+  onSearchProfile?: (profile: string) => void;
 };
 
-export function SearchBar({ className, onSearch }: SearchBarProps) {
+export function SearchBar({ className, onSearchProfile }: SearchBarProps) {
   const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams<SearchParams>();
   const [onCooldown, setOnCooldown] = useState(false);
@@ -63,22 +63,33 @@ export function SearchBar({ className, onSearch }: SearchBarProps) {
 
   const trimmedValue = input.value.trim();
 
-  const updateInput = (key: keyof SearchInput, value: string) => {
+  const updateInput = <K extends keyof SearchInput>(key: K, value: SearchInput[K]) => {
     if (!isLoading) {
       setInput((prev) => ({ ...prev, [key]: value }));
     }
   };
 
-  const handleSearch = () => {
-    const processedInput: SearchInput = {
-      ...input,
-      value: trimmedValue,
-    };
-    const newParams = { [input.type]: input.value };
+  const handleSearchUID = (uid: string) => {
+    setSearchParams({ uid });
+    dispatch(updateEnkaParams({ uid }));
+  };
 
-    setSearchParams(newParams);
-    dispatch(updateEnkaParams(newParams));
-    onSearch?.(processedInput);
+  const handleSearchProfile = (profile: string) => {
+    onSearchProfile?.(profile);
+  };
+
+  const handleSearch = () => {
+    console.log(input);
+    console.log(trimmedValue);
+
+    switch (input.type) {
+      case "uid":
+        handleSearchUID(trimmedValue);
+        break;
+      case "hoyo":
+        handleSearchProfile(trimmedValue);
+        break;
+    }
 
     setOnCooldown(true);
 
@@ -99,7 +110,7 @@ export function SearchBar({ className, onSearch }: SearchBarProps) {
           },
           // {
           //   label: "Profile",
-          //   value: "profile",
+          //   value: "hoyo",
           // },
         ]}
         value={input.type}

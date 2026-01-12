@@ -19,6 +19,23 @@ export type GenshinUserResponse = {
   ttl?: number;
 };
 
+type GameAccount = {
+  hash: string;
+  player?: {
+    name: string;
+    level: number;
+    worldLevel: number;
+    signature?: string;
+    uid?: number;
+  };
+};
+export type EnkaUserResponse = {
+  profile: string;
+  gameAccounts: GameAccount[];
+};
+
+//
+
 export type GenshinUserBuild = {
   name?: string;
   character: GOODCharacterConvertReturn;

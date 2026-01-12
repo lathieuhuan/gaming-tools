@@ -1,7 +1,7 @@
 import { clsx, Skeleton } from "rond";
 
 import type { GenshinUserBuild } from "@/services/enka";
-import { useContainerState } from "../Container";
+import { useLayoutState } from "../Layout";
 
 import { BuildOverview, BuildOverviewMobile } from "./BuildOverview";
 
@@ -20,7 +20,7 @@ export function BuildOverviews({
   onSave,
   onCalculate,
 }: BuildOverviewsProps) {
-  const { isMobile } = useContainerState();
+  const { isMobile } = useLayoutState();
   const OverviewComponent = isMobile ? BuildOverviewMobile : BuildOverview;
 
   if (isLoading) {

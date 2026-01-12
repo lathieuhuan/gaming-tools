@@ -1,8 +1,8 @@
 import { ErrorBoundary } from "react-error-boundary";
 import { useScreenWatcher } from "rond";
 
-import { Container, MOBILE_SECTION_CLASS } from "./Container";
-import { DataImportProvider } from "./DataImportProvider";
+import { Layout, MOBILE_SECTION_CLASS } from "./Layout";
+import { DataImporter } from "./DataImporter";
 import { DataSaver } from "./DataSaver";
 import { Error } from "./Error";
 import { SectionCover } from "./SectionCover";
@@ -14,8 +14,8 @@ export function EnkaImport() {
 
   return (
     <ErrorBoundary FallbackComponent={Error}>
-      <Container isMobile={isMobile}>
-        <DataImportProvider>
+      <Layout isMobile={isMobile}>
+        <DataImporter>
           <DataSaver>
             <SectionCover className={isMobile ? MOBILE_SECTION_CLASS : "w-85"} />
 
@@ -25,8 +25,8 @@ export function EnkaImport() {
 
             <SectionDetail className={["shrink-0", isMobile ? MOBILE_SECTION_CLASS : "w-80"]} />
           </DataSaver>
-        </DataImportProvider>
-      </Container>
+        </DataImporter>
+      </Layout>
     </ErrorBoundary>
   );
 }

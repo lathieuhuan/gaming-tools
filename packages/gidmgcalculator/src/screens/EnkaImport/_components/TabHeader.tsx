@@ -3,7 +3,7 @@ import { Button, cn, FancyBackSvg } from "rond";
 
 import type { EnkaImportSection } from "../types";
 
-import { useContainerState } from "../Container";
+import { useLayoutState } from "../Layout";
 
 type TabHeaderProps = {
   className?: string;
@@ -13,7 +13,7 @@ type TabHeaderProps = {
 };
 
 export function TabHeader({ className, children, sub, prevSection }: TabHeaderProps) {
-  const { isMobile, goToSection } = useContainerState();
+  const { isMobile, goToSection } = useLayoutState();
 
   const handleBack = (section: EnkaImportSection) => {
     goToSection(section);

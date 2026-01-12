@@ -5,15 +5,15 @@ import { Button, clsx, Skeleton } from "rond";
 import { useTimer } from "@/hooks/useTimer";
 import { secondsToTimeString } from "@/utils/pure-utils";
 import { STALE_TIME } from "../_hooks/useGenshinUser";
-import { useContainerState } from "../Container";
-import { useDataImportState } from "../DataImportProvider";
+import { useLayoutState } from "../Layout";
+import { useDataImportState } from "../DataImporter";
 
 export type AccountInfoProps = {
   className?: string;
 };
 
 export function AccountInfo({ className }: AccountInfoProps) {
-  const { isMobile, goToSection } = useContainerState();
+  const { isMobile, goToSection } = useLayoutState();
   const { data: genshinUser, isLoading, isError, error } = useDataImportState();
   const cls = ["p-3 rounded-lg bg-dark-1", className];
 
@@ -65,6 +65,8 @@ export function AccountInfo({ className }: AccountInfoProps) {
       </div>
     );
   }
+
+  return null;
 }
 
 export function RefreshButton() {

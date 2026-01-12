@@ -6,7 +6,7 @@ import type { SelectedBuild } from "../types";
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { Artifact } from "@/models/base";
 import { GenshinUserBuild } from "@/services/enka";
-import { useSelectedBuildState } from "../DataImportProvider";
+import { useSelectedBuildState } from "../DataImporter";
 
 import { GenshinImage, ItemThumbnail } from "@/components";
 

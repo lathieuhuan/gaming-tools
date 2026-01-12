@@ -1,4 +1,3 @@
-export * from "./queries/useQuery";
 export * from "./useArtifactSetData";
 export * from "./useWeaponData";
 export * from "./useItemBoundSetups";

@@ -1,16 +1,16 @@
 import { ReactNode, useRef } from "react";
 import { clsx } from "rond";
-import { ContainerContext } from "./_context";
+import { LayoutContext } from "./_context";
 import { EnkaImportSection } from "../types";
 
 export const MOBILE_SECTION_CLASS = "w-full shrink-0 snap-center";
 
-type ContainerProps = {
+type LayoutProps = {
   isMobile: boolean;
   children: ReactNode;
 };
 
-export function Container({ isMobile, children }: ContainerProps) {
+export function Layout({ isMobile, children }: LayoutProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const goToSection = (section: EnkaImportSection) => {
@@ -29,7 +29,7 @@ export function Container({ isMobile, children }: ContainerProps) {
   };
 
   return (
-    <ContainerContext.Provider value={{ isMobile, goToSection }}>
+    <LayoutContext.Provider value={{ isMobile, goToSection }}>
       <div
         ref={containerRef}
         className={clsx(
@@ -39,6 +39,6 @@ export function Container({ isMobile, children }: ContainerProps) {
       >
         {children}
       </div>
-    </ContainerContext.Provider>
+    </LayoutContext.Provider>
   );
 }

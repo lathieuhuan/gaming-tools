@@ -1,3 +1,4 @@
+import { useQuery } from "@tanstack/react-query";
 import { CloseButton, LoadingSpin } from "rond";
 
 import type { AppCharacter } from "@/types";
@@ -6,7 +7,6 @@ import { $AppCharacter } from "@/services";
 // Conponent
 import { markDim, markGreen } from "../../span";
 import { AbilityCarousel } from "../_components/AbilityCarousel";
-import { useQuery } from "@tanstack/react-query";
 
 type ConstellationDetailProps = {
   character: AppCharacter;

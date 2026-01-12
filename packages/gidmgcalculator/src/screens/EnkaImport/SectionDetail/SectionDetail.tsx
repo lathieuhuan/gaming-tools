@@ -7,8 +7,8 @@ import { ARTIFACT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { Artifact, ArtifactGear, CalcCharacter, Weapon } from "@/models/base";
 import Array_ from "@/utils/Array";
-import { useContainerState } from "../Container";
-import { useSelectedBuildState } from "../DataImportProvider";
+import { useLayoutState } from "../Layout";
+import { useSelectedBuildState } from "../DataImporter";
 import { useRequestSaveItem } from "../DataSaver/ItemSaver";
 
 import { AttributeTable } from "@/components";
@@ -23,7 +23,7 @@ type SectionDetailProps = {
 
 export function SectionDetail({ className }: SectionDetailProps) {
   const { t } = useTranslation();
-  const { isMobile } = useContainerState();
+  const { isMobile } = useLayoutState();
   const requestSave = useRequestSaveItem();
   const [selectedBuild] = useSelectedBuildState();
 

@@ -1,6 +1,6 @@
 import { IS_DEV_ENV } from "@/constants/config";
 // import { mock } from "./mock";
-import { GenshinUserResponse } from "./types";
+import { EnkaUserResponse, GenshinUserResponse } from "./types";
 import { transformResponse } from "./transform";
 import IdStore from "@/utils/IdStore";
 import { delay } from "@/utils/pure-utils";
@@ -47,6 +47,12 @@ export async function getGenshinUser(uid: string) {
   }
 
   throw await response.json();
+}
+
+export async function getEnkaUser(profile: string): Promise<EnkaUserResponse> {
+  const response = await fetch(`${baseUrl}/enka/profile/${profile}`);
+
+  return await response.json();
 }
 
 export async function updateCache() {
