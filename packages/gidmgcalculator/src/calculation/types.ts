@@ -32,7 +32,7 @@ export type CalcItemDefaultValues = {
   flatFactorScale: number;
 };
 
-export type AttackAlterConfig = {
+export type AttackAlter = {
   attPatt?: AttackPattern;
   attElmt?: ElementType;
   disabled?: boolean;

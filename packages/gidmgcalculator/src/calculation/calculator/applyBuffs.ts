@@ -53,11 +53,25 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
           for (const targetPath of Array_.toArray(target.path)) {
             let toStat: ReceivedAttributeBonus["toStat"];
 
-            if (targetPath === "INP_ELMT") {
-              const elmtIndex = inputs[target.inpIndex ?? 0] ?? 0;
-              toStat = ELEMENT_TYPES[elmtIndex];
-            } else {
-              toStat = targetPath;
+            switch (targetPath) {
+              case "INP_ELMT": {
+                const elmtIndex = inputs[target.inpIndex ?? 0] ?? 0;
+                toStat = ELEMENT_TYPES[elmtIndex];
+                break;
+              }
+              case "P/H/E/C": {
+                const phecElmt = team.getPhecElmt();
+
+                if (!phecElmt) {
+                  continue;
+                }
+
+                toStat = phecElmt;
+                break;
+              }
+              default:
+                toStat = targetPath;
+                break;
             }
 
             main.receiveAttrBonus({

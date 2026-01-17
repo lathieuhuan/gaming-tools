@@ -13,6 +13,7 @@ import type {
 import TypeCounter from "@/utils/TypeCounter";
 import { isAutoRsnElmt } from "./utils/isAutoRsnElmt";
 import { isPassedComparison } from "./utils/isPassedComparison";
+import { PHEC_ELEMENT_TYPES } from "@/constants";
 
 export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
   members: TMember[] = [];
@@ -114,7 +115,32 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
 
   checkTeamElmt(condition: TeamElementConditions) {
     const { elmtCount } = this;
-    const { teamOnlyElmts, teamEachElmtCount, teamElmtTotalCount, teamTotalElmtCount } = condition;
+    const {
+      teamOnlyElmts,
+      teamEachElmtCount,
+      teamElmtTotalCount,
+      teamTotalElmtCount,
+      varkaPhecAND,
+      varkaPhecOR,
+    } = condition;
+
+    if (varkaPhecAND) {
+      if (
+        elmtCount.get("anemo") < 2 ||
+        PHEC_ELEMENT_TYPES.every((elmt) => elmtCount.get(elmt) < 2)
+      ) {
+        return false;
+      }
+    }
+
+    if (varkaPhecOR) {
+      if (
+        elmtCount.get("anemo") < 2 &&
+        PHEC_ELEMENT_TYPES.every((elmt) => elmtCount.get(elmt) < 2)
+      ) {
+        return false;
+      }
+    }
 
     if (
       teamOnlyElmts &&
@@ -188,6 +214,21 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
     }
 
     return true;
+  }
+
+  getPhecElmt() {
+    let index = 0;
+
+    while (index < PHEC_ELEMENT_TYPES.length) {
+      const elmt = PHEC_ELEMENT_TYPES[index];
+      index++;
+
+      if (this.elmtCount.has(elmt)) {
+        return elmt;
+      }
+    }
+
+    return undefined;
   }
 
   getMixedCount(performerElmt: ElementType) {

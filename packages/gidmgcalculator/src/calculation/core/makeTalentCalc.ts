@@ -3,12 +3,13 @@ import type {
   AttackElement,
   CalcItemFactor,
   ElementalEvent,
+  ElementType,
   LevelableTalentType,
   LunarType,
   TalentCalcItem,
 } from "@/types";
 import type {
-  AttackAlterConfig,
+  AttackAlter,
   CalcItemDefaultValues,
   CalcResultAttackItem,
   CalcResultItemValue,
@@ -31,7 +32,7 @@ export function makeTalentCalc(
   target: CalcTarget,
   talentType: LevelableTalentType,
   default_: CalcItemDefaultValues,
-  alterConfig: AttackAlterConfig = {}
+  alterConfig: AttackAlter = {}
 ) {
   const { totalAttrs, attkBonusCtrl } = performer;
   const { vision, weaponType } = performer.data;
@@ -77,6 +78,7 @@ export function makeTalentCalc(
 
   function calcAttackItem(
     item: TalentCalcItem,
+    itemElmtAlter: ElementType | undefined,
     elmtEvent: ElementalEvent,
     recorder: ResultRecorder
   ): CalcResultAttackItem {
@@ -88,14 +90,18 @@ export function makeTalentCalc(
 
     {
       // AttackElement priority:
-      // 0. anemo absorption
-      // 1. NAs of (catalyst) or FCA
-      // 2. item.attElmt
-      // 3. infusedElmt (custom infusion) (if NAs)
-      // 4. alterConfig
-      // 5. phys (if NAs) | performer.vision (otherwise)
+      // 0. item element alter
+      // 1. anemo absorption
+      // 2. NAs of (catalyst) or FCA
+      // 3. item.attElmt
+      // 4. infusedElmt (custom infusion) (if NAs)
+      // 5. alterConfig
+      // 6. phys (if NAs) | performer.vision (otherwise)
 
-      if (item.attElmt === "absorb") {
+      if (itemElmtAlter) {
+        attElmt = itemElmtAlter;
+      } //
+      else if (item.attElmt === "absorb") {
         // this attack can absorb element (anemo abilities) but user may not activate absorption
         attElmt = absorption || "anemo";
         reaction = absorbReaction;

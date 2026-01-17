@@ -23,6 +23,10 @@ export type TeamElementConditions = {
   teamEachElmtCount?: Partial<Record<ElementType, number>>;
   /** On Nilou, Chevreuse */
   teamOnlyElmts?: ElementType[];
+  /** Temporary */
+  varkaPhecAND?: boolean;
+  /** Temporary */
+  varkaPhecOR?: boolean;
 };
 
 export type TeamMilestoneType = "MOONSIGN" | "WITCH_RITE";

@@ -1,15 +1,8 @@
 import type { CalcSetup } from "@/models/calculator";
-import type { AttackPattern } from "@/types";
-import type { AttackAlterConfig, CalcResultAttackItem } from "../types";
+import type { CalcResultAttackItem } from "../types";
 import type { CalcResult } from "./types";
 
-import {
-  ATTACK_PATTERNS,
-  LUNAR_REACTIONS,
-  NORMAL_ATTACKS,
-  TRANSFORMATIVE_REACTIONS,
-} from "@/constants/global";
-import Array_ from "@/utils/Array";
+import { ATTACK_PATTERNS, LUNAR_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@/constants/global";
 import { CalcTarget } from "../core/CalcTarget";
 import { CharacterCalc } from "../core/CharacterCalc";
 import { makeAttackItemCalc } from "../core/makeAttackItemCalc";
@@ -19,6 +12,7 @@ import { makeTalentCalc } from "../core/makeTalentCalc";
 import { ResultRecorder } from "../core/ResultRecorder";
 import { applyBuffs } from "./applyBuffs";
 import { applyDebuffs } from "./applyDebuffs";
+import { getAttackAlters } from "./getAttackAlters";
 import { getTalentDefaultValues } from "./getTalentDefaultValues";
 import { TeammateCalc } from "./TeammateCalc";
 
@@ -42,31 +36,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
   applyBuffs(main, teammates, setup);
   applyDebuffs(main, teammates, setup, target);
 
-  const attackAlterConfigs = (function getAttackAlterConfigs() {
-    const configs: Partial<Record<AttackPattern, AttackAlterConfig>> = {};
-    const { buffs } = main.data;
-
-    for (const ctrl of setup.selfBuffCtrls) {
-      const buff = ctrl.activated ? Array_.findByIndex(buffs, ctrl.data.index) : undefined;
-      const { normalsConfig = [] } = buff || {};
-
-      for (const config of Array_.toArray(normalsConfig)) {
-        const { checkInput, forPatt = "ALL", ...rest } = config;
-
-        if (main.isPerformableEffect(config, ctrl.inputs)) {
-          if (forPatt === "ALL") {
-            for (const type of NORMAL_ATTACKS) {
-              configs[type] = rest;
-            }
-          } else {
-            configs[forPatt] = rest;
-          }
-        }
-      }
-    }
-
-    return configs;
-  })();
+  const attackAlters = getAttackAlters(main, setup);
 
   const result: CalcResult = {
     NAs: {},
@@ -90,7 +60,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
   for (const ATT_PATT of ATTACK_PATTERNS) {
     const talentType = ATT_PATT === "ES" || ATT_PATT === "EB" ? ATT_PATT : "NAs";
     const resultGroup = result[talentType];
-    const alterConfig = attackAlterConfigs[ATT_PATT];
+    const alterConfig = attackAlters[ATT_PATT];
     const defaultValues = getTalentDefaultValues(
       main.data,
       ATT_PATT,
@@ -109,6 +79,8 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
       );
 
       if (type === "attack") {
+        const itemElmtAlter = calcItem.id ? attackAlters[calcItem.id]?.attElmt : undefined;
+
         if (alterConfig?.disabled) {
           resultGroup[calcItem.name] = EMPTY_ATTACK_RESULT;
           continue;
@@ -123,7 +95,12 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
           continue;
         }
 
-        resultGroup[calcItem.name] = calculator.calcAttackItem(calcItem, elmtEvent, recorder);
+        resultGroup[calcItem.name] = calculator.calcAttackItem(
+          calcItem,
+          itemElmtAlter,
+          elmtEvent,
+          recorder
+        );
         continue;
       }
 

@@ -4,6 +4,15 @@ import type { ModInputConfig } from "@/types";
 import type { ModifierViewInputConfig, ModifierViewProps } from "rond";
 
 import { genSequentialOptions } from "@/utils";
+import {
+  OPTION_CRYO,
+  OPTION_HYDRO,
+  OPTION_ELECTRO,
+  OPTION_PYRO,
+  OPTION_DENDRO,
+  OPTION_ANEMO,
+  OPTION_GEO,
+} from "./_constants";
 
 const genOptions = (config: ModInputConfig) => {
   let count: number | undefined = undefined;
@@ -31,6 +40,7 @@ export function GenshinModifierView({
 
   const viewInputConfigs = inputConfigs?.map<ModifierViewInputConfig>((config) => {
     const label = config.label || "[missing label]";
+    const configOptions = config.options;
 
     switch (config.type) {
       case "TEXT":
@@ -40,13 +50,13 @@ export function GenshinModifierView({
       case "CHECK":
         return { type: "check", label };
       case "SELECT": {
-        if (config.options) {
+        if (configOptions) {
           const { menuWidth = 7 } = config;
 
           return {
             type: "select",
             label,
-            options: config.options.map((option, optionIndex) => ({
+            options: configOptions.map((option, optionIndex) => ({
               label: option,
               value: optionIndex,
             })),
@@ -67,41 +77,32 @@ export function GenshinModifierView({
         return {
           type: "select",
           label,
-          options: [
-            { label: "Pyro", value: 0 },
-            { label: "Hydro", value: 1 },
-            { label: "Electro", value: 2 },
-            { label: "Cryo", value: 3 },
-          ],
+          options: [OPTION_PYRO, OPTION_HYDRO, OPTION_ELECTRO, OPTION_CRYO],
         };
       case "DENDROABLE":
         return {
           type: "select",
           label,
-          options: [
-            { label: "Pyro", value: 0 },
-            { label: "Hydro", value: 1 },
-            { label: "Electro", value: 2 },
-          ],
+          options: [OPTION_PYRO, OPTION_HYDRO, OPTION_ELECTRO],
         };
       case "ELEMENTAL": {
         const options = [
-          { label: "Pyro", value: 0 },
-          { label: "Hydro", value: 1 },
-          { label: "Electro", value: 2 },
-          { label: "Cryo", value: 3 },
-          { label: "Geo", value: 4 },
-          { label: "Anemo", value: 5 },
-          { label: "Dendro", value: 6 },
+          OPTION_PYRO,
+          OPTION_HYDRO,
+          OPTION_ELECTRO,
+          OPTION_CRYO,
+          OPTION_GEO,
+          OPTION_ANEMO,
+          OPTION_DENDRO,
         ];
 
         return {
           type: "select",
           label,
-          options: config.options
-            ? options.filter((option) => config.options?.includes(option.value))
+          options: configOptions
+            ? options.filter((option) => configOptions.includes(option.value))
             : options,
-          style: { maxWidth: config.options ? "6rem" : undefined },
+          style: { maxWidth: configOptions ? "6rem" : undefined },
         };
       }
       default:

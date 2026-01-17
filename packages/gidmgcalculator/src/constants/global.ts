@@ -1,12 +1,6 @@
-export const ELEMENT_TYPES = [
-  "pyro",
-  "hydro",
-  "electro",
-  "cryo",
-  "geo",
-  "anemo",
-  "dendro",
-] as const;
+export const PHEC_ELEMENT_TYPES = ["pyro", "hydro", "electro", "cryo"] as const;
+
+export const ELEMENT_TYPES = [...PHEC_ELEMENT_TYPES, "geo", "anemo", "dendro"] as const;
 
 export const WEAPON_TYPES = ["sword", "claymore", "catalyst", "polearm", "bow"] as const;
 

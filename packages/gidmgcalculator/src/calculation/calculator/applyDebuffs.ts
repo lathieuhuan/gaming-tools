@@ -5,7 +5,7 @@ import type { CharacterCalc } from "../core/CharacterCalc";
 import type { IEffectPerformer } from "../types";
 import type { TeammateCalc } from "./TeammateCalc";
 
-import { ELEMENT_TYPES } from "@/constants/global";
+import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants/global";
 import Array_ from "@/utils/Array";
 
 export function applyDebuffs(
@@ -35,7 +35,7 @@ export function applyDebuffs(
           break;
         }
         case "XILONEN": {
-          const elmts: ElementType[] = ["pyro", "hydro", "cryo", "electro"];
+          const elmts: ElementType[] = [...PHEC_ELEMENT_TYPES];
           const { elmtCount } = team;
 
           elmtCount.forEach((elmt) => {
