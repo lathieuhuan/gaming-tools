@@ -11,7 +11,7 @@ import { selectDbWeapons, sortWeapons } from "@Store/userdb-slice";
 
 // Component
 import { InventoryRack, WeaponTypeSelect } from "@/components";
-import { ComplexFilterButton } from "../_components/ComplexFilterButton";
+import { CompoundFilterButton } from "../_components/CompoundFilterButton";
 import { UserItemSortButton } from "../_components/UserItemSortButton";
 import { WarehouseWrapper } from "../_components/WarehouseWrapper";
 import { ActionContainer } from "./ActionContainer";
@@ -93,7 +93,7 @@ function MyWeapons() {
           {screenWatcher.isFromSize("sm") ? (
             <WeaponTypeSelect values={weaponTypes} onSelect={toggleWeaponType} />
           ) : (
-            <ComplexFilterButton
+            <CompoundFilterButton
               active={weaponTypes.length > 0}
               onClick={toggleExtra}
               onClear={() => updateWeaponTypes([])}

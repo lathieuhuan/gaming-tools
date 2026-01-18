@@ -228,5 +228,11 @@ export const createTarget = (
     }
   }
 
-  return new Target(basic, data);
+  return new Target(
+    {
+      ...basic,
+      resistances
+    },
+    data
+  );
 };

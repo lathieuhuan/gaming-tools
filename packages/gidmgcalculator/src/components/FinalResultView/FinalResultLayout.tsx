@@ -1,7 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { FaCaretRight } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
-import { Button, clsx, CollapseSpace, Table, TableThProps } from "rond";
+import { Button, clsx, CollapseSpace, Table, TableTdProps, TableThProps } from "rond";
 
 import type { Character } from "@/models/base";
 import type { LevelableTalentType, TalentType } from "@/types";
@@ -11,14 +11,12 @@ import { useTranslation } from "@/hooks";
 import { getTableKeys, type TableKey } from "./utils";
 
 type HeaderConfig = Pick<TableThProps, "className" | "style"> & {
-  content: React.ReactNode | ((talentType: TalentType | undefined) => React.ReactNode);
+  content: ReactNode | ((talentType: TalentType | undefined) => ReactNode);
 };
 
-type RowCellConfig = {
-  className?: string;
-  style?: React.CSSProperties;
-  value?: string | number | null;
-  extra?: React.ReactNode;
+type RowCellConfig = TableTdProps & {
+  value?: ReactNode;
+  extra?: ReactNode;
 };
 
 type RowConfig = {
@@ -53,10 +51,7 @@ export function FinalResultLayout({
   const [lvlingSectionI, setLvlingSectionI] = useState(-1);
 
   const tableKeys = useMemo(() => {
-    return getTableKeys(
-      character.data.calcList,
-      showWeaponCalc ? character.weapon.data.calcItems : undefined
-    );
+    return getTableKeys(character.data.calcList, showWeaponCalc ? character.weapon.data.calcItems : undefined);
   }, [character.name, character.weapon.code, showWeaponCalc]);
 
   const toggleSection = (index: number, forcedClosed?: boolean) => {
@@ -118,17 +113,14 @@ export function FinalResultLayout({
                 <div className="py-1.5 flex items-center gap-1">
                   <FaCaretRight
                     className={
-                      "text-base duration-150 ease-linear" +
-                      (closedSections[sectionIndex] ? "" : " rotate-90")
+                      "text-base duration-150 ease-linear" + (closedSections[sectionIndex] ? "" : " rotate-90")
                     }
                   />
                   <span>{sectionLabel}</span>
                 </div>
 
                 {talentLevel !== 0 && (
-                  <span className="px-1 rounded-sm bg-black/60 text-light-1 text-sm">
-                    {talentLevel}
-                  </span>
+                  <span className="px-1 rounded-sm bg-black/60 text-light-1 text-sm">{talentLevel}</span>
                 )}
               </button>
 
@@ -156,9 +148,7 @@ export function FinalResultLayout({
             <CollapseSpace key={tableKey.main} active={!closedSections[sectionIndex]}>
               {tableKey.subs.length === 0 ? (
                 <div className="pt-2">
-                  <p className="pt-2 pb-1 bg-dark-2 text-center text-light-hint">
-                    This talent does not deal damage.
-                  </p>
+                  <p className="pt-2 pb-1 bg-dark-2 text-center text-light-hint">This talent does not deal damage.</p>
                 </div>
               ) : (
                 <div className="pt-2 custom-scrollbar">
@@ -186,7 +176,7 @@ type SectionTableProps = Pick<FinalResultLayoutProps, "getRowConfig" | "headerCo
   getRowTitle: (key: string) => string;
 };
 
-function SectionTable(props: SectionTableProps) {
+function SectionTable({ label, talentType, headerConfigs, tableKey, getRowConfig, getRowTitle }: SectionTableProps) {
   return (
     <Table
       className="w-full"
@@ -196,23 +186,23 @@ function SectionTable(props: SectionTableProps) {
           style: { width: "8.5rem", minWidth: "6rem" },
         },
       ]}
-      aria-label={props.label}
+      aria-label={label}
     >
       <Table.Tr>
         <Table.Th className="sticky left-0 z-10" style={{ background: "inherit" }} />
 
-        {props.headerConfigs.map(({ content, ...attrs }, i) => {
+        {headerConfigs.map(({ content, ...attrs }, i) => {
           return (
             <Table.Th key={i} {...attrs}>
-              {typeof content === "function" ? content(props.talentType) : content}
+              {typeof content === "function" ? content(talentType) : content}
             </Table.Th>
           );
         })}
       </Table.Tr>
 
-      {props.tableKey.subs.map((subKey) => {
-        const config = props.getRowConfig(props.tableKey.main, subKey);
-        const label = props.getRowTitle(subKey);
+      {tableKey.subs.map((subKey) => {
+        const config = getRowConfig(tableKey.main, subKey);
+        const label = getRowTitle(subKey);
 
         return (
           <Table.Tr key={subKey} aria-label={label}>
@@ -225,11 +215,11 @@ function SectionTable(props: SectionTableProps) {
               {label}
             </Table.Td>
 
-            {config.cells.map((cell, cellIndex) => {
+            {config.cells.map(({ value, extra, ...rest }, cellIndex) => {
               return (
-                <Table.Td key={cellIndex} className={cell.className} style={cell.style}>
-                  {cell.value || EMPTY_VALUE}
-                  {cell.extra}
+                <Table.Td key={cellIndex} {...rest}>
+                  {value || EMPTY_VALUE}
+                  {extra}
                 </Table.Td>
               );
             })}

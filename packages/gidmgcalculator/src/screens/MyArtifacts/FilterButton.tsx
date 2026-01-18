@@ -4,7 +4,7 @@ import { Modal } from "rond";
 import type { IArtifactBasic } from "@/types";
 
 import { ArtifactFilter, ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER } from "@/components";
-import { ComplexFilterButton } from "../_components/ComplexFilterButton";
+import { CompoundFilterButton } from "../_components/CompoundFilterButton";
 
 type FilterButtonProps = {
   artifacts: IArtifactBasic[];
@@ -34,7 +34,7 @@ export function FilterButton({ artifacts, filter, onChange }: FilterButtonProps)
 
   return (
     <>
-      <ComplexFilterButton
+      <CompoundFilterButton
         active={isFiltered}
         onClick={() => setOpen(true)}
         onClear={handleRemoveFilter}

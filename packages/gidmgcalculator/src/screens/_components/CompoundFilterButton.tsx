@@ -7,7 +7,7 @@ type ComplexFilterButtonProps = {
   onClear?: () => void;
 };
 
-export function ComplexFilterButton({ active, onClick, onClear }: ComplexFilterButtonProps) {
+export function CompoundFilterButton({ active, onClick, onClear }: ComplexFilterButtonProps) {
   return (
     <div className="flex cursor-pointer">
       <button
