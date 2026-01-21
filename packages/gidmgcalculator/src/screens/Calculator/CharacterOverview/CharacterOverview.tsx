@@ -4,8 +4,7 @@ import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 import { useCalcStore } from "@Store/calculator";
 import { updateMain } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
-import { useSelector } from "@Store/hooks";
-import { selectAppReady } from "@Store/ui-slice";
+import { selectAppReady, useUIStore } from "@Store/ui";
 import { useCalcModalCtrl } from "../ContextProvider";
 
 // Component
@@ -62,7 +61,7 @@ type CharacterOverviewProps = {
 };
 
 export function CharacterOverview({ touched }: CharacterOverviewProps) {
-  const appReady = useSelector(selectAppReady);
+  const appReady = useUIStore(selectAppReady);
   const modalCtrl = useCalcModalCtrl();
 
   return (

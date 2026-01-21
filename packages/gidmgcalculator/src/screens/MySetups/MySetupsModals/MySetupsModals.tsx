@@ -1,8 +1,7 @@
 import { FaUnlink, FaWrench } from "react-icons/fa";
 import { Modal } from "rond";
 
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectMySetupModalType, updateUI } from "@Store/ui-slice";
+import { useUIStore, updateUI } from "@Store/ui";
 
 // Component
 import { markYellow } from "@/components";
@@ -14,11 +13,10 @@ type MySetupsModalsProps = {
 };
 
 export function MySetupsModals(props: MySetupsModalsProps) {
-  const dispatch = useDispatch();
-  const modalType = useSelector(selectMySetupModalType);
+  const modalType = useUIStore((state) => state.mySetupsModalType);
 
   const closeModal = () => {
-    dispatch(updateUI({ mySetupsModalType: "" }));
+    updateUI({ mySetupsModalType: "" });
   };
 
   return (

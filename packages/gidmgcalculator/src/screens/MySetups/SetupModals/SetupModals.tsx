@@ -2,8 +2,8 @@ import { ConfirmModal, Modal } from "rond";
 
 import type { CalcSetup } from "@/models/calculator";
 
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectMySetupModalType, updateUI } from "@Store/ui-slice";
+import { useDispatch } from "@Store/hooks";
+import { updateUI, useUIStore } from "@Store/ui";
 import { removeSetup } from "@Store/userdb-slice";
 
 // Component
@@ -23,12 +23,12 @@ type SetupModalsProps = {
 
 export function SetupModals({ setupName, setup }: SetupModalsProps) {
   const dispatch = useDispatch();
-  const modalType = useSelector(selectMySetupModalType);
+  const modalType = useUIStore((state) => state.mySetupsModalType);
 
   const { weapon, atfGear, totalAttrs } = setup.main;
 
   const closeModal = () => {
-    dispatch(updateUI({ mySetupsModalType: "" }));
+    updateUI({ mySetupsModalType: "" });
   };
 
   return (
@@ -47,11 +47,7 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
       />
 
       <Modal.Core active={modalType === "SHARE_SETUP"} preset="small" onClose={closeModal}>
-        <SetupExporter
-          setupName={setupName}
-          calcSetup={setup}
-          onClose={closeModal}
-        />
+        <SetupExporter setupName={setupName} calcSetup={setup} onClose={closeModal} />
       </Modal.Core>
 
       <Modal

@@ -2,14 +2,14 @@ import { useLayoutEffect, useState } from "react";
 import { CollapseList, CollapseListProps } from "rond";
 
 import type { AttackPattern } from "@/types";
-import type { TrackerState } from "@Store/ui-slice";
+import type { TrackerState } from "@Store/ui";
 
 import { calculateSetup } from "@/calculation/calculator";
+import { useShallowCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 
 // Component
 import { markDim, markGreen } from "@/components";
-import { useShallowCalcStore } from "@Store/calculator";
 import { AttributesTracker } from "./AttributesTracker";
 import { BonusesTracker } from "./BonusesTracker";
 import { CalcItemTracker } from "./CalcItemTracker";

@@ -5,8 +5,7 @@ import { Button, clsx, Modal, Skeleton } from "rond";
 import type { AppMetadata } from "./types";
 
 import { $AppSettings } from "@/services";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { useUIStore, updateUI } from "@Store/ui";
 import { $Greeter } from "./_logic/GreeterService";
 
 // Components
@@ -21,8 +20,7 @@ type State = {
 };
 
 export const Greeter = () => {
-  const dispatch = useDispatch();
-  const appModalType = useSelector((state) => state.ui.appModalType);
+  const appModalType = useUIStore((state) => state.appModalType);
 
   const [state, setState] = useState<State>({
     status: "loading",
@@ -50,12 +48,12 @@ export const Greeter = () => {
         status: "success",
         metadata: $Greeter.metadata,
       });
-      dispatch(updateUI({ appReady: true }));
+      updateUI({ appReady: true });
     }
   };
 
   useLayoutEffect(() => {
-    dispatch(updateUI({ appModalType: "INTRO" }));
+    updateUI({ appModalType: "INTRO" });
     getMetadata();
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
@@ -141,7 +139,7 @@ export const Greeter = () => {
         </>
       }
       closable={state.status === "success"}
-      onClose={() => dispatch(updateUI({ appModalType: "" }))}
+      onClose={() => updateUI({ appModalType: "" })}
     >
       <Introduction className="grow" metadata={state.metadata} loading={isLoading} />
 

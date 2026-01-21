@@ -5,8 +5,7 @@ import { Button, LoadingSpin } from "rond";
 import { IS_DEV_ENV, SCREEN_PATH } from "@/constants/config";
 import { $AppData } from "@/services";
 import { useRouter } from "@/systems/router";
-import { useDispatch } from "@Store/hooks";
-import { updateUI, type UIState } from "@Store/ui-slice";
+import { updateUI, type UIState } from "@Store/ui";
 import { ModalOption } from "./_config";
 
 import { EnkaLogo } from "@/assets/icons";
@@ -19,16 +18,15 @@ type RightSideProps = {
 };
 
 export function RightSide({ appReady }: RightSideProps) {
-  const dispatch = useDispatch();
   const router = useRouter();
   const [refetching, setRefetching] = useState(false);
 
   const openModal = (type: UIState["appModalType"]) => () => {
-    dispatch(updateUI({ appModalType: type }));
+    updateUI({ appModalType: type });
   };
 
   const handleSelectModal = (option: ModalOption) => {
-    dispatch(updateUI({ appModalType: option.modalType }));
+    updateUI({ appModalType: option.modalType });
   };
 
   const handleSelectEnkaImport = () => {

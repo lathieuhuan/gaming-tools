@@ -4,15 +4,14 @@ import { message } from "rond";
 import { useSearchParams } from "@/systems/router";
 import { useSetupImporter } from "@/systems/setup-importer";
 import { decodeSetup } from "@/utils/setup-porter";
-import { useSelector } from "@Store/hooks";
-import { selectAppReady } from "@Store/ui-slice";
+import { selectAppReady, useUIStore } from "@Store/ui";
 
 type SearchParams = {
   importCode?: string;
 };
 
 export function SetupTransshiper() {
-  const appReady = useSelector(selectAppReady);
+  const appReady = useUIStore(selectAppReady);
   const [searchParams, setSearchParams] = useSearchParams<SearchParams>();
   const setupImporter = useSetupImporter();
 

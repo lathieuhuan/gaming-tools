@@ -8,7 +8,7 @@ import {
   FaWrench,
 } from "react-icons/fa";
 
-import { UIState } from "@Store/ui-slice";
+import type { UIState } from "@Store/ui";
 
 export type ModalOption = {
   label: string;

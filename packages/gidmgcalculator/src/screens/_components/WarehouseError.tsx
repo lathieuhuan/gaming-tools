@@ -4,7 +4,7 @@ import { Button, WarehouseLayout } from "rond";
 
 import { SystemError } from "@/utils/SystemError";
 import { useDispatch } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { updateUI } from "@Store/ui";
 import { fixV4MigrationError } from "@Store/userdb-slice";
 
 export function WarehouseError({ error, resetErrorBoundary }: FallbackProps) {
@@ -12,7 +12,7 @@ export function WarehouseError({ error, resetErrorBoundary }: FallbackProps) {
 
   const fixable = error instanceof SystemError && error.detail.type === "V4_MIGRATION_ERROR";
 
-  const openDownloadModal = () => dispatch(updateUI({ appModalType: "DOWNLOAD" }));
+  const openDownloadModal = () => updateUI({ appModalType: "DOWNLOAD" });
 
   const handleFix = () => {
     dispatch(fixV4MigrationError());

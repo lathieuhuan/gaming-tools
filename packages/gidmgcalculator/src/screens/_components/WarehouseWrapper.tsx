@@ -3,8 +3,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { LoadingPlate, WarehouseLayout } from "rond";
 
 import { useTravelerKey } from "@/hooks";
-import { useSelector } from "@Store/hooks";
-import { selectAppReady } from "@Store/ui-slice";
+import { selectAppReady, useUIStore } from "@Store/ui";
 import { WarehouseError } from "./WarehouseError";
 
 type WarehouseWrapperProps = {
@@ -12,7 +11,7 @@ type WarehouseWrapperProps = {
 };
 
 export function WarehouseWrapper({ children }: WarehouseWrapperProps) {
-  const appReady = useSelector(selectAppReady);
+  const appReady = useUIStore(selectAppReady);
   const travelerKey = useTravelerKey();
 
   if (!appReady) {

@@ -3,8 +3,10 @@ import isEqual from "react-fast-compare";
 import type { CalcSetup } from "@/models/calculator";
 import type { AppThunk } from "./store";
 
-// Store
-import { updateUI } from "./ui-slice";
+import Array_ from "@/utils/Array";
+import { createArtifactBasic, createWeaponBasic } from "@/utils/entity";
+import { isDbSetup, toDbSetup } from "@/utils/setup";
+import { updateUI } from "./ui";
 import {
   addUserArtifact,
   addUserWeapon,
@@ -12,11 +14,6 @@ import {
   updateUserArtifact,
   updateUserWeapon,
 } from "./userdb-slice";
-
-// Util
-import Array_ from "@/utils/Array";
-import { createArtifactBasic, createWeaponBasic } from "@/utils/entity";
-import { isDbSetup, toDbSetup } from "@/utils/setup";
 
 export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
   return (dispatch, getState) => {
@@ -162,6 +159,6 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
 
     dispatch(saveSetup(newDbSetup));
 
-    dispatch(updateUI({ setupDirectorActive: false }));
+    updateUI({ setupDirectorActive: false });
   };
 }

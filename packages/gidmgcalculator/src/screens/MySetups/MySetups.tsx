@@ -9,7 +9,7 @@ import Array_ from "@/utils/Array";
 import { restoreCalcSetup } from "@/utils/setup";
 import { parseDbArtifacts, parseDbWeapon } from "@/utils/userdb";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { MySetupsModalType, updateUI } from "@Store/ui-slice";
+import { MySetupsModalType, updateUI } from "@Store/ui";
 import { chooseUserSetup, selectActiveSetupId } from "@Store/userdb-slice";
 import { createSetupForTeammate, toOverviewInfo } from "./utils";
 
@@ -49,7 +49,7 @@ function MySetups() {
   };
 
   const openModal = (type: MySetupsModalType) => () => {
-    dispatch(updateUI({ mySetupsModalType: type }));
+    updateUI({ mySetupsModalType: type });
   };
 
   const handleCalculateTeammateSetup = (info: SetupOverviewInfo, teammateIndex: number) => {

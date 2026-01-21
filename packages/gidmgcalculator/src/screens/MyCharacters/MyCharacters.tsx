@@ -2,8 +2,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { LoadingPlate, useScreenWatcher } from "rond";
 
 import { useTravelerKey } from "@/hooks";
-import { useSelector } from "@Store/hooks";
-import { selectAppReady } from "@Store/ui-slice";
+import { selectAppReady, useUIStore } from "@Store/ui";
 
 import { WarehouseError } from "../_components/WarehouseError";
 import { MyCharactersLarge } from "./MyCharactersLarge";
@@ -12,7 +11,7 @@ import { MyCharactersSmall } from "./MyCharactersSmall";
 export function MyCharacters() {
   const screenWatcher = useScreenWatcher();
   const isMobile = !screenWatcher.isFromSize("sm");
-  const appReady = useSelector(selectAppReady);
+  const appReady = useUIStore(selectAppReady);
   const travelerKey = useTravelerKey();
 
   if (!appReady) {

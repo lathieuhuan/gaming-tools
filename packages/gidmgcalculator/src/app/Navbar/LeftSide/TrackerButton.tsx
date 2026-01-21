@@ -1,15 +1,13 @@
-import { useDispatch, useSelector } from "@Store/hooks";
 import { BiDetail } from "react-icons/bi";
 
-import { updateUI } from "@Store/ui-slice";
+import { updateUI, useUIStore } from "@Store/ui";
 
 export function TrackerButton() {
-  const dispatch = useDispatch();
-  const trackerState = useSelector((state) => state.ui.trackerState);
+  const trackerState = useUIStore((state) => state.trackerState);
 
   if (trackerState !== "close") {
     const onClick = () => {
-      dispatch(updateUI({ trackerState: "open" }));
+      updateUI({ trackerState: "open" });
     };
 
     return (

@@ -1,8 +1,7 @@
 import { createPortal } from "react-dom";
 import { LoadingSpin, Modal } from "rond";
 
-import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { updateUI, useUIStore } from "@Store/ui";
 
 // Component
 import { DataFixing } from "./DataFixing";
@@ -14,7 +13,7 @@ import { Upload } from "./Upload";
 
 // TODO check if this is still needed
 const AppLoadingOverlay = () => {
-  const loading = useSelector((state) => state.ui.loading);
+  const loading = useUIStore((state) => state.loading);
   let mask = document.getElementById("app-mask");
 
   if (!mask) {
@@ -31,10 +30,9 @@ const AppLoadingOverlay = () => {
 };
 
 export function Modals() {
-  const dispatch = useDispatch();
-  const appModalType = useSelector((state) => state.ui.appModalType);
+  const appModalType = useUIStore((state) => state.appModalType);
 
-  const closeModal = () => dispatch(updateUI({ appModalType: "" }));
+  const closeModal = () => updateUI({ appModalType: "" });
 
   return (
     <>

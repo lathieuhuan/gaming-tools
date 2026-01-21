@@ -8,7 +8,7 @@ import { useDynamicStoreControl } from "@/systems/dynamic-store";
 import { genAccountTravelerKey, selectTraveler, updateTraveler } from "@Store/account-slice";
 import { applySettings } from "@Store/calculator/actions";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { updateUI } from "@Store/ui";
 
 import { AccountSettingsControls } from "./AccountSettingsControls";
 import { AppSettingsControls } from "./AppSettingsControls";
@@ -48,11 +48,9 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
     applySettings(currSettings.separateCharInfo && !newSettings.separateCharInfo, travelerChanged);
 
     if (newSettings.isTabLayout !== currSettings.isTabLayout) {
-      dispatch(
-        updateUI({
-          isTabLayout: newSettings.isTabLayout,
-        })
-      );
+      updateUI({
+        isTabLayout: newSettings.isTabLayout,
+      });
     }
 
     if (newSettings.persistUserData !== currSettings.persistUserData) {

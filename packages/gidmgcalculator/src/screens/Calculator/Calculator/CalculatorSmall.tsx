@@ -1,8 +1,7 @@
 import { useState } from "react";
 
 import { useCalcStore } from "@Store/calculator";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { updateUI, useUIStore } from "@Store/ui";
 
 // Components
 import { ContextProvider } from "../ContextProvider";
@@ -10,15 +9,14 @@ import { BottomNavSmall } from "./BottomNavSmall";
 import { ModifiersCard, ResultsCard, SetupCard, OverviewCard } from "./_cards";
 
 export function CalculatorSmall() {
-  const dispatch = useDispatch();
   const touched = useCalcStore((state) => state.setupManagers.length !== 0);
-  const isModernUI = useSelector((state) => state.ui.isTabLayout);
+  const isModernUI = useUIStore((state) => state.isTabLayout);
 
   const [activePanelI, setActivePanelI] = useState(0);
 
   const onSelectSection = (index: number) => {
     setActivePanelI(index);
-    dispatch(updateUI({ setupDirectorActive: false }));
+    updateUI({ setupDirectorActive: false });
   };
 
   return (

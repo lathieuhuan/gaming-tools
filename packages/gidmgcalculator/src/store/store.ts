@@ -16,7 +16,6 @@ import storage from "redux-persist/lib/storage";
 import { PERSISTED_DATA_VERSION } from "@/constants/config";
 import accountSliceReducers, { accountSlice } from "./account-slice";
 import { migrates } from "./migration";
-import uiSliceReducers, { uiSlice } from "./ui-slice";
 import userdbSliceReducers, { initialState, userdbSlice } from "./userdb-slice";
 
 type SetupStoreOptions = {
@@ -45,7 +44,6 @@ export function setupStore(options?: SetupStoreOptions) {
   );
 
   const rootReducer = combineReducers({
-    ui: uiSliceReducers,
     userdb: userdbPersistReducers,
     account: accountPersistReducers,
   });
@@ -54,7 +52,7 @@ export function setupStore(options?: SetupStoreOptions) {
     key: "root",
     version: 0,
     storage,
-    blacklist: [uiSlice.name, userdbSlice.name, accountSlice.name],
+    blacklist: [userdbSlice.name, accountSlice.name],
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -81,4 +79,9 @@ export type AppStore = ReturnType<typeof setupStore>["store"];
 
 export type RootState = ReturnType<AppStore["getState"]>;
 export type AppDispatch = AppStore["dispatch"];
-export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action<string>>;
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>;

@@ -2,7 +2,7 @@ import { ReactElement, useCallback, useState } from "react";
 
 import { $AppSettings } from "@/services";
 import { setupStore } from "@/store";
-import { updateUI } from "@Store/ui-slice";
+import { updateUI } from "@Store/ui";
 import { addUserDatabase } from "@Store/userdb-slice";
 import { DynamicStoreContext, DynamicStoreControlContext, type UpdateStoreConfig } from "./context";
 
@@ -37,7 +37,7 @@ export function DynamicStoreProvider(props: DynamicStoreProviderProps) {
         );
       }
 
-      newConfig.store.dispatch(updateUI({ appReady: true }));
+      updateUI({ appReady: true });
     },
     [config]
   );

@@ -3,21 +3,19 @@ import { Button, CloseButton, Modal } from "rond";
 
 import Array_ from "@/utils/Array";
 import { useCalcStore } from "@Store/calculator";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI, type TrackerState } from "@Store/ui-slice";
+import { updateUI, useUIStore, type TrackerState } from "@Store/ui";
 
 import { TrackerCore } from "./TrackerCore";
 
 export function Tracker() {
-  const dispatch = useDispatch();
-  const trackerState = useSelector((state) => state.ui.trackerState);
+  const trackerState = useUIStore((state) => state.trackerState);
   const activeSetupName = useCalcStore((state) => {
     const { activeId, setupManagers } = state;
     return Array_.findById(setupManagers, activeId)?.name || "";
   });
 
   const setTrackerState = (newState: TrackerState) => {
-    dispatch(updateUI({ trackerState: newState }));
+    updateUI({ trackerState: newState });
   };
 
   return (

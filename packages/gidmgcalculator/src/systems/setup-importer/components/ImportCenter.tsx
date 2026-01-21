@@ -9,8 +9,7 @@ import { CalcSetup } from "@/models/calculator";
 import { useRouter } from "@/systems/router";
 import { useShallowCalcStore } from "@Store/calculator";
 import { importSetup, initSession } from "@Store/calculator/actions";
-import { useDispatch } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { updateUI } from "@Store/ui";
 
 // Component
 import { OverwriteOptions, type OverwriteOptionsProps } from "./OverwriteOptions";
@@ -22,7 +21,6 @@ type SetupImportCenterProps = PartiallyRequired<SetupImportInfo, "params"> & {
 };
 
 export function SetupImportCenter({ params, onFinish, ...manageInfo }: SetupImportCenterProps) {
-  const dispatch = useDispatch();
   const router = useRouter();
   const { main, target, setupManagers } = useShallowCalcStore((state) => {
     const { activeId = "", setupsById } = state;
@@ -111,7 +109,7 @@ export function SetupImportCenter({ params, onFinish, ...manageInfo }: SetupImpo
 
   const addImportedSetup: OverwriteOptionsProps["onDone"] = (config) => {
     importSetup(params, manageInfo, config);
-    dispatch(updateUI({ setupDirectorActive: false }));
+    updateUI({ setupDirectorActive: false });
     onFinish();
   };
 
@@ -125,7 +123,7 @@ export function SetupImportCenter({ params, onFinish, ...manageInfo }: SetupImpo
       }),
     });
 
-    dispatch(updateUI({ setupDirectorActive: false }));
+    updateUI({ setupDirectorActive: false });
     onFinish();
 
     router.navigate(SCREEN_PATH.CALCULATOR);
@@ -139,7 +137,7 @@ export function SetupImportCenter({ params, onFinish, ...manageInfo }: SetupImpo
   };
 
   const resetExistingSetup = () => {
-    dispatch(updateUI({ setupDirectorActive: false }));
+    updateUI({ setupDirectorActive: false });
   };
 
   switch (pendingCode) {

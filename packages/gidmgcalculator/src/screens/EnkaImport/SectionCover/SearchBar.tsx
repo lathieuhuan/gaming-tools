@@ -5,8 +5,7 @@ import type { SearchParams } from "../types";
 
 import { useSearchParams } from "@/systems/router";
 import Object_ from "@/utils/Object";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectEnkaParams, updateEnkaParams } from "@Store/ui-slice";
+import { updateEnkaParams, useUIStore } from "@Store/ui";
 import { useDataImportState } from "../DataImporter";
 
 type SearchInput = {
@@ -32,10 +31,9 @@ export type SearchBarProps = {
 };
 
 export function SearchBar({ className, onSearchProfile }: SearchBarProps) {
-  const dispatch = useDispatch();
   const [searchParams, setSearchParams] = useSearchParams<SearchParams>();
   const [onCooldown, setOnCooldown] = useState(false);
-  const enkaParams = useSelector(selectEnkaParams);
+  const enkaParams = useUIStore((state) => state.enkaParams);
   const { isLoading } = useDataImportState();
 
   const [input, setInput] = useState<SearchInput>({
@@ -49,7 +47,7 @@ export function SearchBar({ className, onSearchProfile }: SearchBarProps) {
         setSearchParams(enkaParams, true);
       }
     } else {
-      dispatch(updateEnkaParams(searchParams));
+      updateEnkaParams(searchParams);
     }
   }, []);
 
@@ -71,7 +69,7 @@ export function SearchBar({ className, onSearchProfile }: SearchBarProps) {
 
   const handleSearchUID = (uid: string) => {
     setSearchParams({ uid });
-    dispatch(updateEnkaParams({ uid }));
+    updateEnkaParams({ uid });
   };
 
   const handleSearchProfile = (profile: string) => {

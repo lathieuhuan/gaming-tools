@@ -7,7 +7,7 @@ import type { SetupOverviewInfo } from "../types";
 
 import { Artifact } from "@/models/base";
 import { useDispatch } from "@Store/hooks";
-import { MySetupsModalType, updateUI } from "@Store/ui-slice";
+import { MySetupsModalType, updateUI } from "@Store/ui";
 import { chooseUserSetup, switchShownSetupInComplex, uncombineSetups } from "@Store/userdb-slice";
 
 // Component
@@ -37,7 +37,7 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
   const isOriginalSetup = setup.type === "original";
 
   const openModal = (type: MySetupsModalType) => () => {
-    dispatch(updateUI({ mySetupsModalType: type }));
+    updateUI({ mySetupsModalType: type });
   };
 
   const closeTeammateDetail = () => {
