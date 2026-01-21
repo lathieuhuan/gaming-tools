@@ -1,13 +1,13 @@
 import { useRef } from "react";
 import { Modal } from "rond";
 
-import type { TravelerInfo, TravelerKey } from "@/types";
+import type { TravelerConfig, TravelerKey } from "@/types";
 
 import { $AppSettings, AppSettings } from "@/services";
 import { useDynamicStoreControl } from "@/systems/dynamic-store";
-import { genAccountTravelerKey, selectTraveler, updateTraveler } from "@Store/account-slice";
+import { genAccountTravelerKey } from "@/utils/genAccountTravelerKey";
+import { updateTraveler, useAccountStore } from "@Store/account";
 import { applySettings } from "@Store/calculator/actions";
-import { useDispatch, useSelector } from "@Store/hooks";
 import { updateUI } from "@Store/ui";
 
 import { AccountSettingsControls } from "./AccountSettingsControls";
@@ -27,8 +27,7 @@ type SettingsProps = {
 };
 
 const SettingsCore = ({ onClose }: SettingsProps) => {
-  const dispatch = useDispatch();
-  const traveler = useSelector(selectTraveler);
+  const traveler = useAccountStore((state) => state.traveler);
 
   const newSettings = useAppSettings();
   const newTraveler = useRef(traveler);
@@ -42,7 +41,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
 
     if (travelerChanged) {
       // updateTraveler must run before applySettings
-      dispatch(updateTraveler(currTraveler));
+      updateTraveler(currTraveler);
     }
 
     applySettings(currSettings.separateCharInfo && !newSettings.separateCharInfo, travelerChanged);
@@ -74,7 +73,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
     newTraveler.current = { ...newTraveler.current, selection };
   };
 
-  const handlePowerupsChange = (key: keyof TravelerInfo["powerups"], value: boolean) => {
+  const handlePowerupsChange = (key: keyof TravelerConfig["powerups"], value: boolean) => {
     newTraveler.current = {
       ...newTraveler.current,
       powerups: {

@@ -12,7 +12,7 @@ type WarehouseWrapperProps = {
 
 export function WarehouseWrapper({ children }: WarehouseWrapperProps) {
   const appReady = useUIStore(selectAppReady);
-  const travelerKey = useTravelerKey();
+  const [travelerKey] = useTravelerKey();
 
   if (!appReady) {
     return (

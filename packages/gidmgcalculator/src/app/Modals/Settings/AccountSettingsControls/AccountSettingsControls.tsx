@@ -3,14 +3,19 @@ import { FaCaretRight } from "react-icons/fa";
 import { clsx, CollapseSpace } from "rond";
 
 import { $AppCharacter } from "@/services";
-import { TravelerInfo, TravelerKey, PowerupKey } from "@/types";
+import { TravelerConfig, TravelerKey, PowerupKey } from "@/types";
 
 import { CharacterPortrait } from "@/components";
-import { SettingsGroupCard, SettingsGroupItem, SettingsGroupItems, SettingsGroupTitle } from "../SettingsGroup";
+import {
+  SettingsGroupCard,
+  SettingsGroupItem,
+  SettingsGroupItems,
+  SettingsGroupTitle,
+} from "../SettingsGroup";
 
 type AccountSettingsControlsProps = {
   className?: string;
-  initialTraveler: TravelerInfo;
+  initialTraveler: TravelerConfig;
   onChangeSelection: (selection: TravelerKey) => void;
   onChangePowerups: (key: PowerupKey, value: boolean) => void;
 };
@@ -118,9 +123,14 @@ export function AccountSettingsControls({
         className="text-sm font-semibold flex items-center gap-1"
         onClick={() => setPowerupsExpanded(!powerupsExpanded)}
       >
-        <FaCaretRight className={clsx("duration-200 ease-linear", powerupsExpanded && "rotate-90")} />
+        <FaCaretRight
+          className={clsx("duration-200 ease-linear", powerupsExpanded && "rotate-90")}
+        />
         <span>
-          <span className={clsx(powerupsExpanded && "underline underline-offset-4")}>POWER-UPs</span> (spoilers)
+          <span className={clsx(powerupsExpanded && "underline underline-offset-4")}>
+            POWER-UPs
+          </span>{" "}
+          (spoilers)
         </span>
       </button>
       <CollapseSpace active={powerupsExpanded}>

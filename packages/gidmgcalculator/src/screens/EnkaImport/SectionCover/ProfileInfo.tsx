@@ -7,9 +7,6 @@ type ProfileInfoProps = {
 export function ProfileInfo({ profile }: ProfileInfoProps) {
   const { data: enkaUser, isLoading, isError, error } = useEnkaUser(profile);
 
-  console.log(profile);
-  console.log(enkaUser);
-
   if (isLoading) {
     return <div>Loading...</div>;
   }

@@ -14,7 +14,6 @@ import {
 import storage from "redux-persist/lib/storage";
 
 import { PERSISTED_DATA_VERSION } from "@/constants/config";
-import accountSliceReducers, { accountSlice } from "./account-slice";
 import { migrates } from "./migration";
 import userdbSliceReducers, { initialState, userdbSlice } from "./userdb-slice";
 
@@ -34,25 +33,15 @@ export function setupStore(options?: SetupStoreOptions) {
     userdbSliceReducers
   );
 
-  const accountPersistReducers = persistReducer(
-    {
-      key: "account",
-      version: 1,
-      storage,
-    },
-    accountSliceReducers
-  );
-
   const rootReducer = combineReducers({
     userdb: userdbPersistReducers,
-    account: accountPersistReducers,
   });
 
   const persistConfig = {
     key: "root",
     version: 0,
     storage,
-    blacklist: [userdbSlice.name, accountSlice.name],
+    blacklist: [userdbSlice.name],
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);

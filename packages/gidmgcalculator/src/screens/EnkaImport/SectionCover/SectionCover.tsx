@@ -14,8 +14,6 @@ type SectionCoverProps = {
 export function SectionCover({ className }: SectionCoverProps) {
   const [profile, setProfile] = useState<string>("");
 
-  console.log(profile);
-
   return (
     <div className={clsx("p-4 flex flex-col gap-6 shrink-0 overflow-auto", className)}>
       <div className="flex justify-between">

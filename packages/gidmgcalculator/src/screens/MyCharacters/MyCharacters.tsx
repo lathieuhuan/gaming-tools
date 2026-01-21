@@ -12,7 +12,7 @@ export function MyCharacters() {
   const screenWatcher = useScreenWatcher();
   const isMobile = !screenWatcher.isFromSize("sm");
   const appReady = useUIStore(selectAppReady);
-  const travelerKey = useTravelerKey();
+  const [travelerKey] = useTravelerKey();
 
   if (!appReady) {
     return (

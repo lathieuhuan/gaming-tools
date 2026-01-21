@@ -1,4 +1,4 @@
-import type { AppCharacter, CharacterInnateBuff, TalentType, TravelerInfo } from "@/types";
+import type { AppCharacter, CharacterInnateBuff, TalentType, TravelerConfig } from "@/types";
 import type {
   GenshinDevCharacterSuccessResponse,
   GenshinDevErrorResponse,
@@ -12,7 +12,7 @@ import { cannedKnowledgeBuff, skirksTrainingBuff } from "./config";
 const NO_DESCRIPTION_MSG = "[Description missing]";
 
 class AppCharacterService {
-  readonly DEFAULT_TRAVELER: TravelerInfo = {
+  readonly DEFAULT_TRAVELER: TravelerConfig = {
     selection: "LUMINE",
     powerups: {
       cannedKnowledge: false,
@@ -20,7 +20,7 @@ class AppCharacterService {
     },
   };
   characters: AppCharacter[] = [];
-  traveler: TravelerInfo = this.DEFAULT_TRAVELER;
+  traveler: TravelerConfig = this.DEFAULT_TRAVELER;
 
   populate(characters: AppCharacter[]) {
     const travelerProps = this.getTravelerProps(this.traveler);
@@ -124,14 +124,14 @@ class AppCharacterService {
     return data;
   }
 
-  changeTraveler(traveler: TravelerInfo) {
+  changeTraveler(traveler: TravelerConfig) {
     this.traveler = traveler;
 
     const travelerProps = this.getTravelerProps(traveler);
     this.characters.forEach((character) => this.updateIfTraveler(character, travelerProps));
   }
 
-  getTravelerProps(traveler: Partial<TravelerInfo>): TravelerProps {
+  getTravelerProps(traveler: Partial<TravelerConfig>): TravelerProps {
     const { selection, powerups } = traveler;
 
     const innateBuffs: TravelerProps["innateBuffs"] = [];

@@ -1,16 +1,15 @@
-import { useLayoutEffect, useMemo } from "react";
+import { useLayoutEffect } from "react";
 import { useScreenWatcher } from "rond";
 
+import { useTravelerKey } from "@/hooks";
 import { CalculatorLarge, CalculatorSmall } from "@/screens/Calculator";
 import { $AppCharacter } from "@/services";
 import { Outlet, useRouter } from "@/systems/router";
-import { genAccountTravelerKey, selectTraveler } from "@Store/account-slice";
-import { useSelector } from "@Store/hooks";
 
 export function Main() {
   const screenWatcher = useScreenWatcher();
   const router = useRouter();
-  const traveler = useSelector(selectTraveler);
+  const [travelerKey, traveler] = useTravelerKey();
 
   const isMobile = !screenWatcher.isFromSize("sm");
   const isAtRoot = router.isRouteActive("/");
@@ -18,8 +17,6 @@ export function Main() {
   useLayoutEffect(() => {
     $AppCharacter.changeTraveler(traveler);
   }, []);
-
-  const travelerKey = useMemo(() => genAccountTravelerKey(traveler), [traveler]);
 
   if (isMobile) {
     return isAtRoot ? <CalculatorSmall key={travelerKey} /> : <Outlet />;

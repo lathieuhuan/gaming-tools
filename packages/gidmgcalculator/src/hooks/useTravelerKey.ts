@@ -1,8 +1,10 @@
-import { genAccountTravelerKey, selectTraveler } from "@Store/account-slice";
-import { useSelector } from "@Store/hooks";
+import { useAccountStore } from "@Store/account";
+import { genAccountTravelerKey } from "@/utils/genAccountTravelerKey";
 import { useMemo } from "react";
 
 export function useTravelerKey() {
-  const traveler = useSelector(selectTraveler);
-  return useMemo(() => genAccountTravelerKey(traveler), [traveler]);
+  const traveler = useAccountStore((state) => state.traveler);
+  const travelerKey = useMemo(() => genAccountTravelerKey(traveler), [traveler]);
+
+  return [travelerKey, traveler] as const;
 }
