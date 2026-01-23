@@ -1,12 +1,12 @@
-import type { StandardResponse } from "../services.types";
+import type { StandardResponse } from "../types";
 
-export async function fetchData<T, E = unknown>(
+export async function customFetch<T, E = unknown>(
   url: string,
   options?: { processData?: (res: any) => T; processError?: (res: E) => string }
 ): StandardResponse<T> {
   const { processData, processError } = options || {};
 
-  return await fetch(url)
+  return fetch(url)
     .then(async (res) => {
       const response = await res.json();
 

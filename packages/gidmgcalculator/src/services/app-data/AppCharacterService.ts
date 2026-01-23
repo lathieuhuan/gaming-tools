@@ -5,9 +5,9 @@ import type {
   TravelerProps,
 } from "./types";
 
-import { GENSHIN_DEV_URL } from "@/constants/config";
-import { fetchData } from "./BaseService";
+import { customFetch } from "./BaseService";
 import { cannedKnowledgeBuff, skirksTrainingBuff } from "./config";
+import { GENSHIN_DEV_URL } from "./url";
 
 const NO_DESCRIPTION_MSG = "[Description missing]";
 
@@ -18,6 +18,7 @@ class AppCharacterService {
       cannedKnowledge: false,
       skirksTraining: false,
     },
+    resonateElmts: [],
   };
   characters: AppCharacter[] = [];
   traveler: TravelerConfig = this.DEFAULT_TRAVELER;
@@ -46,7 +47,7 @@ class AppCharacterService {
       return constellation.map((cons) => cons.description || NO_DESCRIPTION_MSG);
     }
 
-    const response = await fetchData(GENSHIN_DEV_URL.character(name), {
+    const response = await customFetch(GENSHIN_DEV_URL.character(name), {
       processData: (res: GenshinDevCharacterSuccessResponse) => {
         return parseGenshinDevResponse(res, appCharacter).consDescriptions;
       },
@@ -85,7 +86,7 @@ class AppCharacterService {
       return descriptions;
     }
 
-    const response = await fetchData(GENSHIN_DEV_URL.character(name), {
+    const response = await customFetch(GENSHIN_DEV_URL.character(name), {
       processData: (res) => parseGenshinDevResponse(res, appCharacter).talentDescriptions,
       processError: (res: GenshinDevErrorResponse) => res.error,
     });

@@ -7,7 +7,7 @@ import type {
   CharacterInnateBuff,
 } from "@/types";
 
-export type Update = {
+export type AppUpdate = {
   date: string;
   content: string[];
   patch?: string;
@@ -20,7 +20,7 @@ export type AllData = {
   artifacts: AppArtifact[];
   teamBuffs: AppTeamBuff[];
   monsters: AppMonster[];
-  updates: Update[];
+  updates: AppUpdate[];
   supporters: string[];
 };
 

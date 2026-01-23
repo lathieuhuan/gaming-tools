@@ -1,3 +1,5 @@
+import type { ElementType } from "./common";
+
 export type TravelerKey = "LUMINE" | "AETHER";
 
 export type PowerupKey = "cannedKnowledge" | "skirksTraining";
@@ -7,4 +9,5 @@ export type TravelerConfig = {
   powerups: {
     [key in PowerupKey]: boolean;
   };
+  resonateElmts: ElementType[];
 };

@@ -5,7 +5,7 @@ type DebuffArtifact = {
   debuff?: ArtifactDebuff;
 };
 
-const map = new Map<number, AppArtifact>();
+const cache = new Map<number, AppArtifact>();
 
 class AppArtifactService {
   artifacts: AppArtifact[] = [];
@@ -13,7 +13,7 @@ class AppArtifactService {
   deepwoodArtifact: DebuffArtifact | undefined;
 
   populate(artifacts: AppArtifact[]) {
-    map.clear();
+    cache.clear();
     this.artifacts = artifacts;
 
     for (const artifact of artifacts) {
@@ -45,16 +45,16 @@ class AppArtifactService {
       return undefined;
     }
 
-    const cached = map.get(code);
+    const cachedAtf = cache.get(code);
 
-    if (cached) {
-      return cached;
+    if (cachedAtf) {
+      return cachedAtf;
     }
 
     const data = this.artifacts.find((artifact) => artifact.code === code);
 
     if (data) {
-      map.set(code, data);
+      cache.set(code, data);
       return data;
     }
 

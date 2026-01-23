@@ -1,12 +1,12 @@
 import type { AppWeapon, WeaponType } from "@/types";
 
-const map = new Map<number, AppWeapon>();
+const cache = new Map<number, AppWeapon>();
 
 class AppWeaponService {
   weapons: AppWeapon[] = [];
 
   populate(weapons: AppWeapon[]) {
-    map.clear();
+    cache.clear();
     this.weapons = weapons;
   }
 
@@ -34,7 +34,7 @@ class AppWeaponService {
       return undefined;
     }
 
-    const cachedWeapon = map.get(code);
+    const cachedWeapon = cache.get(code);
 
     if (cachedWeapon) {
       return cachedWeapon;
@@ -43,7 +43,7 @@ class AppWeaponService {
     const data = this.weapons.find((weapon) => weapon.code === code);
 
     if (data) {
-      map.set(code, data);
+      cache.set(code, data);
       return data;
     }
 

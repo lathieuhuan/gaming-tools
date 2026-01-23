@@ -7,7 +7,7 @@ import { convertGOODArtifact, convertGOODCharacter, convertGOODWeapon } from "@/
 import IdStore from "@/utils/IdStore";
 import Object_ from "@/utils/Object";
 
-export function transformResponse(
+export function transformGenshinUserResponse(
   response: GenshinUserResponse,
   idStore = new IdStore()
 ): GenshinUser {

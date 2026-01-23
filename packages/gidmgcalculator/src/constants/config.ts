@@ -19,21 +19,3 @@ export const SCREEN_PATH = {
   CHARACTERS: "/characters",
   ENKA: "/enka",
 } as const;
-
-export const GENSHIN_DEV_URL = {
-  base: "https://genshin.jmp.blue",
-  character: (name: string) => `${GENSHIN_DEV_URL.base}/characters/${name}`,
-};
-
-export const BACKEND_URL = {
-  base: IS_DEV_ENV ? "http://localhost:3000/api" : "https://gidmgcalculator.vercel.app/api",
-  allData() {
-    return `${this.base}/meta-data`;
-  },
-  character: {
-    byName: (name: string) => `${BACKEND_URL.base}/character?name=${name}`,
-  },
-  weapon: {
-    byCode: (code: number) => `${BACKEND_URL.base}/weapon?code=${code}`,
-  },
-};

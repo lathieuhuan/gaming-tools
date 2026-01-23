@@ -1,19 +1,19 @@
 import type { AppMonster, AppTeamBuff, ITarget } from "@/types";
 import type { AllData } from "./types";
 
-import { BACKEND_URL } from "@/constants/config";
 import Array_ from "@/utils/Array";
 import { $AppArtifact } from "./AppArtifactService";
 import { $AppCharacter } from "./AppCharacterService";
 import { $AppWeapon } from "./AppWeaponService";
-import { fetchData } from "./BaseService";
+import { customFetch } from "./BaseService";
+import { API_URL } from "./url";
 
 class AppDataService {
   teamBuffs: AppTeamBuff[] = [];
   monsters: AppMonster[] = [];
 
   async fetchAllData() {
-    return await fetchData<AllData>(BACKEND_URL.allData());
+    return await customFetch<AllData>(API_URL.allData());
   }
 
   populate(data: Pick<AllData, "characters" | "weapons" | "artifacts" | "teamBuffs" | "monsters">) {
