@@ -43,7 +43,6 @@ export function KeyboardShortcutsProvider(props: { children: React.ReactNode }) 
 
           if (!outTags.includes(activeTag)) {
             const handlers = shortcutConfigs.current[e.key] ?? [];
-            console.log(e.key, handlers.length);
 
             handlers[handlers.length - 1]?.();
           }
@@ -81,7 +80,11 @@ export function KeyboardShortcutsProvider(props: { children: React.ReactNode }) 
     };
   }, []);
 
-  return <KeyboardShortcutsContext.Provider value={control}>{props.children}</KeyboardShortcutsContext.Provider>;
+  return (
+    <KeyboardShortcutsContext.Provider value={control}>
+      {props.children}
+    </KeyboardShortcutsContext.Provider>
+  );
 }
 
 export function useKeyboardShortcut(key: string, handler: Handler): KeyboardShortcutsControl;

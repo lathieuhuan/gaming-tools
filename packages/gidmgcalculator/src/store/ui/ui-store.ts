@@ -2,13 +2,9 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { useShallow } from "zustand/shallow";
 
-import { $AppSettings } from "@/services";
-import { UIState } from "./types";
-
-const { isTabLayout } = $AppSettings.get();
+import type { UIState } from "./types";
 
 const initialState: UIState = {
-  isTabLayout,
   appModalType: "",
   mySetupsModalType: "",
   targetConfig: {

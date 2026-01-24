@@ -2,8 +2,8 @@ import { FaSkull } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 import { Button, useScreenWatcher } from "rond";
 
-import { useUIStore } from "@Store/ui";
-import { updateUI } from "@Store/ui";
+import { useSettingsStore } from "@Store/settings";
+import { updateUI, useUIStore } from "@Store/ui";
 
 // Component
 import SectionArtifacts from "./SectionArtifacts";
@@ -15,7 +15,7 @@ import { SetupSelect } from "./SetupSelect";
 export function SetupManager() {
   const screenWatcher = useScreenWatcher();
   const targetConfig = useUIStore((state) => state.targetConfig);
-  const isModernUI = useUIStore((state) => state.isTabLayout);
+  const isModernUI = useSettingsStore((state) => state.isTabLayout);
 
   const updateTargetConfig = (active: boolean, overviewed: boolean) => {
     updateUI({ targetConfig: { active, overviewed } });

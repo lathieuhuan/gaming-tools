@@ -3,17 +3,9 @@ import { createContext, useContext, useMemo } from "react";
 import type { AppStore, RootState } from "@/store";
 import type { Persistor } from "redux-persist";
 
-export type UpdateStoreConfig = (args: Partial<{ persistUserData: boolean }>) => void;
-
-export const DynamicStoreControlContext = createContext<UpdateStoreConfig>(() => {});
-
 export const DynamicStoreContext = createContext<{ store: AppStore; persistor: Persistor } | null>(
   null
 );
-
-export const useDynamicStoreControl = () => {
-  return useContext(DynamicStoreControlContext);
-};
 
 const useStoreContext = (): AppStore => {
   const storeContext = useContext(DynamicStoreContext);

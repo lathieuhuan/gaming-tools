@@ -2,7 +2,7 @@ import { Checkbox, clsx, InputNumber, VersatileSelect } from "rond";
 import { SettingControlProps } from "./types";
 
 export function SettingControl(props: SettingControlProps) {
-  const { type, subType, label, description, ...rest } = props;
+  const { type, subType, label, description, align, controlProps } = props;
   let control: React.ReactNode = null;
 
   switch (type) {
@@ -10,8 +10,11 @@ export function SettingControl(props: SettingControlProps) {
       control = (
         <div className="min-h-9 flex items-center">
           <Checkbox
-            {...(rest as any)}
-            className={props.align === "right" ? "w-full flex-row-reverse justify-between" : ""}
+            {...controlProps}
+            className={clsx(
+              controlProps.className,
+              align === "right" && "w-full flex-row-reverse justify-between"
+            )}
           >
             {label}
           </Checkbox>
@@ -28,7 +31,7 @@ export function SettingControl(props: SettingControlProps) {
               className="font-semibold h-8"
               dropdownCls="font-medium"
               align="right"
-              {...(rest as any)}
+              {...controlProps}
             />
           </div>
         </div>
@@ -39,7 +42,7 @@ export function SettingControl(props: SettingControlProps) {
         <div className="flex gap-3 items-center justify-between" style={{ minHeight: "2.25rem" }}>
           <span>{label}</span>
           <div className="w-16 flex shrink-0">
-            <InputNumber className="w-full font-semibold" size="medium" {...(rest as any)} />
+            <InputNumber className="w-full font-semibold" size="medium" {...controlProps} />
           </div>
         </div>
       );

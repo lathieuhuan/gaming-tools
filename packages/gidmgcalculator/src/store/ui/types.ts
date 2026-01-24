@@ -1,5 +1,4 @@
-import { AppSettings } from "@/services/app-settings";
-import { SearchParams } from "@/systems/router";
+import type { SearchParams } from "@/systems/router";
 
 export type MySetupsModalType =
   | "TIPS"
@@ -15,10 +14,18 @@ export type MySetupsModalType =
 
 export type TrackerState = "open" | "close" | "hidden";
 
-export type UIState = Pick<AppSettings, "isTabLayout"> & {
+export type UIState = {
   loading: boolean;
   appReady: boolean;
-  appModalType: "" | "INTRO" | "GUIDES" | "SETTINGS" | "UPLOAD" | "DOWNLOAD" | "DONATE" | "DATA_FIX";
+  appModalType:
+    | ""
+    | "INTRO"
+    | "GUIDES"
+    | "SETTINGS"
+    | "UPLOAD"
+    | "DOWNLOAD"
+    | "DONATE"
+    | "DATA_FIX";
   targetConfig: {
     active: boolean;
     overviewed: boolean;

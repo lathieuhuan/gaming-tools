@@ -12,7 +12,8 @@ import type { AdvancedPick, PartiallyRequiredOnly } from "rond";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
 import { Artifact, Target, Weapon } from "@/models/base";
-import { $AppArtifact, $AppData, $AppSettings, $AppWeapon } from "@/services";
+import { $AppArtifact, $AppData, $AppWeapon } from "@/services";
+import { useSettingsStore } from "@Store/settings";
 import Array_ from "./Array";
 import IdStore from "./IdStore";
 import Object_ from "./Object";
@@ -39,7 +40,7 @@ export const createArtifactBasic = (
 ): IArtifactBasic => {
   const {
     ID = idStore?.gen() || Date.now(),
-    level = $AppSettings.get("artLevel"),
+    level = useSettingsStore.getState().artLevel,
     mainStatType = "hp",
     subStats = [
       { type: "def", value: 0 },
@@ -79,7 +80,7 @@ export const createArtifact = (
 export type CreateWeaponParams = PartiallyRequiredOnly<IWeaponBasic, "type">;
 
 export const createWeaponBasic = (params: CreateWeaponParams, idStore?: IdStore): IWeaponBasic => {
-  const { wpLevel, wpRefi } = $AppSettings.get();
+  const { wpLevel, wpRefi } = useSettingsStore.getState();
   const { ID = idStore?.gen() || Date.now(), type, level = wpLevel, refi = wpRefi } = params;
   const code = params.code || Weapon.DEFAULT_CODE[type];
 
@@ -110,7 +111,9 @@ export const createWeapon = (params: CreateWeaponParams, data?: AppWeapon, idSto
 export type CreateCharacterParams = PartiallyRequiredOnly<ICharacterBasic, "name">;
 
 export const createCharacterBasic = (params: CreateCharacterParams): ICharacterBasic => {
-  const { charLevel, charCons, charNAs, charES, charEB, charEnhanced } = $AppSettings.get();
+  const { charLevel, charCons, charNAs, charES, charEB, charEnhanced } =
+    useSettingsStore.getState();
+
   const {
     name,
     level = charLevel,
@@ -129,10 +132,8 @@ export const createCharacterBasic = (params: CreateCharacterParams): ICharacterB
 export type CreateTargetParams = PartiallyRequiredOnly<ITargetBasic, "code">;
 
 export const createTargetBasic = (params: CreateTargetParams): ITargetBasic => {
-  const { targetLevel } = $AppSettings.get();
-
   const {
-    level = targetLevel,
+    level = useSettingsStore.getState().targetLevel,
     resistances = {
       pyro: 10,
       hydro: 10,
@@ -231,7 +232,7 @@ export const createTarget = (
   return new Target(
     {
       ...basic,
-      resistances
+      resistances,
     },
     data
   );

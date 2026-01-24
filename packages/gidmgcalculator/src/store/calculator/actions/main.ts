@@ -2,20 +2,22 @@ import type { CalcSetup, MainUpdateData } from "@/models/calculator";
 import type { ElementalEvent, ITarget } from "@/types";
 import type { ForwardedAction } from "../types";
 
+import { Team } from "@/models/base";
 import { createWeaponBuffCtrls } from "@/models/calculator";
-import { $AppSettings } from "@/services";
 import { createTarget } from "@/utils/entity";
 import Object_ from "@/utils/Object";
+import { useSettingsStore } from "@Store/settings";
 import { useCalcStore } from "../calculator-store";
 import { onActiveSetup } from "../utils";
-import { Team } from "@/models/base";
 
 // ===== CHARACTER =====
 
 export const updateMain = (data: MainUpdateData, setupIds?: number[]) => {
+  const { separateCharInfo } = useSettingsStore.getState();
+
   const ids =
     setupIds ||
-    ($AppSettings.get("separateCharInfo")
+    (separateCharInfo
       ? [useCalcStore.getState().activeId]
       : useCalcStore.getState().setupManagers.map(({ ID }) => ID));
 

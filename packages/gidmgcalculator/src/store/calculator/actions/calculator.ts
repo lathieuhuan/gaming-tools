@@ -2,8 +2,9 @@ import type { BasicSetupType, ISetupManager } from "@/types";
 import type { CalculatorState } from "../types";
 
 import { CalcSetup, CalcSetupConstructInfo } from "@/models/calculator";
-import { $AppCharacter, $AppSettings } from "@/services";
+import { $AppCharacter } from "@/services";
 import { initialState, useCalcStore } from "../calculator-store";
+import { useSettingsStore } from "@Store/settings";
 
 type InitSessionPayload = {
   name?: string;
@@ -15,7 +16,7 @@ export const initSession = (payload: InitSessionPayload) => {
   const { name = "Setup 1", type = "original", calcSetup } = payload;
   const { ID } = calcSetup;
 
-  $AppSettings.patch({ separateCharInfo: false });
+  useSettingsStore.setState({ separateCharInfo: false });
 
   useCalcStore.setState({
     ...initialState,
@@ -38,7 +39,7 @@ export const updateCalculator = (
   });
 };
 
-export const applySettings = (unifyCharacters: boolean, travelerChanged: boolean) => {
+export const applySettingsToCalculator = (unifyCharacters: boolean, travelerChanged: boolean) => {
   useCalcStore.setState((state) => {
     const { setupsById } = state;
     const activeMain = setupsById[state.activeId]?.main;

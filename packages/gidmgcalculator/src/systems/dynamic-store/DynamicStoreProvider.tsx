@@ -1,10 +1,12 @@
-import { ReactElement, useCallback, useState } from "react";
+import { ReactElement, useLayoutEffect, useState } from "react";
 
-import { $AppSettings } from "@/services";
 import { setupStore } from "@/store";
+import { useSettingsStore } from "@Store/settings";
 import { updateUI } from "@Store/ui";
 import { addUserDatabase } from "@Store/userdb-slice";
-import { DynamicStoreContext, DynamicStoreControlContext, type UpdateStoreConfig } from "./context";
+import { DynamicStoreContext } from "./context";
+
+import { SettingsHydrationGuard } from "./SettingsHydrationGuard";
 
 type StoreConfig = ReturnType<typeof setupStore>;
 
@@ -12,17 +14,23 @@ type DynamicStoreProviderProps = {
   children: (config: StoreConfig) => ReactElement;
 };
 
-export function DynamicStoreProvider(props: DynamicStoreProviderProps) {
-  const [config, setConfig] = useState(
-    setupStore({ persistUserData: $AppSettings.get("persistUserData") })
+function DynamicStoreControl(props: DynamicStoreProviderProps) {
+  const [config, setConfig] = useState(() =>
+    setupStore({
+      persistUserData: useSettingsStore.getState().persistUserData,
+    })
   );
 
-  const changeConfig: UpdateStoreConfig = useCallback(
-    ({ persistUserData }) => {
+  useLayoutEffect(() => {
+    const currentPersistUserData = useSettingsStore.getState().persistUserData;
+
+    return useSettingsStore.subscribe(({ persistUserData }) => {
+      if (persistUserData === currentPersistUserData) {
+        return;
+      }
+
       const newConfig = setupStore({ persistUserData });
       const oldStoreState = config.store.getState();
-
-      setConfig(newConfig);
 
       if (oldStoreState) {
         const { userdb } = oldStoreState;
@@ -37,16 +45,22 @@ export function DynamicStoreProvider(props: DynamicStoreProviderProps) {
         );
       }
 
+      setConfig(newConfig);
       updateUI({ appReady: true });
-    },
-    [config]
-  );
+    });
+  }, [config]);
 
   return (
-    <DynamicStoreControlContext.Provider value={changeConfig}>
-      <DynamicStoreContext.Provider value={config}>
-        {props.children(config)}
-      </DynamicStoreContext.Provider>
-    </DynamicStoreControlContext.Provider>
+    <DynamicStoreContext.Provider value={config}>
+      {props.children(config)}
+    </DynamicStoreContext.Provider>
+  );
+}
+
+export function DynamicStoreProvider(props: DynamicStoreProviderProps) {
+  return (
+    <SettingsHydrationGuard>
+      <DynamicStoreControl {...props} />
+    </SettingsHydrationGuard>
   );
 }

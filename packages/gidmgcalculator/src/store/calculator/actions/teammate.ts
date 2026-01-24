@@ -3,19 +3,19 @@ import type { AppCharacter, ITeammateArtifact, ITeammateWeapon } from "@/types";
 import type { ForwardedAction } from "../types";
 
 import {
-  type CalcSetup,
   createArtifactBuffCtrls,
   createWeaponBuffCtrls,
+  type CalcSetup,
 } from "@/models/calculator";
 import Object_ from "@/utils/Object";
+import { useSettingsStore } from "@Store/settings";
 import { useCalcStore } from "../calculator-store";
 import { onActiveSetup } from "../utils";
-import { $AppSettings } from "@/services";
 
 export const setTeammate = (teammate: AppCharacter, index: number) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
-      const { charEnhanced } = $AppSettings.get();
+      const { charEnhanced } = useSettingsStore.getState();
 
       setup.setTeammate({ name: teammate.name, enhanced: charEnhanced }, index, teammate);
     })

@@ -18,7 +18,7 @@ class AppCharacterService {
       cannedKnowledge: false,
       skirksTraining: false,
     },
-    resonateElmts: [],
+    resonatedElmts: [],
   };
   characters: AppCharacter[] = [];
   traveler: TravelerConfig = this.DEFAULT_TRAVELER;

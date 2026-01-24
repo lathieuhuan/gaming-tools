@@ -1,3 +1,5 @@
+import { DeepPartial } from "@reduxjs/toolkit";
+import { deepMerge } from "./pure-utils";
 import type { UnknownObject } from "./utils.types";
 
 function isEmpty(value: unknown): boolean {
@@ -83,6 +85,10 @@ export default class Object_ {
 
   static assign<TObj extends UnknownObject>(obj: TObj, props: Partial<TObj>): TObj {
     return Object.assign(obj, props);
+  }
+
+  static deepMerge<TObj extends UnknownObject>(obj: TObj, ...changes: DeepPartial<TObj>[]): TObj {
+    return deepMerge(obj, ...changes) as TObj;
   }
 
   static optionalAssign<TObj extends object>(obj: TObj, props: Partial<TObj>): TObj {

@@ -110,7 +110,6 @@ export function decodeSetupCurrent(code: string): DecodeResult {
 
   // ===== MAIN =====
 
-  // TODO add enhanced flag
   const [mainCode, levelIndex, cons, enhancedCode, NAs, ES, EB] = split(mainStr, 1);
   const mainData = Array_.findByCode(characters, +mainCode);
 

@@ -1,3 +1,4 @@
+import { enableMapSet } from "immer";
 import ReactDOM from "react-dom/client";
 import { Provider as StoreProvider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
@@ -10,6 +11,8 @@ import { QueryClientProvider } from "./systems/react-query";
 import { RouterProvider } from "./systems/router";
 
 import "./style.css";
+
+enableMapSet();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <ScreenSizeWatcher>

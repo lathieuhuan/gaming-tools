@@ -3,7 +3,7 @@ import { CloseButton, clsx, Drawer, SideBarSvg, useScreenWatcher } from "rond";
 
 import { SCREEN_PATH } from "@/constants/config";
 import { useRouter } from "@/systems/router";
-import { useUIStore } from "@Store/ui";
+import { useSettingsStore } from "@Store/settings";
 import { ScreenConfig } from "./_config";
 
 import { NavOptions } from "./NavOptions";
@@ -16,7 +16,7 @@ type LeftSideProps = {
 
 export function LeftSide({ appReady }: LeftSideProps) {
   const router = useRouter();
-  const isTabLayout = useUIStore((state) => state.isTabLayout);
+  const isTabLayout = useSettingsStore((state) => state.isTabLayout);
   const screenWatcher = useScreenWatcher();
 
   const [drawerActive, setDrawerActive] = useState(false);

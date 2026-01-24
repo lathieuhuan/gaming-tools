@@ -1,8 +1,7 @@
-import { Fragment, ReactElement } from "react";
+import { ReactElement } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { LoadingPlate, WarehouseLayout } from "rond";
 
-import { useTravelerKey } from "@/hooks";
 import { selectAppReady, useUIStore } from "@Store/ui";
 import { WarehouseError } from "./WarehouseError";
 
@@ -12,7 +11,6 @@ type WarehouseWrapperProps = {
 
 export function WarehouseWrapper({ children }: WarehouseWrapperProps) {
   const appReady = useUIStore(selectAppReady);
-  const [travelerKey] = useTravelerKey();
 
   if (!appReady) {
     return (
@@ -24,9 +22,5 @@ export function WarehouseWrapper({ children }: WarehouseWrapperProps) {
     );
   }
 
-  return (
-    <ErrorBoundary FallbackComponent={WarehouseError}>
-      <Fragment key={travelerKey}>{children}</Fragment>
-    </ErrorBoundary>
-  );
+  return <ErrorBoundary FallbackComponent={WarehouseError}>{children}</ErrorBoundary>;
 }

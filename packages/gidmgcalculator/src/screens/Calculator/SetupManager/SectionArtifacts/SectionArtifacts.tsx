@@ -7,9 +7,10 @@ import type { ArtifactType } from "@/types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { Artifact } from "@/models/base";
-import { $AppSettings } from "@/services";
+import { useCalcStore } from "@Store/calculator";
 import { setArtifactPiece } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
+import { useSettingsStore } from "@Store/settings";
 
 // Component
 import {
@@ -21,7 +22,6 @@ import {
   LoadoutStash,
   LoadoutStashProps,
 } from "@/components";
-import { useCalcStore } from "@Store/calculator";
 import { Section } from "../_components/Section";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
@@ -45,6 +45,7 @@ export default function SectionArtifacts() {
   const [activeArtifactType, setActiveArtifactType] = useState<ArtifactType>();
 
   const atfGear = useCalcStore((state) => selectActiveMain(state).atfGear);
+  const keepArtStatsOnSwitch = useSettingsStore((state) => state.keepArtStatsOnSwitch);
 
   const [inventory, setInventory] = useState<InventoryState>({
     active: false,
@@ -133,7 +134,7 @@ export default function SectionArtifacts() {
       content: `Forged ${artifact.data.name} (${artifact.type})`,
     });
 
-    setArtifactPiece(artifact, artifact.data, $AppSettings.get("keepArtStatsOnSwitch"));
+    setArtifactPiece(artifact, artifact.data, keepArtStatsOnSwitch);
     setActiveArtifactType(artifact.type);
   };
 
@@ -154,7 +155,7 @@ export default function SectionArtifacts() {
           rarity,
         },
         data,
-        $AppSettings.get("keepArtStatsOnSwitch")
+        keepArtStatsOnSwitch
       );
 
       const index = ARTIFACT_TYPES.indexOf(type);

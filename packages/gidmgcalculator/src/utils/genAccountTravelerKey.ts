@@ -2,14 +2,16 @@ import { sha256 } from "js-sha256";
 
 import type { TravelerConfig } from "@/types";
 
-export const genAccountTravelerKey = ({ selection, powerups }: TravelerConfig) => {
-  const keys: string[] = [];
+export const genAccountTravelerKey = (config: TravelerConfig) => {
+  const activePowerupKeys: string[] = [];
 
-  for (const [key, value] of Object.entries(powerups)) {
+  for (const [key, value] of Object.entries(config.powerups)) {
     if (value) {
-      keys.push(key);
+      activePowerupKeys.push(key);
     }
   }
 
-  return sha256([selection, ...keys.sort()].toString());
+  const series = [config.selection, ...activePowerupKeys.sort(), ...config.resonatedElmts.sort()];
+
+  return sha256(series.toString());
 };

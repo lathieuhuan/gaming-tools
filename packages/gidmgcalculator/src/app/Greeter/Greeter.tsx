@@ -4,13 +4,13 @@ import { Button, clsx, Modal, Skeleton } from "rond";
 
 import type { AppMetadata } from "./types";
 
-import { $AppSettings } from "@/services";
 import { useUIStore, updateUI } from "@Store/ui";
 import { $Greeter } from "./_logic/GreeterService";
 
 // Components
 import { Introduction } from "./Introduction";
 import { MetadataRefetcher } from "./MetadataRefetcher";
+import { useSettingsStore } from "@Store/settings";
 
 type State = {
   status: "loading" | "success" | "error";
@@ -57,7 +57,9 @@ export const Greeter = () => {
     getMetadata();
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if ($AppSettings.get("askBeforeUnload")) {
+      const { askBeforeUnload } = useSettingsStore.getState();
+
+      if (askBeforeUnload) {
         e.preventDefault();
         return (e.returnValue = "Are you sure you want to exit?");
       }

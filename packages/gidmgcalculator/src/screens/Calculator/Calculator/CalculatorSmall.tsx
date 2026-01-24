@@ -1,16 +1,17 @@
 import { useState } from "react";
 
 import { useCalcStore } from "@Store/calculator";
-import { updateUI, useUIStore } from "@Store/ui";
+import { useSettingsStore } from "@Store/settings";
+import { updateUI } from "@Store/ui";
 
 // Components
 import { ContextProvider } from "../ContextProvider";
 import { BottomNavSmall } from "./BottomNavSmall";
-import { ModifiersCard, ResultsCard, SetupCard, OverviewCard } from "./_cards";
+import { ModifiersCard, OverviewCard, ResultsCard, SetupCard } from "./_cards";
 
 export function CalculatorSmall() {
   const touched = useCalcStore((state) => state.setupManagers.length !== 0);
-  const isModernUI = useUIStore((state) => state.isTabLayout);
+  const isModernUI = useSettingsStore((state) => state.isTabLayout);
 
   const [activePanelI, setActivePanelI] = useState(0);
 
