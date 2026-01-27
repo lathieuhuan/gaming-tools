@@ -9,7 +9,7 @@ import { getTalentDefaultValues } from "@/calculation/calculator/getTalentDefaul
 import { ATTACK_PATTERNS } from "@/constants/global";
 import { useTabs, useTranslation } from "@/hooks";
 import { Character } from "@/models/base";
-import { $AppCharacter } from "@/services";
+import { fetchTalentDescriptions } from "@/services/app-data";
 import { genSequentialOptions } from "@/utils";
 import Array_ from "@/utils/Array";
 import { NORMAL_ATTACK_ICONS } from "./_constants";
@@ -17,14 +17,6 @@ import { NORMAL_ATTACK_ICONS } from "./_constants";
 // Component
 import { markDim } from "../../span";
 import { AbilityCarousel } from "../_components/AbilityCarousel";
-
-const useTalentDescriptions = (characterName: string, enabled: boolean) => {
-  return useQuery({
-    queryKey: ["talent-description", characterName],
-    queryFn: () => $AppCharacter.fetchTalentDescriptions(characterName),
-    enabled,
-  });
-};
 
 type TalentDetailProps = {
   character: AppCharacter;
@@ -54,7 +46,12 @@ export function TalentDetail({
     isLoading,
     isError,
     data: descriptions,
-  } = useTalentDescriptions(character.name, !activeIndex);
+  } = useQuery({
+    queryKey: ["talent-description", character.name],
+    queryFn: () => fetchTalentDescriptions(character.name),
+    enabled: !activeIndex,
+    staleTime: Infinity,
+  });
 
   if (altSprint) {
     images.push(altSprint.image);

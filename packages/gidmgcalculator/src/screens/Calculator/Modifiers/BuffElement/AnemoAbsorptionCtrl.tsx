@@ -51,7 +51,7 @@ export function AnemoAbsorptionCtrl({ elmtEvent, character }: AnemoAbsorptionCtr
         onToggle={onToggleAbsorption}
       />
       <div className="pt-2 pb-1 pr-1 flex items-center justify-end">
-        <span className="mr-4 text-base leading-6 text-right">Swirled /Absorbed Element</span>
+        <span className="mr-4 text-base leading-6 text-right">Swirled/Absorbed Element</span>
         <VersatileSelect
           title="Select Absorbed Element"
           className="w-24 h-8 font-bold capitalize"

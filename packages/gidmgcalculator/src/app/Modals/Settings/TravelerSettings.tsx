@@ -3,8 +3,7 @@ import { useState } from "react";
 import { FaCaretRight } from "react-icons/fa";
 import { Checkbox, clsx, CollapseSpace } from "rond";
 
-import { ELEMENT_TYPES } from "@/constants";
-import { $AppCharacter } from "@/services";
+import { $AppCharacter, RESONATED_ELEMENTS } from "@/services";
 import { ElementType, PowerupKey, TravelerConfig, TravelerKey } from "@/types";
 import Object_ from "@/utils/Object";
 
@@ -57,10 +56,10 @@ export function TravelerSettings({
 
   const handleAllPowerupsToggle = (activated: boolean) => {
     setSelectedPowerups(activated ? new Set(POWERUPS) : new Set());
-    setResonatedElmts(activated ? new Set(ELEMENT_TYPES) : new Set());
+    setResonatedElmts(activated ? new Set(RESONATED_ELEMENTS) : new Set());
 
     POWERUPS.forEach((key) => onChangePowerups?.(key, activated));
-    onChangeResonatedElmts?.(activated ? Array.from(ELEMENT_TYPES) : []);
+    onChangeResonatedElmts?.(activated ? Array.from(RESONATED_ELEMENTS) : []);
   };
 
   const handlePowerupToggle = (key: PowerupKey, activated: boolean) => {
@@ -83,7 +82,7 @@ export function TravelerSettings({
   };
 
   const isAllPowerupsSelected =
-    selectedPowerups.size === POWERUPS.length && resonatedElmts.size === ELEMENT_TYPES.length;
+    selectedPowerups.size === POWERUPS.length && resonatedElmts.size === RESONATED_ELEMENTS.length;
   const isSomePowerupsSelected =
     !isAllPowerupsSelected && (selectedPowerups.size > 0 || resonatedElmts.size > 0);
 
@@ -181,7 +180,7 @@ export function TravelerSettings({
             <span className="text-light-hint text-sm">(Archon Quest: True Moon)</span>
           </p>
           <div className="mt-2 grid grid-cols-4 gap-3">
-            {ELEMENT_TYPES.map((elmt) => (
+            {RESONATED_ELEMENTS.map((elmt) => (
               <Checkbox
                 key={elmt}
                 checked={resonatedElmts.has(elmt)}

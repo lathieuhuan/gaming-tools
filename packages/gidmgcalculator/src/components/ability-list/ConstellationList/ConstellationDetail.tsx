@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { CloseButton, LoadingSpin } from "rond";
 
 import type { AppCharacter } from "@/types";
-import { $AppCharacter } from "@/services";
+import { fetchConsDescriptions } from "@/services/app-data";
 
 // Conponent
 import { markDim, markGreen } from "../../span";
@@ -30,7 +30,8 @@ export function ConstellationDetail({
     data: descriptions,
   } = useQuery({
     queryKey: ["cons-description", character.name],
-    queryFn: () => $AppCharacter.fetchConsDescriptions(character.name),
+    queryFn: () => fetchConsDescriptions(character.name),
+    staleTime: Infinity,
   });
 
   return (
