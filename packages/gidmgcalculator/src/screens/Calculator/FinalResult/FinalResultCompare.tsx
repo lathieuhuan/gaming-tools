@@ -45,7 +45,9 @@ export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
       const handleClickOutside = (e: MouseEvent) => {
         const { target } = e;
         const diffCellElmt =
-          target instanceof Element ? target.closest(`[data-slot="${SLOT_NAME.resultDiffCell}"]`) : null;
+          target instanceof Element
+            ? target.closest(`[data-slot="${SLOT_NAME.resultDiffCell}"]`)
+            : null;
 
         if (!diffCellElmt) {
           setActiveDiffCell({ setupId: 0, subKey: "" });
@@ -61,7 +63,9 @@ export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
   }, [isMobile]);
 
   const getValues = (setupId: number, mainKey: keyof CalcResult, subKey: string) => {
-    return setupsById[setupId].result[mainKey][subKey].values;
+    // Can be undefined in weapon DMG calc when the standard setup has weapon dealing DMG
+    // and compared setups don't.
+    return setupsById[setupId].result[mainKey]?.[subKey]?.values || [];
   };
 
   const getComparedValue = (values: CalcResultItemValue[]) => {

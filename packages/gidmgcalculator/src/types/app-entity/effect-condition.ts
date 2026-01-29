@@ -59,7 +59,11 @@ export type EffectGrantedAtConfig = {
 
 export type EffectGrantedAt = CharacterMilestone | EffectGrantedAtConfig;
 
-export type EffectPerformerConditions = {
+export type EffectTravelerCondition = {
+  resonateElmt?: ElementType;
+};
+
+export type EffectPerformerConditions = EffectTravelerCondition & {
   grantedAt?: EffectGrantedAt;
   beEnhanced?: boolean;
   /** Special for Chain Breaker (bow) */

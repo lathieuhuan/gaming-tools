@@ -79,7 +79,7 @@ export const useSettingsStore = create<AppSettingsState>()(
   persist(
     immer(() => initialState),
     {
-      name: "settings-storage",
+      name: "storage:settings",
       // TODO: Remove after 1/4/2026
       merge: (persisted, current) => {
         const persistState =
