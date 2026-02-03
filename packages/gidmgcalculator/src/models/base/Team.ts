@@ -115,32 +115,8 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
 
   checkTeamElmt(condition: TeamElementConditions) {
     const { elmtCount } = this;
-    const {
-      teamOnlyElmts,
-      teamEachElmtCount,
-      teamElmtTotalCount,
-      teamTotalElmtCount,
-      varkaPhecAND,
-      varkaPhecOR,
-    } = condition;
-
-    if (varkaPhecAND) {
-      if (
-        elmtCount.get("anemo") < 2 ||
-        PHEC_ELEMENT_TYPES.every((elmt) => elmtCount.get(elmt) < 2)
-      ) {
-        return false;
-      }
-    }
-
-    if (varkaPhecOR) {
-      if (
-        elmtCount.get("anemo") < 2 &&
-        PHEC_ELEMENT_TYPES.every((elmt) => elmtCount.get(elmt) < 2)
-      ) {
-        return false;
-      }
-    }
+    const { teamOnlyElmts, teamEachElmtCount, teamElmtTotalCount, teamTotalElmtCount, varkaPHEC } =
+      condition;
 
     if (
       teamOnlyElmts &&
@@ -148,6 +124,7 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
     ) {
       return false;
     }
+
     if (teamEachElmtCount) {
       const requiredEntries = new TypeCounter(teamEachElmtCount).entries;
 
@@ -155,6 +132,7 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
         return false;
       }
     }
+
     if (teamElmtTotalCount) {
       const { elements, value, comparison } = teamElmtTotalCount;
 
@@ -162,6 +140,7 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
         return false;
       }
     }
+
     if (teamTotalElmtCount) {
       const { elements, value, comparison } = teamTotalElmtCount;
 
@@ -170,6 +149,17 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
           return false;
         }
       } else if (!isPassedComparison(elmtCount.keys.length, value, comparison)) {
+        return false;
+      }
+    }
+
+    if (varkaPHEC) {
+      const hasAny2SamePHEC = PHEC_ELEMENT_TYPES.some((elmt) => elmtCount.get(elmt) >= 2);
+
+      if (varkaPHEC === "AND" && (elmtCount.get("anemo") < 2 || !hasAny2SamePHEC)) {
+        return false;
+      }
+      if (varkaPHEC === "OR" && elmtCount.get("anemo") < 2 && !hasAny2SamePHEC) {
         return false;
       }
     }

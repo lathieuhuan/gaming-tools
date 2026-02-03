@@ -15,7 +15,7 @@ import type {
   IWeaponBuffCtrl,
 } from "@/types";
 
-import { ArtifactGear, CalcCharacter, Team } from "@/models/base";
+import { ArtifactGear, Team } from "@/models/base";
 import {
   CalcSetup,
   CalcTeammate,
@@ -23,7 +23,7 @@ import {
   createWeaponBuffCtrls,
 } from "@/models/calculator";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import { createArtifact, createTarget, createWeapon } from "./entity";
+import { createArtifact, createCalcCharacter, createTarget, createWeapon } from "./entity";
 import IdStore from "./IdStore";
 import { enhanceCtrls } from "./modifier";
 import Object_ from "./Object";
@@ -193,14 +193,11 @@ export function restoreCalcSetup(
   });
   const atfGear = new ArtifactGear(artifacts);
 
-  const main = new CalcCharacter(
-    {
-      ...data.main,
-      weapon,
-      atfGear,
-    },
-    $AppCharacter.get(data.main.name)!
-  );
+  const main = createCalcCharacter({
+    ...data.main,
+    weapon,
+    atfGear,
+  });
   const team = new Team();
   const teammates = data.teammates.map((teammate) => restoreTeammate(teammate, team));
 

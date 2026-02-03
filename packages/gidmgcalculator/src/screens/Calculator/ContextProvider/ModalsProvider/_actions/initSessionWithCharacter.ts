@@ -1,11 +1,11 @@
 import type { TavernSelectedCharacter } from "@/components";
 import type { UserdbState } from "@Store/userdb-slice";
 
-import { ArtifactGear, CalcCharacter } from "@/models/base";
+import { ArtifactGear } from "@/models/base";
 import { CalcSetup } from "@/models/calculator";
 import {
   createArtifact,
-  createCharacterBasic,
+  createCalcCharacter,
   createWeapon,
   createWeaponBasic,
 } from "@/utils/entity";
@@ -35,14 +35,10 @@ export function initSessionWithCharacter(
   const weapon = createWeapon(weaponBasic);
   const atfGear = new ArtifactGear(artifacts);
 
-  const characterBasic = createCharacterBasic({
-    ...userData,
-    name: data.name,
-  });
-
-  const main = new CalcCharacter(
+  const main = createCalcCharacter(
     {
-      ...characterBasic,
+      ...userData,
+      name: data.name,
       weapon,
       atfGear,
     },

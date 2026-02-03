@@ -1,5 +1,6 @@
 import type {
   AppArtifact,
+  AppCharacter,
   AppMonster,
   AppWeapon,
   IArtifactBasic,
@@ -11,8 +12,16 @@ import type {
 import type { AdvancedPick, PartiallyRequiredOnly } from "rond";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
-import { Artifact, Target, Weapon } from "@/models/base";
-import { $AppArtifact, $AppData, $AppWeapon } from "@/services";
+import {
+  Artifact,
+  ArtifactGear,
+  CalcCharacter,
+  CalcCharacterConstructInfo,
+  Target,
+  Team,
+  Weapon,
+} from "@/models/base";
+import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
 import { useSettingsStore } from "@Store/settings";
 import Array_ from "./Array";
 import IdStore from "./IdStore";
@@ -125,6 +134,29 @@ export const createCharacterBasic = (params: CreateCharacterParams): ICharacterB
   } = params;
 
   return { name, level, NAs, ES, EB, cons, enhanced };
+};
+
+export type CreateCalcCharacterParams = PartiallyRequiredOnly<
+  CalcCharacterConstructInfo<Weapon, ArtifactGear>,
+  "name" | "weapon" | "atfGear"
+>;
+
+export const createCalcCharacter = (
+  params: CreateCalcCharacterParams,
+  data: AppCharacter = $AppCharacter.get(params.name),
+  team?: Team
+) => {
+  const basic = createCharacterBasic(params);
+
+  return new CalcCharacter(
+    {
+      ...basic,
+      weapon: params.weapon,
+      atfGear: params.atfGear,
+    },
+    data,
+    team
+  );
 };
 
 // ========== TARGET ==========

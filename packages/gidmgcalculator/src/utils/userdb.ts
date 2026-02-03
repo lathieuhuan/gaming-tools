@@ -1,9 +1,15 @@
 import type { IArtifactBasic, IDbCharacter, IWeaponBasic, WeaponType } from "@/types";
 
-import { ArtifactGear, CalcCharacter, Team } from "@/models/base";
+import { ArtifactGear, Team } from "@/models/base";
 import { $AppCharacter } from "@/services";
 import Array_ from "./Array";
-import { createArtifact, createArtifactBasic, createWeapon, createWeaponBasic } from "./entity";
+import {
+  createArtifact,
+  createArtifactBasic,
+  createCalcCharacter,
+  createWeapon,
+  createWeaponBasic,
+} from "./entity";
 import IdStore from "./IdStore";
 
 export function parseDbWeapon(weaponID: number, dbWeapons: IWeaponBasic[], weaponType: WeaponType) {
@@ -52,7 +58,7 @@ export function makeCalcCharacterFromDb(
   const weapon = createWeapon(weaponBasic);
   const atfGear = new ArtifactGear(artifacts);
 
-  return new CalcCharacter(
+  return createCalcCharacter(
     {
       ...character,
       weapon,

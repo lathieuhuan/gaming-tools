@@ -25,8 +25,16 @@ import { isPassedComparison } from "../utils/isPassedComparison";
 import { isValidInput } from "../utils/isValidInput";
 import { parseAbilityDesc } from "../utils/parseAbilityDesc";
 import { AttackBonusControl } from "./AttackBonusControl";
-import { PenaltyCalc } from "./PenaltyCalc";
 import { BonusCalc } from "./BonusCalc";
+import { PenaltyCalc } from "./PenaltyCalc";
+
+export type CalcCharacterConstructInfo<
+  W extends Weapon = Weapon,
+  A extends ArtifactGear = ArtifactGear
+> = ICharacter<W, A> & {
+  totalAttrs?: TotalAttributes;
+  attkBonusCtrl?: AttackBonusControl;
+};
 
 export type ICalcCharacter<
   W extends Weapon = Weapon,
@@ -35,14 +43,6 @@ export type ICalcCharacter<
   data: AppCharacter;
   totalAttrs: TotalAttributes;
   attkBonusCtrl: AttackBonusControl;
-};
-
-export type CalcCharacterConstructInfo<
-  W extends Weapon = Weapon,
-  A extends ArtifactGear = ArtifactGear
-> = ICharacter<W, A> & {
-  totalAttrs?: TotalAttributes;
-  attkBonusCtrl?: AttackBonusControl;
 };
 
 export class CalcCharacter<

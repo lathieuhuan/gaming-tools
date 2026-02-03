@@ -3,7 +3,7 @@ import type { UserdbState } from "@Store/userdb-slice";
 import type { SetupOverviewInfo } from "./types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
-import { Artifact, ArtifactGear, CalcCharacter, Team } from "@/models/base";
+import { Artifact, ArtifactGear, Team } from "@/models/base";
 import {
   CalcSetup,
   CalcTeammate,
@@ -15,7 +15,7 @@ import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
 import {
   createArtifact,
-  createCharacterBasic,
+  createCalcCharacter,
   createTarget,
   createWeapon,
   createWeaponBasic,
@@ -23,8 +23,8 @@ import {
 import IdStore from "@/utils/IdStore";
 import { enhanceCtrls } from "@/utils/modifier";
 import { isDbSetup } from "@/utils/setup";
-import { makeCalcCharacterFromDb } from "@/utils/userdb";
 import { SystemError } from "@/utils/SystemError";
+import { makeCalcCharacterFromDb } from "@/utils/userdb";
 
 export function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOverviewInfo["setup"] {
   const { userWps, userArts } = userDb;
@@ -153,12 +153,10 @@ export function createSetupForTeammate(
     }
   }
 
-  const newMainBasic =
-    Array_.findByName(userChars, teammate.name) || createCharacterBasic(teammate);
-
-  const newMain = new CalcCharacter(
+  const newMain = createCalcCharacter(
     {
-      ...newMainBasic,
+      ...Array_.findByName(userChars, teammate.name),
+      name: teammate.name,
       weapon: createWeapon(weaponBasic),
       atfGear: new ArtifactGear(artifacts),
     },

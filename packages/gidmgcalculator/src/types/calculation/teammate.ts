@@ -54,17 +54,11 @@ export type ITeammateArtifact = ITeammateArtifactBasic & {
   data: AppArtifact;
 };
 
-// type TeammateInput = {
-//   id: string;
-//   value: number;
-// };
-
 export type ITeammateInfo = ITeammateBasicCore & {
   buffCtrls: IAbilityBuffCtrl[];
   debuffCtrls: IAbilityDebuffCtrl[];
   weapon: ITeammateWeapon;
   artifact?: ITeammateArtifact;
-  // inputs: TeammateInput[];
 };
 
 export type ITeammate<TTeam extends ITeam = ITeam> = ITeammateInfo & ITeamMember<TTeam> & {};

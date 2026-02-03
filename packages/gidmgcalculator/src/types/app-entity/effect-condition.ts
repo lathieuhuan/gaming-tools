@@ -24,9 +24,7 @@ export type TeamElementConditions = {
   /** On Nilou, Chevreuse */
   teamOnlyElmts?: ElementType[];
   /** Temporary */
-  varkaPhecAND?: boolean;
-  /** Temporary */
-  varkaPhecOR?: boolean;
+  varkaPHEC?: "AND" | "OR";
 };
 
 export type TeamMilestoneType = "MOONSIGN" | "WITCH_RITE";
@@ -59,11 +57,7 @@ export type EffectGrantedAtConfig = {
 
 export type EffectGrantedAt = CharacterMilestone | EffectGrantedAtConfig;
 
-export type EffectTravelerCondition = {
-  resonateElmt?: ElementType;
-};
-
-export type EffectPerformerConditions = EffectTravelerCondition & {
+export type EffectPerformerConditions = {
   grantedAt?: EffectGrantedAt;
   beEnhanced?: boolean;
   /** Special for Chain Breaker (bow) */

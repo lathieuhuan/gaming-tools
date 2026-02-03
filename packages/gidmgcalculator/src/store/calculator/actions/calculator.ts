@@ -51,7 +51,7 @@ export const applySettingsToCalculator = (unifyCharacters: boolean, travelerChan
     const shouldRecalculateAll = travelerChanged && $AppCharacter.checkIsTraveler(activeMain);
 
     for (const [id, setup] of Object.entries(setupsById)) {
-      if (unifyCharacters && activeMain) {
+      if (unifyCharacters) {
         setup.main = activeMain;
       }
       if (unifyCharacters || shouldRecalculateAll) {
