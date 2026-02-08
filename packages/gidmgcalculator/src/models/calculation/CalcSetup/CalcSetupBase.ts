@@ -1,5 +1,5 @@
 import type { CalcResult } from "@/calculation/calculator/types";
-import type { CalcCharacter, Target, Team } from "@/models/base";
+import type { Target, Team } from "@/models/base";
 import type {
   CustomBuffCtrl,
   CustomDebuffCtrl,
@@ -12,11 +12,12 @@ import type {
   IWeaponBuffCtrl,
   ResonanceModCtrl,
 } from "@/types";
-import type { CalcTeammate } from "../CalcTeammate";
+import type { CharacterCalc } from "../CharacterCalc";
+import type { TeammateCalc } from "../TeammateCalc";
 
 export type CalcSetupBaseConstructInfo = {
   ID: number;
-  main: CalcCharacter;
+  main: CharacterCalc;
   selfBuffCtrls: IAbilityBuffCtrl[];
   selfDebuffCtrls: IAbilityDebuffCtrl[];
 
@@ -31,7 +32,7 @@ export type CalcSetupBaseConstructInfo = {
   customBuffCtrls: CustomBuffCtrl[];
   customDebuffCtrls: CustomDebuffCtrl[];
 
-  teammates: CalcTeammate[];
+  teammates: TeammateCalc[];
   team: Team;
   target: Target;
 
@@ -40,7 +41,7 @@ export type CalcSetupBaseConstructInfo = {
 
 export class CalcSetupBase {
   ID: number;
-  main: CalcCharacter;
+  main: CharacterCalc;
   selfBuffCtrls: IAbilityBuffCtrl[];
   selfDebuffCtrls: IAbilityDebuffCtrl[];
 
@@ -55,7 +56,7 @@ export class CalcSetupBase {
   customBuffCtrls: CustomBuffCtrl[];
   customDebuffCtrls: CustomDebuffCtrl[];
 
-  teammates: CalcTeammate[];
+  teammates: TeammateCalc[];
   team: Team;
   target: Target;
 

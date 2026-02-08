@@ -6,7 +6,7 @@ import {
   createArtifactBuffCtrls,
   createWeaponBuffCtrls,
   type CalcSetup,
-} from "@/models/calculator";
+} from "@/models/calculation";
 import Object_ from "@/utils/Object";
 import { useSettingsStore } from "@Store/settings";
 import { useCalcStore } from "../calculator-store";

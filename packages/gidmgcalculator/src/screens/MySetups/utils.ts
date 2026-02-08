@@ -6,16 +6,16 @@ import { ARTIFACT_TYPES } from "@/constants/global";
 import { Artifact, ArtifactGear, Team } from "@/models/base";
 import {
   CalcSetup,
-  CalcTeammate,
+  TeammateCalc,
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
   createWeaponBuffCtrls,
-} from "@/models/calculator";
+} from "@/models/calculation";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
 import {
   createArtifact,
-  createCalcCharacter,
+  createCharacterCalc,
   createTarget,
   createWeapon,
   createWeaponBasic,
@@ -32,7 +32,7 @@ export function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOver
   const main = makeCalcCharacterFromDb(setup.main, userWps, userArts);
   const team = new Team();
 
-  const teammates = setup.teammates.map<CalcTeammate>((teammate) => {
+  const teammates = setup.teammates.map<TeammateCalc>((teammate) => {
     const data = $AppCharacter.get(teammate.name)!;
     let artifact: ITeammateArtifact | undefined;
 
@@ -58,7 +58,7 @@ export function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOver
 
     const weaponData = $AppWeapon.get(teammate.weapon.code)!;
 
-    return new CalcTeammate(
+    return new TeammateCalc(
       {
         name: teammate.name,
         enhanced: teammate.enhanced,
@@ -153,7 +153,7 @@ export function createSetupForTeammate(
     }
   }
 
-  const newMain = createCalcCharacter(
+  const newMain = createCharacterCalc(
     {
       ...Array_.findByName(userChars, teammate.name),
       name: teammate.name,
@@ -170,7 +170,7 @@ export function createSetupForTeammate(
   const { main } = setup;
   const mainWeapon = main.weapon;
 
-  teammates[teammateIndex] = new CalcTeammate(
+  teammates[teammateIndex] = new TeammateCalc(
     {
       ...main,
       weapon: {

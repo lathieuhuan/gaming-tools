@@ -124,4 +124,4 @@ export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];
 
 export type ElementCount = TypeCounter<ElementType>;
 
-export type TotalAttributes = TypeCounter<AttributeStat | BaseAttributeStat>;
+export type AllAttributes = TypeCounter<AttributeStat | BaseAttributeStat>;

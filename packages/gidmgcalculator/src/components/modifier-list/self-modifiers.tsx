@@ -1,4 +1,4 @@
-import type { CalcCharacter } from "@/models/base";
+import type { CharacterCalc } from "@/models/calculation";
 import type { IAbilityBuffCtrl, IAbilityDebuffCtrl, ITeam } from "@/types";
 import type { ModifierHanlders } from "./types";
 
@@ -7,7 +7,7 @@ import { ModifierContainer } from "./ModifierContainer";
 
 type SelfModsViewProps<T extends IAbilityBuffCtrl | IAbilityDebuffCtrl> = {
   mutable?: boolean;
-  character: CalcCharacter;
+  character: CharacterCalc;
   team: ITeam;
   modCtrls: T[];
   getHanlders?: (ctrl: T) => ModifierHanlders;

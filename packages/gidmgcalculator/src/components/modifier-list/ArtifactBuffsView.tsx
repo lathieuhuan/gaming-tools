@@ -1,4 +1,4 @@
-import type { CalcTeammate } from "@/models/calculator";
+import type { TeammateCalc } from "@/models/calculation";
 import type { IArtifactBuffCtrl, ITeammateArtifactBuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
@@ -9,10 +9,10 @@ import { ModifierContainer } from "./ModifierContainer";
 type ArtifactBuffsViewProps = {
   mutable?: boolean;
   artBuffCtrls: IArtifactBuffCtrl[];
-  teammates: CalcTeammate[];
+  teammates: TeammateCalc[];
   getSelfHandlers?: (ctrl: IArtifactBuffCtrl) => ModifierHanlders;
   getTeammateHandlers?: (
-    teammate: CalcTeammate,
+    teammate: TeammateCalc,
     ctrl: ITeammateArtifactBuffCtrl
   ) => ModifierHanlders;
 };

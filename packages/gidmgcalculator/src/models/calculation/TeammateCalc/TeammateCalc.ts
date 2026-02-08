@@ -1,5 +1,9 @@
 import type {
   AppCharacter,
+  BareBonus,
+  BonusPerformTools,
+  EntityBonusEffect,
+  EntityPenaltyEffect,
   IAbilityBuffCtrl,
   IAbilityDebuffCtrl,
   ITeam,
@@ -10,21 +14,20 @@ import type {
 import type { PartiallyRequiredOnly } from "rond";
 
 import { Teammate, Weapon } from "@/models/base";
-import { parseAbilityDesc } from "@/models/base/utils/parseAbilityDesc";
 import { $AppWeapon } from "@/services";
 import Object_ from "@/utils/Object";
 import { createAbilityBuffCtrls, createAbilityDebuffCtrls } from "../modifier";
 import { BonusCalc } from "./BonusCalc";
 import { PenaltyCalc } from "./PenaltyCalc";
 
-export type CalcTeammateConstructInfo = PartiallyRequiredOnly<ITeammateInfo, "name">;
+export type TeammateCalcConstructInfo = PartiallyRequiredOnly<ITeammateInfo, "name">;
 
 type CloneOptions = {
   team?: ITeam;
 };
 
-export class CalcTeammate extends Teammate {
-  constructor(info: CalcTeammateConstructInfo, public data: AppCharacter, public team: ITeam) {
+export class TeammateCalc extends Teammate {
+  constructor(info: TeammateCalcConstructInfo, public data: AppCharacter, public team: ITeam) {
     const {
       enhanced = false,
       buffCtrls = createAbilityBuffCtrls(data, false),
@@ -50,11 +53,22 @@ export class CalcTeammate extends Teammate {
   }
 
   update(data: Partial<ITeammate>) {
-    return new CalcTeammate({ ...this, ...data }, this.data, this.team);
+    return new TeammateCalc({ ...this, ...data }, this.data, this.team);
   }
 
   updateWeaponBuffCtrl(newCtrl: IWeaponBuffCtrl) {
     return this.weapon.buffCtrls.map((ctrl) => (ctrl.id === newCtrl.id ? newCtrl : ctrl));
+  }
+
+  performBonus(
+    config: EntityBonusEffect,
+    { inputs = [], refi = 0, basedOnFixed = false }: Partial<BonusPerformTools>
+  ): BareBonus {
+    return new BonusCalc(this, this.team, { inputs, refi, basedOnFixed }).makeBonus(config);
+  }
+
+  performPenalty(config: EntityPenaltyEffect, inputs?: number[]) {
+    return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
   }
 
   clone(options: CloneOptions = {}) {
@@ -68,20 +82,14 @@ export class CalcTeammate extends Teammate {
       artifact: Object_.clone(this.artifact),
     };
 
-    return new CalcTeammate(teamamte, this.data, team);
+    return new TeammateCalc(teamamte, this.data, team);
   }
 
   parseBuffDesc(ctrl: IAbilityBuffCtrl) {
-    const { inputs, data } = ctrl;
-    const calc = new BonusCalc(this, this.team, { inputs });
-
-    return parseAbilityDesc(data.description, data.effects, calc);
+    return new BonusCalc(this, this.team, { inputs: ctrl.inputs }).parseAbilityDesc(ctrl.data);
   }
 
   parseDebuffDesc(ctrl: IAbilityDebuffCtrl) {
-    const { inputs, data } = ctrl;
-    const calc = new PenaltyCalc(this, this.team, inputs);
-
-    return parseAbilityDesc(data.description, data.effects, calc);
+    return new PenaltyCalc(this, this.team, ctrl.inputs).parseAbilityDesc(ctrl.data);
   }
 }

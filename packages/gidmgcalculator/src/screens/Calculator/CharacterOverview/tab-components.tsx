@@ -14,11 +14,11 @@ import {
 } from "@/components";
 
 export function AttributesTab() {
-  const totalAttrs = useCalcStore((state) => selectActiveMain(state).totalAttrs);
+  const allAttrs = useCalcStore((state) => selectActiveMain(state).allAttrs);
 
   return (
     <div className="h-full custom-scrollbar">
-      <AttributeTable attributes={totalAttrs} />
+      <AttributeTable attributes={allAttrs} />
     </div>
   );
 }

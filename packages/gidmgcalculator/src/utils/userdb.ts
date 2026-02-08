@@ -6,7 +6,7 @@ import Array_ from "./Array";
 import {
   createArtifact,
   createArtifactBasic,
-  createCalcCharacter,
+  createCharacterCalc,
   createWeapon,
   createWeaponBasic,
 } from "./entity";
@@ -58,7 +58,7 @@ export function makeCalcCharacterFromDb(
   const weapon = createWeapon(weaponBasic);
   const atfGear = new ArtifactGear(artifacts);
 
-  return createCalcCharacter(
+  return createCharacterCalc(
     {
       ...character,
       weapon,

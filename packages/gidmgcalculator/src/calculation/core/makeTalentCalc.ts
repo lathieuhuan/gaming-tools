@@ -1,3 +1,4 @@
+import type { CharacterCalc } from "@/models/calculation";
 import type {
   AttackBonusKey,
   AttackElement,
@@ -16,16 +17,15 @@ import type {
   CalcResultOtherItem,
 } from "../types";
 import type { CalcTarget } from "./CalcTarget";
-import type { CharacterCalc } from "./CharacterCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
 import { Character } from "@/models/base";
 import Array_ from "@/utils/Array";
 import { toMult } from "@/utils/pure-utils";
+import { LUNAR_ATTACK_COEFFICIENT, LUNAR_ATTACK_ELEMENT } from "../constants";
 import { makeAttackItemCalc } from "./makeAttackItemCalc";
 import { makeOtherItemCalc } from "./makeOtherItemCalc";
 import { limitCRate } from "./utils";
-import { LUNAR_ATTACK_COEFFICIENT, LUNAR_ATTACK_ELEMENT } from "../constants";
 
 export function makeTalentCalc(
   performer: CharacterCalc,
@@ -34,7 +34,7 @@ export function makeTalentCalc(
   default_: CalcItemDefaultValues,
   alterConfig: AttackAlter = {}
 ) {
-  const { totalAttrs, attkBonusCtrl } = performer;
+  const { allAttrs, attkBonusCtrl } = performer;
   const { vision, weaponType } = performer.data;
   const level = performer.getFinalTalentLv(talentType);
 
@@ -57,7 +57,7 @@ export function makeTalentCalc(
 
     for (const factor of Array_.toArray(item.factor)) {
       const { root, scale, basedOn } = parseFactor(factor);
-      const value = totalAttrs.get(basedOn);
+      const value = allAttrs.get(basedOn);
       const totalMult = root * Character.getTalentMult(scale, level) + extraTalentMult;
 
       bases.push((value * totalMult) / 100);
@@ -179,8 +179,8 @@ export function makeTalentCalc(
     const resMult = target.resistMults[attElmt];
 
     // CRITS
-    const cRate_ = limitCRate(totalAttrs.get("cRate_") + getBonus("cRate_")) / 100;
-    const cDmg_ = (totalAttrs.get("cDmg_") + getBonus("cDmg_")) / 100;
+    const cRate_ = limitCRate(allAttrs.get("cRate_") + getBonus("cRate_")) / 100;
+    const cDmg_ = (allAttrs.get("cDmg_") + getBonus("cDmg_")) / 100;
     const cDmgMult = 1 + cDmg_;
     const averageMult = 1 + cRate_ * cDmg_;
 

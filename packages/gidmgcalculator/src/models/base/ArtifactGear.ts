@@ -5,7 +5,7 @@ import type {
   IArtifactGearPieces,
   IArtifactGearSet,
   IArtifactGearSlot,
-  TotalAttributes,
+  AllAttributes,
 } from "@/types";
 import type { Artifact } from "./Artifact";
 
@@ -95,8 +95,8 @@ export class ArtifactGear<TArtifact extends Artifact = Artifact>
   pieces: ArtifactGearPieces<TArtifact>;
   slots: IArtifactGearSlot<TArtifact>[] = [];
   sets: IArtifactGearSet[] = [];
-  attributes: TotalAttributes = new TypeCounter();
-  finalAttrs: TotalAttributes = new TypeCounter();
+  attributes: AllAttributes = new TypeCounter();
+  finalAttrs: AllAttributes = new TypeCounter();
 
   constructor(pieces?: IArtifactGearPieces<TArtifact> | TArtifact[]) {
     const gearPieces: Partial<Record<ArtifactType, TArtifact>> = {};
@@ -122,7 +122,7 @@ export class ArtifactGear<TArtifact extends Artifact = Artifact>
     }
 
     const sets: IArtifactGearSet[] = [];
-    const attributes: TotalAttributes = new TypeCounter();
+    const attributes: AllAttributes = new TypeCounter();
     const counter = new TypeCounter();
 
     for (const artifact of pieces) {

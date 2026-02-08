@@ -1,7 +1,7 @@
 import type { WritableDraft } from "immer/src/internal.js";
 import type { ISetupManager } from "@/types";
 
-import { CalcSetup } from "@/models/calculator";
+import { CalcSetup } from "@/models/calculation";
 import Array_ from "@/utils/Array";
 import { useCalcStore } from "../calculator-store";
 import { getCopyName, onActiveSetup } from "../utils";

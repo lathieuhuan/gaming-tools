@@ -1,4 +1,4 @@
-import type { CalcCharacter } from "@/models/base";
+import type { CharacterCalc } from "@/models/calculation";
 import type { ElementType, QuickenReaction } from "@/types";
 
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
@@ -7,7 +7,7 @@ import { markGreen } from "../span";
 type QuickenBuffItemProps = Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle"> & {
   reaction: QuickenReaction;
   element: ElementType;
-  character: CalcCharacter;
+  character: CharacterCalc;
 };
 
 export function QuickenBuffItem({ reaction, element, character, ...rest }: QuickenBuffItemProps) {

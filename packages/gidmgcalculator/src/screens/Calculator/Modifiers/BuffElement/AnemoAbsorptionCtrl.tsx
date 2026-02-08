@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SelectOption, VersatileSelect } from "rond";
 
 import type { ElementType, ElementalEvent } from "@/types";
-import type { CalcCharacter } from "@/models/base";
+import type { CharacterCalc } from "@/models/calculation";
 
 import { updateElementalEvent } from "@Store/calculator/actions";
 
@@ -11,7 +11,7 @@ import { AttackReactionCtrl } from "./AttackReactionCtrl";
 
 type AnemoAbsorptionCtrlProps = {
   elmtEvent: ElementalEvent;
-  character: CalcCharacter;
+  character: CharacterCalc;
 };
 
 export function AnemoAbsorptionCtrl({ elmtEvent, character }: AnemoAbsorptionCtrlProps) {

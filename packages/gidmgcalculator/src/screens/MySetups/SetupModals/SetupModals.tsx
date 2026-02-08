@@ -1,6 +1,6 @@
 import { ConfirmModal, Modal } from "rond";
 
-import type { CalcSetup } from "@/models/calculator";
+import type { CalcSetup } from "@/models/calculation";
 
 import { useDispatch } from "@Store/hooks";
 import { updateUI, useUIStore } from "@Store/ui";
@@ -25,7 +25,7 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
   const dispatch = useDispatch();
   const modalType = useUIStore((state) => state.mySetupsModalType);
 
-  const { weapon, atfGear, totalAttrs } = setup.main;
+  const { weapon, atfGear, allAttrs } = setup.main;
 
   const closeModal = () => {
     updateUI({ mySetupsModalType: "" });
@@ -98,7 +98,7 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
           <div className="w-76 flex flex-col shrink-0">
             <p className="text-lg text-center font-semibold">Final Attributes</p>
             <div className="mt-1 custom-scrollbar">
-              <AttributeTable attributes={totalAttrs} />
+              <AttributeTable attributes={allAttrs} />
             </div>
           </div>
 

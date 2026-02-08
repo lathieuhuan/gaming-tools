@@ -1,9 +1,10 @@
 import { createContext } from "react";
 
-import type { Artifact, CalcCharacter } from "@/models/base";
+import type { Artifact } from "@/models/base";
+import type { CharacterCalc } from "@/models/calculation";
 import type { IArtifactGearSlot } from "@/types";
 
-export const ActiveCharContext = createContext<CalcCharacter | null>(null);
+export const ActiveCharContext = createContext<CharacterCalc | null>(null);
 
 export type ActiveCharAction = {
   requestSwitchCharacter: () => void;

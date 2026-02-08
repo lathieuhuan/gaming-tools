@@ -1,9 +1,7 @@
-import type { CalcSetup } from "@/models/calculator";
+import type { CalcSetup, TeammateCalc, CharacterCalc } from "@/models/calculation";
 import type { ElementType, EntityDebuff, EntityPenaltyTarget, ResistReductionKey } from "@/types";
 import type { CalcTarget } from "../core/CalcTarget";
-import type { CharacterCalc } from "../core/CharacterCalc";
 import type { IEffectPerformer } from "../types";
-import type { TeammateCalc } from "./TeammateCalc";
 
 import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants/global";
 import Array_ from "@/utils/Array";

@@ -1,6 +1,6 @@
 import isEqual from "react-fast-compare";
 
-import type { CalcSetup } from "@/models/calculator";
+import type { CalcSetup } from "@/models/calculation";
 import type { AppThunk } from "./store";
 
 import Array_ from "@/utils/Array";

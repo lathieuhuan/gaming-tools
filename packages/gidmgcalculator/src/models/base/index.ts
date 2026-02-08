@@ -3,7 +3,6 @@ export * from "./AbstractPenaltyCalc";
 export * from "./Artifact";
 export * from "./ArtifactGear";
 export * from "./Ascendable";
-export * from "./CalcCharacter";
 export * from "./Character";
 export * from "./Target";
 export * from "./Team";

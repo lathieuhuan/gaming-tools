@@ -1,6 +1,6 @@
 import type { WritableDraft } from "immer/src/internal.js";
 
-import type { CalcSetup } from "@/models/calculator";
+import type { CalcSetup } from "@/models/calculation";
 import type { ElementType, IModifierCtrlBasic, ISetupManager, ResonanceModCtrl } from "@/types";
 import type { CalculatorState } from "./types";
 

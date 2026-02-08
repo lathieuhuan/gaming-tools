@@ -1,23 +1,24 @@
 import { useMemo, useState } from "react";
 import { ConfirmModal } from "rond";
 
+import type { Artifact } from "@/models/base";
+import type { CharacterCalc } from "@/models/calculation";
 import type { IArtifactGearSlot } from "@/types";
-import type { Artifact, CalcCharacter } from "@/models/base";
 
+import { ArtifactInventory, Tavern, WeaponInventory } from "@/components";
 import { useDispatch } from "@Store/hooks";
-import { ActiveCharAction, ActiveCharActionContext } from "./_context";
 import {
   removeUserCharacter,
   switchArtifact,
   switchWeapon,
   viewCharacter,
 } from "@Store/userdb-slice";
-import { ArtifactInventory, Tavern, WeaponInventory } from "@/components";
+import { ActiveCharAction, ActiveCharActionContext } from "./_context";
 
 type ModalType = "SWITCH_CHARACTER" | "SWITCH_WEAPON" | "SWITCH_ARTIFACT" | "REMOVE_CHARACTER" | "";
 
 type ActionProviderProps = {
-  character: CalcCharacter;
+  character: CharacterCalc;
   children: React.ReactNode;
 };
 

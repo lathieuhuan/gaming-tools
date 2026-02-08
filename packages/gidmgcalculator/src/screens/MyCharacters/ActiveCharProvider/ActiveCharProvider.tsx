@@ -1,7 +1,7 @@
 import type { RootState } from "@Store/store";
 
-import { CharacterCalc } from "@/calculation/core/CharacterCalc";
 import { Team } from "@/models/base";
+import { CharacterCalc } from "@/models/calculation";
 import Array_ from "@/utils/Array";
 import { makeCalcCharacterFromDb } from "@/utils/userdb";
 import { useSelector } from "@Store/hooks";
@@ -23,10 +23,10 @@ const parseUserdb = (state: RootState) => {
   const character = makeCalcCharacterFromDb(activeCharacter, userWps, userArts);
   const charCalc = new CharacterCalc(character, character.data, new Team([character]));
 
-  charCalc.initTotalAttr();
+  charCalc.initAllAttrs();
 
   character.atfGear = charCalc.atfGear;
-  character.totalAttrs = charCalc.totalAttrCtrl.finalize();
+  character.allAttrs = charCalc.allAttrsCtrl.finalize();
 
   return {
     character,

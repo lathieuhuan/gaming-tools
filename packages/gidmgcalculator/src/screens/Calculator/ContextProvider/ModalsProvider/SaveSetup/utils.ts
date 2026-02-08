@@ -1,4 +1,4 @@
-import type { CalcSetup } from "@/models/calculator";
+import type { CalcSetup } from "@/models/calculation";
 import type { IDbComplexSetup, IDbSetup } from "@/types";
 import type { UserdbState } from "@Store/userdb-slice";
 import type { ValidationError } from "./types";

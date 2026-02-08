@@ -17,12 +17,12 @@ type Reductions = Record<
 >;
 
 type CalcTargetOptions = {
-  shouldRecord?: boolean;
+  shouldLog?: boolean;
 };
 
 export class CalcTarget extends Target {
   protected reductions = {} as Reductions;
-  protected shouldRecord: boolean;
+  protected shouldLog: boolean;
 
   defReduceMult = 1;
   resistMults: Record<AttackElement, number> = {
@@ -37,10 +37,10 @@ export class CalcTarget extends Target {
   };
 
   constructor(info: ITarget, data: AppMonster, options: CalcTargetOptions = {}) {
-    const { shouldRecord = false } = options;
+    const { shouldLog = false } = options;
 
     super(info, data);
-    this.shouldRecord = shouldRecord;
+    this.shouldLog = shouldLog;
   }
 
   getReduction(key: ResistReductionKey) {
@@ -52,7 +52,7 @@ export class CalcTarget extends Target {
 
     reduction.value += value;
 
-    if (this.shouldRecord) {
+    if (this.shouldLog) {
       reduction.records ||= [];
       reduction.records?.push({ label, value });
     }

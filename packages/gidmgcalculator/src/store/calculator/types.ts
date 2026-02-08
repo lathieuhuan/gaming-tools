@@ -1,5 +1,5 @@
 import type { Target } from "@/models/base";
-import type { CalcSetup } from "@/models/calculator";
+import type { CalcSetup } from "@/models/calculation";
 import type { ISetupManager } from "@/types";
 
 export type CalculatorState = {

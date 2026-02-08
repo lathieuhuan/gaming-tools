@@ -18,12 +18,12 @@ import type {
 import { ArtifactGear, Team } from "@/models/base";
 import {
   CalcSetup,
-  CalcTeammate,
+  TeammateCalc,
   createArtifactBuffCtrls,
   createWeaponBuffCtrls,
-} from "@/models/calculator";
+} from "@/models/calculation";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import { createArtifact, createCalcCharacter, createTarget, createWeapon } from "./entity";
+import { createArtifact, createCharacterCalc, createTarget, createWeapon } from "./entity";
 import IdStore from "./IdStore";
 import { enhanceCtrls } from "./modifier";
 import Object_ from "./Object";
@@ -164,7 +164,7 @@ function restoreTeammate(teammate: ITeammateBasic, team: Team) {
   }
 
   const data = $AppCharacter.get(teammate.name)!;
-  const standard = new CalcTeammate(
+  const standard = new TeammateCalc(
     {
       name: teammate.name,
       enhanced: teammate.enhanced,
@@ -193,7 +193,7 @@ export function restoreCalcSetup(
   });
   const atfGear = new ArtifactGear(artifacts);
 
-  const main = createCalcCharacter({
+  const main = createCharacterCalc({
     ...data.main,
     weapon,
     atfGear,

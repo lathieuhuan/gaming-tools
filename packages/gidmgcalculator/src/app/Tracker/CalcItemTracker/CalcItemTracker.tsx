@@ -10,7 +10,7 @@ import type { LunarType } from "@/types";
 
 import { LUNAR_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { AttackBonusControl } from "@/models/base";
+import { AttackBonusControl } from "@/models/calculation";
 import { round, suffixOf } from "@/utils";
 import Object_ from "@/utils/Object";
 

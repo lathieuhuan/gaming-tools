@@ -1,5 +1,3 @@
-import createDeepMerge from "@fastify/deepmerge";
-
 const numberFormat = new Intl.NumberFormat("en-EN");
 
 export const formatNumber = (n: number) => numberFormat.format(n);
@@ -44,5 +42,3 @@ export function secondsToTimeString(time: number) {
 export function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
-
-export const deepMerge = createDeepMerge({ all: true });

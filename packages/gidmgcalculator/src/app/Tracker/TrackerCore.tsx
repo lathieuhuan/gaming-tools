@@ -25,7 +25,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
 
   useLayoutEffect(() => {
     if (trackerState === "open") {
-      const state = calculateSetup(activeSetup, { shouldRecord: true });
+      const state = calculateSetup(activeSetup, { shouldLog: true });
 
       setState(state);
     }
@@ -36,7 +36,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   }
 
   const { result, target } = state;
-  const { attkBonusCtrl, totalAttrCtrl } = state.main;
+  const { attkBonusCtrl, allAttrsCtrl } = state.main;
   const charLv = activeSetup.main.bareLv;
   const totalDefReduct = target.getReduction("def").value;
 
@@ -80,7 +80,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const collapseItems: CollapseListProps["items"] = [
     {
       heading: "Attributes",
-      body: <AttributesTracker listClassName={listClassName} totalAttrCtrl={totalAttrCtrl} />,
+      body: <AttributesTracker listClassName={listClassName} allAttrsCtrl={allAttrsCtrl} />,
     },
     {
       heading: "Bonuses",

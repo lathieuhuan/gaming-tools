@@ -2,7 +2,7 @@ import { memo, useState } from "react";
 import { FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
 import { Button, ButtonGroup, CloseButton, Modal, TrashCanSvg } from "rond";
 
-import type { CalcTeammate } from "@/models/calculator";
+import type { TeammateCalc } from "@/models/calculation";
 import type { SetupOverviewInfo } from "../types";
 
 import { Artifact } from "@/models/base";
@@ -58,7 +58,7 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
     }
   };
 
-  const handleSwitchTeammate = (teammate: CalcTeammate) => {
+  const handleSwitchTeammate = (teammate: TeammateCalc) => {
     const shownId = allIDs ? allIDs[teammate.name] : undefined;
 
     if (complexSetup && shownId) {

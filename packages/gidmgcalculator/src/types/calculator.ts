@@ -1,4 +1,4 @@
-import type { CalcSetupConstructInfo } from "@/models/calculator";
+import type { CalcSetupConstructInfo } from "@/models/calculation";
 
 export type BasicSetupType = "original" | "combined";
 

@@ -19,7 +19,7 @@ import type {
   ResonanceModCtrl,
 } from "@/types";
 import type { CalcSetup } from "./CalcSetup";
-import type { CalcTeammate } from "./CalcTeammate";
+import type { TeammateCalc } from "./TeammateCalc";
 
 import { $AppArtifact, $AppData } from "@/services";
 import Array_ from "@/utils/Array";
@@ -186,7 +186,7 @@ export function createArtifactBuffCtrls(
   return [];
 }
 
-export function createArtifactDebuffCtrls(sets: IArtifactGearSet[], teammates: CalcTeammate[]) {
+export function createArtifactDebuffCtrls(sets: IArtifactGearSet[], teammates: TeammateCalc[]) {
   const ctrls: IArtifactDebuffCtrl[] = [];
   const vvArtifact = $AppArtifact.vvArtifact;
   const deepwoodArtifact = $AppArtifact.deepwoodArtifact;

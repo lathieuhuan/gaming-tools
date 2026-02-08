@@ -15,8 +15,10 @@ type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
 
 export class AttackBonusControl {
   protected group = {} as AttackBonusGroup;
+  protected initial = {} as AttackBonusGroup;
 
   constructor(initial: Partial<AttackBonusGroup> = {}) {
+    this.initial = Object_.cloneProps(initial) as AttackBonusGroup;
     this.group = initial as AttackBonusGroup;
   }
 
@@ -28,19 +30,19 @@ export class AttackBonusControl {
     const current = this.group[bonus.toType] || [];
     current.push(bonus);
     this.group[bonus.toType] = current;
+
+    return this;
   }
 
   get(key: AttackBonusKey, ...paths: GetBonusPaths) {
     let result = 0;
 
     for (const path of paths) {
-      const bonuses = path ? this.group[path] : undefined;
+      const bonuses = (path && this.group[path]) || [];
 
-      if (bonuses) {
-        result += bonuses.reduce((total, bonus) => {
-          return total + (bonus.toKey === key ? bonus.value : 0);
-        }, 0);
-      }
+      result += bonuses.reduce((total, bonus) => {
+        return total + (bonus.toKey === key ? bonus.value : 0);
+      }, 0);
     }
 
     return result;
@@ -71,10 +73,16 @@ export class AttackBonusControl {
   };
 
   clone() {
-    return new AttackBonusControl(Object_.clone(this.group));
+    return new AttackBonusControl(Object_.cloneProps(this.group));
   }
 
   reset() {
+    this.group = Object_.cloneProps(this.initial);
+    return this;
+  }
+
+  clear() {
     this.group = {} as AttackBonusGroup;
+    return this;
   }
 }

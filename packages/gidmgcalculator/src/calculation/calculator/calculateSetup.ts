@@ -1,10 +1,9 @@
-import type { CalcSetup } from "@/models/calculator";
+import type { CalcSetup } from "@/models/calculation";
 import type { CalcResultAttackItem } from "../types";
 import type { CalcResult } from "./types";
 
 import { ATTACK_PATTERNS, LUNAR_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@/constants/global";
 import { CalcTarget } from "../core/CalcTarget";
-import { CharacterCalc } from "../core/CharacterCalc";
 import { makeAttackItemCalc } from "../core/makeAttackItemCalc";
 import { makeOtherItemCalc } from "../core/makeOtherItemCalc";
 import { makeReactionCalc } from "../core/makeReactionCalc";
@@ -14,24 +13,19 @@ import { applyBuffs } from "./applyBuffs";
 import { applyDebuffs } from "./applyDebuffs";
 import { getAttackAlters } from "./getAttackAlters";
 import { getTalentDefaultValues } from "./getTalentDefaultValues";
-import { TeammateCalc } from "./TeammateCalc";
 
 type CalculateSetupOptions = {
-  shouldRecord?: boolean;
+  shouldLog?: boolean;
 };
 
 export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions = {}) {
-  const { team } = setup;
-  const main = new CharacterCalc(setup.main, setup.main.data, team, {
-    shouldRecord: options.shouldRecord,
-  });
-  const teammates = setup.teammates.map(
-    (teammate) => new TeammateCalc(teammate, teammate.data, team)
-  );
+  const { main, teammates } = setup;
   const target = new CalcTarget(setup.target, setup.target.data, options);
 
   const { calcList } = main.data;
   const { elmtEvent } = setup;
+
+  main.initCalc();
 
   applyBuffs(main, teammates, setup);
   applyDebuffs(main, teammates, setup, target);
@@ -75,7 +69,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
         {
           exclusives: main.attkBonusCtrl.collectExclusiveBonuses(calcItem.id),
         },
-        options?.shouldRecord
+        options?.shouldLog
       );
 
       if (type === "attack") {
@@ -113,30 +107,30 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
   const rxnCalculator = makeReactionCalc(main, target);
 
   for (const reaction of LUNAR_REACTIONS) {
-    const recorder = new ResultRecorder({}, options?.shouldRecord);
+    const recorder = new ResultRecorder({}, options?.shouldLog);
     result.RXN[reaction] = rxnCalculator.calcLunarReaction(reaction, recorder);
   }
 
   for (const reaction of TRANSFORMATIVE_REACTIONS) {
-    const recorder = new ResultRecorder({}, options?.shouldRecord);
+    const recorder = new ResultRecorder({}, options?.shouldLog);
     result.RXN[reaction] = rxnCalculator.calcReaction(reaction, recorder, elmtEvent);
   }
 
   // ===== WEAPON CALCULATION =====
 
-  const { totalAttrs, weapon } = main;
+  const { allAttrs, weapon } = main;
 
   weapon.data.calcItems?.forEach((calcItem) => {
     const { name, type = "attack", value, incre = value / 3, basedOn = "atk" } = calcItem;
     const mult = value + incre * weapon.refi;
-    const attribute = totalAttrs.get(basedOn);
+    const attribute = allAttrs.get(basedOn);
     const base = (attribute * mult) / 100;
 
     const recorder = new ResultRecorder(
       {
         factors: [{ label: basedOn, value: attribute, mult }],
       },
-      options?.shouldRecord
+      options?.shouldLog
     );
 
     if (type === "attack") {

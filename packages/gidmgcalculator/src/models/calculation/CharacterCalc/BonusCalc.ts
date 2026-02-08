@@ -1,4 +1,3 @@
-import type { CalcCharacter } from "@/models/base";
 import type {
   CharacterEffectLevelIncrement,
   EffectValueByOption,
@@ -6,17 +5,18 @@ import type {
   InputStack,
   TalentLevelScaleConfig,
 } from "@/types";
+import type { CharacterCalc } from "./CharacterCalc";
 
 import { AbstractBonusCalc } from "../AbstractBonusCalc";
 
-export class BonusCalc extends AbstractBonusCalc<CalcCharacter> {
+export class BonusCalc extends AbstractBonusCalc<CharacterCalc> {
   protected getLvIncre(incre?: CharacterEffectLevelIncrement) {
     return incre ? this.performer.getFinalTalentLv(incre.talent) * incre.value : 0;
   }
 
   protected getBasedOn(config: EntityBonusBasedOn) {
     const { field, baseline = 0 } = this.parseBasedOn(config);
-    const basedOnValue = this.performer.getTotalAttr(field, this.basedOnFixed) || 0;
+    const basedOnValue = this.performer.getTotalAttr(field, this.basedOnFixed);
 
     return {
       field,

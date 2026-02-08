@@ -1,69 +1,94 @@
+import type { ArtifactGear, Weapon } from "@/models/base";
 import type {
+  AllAttributes,
   AmplifyingReaction,
   AppCharacter,
+  AttackBonus,
   AttackElement,
+  AttributeBonus,
   AttributeStat,
+  BonusPerformTools,
   CharacterBuff,
   CharacterDebuff,
   EffectPerformableCondition,
   EffectPerformerConditions,
   EffectReceiverConditions,
+  EntityBonus,
+  EntityBonusEffect,
+  EntityPenaltyEffect,
   ICharacter,
   ITeam,
   ITeamMember,
   QuickenReaction,
   TalentType,
-  TotalAttributes,
 } from "@/types";
-import type { ArtifactGear } from "../ArtifactGear";
-import type { Weapon } from "../Weapon";
 
+import { Character, Team } from "@/models/base";
+import { isPassedComparison } from "@/models/base/utils/isPassedComparison";
+import { isValidInput } from "@/models/base/utils/isValidInput";
 import TypeCounter from "@/utils/TypeCounter";
-import { Character } from "../Character";
-import { Team } from "../Team";
-import { isPassedComparison } from "../utils/isPassedComparison";
-import { isValidInput } from "../utils/isValidInput";
-import { parseAbilityDesc } from "../utils/parseAbilityDesc";
-import { AttackBonusControl } from "./AttackBonusControl";
+import { AllAttributesControl } from "../AllAttributesControl";
+import { AttackBonusControl } from "../AttackBonusControl";
 import { BonusCalc } from "./BonusCalc";
 import { PenaltyCalc } from "./PenaltyCalc";
 
-export type CalcCharacterConstructInfo<
+type BonusMonoRecord = {
+  trackId: string;
+  targetId: string;
+};
+
+export type ReceivedAttributeBonus = Omit<AttributeBonus, "toStat"> & {
+  toStat: AttributeBonus["toStat"] | "OWN_ELMT";
+  effectSrc: EntityBonus<EntityBonusEffect>;
+};
+
+export type ReceivedAttackBonus = AttackBonus & {
+  effectSrc: EntityBonus<EntityBonusEffect>;
+};
+
+export type CharacterCalcConstructInfo<
   W extends Weapon = Weapon,
   A extends ArtifactGear = ArtifactGear
 > = ICharacter<W, A> & {
-  totalAttrs?: TotalAttributes;
+  allAttrs?: AllAttributes;
+  allAttrsCtrl?: AllAttributesControl;
   attkBonusCtrl?: AttackBonusControl;
 };
 
-export type ICalcCharacter<
-  W extends Weapon = Weapon,
-  A extends ArtifactGear = ArtifactGear
-> = ICharacter<W, A> & {
+type ICharacterCalc<W extends Weapon = Weapon, A extends ArtifactGear = ArtifactGear> = ICharacter<
+  W,
+  A
+> & {
   data: AppCharacter;
-  totalAttrs: TotalAttributes;
+  allAttrs: AllAttributes;
   attkBonusCtrl: AttackBonusControl;
 };
 
-export class CalcCharacter<
+export class CharacterCalc<
     W extends Weapon = Weapon,
     A extends ArtifactGear = ArtifactGear,
     TTeam extends ITeam = ITeam
   >
   extends Character<W, A>
-  implements ICalcCharacter<W, A>, ITeamMember<TTeam>
+  implements ICharacterCalc<W, A>, ITeamMember<TTeam>
 {
   team: ITeam;
 
-  totalAttrs: TotalAttributes;
+  allAttrs: AllAttributes;
+  allAttrsCtrl: AllAttributesControl;
   attkBonusCtrl: AttackBonusControl;
 
-  constructor(info: CalcCharacterConstructInfo<W, A>, public data: AppCharacter, team?: ITeam) {
+  constructor(info: CharacterCalcConstructInfo<W, A>, public data: AppCharacter, team?: ITeam) {
     super(info, data);
 
-    const { totalAttrs = new TypeCounter(), attkBonusCtrl = new AttackBonusControl() } = info;
+    const {
+      allAttrs = new TypeCounter(),
+      allAttrsCtrl = new AllAttributesControl(),
+      attkBonusCtrl = new AttackBonusControl(),
+    } = info;
 
-    this.totalAttrs = totalAttrs;
+    this.allAttrs = allAttrs;
+    this.allAttrsCtrl = allAttrsCtrl;
     this.attkBonusCtrl = attkBonusCtrl;
     this.team = team || new Team([this]);
   }
@@ -76,9 +101,9 @@ export class CalcCharacter<
     return this.team.extraTalentLv.get(talentType) + super.getTotalXtraTalentLv(talentType);
   }
 
-  /** This is overridden in CharacterCalc, fixedOnly is used there */
+  /** TODO: test this */
   getTotalAttr(key: AttributeStat | "base_atk", fixedOnly = false) {
-    return this.totalAttrs.get(key);
+    return this.allAttrsCtrl.getTotal(key, fixedOnly);
   }
 
   getQuickenBuffDamage(reaction: QuickenReaction) {
@@ -105,6 +130,13 @@ export class CalcCharacter<
       default:
         return 1;
     }
+  }
+
+  // ===== CALCULATION =====
+
+  initCalc() {
+    this.allAttrsCtrl.init(this);
+    this.attkBonusCtrl = new AttackBonusControl();
   }
 
   protected canPerformEffect(condition: EffectPerformerConditions) {
@@ -183,17 +215,74 @@ export class CalcCharacter<
     return true;
   }
 
+  performBonus(config: EntityBonusEffect, support: Partial<BonusPerformTools>) {
+    return new BonusCalc(this, this.team, support).makeBonus(config);
+  }
+
+  performPenalty(config: EntityPenaltyEffect, inputs?: number[]) {
+    return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
+  }
+
+  // ===== RECEIVE BONUSES =====
+
+  private monoRecords: NonNullable<BonusMonoRecord>[] = [];
+
+  private isRecordedBonus(trackId: string, targetId: string) {
+    const recorded = this.monoRecords.some((savedRecord) => {
+      return trackId === savedRecord.trackId && targetId === savedRecord.targetId;
+    });
+
+    if (recorded) {
+      return true;
+    }
+
+    this.monoRecords.push({ trackId, targetId });
+
+    return false;
+  }
+
+  receiveAttrBonus(bonus: ReceivedAttributeBonus) {
+    if (this.canReceiveEffect(bonus.effectSrc)) {
+      const { monoId } = bonus.effectSrc;
+      const toStat = bonus.toStat === "OWN_ELMT" ? this.data.vision : bonus.toStat;
+      const notRecorded = !monoId || !this.isRecordedBonus(monoId, toStat);
+
+      if (notRecorded) {
+        this.allAttrsCtrl.applyBonus({
+          ...bonus,
+          toStat,
+        });
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  receiveAttkBonus(bonus: ReceivedAttackBonus) {
+    if (this.canReceiveEffect(bonus.effectSrc)) {
+      const { monoId } = bonus.effectSrc;
+      const notRecorded =
+        !monoId || !this.isRecordedBonus(monoId, `${bonus.toType}/${bonus.toKey}`);
+
+      if (notRecorded) {
+        this.attkBonusCtrl.add(bonus);
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   //
 
   parseBuffDesc(buff: Pick<CharacterBuff, "description" | "effects">, inputs?: number[]) {
-    const calc = new BonusCalc(this, this.team, { inputs });
-
-    return parseAbilityDesc(buff.description, buff.effects, calc);
+    return new BonusCalc(this, this.team, { inputs }).parseAbilityDesc(buff);
   }
 
   parseDebuffDesc(debuff: Pick<CharacterDebuff, "description" | "effects">, inputs?: number[]) {
-    const calc = new PenaltyCalc(this, this.team, inputs);
-
-    return parseAbilityDesc(debuff.description, debuff.effects, calc);
+    return new PenaltyCalc(this, this.team, inputs).parseAbilityDesc(debuff);
   }
 }

@@ -1,7 +1,7 @@
 import { useEffect, useId, useState } from "react";
 import { clsx } from "rond";
 
-import type { CoreStat, TotalAttributes } from "@/types";
+import type { CoreStat, AllAttributes } from "@/types";
 
 import { CORE_STAT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
@@ -11,7 +11,7 @@ import { markGreen } from "@/components";
 import { CoreStatRow } from "./CoreStatRow";
 
 export type CoreStatRowsProps = {
-  attributes: TotalAttributes;
+  attributes: AllAttributes;
 };
 
 export function CoreStatRows({ attributes }: CoreStatRowsProps) {

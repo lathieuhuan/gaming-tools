@@ -1,6 +1,9 @@
 import { DeepPartial } from "@reduxjs/toolkit";
-import { deepMerge } from "./pure-utils";
+import createDeepMerge from "@fastify/deepmerge";
+
 import type { UnknownObject } from "./utils.types";
+
+const deepMerge = createDeepMerge({ all: true });
 
 function isEmpty(value: unknown): boolean {
   return value === "" || value === null || value === undefined;
@@ -133,6 +136,19 @@ export default class Object_ {
     } catch {
       return JSON.parse(JSON.stringify(item));
     }
+  }
+
+  /** shallow clone */
+  static cloneProps<T extends object>(item: T): T {
+    const clone = {} as T;
+
+    for (const key in item) {
+      if (typeof item[key] !== "function") {
+        clone[key] = item[key];
+      }
+    }
+
+    return clone;
   }
 }
 

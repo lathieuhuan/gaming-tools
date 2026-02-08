@@ -1,5 +1,5 @@
 import type { Weapon } from "@/models/base";
-import type { CalcTeammate } from "@/models/calculator";
+import type { TeammateCalc } from "@/models/calculation";
 import type { IWeapon, IWeaponBuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
@@ -48,9 +48,9 @@ type WeaponBuffsViewProps = {
   mutable?: boolean;
   weapon: Weapon;
   wpBuffCtrls: IWeaponBuffCtrl[];
-  teammates: CalcTeammate[];
+  teammates: TeammateCalc[];
   getSelfHandlers?: RenderWeaponModifiersArgs["getHanlders"];
-  getTeammateHandlers?: (teammate: CalcTeammate, ctrl: IWeaponBuffCtrl) => ModifierHanlders;
+  getTeammateHandlers?: (teammate: TeammateCalc, ctrl: IWeaponBuffCtrl) => ModifierHanlders;
 };
 
 export function WeaponBuffsView({

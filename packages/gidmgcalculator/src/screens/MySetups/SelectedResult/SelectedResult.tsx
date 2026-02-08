@@ -5,7 +5,7 @@ import type { SetupOverviewInfo } from "../types";
 
 import { calculateSetup } from "@/calculation/calculator";
 import { Target, Team } from "@/models/base";
-import { CalcSetup } from "@/models/calculator";
+import { CalcSetup } from "@/models/calculation";
 import { $AppArtifact, $AppData } from "@/services";
 import { enhanceCtrls } from "@/utils/modifier";
 

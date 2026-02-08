@@ -1,12 +1,12 @@
+import type { CharacterCalc } from "@/models/calculation";
 import type { TalentCalcItemBonusId } from "@/types";
 import type { CalcResultOtherItem } from "../types";
-import type { CharacterCalc } from "./CharacterCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
 import { toMult } from "@/utils";
 
 export function makeOtherItemCalc(performer: CharacterCalc) {
-  const { totalAttrs, attkBonusCtrl } = performer;
+  const { allAttrs, attkBonusCtrl } = performer;
 
   function calculate(
     type: CalcResultOtherItem["type"],
@@ -20,10 +20,10 @@ export function makeOtherItemCalc(performer: CharacterCalc) {
     switch (type) {
       case "healing":
         flat = attkBonusCtrl.get("flat", itemId);
-        bonusMult += totalAttrs.get("healB_");
+        bonusMult += allAttrs.get("healB_");
         break;
       case "shield":
-        bonusMult += totalAttrs.get("shieldS_");
+        bonusMult += allAttrs.get("shieldS_");
         break;
     }
 

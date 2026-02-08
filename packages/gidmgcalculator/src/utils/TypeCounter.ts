@@ -35,8 +35,8 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
     const min = options.allowNegative ? -Infinity : 0;
     const data = this.filter(initial, min);
 
-    this.initial = { ...data };
-    this.count = { ...data };
+    this.initial = Object_.cloneProps(data);
+    this.count = data;
     this.min = min;
   }
 
@@ -86,19 +86,20 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
 
   delete = (key: TKey) => {
     delete this.count[key];
-  };
-
-  merge = (data: TypeCounter<TKey> | Partial<Record<TKey, number>>) => {
-    const _data = data instanceof TypeCounter ? data.result : data;
-
-    for (const key in _data) {
-      this.add(key, _data[key]);
-    }
-
     return this;
   };
 
-  /** Only run callback for keys with positive count */
+  // merge = (data: TypeCounter<TKey> | Partial<Record<TKey, number>>) => {
+  //   const _data = data instanceof TypeCounter ? data.result : data;
+
+  //   for (const key in _data) {
+  //     this.add(key, _data[key]);
+  //   }
+
+  //   return this;
+  // };
+
+  /** Only run callback for entries that have value other than 0   */
   forEach = (callback: (key: TKey, count: number) => void) => {
     Object_.forEach(this.count, (key, count) => {
       if (count) {
@@ -107,16 +108,18 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
     });
   };
 
-  clear = () => {
-    this.count = {} as Record<TKey, number>;
-  };
-
   clone = () => {
-    return new TypeCounter(this.count, this.options);
+    return new TypeCounter(Object_.cloneProps(this.count), this.options);
   };
 
   reset = () => {
-    this.count = { ...this.initial } as Record<TKey, number>;
+    this.count = Object_.cloneProps(this.initial) as Record<TKey, number>;
+    return this;
+  };
+
+  clear = () => {
+    this.count = {} as Record<TKey, number>;
+    return this;
   };
 }
 

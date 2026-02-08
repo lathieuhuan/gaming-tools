@@ -2,14 +2,14 @@ import { ReactNode } from "react";
 import { FaSave } from "react-icons/fa";
 import { ClassValue, clsx } from "rond";
 
-import { CharacterCalc } from "@/calculation/core/CharacterCalc";
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { Artifact, ArtifactGear, CalcCharacter, Weapon } from "@/models/base";
+import { Artifact, ArtifactGear, Weapon } from "@/models/base";
+import { CharacterCalc } from "@/models/calculation";
 import Array_ from "@/utils/Array";
-import { useLayoutState } from "../Layout";
 import { useSelectedBuildState } from "../DataImporter";
 import { useRequestSaveItem } from "../DataSaver/ItemSaver";
+import { useLayoutState } from "../Layout";
 
 import { AttributeTable } from "@/components";
 import { ArtifactCard } from "@/components/ArtifactCard";
@@ -40,7 +40,7 @@ export function SectionDetail({ className }: SectionDetailProps) {
       const atfPieces = Array_.truthify(artifacts).map(
         (artifact) => new Artifact(artifact, artifact.data)
       );
-      const calcCharacter = new CalcCharacter(
+      const characterCalc = new CharacterCalc(
         {
           ...character.basic,
           weapon: new Weapon(weapon, weapon.data),
@@ -48,15 +48,14 @@ export function SectionDetail({ className }: SectionDetailProps) {
         },
         character.data
       );
-      const calc = new CharacterCalc(calcCharacter, calcCharacter.data, calcCharacter.team);
 
-      calc.initTotalAttr();
+      characterCalc.initAllAttrs();
 
       extraTitle = "Attributes";
       content = (
         <AttributeTable
           className="max-h-full hide-scrollbar border-2 border-dark-3 rounded"
-          attributes={calc.totalAttrCtrl.finalize()}
+          attributes={characterCalc.allAttrsCtrl.finalize()}
         />
       );
       break;

@@ -1,3 +1,4 @@
+import type { CharacterCalc } from "@/models/calculation";
 import type {
   ActualAttackPattern,
   AttackBonusKey,
@@ -7,7 +8,6 @@ import type {
 } from "@/types";
 import type { CalcResultAttackItem, CalcResultItemValue } from "../types";
 import type { CalcTarget } from "./CalcTarget";
-import type { CharacterCalc } from "./CharacterCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
 import { toMult } from "@/utils";
@@ -25,7 +25,7 @@ export function makeAttackItemCalc(
   target: CalcTarget,
   tools: MakeAttackCalcTools = {}
 ) {
-  const { totalAttrs, attkBonusCtrl, bareLv } = performer;
+  const { allAttrs, attkBonusCtrl, bareLv } = performer;
   const { attElmt = "phys", attPatt = "none", itemId, reaction = null } = tools;
 
   function getBonus(key: AttackBonusKey) {
@@ -40,7 +40,7 @@ export function makeAttackItemCalc(
     baseMult = baseMult >= 0 ? toMult(baseMult) : -baseMult / 100;
 
     const flat = getBonus("flat");
-    const bonusMult = toMult(getBonus("pct_") + totalAttrs.get(attElmt));
+    const bonusMult = toMult(getBonus("pct_") + allAttrs.get(attElmt));
     const specMult = toMult(getBonus("specMult_"));
     const elvMult = toMult(getBonus("elvMult_"));
 
@@ -61,8 +61,8 @@ export function makeAttackItemCalc(
     const resMult = target.resistMults[attElmt];
 
     // CRITS
-    const cRate_ = limitCRate(totalAttrs.get("cRate_") + getBonus("cRate_")) / 100;
-    const cDmg_ = (totalAttrs.get("cDmg_") + getBonus("cDmg_")) / 100;
+    const cRate_ = limitCRate(allAttrs.get("cRate_") + getBonus("cRate_")) / 100;
+    const cDmg_ = (allAttrs.get("cDmg_") + getBonus("cDmg_")) / 100;
     const cDmgMult = 1 + cDmg_;
     const averageMult = 1 + cRate_ * cDmg_;
 

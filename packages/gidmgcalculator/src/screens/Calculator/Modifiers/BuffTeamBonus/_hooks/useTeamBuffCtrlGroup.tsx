@@ -1,7 +1,7 @@
 import type { ITeamBuffCtrl } from "@/types";
 import type { ControlGroup } from "../types";
 
-import { MS_ASCENDANT_BUFF_ID } from "@/models/calculator";
+import { MS_ASCENDANT_BUFF_ID } from "@/models/calculation";
 import { parseDescription } from "@/utils/description-parsers";
 import { useCalcStore } from "@Store/calculator";
 import { updateActiveSetup } from "@Store/calculator/actions";

@@ -1,14 +1,15 @@
 import { ClassValue, clsx } from "rond";
 
-import { ArtifactGear, CalcCharacter } from "@/models/base";
+import { ArtifactGear } from "@/models/base";
+import { CharacterCalc } from "@/models/calculation";
 import { GenshinUserBuild } from "@/services/enka";
 import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/Array";
 import { createArtifact, createWeapon } from "@/utils/entity";
 import IdStore from "@/utils/IdStore";
-import { useLayoutState } from "../Layout";
 import { useDataImportState } from "../DataImporter";
 import { useRequestSaveBuild } from "../DataSaver/BuildSaver";
+import { useLayoutState } from "../Layout";
 
 import { TabHeader } from "../_components/TabHeader";
 import { BuildOverviews } from "./BuildOverviews";
@@ -33,7 +34,7 @@ export function SectionResults({ className }: SectionResultsProps) {
     );
     const atfGear = new ArtifactGear(artifacts);
     const { basic, data } = build.character;
-    const character = new CalcCharacter(
+    const character = new CharacterCalc(
       {
         ...basic,
         weapon,

@@ -12,15 +12,8 @@ import type {
 import type { AdvancedPick, PartiallyRequiredOnly } from "rond";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
-import {
-  Artifact,
-  ArtifactGear,
-  CalcCharacter,
-  CalcCharacterConstructInfo,
-  Target,
-  Team,
-  Weapon,
-} from "@/models/base";
+import { Artifact, ArtifactGear, Target, Team, Weapon } from "@/models/base";
+import { CharacterCalc, type CharacterCalcConstructInfo } from "@/models/calculation";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
 import { useSettingsStore } from "@Store/settings";
 import Array_ from "./Array";
@@ -136,19 +129,19 @@ export const createCharacterBasic = (params: CreateCharacterParams): ICharacterB
   return { name, level, NAs, ES, EB, cons, enhanced };
 };
 
-export type CreateCalcCharacterParams = PartiallyRequiredOnly<
-  CalcCharacterConstructInfo<Weapon, ArtifactGear>,
+type CreateCharacterCalcParams = PartiallyRequiredOnly<
+  CharacterCalcConstructInfo<Weapon, ArtifactGear>,
   "name" | "weapon" | "atfGear"
 >;
 
-export const createCalcCharacter = (
-  params: CreateCalcCharacterParams,
+export const createCharacterCalc = (
+  params: CreateCharacterCalcParams,
   data: AppCharacter = $AppCharacter.get(params.name),
   team?: Team
 ) => {
   const basic = createCharacterBasic(params);
 
-  return new CalcCharacter(
+  return new CharacterCalc(
     {
       ...basic,
       weapon: params.weapon,

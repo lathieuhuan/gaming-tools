@@ -1,4 +1,4 @@
-import type { CalcTeammate } from "@/models/calculator";
+import type { TeammateCalc } from "@/models/calculation";
 import type { IArtifactBuffCtrl, ITeammateArtifactBuffCtrl } from "@/types";
 
 import Object_ from "@/utils/Object";
@@ -21,7 +21,7 @@ export default function BuffArtifact() {
   };
 
   const handleUpdateTeammateCtrls = (
-    teammate: CalcTeammate,
+    teammate: TeammateCalc,
     newCtrls: ITeammateArtifactBuffCtrl[]
   ) => {
     updateTeammateArtifact(teammate.data.code, {

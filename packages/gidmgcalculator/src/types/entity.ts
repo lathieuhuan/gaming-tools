@@ -7,7 +7,7 @@ import type {
   AttributeStat,
   ElementType,
   Level,
-  TotalAttributes,
+  AllAttributes,
   WeaponType,
 } from "./common";
 import { CustomDebuffCtrl, CustomBuffCtrl, ElementalEvent, ResonanceModCtrl } from "./modifiers";
@@ -79,7 +79,7 @@ export type IArtifactGear<T extends IArtifact = IArtifact> = {
   pieces: IArtifactGearPieces<T>;
   slots: IArtifactGearSlot<T>[];
   sets: IArtifactGearSet[];
-  attributes: TotalAttributes;
+  attributes: AllAttributes;
 };
 
 // ========== CHARACTER ==========

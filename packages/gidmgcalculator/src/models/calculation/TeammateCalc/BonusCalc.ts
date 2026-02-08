@@ -5,7 +5,7 @@ import type {
   TalentLevelScaleConfig,
 } from "@/types";
 
-import { AbstractBonusCalc } from "@/models/base";
+import { AbstractBonusCalc } from "../AbstractBonusCalc";
 
 export class BonusCalc extends AbstractBonusCalc {
   protected getLvIncre(incre?: CharacterEffectLevelIncrement) {

@@ -1,7 +1,6 @@
 import { Fragment } from "react";
 
-import type { CalcCharacter } from "@/models/base";
-import type { CalcSetup } from "@/models/calculator";
+import type { CalcSetup, CharacterCalc } from "@/models/calculation";
 import type { AttackReaction, CustomBuffCtrl, ElementalEvent, ElementType } from "@/types";
 
 import { useTranslation } from "@/hooks";
@@ -86,7 +85,7 @@ type ElementBuffProps = {
   element: ElementType;
   heading: string;
   reaction: AttackReaction;
-  character: CalcCharacter;
+  character: CharacterCalc;
   showElement?: boolean;
 };
 
@@ -133,7 +132,7 @@ function ElementBuff({
 }
 
 type ElementBuffsProps = {
-  character: CalcCharacter;
+  character: CharacterCalc;
   elmtEvent: ElementalEvent;
 };
 

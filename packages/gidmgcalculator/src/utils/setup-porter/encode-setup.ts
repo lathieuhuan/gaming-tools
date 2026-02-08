@@ -1,4 +1,4 @@
-import type { CalcSetup } from "@/models/calculator";
+import type { CalcSetup } from "@/models/calculation";
 import type {
   AttackElement,
   AttributeStat,

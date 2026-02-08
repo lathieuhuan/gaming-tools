@@ -28,9 +28,9 @@ import {
   REACTIONS,
   WEAPON_TYPES,
 } from "@/constants/global";
-import { Artifact, ArtifactGear, CalcCharacter, Target, Team } from "@/models/base";
+import { Artifact, ArtifactGear, Target, Team } from "@/models/base";
 import { isManualRsnElmt } from "@/models/base/utils/isManualRsnElmt";
-import { CalcSetup, CalcTeammate } from "@/models/calculator";
+import { CalcSetup, CharacterCalc, TeammateCalc } from "@/models/calculation";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
 import { createArtifact, createTarget, createWeapon } from "../entity";
@@ -172,7 +172,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
     ])
   );
 
-  const main = new CalcCharacter(
+  const main = new CharacterCalc(
     {
       name: mainData.name,
       enhanced: enhancedCode === "1",
@@ -233,7 +233,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
 
   // ===== TEAMMATES =====
 
-  const decodeTeammate = (tmStr: string | undefined): CalcTeammate | null => {
+  const decodeTeammate = (tmStr: string | undefined): TeammateCalc | null => {
     try {
       const [tmCode, enhancedCode, tmBcStrs, tmDcStrs, weaponStr, artifactStr] = split(tmStr, 1);
       const tmData = characters.find((data) => data.code === +tmCode);
@@ -262,7 +262,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
         };
       }
 
-      return new CalcTeammate(
+      return new TeammateCalc(
         {
           name: tmData.name,
           enhanced: enhancedCode === "1",

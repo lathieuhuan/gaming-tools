@@ -10,11 +10,12 @@ import type {
 import type { ArtifactPieceUpdateData, CloneOptions, MainUpdateData } from "./types";
 
 import { calculateSetup } from "@/calculation/calculator";
-import { Artifact, ArtifactGear, CalcCharacter, Team, Weapon } from "@/models/base";
+import { Artifact, ArtifactGear, Team, Weapon } from "@/models/base";
+import { CharacterCalc } from "../CharacterCalc";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
 import { createArtifactBasic, CreateArtifactParams, createTarget } from "@/utils/entity";
-import { CalcTeammate, type CalcTeammateConstructInfo } from "../CalcTeammate";
+import { TeammateCalc, type TeammateCalcConstructInfo } from "../TeammateCalc";
 import {
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
@@ -103,11 +104,11 @@ export class CalcSetup extends CalcSetupBase {
     });
   }
 
-  calculate(shouldRecord?: boolean) {
-    const { main, result } = calculateSetup(this, { shouldRecord: true });
+  calculate(shouldLog?: boolean) {
+    const { main, result } = calculateSetup(this, { shouldLog });
 
     const newMain = this.updateMain({
-      totalAttrs: main.totalAttrs.clone(),
+      allAttrs: main.allAttrs.clone(),
       attkBonusCtrl: main.attkBonusCtrl.clone(),
     });
 
@@ -121,7 +122,7 @@ export class CalcSetup extends CalcSetupBase {
   // ===== MAIN CHARACTER =====
 
   updateMain(data: MainUpdateData) {
-    return new CalcCharacter(
+    return new CharacterCalc(
       {
         ...this.main,
         ...data,
@@ -132,15 +133,15 @@ export class CalcSetup extends CalcSetupBase {
   }
 
   cloneMain() {
-    const { weapon, atfGear, attkBonusCtrl, totalAttrs } = this.main;
+    const { weapon, atfGear, attkBonusCtrl, allAttrs } = this.main;
 
-    return new CalcCharacter(
+    return new CharacterCalc(
       {
         ...this.main,
         weapon: new Weapon(weapon, weapon.data),
         atfGear: new ArtifactGear(atfGear.pieces),
         attkBonusCtrl: attkBonusCtrl.clone(),
-        totalAttrs: totalAttrs.clone(),
+        allAttrs: allAttrs.clone(),
       },
       this.main.data,
       this.team
@@ -259,14 +260,14 @@ export class CalcSetup extends CalcSetupBase {
   // ===== TEAMMATES =====
 
   setTeammate(
-    info: CalcTeammateConstructInfo,
+    info: TeammateCalcConstructInfo,
     index: number,
     data: AppCharacter = $AppCharacter.get(info.name)
   ) {
     const newTeam = new Team();
     const newTeammates = [...this.teammates];
 
-    newTeammates[index] = new CalcTeammate(info, data, newTeam);
+    newTeammates[index] = new TeammateCalc(info, data, newTeam);
     newTeam.updateMembers([this.main, ...newTeammates]);
 
     this.team = newTeam;
@@ -276,7 +277,7 @@ export class CalcSetup extends CalcSetupBase {
     this.updateArtifactDebuffCtrls();
   }
 
-  removeTeammate(teammate: CalcTeammate) {
+  removeTeammate(teammate: TeammateCalc) {
     const newTeammates = this.teammates.filter((tm) => tm.name !== teammate.name);
 
     this.team = new Team([this.main, ...newTeammates]);
@@ -288,7 +289,7 @@ export class CalcSetup extends CalcSetupBase {
 
   updateTeammate(
     tmCode: number,
-    data: TeammateUpdateData | ((teammate: CalcTeammate) => TeammateUpdateData)
+    data: TeammateUpdateData | ((teammate: TeammateCalc) => TeammateUpdateData)
   ) {
     this.teammates = this.teammates.map((teammate) => {
       if (teammate.data.code === tmCode) {

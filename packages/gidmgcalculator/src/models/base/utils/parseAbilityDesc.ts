@@ -7,6 +7,7 @@ import { round, toMult } from "@/utils/pure-utils";
 
 type AbilityBuff = CharacterBuff | CharacterDebuff;
 
+// TODO: Remove
 export const parseAbilityDesc = (
   description: AbilityBuff["description"],
   effects: AbilityBuff["effects"],
