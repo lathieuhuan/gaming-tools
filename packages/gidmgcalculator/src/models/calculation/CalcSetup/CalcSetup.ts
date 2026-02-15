@@ -108,7 +108,7 @@ export class CalcSetup extends CalcSetupBase {
     const { main, result } = calculateSetup(this, { shouldLog });
 
     const newMain = this.updateMain({
-      allAttrs: main.allAttrs.clone(),
+      allAttrsCtrl: main.allAttrsCtrl.clone(),
       attkBonusCtrl: main.attkBonusCtrl.clone(),
     });
 
@@ -133,7 +133,7 @@ export class CalcSetup extends CalcSetupBase {
   }
 
   cloneMain() {
-    const { weapon, atfGear, attkBonusCtrl, allAttrs } = this.main;
+    const { weapon, atfGear, attkBonusCtrl, allAttrsCtrl } = this.main;
 
     return new CharacterCalc(
       {
@@ -141,7 +141,7 @@ export class CalcSetup extends CalcSetupBase {
         weapon: new Weapon(weapon, weapon.data),
         atfGear: new ArtifactGear(atfGear.pieces),
         attkBonusCtrl: attkBonusCtrl.clone(),
-        allAttrs: allAttrs.clone(),
+        allAttrsCtrl: allAttrsCtrl.clone(),
       },
       this.main.data,
       this.team

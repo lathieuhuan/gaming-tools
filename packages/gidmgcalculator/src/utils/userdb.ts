@@ -36,7 +36,7 @@ export function parseDbArtifacts(artifactIDs: number[] = [], dbArtifacts: IArtif
   return artifacts;
 }
 
-export function makeCalcCharacterFromDb(
+export function makeCharacterCalcFromDb(
   character: IDbCharacter,
   dbWeapons: IWeaponBasic[],
   dbArtifacts: IArtifactBasic[],

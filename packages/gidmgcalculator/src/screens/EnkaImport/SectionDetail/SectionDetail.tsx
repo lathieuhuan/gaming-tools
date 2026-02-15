@@ -48,14 +48,13 @@ export function SectionDetail({ className }: SectionDetailProps) {
         },
         character.data
       );
-
-      characterCalc.initAllAttrs();
+      const allAttrs = characterCalc.initCalc().allAttrsCtrl.finalize();
 
       extraTitle = "Attributes";
       content = (
         <AttributeTable
           className="max-h-full hide-scrollbar border-2 border-dark-3 rounded"
-          attributes={characterCalc.allAttrsCtrl.finalize()}
+          attributes={allAttrs}
         />
       );
       break;

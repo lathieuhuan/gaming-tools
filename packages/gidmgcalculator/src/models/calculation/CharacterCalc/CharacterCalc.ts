@@ -6,7 +6,6 @@ import type {
   AttackBonus,
   AttackElement,
   AttributeBonus,
-  AttributeStat,
   BonusPerformTools,
   CharacterBuff,
   CharacterDebuff,
@@ -22,11 +21,11 @@ import type {
   QuickenReaction,
   TalentType,
 } from "@/types";
+import type { TypeCounterKey } from "@/utils/TypeCounter";
 
 import { Character, Team } from "@/models/base";
 import { isPassedComparison } from "@/models/base/utils/isPassedComparison";
 import { isValidInput } from "@/models/base/utils/isValidInput";
-import TypeCounter from "@/utils/TypeCounter";
 import { AllAttributesControl } from "../AllAttributesControl";
 import { AttackBonusControl } from "../AttackBonusControl";
 import { BonusCalc } from "./BonusCalc";
@@ -50,7 +49,6 @@ export type CharacterCalcConstructInfo<
   W extends Weapon = Weapon,
   A extends ArtifactGear = ArtifactGear
 > = ICharacter<W, A> & {
-  allAttrs?: AllAttributes;
   allAttrsCtrl?: AllAttributesControl;
   attkBonusCtrl?: AttackBonusControl;
 };
@@ -60,7 +58,6 @@ type ICharacterCalc<W extends Weapon = Weapon, A extends ArtifactGear = Artifact
   A
 > & {
   data: AppCharacter;
-  allAttrs: AllAttributes;
   attkBonusCtrl: AttackBonusControl;
 };
 
@@ -74,20 +71,15 @@ export class CharacterCalc<
 {
   team: ITeam;
 
-  allAttrs: AllAttributes;
   allAttrsCtrl: AllAttributesControl;
   attkBonusCtrl: AttackBonusControl;
 
   constructor(info: CharacterCalcConstructInfo<W, A>, public data: AppCharacter, team?: ITeam) {
     super(info, data);
 
-    const {
-      allAttrs = new TypeCounter(),
-      allAttrsCtrl = new AllAttributesControl(),
-      attkBonusCtrl = new AttackBonusControl(),
-    } = info;
+    const { allAttrsCtrl = new AllAttributesControl(), attkBonusCtrl = new AttackBonusControl() } =
+      info;
 
-    this.allAttrs = allAttrs;
     this.allAttrsCtrl = allAttrsCtrl;
     this.attkBonusCtrl = attkBonusCtrl;
     this.team = team || new Team([this]);
@@ -97,13 +89,16 @@ export class CharacterCalc<
     this.team = team;
   }
 
+  // ===== OVERRIDE =====
+
   override getTotalXtraTalentLv(talentType: TalentType) {
     return this.team.extraTalentLv.get(talentType) + super.getTotalXtraTalentLv(talentType);
   }
 
-  /** TODO: test this */
-  getTotalAttr(key: AttributeStat | "base_atk", fixedOnly = false) {
-    return this.allAttrsCtrl.getTotal(key, fixedOnly);
+  // ===== GETTERS =====
+
+  getAttr(key: TypeCounterKey<AllAttributes>) {
+    return this.allAttrsCtrl.finals.get(key);
   }
 
   getQuickenBuffDamage(reaction: QuickenReaction) {
@@ -137,6 +132,7 @@ export class CharacterCalc<
   initCalc() {
     this.allAttrsCtrl.init(this);
     this.attkBonusCtrl = new AttackBonusControl();
+    return this;
   }
 
   protected canPerformEffect(condition: EffectPerformerConditions) {
@@ -157,7 +153,7 @@ export class CharacterCalc<
     }
 
     if (condition.checkMixed) {
-      const mixedCount = this.team["getMixedCount"](this.data.vision);
+      const mixedCount = this.team.getMixedCount(this.data.vision);
 
       if (!isPassedComparison(mixedCount, 3, "MIN")) {
         return false;

@@ -10,9 +10,9 @@ import type { CalcResultReactionItem } from "../types";
 import type { CalcTarget } from "./CalcTarget";
 import type { ResultRecorder } from "./ResultRecorder";
 
+import { limitCRate } from "@/utils/calculation";
 import { toMult } from "@/utils/pure-utils";
 import { LUNAR_ATTACK_ELEMENT, LUNAR_REACTION_COEFFICIENT } from "../constants";
-import { limitCRate } from "./utils";
 
 const TRANSFORMATIVE_REACTION_CONFIG: Record<
   TransformativeReaction,
@@ -30,7 +30,7 @@ const TRANSFORMATIVE_REACTION_CONFIG: Record<
 };
 
 export function makeReactionCalc(performer: CharacterCalc, target: CalcTarget) {
-  const { attkBonusCtrl, allAttrs, baseRxnDamage } = performer;
+  const { attkBonusCtrl, baseRxnDamage } = performer;
 
   function calcLunarReaction(
     reaction: LunarReaction,
@@ -52,8 +52,8 @@ export function makeReactionCalc(performer: CharacterCalc, target: CalcTarget) {
     const resMult = target.resistMults[attElmt];
 
     const base = (baseValue * baseMult * bonusMult * elvMult + flat) * rxnMult * resMult;
-    const cRate_ = limitCRate(getBonus("cRate_") + allAttrs.get("cRate_")) / 100;
-    const cDmg_ = (getBonus("cDmg_") + allAttrs.get("cDmg_")) / 100;
+    const cRate_ = limitCRate(getBonus("cRate_") + performer.getAttr("cRate_")) / 100;
+    const cDmg_ = (getBonus("cDmg_") + performer.getAttr("cDmg_")) / 100;
 
     recorder.record({
       factors: [{ value: Math.round(baseValue), label: "Base DMG" }],

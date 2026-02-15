@@ -46,7 +46,7 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
     for (const key of Object_.keys(data)) {
       const value = data[key];
 
-      if (value && value > min) {
+      if (typeof value === "number" && value > min) {
         filtered[key] = value;
       }
     }
@@ -54,21 +54,21 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
     return filtered;
   }
 
-  private _get = (key: TKey) => {
+  private _get(key: TKey) {
     return this.count[key] ?? 0;
-  };
+  }
 
-  has = (key: TKey) => {
+  has(key: TKey) {
     return !!this.count[key];
-  };
+  }
 
-  get = (keys: TKey | TKey[]) => {
+  get(keys: TKey | TKey[]) {
     return Array.isArray(keys)
       ? keys.reduce((total, key) => total + this._get(key), 0)
       : this._get(keys);
-  };
+  }
 
-  add = (key: TKey, value = 1) => {
+  add(key: TKey, value = 1) {
     const newCount = this._get(key) + value;
 
     if (newCount > this.min) {
@@ -78,16 +78,16 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
     }
 
     return newCount;
-  };
+  }
 
-  remove = (key: TKey, value = 1) => {
+  remove(key: TKey, value = 1) {
     return this.add(key, -value);
-  };
+  }
 
-  delete = (key: TKey) => {
+  delete(key: TKey) {
     delete this.count[key];
     return this;
-  };
+  }
 
   // merge = (data: TypeCounter<TKey> | Partial<Record<TKey, number>>) => {
   //   const _data = data instanceof TypeCounter ? data.result : data;
@@ -100,27 +100,27 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   // };
 
   /** Only run callback for entries that have value other than 0   */
-  forEach = (callback: (key: TKey, count: number) => void) => {
+  forEach(callback: (key: TKey, count: number) => void) {
     Object_.forEach(this.count, (key, count) => {
       if (count) {
         callback(key, count);
       }
     });
-  };
+  }
 
-  clone = () => {
+  clone() {
     return new TypeCounter(Object_.cloneProps(this.count), this.options);
-  };
+  }
 
-  reset = () => {
+  reset() {
     this.count = Object_.cloneProps(this.initial) as Record<TKey, number>;
     return this;
-  };
+  }
 
-  clear = () => {
+  clear() {
     this.count = {} as Record<TKey, number>;
     return this;
-  };
+  }
 }
 
 export type TypeCounterKey<T> = T extends TypeCounter<infer TKey> ? TKey : never;

@@ -24,12 +24,12 @@ import IdStore from "@/utils/IdStore";
 import { enhanceCtrls } from "@/utils/modifier";
 import { isDbSetup } from "@/utils/setup";
 import { SystemError } from "@/utils/SystemError";
-import { makeCalcCharacterFromDb } from "@/utils/userdb";
+import { makeCharacterCalcFromDb } from "@/utils/userdb";
 
 export function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOverviewInfo["setup"] {
   const { userWps, userArts } = userDb;
 
-  const main = makeCalcCharacterFromDb(setup.main, userWps, userArts);
+  const main = makeCharacterCalcFromDb(setup.main, userWps, userArts);
   const team = new Team();
 
   const teammates = setup.teammates.map<TeammateCalc>((teammate) => {

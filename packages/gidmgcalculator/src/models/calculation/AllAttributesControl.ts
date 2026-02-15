@@ -1,30 +1,31 @@
-import type { AllAttributes, AttributeBonus, AttributeStat, CoreStat } from "@/types";
+import type { AllAttributes, AttributeBonus, AttributeStat, BaseAttributeStat } from "@/types";
 import type { CharacterCalc } from "./CharacterCalc";
 
-import { ATTRIBUTE_STAT_TYPES } from "@/constants/global";
+import { ATTRIBUTE_STAT_TYPES } from "@/constants";
+import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/utils/calculation";
 import Object_ from "@/utils/Object";
-import TypeCounter, { TypeCounterKey } from "@/utils/TypeCounter";
 import { round } from "@/utils/pure-utils";
+import TypeCounter from "@/utils/TypeCounter";
 
 const ASC_MULT_BY_ASC = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];
 
-type ResonanceStat = {
-  key: AttributeStat;
-  value: number;
-};
-
-const AUTO_RESONANCE_STATS: Record<string, ResonanceStat> = {
+const AUTO_RESONANCE_STATS: Record<string, { key: AttributeStat; value: number }> = {
   pyro: { key: "atk_", value: 25 },
   geo: { key: "shieldS_", value: 15 },
   hydro: { key: "hp_", value: 25 },
   dendro: { key: "em", value: 50 },
 };
 
+type AllAttributesControlInitial = {
+  details?: DetailedAttributes;
+  finals?: AllAttributes;
+};
+
 export type AllAttributesControlOptions = {
   shouldLog?: boolean;
 };
 
-export type AttributeControlLog = {
+type AttributeControlLog = {
   label: string;
   value: number;
 };
@@ -36,19 +37,24 @@ type InternalAttribute = {
   logs?: AttributeControlLog[];
 };
 
-type InternalAllAttributes = Record<AttributeStat, InternalAttribute>;
+type DetailedAttributes = Record<AttributeStat, InternalAttribute>;
 
 export class AllAttributesControl {
-  private allAttrs: InternalAllAttributes;
+  private details: DetailedAttributes;
+  public finals: AllAttributes;
+
   readonly shouldLog?: boolean;
 
+  /** Deep clone initial if it is reused */
   constructor(
-    initial: Partial<InternalAllAttributes> = {},
+    initial: AllAttributesControlInitial = {},
     options: AllAttributesControlOptions = {}
   ) {
+    const { details = {}, finals = new TypeCounter() } = initial;
     const { shouldLog = false } = options;
 
-    this.allAttrs = initial as InternalAllAttributes;
+    this.details = details as DetailedAttributes;
+    this.finals = finals;
     this.shouldLog = shouldLog;
   }
 
@@ -119,19 +125,19 @@ export class AllAttributesControl {
     }
 
     // ===== Artifacts =====
-    character.atfGear.finalizeAttributes({
-      hp_base: this.getBase("hp"),
-      atk_base: this.getBase("atk"),
-      def_base: this.getBase("def"),
-    });
-
-    character.atfGear.finalAttrs.entries.forEach(([stat, value]) => {
-      this.applyBonus({
-        toStat: stat,
-        value,
-        label: "Artifact stat",
+    character.atfGear
+      .finalizeAttributes({
+        hp_base: this.getBase("hp"),
+        atk_base: this.getBase("atk"),
+        def_base: this.getBase("def"),
+      })
+      .entries.forEach(([stat, value]) => {
+        this.applyBonus({
+          toStat: stat,
+          value,
+          label: "Artifact stat",
+        });
       });
-    });
 
     // ===== Resonances =====
     for (const resonance of character.team.resonances) {
@@ -145,13 +151,15 @@ export class AllAttributesControl {
         });
       }
     }
+
+    return this.details;
   }
 
   // ===== GET & SET =====
 
   private _get(stat: AttributeStat): InternalAttribute {
-    if (this.allAttrs[stat]) {
-      return this.allAttrs[stat];
+    if (this.details[stat]) {
+      return this.details[stat];
     }
 
     return {
@@ -169,7 +177,7 @@ export class AllAttributesControl {
     const attr = this._get(stat);
 
     attr[key] = typeof valueOrSetter === "function" ? valueOrSetter(attr[key]) : valueOrSetter;
-    this.allAttrs[stat] = attr;
+    this.details[stat] = attr;
   }
 
   // ===== LOG =====
@@ -178,7 +186,7 @@ export class AllAttributesControl {
     return this._get(key).logs || [];
   }
 
-  private log(key: AttributeStat, value: number, label: string) {
+  private addLog(key: AttributeStat, value: number, label: string) {
     if (this.shouldLog) {
       this._set(key, "logs", (logs) => {
         logs?.push({ label, value });
@@ -187,22 +195,16 @@ export class AllAttributesControl {
     }
   }
 
-  // ===== BASE =====
+  // ===== UPDATE =====
 
   addBase(key: AttributeStat, value: number, label = "Character base stat") {
     this._set(key, "base", (base) => base + value);
-    this.log(key, value, label);
+    this.addLog(key, value, label);
   }
-
-  getBase(key: AttributeStat) {
-    return this._get(key).base;
-  }
-
-  // ===== BONUS & TOTAL =====
 
   applyBonus(bonus: AttributeBonus) {
-    if (bonus.toStat === "base_atk" || bonus.toStat === "base_hp" || bonus.toStat === "base_def") {
-      const statType = bonus.toStat.slice(5) as CoreStat;
+    if (isBaseStat(bonus.toStat)) {
+      const statType = baseStatToCoreStat(bonus.toStat);
       this.addBase(statType, bonus.value, bonus.label);
       return;
     }
@@ -210,12 +212,18 @@ export class AllAttributesControl {
     const bonusType = bonus.isDynamic ? "dynamicBonus" : "fixedBonus";
 
     this._set(bonus.toStat, bonusType, (prev) => prev + bonus.value);
-    this.log(bonus.toStat, bonus.value, bonus.label);
+    this.addLog(bonus.toStat, bonus.value, bonus.label);
   }
 
-  getTotal(key: AttributeStat | "base_atk", fixedOnly = false) {
-    if (key === "base_atk") {
-      return this.getBase("atk");
+  // ===== READ =====
+
+  getBase(key: AttributeStat) {
+    return this._get(key).base;
+  }
+
+  getTotal(key: AttributeStat | BaseAttributeStat, fixedOnly = false) {
+    if (isBaseStat(key)) {
+      return this.getBase(baseStatToCoreStat(key));
     }
 
     const { base, fixedBonus, dynamicBonus } = this._get(key);
@@ -242,7 +250,7 @@ export class AllAttributesControl {
   // ===== FINALS =====
 
   finalize() {
-    const allAttrs = new TypeCounter<TypeCounterKey<AllAttributes>>(undefined, {
+    const allAttrs: AllAttributes = new TypeCounter(undefined, {
       allowNegative: true,
     });
 
@@ -261,21 +269,26 @@ export class AllAttributesControl {
       allAttrs.add(key, isSpeedStat ? Math.min(total, 160) : total);
     }
 
+    this.finals = allAttrs;
+
     return allAttrs;
   }
 
   clone() {
-    return new AllAttributesControl(Object_.cloneProps(this.allAttrs), {
-      shouldLog: this.shouldLog,
-    });
+    return new AllAttributesControl(
+      {
+        details: Object_.clone(this.details),
+        finals: this.finals.clone(),
+      },
+      {
+        shouldLog: this.shouldLog,
+      }
+    );
   }
 
   clear() {
-    this.allAttrs = {} as InternalAllAttributes;
+    this.details = {} as DetailedAttributes;
+    this.finals = new TypeCounter();
     return this;
   }
-}
-
-function isCoreStat(key: string) {
-  return key === "hp" || key === "atk" || key === "def";
 }

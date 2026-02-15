@@ -151,20 +151,22 @@ export class ArtifactGear<TArtifact extends Artifact = Artifact>
   }
 
   finalizeAttributes = (baseStats: { hp_base: number; atk_base: number; def_base: number }) => {
-    const counter = this.attributes.clone();
+    const attrs = this.attributes.clone();
 
     for (const statType of CORE_STAT_TYPES) {
-      const percentValue = counter.get(`${statType}_`);
+      const percentValue = attrs.get(`${statType}_`);
 
       if (percentValue) {
         const finalValue = applyPercent(baseStats[`${statType}_base`], percentValue);
 
-        counter.add(statType, finalValue);
+        attrs.add(statType, finalValue);
       }
 
-      counter.delete(`${statType}_`);
+      attrs.delete(`${statType}_`);
     }
 
-    this.finalAttrs = counter;
+    this.finalAttrs = attrs;
+
+    return attrs;
   };
 }

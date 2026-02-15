@@ -118,12 +118,12 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
 
   // ===== WEAPON CALCULATION =====
 
-  const { allAttrs, weapon } = main;
+  const { weapon } = main;
 
   weapon.data.calcItems?.forEach((calcItem) => {
     const { name, type = "attack", value, incre = value / 3, basedOn = "atk" } = calcItem;
     const mult = value + incre * weapon.refi;
-    const attribute = allAttrs.get(basedOn);
+    const attribute = main.getAttr(basedOn);
     const base = (attribute * mult) / 100;
 
     const recorder = new ResultRecorder(

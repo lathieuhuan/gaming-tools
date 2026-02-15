@@ -14,7 +14,7 @@ import {
 } from "@/components";
 
 export function AttributesTab() {
-  const allAttrs = useCalcStore((state) => selectActiveMain(state).allAttrs);
+  const allAttrs = useCalcStore((state) => selectActiveMain(state).allAttrsCtrl.finals);
 
   return (
     <div className="h-full custom-scrollbar">

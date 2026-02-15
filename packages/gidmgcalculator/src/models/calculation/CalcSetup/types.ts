@@ -6,7 +6,10 @@ export type CloneOptions = {
 };
 
 export type MainUpdateData = Partial<
-  Pick<CharacterCalc, keyof ICharacterBasic | "weapon" | "atfGear" | "attkBonusCtrl" | "allAttrs">
+  Pick<
+    CharacterCalc,
+    keyof ICharacterBasic | "weapon" | "atfGear" | "attkBonusCtrl" | "allAttrsCtrl"
+  >
 >;
 
 export type ArtifactPieceUpdateData = Partial<Pick<IArtifact, "level" | "mainStatType">> & {

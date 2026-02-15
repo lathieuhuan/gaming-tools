@@ -6,7 +6,7 @@ import type { ResultRecorder } from "./ResultRecorder";
 import { toMult } from "@/utils";
 
 export function makeOtherItemCalc(performer: CharacterCalc) {
-  const { allAttrs, attkBonusCtrl } = performer;
+  const { attkBonusCtrl } = performer;
 
   function calculate(
     type: CalcResultOtherItem["type"],
@@ -20,10 +20,10 @@ export function makeOtherItemCalc(performer: CharacterCalc) {
     switch (type) {
       case "healing":
         flat = attkBonusCtrl.get("flat", itemId);
-        bonusMult += allAttrs.get("healB_");
+        bonusMult += performer.getAttr("healB_");
         break;
       case "shield":
-        bonusMult += allAttrs.get("shieldS_");
+        bonusMult += performer.getAttr("shieldS_");
         break;
     }
 

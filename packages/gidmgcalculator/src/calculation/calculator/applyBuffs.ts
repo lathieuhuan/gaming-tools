@@ -342,9 +342,9 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
   applyAbilityBuffs(true);
   applyArtifactBuffs(true);
 
-  main.allAttrs = allAttrsCtrl.finalize();
+  allAttrsCtrl.finalize();
 
-  const rxnBonuses = getRxnBonusesFromEM(main.allAttrs.get("em"));
+  const rxnBonuses = getRxnBonusesFromEM(main.getAttr("em"));
 
   if (rxnBonuses.transformative) {
     for (const rxn of TRANSFORMATIVE_REACTIONS) {

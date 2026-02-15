@@ -31,7 +31,7 @@ export function PanelAttributes(props: PanelAttributesProps) {
       />
 
       <div className="mt-1 grow custom-scrollbar">
-        <AttributeTable attributes={character.allAttrs} />
+        <AttributeTable attributes={character.allAttrsCtrl.finals} />
       </div>
     </div>
   );

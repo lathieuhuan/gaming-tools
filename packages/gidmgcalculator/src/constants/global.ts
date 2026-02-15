@@ -60,6 +60,8 @@ export const REACTIONS = [
 
 /** ========== STATS ========== */
 
+export const BASE_ATTRIBUTE_STATS = ["base_atk", "base_hp", "base_def"] as const;
+
 export const CORE_STAT_TYPES = ["hp", "atk", "def"] as const;
 
 export const ATTRIBUTE_STAT_TYPES = [

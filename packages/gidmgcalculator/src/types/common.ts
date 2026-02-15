@@ -1,10 +1,11 @@
 import type TypeCounter from "@/utils/TypeCounter";
-import {
+import type {
   AMPLIFYING_REACTIONS,
   ARTIFACT_TYPES,
   ATTACK_ELEMENTS,
   ATTACK_PATTERNS,
   ATTRIBUTE_STAT_TYPES,
+  BASE_ATTRIBUTE_STATS,
   BONUS_KEYS,
   CORE_STAT_TYPES,
   ELEMENT_TYPES,
@@ -118,7 +119,7 @@ export type ResistReduction = Record<ResistReductionKey, number>;
 
 export type CoreStat = (typeof CORE_STAT_TYPES)[number];
 
-export type BaseAttributeStat = "base_atk" | "base_hp" | "base_def";
+export type BaseAttributeStat = (typeof BASE_ATTRIBUTE_STATS)[number];
 
 export type AttributeStat = (typeof ATTRIBUTE_STAT_TYPES)[number];
 
