@@ -33,9 +33,9 @@ type CharacterPortraitProps = {
 
 export function CharacterPortrait(props: CharacterPortraitProps) {
   const { info, size = "medium", zoomable = true, onClick } = props;
-  const { name, icon, vision } = info || {};
+  const { code, icon, vision } = info || {};
 
-  const isTraveler = name ? $AppCharacter.checkIsTraveler({ name }) : false;
+  const isTraveler = code ? $AppCharacter.checkIsTraveler({ code }) : false;
   const { withColorBg = isTraveler } = props;
 
   const cls = [

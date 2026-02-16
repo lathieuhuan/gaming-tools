@@ -7,7 +7,7 @@ import type { ArtifactType } from "@/types";
 import Array_ from "@/utils/Array";
 import { createArtifact } from "@/utils/entity";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectDbArtifacts, sortArtifacts } from "@Store/userdb-slice";
+import { selectDbArtifacts, sortDbArtifacts } from "@Store/userdb-slice";
 
 // Component
 import {
@@ -76,7 +76,7 @@ function MyArtifacts() {
     <div className="flex items-center space-x-4">
       <AddButton currentArtifactsCount={userArtifacts.length} />
 
-      <UserItemSortButton onSelectSort={(sort) => dispatch(sortArtifacts(sort))} />
+      <UserItemSortButton onSelectSort={(sort) => dispatch(sortDbArtifacts(sort))} />
 
       {screenWatcher.isFromSize("md") && (
         <ArtifactTypeSelect values={artifactTypes} onSelect={toggleArtifactType} />

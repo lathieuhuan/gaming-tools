@@ -28,15 +28,17 @@ function getTeammateModifierElmts<TModCtrl extends IAbilityBuffCtrl | IAbilityDe
   }
 
   return (
-    <div key={teammate.name}>
-      <p className={`text-lg text-${vision} font-bold text-center uppercase`}>{teammate.name}</p>
+    <div key={teammate.code}>
+      <p className={`text-lg text-${vision} font-bold text-center uppercase`}>
+        {teammate.data.name}
+      </p>
       <div className="space-y-3 peer">
         {availableCtrls.map((ctrl) => {
           const { data } = ctrl;
 
           return (
             <GenshinModifierView
-              key={`${teammate.name}-${ctrl.id}`}
+              key={`${teammate.code}-${ctrl.id}`}
               mutable={props.mutable}
               heading={data.src}
               description={renderDesc(ctrl)}

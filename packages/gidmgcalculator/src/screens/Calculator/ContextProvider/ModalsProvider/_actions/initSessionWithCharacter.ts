@@ -38,7 +38,7 @@ export function initSessionWithCharacter(
   const main = createCharacterCalc(
     {
       ...userData,
-      name: data.name,
+      code: data.code,
       weapon,
       atfGear,
     },

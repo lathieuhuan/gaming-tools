@@ -262,7 +262,7 @@ export class CalcSetup extends CalcSetupBase {
   setTeammate(
     info: TeammateCalcConstructInfo,
     index: number,
-    data: AppCharacter = $AppCharacter.get(info.name)
+    data: AppCharacter = $AppCharacter.get(info.code)
   ) {
     const newTeam = new Team();
     const newTeammates = [...this.teammates];
@@ -278,7 +278,7 @@ export class CalcSetup extends CalcSetupBase {
   }
 
   removeTeammate(teammate: TeammateCalc) {
-    const newTeammates = this.teammates.filter((tm) => tm.name !== teammate.name);
+    const newTeammates = this.teammates.filter((tm) => tm.code !== teammate.code);
 
     this.team = new Team([this.main, ...newTeammates]);
     this.teammates = newTeammates;

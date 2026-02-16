@@ -1,6 +1,6 @@
 import { TalentList } from "@/components";
 import { useDispatch } from "@Store/hooks";
-import { updateUserCharacter } from "@Store/userdb-slice";
+import { updateDbCharacter } from "@Store/userdb-slice";
 import { useActiveChar } from "../ActiveCharProvider";
 
 interface PanelTalentsProps {
@@ -16,8 +16,8 @@ export function PanelTalents(props: PanelTalentsProps) {
       character={character}
       onChangeTalentLevel={(type, level) => {
         dispatch(
-          updateUserCharacter({
-            name: character.name,
+          updateDbCharacter({
+            code: character.code,
             [type]: level,
           })
         );

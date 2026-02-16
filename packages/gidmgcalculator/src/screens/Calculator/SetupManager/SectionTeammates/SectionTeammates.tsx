@@ -99,7 +99,7 @@ export default function SectionTeammates() {
 
             return (
               <TeammateSlot
-                key={teammate.name}
+                key={teammate.code}
                 active={active}
                 teammate={teammate}
                 onSelect={() => setSelectedIndex(active ? null : tmIndex)}
@@ -140,7 +140,7 @@ export default function SectionTeammates() {
         active={tavern.active}
         sourceType="app"
         filter={(character) =>
-          character.name !== mainData.name && teammates.every((tm) => tm?.name !== character.name)
+          character.code !== mainData.code && teammates.every((tm) => tm?.code !== character.code)
         }
         onSelectCharacter={handleRecruitTeammate}
         onClose={closeTavern}

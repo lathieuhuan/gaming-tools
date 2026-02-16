@@ -6,7 +6,7 @@ import Array_ from "@/utils/Array";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUserArtifact, updateUserWeapon, selectUserSetups } from "@Store/userdb-slice";
+import { updateDbArtifact, updateDbWeapon, selectUserSetups } from "@Store/userdb-slice";
 
 export type BoundingItem = Pick<IDbItem, "ID" | "setupIDs">;
 
@@ -60,7 +60,7 @@ export function useItemBoundSetups(item?: BoundingItem, isWeapon?: boolean): IDb
         ID: item.ID,
         setupIDs: result.validSetupIDs,
       };
-      result.isWeapon ? dispatch(updateUserWeapon(changes)) : dispatch(updateUserArtifact(changes));
+      result.isWeapon ? dispatch(updateDbWeapon(changes)) : dispatch(updateDbArtifact(changes));
     }
   }, [result]);
 

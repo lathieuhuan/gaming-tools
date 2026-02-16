@@ -7,7 +7,7 @@ import { MAX_USER_WEAPONS } from "@/constants/config";
 import { Weapon } from "@/models/base";
 import { IWeaponBasic } from "@/types";
 import { useDispatch } from "@Store/hooks";
-import { addUserWeapon } from "@Store/userdb-slice";
+import { addDbWeapon } from "@Store/userdb-slice";
 
 type AddButtonProps = {
   currentWeaponsCount: number;
@@ -40,7 +40,7 @@ export function AddButton({ currentWeaponsCount }: AddButtonProps) {
         ID: Date.now(),
       };
 
-      dispatch(addUserWeapon(newUserWeapon));
+      dispatch(addDbWeapon(newUserWeapon));
     }
   };
 

@@ -89,13 +89,12 @@ export function applyDebuffs(
 
   // APPLY TEAMMATE DEBUFFS
   for (const teammate of teammates) {
-    const { name, debuffs = [] } = teammate.data;
-
+    //
     for (const ctrl of teammate.debuffCtrls) {
-      const debuff = Array_.findByIndex(debuffs, ctrl.data.index);
-
-      if (ctrl.activated && debuff && team.isAvailableEffect(debuff)) {
-        applyPenalty(`${name} / ${debuff.src}`, teammate, debuff.effects, ctrl.inputs);
+      if (ctrl.activated && team.isAvailableEffect(ctrl.data)) {
+        const debuff = ctrl.data;
+        const label = `${teammate.data.name} / ${debuff.src}`;
+        applyPenalty(label, teammate, debuff.effects, ctrl.inputs);
       }
     }
   }

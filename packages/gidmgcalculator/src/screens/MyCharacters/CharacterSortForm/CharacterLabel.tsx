@@ -22,7 +22,8 @@ export const CharacterLabel = ({
         <div className="w-8 h-8 mr-2 flex-center text-light-1 pointer-events-none">{marker}</div>
 
         <p className="pointer-events-none text-light-1">
-          <span className={`text-rarity-${rarity}`}>{character.name}</span> (Lv. {character.level})
+          <span className={`text-rarity-${rarity}`}>{character.data.name}</span> (Lv.{" "}
+          {character.level})
         </p>
       </div>
     </div>

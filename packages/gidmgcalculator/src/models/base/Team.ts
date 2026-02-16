@@ -32,12 +32,12 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
   }
 
   protected filterMembers(members: TMember[]) {
-    const existNames = new Set<string>();
+    const existCodes = new Set<number>();
     const newMembers: TMember[] = [];
 
     for (const member of members) {
-      if (member && !existNames.has(member.name)) {
-        existNames.add(member.name);
+      if (member && !existCodes.has(member.code)) {
+        existCodes.add(member.code);
         newMembers.push(member);
       }
     }

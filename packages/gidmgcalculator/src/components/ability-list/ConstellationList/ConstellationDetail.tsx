@@ -29,8 +29,8 @@ export function ConstellationDetail({
     isError,
     data: descriptions,
   } = useQuery({
-    queryKey: ["cons-description", character.name],
-    queryFn: () => fetchConsDescriptions(character.name),
+    queryKey: ["cons-description", character.code],
+    queryFn: () => fetchConsDescriptions(character.code),
     staleTime: Infinity,
   });
 

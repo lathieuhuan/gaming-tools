@@ -46,7 +46,7 @@ export function Modifiers({ setup }: ModifiersProps) {
   const { title, variant, statuses } = $AppData.getTargetInfo(target);
 
   return (
-    <div className="h-full px-4 flex space-x-4" onDoubleClick={() => console.log(setup)}>
+    <div className="h-full px-4 flex space-x-4" onDoubleClick={() => console.info(setup)}>
       <SectionLayout title="Debuffs used" className="w-76 flex flex-col">
         <CollapseList
           items={[

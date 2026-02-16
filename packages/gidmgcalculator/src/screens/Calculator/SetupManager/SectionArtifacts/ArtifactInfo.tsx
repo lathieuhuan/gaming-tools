@@ -40,7 +40,7 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
   };
 
   return (
-    <div className="pt-4 px-2 space-y-2" onDoubleClick={() => console.log(artifact)}>
+    <div className="pt-4 px-2 space-y-2" onDoubleClick={() => console.info(artifact)}>
       <div className="pl-1 flex items-start gap-4">
         <ArtifactLevelSelect
           mutable

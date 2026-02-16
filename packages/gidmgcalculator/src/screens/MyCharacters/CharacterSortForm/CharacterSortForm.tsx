@@ -5,7 +5,7 @@ import { CarouselSpace, Popover } from "rond";
 import { Ascendable } from "@/models/base";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import { useDispatch } from "@Store/hooks";
-import { sortCharacters } from "@Store/userdb-slice";
+import { sortDbCharacters } from "@Store/userdb-slice";
 import { selectCharacterToBeSorted } from "./utils";
 
 import { DragAndDropList } from "./DragAndDropList";
@@ -26,7 +26,7 @@ export function CharacterSortForm({ id, onClose }: CharacterSortFormProps) {
   const handleSortByName = () => {
     setList((prev) => {
       const newList = [...prev];
-      newList.sort((a, b) => a.name.localeCompare(b.name));
+      newList.sort((a, b) => a.data.name.localeCompare(b.data.name));
 
       return newList;
     });
@@ -52,7 +52,7 @@ export function CharacterSortForm({ id, onClose }: CharacterSortFormProps) {
   };
 
   const handleSubmit = () => {
-    dispatch(sortCharacters(list.map(({ index }) => index)));
+    dispatch(sortDbCharacters(list.map(({ index }) => index)));
     onClose();
   };
 

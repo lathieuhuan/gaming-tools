@@ -1,25 +1,33 @@
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import { ButtonGroup, FancyBackSvg, Input, useChildListObserver, useIntersectionObserver } from "rond";
+import {
+  ButtonGroup,
+  FancyBackSvg,
+  Input,
+  useChildListObserver,
+  useIntersectionObserver,
+} from "rond";
 
+import type { IDbCharacter } from "@/types";
+
+import { $AppCharacter } from "@/services";
 import { useSelector } from "@Store/hooks";
 import { selectActiveCharacter, selectDbCharacters } from "@Store/userdb-slice";
-import { $AppCharacter } from "@/services";
-import { GenshinImage } from "@/components";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
 
-interface MyCharactersSmallMenuProps {
-  onSelect: (name: string) => void;
+import { GenshinImage } from "@/components";
+
+type MyCharactersSmallMenuProps = {
+  onSelect: (character: IDbCharacter) => void;
   onClose: () => void;
-}
+};
+
 export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
   const userChars = useSelector(selectDbCharacters);
   const activeChar = useSelector(selectActiveCharacter);
   const modalCtrl = useMyCharactersModalCtrl();
 
   const [keyword, setKeyword] = useState("");
-
-  const appCharacters = $AppCharacter.getAll();
 
   const { observedAreaRef: intersectObsArea, visibleMap, itemUtils } = useIntersectionObserver();
   const { observedAreaRef: listObsArea } = useChildListObserver({
@@ -43,23 +51,23 @@ export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
 
       <div ref={listObsArea} className="px-4 grow hide-scrollbar">
         {userChars.map((character) => {
-          const data = appCharacters.find((appCharacter) => appCharacter.name === character.name);
+          const data = $AppCharacter.get(character.code);
 
           if (data) {
             const visible = visibleMap[data.code];
-            const hidden = shouldCheckKeyword && !character.name.toLowerCase().includes(lowerKeyword);
-            const isActive = character.name === activeChar;
+            const hidden = shouldCheckKeyword && !data.name.toLowerCase().includes(lowerKeyword);
+            const isActive = character.code === activeChar;
 
             return (
               <button
-                key={character.name}
+                key={character.code}
                 {...itemUtils.getProps(data.code, [
                   "w-full py-2 border-b border-dark-line flex items-center gap-3",
                   hidden && "hidden",
                 ])}
                 onClick={() => {
                   if (!isActive) {
-                    props.onSelect(character.name);
+                    props.onSelect(character);
                   }
                   props.onClose();
                 }}
@@ -78,14 +86,18 @@ export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
                     />
                   )}
                 </div>
-                <span className={`font-semibold ${isActive ? "text-active" : ""}`}>{character.name}</span>
+                <span className={`font-semibold ${isActive ? "text-active" : ""}`}>
+                  {data.name}
+                </span>
               </button>
             );
           }
           return null;
         })}
 
-        {!userChars.length && <p className="pt-8 text-center text-light-hint">No characters found</p>}
+        {!userChars.length && (
+          <p className="pt-8 text-center text-light-hint">No characters found</p>
+        )}
       </div>
 
       <ButtonGroup

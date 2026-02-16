@@ -22,7 +22,7 @@ export type IWeaponBasic = {
   type: WeaponType;
   level: Level;
   refi: number;
-  owner?: string;
+  owner?: number;
   setupIDs?: number[];
 };
 
@@ -45,7 +45,7 @@ export type IArtifactBasic = {
   level: number;
   mainStatType: AttributeStat;
   subStats: ArtifactSubStat[];
-  owner?: string;
+  owner?: number;
   setupIDs?: number[];
 };
 
@@ -85,7 +85,7 @@ export type IArtifactGear<T extends IArtifact = IArtifact> = {
 // ========== CHARACTER ==========
 
 export type ICharacterBasic = {
-  name: string;
+  code: number;
   level: Level;
   NAs: number;
   ES: number;
@@ -115,7 +115,7 @@ export type ITeammateArtifactBasic = {
 };
 
 export type ITeammateBasicCore = {
-  name: string;
+  code: number;
   enhanced: boolean;
 };
 

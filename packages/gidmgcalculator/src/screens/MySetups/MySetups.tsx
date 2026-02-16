@@ -6,11 +6,11 @@ import type { SetupOverviewInfo } from "./types";
 
 import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/Array";
-import { restoreCalcSetup } from "@/utils/setup";
+import { isDbSetup, restoreCalcSetup } from "@/utils/setup";
 import { parseDbArtifacts, parseDbWeapon } from "@/utils/userdb";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui";
-import { chooseUserSetup, selectActiveSetupId } from "@Store/userdb-slice";
+import { viewDbSetup, selectActiveSetupId } from "@Store/userdb-slice";
 import { createSetupForTeammate, toOverviewInfo } from "./utils";
 
 // Component
@@ -69,7 +69,13 @@ function MySetups() {
     //
   }, [userSetups, userWeapons, userArtifacts]);
 
-  const selectedInfo = overviewInfos.find((info) => info.setup.ID === selectedSetupId);
+  const selectedSetup = Array_.findById(userSetups, selectedSetupId);
+  const selectedDbSetupId = selectedSetup
+    ? isDbSetup(selectedSetup)
+      ? selectedSetup.ID
+      : selectedSetup.shownID
+    : undefined;
+  const selectedInfo = overviewInfos.find((info) => info.setup.ID === selectedDbSetupId);
 
   return (
     <WarehouseLayout
@@ -107,7 +113,7 @@ function MySetups() {
                       ? "shadow-hightlight-1 shadow-active"
                       : "shadow-common"
                   )}
-                  onClick={() => dispatch(chooseUserSetup(setupId))}
+                  onClick={() => dispatch(viewDbSetup(setupId))}
                 >
                   <SetupView
                     {...info}
@@ -133,7 +139,7 @@ function MySetups() {
         )}
       </div>
 
-      <MySetupsModals combineMoreId={selectedSetupId} />
+      <MySetupsModals />
     </WarehouseLayout>
   );
 }

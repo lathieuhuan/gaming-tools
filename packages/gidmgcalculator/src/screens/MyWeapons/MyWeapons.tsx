@@ -7,7 +7,7 @@ import type { IWeaponBasic, WeaponType } from "@/types";
 import Array_ from "@/utils/Array";
 import { createWeapon } from "@/utils/entity";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectDbWeapons, sortWeapons } from "@Store/userdb-slice";
+import { selectDbWeapons, sortDbWeapons } from "@Store/userdb-slice";
 
 // Component
 import { InventoryRack, WeaponTypeSelect } from "@/components";
@@ -88,7 +88,7 @@ function MyWeapons() {
         <>
           <AddButton currentWeaponsCount={totalCount} />
 
-          <UserItemSortButton onSelectSort={(sort) => dispatch(sortWeapons(sort))} />
+          <UserItemSortButton onSelectSort={(sort) => dispatch(sortDbWeapons(sort))} />
 
           {screenWatcher.isFromSize("sm") ? (
             <WeaponTypeSelect values={weaponTypes} onSelect={toggleWeaponType} />

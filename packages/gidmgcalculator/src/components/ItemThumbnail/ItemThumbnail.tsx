@@ -19,7 +19,7 @@ export type ItemThumbProps = {
     rarity?: number;
     level?: Level | number;
     refi?: number;
-    owner?: string | null;
+    owner?: number | null;
   };
 };
 
@@ -30,7 +30,7 @@ export function ItemThumbnail(props: ItemThumbProps) {
       ? null
       : `Lv. ${typeof item.level === "string" ? item.level.split("/")[0] : item.level}`;
 
-  const renderSideIcon = (owner: string) => {
+  const renderSideIcon = (owner: number) => {
     const { icon = "", sideIcon } = $AppCharacter.get(owner) || {};
     return (
       <div

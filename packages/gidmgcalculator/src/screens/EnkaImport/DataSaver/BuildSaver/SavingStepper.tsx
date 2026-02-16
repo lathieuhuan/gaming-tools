@@ -3,6 +3,7 @@ import { CarouselSpace, notification } from "rond";
 
 import type { SaveOutput, SavingSteps } from "./_types";
 
+import { $AppCharacter } from "@/services";
 import { useSaveOutputHandler } from "./_hooks";
 
 import { SaverLayout } from "../_components/SaverLayout";
@@ -37,10 +38,12 @@ export function SavingStepper({ steps, onComplete }: SavingStepperProps) {
     } = saveOutput.current;
 
     if (characterOutput && weaponOutput) {
+      const characterName = $AppCharacter.get(characterOutput.character.code)?.name;
+
       handleSaveOutput(characterOutput, weaponOutput, artifactsOutput, steps);
 
       notification.success({
-        content: `This ${characterOutput.character.name}'s build has been saved successfully.`,
+        content: `This ${characterName}'s build has been saved successfully.`,
       });
     }
 

@@ -23,7 +23,7 @@ export function useStoreCheck() {
   const isAbleToAddCharacter = (character: ICharacterBasic): AddCharacterError | null => {
     const existed = store
       .select((state) => state.userdb.userChars)
-      .some((c) => c.name === character.name);
+      .some((c) => c.code === character.code);
 
     if (existed) {
       return null;

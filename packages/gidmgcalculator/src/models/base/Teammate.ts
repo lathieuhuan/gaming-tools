@@ -15,7 +15,7 @@ import { isPassedComparison } from "./utils/isPassedComparison";
 import { isValidInput } from "./utils/isValidInput";
 
 export class Teammate<TTeam extends ITeam = ITeam> implements ITeammate<TTeam> {
-  name: string;
+  code: number;
   enhanced: boolean;
   buffCtrls: IAbilityBuffCtrl[];
   debuffCtrls: IAbilityDebuffCtrl[];
@@ -24,7 +24,7 @@ export class Teammate<TTeam extends ITeam = ITeam> implements ITeammate<TTeam> {
   // inputs: TeammateInput[] = [];
 
   constructor(info: ITeammateInfo, public data: AppCharacter, protected team: TTeam) {
-    this.name = info.name;
+    this.code = info.code;
     this.enhanced = info.enhanced;
     this.buffCtrls = info.buffCtrls;
     this.debuffCtrls = info.debuffCtrls;

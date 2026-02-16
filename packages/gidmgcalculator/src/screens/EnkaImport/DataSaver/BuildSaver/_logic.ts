@@ -19,7 +19,7 @@ export const getCharacterSavingStep = (
   character: GOODCharacterConvertReturn,
   userChars: IDbCharacter[]
 ): CharacterSavingStep => {
-  const existedCharacter = userChars.find((userChar) => userChar.name === character.basic.name);
+  const existedCharacter = userChars.find((userChar) => userChar.code === character.basic.code);
 
   return {
     type: "CHARACTER",

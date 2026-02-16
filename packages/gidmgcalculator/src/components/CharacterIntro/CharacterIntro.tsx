@@ -55,7 +55,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
             className={`text-2xl leading-7 truncate ${elmtText} font-black ${
               props.removable ? "pr-9" : ""
             }`}
-            onDoubleClick={() => console.log(character)}
+            onDoubleClick={() => console.info(character)}
           >
             {data.name}
           </h2>

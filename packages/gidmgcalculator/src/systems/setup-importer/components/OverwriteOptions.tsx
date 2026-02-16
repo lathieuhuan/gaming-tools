@@ -5,6 +5,7 @@ import type { ICharacterBasic, ITargetBasic } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { OverwriteOption } from "./OverwriteOption";
+import { $AppCharacter } from "@/services";
 
 export type OverwriteOptionsProps = {
   currentMain: ICharacterBasic;
@@ -43,25 +44,25 @@ export function OverwriteOptions({
   };
 
   const renderCompareRow = (object1: any, object2: any, ns: "resistance" | "common") => {
-    return Object.keys(object1).map((type) => {
+    return Object.keys(object1).map((key) => {
       const value1 =
-        object1?.[type] === undefined
+        object1?.[key] === undefined
           ? null
-          : Array.isArray(object1[type]) && object1[type].length > 1
-          ? `${object1[type].join(", ")}`
-          : `${object1[type]}`;
+          : Array.isArray(object1[key]) && object1[key].length > 1
+          ? `${object1[key].join(", ")}`
+          : `${object1[key]}`;
 
-      const value2 = object2?.[type] === undefined ? null : `${object2[type]}`;
+      const value2 = object2?.[key] === undefined ? null : `${object2[key]}`;
 
       return (
-        <Table.Tr key={type}>
+        <Table.Tr key={key}>
           <Table.Td className={clsx("capitalize", value1 !== value2 && "text-danger-2")}>
-            {t(type, { ns })}
+            {t(key, { ns })}
           </Table.Td>
 
-          {type === "name" ? (
+          {key === "code" ? (
             <Table.Td colSpan={2} style={{ textAlign: "center" }}>
-              {currentMain.name}
+              {$AppCharacter.get(currentMain.code)?.name}
             </Table.Td>
           ) : (
             <>

@@ -19,7 +19,7 @@ export type AddUserDatabaseAction = PayloadAction<{
 }>;
 
 export type UpdateDbCharacterAction = PayloadAction<
-  PartiallyRequired<Partial<IDbCharacter>, "name">
+  PartiallyRequired<Partial<IDbCharacter>, "code">
 >;
 
 export type UpdateDbArtifactSubStatAction = PayloadAction<
@@ -44,9 +44,9 @@ type SwitchPayload = {
   /**
    * Owner of the target item
    */
-  newOwner: string | undefined;
+  newOwner: number | undefined;
   newID: number;
-  oldOwner: string;
+  oldOwner: number;
   oldID: number;
 };
 
@@ -72,7 +72,7 @@ export type AddSetupToComplexAction = PayloadAction<{
 }>;
 
 export type AddDbCharacterAction = PayloadAction<
-  PartiallyRequiredOnly<IDbCharacter, "name"> & {
+  PartiallyRequiredOnly<IDbCharacter, "code"> & {
     data?: AppCharacter;
   }
 >;

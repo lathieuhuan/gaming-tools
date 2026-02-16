@@ -66,8 +66,8 @@ const cache = {
   },
 };
 
-export async function fetchTalentDescriptions(name: string): Promise<string[]> {
-  const character = $AppCharacter.get(name);
+export async function fetchTalentDescriptions(code: number): Promise<string[]> {
+  const character = $AppCharacter.get(code);
 
   if (!character) {
     throw new Error("Character not found");
@@ -85,7 +85,7 @@ export async function fetchTalentDescriptions(name: string): Promise<string[]> {
     return Object.values(data.skillDescriptions).concat(data.passiveDescriptions);
   };
 
-  const response = await customFetch(GENSHIN_DEV_URL.character(name), {
+  const response = await customFetch(GENSHIN_DEV_URL.character(character.name), {
     processData,
     processError: (res: GenshinDevErrorResponse) => res.error,
   });
@@ -97,8 +97,8 @@ export async function fetchTalentDescriptions(name: string): Promise<string[]> {
   throw new Error(response.message);
 }
 
-export async function fetchConsDescriptions(name: string): Promise<string[]> {
-  const character = $AppCharacter.get(name);
+export async function fetchConsDescriptions(code: number): Promise<string[]> {
+  const character = $AppCharacter.get(code);
 
   if (!character) {
     throw new Error("Character not found");
@@ -116,7 +116,7 @@ export async function fetchConsDescriptions(name: string): Promise<string[]> {
     return data.constellationDescriptions;
   };
 
-  const response = await customFetch(GENSHIN_DEV_URL.character(name), {
+  const response = await customFetch(GENSHIN_DEV_URL.character(character.name), {
     processData,
     processError: (res: GenshinDevErrorResponse) => res.error,
   });

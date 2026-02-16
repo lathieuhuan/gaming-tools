@@ -1,4 +1,4 @@
-import type { AppCharacter, CharacterInnateBuff, ElementType, TravelerConfig } from "@/types";
+import type { AppCharacter, CharacterInnateBuff, TravelerConfig } from "@/types";
 import type { TravelerProps } from "./types";
 
 import {
@@ -7,6 +7,8 @@ import {
   resonatedElmtsBuff,
   skirksTrainingBuff,
 } from "./config";
+
+const cache = new Map<number, AppCharacter>();
 
 class AppCharacterService {
   readonly DEFAULT_TRAVELER: TravelerConfig = {
@@ -21,25 +23,49 @@ class AppCharacterService {
   traveler: TravelerConfig = this.DEFAULT_TRAVELER;
 
   populate(characters: AppCharacter[]) {
+    const thisCharacters: AppCharacter[] = [];
     const travelerProps = this.getTravelerProps(this.traveler);
 
-    this.characters = characters.map((character) => {
-      return this.updateIfTraveler(character, travelerProps);
+    cache.clear();
+
+    characters.forEach((character) => {
+      if (cache.has(character.code)) {
+        throw new Error(`Duplicate character code: ${character.code}.`);
+      }
+
+      cache.set(character.code, character);
+
+      thisCharacters.push(this.updateIfTraveler(character, travelerProps));
     });
+
+    this.characters = thisCharacters;
   }
 
   getAll(): AppCharacter[] {
     return this.characters;
   }
 
-  get(name: string) {
-    return this.characters.find((character) => character.name === name)!;
+  get(code: number) {
+    const cached = cache.get(code);
+
+    if (cached) {
+      return cached;
+    }
+
+    const data = this.characters.find((character) => character.code === code)!;
+
+    if (data) {
+      cache.set(code, data);
+    }
+
+    return data;
   }
 
   // ==== TRAVELER ====
 
-  checkIsTraveler(obj: { name: string }) {
-    return obj.name.slice(-8) === "Traveler";
+  checkIsTraveler(obj: { code: number }) {
+    const character = this.get(obj.code);
+    return character?.name.slice(-8) === "Traveler";
   }
 
   private updateIfTraveler(data: AppCharacter, props: TravelerProps) {

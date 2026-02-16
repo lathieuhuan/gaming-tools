@@ -8,7 +8,7 @@ import type { IWeaponBasic } from "@/types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";
 import { useDispatch } from "@Store/hooks";
-import { addUserWeapon, updateUserWeapon } from "@Store/userdb-slice";
+import { addDbWeapon, updateDbWeapon } from "@Store/userdb-slice";
 import { genCaseConfigs } from "../_config";
 import { isExactWeapon } from "../_logic";
 
@@ -39,7 +39,7 @@ export function WeaponSaver({ weapon, sameWeapons, onComplete }: WeaponSaverProp
     const { owner, ...weaponToSave } = weapon.serialize();
 
     dispatch(
-      addUserWeapon({
+      addDbWeapon({
         ...weaponToSave,
         ID: Date.now(),
       })
@@ -57,7 +57,7 @@ export function WeaponSaver({ weapon, sameWeapons, onComplete }: WeaponSaverProp
     }
 
     dispatch(
-      updateUserWeapon({
+      updateDbWeapon({
         ID: selectedWeapon?.ID,
         level: weapon.level,
         refi: weapon.refi,

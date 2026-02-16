@@ -36,7 +36,7 @@ export default function SectionWeapon() {
   return (
     <Section
       className="px-2 py-3 bg-dark-1 flex items-start relative"
-      onDoubleClick={() => console.log(weapon)}
+      onDoubleClick={() => console.info(weapon)}
     >
       <div
         className={`w-20 h-20 shrink-0 relative bg-gradient-${rarity} cursor-pointer rounded-md`}

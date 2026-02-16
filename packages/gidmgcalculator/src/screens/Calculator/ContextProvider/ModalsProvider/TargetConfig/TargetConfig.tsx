@@ -46,7 +46,7 @@ function TargetConfigCore() {
   return (
     <div
       className="h-full px-2 flex gap-4 hide-scrollbar"
-      onDoubleClick={() => console.log(target)}
+      onDoubleClick={() => console.info(target)}
     >
       <div className="w-76 flex flex-col shrink-0">
         <div className="grow overflow-auto flex flex-col">

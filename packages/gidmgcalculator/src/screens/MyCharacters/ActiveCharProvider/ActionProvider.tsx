@@ -8,10 +8,10 @@ import type { IArtifactGearSlot } from "@/types";
 import { ArtifactInventory, Tavern, WeaponInventory } from "@/components";
 import { useDispatch } from "@Store/hooks";
 import {
-  removeUserCharacter,
+  removeDbCharacter,
   switchArtifact,
   switchWeapon,
-  viewCharacter,
+  viewDbCharacter,
 } from "@Store/userdb-slice";
 import { ActiveCharAction, ActiveCharActionContext } from "./_context";
 
@@ -58,11 +58,11 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
         danger
         message={
           <>
-            Remove <b>{character.name}</b>?
+            Remove <b>{character.data.name}</b>?
           </>
         }
         focusConfirm
-        onConfirm={() => dispatch(removeUserCharacter(character.name))}
+        onConfirm={() => dispatch(removeDbCharacter(character.code))}
         onClose={closeModal}
       />
 
@@ -70,14 +70,14 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
         active={modalType === "SWITCH_CHARACTER"}
         sourceType="user"
         onSelectCharacter={(character) => {
-          dispatch(viewCharacter(character.data.name));
+          dispatch(viewDbCharacter(character.data.code));
         }}
         onClose={closeModal}
       />
 
       <WeaponInventory
         active={modalType === "SWITCH_WEAPON"}
-        owner={character.name}
+        owner={character.code}
         weaponType={weapon.type}
         buttonText="Switch"
         onClickButton={(selectedWeapon) => {
@@ -85,7 +85,7 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
             switchWeapon({
               newOwner: selectedWeapon.owner,
               newID: selectedWeapon.ID,
-              oldOwner: character.name,
+              oldOwner: character.code,
               oldID: weapon.ID,
             })
           );
@@ -97,7 +97,7 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
         active={modalType === "SWITCH_ARTIFACT"}
         currentAtfGear={atfGear}
         forcedType={switchedSlot?.type}
-        owner={character.name}
+        owner={character.code}
         buttonText="Switch"
         onClickButton={(selectedArtifact) => {
           if (!switchedSlot) {
@@ -110,7 +110,7 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
             switchArtifact({
               newOwner: selectedArtifact.owner,
               newID: selectedArtifact.ID,
-              oldOwner: character.name,
+              oldOwner: character.code,
               oldID: currentPiece?.ID,
             })
           );

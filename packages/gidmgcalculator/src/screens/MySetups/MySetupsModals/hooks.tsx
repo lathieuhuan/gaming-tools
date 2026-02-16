@@ -64,11 +64,11 @@ export function useCombineManager({ options, limit }: UseCombineManagerArgs) {
               <CharacterPortrait
                 className="shadow-hightlight-2 shadow-light-1"
                 size="small"
-                info={$AppCharacter.get(setup.main.name)}
+                info={$AppCharacter.get(setup.main.code)}
               />
               {setup.teammates.map((teammate, j) => {
                 return (
-                  <CharacterPortrait key={j} size="small" info={$AppCharacter.get(teammate.name)} />
+                  <CharacterPortrait key={j} size="small" info={$AppCharacter.get(teammate.code)} />
                 );
               })}
             </div>

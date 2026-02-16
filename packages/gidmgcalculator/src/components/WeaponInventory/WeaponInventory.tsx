@@ -13,7 +13,7 @@ import { WeaponCard } from "../WeaponCard";
 
 type WeaponInventoryProps = {
   weaponType: WeaponType;
-  owner?: string | null;
+  owner?: number | null;
   buttonText: string;
   onClickButton: (selectedWeapon: Weapon) => void;
   onClose: () => void;

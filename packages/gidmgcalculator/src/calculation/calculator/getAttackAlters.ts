@@ -7,11 +7,13 @@ import Array_ from "@/utils/Array";
 
 export function getAttackAlters(main: CharacterCalc, setup: CalcSetup) {
   const configs: Partial<Record<AttackPattern | TalentCalcItemBonusId, AttackAlter>> = {};
-  const { buffs } = main.data;
-  setup.team;
+
   for (const ctrl of setup.selfBuffCtrls) {
-    const buff = ctrl.activated ? Array_.findByIndex(buffs, ctrl.data.index) : undefined;
-    const { alterConfigs = [] } = buff || {};
+    if (!ctrl.activated) {
+      continue;
+    }
+
+    const { alterConfigs = [] } = ctrl.data;
 
     for (const config of Array_.toArray(alterConfigs)) {
       const { checkInput, forPatt = "ALL", attElmt, ...rest } = config;

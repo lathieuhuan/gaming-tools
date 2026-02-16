@@ -1,6 +1,6 @@
 import { ConstellationList } from "@/components";
 import { useDispatch } from "@Store/hooks";
-import { updateUserCharacter } from "@Store/userdb-slice";
+import { updateDbCharacter } from "@Store/userdb-slice";
 import { useActiveChar } from "../ActiveCharProvider";
 
 type PanelConstellationProps = {
@@ -17,8 +17,8 @@ export function PanelConstellation(props: PanelConstellationProps) {
       character={character}
       onClickIcon={(i) => {
         dispatch(
-          updateUserCharacter({
-            name: character.name,
+          updateDbCharacter({
+            code: character.code,
             cons: character.cons === i + 1 ? i : i + 1,
           })
         );

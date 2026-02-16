@@ -129,7 +129,7 @@ function Overview({ character, data }: OverviewProps) {
     >
       <CharacterPortrait zoomable={false} info={{ icon: data.icon }} />
       <div>
-        <p className={`text-xl font-bold ${elmtText}`}>{character.name}</p>
+        <p className={`text-xl font-bold ${elmtText}`}>{data.name}</p>
         <div className="flex items-center gap-1">
           <span>
             <span className="text-light-4">Level:</span>{" "}

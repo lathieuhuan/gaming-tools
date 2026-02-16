@@ -57,10 +57,10 @@ export function ArtifactBuffsView({
 
             return (
               <GenshinModifierView
-                key={`${teammate.name}-${artifact.data.code}-${ctrl.id}`}
+                key={`${teammate.code}-${artifact.data.code}-${ctrl.id}`}
                 mutable={mutable}
                 checked={ctrl.activated}
-                heading={`${artifact.data.name} / ${teammate.name}`}
+                heading={`${artifact.data.name} / ${teammate.data.name}`}
                 description={getArtifactDesc(artifact.data, data)}
                 inputs={ctrl.inputs}
                 inputConfigs={data.inputConfigs}

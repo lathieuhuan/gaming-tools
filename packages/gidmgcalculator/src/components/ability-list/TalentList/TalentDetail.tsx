@@ -47,8 +47,8 @@ export function TalentDetail({
     isError,
     data: descriptions,
   } = useQuery({
-    queryKey: ["talent-description", character.name],
-    queryFn: () => fetchTalentDescriptions(character.name),
+    queryKey: ["talent-description", character.code],
+    queryFn: () => fetchTalentDescriptions(character.code),
     enabled: !activeIndex,
     staleTime: Infinity,
   });

@@ -2,13 +2,11 @@ import type {
   ElementalEvent,
   IArtifactModCtrlBasic,
   IDbComplexSetup,
-  IDbSetup,
   IModifierCtrlBasic,
-  ITeammateBasic,
   ResonanceModCtrl,
 } from "@/types";
 import type { DatabaseDataV3_1 } from "./types/v3_1";
-import type { DatabaseDataV4 } from "./types/v4";
+import type { DatabaseDataV4, IDbSetup, ITeammateBasic } from "./types/v4";
 
 import Array_ from "@/utils/Array";
 

@@ -77,9 +77,6 @@ export function SearchBar({ className, onSearchProfile }: SearchBarProps) {
   };
 
   const handleSearch = () => {
-    console.log(input);
-    console.log(trimmedValue);
-
     switch (input.type) {
       case "uid":
         handleSearchUID(trimmedValue);

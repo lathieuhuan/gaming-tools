@@ -4,7 +4,7 @@ import type { CalcSetup } from "@/models/calculation";
 
 import { useDispatch } from "@Store/hooks";
 import { updateUI, useUIStore } from "@Store/ui";
-import { removeSetup } from "@Store/userdb-slice";
+import { removeDbSetup } from "@Store/userdb-slice";
 
 // Component
 import {
@@ -42,7 +42,7 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
           </>
         }
         focusConfirm
-        onConfirm={() => dispatch(removeSetup(setup.ID))}
+        onConfirm={() => dispatch(removeDbSetup(setup.ID))}
         onClose={closeModal}
       />
 

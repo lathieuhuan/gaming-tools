@@ -4,15 +4,20 @@ import { ConfirmModal, TrashCanSvg } from "rond";
 import { Artifact } from "@/models/base";
 import { useDispatch } from "@Store/hooks";
 import {
-  removeArtifact,
+  removeDbArtifact,
   swapArtifactOwner,
-  updateUserArtifact,
-  updateUserArtifactSubStat,
+  updateDbArtifact,
+  updateDbArtifactSubStat,
 } from "@Store/userdb-slice";
 
 // Components
 import { ArtifactCard, Tavern } from "@/components";
 import { ReforgeButton } from "./ReforgeButton";
+
+type NewOwner = {
+  name: string;
+  code: number;
+};
 
 type ActiveArtifactViewProps = {
   artifact?: Artifact;
@@ -22,18 +27,18 @@ type ActiveArtifactViewProps = {
 export function ActiveArtifactView({ artifact, onRemoveArtifact }: ActiveArtifactViewProps) {
   const dispatch = useDispatch();
   const [modalType, setModalType] = useState<"REMOVE_ARTIFACT" | "EQUIP_CHARACTER" | "">("");
-  const [newOwner, setNewOwner] = useState("");
+  const [newOwner, setNewOwner] = useState<NewOwner>();
 
   const closeModal = () => setModalType("");
 
-  const swapOwner = (name: string) => {
+  const swapOwner = (code: number) => {
     if (artifact?.ID) {
-      dispatch(swapArtifactOwner({ newOwner: name, artifactID: artifact.ID }));
+      dispatch(swapArtifactOwner({ newOwner: code, artifactID: artifact.ID }));
     }
   };
 
   const handleConfirmRemove = (artifact: Artifact) => {
-    dispatch(removeArtifact({ ID: artifact.ID }));
+    dispatch(removeDbArtifact({ ID: artifact.ID }));
     onRemoveArtifact?.(artifact);
   };
 
@@ -45,11 +50,11 @@ export function ActiveArtifactView({ artifact, onRemoveArtifact }: ActiveArtifac
         mutable
         withOwnerLabel
         onEnhance={(level, artifact) => {
-          dispatch(updateUserArtifact({ ID: artifact.ID, level }));
+          dispatch(updateDbArtifact({ ID: artifact.ID, level }));
         }}
         onChangeMainStatType={(type, artifact) => {
           dispatch(
-            updateUserArtifact({
+            updateDbArtifact({
               ID: artifact.ID,
               mainStatType: type,
             })
@@ -57,7 +62,7 @@ export function ActiveArtifactView({ artifact, onRemoveArtifact }: ActiveArtifac
         }}
         onChangeSubStat={(subStatIndex, changes, artifact) => {
           dispatch(
-            updateUserArtifactSubStat({
+            updateDbArtifactSubStat({
               ID: artifact.ID,
               subStatIndex,
               ...changes,
@@ -86,28 +91,32 @@ export function ActiveArtifactView({ artifact, onRemoveArtifact }: ActiveArtifac
       <Tavern
         active={modalType === "EQUIP_CHARACTER" && !!artifact}
         sourceType="user"
-        filter={(character) => character.name !== artifact?.owner}
+        filter={(character) => character.code !== artifact?.owner}
         onSelectCharacter={(character) => {
-          const name = character.data.name;
+          if (artifact?.owner) {
+            setNewOwner(character.data);
+            return;
+          }
 
-          artifact?.owner ? setNewOwner(name) : swapOwner(name);
+          swapOwner(character.data.code);
         }}
         onClose={closeModal}
       />
 
       <ConfirmModal
-        active={newOwner !== ""}
+        active={!!newOwner}
         message={
           <>
-            <b>{artifact?.owner}</b> is currently using this artifact. Equip to <b>{newOwner}</b>?
+            <b>{artifact?.owner}</b> is currently using this artifact. Equip to{" "}
+            <b>{newOwner?.name}</b>?
           </>
         }
         focusConfirm
-        onConfirm={() => swapOwner(newOwner)}
-        onClose={() => setNewOwner("")}
+        onConfirm={() => newOwner && swapOwner(newOwner.code)}
+        onClose={() => setNewOwner(undefined)}
       />
 
-      {artifact ? (
+      {artifact && (
         <ConfirmModal
           active={modalType === "REMOVE_ARTIFACT"}
           danger
@@ -125,7 +134,7 @@ export function ActiveArtifactView({ artifact, onRemoveArtifact }: ActiveArtifac
           onConfirm={() => handleConfirmRemove(artifact)}
           onClose={closeModal}
         />
-      ) : null}
+      )}
     </>
   );
 }

@@ -82,7 +82,7 @@ export function FinalResultView({ finalResult, ...props }: FinalResultViewProps)
             },
           ],
           onDoubleClick() {
-            console.log(result);
+            console.info(result);
           },
         };
       }}

@@ -1,4 +1,5 @@
 import { memo, useState } from "react";
+import isEqual from "react-fast-compare";
 import { FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
 import { Button, ButtonGroup, CloseButton, Modal, TrashCanSvg } from "rond";
 
@@ -8,7 +9,7 @@ import type { SetupOverviewInfo } from "../types";
 import { Artifact } from "@/models/base";
 import { useDispatch } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui";
-import { chooseUserSetup, switchShownSetupInComplex, uncombineSetups } from "@Store/userdb-slice";
+import { viewDbSetup, switchShownSetupInComplex, uncombineSetups } from "@Store/userdb-slice";
 
 // Component
 import { CharacterPortrait, EnhanceTag, GenshinImage } from "@/components";
@@ -53,13 +54,13 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
       dispatch(uncombineSetups(complexSetup.ID));
 
       setTimeout(() => {
-        dispatch(chooseUserSetup(setup.ID));
+        dispatch(viewDbSetup(setup.ID));
       }, 10);
     }
   };
 
   const handleSwitchTeammate = (teammate: TeammateCalc) => {
-    const shownId = allIDs ? allIDs[teammate.name] : undefined;
+    const shownId = allIDs?.[teammate.code];
 
     if (complexSetup && shownId) {
       dispatch(
@@ -76,7 +77,7 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
     <>
       <div
         className="pr-1 flex justify-between flex-col lg:flex-row"
-        onDoubleClick={() => console.log({ main, teammates })}
+        onDoubleClick={() => console.info(setup)}
       >
         <div className="flex items-center">
           {!isOriginalSetup && (
@@ -142,7 +143,7 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
                 return <CharacterPortrait key={teammateIndex} />;
               }
 
-              const calculated = !isOriginalSetup && !!allIDs?.[teammate.name];
+              const calculated = !isOriginalSetup && !!allIDs?.[teammate.code];
 
               return (
                 <CharacterPortrait
@@ -233,4 +234,9 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
   );
 }
 
-export const SetupView = memo(SetupViewCore, (prev, next) => prev.setup.ID === next.setup.ID);
+export const SetupView = memo(SetupViewCore, (prev, next) => {
+  const prevAllIDs = prev.complexSetup?.allIDs || {};
+  const nextAllIDs = next.complexSetup?.allIDs || {};
+
+  return prev.setup.ID === next.setup.ID && isEqual(prevAllIDs, nextAllIDs);
+});

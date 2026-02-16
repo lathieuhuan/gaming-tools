@@ -57,24 +57,24 @@ export function EquippedSetStash({
   const setOptions = useMemo(() => {
     const options: EquippedSetOption[] = [];
 
-    for (const { name, artifactIDs } of characters) {
-      if (!artifactIDs.length) {
+    for (const character of characters) {
+      if (!character.artifactIDs.length) {
         continue;
       }
 
-      const appCharacter = $AppCharacter.get(name);
+      const appCharacter = $AppCharacter.get(character.code);
 
       const option: EquippedSetOption = {
         character: {
           code: appCharacter.code,
-          name,
+          name: appCharacter.name,
           icon: appCharacter.icon,
           elementType: appCharacter.vision,
         },
         artifacts: [],
       };
 
-      for (const id of artifactIDs) {
+      for (const id of character.artifactIDs) {
         const artifact = Array_.findById(artifacts, id);
 
         if (artifact) {

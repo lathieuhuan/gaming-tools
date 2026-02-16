@@ -51,8 +51,11 @@ export function FinalResultLayout({
   const [lvlingSectionI, setLvlingSectionI] = useState(-1);
 
   const tableKeys = useMemo(() => {
-    return getTableKeys(character.data.calcList, showWeaponCalc ? character.weapon.data.calcItems : undefined);
-  }, [character.name, character.weapon.code, showWeaponCalc]);
+    return getTableKeys(
+      character.data.calcList,
+      showWeaponCalc ? character.weapon.data.calcItems : undefined
+    );
+  }, [character.code, character.weapon.code, showWeaponCalc]);
 
   const toggleSection = (index: number, forcedClosed?: boolean) => {
     const newClosed = forcedClosed ?? !closedSections[index];
@@ -113,14 +116,17 @@ export function FinalResultLayout({
                 <div className="py-1.5 flex items-center gap-1">
                   <FaCaretRight
                     className={
-                      "text-base duration-150 ease-linear" + (closedSections[sectionIndex] ? "" : " rotate-90")
+                      "text-base duration-150 ease-linear" +
+                      (closedSections[sectionIndex] ? "" : " rotate-90")
                     }
                   />
                   <span>{sectionLabel}</span>
                 </div>
 
                 {talentLevel !== 0 && (
-                  <span className="px-1 rounded-sm bg-black/60 text-light-1 text-sm">{talentLevel}</span>
+                  <span className="px-1 rounded-sm bg-black/60 text-light-1 text-sm">
+                    {talentLevel}
+                  </span>
                 )}
               </button>
 
@@ -148,7 +154,9 @@ export function FinalResultLayout({
             <CollapseSpace key={tableKey.main} active={!closedSections[sectionIndex]}>
               {tableKey.subs.length === 0 ? (
                 <div className="pt-2">
-                  <p className="pt-2 pb-1 bg-dark-2 text-center text-light-hint">This talent does not deal damage.</p>
+                  <p className="pt-2 pb-1 bg-dark-2 text-center text-light-hint">
+                    This talent does not deal damage.
+                  </p>
                 </div>
               ) : (
                 <div className="pt-2 custom-scrollbar">
@@ -176,7 +184,14 @@ type SectionTableProps = Pick<FinalResultLayoutProps, "getRowConfig" | "headerCo
   getRowTitle: (key: string) => string;
 };
 
-function SectionTable({ label, talentType, headerConfigs, tableKey, getRowConfig, getRowTitle }: SectionTableProps) {
+function SectionTable({
+  label,
+  talentType,
+  headerConfigs,
+  tableKey,
+  getRowConfig,
+  getRowTitle,
+}: SectionTableProps) {
   return (
     <Table
       className="w-full"

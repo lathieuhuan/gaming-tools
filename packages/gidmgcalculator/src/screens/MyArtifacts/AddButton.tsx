@@ -7,7 +7,7 @@ import { MAX_USER_ARTIFACTS } from "@/constants";
 import { Artifact } from "@/models/base";
 import { IArtifactBasic } from "@/types";
 import { useDispatch } from "@Store/hooks";
-import { addUserArtifact } from "@Store/userdb-slice";
+import { addDbArtifact } from "@Store/userdb-slice";
 
 type AddButtonProps = {
   currentArtifactsCount: number;
@@ -40,7 +40,7 @@ export function AddButton({ currentArtifactsCount }: AddButtonProps) {
         ID: Date.now(),
       };
 
-      dispatch(addUserArtifact(newUserArtifact));
+      dispatch(addDbArtifact(newUserArtifact));
     }
   };
 

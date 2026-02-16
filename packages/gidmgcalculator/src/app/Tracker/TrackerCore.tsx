@@ -142,7 +142,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   return (
     <div
       className="h-full custom-scrollbar cursor-default"
-      onDoubleClick={() => console.log(state)}
+      onDoubleClick={() => console.info(state)}
     >
       <CollapseList items={collapseItems} />
     </div>

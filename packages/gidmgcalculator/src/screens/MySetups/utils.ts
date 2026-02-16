@@ -33,7 +33,7 @@ export function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOver
   const team = new Team();
 
   const teammates = setup.teammates.map<TeammateCalc>((teammate) => {
-    const data = $AppCharacter.get(teammate.name)!;
+    const data = $AppCharacter.get(teammate.code);
     let artifact: ITeammateArtifact | undefined;
 
     if (teammate.artifact) {
@@ -60,7 +60,7 @@ export function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOver
 
     return new TeammateCalc(
       {
-        name: teammate.name,
+        code: teammate.code,
         enhanced: teammate.enhanced,
         weapon: {
           code: teammate.weapon.code,
@@ -155,8 +155,8 @@ export function createSetupForTeammate(
 
   const newMain = createCharacterCalc(
     {
-      ...Array_.findByName(userChars, teammate.name),
-      name: teammate.name,
+      ...Array_.findByCode(userChars, teammate.code),
+      code: teammate.code,
       weapon: createWeapon(weaponBasic),
       atfGear: new ArtifactGear(artifacts),
     },

@@ -51,11 +51,11 @@ export function convertGOODData(data: GOODData) {
 
     result.artifacts.push({
       ...artifact,
-      owner: owner?.name,
+      owner: owner?.code,
     });
 
     if (owner) {
-      const character = Array_.findByName(result.characters, owner.name);
+      const character = Array_.findByCode(result.characters, owner.code);
 
       if (character) {
         character.artifactIDs.push(artifact.ID);
@@ -73,11 +73,11 @@ export function convertGOODData(data: GOODData) {
 
     result.weapons.push({
       ...weapon,
-      owner: owner?.name,
+      owner: owner?.code,
     });
 
     if (owner) {
-      const character = Array_.findByName(result.characters, owner.name);
+      const character = Array_.findByCode(result.characters, owner.code);
 
       if (character) {
         character.weaponID = weapon.ID;
@@ -87,8 +87,8 @@ export function convertGOODData(data: GOODData) {
 
   for (const character of result.characters) {
     if (!character.weaponID) {
-      const { weaponType } = $AppCharacter.get(character.name);
-      const newWeapon = createWeaponBasic({ type: weaponType, owner: character.name }, idStore);
+      const { weaponType } = $AppCharacter.get(character.code);
+      const newWeapon = createWeaponBasic({ type: weaponType, owner: character.code }, idStore);
 
       result.weapons.push(newWeapon);
       character.weaponID = newWeapon.ID;

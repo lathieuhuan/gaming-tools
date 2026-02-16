@@ -5,7 +5,7 @@ import { Button, clsx, useChildListObserver, useIntersectionObserver } from "ron
 import { GenshinImage } from "@/components";
 import { $AppCharacter } from "@/services";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectActiveCharacter, selectDbCharacters, viewCharacter } from "@Store/userdb-slice";
+import { selectActiveCharacter, selectDbCharacters, viewDbCharacter } from "@Store/userdb-slice";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
 
 export function MyCharactersTopBar() {
@@ -24,10 +24,8 @@ export function MyCharactersTopBar() {
     },
   });
 
-  const appCharacters = $AppCharacter.getAll();
-
-  const scrollList = (name: string) => {
-    itemUtils.queryById(name)?.element.scrollIntoView();
+  const scrollList = (code: number) => {
+    itemUtils.queryById(code)?.element.scrollIntoView();
   };
 
   useEffect(() => {
@@ -67,20 +65,20 @@ export function MyCharactersTopBar() {
 
         <div ref={intersectObsArea} className="mt-2 w-full h-20 hide-scrollbar">
           <div ref={listObsArea} className="flex">
-            {characters.map(({ name }) => {
-              const appCharacter = appCharacters.find((data) => data.name === name);
+            {characters.map(({ code }) => {
+              const appCharacter = $AppCharacter.get(code);
               if (!appCharacter) return null;
-              const visible = visibleMap[name];
+              const visible = visibleMap[code];
 
               return (
                 <div
-                  key={name}
-                  data-selected={name === activeChar}
+                  key={code}
+                  data-selected={code === activeChar}
                   {...itemUtils.getProps(
-                    name,
+                    code,
                     "mx-1 border-b-3 border-transparent cursor-pointer group/cell data-[selected=true]/cell:border-link"
                   )}
-                  onClick={() => dispatch(viewCharacter(name))}
+                  onClick={() => dispatch(viewDbCharacter(code))}
                 >
                   <div
                     className={clsx(

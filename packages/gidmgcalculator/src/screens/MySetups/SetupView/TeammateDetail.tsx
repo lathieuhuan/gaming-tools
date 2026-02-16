@@ -26,7 +26,7 @@ export function TeammateDetail({
         <CharacterPortrait info={data} />
 
         <div className="px-4">
-          <p className={`text-2xl text-${data.vision} font-bold`}>{teammate.name}</p>
+          <p className={`text-2xl text-${data.vision} font-bold`}>{data.name}</p>
           {teammate.enhanced && <EnhanceTag mutable={false} character={teammate} />}
         </div>
       </div>

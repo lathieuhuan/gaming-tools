@@ -2,7 +2,7 @@ import { clsx } from "rond";
 
 import { AttributeTable, CharacterIntro } from "@/components";
 import { useDispatch } from "@Store/hooks";
-import { updateUserCharacter } from "@Store/userdb-slice";
+import { updateDbCharacter } from "@Store/userdb-slice";
 import { useActiveChar, useActiveCharActions } from "../ActiveCharProvider";
 
 type PanelAttributesProps = {
@@ -23,10 +23,10 @@ export function PanelAttributes(props: PanelAttributesProps) {
         mutable
         onSwitch={actions.requestSwitchCharacter}
         onRemove={actions.requestRemoveCharacter}
-        onChangeLevel={(level) => dispatch(updateUserCharacter({ name: character.name, level }))}
-        onChangeCons={(cons) => dispatch(updateUserCharacter({ name: character.name, cons }))}
+        onChangeLevel={(level) => dispatch(updateDbCharacter({ code: character.code, level }))}
+        onChangeCons={(cons) => dispatch(updateDbCharacter({ code: character.code, cons }))}
         onEnhanceToggle={(enhanced) =>
-          dispatch(updateUserCharacter({ name: character.name, enhanced }))
+          dispatch(updateDbCharacter({ code: character.code, enhanced }))
         }
       />
 

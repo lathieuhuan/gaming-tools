@@ -8,6 +8,7 @@ import type {
 } from "@/types";
 
 import Object_ from "@/utils/Object";
+import isEqual from "react-fast-compare";
 
 const percent1 = {
   4: [
@@ -148,7 +149,7 @@ export class Artifact implements IArtifact {
   level: number;
   mainStatType: AttributeStat;
   subStats: ArtifactSubStat[];
-  owner?: string;
+  owner?: number;
   setupIDs?: number[];
 
   data: AppArtifact;
@@ -198,6 +199,18 @@ export class Artifact implements IArtifact {
         setupIDs: artifact.setupIDs,
       }
     );
+  }
+
+  static toCore(artifact: IArtifactBasic) {
+    return Object_.pickProps(artifact, [
+      "ID",
+      "code",
+      "type",
+      "rarity",
+      "level",
+      "mainStatType",
+      "subStats",
+    ]);
   }
 
   serialize(): IArtifactBasic {

@@ -39,7 +39,7 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
     }
 
     return {
-      initialSetupName: existedSetup ? existedSetup.name : `${setup.main.name} setup`,
+      initialSetupName: existedSetup?.name || `${setup.main.data.name} setup`,
       isNewSetup: !existedSetup,
       isError: errors.length > 0,
       errors,

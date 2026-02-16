@@ -59,7 +59,7 @@ export function toDbSetup(
     type,
     name,
     main: {
-      name: main.name,
+      code: main.code,
       level: main.level,
       NAs: main.NAs,
       ES: main.ES,
@@ -76,7 +76,7 @@ export function toDbSetup(
     artDebuffCtrls: toDbCtrls(setup.artDebuffCtrls, ["code"]),
     teammates: setup.teammates.map((teammate) => {
       return {
-        name: teammate.name,
+        code: teammate.code,
         enhanced: teammate.enhanced,
         buffCtrls: toDbCtrls(teammate.buffCtrls),
         debuffCtrls: toDbCtrls(teammate.debuffCtrls),
@@ -163,10 +163,10 @@ function restoreTeammate(teammate: ITeammateBasic, team: Team) {
     };
   }
 
-  const data = $AppCharacter.get(teammate.name)!;
+  const data = $AppCharacter.get(teammate.code)!;
   const standard = new TeammateCalc(
     {
-      name: teammate.name,
+      code: teammate.code,
       enhanced: teammate.enhanced,
       weapon,
       artifact,

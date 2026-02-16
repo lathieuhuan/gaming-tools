@@ -174,7 +174,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
 
   const main = new CharacterCalc(
     {
-      name: mainData.name,
+      code: mainData.code,
       enhanced: enhancedCode === "1",
       level: LEVELS[parseNumber(levelIndex, "Main Level")],
       cons: parseNumber(cons, "Cons"),
@@ -264,7 +264,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
 
       return new TeammateCalc(
         {
-          name: tmData.name,
+          code: tmData.code,
           enhanced: enhancedCode === "1",
           buffCtrls: enhanceCtrls(splitModCtrls(tmBcStrs, 2), tmData.buffs),
           debuffCtrls: enhanceCtrls(splitModCtrls(tmDcStrs, 2), tmData.debuffs),

@@ -20,7 +20,7 @@ import type {
 // ========== TEAM ==========
 
 export type ITeamMember<TTeam extends ITeam = ITeam> = {
-  name: string;
+  code: number;
   enhanced: boolean;
   data: AppCharacter;
   join(team: TTeam): void;

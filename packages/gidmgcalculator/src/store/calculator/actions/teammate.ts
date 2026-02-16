@@ -17,7 +17,7 @@ export const setTeammate = (teammate: AppCharacter, index: number) => {
     onActiveSetup((setup) => {
       const { charEnhanced } = useSettingsStore.getState();
 
-      setup.setTeammate({ name: teammate.name, enhanced: charEnhanced }, index, teammate);
+      setup.setTeammate({ code: teammate.code, enhanced: charEnhanced }, index, teammate);
     })
   );
 };

@@ -39,7 +39,7 @@ export type UserdbState = {
   userWps: IWeaponBasic[];
   userArts: IArtifactBasic[];
   userSetups: (IDbSetup | IDbComplexSetup)[];
-  chosenChar: string;
+  chosenChar: number;
   chosenSetupID: number;
 };
 
@@ -48,7 +48,7 @@ export const initialState: UserdbState = {
   userWps: [],
   userArts: [],
   userSetups: [],
-  chosenChar: "",
+  chosenChar: -1,
   chosenSetupID: 0,
 };
 
@@ -64,7 +64,7 @@ export const userdbSlice = createSlice({
       state.userSetups = setups;
 
       if (characters.length) {
-        state.chosenChar = characters[0].name;
+        state.chosenChar = characters[0].code;
       }
       if (setups.length) {
         const firstSetup = setups.find((setup) => setup.type !== "combined");
@@ -80,18 +80,18 @@ export const userdbSlice = createSlice({
     },
     // CHARACTER
     /** Overwrite if character already exists */
-    addCharacter: (state, action: AddDbCharacterAction) => {
+    addDbCharacter: (state, action: AddDbCharacterAction) => {
       const {
-        name,
+        code,
         weaponID,
         artifactIDs = [],
-        data = $AppCharacter.get(name),
+        data = $AppCharacter.get(code),
         ...defaultValues
       } = action.payload;
 
-      const foundIndex = state.userChars.findIndex((char) => char.name === name);
+      const foundIndex = state.userChars.findIndex((char) => char.code === code);
       const newChar = {
-        ...createCharacterBasic({ name, ...defaultValues }),
+        ...createCharacterBasic({ code, ...defaultValues }),
         weaponID: weaponID || Date.now(),
         artifactIDs,
       };
@@ -104,7 +104,7 @@ export const userdbSlice = createSlice({
 
       if (!weaponID) {
         state.userWps.push({
-          owner: name,
+          owner: code,
           ...createWeaponBasic({
             ID: newChar.weaponID,
             type: data.weaponType,
@@ -112,15 +112,15 @@ export const userdbSlice = createSlice({
         });
       }
     },
-    viewCharacter: (state, action: PayloadAction<string>) => {
+    viewDbCharacter: (state, action: PayloadAction<number>) => {
       state.chosenChar = action.payload;
     },
-    sortCharacters: (state, action: PayloadAction<number[]>) => {
+    sortDbCharacters: (state, action: PayloadAction<number[]>) => {
       state.userChars = action.payload.map((index) => state.userChars[index]);
     },
-    updateUserCharacter: (state, action: UpdateDbCharacterAction) => {
-      const { name, ...newInfo } = action.payload;
-      const charIndex = Array_.indexByName(state.userChars, name);
+    updateDbCharacter: (state, action: UpdateDbCharacterAction) => {
+      const { code, ...newInfo } = action.payload;
+      const charIndex = state.userChars.findIndex((char) => char.code === code);
 
       if (charIndex !== -1) {
         state.userChars[charIndex] = {
@@ -129,10 +129,10 @@ export const userdbSlice = createSlice({
         };
       }
     },
-    removeUserCharacter: (state, action: PayloadAction<string>) => {
+    removeDbCharacter: (state, action: PayloadAction<number>) => {
       const { userChars, userWps, userArts } = state;
-      const name = action.payload;
-      let charIndex = Array_.indexByName(userChars, name);
+      const code = action.payload;
+      let charIndex = userChars.findIndex((char) => char.code === code);
       const character = userChars[charIndex];
 
       if (character) {
@@ -152,7 +152,7 @@ export const userdbSlice = createSlice({
           charIndex--;
         }
 
-        state.chosenChar = userChars[charIndex]?.name || "";
+        state.chosenChar = userChars[charIndex]?.code || -1;
       }
     },
     switchWeapon: ({ userWps, userChars }, action: SwitchWeaponAction) => {
@@ -168,12 +168,12 @@ export const userdbSlice = createSlice({
         oldWeaponInfo.owner = newOwner;
       }
 
-      const oldOwnerInfo = Array_.findByName(userChars, oldOwner);
+      const oldOwnerInfo = Array_.findByCode(userChars, oldOwner);
       if (oldOwnerInfo) {
         oldOwnerInfo.weaponID = newID;
       }
 
-      const newOwnerInfo = newOwner ? Array_.findByName(userChars, newOwner) : undefined;
+      const newOwnerInfo = Array_.findByCode(userChars, newOwner);
       if (newOwnerInfo) {
         newOwnerInfo.weaponID = oldID;
       }
@@ -207,7 +207,7 @@ export const userdbSlice = createSlice({
         oldAtf.owner = newOwner;
       }
 
-      const oldChar = Array_.findByName(userChars, oldOwner);
+      const oldChar = Array_.findByCode(userChars, oldOwner);
       if (oldChar) {
         const newArtifactIDs = new Set<number | undefined>(oldChar.artifactIDs);
 
@@ -217,7 +217,7 @@ export const userdbSlice = createSlice({
         oldChar.artifactIDs = Array_.truthify([...newArtifactIDs]);
       }
 
-      const newChar = Array_.findByName(userChars, newOwner);
+      const newChar = Array_.findByCode(userChars, newOwner);
       if (newChar) {
         const newArtifactIDs = new Set<number | undefined>(newChar.artifactIDs);
 
@@ -235,7 +235,7 @@ export const userdbSlice = createSlice({
         return;
       }
 
-      const owner = Array_.findByName(state.userChars, artifact.owner);
+      const owner = Array_.findByCode(state.userChars, artifact.owner);
 
       if (owner) {
         owner.artifactIDs = owner.artifactIDs.filter((id) => id !== artifactID);
@@ -244,11 +244,11 @@ export const userdbSlice = createSlice({
       delete artifact.owner;
     },
     // WEAPON
-    addUserWeapon: (state, action: PayloadAction<IWeaponBasic>) => {
+    addDbWeapon: (state, action: PayloadAction<IWeaponBasic>) => {
       state.userWps.push(Weapon.toBasic(action.payload));
     },
     /** Require index (prioritized) or ID */
-    updateUserWeapon: (state, action: UpdateDbWeaponAction) => {
+    updateDbWeapon: (state, action: UpdateDbWeaponAction) => {
       const { ID, ...newInfo } = action.payload;
       const weaponIndex = Array_.indexById(state.userWps, ID);
 
@@ -259,11 +259,11 @@ export const userdbSlice = createSlice({
         });
       }
     },
-    swapWeaponOwner: (state, action: PayloadAction<{ newOwner: string; weaponID: number }>) => {
+    swapWeaponOwner: (state, action: PayloadAction<{ newOwner: number; weaponID: number }>) => {
       const { userChars, userWps } = state;
       const { weaponID, newOwner } = action.payload;
       const weaponInfo = Array_.findById(userWps, weaponID);
-      const newOwnerInfo = Array_.findByName(userChars, newOwner);
+      const newOwnerInfo = Array_.findByCode(userChars, newOwner);
 
       if (weaponInfo && newOwnerInfo) {
         const newOwnerWeaponInfo = Array_.findById(userWps, newOwnerInfo.weaponID);
@@ -276,7 +276,7 @@ export const userdbSlice = createSlice({
           newOwnerWeaponInfo.owner = oldOwner;
 
           if (oldOwner) {
-            const oldOwnerInfo = Array_.findByName(userChars, oldOwner);
+            const oldOwnerInfo = Array_.findByCode(userChars, oldOwner);
 
             if (oldOwnerInfo) {
               oldOwnerInfo.weaponID = newOwnerWeaponInfo.ID;
@@ -285,7 +285,7 @@ export const userdbSlice = createSlice({
         }
       }
     },
-    sortWeapons: (state, action: PayloadAction<DbItemSortPayload>) => {
+    sortDbWeapons: (state, action: PayloadAction<DbItemSortPayload>) => {
       const { option, direction } = action.payload;
       const isAsc = direction === "asc";
 
@@ -310,13 +310,13 @@ export const userdbSlice = createSlice({
         // old code has sort by rarity, and type
       }
     },
-    removeWeapon: ({ userWps, userChars }, action: RemoveDbWeaponAction) => {
+    removeDbWeapon: ({ userWps, userChars }, action: RemoveDbWeaponAction) => {
       const { ID } = action.payload;
       const removedIndex = Array_.indexById(userWps, ID);
 
       if (removedIndex !== -1) {
         const { owner, type } = userWps[removedIndex];
-        const ownerInfo = owner ? Array_.findByName(userChars, owner) : undefined;
+        const ownerInfo = Array_.findByCode(userChars, owner);
 
         userWps.splice(removedIndex, 1);
 
@@ -332,12 +332,12 @@ export const userdbSlice = createSlice({
       }
     },
     // ARTIFACT
-    addUserArtifact: (state, action: PayloadAction<IArtifactBasic | IArtifactBasic[]>) => {
+    addDbArtifact: (state, action: PayloadAction<IArtifactBasic | IArtifactBasic[]>) => {
       for (const artifact of Array_.toArray(action.payload)) {
         state.userArts.push(Artifact.toBasic(artifact));
       }
     },
-    updateUserArtifact: (state, action: UpdateDbArtifactAction) => {
+    updateDbArtifact: (state, action: UpdateDbArtifactAction) => {
       const { ID, ...newInfo } = action.payload;
       const artifactIndex = Array_.indexById(state.userArts, ID);
 
@@ -348,7 +348,7 @@ export const userdbSlice = createSlice({
         });
       }
     },
-    updateUserArtifactSubStat: (state, action: UpdateDbArtifactSubStatAction) => {
+    updateDbArtifactSubStat: (state, action: UpdateDbArtifactSubStatAction) => {
       const { ID, subStatIndex, ...newInfo } = action.payload;
       const artifact = Array_.findById(state.userArts, ID);
       if (artifact) {
@@ -358,11 +358,11 @@ export const userdbSlice = createSlice({
         };
       }
     },
-    swapArtifactOwner: (state, action: PayloadAction<{ newOwner: string; artifactID: number }>) => {
+    swapArtifactOwner: (state, action: PayloadAction<{ newOwner: number; artifactID: number }>) => {
       const { userChars, userArts } = state;
       const { artifactID, newOwner } = action.payload;
       const artifactInfo = Array_.findById(userArts, artifactID);
-      const newOwnerInfo = Array_.findByName(userChars, newOwner);
+      const newOwnerInfo = Array_.findByCode(userChars, newOwner);
 
       if (artifactInfo && newOwnerInfo) {
         const oldOwner = artifactInfo.owner;
@@ -379,7 +379,7 @@ export const userdbSlice = createSlice({
           }
         }
         if (oldOwner) {
-          const oldOwnerInfo = Array_.findByName(userChars, oldOwner);
+          const oldOwnerInfo = Array_.findByCode(userChars, oldOwner);
 
           if (oldOwnerInfo) {
             oldOwnerInfo.artifactIDs[index] = artifactIDs[index];
@@ -388,7 +388,7 @@ export const userdbSlice = createSlice({
         artifactIDs[index] = artifactID;
       }
     },
-    sortArtifacts: (state, action: PayloadAction<DbItemSortPayload>) => {
+    sortDbArtifacts: (state, action: PayloadAction<DbItemSortPayload>) => {
       const { option, direction } = action.payload;
       const isAsc = direction === "asc";
 
@@ -405,13 +405,13 @@ export const userdbSlice = createSlice({
           break;
       }
     },
-    removeArtifact: ({ userArts, userChars }, action: RemoveDbArtifactAction) => {
+    removeDbArtifact: ({ userArts, userChars }, action: RemoveDbArtifactAction) => {
       const { ID } = action.payload;
       const removedIndex = Array_.indexById(userArts, ID);
 
       if (removedIndex !== -1) {
         const { owner } = userArts[removedIndex];
-        const ownerInfo = owner ? Array_.findByName(userChars, owner) : undefined;
+        const ownerInfo = Array_.findByCode(userChars, owner);
 
         userArts.splice(removedIndex, 1);
 
@@ -421,7 +421,7 @@ export const userdbSlice = createSlice({
       }
     },
     // SETUP
-    chooseUserSetup: (state, action: PayloadAction<number>) => {
+    viewDbSetup: (state, action: PayloadAction<number>) => {
       state.chosenSetupID = action.payload;
     },
     saveSetup: (state, action: SaveSetupAction) => {
@@ -444,7 +444,7 @@ export const userdbSlice = createSlice({
 
       if (existed.type === "combined") {
         for (const setup of userSetups) {
-          if (setup.type === "complex" && setup.allIDs[existed.main.name] === data.ID) {
+          if (setup.type === "complex" && setup.allIDs[existed.main.code] === data.ID) {
             newActiveId = setup.ID;
             setup.shownID = data.ID;
             break;
@@ -456,7 +456,7 @@ export const userdbSlice = createSlice({
 
       state.chosenSetupID = newActiveId;
     },
-    removeSetup: (state, action: PayloadAction<number>) => {
+    removeDbSetup: (state, action: PayloadAction<number>) => {
       const removedID = action.payload;
       const { userSetups, userWps, userArts } = state;
       const removedIndex = Array_.indexById(userSetups, removedID);
@@ -514,7 +514,7 @@ export const userdbSlice = createSlice({
           setup.type = "combined";
 
           if (isDbSetup(setup)) {
-            allIDs[setup.main.name] = ID;
+            allIDs[setup.main.code] = ID;
           }
         }
       }
@@ -546,7 +546,7 @@ export const userdbSlice = createSlice({
 
           if (setup && isDbSetup(setup)) {
             setup.type = "combined";
-            complexSetup.allIDs[setup.main.name] = ID;
+            complexSetup.allIDs[setup.main.code] = ID;
           }
         });
       }
@@ -580,10 +580,10 @@ export const userdbSlice = createSlice({
     fixMultipleEquippedWeapons: (state) => {
       const { userChars, userWps } = state;
 
-      const validWeaponsByChar = new Map<string, number>();
+      const validWeaponsByChar = new Map<number, number>();
 
       for (const char of userChars) {
-        validWeaponsByChar.set(char.name, char.weaponID);
+        validWeaponsByChar.set(char.code, char.weaponID);
       }
 
       for (const weapon of userWps) {
@@ -595,7 +595,7 @@ export const userdbSlice = createSlice({
     fixMultipleEquippedArtifacts: (state) => {
       const { userChars, userArts } = state;
 
-      const artifactsByOwnerByType = new Map<string, Map<ArtifactType, IArtifactBasic>>();
+      const artifactsByOwnerByType = new Map<number, Map<ArtifactType, IArtifactBasic>>();
 
       for (const artifact of userArts) {
         if (!artifact.owner) {
@@ -622,7 +622,7 @@ export const userdbSlice = createSlice({
       }
 
       for (const char of userChars) {
-        const artifactsByOwner = artifactsByOwnerByType.get(char.name);
+        const artifactsByOwner = artifactsByOwnerByType.get(char.code);
 
         if (!artifactsByOwner) {
           char.artifactIDs = [];
@@ -640,28 +640,28 @@ export const userdbSlice = createSlice({
 
 export const {
   addUserDatabase,
-  addCharacter,
-  viewCharacter,
-  sortCharacters,
-  updateUserCharacter,
-  removeUserCharacter,
+  addDbCharacter,
+  viewDbCharacter,
+  sortDbCharacters,
+  updateDbCharacter,
+  removeDbCharacter,
   switchWeapon,
   switchArtifact,
   unequipArtifact,
-  addUserWeapon,
+  addDbWeapon,
   swapWeaponOwner,
-  updateUserWeapon,
-  sortWeapons,
-  removeWeapon,
-  addUserArtifact,
-  updateUserArtifact,
-  updateUserArtifactSubStat,
+  updateDbWeapon,
+  sortDbWeapons,
+  removeDbWeapon,
+  addDbArtifact,
+  updateDbArtifact,
+  updateDbArtifactSubStat,
   swapArtifactOwner,
-  sortArtifacts,
-  removeArtifact,
-  chooseUserSetup,
+  sortDbArtifacts,
+  removeDbArtifact,
+  viewDbSetup,
   saveSetup,
-  removeSetup,
+  removeDbSetup,
   combineSetups,
   switchShownSetupInComplex,
   addSetupToComplex,

@@ -9,9 +9,9 @@ import { ARTIFACT_TYPES } from "@/constants/global";
 import { useDispatch } from "@Store/hooks";
 import {
   unequipArtifact,
-  updateUserArtifact,
-  updateUserArtifactSubStat,
-  updateUserWeapon,
+  updateDbArtifact,
+  updateDbArtifactSubStat,
+  updateDbWeapon,
 } from "@Store/userdb-slice";
 import { useActiveChar, useActiveCharActions } from "../ActiveCharProvider";
 
@@ -55,8 +55,8 @@ export function GearsDetail({ detailType, showCloseBtn, onClose }: GearsDetailPr
           mutable
           withGutter={false}
           weapon={weapon}
-          upgrade={(level) => dispatch(updateUserWeapon({ ID: weapon.ID, level }))}
-          refine={(refi) => dispatch(updateUserWeapon({ ID: weapon.ID, refi }))}
+          upgrade={(level) => dispatch(updateDbWeapon({ ID: weapon.ID, level }))}
+          refine={(refi) => dispatch(updateDbWeapon({ ID: weapon.ID, refi }))}
           actions={[
             closeBtnProps,
             {
@@ -109,20 +109,18 @@ export function GearsDetail({ detailType, showCloseBtn, onClose }: GearsDetailPr
           artifact={activeArtifact}
           mutable
           onEnhance={(level) => {
-            dispatch(updateUserArtifact({ ID: activeArtifact.ID, level }));
+            dispatch(updateDbArtifact({ ID: activeArtifact.ID, level }));
           }}
           onChangeMainStatType={(type) => {
             dispatch(
-              updateUserArtifact({
+              updateDbArtifact({
                 ID: activeArtifact.ID,
                 mainStatType: type as AttributeStat,
               })
             );
           }}
           onChangeSubStat={(subStatIndex, changes) => {
-            dispatch(
-              updateUserArtifactSubStat({ ID: activeArtifact.ID, subStatIndex, ...changes })
-            );
+            dispatch(updateDbArtifactSubStat({ ID: activeArtifact.ID, subStatIndex, ...changes }));
           }}
           actions={[
             closeBtnProps,

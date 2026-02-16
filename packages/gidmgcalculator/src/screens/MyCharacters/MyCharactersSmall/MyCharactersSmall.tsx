@@ -3,7 +3,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { BottomSheet, CarouselSpace, SwitchNode } from "rond";
 
 import { useDispatch } from "@Store/hooks";
-import { viewCharacter } from "@Store/userdb-slice";
+import { viewDbCharacter } from "@Store/userdb-slice";
 
 // Component
 import { MobileBottomNav } from "@/components";
@@ -79,7 +79,7 @@ export function MyCharactersSmall() {
 
         <BottomSheet active={menuActive} height="90%" title="Switch to" onClose={closeMenu}>
           <MyCharactersSmallMenu
-            onSelect={(name) => dispatch(viewCharacter(name))}
+            onSelect={(character) => dispatch(viewDbCharacter(character.code))}
             onClose={closeMenu}
           />
         </BottomSheet>

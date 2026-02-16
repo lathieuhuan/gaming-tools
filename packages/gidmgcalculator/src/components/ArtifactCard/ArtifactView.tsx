@@ -45,7 +45,7 @@ export function ArtifactView<T extends Artifact>({
       <div className={`bg-rarity-${rarity} flex items-center`}>
         <p
           className="mr-auto pl-4 pr-2 py-0.5 text-lg font-semibold text-black truncate"
-          onDoubleClick={() => console.log(artifact)}
+          onDoubleClick={() => console.info(artifact)}
         >
           {appArtifact?.name}
         </p>

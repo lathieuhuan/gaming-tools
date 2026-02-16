@@ -8,7 +8,7 @@ import { ActiveCharContext } from "./_context";
 
 const parseUserdb = (state: RootState) => {
   const { userChars, userWps, userArts, chosenChar } = state.userdb;
-  const activeCharacter = Array_.findByName(userChars, chosenChar);
+  const activeCharacter = userChars.find((char) => char.code === chosenChar);
   const charCount = userChars.length;
 
   if (!activeCharacter) {

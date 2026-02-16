@@ -3,16 +3,18 @@ import isEqual from "react-fast-compare";
 import type { CalcSetup } from "@/models/calculation";
 import type { AppThunk } from "./store";
 
+import { Artifact, Weapon } from "@/models/base";
+import { ArtifactType } from "@/types";
 import Array_ from "@/utils/Array";
-import { createArtifactBasic, createWeaponBasic } from "@/utils/entity";
 import { isDbSetup, toDbSetup } from "@/utils/setup";
+import { updateSetupAfterSave } from "./calculator/actions";
 import { updateUI } from "./ui";
 import {
-  addUserArtifact,
-  addUserWeapon,
+  addDbArtifact,
+  addDbWeapon,
   saveSetup,
-  updateUserArtifact,
-  updateUserWeapon,
+  updateDbArtifact,
+  updateDbWeapon,
 } from "./userdb-slice";
 
 export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
@@ -26,36 +28,37 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
     const isOldSetup = dbSetup && isDbSetup(dbSetup);
 
     const existedWeapon = Array_.findById(userWps, weapon.ID);
-    const weaponBasic = weapon.serialize();
+    const weaponCore = Weapon.toCore(weapon);
 
     if (existedWeapon) {
-      if (isEqual(weaponBasic, createWeaponBasic(existedWeapon))) {
-        // Nothing changes => add setupID to existedWeapon
+      if (isEqual(weaponCore, Weapon.toCore(existedWeapon))) {
+        // Core not changed => add setupID to existedWeapon
         const newSetupIDs = existedWeapon.setupIDs || [];
 
         if (!newSetupIDs.includes(setup.ID)) {
           dispatch(
-            updateUserWeapon({
+            updateDbWeapon({
               ID: existedWeapon.ID,
               setupIDs: newSetupIDs.concat(setup.ID),
             })
           );
         }
       } else {
-        // Something changes => Duplicate existedWeapon and add it along with setupID
+        // Core changed => Duplicate existedWeapon and add it along with setupID
         weaponID = seedID++;
 
         dispatch(
-          addUserWeapon({
-            ...weaponBasic,
+          addDbWeapon({
+            ...weaponCore,
             ID: weaponID,
+            owner: undefined,
             setupIDs: [setup.ID],
           })
         );
 
         // Remove setupID from existed weapon
         dispatch(
-          updateUserWeapon({
+          updateDbWeapon({
             ID: existedWeapon.ID,
             setupIDs: existedWeapon.setupIDs?.filter((ID) => ID !== setup.ID),
           })
@@ -64,8 +67,8 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
     } else {
       // Weapon not found => Add new weapon with setupID
       dispatch(
-        addUserWeapon({
-          ...weaponBasic,
+        addDbWeapon({
+          ...weaponCore,
           setupIDs: [setup.ID],
         })
       );
@@ -76,7 +79,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
 
         if (oldWeapon) {
           dispatch(
-            updateUserWeapon({
+            updateDbWeapon({
               ID: oldWeapon.ID,
               setupIDs: oldWeapon.setupIDs?.filter((ID) => ID !== setup.ID),
             })
@@ -86,32 +89,35 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
     }
 
     const artifactIDs = atfGear.pieces.map((piece) => piece.ID);
+    const newPieceIds: Partial<Record<ArtifactType, number>> = {};
 
     atfGear.pieces.forEach((piece, pieceIndex) => {
       const existedPiece = Array_.findById(userArts, piece.ID);
-      const pieceBasic = piece.serialize();
+      const pieceCore = Artifact.toCore(piece);
 
       if (existedPiece) {
-        if (isEqual(pieceBasic, createArtifactBasic(existedPiece))) {
-          // Nothing changes => add setupID to existedArtifact
+        if (isEqual(pieceCore, Artifact.toCore(existedPiece))) {
+          // Core not changed => add setupID to existedArtifact
           const newSetupIDs = existedPiece.setupIDs || [];
 
           if (!newSetupIDs.includes(setup.ID)) {
             dispatch(
-              updateUserArtifact({
+              updateDbArtifact({
                 ID: existedPiece.ID,
                 setupIDs: newSetupIDs.concat(setup.ID),
               })
             );
           }
         } else {
-          // Something changes => Add new artifact with setupID
+          // Core changed => Add new artifact with setupID
           const artifactID = seedID++;
+
           artifactIDs[pieceIndex] = artifactID;
+          newPieceIds[piece.type] = artifactID;
 
           dispatch(
-            addUserArtifact({
-              ...pieceBasic,
+            addDbArtifact({
+              ...pieceCore,
               ID: artifactID,
               setupIDs: [setup.ID],
             })
@@ -119,7 +125,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
 
           // Remove setupID from existed artifact
           dispatch(
-            updateUserArtifact({
+            updateDbArtifact({
               ID: existedPiece.ID,
               setupIDs: existedPiece.setupIDs?.filter((ID) => ID !== setup.ID),
             })
@@ -128,8 +134,8 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
       } else {
         // Artifact not found => Add new artifact with setupID
         dispatch(
-          addUserArtifact({
-            ...pieceBasic,
+          addDbArtifact({
+            ...pieceCore,
             setupIDs: [setup.ID],
           })
         );
@@ -142,7 +148,7 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
 
           if (oldArtifact) {
             dispatch(
-              updateUserArtifact({
+              updateDbArtifact({
                 ID: oldArtifact.ID,
                 setupIDs: oldArtifact.setupIDs?.filter((ID) => ID !== setup.ID),
               })
@@ -158,6 +164,8 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
     newDbSetup.main.artifactIDs = artifactIDs;
 
     dispatch(saveSetup(newDbSetup));
+
+    updateSetupAfterSave(setup.ID, weaponID, newPieceIds);
 
     updateUI({ setupDirectorActive: false });
   };

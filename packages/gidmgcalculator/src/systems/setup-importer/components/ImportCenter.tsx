@@ -61,7 +61,7 @@ export function SetupImportCenter({ params, onFinish, ...manageInfo }: SetupImpo
       return;
     }
 
-    if (main.name !== params.main.name) {
+    if (main.data.code !== params.main.code) {
       delay(() => setPendingCode("DIFFERENT_CHAR"));
       return;
     }

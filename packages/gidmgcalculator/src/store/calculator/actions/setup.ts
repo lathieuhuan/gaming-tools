@@ -1,27 +1,42 @@
+import type { ArtifactType, ISetupManager } from "@/types";
 import type { WritableDraft } from "immer/src/internal.js";
-import type { ISetupManager } from "@/types";
 
 import { CalcSetup } from "@/models/calculation";
 import Array_ from "@/utils/Array";
+import Object_ from "@/utils/Object";
 import { useCalcStore } from "../calculator-store";
 import { getCopyName, onActiveSetup } from "../utils";
-
-// export function updateSetup(setup: CalcSetup, setupId?: number) {
-//   const { activeId, setupsById } = useCalcStore.getState();
-//   const id = setupId ?? activeId;
-
-//   useCalcStore.setState({
-//     setupsById: {
-//       ...setupsById,
-//       [id]: setup.calculate(),
-//     },
-//   });
-// }
 
 export const updateActiveSetup = (
   callback: (setup: WritableDraft<CalcSetup>) => boolean | void
 ) => {
   useCalcStore.setState(onActiveSetup(callback));
+};
+
+export const updateSetupAfterSave = (
+  setupId: number,
+  weaponId: number,
+  newPieceIds: Partial<Record<ArtifactType, number>>
+) => {
+  useCalcStore.setState((state) => {
+    const setup = state.setupsById[setupId];
+
+    if (!setup) {
+      return;
+    }
+
+    const { weapon, atfGear } = setup.main;
+
+    weapon.ID = weaponId;
+
+    for (const [type, id] of Object_.entries(newPieceIds)) {
+      const piece = atfGear.pieces[type];
+
+      if (piece && id) {
+        piece.ID = id;
+      }
+    }
+  });
 };
 
 export const duplicateSetup = (sourceId: number) => {

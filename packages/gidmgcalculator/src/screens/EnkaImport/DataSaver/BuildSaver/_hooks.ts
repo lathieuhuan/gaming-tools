@@ -10,12 +10,12 @@ import { useStore } from "@/systems/dynamic-store";
 import IdStore from "@/utils/IdStore";
 import { useDispatch } from "@Store/hooks";
 import {
-  addCharacter,
-  addUserArtifact,
-  addUserWeapon,
-  updateUserArtifact,
-  updateUserCharacter,
-  updateUserWeapon,
+  addDbCharacter,
+  addDbArtifact,
+  addDbWeapon,
+  updateDbArtifact,
+  updateDbCharacter,
+  updateDbWeapon,
 } from "@Store/userdb-slice";
 
 export function useSaveOutputHandler() {
@@ -30,7 +30,7 @@ export function useSaveOutputHandler() {
     switch (output.action) {
       case "CREATE":
         dispatch(
-          addCharacter({
+          addDbCharacter({
             ...output.character,
             weaponID,
             artifactIDs,
@@ -39,7 +39,7 @@ export function useSaveOutputHandler() {
         return;
       case "UPDATE":
         dispatch(
-          updateUserCharacter({
+          updateDbCharacter({
             ...output.character,
             weaponID,
             artifactIDs,
@@ -48,8 +48,8 @@ export function useSaveOutputHandler() {
         return;
       case "NONE":
         dispatch(
-          updateUserCharacter({
-            name: output.character.name,
+          updateDbCharacter({
+            code: output.character.code,
             weaponID,
             artifactIDs,
           })
@@ -60,7 +60,7 @@ export function useSaveOutputHandler() {
 
   const handleWeaponSaveOutput = (
     output: WeaponSaveOutput,
-    owner: string,
+    owner: number,
     idStore: IdStore,
     currentWeaponID?: number
   ) => {
@@ -69,7 +69,7 @@ export function useSaveOutputHandler() {
         const weaponId = idStore.gen();
 
         dispatch(
-          addUserWeapon({
+          addDbWeapon({
             ...output.weapon,
             ID: weaponId,
             owner,
@@ -78,7 +78,7 @@ export function useSaveOutputHandler() {
 
         if (currentWeaponID) {
           dispatch(
-            updateUserWeapon({
+            updateDbWeapon({
               ID: currentWeaponID,
               owner: undefined,
             })
@@ -88,7 +88,7 @@ export function useSaveOutputHandler() {
         return weaponId;
       case "UPDATE":
         dispatch(
-          updateUserWeapon({
+          updateDbWeapon({
             ...output.weapon,
             owner,
           })
@@ -96,7 +96,7 @@ export function useSaveOutputHandler() {
 
         if (currentWeaponID && currentWeaponID !== output.weapon.ID) {
           dispatch(
-            updateUserWeapon({
+            updateDbWeapon({
               ID: currentWeaponID,
               owner: undefined,
             })
@@ -111,7 +111,7 @@ export function useSaveOutputHandler() {
 
   const handleArtifactSaveOutput = (
     output: ArtifactSaveOutput,
-    owner: string,
+    owner: number,
     idStore: IdStore,
     currentArtifactID?: number
   ) => {
@@ -120,7 +120,7 @@ export function useSaveOutputHandler() {
         const artifactId = idStore.gen();
 
         dispatch(
-          addUserArtifact({
+          addDbArtifact({
             ...output.artifact,
             ID: artifactId,
             owner,
@@ -129,7 +129,7 @@ export function useSaveOutputHandler() {
 
         if (currentArtifactID) {
           dispatch(
-            updateUserArtifact({
+            updateDbArtifact({
               ID: currentArtifactID,
               owner: undefined,
             })
@@ -142,7 +142,7 @@ export function useSaveOutputHandler() {
         const { owner: currentOwner, ID: artifactID } = output.artifact;
 
         dispatch(
-          updateUserArtifact({
+          updateDbArtifact({
             ...output.artifact,
             owner,
           })
@@ -151,14 +151,14 @@ export function useSaveOutputHandler() {
         // TODO: improve this handler
         if (currentOwner && currentOwner !== owner) {
           const currentCharacter = store.select((state) =>
-            state.userdb.userChars.find((char) => char.name === currentOwner)
+            state.userdb.userChars.find((char) => char.code === currentOwner)
           );
           const newArtifactIDs =
             currentCharacter?.artifactIDs.filter((id) => id !== artifactID) || [];
 
           dispatch(
-            updateUserCharacter({
-              name: currentOwner,
+            updateDbCharacter({
+              code: currentOwner,
               artifactIDs: newArtifactIDs,
             })
           );
@@ -166,7 +166,7 @@ export function useSaveOutputHandler() {
 
         if (currentArtifactID && currentArtifactID !== artifactID) {
           dispatch(
-            updateUserArtifact({
+            updateDbArtifact({
               ID: currentArtifactID,
               owner: undefined,
             })
@@ -198,14 +198,14 @@ export function useSaveOutputHandler() {
 
     const weaponID = handleWeaponSaveOutput(
       weaponOutput,
-      characterOutput.character.name,
+      characterOutput.character.code,
       idStore,
       currentWeapon?.ID
     );
     const artifactIDs = artifactsOutput.map((artifact) =>
       handleArtifactSaveOutput(
         artifact,
-        characterOutput.character.name,
+        characterOutput.character.code,
         idStore,
         currentArtifactIds[artifact.artifact.type]
       )

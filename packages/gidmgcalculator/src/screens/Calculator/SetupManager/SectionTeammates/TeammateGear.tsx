@@ -50,9 +50,9 @@ export function TeammateGear({ teammate, info }: TeammateGearProps) {
   return (
     <>
       <div className="bg-dark-2 pt-2">
-        <div className="bg-dark-1 pt-12 px-2 pb-3" onDoubleClick={() => console.log(teammate)}>
+        <div className="bg-dark-1 pt-12 px-2 pb-3" onDoubleClick={() => console.info(teammate)}>
           <div className="mb-4 pl-1 flex items-center">
-            <p className={`leading-none text-xl font-semibold ${elmtText}`}>{teammate.name}</p>
+            <p className={`leading-none text-xl font-semibold ${elmtText}`}>{teammate.data.name}</p>
 
             <EnhanceTag
               className="ml-2 pl-2 border-l border-dark-line"

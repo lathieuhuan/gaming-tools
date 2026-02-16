@@ -5,7 +5,7 @@ import { Button } from "rond";
 import { ArtifactForge } from "@/components";
 import { Artifact } from "@/models/base";
 import { useDispatch } from "@Store/hooks";
-import { updateUserArtifact } from "@Store/userdb-slice";
+import { updateDbArtifact } from "@Store/userdb-slice";
 
 type ReforgeButtonProps = {
   artifact?: Artifact;
@@ -19,7 +19,7 @@ export function ReforgeButton({ artifact }: ReforgeButtonProps) {
 
   const handleForgeArtifact = (artifact: Artifact) => {
     dispatch(
-      updateUserArtifact({
+      updateDbArtifact({
         ...artifact,
         ID: artifact.ID,
       })

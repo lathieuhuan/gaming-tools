@@ -6,7 +6,7 @@ import type { IWeaponBasic } from "@/types";
 
 import { Tavern, WeaponCard } from "@/components";
 import { useDispatch } from "@Store/hooks";
-import { removeWeapon, swapWeaponOwner, updateUserWeapon } from "@Store/userdb-slice";
+import { removeDbWeapon, swapWeaponOwner, updateDbWeapon } from "@Store/userdb-slice";
 
 type ModalType = "SELECT_WEAPON_OWNER" | "REMOVE_WEAPON" | "";
 
@@ -35,7 +35,7 @@ export const ActiveWeaponView = forwardRef<ActiveWeaponViewControlRef, ActiveWea
     };
 
     const onConfirmRemoveWeapon = (weapon: Weapon) => {
-      dispatch(removeWeapon({ ID: weapon.ID }));
+      dispatch(removeDbWeapon({ ID: weapon.ID }));
       onRemoveWeapon?.(weapon);
     };
 
@@ -50,8 +50,8 @@ export const ActiveWeaponView = forwardRef<ActiveWeaponViewControlRef, ActiveWea
           mutable
           weapon={weapon}
           withOwnerLabel
-          upgrade={(level, weapon) => dispatch(updateUserWeapon({ ID: weapon.ID, level }))}
-          refine={(refi, weapon) => dispatch(updateUserWeapon({ ID: weapon.ID, refi }))}
+          upgrade={(level, weapon) => dispatch(updateDbWeapon({ ID: weapon.ID, level }))}
+          refine={(refi, weapon) => dispatch(updateDbWeapon({ ID: weapon.ID, refi }))}
           actions={[
             {
               children: "Remove",
@@ -69,13 +69,13 @@ export const ActiveWeaponView = forwardRef<ActiveWeaponViewControlRef, ActiveWea
             active={modalType === "SELECT_WEAPON_OWNER"}
             sourceType="user"
             filter={({ data }) => {
-              return data.weaponType === weapon.type && data.name !== weapon.owner;
+              return data.weaponType === weapon.type && data.code !== weapon.owner;
             }}
             onSelectCharacter={(character) => {
               dispatch(
                 swapWeaponOwner({
                   weaponID: weapon.ID,
-                  newOwner: character.data.name,
+                  newOwner: character.data.code,
                 })
               );
             }}

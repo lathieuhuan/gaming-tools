@@ -20,7 +20,7 @@ import { createAbilityBuffCtrls, createAbilityDebuffCtrls } from "../modifier";
 import { BonusCalc } from "./BonusCalc";
 import { PenaltyCalc } from "./PenaltyCalc";
 
-export type TeammateCalcConstructInfo = PartiallyRequiredOnly<ITeammateInfo, "name">;
+export type TeammateCalcConstructInfo = PartiallyRequiredOnly<ITeammateInfo, "code">;
 
 type CloneOptions = {
   team?: ITeam;

@@ -15,11 +15,7 @@ export default function FirstCombine(props: { onClose: () => void }) {
   const [input, setInput] = useState("Team Setup");
 
   const setupOptions = dbSetups.filter(isDbSetup).filter((setup) => {
-    return (
-      setup.type === "original" &&
-      setup.teammates.length === 3 &&
-      setup.teammates.every((teammate) => teammate.name)
-    );
+    return setup.type === "original" && setup.teammates.length === 3;
   });
 
   const { isError, pickedIDs, combineMenu, setIsError } = useCombineManager({
@@ -36,39 +32,40 @@ export default function FirstCombine(props: { onClose: () => void }) {
       return;
     }
 
-    const mains: string[] = [];
-    const all: string[] = [];
+    const mains: number[] = [];
+    const all: number[] = [];
 
     for (const ID of pickedIDs) {
       const { main, teammates } = Array_.findById(setupOptions, ID)!;
 
-      if (mains.includes(main.name)) {
+      if (mains.includes(main.code)) {
         setIsError(true);
         return;
       } else {
-        mains.push(main.name);
+        mains.push(main.code);
       }
 
-      if (!all.includes(main.name)) {
+      if (!all.includes(main.code)) {
         if (all.length === 4) {
           setIsError(true);
           return;
         } else {
-          all.push(main.name);
+          all.push(main.code);
         }
       }
 
       for (const teammate of teammates) {
-        if (!all.includes(teammate.name)) {
+        if (!all.includes(teammate.code)) {
           if (all.length === 4) {
             setIsError(true);
             return;
           } else {
-            all.push(teammate.name);
+            all.push(teammate.code);
           }
         }
       }
     }
+
     dispatch(combineSetups({ pickedIDs, name: input }));
     props.onClose();
   };

@@ -76,8 +76,8 @@ export function WeaponBuffsView({
         .map((teammate) => {
           return renderWeaponModifiers({
             mutable,
-            keyPrefix: teammate.name,
-            headingSuffix: teammate.name,
+            keyPrefix: teammate.code,
+            headingSuffix: teammate.data.name,
             weapon: teammate.weapon,
             ctrls: teammate.weapon.buffCtrls,
             getHanlders: (ctrl) => getTeammateHandlers?.(teammate, ctrl) || {},

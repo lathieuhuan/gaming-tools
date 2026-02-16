@@ -25,7 +25,7 @@ export type ArtifactInventoryProps = Pick<ArtifactFilterProps<Artifact>, "forced
     /** Default 'flower' */
     initialType?: ArtifactType;
     currentAtfGear?: ArtifactGear;
-    owner?: string | null;
+    owner?: number | null;
     buttonText: string;
     onClickButton: (selectedArtifact: Artifact, isMultiSelect: boolean) => void;
     onClose: () => void;

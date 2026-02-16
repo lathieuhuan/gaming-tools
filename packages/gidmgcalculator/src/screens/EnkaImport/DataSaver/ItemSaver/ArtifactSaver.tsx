@@ -8,7 +8,7 @@ import type { IArtifactBasic } from "@/types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";
 import { useDispatch } from "@Store/hooks";
-import { addUserArtifact, updateUserArtifact } from "@Store/userdb-slice";
+import { addDbArtifact, updateDbArtifact } from "@Store/userdb-slice";
 import { genCaseConfigs } from "../_config";
 import { isExactArtifact } from "../_logic";
 
@@ -39,7 +39,7 @@ export function ArtifactSaver({ artifact, sameArtifacts, onComplete }: ArtifactS
     const { owner, ...artifactToSave } = artifact.serialize();
 
     dispatch(
-      addUserArtifact({
+      addDbArtifact({
         ...artifactToSave,
         ID: Date.now(),
       })
@@ -57,7 +57,7 @@ export function ArtifactSaver({ artifact, sameArtifacts, onComplete }: ArtifactS
     }
 
     dispatch(
-      updateUserArtifact({
+      updateDbArtifact({
         ID: selectedArtifact?.ID,
         level: artifact.level,
         subStats: artifact.subStats,

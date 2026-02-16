@@ -305,7 +305,7 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
         teammate.isPerformableEffect(ctrl.data)
       ) {
         const buff = ctrl.data;
-        const label = `${teammate.name} / ${buff.src}`;
+        const label = `${teammate.data.name} / ${buff.src}`;
         applyBonus(label, teammate, buff.effects, { inputs: ctrl.inputs });
       }
     }

@@ -14,7 +14,7 @@ export const selectCharacterToBeSorted = createSelector(selectDbCharacters, (use
   userChars.map<CharacterToBeSorted>((character, index) => {
     return {
       ...character,
-      data: $AppCharacter.get(character.name),
+      data: $AppCharacter.get(character.code),
       index,
     };
   })

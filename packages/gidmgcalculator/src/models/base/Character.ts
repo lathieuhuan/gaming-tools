@@ -53,7 +53,7 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
   extends Ascendable
   implements ICharacter<W, A>
 {
-  name: string;
+  code: number;
   level: Level;
   NAs: number;
   ES: number;
@@ -73,7 +73,7 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
   constructor(info: ICharacter<W, A>, public data: AppCharacter) {
     super(info.level);
 
-    this.name = info.name;
+    this.code = info.code;
     this.level = info.level;
     this.NAs = info.NAs;
     this.ES = info.ES;
@@ -111,7 +111,7 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
 
   static toBasic(character: ICharacterBasic): ICharacterBasic {
     return {
-      name: character.name,
+      code: character.code,
       level: character.level,
       NAs: character.NAs,
       ES: character.ES,

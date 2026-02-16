@@ -3,6 +3,7 @@ import type { AppWeapon, IWeapon, IWeaponBasic, Level, WeaponType } from "@/type
 import { LEVELS } from "@/constants/global";
 import { Ascendable } from "./Ascendable";
 import Object_ from "@/utils/Object";
+import isEqual from "react-fast-compare";
 
 const BASE_ATTACK_TYPE: Record<string, number[]> = {
   23: [23, 56, 68, 102, 113, 130, 141, 158, 169, 185, 185, 185, 185, 185],
@@ -70,7 +71,7 @@ export class Weapon extends Ascendable implements IWeapon {
   code: number;
   level: Level;
   refi: number;
-  owner?: string;
+  owner?: number;
   setupIDs?: number[];
 
   data: AppWeapon;
@@ -132,6 +133,10 @@ export class Weapon extends Ascendable implements IWeapon {
         setupIDs: weapon.setupIDs,
       }
     );
+  }
+
+  static toCore(weapon: IWeaponBasic) {
+    return Object_.pickProps(weapon, ["ID", "code", "type", "level", "refi"]);
   }
 
   serialize(): IWeaponBasic {

@@ -106,7 +106,17 @@ class GreeterService {
 
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(this._fetchAllData());
+        this._fetchAllData()
+          .then(() => resolve(null))
+          .catch((error) => {
+            const message = error instanceof Error ? error.message : "Failed to fetch App data";
+
+            resolve({
+              code: 500,
+              message,
+              cooldown: COOLDOWN_NORMAL * 5,
+            });
+          });
       }, 200);
     });
   }

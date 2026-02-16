@@ -108,7 +108,7 @@ export function convertGOODCharacter(
 
   return {
     basic: {
-      name: data.name,
+      code: data.code,
       level: convertGOODLevel(character),
       cons: character.constellation,
       NAs: character.talent.auto,

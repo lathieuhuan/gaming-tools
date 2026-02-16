@@ -110,14 +110,14 @@ export const createWeapon = (params: CreateWeaponParams, data?: AppWeapon, idSto
 
 // ========== CHARACTER ==========
 
-export type CreateCharacterParams = PartiallyRequiredOnly<ICharacterBasic, "name">;
+export type CreateCharacterParams = PartiallyRequiredOnly<ICharacterBasic, "code">;
 
 export const createCharacterBasic = (params: CreateCharacterParams): ICharacterBasic => {
   const { charLevel, charCons, charNAs, charES, charEB, charEnhanced } =
     useSettingsStore.getState();
 
   const {
-    name,
+    code,
     level = charLevel,
     NAs = charNAs,
     ES = charES,
@@ -126,17 +126,17 @@ export const createCharacterBasic = (params: CreateCharacterParams): ICharacterB
     enhanced = !!charEnhanced,
   } = params;
 
-  return { name, level, NAs, ES, EB, cons, enhanced };
+  return { code, level, NAs, ES, EB, cons, enhanced };
 };
 
 type CreateCharacterCalcParams = PartiallyRequiredOnly<
   CharacterCalcConstructInfo<Weapon, ArtifactGear>,
-  "name" | "weapon" | "atfGear"
+  "code" | "weapon" | "atfGear"
 >;
 
 export const createCharacterCalc = (
   params: CreateCharacterCalcParams,
-  data: AppCharacter = $AppCharacter.get(params.name),
+  data: AppCharacter = $AppCharacter.get(params.code),
   team?: Team
 ) => {
   const basic = createCharacterBasic(params);

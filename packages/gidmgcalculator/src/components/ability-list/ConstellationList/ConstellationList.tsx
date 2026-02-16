@@ -24,7 +24,7 @@ export function ConstellationList(props: ConstellationListProps) {
 
   useEffect(() => {
     setAtDetail(false);
-  }, [character.name]);
+  }, [character.code]);
 
   if (!constellation.length) {
     return (
