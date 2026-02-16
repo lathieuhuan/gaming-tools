@@ -1,9 +1,11 @@
-import type { Level } from "@/types";
 import type { AppSettingsState } from "@Store/settings";
 import type { OnSettingChange } from "./types";
 
-import { LEVELS, MAX_TARGET_LEVEL, WEAPON_LEVELS } from "@/constants";
+import { MAX_TARGET_LEVEL } from "@/constants";
 import { genSequentialOptions } from "@/utils";
+
+// Components
+import { CharacterLevelControl, WeaponLevelControl } from "@/components";
 import { SettingsGroup, SettingsGroupItem } from "./SettingsGroup";
 
 type DefaultValuesSettingsProps = {
@@ -23,16 +25,6 @@ type DefaultValuesSettingsProps = {
 };
 
 export function DefaultValuesSettings({ initialValues, onChange }: DefaultValuesSettingsProps) {
-  const levelOptions = LEVELS.map((_, i) => {
-    const value = LEVELS[LEVELS.length - 1 - i];
-    return { label: value, value };
-  });
-
-  const weaponLevelOptions = WEAPON_LEVELS.map((_, i) => {
-    const value = WEAPON_LEVELS[WEAPON_LEVELS.length - 1 - i];
-    return { label: value, value };
-  });
-
   const artLevelOptions = Array.from({ length: 6 }, (_, i) => {
     const value = i * 4;
     return { label: value, value };
@@ -42,13 +34,14 @@ export function DefaultValuesSettings({ initialValues, onChange }: DefaultValues
     {
       key: "charLevel",
       label: "Character level",
-      type: "SELECT",
-      subType: "LEVEL",
-      controlProps: {
-        options: levelOptions,
-        defaultValue: initialValues.charLevel,
-        onChange: (value) => onChange?.("charLevel", value as Level),
-      },
+      type: "CUSTOM",
+      control: (
+        <CharacterLevelControl
+          className="h-8 bg-light-1 text-black rounded-sm"
+          defaultValue={initialValues.charLevel}
+          onChange={(value) => onChange?.("charLevel", value)}
+        />
+      ),
     },
     {
       key: "charCons",
@@ -103,13 +96,14 @@ export function DefaultValuesSettings({ initialValues, onChange }: DefaultValues
     {
       key: "wpLevel",
       label: "Weapon level",
-      type: "SELECT",
-      subType: "LEVEL",
-      controlProps: {
-        options: weaponLevelOptions,
-        defaultValue: initialValues.wpLevel,
-        onChange: (value) => onChange?.("wpLevel", value as Level),
-      },
+      type: "CUSTOM",
+      control: (
+        <WeaponLevelControl
+          className="w-23 h-8 bg-light-1 text-black rounded-sm"
+          defaultValue={initialValues.wpLevel}
+          onChange={(value) => onChange?.("wpLevel", value)}
+        />
+      ),
     },
     {
       key: "wpRefi",

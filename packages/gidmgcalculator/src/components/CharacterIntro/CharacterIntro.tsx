@@ -3,9 +3,9 @@ import { Badge, Button, Rarity, VersatileSelect } from "rond";
 
 import type { AppCharacter, ICharacterBasic, Level } from "@/types";
 
-import { LEVELS } from "@/constants/global";
 import { EnhanceTag } from "../EnhanceTag";
 import { GenshinImage } from "../GenshinImage";
+import { CharacterLevelControl, LevelControl } from "../LevelControl";
 
 type CharacterIntroProps = {
   className?: string;
@@ -76,19 +76,10 @@ export function CharacterIntro(props: CharacterIntroProps) {
           <div className="flex items-center text-lg" aria-label="calculator_character-level">
             <label className="mr-1">Level</label>
             {mutable ? (
-              <VersatileSelect
-                title="Select Level"
-                align="right"
-                transparent
-                showAllOptions
-                className={`w-[98px] shrink-0 ${elmtText} text-lg font-bold`}
-                dropdownCls="z-30"
-                options={LEVELS.map((_, i) => {
-                  const item = LEVELS[LEVELS.length - 1 - i];
-                  return { label: item, value: item };
-                })}
+              <CharacterLevelControl
+                className={`w-24 ${elmtText} text-lg font-bold`}
                 value={character.level}
-                onChange={(value) => props.onChangeLevel?.(value as Level)}
+                onChange={(value) => props.onChangeLevel?.(value)}
               />
             ) : (
               <p className={`${elmtText} text-lg font-bold`}>{character.level}</p>

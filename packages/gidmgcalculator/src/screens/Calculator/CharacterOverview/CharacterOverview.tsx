@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 
 import { useCalcStore } from "@Store/calculator";
@@ -17,7 +17,9 @@ import {
   WeaponTab,
 } from "./tab-components";
 
-const TABS: SwitchNodeCase<string>[] = [
+type TabType = "Attributes" | "Weapon" | "Artifacts" | "Constellation" | "Talents";
+
+const TABS: SwitchNodeCase<TabType>[] = [
   { value: "Attributes", element: <AttributesTab /> },
   { value: "Weapon", element: <WeaponTab /> },
   { value: "Artifacts", element: <ArtifactsTab /> },
@@ -26,9 +28,10 @@ const TABS: SwitchNodeCase<string>[] = [
 ];
 
 function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
+  const id = useId();
   const main = useCalcStore(selectActiveMain);
 
-  const [activeTab, setActiveTab] = useState("Attributes");
+  const [activeTab, setActiveTab] = useState<TabType>("Attributes");
 
   return (
     <div className="h-full flex flex-col gap-4">
@@ -43,10 +46,10 @@ function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
       />
 
       <ComplexSelect
-        selectId="character-overview-select"
+        selectId={id}
         value={activeTab}
         options={TABS.map((tab) => ({ value: tab.value, label: tab.value }))}
-        onChange={(newTab) => setActiveTab(newTab.toString())}
+        onChange={(newTab) => setActiveTab(newTab)}
       />
 
       <div className="grow hide-scrollbar">

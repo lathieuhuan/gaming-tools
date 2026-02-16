@@ -35,7 +35,7 @@ export function SelectWithAction<
     <div
       ref={ref}
       className={clsx(
-        "flex [&>:first-child]:!rounded-tr-none [&>:first-child]:!rounded-br-none",
+        "flex [&>:first-child]:rounded-tr-none! [&>:first-child]:rounded-br-none!",
         className
       )}
       style={style}

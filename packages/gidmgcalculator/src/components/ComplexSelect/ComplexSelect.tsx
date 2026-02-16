@@ -13,21 +13,22 @@ const CLASS_BY_SIZE = {
   },
 } satisfies Record<string, { option: string; icon?: string }>;
 
-interface ComplexSelectProps {
+type ComplexSelectProps<TValue extends string | number> = {
   className?: string;
   /** Default 'medium' */
   // size?: "medium" | "small";
   selectId: string;
-  value?: string | number;
+  value?: TValue;
   options?: Array<{
     label: React.ReactNode;
-    value: string | number;
+    value: TValue;
     renderActions?: (args: { closeSelect: () => void }) => JSX.Element;
   }>;
-  onChange?: (value: string | number) => void;
+  onChange?: (value: TValue) => void;
   onToggleDropdown?: (shouldDrop: boolean) => void;
-}
-export function ComplexSelect({
+};
+
+export function ComplexSelect<TValue extends string | number>({
   className,
   // size = "medium",
   selectId,
@@ -35,16 +36,17 @@ export function ComplexSelect({
   options = [],
   onChange,
   onToggleDropdown,
-}: ComplexSelectProps) {
+}: ComplexSelectProps<TValue>) {
   const [isDropped, setIsDropped] = useState(false);
 
+  const id = `complex-select${selectId}`;
   const classes = CLASS_BY_SIZE["medium"];
 
   const toggleDropdown = (newIsDropped: boolean) => {
     setIsDropped(newIsDropped);
     onToggleDropdown?.(newIsDropped);
 
-    const setupSelect = document.querySelector(`#complex-select-${selectId}_select`);
+    const setupSelect = document.getElementById(id);
 
     if (newIsDropped) {
       setupSelect?.classList.remove("rounded-t-2.5xl", "rounded-b-2.5xl");
@@ -59,7 +61,7 @@ export function ComplexSelect({
 
   const ref = useClickOutside<HTMLDivElement>(() => toggleDropdown(false));
 
-  const onClickOption = (newValue: string | number) => () => {
+  const onClickOption = (newValue: TValue) => () => {
     toggleDropdown(false);
 
     if (newValue !== value) {
@@ -82,12 +84,18 @@ export function ComplexSelect({
   return (
     <div ref={ref} className={clsx("flex shrink-0 relative", className)}>
       <button
-        id={`complex-select-${selectId}_select`}
+        id={id}
         className="w-full px-8 py-0.5 bg-heading text-black rounded-t-2.5xl rounded-b-2.5xl relative cursor-default"
         onClick={() => toggleDropdown(!isDropped)}
       >
-        <div className={clsx("w-full truncate font-bold text-center relative z-10", classes.option)}>{label}</div>
-        <FaChevronDown className={clsx("absolute top-1/2 right-4 -translate-y-1/2", classes.icon)} />
+        <div
+          className={clsx("w-full truncate font-bold text-center relative z-10", classes.option)}
+        >
+          {label}
+        </div>
+        <FaChevronDown
+          className={clsx("absolute top-1/2 right-4 -translate-y-1/2", classes.icon)}
+        />
       </button>
 
       <div

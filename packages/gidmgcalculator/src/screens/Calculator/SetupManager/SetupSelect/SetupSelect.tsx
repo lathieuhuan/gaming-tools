@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { FaBalanceScaleLeft, FaCopy, FaSave, FaShareAlt } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
 import { clsx, ConfirmModal, TrashCanSvg } from "rond";
@@ -21,6 +21,7 @@ type ModalState = {
 type ActionButtonAttrs = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function SetupSelect() {
+  const id = useId();
   const calcModalCtrl = useCalcModalCtrl();
 
   const { activeId, setupManagers, standardId, comparedIds } = useShallowCalcStore((state) =>
@@ -85,7 +86,7 @@ export function SetupSelect() {
   return (
     <>
       <ComplexSelect
-        selectId="setup-select"
+        selectId={id}
         value={Array_.findById(setupManagers, activeId)?.ID}
         options={setupManagers.map((setup, i) => {
           return {

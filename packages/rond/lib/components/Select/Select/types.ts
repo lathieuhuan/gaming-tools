@@ -27,7 +27,7 @@ export type SelectCoreProps<
   TData extends Record<string, unknown> = Record<string, unknown>
 > = Pick<
   RcProps,
-  "id" | "open" | "disabled" | "placeholder" | "showSearch" | "getPopupContainer"
+  "id" | "open" | "disabled" | "placeholder" | "showSearch" | "getPopupContainer" | "mode"
 > & {
   className?: ClassValue;
   dropdownCls?: ClassValue;

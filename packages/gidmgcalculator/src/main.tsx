@@ -10,6 +10,7 @@ import { DynamicStoreProvider } from "./systems/dynamic-store";
 import { QueryClientProvider } from "./systems/react-query";
 import { RouterProvider } from "./systems/router";
 
+import "@rc-component/dropdown/assets/index.css";
 import "./style.css";
 
 enableMapSet();
