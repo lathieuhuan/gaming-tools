@@ -25,7 +25,13 @@ export function Modifiers() {
       <Tabs
         {...tabProps}
         className="text-lg shrink-0"
-        configs={[{ text: "Debuffs" }, { text: "Buffs" }]}
+        configs={[
+          { text: "Debuffs" },
+          {
+            id: TOUR_STEP_ID.buffsTab,
+            text: "Buffs",
+          },
+        ]}
       />
 
       <div className="mt-4 grow custom-scrollbar">

@@ -17,4 +17,5 @@ export const TOUR_STEP_ID = {
   overviewPanel: "overview-panel",
   modifiersPanel: "modifiers-panel",
   setupPanel: "setup-panel",
+  buffsTab: "buffs-tab",
 };

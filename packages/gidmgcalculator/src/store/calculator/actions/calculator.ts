@@ -3,8 +3,10 @@ import type { CalculatorState } from "../types";
 
 import { CalcSetup, CalcSetupConstructInfo } from "@/models/calculation";
 import { $AppCharacter } from "@/services";
+import { updateSettings } from "@Store/settings";
+import { useToursStore } from "@Store/tours";
+import { updateUI } from "@Store/ui";
 import { initialState, useCalcStore } from "../calculator-store";
-import { useSettingsStore } from "@Store/settings";
 
 type InitSessionPayload = {
   name?: string;
@@ -16,8 +18,6 @@ export const initSession = (payload: InitSessionPayload) => {
   const { name = "Setup 1", type = "original", calcSetup } = payload;
   const { ID } = calcSetup;
 
-  useSettingsStore.setState({ separateCharInfo: false });
-
   useCalcStore.setState({
     ...initialState,
     setupManagers: [{ ID, name, type }],
@@ -27,6 +27,12 @@ export const initSession = (payload: InitSessionPayload) => {
     activeId: ID,
     target: calcSetup.target,
   });
+
+  updateSettings({ separateCharInfo: false });
+
+  if (calcSetup.main.data.enhanceType && !useToursStore.getState().characterEnhance) {
+    updateUI({ appModalType: "ENHANCE_NOTICE" });
+  }
 };
 
 export const updateCalculator = (

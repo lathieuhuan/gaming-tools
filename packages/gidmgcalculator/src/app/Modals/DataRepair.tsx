@@ -17,7 +17,7 @@ function Option({ description, onFix }: OptionProps) {
   );
 }
 
-export function DataFixingCore() {
+export function DataRepairCore() {
   const dispatch = useDispatch();
 
   const fixDuplicatedWeapons = () => {
@@ -50,7 +50,7 @@ export function DataFixingCore() {
   );
 }
 
-export const DataFixing = Modal.wrap(DataFixingCore, {
+export const DataRepair = Modal.wrap(DataRepairCore, {
   preset: "small",
   title: "Fix my data",
   className: "bg-dark-1",

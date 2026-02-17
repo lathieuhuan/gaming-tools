@@ -1,5 +1,6 @@
 import { ImporterProvider } from "@/systems/setup-importer";
 
+import { TourOperator } from "@/systems/tour";
 import { Greeter } from "./Greeter";
 import { Main } from "./Main";
 import { Modals } from "./Modals";
@@ -54,6 +55,7 @@ function RehydrateSuspend() {
             <Main />
             <Modals />
             <Tracker />
+            <TourOperator />
           </PersistGate>
         </StoreProvider>
       )}

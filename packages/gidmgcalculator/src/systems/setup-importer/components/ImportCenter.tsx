@@ -128,7 +128,7 @@ export function SetupImportCenter({ params, onFinish, ...manageInfo }: SetupImpo
 
     router.navigate(SCREEN_PATH.CALCULATOR);
 
-    if (["URL", "ENKA"].includes(manageInfo.source || "")) {
+    if (manageInfo.source === "URL" || manageInfo.source === "ENKA") {
       notification.success({
         content: "Successfully import the setup!",
         duration: 0,
@@ -137,7 +137,10 @@ export function SetupImportCenter({ params, onFinish, ...manageInfo }: SetupImpo
   };
 
   const resetExistingSetup = () => {
+    // TODO implement
     updateUI({ setupDirectorActive: false });
+
+    router.navigate(SCREEN_PATH.CALCULATOR);
   };
 
   switch (pendingCode) {

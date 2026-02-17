@@ -9,6 +9,7 @@ const classByLevel = {
 export type TabConfig =
   | string
   | {
+      id?: string;
       text: string;
       disabled?: boolean;
     };
@@ -31,12 +32,20 @@ export function Tabs({
   onClickTab,
 }: TabsProps) {
   return (
-    <div className={cn("w-full flex rounded-full overflow-hidden divide-x-2 divide-dark-3", className)} style={style}>
+    <div
+      className={cn("w-full flex rounded-full overflow-hidden divide-x-2 divide-dark-3", className)}
+      style={style}
+    >
       {configs?.map((config, index) => {
-        const { text, disabled = false } = typeof config === "string" ? { text: config } : config;
+        const {
+          id,
+          text,
+          disabled = false,
+        } = typeof config === "string" ? { text: config } : config;
 
         return (
           <button
+            id={id}
             key={index}
             type="button"
             disabled={disabled}

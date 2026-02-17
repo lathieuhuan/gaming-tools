@@ -15,6 +15,6 @@ export type SetupImportInfo = {
   ID?: number;
   name?: string;
   type?: BasicSetupType;
-  source?: "URL" | "SETUP_MANAGER" | "MY_SETUPS" | "ENKA";
+  source?: "URL" | "MY_SETUPS" | "ENKA";
   params?: CalcSetupConstructInfo;
 };

@@ -45,6 +45,6 @@ export const MODAL_OPTIONS: ModalOption[] = [
   {
     label: "Fix my data",
     icon: <FaWrench />,
-    modalType: "DATA_FIX",
+    modalType: "DATA_REPAIR",
   },
 ];

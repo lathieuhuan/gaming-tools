@@ -1,5 +1,16 @@
 import type { SearchParams } from "@/systems/router";
 
+type AppModalType =
+  | "INTRO"
+  | "GUIDES"
+  | "SETTINGS"
+  | "UPLOAD"
+  | "DOWNLOAD"
+  | "DONATE"
+  | "DATA_REPAIR"
+  | "ENHANCE_NOTICE"
+  | "";
+
 export type MySetupsModalType =
   | "TIPS"
   | "FIRST_COMBINE"
@@ -18,22 +29,14 @@ export type TourType = "ENHANCE" | "";
 
 export type UIState = {
   appReady: boolean;
-  appModalType:
-    | ""
-    | "INTRO"
-    | "GUIDES"
-    | "SETTINGS"
-    | "UPLOAD"
-    | "DOWNLOAD"
-    | "DONATE"
-    | "DATA_FIX";
+  appModalType: AppModalType;
   targetConfig: {
     active: boolean;
     overviewed: boolean;
   };
   setupDirectorActive: boolean;
   trackerState: TrackerState;
-  tourType: TourType;
   mySetupsModalType: MySetupsModalType;
+  tourType: TourType;
   enkaParams?: SearchParams;
 };
