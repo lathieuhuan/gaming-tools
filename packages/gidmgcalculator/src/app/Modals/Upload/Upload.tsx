@@ -55,7 +55,7 @@ function UploadCore({ active, onClose }: ModalControl) {
         notification.destroy(notiId.current);
       }
 
-      setTimeout(onClose, 150);
+      onClose && setTimeout(onClose, 150);
     }
   };
 

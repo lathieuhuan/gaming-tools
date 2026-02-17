@@ -2,40 +2,39 @@ import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { BottomSheet } from "rond";
 
-import { MobileBottomNav } from "@/components";
+import { MobileBottomNav, MobileBottomNavProps } from "@/components";
 import { SetupManagerSmall } from "./SetupManagerSmall";
 
-interface BottomNavSmallProps {
-  activePanelI: number;
-  onSelectSection: (index: number) => void;
-}
-export function BottomNavSmall({ activePanelI, onSelectSection }: BottomNavSmallProps) {
-  const [optionsActive, setOptionsActive] = useState(false);
+export type BottomNavSmallProps<T extends string> = Pick<
+  MobileBottomNavProps<T>,
+  "value" | "options" | "onSelect"
+>;
 
-  const closeOptions = () => setOptionsActive(false);
+export function BottomNavSmall<T extends string>(props: BottomNavSmallProps<T>) {
+  const [managerActive, setManagerActive] = useState(false);
+
+  const closeManager = () => setManagerActive(false);
 
   return (
     <>
       <MobileBottomNav
-        activeI={activePanelI}
-        options={["Overview", "Modifiers", "Setup", "Results"]}
+        {...props}
         extraEnd={
           <>
             <div className="my-auto w-px h-2/3 bg-dark-line" />
             <button
               type="button"
               className="shrink-0 w-10 flex-center rotate-180"
-              onClick={() => setOptionsActive(true)}
+              onClick={() => setManagerActive(true)}
             >
               <FaChevronDown />
             </button>
           </>
         }
-        onSelect={onSelectSection}
       />
 
-      <BottomSheet active={optionsActive} title="Setups Manager" onClose={closeOptions}>
-        <SetupManagerSmall onClose={closeOptions} />
+      <BottomSheet active={managerActive} title="Setups Manager" onClose={closeManager}>
+        <SetupManagerSmall onClose={closeManager} />
       </BottomSheet>
     </>
   );

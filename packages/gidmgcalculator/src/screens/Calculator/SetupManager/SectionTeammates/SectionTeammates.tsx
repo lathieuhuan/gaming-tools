@@ -9,7 +9,7 @@ import { setTeammate, removeTeammate } from "@Store/calculator/actions";
 import { CharacterPortrait, Tavern, TavernProps } from "@/components";
 import { Section } from "../_components/Section";
 import { CopySelect } from "./CopySelect";
-import { TeammateGear } from "./TeammateGear";
+import { TeammateDetail } from "./TeammateDetail";
 import { TeammateSlot } from "./TeammateSlot";
 
 type TavernState = {
@@ -132,7 +132,7 @@ export default function SectionTeammates() {
 
       <CollapseSpace active={selectedIndex !== null}>
         {selectedTeammate && selectedIndex !== null && (
-          <TeammateGear teammate={selectedTeammate} info={selectedTeammate.data} />
+          <TeammateDetail teammate={selectedTeammate} info={selectedTeammate.data} />
         )}
       </CollapseSpace>
 

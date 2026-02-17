@@ -1,6 +1,3 @@
-import { createPortal } from "react-dom";
-import { LoadingSpin, Modal } from "rond";
-
 import { updateUI, useUIStore } from "@Store/ui";
 
 // Component
@@ -10,24 +7,6 @@ import { Download } from "./Download";
 import { Guides } from "./Guides";
 import { Settings } from "./Settings";
 import { Upload } from "./Upload";
-
-// TODO check if this is still needed
-const AppLoadingOverlay = () => {
-  const loading = useUIStore((state) => state.loading);
-  let mask = document.getElementById("app-mask");
-
-  if (!mask) {
-    mask = document.createElement("div");
-    mask.id = "app-mask";
-    document.body.appendChild(mask);
-  }
-  return createPortal(
-    <Modal.Core active={loading} closeOnMaskClick={false} onClose={() => {}}>
-      <LoadingSpin size="large" />
-    </Modal.Core>,
-    mask
-  );
-};
 
 export function Modals() {
   const appModalType = useUIStore((state) => state.appModalType);
@@ -42,7 +21,6 @@ export function Modals() {
       <Upload active={appModalType === "UPLOAD"} onClose={closeModal} />
       <Donate active={appModalType === "DONATE"} onClose={closeModal} />
       <DataFixing active={appModalType === "DATA_FIX"} onClose={closeModal} />
-      <AppLoadingOverlay />
     </>
   );
 }

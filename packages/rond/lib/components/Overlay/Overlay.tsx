@@ -25,7 +25,7 @@ export type OverlayProps = {
     moving: OverlayState["movingDir"],
     transitionStyle: TransitionStyle
   ) => React.ReactNode;
-  onClose: () => void;
+  onClose?: () => void;
   onTransitionEnd?: (open: boolean) => void;
   getContainer?: () => HTMLElement | null;
 };
@@ -70,7 +70,7 @@ export function Overlay({
         onTransitionEnd?.(false);
 
         if (shouldSync) {
-          onClose();
+          onClose?.();
         }
       }, transitionDuration);
     }

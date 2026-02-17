@@ -8,6 +8,7 @@ export type CollapseListProps = {
   className?: string;
   bodyCls?: ClassValue;
   items: Array<{
+    id?: string;
     title?: string;
     heading: React.ReactNode | ((expanded?: boolean) => React.ReactNode);
     body: React.ReactNode;
@@ -19,11 +20,11 @@ export const CollapseList = (props: CollapseListProps) => {
 
   return (
     <div className={props.className}>
-      {props.items.map(({ title, heading, body }, i) => {
+      {props.items.map(({ id, title, heading, body }, i) => {
         const active = !!expanded[i];
 
         return (
-          <div key={i} className="mb-3">
+          <div key={i} id={id} className="mb-3">
             <div
               className={clsx(
                 "pt-1 px-6 pb-0 font-semibold leading-[1.625] cursor-pointer transition-all duration-200 glow-on-hover",

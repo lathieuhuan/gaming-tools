@@ -89,8 +89,21 @@ export function convertToV5(data: DatabaseDataV4): DatabaseDataV5 {
 
   for (const setup of data.setups) {
     if (setup.type === "complex") {
-      // TODO: migrate allIDs
-      setups.push(setup);
+      const { allIDs, ...rest } = setup;
+      const newAllIDs: typeof allIDs = {};
+
+      for (const [name, setupId] of Object.entries(allIDs)) {
+        const character = getCharacter(name);
+
+        if (character) {
+          newAllIDs[character.code] = setupId;
+        }
+      }
+
+      setups.push({
+        ...rest,
+        allIDs: newAllIDs,
+      });
       continue;
     }
 

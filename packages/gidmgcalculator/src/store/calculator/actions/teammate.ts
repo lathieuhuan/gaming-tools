@@ -30,7 +30,7 @@ export const updateTeammate: ForwardedAction<CalcSetup["updateTeammate"]> = (...
   );
 };
 
-export const toggleTeammateEnhance = (tmCode: number) => {
+export const toggleTeammateEnhance = (tmCode: number, enhanced?: boolean) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
       const teammate = setup.teammates.find((teammate) => teammate.data.code === tmCode);
@@ -40,7 +40,7 @@ export const toggleTeammateEnhance = (tmCode: number) => {
       }
 
       setup.updateTeammate(tmCode, {
-        enhanced: !teammate.enhanced,
+        enhanced: enhanced ?? !teammate.enhanced,
       });
 
       setup.team = new Team([setup.main, ...setup.teammates]);

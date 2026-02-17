@@ -1,6 +1,8 @@
 import { useState } from "react";
 
 import type { AppCharacter, ITeammate } from "@/types";
+
+import { ENHANCE_TOUR_SITE_ID } from "@/constants";
 import {
   changeTeammateArtifact,
   changeTeammateWeapon,
@@ -17,12 +19,12 @@ import {
   WeaponForgeProps,
 } from "@/components";
 
-type TeammateGearProps = {
+type TeammateDetailProps = {
   teammate: ITeammate;
   info: AppCharacter;
 };
 
-export function TeammateGear({ teammate, info }: TeammateGearProps) {
+export function TeammateDetail({ teammate, info }: TeammateDetailProps) {
   const [modalType, setModalType] = useState<"WEAPON" | "ARTIFACT" | null>(null);
   const { data } = teammate;
   const elmtText = `text-${data.vision}`;
@@ -54,8 +56,10 @@ export function TeammateGear({ teammate, info }: TeammateGearProps) {
           <div className="mb-4 pl-1 flex items-center">
             <p className={`leading-none text-xl font-semibold ${elmtText}`}>{teammate.data.name}</p>
 
+            <div hidden={!data.enhanceType} className="mx-2 w-px h-4 bg-dark-line" />
+
             <EnhanceTag
-              className="ml-2 pl-2 border-l border-dark-line"
+              id={ENHANCE_TOUR_SITE_ID.subEnhance(teammate.code)}
               mutable={true}
               character={teammate}
               onToggle={handleEnhanceToggle}

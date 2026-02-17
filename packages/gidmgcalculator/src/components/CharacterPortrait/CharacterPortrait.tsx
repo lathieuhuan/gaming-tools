@@ -14,6 +14,7 @@ const sizeCls: Partial<Record<PortraitSize, string>> = {
 };
 
 type CharacterPortraitProps = {
+  id?: string;
   className?: ClassValue;
   imgCls?: ClassValue;
   info?: {
@@ -49,6 +50,7 @@ export function CharacterPortrait(props: CharacterPortraitProps) {
   if (props.recruitable) {
     return (
       <button
+        id={props.id}
         className={clsx(cls, !info && "flex-center glow-on-hover")}
         title={info?.name}
         onClick={onClick}
@@ -63,7 +65,7 @@ export function CharacterPortrait(props: CharacterPortraitProps) {
   }
 
   return (
-    <div className={clsx(cls)} title={info?.name} onClick={onClick}>
+    <div id={props.id} className={clsx(cls)} title={info?.name} onClick={onClick}>
       {info && (
         <GenshinImage src={icon} imgType="character" imgCls={props.imgCls} fallbackCls="p-2" />
       )}

@@ -8,7 +8,7 @@ export const LARGE_HEIGHT_CLS = "h-90/100 max-h-192";
 
 export type ModalControl = {
   active?: boolean;
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 export type ModalCoreProps = ModalControl &

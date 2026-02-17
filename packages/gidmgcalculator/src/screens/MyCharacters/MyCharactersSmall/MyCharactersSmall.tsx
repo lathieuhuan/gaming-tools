@@ -6,7 +6,7 @@ import { useDispatch } from "@Store/hooks";
 import { viewDbCharacter } from "@Store/userdb-slice";
 
 // Component
-import { MobileBottomNav } from "@/components";
+import { MobileBottomNav, MobileBottomNavOption } from "@/components";
 import { ActiveCharProvider } from "../ActiveCharProvider";
 import { ContextProvider } from "../ContextProvider";
 import { PanelAttributes } from "../PanelAttributes";
@@ -15,12 +15,21 @@ import { PanelGears } from "../PanelGears";
 import { PanelTalents } from "../PanelTalents";
 import { MyCharactersSmallMenu } from "./MyCharactersSmallMenu";
 
+type PanelType = "ATTRIBUTES" | "GEARS" | "CONSTELATION" | "TALENTS";
+
 export function MyCharactersSmall() {
   const dispatch = useDispatch();
-  const [activePanelI, setActivePanelI] = useState(0);
+  const [activePanel, setActivePanel] = useState<PanelType>("ATTRIBUTES");
   const [menuActive, setMenuActive] = useState(false);
 
   const closeMenu = () => setMenuActive(false);
+
+  const panelOptions: MobileBottomNavOption<PanelType>[] = [
+    { label: "Overview", value: "ATTRIBUTES" },
+    { label: "Gears", value: "GEARS" },
+    { label: "Constellation", value: "CONSTELATION" },
+    { label: "Talents", value: "TALENTS" },
+  ];
 
   return (
     <ContextProvider>
@@ -28,11 +37,11 @@ export function MyCharactersSmall() {
         <div className="p-4 grow hide-scrollbar bg-dark-1">
           <ActiveCharProvider>
             <SwitchNode
-              value={activePanelI}
+              value={activePanel}
               cases={[
-                { value: 0, element: <PanelAttributes /> },
+                { value: "ATTRIBUTES", element: <PanelAttributes /> },
                 {
-                  value: 1,
+                  value: "GEARS",
                   element: (
                     <PanelGears>
                       {({ detailActive, renderGearsOverview, renderGearsDetail, removeDetail }) => {
@@ -52,17 +61,17 @@ export function MyCharactersSmall() {
                     </PanelGears>
                   ),
                 },
-                { value: 2, element: <PanelConstellation /> },
-                { value: 3, element: <PanelTalents /> },
+                { value: "CONSTELATION", element: <PanelConstellation /> },
+                { value: "TALENTS", element: <PanelTalents /> },
               ]}
             />
           </ActiveCharProvider>
         </div>
 
         <MobileBottomNav
-          activeI={activePanelI}
-          options={["Overview", "Gears", "Constellation", "Talents"]}
-          onSelect={setActivePanelI}
+          value={activePanel}
+          options={panelOptions}
+          onSelect={(option) => setActivePanel(option.value)}
           extraEnd={
             <>
               <div className="my-auto w-px h-2/3 bg-dark-line" />

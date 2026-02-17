@@ -1,6 +1,7 @@
 import { useId, useState } from "react";
 import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 
+import { ENHANCE_TOUR_SITE_ID } from "@/constants/ui";
 import { useCalcStore } from "@Store/calculator";
 import { updateMain } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
@@ -43,6 +44,9 @@ function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
         onChangeLevel={(level) => updateMain({ level })}
         onChangeCons={(cons) => updateMain({ cons })}
         onEnhanceToggle={(enhanced) => updateMain({ enhanced })}
+        ids={{
+          enhanceTag: ENHANCE_TOUR_SITE_ID.mainEnhance,
+        }}
       />
 
       <ComplexSelect

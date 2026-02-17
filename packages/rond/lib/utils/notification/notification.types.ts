@@ -3,6 +3,7 @@ import type { AlertProps } from "../../components";
 
 export type NotificationRequest = Omit<AlertProps, "onClose"> & {
   id: number;
+  /** In seconds. Default is 3 */
   duration?: number;
   isClosing?: boolean;
   onClose?: (id: number) => void;

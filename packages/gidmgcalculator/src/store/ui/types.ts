@@ -14,8 +14,9 @@ export type MySetupsModalType =
 
 export type TrackerState = "open" | "close" | "hidden";
 
+export type TourType = "ENHANCE" | "";
+
 export type UIState = {
-  loading: boolean;
   appReady: boolean;
   appModalType:
     | ""
@@ -32,6 +33,7 @@ export type UIState = {
   };
   setupDirectorActive: boolean;
   trackerState: TrackerState;
+  tourType: TourType;
   mySetupsModalType: MySetupsModalType;
   enkaParams?: SearchParams;
 };

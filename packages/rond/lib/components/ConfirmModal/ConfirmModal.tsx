@@ -36,11 +36,11 @@ const ConfirmModal = ({
         }}
         onCancel={() => {
           onCancel?.();
-          onClose();
+          onClose?.();
         }}
         onConfirm={() => {
           onConfirm?.();
-          onClose();
+          onClose?.();
         }}
       />
     </Modal.Core>

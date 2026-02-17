@@ -143,7 +143,7 @@ export function SetupImportCenter({ params, onFinish, ...manageInfo }: SetupImpo
   switch (pendingCode) {
     case "INIT":
       return (
-        <Modal.Core active closeOnMaskClick={false} onClose={() => {}}>
+        <Modal.Core active closeOnMaskClick={false}>
           <LoadingSpin size="large" />
         </Modal.Core>
       );

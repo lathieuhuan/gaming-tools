@@ -1,5 +1,6 @@
 import { CollapseList } from "rond";
 
+import { TOUR_STEP_ID } from "@/constants/ui";
 import { useTabs } from "@/hooks";
 
 // Component
@@ -33,6 +34,7 @@ export function Modifiers() {
           className={!activeIndex ? "hidden" : undefined}
           items={[
             {
+              id: TOUR_STEP_ID.teamBonus,
               title: "Team Bonus",
               heading: "Team Bonus",
               body: <BuffTeamBonus />,

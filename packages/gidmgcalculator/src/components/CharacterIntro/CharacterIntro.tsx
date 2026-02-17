@@ -1,11 +1,11 @@
 import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
-import { Badge, Button, Rarity, VersatileSelect } from "rond";
+import { Badge, Button, clsx, Rarity, VersatileSelect } from "rond";
 
 import type { AppCharacter, ICharacterBasic, Level } from "@/types";
 
 import { EnhanceTag } from "../EnhanceTag";
 import { GenshinImage } from "../GenshinImage";
-import { CharacterLevelControl, LevelControl } from "../LevelControl";
+import { CharacterLevelControl } from "../LevelControl";
 
 type CharacterIntroProps = {
   className?: string;
@@ -14,6 +14,9 @@ type CharacterIntroProps = {
   removable?: boolean;
   /** Default true */
   mutable?: boolean;
+  ids?: {
+    enhanceTag?: string;
+  };
   onSwitch?: () => void;
   onRemove?: () => void;
   onChangeLevel?: (newLevel: Level) => void;
@@ -22,7 +25,7 @@ type CharacterIntroProps = {
 };
 
 export function CharacterIntro(props: CharacterIntroProps) {
-  const { className = "", character, mutable = true } = props;
+  const { className = "", character, mutable = true, ids } = props;
   const { data } = character;
   const elmtText = `text-${data.vision}`;
 
@@ -52,9 +55,11 @@ export function CharacterIntro(props: CharacterIntroProps) {
       <div className="min-w-0 grow">
         <div className="overflow-hidden">
           <h2
-            className={`text-2xl leading-7 truncate ${elmtText} font-black ${
-              props.removable ? "pr-9" : ""
-            }`}
+            className={clsx(
+              `text-2xl leading-7 truncate font-black`,
+              elmtText,
+              props.removable && "pr-9"
+            )}
             onDoubleClick={() => console.info(character)}
           >
             {data.name}
@@ -63,8 +68,10 @@ export function CharacterIntro(props: CharacterIntroProps) {
           <div className="flex items-center">
             <Rarity value={data.rarity} />
 
+            <div hidden={!data.enhanceType} className="mx-2 w-px h-4 bg-dark-line" />
+
             <EnhanceTag
-              className="ml-2 pl-2 border-l border-dark-line"
+              id={ids?.enhanceTag}
               mutable={mutable}
               character={character}
               onToggle={() => props.onEnhanceToggle?.(!character.enhanced)}
