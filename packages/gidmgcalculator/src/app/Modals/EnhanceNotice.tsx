@@ -34,7 +34,7 @@ export function EnhanceNotice({ active, onClose }: ModalControl) {
 
       <div className="mt-4 flex">
         <Checkbox onChange={(checked) => (checkRef.current = checked)}>
-          <span className="text-light-3">Don't show again</span>
+          <span className="text-light-3">Don't notify again</span>
         </Checkbox>
       </div>
     </Modal>

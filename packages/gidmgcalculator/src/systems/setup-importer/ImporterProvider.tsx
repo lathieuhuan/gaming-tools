@@ -1,8 +1,8 @@
 import { ReactNode, useMemo, useState } from "react";
 
 import { SetupImportInfo } from "@/types";
-import { ImporterContext } from "./contexts/ImporterContext";
-import { SetupImportCenter } from "./components/ImportCenter";
+import { ImporterContext } from "./_context";
+import { ImportCenter } from "./ImportCenter";
 
 export function ImporterProvider({ children }: { children: ReactNode }) {
   const [importInfo, setImportInfo] = useState<SetupImportInfo>({});
@@ -23,7 +23,7 @@ export function ImporterProvider({ children }: { children: ReactNode }) {
       {children}
 
       {importInfo.params && (
-        <SetupImportCenter {...importInfo} params={importInfo.params} onFinish={handleFinish} />
+        <ImportCenter {...importInfo} params={importInfo.params} onFinish={handleFinish} />
       )}
     </ImporterContext.Provider>
   );

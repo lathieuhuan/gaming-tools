@@ -1,16 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { OutletRouteContext } from "../contexts/OutletRouteContext";
-import { Router, RouterContext } from "../contexts/RouterContext";
+import type { RootRouteConfig } from "./_types";
+
+import { getOutletRoute } from "./_logic/getOutletRoute";
+import { navigate } from "./_logic/navigate";
+import { checkIsChildSegments, getSearchParams, toPathSegments } from "./_utils";
+import { OutletRouteContext } from "./_contexts/OutletRouteContext";
+import { Router, RouterContext } from "./_contexts/RouterContext";
 import {
   SearchParamsContext,
   SearchParamsContextState,
   SetSearchParams,
-} from "../contexts/SearchParamsContext";
-import { getOutletRoute } from "../logic/getOutletRoute";
-import { navigate } from "../logic/navigate";
-import { RootRouteConfig } from "../types";
-import { checkIsChildSegments, getSearchParams, toPathSegments } from "../utils";
+} from "./_contexts/SearchParamsContext";
 
 import { NotFound } from "./NotFound";
 
@@ -61,7 +62,9 @@ export function RouterProvider({ route }: RouterProviderProps) {
         navigate(pathname, searchParams, replaceHistory);
       },
       isRouteActive: (path: string) => {
-        return path === "/" ? pathname === "/" : checkIsChildSegments(toPathSegments(path), segments);
+        return path === "/"
+          ? pathname === "/"
+          : checkIsChildSegments(toPathSegments(path), segments);
       },
     };
 

@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, WarehouseLayout, clsx, useScreenWatcher } from "rond";
 
-import type { SetupOverviewInfo } from "./types";
+import type { SetupOverviewInfo } from "./_types";
 
 import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/Array";
@@ -11,7 +11,7 @@ import { parseDbArtifacts, parseDbWeapon } from "@/utils/userdb";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui";
 import { viewDbSetup, selectActiveSetupId } from "@Store/userdb-slice";
-import { createSetupForTeammate, toOverviewInfo } from "./utils";
+import { createSetupForTeammate, toOverviewInfo } from "./_utils";
 
 // Component
 import { WarehouseWrapper } from "../_components/WarehouseWrapper";

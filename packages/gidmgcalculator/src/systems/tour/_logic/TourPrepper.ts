@@ -27,9 +27,7 @@ export class TourPrepper implements TourPrepperOptions {
   }
 
   next() {
-    this.currentIndex++;
-
-    return this.prep(this.currentIndex);
+    return this.prep(++this.currentIndex);
   }
 
   private async prep(index: number): Promise<TourSite | undefined> {

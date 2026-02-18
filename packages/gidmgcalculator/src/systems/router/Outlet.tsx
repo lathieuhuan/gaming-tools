@@ -1,8 +1,9 @@
 import { useContext, useMemo } from "react";
 
-import { OutletRouteContext } from "../contexts/OutletRouteContext";
-import { getOutletRoute } from "../logic/getOutletRoute";
-import { NotFoundRoute, OutletRoute } from "../types";
+import type { NotFoundRoute, OutletRoute } from "./_types";
+
+import { OutletRouteContext } from "./_contexts/OutletRouteContext";
+import { getOutletRoute } from "./_logic/getOutletRoute";
 
 function getRouteKey(route: OutletRoute | NotFoundRoute | null) {
   if (!route) {
@@ -42,5 +43,9 @@ export function Outlet() {
     return null;
   }
 
-  return <OutletRouteContext.Provider value={config.outlet}>{config.children}</OutletRouteContext.Provider>;
+  return (
+    <OutletRouteContext.Provider value={config.outlet}>
+      {config.children}
+    </OutletRouteContext.Provider>
+  );
 }

@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { NavigateFn } from "../logic/navigate";
+import { NavigateFn } from "../_logic/navigate";
 
 export type Router = {
   pathname: string;

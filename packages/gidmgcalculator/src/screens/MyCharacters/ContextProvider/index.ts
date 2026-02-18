@@ -1,2 +1,2 @@
 export * from "./ContextProvider";
-export * from "./hooks";
+export { useMyCharactersModalCtrl } from "./ModalProvider/_context";

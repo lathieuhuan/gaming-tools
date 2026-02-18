@@ -1,5 +1,5 @@
-import { SearchParams } from "../types";
-import { objectToSearchString } from "../utils";
+import { SearchParams } from "../_types";
+import { objectToSearchString } from "../_utils";
 
 export function navigate(pathname: string, searchParams?: SearchParams, replaceHistory?: boolean) {
   const searchString = searchParams ? objectToSearchString(searchParams) : "";

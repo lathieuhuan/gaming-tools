@@ -30,13 +30,13 @@ export type TourType = "ENHANCE" | "";
 export type UIState = {
   appReady: boolean;
   appModalType: AppModalType;
+  mySetupsModalType: MySetupsModalType;
   targetConfig: {
     active: boolean;
     overviewed: boolean;
   };
   setupDirectorActive: boolean;
   trackerState: TrackerState;
-  mySetupsModalType: MySetupsModalType;
   tourType: TourType;
   enkaParams?: SearchParams;
 };

@@ -4,8 +4,8 @@ import { clsx, Table } from "rond";
 import type { ICharacterBasic, ITargetBasic } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { OverwriteOption } from "./OverwriteOption";
 import { $AppCharacter } from "@/services";
+import { OverwriteOption } from "./OverwriteOption";
 
 export type OverwriteOptionsProps = {
   currentMain: ICharacterBasic;

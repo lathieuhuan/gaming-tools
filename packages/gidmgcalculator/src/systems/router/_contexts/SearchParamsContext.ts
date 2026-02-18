@@ -1,5 +1,5 @@
 import { createContext, SetStateAction, useContext } from "react";
-import { SearchParams } from "../types";
+import type { SearchParams } from "../_types";
 
 export type SetSearchParams<T extends SearchParams = SearchParams> = (
   value: SetStateAction<T>,

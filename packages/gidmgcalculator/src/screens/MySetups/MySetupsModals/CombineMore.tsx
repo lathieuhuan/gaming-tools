@@ -5,7 +5,7 @@ import Array_ from "@/utils/Array";
 import { isDbSetup } from "@/utils/setup";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { addSetupToComplex, selectActiveSetupId, selectUserSetups } from "@Store/userdb-slice";
-import { useCombineManager } from "./hooks";
+import { useCombineManager } from "./_useCombineManager";
 
 type CombineMoreProcessedResult = {
   dbSetups: (IDbSetup | IDbComplexSetup)[];

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CharacterLabel } from "./CharacterLabel";
-import { CharacterToBeSorted } from "./utils";
+import { CharacterToBeSorted } from "./_utils";
 
 type MarkedListProps = {
   characters: CharacterToBeSorted[];

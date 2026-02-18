@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-import type { EnkaImportSection } from "../types";
+import type { EnkaImportSection } from "../_types";
 
 export type LayoutContextState = {
   isMobile: boolean;

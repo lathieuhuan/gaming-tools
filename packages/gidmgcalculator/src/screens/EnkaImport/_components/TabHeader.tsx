@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Button, cn, FancyBackSvg } from "rond";
 
-import type { EnkaImportSection } from "../types";
+import type { EnkaImportSection } from "../_types";
 
 import { useLayoutState } from "../Layout";
 

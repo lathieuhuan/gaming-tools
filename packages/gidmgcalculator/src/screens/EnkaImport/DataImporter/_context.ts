@@ -2,7 +2,7 @@ import { UseQueryResult } from "@tanstack/react-query";
 import { createContext, Dispatch, SetStateAction, useContext } from "react";
 
 import type { GenshinUser } from "@/services/enka";
-import type { SelectedBuild } from "../types";
+import type { SelectedBuild } from "../_types";
 
 export type DataImportContextState = UseQueryResult<GenshinUser>;
 

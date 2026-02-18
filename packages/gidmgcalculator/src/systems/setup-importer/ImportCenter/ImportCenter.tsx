@@ -16,11 +16,11 @@ import { OverwriteOptions, type OverwriteOptionsProps } from "./OverwriteOptions
 
 type PendingCode = "INIT" | "DIFFERENT_CHAR" | "EXISTED" | "MAX_SETUPS" | "DIFFERENT_INFO/TARGET";
 
-type SetupImportCenterProps = PartiallyRequired<SetupImportInfo, "params"> & {
+type ImportCenterProps = PartiallyRequired<SetupImportInfo, "params"> & {
   onFinish: () => void;
 };
 
-export function SetupImportCenter({ params, onFinish, ...manageInfo }: SetupImportCenterProps) {
+export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterProps) {
   const router = useRouter();
   const { main, target, setupManagers } = useShallowCalcStore((state) => {
     const { activeId = "", setupsById } = state;

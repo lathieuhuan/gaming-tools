@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { Button, FancyBackSvg } from "rond";
 
 import type { ArtifactType, AttributeStat } from "@/types";
-import type { GearsDetailType } from "./Gears.types";
+import type { GearsDetailType } from "./_types";
 
 import { ArtifactCard, AttributeTable, SetBonusesView, WeaponCard } from "@/components";
 import { ARTIFACT_TYPES } from "@/constants/global";

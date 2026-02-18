@@ -1,2 +1,2 @@
 export * from "./ActiveCharProvider";
-export * from "./_hooks";
+export { useActiveChar, useActiveCharActions } from "./_context";

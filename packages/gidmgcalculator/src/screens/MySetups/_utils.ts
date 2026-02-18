@@ -1,6 +1,6 @@
 import type { IDbComplexSetup, IDbSetup, ITeammateArtifact } from "@/types";
 import type { UserdbState } from "@Store/userdb-slice";
-import type { SetupOverviewInfo } from "./types";
+import type { SetupOverviewInfo } from "./_types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { Artifact, ArtifactGear, Team } from "@/models/base";
@@ -26,7 +26,7 @@ import { isDbSetup } from "@/utils/setup";
 import { SystemError } from "@/utils/SystemError";
 import { makeCharacterCalcFromDb } from "@/utils/userdb";
 
-export function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOverviewInfo["setup"] {
+function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOverviewInfo["setup"] {
   const { userWps, userArts } = userDb;
 
   const main = makeCharacterCalcFromDb(setup.main, userWps, userArts);

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import type { IArtifactBuffCtrl, IArtifactDebuffCtrl, IDbSetup } from "@/types";
-import type { SetupOverviewInfo } from "../types";
+import type { SetupOverviewInfo } from "../_types";
 
 import { calculateSetup } from "@/calculation/calculator";
 import { Target, Team } from "@/models/base";

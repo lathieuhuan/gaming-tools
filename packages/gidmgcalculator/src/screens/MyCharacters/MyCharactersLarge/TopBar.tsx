@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "@Store/hooks";
 import { selectActiveCharacter, selectDbCharacters, viewDbCharacter } from "@Store/userdb-slice";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
 
-export function MyCharactersTopBar() {
+export function TopBar() {
   const dispatch = useDispatch();
   const characters = useSelector(selectDbCharacters);
   const activeChar = useSelector(selectActiveCharacter);

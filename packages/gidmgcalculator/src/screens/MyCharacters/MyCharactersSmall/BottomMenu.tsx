@@ -17,12 +17,12 @@ import { useMyCharactersModalCtrl } from "../ContextProvider";
 
 import { GenshinImage } from "@/components";
 
-type MyCharactersSmallMenuProps = {
+type BottomMenuProps = {
   onSelect: (character: IDbCharacter) => void;
   onClose: () => void;
 };
 
-export function MyCharactersSmallMenu(props: MyCharactersSmallMenuProps) {
+export function BottomMenu(props: BottomMenuProps) {
   const userChars = useSelector(selectDbCharacters);
   const activeChar = useSelector(selectActiveCharacter);
   const modalCtrl = useMyCharactersModalCtrl();

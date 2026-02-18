@@ -6,7 +6,7 @@ import Array_ from "@/utils/Array";
 import { isDbSetup } from "@/utils/setup";
 import { useDispatch } from "@Store/hooks";
 import { combineSetups, selectUserSetups } from "@Store/userdb-slice";
-import { useCombineManager } from "./hooks";
+import { useCombineManager } from "./_useCombineManager";
 
 export default function FirstCombine(props: { onClose: () => void }) {
   const dispatch = useDispatch();

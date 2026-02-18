@@ -7,7 +7,7 @@ import type { TourStep } from "./_types";
 
 import { setTourType } from "@Store/ui";
 import { useTourPrepper } from "./_hooks/useTourPrepper";
-import { getEnhanceTourSteps } from "./_tours/enhance-tour";
+import { getEnhanceTourSteps } from "./_configs/enhance-tour";
 
 import { Tour } from "./Tour";
 import { TourLoading } from "./TourLoading";

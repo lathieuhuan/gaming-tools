@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import type { GearsDetailType } from "./Gears.types";
+import type { GearsDetailType } from "./_types";
 import { useActiveCharActions } from "../ActiveCharProvider";
 
 import { GearsDetail, GearsDetailProps } from "./GearsDetail";

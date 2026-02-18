@@ -7,10 +7,10 @@ import { CharacterPortrait } from "@/components";
 
 export type SetupOptions = Array<Pick<IDbSetup, "ID" | "type" | "name" | "main" | "teammates">>;
 
-interface UseCombineManagerArgs {
+type UseCombineManagerArgs = {
   options: SetupOptions;
   limit: number;
-}
+};
 
 export function useCombineManager({ options, limit }: UseCombineManagerArgs) {
   const [pickedIDs, setPickedIDs] = useState<number[]>([]);

@@ -3,7 +3,7 @@ import { Modal } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
 import { addDbCharacter, selectDbCharacters, viewDbCharacter } from "@Store/userdb-slice";
-import { ModalContext, type ModalControl } from "./Modal.context";
+import { ModalContext, type ModalControl } from "./_context";
 
 // Component
 import { Tavern } from "@/components";

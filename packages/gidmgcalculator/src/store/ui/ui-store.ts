@@ -5,6 +5,7 @@ import { immer } from "zustand/middleware/immer";
 import type { UIState } from "./types";
 
 const initialState: UIState = {
+  appReady: false,
   appModalType: "",
   mySetupsModalType: "",
   targetConfig: {
@@ -14,7 +15,6 @@ const initialState: UIState = {
   setupDirectorActive: false,
   trackerState: "close",
   tourType: "",
-  appReady: false,
 };
 
 export const useUIStore = create<UIState>()(immer(() => initialState));
@@ -22,3 +22,5 @@ export const useUIStore = create<UIState>()(immer(() => initialState));
 // export const useShallowUIStore = <T>(selector: (state: UIState) => T) => {
 //   return useUIStore(useShallow(selector));
 // };
+
+export const selectAppReady = (state: UIState) => state.appReady;

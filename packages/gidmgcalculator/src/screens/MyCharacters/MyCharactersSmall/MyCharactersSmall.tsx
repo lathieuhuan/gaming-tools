@@ -13,7 +13,7 @@ import { PanelAttributes } from "../PanelAttributes";
 import { PanelConstellation } from "../PanelConstellation";
 import { PanelGears } from "../PanelGears";
 import { PanelTalents } from "../PanelTalents";
-import { MyCharactersSmallMenu } from "./MyCharactersSmallMenu";
+import { BottomMenu } from "./BottomMenu";
 
 type PanelType = "ATTRIBUTES" | "GEARS" | "CONSTELATION" | "TALENTS";
 
@@ -87,7 +87,7 @@ export function MyCharactersSmall() {
         />
 
         <BottomSheet active={menuActive} height="90%" title="Switch to" onClose={closeMenu}>
-          <MyCharactersSmallMenu
+          <BottomMenu
             onSelect={(character) => dispatch(viewDbCharacter(character.code))}
             onClose={closeMenu}
           />

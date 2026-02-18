@@ -6,7 +6,7 @@ import { Ascendable } from "@/models/base";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import { useDispatch } from "@Store/hooks";
 import { sortDbCharacters } from "@Store/userdb-slice";
-import { selectCharacterToBeSorted } from "./utils";
+import { selectCharacterToBeSorted } from "./_utils";
 
 import { DragAndDropList } from "./DragAndDropList";
 import { MarkedList } from "./MarkedList";

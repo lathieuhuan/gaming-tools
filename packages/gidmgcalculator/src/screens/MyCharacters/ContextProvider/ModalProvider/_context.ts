@@ -1,5 +1,11 @@
-import { useContext } from "react";
-import { ModalContext } from "./ModalProvider/Modal.context";
+import { createContext, useContext } from "react";
+
+export type ModalControl = {
+  requestSortCharacters: () => void;
+  requestAddCharacter: () => void;
+};
+
+export const ModalContext = createContext<ModalControl | null>(null);
 
 export function useMyCharactersModalCtrl() {
   const context = useContext(ModalContext);

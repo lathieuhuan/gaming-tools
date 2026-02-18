@@ -2,7 +2,7 @@ import { FaInfo } from "react-icons/fa";
 import { Button, CloseButton, clsx } from "rond";
 
 import type { ArtifactType, IArtifactGearSet } from "@/types";
-import type { GearsDetailType } from "./Gears.types";
+import type { GearsDetailType } from "./_types";
 
 import { EquipmentDisplay, EquipmentDisplayProps, EquipmentType } from "@/components";
 import { ARTIFACT_TYPES } from "@/constants/global";

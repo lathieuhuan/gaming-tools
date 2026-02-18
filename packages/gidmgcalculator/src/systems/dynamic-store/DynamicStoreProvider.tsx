@@ -4,7 +4,7 @@ import { setupStore } from "@/store";
 import { useSettingsStore } from "@Store/settings";
 import { updateUI } from "@Store/ui";
 import { addUserDatabase } from "@Store/userdb-slice";
-import { DynamicStoreContext } from "./context";
+import { DynamicStoreContext } from "./_context";
 
 import { SettingsHydrationGuard } from "./SettingsHydrationGuard";
 

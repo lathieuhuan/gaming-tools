@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button, clsx, Input, LoadingSpin, SearchSvg, Select } from "rond";
 
-import type { SearchParams } from "../types";
+import type { EnkaSearchParams } from "../_types";
 
 import { useSearchParams } from "@/systems/router";
 import Object_ from "@/utils/Object";
@@ -13,7 +13,7 @@ type SearchInput = {
   value: string;
 };
 
-function parseSearchParams(params?: SearchParams): SearchInput {
+function parseSearchParams(params?: EnkaSearchParams): SearchInput {
   if (params?.uid) {
     return { type: "uid", value: params.uid };
   }
@@ -31,7 +31,7 @@ export type SearchBarProps = {
 };
 
 export function SearchBar({ className, onSearchProfile }: SearchBarProps) {
-  const [searchParams, setSearchParams] = useSearchParams<SearchParams>();
+  const [searchParams, setSearchParams] = useSearchParams<EnkaSearchParams>();
   const [onCooldown, setOnCooldown] = useState(false);
   const enkaParams = useUIStore((state) => state.enkaParams);
   const { isLoading } = useDataImportState();

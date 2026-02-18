@@ -1,7 +1,7 @@
 import { clsx, ItemCase } from "rond";
 
 import type { ArtifactType, IArtifact } from "@/types";
-import type { SelectedBuild } from "../types";
+import type { SelectedBuild } from "../_types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { Artifact } from "@/models/base";

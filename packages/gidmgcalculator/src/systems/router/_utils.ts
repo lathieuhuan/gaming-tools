@@ -1,4 +1,4 @@
-import { SearchParams } from "./types";
+import type { SearchParams } from "./_types";
 
 export function toPathSegments(path: string) {
   return path.split("/").filter(Boolean);

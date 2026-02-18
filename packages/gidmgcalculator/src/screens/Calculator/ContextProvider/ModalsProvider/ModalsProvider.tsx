@@ -3,7 +3,7 @@ import { Modal } from "rond";
 
 import { useStore } from "@/systems/dynamic-store";
 import { initSessionWithCharacter } from "./_actions/initSessionWithCharacter";
-import { CalculatorModalsContext, CalculatorModalsControl } from "./context";
+import { CalculatorModalsContext, CalculatorModalsControl } from "./_context";
 
 // Component
 import { Tavern } from "@/components";
