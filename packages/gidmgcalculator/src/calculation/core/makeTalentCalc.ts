@@ -21,8 +21,8 @@ import type { ResultRecorder } from "./ResultRecorder";
 
 import { Character } from "@/models/base";
 import Array_ from "@/utils/Array";
-import { limitCRate } from "@/utils/calculation";
-import { toMult } from "@/utils/pure-utils";
+import { limitCRate } from "@/utils/calculation.utils";
+import { toMult } from "@/utils/pure.utils";
 import { LUNAR_ATTACK_COEFFICIENT, LUNAR_ATTACK_ELEMENT } from "../constants";
 import { makeAttackItemCalc } from "./makeAttackItemCalc";
 import { makeOtherItemCalc } from "./makeOtherItemCalc";

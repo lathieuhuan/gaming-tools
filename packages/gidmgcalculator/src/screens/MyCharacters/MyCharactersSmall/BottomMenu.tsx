@@ -12,7 +12,7 @@ import type { IDbCharacter } from "@/types";
 
 import { $AppCharacter } from "@/services";
 import { useSelector } from "@Store/hooks";
-import { selectActiveCharacter, selectDbCharacters } from "@Store/userdb-slice";
+import { selectActiveCharacter, selectDbCharacters } from "@Store/userdbSlice";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
 
 import { GenshinImage } from "@/components";

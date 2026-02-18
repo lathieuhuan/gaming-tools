@@ -5,9 +5,9 @@ import type { Artifact } from "@/models/base";
 import type { ArtifactType } from "@/types";
 
 import Array_ from "@/utils/Array";
-import { createArtifact } from "@/utils/entity";
+import { createArtifact } from "@/utils/entity.utils";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectDbArtifacts, sortDbArtifacts } from "@Store/userdb-slice";
+import { selectDbArtifacts, sortDbArtifacts } from "@Store/userdbSlice";
 
 // Component
 import {

@@ -4,13 +4,13 @@ import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 import { DOWNLOAD_DATA_VERSION } from "@/constants/config";
 import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
-import { createWeaponBasic } from "@/utils/entity";
+import { createWeaponBasic } from "@/utils/entity.utils";
 import {
   convertGOODArtifact,
   convertGOODCharacter,
   convertGOODWeapon,
   findGOODCharacter,
-} from "@/utils/GOOD";
+} from "@/utils/converGOOD.utils";
 import IdStore from "@/utils/IdStore";
 
 type GOODData = {

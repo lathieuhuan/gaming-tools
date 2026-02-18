@@ -2,7 +2,7 @@ import { clsx } from "rond";
 
 import { AttributeTable, CharacterIntro } from "@/components";
 import { useDispatch } from "@Store/hooks";
-import { updateDbCharacter } from "@Store/userdb-slice";
+import { updateDbCharacter } from "@Store/userdbSlice";
 import { useActiveChar, useActiveCharActions } from "../ActiveCharProvider";
 
 type PanelAttributesProps = {

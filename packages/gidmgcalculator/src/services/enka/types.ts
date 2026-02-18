@@ -1,6 +1,6 @@
 import type { IArtifact, IWeapon } from "@/types";
 import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
-import type { GOODCharacterConvertReturn } from "@/utils/GOOD";
+import type { GOODCharacterConvertReturn } from "@/utils/converGOOD.utils";
 
 type GOODBuild = {
   name?: string;

@@ -5,7 +5,7 @@ import { Button, WarehouseLayout } from "rond";
 import { SystemError } from "@/utils/SystemError";
 import { useDispatch } from "@Store/hooks";
 import { updateUI } from "@Store/ui";
-import { fixV4MigrationError } from "@Store/userdb-slice";
+import { fixV4MigrationError } from "@Store/userdbSlice";
 
 export function WarehouseError({ error, resetErrorBoundary }: FallbackProps) {
   const dispatch = useDispatch();

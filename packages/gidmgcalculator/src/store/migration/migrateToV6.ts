@@ -1,5 +1,5 @@
 import { convertToV5 } from "@/migration/convertToV5";
-import { initialState, UserdbState } from "@Store/userdb-slice";
+import { initialState, UserdbState } from "@Store/userdbSlice";
 
 export const migrateToV6 = (state?: any): UserdbState => {
   if (!state) {

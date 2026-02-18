@@ -6,7 +6,7 @@ import type { AppCharacter, IDbCharacter } from "@/types";
 import { $AppCharacter } from "@/services";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import Array_ from "@/utils/Array";
-import { selectDbCharacters } from "@Store/userdb-slice";
+import { selectDbCharacters } from "@Store/userdbSlice";
 
 // Component
 import {

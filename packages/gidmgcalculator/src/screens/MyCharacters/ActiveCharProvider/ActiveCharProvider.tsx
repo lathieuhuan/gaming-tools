@@ -1,6 +1,6 @@
 import type { RootState } from "@Store/store";
 
-import { makeCharacterCalcFromDb } from "@/utils/userdb";
+import { makeCharacterCalcFromDb } from "@/utils/userdb.utils";
 import { useSelector } from "@Store/hooks";
 import { ActionProvider } from "./ActionProvider";
 import { ActiveCharContext } from "./_context";

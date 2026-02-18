@@ -15,7 +15,7 @@ import storage from "redux-persist/lib/storage";
 
 import { PERSISTED_DATA_VERSION } from "@/constants/config";
 import { migrates } from "./migration";
-import userdbSliceReducers, { initialState, userdbSlice } from "./userdb-slice";
+import userdbSliceReducers, { initialState, userdbSlice } from "./userdbSlice";
 
 type SetupStoreOptions = {
   persistUserData?: boolean;

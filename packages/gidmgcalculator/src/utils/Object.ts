@@ -1,8 +1,6 @@
 import { DeepPartial } from "@reduxjs/toolkit";
 import createDeepMerge from "@fastify/deepmerge";
 
-import type { UnknownObject } from "./utils.types";
-
 const deepMerge = createDeepMerge({ all: true });
 
 function isEmpty(value: unknown): boolean {
@@ -47,18 +45,19 @@ export default class Object_ {
     return !this.isEmpty(value);
   }
 
-  static keys<TObject extends UnknownObject = UnknownObject>(obj: TObject): (keyof TObject)[] {
-    return Object.keys(obj);
+  static keys<TObject extends object = object>(obj: TObject): (keyof TObject)[] {
+    // TODO: get keys of properties only
+    return Object.keys(obj) as (keyof TObject)[];
   }
 
   static entries<TObject extends object>(obj: TObject): [keyof TObject, TObject[keyof TObject]][] {
     return Object.entries(obj) as [keyof TObject, TObject[keyof TObject]][];
   }
 
-  static forEach<
-    TObject extends UnknownObject = UnknownObject,
-    TKey extends keyof TObject = keyof TObject
-  >(obj: TObject, callback: (key: TKey, value: TObject[TKey]) => void) {
+  static forEach<TObject extends object = object, TKey extends keyof TObject = keyof TObject>(
+    obj: TObject,
+    callback: (key: TKey, value: TObject[TKey]) => void
+  ) {
     for (const key in obj) {
       callback(key as unknown as TKey, obj[key] as unknown as TObject[TKey]);
     }
@@ -110,11 +109,11 @@ export default class Object_ {
     return object;
   }
 
-  static assign<TObj extends UnknownObject>(obj: TObj, props: Partial<TObj>): TObj {
+  static assign<TObj extends object>(obj: TObj, props: Partial<TObj>): TObj {
     return Object.assign(obj, props);
   }
 
-  static deepMerge<TObj extends UnknownObject>(obj: TObj, ...changes: DeepPartial<TObj>[]): TObj {
+  static deepMerge<TObj extends object>(obj: TObj, ...changes: DeepPartial<TObj>[]): TObj {
     return deepMerge(obj, ...changes) as TObj;
   }
 

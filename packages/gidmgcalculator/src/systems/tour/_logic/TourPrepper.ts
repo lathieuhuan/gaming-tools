@@ -1,4 +1,4 @@
-import { nextFrame } from "@/utils/window";
+import { nextFrame } from "@/utils/window.utils";
 import type { TourSite, TourStep, TourStepErrorCode } from "../_types";
 
 export type TourPrepperOptions = {

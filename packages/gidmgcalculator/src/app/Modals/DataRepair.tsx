@@ -1,7 +1,7 @@
 import { Button, Modal, notification } from "rond";
 
 import { useDispatch } from "@Store/hooks";
-import { fixMultipleEquippedArtifacts, fixMultipleEquippedWeapons } from "@Store/userdb-slice";
+import { fixMultipleEquippedArtifacts, fixMultipleEquippedWeapons } from "@Store/userdbSlice";
 
 type OptionProps = {
   description: string;

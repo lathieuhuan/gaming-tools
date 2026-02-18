@@ -7,7 +7,7 @@ import { MAX_USER_WEAPONS } from "@/constants/config";
 import { Weapon } from "@/models/base";
 import { IWeaponBasic } from "@/types";
 import { useDispatch } from "@Store/hooks";
-import { addDbWeapon } from "@Store/userdb-slice";
+import { addDbWeapon } from "@Store/userdbSlice";
 
 type AddButtonProps = {
   currentWeaponsCount: number;

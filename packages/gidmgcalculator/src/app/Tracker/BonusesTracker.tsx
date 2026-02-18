@@ -5,7 +5,7 @@ import type { AttackBonus, AttackBonusKey } from "@/types";
 import { ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { AttackBonusControl } from "@/models/calculation";
-import { suffixOf } from "@/utils";
+import { suffixOf } from "@/utils/pure.utils";
 import Object_ from "@/utils/Object";
 import { getTotalRecordValue } from "./_utils";
 

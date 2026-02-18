@@ -6,11 +6,11 @@ import type { SetupOverviewInfo } from "./_types";
 
 import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/Array";
-import { isDbSetup, restoreCalcSetup } from "@/utils/setup";
-import { parseDbArtifacts, parseDbWeapon } from "@/utils/userdb";
+import { isDbSetup, restoreCalcSetup } from "@/utils/setup.utils";
+import { parseDbArtifacts, parseDbWeapon } from "@/utils/userdb.utils";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui";
-import { viewDbSetup, selectActiveSetupId } from "@Store/userdb-slice";
+import { viewDbSetup, selectActiveSetupId } from "@Store/userdbSlice";
 import { createSetupForTeammate, toOverviewInfo } from "./_utils";
 
 // Component

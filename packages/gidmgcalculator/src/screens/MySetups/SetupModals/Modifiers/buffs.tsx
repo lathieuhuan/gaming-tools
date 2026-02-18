@@ -4,7 +4,7 @@ import type { CalcSetup, CharacterCalc } from "@/models/calculation";
 import type { AttackReaction, CustomBuffCtrl, ElementalEvent, ElementType } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { suffixOf, toCustomBuffLabel } from "@/utils";
+import { suffixOf, toCustomBuffLabel } from "@/utils/pure.utils";
 import { parseDescription } from "@/utils/description-parsers";
 
 // Component

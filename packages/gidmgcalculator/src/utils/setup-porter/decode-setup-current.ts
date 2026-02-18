@@ -33,9 +33,9 @@ import { isManualRsnElmt } from "@/models/base/utils/isManualRsnElmt";
 import { CalcSetup, CharacterCalc, TeammateCalc } from "@/models/calculation";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
-import { createArtifact, createTarget, createWeapon } from "../entity";
+import { createArtifact, createTarget, createWeapon } from "../entity.utils";
 import IdStore from "../IdStore";
-import { enhanceCtrls } from "../modifier";
+import { enhanceCtrls } from "../modifier.utils";
 import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./setup-porter-config";
 
 export function decodeSetupCurrent(code: string): DecodeResult {

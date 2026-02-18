@@ -3,14 +3,14 @@ import { Input } from "rond";
 
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import Array_ from "@/utils/Array";
-import { isDbSetup } from "@/utils/setup";
+import { isDbSetup } from "@/utils/setup.utils";
 import { useDispatch } from "@Store/hooks";
-import { combineSetups, selectUserSetups } from "@Store/userdb-slice";
+import { combineSetups, selectDbSetups } from "@Store/userdbSlice";
 import { useCombineManager } from "./_useCombineManager";
 
 export default function FirstCombine(props: { onClose: () => void }) {
   const dispatch = useDispatch();
-  const dbSetups = useStoreSnapshot(selectUserSetups);
+  const dbSetups = useStoreSnapshot(selectDbSetups);
 
   const [input, setInput] = useState("Team Setup");
 

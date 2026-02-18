@@ -3,7 +3,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import type { AppCharacter, ICharacterBasic } from "@/types";
 
 import { $AppCharacter } from "@/services";
-import { selectDbCharacters } from "@Store/userdb-slice";
+import { selectDbCharacters } from "@Store/userdbSlice";
 
 export type CharacterToBeSorted = ICharacterBasic & {
   index: number;

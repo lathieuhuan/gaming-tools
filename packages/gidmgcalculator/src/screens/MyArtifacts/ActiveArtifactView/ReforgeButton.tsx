@@ -5,7 +5,7 @@ import { Button } from "rond";
 import { ArtifactForge } from "@/components";
 import { Artifact } from "@/models/base";
 import { useDispatch } from "@Store/hooks";
-import { updateDbArtifact } from "@Store/userdb-slice";
+import { updateDbArtifact } from "@Store/userdbSlice";
 
 type ReforgeButtonProps = {
   artifact?: Artifact;

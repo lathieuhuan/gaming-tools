@@ -12,7 +12,7 @@ import {
   switchArtifact,
   switchWeapon,
   viewDbCharacter,
-} from "@Store/userdb-slice";
+} from "@Store/userdbSlice";
 import { ActiveCharAction, ActiveCharActionContext } from "./_context";
 
 type ModalType = "SWITCH_CHARACTER" | "SWITCH_WEAPON" | "SWITCH_ARTIFACT" | "REMOVE_CHARACTER" | "";

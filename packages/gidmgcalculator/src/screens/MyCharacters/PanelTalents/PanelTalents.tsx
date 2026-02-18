@@ -1,6 +1,6 @@
 import { TalentList } from "@/components";
 import { useDispatch } from "@Store/hooks";
-import { updateDbCharacter } from "@Store/userdb-slice";
+import { updateDbCharacter } from "@Store/userdbSlice";
 import { useActiveChar } from "../ActiveCharProvider";
 
 interface PanelTalentsProps {

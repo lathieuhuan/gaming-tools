@@ -2,7 +2,7 @@ import type { AppSettingsState } from "@Store/settings";
 import type { OnSettingChange } from "./types";
 
 import { MAX_TARGET_LEVEL } from "@/constants";
-import { genSequentialOptions } from "@/utils";
+import { genSequentialOptions } from "@/utils/pure.utils";
 
 // Components
 import { CharacterLevelControl, WeaponLevelControl } from "@/components";

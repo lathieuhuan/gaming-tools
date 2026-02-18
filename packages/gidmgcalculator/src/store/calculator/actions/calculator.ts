@@ -6,7 +6,7 @@ import { $AppCharacter } from "@/services";
 import { updateSettings } from "@Store/settings";
 import { useToursStore } from "@Store/tours";
 import { updateUI } from "@Store/ui";
-import { initialState, useCalcStore } from "../calculator-store";
+import { initialState, useCalcStore } from "../calculatorStore";
 
 type InitSessionPayload = {
   name?: string;

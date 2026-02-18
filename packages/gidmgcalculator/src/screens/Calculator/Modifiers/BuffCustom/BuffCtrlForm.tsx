@@ -5,7 +5,7 @@ import type { CustomBuffCtrl, CustomBuffCtrlCategory, CustomBuffCtrlType } from 
 
 import { ATTACK_ELEMENTS, ATTACK_PATTERNS, REACTIONS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { suffixOf, toCustomBuffLabel } from "@/utils";
+import { suffixOf, toCustomBuffLabel } from "@/utils/pure.utils";
 
 const CATEGORIES: Record<
   CustomBuffCtrlCategory,

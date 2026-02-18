@@ -3,7 +3,7 @@ import type { TalentCalcItemBonusId } from "@/types";
 import type { CalcResultOtherItem } from "../types";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { toMult } from "@/utils";
+import { toMult } from "@/utils/pure.utils";
 
 export function makeOtherItemCalc(performer: CharacterCalc) {
   const { attkBonusCtrl } = performer;

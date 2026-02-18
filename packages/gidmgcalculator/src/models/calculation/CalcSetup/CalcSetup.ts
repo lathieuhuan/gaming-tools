@@ -14,7 +14,7 @@ import { Artifact, ArtifactGear, Team, Weapon } from "@/models/base";
 import { CharacterCalc } from "../CharacterCalc";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
-import { createArtifactBasic, CreateArtifactParams, createTarget } from "@/utils/entity";
+import { createArtifactBasic, CreateArtifactParams, createTarget } from "@/utils/entity.utils";
 import { TeammateCalc, type TeammateCalcConstructInfo } from "../TeammateCalc";
 import {
   createAbilityBuffCtrls,

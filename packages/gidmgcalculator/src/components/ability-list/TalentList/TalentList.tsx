@@ -6,7 +6,7 @@ import type { Character } from "@/models/base";
 import type { LevelableTalentType } from "@/types";
 
 import { TALENT_TYPES } from "@/constants/global";
-import { genSequentialOptions } from "@/utils";
+import { genSequentialOptions } from "@/utils/pure.utils";
 import { NORMAL_ATTACK_ICONS } from "./_constants";
 
 // Component

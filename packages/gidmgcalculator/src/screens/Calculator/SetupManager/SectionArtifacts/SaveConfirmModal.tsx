@@ -8,7 +8,7 @@ import { MAX_USER_ARTIFACTS } from "@/constants/config";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import Array_ from "@/utils/Array";
 import { useDispatch } from "@Store/hooks";
-import { addDbArtifact, selectDbArtifacts, updateDbArtifact } from "@Store/userdb-slice";
+import { addDbArtifact, selectDbArtifacts, updateDbArtifact } from "@Store/userdbSlice";
 
 type SaveConfirmProps = {
   artifact: Artifact;

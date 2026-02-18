@@ -10,8 +10,8 @@ import type { CalcResultAttackItem, CalcResultItemValue } from "../types";
 import type { CalcTarget } from "./CalcTarget";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { toMult } from "@/utils";
-import { limitCRate } from "@/utils/calculation";
+import { toMult } from "@/utils/pure.utils";
+import { limitCRate } from "@/utils/calculation.utils";
 
 type MakeAttackCalcTools = {
   attElmt?: AttackElement;

@@ -1,6 +1,6 @@
 import type { Artifact, Weapon } from "@/models/base";
 import type { IArtifactBasic, ICharacterBasic, IDbCharacter, IWeaponBasic } from "@/types";
-import type { GOODCharacterConvertReturn } from "@/utils/GOOD";
+import type { GOODCharacterConvertReturn } from "@/utils/converGOOD.utils";
 
 // ===== Saving Step =====
 

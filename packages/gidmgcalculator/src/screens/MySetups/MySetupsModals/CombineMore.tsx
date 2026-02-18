@@ -2,9 +2,9 @@ import type { IDbComplexSetup, IDbSetup } from "@/types";
 
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import Array_ from "@/utils/Array";
-import { isDbSetup } from "@/utils/setup";
+import { isDbSetup } from "@/utils/setup.utils";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { addSetupToComplex, selectActiveSetupId, selectUserSetups } from "@Store/userdb-slice";
+import { addSetupToComplex, selectActiveSetupId, selectDbSetups } from "@Store/userdbSlice";
 import { useCombineManager } from "./_useCombineManager";
 
 type CombineMoreProcessedResult = {
@@ -15,7 +15,7 @@ type CombineMoreProcessedResult = {
 };
 
 function useCombineMoreProcessor(setupID: number) {
-  const dbSetups = useStoreSnapshot(selectUserSetups);
+  const dbSetups = useStoreSnapshot(selectDbSetups);
   const result: CombineMoreProcessedResult = {
     dbSetups,
     setupOptions: [],

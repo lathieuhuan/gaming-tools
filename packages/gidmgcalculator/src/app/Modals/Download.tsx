@@ -3,13 +3,18 @@ import { Button, Modal } from "rond";
 
 import { DOWNLOAD_DATA_VERSION } from "@/constants/config";
 import { useSelector } from "@Store/hooks";
-import { selectDbArtifacts, selectDbCharacters, selectUserSetups, selectDbWeapons } from "@Store/userdb-slice";
+import {
+  selectDbArtifacts,
+  selectDbCharacters,
+  selectDbSetups,
+  selectDbWeapons,
+} from "@Store/userdbSlice";
 
 function DownloadCore() {
   const userChars = useSelector(selectDbCharacters);
   const userWps = useSelector(selectDbWeapons);
   const userArts = useSelector(selectDbArtifacts);
-  const userSetups = useSelector(selectUserSetups);
+  const userSetups = useSelector(selectDbSetups);
 
   const onClickDownload = () => {
     const downloadData = JSON.stringify({
@@ -43,7 +48,9 @@ function DownloadCore() {
         Get File
       </Button>
 
-      <p className="text-center text-danger-2">Please DO NOT modify this file if you don't understand how it works.</p>
+      <p className="text-center text-danger-2">
+        Please DO NOT modify this file if you don't understand how it works.
+      </p>
     </div>
   );
 }

@@ -6,7 +6,7 @@ import type { Level } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { $AppWeapon } from "@/services";
-import { genSequentialOptions, suffixOf } from "@/utils";
+import { genSequentialOptions, suffixOf } from "@/utils/pure.utils";
 import { parseWeaponDesc } from "@/utils/description-parsers";
 
 // Component

@@ -4,7 +4,7 @@ import { clsx, Radio } from "rond";
 import type { Artifact } from "@/models/base";
 
 import { useTranslation } from "@/hooks/useTranslation";
-import { suffixOf } from "@/utils";
+import { suffixOf } from "@/utils/pure.utils";
 
 const SLOT_NAME = "artifact-summary";
 const STAT_CLS = "text-light-2 font-medium";

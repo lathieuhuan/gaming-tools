@@ -10,8 +10,8 @@ import type { CalcResultReactionItem } from "../types";
 import type { CalcTarget } from "./CalcTarget";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { limitCRate } from "@/utils/calculation";
-import { toMult } from "@/utils/pure-utils";
+import { limitCRate } from "@/utils/calculation.utils";
+import { toMult } from "@/utils/pure.utils";
 import { LUNAR_ATTACK_ELEMENT, LUNAR_REACTION_COEFFICIENT } from "../constants";
 
 const TRANSFORMATIVE_REACTION_CONFIG: Record<

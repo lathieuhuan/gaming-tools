@@ -2,8 +2,8 @@ import type { TeammateCalc } from "@/models/calculation";
 import type { IArtifactBuffCtrl, ITeammateArtifactBuffCtrl } from "@/types";
 
 import Object_ from "@/utils/Object";
+import { useShallowCalcStore } from "@Store/calculator";
 import { updateActiveSetup, updateTeammateArtifact } from "@Store/calculator/actions";
-import { useShallowCalcStore } from "@Store/calculator/calculator-store";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleModCtrl, updateModCtrlInputs } from "@Store/calculator/utils";
 

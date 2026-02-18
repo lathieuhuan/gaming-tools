@@ -6,7 +6,7 @@ import type { AppThunk } from "./store";
 import { Artifact, Weapon } from "@/models/base";
 import { ArtifactType } from "@/types";
 import Array_ from "@/utils/Array";
-import { isDbSetup, toDbSetup } from "@/utils/setup";
+import { isDbSetup, toDbSetup } from "@/utils/setup.utils";
 import { updateSetupAfterSave } from "./calculator/actions";
 import { updateUI } from "./ui";
 import {
@@ -15,7 +15,7 @@ import {
   saveSetup,
   updateDbArtifact,
   updateDbWeapon,
-} from "./userdb-slice";
+} from "./userdbSlice";
 
 export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
   return (dispatch, getState) => {

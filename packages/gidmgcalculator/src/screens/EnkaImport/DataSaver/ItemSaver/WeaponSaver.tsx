@@ -8,7 +8,7 @@ import type { IWeaponBasic } from "@/types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";
 import { useDispatch } from "@Store/hooks";
-import { addDbWeapon, updateDbWeapon } from "@Store/userdb-slice";
+import { addDbWeapon, updateDbWeapon } from "@Store/userdbSlice";
 import { genCaseConfigs } from "../_config";
 import { isExactWeapon } from "../_logic";
 

@@ -3,7 +3,7 @@ import { FaChevronDown } from "react-icons/fa";
 import { BottomSheet, CarouselSpace, SwitchNode } from "rond";
 
 import { useDispatch } from "@Store/hooks";
-import { viewDbCharacter } from "@Store/userdb-slice";
+import { viewDbCharacter } from "@Store/userdbSlice";
 
 // Component
 import { MobileBottomNav, MobileBottomNavOption } from "@/components";

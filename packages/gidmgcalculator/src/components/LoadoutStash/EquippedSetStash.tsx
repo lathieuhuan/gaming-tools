@@ -7,7 +7,7 @@ import { useArtifactSetData } from "@/hooks";
 import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
 import { useSelector } from "@Store/hooks";
-import { selectDbArtifacts, selectDbCharacters } from "@Store/userdb-slice";
+import { selectDbArtifacts, selectDbCharacters } from "@Store/userdbSlice";
 
 // Component
 import { CharacterPortrait } from "@/components/CharacterPortrait";

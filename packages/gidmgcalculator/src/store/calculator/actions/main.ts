@@ -4,10 +4,10 @@ import type { ForwardedAction } from "../types";
 
 import { Team } from "@/models/base";
 import { createWeaponBuffCtrls } from "@/models/calculation";
-import { createTarget } from "@/utils/entity";
+import { createTarget } from "@/utils/entity.utils";
 import Object_ from "@/utils/Object";
 import { useSettingsStore } from "@Store/settings";
-import { useCalcStore } from "../calculator-store";
+import { useCalcStore } from "../calculatorStore";
 import { onActiveSetup } from "../utils";
 
 // ===== CHARACTER =====

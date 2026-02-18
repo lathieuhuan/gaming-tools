@@ -8,7 +8,7 @@ import {
   swapArtifactOwner,
   updateDbArtifact,
   updateDbArtifactSubStat,
-} from "@Store/userdb-slice";
+} from "@Store/userdbSlice";
 
 // Components
 import { ArtifactCard, Tavern } from "@/components";

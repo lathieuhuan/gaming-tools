@@ -3,7 +3,7 @@ import { FaCaretRight, FaRedoAlt } from "react-icons/fa";
 import { Button, clsx, Skeleton } from "rond";
 
 import { useTimer } from "@/hooks/useTimer";
-import { secondsToTimeString } from "@/utils/pure-utils";
+import { secondsToTimeString } from "@/utils/pure.utils";
 import { STALE_TIME } from "../_hooks/useGenshinUser";
 import { useLayoutState } from "../Layout";
 import { useDataImportState } from "../DataImporter";

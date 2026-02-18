@@ -5,9 +5,9 @@ import { useScreenWatcher, useValues, WarehouseLayout } from "rond";
 import type { IWeaponBasic, WeaponType } from "@/types";
 
 import Array_ from "@/utils/Array";
-import { createWeapon } from "@/utils/entity";
+import { createWeapon } from "@/utils/entity.utils";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectDbWeapons, sortDbWeapons } from "@Store/userdb-slice";
+import { selectDbWeapons, sortDbWeapons } from "@Store/userdbSlice";
 
 // Component
 import { InventoryRack, WeaponTypeSelect } from "@/components";

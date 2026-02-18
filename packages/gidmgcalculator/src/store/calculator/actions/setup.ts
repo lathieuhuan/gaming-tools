@@ -4,7 +4,7 @@ import type { WritableDraft } from "immer/src/internal.js";
 import { CalcSetup } from "@/models/calculation";
 import Array_ from "@/utils/Array";
 import Object_ from "@/utils/Object";
-import { useCalcStore } from "../calculator-store";
+import { useCalcStore } from "../calculatorStore";
 import { getCopyName, onActiveSetup } from "../utils";
 
 export const updateActiveSetup = (

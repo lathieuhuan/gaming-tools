@@ -6,7 +6,7 @@ import type { IArtifactBasic, IWeaponBasic } from "@/types";
 
 import { MAX_USER_ARTIFACTS, MAX_USER_WEAPONS } from "@/constants/config";
 import { useDispatch } from "@Store/hooks";
-import { addUserDatabase } from "@Store/userdb-slice";
+import { addUserDatabase } from "@Store/userdbSlice";
 
 // Component
 import { ItemMultiSelect, ItemMultiSelectIds } from "@/components";

@@ -5,7 +5,7 @@ import { CarouselSpace, Popover } from "rond";
 import { Ascendable } from "@/models/base";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import { useDispatch } from "@Store/hooks";
-import { sortDbCharacters } from "@Store/userdb-slice";
+import { sortDbCharacters } from "@Store/userdbSlice";
 import { selectCharacterToBeSorted } from "./_utils";
 
 import { DragAndDropList } from "./DragAndDropList";

@@ -1,5 +1,5 @@
 import type { TavernSelectedCharacter } from "@/components";
-import type { UserdbState } from "@Store/userdb-slice";
+import type { UserdbState } from "@Store/userdbSlice";
 
 import { ArtifactGear } from "@/models/base";
 import { CalcSetup } from "@/models/calculation";
@@ -8,9 +8,9 @@ import {
   createCharacterCalc,
   createWeapon,
   createWeaponBasic,
-} from "@/utils/entity";
+} from "@/utils/entity.utils";
 import IdStore from "@/utils/IdStore";
-import { parseDbArtifacts, parseDbWeapon } from "@/utils/userdb";
+import { parseDbArtifacts, parseDbWeapon } from "@/utils/userdb.utils";
 import { initSession } from "@Store/calculator/actions";
 
 export function initSessionWithCharacter(

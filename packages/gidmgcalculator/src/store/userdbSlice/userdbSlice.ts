@@ -31,8 +31,8 @@ import { ARTIFACT_TYPES } from "@/constants/global";
 import { Artifact, Ascendable, Weapon } from "@/models/base";
 import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
-import { createCharacterBasic, createWeaponBasic } from "@/utils/entity";
-import { isDbSetup } from "@/utils/setup";
+import { createCharacterBasic, createWeaponBasic } from "@/utils/entity.utils";
+import { isDbSetup } from "@/utils/setup.utils";
 
 export type UserdbState = {
   userChars: IDbCharacter[];

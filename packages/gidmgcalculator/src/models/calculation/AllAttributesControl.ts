@@ -2,9 +2,9 @@ import type { AllAttributes, AttributeBonus, AttributeStat, BaseAttributeStat } 
 import type { CharacterCalc } from "./CharacterCalc";
 
 import { ATTRIBUTE_STAT_TYPES } from "@/constants";
-import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/utils/calculation";
+import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/utils/calculation.utils";
 import Object_ from "@/utils/Object";
-import { round } from "@/utils/pure-utils";
+import { round } from "@/utils/pure.utils";
 import TypeCounter from "@/utils/TypeCounter";
 
 const ASC_MULT_BY_ASC = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];

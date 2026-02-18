@@ -16,7 +16,7 @@ import {
   updateDbArtifact,
   updateDbCharacter,
   updateDbWeapon,
-} from "@Store/userdb-slice";
+} from "@Store/userdbSlice";
 
 export function useSaveOutputHandler() {
   const store = useStore();

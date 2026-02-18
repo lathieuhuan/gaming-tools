@@ -12,7 +12,7 @@ import type {
 
 import Array_ from "@/utils/Array";
 import { wrapText } from "@/utils/description-parsers/utils";
-import { round, toMult } from "@/utils/pure-utils";
+import { round, toMult } from "@/utils/pure.utils";
 import { Character } from "../base";
 
 type AbilityBuff = CharacterBuff | CharacterDebuff;

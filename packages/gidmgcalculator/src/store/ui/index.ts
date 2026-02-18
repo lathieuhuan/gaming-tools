@@ -1,3 +1,3 @@
 export * from "./actions";
-export * from "./ui-store";
+export * from "./uiStore";
 export type { MySetupsModalType, TrackerState, UIState } from "./types";

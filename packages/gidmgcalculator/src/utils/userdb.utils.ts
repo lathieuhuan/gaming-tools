@@ -9,7 +9,7 @@ import {
   createCharacterCalc,
   createWeapon,
   createWeaponBasic,
-} from "./entity";
+} from "./entity.utils";
 import IdStore from "./IdStore";
 
 export function parseDbWeapon(weaponID: number, dbWeapons: IWeaponBasic[], weaponType: WeaponType) {

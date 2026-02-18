@@ -20,14 +20,6 @@ import Array_ from "./Array";
 import IdStore from "./IdStore";
 import Object_ from "./Object";
 
-// ========== TYPES ==========
-
-type CalcItemToUserItemOptions = {
-  ID?: number;
-  owner?: string;
-  setupIDs?: number[];
-};
-
 // ========== ARTIFACT ==========
 
 export type CreateArtifactParams = AdvancedPick<

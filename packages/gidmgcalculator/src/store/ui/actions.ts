@@ -1,6 +1,6 @@
 import { SearchParams } from "@/systems/router";
 import { TourType, UIState } from "./types";
-import { useUIStore } from "./ui-store";
+import { useUIStore } from "./uiStore";
 
 export const updateUI = (state: Partial<UIState>) => {
   useUIStore.setState(state);

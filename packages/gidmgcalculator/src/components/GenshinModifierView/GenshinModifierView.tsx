@@ -3,7 +3,7 @@ import { ModifierView } from "rond";
 import type { ModInputConfig } from "@/types";
 import type { ModifierViewInputConfig, ModifierViewProps } from "rond";
 
-import { genSequentialOptions } from "@/utils";
+import { genSequentialOptions } from "@/utils/pure.utils";
 import {
   OPTION_CRYO,
   OPTION_HYDRO,

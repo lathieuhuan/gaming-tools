@@ -1,7 +1,7 @@
 import { CloseButton, clsx, cn, VersatileSelect } from "rond";
 
 import type { ITeammate } from "@/types";
-import { genSequentialOptions } from "@/utils";
+import { genSequentialOptions } from "@/utils/pure.utils";
 
 import { GenshinImage } from "../GenshinImage";
 

@@ -12,7 +12,7 @@ import {
   updateDbArtifact,
   updateDbArtifactSubStat,
   updateDbWeapon,
-} from "@Store/userdb-slice";
+} from "@Store/userdbSlice";
 import { useActiveChar, useActiveCharActions } from "../ActiveCharProvider";
 
 export type GearsDetailProps = {

@@ -1,5 +1,5 @@
 import type { IDbComplexSetup, IDbSetup, ITeammateArtifact } from "@/types";
-import type { UserdbState } from "@Store/userdb-slice";
+import type { UserdbState } from "@Store/userdbSlice";
 import type { SetupOverviewInfo } from "./_types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
@@ -19,12 +19,12 @@ import {
   createTarget,
   createWeapon,
   createWeaponBasic,
-} from "@/utils/entity";
+} from "@/utils/entity.utils";
 import IdStore from "@/utils/IdStore";
-import { enhanceCtrls } from "@/utils/modifier";
-import { isDbSetup } from "@/utils/setup";
+import { enhanceCtrls } from "@/utils/modifier.utils";
+import { isDbSetup } from "@/utils/setup.utils";
 import { SystemError } from "@/utils/SystemError";
-import { makeCharacterCalcFromDb } from "@/utils/userdb";
+import { makeCharacterCalcFromDb } from "@/utils/userdb.utils";
 
 function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOverviewInfo["setup"] {
   const { userWps, userArts } = userDb;

@@ -45,7 +45,7 @@ export function convertGOODLevel(entity: GOODAscendable): Level {
   return LEVELS.includes(level) ? level : "1/20";
 }
 
-const goodFormatMap: Record<GOODStatKey, AttributeStat> = {
+const GOOD_FORMAT_MAP: Record<GOODStatKey, AttributeStat> = {
   atk: "atk",
   atk_: "atk_",
   hp: "hp",
@@ -68,7 +68,7 @@ const goodFormatMap: Record<GOODStatKey, AttributeStat> = {
 };
 
 export function convertGOODStatKey(key: GOODStatKey): AttributeStat | undefined {
-  return goodFormatMap[key];
+  return GOOD_FORMAT_MAP[key];
 }
 
 export function findGOODCharacter(key: string): AppCharacter | undefined {

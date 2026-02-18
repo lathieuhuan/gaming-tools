@@ -12,7 +12,7 @@ import { type ArtifactGear, Artifact } from "@/models/base";
 
 import { useArtifactSetData } from "@/hooks";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import { selectDbArtifacts } from "@Store/userdb-slice";
+import { selectDbArtifacts } from "@Store/userdbSlice";
 
 // Conponent
 import { ArtifactCard } from "../ArtifactCard";

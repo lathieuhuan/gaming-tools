@@ -8,7 +8,7 @@ import type { IArtifactBasic } from "@/types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";
 import { useDispatch } from "@Store/hooks";
-import { addDbArtifact, updateDbArtifact } from "@Store/userdb-slice";
+import { addDbArtifact, updateDbArtifact } from "@Store/userdbSlice";
 import { genCaseConfigs } from "../_config";
 import { isExactArtifact } from "../_logic";
 

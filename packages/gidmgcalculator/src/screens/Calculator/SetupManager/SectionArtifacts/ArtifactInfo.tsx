@@ -4,7 +4,7 @@ import { Button, PouchSvg, TrashCanSvg, VersatileSelect } from "rond";
 
 import { useTranslation } from "@/hooks";
 import { Artifact } from "@/models/base";
-import { suffixOf } from "@/utils";
+import { suffixOf } from "@/utils/pure.utils";
 import { removeArtifactPiece, updateArtifactPiece } from "@Store/calculator/actions";
 
 // Component

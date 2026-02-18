@@ -1,1 +1,1 @@
-export * from "./tours-store";
+export * from "./toursStore";

@@ -5,7 +5,7 @@ import { Button, clsx, useChildListObserver, useIntersectionObserver } from "ron
 import { GenshinImage } from "@/components";
 import { $AppCharacter } from "@/services";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { selectActiveCharacter, selectDbCharacters, viewDbCharacter } from "@Store/userdb-slice";
+import { selectActiveCharacter, selectDbCharacters, viewDbCharacter } from "@Store/userdbSlice";
 import { useMyCharactersModalCtrl } from "../ContextProvider";
 
 export function TopBar() {

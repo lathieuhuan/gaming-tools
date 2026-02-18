@@ -9,7 +9,7 @@ import {
 } from "@/models/calculation";
 import Object_ from "@/utils/Object";
 import { useSettingsStore } from "@Store/settings";
-import { useCalcStore } from "../calculator-store";
+import { useCalcStore } from "../calculatorStore";
 import { onActiveSetup } from "../utils";
 
 export const setTeammate = (teammate: AppCharacter, index: number) => {

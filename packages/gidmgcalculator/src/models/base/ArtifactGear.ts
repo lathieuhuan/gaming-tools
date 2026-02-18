@@ -10,7 +10,7 @@ import type {
 import type { Artifact } from "./Artifact";
 
 import { ARTIFACT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
-import { applyPercent } from "@/utils/pure-utils";
+import { applyPercent } from "@/utils/pure.utils";
 import TypeCounter from "@/utils/TypeCounter";
 
 class PiecesIterator<TArtifact extends IArtifact> implements Iterator<TArtifact> {

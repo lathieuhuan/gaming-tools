@@ -7,7 +7,7 @@ import { MAX_USER_ARTIFACTS } from "@/constants";
 import { Artifact } from "@/models/base";
 import { IArtifactBasic } from "@/types";
 import { useDispatch } from "@Store/hooks";
-import { addDbArtifact } from "@Store/userdb-slice";
+import { addDbArtifact } from "@Store/userdbSlice";
 
 type AddButtonProps = {
   currentArtifactsCount: number;

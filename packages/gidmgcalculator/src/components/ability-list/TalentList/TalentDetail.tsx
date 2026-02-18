@@ -10,7 +10,7 @@ import { ATTACK_PATTERNS } from "@/constants/global";
 import { useTabs, useTranslation } from "@/hooks";
 import { Character } from "@/models/base";
 import { fetchTalentDescriptions } from "@/services/app-data";
-import { genSequentialOptions } from "@/utils";
+import { genSequentialOptions } from "@/utils/pure.utils";
 import Array_ from "@/utils/Array";
 import { NORMAL_ATTACK_ICONS } from "./_constants";
 

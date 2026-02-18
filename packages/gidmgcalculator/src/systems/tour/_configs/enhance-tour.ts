@@ -2,7 +2,7 @@ import type { TourStep } from "../_types";
 
 import { ENHANCE_TOUR_SITE_ID, TOUR_STEP_ID } from "@/constants";
 import { $AppCharacter } from "@/services";
-import { nextFrame } from "@/utils/window";
+import { nextFrame } from "@/utils/window.utils";
 import { useCalcStore } from "@Store/calculator";
 import { setTeammate, toggleTeammateEnhance, updateMain } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";

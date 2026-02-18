@@ -9,7 +9,7 @@ import type { SetupOverviewInfo } from "../_types";
 import { Artifact } from "@/models/base";
 import { useDispatch } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui";
-import { viewDbSetup, switchShownSetupInComplex, uncombineSetups } from "@Store/userdb-slice";
+import { viewDbSetup, switchShownSetupInComplex, uncombineSetups } from "@Store/userdbSlice";
 
 // Component
 import { CharacterPortrait, EnhanceTag, GenshinImage } from "@/components";

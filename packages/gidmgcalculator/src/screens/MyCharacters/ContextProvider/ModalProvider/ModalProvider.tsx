@@ -2,7 +2,7 @@ import { useId, useMemo, useState } from "react";
 import { Modal } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
-import { addDbCharacter, selectDbCharacters, viewDbCharacter } from "@Store/userdb-slice";
+import { addDbCharacter, selectDbCharacters, viewDbCharacter } from "@Store/userdbSlice";
 import { ModalContext, type ModalControl } from "./_context";
 
 // Component

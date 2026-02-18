@@ -1,4 +1,4 @@
-import { round } from "@/utils";
+import { round } from "@/utils/pure.utils";
 
 export function getTotalRecordValue(list: Array<{ value: number }>) {
   return round(

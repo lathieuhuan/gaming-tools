@@ -4,7 +4,7 @@ import type { CalcSetup } from "@/models/calculation";
 
 import { useDispatch } from "@Store/hooks";
 import { updateUI, useUIStore } from "@Store/ui";
-import { removeDbSetup } from "@Store/userdb-slice";
+import { removeDbSetup } from "@Store/userdbSlice";
 
 // Component
 import {

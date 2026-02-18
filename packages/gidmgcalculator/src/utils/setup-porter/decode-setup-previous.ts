@@ -34,8 +34,8 @@ import { CalcSetup, CharacterCalc, TeammateCalc } from "@/models/calculation";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
 import IdStore from "../IdStore";
-import { createArtifact, createTarget, createWeapon } from "../entity";
-import { enhanceCtrls } from "../modifier";
+import { createArtifact, createTarget, createWeapon } from "../entity.utils";
+import { enhanceCtrls } from "../modifier.utils";
 import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./setup-porter-config";
 
 export function decodeSetupPrevious(code: string): DecodeResult {

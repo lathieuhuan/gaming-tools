@@ -1,3 +1,3 @@
 export * from "./actions";
-export * from "./settings-store";
+export * from "./settingsStore";
 export type { AppSettingsState } from "./types";

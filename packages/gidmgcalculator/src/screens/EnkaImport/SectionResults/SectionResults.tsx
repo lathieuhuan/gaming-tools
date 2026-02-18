@@ -5,7 +5,7 @@ import { CharacterCalc } from "@/models/calculation";
 import { GenshinUserBuild } from "@/services/enka";
 import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/Array";
-import { createArtifact, createWeapon } from "@/utils/entity";
+import { createArtifact, createWeapon } from "@/utils/entity.utils";
 import IdStore from "@/utils/IdStore";
 import { useDataImportState } from "../DataImporter";
 import { useRequestSaveBuild } from "../DataSaver/BuildSaver";

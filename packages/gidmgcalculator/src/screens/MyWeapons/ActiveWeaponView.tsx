@@ -6,7 +6,7 @@ import type { IWeaponBasic } from "@/types";
 
 import { Tavern, WeaponCard } from "@/components";
 import { useDispatch } from "@Store/hooks";
-import { removeDbWeapon, swapWeaponOwner, updateDbWeapon } from "@Store/userdb-slice";
+import { removeDbWeapon, swapWeaponOwner, updateDbWeapon } from "@Store/userdbSlice";
 
 type ModalType = "SELECT_WEAPON_OWNER" | "REMOVE_WEAPON" | "";
 

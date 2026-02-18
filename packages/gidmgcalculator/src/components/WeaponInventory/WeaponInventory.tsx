@@ -5,7 +5,7 @@ import type { IWeaponBasic, WeaponType } from "@/types";
 
 import { Weapon } from "@/models/base";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import { selectDbWeapons } from "@Store/userdb-slice";
+import { selectDbWeapons } from "@Store/userdbSlice";
 
 // Component
 import { InventoryRack, ItemOption } from "../InventoryRack";

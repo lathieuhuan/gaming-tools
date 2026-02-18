@@ -4,7 +4,7 @@ import type { AllAttributesControl } from "@/models/calculation";
 
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { round, suffixOf } from "@/utils";
+import { round, suffixOf } from "@/utils/pure.utils";
 import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 
