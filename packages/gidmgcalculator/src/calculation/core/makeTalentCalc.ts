@@ -16,7 +16,7 @@ import type {
   CalcResultItemValue,
   CalcResultOtherItem,
 } from "../types";
-import type { CalcTarget } from "./CalcTarget";
+import type { TargetCalc } from "../../models/TargetCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
 import { Character } from "@/models";
@@ -29,7 +29,7 @@ import { makeOtherItemCalc } from "./makeOtherItemCalc";
 
 export function makeTalentCalc(
   performer: CharacterCalc,
-  target: CalcTarget,
+  target: TargetCalc,
   talentType: LevelableTalentType,
   default_: CalcItemDefaultValues,
   alterConfig: AttackAlter = {}

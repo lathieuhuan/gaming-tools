@@ -8,7 +8,7 @@ import type {
   TransformativeReaction,
 } from "@/types";
 import type { CalcResultReactionItem } from "../types";
-import type { CalcTarget } from "./CalcTarget";
+import type { TargetCalc } from "../../models/TargetCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
 import { limitCRate } from "@/logic/stat.logic";
@@ -30,7 +30,7 @@ const TRANSFORMATIVE_REACTION_CONFIG: Record<
   shattered: { mult: 3, attElmt: "phys" },
 };
 
-export function makeReactionCalc(performer: CharacterCalc, target: CalcTarget) {
+export function makeReactionCalc(performer: CharacterCalc, target: TargetCalc) {
   const { attkBonusCtrl, baseRxnDamage } = performer;
 
   function calcLunarReaction(

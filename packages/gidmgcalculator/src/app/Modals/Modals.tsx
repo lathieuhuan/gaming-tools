@@ -22,7 +22,11 @@ export function Modals() {
       <Upload active={appModalType === "UPLOAD"} onClose={closeModal} />
       <Donate active={appModalType === "DONATE"} onClose={closeModal} />
       <DataRepair active={appModalType === "DATA_REPAIR"} onClose={closeModal} />
-      <EnhanceNotice active={appModalType === "ENHANCE_NOTICE"} onClose={closeModal} />
+      <EnhanceNotice
+        active={appModalType === "MAIN_ENHANCE_NOTICE" || appModalType === "SUB_ENHANCE_NOTICE"}
+        type={appModalType === "MAIN_ENHANCE_NOTICE" ? "MAIN_ENHANCE" : "SUB_ENHANCE"}
+        onClose={closeModal}
+      />
     </>
   );
 }

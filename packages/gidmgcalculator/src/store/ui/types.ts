@@ -8,7 +8,8 @@ type AppModalType =
   | "DOWNLOAD"
   | "DONATE"
   | "DATA_REPAIR"
-  | "ENHANCE_NOTICE"
+  | "MAIN_ENHANCE_NOTICE"
+  | "SUB_ENHANCE_NOTICE"
   | "";
 
 export type MySetupsModalType =
@@ -25,7 +26,7 @@ export type MySetupsModalType =
 
 export type TrackerState = "open" | "close" | "hidden";
 
-export type TourType = "ENHANCE" | "";
+export type TourType = "MAIN_ENHANCE" | "SUB_ENHANCE" | "";
 
 export type UIState = {
   appReady: boolean;

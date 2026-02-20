@@ -1,7 +1,7 @@
 import type { AppMonster, AttackElement, ITarget, ResistReductionKey } from "@/types";
 
-import { Target } from "@/models";
 import { ATTACK_ELEMENTS } from "@/constants/global";
+import { Target } from "./Target";
 
 type ReductionRecord = {
   label: string;
@@ -16,11 +16,11 @@ type Reductions = Record<
   }
 >;
 
-type CalcTargetOptions = {
+type TargetCalcOptions = {
   shouldLog?: boolean;
 };
 
-export class CalcTarget extends Target {
+export class TargetCalc extends Target {
   protected reductions = {} as Reductions;
   protected shouldLog: boolean;
 
@@ -36,7 +36,7 @@ export class CalcTarget extends Target {
     phys: 1,
   };
 
-  constructor(info: ITarget, data: AppMonster, options: CalcTargetOptions = {}) {
+  constructor(info: ITarget, data: AppMonster, options: TargetCalcOptions = {}) {
     const { shouldLog = false } = options;
 
     super(info, data);

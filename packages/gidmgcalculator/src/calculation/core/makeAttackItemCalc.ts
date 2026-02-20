@@ -7,7 +7,7 @@ import type {
   TalentCalcItemBonusId,
 } from "@/types";
 import type { CalcResultAttackItem, CalcResultItemValue } from "../types";
-import type { CalcTarget } from "./CalcTarget";
+import type { TargetCalc } from "../../models/TargetCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
 import { toMult } from "@/utils/pure.utils";
@@ -22,7 +22,7 @@ type MakeAttackCalcTools = {
 
 export function makeAttackItemCalc(
   performer: CharacterCalc,
-  target: CalcTarget,
+  target: TargetCalc,
   tools: MakeAttackCalcTools = {}
 ) {
   const { attkBonusCtrl, bareLv } = performer;

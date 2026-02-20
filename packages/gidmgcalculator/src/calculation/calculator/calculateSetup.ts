@@ -3,7 +3,7 @@ import type { CalcResultAttackItem } from "../types";
 import type { CalcResult } from "./types";
 
 import { ATTACK_PATTERNS, LUNAR_REACTIONS, TRANSFORMATIVE_REACTIONS } from "@/constants/global";
-import { CalcTarget } from "../core/CalcTarget";
+import { TargetCalc } from "../../models/TargetCalc";
 import { makeAttackItemCalc } from "../core/makeAttackItemCalc";
 import { makeOtherItemCalc } from "../core/makeOtherItemCalc";
 import { makeReactionCalc } from "../core/makeReactionCalc";
@@ -20,7 +20,7 @@ type CalculateSetupOptions = {
 
 export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions = {}) {
   const { main, teammates } = setup;
-  const target = new CalcTarget(setup.target, setup.target.data, options);
+  const target = new TargetCalc(setup.target, setup.target.data, options);
 
   const { calcList } = main.data;
   const { elmtEvent } = setup;

@@ -1,6 +1,6 @@
 import type { CalcSetup, TeammateCalc, CharacterCalc } from "@/models";
 import type { ElementType, EntityDebuff, EntityPenaltyTarget, ResistReductionKey } from "@/types";
-import type { CalcTarget } from "../core/CalcTarget";
+import type { TargetCalc } from "../../models/TargetCalc";
 import type { IEffectPerformer } from "../types";
 
 import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants/global";
@@ -10,7 +10,7 @@ export function applyDebuffs(
   main: CharacterCalc,
   teammates: TeammateCalc[],
   setup: CalcSetup,
-  target: CalcTarget
+  target: TargetCalc
 ) {
   const { team } = setup;
 

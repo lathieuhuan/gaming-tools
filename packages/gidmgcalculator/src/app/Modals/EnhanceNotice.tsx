@@ -4,7 +4,11 @@ import { Checkbox, Modal, ModalControl } from "rond";
 import { useToursStore } from "@Store/tours";
 import { setTourType } from "@Store/ui";
 
-export function EnhanceNotice({ active, onClose }: ModalControl) {
+type EnhanceNoticeProps = ModalControl & {
+  type: "MAIN_ENHANCE" | "SUB_ENHANCE";
+};
+
+export function EnhanceNotice({ active, type, onClose }: EnhanceNoticeProps) {
   const checkRef = useRef(false);
 
   const handleClose = () => {
@@ -25,7 +29,7 @@ export function EnhanceNotice({ active, onClose }: ModalControl) {
       focusConfirm
       confirmText="Show me"
       onConfirm={() => {
-        setTourType("ENHANCE");
+        setTourType(type);
         handleClose();
       }}
       onClose={handleClose}

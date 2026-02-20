@@ -16,7 +16,7 @@ type InitSessionPayload = {
 
 export const initSession = (payload: InitSessionPayload) => {
   const { name = "Setup 1", type = "original", calcSetup } = payload;
-  const { ID } = calcSetup;
+  const { ID, main, teammates } = calcSetup;
 
   useCalcStore.setState({
     ...initialState,
@@ -30,8 +30,18 @@ export const initSession = (payload: InitSessionPayload) => {
 
   updateSettings({ separateCharInfo: false });
 
-  if (calcSetup.main.data.enhanceType && !useToursStore.getState().characterEnhance) {
-    updateUI({ appModalType: "ENHANCE_NOTICE" });
+  if (useToursStore.getState().characterEnhance) {
+    return;
+  }
+
+  if (main.data.enhanceType) {
+    updateUI({ appModalType: "MAIN_ENHANCE_NOTICE" });
+    return;
+  }
+
+  if (teammates.some((teammate) => teammate.data.enhanceType)) {
+    updateUI({ appModalType: "SUB_ENHANCE_NOTICE" });
+    return;
   }
 };
 

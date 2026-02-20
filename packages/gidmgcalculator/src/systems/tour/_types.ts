@@ -14,7 +14,9 @@ export type TourStep = {
   // introOffsetX?: IntroOffsetX;
   // introWidth?: number;
   /** IDEA: return dynamic id and other configs */
+  sitePrep?: () => void | Promise<void>;
   go?: () => void | Promise<void>;
+  lastCheck?: () => void | Promise<void>;
 };
 
 export type TourSiteLocation = {

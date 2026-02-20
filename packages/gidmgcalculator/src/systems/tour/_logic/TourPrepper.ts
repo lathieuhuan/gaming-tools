@@ -26,7 +26,15 @@ export class TourPrepper implements TourPrepperOptions {
     return this.prep(0);
   }
 
-  next() {
+  async next() {
+    const { lastCheck } = this.steps[this.currentIndex];
+
+    try {
+      await lastCheck?.();
+    } catch (error) {
+      console.error(error);
+    }
+
     return this.prep(++this.currentIndex);
   }
 
@@ -40,6 +48,11 @@ export class TourPrepper implements TourPrepperOptions {
     }
 
     try {
+      if (step.sitePrep) {
+        await step.sitePrep();
+        await nextFrame();
+      }
+
       await step.go?.();
     } catch (error) {
       console.error(error);
