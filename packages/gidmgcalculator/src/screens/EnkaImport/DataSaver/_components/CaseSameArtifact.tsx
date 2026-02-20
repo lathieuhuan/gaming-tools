@@ -1,6 +1,6 @@
 import type { AppArtifact, IArtifactBasic } from "@/types";
 
-import { createArtifact } from "@/utils/entity.utils";
+import { createArtifact } from "@/logic/entity.logic";
 
 import { ArtifactSummary } from "./ArtifactSummary";
 import { SavingCase, SavingCaseProps } from "./SavingCase";

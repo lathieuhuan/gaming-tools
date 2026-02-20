@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, clsx, type ClassValue } from "rond";
 
-import type { Character } from "@/models/base";
+import type { Character } from "@/models";
 
 // Conponent
 import { AbilityIcon } from "../_components/AbilityIcon";

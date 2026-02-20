@@ -1,9 +1,9 @@
 import type { DecodeResult } from "./types";
 
 import { EXPORTED_SETUP_VERSION, LEGACY_EXPORTED_SETUP_VERSION } from "@/constants/config";
-import { decodeSetupCurrent } from "./decode-setup-current";
-import { decodeSetupPrevious } from "./decode-setup-previous";
-import { DECODE_ERROR_MSG, DIVIDER } from "./setup-porter-config";
+import { decodeSetupCurrent } from "./decodeSetupCurrent";
+import { decodeSetupPrevious } from "./decodeSetupPrevious";
+import { DECODE_ERROR_MSG, DIVIDER } from "./config";
 
 export function decodeSetup(code: string): DecodeResult {
   const version = code.slice(0, code.indexOf(DIVIDER[0]));

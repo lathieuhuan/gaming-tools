@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { Badge, VersatileSelect, clsx, type ClassValue } from "rond";
 
-import type { Weapon } from "@/models/base";
+import type { Weapon } from "@/models";
 import type { Level } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { $AppWeapon } from "@/services";
 import { genSequentialOptions, suffixOf } from "@/utils/pure.utils";
-import { parseWeaponDesc } from "@/utils/description-parsers";
+import { parseWeaponDesc } from "@/utils/descriptionParsers";
 
 // Component
 import { GenshinImage } from "../GenshinImage";

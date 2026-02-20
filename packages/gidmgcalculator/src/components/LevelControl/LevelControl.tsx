@@ -1,7 +1,7 @@
 import Dropdown from "@rc-component/dropdown";
 import { ChevronDownSvg, ClassValue, cn } from "rond";
 
-import { Ascendable } from "@/models/base";
+import { Ascendable } from "@/models";
 import { Level } from "@/types";
 import { LevelMenu, LevelMenuProps } from "./LevelMenu";
 import { useControllableState } from "@/hooks/useControllableState";

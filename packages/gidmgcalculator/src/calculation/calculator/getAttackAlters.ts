@@ -1,4 +1,4 @@
-import type { CalcSetup, CharacterCalc } from "@/models/calculation";
+import type { CalcSetup, CharacterCalc } from "@/models";
 import type { AttackPattern, TalentCalcItemBonusId } from "@/types";
 import type { AttackAlter } from "../types";
 

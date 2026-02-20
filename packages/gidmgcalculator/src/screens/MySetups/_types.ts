@@ -1,4 +1,4 @@
-import type { CharacterCalc, TeammateCalc } from "@/models/calculation";
+import type { CharacterCalc, TeammateCalc } from "@/models";
 import type { BasicSetupType, IDbComplexSetup, IDbSetup } from "@/types";
 
 export type SetupOverviewInfo = {

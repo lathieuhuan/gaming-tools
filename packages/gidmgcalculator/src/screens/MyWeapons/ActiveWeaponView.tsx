@@ -1,7 +1,7 @@
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { ConfirmModal, message } from "rond";
 
-import type { Weapon } from "@/models/base";
+import type { Weapon } from "@/models";
 import type { IWeaponBasic } from "@/types";
 
 import { Tavern, WeaponCard } from "@/components";

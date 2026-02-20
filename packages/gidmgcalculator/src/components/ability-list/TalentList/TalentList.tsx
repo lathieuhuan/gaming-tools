@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, CarouselSpace, type ClassValue, VersatileSelect } from "rond";
 
-import type { Character } from "@/models/base";
+import type { Character } from "@/models";
 import type { LevelableTalentType } from "@/types";
 
 import { TALENT_TYPES } from "@/constants/global";

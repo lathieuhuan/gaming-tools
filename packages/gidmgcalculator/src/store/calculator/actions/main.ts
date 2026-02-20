@@ -1,10 +1,10 @@
-import type { CalcSetup, MainUpdateData } from "@/models/calculation";
+import type { CalcSetup, MainUpdateData } from "@/models";
 import type { ElementalEvent, ITarget } from "@/types";
 import type { ForwardedAction } from "../types";
 
-import { Team } from "@/models/base";
-import { createWeaponBuffCtrls } from "@/models/calculation";
-import { createTarget } from "@/utils/entity.utils";
+import { createTarget } from "@/logic/entity.logic";
+import { createWeaponBuffCtrls } from "@/logic/modifier.logic";
+import { Team } from "@/models";
 import Object_ from "@/utils/Object";
 import { useSettingsStore } from "@Store/settings";
 import { useCalcStore } from "../calculatorStore";

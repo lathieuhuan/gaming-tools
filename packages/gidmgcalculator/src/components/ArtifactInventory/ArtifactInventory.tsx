@@ -8,7 +8,7 @@ import {
 } from "rond";
 
 import type { ArtifactType } from "@/types";
-import { type ArtifactGear, Artifact } from "@/models/base";
+import { type ArtifactGear, Artifact } from "@/models";
 
 import { useArtifactSetData } from "@/hooks";
 import { useStoreSnapshot } from "@/systems/dynamic-store";

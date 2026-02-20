@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ConfirmModal, TrashCanSvg } from "rond";
 
-import { Artifact } from "@/models/base";
+import { Artifact } from "@/models";
 import { useDispatch } from "@Store/hooks";
 import {
   removeDbArtifact,

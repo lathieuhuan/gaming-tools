@@ -9,7 +9,7 @@ import {
 } from "rond";
 
 import type { IArtifactBasic, IWeaponBasic } from "@/types";
-import { Artifact, Weapon } from "@/models/base";
+import { Artifact, Weapon } from "@/models";
 
 // Component
 import { ArtifactCard } from "../ArtifactCard";

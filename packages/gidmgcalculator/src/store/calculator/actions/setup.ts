@@ -1,7 +1,7 @@
 import type { ArtifactType, ISetupManager } from "@/types";
 import type { WritableDraft } from "immer/src/internal.js";
 
-import { CalcSetup } from "@/models/calculation";
+import { CalcSetup } from "@/models";
 import Array_ from "@/utils/Array";
 import Object_ from "@/utils/Object";
 import { useCalcStore } from "../calculatorStore";

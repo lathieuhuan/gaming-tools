@@ -3,7 +3,7 @@ import { FaSave } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { notification, OverflowWatcher } from "rond";
 
-import type { Weapon } from "@/models/base";
+import type { Weapon } from "@/models";
 import type { IWeaponBasic } from "@/types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";

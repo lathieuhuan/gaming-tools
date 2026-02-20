@@ -1,7 +1,7 @@
 import { MouseEvent } from "react";
 import { clsx, Radio } from "rond";
 
-import type { Artifact } from "@/models/base";
+import type { Artifact } from "@/models";
 
 import { useTranslation } from "@/hooks/useTranslation";
 import { suffixOf } from "@/utils/pure.utils";

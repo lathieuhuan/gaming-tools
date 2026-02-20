@@ -1,4 +1,4 @@
-import type { CalcSetup } from "@/models/calculation";
+import type { CalcSetup } from "@/models";
 import type { CalcResultAttackItem } from "../types";
 import type { CalcResult } from "./types";
 

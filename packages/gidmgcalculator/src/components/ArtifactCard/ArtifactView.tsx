@@ -1,6 +1,6 @@
 import { Badge, clsx, VersatileSelect } from "rond";
 
-import type { Artifact } from "@/models/base";
+import type { Artifact } from "@/models";
 import type { ArtifactSubStat, AttributeStat } from "@/types";
 
 import { useTranslation } from "@/hooks";

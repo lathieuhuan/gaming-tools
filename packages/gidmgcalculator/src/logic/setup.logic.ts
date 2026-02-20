@@ -15,18 +15,13 @@ import type {
   IWeaponBuffCtrl,
 } from "@/types";
 
-import { ArtifactGear, Team } from "@/models/base";
-import {
-  CalcSetup,
-  TeammateCalc,
-  createArtifactBuffCtrls,
-  createWeaponBuffCtrls,
-} from "@/models/calculation";
+import { ArtifactGear, CalcSetup, Team, TeammateCalc } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import { createArtifact, createCharacterCalc, createTarget, createWeapon } from "./entity.utils";
-import IdStore from "./IdStore";
-import { enhanceCtrls } from "./modifier.utils";
-import Object_ from "./Object";
+import IdStore from "../utils/IdStore";
+import { enhanceCtrls } from "../logic/modifier.logic";
+import Object_ from "../utils/Object";
+import { createArtifact, createCharacterCalc, createTarget, createWeapon } from "./entity.logic";
+import { createArtifactBuffCtrls, createWeaponBuffCtrls } from "./modifier.logic";
 
 export function isDbSetup(setup: IDbSetup | IDbComplexSetup): setup is IDbSetup {
   return ["original", "combined"].includes(setup.type);

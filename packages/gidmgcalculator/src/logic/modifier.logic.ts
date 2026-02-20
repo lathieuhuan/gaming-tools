@@ -1,3 +1,4 @@
+import type { CalcSetup, TeammateCalc } from "@/models";
 import type {
   AppArtifact,
   AppCharacter,
@@ -9,6 +10,7 @@ import type {
   IArtifactBuffCtrl,
   IArtifactDebuffCtrl,
   IArtifactGearSet,
+  IModifierCtrl,
   IModifierCtrlBasic,
   ITeam,
   ITeamBuffCtrl,
@@ -18,12 +20,10 @@ import type {
   ModInputType,
   ResonanceModCtrl,
 } from "@/types";
-import type { CalcSetup } from "./CalcSetup";
-import type { TeammateCalc } from "./TeammateCalc";
 
 import { $AppArtifact, $AppData } from "@/services";
 import Array_ from "@/utils/Array";
-import { isManualRsnElmt } from "../base/utils/isManualRsnElmt";
+import { isManualRsnElmt } from "./element.logic";
 
 export const MS_ASCENDANT_BUFF_ID = 1;
 
@@ -269,4 +269,20 @@ export function createElementalEvent(): ElementalEvent {
     absorbReaction: null,
     absorption: null,
   };
+}
+
+export function enhanceCtrls<T extends EntityModifier, TExtra extends object = {}>(
+  ctrls: IModifierCtrlBasic[],
+  mods?: T[],
+  extraProps: TExtra = {} as TExtra,
+  extraCheck: (ctrl: IModifierCtrlBasic, mod: T) => boolean = () => true
+) {
+  if (mods) {
+    return ctrls.reduce<(IModifierCtrl<T> & TExtra)[]>((result, ctrl) => {
+      const data = mods.find((mod) => mod.index === ctrl.id && extraCheck(ctrl, mod));
+      return data ? result.concat({ ...ctrl, data, ...extraProps }) : result;
+    }, []);
+  }
+
+  return [];
 }

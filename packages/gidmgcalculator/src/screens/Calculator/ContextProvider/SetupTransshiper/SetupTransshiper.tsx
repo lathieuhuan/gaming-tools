@@ -3,7 +3,7 @@ import { message } from "rond";
 
 import { useSearchParams } from "@/systems/router";
 import { useSetupImporter } from "@/systems/setup-importer";
-import { decodeSetup } from "@/utils/setup-porter";
+import { decodeSetup } from "@/logic/setupCodec";
 import { selectAppReady, useUIStore } from "@Store/ui";
 
 type SearchParams = {

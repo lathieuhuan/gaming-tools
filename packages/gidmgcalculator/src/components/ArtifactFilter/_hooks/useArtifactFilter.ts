@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import type { AttributeStat, IArtifactBasic } from "@/types";
 import type { ArtifactFilterCondition } from "../types";
 
-import { Artifact } from "@/models/base";
+import { Artifact } from "@/models";
 import { DEFAULT_ARTIFACT_FILTER } from "../constants";
 
 export function useArtifactFilter<T extends IArtifactBasic = IArtifactBasic>(

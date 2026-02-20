@@ -1,4 +1,4 @@
-import { Artifact, Weapon } from "@/models/base";
+import { Artifact, Weapon } from "@/models";
 import { initialState, UserdbState } from "@Store/userdbSlice";
 
 export const migrateToV5 = (state?: UserdbState): UserdbState => {

@@ -2,7 +2,7 @@ import type { AllAttributes, AttributeBonus, AttributeStat, BaseAttributeStat } 
 import type { CharacterCalc } from "./CharacterCalc";
 
 import { ATTRIBUTE_STAT_TYPES } from "@/constants";
-import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/utils/calculation.utils";
+import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/logic/stat.logic";
 import Object_ from "@/utils/Object";
 import { round } from "@/utils/pure.utils";
 import TypeCounter from "@/utils/TypeCounter";

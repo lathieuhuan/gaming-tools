@@ -1,7 +1,7 @@
-import type { Weapon } from "@/models/base";
+import type { Weapon } from "@/models";
 import type { GenshinUserBuild } from "@/services/enka";
 import type { ArtifactType, IArtifactBasic, IDbCharacter, IWeaponBasic } from "@/types";
-import type { GOODCharacterConvertReturn } from "@/utils/converGOOD.utils";
+import type { GOODCharacterConvertReturn } from "@/logic/converGOOD.logic";
 import type {
   ArtifactSavingStep,
   CharacterSavingStep,
@@ -12,7 +12,7 @@ import type {
 
 import { ARTIFACT_TYPES } from "@/constants";
 import Array_ from "@/utils/Array";
-import { createArtifact, createWeapon } from "@/utils/entity.utils";
+import { createArtifact, createWeapon } from "@/logic/entity.logic";
 import { isSameArtifact } from "../_logic";
 
 export const getCharacterSavingStep = (

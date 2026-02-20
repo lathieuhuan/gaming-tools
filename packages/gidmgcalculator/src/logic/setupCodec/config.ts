@@ -1,4 +1,4 @@
-import { CustomBuffCtrlCategory } from "@/types";
+import type { CustomBuffCtrlCategory } from "@/types";
 
 export const DIVIDER: Record<number | "MC" | "MC_INPUTS", string> = {
   0: "/",

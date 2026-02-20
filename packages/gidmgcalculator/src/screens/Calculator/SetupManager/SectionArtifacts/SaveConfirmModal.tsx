@@ -2,7 +2,7 @@ import { useRef } from "react";
 import isEqual from "react-fast-compare";
 import { ConfirmModal, Modal } from "rond";
 
-import type { Artifact } from "@/models/base";
+import type { Artifact } from "@/models";
 
 import { MAX_USER_ARTIFACTS } from "@/constants/config";
 import { useStoreSnapshot } from "@/systems/dynamic-store";

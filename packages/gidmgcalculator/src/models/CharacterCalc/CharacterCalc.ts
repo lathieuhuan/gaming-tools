@@ -1,4 +1,3 @@
-import type { ArtifactGear, Weapon } from "@/models/base";
 import type {
   AllAttributes,
   AmplifyingReaction,
@@ -22,12 +21,15 @@ import type {
   TalentType,
 } from "@/types";
 import type { TypeCounterKey } from "@/utils/TypeCounter";
+import type { ArtifactGear } from "../ArtifactGear";
+import type { Weapon } from "../Weapon";
 
-import { Character, Team } from "@/models/base";
-import { isPassedComparison } from "@/models/base/utils/isPassedComparison";
-import { isValidInput } from "@/models/base/utils/isValidInput";
 import { AllAttributesControl } from "../AllAttributesControl";
 import { AttackBonusControl } from "../AttackBonusControl";
+import { Character } from "../Character";
+import { Team } from "../Team";
+import { isPassedComparison } from "../utils/isPassedComparison";
+import { isValidInput } from "../utils/isValidInput";
 import { BonusCalc } from "./BonusCalc";
 import { PenaltyCalc } from "./PenaltyCalc";
 

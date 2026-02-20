@@ -1,4 +1,4 @@
-import type { CalcSetup } from "@/models/calculation";
+import type { CalcSetup } from "@/models";
 import type {
   AttackElement,
   AttributeStat,
@@ -18,7 +18,7 @@ import {
   REACTIONS,
   WEAPON_TYPES,
 } from "@/constants/global";
-import { CUSTOM_BUFF_CATEGORIES, DIVIDER } from "./setup-porter-config";
+import { CUSTOM_BUFF_CATEGORIES, DIVIDER } from "./config";
 
 export function encodeSetup(calcSetup: CalcSetup) {
   const {

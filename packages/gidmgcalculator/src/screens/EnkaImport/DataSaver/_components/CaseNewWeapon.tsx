@@ -1,4 +1,4 @@
-import type { Weapon } from "@/models/base";
+import type { Weapon } from "@/models";
 
 import { SavingCase, SavingCaseProps } from "./SavingCase";
 import { WeaponSummary } from "./WeaponSummary";

@@ -1,4 +1,4 @@
-import type { CharacterCalc } from "@/models/calculation";
+import type { CharacterCalc } from "@/models";
 import type {
   ActualAttackPattern,
   AttackBonusKey,
@@ -11,7 +11,7 @@ import type { CalcTarget } from "./CalcTarget";
 import type { ResultRecorder } from "./ResultRecorder";
 
 import { toMult } from "@/utils/pure.utils";
-import { limitCRate } from "@/utils/calculation.utils";
+import { limitCRate } from "@/logic/stat.logic";
 
 type MakeAttackCalcTools = {
   attElmt?: AttackElement;

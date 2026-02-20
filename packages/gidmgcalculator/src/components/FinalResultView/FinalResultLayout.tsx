@@ -3,7 +3,7 @@ import { FaCaretRight } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { Button, clsx, CollapseSpace, Table, TableTdProps, TableThProps } from "rond";
 
-import type { Character } from "@/models/base";
+import type { Character } from "@/models";
 import type { LevelableTalentType, TalentType } from "@/types";
 
 import { EMPTY_VALUE } from "@/constants/ui";

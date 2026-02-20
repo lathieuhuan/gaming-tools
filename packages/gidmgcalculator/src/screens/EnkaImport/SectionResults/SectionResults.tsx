@@ -1,11 +1,10 @@
 import { ClassValue, clsx } from "rond";
 
-import { ArtifactGear } from "@/models/base";
-import { CharacterCalc } from "@/models/calculation";
+import { createArtifact, createWeapon } from "@/logic/entity.logic";
+import { ArtifactGear, CharacterCalc } from "@/models";
 import { GenshinUserBuild } from "@/services/enka";
 import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/Array";
-import { createArtifact, createWeapon } from "@/utils/entity.utils";
 import IdStore from "@/utils/IdStore";
 import { useDataImportState } from "../DataImporter";
 import { useRequestSaveBuild } from "../DataSaver/BuildSaver";

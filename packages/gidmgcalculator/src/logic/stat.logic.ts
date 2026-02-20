@@ -1,5 +1,6 @@
+import type { BaseAttributeStat, CoreStat } from "@/types";
+
 import { BASE_ATTRIBUTE_STATS, CORE_STAT_TYPES } from "@/constants/global";
-import { BaseAttributeStat, CoreStat } from "@/types";
 
 export function limitCRate(crit: number) {
   return Math.min(Math.max(crit, 0), 100);

@@ -1,4 +1,4 @@
-import type { CalcSetup, TeammateCalc, CharacterCalc } from "@/models/calculation";
+import type { CalcSetup, TeammateCalc, CharacterCalc } from "@/models";
 import type { ElementType, EntityDebuff, EntityPenaltyTarget, ResistReductionKey } from "@/types";
 import type { CalcTarget } from "../core/CalcTarget";
 import type { IEffectPerformer } from "../types";

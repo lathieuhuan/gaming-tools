@@ -1,4 +1,3 @@
-import type { PartiallyRequiredOnly } from "rond";
 import type {
   AppArtifact,
   AppCharacter,
@@ -7,15 +6,11 @@ import type {
   ITeammate,
   IWeapon,
 } from "@/types";
+import type { PartiallyRequiredOnly } from "rond";
 import type { ArtifactPieceUpdateData, CloneOptions, MainUpdateData } from "./types";
 
 import { calculateSetup } from "@/calculation/calculator";
-import { Artifact, ArtifactGear, Team, Weapon } from "@/models/base";
-import { CharacterCalc } from "../CharacterCalc";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import Array_ from "@/utils/Array";
-import { createArtifactBasic, CreateArtifactParams, createTarget } from "@/utils/entity.utils";
-import { TeammateCalc, type TeammateCalcConstructInfo } from "../TeammateCalc";
+import { createArtifactBasic, CreateArtifactParams, createTarget } from "@/logic/entity.logic";
 import {
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
@@ -26,7 +21,15 @@ import {
   createRsnModCtrls,
   createTeamBuffCtrls,
   createWeaponBuffCtrls,
-} from "../modifier";
+} from "@/logic/modifier.logic";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
+import Array_ from "@/utils/Array";
+import { Artifact } from "../Artifact";
+import { ArtifactGear } from "../ArtifactGear";
+import { CharacterCalc } from "../CharacterCalc";
+import { Team } from "../Team";
+import { TeammateCalc, type TeammateCalcConstructInfo } from "../TeammateCalc";
+import { Weapon } from "../Weapon";
 import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
 
 type TeammateUpdateData = Partial<

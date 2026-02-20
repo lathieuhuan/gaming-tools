@@ -1,4 +1,4 @@
-import type { CharacterCalc } from "@/models/calculation";
+import type { CharacterCalc } from "@/models";
 import type { AttackElement, AttackReaction, ElementalEvent } from "@/types";
 
 import { QuickenBuffItem, VapMeltBuffItem } from "@/components";

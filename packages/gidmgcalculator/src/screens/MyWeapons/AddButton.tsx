@@ -4,7 +4,7 @@ import { Button, message } from "rond";
 
 import { WeaponForge } from "@/components";
 import { MAX_USER_WEAPONS } from "@/constants/config";
-import { Weapon } from "@/models/base";
+import { Weapon } from "@/models";
 import { IWeaponBasic } from "@/types";
 import { useDispatch } from "@Store/hooks";
 import { addDbWeapon } from "@Store/userdbSlice";

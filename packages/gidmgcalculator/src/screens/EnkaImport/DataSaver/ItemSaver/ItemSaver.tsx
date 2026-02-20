@@ -4,7 +4,7 @@ import { CloseButton, Modal, notification } from "rond";
 import type { ItemSavingStep } from "./_types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";
-import { createArtifact, createWeapon } from "@/utils/entity.utils";
+import { createArtifact, createWeapon } from "@/logic/entity.logic";
 import { isSameArtifact, isSameWeapon } from "../_logic";
 import { ItemSaverContext, ItemSaverContextState } from "./_context";
 

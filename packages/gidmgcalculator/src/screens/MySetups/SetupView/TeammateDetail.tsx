@@ -1,7 +1,7 @@
 import { FaCalculator, FaSyncAlt } from "react-icons/fa";
 import { Button } from "rond";
 
-import type { TeammateCalc } from "@/models/calculation";
+import type { TeammateCalc } from "@/models";
 
 import { CharacterPortrait, EnhanceTag, TeammateItems } from "@/components";
 

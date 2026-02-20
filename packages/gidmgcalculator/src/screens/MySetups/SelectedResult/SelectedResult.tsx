@@ -4,10 +4,9 @@ import type { IArtifactBuffCtrl, IArtifactDebuffCtrl, IDbSetup } from "@/types";
 import type { SetupOverviewInfo } from "../_types";
 
 import { calculateSetup } from "@/calculation/calculator";
-import { Target, Team } from "@/models/base";
-import { CalcSetup } from "@/models/calculation";
+import { enhanceCtrls } from "@/logic/modifier.logic";
+import { CalcSetup, Target, Team } from "@/models";
 import { $AppArtifact, $AppData } from "@/services";
-import { enhanceCtrls } from "@/utils/modifier.utils";
 
 import { FinalResultView } from "@/components";
 import { SetupModals } from "../SetupModals";

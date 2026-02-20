@@ -28,11 +28,11 @@ import type {
 } from "./types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
-import { Artifact, Ascendable, Weapon } from "@/models/base";
+import { Artifact, Ascendable, Weapon } from "@/models";
 import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
-import { createCharacterBasic, createWeaponBasic } from "@/utils/entity.utils";
-import { isDbSetup } from "@/utils/setup.utils";
+import { createCharacterBasic, createWeaponBasic } from "@/logic/entity.logic";
+import { isDbSetup } from "@/logic/setup.logic";
 
 export type UserdbState = {
   userChars: IDbCharacter[];

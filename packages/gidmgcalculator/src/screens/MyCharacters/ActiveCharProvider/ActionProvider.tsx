@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react";
 import { ConfirmModal } from "rond";
 
-import type { Artifact } from "@/models/base";
-import type { CharacterCalc } from "@/models/calculation";
+import type { Artifact, CharacterCalc } from "@/models";
 import type { IArtifactGearSlot } from "@/types";
 
 import { ArtifactInventory, Tavern, WeaponInventory } from "@/components";

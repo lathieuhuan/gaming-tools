@@ -3,7 +3,7 @@ import { FaAngleDoubleRight, FaPlus } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { ButtonProps, Checkbox, notification } from "rond";
 
-import type { Artifact } from "@/models/base";
+import type { Artifact } from "@/models";
 import type { IArtifactBasic } from "@/types";
 import type { ArtifactSaveOutput, ArtifactSavingStep } from "./_types";
 

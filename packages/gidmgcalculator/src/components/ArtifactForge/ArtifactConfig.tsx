@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Rarity } from "rond";
 
-import type { Artifact } from "@/models/base";
+import type { Artifact } from "@/models";
 import type { IArtifact } from "@/types";
 import Object_ from "@/utils/Object";
 

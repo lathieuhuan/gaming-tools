@@ -1,4 +1,4 @@
-import type { CharacterCalc } from "@/models/calculation";
+import type { CharacterCalc } from "@/models";
 import type { TalentCalcItemBonusId } from "@/types";
 import type { CalcResultOtherItem } from "../types";
 import type { ResultRecorder } from "./ResultRecorder";

@@ -1,5 +1,4 @@
-import type { Artifact } from "@/models/base/Artifact";
-import type { Weapon } from "@/models/base/Weapon";
+import type { Artifact, Weapon } from "@/models";
 import type { IArtifactBasic, IWeaponBasic } from "@/types";
 
 export type WeaponSavingStep = {

@@ -1,7 +1,7 @@
 import type { IArtifactDebuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
-import { getArtifactDesc } from "@/utils/description-parsers";
+import { getArtifactDesc } from "@/utils/descriptionParsers";
 import { GenshinModifierView } from "../GenshinModifierView";
 import { ModifierContainer } from "./ModifierContainer";
 

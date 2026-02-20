@@ -1,6 +1,6 @@
 import { round } from "rond";
 
-import type { CharacterCalc } from "@/models/calculation";
+import type { CharacterCalc } from "@/models";
 import type { AmplifyingReaction, ElementType } from "@/types";
 
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";

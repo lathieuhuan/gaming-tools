@@ -11,9 +11,9 @@ import type {
 } from "@/types";
 
 import Array_ from "@/utils/Array";
-import { wrapText } from "@/utils/description-parsers/utils";
+import { wrapText } from "@/utils/descriptionParsers/utils";
 import { round, toMult } from "@/utils/pure.utils";
-import { Character } from "../base";
+import { Character } from "./Character";
 
 type AbilityBuff = CharacterBuff | CharacterDebuff;
 

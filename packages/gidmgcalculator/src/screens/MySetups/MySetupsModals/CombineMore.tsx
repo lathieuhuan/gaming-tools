@@ -2,7 +2,7 @@ import type { IDbComplexSetup, IDbSetup } from "@/types";
 
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import Array_ from "@/utils/Array";
-import { isDbSetup } from "@/utils/setup.utils";
+import { isDbSetup } from "@/logic/setup.logic";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { addSetupToComplex, selectActiveSetupId, selectDbSetups } from "@Store/userdbSlice";
 import { useCombineManager } from "./_useCombineManager";

@@ -1,4 +1,4 @@
-import type { TeammateCalc } from "@/models/calculation";
+import type { TeammateCalc } from "@/models";
 import type { IWeaponBuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";

@@ -10,10 +10,10 @@ import type {
   TeamMilestoneCondition,
 } from "@/types";
 
-import TypeCounter from "@/utils/TypeCounter";
-import { isAutoRsnElmt } from "./utils/isAutoRsnElmt";
-import { isPassedComparison } from "./utils/isPassedComparison";
 import { PHEC_ELEMENT_TYPES } from "@/constants";
+import { isAutoRsnElmt } from "@/logic/element.logic";
+import TypeCounter from "@/utils/TypeCounter";
+import { isPassedComparison } from "./utils/isPassedComparison";
 
 export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
   members: TMember[] = [];

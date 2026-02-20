@@ -6,7 +6,7 @@ import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
 import type { ArtifactType } from "@/types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
-import { Artifact } from "@/models/base";
+import { Artifact } from "@/models";
 import { useCalcStore } from "@Store/calculator";
 import { setArtifactPiece } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";

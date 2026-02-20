@@ -1,5 +1,5 @@
 import { ClassValue, clsx, cn } from "rond";
-import { Ascendable } from "@/models/base";
+import { Ascendable } from "@/models";
 
 export type LevelMenuProps = {
   classNames?: {

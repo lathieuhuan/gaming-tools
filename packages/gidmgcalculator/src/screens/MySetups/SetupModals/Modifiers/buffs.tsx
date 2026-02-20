@@ -1,11 +1,11 @@
 import { Fragment } from "react";
 
-import type { CalcSetup, CharacterCalc } from "@/models/calculation";
+import type { CalcSetup, CharacterCalc } from "@/models";
 import type { AttackReaction, CustomBuffCtrl, ElementalEvent, ElementType } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { suffixOf, toCustomBuffLabel } from "@/utils/pure.utils";
-import { parseDescription } from "@/utils/description-parsers";
+import { parseDescription } from "@/utils/descriptionParsers";
 
 // Component
 import {

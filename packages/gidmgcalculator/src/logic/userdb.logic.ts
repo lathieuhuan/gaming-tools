@@ -1,16 +1,16 @@
 import type { IArtifactBasic, IDbCharacter, IWeaponBasic, WeaponType } from "@/types";
 
-import { ArtifactGear, Team } from "@/models/base";
+import { ArtifactGear, Team } from "@/models";
 import { $AppCharacter } from "@/services";
-import Array_ from "./Array";
+import Array_ from "@/utils/Array";
 import {
   createArtifact,
   createArtifactBasic,
   createCharacterCalc,
   createWeapon,
   createWeaponBasic,
-} from "./entity.utils";
-import IdStore from "./IdStore";
+} from "@/logic/entity.logic";
+import IdStore from "@/utils/IdStore";
 
 export function parseDbWeapon(weaponID: number, dbWeapons: IWeaponBasic[], weaponType: WeaponType) {
   const dbWeapon = Array_.findById(dbWeapons, weaponID);

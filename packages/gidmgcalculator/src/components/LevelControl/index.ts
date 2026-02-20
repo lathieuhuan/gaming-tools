@@ -1,2 +1,2 @@
 export * from "./LevelControl";
-export * from "./component-variants";
+export * from "./LevelControlVariants";

@@ -3,7 +3,7 @@ import { FaSave } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { notification } from "rond";
 
-import type { Artifact } from "@/models/base/Artifact";
+import type { Artifact } from "@/models";
 import type { IArtifactBasic } from "@/types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";

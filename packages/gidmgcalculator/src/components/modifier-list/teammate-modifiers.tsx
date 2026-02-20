@@ -1,4 +1,4 @@
-import type { TeammateCalc } from "@/models/calculation";
+import type { TeammateCalc } from "@/models";
 import type { IAbilityBuffCtrl, IAbilityDebuffCtrl, IModifierCtrlBasic, ITeam } from "@/types";
 import type { ModifierHanlders } from "./types";
 

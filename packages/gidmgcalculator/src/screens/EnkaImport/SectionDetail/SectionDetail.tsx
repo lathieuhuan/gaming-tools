@@ -4,8 +4,7 @@ import { ClassValue, clsx } from "rond";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { Artifact, ArtifactGear, Weapon } from "@/models/base";
-import { CharacterCalc } from "@/models/calculation";
+import { Artifact, ArtifactGear, CharacterCalc, Weapon } from "@/models";
 import Array_ from "@/utils/Array";
 import { useSelectedBuildState } from "../DataImporter";
 import { useRequestSaveItem } from "../DataSaver/ItemSaver";

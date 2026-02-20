@@ -2,7 +2,7 @@ import { FallbackProps } from "react-error-boundary";
 import { FaDownload } from "react-icons/fa";
 import { Button, WarehouseLayout } from "rond";
 
-import { SystemError } from "@/utils/SystemError";
+import { SystemError } from "@/logic/SystemError";
 import { useDispatch } from "@Store/hooks";
 import { updateUI } from "@Store/ui";
 import { fixV4MigrationError } from "@Store/userdbSlice";

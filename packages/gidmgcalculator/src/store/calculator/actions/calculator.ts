@@ -1,7 +1,7 @@
 import type { BasicSetupType, ISetupManager } from "@/types";
 import type { CalculatorState } from "../types";
 
-import { CalcSetup, CalcSetupConstructInfo } from "@/models/calculation";
+import { CalcSetup, CalcSetupConstructInfo } from "@/models";
 import { $AppCharacter } from "@/services";
 import { updateSettings } from "@Store/settings";
 import { useToursStore } from "@Store/tours";

@@ -4,9 +4,9 @@ import { ButtonGroup, FancyBackSvg, Modal, useValues } from "rond";
 
 import type { AppArtifact, ArtifactType, IArtifact } from "@/types";
 
-import { Artifact } from "@/models/base";
+import { Artifact } from "@/models";
 import { $AppArtifact } from "@/services";
-import { createArtifact } from "@/utils/entity.utils";
+import { createArtifact } from "@/logic/entity.logic";
 
 // Component
 import {

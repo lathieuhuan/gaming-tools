@@ -1,7 +1,7 @@
 import type { ElementType, ModInputConfig } from "@/types";
 
 import Array_ from "@/utils/Array";
-import { parseDescription } from "@/utils/description-parsers";
+import { parseDescription } from "@/utils/descriptionParsers";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 
 type RenderInfo = {

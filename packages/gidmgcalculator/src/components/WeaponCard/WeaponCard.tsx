@@ -1,7 +1,7 @@
 import type { CSSProperties, MouseEvent } from "react";
 import { ButtonGroup, clsx, type ButtonGroupItem, type ClassValue } from "rond";
 
-import type { Weapon } from "@/models/base";
+import type { Weapon } from "@/models";
 import { OwnerLabel } from "../OwnerLabel";
 import { WeaponView, WeaponViewProps } from "./WeaponView";
 

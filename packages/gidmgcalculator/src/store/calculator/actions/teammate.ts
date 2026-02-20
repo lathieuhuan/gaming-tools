@@ -1,12 +1,9 @@
-import { Team, type Artifact, type Weapon } from "@/models/base";
+import type { Artifact, CalcSetup, Weapon } from "@/models";
 import type { AppCharacter, ITeammateArtifact, ITeammateWeapon } from "@/types";
 import type { ForwardedAction } from "../types";
 
-import {
-  createArtifactBuffCtrls,
-  createWeaponBuffCtrls,
-  type CalcSetup,
-} from "@/models/calculation";
+import { createArtifactBuffCtrls, createWeaponBuffCtrls } from "@/logic/modifier.logic";
+import { Team } from "@/models";
 import Object_ from "@/utils/Object";
 import { useSettingsStore } from "@Store/settings";
 import { useCalcStore } from "../calculatorStore";

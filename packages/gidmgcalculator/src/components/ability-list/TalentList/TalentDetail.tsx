@@ -8,7 +8,7 @@ import type { AppCharacter, TalentType } from "@/types";
 import { getTalentDefaultValues } from "@/calculation/calculator/getTalentDefaultValues";
 import { ATTACK_PATTERNS } from "@/constants/global";
 import { useTabs, useTranslation } from "@/hooks";
-import { Character } from "@/models/base";
+import { Character } from "@/models";
 import { fetchTalentDescriptions } from "@/services/app-data";
 import { genSequentialOptions } from "@/utils/pure.utils";
 import Array_ from "@/utils/Array";

@@ -1,6 +1,6 @@
 import { clsx } from "rond";
 
-import type { AllAttributesControl } from "@/models/calculation";
+import type { AllAttributesControl } from "@/models";
 
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";

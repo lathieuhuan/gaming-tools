@@ -3,7 +3,7 @@ import { FaAngleDoubleRight, FaPlus } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { ButtonProps, Checkbox, notification } from "rond";
 
-import type { Weapon } from "@/models/base";
+import type { Weapon } from "@/models";
 import type { IWeaponBasic } from "@/types";
 import type { SaveOutput, WeaponSavingStep } from "./_types";
 

@@ -1,10 +1,10 @@
 import { useLayoutEffect, useMemo } from "react";
 import { useScreenWatcher } from "rond";
 
+import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
 import { CalculatorLarge, CalculatorSmall } from "@/screens/Calculator";
 import { $AppCharacter } from "@/services";
 import { Outlet, useRouter } from "@/systems/router";
-import { genAccountTravelerKey } from "@/utils/genAccountTravelerKey";
 import { useSettingsStore } from "@Store/settings";
 
 export function Main() {

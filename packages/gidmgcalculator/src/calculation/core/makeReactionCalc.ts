@@ -1,4 +1,4 @@
-import type { CharacterCalc } from "@/models/calculation";
+import type { CharacterCalc } from "@/models";
 import type {
   ActualAttackElement,
   AttackBonusKey,
@@ -10,7 +10,7 @@ import type { CalcResultReactionItem } from "../types";
 import type { CalcTarget } from "./CalcTarget";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { limitCRate } from "@/utils/calculation.utils";
+import { limitCRate } from "@/logic/stat.logic";
 import { toMult } from "@/utils/pure.utils";
 import { LUNAR_ATTACK_ELEMENT, LUNAR_REACTION_COEFFICIENT } from "../constants";
 

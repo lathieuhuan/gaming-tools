@@ -3,10 +3,10 @@ import isEqual from "react-fast-compare";
 import { FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
 import { Button, ButtonGroup, CloseButton, Modal, TrashCanSvg } from "rond";
 
-import type { TeammateCalc } from "@/models/calculation";
+import type { TeammateCalc } from "@/models";
 import type { SetupOverviewInfo } from "../_types";
 
-import { Artifact } from "@/models/base";
+import { Artifact } from "@/models";
 import { useDispatch } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui";
 import { viewDbSetup, switchShownSetupInComplex, uncombineSetups } from "@Store/userdbSlice";

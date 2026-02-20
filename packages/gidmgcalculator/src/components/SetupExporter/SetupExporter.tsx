@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 
-import type { CalcSetup } from "@/models/calculation";
-import { encodeSetup } from "@/utils/setup-porter";
+import type { CalcSetup } from "@/models";
+import { encodeSetup } from "@/logic/setupCodec";
 import { PorterLayout } from "./PorterLayout";
 import { EXPORTED_SETUP_VERSION, LEGACY_EXPORTED_SETUP_VERSION } from "@/constants/config";
 

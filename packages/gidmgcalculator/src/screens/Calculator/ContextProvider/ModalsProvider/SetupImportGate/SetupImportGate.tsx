@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { useSetupImporter } from "@/systems/setup-importer";
-import { decodeSetup } from "@/utils/setup-porter/decode-setup";
+import { decodeSetup } from "@/logic/setupCodec/decodeSetup";
 
 import { PorterLayout } from "@/components";
 

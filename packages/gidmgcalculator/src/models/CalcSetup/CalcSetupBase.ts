@@ -1,5 +1,4 @@
 import type { CalcResult } from "@/calculation/calculator/types";
-import type { Target, Team } from "@/models/base";
 import type {
   CustomBuffCtrl,
   CustomDebuffCtrl,
@@ -13,6 +12,8 @@ import type {
   ResonanceModCtrl,
 } from "@/types";
 import type { CharacterCalc } from "../CharacterCalc";
+import type { Target } from "../Target";
+import type { Team } from "../Team";
 import type { TeammateCalc } from "../TeammateCalc";
 
 export type CalcSetupBaseConstructInfo = {

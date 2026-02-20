@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { VersatileSelect } from "rond";
 
-import type { CharacterCalc } from "@/models/calculation";
+import type { CharacterCalc } from "@/models";
 import type { ElementalEvent, ElementType } from "@/types";
 
 import { ELEMENT_TYPES } from "@/constants/global";

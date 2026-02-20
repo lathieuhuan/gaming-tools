@@ -1,4 +1,4 @@
-import type { CharacterCalc } from "@/models/calculation";
+import type { CharacterCalc } from "@/models";
 import type { IAbilityBuffCtrl, IAbilityDebuffCtrl, ITeam } from "@/types";
 import type { ModifierHanlders } from "./types";
 

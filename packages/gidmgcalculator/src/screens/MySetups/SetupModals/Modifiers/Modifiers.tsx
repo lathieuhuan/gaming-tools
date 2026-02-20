@@ -1,6 +1,6 @@
 import { CollapseList } from "rond";
 
-import type { CalcSetup } from "@/models/calculation";
+import type { CalcSetup } from "@/models";
 
 import { useTranslation } from "@/hooks";
 import { $AppData } from "@/services";

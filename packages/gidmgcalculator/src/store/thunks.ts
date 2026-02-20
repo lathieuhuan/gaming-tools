@@ -1,12 +1,12 @@
 import isEqual from "react-fast-compare";
 
-import type { CalcSetup } from "@/models/calculation";
+import type { CalcSetup } from "@/models";
 import type { AppThunk } from "./store";
 
-import { Artifact, Weapon } from "@/models/base";
+import { Artifact, Weapon } from "@/models";
 import { ArtifactType } from "@/types";
 import Array_ from "@/utils/Array";
-import { isDbSetup, toDbSetup } from "@/utils/setup.utils";
+import { isDbSetup, toDbSetup } from "@/logic/setup.logic";
 import { updateSetupAfterSave } from "./calculator/actions";
 import { updateUI } from "./ui";
 import {

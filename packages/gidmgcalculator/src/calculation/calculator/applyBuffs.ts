@@ -1,9 +1,4 @@
-import type {
-  CalcSetup,
-  CharacterCalc,
-  TeammateCalc,
-  ReceivedAttributeBonus,
-} from "@/models/calculation";
+import type { CalcSetup, CharacterCalc, TeammateCalc, ReceivedAttributeBonus } from "@/models";
 import type {
   AttackElement,
   AttackPattern,
@@ -24,7 +19,7 @@ import {
   QUICKEN_REACTIONS,
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
-import { BonusCalc } from "@/models/calculation";
+import { BonusCalc } from "@/models";
 import Array_ from "@/utils/Array";
 import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";
 

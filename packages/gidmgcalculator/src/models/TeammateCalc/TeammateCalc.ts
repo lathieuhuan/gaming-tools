@@ -13,10 +13,11 @@ import type {
 } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
 
-import { Teammate, Weapon } from "@/models/base";
+import { createAbilityBuffCtrls, createAbilityDebuffCtrls } from "@/logic/modifier.logic";
 import { $AppWeapon } from "@/services";
 import Object_ from "@/utils/Object";
-import { createAbilityBuffCtrls, createAbilityDebuffCtrls } from "../modifier";
+import { Teammate } from "../Teammate";
+import { Weapon } from "../Weapon";
 import { BonusCalc } from "./BonusCalc";
 import { PenaltyCalc } from "./PenaltyCalc";
 

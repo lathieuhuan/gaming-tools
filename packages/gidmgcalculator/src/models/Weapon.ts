@@ -1,9 +1,8 @@
 import type { AppWeapon, IWeapon, IWeaponBasic, Level, WeaponType } from "@/types";
 
 import { LEVELS } from "@/constants/global";
-import { Ascendable } from "./Ascendable";
 import Object_ from "@/utils/Object";
-import isEqual from "react-fast-compare";
+import { Ascendable } from "./Ascendable";
 
 const BASE_ATTACK_TYPE: Record<string, number[]> = {
   23: [23, 56, 68, 102, 113, 130, 141, 158, 169, 185, 185, 185, 185, 185],

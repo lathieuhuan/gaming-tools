@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 import { useScreenWatcher, useValues, WarehouseLayout } from "rond";
 
-import type { Artifact } from "@/models/base";
+import type { Artifact } from "@/models";
 import type { ArtifactType } from "@/types";
 
 import Array_ from "@/utils/Array";
-import { createArtifact } from "@/utils/entity.utils";
+import { createArtifact } from "@/logic/entity.logic";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { selectDbArtifacts, sortDbArtifacts } from "@Store/userdbSlice";
 

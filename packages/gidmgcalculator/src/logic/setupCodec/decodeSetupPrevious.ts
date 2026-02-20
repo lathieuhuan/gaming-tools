@@ -28,15 +28,22 @@ import {
   REACTIONS,
   WEAPON_TYPES,
 } from "@/constants/global";
-import { Artifact, ArtifactGear, Target, Team } from "@/models/base";
-import { isManualRsnElmt } from "@/models/base/utils/isManualRsnElmt";
-import { CalcSetup, CharacterCalc, TeammateCalc } from "@/models/calculation";
+import { isManualRsnElmt } from "@/logic/element.logic";
+import { createArtifact, createTarget, createWeapon } from "@/logic/entity.logic";
+import { enhanceCtrls } from "@/logic/modifier.logic";
+import {
+  Artifact,
+  ArtifactGear,
+  CalcSetup,
+  CharacterCalc,
+  Target,
+  Team,
+  TeammateCalc,
+} from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
 import Array_ from "@/utils/Array";
-import IdStore from "../IdStore";
-import { createArtifact, createTarget, createWeapon } from "../entity.utils";
-import { enhanceCtrls } from "../modifier.utils";
-import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./setup-porter-config";
+import IdStore from "@/utils/IdStore";
+import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./config";
 
 export function decodeSetupPrevious(code: string): DecodeResult {
   const characters = $AppCharacter.getAll();

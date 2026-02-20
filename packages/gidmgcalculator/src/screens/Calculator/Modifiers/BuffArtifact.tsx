@@ -1,4 +1,4 @@
-import type { TeammateCalc } from "@/models/calculation";
+import type { TeammateCalc } from "@/models";
 import type { IArtifactBuffCtrl, ITeammateArtifactBuffCtrl } from "@/types";
 
 import Object_ from "@/utils/Object";

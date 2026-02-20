@@ -1,4 +1,4 @@
-import type { CharacterCalc } from "@/models/calculation";
+import type { CharacterCalc } from "@/models";
 import type { ElementType, QuickenReaction } from "@/types";
 
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";

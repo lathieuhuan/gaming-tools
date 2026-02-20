@@ -1,7 +1,6 @@
 import { createContext, useContext } from "react";
 
-import type { Artifact } from "@/models/base";
-import type { CharacterCalc } from "@/models/calculation";
+import type { Artifact, CharacterCalc } from "@/models";
 import type { IArtifactGearSlot } from "@/types";
 
 // Data Context

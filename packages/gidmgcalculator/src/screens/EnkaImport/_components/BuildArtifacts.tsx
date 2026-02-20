@@ -4,7 +4,7 @@ import type { ArtifactType, IArtifact } from "@/types";
 import type { SelectedBuild } from "../_types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
-import { Artifact } from "@/models/base";
+import { Artifact } from "@/models";
 import { GenshinUserBuild } from "@/services/enka";
 import { useSelectedBuildState } from "../DataImporter";
 

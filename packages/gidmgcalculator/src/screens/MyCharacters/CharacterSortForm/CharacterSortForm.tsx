@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { CarouselSpace, Popover } from "rond";
 
-import { Ascendable } from "@/models/base";
+import { Ascendable } from "@/models";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import { useDispatch } from "@Store/hooks";
 import { sortDbCharacters } from "@Store/userdbSlice";

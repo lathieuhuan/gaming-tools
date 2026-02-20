@@ -12,13 +12,20 @@ import type {
 import type { AdvancedPick, PartiallyRequiredOnly } from "rond";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
-import { Artifact, ArtifactGear, Target, Team, Weapon } from "@/models/base";
-import { CharacterCalc, type CharacterCalcConstructInfo } from "@/models/calculation";
+import {
+  Artifact,
+  ArtifactGear,
+  CharacterCalc,
+  Target,
+  Team,
+  Weapon,
+  type CharacterCalcConstructInfo,
+} from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
+import Array_ from "@/utils/Array";
+import IdStore from "@/utils/IdStore";
+import Object_ from "@/utils/Object";
 import { useSettingsStore } from "@Store/settings";
-import Array_ from "./Array";
-import IdStore from "./IdStore";
-import Object_ from "./Object";
 
 // ========== ARTIFACT ==========
 

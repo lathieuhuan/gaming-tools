@@ -8,7 +8,6 @@ import type {
 } from "@/types";
 
 import Object_ from "@/utils/Object";
-import isEqual from "react-fast-compare";
 
 const percent1 = {
   4: [

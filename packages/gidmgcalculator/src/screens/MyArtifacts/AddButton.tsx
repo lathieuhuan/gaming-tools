@@ -4,7 +4,7 @@ import { Button, message } from "rond";
 
 import { ArtifactForge } from "@/components";
 import { MAX_USER_ARTIFACTS } from "@/constants";
-import { Artifact } from "@/models/base";
+import { Artifact } from "@/models";
 import { IArtifactBasic } from "@/types";
 import { useDispatch } from "@Store/hooks";
 import { addDbArtifact } from "@Store/userdbSlice";

@@ -1,4 +1,4 @@
-import type { Artifact } from "@/models/base";
+import type { Artifact } from "@/models";
 
 import { SavingCase, SavingCaseProps } from "./SavingCase";
 import { ArtifactSummary } from "./ArtifactSummary";

@@ -3,8 +3,8 @@ import { Modal } from "rond";
 
 import type { ElementType, TravelerConfig, TravelerKey } from "@/types";
 
+import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
 import { $AppCharacter } from "@/services";
-import { genAccountTravelerKey } from "@/utils/genAccountTravelerKey";
 import Object_ from "@/utils/Object";
 import { applySettingsToCalculator } from "@Store/calculator/actions";
 import { AppSettingsState, updateSettings, useSettingsStore } from "@Store/settings";

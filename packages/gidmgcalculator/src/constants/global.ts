@@ -21,7 +21,7 @@ export const BONUS_KEYS = [
   "veil_",
 ] as const;
 
-/** ========== ATTACKS ========== */
+// ========== ATTACKS ==========
 
 export const NORMAL_ATTACKS = ["NA", "CA", "PA"] as const;
 
@@ -29,7 +29,7 @@ export const ATTACK_PATTERNS = [...NORMAL_ATTACKS, "ES", "EB"] as const;
 
 export const ATTACK_ELEMENTS = [...ELEMENT_TYPES, "phys"] as const;
 
-/** ========== REACTIONS ========== */
+// ========== REACTIONS ==========
 
 export const TRANSFORMATIVE_REACTIONS = [
   "bloom",
@@ -58,7 +58,7 @@ export const REACTIONS = [
   ...AMPLIFYING_REACTIONS,
 ] as const;
 
-/** ========== STATS ========== */
+// ========== STATS ==========
 
 export const BASE_ATTRIBUTE_STATS = ["base_atk", "base_hp", "base_def"] as const;
 
