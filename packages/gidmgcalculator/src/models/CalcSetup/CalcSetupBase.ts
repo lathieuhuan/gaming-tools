@@ -1,4 +1,4 @@
-import type { CalcResult } from "@/calculation/calculator/types";
+import type { CalcResult } from "@/calculation/calculator";
 import type {
   CustomBuffCtrl,
   CustomDebuffCtrl,

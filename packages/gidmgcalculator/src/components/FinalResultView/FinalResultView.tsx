@@ -1,4 +1,4 @@
-import type { CalcResult } from "@/calculation/calculator/types";
+import type { CalcResult } from "@/calculation/calculator";
 import type { CalcResultAttackItem } from "@/calculation/types";
 
 import { LUNAR_TYPES } from "@/constants/global";
@@ -18,13 +18,8 @@ type FinalResultViewProps = Pick<
 export function FinalResultView({ finalResult, ...props }: FinalResultViewProps) {
   const { t } = useTranslation();
 
-  const displayAttElmt = (attElmt: CalcResultAttackItem["attElmt"]) => {
-    // TODO improve this
-    return attElmt === "phys"
-      ? "physical"
-      : LUNAR_TYPES.includes(attElmt as LunarType)
-      ? t(attElmt).toLowerCase()
-      : attElmt;
+  const tAttElmt = (attElmt: CalcResultAttackItem["attElmt"]) => {
+    return LUNAR_TYPES.includes(attElmt as LunarType) ? t(attElmt) : t(`${attElmt}_attElmt`);
   };
 
   return (
@@ -49,13 +44,13 @@ export function FinalResultView({ finalResult, ...props }: FinalResultViewProps)
 
         switch (result.type) {
           case "attack": {
-            const elmt = displayAttElmt(result.attElmt);
+            const elmt = tAttElmt(result.attElmt);
             const patt = result.attPatt !== "none" ? ` / ${t(result.attPatt).toLowerCase()}` : "";
             title = `${elmt}${patt}`;
             break;
           }
           case "reaction": {
-            const elmt = displayAttElmt(result.attElmt);
+            const elmt = tAttElmt(result.attElmt);
             const reaction = result.reaction ? ` / ${result.reaction}` : "";
             title = `${elmt}${reaction}`;
             break;

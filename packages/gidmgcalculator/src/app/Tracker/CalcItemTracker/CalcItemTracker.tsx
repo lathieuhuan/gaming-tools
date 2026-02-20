@@ -190,13 +190,10 @@ export function CalcItemTracker({
     let text = "";
 
     if (item.type === "attack") {
-      // TODO improve this
       const parts = [
-        item.attElmt !== "absorb"
-          ? LUNAR_TYPES.includes(item.attElmt as LunarType)
-            ? t(item.attElmt)
-            : t(`${item.attElmt}_attElmt`)
-          : "",
+        LUNAR_TYPES.includes(item.attElmt as LunarType)
+          ? t(item.attElmt)
+          : t(`${item.attElmt}_attElmt`),
         item.attPatt !== "none" && t(item.attPatt),
       ].filter(Boolean);
 

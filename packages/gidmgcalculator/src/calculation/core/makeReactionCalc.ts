@@ -2,6 +2,7 @@ import type { CharacterCalc } from "@/models";
 import type {
   ActualAttackElement,
   AttackBonusKey,
+  AttackElement,
   ElementalEvent,
   LunarReaction,
   TransformativeReaction,
@@ -94,7 +95,7 @@ export function makeReactionCalc(performer: CharacterCalc, target: CalcTarget) {
     const baseValue = baseRxnDamage * config.mult;
     const bonusMult = 1 + getBonus("pct_") / 100;
     const flat = getBonus("flat");
-    let attElmt = config.attElmt;
+    let attElmt: AttackElement;
     let rxnMult = 1;
     let resMult = 1;
 
@@ -108,8 +109,11 @@ export function makeReactionCalc(performer: CharacterCalc, target: CalcTarget) {
         if (absorbReaction === "melt" || absorbReaction === "vaporize") {
           rxnMult = performer.getAmplifyingMult(absorbReaction, attElmt);
         }
+      } else {
+        attElmt = "anemo";
       }
     } else {
+      attElmt = config.attElmt;
       resMult = target.resistMults[config.attElmt];
     }
 
