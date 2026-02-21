@@ -3,6 +3,7 @@ import {
   FaCog,
   FaDownload,
   FaInfoCircle,
+  FaMapMarkedAlt,
   FaQuestionCircle,
   FaUpload,
   FaWrench,
@@ -27,6 +28,11 @@ export const MODAL_OPTIONS: ModalOption[] = [
     icon: <FaQuestionCircle />,
     modalType: "GUIDES",
   },
+  // {
+  //   label: "App Tours",
+  //   icon: <FaMapMarkedAlt />,
+  //   modalType: "TOUR_CATALOGUE",
+  // },
   {
     label: "Settings",
     icon: <FaCog />,

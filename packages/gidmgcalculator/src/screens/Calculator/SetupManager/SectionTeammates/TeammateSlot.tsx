@@ -45,6 +45,7 @@ export function TeammateSlot({
         info={data}
         withColorBg
         recruitable
+        aria-expanded={active}
         onClick={onSelect}
       />
     </div>

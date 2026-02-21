@@ -1,4 +1,5 @@
 import type { SearchParams } from "@/systems/router";
+import type { TourKey } from "@/types";
 
 type AppModalType =
   | "INTRO"
@@ -8,8 +9,8 @@ type AppModalType =
   | "DOWNLOAD"
   | "DONATE"
   | "DATA_REPAIR"
-  | "MAIN_ENHANCE_NOTICE"
-  | "SUB_ENHANCE_NOTICE"
+  | "TOUR_CATALOGUE"
+  | "CHAR_ENHANCE_NOTICE"
   | "";
 
 export type MySetupsModalType =
@@ -26,7 +27,7 @@ export type MySetupsModalType =
 
 export type TrackerState = "open" | "close" | "hidden";
 
-export type TourType = "MAIN_ENHANCE" | "SUB_ENHANCE" | "";
+export type TourType = TourKey | "MAIN_ENHANCE" | "TEAMMATE_ENHANCE";
 
 export type UIState = {
   appReady: boolean;
@@ -38,6 +39,6 @@ export type UIState = {
   };
   setupDirectorActive: boolean;
   trackerState: TrackerState;
-  tourType: TourType;
+  tourType?: TourType;
   enkaParams?: SearchParams;
 };

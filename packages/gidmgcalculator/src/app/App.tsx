@@ -1,6 +1,6 @@
 import { ImporterProvider } from "@/systems/setup-importer";
 
-import { TourOperator } from "@/systems/tour";
+import { TourOperator } from "@/systems/tour-operator";
 import { Greeter } from "./Greeter";
 import { Main } from "./Main";
 import { Modals } from "./Modals";

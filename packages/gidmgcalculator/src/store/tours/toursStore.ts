@@ -2,12 +2,14 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
-type ToursState = {
-  characterEnhance: boolean;
+import type { TourKey } from "@/types";
+
+export type ToursState = {
+  finishedTours: Partial<Record<TourKey, boolean>>;
 };
 
 const initialState: ToursState = {
-  characterEnhance: false,
+  finishedTours: {},
 };
 
 export const useToursStore = create<ToursState>()(
@@ -18,3 +20,7 @@ export const useToursStore = create<ToursState>()(
     }
   )
 );
+
+export const isTourFinished = (tourKey: TourKey): boolean => {
+  return useToursStore.getState().finishedTours[tourKey] === true;
+};

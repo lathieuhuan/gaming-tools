@@ -4,8 +4,6 @@ import type { CalculatorState } from "../types";
 import { CalcSetup, CalcSetupConstructInfo } from "@/models";
 import { $AppCharacter } from "@/services";
 import { updateSettings } from "@Store/settings";
-import { useToursStore } from "@Store/tours";
-import { updateUI } from "@Store/ui";
 import { initialState, useCalcStore } from "../calculatorStore";
 
 type InitSessionPayload = {
@@ -29,20 +27,6 @@ export const initSession = (payload: InitSessionPayload) => {
   });
 
   updateSettings({ separateCharInfo: false });
-
-  if (useToursStore.getState().characterEnhance) {
-    return;
-  }
-
-  if (main.data.enhanceType) {
-    updateUI({ appModalType: "MAIN_ENHANCE_NOTICE" });
-    return;
-  }
-
-  if (teammates.some((teammate) => teammate.data.enhanceType)) {
-    updateUI({ appModalType: "SUB_ENHANCE_NOTICE" });
-    return;
-  }
 };
 
 export const updateCalculator = (

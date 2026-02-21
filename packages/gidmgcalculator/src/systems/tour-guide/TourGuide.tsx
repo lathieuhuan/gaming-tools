@@ -3,11 +3,9 @@ import ReactDOM from "react-dom";
 import { notification } from "rond";
 
 import type { TourType } from "@Store/ui/types";
-import type { TourStep } from "./_types";
+import type { TourStep, TourStepErrorCode } from "./_types";
 
 import { setTourType } from "@Store/ui";
-import { getMainEnhanceTourSteps, getSubEnhanceTourSteps } from "./_configs/enhanceTours";
-import { getErrorByCode } from "./_configs/getErrorByCode";
 import { useTourPrepper } from "./_hooks/useTourPrepper";
 
 import { Tour } from "./Tour";
@@ -33,27 +31,21 @@ function useOverlayElement(id: string) {
 }
 
 type TourGuideProps = {
-  type: TourType;
+  steps: TourStep[];
+  onError: (code: TourStepErrorCode) => void;
+  onFinish: () => void;
+  onCancel: () => void;
 };
 
-export function TourGuide({ type }: TourGuideProps) {
+export function TourGuide({ steps, onError, onFinish, onCancel }: TourGuideProps) {
   const overlayElement = useOverlayElement("tour");
-
-  const endTour = () => {
-    setTourType("");
-  };
 
   const tourPrepper = useTourPrepper({
     onError: (code) => {
-      notification.error({
-        content: `The tour has ended prematurely. ${getErrorByCode(code)}`,
-        duration: 0,
-      });
-
-      endTour();
+      onError(code);
     },
     onFinish: () => {
-      endTour();
+      onFinish();
     },
   });
 
@@ -61,19 +53,6 @@ export function TourGuide({ type }: TourGuideProps) {
   const [site, setSite] = useState(tourPrepper.site);
 
   useLayoutEffect(() => {
-    let steps: TourStep[] = [];
-
-    switch (type) {
-      case "MAIN_ENHANCE":
-        steps = getMainEnhanceTourSteps();
-        break;
-      case "SUB_ENHANCE":
-        steps = getSubEnhanceTourSteps();
-        break;
-      default:
-        break;
-    }
-
     tourPrepper.start(steps).then((site) => {
       setSite(site);
       setTotalSites(steps.length);
@@ -86,7 +65,7 @@ export function TourGuide({ type }: TourGuideProps) {
 
   return ReactDOM.createPortal(
     site ? (
-      <Tour site={site} totalSites={totalSites} onNext={handleNext} onCancel={endTour} />
+      <Tour site={site} totalSites={totalSites} onNext={handleNext} onCancel={onCancel} />
     ) : (
       <TourLoading />
     ),

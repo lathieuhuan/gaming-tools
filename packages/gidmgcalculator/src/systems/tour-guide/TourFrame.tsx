@@ -2,9 +2,11 @@ import type { TourSiteLocation } from "./_types";
 
 type TourFrameProps = TourSiteLocation;
 
-export function TourFrame({ top, right, bottom, left, width, height }: TourFrameProps) {
-  const rightWidth = window.innerWidth - right;
-  const bottomHeight = window.innerHeight - bottom;
+export function TourFrame({ top, left, width, height }: TourFrameProps) {
+  // const rightWidth = window.innerWidth - right;
+  // const bottomHeight = window.innerHeight - bottom;
+  const rightWidth = window.innerWidth - left - width;
+  const bottomHeight = window.innerHeight - top - height;
 
   return (
     <>

@@ -5,9 +5,11 @@
 //   value: number;
 // };
 
+export type TourStepDialog = string | React.ReactElement;
+
 export type TourStep = {
   id: string;
-  description: React.ReactNode;
+  dialogs: TourStepDialog[];
   siteGutter?: number;
   // ENHANCE: when we need to position intro
   // introAlign?: IntroAlign;
@@ -22,14 +24,14 @@ export type TourStep = {
 export type TourSiteLocation = {
   top: number;
   left: number;
-  bottom: number;
-  right: number;
+  // bottom: number;
+  // right: number;
   width: number;
   height: number;
 };
 
 type TourSiteIntro = {
-  text: React.ReactNode;
+  dialogs: TourStepDialog[];
   x: number;
   y: number;
 };

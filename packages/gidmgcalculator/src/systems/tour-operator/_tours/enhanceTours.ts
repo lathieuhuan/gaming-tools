@@ -1,4 +1,4 @@
-import type { TourStep } from "../_types";
+import type { TourStep } from "@/systems/tour-guide";
 
 import { ENHANCE_TOUR_SITE_ID, TOUR_STEP_ID } from "@/constants";
 import { $AppCharacter } from "@/services";
@@ -8,10 +8,12 @@ import { setTeammate, toggleTeammateEnhance, updateMain } from "@Store/calculato
 import { selectSetup } from "@Store/calculator/selectors";
 import { $ } from "../_utils";
 
+const CONDITION_TEXT = "This is a condition for some buffs/debuffs.";
+
 function genTeammateStep(teammateCode: number): TourStep {
   return {
     id: ENHANCE_TOUR_SITE_ID.subEnhance(teammateCode),
-    description: "Tap to toggle the enhanced state on this teammate.",
+    dialogs: [`Tap to toggle the enhanced state of this teammate. ${CONDITION_TEXT}`],
     siteGutter: 12,
     go: async () => {
       // Move to setup panel on Tab layout
@@ -30,7 +32,9 @@ function genTeammateStep(teammateCode: number): TourStep {
 
       await nextFrame();
 
-      slot.click();
+      if (slot.getAttribute("aria-expanded") !== "true") {
+        slot.click();
+      }
     },
     lastCheck: () => {
       toggleTeammateEnhance(teammateCode, true);
@@ -41,7 +45,7 @@ function genTeammateStep(teammateCode: number): TourStep {
 function genEnhanceBuffStep(id: string): TourStep {
   return {
     id,
-    description: "This effect is a condition to show some modifier controls.",
+    dialogs: [CONDITION_TEXT],
     siteGutter: 8,
     go: async () => {
       // Move to modifiers panel on Tab layout
@@ -72,33 +76,32 @@ function genEnhanceBuffStep(id: string): TourStep {
   };
 }
 
-export function getMainEnhanceTourSteps(): TourStep[] {
-  const TOUR_STEPS: TourStep[] = [
-    {
-      id: ENHANCE_TOUR_SITE_ID.mainEnhance,
-      description:
-        "Tap this tag to toggle the enhanced state the main character. It is a condition to show some modifier controls.",
-      siteGutter: 12,
-      go: () => {
-        // Move to overview panel on Tab layout
-        $(TOUR_STEP_ID.overviewPanel).act.click();
+export function getEnhanceTourSteps(): TourStep[] {
+  const MAIN_ENHANCE_STEP: TourStep = {
+    id: ENHANCE_TOUR_SITE_ID.mainEnhance,
+    dialogs: [`Tap this tag to toggle the enhanced state of the main character. ${CONDITION_TEXT}`],
+    siteGutter: 12,
+    go: () => {
+      // Move to overview panel on Tab layout
+      $(TOUR_STEP_ID.overviewPanel).act.click();
 
-        // Move to overview panel on scrollable layout
-        $(TOUR_STEP_ID.calculatorSmall).set("scrollLeft", 0);
-      },
-      lastCheck: () => {
-        updateMain({ enhanced: true });
-      },
+      // Move to overview panel on scrollable layout
+      $(TOUR_STEP_ID.calculatorSmall).set("scrollLeft", 0);
     },
-  ];
+    lastCheck: () => {
+      updateMain({ enhanced: true });
+    },
+  };
 
   const { main, teammates } = selectSetup(useCalcStore.getState());
   const teammateCalc = teammates.find((t) => t.data.enhanceType === main.data.enhanceType);
 
   if (!teammateCalc && teammates.length === 3) {
     // No teammate with the same enhance type, and slots are full
-    return TOUR_STEPS;
+    return [MAIN_ENHANCE_STEP];
   }
+
+  const TOUR_STEPS: TourStep[] = [MAIN_ENHANCE_STEP];
 
   let teammate = teammateCalc?.data;
   let addSlot: number | undefined = undefined;
@@ -138,23 +141,18 @@ export function getMainEnhanceTourSteps(): TourStep[] {
 }
 
 export function getSubEnhanceTourSteps(): TourStep[] {
-  const TOUR_STEPS: TourStep[] = [];
-
   const { teammates } = selectSetup(useCalcStore.getState());
   const teammate1 = teammates.find((t) => t.data.enhanceType)?.data;
+  if (!teammate1) return [];
 
-  if (!teammate1) {
-    return TOUR_STEPS;
-  }
-
-  TOUR_STEPS.push(genTeammateStep(teammate1.code));
+  const TOUR_STEPS: TourStep[] = [genTeammateStep(teammate1.code)];
 
   let teammate2Calc = teammates.find(
     (t) => t.data.enhanceType === teammate1.enhanceType && t.data.code !== teammate1.code
   );
 
   if (!teammate2Calc && teammates.length === 3) {
-    // No other teammate with the same enhance type, or slots are full
+    // No other teammate with the same enhance type, and slots are full
     return TOUR_STEPS;
   }
 

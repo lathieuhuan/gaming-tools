@@ -10,6 +10,6 @@ export const updateEnkaParams = (params: SearchParams) => {
   useUIStore.setState({ enkaParams: params });
 };
 
-export const setTourType = (tourType: TourType) => {
+export const setTourType = (tourType: TourType | undefined) => {
   useUIStore.setState({ tourType });
 };

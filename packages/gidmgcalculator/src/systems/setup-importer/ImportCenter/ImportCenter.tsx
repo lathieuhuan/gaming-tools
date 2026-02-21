@@ -9,6 +9,7 @@ import { CalcSetup } from "@/models";
 import { useRouter } from "@/systems/router";
 import { useShallowCalcStore } from "@Store/calculator";
 import { importSetup, initSession } from "@Store/calculator/actions";
+import { isTourFinished } from "@Store/tours";
 import { updateUI } from "@Store/ui";
 
 // Component
@@ -114,16 +115,27 @@ export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterPr
   };
 
   const startNewSession = () => {
+    const calcSetup = new CalcSetup({
+      ...params,
+      ID: manageInfo.ID,
+    });
+    const { teammates } = calcSetup;
+    const { enhanceType } = calcSetup.main.data;
+
     initSession({
       name: manageInfo.name,
       type: manageInfo.type,
-      calcSetup: new CalcSetup({
-        ...params,
-        ID: manageInfo.ID,
-      }),
+      calcSetup,
     });
 
-    updateUI({ setupDirectorActive: false });
+    const shouldShowEnhanceNotice =
+      !isTourFinished("CHAR_ENHANCE") && (enhanceType || teammates.some((t) => t.data.enhanceType));
+
+    updateUI({
+      setupDirectorActive: false,
+      appModalType: shouldShowEnhanceNotice ? "CHAR_ENHANCE_NOTICE" : "",
+    });
+
     onFinish();
 
     router.navigate(SCREEN_PATH.CALCULATOR);

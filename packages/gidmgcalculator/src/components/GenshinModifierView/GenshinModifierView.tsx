@@ -46,7 +46,7 @@ export function GenshinModifierView({
       case "TEXT":
         return { type: "text", label, max: config.max };
       case "LEVEL":
-        return { type: "text", label, max: 13 };
+        return { type: "text", label, max: 15 };
       case "CHECK":
         return { type: "check", label };
       case "SELECT": {

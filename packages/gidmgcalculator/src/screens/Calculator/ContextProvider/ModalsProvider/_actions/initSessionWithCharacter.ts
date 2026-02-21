@@ -11,6 +11,8 @@ import { parseDbArtifacts, parseDbWeapon } from "@/logic/userdb.logic";
 import { ArtifactGear, CalcSetup } from "@/models";
 import IdStore from "@/utils/IdStore";
 import { initSession } from "@Store/calculator/actions";
+import { isTourFinished } from "@Store/tours";
+import { updateUI } from "@Store/ui";
 
 export function initSessionWithCharacter(
   selectedCharacter: TavernSelectedCharacter,
@@ -44,10 +46,16 @@ export function initSessionWithCharacter(
     data
   );
 
-  initSession({
-    calcSetup: new CalcSetup({
-      ID: idStore.gen(),
-      main,
-    }),
+  const calcSetup = new CalcSetup({
+    ID: idStore.gen(),
+    main,
   });
+
+  initSession({
+    calcSetup,
+  });
+
+  if (!isTourFinished("CHAR_ENHANCE") && main.data.enhanceType) {
+    updateUI({ appModalType: "CHAR_ENHANCE_NOTICE" });
+  }
 }

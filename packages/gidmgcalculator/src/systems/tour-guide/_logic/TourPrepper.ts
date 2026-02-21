@@ -74,8 +74,8 @@ export class TourPrepper implements TourPrepperOptions {
     const location = {
       top: top - siteGutter,
       left: left - siteGutter,
-      bottom: bottom + siteGutter,
-      right: right + siteGutter,
+      // bottom: bottom + siteGutter,
+      // right: right + siteGutter,
       width: width + siteGutter * 2,
       height: height + siteGutter * 2,
     };
@@ -89,7 +89,7 @@ export class TourPrepper implements TourPrepperOptions {
       stepNo: index + 1,
       location,
       intro: {
-        text: step.description,
+        dialogs: step.dialogs,
         x: introX,
         y: introY,
       },

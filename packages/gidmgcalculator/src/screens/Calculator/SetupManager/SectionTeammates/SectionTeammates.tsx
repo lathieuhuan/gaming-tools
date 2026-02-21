@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { CollapseSpace, message } from "rond";
 
 import { useShallowCalcStore } from "@Store/calculator";
+import { removeTeammate, setTeammate } from "@Store/calculator/actions";
 import { selectSetup, selectSetupManager } from "@Store/calculator/selectors";
-import { setTeammate, removeTeammate } from "@Store/calculator/actions";
+import { isTourFinished } from "@Store/tours";
+import { updateUI } from "@Store/ui";
 
 // Component
 import { CharacterPortrait, Tavern, TavernProps } from "@/components";
@@ -79,10 +81,13 @@ export default function SectionTeammates() {
 
   const handleRecruitTeammate: TavernProps["onSelectCharacter"] = ({ data }) => {
     const { recruitIndex } = tavern;
+    if (recruitIndex === null) return;
 
-    if (recruitIndex !== null) {
-      setTeammate(data, recruitIndex);
-      setSelectedIndex(recruitIndex);
+    setTeammate(data, recruitIndex);
+    setSelectedIndex(recruitIndex);
+
+    if (!isTourFinished("CHAR_ENHANCE") && data.enhanceType) {
+      updateUI({ appModalType: "CHAR_ENHANCE_NOTICE" });
     }
   };
 
@@ -116,7 +121,7 @@ export default function SectionTeammates() {
 
           return (
             <div
-              key={tmIndex}
+              key={`empty-${tmIndex}`}
               className="flex justify-center items-end"
               style={{ height: "5.25rem" }}
             >
