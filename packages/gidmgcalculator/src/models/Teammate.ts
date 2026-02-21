@@ -33,7 +33,7 @@ export class Teammate<TTeam extends ITeam = ITeam> implements ITeammate<TTeam> {
     // this.inputs = info.inputs;
   }
 
-  join(team: TTeam) {
+  joinTeam(team: TTeam) {
     this.team = team;
   }
 

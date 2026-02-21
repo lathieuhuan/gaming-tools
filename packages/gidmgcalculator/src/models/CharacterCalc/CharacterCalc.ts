@@ -87,7 +87,7 @@ export class CharacterCalc<
     this.team = team || new Team([this]);
   }
 
-  join(team: TTeam) {
+  joinTeam(team: TTeam) {
     this.team = team;
   }
 

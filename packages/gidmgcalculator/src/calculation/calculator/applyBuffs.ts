@@ -1,8 +1,9 @@
-import type { CalcSetup, CharacterCalc, TeammateCalc, ReceivedAttributeBonus } from "@/models";
+import type { CalcSetup, CharacterCalc, TeammateCalc } from "@/models";
 import type {
   AttackElement,
   AttackPattern,
   AttributeStat,
+  AttributeTargetPath,
   BareBonus,
   BonusPerformTools,
   EntityBonus,
@@ -43,32 +44,26 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
       bonus.value *= new BonusCalc(main, team, { inputs }).getStackValue(outsource.stacks);
     }
 
+    const getToStat = (path: AttributeTargetPath, inpIndex: number) => {
+      switch (path) {
+        case "INP_ELMT": {
+          const elmtIndex = inputs[inpIndex] ?? 0;
+          return ELEMENT_TYPES[elmtIndex];
+        }
+        case "P/H/E/C": {
+          return team.getPhecElmt();
+        }
+        default:
+          return path;
+      }
+    };
+
     for (const target of Array_.toArray(effect.targets)) {
       switch (target.module) {
         case "ATTR": {
           for (const targetPath of Array_.toArray(target.path)) {
-            let toStat: ReceivedAttributeBonus["toStat"];
-
-            switch (targetPath) {
-              case "INP_ELMT": {
-                const elmtIndex = inputs[target.inpIndex ?? 0] ?? 0;
-                toStat = ELEMENT_TYPES[elmtIndex];
-                break;
-              }
-              case "P/H/E/C": {
-                const phecElmt = team.getPhecElmt();
-
-                if (!phecElmt) {
-                  continue;
-                }
-
-                toStat = phecElmt;
-                break;
-              }
-              default:
-                toStat = targetPath;
-                break;
-            }
+            const toStat = getToStat(targetPath, target.inpIndex ?? 0);
+            if (!toStat) continue;
 
             main.receiveAttrBonus({
               ...bonus,

@@ -34,7 +34,12 @@ export type EntityBonusEffect = EffectCondition & {
   };
 };
 
-type AttributeTargetPath = "INP_ELMT" | "OWN_ELMT" | "P/H/E/C" | AttributeStat | BaseAttributeStat;
+export type AttributeTargetPath =
+  | "INP_ELMT"
+  | "OWN_ELMT"
+  | "P/H/E/C"
+  | AttributeStat
+  | BaseAttributeStat;
 
 type AttributeTarget = {
   module: "ATTR";

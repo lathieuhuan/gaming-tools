@@ -23,7 +23,7 @@ export type ITeamMember<TTeam extends ITeam = ITeam> = {
   code: number;
   enhanced: boolean;
   data: AppCharacter;
-  join(team: TTeam): void;
+  joinTeam(team: TTeam): void;
   isPerformableEffect(condition?: EffectPerformableCondition, inputs?: number[]): boolean;
 };
 

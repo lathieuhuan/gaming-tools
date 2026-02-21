@@ -26,8 +26,6 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
   constructor(members: TMember[] = []) {
     const newMembers = this.filterMembers(members);
 
-    newMembers.forEach((member) => member.join(this));
-
     this.updateMembers(newMembers);
   }
 
@@ -67,6 +65,8 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
         // More future enhance types
       }
     }
+
+    members.forEach((member) => member.joinTeam(this));
 
     this.members = members;
     this.elmtCount = elmtCount;
