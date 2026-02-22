@@ -9,8 +9,8 @@ import { Download } from "./Download";
 import { EnhanceNoticeModal } from "./EnhanceNotice";
 import { Guides } from "./Guides";
 import { SettingsModal } from "./Settings";
-import { TourCatalogue } from "./TourCatalogue";
 import { UploadModals } from "./Upload";
+import { TravelAgencyModals } from "./TravelAgency";
 
 export function Modals() {
   const appModalType = useUIStore((state) => state.appModalType);
@@ -65,15 +65,7 @@ export function Modals() {
         <DataRepair />
       </Modal>
 
-      <Modal
-        active={appModalType === "TOUR_CATALOGUE"}
-        title="App Tours"
-        preset="small"
-        className="bg-dark-2"
-        onClose={closeModal}
-      >
-        <TourCatalogue onStartTour={closeModal} />
-      </Modal>
+      <TravelAgencyModals active={appModalType === "TRAVEL_AGENCY"} onClose={closeModal} />
 
       <EnhanceNoticeModal active={appModalType === "CHAR_ENHANCE_NOTICE"} onClose={closeModal} />
     </>

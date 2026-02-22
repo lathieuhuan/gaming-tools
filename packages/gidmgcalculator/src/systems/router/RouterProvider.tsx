@@ -2,9 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 
 import type { RootRouteConfig } from "./_types";
 
-import { getOutletRoute } from "./_logic/getOutletRoute";
-import { navigate } from "./_logic/navigate";
-import { checkIsChildSegments, getSearchParams, toPathSegments } from "./_utils";
 import { OutletRouteContext } from "./_contexts/OutletRouteContext";
 import { Router, RouterContext } from "./_contexts/RouterContext";
 import {
@@ -12,6 +9,9 @@ import {
   SearchParamsContextState,
   SetSearchParams,
 } from "./_contexts/SearchParamsContext";
+import { getOutletRoute } from "./_logic/getOutletRoute";
+import { navigate } from "./_logic/navigate";
+import { checkIsChildSegments, getSearchParams, toPathSegments } from "./_utils";
 
 import { NotFound } from "./NotFound";
 
@@ -24,16 +24,14 @@ export function RouterProvider({ route }: RouterProviderProps) {
   const [searchParams, setSearchParams] = useState(getSearchParams());
 
   useEffect(() => {
-    const handlePopState = () => {
-      setPathname(window.location.pathname);
-      setSearchParams(getSearchParams());
-    };
-
-    window.addEventListener("popstate", handlePopState);
-
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
+    // const handlePopState = () => {
+    //   setPathname(window.location.pathname);
+    //   setSearchParams(getSearchParams());
+    // };
+    // window.addEventListener("popstate", handlePopState);
+    // return () => {
+    //   window.removeEventListener("popstate", handlePopState);
+    // };
   }, []);
 
   const searchParamsState = useMemo<SearchParamsContextState>(() => {

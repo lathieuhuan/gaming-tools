@@ -9,7 +9,7 @@ type AppModalType =
   | "DOWNLOAD"
   | "DONATE"
   | "DATA_REPAIR"
-  | "TOUR_CATALOGUE"
+  | "TRAVEL_AGENCY"
   | "CHAR_ENHANCE_NOTICE"
   | "";
 

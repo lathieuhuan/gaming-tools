@@ -6,19 +6,13 @@ import type { TourKey } from "@/types";
 import { TOURS } from "@/systems/tour-operator";
 import { useToursStore } from "@Store/tours";
 import { setTourFinished } from "@Store/tours/actions";
-import { setTourType } from "@Store/ui";
 
 type TourCatalogueProps = {
-  onStartTour?: () => void;
+  onStartTour?: (key: TourKey) => void;
 };
 
 export function TourCatalogue({ onStartTour }: TourCatalogueProps) {
   const finishedTours = useToursStore((state) => state.finishedTours);
-
-  const handleStartTour = (key: TourKey) => {
-    setTourType(key);
-    onStartTour?.();
-  };
 
   return (
     <div>
@@ -39,7 +33,7 @@ export function TourCatalogue({ onStartTour }: TourCatalogueProps) {
               size="small"
               className="ml-auto shrink-0 gap-0"
               icon={<FaCaretRight className="text-lg" />}
-              onClick={() => handleStartTour(tour.key)}
+              onClick={() => onStartTour?.(tour.key)}
             >
               Start
             </Button>

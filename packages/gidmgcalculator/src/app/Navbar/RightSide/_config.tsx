@@ -31,7 +31,7 @@ export const MODAL_OPTIONS: ModalOption[] = [
   {
     label: "App Tours",
     icon: <FaMapMarkedAlt />,
-    modalType: "TOUR_CATALOGUE",
+    modalType: "TRAVEL_AGENCY",
   },
   {
     label: "Settings",
