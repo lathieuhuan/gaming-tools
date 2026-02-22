@@ -1,3 +1,4 @@
+import { FaCaretRight } from "react-icons/fa";
 import { Button, Checkbox } from "rond";
 
 import type { TourKey } from "@/types";
@@ -36,7 +37,8 @@ export function TourCatalogue({ onStartTour }: TourCatalogueProps) {
 
             <Button
               size="small"
-              className="ml-auto shrink-0"
+              className="ml-auto shrink-0 gap-0"
+              icon={<FaCaretRight className="text-lg" />}
               onClick={() => handleStartTour(tour.key)}
             >
               Start

@@ -1,12 +1,12 @@
+import { FaBars, FaMapMarkedAlt } from "react-icons/fa";
 import { Modal, ModalControl } from "rond";
 
 import type { TourType } from "@Store/ui/types";
 
+import { CHAR_ENHANCE_TOUR } from "@/systems/tour-operator";
 import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 import { setTourType } from "@Store/ui";
-import { CHAR_ENHANCE_TOUR } from "@/systems/tour-operator/_tours/catalogue";
-import { FaBars, FaMapMarkedAlt } from "react-icons/fa";
 
 function EnhanceNotice({ onClose }: ModalControl) {
   const activeSetup = useCalcStore(selectSetup);
@@ -44,8 +44,15 @@ function EnhanceNotice({ onClose }: ModalControl) {
 
       {isQuickTour && (
         <div className="mt-4 text-sm text-light-hint contains-inline-svg">
-          Finish the App Tour: <b>{CHAR_ENHANCE_TOUR.title}</b> in <FaBars /> Menu /{" "}
-          <FaMapMarkedAlt /> App Tours to mute this notice.
+          Finish the App Tour: <b>{CHAR_ENHANCE_TOUR.title}</b> in{" "}
+          <span className="whitespace-nowrap">
+            <FaBars /> Menu
+          </span>{" "}
+          /{" "}
+          <span className="whitespace-nowrap">
+            <FaMapMarkedAlt /> App Tours
+          </span>{" "}
+          to mute this notice.
         </div>
       )}
 

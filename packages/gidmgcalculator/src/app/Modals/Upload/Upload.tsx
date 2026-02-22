@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { notification, type ModalControl } from "rond";
+import { Modal, notification, type ModalControl } from "rond";
 
 import type { CurrentDatabaseData } from "@/migration/types/current";
 import type { IArtifactBasic, IWeaponBasic } from "@/types";
@@ -10,14 +10,14 @@ import { addUserDatabase } from "@Store/userdbSlice";
 
 // Component
 import { ItemMultiSelect, ItemMultiSelectIds } from "@/components";
-import { FileUpload } from "./components/FileUpload";
+import { FileUpload } from "./FileUpload";
 
 // const MAX_USER_WEAPONS = 3;
 // const MAX_USER_ARTIFACTS = 3;
 
 export type UploadStep = "SELECT_OPTION" | "CHECK_WEAPONS" | "CHECK_ARTIFACTS" | "FINISH";
 
-function UploadCore({ active, onClose }: ModalControl) {
+function Upload({ onClose }: ModalControl) {
   const dispatch = useDispatch();
   const uploadSteps = useRef<UploadStep[]>(["SELECT_OPTION"]);
   const uploadedData = useRef<CurrentDatabaseData>();
@@ -29,8 +29,8 @@ function UploadCore({ active, onClose }: ModalControl) {
 
   const currentStep = uploadSteps.current[stepNo];
   const { weapons = [], artifacts = [] } = uploadedData.current || {};
-  const selectingWeapons = active && currentStep === "CHECK_WEAPONS";
-  const selectingArtifacts = active && currentStep === "CHECK_ARTIFACTS";
+  const selectingWeapons = currentStep === "CHECK_WEAPONS";
+  const selectingArtifacts = currentStep === "CHECK_ARTIFACTS";
   let filteredWeapons: IWeaponBasic[] = [];
   let filteredArtifacts: IArtifactBasic[] = [];
 
@@ -108,25 +108,32 @@ function UploadCore({ active, onClose }: ModalControl) {
 
   return (
     <>
-      <FileUpload
-        active={active && currentStep === "SELECT_OPTION"}
-        onSuccessUploadFile={(data) => {
-          uploadedData.current = data;
-
-          if (data.weapons.length > MAX_USER_WEAPONS) {
-            uploadSteps.current.push("CHECK_WEAPONS");
-          }
-          if (data.artifacts.length > MAX_USER_ARTIFACTS) {
-            uploadSteps.current.push("CHECK_ARTIFACTS");
-          }
-
-          toNextStep();
-        }}
+      <Modal
+        preset="small"
+        title="Upload"
+        className="bg-dark-1"
+        active={currentStep === "SELECT_OPTION"}
         onClose={handleClose("SELECT_OPTION")}
-      />
+      >
+        <FileUpload
+          onSuccessUploadFile={(data) => {
+            uploadedData.current = data;
+
+            if (data.weapons.length > MAX_USER_WEAPONS) {
+              uploadSteps.current.push("CHECK_WEAPONS");
+            }
+            if (data.artifacts.length > MAX_USER_ARTIFACTS) {
+              uploadSteps.current.push("CHECK_ARTIFACTS");
+            }
+
+            toNextStep();
+          }}
+        />
+      </Modal>
+
       <ItemMultiSelect
         title="Weapons"
-        active={active && currentStep === "CHECK_WEAPONS"}
+        active={currentStep === "CHECK_WEAPONS"}
         items={filteredWeapons}
         required={weapons.length - MAX_USER_WEAPONS}
         onConfirm={(data) => {
@@ -135,9 +142,10 @@ function UploadCore({ active, onClose }: ModalControl) {
         }}
         onClose={handleClose("CHECK_WEAPONS")}
       />
+
       <ItemMultiSelect
         title="Artifacts"
-        active={active && currentStep === "CHECK_ARTIFACTS"}
+        active={currentStep === "CHECK_ARTIFACTS"}
         items={filteredArtifacts}
         required={artifacts.length - MAX_USER_ARTIFACTS}
         onConfirm={(data) => {
@@ -150,6 +158,6 @@ function UploadCore({ active, onClose }: ModalControl) {
   );
 }
 
-export function Upload(props: ModalControl) {
-  return props.active ? <UploadCore {...props} /> : null;
+export function UploadModals(props: ModalControl) {
+  return props.active ? <Upload {...props} /> : null;
 }

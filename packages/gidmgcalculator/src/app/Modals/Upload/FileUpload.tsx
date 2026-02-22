@@ -1,11 +1,11 @@
 import { useRef } from "react";
 import { FaUpload } from "react-icons/fa";
-import { Button, Modal, notification } from "rond";
+import { Button, notification } from "rond";
 
 import type { CurrentDatabaseData } from "@/migration/types/current";
 
-import { convertGOODData } from "../logic/convertGOODData";
-import { migrateUploadData } from "../logic/migrateUploadData";
+import { convertGOODData } from "./_logic/convertGOODData";
+import { migrateUploadData } from "./_logic/migrateUploadData";
 
 type GetFileResult =
   | {
@@ -37,7 +37,7 @@ type FileUploadProps = {
   onSuccessUploadFile: (data: CurrentDatabaseData) => void;
 };
 
-const FileUploadCore = ({ onSuccessUploadFile }: FileUploadProps) => {
+export function FileUpload({ onSuccessUploadFile }: FileUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = () => {
@@ -104,10 +104,4 @@ const FileUploadCore = ({ onSuccessUploadFile }: FileUploadProps) => {
       </p>
     </div>
   );
-};
-
-export const FileUpload = Modal.wrap(FileUploadCore, {
-  preset: "small",
-  title: "Upload",
-  className: "bg-dark-1",
-});
+}

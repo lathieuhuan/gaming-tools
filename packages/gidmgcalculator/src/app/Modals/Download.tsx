@@ -1,22 +1,15 @@
 import { FaDownload } from "react-icons/fa";
-import { Button, Modal } from "rond";
+import { Button } from "rond";
 
 import { DOWNLOAD_DATA_VERSION } from "@/constants/config";
-import { useSelector } from "@Store/hooks";
-import {
-  selectDbArtifacts,
-  selectDbCharacters,
-  selectDbSetups,
-  selectDbWeapons,
-} from "@Store/userdbSlice";
+import { useStore } from "@/systems/dynamic-store";
 
-function DownloadCore() {
-  const userChars = useSelector(selectDbCharacters);
-  const userWps = useSelector(selectDbWeapons);
-  const userArts = useSelector(selectDbArtifacts);
-  const userSetups = useSelector(selectDbSetups);
+export function Download() {
+  const store = useStore();
 
   const onClickDownload = () => {
+    const { userChars, userWps, userArts, userSetups } = store.select((state) => state.userdb);
+
     const downloadData = JSON.stringify({
       version: DOWNLOAD_DATA_VERSION,
       characters: userChars,
@@ -54,9 +47,3 @@ function DownloadCore() {
     </div>
   );
 }
-
-export const Download = Modal.wrap(DownloadCore, {
-  preset: "small",
-  title: "Download",
-  className: "bg-dark-1",
-});

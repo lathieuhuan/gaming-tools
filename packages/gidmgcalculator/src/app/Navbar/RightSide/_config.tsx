@@ -28,11 +28,11 @@ export const MODAL_OPTIONS: ModalOption[] = [
     icon: <FaQuestionCircle />,
     modalType: "GUIDES",
   },
-  // {
-  //   label: "App Tours",
-  //   icon: <FaMapMarkedAlt />,
-  //   modalType: "TOUR_CATALOGUE",
-  // },
+  {
+    label: "App Tours",
+    icon: <FaMapMarkedAlt />,
+    modalType: "TOUR_CATALOGUE",
+  },
   {
     label: "Settings",
     icon: <FaCog />,

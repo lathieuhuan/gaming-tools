@@ -28,7 +28,7 @@ type SettingsProps = {
   onClose: () => void;
 };
 
-const SettingsCore = ({ onClose }: SettingsProps) => {
+const Settings = ({ onClose }: SettingsProps) => {
   const newSettings = useNewAppSettings();
 
   const handleSubmit = () => {
@@ -101,7 +101,7 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
   );
 };
 
-export const Settings = Modal.wrap(SettingsCore, {
+export const SettingsModal = Modal.wrap(Settings, {
   title: "Settings",
   className: ["bg-dark-2", Modal.LARGE_HEIGHT_CLS],
   style: {

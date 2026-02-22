@@ -9,4 +9,4 @@ export function TourOperator() {
   return tourType && <Operator tourType={tourType} />;
 }
 
-export { TOURS } from "./_tours/catalogue";
+export * from "./_tours/catalogue";

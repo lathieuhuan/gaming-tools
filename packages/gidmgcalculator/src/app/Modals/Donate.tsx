@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FaCoffee, FaPaypal } from "react-icons/fa";
-import { Button, InputNumber, Modal } from "rond";
+import { Button, InputNumber } from "rond";
 
-function DonateCore() {
+export function Donate() {
   const [usd, setUsd] = useState(1);
 
   return (
@@ -13,12 +13,21 @@ function DonateCore() {
             Paypal
           </Button>
         </a>
-        <InputNumber className="w-12 font-semibold" size="medium" value={usd} min={1} max={999} onChange={setUsd} />
+        <InputNumber
+          className="w-12 font-semibold"
+          size="medium"
+          value={usd}
+          min={1}
+          max={999}
+          onChange={setUsd}
+        />
         <span>$</span>
       </div>
 
       <div className="w-1/2 h-0.5 bg-dark-3 relative">
-        <span className="px-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-dark-1">or</span>
+        <span className="px-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-dark-1">
+          or
+        </span>
       </div>
 
       <div className="pb-2">
@@ -29,10 +38,3 @@ function DonateCore() {
     </div>
   );
 }
-
-export const Donate = Modal.wrap(DonateCore, {
-  preset: "small",
-  title: <p className="text-center">Donate</p>,
-  withHeaderDivider: false,
-  className: "bg-dark-1",
-});

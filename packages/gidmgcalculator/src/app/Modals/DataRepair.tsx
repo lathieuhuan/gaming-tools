@@ -1,4 +1,4 @@
-import { Button, Modal, notification } from "rond";
+import { Button, notification } from "rond";
 
 import { useDispatch } from "@Store/hooks";
 import { fixMultipleEquippedArtifacts, fixMultipleEquippedWeapons } from "@Store/userdbSlice";
@@ -17,7 +17,7 @@ function Option({ description, onFix }: OptionProps) {
   );
 }
 
-export function DataRepairCore() {
+export function DataRepair() {
   const dispatch = useDispatch();
 
   const fixDuplicatedWeapons = () => {
@@ -49,9 +49,3 @@ export function DataRepairCore() {
     </div>
   );
 }
-
-export const DataRepair = Modal.wrap(DataRepairCore, {
-  preset: "small",
-  title: "Fix my data",
-  className: "bg-dark-1",
-});
