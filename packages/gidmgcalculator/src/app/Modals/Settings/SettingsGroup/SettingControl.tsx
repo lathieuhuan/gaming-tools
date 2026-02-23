@@ -37,7 +37,7 @@ export function SettingControl(props: SettingControlProps) {
             <span>{label}</span>
             <div className="w-16 flex shrink-0">
               <VersatileSelect
-                title={`Select ${label}`}
+                title={typeof label === "string" ? `Select ${label}` : <span>Select {label}</span>}
                 className="font-semibold h-8"
                 dropdownCls="font-medium"
                 align="right"

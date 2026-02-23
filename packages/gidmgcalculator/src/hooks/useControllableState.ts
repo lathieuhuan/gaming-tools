@@ -1,6 +1,8 @@
 import { useLayoutEffect, useEffect, useRef, useCallback } from "react";
 import { useState } from "react";
 
+import { isFunction } from "@/utils/pure.utils";
+
 type ChangeHandler<T> = (state: T) => void;
 type SetStateFn<T> = React.Dispatch<React.SetStateAction<T>>;
 
@@ -88,8 +90,4 @@ function useUncontrolledState<T>({
   }, [value, prevValueRef]);
 
   return [value, setValue, onChangeRef];
-}
-
-function isFunction(value: unknown): value is (...args: any[]) => any {
-  return typeof value === "function";
 }

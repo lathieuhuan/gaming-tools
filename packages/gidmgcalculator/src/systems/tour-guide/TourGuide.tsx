@@ -53,14 +53,14 @@ export function TourGuide({ steps, onError, onFinish, onCancel }: TourGuideProps
   const [site, setSite] = useState(tourPrepper.site);
 
   useLayoutEffect(() => {
-    tourPrepper.start(steps).then((site) => {
+    void tourPrepper.start(steps).then((site) => {
       setSite(site);
       setTotalSites(steps.length);
     });
   }, []);
 
   const handleNext = () => {
-    tourPrepper.next().then((site) => setSite(site));
+    void tourPrepper.next().then((site) => setSite(site));
   };
 
   return ReactDOM.createPortal(

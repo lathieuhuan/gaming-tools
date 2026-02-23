@@ -2,6 +2,7 @@ import { cloneElement } from "react";
 import { Modal, ModalProps } from "rond";
 
 import { useControllableState } from "@/hooks/useControllableState";
+import { isFunction } from "@/utils/pure.utils";
 
 type ModalActionProps = Omit<ModalProps, "children" | "onClose"> & {
   content: ModalProps["children"];
@@ -30,7 +31,7 @@ export function ModalAction({
 
     const { onClick } = children.props;
 
-    if (typeof onClick === "function") {
+    if (isFunction<React.MouseEventHandler>(onClick)) {
       onClick(e);
     }
   };

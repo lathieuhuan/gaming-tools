@@ -10,7 +10,7 @@ export const SettingsHydrationGuard = ({ children }: { children: React.ReactNode
       setHydrated(true);
     };
 
-    rehydrate();
+    void rehydrate();
   }, []);
 
   if (!hydrated) {

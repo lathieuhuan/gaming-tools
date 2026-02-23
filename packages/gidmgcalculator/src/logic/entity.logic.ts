@@ -107,6 +107,12 @@ export const createWeapon = (params: CreateWeaponParams, data?: AppWeapon, idSto
   return new Weapon(basic, data_);
 };
 
+// ========== ITEMS ==========
+
+export function isWeapon(item: IWeaponBasic | IArtifactBasic): item is IWeaponBasic {
+  return "refi" in item;
+}
+
 // ========== CHARACTER ==========
 
 export type CreateCharacterParams = PartiallyRequiredOnly<ICharacterBasic, "code">;
@@ -235,7 +241,7 @@ export const createTarget = (
           updateAsChanges(config.changes);
         }
         break;
-      case "SELECT":
+      case "SELECT": {
         if (input === -1 || !config.options) {
           continue;
         }
@@ -250,6 +256,7 @@ export const createTarget = (
           updateAsChanges(option.changes);
         }
         break;
+      }
     }
   }
 

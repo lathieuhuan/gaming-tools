@@ -1,3 +1,5 @@
+import { isFunction } from "./pure.utils";
+
 // 1. Helper to check if two types are exactly equal (including readonly)
 type IfEquals<X, Y, A, B> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
   ? A
@@ -54,7 +56,7 @@ export class Fluent<T> {
         return (...args: any[]) => {
           const func = (this.e as any)?.[prop];
 
-          if (typeof func === "function") {
+          if (isFunction(func)) {
             // Ensure the function is bound to the original element
             func.apply(this.e, args);
           }
@@ -62,7 +64,7 @@ export class Fluent<T> {
           return this;
         };
       },
-    });
+    }) as Act<T, this>;
   }
 
   set<K extends WritableKeys<T> & NonFunctionKeys<T>>(key: K, value: T[K] | ((e: T) => T[K])): this;

@@ -80,7 +80,11 @@ export function RefreshButton() {
   }, [dataUpdatedAt]);
 
   return (
-    <Button icon={<FaRedoAlt />} disabled={seconds > 0 || isRefetching} onClick={() => refetch()}>
+    <Button
+      icon={<FaRedoAlt />}
+      disabled={seconds > 0 || isRefetching}
+      onClick={() => void refetch()}
+    >
       {seconds > 0 ? `${actionText} in ${secondsToTimeString(seconds)}` : actionText}
     </Button>
   );

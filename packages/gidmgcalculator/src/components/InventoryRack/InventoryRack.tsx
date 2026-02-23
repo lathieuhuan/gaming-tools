@@ -4,15 +4,12 @@ import { ItemCase, clsx, useIntersectionObserver } from "rond";
 
 import type { AppArtifact, AppWeapon, IArtifactBasic, IWeaponBasic } from "@/types";
 
+import { isWeapon } from "@/logic/entity.logic";
 import { $AppArtifact, $AppWeapon } from "@/services";
 
 // Component
 import { ItemThumbnail, type ItemThumbProps } from "../ItemThumbnail";
 import { Pagination } from "./Pagination";
-
-export function isWeapon(item: IWeaponBasic | IArtifactBasic): item is IWeaponBasic {
-  return "refi" in item;
-}
 
 export type ItemOption<
   T extends IWeaponBasic | IArtifactBasic,

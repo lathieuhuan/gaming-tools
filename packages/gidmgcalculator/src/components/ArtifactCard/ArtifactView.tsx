@@ -88,7 +88,7 @@ export function ArtifactView<T extends Artifact>({
             arrowAt="start"
             options={mainStatTypeOptions}
             value={mainStatType}
-            onChange={(value) => onChangeMainStatType?.(value as AttributeStat, artifact)}
+            onChange={(value) => onChangeMainStatType?.(value, artifact)}
           />
         )}
         <p

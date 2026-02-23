@@ -71,7 +71,7 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
             const code = item.getId();
             const foundItem = code ? data.find((entity) => entity.code === +code) : undefined;
 
-            if (foundItem) selectOption(foundItem);
+            if (foundItem) void selectOption(foundItem);
             return;
           }
         }
@@ -96,7 +96,7 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
     setEmpty(!visibleItems.length);
 
     if (!visibleItems.length && hasConfigStep) {
-      onChange?.(undefined, true);
+      void onChange?.(undefined, true);
       setActiveCode(0);
     }
 
@@ -179,7 +179,7 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
               >
                 <ItemCase
                   selected={option.key === activeCode}
-                  onClick={() => selectOption(option.data)}
+                  onClick={() => void selectOption(option.data)}
                   // onDoubleClick={() => onDoubleClickPickerItem(item)}
                 >
                   {(className, imgCls) => (

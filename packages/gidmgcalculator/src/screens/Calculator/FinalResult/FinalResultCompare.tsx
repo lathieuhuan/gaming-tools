@@ -91,7 +91,7 @@ export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
           transparent
           options={CALC_ASPECT_OPTIONS}
           value={focusedAspect}
-          onChange={(value) => setFocusedAspect(value as CalcAspect)}
+          onChange={(value) => setFocusedAspect(value)}
           getPopupContainer={() => containerRef.current!}
         />
       </div>

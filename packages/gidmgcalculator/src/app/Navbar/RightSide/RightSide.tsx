@@ -61,7 +61,7 @@ export function RightSide({ appReady }: RightSideProps) {
         <Button
           shape="square"
           icon={refetching ? <LoadingSpin size="small" className="text-black" /> : null}
-          onClick={handleRefetch}
+          onClick={() => void handleRefetch()}
         >
           Refetch
         </Button>

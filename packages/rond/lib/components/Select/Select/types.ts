@@ -50,7 +50,7 @@ export type SelectProps<
   TValue extends SelectValueType = SelectValueType,
   TData extends Record<string, unknown> = Record<string, unknown>
 > = SelectCoreProps<TValue, TData> & {
-  title?: RcProps["title"];
+  title?: React.ReactNode;
   /** Only when select has action */
   wrapperCls?: string;
   /** Only when select has action */

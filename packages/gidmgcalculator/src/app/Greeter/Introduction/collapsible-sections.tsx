@@ -99,7 +99,7 @@ export const About = (
       questions regarding the Calculator.
     </p>
     <ul className="pl-3 space-y-2">
-      {CONTACTS.map(({ Icon, href, text }, i) => (
+      {CONTACTS.map(({ Icon, href, text }) => (
         <li key={text} className="flex items-center">
           <Icon className="mr-2 shrink-0" size="1.25rem" />
           <a href={href} rel="noreferrer" target="_blank">

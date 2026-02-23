@@ -103,7 +103,7 @@ export function CharacterIntro(props: CharacterIntroProps) {
                 value: i,
               }))}
               value={character.cons}
-              onChange={(newCons) => props.onChangeCons?.(newCons as number)}
+              onChange={(newCons) => props.onChangeCons?.(newCons)}
             />
           ) : (
             <p className={`ml-auto text-lg ${elmtText} font-bold`}>C{character.cons}</p>

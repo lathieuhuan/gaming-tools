@@ -158,7 +158,7 @@ function restoreTeammate(teammate: ITeammateBasic, team: Team) {
     };
   }
 
-  const data = $AppCharacter.get(teammate.code)!;
+  const data = $AppCharacter.get(teammate.code);
   const standard = new TeammateCalc(
     {
       code: teammate.code,

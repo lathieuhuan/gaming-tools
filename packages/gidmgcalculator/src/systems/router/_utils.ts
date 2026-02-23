@@ -18,7 +18,7 @@ export function objectToSearchString(params: Partial<SearchParams>) {
       //   valueString = value.map((v) => `${v}`).join(",");
       // }
 
-      return `${key}=${value}`;
+      return `${key}=${value?.toString()}`;
     })
     .join("&");
 }

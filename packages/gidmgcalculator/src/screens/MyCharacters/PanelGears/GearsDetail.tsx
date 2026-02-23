@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Button, FancyBackSvg } from "rond";
 
-import type { ArtifactType, AttributeStat } from "@/types";
+import type { ArtifactType } from "@/types";
 import type { GearsDetailType } from "./_types";
 
 import { ArtifactCard, AttributeTable, SetBonusesView, WeaponCard } from "@/components";
@@ -115,7 +115,7 @@ export function GearsDetail({ detailType, showCloseBtn, onClose }: GearsDetailPr
             dispatch(
               updateDbArtifact({
                 ID: activeArtifact.ID,
-                mainStatType: type as AttributeStat,
+                mainStatType: type,
               })
             );
           }}

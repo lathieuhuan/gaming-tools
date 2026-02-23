@@ -68,7 +68,7 @@ export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
 
     setConfig({
       category,
-      type: CATEGORIES[category].types[0] as CustomBuffCtrlType,
+      type: CATEGORIES[category].types[0],
       ...(subType ? { subType } : undefined),
       value: 0,
     });
@@ -210,7 +210,7 @@ export function BuffCtrlForm({ id, onSubmit }: BuffCtrlFormProps) {
                   dropdownCls="z-50"
                   options={subTypes.map((subType) => ({ label: t(subType), value: subType }))}
                   value={config.subType}
-                  onChange={(value) => handleSubTypeChange(value as string)}
+                  onChange={(value) => handleSubTypeChange(value)}
                 />
               )}
 

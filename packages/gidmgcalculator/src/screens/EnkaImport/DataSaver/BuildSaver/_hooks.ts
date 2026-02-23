@@ -65,7 +65,7 @@ export function useSaveOutputHandler() {
     currentWeaponID?: number
   ) => {
     switch (output.action) {
-      case "CREATE":
+      case "CREATE": {
         const weaponId = idStore.gen();
 
         dispatch(
@@ -86,6 +86,7 @@ export function useSaveOutputHandler() {
         }
 
         return weaponId;
+      }
       case "UPDATE":
         dispatch(
           updateDbWeapon({

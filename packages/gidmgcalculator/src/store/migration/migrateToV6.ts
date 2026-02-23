@@ -15,7 +15,7 @@ export const migrateToV6 = (state?: any): UserdbState => {
       setups: state.userSetups,
     });
 
-    return {
+    const result: UserdbState = {
       ...state,
       chosenChar: -1,
       userChars: migrateResult.characters,
@@ -23,6 +23,9 @@ export const migrateToV6 = (state?: any): UserdbState => {
       userArts: migrateResult.artifacts,
       userSetups: migrateResult.setups,
     };
+
+    return result;
+    //
   } catch (error) {
     console.error(error);
     return initialState;

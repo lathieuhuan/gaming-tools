@@ -49,7 +49,7 @@ export function filterArtifacts<T extends IArtifactBasic = IArtifactBasic>(
     result = result.filter((item) => item.mainStatType === statsFilter.main);
   }
 
-  const requiredSubstats = statsFilter.subs.filter((s) => s !== "All") as AttributeStat[];
+  const requiredSubstats: AttributeStat[] = statsFilter.subs.filter((s) => s !== "All");
 
   if (requiredSubstats.length) {
     result = result.filter((item) =>

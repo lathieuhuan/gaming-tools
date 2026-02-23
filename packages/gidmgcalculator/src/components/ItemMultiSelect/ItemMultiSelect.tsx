@@ -9,11 +9,13 @@ import {
 } from "rond";
 
 import type { IArtifactBasic, IWeaponBasic } from "@/types";
+
+import { isWeapon } from "@/logic/entity.logic";
 import { Artifact, Weapon } from "@/models";
 
 // Component
 import { ArtifactCard } from "../ArtifactCard";
-import { InventoryRack, isWeapon, ItemOption } from "../InventoryRack";
+import { InventoryRack, ItemOption } from "../InventoryRack";
 import { WeaponCard } from "../WeaponCard";
 
 export type ItemMultiSelectIds = Set<number>;

@@ -40,7 +40,7 @@ export function makeCharacterCalcFromDb(
   character: IDbCharacter,
   dbWeapons: IWeaponBasic[],
   dbArtifacts: IArtifactBasic[],
-  data = $AppCharacter.get(character.code)!,
+  data = $AppCharacter.get(character.code),
   team?: Team
 ) {
   const { weaponID, artifactIDs } = character;

@@ -54,7 +54,8 @@ export const Greeter = () => {
 
   useLayoutEffect(() => {
     updateUI({ appModalType: "INTRO" });
-    getMetadata();
+
+    void getMetadata();
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       const { askBeforeUnload } = useSettingsStore.getState();
@@ -124,7 +125,7 @@ export const Greeter = () => {
             isError={state.status === "error"}
             error={state.error}
             cooldown={state.cooldown}
-            onRefetch={getMetadata}
+            onRefetch={() => void getMetadata()}
           />
 
           {/* <div className="mb-1 text-center text-light-1 text-base font-normal">

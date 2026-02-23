@@ -29,8 +29,11 @@ export function TopBar() {
   };
 
   useEffect(() => {
-    const scrollHorizontally = (e: any) => {
-      const delta = Math.max(-1, Math.min(1, e.wheelDelta || -e.detail));
+    const scrollHorizontally = (e: WheelEvent) => {
+      const wheelDelta =
+        "wheelDelta" in e && typeof e.wheelDelta === "number" ? e.wheelDelta : -e.detail;
+
+      const delta = Math.max(-1, Math.min(1, wheelDelta));
 
       if (intersectObsArea.current) {
         intersectObsArea.current.scrollLeft -= delta * 50;

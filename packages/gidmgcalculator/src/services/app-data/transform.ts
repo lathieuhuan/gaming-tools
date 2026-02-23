@@ -29,9 +29,8 @@ export function transformGenshinDevResponse(response: GenshinDevResponse) {
     );
 
     const getTalentDescription = (type: string | undefined) => {
-      return (
-        skillTalents?.find((item: any) => item.type === type)?.description || NO_DESCRIPTION_MSG
-      );
+      const talent = skillTalents?.find((item) => item.type === type);
+      return talent?.description || NO_DESCRIPTION_MSG;
     };
 
     const skillDescriptions: Record<TalentType, string> = {

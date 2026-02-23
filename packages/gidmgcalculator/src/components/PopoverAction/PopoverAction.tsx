@@ -1,6 +1,8 @@
 import { cloneElement, useState } from "react";
 import { Popover, PopoverProps, useClickOutside } from "rond";
 
+import { isFunction } from "@/utils/pure.utils";
+
 type PopoverActionProps = Omit<PopoverProps, "children" | "active" | "content"> & {
   content: React.ReactNode | ((close: () => void) => React.ReactNode);
   children: React.ReactElement;
@@ -16,7 +18,7 @@ export function PopoverAction({ content, children, ...popoverProps }: PopoverAct
 
     const { onClick } = children.props;
 
-    if (typeof onClick === "function") {
+    if (isFunction<React.MouseEventHandler>(onClick)) {
       onClick(e);
     }
   };

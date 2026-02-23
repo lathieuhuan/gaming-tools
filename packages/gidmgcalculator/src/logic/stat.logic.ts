@@ -23,7 +23,7 @@ export function baseStatToCoreStat(key: BaseAttributeStat): CoreStat {
     case "base_def":
       return "def";
     default:
-      console.error(`Invalid base stat: ${key}`);
+      key satisfies never;
       return "atk";
   }
 }
