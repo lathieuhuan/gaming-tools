@@ -1,3 +1,7 @@
+export function assertIsError(e: unknown): asserts e is Error {
+  if (!(e instanceof Error)) throw new Error("e is not an Error");
+}
+
 const numberFormat = new Intl.NumberFormat("en-EN");
 
 export const formatNumber = (n: number) => numberFormat.format(n);

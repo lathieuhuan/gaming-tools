@@ -4,13 +4,13 @@ import { Button, clsx, Modal, Skeleton } from "rond";
 
 import type { AppMetadata } from "./types";
 
-import { useUIStore, updateUI } from "@Store/ui";
-import { $Greeter } from "./_logic/GreeterService";
+import { useSettingsStore } from "@Store/settings";
+import { updateUI, useUIStore } from "@Store/ui";
+import { $Greeter } from "./logic/GreeterService";
 
 // Components
 import { Introduction } from "./Introduction";
 import { MetadataRefetcher } from "./MetadataRefetcher";
-import { useSettingsStore } from "@Store/settings";
 
 type State = {
   status: "loading" | "success" | "error";

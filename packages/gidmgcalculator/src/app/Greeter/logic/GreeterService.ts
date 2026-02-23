@@ -2,8 +2,9 @@ import type { AppMetadata } from "../types";
 
 import { MINIMUM_SYSTEM_VERSION } from "@/constants/config";
 import { $AppData, AllData } from "@/services";
+import { assertIsError } from "@/utils/pure.utils";
 import { AllDataChannel } from "./AllDataChannel";
-import { StoredTime } from "./StoredTime";
+import { TimeStore } from "./TimeStore";
 
 const COOLDOWN_NORMAL = 60;
 const COOLDOWN_UPGRADE = 300;
@@ -16,7 +17,7 @@ type FetchAllDataError = {
 };
 
 class GreeterService {
-  isFetchedMetadata = false;
+  private isFetchedMetadata = false;
 
   metadata: AppMetadata = {
     version: "",
@@ -24,8 +25,8 @@ class GreeterService {
     supporters: [],
   };
 
-  allDataChannel: AllDataChannel;
-  lastVersionCheckTime = new StoredTime("lastVersionCheckTime");
+  private allDataChannel: AllDataChannel;
+  private lastVersionCheckTime = new TimeStore("lastVersionCheckTime");
 
   constructor() {
     this.allDataChannel = new AllDataChannel();
@@ -56,28 +57,24 @@ class GreeterService {
     $AppData.populate(data);
   }
 
+  private get currentTime() {
+    return Math.round(Date.now() / 1000);
+  }
+
+  private removeVersionCheckTime() {
+    localStorage.removeItem("lastVersionCheckTime");
+  }
+
   async _fetchAllData(): Promise<FetchAllDataError | null> {
-    if (!this.isFetchedMetadata) {
-      const response = await $AppData.fetchAllData();
-      const { code, message = "Error.", data } = response;
+    if (this.isFetchedMetadata) {
+      this.removeVersionCheckTime();
+      return null;
+    }
 
-      if (data) {
-        if (isValidDataVersion(data.version)) {
-          this.populateData(data);
-          removeVersionCheckTime();
-          return null;
-        }
+    const response = await $AppData.fetchAllData();
+    const { code, message = "Error.", data } = response;
 
-        // Data is outdated, set cooldown and return error
-        this.lastVersionCheckTime.value = getCurrentTime();
-
-        return {
-          code: 503,
-          message: SYSTEM_UPGRADE_MESSAGE,
-          cooldown: COOLDOWN_UPGRADE,
-        };
-      }
-
+    if (!data) {
       return {
         code,
         message,
@@ -85,12 +82,24 @@ class GreeterService {
       };
     }
 
-    removeVersionCheckTime();
-    return null;
+    if (isValidDataVersion(data.version)) {
+      this.populateData(data);
+      this.removeVersionCheckTime();
+      return null;
+    }
+
+    // Data is outdated, set cooldown and return error
+    this.lastVersionCheckTime.value = this.currentTime;
+
+    return {
+      code: 503,
+      message: SYSTEM_UPGRADE_MESSAGE,
+      cooldown: COOLDOWN_UPGRADE,
+    };
   }
 
   fetchAllData(): Promise<FetchAllDataError | null> {
-    const timeElapsed = getCurrentTime() - this.lastVersionCheckTime.value;
+    const timeElapsed = this.currentTime - this.lastVersionCheckTime.value;
 
     if (timeElapsed < COOLDOWN_UPGRADE) {
       // Still in cooldown of refetching data
@@ -109,11 +118,11 @@ class GreeterService {
         this._fetchAllData()
           .then(() => resolve(null))
           .catch((error) => {
-            const message = error instanceof Error ? error.message : "Failed to fetch App data";
+            assertIsError(error);
 
             resolve({
               code: 500,
-              message,
+              message: error.message,
               cooldown: COOLDOWN_NORMAL * 5,
             });
           });
@@ -124,13 +133,6 @@ class GreeterService {
   endShift() {
     this.allDataChannel.close();
   }
-}
-
-function getCurrentTime() {
-  return Math.round(Date.now() / 1000);
-}
-function removeVersionCheckTime() {
-  localStorage.removeItem("lastVersionCheckTime");
 }
 
 function isValidDataVersion(version: string) {

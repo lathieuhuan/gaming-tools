@@ -1,4 +1,4 @@
-export class StoredTime {
+export class TimeStore {
   constructor(private key: string) {}
 
   get value(): number {
