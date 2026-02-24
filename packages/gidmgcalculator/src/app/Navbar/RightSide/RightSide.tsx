@@ -31,7 +31,7 @@ export function RightSide({ appReady }: RightSideProps) {
   };
 
   const handleSelectEnkaImport = () => {
-    router.navigate(SCREEN_PATH.ENKA);
+    router.navigate({ to: SCREEN_PATH.ENKA });
   };
 
   const handleRefetch = async () => {

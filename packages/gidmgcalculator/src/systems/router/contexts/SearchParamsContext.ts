@@ -1,21 +1,12 @@
-import { createContext, SetStateAction, useContext } from "react";
+import { createContext, useContext } from "react";
+
 import type { SearchParams } from "../types";
+import { setSearchParams } from "../logic/router";
 
-export type SetSearchParams<T extends SearchParams = SearchParams> = (
-  value: SetStateAction<T>,
-  replaceHistory?: boolean
-) => void;
+type SearchParamsContextState<T extends SearchParams = SearchParams> = [T, typeof setSearchParams];
 
-export type SearchParamsContextState<T extends SearchParams = SearchParams> = [
-  T,
-  SetSearchParams<T>
-];
-
-export const SearchParamsContext = createContext<SearchParamsContextState<SearchParams>>([
-  {},
-  () => {},
-]);
+export const SearchParamsContext = createContext<SearchParamsContextState>([{}, setSearchParams]);
 
 export function useSearchParams<T extends SearchParams = SearchParams>() {
-  return useContext(SearchParamsContext) as unknown as SearchParamsContextState<T>;
+  return useContext(SearchParamsContext) as SearchParamsContextState<T>;
 }

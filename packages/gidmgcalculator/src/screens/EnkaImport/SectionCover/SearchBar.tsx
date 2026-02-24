@@ -44,7 +44,7 @@ export function SearchBar({ className, onSearchProfile }: SearchBarProps) {
   useEffect(() => {
     if (Object_.isEmpty(searchParams)) {
       if (Object_.isNotEmpty(enkaParams)) {
-        setSearchParams(enkaParams, true);
+        setSearchParams(enkaParams, { replace: true });
       }
     } else {
       updateEnkaParams(searchParams);

@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { FaTimes } from "react-icons/fa";
+import { VscDebugContinue } from "react-icons/vsc";
 import { ConfirmModal, Modal, ModalControl } from "rond";
 
 import type { TourKey } from "@/types";
@@ -79,11 +81,20 @@ function TravelAgency({ onClose }: ModalControl) {
       <ConfirmModal
         active={modalType === "CONFIRM_START_ENHANCE_TOUR"}
         message={
-          "We will start a new calculating session for this tour. " +
-          "The existing session (if any) will be removed. Do you want to continue?"
+          <span className="text-base">
+            We will start a new calculating session for this tour. The existing session (if any)
+            will be <span className="text-danger-2 font-bold">REMOVED</span>. Do you want to
+            continue?
+          </span>
         }
-        confirmText="Yes"
-        cancelText="No"
+        confirmButtonProps={{
+          children: "Yes",
+          icon: <VscDebugContinue className="text-lg" />,
+        }}
+        cancelButtonProps={{
+          children: "No",
+          icon: <FaTimes className="text-base" />,
+        }}
         onConfirm={() => void startTour("CHAR_ENHANCE")}
         onClose={() => setModalType("TOUR_CATALOGUE")}
       />

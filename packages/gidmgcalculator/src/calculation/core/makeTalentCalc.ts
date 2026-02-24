@@ -167,7 +167,7 @@ export function makeTalentCalc(
     }
 
     const extraTalentMult = getBonus("mult_");
-    let bases = getBases(item, extraTalentMult, recorder);
+    const bases = getBases(item, extraTalentMult, recorder);
 
     const baseMult = toMult(getBonus("baseMult_"));
     const coefficient = LUNAR_ATTACK_COEFFICIENT[lunar];

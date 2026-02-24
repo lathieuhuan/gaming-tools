@@ -44,6 +44,9 @@ export const TourOperator = ({ tourType }: TourOperatorProps) => {
       case "TEAMMATE_ENHANCE":
         // These are quick tours, they are not tracked
         break;
+      default:
+        tourType satisfies never;
+        break;
     }
 
     if (finishedTour) {

@@ -39,7 +39,7 @@ export function searchStringToObject(search: string): SearchParams {
   return params;
 }
 
-export function getSearchParams() {
+export function getSearchParams(): SearchParams {
   const params = window.location.search.replace("?", "");
   return searchStringToObject(params);
 }

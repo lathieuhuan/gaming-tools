@@ -1,18 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useSyncExternalStore } from "react";
 
-import type { RootRouteConfig } from "./types";
+import type { NotFoundRoute, RootRouteConfig } from "./types";
+
+import { getOutletRoute } from "./logic/getOutletRoute";
+import { router, setSearchParams, store, watchPopState } from "./logic/router";
+import { toPathSegments } from "./utils";
 
 import { OutletRouteContext } from "./contexts/OutletRouteContext";
-import { Router, RouterContext } from "./contexts/RouterContext";
-import {
-  SearchParamsContext,
-  SearchParamsContextState,
-  SetSearchParams,
-} from "./contexts/SearchParamsContext";
-import { getOutletRoute } from "./logic/getOutletRoute";
-import { navigate } from "./logic/navigate";
-import { checkIsChildSegments, getSearchParams, toPathSegments } from "./utils";
-
+import { RouterContext } from "./contexts/RouterContext";
+import { SearchParamsContext } from "./contexts/SearchParamsContext";
 import { NotFound } from "./NotFound";
 
 type RouterProviderProps = {
@@ -20,62 +16,34 @@ type RouterProviderProps = {
 };
 
 export function RouterProvider({ route }: RouterProviderProps) {
-  const [pathname, setPathname] = useState(window.location.pathname);
-  const [searchParams, setSearchParams] = useState(getSearchParams());
-
   useEffect(() => {
-    // const handlePopState = () => {
-    //   setPathname(window.location.pathname);
-    //   setSearchParams(getSearchParams());
-    // };
-    // window.addEventListener("popstate", handlePopState);
-    // return () => {
-    //   window.removeEventListener("popstate", handlePopState);
-    // };
+    return watchPopState();
   }, []);
 
-  const searchParamsState = useMemo<SearchParamsContextState>(() => {
-    const setFn: SetSearchParams = (value, replaceHistory = false) => {
-      const newParams = typeof value === "function" ? value(searchParams) : value;
+  const pathname = useSyncExternalStore(store.subscribePathname, store.getPathname);
+  const searchParams = useSyncExternalStore(store.subscribeSearchParams, store.getSearchParams);
 
-      setSearchParams(newParams);
-      navigate(pathname, newParams, replaceHistory);
-    };
+  const notFoundRoute: NotFoundRoute = {
+    component: route.notFound || NotFound,
+  };
 
-    return [searchParams, setFn];
-  }, [pathname, searchParams]);
-
-  const { children, outlet, router } = useMemo(() => {
+  const { children, outlet, routerClone } = useMemo(() => {
     const segments = toPathSegments(pathname);
 
-    const outlet = getOutletRoute(segments, route.children) || {
-      component: route.notFound || NotFound,
-    };
-
-    const router: Router = {
-      pathname,
-      navigate: (pathname, searchParams = {}, replaceHistory) => {
-        setPathname(pathname);
-        setSearchParams(searchParams);
-        navigate(pathname, searchParams, replaceHistory);
-      },
-      isRouteActive: (path: string) => {
-        return path === "/"
-          ? pathname === "/"
-          : checkIsChildSegments(toPathSegments(path), segments);
-      },
-    };
+    const outlet = getOutletRoute(segments, route.children) || notFoundRoute;
 
     return {
       children: <route.component />,
       outlet,
-      router,
+      routerClone: {
+        ...router,
+      },
     };
   }, [pathname]);
 
   return (
-    <RouterContext.Provider value={router}>
-      <SearchParamsContext.Provider value={searchParamsState}>
+    <RouterContext.Provider value={routerClone}>
+      <SearchParamsContext.Provider value={[searchParams, setSearchParams]}>
         <OutletRouteContext.Provider value={outlet}>{children}</OutletRouteContext.Provider>
       </SearchParamsContext.Provider>
     </RouterContext.Provider>

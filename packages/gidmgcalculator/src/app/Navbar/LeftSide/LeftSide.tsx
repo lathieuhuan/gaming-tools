@@ -26,7 +26,7 @@ export function LeftSide({ appReady }: LeftSideProps) {
   const showOnMobileTab = isMobile && isTabLayout;
 
   const handleSelectScreen = (option: ScreenConfig) => {
-    router.navigate(option.path);
+    router.navigate({ to: option.path });
   };
 
   const closeDrawer = () => setDrawerActive(false);

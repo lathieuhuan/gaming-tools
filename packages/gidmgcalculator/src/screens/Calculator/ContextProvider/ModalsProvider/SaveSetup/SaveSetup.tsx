@@ -47,7 +47,7 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
 
   const saveSetup = () => {
     dispatch(saveSetupThunk(setup, input));
-    router.navigate(SCREEN_PATH.SETUPS);
+    router.navigate({ to: SCREEN_PATH.SETUPS });
     onClose();
   };
 

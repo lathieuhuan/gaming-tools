@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { message } from "rond";
 
+import { decodeSetup } from "@/logic/setupCodec";
 import { useSearchParams } from "@/systems/router";
 import { useSetupImporter } from "@/systems/setup-importer";
-import { decodeSetup } from "@/logic/setupCodec";
 import { selectAppReady, useUIStore } from "@Store/ui";
 
 type SearchParams = {
@@ -26,7 +26,7 @@ export function SetupTransshiper() {
           ...result.importInfo,
           source: "URL",
         });
-        setSearchParams({ importCode: undefined }, true);
+        setSearchParams(null);
       } else {
         message.error(result.error);
       }

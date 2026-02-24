@@ -1,103 +1,122 @@
-import { SearchParams } from "../types";
+import isEqual from "react-fast-compare";
+
+import type { SearchParams } from "../types";
+
 import {
   checkIsChildSegments,
   getSearchParams,
   objectToSearchString,
   toPathSegments,
 } from "../utils";
+import { Subject } from "@/utils/Subject";
 
-type RouteData = {
-  pathname: string;
-  searchParams: SearchParams;
+let pathname = window.location.pathname;
+let searchParams = getSearchParams();
+
+const pathnameSubject = new Subject<string>();
+const searchParamsSubject = new Subject<SearchParams>();
+
+export const store = {
+  subscribePathname: pathnameSubject.subscribe.bind(pathnameSubject),
+  subscribeSearchParams: searchParamsSubject.subscribe.bind(searchParamsSubject),
+  getPathname: () => pathname,
+  getSearchParams: () => searchParams,
 };
 
-type RouterSubscriber = (route: RouteData) => void;
+function handleNewLocation(path: string, search: SearchParams) {
+  let isNewPath = false;
+  let isNewSearch = false;
 
-class InternalRouter {
-  private pathname: string;
-  private searchParams: SearchParams;
-  private subscribers: Set<RouterSubscriber> = new Set();
-
-  constructor() {
-    this.pathname = window.location.pathname;
-    this.searchParams = getSearchParams();
+  if (path !== pathname) {
+    isNewPath = true;
+    pathname = path;
+    pathnameSubject.next(pathname);
   }
 
-  gen() {
-    return {
-      pathname: this.pathname,
-      searchParams: this.searchParams,
-      subscribe: this.subscribe.bind(this),
-      navigate: this.navigate.bind(this),
-      isRouteActive: this.isRouteActive.bind(this),
-    };
+  if (!isEqual(search, searchParams)) {
+    isNewSearch = true;
+    searchParams = search;
+    searchParamsSubject.next(searchParams);
   }
 
-  subscribe(callback: RouterSubscriber) {
-    this.subscribers.add(callback);
-
-    return () => {
-      this.subscribers.delete(callback);
-    };
-  }
-
-  notifySubscribers() {
-    const data: RouteData = {
-      pathname: this.pathname,
-      searchParams: this.searchParams,
-    };
-
-    this.subscribers.forEach((subscriber) => subscriber(data));
-  }
-
-  watchPopState() {
-    const handlePopState = () => {
-      this.pathname = window.location.pathname;
-      this.searchParams = getSearchParams();
-      this.notifySubscribers();
-    };
-
-    window.addEventListener("popstate", handlePopState);
-
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }
-
-  private _navigate(pathname: string, searchParams?: SearchParams, replaceHistory?: boolean) {
-    const searchString = searchParams ? objectToSearchString(searchParams) : "";
-    const search = searchString ? `?${searchString}` : "";
-    const fullpath = pathname + search;
-    const currentPath = window.location.pathname + window.location.search;
-
-    if (fullpath !== currentPath) {
-      if (replaceHistory) {
-        window.history.replaceState(null, "", window.location.origin + fullpath);
-      } else {
-        window.history.pushState(null, "", window.location.origin + fullpath);
-      }
-
-      return { fullpath, navigated: true };
-    }
-
-    return { fullpath, navigated: false };
-  }
-
-  navigate(pathname: string, searchParams: SearchParams = {}, replaceHistory?: boolean) {
-    const { navigated } = this._navigate(pathname, searchParams, replaceHistory);
-
-    if (navigated) {
-      this.pathname = pathname;
-      this.searchParams = searchParams;
-      this.notifySubscribers();
-    }
-  }
-
-  isRouteActive(path: string) {
-    return path === "/"
-      ? this.pathname === "/"
-      : checkIsChildSegments(toPathSegments(path), toPathSegments(this.pathname));
-  }
+  return isNewPath || isNewSearch;
 }
 
-export const internalRouter = new InternalRouter();
+export function watchPopState() {
+  const handlePopState = () => {
+    handleNewLocation(window.location.pathname, getSearchParams());
+  };
+
+  window.addEventListener("popstate", handlePopState);
+
+  return () => {
+    window.removeEventListener("popstate", handlePopState);
+  };
+}
+
+type NavigateParams = {
+  to?: string;
+  search?: SearchParams;
+  replaceSearch?: boolean;
+  replaceHistory?: boolean;
+};
+
+export function navigate(params: NavigateParams) {
+  const { search = {}, replaceHistory = false } = params;
+  const replaceSearch = params.to ? true : params.replaceSearch;
+  const { origin } = window.location;
+
+  const newSearchParams = replaceSearch
+    ? search
+    : {
+        ...getSearchParams(),
+        ...search,
+      };
+
+  const isNewLocation = handleNewLocation(params.to || window.location.pathname, newSearchParams);
+
+  if (isNewLocation) {
+    const searchString = objectToSearchString(searchParams);
+    const newFullpath = pathname + (searchString ? `?${searchString}` : "");
+
+    if (replaceHistory) {
+      window.history.replaceState(null, "", origin + newFullpath);
+    } else {
+      window.history.pushState(null, "", origin + newFullpath);
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
+export function isRouteActive(path: string) {
+  return path === "/"
+    ? pathname === "/"
+    : checkIsChildSegments(toPathSegments(path), toPathSegments(pathname));
+}
+
+type SetSearchParamsOptions = {
+  replace?: boolean;
+  replaceHistory?: boolean;
+};
+
+export function setSearchParams<T extends SearchParams = SearchParams>(
+  params: T | null,
+  options: SetSearchParamsOptions = {}
+) {
+  return navigate({
+    search: params || {},
+    replaceSearch: params === null || options.replace,
+    replaceHistory: options.replaceHistory,
+  });
+}
+
+export const router = {
+  navigate,
+  setSearchParams,
+  isRouteActive,
+};
+
+export type Router = typeof router;

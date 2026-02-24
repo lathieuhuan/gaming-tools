@@ -41,7 +41,7 @@ export default class Object_ {
     return this.isNil(value) || !Object.keys(value).length;
   }
 
-  static isNotEmpty(value?: object | null): value is object {
+  static isNotEmpty<T extends object>(value?: T | null): value is T {
     return !this.isEmpty(value);
   }
 

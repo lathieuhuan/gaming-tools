@@ -138,7 +138,7 @@ export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterPr
 
     onFinish();
 
-    router.navigate(SCREEN_PATH.CALCULATOR);
+    router.navigate({ to: SCREEN_PATH.CALCULATOR });
 
     if (manageInfo.source === "URL" || manageInfo.source === "ENKA") {
       notification.success({
@@ -152,7 +152,7 @@ export function ImportCenter({ params, onFinish, ...manageInfo }: ImportCenterPr
     // TODO implement
     updateUI({ setupDirectorActive: false });
 
-    router.navigate(SCREEN_PATH.CALCULATOR);
+    router.navigate({ to: SCREEN_PATH.CALCULATOR });
   };
 
   switch (pendingCode) {
