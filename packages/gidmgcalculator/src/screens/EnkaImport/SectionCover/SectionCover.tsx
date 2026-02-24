@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ClassValue, clsx, ExclamationCircleSvg } from "rond";
 
 import { EnkaLogo } from "@/assets/icons";
-import { TabHeader } from "../_components/TabHeader";
+import { TabHeader } from "../components/TabHeader";
 import { AccountInfo } from "./AccountInfo";
 import { ProfileInfo } from "./ProfileInfo";
 import { SearchBar } from "./SearchBar";

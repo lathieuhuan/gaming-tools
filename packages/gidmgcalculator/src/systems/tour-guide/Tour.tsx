@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ButtonGroup } from "rond";
 
-import type { TourSite } from "./_types";
+import type { TourSite } from "./types";
 import { TourFrame } from "./TourFrame";
 
 type TourProps = {

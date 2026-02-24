@@ -1,2 +1,2 @@
 export * from "./TourGuide";
-export type { TourStep, TourStepDialog, TourStepErrorCode } from "./_types";
+export type { TourStep, TourStepDialog, TourStepErrorCode } from "./types";

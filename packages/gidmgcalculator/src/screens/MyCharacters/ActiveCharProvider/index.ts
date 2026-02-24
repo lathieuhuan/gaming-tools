@@ -1,2 +1,2 @@
 export * from "./ActiveCharProvider";
-export { useActiveChar, useActiveCharActions } from "./_context";
+export { useActiveChar, useActiveCharActions } from "./context";

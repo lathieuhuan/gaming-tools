@@ -4,8 +4,8 @@ import { Button, notification } from "rond";
 
 import type { CurrentDatabaseData } from "@/migration/types/current";
 
-import { convertGOODData } from "./_logic/convertGOODData";
-import { migrateUploadData } from "./_logic/migrateUploadData";
+import { convertGOODData } from "./logic/convertGOODData";
+import { migrateUploadData } from "./logic/migrateUploadData";
 
 type GetFileResult =
   | {

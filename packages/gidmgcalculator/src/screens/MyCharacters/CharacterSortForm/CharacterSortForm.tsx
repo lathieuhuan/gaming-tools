@@ -1,15 +1,28 @@
+import { createSelector } from "@reduxjs/toolkit";
 import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { CarouselSpace, Popover } from "rond";
 
+import type { CharacterToBeSorted } from "./types";
+
 import { Ascendable } from "@/models";
+import { $AppCharacter } from "@/services";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import { useDispatch } from "@Store/hooks";
-import { sortDbCharacters } from "@Store/userdbSlice";
-import { selectCharacterToBeSorted } from "./_utils";
+import { selectDbCharacters, sortDbCharacters } from "@Store/userdbSlice";
 
 import { DragAndDropList } from "./DragAndDropList";
 import { MarkedList } from "./MarkedList";
+
+const selectCharacterToBeSorted = createSelector(selectDbCharacters, (userChars) =>
+  userChars.map<CharacterToBeSorted>((character, index) => {
+    return {
+      ...character,
+      data: $AppCharacter.get(character.code),
+      index,
+    };
+  })
+);
 
 type CharacterSortFormProps = {
   id?: string;

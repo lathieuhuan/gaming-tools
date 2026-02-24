@@ -1,2 +1,2 @@
 export * from "./ImporterProvider";
-export { useSetupImporter } from "./_context";
+export { useSetupImporter } from "./context";

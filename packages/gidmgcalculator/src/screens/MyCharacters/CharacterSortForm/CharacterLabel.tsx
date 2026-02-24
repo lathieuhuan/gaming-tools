@@ -1,4 +1,4 @@
-import { CharacterToBeSorted } from "./_utils";
+import type { CharacterToBeSorted } from "./types";
 
 type CharacterLabelProps = React.HTMLAttributes<HTMLDivElement> & {
   character: CharacterToBeSorted;

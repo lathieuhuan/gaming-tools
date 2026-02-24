@@ -7,7 +7,7 @@ import type { TourType } from "@Store/ui/types";
 import { TourGuide } from "@/systems/tour-guide";
 import { setTourFinished } from "@Store/tours/actions";
 import { setTourType } from "@Store/ui";
-import { getEnhanceTourSteps, getSubEnhanceTourSteps } from "./_tours/enhanceTours";
+import { getEnhanceTourSteps, getSubEnhanceTourSteps } from "./tours/enhanceTours";
 
 type TourOperatorProps = {
   tourType: TourType;

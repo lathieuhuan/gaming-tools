@@ -1,12 +1,12 @@
 import { RefCallback, useRef, useState } from "react";
 import { CarouselSpace, notification } from "rond";
 
-import type { SaveOutput, SavingSteps } from "./_types";
+import type { SaveOutput, SavingSteps } from "./types";
 
 import { $AppCharacter } from "@/services";
-import { useSaveOutputHandler } from "./_hooks";
+import { useSaveOutputHandler } from "./hooks/useSaveOutputHandler";
 
-import { SaverLayout } from "../_components/SaverLayout";
+import { SaverLayout } from "../components/SaverLayout";
 import { SaveArtifactStep } from "./SaveArtifactStep";
 import { SaveCharacterStep } from "./SaveCharacterStep";
 import { SaveWeaponStep } from "./SaveWeaponStep";

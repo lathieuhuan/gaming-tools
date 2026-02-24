@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FaSort } from "react-icons/fa";
 
+import type { CharacterToBeSorted } from "./types";
 import { CharacterLabel } from "./CharacterLabel";
-import { CharacterToBeSorted } from "./_utils";
 
 type DragAndDropListProps = {
   characters: CharacterToBeSorted[];

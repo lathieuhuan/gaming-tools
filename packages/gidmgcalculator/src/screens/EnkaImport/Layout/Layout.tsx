@@ -1,7 +1,7 @@
 import { ReactNode, useRef } from "react";
 import { clsx } from "rond";
-import { LayoutContext } from "./_context";
-import { EnkaImportSection } from "../_types";
+import { LayoutContext } from "./context";
+import { EnkaImportSection } from "../types";
 
 export const MOBILE_SECTION_CLASS = "w-full shrink-0 snap-center";
 

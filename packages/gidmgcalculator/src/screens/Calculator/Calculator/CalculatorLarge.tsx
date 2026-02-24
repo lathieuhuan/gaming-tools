@@ -4,9 +4,9 @@ import { useScreenWatcher } from "rond";
 import { useCalcStore } from "@Store/calculator";
 
 // Components
-import { Card } from "../_components/Card";
+import { Card } from "../components/Card";
 import { ContextProvider } from "../ContextProvider";
-import { ModifiersCard, OverviewCard, ResultsCard, SetupCard } from "./_cards";
+import { ModifiersCard, OverviewCard, ResultsCard, SetupCard } from "./CardComponents";
 
 const FlexibleCard: typeof Card = ({ className, style, ...restProps }) => {
   const comparedCount = useCalcStore((state) => state.comparedIds.length);

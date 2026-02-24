@@ -1,2 +1,2 @@
 export * from "./ContextProvider";
-export { useMyCharactersModalCtrl } from "./ModalProvider/_context";
+export { useMyCharactersModalCtrl } from "./ModalProvider/context";

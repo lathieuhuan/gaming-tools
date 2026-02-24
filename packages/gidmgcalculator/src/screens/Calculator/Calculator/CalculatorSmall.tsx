@@ -8,7 +8,7 @@ import { updateUI } from "@Store/ui";
 // Components
 import { ContextProvider } from "../ContextProvider";
 import { BottomNavSmall, BottomNavSmallProps } from "./BottomNavSmall";
-import { ModifiersCard, OverviewCard, ResultsCard, SetupCard } from "./_cards";
+import { ModifiersCard, OverviewCard, ResultsCard, SetupCard } from "./CardComponents";
 
 type CalculatorPanelType = "OVERVIEW" | "MODIFIERS" | "SETUP" | "RESULTS";
 

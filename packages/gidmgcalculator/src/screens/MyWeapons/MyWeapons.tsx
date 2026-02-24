@@ -11,9 +11,9 @@ import { selectDbWeapons, sortDbWeapons } from "@Store/userdbSlice";
 
 // Component
 import { InventoryRack, WeaponTypeSelect } from "@/components";
-import { CompoundFilterButton } from "../_components/CompoundFilterButton";
-import { UserItemSortButton } from "../_components/UserItemSortButton";
-import { WarehouseWrapper } from "../_components/WarehouseWrapper";
+import { CompoundFilterButton } from "../components/CompoundFilterButton";
+import { UserItemSortButton } from "../components/UserItemSortButton";
+import { WarehouseWrapper } from "../components/WarehouseWrapper";
 import { ActionContainer } from "./ActionContainer";
 import { ActiveWeaponView, ActiveWeaponViewControlRef } from "./ActiveWeaponView";
 import { AddButton } from "./AddButton";

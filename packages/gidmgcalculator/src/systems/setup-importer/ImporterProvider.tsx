@@ -1,7 +1,7 @@
 import { ReactNode, useMemo, useState } from "react";
 
 import { SetupImportInfo } from "@/types";
-import { ImporterContext } from "./_context";
+import { ImporterContext } from "./context";
 import { ImportCenter } from "./ImportCenter";
 
 export function ImporterProvider({ children }: { children: ReactNode }) {

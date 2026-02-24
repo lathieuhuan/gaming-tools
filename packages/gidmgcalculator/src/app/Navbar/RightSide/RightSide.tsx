@@ -2,11 +2,12 @@ import { useState } from "react";
 import { FaBars, FaDonate } from "react-icons/fa";
 import { Button, LoadingSpin } from "rond";
 
+import type { ModalOption } from "./config";
+
 import { IS_DEV_ENV, SCREEN_PATH } from "@/constants/config";
 import { $AppData } from "@/services";
 import { useRouter } from "@/systems/router";
 import { updateUI, type UIState } from "@Store/ui";
-import { ModalOption } from "./_config";
 
 import { EnkaLogo } from "@/assets/icons";
 import { PopoverAction } from "@/components";

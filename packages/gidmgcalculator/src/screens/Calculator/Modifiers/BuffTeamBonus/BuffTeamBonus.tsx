@@ -9,7 +9,7 @@ import { useTeamBuffCtrlGroup } from "./_hooks/useTeamBuffCtrlGroup";
 import type { ControlGroup } from "./types";
 
 import { GenshinModifierView } from "@/components";
-import { SECRET_RITE_BUFF_CONFIG } from "@/components/modifier-item/configs";
+import { SECRET_RITE_BUFF_CONFIG } from "@/components/ModifierItems/config";
 
 export function BuffTeamBonus() {
   const team = useCalcStore((state) => selectSetup(state).team);

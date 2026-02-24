@@ -9,13 +9,13 @@ import type { IWeaponBasic } from "@/types";
 import { useStoreCheck } from "@/hooks/useStoreCheck";
 import { useDispatch } from "@Store/hooks";
 import { addDbWeapon, updateDbWeapon } from "@Store/userdbSlice";
-import { genCaseConfigs } from "../_config";
-import { isExactWeapon } from "../_logic";
+import { genCaseConfigs } from "../config";
+import { isExactWeapon } from "../logic";
 
-import { CaseNewWeapon } from "../_components/CaseNewWeapon";
-import { CaseSameWeapons } from "../_components/CaseSameWeapons";
-import { SaverLayout } from "../_components/SaverLayout";
-import { SavingStepLayout } from "../_components/SavingStepLayout";
+import { CaseNewWeapon } from "../components/CaseNewWeapon";
+import { CaseSameWeapons } from "../components/CaseSameWeapons";
+import { SaverLayout } from "../components/SaverLayout";
+import { SavingStepLayout } from "../components/SavingStepLayout";
 
 type WeaponSaverProps = {
   weapon: Weapon;

@@ -6,10 +6,10 @@ import { useSettingsStore } from "@Store/settings";
 import { updateUI, useUIStore } from "@Store/ui";
 
 // Component
-import SectionArtifacts from "./SectionArtifacts";
-import SectionTarget from "./SectionTarget";
-import SectionTeammates from "./SectionTeammates";
-import SectionWeapon from "./SectionWeapon";
+import { SectionArtifacts } from "./SectionArtifacts";
+import { SectionTarget } from "./SectionTarget";
+import { SectionTeammates } from "./SectionTeammates";
+import { SectionWeapon } from "./SectionWeapon";
 import { SetupSelect } from "./SetupSelect";
 
 export function SetupManager() {

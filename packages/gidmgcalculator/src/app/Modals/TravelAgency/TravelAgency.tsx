@@ -3,10 +3,11 @@ import { ConfirmModal, Modal, ModalControl } from "rond";
 
 import type { TourKey } from "@/types";
 
+import { nextFrame } from "@/utils/window.utils";
 import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 import { setTourType } from "@Store/ui";
-import { startEnhanceTour } from "./_actions/startEnhanceTour";
+import { prepTour } from "./actions/prepTour";
 
 import { TourCatalogue } from "./TourCatalogue";
 
@@ -45,14 +46,10 @@ function TravelAgency({ onClose }: ModalControl) {
     }
   };
 
-  const startTour = (key: TourKey) => {
-    switch (key) {
-      case "CHAR_ENHANCE":
-        startEnhanceTour();
-        break;
-      default:
-        key satisfies never;
-    }
+  const startTour = async (key: TourKey) => {
+    prepTour(key);
+
+    await nextFrame();
 
     setTourType(key);
     onClose?.();
@@ -60,7 +57,7 @@ function TravelAgency({ onClose }: ModalControl) {
 
   const handleStartTour = (key: TourKey) => {
     if (isTourAvailable(key)) {
-      startTour(key);
+      void startTour(key);
     }
   };
 
@@ -87,7 +84,7 @@ function TravelAgency({ onClose }: ModalControl) {
         }
         confirmText="Yes"
         cancelText="No"
-        onConfirm={() => startTour("CHAR_ENHANCE")}
+        onConfirm={() => void startTour("CHAR_ENHANCE")}
         onClose={() => setModalType("TOUR_CATALOGUE")}
       />
     </>

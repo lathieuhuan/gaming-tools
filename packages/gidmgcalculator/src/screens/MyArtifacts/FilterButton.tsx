@@ -4,7 +4,7 @@ import { Modal } from "rond";
 import type { IArtifactBasic } from "@/types";
 
 import { ArtifactFilter, ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER } from "@/components";
-import { CompoundFilterButton } from "../_components/CompoundFilterButton";
+import { CompoundFilterButton } from "../components/CompoundFilterButton";
 
 type FilterButtonProps = {
   artifacts: IArtifactBasic[];

@@ -1,4 +1,4 @@
-import { useEnkaUser } from "../_hooks/useEnkaUser";
+import { useEnkaUser } from "../hooks/useEnkaUser";
 
 type ProfileInfoProps = {
   profile?: string;

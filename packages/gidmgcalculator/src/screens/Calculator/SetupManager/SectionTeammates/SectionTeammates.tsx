@@ -9,7 +9,7 @@ import { updateUI } from "@Store/ui";
 
 // Component
 import { CharacterPortrait, Tavern, TavernProps } from "@/components";
-import { Section } from "../_components/Section";
+import { Section } from "../components/Section";
 import { CopySelect } from "./CopySelect";
 import { TeammateDetail } from "./TeammateDetail";
 import { TeammateSlot } from "./TeammateSlot";
@@ -19,7 +19,7 @@ type TavernState = {
   recruitIndex: number | null;
 };
 
-export default function SectionTeammates() {
+export function SectionTeammates() {
   //
   const { isCombinedSetup, teammates, mainData } = useShallowCalcStore((state) => {
     const manager = selectSetupManager(state);

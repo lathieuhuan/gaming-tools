@@ -3,7 +3,7 @@ import { Button } from "rond";
 
 import type { GenshinUserBuild } from "@/services/enka";
 
-import { BuildArtifacts } from "../_components/BuildArtifacts";
+import { BuildArtifacts } from "../components/BuildArtifacts";
 import { BuildCharacter } from "./BuildCharacter";
 import { BuildWeapon } from "./BuildWeapon";
 

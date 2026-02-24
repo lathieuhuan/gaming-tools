@@ -3,7 +3,7 @@ import { LoadingPlate, useScreenWatcher } from "rond";
 
 import { selectAppReady, useUIStore } from "@Store/ui";
 
-import { WarehouseError } from "../_components/WarehouseError";
+import { WarehouseError } from "../components/WarehouseError";
 import { MyCharactersLarge } from "./MyCharactersLarge";
 import { MyCharactersSmall } from "./MyCharactersSmall";
 

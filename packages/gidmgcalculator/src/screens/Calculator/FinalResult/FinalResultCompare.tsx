@@ -6,11 +6,11 @@ import type { CalcResult } from "@/calculation/calculator";
 import type { CalcAspect, CalcResultItemValue } from "@/calculation/types";
 
 import { displayValues } from "@/components/FinalResultView";
+import { SLOT_NAME } from "@/constants";
 import { updateMain } from "@Store/calculator/actions";
-import { useLayoutProps } from "./_useLayoutProps";
+import { useLayoutProps } from "./hooks/useLayoutProps";
 
 import { FinalResultLayout, type FinalResultLayoutProps } from "@/components";
-import { SLOT_NAME } from "@/constants";
 
 type CellConfig = ReturnType<FinalResultLayoutProps["getRowConfig"]>["cells"][number];
 

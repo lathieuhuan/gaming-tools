@@ -16,8 +16,8 @@ import {
   InventoryRack,
   useArtifactFilter,
 } from "@/components";
-import { UserItemSortButton } from "../_components/UserItemSortButton";
-import { WarehouseWrapper } from "../_components/WarehouseWrapper";
+import { UserItemSortButton } from "../components/UserItemSortButton";
+import { WarehouseWrapper } from "../components/WarehouseWrapper";
 import { ActiveArtifactView } from "./ActiveArtifactView";
 import { AddButton } from "./AddButton";
 import { FilterButton } from "./FilterButton";

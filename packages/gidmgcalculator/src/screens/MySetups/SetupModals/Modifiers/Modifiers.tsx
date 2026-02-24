@@ -17,8 +17,8 @@ import {
   TeammateDebuffsView,
   WeaponBuffsView,
 } from "@/components";
-import { CustomBuffs, ElementBuffs, TeamBuffs } from "./buffs";
-import { CustomDebuffs, ElementDebuffs } from "./debuffs";
+import { CustomBuffs, ElementBuffs, TeamBuffs } from "./BuffComponents";
+import { CustomDebuffs, ElementDebuffs } from "./DebuffComponents";
 
 type SectionLayoutProps = {
   className?: string;

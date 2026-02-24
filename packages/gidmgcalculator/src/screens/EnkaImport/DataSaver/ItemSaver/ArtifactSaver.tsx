@@ -9,13 +9,13 @@ import type { IArtifactBasic } from "@/types";
 import { useStoreCheck } from "@/hooks/useStoreCheck";
 import { useDispatch } from "@Store/hooks";
 import { addDbArtifact, updateDbArtifact } from "@Store/userdbSlice";
-import { genCaseConfigs } from "../_config";
-import { isExactArtifact } from "../_logic";
+import { genCaseConfigs } from "../config";
+import { isExactArtifact } from "../logic";
 
-import { CaseNewArtifact } from "../_components/CaseNewArtifact";
-import { CaseSameArtifacts } from "../_components/CaseSameArtifact";
-import { SaverLayout } from "../_components/SaverLayout";
-import { SavingStepLayout } from "../_components/SavingStepLayout";
+import { CaseNewArtifact } from "../components/CaseNewArtifact";
+import { CaseSameArtifacts } from "../components/CaseSameArtifact";
+import { SaverLayout } from "../components/SaverLayout";
+import { SavingStepLayout } from "../components/SavingStepLayout";
 
 type ArtifactSaverProps = {
   artifact: Artifact;

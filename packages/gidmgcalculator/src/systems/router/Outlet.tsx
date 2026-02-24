@@ -1,9 +1,9 @@
 import { useContext, useMemo } from "react";
 
-import type { NotFoundRoute, OutletRoute } from "./_types";
+import type { NotFoundRoute, OutletRoute } from "./types";
 
-import { OutletRouteContext } from "./_contexts/OutletRouteContext";
-import { getOutletRoute } from "./_logic/getOutletRoute";
+import { OutletRouteContext } from "./contexts/OutletRouteContext";
+import { getOutletRoute } from "./logic/getOutletRoute";
 
 function getRouteKey(route: OutletRoute | NotFoundRoute | null) {
   if (!route) {

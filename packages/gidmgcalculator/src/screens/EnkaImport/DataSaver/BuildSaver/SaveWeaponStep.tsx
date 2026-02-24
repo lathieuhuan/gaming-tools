@@ -5,18 +5,18 @@ import { ButtonProps, Checkbox, notification } from "rond";
 
 import type { Weapon } from "@/models";
 import type { IWeaponBasic } from "@/types";
-import type { SaveOutput, WeaponSavingStep } from "./_types";
+import type { SaveOutput, WeaponSavingStep } from "./types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";
-import { genCaseConfigs } from "../_config";
-import { isExactWeapon, isSameWeapon } from "../_logic";
+import { genCaseConfigs } from "../config";
+import { isExactWeapon, isSameWeapon } from "../logic";
 
 import { EquipmentIcon } from "@/assets/icons";
-import { CaseNewWeapon } from "../_components/CaseNewWeapon";
-import { CaseSameWeapons } from "../_components/CaseSameWeapons";
-import { SavingCase } from "../_components/SavingCase";
-import { SavingStepLayout } from "../_components/SavingStepLayout";
-import { WeaponSummary } from "../_components/WeaponSummary";
+import { CaseNewWeapon } from "../components/CaseNewWeapon";
+import { CaseSameWeapons } from "../components/CaseSameWeapons";
+import { SavingCase } from "../components/SavingCase";
+import { SavingStepLayout } from "../components/SavingStepLayout";
+import { WeaponSummary } from "../components/WeaponSummary";
 
 export type SaveWeaponStepProps = {
   className?: string;

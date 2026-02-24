@@ -4,7 +4,7 @@ import { FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
 import { Button, ButtonGroup, CloseButton, Modal, TrashCanSvg } from "rond";
 
 import type { TeammateCalc } from "@/models";
-import type { SetupOverviewInfo } from "../_types";
+import type { SetupOverviewInfo } from "../types";
 
 import { Artifact } from "@/models";
 import { useDispatch } from "@Store/hooks";

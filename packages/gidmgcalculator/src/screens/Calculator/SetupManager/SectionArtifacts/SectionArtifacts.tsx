@@ -22,7 +22,7 @@ import {
   LoadoutStash,
   LoadoutStashProps,
 } from "@/components";
-import { Section } from "../_components/Section";
+import { Section } from "../components/Section";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
 
@@ -40,7 +40,7 @@ type ForgeState = Pick<ArtifactForgeProps, "hasConfigStep"> & {
 
 const SECTION_ID = "calculator-section-artifacts";
 
-export default function SectionArtifacts() {
+export function SectionArtifacts() {
   const [modalType, setModalType] = useState<ModalType>("");
   const [activeArtifactType, setActiveArtifactType] = useState<ArtifactType>();
 

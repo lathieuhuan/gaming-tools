@@ -2,19 +2,20 @@ import { useEffect, useMemo } from "react";
 import { FaInfo } from "react-icons/fa";
 import { Button, WarehouseLayout, clsx, useScreenWatcher } from "rond";
 
-import type { SetupOverviewInfo } from "./_types";
+import type { SetupOverviewInfo } from "./types";
 
-import { useSetupImporter } from "@/systems/setup-importer";
-import Array_ from "@/utils/Array";
 import { isDbSetup, restoreCalcSetup } from "@/logic/setup.logic";
 import { parseDbArtifacts, parseDbWeapon } from "@/logic/userdb.logic";
+import { useSetupImporter } from "@/systems/setup-importer";
+import Array_ from "@/utils/Array";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui";
-import { viewDbSetup, selectActiveSetupId } from "@Store/userdbSlice";
-import { createSetupForTeammate, toOverviewInfo } from "./_utils";
+import { selectActiveSetupId, viewDbSetup } from "@Store/userdbSlice";
+import { createSetupForTeammate } from "./logic/createSetupForTeammate";
+import { setupToOverviewInfo } from "./logic/setupToOverviewInfo";
 
 // Component
-import { WarehouseWrapper } from "../_components/WarehouseWrapper";
+import { WarehouseWrapper } from "../components/WarehouseWrapper";
 import { MySetupsModals } from "./MySetupsModals";
 import { SelectedResult } from "./SelectedResult";
 import { SetupView } from "./SetupView";
@@ -65,7 +66,7 @@ function MySetups() {
 
   const overviewInfos = useMemo(() => {
     //
-    return Array_.truthify(userSetups.map((setup) => toOverviewInfo(setup, userdb)));
+    return Array_.truthify(userSetups.map((setup) => setupToOverviewInfo(setup, userdb)));
     //
   }, [userSetups, userWeapons, userArtifacts]);
 

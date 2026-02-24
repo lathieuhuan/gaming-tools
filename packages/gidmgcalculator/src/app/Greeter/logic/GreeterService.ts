@@ -2,7 +2,7 @@ import type { AppMetadata } from "../types";
 
 import { MINIMUM_SYSTEM_VERSION } from "@/constants/config";
 import { $AppData, AllData } from "@/services";
-import { assertIsError } from "@/utils/pure.utils";
+import { assertIsError, delay } from "@/utils/pure.utils";
 import { AllDataChannel } from "./AllDataChannel";
 import { TimeStore } from "./TimeStore";
 
@@ -17,7 +17,9 @@ type FetchAllDataError = {
 };
 
 class GreeterService {
-  private isFetchedMetadata = false;
+  private allDataChannel: AllDataChannel;
+  private lastVersionCheckTime = new TimeStore("lastVersionCheckTime");
+  private isFetchedAllData = false;
 
   metadata: AppMetadata = {
     version: "",
@@ -25,14 +27,11 @@ class GreeterService {
     supporters: [],
   };
 
-  private allDataChannel: AllDataChannel;
-  private lastVersionCheckTime = new TimeStore("lastVersionCheckTime");
-
   constructor() {
     this.allDataChannel = new AllDataChannel();
 
     this.allDataChannel.onRequest = () => {
-      if (this.isFetchedMetadata) {
+      if (this.isFetchedAllData) {
         this.allDataChannel.response({
           ...this.metadata,
           ...$AppData.getAll(),
@@ -41,19 +40,39 @@ class GreeterService {
     };
 
     this.allDataChannel.onResponse = (metadata) => {
-      if (!this.isFetchedMetadata) {
+      if (!this.isFetchedAllData && this.isValidDataVersion(metadata.version)) {
         this.populateData(metadata);
       }
     };
   }
 
+  private isValidDataVersion(version: string) {
+    const versionFrags = version.split(".");
+    const minVersionFrags = MINIMUM_SYSTEM_VERSION.split(".");
+
+    for (let i = 0; i < 3; i++) {
+      const versionFrag = +versionFrags[i];
+      const minVersionFrag = +minVersionFrags[i];
+
+      if (versionFrag > minVersionFrag) {
+        return true;
+      }
+      if (versionFrag < minVersionFrag) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   populateData(data: AllData) {
-    this.isFetchedMetadata = true;
+    this.isFetchedAllData = true;
     this.metadata = {
       version: data.version,
       updates: data.updates,
       supporters: data.supporters,
     };
+
     $AppData.populate(data);
   }
 
@@ -61,16 +80,7 @@ class GreeterService {
     return Math.round(Date.now() / 1000);
   }
 
-  private removeVersionCheckTime() {
-    localStorage.removeItem("lastVersionCheckTime");
-  }
-
-  async _fetchAllData(): Promise<FetchAllDataError | null> {
-    if (this.isFetchedMetadata) {
-      this.removeVersionCheckTime();
-      return null;
-    }
-
+  private async fetchAllData(): Promise<FetchAllDataError | null> {
     const response = await $AppData.fetchAllData();
     const { code, message = "Error.", data } = response;
 
@@ -82,14 +92,14 @@ class GreeterService {
       };
     }
 
-    if (isValidDataVersion(data.version)) {
+    if (this.isValidDataVersion(data.version)) {
       this.populateData(data);
-      this.removeVersionCheckTime();
+      this.lastVersionCheckTime.remove();
       return null;
     }
 
     // Data is outdated, set cooldown and return error
-    this.lastVersionCheckTime.value = this.currentTime;
+    this.lastVersionCheckTime.set(this.currentTime);
 
     return {
       code: 503,
@@ -98,8 +108,8 @@ class GreeterService {
     };
   }
 
-  fetchAllData(): Promise<FetchAllDataError | null> {
-    const timeElapsed = this.currentTime - this.lastVersionCheckTime.value;
+  async getAllData(): Promise<FetchAllDataError | null> {
+    const timeElapsed = this.currentTime - this.lastVersionCheckTime.get();
 
     if (timeElapsed < COOLDOWN_UPGRADE) {
       // Still in cooldown of refetching data
@@ -113,44 +123,30 @@ class GreeterService {
     // Request data from other tabs
     this.allDataChannel.request();
 
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        this._fetchAllData()
-          .then(() => resolve(null))
-          .catch((error) => {
-            assertIsError(error);
+    // Give it time to receive the data from other tabs
+    await delay(200);
 
-            resolve({
-              code: 500,
-              message: error.message,
-              cooldown: COOLDOWN_NORMAL * 5,
-            });
-          });
-      }, 200);
-    });
+    if (this.isFetchedAllData) {
+      this.lastVersionCheckTime.remove();
+      return null;
+    }
+
+    return this.fetchAllData()
+      .then(() => null)
+      .catch((error) => {
+        assertIsError(error);
+
+        return {
+          code: 500,
+          message: error.message,
+          cooldown: COOLDOWN_NORMAL * 5,
+        };
+      });
   }
 
   endShift() {
     this.allDataChannel.close();
   }
-}
-
-function isValidDataVersion(version: string) {
-  const versionFrags = version.split(".");
-  const minVersionFrags = MINIMUM_SYSTEM_VERSION.split(".");
-
-  for (let i = 0; i < 3; i++) {
-    const versionFrag = +versionFrags[i];
-    const minVersionFrag = +minVersionFrags[i];
-
-    if (versionFrag > minVersionFrag) {
-      return true;
-    }
-    if (versionFrag < minVersionFrag) {
-      return false;
-    }
-  }
-  return true;
 }
 
 export const $Greeter = new GreeterService();

@@ -8,7 +8,7 @@ import { useSetupDirectorKit } from "./useSetupDirectorKit";
 
 // Component
 import { SetupControl } from "./SetupControl";
-import { Card } from "../_components/Card";
+import { Card } from "../components/Card";
 
 function SetupDirectorCore() {
   const calcModalCtrl = useCalcModalCtrl();

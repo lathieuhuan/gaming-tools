@@ -10,7 +10,7 @@ import { useDataImportState } from "../DataImporter";
 import { useRequestSaveBuild } from "../DataSaver/BuildSaver";
 import { useLayoutState } from "../Layout";
 
-import { TabHeader } from "../_components/TabHeader";
+import { TabHeader } from "../components/TabHeader";
 import { BuildOverviews } from "./BuildOverviews";
 
 type SectionResultsProps = {

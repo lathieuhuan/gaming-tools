@@ -1,4 +1,4 @@
-import type { TourSiteLocation } from "./_types";
+import type { TourSiteLocation } from "./types";
 
 type TourFrameProps = TourSiteLocation;
 

@@ -3,14 +3,14 @@ import { FaAngleDoubleRight, FaPlus } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 
 import type { AppCharacter, ICharacterBasic } from "@/types";
-import type { CharacterSavingStep, SaveOutput } from "./_types";
+import type { CharacterSavingStep, SaveOutput } from "./types";
 
-import { genNewEntityText, getDifferentEntityMessage } from "../_config";
-import { isExactCharacter } from "../_logic";
+import { genNewEntityText, getDifferentEntityMessage } from "../config";
+import { isExactCharacter } from "../logic";
 
 import { CharacterPortrait } from "@/components";
-import { EntityComparer } from "../_components/EntityComparer";
-import { SavingStepLayout } from "../_components/SavingStepLayout";
+import { EntityComparer } from "../components/EntityComparer";
+import { SavingStepLayout } from "../components/SavingStepLayout";
 
 export type SaveCharacterStepProps = {
   step: CharacterSavingStep;

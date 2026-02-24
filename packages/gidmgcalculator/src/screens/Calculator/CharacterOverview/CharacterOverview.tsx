@@ -10,7 +10,13 @@ import { useCalcModalCtrl } from "../ContextProvider";
 
 // Component
 import { CharacterIntro, ComplexSelect } from "@/components";
-import { ArtifactsTab, AttributesTab, ConstellationTab, TalentsTab, WeaponTab } from "./_tabs";
+import {
+  ArtifactsTab,
+  AttributesTab,
+  ConstellationTab,
+  TalentsTab,
+  WeaponTab,
+} from "./TabComponents";
 
 type TabType = "Attributes" | "Weapon" | "Artifacts" | "Constellation" | "Talents";
 

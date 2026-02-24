@@ -1,17 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 
-import type { RootRouteConfig } from "./_types";
+import type { RootRouteConfig } from "./types";
 
-import { OutletRouteContext } from "./_contexts/OutletRouteContext";
-import { Router, RouterContext } from "./_contexts/RouterContext";
+import { OutletRouteContext } from "./contexts/OutletRouteContext";
+import { Router, RouterContext } from "./contexts/RouterContext";
 import {
   SearchParamsContext,
   SearchParamsContextState,
   SetSearchParams,
-} from "./_contexts/SearchParamsContext";
-import { getOutletRoute } from "./_logic/getOutletRoute";
-import { navigate } from "./_logic/navigate";
-import { checkIsChildSegments, getSearchParams, toPathSegments } from "./_utils";
+} from "./contexts/SearchParamsContext";
+import { getOutletRoute } from "./logic/getOutletRoute";
+import { navigate } from "./logic/navigate";
+import { checkIsChildSegments, getSearchParams, toPathSegments } from "./utils";
 
 import { NotFound } from "./NotFound";
 

@@ -1,12 +1,12 @@
 import { ReactNode, useEffect, useState } from "react";
 
-import type { EnkaSearchParams, SelectedBuild } from "../_types";
+import type { EnkaSearchParams, SelectedBuild } from "../types";
 
 import { useSearchParams } from "@/systems/router";
 import { selectAppReady, useUIStore } from "@Store/ui";
-import { useGenshinUser } from "../_hooks/useGenshinUser";
+import { useGenshinUser } from "../hooks/useGenshinUser";
 import { useLayoutState } from "../Layout";
-import { DataImportContext, SelectedBuildContext, SelectedBuildContextState } from "./_context";
+import { DataImportContext, SelectedBuildContext, SelectedBuildContextState } from "./context";
 
 type DataImporterProps = {
   children: ReactNode;

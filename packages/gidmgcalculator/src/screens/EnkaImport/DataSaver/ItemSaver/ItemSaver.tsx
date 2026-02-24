@@ -1,12 +1,12 @@
 import { ReactNode, useCallback, useState } from "react";
 import { CloseButton, Modal, notification } from "rond";
 
-import type { ItemSavingStep } from "./_types";
+import type { ItemSavingStep } from "./types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";
 import { createArtifact, createWeapon } from "@/logic/entity.logic";
-import { isSameArtifact, isSameWeapon } from "../_logic";
-import { ItemSaverContext, ItemSaverContextState } from "./_context";
+import { isSameArtifact, isSameWeapon } from "../logic";
+import { ItemSaverContext, ItemSaverContextState } from "./context";
 
 import { ArtifactSaver } from "./ArtifactSaver";
 import { WeaponSaver } from "./WeaponSaver";

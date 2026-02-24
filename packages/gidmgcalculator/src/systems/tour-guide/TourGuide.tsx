@@ -3,10 +3,10 @@ import ReactDOM from "react-dom";
 import { notification } from "rond";
 
 import type { TourType } from "@Store/ui/types";
-import type { TourStep, TourStepErrorCode } from "./_types";
+import type { TourStep, TourStepErrorCode } from "./types";
 
 import { setTourType } from "@Store/ui";
-import { useTourPrepper } from "./_hooks/useTourPrepper";
+import { useTourPrepper } from "./hooks/useTourPrepper";
 
 import { Tour } from "./Tour";
 import { TourLoading } from "./TourLoading";

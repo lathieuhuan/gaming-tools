@@ -1,1 +1,1 @@
-export { default } from "./SectionArtifacts";
+export * from "./SectionArtifacts";

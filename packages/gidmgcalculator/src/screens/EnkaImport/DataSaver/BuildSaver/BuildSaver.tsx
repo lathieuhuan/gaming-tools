@@ -2,12 +2,12 @@ import { ReactNode, useCallback, useRef, useState } from "react";
 import { CloseButton, Modal } from "rond";
 
 import type { GenshinUserBuild } from "@/services/enka";
-import type { SavingSteps } from "./_types";
+import type { SavingSteps } from "./types";
 
 import { useStore } from "@/systems/dynamic-store";
-import { getArtifactSavingStep, getCharacterSavingStep, getWeaponSavingStep } from "./_logic";
+import { getArtifactSavingStep, getCharacterSavingStep, getWeaponSavingStep } from "./logic";
 
-import { BuildSaverContext, BuildSaverContextState } from "./_context";
+import { BuildSaverContext, BuildSaverContextState } from "./context";
 import { SavingStepper } from "./SavingStepper";
 
 export function BuildSaver({ children }: { children: ReactNode }) {

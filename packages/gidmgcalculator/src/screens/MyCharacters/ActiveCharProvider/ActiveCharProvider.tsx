@@ -3,7 +3,7 @@ import type { RootState } from "@Store/store";
 import { makeCharacterCalcFromDb } from "@/logic/userdb.logic";
 import { useSelector } from "@Store/hooks";
 import { ActionProvider } from "./ActionProvider";
-import { ActiveCharContext } from "./_context";
+import { ActiveCharContext } from "./context";
 
 const parseUserdb = (state: RootState) => {
   const { userChars, userWps, userArts, chosenChar } = state.userdb;

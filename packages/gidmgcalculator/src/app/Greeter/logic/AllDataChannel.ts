@@ -9,16 +9,18 @@ type AllDataMessageResponse = {
   data: AllData;
 };
 
+type AllDataMessage = AllDataMessageRequest | AllDataMessageResponse;
+
 export class AllDataChannel {
   private channel = new BroadcastChannel("ALL_DATA");
-  private isClosedChannel = false;
+  private isClosed = false;
 
-  onRequest = () => {};
+  onRequest() {}
 
-  onResponse = (data: AllData) => {};
+  onResponse(data: AllData) {}
 
   constructor() {
-    this.channel.onmessage = ({ data }: MessageEvent<AllDataMessageRequest | AllDataMessageResponse>) => {
+    this.channel.onmessage = ({ data }: MessageEvent<AllDataMessage>) => {
       switch (data.type) {
         case "REQUEST":
           this.onRequest();
@@ -30,24 +32,26 @@ export class AllDataChannel {
     };
   }
 
-  request = () => {
-    if (!this.isClosedChannel) {
-      this.channel.postMessage({ type: "REQUEST" } satisfies AllDataMessageRequest);
+  private postMessage(message: AllDataMessage) {
+    if (!this.isClosed) {
+      this.channel.postMessage(message);
     }
-  };
+  }
 
-  response = (allData: AllData) => {
-    if (!this.isClosedChannel) {
-      this.channel.postMessage({ type: "RESPONSE", data: allData } satisfies AllDataMessageResponse);
-    }
-  };
+  request() {
+    this.postMessage({ type: "REQUEST" });
+  }
 
-  close = () => {
+  response(allData: AllData) {
+    this.postMessage({ type: "RESPONSE", data: allData });
+  }
+
+  close() {
     try {
       this.channel.close();
-      this.isClosedChannel = true;
+      this.isClosed = true;
     } catch (error) {
       //
     }
-  };
+  }
 }

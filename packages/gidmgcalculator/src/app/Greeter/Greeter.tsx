@@ -35,7 +35,7 @@ export const Greeter = () => {
       });
     }
 
-    const error = await $Greeter.fetchAllData();
+    const error = await $Greeter.getAllData();
 
     if (error) {
       setState({
@@ -65,6 +65,7 @@ export const Greeter = () => {
         return (e.returnValue = "Are you sure you want to exit?");
       }
     };
+
     window.addEventListener("beforeunload", handleBeforeUnload, { capture: true });
 
     return () => {

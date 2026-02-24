@@ -13,8 +13,8 @@ import { useLayoutState } from "../Layout";
 import { AttributeTable } from "@/components";
 import { ArtifactCard } from "@/components/ArtifactCard";
 import { WeaponCard } from "@/components/WeaponCard";
-import { BuildArtifacts } from "../_components/BuildArtifacts";
-import { TabHeader } from "../_components/TabHeader";
+import { BuildArtifacts } from "../components/BuildArtifacts";
+import { TabHeader } from "../components/TabHeader";
 
 type SectionDetailProps = {
   className?: ClassValue;

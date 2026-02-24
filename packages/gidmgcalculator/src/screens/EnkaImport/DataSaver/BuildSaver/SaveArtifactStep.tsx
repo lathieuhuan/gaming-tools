@@ -5,18 +5,18 @@ import { ButtonProps, Checkbox, notification } from "rond";
 
 import type { Artifact } from "@/models";
 import type { IArtifactBasic } from "@/types";
-import type { ArtifactSaveOutput, ArtifactSavingStep } from "./_types";
+import type { ArtifactSaveOutput, ArtifactSavingStep } from "./types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";
-import { genCaseConfigs } from "../_config";
-import { isExactArtifact, isSameArtifact } from "../_logic";
+import { genCaseConfigs } from "../config";
+import { isExactArtifact, isSameArtifact } from "../logic";
 
 import { EquipmentIcon } from "@/assets/icons";
-import { CaseNewArtifact } from "../_components/CaseNewArtifact";
-import { CaseSameArtifacts } from "../_components/CaseSameArtifact";
-import { SavingCase } from "../_components/SavingCase";
-import { SavingStepLayout } from "../_components/SavingStepLayout";
-import { ArtifactSummary } from "../_components/ArtifactSummary";
+import { CaseNewArtifact } from "../components/CaseNewArtifact";
+import { CaseSameArtifacts } from "../components/CaseSameArtifact";
+import { SavingCase } from "../components/SavingCase";
+import { SavingStepLayout } from "../components/SavingStepLayout";
+import { ArtifactSummary } from "../components/ArtifactSummary";
 
 export type SaveArtifactStepProps = {
   className?: string;
