@@ -1,0 +1,96 @@
+import { useState } from "react";
+
+import type { AppCharacter, ITeammate } from "@/types";
+
+import { ENHANCE_TOUR_SITE_ID } from "@/constants";
+import {
+  changeTeammateArtifact,
+  changeTeammateWeapon,
+  toggleTeammateEnhance,
+  updateTeammateWeapon,
+} from "@Store/calculator/actions";
+
+import {
+  ArtifactForge,
+  ArtifactForgeProps,
+  EnhanceTag,
+  TeammateItems,
+  WeaponForge,
+  WeaponForgeProps,
+} from "@/components";
+
+type TeammateDetailProps = {
+  teammate: ITeammate;
+  info: AppCharacter;
+};
+
+export function TeammateDetail({ teammate, info }: TeammateDetailProps) {
+  const [modalType, setModalType] = useState<"WEAPON" | "ARTIFACT" | null>(null);
+  const { data } = teammate;
+  const elmtText = `text-${data.vision}`;
+
+  const handleWeaponRefinementChange = (refi: number) => {
+    updateTeammateWeapon(data.code, { refi });
+  };
+
+  const handleArtifactRemove = () => {
+    changeTeammateArtifact(data.code, undefined);
+  };
+
+  const handleWeaponChange: WeaponForgeProps["onForgeWeapon"] = (weapon) => {
+    changeTeammateWeapon(data.code, weapon);
+  };
+
+  const handleArtifactChange: ArtifactForgeProps["onForgeArtifact"] = (artifact) => {
+    changeTeammateArtifact(data.code, artifact);
+  };
+
+  const handleEnhanceToggle = () => {
+    toggleTeammateEnhance(data.code);
+  };
+
+  return (
+    <>
+      <div className="bg-dark-2 pt-2">
+        <div className="bg-dark-1 pt-12 px-2 pb-3" onDoubleClick={() => console.info(teammate)}>
+          <div className="mb-4 pl-1 flex items-center">
+            <p className={`leading-none text-xl font-semibold ${elmtText}`}>{teammate.data.name}</p>
+
+            <div hidden={!data.enhanceType} className="mx-2 w-px h-4 bg-dark-line" />
+
+            <EnhanceTag
+              id={ENHANCE_TOUR_SITE_ID.subEnhance(teammate.code)}
+              mutable={true}
+              character={teammate}
+              onToggle={handleEnhanceToggle}
+            />
+          </div>
+
+          <TeammateItems
+            mutable
+            teammate={teammate}
+            onClickWeapon={() => setModalType("WEAPON")}
+            onChangeWeaponRefinement={handleWeaponRefinementChange}
+            onClickArtifact={() => setModalType("ARTIFACT")}
+            onClickRemoveArtifact={handleArtifactRemove}
+          />
+        </div>
+      </div>
+
+      <WeaponForge
+        active={modalType === "WEAPON"}
+        forcedType={info.weaponType}
+        onForgeWeapon={handleWeaponChange}
+        onClose={() => setModalType(null)}
+      />
+
+      <ArtifactForge
+        active={modalType === "ARTIFACT"}
+        forcedType="flower"
+        forFeature="TEAMMATE_MODIFIERS"
+        onForgeArtifact={handleArtifactChange}
+        onClose={() => setModalType(null)}
+      />
+    </>
+  );
+}

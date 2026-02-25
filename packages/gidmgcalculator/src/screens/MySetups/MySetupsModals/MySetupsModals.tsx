@@ -1,24 +1,18 @@
 import { FaUnlink, FaWrench } from "react-icons/fa";
 import { Modal } from "rond";
 
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectMySetupModalType, updateUI } from "@Store/ui-slice";
+import { useUIStore, updateUI } from "@Store/ui";
 
 // Component
 import { markYellow } from "@/components";
 import FirstCombine from "./FirstCombine";
 import CombineMore from "./CombineMore";
 
-type MySetupsModalsProps = {
-  combineMoreId?: number;
-};
-
-export function MySetupsModals(props: MySetupsModalsProps) {
-  const dispatch = useDispatch();
-  const modalType = useSelector(selectMySetupModalType);
+export function MySetupsModals() {
+  const modalType = useUIStore((state) => state.mySetupsModalType);
 
   const closeModal = () => {
-    dispatch(updateUI({ mySetupsModalType: "" }));
+    updateUI({ mySetupsModalType: "" });
   };
 
   return (
@@ -28,7 +22,6 @@ export function MySetupsModals(props: MySetupsModalsProps) {
         title="Tips"
         preset="large"
         bodyCls="grow custom-scrollbar"
-        {...props}
         onClose={closeModal}
       >
         <ul className="pl-4 pr-2 list-disc space-y-1 contains-inline-svg">
@@ -86,7 +79,7 @@ export function MySetupsModals(props: MySetupsModalsProps) {
         formId="setup-combine-more"
         onClose={closeModal}
       >
-        {props.combineMoreId && <CombineMore setupID={props.combineMoreId} onClose={closeModal} />}
+        <CombineMore onClose={closeModal} />
       </Modal>
     </>
   );

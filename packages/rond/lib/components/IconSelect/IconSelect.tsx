@@ -3,6 +3,7 @@ import { cn } from "@lib/utils";
 import { Image, type ImageProps } from "../Image";
 
 type IconOption<T> = {
+  title?: string;
   value: T;
   icon: string | JSX.Element;
 };
@@ -38,6 +39,7 @@ export function IconSelect<T>(props: IconSelectProps<T>) {
           <button
             key={i}
             type="button"
+            title={option.title}
             className={cn(
               `rounded-circle transition-all ${OPTION_CN_BY_SIZE[size]} flex-center glow-on-hover`,
               props?.iconCls,

@@ -4,17 +4,18 @@ import { Button, WarehouseLayout, clsx, useScreenWatcher } from "rond";
 
 import type { SetupOverviewInfo } from "./types";
 
+import { isDbSetup, restoreCalcSetup } from "@/logic/setup.logic";
+import { parseDbArtifacts, parseDbWeapon } from "@/logic/userdb.logic";
 import { useSetupImporter } from "@/systems/setup-importer";
 import Array_ from "@/utils/Array";
-import { restoreCalcSetup } from "@/utils/setup";
-import { parseDbArtifacts, parseDbWeapon } from "@/utils/userdb";
 import { useDispatch, useSelector } from "@Store/hooks";
-import { MySetupsModalType, updateUI } from "@Store/ui-slice";
-import { chooseUserSetup, selectChosenSetupId } from "@Store/userdb-slice";
-import { createSetupForTeammate, toOverviewInfo } from "./utils";
+import { MySetupsModalType, updateUI } from "@Store/ui";
+import { selectActiveSetupId, viewDbSetup } from "@Store/userdbSlice";
+import { createSetupForTeammate } from "./logic/createSetupForTeammate";
+import { setupToOverviewInfo } from "./logic/setupToOverviewInfo";
 
 // Component
-import { WarehouseWrapper } from "../_components/WarehouseWrapper";
+import { WarehouseWrapper } from "../components/WarehouseWrapper";
 import { MySetupsModals } from "./MySetupsModals";
 import { SelectedResult } from "./SelectedResult";
 import { SetupView } from "./SetupView";
@@ -24,7 +25,7 @@ function MySetups() {
   const screenWatcher = useScreenWatcher();
   const setupImporter = useSetupImporter();
   const userdb = useSelector((state) => state.userdb);
-  const selectedSetupId = useSelector(selectChosenSetupId);
+  const selectedSetupId = useSelector(selectActiveSetupId);
 
   const { userWps: userWeapons, userArts: userArtifacts, userSetups } = userdb;
 
@@ -49,7 +50,7 @@ function MySetups() {
   };
 
   const openModal = (type: MySetupsModalType) => () => {
-    dispatch(updateUI({ mySetupsModalType: type }));
+    updateUI({ mySetupsModalType: type });
   };
 
   const handleCalculateTeammateSetup = (info: SetupOverviewInfo, teammateIndex: number) => {
@@ -65,11 +66,17 @@ function MySetups() {
 
   const overviewInfos = useMemo(() => {
     //
-    return Array_.truthify(userSetups.map((setup) => toOverviewInfo(setup, userdb)));
+    return Array_.truthify(userSetups.map((setup) => setupToOverviewInfo(setup, userdb)));
     //
   }, [userSetups, userWeapons, userArtifacts]);
 
-  const selectedInfo = overviewInfos.find((info) => info.setup.ID === selectedSetupId);
+  const selectedSetup = Array_.findById(userSetups, selectedSetupId);
+  const selectedDbSetupId = selectedSetup
+    ? isDbSetup(selectedSetup)
+      ? selectedSetup.ID
+      : selectedSetup.shownID
+    : undefined;
+  const selectedInfo = overviewInfos.find((info) => info.setup.ID === selectedDbSetupId);
 
   return (
     <WarehouseLayout
@@ -107,7 +114,7 @@ function MySetups() {
                       ? "shadow-hightlight-1 shadow-active"
                       : "shadow-common"
                   )}
-                  onClick={() => dispatch(chooseUserSetup(setupId))}
+                  onClick={() => dispatch(viewDbSetup(setupId))}
                 >
                   <SetupView
                     {...info}
@@ -133,7 +140,7 @@ function MySetups() {
         )}
       </div>
 
-      <MySetupsModals combineMoreId={selectedSetupId} />
+      <MySetupsModals />
     </WarehouseLayout>
   );
 }

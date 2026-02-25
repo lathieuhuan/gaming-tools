@@ -1,4 +1,4 @@
-import type { CalcSetupConstructInfo } from "@/models/calculator";
+import type { CalcSetupConstructInfo } from "@/models";
 
 export type BasicSetupType = "original" | "combined";
 
@@ -15,6 +15,6 @@ export type SetupImportInfo = {
   ID?: number;
   name?: string;
   type?: BasicSetupType;
-  source?: "URL" | "SETUP_MANAGER" | "MY_SETUPS" | "ENKA";
+  source?: "URL" | "MY_SETUPS" | "ENKA";
   params?: CalcSetupConstructInfo;
 };

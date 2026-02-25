@@ -55,7 +55,7 @@ export function DebuffCtrlForm({ id, onSubmit }: DebuffCtrlFormProps) {
           value: option,
         }))}
         value={config.type}
-        onChange={(value) => handleTypeChange(value as string)}
+        onChange={(value) => handleTypeChange(value)}
       />
       <InputNumber
         ref={inputRef}

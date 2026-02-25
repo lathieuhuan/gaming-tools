@@ -11,7 +11,7 @@ type Config = {
 
 export function useArtifactSetFilter<T extends IArtifactBasic = IArtifactBasic>(
   artifacts: T[],
-  chosenCodes: number[],
+  selectedCodes: number[],
   config?: Config
 ) {
   const { artifactType = "flower" } = config || {};
@@ -31,7 +31,7 @@ export function useArtifactSetFilter<T extends IArtifactBasic = IArtifactBasic>(
       else {
         const filterSet: ArtifactFilterSet = {
           code,
-          chosen: chosenCodes.includes(code),
+          selected: selectedCodes.includes(code),
           icon: data[artifactType].icon,
           data,
           count: 1,
@@ -49,13 +49,13 @@ export function useArtifactSetFilter<T extends IArtifactBasic = IArtifactBasic>(
   const toggleSet = (index: number) => {
     setSetOptions((prev) => {
       const result = [...prev];
-      result[index].chosen = !result[index].chosen;
+      result[index].selected = !result[index].selected;
       return result;
     });
   };
 
   const clearFilter = () => {
-    setSetOptions(setOptions.map((set) => ({ ...set, chosen: false })));
+    setSetOptions(setOptions.map((set) => ({ ...set, selected: false })));
   };
 
   return {

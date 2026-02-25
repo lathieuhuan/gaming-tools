@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import type { AttributeStat, IArtifactBasic } from "@/types";
 import type { ArtifactFilterCondition } from "../types";
 
-import { Artifact } from "@/models/base";
+import { Artifact } from "@/models";
 import { DEFAULT_ARTIFACT_FILTER } from "../constants";
 
 export function useArtifactFilter<T extends IArtifactBasic = IArtifactBasic>(
@@ -49,7 +49,7 @@ export function filterArtifacts<T extends IArtifactBasic = IArtifactBasic>(
     result = result.filter((item) => item.mainStatType === statsFilter.main);
   }
 
-  const requiredSubstats = statsFilter.subs.filter((s) => s !== "All") as AttributeStat[];
+  const requiredSubstats: AttributeStat[] = statsFilter.subs.filter((s) => s !== "All");
 
   if (requiredSubstats.length) {
     result = result.filter((item) =>

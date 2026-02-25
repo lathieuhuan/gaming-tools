@@ -14,7 +14,7 @@ export type AfterSelectAppEntity = (itemCode: number, quantity?: number) => void
 export type AppEntityOptionsProps<T> = {
   className?: string;
   data: T[];
-  initialChosenCode?: number;
+  initialActiveCode?: number;
   hiddenCodes?: Set<number>;
   /** Default 'No data' */
   emptyText?: string;
@@ -36,7 +36,7 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
   shouldHideSelected,
   emptyText = "No data",
   hasConfigStep,
-  initialChosenCode = 0,
+  initialActiveCode = -1,
   hiddenCodes,
   renderOptionConfig,
   onChange,
@@ -52,7 +52,7 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
   // for hidden
   const [pickedCodes, setPickedCodes] = useState(new Set<number>());
   // for highlight
-  const [chosenCode, setChosenCode] = useState(initialChosenCode);
+  const [activeCode, setActiveCode] = useState(initialActiveCode);
   const [empty, setEmpty] = useState(false);
   const [overflow, setOverflow] = useState(true);
 
@@ -71,7 +71,7 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
             const code = item.getId();
             const foundItem = code ? data.find((entity) => entity.code === +code) : undefined;
 
-            if (foundItem) selectOption(foundItem);
+            if (foundItem) void selectOption(foundItem);
             return;
           }
         }
@@ -80,8 +80,8 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
 
     document.addEventListener("keydown", handleEnter);
 
-    if (initialChosenCode) {
-      itemUtils.queryById(initialChosenCode)?.element.scrollIntoView();
+    if (initialActiveCode) {
+      itemUtils.queryById(initialActiveCode)?.element.scrollIntoView();
     }
 
     return () => {
@@ -96,8 +96,8 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
     setEmpty(!visibleItems.length);
 
     if (!visibleItems.length && hasConfigStep) {
-      onChange?.(undefined, true);
-      setChosenCode(0);
+      void onChange?.(undefined, true);
+      setActiveCode(0);
     }
 
     // check if container overflow to add padding right
@@ -131,9 +131,9 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
     if (!onChange) return;
 
     if (hasConfigStep) {
-      if (item.code !== chosenCode) {
+      if (item.code !== activeCode) {
         await onChange(item, true);
-        setChosenCode(item.code);
+        setActiveCode(item.code);
       }
       if (bodyRef.current) {
         bodyRef.current.scrollLeft = 999;
@@ -178,8 +178,8 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
                 ])}
               >
                 <ItemCase
-                  chosen={option.key === chosenCode}
-                  onClick={() => selectOption(option.data)}
+                  selected={option.key === activeCode}
+                  onClick={() => void selectOption(option.data)}
                   // onDoubleClick={() => onDoubleClickPickerItem(item)}
                 >
                   {(className, imgCls) => (
@@ -197,14 +197,14 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
           })}
         </div>
 
-        {empty ? <p className="py-4 text-light-hint text-lg text-center">{emptyText}</p> : null}
+        {empty && <p className="py-4 text-light-hint text-lg text-center">{emptyText}</p>}
       </div>
 
-      {hasConfigStep ? (
+      {hasConfigStep && (
         <div className="overflow-auto shrink-0">
           {renderOptionConfig?.(afterSelect, bodyRef.current)}
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

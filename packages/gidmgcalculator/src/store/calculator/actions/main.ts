@@ -1,21 +1,23 @@
-import type { CalcSetup, MainUpdateData } from "@/models/calculator";
+import type { CalcSetup, MainUpdateData } from "@/models";
 import type { ElementalEvent, ITarget } from "@/types";
 import type { ForwardedAction } from "../types";
 
-import { createWeaponBuffCtrls } from "@/models/calculator";
-import { $AppSettings } from "@/services";
-import { createTarget } from "@/utils/entity";
+import { createTarget } from "@/logic/entity.logic";
+import { createWeaponBuffCtrls } from "@/logic/modifier.logic";
+import { Team } from "@/models";
 import Object_ from "@/utils/Object";
-import { useCalcStore } from "../calculator-store";
+import { useSettingsStore } from "@Store/settings";
+import { useCalcStore } from "../calculatorStore";
 import { onActiveSetup } from "../utils";
-import { Team } from "@/models/base";
 
 // ===== CHARACTER =====
 
 export const updateMain = (data: MainUpdateData, setupIds?: number[]) => {
+  const { separateCharInfo } = useSettingsStore.getState();
+
   const ids =
     setupIds ||
-    ($AppSettings.get("separateCharInfo")
+    (separateCharInfo
       ? [useCalcStore.getState().activeId]
       : useCalcStore.getState().setupManagers.map(({ ID }) => ID));
 

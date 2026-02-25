@@ -1,17 +1,18 @@
+import type { CharacterCalc } from "@/models";
 import type {
   ActualAttackElement,
   AttackBonusKey,
+  AttackElement,
   ElementalEvent,
   LunarReaction,
   TransformativeReaction,
 } from "@/types";
-import type { CalcTarget } from "./CalcTarget";
-import type { CharacterCalc } from "./CharacterCalc";
+import type { CalcResultReactionItem } from "../types";
+import type { TargetCalc } from "../../models/TargetCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { toMult } from "@/utils/pure-utils";
-import { CalcResultReactionItem } from "../types";
-import { limitCRate } from "./utils";
+import { limitCRate } from "@/logic/stat.logic";
+import { toMult } from "@/utils/pure.utils";
 import { LUNAR_ATTACK_ELEMENT, LUNAR_REACTION_COEFFICIENT } from "../constants";
 
 const TRANSFORMATIVE_REACTION_CONFIG: Record<
@@ -29,8 +30,8 @@ const TRANSFORMATIVE_REACTION_CONFIG: Record<
   shattered: { mult: 3, attElmt: "phys" },
 };
 
-export function makeReactionCalc(performer: CharacterCalc, target: CalcTarget) {
-  const { attkBonusCtrl, totalAttrs, baseRxnDamage } = performer;
+export function makeReactionCalc(performer: CharacterCalc, target: TargetCalc) {
+  const { attkBonusCtrl, baseRxnDamage } = performer;
 
   function calcLunarReaction(
     reaction: LunarReaction,
@@ -42,7 +43,7 @@ export function makeReactionCalc(performer: CharacterCalc, target: CalcTarget) {
 
     const mult = LUNAR_REACTION_COEFFICIENT[reaction];
     const baseValue = baseRxnDamage * mult;
-    const baseMult = toMult(getBonus("multPlus_"));
+    const baseMult = toMult(getBonus("baseMult_"));
     const bonusMult = 1 + getBonus("pct_") / 100;
     const elvMult = toMult(getBonus("elvMult_"));
     const flat = getBonus("flat");
@@ -52,8 +53,8 @@ export function makeReactionCalc(performer: CharacterCalc, target: CalcTarget) {
     const resMult = target.resistMults[attElmt];
 
     const base = (baseValue * baseMult * bonusMult * elvMult + flat) * rxnMult * resMult;
-    const cRate_ = limitCRate(getBonus("cRate_") + totalAttrs.get("cRate_")) / 100;
-    const cDmg_ = (getBonus("cDmg_") + totalAttrs.get("cDmg_")) / 100;
+    const cRate_ = limitCRate(getBonus("cRate_") + performer.getAttr("cRate_")) / 100;
+    const cDmg_ = (getBonus("cDmg_") + performer.getAttr("cDmg_")) / 100;
 
     recorder.record({
       factors: [{ value: Math.round(baseValue), label: "Base DMG" }],
@@ -94,7 +95,7 @@ export function makeReactionCalc(performer: CharacterCalc, target: CalcTarget) {
     const baseValue = baseRxnDamage * config.mult;
     const bonusMult = 1 + getBonus("pct_") / 100;
     const flat = getBonus("flat");
-    let attElmt = config.attElmt;
+    let attElmt: AttackElement;
     let rxnMult = 1;
     let resMult = 1;
 
@@ -108,8 +109,11 @@ export function makeReactionCalc(performer: CharacterCalc, target: CalcTarget) {
         if (absorbReaction === "melt" || absorbReaction === "vaporize") {
           rxnMult = performer.getAmplifyingMult(absorbReaction, attElmt);
         }
+      } else {
+        attElmt = "anemo";
       }
     } else {
+      attElmt = config.attElmt;
       resMult = target.resistMults[config.attElmt];
     }
 

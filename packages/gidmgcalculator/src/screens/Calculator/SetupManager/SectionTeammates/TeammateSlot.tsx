@@ -2,6 +2,7 @@ import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
 import { clsx } from "rond";
 
 import type { ITeammate } from "@/types";
+import { TOUR_STEP_ID } from "@/constants";
 import { CharacterPortrait } from "@/components";
 
 type TeammateSlotProps = {
@@ -39,7 +40,14 @@ export function TeammateSlot({
         </button>
       </div>
 
-      <CharacterPortrait info={data} withColorBg recruitable onClick={onSelect} />
+      <CharacterPortrait
+        id={TOUR_STEP_ID.teammateSlot(data.code)}
+        info={data}
+        withColorBg
+        recruitable
+        aria-expanded={active}
+        onClick={onSelect}
+      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { clsx } from "rond";
 
-import { SCREENS, type ScreenConfig } from "./_config";
+import { SCREENS, type ScreenConfig } from "./config";
 
 export type NavOptionsProps = {
   className?: string;
@@ -10,7 +10,13 @@ export type NavOptionsProps = {
   onSelect?: (option: ScreenConfig) => void;
 };
 
-export function NavOptions({ disabled, className, itemClassName, isOptionActive, onSelect }: NavOptionsProps) {
+export function NavOptions({
+  disabled,
+  className,
+  itemClassName,
+  isOptionActive,
+  onSelect,
+}: NavOptionsProps) {
   return (
     <ul className={className}>
       {SCREENS.map((screen, i) => (

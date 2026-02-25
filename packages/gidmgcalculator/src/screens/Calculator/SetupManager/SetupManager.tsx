@@ -2,24 +2,23 @@ import { FaSkull } from "react-icons/fa";
 import { IoDocumentText } from "react-icons/io5";
 import { Button, useScreenWatcher } from "rond";
 
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectTargetConfig, updateUI } from "@Store/ui-slice";
+import { useSettingsStore } from "@Store/settings";
+import { updateUI, useUIStore } from "@Store/ui";
 
 // Component
-import SectionArtifacts from "./SectionArtifacts";
-import SectionTarget from "./SectionTarget";
-import SectionTeammates from "./SectionTeammates";
-import SectionWeapon from "./SectionWeapon";
+import { SectionArtifacts } from "./SectionArtifacts";
+import { SectionTarget } from "./SectionTarget";
+import { SectionTeammates } from "./SectionTeammates";
+import { SectionWeapon } from "./SectionWeapon";
 import { SetupSelect } from "./SetupSelect";
 
 export function SetupManager() {
-  const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
-  const targetConfig = useSelector(selectTargetConfig);
-  const isModernUI = useSelector((state) => state.ui.isTabLayout);
+  const targetConfig = useUIStore((state) => state.targetConfig);
+  const isModernUI = useSettingsStore((state) => state.isTabLayout);
 
   const updateTargetConfig = (active: boolean, overviewed: boolean) => {
-    dispatch(updateUI({ targetConfig: { active, overviewed } }));
+    updateUI({ targetConfig: { active, overviewed } });
   };
 
   const onClickTargetConfigButton = () => {
@@ -61,7 +60,7 @@ export function SetupManager() {
             className="mx-auto"
             title="Setup Manager"
             icon={<IoDocumentText className="text-xl" />}
-            onClick={() => dispatch(updateUI({ setupDirectorActive: true }))}
+            onClick={() => updateUI({ setupDirectorActive: true })}
           />
         </div>
 

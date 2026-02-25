@@ -20,10 +20,10 @@ import type {
 // ========== TEAM ==========
 
 export type ITeamMember<TTeam extends ITeam = ITeam> = {
-  name: string;
+  code: number;
   enhanced: boolean;
   data: AppCharacter;
-  join(team: TTeam): void;
+  joinTeam(team: TTeam): void;
   isPerformableEffect(condition?: EffectPerformableCondition, inputs?: number[]): boolean;
 };
 
@@ -54,17 +54,11 @@ export type ITeammateArtifact = ITeammateArtifactBasic & {
   data: AppArtifact;
 };
 
-// type TeammateInput = {
-//   id: string;
-//   value: number;
-// };
-
 export type ITeammateInfo = ITeammateBasicCore & {
   buffCtrls: IAbilityBuffCtrl[];
   debuffCtrls: IAbilityDebuffCtrl[];
   weapon: ITeammateWeapon;
   artifact?: ITeammateArtifact;
-  // inputs: TeammateInput[];
 };
 
 export type ITeammate<TTeam extends ITeam = ITeam> = ITeammateInfo & ITeamMember<TTeam> & {};

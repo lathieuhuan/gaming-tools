@@ -9,11 +9,13 @@ import {
 } from "rond";
 
 import type { IArtifactBasic, IWeaponBasic } from "@/types";
-import { Artifact, Weapon } from "@/models/base";
+
+import { isWeapon } from "@/logic/entity.logic";
+import { Artifact, Weapon } from "@/models";
 
 // Component
 import { ArtifactCard } from "../ArtifactCard";
-import { InventoryRack, isWeapon, ItemOption } from "../InventoryRack";
+import { InventoryRack, ItemOption } from "../InventoryRack";
 import { WeaponCard } from "../WeaponCard";
 
 export type ItemMultiSelectIds = Set<number>;
@@ -128,7 +130,7 @@ function ItemMultiSelectCore<T extends IWeaponBasic | IArtifactBasic>(
             <InventoryRack
               data={items}
               itemCls="max-w-1/3 basis-1/3 md:w-1/4 md:basis-1/4 lg:max-w-1/6 lg:basis-1/6"
-              chosenID={selectedItem?.ID || 1}
+              activeId={selectedItem?.ID || 1}
               selectedIds={selectedIds}
               onUnselectItem={(item) => unselectItem(item.userData.ID)}
               onChangeItem={onChangeItem}

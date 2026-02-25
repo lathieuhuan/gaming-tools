@@ -1,12 +1,6 @@
-export const ELEMENT_TYPES = [
-  "pyro",
-  "hydro",
-  "electro",
-  "cryo",
-  "geo",
-  "anemo",
-  "dendro",
-] as const;
+export const PHEC_ELEMENT_TYPES = ["pyro", "hydro", "electro", "cryo"] as const;
+
+export const ELEMENT_TYPES = [...PHEC_ELEMENT_TYPES, "geo", "anemo", "dendro"] as const;
 
 export const WEAPON_TYPES = ["sword", "claymore", "catalyst", "polearm", "bow"] as const;
 
@@ -21,13 +15,13 @@ export const BONUS_KEYS = [
   "cDmg_",
   "mult_",
   "defIgn_",
-  "multPlus_",
+  "baseMult_",
   "elvMult_",
   "specMult_",
   "veil_",
 ] as const;
 
-/** ========== ATTACKS ========== */
+// ========== ATTACKS ==========
 
 export const NORMAL_ATTACKS = ["NA", "CA", "PA"] as const;
 
@@ -35,7 +29,7 @@ export const ATTACK_PATTERNS = [...NORMAL_ATTACKS, "ES", "EB"] as const;
 
 export const ATTACK_ELEMENTS = [...ELEMENT_TYPES, "phys"] as const;
 
-/** ========== REACTIONS ========== */
+// ========== REACTIONS ==========
 
 export const TRANSFORMATIVE_REACTIONS = [
   "bloom",
@@ -64,7 +58,9 @@ export const REACTIONS = [
   ...AMPLIFYING_REACTIONS,
 ] as const;
 
-/** ========== STATS ========== */
+// ========== STATS ==========
+
+export const BASE_ATTRIBUTE_STATS = ["base_atk", "base_hp", "base_def"] as const;
 
 export const CORE_STAT_TYPES = ["hp", "atk", "def"] as const;
 
@@ -100,7 +96,7 @@ export const ARTIFACT_SUBSTAT_TYPES = [
 
 //
 
-export const WEAPON_LEVELS = [
+export const LEVELS = [
   "1/20",
   "20/20",
   "20/40",
@@ -115,6 +111,6 @@ export const WEAPON_LEVELS = [
   "80/80",
   "80/90",
   "90/90",
+  "95/95",
+  "100/100",
 ] as const;
-
-export const LEVELS = [...WEAPON_LEVELS, "95/95", "100/100"] as const;

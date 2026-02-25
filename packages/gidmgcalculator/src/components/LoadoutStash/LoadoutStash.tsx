@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, EntitySelectTemplate, Modal, SwitchNode } from "rond";
 
-import { Artifact } from "@/models/base";
+import { Artifact } from "@/models";
 
 // Component
 import { ArtifactCard } from "@/components/ArtifactCard";

@@ -13,11 +13,9 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import { DATABASE_DATA_VERSION } from "@/constants/config";
-import accountSliceReducers, { accountSlice } from "./account-slice";
+import { PERSISTED_DATA_VERSION } from "@/constants/config";
 import { migrates } from "./migration";
-import uiSliceReducers, { uiSlice } from "./ui-slice";
-import userdbSliceReducers, { initialState, userdbSlice } from "./userdb-slice";
+import userdbSliceReducers, { initialState, userdbSlice } from "./userdbSlice";
 
 type SetupStoreOptions = {
   persistUserData?: boolean;
@@ -27,7 +25,7 @@ export function setupStore(options?: SetupStoreOptions) {
   const userdbPersistReducers = persistReducer(
     {
       key: "database",
-      version: DATABASE_DATA_VERSION,
+      version: PERSISTED_DATA_VERSION,
       storage,
       blacklist: options?.persistUserData ? [] : Object.keys(initialState),
       migrate: createMigrate(migrates, { debug: false }),
@@ -35,26 +33,15 @@ export function setupStore(options?: SetupStoreOptions) {
     userdbSliceReducers
   );
 
-  const accountPersistReducers = persistReducer(
-    {
-      key: "account",
-      version: 1,
-      storage,
-    },
-    accountSliceReducers
-  );
-
   const rootReducer = combineReducers({
-    ui: uiSliceReducers,
     userdb: userdbPersistReducers,
-    account: accountPersistReducers,
   });
 
   const persistConfig = {
     key: "root",
     version: 0,
     storage,
-    blacklist: [uiSlice.name, userdbSlice.name, accountSlice.name],
+    blacklist: [userdbSlice.name],
   };
 
   const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -81,4 +68,9 @@ export type AppStore = ReturnType<typeof setupStore>["store"];
 
 export type RootState = ReturnType<AppStore["getState"]>;
 export type AppDispatch = AppStore["dispatch"];
-export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action<string>>;
+export type AppThunk<ReturnType = void> = ThunkAction<
+  ReturnType,
+  RootState,
+  unknown,
+  Action<string>
+>;

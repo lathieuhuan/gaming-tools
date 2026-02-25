@@ -12,11 +12,12 @@ const ICONS_BY_TYPE: Record<string, IconType> = {
 
 type FallbackProps = IconBaseProps;
 
-interface DefaultImageFallbackProps extends FallbackProps {
+type DefaultImageFallbackProps = FallbackProps & {
   type: "character" | "weapon" | "artifact";
-}
+};
+
 function DefaultFallback({ type, className, ...rest }: DefaultImageFallbackProps) {
-  const Fallback = ICONS_BY_TYPE[type || ""] ?? FaQuestion;
+  const Fallback = type in ICONS_BY_TYPE ? ICONS_BY_TYPE[type] : FaQuestion;
   return (
     <div className={className}>
       <Fallback className="w-full h-full" {...rest} />
@@ -24,11 +25,12 @@ function DefaultFallback({ type, className, ...rest }: DefaultImageFallbackProps
   );
 }
 
-interface GiImageProps extends Omit<ImageProps, "fallback" | "defaultFallback"> {
+type GiImageProps = Omit<ImageProps, "fallback" | "defaultFallback"> & {
   /** Default 'unknown' */
   imgType?: "character" | "weapon" | "artifact" | "unknown";
   fallbackCls?: string;
-}
+};
+
 function GenshinImage({ src, imgType = "unknown", fallbackCls, ...rest }: GiImageProps) {
   return (
     <Image

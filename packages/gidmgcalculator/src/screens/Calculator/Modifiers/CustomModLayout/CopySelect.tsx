@@ -2,7 +2,7 @@ import Object_ from "@/utils/Object";
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateActiveSetup } from "@Store/calculator/actions";
 
-import { CopySection } from "@/screens/Calculator/_components/CopySection";
+import { CopySection } from "@/screens/Calculator/components/CopySection";
 
 type CopyOption = {
   value: number;

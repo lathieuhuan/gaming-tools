@@ -1,5 +1,5 @@
 import { IModifierCtrlBasic, IDbComplexSetup, IDbSetup } from "@/types";
-import { UserdbState } from "@Store/userdb-slice";
+import { UserdbState } from "@Store/userdbSlice";
 
 type UserSetupV0 = Omit<IDbSetup, "artBuffCtrls"> & {
   artBuffCtrls: IModifierCtrlBasic[];

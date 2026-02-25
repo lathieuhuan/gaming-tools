@@ -6,7 +6,7 @@ import { PanelAttributes } from "../PanelAttributes";
 import { PanelConstellation } from "../PanelConstellation";
 import { PanelGears } from "../PanelGears";
 import { PanelTalents } from "../PanelTalents";
-import { MyCharactersTopBar } from "./MyCharactersTopBar";
+import { TopBar } from "./TopBar";
 
 export function MyCharactersLarge() {
   const sectionCls = "p-4 rounded-lg bg-dark-1";
@@ -14,7 +14,7 @@ export function MyCharactersLarge() {
   return (
     <ContextProvider>
       <div className="h-full flex flex-col bg-dark-3">
-        <MyCharactersTopBar />
+        <TopBar />
 
         <ActiveCharProvider>
           <div className="grow overflow-auto flex-center">

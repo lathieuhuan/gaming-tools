@@ -3,7 +3,9 @@ import { FaPuzzlePiece } from "react-icons/fa";
 import { Popover, useClickOutside, type ClickOutsideHandler } from "rond";
 
 import type { IDbItem, IDbSetup, IWeaponBasic } from "@/types";
+
 import { useItemBoundSetups, type BoundingItem } from "@/hooks";
+import { $AppCharacter } from "@/services";
 
 type SetupListProps = {
   setups: IDbSetup[];
@@ -76,11 +78,11 @@ export function OwnerLabel({ className = "", style, item }: OwnerLabelProps) {
     return <div className={`h-8 ${cls}`} style={style} />;
   }
 
+  const ownerName = item.owner ? $AppCharacter.get(item.owner)?.name : undefined;
+
   return (
     <div className={cls} style={style}>
-      <p className="py-1">
-        Equipped: {item.owner ? item.owner : <span className="opacity-80">None</span>}
-      </p>
+      <p className="py-1">Equipped: {ownerName || <span className="opacity-80">None</span>}</p>
 
       {containingSetups.length ? (
         <>
@@ -89,7 +91,6 @@ export function OwnerLabel({ className = "", style, item }: OwnerLabelProps) {
           </button>
 
           <Popover
-            as="div"
             className="bottom-full right-2 mb-2 shadow-popup"
             active={list.isVisible}
             withTooltipStyle

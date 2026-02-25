@@ -1,6 +1,7 @@
 import { useState } from "react";
+
+import type { CharacterToBeSorted } from "./types";
 import { CharacterLabel } from "./CharacterLabel";
-import { CharacterToBeSorted } from "./utils";
 
 type MarkedListProps = {
   characters: CharacterToBeSorted[];
@@ -34,7 +35,7 @@ export function MarkedList({ characters, onChange }: MarkedListProps) {
       {markedList.map((character, i) => {
         return (
           <CharacterLabel
-            key={character.name}
+            key={character.code}
             character={character}
             marker={i + 1}
             onClick={() => handleLabelMark(character)}
@@ -44,7 +45,7 @@ export function MarkedList({ characters, onChange }: MarkedListProps) {
       {unmarkedList.map((character) => {
         return (
           <CharacterLabel
-            key={character.name}
+            key={character.code}
             character={character}
             onClick={() => handleLabelMark(character)}
           />

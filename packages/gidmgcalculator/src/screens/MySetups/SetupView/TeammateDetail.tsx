@@ -1,12 +1,12 @@
 import { FaCalculator, FaSyncAlt } from "react-icons/fa";
 import { Button } from "rond";
 
-import type { CalcTeammate } from "@/models/calculator";
+import type { TeammateCalc } from "@/models";
 
 import { CharacterPortrait, EnhanceTag, TeammateItems } from "@/components";
 
 type TeammateDetailProps = {
-  teammate: CalcTeammate;
+  teammate: TeammateCalc;
   calculated: boolean;
   onSwitch: () => void;
   onCalculate: () => void;
@@ -26,7 +26,7 @@ export function TeammateDetail({
         <CharacterPortrait info={data} />
 
         <div className="px-4">
-          <p className={`text-2xl text-${data.vision} font-bold`}>{teammate.name}</p>
+          <p className={`text-2xl text-${data.vision} font-bold`}>{data.name}</p>
           {teammate.enhanced && <EnhanceTag mutable={false} character={teammate} />}
         </div>
       </div>

@@ -24,12 +24,16 @@ export default function DebuffArtifact() {
       mutable
       artDebuffCtrls={artDebuffCtrls}
       getHanlders={(ctrl) => {
+        const extraCheck = (ctrlItem: IArtifactDebuffCtrl) => ctrlItem.code === ctrl.code;
+
         return {
           onToggle: () => {
-            handleUpdateCtrls(toggleModCtrl(artDebuffCtrls, ctrl.id));
+            handleUpdateCtrls(toggleModCtrl(artDebuffCtrls, ctrl.id, extraCheck));
           },
           onSelectOption: (value, inputIndex) => {
-            handleUpdateCtrls(updateModCtrlInputs(artDebuffCtrls, ctrl.id, inputIndex, value));
+            handleUpdateCtrls(
+              updateModCtrlInputs(artDebuffCtrls, ctrl.id, inputIndex, value, extraCheck)
+            );
           },
         };
       }}

@@ -1,8 +1,9 @@
 import type { CurrentDatabaseData } from "@/migration/types/current";
 
-import { DATABASE_DATA_VERSION } from "@/constants/config";
+import { DOWNLOAD_DATA_VERSION } from "@/constants/config";
 import { convertToV3_1 } from "@/migration/convertToV3_1";
 import { convertToV4 } from "@/migration/convertToV4";
+import { convertToV5 } from "@/migration/convertToV5";
 
 type MigrationFn = (data: any) => any;
 
@@ -14,6 +15,7 @@ type Migration = {
 const MIGRATIONS: Migration[] = [
   { version: 3, fn: convertToV3_1 },
   { version: 3.1, fn: convertToV4 },
+  { version: 4, fn: convertToV5 },
 ];
 
 type OldData = {
@@ -42,7 +44,7 @@ export function migrateUploadData(data: OldData): MigrateResult {
     };
   }
 
-  if (data.version === DATABASE_DATA_VERSION) {
+  if (data.version === DOWNLOAD_DATA_VERSION) {
     return {
       status: "SUCCESS",
       data: data as CurrentDatabaseData,

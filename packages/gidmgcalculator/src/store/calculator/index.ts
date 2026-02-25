@@ -1,1 +1,1 @@
-export { useCalcStore, useShallowCalcStore } from "./calculator-store";
+export { useCalcStore, useShallowCalcStore } from "./calculatorStore";

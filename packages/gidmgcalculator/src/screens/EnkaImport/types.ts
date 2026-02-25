@@ -1,8 +1,10 @@
-import { GenshinUserBuild } from "@/services/enka";
+import type { GenshinUserBuild } from "@/services/enka";
 
-export type SearchParams = {
+export type EnkaImportSection = "COVER" | "RESULTS" | "DETAIL";
+
+export type EnkaSearchParams = {
   uid?: string;
-  profile?: string;
+  hoyo?: string;
 };
 
 export type SelectedBuild = GenshinUserBuild & {

@@ -1,6 +1,6 @@
-import { IArtifact, IWeapon } from "@/types";
-import { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
-import { GOODCharacterConvertReturn } from "@/utils/GOOD";
+import type { IArtifact, IWeapon } from "@/types";
+import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
+import type { GOODCharacterConvertReturn } from "@/logic/converGOOD.logic";
 
 type GOODBuild = {
   name?: string;
@@ -10,7 +10,7 @@ type GOODBuild = {
 };
 
 export type GenshinUserResponse = {
-  uid: string;
+  uid: string | number;
   name: string;
   level: number;
   worldLevel: number;
@@ -18,6 +18,23 @@ export type GenshinUserResponse = {
   builds: GOODBuild[];
   ttl?: number;
 };
+
+type GameAccount = {
+  hash: string;
+  player?: {
+    name: string;
+    level: number;
+    worldLevel: number;
+    signature?: string;
+    uid?: number;
+  };
+};
+export type EnkaUserResponse = {
+  profile: string;
+  gameAccounts: GameAccount[];
+};
+
+//
 
 export type GenshinUserBuild = {
   name?: string;

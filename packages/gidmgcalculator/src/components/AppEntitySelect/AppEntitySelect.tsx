@@ -21,7 +21,7 @@ export type AppEntitySelectProps<T extends AppEntityOptionModel = AppEntityOptio
 
 export function AppEntitySelect<T extends AppEntityOptionModel = AppEntityOptionModel>({
   data,
-  initialChosenCode,
+  initialActiveCode,
   hiddenCodes,
   emptyText,
   hasConfigStep,
@@ -40,7 +40,7 @@ export function AppEntitySelect<T extends AppEntityOptionModel = AppEntityOption
             {...renderProps}
             {...{
               data,
-              initialChosenCode,
+              initialActiveCode,
               hiddenCodes,
               emptyText,
               hasConfigStep,

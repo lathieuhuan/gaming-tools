@@ -1,4 +1,4 @@
-import type { CalcTeammate } from "@/models/calculator";
+import type { TeammateCalc } from "@/models";
 import type { IAbilityBuffCtrl } from "@/types";
 
 import Object_ from "@/utils/Object";
@@ -14,7 +14,7 @@ export default function BuffTeammates() {
     Object_.pickProps(selectSetup(state), ["teammates", "team"])
   );
 
-  const handleUpdateCtrls = (teammate: CalcTeammate, ctrls: IAbilityBuffCtrl[]) => {
+  const handleUpdateCtrls = (teammate: TeammateCalc, ctrls: IAbilityBuffCtrl[]) => {
     updateTeammate(teammate.data.code, {
       buffCtrls: ctrls,
     });

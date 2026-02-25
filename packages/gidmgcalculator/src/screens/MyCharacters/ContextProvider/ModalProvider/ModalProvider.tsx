@@ -2,8 +2,8 @@ import { useId, useMemo, useState } from "react";
 import { Modal } from "rond";
 
 import { useDispatch, useSelector } from "@Store/hooks";
-import { addCharacter, selectDbCharacters, viewCharacter } from "@Store/userdb-slice";
-import { ModalContext, type ModalControl } from "./Modal.context";
+import { addDbCharacter, selectDbCharacters, viewDbCharacter } from "@Store/userdbSlice";
+import { ModalContext, type ModalControl } from "./context";
 
 // Component
 import { Tavern } from "@/components";
@@ -39,12 +39,12 @@ export function ModalProvider(props: { children: React.ReactNode }) {
         active={modalType === "ADD_CHARACTER"}
         sourceType="app"
         hasMultipleMode
-        filter={(character) => dbChars.every((dbChar) => dbChar.name !== character.name)}
+        filter={(character) => dbChars.every((dbChar) => dbChar.code !== character.code)}
         onSelectCharacter={({ data }) => {
-          dispatch(addCharacter({ name: data.name, data }));
+          dispatch(addDbCharacter({ code: data.code, data }));
 
           if (!dbChars.length) {
-            dispatch(viewCharacter(data.name));
+            dispatch(viewDbCharacter(data.code));
           }
         }}
         onClose={closeModal}

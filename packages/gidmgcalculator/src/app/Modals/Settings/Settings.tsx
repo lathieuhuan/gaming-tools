@@ -1,24 +1,26 @@
 import { useRef } from "react";
 import { Modal } from "rond";
 
-import type { TravelerInfo, TravelerKey } from "@/types";
+import type { ElementType, TravelerConfig, TravelerKey } from "@/types";
 
-import { $AppSettings, AppSettings } from "@/services";
-import { useDynamicStoreControl } from "@/systems/dynamic-store";
-import { genAccountTravelerKey, selectTraveler, updateTraveler } from "@Store/account-slice";
-import { applySettings } from "@Store/calculator/actions";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
+import { $AppCharacter } from "@/services";
+import Object_ from "@/utils/Object";
+import { applySettingsToCalculator } from "@Store/calculator/actions";
+import { AppSettingsState, updateSettings, useSettingsStore } from "@Store/settings";
 
-import { AccountSettingsControls } from "./AccountSettingsControls";
-import { AppSettingsControls } from "./AppSettingsControls";
+import { CalculatorSettings } from "./CalculatorSettings";
+import { DefaultValuesSettings } from "./DefaultValuesSettings";
+import { TravelerSettings } from "./TravelerSettings";
+import { UserDataSettings } from "./UserDataSettings";
 
-const useAppSettings = () => {
-  const settings = useRef<AppSettings>();
+const useNewAppSettings = () => {
+  const settings = useRef<AppSettingsState>();
 
   if (!settings.current) {
-    settings.current = $AppSettings.get();
+    settings.current = Object_.clone(useSettingsStore.getState());
   }
+
   return settings.current;
 };
 
@@ -26,64 +28,52 @@ type SettingsProps = {
   onClose: () => void;
 };
 
-const SettingsCore = ({ onClose }: SettingsProps) => {
-  const dispatch = useDispatch();
-  const traveler = useSelector(selectTraveler);
-
-  const newSettings = useAppSettings();
-  const newTraveler = useRef(traveler);
-
-  const updateAppStoreConfig = useDynamicStoreControl();
+const Settings = ({ onClose }: SettingsProps) => {
+  const newSettings = useNewAppSettings();
 
   const handleSubmit = () => {
-    const currSettings = $AppSettings.get();
-    const currTraveler = newTraveler.current;
-    const travelerChanged = genAccountTravelerKey(currTraveler) !== genAccountTravelerKey(traveler);
+    const currSettings = useSettingsStore.getState();
+    const currTraveler = currSettings.traveler;
+    const newTraveler = newSettings.traveler;
+    const travelerChanged =
+      genAccountTravelerKey(currTraveler) !== genAccountTravelerKey(newTraveler);
 
     if (travelerChanged) {
-      // updateTraveler must run before applySettings
-      dispatch(updateTraveler(currTraveler));
+      // changeTraveler must run before apply settings
+      $AppCharacter.changeTraveler(newTraveler);
     }
 
-    applySettings(currSettings.separateCharInfo && !newSettings.separateCharInfo, travelerChanged);
+    updateSettings(newSettings);
 
-    if (newSettings.isTabLayout !== currSettings.isTabLayout) {
-      dispatch(
-        updateUI({
-          isTabLayout: newSettings.isTabLayout,
-        })
-      );
-    }
+    applySettingsToCalculator(
+      currSettings.separateCharInfo && !newSettings.separateCharInfo,
+      travelerChanged
+    );
 
-    if (newSettings.persistUserData !== currSettings.persistUserData) {
-      updateAppStoreConfig({
-        persistUserData: newSettings.persistUserData,
-      });
-    }
-
-    $AppSettings.set(newSettings);
     onClose();
   };
 
-  const handleAppSettingChange = <TKey extends keyof AppSettings>(
+  const handleAppSettingChange = <TKey extends keyof AppSettingsState>(
     key: TKey,
-    value: AppSettings[TKey]
+    value: AppSettingsState[TKey]
   ) => {
     newSettings[key] = value;
   };
 
   const handleTravelerSelect = (selection: TravelerKey) => {
-    newTraveler.current = { ...newTraveler.current, selection };
+    newSettings.traveler.selection = selection;
   };
 
-  const handlePowerupsChange = (key: keyof TravelerInfo["powerups"], value: boolean) => {
-    newTraveler.current = {
-      ...newTraveler.current,
+  const handlePowerupsChange = (key: keyof TravelerConfig["powerups"], value: boolean) => {
+    newSettings.traveler = Object_.deepMerge(newSettings.traveler, {
       powerups: {
-        ...newTraveler.current.powerups,
         [key]: value,
       },
-    };
+    });
+  };
+
+  const handleResonatedElmtsChange = (resonatedElmts: ElementType[]) => {
+    newSettings.traveler.resonatedElmts = resonatedElmts;
   };
 
   return (
@@ -95,17 +85,23 @@ const SettingsCore = ({ onClose }: SettingsProps) => {
         handleSubmit();
       }}
     >
-      <AccountSettingsControls
-        initialTraveler={newTraveler.current}
+      <TravelerSettings
+        initialConfig={newSettings.traveler}
         onChangeSelection={handleTravelerSelect}
         onChangePowerups={handlePowerupsChange}
+        onChangeResonatedElmts={handleResonatedElmtsChange}
       />
-      <AppSettingsControls initialValues={newSettings} onChange={handleAppSettingChange} />
+
+      <CalculatorSettings initialValues={newSettings} onChange={handleAppSettingChange} />
+
+      <UserDataSettings initialValues={newSettings} onChange={handleAppSettingChange} />
+
+      <DefaultValuesSettings initialValues={newSettings} onChange={handleAppSettingChange} />
     </form>
   );
 };
 
-export const Settings = Modal.wrap(SettingsCore, {
+export const SettingsModal = Modal.wrap(Settings, {
   title: "Settings",
   className: ["bg-dark-2", Modal.LARGE_HEIGHT_CLS],
   style: {

@@ -1,7 +1,8 @@
-import { cn, type ClassValue } from "rond";
 import type { AppCharacter } from "@/types";
+import { cn, type ClassValue } from "rond";
 
 type EnhanceTagProps = {
+  id?: string;
   className?: ClassValue;
   character: {
     enhanced: boolean;
@@ -16,6 +17,7 @@ export function EnhanceTag(props: EnhanceTagProps) {
 
   return (
     <div
+      id={props.id}
       className={cn(
         "text-base font-semibold leading-none",
         props.mutable && "cursor-pointer",

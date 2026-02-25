@@ -1,4 +1,4 @@
-import { UserdbState, initialState } from "@Store/userdb-slice";
+import { UserdbState, initialState } from "@Store/userdbSlice";
 import { UserDatabaseV0 } from "./types";
 
 export const migrateToV1 = (state?: UserDatabaseV0): UserdbState => {

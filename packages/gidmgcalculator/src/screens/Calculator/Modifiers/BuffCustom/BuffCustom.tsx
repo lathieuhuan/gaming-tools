@@ -3,7 +3,7 @@ import { clsx } from "rond";
 import type { CustomBuffCtrl } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { suffixOf, toCustomBuffLabel } from "@/utils";
+import { suffixOf, toCustomBuffLabel } from "@/utils/pure.utils";
 import { useCalcStore } from "@Store/calculator";
 import { updateActiveSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";

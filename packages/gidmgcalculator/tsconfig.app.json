@@ -29,5 +29,5 @@
       "@UnitTest/*": ["unit-test/*"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "unit-test"]
 }

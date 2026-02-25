@@ -4,12 +4,9 @@ import { MdMoreVert } from "react-icons/md";
 import { BiDetail } from "react-icons/bi";
 import { useClickOutside, Modal, CloseButton } from "rond";
 
-import { useDispatch } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { updateUI } from "@Store/ui";
 
 export function Menu(props: { calcResultRender: React.ReactNode }) {
-  const dispatch = useDispatch();
-
   const [menuDropped, setMenuDropped] = useState(false);
   const [resultsEnlarged, setResultsEnlarged] = useState(false);
 
@@ -21,7 +18,7 @@ export function Menu(props: { calcResultRender: React.ReactNode }) {
       text: "Tracker",
       className: "flex hover:bg-primary-1",
       onClick: () => {
-        dispatch(updateUI({ trackerState: "open" }));
+        updateUI({ trackerState: "open" });
       },
     },
     {
@@ -39,7 +36,9 @@ export function Menu(props: { calcResultRender: React.ReactNode }) {
   return (
     <div ref={wrapperRef} className="absolute top-2 right-2 w-8">
       <button
-        className={"w-8 h-8 flex-center rounded-md text-2xl" + (menuDropped ? " bg-active text-black" : "")}
+        className={
+          "w-8 h-8 flex-center rounded-md text-2xl" + (menuDropped ? " bg-active text-black" : "")
+        }
         onClick={() => setMenuDropped(!menuDropped)}
       >
         <MdMoreVert />
@@ -56,7 +55,9 @@ export function Menu(props: { calcResultRender: React.ReactNode }) {
             return (
               <span
                 key={i}
-                className={"px-2 py-1 items-center font-medium cursor-default " + (item.className || "")}
+                className={
+                  "px-2 py-1 items-center font-medium cursor-default " + (item.className || "")
+                }
                 onClick={() => {
                   item.onClick();
                   setMenuDropped(false);

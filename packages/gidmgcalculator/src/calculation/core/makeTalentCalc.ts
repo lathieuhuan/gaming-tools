@@ -1,39 +1,40 @@
+import type { CharacterCalc } from "@/models";
 import type {
   AttackBonusKey,
   AttackElement,
   CalcItemFactor,
   ElementalEvent,
+  ElementType,
   LevelableTalentType,
   LunarType,
   TalentCalcItem,
 } from "@/types";
 import type {
-  AttackAlterConfig,
+  AttackAlter,
   CalcItemDefaultValues,
   CalcResultAttackItem,
   CalcResultItemValue,
   CalcResultOtherItem,
 } from "../types";
-import type { CalcTarget } from "./CalcTarget";
-import type { CharacterCalc } from "./CharacterCalc";
+import type { TargetCalc } from "../../models/TargetCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { Character } from "@/models/base";
+import { Character } from "@/models";
 import Array_ from "@/utils/Array";
-import { toMult } from "@/utils/pure-utils";
+import { limitCRate } from "@/logic/stat.logic";
+import { toMult } from "@/utils/pure.utils";
+import { LUNAR_ATTACK_COEFFICIENT, LUNAR_ATTACK_ELEMENT } from "../constants";
 import { makeAttackItemCalc } from "./makeAttackItemCalc";
 import { makeOtherItemCalc } from "./makeOtherItemCalc";
-import { limitCRate } from "./utils";
-import { LUNAR_ATTACK_COEFFICIENT, LUNAR_ATTACK_ELEMENT } from "../constants";
 
 export function makeTalentCalc(
   performer: CharacterCalc,
-  target: CalcTarget,
+  target: TargetCalc,
   talentType: LevelableTalentType,
   default_: CalcItemDefaultValues,
-  alterConfig: AttackAlterConfig = {}
+  alterConfig: AttackAlter = {}
 ) {
-  const { totalAttrs, attkBonusCtrl } = performer;
+  const { attkBonusCtrl } = performer;
   const { vision, weaponType } = performer.data;
   const level = performer.getFinalTalentLv(talentType);
 
@@ -56,7 +57,7 @@ export function makeTalentCalc(
 
     for (const factor of Array_.toArray(item.factor)) {
       const { root, scale, basedOn } = parseFactor(factor);
-      const value = totalAttrs.get(basedOn);
+      const value = performer.getAttr(basedOn);
       const totalMult = root * Character.getTalentMult(scale, level) + extraTalentMult;
 
       bases.push((value * totalMult) / 100);
@@ -77,6 +78,7 @@ export function makeTalentCalc(
 
   function calcAttackItem(
     item: TalentCalcItem,
+    itemElmtAlter: ElementType | undefined,
     elmtEvent: ElementalEvent,
     recorder: ResultRecorder
   ): CalcResultAttackItem {
@@ -88,14 +90,18 @@ export function makeTalentCalc(
 
     {
       // AttackElement priority:
-      // 0. anemo absorption
-      // 1. NAs of (catalyst) or FCA
-      // 2. item.attElmt
-      // 3. infusedElmt (custom infusion) (if NAs)
-      // 4. alterConfig
-      // 5. phys (if NAs) | performer.vision (otherwise)
+      // 0. item element alter
+      // 1. anemo absorption
+      // 2. NAs of (catalyst) or FCA
+      // 3. item.attElmt
+      // 4. infusedElmt (custom infusion) (if NAs)
+      // 5. alterConfig
+      // 6. phys (if NAs) | performer.vision (otherwise)
 
-      if (item.attElmt === "absorb") {
+      if (itemElmtAlter) {
+        attElmt = itemElmtAlter;
+      } //
+      else if (item.attElmt === "absorb") {
         // this attack can absorb element (anemo abilities) but user may not activate absorption
         attElmt = absorption || "anemo";
         reaction = absorbReaction;
@@ -161,9 +167,9 @@ export function makeTalentCalc(
     }
 
     const extraTalentMult = getBonus("mult_");
-    let bases = getBases(item, extraTalentMult, recorder);
+    const bases = getBases(item, extraTalentMult, recorder);
 
-    const baseMult = toMult(getBonus("multPlus_"));
+    const baseMult = toMult(getBonus("baseMult_"));
     const coefficient = LUNAR_ATTACK_COEFFICIENT[lunar];
     const bonusMult = toMult(getBonus("pct_"));
     const veilMult = toMult(getBonus("veil_"));
@@ -173,8 +179,8 @@ export function makeTalentCalc(
     const resMult = target.resistMults[attElmt];
 
     // CRITS
-    const cRate_ = limitCRate(totalAttrs.get("cRate_") + getBonus("cRate_")) / 100;
-    const cDmg_ = (totalAttrs.get("cDmg_") + getBonus("cDmg_")) / 100;
+    const cRate_ = limitCRate(performer.getAttr("cRate_") + getBonus("cRate_")) / 100;
+    const cDmg_ = (performer.getAttr("cDmg_") + getBonus("cDmg_")) / 100;
     const cDmgMult = 1 + cDmg_;
     const averageMult = 1 + cRate_ * cDmg_;
 

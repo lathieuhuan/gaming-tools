@@ -3,7 +3,7 @@ import { InputNumber, VersatileSelect } from "rond";
 
 import type { ArtifactSubStat, AttributeStat } from "@/types";
 import { useTranslation } from "@/hooks";
-import { suffixOf } from "@/utils";
+import { suffixOf } from "@/utils/pure.utils";
 
 // Constant
 import { ARTIFACT_SUBSTAT_TYPES } from "@/constants/global";
@@ -37,9 +37,7 @@ export function ArtifactSubstatsControl({
 
   const onKeyDownValue = (index: number) => (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && wrapper.current) {
-      const inputs = wrapper.current.querySelectorAll(
-        ".ron-input-number"
-      ) as NodeListOf<HTMLInputElement>;
+      const inputs = wrapper.current.querySelectorAll<HTMLInputElement>(".ron-input-number");
       const nextInput = inputs[index + (e.shiftKey ? -1 : 1)];
 
       if (nextInput) nextInput.focus?.();
@@ -63,7 +61,7 @@ export function ArtifactSubstatsControl({
               arrowAt="start"
               options={ARTIFACT_SUBSTAT_TYPES.map((type) => ({ label: t(type), value: type }))}
               value={type}
-              onChange={(value) => onChangeSubStat?.(i, { type: value as AttributeStat })}
+              onChange={(value) => onChangeSubStat?.(i, { type: value })}
             />
             <span>+</span>
             <InputNumber

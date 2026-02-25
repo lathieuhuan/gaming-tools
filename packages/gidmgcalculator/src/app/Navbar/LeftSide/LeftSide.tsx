@@ -1,10 +1,11 @@
-import { useSelector } from "@Store/hooks";
 import { useState } from "react";
 import { CloseButton, clsx, Drawer, SideBarSvg, useScreenWatcher } from "rond";
 
+import type { ScreenConfig } from "./config";
+
 import { SCREEN_PATH } from "@/constants/config";
 import { useRouter } from "@/systems/router";
-import { ScreenConfig } from "./_config";
+import { useSettingsStore } from "@Store/settings";
 
 import { NavOptions } from "./NavOptions";
 import { TargetButton } from "./TargetButton";
@@ -16,7 +17,7 @@ type LeftSideProps = {
 
 export function LeftSide({ appReady }: LeftSideProps) {
   const router = useRouter();
-  const isTabLayout = useSelector((state) => state.ui.isTabLayout);
+  const isTabLayout = useSettingsStore((state) => state.isTabLayout);
   const screenWatcher = useScreenWatcher();
 
   const [drawerActive, setDrawerActive] = useState(false);
@@ -25,7 +26,7 @@ export function LeftSide({ appReady }: LeftSideProps) {
   const showOnMobileTab = isMobile && isTabLayout;
 
   const handleSelectScreen = (option: ScreenConfig) => {
-    router.navigate(option.path);
+    router.navigate({ to: option.path });
   };
 
   const closeDrawer = () => setDrawerActive(false);

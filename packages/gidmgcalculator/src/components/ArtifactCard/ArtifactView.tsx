@@ -1,11 +1,11 @@
 import { Badge, clsx, VersatileSelect } from "rond";
 
-import type { Artifact } from "@/models/base";
+import type { Artifact } from "@/models";
 import type { ArtifactSubStat, AttributeStat } from "@/types";
 
 import { useTranslation } from "@/hooks";
 import { $AppArtifact } from "@/services";
-import { suffixOf } from "@/utils";
+import { suffixOf } from "@/utils/pure.utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
@@ -16,7 +16,7 @@ export interface ArtifactViewProps<T extends Artifact> {
   mutable?: boolean;
   className?: string;
   artifact?: T;
-  action?: React.ReactNode;
+  headerAction?: React.ReactNode;
   onEnhance?: (level: number, artifact: T) => void;
   onChangeMainStatType?: (type: AttributeStat, artifact: T) => void;
   onChangeSubStat?: (index: number, changes: Partial<ArtifactSubStat>, artifact: T) => void;
@@ -25,7 +25,7 @@ export function ArtifactView<T extends Artifact>({
   className,
   artifact,
   mutable,
-  action,
+  headerAction,
   onEnhance,
   onChangeMainStatType,
   onChangeSubStat,
@@ -45,11 +45,11 @@ export function ArtifactView<T extends Artifact>({
       <div className={`bg-rarity-${rarity} flex items-center`}>
         <p
           className="mr-auto pl-4 pr-2 py-0.5 text-lg font-semibold text-black truncate"
-          onDoubleClick={() => console.log(artifact)}
+          onDoubleClick={() => console.info(artifact)}
         >
           {appArtifact?.name}
         </p>
-        {action}
+        {headerAction}
       </div>
 
       <div className="mt-4 px-3 flex justify-between items-start">
@@ -88,7 +88,7 @@ export function ArtifactView<T extends Artifact>({
             arrowAt="start"
             options={mainStatTypeOptions}
             value={mainStatType}
-            onChange={(value) => onChangeMainStatType?.(value as AttributeStat, artifact)}
+            onChange={(value) => onChangeMainStatType?.(value, artifact)}
           />
         )}
         <p

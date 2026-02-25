@@ -2,17 +2,15 @@ import { FaPlus } from "react-icons/fa";
 import { BiImport } from "react-icons/bi";
 import { Button, CloseButton, CollapseSpace, Modal } from "rond";
 
-import { updateUI } from "@Store/ui-slice";
-import { useDispatch, useSelector } from "@Store/hooks";
+import { updateUI, useUIStore } from "@Store/ui";
 import { useCalcModalCtrl } from "../ContextProvider";
 import { useSetupDirectorKit } from "./useSetupDirectorKit";
 
 // Component
 import { SetupControl } from "./SetupControl";
-import { Card } from "../_components/Card";
+import { Card } from "../components/Card";
 
 function SetupDirectorCore() {
-  const dispatch = useDispatch();
   const calcModalCtrl = useCalcModalCtrl();
   const { displayedSetups, comparedSetups, canAddMoreSetup, tempStandardId, control } =
     useSetupDirectorKit();
@@ -22,7 +20,7 @@ function SetupDirectorCore() {
       <CloseButton
         className={Modal.CLOSE_BTN_CLS}
         boneOnly
-        onClick={() => dispatch(updateUI({ setupDirectorActive: false }))}
+        onClick={() => updateUI({ setupDirectorActive: false })}
       />
 
       <p className="my-2 text-1.5xl text-center text-heading font-bold">Setups Management</p>
@@ -74,9 +72,7 @@ function SetupDirectorCore() {
       <Button
         className="mt-4 mx-auto group relative"
         variant="primary"
-        onClick={() =>
-          control.tryApplyNewSettings(() => dispatch(updateUI({ setupDirectorActive: false })))
-        }
+        onClick={() => control.tryApplyNewSettings(() => updateUI({ setupDirectorActive: false }))}
       >
         Apply
       </Button>
@@ -85,7 +81,7 @@ function SetupDirectorCore() {
 }
 
 export function SetupDirector(props: { className?: string }) {
-  const setupDirectorActive = useSelector((state) => state.ui.setupDirectorActive);
+  const setupDirectorActive = useUIStore((state) => state.setupDirectorActive);
 
   return (
     <CollapseSpace

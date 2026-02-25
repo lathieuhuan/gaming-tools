@@ -1,23 +1,23 @@
 import { useMemo, useState } from "react";
 import { ConfirmModal } from "rond";
 
+import type { Artifact, CharacterCalc } from "@/models";
 import type { IArtifactGearSlot } from "@/types";
-import type { Artifact, CalcCharacter } from "@/models/base";
 
+import { ArtifactInventory, Tavern, WeaponInventory } from "@/components";
 import { useDispatch } from "@Store/hooks";
-import { ActiveCharAction, ActiveCharActionContext } from "./_context";
 import {
-  removeUserCharacter,
+  removeDbCharacter,
   switchArtifact,
   switchWeapon,
-  viewCharacter,
-} from "@Store/userdb-slice";
-import { ArtifactInventory, Tavern, WeaponInventory } from "@/components";
+  viewDbCharacter,
+} from "@Store/userdbSlice";
+import { ActiveCharAction, ActiveCharActionContext } from "./context";
 
 type ModalType = "SWITCH_CHARACTER" | "SWITCH_WEAPON" | "SWITCH_ARTIFACT" | "REMOVE_CHARACTER" | "";
 
 type ActionProviderProps = {
-  character: CalcCharacter;
+  character: CharacterCalc;
   children: React.ReactNode;
 };
 
@@ -57,11 +57,11 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
         danger
         message={
           <>
-            Remove <b>{character.name}</b>?
+            Remove <b>{character.data.name}</b>?
           </>
         }
         focusConfirm
-        onConfirm={() => dispatch(removeUserCharacter(character.name))}
+        onConfirm={() => dispatch(removeDbCharacter(character.code))}
         onClose={closeModal}
       />
 
@@ -69,14 +69,14 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
         active={modalType === "SWITCH_CHARACTER"}
         sourceType="user"
         onSelectCharacter={(character) => {
-          dispatch(viewCharacter(character.data.name));
+          dispatch(viewDbCharacter(character.data.code));
         }}
         onClose={closeModal}
       />
 
       <WeaponInventory
         active={modalType === "SWITCH_WEAPON"}
-        owner={character.name}
+        owner={character.code}
         weaponType={weapon.type}
         buttonText="Switch"
         onClickButton={(selectedWeapon) => {
@@ -84,7 +84,7 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
             switchWeapon({
               newOwner: selectedWeapon.owner,
               newID: selectedWeapon.ID,
-              oldOwner: character.name,
+              oldOwner: character.code,
               oldID: weapon.ID,
             })
           );
@@ -96,7 +96,7 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
         active={modalType === "SWITCH_ARTIFACT"}
         currentAtfGear={atfGear}
         forcedType={switchedSlot?.type}
-        owner={character.name}
+        owner={character.code}
         buttonText="Switch"
         onClickButton={(selectedArtifact) => {
           if (!switchedSlot) {
@@ -109,7 +109,7 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
             switchArtifact({
               newOwner: selectedArtifact.owner,
               newID: selectedArtifact.ID,
-              oldOwner: character.name,
+              oldOwner: character.code,
               oldID: currentPiece?.ID,
             })
           );

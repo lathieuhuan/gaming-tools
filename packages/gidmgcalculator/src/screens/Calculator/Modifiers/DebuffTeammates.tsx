@@ -1,4 +1,4 @@
-import type { CalcTeammate } from "@/models/calculator";
+import type { TeammateCalc } from "@/models";
 import type { IAbilityDebuffCtrl } from "@/types";
 
 import Object_ from "@/utils/Object";
@@ -14,7 +14,7 @@ export default function DebuffTeammates() {
     Object_.pickProps(selectSetup(state), ["teammates", "team"])
   );
 
-  const handleUpdateCtrls = (teammate: CalcTeammate, ctrls: IAbilityDebuffCtrl[]) => {
+  const handleUpdateCtrls = (teammate: TeammateCalc, ctrls: IAbilityDebuffCtrl[]) => {
     updateTeammate(teammate.data.code, {
       debuffCtrls: ctrls,
     });

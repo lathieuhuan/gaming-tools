@@ -1,50 +1,73 @@
-import { createPortal } from "react-dom";
-import { LoadingSpin, Modal } from "rond";
+import { Modal } from "rond";
 
-import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
+import { updateUI, useUIStore } from "@Store/ui";
 
 // Component
-import { DataFixing } from "./DataFixing";
+import { DataRepair } from "./DataRepair";
 import { Donate } from "./Donate";
 import { Download } from "./Download";
+import { EnhanceNoticeModal } from "./EnhanceNotice";
 import { Guides } from "./Guides";
-import { Settings } from "./Settings";
-import { Upload } from "./Upload";
-
-// TODO check if this is still needed
-const AppLoadingOverlay = () => {
-  const loading = useSelector((state) => state.ui.loading);
-  let mask = document.getElementById("app-mask");
-
-  if (!mask) {
-    mask = document.createElement("div");
-    mask.id = "app-mask";
-    document.body.appendChild(mask);
-  }
-  return createPortal(
-    <Modal.Core active={loading} closeOnMaskClick={false} onClose={() => {}}>
-      <LoadingSpin size="large" />
-    </Modal.Core>,
-    mask
-  );
-};
+import { SettingsModal } from "./Settings";
+import { UploadModals } from "./Upload";
+import { TravelAgencyModals } from "./TravelAgency";
 
 export function Modals() {
-  const dispatch = useDispatch();
-  const appModalType = useSelector((state) => state.ui.appModalType);
+  const appModalType = useUIStore((state) => state.appModalType);
 
-  const closeModal = () => dispatch(updateUI({ appModalType: "" }));
+  const closeModal = () => updateUI({ appModalType: "" });
 
   return (
     <>
-      <Guides active={appModalType === "GUIDES"} onClose={closeModal} />
-      <Settings active={appModalType === "SETTINGS"} onClose={closeModal} />
-      <Download active={appModalType === "DOWNLOAD"} onClose={closeModal} />
-      <Upload active={appModalType === "UPLOAD"} onClose={closeModal} />
-      <Donate active={appModalType === "DONATE"} onClose={closeModal} />
-      <DataFixing active={appModalType === "DATA_FIX"} onClose={closeModal} />
-      <AppLoadingOverlay />
+      <Modal
+        active={appModalType === "GUIDES"}
+        title="Guides"
+        preset="large"
+        withHeaderDivider={false}
+        bodyCls="pt-0"
+        onClose={closeModal}
+      >
+        <Guides />
+      </Modal>
+
+      <SettingsModal active={appModalType === "SETTINGS"} onClose={closeModal} />
+
+      <Modal
+        active={appModalType === "DOWNLOAD"}
+        title="Download"
+        preset="small"
+        className="bg-dark-1"
+        onClose={closeModal}
+      >
+        <Download />
+      </Modal>
+
+      <UploadModals active={appModalType === "UPLOAD"} onClose={closeModal} />
+
+      <Modal
+        active={appModalType === "DONATE"}
+        title={<p className="text-center">Donate</p>}
+        preset="small"
+        withHeaderDivider={false}
+        className="bg-dark-1"
+        onClose={closeModal}
+      >
+        <Donate />
+      </Modal>
+
+      <Modal
+        active={appModalType === "DATA_REPAIR"}
+        title="Fix my data"
+        preset="small"
+        className="bg-dark-1"
+        onClose={closeModal}
+      >
+        <DataRepair />
+      </Modal>
+
+      <TravelAgencyModals active={appModalType === "TRAVEL_AGENCY"} onClose={closeModal} />
+
+      <EnhanceNoticeModal active={appModalType === "CHAR_ENHANCE_NOTICE"} onClose={closeModal} />
     </>
   );
 }

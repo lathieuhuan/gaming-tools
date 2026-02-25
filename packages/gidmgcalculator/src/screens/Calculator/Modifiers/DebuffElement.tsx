@@ -6,7 +6,7 @@ import { selectSetup } from "@Store/calculator/selectors";
 import { toggleRsnModCtrl } from "@Store/calculator/utils";
 
 import { GenshinModifierView, ResonanceDebuffItem } from "@/components";
-import { SUPERCONDUCT_DEBUFF_CONFIG } from "@/components/modifier-item/configs";
+import { SUPERCONDUCT_DEBUFF_CONFIG } from "@/components/ModifierItems/config";
 
 export default function DebuffElement() {
   const { superconduct, rsnDebuffCtrls } = useShallowCalcStore((state) => {

@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Button, SwitchNode, type SwitchNodeCase } from "rond";
 
+import { ENHANCE_TOUR_SITE_ID } from "@/constants/ui";
 import { useCalcStore } from "@Store/calculator";
 import { updateMain } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
-import { useSelector } from "@Store/hooks";
-import { selectAppReady } from "@Store/ui-slice";
+import { selectAppReady, useUIStore } from "@Store/ui";
 import { useCalcModalCtrl } from "../ContextProvider";
 
 // Component
@@ -16,9 +16,11 @@ import {
   ConstellationTab,
   TalentsTab,
   WeaponTab,
-} from "./tab-components";
+} from "./TabComponents";
 
-const TABS: SwitchNodeCase<string>[] = [
+type TabType = "Attributes" | "Weapon" | "Artifacts" | "Constellation" | "Talents";
+
+const TABS: SwitchNodeCase<TabType>[] = [
   { value: "Attributes", element: <AttributesTab /> },
   { value: "Weapon", element: <WeaponTab /> },
   { value: "Artifacts", element: <ArtifactsTab /> },
@@ -27,9 +29,10 @@ const TABS: SwitchNodeCase<string>[] = [
 ];
 
 function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
+  const id = useId();
   const main = useCalcStore(selectActiveMain);
 
-  const [activeTab, setActiveTab] = useState("Attributes");
+  const [activeTab, setActiveTab] = useState<TabType>("Attributes");
 
   return (
     <div className="h-full flex flex-col gap-4">
@@ -41,13 +44,16 @@ function CharacterOverviewCore(props: { onClickSwitchCharacter: () => void }) {
         onChangeLevel={(level) => updateMain({ level })}
         onChangeCons={(cons) => updateMain({ cons })}
         onEnhanceToggle={(enhanced) => updateMain({ enhanced })}
+        ids={{
+          enhanceTag: ENHANCE_TOUR_SITE_ID.mainEnhance,
+        }}
       />
 
       <ComplexSelect
-        selectId="character-overview-select"
+        selectId={id}
         value={activeTab}
         options={TABS.map((tab) => ({ value: tab.value, label: tab.value }))}
-        onChange={(newTab) => setActiveTab(newTab.toString())}
+        onChange={(newTab) => setActiveTab(newTab)}
       />
 
       <div className="grow hide-scrollbar">
@@ -62,7 +68,7 @@ type CharacterOverviewProps = {
 };
 
 export function CharacterOverview({ touched }: CharacterOverviewProps) {
-  const appReady = useSelector(selectAppReady);
+  const appReady = useUIStore(selectAppReady);
   const modalCtrl = useCalcModalCtrl();
 
   return (

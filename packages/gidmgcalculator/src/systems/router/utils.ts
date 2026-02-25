@@ -1,4 +1,4 @@
-import { SearchParams } from "./types";
+import type { SearchParams } from "./types";
 
 export function toPathSegments(path: string) {
   return path.split("/").filter(Boolean);
@@ -18,7 +18,7 @@ export function objectToSearchString(params: Partial<SearchParams>) {
       //   valueString = value.map((v) => `${v}`).join(",");
       // }
 
-      return `${key}=${value}`;
+      return `${key}=${value?.toString()}`;
     })
     .join("&");
 }
@@ -39,7 +39,7 @@ export function searchStringToObject(search: string): SearchParams {
   return params;
 }
 
-export function getSearchParams() {
+export function getSearchParams(): SearchParams {
   const params = window.location.search.replace("?", "");
   return searchStringToObject(params);
 }

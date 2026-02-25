@@ -1,6 +1,6 @@
 import { IArtifactGearSet } from "@/types";
 import Array_ from "@/utils/Array";
-import { parseArtifactDesc } from "@/utils/description-parsers";
+import { parseArtifactDesc } from "@/utils/descriptionParsers";
 
 interface SetBonusesViewProps {
   sets: IArtifactGearSet[];

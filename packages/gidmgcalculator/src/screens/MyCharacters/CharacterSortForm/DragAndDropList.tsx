@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { FaSort } from "react-icons/fa";
 
+import type { CharacterToBeSorted } from "./types";
 import { CharacterLabel } from "./CharacterLabel";
-import { CharacterToBeSorted } from "./utils";
 
 type DragAndDropListProps = {
   characters: CharacterToBeSorted[];
@@ -42,7 +42,7 @@ export function DragAndDropList({ characters, onChange }: DragAndDropListProps) 
       {characters.map((character, index) => {
         return (
           <CharacterLabel
-            key={character.name}
+            key={character.code}
             data-index={index}
             character={character}
             withEmptySlot={canShowEmptySlot && index === dropIndex}

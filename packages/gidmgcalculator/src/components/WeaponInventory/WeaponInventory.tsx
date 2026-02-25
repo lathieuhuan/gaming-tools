@@ -3,9 +3,9 @@ import { EntitySelectTemplate, FancyBackSvg, Modal } from "rond";
 
 import type { IWeaponBasic, WeaponType } from "@/types";
 
-import { Weapon } from "@/models/base";
+import { Weapon } from "@/models";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import { selectDbWeapons } from "@Store/userdb-slice";
+import { selectDbWeapons } from "@Store/userdbSlice";
 
 // Component
 import { InventoryRack, ItemOption } from "../InventoryRack";
@@ -13,9 +13,9 @@ import { WeaponCard } from "../WeaponCard";
 
 type WeaponInventoryProps = {
   weaponType: WeaponType;
-  owner?: string | null;
+  owner?: number | null;
   buttonText: string;
-  onClickButton: (chosen: Weapon) => void;
+  onClickButton: (selectedWeapon: Weapon) => void;
   onClose: () => void;
 };
 
@@ -60,7 +60,7 @@ const WeaponInventoryCore = ({
               data={items}
               itemCls="max-w-1/3 basis-1/3 md:w-1/4 md:basis-1/4 lg:max-w-1/6 lg:basis-1/6"
               emptyText="No weapons found"
-              chosenID={selectedWeapon?.ID}
+              activeId={selectedWeapon?.ID}
               onChangeItem={onChangeItem}
             />
             <WeaponCard

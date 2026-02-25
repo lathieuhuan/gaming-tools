@@ -59,6 +59,15 @@
     &:focus {
       background-color: var(--color-light-1);
     }
+
+    &[type="search"]::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    &[type="search"]::-webkit-search-decoration {
+      display: none;
+    }
   }
 
   &.ron-select-disabled {
@@ -127,6 +136,7 @@
 
 // align
 .ron-select--right .ron-select-selection-placeholder,
+.ron-select--right .ron-select-selection-search-input,
 .ron-select--right .ron-select-selection-item,
 .ron-select__dropdown--right .ron-select-item {
   text-align: right;

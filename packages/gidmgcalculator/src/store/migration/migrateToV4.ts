@@ -1,5 +1,5 @@
 import { convertToV4 } from "@/migration/convertToV4";
-import { initialState, UserdbState } from "@Store/userdb-slice";
+import { initialState, UserdbState } from "@Store/userdbSlice";
 
 export const migrateToV4 = (state?: any): UserdbState => {
   if (!state) {
@@ -15,13 +15,16 @@ export const migrateToV4 = (state?: any): UserdbState => {
       setups: state.userSetups,
     });
 
-    return {
+    const result: UserdbState = {
       ...state,
       userChars: migrateResult.characters,
       userWps: migrateResult.weapons,
       userArts: migrateResult.artifacts,
       userSetups: migrateResult.setups,
     };
+
+    return result;
+    //
   } catch (error) {
     console.error(error);
     return initialState;

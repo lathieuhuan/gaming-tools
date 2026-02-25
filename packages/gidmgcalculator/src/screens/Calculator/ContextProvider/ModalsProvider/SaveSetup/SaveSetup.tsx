@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Input, Modal } from "rond";
 
-import type { ValidationError } from "./types";
-
 import { SCREEN_PATH } from "@/constants/config";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import { useRouter } from "@/systems/router";
@@ -11,7 +9,7 @@ import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 import { useDispatch } from "@Store/hooks";
 import { saveSetupThunk } from "@Store/thunks";
-import { validateFreeItemSlots, validateTeammates } from "./utils";
+import { validateFreeItemSlots, validateTeammates, type ValidationError } from "./logic";
 
 type StoreSnapshot = {
   initialSetupName: string;
@@ -39,7 +37,7 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
     }
 
     return {
-      initialSetupName: existedSetup ? existedSetup.name : `${setup.main.name} setup`,
+      initialSetupName: existedSetup?.name || `${setup.main.data.name} setup`,
       isNewSetup: !existedSetup,
       isError: errors.length > 0,
       errors,
@@ -49,7 +47,7 @@ export function SaveSetup({ setupId, onClose }: SaveSetupProps) {
 
   const saveSetup = () => {
     dispatch(saveSetupThunk(setup, input));
-    router.navigate(SCREEN_PATH.SETUPS);
+    router.navigate({ to: SCREEN_PATH.SETUPS });
     onClose();
   };
 

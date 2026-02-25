@@ -1,18 +1,16 @@
 import { FaSkull } from "react-icons/fa";
 
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectTargetConfig, updateUI } from "@Store/ui-slice";
+import { updateUI, useUIStore } from "@Store/ui";
 
 export function TargetButton() {
-  const dispatch = useDispatch();
-  const targetConfig = useSelector(selectTargetConfig);
+  const targetConfig = useUIStore((state) => state.targetConfig);
 
   if (targetConfig.overviewed) {
     return null;
   }
 
   const onClick = () => {
-    dispatch(updateUI({ targetConfig: { active: true, overviewed: false } }));
+    updateUI({ targetConfig: { active: true, overviewed: false } });
   };
 
   return (

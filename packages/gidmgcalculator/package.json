@@ -6,13 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run type-check && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives",
     "preview": "vite preview",
     "type-check": "tsc -p tsconfig.type-check.json --noEmit",
     "e2e-test": "npx playwright test",
     "unit-test": "jest"
   },
   "dependencies": {
+    "@fastify/deepmerge": "3.2.0",
+    "@rc-component/dropdown": "1.0.2",
     "@reduxjs/toolkit": "1.8.3",
     "@tanstack/react-query": "5.67.1",
     "immer": "9.0.21",

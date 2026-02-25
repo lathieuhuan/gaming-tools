@@ -1,16 +1,16 @@
 import type { CurrentDatabaseData } from "@/migration/types/current";
 import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 
-import { DATABASE_DATA_VERSION } from "@/constants/config";
+import { DOWNLOAD_DATA_VERSION } from "@/constants/config";
 import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
-import { createWeaponBasic } from "@/utils/entity";
+import { createWeaponBasic } from "@/logic/entity.logic";
 import {
   convertGOODArtifact,
   convertGOODCharacter,
   convertGOODWeapon,
   findGOODCharacter,
-} from "@/utils/GOOD";
+} from "@/logic/converGOOD.logic";
 import IdStore from "@/utils/IdStore";
 
 type GOODData = {
@@ -21,7 +21,7 @@ type GOODData = {
 
 export function convertGOODData(data: GOODData) {
   const result: CurrentDatabaseData = {
-    version: DATABASE_DATA_VERSION,
+    version: DOWNLOAD_DATA_VERSION,
     characters: [],
     weapons: [],
     artifacts: [],
@@ -51,11 +51,11 @@ export function convertGOODData(data: GOODData) {
 
     result.artifacts.push({
       ...artifact,
-      owner: owner?.name,
+      owner: owner?.code,
     });
 
     if (owner) {
-      const character = Array_.findByName(result.characters, owner.name);
+      const character = Array_.findByCode(result.characters, owner.code);
 
       if (character) {
         character.artifactIDs.push(artifact.ID);
@@ -73,11 +73,11 @@ export function convertGOODData(data: GOODData) {
 
     result.weapons.push({
       ...weapon,
-      owner: owner?.name,
+      owner: owner?.code,
     });
 
     if (owner) {
-      const character = Array_.findByName(result.characters, owner.name);
+      const character = Array_.findByCode(result.characters, owner.code);
 
       if (character) {
         character.weaponID = weapon.ID;
@@ -87,8 +87,8 @@ export function convertGOODData(data: GOODData) {
 
   for (const character of result.characters) {
     if (!character.weaponID) {
-      const { weaponType } = $AppCharacter.get(character.name);
-      const newWeapon = createWeaponBasic({ type: weaponType, owner: character.name }, idStore);
+      const { weaponType } = $AppCharacter.get(character.code);
+      const newWeapon = createWeaponBasic({ type: weaponType, owner: character.code }, idStore);
 
       result.weapons.push(newWeapon);
       character.weaponID = newWeapon.ID;

@@ -33,7 +33,7 @@ export function ArtifactLevelSelect({
           };
         })}
         value={level}
-        onChange={(newLv) => onChangeLevel?.(newLv as number)}
+        onChange={(newLv) => onChangeLevel?.(newLv)}
         action={{
           icon: (
             <svg

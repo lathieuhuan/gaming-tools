@@ -3,9 +3,9 @@ import { FancyBackSvg, Modal } from "rond";
 
 import type { AppWeapon, WeaponType } from "@/types";
 
-import { Weapon } from "@/models/base";
+import { Weapon } from "@/models";
 import { $AppWeapon } from "@/services";
-import { createWeapon } from "@/utils/entity";
+import { createWeapon } from "@/logic/entity.logic";
 
 // Component
 import {

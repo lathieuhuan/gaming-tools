@@ -1,6 +1,7 @@
 import { clsx } from "rond";
-import { MODAL_OPTIONS, type ModalOption } from "./_config";
 import { ReactNode } from "react";
+
+import { MODAL_OPTIONS, type ModalOption } from "./config";
 
 export type ModalOptionsProps = {
   className?: string;

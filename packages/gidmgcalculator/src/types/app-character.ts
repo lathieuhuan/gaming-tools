@@ -142,17 +142,18 @@ export type CharacterBonusEffect = EntityBonusEffect;
 
 export type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "effects">;
 
-export type CharacterBuffNormalAttackConfig = {
+export type AttackAlterConfigs = {
   checkInput?: number | InputCheck;
-  forPatt?: "ALL" | NormalAttack;
+  /** Default "ALL" */
+  forPatt?: "ALL" | NormalAttack | NormalAttack[] | TalentCalcItemBonusId[];
   attPatt?: AttackPattern;
-  attElmt?: ElementType;
+  attElmt?: ElementType | "phec";
   disabled?: boolean;
 };
 
 export type CharacterBuff = EntityBuff<CharacterBonusEffect> &
   CharacterModifier & {
-    normalsConfig?: CharacterBuffNormalAttackConfig | CharacterBuffNormalAttackConfig[];
+    alterConfigs?: AttackAlterConfigs | AttackAlterConfigs[];
   };
 
 // ============ DEBUFF / PENALTY ============

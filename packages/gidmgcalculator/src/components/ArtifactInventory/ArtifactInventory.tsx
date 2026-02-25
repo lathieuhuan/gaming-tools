@@ -8,11 +8,11 @@ import {
 } from "rond";
 
 import type { ArtifactType } from "@/types";
-import { type ArtifactGear, Artifact } from "@/models/base";
+import { type ArtifactGear, Artifact } from "@/models";
 
 import { useArtifactSetData } from "@/hooks";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
-import { selectDbArtifacts } from "@Store/userdb-slice";
+import { selectDbArtifacts } from "@Store/userdbSlice";
 
 // Conponent
 import { ArtifactCard } from "../ArtifactCard";
@@ -25,9 +25,9 @@ export type ArtifactInventoryProps = Pick<ArtifactFilterProps<Artifact>, "forced
     /** Default 'flower' */
     initialType?: ArtifactType;
     currentAtfGear?: ArtifactGear;
-    owner?: string | null;
+    owner?: number | null;
     buttonText: string;
-    onClickButton: (chosen: Artifact, isMultiSelect: boolean) => void;
+    onClickButton: (selectedArtifact: Artifact, isMultiSelect: boolean) => void;
     onClose: () => void;
   };
 
@@ -119,7 +119,7 @@ const ArtifactInventoryCore = ({
               data={filteredArtifacts}
               itemCls="max-w-1/3 basis-1/3 md:w-1/4 md:basis-1/4 lg:max-w-1/6 lg:basis-1/6"
               emptyText="No artifacts found"
-              chosenID={selectedArtifact?.ID}
+              activeId={selectedArtifact?.ID}
               onChangeItem={onChangeItem}
             />
 

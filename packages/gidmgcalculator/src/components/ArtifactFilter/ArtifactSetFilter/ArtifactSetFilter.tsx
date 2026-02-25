@@ -1,16 +1,9 @@
 import { clsx } from "rond";
 
-import type { AppArtifact } from "@/types";
+import type { ArtifactFilterSet } from "../types";
+
 import { FilterTemplate, type FilterTemplateProps } from "@/components/FilterTemplate";
 import { GenshinImage } from "@/components/GenshinImage";
-
-export type ArtifactFilterSet = {
-  code: number;
-  chosen: boolean;
-  icon: string;
-  data: AppArtifact;
-  count: number;
-};
 
 export type ArtifactSetFilterProps = Pick<
   FilterTemplateProps,
@@ -31,7 +24,7 @@ export function ArtifactSetFilter({
   return (
     <FilterTemplate
       className={["h-full flex flex-col", className]}
-      clearAllDisabled={setOptions.every((set) => !set.chosen)}
+      clearAllDisabled={setOptions.every((set) => !set.selected)}
       {...templateProps}
     >
       <div className="grow custom-scrollbar">
@@ -43,7 +36,7 @@ export function ArtifactSetFilter({
                   title={set.data.name}
                   className={clsx(
                     "rounded-circle",
-                    set.chosen ? "shadow-hightlight-2 shadow-bonus bg-dark-1" : "bg-transparent"
+                    set.selected ? "shadow-hightlight-2 shadow-bonus bg-dark-1" : "bg-transparent"
                   )}
                 >
                   <GenshinImage className="p-1" src={set.icon} imgType="artifact" />

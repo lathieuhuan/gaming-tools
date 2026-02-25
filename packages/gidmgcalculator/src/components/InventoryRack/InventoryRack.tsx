@@ -1,18 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { FaCaretRight, FaMinus } from "react-icons/fa";
-import { TbRectangleVerticalFilled } from "react-icons/tb";
+import { FaMinus } from "react-icons/fa";
 import { ItemCase, clsx, useIntersectionObserver } from "rond";
 
 import type { AppArtifact, AppWeapon, IArtifactBasic, IWeaponBasic } from "@/types";
 
+import { isWeapon } from "@/logic/entity.logic";
 import { $AppArtifact, $AppWeapon } from "@/services";
 
 // Component
 import { ItemThumbnail, type ItemThumbProps } from "../ItemThumbnail";
-
-export function isWeapon(item: IWeaponBasic | IArtifactBasic): item is IWeaponBasic {
-  return "refi" in item;
-}
+import { Pagination } from "./Pagination";
 
 export type ItemOption<
   T extends IWeaponBasic | IArtifactBasic,
@@ -28,7 +25,7 @@ export type InventoryRackProps<
 > = {
   itemCls?: string;
   emptyText?: string;
-  chosenID?: number;
+  activeId?: number;
   selectedIds?: Set<PropertyKey>;
   /** Default 60 */
   pageSize?: number;
@@ -44,7 +41,7 @@ export function InventoryRack<
   data,
   itemCls,
   emptyText = "No data",
-  chosenID,
+  activeId,
   selectedIds,
   pageSize = 60,
   onUnselectItem,
@@ -52,14 +49,13 @@ export function InventoryRack<
 }: InventoryRackProps<T, U>): JSX.Element {
   const pioneerRef = useRef<HTMLDivElement>(null);
   const heightRef = useRef(0);
-  // const dataByCode = useRef<Record<number, T extends IWeaponBasic ? AppWeapon : AppArtifact>>({});
 
   const [ready, setReady] = useState(false);
-  const [pageNo, setPageNo] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
 
   const { observedAreaRef, visibleMap, itemUtils } = useIntersectionObserver({
     ready,
-    dependencies: [ready, data, pageNo, pageSize],
+    dependencies: [ready, data, pageIndex, pageSize],
   });
 
   useEffect(() => {
@@ -68,6 +64,20 @@ export function InventoryRack<
       setReady(true);
     }
   }, []);
+
+  const firstItemIndex = pageSize * pageIndex;
+  const nextFirstItemIndex = firstItemIndex + pageSize;
+
+  const resetScroll = () => {
+    if (observedAreaRef.current) {
+      observedAreaRef.current.scrollTop = 0;
+    }
+  };
+
+  const handlePageIndexChange = (pageIndex: number) => {
+    setPageIndex(pageIndex);
+    resetScroll();
+  };
 
   const toItemOption = (item: T): ItemOption<T, U> => {
     if (isWeapon(item)) {
@@ -96,24 +106,26 @@ export function InventoryRack<
     };
   };
 
-  const deadEnd = Math.ceil(data.length / pageSize) - 1;
-  const firstIndex = pageSize * pageNo;
-  const nextFirstIndex = firstIndex + pageSize;
+  const renderItem = (item: T) => {
+    const option = toItemOption(item);
 
-  const resetScroll = () => {
-    if (observedAreaRef.current) {
-      observedAreaRef.current.scrollTop = 0;
-    }
-  };
-
-  const goBack = () => {
-    setPageNo((prev) => prev - 1);
-    resetScroll();
-  };
-
-  const goNext = () => {
-    setPageNo((prev) => prev + 1);
-    resetScroll();
+    return (
+      <>
+        {selectedIds?.has(item.ID) && (
+          <button
+            className="absolute z-10 top-1 left-1 w-8 h-8 flex-center bg-danger-1 rounded-md"
+            onClick={() => onUnselectItem?.(option)}
+          >
+            <FaMinus />
+          </button>
+        )}
+        <ItemCase selected={item.ID === activeId} onClick={() => onChangeItem?.(option)}>
+          {(className, imgCls) => (
+            <ItemThumbnail className={className} imgCls={imgCls} item={option} />
+          )}
+        </ItemCase>
+      </>
+    );
   };
 
   return (
@@ -133,9 +145,8 @@ export function InventoryRack<
           <div className="flex flex-wrap">
             {data.map((item, index) => {
               const visible = visibleMap[item.code];
-              const isOnPage = index >= firstIndex && index < nextFirstIndex;
+              const isOnPage = index >= firstItemIndex && index < nextFirstItemIndex;
               const rendered = isOnPage && visible;
-              const option = rendered ? toItemOption(item) : undefined;
 
               return (
                 <div
@@ -149,75 +160,26 @@ export function InventoryRack<
                     height: isOnPage ? (visible ? "auto" : heightRef.current) : 0,
                   }}
                 >
-                  {option && (
-                    <>
-                      {selectedIds?.has(item.ID) && (
-                        <button
-                          className="absolute z-10 top-1 left-1 w-8 h-8 flex-center bg-danger-1 rounded-md"
-                          onClick={() => onUnselectItem?.(option)}
-                        >
-                          <FaMinus />
-                        </button>
-                      )}
-                      <ItemCase
-                        chosen={item.ID === chosenID}
-                        onClick={() => onChangeItem?.(option)}
-                      >
-                        {(className, imgCls) => (
-                          <ItemThumbnail className={className} imgCls={imgCls} item={option} />
-                        )}
-                      </ItemCase>
-                    </>
-                  )}
+                  {rendered && renderItem(item)}
                 </div>
               );
             })}
           </div>
         )}
 
-        {ready && !data.length ? (
+        {ready && !data.length && (
           <p className="py-4 text-light-hint text-lg text-center">{emptyText}</p>
-        ) : null}
+        )}
       </div>
 
       {data.length !== 0 && (
-        <div className="mt-2 h-7 shrink-0 relative">
-          {deadEnd !== 0 && (
-            <div className="flex-center space-x-2">
-              <button
-                className="w-7 h-7 flex-center glow-on-hover disabled:opacity-50"
-                disabled={pageNo <= 0}
-                onClick={goBack}
-              >
-                {pageNo > 0 ? (
-                  <FaCaretRight className="rotate-180 text-2xl" />
-                ) : (
-                  <TbRectangleVerticalFilled className="text-lg" />
-                )}
-              </button>
-
-              <p className="font-semibold">
-                <span className="text-heading">{pageNo + 1}</span> / {deadEnd + 1}
-              </p>
-
-              <button
-                className="w-7 h-7 flex-center glow-on-hover disabled:opacity-50"
-                disabled={pageNo >= deadEnd}
-                onClick={goNext}
-              >
-                {pageNo < deadEnd ? (
-                  <FaCaretRight className="text-2xl" />
-                ) : (
-                  <TbRectangleVerticalFilled className="text-lg" />
-                )}
-              </button>
-            </div>
-          )}
-
-          <div className="absolute bottom-1 right-4 mr-2 text-sm leading-none text-light-hint">
-            {data.length} items
-          </div>
-        </div>
+        <Pagination
+          className="mt-3 pl-2 pr-4"
+          total={data.length}
+          pageIndex={pageIndex}
+          pageSize={pageSize}
+          onChange={handlePageIndexChange}
+        />
       )}
     </div>
   );

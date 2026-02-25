@@ -2,14 +2,14 @@ import { useLayoutEffect, useState } from "react";
 import { CollapseList, CollapseListProps } from "rond";
 
 import type { AttackPattern } from "@/types";
-import type { TrackerState } from "@Store/ui-slice";
+import type { TrackerState } from "@Store/ui";
 
 import { calculateSetup } from "@/calculation/calculator";
+import { useShallowCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 
 // Component
 import { markDim, markGreen } from "@/components";
-import { useShallowCalcStore } from "@Store/calculator";
 import { AttributesTracker } from "./AttributesTracker";
 import { BonusesTracker } from "./BonusesTracker";
 import { CalcItemTracker } from "./CalcItemTracker";
@@ -25,7 +25,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
 
   useLayoutEffect(() => {
     if (trackerState === "open") {
-      const state = calculateSetup(activeSetup, { shouldRecord: true });
+      const state = calculateSetup(activeSetup, { shouldLog: true });
 
       setState(state);
     }
@@ -36,7 +36,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   }
 
   const { result, target } = state;
-  const { attkBonusCtrl, totalAttrCtrl } = state.main;
+  const { attkBonusCtrl, allAttrsCtrl } = state.main;
   const charLv = activeSetup.main.bareLv;
   const totalDefReduct = target.getReduction("def").value;
 
@@ -80,7 +80,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   const collapseItems: CollapseListProps["items"] = [
     {
       heading: "Attributes",
-      body: <AttributesTracker listClassName={listClassName} totalAttrCtrl={totalAttrCtrl} />,
+      body: <AttributesTracker listClassName={listClassName} allAttrsCtrl={allAttrsCtrl} />,
     },
     {
       heading: "Bonuses",
@@ -142,7 +142,7 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
   return (
     <div
       className="h-full custom-scrollbar cursor-default"
-      onDoubleClick={() => console.log(result)}
+      onDoubleClick={() => console.info(state)}
     >
       <CollapseList items={collapseItems} />
     </div>

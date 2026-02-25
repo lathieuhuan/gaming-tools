@@ -1,15 +1,28 @@
+import { createSelector } from "@reduxjs/toolkit";
 import { useState } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { CarouselSpace, Popover } from "rond";
 
+import type { CharacterToBeSorted } from "./types";
+
+import { Ascendable } from "@/models";
+import { $AppCharacter } from "@/services";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import { useDispatch } from "@Store/hooks";
-import { sortCharacters } from "@Store/userdb-slice";
-import { selectCharacterToBeSorted } from "./utils";
+import { selectDbCharacters, sortDbCharacters } from "@Store/userdbSlice";
 
 import { DragAndDropList } from "./DragAndDropList";
 import { MarkedList } from "./MarkedList";
-import { Ascendable } from "@/models/base";
+
+const selectCharacterToBeSorted = createSelector(selectDbCharacters, (userChars) =>
+  userChars.map<CharacterToBeSorted>((character, index) => {
+    return {
+      ...character,
+      data: $AppCharacter.get(character.code),
+      index,
+    };
+  })
+);
 
 type CharacterSortFormProps = {
   id?: string;
@@ -26,7 +39,7 @@ export function CharacterSortForm({ id, onClose }: CharacterSortFormProps) {
   const handleSortByName = () => {
     setList((prev) => {
       const newList = [...prev];
-      newList.sort((a, b) => a.name.localeCompare(b.name));
+      newList.sort((a, b) => a.data.name.localeCompare(b.data.name));
 
       return newList;
     });
@@ -52,7 +65,7 @@ export function CharacterSortForm({ id, onClose }: CharacterSortFormProps) {
   };
 
   const handleSubmit = () => {
-    dispatch(sortCharacters(list.map(({ index }) => index)));
+    dispatch(sortDbCharacters(list.map(({ index }) => index)));
     onClose();
   };
 
@@ -87,7 +100,6 @@ export function CharacterSortForm({ id, onClose }: CharacterSortFormProps) {
             <FaChevronDown className="text-sm" />
           </p>
           <Popover
-            as="div"
             className="p-2 top-full bg-light-2 text-black font-bold rounded group-hover:scale-100"
             origin="top center"
           >

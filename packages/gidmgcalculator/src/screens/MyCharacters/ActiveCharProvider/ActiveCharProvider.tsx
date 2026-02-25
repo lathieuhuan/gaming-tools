@@ -1,16 +1,13 @@
 import type { RootState } from "@Store/store";
 
-import { CharacterCalc } from "@/calculation/core/CharacterCalc";
-import { Team } from "@/models/base";
-import Array_ from "@/utils/Array";
-import { makeCalcCharacterFromDb } from "@/utils/userdb";
+import { makeCharacterCalcFromDb } from "@/logic/userdb.logic";
 import { useSelector } from "@Store/hooks";
 import { ActionProvider } from "./ActionProvider";
-import { ActiveCharContext } from "./_context";
+import { ActiveCharContext } from "./context";
 
 const parseUserdb = (state: RootState) => {
   const { userChars, userWps, userArts, chosenChar } = state.userdb;
-  const activeCharacter = Array_.findByName(userChars, chosenChar);
+  const activeCharacter = userChars.find((char) => char.code === chosenChar);
   const charCount = userChars.length;
 
   if (!activeCharacter) {
@@ -20,13 +17,9 @@ const parseUserdb = (state: RootState) => {
     };
   }
 
-  const character = makeCalcCharacterFromDb(activeCharacter, userWps, userArts);
-  const charCalc = new CharacterCalc(character, character.data, new Team([character]));
+  const character = makeCharacterCalcFromDb(activeCharacter, userWps, userArts).initCalc();
 
-  charCalc.initTotalAttr();
-
-  character.atfGear = charCalc.atfGear;
-  character.totalAttrs = charCalc.totalAttrCtrl.finalize();
+  character.allAttrsCtrl.finalize();
 
   return {
     character,

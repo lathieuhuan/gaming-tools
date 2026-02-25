@@ -1,6 +1,6 @@
 import { CollapseList } from "rond";
 
-import type { CalcSetup } from "@/models/calculator";
+import type { CalcSetup } from "@/models";
 
 import { useTranslation } from "@/hooks";
 import { $AppData } from "@/services";
@@ -17,8 +17,8 @@ import {
   TeammateDebuffsView,
   WeaponBuffsView,
 } from "@/components";
-import { CustomBuffs, ElementBuffs, TeamBuffs } from "./buffs";
-import { CustomDebuffs, ElementDebuffs } from "./debuffs";
+import { CustomBuffs, ElementBuffs, TeamBuffs } from "./BuffComponents";
+import { CustomDebuffs, ElementDebuffs } from "./DebuffComponents";
 
 type SectionLayoutProps = {
   className?: string;
@@ -46,7 +46,7 @@ export function Modifiers({ setup }: ModifiersProps) {
   const { title, variant, statuses } = $AppData.getTargetInfo(target);
 
   return (
-    <div className="h-full px-4 flex space-x-4" onDoubleClick={() => console.log(setup)}>
+    <div className="h-full px-4 flex space-x-4" onDoubleClick={() => console.info(setup)}>
       <SectionLayout title="Debuffs used" className="w-76 flex flex-col">
         <CollapseList
           items={[

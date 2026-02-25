@@ -1,16 +1,17 @@
 import { useLayoutEffect, useMemo } from "react";
 import { useScreenWatcher } from "rond";
 
+import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
 import { CalculatorLarge, CalculatorSmall } from "@/screens/Calculator";
 import { $AppCharacter } from "@/services";
 import { Outlet, useRouter } from "@/systems/router";
-import { genAccountTravelerKey, selectTraveler } from "@Store/account-slice";
-import { useSelector } from "@Store/hooks";
+import { useSettingsStore } from "@Store/settings";
 
 export function Main() {
   const screenWatcher = useScreenWatcher();
   const router = useRouter();
-  const traveler = useSelector(selectTraveler);
+  const traveler = useSettingsStore((state) => state.traveler);
+  const travelerKey = useMemo(() => genAccountTravelerKey(traveler), [traveler]);
 
   const isMobile = !screenWatcher.isFromSize("sm");
   const isAtRoot = router.isRouteActive("/");
@@ -19,15 +20,13 @@ export function Main() {
     $AppCharacter.changeTraveler(traveler);
   }, []);
 
-  const travelerKey = useMemo(() => genAccountTravelerKey(traveler), [traveler]);
-
   if (isMobile) {
-    return isAtRoot ? <CalculatorSmall key={travelerKey} /> : <Outlet />;
+    return isAtRoot ? <CalculatorSmall key={travelerKey} /> : <Outlet key={travelerKey} />;
   }
 
   return (
-    <div className="h-full flex-center relative">
-      <CalculatorLarge key={travelerKey} />
+    <div key={travelerKey} className="h-full flex-center relative">
+      <CalculatorLarge />
 
       {!isAtRoot && (
         <div className="absolute inset-0 z-30">

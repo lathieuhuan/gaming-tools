@@ -1,22 +1,33 @@
-import { ReactNode } from "react";
-import { CheckboxProps, InputNumberProps, SelectProps } from "rond";
+import type { ReactElement, ReactNode } from "react";
+import type { CheckboxProps, InputNumberProps, SelectProps } from "rond";
 
-type CheckboxControlProps = CheckboxProps & {
+type CheckboxControlProps = {
   type: "CHECK";
+  controlProps: CheckboxProps;
 };
 
-type SelectControlProps = SelectProps & {
+type SelectControlProps = {
   type: "SELECT";
+  controlProps: SelectProps;
 };
 
-type InputControlProps = InputNumberProps & {
+type InputControlProps = {
   type: "INPUT";
+  controlProps: InputNumberProps;
 };
 
-export type SettingControlProps = (CheckboxControlProps | SelectControlProps | InputControlProps) & {
+type CustomControlProps = {
+  type: "CUSTOM";
+  control: ReactElement;
+};
+
+export type SettingControlProps = (
+  | CheckboxControlProps
+  | SelectControlProps
+  | InputControlProps
+  | CustomControlProps
+) & {
   label: ReactNode;
-  /** Only on SELECT type */
-  subType?: "LEVEL";
   /** Only on CHECK type */
   align?: "left" | "right";
   description?: string[];

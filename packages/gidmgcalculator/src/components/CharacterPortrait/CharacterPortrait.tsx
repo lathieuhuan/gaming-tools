@@ -13,7 +13,8 @@ const sizeCls: Partial<Record<PortraitSize, string>> = {
   medium: "w-18 h-18",
 };
 
-type CharacterPortraitProps = {
+type CharacterPortraitProps = React.AriaAttributes & {
+  id?: string;
   className?: ClassValue;
   imgCls?: ClassValue;
   info?: {
@@ -31,30 +32,42 @@ type CharacterPortraitProps = {
   onClick?: () => void;
 };
 
-export function CharacterPortrait(props: CharacterPortraitProps) {
-  const { info, size = "medium", zoomable = true, onClick } = props;
-  const { name, icon, vision } = info || {};
+export function CharacterPortrait({
+  id,
+  className,
+  imgCls,
+  info,
+  size = "medium",
+  zoomable = true,
+  recruitable,
+  withColorBg: withColorBgProp,
+  onClick,
+  ...ariaAttributes
+}: CharacterPortraitProps) {
+  const { code, icon, vision } = info || {};
 
-  const isTraveler = name ? $AppCharacter.checkIsTraveler({ name }) : false;
-  const { withColorBg = isTraveler } = props;
+  const isTraveler = code ? $AppCharacter.checkIsTraveler({ code }) : false;
+  const withColorBg = withColorBgProp ?? isTraveler;
 
   const cls = [
     "shrink-0 overflow-hidden rounded-circle",
     info && zoomable && "zoomin-on-hover",
     sizeCls[size],
     withColorBg && vision ? `bg-${vision}` : "bg-dark-3",
-    props.className,
+    className,
   ];
 
-  if (props.recruitable) {
+  if (recruitable) {
     return (
       <button
+        id={id}
         className={clsx(cls, !info && "flex-center glow-on-hover")}
         title={info?.name}
         onClick={onClick}
+        {...ariaAttributes}
       >
         {info ? (
-          <GenshinImage src={icon} imgType="character" imgCls={props.imgCls} fallbackCls="p-2" />
+          <GenshinImage src={icon} imgType="character" imgCls={imgCls} fallbackCls="p-2" />
         ) : (
           <FaPlus className="text-2xl" />
         )}
@@ -63,10 +76,8 @@ export function CharacterPortrait(props: CharacterPortraitProps) {
   }
 
   return (
-    <div className={clsx(cls)} title={info?.name} onClick={onClick}>
-      {info && (
-        <GenshinImage src={icon} imgType="character" imgCls={props.imgCls} fallbackCls="p-2" />
-      )}
+    <div id={id} className={clsx(cls)} title={info?.name} onClick={onClick} {...ariaAttributes}>
+      {info && <GenshinImage src={icon} imgType="character" imgCls={imgCls} fallbackCls="p-2" />}
     </div>
   );
 }

@@ -1,8 +1,9 @@
-import type { CalcSetup } from "@/models/calculator";
+import type { CalcSetup, CharacterCalc, TeammateCalc } from "@/models";
 import type {
   AttackElement,
   AttackPattern,
   AttributeStat,
+  AttributeTargetPath,
   BareBonus,
   BonusPerformTools,
   EntityBonus,
@@ -10,9 +11,7 @@ import type {
   EntityBuff,
   ReactionType,
 } from "@/types";
-import type { CharacterCalc, ReceivedAttributeBonus } from "../core/CharacterCalc";
 import type { IEffectPerformer } from "../types";
-import type { TeammateCalc } from "./TeammateCalc";
 
 import {
   AMPLIFYING_REACTIONS,
@@ -21,15 +20,13 @@ import {
   QUICKEN_REACTIONS,
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
-import { BonusCalc } from "@/models/base";
+import { BonusCalc } from "@/models";
 import Array_ from "@/utils/Array";
 import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";
 
 export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup: CalcSetup) {
-  main.initTotalAttr();
-
   const { team } = setup;
-  const { weapon, totalAttrCtrl, attkBonusCtrl } = main;
+  const { weapon, allAttrsCtrl, attkBonusCtrl } = main;
 
   // ↓↓↓↓↓ HELPERS ↓↓↓↓↓
 
@@ -47,18 +44,26 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
       bonus.value *= new BonusCalc(main, team, { inputs }).getStackValue(outsource.stacks);
     }
 
+    const getToStat = (path: AttributeTargetPath, inpIndex: number) => {
+      switch (path) {
+        case "INP_ELMT": {
+          const elmtIndex = inputs[inpIndex] ?? 0;
+          return ELEMENT_TYPES[elmtIndex];
+        }
+        case "P/H/E/C": {
+          return team.getPhecElmt();
+        }
+        default:
+          return path;
+      }
+    };
+
     for (const target of Array_.toArray(effect.targets)) {
       switch (target.module) {
         case "ATTR": {
           for (const targetPath of Array_.toArray(target.path)) {
-            let toStat: ReceivedAttributeBonus["toStat"];
-
-            if (targetPath === "INP_ELMT") {
-              const elmtIndex = inputs[target.inpIndex ?? 0] ?? 0;
-              toStat = ELEMENT_TYPES[elmtIndex];
-            } else {
-              toStat = targetPath;
-            }
+            const toStat = getToStat(targetPath, target.inpIndex ?? 0);
+            if (!toStat) continue;
 
             main.receiveAttrBonus({
               ...bonus,
@@ -190,7 +195,7 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
   for (const { category, type, subType, value } of setup.customBuffCtrls) {
     switch (category) {
       case "totalAttr":
-        totalAttrCtrl.applyBonus({
+        allAttrsCtrl.applyBonus({
           value,
           toStat: type as AttributeStat,
           label: "Custom buff",
@@ -198,7 +203,7 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
         break;
       case "attElmtBonus": {
         if (subType === "pct_") {
-          totalAttrCtrl.applyBonus({
+          allAttrsCtrl.applyBonus({
             value,
             toStat: type as AttributeStat,
             label: "Custom buff",
@@ -254,14 +259,14 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
         });
         break;
       case "cryo":
-        totalAttrCtrl.applyBonus({
+        allAttrsCtrl.applyBonus({
           value: 15,
           toStat: "cRate_",
           label: "Cryo resonance",
         });
         break;
       case "dendro":
-        totalAttrCtrl.applyBonus({
+        allAttrsCtrl.applyBonus({
           value: (inputs[0] ? 20 : 0) + (inputs[1] ? 30 : 0),
           toStat: "em",
           label: "Dendro resonance / Trigger Dendro reactions",
@@ -290,7 +295,7 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
         teammate.isPerformableEffect(ctrl.data)
       ) {
         const buff = ctrl.data;
-        const label = `${teammate.name} / ${buff.src}`;
+        const label = `${teammate.data.name} / ${buff.src}`;
         applyBonus(label, teammate, buff.effects, { inputs: ctrl.inputs });
       }
     }
@@ -327,9 +332,9 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
   applyAbilityBuffs(true);
   applyArtifactBuffs(true);
 
-  main.totalAttrs = totalAttrCtrl.finalize();
+  allAttrsCtrl.finalize();
 
-  const rxnBonuses = getRxnBonusesFromEM(main.totalAttrs.get("em"));
+  const rxnBonuses = getRxnBonusesFromEM(main.getAttr("em"));
 
   if (rxnBonuses.transformative) {
     for (const rxn of TRANSFORMATIVE_REACTIONS) {

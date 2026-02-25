@@ -1,20 +1,22 @@
 import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
-import { Badge, Button, Rarity, VersatileSelect } from "rond";
+import { Badge, Button, clsx, Rarity, VersatileSelect } from "rond";
 
-import type { Level } from "@/types";
+import type { AppCharacter, ICharacterBasic, Level } from "@/types";
 
-import { LEVELS } from "@/constants/global";
-import { CalcCharacter } from "@/models/base";
 import { EnhanceTag } from "../EnhanceTag";
 import { GenshinImage } from "../GenshinImage";
+import { CharacterLevelControl } from "../LevelControl";
 
 type CharacterIntroProps = {
   className?: string;
-  character: CalcCharacter;
+  character: ICharacterBasic & { data: AppCharacter };
   switchable?: boolean;
   removable?: boolean;
   /** Default true */
   mutable?: boolean;
+  ids?: {
+    enhanceTag?: string;
+  };
   onSwitch?: () => void;
   onRemove?: () => void;
   onChangeLevel?: (newLevel: Level) => void;
@@ -23,7 +25,7 @@ type CharacterIntroProps = {
 };
 
 export function CharacterIntro(props: CharacterIntroProps) {
-  const { className = "", character, mutable = true } = props;
+  const { className = "", character, mutable = true, ids } = props;
   const { data } = character;
   const elmtText = `text-${data.vision}`;
 
@@ -53,10 +55,12 @@ export function CharacterIntro(props: CharacterIntroProps) {
       <div className="min-w-0 grow">
         <div className="overflow-hidden">
           <h2
-            className={`text-2xl leading-7 truncate ${elmtText} font-black ${
-              props.removable ? "pr-9" : ""
-            }`}
-            onDoubleClick={() => console.log(character)}
+            className={clsx(
+              `text-2xl leading-7 truncate font-black`,
+              elmtText,
+              props.removable && "pr-9"
+            )}
+            onDoubleClick={() => console.info(character)}
           >
             {data.name}
           </h2>
@@ -64,9 +68,11 @@ export function CharacterIntro(props: CharacterIntroProps) {
           <div className="flex items-center">
             <Rarity value={data.rarity} />
 
+            <div hidden={!data.enhanceType} className="mx-2 w-px h-4 bg-dark-line" />
+
             <EnhanceTag
-              className="ml-2 pl-2 border-l border-dark-line"
-              mutable={props.mutable}
+              id={ids?.enhanceTag}
+              mutable={mutable}
               character={character}
               onToggle={() => props.onEnhanceToggle?.(!character.enhanced)}
             />
@@ -76,33 +82,32 @@ export function CharacterIntro(props: CharacterIntroProps) {
         <div className="mt-2 pl-1 flex justify-between items-center">
           <div className="flex items-center text-lg" aria-label="calculator_character-level">
             <label className="mr-1">Level</label>
-            <VersatileSelect
-              title="Select Level"
-              align="right"
-              transparent
-              showAllOptions
-              className={`w-[98px] shrink-0 ${elmtText} text-lg font-bold`}
-              dropdownCls="z-30"
-              options={LEVELS.map((_, i) => {
-                const item = LEVELS[LEVELS.length - 1 - i];
-                return { label: item, value: item };
-              })}
-              value={character.level}
-              onChange={(value) => props.onChangeLevel?.(value as Level)}
-            />
+            {mutable ? (
+              <CharacterLevelControl
+                className={`w-24 ${elmtText} text-lg font-bold`}
+                value={character.level}
+                onChange={(value) => props.onChangeLevel?.(value)}
+              />
+            ) : (
+              <p className={`${elmtText} text-lg font-bold`}>{character.level}</p>
+            )}
           </div>
 
-          <VersatileSelect
-            title="Select Constellation"
-            className={`ml-auto w-14 text-lg ${elmtText} font-bold bg-dark-2`}
-            align="right"
-            options={Array.from({ length: 7 }, (_, i) => ({
-              label: `C${i}`,
-              value: i,
-            }))}
-            value={character.cons}
-            onChange={(newCons) => props.onChangeCons?.(newCons as number)}
-          />
+          {mutable ? (
+            <VersatileSelect
+              title="Select Constellation"
+              className={`ml-auto w-14 text-lg ${elmtText} font-bold bg-dark-2`}
+              align="right"
+              options={Array.from({ length: 7 }, (_, i) => ({
+                label: `C${i}`,
+                value: i,
+              }))}
+              value={character.cons}
+              onChange={(newCons) => props.onChangeCons?.(newCons)}
+            />
+          ) : (
+            <p className={`ml-auto text-lg ${elmtText} font-bold`}>C{character.cons}</p>
+          )}
         </div>
       </div>
 

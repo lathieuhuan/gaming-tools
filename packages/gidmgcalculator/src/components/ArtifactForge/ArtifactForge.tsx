@@ -4,9 +4,9 @@ import { ButtonGroup, FancyBackSvg, Modal, useValues } from "rond";
 
 import type { AppArtifact, ArtifactType, IArtifact } from "@/types";
 
-import { Artifact } from "@/models/base";
+import { Artifact } from "@/models";
 import { $AppArtifact } from "@/services";
-import { createArtifact } from "@/utils/entity";
+import { createArtifact } from "@/logic/entity.logic";
 
 // Component
 import {
@@ -237,7 +237,7 @@ const ArtifactSmith = ({
     <AppEntitySelect
       title={<p className="text-base sm:text-xl leading-7">Artifact Forge</p>}
       data={artifactOptions}
-      initialChosenCode={workpiece?.code}
+      initialActiveCode={workpiece?.code}
       emptyText="No artifacts found"
       hasSearch
       renderOptionConfig={(afterSelect, selectBody) => {

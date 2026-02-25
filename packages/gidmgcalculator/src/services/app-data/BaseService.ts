@@ -1,26 +1,35 @@
-import type { StandardResponse } from "../services.types";
+import type { StandardResponse } from "../types";
 
-export async function fetchData<T, E = unknown>(
+class CustomError extends Error {
+  constructor(public code: number, public message: string) {
+    super(message);
+  }
+}
+
+type Response = {
+  data: unknown;
+};
+
+export async function customFetch<T, E = unknown>(
   url: string,
-  options?: { processData?: (res: any) => T; processError?: (res: E) => string }
+  options?: { processData?: (res: Response) => T; processError?: (res: E) => string }
 ): StandardResponse<T> {
   const { processData, processError } = options || {};
 
-  return await fetch(url)
+  return fetch(url)
     .then(async (res) => {
-      const response = await res.json();
+      const response = (await res.json()) as Response;
 
       if (res.ok) {
         return {
           code: 200,
-          data: processData ? processData(response) : response?.data || null,
+          data: processData ? processData(response) : (response?.data as T) || null,
         };
       }
 
-      throw {
-        code: res.status,
-        message: processError?.(response),
-      };
+      const errorMessage = processError?.(response as E) || "Unknown error";
+
+      throw new CustomError(res.status, errorMessage);
     })
     .catch((err) => {
       const { code = 500, message = "Error" } = err || {};

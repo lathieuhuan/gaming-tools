@@ -1,18 +1,18 @@
 import { useEffect, useMemo } from "react";
 
 import type { IDbItem, IDbSetup } from "@/types";
-import { isDbSetup } from "@/utils/setup";
+import { isDbSetup } from "@/logic/setup.logic";
 import Array_ from "@/utils/Array";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUserArtifact, updateUserWeapon, selectUserSetups } from "@Store/userdb-slice";
+import { updateDbArtifact, updateDbWeapon, selectDbSetups } from "@Store/userdbSlice";
 
 export type BoundingItem = Pick<IDbItem, "ID" | "setupIDs">;
 
 export function useItemBoundSetups(item?: BoundingItem, isWeapon?: boolean): IDbSetup[] {
   const dispatch = useDispatch();
-  const userSetups = useSelector(selectUserSetups);
+  const userSetups = useSelector(selectDbSetups);
 
   const result = useMemo(() => {
     if (!item) {
@@ -60,7 +60,7 @@ export function useItemBoundSetups(item?: BoundingItem, isWeapon?: boolean): IDb
         ID: item.ID,
         setupIDs: result.validSetupIDs,
       };
-      result.isWeapon ? dispatch(updateUserWeapon(changes)) : dispatch(updateUserArtifact(changes));
+      result.isWeapon ? dispatch(updateDbWeapon(changes)) : dispatch(updateDbArtifact(changes));
     }
   }, [result]);
 

@@ -3,8 +3,8 @@ import { FaSave, FaSyncAlt, FaToolbox } from "react-icons/fa";
 import { Button, PouchSvg, TrashCanSvg, VersatileSelect } from "rond";
 
 import { useTranslation } from "@/hooks";
-import { Artifact } from "@/models/base";
-import { suffixOf } from "@/utils";
+import { Artifact } from "@/models";
+import { suffixOf } from "@/utils/pure.utils";
 import { removeArtifactPiece, updateArtifactPiece } from "@Store/calculator/actions";
 
 // Component
@@ -40,7 +40,7 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
   };
 
   return (
-    <div className="pt-4 px-2 space-y-2" onDoubleClick={() => console.log(artifact)}>
+    <div className="pt-4 px-2 space-y-2" onDoubleClick={() => console.info(artifact)}>
       <div className="pl-1 flex items-start gap-4">
         <ArtifactLevelSelect
           mutable

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { SelectOption, VersatileSelect } from "rond";
 
 import type { ElementType, ElementalEvent } from "@/types";
-import type { CalcCharacter } from "@/models/base";
+import type { CharacterCalc } from "@/models";
 
 import { updateElementalEvent } from "@Store/calculator/actions";
 
@@ -11,7 +11,7 @@ import { AttackReactionCtrl } from "./AttackReactionCtrl";
 
 type AnemoAbsorptionCtrlProps = {
   elmtEvent: ElementalEvent;
-  character: CalcCharacter;
+  character: CharacterCalc;
 };
 
 export function AnemoAbsorptionCtrl({ elmtEvent, character }: AnemoAbsorptionCtrlProps) {
@@ -51,7 +51,7 @@ export function AnemoAbsorptionCtrl({ elmtEvent, character }: AnemoAbsorptionCtr
         onToggle={onToggleAbsorption}
       />
       <div className="pt-2 pb-1 pr-1 flex items-center justify-end">
-        <span className="mr-4 text-base leading-6 text-right">Swirled /Absorbed Element</span>
+        <span className="mr-4 text-base leading-6 text-right">Swirled/Absorbed Element</span>
         <VersatileSelect
           title="Select Absorbed Element"
           className="w-24 h-8 font-bold capitalize"

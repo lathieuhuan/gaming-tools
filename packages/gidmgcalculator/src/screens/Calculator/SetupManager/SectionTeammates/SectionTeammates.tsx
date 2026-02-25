@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import { CollapseSpace, message } from "rond";
 
 import { useShallowCalcStore } from "@Store/calculator";
+import { removeTeammate, setTeammate } from "@Store/calculator/actions";
 import { selectSetup, selectSetupManager } from "@Store/calculator/selectors";
-import { setTeammate, removeTeammate } from "@Store/calculator/actions";
+import { isTourFinished } from "@Store/tours";
+import { updateUI } from "@Store/ui";
 
 // Component
 import { CharacterPortrait, Tavern, TavernProps } from "@/components";
-import { Section } from "../_components/Section";
+import { Section } from "../components/Section";
 import { CopySelect } from "./CopySelect";
-import { TeammateGear } from "./TeammateGear";
+import { TeammateDetail } from "./TeammateDetail";
 import { TeammateSlot } from "./TeammateSlot";
 
 type TavernState = {
@@ -17,7 +19,7 @@ type TavernState = {
   recruitIndex: number | null;
 };
 
-export default function SectionTeammates() {
+export function SectionTeammates() {
   //
   const { isCombinedSetup, teammates, mainData } = useShallowCalcStore((state) => {
     const manager = selectSetupManager(state);
@@ -79,10 +81,13 @@ export default function SectionTeammates() {
 
   const handleRecruitTeammate: TavernProps["onSelectCharacter"] = ({ data }) => {
     const { recruitIndex } = tavern;
+    if (recruitIndex === null) return;
 
-    if (recruitIndex !== null) {
-      setTeammate(data, recruitIndex);
-      setSelectedIndex(recruitIndex);
+    setTeammate(data, recruitIndex);
+    setSelectedIndex(recruitIndex);
+
+    if (!isTourFinished("CHAR_ENHANCE") && data.enhanceType) {
+      updateUI({ appModalType: "CHAR_ENHANCE_NOTICE" });
     }
   };
 
@@ -99,7 +104,7 @@ export default function SectionTeammates() {
 
             return (
               <TeammateSlot
-                key={teammate.name}
+                key={teammate.code}
                 active={active}
                 teammate={teammate}
                 onSelect={() => setSelectedIndex(active ? null : tmIndex)}
@@ -116,7 +121,7 @@ export default function SectionTeammates() {
 
           return (
             <div
-              key={tmIndex}
+              key={`empty-${tmIndex}`}
               className="flex justify-center items-end"
               style={{ height: "5.25rem" }}
             >
@@ -132,7 +137,7 @@ export default function SectionTeammates() {
 
       <CollapseSpace active={selectedIndex !== null}>
         {selectedTeammate && selectedIndex !== null && (
-          <TeammateGear teammate={selectedTeammate} info={selectedTeammate.data} />
+          <TeammateDetail teammate={selectedTeammate} info={selectedTeammate.data} />
         )}
       </CollapseSpace>
 
@@ -140,7 +145,7 @@ export default function SectionTeammates() {
         active={tavern.active}
         sourceType="app"
         filter={(character) =>
-          character.name !== mainData.name && teammates.every((tm) => tm?.name !== character.name)
+          character.code !== mainData.code && teammates.every((tm) => tm?.code !== character.code)
         }
         onSelectCharacter={handleRecruitTeammate}
         onClose={closeTavern}

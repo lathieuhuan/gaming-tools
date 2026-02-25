@@ -1,17 +1,17 @@
 import { useMemo } from "react";
 import { Badge, VersatileSelect, clsx, type ClassValue } from "rond";
 
-import type { Weapon } from "@/models/base";
+import type { Weapon } from "@/models";
 import type { Level } from "@/types";
 
-import { WEAPON_LEVELS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { $AppWeapon } from "@/services";
-import { genSequentialOptions, suffixOf } from "@/utils";
-import { parseWeaponDesc } from "@/utils/description-parsers";
+import { genSequentialOptions, suffixOf } from "@/utils/pure.utils";
+import { parseWeaponDesc } from "@/utils/descriptionParsers";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
+import { WeaponLevelControl } from "../LevelControl";
 
 const groupStyles = "bg-dark-2 px-3";
 
@@ -43,31 +43,22 @@ export function WeaponView<T extends Weapon>({
   if (!weapon || !appWeapon) return null;
 
   const { rarity, subStat } = appWeapon;
-  const selectLevels = rarity < 3 ? WEAPON_LEVELS.slice(0, -4) : WEAPON_LEVELS;
 
   return (
-    <div className={clsx("w-full", className)} onDoubleClick={() => console.log(weapon)}>
+    <div className={clsx("w-full", className)} onDoubleClick={() => console.info(weapon)}>
       <p className={`text-1.5xl text-rarity-${rarity} font-semibold`}>{appWeapon.name}</p>
 
       <div className="mt-2 flex">
         {/* left */}
         <div className="flex flex-col grow justify-between space-y-1">
           <div className={"pt-1 grow flex items-center " + groupStyles}>
-            <p className="mr-1 text-lg font-semibold">Level</p>
+            <p className="mr-2 text-lg font-semibold">Level</p>
             {mutable ? (
-              <VersatileSelect
-                title="Select Level"
-                className={`text-rarity-${rarity} font-bold`}
-                style={{ width: "4.75rem " }}
-                size="medium"
-                align="right"
-                transparent
-                options={selectLevels.map((_, i) => {
-                  const item = selectLevels[selectLevels.length - 1 - i];
-                  return { label: item, value: item };
-                })}
+              <WeaponLevelControl
+                className={`w-19 text-lg text-rarity-${rarity} font-bold`}
+                rarity={rarity}
                 value={weapon.level}
-                onChange={(value) => upgrade && upgrade(value as Level, weapon)}
+                onChange={(value) => upgrade?.(value, weapon)}
               />
             ) : (
               <p className={`text-lg text-rarity-${rarity} font-bold`}>{weapon.level}</p>

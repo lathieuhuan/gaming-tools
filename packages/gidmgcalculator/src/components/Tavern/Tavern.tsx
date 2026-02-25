@@ -6,7 +6,7 @@ import type { AppCharacter, IDbCharacter } from "@/types";
 import { $AppCharacter } from "@/services";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import Array_ from "@/utils/Array";
-import { selectDbCharacters } from "@Store/userdb-slice";
+import { selectDbCharacters } from "@Store/userdbSlice";
 
 // Component
 import {
@@ -66,7 +66,7 @@ const TavernHall = ({
         break;
       case "user":
         for (const userChar of userChars) {
-          const data = $AppCharacter.get(userChar.name);
+          const data = $AppCharacter.get(userChar.code);
           if (!data) continue;
 
           const option: CharacterOption = {
@@ -86,7 +86,7 @@ const TavernHall = ({
         break;
       case "mixed":
         for (const data of $AppCharacter.getAll()) {
-          const userChar = Array_.findByName(userChars, data.name);
+          const userChar = userChars.find((char) => char.code === data.code);
           const option: CharacterOption = {
             name: data.name,
             beta: data.beta,

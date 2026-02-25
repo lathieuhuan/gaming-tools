@@ -33,6 +33,7 @@ export type ModifierViewInputConfig =
   | ModifierViewInputSelectConfig;
 
 export type ModifierViewProps = {
+  id?: string;
   className?: ClassValue;
   mutable?: boolean;
   /** Default 'toggle' if mutable is true, to 'view' if mutable is false */
@@ -50,6 +51,7 @@ export type ModifierViewProps = {
 };
 
 export const ModifierView = ({
+  id,
   className,
   mutable,
   headingVariant = mutable ? "toggle" : "view",
@@ -131,7 +133,7 @@ export const ModifierView = ({
   }
 
   return (
-    <div className={cn("text-white", className)}>
+    <div id={id} className={cn("text-white", className)}>
       <div className="mb-1 flex justify-between items-start gap-2 font-semibold text-primary-1">
         {headingNode}
         {headingSuffix}

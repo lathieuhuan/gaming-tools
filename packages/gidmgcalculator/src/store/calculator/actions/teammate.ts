@@ -1,23 +1,20 @@
-import { Team, type Artifact, type Weapon } from "@/models/base";
+import type { Artifact, CalcSetup, Weapon } from "@/models";
 import type { AppCharacter, ITeammateArtifact, ITeammateWeapon } from "@/types";
 import type { ForwardedAction } from "../types";
 
-import {
-  type CalcSetup,
-  createArtifactBuffCtrls,
-  createWeaponBuffCtrls,
-} from "@/models/calculator";
+import { createArtifactBuffCtrls, createWeaponBuffCtrls } from "@/logic/modifier.logic";
+import { Team } from "@/models";
 import Object_ from "@/utils/Object";
-import { useCalcStore } from "../calculator-store";
+import { useSettingsStore } from "@Store/settings";
+import { useCalcStore } from "../calculatorStore";
 import { onActiveSetup } from "../utils";
-import { $AppSettings } from "@/services";
 
 export const setTeammate = (teammate: AppCharacter, index: number) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
-      const { charEnhanced } = $AppSettings.get();
+      const { charEnhanced } = useSettingsStore.getState();
 
-      setup.setTeammate({ name: teammate.name, enhanced: charEnhanced }, index, teammate);
+      setup.setTeammate({ code: teammate.code, enhanced: charEnhanced }, index, teammate);
     })
   );
 };
@@ -30,7 +27,7 @@ export const updateTeammate: ForwardedAction<CalcSetup["updateTeammate"]> = (...
   );
 };
 
-export const toggleTeammateEnhance = (tmCode: number) => {
+export const toggleTeammateEnhance = (tmCode: number, enhanced?: boolean) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
       const teammate = setup.teammates.find((teammate) => teammate.data.code === tmCode);
@@ -40,7 +37,7 @@ export const toggleTeammateEnhance = (tmCode: number) => {
       }
 
       setup.updateTeammate(tmCode, {
-        enhanced: !teammate.enhanced,
+        enhanced: enhanced ?? !teammate.enhanced,
       });
 
       setup.team = new Team([setup.main, ...setup.teammates]);

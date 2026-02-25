@@ -1,18 +1,16 @@
-import type { CalcSetup } from "@/models/calculator";
+import type { CalcSetup, TeammateCalc, CharacterCalc } from "@/models";
 import type { ElementType, EntityDebuff, EntityPenaltyTarget, ResistReductionKey } from "@/types";
-import type { CalcTarget } from "../core/CalcTarget";
-import type { CharacterCalc } from "../core/CharacterCalc";
+import type { TargetCalc } from "../../models/TargetCalc";
 import type { IEffectPerformer } from "../types";
-import type { TeammateCalc } from "./TeammateCalc";
 
-import { ELEMENT_TYPES } from "@/constants/global";
+import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants/global";
 import Array_ from "@/utils/Array";
 
 export function applyDebuffs(
   main: CharacterCalc,
   teammates: TeammateCalc[],
   setup: CalcSetup,
-  target: CalcTarget
+  target: TargetCalc
 ) {
   const { team } = setup;
 
@@ -35,7 +33,7 @@ export function applyDebuffs(
           break;
         }
         case "XILONEN": {
-          const elmts: ElementType[] = ["pyro", "hydro", "cryo", "electro"];
+          const elmts: ElementType[] = [...PHEC_ELEMENT_TYPES];
           const { elmtCount } = team;
 
           elmtCount.forEach((elmt) => {
@@ -91,13 +89,12 @@ export function applyDebuffs(
 
   // APPLY TEAMMATE DEBUFFS
   for (const teammate of teammates) {
-    const { name, debuffs = [] } = teammate.data;
-
+    //
     for (const ctrl of teammate.debuffCtrls) {
-      const debuff = Array_.findByIndex(debuffs, ctrl.data.index);
-
-      if (ctrl.activated && debuff && team.isAvailableEffect(debuff)) {
-        applyPenalty(`${name} / ${debuff.src}`, teammate, debuff.effects, ctrl.inputs);
+      if (ctrl.activated && team.isAvailableEffect(ctrl.data)) {
+        const debuff = ctrl.data;
+        const label = `${teammate.data.name} / ${debuff.src}`;
+        applyPenalty(label, teammate, debuff.effects, ctrl.inputs);
       }
     }
   }

@@ -2,13 +2,13 @@ import { useRef } from "react";
 import isEqual from "react-fast-compare";
 import { ConfirmModal, Modal } from "rond";
 
-import type { Artifact } from "@/models/base";
+import type { Artifact } from "@/models";
 
 import { MAX_USER_ARTIFACTS } from "@/constants/config";
 import { useStoreSnapshot } from "@/systems/dynamic-store";
 import Array_ from "@/utils/Array";
 import { useDispatch } from "@Store/hooks";
-import { addUserArtifact, selectDbArtifacts, updateUserArtifact } from "@Store/userdb-slice";
+import { addDbArtifact, selectDbArtifacts, updateDbArtifact } from "@Store/userdbSlice";
 
 type SaveConfirmProps = {
   artifact: Artifact;
@@ -28,7 +28,7 @@ function SaveConfirm({ artifact, onClose }: SaveConfirmProps) {
     } else if (existedArtifact) {
       state.current = "PENDING";
     } else {
-      dispatch(addUserArtifact(artifact));
+      dispatch(addDbArtifact(artifact));
       state.current = "SUCCESS";
     }
   }
@@ -69,7 +69,7 @@ function SaveConfirm({ artifact, onClose }: SaveConfirmProps) {
 
       const addNew = () => {
         dispatch(
-          addUserArtifact({
+          addDbArtifact({
             ...artifact.serialize(),
             ID: Date.now(),
           })
@@ -95,7 +95,7 @@ function SaveConfirm({ artifact, onClose }: SaveConfirmProps) {
       }
 
       const overwrite = () => {
-        dispatch(updateUserArtifact(artifact.serialize()));
+        dispatch(updateDbArtifact(artifact.serialize()));
         onClose();
       };
 

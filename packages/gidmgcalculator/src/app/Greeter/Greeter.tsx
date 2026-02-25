@@ -4,10 +4,9 @@ import { Button, clsx, Modal, Skeleton } from "rond";
 
 import type { AppMetadata } from "./types";
 
-import { $AppSettings } from "@/services";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { updateUI } from "@Store/ui-slice";
-import { $Greeter } from "./_logic/GreeterService";
+import { useSettingsStore } from "@Store/settings";
+import { updateUI, useUIStore } from "@Store/ui";
+import { $Greeter } from "./logic/GreeterService";
 
 // Components
 import { Introduction } from "./Introduction";
@@ -21,8 +20,7 @@ type State = {
 };
 
 export const Greeter = () => {
-  const dispatch = useDispatch();
-  const appModalType = useSelector((state) => state.ui.appModalType);
+  const appModalType = useUIStore((state) => state.appModalType);
 
   const [state, setState] = useState<State>({
     status: "loading",
@@ -37,7 +35,7 @@ export const Greeter = () => {
       });
     }
 
-    const error = await $Greeter.fetchAllData();
+    const error = await $Greeter.getAllData();
 
     if (error) {
       setState({
@@ -50,20 +48,24 @@ export const Greeter = () => {
         status: "success",
         metadata: $Greeter.metadata,
       });
-      dispatch(updateUI({ appReady: true }));
+      updateUI({ appReady: true });
     }
   };
 
   useLayoutEffect(() => {
-    dispatch(updateUI({ appModalType: "INTRO" }));
-    getMetadata();
+    updateUI({ appModalType: "INTRO" });
+
+    void getMetadata();
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if ($AppSettings.get("askBeforeUnload")) {
+      const { askBeforeUnload } = useSettingsStore.getState();
+
+      if (askBeforeUnload) {
         e.preventDefault();
         return (e.returnValue = "Are you sure you want to exit?");
       }
     };
+
     window.addEventListener("beforeunload", handleBeforeUnload, { capture: true });
 
     return () => {
@@ -124,7 +126,7 @@ export const Greeter = () => {
             isError={state.status === "error"}
             error={state.error}
             cooldown={state.cooldown}
-            onRefetch={getMetadata}
+            onRefetch={() => void getMetadata()}
           />
 
           {/* <div className="mb-1 text-center text-light-1 text-base font-normal">
@@ -141,7 +143,7 @@ export const Greeter = () => {
         </>
       }
       closable={state.status === "success"}
-      onClose={() => dispatch(updateUI({ appModalType: "" }))}
+      onClose={() => updateUI({ appModalType: "" })}
     >
       <Introduction className="grow" metadata={state.metadata} loading={isLoading} />
 

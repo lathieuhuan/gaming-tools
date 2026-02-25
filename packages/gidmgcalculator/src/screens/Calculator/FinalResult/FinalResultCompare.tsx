@@ -1,18 +1,14 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaLongArrowAltUp } from "react-icons/fa";
-import { Select, clsx } from "rond";
+import { Select, clsx, useScreenWatcher } from "rond";
 
-import type { CalcResult } from "@/calculation/calculator/types";
+import type { CalcResult } from "@/calculation/calculator";
 import type { CalcAspect, CalcResultItemValue } from "@/calculation/types";
-import type { TalentType } from "@/types";
-import type { CalculatorState } from "@Store/calculator/types";
 
 import { displayValues } from "@/components/FinalResultView";
-import { TALENT_TYPES } from "@/constants/global";
-import Array_ from "@/utils/Array";
-import Object_ from "@/utils/Object";
-import { useShallowCalcStore } from "@Store/calculator";
+import { SLOT_NAME } from "@/constants";
 import { updateMain } from "@Store/calculator/actions";
+import { useLayoutProps } from "./hooks/useLayoutProps";
 
 import { FinalResultLayout, type FinalResultLayoutProps } from "@/components";
 
@@ -35,16 +31,54 @@ type FinalResultCompareProps = {
 
 export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const isMobile = !useScreenWatcher().isFromSize("md");
   const [focusedAspect, setFocusedAspect] = useState<CalcAspect>("average");
+  const [activeDiffCell, setActiveDiffCell] = useState({
+    setupId: 0,
+    subKey: "",
+  });
 
   const { setupIds, standardId, setupsById, ...layoutProps } = useLayoutProps(comparedIds);
 
+  useEffect(() => {
+    if (isMobile) {
+      const handleClickOutside = (e: MouseEvent) => {
+        const { target } = e;
+        const diffCellElmt =
+          target instanceof Element
+            ? target.closest(`[data-slot="${SLOT_NAME.resultDiffCell}"]`)
+            : null;
+
+        if (!diffCellElmt) {
+          setActiveDiffCell({ setupId: 0, subKey: "" });
+        }
+      };
+
+      document.addEventListener("click", handleClickOutside);
+
+      return () => {
+        document.removeEventListener("click", handleClickOutside);
+      };
+    }
+  }, [isMobile]);
+
   const getValues = (setupId: number, mainKey: keyof CalcResult, subKey: string) => {
-    return setupsById[setupId].result[mainKey][subKey].values;
+    // Can be undefined in weapon DMG calc when the standard setup has weapon dealing DMG
+    // and compared setups don't.
+    return setupsById[setupId].result[mainKey]?.[subKey]?.values || [];
   };
 
   const getComparedValue = (values: CalcResultItemValue[]) => {
     return values.at(0)?.[focusedAspect] || 0;
+  };
+
+  const handleClickDiffCell = (setupId: number, subKey: string) => {
+    if (isMobile) {
+      setActiveDiffCell({
+        setupId,
+        subKey,
+      });
+    }
   };
 
   return (
@@ -57,7 +91,7 @@ export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
           transparent
           options={CALC_ASPECT_OPTIONS}
           value={focusedAspect}
-          onChange={(value) => setFocusedAspect(value as CalcAspect)}
+          onChange={(value) => setFocusedAspect(value)}
           getPopupContainer={() => containerRef.current!}
         />
       </div>
@@ -77,7 +111,7 @@ export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
           getRowConfig={(mainKey, subKey) => {
             const standardValues = getValues(standardId, mainKey, subKey);
 
-            const cells = setupIds.map<CellConfig>((id, index) => {
+            const cells = setupIds.map<CellConfig>((setupId, index) => {
               if (!index) {
                 return {
                   value: displayValues(standardValues, focusedAspect),
@@ -85,7 +119,7 @@ export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
                 };
               }
 
-              const values = getValues(id, mainKey, subKey);
+              const values = getValues(setupId, mainKey, subKey);
               const comparedStandardValue = getComparedValue(standardValues);
               const diff = getComparedValue(values) - comparedStandardValue;
               const percenttDiff = comparedStandardValue
@@ -98,6 +132,12 @@ export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
                   className: "text-right",
                 };
               }
+
+              const diffCls = isMobile
+                ? setupId === activeDiffCell.setupId && subKey === activeDiffCell.subKey
+                  ? "block"
+                  : "hidden"
+                : "hidden group-hover:block";
 
               return {
                 value: displayValues(values, focusedAspect),
@@ -116,7 +156,8 @@ export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
                     />
                     <span
                       className={clsx(
-                        "absolute bottom-1/2 right-5 z-10 mb-2.5 pt-1 px-2 pb-0.5 rounded font-semibold bg-black shadow-popup hidden group-hover:block",
+                        "absolute bottom-1/2 right-5 z-10 mb-2.5 pt-1 px-2 pb-0.5 rounded font-semibold bg-black shadow-popup",
+                        diffCls,
                         diff > 0 ? "text-bonus" : "text-danger-2"
                       )}
                     >
@@ -125,6 +166,8 @@ export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
                     </span>
                   </>
                 ),
+                "data-slot": SLOT_NAME.resultDiffCell,
+                onClick: () => handleClickDiffCell(setupId, subKey),
               };
             });
 
@@ -134,69 +177,4 @@ export function FinalResultCompare({ comparedIds }: FinalResultCompareProps) {
       </div>
     </div>
   );
-}
-
-type UseLayoutPropsReturn = Pick<
-  FinalResultLayoutProps,
-  "showWeaponCalc" | "headerConfigs" | "character"
-> &
-  Pick<CalculatorState, "setupsById" | "standardId"> & {
-    setupIds: number[];
-  };
-
-function useLayoutProps(comparedIds: number[]): UseLayoutPropsReturn {
-  const { setupManagers, setupsById, standardId } = useShallowCalcStore((state) =>
-    Object_.pickProps(state, ["setupManagers", "setupsById", "standardId"])
-  );
-
-  const standardWeapon = setupsById[standardId].main.weapon.code;
-  const showWeaponCalc = comparedIds.some(
-    (id) => setupsById[id].main.weapon.code !== standardWeapon
-  );
-  const setupIds = [standardId].concat(comparedIds.filter((id) => id !== standardId));
-
-  const talent = {} as Record<TalentType, { areSame: boolean; levels: number[] }>;
-
-  for (const talentType of TALENT_TYPES) {
-    const levels = setupIds.map((id) => setupsById[id].main.getFinalTalentLv(talentType));
-
-    talent[talentType] = {
-      areSame: new Set(levels).size === 1,
-      levels,
-    };
-  }
-
-  const headerConfigs: UseLayoutPropsReturn["headerConfigs"] = setupIds.map((id, setupIndex) => {
-    const text = Array_.findById(setupManagers, id)?.name || "";
-
-    return {
-      content: (talentType) => {
-        const talentCalc = talentType ? talent[talentType] : undefined;
-        const talentLevel =
-          talentCalc && !talentCalc.areSame ? talentCalc.levels[setupIndex] : undefined;
-
-        if (talentLevel) {
-          return (
-            <div className="flex flex-col items-center">
-              <span>{text}</span>
-              <span className="px-1 rounded-sm text-xs font-bold text-secondary-1">
-                Lv.{talentLevel}
-              </span>
-            </div>
-          );
-        }
-
-        return text;
-      },
-    };
-  });
-
-  return {
-    character: setupsById[standardId].main,
-    showWeaponCalc,
-    headerConfigs,
-    setupIds,
-    standardId,
-    setupsById,
-  };
 }

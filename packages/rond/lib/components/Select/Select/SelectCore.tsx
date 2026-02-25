@@ -1,4 +1,4 @@
-import { default as RcSelect } from "rc-select";
+import RcSelect from "rc-select";
 
 import { cn } from "@lib/utils";
 import { ChevronDownSvg } from "../../svg-icons";

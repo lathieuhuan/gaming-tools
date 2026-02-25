@@ -10,8 +10,8 @@ import type { LunarType } from "@/types";
 
 import { LUNAR_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { AttackBonusControl } from "@/models/base";
-import { round, suffixOf } from "@/utils";
+import { AttackBonusControl } from "@/models";
+import { round, suffixOf } from "@/utils/pure.utils";
 import Object_ from "@/utils/Object";
 
 import { markGreen } from "@/components";
@@ -177,8 +177,8 @@ export function CalcItemTracker({
     ];
   };
 
-  const renderRecord = (name: string, item: CalcResultItem) => {
-    if (!item.values[0].base) {
+  const renderRecord = (name: string, item?: CalcResultItem) => {
+    if (!item?.values[0]?.base) {
       return null;
     }
 
@@ -190,13 +190,10 @@ export function CalcItemTracker({
     let text = "";
 
     if (item.type === "attack") {
-      // TODO improve this
       const parts = [
-        item.attElmt !== "absorb"
-          ? LUNAR_TYPES.includes(item.attElmt as LunarType)
-            ? t(item.attElmt)
-            : t(`${item.attElmt}_attElmt`)
-          : "",
+        LUNAR_TYPES.includes(item.attElmt as LunarType)
+          ? t(item.attElmt)
+          : t(`${item.attElmt}_attElmt`),
         item.attPatt !== "none" && t(item.attPatt),
       ].filter(Boolean);
 

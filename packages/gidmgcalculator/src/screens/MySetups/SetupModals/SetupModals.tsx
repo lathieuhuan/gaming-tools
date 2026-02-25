@@ -1,10 +1,10 @@
 import { ConfirmModal, Modal } from "rond";
 
-import type { CalcSetup } from "@/models/calculator";
+import type { CalcSetup } from "@/models";
 
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectMySetupModalType, updateUI } from "@Store/ui-slice";
-import { removeSetup } from "@Store/userdb-slice";
+import { useDispatch } from "@Store/hooks";
+import { updateUI, useUIStore } from "@Store/ui";
+import { removeDbSetup } from "@Store/userdbSlice";
 
 // Component
 import {
@@ -23,12 +23,12 @@ type SetupModalsProps = {
 
 export function SetupModals({ setupName, setup }: SetupModalsProps) {
   const dispatch = useDispatch();
-  const modalType = useSelector(selectMySetupModalType);
+  const modalType = useUIStore((state) => state.mySetupsModalType);
 
-  const { weapon, atfGear, totalAttrs } = setup.main;
+  const { weapon, atfGear, allAttrsCtrl } = setup.main;
 
   const closeModal = () => {
-    dispatch(updateUI({ mySetupsModalType: "" }));
+    updateUI({ mySetupsModalType: "" });
   };
 
   return (
@@ -42,16 +42,12 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
           </>
         }
         focusConfirm
-        onConfirm={() => dispatch(removeSetup(setup.ID))}
+        onConfirm={() => dispatch(removeDbSetup(setup.ID))}
         onClose={closeModal}
       />
 
       <Modal.Core active={modalType === "SHARE_SETUP"} preset="small" onClose={closeModal}>
-        <SetupExporter
-          setupName={setupName}
-          calcSetup={setup}
-          onClose={closeModal}
-        />
+        <SetupExporter setupName={setupName} calcSetup={setup} onClose={closeModal} />
       </Modal.Core>
 
       <Modal
@@ -102,7 +98,7 @@ export function SetupModals({ setupName, setup }: SetupModalsProps) {
           <div className="w-76 flex flex-col shrink-0">
             <p className="text-lg text-center font-semibold">Final Attributes</p>
             <div className="mt-1 custom-scrollbar">
-              <AttributeTable attributes={totalAttrs} />
+              <AttributeTable attributes={allAttrsCtrl.finals} />
             </div>
           </div>
 

@@ -1,13 +1,15 @@
 import { Fragment } from "react";
 
+import { ENHANCE_TOUR_SITE_ID } from "@/constants/ui";
 import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 import { useResonanceCtrlGroup } from "./_hooks/useResonanceCtrlGroup";
 import { useTeamBuffCtrlGroup } from "./_hooks/useTeamBuffCtrlGroup";
 
-import { GenshinModifierView } from "@/components";
-import { SECRET_RITE_BUFF_CONFIG } from "@/components/modifier-item/configs";
 import type { ControlGroup } from "./types";
+
+import { GenshinModifierView } from "@/components";
+import { SECRET_RITE_BUFF_CONFIG } from "@/components/ModifierItems/config";
 
 export function BuffTeamBonus() {
   const team = useCalcStore((state) => selectSetup(state).team);
@@ -17,7 +19,13 @@ export function BuffTeamBonus() {
       ? {
           isEmpty: false,
           key: "witch-rite",
-          render: () => <GenshinModifierView mutable={false} {...SECRET_RITE_BUFF_CONFIG} />,
+          render: () => (
+            <GenshinModifierView
+              mutable={false}
+              id={ENHANCE_TOUR_SITE_ID.secretRiteBuff}
+              {...SECRET_RITE_BUFF_CONFIG}
+            />
+          ),
         }
       : {
           isEmpty: true,

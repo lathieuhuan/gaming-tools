@@ -1,6 +1,7 @@
 import type {
   ActualAttackElement,
   ActualAttackPattern,
+  AttackElement,
   AttackPattern,
   AttackReaction,
   BareBonus,
@@ -32,7 +33,7 @@ export type CalcItemDefaultValues = {
   flatFactorScale: number;
 };
 
-export type AttackAlterConfig = {
+export type AttackAlter = {
   attPatt?: AttackPattern;
   attElmt?: ElementType;
   disabled?: boolean;
@@ -74,7 +75,7 @@ export type CalcResultItem = {
 
 export type CalcResultAttackItem = CalcResultItem & {
   type: "attack";
-  attElmt: ActualAttackElement | LunarType;
+  attElmt: AttackElement | LunarType;
   attPatt: ActualAttackPattern;
   reaction: AttackReaction;
   recorder: ResultRecorder;
@@ -87,7 +88,7 @@ export type CalcResultOtherItem = CalcResultItem & {
 
 export type CalcResultReactionItem = CalcResultItem & {
   type: "reaction";
-  attElmt: ActualAttackElement;
+  attElmt: AttackElement;
   reaction: AttackReaction;
   recorder: ResultRecorder;
 };

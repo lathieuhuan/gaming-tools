@@ -7,7 +7,7 @@ import { useArtifactSetData } from "@/hooks";
 import { $AppCharacter } from "@/services";
 import Array_ from "@/utils/Array";
 import { useSelector } from "@Store/hooks";
-import { selectDbArtifacts, selectDbCharacters } from "@Store/userdb-slice";
+import { selectDbArtifacts, selectDbCharacters } from "@Store/userdbSlice";
 
 // Component
 import { CharacterPortrait } from "@/components/CharacterPortrait";
@@ -57,24 +57,24 @@ export function EquippedSetStash({
   const setOptions = useMemo(() => {
     const options: EquippedSetOption[] = [];
 
-    for (const { name, artifactIDs } of characters) {
-      if (!artifactIDs.length) {
+    for (const character of characters) {
+      if (!character.artifactIDs.length) {
         continue;
       }
 
-      const appCharacter = $AppCharacter.get(name);
+      const appCharacter = $AppCharacter.get(character.code);
 
       const option: EquippedSetOption = {
         character: {
           code: appCharacter.code,
-          name,
+          name: appCharacter.name,
           icon: appCharacter.icon,
           elementType: appCharacter.vision,
         },
         artifacts: [],
       };
 
-      for (const id of artifactIDs) {
+      for (const id of character.artifactIDs) {
         const artifact = Array_.findById(artifacts, id);
 
         if (artifact) {
@@ -94,21 +94,21 @@ export function EquippedSetStash({
   useEffect(() => {
     // Check if any item visible
     let visibleCount = 0;
-    let shouldCheckChosen = !!selection.characterCode;
+    let shouldCheckSelected = !!selection.characterCode;
 
     for (const item of itemUtils.queryAll()) {
       if (item.isVisible()) {
         visibleCount++;
       }
       // Unselect if not visible
-      else if (shouldCheckChosen && item.getId() === `${selection.characterCode}`) {
+      else if (shouldCheckSelected && item.getId() === `${selection.characterCode}`) {
         setSelection({
           characterCode: 0,
           artifactId: 0,
         });
         onSelectArtifact(undefined);
 
-        shouldCheckChosen = false;
+        shouldCheckSelected = false;
       }
     }
 
@@ -162,7 +162,7 @@ export function EquippedSetStash({
                       <ItemCase
                         key={ID}
                         className={`w-12 h-12 cursor-pointer ${opacityCls}`}
-                        chosen={ID === selection.artifactId}
+                        selected={ID === selection.artifactId}
                         onClick={() => {
                           setSelection({
                             characterCode: character.code,

@@ -1,5 +1,5 @@
 import type { ClassValue } from "clsx";
-import type { RefObject } from "react";
+import type { Ref } from "react";
 import { Button, type ButtonProps } from "./Button";
 import { cn } from "@lib/utils";
 
@@ -8,7 +8,7 @@ type Justify = "start" | "center" | "end";
 export type ButtonGroupItem = ButtonProps;
 
 export type ButtonGroupProps = {
-  groupRef?: RefObject<HTMLDivElement>;
+  groupRef?: Ref<HTMLDivElement>;
   className?: ClassValue;
   /** Default 'center' */
   justify?: Justify;

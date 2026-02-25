@@ -1,18 +1,15 @@
 import { createContext, useContext } from "react";
-import { NavigateFn } from "../logic/navigate";
 
-export type Router = {
-  pathname: string;
-  navigate: (...args: Parameters<NavigateFn>) => void;
-  isRouteActive: (path: string) => boolean;
-};
+import type { Router } from "../logic/router";
 
-export const RouterContext = createContext<Router>({
-  pathname: "/",
-  navigate: () => {},
-  isRouteActive: () => false,
-});
+export const RouterContext = createContext<Router | null>(null);
 
 export function useRouter() {
-  return useContext(RouterContext);
+  const router = useContext(RouterContext);
+
+  if (!router) {
+    throw new Error("useRouter must be used within a RouterProvider");
+  }
+
+  return router;
 }

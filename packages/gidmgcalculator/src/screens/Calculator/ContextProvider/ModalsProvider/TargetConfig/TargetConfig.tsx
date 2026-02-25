@@ -8,8 +8,7 @@ import { useTranslation } from "@/hooks";
 import Array_ from "@/utils/Array";
 import { useCalcStore } from "@Store/calculator";
 import { updateTarget } from "@Store/calculator/actions";
-import { useDispatch, useSelector } from "@Store/hooks";
-import { selectTargetConfig, updateUI } from "@Store/ui-slice";
+import { useUIStore, updateUI } from "@Store/ui";
 
 import { ComboBox } from "./ComboBox";
 import { InputControl } from "./InputControl";
@@ -47,7 +46,7 @@ function TargetConfigCore() {
   return (
     <div
       className="h-full px-2 flex gap-4 hide-scrollbar"
-      onDoubleClick={() => console.log(target)}
+      onDoubleClick={() => console.info(target)}
     >
       <div className="w-76 flex flex-col shrink-0">
         <div className="grow overflow-auto flex flex-col">
@@ -159,11 +158,10 @@ function TargetConfigCore() {
 }
 
 export function TargetConfig() {
-  const dispatch = useDispatch();
-  const targetConfig = useSelector(selectTargetConfig);
+  const targetConfig = useUIStore((state) => state.targetConfig);
 
   const updateTargetConfig = (active: boolean, overviewed = targetConfig.overviewed) => {
-    dispatch(updateUI({ targetConfig: { active, overviewed } }));
+    updateUI({ targetConfig: { active, overviewed } });
   };
 
   const closeTargetConfig = () => {

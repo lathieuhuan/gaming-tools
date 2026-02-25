@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { MAX_CALC_SETUPS } from "@/constants/config";
 import Array_ from "@/utils/Array";
 import Object_ from "@/utils/Object";
+import { useShallowCalcStore } from "@Store/calculator";
 import { MultiSetupChange, updateMultiSetups } from "@Store/calculator/actions";
-import { useShallowCalcStore } from "@Store/calculator/calculator-store";
 import { getCopyName } from "@Store/calculator/utils";
 
 function getNewSetupName(setups: Array<{ name: string }>) {
