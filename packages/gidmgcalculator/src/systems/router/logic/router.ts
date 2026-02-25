@@ -117,6 +117,8 @@ export const router = {
   navigate,
   setSearchParams,
   isRouteActive,
+  subscribePathname: store.subscribePathname,
+  subscribeSearchParams: store.subscribeSearchParams,
 };
 
 export type Router = typeof router;

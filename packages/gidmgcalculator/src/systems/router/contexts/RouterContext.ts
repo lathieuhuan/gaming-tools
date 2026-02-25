@@ -2,12 +2,14 @@ import { createContext, useContext } from "react";
 
 import type { Router } from "../logic/router";
 
-export const RouterContext = createContext<Router>({
-  navigate: () => false,
-  setSearchParams: () => false,
-  isRouteActive: () => false,
-});
+export const RouterContext = createContext<Router | null>(null);
 
 export function useRouter() {
-  return useContext(RouterContext);
+  const router = useContext(RouterContext);
+
+  if (!router) {
+    throw new Error("useRouter must be used within a RouterProvider");
+  }
+
+  return router;
 }

@@ -1,8 +1,10 @@
 import type { AppCharacter } from "@/types";
 
+import { SCREEN_PATH } from "@/constants";
 import { createCharacterCalc, createWeapon } from "@/logic/entity.logic";
 import { ArtifactGear, CalcSetup, Team, TeammateCalc } from "@/models";
 import { $AppCharacter } from "@/services";
+import { router } from "@/systems/router";
 import { initSession } from "@Store/calculator/actions";
 
 export function prepEnhanceTour() {
@@ -44,5 +46,9 @@ export function prepEnhanceTour() {
 
   initSession({
     calcSetup,
+  });
+
+  router.navigate({
+    to: SCREEN_PATH.CALCULATOR,
   });
 }

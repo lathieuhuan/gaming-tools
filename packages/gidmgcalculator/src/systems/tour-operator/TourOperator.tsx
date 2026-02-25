@@ -1,3 +1,4 @@
+import { useLayoutEffect } from "react";
 import { notification } from "rond";
 
 import type { TourStep, TourStepErrorCode } from "@/systems/tour-guide";
@@ -7,6 +8,7 @@ import type { TourType } from "@Store/ui/types";
 import { TourGuide } from "@/systems/tour-guide";
 import { setTourFinished } from "@Store/tours/actions";
 import { setTourType } from "@Store/ui";
+import { router } from "../router/logic/router";
 import { getEnhanceTourSteps, getSubEnhanceTourSteps } from "./tours/enhanceTours";
 
 type TourOperatorProps = {
@@ -14,6 +16,7 @@ type TourOperatorProps = {
 };
 
 export const TourOperator = ({ tourType }: TourOperatorProps) => {
+  const TOUR_FORCE_END_MESSAGE = "The tour has ended prematurely.";
   let steps: TourStep[] = [];
 
   switch (tourType) {
@@ -32,6 +35,18 @@ export const TourOperator = ({ tourType }: TourOperatorProps) => {
   const endTour = () => {
     setTourType(undefined);
   };
+
+  useLayoutEffect(() => {
+    // subscribe route change to end tour
+    return router.subscribePathname(() => {
+      notification.warn({
+        content: TOUR_FORCE_END_MESSAGE,
+        duration: 5,
+      });
+
+      endTour();
+    });
+  }, []);
 
   const handleFinish = () => {
     let finishedTour: TourKey | undefined = undefined;
@@ -72,7 +87,7 @@ export const TourOperator = ({ tourType }: TourOperatorProps) => {
 
   const handleError = (code: TourStepErrorCode) => {
     notification.error({
-      content: `The tour has ended prematurely. ${getErrorByCode(code)}`,
+      content: `${TOUR_FORCE_END_MESSAGE} ${getErrorByCode(code)}`,
       duration: 0,
     });
 
