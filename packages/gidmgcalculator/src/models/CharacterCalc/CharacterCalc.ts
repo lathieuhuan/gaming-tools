@@ -204,8 +204,15 @@ export class CharacterCalc<
         return false;
       }
     }
-    if (condition.forEnhance) {
-      if (!this.enhanced || this.data.enhanceType !== condition.forEnhance) {
+
+    const { forEnhance } = condition;
+
+    if (forEnhance) {
+      if (forEnhance === "MOONSIGN") {
+        if (this.data.faction !== "moonsign") {
+          return false;
+        }
+      } else if (!this.enhanced || this.data.enhanceType !== forEnhance) {
         return false;
       }
     }

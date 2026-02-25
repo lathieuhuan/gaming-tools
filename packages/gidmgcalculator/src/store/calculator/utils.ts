@@ -80,9 +80,12 @@ export function updateModCtrlInputs<T extends IModifierCtrlBasic>(
 ) {
   return ctrls.map((ctrl) => {
     if (ctrl.id === ctrlId && (!extraCheck || extraCheck(ctrl))) {
+      const newInputs = ctrl.inputs ? [...ctrl.inputs] : [];
+      newInputs[inputIndex] = value;
+
       return {
         ...ctrl,
-        inputs: ctrl.inputs?.map((input, index) => (index === inputIndex ? value : input)),
+        inputs: newInputs,
       };
     }
 
