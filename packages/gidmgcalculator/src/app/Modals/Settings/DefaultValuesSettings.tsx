@@ -37,7 +37,7 @@ export function DefaultValuesSettings({ initialValues, onChange }: DefaultValues
       type: "CUSTOM",
       control: (
         <CharacterLevelControl
-          className="h-8 bg-light-1 text-black rounded-sm"
+          className="w-23 h-8 bg-light-1 text-black rounded-sm"
           defaultValue={initialValues.charLevel}
           onChange={(value) => onChange?.("charLevel", value)}
         />
@@ -99,7 +99,7 @@ export function DefaultValuesSettings({ initialValues, onChange }: DefaultValues
       type: "CUSTOM",
       control: (
         <WeaponLevelControl
-          className="w-23 h-8 bg-light-1 text-black rounded-sm"
+          className="w-21 h-8 bg-light-1 text-black rounded-sm"
           defaultValue={initialValues.wpLevel}
           onChange={(value) => onChange?.("wpLevel", value)}
         />

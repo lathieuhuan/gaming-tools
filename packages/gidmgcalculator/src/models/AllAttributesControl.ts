@@ -21,10 +21,6 @@ type AllAttributesControlInitial = {
   finals?: AllAttributes;
 };
 
-export type AllAttributesControlOptions = {
-  shouldLog?: boolean;
-};
-
 type AttributeControlLog = {
   label: string;
   value: number;
@@ -34,7 +30,7 @@ type InternalAttribute = {
   base: number;
   fixedBonus: number;
   dynamicBonus: number;
-  logs?: AttributeControlLog[];
+  logs: AttributeControlLog[];
 };
 
 type DetailedAttributes = Record<AttributeStat, InternalAttribute>;
@@ -43,19 +39,12 @@ export class AllAttributesControl {
   private details: DetailedAttributes;
   public finals: AllAttributes;
 
-  readonly shouldLog?: boolean;
-
   /** Deep clone initial if it is reused */
-  constructor(
-    initial: AllAttributesControlInitial = {},
-    options: AllAttributesControlOptions = {}
-  ) {
+  constructor(initial: AllAttributesControlInitial = {}) {
     const { details = {}, finals = new TypeCounter() } = initial;
-    const { shouldLog = false } = options;
 
     this.details = details as DetailedAttributes;
     this.finals = finals;
-    this.shouldLog = shouldLog;
   }
 
   init(character: CharacterCalc) {
@@ -166,6 +155,7 @@ export class AllAttributesControl {
       base: 0,
       fixedBonus: 0,
       dynamicBonus: 0,
+      logs: [],
     };
   }
 
@@ -187,12 +177,10 @@ export class AllAttributesControl {
   }
 
   private addLog(key: AttributeStat, value: number, label: string) {
-    if (this.shouldLog) {
-      this._set(key, "logs", (logs) => {
-        logs?.push({ label, value });
-        return logs;
-      });
-    }
+    this._set(key, "logs", (logs) => {
+      logs.push({ label, value });
+      return logs;
+    });
   }
 
   // ===== UPDATE =====
@@ -275,15 +263,10 @@ export class AllAttributesControl {
   }
 
   clone() {
-    return new AllAttributesControl(
-      {
-        details: Object_.clone(this.details),
-        finals: this.finals.clone(),
-      },
-      {
-        shouldLog: this.shouldLog,
-      }
-    );
+    return new AllAttributesControl({
+      details: Object_.clone(this.details),
+      finals: this.finals.clone(),
+    });
   }
 
   clear() {

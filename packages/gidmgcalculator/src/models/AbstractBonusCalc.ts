@@ -19,7 +19,7 @@ import { AbstractEffectValueCalc } from "./AbstractEffectValueCalc";
 
 const TEAM_DEPENDED_STACK_TYPES: EntityBonusStack["type"][] = [
   "MEMBER",
-  "ENERGY",
+  // "ENERGY", // remove for now because Raiden needs it when the team is only her
   "NATION",
   "RESOLVE",
   "MIX",
@@ -284,7 +284,7 @@ export abstract class AbstractBonusCalc<
       const basedOn = this.getBasedOn(config.basedOn);
 
       bonus.value *= basedOn.value;
-      bonus.isDynamic = basedOn.field !== "base_atk";
+      bonus.isDynamic = true;
     }
 
     bonus.value *= this.getStackValue(config.stacks);

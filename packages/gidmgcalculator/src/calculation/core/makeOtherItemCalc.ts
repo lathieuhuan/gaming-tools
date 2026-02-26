@@ -19,7 +19,7 @@ export function makeOtherItemCalc(performer: CharacterCalc) {
 
     switch (type) {
       case "healing":
-        flat = attkBonusCtrl.get("flat", itemId);
+        flat += attkBonusCtrl.get("flat", itemId);
         bonusMult += performer.getAttr("healB_");
         break;
       case "shield":
