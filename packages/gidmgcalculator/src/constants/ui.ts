@@ -12,7 +12,7 @@ export const ENHANCE_TOUR_SITE_ID = {
 
 export const TOUR_STEP_ID = {
   teammateSlot: (code: number) => `teammate-slot-${code}`,
-  calculatorSmall: "calculator-small",
+  scrollCalculator: "scroll-calculator",
   teamBonus: "team-bonus",
   overviewPanel: "overview-panel",
   modifiersPanel: "modifiers-panel",

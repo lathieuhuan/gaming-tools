@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { useScreenWatcher } from "rond";
 
+import { TOUR_STEP_ID } from "@/constants/ui";
 import { useCalcStore } from "@Store/calculator";
 
 // Components
@@ -38,7 +39,7 @@ function LargeCalculator() {
   return (
     <ContextProvider>
       <div className="flex flex-col relative max-w-98/100 2xl:max-w-none h-full sm:h-[calc(100vh_-_3rem)]">
-        <div className="grow flex items-center overflow-auto snap-x snap-mandatory sm:snap-none">
+        <div id={TOUR_STEP_ID.scrollCalculator} className="grow flex items-center overflow-auto">
           <div className="w-full flex h-98/100 gap-2">
             <OverviewCard touched={touched} />
             <ModifiersCard touched={touched} />

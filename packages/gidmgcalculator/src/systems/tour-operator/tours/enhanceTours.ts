@@ -23,7 +23,7 @@ function genTeammateStep(teammateCode: number): TourStep {
       if (!slot) return;
 
       // Move to setup panel on scrollable layout
-      $(TOUR_STEP_ID.calculatorSmall).set("scrollLeft", (calc) => {
+      $(TOUR_STEP_ID.scrollCalculator).set("scrollLeft", (calc) => {
         const rectChild = slot.getBoundingClientRect();
         const rectParent = calc.getBoundingClientRect();
 
@@ -55,7 +55,7 @@ export function getEnhanceTourSteps(): TourStep[] {
         $(TOUR_STEP_ID.overviewPanel).act.click();
 
         // Move to overview panel on scrollable layout
-        $(TOUR_STEP_ID.calculatorSmall).set("scrollLeft", 0);
+        $(TOUR_STEP_ID.scrollCalculator).set("scrollLeft", 0);
       },
       lastCheck: () => {
         updateMain({ enhanced: true });
@@ -113,7 +113,7 @@ export function getEnhanceTourSteps(): TourStep[] {
           if (!triggerEl) return;
 
           // Move to modifiers panel on scrollable layout
-          $(TOUR_STEP_ID.calculatorSmall).set("scrollLeft", (calc) => {
+          $(TOUR_STEP_ID.scrollCalculator).set("scrollLeft", (calc) => {
             const rectChild = triggerEl.getBoundingClientRect();
             const rectParent = calc.getBoundingClientRect();
 
