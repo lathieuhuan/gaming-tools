@@ -1,14 +1,12 @@
 import { useLayoutEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
-import { notification } from "rond";
 
-import type { TourType } from "@Store/ui/types";
 import type { TourStep, TourStepErrorCode } from "./types";
 
-import { setTourType } from "@Store/ui";
 import { useTourPrepper } from "./hooks/useTourPrepper";
 
 import { Tour } from "./Tour";
+import { TourFrame } from "./TourFrame";
 import { TourLoading } from "./TourLoading";
 
 // TODO: move to rond
@@ -49,23 +47,21 @@ export function TourGuide({ steps, onError, onFinish, onCancel }: TourGuideProps
     },
   });
 
-  const [totalSites, setTotalSites] = useState(0);
   const [site, setSite] = useState(tourPrepper.site);
 
   useLayoutEffect(() => {
-    void tourPrepper.start(steps).then((site) => {
-      setSite(site);
-      setTotalSites(steps.length);
-    });
+    void tourPrepper.start(steps).then(setSite);
   }, []);
 
   const handleNext = () => {
-    void tourPrepper.next().then((site) => setSite(site));
+    void tourPrepper.next().then(setSite);
   };
 
   return ReactDOM.createPortal(
     site ? (
-      <Tour site={site} totalSites={totalSites} onNext={handleNext} onCancel={onCancel} />
+      <TourFrame location={site.location}>
+        <Tour site={site} totalSites={steps.length} onNext={handleNext} onCancel={onCancel} />
+      </TourFrame>
     ) : (
       <TourLoading />
     ),

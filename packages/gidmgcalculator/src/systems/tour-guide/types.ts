@@ -10,7 +10,7 @@ export type TourStepDialog = string | React.ReactElement;
 export type TourStep = {
   id: string;
   dialogs: TourStepDialog[];
-  siteGutter?: number;
+  siteGutter?: number | [number, number];
   // ENHANCE: when we need to position intro
   // introAlign?: IntroAlign;
   // introOffsetX?: IntroOffsetX;
@@ -24,16 +24,14 @@ export type TourStep = {
 export type TourSiteLocation = {
   top: number;
   left: number;
-  // bottom: number;
-  // right: number;
   width: number;
   height: number;
 };
 
-type TourSiteIntro = {
+export type TourSiteIntro = {
   dialogs: TourStepDialog[];
-  x: number;
-  y: number;
+  width: number;
+  offsetX: number;
 };
 
 export type TourSite = {

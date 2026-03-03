@@ -14,7 +14,7 @@ function genTeammateStep(teammateCode: number): TourStep {
   return {
     id: ENHANCE_TOUR_SITE_ID.subEnhance(teammateCode),
     dialogs: [`Tap to toggle the enhanced state of this teammate. ${CONDITION_TEXT}`],
-    siteGutter: 12,
+    siteGutter: [8, 12],
     go: async () => {
       // Move to setup panel on Tab layout
       $(TOUR_STEP_ID.setupPanel).act.click();
@@ -23,11 +23,11 @@ function genTeammateStep(teammateCode: number): TourStep {
       if (!slot) return;
 
       // Move to setup panel on scrollable layout
-      $(TOUR_STEP_ID.scrollCalculator).set("scrollLeft", (calc) => {
+      $(TOUR_STEP_ID.scrollCalculator).set("scrollLeft", (calculator) => {
         const rectChild = slot.getBoundingClientRect();
-        const rectParent = calc.getBoundingClientRect();
+        const rectParent = calculator.getBoundingClientRect();
 
-        return calc.scrollLeft + rectChild.left - rectParent.left;
+        return calculator.scrollLeft + rectChild.left - rectParent.left;
       });
 
       await nextFrame();
@@ -49,7 +49,7 @@ export function getEnhanceTourSteps(): TourStep[] {
       dialogs: [
         `Tap this tag to toggle the enhanced state of the main character. ${CONDITION_TEXT}`,
       ],
-      siteGutter: 12,
+      siteGutter: [8, 12],
       go: () => {
         // Move to overview panel on Tab layout
         $(TOUR_STEP_ID.overviewPanel).act.click();
@@ -104,7 +104,7 @@ export function getEnhanceTourSteps(): TourStep[] {
         // TODO: when there're more enhance types, we need to switch this id
         id: ENHANCE_TOUR_SITE_ID.secretRiteBuff,
         dialogs: [CONDITION_TEXT],
-        siteGutter: 8,
+        siteGutter: [4, 8],
         go: async () => {
           // Move to modifiers panel on Tab layout
           $(TOUR_STEP_ID.modifiersPanel).act.click();

@@ -1,5 +1,11 @@
 import { nextFrame } from "@/utils/window.utils";
-import type { TourSite, TourStep, TourStepErrorCode } from "../types";
+import type {
+  TourSite,
+  TourSiteIntro,
+  TourSiteLocation,
+  TourStep,
+  TourStepErrorCode,
+} from "../types";
 
 export type TourPrepperOptions = {
   onError?: (code: TourStepErrorCode) => void;
@@ -18,6 +24,8 @@ export class TourPrepper implements TourPrepperOptions {
     this.onError = options.onError;
     this.onFinish = options.onFinish;
   }
+
+  // ===== CORE LOGIC =====
 
   start(steps: TourStep[]) {
     this.steps = steps;
@@ -38,13 +46,31 @@ export class TourPrepper implements TourPrepperOptions {
     return this.prep(++this.currentIndex);
   }
 
+  private getIntroOffsetX(location: TourSiteLocation, introWidth: number): number {
+    const halfWidth = introWidth / 2;
+    const siteLeftToWindowLeft = Math.ceil(location.left + location.width / 2);
+
+    if (siteLeftToWindowLeft < halfWidth) {
+      return halfWidth - siteLeftToWindowLeft;
+    }
+
+    const siteRightToWindowRight = Math.ceil(
+      window.innerWidth - (location.left + location.width / 2)
+    );
+
+    if (siteRightToWindowRight < halfWidth) {
+      return siteRightToWindowRight - halfWidth;
+    }
+
+    return 0;
+  }
+
   private async prep(index: number): Promise<TourSite | undefined> {
     const step = this.steps[index];
 
     if (!step) {
       this.onFinish?.();
-
-      return undefined;
+      return;
     }
 
     try {
@@ -64,25 +90,21 @@ export class TourPrepper implements TourPrepperOptions {
 
     if (!element) {
       this.onError?.("NOT_FOUND");
-
-      return undefined;
+      return;
     }
 
     const { siteGutter = 0 } = step;
-    const { top, left, bottom, right, width, height } = element.getBoundingClientRect();
+    const [gutterY, gutterX] = Array.isArray(siteGutter) ? siteGutter : [siteGutter, siteGutter];
+    const { top, left, width, height } = element.getBoundingClientRect();
 
-    const location = {
-      top: top - siteGutter,
-      left: left - siteGutter,
-      // bottom: bottom + siteGutter,
-      // right: right + siteGutter,
-      width: width + siteGutter * 2,
-      height: height + siteGutter * 2,
+    const location: TourSiteLocation = {
+      top: top - gutterY,
+      left: left - gutterX,
+      width: width + gutterX * 2,
+      height: height + gutterY * 2,
     };
 
-    // TODO: when we need to position intro
-    let introX = 0;
-    let introY = 0;
+    const introWidth = 256; // limit to window.innerWidth when it's dynamic
 
     return {
       id: step.id,
@@ -90,8 +112,8 @@ export class TourPrepper implements TourPrepperOptions {
       location,
       intro: {
         dialogs: step.dialogs,
-        x: introX,
-        y: introY,
+        width: introWidth,
+        offsetX: this.getIntroOffsetX(location, introWidth),
       },
     };
   }
