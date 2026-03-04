@@ -15,6 +15,7 @@ export function makeOtherItemCalc(performer: CharacterCalc) {
     flat = 0,
     itemId?: TalentCalcItemBonusId
   ): CalcResultOtherItem {
+    const baseMult = toMult(attkBonusCtrl.get("baseMult_", itemId));
     let bonusMult = attkBonusCtrl.get("pct_", itemId);
 
     switch (type) {
@@ -30,10 +31,11 @@ export function makeOtherItemCalc(performer: CharacterCalc) {
     bonusMult = toMult(bonusMult);
     const specMult = toMult(attkBonusCtrl.get("specMult_", itemId));
 
-    base = (base + flat) * bonusMult * specMult;
+    base = (base * baseMult + flat) * bonusMult * specMult;
 
     recorder.record({
       flat,
+      baseMult,
       bonusMult,
       specMult,
     });
