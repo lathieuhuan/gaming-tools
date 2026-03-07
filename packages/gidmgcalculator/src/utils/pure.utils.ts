@@ -1,7 +1,3 @@
-export const toMult = (n: number) => 1 + n / 100;
-
-export const applyPercent = (n: number, percent: number) => Math.round((n * percent) / 100);
-
 export function genSequentialOptions(count: number | undefined = 0, startFrom = 1) {
   return Array.from({ length: count }, (_, i) => {
     const value = i + startFrom;

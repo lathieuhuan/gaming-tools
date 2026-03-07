@@ -1,3 +1,5 @@
+import { toMult } from "ron-utils";
+
 import type { CharacterCalc } from "@/models";
 import type {
   ActualAttackPattern,
@@ -10,7 +12,6 @@ import type { CalcResultAttackItem, CalcResultItemValue } from "../types";
 import type { TargetCalc } from "../../models/TargetCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { toMult } from "@/utils/pure.utils";
 import { limitCRate } from "@/logic/stat.logic";
 
 type MakeAttackCalcTools = {

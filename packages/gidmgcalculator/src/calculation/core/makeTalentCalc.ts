@@ -1,4 +1,4 @@
-import { Array_ } from "ron-utils";
+import { Array_, toMult } from "ron-utils";
 
 import type { CharacterCalc } from "@/models";
 import type {
@@ -23,7 +23,6 @@ import type { ResultRecorder } from "./ResultRecorder";
 
 import { Character } from "@/models";
 import { limitCRate } from "@/logic/stat.logic";
-import { toMult } from "@/utils/pure.utils";
 import { LUNAR_ATTACK_COEFFICIENT, LUNAR_ATTACK_ELEMENT } from "../constants";
 import { makeAttackItemCalc } from "./makeAttackItemCalc";
 import { makeOtherItemCalc } from "./makeOtherItemCalc";

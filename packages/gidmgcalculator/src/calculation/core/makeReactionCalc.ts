@@ -1,3 +1,5 @@
+import { toMult } from "ron-utils";
+
 import type { CharacterCalc } from "@/models";
 import type {
   ActualAttackElement,
@@ -12,7 +14,6 @@ import type { TargetCalc } from "../../models/TargetCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
 import { limitCRate } from "@/logic/stat.logic";
-import { toMult } from "@/utils/pure.utils";
 import { LUNAR_ATTACK_ELEMENT, LUNAR_REACTION_COEFFICIENT } from "../constants";
 
 const TRANSFORMATIVE_REACTION_CONFIG: Record<
