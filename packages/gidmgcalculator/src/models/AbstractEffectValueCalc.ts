@@ -1,4 +1,4 @@
-import { Array_ } from "ron-utils";
+import { Array_, round, toMult } from "ron-utils";
 
 import type {
   CharacterBuff,
@@ -13,7 +13,6 @@ import type {
 } from "@/types";
 
 import { wrapText } from "@/utils/descriptionParsers/utils";
-import { round, toMult } from "@/utils/pure.utils";
 import { Character } from "./Character";
 
 type AbilityBuff = CharacterBuff | CharacterDebuff;

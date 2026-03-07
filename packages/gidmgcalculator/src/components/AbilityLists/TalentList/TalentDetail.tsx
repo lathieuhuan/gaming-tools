@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
-import { Array_ } from "ron-utils";
-import { CloseButton, LoadingSpin, StatsTable, VersatileSelect, round } from "rond";
+import { Array_, round } from "ron-utils";
+import { CloseButton, LoadingSpin, StatsTable, VersatileSelect } from "rond";
 
 import type { AppCharacter, TalentType } from "@/types";
 

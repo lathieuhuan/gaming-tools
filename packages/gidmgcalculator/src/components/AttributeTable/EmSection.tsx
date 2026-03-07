@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
-import { clsx, CollapseSpace, round, StatsTable } from "rond";
+import { round } from "ron-utils";
+import { clsx, CollapseSpace, StatsTable } from "rond";
 
 import { getRxnBonusesFromEM } from "@/calculation/core/getRxnBonusesFromEM";
 import { markGreen } from "@/components";

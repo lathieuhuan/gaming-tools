@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import { FaCaretRight, FaRedoAlt } from "react-icons/fa";
+import { secondsToTimeString } from "ron-utils";
 import { Button, clsx, Skeleton } from "rond";
 
 import { useTimer } from "@/hooks/useTimer";
-import { secondsToTimeString } from "@/utils/pure.utils";
+import { useDataImportState } from "../DataImporter";
 import { STALE_TIME } from "../hooks/useGenshinUser";
 import { useLayoutState } from "../Layout";
-import { useDataImportState } from "../DataImporter";
 
 export type AccountInfoProps = {
   className?: string;

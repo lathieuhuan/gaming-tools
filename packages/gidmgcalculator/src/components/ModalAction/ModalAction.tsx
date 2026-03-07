@@ -1,8 +1,8 @@
 import { cloneElement } from "react";
+import { isFunction } from "ron-utils";
 import { Modal, ModalProps } from "rond";
 
 import { useControllableState } from "@/hooks/useControllableState";
-import { isFunction } from "@/utils/pure.utils";
 
 type ModalActionProps = Omit<ModalProps, "children" | "onClose"> & {
   content: ModalProps["children"];

@@ -1,11 +1,10 @@
-import { Object_ } from "ron-utils";
+import { Object_, round } from "ron-utils";
 
 import type { AllAttributes, AttributeBonus, AttributeStat, BaseAttributeStat } from "@/types";
 import type { CharacterCalc } from "./CharacterCalc";
 
 import { ATTRIBUTE_STAT_TYPES } from "@/constants";
 import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/logic/stat.logic";
-import { round } from "@/utils/pure.utils";
 import TypeCounter from "@/utils/TypeCounter";
 
 const ASC_MULT_BY_ASC = [0, 38 / 182, 65 / 182, 101 / 182, 128 / 182, 155 / 182, 1];

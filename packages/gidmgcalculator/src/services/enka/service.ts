@@ -1,9 +1,10 @@
+import { delay } from "ron-utils";
+
 import type { EnkaUserResponse, GenshinUserResponse } from "./types";
 
 import { IS_DEV_ENV } from "@/constants/config";
 // import { mock } from "./mock";
 import IdStore from "@/utils/IdStore";
-import { delay } from "@/utils/pure.utils";
 import { transformGenshinUserResponse } from "./transform";
 
 const baseUrl = IS_DEV_ENV ? "http://localhost:3001" : "https://gicalculator.ronqueroc.com";
