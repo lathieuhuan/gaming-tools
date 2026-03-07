@@ -1,10 +1,11 @@
+import { Object_ } from "ron-utils";
+
 import type { Artifact, CalcSetup, Weapon } from "@/models";
 import type { AppCharacter, ITeammateArtifact, ITeammateWeapon } from "@/types";
 import type { ForwardedAction } from "../types";
 
 import { createArtifactBuffCtrls, createWeaponBuffCtrls } from "@/logic/modifier.logic";
 import { Team } from "@/models";
-import Object_ from "@/utils/Object";
 import { useSettingsStore } from "@Store/settings";
 import { useCalcStore } from "../calculatorStore";
 import { onActiveSetup } from "../utils";

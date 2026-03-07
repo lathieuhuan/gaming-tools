@@ -1,7 +1,8 @@
+import { Object_ } from "ron-utils";
+
 import type { TeammateCalc } from "@/models";
 import type { IArtifactBuffCtrl, ITeammateArtifactBuffCtrl } from "@/types";
 
-import Object_ from "@/utils/Object";
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateActiveSetup, updateTeammateArtifact } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";

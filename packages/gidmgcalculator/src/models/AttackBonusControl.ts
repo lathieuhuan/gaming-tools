@@ -1,3 +1,5 @@
+import { Object_ } from "ron-utils";
+
 import type {
   AttackBonus,
   AttackBonusKey,
@@ -6,8 +8,6 @@ import type {
   ExclusiveAttackBonusGroup,
   TalentCalcItemBonusId,
 } from "@/types";
-
-import Object_ from "@/utils/Object";
 
 type AttackBonusGroup = Record<AttackBonusType, AttackBonus[]>;
 

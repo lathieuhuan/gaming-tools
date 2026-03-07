@@ -1,3 +1,5 @@
+import { Object_ } from "ron-utils";
+
 import type {
   AppArtifact,
   ArtifactSubStat,
@@ -7,7 +9,6 @@ import type {
   IArtifactBasic,
 } from "@/types";
 
-import Object_ from "@/utils/Object";
 
 const percent1 = {
   4: [

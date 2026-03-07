@@ -1,10 +1,10 @@
+import { Object_ } from "ron-utils";
 import { CollapseList } from "rond";
 
 import type { CalcSetup } from "@/models";
 
 import { useTranslation } from "@/hooks";
 import { $AppData } from "@/services";
-import Object_ from "@/utils/Object";
 
 // Component
 import {

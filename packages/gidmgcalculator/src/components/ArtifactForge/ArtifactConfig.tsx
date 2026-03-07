@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
+import { Object_ } from "ron-utils";
 import { Rarity } from "rond";
 
 import type { Artifact } from "@/models";
 import type { IArtifact } from "@/types";
-import Object_ from "@/utils/Object";
 
 import {
   ArtifactCard,

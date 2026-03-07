@@ -1,6 +1,7 @@
+import { Object_ } from "ron-utils";
+
 import type { IAbilityBuffCtrl } from "@/types";
 
-import Object_ from "@/utils/Object";
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateActiveSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";

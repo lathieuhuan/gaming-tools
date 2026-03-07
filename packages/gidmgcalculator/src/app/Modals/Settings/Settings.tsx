@@ -1,11 +1,11 @@
 import { useRef } from "react";
+import { Object_ } from "ron-utils";
 import { Modal } from "rond";
 
 import type { ElementType, TravelerConfig, TravelerKey } from "@/types";
 
 import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
 import { $AppCharacter } from "@/services";
-import Object_ from "@/utils/Object";
 import { applySettingsToCalculator } from "@Store/calculator/actions";
 import { AppSettingsState, updateSettings, useSettingsStore } from "@Store/settings";
 

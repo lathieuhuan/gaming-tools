@@ -1,4 +1,5 @@
-import Object_ from "@/utils/Object";
+import { Object_ } from "ron-utils";
+
 import { useShallowCalcStore } from "@Store/calculator";
 import { copyTeammates } from "@Store/calculator/actions";
 

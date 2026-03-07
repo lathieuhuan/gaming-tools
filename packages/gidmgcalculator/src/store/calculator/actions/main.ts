@@ -1,3 +1,5 @@
+import { Object_ } from "ron-utils";
+
 import type { CalcSetup, MainUpdateData } from "@/models";
 import type { ElementalEvent, ITarget } from "@/types";
 import type { ForwardedAction } from "../types";
@@ -5,7 +7,6 @@ import type { ForwardedAction } from "../types";
 import { createTarget } from "@/logic/entity.logic";
 import { createWeaponBuffCtrls } from "@/logic/modifier.logic";
 import { Team } from "@/models";
-import Object_ from "@/utils/Object";
 import { useSettingsStore } from "@Store/settings";
 import { useCalcStore } from "../calculatorStore";
 import { onActiveSetup } from "../utils";

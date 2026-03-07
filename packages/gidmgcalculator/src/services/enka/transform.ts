@@ -1,3 +1,5 @@
+import { Object_ } from "ron-utils";
+
 import type { IArtifact } from "@/types";
 import type { GenshinUser, GenshinUserBuild, GenshinUserResponse } from "./types";
 
@@ -9,7 +11,6 @@ import {
   convertGOODWeapon,
 } from "@/logic/converGOOD.logic";
 import IdStore from "@/utils/IdStore";
-import Object_ from "@/utils/Object";
 
 export function transformGenshinUserResponse(
   response: GenshinUserResponse,

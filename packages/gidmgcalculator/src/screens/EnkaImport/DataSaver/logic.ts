@@ -1,8 +1,7 @@
 import isEqual from "react-fast-compare";
+import { Object_ } from "ron-utils";
 
 import type { IArtifactBasic, ICharacterBasic, IWeaponBasic } from "@/types";
-
-import Object_ from "@/utils/Object";
 
 export const isExactCharacter = (character1: ICharacterBasic, character2: ICharacterBasic) => {
   return isEqual(

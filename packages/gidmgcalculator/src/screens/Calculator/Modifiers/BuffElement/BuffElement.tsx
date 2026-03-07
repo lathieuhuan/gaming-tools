@@ -1,6 +1,6 @@
 import { Fragment, ReactNode } from "react";
+import { Object_ } from "ron-utils";
 
-import Object_ from "@/utils/Object";
 import { useShallowCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 

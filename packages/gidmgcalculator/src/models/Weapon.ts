@@ -1,7 +1,8 @@
+import { Object_ } from "ron-utils";
+
 import type { AppWeapon, IWeapon, IWeaponBasic, Level, WeaponType } from "@/types";
 
 import { LEVELS } from "@/constants/global";
-import Object_ from "@/utils/Object";
 import { Ascendable } from "./Ascendable";
 
 const BASE_ATTACK_TYPE: Record<string, number[]> = {

@@ -1,4 +1,4 @@
-import Object_ from "./Object";
+import { Object_ } from "ron-utils";
 
 type TypeCounterOptions = {
   allowNegative?: boolean;

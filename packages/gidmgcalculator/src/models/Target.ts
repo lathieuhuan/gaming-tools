@@ -1,5 +1,6 @@
+import { Object_ } from "ron-utils";
+
 import type { AppMonster, AttackElement, ElementType, ITarget, ITargetBasic } from "@/types";
-import Object_ from "@/utils/Object";
 
 export class Target implements ITarget {
   code: number;

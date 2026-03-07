@@ -1,3 +1,5 @@
+import { Object_ } from "ron-utils";
+
 import type {
   CalcAspect,
   CalcResultAttackItem,
@@ -12,7 +14,6 @@ import { LUNAR_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
 import { AttackBonusControl } from "@/models";
 import { round, suffixOf } from "@/utils/pure.utils";
-import Object_ from "@/utils/Object";
 
 import { markGreen } from "@/components";
 import { PartConfig, Parts, PartsConfig } from "./Parts";

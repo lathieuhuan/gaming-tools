@@ -1,3 +1,5 @@
+import { Object_ } from "ron-utils";
+
 import type {
   AppCharacter,
   BareBonus,
@@ -15,7 +17,6 @@ import type { PartiallyRequiredOnly } from "rond";
 
 import { createAbilityBuffCtrls, createAbilityDebuffCtrls } from "@/logic/modifier.logic";
 import { $AppWeapon } from "@/services";
-import Object_ from "@/utils/Object";
 import { Teammate } from "../Teammate";
 import { Weapon } from "../Weapon";
 import { BonusCalc } from "./BonusCalc";

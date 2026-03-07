@@ -1,4 +1,4 @@
-import Object_ from "./Object";
+import { Object_ } from "ron-utils";
 
 export default class Array_ {
   static applyToItem<T>(base: T | T[], callback: (base: T, index?: number) => T) {

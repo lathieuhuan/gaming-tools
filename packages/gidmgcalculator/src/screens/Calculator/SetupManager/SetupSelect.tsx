@@ -1,11 +1,11 @@
 import { useId, useState } from "react";
 import { FaBalanceScaleLeft, FaCopy, FaSave, FaShareAlt } from "react-icons/fa";
 import { SiTarget } from "react-icons/si";
+import { Object_ } from "ron-utils";
 import { clsx, ConfirmModal, TrashCanSvg } from "rond";
 
 import { MAX_CALC_SETUPS } from "@/constants/config";
 import Array_ from "@/utils/Array";
-import Object_ from "@/utils/Object";
 import { useShallowCalcStore } from "@Store/calculator";
 import { duplicateSetup, removeSetup, updateCalculator } from "@Store/calculator/actions";
 import { useCalcModalCtrl } from "../ContextProvider";
