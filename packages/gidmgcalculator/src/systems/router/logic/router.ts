@@ -1,4 +1,5 @@
 import isEqual from "react-fast-compare";
+import { Subject } from "ron-utils";
 
 import type { SearchParams } from "../types";
 
@@ -8,7 +9,6 @@ import {
   objectToSearchString,
   toPathSegments,
 } from "../utils";
-import { Subject } from "@/utils/Subject";
 
 let pathname = window.location.pathname;
 let searchParams = getSearchParams();
