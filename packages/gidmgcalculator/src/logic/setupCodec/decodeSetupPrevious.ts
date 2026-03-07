@@ -1,3 +1,5 @@
+import { Array_ } from "ron-utils";
+
 import type {
   AppArtifact,
   ArtifactBuff,
@@ -41,7 +43,6 @@ import {
   TeammateCalc,
 } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
-import Array_ from "@/utils/Array";
 import IdStore from "@/utils/IdStore";
 import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./config";
 

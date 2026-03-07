@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { FaInfo } from "react-icons/fa";
+import { Array_ } from "ron-utils";
 import { Button, WarehouseLayout, clsx, useScreenWatcher } from "rond";
 
 import type { SetupOverviewInfo } from "./types";
@@ -7,7 +8,6 @@ import type { SetupOverviewInfo } from "./types";
 import { isDbSetup, restoreCalcSetup } from "@/logic/setup.logic";
 import { parseDbArtifacts, parseDbWeapon } from "@/logic/userdb.logic";
 import { useSetupImporter } from "@/systems/setup-importer";
-import Array_ from "@/utils/Array";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui";
 import { selectActiveSetupId, viewDbSetup } from "@Store/userdbSlice";

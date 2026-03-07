@@ -1,3 +1,5 @@
+import { Array_ } from "ron-utils";
+
 import type {
   AppArtifact,
   AppCharacter,
@@ -23,7 +25,6 @@ import {
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import Array_ from "@/utils/Array";
 import { Artifact } from "../Artifact";
 import { ArtifactGear } from "../ArtifactGear";
 import { CharacterCalc } from "../CharacterCalc";

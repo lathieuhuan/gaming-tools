@@ -1,10 +1,9 @@
-import { Object_ } from "ron-utils";
+import { Array_, Object_ } from "ron-utils";
 
 import type { ArtifactType, ISetupManager } from "@/types";
 import type { WritableDraft } from "immer/src/internal.js";
 
 import { CalcSetup } from "@/models";
-import Array_ from "@/utils/Array";
 import { useCalcStore } from "../calculatorStore";
 import { getCopyName, onActiveSetup } from "../utils";
 

@@ -1,3 +1,5 @@
+import { Array_ } from "ron-utils";
+
 import type {
   BareBonus,
   BonusPerformTools,
@@ -14,7 +16,6 @@ import type {
   ITeamMember,
 } from "@/types";
 
-import Array_ from "@/utils/Array";
 import { AbstractEffectValueCalc } from "./AbstractEffectValueCalc";
 
 const TEAM_DEPENDED_STACK_TYPES: EntityBonusStack["type"][] = [

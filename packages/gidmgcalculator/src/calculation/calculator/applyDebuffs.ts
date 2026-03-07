@@ -1,10 +1,11 @@
+import { Array_ } from "ron-utils";
+
 import type { CalcSetup, TeammateCalc, CharacterCalc } from "@/models";
 import type { ElementType, EntityDebuff, EntityPenaltyTarget, ResistReductionKey } from "@/types";
 import type { TargetCalc } from "../../models/TargetCalc";
 import type { IEffectPerformer } from "../types";
 
 import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants/global";
-import Array_ from "@/utils/Array";
 
 export function applyDebuffs(
   main: CharacterCalc,

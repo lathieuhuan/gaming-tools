@@ -1,3 +1,5 @@
+import { Array_ } from "ron-utils";
+
 import type { CalcSetup, TeammateCalc } from "@/models";
 import type {
   AppArtifact,
@@ -22,7 +24,6 @@ import type {
 } from "@/types";
 
 import { $AppArtifact, $AppData } from "@/services";
-import Array_ from "@/utils/Array";
 import { isManualRsnElmt } from "./element.logic";
 
 export const MS_ASCENDANT_BUFF_ID = 1;

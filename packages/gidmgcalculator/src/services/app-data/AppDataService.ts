@@ -1,7 +1,8 @@
+import { Array_ } from "ron-utils";
+
 import type { AppMonster, AppTeamBuff, ITarget } from "@/types";
 import type { AllData } from "./types";
 
-import Array_ from "@/utils/Array";
 import { $AppArtifact } from "./AppArtifactService";
 import { $AppCharacter } from "./AppCharacterService";
 import { $AppWeapon } from "./AppWeaponService";

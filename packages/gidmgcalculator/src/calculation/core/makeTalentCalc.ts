@@ -1,3 +1,5 @@
+import { Array_ } from "ron-utils";
+
 import type { CharacterCalc } from "@/models";
 import type {
   AttackBonusKey,
@@ -20,7 +22,6 @@ import type { TargetCalc } from "../../models/TargetCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
 import { Character } from "@/models";
-import Array_ from "@/utils/Array";
 import { limitCRate } from "@/logic/stat.logic";
 import { toMult } from "@/utils/pure.utils";
 import { LUNAR_ATTACK_COEFFICIENT, LUNAR_ATTACK_ELEMENT } from "../constants";

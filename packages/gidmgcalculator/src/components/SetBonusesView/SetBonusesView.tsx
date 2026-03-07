@@ -1,5 +1,6 @@
-import { IArtifactGearSet } from "@/types";
-import Array_ from "@/utils/Array";
+import { Array_ } from "ron-utils";
+
+import type { IArtifactGearSet } from "@/types";
 import { parseArtifactDesc } from "@/utils/descriptionParsers";
 
 interface SetBonusesViewProps {

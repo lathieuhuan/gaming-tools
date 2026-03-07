@@ -1,3 +1,5 @@
+import { Array_ } from "ron-utils";
+
 import type { GOODCharacterConvertReturn } from "@/logic/converGOOD.logic";
 import type { Weapon } from "@/models";
 import type { GenshinUserBuild } from "@/services/enka";
@@ -6,7 +8,6 @@ import type { ArtifactSavingStep, CharacterSavingStep, WeaponSavingStep } from "
 
 import { ARTIFACT_TYPES } from "@/constants";
 import { createArtifact, createWeapon } from "@/logic/entity.logic";
-import Array_ from "@/utils/Array";
 import { isSameArtifact } from "../logic";
 
 export const getCharacterSavingStep = (

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { Object_ } from "ron-utils";
+import { Array_, Object_ } from "ron-utils";
 
 import { MAX_CALC_SETUPS } from "@/constants/config";
-import Array_ from "@/utils/Array";
 import { useShallowCalcStore } from "@Store/calculator";
 import { MultiSetupChange, updateMultiSetups } from "@Store/calculator/actions";
 import { getCopyName } from "@Store/calculator/utils";

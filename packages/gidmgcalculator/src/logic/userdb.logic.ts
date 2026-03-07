@@ -1,8 +1,9 @@
+import { Array_ } from "ron-utils";
+
 import type { IArtifactBasic, IDbCharacter, IWeaponBasic, WeaponType } from "@/types";
 
 import { ArtifactGear, Team } from "@/models";
 import { $AppCharacter } from "@/services";
-import Array_ from "@/utils/Array";
 import {
   createArtifact,
   createArtifactBasic,

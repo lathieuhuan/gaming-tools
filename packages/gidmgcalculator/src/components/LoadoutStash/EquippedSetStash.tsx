@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
+import { Array_ } from "ron-utils";
 import { Button, clsx, ItemCase, useIntersectionObserver } from "rond";
 
 import type { AppArtifact, ElementType, IArtifactBasic } from "@/types";
 
 import { useArtifactSetData } from "@/hooks";
 import { $AppCharacter } from "@/services";
-import Array_ from "@/utils/Array";
 import { useSelector } from "@Store/hooks";
 import { selectDbArtifacts, selectDbCharacters } from "@Store/userdbSlice";
 

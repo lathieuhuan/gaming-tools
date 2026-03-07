@@ -1,9 +1,10 @@
+import { Array_ } from "ron-utils";
+
 import type { CalcSetup } from "@/models";
 import type { IDbComplexSetup, IDbSetup } from "@/types";
 import type { UserdbState } from "@Store/userdbSlice";
 
 import { MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@/constants/config";
-import Array_ from "@/utils/Array";
 import { isDbSetup } from "@/logic/setup.logic";
 
 type ValidationErrorCode =

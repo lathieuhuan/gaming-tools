@@ -1,3 +1,5 @@
+import { Array_ } from "ron-utils";
+
 import type { CalcSetup, CharacterCalc, TeammateCalc } from "@/models";
 import type {
   AttackElement,
@@ -21,7 +23,6 @@ import {
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
 import { BonusCalc } from "@/models";
-import Array_ from "@/utils/Array";
 import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";
 
 export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup: CalcSetup) {

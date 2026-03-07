@@ -1,9 +1,10 @@
+import { Array_ } from "ron-utils";
+
 import type { CalcSetup, CharacterCalc } from "@/models";
 import type { AttackPattern, TalentCalcItemBonusId } from "@/types";
 import type { AttackAlter } from "../types";
 
 import { NORMAL_ATTACKS } from "@/constants";
-import Array_ from "@/utils/Array";
 
 export function getAttackAlters(main: CharacterCalc, setup: CalcSetup) {
   const configs: Partial<Record<AttackPattern | TalentCalcItemBonusId, AttackAlter>> = {};

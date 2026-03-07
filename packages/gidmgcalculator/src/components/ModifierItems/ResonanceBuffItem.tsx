@@ -1,6 +1,7 @@
+import { Array_ } from "ron-utils";
+
 import type { ElementType, ModInputConfig } from "@/types";
 
-import Array_ from "@/utils/Array";
 import { parseDescription } from "@/utils/descriptionParsers";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
 

@@ -1,10 +1,10 @@
+import { Array_ } from "ron-utils";
 import { ClassValue, clsx } from "rond";
 
 import { createArtifact, createWeapon } from "@/logic/entity.logic";
 import { ArtifactGear, CharacterCalc } from "@/models";
 import { GenshinUserBuild } from "@/services/enka";
 import { useSetupImporter } from "@/systems/setup-importer";
-import Array_ from "@/utils/Array";
 import IdStore from "@/utils/IdStore";
 import { useDataImportState } from "../DataImporter";
 import { useRequestSaveBuild } from "../DataSaver/BuildSaver";

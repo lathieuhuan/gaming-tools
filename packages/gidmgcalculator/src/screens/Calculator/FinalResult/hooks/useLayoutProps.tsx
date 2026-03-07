@@ -1,11 +1,10 @@
-import { Object_ } from "ron-utils";
+import { Array_, Object_ } from "ron-utils";
 
 import type { FinalResultLayoutProps } from "@/components";
 import type { TalentType } from "@/types";
 import type { CalculatorState } from "@Store/calculator/types";
 
 import { TALENT_TYPES } from "@/constants/global";
-import Array_ from "@/utils/Array";
 import { useShallowCalcStore } from "@Store/calculator";
 
 type UseLayoutPropsReturn = Pick<FinalResultLayoutProps, "showWeaponCalc" | "headerConfigs" | "character"> &

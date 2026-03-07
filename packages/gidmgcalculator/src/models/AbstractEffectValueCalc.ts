@@ -1,3 +1,5 @@
+import { Array_ } from "ron-utils";
+
 import type {
   CharacterBuff,
   CharacterDebuff,
@@ -10,7 +12,6 @@ import type {
   TalentLevelScaleConfig,
 } from "@/types";
 
-import Array_ from "@/utils/Array";
 import { wrapText } from "@/utils/descriptionParsers/utils";
 import { round, toMult } from "@/utils/pure.utils";
 import { Character } from "./Character";

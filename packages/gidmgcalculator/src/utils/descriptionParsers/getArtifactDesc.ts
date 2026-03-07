@@ -1,6 +1,6 @@
-import type { AppArtifact, ArtifactModifierDescription } from "@/types";
+import { Array_ } from "ron-utils";
 
-import Array_ from "../Array";
+import type { AppArtifact, ArtifactModifierDescription } from "@/types";
 import { parseArtifactDesc } from "./parseArtifactDesc";
 
 export function getArtifactDesc(

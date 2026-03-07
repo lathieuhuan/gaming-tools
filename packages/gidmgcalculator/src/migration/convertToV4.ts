@@ -1,3 +1,5 @@
+import { Array_ } from "ron-utils";
+
 import type {
   ElementalEvent,
   IArtifactModCtrlBasic,
@@ -7,8 +9,6 @@ import type {
 } from "@/types";
 import type { DatabaseDataV3_1 } from "./types/v3_1";
 import type { DatabaseDataV4, IDbSetup, ITeammateBasic } from "./types/v4";
-
-import Array_ from "@/utils/Array";
 
 type V3_1Setup = Exclude<DatabaseDataV3_1["setups"][number], IDbComplexSetup>;
 type V3_1ModifierCtrl = V3_1Setup["selfBuffCtrls"][number];

@@ -1,9 +1,10 @@
+import { Array_ } from "ron-utils";
+
 import type { CurrentDatabaseData } from "@/migration/types/current";
 import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 
 import { DOWNLOAD_DATA_VERSION } from "@/constants/config";
 import { $AppCharacter } from "@/services";
-import Array_ from "@/utils/Array";
 import { createWeaponBasic } from "@/logic/entity.logic";
 import {
   convertGOODArtifact,

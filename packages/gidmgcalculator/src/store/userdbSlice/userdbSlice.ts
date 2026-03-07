@@ -1,4 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { Array_ } from "ron-utils";
 
 import type {
   ArtifactType,
@@ -28,11 +29,10 @@ import type {
 } from "./types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
-import { Artifact, Ascendable, Weapon } from "@/models";
-import { $AppCharacter } from "@/services";
-import Array_ from "@/utils/Array";
 import { createCharacterBasic, createWeaponBasic } from "@/logic/entity.logic";
 import { isDbSetup } from "@/logic/setup.logic";
+import { Artifact, Ascendable, Weapon } from "@/models";
+import { $AppCharacter } from "@/services";
 
 export type UserdbState = {
   userChars: IDbCharacter[];

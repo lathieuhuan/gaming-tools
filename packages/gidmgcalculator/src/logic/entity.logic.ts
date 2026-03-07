@@ -1,4 +1,4 @@
-import { Object_ } from "ron-utils";
+import { Array_, Object_ } from "ron-utils";
 
 import type {
   AppArtifact,
@@ -24,7 +24,6 @@ import {
   type CharacterCalcConstructInfo,
 } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
-import Array_ from "@/utils/Array";
 import IdStore from "@/utils/IdStore";
 import { useSettingsStore } from "@Store/settings";
 

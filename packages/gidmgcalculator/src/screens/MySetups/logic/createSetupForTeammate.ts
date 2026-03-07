@@ -1,3 +1,5 @@
+import { Array_ } from "ron-utils";
+
 import type { UserdbState } from "@Store/userdbSlice";
 import type { SetupOverviewInfo } from "../types";
 
@@ -16,7 +18,6 @@ import {
 } from "@/logic/modifier.logic";
 import { Artifact, ArtifactGear, CalcSetup, Team, TeammateCalc } from "@/models";
 import { $AppArtifact } from "@/services";
-import Array_ from "@/utils/Array";
 import IdStore from "@/utils/IdStore";
 
 export function createSetupForTeammate(
