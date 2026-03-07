@@ -2,6 +2,8 @@ export function assertIsError(e: unknown): asserts e is Error {
   if (!(e instanceof Error)) throw new Error("e is not an Error");
 }
 
+export const noop = () => {};
+
 export function isFunction<T extends (...args: any[]) => any>(value: any): value is T {
   return typeof value === "function";
 }
