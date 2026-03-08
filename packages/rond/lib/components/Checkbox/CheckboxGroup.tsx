@@ -7,10 +7,10 @@ import {
   CheckboxGroupControl,
   CheckboxGroupControlOptions,
   CheckboxGroupOption,
-  CheckboxGroupValue,
+  CheckboxGroupOptionValue,
 } from "./logic";
 
-type CheckboxGroupProps<T extends CheckboxGroupValue> = CheckboxGroupControlOptions<T> & {
+export type CheckboxGroupProps<T extends CheckboxGroupOptionValue> = CheckboxGroupControlOptions<T> & {
   className?: string;
   style?: React.CSSProperties;
   values?: T[];
@@ -19,7 +19,7 @@ type CheckboxGroupProps<T extends CheckboxGroupValue> = CheckboxGroupControlOpti
   renderLabel?: CheckboxItemProps<T>["renderLabel"];
 };
 
-export function CheckboxGroup<T extends CheckboxGroupValue>({
+export function CheckboxGroup<T extends CheckboxGroupOptionValue>({
   values,
   options,
   control: controlProp,
@@ -41,7 +41,7 @@ export function CheckboxGroup<T extends CheckboxGroupValue>({
 
   return (
     <CheckboxGroupContext.Provider
-      value={control as unknown as CheckboxGroupControl<CheckboxGroupValue>}
+      value={control as unknown as CheckboxGroupControl<CheckboxGroupOptionValue>}
     >
       <div {...rest}>
         {options.map((option) => (

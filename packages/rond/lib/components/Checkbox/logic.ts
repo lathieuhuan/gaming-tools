@@ -1,17 +1,17 @@
 import { Subject } from "ron-utils";
 
-export type CheckboxGroupValue = string | number;
+export type CheckboxGroupOptionValue = string | number;
 
-export type CheckboxGroupOption<T extends CheckboxGroupValue> = {
+export type CheckboxGroupOption<T extends CheckboxGroupOptionValue> = {
   label?: string;
   value: T;
 };
 
-export type CheckboxGroupControlOptions<T extends CheckboxGroupValue> = {
+export type CheckboxGroupControlOptions<T extends CheckboxGroupOptionValue> = {
   onChange?: (values: Set<T>) => void;
 };
 
-export class CheckboxGroupControl<T extends CheckboxGroupValue> {
+export class CheckboxGroupControl<T extends CheckboxGroupOptionValue> {
   values: Set<T>;
   options: CheckboxGroupControlOptions<T>;
 

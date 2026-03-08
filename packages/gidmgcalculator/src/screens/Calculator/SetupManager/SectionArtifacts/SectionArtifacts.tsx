@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { FaToolbox } from "react-icons/fa";
 import { GiAnvil } from "react-icons/gi";
-import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
+import { IoDice } from "react-icons/io5";
+import { Button, clsx, CollapseSpace, Modal, notification, PouchSvg } from "rond";
 
 import type { ArtifactType } from "@/types";
 
@@ -23,10 +24,11 @@ import {
   LoadoutStashProps,
 } from "@/components";
 import { Section } from "../components/Section";
+import { ArtifactGenerator } from "./ArtifactGenerator";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
 
-type ModalType = "ARTIFACT_LOADOUT" | "";
+type ModalType = "ARTIFACT_LOADOUT" | "ARTIFACT_GENERATOR" | "";
 
 type InventoryState = {
   active: boolean;
@@ -248,6 +250,11 @@ export function SectionArtifacts() {
       {!activeArtifactType && (
         <div className="mt-4 px-4 flex justify-end gap-4">
           <Button
+            title="Generate"
+            icon={<IoDice className="text-2xl" />}
+            onClick={() => setModalType("ARTIFACT_GENERATOR")}
+          />
+          <Button
             title="Loadout"
             icon={<FaToolbox className="text-lg" />}
             onClick={handleRequestSelectArtifactLoadout}
@@ -293,6 +300,16 @@ export function SectionArtifacts() {
         onSelect={handleSelectLoadout}
         onClose={closeModal}
       />
+
+      <Modal
+        active={modalType === "ARTIFACT_GENERATOR"}
+        preset="small"
+        title="Artifact Generator"
+        className="bg-dark-1"
+        onClose={closeModal}
+      >
+        <ArtifactGenerator className="h-[70vh] custom-scrollbar" />
+      </Modal>
     </Section>
   );
 }

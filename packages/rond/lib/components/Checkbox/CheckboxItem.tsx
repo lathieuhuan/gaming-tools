@@ -2,9 +2,9 @@ import { useLayoutEffect, useState } from "react";
 
 import { Checkbox } from "./Checkbox";
 import { useCheckboxGroupContext } from "./context";
-import { CheckboxGroupOption, CheckboxGroupValue } from "./logic";
+import { CheckboxGroupOption, CheckboxGroupOptionValue } from "./logic";
 
-export type CheckboxItemProps<T extends CheckboxGroupValue> = {
+export type CheckboxItemProps<T extends CheckboxGroupOptionValue> = {
   option: CheckboxGroupOption<T>;
   renderLabel?: (
     field: { checked: boolean; onClick: () => void },
@@ -12,7 +12,7 @@ export type CheckboxItemProps<T extends CheckboxGroupValue> = {
   ) => React.ReactElement;
 };
 
-export function CheckboxItem<T extends CheckboxGroupValue>({
+export function CheckboxItem<T extends CheckboxGroupOptionValue>({
   option,
   renderLabel,
 }: CheckboxItemProps<T>) {
