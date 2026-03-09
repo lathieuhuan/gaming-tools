@@ -6,9 +6,9 @@ import { ConfigProvider, ScreenSizeWatcher } from "rond";
 
 import { route } from "./app/route";
 import { GenshinImage } from "./components";
-// import { DynamicStoreProvider } from "./systems/dynamic-store";
-import { QueryClientProvider } from "./systems/react-query";
-import { RouterProvider } from "./systems/router";
+// import { DynamicStoreProvider } from "./lib/dynamic-store";
+import { QueryClientProvider } from "./lib/react-query";
+import { RouterProvider } from "./lib/router";
 
 import "@rc-component/dropdown/assets/index.css";
 import "./style.css";

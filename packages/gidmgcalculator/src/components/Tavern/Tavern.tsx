@@ -4,7 +4,7 @@ import { Modal } from "rond";
 import type { AppCharacter, IDbCharacter } from "@/types";
 
 import { $AppCharacter } from "@/services";
-import { useStoreSnapshot } from "@/systems/dynamic-store";
+import { useStoreSnapshot } from "@/lib/dynamic-store";
 import { selectDbCharacters } from "@Store/userdbSlice";
 
 // Component

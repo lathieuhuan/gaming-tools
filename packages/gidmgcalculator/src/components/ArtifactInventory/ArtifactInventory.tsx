@@ -11,7 +11,7 @@ import type { ArtifactType } from "@/types";
 import { type ArtifactGear, Artifact } from "@/models";
 
 import { useArtifactSetData } from "@/hooks";
-import { useStoreSnapshot } from "@/systems/dynamic-store";
+import { useStoreSnapshot } from "@/lib/dynamic-store";
 import { selectDbArtifacts } from "@Store/userdbSlice";
 
 // Conponent

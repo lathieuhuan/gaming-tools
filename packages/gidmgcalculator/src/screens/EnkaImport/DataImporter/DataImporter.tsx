@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useState } from "react";
 
 import type { EnkaSearchParams, SelectedBuild } from "../types";
 
-import { useSearchParams } from "@/systems/router";
+import { useSearchParams } from "@/lib/router";
 import { selectAppReady, useUIStore } from "@Store/ui";
 import { useGenshinUser } from "../hooks/useGenshinUser";
 import { useLayoutState } from "../Layout";

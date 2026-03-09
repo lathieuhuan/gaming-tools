@@ -4,7 +4,7 @@ import { SCREEN_PATH } from "@/constants";
 import { createCharacterCalc, createWeapon } from "@/logic/entity.logic";
 import { ArtifactGear, CalcSetup, Team, TeammateCalc } from "@/models";
 import { $AppCharacter } from "@/services";
-import { router } from "@/systems/router";
+import { router } from "@/lib/router";
 import { initSession } from "@Store/calculator/actions";
 
 export function prepEnhanceTour() {

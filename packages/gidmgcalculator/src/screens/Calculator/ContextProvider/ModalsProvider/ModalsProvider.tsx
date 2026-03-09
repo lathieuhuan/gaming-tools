@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Modal } from "rond";
 
-import { useStore } from "@/systems/dynamic-store";
+import { useStore } from "@/lib/dynamic-store";
 import { initSessionWithCharacter } from "./actions/initSessionWithCharacter";
 import { CalculatorModalsContext, CalculatorModalsControl } from "./context";
 

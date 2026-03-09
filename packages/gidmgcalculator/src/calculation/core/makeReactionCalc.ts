@@ -38,9 +38,9 @@ export function makeReactionCalc(performer: CharacterCalc, target: TargetCalc) {
     reaction: LunarReaction,
     recorder: ResultRecorder
   ): CalcResultReactionItem {
-    function getBonus(key: AttackBonusKey) {
-      return attkBonusCtrl.get(key, reaction);
-    }
+    const getBonus: typeof attkBonusCtrl.get = (key, ...paths) => {
+      return attkBonusCtrl.get(key, reaction, ...paths);
+    };
 
     const mult = LUNAR_REACTION_COEFFICIENT[reaction];
     const baseValue = baseRxnDamage * mult;
@@ -54,8 +54,8 @@ export function makeReactionCalc(performer: CharacterCalc, target: TargetCalc) {
     const resMult = target.resistMults[attElmt];
 
     const base = (baseValue * baseMult * bonusMult * elvMult + flat) * rxnMult * resMult;
-    const cRate_ = limitCRate(getBonus("cRate_") + performer.getAttr("cRate_")) / 100;
-    const cDmg_ = (getBonus("cDmg_") + performer.getAttr("cDmg_")) / 100;
+    const cRate_ = limitCRate(getBonus("cRate_", attElmt) + performer.getAttr("cRate_")) / 100;
+    const cDmg_ = (getBonus("cDmg_", attElmt) + performer.getAttr("cDmg_")) / 100;
 
     recorder.record({
       factors: [{ value: Math.round(baseValue), label: "Base DMG" }],

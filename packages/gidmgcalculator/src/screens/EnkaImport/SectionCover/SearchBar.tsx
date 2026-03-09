@@ -4,7 +4,7 @@ import { Button, clsx, Input, LoadingSpin, SearchSvg, Select } from "rond";
 
 import type { EnkaSearchParams } from "../types";
 
-import { useSearchParams } from "@/systems/router";
+import { useSearchParams } from "@/lib/router";
 import { updateEnkaParams, useUIStore } from "@Store/ui";
 import { useDataImportState } from "../DataImporter";
 

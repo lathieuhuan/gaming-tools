@@ -4,7 +4,7 @@ import { useScreenWatcher } from "rond";
 import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
 import { CalculatorLarge, CalculatorSmall } from "@/screens/Calculator";
 import { $AppCharacter } from "@/services";
-import { Outlet, useRouter } from "@/systems/router";
+import { Outlet, useRouter } from "@/lib/router";
 import { useSettingsStore } from "@Store/settings";
 
 export function Main() {

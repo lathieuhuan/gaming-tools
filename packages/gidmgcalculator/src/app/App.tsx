@@ -1,13 +1,13 @@
-import { ImporterProvider } from "@/systems/setup-importer";
+import { ImporterProvider } from "@/lib/setup-importer";
 
-import { TourOperator } from "@/systems/tour-operator";
+import { TourOperator } from "@/lib/tour-operator";
 import { Greeter } from "./Greeter";
 import { Main } from "./Main";
 import { Modals } from "./Modals";
 import { Navbar } from "./Navbar";
 import { Tracker } from "./Tracker";
 
-import { DynamicStoreProvider } from "@/systems/dynamic-store";
+import { DynamicStoreProvider } from "@/lib/dynamic-store";
 import { selectAppReady, useUIStore } from "@Store/ui";
 import { Provider as StoreProvider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";

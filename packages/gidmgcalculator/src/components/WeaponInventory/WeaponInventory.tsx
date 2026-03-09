@@ -4,7 +4,7 @@ import { EntitySelectTemplate, FancyBackSvg, Modal } from "rond";
 import type { IWeaponBasic, WeaponType } from "@/types";
 
 import { Weapon } from "@/models";
-import { useStoreSnapshot } from "@/systems/dynamic-store";
+import { useStoreSnapshot } from "@/lib/dynamic-store";
 import { selectDbWeapons } from "@Store/userdbSlice";
 
 // Component

@@ -6,7 +6,7 @@ import { ConfirmModal, Modal } from "rond";
 import type { Artifact } from "@/models";
 
 import { MAX_USER_ARTIFACTS } from "@/constants/config";
-import { useStoreSnapshot } from "@/systems/dynamic-store";
+import { useStoreSnapshot } from "@/lib/dynamic-store";
 import { useDispatch } from "@Store/hooks";
 import { addDbArtifact, selectDbArtifacts, updateDbArtifact } from "@Store/userdbSlice";
 

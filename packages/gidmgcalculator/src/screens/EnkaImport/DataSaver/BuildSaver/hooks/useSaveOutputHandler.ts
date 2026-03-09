@@ -6,7 +6,7 @@ import type {
   WeaponSaveOutput,
 } from "../types";
 
-import { useStore } from "@/systems/dynamic-store";
+import { useStore } from "@/lib/dynamic-store";
 import IdStore from "@/utils/IdStore";
 import { useDispatch } from "@Store/hooks";
 import {

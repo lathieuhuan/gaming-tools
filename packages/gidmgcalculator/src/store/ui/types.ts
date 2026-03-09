@@ -1,4 +1,4 @@
-import type { SearchParams } from "@/systems/router";
+import type { SearchParams } from "@/lib/router";
 import type { TourKey } from "@/types";
 
 type AppModalType =

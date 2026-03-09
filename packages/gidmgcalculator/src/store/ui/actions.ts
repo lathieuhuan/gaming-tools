@@ -1,4 +1,4 @@
-import { SearchParams } from "@/systems/router";
+import { SearchParams } from "@/lib/router";
 import { TourType, UIState } from "./types";
 import { useUIStore } from "./uiStore";
 

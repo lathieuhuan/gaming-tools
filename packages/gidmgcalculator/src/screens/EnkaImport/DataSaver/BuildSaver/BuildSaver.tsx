@@ -4,7 +4,7 @@ import { CloseButton, Modal } from "rond";
 import type { GenshinUserBuild } from "@/services/enka";
 import type { SavingSteps } from "./types";
 
-import { useStore } from "@/systems/dynamic-store";
+import { useStore } from "@/lib/dynamic-store";
 import { getArtifactSavingStep, getCharacterSavingStep, getWeaponSavingStep } from "./logic";
 
 import { BuildSaverContext, BuildSaverContextState } from "./context";

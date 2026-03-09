@@ -1,4 +1,4 @@
-import type { TourStep } from "@/systems/tour-guide";
+import type { TourStep } from "@/lib/tour-guide";
 
 import { ENHANCE_TOUR_SITE_ID, TOUR_STEP_ID } from "@/constants";
 import { $AppCharacter } from "@/services";

@@ -7,7 +7,7 @@ import type { SetupOverviewInfo } from "./types";
 
 import { isDbSetup, restoreCalcSetup } from "@/logic/setup.logic";
 import { parseDbArtifacts, parseDbWeapon } from "@/logic/userdb.logic";
-import { useSetupImporter } from "@/systems/setup-importer";
+import { useSetupImporter } from "@/lib/setup-importer";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui";
 import { selectActiveSetupId, viewDbSetup } from "@Store/userdbSlice";

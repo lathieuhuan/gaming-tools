@@ -1,5 +1,5 @@
 import { MAX_USER_ARTIFACTS, MAX_USER_WEAPONS } from "@/constants/config";
-import { useStore } from "@/systems/dynamic-store";
+import { useStore } from "@/lib/dynamic-store";
 import { ICharacterBasic } from "@/types";
 
 type AddCharacterError = {

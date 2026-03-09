@@ -1,11 +1,11 @@
 import { useLayoutEffect } from "react";
 import { notification } from "rond";
 
-import type { TourStep, TourStepErrorCode } from "@/systems/tour-guide";
+import type { TourStep, TourStepErrorCode } from "@/lib/tour-guide";
 import type { TourKey } from "@/types";
 import type { TourType } from "@Store/ui/types";
 
-import { TourGuide } from "@/systems/tour-guide";
+import { TourGuide } from "@/lib/tour-guide";
 import { setTourFinished } from "@Store/tours/actions";
 import { setTourType } from "@Store/ui";
 import { router } from "../router/logic/router";

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FaToolbox } from "react-icons/fa";
 import { GiAnvil } from "react-icons/gi";
 import { IoDice } from "react-icons/io5";
-import { Button, clsx, CollapseSpace, Modal, notification, PouchSvg } from "rond";
+import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
 
 import type { ArtifactType } from "@/types";
 
@@ -24,7 +24,6 @@ import {
   LoadoutStashProps,
 } from "@/components";
 import { Section } from "../components/Section";
-import { ArtifactGenerator } from "./ArtifactGenerator";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
 
@@ -301,7 +300,7 @@ export function SectionArtifacts() {
         onClose={closeModal}
       />
 
-      <Modal
+      {/* <Modal
         active={modalType === "ARTIFACT_GENERATOR"}
         preset="small"
         title="Artifact Generator"
@@ -309,7 +308,7 @@ export function SectionArtifacts() {
         onClose={closeModal}
       >
         <ArtifactGenerator className="h-[70vh] custom-scrollbar" />
-      </Modal>
+      </Modal> */}
     </Section>
   );
 }
