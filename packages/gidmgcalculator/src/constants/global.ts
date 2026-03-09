@@ -6,7 +6,9 @@ export const WEAPON_TYPES = ["sword", "claymore", "catalyst", "polearm", "bow"] 
 
 export const ARTIFACT_TYPES = ["flower", "plume", "sands", "goblet", "circlet"] as const;
 
-export const TALENT_TYPES = ["NAs", "ES", "EB", "altSprint"] as const;
+export const LEVELABLE_TALENT_TYPES = ["NAs", "ES", "EB"] as const;
+
+export const TALENT_TYPES = [...LEVELABLE_TALENT_TYPES, "altSprint"] as const;
 
 export const BONUS_KEYS = [
   "pct_",

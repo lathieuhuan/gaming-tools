@@ -18,4 +18,5 @@ export const SCREEN_PATH = {
   WEAPONS: "/weapons",
   CHARACTERS: "/characters",
   ENKA: "/enka",
+  SIMULATOR: "/simulator",
 } as const;

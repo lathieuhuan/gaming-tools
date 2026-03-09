@@ -1,9 +1,10 @@
+import { RootRouteConfig } from "@/lib/router";
 import EnkaImport from "@/screens/EnkaImport";
 import MyArtifacts from "@/screens/MyArtifacts";
 import MyCharacters from "@/screens/MyCharacters";
 import MySetups from "@/screens/MySetups";
 import MyWeapons from "@/screens/MyWeapons";
-import { RootRouteConfig } from "@/lib/router";
+import Simulator from "@/screens/Simulator";
 
 import { SCREEN_PATH } from "@/constants/config";
 import { App } from "./App";
@@ -11,6 +12,10 @@ import { App } from "./App";
 export const route: RootRouteConfig = {
   component: App,
   children: [
+    {
+      path: SCREEN_PATH.SIMULATOR,
+      component: Simulator,
+    },
     {
       path: SCREEN_PATH.ENKA,
       component: EnkaImport,
