@@ -59,10 +59,7 @@ export type IArtifactGearSet = {
   data: AppArtifact;
 };
 
-export type IArtifactGearPieces<T extends IArtifact = IArtifact> = Partial<
-  Record<ArtifactType, T>
-> &
-  Iterable<T>;
+export type IArtifactGearPieces<T extends IArtifact = IArtifact> = Map<ArtifactType, T>;
 
 export type IArtifactGearSlot<TArtifact extends IArtifact = IArtifact> =
   | {
@@ -77,9 +74,11 @@ export type IArtifactGearSlot<TArtifact extends IArtifact = IArtifact> =
 
 export type IArtifactGear<T extends IArtifact = IArtifact> = {
   pieces: IArtifactGearPieces<T>;
-  slots: IArtifactGearSlot<T>[];
   sets: IArtifactGearSet[];
   attributes: AllAttributes;
+  slots<U>(callback: (slot: IArtifactGearSlot<T>) => U): U[];
+  slots(): IArtifactGearSlot<T>[];
+  slots<U>(callback?: (slot: IArtifactGearSlot<T>) => U): IArtifactGearSlot<T>[] | U[];
 };
 
 // ========== CHARACTER ==========

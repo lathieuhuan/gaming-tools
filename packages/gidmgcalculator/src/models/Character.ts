@@ -1,4 +1,7 @@
+import { Object_ } from "ron-utils";
+
 import type { AppCharacter, ICharacter, ICharacterBasic, Level, TalentType } from "@/types";
+import type { Clonable } from "./interfaces";
 
 import { ArtifactGear } from "./ArtifactGear";
 import { Ascendable } from "./Ascendable";
@@ -51,7 +54,7 @@ const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
 
 export class Character<W extends Weapon = Weapon, A extends ArtifactGear = ArtifactGear>
   extends Ascendable
-  implements ICharacter<W, A>
+  implements ICharacter<W, A>, Clonable<Character<W, A>>
 {
   code: number;
   level: Level;
@@ -87,23 +90,40 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
     this.isTraveler = data.name.slice(-8) === "Traveler";
   }
 
-  getTotalXtraTalentLv(talentType: TalentType) {
-    let result = 0;
+  // ===== SETTERS =====
 
-    if (talentType !== "altSprint") {
-      const requiredConsLv = this.data.talentLvBonus?.[talentType];
+  update<T extends keyof ICharacterBasic>(prop: T, value: ICharacterBasic[T]): this;
+  update(info: Partial<ICharacterBasic>): this;
+  update<T extends keyof ICharacterBasic>(
+    infoOrProp: T | Partial<ICharacterBasic>,
+    value?: ICharacterBasic[T]
+  ): this {
+    const data = typeof infoOrProp === "object" ? infoOrProp : { [infoOrProp]: value };
+    return Object_.assign(this, data) as this;
+  }
 
-      if (requiredConsLv && this.cons >= requiredConsLv) {
-        result += 3;
-      }
+  equip(item: W | A) {
+    if (item instanceof Weapon) {
+      this.weapon = item;
+    } else {
+      this.atfGear = item;
     }
 
-    return result;
+    return this;
+  }
+
+  // ===== GETTERS =====
+
+  getTotalXtraTalentLv(talentType: TalentType): number {
+    const requiredConsLv = this.data.talentLvBonus?.[talentType];
+    return requiredConsLv && this.cons >= requiredConsLv ? 3 : 0;
   }
 
   getFinalTalentLv(talent: TalentType) {
     return talent === "altSprint" ? 1 : this[talent] + this.getTotalXtraTalentLv(talent);
   }
+
+  // ===== STATIC =====
 
   static getTalentMult(scale: number, talentLv: number) {
     return scale ? TALENT_LV_MULTIPLIERS[scale]?.[talentLv] ?? 0 : 1;
@@ -121,7 +141,13 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
     };
   }
 
+  // ===== _ =====
+
   serialize(): ICharacterBasic {
     return Character.toBasic(this);
+  }
+
+  clone() {
+    return new Character<W, A>({ ...this }, this.data);
   }
 }

@@ -30,7 +30,7 @@ export const updateSetupAfterSave = (
     weapon.ID = weaponId;
 
     for (const [type, id] of Object_.entries(newPieceIds)) {
-      const piece = atfGear.pieces[type];
+      const piece = atfGear.pieces.get(type);
 
       if (piece && id) {
         piece.ID = id;

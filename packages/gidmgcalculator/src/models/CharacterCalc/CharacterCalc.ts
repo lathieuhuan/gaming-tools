@@ -23,6 +23,7 @@ import type {
 import type { TypeCounterKey } from "@/utils/TypeCounter";
 import type { ArtifactGear } from "../ArtifactGear";
 import type { Weapon } from "../Weapon";
+import type { Clonable } from "../interfaces";
 
 import { AllAttributesControl } from "../AllAttributesControl";
 import { AttackBonusControl } from "../AttackBonusControl";
@@ -69,7 +70,7 @@ export class CharacterCalc<
     TTeam extends ITeam = ITeam
   >
   extends Character<W, A>
-  implements ICharacterCalc<W, A>, ITeamMember<TTeam>
+  implements ICharacterCalc<W, A>, ITeamMember<TTeam>, Clonable<CharacterCalc<W, A, TTeam>>
 {
   team: ITeam;
 
@@ -95,6 +96,10 @@ export class CharacterCalc<
 
   override getTotalXtraTalentLv(talentType: TalentType) {
     return this.team.extraTalentLv.get(talentType) + super.getTotalXtraTalentLv(talentType);
+  }
+
+  override clone() {
+    return new CharacterCalc<W, A, TTeam>({ ...this }, this.data, this.team);
   }
 
   // ===== GETTERS =====

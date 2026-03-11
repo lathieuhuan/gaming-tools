@@ -56,7 +56,7 @@ export function SectionArtifacts() {
   });
 
   const { pieces } = atfGear;
-  const activePiece = activeArtifactType ? pieces[activeArtifactType] : undefined;
+  const activePiece = activeArtifactType ? pieces.get(activeArtifactType) : undefined;
 
   const closeModal = () => setModalType("");
 
@@ -76,7 +76,7 @@ export function SectionArtifacts() {
 
   const handleClickTab = (type: ArtifactType) => {
     // there's already an artifact at tabIndex (or activePiece !== null after this excution)
-    if (pieces[type]) {
+    if (pieces.has(type)) {
       // if click on the activeTab close it, otherwise change tab
       setActiveArtifactType(activeArtifactType === type ? undefined : type);
     } else {
@@ -209,7 +209,7 @@ export function SectionArtifacts() {
 
       <div className="flex">
         {ARTIFACT_TYPES.map((type) => {
-          const piece = pieces[type];
+          const piece = pieces.get(type);
           const icon = piece?.data?.[type].icon || Artifact.iconOf(type);
 
           return (

@@ -51,7 +51,7 @@ export function GearsOverview({
         showOwner={false}
         selectedType={isEquipmentType(detailType) ? detailType : undefined}
         weapon={weapon}
-        atfSlots={atfGear.slots}
+        atfGear={atfGear}
         onClickItem={onClickDetail}
         onClickEmptyAtfSlot={onClickEmptyAtfSlot}
       />

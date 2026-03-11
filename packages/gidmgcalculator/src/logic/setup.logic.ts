@@ -62,7 +62,7 @@ export function toDbSetup(
       cons: main.cons,
       enhanced: main.enhanced,
       weaponID: main.weapon.ID,
-      artifactIDs: main.atfGear.pieces.map((artifact) => artifact.ID),
+      artifactIDs: main.atfGear.pieces.list().map((piece) => piece.ID),
     },
     selfBuffCtrls: toDbCtrls(setup.selfBuffCtrls),
     selfDebuffCtrls: toDbCtrls(setup.selfDebuffCtrls),

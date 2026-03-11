@@ -103,7 +103,7 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
             return;
           }
 
-          const currentPiece = atfGear?.pieces[switchedSlot.type];
+          const currentPiece = atfGear?.pieces.get(switchedSlot.type);
 
           dispatch(
             switchArtifact({

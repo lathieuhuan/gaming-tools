@@ -169,7 +169,7 @@ export class CalcSetup extends CalcSetupBase {
     shouldKeepStats = false
   ) {
     const { atfGear } = this.main;
-    const oldPiece = atfGear.pieces[artifact.type];
+    const oldPiece = atfGear.pieces.get(artifact.type);
     let newPiece: IArtifactBasic;
 
     if (shouldKeepStats && oldPiece) {
@@ -186,21 +186,21 @@ export class CalcSetup extends CalcSetupBase {
       });
     }
 
-    atfGear.pieces[artifact.type] = new Artifact(newPiece, data);
+    atfGear.pieces.set(artifact.type, new Artifact(newPiece, data));
 
     return new ArtifactGear(atfGear.pieces);
   }
 
   removeArtifactPiece(type: ArtifactType) {
-    const { pieces } = this.main.atfGear;
-    pieces[type] = undefined;
+    const pieces = this.main.atfGear.pieces.clone();
+    pieces.delete(type);
 
     return new ArtifactGear(pieces);
   }
 
   updateArtifactPiece(type: ArtifactType, info: ArtifactPieceUpdateData) {
-    const { pieces } = this.main.atfGear;
-    const piece = pieces[type];
+    const pieces = this.main.atfGear.pieces.clone();
+    const piece = pieces.get(type);
 
     if (!piece) {
       return this.main.atfGear;
@@ -218,9 +218,9 @@ export class CalcSetup extends CalcSetupBase {
       };
     }
 
-    pieces[type] = new Artifact({ ...piece, ...newInfo, subStats: newSubStats }, piece.data);
+    const newPiece = new Artifact({ ...piece, ...newInfo, subStats: newSubStats }, piece.data);
 
-    return new ArtifactGear(pieces);
+    return new ArtifactGear(pieces.set(type, newPiece));
   }
 
   /** Used when change involves artifact.sets */
@@ -234,11 +234,7 @@ export class CalcSetup extends CalcSetupBase {
   }
 
   cloneArtifactGear() {
-    const pieces = this.main.atfGear.pieces.map<Artifact>((piece) => {
-      return new Artifact(piece.serialize(), piece.data);
-    });
-
-    return new ArtifactGear(pieces);
+    return new ArtifactGear(this.main.atfGear.pieces.clone());
   }
 
   // ===== MODIFIERS UPDATE FOLLOW-UPS =====

@@ -88,10 +88,11 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
       }
     }
 
-    const artifactIDs = atfGear.pieces.map((piece) => piece.ID);
+    const pieces = atfGear.pieces.list();
+    const artifactIDs = pieces.map((piece) => piece.ID);
     const newPieceIds: Partial<Record<ArtifactType, number>> = {};
 
-    atfGear.pieces.forEach((piece, pieceIndex) => {
+    pieces.forEach((piece, pieceIndex) => {
       const existedPiece = Array_.findById(userArts, piece.ID);
       const pieceCore = Artifact.toCore(piece);
 

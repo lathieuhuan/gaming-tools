@@ -71,7 +71,7 @@ const ArtifactInventoryCore = ({
   });
 
   const currentPiece = selectedArtifact?.type
-    ? currentAtfGear?.pieces[selectedArtifact.type]
+    ? currentAtfGear?.pieces.get(selectedArtifact.type)
     : undefined;
 
   const onChangeItem: InventoryRackProps<Artifact>["onChangeItem"] = (item) => {

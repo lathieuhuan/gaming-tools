@@ -40,7 +40,7 @@ export function GearsDetail({ detailType, showCloseBtn, onClose }: GearsDetailPr
     };
 
     if (
-      (isArtifactType(detailType) && !atfGear.pieces[detailType]) ||
+      (isArtifactType(detailType) && !atfGear.pieces.get(detailType)) ||
       (detailType === "setBonus" && !atfGear.sets.length)
     ) {
       onClose();
@@ -96,7 +96,7 @@ export function GearsDetail({ detailType, showCloseBtn, onClose }: GearsDetailPr
       return null;
 
     default: {
-      const activeArtifact = atfGear.pieces[detailType];
+      const activeArtifact = atfGear.pieces.get(detailType);
 
       if (!activeArtifact) {
         return null;

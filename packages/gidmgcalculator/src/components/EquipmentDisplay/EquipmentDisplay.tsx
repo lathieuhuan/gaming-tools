@@ -1,7 +1,6 @@
 import { clsx, ItemCase, type ClassValue } from "rond";
 
-import type { ArtifactType, IArtifact, IArtifactGearSlot, IWeapon } from "@/types";
-import { ARTIFACT_TYPES } from "@/constants/global";
+import type { ArtifactType, IArtifact, IArtifactGear, IWeapon } from "@/types";
 import { Artifact } from "@/models";
 
 // Component
@@ -14,7 +13,7 @@ export type EquipmentDisplayProps = Pick<ItemThumbProps, "muted" | "compact" | "
   className?: ClassValue;
   style?: React.CSSProperties;
   weapon: IWeapon;
-  atfSlots: IArtifactGearSlot[];
+  atfGear: IArtifactGear;
   /** Whether empty artifacts are rendered as clickable buttons. */
   fillable?: boolean;
   selectedType?: EquipmentType;
@@ -23,7 +22,7 @@ export type EquipmentDisplayProps = Pick<ItemThumbProps, "muted" | "compact" | "
 };
 
 export function EquipmentDisplay(props: EquipmentDisplayProps) {
-  const { weapon, atfSlots, selectedType, muted, showOwner, fillable, compact } = props;
+  const { weapon, atfGear, selectedType, muted, showOwner, fillable, compact } = props;
   const EmptyWrap: keyof JSX.IntrinsicElements = fillable ? "button" : "div";
 
   const renderWeapon = (className?: string, imgCls?: string) => {
@@ -78,10 +77,10 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
         )}
       </div>
 
-      {atfSlots.map((slot, i) => {
+      {atfGear.slots((slot) => {
         if (slot.isFilled) {
           return (
-            <div key={i} className="p-1.5 w-1/3">
+            <div key={slot.type} className="p-1.5 w-1/3">
               {muted ? (
                 renderArtifact(slot.piece)
               ) : (
@@ -97,7 +96,7 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
         }
 
         return (
-          <div key={i} className="p-1.5 w-1/3" style={{ minHeight: compact ? 84 : 124 }}>
+          <div key={slot.type} className="p-1.5 w-1/3" style={{ minHeight: compact ? 84 : 124 }}>
             <EmptyWrap
               className={clsx(
                 "p-4 w-full h-full flex-center rounded bg-dark-3",
@@ -105,7 +104,7 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
               )}
               onClick={fillable ? () => props.onClickEmptyAtfSlot?.(slot.type) : undefined}
             >
-              <GenshinImage className="w-full" src={Artifact.iconOf(ARTIFACT_TYPES[i])} />
+              <GenshinImage className="w-full" src={Artifact.iconOf(slot.type)} />
             </EmptyWrap>
           </div>
         );
