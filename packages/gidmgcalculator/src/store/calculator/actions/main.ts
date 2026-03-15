@@ -28,19 +28,16 @@ export const updateMain = (data: MainUpdateData, setupIds?: number[]) => {
     for (const setupId of ids) {
       const setup = setupsById[setupId];
       const prevEnhanced = setup.main.enhanced;
-      const newMain = setup.updateMain(data);
 
-      setup.main = newMain;
+      setup.main = setup.main.update(data).clone();
 
       if (data.enhanced !== undefined && data.enhanced !== prevEnhanced) {
-        setup.team = new Team([newMain, ...setup.teammates]);
+        setup.team = new Team([setup.main, ...setup.teammates]);
       }
 
       setupsById[setupId] = setup.calculate();
     }
   });
-
-  return;
 };
 
 // ===== WEAPON =====

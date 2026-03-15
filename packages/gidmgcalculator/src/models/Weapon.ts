@@ -1,6 +1,7 @@
 import { Object_ } from "ron-utils";
 
 import type { AppWeapon, IWeapon, IWeaponBasic, Level, WeaponType } from "@/types";
+import type { Clonable } from "./interfaces";
 
 import { LEVELS } from "@/constants/global";
 import { Ascendable } from "./Ascendable";
@@ -65,7 +66,7 @@ const SUBSTAT_SCALE: Record<string, number[]> = {
   58: [58, 102, 148, 172, 195, 218, 241, 265],
 };
 
-export class Weapon extends Ascendable implements IWeapon {
+export class Weapon extends Ascendable implements IWeapon, Clonable<Weapon> {
   ID: number;
   type: WeaponType;
   code: number;
@@ -141,5 +142,9 @@ export class Weapon extends Ascendable implements IWeapon {
 
   serialize(): IWeaponBasic {
     return Weapon.toBasic(this);
+  }
+
+  clone() {
+    return new Weapon(this, this.data);
   }
 }

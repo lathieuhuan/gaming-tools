@@ -111,10 +111,15 @@ export class CalcSetup extends CalcSetupBase {
   calculate(shouldLog?: boolean) {
     const { main, result } = calculateSetup(this, { shouldLog });
 
-    const newMain = this.updateMain({
-      allAttrsCtrl: main.allAttrsCtrl.clone(),
-      attkBonusCtrl: main.attkBonusCtrl.clone(),
-    });
+    const newMain = new CharacterCalc(
+      {
+        ...this.main,
+        allAttrsCtrl: main.allAttrsCtrl.clone(),
+        attkBonusCtrl: main.attkBonusCtrl.clone(),
+      },
+      this.main.data,
+      this.team
+    );
 
     return new CalcSetup({
       ...this,
@@ -124,17 +129,6 @@ export class CalcSetup extends CalcSetupBase {
   }
 
   // ===== MAIN CHARACTER =====
-
-  updateMain(data: MainUpdateData) {
-    return new CharacterCalc(
-      {
-        ...this.main,
-        ...data,
-      },
-      this.main.data,
-      this.team
-    );
-  }
 
   cloneMain() {
     const { weapon, atfGear, attkBonusCtrl, allAttrsCtrl } = this.main;

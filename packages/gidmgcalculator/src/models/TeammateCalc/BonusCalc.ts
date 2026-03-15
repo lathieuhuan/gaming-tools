@@ -13,12 +13,13 @@ export class BonusCalc extends AbstractBonusCalc {
   }
 
   protected getBasedOn(config: EntityBonusBasedOn) {
-    const { field, altIndex, baseline = 0 } = this.parseBasedOn(config);
+    const { field, altIndex, baseline = 0, isDynamic = true } = this.parseBasedOn(config);
     const basedOnValue = this.getInput(altIndex);
 
     return {
       field,
       value: Math.max(basedOnValue - baseline, 0),
+      isDynamic,
     };
   }
 
