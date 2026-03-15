@@ -113,6 +113,9 @@ export const Greeter = () => {
       bodyCls="pt-0 flex flex-col"
       title={
         <>
+          <div>
+            <p className="text-center text-red-500 font-bold">NOTE: THIS WEBSITE MIGHT NOT WORKING FULLY 100% FUNCTION</p>
+          </div>
           <div className="flex flex-col items-center">
             {renderIntroTitle("large")}
 
