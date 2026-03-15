@@ -9,7 +9,8 @@
     "gidmgcalculator:build": "cd packages/gidmgcalculator && npm run build",
     "rond:storybook": "cd packages/rond && npm run storybook",
     "rond:dev": "cd packages/rond && npm run dev",
-    "rond:build": "cd packages/rond && npm run build"
+    "rond:build": "cd packages/rond && npm run build",
+    "up": "docker compose up -d --build"
   },
   "devDependencies": {
     "@eslint/js": "9.36.0",
