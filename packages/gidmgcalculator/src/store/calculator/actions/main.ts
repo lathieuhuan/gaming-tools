@@ -1,7 +1,7 @@
 import { Object_ } from "ron-utils";
 
-import type { CalcSetup, MainUpdateData } from "@/models";
-import type { ElementalEvent, ITarget } from "@/types";
+import type { CalcSetup } from "@/models";
+import type { ElementalEvent, ICharacterBasic, ITarget, IWeaponBasic } from "@/types";
 import type { ForwardedAction } from "../types";
 
 import { createTarget } from "@/logic/entity.logic";
@@ -13,7 +13,7 @@ import { onActiveSetup } from "../utils";
 
 // ===== CHARACTER =====
 
-export const updateMain = (data: MainUpdateData, setupIds?: number[]) => {
+export const updateMain = (data: Partial<ICharacterBasic>, setupIds?: number[]) => {
   const { separateCharInfo } = useSettingsStore.getState();
 
   const ids =
@@ -42,17 +42,17 @@ export const updateMain = (data: MainUpdateData, setupIds?: number[]) => {
 
 // ===== WEAPON =====
 
-export const updateMainWeapon: ForwardedAction<CalcSetup["updateMainWeapon"]> = (data) => {
+export const updateMainWeapon = (data: Partial<IWeaponBasic>) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
-      const { weapon } = setup.main;
-      const newWeapon = setup.updateMainWeapon(data);
+      const { main } = setup;
+      const oldWeaponCode = main.weapon.code;
 
-      if (newWeapon.code !== weapon.code) {
-        setup.wpBuffCtrls = createWeaponBuffCtrls(newWeapon.data, true);
+      main.weapon = main.weapon.update(data).clone();
+
+      if (main.weapon.code !== oldWeaponCode) {
+        setup.wpBuffCtrls = createWeaponBuffCtrls(main.weapon.data, true);
       }
-
-      setup.main.weapon = newWeapon;
     })
   );
 };

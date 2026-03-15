@@ -92,13 +92,13 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
 
   // ===== SETTERS =====
 
-  update<T extends keyof ICharacterBasic>(prop: T, value: ICharacterBasic[T]): this;
+  update<T extends keyof ICharacterBasic>(key: T, value: ICharacterBasic[T]): this;
   update(info: Partial<ICharacterBasic>): this;
   update<T extends keyof ICharacterBasic>(
-    infoOrProp: T | Partial<ICharacterBasic>,
+    infoOrKey: T | Partial<ICharacterBasic>,
     value?: ICharacterBasic[T]
   ): this {
-    const data = typeof infoOrProp === "object" ? infoOrProp : { [infoOrProp]: value };
+    const data = typeof infoOrKey === "object" ? infoOrKey : { [infoOrKey]: value };
     return Object_.assign(this, data) as this;
   }
 
@@ -148,6 +148,6 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
   }
 
   clone() {
-    return new Character<W, A>({ ...this }, this.data);
+    return new Character<W, A>(this, this.data);
   }
 }

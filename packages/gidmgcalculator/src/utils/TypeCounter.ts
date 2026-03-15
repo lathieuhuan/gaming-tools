@@ -43,9 +43,7 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   private filter(data: Partial<Record<TKey, number>>, min = 0) {
     const filtered = {} as Record<TKey, number>;
 
-    for (const key of Object_.keys(data)) {
-      const value = data[key];
-
+    for (const [key, value] of Object_.entries(data)) {
       if (typeof value === "number" && value > min) {
         filtered[key] = value;
       }
@@ -109,7 +107,7 @@ export default class TypeCounter<TKey extends PropertyKey = PropertyKey> {
   }
 
   clone() {
-    return new TypeCounter(Object_.cloneProps(this.count), this.options);
+    return new TypeCounter(this.count, this.options);
   }
 
   reset() {

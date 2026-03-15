@@ -108,9 +108,7 @@ export class ArtifactGear<TArtifact extends Artifact = Artifact>
       attrs.delete(`${statType}_`);
     }
 
-    this.finalAttrs = attrs;
-
-    return attrs;
+    return (this.finalAttrs = attrs);
   };
 
   clone(): ArtifactGear<TArtifact> {

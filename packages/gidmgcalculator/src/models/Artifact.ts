@@ -9,7 +9,6 @@ import type {
   IArtifactBasic,
 } from "@/types";
 
-
 const percent1 = {
   4: [
     6.3, 8.1, 9.9, 11.6, 13.4, 15.2, 17, 18.8, 20.6, 22.3, 24.1, 25.9, 27.7, 29.5, 31.3, 33, 34.8,
@@ -154,6 +153,8 @@ export class Artifact implements IArtifact {
 
   data: AppArtifact;
 
+  // ===== GETTERS =====
+
   get mainStatValue(): number {
     return Artifact.mainStatValueOf(this);
   }
@@ -182,6 +183,20 @@ export class Artifact implements IArtifact {
     this.setupIDs = info.setupIDs;
     this.data = data;
   }
+
+  // ===== SETTERS =====
+
+  update<T extends keyof IArtifactBasic>(key: T, value: IArtifactBasic[T]): this;
+  update(info: Partial<IArtifactBasic>): this;
+  update<T extends keyof IArtifactBasic>(
+    infoOrKey: T | Partial<IArtifactBasic>,
+    value?: IArtifactBasic[T]
+  ): this {
+    const data = typeof infoOrKey === "object" ? infoOrKey : { [infoOrKey]: value };
+    return Object_.assign(this, data) as this;
+  }
+
+  // ===== STATIC =====
 
   static toBasic(artifact: IArtifactBasic): IArtifactBasic {
     return Object_.optionalAssign<IArtifactBasic>(
@@ -213,10 +228,6 @@ export class Artifact implements IArtifact {
     ]);
   }
 
-  serialize(): IArtifactBasic {
-    return Artifact.toBasic(this);
-  }
-
   static mainStatValueOf(artifact: IArtifactBasic) {
     const { type, rarity = 5, mainStatType } = artifact;
     return ARTIFACT_MAIN_STATS[type][mainStatType]?.[rarity][artifact.level] || 0;
@@ -234,5 +245,15 @@ export class Artifact implements IArtifact {
   static allIcons<T>(transform: (icons: ArtifactTypeIcon) => T): T[];
   static allIcons<T>(transform?: (icons: ArtifactTypeIcon) => T): ArtifactTypeIcon[] | T[] {
     return transform ? ARTIFACT_TYPE_ICONS.map(transform) : ARTIFACT_TYPE_ICONS;
+  }
+
+  // ===== _ =====
+
+  serialize(): IArtifactBasic {
+    return Artifact.toBasic(this);
+  }
+
+  clone() {
+    return new Artifact(this, this.data);
   }
 }
