@@ -1,5 +1,5 @@
-import { AppWeapon } from "../../src/calculation";
-import { $AppWeapon } from "../../src/services";
+import { AppWeapon } from "@/types";
+import { $AppWeapon } from "@/services";
 
 export enum __EMockWeapon {
   SWORD = 1,

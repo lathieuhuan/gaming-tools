@@ -32,7 +32,19 @@ export function AttributeTable({ className, attributes }: AttributeTableProps) {
 
       <EmSection value={attributes.get("em")} />
 
-      {(["cRate_", "cDmg_", "er_", "healB_", "inHealB_", "shieldS_"] as const).map((type) => {
+      {(["cRate_", "cDmg_", "er_", "healB_", "inHealB_", "shieldS_"] as const)
+        .filter((type) => attributes.get(type) !== 0)
+        .map((type) => {
+          const label = t(type);
+          return (
+            <Row key={type} aria-label={label}>
+              <Cell>{label}</Cell>
+              <Cell className="mr-2">{Math.round(attributes.get(type) * 10) / 10}%</Cell>
+            </Row>
+          );
+        })}
+
+      {ATTACK_ELEMENTS.filter((type) => attributes.get(type) !== 0).map((type) => {
         const label = t(type);
         return (
           <Row key={type} aria-label={label}>
@@ -42,25 +54,17 @@ export function AttributeTable({ className, attributes }: AttributeTableProps) {
         );
       })}
 
-      {ATTACK_ELEMENTS.map((type) => {
-        const label = t(type);
-        return (
-          <Row key={type} aria-label={label}>
-            <Cell>{label}</Cell>
-            <Cell className="mr-2">{Math.round(attributes.get(type) * 10) / 10}%</Cell>
-          </Row>
-        );
-      })}
-
-      {(["naAtkSpd_", "caAtkSpd_"] as const).map((type) => {
-        const label = t(type);
-        return (
-          <Row key={type} aria-label={label}>
-            <Cell>{label}</Cell>
-            <Cell className="mr-2">{Math.round(attributes.get(type) * 10) / 10}%</Cell>
-          </Row>
-        );
-      })}
+      {(["naAtkSpd_", "caAtkSpd_"] as const)
+        .filter((type) => attributes.get(type) !== 0)
+        .map((type) => {
+          const label = t(type);
+          return (
+            <Row key={type} aria-label={label}>
+              <Cell>{label}</Cell>
+              <Cell className="mr-2">{Math.round(attributes.get(type) * 10) / 10}%</Cell>
+            </Row>
+          );
+        })}
     </StatsTable>
   );
 }

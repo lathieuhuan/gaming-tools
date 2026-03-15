@@ -1,7 +1,5 @@
-import { IS_DEV_ENV } from "@/constants/config";
-
 export const API_URL = {
-  base: IS_DEV_ENV ? "http://localhost:3000/api" : "https://gidmgcalculator.vercel.app/api",
+  base: "https://gidmgcalculator.vercel.app/api",
   allData() {
     return `${this.base}/meta-data`;
   },

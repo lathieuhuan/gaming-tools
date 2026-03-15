@@ -1,5 +1,5 @@
-import { AppCharacter } from "../../src/calculation";
-import { $AppCharacter } from "../../src/services";
+import { AppCharacter } from "@/types";
+import { $AppCharacter } from "@/services";
 
 export enum __EMockCharacter {
   /** pyro, sword, mondstadt */

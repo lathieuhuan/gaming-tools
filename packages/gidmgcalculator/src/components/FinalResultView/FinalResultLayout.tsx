@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { FaCaretRight } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
+import { MdEdit, MdContentCopy, MdCheck } from "react-icons/md";
 import { Button, clsx, CollapseSpace, Table, TableTdProps, TableThProps } from "rond";
 
 import type { Character } from "@/models";
@@ -43,12 +43,14 @@ export function FinalResultLayout({
   showWeaponCalc,
   talentMutable,
   onTalentLevelChange,
-  ...sectionProps
+  headerConfigs,
+  getRowConfig,
 }: FinalResultLayoutProps) {
   const { t } = useTranslation();
 
   const [closedSections, setClosedSections] = useState<boolean[]>([]);
   const [lvlingSectionI, setLvlingSectionI] = useState(-1);
+  const [copiedIndex, setCopiedIndex] = useState(-1);
 
   const tableKeys = useMemo(() => {
     return getTableKeys(
@@ -73,6 +75,25 @@ export function FinalResultLayout({
     if (!isLvling && closedSections[index]) {
       toggleSection(index);
     }
+  };
+
+  const onCopy = (tableKey: TableKey, index: number, sectionLabel: string) => {
+    const headers = headerConfigs
+      .map((h) => (typeof h.content === "string" ? h.content : ""))
+      .filter(Boolean);
+    let tsv = `\t${headers.join("\t")}\n`;
+
+    for (const subKey of tableKey.subs) {
+      const config = getRowConfig(tableKey.main, subKey);
+      const rowLabel = tableKey.main === "RXN" ? t(subKey) : subKey;
+      const values = config.cells.map((cell) => cell.value || EMPTY_VALUE).join("\t");
+      tsv += `${rowLabel}\t${values}\n`;
+    }
+
+    navigator.clipboard.writeText(tsv).then(() => {
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(-1), 2000);
+    });
   };
 
   const renderLvButtons = (talent: LevelableTalentType, buffer = 0) => {
@@ -130,7 +151,7 @@ export function FinalResultLayout({
                 )}
               </button>
 
-              <div className="flex">
+              <div className="flex items-center gap-1">
                 {talentMutable && talentType ? (
                   <Button
                     boneOnly
@@ -140,6 +161,16 @@ export function FinalResultLayout({
                     onClick={() => onRequestChangeLevel(sectionIndex, isLvling)}
                   />
                 ) : null}
+
+                <Button
+                  boneOnly
+                  size="custom"
+                  className={`w-7 h-7 text-lg ${
+                    copiedIndex === sectionIndex ? "text-green-500" : "text-light-4"
+                  }`}
+                  icon={copiedIndex === sectionIndex ? <MdCheck /> : <MdContentCopy />}
+                  onClick={() => onCopy(tableKey, sectionIndex, sectionLabel)}
+                />
               </div>
             </div>
 
@@ -164,7 +195,8 @@ export function FinalResultLayout({
                     tableKey={tableKey}
                     talentType={talentType}
                     getRowTitle={(subKey) => (isReactionDmg ? t(subKey) : subKey)}
-                    {...sectionProps}
+                    headerConfigs={headerConfigs}
+                    getRowConfig={getRowConfig}
                     label={sectionLabel}
                   />
                 </div>

@@ -1,5 +1,5 @@
-import { AppArtifact } from "../../src/calculation";
-import { $AppArtifact } from "../../src/services";
+import { AppArtifact } from "@/types";
+import { $AppArtifact } from "@/services";
 
 export enum __EMockArtifactSet {
   DEFAULT = 1,

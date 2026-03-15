@@ -1,4 +1,8 @@
-import { CarouselSpace } from "rond";
+import { useState } from "react";
+import { MdCheck, MdContentCopy } from "react-icons/md";
+import { Button, CarouselSpace } from "rond";
+import { CORE_STAT_TYPES, ATTACK_ELEMENTS } from "@/constants/global";
+import { useTranslation } from "@/hooks";
 
 import { useTabs } from "@/hooks";
 import { useCalcStore } from "@Store/calculator";
@@ -14,11 +18,62 @@ import {
 } from "@/components";
 
 export function AttributesTab() {
-  const allAttrs = useCalcStore((state) => selectActiveMain(state).allAttrsCtrl.finals);
+  const { t } = useTranslation();
+  const main = useCalcStore(selectActiveMain);
+  const [copied, setCopied] = useState(false);
+
+  const onCopyStats = () => {
+    const { finals } = main.allAttrsCtrl;
+    let text = `${main.data.name}\nLevel ${main.level}\nC${main.cons}\n\nAttributes\n`;
+
+    for (const type of CORE_STAT_TYPES) {
+      text += `${t(type)}\t${finals.get(type)}\n`;
+    }
+
+    const em = finals.get("em");
+    if (em !== 0) {
+      text += `${t("em")}\t${em}\n`;
+    }
+
+    const percentStats = [
+      "cRate_",
+      "cDmg_",
+      "er_",
+      "healB_",
+      "inHealB_",
+      "shieldS_",
+      ...ATTACK_ELEMENTS,
+      "naAtkSpd_",
+      "caAtkSpd_",
+    ] as const;
+
+    for (const type of percentStats) {
+      const value = finals.get(type);
+      if (value !== 0) {
+        text += `${t(type)}\t${Math.round(value * 10) / 10}%\n`;
+      }
+    }
+
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   return (
-    <div className="h-full custom-scrollbar">
-      <AttributeTable attributes={allAttrs} />
+    <div className="h-full flex flex-col">
+      <div className="flex justify-end p-2 pb-0">
+        <Button
+          boneOnly
+          size="custom"
+          className={`w-7 h-7 text-lg ${copied ? "text-green-500" : "text-light-4"}`}
+          icon={copied ? <MdCheck /> : <MdContentCopy />}
+          onClick={onCopyStats}
+        />
+      </div>
+      <div className="grow custom-scrollbar">
+        <AttributeTable attributes={main.allAttrsCtrl.finals} />
+      </div>
     </div>
   );
 }

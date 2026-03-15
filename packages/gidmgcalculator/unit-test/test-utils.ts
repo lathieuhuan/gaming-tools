@@ -1,7 +1,7 @@
-import { MutableTeamData } from "../src/calculation/CalcTeamData";
-import { IWeaponBasic, Level } from "../src/types";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "../src/services";
-import { ICharacter, ITeammate, IWeapon } from "../src/types";
+import { CalcSetup as MutableTeamData } from "@/models";
+import { IWeaponBasic, Level } from "@/types";
+import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
+import { ICharacter, ITeammate, IWeapon } from "@/types";
 import { __EMockCharacter } from "./mocks/characters.mock";
 import { __EMockWeapon } from "./mocks/weapons.mock";
 import { ASCENSION_RANKS } from "./test-constants";
@@ -22,6 +22,7 @@ export class MutableTeamDataTester extends MutableTeamData {
 
   __changeTeammates = (names: string[]) => {
     const teammates = names.map<ITeammate>((name) => ({
+      code: $AppCharacter.get(name)!.code,
       name: name,
       weapon: {
         buffCtrls: [],
@@ -39,7 +40,7 @@ export class MutableTeamDataTester extends MutableTeamData {
       debuffCtrls: [],
       enhanced: false,
       data: $AppCharacter.get(name)!,
-      join: () => {},
+      joinTeam: (team: any) => {},
       isPerformableEffect: () => false,
     }));
 
