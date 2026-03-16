@@ -58,21 +58,21 @@ const getLegacyPersistState = (): DeepPartial<AppSettingsState> | undefined => {
 
 const initialState: AppSettingsState = {
   traveler: $AppCharacter.DEFAULT_TRAVELER,
-  persistUserData: false,
+  persistUserData: true,
   isTabLayout: true,
   separateCharInfo: false,
   keepArtStatsOnSwitch: false,
   askBeforeUnload: true,
-  charLevel: "1/20",
-  charCons: 0,
-  charNAs: 1,
-  charES: 1,
-  charEB: 1,
-  charEnhanced: false,
-  wpLevel: "1/20",
+  charLevel: "90/90",
+  charCons: 6,
+  charNAs: 9,
+  charES: 9,
+  charEB: 9,
+  charEnhanced: true,
+  wpLevel: "90/90",
   wpRefi: 1,
-  artLevel: 0,
-  targetLevel: 1,
+  artLevel: 20,
+  targetLevel: 100,
 };
 
 export const useSettingsStore = create<AppSettingsState>()(
