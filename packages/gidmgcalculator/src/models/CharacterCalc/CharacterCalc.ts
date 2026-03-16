@@ -99,7 +99,7 @@ export class CharacterCalc<
   }
 
   override clone() {
-    return new CharacterCalc<W, A, TTeam>({ ...this }, this.data, this.team);
+    return new CharacterCalc<W, A, TTeam>(this, this.data, this.team);
   }
 
   // ===== GETTERS =====

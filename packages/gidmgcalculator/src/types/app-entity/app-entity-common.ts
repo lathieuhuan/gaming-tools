@@ -15,6 +15,8 @@ export type EntityBonusBasedOnConfig = {
    * On characters. Default 0
    */
   altIndex?: number;
+  /** Default true. */
+  isDynamic?: boolean;
 };
 
 export type EntityBonusBasedOn = EntityBonusBasedOnField | EntityBonusBasedOnConfig;

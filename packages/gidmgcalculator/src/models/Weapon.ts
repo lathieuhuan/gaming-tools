@@ -1,6 +1,7 @@
 import { Object_ } from "ron-utils";
 
 import type { AppWeapon, IWeapon, IWeaponBasic, Level, WeaponType } from "@/types";
+import type { Clonable } from "./interfaces";
 
 import { LEVELS } from "@/constants/global";
 import { Ascendable } from "./Ascendable";
@@ -65,7 +66,7 @@ const SUBSTAT_SCALE: Record<string, number[]> = {
   58: [58, 102, 148, 172, 195, 218, 241, 265],
 };
 
-export class Weapon extends Ascendable implements IWeapon {
+export class Weapon extends Ascendable implements IWeapon, Clonable<Weapon> {
   ID: number;
   type: WeaponType;
   code: number;
@@ -83,6 +84,8 @@ export class Weapon extends Ascendable implements IWeapon {
     polearm: 84,
     sword: 108,
   };
+
+  // ===== GETTERS =====
 
   get mainStatValue(): number {
     const { mainStatScale } = this.data;
@@ -119,6 +122,20 @@ export class Weapon extends Ascendable implements IWeapon {
     this.data = data;
   }
 
+  // ===== SETTERS =====
+
+  update<T extends keyof IWeaponBasic>(key: T, value: IWeaponBasic[T]): this;
+  update(info: Partial<IWeaponBasic>): this;
+  update<T extends keyof IWeaponBasic>(
+    infoOrKey: T | Partial<IWeaponBasic>,
+    value?: IWeaponBasic[T]
+  ): this {
+    const data = typeof infoOrKey === "object" ? infoOrKey : { [infoOrKey]: value };
+    return Object_.assign(this, data) as this;
+  }
+
+  // ===== STATIC =====
+
   static toBasic(weapon: IWeaponBasic): IWeaponBasic {
     return Object_.optionalAssign<IWeaponBasic>(
       {
@@ -139,7 +156,13 @@ export class Weapon extends Ascendable implements IWeapon {
     return Object_.pickProps(weapon, ["ID", "code", "type", "level", "refi"]);
   }
 
+  // ===== _ =====
+
   serialize(): IWeaponBasic {
     return Weapon.toBasic(this);
+  }
+
+  clone() {
+    return new Weapon(this, this.data);
   }
 }

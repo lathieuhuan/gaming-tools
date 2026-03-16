@@ -248,11 +248,11 @@ export function SectionArtifacts() {
 
       {!activeArtifactType && (
         <div className="mt-4 px-4 flex justify-end gap-4">
-          <Button
+          {/* <Button
             title="Generate"
             icon={<IoDice className="text-2xl" />}
             onClick={() => setModalType("ARTIFACT_GENERATOR")}
-          />
+          /> */}
           <Button
             title="Loadout"
             icon={<FaToolbox className="text-lg" />}

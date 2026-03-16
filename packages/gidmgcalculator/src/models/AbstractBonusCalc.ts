@@ -63,6 +63,7 @@ export abstract class AbstractBonusCalc<
   protected abstract getBasedOn(config: EntityBonusBasedOn): {
     field: EntityBonusBasedOnField;
     value: number;
+    isDynamic: boolean;
   };
 
   protected applyMax(value: number, config?: EffectMax) {
@@ -285,7 +286,7 @@ export abstract class AbstractBonusCalc<
       const basedOn = this.getBasedOn(config.basedOn);
 
       bonus.value *= basedOn.value;
-      bonus.isDynamic = true;
+      bonus.isDynamic = basedOn.isDynamic;
     }
 
     bonus.value *= this.getStackValue(config.stacks);

@@ -9,7 +9,7 @@ import type {
   IWeapon,
 } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
-import type { ArtifactPieceUpdateData, CloneOptions, MainUpdateData } from "./types";
+import type { ArtifactPieceUpdateData, CloneOptions } from "./types";
 
 import { calculateSetup } from "@/calculation/calculator";
 import { createArtifactBasic, CreateArtifactParams, createTarget } from "@/logic/entity.logic";
@@ -111,10 +111,15 @@ export class CalcSetup extends CalcSetupBase {
   calculate(shouldLog?: boolean) {
     const { main, result } = calculateSetup(this, { shouldLog });
 
-    const newMain = this.updateMain({
-      allAttrsCtrl: main.allAttrsCtrl.clone(),
-      attkBonusCtrl: main.attkBonusCtrl.clone(),
-    });
+    const newMain = new CharacterCalc(
+      {
+        ...this.main,
+        allAttrsCtrl: main.allAttrsCtrl.clone(),
+        attkBonusCtrl: main.attkBonusCtrl.clone(),
+      },
+      this.main.data,
+      this.team
+    );
 
     return new CalcSetup({
       ...this,
@@ -125,40 +130,20 @@ export class CalcSetup extends CalcSetupBase {
 
   // ===== MAIN CHARACTER =====
 
-  updateMain(data: MainUpdateData) {
-    return new CharacterCalc(
-      {
-        ...this.main,
-        ...data,
-      },
-      this.main.data,
-      this.team
-    );
-  }
-
   cloneMain() {
     const { weapon, atfGear, attkBonusCtrl, allAttrsCtrl } = this.main;
 
     return new CharacterCalc(
       {
         ...this.main,
-        weapon: new Weapon(weapon, weapon.data),
-        atfGear: new ArtifactGear(atfGear.pieces),
+        weapon: weapon.clone(),
+        atfGear: atfGear.clone(),
         attkBonusCtrl: attkBonusCtrl.clone(),
         allAttrsCtrl: allAttrsCtrl.clone(),
       },
       this.main.data,
       this.team
     );
-  }
-
-  // ===== WEAPON =====
-
-  updateMainWeapon(info: Partial<IWeapon>) {
-    const { weapon } = this.main;
-    const data = info.code && info.code !== weapon.code ? $AppWeapon.get(info.code)! : weapon.data;
-
-    return new Weapon({ ...weapon, ...info }, data);
   }
 
   // ===== ARTIFACTS =====

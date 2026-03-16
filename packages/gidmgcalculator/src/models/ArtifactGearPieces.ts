@@ -7,11 +7,18 @@ export class ArtifactGearPieces<TArtifact extends IArtifact>
   extends Map<ArtifactType, TArtifact>
   implements IArtifactGearPieces<TArtifact>, Clonable<ArtifactGearPieces<TArtifact>>
 {
-  constructor(pieces: Partial<Record<ArtifactType, TArtifact>> = {}) {
+  constructor(
+    pieces: Partial<Record<ArtifactType, TArtifact>> | Map<ArtifactType, TArtifact> = {}
+  ) {
     super();
 
+    const getPiece =
+      pieces instanceof Map
+        ? (type: ArtifactType) => pieces.get(type)
+        : (type: ArtifactType) => pieces[type];
+
     for (const atfType of ARTIFACT_TYPES) {
-      const piece = pieces[atfType];
+      const piece = getPiece(atfType);
 
       if (piece) {
         this.set(atfType, piece);
@@ -24,6 +31,6 @@ export class ArtifactGearPieces<TArtifact extends IArtifact>
   }
 
   clone(): ArtifactGearPieces<TArtifact> {
-    return new ArtifactGearPieces(Object.fromEntries(this.entries()));
+    return new ArtifactGearPieces(this);
   }
 }
