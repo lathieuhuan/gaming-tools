@@ -1,15 +1,23 @@
 import { Object_ } from "ron-utils";
 
-import type { CalcSetup } from "@/models";
-import type { ElementalEvent, ICharacterBasic, ITarget, IWeaponBasic } from "@/types";
-import type { ForwardedAction } from "../types";
+import type {
+  AppArtifact,
+  ArtifactSubStat,
+  ArtifactType,
+  ElementalEvent,
+  IArtifactBasic,
+  ICharacterBasic,
+  ITarget,
+  IWeaponBasic,
+} from "@/types";
 
-import { createTarget } from "@/logic/entity.logic";
+import { createArtifact, CreateArtifactParams, createTarget } from "@/logic/entity.logic";
 import { createWeaponBuffCtrls } from "@/logic/modifier.logic";
-import { Team } from "@/models";
+import { ArtifactGear, Team } from "@/models";
 import { useSettingsStore } from "@Store/settings";
 import { useCalcStore } from "../calculatorStore";
 import { onActiveSetup } from "../utils";
+import { selectSetup } from "../selectors";
 
 // ===== CHARACTER =====
 
@@ -59,40 +67,94 @@ export const updateMainWeapon = (data: Partial<IWeaponBasic>) => {
 
 // ===== ARTIFACT =====
 
-export const setArtifactPiece: ForwardedAction<CalcSetup["setArtifactPiece"]> = (...args) => {
+export const setArtifactPiece = (
+  params: CreateArtifactParams,
+  data?: AppArtifact,
+  shouldKeepStats = false
+) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
-      const newAtfGear = setup.setArtifactPiece(...args);
+      const { atfGear } = setup.main;
+      const oldPiece = atfGear.pieces.get(params.type);
 
-      setup.setArtifactGear(newAtfGear);
+      if (shouldKeepStats && oldPiece) {
+        params = {
+          ...oldPiece,
+          code: params.code,
+          rarity: params.rarity,
+          ID: params.ID,
+        };
+      }
+
+      atfGear.pieces.set(params.type, createArtifact(params, data));
+
+      setup.setArtifactGear(new ArtifactGear(atfGear.pieces));
     })
   );
 };
 
-export const removeArtifactPiece: ForwardedAction<CalcSetup["removeArtifactPiece"]> = (...args) => {
-  useCalcStore.setState(
-    onActiveSetup((setup) => {
-      const newAtfGear = setup.removeArtifactPiece(...args);
+export const removeArtifactPiece = (type: ArtifactType) => {
+  const setup = selectSetup(useCalcStore.getState());
 
-      setup.setArtifactGear(newAtfGear);
+  useCalcStore.setState(
+    onActiveSetup(() => {
+      const pieces = setup.main.atfGear.pieces.clone();
+
+      pieces.delete(type);
+      setup.setArtifactGear(new ArtifactGear(pieces));
     })
   );
 };
 
-export const updateArtifactPiece: ForwardedAction<CalcSetup["updateArtifactPiece"]> = (...args) => {
+export const updateArtifactPiece = <T extends keyof IArtifactBasic>(
+  type: ArtifactType,
+  key: T,
+  value: IArtifactBasic[T]
+) => {
+  const setup = selectSetup(useCalcStore.getState());
+
   useCalcStore.setState(
-    onActiveSetup((setup) => {
-      setup.main.atfGear = setup.updateArtifactPiece(...args);
+    onActiveSetup(() => {
+      const pieces = setup.main.atfGear.pieces.clone();
+      const piece = pieces.get(type)?.update(key, value);
+
+      if (!piece) {
+        return false;
+      }
+
+      setup.main.atfGear = new ArtifactGear(pieces.set(type, piece));
+    })
+  );
+};
+
+export const updateArtifactPieceSubStat = (
+  type: ArtifactType,
+  index: number,
+  data: Partial<ArtifactSubStat>
+) => {
+  const setup = selectSetup(useCalcStore.getState());
+
+  useCalcStore.setState(
+    onActiveSetup(() => {
+      const pieces = setup.main.atfGear.pieces.clone();
+      const piece = pieces.get(type)?.updateSubStatByIndex(index, data);
+
+      if (!piece) {
+        return false;
+      }
+
+      setup.main.atfGear = new ArtifactGear(pieces.set(type, piece));
     })
   );
 };
 
 export const copyArtifacts = (sourceId: number) => {
+  const sourceSetup = useCalcStore.getState().setupsById[sourceId];
+  const sourcePieces = sourceSetup.main.atfGear.pieces.deepClone();
+
   useCalcStore.setState(
     onActiveSetup((setup) => {
-      const sourceSetup = useCalcStore.getState().setupsById[sourceId];
-
-      setup.main.atfGear = sourceSetup.cloneArtifactGear();
+      setup.main.atfGear = new ArtifactGear(sourcePieces);
       setup.artBuffCtrls = Object_.clone(sourceSetup.artBuffCtrls);
       setup.artDebuffCtrls = Object_.clone(sourceSetup.artDebuffCtrls);
       setup.updateTeamBuffCtrls();

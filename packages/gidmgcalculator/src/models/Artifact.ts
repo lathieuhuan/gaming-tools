@@ -186,6 +186,7 @@ export class Artifact implements IArtifact {
 
   // ===== SETTERS =====
 
+  /** Don't use this method to update subStats */
   update<T extends keyof IArtifactBasic>(key: T, value: IArtifactBasic[T]): this;
   update(info: Partial<IArtifactBasic>): this;
   update<T extends keyof IArtifactBasic>(
@@ -194,6 +195,14 @@ export class Artifact implements IArtifact {
   ): this {
     const data = typeof infoOrKey === "object" ? infoOrKey : { [infoOrKey]: value };
     return Object_.assign(this, data) as this;
+  }
+
+  updateSubStatByIndex(index: number, data: Partial<ArtifactSubStat>): this {
+    this.subStats = this.subStats.map((subStat, i) =>
+      i === index ? Object_.optionalAssign(subStat, data) : subStat
+    );
+
+    return this;
   }
 
   // ===== STATIC =====
@@ -254,6 +263,12 @@ export class Artifact implements IArtifact {
   }
 
   clone() {
-    return new Artifact(this, this.data);
+    return new Artifact(
+      {
+        ...this,
+        subStats: this.subStats.map((subStat) => ({ ...subStat })),
+      },
+      this.data
+    );
   }
 }
