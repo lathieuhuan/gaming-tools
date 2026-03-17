@@ -133,7 +133,7 @@ class GreeterService {
     }
 
     return this.fetchAllData()
-      .then(() => null)
+      .then((error) => error)
       .catch((error) => {
         assertIsError(error);
 

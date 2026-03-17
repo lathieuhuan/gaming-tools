@@ -21,8 +21,10 @@ export class Object_ {
     const [first, ...rest] = path;
     const target = object as any;
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (target[first]) {
       // @ts-expect-error - Type is excessively deep
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       target[first] = rest.length ? Object_.set(target[first], rest, value) : value;
     }
 
@@ -100,6 +102,7 @@ export class Object_ {
 
       for (const key of keys) {
         const value = Object_.omitEmptyProps(object[key as keyof typeof object], filterKey);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (!isEmpty(value)) clone[key] = value;
       }
 
@@ -113,11 +116,25 @@ export class Object_ {
     return Object.assign(obj, props);
   }
 
+  static safeAssign<TObj extends object>(
+    obj: TObj,
+    props: Partial<TObj>,
+    keys: (keyof TObj)[]
+  ): TObj {
+    for (const key of keys) {
+      if (props[key] !== undefined) {
+        obj[key] = props[key];
+      }
+    }
+
+    return obj;
+  }
+
   static deepMerge<TObj extends object>(obj: TObj, ...changes: DeepPartial<TObj>[]): TObj {
     return deepMerge(obj, ...changes) as TObj;
   }
 
-  static optionalAssign<TObj extends object>(obj: TObj, props: Partial<TObj>): TObj {
+  static patch<TObj extends object>(obj: TObj, props: Partial<TObj>): TObj {
     const result = obj;
 
     for (const [key, value] of Object_.entries(props)) {
@@ -133,7 +150,7 @@ export class Object_ {
     try {
       return structuredClone(item);
     } catch {
-      return JSON.parse(JSON.stringify(item));
+      return JSON.parse(JSON.stringify(item)) as T;
     }
   }
 

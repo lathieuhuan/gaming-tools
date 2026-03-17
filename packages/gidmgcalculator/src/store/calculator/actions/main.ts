@@ -13,11 +13,12 @@ import type {
 
 import { createArtifact, CreateArtifactParams, createTarget } from "@/logic/entity.logic";
 import { createWeaponBuffCtrls } from "@/logic/modifier.logic";
-import { ArtifactGear, Team } from "@/models";
+import { ArtifactGear, Team, UpdatableKey } from "@/models";
+import { $AppWeapon } from "@/services";
 import { useSettingsStore } from "@Store/settings";
 import { useCalcStore } from "../calculatorStore";
-import { onActiveSetup } from "../utils";
 import { selectSetup } from "../selectors";
+import { onActiveSetup } from "../utils";
 
 // ===== CHARACTER =====
 
@@ -55,10 +56,12 @@ export const updateMainWeapon = (data: Partial<IWeaponBasic>) => {
     onActiveSetup((setup) => {
       const { main } = setup;
       const oldWeaponCode = main.weapon.code;
+      const newWeaponCode = data.code;
 
-      main.weapon = main.weapon.update(data).clone();
+      main.weapon = main.weapon.clone().update(data);
 
-      if (main.weapon.code !== oldWeaponCode) {
+      if (newWeaponCode && newWeaponCode !== oldWeaponCode) {
+        main.weapon.data = $AppWeapon.get(newWeaponCode)!;
         setup.wpBuffCtrls = createWeaponBuffCtrls(main.weapon.data, true);
       }
     })
@@ -72,9 +75,11 @@ export const setArtifactPiece = (
   data?: AppArtifact,
   shouldKeepStats = false
 ) => {
+  const setup = selectSetup(useCalcStore.getState());
+
   useCalcStore.setState(
-    onActiveSetup((setup) => {
-      const { atfGear } = setup.main;
+    onActiveSetup(() => {
+      const atfGear = setup.main.atfGear.clone();
       const oldPiece = atfGear.pieces.get(params.type);
 
       if (shouldKeepStats && oldPiece) {
@@ -106,7 +111,7 @@ export const removeArtifactPiece = (type: ArtifactType) => {
   );
 };
 
-export const updateArtifactPiece = <T extends keyof IArtifactBasic>(
+export const updateArtifactPiece = <T extends UpdatableKey>(
   type: ArtifactType,
   key: T,
   value: IArtifactBasic[T]
@@ -116,7 +121,7 @@ export const updateArtifactPiece = <T extends keyof IArtifactBasic>(
   useCalcStore.setState(
     onActiveSetup(() => {
       const pieces = setup.main.atfGear.pieces.clone();
-      const piece = pieces.get(type)?.update(key, value);
+      const piece = pieces.get(type)?.clone().update(key, value);
 
       if (!piece) {
         return false;
@@ -137,7 +142,7 @@ export const updateArtifactPieceSubStat = (
   useCalcStore.setState(
     onActiveSetup(() => {
       const pieces = setup.main.atfGear.pieces.clone();
-      const piece = pieces.get(type)?.updateSubStatByIndex(index, data);
+      const piece = pieces.get(type)?.clone().updateSubStatByIndex(index, data);
 
       if (!piece) {
         return false;

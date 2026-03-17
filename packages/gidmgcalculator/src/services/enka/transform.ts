@@ -31,7 +31,7 @@ export function transformGenshinUserResponse(
       ? createWeapon(convertedWeapon, convertedWeapon.data, idStore)
       : createWeapon({ type: character.data.weaponType }, undefined, idStore);
 
-    Object_.optionalAssign(weapon, { owner: character.data.code });
+    Object_.patch(weapon, { owner: character.data.code });
 
     const artifacts = ARTIFACT_TYPES.map<IArtifact | null>((type) => {
       const GOODArtifact = build.artifacts.find((artifact) => artifact?.slotKey === type);
@@ -44,7 +44,7 @@ export function transformGenshinUserResponse(
 
       if (converted) {
         const artifact = createArtifact(converted, converted.data, idStore);
-        return Object_.optionalAssign(artifact, { owner: character.data.code });
+        return Object_.patch(artifact, { owner: character.data.code });
       }
 
       return null;

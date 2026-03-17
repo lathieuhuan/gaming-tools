@@ -51,7 +51,7 @@ export const createArtifactBasic = (
     ],
   } = params;
 
-  return Object_.optionalAssign<IArtifactBasic>(
+  return Object_.patch<IArtifactBasic>(
     {
       ID,
       type: params.type,
@@ -85,7 +85,7 @@ export const createWeaponBasic = (params: CreateWeaponParams, idStore?: IdStore)
   const { ID = idStore?.gen() || Date.now(), type, level = wpLevel, refi = wpRefi } = params;
   const code = params.code || Weapon.DEFAULT_CODE[type];
 
-  return Object_.optionalAssign<IWeaponBasic>(
+  return Object_.patch<IWeaponBasic>(
     {
       ID,
       type,

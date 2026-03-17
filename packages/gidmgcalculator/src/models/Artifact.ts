@@ -140,6 +140,8 @@ const ARTIFACT_TYPE_ICONS: ArtifactTypeIcon[] = [
   { value: "circlet", icon: "6/64/Icon_Circlet_of_Logos" },
 ];
 
+export type UpdatableKey = keyof Omit<IArtifactBasic, "subStats">;
+
 export class Artifact implements IArtifact {
   ID: number;
   code: number;
@@ -187,20 +189,29 @@ export class Artifact implements IArtifact {
   // ===== SETTERS =====
 
   /** Don't use this method to update subStats */
-  update<T extends keyof IArtifactBasic>(key: T, value: IArtifactBasic[T]): this;
+  update<T extends UpdatableKey>(key: T, value: IArtifactBasic[T]): this;
   update(info: Partial<IArtifactBasic>): this;
-  update<T extends keyof IArtifactBasic>(
+  update<T extends UpdatableKey>(
     infoOrKey: T | Partial<IArtifactBasic>,
     value?: IArtifactBasic[T]
   ): this {
     const data = typeof infoOrKey === "object" ? infoOrKey : { [infoOrKey]: value };
-    return Object_.assign(this, data) as this;
+    const keys: UpdatableKey[] = [
+      "ID",
+      "code",
+      "type",
+      "rarity",
+      "level",
+      "mainStatType",
+      "owner",
+      "setupIDs",
+    ];
+
+    return Object_.safeAssign(this, data, keys) as this;
   }
 
   updateSubStatByIndex(index: number, data: Partial<ArtifactSubStat>): this {
-    this.subStats = this.subStats.map((subStat, i) =>
-      i === index ? Object_.optionalAssign(subStat, data) : subStat
-    );
+    this.subStats[index] = Object_.safeAssign(this.subStats[index], data, ["type", "value"]);
 
     return this;
   }
@@ -208,7 +219,7 @@ export class Artifact implements IArtifact {
   // ===== STATIC =====
 
   static toBasic(artifact: IArtifactBasic): IArtifactBasic {
-    return Object_.optionalAssign<IArtifactBasic>(
+    return Object_.patch<IArtifactBasic>(
       {
         ID: artifact.ID,
         code: artifact.code,
@@ -267,6 +278,7 @@ export class Artifact implements IArtifact {
       {
         ...this,
         subStats: this.subStats.map((subStat) => ({ ...subStat })),
+        setupIDs: this.setupIDs?.slice(),
       },
       this.data
     );
