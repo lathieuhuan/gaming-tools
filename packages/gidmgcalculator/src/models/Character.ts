@@ -99,7 +99,17 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
     value?: ICharacterBasic[T]
   ): this {
     const data = typeof infoOrKey === "object" ? infoOrKey : { [infoOrKey]: value };
-    return Object_.assign(this, data) as this;
+    const keys: (keyof ICharacterBasic)[] = [
+      "code",
+      "level",
+      "NAs",
+      "ES",
+      "EB",
+      "cons",
+      "enhanced",
+    ];
+
+    return Object_.safeAssign(this, data, keys) as this;
   }
 
   equip(item: W | A) {

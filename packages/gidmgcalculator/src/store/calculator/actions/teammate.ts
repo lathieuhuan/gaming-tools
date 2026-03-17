@@ -11,10 +11,10 @@ import { useCalcStore } from "../calculatorStore";
 import { onActiveSetup } from "../utils";
 
 export const setTeammate = (teammate: AppCharacter, index: number) => {
+  const { charEnhanced } = useSettingsStore.getState();
+
   useCalcStore.setState(
     onActiveSetup((setup) => {
-      const { charEnhanced } = useSettingsStore.getState();
-
       setup.setTeammate({ code: teammate.code, enhanced: charEnhanced }, index, teammate);
     })
   );

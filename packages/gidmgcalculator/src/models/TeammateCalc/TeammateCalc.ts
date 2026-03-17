@@ -21,6 +21,7 @@ import { Teammate } from "../Teammate";
 import { Weapon } from "../Weapon";
 import { BonusCalc } from "./BonusCalc";
 import { PenaltyCalc } from "./PenaltyCalc";
+import { Clonable } from "../interfaces";
 
 export type TeammateCalcConstructInfo = PartiallyRequiredOnly<ITeammateInfo, "code">;
 
@@ -28,7 +29,7 @@ type CloneOptions = {
   team?: ITeam;
 };
 
-export class TeammateCalc extends Teammate {
+export class TeammateCalc extends Teammate implements Clonable<TeammateCalc> {
   constructor(info: TeammateCalcConstructInfo, public data: AppCharacter, public team: ITeam) {
     const {
       enhanced = false,
@@ -54,6 +55,8 @@ export class TeammateCalc extends Teammate {
     super({ ...info, enhanced, buffCtrls, debuffCtrls, weapon }, data, team);
   }
 
+  // ===== SETTERS =====
+
   update(data: Partial<ITeammate>) {
     return new TeammateCalc({ ...this, ...data }, this.data, this.team);
   }
@@ -61,6 +64,8 @@ export class TeammateCalc extends Teammate {
   updateWeaponBuffCtrl(newCtrl: IWeaponBuffCtrl) {
     return this.weapon.buffCtrls.map((ctrl) => (ctrl.id === newCtrl.id ? newCtrl : ctrl));
   }
+
+  // ===== CALCULATION =====
 
   performBonus(
     config: EntityBonusEffect,
@@ -72,6 +77,8 @@ export class TeammateCalc extends Teammate {
   performPenalty(config: EntityPenaltyEffect, inputs?: number[]) {
     return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
   }
+
+  // ===== _ =====
 
   clone(options: CloneOptions = {}) {
     const { team = this.team } = options;
@@ -86,6 +93,8 @@ export class TeammateCalc extends Teammate {
 
     return new TeammateCalc(teamamte, this.data, team);
   }
+
+  //
 
   parseBuffDesc(ctrl: IAbilityBuffCtrl) {
     return new BonusCalc(this, this.team, { inputs: ctrl.inputs }).parseAbilityDesc(ctrl.data);
