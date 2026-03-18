@@ -149,7 +149,7 @@ export const updateMultiSetups = (changes: MultiSetupChange[], newStandardId: nu
 
           const newSetup = new CalcSetup({
             ID: change.ID,
-            main: setupsById[activeId].cloneMain(),
+            main: setupsById[activeId].main.deepClone(),
             target,
           });
 

@@ -5,7 +5,11 @@ import { Button, PouchSvg, TrashCanSvg, VersatileSelect } from "rond";
 import { useTranslation } from "@/hooks";
 import { Artifact } from "@/models";
 import { suffixOf } from "@/utils/pure.utils";
-import { removeArtifactPiece, updateArtifactPiece } from "@Store/calculator/actions";
+import {
+  removeArtifactPiece,
+  updateArtifactPiece,
+  updateArtifactPieceSubStat,
+} from "@Store/calculator/actions";
 
 // Component
 import { ArtifactLevelSelect, ArtifactSubstatsControl } from "@/components";
@@ -47,7 +51,7 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
           rarity={rarity}
           level={artifact.level}
           maxLevel={rarity === 5 ? 20 : 16}
-          onChangeLevel={(level) => updateArtifactPiece(artifact.type, { level })}
+          onChangeLevel={(level) => updateArtifactPiece(artifact.type, "level", level)}
         />
 
         <div className="w-full flex flex-col">
@@ -61,7 +65,9 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
               arrowAt="start"
               options={mainStatOptions}
               value={mainStatType}
-              onChange={(mainStatType) => updateArtifactPiece(artifact.type, { mainStatType })}
+              onChange={(mainStatType) =>
+                updateArtifactPiece(artifact.type, "mainStatType", mainStatType)
+              }
             />
           )}
           <p className={`pl-6 text-1.5xl leading-7 text-rarity-${rarity} font-bold`}>
@@ -78,7 +84,7 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
         mainStatType={mainStatType}
         subStats={artifact.subStats}
         onChangeSubStat={(index, changeInfo) => {
-          updateArtifactPiece(artifact.type, { subStat: { index, ...changeInfo } });
+          updateArtifactPieceSubStat(artifact.type, index, changeInfo);
         }}
       />
 

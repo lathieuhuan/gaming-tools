@@ -27,7 +27,7 @@ export class Target implements ITarget {
   }
 
   serialize(): ITargetBasic {
-    return Object_.optionalAssign<ITargetBasic>(
+    return Object_.patch<ITargetBasic>(
       {
         code: this.code,
         level: this.level,

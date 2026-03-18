@@ -114,4 +114,8 @@ export class ArtifactGear<TArtifact extends Artifact = Artifact>
   clone(): ArtifactGear<TArtifact> {
     return new ArtifactGear(this.pieces);
   }
+
+  deepClone(): ArtifactGear<TArtifact> {
+    return new ArtifactGear(this.pieces.deepClone());
+  }
 }

@@ -1,4 +1,4 @@
-import type { ArtifactSubStat, IArtifact, ICharacterBasic } from "@/types";
+import type { ArtifactSubStat, IArtifact } from "@/types";
 
 export type CloneOptions = {
   ID?: number;

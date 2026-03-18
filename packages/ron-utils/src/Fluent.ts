@@ -54,6 +54,7 @@ export class Fluent<T> {
     return new Proxy({} as any, {
       get: (_, prop) => {
         return (...args: any[]) => {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           const func = (this.e as any)?.[prop];
 
           if (isFunction(func)) {

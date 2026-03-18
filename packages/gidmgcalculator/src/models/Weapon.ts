@@ -131,13 +131,23 @@ export class Weapon extends Ascendable implements IWeapon, Clonable<Weapon> {
     value?: IWeaponBasic[T]
   ): this {
     const data = typeof infoOrKey === "object" ? infoOrKey : { [infoOrKey]: value };
-    return Object_.assign(this, data) as this;
+    const keys: (keyof IWeaponBasic)[] = [
+      "ID",
+      "code",
+      "type",
+      "level",
+      "refi",
+      "owner",
+      "setupIDs",
+    ];
+
+    return Object_.safeAssign(this, data, keys) as this;
   }
 
   // ===== STATIC =====
 
   static toBasic(weapon: IWeaponBasic): IWeaponBasic {
-    return Object_.optionalAssign<IWeaponBasic>(
+    return Object_.patch<IWeaponBasic>(
       {
         ID: weapon.ID,
         code: weapon.code,
@@ -163,6 +173,12 @@ export class Weapon extends Ascendable implements IWeapon, Clonable<Weapon> {
   }
 
   clone() {
-    return new Weapon(this, this.data);
+    return new Weapon(
+      {
+        ...this,
+        setupIDs: this.setupIDs?.slice(),
+      },
+      this.data
+    );
   }
 }

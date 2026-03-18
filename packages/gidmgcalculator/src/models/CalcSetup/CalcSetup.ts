@@ -1,18 +1,11 @@
 import { Array_ } from "ron-utils";
 
-import type {
-  AppArtifact,
-  AppCharacter,
-  ArtifactType,
-  IArtifactBasic,
-  ITeammate,
-  IWeapon,
-} from "@/types";
+import type { AppCharacter, ITeammate } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
-import type { ArtifactPieceUpdateData, CloneOptions } from "./types";
+import type { CloneOptions } from "./types";
 
 import { calculateSetup } from "@/calculation/calculator";
-import { createArtifactBasic, CreateArtifactParams, createTarget } from "@/logic/entity.logic";
+import { createTarget } from "@/logic/entity.logic";
 import {
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
@@ -24,13 +17,11 @@ import {
   createTeamBuffCtrls,
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import { Artifact } from "../Artifact";
+import { $AppCharacter } from "@/services";
 import { ArtifactGear } from "../ArtifactGear";
 import { CharacterCalc } from "../CharacterCalc";
 import { Team } from "../Team";
 import { TeammateCalc, type TeammateCalcConstructInfo } from "../TeammateCalc";
-import { Weapon } from "../Weapon";
 import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
 
 type TeammateUpdateData = Partial<
@@ -95,7 +86,7 @@ export class CalcSetup extends CalcSetupBase {
 
   clone(options: CloneOptions = {}) {
     const { ID = this.ID } = options;
-    const main = this.cloneMain();
+    const main = this.main.deepClone();
     const teammates = this.teammates.map((teammate) => teammate.clone());
     const team = new Team([main, ...teammates]);
 
@@ -128,85 +119,7 @@ export class CalcSetup extends CalcSetupBase {
     });
   }
 
-  // ===== MAIN CHARACTER =====
-
-  cloneMain() {
-    const { weapon, atfGear, attkBonusCtrl, allAttrsCtrl } = this.main;
-
-    return new CharacterCalc(
-      {
-        ...this.main,
-        weapon: weapon.clone(),
-        atfGear: atfGear.clone(),
-        attkBonusCtrl: attkBonusCtrl.clone(),
-        allAttrsCtrl: allAttrsCtrl.clone(),
-      },
-      this.main.data,
-      this.team
-    );
-  }
-
   // ===== ARTIFACTS =====
-
-  setArtifactPiece(
-    artifact: CreateArtifactParams,
-    data: AppArtifact = $AppArtifact.getSet(artifact.code)!,
-    shouldKeepStats = false
-  ) {
-    const { atfGear } = this.main;
-    const oldPiece = atfGear.pieces.get(artifact.type);
-    let newPiece: IArtifactBasic;
-
-    if (shouldKeepStats && oldPiece) {
-      newPiece = createArtifactBasic({
-        ...oldPiece,
-        code: artifact.code,
-        rarity: artifact.rarity,
-        ID: Date.now(),
-      });
-    } else {
-      newPiece = createArtifactBasic({
-        ...artifact,
-        ID: Date.now(),
-      });
-    }
-
-    atfGear.pieces.set(artifact.type, new Artifact(newPiece, data));
-
-    return new ArtifactGear(atfGear.pieces);
-  }
-
-  removeArtifactPiece(type: ArtifactType) {
-    const pieces = this.main.atfGear.pieces.clone();
-    pieces.delete(type);
-
-    return new ArtifactGear(pieces);
-  }
-
-  updateArtifactPiece(type: ArtifactType, info: ArtifactPieceUpdateData) {
-    const pieces = this.main.atfGear.pieces.clone();
-    const piece = pieces.get(type);
-
-    if (!piece) {
-      return this.main.atfGear;
-    }
-
-    const newSubStats = [...piece.subStats];
-    const { subStat, ...newInfo } = info;
-
-    if (subStat) {
-      const { index, ...newSubStat } = subStat;
-
-      newSubStats[index] = {
-        ...newSubStats[index],
-        ...newSubStat,
-      };
-    }
-
-    const newPiece = new Artifact({ ...piece, ...newInfo, subStats: newSubStats }, piece.data);
-
-    return new ArtifactGear(pieces.set(type, newPiece));
-  }
 
   /** Used when change involves artifact.sets */
   setArtifactGear(newAtfGear: ArtifactGear) {
@@ -216,10 +129,6 @@ export class CalcSetup extends CalcSetupBase {
       .flat();
     this.updateTeamBuffCtrls();
     this.updateArtifactDebuffCtrls();
-  }
-
-  cloneArtifactGear() {
-    return new ArtifactGear(this.main.atfGear.pieces.clone());
   }
 
   // ===== MODIFIERS UPDATE FOLLOW-UPS =====

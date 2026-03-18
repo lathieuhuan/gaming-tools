@@ -92,6 +92,20 @@ export class CharacterCalc<
     this.team = team;
   }
 
+  deepClone() {
+    return new CharacterCalc<W, A, TTeam>(
+      {
+        ...this,
+        weapon: this.weapon.clone(),
+        atfGear: this.atfGear.deepClone(),
+        allAttrsCtrl: this.allAttrsCtrl.clone(),
+        attkBonusCtrl: this.attkBonusCtrl.clone(),
+      },
+      this.data,
+      this.team
+    );
+  }
+
   // ===== OVERRIDE =====
 
   override getTotalXtraTalentLv(talentType: TalentType) {
