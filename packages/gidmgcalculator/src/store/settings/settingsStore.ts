@@ -64,7 +64,7 @@ const initialState: AppSettingsState = {
   keepArtStatsOnSwitch: false,
   askBeforeUnload: true,
   charLevel: "90/90",
-  charCons: 6,
+  charCons: 0,
   charNAs: 9,
   charES: 9,
   charEB: 9,
