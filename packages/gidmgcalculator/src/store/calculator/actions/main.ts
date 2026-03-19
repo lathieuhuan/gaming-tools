@@ -8,6 +8,7 @@ import type {
   IArtifactBasic,
   ICharacterBasic,
   ITarget,
+  IWeapon,
   IWeaponBasic,
 } from "@/types";
 
@@ -18,6 +19,7 @@ import { useSettingsStore } from "@Store/settings";
 import { useCalcStore } from "../calculatorStore";
 import { onActiveSetup } from "../utils";
 import { selectSetup } from "../selectors";
+import { $AppWeapon } from "@/services";
 
 // ===== CHARACTER =====
 
@@ -50,7 +52,7 @@ export const updateMain = (data: Partial<ICharacterBasic>, setupIds?: number[]) 
 
 // ===== WEAPON =====
 
-export const updateMainWeapon = (data: Partial<IWeaponBasic>) => {
+export const updateMainWeapon = (data: Partial<IWeapon>) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
       const { main } = setup;
@@ -59,6 +61,9 @@ export const updateMainWeapon = (data: Partial<IWeaponBasic>) => {
       main.weapon = main.weapon.clone().update(data);
 
       if (main.weapon.code !== oldWeaponCode) {
+        if (!data.data) {
+          main.weapon.data = $AppWeapon.get(main.weapon.code)!;
+        }
         setup.wpBuffCtrls = createWeaponBuffCtrls(main.weapon.data, true);
       }
     })
