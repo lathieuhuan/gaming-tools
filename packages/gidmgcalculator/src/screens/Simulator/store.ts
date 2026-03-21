@@ -31,8 +31,11 @@ export const selectSimulation = (state: SimulatorState, id = state.activeId) =>
 
 export const selectActiveMember = (state: SimulatorState) => {
   const { activeMember, members, memberOrder } = selectSimulation(state);
-
   return members[activeMember] || members[memberOrder[0]];
+};
+
+export const selectProcessor = (state: SimulatorState, id?: number) => {
+  return selectSimulation(state, id).processor;
 };
 
 // export const useShallowSimulatorStore = <T>(selector: (state: SimulatorState) => T) => {

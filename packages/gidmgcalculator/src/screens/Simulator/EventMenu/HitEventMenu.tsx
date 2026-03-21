@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { Button, clsx, CollapseSpace } from "rond";
+import { clsx } from "rond";
 
-import type { AppCharacter, LevelableTalentType, TalentCalcItem } from "@/types";
+import type { AppCharacter } from "@/types";
 
-import { triggerTalentHitEvent } from "../actions/build";
+import { NORMAL_ATTACKS } from "@/constants";
+import { useTranslation } from "@/hooks";
+import { selectActiveMember, selectSimulation, useSimulatorStore } from "../store";
+
+// Components
+import { EventListLayout } from "./EventListLayout";
+import { TalentEventList } from "./TalentEventList";
 
 type HitEventMenuProps = {
   className?: string;
@@ -11,49 +17,56 @@ type HitEventMenuProps = {
 };
 
 export function HitEventMenu({ className, data }: HitEventMenuProps) {
-  const [activeIndex, setActiveIndex] = useState<number>(-1);
+  const { t } = useTranslation();
+  const activeMember = useSimulatorStore(selectActiveMember);
+  const target = useSimulatorStore((state) => selectSimulation(state).target);
+  const [activeNames, setActiveNames] = useState<string[]>([]);
 
-  const handleTrigger = (talent: LevelableTalentType, index: number, item: TalentCalcItem) => {
-    triggerTalentHitEvent({
-      performer: data.code,
-      talent,
-      index,
-    });
+  const handleClickHeading = (name: string) => {
+    setActiveNames(activeNames.includes(name) ? [] : [name]);
+
+    // setActiveNames(
+    //   activeNames.includes(name) ? activeNames.filter((n) => n !== name) : [...activeNames, name]
+    // );
   };
 
   return (
-    <div className={clsx("space-y-2", className)}>
-      {data.calcList.NA.map((item, index) => {
-        const active = index === activeIndex;
-        const { type = "attack" } = item;
+    <div className={clsx("space-y-4", className)}>
+      <EventListLayout title={t("NAs")}>
+        {NORMAL_ATTACKS.map((type) => {
+          return (
+            <TalentEventList
+              key={type}
+              className="space-y-2"
+              character={activeMember}
+              target={target}
+              attPatt={type}
+              activeNames={activeNames}
+              onClickHeading={handleClickHeading}
+            />
+          );
+        })}
+      </EventListLayout>
 
-        return (
-          <div key={item.name}>
-            <div
-              className="px-2 py-1 font-semibold bg-dark-2 rounded-sm cursor-pointer"
-              onClick={() => setActiveIndex(active ? -1 : index)}
-            >
-              {item.name}
-            </div>
+      {/* <EventListLayout title={t("ES")}>
+        <TalentEventList
+          className="space-y-2"
+          character={activeMember}
+          attPatt="ES"
+          activeNames={activeNames}
+          onClickHeading={handleClickHeading}
+        />
+      </EventListLayout> */}
 
-            <CollapseSpace active={active}>
-              <div className="py-1">
-                <div>{type}</div>
-                <div className="flex justify-end">
-                  <Button
-                    size="small"
-                    hidden={type !== "attack"}
-                    variant="primary"
-                    onClick={() => handleTrigger("NAs", index, item)}
-                  >
-                    Trigger
-                  </Button>
-                </div>
-              </div>
-            </CollapseSpace>
-          </div>
-        );
-      })}
+      {/* <EventListLayout title={t("EB")}>
+        <TalentEventList
+          className="space-y-2"
+          character={activeMember}
+          attPatt="EB"
+          activeNames={activeNames}
+          onClickHeading={handleClickHeading}
+        />
+      </EventListLayout> */}
     </div>
   );
 }

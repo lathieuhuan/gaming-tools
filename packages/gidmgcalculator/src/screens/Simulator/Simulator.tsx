@@ -9,6 +9,8 @@ import { IntroTopBar } from "./IntroTopBar";
 import { SimulationPrepper } from "./SimulationPrepper";
 import { TimelineView } from "./TimelineView";
 
+const containerCls = "w-78 p-4 bg-dark-1 rounded-md shrink-0";
+
 export function Simulator() {
   const step = useSimulatorStore((state) => state.step);
 
@@ -21,14 +23,15 @@ export function Simulator() {
           <IntroTopBar />
 
           <div className="p-4 grow flex gap-4 hide-scrollbar">
-            <EventMenu className="p-4 bg-dark-1 rounded-md shrink-0" />
+            <ActiveMemberView className={containerCls} />
+            <EventMenu className={containerCls} />
+            <TimelineView className={containerCls} />
+            <AnalyticsView className={containerCls} />
 
-            <div className="h-full grow flex flex-col gap-4 overflow-hidden">
+            {/* <div className="h-full grow flex flex-col gap-4 overflow-hidden">
               <ActiveMemberView className="grow p-4 bg-dark-1 rounded-md overflow-y-hidden" />
               <TimelineView className="p-4 bg-dark-1 rounded-md" />
-            </div>
-
-            <AnalyticsView className="w-80 p-4 bg-dark-1 rounded-md shrink-0" />
+            </div> */}
           </div>
         </div>
       )}

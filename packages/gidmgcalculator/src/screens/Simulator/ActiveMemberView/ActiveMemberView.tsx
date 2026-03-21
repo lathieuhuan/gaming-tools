@@ -14,12 +14,15 @@ export function ActiveMemberView({ className }: ActiveMemberViewProps) {
   const allAttrs = activeMember.allAttrsCtrl.finalize();
 
   return (
-    <div className={clsx("flex flex-col", className)}>
+    <div
+      className={clsx("flex flex-col", className)}
+      onDoubleClick={() => console.info(activeMember)}
+    >
       <div>
         <h3 className={`text-lg font-bold text-${data.vision}`}>{data.name}</h3>
       </div>
 
-      <div className="mt-4 grow custom-scrollbar">
+      <div className="mt-3 grow custom-scrollbar">
         <AttributeTable attributes={allAttrs} />
       </div>
     </div>

@@ -1,20 +1,23 @@
 import { WritableDraft } from "immer/src/internal.js";
 
 import type { Simulation } from "../types";
+
+import { createTarget } from "@/logic/entity.logic";
+import { Target } from "@/models";
+import { TargetCalc } from "@/models/TargetCalc";
+import { SimulationProcessor } from "../logic/SimulationProcessor";
 import { SimulatorState, useSimulatorStore } from "../store";
 
-export function initSimulation(id: number = Date.now()) {
+export function createSimulation(id: number = Date.now()) {
+  const target = new TargetCalc(createTarget({ code: 0 }), Target.DEFAULT_MONSTER);
   const newSimulation: Simulation = {
     id,
     memberOrder: [],
     members: {},
-    eventsByMember: {},
-    timeline: [],
-    onFieldMember: 0,
     activeMember: 0,
-    summary: {
-      totalDamage: 0,
-    },
+    target,
+    timeline: [],
+    processor: new SimulationProcessor({}, target, 0),
   };
 
   return newSimulation;
@@ -28,11 +31,7 @@ export function onActiveSimulation(
     const simulation = simulationsById[activeId];
 
     if (simulation) {
-      const shouldCalculate = callback(simulation) ?? true;
-
-      // if (shouldCalculate) {
-      //   state.simulationsById[activeId] = simulation.calculate();
-      // }
+      callback(simulation);
     }
   };
 }

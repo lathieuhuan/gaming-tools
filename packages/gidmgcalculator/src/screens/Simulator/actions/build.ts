@@ -1,31 +1,33 @@
 import { ExactOmit } from "rond";
 
-import type { WritableDraft } from "immer/src/internal.js";
-import type { EventsByMember, Simulation, TalentHitEvent } from "../types";
+import type { SimulationMembers, TalentHitEvent } from "../types";
 
+import { SimulationProcessor } from "../logic/SimulationProcessor";
 import { useSimulatorStore } from "../store";
-import { initSimulation, updateActiveSimulation } from "./utils";
+import { updateActiveSimulation } from "./utils";
 
 export function startBuilding() {
   useSimulatorStore.setState((state) => {
-    const simulation: WritableDraft<Simulation> = {
-      ...initSimulation(state.activeId),
-      ...state.simulationsById[state.activeId],
-    };
-    const { memberOrder } = simulation;
-    const eventsByMember: EventsByMember = {};
+    const simulation = state.simulationsById[state.activeId];
+    const { memberOrder, members } = simulation;
+
+    const target = simulation.target.clone();
+    const newMembers: SimulationMembers = {};
+    const newMemberClones: SimulationMembers = {};
 
     memberOrder.forEach((code) => {
-      const member = simulation.members[code];
+      const member = members[code].initCalc();
 
-      eventsByMember[code] = {};
-      member.initCalc();
+      newMembers[code] = member.clone();
+      newMemberClones[code] = member.deepClone();
     });
 
-    simulation.eventsByMember = eventsByMember;
-    simulation.onFieldMember = memberOrder[0];
+    simulation.members = newMembers;
     simulation.activeMember = memberOrder[0];
+    simulation.timeline = [];
+    simulation.processor = new SimulationProcessor(newMemberClones, target, memberOrder[0]);
 
+    state.simulationsById[state.activeId] = simulation;
     state.step = "BUILD";
   });
 }
@@ -38,19 +40,32 @@ export function selectMember(code: number) {
 
 let eventId = 1;
 
-export function triggerTalentHitEvent(event: ExactOmit<TalentHitEvent, "id" | "type" | "subType">) {
+export function switchIn(code: number) {
   updateActiveSimulation((simulation) => {
     const id = `${eventId++}`;
 
-    simulation.eventsByMember[event.performer][id] = {
+    simulation.timeline.push({
+      id,
+      cate: "C",
+      type: "SI",
+      performer: code,
+    });
+
+    simulation.processor.processTimeline(simulation.timeline);
+  });
+}
+
+export function triggerTalentHitEvent(event: ExactOmit<TalentHitEvent, "id" | "cate" | "type">) {
+  updateActiveSimulation((simulation) => {
+    const id = `${eventId++}`;
+
+    simulation.timeline.push({
       ...event,
       id,
-      type: "H",
-      subType: "Th",
-    };
-    simulation.timeline.push({
-      performer: { type: "M", code: event.performer },
-      id,
+      cate: "C",
+      type: "TH",
     });
+
+    simulation.processor.processTimeline(simulation.timeline);
   });
 }

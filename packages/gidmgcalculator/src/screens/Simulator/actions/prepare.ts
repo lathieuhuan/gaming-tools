@@ -19,15 +19,15 @@ import { parseDbArtifacts, parseDbWeapon } from "@/logic/userdb.logic";
 import { ArtifactGear, Team } from "@/models";
 import IdStore from "@/utils/IdStore";
 import { selectSimulation, useSimulatorStore } from "../store";
-import { initSimulation, updateActiveSimulation } from "./utils";
+import { createSimulation, updateActiveSimulation } from "./utils";
 
-export function createSimulation() {
+export function startNewSimulation() {
   useSimulatorStore.setState((state) => {
     const id = Date.now();
 
     state.activeId = id;
     state.managers.push({ id, name: "New Simulation" });
-    state.simulationsById[id] = initSimulation(id);
+    state.simulationsById[id] = createSimulation(id);
     state.step = "PREP";
   });
 }

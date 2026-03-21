@@ -1,4 +1,5 @@
 import type { AppMonster, AttackElement, ITarget, ResistReductionKey } from "@/types";
+import type { Clonable } from "./interfaces";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
 import { Target } from "./Target";
@@ -20,7 +21,7 @@ type TargetCalcOptions = {
   shouldLog?: boolean;
 };
 
-export class TargetCalc extends Target {
+export class TargetCalc extends Target implements Clonable<TargetCalc> {
   protected reductions = {} as Reductions;
   protected shouldLog: boolean;
 
@@ -74,5 +75,17 @@ export class TargetCalc extends Target {
 
       this.resistMults[key] = RES < 0 ? 1 - RES / 2 : RES >= 0.75 ? 1 / (4 * RES + 1) : 1 - RES;
     }
+  }
+
+  /** Does not clone the mutable properties: `reductions`, `defReduceMult`, `resistMults` */
+  clone() {
+    return new TargetCalc(
+      {
+        ...this,
+        resistances: { ...this.resistances },
+      },
+      this.data,
+      { shouldLog: this.shouldLog }
+    );
   }
 }

@@ -1,47 +1,118 @@
-import { HitEvent, ModifyEvent, Simulation, SimulationEvent, SimulationSummary } from "../types";
+import type { CharacterCalc } from "@/models/CharacterCalc";
+import type { TargetCalc } from "@/models/TargetCalc";
+import type { AttackElement, AttackReaction, LunarType } from "@/types";
+import type { CharacterEvent, SimulationEvent, SwitchInEvent, TalentHitEvent } from "../types";
+
+import { talentCalc } from "./talentCalc";
+
+type HitLog = {
+  performer: number;
+  value: number;
+  attElmt: AttackElement | LunarType;
+  reaction?: AttackReaction;
+};
 
 export class SimulationProcessor {
-  onFieldMember: number;
-  summary: SimulationSummary = {
-    totalDamage: 0,
-  };
+  #hitLogs: HitLog[] = [];
+  #onFieldMember: number;
 
-  constructor({ members, timeline }: Simulation) {
-    this.onFieldMember = members[0].code;
+  get hitLogs() {
+    return this.#hitLogs;
   }
 
-  processHitEvent(event: HitEvent) {
-    switch (event.subType) {
-      case "Th": {
-        //
+  get onFieldMember(): number {
+    return this.#onFieldMember;
+  }
+
+  constructor(
+    private members: Record<PropertyKey, CharacterCalc>,
+    private target: TargetCalc,
+    onFieldMember: number
+  ) {
+    this.#onFieldMember = onFieldMember;
+  }
+
+  processSwitchInEvent(event: SwitchInEvent) {
+    const performer = this.members[event.performer];
+
+    this.#onFieldMember = performer.code;
+    // TODO redirect on-field buffs to this member
+  }
+
+  processTalentHitEvent(event: TalentHitEvent): HitLog {
+    const performer = this.members[event.performer];
+    const item = performer.data.calcList[event.talent][event.index];
+
+    const calculator = talentCalc(performer, this.target, event.talent);
+    const result = calculator.calcAttackItem(item, {
+      attElmt: event.attElmt,
+      reaction: event.reaction,
+    });
+    const value = result.values.reduce((acc, value) => acc + Math.round(value.average), 0);
+
+    return {
+      performer: event.performer,
+      value,
+      attElmt: result.attElmt,
+      reaction: event.reaction,
+    };
+  }
+
+  processCharacterEvent(event: CharacterEvent) {
+    switch (event.type) {
+      case "SI": {
+        this.processSwitchInEvent(event);
         break;
       }
-      case "Rh": {
-        // TODO
+
+      case "TH": {
+        const log = this.processTalentHitEvent(event);
+
+        this.#hitLogs = this.#hitLogs.concat(log);
         break;
       }
+
+      case "RH": {
+        // TODO process reaction hit event
+        break;
+      }
+
+      case "M": {
+        // TODO process modify event
+        break;
+      }
+
       default:
         event satisfies never;
     }
   }
 
-  processModifyEvent(event: ModifyEvent) {
-    // TODO
-  }
+  // TODO optimize
+  processTimeline(timeline: SimulationEvent[]) {
+    this.#hitLogs = [];
 
-  processEvent(event: SimulationEvent) {
-    switch (event.type) {
-      case "SI":
-        this.onFieldMember = event.performer;
-        break;
-      case "M":
-        this.processModifyEvent(event);
-        break;
-      case "H":
-        this.processHitEvent(event);
-        break;
-      default:
-        event satisfies never;
+    Object.values(this.members).forEach((member) => {
+      member.initCalc().allAttrsCtrl.finalize();
+    });
+
+    this.target = this.target.clone();
+
+    for (const event of timeline) {
+      switch (event.cate) {
+        //
+        case "C": {
+          this.processCharacterEvent(event);
+          break;
+        }
+
+        case "E": {
+          // TODO process environment event
+          break;
+        }
+
+        default:
+          event satisfies never;
+      }
     }
   }
 }

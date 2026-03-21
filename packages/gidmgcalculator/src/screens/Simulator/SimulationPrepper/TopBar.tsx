@@ -3,7 +3,8 @@ import { Button } from "rond";
 
 import { ElementIcon } from "@/components";
 import { Team } from "@/models";
-import { createSimulation, deleteSimulation } from "../actions/prepare";
+import { startDevSimulation } from "../actions/dev";
+import { startNewSimulation, deleteSimulation } from "../actions/prepare";
 import { selectSimulation, useSimulatorStore } from "../store";
 
 const containerCls = "flex justify-center bg-dark-2";
@@ -13,7 +14,7 @@ export function TopBarEmpty() {
   return (
     <div className={containerCls}>
       <div className={`${contentCls} gap-2`}>
-        <Button boneOnly icon={<FaPlus />} onClick={() => createSimulation()}>
+        <Button boneOnly icon={<FaPlus />} onClick={() => startDevSimulation()}>
           New Simulation
         </Button>
       </div>

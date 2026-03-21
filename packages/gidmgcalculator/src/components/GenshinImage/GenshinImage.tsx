@@ -25,13 +25,13 @@ function DefaultFallback({ type, className, ...rest }: DefaultImageFallbackProps
   );
 }
 
-type GiImageProps = Omit<ImageProps, "fallback" | "defaultFallback"> & {
+export type GenshinImageProps = Omit<ImageProps, "fallback" | "defaultFallback"> & {
   /** Default 'unknown' */
   imgType?: "character" | "weapon" | "artifact" | "unknown";
   fallbackCls?: string;
 };
 
-function GenshinImage({ src, imgType = "unknown", fallbackCls, ...rest }: GiImageProps) {
+function GenshinImage({ src, imgType = "unknown", fallbackCls, ...rest }: GenshinImageProps) {
   return (
     <Image
       src={getImgSrc(src)}
