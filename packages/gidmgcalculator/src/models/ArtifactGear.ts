@@ -9,14 +9,14 @@ import type {
   IArtifactGearSlot,
 } from "@/types";
 import type { Artifact } from "./Artifact";
-import type { Clonable } from "./interfaces";
+// import type { Clonable } from "./interfaces";
 
 import { ARTIFACT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
 import TypeCounter from "@/utils/TypeCounter";
 import { ArtifactGearPieces } from "./ArtifactGearPieces";
 
 export class ArtifactGear<TArtifact extends Artifact = Artifact>
-  implements IArtifactGear<TArtifact>, Clonable<ArtifactGear<TArtifact>>
+  implements IArtifactGear<TArtifact>
 {
   pieces: ArtifactGearPieces<TArtifact>;
   sets: IArtifactGearSet[] = [];
@@ -111,9 +111,9 @@ export class ArtifactGear<TArtifact extends Artifact = Artifact>
     return (this.finalAttrs = attrs);
   };
 
-  clone(): ArtifactGear<TArtifact> {
-    return new ArtifactGear(this.pieces);
-  }
+  // clone(): ArtifactGear<TArtifact> {
+  //   return new ArtifactGear(this.pieces);
+  // }
 
   deepClone(): ArtifactGear<TArtifact> {
     return new ArtifactGear(this.pieces.deepClone());

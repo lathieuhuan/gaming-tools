@@ -7,6 +7,10 @@ export type ScreenConfig = {
 
 export const SCREENS: ScreenConfig[] = [
   {
+    label: "Simulator",
+    path: SCREEN_PATH.SIMULATOR,
+  },
+  {
     label: "Calculator",
     path: SCREEN_PATH.CALCULATOR,
   },

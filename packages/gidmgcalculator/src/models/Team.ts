@@ -24,9 +24,7 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
   extraTalentLv: TypeCounter<TalentType> = new TypeCounter();
 
   constructor(members: TMember[] = []) {
-    const newMembers = this.filterMembers(members);
-
-    this.updateMembers(newMembers);
+    this.updateMembers(members);
   }
 
   protected filterMembers(members: TMember[]) {
@@ -48,9 +46,12 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
     let moonsignLv = 0;
     let witchRiteLv = 0;
 
+    members = this.filterMembers(members);
+
     for (const member of members) {
       const { data } = member;
 
+      member.joinTeam(this);
       elmtCount.add(data.vision);
 
       if (data.faction?.includes("moonsign")) {
@@ -65,8 +66,6 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
         // More future enhance types
       }
     }
-
-    members.forEach((member) => member.joinTeam(this));
 
     this.members = members;
     this.elmtCount = elmtCount;
@@ -111,6 +110,8 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
     }
 
     this.extraTalentLv = extraTalentLv;
+
+    return this;
   }
 
   checkTeamElmt(condition: TeamElementConditions) {

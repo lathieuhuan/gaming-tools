@@ -12,7 +12,7 @@ import { InventoryRack, ItemOption } from "../InventoryRack";
 import { WeaponCard } from "../WeaponCard";
 
 type WeaponInventoryProps = {
-  weaponType: WeaponType;
+  weaponType?: WeaponType;
   owner?: number | null;
   buttonText: string;
   onClickButton: (selectedWeapon: Weapon) => void;
@@ -26,9 +26,10 @@ const WeaponInventoryCore = ({
   onClickButton,
   onClose,
 }: WeaponInventoryProps) => {
-  const items = useStoreSnapshot((state) =>
-    selectDbWeapons(state).filter((weapon) => weapon.type === weaponType)
-  );
+  const items = useStoreSnapshot((state) => {
+    const weapons = selectDbWeapons(state);
+    return weaponType ? weapons.filter((weapon) => weapon.type === weaponType) : weapons;
+  });
 
   const bodyRef = useRef<HTMLDivElement>(null);
   const [selectedWeapon, setSelectedWeapon] = useState<Weapon>();

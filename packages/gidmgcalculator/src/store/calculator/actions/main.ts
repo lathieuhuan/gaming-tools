@@ -79,8 +79,8 @@ export const setArtifactPiece = (
 
   useCalcStore.setState(
     onActiveSetup(() => {
-      const atfGear = setup.main.atfGear.clone();
-      const oldPiece = atfGear.pieces.get(params.type);
+      const pieces = setup.main.atfGear.pieces.clone();
+      const oldPiece = pieces.get(params.type);
 
       if (shouldKeepStats && oldPiece) {
         params = {
@@ -91,9 +91,9 @@ export const setArtifactPiece = (
         };
       }
 
-      atfGear.pieces.set(params.type, createArtifact(params, data));
+      pieces.set(params.type, createArtifact(params, data));
 
-      setup.setArtifactGear(new ArtifactGear(atfGear.pieces));
+      setup.setArtifactGear(new ArtifactGear(pieces));
     })
   );
 };
