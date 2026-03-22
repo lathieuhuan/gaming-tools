@@ -6,6 +6,7 @@ import { Team } from "@/models";
 import { startDevSimulation } from "../actions/dev";
 import { startNewSimulation, deleteSimulation } from "../actions/prepare";
 import { selectSimulation, useSimulatorStore } from "../store";
+import { SidebarButton } from "../components/SidebarButton";
 
 const containerCls = "flex justify-center bg-dark-2";
 const contentCls = "w-full h-16 px-4 flex items-center";
@@ -14,8 +15,12 @@ export function TopBarEmpty() {
   return (
     <div className={containerCls}>
       <div className={`${contentCls} gap-2`}>
+        <SidebarButton />
+
+        <div className="w-px h-6 bg-dark-line" />
+
         <Button boneOnly icon={<FaPlus />} onClick={() => startDevSimulation()}>
-          New Simulation
+          New
         </Button>
       </div>
     </div>
@@ -54,7 +59,11 @@ export function TopBar({ onStart }: TopBarProps) {
   return (
     <div className={containerCls}>
       <div className={contentCls}>
-        <p className="mr-2 text-lg font-bold">Simulation Name</p>
+        <SidebarButton />
+
+        <div className="mx-2 w-px h-6 bg-dark-line" />
+
+        <p className="text-lg font-bold">Simulation Name</p>
 
         <div className="ml-6 flex divide-x divide-dark-line">
           {resonances.length > 0 && (
@@ -87,6 +96,7 @@ export function TopBar({ onStart }: TopBarProps) {
           <Button size="small" icon={<FaTimes />} onClick={() => deleteSimulation()}>
             Cancel
           </Button>
+
           <Button
             size="small"
             variant="primary"

@@ -1,3 +1,4 @@
+import { ComponentType, useState } from "react";
 import { Button, clsx, cn } from "rond";
 
 import { selectMember, switchIn } from "../actions/build";
@@ -5,7 +6,20 @@ import { selectActiveMember, selectProcessor, selectSimulation, useSimulatorStor
 
 // Components
 import { CharacterPortrait } from "@/components";
-import { HitEventMenu } from "./HitEventMenu";
+import { TabItem, Tabs } from "../components/Tabs";
+import { TalentEventMenu } from "./TalentEventMenu";
+
+type EventMenuTabItem = TabItem & {
+  component: ComponentType;
+};
+
+const TABS: EventMenuTabItem[] = [
+  {
+    label: "Talent",
+    value: "TALENT",
+    component: TalentEventMenu,
+  },
+];
 
 type EventMenuProps = {
   className?: string;
@@ -16,6 +30,8 @@ export function EventMenu({ className }: EventMenuProps) {
   const memberOrder = useSimulatorStore((state) => selectSimulation(state).memberOrder);
   const onFieldMember = useSimulatorStore((state) => selectProcessor(state).onFieldMember);
   const activeMember = useSimulatorStore(selectActiveMember);
+
+  const [activeTab, setActiveTab] = useState<EventMenuTabItem>(TABS[0]);
 
   const activeMemberIsOnField = activeMember.code === onFieldMember;
 
@@ -51,9 +67,11 @@ export function EventMenu({ className }: EventMenuProps) {
           </Button>
         </div>
 
-        <div className="mx-auto h-px w-1/2 bg-dark-3" />
+        <Tabs className="mt-3" tabs={TABS} value={activeTab.value} onChange={setActiveTab} />
 
-        <HitEventMenu className="grow custom-scrollbar" data={activeMember.data} />
+        <div className="grow custom-scrollbar">
+          <activeTab.component />
+        </div>
       </div>
     </div>
   );

@@ -28,7 +28,7 @@ export function startBuilding() {
     simulation.processor = new SimulationProcessor(newMemberClones, target, memberOrder[0]);
 
     state.simulationsById[state.activeId] = simulation;
-    state.step = "BUILD";
+    state.phase = "BUILD";
   });
 }
 

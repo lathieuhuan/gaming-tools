@@ -12,7 +12,7 @@ export function IntroTopBar() {
   }
 
   const handleBack = () => {
-    useSimulatorStore.setState({ step: "PREP" });
+    useSimulatorStore.setState({ phase: "PREP" });
   };
 
   return (

@@ -28,7 +28,7 @@ export function startNewSimulation() {
     state.activeId = id;
     state.managers.push({ id, name: "New Simulation" });
     state.simulationsById[id] = createSimulation(id);
-    state.step = "PREP";
+    state.phase = "PREP";
   });
 }
 
@@ -36,8 +36,12 @@ export function deleteSimulation(id?: number) {
   useSimulatorStore.setState((state) => {
     const deletedId = id ?? state.activeId;
 
+    if (state.activeId === deletedId && state.phase === "BUILD") {
+      state.phase = "PREP";
+      state.activeId = 0;
+    }
+
     state.managers = state.managers.filter((manager) => manager.id !== deletedId);
-    state.activeId = 0;
     delete state.simulationsById[deletedId];
   });
 }

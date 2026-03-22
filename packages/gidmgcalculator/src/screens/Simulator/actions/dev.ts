@@ -68,6 +68,7 @@ export function startDevSimulation() {
   const target = new TargetCalc(createTarget({ code: 0 }), Target.DEFAULT_MONSTER);
 
   const devInitialState: SimulatorState = {
+    sidebarOpen: false,
     activeId: 1774085344498,
     managers: [
       {
@@ -86,7 +87,7 @@ export function startDevSimulation() {
         processor: new SimulationProcessor(members, target, 29),
       },
     },
-    step: "BUILD",
+    phase: "BUILD",
   };
 
   useSimulatorStore.setState(devInitialState);

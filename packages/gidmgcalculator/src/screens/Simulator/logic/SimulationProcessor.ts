@@ -5,12 +5,22 @@ import type { CharacterEvent, SimulationEvent, SwitchInEvent, TalentHitEvent } f
 
 import { talentCalc } from "./talentCalc";
 
-type HitLog = {
-  performer: number;
+type BaseHitLog = {
   value: number;
   attElmt: AttackElement | LunarType;
   reaction?: AttackReaction;
 };
+
+type CharacterHitLog = BaseHitLog & {
+  type: "C";
+  performer: number;
+};
+
+type EnvironmentHitLog = BaseHitLog & {
+  type: "E";
+};
+
+type HitLog = CharacterHitLog | EnvironmentHitLog;
 
 export class SimulationProcessor {
   #hitLogs: HitLog[] = [];
@@ -25,8 +35,8 @@ export class SimulationProcessor {
   }
 
   constructor(
-    private members: Record<PropertyKey, CharacterCalc>,
-    private target: TargetCalc,
+    public members: Record<PropertyKey, CharacterCalc>,
+    public target: TargetCalc,
     onFieldMember: number
   ) {
     this.#onFieldMember = onFieldMember;
@@ -51,6 +61,7 @@ export class SimulationProcessor {
     const value = result.values.reduce((acc, value) => acc + Math.round(value.average), 0);
 
     return {
+      type: "C",
       performer: event.performer,
       value,
       attElmt: result.attElmt,

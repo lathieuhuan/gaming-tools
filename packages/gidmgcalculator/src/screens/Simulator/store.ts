@@ -3,22 +3,24 @@ import { immer } from "zustand/middleware/immer";
 
 import type { Simulation } from "./types";
 
-type SimulationManager = {
+export type SimulationManager = {
   id: number;
   name: string;
 };
 
-type Step = "PREP" | "BUILD";
+type Phase = "PREP" | "BUILD";
 
 export type SimulatorState = {
-  step: Step;
+  sidebarOpen: boolean;
+  phase: Phase;
   managers: SimulationManager[];
   activeId: number;
   simulationsById: Record<string, Simulation>;
 };
 
 const initialState: SimulatorState = {
-  step: "PREP",
+  sidebarOpen: false,
+  phase: "PREP",
   managers: [],
   activeId: 0,
   simulationsById: {},
@@ -30,8 +32,8 @@ export const selectSimulation = (state: SimulatorState, id = state.activeId) =>
   state.simulationsById[id];
 
 export const selectActiveMember = (state: SimulatorState) => {
-  const { activeMember, members, memberOrder } = selectSimulation(state);
-  return members[activeMember] || members[memberOrder[0]];
+  const { activeMember, memberOrder, processor } = selectSimulation(state);
+  return processor.members[activeMember] || processor.members[memberOrder[0]];
 };
 
 export const selectProcessor = (state: SimulatorState, id?: number) => {

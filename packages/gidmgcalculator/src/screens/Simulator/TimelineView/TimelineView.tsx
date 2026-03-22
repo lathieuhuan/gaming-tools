@@ -25,7 +25,7 @@ export function TimelineView({ className }: TimelineViewProps) {
           switch (event.cate) {
             case "C": {
               const member = members[event.performer];
-              const { sideIcon, icon } = member.data;
+              const { name, sideIcon, icon } = member.data;
 
               return (
                 <div key={event.id} className="flex items-center gap-2">
@@ -34,6 +34,7 @@ export function TimelineView({ className }: TimelineViewProps) {
                       "size-8 min-w-8 rounded-circle bg-dark-3",
                       sideIcon ? "" : "overflow-hidden"
                     )}
+                    title={name}
                   >
                     <div className="w-ful h-full">
                       <GenshinImage

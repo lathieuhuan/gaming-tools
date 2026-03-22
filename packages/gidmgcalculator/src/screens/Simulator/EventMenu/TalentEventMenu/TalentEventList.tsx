@@ -1,9 +1,9 @@
 import type { CharacterCalc } from "@/models";
-import type { AttackPattern, TalentCalcItem } from "@/types";
+import type { TargetCalc } from "@/models/TargetCalc";
+import type { AttackPattern } from "@/types";
 
-import { talentCalc } from "../logic/talentCalc";
+import { talentCalc } from "../../logic/talentCalc";
 import { TalentEventItem } from "./TalentEventItem";
-import { TargetCalc } from "@/models/TargetCalc";
 
 type TalentEventListProps = {
   className?: string;

@@ -1,24 +1,18 @@
 import { useState } from "react";
-import { clsx } from "rond";
-
-import type { CharacterCalc } from "@/models";
 
 import { NORMAL_ATTACKS } from "@/constants";
 import { useTranslation } from "@/hooks";
-import { selectSimulation, useSimulatorStore } from "../store";
+import { selectActiveMember, selectSimulation, useSimulatorStore } from "../../store";
 
 // Components
-import { EventListLayout } from "./EventListLayout";
-import { TalentEventList } from "./TalentEventMenu/TalentEventList";
+import { EventListLayout } from "../EventListLayout";
+import { TalentEventList } from "./TalentEventList";
 
-type HitEventMenuProps = {
-  character: CharacterCalc;
-  className?: string;
-};
-
-export function HitEventMenu({ character, className }: HitEventMenuProps) {
+export function TalentEventMenu() {
   const { t } = useTranslation();
+  const activeMember = useSimulatorStore(selectActiveMember);
   const target = useSimulatorStore((state) => selectSimulation(state).target);
+
   const [activeNames, setActiveNames] = useState<string[]>([]);
 
   const handleClickHeading = (name: string) => {
@@ -30,14 +24,14 @@ export function HitEventMenu({ character, className }: HitEventMenuProps) {
   };
 
   return (
-    <div className={clsx("space-y-4", className)}>
+    <div className="space-y-4">
       <EventListLayout title={t("NAs")}>
         {NORMAL_ATTACKS.map((type) => {
           return (
             <TalentEventList
               key={type}
               className="space-y-2"
-              character={character}
+              character={activeMember}
               target={target}
               attPatt={type}
               activeNames={activeNames}
@@ -50,7 +44,7 @@ export function HitEventMenu({ character, className }: HitEventMenuProps) {
       {/* <EventListLayout title={t("ES")}>
         <TalentEventList
           className="space-y-2"
-          character={character}
+          character={activeMember}
           attPatt="ES"
           activeNames={activeNames}
           onClickHeading={handleClickHeading}
@@ -60,7 +54,7 @@ export function HitEventMenu({ character, className }: HitEventMenuProps) {
       {/* <EventListLayout title={t("EB")}>
         <TalentEventList
           className="space-y-2"
-          character={character}
+          character={activeMember}
           attPatt="EB"
           activeNames={activeNames}
           onClickHeading={handleClickHeading}

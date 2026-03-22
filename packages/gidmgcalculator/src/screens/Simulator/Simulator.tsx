@@ -1,22 +1,23 @@
-import { useSimulatorStore } from "./store";
 import { startBuilding } from "./actions/build";
+import { useSimulatorStore } from "./store";
 
 // Components
 import { ActiveMemberView } from "./ActiveMemberView";
 import { AnalyticsView } from "./AnalyticsView";
 import { EventMenu } from "./EventMenu";
 import { IntroTopBar } from "./IntroTopBar";
+import { Sidebar } from "./Sidebar";
 import { SimulationPrepper } from "./SimulationPrepper";
 import { TimelineView } from "./TimelineView";
 
 const containerCls = "w-78 p-4 bg-dark-1 rounded-md shrink-0";
 
 export function Simulator() {
-  const step = useSimulatorStore((state) => state.step);
+  const phase = useSimulatorStore((state) => state.phase);
 
   return (
     <div className="h-full bg-dark-3">
-      {step === "PREP" ? (
+      {phase === "PREP" ? (
         <SimulationPrepper onStart={startBuilding} />
       ) : (
         <div className="h-full flex flex-col">
@@ -35,6 +36,8 @@ export function Simulator() {
           </div>
         </div>
       )}
+
+      <Sidebar />
     </div>
   );
 }

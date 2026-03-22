@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { Button, CollapseSpace } from "rond";
+import { Button, clsx, CollapseSpace } from "rond";
 
 import type { AttackElement, AttackReaction, TalentCalcItem } from "@/types";
 
 import { CharacterCalc } from "@/models";
-import { triggerTalentHitEvent } from "../actions/build";
-import { TalentCalculator } from "../logic/talentCalc";
-import { smoothValues } from "../utils";
+import { triggerTalentHitEvent } from "../../actions/build";
+import { TalentCalculator } from "../../logic/talentCalc";
 
 type AlterState = {
   attElmt?: AttackElement;
@@ -37,7 +36,9 @@ export function TalentEventItem({
 
   const [alter, setAlter] = useState<AlterState>({});
 
-  const values = calculator.calcAttackItem(item, alter).values.map((value) => value.average);
+  const values = calculator
+    .calcAttackItem(item, alter)
+    .values.map((value) => Math.round(value.average));
 
   const handleTrigger = (item: TalentCalcItem) => {
     triggerTalentHitEvent({
@@ -51,13 +52,18 @@ export function TalentEventItem({
 
   return (
     <div>
-      <div className="text-sm bg-dark-2 rounded-sm flex items-center">
+      <div
+        className={clsx(
+          "text-sm rounded-xs flex items-center",
+          active ? "text-black bg-primary-2" : "text-light-2 bg-dark-2"
+        )}
+      >
         <button
           className="px-2 py-1 cursor-pointer grow flex justify-between gap-2 glow-on-hover"
           onClick={() => onClickHeading?.(item.name)}
         >
           <span className="text-left font-semibold">{item.name}</span>
-          <span className="text-light-4">{smoothValues(values)}</span>
+          {!active && <span>{values.join(" + ")}</span>}
         </button>
 
         {/* <div className="w-px h-4 bg-dark-3" /> */}

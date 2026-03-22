@@ -15,7 +15,7 @@ A combat rotation simulator for Genshin Impact. It helps users simulate in-game 
 
 ```ts
 SimulatorState {
-  step: "PREP" | "BUILD"
+  phase: "PREP" | "BUILD"
   managers: { id, name }[]      // list of simulation managing data to keep their order
   activeId: number              // id of the active simulation
   simulationsById: Record<id, Simulation>

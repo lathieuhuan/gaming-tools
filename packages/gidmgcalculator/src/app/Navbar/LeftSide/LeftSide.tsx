@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { CloseButton, clsx, Drawer, SideBarSvg, useScreenWatcher } from "rond";
+import { TbLayoutSidebar } from "react-icons/tb";
+import { CloseButton, clsx, Drawer, useScreenWatcher } from "rond";
 
 import type { ScreenConfig } from "./config";
 
@@ -39,7 +40,7 @@ export function LeftSide({ appReady }: LeftSideProps) {
           disabled={!appReady}
           onClick={() => setDrawerActive(true)}
         >
-          <SideBarSvg />
+          <TbLayoutSidebar className="text-xl" />
         </button>
       ) : (
         <NavOptions
@@ -59,12 +60,9 @@ export function LeftSide({ appReady }: LeftSideProps) {
 
       <Drawer
         active={drawerActive}
+        className="p-4 bg-dark-2 shadow-popup"
         destroyOnClose
-        style={{
-          boxShadow: "0 0 1.5px #b8b8b8",
-        }}
         width={240}
-        className="p-4 bg-dark-2"
         position="left"
         onClose={closeDrawer}
       >
