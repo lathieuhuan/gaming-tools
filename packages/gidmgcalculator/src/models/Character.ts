@@ -109,6 +109,13 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
       "enhanced",
     ];
 
+    if (data.level) {
+      const { bareLv, ascension } = Ascendable.splitLevel(data.level);
+
+      this.bareLv = bareLv;
+      this.ascension = ascension;
+    }
+
     return Object_.safeAssign(this, data, keys) as this;
   }
 

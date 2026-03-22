@@ -141,6 +141,13 @@ export class Weapon extends Ascendable implements IWeapon, Clonable<Weapon> {
       "setupIDs",
     ];
 
+    if (data.level) {
+      const { bareLv, ascension } = Ascendable.splitLevel(data.level);
+
+      this.bareLv = bareLv;
+      this.ascension = ascension;
+    }
+
     return Object_.safeAssign(this, data, keys) as this;
   }
 
