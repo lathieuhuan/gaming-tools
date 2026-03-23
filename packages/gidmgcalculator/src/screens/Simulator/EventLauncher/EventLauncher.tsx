@@ -9,11 +9,11 @@ import { CharacterPortrait } from "@/components";
 import { TabItem, Tabs } from "../components/Tabs";
 import { AbilityEventMenu } from "./AbilityEventMenu";
 
-type EventMenuTabItem = TabItem & {
+type EventLauncherTabItem = TabItem & {
   component: ComponentType;
 };
 
-const TABS: EventMenuTabItem[] = [
+const TABS: EventLauncherTabItem[] = [
   {
     label: "Ability",
     value: "ABILITY",
@@ -21,17 +21,17 @@ const TABS: EventMenuTabItem[] = [
   },
 ];
 
-type EventMenuProps = {
+type EventLauncherProps = {
   className?: string;
 };
 
-export function EventMenu({ className }: EventMenuProps) {
+export function EventLauncher({ className }: EventLauncherProps) {
   const members = useSimulatorStore((state) => selectSimulation(state).members);
   const memberOrder = useSimulatorStore((state) => selectSimulation(state).memberOrder);
   const onFieldMember = useSimulatorStore((state) => selectProcessor(state).onFieldMember);
   const activeMember = useSimulatorStore(selectActiveMember);
 
-  const [activeTab, setActiveTab] = useState<EventMenuTabItem>(TABS[0]);
+  const [activeTab, setActiveTab] = useState<EventLauncherTabItem>(TABS[0]);
 
   const activeMemberIsOnField = activeMember.code === onFieldMember;
 

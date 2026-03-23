@@ -1,39 +1,34 @@
-import { startBuilding } from "./actions/build";
 import { useSimulatorStore } from "./store";
 
 // Components
 import { ActiveMemberView } from "./ActiveMemberView";
 import { AnalyticsView } from "./AnalyticsView";
-import { EventMenu } from "./EventMenu";
-import { IntroTopBar } from "./IntroTopBar";
+import { EventLauncher } from "./EventLauncher";
 import { Sidebar } from "./Sidebar";
-import { SimulationPrepper } from "./SimulationPrepper";
+import { TeamAssembler } from "./TeamAssembler";
 import { TimelineView } from "./TimelineView";
+import { TopBar } from "./Topbar";
 
 const containerCls = "w-78 p-4 bg-dark-1 rounded-md shrink-0";
 
 export function Simulator() {
   const phase = useSimulatorStore((state) => state.phase);
+  const isEmpty = useSimulatorStore(
+    (state) => !state.activeId || !state.simulationsById[state.activeId]
+  );
 
   return (
-    <div className="h-full bg-dark-3">
+    <div className="h-full flex flex-col bg-dark-3">
+      <TopBar />
+
       {phase === "PREP" ? (
-        <SimulationPrepper onStart={startBuilding} />
+        !isEmpty && <TeamAssembler className="grow" />
       ) : (
-        <div className="h-full flex flex-col">
-          <IntroTopBar />
-
-          <div className="p-4 grow flex gap-4 hide-scrollbar">
-            <ActiveMemberView className={containerCls} />
-            <EventMenu className={containerCls} />
-            <TimelineView className={containerCls} />
-            <AnalyticsView className={containerCls} />
-
-            {/* <div className="h-full grow flex flex-col gap-4 overflow-hidden">
-              <ActiveMemberView className="grow p-4 bg-dark-1 rounded-md overflow-y-hidden" />
-              <TimelineView className="p-4 bg-dark-1 rounded-md" />
-            </div> */}
-          </div>
+        <div className="p-4 grow flex gap-4 hide-scrollbar">
+          <ActiveMemberView className={containerCls} />
+          <EventLauncher className={containerCls} />
+          <TimelineView className={containerCls} />
+          <AnalyticsView className={containerCls} />
         </div>
       )}
 
