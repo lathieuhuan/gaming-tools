@@ -1,7 +1,7 @@
 import type { CharacterCalc } from "@/models/CharacterCalc";
 import type { TargetCalc } from "@/models/TargetCalc";
 import type { AttackElement, AttackReaction, LunarType } from "@/types";
-import type { CharacterEvent, SimulationEvent, SwitchInEvent, TalentHitEvent } from "../types";
+import type { CharacterEvent, SimulationEvent, SwitchInEvent, AbilityHitEvent } from "../types";
 
 import { talentCalc } from "./talentCalc";
 
@@ -49,7 +49,7 @@ export class SimulationProcessor {
     // TODO redirect on-field buffs to this member
   }
 
-  processTalentHitEvent(event: TalentHitEvent): HitLog {
+  processTalentHitEvent(event: AbilityHitEvent): HitLog {
     const performer = this.members[event.performer];
     const item = performer.data.calcList[event.talent][event.index];
 
@@ -76,7 +76,7 @@ export class SimulationProcessor {
         break;
       }
 
-      case "TH": {
+      case "AH": {
         const log = this.processTalentHitEvent(event);
 
         this.#hitLogs = this.#hitLogs.concat(log);

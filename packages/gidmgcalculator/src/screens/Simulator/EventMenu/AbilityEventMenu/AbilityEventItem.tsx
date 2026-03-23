@@ -4,7 +4,7 @@ import { Button, clsx, CollapseSpace } from "rond";
 import type { AttackElement, AttackReaction, TalentCalcItem } from "@/types";
 
 import { CharacterCalc } from "@/models";
-import { triggerTalentHitEvent } from "../../actions/build";
+import { triggerAbilityHitEvent } from "../../actions/build";
 import { TalentCalculator } from "../../logic/talentCalc";
 
 type AlterState = {
@@ -12,7 +12,7 @@ type AlterState = {
   reaction?: AttackReaction;
 };
 
-type TalentEventItemProps = {
+type AbilityEventItemProps = {
   performer: CharacterCalc;
   item: TalentCalcItem;
   active: boolean;
@@ -23,7 +23,7 @@ type TalentEventItemProps = {
   index: number;
 };
 
-export function TalentEventItem({
+export function AbilityEventItem({
   performer,
   item,
   active,
@@ -31,7 +31,7 @@ export function TalentEventItem({
   onClickHeading,
 
   index,
-}: TalentEventItemProps) {
+}: AbilityEventItemProps) {
   const { type = "attack" } = item;
 
   const [alter, setAlter] = useState<AlterState>({});
@@ -41,7 +41,7 @@ export function TalentEventItem({
     .values.map((value) => Math.round(value.average));
 
   const handleTrigger = (item: TalentCalcItem) => {
-    triggerTalentHitEvent({
+    triggerAbilityHitEvent({
       performer: performer.data.code,
       talent: calculator.talent,
       index,

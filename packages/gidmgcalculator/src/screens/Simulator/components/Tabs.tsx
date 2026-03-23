@@ -9,7 +9,7 @@ type TabsProps<T extends TabItem> = {
   className?: string;
   tabs: T[];
   value: string;
-  onChange?: (tab: T) => void;
+  onChange?: (value: string, tab: T) => void;
 };
 
 export function Tabs<T extends TabItem>({ className, tabs, value, onChange }: TabsProps<T>) {
@@ -22,7 +22,7 @@ export function Tabs<T extends TabItem>({ className, tabs, value, onChange }: Ta
             "px-2 pt-1 font-semibold rounded-t-sm",
             value === tab.value ? "text-black bg-primary-2" : "text-light-2"
           )}
-          onClick={() => onChange?.(tab)}
+          onClick={() => onChange?.(tab.value, tab)}
         >
           {tab.label}
         </button>

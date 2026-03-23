@@ -3,9 +3,9 @@ import type { TargetCalc } from "@/models/TargetCalc";
 import type { AttackPattern } from "@/types";
 
 import { talentCalc } from "../../logic/talentCalc";
-import { TalentEventItem } from "./TalentEventItem";
+import { AbilityEventItem } from "./AbilityEventItem";
 
-type TalentEventListProps = {
+type AbilityEventListProps = {
   className?: string;
   character: CharacterCalc;
   target: TargetCalc;
@@ -14,14 +14,14 @@ type TalentEventListProps = {
   onClickHeading?: (name: string) => void;
 };
 
-export function TalentEventList({
+export function AbilityEventList({
   className,
   character,
   target,
   attPatt,
   activeNames = [],
   onClickHeading,
-}: TalentEventListProps) {
+}: AbilityEventListProps) {
   const calcList = character.data.calcList[attPatt];
   const calculator = talentCalc(character, target, attPatt);
 
@@ -31,7 +31,7 @@ export function TalentEventList({
         const active = activeNames.includes(item.name);
 
         return (
-          <TalentEventItem
+          <AbilityEventItem
             key={item.name}
             performer={character}
             item={item}

@@ -7,7 +7,7 @@ import { selectActiveMember, selectProcessor, selectSimulation, useSimulatorStor
 // Components
 import { CharacterPortrait } from "@/components";
 import { TabItem, Tabs } from "../components/Tabs";
-import { TalentEventMenu } from "./TalentEventMenu";
+import { AbilityEventMenu } from "./AbilityEventMenu";
 
 type EventMenuTabItem = TabItem & {
   component: ComponentType;
@@ -15,9 +15,9 @@ type EventMenuTabItem = TabItem & {
 
 const TABS: EventMenuTabItem[] = [
   {
-    label: "Talent",
-    value: "TALENT",
-    component: TalentEventMenu,
+    label: "Ability",
+    value: "ABILITY",
+    component: AbilityEventMenu,
   },
 ];
 
@@ -67,7 +67,12 @@ export function EventMenu({ className }: EventMenuProps) {
           </Button>
         </div>
 
-        <Tabs className="mt-3" tabs={TABS} value={activeTab.value} onChange={setActiveTab} />
+        <Tabs
+          className="mt-3"
+          tabs={TABS}
+          value={activeTab.value}
+          onChange={(_, tab) => setActiveTab(tab)}
+        />
 
         <div className="grow custom-scrollbar">
           <activeTab.component />

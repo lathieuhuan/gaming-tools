@@ -45,7 +45,12 @@ export function ActiveMemberView({ className }: ActiveMemberViewProps) {
         <h3 className={`text-lg font-bold text-${data.vision}`}>{data.name}</h3>
       </div>
 
-      <Tabs className="mt-3" tabs={TABS} value={activeTab.value} onChange={setActiveTab} />
+      <Tabs
+        className="mt-3"
+        tabs={TABS}
+        value={activeTab.value}
+        onChange={(_, tab) => setActiveTab(tab)}
+      />
 
       <div className="mt-3 grow custom-scrollbar">
         <activeTab.component />

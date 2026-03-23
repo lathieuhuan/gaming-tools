@@ -40,7 +40,7 @@ SimulationEvent
 │   ├── SwitchInEvent      (type: "SI")  — character takes the field
 │   ├── ModifyEvent        (type: "M")   — buff/debuff modifier  [TODO]
 │   └── HitEvent
-│       ├── TalentHitEvent  (type: "TH") — damage from a talent attack
+│       ├── AbilityHitEvent  (type: "AH") — damage from an ability (talent/constellation) attack
 │       └── ReactionHitEvent (type: "RH") — damage from a reaction  [TODO]
 └── EnvironmentEvent (cate: "E")          — environment-level event  [TODO]
 ```

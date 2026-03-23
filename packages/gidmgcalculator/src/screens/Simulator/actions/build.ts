@@ -1,6 +1,6 @@
 import { ExactOmit } from "rond";
 
-import type { SimulationMembers, TalentHitEvent } from "../types";
+import type { SimulationMembers, AbilityHitEvent } from "../types";
 
 import { SimulationProcessor } from "../logic/SimulationProcessor";
 import { useSimulatorStore } from "../store";
@@ -55,7 +55,7 @@ export function switchIn(code: number) {
   });
 }
 
-export function triggerTalentHitEvent(event: ExactOmit<TalentHitEvent, "id" | "cate" | "type">) {
+export function triggerAbilityHitEvent(event: ExactOmit<AbilityHitEvent, "id" | "cate" | "type">) {
   updateActiveSimulation((simulation) => {
     const id = `${eventId++}`;
 
@@ -63,7 +63,7 @@ export function triggerTalentHitEvent(event: ExactOmit<TalentHitEvent, "id" | "c
       ...event,
       id,
       cate: "C",
-      type: "TH",
+      type: "AH",
     });
 
     simulation.processor.processTimeline(simulation.timeline);

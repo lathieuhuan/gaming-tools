@@ -12,7 +12,7 @@ export function CharacterEventView({ event, character }: CharacterEventViewProps
       return <div>Take the field</div>;
     }
 
-    case "TH": {
+    case "AH": {
       const config = character.data.calcList[event.talent][event.index];
 
       return <div>{config.name}</div>;

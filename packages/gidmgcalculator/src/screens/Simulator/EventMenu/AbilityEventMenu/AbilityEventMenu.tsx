@@ -6,9 +6,9 @@ import { selectActiveMember, selectSimulation, useSimulatorStore } from "../../s
 
 // Components
 import { EventListLayout } from "../EventListLayout";
-import { TalentEventList } from "./TalentEventList";
+import { AbilityEventList } from "./AbilityEventList";
 
-export function TalentEventMenu() {
+export function AbilityEventMenu() {
   const { t } = useTranslation();
   const activeMember = useSimulatorStore(selectActiveMember);
   const target = useSimulatorStore((state) => selectSimulation(state).target);
@@ -28,7 +28,7 @@ export function TalentEventMenu() {
       <EventListLayout title={t("NAs")}>
         {NORMAL_ATTACKS.map((type) => {
           return (
-            <TalentEventList
+            <AbilityEventList
               key={type}
               className="space-y-2"
               character={activeMember}
@@ -42,7 +42,7 @@ export function TalentEventMenu() {
       </EventListLayout>
 
       {/* <EventListLayout title={t("ES")}>
-        <TalentEventList
+        <AbilityEventList
           className="space-y-2"
           character={activeMember}
           attPatt="ES"
@@ -52,7 +52,7 @@ export function TalentEventMenu() {
       </EventListLayout> */}
 
       {/* <EventListLayout title={t("EB")}>
-        <TalentEventList
+        <AbilityEventList
           className="space-y-2"
           character={activeMember}
           attPatt="EB"

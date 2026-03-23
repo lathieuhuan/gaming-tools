@@ -19,8 +19,8 @@ export type ModifyEvent = BaseEvent & {
 
 // ===== Hit Event =====
 
-export type TalentHitEvent = BaseEvent & {
-  type: "TH";
+export type AbilityHitEvent = BaseEvent & {
+  type: "AH";
   talent: AttackPattern;
   index: number; // temporary works as id of the hit
   attElmt?: AttackElement;
@@ -31,7 +31,7 @@ export type ReactionHitEvent = BaseEvent & {
   type: "RH";
 };
 
-export type HitEvent = TalentHitEvent | ReactionHitEvent;
+export type HitEvent = AbilityHitEvent | ReactionHitEvent;
 
 // ===== Character Event =====
 
