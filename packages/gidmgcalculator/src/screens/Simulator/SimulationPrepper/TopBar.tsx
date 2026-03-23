@@ -1,11 +1,13 @@
 import { FaCheck, FaPlus, FaTimes } from "react-icons/fa";
-import { Button } from "rond";
+import { Button, Input } from "rond";
 
-import { ElementIcon } from "@/components";
 import { Team } from "@/models";
-import { startDevSimulation } from "../actions/dev";
-import { startNewSimulation, deleteSimulation } from "../actions/prepare";
+import { deleteSimulation, startNewSimulation } from "../actions/prepare";
+import { SIMULATION_NAME_MAX_LENGTH } from "../configs";
 import { selectSimulation, useSimulatorStore } from "../store";
+
+// Components
+import { ElementIcon } from "@/components";
 import { SidebarButton } from "../components/SidebarButton";
 
 const containerCls = "flex justify-center bg-dark-2";
@@ -19,7 +21,7 @@ export function TopBarEmpty() {
 
         <div className="w-px h-6 bg-dark-line" />
 
-        <Button boneOnly icon={<FaPlus />} onClick={() => startDevSimulation()}>
+        <Button boneOnly icon={<FaPlus />} onClick={() => startNewSimulation()}>
           New
         </Button>
       </div>
@@ -38,7 +40,10 @@ type TopBarProps = {
 };
 
 export function TopBar({ onStart }: TopBarProps) {
-  const { memberOrder, members } = useSimulatorStore(selectSimulation);
+  const { id, memberOrder, members } = useSimulatorStore(selectSimulation);
+  const manager = useSimulatorStore((state) =>
+    state.managers.find((manager) => manager.id === state.activeId)
+  );
 
   const team = new Team(memberOrder.map((code) => members[code]));
   const { resonances, moonsignLv, witchRiteLv } = team;
@@ -56,6 +61,16 @@ export function TopBar({ onStart }: TopBarProps) {
     },
   ];
 
+  const handleNameChange = (name: string) => {
+    useSimulatorStore.setState((state) => {
+      const manager = state.managers.find((manager) => manager.id === id);
+
+      if (manager) {
+        manager.name = name;
+      }
+    });
+  };
+
   return (
     <div className={containerCls}>
       <div className={contentCls}>
@@ -63,7 +78,13 @@ export function TopBar({ onStart }: TopBarProps) {
 
         <div className="mx-2 w-px h-6 bg-dark-line" />
 
-        <p className="text-lg font-bold">Simulation Name</p>
+        <div>
+          <Input
+            value={manager?.name}
+            maxLength={SIMULATION_NAME_MAX_LENGTH}
+            onChange={handleNameChange}
+          />
+        </div>
 
         <div className="ml-6 flex divide-x divide-dark-line">
           {resonances.length > 0 && (

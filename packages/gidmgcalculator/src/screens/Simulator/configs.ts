@@ -1,0 +1,1 @@
+export const SIMULATION_NAME_MAX_LENGTH = 20;
