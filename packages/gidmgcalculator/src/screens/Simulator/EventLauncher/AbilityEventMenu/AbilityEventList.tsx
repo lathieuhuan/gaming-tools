@@ -1,13 +1,13 @@
-import type { CharacterCalc } from "@/models";
 import type { TargetCalc } from "@/models/TargetCalc";
 import type { AttackPattern } from "@/types";
 
+import { MemberCalc } from "../../logic/MemberCalc";
 import { talentCalc } from "../../logic/talentCalc";
 import { AbilityEventItem } from "./AbilityEventItem";
 
 type AbilityEventListProps = {
   className?: string;
-  character: CharacterCalc;
+  character: MemberCalc;
   target: TargetCalc;
   attPatt: AttackPattern;
   activeNames?: string[];

@@ -1,19 +1,21 @@
-import { CharacterCalc } from "@/models";
-import { CharacterEvent } from "../types";
+import type { MemberCalc } from "../logic/MemberCalc";
+import type { CharacterEvent } from "../types";
 
 type CharacterEventViewProps = {
   event: CharacterEvent;
-  character: CharacterCalc;
+  character: MemberCalc;
 };
 
 export function CharacterEventView({ event, character }: CharacterEventViewProps) {
+  const { data } = character;
+
   switch (event.type) {
     case "SI": {
       return <div>Take the field</div>;
     }
 
     case "AH": {
-      const config = character.data.calcList[event.talent][event.index];
+      const config = data.calcList[event.talent][event.index];
 
       return <div>{config.name}</div>;
     }
@@ -22,8 +24,18 @@ export function CharacterEventView({ event, character }: CharacterEventViewProps
       return <div>Reaction Hit</div>;
     }
 
-    case "M": {
-      return <div>Modify</div>;
+    case "AB": {
+      const buff = data.buffs?.find((buff) => buff.index === event.modId);
+
+      if (!buff) {
+        return null;
+      }
+
+      return <div>{buff.src}</div>;
+    }
+
+    case "WB": {
+      return <div>Weapon Buff</div>;
     }
 
     default: {

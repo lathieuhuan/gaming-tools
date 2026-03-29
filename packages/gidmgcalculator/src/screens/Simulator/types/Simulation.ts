@@ -1,6 +1,6 @@
 import type { ExactOmit } from "rond";
 
-import type { CharacterCalc } from "@/models/CharacterCalc";
+import type { MemberCalc } from "../logic/MemberCalc";
 import type { TargetCalc } from "@/models/TargetCalc";
 import type { IDbCharacter } from "@/types";
 import type { SimulationProcessor } from "../logic/SimulationProcessor";
@@ -20,11 +20,20 @@ type DbSimulation = {
 
 // ===== App Simulation =====
 
-export type SimulationMembers = Record<PropertyKey, CharacterCalc>;
+export type InputsById = Record<number, number[]>;
+
+export type ModCategory = "ABILITY_BUFF" | "WEAPON_BUFF";
+
+export type MemberInputs = Record<ModCategory, InputsById>;
+
+export type SimulationInputs = Record<number, MemberInputs>;
+
+export type SimulationMembers = Record<number, MemberCalc>;
 
 export type Simulation = ExactOmit<DbSimulation, "members"> & {
   members: SimulationMembers;
   activeMember: number;
+  inputs: SimulationInputs;
   target: TargetCalc;
   processor: SimulationProcessor;
 };

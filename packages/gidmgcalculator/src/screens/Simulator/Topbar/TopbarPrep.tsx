@@ -6,8 +6,7 @@ import { Team } from "@/models";
 import { startBuilding } from "../actions/build";
 import { deleteSimulation } from "../actions/prepare";
 import { SIMULATION_NAME_MAX_LENGTH } from "../configs";
-import { useSimulatorStore } from "../store";
-import { Simulation } from "../types";
+import { selectSimulation, useSimulatorStore } from "../store";
 
 type TeamBonus = {
   image: string;
@@ -17,15 +16,15 @@ type TeamBonus = {
 
 type TopbarPrepProps = {
   className?: string;
-  simulation: Simulation;
 };
 
-export function TopbarPrep({ className, simulation }: TopbarPrepProps) {
-  const { id, memberOrder, members } = simulation;
+export function TopbarPrep({ className }: TopbarPrepProps) {
+  const simulation = useSimulatorStore(selectSimulation);
   const manager = useSimulatorStore((state) =>
     state.managers.find((manager) => manager.id === state.activeId)
   );
 
+  const { id, memberOrder, members } = simulation;
   const team = new Team(memberOrder.map((code) => members[code]));
   const { resonances, moonsignLv, witchRiteLv } = team;
 

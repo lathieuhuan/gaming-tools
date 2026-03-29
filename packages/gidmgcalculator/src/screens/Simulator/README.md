@@ -24,7 +24,7 @@ SimulatorState {
 Simulation {
   id
   memberOrder                   // list of team member code to keep their order
-  members: Record<memberCode, CharacterCalc>
+  members: Record<memberCode, MemberCalc>
   timeline: SimulationEvent[]
   activeMember                  // code of the selected member
   target: TargetCalc            // enemy target
@@ -57,7 +57,7 @@ Timeline processing engine - backbone of the Simulator.
 
 Note:
 
-- `members` & `target` are mutable. So only pass copies into the constructor function.
+- `members` & `target` are mutable. So only pass deep copies into the constructor function.
 
 ---
 
@@ -68,13 +68,15 @@ Note:
 ### PREP
 
 - Create a simulation. Allow users to change members and target only.
+- Before transition to BUILD phase, reset calculations on members and target.
 
 ### BUILD
 
 Each time users trigger an event:
 
 - The event is added to `timeline`.
-- The processor then processes this new timeline and produces new hit logs.
+- The processor then processes this new timeline.
+- Members' attributes and bonuses, target's resistance reduction, or hit logs are updated after every event.
 
 ---
 
@@ -91,18 +93,18 @@ Simulator/
 ├── actions/
 │   ├── utils.ts                — helper functions for actions
 │   ├── prepare.ts              — PREP-phase actions
-│   ├── build.ts                — BUILD-phase actions
-│   └── dev.ts                  — actions with hardcoded data for development
+│   └── build.ts                — BUILD-phase actions
 │
 ├── logic/
 │   ├── SimulationProcessor.ts  — timeline processing engine
 │   └── talentCalc.ts           — calculator for character talent
 │
-├── SimulationPrepper/          — PREP-phase UI
-│
-├── IntroTopBar/                — BUILD phase's top bar
-├── ActiveMemberView/           — BUILD-phase, the selected member's live data: attributes, effects...
-├── EventMenu/                  — BUILD-phase, various event menus for users to trigger events
-├── TimelineView/               — BUILD-phase, ordered event history
-└── AnalyticsView/              — BUILD-phase, analysis of damage output
+├── TopBar/                     — general information of the active simulation and actions towards it
+├── Sidebar/                    — simulation list, simulator actions and settings
+├── TeamAssembler/              — simulation characters (members) configurations
+├── TargetConfiger/             — target configurations [TODO]
+├── ActiveMemberView/           — the selected member's live data: attributes, effects...
+├── EventLauncher/              — various event menus for users to trigger events
+├── TimelineView/               — ordered event history
+└── AnalyticsView/              — analysis of damage output
 ```

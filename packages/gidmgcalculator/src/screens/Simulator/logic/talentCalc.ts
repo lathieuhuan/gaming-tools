@@ -1,20 +1,20 @@
 import { Array_ } from "ron-utils";
 
-import type { CharacterCalc } from "@/models";
 import type {
   AppCharacter,
+  AttackElement,
   AttackPattern,
   AttackReaction,
   CalcItemFactor,
-  AttackElement,
   TalentCalcItem,
 } from "@/types";
+import type { MemberCalc } from "./MemberCalc";
 
-import { Character } from "@/models";
-import { TargetCalc } from "@/models/TargetCalc";
-import { CalcResultAttackItem } from "@/calculation/types";
 import { makeAttackItemCalc } from "@/calculation/core/makeAttackItemCalc";
 import { ResultRecorder } from "@/calculation/core/ResultRecorder";
+import { CalcResultAttackItem } from "@/calculation/types";
+import { Character } from "@/models";
+import { TargetCalc } from "@/models/TargetCalc";
 
 type AlterConfig = {
   attPatt?: AttackPattern;
@@ -23,7 +23,7 @@ type AlterConfig = {
 };
 
 export function talentCalc(
-  performer: CharacterCalc,
+  performer: MemberCalc,
   target: TargetCalc,
   expectAttPatt: AttackPattern
 ) {

@@ -39,7 +39,7 @@ function getDefaultInitValue(type: ModInputType) {
   }
 }
 
-function createModCtrlInputs(
+export function createModCtrlInputs(
   inputConfigs: ModInputConfig[] = [],
   forSelf = true,
   useMaxValue = false

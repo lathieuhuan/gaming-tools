@@ -19,7 +19,7 @@ export function Simulator() {
 
   return (
     <div className="h-full flex flex-col bg-dark-3">
-      <TopBar />
+      <TopBar phase={phase} noActiveSimulation={isEmpty} />
 
       {phase === "PREP" ? (
         !isEmpty && <TeamAssembler className="grow" />

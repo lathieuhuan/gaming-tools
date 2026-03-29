@@ -1,6 +1,7 @@
 import { Button, clsx, FancyBackSvg } from "rond";
 
 import { selectSimulation, useSimulatorStore } from "../store";
+import { restart } from "../actions/build";
 
 type TopbarBuildProps = {
   className?: string;
@@ -19,6 +20,11 @@ export function TopbarBuild({ className }: TopbarBuildProps) {
     useSimulatorStore.setState({ phase: "PREP" });
   };
 
+  // TODO: ask for confirmation
+  const handleRestart = () => {
+    restart();
+  };
+
   return (
     <div
       className={clsx("h-16 flex items-center bg-dark-2 shrink-0", className)}
@@ -31,6 +37,10 @@ export function TopbarBuild({ className }: TopbarBuildProps) {
 
         <span>{manager.name}</span>
       </div>
+
+      <Button className="ml-auto" size="small" onClick={handleRestart}>
+        Restart
+      </Button>
     </div>
   );
 }

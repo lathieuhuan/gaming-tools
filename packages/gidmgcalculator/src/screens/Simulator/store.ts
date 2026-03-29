@@ -1,18 +1,18 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-import type { Simulation } from "./types";
+import type { ModCategory, Simulation } from "./types";
 
 export type SimulationManager = {
   id: number;
   name: string;
 };
 
-type Phase = "PREP" | "BUILD";
+export type SimulatorPhase = "PREP" | "BUILD";
 
 export type SimulatorState = {
   sidebarOpen: boolean;
-  phase: Phase;
+  phase: SimulatorPhase;
   managers: SimulationManager[];
   activeId: number;
   simulationsById: Record<string, Simulation>;
@@ -38,6 +38,12 @@ export const selectActiveMember = (state: SimulatorState) => {
 
 export const selectProcessor = (state: SimulatorState, id?: number) => {
   return selectSimulation(state, id).processor;
+};
+
+export const selectModInputs = (category: ModCategory) => (state: SimulatorState) => {
+  const simulation = selectSimulation(state);
+
+  return simulation.inputs[simulation.activeMember][category];
 };
 
 // export const useShallowSimulatorStore = <T>(selector: (state: SimulatorState) => T) => {

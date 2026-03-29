@@ -8,6 +8,7 @@ import { selectActiveMember, selectProcessor, selectSimulation, useSimulatorStor
 import { CharacterPortrait } from "@/components";
 import { TabItem, Tabs } from "../components/Tabs";
 import { AbilityEventMenu } from "./AbilityEventMenu";
+import { ModifyEventMenu } from "./ModifyEventMenu";
 
 type EventLauncherTabItem = TabItem & {
   component: ComponentType;
@@ -18,6 +19,11 @@ const TABS: EventLauncherTabItem[] = [
     label: "Ability",
     value: "ABILITY",
     component: AbilityEventMenu,
+  },
+  {
+    label: "Modify",
+    value: "MODIFY",
+    component: ModifyEventMenu,
   },
 ];
 
@@ -67,12 +73,7 @@ export function EventLauncher({ className }: EventLauncherProps) {
           </Button>
         </div>
 
-        <Tabs
-          className="mt-3"
-          tabs={TABS}
-          value={activeTab.value}
-          onChange={(_, tab) => setActiveTab(tab)}
-        />
+        <Tabs tabs={TABS} value={activeTab.value} onChange={(_, tab) => setActiveTab(tab)} />
 
         <div className="grow custom-scrollbar">
           <activeTab.component />

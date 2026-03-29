@@ -1,42 +1,56 @@
-import { ExactOmit } from "rond";
+import type { ExactOmit } from "rond";
 
-import type { SimulationMembers, AbilityHitEvent } from "../types";
+import type { AbilityBuffEvent, AbilityHitEvent, ModCategory } from "../types";
 
-import { SimulationProcessor } from "../logic/SimulationProcessor";
 import { useSimulatorStore } from "../store";
-import { updateActiveSimulation } from "./utils";
+import { resetSimulation, updateActiveSimulation } from "./utils";
 
-export function startBuilding() {
+export function startBuilding(simulationId?: number) {
   useSimulatorStore.setState((state) => {
-    const simulation = state.simulationsById[state.activeId];
-    const { memberOrder, members } = simulation;
+    const id = simulationId ?? state.activeId;
+    const simulation = state.simulationsById[id];
 
-    const target = simulation.target.clone();
-    const newMembers: SimulationMembers = {};
-    const newMemberClones: SimulationMembers = {};
+    if (!simulation) {
+      return;
+    }
 
-    memberOrder.forEach((code) => {
-      const member = members[code].initCalc();
+    resetSimulation(simulation);
 
-      newMembers[code] = member.clone();
-      newMemberClones[code] = member.deepClone();
-    });
-
-    simulation.members = newMembers;
-    simulation.activeMember = memberOrder[0];
-    simulation.timeline = [];
-    simulation.processor = new SimulationProcessor(newMemberClones, target, memberOrder[0]);
-
-    state.simulationsById[state.activeId] = simulation;
+    state.activeId = id;
     state.phase = "BUILD";
   });
 }
+
+export function restart() {
+  updateActiveSimulation((simulation) => {
+    resetSimulation(simulation);
+  });
+}
+
+// ===== OPERATIONS =====
 
 export function selectMember(code: number) {
   updateActiveSimulation((simulation) => {
     simulation.activeMember = code;
   });
 }
+
+export function updateAbilityInputs(
+  category: ModCategory,
+  modId: number,
+  inputsOrSetter: number[] | ((inputs: number[]) => number[])
+) {
+  updateActiveSimulation((simulation) => {
+    const cateInputs = simulation.inputs[simulation.activeMember][category];
+    const inputs = cateInputs[modId] || [];
+    const newInputs =
+      typeof inputsOrSetter === "function" ? inputsOrSetter(inputs) : inputsOrSetter;
+
+    cateInputs[modId] = newInputs;
+  });
+}
+
+// ===== EVENT =====
 
 let eventId = 1;
 
@@ -64,6 +78,23 @@ export function triggerAbilityHitEvent(event: ExactOmit<AbilityHitEvent, "id" | 
       id,
       cate: "C",
       type: "AH",
+    });
+
+    simulation.processor.processTimeline(simulation.timeline);
+  });
+}
+
+export function triggerAbilityBuffEvent(
+  event: ExactOmit<AbilityBuffEvent, "id" | "cate" | "type">
+) {
+  updateActiveSimulation((simulation) => {
+    const id = `${eventId++}`;
+
+    simulation.timeline.push({
+      ...event,
+      id,
+      cate: "C",
+      type: "AB",
     });
 
     simulation.processor.processTimeline(simulation.timeline);

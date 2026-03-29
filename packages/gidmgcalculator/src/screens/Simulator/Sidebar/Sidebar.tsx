@@ -47,7 +47,7 @@ export function Sidebar() {
       destroyOnClose
       className="bg-dark-2 shadow-popup"
       position="left"
-      width={256}
+      width={288}
       onClose={closeSidebar}
     >
       <div className="h-full flex flex-col">

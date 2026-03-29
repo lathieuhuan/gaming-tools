@@ -13,9 +13,18 @@ export type SwitchInEvent = BaseEvent & {
 
 // ===== Modify Event =====
 
-export type ModifyEvent = BaseEvent & {
-  type: "M";
-};
+export type AbilityBuffEvent = BaseEvent & {
+  type: "AB";
+  modId: number;
+  inputs?: number[];
+}
+
+export type WeaponBuffEvent = BaseEvent & {
+  type: "WB";
+  index: number; // temporary works as id of the buff
+}
+
+export type ModifyEvent = AbilityBuffEvent | WeaponBuffEvent;
 
 // ===== Hit Event =====
 

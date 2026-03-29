@@ -1,9 +1,16 @@
-import type { CharacterCalc } from "@/models/CharacterCalc";
 import type { TargetCalc } from "@/models/TargetCalc";
 import type { AttackElement, AttackReaction, LunarType } from "@/types";
-import type { CharacterEvent, SimulationEvent, SwitchInEvent, AbilityHitEvent } from "../types";
+import type {
+  AbilityBuffEvent,
+  AbilityHitEvent,
+  CharacterEvent,
+  SimulationEvent,
+  SwitchInEvent,
+} from "../types";
+import type { MemberCalc } from "./MemberCalc";
 
 import { talentCalc } from "./talentCalc";
+import { Array_ } from "ron-utils";
 
 type BaseHitLog = {
   value: number;
@@ -35,7 +42,7 @@ export class SimulationProcessor {
   }
 
   constructor(
-    public members: Record<PropertyKey, CharacterCalc>,
+    public members: Record<PropertyKey, MemberCalc>,
     public target: TargetCalc,
     onFieldMember: number
   ) {
@@ -49,7 +56,7 @@ export class SimulationProcessor {
     // TODO redirect on-field buffs to this member
   }
 
-  processTalentHitEvent(event: AbilityHitEvent): HitLog {
+  processAbilityHitEvent(event: AbilityHitEvent): HitLog {
     const performer = this.members[event.performer];
     const item = performer.data.calcList[event.talent][event.index];
 
@@ -69,30 +76,51 @@ export class SimulationProcessor {
     };
   }
 
+  processAbilityBuffEvent(event: AbilityBuffEvent) {
+    const performer = this.members[event.performer];
+    const buff = performer.data.buffs?.find((buff) => buff.index === event.modId);
+
+    if (!buff) {
+      return;
+    }
+
+    const { affect, effects = [] } = buff;
+
+    for (const effect of Array_.toArray(effects)) {
+      if (!performer.isPerformableEffect(effect, event.inputs)) {
+        continue;
+      }
+
+      const bonus = performer.performBonus(effect, {
+        inputs: event.inputs,
+      });
+    }
+  }
+
   processCharacterEvent(event: CharacterEvent) {
     switch (event.type) {
       case "SI": {
         this.processSwitchInEvent(event);
         break;
       }
-
       case "AH": {
-        const log = this.processTalentHitEvent(event);
+        const log = this.processAbilityHitEvent(event);
 
         this.#hitLogs = this.#hitLogs.concat(log);
         break;
       }
-
       case "RH": {
         // TODO process reaction hit event
         break;
       }
-
-      case "M": {
-        // TODO process modify event
+      case "AB": {
+        this.processAbilityBuffEvent(event);
         break;
       }
-
+      case "WB": {
+        // TODO process weapon buff event
+        break;
+      }
       default:
         event satisfies never;
     }
