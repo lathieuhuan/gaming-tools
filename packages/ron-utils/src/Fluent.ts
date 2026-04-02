@@ -1,29 +1,5 @@
 import { isFunction } from "./pure.utils";
-
-// 1. Helper to check if two types are exactly equal (including readonly)
-type IfEquals<X, Y, A, B> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y ? 1 : 2
-  ? A
-  : B;
-
-// 2. Filter for keys that are NOT readonly
-type WritableKeys<T> = {
-  [P in keyof T]-?: IfEquals<
-    {
-      [Q in P]: T[P];
-    },
-    {
-      -readonly [Q in P]: T[P];
-    },
-    P,
-    never
-  >;
-}[keyof T];
-
-// 3. Filter for keys that are NOT functions
-type NonFunctionKeys<T> = {
-  [K in keyof T]: T[K] extends Function ? never : K;
-}[keyof T] &
-  keyof T;
+import type { WritableKeys, NonFunctionKeys } from "./types";
 
 // 4. Filter for keys that ARE functions
 type FunctionKeys<T> = {

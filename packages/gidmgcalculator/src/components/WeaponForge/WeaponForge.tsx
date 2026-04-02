@@ -102,14 +102,14 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
 
       if (isConfigStep) {
         setWeaponConfig(weapon);
-      } else {
-        onForgeWeapon(weapon);
+        return;
       }
-    } else {
-      setWeaponConfig(undefined);
+
+      onForgeWeapon(weapon);
+      return;
     }
 
-    return true;
+    setWeaponConfig(undefined);
   };
 
   return (
@@ -145,10 +145,10 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
             mutable
             weapon={weaponConfig}
             refine={(refi, config) => {
-              setWeaponConfig(new Weapon({ ...config, refi }, config.data));
+              setWeaponConfig(config.clone({ state: { refi } }));
             }}
             upgrade={(level, config) => {
-              setWeaponConfig(new Weapon({ ...config, level }, config.data));
+              setWeaponConfig(config.clone({ state: { level } }));
             }}
             actions={[
               {

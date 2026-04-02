@@ -1,10 +1,72 @@
 import { Object_ } from "ron-utils";
 
-import type { AppWeapon, IWeapon, IWeaponBasic, Level, WeaponType } from "@/types";
-import type { Clonable } from "./interfaces";
+import type { AppWeapon, Level, WeaponStateData } from "@/types";
 
-import { LEVELS } from "@/constants/global";
-import { Ascendable } from "./Ascendable";
+import { LEVELS } from "@/constants";
+import { Ascendable } from "../Ascendable";
+
+export class WeaponState extends Ascendable implements WeaponStateData {
+  level: Level;
+  refi: number;
+
+  #data: AppWeapon;
+
+  get mainStatValue(): number {
+    const { mainStatScale } = this.#data;
+    return BASE_ATTACK_TYPE[mainStatScale]?.[LEVELS.indexOf(this.level)] || 0;
+  }
+
+  get subStatValue(): number {
+    const { subStat } = this.#data;
+
+    if (subStat) {
+      const index = this.bareLv === 1 ? 0 : this.bareLv === 20 ? 1 : (this.bareLv - 20) / 10;
+      return SUBSTAT_SCALE[subStat.scale]?.[index] || 0;
+    }
+
+    return 0;
+  }
+
+  static DEFAULT_LEVEL: Level = "1/20";
+  static DEFAULT_REFI = 0;
+
+  constructor(data: AppWeapon, init: Partial<WeaponStateData> = {}) {
+    const { level = WeaponState.DEFAULT_LEVEL, refi = WeaponState.DEFAULT_REFI } = init;
+
+    super(level);
+
+    this.level = level;
+    this.refi = refi;
+
+    this.#data = data;
+
+    this.correctData();
+  }
+
+  update(changes: Partial<WeaponStateData>) {
+    Object_.patch<WeaponState>(this, {
+      level: changes.level,
+      refi: changes.refi,
+    });
+
+    if (changes.level) {
+      const { bareLv, ascension } = Ascendable.splitLevel(changes.level);
+
+      this.bareLv = bareLv;
+      this.ascension = ascension;
+    }
+
+    this.correctData();
+
+    return this;
+  }
+
+  protected correctData() {
+    if (this.#data.rarity < 3 && this.ascension > 4) {
+      this.level = "70/70";
+    }
+  }
+}
 
 const BASE_ATTACK_TYPE: Record<string, number[]> = {
   23: [23, 56, 68, 102, 113, 130, 141, 158, 169, 185, 185, 185, 185, 185],
@@ -65,127 +127,3 @@ const SUBSTAT_SCALE: Record<string, number[]> = {
   48: [48, 85, 124, 143, 162, 182, 201, 221],
   58: [58, 102, 148, 172, 195, 218, 241, 265],
 };
-
-export class Weapon extends Ascendable implements IWeapon, Clonable<Weapon> {
-  ID: number;
-  type: WeaponType;
-  code: number;
-  level: Level;
-  refi: number;
-  owner?: number;
-  setupIDs?: number[];
-
-  data: AppWeapon;
-
-  static DEFAULT_CODE: Record<WeaponType, number> = {
-    bow: 11,
-    catalyst: 36,
-    claymore: 59,
-    polearm: 84,
-    sword: 108,
-  };
-
-  // ===== GETTERS =====
-
-  get mainStatValue(): number {
-    const { mainStatScale } = this.data;
-    return BASE_ATTACK_TYPE[mainStatScale]?.[LEVELS.indexOf(this.level)] || 0;
-  }
-
-  get subStatValue(): number {
-    const { subStat } = this.data;
-
-    if (subStat) {
-      const index = this.bareLv === 1 ? 0 : this.bareLv === 20 ? 1 : (this.bareLv - 20) / 10;
-      return SUBSTAT_SCALE[subStat.scale]?.[index] || 0;
-    }
-
-    return 0;
-  }
-
-  constructor(info: IWeaponBasic, data: AppWeapon) {
-    let { level } = info;
-
-    if (+level.split("/")[1] > 70 && data.rarity < 3) {
-      level = "70/70";
-    }
-
-    super(level);
-
-    this.ID = info.ID;
-    this.type = info.type;
-    this.code = info.code;
-    this.level = level;
-    this.refi = info.refi;
-    this.owner = info.owner;
-    this.setupIDs = info.setupIDs;
-    this.data = data;
-  }
-
-  // ===== SETTERS =====
-
-  update<T extends keyof IWeaponBasic>(key: T, value: IWeaponBasic[T]): this;
-  update(info: Partial<IWeaponBasic>): this;
-  update<T extends keyof IWeaponBasic>(
-    infoOrKey: T | Partial<IWeaponBasic>,
-    value?: IWeaponBasic[T]
-  ): this {
-    const data = typeof infoOrKey === "object" ? infoOrKey : { [infoOrKey]: value };
-    const keys: (keyof IWeaponBasic)[] = [
-      "ID",
-      "code",
-      "type",
-      "level",
-      "refi",
-      "owner",
-      "setupIDs",
-    ];
-
-    if (data.level) {
-      const { bareLv, ascension } = Ascendable.splitLevel(data.level);
-
-      this.bareLv = bareLv;
-      this.ascension = ascension;
-    }
-
-    return Object_.safeAssign(this, data, keys) as this;
-  }
-
-  // ===== STATIC =====
-
-  static toBasic(weapon: IWeaponBasic): IWeaponBasic {
-    return Object_.patch<IWeaponBasic>(
-      {
-        ID: weapon.ID,
-        code: weapon.code,
-        type: weapon.type,
-        level: weapon.level,
-        refi: weapon.refi,
-      },
-      {
-        owner: weapon.owner,
-        setupIDs: weapon.setupIDs,
-      }
-    );
-  }
-
-  static toCore(weapon: IWeaponBasic) {
-    return Object_.pickProps(weapon, ["ID", "code", "type", "level", "refi"]);
-  }
-
-  // ===== _ =====
-
-  serialize(): IWeaponBasic {
-    return Weapon.toBasic(this);
-  }
-
-  clone() {
-    return new Weapon(
-      {
-        ...this,
-        setupIDs: this.setupIDs?.slice(),
-      },
-      this.data
-    );
-  }
-}

@@ -5,7 +5,8 @@ import { ClassValue, clsx } from "rond";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { Artifact, ArtifactGear, CharacterCalc, Weapon } from "@/models";
+import { createArtifact } from "@/logic/entity.logic";
+import { ArtifactGear, CharacterCalc, Weapon } from "@/models";
 import { useSelectedBuildState } from "../DataImporter";
 import { useRequestSaveItem } from "../DataSaver/ItemSaver";
 import { useLayoutState } from "../Layout";
@@ -36,9 +37,7 @@ export function SectionDetail({ className }: SectionDetailProps) {
 
   switch (detailType) {
     case "CHARACTER": {
-      const atfPieces = Array_.truthify(artifacts).map(
-        (artifact) => new Artifact(artifact, artifact.data)
-      );
+      const atfPieces = Array_.truthify(artifacts).map((artifact) => createArtifact(artifact));
       const characterCalc = new CharacterCalc(
         {
           ...character.basic,
@@ -81,7 +80,7 @@ export function SectionDetail({ className }: SectionDetailProps) {
       extraTitle = t(ARTIFACT_TYPES[detailType]);
       content = (
         <ArtifactCard
-          artifact={artifact ? new Artifact(artifact, artifact?.data) : undefined}
+          artifact={artifact ? createArtifact(artifact) : undefined}
           actions={[
             {
               children: "Save",

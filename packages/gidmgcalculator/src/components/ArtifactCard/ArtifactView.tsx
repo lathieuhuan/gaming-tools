@@ -35,7 +35,7 @@ export function ArtifactView<T extends Artifact>({
 
   const appArtifact = $AppArtifact.get(artifact);
   const { rarity = 5, mainStatType } = artifact;
-  const mainStatTypeOptions = artifact.possibleMainStatTypes.map((type) => ({
+  const mainStatTypeOptions = artifact.state.possibleMainStatTypes.map((type) => ({
     label: t(type),
     value: type,
   }));

@@ -3,7 +3,7 @@ import { FaCaretRight, FaEraser } from "react-icons/fa";
 import { TbRectangleVerticalFilled } from "react-icons/tb";
 import { Button, clsx, Modal, useScreenWatcher, useValues, type ClassValue } from "rond";
 
-import type { ArtifactType, IArtifactBasic } from "@/types";
+import type { ArtifactType, RawArtifact } from "@/types";
 import type { ArtifactFilterCondition } from "./types";
 
 import { useArtifactSetFilter, useArtifactStatFilter } from "./_hooks";
@@ -14,7 +14,7 @@ import { FilterTemplate } from "@/components/FilterTemplate";
 import { ArtifactSetFilter } from "./ArtifactSetFilter";
 import { ArtifactStatFilter } from "./ArtifactStatFilter";
 
-export type ArtifactFilterProps<T extends IArtifactBasic = IArtifactBasic> = {
+export type ArtifactFilterProps<T extends RawArtifact = RawArtifact> = {
   forcedType?: ArtifactType;
   artifacts: T[];
   initialFilter: ArtifactFilterCondition;
@@ -23,7 +23,7 @@ export type ArtifactFilterProps<T extends IArtifactBasic = IArtifactBasic> = {
 };
 
 /** Only used on Modals */
-export const ArtifactFilter = <T extends IArtifactBasic = IArtifactBasic>({
+export const ArtifactFilter = <T extends RawArtifact = RawArtifact>({
   forcedType,
   artifacts,
   initialFilter,

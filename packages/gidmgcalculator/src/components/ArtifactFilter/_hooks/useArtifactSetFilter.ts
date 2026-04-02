@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-import type { ArtifactType, IArtifactBasic } from "@/types";
+import type { ArtifactType, RawArtifact } from "@/types";
 import type { ArtifactFilterSet } from "../types";
 
 import { useArtifactSetData } from "@/hooks";
@@ -9,7 +9,7 @@ type Config = {
   artifactType?: ArtifactType;
 };
 
-export function useArtifactSetFilter<T extends IArtifactBasic = IArtifactBasic>(
+export function useArtifactSetFilter<T extends RawArtifact = RawArtifact>(
   artifacts: T[],
   selectedCodes: number[],
   config?: Config

@@ -1,7 +1,7 @@
 import { clsx, ItemCase, type ClassValue } from "rond";
 
-import type { ArtifactType, IArtifact, IArtifactGear, IWeapon } from "@/types";
-import { Artifact } from "@/models";
+import type { ArtifactType, IArtifact, IWeapon } from "@/types";
+import { Artifact, ArtifactGear } from "@/models";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
@@ -13,7 +13,7 @@ export type EquipmentDisplayProps = Pick<ItemThumbProps, "muted" | "compact" | "
   className?: ClassValue;
   style?: React.CSSProperties;
   weapon: IWeapon;
-  atfGear: IArtifactGear;
+  atfGear: ArtifactGear;
   /** Whether empty artifacts are rendered as clickable buttons. */
   fillable?: boolean;
   selectedType?: EquipmentType;

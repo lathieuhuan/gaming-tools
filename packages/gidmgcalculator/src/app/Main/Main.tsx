@@ -1,10 +1,11 @@
 import { useLayoutEffect, useMemo } from "react";
 import { useScreenWatcher } from "rond";
 
+import { Outlet, useRouter } from "@/lib/router";
 import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
+import { Artifact, Weapon } from "@/models";
 import { CalculatorLarge, CalculatorSmall } from "@/screens/Calculator";
 import { $AppCharacter } from "@/services";
-import { Outlet, useRouter } from "@/lib/router";
 import { useSettingsStore } from "@Store/settings";
 
 export function Main() {
@@ -18,6 +19,16 @@ export function Main() {
 
   useLayoutEffect(() => {
     $AppCharacter.changeTraveler(traveler);
+
+    return useSettingsStore.subscribe((newState) => {
+      Artifact.configure({
+        defaultLevel: newState.artLevel,
+      });
+      Weapon.configure({
+        defaultLevel: newState.wpLevel,
+        defaultRefi: newState.wpRefi,
+      });
+    });
   }, []);
 
   if (isMobile) {

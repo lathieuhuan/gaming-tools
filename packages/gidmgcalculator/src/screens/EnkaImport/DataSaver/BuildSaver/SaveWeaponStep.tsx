@@ -4,7 +4,7 @@ import { MdEdit } from "react-icons/md";
 import { ButtonProps, Checkbox, notification } from "rond";
 
 import type { Weapon } from "@/models";
-import type { IWeaponBasic } from "@/types";
+import type { RawWeapon } from "@/types";
 import type { SaveOutput, WeaponSavingStep } from "./types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";
@@ -28,10 +28,10 @@ export type SaveWeaponStepProps = {
 export function SaveWeaponStep({ className, step, ctaRef, onAction }: SaveWeaponStepProps) {
   const { data: weapon, currentWeapon, sameWeapons } = step;
   const { isAbleToAddWeapon } = useStoreCheck();
-  const [selectedWeapon, setSelectedWeapon] = useState<IWeaponBasic>();
+  const [selectedWeapon, setSelectedWeapon] = useState<RawWeapon>();
   const [shouldUpdate, setShouldUpdate] = useState(true);
 
-  const handleSelectWeapon = (weapon: IWeaponBasic) => {
+  const handleSelectWeapon = (weapon: RawWeapon) => {
     setSelectedWeapon(weapon);
     setShouldUpdate(true);
   };

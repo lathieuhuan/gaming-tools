@@ -27,10 +27,8 @@ export function SectionResults({ className }: SectionResultsProps) {
 
   const handleCalculate = (build: GenshinUserBuild) => {
     const idStore = new IdStore();
-    const weapon = createWeapon(build.weapon, build.weapon.data, idStore);
-    const artifacts = Array_.truthify(build.artifacts).map((artifact) =>
-      createArtifact(artifact, artifact.data, idStore)
-    );
+    const weapon = createWeapon(build.weapon, build.weapon.data);
+    const artifacts = Array_.truthify(build.artifacts).map((artifact) => createArtifact(artifact));
     const atfGear = new ArtifactGear(artifacts);
     const { basic, data } = build.character;
     const character = new CharacterCalc(

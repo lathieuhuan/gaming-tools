@@ -11,7 +11,7 @@ import { ArtifactDebuffsView } from "@/components";
 
 export default function DebuffArtifact() {
   const { artDebuffCtrls } = useShallowCalcStore((state) =>
-    Object_.pickProps(selectSetup(state), ["artDebuffCtrls"])
+    Object_.extract(selectSetup(state), ["artDebuffCtrls"])
   );
 
   const handleUpdateCtrls = (newCtrls: IArtifactDebuffCtrl[]) => {

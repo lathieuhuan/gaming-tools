@@ -2,6 +2,7 @@ import type { AppArtifact, IArtifact } from "@/types";
 import { $AppArtifact } from "@/services";
 import { useRef } from "react";
 
+// TODO remove
 export function useArtifactSetData() {
   const setData = useRef<Record<number, AppArtifact>>({});
 

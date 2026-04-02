@@ -3,7 +3,7 @@ import { Array_ } from "ron-utils";
 import type { GOODCharacterConvertReturn } from "@/logic/converGOOD.logic";
 import type { Weapon } from "@/models";
 import type { GenshinUserBuild } from "@/services/enka";
-import type { ArtifactType, IArtifactBasic, IDbCharacter, IWeaponBasic } from "@/types";
+import type { ArtifactType, RawArtifact, IDbCharacter, RawWeapon } from "@/types";
 import type { ArtifactSavingStep, CharacterSavingStep, WeaponSavingStep } from "./types";
 
 import { ARTIFACT_TYPES } from "@/constants";
@@ -25,7 +25,7 @@ export const getCharacterSavingStep = (
 
 export const getWeaponSavingStep = (
   weapon: GenshinUserBuild["weapon"],
-  userWps: IWeaponBasic[]
+  userWps: RawWeapon[]
 ): WeaponSavingStep => {
   let currentWeapon: Weapon | undefined;
 
@@ -50,14 +50,14 @@ export const getWeaponSavingStep = (
 
 export const getArtifactSavingStep = (
   artifacts: GenshinUserBuild["artifacts"],
-  userAtfs: IArtifactBasic[]
+  dbArtifacts: RawArtifact[]
 ): ArtifactSavingStep[] => {
   const configByType = artifacts.reduce<Partial<Record<ArtifactType, ArtifactSavingStep>>>(
     (acc, artifact) => {
       if (artifact) {
         acc[artifact.type] = {
           type: "ARTIFACT",
-          data: createArtifact(artifact, artifact.data),
+          data: createArtifact(artifact),
           currentArtifact: undefined,
           sameArtifacts: [],
         };
@@ -68,19 +68,19 @@ export const getArtifactSavingStep = (
     {}
   );
 
-  for (const userAtf of userAtfs) {
-    const config = configByType[userAtf.type];
+  for (const dbArtifact of dbArtifacts) {
+    const config = configByType[dbArtifact.type];
     if (!config) {
       continue;
     }
 
-    if (userAtf.owner === config.data.owner) {
-      config.currentArtifact = createArtifact(userAtf);
+    if (dbArtifact.owner === config.data.owner) {
+      config.currentArtifact = createArtifact(dbArtifact);
       continue;
     }
 
-    if (isSameArtifact(config.data, userAtf)) {
-      config.sameArtifacts.push(userAtf);
+    if (isSameArtifact(config.data, dbArtifact)) {
+      config.sameArtifacts.push(dbArtifact);
     }
   }
 

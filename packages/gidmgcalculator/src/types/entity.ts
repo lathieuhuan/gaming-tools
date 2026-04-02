@@ -1,3 +1,4 @@
+import type { ArtifactGear } from "@/models";
 import type { AppArtifact } from "./app-artifact";
 import type { AppMonster } from "./app-monster";
 import type { AppWeapon } from "./app-weapon";
@@ -7,49 +8,67 @@ import type {
   AttributeStat,
   ElementType,
   Level,
-  AllAttributes,
   WeaponType,
 } from "./common";
-import { CustomDebuffCtrl, CustomBuffCtrl, ElementalEvent, ResonanceModCtrl } from "./modifiers";
-import { IArtifactModCtrlBasic } from "./modifiers";
-import { IModifierCtrlBasic } from "./modifiers";
+import {
+  CustomBuffCtrl,
+  CustomDebuffCtrl,
+  ElementalEvent,
+  IArtifactModCtrlBasic,
+  IModifierCtrlBasic,
+  ResonanceModCtrl,
+} from "./modifiers";
 
-// ========== WEAPON ==========
-
-export type IWeaponBasic = {
-  ID: number;
-  code: number;
-  type: WeaponType;
-  level: Level;
-  refi: number;
+export type EquipmentRelationData = {
   owner?: number;
   setupIDs?: number[];
 };
 
-export type IWeapon = IWeaponBasic & {
+// ========== WEAPON ==========
+
+export type WeaponKey = {
+  ID: number;
+  code: number;
+  type: WeaponType;
+};
+
+export type WeaponStateData = {
+  level: Level;
+  refi: number;
+};
+
+export type RawWeapon = WeaponKey & WeaponStateData & EquipmentRelationData;
+
+export type IWeapon = RawWeapon & {
   data: AppWeapon;
 };
 
 // ========== ARTIFACT ==========
+
+export type ArtifactKey = {
+  ID: number;
+  code: number;
+};
 
 export type ArtifactSubStat = {
   type: AttributeStat;
   value: number;
 };
 
-export type IArtifactBasic = {
-  ID: number;
-  code: number;
+export type ArtifactStateData = {
   type: ArtifactType;
   rarity: number;
   level: number;
   mainStatType: AttributeStat;
   subStats: ArtifactSubStat[];
-  owner?: number;
-  setupIDs?: number[];
 };
 
-export type IArtifact = IArtifactBasic & {
+export type ArtifactStateKey = keyof ArtifactStateData;
+
+export type RawArtifact = ArtifactKey & ArtifactStateData & EquipmentRelationData;
+
+// TODO remove
+export type IArtifact = RawArtifact & {
   data: AppArtifact;
 };
 
@@ -58,8 +77,6 @@ export type IArtifactGearSet = {
   pieceCount: number;
   data: AppArtifact;
 };
-
-export type IArtifactGearPieces<T extends IArtifact = IArtifact> = Map<ArtifactType, T>;
 
 export type IArtifactGearSlot<TArtifact extends IArtifact = IArtifact> =
   | {
@@ -71,15 +88,6 @@ export type IArtifactGearSlot<TArtifact extends IArtifact = IArtifact> =
       isFilled: false;
       type: ArtifactType;
     };
-
-export type IArtifactGear<T extends IArtifact = IArtifact> = {
-  pieces: IArtifactGearPieces<T>;
-  sets: IArtifactGearSet[];
-  attributes: AllAttributes;
-  slots<U>(callback: (slot: IArtifactGearSlot<T>) => U): U[];
-  slots(): IArtifactGearSlot<T>[];
-  slots<U>(callback?: (slot: IArtifactGearSlot<T>) => U): IArtifactGearSlot<T>[] | U[];
-};
 
 // ========== CHARACTER ==========
 
@@ -93,12 +101,9 @@ export type ICharacterBasic = {
   enhanced: boolean;
 };
 
-export type ICharacter<
-  W extends IWeapon = IWeapon,
-  A extends IArtifactGear = IArtifactGear
-> = ICharacterBasic & {
+export type ICharacter<W extends IWeapon = IWeapon> = ICharacterBasic & {
   weapon: W;
-  atfGear: A;
+  atfGear: ArtifactGear;
 };
 
 // ========== TEAMMATE ==========

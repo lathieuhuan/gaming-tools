@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Array_ } from "ron-utils";
 import { Button, clsx, ItemCase, useIntersectionObserver } from "rond";
 
-import type { AppArtifact, ElementType, IArtifactBasic } from "@/types";
+import type { AppArtifact, ElementType, RawArtifact } from "@/types";
 
 import { useArtifactSetData } from "@/hooks";
 import { $AppCharacter } from "@/services";
@@ -14,7 +14,7 @@ import { CharacterPortrait } from "@/components/CharacterPortrait";
 import { GenshinImage } from "@/components/GenshinImage";
 
 export type ArtifactOption = {
-  userData: IArtifactBasic;
+  userData: RawArtifact;
   data: AppArtifact;
 };
 

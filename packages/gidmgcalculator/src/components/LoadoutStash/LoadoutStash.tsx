@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Button, EntitySelectTemplate, Modal, SwitchNode } from "rond";
 
-import { Artifact } from "@/models";
+import type { Artifact } from "@/models";
+import { createArtifact } from "@/logic/entity.logic";
 
 // Component
 import { ArtifactCard } from "@/components/ArtifactCard";
@@ -29,7 +30,7 @@ export function LoadoutStashCore({ onSelect, onClose }: LoadoutStashProps) {
   };
 
   const handleSelectArtifact = (artifact?: ArtifactOption) => {
-    setSelectedArtifact(artifact && new Artifact(artifact.userData, artifact.data));
+    setSelectedArtifact(artifact && createArtifact(artifact.userData, artifact.data));
   };
 
   const handleSelectSet = (artifacts: ArtifactOption[]) => {

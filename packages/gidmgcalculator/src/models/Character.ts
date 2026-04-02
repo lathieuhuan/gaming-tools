@@ -1,9 +1,9 @@
 import { Object_ } from "ron-utils";
 
 import type { AppCharacter, ICharacter, ICharacterBasic, Level, TalentType } from "@/types";
+import type { ArtifactGear } from "./ArtifactGear";
 import type { Clonable } from "./interfaces";
 
-import { ArtifactGear } from "./ArtifactGear";
 import { Ascendable } from "./Ascendable";
 import { Weapon } from "./Weapon";
 
@@ -52,9 +52,9 @@ const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
   ],
 };
 
-export class Character<W extends Weapon = Weapon, A extends ArtifactGear = ArtifactGear>
+export class Character<W extends Weapon = Weapon>
   extends Ascendable
-  implements ICharacter<W, A>, Clonable<Character<W, A>>
+  implements ICharacter<W>, Clonable<Character<W>>
 {
   code: number;
   level: Level;
@@ -65,7 +65,7 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
   enhanced: boolean;
 
   weapon: W;
-  atfGear: A;
+  atfGear: ArtifactGear;
 
   isTraveler: boolean;
 
@@ -73,7 +73,7 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
     return BASE_REACTION_DAMAGE[this.bareLv] ?? 0;
   }
 
-  constructor(info: ICharacter<W, A>, public data: AppCharacter) {
+  constructor(info: ICharacter<W>, public data: AppCharacter) {
     super(info.level);
 
     this.code = info.code;
@@ -119,7 +119,7 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
     return Object_.safeAssign(this, data, keys) as this;
   }
 
-  equip(item: W | A) {
+  equip(item: W | ArtifactGear) {
     if (item instanceof Weapon) {
       this.weapon = item;
     } else {
@@ -165,6 +165,6 @@ export class Character<W extends Weapon = Weapon, A extends ArtifactGear = Artif
   }
 
   clone() {
-    return new Character<W, A>(this, this.data);
+    return new Character<W>(this, this.data);
   }
 }

@@ -48,36 +48,26 @@ export type ReceivedAttackBonus = AttackBonus & {
   effectSrc: EntityBonus<EntityBonusEffect>;
 };
 
-export type CharacterCalcConstructInfo<
-  W extends Weapon = Weapon,
-  A extends ArtifactGear = ArtifactGear
-> = ICharacter<W, A> & {
+export type CharacterCalcConstructInfo<W extends Weapon = Weapon> = ICharacter<W> & {
   allAttrsCtrl?: AllAttributesControl;
   attkBonusCtrl?: AttackBonusControl;
 };
 
-type ICharacterCalc<W extends Weapon = Weapon, A extends ArtifactGear = ArtifactGear> = ICharacter<
-  W,
-  A
-> & {
+type ICharacterCalc<W extends Weapon = Weapon> = ICharacter<W> & {
   data: AppCharacter;
   attkBonusCtrl: AttackBonusControl;
 };
 
-export class CharacterCalc<
-    W extends Weapon = Weapon,
-    A extends ArtifactGear = ArtifactGear,
-    TTeam extends ITeam = ITeam
-  >
-  extends Character<W, A>
-  implements ICharacterCalc<W, A>, ITeamMember<TTeam>, Clonable<CharacterCalc<W, A, TTeam>>
+export class CharacterCalc<W extends Weapon = Weapon, TTeam extends ITeam = ITeam>
+  extends Character<W>
+  implements ICharacterCalc<W>, ITeamMember<TTeam>, Clonable<CharacterCalc<W, TTeam>>
 {
   team: ITeam;
 
   allAttrsCtrl: AllAttributesControl;
   attkBonusCtrl: AttackBonusControl;
 
-  constructor(info: CharacterCalcConstructInfo<W, A>, public data: AppCharacter, team?: ITeam) {
+  constructor(info: CharacterCalcConstructInfo<W>, public data: AppCharacter, team?: ITeam) {
     super(info, data);
 
     const { allAttrsCtrl = new AllAttributesControl(), attkBonusCtrl = new AttackBonusControl() } =
@@ -93,7 +83,7 @@ export class CharacterCalc<
   }
 
   deepClone() {
-    return new CharacterCalc<W, A, TTeam>(
+    return new CharacterCalc<W, TTeam>(
       {
         ...this,
         weapon: this.weapon.clone(),
@@ -113,7 +103,7 @@ export class CharacterCalc<
   }
 
   override clone() {
-    return new CharacterCalc<W, A, TTeam>(this, this.data, this.team);
+    return new CharacterCalc<W, TTeam>(this, this.data, this.team);
   }
 
   // ===== GETTERS =====

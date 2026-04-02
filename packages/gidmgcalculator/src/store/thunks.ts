@@ -28,10 +28,10 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
     const isOldSetup = dbSetup && isDbSetup(dbSetup);
 
     const existedWeapon = Array_.findById(userWps, weapon.ID);
-    const weaponCore = Weapon.toCore(weapon);
+    const weaponCore = Weapon.serialize(weapon);
 
     if (existedWeapon) {
-      if (isEqual(weaponCore, Weapon.toCore(existedWeapon))) {
+      if (isEqual(weaponCore, Weapon.serialize(existedWeapon))) {
         // Core not changed => add setupID to existedWeapon
         const newSetupIDs = existedWeapon.setupIDs || [];
 
@@ -94,10 +94,10 @@ export function saveSetupThunk(setup: CalcSetup, name: string): AppThunk {
 
     pieces.forEach((piece, pieceIndex) => {
       const existedPiece = Array_.findById(userArts, piece.ID);
-      const pieceCore = Artifact.toCore(piece);
+      const pieceCore = piece.extractCore();
 
       if (existedPiece) {
-        if (isEqual(pieceCore, Artifact.toCore(existedPiece))) {
+        if (isEqual(pieceCore, Artifact.extractCore(existedPiece))) {
           // Core not changed => add setupID to existedArtifact
           const newSetupIDs = existedPiece.setupIDs || [];
 

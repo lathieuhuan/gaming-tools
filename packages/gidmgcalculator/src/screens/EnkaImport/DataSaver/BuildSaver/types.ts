@@ -1,5 +1,5 @@
 import type { Artifact, Weapon } from "@/models";
-import type { IArtifactBasic, ICharacterBasic, IDbCharacter, IWeaponBasic } from "@/types";
+import type { RawArtifact, ICharacterBasic, IDbCharacter, RawWeapon } from "@/types";
 import type { GOODCharacterConvertReturn } from "@/logic/converGOOD.logic";
 
 // ===== Saving Step =====
@@ -14,14 +14,14 @@ export type WeaponSavingStep = {
   type: "WEAPON";
   data: Weapon;
   currentWeapon?: Weapon;
-  sameWeapons: IWeaponBasic[];
+  sameWeapons: RawWeapon[];
 };
 
 export type ArtifactSavingStep = {
   type: "ARTIFACT";
   data: Artifact;
   currentArtifact?: Artifact;
-  sameArtifacts: IArtifactBasic[];
+  sameArtifacts: RawArtifact[];
 };
 
 export type SavingSteps = [CharacterSavingStep, WeaponSavingStep, ...ArtifactSavingStep[]];
@@ -35,12 +35,12 @@ export type CharacterSaveOutput = {
 
 export type WeaponSaveOutput = {
   action: "CREATE" | "UPDATE" | "NONE";
-  weapon: IWeaponBasic;
+  weapon: RawWeapon;
 };
 
 export type ArtifactSaveOutput = {
   action: "CREATE" | "UPDATE" | "NONE";
-  artifact: IArtifactBasic;
+  artifact: RawArtifact;
 };
 
 export type SaveOutput = {

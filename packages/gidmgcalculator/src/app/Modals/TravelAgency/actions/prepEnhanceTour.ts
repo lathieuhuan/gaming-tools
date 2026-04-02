@@ -28,9 +28,7 @@ export function prepEnhanceTour() {
   const calcSetup = new CalcSetup({
     main: createCharacterCalc({
       code: main.code,
-      weapon: createWeapon({
-        type: main.weaponType,
-      }),
+      weapon: createWeapon({ type: main.weaponType }),
       atfGear: new ArtifactGear(),
     }),
     teammates: [

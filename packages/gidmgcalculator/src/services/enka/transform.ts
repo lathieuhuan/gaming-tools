@@ -1,6 +1,6 @@
 import { Object_ } from "ron-utils";
 
-import type { IArtifact } from "@/types";
+import type { Artifact } from "@/models";
 import type { GenshinUser, GenshinUserBuild, GenshinUserResponse } from "./types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
@@ -28,12 +28,12 @@ export function transformGenshinUserResponse(
     const convertedWeapon = convertGOODWeapon(build.weapon, idStore.gen());
 
     const weapon = convertedWeapon
-      ? createWeapon(convertedWeapon, convertedWeapon.data, idStore)
-      : createWeapon({ type: character.data.weaponType }, undefined, idStore);
+      ? createWeapon(convertedWeapon, convertedWeapon.data)
+      : createWeapon({ ID: idStore.gen(), type: character.data.weaponType });
 
     Object_.patch(weapon, { owner: character.data.code });
 
-    const artifacts = ARTIFACT_TYPES.map<IArtifact | null>((type) => {
+    const artifacts = ARTIFACT_TYPES.map<Artifact | null>((type) => {
       const GOODArtifact = build.artifacts.find((artifact) => artifact?.slotKey === type);
 
       if (!GOODArtifact) {
@@ -43,7 +43,7 @@ export function transformGenshinUserResponse(
       const converted = convertGOODArtifact(GOODArtifact, idStore.gen());
 
       if (converted) {
-        const artifact = createArtifact(converted, converted.data, idStore);
+        const artifact = createArtifact(converted);
         return Object_.patch(artifact, { owner: character.data.code });
       }
 

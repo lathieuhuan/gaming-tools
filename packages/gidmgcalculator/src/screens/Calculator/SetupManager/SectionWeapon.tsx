@@ -4,7 +4,7 @@ import { Badge, Button, PouchSvg, VersatileSelect } from "rond";
 import { $AppWeapon } from "@/services";
 import { genSequentialOptions } from "@/utils/pure.utils";
 import { useCalcStore } from "@Store/calculator";
-import { updateMainWeapon } from "@Store/calculator/actions";
+import { switchMainWeapon, updateMainWeapon } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
 
 import {
@@ -27,10 +27,7 @@ export function SectionWeapon() {
   const closeModal = () => setModalType("");
 
   const handleForgeWeapon: WeaponForgeProps["onForgeWeapon"] = (weapon) => {
-    updateMainWeapon({
-      ...weapon,
-      ID: Date.now(),
-    });
+    switchMainWeapon(weapon);
   };
 
   return (
@@ -57,7 +54,7 @@ export function SectionWeapon() {
             className={`text-rarity-${rarity} font-medium`}
             rarity={rarity}
             value={weapon.level}
-            onChange={(value) => updateMainWeapon({ level: value })}
+            onChange={(level) => updateMainWeapon({ level })}
           />
         </div>
 
@@ -72,7 +69,7 @@ export function SectionWeapon() {
               disabled={name === ""}
               options={genSequentialOptions(5)}
               value={weapon.refi}
-              onChange={(value) => updateMainWeapon({ refi: +value })}
+              onChange={(refi) => updateMainWeapon({ refi })}
             />
           </div>
         )}

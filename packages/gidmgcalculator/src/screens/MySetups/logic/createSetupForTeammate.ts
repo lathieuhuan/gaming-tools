@@ -9,7 +9,6 @@ import {
   createCharacterCalc,
   createTarget,
   createWeapon,
-  createWeaponBasic,
 } from "@/logic/entity.logic";
 import {
   createAbilityBuffCtrls,
@@ -17,7 +16,6 @@ import {
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
 import { Artifact, ArtifactGear, CalcSetup, Team, TeammateCalc } from "@/models";
-import { $AppArtifact } from "@/services";
 import IdStore from "@/utils/IdStore";
 
 export function createSetupForTeammate(
@@ -35,24 +33,25 @@ export function createSetupForTeammate(
   const { weapon, artifact } = teammate;
 
   const similarWeapon = Array_.findByCode(userWps, teammate.weapon.code);
-  const weaponBasic = similarWeapon || createWeaponBasic(weapon, idStore);
+  const weaponBasic =
+    similarWeapon ||
+    createWeapon({ ID: idStore.gen(), type: weapon.type, code: weapon.code }, weapon.data);
 
   let artifacts: Artifact[] = [];
 
   if (artifact?.code) {
-    const atfData = $AppArtifact.getSet(artifact.code)!;
-    const maxRarity = atfData.variants.at(-1);
+    const maxRarity = artifact.data.variants.at(-1);
 
     if (maxRarity) {
       artifacts = ARTIFACT_TYPES.map((type) => {
         return createArtifact(
           {
-            ...artifact,
+            ID: idStore.gen(),
+            code: artifact.code,
             type,
             rarity: maxRarity,
           },
-          atfData,
-          idStore
+          artifact.data
         );
       });
     }

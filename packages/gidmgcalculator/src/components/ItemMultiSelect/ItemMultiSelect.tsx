@@ -8,9 +8,9 @@ import {
   useScreenWatcher,
 } from "rond";
 
-import type { IArtifactBasic, IWeaponBasic } from "@/types";
+import type { RawArtifact, RawWeapon } from "@/types";
 
-import { isWeapon } from "@/logic/entity.logic";
+import { createArtifact, isWeapon } from "@/logic/entity.logic";
 import { Artifact, Weapon } from "@/models";
 
 // Component
@@ -27,7 +27,7 @@ type ItemMultiSelectProps<T> = Pick<EntitySelectTemplateProps, "title" | "onClos
   onConfirm: (selectedIds: ItemMultiSelectIds) => void;
 };
 
-function ItemMultiSelectCore<T extends IWeaponBasic | IArtifactBasic>(
+function ItemMultiSelectCore<T extends RawWeapon | RawArtifact>(
   props: ItemMultiSelectProps<T>
 ): JSX.Element {
   const { items, required, initialValue = new Set() } = props;
@@ -62,20 +62,22 @@ function ItemMultiSelectCore<T extends IWeaponBasic | IArtifactBasic>(
   };
 
   const focusAction = () => {
-    const action: HTMLButtonElement | null | undefined = bodyRef.current?.querySelector(
-      `#${actionId}`
-    );
-    action?.focus();
-    return !!action;
+    const cta = bodyRef.current?.querySelector(`#${actionId}`);
+
+    if (cta instanceof HTMLButtonElement) {
+      cta.focus();
+    }
+
+    return !!cta;
   };
 
   const onChangeItem = (item: ItemOption<T>) => {
     if (isWeapon(item.userData)) {
-      const item_ = item as ItemOption<IWeaponBasic>;
+      const item_ = item as ItemOption<RawWeapon>;
       setSelectedItem(new Weapon(item_.userData, item_.data));
     } else {
-      const item_ = item as ItemOption<IArtifactBasic>;
-      setSelectedItem(new Artifact(item_.userData, item_.data));
+      const item_ = item as ItemOption<RawArtifact>;
+      setSelectedItem(createArtifact(item_.userData, item_.data));
     }
 
     scrollBody(9999);

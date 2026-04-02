@@ -12,7 +12,7 @@ import { TeammateBuffsView } from "@/components";
 
 export default function BuffTeammates() {
   const { teammates, team } = useShallowCalcStore((state) =>
-    Object_.pickProps(selectSetup(state), ["teammates", "team"])
+    Object_.extract(selectSetup(state), ["teammates", "team"])
   );
 
   const handleUpdateCtrls = (teammate: TeammateCalc, ctrls: IAbilityBuffCtrl[]) => {

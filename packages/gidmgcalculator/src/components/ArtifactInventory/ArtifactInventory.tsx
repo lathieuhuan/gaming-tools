@@ -7,11 +7,11 @@ import {
   useElementSize,
 } from "rond";
 
+import type { Artifact, ArtifactGear } from "@/models";
 import type { ArtifactType } from "@/types";
-import { type ArtifactGear, Artifact } from "@/models";
 
-import { useArtifactSetData } from "@/hooks";
 import { useStoreSnapshot } from "@/lib/dynamic-store";
+import { createArtifact } from "@/logic/entity.logic";
 import { selectDbArtifacts } from "@Store/userdbSlice";
 
 // Conponent
@@ -46,24 +46,23 @@ const ArtifactInventoryCore = ({
 
   const [showingCurrent, setShowingCurrent] = useState(false);
   const [selectedArtifact, setSelectedArtifact] = useState<Artifact>();
-  const setData = useArtifactSetData();
 
   const artifacts = useStoreSnapshot((state) => {
-    const userArtifacts = selectDbArtifacts(state);
+    const dbArtifacts = selectDbArtifacts(state);
 
     if (forcedType) {
       const results: Artifact[] = [];
 
-      for (const artifact of userArtifacts) {
-        if (artifact.type === forcedType) {
-          results.push(new Artifact(artifact, setData.get(artifact.code)));
+      for (const dbArtifact of dbArtifacts) {
+        if (dbArtifact.type === forcedType) {
+          results.push(createArtifact(dbArtifact));
         }
       }
 
       return results;
     }
 
-    return userArtifacts.map((artifact) => new Artifact(artifact, setData.get(artifact.code)));
+    return dbArtifacts.map((artifact) => createArtifact(artifact));
   });
 
   const { filteredArtifacts, filter, setFilter } = useArtifactFilter(artifacts, {
@@ -176,7 +175,8 @@ const ArtifactInventoryCore = ({
                 </div>
               ) : null}
 
-              <OwnerLabel className="mt-3" item={selectedArtifact} />
+              {/* TODO find a solution when we don't need to serialize the artifact */}
+              <OwnerLabel className="mt-3" item={selectedArtifact?.serialize()} />
             </div>
           </div>
         );

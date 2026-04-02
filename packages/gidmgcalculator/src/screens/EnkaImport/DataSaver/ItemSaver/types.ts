@@ -1,16 +1,16 @@
 import type { Artifact, Weapon } from "@/models";
-import type { IArtifactBasic, IWeaponBasic } from "@/types";
+import type { RawArtifact, RawWeapon } from "@/types";
 
 export type WeaponSavingStep = {
   type: "WEAPON";
   data: Weapon;
-  sameWeapons: IWeaponBasic[];
+  sameWeapons: RawWeapon[];
 };
 
 export type ArtifactSavingStep = {
   type: "ARTIFACT";
   data: Artifact;
-  sameArtifacts: IArtifactBasic[];
+  sameArtifacts: RawArtifact[];
 };
 
 export type ItemSavingStep = WeaponSavingStep | ArtifactSavingStep;
