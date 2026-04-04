@@ -27,11 +27,16 @@ export class WeaponState extends Ascendable implements WeaponStateData {
     return 0;
   }
 
-  static DEFAULT_LEVEL: Level = "1/20";
-  static DEFAULT_REFI = 0;
+  static #DEFAULT_LEVEL: Level = "1/20";
+  static #DEFAULT_REFI = 1;
+
+  static configure(config: { defaultLevel?: Level; defaultRefi?: number }) {
+    this.#DEFAULT_LEVEL = config.defaultLevel ?? this.#DEFAULT_LEVEL;
+    this.#DEFAULT_REFI = config.defaultRefi ?? this.#DEFAULT_REFI;
+  }
 
   constructor(data: AppWeapon, init: Partial<WeaponStateData> = {}) {
-    const { level = WeaponState.DEFAULT_LEVEL, refi = WeaponState.DEFAULT_REFI } = init;
+    const { level = WeaponState.#DEFAULT_LEVEL, refi = WeaponState.#DEFAULT_REFI } = init;
 
     super(level);
 

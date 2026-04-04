@@ -1,5 +1,5 @@
 import type { TeammateCalc, Weapon } from "@/models";
-import type { IWeapon, IWeaponBuffCtrl } from "@/types";
+import type { ITeammateWeapon, IWeaponBuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
 import { getWeaponBuffDesc } from "@/utils/descriptionParsers";
@@ -10,7 +10,7 @@ type RenderWeaponModifiersArgs = {
   keyPrefix: string | number;
   headingSuffix?: string;
   mutable?: boolean;
-  weapon: Pick<IWeapon, "code" | "type" | "refi" | "data">;
+  weapon: Weapon | ITeammateWeapon;
   ctrls: IWeaponBuffCtrl[];
   getHanlders?: (ctrl: IWeaponBuffCtrl, ctrls: IWeaponBuffCtrl[]) => ModifierHanlders;
 };

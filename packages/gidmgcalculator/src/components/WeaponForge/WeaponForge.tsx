@@ -3,9 +3,9 @@ import { FancyBackSvg, Modal } from "rond";
 
 import type { AppWeapon, WeaponType } from "@/types";
 
-import { Weapon } from "@/models";
-import { $AppWeapon } from "@/services";
 import { createWeapon } from "@/logic/entity.logic";
+import { Weapon } from "@/models/Weapon";
+import { $AppWeapon } from "@/services";
 
 // Component
 import {
@@ -162,7 +162,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
                 children: "Forge",
                 variant: "primary",
                 onClick: (_, config) => {
-                  onForgeWeapon(new Weapon(config, config.data));
+                  onForgeWeapon(config);
                   afterSelect(config.code);
                 },
               },

@@ -1,7 +1,7 @@
 import { MutableTeamData } from "../src/calculation/CalcTeamData";
 import { RawWeapon, Level } from "../src/types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "../src/services";
-import { ICharacter, ITeammate, IWeapon } from "../src/types";
+import { ICharacter, ITeammate } from "../src/types";
 import { __EMockCharacter } from "./mocks/characters.mock";
 import { __EMockWeapon } from "./mocks/weapons.mock";
 import { ASCENSION_RANKS } from "./test-constants";

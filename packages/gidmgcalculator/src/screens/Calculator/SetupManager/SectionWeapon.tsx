@@ -11,9 +11,9 @@ import {
   GenshinImage,
   WeaponForge,
   WeaponForgeProps,
-  WeaponInventory,
   WeaponLevelControl,
 } from "@/components";
+import { WeaponInventory } from "@/components/WeaponInventory";
 import { Section } from "./components/Section";
 
 type ModalType = "MAKE_NEW_WEAPON" | "SELECT_USER_WEAPON" | "";

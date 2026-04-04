@@ -41,18 +41,15 @@ export type RemoveDbWeaponAction = PayloadAction<{
 }>;
 
 type SwitchPayload = {
-  /**
-   * Owner of the target item
-   */
-  newOwner: number | undefined;
-  newID: number;
-  oldOwner: number;
-  oldID: number;
+  targetId: number;
+  targetOwner: number | undefined;
+  currentId: number;
+  currentOwner: number;
 };
 
 export type SwitchWeaponAction = PayloadAction<SwitchPayload>;
 
-export type SwitchArtifactAction = PayloadAction<PartiallyOptional<SwitchPayload, "oldID">>;
+export type SwitchArtifactAction = PayloadAction<PartiallyOptional<SwitchPayload, "currentId">>;
 
 export type SaveSetupAction = PayloadAction<IDbSetup>;
 

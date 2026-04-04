@@ -1,4 +1,5 @@
 import type { GenshinUserBuild } from "@/services/enka";
+import type { ArtifactType } from "@/types";
 
 export type EnkaImportSection = "COVER" | "RESULTS" | "DETAIL";
 
@@ -8,5 +9,5 @@ export type EnkaSearchParams = {
 };
 
 export type SelectedBuild = GenshinUserBuild & {
-  detailType: "CHARACTER" | "WEAPON" | number;
+  detailType: "CHARACTER" | "WEAPON" | ArtifactType;
 };

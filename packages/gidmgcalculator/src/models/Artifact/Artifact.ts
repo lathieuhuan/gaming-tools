@@ -42,8 +42,8 @@ export class Artifact implements Clonable<Artifact> {
   declare owner?: number;
   declare setupIDs?: number[];
 
-  static configure(config: { defaultLevel?: number }) {
-    ArtifactState.DEFAULT_LEVEL = config.defaultLevel ?? ArtifactState.DEFAULT_LEVEL;
+  get icon() {
+    return this.data[this.type].icon;
   }
 
   constructor(key: ArtifactKey, data: AppArtifact, options: ArtifactConstructOptions = {}) {
@@ -64,10 +64,7 @@ export class Artifact implements Clonable<Artifact> {
   }
 
   serialize(): RawArtifact {
-    return Artifact.serialize({
-      ...this.key,
-      ...this.state,
-    });
+    return Artifact.serialize(this);
   }
 
   clone(options: ArtifactConstructOptions = {}) {

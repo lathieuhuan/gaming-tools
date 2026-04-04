@@ -50,10 +50,8 @@ export function convertGOODData(data: GOODData) {
       continue;
     }
 
-    result.artifacts.push({
-      ...artifact,
-      owner: owner?.code,
-    });
+    artifact.relation.set("owner", owner?.code);
+    result.artifacts.push(artifact.serialize());
 
     if (owner) {
       const character = Array_.findByCode(result.characters, owner.code);
@@ -72,10 +70,8 @@ export function convertGOODData(data: GOODData) {
       continue;
     }
 
-    result.weapons.push({
-      ...weapon,
-      owner: owner?.code,
-    });
+    weapon.relation.set("owner", owner?.code);
+    result.weapons.push(weapon.serialize());
 
     if (owner) {
       const character = Array_.findByCode(result.characters, owner.code);

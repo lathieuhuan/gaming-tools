@@ -8,7 +8,7 @@ import {
 } from "rond";
 
 import type { Artifact, ArtifactGear } from "@/models";
-import type { ArtifactType } from "@/types";
+import type { ArtifactType, RawArtifact } from "@/types";
 
 import { useStoreSnapshot } from "@/lib/dynamic-store";
 import { createArtifact } from "@/logic/entity.logic";
@@ -50,19 +50,9 @@ const ArtifactInventoryCore = ({
   const artifacts = useStoreSnapshot((state) => {
     const dbArtifacts = selectDbArtifacts(state);
 
-    if (forcedType) {
-      const results: Artifact[] = [];
-
-      for (const dbArtifact of dbArtifacts) {
-        if (dbArtifact.type === forcedType) {
-          results.push(createArtifact(dbArtifact));
-        }
-      }
-
-      return results;
-    }
-
-    return dbArtifacts.map((artifact) => createArtifact(artifact));
+    return forcedType
+      ? dbArtifacts.filter((artifact) => artifact.type === forcedType)
+      : dbArtifacts;
   });
 
   const { filteredArtifacts, filter, setFilter } = useArtifactFilter(artifacts, {
@@ -73,15 +63,13 @@ const ArtifactInventoryCore = ({
     ? currentAtfGear?.pieces.get(selectedArtifact.type)
     : undefined;
 
-  const onChangeItem: InventoryRackProps<Artifact>["onChangeItem"] = (item) => {
+  const onChangeItem: InventoryRackProps<RawArtifact>["onChangeItem"] = (item) => {
     if (!item) {
       setSelectedArtifact(undefined);
       return;
     }
 
-    if (item.userData.ID !== selectedArtifact?.ID) {
-      setSelectedArtifact(item.userData);
-    }
+    setSelectedArtifact(createArtifact(item.userData, item.data));
 
     if (bodyRef.current) {
       bodyRef.current.scrollLeft = 9999;

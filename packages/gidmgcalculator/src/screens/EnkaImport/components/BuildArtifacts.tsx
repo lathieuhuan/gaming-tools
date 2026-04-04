@@ -1,6 +1,6 @@
 import { clsx, ItemCase } from "rond";
 
-import type { ArtifactType, IArtifact } from "@/types";
+import type { ArtifactType } from "@/types";
 import type { SelectedBuild } from "../types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
@@ -12,7 +12,7 @@ import { GenshinImage, ItemThumbnail } from "@/components";
 
 type BuildArtifactProps = {
   className?: string;
-  artifact?: IArtifact | null;
+  artifact?: Artifact;
   selectedBuild?: SelectedBuild;
   artifactType: ArtifactType;
   showLevel?: boolean;
@@ -35,10 +35,9 @@ export function BuildArtifact({
     );
   }
 
-  const index = ARTIFACT_TYPES.indexOf(artifactType);
-  const icon = artifact.data[artifactType].icon;
+  const selectedArtifact = selectedBuild?.atfGear.pieces.get(artifactType);
   const selected =
-    selectedBuild?.detailType === index && selectedBuild?.artifacts[index]?.ID === artifact.ID;
+    selectedBuild?.detailType === artifactType && selectedArtifact?.ID === artifact.ID;
 
   return (
     <ItemCase className={clsx("grow", className)} selected={selected} onClick={onClick}>
@@ -47,9 +46,9 @@ export function BuildArtifact({
           className={className}
           imgCls={imgCls}
           item={{
-            icon,
-            level: showLevel ? artifact.level : undefined,
-            rarity: artifact.rarity,
+            icon: artifact.icon,
+            level: showLevel ? selectedArtifact?.level : undefined,
+            rarity: selectedArtifact?.rarity,
           }}
           compact
         />
@@ -68,14 +67,14 @@ export function BuildArtifacts({ build, showLevel }: BuildArtifactsProps) {
 
   return (
     <>
-      {build.artifacts.map((artifact, index) => (
+      {ARTIFACT_TYPES.map((type) => (
         <BuildArtifact
-          key={index}
+          key={type}
           showLevel={showLevel}
-          artifact={artifact}
+          artifact={build.atfGear.pieces.get(type)}
           selectedBuild={selectedBuild}
-          artifactType={ARTIFACT_TYPES[index]}
-          onClick={() => setSelectedBuild({ ...build, detailType: index })}
+          artifactType={type}
+          onClick={() => setSelectedBuild({ ...build, detailType: type })}
         />
       ))}
     </>

@@ -48,7 +48,6 @@ function MyArtifacts() {
   const activeArtifact = useMemo(() => {
     const data = Array_.findById(filteredArtifacts, activeId);
     return data && createArtifact(data);
-    //
   }, [filteredArtifacts, activeId]);
 
   const handleRemoveArtifact = (artifact: Artifact) => {

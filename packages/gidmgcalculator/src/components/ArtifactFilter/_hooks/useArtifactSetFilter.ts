@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import type { ArtifactType, RawArtifact } from "@/types";
 import type { ArtifactFilterSet } from "../types";
 
-import { useArtifactSetData } from "@/hooks";
+import { $AppArtifact } from "@/services";
 
 type Config = {
   artifactType?: ArtifactType;
@@ -15,14 +15,13 @@ export function useArtifactSetFilter<T extends RawArtifact = RawArtifact>(
   config?: Config
 ) {
   const { artifactType = "flower" } = config || {};
-  const setData = useArtifactSetData();
 
   const initialSets = useMemo(() => {
     const countMap = new Map<number, ArtifactFilterSet>();
     const result: ArtifactFilterSet[] = [];
 
     for (const { code } of artifacts) {
-      const data = setData.get(code);
+      const data = $AppArtifact.getSet(code)!;
       const filterSet = countMap.get(code);
 
       if (filterSet) {

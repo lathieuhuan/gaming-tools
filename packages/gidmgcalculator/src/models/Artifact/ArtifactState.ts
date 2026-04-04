@@ -24,20 +24,24 @@ export class ArtifactState implements ArtifactStateData {
     return ArtifactState.allMainStatTypesOf(this.type);
   }
 
-  static DEFAULT_LEVEL = 1;
-  static DEFAULT_SUB_STATS: ArtifactSubStat[] = [
+  static #DEFAULT_LEVEL = 1;
+  static #DEFAULT_SUB_STATS: ArtifactSubStat[] = [
     { type: "def", value: 0 },
     { type: "def_", value: 0 },
     { type: "cRate_", value: 0 },
     { type: "cDmg_", value: 0 },
   ];
 
+  static configure(config: { defaultLevel?: number }) {
+    ArtifactState.#DEFAULT_LEVEL = config.defaultLevel ?? ArtifactState.#DEFAULT_LEVEL;
+  }
+
   constructor(init: Partial<ArtifactStateData> = {}) {
     const {
       type = "flower",
-      level = ArtifactState.DEFAULT_LEVEL,
+      level = ArtifactState.#DEFAULT_LEVEL,
       rarity = 4,
-      subStats = ArtifactState.DEFAULT_SUB_STATS,
+      subStats = ArtifactState.#DEFAULT_SUB_STATS,
       mainStatType = mainStatTypeByAtfType(type).default,
     } = init;
 

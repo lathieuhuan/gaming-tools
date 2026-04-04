@@ -1,6 +1,6 @@
 import { applyPercent } from "ron-utils";
 
-import type { AllAttributes, ArtifactType, IArtifactGearSet } from "@/types";
+import type { AllAttributes, ArtifactType, ArtifactGearSet } from "@/types";
 import type { Clonable } from "./interfaces";
 
 import { ARTIFACT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
@@ -8,7 +8,7 @@ import TypeCounter from "@/utils/TypeCounter";
 import { Artifact } from "./Artifact";
 import { ArtifactGearPieces } from "./ArtifactGearPieces";
 
-export type IArtifactGearSlot =
+export type ArtifactGearSlot =
   | {
       isFilled: true;
       type: ArtifactType;
@@ -21,7 +21,7 @@ export type IArtifactGearSlot =
 
 export class ArtifactGear implements Clonable<ArtifactGear> {
   pieces: ArtifactGearPieces;
-  sets: IArtifactGearSet[] = [];
+  sets: ArtifactGearSet[] = [];
   attributes: AllAttributes = new TypeCounter();
   finalAttrs: AllAttributes = new TypeCounter();
 
@@ -44,7 +44,7 @@ export class ArtifactGear implements Clonable<ArtifactGear> {
   }
 
   private processPieces() {
-    const sets: IArtifactGearSet[] = [];
+    const sets: ArtifactGearSet[] = [];
     const attributes: AllAttributes = new TypeCounter();
     const counter = new TypeCounter();
 
@@ -73,9 +73,9 @@ export class ArtifactGear implements Clonable<ArtifactGear> {
     this.attributes = attributes;
   }
 
-  slots<U>(callback: (slot: IArtifactGearSlot) => U): U[];
-  slots(): IArtifactGearSlot[];
-  slots<U>(callback?: (slot: IArtifactGearSlot) => U): IArtifactGearSlot[] | U[] {
+  slots<U>(callback: (slot: ArtifactGearSlot) => U): U[];
+  slots(): ArtifactGearSlot[];
+  slots<U>(callback?: (slot: ArtifactGearSlot) => U): ArtifactGearSlot[] | U[] {
     if (callback) {
       return this.slots().map(callback);
     }

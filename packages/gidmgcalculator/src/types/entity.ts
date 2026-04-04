@@ -1,7 +1,6 @@
-import type { ArtifactGear } from "@/models";
+import type { Artifact, ArtifactGear, Weapon } from "@/models";
 import type { AppArtifact } from "./app-artifact";
 import type { AppMonster } from "./app-monster";
-import type { AppWeapon } from "./app-weapon";
 import type {
   ArtifactType,
   AttackElement,
@@ -39,10 +38,6 @@ export type WeaponStateData = {
 
 export type RawWeapon = WeaponKey & WeaponStateData & EquipmentRelationData;
 
-export type IWeapon = RawWeapon & {
-  data: AppWeapon;
-};
-
 // ========== ARTIFACT ==========
 
 export type ArtifactKey = {
@@ -67,27 +62,26 @@ export type ArtifactStateKey = keyof ArtifactStateData;
 
 export type RawArtifact = ArtifactKey & ArtifactStateData & EquipmentRelationData;
 
-// TODO remove
-export type IArtifact = RawArtifact & {
-  data: AppArtifact;
-};
-
-export type IArtifactGearSet = {
+export type ArtifactGearSet = {
   bonusLv: number;
   pieceCount: number;
   data: AppArtifact;
 };
 
-export type IArtifactGearSlot<TArtifact extends IArtifact = IArtifact> =
+export type ArtifactGearSlot =
   | {
       isFilled: true;
       type: ArtifactType;
-      piece: TArtifact;
+      piece: Artifact;
     }
   | {
       isFilled: false;
       type: ArtifactType;
     };
+
+//
+
+export type RawItem = RawWeapon | RawArtifact;
 
 // ========== CHARACTER ==========
 
@@ -101,8 +95,8 @@ export type ICharacterBasic = {
   enhanced: boolean;
 };
 
-export type ICharacter<W extends IWeapon = IWeapon> = ICharacterBasic & {
-  weapon: W;
+export type ICharacter = ICharacterBasic & {
+  weapon: Weapon;
   atfGear: ArtifactGear;
 };
 

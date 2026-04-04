@@ -2,7 +2,6 @@ import { Array_ } from "ron-utils";
 
 import type { AppCharacter, ITeammate } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
-import type { CloneOptions } from "./types";
 
 import { calculateSetup } from "@/calculation/calculator";
 import { createTarget } from "@/logic/entity.logic";
@@ -27,6 +26,10 @@ import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase"
 type TeammateUpdateData = Partial<
   Pick<ITeammate, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
 >;
+
+type CloneOptions = {
+  ID?: number;
+};
 
 export type CalcSetupConstructInfo = PartiallyRequiredOnly<CalcSetupBaseConstructInfo, "main">;
 

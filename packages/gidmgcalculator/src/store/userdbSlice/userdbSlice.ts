@@ -156,75 +156,75 @@ export const userdbSlice = createSlice({
       }
     },
     switchWeapon: ({ userWps, userChars }, action: SwitchWeaponAction) => {
-      const { newOwner, newID, oldOwner, oldID } = action.payload;
+      const { targetOwner, targetId, currentOwner, currentId } = action.payload;
 
-      const newWeaponInfo = Array_.findById(userWps, newID);
-      if (newWeaponInfo) {
-        newWeaponInfo.owner = oldOwner;
+      const targetWp = Array_.findById(userWps, targetId);
+      if (targetWp) {
+        targetWp.owner = currentOwner;
       }
 
-      const oldWeaponInfo = Array_.findById(userWps, oldID);
-      if (oldWeaponInfo) {
-        oldWeaponInfo.owner = newOwner;
+      const currentWp = Array_.findById(userWps, currentId);
+      if (currentWp) {
+        currentWp.owner = targetOwner;
       }
 
-      const oldOwnerInfo = Array_.findByCode(userChars, oldOwner);
-      if (oldOwnerInfo) {
-        oldOwnerInfo.weaponID = newID;
+      const character = Array_.findByCode(userChars, currentOwner);
+      if (character) {
+        character.weaponID = targetId;
       }
 
-      const newOwnerInfo = Array_.findByCode(userChars, newOwner);
-      if (newOwnerInfo) {
-        newOwnerInfo.weaponID = oldID;
+      const targetWpOwner = Array_.findByCode(userChars, targetOwner);
+      if (targetWpOwner) {
+        targetWpOwner.weaponID = currentId;
       }
     },
     switchArtifact: ({ userArts, userChars }, action: SwitchArtifactAction) => {
-      const { newOwner, newID, oldOwner, oldID } = action.payload;
+      const { targetOwner, targetId, currentOwner, currentId } = action.payload;
 
-      let newAtf: WritableDraft<RawArtifact> | undefined;
-      let oldAtf: WritableDraft<RawArtifact> | undefined;
+      let targetAtf: WritableDraft<RawArtifact> | undefined;
+      let currentAtf: WritableDraft<RawArtifact> | undefined;
 
-      if (oldID) {
-        for (const atf of userArts) {
-          if (atf.ID === newID) {
-            newAtf = atf;
+      if (currentId) {
+        for (const artifact of userArts) {
+          if (artifact.ID === targetId) {
+            targetAtf = artifact;
           }
-          if (atf.ID === oldID) {
-            oldAtf = atf;
+          if (artifact.ID === currentId) {
+            currentAtf = artifact;
           }
-          if (newAtf && oldAtf) {
+          if (targetAtf && currentAtf) {
             break;
           }
         }
       } else {
-        newAtf = Array_.findById(userArts, newID);
+        targetAtf = Array_.findById(userArts, targetId);
       }
 
-      if (newAtf) {
-        newAtf.owner = oldOwner;
+      if (targetAtf) {
+        targetAtf.owner = currentOwner;
       }
-      if (oldAtf) {
-        oldAtf.owner = newOwner;
-      }
-
-      const oldChar = Array_.findByCode(userChars, oldOwner);
-      if (oldChar) {
-        const newArtifactIDs = new Set<number | undefined>(oldChar.artifactIDs);
-
-        newArtifactIDs.delete(oldID);
-        newArtifactIDs.add(newID);
-
-        oldChar.artifactIDs = Array_.truthify([...newArtifactIDs]);
+      if (currentAtf) {
+        currentAtf.owner = targetOwner;
       }
 
-      const newChar = Array_.findByCode(userChars, newOwner);
-      if (newChar) {
-        const newArtifactIDs = new Set<number | undefined>(newChar.artifactIDs);
+      const character = Array_.findByCode(userChars, currentOwner);
+      if (character) {
+        const newArtifactIDs = new Set<number | undefined>(character.artifactIDs);
 
-        newArtifactIDs.delete(newID);
-        newArtifactIDs.add(oldID);
+        newArtifactIDs.delete(currentId);
+        newArtifactIDs.add(targetId);
 
-        newChar.artifactIDs = Array_.truthify(Array.from(newArtifactIDs));
+        character.artifactIDs = Array_.truthify(Array.from(newArtifactIDs));
+      }
+
+      const targetAtfOwner = Array_.findByCode(userChars, targetOwner);
+      if (targetAtfOwner) {
+        const newArtifactIDs = new Set<number | undefined>(targetAtfOwner.artifactIDs);
+
+        newArtifactIDs.delete(targetId);
+        newArtifactIDs.add(currentId);
+
+        targetAtfOwner.artifactIDs = Array_.truthify(Array.from(newArtifactIDs));
       }
     },
     unequipArtifact: (state, action: PayloadAction<number>) => {

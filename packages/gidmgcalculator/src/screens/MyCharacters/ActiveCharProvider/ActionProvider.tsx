@@ -1,10 +1,9 @@
 import { useMemo, useState } from "react";
 import { ConfirmModal } from "rond";
 
-import type { Artifact, CharacterCalc } from "@/models";
-import type { IArtifactGearSlot } from "@/types";
+import type { CharacterCalc } from "@/models";
+import type { ArtifactGearSlot } from "@/types";
 
-import { ArtifactInventory, Tavern, WeaponInventory } from "@/components";
 import { useDispatch } from "@Store/hooks";
 import {
   removeDbCharacter,
@@ -13,6 +12,11 @@ import {
   viewDbCharacter,
 } from "@Store/userdbSlice";
 import { ActiveCharAction, ActiveCharActionContext } from "./context";
+
+// Component
+import { Tavern } from "@/components/Tavern";
+import { ArtifactInventory } from "@/components/ArtifactInventory";
+import { WeaponInventory } from "@/components/WeaponInventory";
 
 type ModalType = "SWITCH_CHARACTER" | "SWITCH_WEAPON" | "SWITCH_ARTIFACT" | "REMOVE_CHARACTER" | "";
 
@@ -24,7 +28,7 @@ type ActionProviderProps = {
 export function ActionProvider({ character, children }: ActionProviderProps) {
   const dispatch = useDispatch();
   const [modalType, setModalType] = useState<ModalType>("");
-  const [switchedSlot, setSwitchedSlot] = useState<IArtifactGearSlot<Artifact> | null>(null);
+  const [switchedSlot, setSwitchedSlot] = useState<ArtifactGearSlot | null>(null);
 
   const { weapon, atfGear } = character;
 
@@ -82,10 +86,10 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
         onClickButton={(selectedWeapon) => {
           dispatch(
             switchWeapon({
-              newOwner: selectedWeapon.owner,
-              newID: selectedWeapon.ID,
-              oldOwner: character.code,
-              oldID: weapon.ID,
+              targetId: selectedWeapon.ID,
+              targetOwner: selectedWeapon.owner,
+              currentId: weapon.ID,
+              currentOwner: character.code,
             })
           );
         }}
@@ -107,10 +111,10 @@ export function ActionProvider({ character, children }: ActionProviderProps) {
 
           dispatch(
             switchArtifact({
-              newOwner: selectedArtifact.owner,
-              newID: selectedArtifact.ID,
-              oldOwner: character.code,
-              oldID: currentPiece?.ID,
+              targetId: selectedArtifact.ID,
+              targetOwner: selectedArtifact.owner,
+              currentId: currentPiece?.ID,
+              currentOwner: character.code,
             })
           );
         }}

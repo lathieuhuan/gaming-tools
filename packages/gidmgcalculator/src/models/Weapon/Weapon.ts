@@ -51,11 +51,6 @@ export class Weapon implements Clonable<Weapon> {
     sword: 108,
   };
 
-  static configure(config: { defaultLevel?: Level; defaultRefi?: number }) {
-    WeaponState.DEFAULT_LEVEL = config.defaultLevel ?? WeaponState.DEFAULT_LEVEL;
-    WeaponState.DEFAULT_REFI = config.defaultRefi ?? WeaponState.DEFAULT_REFI;
-  }
-
   constructor(
     key: PartiallyOptional<WeaponKey, "code">,
     data: AppWeapon,

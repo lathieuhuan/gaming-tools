@@ -52,10 +52,7 @@ const TALENT_LV_MULTIPLIERS: Record<number, number[]> = {
   ],
 };
 
-export class Character<W extends Weapon = Weapon>
-  extends Ascendable
-  implements ICharacter<W>, Clonable<Character<W>>
-{
+export class Character extends Ascendable implements ICharacter, Clonable<Character> {
   code: number;
   level: Level;
   NAs: number;
@@ -64,7 +61,7 @@ export class Character<W extends Weapon = Weapon>
   cons: number;
   enhanced: boolean;
 
-  weapon: W;
+  weapon: Weapon;
   atfGear: ArtifactGear;
 
   isTraveler: boolean;
@@ -73,7 +70,7 @@ export class Character<W extends Weapon = Weapon>
     return BASE_REACTION_DAMAGE[this.bareLv] ?? 0;
   }
 
-  constructor(info: ICharacter<W>, public data: AppCharacter) {
+  constructor(info: ICharacter, public data: AppCharacter) {
     super(info.level);
 
     this.code = info.code;
@@ -119,7 +116,7 @@ export class Character<W extends Weapon = Weapon>
     return Object_.safeAssign(this, data, keys) as this;
   }
 
-  equip(item: W | ArtifactGear) {
+  equip(item: Weapon | ArtifactGear) {
     if (item instanceof Weapon) {
       this.weapon = item;
     } else {
@@ -165,6 +162,6 @@ export class Character<W extends Weapon = Weapon>
   }
 
   clone() {
-    return new Character<W>(this, this.data);
+    return new Character(this, this.data);
   }
 }

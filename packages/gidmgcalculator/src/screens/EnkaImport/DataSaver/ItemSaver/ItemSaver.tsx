@@ -4,7 +4,6 @@ import { CloseButton, Modal, notification } from "rond";
 import type { ItemSavingStep } from "./types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";
-import { createArtifact, createWeapon } from "@/logic/entity.logic";
 import { isSameArtifact, isSameWeapon } from "../logic";
 import { ItemSaverContext, ItemSaverContextState } from "./context";
 
@@ -20,7 +19,7 @@ export function ItemSaver({ children }: { children: ReactNode }) {
     setSaveModalOpen(false);
   };
 
-  const requestSave = useCallback<ItemSaverContextState>(({ weapon, artifacts }, type) => {
+  const requestSave = useCallback<ItemSaverContextState>(({ weapon, atfGear }, type) => {
     switch (type) {
       case "WEAPON": {
         const error = isAbleToAddWeapon(1);
@@ -37,7 +36,7 @@ export function ItemSaver({ children }: { children: ReactNode }) {
         setSavingSteps([
           {
             type: "WEAPON",
-            data: createWeapon(weapon, weapon.data),
+            data: weapon,
             sameWeapons,
           },
         ]);
@@ -47,7 +46,7 @@ export function ItemSaver({ children }: { children: ReactNode }) {
         break;
       }
       default: {
-        const artifact = artifacts[type];
+        const artifact = atfGear.pieces.get(type);
 
         if (!artifact) {
           return;
@@ -67,7 +66,7 @@ export function ItemSaver({ children }: { children: ReactNode }) {
         setSavingSteps([
           {
             type: "ARTIFACT",
-            data: createArtifact(artifact, artifact.data),
+            data: artifact,
             sameArtifacts,
           },
         ]);

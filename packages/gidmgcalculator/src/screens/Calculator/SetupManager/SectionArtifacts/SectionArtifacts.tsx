@@ -18,12 +18,11 @@ import { useSettingsStore } from "@Store/settings";
 import {
   ArtifactForge,
   ArtifactForgeProps,
-  ArtifactInventory,
-  ArtifactInventoryProps,
   GenshinImage,
   LoadoutStash,
   LoadoutStashProps,
 } from "@/components";
+import { ArtifactInventory, ArtifactInventoryProps } from "@/components/ArtifactInventory";
 import { Section } from "../components/Section";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
@@ -96,7 +95,7 @@ export function SectionArtifacts() {
 
   const handleSelectLoadout: LoadoutStashProps["onSelect"] = (pieces) => {
     for (const piece of pieces) {
-      setArtifactPiece(createArtifact(piece.userData, piece.data));
+      setArtifactPiece(piece);
     }
     closeModal();
   };

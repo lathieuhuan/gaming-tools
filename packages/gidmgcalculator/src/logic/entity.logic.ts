@@ -110,7 +110,7 @@ export const createCharacterBasic = (params: CreateCharacterParams): ICharacterB
 };
 
 type CreateCharacterCalcParams = PartiallyRequiredOnly<
-  CharacterCalcConstructInfo<Weapon>,
+  CharacterCalcConstructInfo,
   "code" | "weapon" | "atfGear"
 >;
 

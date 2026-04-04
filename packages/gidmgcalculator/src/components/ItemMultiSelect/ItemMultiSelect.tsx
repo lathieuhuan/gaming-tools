@@ -8,9 +8,9 @@ import {
   useScreenWatcher,
 } from "rond";
 
-import type { RawArtifact, RawWeapon } from "@/types";
+import type { RawArtifact, RawItem, RawWeapon } from "@/types";
 
-import { createArtifact, isWeapon } from "@/logic/entity.logic";
+import { createArtifact, createWeapon, isWeapon } from "@/logic/entity.logic";
 import { Artifact, Weapon } from "@/models";
 
 // Component
@@ -27,9 +27,7 @@ type ItemMultiSelectProps<T> = Pick<EntitySelectTemplateProps, "title" | "onClos
   onConfirm: (selectedIds: ItemMultiSelectIds) => void;
 };
 
-function ItemMultiSelectCore<T extends RawWeapon | RawArtifact>(
-  props: ItemMultiSelectProps<T>
-): JSX.Element {
+function ItemMultiSelectCore<T extends RawItem>(props: ItemMultiSelectProps<T>): JSX.Element {
   const { items, required, initialValue = new Set() } = props;
 
   const bodyRef = useRef<HTMLDivElement>(null);
@@ -74,7 +72,7 @@ function ItemMultiSelectCore<T extends RawWeapon | RawArtifact>(
   const onChangeItem = (item: ItemOption<T>) => {
     if (isWeapon(item.userData)) {
       const item_ = item as ItemOption<RawWeapon>;
-      setSelectedItem(new Weapon(item_.userData, item_.data));
+      setSelectedItem(createWeapon(item_.userData, item_.data));
     } else {
       const item_ = item as ItemOption<RawArtifact>;
       setSelectedItem(createArtifact(item_.userData, item_.data));

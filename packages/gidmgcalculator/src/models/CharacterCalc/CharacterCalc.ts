@@ -21,7 +21,6 @@ import type {
   TalentType,
 } from "@/types";
 import type { TypeCounterKey } from "@/utils/TypeCounter";
-import type { ArtifactGear } from "../ArtifactGear";
 import type { Weapon } from "../Weapon";
 import type { Clonable } from "../interfaces";
 
@@ -48,26 +47,26 @@ export type ReceivedAttackBonus = AttackBonus & {
   effectSrc: EntityBonus<EntityBonusEffect>;
 };
 
-export type CharacterCalcConstructInfo<W extends Weapon = Weapon> = ICharacter<W> & {
+export type CharacterCalcConstructInfo = ICharacter & {
   allAttrsCtrl?: AllAttributesControl;
   attkBonusCtrl?: AttackBonusControl;
 };
 
-type ICharacterCalc<W extends Weapon = Weapon> = ICharacter<W> & {
+type ICharacterCalc = ICharacter & {
   data: AppCharacter;
   attkBonusCtrl: AttackBonusControl;
 };
 
-export class CharacterCalc<W extends Weapon = Weapon, TTeam extends ITeam = ITeam>
-  extends Character<W>
-  implements ICharacterCalc<W>, ITeamMember<TTeam>, Clonable<CharacterCalc<W, TTeam>>
+export class CharacterCalc<TTeam extends ITeam = ITeam>
+  extends Character
+  implements ICharacterCalc, ITeamMember<TTeam>, Clonable<CharacterCalc<TTeam>>
 {
   team: ITeam;
 
   allAttrsCtrl: AllAttributesControl;
   attkBonusCtrl: AttackBonusControl;
 
-  constructor(info: CharacterCalcConstructInfo<W>, public data: AppCharacter, team?: ITeam) {
+  constructor(info: CharacterCalcConstructInfo, public data: AppCharacter, team?: ITeam) {
     super(info, data);
 
     const { allAttrsCtrl = new AllAttributesControl(), attkBonusCtrl = new AttackBonusControl() } =
@@ -83,7 +82,7 @@ export class CharacterCalc<W extends Weapon = Weapon, TTeam extends ITeam = ITea
   }
 
   deepClone() {
-    return new CharacterCalc<W, TTeam>(
+    return new CharacterCalc<TTeam>(
       {
         ...this,
         weapon: this.weapon.clone(),
@@ -103,7 +102,7 @@ export class CharacterCalc<W extends Weapon = Weapon, TTeam extends ITeam = ITea
   }
 
   override clone() {
-    return new CharacterCalc<W, TTeam>(this, this.data, this.team);
+    return new CharacterCalc<TTeam>(this, this.data, this.team);
   }
 
   // ===== GETTERS =====
