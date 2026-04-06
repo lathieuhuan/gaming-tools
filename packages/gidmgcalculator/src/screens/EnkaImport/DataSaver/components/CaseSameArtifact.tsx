@@ -1,4 +1,4 @@
-import type { AppArtifact, IArtifactBasic } from "@/types";
+import type { AppArtifact, RawArtifact } from "@/types";
 
 import { createArtifact } from "@/logic/entity.logic";
 
@@ -6,10 +6,10 @@ import { ArtifactSummary } from "./ArtifactSummary";
 import { SavingCase, SavingCaseProps } from "./SavingCase";
 
 type CaseSameArtifactsProps = Pick<SavingCaseProps, "message" | "hint" | "withDivider"> & {
-  sameArtifacts: IArtifactBasic[];
-  selectedArtifact?: IArtifactBasic;
+  sameArtifacts: RawArtifact[];
+  selectedArtifact?: RawArtifact;
   data: AppArtifact;
-  onSelectArtifact?: (artifact: IArtifactBasic) => void;
+  onSelectArtifact?: (artifact: RawArtifact) => void;
 };
 
 export function CaseSameArtifacts({

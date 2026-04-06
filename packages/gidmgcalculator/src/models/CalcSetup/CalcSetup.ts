@@ -2,7 +2,6 @@ import { Array_ } from "ron-utils";
 
 import type { AppCharacter, ITeammate } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
-import type { CloneOptions } from "./types";
 
 import { calculateSetup } from "@/calculation/calculator";
 import { createTarget } from "@/logic/entity.logic";
@@ -19,14 +18,18 @@ import {
 } from "@/logic/modifier.logic";
 import { $AppCharacter } from "@/services";
 import { ArtifactGear } from "../ArtifactGear";
-import { CharacterCalc } from "../CharacterCalc";
 import { Team } from "../Team";
 import { TeammateCalc, type TeammateCalcConstructInfo } from "../TeammateCalc";
 import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
+import { Character } from "../Character";
 
 type TeammateUpdateData = Partial<
   Pick<ITeammate, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
 >;
+
+type CloneOptions = {
+  ID?: number;
+};
 
 export type CalcSetupConstructInfo = PartiallyRequiredOnly<CalcSetupBaseConstructInfo, "main">;
 
@@ -102,15 +105,13 @@ export class CalcSetup extends CalcSetupBase {
   calculate(shouldLog?: boolean) {
     const { main, result } = calculateSetup(this, { shouldLog });
 
-    const newMain = new CharacterCalc(
-      {
-        ...this.main,
-        allAttrsCtrl: main.allAttrsCtrl.clone(),
-        attkBonusCtrl: main.attkBonusCtrl.clone(),
-      },
-      this.main.data,
-      this.team
-    );
+    const newMain = new Character(main.code, main.data, main.weapon, {
+      state: main.state,
+      atfGear: main.atfGear,
+      allAttrsCtrl: main.allAttrsCtrl.clone(),
+      attkBonusCtrl: main.attkBonusCtrl.clone(),
+      team: this.team,
+    });
 
     return new CalcSetup({
       ...this,

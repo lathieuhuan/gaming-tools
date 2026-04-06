@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { FaMinus } from "react-icons/fa";
 import { ItemCase, clsx, useIntersectionObserver } from "rond";
 
-import type { AppArtifact, AppWeapon, IArtifactBasic, IWeaponBasic } from "@/types";
+import type { AppArtifact, AppWeapon, RawItem, RawWeapon } from "@/types";
 
 import { isWeapon } from "@/logic/entity.logic";
 import { $AppArtifact, $AppWeapon } from "@/services";
@@ -12,16 +12,16 @@ import { ItemThumbnail, type ItemThumbProps } from "../ItemThumbnail";
 import { Pagination } from "./Pagination";
 
 export type ItemOption<
-  T extends IWeaponBasic | IArtifactBasic,
-  U = T extends IWeaponBasic ? AppWeapon : AppArtifact
+  T extends RawItem,
+  U = T extends RawWeapon ? AppWeapon : AppArtifact
 > = ItemThumbProps["item"] & {
   userData: T;
   data: U;
 };
 
 export type InventoryRackProps<
-  T extends IWeaponBasic | IArtifactBasic,
-  U = T extends IWeaponBasic ? AppWeapon : AppArtifact
+  T extends RawItem,
+  U = T extends RawWeapon ? AppWeapon : AppArtifact
 > = {
   itemCls?: string;
   emptyText?: string;
@@ -30,13 +30,13 @@ export type InventoryRackProps<
   /** Default 60 */
   pageSize?: number;
   data: T[];
-  onUnselectItem?: (item: ItemOption<T, U>) => void;
-  onChangeItem?: (item: ItemOption<T, U>) => void;
+  onUnselectItem?: (item: ItemOption<NoInfer<T>, U>) => void;
+  onChangeItem?: (item: ItemOption<NoInfer<T>, U>) => void;
 };
 
 export function InventoryRack<
-  T extends IWeaponBasic | IArtifactBasic,
-  U = T extends IWeaponBasic ? AppWeapon : AppArtifact
+  T extends RawItem,
+  U = T extends RawWeapon ? AppWeapon : AppArtifact
 >({
   data,
   itemCls,

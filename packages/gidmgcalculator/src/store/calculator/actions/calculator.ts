@@ -1,9 +1,18 @@
+import { Array_ } from "ron-utils";
+
+import type { TavernSelectedCharacter } from "@/components";
 import type { BasicSetupType, ISetupManager } from "@/types";
+import type { UserdbState } from "@Store/userdbSlice";
 import type { CalculatorState } from "../types";
 
+import { createCharacter, createWeapon } from "@/logic/entity.logic";
+import { parseDbArtifacts } from "@/logic/userdb.logic";
 import { CalcSetup, CalcSetupConstructInfo } from "@/models";
 import { $AppCharacter } from "@/services";
+import IdStore from "@/utils/IdStore";
 import { updateSettings } from "@Store/settings";
+import { isTourFinished } from "@Store/tours";
+import { updateUI } from "@Store/ui";
 import { initialState, useCalcStore } from "../calculatorStore";
 
 type InitSessionPayload = {
@@ -111,3 +120,40 @@ export const importSetup = (
     state.activeId = setupId;
   });
 };
+
+export function initSessionWithCharacter(
+  selectedCharacter: TavernSelectedCharacter,
+  userDb: UserdbState
+) {
+  const { userData, data } = selectedCharacter;
+  const { weaponID, artifactIDs } = userData ?? {};
+  const { userWps, userArts } = userDb;
+
+  const idStore = new IdStore();
+
+  const dbWeapon = weaponID ? Array_.findById(userWps, weaponID) : undefined;
+  const weapon = dbWeapon
+    ? createWeapon(dbWeapon)
+    : createWeapon({ ID: idStore.gen(), type: data.weaponType });
+
+  const atfGear = parseDbArtifacts(artifactIDs, userArts);
+
+  const main = createCharacter({ code: data.code }, data, {
+    state: userData,
+    weapon,
+    atfGear,
+  });
+
+  const calcSetup = new CalcSetup({
+    ID: idStore.gen(),
+    main,
+  });
+
+  initSession({
+    calcSetup,
+  });
+
+  if (!isTourFinished("CHAR_ENHANCE") && main.data.enhanceType) {
+    updateUI({ appModalType: "CHAR_ENHANCE_NOTICE" });
+  }
+}

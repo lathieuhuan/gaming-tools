@@ -1,5 +1,10 @@
 import type { AttackElement, LunarReaction, LunarType } from "@/types";
 
+export const QUICKEN_BUFF_LABEL = {
+  spread: "Spread reaction",
+  aggravate: "Aggravate reaction",
+}
+
 export const LUNAR_ATTACK_ELEMENT: Record<LunarType, AttackElement> = {
   lunarCharged: "electro",
   lunarBloom: "dendro",

@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { ButtonGroup, FancyBackSvg, Modal, useValues } from "rond";
 
-import type { AppArtifact, ArtifactType, IArtifact } from "@/types";
+import type { AppArtifact, ArtifactType, ArtifactStateData } from "@/types";
+import type { Artifact } from "@/models";
 
-import { Artifact } from "@/models";
 import { $AppArtifact } from "@/services";
 import { createArtifact } from "@/logic/entity.logic";
 
@@ -54,29 +54,23 @@ const ArtifactSmith = ({
   onClose,
   ...templateProps
 }: ArtifactForgeProps) => {
-  const [artifactConfig, setArtifactConfig] = useState<Artifact | undefined>(workpiece);
+  const [artifactConfig, setArtifactConfig] = useState(workpiece);
   const [maxRarity, setMaxRarity] = useState(initialMaxRarity);
   const [batchForging, setBatchForging] = useState(defaultBatchForging);
 
   const updateConfig = (
-    changesOrUpdater: Partial<IArtifact> | ((prevConfig: Artifact) => Partial<IArtifact>)
+    changesOrUpdater:
+      | Partial<ArtifactStateData>
+      | ((prevConfig: Artifact) => Partial<ArtifactStateData>)
   ) => {
-    if (artifactConfig) {
-      const newConfig =
-        typeof changesOrUpdater === "function"
-          ? changesOrUpdater(artifactConfig)
-          : changesOrUpdater;
-
-      setArtifactConfig(
-        new Artifact(
-          {
-            ...artifactConfig,
-            ...newConfig,
-          },
-          artifactConfig.data
-        )
-      );
+    if (!artifactConfig) {
+      return;
     }
+
+    const newState =
+      typeof changesOrUpdater === "function" ? changesOrUpdater(artifactConfig) : changesOrUpdater;
+
+    setArtifactConfig(artifactConfig.clone({ state: newState }));
   };
 
   const {
@@ -123,40 +117,43 @@ const ArtifactSmith = ({
     });
   };
 
-  const handleSelectChange: AppEntitySelectProps<ArtifactOption>["onChange"] = (
+  const handleSelectOption: AppEntitySelectProps<ArtifactOption>["onChange"] = (
     mold,
     isConfigStep
   ) => {
-    if (mold) {
-      if (isConfigStep) {
-        const artifact = createArtifact(
-          {
-            ...artifactConfig,
-            ...mold,
-            type: forcedType || artifactTypes[0],
-          },
-          mold.data
-        );
+    if (!mold) {
+      setArtifactConfig(undefined);
+      return;
+    }
 
-        setArtifactConfig(artifact);
-        setMaxRarity(mold.rarity);
-        return true;
-      }
-
+    if (isConfigStep) {
       const artifact = createArtifact(
         {
-          ...mold,
-          type: artifactTypes[0],
+          ID: Date.now(),
+          code: mold.code,
+          ...artifactConfig?.state,
+          rarity: mold.rarity,
+          type: forcedType || artifactTypes[0],
         },
         mold.data
       );
 
-      onForgeArtifact(artifact);
-      return true;
+      setArtifactConfig(artifact);
+      setMaxRarity(mold.rarity);
+      return;
     }
 
-    setArtifactConfig(undefined);
-    return true;
+    const artifact = createArtifact(
+      {
+        ID: Date.now(),
+        code: mold.code,
+        rarity: mold.rarity,
+        type: artifactTypes[0],
+      },
+      mold.data
+    );
+
+    onForgeArtifact(artifact);
   };
 
   const getBackAction = (selectBody: HTMLDivElement | null) => ({
@@ -269,7 +266,7 @@ const ArtifactSmith = ({
           />
         );
       }}
-      onChange={handleSelectChange}
+      onChange={handleSelectOption}
       onClose={onClose}
       {...templateProps}
     />

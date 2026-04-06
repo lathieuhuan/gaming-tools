@@ -47,7 +47,7 @@ export abstract class AbstractBonusCalc<
   private isPerformableEffect(condition?: EffectPerformableCondition) {
     return (
       this.team.isAvailableEffect(condition) &&
-      this.performer.isPerformableEffect(condition, this.inputs)
+      this.performer.canPerformEffect(condition, this.inputs)
     );
   }
 

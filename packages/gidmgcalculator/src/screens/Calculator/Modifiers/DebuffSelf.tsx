@@ -11,7 +11,7 @@ import { SelfDebuffsView } from "@/components";
 
 export default function DebuffSelf() {
   const { main, team, selfDebuffCtrls } = useShallowCalcStore((state) => {
-    return Object_.pickProps(selectSetup(state), ["main", "team", "selfDebuffCtrls"]);
+    return Object_.extract(selectSetup(state), ["main", "team", "selfDebuffCtrls"]);
   });
 
   const handleUpdateCtrls = (newCtrls: IAbilityDebuffCtrl[]) => {

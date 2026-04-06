@@ -1,14 +1,13 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcSetup, TeammateCalc, CharacterCalc } from "@/models";
+import type { CalcSetup, Character, TargetCalc, TeammateCalc } from "@/models";
 import type { ElementType, EntityDebuff, EntityPenaltyTarget, ResistReductionKey } from "@/types";
-import type { TargetCalc } from "../../models/TargetCalc";
 import type { IEffectPerformer } from "../types";
 
 import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants/global";
 
 export function applyDebuffs(
-  main: CharacterCalc,
+  main: Character,
   teammates: TeammateCalc[],
   setup: CalcSetup,
   target: TargetCalc
@@ -59,7 +58,7 @@ export function applyDebuffs(
     inputs: number[] = []
   ) {
     for (const effect of Array_.toArray(effects)) {
-      if (team.isAvailableEffect(effect) && performer.isPerformableEffect(effect, inputs)) {
+      if (team.isAvailableEffect(effect) && performer.canPerformEffect(effect, inputs)) {
         const penalty = performer.performPenalty(effect, inputs);
         const reductionPaths = getReductionPaths(Array_.toArray(effect.targets), inputs);
 
@@ -82,7 +81,7 @@ export function applyDebuffs(
     if (
       ctrl.activated &&
       team.isAvailableEffect(debuff) &&
-      main.isPerformableEffect(debuff, ctrl.inputs)
+      main.canPerformEffect(debuff, ctrl.inputs)
     ) {
       applyPenalty(`Self / ${debuff.src}`, main, ctrl.data.effects, ctrl.inputs);
     }

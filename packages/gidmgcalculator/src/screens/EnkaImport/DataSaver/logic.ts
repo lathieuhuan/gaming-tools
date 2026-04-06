@@ -1,27 +1,27 @@
 import isEqual from "react-fast-compare";
 import { Object_ } from "ron-utils";
 
-import type { IArtifactBasic, ICharacterBasic, IWeaponBasic } from "@/types";
+import type { RawArtifact, RawCharacter, RawWeapon } from "@/types";
 
-export const isExactCharacter = (character1: ICharacterBasic, character2: ICharacterBasic) => {
+export const isExactCharacter = (character1: RawCharacter, character2: RawCharacter) => {
   return isEqual(
-    Object_.pickProps(character1, ["level", "NAs", "ES", "EB", "cons"]),
-    Object_.pickProps(character2, ["level", "NAs", "ES", "EB", "cons"])
+    Object_.extract(character1, ["level", "NAs", "ES", "EB", "cons"]),
+    Object_.extract(character2, ["level", "NAs", "ES", "EB", "cons"])
   );
 };
 
-export const isSameWeapon = (weapon1: IWeaponBasic, weapon2: IWeaponBasic) => {
+export const isSameWeapon = (weapon1: RawWeapon, weapon2: RawWeapon) => {
   return weapon1.code === weapon2.code;
 };
 
-export const isExactWeapon = (weapon1: IWeaponBasic, weapon2: IWeaponBasic) => {
+export const isExactWeapon = (weapon1: RawWeapon, weapon2: RawWeapon) => {
   return isEqual(
-    Object_.pickProps(weapon1, ["level", "refi"]),
-    Object_.pickProps(weapon2, ["level", "refi"])
+    Object_.extract(weapon1, ["level", "refi"]),
+    Object_.extract(weapon2, ["level", "refi"])
   );
 };
 
-export const isSameArtifact = (artifact1: IArtifactBasic, artifact2: IArtifactBasic) => {
+export const isSameArtifact = (artifact1: RawArtifact, artifact2: RawArtifact) => {
   const isSameGeneral =
     artifact1.code === artifact2.code &&
     artifact1.type === artifact2.type &&
@@ -40,9 +40,9 @@ export const isSameArtifact = (artifact1: IArtifactBasic, artifact2: IArtifactBa
   return isSameGeneral && isSameSubStats;
 };
 
-export const isExactArtifact = (artifact1: IArtifactBasic, artifact2: IArtifactBasic) => {
+export const isExactArtifact = (artifact1: RawArtifact, artifact2: RawArtifact) => {
   return isEqual(
-    Object_.pickProps(artifact1, ["level", "subStats"]),
-    Object_.pickProps(artifact2, ["level", "subStats"])
+    Object_.extract(artifact1, ["level", "subStats"]),
+    Object_.extract(artifact2, ["level", "subStats"])
   );
 };

@@ -4,7 +4,7 @@ import { MdEdit } from "react-icons/md";
 import { notification } from "rond";
 
 import type { Artifact } from "@/models";
-import type { IArtifactBasic } from "@/types";
+import type { RawArtifact } from "@/types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";
 import { useDispatch } from "@Store/hooks";
@@ -19,14 +19,14 @@ import { SavingStepLayout } from "../components/SavingStepLayout";
 
 type ArtifactSaverProps = {
   artifact: Artifact;
-  sameArtifacts: IArtifactBasic[];
+  sameArtifacts: RawArtifact[];
   onComplete?: () => void;
 };
 
 export function ArtifactSaver({ artifact, sameArtifacts, onComplete }: ArtifactSaverProps) {
   const dispatch = useDispatch();
   const { isAbleToAddArtifact } = useStoreCheck();
-  const [selectedArtifact, setSelectedArtifact] = useState<IArtifactBasic>();
+  const [selectedArtifact, setSelectedArtifact] = useState<RawArtifact>();
 
   const handleSave = () => {
     const error = isAbleToAddArtifact(1);

@@ -30,7 +30,7 @@ export abstract class AbstractPenaltyCalc<
     } else if (preExtra) {
       if (
         this.team.isAvailableEffect(preExtra) &&
-        this.performer.isPerformableEffect(preExtra, this.inputs)
+        this.performer.canPerformEffect(preExtra, this.inputs)
       ) {
         result += this.makePenalty(preExtra);
       }

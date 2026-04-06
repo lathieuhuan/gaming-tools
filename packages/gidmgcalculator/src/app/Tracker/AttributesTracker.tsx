@@ -1,7 +1,7 @@
 import { round } from "ron-utils";
 import { clsx } from "rond";
 
-import type { AllAttributesControl } from "@/models";
+import type { AllAttributesControl } from "@/models/Character";
 
 import { ATTRIBUTE_STAT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";

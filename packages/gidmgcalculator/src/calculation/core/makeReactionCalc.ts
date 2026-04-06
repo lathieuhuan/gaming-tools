@@ -1,6 +1,6 @@
 import { toMult } from "ron-utils";
 
-import type { CharacterCalc } from "@/models";
+import type { Character, TargetCalc } from "@/models";
 import type {
   ActualAttackElement,
   AttackBonusKey,
@@ -10,11 +10,11 @@ import type {
   TransformativeReaction,
 } from "@/types";
 import type { CalcResultReactionItem } from "../types";
-import type { TargetCalc } from "../../models/TargetCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
 import { limitCRate } from "@/logic/stat.logic";
 import { LUNAR_ATTACK_ELEMENT, LUNAR_REACTION_COEFFICIENT } from "../constants";
+import { GetBonusPaths } from "@/models/Character";
 
 const TRANSFORMATIVE_REACTION_CONFIG: Record<
   TransformativeReaction,
@@ -31,15 +31,15 @@ const TRANSFORMATIVE_REACTION_CONFIG: Record<
   shattered: { mult: 3, attElmt: "phys" },
 };
 
-export function makeReactionCalc(performer: CharacterCalc, target: TargetCalc) {
+export function makeReactionCalc(performer: Character, target: TargetCalc) {
   const { attkBonusCtrl, baseRxnDamage } = performer;
 
   function calcLunarReaction(
     reaction: LunarReaction,
     recorder: ResultRecorder
   ): CalcResultReactionItem {
-    const getBonus: typeof attkBonusCtrl.get = (key, ...paths) => {
-      return attkBonusCtrl.get(key, reaction, ...paths);
+    const getBonus = (key: AttackBonusKey, paths: GetBonusPaths = []) => {
+      return attkBonusCtrl.get(key, [reaction, ...paths]);
     };
 
     const mult = LUNAR_REACTION_COEFFICIENT[reaction];
@@ -54,8 +54,9 @@ export function makeReactionCalc(performer: CharacterCalc, target: TargetCalc) {
     const resMult = target.resistMults[attElmt];
 
     const base = (baseValue * baseMult * bonusMult * elvMult + flat) * rxnMult * resMult;
-    const cRate_ = limitCRate(getBonus("cRate_", attElmt) + performer.getAttr("cRate_")) / 100;
-    const cDmg_ = (getBonus("cDmg_", attElmt) + performer.getAttr("cDmg_")) / 100;
+    const cRate_ =
+      limitCRate(getBonus("cRate_", [attElmt]) + performer.getAttr("cRate_")) / 100;
+    const cDmg_ = (getBonus("cDmg_", [attElmt]) + performer.getAttr("cDmg_")) / 100;
 
     recorder.record({
       factors: [{ value: Math.round(baseValue), label: "Base DMG" }],
@@ -89,7 +90,7 @@ export function makeReactionCalc(performer: CharacterCalc, target: TargetCalc) {
     elmtEvent?: ElementalEvent
   ): CalcResultReactionItem {
     function getBonus(key: AttackBonusKey) {
-      return attkBonusCtrl.get(key, reaction);
+      return attkBonusCtrl.get(key, [reaction]);
     }
 
     const config = TRANSFORMATIVE_REACTION_CONFIG[reaction];

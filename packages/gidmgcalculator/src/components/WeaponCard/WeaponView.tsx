@@ -5,9 +5,8 @@ import type { Weapon } from "@/models";
 import type { Level } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { $AppWeapon } from "@/services";
-import { genSequentialOptions, suffixOf } from "@/utils/pure.utils";
 import { parseWeaponDesc } from "@/utils/descriptionParsers";
+import { genSequentialOptions, suffixOf } from "@/utils/pure.utils";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
@@ -31,22 +30,24 @@ export function WeaponView<T extends Weapon>({
   refine,
 }: WeaponViewProps<T>) {
   const { t } = useTranslation();
-  const appWeapon = weapon ? $AppWeapon.get(weapon.code) : undefined;
 
   const passiveDescription = useMemo(() => {
-    if (!appWeapon?.descriptions || !weapon?.refi) {
+    const { descriptions } = weapon?.data || {};
+
+    if (!descriptions || !weapon?.refi) {
       return "";
     }
-    return appWeapon.descriptions.map((content) => parseWeaponDesc(content, weapon.refi)).join(" ");
-  }, [appWeapon?.code, weapon?.refi]);
+    return descriptions.map((content) => parseWeaponDesc(content, weapon.refi)).join(" ");
+  }, [weapon?.code, weapon?.refi]);
 
-  if (!weapon || !appWeapon) return null;
+  if (!weapon) return null;
 
-  const { rarity, subStat } = appWeapon;
+  const { data } = weapon;
+  const { rarity, subStat } = weapon.data;
 
   return (
     <div className={clsx("w-full", className)} onDoubleClick={() => console.info(weapon)}>
-      <p className={`text-1.5xl text-rarity-${rarity} font-semibold`}>{appWeapon.name}</p>
+      <p className={`text-1.5xl text-rarity-${rarity} font-semibold`}>{data.name}</p>
 
       <div className="mt-2 flex">
         {/* left */}
@@ -93,8 +94,8 @@ export function WeaponView<T extends Weapon>({
         {/* right */}
         <div className="ml-2">
           <div className={`rounded-lg bg-gradient-${rarity} relative`}>
-            <GenshinImage src={appWeapon.icon} imgType="weapon" width={112} height={112} />
-            <Badge active={appWeapon.beta} className="absolute bottom-0 right-0">
+            <GenshinImage src={data.icon} imgType="weapon" width={112} height={112} />
+            <Badge active={data.beta} className="absolute bottom-0 right-0">
               BETA
             </Badge>
           </div>
@@ -120,7 +121,7 @@ export function WeaponView<T extends Weapon>({
         </div>
       </div>
       <div className="mt-3">
-        <p className="text-sm font-semibold text-heading">{appWeapon.passiveName}</p>
+        <p className="text-sm font-semibold text-heading">{data.passiveName}</p>
         <p
           className="indent-4 text-base"
           dangerouslySetInnerHTML={{ __html: passiveDescription }}

@@ -1,14 +1,14 @@
 import { useEffect, useMemo } from "react";
 import { Array_ } from "ron-utils";
 
-import type { IDbItem, IDbSetup } from "@/types";
 import { isDbSetup } from "@/logic/setup.logic";
+import type { IDbSetup, RawItem } from "@/types";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
-import { updateDbArtifact, updateDbWeapon, selectDbSetups } from "@Store/userdbSlice";
+import { selectDbSetups, updateDbArtifact, updateDbWeapon } from "@Store/userdbSlice";
 
-export type BoundingItem = Pick<IDbItem, "ID" | "setupIDs">;
+export type BoundingItem = Pick<RawItem, "ID" | "setupIDs">;
 
 export function useItemBoundSetups(item?: BoundingItem, isWeapon?: boolean): IDbSetup[] {
   const dispatch = useDispatch();

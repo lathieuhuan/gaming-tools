@@ -11,8 +11,8 @@ export const migrateToV5 = (state?: UserdbState): UserdbState => {
 
     return {
       ...state,
-      userWps: userWps.map((weapon) => Weapon.toBasic(weapon)),
-      userArts: userArts.map((artifact) => Artifact.toBasic(artifact)),
+      userWps: userWps.map((weapon) => Weapon.serialize(weapon)),
+      userArts: userArts.map((artifact) => Artifact.serialize(artifact)),
     };
   } catch (error) {
     console.error(error);

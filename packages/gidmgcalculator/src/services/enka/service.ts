@@ -52,7 +52,7 @@ export async function getGenshinUser(uid: string) {
 export async function getEnkaUser(profile: string): Promise<EnkaUserResponse> {
   const response = await fetch(`${baseUrl}/enka/profile/${profile}`);
 
-  return await response.json();
+  return await response.json() as EnkaUserResponse;
 }
 
 export async function updateCache() {

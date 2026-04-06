@@ -24,7 +24,7 @@ export function SetupSelect() {
   const calcModalCtrl = useCalcModalCtrl();
 
   const { activeId, setupManagers, standardId, comparedIds } = useShallowCalcStore((state) =>
-    Object_.pickProps(state, ["activeId", "setupManagers", "standardId", "comparedIds"])
+    Object_.extract(state, ["activeId", "setupManagers", "standardId", "comparedIds"])
   );
 
   const [modal, setModal] = useState<ModalState>({

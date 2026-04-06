@@ -1,11 +1,13 @@
 import { useLayoutEffect, useMemo } from "react";
 import { useScreenWatcher } from "rond";
 
+import { Outlet, useRouter } from "@/lib/router";
 import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
+import { ArtifactState, CharacterState, WeaponState } from "@/models";
+
 import { CalculatorLarge, CalculatorSmall } from "@/screens/Calculator";
 import { $AppCharacter } from "@/services";
-import { Outlet, useRouter } from "@/lib/router";
-import { useSettingsStore } from "@Store/settings";
+import { AppSettingsState, useSettingsStore } from "@Store/settings";
 
 export function Main() {
   const screenWatcher = useScreenWatcher();
@@ -16,8 +18,30 @@ export function Main() {
   const isMobile = !screenWatcher.isFromSize("sm");
   const isAtRoot = router.isRouteActive("/");
 
+  const updateEntityConfigs = (settings: AppSettingsState) => {
+    ArtifactState.configure({
+      defaultLevel: settings.artLevel,
+    });
+    WeaponState.configure({
+      defaultLevel: settings.wpLevel,
+      defaultRefi: settings.wpRefi,
+    });
+    CharacterState.configure({
+      defaultLevel: settings.charLevel,
+      defaultNAs: settings.charNAs,
+      defaultES: settings.charES,
+      defaultEB: settings.charEB,
+      defaultCons: settings.charCons,
+      defaultEnhanced: settings.charEnhanced,
+    });
+  };
+
   useLayoutEffect(() => {
     $AppCharacter.changeTraveler(traveler);
+
+    updateEntityConfigs(useSettingsStore.getState());
+
+    return useSettingsStore.subscribe(updateEntityConfigs);
   }, []);
 
   if (isMobile) {

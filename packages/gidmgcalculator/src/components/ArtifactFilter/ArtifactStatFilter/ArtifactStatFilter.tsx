@@ -3,7 +3,7 @@ import type { ArtifactStatFilterCondition } from "../types";
 
 import { ARTIFACT_SUBSTAT_TYPES, ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { Artifact } from "@/models";
+import { ArtifactState } from "@/models";
 
 import { FilterTemplate, FilterTemplateProps } from "@/components/FilterTemplate";
 import { StatSelect } from "./StatSelect";
@@ -30,7 +30,7 @@ export function ArtifactStatFilter({
   const { t } = useTranslation();
 
   const mainStatOptions = artifactType
-    ? ["All", ...Artifact.allMainStatTypesOf(artifactType)]
+    ? ["All", ...ArtifactState.allMainStatTypesOf(artifactType)]
     : [
         "All",
         "hp",

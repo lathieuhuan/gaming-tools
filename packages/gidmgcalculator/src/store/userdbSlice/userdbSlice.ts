@@ -3,11 +3,11 @@ import { Array_ } from "ron-utils";
 
 import type {
   ArtifactType,
-  IArtifactBasic,
   IDbCharacter,
   IDbComplexSetup,
   IDbSetup,
-  IWeaponBasic,
+  RawArtifact,
+  RawWeapon,
 } from "@/types";
 import type { WritableDraft } from "immer/src/internal.js";
 import type {
@@ -29,15 +29,14 @@ import type {
 } from "./types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
-import { createCharacterBasic, createWeaponBasic } from "@/logic/entity.logic";
+import { createCharacter, createWeapon } from "@/logic/entity.logic";
 import { isDbSetup } from "@/logic/setup.logic";
 import { Artifact, Ascendable, Weapon } from "@/models";
-import { $AppCharacter } from "@/services";
 
 export type UserdbState = {
   userChars: IDbCharacter[];
-  userWps: IWeaponBasic[];
-  userArts: IArtifactBasic[];
+  userWps: RawWeapon[];
+  userArts: RawArtifact[];
   userSetups: (IDbSetup | IDbComplexSetup)[];
   chosenChar: number;
   chosenSetupID: number;
@@ -59,8 +58,8 @@ export const userdbSlice = createSlice({
     addUserDatabase: (state, action: AddUserDatabaseAction) => {
       const { characters = [], weapons = [], artifacts = [], setups = [] } = action.payload;
       state.userChars = characters;
-      state.userWps = weapons.map((weapon) => Weapon.toBasic(weapon));
-      state.userArts = artifacts.map((artifact) => Artifact.toBasic(artifact));
+      state.userWps = weapons.map((weapon) => Weapon.serialize(weapon));
+      state.userArts = artifacts.map((artifact) => Artifact.serialize(artifact));
       state.userSetups = setups;
 
       if (characters.length) {
@@ -81,35 +80,31 @@ export const userdbSlice = createSlice({
     // CHARACTER
     /** Overwrite if character already exists */
     addDbCharacter: (state, action: AddDbCharacterAction) => {
-      const {
-        code,
-        weaponID,
-        artifactIDs = [],
-        data = $AppCharacter.get(code),
-        ...defaultValues
-      } = action.payload;
+      const { code, weaponID, artifactIDs = [], data, ...characterState } = action.payload;
+
+      const character = createCharacter({ code }, data, { state: characterState });
 
       const foundIndex = state.userChars.findIndex((char) => char.code === code);
-      const newChar = {
-        ...createCharacterBasic({ code, ...defaultValues }),
+      const dbCharacter: IDbCharacter = {
+        ...character.serialize(),
         weaponID: weaponID || Date.now(),
         artifactIDs,
       };
 
       if (foundIndex !== -1) {
-        state.userChars[foundIndex] = newChar;
+        state.userChars[foundIndex] = dbCharacter;
       } else {
-        state.userChars.push(newChar);
+        state.userChars.push(dbCharacter);
       }
 
       if (!weaponID) {
-        state.userWps.push({
+        const weapon = createWeapon({
+          ID: dbCharacter.weaponID,
+          type: character.data.weaponType,
           owner: code,
-          ...createWeaponBasic({
-            ID: newChar.weaponID,
-            type: data.weaponType,
-          }),
         });
+
+        state.userWps.push(weapon.serialize());
       }
     },
     viewDbCharacter: (state, action: PayloadAction<number>) => {
@@ -156,75 +151,75 @@ export const userdbSlice = createSlice({
       }
     },
     switchWeapon: ({ userWps, userChars }, action: SwitchWeaponAction) => {
-      const { newOwner, newID, oldOwner, oldID } = action.payload;
+      const { targetOwner, targetId, currentOwner, currentId } = action.payload;
 
-      const newWeaponInfo = Array_.findById(userWps, newID);
-      if (newWeaponInfo) {
-        newWeaponInfo.owner = oldOwner;
+      const targetWp = Array_.findById(userWps, targetId);
+      if (targetWp) {
+        targetWp.owner = currentOwner;
       }
 
-      const oldWeaponInfo = Array_.findById(userWps, oldID);
-      if (oldWeaponInfo) {
-        oldWeaponInfo.owner = newOwner;
+      const currentWp = Array_.findById(userWps, currentId);
+      if (currentWp) {
+        currentWp.owner = targetOwner;
       }
 
-      const oldOwnerInfo = Array_.findByCode(userChars, oldOwner);
-      if (oldOwnerInfo) {
-        oldOwnerInfo.weaponID = newID;
+      const character = Array_.findByCode(userChars, currentOwner);
+      if (character) {
+        character.weaponID = targetId;
       }
 
-      const newOwnerInfo = Array_.findByCode(userChars, newOwner);
-      if (newOwnerInfo) {
-        newOwnerInfo.weaponID = oldID;
+      const targetWpOwner = Array_.findByCode(userChars, targetOwner);
+      if (targetWpOwner) {
+        targetWpOwner.weaponID = currentId;
       }
     },
     switchArtifact: ({ userArts, userChars }, action: SwitchArtifactAction) => {
-      const { newOwner, newID, oldOwner, oldID } = action.payload;
+      const { targetOwner, targetId, currentOwner, currentId } = action.payload;
 
-      let newAtf: WritableDraft<IArtifactBasic> | undefined;
-      let oldAtf: WritableDraft<IArtifactBasic> | undefined;
+      let targetAtf: WritableDraft<RawArtifact> | undefined;
+      let currentAtf: WritableDraft<RawArtifact> | undefined;
 
-      if (oldID) {
-        for (const atf of userArts) {
-          if (atf.ID === newID) {
-            newAtf = atf;
+      if (currentId) {
+        for (const artifact of userArts) {
+          if (artifact.ID === targetId) {
+            targetAtf = artifact;
           }
-          if (atf.ID === oldID) {
-            oldAtf = atf;
+          if (artifact.ID === currentId) {
+            currentAtf = artifact;
           }
-          if (newAtf && oldAtf) {
+          if (targetAtf && currentAtf) {
             break;
           }
         }
       } else {
-        newAtf = Array_.findById(userArts, newID);
+        targetAtf = Array_.findById(userArts, targetId);
       }
 
-      if (newAtf) {
-        newAtf.owner = oldOwner;
+      if (targetAtf) {
+        targetAtf.owner = currentOwner;
       }
-      if (oldAtf) {
-        oldAtf.owner = newOwner;
-      }
-
-      const oldChar = Array_.findByCode(userChars, oldOwner);
-      if (oldChar) {
-        const newArtifactIDs = new Set<number | undefined>(oldChar.artifactIDs);
-
-        newArtifactIDs.delete(oldID);
-        newArtifactIDs.add(newID);
-
-        oldChar.artifactIDs = Array_.truthify([...newArtifactIDs]);
+      if (currentAtf) {
+        currentAtf.owner = targetOwner;
       }
 
-      const newChar = Array_.findByCode(userChars, newOwner);
-      if (newChar) {
-        const newArtifactIDs = new Set<number | undefined>(newChar.artifactIDs);
+      const character = Array_.findByCode(userChars, currentOwner);
+      if (character) {
+        const newArtifactIDs = new Set<number | undefined>(character.artifactIDs);
 
-        newArtifactIDs.delete(newID);
-        newArtifactIDs.add(oldID);
+        newArtifactIDs.delete(currentId);
+        newArtifactIDs.add(targetId);
 
-        newChar.artifactIDs = Array_.truthify(Array.from(newArtifactIDs));
+        character.artifactIDs = Array_.truthify(Array.from(newArtifactIDs));
+      }
+
+      const targetAtfOwner = Array_.findByCode(userChars, targetOwner);
+      if (targetAtfOwner) {
+        const newArtifactIDs = new Set<number | undefined>(targetAtfOwner.artifactIDs);
+
+        newArtifactIDs.delete(targetId);
+        newArtifactIDs.add(currentId);
+
+        targetAtfOwner.artifactIDs = Array_.truthify(Array.from(newArtifactIDs));
       }
     },
     unequipArtifact: (state, action: PayloadAction<number>) => {
@@ -244,8 +239,8 @@ export const userdbSlice = createSlice({
       delete artifact.owner;
     },
     // WEAPON
-    addDbWeapon: (state, action: PayloadAction<IWeaponBasic>) => {
-      state.userWps.push(Weapon.toBasic(action.payload));
+    addDbWeapon: (state, action: PayloadAction<RawWeapon>) => {
+      state.userWps.push(Weapon.serialize(action.payload));
     },
     /** Require index (prioritized) or ID */
     updateDbWeapon: (state, action: UpdateDbWeaponAction) => {
@@ -253,7 +248,7 @@ export const userdbSlice = createSlice({
       const weaponIndex = Array_.indexById(state.userWps, ID);
 
       if (weaponIndex !== -1) {
-        state.userWps[weaponIndex] = Weapon.toBasic({
+        state.userWps[weaponIndex] = Weapon.serialize({
           ...state.userWps[weaponIndex],
           ...newInfo,
         });
@@ -321,20 +316,17 @@ export const userdbSlice = createSlice({
         userWps.splice(removedIndex, 1);
 
         if (ownerInfo) {
-          const newWeapon: IWeaponBasic = {
-            owner,
-            ...createWeaponBasic({ type }),
-          };
+          const newWeapon = createWeapon({ type, owner });
 
-          userWps.push(newWeapon);
+          userWps.push(newWeapon.serialize());
           ownerInfo.weaponID = newWeapon.ID;
         }
       }
     },
     // ARTIFACT
-    addDbArtifact: (state, action: PayloadAction<IArtifactBasic | IArtifactBasic[]>) => {
+    addDbArtifact: (state, action: PayloadAction<RawArtifact | RawArtifact[]>) => {
       for (const artifact of Array_.toArray(action.payload)) {
-        state.userArts.push(Artifact.toBasic(artifact));
+        state.userArts.push(Artifact.serialize(artifact));
       }
     },
     updateDbArtifact: (state, action: UpdateDbArtifactAction) => {
@@ -342,7 +334,7 @@ export const userdbSlice = createSlice({
       const artifactIndex = Array_.indexById(state.userArts, ID);
 
       if (artifactIndex !== -1) {
-        state.userArts[artifactIndex] = Artifact.toBasic({
+        state.userArts[artifactIndex] = Artifact.serialize({
           ...state.userArts[artifactIndex],
           ...newInfo,
         });
@@ -595,7 +587,7 @@ export const userdbSlice = createSlice({
     fixMultipleEquippedArtifacts: (state) => {
       const { userChars, userArts } = state;
 
-      const artifactsByOwnerByType = new Map<number, Map<ArtifactType, IArtifactBasic>>();
+      const artifactsByOwnerByType = new Map<number, Map<ArtifactType, RawArtifact>>();
 
       for (const artifact of userArts) {
         if (!artifact.owner) {
@@ -615,7 +607,7 @@ export const userdbSlice = createSlice({
           continue;
         }
 
-        const newArtifactsByOwner = new Map<ArtifactType, IArtifactBasic>();
+        const newArtifactsByOwner = new Map<ArtifactType, RawArtifact>();
 
         newArtifactsByOwner.set(artifact.type, artifact);
         artifactsByOwnerByType.set(artifact.owner, newArtifactsByOwner);

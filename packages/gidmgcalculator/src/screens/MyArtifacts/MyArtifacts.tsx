@@ -25,11 +25,11 @@ import { FilterButton } from "./FilterButton";
 function MyArtifacts() {
   const dispatch = useDispatch();
   const screenWatcher = useScreenWatcher();
-  const userArtifacts = useSelector(selectDbArtifacts);
+  const dbArtifacts = useSelector(selectDbArtifacts);
 
   const [activeId, setActiveId] = useState<number>();
 
-  const { filteredArtifacts, filter, setFilter } = useArtifactFilter(userArtifacts);
+  const { filteredArtifacts, filter, setFilter } = useArtifactFilter(dbArtifacts);
 
   const {
     values: artifactTypes,
@@ -48,7 +48,6 @@ function MyArtifacts() {
   const activeArtifact = useMemo(() => {
     const data = Array_.findById(filteredArtifacts, activeId);
     return data && createArtifact(data);
-    //
   }, [filteredArtifacts, activeId]);
 
   const handleRemoveArtifact = (artifact: Artifact) => {
@@ -74,7 +73,7 @@ function MyArtifacts() {
 
   const actions = (
     <div className="flex items-center space-x-4">
-      <AddButton currentArtifactsCount={userArtifacts.length} />
+      <AddButton currentArtifactsCount={dbArtifacts.length} />
 
       <UserItemSortButton onSelectSort={(sort) => dispatch(sortDbArtifacts(sort))} />
 
@@ -82,7 +81,7 @@ function MyArtifacts() {
         <ArtifactTypeSelect values={artifactTypes} onSelect={toggleArtifactType} />
       )}
 
-      <FilterButton artifacts={userArtifacts} filter={filter} onChange={handleFilterChange} />
+      <FilterButton artifacts={dbArtifacts} filter={filter} onChange={handleFilterChange} />
     </div>
   );
 

@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Modal } from "rond";
 
-import type { IArtifactBasic } from "@/types";
+import type { RawArtifact } from "@/types";
 
 import { ArtifactFilter, ArtifactFilterCondition, DEFAULT_ARTIFACT_FILTER } from "@/components";
 import { CompoundFilterButton } from "../components/CompoundFilterButton";
 
 type FilterButtonProps = {
-  artifacts: IArtifactBasic[];
+  artifacts: RawArtifact[];
   filter: ArtifactFilterCondition;
   onChange?: (filter: ArtifactFilterCondition) => void;
 };

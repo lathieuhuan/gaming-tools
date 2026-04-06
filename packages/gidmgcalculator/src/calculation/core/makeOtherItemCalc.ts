@@ -1,11 +1,11 @@
 import { toMult } from "ron-utils";
 
-import type { CharacterCalc } from "@/models";
+import type { Character } from "@/models";
 import type { TalentCalcItemBonusId } from "@/types";
 import type { CalcResultOtherItem } from "../types";
 import type { ResultRecorder } from "./ResultRecorder";
 
-export function makeOtherItemCalc(performer: CharacterCalc) {
+export function makeOtherItemCalc(performer: Character) {
   const { attkBonusCtrl } = performer;
 
   function calculate(
@@ -15,12 +15,12 @@ export function makeOtherItemCalc(performer: CharacterCalc) {
     flat = 0,
     itemId?: TalentCalcItemBonusId
   ): CalcResultOtherItem {
-    const baseMult = toMult(attkBonusCtrl.get("baseMult_", itemId));
-    let bonusMult = attkBonusCtrl.get("pct_", itemId);
+    const baseMult = toMult(attkBonusCtrl.get("baseMult_", [itemId]));
+    let bonusMult = attkBonusCtrl.get("pct_", [itemId]);
 
     switch (type) {
       case "healing":
-        flat += attkBonusCtrl.get("flat", itemId);
+        flat += attkBonusCtrl.get("flat", [itemId]);
         bonusMult += performer.getAttr("healB_");
         break;
       case "shield":
@@ -29,7 +29,7 @@ export function makeOtherItemCalc(performer: CharacterCalc) {
     }
 
     bonusMult = toMult(bonusMult);
-    const specMult = toMult(attkBonusCtrl.get("specMult_", itemId));
+    const specMult = toMult(attkBonusCtrl.get("specMult_", [itemId]));
 
     base = (base * baseMult + flat) * bonusMult * specMult;
 

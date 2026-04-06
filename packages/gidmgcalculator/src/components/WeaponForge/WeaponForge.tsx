@@ -3,9 +3,9 @@ import { FancyBackSvg, Modal } from "rond";
 
 import type { AppWeapon, WeaponType } from "@/types";
 
+import { createWeapon } from "@/logic/entity.logic";
 import { Weapon } from "@/models";
 import { $AppWeapon } from "@/services";
-import { createWeapon } from "@/logic/entity.logic";
 
 // Component
 import {
@@ -102,14 +102,14 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
 
       if (isConfigStep) {
         setWeaponConfig(weapon);
-      } else {
-        onForgeWeapon(weapon);
+        return;
       }
-    } else {
-      setWeaponConfig(undefined);
+
+      onForgeWeapon(weapon);
+      return;
     }
 
-    return true;
+    setWeaponConfig(undefined);
   };
 
   return (
@@ -145,10 +145,10 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
             mutable
             weapon={weaponConfig}
             refine={(refi, config) => {
-              setWeaponConfig(new Weapon({ ...config, refi }, config.data));
+              setWeaponConfig(config.clone({ state: { refi } }));
             }}
             upgrade={(level, config) => {
-              setWeaponConfig(new Weapon({ ...config, level }, config.data));
+              setWeaponConfig(config.clone({ state: { level } }));
             }}
             actions={[
               {
@@ -162,7 +162,7 @@ function WeaponSmith({ forcedType, onForgeWeapon, onClose, ...templateProps }: W
                 children: "Forge",
                 variant: "primary",
                 onClick: (_, config) => {
-                  onForgeWeapon(new Weapon(config, config.data));
+                  onForgeWeapon(config);
                   afterSelect(config.code);
                 },
               },

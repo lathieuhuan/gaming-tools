@@ -12,7 +12,7 @@ import { TeammateDebuffsView } from "@/components";
 
 export default function DebuffTeammates() {
   const { teammates, team } = useShallowCalcStore((state) =>
-    Object_.pickProps(selectSetup(state), ["teammates", "team"])
+    Object_.extract(selectSetup(state), ["teammates", "team"])
   );
 
   const handleUpdateCtrls = (teammate: TeammateCalc, ctrls: IAbilityDebuffCtrl[]) => {

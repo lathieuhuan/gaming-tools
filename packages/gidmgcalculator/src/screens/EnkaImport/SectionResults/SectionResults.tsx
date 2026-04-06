@@ -1,10 +1,8 @@
-import { Array_ } from "ron-utils";
 import { ClassValue, clsx } from "rond";
 
-import { createArtifact, createWeapon } from "@/logic/entity.logic";
-import { ArtifactGear, CharacterCalc } from "@/models";
-import { GenshinUserBuild } from "@/services/enka";
 import { useSetupImporter } from "@/lib/setup-importer";
+import { createCharacter } from "@/logic/entity.logic";
+import { GenshinUserBuild } from "@/services/enka";
 import IdStore from "@/utils/IdStore";
 import { useDataImportState } from "../DataImporter";
 import { useRequestSaveBuild } from "../DataSaver/BuildSaver";
@@ -27,20 +25,11 @@ export function SectionResults({ className }: SectionResultsProps) {
 
   const handleCalculate = (build: GenshinUserBuild) => {
     const idStore = new IdStore();
-    const weapon = createWeapon(build.weapon, build.weapon.data, idStore);
-    const artifacts = Array_.truthify(build.artifacts).map((artifact) =>
-      createArtifact(artifact, artifact.data, idStore)
-    );
-    const atfGear = new ArtifactGear(artifacts);
     const { basic, data } = build.character;
-    const character = new CharacterCalc(
-      {
-        ...basic,
-        weapon,
-        atfGear,
-      },
-      data
-    );
+    const character = createCharacter(basic, data, {
+      weapon: build.weapon,
+      atfGear: build.atfGear,
+    });
 
     setupImporter.import({
       name: build.name,

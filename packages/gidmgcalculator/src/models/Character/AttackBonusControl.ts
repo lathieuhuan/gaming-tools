@@ -11,7 +11,13 @@ import type {
 
 type AttackBonusGroup = Record<AttackBonusType, AttackBonus[]>;
 
-type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
+export type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
+
+export type GetBonusOptions = {
+  filter?: (bonus: AttackBonus) => boolean;
+}
+
+const defaultFilter = () => true;
 
 export class AttackBonusControl {
   protected group = {} as AttackBonusGroup;
@@ -34,14 +40,15 @@ export class AttackBonusControl {
     return this;
   }
 
-  get(key: AttackBonusKey, ...paths: GetBonusPaths) {
+  get(key: AttackBonusKey, paths: GetBonusPaths, options: GetBonusOptions = {}) {
+    const { filter = defaultFilter } = options;
     let result = 0;
 
     for (const path of paths) {
       const bonuses = (path && this.group[path]) || [];
 
       result += bonuses.reduce((total, bonus) => {
-        return total + (bonus.toKey === key ? bonus.value : 0);
+        return total + (bonus.toKey === key && filter(bonus) ? bonus.value : 0);
       }, 0);
     }
 

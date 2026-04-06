@@ -16,7 +16,7 @@ import type {
   ITeammateWeaponBasic,
 } from "@/types";
 
-type ICharacterBasic = {
+type RawCharacter = {
   name: string;
   level: Level;
   NAs: number;
@@ -26,7 +26,7 @@ type ICharacterBasic = {
   enhanced: boolean;
 };
 
-type IDbCharacter = ICharacterBasic & {
+type IDbCharacter = RawCharacter & {
   weaponID: number;
   artifactIDs: number[];
 };

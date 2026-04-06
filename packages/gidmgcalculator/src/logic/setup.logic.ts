@@ -3,7 +3,6 @@ import { ExactOmit } from "rond";
 
 import type {
   BasicSetupType,
-  IArtifactBasic,
   IArtifactBuffCtrl,
   IDbComplexSetup,
   IDbSetup,
@@ -12,15 +11,13 @@ import type {
   ITeammateArtifact,
   ITeammateBasic,
   ITeammateWeapon,
-  IWeaponBasic,
   IWeaponBuffCtrl,
 } from "@/types";
 
-import { ArtifactGear, CalcSetup, Team, TeammateCalc } from "@/models";
+import { ArtifactGear, CalcSetup, Team, TeammateCalc, Weapon } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import { enhanceCtrls } from "../logic/modifier.logic";
-import IdStore from "../utils/IdStore";
-import { createArtifact, createCharacterCalc, createTarget, createWeapon } from "./entity.logic";
+import { createCharacter, createTarget } from "./entity.logic";
 import { createArtifactBuffCtrls, createWeaponBuffCtrls } from "./modifier.logic";
 
 export function isDbSetup(setup: IDbSetup | IDbComplexSetup): setup is IDbSetup {
@@ -35,7 +32,7 @@ function toDbCtrls<TCtrl extends IModifierCtrlBasic, TExtraKeys extends keyof TC
 
   for (const ctrl of ctrls) {
     if (ctrl.activated) {
-      result.push(Object_.pickProps(ctrl, ["id", "activated", "inputs", ...extraKeys]));
+      result.push(Object_.extract(ctrl, ["id", "activated", "inputs", ...extraKeys]));
     }
   }
 
@@ -176,24 +173,14 @@ function restoreTeammate(teammate: ITeammateBasic, team: Team) {
   return standard;
 }
 
-export function restoreCalcSetup(
-  data: IDbSetup,
-  weaponBasic: IWeaponBasic,
-  artifactBasics: IArtifactBasic[] = [],
-  idStore = new IdStore()
-) {
-  const weapon = createWeapon(weaponBasic, undefined, idStore);
-  const artifacts = artifactBasics.map((artifactBasic) => {
-    return createArtifact(artifactBasic, undefined, idStore);
-  });
-  const atfGear = new ArtifactGear(artifacts);
-
-  const main = createCharacterCalc({
-    ...data.main,
+export function restoreCalcSetup(data: IDbSetup, weapon: Weapon, atfGear: ArtifactGear) {
+  const team = new Team();
+  const main = createCharacter(data.main, null, {
+    state: data.main,
     weapon,
     atfGear,
+    team,
   });
-  const team = new Team();
   const teammates = data.teammates.map((teammate) => restoreTeammate(teammate, team));
 
   team.updateMembers([main, ...teammates]);

@@ -1,6 +1,6 @@
 import { Array_, toMult } from "ron-utils";
 
-import type { CharacterCalc } from "@/models";
+import type { TargetCalc } from "@/models";
 import type {
   AttackBonusKey,
   AttackElement,
@@ -18,17 +18,16 @@ import type {
   CalcResultItemValue,
   CalcResultOtherItem,
 } from "../types";
-import type { TargetCalc } from "../../models/TargetCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { Character } from "@/models";
 import { limitCRate } from "@/logic/stat.logic";
+import { Character } from "@/models";
 import { LUNAR_ATTACK_COEFFICIENT, LUNAR_ATTACK_ELEMENT } from "../constants";
 import { makeAttackItemCalc } from "./makeAttackItemCalc";
 import { makeOtherItemCalc } from "./makeOtherItemCalc";
 
 export function makeTalentCalc(
-  performer: CharacterCalc,
+  performer: Character,
   target: TargetCalc,
   talentType: LevelableTalentType,
   default_: CalcItemDefaultValues,
@@ -139,6 +138,7 @@ export function makeTalentCalc(
       attPatt,
       reaction,
       itemId: item.id,
+      noU: item.noU,
     });
 
     const bases = getBases(item, getBonus("mult_"), recorder);
@@ -157,13 +157,13 @@ export function makeTalentCalc(
     const attElmt = LUNAR_ATTACK_ELEMENT[lunar];
 
     function getBonus(key: AttackBonusKey) {
-      return attkBonusCtrl.get(
-        key,
+      return attkBonusCtrl.get(key, [
         lunar,
         attPatt !== "none" && `${attPatt}.${lunar}`,
         item.id,
-        key === "cRate_" || key === "cDmg_" ? attElmt : null // Only get "cRate_" and "cDmg_" bonus from attElmt
-      );
+        // Only get "cRate_" and "cDmg_" bonus from attElmt
+        key === "cRate_" || key === "cDmg_" ? attElmt : null,
+      ]);
     }
 
     const extraTalentMult = getBonus("mult_");
@@ -226,7 +226,7 @@ export function makeTalentCalc(
   ): CalcResultOtherItem {
     const { flatFactor } = item;
 
-    const extraTalentMult = attkBonusCtrl.get("mult_", item.id);
+    const extraTalentMult = attkBonusCtrl.get("mult_", [item.id]);
     const base = getBases(item, extraTalentMult, recorder)[0];
     let flat = 0;
 

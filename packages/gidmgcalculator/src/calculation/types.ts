@@ -1,5 +1,4 @@
 import type {
-  ActualAttackElement,
   ActualAttackPattern,
   AttackElement,
   AttackPattern,
@@ -14,12 +13,12 @@ import type {
   EntityPenaltyEffect,
   ExclusiveAttackBonusGroup,
   LunarType,
-  TalentCalcItemBonusId,
+  TalentCalcItemBonusId
 } from "@/types";
 import type { ResultRecorder } from "./core/ResultRecorder";
 
 export type IEffectPerformer = {
-  isPerformableEffect(condition?: EffectPerformableCondition, inputs?: number[]): boolean;
+  canPerformEffect(condition?: EffectPerformableCondition, inputs?: number[]): boolean;
   performBonus(config: EntityBonusEffect, tools: Partial<BonusPerformTools>): BareBonus;
   performPenalty(config: EntityPenaltyEffect, inputs?: number[]): number;
 };

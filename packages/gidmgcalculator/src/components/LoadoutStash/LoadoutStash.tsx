@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Button, EntitySelectTemplate, Modal, SwitchNode } from "rond";
 
-import { Artifact } from "@/models";
+import type { Artifact } from "@/models";
 
 // Component
 import { ArtifactCard } from "@/components/ArtifactCard";
-import { ArtifactOption, EquippedSetStash, EquippedSetStashProps } from "./EquippedSetStash";
+import { EquippedSetStash, EquippedSetStashProps } from "./EquippedSetStash";
 
 type LoadoutType = "EQUIPPED" | "CUSTOM";
 
@@ -28,11 +28,11 @@ export function LoadoutStashCore({ onSelect, onClose }: LoadoutStashProps) {
     }
   };
 
-  const handleSelectArtifact = (artifact?: ArtifactOption) => {
-    setSelectedArtifact(artifact && new Artifact(artifact.userData, artifact.data));
+  const handleSelectArtifact = (artifact?: Artifact) => {
+    setSelectedArtifact(artifact);
   };
 
-  const handleSelectSet = (artifacts: ArtifactOption[]) => {
+  const handleSelectSet = (artifacts: Artifact[]) => {
     onSelect?.(artifacts);
   };
 

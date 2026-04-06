@@ -151,12 +151,7 @@ const TavernHall = ({
           />
         );
       }}
-      onChange={(character) => {
-        if (character) {
-          onSelectCharacter(character);
-        }
-        return true;
-      }}
+      onChange={(character) => character && onSelectCharacter(character)}
       onClose={onClose}
       {...templateProps}
     />

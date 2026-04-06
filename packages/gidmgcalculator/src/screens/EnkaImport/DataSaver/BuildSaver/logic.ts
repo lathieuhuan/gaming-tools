@@ -3,7 +3,7 @@ import { Array_ } from "ron-utils";
 import type { GOODCharacterConvertReturn } from "@/logic/converGOOD.logic";
 import type { Weapon } from "@/models";
 import type { GenshinUserBuild } from "@/services/enka";
-import type { ArtifactType, IArtifactBasic, IDbCharacter, IWeaponBasic } from "@/types";
+import type { ArtifactType, IDbCharacter, RawArtifact, RawWeapon } from "@/types";
 import type { ArtifactSavingStep, CharacterSavingStep, WeaponSavingStep } from "./types";
 
 import { ARTIFACT_TYPES } from "@/constants";
@@ -25,62 +25,57 @@ export const getCharacterSavingStep = (
 
 export const getWeaponSavingStep = (
   weapon: GenshinUserBuild["weapon"],
-  userWps: IWeaponBasic[]
+  userWps: RawWeapon[]
 ): WeaponSavingStep => {
   let currentWeapon: Weapon | undefined;
 
   const sameWeapons = userWps.filter((userWp) => {
-    const isSameCode = userWp.code === weapon.code;
-
     if (userWp.owner === weapon.owner) {
       currentWeapon = createWeapon(userWp);
       return false;
     }
 
-    return isSameCode && !userWp.owner;
+    return userWp.code === weapon.code && !userWp.owner;
   });
 
   return {
     type: "WEAPON",
-    data: createWeapon(weapon, weapon.data),
+    data: weapon,
     currentWeapon,
     sameWeapons,
   };
 };
 
 export const getArtifactSavingStep = (
-  artifacts: GenshinUserBuild["artifacts"],
-  userAtfs: IArtifactBasic[]
+  atfGear: GenshinUserBuild["atfGear"],
+  dbArtifacts: RawArtifact[]
 ): ArtifactSavingStep[] => {
-  const configByType = artifacts.reduce<Partial<Record<ArtifactType, ArtifactSavingStep>>>(
-    (acc, artifact) => {
-      if (artifact) {
-        acc[artifact.type] = {
-          type: "ARTIFACT",
-          data: createArtifact(artifact, artifact.data),
-          currentArtifact: undefined,
-          sameArtifacts: [],
-        };
-      }
+  const configByType = atfGear.pieces
+    .list()
+    .reduce<Partial<Record<ArtifactType, ArtifactSavingStep>>>((acc, artifact) => {
+      acc[artifact.type] = {
+        type: "ARTIFACT",
+        data: artifact,
+        currentArtifact: undefined,
+        sameArtifacts: [],
+      };
 
       return acc;
-    },
-    {}
-  );
+    }, {});
 
-  for (const userAtf of userAtfs) {
-    const config = configByType[userAtf.type];
+  for (const dbArtifact of dbArtifacts) {
+    const config = configByType[dbArtifact.type];
     if (!config) {
       continue;
     }
 
-    if (userAtf.owner === config.data.owner) {
-      config.currentArtifact = createArtifact(userAtf);
+    if (dbArtifact.owner === config.data.owner) {
+      config.currentArtifact = createArtifact(dbArtifact);
       continue;
     }
 
-    if (isSameArtifact(config.data, userAtf)) {
-      config.sameArtifacts.push(userAtf);
+    if (isSameArtifact(config.data, dbArtifact)) {
+      config.sameArtifacts.push(dbArtifact);
     }
   }
 

@@ -127,6 +127,7 @@ export type TalentCalcItem = {
 
   // Only on 'attack'
 
+  noU?: boolean;
   jointFactors?: boolean;
   attPatt?: ActualAttackPattern;
   attElmt?: ActualAttackElement;

@@ -1,17 +1,15 @@
 import { ReactNode } from "react";
 import { FaSave } from "react-icons/fa";
-import { Array_ } from "ron-utils";
 import { ClassValue, clsx } from "rond";
 
-import { ARTIFACT_TYPES } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { Artifact, ArtifactGear, CharacterCalc, Weapon } from "@/models";
+import { createCharacter } from "@/logic/entity.logic";
 import { useSelectedBuildState } from "../DataImporter";
 import { useRequestSaveItem } from "../DataSaver/ItemSaver";
 import { useLayoutState } from "../Layout";
 
-import { AttributeTable } from "@/components";
 import { ArtifactCard } from "@/components/ArtifactCard";
+import { AttributeTable } from "@/components/AttributeTable";
 import { WeaponCard } from "@/components/WeaponCard";
 import { BuildArtifacts } from "../components/BuildArtifacts";
 import { TabHeader } from "../components/TabHeader";
@@ -30,24 +28,17 @@ export function SectionDetail({ className }: SectionDetailProps) {
     return <div className={clsx(className)} />;
   }
 
-  const { character, weapon, artifacts, detailType } = selectedBuild;
+  const { character, weapon, atfGear, detailType } = selectedBuild;
   let extraTitle = "";
   let content: ReactNode;
 
   switch (detailType) {
     case "CHARACTER": {
-      const atfPieces = Array_.truthify(artifacts).map(
-        (artifact) => new Artifact(artifact, artifact.data)
-      );
-      const characterCalc = new CharacterCalc(
-        {
-          ...character.basic,
-          weapon: new Weapon(weapon, weapon.data),
-          atfGear: new ArtifactGear(atfPieces),
-        },
-        character.data
-      );
-      const allAttrs = characterCalc.initCalc().allAttrsCtrl.finalize();
+      const $character = createCharacter(character.basic, character.data, {
+        weapon,
+        atfGear,
+      });
+      const allAttrs = $character.initCalculation().allAttrsCtrl.finalize();
 
       extraTitle = "Attributes";
       content = (
@@ -63,7 +54,7 @@ export function SectionDetail({ className }: SectionDetailProps) {
       content = (
         <WeaponCard
           wrapperCls="max-h-full hide-scrollbar"
-          weapon={new Weapon(weapon, weapon.data)}
+          weapon={weapon}
           actions={[
             {
               children: "Save",
@@ -76,12 +67,12 @@ export function SectionDetail({ className }: SectionDetailProps) {
       break;
 
     default: {
-      const artifact = artifacts[detailType];
+      const artifact = atfGear.pieces.get(detailType);
 
-      extraTitle = t(ARTIFACT_TYPES[detailType]);
+      extraTitle = t(detailType);
       content = (
         <ArtifactCard
-          artifact={artifact ? new Artifact(artifact, artifact?.data) : undefined}
+          artifact={artifact}
           actions={[
             {
               children: "Save",
