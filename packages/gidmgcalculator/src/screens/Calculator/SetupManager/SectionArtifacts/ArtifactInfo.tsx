@@ -29,7 +29,7 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
 
   const { rarity = 5, mainStatType } = artifact;
 
-  const mainStatOptions = artifact.possibleMainStatTypes.map((type) => ({
+  const mainStatOptions = artifact.state.possibleMainStatTypes.map((type) => ({
     label: t(type),
     value: type,
   }));
@@ -51,7 +51,7 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
           rarity={rarity}
           level={artifact.level}
           maxLevel={rarity === 5 ? 20 : 16}
-          onChangeLevel={(level) => updateArtifactPiece(artifact.type, "level", level)}
+          onChangeLevel={(level) => updateArtifactPiece(artifact.type, { level })}
         />
 
         <div className="w-full flex flex-col">
@@ -66,7 +66,7 @@ export function ArtifactInfo({ artifact, onRemove, onRequestChange }: ArtifactIn
               options={mainStatOptions}
               value={mainStatType}
               onChange={(mainStatType) =>
-                updateArtifactPiece(artifact.type, "mainStatType", mainStatType)
+                updateArtifactPiece(artifact.type, { mainStatType })
               }
             />
           )}

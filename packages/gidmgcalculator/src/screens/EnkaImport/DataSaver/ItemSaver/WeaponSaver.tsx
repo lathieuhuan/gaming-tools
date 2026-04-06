@@ -4,7 +4,7 @@ import { MdEdit } from "react-icons/md";
 import { notification, OverflowWatcher } from "rond";
 
 import type { Weapon } from "@/models";
-import type { IWeaponBasic } from "@/types";
+import type { RawWeapon } from "@/types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";
 import { useDispatch } from "@Store/hooks";
@@ -19,14 +19,14 @@ import { SavingStepLayout } from "../components/SavingStepLayout";
 
 type WeaponSaverProps = {
   weapon: Weapon;
-  sameWeapons: IWeaponBasic[];
+  sameWeapons: RawWeapon[];
   onComplete?: () => void;
 };
 
 export function WeaponSaver({ weapon, sameWeapons, onComplete }: WeaponSaverProps) {
   const dispatch = useDispatch();
   const { isAbleToAddWeapon } = useStoreCheck();
-  const [selectedWeapon, setSelectedWeapon] = useState<IWeaponBasic>();
+  const [selectedWeapon, setSelectedWeapon] = useState<RawWeapon>();
 
   const handleSave = () => {
     const error = isAbleToAddWeapon(1);

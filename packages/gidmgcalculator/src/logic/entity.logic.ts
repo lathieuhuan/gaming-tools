@@ -1,161 +1,111 @@
 import { Array_, Object_ } from "ron-utils";
+import type { PartiallyRequiredOnly } from "rond";
 
 import type {
   AppArtifact,
   AppCharacter,
   AppMonster,
   AppWeapon,
-  IArtifactBasic,
-  ICharacterBasic,
+  ArtifactKey,
+  ArtifactStateData,
+  CharacterStateData,
+  EquipmentRelationData,
+  RawCharacter,
   ITargetBasic,
-  IWeaponBasic,
   MonsterInputChanges,
+  RawArtifact,
+  RawWeapon,
+  WeaponStateData,
 } from "@/types";
-import type { AdvancedPick, PartiallyRequiredOnly } from "rond";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
-import {
-  Artifact,
-  ArtifactGear,
-  CharacterCalc,
-  Target,
-  Team,
-  Weapon,
-  type CharacterCalcConstructInfo,
-} from "@/models";
+import { Artifact, Character, CharacterConstructOptions, Target, Weapon } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
-import IdStore from "@/utils/IdStore";
 import { useSettingsStore } from "@Store/settings";
 
 // ========== ARTIFACT ==========
 
-export type CreateArtifactParams = AdvancedPick<
-  IArtifactBasic,
-  "type" | "code" | "rarity",
-  "ID" | "level" | "mainStatType" | "subStats" | "owner" | "setupIDs"
->;
-
-export const createArtifactBasic = (
-  params: CreateArtifactParams,
-  idStore?: IdStore
-): IArtifactBasic => {
-  const {
-    ID = idStore?.gen() || Date.now(),
-    level = useSettingsStore.getState().artLevel,
-    mainStatType = "hp",
-    subStats = [
-      { type: "def", value: 0 },
-      { type: "def_", value: 0 },
-      { type: "cRate_", value: 0 },
-      { type: "cDmg_", value: 0 },
-    ],
-  } = params;
-
-  return Object_.patch<IArtifactBasic>(
-    {
-      ID,
-      type: params.type,
-      rarity: params.rarity,
-      code: params.code,
-      level,
-      mainStatType,
-      subStats,
-    },
-    {
-      owner: params.owner,
-      setupIDs: params.setupIDs,
-    }
-  );
+export type CreateArtifactOptions = {
+  newState?: Partial<ArtifactStateData>;
+  newRelation?: Partial<EquipmentRelationData>;
 };
 
-export const createArtifact = (
-  params: CreateArtifactParams,
-  data: AppArtifact = $AppArtifact.getSet(params.code)!,
-  idStore?: IdStore
-) => {
-  return new Artifact(createArtifactBasic(params, idStore), data);
-};
+export function createArtifact(
+  raw: PartiallyRequiredOnly<RawArtifact, keyof ArtifactKey>,
+  data?: AppArtifact | null,
+  options: CreateArtifactOptions = {}
+) {
+  const state: Partial<ArtifactStateData> = {
+    ...raw,
+    ...options.newState,
+  };
+  const relation: Partial<EquipmentRelationData> = {
+    ...raw,
+    ...options.newRelation,
+  };
+
+  data ??= $AppArtifact.getSet(raw.code)!;
+
+  return new Artifact(raw, data, { state, relation });
+}
 
 // ========== WEAPON ==========
 
-export type CreateWeaponParams = PartiallyRequiredOnly<IWeaponBasic, "type">;
-
-export const createWeaponBasic = (params: CreateWeaponParams, idStore?: IdStore): IWeaponBasic => {
-  const { wpLevel, wpRefi } = useSettingsStore.getState();
-  const { ID = idStore?.gen() || Date.now(), type, level = wpLevel, refi = wpRefi } = params;
-  const code = params.code || Weapon.DEFAULT_CODE[type];
-
-  return Object_.patch<IWeaponBasic>(
-    {
-      ID,
-      type,
-      code,
-      level,
-      refi,
-    },
-    {
-      owner: params.owner,
-      setupIDs: params.setupIDs,
-    }
-  );
+export type CreateWeaponOptions = {
+  newState?: Partial<WeaponStateData>;
+  newRelation?: Partial<EquipmentRelationData>;
 };
 
-export const createWeapon = (params: CreateWeaponParams, data?: AppWeapon, idStore?: IdStore) => {
-  const basic = createWeaponBasic(params, idStore);
-  const data_ = data ?? $AppWeapon.get(basic.code)!;
+export function createWeapon(
+  raw: PartiallyRequiredOnly<RawWeapon, "type">,
+  data?: AppWeapon | null,
+  options: CreateWeaponOptions = {}
+) {
+  const { ID = Date.now(), type, code = Weapon.DEFAULT_CODE[type] } = raw;
+  const state: Partial<WeaponStateData> = {
+    ...raw,
+    ...options.newState,
+  };
+  const relation: Partial<EquipmentRelationData> = {
+    ...raw,
+    ...options.newRelation,
+  };
 
-  return new Weapon(basic, data_);
-};
+  data ??= $AppWeapon.get(code)!;
+
+  return new Weapon({ ID, type, code }, data, { state, relation });
+}
 
 // ========== ITEMS ==========
 
-export function isWeapon(item: IWeaponBasic | IArtifactBasic): item is IWeaponBasic {
+export function isWeapon(item: RawWeapon | RawArtifact): item is RawWeapon {
   return "refi" in item;
 }
 
 // ========== CHARACTER ==========
 
-export type CreateCharacterParams = PartiallyRequiredOnly<ICharacterBasic, "code">;
-
-export const createCharacterBasic = (params: CreateCharacterParams): ICharacterBasic => {
-  const { charLevel, charCons, charNAs, charES, charEB, charEnhanced } =
-    useSettingsStore.getState();
-
-  const {
-    code,
-    level = charLevel,
-    NAs = charNAs,
-    ES = charES,
-    EB = charEB,
-    cons = charCons,
-    enhanced = !!charEnhanced,
-  } = params;
-
-  return { code, level, NAs, ES, EB, cons, enhanced };
+export type CreateCharacterOptions = CharacterConstructOptions & {
+  weapon?: Weapon;
 };
 
-type CreateCharacterCalcParams = PartiallyRequiredOnly<
-  CharacterCalcConstructInfo<Weapon, ArtifactGear>,
-  "code" | "weapon" | "atfGear"
->;
+export function createCharacter(
+  raw: PartiallyRequiredOnly<RawCharacter, "code">,
+  data?: AppCharacter | null,
+  options: CreateCharacterOptions = {}
+) {
+  data ??= $AppCharacter.get(raw.code);
 
-export const createCharacterCalc = (
-  params: CreateCharacterCalcParams,
-  data: AppCharacter = $AppCharacter.get(params.code),
-  team?: Team
-) => {
-  const basic = createCharacterBasic(params);
+  const { weapon = createWeapon({ type: data.weaponType }) } = options;
+  const state: Partial<CharacterStateData> = {
+    ...raw,
+    ...options.state,
+  };
 
-  return new CharacterCalc(
-    {
-      ...basic,
-      weapon: params.weapon,
-      atfGear: params.atfGear,
-    },
-    data,
-    team
-  );
-};
+  return new Character(raw.code, data, weapon, {
+    ...options,
+    state,
+  });
+}
 
 // ========== TARGET ==========
 

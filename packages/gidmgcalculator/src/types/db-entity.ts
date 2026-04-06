@@ -1,9 +1,7 @@
 import type { BasicSetupType } from "./calculator";
-import type { IArtifactBasic, ICharacterBasic, ISetupBasic, IWeaponBasic } from "./entity";
+import type { RawCharacter, ISetupBasic } from "./entity";
 
-export type IDbItem = IWeaponBasic | IArtifactBasic;
-
-export type IDbCharacter = ICharacterBasic & {
+export type IDbCharacter = RawCharacter & {
   weaponID: number;
   artifactIDs: number[];
 };

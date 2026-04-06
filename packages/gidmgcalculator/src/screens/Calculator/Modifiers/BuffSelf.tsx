@@ -11,7 +11,7 @@ import { SelfBuffsView } from "@/components";
 
 export default function BuffSelf() {
   const { main, team, selfBuffCtrls } = useShallowCalcStore((state) =>
-    Object_.pickProps(selectSetup(state), ["main", "team", "selfBuffCtrls"])
+    Object_.extract(selectSetup(state), ["main", "team", "selfBuffCtrls"])
   );
 
   const handleUpdateCtrls = (newCtrls: IAbilityBuffCtrl[]) => {

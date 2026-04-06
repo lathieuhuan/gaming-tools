@@ -65,7 +65,7 @@ export class Object_ {
     }
   }
 
-  static pickProps<TObject, TKey extends keyof TObject = keyof TObject>(
+  static extract<TObject, TKey extends keyof TObject = keyof TObject>(
     obj: TObject,
     keys: TKey[]
   ) {
@@ -112,8 +112,8 @@ export class Object_ {
     return object;
   }
 
-  static assign<TObj extends object>(obj: TObj, props: Partial<TObj>): TObj {
-    return Object.assign(obj, props);
+  static assign<TObj extends object>(obj: TObj, ...props: Partial<TObj>[]): TObj {
+    return Object.assign(obj, ...props) as TObj;
   }
 
   static safeAssign<TObj extends object>(
@@ -130,20 +130,23 @@ export class Object_ {
     return obj;
   }
 
-  static deepMerge<TObj extends object>(obj: TObj, ...changes: DeepPartial<TObj>[]): TObj {
-    return deepMerge(obj, ...changes) as TObj;
-  }
-
+  /**
+   * Use with caution!
+   * This utility leads to redundant properties in the `obj`,
+   * when the actual properties in `props` is more than its type definition.
+   */
   static patch<TObj extends object>(obj: TObj, props: Partial<TObj>): TObj {
-    const result = obj;
-
     for (const [key, value] of Object_.entries(props)) {
-      if (value !== undefined) {
-        result[key] = value;
+      if (value !== undefined && typeof value !== "function") {
+        obj[key] = value;
       }
     }
 
-    return result;
+    return obj;
+  }
+
+  static deepMerge<TObj extends object>(obj: TObj, ...changes: DeepPartial<TObj>[]): TObj {
+    return deepMerge(obj, ...changes) as TObj;
   }
 
   static clone<T>(item: T): T {

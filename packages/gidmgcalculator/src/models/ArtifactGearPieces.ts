@@ -1,16 +1,14 @@
-import type { ArtifactType, IArtifactGearPieces } from "@/types";
+import type { ArtifactType } from "@/types";
 import type { Artifact } from "./Artifact";
 import type { Clonable } from "./interfaces";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
 
-export class ArtifactGearPieces<TArtifact extends Artifact>
-  extends Map<ArtifactType, TArtifact>
-  implements IArtifactGearPieces<TArtifact>, Clonable<ArtifactGearPieces<TArtifact>>
+export class ArtifactGearPieces
+  extends Map<ArtifactType, Artifact>
+  implements Clonable<ArtifactGearPieces>
 {
-  constructor(
-    pieces: Partial<Record<ArtifactType, TArtifact>> | Map<ArtifactType, TArtifact> = {}
-  ) {
+  constructor(pieces: Partial<Record<ArtifactType, Artifact>> | Map<ArtifactType, Artifact> = {}) {
     super();
 
     const getPiece =
@@ -27,19 +25,19 @@ export class ArtifactGearPieces<TArtifact extends Artifact>
     }
   }
 
-  list(): TArtifact[] {
+  list(): Artifact[] {
     return Array.from(this.values());
   }
 
-  clone(): ArtifactGearPieces<TArtifact> {
+  clone(): ArtifactGearPieces {
     return new ArtifactGearPieces(this);
   }
 
-  deepClone(): ArtifactGearPieces<TArtifact> {
-    const pieces: Partial<Record<ArtifactType, TArtifact>> = {};
+  deepClone(): ArtifactGearPieces {
+    const pieces: Partial<Record<ArtifactType, Artifact>> = {};
 
     for (const type of ARTIFACT_TYPES) {
-      pieces[type] = this.get(type)?.clone() as TArtifact | undefined;
+      pieces[type] = this.get(type)?.clone();
     }
 
     return new ArtifactGearPieces(pieces);

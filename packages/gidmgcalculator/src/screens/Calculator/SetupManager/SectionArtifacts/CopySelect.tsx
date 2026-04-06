@@ -12,7 +12,7 @@ type Option = {
 
 export function CopySelect() {
   const { setupManagers, setupsById } = useShallowCalcStore((state) =>
-    Object_.pickProps(state, ["setupManagers", "setupsById"])
+    Object_.extract(state, ["setupManagers", "setupsById"])
   );
 
   const copyOptions = setupManagers.reduce<Option[]>((results, manager) => {

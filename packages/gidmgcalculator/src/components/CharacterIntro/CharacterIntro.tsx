@@ -1,7 +1,7 @@
 import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
 import { Badge, Button, clsx, Rarity, VersatileSelect } from "rond";
 
-import type { AppCharacter, ICharacterBasic, Level } from "@/types";
+import type { AppCharacter, RawCharacter, Level } from "@/types";
 
 import { EnhanceTag } from "../EnhanceTag";
 import { GenshinImage } from "../GenshinImage";
@@ -9,7 +9,7 @@ import { CharacterLevelControl } from "../LevelControl";
 
 type CharacterIntroProps = {
   className?: string;
-  character: ICharacterBasic & { data: AppCharacter };
+  character: RawCharacter & { data: AppCharacter };
   switchable?: boolean;
   removable?: boolean;
   /** Default true */

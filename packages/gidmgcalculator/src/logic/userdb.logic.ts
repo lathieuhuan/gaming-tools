@@ -1,71 +1,55 @@
 import { Array_ } from "ron-utils";
 
-import type { IArtifactBasic, IDbCharacter, IWeaponBasic, WeaponType } from "@/types";
+import type { IDbCharacter, RawArtifact, RawWeapon, WeaponType } from "@/types";
 
-import { ArtifactGear, Team } from "@/models";
+import { createArtifact, createCharacter, createWeapon } from "@/logic/entity.logic";
+import { Artifact, ArtifactGear, Team } from "@/models";
 import { $AppCharacter } from "@/services";
-import {
-  createArtifact,
-  createArtifactBasic,
-  createCharacterCalc,
-  createWeapon,
-  createWeaponBasic,
-} from "@/logic/entity.logic";
 import IdStore from "@/utils/IdStore";
 
-export function parseDbWeapon(weaponID: number, dbWeapons: IWeaponBasic[], weaponType: WeaponType) {
+export function parseDbWeapon(
+  weaponID: number,
+  dbWeapons: RawWeapon[],
+  weaponType: WeaponType,
+  idStore?: IdStore
+) {
   const dbWeapon = Array_.findById(dbWeapons, weaponID);
 
   const weapon = dbWeapon
-    ? createWeaponBasic(dbWeapon)
-    : createWeaponBasic({ ID: Date.now(), type: weaponType });
+    ? createWeapon(dbWeapon)
+    : createWeapon({ ID: idStore?.gen(), type: weaponType });
 
   return weapon;
 }
 
-export function parseDbArtifacts(artifactIDs: number[] = [], dbArtifacts: IArtifactBasic[]) {
-  const artifacts: IArtifactBasic[] = [];
+export function parseDbArtifacts(artifactIDs: number[] = [], dbArtifacts: RawArtifact[]) {
+  const artifacts: Artifact[] = [];
 
   for (const artifactID of artifactIDs) {
     const dbArtifact = Array_.findById(dbArtifacts, artifactID);
 
     if (dbArtifact) {
-      artifacts.push(createArtifactBasic(dbArtifact));
+      artifacts.push(createArtifact(dbArtifact));
     }
   }
 
-  return artifacts;
+  return new ArtifactGear(artifacts);
 }
 
 export function makeCharacterCalcFromDb(
   character: IDbCharacter,
-  dbWeapons: IWeaponBasic[],
-  dbArtifacts: IArtifactBasic[],
+  dbWeapons: RawWeapon[],
+  dbArtifacts: RawArtifact[],
   data = $AppCharacter.get(character.code),
   team?: Team
 ) {
   const { weaponID, artifactIDs } = character;
-  const weaponBasic = weaponID
-    ? parseDbWeapon(weaponID, dbWeapons, data.weaponType)
-    : createWeaponBasic({ type: data.weaponType });
+  const weapon = parseDbWeapon(weaponID, dbWeapons, data.weaponType);
+  const atfGear = parseDbArtifacts(artifactIDs, dbArtifacts);
 
-  // weaponBasic.ID !== weaponID => weaponBasic is new => use weaponBasic.ID as seed
-  const idStore = new IdStore(weaponBasic.ID !== weaponID ? weaponBasic.ID : undefined);
-
-  const artifacts = parseDbArtifacts(artifactIDs, dbArtifacts).map((artifactBasic) =>
-    createArtifact(artifactBasic, undefined, idStore)
-  );
-
-  const weapon = createWeapon(weaponBasic);
-  const atfGear = new ArtifactGear(artifacts);
-
-  return createCharacterCalc(
-    {
-      ...character,
-      weapon,
-      atfGear,
-    },
-    data,
-    team
-  );
+  return createCharacter(character, data, {
+    weapon,
+    atfGear,
+    team,
+  });
 }

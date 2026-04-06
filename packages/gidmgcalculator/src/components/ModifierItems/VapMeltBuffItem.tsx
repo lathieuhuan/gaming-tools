@@ -1,6 +1,6 @@
 import { round } from "ron-utils";
 
-import type { CharacterCalc } from "@/models";
+import type { Character } from "@/models";
 import type { AmplifyingReaction, ElementType } from "@/types";
 
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
@@ -9,7 +9,7 @@ import { markGreen } from "../Span";
 type VapMeltBuffItemProps = Pick<GenshinModifierViewProps, "mutable" | "checked" | "onToggle"> & {
   reaction: AmplifyingReaction;
   element: ElementType;
-  character: CharacterCalc;
+  character: Character;
 };
 
 export function VapMeltBuffItem({ reaction, element, character, ...rest }: VapMeltBuffItemProps) {

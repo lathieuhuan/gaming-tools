@@ -1,11 +1,11 @@
 import type { MouseEvent } from "react";
 import { clsx, Radio } from "rond";
 
-import type { IWeaponBasic } from "@/types";
+import type { RawWeapon } from "@/types";
 
 const SLOT_NAME = "weapon-summary";
 
-export function WeaponSubtitle({ item }: { item: IWeaponBasic }) {
+export function WeaponSubtitle({ item }: { item: RawWeapon }) {
   return (
     <div className="text-sm text-light-4 flex items-center gap-2">
       <span>Level: {item.level}</span>
@@ -20,7 +20,7 @@ type WeaponSummaryProps = {
   /** Default "default" */
   variant?: "primary" | "default";
   label: React.ReactNode;
-  weapon: IWeaponBasic;
+  weapon: RawWeapon;
   selectable?: boolean;
   selected?: boolean;
   onSelect?: () => void;

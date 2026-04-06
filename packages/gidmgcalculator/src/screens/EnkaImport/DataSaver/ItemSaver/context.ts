@@ -1,9 +1,11 @@
 import { createContext, useContext } from "react";
-import { GenshinUserBuild } from "@/services/enka";
+
+import type { GenshinUserBuild } from "@/services/enka";
+import type { ArtifactType } from "@/types";
 
 export type ItemSaverContextState = (
   build: GenshinUserBuild,
-  saveType: "WEAPON" | "ARTIFACTS" | number
+  saveType: "WEAPON" | "ARTIFACTS" | ArtifactType
 ) => void;
 
 export const ItemSaverContext = createContext<ItemSaverContextState>(() => {});

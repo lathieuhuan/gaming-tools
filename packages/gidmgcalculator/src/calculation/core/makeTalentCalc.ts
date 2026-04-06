@@ -1,6 +1,6 @@
 import { Array_, toMult } from "ron-utils";
 
-import type { CharacterCalc } from "@/models";
+import type { TargetCalc } from "@/models";
 import type {
   AttackBonusKey,
   AttackElement,
@@ -18,17 +18,16 @@ import type {
   CalcResultItemValue,
   CalcResultOtherItem,
 } from "../types";
-import type { TargetCalc } from "../../models/TargetCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { Character } from "@/models";
 import { limitCRate } from "@/logic/stat.logic";
+import { Character } from "@/models";
 import { LUNAR_ATTACK_COEFFICIENT, LUNAR_ATTACK_ELEMENT } from "../constants";
 import { makeAttackItemCalc } from "./makeAttackItemCalc";
 import { makeOtherItemCalc } from "./makeOtherItemCalc";
 
 export function makeTalentCalc(
-  performer: CharacterCalc,
+  performer: Character,
   target: TargetCalc,
   talentType: LevelableTalentType,
   default_: CalcItemDefaultValues,
@@ -57,7 +56,7 @@ export function makeTalentCalc(
 
     for (const factor of Array_.toArray(item.factor)) {
       const { root, scale, basedOn } = parseFactor(factor);
-      const value = performer.getAttr(basedOn);
+      const value = performer.getAttribute(basedOn);
       const totalMult = root * Character.getTalentMult(scale, level) + extraTalentMult;
 
       bases.push((value * totalMult) / 100);
@@ -179,8 +178,8 @@ export function makeTalentCalc(
     const resMult = target.resistMults[attElmt];
 
     // CRITS
-    const cRate_ = limitCRate(performer.getAttr("cRate_") + getBonus("cRate_")) / 100;
-    const cDmg_ = (performer.getAttr("cDmg_") + getBonus("cDmg_")) / 100;
+    const cRate_ = limitCRate(performer.getAttribute("cRate_") + getBonus("cRate_")) / 100;
+    const cDmg_ = (performer.getAttribute("cDmg_") + getBonus("cDmg_")) / 100;
     const cDmgMult = 1 + cDmg_;
     const averageMult = 1 + cRate_ * cDmg_;
 

@@ -2,7 +2,7 @@ import { forwardRef, useImperativeHandle, useState } from "react";
 import { ConfirmModal, message } from "rond";
 
 import type { Weapon } from "@/models";
-import type { IWeaponBasic } from "@/types";
+import type { RawWeapon } from "@/types";
 
 import { Tavern, WeaponCard } from "@/components";
 import { useDispatch } from "@Store/hooks";
@@ -16,7 +16,7 @@ export type ActiveWeaponViewControlRef = {
 
 type ActiveWeaponViewProps = {
   weapon?: Weapon;
-  onRemoveWeapon?: (weapon: IWeaponBasic) => void;
+  onRemoveWeapon?: (weapon: RawWeapon) => void;
 };
 
 export const ActiveWeaponView = forwardRef<ActiveWeaponViewControlRef, ActiveWeaponViewProps>(

@@ -5,7 +5,7 @@ import { Button, message } from "rond";
 import { ArtifactForge } from "@/components";
 import { MAX_USER_ARTIFACTS } from "@/constants";
 import { Artifact } from "@/models";
-import { IArtifactBasic } from "@/types";
+import { RawArtifact } from "@/types";
 import { useDispatch } from "@Store/hooks";
 import { addDbArtifact } from "@Store/userdbSlice";
 
@@ -35,12 +35,8 @@ export function AddButton({ currentArtifactsCount }: AddButtonProps) {
 
   const handleForgeArtifact = (artifact: Artifact) => {
     if (isNewArtifactAddable()) {
-      const newUserArtifact: IArtifactBasic = {
-        ...artifact,
-        ID: Date.now(),
-      };
-
-      dispatch(addDbArtifact(newUserArtifact));
+      // TODO check if we can improve this
+      dispatch(addDbArtifact(artifact.serialize()));
     }
   };
 

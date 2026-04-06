@@ -31,17 +31,9 @@ import {
   WEAPON_TYPES,
 } from "@/constants/global";
 import { isManualRsnElmt } from "@/logic/element.logic";
-import { createArtifact, createTarget, createWeapon } from "@/logic/entity.logic";
+import { createArtifact, createCharacter, createTarget, createWeapon } from "@/logic/entity.logic";
 import { enhanceCtrls } from "@/logic/modifier.logic";
-import {
-  Artifact,
-  ArtifactGear,
-  CalcSetup,
-  CharacterCalc,
-  Target,
-  Team,
-  TeammateCalc,
-} from "@/models";
+import { Artifact, ArtifactGear, CalcSetup, Target, Team, TeammateCalc } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
 import IdStore from "@/utils/IdStore";
 import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./config";
@@ -180,7 +172,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
     ])
   );
 
-  const main = new CharacterCalc(
+  const main = createCharacter(
     {
       code: mainData.code,
       enhanced: enhancedCode === "1",
@@ -189,11 +181,13 @@ export function decodeSetupCurrent(code: string): DecodeResult {
       NAs: parseNumber(NAs, "NAs"),
       ES: parseNumber(ES, "ES"),
       EB: parseNumber(EB, "EB"),
-      weapon,
-      atfGear,
     },
     mainData,
-    team
+    {
+      weapon,
+      atfGear,
+      team,
+    }
   );
 
   // ===== ARTIFACT BUFFS =====

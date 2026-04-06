@@ -12,7 +12,7 @@ import { ArtifactBuffsView } from "@/components";
 
 export default function BuffArtifact() {
   const { artBuffCtrls, teammates } = useShallowCalcStore((state) => {
-    return Object_.pickProps(selectSetup(state), ["artBuffCtrls", "teammates"]);
+    return Object_.extract(selectSetup(state), ["artBuffCtrls", "teammates"]);
   });
 
   const handleUpdateSelfCtrls = (newCtrls: IArtifactBuffCtrl[]) => {

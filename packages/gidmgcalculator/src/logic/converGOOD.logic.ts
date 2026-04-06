@@ -1,12 +1,4 @@
-import type {
-  AppCharacter,
-  AttributeStat,
-  ElementType,
-  IArtifact,
-  ICharacterBasic,
-  IWeapon,
-  Level,
-} from "@/types";
+import type { AppCharacter, AttributeStat, ElementType, RawCharacter, Level } from "@/types";
 import type {
   GOODArtifact,
   GOODAscendable,
@@ -17,6 +9,7 @@ import type {
 
 import { ELEMENT_TYPES, LEVELS } from "@/constants/global";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
+import { createArtifact, createWeapon } from "./entity.logic";
 
 export function toGOODKey(name: string) {
   let result = "";
@@ -92,7 +85,7 @@ export function findGOODCharacter(key: string): AppCharacter | undefined {
 }
 
 export type GOODCharacterConvertReturn = {
-  basic: ICharacterBasic;
+  basic: RawCharacter;
   data: AppCharacter;
 };
 
@@ -120,24 +113,26 @@ export function convertGOODCharacter(
   };
 }
 
-export function convertGOODWeapon(weapon: GOODWeapon, ID: number): IWeapon | undefined {
+export function convertGOODWeapon(weapon: GOODWeapon, ID: number) {
   const data = $AppWeapon.getAll().find((data) => toGOODKey(data.name) === weapon.key);
 
   if (!data) {
     return undefined;
   }
 
-  return {
-    ID,
-    code: data.code,
-    type: data.type,
-    level: convertGOODLevel(weapon),
-    refi: weapon.refinement,
-    data,
-  };
+  return createWeapon(
+    {
+      ID,
+      code: data.code,
+      type: data.type,
+      level: convertGOODLevel(weapon),
+      refi: weapon.refinement,
+    },
+    data
+  );
 }
 
-export function convertGOODArtifact(artifact: GOODArtifact, ID: number): IArtifact | undefined {
+export function convertGOODArtifact(artifact: GOODArtifact, ID: number) {
   if (artifact.rarity < 4) {
     return undefined;
   }
@@ -148,17 +143,19 @@ export function convertGOODArtifact(artifact: GOODArtifact, ID: number): IArtifa
     return undefined;
   }
 
-  return {
-    ID,
-    code: data.code,
-    type: artifact.slotKey,
-    rarity: artifact.rarity,
-    mainStatType: convertGOODStatKey(artifact.mainStatKey) || "atk",
-    subStats: artifact.substats.map((substat) => ({
-      type: convertGOODStatKey(substat.key) || "atk",
-      value: substat.value,
-    })),
-    level: artifact.level,
-    data,
-  };
+  return createArtifact(
+    {
+      ID,
+      code: data.code,
+      type: artifact.slotKey,
+      rarity: artifact.rarity,
+      mainStatType: convertGOODStatKey(artifact.mainStatKey) || "atk",
+      subStats: artifact.substats.map((substat) => ({
+        type: convertGOODStatKey(substat.key) || "atk",
+        value: substat.value,
+      })),
+      level: artifact.level,
+    },
+    data
+  );
 }

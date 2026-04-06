@@ -37,14 +37,14 @@ function MySetups() {
     const { dbSetup } = info;
     const { ID, name, type, main } = dbSetup;
     const mainData = info.setup.main.data;
-    const weaponBasic = parseDbWeapon(main.weaponID, userWeapons, mainData.weaponType);
-    const artifactBasics = parseDbArtifacts(main.artifactIDs, userArtifacts);
+    const weapon = parseDbWeapon(main.weaponID, userWeapons, mainData.weaponType);
+    const atfGear = parseDbArtifacts(main.artifactIDs, userArtifacts);
 
     setupImporter.import({
       ID,
       name,
       type,
-      params: restoreCalcSetup(dbSetup, weaponBasic, artifactBasics),
+      params: restoreCalcSetup(dbSetup, weapon, atfGear),
       source: "MY_SETUPS",
     });
   };

@@ -1,7 +1,7 @@
 import { FaInfo } from "react-icons/fa";
 import { Button, CloseButton, clsx } from "rond";
 
-import type { ArtifactType, IArtifactGearSet } from "@/types";
+import type { ArtifactType, ArtifactGearSet } from "@/types";
 import type { GearsDetailType } from "./types";
 
 import { EquipmentDisplay, EquipmentDisplayProps, EquipmentType } from "@/components";
@@ -30,7 +30,7 @@ export function GearsOverview({
   const { weapon, atfGear } = useActiveChar();
   const atfGearSets = atfGear.sets;
 
-  const renderSet = (set?: IArtifactGearSet) => {
+  const renderSet = (set?: ArtifactGearSet) => {
     return (
       set && (
         <p className="text-bonus font-medium">

@@ -11,7 +11,7 @@ import type {
   IAbilityDebuffCtrl,
   IArtifactBuffCtrl,
   IArtifactDebuffCtrl,
-  IArtifactGearSet,
+  ArtifactGearSet,
   IModifierCtrl,
   IModifierCtrlBasic,
   ITeam,
@@ -145,7 +145,7 @@ export function createWeaponBuffCtrls(
   return Array_.filterMap(buffs, filterFor(forSelf), createModCtrl(forSelf));
 }
 
-export function createMainArtifactBuffCtrls(sets: IArtifactGearSet[]): IArtifactBuffCtrl[] {
+export function createMainArtifactBuffCtrls(sets: ArtifactGearSet[]): IArtifactBuffCtrl[] {
   const ctrls: IArtifactBuffCtrl[] = [];
 
   for (const set of sets) {
@@ -187,7 +187,7 @@ export function createArtifactBuffCtrls(
   return [];
 }
 
-export function createArtifactDebuffCtrls(sets: IArtifactGearSet[], teammates: TeammateCalc[]) {
+export function createArtifactDebuffCtrls(sets: ArtifactGearSet[], teammates: TeammateCalc[]) {
   const ctrls: IArtifactDebuffCtrl[] = [];
   const vvArtifact = $AppArtifact.vvArtifact;
   const deepwoodArtifact = $AppArtifact.deepwoodArtifact;

@@ -14,7 +14,7 @@ type UseLayoutPropsReturn = Pick<FinalResultLayoutProps, "showWeaponCalc" | "hea
 
 export function useLayoutProps(comparedIds: number[]): UseLayoutPropsReturn {
   const { setupManagers, setupsById, standardId } = useShallowCalcStore((state) =>
-    Object_.pickProps(state, ["setupManagers", "setupsById", "standardId"])
+    Object_.extract(state, ["setupManagers", "setupsById", "standardId"])
   );
 
   const standardWeapon = setupsById[standardId].main.weapon.code;

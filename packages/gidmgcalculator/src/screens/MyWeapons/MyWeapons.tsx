@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Array_ } from "ron-utils";
 import { useScreenWatcher, useValues, WarehouseLayout } from "rond";
 
-import type { IWeaponBasic, WeaponType } from "@/types";
+import type { RawWeapon, WeaponType } from "@/types";
 
 import { createWeapon } from "@/logic/entity.logic";
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -50,7 +50,7 @@ function MyWeapons() {
     return data && createWeapon(data);
   }, [filteredWeapons, activeId]);
 
-  const handleRemoveWeapon = (weapon: IWeaponBasic) => {
+  const handleRemoveWeapon = (weapon: RawWeapon) => {
     const removedIndex = Array_.indexById(filteredWeapons, weapon.ID);
 
     if (removedIndex !== -1) {

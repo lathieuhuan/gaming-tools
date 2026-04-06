@@ -2,9 +2,10 @@ import { useRef, useState } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { Popover, useClickOutside, type ClickOutsideHandler } from "rond";
 
-import type { IDbItem, IDbSetup, IWeaponBasic } from "@/types";
+import type { RawArtifact, IDbSetup, RawWeapon } from "@/types";
 
-import { useItemBoundSetups, type BoundingItem } from "@/hooks";
+import { useItemBoundSetups } from "@/hooks";
+import { isWeapon } from "@/logic/entity.logic";
 import { $AppCharacter } from "@/services";
 
 type SetupListProps = {
@@ -31,10 +32,7 @@ const SetupList = ({ setups, onClickOutside }: SetupListProps) => {
 type OwnerLabelProps = {
   className?: string;
   style?: React.CSSProperties;
-  item?: BoundingItem & {
-    owner?: IDbItem["owner"];
-    refi?: IWeaponBasic["refi"];
-  };
+  item?: RawArtifact | RawWeapon;
 };
 
 export function OwnerLabel({ className = "", style, item }: OwnerLabelProps) {
@@ -44,7 +42,7 @@ export function OwnerLabel({ className = "", style, item }: OwnerLabelProps) {
     isMounted: false,
   });
 
-  const containingSetups = useItemBoundSetups(item, item && "refi" in item);
+  const containingSetups = useItemBoundSetups(item, item && isWeapon(item));
 
   const onClickPuzzlePiece = () => {
     setList((prevList) => {

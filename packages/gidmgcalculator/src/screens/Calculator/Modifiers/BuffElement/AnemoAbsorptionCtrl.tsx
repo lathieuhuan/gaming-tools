@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { SelectOption, VersatileSelect } from "rond";
 
+import type { Character } from "@/models";
 import type { ElementType, ElementalEvent } from "@/types";
-import type { CharacterCalc } from "@/models";
 
 import { updateElementalEvent } from "@Store/calculator/actions";
 
@@ -11,7 +11,7 @@ import { AttackReactionCtrl } from "./AttackReactionCtrl";
 
 type AnemoAbsorptionCtrlProps = {
   elmtEvent: ElementalEvent;
-  character: CharacterCalc;
+  character: Character;
 };
 
 export function AnemoAbsorptionCtrl({ elmtEvent, character }: AnemoAbsorptionCtrlProps) {

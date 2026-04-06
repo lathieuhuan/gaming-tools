@@ -24,7 +24,7 @@ export type ITeamMember<TTeam extends ITeam = ITeam> = {
   enhanced: boolean;
   data: AppCharacter;
   joinTeam(team: TTeam): void;
-  isPerformableEffect(condition?: EffectPerformableCondition, inputs?: number[]): boolean;
+  canPerformEffect(condition?: EffectPerformableCondition, inputs?: number[]): boolean;
 };
 
 export type ITeam = {

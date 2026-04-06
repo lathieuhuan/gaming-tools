@@ -63,7 +63,8 @@ export function ArtifactCard<T extends Artifact = Artifact>({
         ) : null}
       </div>
 
-      {withOwnerLabel ? <OwnerLabel className="mt-3" item={artifact} /> : null}
+      {/* TODO find a solution when we don't need to serialize the artifact */}
+      {withOwnerLabel ? <OwnerLabel className="mt-3" item={artifact?.serialize()} /> : null}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { Object_, round } from "ron-utils";
 
 import type { AllAttributes, AttributeBonus, AttributeStat, BaseAttributeStat } from "@/types";
-import type { CharacterCalc } from "./CharacterCalc";
+import type { Character } from "./Character";
 
 import { ATTRIBUTE_STAT_TYPES } from "@/constants";
 import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/logic/stat.logic";
@@ -47,7 +47,7 @@ export class AllAttributesControl {
     this.finals = finals;
   }
 
-  init(character: CharacterCalc) {
+  init(character: Character) {
     const { data } = character;
 
     this.clear();

@@ -1,6 +1,6 @@
 import { clsx } from "rond";
 
-import type { TargetCalc } from "@/models/TargetCalc";
+import type { TargetCalc } from "@/models";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";

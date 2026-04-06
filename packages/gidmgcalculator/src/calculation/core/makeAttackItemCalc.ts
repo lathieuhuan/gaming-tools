@@ -1,6 +1,6 @@
 import { toMult } from "ron-utils";
 
-import type { CharacterCalc } from "@/models";
+import type { Character, TargetCalc } from "@/models";
 import type {
   ActualAttackPattern,
   AttackBonusKey,
@@ -9,7 +9,6 @@ import type {
   TalentCalcItemBonusId,
 } from "@/types";
 import type { CalcResultAttackItem, CalcResultItemValue } from "../types";
-import type { TargetCalc } from "../../models/TargetCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
 import { limitCRate } from "@/logic/stat.logic";
@@ -22,7 +21,7 @@ type MakeAttackCalcTools = {
 };
 
 export function makeAttackItemCalc(
-  performer: CharacterCalc,
+  performer: Character,
   target: TargetCalc,
   tools: MakeAttackCalcTools = {}
 ) {
@@ -41,7 +40,7 @@ export function makeAttackItemCalc(
     baseMult = baseMult >= 0 ? toMult(baseMult) : -baseMult / 100;
 
     const flat = getBonus("flat");
-    const bonusMult = toMult(getBonus("pct_") + performer.getAttr(attElmt));
+    const bonusMult = toMult(getBonus("pct_") + performer.getAttribute(attElmt));
     const specMult = toMult(getBonus("specMult_"));
     const elvMult = toMult(getBonus("elvMult_"));
 
@@ -62,8 +61,8 @@ export function makeAttackItemCalc(
     const resMult = target.resistMults[attElmt];
 
     // CRITS
-    const cRate_ = limitCRate(performer.getAttr("cRate_") + getBonus("cRate_")) / 100;
-    const cDmg_ = (performer.getAttr("cDmg_") + getBonus("cDmg_")) / 100;
+    const cRate_ = limitCRate(performer.getAttribute("cRate_") + getBonus("cRate_")) / 100;
+    const cDmg_ = (performer.getAttribute("cDmg_") + getBonus("cDmg_")) / 100;
     const cDmgMult = 1 + cDmg_;
     const averageMult = 1 + cRate_ * cDmg_;
 

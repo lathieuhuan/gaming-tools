@@ -1,6 +1,6 @@
 import { MAX_USER_ARTIFACTS, MAX_USER_WEAPONS } from "@/constants/config";
 import { useStore } from "@/lib/dynamic-store";
-import { ICharacterBasic } from "@/types";
+import { RawCharacter } from "@/types";
 
 type AddCharacterError = {
   code: "ALREADY_EXISTS";
@@ -20,7 +20,7 @@ type AddArtifactError = {
 export function useStoreCheck() {
   const store = useStore();
 
-  const isAbleToAddCharacter = (character: ICharacterBasic): AddCharacterError | null => {
+  const isAbleToAddCharacter = (character: RawCharacter): AddCharacterError | null => {
     const existed = store
       .select((state) => state.userdb.userChars)
       .some((c) => c.code === character.code);

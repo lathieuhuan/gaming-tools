@@ -1,7 +1,8 @@
 import { clsx, ItemCase, type ClassValue } from "rond";
 
-import type { ArtifactType, IArtifact, IArtifactGear, IWeapon } from "@/types";
-import { Artifact } from "@/models";
+import type { ArtifactType } from "@/types";
+
+import { Artifact, ArtifactGear, Weapon } from "@/models";
 
 // Component
 import { GenshinImage } from "../GenshinImage";
@@ -12,8 +13,8 @@ export type EquipmentType = "weapon" | ArtifactType;
 export type EquipmentDisplayProps = Pick<ItemThumbProps, "muted" | "compact" | "showOwner"> & {
   className?: ClassValue;
   style?: React.CSSProperties;
-  weapon: IWeapon;
-  atfGear: IArtifactGear;
+  weapon: Weapon;
+  atfGear: ArtifactGear;
   /** Whether empty artifacts are rendered as clickable buttons. */
   fillable?: boolean;
   selectedType?: EquipmentType;
@@ -44,7 +45,7 @@ export function EquipmentDisplay(props: EquipmentDisplayProps) {
     );
   };
 
-  const renderArtifact = (artifact: IArtifact, className?: string, imgCls?: string) => {
+  const renderArtifact = (artifact: Artifact, className?: string, imgCls?: string) => {
     return (
       <ItemThumbnail
         className={className}

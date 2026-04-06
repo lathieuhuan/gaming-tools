@@ -1,13 +1,12 @@
-export * from "./AllAttributesControl";
 export * from "./Artifact";
 export * from "./ArtifactGear";
 export * from "./Ascendable";
-export * from "./AttackBonusControl";
 export * from "./CalcSetup";
-export * from "./Character";
-export * from "./CharacterCalc";
+export { Character, CharacterState, type CharacterConstructOptions } from "./Character";
 export * from "./Target";
+export * from "./TargetCalc";
 export * from "./Team";
 export * from "./Teammate";
 export * from "./TeammateCalc";
 export * from "./Weapon";
+

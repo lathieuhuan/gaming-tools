@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { Array_ } from "ron-utils";
 import { Button, clsx, ItemCase, useIntersectionObserver } from "rond";
 
-import type { AppArtifact, ElementType, IArtifactBasic } from "@/types";
+import type { ElementType } from "@/types";
 
-import { useArtifactSetData } from "@/hooks";
+import { createArtifact } from "@/logic/entity.logic";
+import { Artifact } from "@/models";
 import { $AppCharacter } from "@/services";
 import { useSelector } from "@Store/hooks";
 import { selectDbArtifacts, selectDbCharacters } from "@Store/userdbSlice";
@@ -13,11 +14,6 @@ import { selectDbArtifacts, selectDbCharacters } from "@Store/userdbSlice";
 import { CharacterPortrait } from "@/components/CharacterPortrait";
 import { GenshinImage } from "@/components/GenshinImage";
 
-export type ArtifactOption = {
-  userData: IArtifactBasic;
-  data: AppArtifact;
-};
-
 type EquippedSetOption = {
   character: {
     code: number;
@@ -25,13 +21,13 @@ type EquippedSetOption = {
     icon: string;
     elementType: ElementType;
   };
-  artifacts: ArtifactOption[];
+  artifacts: Artifact[];
 };
 
 export type EquippedSetStashProps = {
   keyword?: string;
-  onSelectArtifact: (artifact?: ArtifactOption) => void;
-  onSelectSet: (set: ArtifactOption[]) => void;
+  onSelectArtifact: (artifact?: Artifact) => void;
+  onSelectSet: (set: Artifact[]) => void;
 };
 
 export function EquippedSetStash({
@@ -44,7 +40,6 @@ export function EquippedSetStash({
     artifactId: 0,
   });
   const [empty, setEmpty] = useState(false);
-  const setData = useArtifactSetData();
 
   const characters = useSelector(selectDbCharacters);
   const artifacts = useSelector(selectDbArtifacts);
@@ -75,13 +70,10 @@ export function EquippedSetStash({
       };
 
       for (const id of character.artifactIDs) {
-        const artifact = Array_.findById(artifacts, id);
+        const rawAtf = Array_.findById(artifacts, id);
 
-        if (artifact) {
-          option.artifacts.push({
-            userData: artifact,
-            data: setData.get(artifact.code),
-          });
+        if (rawAtf) {
+          option.artifacts.push(createArtifact(rawAtf));
         }
       }
 
@@ -156,7 +148,7 @@ export function EquippedSetStash({
 
                 <div className="mt-3 h-12 flex space-x-2">
                   {artifacts.map((artifact) => {
-                    const { ID } = artifact.userData;
+                    const { ID } = artifact;
 
                     return (
                       <ItemCase
@@ -176,7 +168,7 @@ export function EquippedSetStash({
                             <GenshinImage
                               className={clsx("p-1 rounded-circle", className)}
                               imgCls={imgCls}
-                              src={artifact.data[artifact.userData.type].icon}
+                              src={artifact.icon}
                               imgType="artifact"
                             />
                           ) : null;

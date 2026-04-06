@@ -5,7 +5,7 @@ import { Button, CheckboxGroup, CheckboxGroupProps, clsx, CollapseSpace, TrashCa
 import type { ArtifactType, AttributeStat } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { Artifact } from "@/models";
+import { ArtifactState } from "@/models";
 import { useGeneratorStore } from "./store";
 
 type ConfigurableAtfTypes = "sands" | "goblet" | "circlet";
@@ -17,7 +17,7 @@ export function MainStatsConfiger() {
   const mainStatTypes = useGeneratorStore((state) => state.mainStatTypes);
 
   const getOptions = (type: ArtifactType) => {
-    return Artifact.allMainStatTypesOf(type).map((statType) => {
+    return ArtifactState.allMainStatTypesOf(type).map((statType) => {
       return { value: statType };
     });
   };

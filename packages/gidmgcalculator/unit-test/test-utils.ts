@@ -1,7 +1,7 @@
 import { MutableTeamData } from "../src/calculation/CalcTeamData";
-import { IWeaponBasic, Level } from "../src/types";
+import { RawWeapon, Level } from "../src/types";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "../src/services";
-import { ICharacter, ITeammate, IWeapon } from "../src/types";
+import { ICharacter, ITeammate } from "../src/types";
 import { __EMockCharacter } from "./mocks/characters.mock";
 import { __EMockWeapon } from "./mocks/weapons.mock";
 import { ASCENSION_RANKS } from "./test-constants";
@@ -77,7 +77,7 @@ export function __findAscensionByLevel(level: Level) {
 }
 
 export function __genWeaponInfo(code: __EMockWeapon = __EMockWeapon.SWORD) {
-  const weapon: IWeaponBasic = {
+  const weapon: RawWeapon = {
     code: code,
     type: "sword",
     ID: 1,

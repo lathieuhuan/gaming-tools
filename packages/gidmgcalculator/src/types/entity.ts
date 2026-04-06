@@ -1,90 +1,79 @@
 import type { AppArtifact } from "./app-artifact";
 import type { AppMonster } from "./app-monster";
-import type { AppWeapon } from "./app-weapon";
 import type {
   ArtifactType,
   AttackElement,
   AttributeStat,
   ElementType,
   Level,
-  AllAttributes,
   WeaponType,
 } from "./common";
-import { CustomDebuffCtrl, CustomBuffCtrl, ElementalEvent, ResonanceModCtrl } from "./modifiers";
-import { IArtifactModCtrlBasic } from "./modifiers";
-import { IModifierCtrlBasic } from "./modifiers";
+import {
+  CustomBuffCtrl,
+  CustomDebuffCtrl,
+  ElementalEvent,
+  IArtifactModCtrlBasic,
+  IModifierCtrlBasic,
+  ResonanceModCtrl,
+} from "./modifiers";
 
-// ========== WEAPON ==========
-
-export type IWeaponBasic = {
-  ID: number;
-  code: number;
-  type: WeaponType;
-  level: Level;
-  refi: number;
+export type EquipmentRelationData = {
   owner?: number;
   setupIDs?: number[];
 };
 
-export type IWeapon = IWeaponBasic & {
-  data: AppWeapon;
+// ========== WEAPON ==========
+
+export type WeaponKey = {
+  ID: number;
+  code: number;
+  type: WeaponType;
 };
 
+export type WeaponStateData = {
+  level: Level;
+  refi: number;
+};
+
+export type RawWeapon = WeaponKey & WeaponStateData & EquipmentRelationData;
+
 // ========== ARTIFACT ==========
+
+export type ArtifactKey = {
+  ID: number;
+  code: number;
+};
 
 export type ArtifactSubStat = {
   type: AttributeStat;
   value: number;
 };
 
-export type IArtifactBasic = {
-  ID: number;
-  code: number;
+export type ArtifactStateData = {
   type: ArtifactType;
   rarity: number;
   level: number;
   mainStatType: AttributeStat;
   subStats: ArtifactSubStat[];
-  owner?: number;
-  setupIDs?: number[];
 };
 
-export type IArtifact = IArtifactBasic & {
-  data: AppArtifact;
-};
+export type ArtifactStateKey = keyof ArtifactStateData;
 
-export type IArtifactGearSet = {
+export type RawArtifact = ArtifactKey & ArtifactStateData & EquipmentRelationData;
+
+export type ArtifactGearSet = {
   bonusLv: number;
   pieceCount: number;
   data: AppArtifact;
 };
 
-export type IArtifactGearPieces<T extends IArtifact = IArtifact> = Map<ArtifactType, T>;
+//
 
-export type IArtifactGearSlot<TArtifact extends IArtifact = IArtifact> =
-  | {
-      isFilled: true;
-      type: ArtifactType;
-      piece: TArtifact;
-    }
-  | {
-      isFilled: false;
-      type: ArtifactType;
-    };
-
-export type IArtifactGear<T extends IArtifact = IArtifact> = {
-  pieces: IArtifactGearPieces<T>;
-  sets: IArtifactGearSet[];
-  attributes: AllAttributes;
-  slots<U>(callback: (slot: IArtifactGearSlot<T>) => U): U[];
-  slots(): IArtifactGearSlot<T>[];
-  slots<U>(callback?: (slot: IArtifactGearSlot<T>) => U): IArtifactGearSlot<T>[] | U[];
-};
+export type RawItem = RawWeapon | RawArtifact;
 
 // ========== CHARACTER ==========
 
-export type ICharacterBasic = {
-  code: number;
+export type CharacterStateData = {
   level: Level;
   NAs: number;
   ES: number;
@@ -93,12 +82,8 @@ export type ICharacterBasic = {
   enhanced: boolean;
 };
 
-export type ICharacter<
-  W extends IWeapon = IWeapon,
-  A extends IArtifactGear = IArtifactGear
-> = ICharacterBasic & {
-  weapon: W;
-  atfGear: A;
+export type RawCharacter = CharacterStateData & {
+  code: number;
 };
 
 // ========== TEAMMATE ==========
@@ -146,7 +131,7 @@ export type ITeammateBasic = ITeammateBasicCore & {
 };
 
 export type ISetupBasic = {
-  main: ICharacterBasic;
+  main: RawCharacter;
   selfBuffCtrls: IModifierCtrlBasic[];
   selfDebuffCtrls: IModifierCtrlBasic[];
 

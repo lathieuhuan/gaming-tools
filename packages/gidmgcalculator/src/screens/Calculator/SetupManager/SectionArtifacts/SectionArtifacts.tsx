@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { FaToolbox } from "react-icons/fa";
 import { GiAnvil } from "react-icons/gi";
-import { IoDice } from "react-icons/io5";
 import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
 
 import type { ArtifactType } from "@/types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
+import { createArtifact } from "@/logic/entity.logic";
 import { Artifact } from "@/models";
+import IdStore from "@/utils/IdStore";
 import { useCalcStore } from "@Store/calculator";
 import { setArtifactPiece } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
@@ -17,12 +18,11 @@ import { useSettingsStore } from "@Store/settings";
 import {
   ArtifactForge,
   ArtifactForgeProps,
-  ArtifactInventory,
-  ArtifactInventoryProps,
   GenshinImage,
   LoadoutStash,
   LoadoutStashProps,
 } from "@/components";
+import { ArtifactInventory, ArtifactInventoryProps } from "@/components/ArtifactInventory";
 import { Section } from "../components/Section";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
@@ -95,7 +95,7 @@ export function SectionArtifacts() {
 
   const handleSelectLoadout: LoadoutStashProps["onSelect"] = (pieces) => {
     for (const piece of pieces) {
-      setArtifactPiece(piece.userData, piece.data);
+      setArtifactPiece(piece);
     }
     closeModal();
   };
@@ -115,7 +115,7 @@ export function SectionArtifacts() {
       content: `Selected ${artifact.data.name} (${artifact.type})`,
     });
 
-    setArtifactPiece(artifact, artifact.data);
+    setArtifactPiece(artifact);
     setActiveArtifactType(artifact.type);
   };
 
@@ -135,7 +135,7 @@ export function SectionArtifacts() {
       content: `Forged ${artifact.data.name} (${artifact.type})`,
     });
 
-    setArtifactPiece(artifact, artifact.data, keepArtStatsOnSwitch);
+    setArtifactPiece(artifact, keepArtStatsOnSwitch);
     setActiveArtifactType(artifact.type);
   };
 
@@ -144,20 +144,21 @@ export function SectionArtifacts() {
     rarity,
     data
   ) => {
-    let rootID = Date.now();
+    const idStore = new IdStore();
     let leftMostIndex = Infinity;
 
     for (const type of types) {
-      setArtifactPiece(
+      const artifact = createArtifact(
         {
-          ID: rootID++,
+          ID: idStore.gen(),
           code: data.code,
           type,
           rarity,
         },
-        data,
-        keepArtStatsOnSwitch
+        data
       );
+
+      setArtifactPiece(artifact, keepArtStatsOnSwitch);
 
       const index = ARTIFACT_TYPES.indexOf(type);
 

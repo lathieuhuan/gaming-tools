@@ -5,7 +5,6 @@ import { Button, message } from "rond";
 import { WeaponForge } from "@/components";
 import { MAX_USER_WEAPONS } from "@/constants/config";
 import { Weapon } from "@/models";
-import { IWeaponBasic } from "@/types";
 import { useDispatch } from "@Store/hooks";
 import { addDbWeapon } from "@Store/userdbSlice";
 
@@ -35,12 +34,7 @@ export function AddButton({ currentWeaponsCount }: AddButtonProps) {
 
   const handleForgeWeapon = (weapon: Weapon) => {
     if (isNewWeaponAddable()) {
-      const newUserWeapon: IWeaponBasic = {
-        ...weapon,
-        ID: Date.now(),
-      };
-
-      dispatch(addDbWeapon(newUserWeapon));
+      dispatch(addDbWeapon(weapon.serialize()));
     }
   };
 

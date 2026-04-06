@@ -16,7 +16,7 @@ type CopySelectProps = {
 
 export function CopySelect({ type }: CopySelectProps) {
   const { setupManagers, setupsById } = useShallowCalcStore((state) =>
-    Object_.pickProps(state, ["setupManagers", "setupsById"])
+    Object_.extract(state, ["setupManagers", "setupsById"])
   );
 
   const copyOptions: CopyOption[] = [];

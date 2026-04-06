@@ -4,14 +4,14 @@ import type { CurrentDatabaseData } from "@/migration/types/current";
 import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 
 import { DOWNLOAD_DATA_VERSION } from "@/constants/config";
-import { $AppCharacter } from "@/services";
-import { createWeaponBasic } from "@/logic/entity.logic";
 import {
   convertGOODArtifact,
   convertGOODCharacter,
   convertGOODWeapon,
   findGOODCharacter,
 } from "@/logic/converGOOD.logic";
+import { createWeapon } from "@/logic/entity.logic";
+import { $AppCharacter } from "@/services";
 import IdStore from "@/utils/IdStore";
 
 type GOODData = {
@@ -50,10 +50,8 @@ export function convertGOODData(data: GOODData) {
       continue;
     }
 
-    result.artifacts.push({
-      ...artifact,
-      owner: owner?.code,
-    });
+    artifact.relation.set("owner", owner?.code);
+    result.artifacts.push(artifact.serialize());
 
     if (owner) {
       const character = Array_.findByCode(result.characters, owner.code);
@@ -72,10 +70,8 @@ export function convertGOODData(data: GOODData) {
       continue;
     }
 
-    result.weapons.push({
-      ...weapon,
-      owner: owner?.code,
-    });
+    weapon.relation.set("owner", owner?.code);
+    result.weapons.push(weapon.serialize());
 
     if (owner) {
       const character = Array_.findByCode(result.characters, owner.code);
@@ -89,7 +85,11 @@ export function convertGOODData(data: GOODData) {
   for (const character of result.characters) {
     if (!character.weaponID) {
       const { weaponType } = $AppCharacter.get(character.code);
-      const newWeapon = createWeaponBasic({ type: weaponType, owner: character.code }, idStore);
+      const newWeapon = createWeapon({
+        ID: idStore.gen(),
+        type: weaponType,
+        owner: character.code,
+      });
 
       result.weapons.push(newWeapon);
       character.weaponID = newWeapon.ID;

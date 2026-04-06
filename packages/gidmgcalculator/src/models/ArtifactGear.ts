@@ -1,30 +1,32 @@
 import { applyPercent } from "ron-utils";
 
-import type {
-  AllAttributes,
-  ArtifactType,
-  IArtifactGear,
-  IArtifactGearPieces,
-  IArtifactGearSet,
-  IArtifactGearSlot,
-} from "@/types";
-import type { Artifact } from "./Artifact";
+import type { AllAttributes, ArtifactType, ArtifactGearSet } from "@/types";
 import type { Clonable } from "./interfaces";
 
 import { ARTIFACT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
 import TypeCounter from "@/utils/TypeCounter";
+import { Artifact } from "./Artifact";
 import { ArtifactGearPieces } from "./ArtifactGearPieces";
 
-export class ArtifactGear<TArtifact extends Artifact = Artifact>
-  implements IArtifactGear<TArtifact>, Clonable<ArtifactGear<TArtifact>>
-{
-  pieces: ArtifactGearPieces<TArtifact>;
-  sets: IArtifactGearSet[] = [];
+export type ArtifactGearSlot =
+  | {
+      isFilled: true;
+      type: ArtifactType;
+      piece: Artifact;
+    }
+  | {
+      isFilled: false;
+      type: ArtifactType;
+    };
+
+export class ArtifactGear implements Clonable<ArtifactGear> {
+  pieces: ArtifactGearPieces;
+  sets: ArtifactGearSet[] = [];
   attributes: AllAttributes = new TypeCounter();
   finalAttrs: AllAttributes = new TypeCounter();
 
-  constructor(pieces?: IArtifactGearPieces<TArtifact> | TArtifact[]) {
-    const gearPieces: Partial<Record<ArtifactType, TArtifact>> = {};
+  constructor(pieces?: ArtifactGearPieces | Artifact[]) {
+    const gearPieces: Partial<Record<ArtifactType, Artifact>> = {};
 
     const getPiece = Array.isArray(pieces)
       ? (type: ArtifactType) => pieces.find((piece) => piece.type === type)
@@ -42,7 +44,7 @@ export class ArtifactGear<TArtifact extends Artifact = Artifact>
   }
 
   private processPieces() {
-    const sets: IArtifactGearSet[] = [];
+    const sets: ArtifactGearSet[] = [];
     const attributes: AllAttributes = new TypeCounter();
     const counter = new TypeCounter();
 
@@ -71,11 +73,9 @@ export class ArtifactGear<TArtifact extends Artifact = Artifact>
     this.attributes = attributes;
   }
 
-  slots<U>(callback: (slot: IArtifactGearSlot<TArtifact>) => U): U[];
-  slots(): IArtifactGearSlot<TArtifact>[];
-  slots<U>(
-    callback?: (slot: IArtifactGearSlot<TArtifact>) => U
-  ): IArtifactGearSlot<TArtifact>[] | U[] {
+  slots<U>(callback: (slot: ArtifactGearSlot) => U): U[];
+  slots(): ArtifactGearSlot[];
+  slots<U>(callback?: (slot: ArtifactGearSlot) => U): ArtifactGearSlot[] | U[] {
     if (callback) {
       return this.slots().map(callback);
     }
@@ -111,11 +111,11 @@ export class ArtifactGear<TArtifact extends Artifact = Artifact>
     return (this.finalAttrs = attrs);
   };
 
-  clone(): ArtifactGear<TArtifact> {
+  clone() {
     return new ArtifactGear(this.pieces);
   }
 
-  deepClone(): ArtifactGear<TArtifact> {
+  deepClone() {
     return new ArtifactGear(this.pieces.deepClone());
   }
 }

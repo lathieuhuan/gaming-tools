@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
 
-import type { AttributeStat, IArtifactBasic } from "@/types";
+import type { RawArtifact, AttributeStat } from "@/types";
 import type { ArtifactFilterCondition } from "../types";
 
-import { Artifact } from "@/models";
+import { ArtifactState } from "@/models";
 import { DEFAULT_ARTIFACT_FILTER } from "../constants";
 
-export function useArtifactFilter<T extends IArtifactBasic = IArtifactBasic>(
+export function useArtifactFilter<T extends RawArtifact = RawArtifact>(
   artifacts: T[],
   initialFilter: Partial<ArtifactFilterCondition> = {}
 ) {
@@ -24,7 +24,7 @@ export function useArtifactFilter<T extends IArtifactBasic = IArtifactBasic>(
   };
 }
 
-export function filterArtifacts<T extends IArtifactBasic = IArtifactBasic>(
+export function filterArtifacts<T extends RawArtifact = RawArtifact>(
   artifacts: T[],
   filterCondition: Partial<ArtifactFilterCondition>
 ) {
@@ -65,7 +65,7 @@ export function filterArtifacts<T extends IArtifactBasic = IArtifactBasic>(
 
     result.sort((a, b) => {
       if (shouldFilterMainstat) {
-        const mainstatCompare = Artifact.mainStatValueOf(b) - Artifact.mainStatValueOf(a);
+        const mainstatCompare = ArtifactState.mainStatValueOf(b) - ArtifactState.mainStatValueOf(a);
 
         if (mainstatCompare) return mainstatCompare;
       }

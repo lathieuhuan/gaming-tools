@@ -1,10 +1,10 @@
 import { Array_ } from "ron-utils";
 
-import type { IArtifactGearSet } from "@/types";
+import type { ArtifactGearSet } from "@/types";
 import { parseArtifactDesc } from "@/utils/descriptionParsers";
 
 interface SetBonusesViewProps {
-  sets: IArtifactGearSet[];
+  sets: ArtifactGearSet[];
   noTitle?: boolean;
 }
 export function SetBonusesView({ sets, noTitle }: SetBonusesViewProps) {
