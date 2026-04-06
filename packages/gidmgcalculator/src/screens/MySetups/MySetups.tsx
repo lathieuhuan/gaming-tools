@@ -1,13 +1,13 @@
 import { useEffect, useMemo } from "react";
 import { FaInfo } from "react-icons/fa";
+import { Array_ } from "ron-utils";
 import { Button, WarehouseLayout, clsx, useScreenWatcher } from "rond";
 
 import type { SetupOverviewInfo } from "./types";
 
 import { isDbSetup, restoreCalcSetup } from "@/logic/setup.logic";
 import { parseDbArtifacts, parseDbWeapon } from "@/logic/userdb.logic";
-import { useSetupImporter } from "@/systems/setup-importer";
-import Array_ from "@/utils/Array";
+import { useSetupImporter } from "@/lib/setup-importer";
 import { useDispatch, useSelector } from "@Store/hooks";
 import { MySetupsModalType, updateUI } from "@Store/ui";
 import { selectActiveSetupId, viewDbSetup } from "@Store/userdbSlice";
@@ -37,14 +37,14 @@ function MySetups() {
     const { dbSetup } = info;
     const { ID, name, type, main } = dbSetup;
     const mainData = info.setup.main.data;
-    const weaponBasic = parseDbWeapon(main.weaponID, userWeapons, mainData.weaponType);
-    const artifactBasics = parseDbArtifacts(main.artifactIDs, userArtifacts);
+    const weapon = parseDbWeapon(main.weaponID, userWeapons, mainData.weaponType);
+    const atfGear = parseDbArtifacts(main.artifactIDs, userArtifacts);
 
     setupImporter.import({
       ID,
       name,
       type,
-      params: restoreCalcSetup(dbSetup, weaponBasic, artifactBasics),
+      params: restoreCalcSetup(dbSetup, weapon, atfGear),
       source: "MY_SETUPS",
     });
   };

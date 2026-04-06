@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { VersatileSelect } from "rond";
 
-import type { CharacterCalc } from "@/models";
+import type { Character } from "@/models";
 import type { ElementalEvent, ElementType } from "@/types";
 
 import { ELEMENT_TYPES } from "@/constants/global";
@@ -12,7 +12,7 @@ import { AttackReactionCtrl } from "./AttackReactionCtrl";
 
 type CustomInfusionCtrlProps = {
   elmtEvent: ElementalEvent;
-  character: CharacterCalc;
+  character: Character;
 };
 
 export function CustomInfusionCtrl({ elmtEvent, character }: CustomInfusionCtrlProps) {

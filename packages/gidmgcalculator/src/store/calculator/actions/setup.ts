@@ -1,9 +1,9 @@
+import { Array_, Object_ } from "ron-utils";
+
 import type { ArtifactType, ISetupManager } from "@/types";
 import type { WritableDraft } from "immer/src/internal.js";
 
 import { CalcSetup } from "@/models";
-import Array_ from "@/utils/Array";
-import Object_ from "@/utils/Object";
 import { useCalcStore } from "../calculatorStore";
 import { getCopyName, onActiveSetup } from "../utils";
 
@@ -30,7 +30,7 @@ export const updateSetupAfterSave = (
     weapon.ID = weaponId;
 
     for (const [type, id] of Object_.entries(newPieceIds)) {
-      const piece = atfGear.pieces[type];
+      const piece = atfGear.pieces.get(type);
 
       if (piece && id) {
         piece.ID = id;
@@ -149,7 +149,7 @@ export const updateMultiSetups = (changes: MultiSetupChange[], newStandardId: nu
 
           const newSetup = new CalcSetup({
             ID: change.ID,
-            main: setupsById[activeId].cloneMain(),
+            main: setupsById[activeId].main.deepClone(),
             target,
           });
 

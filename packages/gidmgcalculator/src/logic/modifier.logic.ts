@@ -1,3 +1,5 @@
+import { Array_ } from "ron-utils";
+
 import type { CalcSetup, TeammateCalc } from "@/models";
 import type {
   AppArtifact,
@@ -9,7 +11,7 @@ import type {
   IAbilityDebuffCtrl,
   IArtifactBuffCtrl,
   IArtifactDebuffCtrl,
-  IArtifactGearSet,
+  ArtifactGearSet,
   IModifierCtrl,
   IModifierCtrlBasic,
   ITeam,
@@ -22,7 +24,6 @@ import type {
 } from "@/types";
 
 import { $AppArtifact, $AppData } from "@/services";
-import Array_ from "@/utils/Array";
 import { isManualRsnElmt } from "./element.logic";
 
 export const MS_ASCENDANT_BUFF_ID = 1;
@@ -144,7 +145,7 @@ export function createWeaponBuffCtrls(
   return Array_.filterMap(buffs, filterFor(forSelf), createModCtrl(forSelf));
 }
 
-export function createMainArtifactBuffCtrls(sets: IArtifactGearSet[]): IArtifactBuffCtrl[] {
+export function createMainArtifactBuffCtrls(sets: ArtifactGearSet[]): IArtifactBuffCtrl[] {
   const ctrls: IArtifactBuffCtrl[] = [];
 
   for (const set of sets) {
@@ -186,7 +187,7 @@ export function createArtifactBuffCtrls(
   return [];
 }
 
-export function createArtifactDebuffCtrls(sets: IArtifactGearSet[], teammates: TeammateCalc[]) {
+export function createArtifactDebuffCtrls(sets: ArtifactGearSet[], teammates: TeammateCalc[]) {
   const ctrls: IArtifactDebuffCtrl[] = [];
   const vvArtifact = $AppArtifact.vvArtifact;
   const deepwoodArtifact = $AppArtifact.deepwoodArtifact;

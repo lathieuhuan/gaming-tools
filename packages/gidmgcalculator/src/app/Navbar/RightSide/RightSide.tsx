@@ -6,7 +6,7 @@ import type { ModalOption } from "./config";
 
 import { IS_DEV_ENV, SCREEN_PATH } from "@/constants/config";
 import { $AppData } from "@/services";
-import { useRouter } from "@/systems/router";
+import { useRouter } from "@/lib/router";
 import { updateUI, type UIState } from "@Store/ui";
 
 import { EnkaLogo } from "@/assets/icons";

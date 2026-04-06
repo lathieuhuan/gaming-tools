@@ -1,9 +1,10 @@
+import { delay } from "ron-utils";
+
 import type { EnkaUserResponse, GenshinUserResponse } from "./types";
 
 import { IS_DEV_ENV } from "@/constants/config";
 // import { mock } from "./mock";
 import IdStore from "@/utils/IdStore";
-import { delay } from "@/utils/pure.utils";
 import { transformGenshinUserResponse } from "./transform";
 
 const baseUrl = IS_DEV_ENV ? "http://localhost:3001" : "https://gicalculator.ronqueroc.com";
@@ -51,7 +52,7 @@ export async function getGenshinUser(uid: string) {
 export async function getEnkaUser(profile: string): Promise<EnkaUserResponse> {
   const response = await fetch(`${baseUrl}/enka/profile/${profile}`);
 
-  return await response.json();
+  return await response.json() as EnkaUserResponse;
 }
 
 export async function updateCache() {

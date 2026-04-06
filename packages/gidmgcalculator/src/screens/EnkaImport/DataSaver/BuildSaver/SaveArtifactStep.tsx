@@ -4,7 +4,7 @@ import { MdEdit } from "react-icons/md";
 import { ButtonProps, Checkbox, notification } from "rond";
 
 import type { Artifact } from "@/models";
-import type { IArtifactBasic } from "@/types";
+import type { RawArtifact } from "@/types";
 import type { ArtifactSaveOutput, ArtifactSavingStep } from "./types";
 
 import { useStoreCheck } from "@/hooks/useStoreCheck";
@@ -35,10 +35,10 @@ export function SaveArtifactStep({
 }: SaveArtifactStepProps) {
   const { data: artifact, currentArtifact, sameArtifacts } = step;
   const { isAbleToAddArtifact } = useStoreCheck();
-  const [selectedArtifact, setSelectedArtifact] = useState<IArtifactBasic>();
+  const [selectedArtifact, setSelectedArtifact] = useState<RawArtifact>();
   const [shouldUpdate, setShouldUpdate] = useState(true);
 
-  const handleSelectArtifact = (artifact: IArtifactBasic) => {
+  const handleSelectArtifact = (artifact: RawArtifact) => {
     setSelectedArtifact(artifact);
     setShouldUpdate(true);
   };

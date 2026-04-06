@@ -4,17 +4,17 @@ import type { PartiallyOptional, PartiallyRequired, PartiallyRequiredOnly } from
 import type {
   AppCharacter,
   ArtifactSubStat,
-  IArtifactBasic,
+  RawArtifact,
   IDbCharacter,
   IDbComplexSetup,
   IDbSetup,
-  IWeaponBasic,
+  RawWeapon,
 } from "@/types";
 
 export type AddUserDatabaseAction = PayloadAction<{
   characters?: IDbCharacter[];
-  weapons?: IWeaponBasic[];
-  artifacts?: IArtifactBasic[];
+  weapons?: RawWeapon[];
+  artifacts?: RawArtifact[];
   setups?: (IDbSetup | IDbComplexSetup)[];
 }>;
 
@@ -30,10 +30,10 @@ export type RemoveDbArtifactAction = PayloadAction<{
   ID: number;
 }>;
 
-export type UpdateDbWeaponAction = PayloadAction<PartiallyRequired<Partial<IWeaponBasic>, "ID">>;
+export type UpdateDbWeaponAction = PayloadAction<PartiallyRequired<Partial<RawWeapon>, "ID">>;
 
 export type UpdateDbArtifactAction = PayloadAction<
-  PartiallyRequired<Partial<IArtifactBasic>, "ID">
+  PartiallyRequired<Partial<RawArtifact>, "ID">
 >;
 
 export type RemoveDbWeaponAction = PayloadAction<{
@@ -41,18 +41,15 @@ export type RemoveDbWeaponAction = PayloadAction<{
 }>;
 
 type SwitchPayload = {
-  /**
-   * Owner of the target item
-   */
-  newOwner: number | undefined;
-  newID: number;
-  oldOwner: number;
-  oldID: number;
+  targetId: number;
+  targetOwner: number | undefined;
+  currentId: number;
+  currentOwner: number;
 };
 
 export type SwitchWeaponAction = PayloadAction<SwitchPayload>;
 
-export type SwitchArtifactAction = PayloadAction<PartiallyOptional<SwitchPayload, "oldID">>;
+export type SwitchArtifactAction = PayloadAction<PartiallyOptional<SwitchPayload, "currentId">>;
 
 export type SaveSetupAction = PayloadAction<IDbSetup>;
 

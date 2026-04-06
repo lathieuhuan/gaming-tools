@@ -1,16 +1,10 @@
-import type {
-  AppArtifact,
-  AppCharacter,
-  ArtifactType,
-  IArtifactBasic,
-  ITeammate,
-  IWeapon,
-} from "@/types";
+import { Array_ } from "ron-utils";
+
+import type { AppCharacter, ITeammate } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
-import type { ArtifactPieceUpdateData, CloneOptions, MainUpdateData } from "./types";
 
 import { calculateSetup } from "@/calculation/calculator";
-import { createArtifactBasic, CreateArtifactParams, createTarget } from "@/logic/entity.logic";
+import { createTarget } from "@/logic/entity.logic";
 import {
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
@@ -22,19 +16,20 @@ import {
   createTeamBuffCtrls,
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import Array_ from "@/utils/Array";
-import { Artifact } from "../Artifact";
+import { $AppCharacter } from "@/services";
 import { ArtifactGear } from "../ArtifactGear";
-import { CharacterCalc } from "../CharacterCalc";
 import { Team } from "../Team";
 import { TeammateCalc, type TeammateCalcConstructInfo } from "../TeammateCalc";
-import { Weapon } from "../Weapon";
 import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
+import { Character } from "../Character";
 
 type TeammateUpdateData = Partial<
   Pick<ITeammate, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
 >;
+
+type CloneOptions = {
+  ID?: number;
+};
 
 export type CalcSetupConstructInfo = PartiallyRequiredOnly<CalcSetupBaseConstructInfo, "main">;
 
@@ -94,7 +89,7 @@ export class CalcSetup extends CalcSetupBase {
 
   clone(options: CloneOptions = {}) {
     const { ID = this.ID } = options;
-    const main = this.cloneMain();
+    const main = this.main.deepClone();
     const teammates = this.teammates.map((teammate) => teammate.clone());
     const team = new Team([main, ...teammates]);
 
@@ -110,9 +105,12 @@ export class CalcSetup extends CalcSetupBase {
   calculate(shouldLog?: boolean) {
     const { main, result } = calculateSetup(this, { shouldLog });
 
-    const newMain = this.updateMain({
+    const newMain = new Character(main.code, main.data, main.weapon, {
+      state: main.state,
+      atfGear: main.atfGear,
       allAttrsCtrl: main.allAttrsCtrl.clone(),
       attkBonusCtrl: main.attkBonusCtrl.clone(),
+      team: this.team,
     });
 
     return new CalcSetup({
@@ -122,105 +120,7 @@ export class CalcSetup extends CalcSetupBase {
     });
   }
 
-  // ===== MAIN CHARACTER =====
-
-  updateMain(data: MainUpdateData) {
-    return new CharacterCalc(
-      {
-        ...this.main,
-        ...data,
-      },
-      this.main.data,
-      this.team
-    );
-  }
-
-  cloneMain() {
-    const { weapon, atfGear, attkBonusCtrl, allAttrsCtrl } = this.main;
-
-    return new CharacterCalc(
-      {
-        ...this.main,
-        weapon: new Weapon(weapon, weapon.data),
-        atfGear: new ArtifactGear(atfGear.pieces),
-        attkBonusCtrl: attkBonusCtrl.clone(),
-        allAttrsCtrl: allAttrsCtrl.clone(),
-      },
-      this.main.data,
-      this.team
-    );
-  }
-
-  // ===== WEAPON =====
-
-  updateMainWeapon(info: Partial<IWeapon>) {
-    const { weapon } = this.main;
-    const data = info.code && info.code !== weapon.code ? $AppWeapon.get(info.code)! : weapon.data;
-
-    return new Weapon({ ...weapon, ...info }, data);
-  }
-
   // ===== ARTIFACTS =====
-
-  setArtifactPiece(
-    artifact: CreateArtifactParams,
-    data: AppArtifact = $AppArtifact.getSet(artifact.code)!,
-    shouldKeepStats = false
-  ) {
-    const { atfGear } = this.main;
-    const oldPiece = atfGear.pieces[artifact.type];
-    let newPiece: IArtifactBasic;
-
-    if (shouldKeepStats && oldPiece) {
-      newPiece = createArtifactBasic({
-        ...oldPiece,
-        code: artifact.code,
-        rarity: artifact.rarity,
-        ID: Date.now(),
-      });
-    } else {
-      newPiece = createArtifactBasic({
-        ...artifact,
-        ID: Date.now(),
-      });
-    }
-
-    atfGear.pieces[artifact.type] = new Artifact(newPiece, data);
-
-    return new ArtifactGear(atfGear.pieces);
-  }
-
-  removeArtifactPiece(type: ArtifactType) {
-    const { pieces } = this.main.atfGear;
-    pieces[type] = undefined;
-
-    return new ArtifactGear(pieces);
-  }
-
-  updateArtifactPiece(type: ArtifactType, info: ArtifactPieceUpdateData) {
-    const { pieces } = this.main.atfGear;
-    const piece = pieces[type];
-
-    if (!piece) {
-      return this.main.atfGear;
-    }
-
-    const newSubStats = [...piece.subStats];
-    const { subStat, ...newInfo } = info;
-
-    if (subStat) {
-      const { index, ...newSubStat } = subStat;
-
-      newSubStats[index] = {
-        ...newSubStats[index],
-        ...newSubStat,
-      };
-    }
-
-    pieces[type] = new Artifact({ ...piece, ...newInfo, subStats: newSubStats }, piece.data);
-
-    return new ArtifactGear(pieces);
-  }
 
   /** Used when change involves artifact.sets */
   setArtifactGear(newAtfGear: ArtifactGear) {
@@ -230,14 +130,6 @@ export class CalcSetup extends CalcSetupBase {
       .flat();
     this.updateTeamBuffCtrls();
     this.updateArtifactDebuffCtrls();
-  }
-
-  cloneArtifactGear() {
-    const pieces = this.main.atfGear.pieces.map<Artifact>((piece) => {
-      return new Artifact(piece.serialize(), piece.data);
-    });
-
-    return new ArtifactGear(pieces);
   }
 
   // ===== MODIFIERS UPDATE FOLLOW-UPS =====

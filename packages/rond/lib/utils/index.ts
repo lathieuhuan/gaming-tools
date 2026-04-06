@@ -1,9 +1,9 @@
 import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 
-export * from "./notification";
-export * from "./message";
 export * from "./bottomList";
+export * from "./message";
+export * from "./notification";
 
 const twMerge = extendTailwindMerge({
   extend: {
@@ -46,8 +46,3 @@ const twMerge = extendTailwindMerge({
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-
-export const round = (n: number, x: number) => {
-  const pow = Math.pow(10, x);
-  return Math.round(n * pow) / pow;
-};

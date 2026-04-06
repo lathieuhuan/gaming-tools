@@ -1,8 +1,9 @@
+import { assertIsError, delay } from "ron-utils";
+
 import type { AppMetadata } from "../types";
 
 import { MINIMUM_SYSTEM_VERSION } from "@/constants/config";
 import { $AppData, AllData } from "@/services";
-import { assertIsError, delay } from "@/utils/pure.utils";
 import { AllDataChannel } from "./AllDataChannel";
 import { TimeStore } from "./TimeStore";
 
@@ -132,7 +133,7 @@ class GreeterService {
     }
 
     return this.fetchAllData()
-      .then(() => null)
+      .then((error) => error)
       .catch((error) => {
         assertIsError(error);
 

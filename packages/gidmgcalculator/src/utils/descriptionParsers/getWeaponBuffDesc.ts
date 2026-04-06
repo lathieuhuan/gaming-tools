@@ -1,5 +1,6 @@
+import { Array_ } from "ron-utils";
+
 import type { AppWeapon, WeaponBuff } from "@/types";
-import Array_ from "../Array";
 import { parseWeaponDesc } from "./parseWeaponDesc";
 
 export const getWeaponBuffDesc = (descriptions: AppWeapon["descriptions"], buff: WeaponBuff, refi: number) => {

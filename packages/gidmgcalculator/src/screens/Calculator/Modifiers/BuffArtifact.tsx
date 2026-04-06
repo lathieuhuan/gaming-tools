@@ -1,7 +1,8 @@
+import { Object_ } from "ron-utils";
+
 import type { TeammateCalc } from "@/models";
 import type { IArtifactBuffCtrl, ITeammateArtifactBuffCtrl } from "@/types";
 
-import Object_ from "@/utils/Object";
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateActiveSetup, updateTeammateArtifact } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
@@ -11,7 +12,7 @@ import { ArtifactBuffsView } from "@/components";
 
 export default function BuffArtifact() {
   const { artBuffCtrls, teammates } = useShallowCalcStore((state) => {
-    return Object_.pickProps(selectSetup(state), ["artBuffCtrls", "teammates"]);
+    return Object_.extract(selectSetup(state), ["artBuffCtrls", "teammates"]);
   });
 
   const handleUpdateSelfCtrls = (newCtrls: IArtifactBuffCtrl[]) => {

@@ -1,5 +1,6 @@
+import { Object_ } from "ron-utils";
+
 import type { AppMonster, AttackElement, ElementType, ITarget, ITargetBasic } from "@/types";
-import Object_ from "@/utils/Object";
 
 export class Target implements ITarget {
   code: number;
@@ -26,7 +27,7 @@ export class Target implements ITarget {
   }
 
   serialize(): ITargetBasic {
-    return Object_.optionalAssign<ITargetBasic>(
+    return Object_.patch<ITargetBasic>(
       {
         code: this.code,
         level: this.level,

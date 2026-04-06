@@ -1,3 +1,4 @@
+import { Array_ } from "ron-utils";
 import { clsx, InputNumber, Modal, VersatileSelect } from "rond";
 
 import type { AttackElement, ElementType } from "@/types";
@@ -5,7 +6,6 @@ import type { AttackElement, ElementType } from "@/types";
 import { MAX_TARGET_LEVEL } from "@/constants/config";
 import { ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import Array_ from "@/utils/Array";
 import { useCalcStore } from "@Store/calculator";
 import { updateTarget } from "@Store/calculator/actions";
 import { useUIStore, updateUI } from "@Store/ui";

@@ -1,6 +1,6 @@
 import { Fragment, ReactNode } from "react";
+import { Object_ } from "ron-utils";
 
-import Object_ from "@/utils/Object";
 import { useShallowCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 
@@ -10,7 +10,7 @@ import { CustomInfusionCtrl } from "./CustomInfusionCtrl";
 
 export function BuffElement() {
   const { main, elmtEvent } = useShallowCalcStore((state) =>
-    Object_.pickProps(selectSetup(state), ["main", "elmtEvent"])
+    Object_.extract(selectSetup(state), ["main", "elmtEvent"])
   );
   const { vision, weaponType } = main.data;
 

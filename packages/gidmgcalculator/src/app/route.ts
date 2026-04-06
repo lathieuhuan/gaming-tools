@@ -3,7 +3,7 @@ import MyArtifacts from "@/screens/MyArtifacts";
 import MyCharacters from "@/screens/MyCharacters";
 import MySetups from "@/screens/MySetups";
 import MyWeapons from "@/screens/MyWeapons";
-import { RootRouteConfig } from "@/systems/router";
+import { RootRouteConfig } from "@/lib/router";
 
 import { SCREEN_PATH } from "@/constants/config";
 import { App } from "./App";

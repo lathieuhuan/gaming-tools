@@ -191,15 +191,15 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
             <div className="grid grid-cols-3 gap-2">
               <GearIcon item={weapon.data} onClick={openModal("WEAPON")} />
 
-              {atfGear.slots.map((slot, i) => {
+              {atfGear.slots((slot) => {
                 if (!slot.isFilled) {
-                  return <GearIcon key={i} item={{ icon: Artifact.iconOf(slot.type) }} />;
+                  return <GearIcon key={slot.type} item={{ icon: Artifact.iconOf(slot.type) }} />;
                 }
                 const { piece } = slot;
 
                 return (
                   <GearIcon
-                    key={i}
+                    key={slot.type}
                     item={{
                       icon: piece.data[piece.type].icon,
                       beta: piece.data.beta,

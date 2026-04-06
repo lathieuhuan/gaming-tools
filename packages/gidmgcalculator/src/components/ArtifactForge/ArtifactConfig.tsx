@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
+import { Object_ } from "ron-utils";
 import { Rarity } from "rond";
 
 import type { Artifact } from "@/models";
-import type { IArtifact } from "@/types";
-import Object_ from "@/utils/Object";
+import type { ArtifactStateData } from "@/types";
 
 import {
   ArtifactCard,
@@ -22,7 +22,7 @@ type ArtifactConfigProps = {
   mainActionLabel?: string;
   moreButtons?: ArtifactCardAction[];
   onRarityChange?: (rarity: number) => void;
-  onConfigUpdate?: (properties: Partial<IArtifact>) => void;
+  onConfigUpdate?: (properties: Partial<ArtifactStateData>) => void;
   onSelect?: (config: Artifact) => void;
 };
 

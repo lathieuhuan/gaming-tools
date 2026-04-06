@@ -4,8 +4,7 @@ import { Modal } from "rond";
 import type { AppCharacter, IDbCharacter } from "@/types";
 
 import { $AppCharacter } from "@/services";
-import { useStoreSnapshot } from "@/systems/dynamic-store";
-import Array_ from "@/utils/Array";
+import { useStoreSnapshot } from "@/lib/dynamic-store";
 import { selectDbCharacters } from "@Store/userdbSlice";
 
 // Component
@@ -152,12 +151,7 @@ const TavernHall = ({
           />
         );
       }}
-      onChange={(character) => {
-        if (character) {
-          onSelectCharacter(character);
-        }
-        return true;
-      }}
+      onChange={(character) => character && onSelectCharacter(character)}
       onClose={onClose}
       {...templateProps}
     />

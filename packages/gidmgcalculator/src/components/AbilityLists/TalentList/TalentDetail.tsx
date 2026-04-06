@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
-import { CloseButton, LoadingSpin, StatsTable, VersatileSelect, round } from "rond";
+import { Array_, round } from "ron-utils";
+import { CloseButton, LoadingSpin, StatsTable, VersatileSelect } from "rond";
 
 import type { AppCharacter, TalentType } from "@/types";
 
@@ -11,7 +12,6 @@ import { useTabs, useTranslation } from "@/hooks";
 import { Character } from "@/models";
 import { fetchTalentDescriptions } from "@/services/app-data";
 import { genSequentialOptions } from "@/utils/pure.utils";
-import Array_ from "@/utils/Array";
 import { NORMAL_ATTACK_ICONS } from "./config";
 
 // Component

@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { message } from "rond";
 
 import { decodeSetup } from "@/logic/setupCodec";
-import { useSearchParams } from "@/systems/router";
-import { useSetupImporter } from "@/systems/setup-importer";
+import { useSearchParams } from "@/lib/router";
+import { useSetupImporter } from "@/lib/setup-importer";
 import { selectAppReady, useUIStore } from "@Store/ui";
 
 type SearchParams = {

@@ -1,12 +1,12 @@
-import type { IWeaponBasic } from "@/types";
+import type { RawWeapon } from "@/types";
 
 import { SavingCase, SavingCaseProps } from "./SavingCase";
 import { WeaponSummary } from "./WeaponSummary";
 
 type CaseSameWeaponsProps = Pick<SavingCaseProps, "message" | "hint" | "withDivider"> & {
-  sameWeapons: IWeaponBasic[];
-  selectedWeapon?: IWeaponBasic;
-  onSelectWeapon?: (weapon: IWeaponBasic) => void;
+  sameWeapons: RawWeapon[];
+  selectedWeapon?: RawWeapon;
+  onSelectWeapon?: (weapon: RawWeapon) => void;
 };
 
 export function CaseSameWeapons({

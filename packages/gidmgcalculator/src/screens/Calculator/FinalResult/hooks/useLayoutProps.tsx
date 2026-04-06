@@ -1,10 +1,10 @@
+import { Array_, Object_ } from "ron-utils";
+
 import type { FinalResultLayoutProps } from "@/components";
 import type { TalentType } from "@/types";
 import type { CalculatorState } from "@Store/calculator/types";
 
 import { TALENT_TYPES } from "@/constants/global";
-import Array_ from "@/utils/Array";
-import Object_ from "@/utils/Object";
 import { useShallowCalcStore } from "@Store/calculator";
 
 type UseLayoutPropsReturn = Pick<FinalResultLayoutProps, "showWeaponCalc" | "headerConfigs" | "character"> &
@@ -14,7 +14,7 @@ type UseLayoutPropsReturn = Pick<FinalResultLayoutProps, "showWeaponCalc" | "hea
 
 export function useLayoutProps(comparedIds: number[]): UseLayoutPropsReturn {
   const { setupManagers, setupsById, standardId } = useShallowCalcStore((state) =>
-    Object_.pickProps(state, ["setupManagers", "setupsById", "standardId"])
+    Object_.extract(state, ["setupManagers", "setupsById", "standardId"])
   );
 
   const standardWeapon = setupsById[standardId].main.weapon.code;

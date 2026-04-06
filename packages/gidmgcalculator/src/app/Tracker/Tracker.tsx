@@ -1,7 +1,7 @@
 import { FaMinus } from "react-icons/fa";
+import { Array_ } from "ron-utils";
 import { Button, CloseButton, Modal } from "rond";
 
-import Array_ from "@/utils/Array";
 import { useCalcStore } from "@Store/calculator";
 import { updateUI, useUIStore, type TrackerState } from "@Store/ui";
 

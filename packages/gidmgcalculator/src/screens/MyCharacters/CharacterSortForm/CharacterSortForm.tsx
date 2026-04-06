@@ -7,7 +7,7 @@ import type { CharacterToBeSorted } from "./types";
 
 import { Ascendable } from "@/models";
 import { $AppCharacter } from "@/services";
-import { useStoreSnapshot } from "@/systems/dynamic-store";
+import { useStoreSnapshot } from "@/lib/dynamic-store";
 import { useDispatch } from "@Store/hooks";
 import { selectDbCharacters, sortDbCharacters } from "@Store/userdbSlice";
 

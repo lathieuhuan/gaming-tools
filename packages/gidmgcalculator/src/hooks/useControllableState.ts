@@ -1,7 +1,6 @@
-import { useLayoutEffect, useEffect, useRef, useCallback } from "react";
-import { useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { isFunction } from "ron-utils";
 
-import { isFunction } from "@/utils/pure.utils";
 
 type ChangeHandler<T> = (state: T) => void;
 type SetStateFn<T> = React.Dispatch<React.SetStateAction<T>>;

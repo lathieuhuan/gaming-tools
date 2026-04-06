@@ -2,7 +2,7 @@ import { FaDownload } from "react-icons/fa";
 import { Button } from "rond";
 
 import { DOWNLOAD_DATA_VERSION } from "@/constants/config";
-import { useStore } from "@/systems/dynamic-store";
+import { useStore } from "@/lib/dynamic-store";
 
 export function Download() {
   const store = useStore();

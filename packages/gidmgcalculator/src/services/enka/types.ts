@@ -1,6 +1,6 @@
-import type { IArtifact, IWeapon } from "@/types";
-import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 import type { GOODCharacterConvertReturn } from "@/logic/converGOOD.logic";
+import type { ArtifactGear, Weapon } from "@/models";
+import type { GOODArtifact, GOODCharacter, GOODWeapon } from "@/types/GOOD";
 
 type GOODBuild = {
   name?: string;
@@ -39,8 +39,8 @@ export type EnkaUserResponse = {
 export type GenshinUserBuild = {
   name?: string;
   character: GOODCharacterConvertReturn;
-  weapon: IWeapon;
-  artifacts: (IArtifact | null)[];
+  weapon: Weapon;
+  atfGear: ArtifactGear;
 };
 
 export type GenshinUser = Omit<GenshinUserResponse, "builds"> & {

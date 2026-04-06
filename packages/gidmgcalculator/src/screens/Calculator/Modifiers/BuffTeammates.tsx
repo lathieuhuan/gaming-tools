@@ -1,7 +1,8 @@
+import { Object_ } from "ron-utils";
+
 import type { TeammateCalc } from "@/models";
 import type { IAbilityBuffCtrl } from "@/types";
 
-import Object_ from "@/utils/Object";
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateTeammate } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
@@ -11,7 +12,7 @@ import { TeammateBuffsView } from "@/components";
 
 export default function BuffTeammates() {
   const { teammates, team } = useShallowCalcStore((state) =>
-    Object_.pickProps(selectSetup(state), ["teammates", "team"])
+    Object_.extract(selectSetup(state), ["teammates", "team"])
   );
 
   const handleUpdateCtrls = (teammate: TeammateCalc, ctrls: IAbilityBuffCtrl[]) => {

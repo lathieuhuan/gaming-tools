@@ -2,7 +2,7 @@ import { RefCallback } from "react";
 import { FaAngleDoubleRight, FaPlus } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 
-import type { AppCharacter, ICharacterBasic } from "@/types";
+import type { AppCharacter, RawCharacter } from "@/types";
 import type { CharacterSavingStep, SaveOutput } from "./types";
 
 import { genNewEntityText, getDifferentEntityMessage } from "../config";
@@ -115,7 +115,7 @@ export function SaveCharacterStep({ step, ctaRef, onAction }: SaveCharacterStepP
 }
 
 type OverviewProps = {
-  character: ICharacterBasic;
+  character: RawCharacter;
   data: AppCharacter;
 };
 

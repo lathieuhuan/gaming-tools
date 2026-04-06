@@ -1,11 +1,12 @@
-import type { CalcSetup, CharacterCalc } from "@/models";
+import { Array_ } from "ron-utils";
+
+import type { CalcSetup, Character } from "@/models";
 import type { AttackPattern, TalentCalcItemBonusId } from "@/types";
 import type { AttackAlter } from "../types";
 
 import { NORMAL_ATTACKS } from "@/constants";
-import Array_ from "@/utils/Array";
 
-export function getAttackAlters(main: CharacterCalc, setup: CalcSetup) {
+export function getAttackAlters(main: Character, setup: CalcSetup) {
   const configs: Partial<Record<AttackPattern | TalentCalcItemBonusId, AttackAlter>> = {};
 
   for (const ctrl of setup.selfBuffCtrls) {
@@ -18,7 +19,7 @@ export function getAttackAlters(main: CharacterCalc, setup: CalcSetup) {
     for (const config of Array_.toArray(alterConfigs)) {
       const { checkInput, forPatt = "ALL", attElmt, ...rest } = config;
 
-      if (main.isPerformableEffect(config, ctrl.inputs)) {
+      if (main.canPerformEffect(config, ctrl.inputs)) {
         const alter: AttackAlter = {
           ...rest,
           attElmt: attElmt === "phec" ? setup.team.getPhecElmt() : attElmt,

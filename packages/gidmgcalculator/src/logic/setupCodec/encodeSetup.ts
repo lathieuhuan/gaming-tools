@@ -68,7 +68,7 @@ export function encodeSetup(calcSetup: CalcSetup) {
       weapon.refi,
     ].join(DIVIDER[1]);
 
-    const artifactStrs = atfGear.slots.map((slot) => {
+    const artifactStrs = atfGear.slots((slot) => {
       if (!slot.isFilled) {
         return "";
       }

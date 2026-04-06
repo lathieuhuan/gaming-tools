@@ -3,7 +3,7 @@ import { Modal, ModalControl } from "rond";
 
 import type { TourType } from "@Store/ui/types";
 
-import { CHAR_ENHANCE_TOUR } from "@/systems/tour-operator";
+import { CHAR_ENHANCE_TOUR } from "@/lib/tour-operator";
 import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 import { setTourType } from "@Store/ui";

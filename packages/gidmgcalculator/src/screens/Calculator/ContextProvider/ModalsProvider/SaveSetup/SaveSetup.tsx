@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { Array_ } from "ron-utils";
 import { Input, Modal } from "rond";
 
 import { SCREEN_PATH } from "@/constants/config";
-import { useStoreSnapshot } from "@/systems/dynamic-store";
-import { useRouter } from "@/systems/router";
-import Array_ from "@/utils/Array";
+import { useStoreSnapshot } from "@/lib/dynamic-store";
+import { useRouter } from "@/lib/router";
 import { useCalcStore } from "@Store/calculator";
 import { selectSetup } from "@Store/calculator/selectors";
 import { useDispatch } from "@Store/hooks";

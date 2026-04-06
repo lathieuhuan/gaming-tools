@@ -1,8 +1,8 @@
 import { useEffect } from "react";
+import { secondsToTimeString } from "ron-utils";
 import { Button } from "rond";
 
 import { useTimer } from "@/hooks/useTimer";
-import { secondsToTimeString } from "@/utils/pure.utils";
 
 type MetadataRefetcherProps = {
   className?: string;

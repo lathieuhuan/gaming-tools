@@ -42,8 +42,8 @@ export function TrackerCore({ trackerState }: TrackerCoreProps) {
 
   const renderDefMultiplier = (talent: AttackPattern | "WP") => {
     const totalDefIgnore =
-      attkBonusCtrl.get("defIgn_", "all") +
-      (talent === "WP" ? 0 : attkBonusCtrl.get("defIgn_", talent));
+      attkBonusCtrl.get("defIgn_", ["all"]) +
+      (talent === "WP" ? 0 : attkBonusCtrl.get("defIgn_", [talent]));
 
     return (
       <div className="flex items-center">

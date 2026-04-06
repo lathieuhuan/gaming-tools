@@ -1,153 +1,96 @@
-import type {
-  ArtifactType,
-  IArtifact,
-  IArtifactGear,
-  IArtifactGearPieces,
-  IArtifactGearSet,
-  IArtifactGearSlot,
-  AllAttributes,
-} from "@/types";
-import type { Artifact } from "./Artifact";
+import { applyPercent } from "ron-utils";
+
+import type { AllAttributes, ArtifactType, ArtifactGearSet } from "@/types";
+import type { Clonable } from "./interfaces";
 
 import { ARTIFACT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
-import { applyPercent } from "@/utils/pure.utils";
 import TypeCounter from "@/utils/TypeCounter";
+import { Artifact } from "./Artifact";
+import { ArtifactGearPieces } from "./ArtifactGearPieces";
 
-class PiecesIterator<TArtifact extends IArtifact> implements Iterator<TArtifact> {
-  private index = 0;
-
-  constructor(private pieces: IArtifactGearPieces<TArtifact>) {}
-
-  private getNextPiece(): TArtifact | undefined {
-    const type = ARTIFACT_TYPES.at(this.index);
-
-    if (!type) {
-      return undefined;
-    }
-
-    this.index++;
-
-    return this.pieces[type] || this.getNextPiece();
-  }
-
-  next(): IteratorResult<TArtifact, undefined> {
-    const value = this.getNextPiece();
-    return value ? { value, done: false } : { value: undefined, done: true };
-  }
-}
-
-export class ArtifactGearPieces<TArtifact extends IArtifact>
-  implements IArtifactGearPieces<TArtifact>
-{
-  flower?: TArtifact;
-  plume?: TArtifact;
-  sands?: TArtifact;
-  goblet?: TArtifact;
-  circlet?: TArtifact;
-
-  constructor(pieces?: Partial<Record<ArtifactType, TArtifact>>) {
-    this.flower = pieces?.flower;
-    this.plume = pieces?.plume;
-    this.sands = pieces?.sands;
-    this.goblet = pieces?.goblet;
-    this.circlet = pieces?.circlet;
-  }
-
-  [Symbol.iterator](): Iterator<TArtifact> {
-    return new PiecesIterator(this);
-  }
-
-  forEach(callback: (piece: TArtifact, index: number) => void): void {
-    for (let index = 0; index < ARTIFACT_TYPES.length; index++) {
-      const type = ARTIFACT_TYPES[index];
-
-      if (this[type]) {
-        callback(this[type], index);
-      }
-    }
-  }
-
-  map<U>(callback: (piece: TArtifact, index: number) => U): U[] {
-    const result: U[] = [];
-
-    this.forEach((piece, index) => {
-      result.push(callback(piece, index));
-    });
-
-    return result;
-  }
-}
-
-type ArtifactGearSlot<TArtifact extends Artifact = Artifact> =
+export type ArtifactGearSlot =
   | {
       isFilled: true;
       type: ArtifactType;
-      piece: TArtifact;
+      piece: Artifact;
     }
   | {
       isFilled: false;
       type: ArtifactType;
     };
 
-export class ArtifactGear<TArtifact extends Artifact = Artifact>
-  implements IArtifactGear<TArtifact>
-{
-  pieces: ArtifactGearPieces<TArtifact>;
-  slots: IArtifactGearSlot<TArtifact>[] = [];
-  sets: IArtifactGearSet[] = [];
+export class ArtifactGear implements Clonable<ArtifactGear> {
+  pieces: ArtifactGearPieces;
+  sets: ArtifactGearSet[] = [];
   attributes: AllAttributes = new TypeCounter();
   finalAttrs: AllAttributes = new TypeCounter();
 
-  constructor(pieces?: IArtifactGearPieces<TArtifact> | TArtifact[]) {
-    const gearPieces: Partial<Record<ArtifactType, TArtifact>> = {};
-    const slots: ArtifactGearSlot<TArtifact>[] = [];
+  constructor(pieces?: ArtifactGearPieces | Artifact[]) {
+    const gearPieces: Partial<Record<ArtifactType, Artifact>> = {};
 
     const getPiece = Array.isArray(pieces)
       ? (type: ArtifactType) => pieces.find((piece) => piece.type === type)
-      : (type: ArtifactType) => pieces?.[type];
+      : (type: ArtifactType) => pieces?.get(type);
 
     for (const type of ARTIFACT_TYPES) {
       const piece = getPiece(type);
 
       gearPieces[type] = piece;
-
-      slots.push(piece ? { isFilled: true, type, piece } : { isFilled: false, type });
     }
 
     this.pieces = new ArtifactGearPieces(gearPieces);
-    this.slots = slots;
 
-    if (!pieces) {
-      return;
-    }
+    this.processPieces();
+  }
 
-    const sets: IArtifactGearSet[] = [];
+  private processPieces() {
+    const sets: ArtifactGearSet[] = [];
     const attributes: AllAttributes = new TypeCounter();
     const counter = new TypeCounter();
 
-    for (const artifact of pieces) {
-      const codeCount = counter.add(artifact.code);
+    for (const piece of this.pieces.values()) {
+      const codeCount = counter.add(piece.code);
 
       if (codeCount === 2) {
         sets.push({
           bonusLv: 0,
           pieceCount: 2,
-          data: artifact.data,
+          data: piece.data,
         });
       } else if (codeCount === 4) {
         sets[0].bonusLv = 1;
         sets[0].pieceCount = 4;
       }
 
-      attributes.add(artifact.mainStatType, artifact.mainStatValue);
+      attributes.add(piece.mainStatType, piece.mainStatValue);
 
-      artifact.subStats.forEach((subStat) => {
+      piece.subStats.forEach((subStat) => {
         attributes.add(subStat.type, subStat.value);
       });
     }
 
     this.sets = sets;
     this.attributes = attributes;
+  }
+
+  slots<U>(callback: (slot: ArtifactGearSlot) => U): U[];
+  slots(): ArtifactGearSlot[];
+  slots<U>(callback?: (slot: ArtifactGearSlot) => U): ArtifactGearSlot[] | U[] {
+    if (callback) {
+      return this.slots().map(callback);
+    }
+
+    return ARTIFACT_TYPES.map((type) => {
+      const piece = this.pieces.get(type);
+
+      return piece
+        ? {
+            isFilled: true,
+            type,
+            piece,
+          }
+        : { isFilled: false, type };
+    });
   }
 
   finalizeAttributes = (baseStats: { hp_base: number; atk_base: number; def_base: number }) => {
@@ -165,8 +108,14 @@ export class ArtifactGear<TArtifact extends Artifact = Artifact>
       attrs.delete(`${statType}_`);
     }
 
-    this.finalAttrs = attrs;
-
-    return attrs;
+    return (this.finalAttrs = attrs);
   };
+
+  clone() {
+    return new ArtifactGear(this.pieces);
+  }
+
+  deepClone() {
+    return new ArtifactGear(this.pieces.deepClone());
+  }
 }

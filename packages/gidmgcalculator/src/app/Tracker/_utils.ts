@@ -1,4 +1,4 @@
-import { round } from "@/utils/pure.utils";
+import { round } from "ron-utils";
 
 export function getTotalRecordValue(list: Array<{ value: number }>) {
   return round(

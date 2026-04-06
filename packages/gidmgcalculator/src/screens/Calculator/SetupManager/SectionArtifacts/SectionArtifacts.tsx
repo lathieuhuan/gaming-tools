@@ -6,7 +6,9 @@ import { Button, clsx, CollapseSpace, notification, PouchSvg } from "rond";
 import type { ArtifactType } from "@/types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
+import { createArtifact } from "@/logic/entity.logic";
 import { Artifact } from "@/models";
+import IdStore from "@/utils/IdStore";
 import { useCalcStore } from "@Store/calculator";
 import { setArtifactPiece } from "@Store/calculator/actions";
 import { selectActiveMain } from "@Store/calculator/selectors";
@@ -16,17 +18,16 @@ import { useSettingsStore } from "@Store/settings";
 import {
   ArtifactForge,
   ArtifactForgeProps,
-  ArtifactInventory,
-  ArtifactInventoryProps,
   GenshinImage,
   LoadoutStash,
   LoadoutStashProps,
 } from "@/components";
+import { ArtifactInventory, ArtifactInventoryProps } from "@/components/ArtifactInventory";
 import { Section } from "../components/Section";
 import { ArtifactInfo, ArtifactSourceType } from "./ArtifactInfo";
 import { CopySelect } from "./CopySelect";
 
-type ModalType = "ARTIFACT_LOADOUT" | "";
+type ModalType = "ARTIFACT_LOADOUT" | "ARTIFACT_GENERATOR" | "";
 
 type InventoryState = {
   active: boolean;
@@ -55,7 +56,7 @@ export function SectionArtifacts() {
   });
 
   const { pieces } = atfGear;
-  const activePiece = activeArtifactType ? pieces[activeArtifactType] : undefined;
+  const activePiece = activeArtifactType ? pieces.get(activeArtifactType) : undefined;
 
   const closeModal = () => setModalType("");
 
@@ -75,7 +76,7 @@ export function SectionArtifacts() {
 
   const handleClickTab = (type: ArtifactType) => {
     // there's already an artifact at tabIndex (or activePiece !== null after this excution)
-    if (pieces[type]) {
+    if (pieces.has(type)) {
       // if click on the activeTab close it, otherwise change tab
       setActiveArtifactType(activeArtifactType === type ? undefined : type);
     } else {
@@ -94,7 +95,7 @@ export function SectionArtifacts() {
 
   const handleSelectLoadout: LoadoutStashProps["onSelect"] = (pieces) => {
     for (const piece of pieces) {
-      setArtifactPiece(piece.userData, piece.data);
+      setArtifactPiece(piece);
     }
     closeModal();
   };
@@ -114,7 +115,7 @@ export function SectionArtifacts() {
       content: `Selected ${artifact.data.name} (${artifact.type})`,
     });
 
-    setArtifactPiece(artifact, artifact.data);
+    setArtifactPiece(artifact);
     setActiveArtifactType(artifact.type);
   };
 
@@ -134,7 +135,7 @@ export function SectionArtifacts() {
       content: `Forged ${artifact.data.name} (${artifact.type})`,
     });
 
-    setArtifactPiece(artifact, artifact.data, keepArtStatsOnSwitch);
+    setArtifactPiece(artifact, keepArtStatsOnSwitch);
     setActiveArtifactType(artifact.type);
   };
 
@@ -143,20 +144,21 @@ export function SectionArtifacts() {
     rarity,
     data
   ) => {
-    let rootID = Date.now();
+    const idStore = new IdStore();
     let leftMostIndex = Infinity;
 
     for (const type of types) {
-      setArtifactPiece(
+      const artifact = createArtifact(
         {
-          ID: rootID++,
+          ID: idStore.gen(),
           code: data.code,
           type,
           rarity,
         },
-        data,
-        keepArtStatsOnSwitch
+        data
       );
+
+      setArtifactPiece(artifact, keepArtStatsOnSwitch);
 
       const index = ARTIFACT_TYPES.indexOf(type);
 
@@ -208,7 +210,7 @@ export function SectionArtifacts() {
 
       <div className="flex">
         {ARTIFACT_TYPES.map((type) => {
-          const piece = pieces[type];
+          const piece = pieces.get(type);
           const icon = piece?.data?.[type].icon || Artifact.iconOf(type);
 
           return (
@@ -247,6 +249,11 @@ export function SectionArtifacts() {
 
       {!activeArtifactType && (
         <div className="mt-4 px-4 flex justify-end gap-4">
+          {/* <Button
+            title="Generate"
+            icon={<IoDice className="text-2xl" />}
+            onClick={() => setModalType("ARTIFACT_GENERATOR")}
+          /> */}
           <Button
             title="Loadout"
             icon={<FaToolbox className="text-lg" />}
@@ -293,6 +300,16 @@ export function SectionArtifacts() {
         onSelect={handleSelectLoadout}
         onClose={closeModal}
       />
+
+      {/* <Modal
+        active={modalType === "ARTIFACT_GENERATOR"}
+        preset="small"
+        title="Artifact Generator"
+        className="bg-dark-1"
+        onClose={closeModal}
+      >
+        <ArtifactGenerator className="h-[70vh] custom-scrollbar" />
+      </Modal> */}
     </Section>
   );
 }

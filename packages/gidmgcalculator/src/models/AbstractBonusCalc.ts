@@ -1,3 +1,5 @@
+import { Array_ } from "ron-utils";
+
 import type {
   BareBonus,
   BonusPerformTools,
@@ -14,12 +16,11 @@ import type {
   ITeamMember,
 } from "@/types";
 
-import Array_ from "@/utils/Array";
 import { AbstractEffectValueCalc } from "./AbstractEffectValueCalc";
 
 const TEAM_DEPENDED_STACK_TYPES: EntityBonusStack["type"][] = [
   "MEMBER",
-  "ENERGY",
+  // "ENERGY", // remove for now because Raiden needs it when the team is only her
   "NATION",
   "RESOLVE",
   "MIX",
@@ -46,7 +47,7 @@ export abstract class AbstractBonusCalc<
   private isPerformableEffect(condition?: EffectPerformableCondition) {
     return (
       this.team.isAvailableEffect(condition) &&
-      this.performer.isPerformableEffect(condition, this.inputs)
+      this.performer.canPerformEffect(condition, this.inputs)
     );
   }
 
@@ -62,6 +63,7 @@ export abstract class AbstractBonusCalc<
   protected abstract getBasedOn(config: EntityBonusBasedOn): {
     field: EntityBonusBasedOnField;
     value: number;
+    isDynamic: boolean;
   };
 
   protected applyMax(value: number, config?: EffectMax) {
@@ -284,7 +286,7 @@ export abstract class AbstractBonusCalc<
       const basedOn = this.getBasedOn(config.basedOn);
 
       bonus.value *= basedOn.value;
-      bonus.isDynamic = basedOn.field !== "base_atk";
+      bonus.isDynamic = basedOn.isDynamic;
     }
 
     bonus.value *= this.getStackValue(config.stacks);

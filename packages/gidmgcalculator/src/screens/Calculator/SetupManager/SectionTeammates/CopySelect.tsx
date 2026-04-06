@@ -1,4 +1,5 @@
-import Object_ from "@/utils/Object";
+import { Object_ } from "ron-utils";
+
 import { useShallowCalcStore } from "@Store/calculator";
 import { copyTeammates } from "@Store/calculator/actions";
 
@@ -11,7 +12,7 @@ type Option = {
 
 export function CopySelect() {
   const { setupManagers, setupsById } = useShallowCalcStore((state) =>
-    Object_.pickProps(state, ["setupManagers", "setupsById"])
+    Object_.extract(state, ["setupManagers", "setupsById"])
   );
 
   const copyOptions = setupManagers.reduce<Option[]>((results, manager) => {

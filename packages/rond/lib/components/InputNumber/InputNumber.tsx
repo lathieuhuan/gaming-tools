@@ -1,7 +1,8 @@
 import type { ClassValue } from "clsx";
+import { forwardRef, useEffect, useState } from "react";
+import { round } from "ron-utils";
+
 import { cn } from "@lib/utils";
-import { forwardRef, useState, useEffect } from "react";
-import { round } from "../../utils";
 
 import "./InputNumber.styles.scss";
 
@@ -14,13 +15,14 @@ const classBySize: Record<Size, string> = {
 
 export type InputNumberProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "type" | "value" | "size" | "max" | "min" | "onChange"
+  "type" | "value" | "defaultValue" | "size" | "max" | "min" | "onChange"
 > & {
   className?: ClassValue;
   unstyled?: boolean;
   transparent?: boolean;
   size?: Size;
   value?: number;
+  defaultValue?: number;
   /** Default 9999 */
   max?: number;
   /** Default 0 */

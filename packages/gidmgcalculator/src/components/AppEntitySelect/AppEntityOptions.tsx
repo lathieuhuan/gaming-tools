@@ -4,8 +4,8 @@ import { clsx, ItemCase, useIntersectionObserver, type EntitySelectRenderArgs } 
 import { filterSortOptions } from "./_utils";
 import { AppEntityOption, AppEntityOptionModel } from "./AppEntityOption";
 
-/** this pick is valid or not */
-type Return = boolean;
+/** false if this pick is invalid */
+type Return = boolean | void;
 
 export type OptionValidity = Return | Promise<Return>;
 
@@ -142,7 +142,9 @@ export function AppEntityOptions<T extends AppEntityOptionModel = AppEntityOptio
       return;
     }
 
-    if (await onChange(item, false)) {
+    const valid = (await onChange(item, false)) ?? true;
+
+    if (valid) {
       afterSelect(item.code);
     }
   };

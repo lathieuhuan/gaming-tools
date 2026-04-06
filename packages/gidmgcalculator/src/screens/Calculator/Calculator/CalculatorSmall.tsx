@@ -70,7 +70,7 @@ export function CalculatorSmall() {
         </div>
       ) : (
         <div
-          id={TOUR_STEP_ID.calculatorSmall}
+          id={TOUR_STEP_ID.scrollCalculator}
           className="h-full flex hide-scrollbar border-t border-dark-line relative snap-x snap-mandatory"
         >
           <OverviewCard touched={touched} />

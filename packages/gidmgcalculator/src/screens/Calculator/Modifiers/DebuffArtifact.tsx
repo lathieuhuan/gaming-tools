@@ -1,6 +1,7 @@
+import { Object_ } from "ron-utils";
+
 import type { IArtifactDebuffCtrl } from "@/types";
 
-import Object_ from "@/utils/Object";
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateActiveSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
@@ -10,7 +11,7 @@ import { ArtifactDebuffsView } from "@/components";
 
 export default function DebuffArtifact() {
   const { artDebuffCtrls } = useShallowCalcStore((state) =>
-    Object_.pickProps(selectSetup(state), ["artDebuffCtrls"])
+    Object_.extract(selectSetup(state), ["artDebuffCtrls"])
   );
 
   const handleUpdateCtrls = (newCtrls: IArtifactDebuffCtrl[]) => {

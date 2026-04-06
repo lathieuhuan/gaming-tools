@@ -20,7 +20,7 @@ function getTeammateModifierElmts<TModCtrl extends IAbilityBuffCtrl | IAbilityDe
 ) {
   const { vision } = teammate.data;
   const availableCtrls = modCtrls.filter(
-    (ctrl) => props.team.isAvailableEffect(ctrl.data) && teammate.isPerformableEffect(ctrl.data)
+    (ctrl) => props.team.isAvailableEffect(ctrl.data) && teammate.canPerformEffect(ctrl.data)
   );
 
   if (!availableCtrls.length) {

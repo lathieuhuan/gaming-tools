@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
+import { Array_, Object_ } from "ron-utils";
 
 import { MAX_CALC_SETUPS } from "@/constants/config";
-import Array_ from "@/utils/Array";
-import Object_ from "@/utils/Object";
 import { useShallowCalcStore } from "@Store/calculator";
 import { MultiSetupChange, updateMultiSetups } from "@Store/calculator/actions";
 import { getCopyName } from "@Store/calculator/utils";
@@ -26,7 +25,7 @@ function getNewSetupName(setups: Array<{ name: string }>) {
 
 export function useSetupDirectorKit() {
   const { setupManagers, comparedIds, standardId } = useShallowCalcStore((state) =>
-    Object_.pickProps(state, ["setupManagers", "comparedIds", "standardId"])
+    Object_.extract(state, ["setupManagers", "comparedIds", "standardId"])
   );
 
   const [tempSetups, setTempSetups] = useState<MultiSetupChange[]>(

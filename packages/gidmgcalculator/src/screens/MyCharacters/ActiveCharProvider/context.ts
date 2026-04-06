@@ -1,11 +1,10 @@
 import { createContext, useContext } from "react";
 
-import type { Artifact, CharacterCalc } from "@/models";
-import type { IArtifactGearSlot } from "@/types";
+import type { ArtifactGearSlot, Character } from "@/models";
 
 // Data Context
 
-export const ActiveCharContext = createContext<CharacterCalc | null>(null);
+export const ActiveCharContext = createContext<Character | null>(null);
 
 export function useActiveChar() {
   const context = useContext(ActiveCharContext);
@@ -20,7 +19,7 @@ export function useActiveChar() {
 export type ActiveCharAction = {
   requestSwitchCharacter: () => void;
   requestSwitchWeapon: () => void;
-  requestSwitchArtifact: (slot: IArtifactGearSlot<Artifact>) => void;
+  requestSwitchArtifact: (slot: ArtifactGearSlot) => void;
   requestRemoveCharacter: () => void;
 };
 

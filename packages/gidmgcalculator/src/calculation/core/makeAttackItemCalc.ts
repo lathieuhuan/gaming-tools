@@ -1,37 +1,52 @@
-import type { CharacterCalc } from "@/models";
+import { toMult } from "ron-utils";
+
+import type { Character, TargetCalc } from "@/models";
 import type {
   ActualAttackPattern,
+  AttackBonus,
   AttackBonusKey,
   AttackElement,
   AttackReaction,
   TalentCalcItemBonusId,
 } from "@/types";
 import type { CalcResultAttackItem, CalcResultItemValue } from "../types";
-import type { TargetCalc } from "../../models/TargetCalc";
 import type { ResultRecorder } from "./ResultRecorder";
 
-import { toMult } from "@/utils/pure.utils";
 import { limitCRate } from "@/logic/stat.logic";
+import { GetBonusOptions } from "@/models/Character";
+import { QUICKEN_BUFF_LABEL } from "../constants";
 
 type MakeAttackCalcTools = {
   attElmt?: AttackElement;
   attPatt?: ActualAttackPattern;
   itemId?: TalentCalcItemBonusId;
   reaction?: AttackReaction;
+  noU?: boolean;
 };
 
 export function makeAttackItemCalc(
-  performer: CharacterCalc,
+  performer: Character,
   target: TargetCalc,
   tools: MakeAttackCalcTools = {}
 ) {
   const { attkBonusCtrl, bareLv } = performer;
-  const { attElmt = "phys", attPatt = "none", itemId, reaction = null } = tools;
+  const { attElmt = "phys", attPatt = "none", itemId, reaction = null, noU = false } = tools;
+
+  let filterBonus: GetBonusOptions["filter"];
+
+  if (noU) {
+    filterBonus = (bonus: AttackBonus) =>
+      bonus.label !== QUICKEN_BUFF_LABEL.spread && bonus.label !== QUICKEN_BUFF_LABEL.aggravate;
+  }
 
   function getBonus(key: AttackBonusKey) {
-    return attPatt === "none"
-      ? attkBonusCtrl.get(key, "all", attElmt, itemId)
-      : attkBonusCtrl.get(key, "all", attElmt, itemId, attPatt, `${attPatt}.${attElmt}`);
+    if (attPatt === "none") {
+      return attkBonusCtrl.get(key, ["all", attElmt, itemId], { filter: filterBonus });
+    }
+
+    return attkBonusCtrl.get(key, ["all", attElmt, itemId, attPatt, `${attPatt}.${attElmt}`], {
+      filter: filterBonus,
+    });
   }
 
   function calculate(bases: number[], recorder: ResultRecorder): CalcResultAttackItem {
@@ -47,7 +62,7 @@ export function makeAttackItemCalc(
     // REACTION MULTIPLIER
     let rxnMult = 1;
 
-    if (attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
+    if (!noU && attElmt !== "phys" && (reaction === "melt" || reaction === "vaporize")) {
       // deal elemental DMG and want amplifying reaction
       rxnMult = performer.getAmplifyingMult(reaction, attElmt);
     }

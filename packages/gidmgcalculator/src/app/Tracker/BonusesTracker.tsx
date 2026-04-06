@@ -1,12 +1,12 @@
-import { clsx, round } from "rond";
+import { Object_, round } from "ron-utils";
+import { clsx } from "rond";
 
 import type { AttackBonus, AttackBonusKey } from "@/types";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
 import { useTranslation } from "@/hooks";
-import { AttackBonusControl } from "@/models";
+import { AttackBonusControl } from "@/models/Character";
 import { suffixOf } from "@/utils/pure.utils";
-import Object_ from "@/utils/Object";
 import { getTotalRecordValue } from "./_utils";
 
 import { Heading, RecordList } from "./_components";

@@ -1,7 +1,6 @@
 import { cloneElement, useState } from "react";
+import { isFunction } from "ron-utils";
 import { Popover, PopoverProps, useClickOutside } from "rond";
-
-import { isFunction } from "@/utils/pure.utils";
 
 type PopoverActionProps = Omit<PopoverProps, "children" | "active" | "content"> & {
   content: React.ReactNode | ((close: () => void) => React.ReactNode);

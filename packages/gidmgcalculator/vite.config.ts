@@ -17,6 +17,9 @@ export default defineConfig({
     open: true,
     port: 4201,
   },
+  esbuild: {
+    target: "es2024",
+  },
   resolve: {
     alias: {
       "@Store": path.resolve(__dirname, "./src/store"),
