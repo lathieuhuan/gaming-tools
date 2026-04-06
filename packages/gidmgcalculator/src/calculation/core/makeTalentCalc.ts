@@ -56,7 +56,7 @@ export function makeTalentCalc(
 
     for (const factor of Array_.toArray(item.factor)) {
       const { root, scale, basedOn } = parseFactor(factor);
-      const value = performer.getAttribute(basedOn);
+      const value = performer.getAttr(basedOn);
       const totalMult = root * Character.getTalentMult(scale, level) + extraTalentMult;
 
       bases.push((value * totalMult) / 100);
@@ -138,6 +138,7 @@ export function makeTalentCalc(
       attPatt,
       reaction,
       itemId: item.id,
+      noU: item.noU,
     });
 
     const bases = getBases(item, getBonus("mult_"), recorder);
@@ -156,13 +157,13 @@ export function makeTalentCalc(
     const attElmt = LUNAR_ATTACK_ELEMENT[lunar];
 
     function getBonus(key: AttackBonusKey) {
-      return attkBonusCtrl.get(
-        key,
+      return attkBonusCtrl.get(key, [
         lunar,
         attPatt !== "none" && `${attPatt}.${lunar}`,
         item.id,
-        key === "cRate_" || key === "cDmg_" ? attElmt : null // Only get "cRate_" and "cDmg_" bonus from attElmt
-      );
+        // Only get "cRate_" and "cDmg_" bonus from attElmt
+        key === "cRate_" || key === "cDmg_" ? attElmt : null,
+      ]);
     }
 
     const extraTalentMult = getBonus("mult_");
@@ -178,8 +179,8 @@ export function makeTalentCalc(
     const resMult = target.resistMults[attElmt];
 
     // CRITS
-    const cRate_ = limitCRate(performer.getAttribute("cRate_") + getBonus("cRate_")) / 100;
-    const cDmg_ = (performer.getAttribute("cDmg_") + getBonus("cDmg_")) / 100;
+    const cRate_ = limitCRate(performer.getAttr("cRate_") + getBonus("cRate_")) / 100;
+    const cDmg_ = (performer.getAttr("cDmg_") + getBonus("cDmg_")) / 100;
     const cDmgMult = 1 + cDmg_;
     const averageMult = 1 + cRate_ * cDmg_;
 
@@ -225,7 +226,7 @@ export function makeTalentCalc(
   ): CalcResultOtherItem {
     const { flatFactor } = item;
 
-    const extraTalentMult = attkBonusCtrl.get("mult_", item.id);
+    const extraTalentMult = attkBonusCtrl.get("mult_", [item.id]);
     const base = getBases(item, extraTalentMult, recorder)[0];
     let flat = 0;
 

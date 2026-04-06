@@ -133,7 +133,7 @@ export class Character implements ITeamMember, Clonable<Character> {
   }
 
   getQuickenBuffDamage(reaction: QuickenReaction) {
-    const pctBonus = this.attkBonusCtrl.get("pct_", reaction);
+    const pctBonus = this.attkBonusCtrl.get("pct_", [reaction]);
 
     switch (reaction) {
       case "aggravate":
@@ -146,7 +146,7 @@ export class Character implements ITeamMember, Clonable<Character> {
   }
 
   getAmplifyingMult(reaction: AmplifyingReaction, attElmt: AttackElement) {
-    const pctBonus = this.attkBonusCtrl.get("pct_", reaction);
+    const pctBonus = this.attkBonusCtrl.get("pct_", [reaction]);
 
     switch (reaction) {
       case "melt":
@@ -158,7 +158,7 @@ export class Character implements ITeamMember, Clonable<Character> {
     }
   }
 
-  getAttribute(key: TypeCounterKey<AllAttributes>) {
+  getAttr(key: TypeCounterKey<AllAttributes>) {
     return this.allAttrsCtrl.finals.get(key);
   }
 

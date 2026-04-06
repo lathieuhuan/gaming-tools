@@ -23,6 +23,7 @@ import {
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
 import { BonusCalc } from "@/models/Character";
+import { QUICKEN_BUFF_LABEL } from "../constants";
 import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";
 
 export function applyBuffs(main: Character, teammates: TeammateCalc[], setup: CalcSetup) {
@@ -335,7 +336,7 @@ export function applyBuffs(main: Character, teammates: TeammateCalc[], setup: Ca
 
   allAttrsCtrl.finalize();
 
-  const rxnBonuses = getRxnBonusesFromEM(main.getAttribute("em"));
+  const rxnBonuses = getRxnBonusesFromEM(main.getAttr("em"));
 
   if (rxnBonuses.transformative) {
     for (const rxn of TRANSFORMATIVE_REACTIONS) {
@@ -388,7 +389,7 @@ export function applyBuffs(main: Character, teammates: TeammateCalc[], setup: Ca
       value: main.getQuickenBuffDamage("spread"),
       toType: "dendro",
       toKey: "flat",
-      label: "Spread reaction",
+      label: QUICKEN_BUFF_LABEL.spread,
     });
   }
   if (reaction === "aggravate" || infuseReaction === "aggravate") {
@@ -396,7 +397,7 @@ export function applyBuffs(main: Character, teammates: TeammateCalc[], setup: Ca
       value: main.getQuickenBuffDamage("aggravate"),
       toType: "electro",
       toKey: "flat",
-      label: "Aggravate reaction",
+      label: QUICKEN_BUFF_LABEL.aggravate,
     });
   }
 }

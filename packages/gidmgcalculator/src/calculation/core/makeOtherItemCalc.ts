@@ -15,21 +15,21 @@ export function makeOtherItemCalc(performer: Character) {
     flat = 0,
     itemId?: TalentCalcItemBonusId
   ): CalcResultOtherItem {
-    const baseMult = toMult(attkBonusCtrl.get("baseMult_", itemId));
-    let bonusMult = attkBonusCtrl.get("pct_", itemId);
+    const baseMult = toMult(attkBonusCtrl.get("baseMult_", [itemId]));
+    let bonusMult = attkBonusCtrl.get("pct_", [itemId]);
 
     switch (type) {
       case "healing":
-        flat += attkBonusCtrl.get("flat", itemId);
-        bonusMult += performer.getAttribute("healB_");
+        flat += attkBonusCtrl.get("flat", [itemId]);
+        bonusMult += performer.getAttr("healB_");
         break;
       case "shield":
-        bonusMult += performer.getAttribute("shieldS_");
+        bonusMult += performer.getAttr("shieldS_");
         break;
     }
 
     bonusMult = toMult(bonusMult);
-    const specMult = toMult(attkBonusCtrl.get("specMult_", itemId));
+    const specMult = toMult(attkBonusCtrl.get("specMult_", [itemId]));
 
     base = (base * baseMult + flat) * bonusMult * specMult;
 
