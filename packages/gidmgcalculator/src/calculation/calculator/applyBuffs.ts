@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcSetup, CharacterCalc, TeammateCalc } from "@/models";
+import type { CalcSetup, Character, TeammateCalc } from "@/models";
 import type {
   AttackElement,
   AttackPattern,
@@ -22,10 +22,10 @@ import {
   QUICKEN_REACTIONS,
   TRANSFORMATIVE_REACTIONS,
 } from "@/constants/global";
-import { BonusCalc } from "@/models";
+import { BonusCalc } from "@/models/Character";
 import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";
 
-export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup: CalcSetup) {
+export function applyBuffs(main: Character, teammates: TeammateCalc[], setup: CalcSetup) {
   const { team } = setup;
   const { weapon, allAttrsCtrl, attkBonusCtrl } = main;
 
@@ -109,7 +109,7 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
       if (
         (isFinalStage === undefined || isFinalStage === isFinalEffect(config)) &&
         team.isAvailableEffect(config) &&
-        performer.isPerformableEffect(config, support.inputs)
+        performer.canPerformEffect(config, support.inputs)
       ) {
         const { targets } = config;
         const basedOnFixed = !Array.isArray(targets) && targets.module === "ATTR";
@@ -131,7 +131,7 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
     const { innateBuffs = [] } = main.data;
 
     for (const buff of innateBuffs) {
-      if (team.isAvailableEffect(buff) && main.isPerformableEffect(buff)) {
+      if (team.isAvailableEffect(buff) && main.canPerformEffect(buff)) {
         applyBonus(`Self / ${buff.src}`, main, buff.effects, {}, isFinalStage);
       }
     }
@@ -139,7 +139,7 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
     for (const ctrl of setup.selfBuffCtrls) {
       const buff = ctrl.data;
 
-      if (ctrl.activated && team.isAvailableEffect(buff) && main.isPerformableEffect(buff)) {
+      if (ctrl.activated && team.isAvailableEffect(buff) && main.canPerformEffect(buff)) {
         applyBonus(`Self / ${buff.src}`, main, buff.effects, { inputs: ctrl.inputs }, isFinalStage);
       }
     }
@@ -293,7 +293,7 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
       if (
         ctrl.activated &&
         team.isAvailableEffect(ctrl.data) &&
-        teammate.isPerformableEffect(ctrl.data)
+        teammate.canPerformEffect(ctrl.data)
       ) {
         const buff = ctrl.data;
         const label = `${teammate.data.name} / ${buff.src}`;
@@ -335,7 +335,7 @@ export function applyBuffs(main: CharacterCalc, teammates: TeammateCalc[], setup
 
   allAttrsCtrl.finalize();
 
-  const rxnBonuses = getRxnBonusesFromEM(main.getAttr("em"));
+  const rxnBonuses = getRxnBonusesFromEM(main.getAttribute("em"));
 
   if (rxnBonuses.transformative) {
     for (const rxn of TRANSFORMATIVE_REACTIONS) {

@@ -1,11 +1,11 @@
 import { toMult } from "ron-utils";
 
-import type { CharacterCalc } from "@/models";
+import type { Character } from "@/models";
 import type { TalentCalcItemBonusId } from "@/types";
 import type { CalcResultOtherItem } from "../types";
 import type { ResultRecorder } from "./ResultRecorder";
 
-export function makeOtherItemCalc(performer: CharacterCalc) {
+export function makeOtherItemCalc(performer: Character) {
   const { attkBonusCtrl } = performer;
 
   function calculate(
@@ -21,10 +21,10 @@ export function makeOtherItemCalc(performer: CharacterCalc) {
     switch (type) {
       case "healing":
         flat += attkBonusCtrl.get("flat", itemId);
-        bonusMult += performer.getAttr("healB_");
+        bonusMult += performer.getAttribute("healB_");
         break;
       case "shield":
-        bonusMult += performer.getAttr("shieldS_");
+        bonusMult += performer.getAttribute("shieldS_");
         break;
     }
 

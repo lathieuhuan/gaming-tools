@@ -17,7 +17,7 @@ import type {
 import { ArtifactGear, CalcSetup, Team, TeammateCalc, Weapon } from "@/models";
 import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
 import { enhanceCtrls } from "../logic/modifier.logic";
-import { createCharacterCalc, createTarget } from "./entity.logic";
+import { createCharacter, createTarget } from "./entity.logic";
 import { createArtifactBuffCtrls, createWeaponBuffCtrls } from "./modifier.logic";
 
 export function isDbSetup(setup: IDbSetup | IDbComplexSetup): setup is IDbSetup {
@@ -174,12 +174,13 @@ function restoreTeammate(teammate: ITeammateBasic, team: Team) {
 }
 
 export function restoreCalcSetup(data: IDbSetup, weapon: Weapon, atfGear: ArtifactGear) {
-  const main = createCharacterCalc({
-    ...data.main,
+  const team = new Team();
+  const main = createCharacter(data.main, null, {
+    state: data.main,
     weapon,
     atfGear,
+    team,
   });
-  const team = new Team();
   const teammates = data.teammates.map((teammate) => restoreTeammate(teammate, team));
 
   team.updateMembers([main, ...teammates]);

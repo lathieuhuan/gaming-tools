@@ -3,7 +3,7 @@ import { FaSave } from "react-icons/fa";
 import { ClassValue, clsx } from "rond";
 
 import { useTranslation } from "@/hooks";
-import { CharacterCalc } from "@/models";
+import { createCharacter } from "@/logic/entity.logic";
 import { useSelectedBuildState } from "../DataImporter";
 import { useRequestSaveItem } from "../DataSaver/ItemSaver";
 import { useLayoutState } from "../Layout";
@@ -34,15 +34,11 @@ export function SectionDetail({ className }: SectionDetailProps) {
 
   switch (detailType) {
     case "CHARACTER": {
-      const characterCalc = new CharacterCalc(
-        {
-          ...character.basic,
-          weapon,
-          atfGear,
-        },
-        character.data
-      );
-      const allAttrs = characterCalc.initCalc().allAttrsCtrl.finalize();
+      const $character = createCharacter(character.basic, character.data, {
+        weapon,
+        atfGear,
+      });
+      const allAttrs = $character.initCalculation().allAttrsCtrl.finalize();
 
       extraTitle = "Attributes";
       content = (

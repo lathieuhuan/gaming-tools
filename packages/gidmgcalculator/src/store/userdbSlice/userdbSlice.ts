@@ -3,10 +3,10 @@ import { Array_ } from "ron-utils";
 
 import type {
   ArtifactType,
-  RawArtifact,
   IDbCharacter,
   IDbComplexSetup,
   IDbSetup,
+  RawArtifact,
   RawWeapon,
 } from "@/types";
 import type { WritableDraft } from "immer/src/internal.js";
@@ -29,10 +29,9 @@ import type {
 } from "./types";
 
 import { ARTIFACT_TYPES } from "@/constants/global";
-import { createCharacterBasic, createWeapon } from "@/logic/entity.logic";
+import { createCharacter, createWeapon } from "@/logic/entity.logic";
 import { isDbSetup } from "@/logic/setup.logic";
 import { Artifact, Ascendable, Weapon } from "@/models";
-import { $AppCharacter } from "@/services";
 
 export type UserdbState = {
   userChars: IDbCharacter[];
@@ -81,31 +80,27 @@ export const userdbSlice = createSlice({
     // CHARACTER
     /** Overwrite if character already exists */
     addDbCharacter: (state, action: AddDbCharacterAction) => {
-      const {
-        code,
-        weaponID,
-        artifactIDs = [],
-        data = $AppCharacter.get(code),
-        ...defaultValues
-      } = action.payload;
+      const { code, weaponID, artifactIDs = [], data, ...characterState } = action.payload;
+
+      const character = createCharacter({ code }, data, { state: characterState });
 
       const foundIndex = state.userChars.findIndex((char) => char.code === code);
-      const newChar = {
-        ...createCharacterBasic({ code, ...defaultValues }),
+      const dbCharacter: IDbCharacter = {
+        ...character.serialize(),
         weaponID: weaponID || Date.now(),
         artifactIDs,
       };
 
       if (foundIndex !== -1) {
-        state.userChars[foundIndex] = newChar;
+        state.userChars[foundIndex] = dbCharacter;
       } else {
-        state.userChars.push(newChar);
+        state.userChars.push(dbCharacter);
       }
 
       if (!weaponID) {
         const weapon = createWeapon({
-          ID: newChar.weaponID,
-          type: data.weaponType,
+          ID: dbCharacter.weaponID,
+          type: character.data.weaponType,
           owner: code,
         });
 

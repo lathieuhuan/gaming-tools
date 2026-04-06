@@ -18,10 +18,10 @@ import {
 } from "@/logic/modifier.logic";
 import { $AppCharacter } from "@/services";
 import { ArtifactGear } from "../ArtifactGear";
-import { CharacterCalc } from "../CharacterCalc";
 import { Team } from "../Team";
 import { TeammateCalc, type TeammateCalcConstructInfo } from "../TeammateCalc";
 import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
+import { Character } from "../Character";
 
 type TeammateUpdateData = Partial<
   Pick<ITeammate, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
@@ -105,15 +105,13 @@ export class CalcSetup extends CalcSetupBase {
   calculate(shouldLog?: boolean) {
     const { main, result } = calculateSetup(this, { shouldLog });
 
-    const newMain = new CharacterCalc(
-      {
-        ...this.main,
-        allAttrsCtrl: main.allAttrsCtrl.clone(),
-        attkBonusCtrl: main.attkBonusCtrl.clone(),
-      },
-      this.main.data,
-      this.team
-    );
+    const newMain = new Character(main.code, main.data, main.weapon, {
+      state: main.state,
+      atfGear: main.atfGear,
+      allAttrsCtrl: main.allAttrsCtrl.clone(),
+      attkBonusCtrl: main.attkBonusCtrl.clone(),
+      team: this.team,
+    });
 
     return new CalcSetup({
       ...this,

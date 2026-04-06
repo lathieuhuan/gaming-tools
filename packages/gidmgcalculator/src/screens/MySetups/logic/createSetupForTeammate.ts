@@ -6,9 +6,9 @@ import type { SetupOverviewInfo } from "../types";
 import { ARTIFACT_TYPES } from "@/constants/global";
 import {
   createArtifact,
-  createCharacterCalc,
+  createCharacter,
   createTarget,
-  createWeapon,
+  createWeapon
 } from "@/logic/entity.logic";
 import {
   createAbilityBuffCtrls,
@@ -57,15 +57,11 @@ export function createSetupForTeammate(
     }
   }
 
-  const newMain = createCharacterCalc(
-    {
-      ...Array_.findByCode(userChars, teammate.code),
-      code: teammate.code,
-      weapon: createWeapon(weaponBasic),
-      atfGear: new ArtifactGear(artifacts),
-    },
-    teammate.data
-  );
+  const newMain = createCharacter(teammate, teammate.data, {
+    state: Array_.findByCode(userChars, teammate.code),
+    weapon: createWeapon(weaponBasic),
+    atfGear: new ArtifactGear(artifacts),
+  });
 
   // Place old main into the teammate's slot
 

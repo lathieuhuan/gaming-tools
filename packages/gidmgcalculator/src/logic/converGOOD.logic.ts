@@ -1,4 +1,4 @@
-import type { AppCharacter, AttributeStat, ElementType, ICharacterBasic, Level } from "@/types";
+import type { AppCharacter, AttributeStat, ElementType, RawCharacter, Level } from "@/types";
 import type {
   GOODArtifact,
   GOODAscendable,
@@ -85,7 +85,7 @@ export function findGOODCharacter(key: string): AppCharacter | undefined {
 }
 
 export type GOODCharacterConvertReturn = {
-  basic: ICharacterBasic;
+  basic: RawCharacter;
   data: AppCharacter;
 };
 

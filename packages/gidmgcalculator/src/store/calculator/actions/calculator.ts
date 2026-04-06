@@ -5,7 +5,7 @@ import type { BasicSetupType, ISetupManager } from "@/types";
 import type { UserdbState } from "@Store/userdbSlice";
 import type { CalculatorState } from "../types";
 
-import { createCharacterCalc, createWeapon } from "@/logic/entity.logic";
+import { createCharacter, createWeapon } from "@/logic/entity.logic";
 import { parseDbArtifacts } from "@/logic/userdb.logic";
 import { CalcSetup, CalcSetupConstructInfo } from "@/models";
 import { $AppCharacter } from "@/services";
@@ -138,15 +138,11 @@ export function initSessionWithCharacter(
 
   const atfGear = parseDbArtifacts(artifactIDs, userArts);
 
-  const main = createCharacterCalc(
-    {
-      ...userData,
-      code: data.code,
-      weapon,
-      atfGear,
-    },
-    data
-  );
+  const main = createCharacter({ code: data.code }, data, {
+    state: userData,
+    weapon,
+    atfGear,
+  });
 
   const calcSetup = new CalcSetup({
     ID: idStore.gen(),

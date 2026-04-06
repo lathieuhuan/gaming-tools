@@ -1,9 +1,9 @@
 import isEqual from "react-fast-compare";
 import { Object_ } from "ron-utils";
 
-import type { RawArtifact, ICharacterBasic, RawWeapon } from "@/types";
+import type { RawArtifact, RawCharacter, RawWeapon } from "@/types";
 
-export const isExactCharacter = (character1: ICharacterBasic, character2: ICharacterBasic) => {
+export const isExactCharacter = (character1: RawCharacter, character2: RawCharacter) => {
   return isEqual(
     Object_.extract(character1, ["level", "NAs", "ES", "EB", "cons"]),
     Object_.extract(character2, ["level", "NAs", "ES", "EB", "cons"])

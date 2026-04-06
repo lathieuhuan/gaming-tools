@@ -1,7 +1,7 @@
 import { ClassValue, clsx } from "rond";
 
 import { useSetupImporter } from "@/lib/setup-importer";
-import { CharacterCalc } from "@/models";
+import { createCharacter } from "@/logic/entity.logic";
 import { GenshinUserBuild } from "@/services/enka";
 import IdStore from "@/utils/IdStore";
 import { useDataImportState } from "../DataImporter";
@@ -26,14 +26,10 @@ export function SectionResults({ className }: SectionResultsProps) {
   const handleCalculate = (build: GenshinUserBuild) => {
     const idStore = new IdStore();
     const { basic, data } = build.character;
-    const character = new CharacterCalc(
-      {
-        ...basic,
-        weapon: build.weapon,
-        atfGear: build.atfGear,
-      },
-      data
-    );
+    const character = createCharacter(basic, data, {
+      weapon: build.weapon,
+      atfGear: build.atfGear,
+    });
 
     setupImporter.import({
       name: build.name,

@@ -5,7 +5,7 @@ import type { RawWeapon, WeaponType } from "@/types";
 
 import { useStoreSnapshot } from "@/lib/dynamic-store";
 import { createWeapon } from "@/logic/entity.logic";
-import { Weapon } from "@/models/Weapon";
+import { Weapon } from "@/models";
 import { selectDbWeapons } from "@Store/userdbSlice";
 
 // Component

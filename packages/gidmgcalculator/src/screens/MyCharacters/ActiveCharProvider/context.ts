@@ -1,11 +1,10 @@
 import { createContext, useContext } from "react";
 
-import type { CharacterCalc } from "@/models";
-import type { ArtifactGearSlot } from "@/types";
+import type { ArtifactGearSlot, Character } from "@/models";
 
 // Data Context
 
-export const ActiveCharContext = createContext<CharacterCalc | null>(null);
+export const ActiveCharContext = createContext<Character | null>(null);
 
 export function useActiveChar() {
   const context = useContext(ActiveCharContext);

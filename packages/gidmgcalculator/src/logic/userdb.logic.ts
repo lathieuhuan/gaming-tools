@@ -1,8 +1,8 @@
 import { Array_ } from "ron-utils";
 
-import type { RawArtifact, IDbCharacter, RawWeapon, WeaponType } from "@/types";
+import type { IDbCharacter, RawArtifact, RawWeapon, WeaponType } from "@/types";
 
-import { createArtifact, createCharacterCalc, createWeapon } from "@/logic/entity.logic";
+import { createArtifact, createCharacter, createWeapon } from "@/logic/entity.logic";
 import { Artifact, ArtifactGear, Team } from "@/models";
 import { $AppCharacter } from "@/services";
 import IdStore from "@/utils/IdStore";
@@ -47,13 +47,9 @@ export function makeCharacterCalcFromDb(
   const weapon = parseDbWeapon(weaponID, dbWeapons, data.weaponType);
   const atfGear = parseDbArtifacts(artifactIDs, dbArtifacts);
 
-  return createCharacterCalc(
-    {
-      ...character,
-      weapon,
-      atfGear,
-    },
-    data,
-    team
-  );
+  return createCharacter(character, data, {
+    weapon,
+    atfGear,
+    team,
+  });
 }

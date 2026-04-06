@@ -1,8 +1,7 @@
 import { useMemo, useState } from "react";
 import { ConfirmModal } from "rond";
 
-import type { CharacterCalc } from "@/models";
-import type { ArtifactGearSlot } from "@/types";
+import type { ArtifactGearSlot, Character } from "@/models";
 
 import { useDispatch } from "@Store/hooks";
 import {
@@ -14,14 +13,14 @@ import {
 import { ActiveCharAction, ActiveCharActionContext } from "./context";
 
 // Component
-import { Tavern } from "@/components/Tavern";
 import { ArtifactInventory } from "@/components/ArtifactInventory";
+import { Tavern } from "@/components/Tavern";
 import { WeaponInventory } from "@/components/WeaponInventory";
 
 type ModalType = "SWITCH_CHARACTER" | "SWITCH_WEAPON" | "SWITCH_ARTIFACT" | "REMOVE_CHARACTER" | "";
 
 type ActionProviderProps = {
-  character: CharacterCalc;
+  character: Character;
   children: React.ReactNode;
 };
 

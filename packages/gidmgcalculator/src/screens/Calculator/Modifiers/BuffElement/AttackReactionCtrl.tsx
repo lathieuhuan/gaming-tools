@@ -1,4 +1,4 @@
-import type { CharacterCalc } from "@/models";
+import type { Character } from "@/models";
 import type { AttackElement, AttackReaction, ElementalEvent } from "@/types";
 
 import { QuickenBuffItem, VapMeltBuffItem } from "@/components";
@@ -9,7 +9,7 @@ type ReactionConfigType = "reaction" | "infuseReaction" | "absorbReaction";
 type AttackReactionCtrlProps = {
   attackElmt: AttackElement | null;
   configType: ReactionConfigType;
-  character: CharacterCalc;
+  character: Character;
   elmtEvent: ElementalEvent;
 };
 

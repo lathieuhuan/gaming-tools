@@ -5,7 +5,7 @@ import type {
   ArtifactSubStat,
   ArtifactType,
   ElementalEvent,
-  ICharacterBasic,
+  RawCharacter,
   ITarget,
   WeaponStateData,
 } from "@/types";
@@ -20,7 +20,7 @@ import { onActiveSetup } from "../utils";
 
 // ===== CHARACTER =====
 
-export const updateMain = (data: Partial<ICharacterBasic>, setupIds?: number[]) => {
+export const updateMain = (data: Partial<RawCharacter>, setupIds?: number[]) => {
   const { separateCharInfo } = useSettingsStore.getState();
 
   const ids =
@@ -34,9 +34,11 @@ export const updateMain = (data: Partial<ICharacterBasic>, setupIds?: number[]) 
 
     for (const setupId of ids) {
       const setup = setupsById[setupId];
-      const prevEnhanced = setup.main.enhanced;
+      const main = setup.main;
+      const prevEnhanced = main.enhanced;
 
-      setup.main = setup.main.update(data).clone();
+      main.state.update(data);
+      setup.main = main.clone();
 
       if (data.enhanced !== undefined && data.enhanced !== prevEnhanced) {
         setup.team = new Team([setup.main, ...setup.teammates]);

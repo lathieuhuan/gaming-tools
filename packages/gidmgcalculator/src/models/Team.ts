@@ -44,6 +44,10 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
   }
 
   updateMembers(members: TMember[]) {
+    if (members.length === 0) {
+      return;
+    }
+
     const elmtCount: ElementCount = new TypeCounter();
     let moonsignLv = 0;
     let witchRiteLv = 0;

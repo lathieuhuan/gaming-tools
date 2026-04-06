@@ -1,11 +1,11 @@
 import { Fragment } from "react";
 
-import type { CalcSetup, CharacterCalc } from "@/models";
+import type { CalcSetup, Character } from "@/models";
 import type { AttackReaction, CustomBuffCtrl, ElementalEvent, ElementType } from "@/types";
 
 import { useTranslation } from "@/hooks";
-import { suffixOf, toCustomBuffLabel } from "@/utils/pure.utils";
 import { parseDescription } from "@/utils/descriptionParsers";
+import { suffixOf, toCustomBuffLabel } from "@/utils/pure.utils";
 
 // Component
 import {
@@ -85,7 +85,7 @@ type ElementBuffProps = {
   element: ElementType;
   heading: string;
   reaction: AttackReaction;
-  character: CharacterCalc;
+  character: Character;
   showElement?: boolean;
 };
 
@@ -132,7 +132,7 @@ function ElementBuff({
 }
 
 type ElementBuffsProps = {
-  character: CharacterCalc;
+  character: Character;
   elmtEvent: ElementalEvent;
 };
 

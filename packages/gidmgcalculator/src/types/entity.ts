@@ -1,4 +1,3 @@
-import type { Artifact, ArtifactGear, Weapon } from "@/models";
 import type { AppArtifact } from "./app-artifact";
 import type { AppMonster } from "./app-monster";
 import type {
@@ -68,25 +67,13 @@ export type ArtifactGearSet = {
   data: AppArtifact;
 };
 
-export type ArtifactGearSlot =
-  | {
-      isFilled: true;
-      type: ArtifactType;
-      piece: Artifact;
-    }
-  | {
-      isFilled: false;
-      type: ArtifactType;
-    };
-
 //
 
 export type RawItem = RawWeapon | RawArtifact;
 
 // ========== CHARACTER ==========
 
-export type ICharacterBasic = {
-  code: number;
+export type CharacterStateData = {
   level: Level;
   NAs: number;
   ES: number;
@@ -95,9 +82,8 @@ export type ICharacterBasic = {
   enhanced: boolean;
 };
 
-export type ICharacter = ICharacterBasic & {
-  weapon: Weapon;
-  atfGear: ArtifactGear;
+export type RawCharacter = CharacterStateData & {
+  code: number;
 };
 
 // ========== TEAMMATE ==========
@@ -145,7 +131,7 @@ export type ITeammateBasic = ITeammateBasicCore & {
 };
 
 export type ISetupBasic = {
-  main: ICharacterBasic;
+  main: RawCharacter;
   selfBuffCtrls: IModifierCtrlBasic[];
   selfDebuffCtrls: IModifierCtrlBasic[];
 

@@ -3,7 +3,8 @@ import { useScreenWatcher } from "rond";
 
 import { Outlet, useRouter } from "@/lib/router";
 import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
-import { ArtifactState, WeaponState } from "@/models";
+import { ArtifactState, CharacterState, WeaponState } from "@/models";
+
 import { CalculatorLarge, CalculatorSmall } from "@/screens/Calculator";
 import { $AppCharacter } from "@/services";
 import { AppSettingsState, useSettingsStore } from "@Store/settings";
@@ -24,6 +25,14 @@ export function Main() {
     WeaponState.configure({
       defaultLevel: settings.wpLevel,
       defaultRefi: settings.wpRefi,
+    });
+    CharacterState.configure({
+      defaultLevel: settings.charLevel,
+      defaultNAs: settings.charNAs,
+      defaultES: settings.charES,
+      defaultEB: settings.charEB,
+      defaultCons: settings.charCons,
+      defaultEnhanced: settings.charEnhanced,
     });
   };
 

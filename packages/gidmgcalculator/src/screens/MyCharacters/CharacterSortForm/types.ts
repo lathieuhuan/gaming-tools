@@ -1,6 +1,6 @@
-import type { AppCharacter, ICharacterBasic } from "@/types";
+import type { AppCharacter, RawCharacter } from "@/types";
 
-export type CharacterToBeSorted = ICharacterBasic & {
+export type CharacterToBeSorted = RawCharacter & {
   index: number;
   data: AppCharacter;
 };

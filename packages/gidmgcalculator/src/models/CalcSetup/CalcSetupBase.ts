@@ -11,14 +11,14 @@ import type {
   IWeaponBuffCtrl,
   ResonanceModCtrl,
 } from "@/types";
-import type { CharacterCalc } from "../CharacterCalc";
+import type { Character } from "../Character";
 import type { Target } from "../Target";
 import type { Team } from "../Team";
 import type { TeammateCalc } from "../TeammateCalc";
 
 export type CalcSetupBaseConstructInfo = {
   ID: number;
-  main: CharacterCalc;
+  main: Character;
   selfBuffCtrls: IAbilityBuffCtrl[];
   selfDebuffCtrls: IAbilityDebuffCtrl[];
 
@@ -42,7 +42,7 @@ export type CalcSetupBaseConstructInfo = {
 
 export class CalcSetupBase {
   ID: number;
-  main: CharacterCalc;
+  main: Character;
   selfBuffCtrls: IAbilityBuffCtrl[];
   selfDebuffCtrls: IAbilityDebuffCtrl[];
 

@@ -1,7 +1,6 @@
 import type {
   AppCharacter,
   EffectPerformableCondition,
-  EffectPerformerConditions,
   IAbilityBuffCtrl,
   IAbilityDebuffCtrl,
   ITeam,
@@ -37,7 +36,11 @@ export class Teammate<TTeam extends ITeam = ITeam> implements ITeammate<TTeam> {
     this.team = team;
   }
 
-  protected canPerformEffect(condition: EffectPerformerConditions, inputs: number[]) {
+  canPerformEffect(condition?: EffectPerformableCondition, inputs: number[] = []) {
+    if (!condition) {
+      return true;
+    }
+
     const { grantedAt } = condition;
 
     if (grantedAt && typeof grantedAt !== "string") {
@@ -55,20 +58,6 @@ export class Teammate<TTeam extends ITeam = ITeam> implements ITeammate<TTeam> {
       return false;
     }
 
-    return true;
-  }
-
-  isPerformableEffect(condition?: EffectPerformableCondition, inputs: number[] = []) {
-    if (!condition) {
-      return true;
-    }
-
-    // if (!this.team.isAvailableEffect(condition)) {
-    //   return false;
-    // }
-    if (!this.canPerformEffect(condition, inputs)) {
-      return false;
-    }
     if (!isValidInput(condition.checkInput, inputs)) {
       return false;
     }

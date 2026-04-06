@@ -1,9 +1,9 @@
 import type { TalentLevelScaleConfig } from "@/types";
 
 import { AbstractPenaltyCalc } from "../AbstractPenaltyCalc";
-import { CharacterCalc } from "./CharacterCalc";
+import { Character } from "./Character";
 
-export class PenaltyCalc extends AbstractPenaltyCalc<CharacterCalc> {
+export class PenaltyCalc extends AbstractPenaltyCalc<Character> {
   protected getTalentLevel(config: TalentLevelScaleConfig): number {
     return this.performer.getFinalTalentLv(config.talent);
   }

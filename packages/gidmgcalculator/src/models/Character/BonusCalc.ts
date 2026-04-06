@@ -5,11 +5,11 @@ import type {
   InputStack,
   TalentLevelScaleConfig,
 } from "@/types";
-import type { CharacterCalc } from "./CharacterCalc";
+import type { Character } from "./Character";
 
 import { AbstractBonusCalc } from "../AbstractBonusCalc";
 
-export class BonusCalc extends AbstractBonusCalc<CharacterCalc> {
+export class BonusCalc extends AbstractBonusCalc<Character> {
   protected getLvIncre(incre?: CharacterEffectLevelIncrement) {
     return incre ? this.performer.getFinalTalentLv(incre.talent) * incre.value : 0;
   }
