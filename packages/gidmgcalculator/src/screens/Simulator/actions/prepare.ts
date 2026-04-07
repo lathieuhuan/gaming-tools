@@ -1,24 +1,20 @@
+import { Array_ } from "ron-utils";
+
 import type { TavernSelectedCharacter } from "@/components";
-import type { Artifact, UpdatableKey, Weapon } from "@/models";
+import type { Artifact, Weapon } from "@/models";
 import type {
+  ArtifactStateData,
   ArtifactSubStat,
   ArtifactType,
-  IArtifactBasic,
-  ICharacterBasic,
-  IWeaponBasic,
+  CharacterStateData,
+  WeaponStateData,
 } from "@/types";
 import type { UserdbState } from "@Store/userdbSlice";
 
-import {
-  createArtifact,
-  createCharacterCalc,
-  createWeapon,
-  createWeaponBasic,
-} from "@/logic/entity.logic";
-import { parseDbArtifacts, parseDbWeapon } from "@/logic/userdb.logic";
-import { ArtifactGear, Team } from "@/models";
+import { createCharacter, createWeapon } from "@/logic/entity.logic";
+import { parseDbArtifacts } from "@/logic/userdb.logic";
+import { ArtifactGear } from "@/models";
 import IdStore from "@/utils/IdStore";
-import { MemberCalc } from "../logic/MemberCalc";
 import { selectSimulation, useSimulatorStore } from "../store";
 import { createSimulation, updateActiveSimulation } from "./utils";
 
@@ -57,33 +53,20 @@ export function switchMember(
   const { weaponID, artifactIDs } = userData ?? {};
   const { userWps, userArts } = userDb;
 
-  const weaponBasic = weaponID
-    ? parseDbWeapon(weaponID, userWps, data.weaponType)
-    : createWeaponBasic({ type: data.weaponType });
+  const idStore = new IdStore();
 
-  // weaponBasic.ID !== weaponID => weaponBasic is new => use weaponBasic.ID as seed
-  const idStore = new IdStore(weaponBasic.ID !== weaponID ? weaponBasic.ID : undefined);
+  const dbWeapon = weaponID ? Array_.findById(userWps, weaponID) : undefined;
+  const weapon = dbWeapon
+    ? createWeapon(dbWeapon)
+    : createWeapon({ ID: idStore.gen(), type: data.weaponType });
 
-  const artifacts = parseDbArtifacts(artifactIDs, userArts).map((artifactBasic) =>
-    createArtifact(artifactBasic, undefined, idStore)
-  );
+  const atfGear = parseDbArtifacts(artifactIDs, userArts);
 
-  const weapon = createWeapon(weaponBasic);
-  const atfGear = new ArtifactGear(artifacts);
-  const team = new Team();
-
-  // TODO merge characterCalc & memberCalc
-  const character = createCharacterCalc(
-    {
-      ...userData,
-      code: data.code,
-      weapon,
-      atfGear,
-    },
-    data,
-    team
-  );
-  const member = new MemberCalc(character, data, team);
+  const character = createCharacter({ code: data.code }, data, {
+    state: userData,
+    weapon,
+    atfGear,
+  });
 
   updateActiveSimulation((simulation) => {
     if (currMemberCode) {
@@ -96,7 +79,7 @@ export function switchMember(
       simulation.memberOrder.push(data.code);
     }
 
-    simulation.members[data.code] = member;
+    simulation.members[data.code] = character;
   });
 }
 
@@ -108,14 +91,10 @@ export function removeMember(code: number) {
   });
 }
 
-export function updateMember<T extends keyof ICharacterBasic>(
-  code: number,
-  key: T,
-  value: ICharacterBasic[T]
-) {
+export function updateMember(code: number, data: Partial<CharacterStateData>) {
   updateActiveSimulation((simulation) => {
     if (code in simulation.members) {
-      simulation.members[code] = simulation.members[code].clone().update(key, value);
+      simulation.members[code] = simulation.members[code].clone({ state: data });
     }
   });
 }
@@ -125,18 +104,18 @@ export function updateMember<T extends keyof ICharacterBasic>(
 export function switchWeapon(code: number, weapon: Weapon) {
   updateActiveSimulation((simulation) => {
     if (code in simulation.members) {
-      simulation.members[code] = simulation.members[code].clone().equip(weapon);
+      simulation.members[code] = simulation.members[code].clone({ weapon });
     }
   });
 }
 
-export function updateWeapon(code: number, data: Partial<IWeaponBasic>) {
+export function updateWeapon(code: number, data: Partial<WeaponStateData>) {
   updateActiveSimulation((simulation) => {
     if (code in simulation.members) {
-      const member = simulation.members[code].clone();
-      const weapon = member.weapon.clone().update(data);
+      const member = simulation.members[code];
+      const weapon = member.weapon.clone({ state: data });
 
-      simulation.members[code] = member.equip(weapon);
+      simulation.members[code] = member.clone({ weapon });
     }
   });
 }
@@ -150,29 +129,24 @@ export function switchArtifact(code: number, artifact: Artifact) {
     return;
   }
 
-  const member = members[code].clone();
+  const member = members[code];
   const pieces = member.atfGear.pieces.clone().set(artifact.type, artifact);
 
   updateActiveSimulation((simulation) => {
-    simulation.members[code] = member.equip(new ArtifactGear(pieces));
+    simulation.members[code] = member.clone({ atfGear: new ArtifactGear(pieces) });
   });
 }
 
-export function updateArtifact<T extends UpdatableKey>(
-  code: number,
-  type: ArtifactType,
-  key: T,
-  value: IArtifactBasic[T]
-) {
+export function updateArtifact(code: number, type: ArtifactType, data: Partial<ArtifactStateData>) {
   const { members } = selectSimulation(useSimulatorStore.getState());
 
   if (!(code in members)) {
     return;
   }
 
-  const member = members[code].clone();
+  const member = members[code];
   const pieces = member.atfGear.pieces.clone();
-  const piece = pieces.get(type)?.clone().update(key, value);
+  const piece = pieces.get(type)?.clone({ state: data });
 
   if (!piece) {
     return;
@@ -181,7 +155,7 @@ export function updateArtifact<T extends UpdatableKey>(
   const atfGear = new ArtifactGear(pieces.set(type, piece));
 
   updateActiveSimulation((simulation) => {
-    simulation.members[code] = member.equip(atfGear);
+    simulation.members[code] = member.clone({ atfGear });
   });
 }
 
@@ -197,9 +171,11 @@ export function updateArtifactSubStat(
     return;
   }
 
-  const member = members[code].clone();
+  const member = members[code];
   const pieces = member.atfGear.pieces.clone();
-  const piece = pieces.get(type)?.clone().updateSubStatByIndex(index, data);
+  const piece = pieces.get(type)?.clone();
+
+  piece?.state.updateSubStatByIndex(index, data);
 
   if (!piece) {
     return;
@@ -208,7 +184,7 @@ export function updateArtifactSubStat(
   const atfGear = new ArtifactGear(pieces.set(type, piece));
 
   updateActiveSimulation((simulation) => {
-    simulation.members[code] = member.equip(atfGear);
+    simulation.members[code] = member.clone({ atfGear });
   });
 }
 
@@ -219,14 +195,12 @@ export function removeArtifact(code: number, type: ArtifactType) {
     return;
   }
 
-  const member = members[code].clone();
+  const member = members[code];
   const pieces = member.atfGear.pieces.clone();
 
   pieces.delete(type);
 
-  const atfGear = new ArtifactGear(pieces);
-
   updateActiveSimulation((simulation) => {
-    simulation.members[code] = member.equip(atfGear);
+    simulation.members[code] = member.clone({ atfGear: new ArtifactGear(pieces) });
   });
 }

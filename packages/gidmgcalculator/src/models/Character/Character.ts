@@ -59,6 +59,10 @@ export type CharacterConstructOptions = {
   team?: Team;
 };
 
+export type CharacterCloneOptions = CharacterConstructOptions & {
+  weapon?: Weapon;
+};
+
 @FlatGetters("state", ["level", "NAs", "ES", "EB", "cons", "enhanced", "bareLv", "ascension"])
 export class Character implements ITeamMember, Clonable<Character> {
   code: number;
@@ -320,13 +324,22 @@ export class Character implements ITeamMember, Clonable<Character> {
     return Character.serialize(this);
   }
 
-  clone() {
-    return new Character(this.code, this.data, this.weapon, {
-      state: this.state,
-      atfGear: this.atfGear,
-      allAttrsCtrl: this.allAttrsCtrl,
-      attkBonusCtrl: this.attkBonusCtrl,
-      team: this.team,
+  clone(options: CharacterCloneOptions = {}) {
+    const {
+      weapon = this.weapon,
+      state = this.state,
+      atfGear = this.atfGear,
+      allAttrsCtrl = this.allAttrsCtrl,
+      attkBonusCtrl = this.attkBonusCtrl,
+      team = this.team,
+    } = options;
+
+    return new Character(this.code, this.data, weapon, {
+      state,
+      atfGear,
+      allAttrsCtrl,
+      attkBonusCtrl,
+      team,
     });
   }
 

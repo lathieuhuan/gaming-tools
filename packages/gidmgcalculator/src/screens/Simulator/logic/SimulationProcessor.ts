@@ -1,4 +1,4 @@
-import type { TargetCalc } from "@/models/TargetCalc";
+import type { Character, TargetCalc } from "@/models";
 import type { AttackElement, AttackReaction, LunarType } from "@/types";
 import type {
   AbilityBuffEvent,
@@ -7,7 +7,6 @@ import type {
   SimulationEvent,
   SwitchInEvent,
 } from "../types";
-import type { MemberCalc } from "./MemberCalc";
 
 import { talentCalc } from "./talentCalc";
 import { Array_ } from "ron-utils";
@@ -42,7 +41,7 @@ export class SimulationProcessor {
   }
 
   constructor(
-    public members: Record<PropertyKey, MemberCalc>,
+    public members: Record<PropertyKey, Character>,
     public target: TargetCalc,
     onFieldMember: number
   ) {
@@ -87,7 +86,7 @@ export class SimulationProcessor {
     const { affect, effects = [] } = buff;
 
     for (const effect of Array_.toArray(effects)) {
-      if (!performer.isPerformableEffect(effect, event.inputs)) {
+      if (!performer.canPerformEffect(effect, event.inputs)) {
         continue;
       }
 
@@ -131,7 +130,7 @@ export class SimulationProcessor {
     this.#hitLogs = [];
 
     Object.values(this.members).forEach((member) => {
-      member.initCalc().allAttrsCtrl.finalize();
+      member.initCalculation().allAttrsCtrl.finalize();
     });
 
     this.target = this.target.clone();

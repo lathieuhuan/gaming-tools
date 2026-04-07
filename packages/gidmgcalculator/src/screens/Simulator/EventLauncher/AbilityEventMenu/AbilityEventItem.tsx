@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button, clsx, CollapseSpace } from "rond";
 
+import type { Character } from "@/models";
 import type { AttackElement, AttackReaction, TalentCalcItem } from "@/types";
 
 import { triggerAbilityHitEvent } from "../../actions/build";
-import { MemberCalc } from "../../logic/MemberCalc";
 import { TalentCalculator } from "../../logic/talentCalc";
 
 type AlterState = {
@@ -13,7 +13,7 @@ type AlterState = {
 };
 
 type AbilityEventItemProps = {
-  performer: MemberCalc;
+  performer: Character;
   item: TalentCalcItem;
   active: boolean;
   calculator: TalentCalculator;

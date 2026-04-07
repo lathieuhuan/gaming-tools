@@ -1,7 +1,6 @@
 import type { ExactOmit } from "rond";
 
-import type { MemberCalc } from "../logic/MemberCalc";
-import type { TargetCalc } from "@/models/TargetCalc";
+import type { Character, TargetCalc } from "@/models";
 import type { IDbCharacter } from "@/types";
 import type { SimulationProcessor } from "../logic/SimulationProcessor";
 import type { CharacterEvent } from "./CharacterEvent";
@@ -28,7 +27,7 @@ export type MemberInputs = Record<ModCategory, InputsById>;
 
 export type SimulationInputs = Record<number, MemberInputs>;
 
-export type SimulationMembers = Record<number, MemberCalc>;
+export type SimulationMembers = Record<number, Character>;
 
 export type Simulation = ExactOmit<DbSimulation, "members"> & {
   members: SimulationMembers;

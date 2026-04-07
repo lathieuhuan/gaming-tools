@@ -8,13 +8,11 @@ import type {
   CalcItemFactor,
   TalentCalcItem,
 } from "@/types";
-import type { MemberCalc } from "./MemberCalc";
+import type { CalcResultAttackItem } from "@/calculation/types";
 
 import { makeAttackItemCalc } from "@/calculation/core/makeAttackItemCalc";
 import { ResultRecorder } from "@/calculation/core/ResultRecorder";
-import { CalcResultAttackItem } from "@/calculation/types";
-import { Character } from "@/models";
-import { TargetCalc } from "@/models/TargetCalc";
+import { Character, TargetCalc } from "@/models";
 
 type AlterConfig = {
   attPatt?: AttackPattern;
@@ -23,7 +21,7 @@ type AlterConfig = {
 };
 
 export function talentCalc(
-  performer: MemberCalc,
+  performer: Character,
   target: TargetCalc,
   expectAttPatt: AttackPattern
 ) {

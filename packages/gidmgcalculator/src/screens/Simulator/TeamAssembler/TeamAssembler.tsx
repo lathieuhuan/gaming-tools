@@ -8,13 +8,9 @@ import { useStore } from "@/lib/dynamic-store";
 import { removeMember, switchArtifact, switchMember, switchWeapon } from "../actions/prepare";
 import { selectSimulation, useSimulatorStore } from "../store";
 
-import {
-  ArtifactForge,
-  ArtifactInventory,
-  Tavern,
-  WeaponForge,
-  WeaponInventory,
-} from "@/components";
+import { ArtifactForge, Tavern, WeaponForge } from "@/components";
+import { ArtifactInventory } from "@/components/ArtifactInventory";
+import { WeaponInventory } from "@/components/WeaponInventory";
 import { GearSwitchSource, MemberConfig } from "./MemberConfig";
 
 type ModalType =

@@ -62,9 +62,9 @@ export function MemberConfig(props: MemberConfigProps) {
             mutable
             onSwitch={props.onSwitchMember}
             onRemove={props.onRemoveMember}
-            onChangeLevel={(level) => updateMember(data.code, "level", level)}
-            onChangeCons={(cons) => updateMember(data.code, "cons", cons)}
-            onEnhanceToggle={(enhanced) => updateMember(data.code, "enhanced", enhanced)}
+            onChangeLevel={(level) => updateMember(data.code, { level })}
+            onChangeCons={(cons) => updateMember(data.code, { cons })}
+            onEnhanceToggle={(enhanced) => updateMember(data.code, { enhanced })}
           />
 
           <div className="mt-3 grow hide-scrollbar">
@@ -125,10 +125,10 @@ export function MemberConfig(props: MemberConfigProps) {
                     mutable
                     artifact={selectedAtfPiece}
                     onEnhance={(level) =>
-                      updateArtifact(data.code, selectedAtfPiece.type, "level", level)
+                      updateArtifact(data.code, selectedAtfPiece.type, { level })
                     }
                     onChangeMainStatType={(mainStatType) =>
-                      updateArtifact(data.code, selectedAtfPiece.type, "mainStatType", mainStatType)
+                      updateArtifact(data.code, selectedAtfPiece.type, { mainStatType })
                     }
                     onChangeSubStat={(subStatIndex, change) =>
                       updateArtifactSubStat(data.code, selectedAtfPiece.type, subStatIndex, change)

@@ -1,11 +1,11 @@
 import { formatNumber, round } from "ron-utils";
 import { clsx } from "rond";
 
-import { MemberCalc } from "../logic/MemberCalc";
+import type { Character } from "@/models";
 import { selectProcessor, selectSimulation, useSimulatorStore } from "../store";
 
 type MemberDamageCalc = {
-  member: MemberCalc;
+  member: Character;
   value: number;
 };
 

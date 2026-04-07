@@ -5,23 +5,12 @@ import type {
   ArtifactSubStat,
   ArtifactType,
   ElementalEvent,
-  RawCharacter,
   ITarget,
+  RawCharacter,
   WeaponStateData,
 } from "@/types";
 
-import type {
-  AppArtifact,
-  ArtifactSubStat,
-  ArtifactType,
-  ElementalEvent,
-  IArtifactBasic,
-  ICharacterBasic,
-  ITarget,
-  IWeaponBasic,
-} from "@/types";
-
-import { createArtifact, CreateArtifactParams, createTarget } from "@/logic/entity.logic";
+import { createTarget } from "@/logic/entity.logic";
 import { createWeaponBuffCtrls } from "@/logic/modifier.logic";
 import { Artifact, ArtifactGear, Team, Weapon } from "@/models";
 import { useSettingsStore } from "@Store/settings";

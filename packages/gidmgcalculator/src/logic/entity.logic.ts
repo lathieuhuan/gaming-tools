@@ -56,12 +56,26 @@ export type CreateWeaponOptions = {
   newRelation?: Partial<EquipmentRelationData>;
 };
 
+export type CreateWeaponRawData =
+  | PartiallyRequiredOnly<RawWeapon, "type">
+  | PartiallyRequiredOnly<RawWeapon, "code">;
+
+function hasCode(raw: CreateWeaponRawData): raw is PartiallyRequiredOnly<RawWeapon, "code"> {
+  return "code" in raw;
+}
+
 export function createWeapon(
-  raw: PartiallyRequiredOnly<RawWeapon, "type">,
+  raw: CreateWeaponRawData,
   data?: AppWeapon | null,
   options: CreateWeaponOptions = {}
 ) {
-  const { ID = Date.now(), type, code = Weapon.DEFAULT_CODE[type] } = raw;
+  const { ID = Date.now() } = raw;
+  const code = hasCode(raw) ? raw.code : Weapon.DEFAULT_CODE[raw.type];
+
+  if (!data || data.code !== code) {
+    data = $AppWeapon.get(code)!;
+  }
+
   const state: Partial<WeaponStateData> = {
     ...raw,
     ...options.newState,
@@ -71,9 +85,7 @@ export function createWeapon(
     ...options.newRelation,
   };
 
-  data ??= $AppWeapon.get(code)!;
-
-  return new Weapon({ ID, type, code }, data, { state, relation });
+  return new Weapon({ ID, type: data.type, code }, data, { state, relation });
 }
 
 // ========== ITEMS ==========

@@ -1,9 +1,9 @@
-import type { MemberCalc } from "../logic/MemberCalc";
+import type { Character } from "@/models";
 import type { CharacterEvent } from "../types";
 
 type CharacterEventViewProps = {
   event: CharacterEvent;
-  character: MemberCalc;
+  character: Character;
 };
 
 export function CharacterEventView({ event, character }: CharacterEventViewProps) {

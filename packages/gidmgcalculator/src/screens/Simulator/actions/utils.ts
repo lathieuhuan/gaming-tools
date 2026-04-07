@@ -9,11 +9,10 @@ import type {
 } from "../types";
 
 import { createTarget } from "@/logic/entity.logic";
-import { Target } from "@/models";
+import { Character, Target } from "@/models";
 import { TargetCalc } from "@/models/TargetCalc";
 import { SimulationProcessor } from "../logic/SimulationProcessor";
 import { SimulatorState, useSimulatorStore } from "../store";
-import { MemberCalc } from "../logic/MemberCalc";
 import { createModCtrlInputs } from "@/logic/modifier.logic";
 
 export function createSimulation(id: number = Date.now()) {
@@ -32,7 +31,7 @@ export function createSimulation(id: number = Date.now()) {
   return newSimulation;
 }
 
-export function createMemberInputs(member: MemberCalc): MemberInputs {
+export function createMemberInputs(member: Character): MemberInputs {
   const abilityBuffInputs: InputsById = {};
 
   member.data.buffs?.forEach((buff) => {
@@ -54,7 +53,7 @@ export function resetSimulation(simulation: WritableDraft<Simulation>) {
   const newInputs: SimulationInputs = {};
 
   memberOrder.forEach((code) => {
-    const member = members[code].initCalc();
+    const member = members[code].initCalculation();
 
     newMembers[code] = member.clone();
     newMemberClones[code] = member.deepClone();

@@ -39,7 +39,7 @@ export function MemberConfigTalents({ className, character }: MemberConfigTalent
                 showAllOptions
                 value={character[talentType]}
                 options={genSequentialOptions(10)}
-                onChange={(value) => updateMember(data.code, talentType, +value)}
+                onChange={(value) => updateMember(data.code, { [talentType]: +value })}
               />
             </div>
           </div>
