@@ -1,20 +1,19 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcSetup, TeammateCalc } from "@/models";
+import type { CalcSetup, Team, TeammateCalc } from "@/models";
 import type {
   AppArtifact,
   AppCharacter,
   AppWeapon,
+  ArtifactGearSet,
   ElementalEvent,
   EntityModifier,
   IAbilityBuffCtrl,
   IAbilityDebuffCtrl,
   IArtifactBuffCtrl,
   IArtifactDebuffCtrl,
-  ArtifactGearSet,
   IModifierCtrl,
   IModifierCtrlBasic,
-  ITeam,
   ITeamBuffCtrl,
   IWeaponBuffCtrl,
   ModifierAffectType,
@@ -231,7 +230,7 @@ export function createArtifactDebuffCtrls(sets: ArtifactGearSet[], teammates: Te
   return ctrls;
 }
 
-export function createRsnModCtrls(team: ITeam) {
+export function createRsnModCtrls(team: Team) {
   const buffCtrls: ResonanceModCtrl[] = [];
   const debuffCtrls: ResonanceModCtrl[] = [];
 

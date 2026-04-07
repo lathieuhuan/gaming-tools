@@ -16,6 +16,7 @@ import type {
   RawArtifact,
   RawWeapon,
   WeaponStateData,
+  RawTeammate,
 } from "@/types";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
@@ -105,6 +106,14 @@ export function createCharacter(
     ...options,
     state,
   });
+}
+
+export function createTeammate(
+  raw: PartiallyRequiredOnly<RawTeammate, "code">,
+  data?: AppCharacter | null,
+  // options: CreateTeammateOptions = {}
+) {
+  // return new Teammate(raw.code, data, weapon, { ...options });
 }
 
 // ========== TARGET ==========

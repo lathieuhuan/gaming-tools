@@ -1,7 +1,7 @@
 import { Object_ } from "ron-utils";
 
 import type { Artifact, CalcSetup, Weapon } from "@/models";
-import type { AppCharacter, ITeammateArtifact, ITeammateWeapon } from "@/types";
+import type { AppCharacter, TeammateArtifact, TeammateWeapon } from "@/types";
 import type { ForwardedAction } from "../types";
 
 import { createArtifactBuffCtrls, createWeaponBuffCtrls } from "@/logic/modifier.logic";
@@ -88,7 +88,7 @@ export const changeTeammateWeapon = (tmCode: number, weapon: Weapon) => {
 
 export const updateTeammateWeapon = (
   tmCode: number,
-  data: Partial<Pick<ITeammateWeapon, "refi" | "buffCtrls">>
+  data: Partial<Pick<TeammateWeapon, "refi" | "buffCtrls">>
 ) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {
@@ -122,7 +122,7 @@ export const changeTeammateArtifact = (tmCode: number, artifact: Artifact | unde
 
 export const updateTeammateArtifact = (
   tmCode: number,
-  data: Partial<Pick<ITeammateArtifact, "buffCtrls">>
+  data: Partial<Pick<TeammateArtifact, "buffCtrls">>
 ) => {
   useCalcStore.setState(
     onActiveSetup((setup) => {

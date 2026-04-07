@@ -7,10 +7,10 @@ import type {
   EffectValue,
   EffectValueByOption,
   ElementCount,
-  ITeam,
-  ITeamMember,
   TalentLevelScaleConfig,
+  TeamMember,
 } from "@/types";
+import type { Team } from "./Team";
 
 import { wrapText } from "@/utils/descriptionParsers/utils";
 import { Character } from "./Character";
@@ -22,12 +22,12 @@ export type EffectToGetInitialValue = {
   lvScale?: CharacterEffectLevelScale;
 };
 
-export abstract class AbstractEffectValueCalc<TPerformer extends ITeamMember = ITeamMember> {
+export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = TeamMember> {
   protected teammateElmtCount: ElementCount;
 
   constructor(
     protected performer: TPerformer,
-    protected team: ITeam,
+    protected team: Team,
     protected inputs: number[] = []
   ) {
     this.teammateElmtCount = team.elmtCount.clone();

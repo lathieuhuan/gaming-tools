@@ -88,19 +88,30 @@ export type RawCharacter = CharacterStateData & {
 
 // ========== TEAMMATE ==========
 
-export type ITeammateWeaponBasic = {
+export type TeammateWeaponState = {
   code: number;
   type: WeaponType;
   refi: number;
 };
 
-export type ITeammateArtifactBasic = {
+export type TeammateArtifactState = {
   code: number;
 };
 
-export type ITeammateBasicCore = {
+export type TeammateStateData = {
   code: number;
   enhanced: boolean;
+};
+
+export type RawTeammate = TeammateStateData & {
+  buffCtrls: IModifierCtrlBasic[];
+  debuffCtrls: IModifierCtrlBasic[];
+  weapon: TeammateWeaponState & {
+    buffCtrls: IModifierCtrlBasic[];
+  };
+  artifact?: TeammateArtifactState & {
+    buffCtrls: IModifierCtrlBasic[];
+  };
 };
 
 // ========== TARGET ==========
@@ -119,17 +130,6 @@ export type ITarget = ITargetBasic & {
 
 // ========== SETUP ==========
 
-export type ITeammateBasic = ITeammateBasicCore & {
-  buffCtrls: IModifierCtrlBasic[];
-  debuffCtrls: IModifierCtrlBasic[];
-  weapon: ITeammateWeaponBasic & {
-    buffCtrls: IModifierCtrlBasic[];
-  };
-  artifact?: ITeammateArtifactBasic & {
-    buffCtrls: IModifierCtrlBasic[];
-  };
-};
-
 export type ISetupBasic = {
   main: RawCharacter;
   selfBuffCtrls: IModifierCtrlBasic[];
@@ -139,7 +139,7 @@ export type ISetupBasic = {
   artBuffCtrls: IArtifactModCtrlBasic[];
   artDebuffCtrls: IArtifactModCtrlBasic[];
 
-  teammates: ITeammateBasic[];
+  teammates: RawTeammate[];
   teamBuffCtrls: IModifierCtrlBasic[];
   rsnBuffCtrls: ResonanceModCtrl[];
   rsnDebuffCtrls: ResonanceModCtrl[];

@@ -2,8 +2,7 @@ import type {
   AutoRsnElmtType,
   ElementCount,
   ElementType,
-  ITeam,
-  ITeamMember,
+  TeamMember,
   TalentType,
   TeamConditions,
   TeamElementConditions,
@@ -15,7 +14,7 @@ import { isAutoRsnElmt } from "@/logic/element.logic";
 import TypeCounter from "@/utils/TypeCounter";
 import { isPassedComparison } from "./utils/isPassedComparison";
 
-export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
+export class Team<TMember extends TeamMember = TeamMember> {
   members: TMember[] = [];
   resonances: AutoRsnElmtType[] = [];
   moonsignLv: number = 0;

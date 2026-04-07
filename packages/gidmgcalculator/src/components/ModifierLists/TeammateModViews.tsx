@@ -1,5 +1,5 @@
-import type { TeammateCalc } from "@/models";
-import type { IAbilityBuffCtrl, IAbilityDebuffCtrl, IModifierCtrlBasic, ITeam } from "@/types";
+import type { TeammateCalc, Team } from "@/models";
+import type { IAbilityBuffCtrl, IAbilityDebuffCtrl, IModifierCtrlBasic } from "@/types";
 import type { ModifierHanlders } from "./types";
 
 import { GenshinModifierView } from "../GenshinModifierView";
@@ -8,7 +8,7 @@ import { ModifierContainer } from "./ModifierContainer";
 type TeamModsViewProps = {
   mutable?: boolean;
   teammates: TeammateCalc[];
-  team: ITeam;
+  team: Team;
   getHanlders?: (teammate: TeammateCalc, ctrl: IModifierCtrlBasic) => ModifierHanlders;
 };
 

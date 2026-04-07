@@ -12,9 +12,9 @@ import type {
   EntityBonusEffect,
   EntityBonusStack,
   InputStack,
-  ITeam,
-  ITeamMember,
+  TeamMember,
 } from "@/types";
+import { Team } from "./Team";
 
 import { AbstractEffectValueCalc } from "./AbstractEffectValueCalc";
 
@@ -27,7 +27,7 @@ const TEAM_DEPENDED_STACK_TYPES: EntityBonusStack["type"][] = [
 ];
 
 export abstract class AbstractBonusCalc<
-  TPerformer extends ITeamMember = ITeamMember
+  TPerformer extends TeamMember = TeamMember
 > extends AbstractEffectValueCalc<TPerformer> {
   //
   protected basedOnFixed = false;
@@ -35,7 +35,7 @@ export abstract class AbstractBonusCalc<
 
   constructor(
     protected performer: TPerformer,
-    protected team: ITeam,
+    protected team: Team,
     { inputs = [], refi = 0, basedOnFixed = false }: Partial<BonusPerformTools>
   ) {
     super(performer, team, inputs);

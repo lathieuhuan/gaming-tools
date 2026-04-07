@@ -1,9 +1,9 @@
-import type { EntityPenaltyEffect, ITeamMember } from "@/types";
+import type { EntityPenaltyEffect, TeamMember } from "@/types";
 
 import { AbstractEffectValueCalc, EffectToGetInitialValue } from "./AbstractEffectValueCalc";
 
 export abstract class AbstractPenaltyCalc<
-  TPerformer extends ITeamMember = ITeamMember
+  TPerformer extends TeamMember = TeamMember
 > extends AbstractEffectValueCalc<TPerformer> {
   //
   getInitialValue(effect: EffectToGetInitialValue) {

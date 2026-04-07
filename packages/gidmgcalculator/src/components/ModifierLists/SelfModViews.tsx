@@ -1,5 +1,5 @@
-import type { Character } from "@/models";
-import type { IAbilityBuffCtrl, IAbilityDebuffCtrl, ITeam } from "@/types";
+import type { Character, Team } from "@/models";
+import type { IAbilityBuffCtrl, IAbilityDebuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
 import { GenshinModifierView } from "../GenshinModifierView";
@@ -8,7 +8,7 @@ import { ModifierContainer } from "./ModifierContainer";
 type SelfModsViewProps<T extends IAbilityBuffCtrl | IAbilityDebuffCtrl> = {
   mutable?: boolean;
   character: Character;
-  team: ITeam;
+  team: Team;
   modCtrls: T[];
   getHanlders?: (ctrl: T) => ModifierHanlders;
 };

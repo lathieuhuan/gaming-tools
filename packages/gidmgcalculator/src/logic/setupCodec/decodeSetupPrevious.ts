@@ -14,7 +14,7 @@ import type {
   IArtifactModCtrl,
   IModifierCtrlBasic,
   ITeamBuffCtrl,
-  ITeammateArtifact,
+  TeammateArtifact,
   ResonanceModCtrl,
   SetupImportInfo,
 } from "@/types";
@@ -254,7 +254,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
 
       const [atfCode, atfBcStrs] = split(artifactStr, 2);
       const atfData = atfCode ? $AppArtifact.getSet(+atfCode) : undefined;
-      let artifact: ITeammateArtifact | undefined;
+      let artifact: TeammateArtifact | undefined;
 
       if (atfData) {
         artifact = {

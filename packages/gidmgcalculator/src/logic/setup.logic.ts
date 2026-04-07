@@ -8,9 +8,9 @@ import type {
   IDbSetup,
   IModifierCtrlBasic,
   ISetupManager,
-  ITeammateArtifact,
-  ITeammateBasic,
-  ITeammateWeapon,
+  TeammateArtifact,
+  RawTeammate,
+  TeammateWeapon,
   IWeaponBuffCtrl,
 } from "@/types";
 
@@ -125,12 +125,12 @@ function restoreModCtrls<T extends Restorable, K extends keyof T>(
   return newCtrls;
 }
 
-function restoreTeammate(teammate: ITeammateBasic, team: Team) {
+function restoreTeammate(teammate: RawTeammate, team: Team) {
   const weaponData = $AppWeapon.get(teammate.weapon.code)!;
   const weaponBuffs = weaponData.buffs || [];
   const weaponBuffCtrls: IWeaponBuffCtrl[] = enhanceCtrls(teammate.weapon.buffCtrls, weaponBuffs);
 
-  const weapon: ITeammateWeapon = {
+  const weapon: TeammateWeapon = {
     code: teammate.weapon.code,
     type: weaponData.type,
     refi: teammate.weapon.refi,
@@ -138,7 +138,7 @@ function restoreTeammate(teammate: ITeammateBasic, team: Team) {
     data: weaponData,
   };
 
-  let artifact: ITeammateArtifact | undefined;
+  let artifact: TeammateArtifact | undefined;
 
   if (teammate.artifact) {
     const artifactData = $AppArtifact.getSet(teammate.artifact.code)!;

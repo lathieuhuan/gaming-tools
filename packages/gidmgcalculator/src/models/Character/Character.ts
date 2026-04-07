@@ -15,7 +15,7 @@ import type {
   EntityBonusEffect,
   EntityPenaltyEffect,
   RawCharacter,
-  ITeamMember,
+  TeamMember,
   Level,
   QuickenReaction,
   TalentType,
@@ -64,7 +64,7 @@ export type CharacterCloneOptions = CharacterConstructOptions & {
 };
 
 @FlatGetters("state", ["level", "NAs", "ES", "EB", "cons", "enhanced", "bareLv", "ascension"])
-export class Character implements ITeamMember, Clonable<Character> {
+export class Character implements TeamMember, Clonable<Character> {
   code: number;
   state: CharacterState;
 

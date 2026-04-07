@@ -9,30 +9,34 @@ import type {
   EntityPenaltyEffect,
   IAbilityBuffCtrl,
   IAbilityDebuffCtrl,
-  TeammateArtifact,
   ITeammateInfo,
-  TeammateWeapon,
   IWeaponBuffCtrl,
+  TeammateArtifact,
+  TeammateWeapon,
+  TeamMember,
 } from "@/types";
-import type { PartiallyRequiredOnly } from "rond";
+import type { Clonable } from "../interfaces";
 
 import { createAbilityBuffCtrls, createAbilityDebuffCtrls } from "@/logic/modifier.logic";
-import { $AppWeapon } from "@/services";
-import { Clonable } from "../interfaces";
 import { Team } from "../Team";
 import { isPassedComparison } from "../utils/isPassedComparison";
 import { isValidInput } from "../utils/isValidInput";
-import { Weapon } from "../Weapon";
 import { BonusCalc } from "./BonusCalc";
 import { PenaltyCalc } from "./PenaltyCalc";
 
-export type TeammateCalcConstructInfo = PartiallyRequiredOnly<ITeammateInfo, "code">;
+export type TeammateConstructOptions = {
+  enhanced?: boolean;
+  buffCtrls?: IAbilityBuffCtrl[];
+  debuffCtrls?: IAbilityDebuffCtrl[];
+  artifact?: TeammateArtifact;
+  team?: Team;
+};
 
 type CloneOptions = {
   team?: Team;
 };
 
-export class TeammateCalc implements Clonable<TeammateCalc> {
+export class Teammate implements ITeammateInfo, TeamMember, Clonable<Teammate> {
   code: number;
   enhanced: boolean;
   buffCtrls: IAbilityBuffCtrl[];
@@ -40,34 +44,50 @@ export class TeammateCalc implements Clonable<TeammateCalc> {
   weapon: TeammateWeapon;
   artifact?: TeammateArtifact;
 
-  constructor(info: TeammateCalcConstructInfo, public data: AppCharacter, public team: Team) {
+  team: Team;
+
+  static #DEFAULT_ENHANCED = false;
+
+  static configure(config: { defaultEnhanced?: boolean }) {
+    this.#DEFAULT_ENHANCED = config.defaultEnhanced ?? this.#DEFAULT_ENHANCED;
+  }
+
+  constructor(
+    code: number,
+    public data: AppCharacter,
+    weapon: TeammateWeapon,
+    options: TeammateConstructOptions = {}
+  ) {
     const {
-      enhanced = false,
+      enhanced = Teammate.#DEFAULT_ENHANCED,
       buffCtrls = createAbilityBuffCtrls(data, false),
       debuffCtrls = createAbilityDebuffCtrls(data, false),
-    } = info;
+      artifact,
+      team = new Team(),
+    } = options;
 
-    let weapon = info.weapon;
+    // let weapon = info.weapon;
 
-    if (!weapon) {
-      const { weaponType } = data;
-      const code = Weapon.DEFAULT_CODE[weaponType];
+    // if (!weapon) {
+    //   const { weaponType } = data;
+    //   const code = Weapon.DEFAULT_CODE[weaponType];
 
-      weapon = {
-        code,
-        type: weaponType,
-        refi: 1,
-        buffCtrls: [],
-        data: $AppWeapon.get(code)!,
-      };
-    }
+    //   weapon = {
+    //     code,
+    //     type: weaponType,
+    //     refi: 1,
+    //     buffCtrls: [],
+    //     data: $AppWeapon.get(code)!,
+    //   };
+    // }
 
-    this.code = info.code;
+    this.code = code;
     this.enhanced = enhanced;
     this.buffCtrls = buffCtrls;
     this.debuffCtrls = debuffCtrls;
     this.weapon = weapon;
-    this.artifact = info.artifact;
+    this.artifact = artifact;
+    this.team = team;
   }
 
   joinTeam(team: Team) {
@@ -77,7 +97,9 @@ export class TeammateCalc implements Clonable<TeammateCalc> {
   // ===== SETTERS =====
 
   update(data: Partial<ITeammateInfo>) {
-    return new TeammateCalc({ ...this, ...data }, this.data, this.team);
+    const { weapon = this.weapon } = data;
+
+    return new Teammate(this.code, this.data, weapon, { ...this, ...data });
   }
 
   updateWeaponBuffCtrl(newCtrl: IWeaponBuffCtrl) {
@@ -126,23 +148,20 @@ export class TeammateCalc implements Clonable<TeammateCalc> {
     return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
   }
 
-  // ===== _ =====
-
   clone(options: CloneOptions = {}) {
     const { team = this.team } = options;
 
-    const teamamte: ITeammateInfo = {
+    return new Teammate(this.code, this.data, this.weapon, {
       ...this,
       buffCtrls: Object_.clone(this.buffCtrls),
       debuffCtrls: Object_.clone(this.debuffCtrls),
       weapon: Object_.clone(this.weapon),
       artifact: Object_.clone(this.artifact),
-    };
-
-    return new TeammateCalc(teamamte, this.data, team);
+      team,
+    });
   }
 
-  //
+  // ===== DESCRIPTION =====
 
   parseBuffDesc(ctrl: IAbilityBuffCtrl) {
     return new BonusCalc(this, this.team, { inputs: ctrl.inputs }).parseAbilityDesc(ctrl.data);

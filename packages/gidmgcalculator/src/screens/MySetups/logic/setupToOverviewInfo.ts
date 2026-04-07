@@ -1,4 +1,4 @@
-import type { IDbComplexSetup, IDbSetup, ITeammateArtifact } from "@/types";
+import type { IDbComplexSetup, IDbSetup, TeammateArtifact } from "@/types";
 import type { UserdbState } from "@Store/userdbSlice";
 import type { SetupOverviewInfo } from "../types";
 
@@ -17,7 +17,7 @@ function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOverviewInf
 
   const teammates = setup.teammates.map<TeammateCalc>((teammate) => {
     const data = $AppCharacter.get(teammate.code);
-    let artifact: ITeammateArtifact | undefined;
+    let artifact: TeammateArtifact | undefined;
 
     if (teammate.artifact) {
       const { code, buffCtrls } = teammate.artifact;

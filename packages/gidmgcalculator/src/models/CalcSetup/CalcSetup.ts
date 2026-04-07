@@ -1,6 +1,7 @@
 import { Array_ } from "ron-utils";
 
-import type { AppCharacter, ITeammate } from "@/types";
+import type { Teammate } from "@/models";
+import type { AppCharacter, ITeammateInfo } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
 
 import { calculateSetup } from "@/calculation/calculator";
@@ -18,13 +19,13 @@ import {
 } from "@/logic/modifier.logic";
 import { $AppCharacter } from "@/services";
 import { ArtifactGear } from "../ArtifactGear";
+import { Character } from "../Character";
 import { Team } from "../Team";
 import { TeammateCalc, type TeammateCalcConstructInfo } from "../TeammateCalc";
 import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
-import { Character } from "../Character";
 
 type TeammateUpdateData = Partial<
-  Pick<ITeammate, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
+  Pick<ITeammateInfo, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
 >;
 
 type CloneOptions = {
