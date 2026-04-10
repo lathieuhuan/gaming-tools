@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcSetup, Team, TeammateCalc } from "@/models";
+import type { CalcSetup, Team, Teammate } from "@/models";
 import type {
   AppArtifact,
   AppCharacter,
@@ -186,7 +186,7 @@ export function createArtifactBuffCtrls(
   return [];
 }
 
-export function createArtifactDebuffCtrls(sets: ArtifactGearSet[], teammates: TeammateCalc[]) {
+export function createArtifactDebuffCtrls(sets: ArtifactGearSet[], teammates: Teammate[]) {
   const ctrls: IArtifactDebuffCtrl[] = [];
   const vvArtifact = $AppArtifact.vvArtifact;
   const deepwoodArtifact = $AppArtifact.deepwoodArtifact;

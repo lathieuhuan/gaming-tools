@@ -1,4 +1,4 @@
-import type { TeammateCalc } from "@/models";
+import type { Teammate } from "@/models";
 import type { IWeaponBuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
@@ -25,7 +25,7 @@ export default function BuffWeapon() {
     });
   };
 
-  const handleUpdateTeammateCtrls = (teammate: TeammateCalc, newCtrls: IWeaponBuffCtrl[]) => {
+  const handleUpdateTeammateCtrls = (teammate: Teammate, newCtrls: IWeaponBuffCtrl[]) => {
     updateTeammateWeapon(teammate.data.code, {
       buffCtrls: newCtrls,
     });

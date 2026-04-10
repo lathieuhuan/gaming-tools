@@ -1,4 +1,4 @@
-import type { TeammateCalc, Team } from "@/models";
+import type { Teammate, Team } from "@/models";
 import type { IAbilityBuffCtrl, IAbilityDebuffCtrl, IModifierCtrlBasic } from "@/types";
 import type { ModifierHanlders } from "./types";
 
@@ -7,14 +7,14 @@ import { ModifierContainer } from "./ModifierContainer";
 
 type TeamModsViewProps = {
   mutable?: boolean;
-  teammates: TeammateCalc[];
+  teammates: Teammate[];
   team: Team;
-  getHanlders?: (teammate: TeammateCalc, ctrl: IModifierCtrlBasic) => ModifierHanlders;
+  getHanlders?: (teammate: Teammate, ctrl: IModifierCtrlBasic) => ModifierHanlders;
 };
 
 function getTeammateModifierElmts<TModCtrl extends IAbilityBuffCtrl | IAbilityDebuffCtrl>(
   props: TeamModsViewProps,
-  teammate: TeammateCalc,
+  teammate: Teammate,
   modCtrls: TModCtrl[],
   renderDesc: (ctrl: TModCtrl) => string
 ) {

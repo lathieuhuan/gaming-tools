@@ -8,14 +8,15 @@ import {
   createArtifact,
   createCharacter,
   createTarget,
-  createWeapon
+  createTeammate,
+  createWeapon,
 } from "@/logic/entity.logic";
 import {
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
-import { Artifact, ArtifactGear, CalcSetup, Team, TeammateCalc } from "@/models";
+import { Artifact, ArtifactGear, CalcSetup, Team } from "@/models";
 import IdStore from "@/utils/IdStore";
 
 export function createSetupForTeammate(
@@ -70,21 +71,21 @@ export function createSetupForTeammate(
   const { main } = setup;
   const mainWeapon = main.weapon;
 
-  teammates[teammateIndex] = new TeammateCalc(
+  teammates[teammateIndex] = createTeammate(
     {
-      ...main,
+      code: main.code,
+      enhanced: main.enhanced,
+      buffCtrls: createAbilityBuffCtrls(main.data, false),
+      debuffCtrls: createAbilityDebuffCtrls(main.data, false),
       weapon: {
         code: mainWeapon.code,
         type: mainWeapon.type,
         refi: mainWeapon.refi,
         buffCtrls: createWeaponBuffCtrls(mainWeapon.data, false),
-        data: mainWeapon.data,
       },
-      buffCtrls: createAbilityBuffCtrls(main.data, false),
-      debuffCtrls: createAbilityDebuffCtrls(main.data, false),
     },
     main.data,
-    team
+    { team }
   );
 
   team.updateMembers([newMain, ...teammates]);

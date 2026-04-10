@@ -2,8 +2,8 @@ import type { AppCharacter } from "@/types";
 
 import { SCREEN_PATH } from "@/constants";
 import { router } from "@/lib/router";
-import { createCharacter } from "@/logic/entity.logic";
-import { CalcSetup, Team, TeammateCalc } from "@/models";
+import { createCharacter, createTeammate } from "@/logic/entity.logic";
+import { CalcSetup } from "@/models";
 import { $AppCharacter } from "@/services";
 import { initSession } from "@Store/calculator/actions";
 
@@ -27,15 +27,7 @@ export function prepEnhanceTour() {
 
   const calcSetup = new CalcSetup({
     main: createCharacter({ code: main.code }, main),
-    teammates: [
-      new TeammateCalc(
-        {
-          code: teammate.code,
-        },
-        teammate,
-        new Team()
-      ),
-    ],
+    teammates: [createTeammate({ code: teammate.code }, teammate)],
   });
 
   initSession({

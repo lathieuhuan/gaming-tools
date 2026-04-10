@@ -17,6 +17,7 @@ import { EquipmentRelation } from "../EquipmentRelation";
 import { ArtifactState } from "./ArtifactState";
 
 export type ArtifactConstructOptions = {
+  key?: Partial<ArtifactKey>;
   state?: Partial<ArtifactStateData>;
   relation?: Partial<EquipmentRelationData>;
 };
@@ -70,7 +71,9 @@ export class Artifact implements Clonable<Artifact> {
   }
 
   clone(options: ArtifactCloneOptions = {}) {
-    return new Artifact(this.key, this.data, {
+    const key = Object_.patch(this.key, options.key || {});
+
+    return new Artifact(key, this.data, {
       state: {
         ...this.state,
         ...options.state,

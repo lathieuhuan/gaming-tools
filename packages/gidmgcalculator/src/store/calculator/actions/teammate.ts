@@ -5,17 +5,14 @@ import type { AppCharacter, TeammateArtifact, TeammateWeapon } from "@/types";
 import type { ForwardedAction } from "../types";
 
 import { createArtifactBuffCtrls, createWeaponBuffCtrls } from "@/logic/modifier.logic";
-import { Team } from "@/models";
-import { useSettingsStore } from "@Store/settings";
+import { Team } from "@/models/Team";
 import { useCalcStore } from "../calculatorStore";
 import { onActiveSetup } from "../utils";
 
 export const setTeammate = (teammate: AppCharacter, index: number) => {
-  const { charEnhanced } = useSettingsStore.getState();
-
   useCalcStore.setState(
     onActiveSetup((setup) => {
-      setup.setTeammate({ code: teammate.code, enhanced: charEnhanced }, index, teammate);
+      setup.setTeammate({ code: teammate.code }, index, teammate);
     })
   );
 };

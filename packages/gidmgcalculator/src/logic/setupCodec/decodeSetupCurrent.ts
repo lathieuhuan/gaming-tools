@@ -14,7 +14,6 @@ import type {
   IArtifactModCtrl,
   IModifierCtrlBasic,
   ITeamBuffCtrl,
-  TeammateArtifact,
   ResonanceModCtrl,
   SetupImportInfo,
 } from "@/types";
@@ -31,10 +30,16 @@ import {
   WEAPON_TYPES,
 } from "@/constants/global";
 import { isManualRsnElmt } from "@/logic/element.logic";
-import { createArtifact, createCharacter, createTarget, createWeapon } from "@/logic/entity.logic";
+import {
+  createArtifact,
+  createCharacter,
+  createTarget,
+  createTeammate,
+  createWeapon,
+} from "@/logic/entity.logic";
 import { enhanceCtrls } from "@/logic/modifier.logic";
-import { Artifact, ArtifactGear, CalcSetup, Target, Team, TeammateCalc } from "@/models";
-import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
+import { Artifact, ArtifactGear, CalcSetup, Target, Team, Teammate } from "@/models";
+import { $AppArtifact, $AppCharacter, $AppData } from "@/services";
 import IdStore from "@/utils/IdStore";
 import { CUSTOM_BUFF_CATEGORIES, DECODE_ERROR_MSG, DIVIDER } from "./config";
 
@@ -235,52 +240,47 @@ export function decodeSetupCurrent(code: string): DecodeResult {
 
   // ===== TEAMMATES =====
 
-  const decodeTeammate = (tmStr: string | undefined): TeammateCalc | null => {
-    try {
-      const [tmCode, enhancedCode, tmBcStrs, tmDcStrs, weaponStr, artifactStr] = split(tmStr, 1);
-      const tmData = characters.find((data) => data.code === +tmCode);
+  const decodeTeammate = (tmStr: string | undefined): Teammate | null => {
+    if (!tmStr) {
+      return null;
+    }
 
-      if (!tmData) {
+    try {
+      const [code, enhancedCode, tmBcStrs, tmDcStrs, weaponStr, artifactStr] = split(tmStr, 1);
+      const tmCode = parseNumber(code, "Teammate Code");
+
+      if (!tmCode) {
         return null;
       }
 
       const [wpCode, wpTypeIndex, wpRefi, wpBcStrs] = split(weaponStr, 2);
-      const wpData = wpCode ? $AppWeapon.get(+wpCode) : undefined;
       const wpType = WEAPON_TYPES[parseNumber(wpTypeIndex, "Teammate Weapon Type")];
 
-      if (!wpData || !wpType) {
+      if (!wpType) {
         return null;
       }
 
-      const [atfCode, atfBcStrs] = split(artifactStr, 2);
-      const atfData = atfCode ? $AppArtifact.getSet(+atfCode) : undefined;
-      let artifact: TeammateArtifact | undefined;
+      const [atfCodeStr, atfBcStrs] = split(artifactStr, 2);
 
-      if (atfData) {
-        artifact = {
-          code: parseNumber(atfCode, "Artifact Code"),
-          buffCtrls: enhanceCtrls(splitModCtrls(atfBcStrs, 3), atfData.buffs),
-          data: atfData,
-        };
-      }
-
-      return new TeammateCalc(
+      return createTeammate(
         {
-          code: tmData.code,
+          code: tmCode,
           enhanced: enhancedCode === "1",
-          buffCtrls: enhanceCtrls(splitModCtrls(tmBcStrs, 2), tmData.buffs),
-          debuffCtrls: enhanceCtrls(splitModCtrls(tmDcStrs, 2), tmData.debuffs),
+          buffCtrls: splitModCtrls(tmBcStrs, 2),
+          debuffCtrls: splitModCtrls(tmDcStrs, 2),
           weapon: {
             code: parseNumber(wpCode, "Teammate Weapon Code"),
             type: wpType,
             refi: parseNumber(wpRefi, "Teammate Weapon Refi"),
-            buffCtrls: enhanceCtrls(splitModCtrls(wpBcStrs, 3), wpData.buffs),
-            data: wpData,
+            buffCtrls: splitModCtrls(wpBcStrs, 3),
           },
-          artifact,
+          artifact: {
+            code: parseNumber(atfCodeStr, "Artifact Code"),
+            buffCtrls: splitModCtrls(atfBcStrs, 3),
+          },
         },
-        tmData,
-        team
+        null,
+        { team }
       );
     } catch (e) {
       console.error(e);

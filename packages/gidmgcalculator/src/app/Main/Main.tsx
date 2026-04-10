@@ -3,7 +3,7 @@ import { useScreenWatcher } from "rond";
 
 import { Outlet, useRouter } from "@/lib/router";
 import { genAccountTravelerKey } from "@/logic/genAccountTravelerKey";
-import { ArtifactState, CharacterState, WeaponState } from "@/models";
+import { ArtifactState, CharacterState, Teammate, WeaponState } from "@/models";
 
 import { CalculatorLarge, CalculatorSmall } from "@/screens/Calculator";
 import { $AppCharacter } from "@/services";
@@ -32,6 +32,9 @@ export function Main() {
       defaultES: settings.charES,
       defaultEB: settings.charEB,
       defaultCons: settings.charCons,
+      defaultEnhanced: settings.charEnhanced,
+    });
+    Teammate.configure({
       defaultEnhanced: settings.charEnhanced,
     });
   };

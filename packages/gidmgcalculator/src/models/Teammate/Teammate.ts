@@ -66,21 +66,6 @@ export class Teammate implements ITeammateInfo, TeamMember, Clonable<Teammate> {
       team = new Team(),
     } = options;
 
-    // let weapon = info.weapon;
-
-    // if (!weapon) {
-    //   const { weaponType } = data;
-    //   const code = Weapon.DEFAULT_CODE[weaponType];
-
-    //   weapon = {
-    //     code,
-    //     type: weaponType,
-    //     refi: 1,
-    //     buffCtrls: [],
-    //     data: $AppWeapon.get(code)!,
-    //   };
-    // }
-
     this.code = code;
     this.enhanced = enhanced;
     this.buffCtrls = buffCtrls;

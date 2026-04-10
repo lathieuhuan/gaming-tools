@@ -3,7 +3,7 @@ import isEqual from "react-fast-compare";
 import { FaPlus, FaShareAlt, FaUnlink, FaWrench } from "react-icons/fa";
 import { Button, ButtonGroup, CloseButton, Modal, TrashCanSvg } from "rond";
 
-import type { TeammateCalc } from "@/models";
+import type { Teammate } from "@/models";
 import type { SetupOverviewInfo } from "../types";
 
 import { Artifact } from "@/models";
@@ -59,7 +59,7 @@ function SetupViewCore({ setup, complexSetup, onEditSetup, onCalcTeammateSetup }
     }
   };
 
-  const handleSwitchTeammate = (teammate: TeammateCalc) => {
+  const handleSwitchTeammate = (teammate: Teammate) => {
     const shownId = allIDs?.[teammate.code];
 
     if (complexSetup && shownId) {

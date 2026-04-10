@@ -1,11 +1,10 @@
 import { Array_ } from "ron-utils";
 
-import type { Teammate } from "@/models";
 import type { AppCharacter, ITeammateInfo } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
 
 import { calculateSetup } from "@/calculation/calculator";
-import { createTarget } from "@/logic/entity.logic";
+import { createTarget, createTeammate } from "@/logic/entity.logic";
 import {
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
@@ -17,11 +16,10 @@ import {
   createTeamBuffCtrls,
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
-import { $AppCharacter } from "@/services";
 import { ArtifactGear } from "../ArtifactGear";
 import { Character } from "../Character";
 import { Team } from "../Team";
-import { TeammateCalc, type TeammateCalcConstructInfo } from "../TeammateCalc";
+import { Teammate, type TeammateConstructOptions } from "../Teammate";
 import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
 
 type TeammateUpdateData = Partial<
@@ -46,7 +44,7 @@ export class CalcSetup extends CalcSetupBase {
       teammates = [],
       artBuffCtrls = createMainArtifactBuffCtrls(main.atfGear.sets),
       artDebuffCtrls = createArtifactDebuffCtrls(main.atfGear.sets, teammates),
-      team = new Team([main, ...teammates]),
+      team = new Team(),
       elmtEvent = createElementalEvent(),
       customBuffCtrls = [],
       customDebuffCtrls = [],
@@ -85,6 +83,7 @@ export class CalcSetup extends CalcSetupBase {
       result,
     });
 
+    this.team.updateMembers([main, ...teammates]);
     this.teamBuffCtrls = info.teamBuffCtrls || createTeamBuffCtrls(this);
   }
 
@@ -156,14 +155,14 @@ export class CalcSetup extends CalcSetupBase {
   // ===== TEAMMATES =====
 
   setTeammate(
-    info: TeammateCalcConstructInfo,
+    info: TeammateConstructOptions & { code: number },
     index: number,
-    data: AppCharacter = $AppCharacter.get(info.code)
+    data?: AppCharacter
   ) {
     const newTeam = new Team();
     const newTeammates = [...this.teammates];
 
-    newTeammates[index] = new TeammateCalc(info, data, newTeam);
+    newTeammates[index] = createTeammate(info, data, { team: newTeam });
     newTeam.updateMembers([this.main, ...newTeammates]);
 
     this.team = newTeam;
@@ -173,7 +172,7 @@ export class CalcSetup extends CalcSetupBase {
     this.updateArtifactDebuffCtrls();
   }
 
-  removeTeammate(teammate: TeammateCalc) {
+  removeTeammate(teammate: Teammate) {
     const newTeammates = this.teammates.filter((tm) => tm.code !== teammate.code);
 
     this.team = new Team([this.main, ...newTeammates]);
@@ -185,7 +184,7 @@ export class CalcSetup extends CalcSetupBase {
 
   updateTeammate(
     tmCode: number,
-    data: TeammateUpdateData | ((teammate: TeammateCalc) => TeammateUpdateData)
+    data: TeammateUpdateData | ((teammate: Teammate) => TeammateUpdateData)
   ) {
     this.teammates = this.teammates.map((teammate) => {
       if (teammate.data.code === tmCode) {

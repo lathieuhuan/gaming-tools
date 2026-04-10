@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { CalcSetup, Character, TeammateCalc } from "@/models";
+import type { CalcSetup, Character, Teammate } from "@/models";
 import type {
   AttackElement,
   AttackPattern,
@@ -26,7 +26,7 @@ import { BonusCalc } from "@/models/Character";
 import { QUICKEN_BUFF_LABEL } from "../constants";
 import { getRxnBonusesFromEM } from "../core/getRxnBonusesFromEM";
 
-export function applyBuffs(main: Character, teammates: TeammateCalc[], setup: CalcSetup) {
+export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSetup) {
   const { team } = setup;
   const { weapon, allAttrsCtrl, attkBonusCtrl } = main;
 

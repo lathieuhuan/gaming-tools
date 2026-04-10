@@ -1,12 +1,12 @@
 import { FaCalculator, FaSyncAlt } from "react-icons/fa";
 import { Button } from "rond";
 
-import type { TeammateCalc } from "@/models";
+import type { Teammate } from "@/models";
 
 import { CharacterPortrait, EnhanceTag, TeammateItems } from "@/components";
 
 type TeammateDetailProps = {
-  teammate: TeammateCalc;
+  teammate: Teammate;
   calculated: boolean;
   onSwitch: () => void;
   onCalculate: () => void;
