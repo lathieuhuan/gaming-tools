@@ -6,7 +6,6 @@ import type { WritableDraft } from "immer/src/internal.js";
 import { CalcSetup } from "@/models";
 import { useCalcStore } from "../calculatorStore";
 import { getCopyName, onActiveSetup } from "../utils";
-import { createWeapon } from "@/logic/entity.logic";
 
 export const updateActiveSetup = (
   callback: (setup: WritableDraft<CalcSetup>) => boolean | void

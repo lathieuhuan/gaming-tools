@@ -32,6 +32,7 @@ import { ARTIFACT_TYPES } from "@/constants/global";
 import { createCharacter, createWeapon } from "@/logic/entity.logic";
 import { isDbSetup } from "@/logic/setup.logic";
 import { Artifact, Ascendable, Weapon } from "@/models";
+import IdStore from "@/utils/IdStore";
 
 export type UserdbState = {
   userChars: IDbCharacter[];
@@ -569,9 +570,7 @@ export const userdbSlice = createSlice({
         }
       }
     },
-    fixMultipleEquippedWeapons: (state) => {
-      const { userChars, userWps } = state;
-
+    fixMultipleEquippedWeapons: ({ userChars, userWps }) => {
       const validWeaponsByChar = new Map<number, number>();
 
       for (const char of userChars) {
@@ -584,9 +583,7 @@ export const userdbSlice = createSlice({
         }
       }
     },
-    fixMultipleEquippedArtifacts: (state) => {
-      const { userChars, userArts } = state;
-
+    fixMultipleEquippedArtifacts: ({ userChars, userArts }) => {
       const artifactsByOwnerByType = new Map<number, Map<ArtifactType, RawArtifact>>();
 
       for (const artifact of userArts) {
@@ -627,6 +624,42 @@ export const userdbSlice = createSlice({
         char.artifactIDs = Array_.truthify(Array.from(artifactIDs));
       }
     },
+    fixDuplicatedArtifactIds: ({ userArts, userChars, userSetups }) => {
+      const dupArtifacts: RawArtifact[] = [];
+      const existedId = new Set<number>();
+
+      for (const artifact of userArts) {
+        if (existedId.has(artifact.ID)) {
+          dupArtifacts.push(artifact);
+          continue;
+        }
+
+        existedId.add(artifact.ID);
+      }
+
+      const idStore = new IdStore();
+
+      for (const artifact of dupArtifacts) {
+        const newId = idStore.gen();
+        const char = Array_.findByCode(userChars, artifact.owner);
+
+        if (char) {
+          char.artifactIDs = char.artifactIDs.filter((id) => id !== artifact.ID);
+          char.artifactIDs.push(newId);
+        }
+
+        for (const setupId of artifact.setupIDs || []) {
+          const setup = Array_.findById(userSetups, setupId);
+
+          if (!setup || !isDbSetup(setup)) continue;
+
+          setup.main.artifactIDs = setup.main.artifactIDs.filter((id) => id !== artifact.ID);
+          setup.main.artifactIDs.push(newId);
+        }
+
+        artifact.ID = newId;
+      }
+    },
   },
 });
 
@@ -661,6 +694,7 @@ export const {
   fixV4MigrationError,
   fixMultipleEquippedWeapons,
   fixMultipleEquippedArtifacts,
+  fixDuplicatedArtifactIds,
 } = userdbSlice.actions;
 
 export default userdbSlice.reducer;

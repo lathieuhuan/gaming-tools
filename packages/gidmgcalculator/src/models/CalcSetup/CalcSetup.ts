@@ -105,12 +105,9 @@ export class CalcSetup extends CalcSetupBase {
   calculate(shouldLog?: boolean) {
     const { main, result } = calculateSetup(this, { shouldLog });
 
-    const newMain = new Character(main.code, main.data, main.weapon, {
-      state: main.state,
-      atfGear: main.atfGear,
+    const newMain = main.clone({
       allAttrsCtrl: main.allAttrsCtrl.clone(),
       attkBonusCtrl: main.attkBonusCtrl.clone(),
-      team: this.team,
     });
 
     return new CalcSetup({

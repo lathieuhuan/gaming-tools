@@ -76,6 +76,9 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
           }
           break;
         }
+        case "TLT": {
+          break;
+        }
         default:
           for (const module of Array_.toArray(target.module)) {
             main.receiveAttkBonus({

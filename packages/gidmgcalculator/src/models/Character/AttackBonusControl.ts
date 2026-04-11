@@ -15,7 +15,7 @@ export type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
 
 export type GetBonusOptions = {
   filter?: (bonus: AttackBonus) => boolean;
-}
+};
 
 const defaultFilter = () => true;
 
@@ -34,6 +34,7 @@ export class AttackBonusControl {
 
   add(bonus: AttackBonus) {
     const current = this.group[bonus.toType] || [];
+
     current.push(bonus);
     this.group[bonus.toType] = current;
 

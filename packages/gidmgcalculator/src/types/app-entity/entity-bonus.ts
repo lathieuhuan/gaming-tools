@@ -1,4 +1,10 @@
-import type { AttackBonusKey, AttackBonusType, AttributeStat, BaseAttributeStat } from "../common";
+import type {
+  AttackBonusKey,
+  AttackBonusType,
+  AttributeStat,
+  BaseAttributeStat,
+  LevelableTalentType,
+} from "../common";
 import type { CharacterEffectLevelScale, EntityBonusBasedOn } from "./app-entity-common";
 import type { EnergyCostStack, EntityBonusStack } from "./effect-bonus-stack";
 import type { EffectCondition } from "./effect-condition";
@@ -53,7 +59,16 @@ type AttackBonusTarget = {
   path: AttackBonusKey;
 };
 
-type EntityBonusTargets = AttributeTarget | AttackBonusTarget | AttackBonusTarget[];
+type TalentLevelTarget = {
+  module: "TLT";
+  path: LevelableTalentType;
+};
+
+type EntityBonusTargets =
+  | AttributeTarget
+  | AttackBonusTarget
+  | AttackBonusTarget[]
+  | TalentLevelTarget;
 
 export type EntityBonus<TEntityEffect extends EntityBonusEffect = EntityBonusEffect> =
   TEntityEffect & {

@@ -92,7 +92,7 @@ export function TalentList({
           const talent = activeTalents[talentType];
           if (!talent) return null;
 
-          const xtraLevel = character.getTotalXtraTalentLv(talentType);
+          const xtraLevel = isAltSprint ? 0 : character.getTotalXtraTalentLv(talentType);
 
           const mutableLvNode = (
             <VersatileSelect
