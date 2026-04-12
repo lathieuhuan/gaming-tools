@@ -3,6 +3,7 @@ import { Array_, round, toMult } from "ron-utils";
 import type {
   CharacterBuff,
   CharacterDebuff,
+  CharacterEffectLevelIncrement,
   CharacterEffectLevelScale,
   EffectValue,
   EffectValueByOption,
@@ -20,6 +21,7 @@ type AbilityBuff = CharacterBuff | CharacterDebuff;
 export type EffectToGetInitialValue = {
   value: EffectValue;
   lvScale?: CharacterEffectLevelScale;
+  lvIncre?: CharacterEffectLevelIncrement;
 };
 
 export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = TeamMember> {
@@ -40,7 +42,7 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
 
   protected abstract getTalentLevel(config: TalentLevelScaleConfig): number;
 
-  // ===== LEVEL SCALE =====
+  // ===== LEVEL SCALE & INCREMENT =====
 
   protected getLevelScale(scale?: CharacterEffectLevelScale) {
     if (scale) {
@@ -51,6 +53,22 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
     }
 
     return 1;
+  }
+
+  protected getLevelIncre(incre?: CharacterEffectLevelIncrement) {
+    if (incre) {
+      const { changes } = incre;
+      const level = this.getTalentLevel(incre);
+      let value = incre.value * level;
+
+      if (changes && level >= changes.startAt) {
+        value += changes.value * (level - changes.startAt + 1);
+      }
+
+      return value;
+    }
+
+    return 0;
   }
 
   // ===== INDEX OF EFFECT VALUE =====

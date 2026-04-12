@@ -5,7 +5,11 @@ import type {
   BaseAttributeStat,
   LevelableTalentType,
 } from "../common";
-import type { CharacterEffectLevelScale, EntityBonusBasedOn } from "./app-entity-common";
+import type {
+  CharacterEffectLevelIncrement,
+  CharacterEffectLevelScale,
+  EntityBonusBasedOn,
+} from "./app-entity-common";
 import type { EnergyCostStack, EntityBonusStack } from "./effect-bonus-stack";
 import type { EffectCondition } from "./effect-condition";
 import type { EffectMax } from "./effect-max";
@@ -16,10 +20,15 @@ export type EntityBonusEffect = EffectCondition & {
   monoId?: string;
   value: EffectValue;
   /**
-   * On Characters. Multiplier based on talent level
+   * On Characters. Multiplier based on talent level.
    * Added before preExtra
    */
   lvScale?: CharacterEffectLevelScale;
+  /** 
+   * Incre based on character talent level.
+   * Added after lvScale
+   */
+  lvIncre?: CharacterEffectLevelIncrement;
   /**
    * On Weapons. Increment to value after each refinement.
    * Default 1/3 of [value]. Fixed buff type has increment = 0.

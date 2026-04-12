@@ -1,4 +1,4 @@
-import type { LevelableTalentType, TalentType } from "../common";
+import type { LevelableTalentType } from "../common";
 
 export type CharacterMilestone = "A1" | "A4" | "C1" | "C2" | "C3" | "C4" | "C5" | "C6";
 
@@ -39,9 +39,10 @@ export type CharacterEffectLevelScale = TalentLevelScaleConfig & {
   max?: number;
 };
 
-export type CharacterEffectLevelIncrement = {
-  talent: TalentType;
+export type CharacterEffectLevelIncrement = TalentLevelScaleConfig & {
   value: number;
-  /** When this bonus is from teammate, this is input's index to get level. Default 0 */
-  altIndex?: number;
+  changes?: {
+    value: number;
+    startAt: number;
+  };
 };
