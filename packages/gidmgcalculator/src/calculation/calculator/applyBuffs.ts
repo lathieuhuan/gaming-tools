@@ -419,6 +419,6 @@ function isFinalEffect(bonus: EntityBonusEffect) {
   return (
     isFinal(bonus) ||
     (typeof bonus.preExtra === "object" && isFinal(bonus.preExtra)) ||
-    (typeof bonus.sufExtra === "object" && isFinal(bonus.sufExtra))
+    (typeof bonus.extras === "object" && Array_.toArray(bonus.extras).some(isFinal))
   );
 }

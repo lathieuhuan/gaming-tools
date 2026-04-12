@@ -290,9 +290,9 @@ export abstract class AbstractBonusCalc<
 
     bonus.value *= this.getStackValue(config.stacks);
 
-    this.applyExtra(bonus, config.sufExtra);
-
     bonus.value = this.applyMax(bonus.value, config.max);
+
+    Array_.toArray(config.extras).forEach((extra) => this.applyExtra(bonus, extra));
 
     return bonus;
   }

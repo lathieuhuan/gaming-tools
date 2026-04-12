@@ -59,8 +59,11 @@ export function applyDebuffs(
   ) {
     for (const effect of Array_.toArray(effects)) {
       if (team.isAvailableEffect(effect) && performer.canPerformEffect(effect, inputs)) {
+        const targets: EntityPenaltyTarget[] =
+          effect.targets === "OWN_ELMT" ? [main.data.vision] : Array_.toArray(effect.targets);
+
+        const reductionPaths = getReductionPaths(targets, inputs);
         const penalty = performer.performPenalty(effect, inputs);
-        const reductionPaths = getReductionPaths(Array_.toArray(effect.targets), inputs);
 
         reductionPaths.forEach((path) => target.takeReduction(path, penalty, label));
       }

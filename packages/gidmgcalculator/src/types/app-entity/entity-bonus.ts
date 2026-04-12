@@ -35,15 +35,15 @@ export type EntityBonusEffect = EffectCondition & {
    * Added before preExtra
    */
   incre?: number;
-  /** Added before basedOn */
+  /** Added before basedOn > stacks */
   preExtra?: number | EntityBonusEffect;
   /** Added right before stacks */
   basedOn?: EntityBonusBasedOn;
   stacks?: EntityBonusStack;
-  /** Added after stacks */
-  sufExtra?: number | EntityBonusEffect;
   /** When max is number on Weapon Bonus, it will auto scale off refi */
   max?: EffectMax;
+  /** Added after max */
+  extras?: number | EntityBonusEffect | EntityBonusEffect[];
   outsource?: {
     stacks?: EnergyCostStack;
   };

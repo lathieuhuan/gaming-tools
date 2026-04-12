@@ -17,7 +17,6 @@ import {
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
 import { ArtifactGear } from "../ArtifactGear";
-import { Character } from "../Character";
 import { Team } from "../Team";
 import { Teammate, type TeammateConstructOptions } from "../Teammate";
 import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
@@ -34,6 +33,8 @@ export type CalcSetupConstructInfo = PartiallyRequiredOnly<CalcSetupBaseConstruc
 
 export class CalcSetup extends CalcSetupBase {
   //
+  // calcItems: CalcItem[];
+
   constructor(info: CalcSetupConstructInfo) {
     const { main } = info;
     const {

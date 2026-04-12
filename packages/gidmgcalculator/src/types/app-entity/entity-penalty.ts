@@ -25,5 +25,5 @@ export type EntityPenaltyTarget =
     };
 
 export type EntityPenalty<TEntityPenaltyCore extends EntityPenaltyEffect> = TEntityPenaltyCore & {
-  targets: EntityPenaltyTarget | EntityPenaltyTarget[];
+  targets: "OWN_ELMT" | EntityPenaltyTarget | EntityPenaltyTarget[];
 };

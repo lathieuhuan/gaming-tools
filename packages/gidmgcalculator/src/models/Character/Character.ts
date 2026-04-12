@@ -179,7 +179,7 @@ export class Character implements TeamMember, Clonable<Character> {
 
   // ===== PERFORM EFFECTS =====
 
-  canPerformEffect(condition?: EffectPerformableCondition, inputs: number[] = []) {
+  canPerformEffect(condition?: EffectPerformableCondition, inputs: number[] = []): boolean {
     if (!condition) {
       return true;
     }
@@ -204,6 +204,16 @@ export class Character implements TeamMember, Clonable<Character> {
       const mixedCount = this.team.getMixedCount(this.data.vision);
 
       if (!isPassedComparison(mixedCount, 3, "MIN")) {
+        return false;
+      }
+    }
+
+    if (condition.checkAny) {
+      const anyInvalid = condition.checkAny.some(
+        (condition) => !this.canPerformEffect(condition, inputs)
+      );
+
+      if (anyInvalid) {
         return false;
       }
     }
