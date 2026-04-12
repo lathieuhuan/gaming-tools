@@ -14,6 +14,7 @@ import type {
   IArtifactModCtrl,
   IModifierCtrlBasic,
   ITeamBuffCtrl,
+  RawTeammate,
   ResonanceModCtrl,
   SetupImportInfo,
 } from "@/types";
@@ -260,7 +261,18 @@ export function decodeSetupPrevious(code: string): DecodeResult {
         return null;
       }
 
-      const [atfCodeStr, atfBcStrs] = split(artifactStr, 2);
+      let artifact: RawTeammate["artifact"];
+
+      try {
+        const [atfCodeStr, atfBcStrs] = split(artifactStr, 2);
+        artifact = {
+          code: parseNumber(atfCodeStr, "Artifact Code"),
+          buffCtrls: splitModCtrls(atfBcStrs, 3),
+        };
+      } catch (e) {
+        console.error(e);
+        artifact = undefined;
+      }
 
       return createTeammate(
         {
@@ -273,10 +285,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
             refi: parseNumber(wpRefi, "Teammate Weapon Refi"),
             buffCtrls: splitModCtrls(wpBcStrs, 3),
           },
-          artifact: {
-            code: parseNumber(atfCodeStr, "Artifact Code"),
-            buffCtrls: splitModCtrls(atfBcStrs, 3),
-          },
+          artifact,
         },
         null,
         { team }

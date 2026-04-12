@@ -8,9 +8,9 @@ import type {
 } from "@/types";
 
 export type AppUpdate = {
+  patch: string;
   date: string;
   content: string[];
-  patch?: string;
 };
 
 export type AllData = {
