@@ -92,14 +92,10 @@ export class Team<TMember extends TeamMember = TeamMember> {
 
     const extraTalentLv = new TypeCounter<TalentType>();
 
-    const hasMember = (name: string) => {
-      return members.some((member) => member.data.name === name);
-    };
-
-    if (hasMember("Tartaglia")) {
+    if (this.getMember("Tartaglia")) {
       extraTalentLv.add("NAs");
     }
-    if (hasMember("Skirk")) {
+    if (this.getMember("Skirk")) {
       const isValid = this.checkTeamElmt({
         teamOnlyElmts: ["hydro", "cryo"],
         teamEachElmtCount: {
@@ -114,6 +110,10 @@ export class Team<TMember extends TeamMember = TeamMember> {
     }
 
     this.extraTalentLv = extraTalentLv;
+  }
+
+  getMember(name: string) {
+    return this.members.find((member) => member.data.name === name);
   }
 
   checkTeamElmt(condition: TeamElementConditions) {

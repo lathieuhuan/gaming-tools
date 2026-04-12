@@ -19,7 +19,7 @@ type CalculateSetupOptions = {
 };
 
 export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions = {}) {
-  const { main, teammates } = setup;
+  const { main, teammates, calcItems } = setup;
   const target = new TargetCalc(setup.target, setup.target.data, options);
 
   const { calcList } = main.data;
@@ -36,6 +36,7 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
     NAs: {},
     ES: {},
     EB: {},
+    XTRA: {},
     RXN: {},
     WP: {},
   };
@@ -99,6 +100,24 @@ export function calculateSetup(setup: CalcSetup, options: CalculateSetupOptions 
       }
 
       resultGroup[calcItem.name] = calculator.calcOtherItem(type, calcItem, recorder);
+    }
+  }
+
+  // ===== EXTRA CALCULATION =====
+
+  const extraCalculator = makeTalentCalc(main, target, null, {
+    attPatt: "none",
+    basedOn: "atk",
+    scale: 0,
+    flatFactorScale: 3,
+  });
+
+  for (const calcItem of calcItems) {
+    const { name, type = "attack" } = calcItem;
+    const recorder = new ResultRecorder({}, options?.shouldLog);
+
+    if (type === "attack") {
+      result.XTRA[name] = extraCalculator.calcAttackItem(calcItem, undefined, elmtEvent, recorder);
     }
   }
 

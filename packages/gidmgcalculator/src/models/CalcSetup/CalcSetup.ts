@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { AppCharacter, ITeammateInfo } from "@/types";
+import type { AppCharacter, ITeammateInfo, TalentCalcItem, TeamMember } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
 
 import { calculateSetup } from "@/calculation/calculator";
@@ -17,6 +17,7 @@ import {
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
 import { ArtifactGear } from "../ArtifactGear";
+import { Character } from "../Character";
 import { Team } from "../Team";
 import { Teammate, type TeammateConstructOptions } from "../Teammate";
 import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
@@ -33,7 +34,7 @@ export type CalcSetupConstructInfo = PartiallyRequiredOnly<CalcSetupBaseConstruc
 
 export class CalcSetup extends CalcSetupBase {
   //
-  // calcItems: CalcItem[];
+  calcItems: TalentCalcItem[] = [];
 
   constructor(info: CalcSetupConstructInfo) {
     const { main } = info;
@@ -54,6 +55,7 @@ export class CalcSetup extends CalcSetupBase {
         NAs: {},
         ES: {},
         EB: {},
+        XTRA: {},
         RXN: {},
         WP: {},
       },
@@ -86,6 +88,7 @@ export class CalcSetup extends CalcSetupBase {
 
     this.team.updateMembers([main, ...teammates]);
     this.teamBuffCtrls = info.teamBuffCtrls || createTeamBuffCtrls(this);
+    this.updateCalcItems();
   }
 
   clone(options: CloneOptions = {}) {
@@ -104,6 +107,8 @@ export class CalcSetup extends CalcSetupBase {
   }
 
   calculate(shouldLog?: boolean) {
+    this.updateCalcItems();
+
     const { main, result } = calculateSetup(this, { shouldLog });
 
     const newMain = main.clone({
@@ -150,6 +155,63 @@ export class CalcSetup extends CalcSetupBase {
     this.artDebuffCtrls = Array_.sync(this.artDebuffCtrls, artDebuffCtrls, (ctrl) => ctrl.code);
   }
 
+  private parseNicoleState(nicole: TeamMember): { cons: number; EB: number } {
+    let EB = 0;
+    let cons = 0;
+
+    if (nicole instanceof Teammate) {
+      EB = nicole.buffCtrls.find((ctrl) => ctrl.id === 2)?.inputs?.at(0) || 0;
+      cons = nicole.buffCtrls.find((ctrl) => ctrl.id === 1)?.inputs?.at(3) || 0;
+    } else if (nicole instanceof Character) {
+      EB = nicole.state.EB;
+      cons = nicole.state.cons;
+    }
+
+    return { cons, EB };
+  }
+
+  private getNicoleEBFactor(EB: number): number | null {
+    let factor = 100 + EB * 10;
+
+    if (EB > 10) {
+      factor += (EB - 10) * 2;
+    }
+
+    return factor;
+  }
+
+  updateCalcItems() {
+    this.calcItems = [];
+
+    const nicole = this.team.getMember("Nicole");
+
+    if (!nicole) {
+      return;
+    }
+
+    const { cons, EB } = this.parseNicoleState(nicole);
+    const ebFactor = EB ? this.getNicoleEBFactor(EB) : null;
+    const attElmt = this.main.data.vision;
+
+    if (ebFactor) {
+      this.calcItems.push({
+        name: "Arcane Projection (Nicole EB)",
+        factor: ebFactor,
+        attElmt: this.main.data.vision,
+        noU: true,
+      });
+    }
+
+    if (cons >= 1) {
+      this.calcItems.push({
+        name: "Arcane Projection: Unity (Nicole C1)",
+        factor: 600,
+        attElmt,
+        noU: true,
+      });
+    }
+  }
+
   // ===== TEAMMATES =====
 
   setTeammate(
@@ -187,13 +249,13 @@ export class CalcSetup extends CalcSetupBase {
     this.teammates = this.teammates.map((teammate) => {
       if (teammate.data.code === tmCode) {
         const updateData = typeof data === "function" ? data(teammate) : data;
-
         return teammate.update({ ...updateData });
       }
 
       return teammate;
     });
 
+    this.team.updateMembers([this.main, ...this.teammates]);
     this.updateArtifactDebuffCtrls();
   }
 }
