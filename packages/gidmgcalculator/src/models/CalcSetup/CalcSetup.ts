@@ -189,9 +189,10 @@ export class CalcSetup extends CalcSetupBase {
       return;
     }
 
-    const { cons, EB } = this.parseNicoleState(nicole);
+    const { EB } = this.parseNicoleState(nicole);
     const ebFactor = EB ? this.getNicoleEBFactor(EB) : null;
     const attElmt = this.main.data.vision;
+    // const isWitchRite = this.team.witchRiteLv >= 2;
 
     if (ebFactor) {
       this.calcItems.push({
@@ -202,14 +203,12 @@ export class CalcSetup extends CalcSetupBase {
       });
     }
 
-    if (cons >= 1) {
-      this.calcItems.push({
-        name: "Arcane Projection: Unity (Nicole C1)",
-        factor: 600,
-        attElmt,
-        noU: true,
-      });
-    }
+    this.calcItems.push({
+      name: "Arcane Projection: Unity (Nicole C1)",
+      factor: 600,
+      attElmt,
+      noU: true,
+    });
   }
 
   // ===== TEAMMATES =====
