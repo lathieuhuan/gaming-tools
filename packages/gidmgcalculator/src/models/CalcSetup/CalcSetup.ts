@@ -160,7 +160,12 @@ export class CalcSetup extends CalcSetupBase {
     let cons = 0;
 
     if (nicole instanceof Teammate) {
-      EB = nicole.buffCtrls.find((ctrl) => ctrl.id === 2)?.inputs?.at(0) || 0;
+      const ebCtrl = nicole.buffCtrls.find((ctrl) => ctrl.id === 2);
+
+      if (ebCtrl?.activated) {
+        EB = ebCtrl.inputs?.at(0) || 0;
+      }
+
       cons = nicole.buffCtrls.find((ctrl) => ctrl.id === 1)?.inputs?.at(3) || 0;
     } else if (nicole instanceof Character) {
       EB = nicole.state.EB;
@@ -170,11 +175,25 @@ export class CalcSetup extends CalcSetupBase {
     return { cons, EB };
   }
 
-  private getNicoleEBFactor(EB: number): number | null {
-    let factor = 100 + EB * 10;
+  private getNicoleEBLevel(nicole: TeamMember): number | undefined {
+    if (nicole instanceof Teammate) {
+      const ebCtrl = nicole.buffCtrls.find((ctrl) => ctrl.id === 2);
 
-    if (EB > 10) {
-      factor += (EB - 10) * 2;
+      return ebCtrl?.activated ? ebCtrl.inputs?.at(0) : undefined;
+    }
+
+    if (nicole instanceof Character) {
+      return nicole.state.EB;
+    }
+
+    return undefined;
+  }
+
+  private getNicoleEBFactor(level: number): number | undefined {
+    let factor = 100 + level * 10;
+
+    if (level > 10) {
+      factor += (level - 10) * 2;
     }
 
     return factor;
@@ -189,16 +208,16 @@ export class CalcSetup extends CalcSetupBase {
       return;
     }
 
-    const { EB } = this.parseNicoleState(nicole);
-    const ebFactor = EB ? this.getNicoleEBFactor(EB) : null;
+    const level = this.getNicoleEBLevel(nicole);
+    const ebFactor = level ? this.getNicoleEBFactor(level) : undefined;
     const attElmt = this.main.data.vision;
-    // const isWitchRite = this.team.witchRiteLv >= 2;
 
     if (ebFactor) {
       this.calcItems.push({
+        id: "id.0",
         name: "Arcane Projection (Nicole EB)",
         factor: ebFactor,
-        attElmt: this.main.data.vision,
+        attElmt,
         noU: true,
       });
     }
