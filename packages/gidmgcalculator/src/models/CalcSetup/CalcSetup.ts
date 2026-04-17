@@ -214,7 +214,7 @@ export class CalcSetup extends CalcSetupBase {
 
     if (ebFactor) {
       this.calcItems.push({
-        id: "id.0",
+        id: "id.100",
         name: "Arcane Projection (Nicole EB)",
         factor: ebFactor,
         attElmt,
