@@ -1,30 +1,15 @@
-import { useMemo, useState, type ReactNode } from "react";
-import { FaCaretRight } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
-import { Button, clsx, CollapseSpace, Table, TableTdProps, TableThProps } from "rond";
+import { useMemo, useState } from "react";
+import { CollapseSpace } from "rond";
 
 import type { Character } from "@/models";
-import type { LevelableTalentType, TalentType } from "@/types";
+import type { LevelableTalentType } from "@/types";
 
-import { EMPTY_VALUE } from "@/constants/ui";
 import { useTranslation } from "@/hooks";
-import { getTableKeys, type TableKey } from "./utils";
-
-type HeaderConfig = Pick<TableThProps, "className" | "style"> & {
-  content: ReactNode | ((talentType: TalentType | undefined) => ReactNode);
-};
-
-type RowCellConfig = TableTdProps & {
-  value?: ReactNode;
-  extra?: ReactNode;
-};
-
-type RowConfig = {
-  title?: string;
-  cells: RowCellConfig[];
-  className?: string;
-  onDoubleClick?: () => void;
-};
+import { SectionHeader } from "./SectionHeader";
+import { SectionTable } from "./SectionTable";
+import { TalentSection } from "./TalentSection";
+import { GetRowConfig, HeaderConfig } from "./types";
+import { getTableKeys } from "./utils";
 
 export type FinalResultLayoutProps = {
   character: Character;
@@ -33,7 +18,8 @@ export type FinalResultLayoutProps = {
   showWeaponCalc?: boolean;
   headerConfigs: HeaderConfig[];
   talentMutable?: boolean;
-  getRowConfig: (mainKey: TableKey["main"], subKey: string) => RowConfig;
+  extraKeys?: string[];
+  getRowConfig: GetRowConfig;
   onTalentLevelChange?: (talentType: LevelableTalentType, newLevel: number) => void;
 };
 
@@ -42,6 +28,7 @@ export function FinalResultLayout({
   showTalentLv = true,
   showWeaponCalc,
   talentMutable,
+  extraKeys,
   onTalentLevelChange,
   ...sectionProps
 }: FinalResultLayoutProps) {
@@ -53,9 +40,10 @@ export function FinalResultLayout({
   const tableKeys = useMemo(() => {
     return getTableKeys(
       character.data.calcList,
-      showWeaponCalc ? character.weapon.data.calcItems : undefined
+      showWeaponCalc ? character.weapon.data.calcItems : undefined,
+      extraKeys
     );
-  }, [character.code, character.weapon.code, showWeaponCalc]);
+  }, [character.code, character.weapon.code, showWeaponCalc, extraKeys]);
 
   const toggleSection = (index: number, forcedClosed?: boolean) => {
     const newClosed = forcedClosed ?? !closedSections[index];
@@ -75,172 +63,73 @@ export function FinalResultLayout({
     }
   };
 
-  const renderLvButtons = (talent: LevelableTalentType, buffer = 0) => {
-    return Array.from({ length: 5 }, (_, i) => {
-      const level = i + 1 + buffer;
-
-      return (
-        <Button
-          key={i}
-          size="custom"
-          className="w-8 h-8"
-          onClick={() => {
-            onTalentLevelChange?.(talent, level);
-            setLvlingSectionI(-1);
-          }}
-        >
-          {level}
-        </Button>
-      );
-    });
+  const labelByMainKey = {
+    WP: "Weapon",
+    RXN: "Reaction",
+    XTRA: "Extra",
   };
 
   return (
     <div className="flex flex-col gap-4">
       {tableKeys.map((tableKey, sectionIndex) => {
-        const mainKey = tableKey.main;
-        const isReactionDmg = mainKey === "RXN";
-        const isLvling = sectionIndex === lvlingSectionI;
-        const talentType = !isReactionDmg && mainKey !== "WP" ? mainKey : undefined;
-        const talentLevel = showTalentLv && talentType ? character.getFinalTalentLv(talentType) : 0;
-        const sectionLabel = tableKey.main === "WP" ? "Weapon" : t(tableKey.main);
+        switch (tableKey.main) {
+          case "WP":
+          case "RXN":
+          case "XTRA": {
+            const isReactionDmg = tableKey.main === "RXN";
+            const sectionLabel = labelByMainKey[tableKey.main];
 
-        return (
-          <div key={tableKey.main}>
-            <div className="flex gap-3">
-              <button
-                type="button"
-                className="pl-2 pr-3 text-base text-black bg-heading leading-none font-bold flex items-center gap-2 rounded-2xl overflow-hidden"
-                onClick={() => toggleSection(sectionIndex)}
-              >
-                <div className="py-1.5 flex items-center gap-1">
-                  <FaCaretRight
-                    className={
-                      "text-base duration-150 ease-linear" +
-                      (closedSections[sectionIndex] ? "" : " rotate-90")
-                    }
-                  />
-                  <span>{sectionLabel}</span>
-                </div>
+            if (tableKey.subs.length === 0) {
+              return null;
+            }
 
-                {talentLevel !== 0 && (
-                  <span className="px-1 rounded-sm bg-black/60 text-light-1 text-sm">
-                    {talentLevel}
-                  </span>
-                )}
-              </button>
+            return (
+              <div key={tableKey.main}>
+                <SectionHeader
+                  title={sectionLabel}
+                  open={!closedSections[sectionIndex]}
+                  onClickTitle={() => toggleSection(sectionIndex)}
+                />
 
-              <div className="flex">
-                {talentMutable && talentType ? (
-                  <Button
-                    boneOnly
-                    size="custom"
-                    className={`w-7 h-7 text-lg ${isLvling ? "text-active" : "text-light-4"}`}
-                    icon={<MdEdit />}
-                    onClick={() => onRequestChangeLevel(sectionIndex, isLvling)}
-                  />
-                ) : null}
+                <CollapseSpace active={!closedSections[sectionIndex]}>
+                  <div className="pt-2 custom-scrollbar">
+                    <SectionTable
+                      tableKey={tableKey}
+                      label={sectionLabel}
+                      getRowTitle={(subKey) => (isReactionDmg ? t(subKey) : subKey)}
+                      {...sectionProps}
+                    />
+                  </div>
+                </CollapseSpace>
               </div>
-            </div>
+            );
+          }
+          default: {
+            const isLvling = sectionIndex === lvlingSectionI;
+            const talentLevel = showTalentLv
+              ? character.getFinalTalentLv(tableKey.main)
+              : undefined;
 
-            {isLvling && talentType ? (
-              <div className="mt-2">
-                <div className="text-sm">Select level</div>
-                <div className="mt-1 flex gap-3">{renderLvButtons(talentType)}</div>
-                <div className="mt-3 flex gap-3">{renderLvButtons(talentType, 5)}</div>
-              </div>
-            ) : null}
-
-            <CollapseSpace key={tableKey.main} active={!closedSections[sectionIndex]}>
-              {tableKey.subs.length === 0 ? (
-                <div className="pt-2">
-                  <p className="pt-2 pb-1 bg-dark-2 text-center text-light-hint">
-                    This talent does not deal damage.
-                  </p>
-                </div>
-              ) : (
-                <div className="pt-2 custom-scrollbar">
-                  <SectionTable
-                    tableKey={tableKey}
-                    talentType={talentType}
-                    getRowTitle={(subKey) => (isReactionDmg ? t(subKey) : subKey)}
-                    {...sectionProps}
-                    label={sectionLabel}
-                  />
-                </div>
-              )}
-            </CollapseSpace>
-          </div>
-        );
+            return (
+              <TalentSection
+                key={tableKey.main}
+                tableKey={tableKey}
+                open={!closedSections[sectionIndex]}
+                level={talentLevel}
+                talentMutable={talentMutable}
+                isLvling={isLvling}
+                onRequestChangeLevel={() => onRequestChangeLevel(sectionIndex, isLvling)}
+                onToggle={() => toggleSection(sectionIndex)}
+                onLevelChange={(talent, level) => {
+                  onTalentLevelChange?.(talent, level);
+                  setLvlingSectionI(-1);
+                }}
+                {...sectionProps}
+              />
+            );
+          }
+        }
       })}
     </div>
-  );
-}
-
-type SectionTableProps = Pick<FinalResultLayoutProps, "getRowConfig" | "headerConfigs"> & {
-  tableKey: TableKey;
-  talentType?: TalentType;
-  label?: string;
-  getRowTitle: (key: string) => string;
-};
-
-function SectionTable({
-  label,
-  talentType,
-  headerConfigs,
-  tableKey,
-  getRowConfig,
-  getRowTitle,
-}: SectionTableProps) {
-  return (
-    <Table
-      className="w-full"
-      colAttrs={[
-        {
-          className: "w-34",
-          style: { width: "8.5rem", minWidth: "6rem" },
-        },
-      ]}
-      aria-label={label}
-    >
-      <Table.Tr>
-        <Table.Th className="sticky left-0 z-10" style={{ background: "inherit" }} />
-
-        {headerConfigs.map(({ content, ...attrs }, i) => {
-          return (
-            <Table.Th key={i} {...attrs}>
-              {typeof content === "function" ? content(talentType) : content}
-            </Table.Th>
-          );
-        })}
-      </Table.Tr>
-
-      {tableKey.subs.map((subKey) => {
-        const config = getRowConfig(tableKey.main, subKey);
-        const label = getRowTitle(subKey);
-
-        return (
-          <Table.Tr key={subKey} aria-label={label}>
-            <Table.Td
-              title={config.title}
-              className={clsx("sticky left-0 z-10", config.className)}
-              style={{ background: "inherit" }}
-              onDoubleClick={config.onDoubleClick}
-            >
-              {label}
-            </Table.Td>
-
-            {config.cells.map(({ value, extra, ...rest }, cellIndex) => {
-              return (
-                <Table.Td key={cellIndex} {...rest}>
-                  {value || EMPTY_VALUE}
-                  {extra}
-                </Table.Td>
-              );
-            })}
-          </Table.Tr>
-        );
-      })}
-    </Table>
   );
 }

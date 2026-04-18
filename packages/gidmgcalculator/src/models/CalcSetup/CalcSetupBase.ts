@@ -14,7 +14,7 @@ import type {
 import type { Character } from "../Character";
 import type { Target } from "../Target";
 import type { Team } from "../Team";
-import type { TeammateCalc } from "../TeammateCalc";
+import type { Teammate } from "../Teammate";
 
 export type CalcSetupBaseConstructInfo = {
   ID: number;
@@ -33,7 +33,7 @@ export type CalcSetupBaseConstructInfo = {
   customBuffCtrls: CustomBuffCtrl[];
   customDebuffCtrls: CustomDebuffCtrl[];
 
-  teammates: TeammateCalc[];
+  teammates: Teammate[];
   team: Team;
   target: Target;
 
@@ -57,7 +57,7 @@ export class CalcSetupBase {
   customBuffCtrls: CustomBuffCtrl[];
   customDebuffCtrls: CustomDebuffCtrl[];
 
-  teammates: TeammateCalc[];
+  teammates: Teammate[];
   team: Team;
   target: Target;
 

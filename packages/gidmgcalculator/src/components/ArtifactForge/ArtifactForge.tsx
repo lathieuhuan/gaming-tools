@@ -108,6 +108,16 @@ const ArtifactSmith = ({
     });
   }, []);
 
+  const forgeArtifact = (artifact: Artifact) => {
+    const clone = artifact.clone({
+      key: {
+        ID: Date.now(),
+      },
+    });
+
+    onForgeArtifact(clone);
+  };
+
   const handleRarityChange = (rarity: number) => {
     updateConfig((prevConfig) => {
       return {
@@ -153,7 +163,7 @@ const ArtifactSmith = ({
       mold.data
     );
 
-    onForgeArtifact(artifact);
+    forgeArtifact(artifact);
   };
 
   const getBackAction = (selectBody: HTMLDivElement | null) => ({
@@ -260,7 +270,7 @@ const ArtifactSmith = ({
             onRarityChange={handleRarityChange}
             onConfigUpdate={updateConfig}
             onSelect={(config) => {
-              onForgeArtifact(config);
+              forgeArtifact(config);
               afterSelect(config.code);
             }}
           />

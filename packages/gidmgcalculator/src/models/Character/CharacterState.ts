@@ -1,6 +1,6 @@
 import { Object_ } from "ron-utils";
 
-import type { CharacterStateData, Level } from "@/types";
+import type { CharacterStateData, Level, LevelableTalentType, TalentLevelBonus } from "@/types";
 import { Ascendable } from "../Ascendable";
 
 type CharacterStateConfig = {
@@ -12,6 +12,10 @@ type CharacterStateConfig = {
   defaultEnhanced?: boolean;
 };
 
+export type CharacterStateContructOptions = {
+  levelBonuses?: TalentLevelBonus[];
+};
+
 export class CharacterState extends Ascendable implements CharacterStateData {
   level: Level;
   NAs: number;
@@ -19,6 +23,12 @@ export class CharacterState extends Ascendable implements CharacterStateData {
   EB: number;
   cons: number;
   enhanced: boolean;
+
+  #levelBonuses: TalentLevelBonus[] = [];
+
+  get levelBonuses() {
+    return this.#levelBonuses;
+  }
 
   static #DEFAULT_LEVEL: Level = "1/20";
   static #DEFAULT_NAs = 0;
@@ -36,7 +46,7 @@ export class CharacterState extends Ascendable implements CharacterStateData {
     this.#DEFAULT_ENHANCED = config.defaultEnhanced ?? this.#DEFAULT_ENHANCED;
   }
 
-  constructor(init: Partial<CharacterStateData> = {}) {
+  constructor(init: Partial<CharacterStateData> = {}, options: CharacterStateContructOptions = {}) {
     const {
       level = CharacterState.#DEFAULT_LEVEL,
       NAs = CharacterState.#DEFAULT_NAs,
@@ -45,6 +55,7 @@ export class CharacterState extends Ascendable implements CharacterStateData {
       cons = CharacterState.#DEFAULT_CONS,
       enhanced = CharacterState.#DEFAULT_ENHANCED,
     } = init;
+    const { levelBonuses = [] } = options;
 
     super(level);
 
@@ -54,6 +65,10 @@ export class CharacterState extends Ascendable implements CharacterStateData {
     this.EB = EB;
     this.cons = cons;
     this.enhanced = enhanced;
+
+    for (const bonus of levelBonuses) {
+      this.addLevelBonus(bonus);
+    }
   }
 
   update(changes: Partial<CharacterStateData>) {
@@ -74,5 +89,39 @@ export class CharacterState extends Ascendable implements CharacterStateData {
     }
 
     return this;
+  }
+
+  addLevelBonus(bonus: TalentLevelBonus) {
+    const existed = this.#levelBonuses.find((b) => b.id === bonus.id);
+
+    if (existed) {
+      return false;
+    }
+
+    this.#levelBonuses.push(bonus);
+
+    return true;
+  }
+
+  removeLevelBonus(id: string) {
+    const index = this.#levelBonuses.findIndex((b) => b.id === id);
+
+    if (index === -1) {
+      return false;
+    }
+
+    this.#levelBonuses.splice(index, 1);
+
+    return true;
+  }
+
+  getLevelBonuses(type: LevelableTalentType) {
+    return this.#levelBonuses.filter((bonus) => bonus.toType === type);
+  }
+
+  getTotalLevelBonus(type: LevelableTalentType) {
+    return this.#levelBonuses.reduce((total, bonus) => {
+      return total + (bonus.toType === type ? bonus.value : 0);
+    }, 0);
   }
 }

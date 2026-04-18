@@ -3,7 +3,6 @@ import { Array_ } from "ron-utils";
 import type {
   BareBonus,
   BonusPerformTools,
-  CharacterEffectLevelIncrement,
   EffectExtra,
   EffectMax,
   EffectPerformableCondition,
@@ -12,11 +11,11 @@ import type {
   EntityBonusEffect,
   EntityBonusStack,
   InputStack,
-  ITeam,
-  ITeamMember,
+  TeamMember,
 } from "@/types";
+import { Team } from "./Team";
 
-import { AbstractEffectValueCalc } from "./AbstractEffectValueCalc";
+import { AbstractEffectValueCalc, EffectToGetInitialValue } from "./AbstractEffectValueCalc";
 
 const TEAM_DEPENDED_STACK_TYPES: EntityBonusStack["type"][] = [
   "MEMBER",
@@ -27,7 +26,7 @@ const TEAM_DEPENDED_STACK_TYPES: EntityBonusStack["type"][] = [
 ];
 
 export abstract class AbstractBonusCalc<
-  TPerformer extends ITeamMember = ITeamMember
+  TPerformer extends TeamMember = TeamMember
 > extends AbstractEffectValueCalc<TPerformer> {
   //
   protected basedOnFixed = false;
@@ -35,7 +34,7 @@ export abstract class AbstractBonusCalc<
 
   constructor(
     protected performer: TPerformer,
-    protected team: ITeam,
+    protected team: Team,
     { inputs = [], refi = 0, basedOnFixed = false }: Partial<BonusPerformTools>
   ) {
     super(performer, team, inputs);
@@ -59,7 +58,6 @@ export abstract class AbstractBonusCalc<
     return typeof config === "string" ? { field: config } : config;
   }
 
-  protected abstract getLvIncre(incre?: CharacterEffectLevelIncrement): number;
   protected abstract getBasedOn(config: EntityBonusBasedOn): {
     field: EntityBonusBasedOnField;
     value: number;
@@ -79,7 +77,7 @@ export abstract class AbstractBonusCalc<
       }
       finalMax += this.getExtra(config.extras);
       finalMax = this.scaleRefi(finalMax, config.incre);
-      finalMax += this.getLvIncre(config.lvIncre);
+      finalMax += this.getLevelIncre(config.lvIncre);
 
       return Math.min(value, finalMax);
     }
@@ -99,12 +97,13 @@ export abstract class AbstractBonusCalc<
     return result;
   }
 
-  getInitialValue(effect: Pick<EntityBonusEffect, "value" | "lvScale">) {
+  getInitialValue(effect: EffectToGetInitialValue) {
     const config = effect.value;
     const lvScale = this.getLevelScale(effect.lvScale);
+    const lvIncre = this.getLevelIncre(effect.lvIncre);
 
     if (typeof config === "number") {
-      return config * lvScale;
+      return config * lvScale + lvIncre;
     }
     const { options } = config;
     let index = this.getIndexOfEffectValue(config);
@@ -114,7 +113,7 @@ export abstract class AbstractBonusCalc<
 
     const value = options[index] ?? (index > 0 ? options[options.length - 1] : 0);
 
-    return value * lvScale;
+    return value * lvScale + lvIncre;
   }
 
   protected applyExtra(bonus: BareBonus, config?: number | EntityBonusEffect) {
@@ -291,9 +290,9 @@ export abstract class AbstractBonusCalc<
 
     bonus.value *= this.getStackValue(config.stacks);
 
-    this.applyExtra(bonus, config.sufExtra);
-
     bonus.value = this.applyMax(bonus.value, config.max);
+
+    Array_.toArray(config.extras).forEach((extra) => this.applyExtra(bonus, extra));
 
     return bonus;
   }

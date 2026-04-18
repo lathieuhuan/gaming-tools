@@ -112,6 +112,8 @@ export type EffectReceiverConditions = {
 
 export type EffectPerformableCondition = TeamConditions &
   EffectPerformerConditions &
-  EffectInputConditions;
+  EffectInputConditions & {
+    checkAny?: EffectPerformableCondition[];
+  };
 
 export type EffectCondition = EffectPerformableCondition & EffectReceiverConditions;

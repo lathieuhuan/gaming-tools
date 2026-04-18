@@ -5,7 +5,7 @@ export type EffectDynamicMax = {
   value: number;
   /** incre on weapon refine */
   incre?: number;
-  /** incre on character talent level */
+  /** Incre based on character talent level. */
   lvIncre?: CharacterEffectLevelIncrement;
   /** On Hu Tao */
   basedOn?: EntityBonusBasedOn;

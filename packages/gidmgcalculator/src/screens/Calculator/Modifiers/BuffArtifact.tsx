@@ -1,7 +1,7 @@
 import { Object_ } from "ron-utils";
 
-import type { TeammateCalc } from "@/models";
-import type { IArtifactBuffCtrl, ITeammateArtifactBuffCtrl } from "@/types";
+import type { Teammate } from "@/models";
+import type { IArtifactBuffCtrl, TeammateArtifactBuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateActiveSetup, updateTeammateArtifact } from "@Store/calculator/actions";
@@ -22,8 +22,8 @@ export default function BuffArtifact() {
   };
 
   const handleUpdateTeammateCtrls = (
-    teammate: TeammateCalc,
-    newCtrls: ITeammateArtifactBuffCtrl[]
+    teammate: Teammate,
+    newCtrls: TeammateArtifactBuffCtrl[]
   ) => {
     updateTeammateArtifact(teammate.data.code, {
       buffCtrls: newCtrls,

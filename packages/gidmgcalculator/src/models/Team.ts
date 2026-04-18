@@ -2,8 +2,7 @@ import type {
   AutoRsnElmtType,
   ElementCount,
   ElementType,
-  ITeam,
-  ITeamMember,
+  TeamMember,
   TalentType,
   TeamConditions,
   TeamElementConditions,
@@ -15,7 +14,7 @@ import { isAutoRsnElmt } from "@/logic/element.logic";
 import TypeCounter from "@/utils/TypeCounter";
 import { isPassedComparison } from "./utils/isPassedComparison";
 
-export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
+export class Team<TMember extends TeamMember = TeamMember> {
   members: TMember[] = [];
   resonances: AutoRsnElmtType[] = [];
   moonsignLv: number = 0;
@@ -92,14 +91,10 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
 
     const extraTalentLv = new TypeCounter<TalentType>();
 
-    const hasMember = (name: string) => {
-      return members.some((member) => member.data.name === name);
-    };
-
-    if (hasMember("Tartaglia")) {
+    if (this.getMember("Tartaglia")) {
       extraTalentLv.add("NAs");
     }
-    if (hasMember("Skirk")) {
+    if (this.getMember("Skirk")) {
       const isValid = this.checkTeamElmt({
         teamOnlyElmts: ["hydro", "cryo"],
         teamEachElmtCount: {
@@ -116,6 +111,10 @@ export class Team<TMember extends ITeamMember = ITeamMember> implements ITeam {
     this.extraTalentLv = extraTalentLv;
 
     return this;
+  }
+
+  getMember(name: string) {
+    return this.members.find((member) => member.data.name === name);
   }
 
   checkTeamElmt(condition: TeamElementConditions) {

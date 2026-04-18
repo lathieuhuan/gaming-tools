@@ -1,13 +1,14 @@
 import { FaSyncAlt, FaUserSlash } from "react-icons/fa";
 import { clsx } from "rond";
 
-import type { ITeammate } from "@/types";
+import type { Teammate } from "@/models";
+
 import { TOUR_STEP_ID } from "@/constants";
 import { CharacterPortrait } from "@/components";
 
 type TeammateSlotProps = {
   active: boolean;
-  teammate: ITeammate;
+  teammate: Teammate;
   onSelect: () => void;
   onRemove: () => void;
   onRequestChange: () => void;

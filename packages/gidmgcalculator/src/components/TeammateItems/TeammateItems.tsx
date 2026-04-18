@@ -1,6 +1,6 @@
 import { CloseButton, clsx, cn, VersatileSelect } from "rond";
 
-import type { ITeammate } from "@/types";
+import type { Teammate } from "@/models";
 import { genSequentialOptions } from "@/utils/pure.utils";
 
 import { GenshinImage } from "../GenshinImage";
@@ -8,7 +8,7 @@ import { GenshinImage } from "../GenshinImage";
 type TeammateItemsProps = {
   className?: string;
   mutable?: boolean;
-  teammate: ITeammate;
+  teammate: Teammate;
   onClickWeapon?: () => void;
   onChangeWeaponRefinement?: (newRefinement: number) => void;
   onClickArtifact?: () => void;

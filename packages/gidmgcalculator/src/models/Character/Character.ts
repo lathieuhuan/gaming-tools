@@ -14,11 +14,12 @@ import type {
   EntityBonus,
   EntityBonusEffect,
   EntityPenaltyEffect,
-  ITeamMember,
   Level,
+  LevelableTalentType,
   QuickenReaction,
   RawCharacter,
   TalentType,
+  TeamMember,
 } from "@/types";
 import type { Clonable } from "../interfaces";
 
@@ -33,7 +34,7 @@ import { Weapon } from "../Weapon";
 import { AllAttributesControl } from "./AllAttributesControl";
 import { AttackBonusControl } from "./AttackBonusControl";
 import { BonusCalc } from "./BonusCalc";
-import { CharacterState } from "./CharacterState";
+import { CharacterState, CharacterStateContructOptions } from "./CharacterState";
 import { PenaltyCalc } from "./PenaltyCalc";
 
 type BonusMonoRecord = {
@@ -50,10 +51,9 @@ export type ReceivedAttackBonus = AttackBonus & {
   effectSrc: EntityBonus<EntityBonusEffect>;
 };
 
-export type CharacterConstructOptions = {
+export type CharacterConstructOptions = Pick<CharacterStateContructOptions, "levelBonuses"> & {
   state?: Partial<CharacterStateData>;
   atfGear?: ArtifactGear;
-  // extraTalentLvFromTeam?: TypeCounter<TalentType>;
   allAttrsCtrl?: AllAttributesControl;
   attkBonusCtrl?: AttackBonusControl;
   team?: Team;
@@ -64,7 +64,7 @@ export type CharacterCloneOptions = CharacterConstructOptions & {
 };
 
 @FlatGetters("state", ["level", "NAs", "ES", "EB", "cons", "enhanced", "bareLv", "ascension"])
-export class Character implements ITeamMember, Clonable<Character> {
+export class Character implements TeamMember, Clonable<Character> {
   code: number;
   state: CharacterState;
 
@@ -73,7 +73,6 @@ export class Character implements ITeamMember, Clonable<Character> {
   weapon: Weapon;
   atfGear: ArtifactGear;
 
-  // extraTalentLvFromTeam: TypeCounter<TalentType>;
   allAttrsCtrl: AllAttributesControl;
   attkBonusCtrl: AttackBonusControl;
 
@@ -100,20 +99,19 @@ export class Character implements ITeamMember, Clonable<Character> {
   ) {
     const {
       atfGear = new ArtifactGear(),
-      // extraTalentLvFromTeam = new TypeCounter<TalentType>(),
       allAttrsCtrl = new AllAttributesControl(),
       attkBonusCtrl = new AttackBonusControl(),
       team = new Team(),
+      levelBonuses = [],
     } = options;
 
     this.code = code;
-    this.state = new CharacterState(options.state);
+    this.state = new CharacterState(options.state, { levelBonuses });
     this.isTraveler = data.name.slice(-8) === "Traveler";
 
     this.weapon = weapon;
     this.atfGear = atfGear;
 
-    // this.extraTalentLvFromTeam = extraTalentLvFromTeam;
     this.allAttrsCtrl = allAttrsCtrl;
     this.attkBonusCtrl = attkBonusCtrl;
     this.team = team;
@@ -125,11 +123,16 @@ export class Character implements ITeamMember, Clonable<Character> {
 
   // ===== GETTERS =====
 
-  getTotalXtraTalentLv(talentType: TalentType): number {
+  getTotalXtraTalentLv(talentType: LevelableTalentType): number {
     const requiredConsLv = this.data.talentLvBonus?.[talentType];
     const extraTalentLv = requiredConsLv !== undefined && this.cons >= requiredConsLv ? 3 : 0;
 
-    return this.team.extraTalentLv.get(talentType) + extraTalentLv;
+    // TODO remove team.extraTalentLv
+    return (
+      this.team.extraTalentLv.get(talentType) +
+      extraTalentLv +
+      this.state.getTotalLevelBonus(talentType)
+    );
   }
 
   getFinalTalentLv(talent: TalentType) {
@@ -176,7 +179,7 @@ export class Character implements ITeamMember, Clonable<Character> {
 
   // ===== PERFORM EFFECTS =====
 
-  canPerformEffect(condition?: EffectPerformableCondition, inputs: number[] = []) {
+  canPerformEffect(condition?: EffectPerformableCondition, inputs: number[] = []): boolean {
     if (!condition) {
       return true;
     }
@@ -201,6 +204,16 @@ export class Character implements ITeamMember, Clonable<Character> {
       const mixedCount = this.team.getMixedCount(this.data.vision);
 
       if (!isPassedComparison(mixedCount, 3, "MIN")) {
+        return false;
+      }
+    }
+
+    if (condition.checkAny) {
+      const anyInvalid = condition.checkAny.some(
+        (condition) => !this.canPerformEffect(condition, inputs)
+      );
+
+      if (anyInvalid) {
         return false;
       }
     }
@@ -318,6 +331,12 @@ export class Character implements ITeamMember, Clonable<Character> {
     return false;
   }
 
+  // receiveTalentLevelBonus(bonus: ReceivedTalentBonus) {
+  //   if (this.canReceiveEffect(bonus.effectSrc)) {
+  //     const {  } = bonus
+  //   }
+  // }
+
   //
 
   serialize(): RawCharacter {
@@ -332,6 +351,7 @@ export class Character implements ITeamMember, Clonable<Character> {
       allAttrsCtrl = this.allAttrsCtrl,
       attkBonusCtrl = this.attkBonusCtrl,
       team = this.team,
+      levelBonuses = this.state.levelBonuses,
     } = options;
 
     return new Character(this.code, this.data, weapon, {
@@ -340,6 +360,7 @@ export class Character implements ITeamMember, Clonable<Character> {
       allAttrsCtrl,
       attkBonusCtrl,
       team,
+      levelBonuses,
     });
   }
 

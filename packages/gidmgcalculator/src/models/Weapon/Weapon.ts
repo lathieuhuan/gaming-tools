@@ -17,6 +17,7 @@ import { EquipmentRelation } from "../EquipmentRelation";
 import { WeaponState } from "./WeaponState";
 
 type WeaponConstructOptions = {
+  key?: Partial<WeaponKey>;
   state?: Partial<WeaponStateData>;
   relation?: Partial<EquipmentRelationData>;
 };
@@ -73,7 +74,9 @@ export class Weapon implements Clonable<Weapon> {
   }
 
   clone(options: WeaponConstructOptions = {}) {
-    return new Weapon(this.key, this.data, {
+    const key = Object_.patch(this.key, options.key || {});
+
+    return new Weapon(key, this.data, {
       state: {
         ...this.state,
         ...options.state,

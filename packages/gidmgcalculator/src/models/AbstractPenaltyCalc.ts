@@ -1,24 +1,25 @@
-import type { EntityPenaltyEffect, ITeamMember } from "@/types";
+import type { EntityPenaltyEffect, TeamMember } from "@/types";
 
 import { AbstractEffectValueCalc, EffectToGetInitialValue } from "./AbstractEffectValueCalc";
 
 export abstract class AbstractPenaltyCalc<
-  TPerformer extends ITeamMember = ITeamMember
+  TPerformer extends TeamMember = TeamMember
 > extends AbstractEffectValueCalc<TPerformer> {
   //
   getInitialValue(effect: EffectToGetInitialValue) {
     const config = effect.value;
     const lvScale = this.getLevelScale(effect.lvScale);
+    const lvIncre = this.getLevelIncre(effect.lvIncre);
 
     if (typeof config === "number") {
-      return config * lvScale;
+      return config * lvScale + lvIncre;
     }
     const { options } = config;
     const index = this.getIndexOfEffectValue(config);
 
     const value = options[index] ?? (index > 0 ? options[options.length - 1] : 0);
 
-    return value * lvScale;
+    return value * lvScale + lvIncre;
   }
 
   makePenalty(debuff: EntityPenaltyEffect) {

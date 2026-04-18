@@ -10,18 +10,38 @@ import type {
   ArtifactStateData,
   CharacterStateData,
   EquipmentRelationData,
-  RawCharacter,
+  IAbilityBuffCtrl,
+  IAbilityDebuffCtrl,
   ITargetBasic,
   MonsterInputChanges,
   RawArtifact,
+  RawCharacter,
+  RawTeammate,
   RawWeapon,
+  TeammateArtifact,
+  TeammateArtifactBuffCtrl,
+  TeammateWeapon,
   WeaponStateData,
 } from "@/types";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
-import { Artifact, Character, CharacterConstructOptions, Target, Weapon } from "@/models";
+import {
+  Artifact,
+  Character,
+  CharacterConstructOptions,
+  Target,
+  Team,
+  Teammate,
+  Weapon,
+} from "@/models";
 import { $AppArtifact, $AppCharacter, $AppData, $AppWeapon } from "@/services";
 import { useSettingsStore } from "@Store/settings";
+import {
+  createAbilityBuffCtrls,
+  createAbilityDebuffCtrls,
+  createWeaponBuffCtrls,
+  enhanceCtrls,
+} from "./modifier.logic";
 
 // ========== ARTIFACT ==========
 
@@ -116,6 +136,71 @@ export function createCharacter(
   return new Character(raw.code, data, weapon, {
     ...options,
     state,
+  });
+}
+
+type CreateTeammateOptions = {
+  team?: Team;
+};
+
+export function createTeammate(
+  raw: PartiallyRequiredOnly<RawTeammate, "code">,
+  data?: AppCharacter | null,
+  options: CreateTeammateOptions = {}
+) {
+  data ??= $AppCharacter.get(raw.code);
+
+  let weapon: TeammateWeapon;
+
+  if (raw.weapon) {
+    const appWeapon = $AppWeapon.get(raw.weapon.code)!;
+    const { buffCtrls } = raw.weapon;
+
+    weapon = {
+      ...raw.weapon,
+      buffCtrls: buffCtrls
+        ? enhanceCtrls(buffCtrls, appWeapon.buffs)
+        : createWeaponBuffCtrls(appWeapon, false),
+      data: appWeapon,
+    };
+  } else {
+    const code = Weapon.DEFAULT_CODE[data.weaponType];
+
+    weapon = {
+      code,
+      type: data.weaponType,
+      refi: 1,
+      buffCtrls: [],
+      data: $AppWeapon.get(code)!,
+    };
+  }
+
+  const buffCtrls: IAbilityBuffCtrl[] = raw.buffCtrls
+    ? enhanceCtrls(raw.buffCtrls, data.buffs)
+    : createAbilityBuffCtrls(data, false);
+
+  const debuffCtrls: IAbilityDebuffCtrl[] = raw.debuffCtrls
+    ? enhanceCtrls(raw.debuffCtrls, data.debuffs)
+    : createAbilityDebuffCtrls(data, false);
+
+  let artifact: TeammateArtifact | undefined;
+
+  if (raw.artifact) {
+    const appArtifact = $AppArtifact.getSet(raw.artifact.code)!;
+
+    artifact = {
+      code: raw.artifact.code,
+      buffCtrls: enhanceCtrls(raw.artifact.buffCtrls, appArtifact.buffs),
+      data: appArtifact,
+    };
+  }
+
+  return new Teammate(raw.code, data, weapon, {
+    enhanced: raw.enhanced,
+    buffCtrls,
+    debuffCtrls,
+    artifact,
+    team: options.team,
   });
 }
 

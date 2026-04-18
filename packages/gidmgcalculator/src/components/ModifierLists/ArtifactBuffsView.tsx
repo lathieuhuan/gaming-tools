@@ -1,5 +1,5 @@
-import type { TeammateCalc } from "@/models";
-import type { IArtifactBuffCtrl, ITeammateArtifactBuffCtrl } from "@/types";
+import type { Teammate } from "@/models";
+import type { IArtifactBuffCtrl, TeammateArtifactBuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
 import { getArtifactDesc } from "@/utils/descriptionParsers";
@@ -9,12 +9,9 @@ import { ModifierContainer } from "./ModifierContainer";
 type ArtifactBuffsViewProps = {
   mutable?: boolean;
   artBuffCtrls: IArtifactBuffCtrl[];
-  teammates: TeammateCalc[];
+  teammates: Teammate[];
   getSelfHandlers?: (ctrl: IArtifactBuffCtrl) => ModifierHanlders;
-  getTeammateHandlers?: (
-    teammate: TeammateCalc,
-    ctrl: ITeammateArtifactBuffCtrl
-  ) => ModifierHanlders;
+  getTeammateHandlers?: (teammate: Teammate, ctrl: TeammateArtifactBuffCtrl) => ModifierHanlders;
 };
 
 export function ArtifactBuffsView({

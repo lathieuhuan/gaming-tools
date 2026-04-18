@@ -1,10 +1,10 @@
 import { Array_ } from "ron-utils";
 
-import type { AppCharacter, ITeammate } from "@/types";
+import type { AppCharacter, ITeammateInfo, TalentCalcItem, TeamMember } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
 
 import { calculateSetup } from "@/calculation/calculator";
-import { createTarget } from "@/logic/entity.logic";
+import { createTarget, createTeammate } from "@/logic/entity.logic";
 import {
   createAbilityBuffCtrls,
   createAbilityDebuffCtrls,
@@ -16,15 +16,14 @@ import {
   createTeamBuffCtrls,
   createWeaponBuffCtrls,
 } from "@/logic/modifier.logic";
-import { $AppCharacter } from "@/services";
 import { ArtifactGear } from "../ArtifactGear";
-import { Team } from "../Team";
-import { TeammateCalc, type TeammateCalcConstructInfo } from "../TeammateCalc";
-import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
 import { Character } from "../Character";
+import { Team } from "../Team";
+import { Teammate, type TeammateConstructOptions } from "../Teammate";
+import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
 
 type TeammateUpdateData = Partial<
-  Pick<ITeammate, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
+  Pick<ITeammateInfo, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
 >;
 
 type CloneOptions = {
@@ -35,6 +34,8 @@ export type CalcSetupConstructInfo = PartiallyRequiredOnly<CalcSetupBaseConstruc
 
 export class CalcSetup extends CalcSetupBase {
   //
+  calcItems: TalentCalcItem[] = [];
+
   constructor(info: CalcSetupConstructInfo) {
     const { main } = info;
     const {
@@ -45,7 +46,7 @@ export class CalcSetup extends CalcSetupBase {
       teammates = [],
       artBuffCtrls = createMainArtifactBuffCtrls(main.atfGear.sets),
       artDebuffCtrls = createArtifactDebuffCtrls(main.atfGear.sets, teammates),
-      team = new Team([main, ...teammates]),
+      team = new Team(),
       elmtEvent = createElementalEvent(),
       customBuffCtrls = [],
       customDebuffCtrls = [],
@@ -54,6 +55,7 @@ export class CalcSetup extends CalcSetupBase {
         NAs: {},
         ES: {},
         EB: {},
+        XTRA: {},
         RXN: {},
         WP: {},
       },
@@ -84,7 +86,9 @@ export class CalcSetup extends CalcSetupBase {
       result,
     });
 
+    this.team.updateMembers([main, ...teammates]);
     this.teamBuffCtrls = info.teamBuffCtrls || createTeamBuffCtrls(this);
+    this.updateCalcItems();
   }
 
   clone(options: CloneOptions = {}) {
@@ -103,14 +107,13 @@ export class CalcSetup extends CalcSetupBase {
   }
 
   calculate(shouldLog?: boolean) {
+    this.updateCalcItems();
+
     const { main, result } = calculateSetup(this, { shouldLog });
 
-    const newMain = new Character(main.code, main.data, main.weapon, {
-      state: main.state,
-      atfGear: main.atfGear,
+    const newMain = main.clone({
       allAttrsCtrl: main.allAttrsCtrl.clone(),
       attkBonusCtrl: main.attkBonusCtrl.clone(),
-      team: this.team,
     });
 
     return new CalcSetup({
@@ -152,17 +155,92 @@ export class CalcSetup extends CalcSetupBase {
     this.artDebuffCtrls = Array_.sync(this.artDebuffCtrls, artDebuffCtrls, (ctrl) => ctrl.code);
   }
 
+  private parseNicoleState(nicole: TeamMember): { cons: number; EB: number } {
+    let EB = 0;
+    let cons = 0;
+
+    if (nicole instanceof Teammate) {
+      const ebCtrl = nicole.buffCtrls.find((ctrl) => ctrl.id === 2);
+
+      if (ebCtrl?.activated) {
+        EB = ebCtrl.inputs?.at(0) || 0;
+      }
+
+      cons = nicole.buffCtrls.find((ctrl) => ctrl.id === 1)?.inputs?.at(3) || 0;
+    } else if (nicole instanceof Character) {
+      EB = nicole.state.EB;
+      cons = nicole.state.cons;
+    }
+
+    return { cons, EB };
+  }
+
+  private getNicoleEBLevel(nicole: TeamMember): number | undefined {
+    if (nicole instanceof Teammate) {
+      const ebCtrl = nicole.buffCtrls.find((ctrl) => ctrl.id === 2);
+
+      return ebCtrl?.activated ? ebCtrl.inputs?.at(0) : undefined;
+    }
+
+    if (nicole instanceof Character) {
+      return nicole.state.EB;
+    }
+
+    return undefined;
+  }
+
+  private getNicoleEBFactor(level: number): number | undefined {
+    let factor = 100 + level * 10;
+
+    if (level > 10) {
+      factor += (level - 10) * 2;
+    }
+
+    return factor;
+  }
+
+  updateCalcItems() {
+    this.calcItems = [];
+
+    const nicole = this.team.getMember("Nicole");
+
+    if (!nicole) {
+      return;
+    }
+
+    const level = this.getNicoleEBLevel(nicole);
+    const ebFactor = level ? this.getNicoleEBFactor(level) : undefined;
+    const attElmt = this.main.data.vision;
+
+    if (ebFactor) {
+      this.calcItems.push({
+        id: "id.100",
+        name: "Arcane Projection (Nicole EB)",
+        factor: ebFactor,
+        attElmt,
+        noU: true,
+      });
+    }
+
+    this.calcItems.push({
+      name: "Arcane Projection: Unity (Nicole C1)",
+      factor: 600,
+      attElmt,
+      noU: true,
+    });
+  }
+
   // ===== TEAMMATES =====
 
   setTeammate(
-    info: TeammateCalcConstructInfo,
+    info: TeammateConstructOptions & { code: number },
     index: number,
-    data: AppCharacter = $AppCharacter.get(info.code)
+    data?: AppCharacter
   ) {
     const newTeam = new Team();
     const newTeammates = [...this.teammates];
 
-    newTeammates[index] = new TeammateCalc(info, data, newTeam);
+    newTeammates[index] = createTeammate(info, data, { team: newTeam });
     newTeam.updateMembers([this.main, ...newTeammates]);
 
     this.team = newTeam;
@@ -172,7 +250,7 @@ export class CalcSetup extends CalcSetupBase {
     this.updateArtifactDebuffCtrls();
   }
 
-  removeTeammate(teammate: TeammateCalc) {
+  removeTeammate(teammate: Teammate) {
     const newTeammates = this.teammates.filter((tm) => tm.code !== teammate.code);
 
     this.team = new Team([this.main, ...newTeammates]);
@@ -184,18 +262,18 @@ export class CalcSetup extends CalcSetupBase {
 
   updateTeammate(
     tmCode: number,
-    data: TeammateUpdateData | ((teammate: TeammateCalc) => TeammateUpdateData)
+    data: TeammateUpdateData | ((teammate: Teammate) => TeammateUpdateData)
   ) {
     this.teammates = this.teammates.map((teammate) => {
       if (teammate.data.code === tmCode) {
         const updateData = typeof data === "function" ? data(teammate) : data;
-
         return teammate.update({ ...updateData });
       }
 
       return teammate;
     });
 
+    this.team.updateMembers([this.main, ...this.teammates]);
     this.updateArtifactDebuffCtrls();
   }
 }

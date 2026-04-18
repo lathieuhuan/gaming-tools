@@ -1,5 +1,15 @@
-import type { AttackBonusKey, AttackBonusType, AttributeStat, BaseAttributeStat } from "../common";
-import type { CharacterEffectLevelScale, EntityBonusBasedOn } from "./app-entity-common";
+import type {
+  AttackBonusKey,
+  AttackBonusType,
+  AttributeStat,
+  BaseAttributeStat,
+  LevelableTalentType,
+} from "../common";
+import type {
+  CharacterEffectLevelIncrement,
+  CharacterEffectLevelScale,
+  EntityBonusBasedOn,
+} from "./app-entity-common";
 import type { EnergyCostStack, EntityBonusStack } from "./effect-bonus-stack";
 import type { EffectCondition } from "./effect-condition";
 import type { EffectMax } from "./effect-max";
@@ -10,25 +20,30 @@ export type EntityBonusEffect = EffectCondition & {
   monoId?: string;
   value: EffectValue;
   /**
-   * On Characters. Multiplier based on talent level
+   * On Characters. Multiplier based on talent level.
    * Added before preExtra
    */
   lvScale?: CharacterEffectLevelScale;
+  /** 
+   * Incre based on character talent level.
+   * Added after lvScale
+   */
+  lvIncre?: CharacterEffectLevelIncrement;
   /**
    * On Weapons. Increment to value after each refinement.
    * Default 1/3 of [value]. Fixed buff type has increment = 0.
    * Added before preExtra
    */
   incre?: number;
-  /** Added before basedOn */
+  /** Added before basedOn > stacks */
   preExtra?: number | EntityBonusEffect;
   /** Added right before stacks */
   basedOn?: EntityBonusBasedOn;
   stacks?: EntityBonusStack;
-  /** Added after stacks */
-  sufExtra?: number | EntityBonusEffect;
   /** When max is number on Weapon Bonus, it will auto scale off refi */
   max?: EffectMax;
+  /** Added after max */
+  extras?: number | EntityBonusEffect | EntityBonusEffect[];
   outsource?: {
     stacks?: EnergyCostStack;
   };
@@ -53,7 +68,16 @@ type AttackBonusTarget = {
   path: AttackBonusKey;
 };
 
-type EntityBonusTargets = AttributeTarget | AttackBonusTarget | AttackBonusTarget[];
+type TalentLevelTarget = {
+  module: "TLT";
+  path: LevelableTalentType;
+};
+
+type EntityBonusTargets =
+  | AttributeTarget
+  | AttackBonusTarget
+  | AttackBonusTarget[]
+  | TalentLevelTarget;
 
 export type EntityBonus<TEntityEffect extends EntityBonusEffect = EntityBonusEffect> =
   TEntityEffect & {

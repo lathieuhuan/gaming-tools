@@ -1,17 +1,8 @@
-import type {
-  CharacterEffectLevelIncrement,
-  EntityBonusBasedOn,
-  InputStack,
-  TalentLevelScaleConfig,
-} from "@/types";
+import type { EntityBonusBasedOn, InputStack, TalentLevelScaleConfig } from "@/types";
 
 import { AbstractBonusCalc } from "../AbstractBonusCalc";
 
 export class BonusCalc extends AbstractBonusCalc {
-  protected getLvIncre(incre?: CharacterEffectLevelIncrement) {
-    return incre ? this.getInput(incre.altIndex) * incre.value : 0;
-  }
-
   protected getBasedOn(config: EntityBonusBasedOn) {
     const { field, altIndex, baseline = 0, isDynamic = true } = this.parseBasedOn(config);
     const basedOnValue = this.getInput(altIndex);

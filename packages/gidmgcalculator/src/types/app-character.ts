@@ -16,11 +16,11 @@ import type {
   CalcItemType,
   ElementType,
   EnhanceType,
+  LevelableTalentType,
   LunarType,
   Nation,
   NormalAttack,
   TalentCalcItemBonusId,
-  TalentType,
   WeaponType,
 } from "./common";
 
@@ -38,7 +38,7 @@ export type AppCharacter = {
   weaponType: WeaponType;
   enhanceType?: EnhanceType;
   EBcost: number;
-  talentLvBonus?: Partial<Record<TalentType, number>>;
+  talentLvBonus?: Partial<Record<LevelableTalentType, number>>;
   statBases: {
     atk: StatBase;
     def: StatBase;

@@ -1,4 +1,5 @@
-import type { ITeam, ResonanceModCtrl } from "@/types";
+import type { Team } from "@/models";
+import type { ResonanceModCtrl } from "@/types";
 import type { ControlGroup } from "../types";
 
 import { AutoResonanceBuffs, ResonanceBuffItem } from "@/components";
@@ -7,7 +8,7 @@ import { updateActiveSetup } from "@Store/calculator/actions";
 import { selectSetup } from "@Store/calculator/selectors";
 import { toggleRsnModCtrl, updateRsnModCtrlInputs } from "@Store/calculator/utils";
 
-export function useResonanceCtrlGroup(team: ITeam): ControlGroup {
+export function useResonanceCtrlGroup(team: Team): ControlGroup {
   const rsnBuffCtrls = useCalcStore((state) => selectSetup(state).rsnBuffCtrls);
 
   if (!rsnBuffCtrls.length && !team.resonances.length) {

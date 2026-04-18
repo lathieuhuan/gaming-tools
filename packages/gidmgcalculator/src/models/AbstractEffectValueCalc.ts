@@ -3,14 +3,15 @@ import { Array_, round, toMult } from "ron-utils";
 import type {
   CharacterBuff,
   CharacterDebuff,
+  CharacterEffectLevelIncrement,
   CharacterEffectLevelScale,
   EffectValue,
   EffectValueByOption,
   ElementCount,
-  ITeam,
-  ITeamMember,
   TalentLevelScaleConfig,
+  TeamMember,
 } from "@/types";
+import type { Team } from "./Team";
 
 import { wrapText } from "@/utils/descriptionParsers/utils";
 import { Character } from "./Character";
@@ -20,14 +21,15 @@ type AbilityBuff = CharacterBuff | CharacterDebuff;
 export type EffectToGetInitialValue = {
   value: EffectValue;
   lvScale?: CharacterEffectLevelScale;
+  lvIncre?: CharacterEffectLevelIncrement;
 };
 
-export abstract class AbstractEffectValueCalc<TPerformer extends ITeamMember = ITeamMember> {
+export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = TeamMember> {
   protected teammateElmtCount: ElementCount;
 
   constructor(
     protected performer: TPerformer,
-    protected team: ITeam,
+    protected team: Team,
     protected inputs: number[] = []
   ) {
     this.teammateElmtCount = team.elmtCount.clone();
@@ -40,7 +42,7 @@ export abstract class AbstractEffectValueCalc<TPerformer extends ITeamMember = I
 
   protected abstract getTalentLevel(config: TalentLevelScaleConfig): number;
 
-  // ===== LEVEL SCALE =====
+  // ===== LEVEL SCALE & INCREMENT =====
 
   protected getLevelScale(scale?: CharacterEffectLevelScale) {
     if (scale) {
@@ -51,6 +53,22 @@ export abstract class AbstractEffectValueCalc<TPerformer extends ITeamMember = I
     }
 
     return 1;
+  }
+
+  protected getLevelIncre(incre?: CharacterEffectLevelIncrement) {
+    if (incre) {
+      const { changes } = incre;
+      const level = this.getTalentLevel(incre);
+      let value = incre.value * level;
+
+      if (changes && level >= changes.startAt) {
+        value += changes.value * (level - changes.startAt + 1);
+      }
+
+      return value;
+    }
+
+    return 0;
   }
 
   // ===== INDEX OF EFFECT VALUE =====

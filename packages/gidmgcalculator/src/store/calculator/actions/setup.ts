@@ -25,16 +25,19 @@ export const updateSetupAfterSave = (
       return;
     }
 
-    const { weapon, atfGear } = setup.main;
+    const { main } = setup;
+    const { pieces } = setup.main.atfGear;
 
-    weapon.ID = weaponId;
+    main.weapon = main.weapon.clone({ key: { ID: weaponId } });
 
     for (const [type, id] of Object_.entries(newPieceIds)) {
-      const piece = atfGear.pieces.get(type);
+      const piece = pieces.get(type);
 
-      if (piece && id) {
-        piece.ID = id;
+      if (!piece || !id) {
+        continue;
       }
+
+      pieces.set(type, piece?.clone({ key: { ID: id } }));
     }
   });
 };

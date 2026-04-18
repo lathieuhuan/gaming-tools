@@ -2,6 +2,7 @@ import { clsx, CollapseList, LoadingSpin, Skeleton } from "rond";
 
 import type { AppMetadata } from "../types";
 import { About, Credits, Notes, VersionRecap } from "./collapsible-sections";
+import { UpdateList } from "./UpdateList";
 
 type IntroductionProps = {
   className?: string;
@@ -21,20 +22,11 @@ export const Introduction = ({
   const { updates, supporters } = metadata;
   const latestDate: string | undefined = updates[0]?.date;
 
-  const typeToCls: Record<string, string> = {
-    e: "text-primary-1",
-    u: "text-danger-2",
-    f: "text-bonus",
-  };
-
-  const parseContent = (content: string) => {
-    return content.replace(/\{[a-zA-Z0-9ã _'"-]+\}#\[[euf]\]/g, (match) => {
-      const [bodyPart, typePart = ""] = match.split("#");
-      const body = bodyPart.slice(1, -1);
-      const type = typePart?.slice(1, -1);
-      return `<span class="${typeToCls[type] || ""}">${body}</span>`;
-    });
-  };
+  const latestDateElement = loading ? (
+    <Skeleton className="w-28 h-4 rounded" />
+  ) : (
+    latestDate && <span className="px-1 text-sm rounded text-heading bg-dark-1">{latestDate}</span>
+  );
 
   return (
     <div className={clsx("custom-scrollbar", className)}>
@@ -45,44 +37,19 @@ export const Introduction = ({
               <div className="flex items-center space-x-2">
                 <span>Updates</span>
 
-                {!expanded ? (
-                  loading ? (
-                    <Skeleton className="w-28 h-4 rounded" />
-                  ) : latestDate ? (
-                    <span className="ml-2 px-1 text-sm rounded text-heading bg-dark-1">
-                      {latestDate}
-                    </span>
-                  ) : null
-                ) : null}
+                {!expanded && latestDateElement}
               </div>
             ),
-            body: (
-              <div className="space-y-2 contains-inline-svg">
-                {loading ? (
-                  <div className="h-20 flex-center">
-                    <LoadingSpin size="large" />
-                  </div>
-                ) : updates.length ? (
-                  updates.map(({ date, patch, content }, i) => (
-                    <div key={i}>
-                      <p className="text-heading font-semibold">
-                        {date + (patch ? ` (v${patch})` : "")}
-                      </p>
-                      <ul className="mt-1 space-y-1">
-                        {content.map((line, j) => (
-                          <li
-                            key={j}
-                            dangerouslySetInnerHTML={{ __html: `- ${parseContent(line)}` }}
-                          />
-                        ))}
-                      </ul>
-                    </div>
-                  ))
-                ) : (
-                  <div className="h-20 flex-center text-danger-2">
-                    <p>Failed to get updates</p>
-                  </div>
-                )}
+            body: loading ? (
+              <div className="h-20 flex-center">
+                <LoadingSpin size="large" />
+              </div>
+            ) : (
+              <div>
+                <UpdateList className="space-y-2 contains-inline-svg peer" updates={updates} />
+                <div className="h-20 flex-center text-danger-2 hidden peer-empty:flex">
+                  <p>Failed to get updates</p>
+                </div>
               </div>
             ),
           },

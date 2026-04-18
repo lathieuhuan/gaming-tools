@@ -12,8 +12,8 @@ import type {
   CustomBuffCtrl,
   CustomDebuffCtrl,
   ITargetBasic,
-  ITeammateArtifactBasic,
-  ITeammateWeaponBasic,
+  TeammateArtifactState,
+  TeammateWeaponState,
 } from "@/types";
 
 type RawCharacter = {
@@ -37,10 +37,10 @@ export type ITeammateBasic = {
 
   buffCtrls: IModifierCtrlBasic[];
   debuffCtrls: IModifierCtrlBasic[];
-  weapon: ITeammateWeaponBasic & {
+  weapon: TeammateWeaponState & {
     buffCtrls: IModifierCtrlBasic[];
   };
-  artifact?: ITeammateArtifactBasic & {
+  artifact?: TeammateArtifactState & {
     buffCtrls: IModifierCtrlBasic[];
   };
 };
