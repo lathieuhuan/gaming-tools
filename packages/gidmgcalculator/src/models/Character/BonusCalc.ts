@@ -1,15 +1,15 @@
 import type {
   EffectValueByOption,
-  EntityBonusBasedOn,
+  BonusAttributeBaseSpec,
   InputStack,
-  TalentLevelScaleConfig,
+  TalentLevelScaleSpec,
 } from "@/types";
 import type { Character } from "./Character";
 
 import { AbstractBonusCalc } from "../AbstractBonusCalc";
 
 export class BonusCalc extends AbstractBonusCalc<Character> {
-  protected getBasedOn(config: EntityBonusBasedOn) {
+  protected getBasedOn(config: BonusAttributeBaseSpec) {
     const { field, baseline = 0, isDynamic = true } = this.parseBasedOn(config);
     const basedOnValue = this.performer.allAttrsCtrl.getTotal(field, this.basedOnFixed);
 
@@ -20,7 +20,7 @@ export class BonusCalc extends AbstractBonusCalc<Character> {
     };
   }
 
-  protected getTalentLevel(config: TalentLevelScaleConfig): number {
+  protected getTalentLevel(config: TalentLevelScaleSpec): number {
     return this.performer.getFinalTalentLv(config.talent);
   }
 

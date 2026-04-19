@@ -1,5 +1,5 @@
 import type { ResistReductionKey } from "../common";
-import type { CharacterEffectLevelScale } from "./app-entity-common";
+import type { CharacterEffectLevelScale } from "./common-specs";
 import type { EffectCondition } from "./effect-condition";
 import type { EffectValue } from "./effect-value";
 
@@ -24,6 +24,6 @@ export type EntityPenaltyTarget =
       type: "XILONEN";
     };
 
-export type EntityPenalty<TEntityPenaltyCore extends EntityPenaltyEffect> = TEntityPenaltyCore & {
+export type EntityPenalty = EntityPenaltyEffect & {
   targets: "OWN_ELMT" | EntityPenaltyTarget | EntityPenaltyTarget[];
 };

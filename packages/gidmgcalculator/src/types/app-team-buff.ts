@@ -1,7 +1,7 @@
-import type { EntityBonus, EntityBonusEffect, EntityModifier } from "./app-entity";
+import type { EntityBonus, ModifierSpec } from "./modifier-specs";
 
-export type AppTeamBuff = EntityModifier & {
+export type AppTeamBuff = ModifierSpec & {
   src: string;
   description: string;
-  effects?: EntityBonus<EntityBonusEffect> | EntityBonus<EntityBonusEffect>[];
+  effects?: EntityBonus | EntityBonus[];
 };

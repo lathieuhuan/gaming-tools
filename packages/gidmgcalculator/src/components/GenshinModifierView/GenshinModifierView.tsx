@@ -1,6 +1,6 @@
 import { ModifierView } from "rond";
 
-import type { ModInputConfig } from "@/types";
+import type { ModInputSpec } from "@/types";
 import type { ModifierViewInputConfig, ModifierViewProps } from "rond";
 
 import { genSequentialOptions } from "@/utils/pure.utils";
@@ -14,7 +14,7 @@ import {
   OPTION_GEO,
 } from "./_constants";
 
-const genOptions = (config: ModInputConfig) => {
+const genOptions = (config: ModInputSpec) => {
   let count: number | undefined = undefined;
 
   if (config.max) {
@@ -25,7 +25,7 @@ const genOptions = (config: ModInputConfig) => {
 };
 
 export type GenshinModifierViewProps = Omit<ModifierViewProps, "inputConfigs"> & {
-  inputConfigs?: ModInputConfig[];
+  inputConfigs?: ModInputSpec[];
   isTeamMod?: boolean;
 };
 

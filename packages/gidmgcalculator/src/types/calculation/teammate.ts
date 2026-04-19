@@ -3,7 +3,7 @@ import type { AppArtifact, ArtifactBuff } from "../app-artifact";
 import type { AppCharacter } from "../app-character";
 import type {
   EffectPerformableCondition
-} from "../app-entity";
+} from "../modifier-specs";
 import type { AppWeapon } from "../app-weapon";
 import type { TeammateArtifactState, TeammateStateData, TeammateWeaponState } from "../entity";
 import type {

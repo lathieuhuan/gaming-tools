@@ -8,7 +8,7 @@ import type {
   EffectValue,
   EffectValueByOption,
   ElementCount,
-  TalentLevelScaleConfig,
+  TalentLevelScaleSpec,
   TeamMember,
 } from "@/types";
 import type { Team } from "./Team";
@@ -40,16 +40,17 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
     return this.inputs[index] ?? defaultValue;
   }
 
-  protected abstract getTalentLevel(config: TalentLevelScaleConfig): number;
+  protected abstract getTalentLevel(config: TalentLevelScaleSpec): number;
 
   // ===== LEVEL SCALE & INCREMENT =====
 
   protected getLevelScale(scale?: CharacterEffectLevelScale) {
     if (scale) {
-      const { value, max } = scale;
+      const { value } = scale;
       const level = this.getTalentLevel(scale);
       const result = value ? Character.getTalentMult(value, level) : level;
-      return max && result > max ? max : result;
+
+      return result;
     }
 
     return 1;
@@ -117,10 +118,8 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
         }
         break;
       }
-      case "LEVEL": {
-        indexValue += this.getTalentLevel(indexConfig);
-        break;
-      }
+      default:
+        indexConfig satisfies never;
     }
 
     return indexValue;

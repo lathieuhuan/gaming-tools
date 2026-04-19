@@ -34,7 +34,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
 
   function processBonus(
     bonus: BareBonus,
-    effect: EntityBonus<EntityBonusEffect>,
+    effect: EntityBonus,
     inputs: number[] = [],
     label: string
   ) {

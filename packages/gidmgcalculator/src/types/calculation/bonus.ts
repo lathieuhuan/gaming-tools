@@ -1,4 +1,4 @@
-import type { EntityBonusEffect } from "../app-entity";
+import type { EntityBonusEffect } from "../modifier-specs";
 import type { AttackBonusKey, AttackBonusType, AttributeStat, BaseAttributeStat, LevelableTalentType } from "../common";
 
 export type BonusPerformTools = {

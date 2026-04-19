@@ -1,5 +1,5 @@
 import type { ElementType, EnhanceType, Nation, WeaponType } from "../common";
-import type { CharacterMilestone } from "./app-entity-common";
+import type { CharacterMilestone, TeamMilestone } from "./common-specs";
 
 export type ConditionComparison = "EQUAL" | "MIN" | "MAX";
 
@@ -27,12 +27,10 @@ export type TeamElementConditions = {
   varkaPHEC?: "AND" | "OR";
 };
 
-export type TeamMilestoneType = "MOONSIGN" | "WITCH_RITE";
-
 export type TeamMilestoneCondition =
-  | TeamMilestoneType
+  | TeamMilestone
   | {
-      type: TeamMilestoneType;
+      type: TeamMilestone;
       /** Default 2 */
       value?: number;
       /** Default 'EQUAL' */
@@ -45,20 +43,20 @@ export type TeamConditions = TeamElementConditions & {
 
 // ===== Performer Condition =====
 
-export type EffectGrantedAtConfig = {
-  value: CharacterMilestone;
-  /** When this bonus is from teammate, this is input's index to check granted. */
-  altIndex?: number;
-  /** Default 1, or checked */
-  compareValue?: number;
-  /** Default 'EQUAL' */
-  comparison?: ConditionComparison;
-};
-
-export type EffectGrantedAt = CharacterMilestone | EffectGrantedAtConfig;
+type SelfMilestoneCondition =
+  | CharacterMilestone
+  | {
+      value: CharacterMilestone;
+      /** When this bonus is from teammate, this is input's index to check granted. */
+      altIndex?: number;
+      /** Default 1, or checked */
+      compareValue?: number;
+      /** Default 'EQUAL' */
+      comparison?: ConditionComparison;
+    };
 
 export type EffectPerformerConditions = {
-  grantedAt?: EffectGrantedAt;
+  grantedAt?: SelfMilestoneCondition;
   beEnhanced?: boolean;
   /** Special for Chain Breaker (bow) */
   checkMixed?: boolean;
@@ -110,10 +108,11 @@ export type EffectReceiverConditions = {
 
 // ===== Conclusion =====
 
-export type EffectPerformableCondition = TeamConditions &
-  EffectPerformerConditions &
+export type EffectPerformableCondition = EffectPerformerConditions &
   EffectInputConditions & {
     checkAny?: EffectPerformableCondition[];
   };
 
-export type EffectCondition = EffectPerformableCondition & EffectReceiverConditions;
+export type EffectCondition = TeamConditions &
+  EffectPerformableCondition &
+  EffectReceiverConditions;

@@ -8,8 +8,8 @@ import type {
 import type {
   CharacterEffectLevelIncrement,
   CharacterEffectLevelScale,
-  EntityBonusBasedOn,
-} from "./app-entity-common";
+  BonusAttributeBaseSpec,
+} from "./common-specs";
 import type { EnergyCostStack, EntityBonusStack } from "./effect-bonus-stack";
 import type { EffectCondition } from "./effect-condition";
 import type { EffectMax } from "./effect-max";
@@ -24,7 +24,7 @@ export type EntityBonusEffect = EffectCondition & {
    * Added before preExtra
    */
   lvScale?: CharacterEffectLevelScale;
-  /** 
+  /**
    * Incre based on character talent level.
    * Added after lvScale
    */
@@ -38,7 +38,7 @@ export type EntityBonusEffect = EffectCondition & {
   /** Added before basedOn > stacks */
   preExtra?: number | EntityBonusEffect;
   /** Added right before stacks */
-  basedOn?: EntityBonusBasedOn;
+  basedOn?: BonusAttributeBaseSpec;
   stacks?: EntityBonusStack;
   /** When max is number on Weapon Bonus, it will auto scale off refi */
   max?: EffectMax;
@@ -56,30 +56,29 @@ export type AttributeTargetPath =
   | AttributeStat
   | BaseAttributeStat;
 
-type AttributeTarget = {
+type AttributeTargetSpec = {
   module: "ATTR";
   path: AttributeTargetPath | AttributeTargetPath[];
   /** Input's index to get element's index if path is 'INP_ELMT'. Default 0 */
   inpIndex?: number;
 };
 
-type AttackBonusTarget = {
+type AttackBonusTargetSpec = {
   module: AttackBonusType | AttackBonusType[];
   path: AttackBonusKey;
 };
 
-type TalentLevelTarget = {
+type TalentLevelTargetSpec = {
   module: "TLT";
   path: LevelableTalentType;
 };
 
-type EntityBonusTargets =
-  | AttributeTarget
-  | AttackBonusTarget
-  | AttackBonusTarget[]
-  | TalentLevelTarget;
+type EntityBonusTargetsSpec =
+  | AttributeTargetSpec
+  | AttackBonusTargetSpec
+  | AttackBonusTargetSpec[]
+  | TalentLevelTargetSpec;
 
-export type EntityBonus<TEntityEffect extends EntityBonusEffect = EntityBonusEffect> =
-  TEntityEffect & {
-    targets: EntityBonusTargets;
-  };
+export type EntityBonus = EntityBonusEffect & {
+  targets: EntityBonusTargetsSpec;
+};

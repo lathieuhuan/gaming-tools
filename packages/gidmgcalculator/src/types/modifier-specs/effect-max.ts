@@ -1,4 +1,4 @@
-import type { CharacterEffectLevelIncrement, EntityBonusBasedOn } from "./app-entity-common";
+import type { CharacterEffectLevelIncrement, BonusAttributeBaseSpec } from "./common-specs";
 import type { EffectExtra } from "./effect-extra";
 
 export type EffectDynamicMax = {
@@ -8,7 +8,7 @@ export type EffectDynamicMax = {
   /** Incre based on character talent level. */
   lvIncre?: CharacterEffectLevelIncrement;
   /** On Hu Tao */
-  basedOn?: EntityBonusBasedOn;
+  basedOn?: BonusAttributeBaseSpec;
   extras?: EffectExtra | EffectExtra[];
 };
 

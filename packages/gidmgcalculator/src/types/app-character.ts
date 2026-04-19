@@ -1,11 +1,9 @@
 import type {
   EffectCondition,
-  EntityBonusEffect,
   EntityBuff,
   EntityDebuff,
-  EntityPenaltyEffect,
-  InputCheck,
-} from "./app-entity";
+  InputCheck
+} from "./modifier-specs";
 import type {
   ActualAttackElement,
   ActualAttackPattern,
@@ -139,8 +137,6 @@ export type TalentCalcItem = {
 
 // ========== BUFF / BONUS ==========
 
-export type CharacterBonusEffect = EntityBonusEffect;
-
 export type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "effects">;
 
 export type AttackAlterConfigs = {
@@ -152,13 +148,11 @@ export type AttackAlterConfigs = {
   disabled?: boolean;
 };
 
-export type CharacterBuff = EntityBuff<CharacterBonusEffect> &
+export type CharacterBuff = EntityBuff &
   CharacterModifier & {
     alterConfigs?: AttackAlterConfigs | AttackAlterConfigs[];
   };
 
 // ============ DEBUFF / PENALTY ============
 
-type CharacterPenaltyEffect = EntityPenaltyEffect;
-
-export type CharacterDebuff = EntityDebuff<CharacterPenaltyEffect> & CharacterModifier;
+export type CharacterDebuff = EntityDebuff & CharacterModifier;

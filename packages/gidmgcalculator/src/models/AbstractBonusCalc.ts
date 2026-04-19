@@ -6,11 +6,12 @@ import type {
   EffectExtra,
   EffectMax,
   EffectPerformableCondition,
-  EntityBonusBasedOn,
-  EntityBonusBasedOnField,
+  BonusAttributeBase,
+  BonusAttributeBaseSpec,
   EntityBonusEffect,
   EntityBonusStack,
   InputStack,
+  TeamConditions,
   TeamMember,
 } from "@/types";
 import { Team } from "./Team";
@@ -43,7 +44,7 @@ export abstract class AbstractBonusCalc<
     this.basedOnFixed = basedOnFixed;
   }
 
-  private isPerformableEffect(condition?: EffectPerformableCondition) {
+  private isPerformableEffect(condition?: TeamConditions & EffectPerformableCondition) {
     return (
       this.team.isAvailableEffect(condition) &&
       this.performer.canPerformEffect(condition, this.inputs)
@@ -54,12 +55,12 @@ export abstract class AbstractBonusCalc<
     return base + increment * this.refi;
   }
 
-  protected parseBasedOn(config: EntityBonusBasedOn) {
+  protected parseBasedOn(config: BonusAttributeBaseSpec) {
     return typeof config === "string" ? { field: config } : config;
   }
 
-  protected abstract getBasedOn(config: EntityBonusBasedOn): {
-    field: EntityBonusBasedOnField;
+  protected abstract getBasedOn(config: BonusAttributeBaseSpec): {
+    field: BonusAttributeBase;
     value: number;
     isDynamic: boolean;
   };

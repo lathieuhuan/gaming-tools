@@ -7,7 +7,7 @@ import type {
   AppWeapon,
   ArtifactGearSet,
   ElementalEvent,
-  EntityModifier,
+  ModifierSpec,
   IAbilityBuffCtrl,
   IAbilityDebuffCtrl,
   IArtifactBuffCtrl,
@@ -16,8 +16,8 @@ import type {
   IModifierCtrlBasic,
   ITeamBuffCtrl,
   IWeaponBuffCtrl,
-  ModifierAffectType,
-  ModInputConfig,
+  ModAffectType,
+  ModInputSpec,
   ModInputType,
   ResonanceModCtrl,
 } from "@/types";
@@ -39,7 +39,7 @@ function getDefaultInitValue(type: ModInputType) {
 }
 
 function createModCtrlInputs(
-  inputConfigs: ModInputConfig[] = [],
+  inputConfigs: ModInputSpec[] = [],
   forSelf = true,
   useMaxValue = false
 ) {
@@ -69,7 +69,7 @@ function createModCtrlInputs(
 
 export function createModCtrl(forSelf: boolean) {
   //
-  return <T extends EntityModifier>(mod: T): IModifierCtrlBasic & { data: T } => {
+  return <T extends ModifierSpec>(mod: T): IModifierCtrlBasic & { data: T } => {
     const inputs = createModCtrlInputs(mod.inputConfigs, forSelf);
 
     return {
@@ -113,12 +113,12 @@ export function createTeamBuffCtrls(setup: CalcSetup): ITeamBuffCtrl[] {
   );
 }
 
-type RefModifier = EntityModifier & {
-  affect?: ModifierAffectType;
+type RefModifier = ModifierSpec & {
+  affect?: ModAffectType;
 };
 
 function filterFor(forSelf: boolean) {
-  const undesiredAffect: ModifierAffectType = forSelf ? "TEAMMATE" : "SELF";
+  const undesiredAffect: ModAffectType = forSelf ? "TEAMMATE" : "SELF";
 
   return (modifier: RefModifier) => !modifier.affect || modifier.affect !== undesiredAffect;
 }
@@ -271,7 +271,7 @@ export function createElementalEvent(): ElementalEvent {
   };
 }
 
-export function enhanceCtrls<T extends EntityModifier, TExtra extends object = {}>(
+export function enhanceCtrls<T extends ModifierSpec, TExtra extends object = {}>(
   ctrls: IModifierCtrlBasic[],
   mods?: T[],
   extraProps: TExtra = {} as TExtra,

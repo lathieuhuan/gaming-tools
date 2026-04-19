@@ -1,5 +1,4 @@
 import type { ElementType } from "../common";
-import type { TalentLevelScaleConfig } from "./app-entity-common";
 import type { EffectExtra } from "./effect-extra";
 import type { EffectMax } from "./effect-max";
 
@@ -17,15 +16,11 @@ type MemberOptionIndex = {
   source: "MEMBER";
   element: "DIFFERENT" | ElementType | ElementType[];
 };
-/** On Razor */
-export type LevelOptionIndex = TalentLevelScaleConfig & {
-  source: "LEVEL";
-};
 
 export type EffectValueByOption = {
   options: number[];
   /** Default InputOptionIndex = { source: "INPUT"; inpIndex: 0; } */
-  optIndex?: InputOptionIndex | ElementOptionIndex | MemberOptionIndex | LevelOptionIndex;
+  optIndex?: InputOptionIndex | ElementOptionIndex | MemberOptionIndex;
 
   // ===== On BUFF / BONUS =====
 

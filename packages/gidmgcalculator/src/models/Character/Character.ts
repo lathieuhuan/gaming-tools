@@ -44,11 +44,11 @@ type BonusMonoRecord = {
 
 export type ReceivedAttributeBonus = Omit<AttributeBonus, "toStat"> & {
   toStat: AttributeBonus["toStat"] | "OWN_ELMT";
-  effectSrc: EntityBonus<EntityBonusEffect>;
+  effectSrc: EntityBonus;
 };
 
 export type ReceivedAttackBonus = AttackBonus & {
-  effectSrc: EntityBonus<EntityBonusEffect>;
+  effectSrc: EntityBonus;
 };
 
 export type CharacterConstructOptions = Pick<CharacterStateContructOptions, "levelBonuses"> & {
