@@ -11,12 +11,12 @@ import type {
   CustomDebuffCtrl,
   ElementalEvent,
   ElementType,
-  IArtifactModCtrl,
-  IModifierCtrlBasic,
-  ITeamBuffCtrl,
+  ArtifactModCtrl,
+  ModifierCtrlState,
+  TeamBuffCtrl,
   RawTeammate,
   ResonanceModCtrl,
-  SetupImportInfo,
+  SetupImportData,
 } from "@/types";
 import type { DecodeResult } from "./types";
 
@@ -91,7 +91,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
 
     const [id, activated, inputs] = str.split(DIVIDER.MC);
 
-    const result: IModifierCtrlBasic = {
+    const result: ModifierCtrlState = {
       activated: activated === "1",
       id: parseNumber(id, "Modifier ID"),
     };
@@ -203,7 +203,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
     getMods: (data: AppArtifact | undefined) => T[] | undefined,
     desc: string
   ) => {
-    const artBuffCtrls: IArtifactModCtrl<T>[] = [];
+    const artBuffCtrls: ArtifactModCtrl<T>[] = [];
 
     for (const ctrlStr of split(ctrlStrs, 1)) {
       const [codeStr, modStrs] = split(ctrlStr, 2);
@@ -353,7 +353,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
 
   // ===== TEAM BUFFS =====
 
-  const teamBuffCtrls: ITeamBuffCtrl[] = split(teamBuffStrs, 1)
+  const teamBuffCtrls: TeamBuffCtrl[] = split(teamBuffStrs, 1)
     .map((ctrl) => {
       const [id, activated, inputs] = split(ctrl, 2);
       const data = $AppData.teamBuffs.find((buff) => buff.index === +id);
@@ -454,7 +454,7 @@ export function decodeSetupCurrent(code: string): DecodeResult {
     target = createTarget({ code: 0 });
   }
 
-  const importInfo: SetupImportInfo = {
+  const importInfo: SetupImportData = {
     ID: idStore.gen(),
     name: "Imported setup",
     params: new CalcSetup({

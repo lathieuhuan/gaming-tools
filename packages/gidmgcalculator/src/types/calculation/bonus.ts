@@ -1,4 +1,4 @@
-import type { EntityBonusEffect } from "../app-entity";
+import type { BonusCoreSpec } from "../modifier-specs";
 import type { AttackBonusKey, AttackBonusType, AttributeStat, BaseAttributeStat, LevelableTalentType } from "../common";
 
 export type BonusPerformTools = {
@@ -11,7 +11,7 @@ export type BareBonus = {
   // id?: string;
   value: number;
   isDynamic: boolean;
-  config: EntityBonusEffect;
+  config: BonusCoreSpec;
 };
 
 export type AttributeBonus = {

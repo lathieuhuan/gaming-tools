@@ -1,5 +1,5 @@
 import type { Teammate } from "@/models";
-import type { IWeaponBuffCtrl } from "@/types";
+import type { WeaponBuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateActiveSetup, updateTeammateWeapon } from "@Store/calculator/actions";
@@ -19,13 +19,13 @@ export default function BuffWeapon() {
     };
   });
 
-  const handleUpdateSelfCtrls = (newCtrls: IWeaponBuffCtrl[]) => {
+  const handleUpdateSelfCtrls = (newCtrls: WeaponBuffCtrl[]) => {
     updateActiveSetup((setup) => {
       setup.wpBuffCtrls = newCtrls;
     });
   };
 
-  const handleUpdateTeammateCtrls = (teammate: Teammate, newCtrls: IWeaponBuffCtrl[]) => {
+  const handleUpdateTeammateCtrls = (teammate: Teammate, newCtrls: WeaponBuffCtrl[]) => {
     updateTeammateWeapon(teammate.data.code, {
       buffCtrls: newCtrls,
     });

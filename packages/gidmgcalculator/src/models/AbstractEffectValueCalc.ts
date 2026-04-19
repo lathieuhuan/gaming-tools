@@ -3,12 +3,11 @@ import { Array_, round, toMult } from "ron-utils";
 import type {
   CharacterBuff,
   CharacterDebuff,
-  CharacterEffectLevelIncrement,
-  CharacterEffectLevelScale,
-  EffectValue,
-  EffectValueByOption,
+  TalentLevelIncrementSpec,
+  EffectValueSpec,
+  EffectValueByOptionSpec,
   ElementCount,
-  TalentLevelScaleConfig,
+  TalentLevelIncrementBaseSpec,
   TeamMember,
 } from "@/types";
 import type { Team } from "./Team";
@@ -19,9 +18,13 @@ import { Character } from "./Character";
 type AbilityBuff = CharacterBuff | CharacterDebuff;
 
 export type EffectToGetInitialValue = {
-  value: EffectValue;
-  lvScale?: CharacterEffectLevelScale;
-  lvIncre?: CharacterEffectLevelIncrement;
+  value: EffectValueSpec;
+  lvIncre?: TalentLevelIncrementSpec;
+};
+
+type LevelIncrement = {
+  multiplier: number;
+  extra: number;
 };
 
 export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = TeamMember> {
@@ -40,40 +43,37 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
     return this.inputs[index] ?? defaultValue;
   }
 
-  protected abstract getTalentLevel(config: TalentLevelScaleConfig): number;
+  protected abstract getTalentLevel(config: TalentLevelIncrementBaseSpec): number;
 
-  // ===== LEVEL SCALE & INCREMENT =====
+  // ===== LEVEL INCREMENT =====
 
-  protected getLevelScale(scale?: CharacterEffectLevelScale) {
-    if (scale) {
-      const { value, max } = scale;
-      const level = this.getTalentLevel(scale);
-      const result = value ? Character.getTalentMult(value, level) : level;
-      return max && result > max ? max : result;
+  protected getLevelIncre(spec?: TalentLevelIncrementSpec): LevelIncrement {
+    if (!spec) {
+      return { multiplier: 1, extra: 0 };
     }
 
-    return 1;
-  }
+    const level = this.getTalentLevel(spec);
 
-  protected getLevelIncre(incre?: CharacterEffectLevelIncrement) {
-    if (incre) {
-      const { changes } = incre;
-      const level = this.getTalentLevel(incre);
-      let value = incre.value * level;
-
-      if (changes && level >= changes.startAt) {
-        value += changes.value * (level - changes.startAt + 1);
-      }
-
-      return value;
+    if ("scale" in spec) {
+      return {
+        extra: 0,
+        multiplier: Character.getTalentMult(spec.scale, level),
+      };
     }
 
-    return 0;
+    const { changes } = spec;
+    let value = spec.value * level;
+
+    if (changes && level >= changes.startAt) {
+      value += changes.value * (level - changes.startAt + 1);
+    }
+
+    return { extra: value, multiplier: 1 };
   }
 
   // ===== INDEX OF EFFECT VALUE =====
 
-  protected getIndexOfEffectValue(config: EffectValueByOption) {
+  protected getIndexOfEffectValue(config: EffectValueByOptionSpec) {
     const { performer } = this;
     const { elmtCount } = this.team;
     const indexConfig = config.optIndex || {
@@ -117,10 +117,8 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
         }
         break;
       }
-      case "LEVEL": {
-        indexValue += this.getTalentLevel(indexConfig);
-        break;
-      }
+      default:
+        indexConfig satisfies never;
     }
 
     return indexValue;

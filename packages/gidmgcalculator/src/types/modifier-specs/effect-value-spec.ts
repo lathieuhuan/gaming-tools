@@ -1,40 +1,36 @@
 import type { ElementType } from "../common";
-import type { TalentLevelScaleConfig } from "./app-entity-common";
-import type { EffectExtra } from "./effect-extra";
-import type { EffectMax } from "./effect-max";
+import type { EffectExtraSpec } from "./effect-extra-spec";
+import type { EffectMaxSpec } from "./effect-max-spec";
 
-type InputOptionIndex = {
+type InputOptionIndexSpec = {
   source: "INPUT";
   inpIndex: number;
 };
+// TODO migrate to stack
 /** Count distinct element types of teammates. Ex: [Pyro, Pyro] -> 1 */
-type ElementOptionIndex = {
+type ElementOptionIndexSpec = {
   source: "ELEMENT";
   elements?: ElementType[];
 };
 /** Count members of element types of teammates. Ex: [Pyro, Pyro] -> 2 */
-type MemberOptionIndex = {
+type MemberOptionIndexSpec = {
   source: "MEMBER";
   element: "DIFFERENT" | ElementType | ElementType[];
 };
-/** On Razor */
-export type LevelOptionIndex = TalentLevelScaleConfig & {
-  source: "LEVEL";
-};
 
-export type EffectValueByOption = {
+export type EffectValueByOptionSpec = {
   options: number[];
   /** Default InputOptionIndex = { source: "INPUT"; inpIndex: 0; } */
-  optIndex?: InputOptionIndex | ElementOptionIndex | MemberOptionIndex | LevelOptionIndex;
+  optIndex?: InputOptionIndexSpec | ElementOptionIndexSpec | MemberOptionIndexSpec;
 
   // ===== On BUFF / BONUS =====
 
   /** On Navia */
   preOptions?: number[];
   /** Add to optIndex. On Nahida */
-  extra?: EffectExtra;
+  extra?: EffectExtraSpec;
   /** Max optIndex. Dynamic on Navia */
-  max?: EffectMax;
+  max?: EffectMaxSpec;
 };
 
-export type EffectValue = number | EffectValueByOption;
+export type EffectValueSpec = number | EffectValueByOptionSpec;

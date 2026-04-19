@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import isEqual from "react-fast-compare";
 import { ConfirmModal, LoadingSpin, Modal, type PartiallyRequired, notification } from "rond";
 
-import type { SetupImportInfo } from "@/types";
+import type { SetupImportData } from "@/types";
 
 import { MAX_CALC_SETUPS, SCREEN_PATH } from "@/constants/config";
 import { CalcSetup } from "@/models";
@@ -17,7 +17,7 @@ import { OverwriteOptions, type OverwriteOptionsProps } from "./OverwriteOptions
 
 type PendingCode = "INIT" | "DIFFERENT_CHAR" | "EXISTED" | "MAX_SETUPS" | "DIFFERENT_INFO/TARGET";
 
-type ImportCenterProps = PartiallyRequired<SetupImportInfo, "params"> & {
+type ImportCenterProps = PartiallyRequired<SetupImportData, "params"> & {
   onFinish: () => void;
 };
 

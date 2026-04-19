@@ -1,4 +1,4 @@
-import type { EntityBonus, EntityBonusEffect, EntityBuff } from "./app-entity";
+import type { BonusSpec, BuffSpec } from "./modifier-specs";
 import type { AttributeStat, CalcItemBasedOn, CalcItemType, WeaponType } from "./common";
 
 export type AppWeapon = {
@@ -16,7 +16,7 @@ export type AppWeapon = {
   };
   passiveName?: string;
   descriptions?: string[];
-  bonuses?: EntityBonus<WeaponBonusEffect>[];
+  bonuses?: BonusSpec[];
   buffs?: WeaponBuff[];
   calcItems?: WeaponCalcItem[];
 };
@@ -34,9 +34,7 @@ type WeaponCalcItem = {
 
 // ========== BONUS ==========
 
-type WeaponBonusEffect = EntityBonusEffect;
-
-export type WeaponBuff = EntityBuff<WeaponBonusEffect> & {
+export type WeaponBuff = BuffSpec & {
   /**
    * If number, it's the index of weapon's descriptions (AppWeapon.descriptions).
    * Default 0.

@@ -7,10 +7,10 @@ import type {
   BonusPerformTools,
   CalcItemBasedOn,
   CalcItemType,
-  EffectPerformableCondition,
+  EffectPerformableConditionSpecs,
   ElementType,
-  EntityBonusEffect,
-  EntityPenaltyEffect,
+  BonusCoreSpec,
+  PenaltyCoreSpec,
   ExclusiveAttackBonusGroup,
   LunarType,
   TalentCalcItemBonusId
@@ -18,9 +18,9 @@ import type {
 import type { ResultRecorder } from "./core/ResultRecorder";
 
 export type IEffectPerformer = {
-  canPerformEffect(condition?: EffectPerformableCondition, inputs?: number[]): boolean;
-  performBonus(config: EntityBonusEffect, tools: Partial<BonusPerformTools>): BareBonus;
-  performPenalty(config: EntityPenaltyEffect, inputs?: number[]): number;
+  canPerformEffect(condition?: EffectPerformableConditionSpecs, inputs?: number[]): boolean;
+  performBonus(config: BonusCoreSpec, tools: Partial<BonusPerformTools>): BareBonus;
+  performPenalty(config: PenaltyCoreSpec, inputs?: number[]): number;
 };
 
 // RESULT CALCULATION - INPUT

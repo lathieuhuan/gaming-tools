@@ -1,4 +1,4 @@
-import type { AppMonster, AttackElement, ITarget, ResistReductionKey } from "@/types";
+import type { AppMonster, AttackElement, TargetData, ResistReductionKey } from "@/types";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
 import { Target } from "./Target";
@@ -36,7 +36,7 @@ export class TargetCalc extends Target {
     phys: 1,
   };
 
-  constructor(info: ITarget, data: AppMonster, options: TargetCalcOptions = {}) {
+  constructor(info: TargetData, data: AppMonster, options: TargetCalcOptions = {}) {
     const { shouldLog = false } = options;
 
     super(info, data);

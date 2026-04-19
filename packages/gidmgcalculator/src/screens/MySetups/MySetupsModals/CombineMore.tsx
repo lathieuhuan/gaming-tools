@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { IDbComplexSetup, IDbSetup } from "@/types";
+import type { DbComplexSetup, DbSetup } from "@/types";
 
 import { useStoreSnapshot } from "@/lib/dynamic-store";
 import { isDbSetup } from "@/logic/setup.logic";
@@ -9,10 +9,10 @@ import { addSetupToComplex, selectActiveSetupId, selectDbSetups } from "@Store/u
 import { useCombineManager } from "./hooks/useCombineManager";
 
 type CombineMoreProcessedResult = {
-  dbSetups: (IDbSetup | IDbComplexSetup)[];
-  setupOptions: IDbSetup[];
+  dbSetups: (DbSetup | DbComplexSetup)[];
+  setupOptions: DbSetup[];
   remainCharacters: number[];
-  targetSetup?: IDbComplexSetup;
+  targetSetup?: DbComplexSetup;
 };
 
 function useCombineMoreProcessor(setupID: number) {

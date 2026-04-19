@@ -1,16 +1,16 @@
 import type { ElementType } from "../common";
-import type { EffectExtra } from "./effect-extra";
-import type { EffectMax } from "./effect-max";
+import type { EffectExtraSpec } from "./effect-extra-spec";
+import type { EffectMaxSpec } from "./effect-max-spec";
 
 /** Only on Tulaytullah's Remembrance */
-type InputIndex = {
+type InputIndexSpec = {
   value: number;
   ratio?: number;
 };
-export type InputStack = {
+export type InputStackSpec = {
   type: "INPUT";
   /** If number, default to 0 */
-  index?: number | InputIndex[];
+  index?: number | InputIndexSpec[];
   /** When this bonus is from teammate, this is input's index to get stacks. On characters */
   altIndex?: number;
   /** Input's index when activated (equal to 1), value is doubled. On some weapons */
@@ -18,42 +18,49 @@ export type InputStack = {
 };
 
 /** Count members of element types of teammates. Ex: [Pyro, Pyro] -> 2 */
-export type MemberStack = {
+export type MemberStackSpec = {
   type: "MEMBER";
   element: "SAME_INCLUDED" | "SAME_EXCLUDED" | "DIFFERENT" | ElementType;
 };
 
 /** On characterss & weapons  */
-export type NationStack = {
+export type NationStackSpec = {
   type: "NATION";
   nation: "SAME_EXCLUDED" | "DIFFERENT" | "LIYUE";
 };
 
-export type EnergyCostStack = {
+export type EnergyCostStackSpec = {
   type: "ENERGY";
   /** 'ACTIVE' on Raiden Shogun. 'PARTY' on Watatsumi series */
   scope: "ACTIVE" | "PARTY";
 };
 
 /** On Raiden Shogun */
-export type ResolveStack = {
+export type ResolveStackSpec = {
   type: "RESOLVE";
 };
 
 /** Special for Chain Breaker (bow) */
-export type MixStack = {
+export type MixStackSpec = {
   type: "MIX";
 };
 
-export type EntityBonusStack = (InputStack | MemberStack | NationStack | EnergyCostStack | ResolveStack | MixStack) & {
+export type BonusStackSpec = (
+  | InputStackSpec
+  | MemberStackSpec
+  | NationStackSpec
+  | EnergyCostStackSpec
+  | ResolveStackSpec
+  | MixStackSpec
+) & {
   /** Actual stack = capacity - input. On Wanderer */
   capacity?: {
     value: number;
-    extra: EffectExtra;
+    extra: EffectExtraSpec;
   };
   /** Actual stacks = stacks - baseline */
   baseline?: number;
   /** On Furina */
-  extra?: EffectExtra;
-  max?: EffectMax;
+  extra?: EffectExtraSpec;
+  max?: EffectMaxSpec;
 };

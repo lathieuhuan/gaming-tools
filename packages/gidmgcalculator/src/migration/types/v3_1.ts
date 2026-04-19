@@ -6,8 +6,8 @@ import type {
   CustomBuffCtrl,
   CustomDebuffCtrl,
   ElementType,
-  IDbComplexSetup,
-  ITargetBasic,
+  DbComplexSetup,
+  RawTarget,
   Level,
   NormalAttack,
   WeaponType,
@@ -99,10 +99,10 @@ type Setup = {
 
   weaponID: number;
   artifactIDs: (number | null)[];
-  target: ITargetBasic;
+  target: RawTarget;
 };
 
 export type DatabaseDataV3_1 = ExactOmit<DatabaseDataV3, "version" | "setups"> & {
   version: 3.1;
-  setups: (Setup | IDbComplexSetup)[];
+  setups: (Setup | DbComplexSetup)[];
 };

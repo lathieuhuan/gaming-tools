@@ -1,4 +1,4 @@
-import type { IArtifactDebuffCtrl } from "@/types";
+import type { ArtifactDebuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
 import { getArtifactDesc } from "@/utils/descriptionParsers";
@@ -7,8 +7,8 @@ import { ModifierContainer } from "./ModifierContainer";
 
 type ArtifactDebuffsViewProps = {
   mutable?: boolean;
-  artDebuffCtrls: IArtifactDebuffCtrl[];
-  getHanlders?: (ctrl: IArtifactDebuffCtrl) => ModifierHanlders;
+  artDebuffCtrls: ArtifactDebuffCtrl[];
+  getHanlders?: (ctrl: ArtifactDebuffCtrl) => ModifierHanlders;
 };
 
 export function ArtifactDebuffsView({

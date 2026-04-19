@@ -1,7 +1,7 @@
 import { Object_ } from "ron-utils";
 
 import type { Teammate } from "@/models";
-import type { IAbilityBuffCtrl } from "@/types";
+import type { AbilityBuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateTeammate } from "@Store/calculator/actions";
@@ -15,7 +15,7 @@ export default function BuffTeammates() {
     Object_.extract(selectSetup(state), ["teammates", "team"])
   );
 
-  const handleUpdateCtrls = (teammate: Teammate, ctrls: IAbilityBuffCtrl[]) => {
+  const handleUpdateCtrls = (teammate: Teammate, ctrls: AbilityBuffCtrl[]) => {
     updateTeammate(teammate.data.code, {
       buffCtrls: ctrls,
     });

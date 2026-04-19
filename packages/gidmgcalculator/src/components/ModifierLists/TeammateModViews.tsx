@@ -1,5 +1,5 @@
 import type { Teammate, Team } from "@/models";
-import type { IAbilityBuffCtrl, IAbilityDebuffCtrl, IModifierCtrlBasic } from "@/types";
+import type { AbilityBuffCtrl, AbilityDebuffCtrl, ModifierCtrlState } from "@/types";
 import type { ModifierHanlders } from "./types";
 
 import { GenshinModifierView } from "../GenshinModifierView";
@@ -9,10 +9,10 @@ type TeamModsViewProps = {
   mutable?: boolean;
   teammates: Teammate[];
   team: Team;
-  getHanlders?: (teammate: Teammate, ctrl: IModifierCtrlBasic) => ModifierHanlders;
+  getHanlders?: (teammate: Teammate, ctrl: ModifierCtrlState) => ModifierHanlders;
 };
 
-function getTeammateModifierElmts<TModCtrl extends IAbilityBuffCtrl | IAbilityDebuffCtrl>(
+function getTeammateModifierElmts<TModCtrl extends AbilityBuffCtrl | AbilityDebuffCtrl>(
   props: TeamModsViewProps,
   teammate: Teammate,
   modCtrls: TModCtrl[],

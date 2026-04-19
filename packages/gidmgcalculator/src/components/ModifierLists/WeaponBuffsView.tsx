@@ -1,5 +1,5 @@
 import type { Teammate, Weapon } from "@/models";
-import type { TeammateWeapon, IWeaponBuffCtrl } from "@/types";
+import type { TeammateWeapon, WeaponBuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
 import { getWeaponBuffDesc } from "@/utils/descriptionParsers";
@@ -11,8 +11,8 @@ type RenderWeaponModifiersArgs = {
   headingSuffix?: string;
   mutable?: boolean;
   weapon: Weapon | TeammateWeapon;
-  ctrls: IWeaponBuffCtrl[];
-  getHanlders?: (ctrl: IWeaponBuffCtrl, ctrls: IWeaponBuffCtrl[]) => ModifierHanlders;
+  ctrls: WeaponBuffCtrl[];
+  getHanlders?: (ctrl: WeaponBuffCtrl, ctrls: WeaponBuffCtrl[]) => ModifierHanlders;
 };
 
 function renderWeaponModifiers({
@@ -46,10 +46,10 @@ function renderWeaponModifiers({
 type WeaponBuffsViewProps = {
   mutable?: boolean;
   weapon: Weapon;
-  wpBuffCtrls: IWeaponBuffCtrl[];
+  wpBuffCtrls: WeaponBuffCtrl[];
   teammates: Teammate[];
   getSelfHandlers?: RenderWeaponModifiersArgs["getHanlders"];
-  getTeammateHandlers?: (teammate: Teammate, ctrl: IWeaponBuffCtrl) => ModifierHanlders;
+  getTeammateHandlers?: (teammate: Teammate, ctrl: WeaponBuffCtrl) => ModifierHanlders;
 };
 
 export function WeaponBuffsView({

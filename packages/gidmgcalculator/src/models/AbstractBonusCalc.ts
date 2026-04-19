@@ -3,21 +3,22 @@ import { Array_ } from "ron-utils";
 import type {
   BareBonus,
   BonusPerformTools,
-  EffectExtra,
-  EffectMax,
-  EffectPerformableCondition,
-  EntityBonusBasedOn,
-  EntityBonusBasedOnField,
-  EntityBonusEffect,
-  EntityBonusStack,
-  InputStack,
+  EffectExtraSpec,
+  EffectMaxSpec,
+  EffectPerformableConditionSpecs,
+  BonusScalingAttribute,
+  BonusAttributeScalingSpec,
+  BonusCoreSpec,
+  BonusStackSpec,
+  InputStackSpec,
+  TeamConditionSpecs,
   TeamMember,
 } from "@/types";
 import { Team } from "./Team";
 
 import { AbstractEffectValueCalc, EffectToGetInitialValue } from "./AbstractEffectValueCalc";
 
-const TEAM_DEPENDED_STACK_TYPES: EntityBonusStack["type"][] = [
+const TEAM_DEPENDED_STACK_TYPES: BonusStackSpec["type"][] = [
   "MEMBER",
   // "ENERGY", // remove for now because Raiden needs it when the team is only her
   "NATION",
@@ -43,7 +44,7 @@ export abstract class AbstractBonusCalc<
     this.basedOnFixed = basedOnFixed;
   }
 
-  private isPerformableEffect(condition?: EffectPerformableCondition) {
+  private isPerformableEffect(condition?: TeamConditionSpecs & EffectPerformableConditionSpecs) {
     return (
       this.team.isAvailableEffect(condition) &&
       this.performer.canPerformEffect(condition, this.inputs)
@@ -54,17 +55,17 @@ export abstract class AbstractBonusCalc<
     return base + increment * this.refi;
   }
 
-  protected parseBasedOn(config: EntityBonusBasedOn) {
+  protected parseBasedOn(config: BonusAttributeScalingSpec) {
     return typeof config === "string" ? { field: config } : config;
   }
 
-  protected abstract getBasedOn(config: EntityBonusBasedOn): {
-    field: EntityBonusBasedOnField;
+  protected abstract getBasedOn(config: BonusAttributeScalingSpec): {
+    field: BonusScalingAttribute;
     value: number;
     isDynamic: boolean;
   };
 
-  protected applyMax(value: number, config?: EffectMax) {
+  protected applyMax(value: number, config?: EffectMaxSpec) {
     if (typeof config === "number") {
       return Math.min(value, this.scaleRefi(config));
     }
@@ -77,7 +78,10 @@ export abstract class AbstractBonusCalc<
       }
       finalMax += this.getExtra(config.extras);
       finalMax = this.scaleRefi(finalMax, config.incre);
-      finalMax += this.getLevelIncre(config.lvIncre);
+
+      const incre = this.getLevelIncre(config.lvIncre);
+
+      finalMax = finalMax * incre.multiplier + incre.extra;
 
       return Math.min(value, finalMax);
     }
@@ -85,7 +89,7 @@ export abstract class AbstractBonusCalc<
     return value;
   }
 
-  protected getExtra(extras: EffectExtra | EffectExtra[] = []) {
+  protected getExtra(extras: EffectExtraSpec | EffectExtraSpec[] = []) {
     let result = 0;
 
     for (const extra of Array_.toArray(extras)) {
@@ -99,11 +103,10 @@ export abstract class AbstractBonusCalc<
 
   getInitialValue(effect: EffectToGetInitialValue) {
     const config = effect.value;
-    const lvScale = this.getLevelScale(effect.lvScale);
-    const lvIncre = this.getLevelIncre(effect.lvIncre);
+    const incre = this.getLevelIncre(effect.lvIncre);
 
     if (typeof config === "number") {
-      return config * lvScale + lvIncre;
+      return config * incre.multiplier + incre.extra;
     }
     const { options } = config;
     let index = this.getIndexOfEffectValue(config);
@@ -113,10 +116,10 @@ export abstract class AbstractBonusCalc<
 
     const value = options[index] ?? (index > 0 ? options[options.length - 1] : 0);
 
-    return value * lvScale + lvIncre;
+    return value * incre.multiplier + incre.extra;
   }
 
-  protected applyExtra(bonus: BareBonus, config?: number | EntityBonusEffect) {
+  protected applyExtra(bonus: BareBonus, config?: number | BonusCoreSpec) {
     if (typeof config === "number") {
       bonus.value += this.scaleRefi(config);
     } //
@@ -137,9 +140,9 @@ export abstract class AbstractBonusCalc<
     return 0;
   }
 
-  protected abstract getInputIndex(stack: InputStack): NonNullable<InputStack["index"]>;
+  protected abstract getInputIndex(stack: InputStackSpec): NonNullable<InputStackSpec["index"]>;
 
-  getStackValue(stack?: EntityBonusStack) {
+  getStackValue(stack?: BonusStackSpec) {
     if (!stack) {
       return 1;
     }
@@ -269,7 +272,7 @@ export abstract class AbstractBonusCalc<
 
   // ↑↑↑ STACKS ↑↑↑
 
-  makeBonus(config: EntityBonusEffect): BareBonus {
+  makeBonus(config: BonusCoreSpec): BareBonus {
     const bonus: BareBonus = {
       // id: config.id,
       value: this.getInitialValue(config),

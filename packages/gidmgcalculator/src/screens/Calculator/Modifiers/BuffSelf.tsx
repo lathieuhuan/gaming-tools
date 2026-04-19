@@ -1,6 +1,6 @@
 import { Array_, Object_ } from "ron-utils";
 
-import type { CharacterBuff, IAbilityBuffCtrl, TalentLevelBonus } from "@/types";
+import type { CharacterBuff, AbilityBuffCtrl, TalentLevelBonus } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateActiveSetup } from "@Store/calculator/actions";
@@ -33,7 +33,7 @@ export default function BuffSelf() {
     Object_.extract(selectSetup(state), ["main", "team", "selfBuffCtrls"])
   );
 
-  const handleUpdateCtrls = (newCtrls: IAbilityBuffCtrl[]) => {
+  const handleUpdateCtrls = (newCtrls: AbilityBuffCtrl[]) => {
     updateActiveSetup((setup) => {
       //
       for (const ctrl of newCtrls) {

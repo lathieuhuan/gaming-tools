@@ -1,7 +1,7 @@
 import { Object_ } from "ron-utils";
 
 import type { Teammate } from "@/models";
-import type { IArtifactBuffCtrl, TeammateArtifactBuffCtrl } from "@/types";
+import type { ArtifactBuffCtrl, TeammateArtifactBuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateActiveSetup, updateTeammateArtifact } from "@Store/calculator/actions";
@@ -15,7 +15,7 @@ export default function BuffArtifact() {
     return Object_.extract(selectSetup(state), ["artBuffCtrls", "teammates"]);
   });
 
-  const handleUpdateSelfCtrls = (newCtrls: IArtifactBuffCtrl[]) => {
+  const handleUpdateSelfCtrls = (newCtrls: ArtifactBuffCtrl[]) => {
     updateActiveSetup((setup) => {
       setup.artBuffCtrls = newCtrls;
     });
@@ -36,7 +36,7 @@ export default function BuffArtifact() {
       teammates={teammates}
       artBuffCtrls={artBuffCtrls}
       getSelfHandlers={(ctrl) => {
-        const extraCheck = (ctrlItem: IArtifactBuffCtrl) => ctrlItem.code === ctrl.code;
+        const extraCheck = (ctrlItem: ArtifactBuffCtrl) => ctrlItem.code === ctrl.code;
 
         const updateCtrlInput = (value: number, inputIndex: number) => {
           handleUpdateSelfCtrls(
