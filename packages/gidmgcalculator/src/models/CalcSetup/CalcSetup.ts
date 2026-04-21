@@ -155,26 +155,6 @@ export class CalcSetup extends CalcSetupBase {
     this.artDebuffCtrls = Array_.sync(this.artDebuffCtrls, artDebuffCtrls, (ctrl) => ctrl.code);
   }
 
-  private parseNicoleState(nicole: TeamMember): { cons: number; EB: number } {
-    let EB = 0;
-    let cons = 0;
-
-    if (nicole instanceof Teammate) {
-      const ebCtrl = nicole.buffCtrls.find((ctrl) => ctrl.id === 2);
-
-      if (ebCtrl?.activated) {
-        EB = ebCtrl.inputs?.at(0) || 0;
-      }
-
-      cons = nicole.buffCtrls.find((ctrl) => ctrl.id === 1)?.inputs?.at(3) || 0;
-    } else if (nicole instanceof Character) {
-      EB = nicole.state.EB;
-      cons = nicole.state.cons;
-    }
-
-    return { cons, EB };
-  }
-
   private getNicoleEBLevel(nicole: TeamMember): number | undefined {
     if (nicole instanceof Teammate) {
       const ebCtrl = nicole.buffCtrls.find((ctrl) => ctrl.id === 2);
@@ -190,10 +170,10 @@ export class CalcSetup extends CalcSetupBase {
   }
 
   private getNicoleEBFactor(level: number): number | undefined {
-    let factor = 100 + level * 10;
+    let factor = 125 + level * 12.5;
 
     if (level > 10) {
-      factor += (level - 10) * 2;
+      factor += (level - 10) * 2.5;
     }
 
     return factor;
