@@ -1,4 +1,5 @@
 import type { ElementType } from "../common";
+import type { EffectConditionSpecs } from "./effect-condition-specs";
 import type { EffectExtraSpec } from "./effect-extra-spec";
 import type { EffectMaxSpec } from "./effect-max-spec";
 
@@ -20,7 +21,7 @@ export type InputStackSpec = {
 /** Count members of element types of teammates. Ex: [Pyro, Pyro] -> 2 */
 export type MemberStackSpec = {
   type: "MEMBER";
-  element: "SAME_INCLUDED" | "SAME_EXCLUDED" | "DIFFERENT" | ElementType;
+  element: "SAME_INCLUDED" | "SAME_EXCLUDED" | "DIFFERENT" | ElementType | ElementType[];
 };
 
 /** On characterss & weapons  */
@@ -35,22 +36,16 @@ export type EnergyCostStackSpec = {
   scope: "ACTIVE" | "PARTY";
 };
 
-/** On Raiden Shogun */
-export type ResolveStackSpec = {
-  type: "RESOLVE";
-};
-
 /** Special for Chain Breaker (bow) */
 export type MixStackSpec = {
   type: "MIX";
 };
 
-export type BonusStackSpec = (
+export type EffectStackSpec = (
   | InputStackSpec
   | MemberStackSpec
   | NationStackSpec
   | EnergyCostStackSpec
-  | ResolveStackSpec
   | MixStackSpec
 ) & {
   /** Actual stack = capacity - input. On Wanderer */
@@ -62,5 +57,12 @@ export type BonusStackSpec = (
   baseline?: number;
   /** On Furina */
   extra?: EffectExtraSpec;
+  /** If number, does not auto scale with refi */
   max?: EffectMaxSpec;
+};
+
+export type StacksBonusSpec = EffectConditionSpecs & {
+  /** Default 'FIN' */
+  at?: "FIN" | number;
+  value: number;
 };

@@ -1,4 +1,4 @@
-import type { PenaltyCoreSpec, TeamMember } from "@/types";
+import type { EffectMaxSpec, PenaltyCoreSpec, TeamMember } from "@/types";
 
 import { AbstractEffectValueCalc, EffectToGetInitialValue } from "./AbstractEffectValueCalc";
 
@@ -21,21 +21,39 @@ export abstract class AbstractPenaltyCalc<
     return value * incre.multiplier + incre.extra;
   }
 
+  protected getMax(spec?: EffectMaxSpec) {
+    if (typeof spec === "number") {
+      return spec;
+    }
+
+    // penalty is only number for now, not support EffectDynamicMaxSpec yet
+
+    return Infinity;
+  }
+
   makePenalty(debuff: PenaltyCoreSpec) {
     const { preExtra } = debuff;
     let result = this.getInitialValue(debuff);
 
     if (typeof preExtra === "number") {
       result += preExtra;
-    } else if (preExtra) {
-      if (
-        this.team.isAvailableEffect(preExtra) &&
-        this.performer.canPerformEffect(preExtra, this.inputs)
-      ) {
-        result += this.makePenalty(preExtra);
-      }
+    } //
+    else if (preExtra && this.isPerformableEffect(preExtra)) {
+      result += this.makePenalty(preExtra);
     }
-    if (debuff.max) result = Math.min(result, debuff.max);
+
+    const stacks = this.getStacks(debuff.stacks);
+    const { stacksBonus } = debuff;
+
+    result *= stacks?.value ?? 1;
+
+    if (debuff.max) {
+      result = Math.min(result, this.getMax(debuff.max));
+    }
+
+    if (stacks && stacksBonus && this.isPerformableEffect(stacksBonus)) {
+      result += this.getStacksBonus(stacksBonus, stacks);
+    }
 
     return Math.max(result, 0);
   }

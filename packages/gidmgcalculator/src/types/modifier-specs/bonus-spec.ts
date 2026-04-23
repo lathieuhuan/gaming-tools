@@ -5,11 +5,8 @@ import type {
   BaseAttributeStat,
   LevelableTalentType,
 } from "../common";
-import type { BonusStackSpec, EnergyCostStackSpec } from "./bonus-stack-spec";
-import type {
-  BonusAttributeScalingSpec,
-  TalentLevelIncrementSpec,
-} from "./common-specs";
+import type { EffectStackSpec, EnergyCostStackSpec, StacksBonusSpec } from "./effect-stack-spec";
+import type { BonusAttributeScalingSpec, TalentLevelIncrementSpec } from "./common-specs";
 import type { EffectConditionSpecs } from "./effect-condition-specs";
 import type { EffectMaxSpec } from "./effect-max-spec";
 import type { EffectValueSpec } from "./effect-value-spec";
@@ -33,9 +30,11 @@ export type BonusCoreSpec = EffectConditionSpecs & {
   preExtra?: number | BonusCoreSpec;
   /** Added right before stacks */
   basedOn?: BonusAttributeScalingSpec;
-  stacks?: BonusStackSpec;
+  stacks?: EffectStackSpec;
   /** When max is number on Weapon Bonus, it will auto scale off refi */
   max?: EffectMaxSpec;
+  /** Added after max */
+  stacksBonus?: StacksBonusSpec;
   /** Added after max */
   extras?: number | BonusCoreSpec | BonusCoreSpec[];
   outsource?: {

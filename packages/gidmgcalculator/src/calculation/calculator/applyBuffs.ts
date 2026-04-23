@@ -32,18 +32,15 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
 
   // ↓↓↓↓↓ HELPERS ↓↓↓↓↓
 
-  function processBonus(
-    bonus: BareBonus,
-    effect: BonusSpec,
-    inputs: number[] = [],
-    label: string
-  ) {
+  function processBonus(bonus: BareBonus, effect: BonusSpec, inputs: number[] = [], label: string) {
     if (!bonus.value) return;
 
     const { outsource } = bonus.config;
 
     if (outsource) {
-      bonus.value *= new BonusCalc(main, team, { inputs }).getStackValue(outsource.stacks);
+      const stacks = new BonusCalc(main, team, { inputs }).getStacks(outsource.stacks);
+
+      bonus.value *= stacks?.value ?? 1;
     }
 
     const getToStat = (path: AttributeTargetPath, inpIndex: number) => {

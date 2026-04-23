@@ -13,7 +13,7 @@ export type TeamElementConditionSpecs = {
     elements?: ElementType[];
     comparison: ConditionComparison;
   };
-  /** ['pyro', 'pyro'] => 2. On Xilonen */
+  /** ['pyro', 'pyro'] => 2 */
   teamElmtTotalCount?: {
     value: number;
     elements: ElementType[];

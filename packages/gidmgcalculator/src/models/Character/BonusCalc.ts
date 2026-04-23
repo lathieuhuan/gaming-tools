@@ -26,13 +26,13 @@ export class BonusCalc extends AbstractBonusCalc<Character> {
 
   protected override getIndexOfEffectValue(config: EffectValueByOptionSpec): number {
     const { preOptions } = config;
+    const [preIndex = 0, optionIndex = 0] = this.inputs;
     let index = -1;
-    const [useOptions = 0, preOptionIndex = 0] = this.inputs;
 
-    /** Navia */
-    if (preOptions && !useOptions) {
-      const preIndex = preOptions[preOptionIndex];
-      index += preIndex ?? preOptions[preOptions.length - 1];
+    // Navia
+    if (preOptions) {
+      const maxIndex = this.optionAt(preIndex, preOptions);
+      index += optionIndex ? Math.min(optionIndex, maxIndex) : maxIndex;
     } else {
       index = super.getIndexOfEffectValue(config);
     }

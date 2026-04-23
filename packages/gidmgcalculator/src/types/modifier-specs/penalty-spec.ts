@@ -1,6 +1,7 @@
 import type { ResistReductionKey } from "../common";
 import type { TalentLevelIncrementSpec } from "./common-specs";
 import type { EffectConditionSpecs } from "./effect-condition-specs";
+import type { EffectStackSpec, StacksBonusSpec } from "./effect-stack-spec";
 import type { EffectValueSpec } from "./effect-value-spec";
 
 export type PenaltyCoreSpec = EffectConditionSpecs & {
@@ -10,7 +11,10 @@ export type PenaltyCoreSpec = EffectConditionSpecs & {
   lvIncre?: TalentLevelIncrementSpec;
   /** Added before stacks, after lvIncre */
   preExtra?: number | PenaltyCoreSpec;
+  stacks?: EffectStackSpec;
   max?: number;
+  /** Added after max */
+  stacksBonus?: StacksBonusSpec;
 };
 
 export type PenaltyTargetsSpec =

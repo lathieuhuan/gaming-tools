@@ -12,16 +12,11 @@ type ElementOptionIndexSpec = {
   source: "ELEMENT";
   elements?: ElementType[];
 };
-/** Count members of element types of teammates. Ex: [Pyro, Pyro] -> 2 */
-type MemberOptionIndexSpec = {
-  source: "MEMBER";
-  element: "DIFFERENT" | ElementType | ElementType[];
-};
 
 export type EffectValueByOptionSpec = {
   options: number[];
   /** Default InputOptionIndex = { source: "INPUT"; inpIndex: 0; } */
-  optIndex?: InputOptionIndexSpec | ElementOptionIndexSpec | MemberOptionIndexSpec;
+  optIndex?: InputOptionIndexSpec | ElementOptionIndexSpec;
 
   // ===== On BUFF / BONUS =====
 
