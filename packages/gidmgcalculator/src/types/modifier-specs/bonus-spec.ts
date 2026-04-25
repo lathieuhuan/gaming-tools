@@ -34,7 +34,7 @@ export type BonusCoreSpec = EffectConditionSpecs & {
   /** When max is number on Weapon Bonus, it will auto scale off refi */
   max?: EffectMaxSpec;
   /** Added after max */
-  stacksBonus?: StacksBonusSpec;
+  stacksBonus?: StacksBonusSpec | StacksBonusSpec[];
   /** Added after max */
   extras?: number | BonusCoreSpec | BonusCoreSpec[];
   outsource?: {

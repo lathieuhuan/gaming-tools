@@ -18,7 +18,13 @@ export type InputStackSpec = {
   doubledAt?: number;
 };
 
-/** Count members of element types of teammates. Ex: [Pyro, Pyro] -> 2 */
+/** Count unique element types of the party. Ex: [Pyro, Pyro] -> 1 */
+export type ElementStackSpec = {
+  type: "ELEMENT";
+  elements?: ElementType[];
+};
+
+/** Count members with some specific element types. Ex: [Pyro, Pyro] -> 2 */
 export type MemberStackSpec = {
   type: "MEMBER";
   element: "SAME_INCLUDED" | "SAME_EXCLUDED" | "DIFFERENT" | ElementType | ElementType[];
@@ -43,6 +49,7 @@ export type MixStackSpec = {
 
 export type EffectStackSpec = (
   | InputStackSpec
+  | ElementStackSpec
   | MemberStackSpec
   | NationStackSpec
   | EnergyCostStackSpec

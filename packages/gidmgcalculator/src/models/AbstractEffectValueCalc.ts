@@ -81,7 +81,7 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
       return null;
     }
     const { inputs, performer, teammateElmtCount, team } = this;
-    const { members } = team;
+    const { members, elmtCount } = team;
 
     let stacks = 0;
 
@@ -103,6 +103,17 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
             0
           );
         }
+        break;
+      }
+      case "ELEMENT": {
+        const { elements } = spec;
+
+        stacks = elements
+          ? elmtCount.keys.reduce(
+              (total, elementType) => total + (elements.includes(elementType) ? 1 : 0),
+              0
+            )
+          : elmtCount.keys.length;
         break;
       }
       case "MEMBER": {
@@ -168,6 +179,8 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
         stacks = this.team["getMixedCount"](performer.data.vision);
         break;
       }
+      default:
+        spec satisfies never;
     }
 
     if (spec.capacity) {
@@ -238,32 +251,13 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
   }
 
   protected getIndexOfEffectValue(config: EffectValueByOptionSpec) {
-    const { elmtCount } = this.team;
     const indexConfig = config.optIndex || {
       source: "INPUT",
       inpIndex: 0,
     };
     let indexValue = -1;
 
-    switch (indexConfig.source) {
-      case "INPUT":
-        indexValue += this.getInput(indexConfig.inpIndex);
-        break;
-      case "ELEMENT": {
-        const { elements } = indexConfig;
-
-        if (elements) {
-          elmtCount.forEach((elementType) => {
-            if (elements.includes(elementType)) indexValue++;
-          });
-        } else {
-          indexValue += elmtCount.keys.length;
-        }
-        break;
-      }
-      default:
-        indexConfig satisfies never;
-    }
+    indexValue += this.getInput(indexConfig.inpIndex);
 
     return indexValue;
   }

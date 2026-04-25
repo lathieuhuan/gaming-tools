@@ -152,8 +152,12 @@ export abstract class AbstractBonusCalc<
       bonus.value = Math.min(bonus.value, this.getMax(spec.max));
     }
 
-    if (stacks && stacksBonus && this.isPerformableEffect(stacksBonus)) {
-      bonus.value += this.scaleRefi(this.getStacksBonus(stacksBonus, stacks));
+    if (stacks && stacksBonus) {
+      for (const spec of Array_.toArray(stacksBonus)) {
+        if (this.isPerformableEffect(spec)) {
+          bonus.value += this.scaleRefi(this.getStacksBonus(spec, stacks));
+        }
+      }
     }
 
     for (const extra of Array_.toArray(spec.extras)) {
