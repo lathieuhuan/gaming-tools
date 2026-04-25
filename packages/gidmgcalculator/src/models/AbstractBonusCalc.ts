@@ -6,7 +6,6 @@ import type {
   BonusCoreSpec,
   BonusPerformTools,
   BonusScalingAttribute,
-  EffectExtraSpec,
   EffectMaxSpec,
   TeamMember,
 } from "@/types";
@@ -70,35 +69,17 @@ export abstract class AbstractBonusCalc<
     return Infinity;
   }
 
-  protected getExtra(extras: EffectExtraSpec | EffectExtraSpec[] = []) {
-    let result = 0;
-
-    for (const extra of Array_.toArray(extras)) {
-      if (this.isPerformableEffect(extra)) {
-        result += extra.value;
-      }
-    }
-
-    return result;
-  }
-
   getInitialValue(effect: EffectToGetInitialValue) {
-    const config = effect.value;
+    const spec = effect.value;
     const incre = this.getLevelIncre(effect.lvIncre);
 
-    if (typeof config === "number") {
-      return config * incre.multiplier + incre.extra;
-    }
-    const { options } = config;
-    let index = this.getIndexOfEffectValue(config);
-
-    index += this.getExtra(config.extra);
-
-    if (config.max) {
-      index = Math.min(index, this.getMax(config.max));
+    if (typeof spec === "number") {
+      return spec * incre.multiplier + incre.extra;
     }
 
-    return this.optionAt(index, options) * incre.multiplier + incre.extra;
+    const index = this.getIndexOfEffectValue(spec);
+
+    return this.itemAt(index, spec.options) * incre.multiplier + incre.extra;
   }
 
   protected applyExtra(bonus: BareBonus, config?: number | BonusCoreSpec) {

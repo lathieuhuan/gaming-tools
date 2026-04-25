@@ -1,5 +1,4 @@
 import type {
-  EffectValueByOptionSpec,
   BonusAttributeScalingSpec,
   InputStackSpec,
   TalentLevelIncrementBaseSpec,
@@ -22,22 +21,6 @@ export class BonusCalc extends AbstractBonusCalc<Character> {
 
   protected getTalentLevel(config: TalentLevelIncrementBaseSpec): number {
     return this.performer.getFinalTalentLv(config.talent);
-  }
-
-  protected override getIndexOfEffectValue(config: EffectValueByOptionSpec): number {
-    const { preOptions } = config;
-    const [preIndex = 0, optionIndex = 0] = this.inputs;
-    let index = -1;
-
-    // Navia
-    if (preOptions) {
-      const maxIndex = this.optionAt(preIndex, preOptions);
-      index += optionIndex ? Math.min(optionIndex, maxIndex) : maxIndex;
-    } else {
-      index = super.getIndexOfEffectValue(config);
-    }
-
-    return index;
   }
 
   override get resolveStacks() {

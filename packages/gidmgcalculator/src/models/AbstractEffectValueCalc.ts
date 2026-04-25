@@ -3,6 +3,7 @@ import { Array_, round, toMult } from "ron-utils";
 import type {
   CharacterBuff,
   CharacterDebuff,
+  EffectExtraSpec,
   EffectMaxSpec,
   EffectPerformableConditionSpecs,
   EffectStackSpec,
@@ -54,13 +55,17 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
 
   protected abstract getTalentLevel(config: TalentLevelIncrementBaseSpec): number;
 
-  protected optionAt(index: number, options: number[], defaultValue = 0) {
-    const value = options.at(index) ?? (index > 0 ? options.at(-1) : null);
+  protected itemAt(index: number, list: number[], defaultValue = 0) {
+    if (index < 0) {
+      console.warn(`Access negative index (${index}) of [${list.toString()}]`);
+    }
+
+    const value = list[index] || (index > 0 ? list.at(-1) : null);
     return value ?? defaultValue;
   }
 
   protected getInput(index = 0, defaultValue = 0) {
-    return this.inputs[index] ?? defaultValue;
+    return this.itemAt(index, this.inputs, defaultValue);
   }
 
   protected isPerformableEffect(condition?: TeamConditionSpecs & EffectPerformableConditionSpecs) {
@@ -75,6 +80,18 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
   protected abstract getInputIndex(spec: InputStackSpec): NonNullable<InputStackSpec["index"]>;
 
   protected abstract getMax(spec?: EffectMaxSpec): number;
+
+  protected getExtra(extras: EffectExtraSpec | EffectExtraSpec[] = []) {
+    let result = 0;
+
+    for (const extra of Array_.toArray(extras)) {
+      if (this.isPerformableEffect(extra)) {
+        result += extra.value;
+      }
+    }
+
+    return result;
+  }
 
   getStacks(spec?: EffectStackSpec): Stacks | null {
     if (!spec) {
@@ -250,16 +267,22 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
     return { extra: value, multiplier: 1 };
   }
 
-  protected getIndexOfEffectValue(config: EffectValueByOptionSpec) {
-    const indexConfig = config.optIndex || {
-      source: "INPUT",
-      inpIndex: 0,
-    };
-    let indexValue = -1;
+  protected getIndexOfEffectValue(spec: EffectValueByOptionSpec) {
+    const { preOptions } = spec;
+    // -1 because getInput should return >= 1 (stacks)
+    let index = -1;
 
-    indexValue += this.getInput(indexConfig.inpIndex);
+    // Navia
+    if (preOptions) {
+      const [preIndex = 0, optionIndex = 0] = this.inputs;
+      const preValue = this.itemAt(preIndex, preOptions);
 
-    return indexValue;
+      index += optionIndex ? Math.min(optionIndex, preValue) : preValue;
+    } else {
+      index += this.getInput(spec.inpIndex) + this.getExtra(spec.extra);
+    }
+
+    return index;
   }
 
   abstract getInitialValue(effect: EffectToGetInitialValue): number;
