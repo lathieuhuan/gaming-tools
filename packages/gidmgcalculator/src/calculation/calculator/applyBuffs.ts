@@ -74,6 +74,15 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
           break;
         }
         case "TLT": {
+          for (const targetPath of Array_.toArray(target.path)) {
+            if (!effect.id) continue;
+
+            main.levelBonuses.set(effect.id, {
+              id: effect.id,
+              talent: targetPath,
+              value: bonus.value,
+            });
+          }
           break;
         }
         default:

@@ -1,3 +1,5 @@
+import { Object_ } from "ron-utils";
+
 import type {
   AllAttributes,
   AmplifyingReaction,
@@ -5,17 +7,17 @@ import type {
   AttackBonus,
   AttackElement,
   AttributeBonus,
+  BonusCoreSpec,
   BonusPerformTools,
+  BonusSpec,
   CharacterBuff,
   CharacterDebuff,
   CharacterStateData,
   EffectPerformableConditionSpecs,
   EffectReceiverConditionSpecs,
-  BonusSpec,
-  BonusCoreSpec,
-  PenaltyCoreSpec,
   Level,
   LevelableTalentType,
+  PenaltyCoreSpec,
   QuickenReaction,
   RawCharacter,
   TeamMember,
@@ -33,12 +35,18 @@ import { Weapon } from "../Weapon";
 import { AllAttributesControl } from "./AllAttributesControl";
 import { AttackBonusControl } from "./AttackBonusControl";
 import { BonusCalc } from "./BonusCalc";
-import { CharacterState, CharacterStateContructOptions } from "./CharacterState";
+import { CharacterState } from "./CharacterState";
 import { PenaltyCalc } from "./PenaltyCalc";
 
 type BonusMonoRecord = {
   trackId: string;
   targetId: string;
+};
+
+type LevelBonus = {
+  id: string;
+  talent: LevelableTalentType;
+  value: number;
 };
 
 export type ReceivedAttributeBonus = Omit<AttributeBonus, "toStat"> & {
@@ -50,9 +58,10 @@ export type ReceivedAttackBonus = AttackBonus & {
   effectSrc: BonusSpec;
 };
 
-export type CharacterConstructOptions = Pick<CharacterStateContructOptions, "levelBonuses"> & {
+export type CharacterConstructOptions = {
   state?: Partial<CharacterStateData>;
   atfGear?: ArtifactGear;
+  levelBonuses?: Map<string, LevelBonus>;
   allAttrsCtrl?: AllAttributesControl;
   attkBonusCtrl?: AttackBonusControl;
   team?: Team;
@@ -72,6 +81,7 @@ export class Character implements TeamMember, Clonable<Character> {
   weapon: Weapon;
   atfGear: ArtifactGear;
 
+  levelBonuses: Map<string, LevelBonus>;
   allAttrsCtrl: AllAttributesControl;
   attkBonusCtrl: AttackBonusControl;
 
@@ -98,19 +108,20 @@ export class Character implements TeamMember, Clonable<Character> {
   ) {
     const {
       atfGear = new ArtifactGear(),
+      levelBonuses = new Map(),
       allAttrsCtrl = new AllAttributesControl(),
       attkBonusCtrl = new AttackBonusControl(),
       team = new Team(),
-      levelBonuses = [],
     } = options;
 
     this.code = code;
-    this.state = new CharacterState(options.state, { levelBonuses });
+    this.state = new CharacterState(options.state);
     this.isTraveler = data.name.slice(-8) === "Traveler";
 
     this.weapon = weapon;
     this.atfGear = atfGear;
 
+    this.levelBonuses = levelBonuses;
     this.allAttrsCtrl = allAttrsCtrl;
     this.attkBonusCtrl = attkBonusCtrl;
     this.team = team;
@@ -124,14 +135,17 @@ export class Character implements TeamMember, Clonable<Character> {
 
   getTotalXtraTalentLv(talentType: LevelableTalentType): number {
     const requiredConsLv = this.data.talentLvBonus?.[talentType];
-    const extraTalentLv = requiredConsLv !== undefined && this.cons >= requiredConsLv ? 3 : 0;
+    const extraLvByCons = requiredConsLv !== undefined && this.cons >= requiredConsLv ? 3 : 0;
+    let totalLvBonus = 0;
+
+    this.levelBonuses.forEach((bonus) => {
+      if (bonus.talent === talentType) {
+        totalLvBonus += bonus.value;
+      }
+    });
 
     // TODO remove team.extraTalentLv
-    return (
-      this.team.extraTalentLv.get(talentType) +
-      extraTalentLv +
-      this.state.getTotalLevelBonus(talentType)
-    );
+    return extraLvByCons + totalLvBonus + this.team.extraTalentLv.get(talentType);
   }
 
   getFinalTalentLv(talent: LevelableTalentType) {
@@ -171,6 +185,7 @@ export class Character implements TeamMember, Clonable<Character> {
   // ===== CALCULATION =====
 
   initCalculation() {
+    this.levelBonuses.clear();
     this.allAttrsCtrl.init(this);
     this.attkBonusCtrl = new AttackBonusControl();
     return this;
@@ -350,7 +365,7 @@ export class Character implements TeamMember, Clonable<Character> {
       allAttrsCtrl = this.allAttrsCtrl,
       attkBonusCtrl = this.attkBonusCtrl,
       team = this.team,
-      levelBonuses = this.state.levelBonuses,
+      levelBonuses = this.levelBonuses,
     } = options;
 
     return new Character(this.code, this.data, weapon, {
@@ -367,6 +382,7 @@ export class Character implements TeamMember, Clonable<Character> {
     return new Character(this.code, this.data, this.weapon.clone(), {
       state: this.state,
       atfGear: this.atfGear.deepClone(),
+      levelBonuses: Object_.clone(this.levelBonuses),
       allAttrsCtrl: this.allAttrsCtrl.clone(),
       attkBonusCtrl: this.attkBonusCtrl.clone(),
       team: this.team,
