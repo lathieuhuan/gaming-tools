@@ -32,7 +32,7 @@ type ActiveMemberViewProps = {
 export function ActiveMemberView({ className }: ActiveMemberViewProps) {
   const data = useSimulatorStore((state) => selectActiveMember(state).data);
 
-  const [activeTab, setActiveTab] = useState<ActiveMemberTabItem>(TABS[0]);
+  const [activeTab, setActiveTab] = useState(TABS[0]);
 
   return (
     <div

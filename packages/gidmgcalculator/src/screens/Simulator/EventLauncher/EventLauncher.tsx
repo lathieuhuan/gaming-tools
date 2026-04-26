@@ -37,7 +37,7 @@ export function EventLauncher({ className }: EventLauncherProps) {
   const onFieldMember = useSimulatorStore((state) => selectProcessor(state).onFieldMember);
   const activeMember = useSimulatorStore(selectActiveMember);
 
-  const [activeTab, setActiveTab] = useState<EventLauncherTabItem>(TABS[0]);
+  const [activeTab, setActiveTab] = useState(TABS[0]);
 
   const activeMemberIsOnField = activeMember.code === onFieldMember;
 

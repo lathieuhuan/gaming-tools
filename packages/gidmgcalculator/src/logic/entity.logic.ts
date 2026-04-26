@@ -19,7 +19,6 @@ import type {
   RawTeammate,
   RawWeapon,
   TeammateArtifact,
-  TeammateArtifactBuffCtrl,
   TeammateWeapon,
   WeaponStateData,
 } from "@/types";
