@@ -18,7 +18,6 @@ import type {
   LevelableTalentType,
   QuickenReaction,
   RawCharacter,
-  TalentType,
   TeamMember,
 } from "@/types";
 import type { Clonable } from "../interfaces";
@@ -135,8 +134,8 @@ export class Character implements TeamMember, Clonable<Character> {
     );
   }
 
-  getFinalTalentLv(talent: TalentType) {
-    return talent === "altSprint" ? 1 : this[talent] + this.getTotalXtraTalentLv(talent);
+  getFinalTalentLv(talent: LevelableTalentType) {
+    return this[talent] + this.getTotalXtraTalentLv(talent);
   }
 
   getQuickenBuffDamage(reaction: QuickenReaction) {
