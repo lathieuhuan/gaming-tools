@@ -36,7 +36,7 @@ Simulation {
 
 ```
 SimulationEvent
-├── CharacterEvent  (cate: "C", performer: number)
+├── CharacterEvent  (cate: "M", performer: number)
 │   ├── SwitchInEvent      (type: "SI")  — character takes the field
 │   ├── ModifyEvent        (type: "M")   — buff/debuff modifier  [TODO]
 │   └── HitEvent

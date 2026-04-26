@@ -1,15 +1,15 @@
 import {
-  createCharacter,
   createTarget,
   createWeapon,
-  CreateWeaponRawData,
+  CreateWeaponRawData
 } from "@/logic/entity.logic";
-import { Character, Target, TargetCalc, Team } from "@/models";
+import { Target, TargetCalc } from "@/models";
+import { Member } from "@/models/Member";
 import { $AppCharacter } from "@/services";
 import { CharacterStateData } from "@/types";
 import IdStore from "@/utils/IdStore";
 import { createMemberInputs } from "../actions/utils";
-import { SimulationProcessor } from "../logic/SimulationProcessor";
+import { SimulationProcessor } from "../models/SimulationProcessor";
 import { Simulation, SimulationInputs } from "../types";
 
 export type MemberConfig = Partial<CharacterStateData> & {
@@ -20,12 +20,10 @@ export type MemberConfig = Partial<CharacterStateData> & {
 const idStore = new IdStore();
 
 export function createSimulation1(memberConfigs: MemberConfig[]): Simulation {
-  const team = new Team();
   const target = new TargetCalc(createTarget({ code: 0 }), Target.DEFAULT_MONSTER);
 
   const memberOrder: number[] = [];
-  const members: Record<number, Character> = {};
-  const memberList: Character[] = [];
+  const members: Map<number, Member> = new Map();
   const inputs: SimulationInputs = {};
 
   for (const config of memberConfigs) {
@@ -34,16 +32,12 @@ export function createSimulation1(memberConfigs: MemberConfig[]): Simulation {
     const weaponRaw = config.weapon || { type: data.weaponType };
     const weapon = createWeapon({ ...weaponRaw, ID: idStore.gen() });
 
-    const character = createCharacter(config, null, { weapon, team });
+    const member = new Member(config.code, data, weapon);
 
     memberOrder.push(config.code);
-    memberList.push(character);
-    members[config.code] = character;
-
-    inputs[config.code] = createMemberInputs(character);
+    members.set(config.code, member);
+    inputs[config.code] = createMemberInputs(member);
   }
-
-  team.updateMembers(memberList);
 
   const simulation: Simulation = {
     id: idStore.gen(),

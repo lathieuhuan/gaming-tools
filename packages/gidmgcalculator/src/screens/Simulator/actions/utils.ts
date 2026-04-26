@@ -1,37 +1,33 @@
 import { WritableDraft } from "immer/src/internal.js";
 
-import type {
-  InputsById,
-  MemberInputs,
-  Simulation,
-  SimulationInputs,
-  SimulationMembers,
-} from "../types";
+import type { InputsById, MemberInputs, Simulation, SimulationInputs } from "../types";
 
 import { createTarget } from "@/logic/entity.logic";
-import { Character, Target } from "@/models";
-import { TargetCalc } from "@/models/TargetCalc";
-import { SimulationProcessor } from "../logic/SimulationProcessor";
-import { SimulatorState, useSimulatorStore } from "../store";
 import { createModCtrlInputs } from "@/logic/modifier.logic";
+import { Member } from "@/models/Member";
+import { Target } from "@/models/Target";
+import { TargetCalc } from "@/models/TargetCalc";
+import { SimulationProcessor } from "../models/SimulationProcessor";
+import { selectSimulation, SimulatorState, useSimulatorStore } from "../store";
 
 export function createSimulation(id: number = Date.now()) {
   const target = new TargetCalc(createTarget({ code: 0 }), Target.DEFAULT_MONSTER);
+
   const newSimulation: Simulation = {
     id,
     memberOrder: [],
-    members: {},
+    members: new Map(),
     activeMember: 0,
     inputs: {},
     target,
     timeline: [],
-    processor: new SimulationProcessor({}, target, 0),
+    processor: new SimulationProcessor(new Map(), target, 0),
   };
 
   return newSimulation;
 }
 
-export function createMemberInputs(member: Character): MemberInputs {
+export function createMemberInputs(member: WritableDraft<Member>): MemberInputs {
   const abilityBuffInputs: InputsById = {};
 
   member.data.buffs?.forEach((buff) => {
@@ -48,23 +44,18 @@ export function resetSimulation(simulation: WritableDraft<Simulation>) {
   const { memberOrder, members } = simulation;
 
   const target = simulation.target.clone();
-  const newMembers: SimulationMembers = {};
-  const newMemberClones: SimulationMembers = {};
-  const newInputs: SimulationInputs = {};
+  const memberClones = new Map<number, Member>();
+  const inputs: SimulationInputs = {};
 
-  memberOrder.forEach((code) => {
-    const member = members[code].initCalculation();
+  for (const member of members.values()) {
+    memberClones.set(member.code, member.clone());
+    inputs[member.code] = createMemberInputs(member);
+  }
 
-    newMembers[code] = member.clone();
-    newMemberClones[code] = member.deepClone();
-    newInputs[code] = createMemberInputs(member);
-  });
-
-  simulation.members = newMembers;
   simulation.activeMember = memberOrder[0];
-  simulation.inputs = newInputs;
+  simulation.inputs = inputs;
   simulation.timeline = [];
-  simulation.processor = new SimulationProcessor(newMemberClones, target, memberOrder[0]);
+  simulation.processor = new SimulationProcessor(memberClones, target, memberOrder[0]);
 }
 
 export function onActiveSimulation(
@@ -84,4 +75,17 @@ export function updateActiveSimulation(
   callback: (simulation: WritableDraft<Simulation>) => boolean | void
 ) {
   useSimulatorStore.setState(onActiveSimulation(callback));
+}
+
+export function updateMember(code: number, callback: (member: Member) => Member) {
+  const members = selectSimulation(useSimulatorStore.getState()).members;
+  const member = members.get(code);
+
+  if (!member) {
+    return;
+  }
+
+  updateActiveSimulation((simulation) => {
+    simulation.members.set(code, callback(member));
+  });
 }

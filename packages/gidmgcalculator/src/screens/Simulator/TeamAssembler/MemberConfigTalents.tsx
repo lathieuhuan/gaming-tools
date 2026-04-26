@@ -1,21 +1,20 @@
 import { clsx, VersatileSelect } from "rond";
 
-import type { Character } from "@/models";
-
 import { LEVELABLE_TALENT_TYPES } from "@/constants";
 import { useTranslation } from "@/hooks";
+import { Member } from "@/models/Member";
 import { genSequentialOptions } from "@/utils/pure.utils";
-import { updateMember } from "../actions/prepare";
+import { updateMemberState } from "../actions/prepare";
 
 type MemberConfigTalentsProps = {
   className?: string;
-  character: Character;
+  member: Member;
 };
 
-export function MemberConfigTalents({ className, character }: MemberConfigTalentsProps) {
+export function MemberConfigTalents({ className, member }: MemberConfigTalentsProps) {
   const { t } = useTranslation();
 
-  const { data } = character;
+  const { data } = member;
 
   return (
     <div className={clsx("flex flex-col gap-2", className)}>
@@ -37,9 +36,9 @@ export function MemberConfigTalents({ className, character }: MemberConfigTalent
                 className={`w-12 text-${data.vision} font-bold`}
                 transparent
                 showAllOptions
-                value={character[talentType]}
+                value={member[talentType]}
                 options={genSequentialOptions(10)}
-                onChange={(value) => updateMember(data.code, { [talentType]: +value })}
+                onChange={(value) => updateMemberState(data.code, { [talentType]: +value })}
               />
             </div>
           </div>

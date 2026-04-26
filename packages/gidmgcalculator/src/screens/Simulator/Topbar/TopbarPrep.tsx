@@ -2,10 +2,10 @@ import { FaCheck, FaTimes } from "react-icons/fa";
 import { Button, clsx, Input } from "rond";
 
 import { ElementIcon } from "@/components";
-import { Team } from "@/models";
 import { startBuilding } from "../actions/build";
 import { deleteSimulation } from "../actions/prepare";
 import { SIMULATION_NAME_MAX_LENGTH } from "../configs";
+import { TeamState } from "../models/Team";
 import { selectSimulation, useSimulatorStore } from "../store";
 
 type TeamBonus = {
@@ -24,9 +24,8 @@ export function TopbarPrep({ className }: TopbarPrepProps) {
     state.managers.find((manager) => manager.id === state.activeId)
   );
 
-  const { id, memberOrder, members } = simulation;
-  const team = new Team(memberOrder.map((code) => members[code]));
-  const { resonances, moonsignLv, witchRiteLv } = team;
+  const { members } = simulation;
+  const { resonances, moonsignLv, witchRiteLv } = new TeamState(members);
 
   const teamBonuses: TeamBonus[] = [
     {
@@ -43,7 +42,7 @@ export function TopbarPrep({ className }: TopbarPrepProps) {
 
   const handleNameChange = (name: string) => {
     useSimulatorStore.setState((state) => {
-      const manager = state.managers.find((manager) => manager.id === id);
+      const manager = state.managers.find((manager) => manager.id === simulation.id);
 
       if (manager) {
         manager.name = name;
@@ -97,8 +96,8 @@ export function TopbarPrep({ className }: TopbarPrepProps) {
           size="small"
           variant="primary"
           icon={<FaCheck />}
-          disabled={!team.members.length}
-          onClick={() => startBuilding()}
+          disabled={members.size === 0}
+          onClick={() => startBuilding(simulation.id)}
         >
           Start
         </Button>

@@ -1,4 +1,5 @@
-import type { Character, TargetCalc } from "@/models";
+import type { TargetCalc } from "@/models";
+import type { Member } from "@/models/Member";
 import type { AttackPattern } from "@/types";
 
 import { talentCalc } from "../../logic/talentCalc";
@@ -6,7 +7,7 @@ import { AbilityEventItem } from "./AbilityEventItem";
 
 type AbilityEventListProps = {
   className?: string;
-  character: Character;
+  member: Member;
   target: TargetCalc;
   attPatt: AttackPattern;
   activeNames?: string[];
@@ -15,14 +16,14 @@ type AbilityEventListProps = {
 
 export function AbilityEventList({
   className,
-  character,
+  member,
   target,
   attPatt,
   activeNames = [],
   onClickHeading,
 }: AbilityEventListProps) {
-  const calcList = character.data.calcList[attPatt];
-  const calculator = talentCalc(character, target, attPatt);
+  const calcList = member.data.calcList[attPatt];
+  const calculator = talentCalc(member, target, attPatt);
 
   return (
     <div className={className}>
@@ -32,7 +33,7 @@ export function AbilityEventList({
         return (
           <AbilityEventItem
             key={item.name}
-            performer={character}
+            performer={member}
             item={item}
             active={active}
             calculator={calculator}

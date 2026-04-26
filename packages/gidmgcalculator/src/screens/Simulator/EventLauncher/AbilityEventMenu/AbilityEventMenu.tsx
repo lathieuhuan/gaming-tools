@@ -31,7 +31,7 @@ export function AbilityEventMenu() {
             <AbilityEventList
               key={type}
               className="space-y-2"
-              character={activeMember}
+              member={activeMember}
               target={target}
               attPatt={type}
               activeNames={activeNames}

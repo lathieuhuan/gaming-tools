@@ -60,7 +60,7 @@ export function switchIn(code: number) {
 
     simulation.timeline.push({
       id,
-      cate: "C",
+      cate: "M",
       type: "SI",
       performer: code,
     });
@@ -76,7 +76,7 @@ export function triggerAbilityHitEvent(event: ExactOmit<AbilityHitEvent, "id" | 
     simulation.timeline.push({
       ...event,
       id,
-      cate: "C",
+      cate: "M",
       type: "AH",
     });
 
@@ -93,7 +93,7 @@ export function triggerAbilityBuffEvent(
     simulation.timeline.push({
       ...event,
       id,
-      cate: "C",
+      cate: "M",
       type: "AB",
     });
 

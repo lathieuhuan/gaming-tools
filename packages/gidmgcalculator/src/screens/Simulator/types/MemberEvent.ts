@@ -3,7 +3,7 @@ import type { AttackElement, AttackPattern } from "@/types/common";
 
 type BaseEvent = {
   id: string;
-  cate: "C";
+  cate: "M";
   performer: number;
 };
 
@@ -42,6 +42,6 @@ export type ReactionHitEvent = BaseEvent & {
 
 export type HitEvent = AbilityHitEvent | ReactionHitEvent;
 
-// ===== Character Event =====
+// ===== Member Event =====
 
-export type CharacterEvent = SwitchInEvent | ModifyEvent | HitEvent;
+export type MemberEvent = SwitchInEvent | ModifyEvent | HitEvent;

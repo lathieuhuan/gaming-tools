@@ -3,7 +3,6 @@ import { FaTrashAlt } from "react-icons/fa";
 import { GiAnvil } from "react-icons/gi";
 import { ButtonGroup, clsx, HiddenSpace, PouchSvg } from "rond";
 
-import type { Character } from "@/models";
 import type { ArtifactType } from "@/types";
 
 import { useTranslation } from "@/hooks";
@@ -11,7 +10,7 @@ import {
   removeArtifact,
   updateArtifact,
   updateArtifactSubStat,
-  updateMember,
+  updateMemberState,
   updateWeapon,
 } from "../actions/prepare";
 
@@ -22,13 +21,14 @@ import {
   EquipmentType,
   WeaponView,
 } from "@/components";
+import { selectSimulation, useSimulatorStore } from "../store";
 import { MemberConfigTalents } from "./MemberConfigTalents";
 
 export type GearSwitchSource = "INVENTORY" | "FORGE";
 
 export type MemberConfigProps = {
   className?: string;
-  character: Character;
+  memberCode: number;
   onSwitchMember?: () => void;
   onRemoveMember?: () => void;
   onSwitchWeapon?: (source: GearSwitchSource) => void;
@@ -38,14 +38,18 @@ export type MemberConfigProps = {
 export function MemberConfig(props: MemberConfigProps) {
   const { t } = useTranslation();
 
+  const member = useSimulatorStore((state) =>
+    selectSimulation(state).members.get(props.memberCode)
+  );
   const [selectedGear, setSelectedGear] = useState<EquipmentType>();
 
-  const { character } = props;
-  const { data } = character;
+  if (!member) {
+    return null;
+  }
+
+  const { data } = member;
   const selectedAtfPiece =
-    selectedGear && selectedGear !== "weapon"
-      ? character.atfGear.pieces.get(selectedGear)
-      : undefined;
+    selectedGear && selectedGear !== "weapon" ? member.atfGear.pieces.get(selectedGear) : undefined;
 
   const toggleSelectedGear = (type: EquipmentType) => {
     setSelectedGear((prev) => (prev === type ? undefined : type));
@@ -56,26 +60,26 @@ export function MemberConfig(props: MemberConfigProps) {
       <div className={props.className}>
         <div className="h-full flex flex-col">
           <CharacterIntro
-            character={character}
+            character={member}
             switchable
             removable
             mutable
             onSwitch={props.onSwitchMember}
             onRemove={props.onRemoveMember}
-            onChangeLevel={(level) => updateMember(data.code, { level })}
-            onChangeCons={(cons) => updateMember(data.code, { cons })}
-            onEnhanceToggle={(enhanced) => updateMember(data.code, { enhanced })}
+            onChangeLevel={(level) => updateMemberState(data.code, { level })}
+            onChangeCons={(cons) => updateMemberState(data.code, { cons })}
+            onEnhanceToggle={(enhanced) => updateMemberState(data.code, { enhanced })}
           />
 
           <div className="mt-3 grow hide-scrollbar">
-            <MemberConfigTalents character={character} />
+            <MemberConfigTalents member={member} />
 
             <EquipmentDisplay
               className="mt-3"
               fillable
               selectedType={selectedGear}
-              weapon={character.weapon}
-              atfGear={character.atfGear}
+              weapon={member.weapon}
+              atfGear={member.atfGear}
               onClickItem={toggleSelectedGear}
               onClickEmptyAtfSlot={toggleSelectedGear}
             />
@@ -94,7 +98,7 @@ export function MemberConfig(props: MemberConfigProps) {
               <WeaponView
                 className="mt-2 grow hide-scrollbar"
                 mutable
-                weapon={character.weapon}
+                weapon={member.weapon}
                 upgrade={(level) => updateWeapon(data.code, { level })}
                 refine={(refi) => updateWeapon(data.code, { refi })}
               />

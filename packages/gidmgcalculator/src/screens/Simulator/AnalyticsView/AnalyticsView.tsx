@@ -1,11 +1,11 @@
 import { formatNumber, round } from "ron-utils";
 import { clsx } from "rond";
 
-import type { Character } from "@/models";
+import type { Member } from "@/models/Member";
 import { selectProcessor, selectSimulation, useSimulatorStore } from "../store";
 
 type MemberDamageCalc = {
-  member: Character;
+  member: Member;
   value: number;
 };
 
@@ -19,7 +19,7 @@ export function AnalyticsView({ className }: AnalyticsViewProps) {
 
   let totalDMG = 0;
 
-  const totalsByMember = Object.values(members).reduce<Record<number, MemberDamageCalc>>(
+  const totalsByMember = Array.from(members.values()).reduce<Record<number, MemberDamageCalc>>(
     (acc, member) => {
       acc[member.data.code] = { member, value: 0 };
       return acc;
@@ -31,7 +31,7 @@ export function AnalyticsView({ className }: AnalyticsViewProps) {
     totalDMG += log.value;
 
     switch (log.type) {
-      case "C": {
+      case "M": {
         totalsByMember[log.performer].value += log.value;
         break;
       }

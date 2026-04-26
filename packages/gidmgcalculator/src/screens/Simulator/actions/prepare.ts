@@ -11,12 +11,23 @@ import type {
 } from "@/types";
 import type { UserdbState } from "@Store/userdbSlice";
 
-import { createCharacter, createWeapon } from "@/logic/entity.logic";
+import { createWeapon } from "@/logic/entity.logic";
 import { parseDbArtifacts } from "@/logic/userdb.logic";
 import { ArtifactGear } from "@/models";
+import { Member } from "@/models/Member";
 import IdStore from "@/utils/IdStore";
-import { selectSimulation, useSimulatorStore } from "../store";
-import { createSimulation, updateActiveSimulation } from "./utils";
+import { AssemblingModalState, useSimulatorStore } from "../store";
+import { createSimulation, updateActiveSimulation, updateMember } from "./utils";
+
+// SIMULATOR
+
+export function updateAssemblingModal(state: AssemblingModalState | null) {
+  useSimulatorStore.setState((store) => {
+    store.assemblingModal = state ?? { type: "", slot: -1 };
+  });
+}
+
+// SIMULATION
 
 export function startNewSimulation() {
   useSimulatorStore.setState((state) => {
@@ -43,6 +54,8 @@ export function deleteSimulation(id?: number) {
   });
 }
 
+// SIMULATION ASSEMBLING
+
 /** Same logic as initSessionWithCharacter */
 export function switchMember(
   tavernCharacter: TavernSelectedCharacter,
@@ -62,15 +75,14 @@ export function switchMember(
 
   const atfGear = parseDbArtifacts(artifactIDs, userArts);
 
-  const character = createCharacter({ code: data.code }, data, {
+  const member = new Member(data.code, data, weapon, {
     state: userData,
-    weapon,
     atfGear,
   });
 
   updateActiveSimulation((simulation) => {
     if (currMemberCode) {
-      delete simulation.members[currMemberCode];
+      simulation.members.delete(currMemberCode);
 
       simulation.memberOrder = simulation.memberOrder.map((code) =>
         code === currMemberCode ? data.code : code
@@ -79,83 +91,58 @@ export function switchMember(
       simulation.memberOrder.push(data.code);
     }
 
-    simulation.members[data.code] = character;
+    simulation.members.set(data.code, member);
   });
 }
 
 export function removeMember(code: number) {
   updateActiveSimulation((simulation) => {
-    delete simulation.members[code];
-
+    simulation.members.delete(code);
     simulation.memberOrder = simulation.memberOrder.filter((c) => c !== code);
   });
 }
 
-export function updateMember(code: number, data: Partial<CharacterStateData>) {
-  updateActiveSimulation((simulation) => {
-    if (code in simulation.members) {
-      simulation.members[code] = simulation.members[code].clone({ state: data });
-    }
-  });
+export function updateMemberState(code: number, data: Partial<CharacterStateData>) {
+  updateMember(code, (member) => member.clone({ state: data }));
 }
 
 // ===== WEAPON =====
 
 export function switchWeapon(code: number, weapon: Weapon) {
-  updateActiveSimulation((simulation) => {
-    if (code in simulation.members) {
-      simulation.members[code] = simulation.members[code].clone({ weapon });
-    }
-  });
+  updateMember(code, (member) => member.clone({ weapon }));
 }
 
 export function updateWeapon(code: number, data: Partial<WeaponStateData>) {
-  updateActiveSimulation((simulation) => {
-    if (code in simulation.members) {
-      const member = simulation.members[code];
-      const weapon = member.weapon.clone({ state: data });
+  updateMember(code, (member) => {
+    const weapon = member.weapon.clone({ state: data });
 
-      simulation.members[code] = member.clone({ weapon });
-    }
+    return member.clone({ weapon });
   });
 }
 
 // ===== ARTIFACT =====
 
 export function switchArtifact(code: number, artifact: Artifact) {
-  const { members } = selectSimulation(useSimulatorStore.getState());
+  updateMember(code, (member) => {
+    const pieces = member.atfGear.pieces.clone().set(artifact.type, artifact);
+    const newMember = member.clone({ atfGear: new ArtifactGear(pieces) });
 
-  if (!(code in members)) {
-    return;
-  }
-
-  const member = members[code];
-  const pieces = member.atfGear.pieces.clone().set(artifact.type, artifact);
-
-  updateActiveSimulation((simulation) => {
-    simulation.members[code] = member.clone({ atfGear: new ArtifactGear(pieces) });
+    return newMember;
   });
 }
 
 export function updateArtifact(code: number, type: ArtifactType, data: Partial<ArtifactStateData>) {
-  const { members } = selectSimulation(useSimulatorStore.getState());
+  updateMember(code, (member) => {
+    const pieces = member.atfGear.pieces.clone();
+    const piece = pieces.get(type)?.clone({ state: data });
 
-  if (!(code in members)) {
-    return;
-  }
+    if (!piece) {
+      return member;
+    }
 
-  const member = members[code];
-  const pieces = member.atfGear.pieces.clone();
-  const piece = pieces.get(type)?.clone({ state: data });
+    const atfGear = new ArtifactGear(pieces.set(type, piece));
 
-  if (!piece) {
-    return;
-  }
-
-  const atfGear = new ArtifactGear(pieces.set(type, piece));
-
-  updateActiveSimulation((simulation) => {
-    simulation.members[code] = member.clone({ atfGear });
+    return member.clone({ atfGear });
   });
 }
 
@@ -165,42 +152,28 @@ export function updateArtifactSubStat(
   index: number,
   data: Partial<ArtifactSubStat>
 ) {
-  const { members } = selectSimulation(useSimulatorStore.getState());
+  updateMember(code, (member) => {
+    const pieces = member.atfGear.pieces.clone();
+    const piece = pieces.get(type)?.clone();
 
-  if (!(code in members)) {
-    return;
-  }
+    piece?.state.updateSubStatByIndex(index, data);
 
-  const member = members[code];
-  const pieces = member.atfGear.pieces.clone();
-  const piece = pieces.get(type)?.clone();
+    if (!piece) {
+      return member;
+    }
 
-  piece?.state.updateSubStatByIndex(index, data);
+    const atfGear = new ArtifactGear(pieces.set(type, piece));
 
-  if (!piece) {
-    return;
-  }
-
-  const atfGear = new ArtifactGear(pieces.set(type, piece));
-
-  updateActiveSimulation((simulation) => {
-    simulation.members[code] = member.clone({ atfGear });
+    return member.clone({ atfGear });
   });
 }
 
 export function removeArtifact(code: number, type: ArtifactType) {
-  const { members } = selectSimulation(useSimulatorStore.getState());
+  updateMember(code, (member) => {
+    const pieces = member.atfGear.pieces.clone();
 
-  if (!(code in members)) {
-    return;
-  }
+    pieces.delete(type);
 
-  const member = members[code];
-  const pieces = member.atfGear.pieces.clone();
-
-  pieces.delete(type);
-
-  updateActiveSimulation((simulation) => {
-    simulation.members[code] = member.clone({ atfGear: new ArtifactGear(pieces) });
+    return member.clone({ atfGear: new ArtifactGear(pieces) });
   });
 }

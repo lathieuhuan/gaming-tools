@@ -32,24 +32,24 @@ type EventLauncherProps = {
 };
 
 export function EventLauncher({ className }: EventLauncherProps) {
-  const members = useSimulatorStore((state) => selectSimulation(state).members);
   const memberOrder = useSimulatorStore((state) => selectSimulation(state).memberOrder);
-  const onFieldMember = useSimulatorStore((state) => selectProcessor(state).onFieldMember);
+  const onFieldCode = useSimulatorStore((state) => selectProcessor(state).onFieldCode);
+  const team = useSimulatorStore((state) => selectProcessor(state).team);
   const activeMember = useSimulatorStore(selectActiveMember);
 
   const [activeTab, setActiveTab] = useState(TABS[0]);
 
-  const activeMemberIsOnField = activeMember.code === onFieldMember;
+  const activeMemberIsOnField = activeMember.code === onFieldCode;
 
   return (
     <div className={cn("flex flex-col", className)}>
       <div className="flex gap-2">
-        {memberOrder.map((code, index) => {
-          const member = members[code];
+        {memberOrder.map((code) => {
+          const member = team.getMember(code);
           const selected = code === activeMember.code;
 
           return (
-            <div key={index}>
+            <div key={code}>
               <CharacterPortrait
                 className={clsx(selected ? "shadow-hightlight-2 shadow-active" : "cursor-pointer")}
                 size="small"

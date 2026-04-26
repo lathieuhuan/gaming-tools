@@ -1,13 +1,13 @@
-import type { Character } from "@/models";
-import type { CharacterEvent } from "../types";
+import type { Member } from "@/models/Member";
+import type { MemberEvent } from "../types";
 
 type CharacterEventViewProps = {
-  event: CharacterEvent;
-  character: Character;
+  event: MemberEvent;
+  member: Member;
 };
 
-export function CharacterEventView({ event, character }: CharacterEventViewProps) {
-  const { data } = character;
+export function CharacterEventView({ event, member }: CharacterEventViewProps) {
+  const { data } = member;
 
   switch (event.type) {
     case "SI": {

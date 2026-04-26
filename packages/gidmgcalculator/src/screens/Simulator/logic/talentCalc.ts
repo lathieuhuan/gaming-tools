@@ -1,5 +1,6 @@
 import { Array_ } from "ron-utils";
 
+import type { CalcResultAttackItem } from "@/calculation/types";
 import type {
   AppCharacter,
   AttackElement,
@@ -8,11 +9,11 @@ import type {
   CalcItemFactor,
   TalentCalcItem,
 } from "@/types";
-import type { CalcResultAttackItem } from "@/calculation/types";
 
-import { makeAttackItemCalc } from "@/calculation/core/makeAttackItemCalc";
 import { ResultRecorder } from "@/calculation/core/ResultRecorder";
-import { Character, TargetCalc } from "@/models";
+import { Member } from "@/models/Member";
+import { TargetCalc } from "@/models/TargetCalc";
+import { makeAttackItemCalc } from "./makeAttackItemCalc";
 
 type AlterConfig = {
   attPatt?: AttackPattern;
@@ -21,7 +22,7 @@ type AlterConfig = {
 };
 
 export function talentCalc(
-  performer: Character,
+  performer: Member,
   target: TargetCalc,
   expectAttPatt: AttackPattern
 ) {
@@ -48,7 +49,7 @@ export function talentCalc(
         basedOn = defaultValues.basedOn,
       } = parseFactor(factor);
       const value = performer.getAttr(basedOn);
-      const totalMult = root * Character.getTalentMult(scale, level) + multBonus;
+      const totalMult = root * Member.getTalentMult(scale, level) + multBonus;
 
       bases.push((value * totalMult) / 100);
 

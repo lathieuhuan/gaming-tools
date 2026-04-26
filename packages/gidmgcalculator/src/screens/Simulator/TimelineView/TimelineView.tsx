@@ -1,6 +1,6 @@
 import { clsx } from "rond";
 
-import { selectSimulation, useSimulatorStore } from "../store";
+import { selectProcessor, selectSimulation, useSimulatorStore } from "../store";
 
 // Components
 import { GenshinImage } from "@/components";
@@ -12,19 +12,18 @@ type TimelineViewProps = {
 
 export function TimelineView({ className }: TimelineViewProps) {
   const timeline = useSimulatorStore((state) => selectSimulation(state).timeline);
-  const members = useSimulatorStore((state) => selectSimulation(state).members);
-  const onFieldMember = useSimulatorStore((state) => {
-    const { processor, members } = selectSimulation(state);
-    return members[processor.onFieldMember];
-  });
+  const processor = useSimulatorStore(selectProcessor);
+
+  const { team, onFieldCode } = processor;
+  const onFieldMember = team.getMember(onFieldCode);
 
   return (
     <div className={className}>
       <div className="flex flex-col-reverse gap-2 peer">
-        {timeline.map((event, index) => {
+        {timeline.map((event) => {
           switch (event.cate) {
-            case "C": {
-              const member = members[event.performer];
+            case "M": {
+              const member = team.getMember(event.performer);
               const { name, sideIcon, icon } = member.data;
 
               return (
@@ -49,7 +48,7 @@ export function TimelineView({ className }: TimelineViewProps) {
                       />
                     </div>
                   </div>
-                  <CharacterEventView event={event} character={member} />
+                  <CharacterEventView event={event} member={member} />
                 </div>
               );
             }
