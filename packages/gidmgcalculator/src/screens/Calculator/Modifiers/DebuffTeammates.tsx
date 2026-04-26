@@ -1,7 +1,7 @@
 import { Object_ } from "ron-utils";
 
 import type { Teammate } from "@/models";
-import type { IAbilityDebuffCtrl } from "@/types";
+import type { AbilityDebuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateTeammate } from "@Store/calculator/actions";
@@ -15,7 +15,7 @@ export default function DebuffTeammates() {
     Object_.extract(selectSetup(state), ["teammates", "team"])
   );
 
-  const handleUpdateCtrls = (teammate: Teammate, ctrls: IAbilityDebuffCtrl[]) => {
+  const handleUpdateCtrls = (teammate: Teammate, ctrls: AbilityDebuffCtrl[]) => {
     updateTeammate(teammate.data.code, {
       debuffCtrls: ctrls,
     });

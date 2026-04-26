@@ -4,13 +4,13 @@ import type {
   AppCharacter,
   BareBonus,
   BonusPerformTools,
-  EffectPerformableCondition,
-  EntityBonusEffect,
-  EntityPenaltyEffect,
-  IAbilityBuffCtrl,
-  IAbilityDebuffCtrl,
-  ITeammateInfo,
-  IWeaponBuffCtrl,
+  EffectPerformableConditionSpecs,
+  BonusCoreSpec,
+  PenaltyCoreSpec,
+  AbilityBuffCtrl,
+  AbilityDebuffCtrl,
+  TeammateData,
+  WeaponBuffCtrl,
   TeammateArtifact,
   TeammateWeapon,
   TeamMember,
@@ -26,8 +26,8 @@ import { PenaltyCalc } from "./PenaltyCalc";
 
 export type TeammateConstructOptions = {
   enhanced?: boolean;
-  buffCtrls?: IAbilityBuffCtrl[];
-  debuffCtrls?: IAbilityDebuffCtrl[];
+  buffCtrls?: AbilityBuffCtrl[];
+  debuffCtrls?: AbilityDebuffCtrl[];
   artifact?: TeammateArtifact;
   team?: Team;
 };
@@ -36,11 +36,11 @@ type CloneOptions = {
   team?: Team;
 };
 
-export class Teammate implements ITeammateInfo, TeamMember, Clonable<Teammate> {
+export class Teammate implements TeammateData, TeamMember, Clonable<Teammate> {
   code: number;
   enhanced: boolean;
-  buffCtrls: IAbilityBuffCtrl[];
-  debuffCtrls: IAbilityDebuffCtrl[];
+  buffCtrls: AbilityBuffCtrl[];
+  debuffCtrls: AbilityDebuffCtrl[];
   weapon: TeammateWeapon;
   artifact?: TeammateArtifact;
 
@@ -81,19 +81,19 @@ export class Teammate implements ITeammateInfo, TeamMember, Clonable<Teammate> {
 
   // ===== SETTERS =====
 
-  update(data: Partial<ITeammateInfo>) {
+  update(data: Partial<TeammateData>) {
     const { weapon = this.weapon } = data;
 
     return new Teammate(this.code, this.data, weapon, { ...this, ...data });
   }
 
-  updateWeaponBuffCtrl(newCtrl: IWeaponBuffCtrl) {
+  updateWeaponBuffCtrl(newCtrl: WeaponBuffCtrl) {
     return this.weapon.buffCtrls.map((ctrl) => (ctrl.id === newCtrl.id ? newCtrl : ctrl));
   }
 
   // ===== CALCULATION =====
 
-  canPerformEffect(condition?: EffectPerformableCondition, inputs: number[] = []) {
+  canPerformEffect(condition?: EffectPerformableConditionSpecs, inputs: number[] = []) {
     if (!condition) {
       return true;
     }
@@ -123,13 +123,13 @@ export class Teammate implements ITeammateInfo, TeamMember, Clonable<Teammate> {
   }
 
   performBonus(
-    config: EntityBonusEffect,
+    config: BonusCoreSpec,
     { inputs = [], refi = 0, basedOnFixed = false }: Partial<BonusPerformTools>
   ): BareBonus {
     return new BonusCalc(this, this.team, { inputs, refi, basedOnFixed }).makeBonus(config);
   }
 
-  performPenalty(config: EntityPenaltyEffect, inputs?: number[]) {
+  performPenalty(config: PenaltyCoreSpec, inputs?: number[]) {
     return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
   }
 
@@ -148,11 +148,11 @@ export class Teammate implements ITeammateInfo, TeamMember, Clonable<Teammate> {
 
   // ===== DESCRIPTION =====
 
-  parseBuffDesc(ctrl: IAbilityBuffCtrl) {
+  parseBuffDesc(ctrl: AbilityBuffCtrl) {
     return new BonusCalc(this, this.team, { inputs: ctrl.inputs }).parseAbilityDesc(ctrl.data);
   }
 
-  parseDebuffDesc(ctrl: IAbilityDebuffCtrl) {
+  parseDebuffDesc(ctrl: AbilityDebuffCtrl) {
     return new PenaltyCalc(this, this.team, ctrl.inputs).parseAbilityDesc(ctrl.data);
   }
 }

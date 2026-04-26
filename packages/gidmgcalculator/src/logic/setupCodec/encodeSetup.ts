@@ -3,7 +3,7 @@ import type {
   AttackElement,
   AttributeStat,
   ElementType,
-  IModifierCtrlBasic,
+  ModifierCtrlState,
   ReactionType,
 } from "@/types";
 
@@ -38,7 +38,7 @@ export function encodeSetup(calcSetup: CalcSetup) {
     target,
   } = calcSetup;
 
-  const encodeModCtrl = (mod: IModifierCtrlBasic) => {
+  const encodeModCtrl = (mod: ModifierCtrlState) => {
     return [
       mod.id,
       +mod.activated,
@@ -46,7 +46,7 @@ export function encodeSetup(calcSetup: CalcSetup) {
     ].join(DIVIDER.MC);
   };
 
-  const encodeModCtrls = (mods: IModifierCtrlBasic[], divideLv: number) => {
+  const encodeModCtrls = (mods: ModifierCtrlState[], divideLv: number) => {
     return mods.map(encodeModCtrl).join(DIVIDER[divideLv]);
   };
 

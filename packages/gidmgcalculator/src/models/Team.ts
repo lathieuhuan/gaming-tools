@@ -4,9 +4,9 @@ import type {
   ElementType,
   TeamMember,
   TalentType,
-  TeamConditions,
-  TeamElementConditions,
-  TeamMilestoneCondition,
+  TeamConditionSpecs,
+  TeamElementConditionSpecs,
+  TeamMilestoneConditionSpec,
 } from "@/types";
 
 import { PHEC_ELEMENT_TYPES } from "@/constants";
@@ -116,7 +116,7 @@ export class Team<TMember extends TeamMember = TeamMember> {
     return this.members.find((member) => member.data.name === name);
   }
 
-  checkTeamElmt(condition: TeamElementConditions) {
+  checkTeamElmt(condition: TeamElementConditionSpecs) {
     const { elmtCount } = this;
     const { teamOnlyElmts, teamEachElmtCount, teamElmtTotalCount, teamTotalElmtCount, varkaPHEC } =
       condition;
@@ -170,7 +170,7 @@ export class Team<TMember extends TeamMember = TeamMember> {
     return true;
   }
 
-  checkTeamProps(condition: TeamMilestoneCondition) {
+  checkTeamProps(condition: TeamMilestoneConditionSpec) {
     let input = 0;
     const {
       type,
@@ -194,7 +194,7 @@ export class Team<TMember extends TeamMember = TeamMember> {
     return true;
   }
 
-  isAvailableEffect(condition?: TeamConditions) {
+  isAvailableEffect(condition?: TeamConditionSpecs) {
     if (!condition) {
       return true;
     }

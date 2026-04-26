@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import type { IArtifactBuffCtrl, IArtifactDebuffCtrl, IDbSetup } from "@/types";
+import type { ArtifactBuffCtrl, ArtifactDebuffCtrl, DbSetup } from "@/types";
 import type { SetupOverviewInfo } from "./types";
 
 import { calculateSetup } from "@/calculation/calculator";
@@ -13,7 +13,7 @@ import { SetupModals } from "./SetupModals";
 
 type SelectedResultProps = {
   setup: SetupOverviewInfo["setup"];
-  dbSetup: IDbSetup;
+  dbSetup: DbSetup;
 };
 
 export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
@@ -22,7 +22,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
     const { teammates } = setup;
     const { data, weapon, atfGear } = setup.main;
 
-    const artBuffCtrls: IArtifactBuffCtrl[] = [];
+    const artBuffCtrls: ArtifactBuffCtrl[] = [];
 
     for (const ctrl of dbSetup.artBuffCtrls) {
       const setData = atfGear.sets.find((set) => set.data.code === ctrl.code)?.data;
@@ -33,7 +33,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
       }
     }
 
-    const artDebuffCtrls: IArtifactDebuffCtrl[] = [];
+    const artDebuffCtrls: ArtifactDebuffCtrl[] = [];
 
     for (const ctrl of dbSetup.artDebuffCtrls) {
       const setData = $AppArtifact.getSet(ctrl.code)!;

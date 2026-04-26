@@ -3,9 +3,9 @@ import { Array_ } from "ron-utils";
 
 import type {
   ArtifactType,
-  IDbCharacter,
-  IDbComplexSetup,
-  IDbSetup,
+  DbCharacter,
+  DbComplexSetup,
+  DbSetup,
   RawArtifact,
   RawWeapon,
 } from "@/types";
@@ -35,10 +35,10 @@ import { Artifact, Ascendable, Weapon } from "@/models";
 import IdStore from "@/utils/IdStore";
 
 export type UserdbState = {
-  userChars: IDbCharacter[];
+  userChars: DbCharacter[];
   userWps: RawWeapon[];
   userArts: RawArtifact[];
-  userSetups: (IDbSetup | IDbComplexSetup)[];
+  userSetups: (DbSetup | DbComplexSetup)[];
   chosenChar: number;
   chosenSetupID: number;
 };
@@ -86,7 +86,7 @@ export const userdbSlice = createSlice({
       const character = createCharacter({ code }, data, { state: characterState });
 
       const foundIndex = state.userChars.findIndex((char) => char.code === code);
-      const dbCharacter: IDbCharacter = {
+      const dbCharacter: DbCharacter = {
         ...character.serialize(),
         weaponID: weaponID || Date.now(),
         artifactIDs,

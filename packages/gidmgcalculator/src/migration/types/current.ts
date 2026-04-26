@@ -1,15 +1,15 @@
 import type {
   RawArtifact,
-  IDbCharacter,
-  IDbComplexSetup,
-  IDbSetup,
+  DbCharacter,
+  DbComplexSetup,
+  DbSetup,
   RawWeapon,
 } from "@/types";
 
 export type CurrentDatabaseData = {
   version: number;
-  characters: IDbCharacter[];
+  characters: DbCharacter[];
   weapons: RawWeapon[];
   artifacts: RawArtifact[];
-  setups: (IDbSetup | IDbComplexSetup)[];
+  setups: (DbSetup | DbComplexSetup)[];
 };

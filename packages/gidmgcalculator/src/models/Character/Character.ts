@@ -9,11 +9,11 @@ import type {
   CharacterBuff,
   CharacterDebuff,
   CharacterStateData,
-  EffectPerformableCondition,
-  EffectReceiverConditions,
-  EntityBonus,
-  EntityBonusEffect,
-  EntityPenaltyEffect,
+  EffectPerformableConditionSpecs,
+  EffectReceiverConditionSpecs,
+  BonusSpec,
+  BonusCoreSpec,
+  PenaltyCoreSpec,
   Level,
   LevelableTalentType,
   QuickenReaction,
@@ -44,11 +44,11 @@ type BonusMonoRecord = {
 
 export type ReceivedAttributeBonus = Omit<AttributeBonus, "toStat"> & {
   toStat: AttributeBonus["toStat"] | "OWN_ELMT";
-  effectSrc: EntityBonus<EntityBonusEffect>;
+  effectSrc: BonusSpec;
 };
 
 export type ReceivedAttackBonus = AttackBonus & {
-  effectSrc: EntityBonus<EntityBonusEffect>;
+  effectSrc: BonusSpec;
 };
 
 export type CharacterConstructOptions = Pick<CharacterStateContructOptions, "levelBonuses"> & {
@@ -179,7 +179,7 @@ export class Character implements TeamMember, Clonable<Character> {
 
   // ===== PERFORM EFFECTS =====
 
-  canPerformEffect(condition?: EffectPerformableCondition, inputs: number[] = []): boolean {
+  canPerformEffect(condition?: EffectPerformableConditionSpecs, inputs: number[] = []): boolean {
     if (!condition) {
       return true;
     }
@@ -225,11 +225,11 @@ export class Character implements TeamMember, Clonable<Character> {
     return true;
   }
 
-  performBonus(config: EntityBonusEffect, tools: Partial<BonusPerformTools>) {
+  performBonus(config: BonusCoreSpec, tools: Partial<BonusPerformTools>) {
     return new BonusCalc(this, this.team, tools).makeBonus(config);
   }
 
-  performPenalty(config: EntityPenaltyEffect, inputs?: number[]) {
+  performPenalty(config: PenaltyCoreSpec, inputs?: number[]) {
     return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
   }
 
@@ -243,7 +243,7 @@ export class Character implements TeamMember, Clonable<Character> {
 
   // ===== RECEIVE BONUSES =====
 
-  canReceiveEffect(condition: EffectReceiverConditions) {
+  canReceiveEffect(condition: EffectReceiverConditionSpecs) {
     const { data } = this;
 
     if (condition.forNation && condition.forNation !== data.nation) {

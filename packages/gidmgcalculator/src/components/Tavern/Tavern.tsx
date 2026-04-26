@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { Modal } from "rond";
 
-import type { AppCharacter, IDbCharacter } from "@/types";
+import type { AppCharacter, DbCharacter } from "@/types";
 
 import { $AppCharacter } from "@/services";
 import { useStoreSnapshot } from "@/lib/dynamic-store";
@@ -16,7 +16,7 @@ import {
 import { CharacterFilter, CharacterFilterState } from "./CharacterFilter";
 
 export type TavernSelectedCharacter = {
-  userData?: IDbCharacter;
+  userData?: DbCharacter;
   data: AppCharacter;
 };
 

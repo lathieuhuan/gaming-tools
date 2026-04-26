@@ -1,6 +1,6 @@
 import { Object_ } from "ron-utils";
 
-import type { IArtifactDebuffCtrl } from "@/types";
+import type { ArtifactDebuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateActiveSetup } from "@Store/calculator/actions";
@@ -14,7 +14,7 @@ export default function DebuffArtifact() {
     Object_.extract(selectSetup(state), ["artDebuffCtrls"])
   );
 
-  const handleUpdateCtrls = (newCtrls: IArtifactDebuffCtrl[]) => {
+  const handleUpdateCtrls = (newCtrls: ArtifactDebuffCtrl[]) => {
     updateActiveSetup((setup) => {
       setup.artDebuffCtrls = newCtrls;
     });
@@ -25,7 +25,7 @@ export default function DebuffArtifact() {
       mutable
       artDebuffCtrls={artDebuffCtrls}
       getHanlders={(ctrl) => {
-        const extraCheck = (ctrlItem: IArtifactDebuffCtrl) => ctrlItem.code === ctrl.code;
+        const extraCheck = (ctrlItem: ArtifactDebuffCtrl) => ctrlItem.code === ctrl.code;
 
         return {
           onToggle: () => {

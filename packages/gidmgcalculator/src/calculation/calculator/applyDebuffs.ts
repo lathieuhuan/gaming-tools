@@ -1,7 +1,7 @@
 import { Array_ } from "ron-utils";
 
 import type { CalcSetup, Character, TargetCalc, Teammate } from "@/models";
-import type { ElementType, EntityDebuff, EntityPenaltyTarget, ResistReductionKey } from "@/types";
+import type { ElementType, DebuffSpec, PenaltyTargetsSpec, ResistReductionKey } from "@/types";
 import type { IEffectPerformer } from "../types";
 
 import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants/global";
@@ -16,7 +16,7 @@ export function applyDebuffs(
 
   // ↓↓↓↓↓ HELPERS ↓↓↓↓↓
 
-  function getReductionPaths(targets: EntityPenaltyTarget[], inputs: number[]) {
+  function getReductionPaths(targets: PenaltyTargetsSpec[], inputs: number[]) {
     const paths = new Set<ResistReductionKey>();
 
     for (const target of targets) {
@@ -54,12 +54,12 @@ export function applyDebuffs(
   function applyPenalty(
     label: string,
     performer: IEffectPerformer,
-    effects: EntityDebuff["effects"] = [],
+    effects: DebuffSpec["effects"] = [],
     inputs: number[] = []
   ) {
     for (const effect of Array_.toArray(effects)) {
       if (team.isAvailableEffect(effect) && performer.canPerformEffect(effect, inputs)) {
-        const targets: EntityPenaltyTarget[] =
+        const targets: PenaltyTargetsSpec[] =
           effect.targets === "OWN_ELMT" ? [main.data.vision] : Array_.toArray(effect.targets);
 
         const reductionPaths = getReductionPaths(targets, inputs);

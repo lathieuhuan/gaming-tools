@@ -1,4 +1,4 @@
-import type { CharacterBonusEffect, CharacterInnateBuff, ElementType, EntityBonus } from "@/types";
+import type { CharacterInnateBuff, ElementType, BonusSpec } from "@/types";
 
 export const NO_DESCRIPTION_MSG = "[Description missing]";
 
@@ -52,7 +52,7 @@ type ResonatedElmtBuff = {
     ElementType,
     {
       description: string;
-      effects: EntityBonus<CharacterBonusEffect>;
+      effects: BonusSpec;
     }
   >;
 };

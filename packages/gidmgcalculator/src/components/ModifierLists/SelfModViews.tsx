@@ -1,11 +1,11 @@
 import type { Character, Team } from "@/models";
-import type { IAbilityBuffCtrl, IAbilityDebuffCtrl } from "@/types";
+import type { AbilityBuffCtrl, AbilityDebuffCtrl } from "@/types";
 import type { ModifierHanlders } from "./types";
 
 import { GenshinModifierView } from "../GenshinModifierView";
 import { ModifierContainer } from "./ModifierContainer";
 
-type SelfModsViewProps<T extends IAbilityBuffCtrl | IAbilityDebuffCtrl> = {
+type SelfModsViewProps<T extends AbilityBuffCtrl | AbilityDebuffCtrl> = {
   mutable?: boolean;
   character: Character;
   team: Team;
@@ -15,7 +15,7 @@ type SelfModsViewProps<T extends IAbilityBuffCtrl | IAbilityDebuffCtrl> = {
 
 type RenderDescFn<T> = (ctrl: T) => string;
 
-function getSelfModifierElmts<T extends IAbilityBuffCtrl | IAbilityDebuffCtrl>(
+function getSelfModifierElmts<T extends AbilityBuffCtrl | AbilityDebuffCtrl>(
   props: SelfModsViewProps<T>,
   renderDesc: RenderDescFn<T>
 ) {
@@ -42,11 +42,11 @@ function getSelfModifierElmts<T extends IAbilityBuffCtrl | IAbilityDebuffCtrl>(
   });
 }
 
-export function SelfBuffsView(props: SelfModsViewProps<IAbilityBuffCtrl>) {
+export function SelfBuffsView(props: SelfModsViewProps<AbilityBuffCtrl>) {
   const { character, team } = props;
   const { innateBuffs = [] } = character.data;
 
-  const renderDesc: RenderDescFn<IAbilityBuffCtrl> = (ctrl) => {
+  const renderDesc: RenderDescFn<AbilityBuffCtrl> = (ctrl) => {
     return character.parseBuffDesc(ctrl.data, ctrl.inputs);
   };
 
@@ -71,8 +71,8 @@ export function SelfBuffsView(props: SelfModsViewProps<IAbilityBuffCtrl>) {
   );
 }
 
-export function SelfDebuffsView(props: SelfModsViewProps<IAbilityDebuffCtrl>) {
-  const renderDesc: RenderDescFn<IAbilityDebuffCtrl> = (ctrl) => {
+export function SelfDebuffsView(props: SelfModsViewProps<AbilityDebuffCtrl>) {
+  const renderDesc: RenderDescFn<AbilityDebuffCtrl> = (ctrl) => {
     return props.character.parseDebuffDesc(ctrl.data, ctrl.inputs);
   };
 

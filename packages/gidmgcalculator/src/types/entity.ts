@@ -8,14 +8,7 @@ import type {
   Level,
   WeaponType,
 } from "./common";
-import {
-  CustomBuffCtrl,
-  CustomDebuffCtrl,
-  ElementalEvent,
-  IArtifactModCtrlBasic,
-  IModifierCtrlBasic,
-  ResonanceModCtrl,
-} from "./modifiers";
+import type { ModifierCtrlState } from "./modifier-controls";
 
 export type EquipmentRelationData = {
   owner?: number;
@@ -104,19 +97,19 @@ export type TeammateStateData = {
 };
 
 export type RawTeammate = TeammateStateData & {
-  buffCtrls: IModifierCtrlBasic[];
-  debuffCtrls: IModifierCtrlBasic[];
+  buffCtrls: ModifierCtrlState[];
+  debuffCtrls: ModifierCtrlState[];
   weapon: TeammateWeaponState & {
-    buffCtrls: IModifierCtrlBasic[];
+    buffCtrls: ModifierCtrlState[];
   };
   artifact?: TeammateArtifactState & {
-    buffCtrls: IModifierCtrlBasic[];
+    buffCtrls: ModifierCtrlState[];
   };
 };
 
 // ========== TARGET ==========
 
-export type ITargetBasic = {
+export type RawTarget = {
   code: number;
   level: number;
   variantType?: ElementType;
@@ -124,28 +117,6 @@ export type ITargetBasic = {
   resistances: Record<AttackElement, number>;
 };
 
-export type ITarget = ITargetBasic & {
+export type TargetData = RawTarget & {
   data: AppMonster;
-};
-
-// ========== SETUP ==========
-
-export type ISetupBasic = {
-  main: RawCharacter;
-  selfBuffCtrls: IModifierCtrlBasic[];
-  selfDebuffCtrls: IModifierCtrlBasic[];
-
-  wpBuffCtrls: IModifierCtrlBasic[];
-  artBuffCtrls: IArtifactModCtrlBasic[];
-  artDebuffCtrls: IArtifactModCtrlBasic[];
-
-  teammates: RawTeammate[];
-  teamBuffCtrls: IModifierCtrlBasic[];
-  rsnBuffCtrls: ResonanceModCtrl[];
-  rsnDebuffCtrls: ResonanceModCtrl[];
-
-  elmtEvent: ElementalEvent;
-  customBuffCtrls: CustomBuffCtrl[];
-  customDebuffCtrls: CustomDebuffCtrl[];
-  target: ITargetBasic;
 };

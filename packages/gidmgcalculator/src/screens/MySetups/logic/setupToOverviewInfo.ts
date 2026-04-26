@@ -1,4 +1,4 @@
-import type { IDbComplexSetup, IDbSetup } from "@/types";
+import type { DbComplexSetup, DbSetup } from "@/types";
 import type { UserdbState } from "@Store/userdbSlice";
 import type { SetupOverviewInfo } from "../types";
 
@@ -7,7 +7,7 @@ import { isDbSetup } from "@/logic/setup.logic";
 import { makeCharacterCalcFromDb } from "@/logic/userdb.logic";
 import { Team } from "@/models/Team";
 
-function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOverviewInfo["setup"] {
+function toSetupOverview(setup: DbSetup, userDb: UserdbState): SetupOverviewInfo["setup"] {
   const { userWps, userArts } = userDb;
 
   const main = makeCharacterCalcFromDb(setup.main, userWps, userArts);
@@ -29,7 +29,7 @@ function toSetupOverview(setup: IDbSetup, userDb: UserdbState): SetupOverviewInf
 }
 
 export function setupToOverviewInfo(
-  setup: IDbSetup | IDbComplexSetup,
+  setup: DbSetup | DbComplexSetup,
   userDb: UserdbState
 ): SetupOverviewInfo | null {
   if (isDbSetup(setup)) {

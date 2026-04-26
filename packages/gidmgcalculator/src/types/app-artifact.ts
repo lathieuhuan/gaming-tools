@@ -1,4 +1,4 @@
-import type { EntityBonusEffect, EntityBuff, EntityDebuff, EntityPenaltyEffect } from "./app-entity";
+import type { BuffSpec, DebuffSpec } from "./modifier-specs";
 
 export type AppArtifact = {
   /** This is id */
@@ -29,20 +29,16 @@ type SetBonus = {
 
 // ========== BUFF / BONUS ==========
 
-type ArtifactBonusEffect = EntityBonusEffect;
+export type ArtifactModDescription = string | number | number[];
 
-export type ArtifactModifierDescription = string | number | number[];
-
-export type ArtifactBuff = EntityBuff<ArtifactBonusEffect> & {
+export type ArtifactBuff = BuffSpec & {
   /** 0 is 2-piece set, 1 is 4-piece set. Default 1 */
   bonusLv?: number;
-  description: ArtifactModifierDescription;
+  description: ArtifactModDescription;
 };
 
 // ============ DEBUFF / PENALTY ============
 
-type ArtifactPenaltyEffect = EntityPenaltyEffect;
-
-export type ArtifactDebuff = EntityDebuff<ArtifactPenaltyEffect> & {
-  description: ArtifactModifierDescription;
+export type ArtifactDebuff = DebuffSpec & {
+  description: ArtifactModDescription;
 };

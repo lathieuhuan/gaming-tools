@@ -1,7 +1,7 @@
 import { Array_ } from "ron-utils";
 
 import type { CalcSetup } from "@/models";
-import type { IDbComplexSetup, IDbSetup } from "@/types";
+import type { DbComplexSetup, DbSetup } from "@/types";
 import type { UserdbState } from "@Store/userdbSlice";
 
 import { MAX_USER_ARTIFACTS, MAX_USER_SETUPS, MAX_USER_WEAPONS } from "@/constants/config";
@@ -18,7 +18,7 @@ export type ValidationError = {
   message: string;
 };
 
-export function validateTeammates(setup: CalcSetup, existedSetup: IDbSetup | IDbComplexSetup) {
+export function validateTeammates(setup: CalcSetup, existedSetup: DbSetup | DbComplexSetup) {
   const errors: ValidationError[] = [];
 
   if (isDbSetup(existedSetup) && existedSetup.type === "combined") {

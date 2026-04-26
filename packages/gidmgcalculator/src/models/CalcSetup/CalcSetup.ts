@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { AppCharacter, ITeammateInfo, TalentCalcItem, TeamMember } from "@/types";
+import type { AppCharacter, TeammateData, TalentCalcItem, TeamMember } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
 
 import { calculateSetup } from "@/calculation/calculator";
@@ -20,23 +20,23 @@ import { ArtifactGear } from "../ArtifactGear";
 import { Character } from "../Character";
 import { Team } from "../Team";
 import { Teammate, type TeammateConstructOptions } from "../Teammate";
-import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
+import { CalcSetupBase, type CalcSetupBaseConstructData } from "./CalcSetupBase";
 
 type TeammateUpdateData = Partial<
-  Pick<ITeammateInfo, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
+  Pick<TeammateData, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
 >;
 
 type CloneOptions = {
   ID?: number;
 };
 
-export type CalcSetupConstructInfo = PartiallyRequiredOnly<CalcSetupBaseConstructInfo, "main">;
+export type CalcSetupConstructData = PartiallyRequiredOnly<CalcSetupBaseConstructData, "main">;
 
 export class CalcSetup extends CalcSetupBase {
   //
   calcItems: TalentCalcItem[] = [];
 
-  constructor(info: CalcSetupConstructInfo) {
+  constructor(info: CalcSetupConstructData) {
     const { main } = info;
     const {
       ID = Date.now(),
