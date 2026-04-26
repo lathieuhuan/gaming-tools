@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { ElementType, ModInputConfig } from "@/types";
+import type { ElementType, ModInputSpec } from "@/types";
 
 import { parseDescription } from "@/utils/descriptionParsers";
 import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinModifierView";
@@ -8,7 +8,7 @@ import { GenshinModifierView, type GenshinModifierViewProps } from "../GenshinMo
 type RenderInfo = {
   heading: string;
   desc: string | string[];
-  inputConfigs?: ModInputConfig[];
+  inputConfigs?: ModInputSpec[];
 };
 
 export const RESONANCE_BUFFS: Record<string, RenderInfo> = {

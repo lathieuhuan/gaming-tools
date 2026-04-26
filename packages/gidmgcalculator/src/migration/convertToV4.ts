@@ -2,20 +2,20 @@ import { Array_ } from "ron-utils";
 
 import type {
   ElementalEvent,
-  IArtifactModCtrlBasic,
-  IDbComplexSetup,
-  IModifierCtrlBasic,
+  ArtifactModCtrlState,
+  DbComplexSetup,
+  ModifierCtrlState,
   ResonanceModCtrl,
 } from "@/types";
 import type { DatabaseDataV3_1 } from "./types/v3_1";
 import type { DatabaseDataV4, IDbSetup, ITeammateBasic } from "./types/v4";
 
-type V3_1Setup = Exclude<DatabaseDataV3_1["setups"][number], IDbComplexSetup>;
+type V3_1Setup = Exclude<DatabaseDataV3_1["setups"][number], DbComplexSetup>;
 type V3_1ModifierCtrl = V3_1Setup["selfBuffCtrls"][number];
 type V3_1ArtifactModifierCtrl = V3_1Setup["artBuffCtrls"][number];
 type V3_1Teammate = NonNullable<V3_1Setup["party"][number]>;
 
-function convertModifierCtrl(ctrl: V3_1ModifierCtrl): IModifierCtrlBasic {
+function convertModifierCtrl(ctrl: V3_1ModifierCtrl): ModifierCtrlState {
   return {
     id: ctrl.index,
     activated: ctrl.activated,
@@ -23,7 +23,7 @@ function convertModifierCtrl(ctrl: V3_1ModifierCtrl): IModifierCtrlBasic {
   };
 }
 
-function convertArtifactModifierCtrl(ctrl: V3_1ArtifactModifierCtrl): IArtifactModCtrlBasic {
+function convertArtifactModifierCtrl(ctrl: V3_1ArtifactModifierCtrl): ArtifactModCtrlState {
   return {
     id: ctrl.index,
     activated: ctrl.activated,
@@ -110,7 +110,7 @@ function convertSetup(setup: V3_1Setup): IDbSetup {
   };
 }
 
-function isComplexSetup(setup: DatabaseDataV3_1["setups"][number]): setup is IDbComplexSetup {
+function isComplexSetup(setup: DatabaseDataV3_1["setups"][number]): setup is DbComplexSetup {
   return setup.type === "complex";
 }
 

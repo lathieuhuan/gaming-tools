@@ -7,17 +7,17 @@ import type {
   AppWeapon,
   ArtifactGearSet,
   ElementalEvent,
-  EntityModifier,
-  IAbilityBuffCtrl,
-  IAbilityDebuffCtrl,
-  IArtifactBuffCtrl,
-  IArtifactDebuffCtrl,
-  IModifierCtrl,
-  IModifierCtrlBasic,
-  ITeamBuffCtrl,
-  IWeaponBuffCtrl,
-  ModifierAffectType,
-  ModInputConfig,
+  ModifierBaseSpec,
+  AbilityBuffCtrl,
+  AbilityDebuffCtrl,
+  ArtifactBuffCtrl,
+  ArtifactDebuffCtrl,
+  ModifierCtrl,
+  ModifierCtrlState,
+  TeamBuffCtrl,
+  WeaponBuffCtrl,
+  ModAffectType,
+  ModInputSpec,
   ModInputType,
   ResonanceModCtrl,
 } from "@/types";
@@ -39,7 +39,7 @@ function getDefaultInitValue(type: ModInputType) {
 }
 
 export function createModCtrlInputs(
-  inputConfigs: ModInputConfig[] = [],
+  inputConfigs: ModInputSpec[] = [],
   forSelf = true,
   useMaxValue = false
 ) {
@@ -69,7 +69,7 @@ export function createModCtrlInputs(
 
 export function createModCtrl(forSelf: boolean) {
   //
-  return <T extends EntityModifier>(mod: T): IModifierCtrlBasic & { data: T } => {
+  return <T extends ModifierBaseSpec>(mod: T): ModifierCtrlState & { data: T } => {
     const inputs = createModCtrlInputs(mod.inputConfigs, forSelf);
 
     return {
@@ -81,7 +81,7 @@ export function createModCtrl(forSelf: boolean) {
   };
 }
 
-export function createTeamBuffCtrls(setup: CalcSetup): ITeamBuffCtrl[] {
+export function createTeamBuffCtrls(setup: CalcSetup): TeamBuffCtrl[] {
   const { team, artBuffCtrls = [] } = setup;
 
   // Find available team buff ids
@@ -113,17 +113,17 @@ export function createTeamBuffCtrls(setup: CalcSetup): ITeamBuffCtrl[] {
   );
 }
 
-type RefModifier = EntityModifier & {
-  affect?: ModifierAffectType;
+type RefModifier = ModifierBaseSpec & {
+  affect?: ModAffectType;
 };
 
 function filterFor(forSelf: boolean) {
-  const undesiredAffect: ModifierAffectType = forSelf ? "TEAMMATE" : "SELF";
+  const undesiredAffect: ModAffectType = forSelf ? "TEAMMATE" : "SELF";
 
   return (modifier: RefModifier) => !modifier.affect || modifier.affect !== undesiredAffect;
 }
 
-export function createAbilityBuffCtrls(data: AppCharacter, forSelf: boolean): IAbilityBuffCtrl[] {
+export function createAbilityBuffCtrls(data: AppCharacter, forSelf: boolean): AbilityBuffCtrl[] {
   const { buffs = [] } = data || {};
 
   return Array_.filterMap(buffs, filterFor(forSelf), createModCtrl(forSelf));
@@ -132,20 +132,20 @@ export function createAbilityBuffCtrls(data: AppCharacter, forSelf: boolean): IA
 export function createAbilityDebuffCtrls(
   data: AppCharacter,
   forSelf: boolean
-): IAbilityDebuffCtrl[] {
+): AbilityDebuffCtrl[] {
   return data.debuffs?.map(createModCtrl(forSelf)) || [];
 }
 
 export function createWeaponBuffCtrls(
   weapon: AppWeapon | undefined,
   forSelf: boolean
-): IWeaponBuffCtrl[] {
+): WeaponBuffCtrl[] {
   const { buffs = [] } = weapon || {};
   return Array_.filterMap(buffs, filterFor(forSelf), createModCtrl(forSelf));
 }
 
-export function createMainArtifactBuffCtrls(sets: ArtifactGearSet[]): IArtifactBuffCtrl[] {
-  const ctrls: IArtifactBuffCtrl[] = [];
+export function createMainArtifactBuffCtrls(sets: ArtifactGearSet[]): ArtifactBuffCtrl[] {
+  const ctrls: ArtifactBuffCtrl[] = [];
 
   for (const set of sets) {
     const { buffs = [] } = set.data;
@@ -170,7 +170,7 @@ export function createArtifactBuffCtrls(
   artifact: AppArtifact | undefined,
   forSelf: boolean,
   maxBonusLv = 1
-): IArtifactBuffCtrl[] {
+): ArtifactBuffCtrl[] {
   if (artifact?.buffs) {
     return Array_.filterMap(
       artifact.buffs,
@@ -187,7 +187,7 @@ export function createArtifactBuffCtrls(
 }
 
 export function createArtifactDebuffCtrls(sets: ArtifactGearSet[], teammates: Teammate[]) {
-  const ctrls: IArtifactDebuffCtrl[] = [];
+  const ctrls: ArtifactDebuffCtrl[] = [];
   const vvArtifact = $AppArtifact.vvArtifact;
   const deepwoodArtifact = $AppArtifact.deepwoodArtifact;
   const usedCodeSet = new Set<number>();
@@ -271,14 +271,14 @@ export function createElementalEvent(): ElementalEvent {
   };
 }
 
-export function enhanceCtrls<T extends EntityModifier, TExtra extends object = {}>(
-  ctrls: IModifierCtrlBasic[],
+export function enhanceCtrls<T extends ModifierBaseSpec, TExtra extends object = {}>(
+  ctrls: ModifierCtrlState[],
   mods?: T[],
   extraProps: TExtra = {} as TExtra,
-  extraCheck: (ctrl: IModifierCtrlBasic, mod: T) => boolean = () => true
+  extraCheck: (ctrl: ModifierCtrlState, mod: T) => boolean = () => true
 ) {
   if (mods) {
-    return ctrls.reduce<(IModifierCtrl<T> & TExtra)[]>((result, ctrl) => {
+    return ctrls.reduce<(ModifierCtrl<T> & TExtra)[]>((result, ctrl) => {
       const data = mods.find((mod) => mod.index === ctrl.id && extraCheck(ctrl, mod));
       return data ? result.concat({ ...ctrl, data, ...extraProps }) : result;
     }, []);

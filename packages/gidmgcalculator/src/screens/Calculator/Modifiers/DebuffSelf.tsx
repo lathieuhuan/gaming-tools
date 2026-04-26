@@ -1,6 +1,6 @@
 import { Object_ } from "ron-utils";
 
-import type { IAbilityDebuffCtrl } from "@/types";
+import type { AbilityDebuffCtrl } from "@/types";
 
 import { useShallowCalcStore } from "@Store/calculator";
 import { updateActiveSetup } from "@Store/calculator/actions";
@@ -14,7 +14,7 @@ export default function DebuffSelf() {
     return Object_.extract(selectSetup(state), ["main", "team", "selfDebuffCtrls"]);
   });
 
-  const handleUpdateCtrls = (newCtrls: IAbilityDebuffCtrl[]) => {
+  const handleUpdateCtrls = (newCtrls: AbilityDebuffCtrl[]) => {
     updateActiveSetup((setup) => {
       setup.selfDebuffCtrls = newCtrls;
     });

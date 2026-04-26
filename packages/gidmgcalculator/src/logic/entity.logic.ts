@@ -10,9 +10,9 @@ import type {
   ArtifactStateData,
   CharacterStateData,
   EquipmentRelationData,
-  IAbilityBuffCtrl,
-  IAbilityDebuffCtrl,
-  ITargetBasic,
+  AbilityBuffCtrl,
+  AbilityDebuffCtrl,
+  RawTarget,
   MonsterInputChanges,
   RawArtifact,
   RawCharacter,
@@ -175,11 +175,11 @@ export function createTeammate(
     };
   }
 
-  const buffCtrls: IAbilityBuffCtrl[] = raw.buffCtrls
+  const buffCtrls: AbilityBuffCtrl[] = raw.buffCtrls
     ? enhanceCtrls(raw.buffCtrls, data.buffs)
     : createAbilityBuffCtrls(data, false);
 
-  const debuffCtrls: IAbilityDebuffCtrl[] = raw.debuffCtrls
+  const debuffCtrls: AbilityDebuffCtrl[] = raw.debuffCtrls
     ? enhanceCtrls(raw.debuffCtrls, data.debuffs)
     : createAbilityDebuffCtrls(data, false);
 
@@ -206,9 +206,9 @@ export function createTeammate(
 
 // ========== TARGET ==========
 
-export type CreateTargetParams = PartiallyRequiredOnly<ITargetBasic, "code">;
+export type CreateTargetParams = PartiallyRequiredOnly<RawTarget, "code">;
 
-export const createTargetBasic = (params: CreateTargetParams): ITargetBasic => {
+export const createTargetBasic = (params: CreateTargetParams): RawTarget => {
   const {
     level = useSettingsStore.getState().targetLevel,
     resistances = {

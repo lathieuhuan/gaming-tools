@@ -1,5 +1,5 @@
 import type { Artifact, Weapon } from "@/models";
-import type { RawArtifact, RawCharacter, IDbCharacter, RawWeapon } from "@/types";
+import type { RawArtifact, RawCharacter, DbCharacter, RawWeapon } from "@/types";
 import type { GOODCharacterConvertReturn } from "@/logic/converGOOD.logic";
 
 // ===== Saving Step =====
@@ -7,7 +7,7 @@ import type { GOODCharacterConvertReturn } from "@/logic/converGOOD.logic";
 export type CharacterSavingStep = {
   type: "CHARACTER";
   data: GOODCharacterConvertReturn;
-  current?: IDbCharacter;
+  current?: DbCharacter;
 };
 
 export type WeaponSavingStep = {

@@ -3,54 +3,57 @@ import type { CharacterBuff, CharacterDebuff } from "./app-character";
 import type { AppTeamBuff } from "./app-team-buff";
 import type { WeaponBuff } from "./app-weapon";
 import type {
+  AmplifyingReaction,
   AttackBonusKey,
   AttackPattern,
   AttributeStat,
   ElementType,
   LunarType,
+  QuickenReaction,
   ReactionType,
   ResistReductionKey,
 } from "./common";
-import type { AttackReaction } from "./calculation/calculation-common";
 
-export type IModifierCtrlBasic = {
+export type ModifierCtrlState = {
   id: number;
   activated: boolean;
   inputs?: number[];
 };
 
-export type IModifierCtrl<T> = IModifierCtrlBasic & {
+export type ModifierCtrl<T> = ModifierCtrlState & {
   data: T;
 };
 
-export type IAbilityBuffCtrl = IModifierCtrl<CharacterBuff>;
+export type AbilityBuffCtrl = ModifierCtrl<CharacterBuff>;
 
-export type IAbilityDebuffCtrl = IModifierCtrl<CharacterDebuff>;
+export type AbilityDebuffCtrl = ModifierCtrl<CharacterDebuff>;
 
-export type IWeaponBuffCtrl = IModifierCtrl<WeaponBuff>;
+export type WeaponBuffCtrl = ModifierCtrl<WeaponBuff>;
 
-export type IArtifactModCtrlBasic = IModifierCtrlBasic & {
+export type ArtifactModCtrlState = ModifierCtrlState & {
   /** set code */
   code: number;
 };
 
-export type IArtifactModCtrl<T> = IModifierCtrl<T> & {
+export type ArtifactModCtrl<T> = ModifierCtrl<T> & {
   /** set code */
   code: number;
   setData: AppArtifact;
 };
 
-export type IArtifactBuffCtrl = IArtifactModCtrl<ArtifactBuff>;
+export type ArtifactBuffCtrl = ArtifactModCtrl<ArtifactBuff>;
 
-export type IArtifactDebuffCtrl = IArtifactModCtrl<ArtifactDebuff>;
+export type ArtifactDebuffCtrl = ArtifactModCtrl<ArtifactDebuff>;
 
-export type ITeamBuffCtrl = IModifierCtrl<AppTeamBuff>;
+export type TeamBuffCtrl = ModifierCtrl<AppTeamBuff>;
 
 export type ResonanceModCtrl = {
   element: ElementType;
   activated: boolean;
   inputs?: number[];
 };
+
+export type AttackReaction = AmplifyingReaction | QuickenReaction | null;
 
 export type ElementalEvent = {
   reaction: AttackReaction;
@@ -63,7 +66,7 @@ export type ElementalEvent = {
 
 export type CustomBuffCtrlCategory = "totalAttr" | "attPattBonus" | "attElmtBonus" | "rxnBonus";
 
-export type CustomBuffCtrlType = AttributeStat | "all" | AttackPattern | ReactionType | LunarType;
+export type CustomBuffCtrlType = "all" | AttributeStat | AttackPattern | ReactionType | LunarType;
 
 export type CustomBuffCtrl = {
   category: CustomBuffCtrlCategory;

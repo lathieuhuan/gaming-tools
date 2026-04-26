@@ -2,16 +2,16 @@ import type { Team } from "@/models";
 import type { AppArtifact, ArtifactBuff } from "../app-artifact";
 import type { AppCharacter } from "../app-character";
 import type {
-  EffectPerformableCondition
-} from "../app-entity";
+  EffectPerformableConditionSpecs
+} from "../modifier-specs";
 import type { AppWeapon } from "../app-weapon";
 import type { TeammateArtifactState, TeammateStateData, TeammateWeaponState } from "../entity";
 import type {
-  IAbilityBuffCtrl,
-  IAbilityDebuffCtrl,
-  IModifierCtrl,
-  IWeaponBuffCtrl,
-} from "../modifiers";
+  AbilityBuffCtrl,
+  AbilityDebuffCtrl,
+  ModifierCtrl,
+  WeaponBuffCtrl,
+} from "../modifier-controls";
 
 // ========== TEAM ==========
 
@@ -20,26 +20,26 @@ export type TeamMember = {
   enhanced: boolean;
   data: AppCharacter;
   joinTeam(team: Team): void;
-  canPerformEffect(condition?: EffectPerformableCondition, inputs?: number[]): boolean;
+  canPerformEffect(condition?: EffectPerformableConditionSpecs, inputs?: number[]): boolean;
 };
 
 // ========== TEAMMATE ==========
 
 export type TeammateWeapon = TeammateWeaponState & {
-  buffCtrls: IWeaponBuffCtrl[];
+  buffCtrls: WeaponBuffCtrl[];
   data: AppWeapon;
 };
 
-export type TeammateArtifactBuffCtrl = IModifierCtrl<ArtifactBuff>;
+export type TeammateArtifactBuffCtrl = ModifierCtrl<ArtifactBuff>;
 
 export type TeammateArtifact = TeammateArtifactState & {
   buffCtrls: TeammateArtifactBuffCtrl[];
   data: AppArtifact;
 };
 
-export type ITeammateInfo = TeammateStateData & {
-  buffCtrls: IAbilityBuffCtrl[];
-  debuffCtrls: IAbilityDebuffCtrl[];
+export type TeammateData = TeammateStateData & {
+  buffCtrls: AbilityBuffCtrl[];
+  debuffCtrls: AbilityDebuffCtrl[];
   weapon: TeammateWeapon;
   artifact?: TeammateArtifact;
 };

@@ -1,11 +1,11 @@
 import type { ElementType, EnhanceType, Nation, WeaponType } from "../common";
-import type { CharacterMilestone } from "./app-entity-common";
+import type { CharacterMilestone, TeamMilestone } from "./common-specs";
 
 export type ConditionComparison = "EQUAL" | "MIN" | "MAX";
 
 // ===== Team Conditions =====
 
-export type TeamElementConditions = {
+export type TeamElementConditionSpecs = {
   /** ['pyro', 'pyro'] => 1. On Ballad of the Fjords */
   teamTotalElmtCount?: {
     value: number;
@@ -13,7 +13,7 @@ export type TeamElementConditions = {
     elements?: ElementType[];
     comparison: ConditionComparison;
   };
-  /** ['pyro', 'pyro'] => 2. On Xilonen */
+  /** ['pyro', 'pyro'] => 2 */
   teamElmtTotalCount?: {
     value: number;
     elements: ElementType[];
@@ -27,38 +27,36 @@ export type TeamElementConditions = {
   varkaPHEC?: "AND" | "OR";
 };
 
-export type TeamMilestoneType = "MOONSIGN" | "WITCH_RITE";
-
-export type TeamMilestoneCondition =
-  | TeamMilestoneType
+export type TeamMilestoneConditionSpec =
+  | TeamMilestone
   | {
-      type: TeamMilestoneType;
+      type: TeamMilestone;
       /** Default 2 */
       value?: number;
       /** Default 'EQUAL' */
       comparison?: ConditionComparison;
     };
 
-export type TeamConditions = TeamElementConditions & {
-  checkTeamMs?: TeamMilestoneCondition;
+export type TeamConditionSpecs = TeamElementConditionSpecs & {
+  checkTeamMs?: TeamMilestoneConditionSpec;
 };
 
 // ===== Performer Condition =====
 
-export type EffectGrantedAtConfig = {
-  value: CharacterMilestone;
-  /** When this bonus is from teammate, this is input's index to check granted. */
-  altIndex?: number;
-  /** Default 1, or checked */
-  compareValue?: number;
-  /** Default 'EQUAL' */
-  comparison?: ConditionComparison;
-};
+type SelfMilestoneConditionSpec =
+  | CharacterMilestone
+  | {
+      value: CharacterMilestone;
+      /** When this bonus is from teammate, this is input's index to check granted. */
+      altIndex?: number;
+      /** Default 1, or checked */
+      compareValue?: number;
+      /** Default 'EQUAL' */
+      comparison?: ConditionComparison;
+    };
 
-export type EffectGrantedAt = CharacterMilestone | EffectGrantedAtConfig;
-
-export type EffectPerformerConditions = {
-  grantedAt?: EffectGrantedAt;
+export type EffectPerformerConditionSpecs = {
+  grantedAt?: SelfMilestoneConditionSpec;
   beEnhanced?: boolean;
   /** Special for Chain Breaker (bow) */
   checkMixed?: boolean;
@@ -70,7 +68,7 @@ export type EffectPerformerConditions = {
  * For the buff/bonus to be available, the input at the [inpIndex]
  * must meet [value] by [comparison] type.
  */
-export type InputCheck = {
+export type InputCheckSpec = {
   value: number;
   /** The index of input to check. Default 0. */
   inpIndex?: number;
@@ -78,21 +76,21 @@ export type InputCheck = {
   comparison?: ConditionComparison;
 };
 
-export type MultipleInputCheck = {
+export type MultipleInputCheckSpec = {
   relation: "AND" | "OR";
-  checks: (number | InputCheck)[];
+  checks: (number | InputCheckSpec)[];
 };
 
-export type EffectInputCondition = number | InputCheck | MultipleInputCheck;
+export type EffectInputConditionSpec = number | InputCheckSpec | MultipleInputCheckSpec;
 
-export type EffectInputConditions = {
+export type EffectInputConditionSpecs = {
   /** If number, the input at 0 must equal to the number */
-  checkInput?: EffectInputCondition;
+  checkInput?: EffectInputConditionSpec;
 };
 
 // ===== Receiver Condition =====
 
-export type EffectReceiverConditions = {
+export type EffectReceiverConditionSpecs = {
   forNation?: Nation;
   /** On Chongyun, 2 original artifacts */
   forWeapons?: WeaponType[];
@@ -110,10 +108,11 @@ export type EffectReceiverConditions = {
 
 // ===== Conclusion =====
 
-export type EffectPerformableCondition = TeamConditions &
-  EffectPerformerConditions &
-  EffectInputConditions & {
-    checkAny?: EffectPerformableCondition[];
+export type EffectPerformableConditionSpecs = EffectPerformerConditionSpecs &
+  EffectInputConditionSpecs & {
+    checkAny?: EffectPerformableConditionSpecs[];
   };
 
-export type EffectCondition = EffectPerformableCondition & EffectReceiverConditions;
+export type EffectConditionSpecs = TeamConditionSpecs &
+  EffectPerformableConditionSpecs &
+  EffectReceiverConditionSpecs;

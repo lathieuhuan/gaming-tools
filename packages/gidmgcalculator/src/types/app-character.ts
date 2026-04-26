@@ -1,12 +1,4 @@
 import type {
-  EffectCondition,
-  EntityBonusEffect,
-  EntityBuff,
-  EntityDebuff,
-  EntityPenaltyEffect,
-  InputCheck,
-} from "./app-entity";
-import type {
   ActualAttackElement,
   ActualAttackPattern,
   AttackPattern,
@@ -23,6 +15,7 @@ import type {
   TalentCalcItemBonusId,
   WeaponType,
 } from "./common";
+import type { BuffSpec, DebuffSpec, EffectConditionSpecs, InputCheckSpec } from "./modifier-specs";
 
 export type AppCharacter = {
   code: number;
@@ -93,7 +86,7 @@ type StatOther = {
 
 // COMMON
 
-type CharacterModifier = EffectCondition & {
+type CharacterModifierBase = EffectConditionSpecs & {
   src: string;
   description: string;
 };
@@ -135,16 +128,10 @@ export type TalentCalcItem = {
   lunar?: LunarType;
 };
 
-// type _TalentCalcItem = PartiallyOptional<TalentCalcItem, "type">;
-
 // ========== BUFF / BONUS ==========
 
-export type CharacterBonusEffect = EntityBonusEffect;
-
-export type CharacterInnateBuff = CharacterModifier & Pick<CharacterBuff, "effects">;
-
-export type AttackAlterConfigs = {
-  checkInput?: number | InputCheck;
+export type AttackAlterSpec = {
+  checkInput?: number | InputCheckSpec;
   /** Default "ALL" */
   forPatt?: "ALL" | NormalAttack | NormalAttack[] | TalentCalcItemBonusId[];
   attPatt?: AttackPattern;
@@ -152,13 +139,13 @@ export type AttackAlterConfigs = {
   disabled?: boolean;
 };
 
-export type CharacterBuff = EntityBuff<CharacterBonusEffect> &
-  CharacterModifier & {
-    alterConfigs?: AttackAlterConfigs | AttackAlterConfigs[];
+export type CharacterBuff = CharacterModifierBase &
+  BuffSpec & {
+    alterConfigs?: AttackAlterSpec | AttackAlterSpec[];
   };
+
+export type CharacterInnateBuff = CharacterModifierBase & Pick<BuffSpec, "effects">;
 
 // ============ DEBUFF / PENALTY ============
 
-type CharacterPenaltyEffect = EntityPenaltyEffect;
-
-export type CharacterDebuff = EntityDebuff<CharacterPenaltyEffect> & CharacterModifier;
+export type CharacterDebuff = CharacterModifierBase & DebuffSpec;

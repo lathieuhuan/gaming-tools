@@ -8,9 +8,9 @@ import type {
   AttributeTargetPath,
   BareBonus,
   BonusPerformTools,
-  EntityBonus,
-  EntityBonusEffect,
-  EntityBuff,
+  BonusSpec,
+  BonusCoreSpec,
+  BuffSpec,
   ReactionType,
 } from "@/types";
 import type { IEffectPerformer } from "../types";
@@ -32,18 +32,15 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
 
   // ↓↓↓↓↓ HELPERS ↓↓↓↓↓
 
-  function processBonus(
-    bonus: BareBonus,
-    effect: EntityBonus<EntityBonusEffect>,
-    inputs: number[] = [],
-    label: string
-  ) {
+  function processBonus(bonus: BareBonus, effect: BonusSpec, inputs: number[] = [], label: string) {
     if (!bonus.value) return;
 
     const { outsource } = bonus.config;
 
     if (outsource) {
-      bonus.value *= new BonusCalc(main, team, { inputs }).getStackValue(outsource.stacks);
+      const stacks = new BonusCalc(main, team, { inputs }).getStacks(outsource.stacks);
+
+      bonus.value *= stacks?.value ?? 1;
     }
 
     const getToStat = (path: AttributeTargetPath, inpIndex: number) => {
@@ -97,7 +94,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
   function applyBonus(
     label: string,
     performer: IEffectPerformer,
-    effects: EntityBuff["effects"] = [],
+    effects: BuffSpec["effects"] = [],
     support: Omit<Partial<BonusPerformTools>, "basedOnFixed">,
     isFinalStage?: boolean
   ) {
@@ -405,7 +402,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
   }
 }
 
-function isFinal(effect: EntityBonusEffect) {
+function isFinal(effect: BonusCoreSpec) {
   const { basedOn } = effect;
 
   if (basedOn) {
@@ -415,7 +412,7 @@ function isFinal(effect: EntityBonusEffect) {
   return false;
 }
 
-function isFinalEffect(bonus: EntityBonusEffect) {
+function isFinalEffect(bonus: BonusCoreSpec) {
   return (
     isFinal(bonus) ||
     (typeof bonus.preExtra === "object" && isFinal(bonus.preExtra)) ||

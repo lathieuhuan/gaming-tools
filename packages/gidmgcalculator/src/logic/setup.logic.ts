@@ -3,12 +3,12 @@ import { ExactOmit } from "rond";
 
 import type {
   BasicSetupType,
-  IArtifactBuffCtrl,
-  IDbComplexSetup,
-  IDbSetup,
-  IModifierCtrlBasic,
-  ISetupManager,
-  IWeaponBuffCtrl,
+  ArtifactBuffCtrl,
+  DbComplexSetup,
+  DbSetup,
+  ModifierCtrlState,
+  SetupManager,
+  WeaponBuffCtrl,
   RawTeammate,
   TeammateArtifact,
 } from "@/types";
@@ -19,15 +19,15 @@ import { enhanceCtrls } from "../logic/modifier.logic";
 import { createCharacter, createTarget, createTeammate } from "./entity.logic";
 import { createArtifactBuffCtrls } from "./modifier.logic";
 
-export function isDbSetup(setup: IDbSetup | IDbComplexSetup): setup is IDbSetup {
+export function isDbSetup(setup: DbSetup | DbComplexSetup): setup is DbSetup {
   return ["original", "combined"].includes(setup.type);
 }
 
-function toDbCtrls<TCtrl extends IModifierCtrlBasic, TExtraKeys extends keyof TCtrl>(
+function toDbCtrls<TCtrl extends ModifierCtrlState, TExtraKeys extends keyof TCtrl>(
   ctrls: TCtrl[],
   extraKeys: TExtraKeys[] = []
 ) {
-  const result: Array<IModifierCtrlBasic & { [K in TExtraKeys]: TCtrl[K] }> = [];
+  const result: Array<ModifierCtrlState & { [K in TExtraKeys]: TCtrl[K] }> = [];
 
   for (const ctrl of ctrls) {
     if (ctrl.activated) {
@@ -40,8 +40,8 @@ function toDbCtrls<TCtrl extends IModifierCtrlBasic, TExtraKeys extends keyof TC
 
 export function toDbSetup(
   setup: CalcSetup,
-  manager: Partial<ExactOmit<ISetupManager, "type">> & { type?: BasicSetupType } = {}
-): IDbSetup {
+  manager: Partial<ExactOmit<SetupManager, "type">> & { type?: BasicSetupType } = {}
+): DbSetup {
   const { ID = setup.ID, type = "original", name = "New setup" } = manager;
   const { main, target } = setup;
 
@@ -147,7 +147,7 @@ function restoreTeammate(teammate: RawTeammate, team: Team) {
   return standard;
 }
 
-export function restoreCalcSetup(data: IDbSetup, weapon: Weapon, atfGear: ArtifactGear) {
+export function restoreCalcSetup(data: DbSetup, weapon: Weapon, atfGear: ArtifactGear) {
   const team = new Team();
   const main = createCharacter(data.main, null, {
     state: data.main,

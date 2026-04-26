@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { Array_ } from "ron-utils";
 
 import { isDbSetup } from "@/logic/setup.logic";
-import type { IDbSetup, RawItem } from "@/types";
+import type { DbSetup, RawItem } from "@/types";
 
 // Store
 import { useDispatch, useSelector } from "@Store/hooks";
@@ -10,7 +10,7 @@ import { selectDbSetups, updateDbArtifact, updateDbWeapon } from "@Store/userdbS
 
 export type BoundingItem = Pick<RawItem, "ID" | "setupIDs">;
 
-export function useItemBoundSetups(item?: BoundingItem, isWeapon?: boolean): IDbSetup[] {
+export function useItemBoundSetups(item?: BoundingItem, isWeapon?: boolean): DbSetup[] {
   const dispatch = useDispatch();
   const userSetups = useSelector(selectDbSetups);
 
@@ -23,7 +23,7 @@ export function useItemBoundSetups(item?: BoundingItem, isWeapon?: boolean): IDb
       };
     }
 
-    const validSetups: IDbSetup[] = [];
+    const validSetups: DbSetup[] = [];
     const validSetupIDs: number[] = [];
     const invalidSetupIDs: number[] = [];
 

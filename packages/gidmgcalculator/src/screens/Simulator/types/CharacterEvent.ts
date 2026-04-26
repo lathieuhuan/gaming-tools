@@ -1,4 +1,4 @@
-import type { AttackReaction } from "@/types/calculation";
+import type { AttackReaction } from "@/types";
 import type { AttackElement, AttackPattern } from "@/types/common";
 
 type BaseEvent = {

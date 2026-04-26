@@ -2,28 +2,16 @@ import { Array_ } from "ron-utils";
 
 import type {
   BareBonus,
+  BonusAttributeScalingSpec,
+  BonusCoreSpec,
   BonusPerformTools,
-  EffectExtra,
-  EffectMax,
-  EffectPerformableCondition,
-  EntityBonusBasedOn,
-  EntityBonusBasedOnField,
-  EntityBonusEffect,
-  EntityBonusStack,
-  InputStack,
+  BonusScalingAttribute,
+  EffectMaxSpec,
   TeamMember,
 } from "@/types";
 import { Team } from "./Team";
 
 import { AbstractEffectValueCalc, EffectToGetInitialValue } from "./AbstractEffectValueCalc";
-
-const TEAM_DEPENDED_STACK_TYPES: EntityBonusStack["type"][] = [
-  "MEMBER",
-  // "ENERGY", // remove for now because Raiden needs it when the team is only her
-  "NATION",
-  "RESOLVE",
-  "MIX",
-];
 
 export abstract class AbstractBonusCalc<
   TPerformer extends TeamMember = TeamMember
@@ -43,80 +31,58 @@ export abstract class AbstractBonusCalc<
     this.basedOnFixed = basedOnFixed;
   }
 
-  private isPerformableEffect(condition?: EffectPerformableCondition) {
-    return (
-      this.team.isAvailableEffect(condition) &&
-      this.performer.canPerformEffect(condition, this.inputs)
-    );
-  }
-
   protected scaleRefi(base: number, increment = base / 3) {
     return base + increment * this.refi;
   }
 
-  protected parseBasedOn(config: EntityBonusBasedOn) {
+  protected parseBasedOn(config: BonusAttributeScalingSpec) {
     return typeof config === "string" ? { field: config } : config;
   }
 
-  protected abstract getBasedOn(config: EntityBonusBasedOn): {
-    field: EntityBonusBasedOnField;
+  protected abstract getBasedOn(config: BonusAttributeScalingSpec): {
+    field: BonusScalingAttribute;
     value: number;
     isDynamic: boolean;
   };
 
-  protected applyMax(value: number, config?: EffectMax) {
-    if (typeof config === "number") {
-      return Math.min(value, this.scaleRefi(config));
+  protected getMax(spec?: EffectMaxSpec) {
+    if (typeof spec === "number") {
+      return this.scaleRefi(spec);
     }
 
-    if (config) {
-      let finalMax = config.value;
+    if (spec) {
+      let finalMax = spec.value;
 
-      if (config.basedOn) {
-        finalMax *= this.getBasedOn(config.basedOn).value;
+      if (spec.basedOn) {
+        finalMax *= this.getBasedOn(spec.basedOn).value;
       }
-      finalMax += this.getExtra(config.extras);
-      finalMax = this.scaleRefi(finalMax, config.incre);
-      finalMax += this.getLevelIncre(config.lvIncre);
+      finalMax += this.getExtra(spec.extras);
+      finalMax = this.scaleRefi(finalMax, spec.incre);
 
-      return Math.min(value, finalMax);
+      const incre = this.getLevelIncre(spec.lvIncre);
+
+      finalMax = finalMax * incre.multiplier + incre.extra;
+
+      return finalMax;
     }
 
-    return value;
-  }
-
-  protected getExtra(extras: EffectExtra | EffectExtra[] = []) {
-    let result = 0;
-
-    for (const extra of Array_.toArray(extras)) {
-      if (this.isPerformableEffect(extra)) {
-        result += extra.value;
-      }
-    }
-
-    return result;
+    return Infinity;
   }
 
   getInitialValue(effect: EffectToGetInitialValue) {
-    const config = effect.value;
-    const lvScale = this.getLevelScale(effect.lvScale);
-    const lvIncre = this.getLevelIncre(effect.lvIncre);
+    const spec = effect.value;
+    const incre = this.getLevelIncre(effect.lvIncre);
 
-    if (typeof config === "number") {
-      return config * lvScale + lvIncre;
+    if (typeof spec === "number") {
+      return spec * incre.multiplier + incre.extra;
     }
-    const { options } = config;
-    let index = this.getIndexOfEffectValue(config);
 
-    index += this.getExtra(config.extra);
-    index = this.applyMax(index, config.max);
+    const index = this.getIndexOfEffectValue(spec);
 
-    const value = options[index] ?? (index > 0 ? options[options.length - 1] : 0);
-
-    return value * lvScale + lvIncre;
+    return this.itemAt(index, spec.options) * incre.multiplier + incre.extra;
   }
 
-  protected applyExtra(bonus: BareBonus, config?: number | EntityBonusEffect) {
+  protected applyExtra(bonus: BareBonus, config?: number | BonusCoreSpec) {
     if (typeof config === "number") {
       bonus.value += this.scaleRefi(config);
     } //
@@ -137,162 +103,47 @@ export abstract class AbstractBonusCalc<
     return 0;
   }
 
-  protected abstract getInputIndex(stack: InputStack): NonNullable<InputStack["index"]>;
-
-  getStackValue(stack?: EntityBonusStack) {
-    if (!stack) {
-      return 1;
-    }
-    const { inputs, performer, teammateElmtCount, team } = this;
-    const { members } = team;
-
-    if (TEAM_DEPENDED_STACK_TYPES.includes(stack.type) && members.length <= 1) {
-      return 0;
-    }
-
-    let result = 0;
-
-    switch (stack.type) {
-      case "INPUT": {
-        const inpIndex = this.getInputIndex(stack);
-
-        if (typeof inpIndex === "number") {
-          let input = inputs[inpIndex] ?? 0;
-
-          if (stack.doubledAt !== undefined && inputs[stack.doubledAt]) {
-            input *= 2;
-          }
-
-          result = input;
-        } else {
-          result = inpIndex.reduce(
-            (total, { value, ratio = 1 }) => total + (inputs[value] ?? 0) * ratio,
-            0
-          );
-        }
-        break;
-      }
-      case "MEMBER": {
-        const performerElmt = performer.data.vision;
-
-        switch (stack.element) {
-          case "DIFFERENT":
-            teammateElmtCount.forEach((type, value) => {
-              result += type !== performerElmt ? value : 0;
-            });
-            break;
-          case "SAME_EXCLUDED":
-            teammateElmtCount.forEach((type, value) => {
-              result += type === performerElmt ? value : 0;
-            });
-            break;
-          case "SAME_INCLUDED":
-            team.elmtCount.forEach((type, value) => {
-              result += type === performerElmt ? value : 0;
-            });
-            break;
-          default:
-            team.elmtCount.forEach((type, value) => {
-              result += type === stack.element ? value : 0;
-            });
-        }
-        break;
-      }
-      case "ENERGY": {
-        if (stack.scope === "PARTY") {
-          result = members.reduce((total, { data }) => total + data.EBcost, 0);
-        } else {
-          result = performer.data.EBcost;
-        }
-        break;
-      }
-      case "NATION": {
-        const performerNation = performer.data.nation;
-
-        switch (stack.nation) {
-          case "LIYUE":
-            result = members.reduce(
-              (total, { data }) => total + (data.nation === "liyue" ? 1 : 0),
-              0
-            );
-            break;
-          case "SAME_EXCLUDED":
-            result = members.reduce(
-              (total, { data }) => total + (data.nation === performerNation ? 1 : 0),
-              -1
-            );
-            break;
-          case "DIFFERENT":
-            result = members.reduce(
-              (total, { data }) => total + (data.nation !== performerNation ? 1 : 0),
-              0
-            );
-            break;
-        }
-        break;
-      }
-      case "RESOLVE": {
-        result = this.resolveStacks;
-        break;
-      }
-      case "MIX": {
-        result = this.team["getMixedCount"](performer.data.vision);
-        break;
-      }
-    }
-
-    if (stack.capacity) {
-      const capacityExtra = stack.capacity.extra;
-      const capacity =
-        stack.capacity.value + (this.isPerformableEffect(capacityExtra) ? capacityExtra.value : 0);
-
-      result = Math.max(capacity - result, 0);
-    }
-
-    if (stack.baseline) {
-      if (result <= stack.baseline) return 0;
-      result -= stack.baseline;
-    }
-
-    if (stack.extra && this.isPerformableEffect(stack.extra)) {
-      result += stack.extra.value;
-    }
-
-    // check before applyMax because max stack in number does not auto scale with refi
-    result =
-      typeof stack.max === "number"
-        ? Math.min(result, stack.max)
-        : this.applyMax(result, stack.max);
-
-    return Math.max(result, 0);
-  }
-
   // ↑↑↑ STACKS ↑↑↑
 
-  makeBonus(config: EntityBonusEffect): BareBonus {
+  makeBonus(spec: BonusCoreSpec): BareBonus {
     const bonus: BareBonus = {
-      // id: config.id,
-      value: this.getInitialValue(config),
+      // id: spec.id,
+      value: this.getInitialValue(spec),
       isDynamic: false,
-      config,
+      config: spec,
     };
 
-    bonus.value = this.scaleRefi(bonus.value, config.incre);
+    bonus.value = this.scaleRefi(bonus.value, spec.incre);
 
-    this.applyExtra(bonus, config.preExtra);
+    this.applyExtra(bonus, spec.preExtra);
 
-    if (config.basedOn) {
-      const basedOn = this.getBasedOn(config.basedOn);
+    if (spec.basedOn) {
+      const basedOn = this.getBasedOn(spec.basedOn);
 
       bonus.value *= basedOn.value;
       bonus.isDynamic = basedOn.isDynamic;
     }
 
-    bonus.value *= this.getStackValue(config.stacks);
+    const stacks = this.getStacks(spec.stacks);
+    const { stacksBonus } = spec;
 
-    bonus.value = this.applyMax(bonus.value, config.max);
+    bonus.value *= stacks?.value ?? 1;
 
-    Array_.toArray(config.extras).forEach((extra) => this.applyExtra(bonus, extra));
+    if (spec.max) {
+      bonus.value = Math.min(bonus.value, this.getMax(spec.max));
+    }
+
+    if (stacks && stacksBonus) {
+      for (const spec of Array_.toArray(stacksBonus)) {
+        if (this.isPerformableEffect(spec)) {
+          bonus.value += this.scaleRefi(this.getStacksBonus(spec, stacks));
+        }
+      }
+    }
+
+    for (const extra of Array_.toArray(spec.extras)) {
+      this.applyExtra(bonus, extra);
+    }
 
     return bonus;
   }

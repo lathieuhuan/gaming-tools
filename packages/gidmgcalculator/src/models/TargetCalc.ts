@@ -1,4 +1,4 @@
-import type { AppMonster, AttackElement, ITarget, ResistReductionKey } from "@/types";
+import type { AppMonster, AttackElement, TargetData, ResistReductionKey } from "@/types";
 import type { Clonable } from "./interfaces";
 
 import { ATTACK_ELEMENTS } from "@/constants/global";
@@ -37,7 +37,7 @@ export class TargetCalc extends Target implements Clonable<TargetCalc> {
     phys: 1,
   };
 
-  constructor(info: ITarget, data: AppMonster, options: TargetCalcOptions = {}) {
+  constructor(info: TargetData, data: AppMonster, options: TargetCalcOptions = {}) {
     const { shouldLog = false } = options;
 
     super(info, data);

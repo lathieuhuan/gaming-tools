@@ -1,7 +1,7 @@
 import type { ExactOmit } from "rond";
 
 import type { Character, TargetCalc } from "@/models";
-import type { IDbCharacter } from "@/types";
+import type { DbCharacter } from "@/types";
 import type { SimulationProcessor } from "../logic/SimulationProcessor";
 import type { CharacterEvent } from "./CharacterEvent";
 import type { EnvironmentEvent } from "./EnvironmentEvent";
@@ -13,7 +13,7 @@ export type SimulationEvent = CharacterEvent | EnvironmentEvent;
 type DbSimulation = {
   id: number;
   memberOrder: number[];
-  members: Record<PropertyKey, IDbCharacter>;
+  members: Record<PropertyKey, DbCharacter>;
   timeline: SimulationEvent[];
 };
 

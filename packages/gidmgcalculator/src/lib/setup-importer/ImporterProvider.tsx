@@ -1,11 +1,11 @@
 import { ReactNode, useMemo, useState } from "react";
 
-import { SetupImportInfo } from "@/types";
+import { SetupImportData } from "@/types";
 import { ImporterContext } from "./context";
 import { ImportCenter } from "./ImportCenter";
 
 export function ImporterProvider({ children }: { children: ReactNode }) {
-  const [importInfo, setImportInfo] = useState<SetupImportInfo>({});
+  const [importInfo, setImportInfo] = useState<SetupImportData>({});
 
   const value = useMemo(() => {
     return {

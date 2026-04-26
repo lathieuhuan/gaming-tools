@@ -5,7 +5,7 @@ import type {
   ArtifactSubStat,
   ArtifactType,
   ElementalEvent,
-  ITarget,
+  TargetData,
   RawCharacter,
   WeaponStateData,
 } from "@/types";
@@ -182,10 +182,10 @@ export const updateElementalEvent = (data: Partial<ElementalEvent>) => {
 
 // ===== TARGET =====
 
-export const updateTarget = (data: Partial<ITarget>) => {
+export const updateTarget = (data: Partial<TargetData>) => {
   useCalcStore.setState((state) => {
     const { setupsById, target: currentTarget } = state;
-    const newInfo: ITarget = {
+    const newInfo: TargetData = {
       ...currentTarget,
       ...data,
     };

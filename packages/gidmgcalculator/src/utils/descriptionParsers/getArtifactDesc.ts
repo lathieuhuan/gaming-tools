@@ -1,11 +1,11 @@
 import { Array_ } from "ron-utils";
 
-import type { AppArtifact, ArtifactModifierDescription } from "@/types";
+import type { AppArtifact, ArtifactModDescription } from "@/types";
 import { parseArtifactDesc } from "./parseArtifactDesc";
 
 export function getArtifactDesc(
   data: AppArtifact,
-  modifier: { description: ArtifactModifierDescription }
+  modifier: { description: ArtifactModDescription }
 ) {
   return parseArtifactDesc(
     Array_.toArray(modifier.description).reduce<string>((acc, description) => {

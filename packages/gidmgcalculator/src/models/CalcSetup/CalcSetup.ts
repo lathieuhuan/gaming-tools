@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { AppCharacter, ITeammateInfo, TalentCalcItem, TeamMember } from "@/types";
+import type { AppCharacter, TeammateData, TalentCalcItem, TeamMember } from "@/types";
 import type { PartiallyRequiredOnly } from "rond";
 
 import { calculateSetup } from "@/calculation/calculator";
@@ -20,23 +20,23 @@ import { ArtifactGear } from "../ArtifactGear";
 import { Character } from "../Character";
 import { Team } from "../Team";
 import { Teammate, type TeammateConstructOptions } from "../Teammate";
-import { CalcSetupBase, type CalcSetupBaseConstructInfo } from "./CalcSetupBase";
+import { CalcSetupBase, type CalcSetupBaseConstructData } from "./CalcSetupBase";
 
 type TeammateUpdateData = Partial<
-  Pick<ITeammateInfo, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
+  Pick<TeammateData, "weapon" | "artifact" | "buffCtrls" | "debuffCtrls" | "enhanced">
 >;
 
 type CloneOptions = {
   ID?: number;
 };
 
-export type CalcSetupConstructInfo = PartiallyRequiredOnly<CalcSetupBaseConstructInfo, "main">;
+export type CalcSetupConstructData = PartiallyRequiredOnly<CalcSetupBaseConstructData, "main">;
 
 export class CalcSetup extends CalcSetupBase {
   //
   calcItems: TalentCalcItem[] = [];
 
-  constructor(info: CalcSetupConstructInfo) {
+  constructor(info: CalcSetupConstructData) {
     const { main } = info;
     const {
       ID = Date.now(),
@@ -155,26 +155,6 @@ export class CalcSetup extends CalcSetupBase {
     this.artDebuffCtrls = Array_.sync(this.artDebuffCtrls, artDebuffCtrls, (ctrl) => ctrl.code);
   }
 
-  private parseNicoleState(nicole: TeamMember): { cons: number; EB: number } {
-    let EB = 0;
-    let cons = 0;
-
-    if (nicole instanceof Teammate) {
-      const ebCtrl = nicole.buffCtrls.find((ctrl) => ctrl.id === 2);
-
-      if (ebCtrl?.activated) {
-        EB = ebCtrl.inputs?.at(0) || 0;
-      }
-
-      cons = nicole.buffCtrls.find((ctrl) => ctrl.id === 1)?.inputs?.at(3) || 0;
-    } else if (nicole instanceof Character) {
-      EB = nicole.state.EB;
-      cons = nicole.state.cons;
-    }
-
-    return { cons, EB };
-  }
-
   private getNicoleEBLevel(nicole: TeamMember): number | undefined {
     if (nicole instanceof Teammate) {
       const ebCtrl = nicole.buffCtrls.find((ctrl) => ctrl.id === 2);
@@ -190,10 +170,10 @@ export class CalcSetup extends CalcSetupBase {
   }
 
   private getNicoleEBFactor(level: number): number | undefined {
-    let factor = 100 + level * 10;
+    let factor = 125 + level * 12.5;
 
     if (level > 10) {
-      factor += (level - 10) * 2;
+      factor += (level - 10) * 2.5;
     }
 
     return factor;

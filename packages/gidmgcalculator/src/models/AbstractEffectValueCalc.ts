@@ -3,12 +3,18 @@ import { Array_, round, toMult } from "ron-utils";
 import type {
   CharacterBuff,
   CharacterDebuff,
-  CharacterEffectLevelIncrement,
-  CharacterEffectLevelScale,
-  EffectValue,
-  EffectValueByOption,
+  EffectExtraSpec,
+  EffectMaxSpec,
+  EffectPerformableConditionSpecs,
+  EffectStackSpec,
+  EffectValueByOptionSpec,
+  EffectValueSpec,
   ElementCount,
-  TalentLevelScaleConfig,
+  InputStackSpec,
+  StacksBonusSpec,
+  TalentLevelIncrementBaseSpec,
+  TalentLevelIncrementSpec,
+  TeamConditionSpecs,
   TeamMember,
 } from "@/types";
 import type { Team } from "./Team";
@@ -19,9 +25,18 @@ import { Character } from "./Character";
 type AbilityBuff = CharacterBuff | CharacterDebuff;
 
 export type EffectToGetInitialValue = {
-  value: EffectValue;
-  lvScale?: CharacterEffectLevelScale;
-  lvIncre?: CharacterEffectLevelIncrement;
+  value: EffectValueSpec;
+  lvIncre?: TalentLevelIncrementSpec;
+};
+
+type LevelIncrement = {
+  multiplier: number;
+  extra: number;
+};
+
+type Stacks = {
+  value: number;
+  isMax: boolean;
 };
 
 export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = TeamMember> {
@@ -36,97 +51,240 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
     this.teammateElmtCount.remove(performer.data.vision);
   }
 
+  // UTILS
+
+  protected abstract getTalentLevel(config: TalentLevelIncrementBaseSpec): number;
+
+  protected itemAt(index: number, list: number[], defaultValue = 0) {
+    if (index < 0) {
+      console.warn(`Access negative index (${index}) of [${list.toString()}]`);
+    }
+
+    const value = list[index] || (index > 0 ? list.at(-1) : null);
+    return value ?? defaultValue;
+  }
+
   protected getInput(index = 0, defaultValue = 0) {
-    return this.inputs[index] ?? defaultValue;
+    return this.itemAt(index, this.inputs, defaultValue);
   }
 
-  protected abstract getTalentLevel(config: TalentLevelScaleConfig): number;
-
-  // ===== LEVEL SCALE & INCREMENT =====
-
-  protected getLevelScale(scale?: CharacterEffectLevelScale) {
-    if (scale) {
-      const { value, max } = scale;
-      const level = this.getTalentLevel(scale);
-      const result = value ? Character.getTalentMult(value, level) : level;
-      return max && result > max ? max : result;
-    }
-
-    return 1;
+  protected isPerformableEffect(condition?: TeamConditionSpecs & EffectPerformableConditionSpecs) {
+    return (
+      this.team.isAvailableEffect(condition) &&
+      this.performer.canPerformEffect(condition, this.inputs)
+    );
   }
 
-  protected getLevelIncre(incre?: CharacterEffectLevelIncrement) {
-    if (incre) {
-      const { changes } = incre;
-      const level = this.getTalentLevel(incre);
-      let value = incre.value * level;
+  // MAIN LOGIC
 
-      if (changes && level >= changes.startAt) {
-        value += changes.value * (level - changes.startAt + 1);
+  protected abstract getInputIndex(spec: InputStackSpec): NonNullable<InputStackSpec["index"]>;
+
+  protected abstract getMax(spec?: EffectMaxSpec): number;
+
+  protected getExtra(extras: EffectExtraSpec | EffectExtraSpec[] = []) {
+    let result = 0;
+
+    for (const extra of Array_.toArray(extras)) {
+      if (this.isPerformableEffect(extra)) {
+        result += extra.value;
       }
-
-      return value;
     }
 
-    return 0;
+    return result;
   }
 
-  // ===== INDEX OF EFFECT VALUE =====
+  getStacks(spec?: EffectStackSpec): Stacks | null {
+    if (!spec) {
+      return null;
+    }
+    const { inputs, performer, teammateElmtCount, team } = this;
+    const { members, elmtCount } = team;
 
-  protected getIndexOfEffectValue(config: EffectValueByOption) {
-    const { performer } = this;
-    const { elmtCount } = this.team;
-    const indexConfig = config.optIndex || {
-      source: "INPUT",
-      inpIndex: 0,
-    };
-    let indexValue = -1;
+    let stacks = 0;
 
-    switch (indexConfig.source) {
-      case "INPUT":
-        indexValue += this.getInput(indexConfig.inpIndex);
-        break;
-      case "ELEMENT": {
-        const { elements } = indexConfig;
+    switch (spec.type) {
+      case "INPUT": {
+        const inpIndex = this.getInputIndex(spec);
 
-        if (elements) {
-          elmtCount.forEach((elementType) => {
-            if (elements.includes(elementType)) indexValue++;
-          });
+        if (typeof inpIndex === "number") {
+          let input = inputs[inpIndex] ?? 0;
+
+          if (spec.doubledAt !== undefined && inputs[spec.doubledAt]) {
+            input *= 2;
+          }
+
+          stacks = input;
         } else {
-          indexValue += elmtCount.keys.length;
+          stacks = inpIndex.reduce(
+            (total, { value, ratio = 1 }) => total + (inputs[value] ?? 0) * ratio,
+            0
+          );
         }
+        break;
+      }
+      case "ELEMENT": {
+        const { elements } = spec;
+
+        stacks = elements
+          ? elmtCount.keys.reduce(
+              (total, elementType) => total + (elements.includes(elementType) ? 1 : 0),
+              0
+            )
+          : elmtCount.keys.length;
         break;
       }
       case "MEMBER": {
-        switch (indexConfig.element) {
+        const performerElmt = performer.data.vision;
+
+        switch (spec.element) {
           case "DIFFERENT":
-            elmtCount.forEach((elementType) => {
-              if (elementType !== performer.data.vision) indexValue++;
+            teammateElmtCount.forEach((type, value) => {
+              stacks += type !== performerElmt ? value : 0;
+            });
+            break;
+          case "SAME_EXCLUDED":
+            teammateElmtCount.forEach((type, value) => {
+              stacks += type === performerElmt ? value : 0;
+            });
+            break;
+          case "SAME_INCLUDED":
+            team.elmtCount.forEach((type, value) => {
+              stacks += type === performerElmt ? value : 0;
             });
             break;
           default:
-            if (typeof indexConfig.element === "string") {
-              indexValue += elmtCount.get(indexConfig.element);
-            } else {
-              indexValue += indexConfig.element.reduce(
-                (total, type) => total + elmtCount.get(type),
-                0
-              );
-            }
+            team.elmtCount.forEach((type, value) => {
+              stacks += spec.element.includes(type) ? value : 0;
+            });
         }
         break;
       }
-      case "LEVEL": {
-        indexValue += this.getTalentLevel(indexConfig);
+      case "ENERGY": {
+        if (spec.scope === "PARTY") {
+          stacks = members.reduce((total, { data }) => total + data.EBcost, 0);
+        } else {
+          stacks = performer.data.EBcost;
+        }
         break;
+      }
+      case "NATION": {
+        const performerNation = performer.data.nation;
+
+        switch (spec.nation) {
+          case "LIYUE":
+            stacks = members.reduce(
+              (total, { data }) => total + (data.nation === "liyue" ? 1 : 0),
+              0
+            );
+            break;
+          case "SAME_EXCLUDED":
+            stacks = members.reduce(
+              (total, { data }) => total + (data.nation === performerNation ? 1 : 0),
+              -1
+            );
+            break;
+          case "DIFFERENT":
+            stacks = members.reduce(
+              (total, { data }) => total + (data.nation !== performerNation ? 1 : 0),
+              0
+            );
+            break;
+        }
+        break;
+      }
+      case "MIX": {
+        stacks = this.team["getMixedCount"](performer.data.vision);
+        break;
+      }
+      default:
+        spec satisfies never;
+    }
+
+    if (spec.capacity) {
+      const capacityExtra = spec.capacity.extra;
+      const capacity =
+        spec.capacity.value + (this.isPerformableEffect(capacityExtra) ? capacityExtra.value : 0);
+
+      stacks = Math.max(capacity - stacks, 0);
+    }
+
+    if (spec.baseline) {
+      if (stacks <= spec.baseline) {
+        return {
+          value: 0,
+          isMax: false,
+        };
+      }
+      stacks -= spec.baseline;
+    }
+
+    if (spec.extra && this.isPerformableEffect(spec.extra)) {
+      stacks += spec.extra.value;
+    }
+
+    /** check before getMax because max stack in number does not auto scale with refi */
+    const max = typeof spec.max === "number" ? spec.max : this.getMax(spec.max);
+
+    stacks = Math.max(Math.min(stacks, max), 0);
+
+    return {
+      value: stacks,
+      isMax: stacks === max,
+    };
+  }
+
+  protected getStacksBonus(spec: StacksBonusSpec, stacks: Stacks) {
+    if (typeof spec.at === "number") {
+      if (stacks.value >= spec.at) {
+        return spec.value;
       }
     }
 
-    return indexValue;
+    return stacks.isMax ? spec.value : 0;
   }
 
-  // ===== INITIAL VALUE =====
+  protected getLevelIncre(spec?: TalentLevelIncrementSpec): LevelIncrement {
+    if (!spec) {
+      return { multiplier: 1, extra: 0 };
+    }
+
+    const level = this.getTalentLevel(spec);
+
+    if ("scale" in spec) {
+      return {
+        extra: 0,
+        multiplier: Character.getTalentMult(spec.scale, level),
+      };
+    }
+
+    const { changes } = spec;
+    let value = spec.value * level;
+
+    if (changes && level >= changes.startAt) {
+      value += changes.value * (level - changes.startAt + 1);
+    }
+
+    return { extra: value, multiplier: 1 };
+  }
+
+  protected getIndexOfEffectValue(spec: EffectValueByOptionSpec) {
+    const { preOptions } = spec;
+    // -1 because getInput should return >= 1 (stacks)
+    let index = -1;
+
+    // Navia
+    if (preOptions) {
+      const [preIndex = 0, optionIndex = 0] = this.inputs;
+      const preValue = this.itemAt(preIndex, preOptions);
+
+      index += optionIndex ? Math.min(optionIndex, preValue) : preValue;
+    } else {
+      index += this.getInput(spec.inpIndex) + this.getExtra(spec.extra);
+    }
+
+    return index;
+  }
+
   abstract getInitialValue(effect: EffectToGetInitialValue): number;
 
   parseAbilityDesc({ description, effects }: Pick<AbilityBuff, "description" | "effects">) {

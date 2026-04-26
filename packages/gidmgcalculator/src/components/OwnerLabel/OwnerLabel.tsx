@@ -2,14 +2,14 @@ import { useRef, useState } from "react";
 import { FaPuzzlePiece } from "react-icons/fa";
 import { Popover, useClickOutside, type ClickOutsideHandler } from "rond";
 
-import type { RawArtifact, IDbSetup, RawWeapon } from "@/types";
+import type { RawArtifact, DbSetup, RawWeapon } from "@/types";
 
 import { useItemBoundSetups } from "@/hooks";
 import { isWeapon } from "@/logic/entity.logic";
 import { $AppCharacter } from "@/services";
 
 type SetupListProps = {
-  setups: IDbSetup[];
+  setups: DbSetup[];
   onClickOutside: ClickOutsideHandler;
 };
 

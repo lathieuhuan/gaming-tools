@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { AppMonster, AppTeamBuff, ITarget } from "@/types";
+import type { AppMonster, AppTeamBuff, TargetData } from "@/types";
 import type { AllData } from "./types";
 
 import { $AppArtifact } from "./AppArtifactService";
@@ -45,7 +45,7 @@ class AppDataService {
     return Array_.findByCode(this.monsters, code);
   }
 
-  getTargetInfo(target: ITarget) {
+  getTargetInfo(target: TargetData) {
     const monster = this.getMonster(target);
     let variant: string | undefined;
     const statuses: string[] = [];
