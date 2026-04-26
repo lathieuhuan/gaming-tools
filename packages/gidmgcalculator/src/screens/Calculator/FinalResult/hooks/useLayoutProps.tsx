@@ -1,13 +1,16 @@
 import { Array_, Object_ } from "ron-utils";
 
 import type { FinalResultLayoutProps } from "@/components";
-import type { TalentType } from "@/types";
+import type { LevelableTalentType } from "@/types";
 import type { CalculatorState } from "@Store/calculator/types";
 
 import { TALENT_TYPES } from "@/constants/global";
 import { useShallowCalcStore } from "@Store/calculator";
 
-type UseLayoutPropsReturn = Pick<FinalResultLayoutProps, "showWeaponCalc" | "headerConfigs" | "character"> &
+type UseLayoutPropsReturn = Pick<
+  FinalResultLayoutProps,
+  "showWeaponCalc" | "headerConfigs" | "character"
+> &
   Pick<CalculatorState, "setupsById" | "standardId"> & {
     setupIds: number[];
   };
@@ -18,12 +21,16 @@ export function useLayoutProps(comparedIds: number[]): UseLayoutPropsReturn {
   );
 
   const standardWeapon = setupsById[standardId].main.weapon.code;
-  const showWeaponCalc = comparedIds.some((id) => setupsById[id].main.weapon.code !== standardWeapon);
+  const showWeaponCalc = comparedIds.some(
+    (id) => setupsById[id].main.weapon.code !== standardWeapon
+  );
   const setupIds = [standardId].concat(comparedIds.filter((id) => id !== standardId));
 
-  const talent = {} as Record<TalentType, { areSame: boolean; levels: number[] }>;
+  const talent = {} as Record<LevelableTalentType, { areSame: boolean; levels: number[] }>;
 
   for (const talentType of TALENT_TYPES) {
+    if (talentType === "altSprint") continue;
+
     const levels = setupIds.map((id) => setupsById[id].main.getFinalTalentLv(talentType));
 
     talent[talentType] = {
@@ -38,13 +45,16 @@ export function useLayoutProps(comparedIds: number[]): UseLayoutPropsReturn {
     return {
       content: (talentType) => {
         const talentCalc = talentType ? talent[talentType] : undefined;
-        const talentLevel = talentCalc && !talentCalc.areSame ? talentCalc.levels[setupIndex] : undefined;
+        const talentLevel =
+          talentCalc && !talentCalc.areSame ? talentCalc.levels[setupIndex] : undefined;
 
         if (talentLevel) {
           return (
             <div className="flex flex-col items-center">
               <span>{text}</span>
-              <span className="px-1 rounded-sm text-xs font-bold text-secondary-1">Lv.{talentLevel}</span>
+              <span className="px-1 rounded-sm text-xs font-bold text-secondary-1">
+                Lv.{talentLevel}
+              </span>
             </div>
           );
         }

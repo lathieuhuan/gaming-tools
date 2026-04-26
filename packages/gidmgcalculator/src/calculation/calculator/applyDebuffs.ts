@@ -1,8 +1,13 @@
 import { Array_ } from "ron-utils";
 
 import type { CalcSetup, Character, TargetCalc, Teammate } from "@/models";
-import type { ElementType, DebuffSpec, PenaltyTargetsSpec, ResistReductionKey } from "@/types";
-import type { IEffectPerformer } from "../types";
+import type {
+  DebuffSpec,
+  ElementType,
+  PenaltyTargetsSpec,
+  ResistReductionKey,
+  TeamMember,
+} from "@/types";
 
 import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants/global";
 
@@ -53,7 +58,7 @@ export function applyDebuffs(
 
   function applyPenalty(
     label: string,
-    performer: IEffectPerformer,
+    performer: TeamMember,
     effects: DebuffSpec["effects"] = [],
     inputs: number[] = []
   ) {

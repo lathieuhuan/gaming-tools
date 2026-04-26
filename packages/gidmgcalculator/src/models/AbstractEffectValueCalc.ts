@@ -29,6 +29,8 @@ export type EffectToGetInitialValue = {
   lvIncre?: TalentLevelIncrementSpec;
 };
 
+export type EffectToParseDesc = Pick<AbilityBuff, "description" | "effects">;
+
 type LevelIncrement = {
   multiplier: number;
   extra: number;
@@ -287,7 +289,7 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
 
   abstract getInitialValue(effect: EffectToGetInitialValue): number;
 
-  parseAbilityDesc({ description, effects }: Pick<AbilityBuff, "description" | "effects">) {
+  parseAbilityDesc({ description, effects }: EffectToParseDesc) {
     return description.replace(/\{.+?\}#\[\w*\]/g, (match) => {
       let [body, type = ""] = match.split("#");
       body = body.slice(1, -1);

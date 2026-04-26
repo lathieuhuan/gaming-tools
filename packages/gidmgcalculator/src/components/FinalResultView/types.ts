@@ -1,10 +1,10 @@
-import { TalentType } from "@/types";
+import { LevelableTalentType } from "@/types";
 import { ReactNode } from "react";
 import { TableTdProps, TableThProps } from "rond";
 import { TableKey } from "./utils";
 
 export type HeaderConfig = Pick<TableThProps, "className" | "style"> & {
-  content: ReactNode | ((talentType: TalentType | undefined) => ReactNode);
+  content: ReactNode | ((talentType: LevelableTalentType | undefined) => ReactNode);
 };
 
 type RowCellConfig = TableTdProps & {

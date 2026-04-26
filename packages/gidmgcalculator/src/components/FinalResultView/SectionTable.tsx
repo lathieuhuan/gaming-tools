@@ -1,6 +1,6 @@
 import { clsx, Table } from "rond";
 
-import type { TalentType } from "@/types";
+import type { LevelableTalentType } from "@/types";
 import type { GetRowConfig, HeaderConfig } from "./types";
 import type { TableKey } from "./utils";
 
@@ -8,7 +8,7 @@ import { EMPTY_VALUE } from "@/constants/ui";
 
 export type SectionTableProps = {
   tableKey: TableKey;
-  talentType?: TalentType;
+  talentType?: LevelableTalentType;
   label?: string;
   headerConfigs: HeaderConfig[];
   getRowConfig: GetRowConfig;

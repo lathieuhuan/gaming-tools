@@ -97,14 +97,6 @@ export abstract class AbstractBonusCalc<
     }
   }
 
-  // ↓↓↓ STACKS ↓↓↓
-
-  protected get resolveStacks() {
-    return 0;
-  }
-
-  // ↑↑↑ STACKS ↑↑↑
-
   makeBonus(spec: BonusCoreSpec): BareBonus {
     const bonus: BareBonus = {
       // id: spec.id,
