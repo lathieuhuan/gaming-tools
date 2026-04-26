@@ -3,25 +3,14 @@ import type {
   AttackElement,
   AttackPattern,
   AttackReaction,
-  BareBonus,
-  BonusPerformTools,
   CalcItemBasedOn,
   CalcItemType,
-  EffectPerformableConditionSpecs,
   ElementType,
-  BonusCoreSpec,
-  PenaltyCoreSpec,
   ExclusiveAttackBonusGroup,
   LunarType,
   TalentCalcItemBonusId
 } from "@/types";
 import type { ResultRecorder } from "./core/ResultRecorder";
-
-export type IEffectPerformer = {
-  canPerformEffect(condition?: EffectPerformableConditionSpecs, inputs?: number[]): boolean;
-  performBonus(config: BonusCoreSpec, tools: Partial<BonusPerformTools>): BareBonus;
-  performPenalty(config: PenaltyCoreSpec, inputs?: number[]): number;
-};
 
 // RESULT CALCULATION - INPUT
 

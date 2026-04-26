@@ -12,8 +12,8 @@ import type {
   BonusCoreSpec,
   BuffSpec,
   ReactionType,
+  TeamMember,
 } from "@/types";
-import type { IEffectPerformer } from "../types";
 
 import {
   AMPLIFYING_REACTIONS,
@@ -102,7 +102,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
 
   function applyBonus(
     label: string,
-    performer: IEffectPerformer,
+    performer: TeamMember,
     effects: BuffSpec["effects"] = [],
     support: Omit<Partial<BonusPerformTools>, "basedOnFixed">,
     isFinalStage?: boolean
