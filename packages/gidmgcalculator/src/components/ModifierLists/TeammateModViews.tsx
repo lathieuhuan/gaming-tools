@@ -59,7 +59,7 @@ export function TeammateBuffsView(props: TeamModsViewProps) {
     <ModifierContainer type="buffs" mutable={props.mutable}>
       {props.teammates.map((teammate) => {
         return getTeammateModifierElmts(props, teammate, teammate.buffCtrls, (ctrl) =>
-          teammate.parseBuffDesc(ctrl)
+          teammate.parseBuffDesc(ctrl.data, ctrl.inputs)
         );
       })}
     </ModifierContainer>
@@ -71,7 +71,7 @@ export function TeammateDebuffsView(props: TeamModsViewProps) {
     <ModifierContainer type="debuffs" mutable={props.mutable}>
       {props.teammates.map((teammate) => {
         return getTeammateModifierElmts(props, teammate, teammate.debuffCtrls, (ctrl) =>
-          teammate.parseDebuffDesc(ctrl)
+          teammate.parseDebuffDesc(ctrl.data, ctrl.inputs)
         );
       })}
     </ModifierContainer>

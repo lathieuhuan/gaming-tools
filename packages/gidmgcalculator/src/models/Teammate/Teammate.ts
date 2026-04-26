@@ -1,20 +1,21 @@
 import { Object_ } from "ron-utils";
 
 import type {
-  AppCharacter,
-  BareBonus,
-  BonusPerformTools,
-  EffectPerformableConditionSpecs,
-  BonusCoreSpec,
-  PenaltyCoreSpec,
   AbilityBuffCtrl,
   AbilityDebuffCtrl,
-  TeammateData,
-  WeaponBuffCtrl,
+  AppCharacter,
+  BareBonus,
+  BonusCoreSpec,
+  BonusPerformTools,
+  EffectPerformableConditionSpecs,
+  PenaltyCoreSpec,
   TeammateArtifact,
+  TeammateData,
   TeammateWeapon,
   TeamMember,
+  WeaponBuffCtrl,
 } from "@/types";
+import type { EffectToParseDesc } from "../AbstractEffectValueCalc";
 import type { Clonable } from "../interfaces";
 
 import { createAbilityBuffCtrls, createAbilityDebuffCtrls } from "@/logic/modifier.logic";
@@ -148,11 +149,11 @@ export class Teammate implements TeammateData, TeamMember, Clonable<Teammate> {
 
   // ===== DESCRIPTION =====
 
-  parseBuffDesc(ctrl: AbilityBuffCtrl) {
-    return new BonusCalc(this, this.team, { inputs: ctrl.inputs }).parseAbilityDesc(ctrl.data);
+  parseBuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
+    return new BonusCalc(this, this.team, { inputs }).parseAbilityDesc(spec);
   }
 
-  parseDebuffDesc(ctrl: AbilityDebuffCtrl) {
-    return new PenaltyCalc(this, this.team, ctrl.inputs).parseAbilityDesc(ctrl.data);
+  parseDebuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
+    return new PenaltyCalc(this, this.team, inputs).parseAbilityDesc(spec);
   }
 }

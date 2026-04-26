@@ -10,8 +10,6 @@ import type {
   BonusCoreSpec,
   BonusPerformTools,
   BonusSpec,
-  CharacterBuff,
-  CharacterDebuff,
   CharacterStateData,
   EffectPerformableConditionSpecs,
   EffectReceiverConditionSpecs,
@@ -20,8 +18,9 @@ import type {
   PenaltyCoreSpec,
   QuickenReaction,
   RawCharacter,
-  TeamMember,
+  TeamMember
 } from "@/types";
+import type { EffectToParseDesc } from "../AbstractEffectValueCalc";
 import type { Clonable } from "../interfaces";
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
@@ -247,12 +246,12 @@ export class Character implements TeamMember, Clonable<Character> {
     return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
   }
 
-  parseBuffDesc(buff: Pick<CharacterBuff, "description" | "effects">, inputs?: number[]) {
-    return new BonusCalc(this, this.team, { inputs }).parseAbilityDesc(buff);
+  parseBuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
+    return new BonusCalc(this, this.team, { inputs }).parseAbilityDesc(spec);
   }
 
-  parseDebuffDesc(debuff: Pick<CharacterDebuff, "description" | "effects">, inputs?: number[]) {
-    return new PenaltyCalc(this, this.team, inputs).parseAbilityDesc(debuff);
+  parseDebuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
+    return new PenaltyCalc(this, this.team, inputs).parseAbilityDesc(spec);
   }
 
   // ===== RECEIVE BONUSES =====

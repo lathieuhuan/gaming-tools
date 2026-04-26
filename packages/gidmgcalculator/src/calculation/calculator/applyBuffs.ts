@@ -32,7 +32,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
 
   // ↓↓↓↓↓ HELPERS ↓↓↓↓↓
 
-  function processBonus(bonus: BareBonus, effect: BonusSpec, inputs: number[] = [], label: string) {
+  function processBonus(bonus: BareBonus, spec: BonusSpec, inputs: number[] = [], label: string) {
     if (!bonus.value) return;
 
     const { outsource } = bonus.config;
@@ -57,7 +57,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
       }
     };
 
-    for (const target of Array_.toArray(effect.targets)) {
+    for (const target of Array_.toArray(spec.targets)) {
       switch (target.module) {
         case "ATTR": {
           for (const targetPath of Array_.toArray(target.path)) {
@@ -68,17 +68,17 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
               ...bonus,
               toStat,
               label,
-              effectSrc: effect,
+              effectSrc: spec,
             });
           }
           break;
         }
         case "TLT": {
           for (const targetPath of Array_.toArray(target.path)) {
-            if (!effect.id) continue;
+            if (!spec.id) continue;
 
-            main.levelBonuses.set(effect.id, {
-              id: effect.id,
+            main.levelBonuses.set(spec.id, {
+              id: spec.id,
               talent: targetPath,
               value: bonus.value,
             });
@@ -93,7 +93,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
               toKey: target.path,
               value: bonus.value,
               label,
-              effectSrc: effect,
+              effectSrc: spec,
             });
           }
       }
@@ -103,28 +103,28 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
   function applyBonus(
     label: string,
     performer: TeamMember,
-    effects: BuffSpec["effects"] = [],
+    specs: BuffSpec["effects"] = [],
     support: Omit<Partial<BonusPerformTools>, "basedOnFixed">,
     isFinalStage?: boolean
   ) {
-    for (const config of Array_.toArray(effects)) {
+    for (const spec of Array_.toArray(specs)) {
       // console.log("===========");
-      // console.log("applyBonus", config);
+      // console.log("applyBonus", spec);
       // console.log(
       //   isFinalStage === undefined,
-      //   isFinalStage === isFinalEffect(config),
-      //   performer.isPerformableEffect(config, support.inputs)
+      //   isFinalStage === isFinalEffect(spec),
+      //   performer.isPerformableEffect(spec, support.inputs)
       // );
 
       if (
-        (isFinalStage === undefined || isFinalStage === isFinalEffect(config)) &&
-        team.isAvailableEffect(config) &&
-        performer.canPerformEffect(config, support.inputs)
+        (isFinalStage === undefined || isFinalStage === isFinalEffect(spec)) &&
+        team.isAvailableEffect(spec) &&
+        performer.canPerformEffect(spec, support.inputs)
       ) {
-        const { targets } = config;
+        const { targets } = spec;
         const basedOnFixed = !Array.isArray(targets) && targets.module === "ATTR";
 
-        const bonus = performer.performBonus(config, {
+        const bonus = performer.performBonus(spec, {
           ...support,
           basedOnFixed,
         });
@@ -132,7 +132,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
         // console.log("===========");
         // console.log("bonus", bonus);
 
-        processBonus(bonus, config, support.inputs, label);
+        processBonus(bonus, spec, support.inputs, label);
       }
     }
   }
