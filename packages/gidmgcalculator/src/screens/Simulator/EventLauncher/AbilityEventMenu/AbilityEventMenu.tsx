@@ -25,7 +25,13 @@ export function AbilityEventMenu() {
 
   return (
     <div className="space-y-4">
-      <EventListLayout title={t("NAs")}>
+      <EventListLayout
+        title={
+          <>
+            {t("NAs")} - {activeMember.getFinalTalentLv("NAs")}
+          </>
+        }
+      >
         {NORMAL_ATTACKS.map((type) => {
           return (
             <AbilityEventList

@@ -103,7 +103,11 @@ export function removeMember(code: number) {
 }
 
 export function updateMemberState(code: number, data: Partial<CharacterStateData>) {
-  updateMember(code, (member) => member.clone({ state: data }));
+  updateMember(code, (member) =>
+    member.clone({
+      state: member.state.update(data),
+    })
+  );
 }
 
 // ===== WEAPON =====

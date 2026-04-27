@@ -21,9 +21,9 @@ export class MemberState extends Ascendable implements CharacterStateData {
   enhanced: boolean;
 
   static #DEFAULT_LEVEL: Level = "1/20";
-  static #DEFAULT_NAs = 0;
-  static #DEFAULT_ES = 0;
-  static #DEFAULT_EB = 0;
+  static #DEFAULT_NAs = 1;
+  static #DEFAULT_ES = 1;
+  static #DEFAULT_EB = 1;
   static #DEFAULT_CONS = 0;
   static #DEFAULT_ENHANCED = false;
 

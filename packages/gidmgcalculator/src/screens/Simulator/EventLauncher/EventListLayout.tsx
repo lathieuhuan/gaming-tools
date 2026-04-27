@@ -1,12 +1,14 @@
+import type { ReactNode } from "react";
+
 type EventListLayoutProps = {
-  title: string;
-  children: React.ReactNode;
+  title: ReactNode;
+  children: ReactNode;
 };
 
 export function EventListLayout({ title, children }: EventListLayoutProps) {
   return (
     <div className="space-y-2">
-      <p className="text-xs font-semibold text-light-hint uppercase">{title}</p>
+      <div className="text-xs font-semibold text-light-hint uppercase">{title}</div>
       {children}
     </div>
   );

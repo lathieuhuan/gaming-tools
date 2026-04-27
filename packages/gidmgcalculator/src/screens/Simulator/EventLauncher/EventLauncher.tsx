@@ -61,7 +61,7 @@ export function EventLauncher({ className }: EventLauncherProps) {
         })}
       </div>
 
-      <div className="grow mt-6 flex flex-col gap-3 custom-scrollbar">
+      <div className="grow mt-4 flex flex-col custom-scrollbar">
         <div className="flex items-center">
           <Button
             size="small"
@@ -73,9 +73,14 @@ export function EventLauncher({ className }: EventLauncherProps) {
           </Button>
         </div>
 
-        <Tabs tabs={TABS} value={activeTab.value} onChange={(_, tab) => setActiveTab(tab)} />
+        <Tabs
+          className="mt-3"
+          tabs={TABS}
+          value={activeTab.value}
+          onChange={(_, tab) => setActiveTab(tab)}
+        />
 
-        <div className="grow custom-scrollbar">
+        <div className="mt-4 grow custom-scrollbar">
           <activeTab.component />
         </div>
       </div>

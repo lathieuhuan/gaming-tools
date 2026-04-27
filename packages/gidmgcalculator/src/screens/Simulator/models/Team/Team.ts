@@ -24,10 +24,10 @@ export class Team implements Clonable<Team> {
     return Array.from(this.members.values());
   }
 
-  constructor(members: Member[] = []) {
+  constructor(members: Member[] | Map<number, Member> = []) {
     this.members = new Map();
 
-    for (const member of members) {
+    for (const member of members.values()) {
       this.setMember(member);
     }
 

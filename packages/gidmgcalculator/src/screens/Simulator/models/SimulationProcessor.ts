@@ -13,22 +13,27 @@ import { Array_ } from "ron-utils";
 import { talentCalc } from "../logic/talentCalc";
 import { Team } from "./Team";
 
+export enum EHitLogType {
+  MEMBER = "M",
+  ENVIRONMENT = "E",
+}
+
 type BaseHitLog = {
   value: number;
   attElmt: AttackElement | LunarType;
   reaction?: AttackReaction;
 };
 
-type CharacterHitLog = BaseHitLog & {
-  type: "M";
+type MemberHitLog = BaseHitLog & {
+  type: EHitLogType.MEMBER;
   performer: number;
 };
 
 type EnvironmentHitLog = BaseHitLog & {
-  type: "E";
+  type: EHitLogType.ENVIRONMENT;
 };
 
-type HitLog = CharacterHitLog | EnvironmentHitLog;
+type HitLog = MemberHitLog | EnvironmentHitLog;
 
 export class SimulationProcessor {
   #hitLogs: HitLog[] = [];
@@ -45,18 +50,14 @@ export class SimulationProcessor {
   }
 
   constructor(members: Map<number, Member>, public target: TargetCalc, onFieldMember: number) {
-    const memberList = Array.from(members.values(), (member) => member.clone());
-
     this.#onFieldCode = onFieldMember;
-    this.team = new Team(memberList);
+    this.team = new Team(members);
   }
 
   // TODO optimize
   processTimeline(timeline: SimulationEvent[]) {
     this.#hitLogs = [];
-
     this.team.prepare();
-
     this.target = this.target.clone();
 
     for (const event of timeline) {
@@ -89,7 +90,7 @@ export class SimulationProcessor {
       case "AH": {
         const log = this.processAbilityHitEvent(event);
 
-        this.#hitLogs = this.#hitLogs.concat(log);
+        this.#hitLogs.push(log);
         break;
       }
       case "RH": {
@@ -128,7 +129,7 @@ export class SimulationProcessor {
     const value = result.values.reduce((acc, value) => acc + Math.round(value.average), 0);
 
     return {
-      type: "M",
+      type: EHitLogType.MEMBER,
       performer: event.performer,
       value,
       attElmt: result.attElmt,
@@ -137,23 +138,32 @@ export class SimulationProcessor {
   }
 
   processAbilityBuffEvent(event: AbilityBuffEvent) {
-    const performer = this.team.getMember(event.performer);
+    const { team } = this;
+    const performer = team.getMember(event.performer);
+    const can = team.ops.can(performer.code);
+    const act = team.ops.act(performer.code);
     const buff = performer.data.buffs?.find((buff) => buff.index === event.modId);
 
     if (!buff) {
+      // TODO handle error not found
+      return;
+    }
+
+    if (!can.performEffect(buff, event.inputs)) {
+      // TODO handle error not valid
       return;
     }
 
     const { affect, effects = [] } = buff;
 
-    for (const effect of Array_.toArray(effects)) {
-      if (!performer.canPerformEffect(effect, event.inputs)) {
+    for (const spec of Array_.toArray(effects)) {
+      if (!can.performEffect(spec, event.inputs)) {
         continue;
       }
 
-      // const bonus = performer.performBonus(effect, {
-      //   inputs: event.inputs,
-      // });
+      const bonus = act.performBonus(spec, {
+        inputs: event.inputs,
+      });
     }
   }
 }

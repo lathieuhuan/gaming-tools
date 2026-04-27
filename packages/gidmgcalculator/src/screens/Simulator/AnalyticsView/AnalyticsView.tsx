@@ -2,6 +2,7 @@ import { formatNumber, round } from "ron-utils";
 import { clsx } from "rond";
 
 import type { Member } from "@/models/Member";
+import { EHitLogType } from "../models/SimulationProcessor";
 import { selectProcessor, selectSimulation, useSimulatorStore } from "../store";
 
 type MemberDamageCalc = {
@@ -31,11 +32,11 @@ export function AnalyticsView({ className }: AnalyticsViewProps) {
     totalDMG += log.value;
 
     switch (log.type) {
-      case "M": {
+      case EHitLogType.MEMBER: {
         totalsByMember[log.performer].value += log.value;
         break;
       }
-      case "E":
+      case EHitLogType.ENVIRONMENT:
         break;
       default:
         log satisfies never;

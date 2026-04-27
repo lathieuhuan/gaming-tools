@@ -30,9 +30,11 @@ type ActiveMemberViewProps = {
 };
 
 export function ActiveMemberView({ className }: ActiveMemberViewProps) {
-  const data = useSimulatorStore((state) => selectActiveMember(state).data);
-
+  const member = useSimulatorStore((state) => selectActiveMember(state));
   const [activeTab, setActiveTab] = useState(TABS[0]);
+
+  const { data } = member;
+  const elmtText = `text-${data.vision}`;
 
   return (
     <div
@@ -41,8 +43,13 @@ export function ActiveMemberView({ className }: ActiveMemberViewProps) {
         console.info(selectActiveMember(useSimulatorStore.getState()));
       }}
     >
-      <div>
-        <h3 className={`text-lg font-bold text-${data.vision}`}>{data.name}</h3>
+      <div className="flex items-center justify-between">
+        <h3 className={`text-lg font-bold ${elmtText}`}>{data.name}</h3>
+
+        <div>
+          Lv. <span className={`font-semibold ${elmtText}`}>{member.level}</span> -{" "}
+          <span className={`font-semibold ${elmtText}`}>C{member.cons}</span>
+        </div>
       </div>
 
       <Tabs

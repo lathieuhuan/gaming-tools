@@ -17,6 +17,7 @@ export function AbilityEventList() {
   const inputsById = useSimulatorStore(selectModInputs("ABILITY_BUFF"));
 
   const { data } = activeMember;
+  const memberCan = teamOps.can(data.code);
   const memberShow = teamOps.show(data.code);
 
   const handleInputChange = (modId: number, inputIndex: number, value: number) => {
@@ -39,6 +40,10 @@ export function AbilityEventList() {
     <div>
       <div className="space-y-2">
         {data.buffs?.map((buff, index) => {
+          if (!memberCan.performEffect(buff)) {
+            return null;
+          }
+
           const inputConfigs = buff.inputConfigs;
           const inputs = inputsById[buff.index] || [];
 

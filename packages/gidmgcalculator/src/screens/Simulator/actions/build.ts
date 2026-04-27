@@ -65,7 +65,7 @@ export function switchIn(code: number) {
       performer: code,
     });
 
-    simulation.processor.processTimeline(simulation.timeline);
+    return true;
   });
 }
 
@@ -80,7 +80,7 @@ export function triggerAbilityHitEvent(event: ExactOmit<AbilityHitEvent, "id" | 
       type: "AH",
     });
 
-    simulation.processor.processTimeline(simulation.timeline);
+    return true;
   });
 }
 
@@ -97,6 +97,6 @@ export function triggerAbilityBuffEvent(
       type: "AB",
     });
 
-    simulation.processor.processTimeline(simulation.timeline);
+    return true;
   });
 }

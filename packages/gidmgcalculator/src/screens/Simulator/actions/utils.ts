@@ -56,25 +56,29 @@ export function resetSimulation(simulation: WritableDraft<Simulation>) {
   simulation.inputs = inputs;
   simulation.timeline = [];
   simulation.processor = new SimulationProcessor(memberClones, target, memberOrder[0]);
+  simulation.processor.processTimeline(simulation.timeline);
 }
 
-export function onActiveSimulation(
-  callback: (simulation: WritableDraft<Simulation>) => boolean | void
-) {
+/** Return true to process timeline */
+type ActionToActiveSimulation = (simulation: WritableDraft<Simulation>) => boolean | void;
+
+export function onActiveSimulation(action: ActionToActiveSimulation) {
   return (state: WritableDraft<SimulatorState>) => {
     const { activeId, simulationsById } = state;
     const simulation = simulationsById[activeId];
 
     if (simulation) {
-      callback(simulation);
+      const shouldProcessTimeline = action(simulation);
+
+      if (shouldProcessTimeline) {
+        simulation.processor.processTimeline(simulation.timeline);
+      }
     }
   };
 }
 
-export function updateActiveSimulation(
-  callback: (simulation: WritableDraft<Simulation>) => boolean | void
-) {
-  useSimulatorStore.setState(onActiveSimulation(callback));
+export function updateActiveSimulation(action: ActionToActiveSimulation) {
+  useSimulatorStore.setState(onActiveSimulation(action));
 }
 
 export function updateMember(code: number, callback: (member: Member) => Member) {
