@@ -1,10 +1,11 @@
 import type { Clonable } from "@/models/interfaces";
-import type { AutoRsnElmtType, ElementCount, TalentLevelBonus } from "@/types";
+import type { AutoRsnElmtType, ElementCount, ElementType, TalentLevelBonus } from "@/types";
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
 import { createWeapon } from "@/logic/entity.logic";
 import { Member } from "@/models/Member";
 import { $AppCharacter } from "@/services";
+import { teamOperations, TeamOperations } from "./teamOperations";
 import { TeamState } from "./TeamState";
 
 @FlatGetters("state", ["resonances", "moonsignLv", "witchRiteLv", "elmtCount"])
@@ -12,14 +13,15 @@ export class Team implements Clonable<Team> {
   private members: Map<number, Member>;
 
   state: TeamState;
+  ops: TeamOperations;
 
   declare resonances: AutoRsnElmtType[];
   declare moonsignLv: number;
   declare witchRiteLv: number;
   declare elmtCount: ElementCount;
 
-  get memberSize() {
-    return this.members.size;
+  get memberList() {
+    return Array.from(this.members.values());
   }
 
   constructor(members: Member[] = []) {
@@ -30,6 +32,7 @@ export class Team implements Clonable<Team> {
     }
 
     this.state = new TeamState(this.members);
+    this.ops = teamOperations(this);
   }
 
   static createMember(code: number) {
@@ -107,6 +110,22 @@ export class Team implements Clonable<Team> {
         })
         .allAttrsCtrl.finalize();
     });
+  }
+
+  //
+
+  getMixedCount(performerElmt: ElementType) {
+    let count = 0;
+
+    for (const member of this.members.values()) {
+      const { nation, vision } = member.data;
+
+      if (nation === "natlan" || vision !== performerElmt) {
+        count++;
+      }
+    }
+
+    return count;
   }
 }
 

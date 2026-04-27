@@ -8,10 +8,10 @@ import type {
   SwitchInEvent,
 } from "../types";
 
-import { Array_ } from "ron-utils";
-import { Team } from "./Team";
-import { talentCalc } from "../logic/talentCalc";
 import { Member } from "@/models/Member";
+import { Array_ } from "ron-utils";
+import { talentCalc } from "../logic/talentCalc";
+import { Team } from "./Team";
 
 type BaseHitLog = {
   value: number;

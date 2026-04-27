@@ -4,12 +4,20 @@ import type { CharacterBuff } from "@/types";
 
 import { GenshinModifierView } from "@/components";
 import { triggerAbilityBuffEvent, updateAbilityInputs } from "../../actions/build";
-import { selectActiveMember, selectModInputs, useSimulatorStore } from "../../store";
+import {
+  selectActiveMember,
+  selectModInputs,
+  selectProcessor,
+  useSimulatorStore,
+} from "../../store";
 
 export function AbilityEventList() {
   const activeMember = useSimulatorStore(selectActiveMember);
+  const teamOps = useSimulatorStore((state) => selectProcessor(state).team.ops);
   const inputsById = useSimulatorStore(selectModInputs("ABILITY_BUFF"));
-  const { buffs } = activeMember.data;
+
+  const { data } = activeMember;
+  const memberShow = teamOps.show(data.code);
 
   const handleInputChange = (modId: number, inputIndex: number, value: number) => {
     updateAbilityInputs("ABILITY_BUFF", modId, (inputs) => {
@@ -22,7 +30,7 @@ export function AbilityEventList() {
 
   const handleTrigger = (buff: CharacterBuff) => {
     triggerAbilityBuffEvent({
-      performer: activeMember.data.code,
+      performer: data.code,
       modId: buff.index,
     });
   };
@@ -30,9 +38,11 @@ export function AbilityEventList() {
   return (
     <div>
       <div className="space-y-2">
-        {buffs?.map((buff, index) => {
+        {data.buffs?.map((buff, index) => {
           const inputConfigs = buff.inputConfigs;
           const inputs = inputsById[buff.index] || [];
+
+          const description = memberShow.buffText(buff, inputs);
 
           return (
             <div key={index} className="p-2 bg-dark-2 rounded-xs">
@@ -40,7 +50,7 @@ export function AbilityEventList() {
                 mutable
                 headingVariant="view"
                 heading={buff.src}
-                description={activeMember.parseBuffDesc(buff, inputs)}
+                description={description}
                 inputs={inputs}
                 inputConfigs={inputConfigs}
                 onToggleCheck={(current, inputIndex) => {
