@@ -1,7 +1,7 @@
 import { Object_ } from "ron-utils";
 
 import type { CharacterStateData, Level } from "@/types";
-import { Ascendable } from "../Ascendable";
+import { Ascendable } from "@/models/Ascendable";
 
 type MemberStateConfig = {
   defaultLevel?: Level;

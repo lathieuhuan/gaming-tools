@@ -3,7 +3,7 @@ import type { AutoRsnElmtType, ElementCount, ElementType, TalentLevelBonus } fro
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
 import { createWeapon } from "@/logic/entity.logic";
-import { Member } from "@/models/Member";
+import { Member } from "@/screens/Simulator/models/Member";
 import { $AppCharacter } from "@/services";
 import { teamOperations, TeamOperations } from "./teamOperations";
 import { TeamState } from "./TeamState";

@@ -19,7 +19,7 @@ import type {
 } from "../types";
 
 import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants";
-import { Member } from "@/models/Member";
+import { Member } from "@/screens/Simulator/models/Member";
 import { talentCalc } from "../logic/talentCalc";
 import { Team } from "./Team";
 import { BonusCalc } from "./Team/BonusCalc";

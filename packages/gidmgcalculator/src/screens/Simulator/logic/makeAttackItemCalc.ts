@@ -14,7 +14,7 @@ import type {
 
 import { QUICKEN_BUFF_LABEL } from "@/calculation/constants";
 import { limitCRate } from "@/logic/stat.logic";
-import { GetBonusOptions, Member } from "@/models/Member";
+import { GetBonusOptions, Member } from "@/screens/Simulator/models/Member";
 
 type MakeAttackCalcTools = {
   attElmt?: AttackElement;

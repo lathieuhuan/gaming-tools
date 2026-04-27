@@ -1,4 +1,4 @@
-import type { Member } from "@/models/Member";
+import type { Member } from "@/screens/Simulator/models/Member";
 import type {
   AutoRsnElmtType,
   ElementCount,

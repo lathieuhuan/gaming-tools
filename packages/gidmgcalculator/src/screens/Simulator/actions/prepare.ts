@@ -14,7 +14,7 @@ import type { UserdbState } from "@Store/userdbSlice";
 import { createWeapon } from "@/logic/entity.logic";
 import { parseDbArtifacts } from "@/logic/userdb.logic";
 import { ArtifactGear } from "@/models";
-import { Member } from "@/models/Member";
+import { Member } from "@/screens/Simulator/models/Member";
 import IdStore from "@/utils/IdStore";
 import { AssemblingModalState, useSimulatorStore } from "../store";
 import { createSimulation, updateActiveSimulation, updateMember } from "./utils";

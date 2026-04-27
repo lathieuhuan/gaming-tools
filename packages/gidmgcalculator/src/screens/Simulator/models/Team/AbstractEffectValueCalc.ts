@@ -17,7 +17,7 @@ import type {
 import type { Team } from "./Team";
 
 import { Character } from "@/models/Character";
-import { Member } from "@/models/Member";
+import { Member } from "@/screens/Simulator/models/Member";
 import { wrapText } from "@/utils/descriptionParsers/utils";
 import { memberCan } from "./memberCan";
 

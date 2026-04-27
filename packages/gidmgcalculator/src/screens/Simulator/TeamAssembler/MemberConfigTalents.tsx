@@ -2,7 +2,7 @@ import { clsx, VersatileSelect } from "rond";
 
 import { LEVELABLE_TALENT_TYPES } from "@/constants";
 import { useTranslation } from "@/hooks";
-import { Member } from "@/models/Member";
+import { Member } from "@/screens/Simulator/models/Member";
 import { genSequentialOptions } from "@/utils/pure.utils";
 import { updateMemberState } from "../actions/prepare";
 

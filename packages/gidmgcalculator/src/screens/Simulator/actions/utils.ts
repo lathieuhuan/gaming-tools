@@ -4,7 +4,7 @@ import type { InputsById, MemberInputs, Simulation, SimulationInputs } from "../
 
 import { createTarget } from "@/logic/entity.logic";
 import { createModCtrlInputs } from "@/logic/modifier.logic";
-import { Member } from "@/models/Member";
+import { Member } from "@/screens/Simulator/models/Member";
 import { Target } from "@/models/Target";
 import { TargetCalc } from "@/models/TargetCalc";
 import { SimulationProcessor } from "../models/SimulationProcessor";

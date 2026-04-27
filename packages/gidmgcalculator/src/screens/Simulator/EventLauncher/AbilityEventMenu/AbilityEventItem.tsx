@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button, clsx, CollapseSpace } from "rond";
 
 import type { AttackElement, AttackReaction, TalentCalcItem } from "@/types";
-import type { Member } from "@/models/Member";
+import type { Member } from "@/screens/Simulator/models/Member";
 
 import { triggerAbilityHitEvent } from "../../actions/build";
 import { TalentCalculator } from "../../logic/talentCalc";

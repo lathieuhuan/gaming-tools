@@ -1,5 +1,6 @@
 import { Object_ } from "ron-utils";
 
+import type { Clonable } from "@/models/interfaces";
 import type {
   AllAttributes,
   AmplifyingReaction,
@@ -16,13 +17,12 @@ import type {
   RawCharacter,
   TalentLevelBonus,
 } from "@/types";
-import type { Clonable } from "../interfaces";
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
 import { TypeCounterKey } from "@/utils/TypeCounter";
 
-import { ArtifactGear } from "../ArtifactGear";
-import { Weapon } from "../Weapon";
+import { ArtifactGear } from "@/models/ArtifactGear";
+import { Weapon } from "@/models/Weapon";
 import { AllAttributesControl } from "./AllAttributesControl";
 import { AttackBonusControl } from "./AttackBonusControl";
 import { MemberState } from "./MemberState";

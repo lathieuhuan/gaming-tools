@@ -4,7 +4,7 @@ import {
   CreateWeaponRawData
 } from "@/logic/entity.logic";
 import { Target, TargetCalc } from "@/models";
-import { Member } from "@/models/Member";
+import { Member } from "@/screens/Simulator/models/Member";
 import { $AppCharacter } from "@/services";
 import { CharacterStateData } from "@/types";
 import IdStore from "@/utils/IdStore";

@@ -1,7 +1,7 @@
 import { formatNumber, round } from "ron-utils";
 import { clsx } from "rond";
 
-import type { Member } from "@/models/Member";
+import type { Member } from "@/screens/Simulator/models/Member";
 import { EHitLogType } from "../models/SimulationProcessor";
 import { selectProcessor, selectSimulation, useSimulatorStore } from "../store";
 

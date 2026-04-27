@@ -1,6 +1,6 @@
 import type { ExactOmit } from "rond";
 
-import type { Member } from "@/models/Member";
+import type { Member } from "@/screens/Simulator/models/Member";
 import type { TargetCalc } from "@/models/TargetCalc";
 import type { DbCharacter } from "@/types";
 import type { SimulationProcessor } from "../models/SimulationProcessor";

@@ -11,7 +11,7 @@ import type {
 } from "@/types";
 
 import { ResultRecorder } from "@/calculation/core/ResultRecorder";
-import { Member } from "@/models/Member";
+import { Member } from "@/screens/Simulator/models/Member";
 import { TargetCalc } from "@/models/TargetCalc";
 import { makeAttackItemCalc } from "./makeAttackItemCalc";
 
