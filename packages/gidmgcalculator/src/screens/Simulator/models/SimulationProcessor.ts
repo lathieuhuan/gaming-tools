@@ -1,5 +1,15 @@
+import { Array_ } from "ron-utils";
+
 import type { TargetCalc } from "@/models";
-import type { AttackElement, AttackReaction, LunarType } from "@/types";
+import type {
+  AttackElement,
+  AttackReaction,
+  AttributeBonus,
+  AttributeTargetPath,
+  BareBonus,
+  BonusSpec,
+  LunarType,
+} from "@/types";
 import type {
   AbilityBuffEvent,
   AbilityHitEvent,
@@ -8,10 +18,11 @@ import type {
   SwitchInEvent,
 } from "../types";
 
+import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants";
 import { Member } from "@/models/Member";
-import { Array_ } from "ron-utils";
 import { talentCalc } from "../logic/talentCalc";
 import { Team } from "./Team";
+import { BonusCalc } from "./Team/BonusCalc";
 
 export enum EHitLogType {
   MEMBER = "M",
@@ -79,7 +90,7 @@ export class SimulationProcessor {
     }
   }
 
-  // ===== Member Event =====
+  // # Member Event
 
   processMemberEvent(event: MemberEvent) {
     switch (event.type) {
@@ -110,12 +121,16 @@ export class SimulationProcessor {
     }
   }
 
+  // ## Switch In Event
+
   processSwitchInEvent(event: SwitchInEvent) {
     const performer = this.team.getMember(event.performer);
 
     this.#onFieldCode = performer.code;
     // TODO redirect on-field buffs to this member
   }
+
+  // ## Ability Hit Event
 
   processAbilityHitEvent(event: AbilityHitEvent): HitLog {
     const performer = this.team.getMember(event.performer);
@@ -137,6 +152,95 @@ export class SimulationProcessor {
     };
   }
 
+  // ## Ability Buff Event
+
+  private processToStat(
+    path: AttributeTargetPath,
+    receiver: Member,
+    inputs: number[],
+    inpIndex: number
+  ): AttributeBonus["toStat"] | undefined {
+    switch (path) {
+      case "INP_ELMT": {
+        const elmtIndex = inputs[inpIndex] ?? 0;
+        return ELEMENT_TYPES[elmtIndex];
+      }
+      case "OWN_ELMT": {
+        return receiver.data.vision;
+      }
+      case "P/H/E/C": {
+        return PHEC_ELEMENT_TYPES.find((elmt) => this.team.state.elmtCount.has(elmt));
+      }
+      default:
+        return path;
+    }
+  }
+
+  deliverBonus(
+    receiverCode: number,
+    bonus: BareBonus,
+    spec: BonusSpec,
+    inputs: number[] = []
+  ): boolean {
+    const { ops } = this.team;
+    const receiver = this.team.getMember(receiverCode);
+
+    if (!ops.can(receiverCode).receiveEffect(spec)) {
+      return false;
+    }
+
+    if (spec.outsource) {
+      const stacksSpec = spec.outsource.stacks;
+      const stacks = new BonusCalc(receiver, this.team, { inputs }).getStacks(stacksSpec);
+
+      bonus.value *= stacks?.value ?? 1;
+    }
+
+    for (const target of Array_.toArray(spec.targets)) {
+      switch (target.module) {
+        case "ATTR": {
+          for (const targetPath of Array_.toArray(target.path)) {
+            const toStat = this.processToStat(targetPath, receiver, inputs, target.inpIndex ?? 0);
+            if (!toStat) continue;
+
+            receiver.receiveAttrBonus({
+              ...bonus,
+              toStat,
+              label: "",
+              effectSrc: spec,
+            });
+          }
+          break;
+        }
+        case "TLT": {
+          for (const targetPath of Array_.toArray(target.path)) {
+            if (!spec.id) continue;
+
+            receiver.lvBonusCtrl.set(spec.id, {
+              id: spec.id,
+              toType: targetPath,
+              value: bonus.value,
+              label: "",
+            });
+          }
+          break;
+        }
+        default:
+          for (const module of Array_.toArray(target.module)) {
+            receiver.receiveAttkBonus({
+              toType: module,
+              toKey: target.path,
+              value: bonus.value,
+              label: "",
+              effectSrc: spec,
+            });
+          }
+      }
+    }
+
+    return true;
+  }
+
   processAbilityBuffEvent(event: AbilityBuffEvent) {
     const { team } = this;
     const performer = team.getMember(event.performer);
@@ -154,6 +258,7 @@ export class SimulationProcessor {
       return;
     }
 
+    const changedCodes: number[] = [];
     const { affect, effects = [] } = buff;
 
     for (const spec of Array_.toArray(effects)) {
@@ -161,9 +266,52 @@ export class SimulationProcessor {
         continue;
       }
 
-      const bonus = act.performBonus(spec, {
-        inputs: event.inputs,
-      });
+      const bonus = act.performBonus(spec, { inputs: event.inputs });
+
+      if (!bonus.value) {
+        continue;
+      }
+
+      switch (affect) {
+        case "SELF": {
+          this.deliverBonus(performer.code, bonus, spec, event.inputs);
+          changedCodes.push(performer.code);
+          break;
+        }
+        case "TEAMMATE": {
+          team.members.forEach((member) => {
+            if (member.code === performer.code) return;
+
+            this.deliverBonus(member.code, bonus, spec, event.inputs);
+            changedCodes.push(member.code);
+          });
+          break;
+        }
+        case "SELF_TEAMMATE": {
+          break;
+        }
+        case "PARTY": {
+          team.members.forEach((member) => {
+            this.deliverBonus(member.code, bonus, spec, event.inputs);
+            changedCodes.push(member.code);
+          });
+          break;
+        }
+        case "ONE_UNIT": {
+          break;
+        }
+        case "ACTIVE_UNIT": {
+          this.deliverBonus(this.#onFieldCode, bonus, spec, event.inputs);
+          changedCodes.push(this.#onFieldCode);
+          break;
+        }
+        default:
+          affect satisfies never;
+      }
+    }
+
+    for (const code of changedCodes) {
+      team.setMember(team.getMember(code).clone());
     }
   }
 }

@@ -35,7 +35,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
   function processBonus(bonus: BareBonus, spec: BonusSpec, inputs: number[] = [], label: string) {
     if (!bonus.value) return;
 
-    const { outsource } = bonus.config;
+    const { outsource } = spec;
 
     if (outsource) {
       const stacks = new BonusCalc(main, team, { inputs }).getStacks(outsource.stacks);

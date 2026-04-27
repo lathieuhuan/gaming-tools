@@ -199,6 +199,7 @@ export class AllAttributesControl {
   applyBonus(bonus: AttributeBonus) {
     if (isBaseStat(bonus.toStat)) {
       const statType = baseStatToCoreStat(bonus.toStat);
+
       this.addBase(statType, bonus.value, bonus.label);
       return;
     }

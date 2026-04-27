@@ -103,7 +103,6 @@ export abstract class AbstractBonusCalc<
       // id: spec.id,
       value: this.getInitialValue(spec),
       isDynamic: false,
-      config: spec,
     };
 
     bonus.value = this.scaleRefi(bonus.value, spec.incre);

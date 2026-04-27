@@ -10,8 +10,6 @@ import type {
   AutoRsnElmtType,
   BonusSpec,
   CharacterStateData,
-  EffectPerformableConditionSpecs,
-  EffectReceiverConditionSpecs,
   Level,
   LevelableTalentType,
   QuickenReaction,
@@ -22,10 +20,8 @@ import type { Clonable } from "../interfaces";
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
 import { TypeCounterKey } from "@/utils/TypeCounter";
-import { isPassedComparison } from "../utils/isPassedComparison";
 
 import { ArtifactGear } from "../ArtifactGear";
-import { isValidInput } from "../utils/isValidInput";
 import { Weapon } from "../Weapon";
 import { AllAttributesControl } from "./AllAttributesControl";
 import { AttackBonusControl } from "./AttackBonusControl";
@@ -36,8 +32,7 @@ type BonusMonoRecord = {
   targetId: string;
 };
 
-export type ReceivedAttributeBonus = Omit<AttributeBonus, "toStat"> & {
-  toStat: AttributeBonus["toStat"] | "OWN_ELMT";
+export type ReceivedAttributeBonus = AttributeBonus & {
   effectSrc: BonusSpec;
 };
 
@@ -182,108 +177,6 @@ export class Member implements Clonable<Member> {
     return this;
   }
 
-  // ===== PERFORM EFFECTS =====
-
-  canPerformEffect(condition?: EffectPerformableConditionSpecs, inputs: number[] = []): boolean {
-    if (!condition) {
-      return true;
-    }
-
-    const { grantedAt } = condition;
-
-    if (grantedAt) {
-      const { value } = typeof grantedAt === "string" ? { value: grantedAt } : grantedAt;
-      const [prefix, level] = value;
-      const isGranted = (prefix === "A" ? this.ascension : this.cons) >= +level;
-
-      if (!isGranted) {
-        return false;
-      }
-    }
-
-    if (condition.beEnhanced && !this.enhanced) {
-      return false;
-    }
-
-    if (condition.checkMixed) {
-      // const mixedCount = this.team.getMixedCount(this.data.vision);
-      // if (!isPassedComparison(mixedCount, 3, "MIN")) {
-      //   return false;
-      // }
-    }
-
-    if (condition.checkAny) {
-      const anyInvalid = condition.checkAny.some(
-        (condition) => !this.canPerformEffect(condition, inputs)
-      );
-
-      if (anyInvalid) {
-        return false;
-      }
-    }
-
-    if (!isValidInput(condition.checkInput, inputs)) {
-      return false;
-    }
-
-    return true;
-  }
-
-  // performBonus(config: BonusCoreSpec, tools: Partial<BonusPerformTools>) {
-  //   return new BonusCalc(this, this.team, tools).makeBonus(config);
-  // }
-
-  // performPenalty(config: PenaltyCoreSpec, inputs?: number[]) {
-  //   return new PenaltyCalc(this, this.team, inputs).makePenalty(config);
-  // }
-
-  // parseBuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
-  //   return new BonusCalc(this, this.team, { inputs }).parseAbilityDesc(spec);
-  // }
-
-  // parseDebuffDesc(spec: EffectToParseDesc, inputs?: number[]) {
-  //   return new PenaltyCalc(this, this.team, inputs).parseAbilityDesc(spec);
-  // }
-
-  // ===== RECEIVE BONUSES =====
-
-  canReceiveEffect(condition: EffectReceiverConditionSpecs) {
-    const { data } = this;
-
-    if (condition.forNation && condition.forNation !== data.nation) {
-      return false;
-    }
-    if (condition.forWeapons && !condition.forWeapons.includes(data.weaponType)) {
-      return false;
-    }
-    if (condition.forElmts && !condition.forElmts.includes(data.vision)) {
-      return false;
-    }
-    if (condition.forName && !data.name.includes(condition.forName)) {
-      return false;
-    }
-    if (condition.forEnergyCap) {
-      const { value, comparison } = condition.forEnergyCap;
-      if (!isPassedComparison(data.EBcost, value, comparison)) {
-        return false;
-      }
-    }
-
-    const { forEnhance } = condition;
-
-    if (forEnhance) {
-      if (forEnhance === "MOONSIGN") {
-        if (data.faction !== "moonsign") {
-          return false;
-        }
-      } else if (!this.enhanced || data.enhanceType !== forEnhance) {
-        return false;
-      }
-    }
-
-    return true;
-  }
-
   private monoRecords: NonNullable<BonusMonoRecord>[] = [];
 
   private isRecordedBonus(trackId: string, targetId: string) {
@@ -301,35 +194,26 @@ export class Member implements Clonable<Member> {
   }
 
   receiveAttrBonus(bonus: ReceivedAttributeBonus) {
-    if (this.canReceiveEffect(bonus.effectSrc)) {
-      const { monoId } = bonus.effectSrc;
-      const toStat = bonus.toStat === "OWN_ELMT" ? this.data.vision : bonus.toStat;
-      const notRecorded = !monoId || !this.isRecordedBonus(monoId, toStat);
+    const { monoId } = bonus.effectSrc;
+    const notRecorded = !monoId || !this.isRecordedBonus(monoId, bonus.toStat);
 
-      if (notRecorded) {
-        this.allAttrsCtrl.applyBonus({
-          ...bonus,
-          toStat,
-        });
+    if (notRecorded) {
+      this.allAttrsCtrl.applyBonus(bonus);
 
-        return true;
-      }
+      return true;
     }
 
     return false;
   }
 
   receiveAttkBonus(bonus: ReceivedAttackBonus) {
-    if (this.canReceiveEffect(bonus.effectSrc)) {
-      const { monoId } = bonus.effectSrc;
-      const notRecorded =
-        !monoId || !this.isRecordedBonus(monoId, `${bonus.toType}/${bonus.toKey}`);
+    const { monoId } = bonus.effectSrc;
+    const notRecorded = !monoId || !this.isRecordedBonus(monoId, `${bonus.toType}/${bonus.toKey}`);
 
-      if (notRecorded) {
-        this.attkBonusCtrl.add(bonus);
+    if (notRecorded) {
+      this.attkBonusCtrl.add(bonus);
 
-        return true;
-      }
+      return true;
     }
 
     return false;

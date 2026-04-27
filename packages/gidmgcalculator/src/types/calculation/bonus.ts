@@ -11,7 +11,6 @@ export type BareBonus = {
   // id?: string;
   value: number;
   isDynamic: boolean;
-  config: BonusCoreSpec;
 };
 
 export type AttributeBonus = {

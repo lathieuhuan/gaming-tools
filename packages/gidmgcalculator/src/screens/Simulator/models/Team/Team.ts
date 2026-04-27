@@ -10,8 +10,7 @@ import { TeamState } from "./TeamState";
 
 @FlatGetters("state", ["resonances", "moonsignLv", "witchRiteLv", "elmtCount"])
 export class Team implements Clonable<Team> {
-  private members: Map<number, Member>;
-
+  members: Map<number, Member>;
   state: TeamState;
   ops: TeamOperations;
 

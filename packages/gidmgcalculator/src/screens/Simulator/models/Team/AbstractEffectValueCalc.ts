@@ -13,7 +13,6 @@ import type {
   StacksBonusSpec,
   TalentLevelIncrementBaseSpec,
   TalentLevelIncrementSpec,
-  TeamConditionSpecs,
 } from "@/types";
 import type { Team } from "./Team";
 
@@ -121,7 +120,7 @@ export abstract class AbstractEffectValueCalc {
 
         stacks = elements
           ? elmtCount.keys.reduce(
-              (total, elementType) => total + (elements.includes(elementType) ? 1 : 0),
+              (total, element) => total + (elements.includes(element) ? 1 : 0),
               0
             )
           : elmtCount.keys.length;
@@ -155,10 +154,17 @@ export abstract class AbstractEffectValueCalc {
         break;
       }
       case "ENERGY": {
-        if (spec.scope === "PARTY") {
-          stacks = memberList.reduce((total, { data }) => total + data.EBcost, 0);
-        } else {
-          stacks = performer.data.EBcost;
+        switch (spec.scope) {
+          case "PARTY": {
+            stacks = memberList.reduce((total, { data }) => total + data.EBcost, 0);
+            break;
+          }
+          case "ACTIVE": {
+            stacks = performer.data.EBcost;
+            break;
+          }
+          default:
+            spec.scope satisfies never;
         }
         break;
       }

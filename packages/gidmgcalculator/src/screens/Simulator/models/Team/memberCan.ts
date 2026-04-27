@@ -1,4 +1,4 @@
-import type { EffectPerformableConditionSpecs } from "@/types";
+import type { EffectPerformableConditionSpecs, EffectReceiverConditionSpecs } from "@/types";
 import type { Team } from "./Team";
 
 import { isPassedComparison } from "@/models/utils/isPassedComparison";
@@ -10,6 +10,14 @@ export function memberCan(memberCode: number, team: Team) {
   function performEffect(condition: EffectPerformableConditionSpecs, inputs: number[] = []) {
     if (!team.state.isAvailableEffect(condition)) {
       return false;
+    }
+
+    if (condition.checkMixed) {
+      const mixedCount = team.getMixedCount(member.data.vision);
+
+      if (!isPassedComparison(mixedCount, 3, "MIN")) {
+        return false;
+      }
     }
 
     const { grantedAt } = condition;
@@ -28,14 +36,6 @@ export function memberCan(memberCode: number, team: Team) {
       return false;
     }
 
-    if (condition.checkMixed) {
-      const mixedCount = team.getMixedCount(member.data.vision);
-
-      if (!isPassedComparison(mixedCount, 3, "MIN")) {
-        return false;
-      }
-    }
-
     if (condition.checkAny) {
       const anyInvalid = condition.checkAny.some((condition) => !performEffect(condition, inputs));
 
@@ -51,7 +51,46 @@ export function memberCan(memberCode: number, team: Team) {
     return true;
   }
 
+  function receiveEffect(condition: EffectReceiverConditionSpecs) {
+    const { data } = member;
+
+    if (condition.forNation && condition.forNation !== data.nation) {
+      return false;
+    }
+    if (condition.forWeapons && !condition.forWeapons.includes(data.weaponType)) {
+      return false;
+    }
+    if (condition.forElmts && !condition.forElmts.includes(data.vision)) {
+      return false;
+    }
+    if (condition.forName && !data.name.includes(condition.forName)) {
+      return false;
+    }
+    if (condition.forEnergyCap) {
+      const { value, comparison } = condition.forEnergyCap;
+
+      if (!isPassedComparison(data.EBcost, value, comparison)) {
+        return false;
+      }
+    }
+
+    const { forEnhance } = condition;
+
+    if (forEnhance) {
+      if (forEnhance === "MOONSIGN") {
+        if (data.faction !== "moonsign") {
+          return false;
+        }
+      } else if (!member.enhanced || data.enhanceType !== forEnhance) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   return {
     performEffect,
+    receiveEffect,
   };
 }
