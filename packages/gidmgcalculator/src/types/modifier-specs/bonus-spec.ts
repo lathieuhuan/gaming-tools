@@ -71,14 +71,8 @@ type TalentLevelTargetSpec = {
   path: LevelableTalentType;
 };
 
-type BonusTargetsSpec =
-  | AttributeTargetSpec
-  | AttackBonusTargetSpec
-  | AttackBonusTargetSpec[]
-  | TalentLevelTargetSpec;
-
 export type BonusSpec = EffectPerformableConditionSpecs &
   EffectReceiverConditionSpecs &
   BonusCoreSpec & {
-    targets: BonusTargetsSpec;
+    targets: AttributeTargetSpec | AttackBonusTargetSpec | TalentLevelTargetSpec;
   };

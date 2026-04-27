@@ -1,5 +1,10 @@
-import type { BonusCoreSpec } from "../modifier-specs";
-import type { AttackBonusKey, AttackBonusType, AttributeStat, BaseAttributeStat, LevelableTalentType } from "../common";
+import type {
+  AttackBonusKey,
+  AttackBonusType,
+  AttributeStat,
+  BaseAttributeStat,
+  LevelableTalentType,
+} from "../common";
 
 export type BonusPerformTools = {
   inputs: number[];

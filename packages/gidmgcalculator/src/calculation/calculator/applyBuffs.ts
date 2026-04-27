@@ -35,7 +35,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
   function processBonus(bonus: BareBonus, spec: BonusSpec, inputs: number[] = [], label: string) {
     if (!bonus.value) return;
 
-    const { outsource } = spec;
+    const { outsource, targets } = spec;
 
     if (outsource) {
       const stacks = new BonusCalc(main, team, { inputs }).getStacks(outsource.stacks);
@@ -57,46 +57,42 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
       }
     };
 
-    for (const target of Array_.toArray(spec.targets)) {
-      switch (target.module) {
-        case "ATTR": {
-          for (const targetPath of Array_.toArray(target.path)) {
-            const toStat = getToStat(targetPath, target.inpIndex ?? 0);
-            if (!toStat) continue;
+    switch (targets.module) {
+      case "ATTR": {
+        for (const targetPath of Array_.toArray(targets.path)) {
+          const toStat = getToStat(targetPath, targets.inpIndex ?? 0);
+          if (!toStat) continue;
 
-            main.receiveAttrBonus({
-              ...bonus,
-              toStat,
-              label,
-              effectSrc: spec,
-            });
-          }
-          break;
+          main.receiveAttrBonus({
+            ...bonus,
+            toStat,
+            label,
+            effectSrc: spec,
+          });
         }
-        case "TLT": {
-          for (const targetPath of Array_.toArray(target.path)) {
-            if (!spec.id) continue;
-
-            main.levelBonuses.set(spec.id, {
-              id: spec.id,
-              talent: targetPath,
-              value: bonus.value,
-            });
-          }
-          break;
-        }
-        default:
-          for (const module of Array_.toArray(target.module)) {
-            main.receiveAttkBonus({
-              // id: bonus.id,
-              toType: module,
-              toKey: target.path,
-              value: bonus.value,
-              label,
-              effectSrc: spec,
-            });
-          }
+        break;
       }
+      case "TLT": {
+        if (!spec.id) return;
+
+        main.levelBonuses.set(spec.id, {
+          id: spec.id,
+          talent: targets.path,
+          value: bonus.value,
+        });
+        break;
+      }
+      default:
+        for (const module of Array_.toArray(targets.module)) {
+          main.receiveAttkBonus({
+            // id: bonus.id,
+            toType: module,
+            toKey: targets.path,
+            value: bonus.value,
+            label,
+            effectSrc: spec,
+          });
+        }
     }
   }
 
