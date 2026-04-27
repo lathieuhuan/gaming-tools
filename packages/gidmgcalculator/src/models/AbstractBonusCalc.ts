@@ -7,6 +7,7 @@ import type {
   BonusPerformTools,
   BonusScalingAttribute,
   EffectMaxSpec,
+  ExtraBonusSpec,
   TeamMember,
 } from "@/types";
 import { Team } from "./Team";
@@ -82,12 +83,12 @@ export abstract class AbstractBonusCalc<
     return this.itemAt(index, spec.options) * incre.multiplier + incre.extra;
   }
 
-  protected applyExtra(bonus: BareBonus, config?: number | BonusCoreSpec) {
-    if (typeof config === "number") {
-      bonus.value += this.scaleRefi(config);
+  protected applyExtra(bonus: BareBonus, spec?: number | ExtraBonusSpec) {
+    if (typeof spec === "number") {
+      bonus.value += this.scaleRefi(spec);
     } //
-    else if (config && this.isPerformableEffect(config)) {
-      const extra = this.makeBonus(config);
+    else if (spec && this.isPerformableEffect(spec)) {
+      const extra = this.makeBonus(spec);
 
       if (extra) {
         bonus.value += extra.value;

@@ -63,7 +63,7 @@ export abstract class AbstractEffectValueCalc {
     return this.itemAt(index, this.inputs, defaultValue);
   }
 
-  protected isPerformableEffect(condition: TeamConditionSpecs & EffectPerformableConditionSpecs) {
+  protected isPerformableEffect(condition: EffectPerformableConditionSpecs) {
     return memberCan(this.performer.code, this.team).performEffect(condition, this.inputs);
   }
 

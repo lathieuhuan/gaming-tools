@@ -1,5 +1,5 @@
 import type { ElementType } from "../common";
-import type { EffectConditionSpecs } from "./effect-condition-specs";
+import type { EffectPerformableConditionSpecs } from "./effect-condition-specs";
 import type { EffectExtraSpec } from "./effect-extra-spec";
 import type { EffectMaxSpec } from "./effect-max-spec";
 
@@ -18,14 +18,14 @@ export type InputStackSpec = {
   doubledAt?: number;
 };
 
-/** Count unique element types of the party. Ex: [Pyro, Pyro] -> 1 */
 export type ElementStackSpec = {
+  /** Count unique element types of the party. Ex: [Pyro, Pyro] -> 1 */
   type: "ELEMENT";
   elements?: ElementType[];
 };
 
-/** Count members with some specific element types. Ex: [Pyro, Pyro] -> 2 */
 export type MemberStackSpec = {
+  /** Count members with some specific element types. Ex: [Pyro, Pyro] -> 2 */
   type: "MEMBER";
   element: "SAME_INCLUDED" | "SAME_EXCLUDED" | "DIFFERENT" | ElementType | ElementType[];
 };
@@ -64,11 +64,10 @@ export type EffectStackSpec = (
   baseline?: number;
   /** On Furina */
   extra?: EffectExtraSpec;
-  /** If number, does not auto scale with refi */
   max?: EffectMaxSpec;
 };
 
-export type StacksBonusSpec = EffectConditionSpecs & {
+export type StacksBonusSpec = EffectPerformableConditionSpecs & {
   /** Default 'FIN' */
   at?: "FIN" | number;
   value: number;

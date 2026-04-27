@@ -70,7 +70,7 @@ export abstract class AbstractEffectValueCalc<TPerformer extends TeamMember = Te
     return this.itemAt(index, this.inputs, defaultValue);
   }
 
-  protected isPerformableEffect(condition?: TeamConditionSpecs & EffectPerformableConditionSpecs) {
+  protected isPerformableEffect(condition?: EffectPerformableConditionSpecs) {
     return (
       this.team.isAvailableEffect(condition) &&
       this.performer.canPerformEffect(condition, this.inputs)

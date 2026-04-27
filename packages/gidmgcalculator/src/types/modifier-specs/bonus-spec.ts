@@ -5,14 +5,19 @@ import type {
   BaseAttributeStat,
   LevelableTalentType,
 } from "../common";
-import type { EffectStackSpec, EnergyCostStackSpec, StacksBonusSpec } from "./effect-stack-spec";
 import type { BonusAttributeScalingSpec, TalentLevelIncrementSpec } from "./common-specs";
-import type { EffectConditionSpecs } from "./effect-condition-specs";
+import type {
+  EffectPerformableConditionSpecs,
+  EffectReceiverConditionSpecs,
+} from "./effect-condition-specs";
 import type { EffectMaxSpec } from "./effect-max-spec";
+import type { EffectStackSpec, EnergyCostStackSpec, StacksBonusSpec } from "./effect-stack-spec";
 import type { EffectValueSpec } from "./effect-value-spec";
 
-export type BonusCoreSpec = EffectConditionSpecs & {
-  id: string;
+export type ExtraBonusSpec = EffectPerformableConditionSpecs & BonusCoreSpec;
+
+export type BonusCoreSpec = {
+  id?: string;
   monoId?: string;
   value: EffectValueSpec;
   /**
@@ -27,7 +32,7 @@ export type BonusCoreSpec = EffectConditionSpecs & {
    */
   incre?: number;
   /** Added before basedOn > stacks */
-  preExtra?: number | BonusCoreSpec;
+  preExtra?: number | ExtraBonusSpec;
   /** Added right before stacks */
   basedOn?: BonusAttributeScalingSpec;
   stacks?: EffectStackSpec;
@@ -36,7 +41,7 @@ export type BonusCoreSpec = EffectConditionSpecs & {
   /** Added after max */
   stacksBonus?: StacksBonusSpec | StacksBonusSpec[];
   /** Added after max */
-  extras?: number | BonusCoreSpec | BonusCoreSpec[];
+  extras?: number | ExtraBonusSpec | ExtraBonusSpec[];
   outsource?: {
     stacks?: EnergyCostStackSpec;
   };
@@ -72,6 +77,8 @@ type BonusTargetsSpec =
   | AttackBonusTargetSpec[]
   | TalentLevelTargetSpec;
 
-export type BonusSpec = BonusCoreSpec & {
-  targets: BonusTargetsSpec;
-};
+export type BonusSpec = EffectPerformableConditionSpecs &
+  EffectReceiverConditionSpecs &
+  BonusCoreSpec & {
+    targets: BonusTargetsSpec;
+  };

@@ -1,4 +1,4 @@
-import type { EffectPerformableConditionSpecs, TeamConditionSpecs } from "@/types";
+import type { EffectPerformableConditionSpecs } from "@/types";
 import type { Team } from "./Team";
 
 import { isPassedComparison } from "@/models/utils/isPassedComparison";
@@ -7,7 +7,11 @@ import { isValidInput } from "@/models/utils/isValidInput";
 export function memberCan(memberCode: number, team: Team) {
   const member = team.getMember(memberCode);
 
-  function canPerformEffect(condition: EffectPerformableConditionSpecs, inputs: number[] = []) {
+  function performEffect(condition: EffectPerformableConditionSpecs, inputs: number[] = []) {
+    if (!team.state.isAvailableEffect(condition)) {
+      return false;
+    }
+
     const { grantedAt } = condition;
 
     if (grantedAt) {
@@ -33,9 +37,7 @@ export function memberCan(memberCode: number, team: Team) {
     }
 
     if (condition.checkAny) {
-      const anyInvalid = condition.checkAny.some(
-        (condition) => !canPerformEffect(condition, inputs)
-      );
+      const anyInvalid = condition.checkAny.some((condition) => !performEffect(condition, inputs));
 
       if (anyInvalid) {
         return false;
@@ -47,13 +49,6 @@ export function memberCan(memberCode: number, team: Team) {
     }
 
     return true;
-  }
-
-  function performEffect(
-    condition: TeamConditionSpecs & EffectPerformableConditionSpecs,
-    inputs?: number[]
-  ): boolean {
-    return team.state.isAvailableEffect(condition) && canPerformEffect(condition, inputs);
   }
 
   return {

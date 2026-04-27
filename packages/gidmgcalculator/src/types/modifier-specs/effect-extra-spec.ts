@@ -1,5 +1,5 @@
-import type { EffectConditionSpecs } from "./effect-condition-specs";
+import type { EffectPerformableConditionSpecs } from "./effect-condition-specs";
 
-export type EffectExtraSpec = EffectConditionSpecs & {
+export type EffectExtraSpec = EffectPerformableConditionSpecs & {
   value: number;
 };

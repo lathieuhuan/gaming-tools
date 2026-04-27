@@ -15,7 +15,7 @@ import type {
   TalentCalcItemBonusId,
   WeaponType,
 } from "./common";
-import type { BuffSpec, DebuffSpec, EffectConditionSpecs, InputCheckSpec } from "./modifier-specs";
+import type { BuffSpec, DebuffSpec, EffectPerformableConditionSpecs, InputCheckSpec } from "./modifier-specs";
 
 export type AppCharacter = {
   code: number;
@@ -86,7 +86,7 @@ type StatOther = {
 
 // COMMON
 
-type CharacterModifierBase = EffectConditionSpecs & {
+type CharacterModifierBase = EffectPerformableConditionSpecs & {
   src: string;
   description: string;
 };

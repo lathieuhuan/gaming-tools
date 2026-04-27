@@ -88,6 +88,14 @@ export type EffectInputConditionSpecs = {
   checkInput?: EffectInputConditionSpec;
 };
 
+// ===== Performable Condition =====
+
+export type EffectPerformableConditionSpecs = TeamConditionSpecs &
+  EffectPerformerConditionSpecs &
+  EffectInputConditionSpecs & {
+    checkAny?: EffectPerformableConditionSpecs[];
+  };
+
 // ===== Receiver Condition =====
 
 export type EffectReceiverConditionSpecs = {
@@ -105,14 +113,3 @@ export type EffectReceiverConditionSpecs = {
   };
   forEnhance?: EnhanceType;
 };
-
-// ===== Conclusion =====
-
-export type EffectPerformableConditionSpecs = EffectPerformerConditionSpecs &
-  EffectInputConditionSpecs & {
-    checkAny?: EffectPerformableConditionSpecs[];
-  };
-
-export type EffectConditionSpecs = TeamConditionSpecs &
-  EffectPerformableConditionSpecs &
-  EffectReceiverConditionSpecs;

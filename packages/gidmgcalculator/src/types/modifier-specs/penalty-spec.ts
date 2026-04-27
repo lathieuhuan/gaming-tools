@@ -1,10 +1,10 @@
 import type { ResistReductionKey } from "../common";
 import type { TalentLevelIncrementSpec } from "./common-specs";
-import type { EffectConditionSpecs } from "./effect-condition-specs";
+import type { EffectPerformableConditionSpecs } from "./effect-condition-specs";
 import type { EffectStackSpec, StacksBonusSpec } from "./effect-stack-spec";
 import type { EffectValueSpec } from "./effect-value-spec";
 
-export type PenaltyCoreSpec = EffectConditionSpecs & {
+export type PenaltyCoreSpec = EffectPerformableConditionSpecs & {
   value: EffectValueSpec;
 
   // ============ CHARACTER PENALTY ONLY ============
