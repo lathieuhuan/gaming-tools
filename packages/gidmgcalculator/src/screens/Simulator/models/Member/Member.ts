@@ -1,6 +1,6 @@
 import { Object_ } from "ron-utils";
 
-import type { Clonable } from "@/models/interfaces";
+import type { Clonable, Serializable } from "@/models/interfaces";
 import type {
   AllAttributes,
   AmplifyingReaction,
@@ -40,10 +40,12 @@ export type ReceivedAttackBonus = AttackBonus & {
   effectSrc: BonusSpec;
 };
 
+type LevelBonusControl = Map<string, TalentLevelBonus>;
+
 export type MemberConstructOptions = {
   state?: Partial<CharacterStateData>;
   atfGear?: ArtifactGear;
-  levelBonuses?: Map<string, TalentLevelBonus>;
+  levelBonuses?: LevelBonusControl;
   allAttrsCtrl?: AllAttributesControl;
   attkBonusCtrl?: AttackBonusControl;
 };
@@ -58,7 +60,7 @@ export type MemberCloneOptions = MemberConstructOptions & {
 };
 
 @FlatGetters("state", ["level", "NAs", "ES", "EB", "cons", "enhanced", "bareLv", "ascension"])
-export class Member implements Clonable<Member> {
+export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   code: number;
   state: MemberState;
 
@@ -67,7 +69,7 @@ export class Member implements Clonable<Member> {
   weapon: Weapon;
   atfGear: ArtifactGear;
 
-  lvBonusCtrl: Map<string, TalentLevelBonus>;
+  lvBonusCtrl: LevelBonusControl;
   allAttrsCtrl: AllAttributesControl;
   attkBonusCtrl: AttackBonusControl;
 
@@ -122,9 +124,7 @@ export class Member implements Clonable<Member> {
       }
     });
 
-    // TODO remove team.extraTalentLv
     return extraLvByCons + totalLvBonus;
-    // + this.team.extraTalentLv.get(talentType);
   }
 
   getFinalTalentLv(talent: LevelableTalentType) {
@@ -219,11 +219,9 @@ export class Member implements Clonable<Member> {
     return false;
   }
 
-  // receiveTalentLevelBonus(bonus: ReceivedTalentBonus) {
-  //   if (this.canReceiveEffect(bonus.effectSrc)) {
-  //     const {  } = bonus
-  //   }
-  // }
+  receiveTalentLvBonus(bonus: TalentLevelBonus) {
+    this.lvBonusCtrl.set(bonus.id, bonus);
+  }
 
   //
 
