@@ -1,15 +1,7 @@
 import { Array_ } from "ron-utils";
 
 import type { TargetCalc } from "@/models";
-import type {
-  AttackElement,
-  AttackReaction,
-  AttributeBonus,
-  AttributeTargetPath,
-  BareBonus,
-  BonusSpec,
-  LunarType,
-} from "@/types";
+import type { AttackElement, AttackReaction, BareBonus, BonusSpec, LunarType } from "@/types";
 import type {
   AbilityBuffEvent,
   AbilityHitEvent,
@@ -18,11 +10,9 @@ import type {
   SwitchInEvent,
 } from "../types";
 
-import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants";
 import { Member } from "@/screens/Simulator/models/Member";
 import { talentCalc } from "../logic/talentCalc";
 import { Team } from "./Team";
-import { BonusCalc } from "./Team/BonusCalc";
 
 export enum EHitLogType {
   MEMBER = "M",

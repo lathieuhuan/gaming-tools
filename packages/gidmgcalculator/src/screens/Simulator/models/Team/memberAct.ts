@@ -38,8 +38,10 @@ export function memberAct(memberCode: number, team: Team) {
   }
 
   function receiveBonus(bonus: BareBonus, spec: BonusSpec, inputs: number[] = []) {
-    if (spec.outsource) {
-      const stacksSpec = spec.outsource.stacks;
+    const { outsource, targets: target } = spec;
+
+    if (outsource) {
+      const stacksSpec = outsource.stacks;
       const stacks = new BonusCalc(member, team, { inputs }).getStacks(stacksSpec);
 
       bonus = {
@@ -48,46 +50,42 @@ export function memberAct(memberCode: number, team: Team) {
       };
     }
 
-    for (const target of Array_.toArray(spec.targets)) {
-      switch (target.module) {
-        case "ATTR": {
-          for (const targetPath of Array_.toArray(target.path)) {
-            const toStat = processToStat(targetPath, member, inputs, target.inpIndex ?? 0);
-            if (!toStat) continue;
+    switch (target.module) {
+      case "ATTR": {
+        for (const targetPath of Array_.toArray(target.path)) {
+          const toStat = processToStat(targetPath, member, inputs, target.inpIndex ?? 0);
+          if (!toStat) continue;
 
-            member.receiveAttrBonus({
-              ...bonus,
-              toStat,
-              label: "",
-              effectSrc: spec,
-            });
-          }
-          break;
+          member.receiveAttrBonus({
+            ...bonus,
+            toStat,
+            label: "",
+            effectSrc: spec,
+          });
         }
-        case "TLT": {
-          for (const targetPath of Array_.toArray(target.path)) {
-            if (!spec.id) continue;
-
-            member.lvBonusCtrl.set(spec.id, {
-              id: spec.id,
-              toType: targetPath,
-              value: bonus.value,
-              label: "",
-            });
-          }
-          break;
-        }
-        default:
-          for (const module of Array_.toArray(target.module)) {
-            member.receiveAttkBonus({
-              toType: module,
-              toKey: target.path,
-              value: bonus.value,
-              label: "",
-              effectSrc: spec,
-            });
-          }
+        break;
       }
+      case "TLT": {
+        if (!spec.id) return;
+
+        member.lvBonusCtrl.set(spec.id, {
+          id: spec.id,
+          toType: target.path,
+          value: bonus.value,
+          label: "",
+        });
+        break;
+      }
+      default:
+        for (const module of Array_.toArray(target.module)) {
+          member.receiveAttkBonus({
+            toType: module,
+            toKey: target.path,
+            value: bonus.value,
+            label: "",
+            effectSrc: spec,
+          });
+        }
     }
   }
 
