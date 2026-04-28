@@ -1,13 +1,15 @@
 import { WritableDraft } from "immer/src/internal.js";
 
+import type { TalentLevelBonus } from "@/types";
+import type { Member } from "../models/Member";
 import type { InputsById, MemberInputs, Simulation, SimulationInputs } from "../types";
 
 import { createTarget } from "@/logic/entity.logic";
 import { createModCtrlInputs } from "@/logic/modifier.logic";
-import { Member } from "@/screens/Simulator/models/Member";
 import { Target } from "@/models/Target";
 import { TargetCalc } from "@/models/TargetCalc";
 import { SimulationProcessor } from "../models/SimulationProcessor";
+import { TeamState } from "../models/Team";
 import { selectSimulation, SimulatorState, useSimulatorStore } from "../store";
 
 export function createSimulation(id: number = Date.now()) {
@@ -41,22 +43,64 @@ export function createMemberInputs(member: WritableDraft<Member>): MemberInputs 
 }
 
 export function resetSimulation(simulation: WritableDraft<Simulation>) {
-  const { memberOrder, members } = simulation;
-
+  const { memberOrder } = simulation;
   const target = simulation.target.clone();
+
+  const members = new Map<number, Member>();
   const memberClones = new Map<number, Member>();
   const inputs: SimulationInputs = {};
 
-  for (const member of members.values()) {
-    memberClones.set(member.code, member.clone());
+  for (const member of simulation.members.values()) {
+    members.set(member.code, member.clone());
     inputs[member.code] = createMemberInputs(member);
   }
 
+  const levelBonuses: TalentLevelBonus[] = [];
+  const teamState = new TeamState(members);
+
+  if (members.has(26)) {
+    // "Tartaglia"
+    levelBonuses.push({
+      id: "c26",
+      toType: "NAs",
+      value: 1,
+      label: "Tartaglia",
+    });
+  }
+
+  if (members.has(105)) {
+    // "Skirk"
+    const isValid = teamState.isTeamElmtValid({
+      teamOnlyElmts: ["hydro", "cryo"],
+      teamEachElmtCount: { hydro: 1, cryo: 1 },
+    });
+
+    if (isValid) {
+      levelBonuses.push({
+        id: "c105",
+        toType: "ES",
+        value: 1,
+        label: "Skirk",
+      });
+    }
+  }
+
+  members.forEach((member) => {
+    member
+      .initCalculation({
+        resonanceElmts: teamState.resonances,
+        levelBonuses,
+      })
+      .attrsCtrl.finalize();
+
+    memberClones.set(member.code, member.deepClone());
+  });
+
+  simulation.members = members;
   simulation.activeMember = memberOrder[0];
   simulation.inputs = inputs;
   simulation.timeline = [];
   simulation.processor = new SimulationProcessor(memberClones, target, memberOrder[0]);
-  simulation.processor.processTimeline(simulation.timeline);
 }
 
 /** Return true to process timeline */
@@ -71,7 +115,7 @@ export function onActiveSimulation(action: ActionToActiveSimulation) {
       const shouldProcessTimeline = action(simulation);
 
       if (shouldProcessTimeline) {
-        simulation.processor.processTimeline(simulation.timeline);
+        simulation.processor.processTimeline(simulation.timeline, simulation.members);
       }
     }
   };

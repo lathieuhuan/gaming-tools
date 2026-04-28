@@ -1,3 +1,5 @@
+import type { WritableDraft } from "immer/src/internal.js";
+
 import type { TargetCalc } from "@/models";
 import type { AttackElement, AttackReaction, LunarType } from "@/types";
 import type {
@@ -54,10 +56,20 @@ export class SimulationProcessor {
   }
 
   // TODO optimize
-  processTimeline(timeline: SimulationEvent[]) {
+  processTimeline(
+    timeline: SimulationEvent[],
+    members: Map<number, Member | WritableDraft<Member>>
+  ) {
     this.#hitLogs = [];
-    this.team.prepare();
     this.target = this.target.clone();
+
+    const memberClones = new Map<number, Member>();
+
+    for (const member of members.values()) {
+      memberClones.set(member.code, member.deepClone());
+    }
+
+    this.team = new Team(memberClones);
 
     const updatedMemberCodes = new Set<number>();
 
@@ -84,7 +96,7 @@ export class SimulationProcessor {
   // # Member Event
 
   processMemberEvent(event: MemberEvent) {
-    const updatedMemberCodes: number[] = [];
+    let updatedMemberCodes: number[] = [];
 
     switch (event.type) {
       case "SI": {
@@ -102,9 +114,7 @@ export class SimulationProcessor {
         break;
       }
       case "AB": {
-        const codes = this.processAbilityBuffEvent(event) || [];
-
-        updatedMemberCodes.push(...codes);
+        updatedMemberCodes = this.processAbilityBuffEvent(event) || [];
         break;
       }
       case "WB": {
@@ -113,6 +123,10 @@ export class SimulationProcessor {
       }
       default:
         event satisfies never;
+    }
+
+    for (const code of updatedMemberCodes) {
+      this.team.getMember(code).attrsCtrl.finalize();
     }
 
     return updatedMemberCodes;

@@ -2,7 +2,7 @@ import { AttributeTable } from "@/components/AttributeTable";
 import { selectActiveMember, useSimulatorStore } from "../store";
 
 export function TabAttributes() {
-  const allAttrsCtrl = useSimulatorStore((state) => selectActiveMember(state).allAttrsCtrl);
+  const attributes = useSimulatorStore((state) => selectActiveMember(state).attrsCtrl.finals);
 
-  return <AttributeTable attributes={allAttrsCtrl.finalize()} />;
+  return <AttributeTable attributes={attributes} />;
 }

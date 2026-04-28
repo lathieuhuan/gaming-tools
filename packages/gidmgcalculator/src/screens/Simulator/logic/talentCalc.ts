@@ -21,11 +21,7 @@ type AlterConfig = {
   reaction?: AttackReaction;
 };
 
-export function talentCalc(
-  performer: Member,
-  target: TargetCalc,
-  expectAttPatt: AttackPattern
-) {
+export function talentCalc(performer: Member, target: TargetCalc, expectAttPatt: AttackPattern) {
   const { vision, weaponType } = performer.data;
   const isESorEB = expectAttPatt === "ES" || expectAttPatt === "EB";
 

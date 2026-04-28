@@ -87,47 +87,43 @@ export class Team implements Clonable<Team> {
     return new Team(members);
   }
 
-  //
+  // prepare() {
+  //   const levelBonuses: TalentLevelBonus[] = [];
 
-  prepare() {
-    const levelBonuses: TalentLevelBonus[] = [];
+  //   if (this.members.has(26)) {
+  //     // "Tartaglia"
+  //     levelBonuses.push({
+  //       id: "c26",
+  //       toType: "NAs",
+  //       value: 1,
+  //       label: "Tartaglia",
+  //     });
+  //   }
 
-    if (this.members.has(26)) {
-      // "Tartaglia"
-      levelBonuses.push({
-        id: "c26",
-        toType: "NAs",
-        value: 1,
-        label: "Tartaglia",
-      });
-    }
+  //   if (this.members.has(105)) {
+  //     // "Skirk"
+  //     const isValid = this.state.isTeamElmtValid({
+  //       teamOnlyElmts: ["hydro", "cryo"],
+  //       teamEachElmtCount: { hydro: 1, cryo: 1 },
+  //     });
 
-    if (this.members.has(105)) {
-      // "Skirk"
-      const isValid = this.state.isTeamElmtValid({
-        teamOnlyElmts: ["hydro", "cryo"],
-        teamEachElmtCount: { hydro: 1, cryo: 1 },
-      });
+  //     if (isValid) {
+  //       levelBonuses.push({
+  //         id: "c105",
+  //         toType: "ES",
+  //         value: 1,
+  //         label: "Skirk",
+  //       });
+  //     }
+  //   }
 
-      if (isValid) {
-        levelBonuses.push({
-          id: "c105",
-          toType: "ES",
-          value: 1,
-          label: "Skirk",
-        });
-      }
-    }
-
-    this.members.forEach((member) => {
-      member
-        .initCalculation({
-          resonanceElmts: this.state.resonances,
-          levelBonuses,
-        })
-        .allAttrsCtrl.finalize();
-    });
-  }
+  //   this.members.forEach((member) => {
+  //     member.initCalculation({
+  //       resonanceElmts: this.state.resonances,
+  //       levelBonuses,
+  //     });
+  //   });
+  // }
 
   //
 

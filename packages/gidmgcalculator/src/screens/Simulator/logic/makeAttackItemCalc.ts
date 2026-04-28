@@ -32,20 +32,23 @@ export function makeAttackItemCalc(
   const { attkBonusCtrl, bareLv } = performer;
   const { attElmt = "phys", attPatt = "none", itemId, reaction = null, noU = false } = tools;
 
-  let filterBonus: GetBonusOptions["filter"];
+  // TODO implement
+  // let filterBonus: GetBonusOptions["filter"];
 
-  if (noU) {
-    filterBonus = (bonus: AttackBonus) =>
-      bonus.label !== QUICKEN_BUFF_LABEL.spread && bonus.label !== QUICKEN_BUFF_LABEL.aggravate;
-  }
+  // if (noU) {
+  //   filterBonus = (bonus: AttackBonus) =>
+  //     bonus.label !== QUICKEN_BUFF_LABEL.spread && bonus.label !== QUICKEN_BUFF_LABEL.aggravate;
+  // }
 
   function getBonus(key: AttackBonusKey) {
     if (attPatt === "none") {
-      return attkBonusCtrl.get(key, ["all", attElmt, itemId], { filter: filterBonus });
+      return attkBonusCtrl.get(key, ["all", attElmt, itemId], {
+        // filter: filterBonus,
+      });
     }
 
     return attkBonusCtrl.get(key, ["all", attElmt, itemId, attPatt, `${attPatt}.${attElmt}`], {
-      filter: filterBonus,
+      // filter: filterBonus,
     });
   }
 

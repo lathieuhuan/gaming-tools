@@ -11,6 +11,7 @@ import type {
 } from "@/types";
 import type { Team } from "./Team";
 
+import { baseStatToCoreStat, isBaseStat } from "@/logic/stat.logic";
 import { AbstractEffectValueCalc, EffectToGetInitialValue } from "./AbstractEffectValueCalc";
 
 export class BonusCalc extends AbstractEffectValueCalc {
@@ -30,7 +31,18 @@ export class BonusCalc extends AbstractEffectValueCalc {
 
   protected getBasedOn(config: BonusAttributeScalingSpec) {
     const { field, baseline = 0, isDynamic = true } = this.parseBasedOn(config);
-    const basedOnValue = this.performer.allAttrsCtrl.getTotal(field, this.basedOnFixed);
+    const { attrsCtrl } = this.performer;
+
+    let basedOnValue: number;
+
+    if (isBaseStat(field)) {
+      const attr = attrsCtrl.get(baseStatToCoreStat(field));
+
+      // base stats should not have dynamic bonus
+      basedOnValue = attr.base + attr.fiBonus;
+    } else {
+      basedOnValue = attrsCtrl.getTotal(field, this.basedOnFixed);
+    }
 
     return {
       field,

@@ -2,12 +2,12 @@ import { Object_ } from "ron-utils";
 
 import type { Clonable, Serializable } from "@/models/interfaces";
 import type {
-  AllAttributes,
   AmplifyingReaction,
   AppCharacter,
   AttackBonus,
   AttackElement,
   AttributeBonus,
+  AttributeStat,
   AutoRsnElmtType,
   BonusSpec,
   CharacterStateData,
@@ -19,18 +19,12 @@ import type {
 } from "@/types";
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
-import { TypeCounterKey } from "@/utils/TypeCounter";
 
 import { ArtifactGear } from "@/models/ArtifactGear";
 import { Weapon } from "@/models/Weapon";
-import { AllAttributesControl } from "./AllAttributesControl";
 import { AttackBonusControl } from "./AttackBonusControl";
+import { AttributeControl } from "./AttributeControl";
 import { MemberState } from "./MemberState";
-
-type BonusMonoRecord = {
-  trackId: string;
-  targetId: string;
-};
 
 export type ReceivedAttributeBonus = AttributeBonus & {
   effectSrc: BonusSpec;
@@ -45,8 +39,8 @@ type LevelBonusControl = Map<string, TalentLevelBonus>;
 export type MemberConstructOptions = {
   state?: Partial<CharacterStateData>;
   atfGear?: ArtifactGear;
-  levelBonuses?: LevelBonusControl;
-  allAttrsCtrl?: AllAttributesControl;
+  lvBonusCtrl?: LevelBonusControl;
+  attrsCtrl?: AttributeControl;
   attkBonusCtrl?: AttackBonusControl;
 };
 
@@ -70,7 +64,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   atfGear: ArtifactGear;
 
   lvBonusCtrl: LevelBonusControl;
-  allAttrsCtrl: AllAttributesControl;
+  attrsCtrl: AttributeControl;
   attkBonusCtrl: AttackBonusControl;
 
   declare level: Level;
@@ -94,8 +88,8 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   ) {
     const {
       atfGear = new ArtifactGear(),
-      levelBonuses = new Map(),
-      allAttrsCtrl = new AllAttributesControl(),
+      lvBonusCtrl = new Map(),
+      attrsCtrl = new AttributeControl(),
       attkBonusCtrl = new AttackBonusControl(),
     } = options;
 
@@ -106,8 +100,8 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     this.weapon = weapon;
     this.atfGear = atfGear;
 
-    this.lvBonusCtrl = levelBonuses;
-    this.allAttrsCtrl = allAttrsCtrl;
+    this.lvBonusCtrl = lvBonusCtrl;
+    this.attrsCtrl = attrsCtrl;
     this.attkBonusCtrl = attkBonusCtrl;
   }
 
@@ -157,8 +151,8 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     }
   }
 
-  getAttr(key: TypeCounterKey<AllAttributes>) {
-    return this.allAttrsCtrl.finals.get(key);
+  getAttr(key: AttributeStat) {
+    return this.attrsCtrl.finals.get(key);
   }
 
   // ===== CALCULATION =====
@@ -167,7 +161,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     const { resonanceElmts = [], levelBonuses = [] } = options;
 
     this.lvBonusCtrl.clear();
-    this.allAttrsCtrl.init(this, resonanceElmts);
+    this.attrsCtrl.init(this, resonanceElmts);
     this.attkBonusCtrl = new AttackBonusControl();
 
     levelBonuses.forEach((bonus) => {
@@ -175,52 +169,6 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     });
 
     return this;
-  }
-
-  private monoRecords: NonNullable<BonusMonoRecord>[] = [];
-
-  private isRecordedBonus(trackId: string, targetId: string) {
-    const recorded = this.monoRecords.some((savedRecord) => {
-      return trackId === savedRecord.trackId && targetId === savedRecord.targetId;
-    });
-
-    if (recorded) {
-      return true;
-    }
-
-    this.monoRecords.push({ trackId, targetId });
-
-    return false;
-  }
-
-  receiveAttrBonus(bonus: ReceivedAttributeBonus) {
-    const { monoId } = bonus.effectSrc;
-    const notRecorded = !monoId || !this.isRecordedBonus(monoId, bonus.toStat);
-
-    if (notRecorded) {
-      this.allAttrsCtrl.applyBonus(bonus);
-
-      return true;
-    }
-
-    return false;
-  }
-
-  // receiveAttkBonus(bonus: ReceivedAttackBonus) {
-  //   const { monoId } = bonus.effectSrc;
-  //   const notRecorded = !monoId || !this.isRecordedBonus(monoId, `${bonus.toType}/${bonus.toKey}`);
-
-  //   if (notRecorded) {
-  //     this.attkBonusCtrl.add(bonus.groupId, [bonus]);
-
-  //     return true;
-  //   }
-
-  //   return false;
-  // }
-
-  receiveTalentLvBonus(bonus: TalentLevelBonus) {
-    this.lvBonusCtrl.set(bonus.id, bonus);
   }
 
   //
@@ -234,17 +182,17 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
       weapon = this.weapon,
       state = this.state,
       atfGear = this.atfGear,
-      allAttrsCtrl = this.allAttrsCtrl,
+      attrsCtrl = this.attrsCtrl,
       attkBonusCtrl = this.attkBonusCtrl,
-      levelBonuses = this.lvBonusCtrl,
+      lvBonusCtrl = this.lvBonusCtrl,
     } = options;
 
     return new Member(this.code, this.data, weapon, {
       state,
       atfGear,
-      allAttrsCtrl,
+      attrsCtrl,
       attkBonusCtrl,
-      levelBonuses,
+      lvBonusCtrl,
     });
   }
 
@@ -252,8 +200,8 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     return new Member(this.code, this.data, this.weapon.clone(), {
       state: this.state,
       atfGear: this.atfGear.deepClone(),
-      levelBonuses: Object_.clone(this.lvBonusCtrl),
-      allAttrsCtrl: this.allAttrsCtrl.clone(),
+      lvBonusCtrl: Object_.clone(this.lvBonusCtrl),
+      attrsCtrl: this.attrsCtrl.clone(),
       attkBonusCtrl: this.attkBonusCtrl.clone(),
     });
   }
