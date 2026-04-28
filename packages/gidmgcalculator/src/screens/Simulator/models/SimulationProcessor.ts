@@ -1,7 +1,5 @@
-import { Array_ } from "ron-utils";
-
 import type { TargetCalc } from "@/models";
-import type { AttackElement, AttackReaction, BareBonus, BonusSpec, LunarType } from "@/types";
+import type { AttackElement, AttackReaction, LunarType } from "@/types";
 import type {
   AbilityBuffEvent,
   AbilityHitEvent,
@@ -148,8 +146,6 @@ export class SimulationProcessor {
     const { team } = this;
     const { ops } = team;
     const performer = team.getMember(event.performer);
-    const can = ops.can(performer.code);
-    const act = ops.act(performer.code);
     const buff = performer.data.buffs?.find((buff) => buff.index === event.modId);
 
     if (!buff) {
@@ -157,66 +153,53 @@ export class SimulationProcessor {
       return;
     }
 
-    if (!can.performEffect(buff, event.inputs)) {
+    if (!ops.can(performer.code).performEffect(buff, event.inputs)) {
       // TODO handle error not valid
       return;
     }
 
     const changedCodes: number[] = [];
-    const { affect, effects = [] } = buff;
+    const { index, affect } = buff;
 
-    function deliverBonus(receiverCode: number, bonus: BareBonus, spec: BonusSpec) {
-      if (!ops.can(receiverCode).receiveEffect(spec)) {
-        return;
-      }
+    const effects = ops.act(performer.code).performBuff(buff.effects, event.inputs);
+    if (!effects.length) return;
 
-      ops.act(receiverCode).receiveBonus(bonus, spec, event.inputs);
+    function deliverBonus(receiverCode: number) {
+      ops.act(receiverCode).receiveBuff(index, effects, event.inputs);
       changedCodes.push(receiverCode);
     }
 
-    for (const spec of Array_.toArray(effects)) {
-      if (!can.performEffect(spec, event.inputs)) {
-        continue;
+    switch (affect) {
+      case "SELF": {
+        deliverBonus(performer.code);
+        break;
       }
-
-      const bonus = act.performBonus(spec, { inputs: event.inputs });
-
-      if (!bonus.value) {
-        continue;
+      case "TEAMMATE": {
+        team.memberList.forEach((member) => {
+          if (member.code !== performer.code) {
+            deliverBonus(member.code);
+          }
+        });
+        break;
       }
-
-      switch (affect) {
-        case "SELF": {
-          deliverBonus(performer.code, bonus, spec);
-          break;
-        }
-        case "TEAMMATE": {
-          team.memberList.forEach((member) => {
-            if (member.code !== performer.code) {
-              deliverBonus(member.code, bonus, spec);
-            }
-          });
-          break;
-        }
-        case "SELF_TEAMMATE": {
-          break;
-        }
-        case "PARTY": {
-          team.memberList.forEach((member) => {
-            deliverBonus(member.code, bonus, spec);
-          });
-          break;
-        }
-        case "ONE_UNIT": {
-          break;
-        }
-        case "ACTIVE_UNIT": {
-          deliverBonus(this.#onFieldCode, bonus, spec);
-          break;
-        }
-        default:
-          affect satisfies never;
+      case "SELF_TEAMMATE": {
+        break;
       }
+      case "PARTY": {
+        team.memberList.forEach((member) => {
+          deliverBonus(member.code);
+        });
+        break;
+      }
+      case "ONE_UNIT": {
+        break;
+      }
+      case "ACTIVE_UNIT": {
+        deliverBonus(this.#onFieldCode);
+        break;
+      }
+      default:
+        affect satisfies never;
     }
 
     for (const code of changedCodes) {

@@ -206,18 +206,18 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     return false;
   }
 
-  receiveAttkBonus(bonus: ReceivedAttackBonus) {
-    const { monoId } = bonus.effectSrc;
-    const notRecorded = !monoId || !this.isRecordedBonus(monoId, `${bonus.toType}/${bonus.toKey}`);
+  // receiveAttkBonus(bonus: ReceivedAttackBonus) {
+  //   const { monoId } = bonus.effectSrc;
+  //   const notRecorded = !monoId || !this.isRecordedBonus(monoId, `${bonus.toType}/${bonus.toKey}`);
 
-    if (notRecorded) {
-      this.attkBonusCtrl.add(bonus);
+  //   if (notRecorded) {
+  //     this.attkBonusCtrl.add(bonus.groupId, [bonus]);
 
-      return true;
-    }
+  //     return true;
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 
   receiveTalentLvBonus(bonus: TalentLevelBonus) {
     this.lvBonusCtrl.set(bonus.id, bonus);

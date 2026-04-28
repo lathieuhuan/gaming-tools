@@ -14,7 +14,6 @@ import type {
   StacksBonusSpec,
   TalentLevelIncrementBaseSpec,
   TalentLevelIncrementSpec,
-  TeamConditionSpecs,
   TeamMember,
 } from "@/types";
 import type { Team } from "./Team";

@@ -1,7 +1,4 @@
-import { Object_ } from "ron-utils";
-
 import type {
-  AttackBonus,
   AttackBonusKey,
   AttackBonusType,
   ExclusiveAttackBonus,
@@ -9,7 +6,19 @@ import type {
   TalentCalcItemBonusId,
 } from "@/types";
 
-type AttackBonusGroup = Record<AttackBonusType, AttackBonus[]>;
+export type AttackBonusGroupId = number;
+
+export type AttackBonus = {
+  groupId: AttackBonusGroupId;
+  value: number;
+  toType: AttackBonusType;
+  toKey: AttackBonusKey;
+  label: string;
+};
+
+type BonusByType = Partial<Record<AttackBonusType, AttackBonus[]>>;
+
+type BonusByGroupId = Map<AttackBonusGroupId, AttackBonus[]>;
 
 export type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
 
@@ -20,25 +29,26 @@ export type GetBonusOptions = {
 const defaultFilter = () => true;
 
 export class AttackBonusControl {
-  protected group = {} as AttackBonusGroup;
-  protected initial = {} as AttackBonusGroup;
-
-  constructor(initial: Partial<AttackBonusGroup> = {}) {
-    this.initial = Object_.cloneProps(initial) as AttackBonusGroup;
-    this.group = initial as AttackBonusGroup;
-  }
+  private byType: BonusByType = {};
+  private byGroupId: BonusByGroupId = new Map();
 
   get records() {
-    return this.group;
+    return this.byGroupId;
   }
 
-  add(bonus: AttackBonus) {
-    const current = this.group[bonus.toType] || [];
+  add(groupId: AttackBonusGroupId, bonuses: AttackBonus[]) {
+    if (this.byGroupId.has(groupId)) {
+      this.remove(groupId);
+    }
 
-    current.push(bonus);
-    this.group[bonus.toType] = current;
+    this.byGroupId.set(groupId, bonuses);
 
-    return this;
+    for (const bonus of bonuses) {
+      const current = this.byType[bonus.toType] || [];
+
+      current.push(bonus);
+      this.byType[bonus.toType] = current;
+    }
   }
 
   get(key: AttackBonusKey, paths: GetBonusPaths, options: GetBonusOptions = {}) {
@@ -46,7 +56,7 @@ export class AttackBonusControl {
     let result = 0;
 
     for (const path of paths) {
-      const bonuses = (path && this.group[path]) || [];
+      const bonuses = (path && this.byType[path]) || [];
 
       result += bonuses.reduce((total, bonus) => {
         return total + (bonus.toKey === key && filter(bonus) ? bonus.value : 0);
@@ -56,9 +66,28 @@ export class AttackBonusControl {
     return result;
   }
 
+  remove(groupId: number) {
+    const bonuses = this.byGroupId.get(groupId);
+
+    if (!bonuses?.length) {
+      this.byGroupId.delete(groupId);
+      return false;
+    }
+
+    for (const bonus of bonuses) {
+      const current = this.byType[bonus.toType] || [];
+
+      this.byType[bonus.toType] = current.filter((b) => b.groupId !== groupId);
+    }
+
+    this.byGroupId.delete(groupId);
+
+    return true;
+  }
+
   collectExclusiveBonuses = (id?: TalentCalcItemBonusId) => {
     const result: ExclusiveAttackBonusGroup[] = [];
-    const bonusRecords = (id && this.group[id]) || [];
+    const bonusRecords = (id && this.byType[id]) || [];
 
     for (const record of bonusRecords) {
       const existed = result.find((filterRecord) => filterRecord.type === record.toKey);
@@ -81,16 +110,12 @@ export class AttackBonusControl {
   };
 
   clone() {
-    return new AttackBonusControl(Object_.cloneProps(this.group));
-  }
+    const copy = new AttackBonusControl();
 
-  reset() {
-    this.group = Object_.cloneProps(this.initial);
-    return this;
-  }
+    for (const [groupId, bonuses] of this.byGroupId) {
+      copy.add(groupId, bonuses);
+    }
 
-  clear() {
-    this.group = {} as AttackBonusGroup;
-    return this;
+    return copy;
   }
 }

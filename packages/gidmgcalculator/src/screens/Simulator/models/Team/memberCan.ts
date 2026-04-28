@@ -51,6 +51,7 @@ export function memberCan(memberCode: number, team: Team) {
     return true;
   }
 
+  // TODO also check for monoId
   function receiveEffect(condition: EffectReceiverConditionSpecs) {
     const { data } = member;
 
