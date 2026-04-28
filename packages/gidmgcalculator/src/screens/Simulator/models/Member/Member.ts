@@ -4,18 +4,14 @@ import type { Clonable, Serializable } from "@/models/interfaces";
 import type {
   AmplifyingReaction,
   AppCharacter,
-  AttackBonus,
   AttackElement,
-  AttributeBonus,
   AttributeStat,
   AutoRsnElmtType,
-  BonusSpec,
   CharacterStateData,
   Level,
   LevelableTalentType,
   QuickenReaction,
-  RawCharacter,
-  TalentLevelBonus,
+  RawCharacter
 } from "@/types";
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
@@ -23,15 +19,14 @@ import { FlatGetters } from "@/decorators/FlatGetters.decorator";
 import { ArtifactGear } from "@/models/ArtifactGear";
 import { Weapon } from "@/models/Weapon";
 import { AttackBonusControl } from "./AttackBonusControl";
+import { AttributeBonusControl } from "./AttributeBonusControl";
 import { AttributeControl } from "./AttributeControl";
 import { MemberState } from "./MemberState";
 
-export type ReceivedAttributeBonus = AttributeBonus & {
-  effectSrc: BonusSpec;
-};
-
-export type ReceivedAttackBonus = AttackBonus & {
-  effectSrc: BonusSpec;
+export type TalentLevelBonus = {
+  id: string;
+  value: number;
+  toType: LevelableTalentType;
 };
 
 type LevelBonusControl = Map<string, TalentLevelBonus>;
@@ -39,9 +34,10 @@ type LevelBonusControl = Map<string, TalentLevelBonus>;
 export type MemberConstructOptions = {
   state?: Partial<CharacterStateData>;
   atfGear?: ArtifactGear;
-  lvBonusCtrl?: LevelBonusControl;
   attrsCtrl?: AttributeControl;
+  attrBonusCtrl?: AttributeBonusControl;
   attkBonusCtrl?: AttackBonusControl;
+  lvBonusCtrl?: LevelBonusControl;
 };
 
 type MemberCalculationInitOptions = {
@@ -63,9 +59,10 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   weapon: Weapon;
   atfGear: ArtifactGear;
 
-  lvBonusCtrl: LevelBonusControl;
   attrsCtrl: AttributeControl;
+  attrBonusCtrl: AttributeBonusControl;
   attkBonusCtrl: AttackBonusControl;
+  lvlBonusCtrl: LevelBonusControl;
 
   declare level: Level;
   declare NAs: number;
@@ -88,8 +85,9 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   ) {
     const {
       atfGear = new ArtifactGear(),
-      lvBonusCtrl = new Map(),
       attrsCtrl = new AttributeControl(),
+      lvBonusCtrl = new Map(),
+      attrBonusCtrl = new AttributeBonusControl(),
       attkBonusCtrl = new AttackBonusControl(),
     } = options;
 
@@ -100,8 +98,9 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     this.weapon = weapon;
     this.atfGear = atfGear;
 
-    this.lvBonusCtrl = lvBonusCtrl;
     this.attrsCtrl = attrsCtrl;
+    this.lvlBonusCtrl = lvBonusCtrl;
+    this.attrBonusCtrl = attrBonusCtrl;
     this.attkBonusCtrl = attkBonusCtrl;
   }
 
@@ -112,7 +111,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     const extraLvByCons = requiredConsLv !== undefined && this.cons >= requiredConsLv ? 3 : 0;
     let totalLvBonus = 0;
 
-    this.lvBonusCtrl.forEach((bonus) => {
+    this.lvlBonusCtrl.forEach((bonus) => {
       if (bonus.toType === talentType) {
         totalLvBonus += bonus.value;
       }
@@ -160,12 +159,13 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   initCalculation(options: MemberCalculationInitOptions = {}) {
     const { resonanceElmts = [], levelBonuses = [] } = options;
 
-    this.lvBonusCtrl.clear();
     this.attrsCtrl.init(this, resonanceElmts);
+    this.lvlBonusCtrl.clear();
+    this.attrBonusCtrl = new AttributeBonusControl();
     this.attkBonusCtrl = new AttackBonusControl();
 
     levelBonuses.forEach((bonus) => {
-      this.lvBonusCtrl.set(bonus.id, bonus);
+      this.lvlBonusCtrl.set(bonus.id, bonus);
     });
 
     return this;
@@ -183,14 +183,16 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
       state = this.state,
       atfGear = this.atfGear,
       attrsCtrl = this.attrsCtrl,
+      attrBonusCtrl = this.attrBonusCtrl,
       attkBonusCtrl = this.attkBonusCtrl,
-      lvBonusCtrl = this.lvBonusCtrl,
+      lvBonusCtrl = this.lvlBonusCtrl,
     } = options;
 
     return new Member(this.code, this.data, weapon, {
       state,
       atfGear,
       attrsCtrl,
+      attrBonusCtrl,
       attkBonusCtrl,
       lvBonusCtrl,
     });
@@ -200,9 +202,10 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     return new Member(this.code, this.data, this.weapon.clone(), {
       state: this.state,
       atfGear: this.atfGear.deepClone(),
-      lvBonusCtrl: Object_.clone(this.lvBonusCtrl),
       attrsCtrl: this.attrsCtrl.clone(),
+      attrBonusCtrl: this.attrBonusCtrl.clone(),
       attkBonusCtrl: this.attkBonusCtrl.clone(),
+      lvBonusCtrl: Object_.clone(this.lvlBonusCtrl),
     });
   }
 

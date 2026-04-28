@@ -5,11 +5,10 @@ import type {
   ExclusiveAttackBonusGroup,
   TalentCalcItemBonusId,
 } from "@/types";
-
-type AttackBonusGroupId = number;
+import type { BonusGroupId, BonusGroupMeta } from "./types";
 
 export type AttackBonus = {
-  groupId: AttackBonusGroupId;
+  groupId: BonusGroupId;
   value: number;
   toType: AttackBonusType;
   toKey: AttackBonusKey;
@@ -17,17 +16,12 @@ export type AttackBonus = {
 
 type BonusByType = Partial<Record<AttackBonusType, AttackBonus[]>>;
 
-export type BonusGroupMeta = {
-  id: AttackBonusGroupId;
-  src: string;
-};
-
 type BonusData = {
   meta: BonusGroupMeta;
   bonuses: AttackBonus[];
 };
 
-type BonusByGroupId = Map<AttackBonusGroupId, BonusData>;
+type BonusByGroupId = Map<BonusGroupId, BonusData>;
 
 export type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
 

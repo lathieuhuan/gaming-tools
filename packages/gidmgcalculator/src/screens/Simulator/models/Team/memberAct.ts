@@ -1,10 +1,11 @@
 import { Array_ } from "ron-utils";
 
 import type { BareBonus } from "@/types/calculation";
-import type { BonusSpec } from "@/types/modifier-specs";
-import type { AttackBonus, BonusGroupMeta } from "../Member";
+import type { AttributeTargetPath, BonusSpec } from "@/types/modifier-specs";
+import type { AttackBonus, AttributeBonus, BonusGroupMeta, Member } from "../Member";
 import type { Team } from "./Team";
 
+import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants/global";
 import { BonusCalc } from "./BonusCalc";
 import { memberCan } from "./memberCan";
 
@@ -39,16 +40,36 @@ export function memberAct(memberCode: number, team: Team) {
     return effects;
   }
 
-  function receiveBuff(
-    meta: BonusGroupMeta,
-    effects: BuffEffect[],
-    inputs: number[] = []
-  ) {
-    const bonuses: AttackBonus[] = [];
+  function processToStat(
+    path: AttributeTargetPath,
+    receiver: Member,
+    inputs: number[],
+    inpIndex: number
+  ): AttributeBonus["toStat"] | undefined {
+    switch (path) {
+      case "INP_ELMT": {
+        const elmtIndex = inputs[inpIndex] ?? 0;
+        return ELEMENT_TYPES[elmtIndex];
+      }
+      case "OWN_ELMT": {
+        return receiver.data.vision;
+      }
+      case "P/H/E/C": {
+        return PHEC_ELEMENT_TYPES.find((elmt) => team.state.elmtCount.has(elmt));
+      }
+      default:
+        return path;
+    }
+  }
+
+  function receiveBuff(meta: BonusGroupMeta, effects: BuffEffect[], inputs: number[] = []) {
+    const attkBs: AttackBonus[] = [];
+    const attrBs: AttributeBonus[] = [];
 
     for (const effect of effects) {
-      const { outsource, targets: target } = effect.spec;
-      let value = effect.bonus.value;
+      const { bonus } = effect;
+      const { id, outsource, targets: target } = effect.spec;
+      let value = bonus.value;
 
       if (outsource) {
         const stacks = new BonusCalc(member, team, { inputs }).getStacks(outsource.stacks);
@@ -58,14 +79,32 @@ export function memberAct(memberCode: number, team: Team) {
 
       switch (target.module) {
         case "ATTR": {
+          for (const path of Array_.toArray(target.path)) {
+            const toStat = processToStat(path, member, inputs, target.inpIndex ?? 0);
+            if (!toStat) continue;
+
+            attrBs.push({
+              groupId: meta.id,
+              toStat,
+              value,
+              isDynamic: bonus.isDynamic,
+            });
+          }
           break;
         }
         case "TLT": {
+          if (id) {
+            member.lvlBonusCtrl.set(id, {
+              id,
+              value: bonus.value,
+              toType: target.path,
+            });
+          }
           break;
         }
         default:
           for (const module of Array_.toArray(target.module)) {
-            bonuses.push({
+            attkBs.push({
               groupId: meta.id,
               toType: module,
               toKey: target.path,
@@ -75,87 +114,14 @@ export function memberAct(memberCode: number, team: Team) {
       }
     }
 
-    if (!bonuses.length) {
+    if (!attkBs.length && !attrBs.length) {
       return false;
     }
 
-    member.attkBonusCtrl.add(meta, bonuses);
+    member.attrBonusCtrl.add(meta, attrBs);
+    member.attkBonusCtrl.add(meta, attkBs);
     return true;
   }
-
-  // function processToStat(
-  //   path: AttributeTargetPath,
-  //   receiver: Member,
-  //   inputs: number[],
-  //   inpIndex: number
-  // ): AttributeBonus["toStat"] | undefined {
-  //   switch (path) {
-  //     case "INP_ELMT": {
-  //       const elmtIndex = inputs[inpIndex] ?? 0;
-  //       return ELEMENT_TYPES[elmtIndex];
-  //     }
-  //     case "OWN_ELMT": {
-  //       return receiver.data.vision;
-  //     }
-  //     case "P/H/E/C": {
-  //       return PHEC_ELEMENT_TYPES.find((elmt) => team.state.elmtCount.has(elmt));
-  //     }
-  //     default:
-  //       return path;
-  //   }
-  // }
-
-  // function receiveBonus(bonus: BareBonus, spec: BonusSpec, inputs: number[] = []) {
-  //   const { outsource, targets: target } = spec;
-
-  //   if (outsource) {
-  //     const stacksSpec = outsource.stacks;
-  //     const stacks = new BonusCalc(member, team, { inputs }).getStacks(stacksSpec);
-
-  //     bonus = {
-  //       ...bonus,
-  //       value: bonus.value * (stacks?.value ?? 1),
-  //     };
-  //   }
-
-  //   switch (target.module) {
-  //     case "ATTR": {
-  //       for (const targetPath of Array_.toArray(target.path)) {
-  //         const toStat = processToStat(targetPath, member, inputs, target.inpIndex ?? 0);
-  //         if (!toStat) continue;
-
-  //         member.receiveAttrBonus({
-  //           ...bonus,
-  //           toStat,
-  //           label: "",
-  //           effectSrc: spec,
-  //         });
-  //       }
-  //       break;
-  //     }
-  //     case "TLT": {
-  //       if (!spec.id) return;
-
-  //       member.lvBonusCtrl.set(spec.id, {
-  //         id: spec.id,
-  //         toType: target.path,
-  //         value: bonus.value,
-  //         label: "",
-  //       });
-  //       break;
-  //     }
-  //     default:
-  //       for (const module of Array_.toArray(target.module)) {
-  //         member.receiveAttkBonus({
-  //           toType: module,
-  //           toKey: target.path,
-  //           value: bonus.value,
-  //           label: "",
-  //           effectSrc: spec,
-  //         });
-  //       }
-  //   }
-  // }
 
   return {
     performBuff,
