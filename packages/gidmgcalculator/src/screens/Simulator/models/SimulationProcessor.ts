@@ -59,28 +59,33 @@ export class SimulationProcessor {
     this.team.prepare();
     this.target = this.target.clone();
 
+    const updatedMemberCodes = new Set<number>();
+
     for (const event of timeline) {
       switch (event.cate) {
-        //
         case "M": {
-          this.processMemberEvent(event);
+          this.processMemberEvent(event).forEach((code) => updatedMemberCodes.add(code));
           break;
         }
-
         case "E": {
           // TODO process environment event
           break;
         }
-
         default:
           event satisfies never;
       }
     }
+
+    updatedMemberCodes.forEach((code) => {
+      this.team.setMember(this.team.getMember(code).clone());
+    });
   }
 
   // # Member Event
 
   processMemberEvent(event: MemberEvent) {
+    const updatedMemberCodes: number[] = [];
+
     switch (event.type) {
       case "SI": {
         this.processSwitchInEvent(event);
@@ -97,7 +102,9 @@ export class SimulationProcessor {
         break;
       }
       case "AB": {
-        this.processAbilityBuffEvent(event);
+        const codes = this.processAbilityBuffEvent(event) || [];
+
+        updatedMemberCodes.push(...codes);
         break;
       }
       case "WB": {
@@ -107,6 +114,8 @@ export class SimulationProcessor {
       default:
         event satisfies never;
     }
+
+    return updatedMemberCodes;
   }
 
   // ## Switch In Event
@@ -215,7 +224,8 @@ export class SimulationProcessor {
 
     for (const code of recipientCodes) {
       ops.act(code).receiveBuff(meta, effects, event.inputs);
-      team.setMember(team.getMember(code).clone());
     }
+
+    return recipientCodes;
   }
 }
