@@ -29,10 +29,11 @@ export function AbilityEventList() {
     });
   };
 
-  const handleTrigger = (buff: CharacterBuff) => {
+  const handleTrigger = (buff: CharacterBuff, inputs: number[]) => {
     triggerAbilityBuffEvent({
       performer: data.code,
       modId: buff.index,
+      inputs,
     });
   };
 
@@ -73,7 +74,7 @@ export function AbilityEventList() {
                   size="small"
                   variant="primary"
                   className="ml-auto"
-                  onClick={() => handleTrigger(buff)}
+                  onClick={() => handleTrigger(buff, inputs)}
                 >
                   Trigger
                 </Button>

@@ -2,7 +2,7 @@ import { Array_ } from "ron-utils";
 
 import type { BareBonus } from "@/types/calculation";
 import type { BonusSpec } from "@/types/modifier-specs";
-import type { AttackBonus, AttackBonusGroupId } from "../Member";
+import type { AttackBonus, BonusGroupMeta } from "../Member";
 import type { Team } from "./Team";
 
 import { BonusCalc } from "./BonusCalc";
@@ -39,7 +39,11 @@ export function memberAct(memberCode: number, team: Team) {
     return effects;
   }
 
-  function receiveBuff(groupId: AttackBonusGroupId, effects: BuffEffect[], inputs: number[] = []) {
+  function receiveBuff(
+    meta: BonusGroupMeta,
+    effects: BuffEffect[],
+    inputs: number[] = []
+  ) {
     const bonuses: AttackBonus[] = [];
 
     for (const effect of effects) {
@@ -62,11 +66,10 @@ export function memberAct(memberCode: number, team: Team) {
         default:
           for (const module of Array_.toArray(target.module)) {
             bonuses.push({
-              groupId,
+              groupId: meta.id,
               toType: module,
               toKey: target.path,
               value,
-              label: "",
             });
           }
       }
@@ -76,7 +79,7 @@ export function memberAct(memberCode: number, team: Team) {
       return false;
     }
 
-    member.attkBonusCtrl.add(groupId, bonuses);
+    member.attkBonusCtrl.add(meta, bonuses);
     return true;
   }
 

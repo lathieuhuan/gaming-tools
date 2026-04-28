@@ -8,7 +8,7 @@ import type {
   SwitchInEvent,
 } from "../types";
 
-import { Member } from "@/screens/Simulator/models/Member";
+import { BonusGroupMeta, Member } from "@/screens/Simulator/models/Member";
 import { talentCalc } from "../logic/talentCalc";
 import { Team } from "./Team";
 
@@ -150,34 +150,40 @@ export class SimulationProcessor {
 
     if (!buff) {
       // TODO handle error not found
+      console.warn(`Ability buff event not found: ${event.performer} / ${event.modId}`);
       return;
     }
 
     if (!ops.can(performer.code).performEffect(buff, event.inputs)) {
       // TODO handle error not valid
+      console.warn(`Ability buff event not valid: ${event.performer} / ${event.modId}`);
       return;
     }
 
-    const changedCodes: number[] = [];
+    // console.log(`Ability buff event`);
+    // console.log(event);
+
     const { index, affect } = buff;
+    const recipientCodes: number[] = [];
 
     const effects = ops.act(performer.code).performBuff(buff.effects, event.inputs);
-    if (!effects.length) return;
 
-    function deliverBonus(receiverCode: number) {
-      ops.act(receiverCode).receiveBuff(index, effects, event.inputs);
-      changedCodes.push(receiverCode);
+    if (!effects.length) {
+      console.warn(`Ability buff event has no effects: ${event.performer} / ${event.modId}`);
+      return;
     }
+
+    // console.log(effects);
 
     switch (affect) {
       case "SELF": {
-        deliverBonus(performer.code);
+        recipientCodes.push(performer.code);
         break;
       }
       case "TEAMMATE": {
         team.memberList.forEach((member) => {
           if (member.code !== performer.code) {
-            deliverBonus(member.code);
+            recipientCodes.push(member.code);
           }
         });
         break;
@@ -187,7 +193,7 @@ export class SimulationProcessor {
       }
       case "PARTY": {
         team.memberList.forEach((member) => {
-          deliverBonus(member.code);
+          recipientCodes.push(member.code);
         });
         break;
       }
@@ -195,14 +201,20 @@ export class SimulationProcessor {
         break;
       }
       case "ACTIVE_UNIT": {
-        deliverBonus(this.#onFieldCode);
+        recipientCodes.push(this.#onFieldCode);
         break;
       }
       default:
         affect satisfies never;
     }
 
-    for (const code of changedCodes) {
+    const meta: BonusGroupMeta = {
+      id: index,
+      src: `${performer.data.name} / ${buff.src}`,
+    };
+
+    for (const code of recipientCodes) {
+      ops.act(code).receiveBuff(meta, effects, event.inputs);
       team.setMember(team.getMember(code).clone());
     }
   }

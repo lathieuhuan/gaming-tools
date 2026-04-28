@@ -6,19 +6,28 @@ import type {
   TalentCalcItemBonusId,
 } from "@/types";
 
-export type AttackBonusGroupId = number;
+type AttackBonusGroupId = number;
 
 export type AttackBonus = {
   groupId: AttackBonusGroupId;
   value: number;
   toType: AttackBonusType;
   toKey: AttackBonusKey;
-  label: string;
 };
 
 type BonusByType = Partial<Record<AttackBonusType, AttackBonus[]>>;
 
-type BonusByGroupId = Map<AttackBonusGroupId, AttackBonus[]>;
+export type BonusGroupMeta = {
+  id: AttackBonusGroupId;
+  src: string;
+};
+
+type BonusData = {
+  meta: BonusGroupMeta;
+  bonuses: AttackBonus[];
+};
+
+type BonusByGroupId = Map<AttackBonusGroupId, BonusData>;
 
 export type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
 
@@ -36,12 +45,12 @@ export class AttackBonusControl {
     return this.byGroupId;
   }
 
-  add(groupId: AttackBonusGroupId, bonuses: AttackBonus[]) {
-    if (this.byGroupId.has(groupId)) {
-      this.remove(groupId);
+  add(meta: BonusGroupMeta, bonuses: AttackBonus[]) {
+    if (this.byGroupId.has(meta.id)) {
+      this.remove(meta.id);
     }
 
-    this.byGroupId.set(groupId, bonuses);
+    this.byGroupId.set(meta.id, { meta, bonuses });
 
     for (const bonus of bonuses) {
       const current = this.byType[bonus.toType] || [];
@@ -67,14 +76,14 @@ export class AttackBonusControl {
   }
 
   remove(groupId: number) {
-    const bonuses = this.byGroupId.get(groupId);
+    const data = this.byGroupId.get(groupId);
 
-    if (!bonuses?.length) {
+    if (!data?.bonuses.length) {
       this.byGroupId.delete(groupId);
       return false;
     }
 
-    for (const bonus of bonuses) {
+    for (const bonus of data.bonuses) {
       const current = this.byType[bonus.toType] || [];
 
       this.byType[bonus.toType] = current.filter((b) => b.groupId !== groupId);
@@ -93,7 +102,7 @@ export class AttackBonusControl {
       const existed = result.find((filterRecord) => filterRecord.type === record.toKey);
       const newRecord: ExclusiveAttackBonus = {
         value: record.value,
-        label: record.label,
+        label: "record.label", // TODO
       };
 
       if (existed) {
@@ -112,8 +121,8 @@ export class AttackBonusControl {
   clone() {
     const copy = new AttackBonusControl();
 
-    for (const [groupId, bonuses] of this.byGroupId) {
-      copy.add(groupId, bonuses);
+    for (const { meta, bonuses } of this.byGroupId.values()) {
+      copy.add(meta, bonuses);
     }
 
     return copy;
