@@ -1,14 +1,7 @@
 import type { AttributeStat, BaseAttributeStat } from "@/types";
-import type { BonusGroupId, BonusGroupMeta } from "./types";
+import type { AttributeBonus, BonusGroupId, BonusGroupMeta } from "./types";
 
 type AttributeBonusStat = AttributeStat | BaseAttributeStat;
-
-export type AttributeBonus = {
-  groupId: BonusGroupId;
-  value: number;
-  toStat: AttributeBonusStat;
-  isDynamic?: boolean;
-};
 
 type BonusByType = Partial<Record<AttributeBonusStat, AttributeBonus[]>>;
 

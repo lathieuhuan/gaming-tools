@@ -11,16 +11,15 @@ import type {
   Level,
   LevelableTalentType,
   QuickenReaction,
-  RawCharacter
+  RawCharacter,
 } from "@/types";
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
 
 import { ArtifactGear } from "@/models/ArtifactGear";
 import { Weapon } from "@/models/Weapon";
-import { AttackBonusControl } from "./AttackBonusControl";
-import { AttributeBonusControl } from "./AttributeBonusControl";
 import { AttributeControl } from "./AttributeControl";
+import { BonusControl } from "./BonusControl";
 import { MemberState } from "./MemberState";
 
 export type TalentLevelBonus = {
@@ -35,8 +34,7 @@ export type MemberConstructOptions = {
   state?: Partial<CharacterStateData>;
   atfGear?: ArtifactGear;
   attrsCtrl?: AttributeControl;
-  attrBonusCtrl?: AttributeBonusControl;
-  attkBonusCtrl?: AttackBonusControl;
+  bonusCtrl?: BonusControl;
   lvBonusCtrl?: LevelBonusControl;
 };
 
@@ -60,8 +58,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   atfGear: ArtifactGear;
 
   attrsCtrl: AttributeControl;
-  attrBonusCtrl: AttributeBonusControl;
-  attkBonusCtrl: AttackBonusControl;
+  bonusCtrl: BonusControl;
   lvlBonusCtrl: LevelBonusControl;
 
   declare level: Level;
@@ -87,8 +84,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
       atfGear = new ArtifactGear(),
       attrsCtrl = new AttributeControl(),
       lvBonusCtrl = new Map(),
-      attrBonusCtrl = new AttributeBonusControl(),
-      attkBonusCtrl = new AttackBonusControl(),
+      bonusCtrl = new BonusControl(),
     } = options;
 
     this.code = code;
@@ -100,8 +96,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
 
     this.attrsCtrl = attrsCtrl;
     this.lvlBonusCtrl = lvBonusCtrl;
-    this.attrBonusCtrl = attrBonusCtrl;
-    this.attkBonusCtrl = attkBonusCtrl;
+    this.bonusCtrl = bonusCtrl;
   }
 
   // ===== GETTERS =====
@@ -125,7 +120,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   }
 
   getQuickenBuffDamage(reaction: QuickenReaction) {
-    const pctBonus = this.attkBonusCtrl.get("pct_", [reaction]);
+    const pctBonus = this.bonusCtrl.totalAttkBonus("pct_", [reaction]);
 
     switch (reaction) {
       case "aggravate":
@@ -138,7 +133,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   }
 
   getAmplifyingMult(reaction: AmplifyingReaction, attElmt: AttackElement) {
-    const pctBonus = this.attkBonusCtrl.get("pct_", [reaction]);
+    const pctBonus = this.bonusCtrl.totalAttkBonus("pct_", [reaction]);
 
     switch (reaction) {
       case "melt":
@@ -161,8 +156,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
 
     this.attrsCtrl.init(this, resonanceElmts);
     this.lvlBonusCtrl.clear();
-    this.attrBonusCtrl = new AttributeBonusControl();
-    this.attkBonusCtrl = new AttackBonusControl();
+    this.bonusCtrl = new BonusControl();
 
     levelBonuses.forEach((bonus) => {
       this.lvlBonusCtrl.set(bonus.id, bonus);
@@ -183,8 +177,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
       state = this.state,
       atfGear = this.atfGear,
       attrsCtrl = this.attrsCtrl,
-      attrBonusCtrl = this.attrBonusCtrl,
-      attkBonusCtrl = this.attkBonusCtrl,
+      bonusCtrl = this.bonusCtrl,
       lvBonusCtrl = this.lvlBonusCtrl,
     } = options;
 
@@ -192,8 +185,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
       state,
       atfGear,
       attrsCtrl,
-      attrBonusCtrl,
-      attkBonusCtrl,
+      bonusCtrl,
       lvBonusCtrl,
     });
   }
@@ -203,8 +195,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
       state: this.state,
       atfGear: this.atfGear.deepClone(),
       attrsCtrl: this.attrsCtrl.clone(),
-      attrBonusCtrl: this.attrBonusCtrl.clone(),
-      attkBonusCtrl: this.attkBonusCtrl.clone(),
+      bonusCtrl: new BonusControl(), // TODO
       lvBonusCtrl: Object_.clone(this.lvlBonusCtrl),
     });
   }

@@ -5,14 +5,7 @@ import type {
   ExclusiveAttackBonusGroup,
   TalentCalcItemBonusId,
 } from "@/types";
-import type { BonusGroupId, BonusGroupMeta } from "./types";
-
-export type AttackBonus = {
-  groupId: BonusGroupId;
-  value: number;
-  toType: AttackBonusType;
-  toKey: AttackBonusKey;
-};
+import type { AttackBonus, BonusGroupId, BonusGroupMeta } from "./types";
 
 type BonusByType = Partial<Record<AttackBonusType, AttackBonus[]>>;
 

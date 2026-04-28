@@ -1,5 +1,5 @@
 import type { Clonable } from "@/models/interfaces";
-import type { AutoRsnElmtType, ElementCount, ElementType, TalentLevelBonus } from "@/types";
+import type { AutoRsnElmtType, ElementCount, ElementType } from "@/types";
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
 import { createWeapon } from "@/logic/entity.logic";
