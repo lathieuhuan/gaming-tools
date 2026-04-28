@@ -8,9 +8,19 @@ export const CONFIG_1: SimulationConfig = {
   members: [
     {
       code: 37,
+      level: "100/100",
     },
-    { code: 19 },
-    { code: 72 },
-    { code: 47 },
+    {
+      code: 19,
+      level: "100/100",
+    },
+    {
+      code: 72,
+      level: "100/100",
+    },
+    {
+      code: 47,
+      level: "100/100",
+    },
   ],
 };

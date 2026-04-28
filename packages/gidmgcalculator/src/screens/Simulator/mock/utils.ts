@@ -1,8 +1,4 @@
-import {
-  createTarget,
-  createWeapon,
-  CreateWeaponRawData
-} from "@/logic/entity.logic";
+import { createTarget, createWeapon, CreateWeaponRawData } from "@/logic/entity.logic";
 import { Target, TargetCalc } from "@/models";
 import { Member } from "@/screens/Simulator/models/Member";
 import { $AppCharacter } from "@/services";
@@ -32,7 +28,7 @@ export function createSimulation1(memberConfigs: MemberConfig[]): Simulation {
     const weaponRaw = config.weapon || { type: data.weaponType };
     const weapon = createWeapon({ ...weaponRaw, ID: idStore.gen() });
 
-    const member = new Member(config.code, data, weapon);
+    const member = new Member(config.code, data, weapon, { state: config });
 
     memberOrder.push(config.code);
     members.set(config.code, member);
