@@ -48,8 +48,8 @@ export function memberAct(member: Member, team: Team) {
   function receiveBonus(
     meta: BonusGroupMeta,
     bonus: BareBonus,
-    inputs: number[] = [],
-    spec: BonusSpec
+    spec: BonusSpec,
+    inputs: number[] = []
   ) {
     const { targets: target, outsource } = spec;
     let value = bonus.value;
@@ -61,6 +61,10 @@ export function memberAct(member: Member, team: Team) {
     }
 
     switch (target.module) {
+      case "TLT": {
+        //
+        break;
+      }
       case "ATTR": {
         for (const path of Array_.toArray(target.path)) {
           const toStat = processToStat(path, inputs, target.inpIndex ?? 0);
@@ -74,10 +78,6 @@ export function memberAct(member: Member, team: Team) {
             isDynamic: bonus.isDynamic,
           });
         }
-        break;
-      }
-      case "TLT": {
-        //
         break;
       }
       default: {

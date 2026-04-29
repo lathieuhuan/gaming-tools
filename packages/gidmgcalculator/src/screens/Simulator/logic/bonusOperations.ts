@@ -97,15 +97,15 @@ export function bonusOperations(
       const { affect = parentAffect } = spec;
       const recipients = getAffectedMembers(affect);
 
-      deliverBonus(meta, bonus, recipients, spec);
+      deliverBonus(meta, bonus, spec, recipients);
     }
   }
 
   function deliverBonus(
     meta: BonusGroupMeta,
     bonus: BareBonus,
+    spec: BonusSpec,
     recipients: Member[],
-    spec: BonusSpec
   ) {
     if (!bonus.value) return;
 
@@ -116,7 +116,7 @@ export function bonusOperations(
         continue;
       }
 
-      recipientOps.act.receiveBonus(meta, bonus, inputs, spec);
+      recipientOps.act.receiveBonus(meta, bonus, spec, inputs);
     }
   }
 

@@ -116,7 +116,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     return this[talent] + this.getTotalXtraTalentLv(talent);
   }
 
-  getQuickenBuffDamage(reaction: QuickenReaction) {
+  getQuickenDamageBonus(reaction: QuickenReaction) {
     const pctBonus = this.bonusCtrl.totalAttkBonus("pct_", [reaction]);
 
     switch (reaction) {
