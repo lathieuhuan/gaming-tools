@@ -5,7 +5,7 @@ import type {
   ExclusiveAttackBonusGroup,
   TalentCalcItemBonusId,
 } from "@/types";
-import type { AttackBonus, BonusGroupId, BonusGroupMeta } from "./types";
+import type { AttackBonus, BonusGroupId, BonusGroupMeta } from "../models/Member";
 
 type BonusByType = Partial<Record<AttackBonusType, AttackBonus[]>>;
 

@@ -1,5 +1,5 @@
 import type { AllAttributeStat } from "@/types";
-import type { AttributeBonus, BonusGroupId, BonusGroupMeta } from "./types";
+import type { AttributeBonus, BonusGroupId, BonusGroupMeta } from "../models/Member";
 
 type BonusByType = Partial<Record<AllAttributeStat, AttributeBonus[]>>;
 

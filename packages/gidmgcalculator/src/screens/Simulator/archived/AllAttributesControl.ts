@@ -7,7 +7,7 @@ import type {
   AttributeStat,
   AutoRsnElmtType,
 } from "@/types";
-import type { Member } from "./Member";
+import type { Member } from "../models/Member";
 
 import { ATTRIBUTE_STAT_TYPES } from "@/constants";
 import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/logic/stat.logic";
