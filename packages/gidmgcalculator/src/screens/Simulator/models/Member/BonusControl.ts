@@ -1,4 +1,5 @@
 import type {
+  AllAttributeStat,
   AttackBonusKey,
   AttackBonusType,
   ExclusiveAttackBonus,
@@ -10,7 +11,6 @@ import type {
   AttackBonusRecord,
   AttributeBonus,
   AttributeBonusRecord,
-  AttributeBonusStat,
   Bonus,
   BonusGroupId,
   BonusGroupMeta,
@@ -103,7 +103,7 @@ export class BonusControl {
     this.updateAttkBonus(bonus);
   }
 
-  totalAttrBonus(key: AttributeBonusStat, fixedOnly = true) {
+  totalAttrBonus(key: AllAttributeStat, fixedOnly = true) {
     const bonuses = this.attrRecord[key] || [];
 
     return bonuses.reduce(

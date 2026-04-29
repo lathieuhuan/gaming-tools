@@ -1,6 +1,6 @@
 import { Object_, round } from "ron-utils";
 
-import type { AllAttributes, AttributeStat, AutoRsnElmtType } from "@/types";
+import type { AllAttributes, AllAttributeStat, AttributeStat, AutoRsnElmtType } from "@/types";
 import type { Member } from "./Member";
 import type { AttributeBonusRecord } from "./types";
 
@@ -18,7 +18,7 @@ const AUTO_RESONANCE_STATS: Record<string, { key: AttributeStat; value: number }
 };
 
 type AttributeLog = {
-  stat: AttributeStat;
+  stat: AllAttributeStat;
   value: number;
   label: string;
 };
@@ -44,7 +44,7 @@ export class AttributeControl {
     this.finals = finals;
   }
 
-  private _add(stat: AttributeStat, value: number, label = "Character base stat") {
+  private _add(stat: AllAttributeStat, value: number, label = "Character base stat") {
     this.attrs.add(stat, value);
     this.logs.push({ stat, value, label });
   }
@@ -75,9 +75,9 @@ export class AttributeControl {
 
       const ascensionMult = ASC_MULT_BY_ASC[member.ascension];
 
-      this._add("hp", hp.level * levelMult + hp.ascension * ascensionMult);
-      this._add("atk", atk.level * atkLevelMult + atk.ascension * ascensionMult);
-      this._add("def", def.level * levelMult + def.ascension * ascensionMult);
+      this._add("base_hp", hp.level * levelMult + hp.ascension * ascensionMult);
+      this._add("base_atk", atk.level * atkLevelMult + atk.ascension * ascensionMult);
+      this._add("base_def", def.level * levelMult + def.ascension * ascensionMult);
       this._add("cRate_", 5);
       this._add("cDmg_", 50);
       this._add("er_", 100);
@@ -104,7 +104,7 @@ export class AttributeControl {
       const { subStat } = member.weapon.data;
       const { mainStatValue, subStatValue } = member.weapon;
 
-      this._add("atk", mainStatValue, "Weapon main stat");
+      this._add("base_atk", mainStatValue, "Weapon main stat");
 
       if (subStatValue && subStat) {
         this._add(subStat.type, subStatValue, "Weapon sub stat");
@@ -132,14 +132,16 @@ export class AttributeControl {
 
   /** For getting stat value before finalize */
   get(stat: AttributeStat) {
-    const base = this.attrs.get(stat);
+    const value = this.attrs.get(stat);
 
     if (isCoreStat(stat)) {
+      const base = this.attrs.get(`base_${stat}`);
       const percent = this.attrs.get(`${stat}_`);
-      return base + (base * percent) / 100;
+
+      return base + (base * percent) / 100 + value;
     }
 
-    return base;
+    return value;
   }
 
   finalize(bonusRecord: AttributeBonusRecord = {}) {
@@ -154,11 +156,10 @@ export class AttributeControl {
     }
 
     for (const stat of CORE_STAT_TYPES) {
-      const base = finals.get(stat);
+      const base = finals.get(`base_${stat}`);
       const percent = finals.get(`${stat}_`);
 
-      finals.add(`base_${stat}`, base);
-      finals.add(stat, (base * percent) / 100);
+      finals.add(stat, base + (base * percent) / 100);
     }
 
     this.finals = finals;

@@ -1,4 +1,4 @@
-import type { AttackBonusKey, AttackBonusType, BaseAttributeStat, AttributeStat } from "@/types";
+import type { AllAttributeStat, AttackBonusKey, AttackBonusType } from "@/types";
 
 export type BonusGroupId = string;
 
@@ -7,13 +7,11 @@ export type BonusGroupMeta = {
   src: string;
 };
 
-export type AttributeBonusStat = AttributeStat | BaseAttributeStat;
-
 export type AttributeBonus = {
   type: "ATTR";
   groupId: BonusGroupId;
   value: number;
-  toStat: AttributeBonusStat;
+  toStat: AllAttributeStat;
   isDynamic?: boolean;
 };
 
@@ -27,6 +25,6 @@ export type AttackBonus = {
 
 export type Bonus = AttributeBonus | AttackBonus;
 
-export type AttributeBonusRecord = Partial<Record<AttributeBonusStat, AttributeBonus[]>>;
+export type AttributeBonusRecord = Partial<Record<AllAttributeStat, AttributeBonus[]>>;
 
 export type AttackBonusRecord = Partial<Record<AttackBonusType, AttackBonus[]>>;

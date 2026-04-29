@@ -1,9 +1,7 @@
-import type { AttributeStat, BaseAttributeStat } from "@/types";
+import type { AllAttributeStat } from "@/types";
 import type { AttributeBonus, BonusGroupId, BonusGroupMeta } from "./types";
 
-type AttributeBonusStat = AttributeStat | BaseAttributeStat;
-
-type BonusByType = Partial<Record<AttributeBonusStat, AttributeBonus[]>>;
+type BonusByType = Partial<Record<AllAttributeStat, AttributeBonus[]>>;
 
 type BonusData = {
   meta: BonusGroupMeta;
@@ -35,7 +33,7 @@ export class AttributeBonusControl {
     }
   }
 
-  get(key: AttributeBonusStat) {
+  get(key: AllAttributeStat) {
     const bonuses = this.byType[key] || [];
 
     return bonuses.reduce((total, bonus) => total + bonus.value, 0);

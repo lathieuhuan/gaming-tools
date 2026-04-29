@@ -2,10 +2,10 @@ import { Object_, round } from "ron-utils";
 
 import type {
   AllAttributes,
+  AllAttributeStat,
   AttributeBonus,
   AttributeStat,
   AutoRsnElmtType,
-  BaseAttributeStat,
 } from "@/types";
 import type { Member } from "./Member";
 
@@ -216,7 +216,7 @@ export class AllAttributesControl {
     return this._get(key).base;
   }
 
-  getTotal(key: AttributeStat | BaseAttributeStat, fixedOnly = false) {
+  getTotal(key: AllAttributeStat, fixedOnly = false) {
     if (isBaseStat(key)) {
       return this.getBase(baseStatToCoreStat(key));
     }
