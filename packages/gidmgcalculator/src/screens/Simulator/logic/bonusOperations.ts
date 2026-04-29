@@ -2,10 +2,7 @@ import type { BareBonus, BonusSpec, ModAffectType } from "@/types";
 import type { BonusGroupMeta, Member } from "../models/Member";
 import type { Team } from "../models/Team";
 
-type ResolvedBonusSpec = {
-  spec: BonusSpec;
-  affect: ModAffectType;
-};
+const DEFAULT_AFFECT: ModAffectType = "SELF";
 
 /**
  * @param refi - required for weapon bonuses
@@ -17,59 +14,65 @@ export function bonusOperations(
   refi?: number
 ) {
   const performerOps = team.getMemberOps(performer);
+  const allRecipients = new Set<Member>();
 
-  function partitionBonusSpecs(specs: BonusSpec[], defaultAffect: ModAffectType = "SELF") {
-    const tltSpecs: ResolvedBonusSpec[] = [];
-    const attrSpecs: ResolvedBonusSpec[] = [];
-    const attkSpecs: ResolvedBonusSpec[] = [];
+  function resolveBonusSpecs(specs: BonusSpec[]) {
+    const tltSpecs: BonusSpec[] = [];
+    const attrSpecs: BonusSpec[] = [];
+    const attkSpecs: BonusSpec[] = [];
 
     for (const spec of specs) {
       if (!performerOps.can.performEffect(spec, inputs)) {
         continue;
       }
 
-      const $spec: ResolvedBonusSpec = {
-        spec,
-        affect: spec.affect ?? defaultAffect,
-      };
-
       switch (spec.targets.module) {
         case "TLT": {
-          tltSpecs.push($spec);
+          tltSpecs.push(spec);
           break;
         }
         case "ATTR": {
-          attrSpecs.push($spec);
+          attrSpecs.push(spec);
           break;
         }
         default: {
-          attkSpecs.push($spec);
+          attkSpecs.push(spec);
           break;
         }
       }
     }
 
-    return { tltSpecs, attrSpecs, attkSpecs };
+    return tltSpecs.concat(attrSpecs, attkSpecs);
   }
 
-  function getAffectedMembers(affect: ModAffectType) {
-    let members: Member[] = [];
+  function getAffectedMembers(affect: ModAffectType = DEFAULT_AFFECT) {
+    const members: Member[] = [];
 
     switch (affect) {
       case "SELF": {
         members.push(performer);
+        allRecipients.add(performer);
         break;
       }
       case "TEAMMATE": {
-        members = team.memberList.filter((member) => member !== performer);
+        team.memberList.forEach((member) => {
+          if (member !== performer) {
+            members.push(member);
+            allRecipients.add(member);
+          }
+        });
         break;
       }
       case "PARTY": {
-        members = team.memberList;
+        team.memberList.forEach((member) => {
+          members.push(member);
+          allRecipients.add(member);
+        });
         break;
       }
       case "ACTIVE_UNIT": {
         members.push(team.onFieldMember);
+        allRecipients.add(team.onFieldMember);
         break;
       }
       case "SELF_TEAMMATE":
@@ -84,9 +87,15 @@ export function bonusOperations(
     return members;
   }
 
-  function performAndDeliverBonuses(meta: BonusGroupMeta, specs: ResolvedBonusSpec[]) {
-    for (const { spec, affect } of specs) {
+  function performAndDeliverBonuses(
+    meta: BonusGroupMeta,
+    specs: BonusSpec[],
+    parentAffect?: ModAffectType
+  ) {
+    for (const spec of specs) {
       const bonus = performerOps.act.performBonus(spec, { inputs, refi });
+
+      const { affect = parentAffect } = spec;
       const recipients = getAffectedMembers(affect);
 
       deliverBonus(meta, bonus, recipients, spec);
@@ -101,19 +110,20 @@ export function bonusOperations(
   ) {
     if (!bonus.value) return;
 
-    recipients.forEach((recipient) => {
+    for (const recipient of recipients) {
       const recipientOps = team.getMemberOps(recipient);
 
       if (!recipientOps.can.receiveBonus(spec)) {
-        return;
+        continue;
       }
 
       recipientOps.act.receiveBonus(meta, bonus, inputs, spec);
-    });
+    }
   }
 
   return {
-    partitionBonusSpecs,
+    allRecipients,
+    resolveBonusSpecs,
     getAffectedMembers,
     performAndDeliverBonuses,
     deliverBonus,

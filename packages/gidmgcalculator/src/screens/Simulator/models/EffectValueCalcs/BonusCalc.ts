@@ -32,17 +32,10 @@ export class BonusCalc extends AbstractEffectValueCalc {
   protected getBasedOn(spec: BonusAttributeScalingSpec) {
     const { field, baseline = 0, isDynamic = true } = this.parseBasedOn(spec);
     const { attrsCtrl, bonusCtrl } = this.performer;
+    const attrStat = isBaseStat(field) ? baseStatToCoreStat(field) : field;
 
-    let basedOnValue = bonusCtrl.totalAttrBonus(field, this.basedOnFixed);
-
-    if (isBaseStat(field)) {
-      const attr = attrsCtrl.get(baseStatToCoreStat(field));
-
-      // base stats should not have dynamic bonus
-      basedOnValue = attr.base + attr.fiBonus;
-    } else {
-      basedOnValue = attrsCtrl.getTotal(field, this.basedOnFixed);
-    }
+    const basedOnValue =
+      attrsCtrl.get(attrStat) + bonusCtrl.totalAttrBonus(field, this.basedOnFixed);
 
     return {
       field,

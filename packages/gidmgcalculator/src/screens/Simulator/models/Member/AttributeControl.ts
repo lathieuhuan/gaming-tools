@@ -1,8 +1,10 @@
-import { round } from "ron-utils";
+import { Object_, round } from "ron-utils";
 
 import type { AllAttributes, AttributeStat, AutoRsnElmtType } from "@/types";
 import type { Member } from "./Member";
+import type { AttributeBonusRecord } from "./types";
 
+import { CORE_STAT_TYPES } from "@/constants";
 import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/logic/stat.logic";
 import TypeCounter from "@/utils/TypeCounter";
 
@@ -15,31 +17,36 @@ const AUTO_RESONANCE_STATS: Record<string, { key: AttributeStat; value: number }
   dendro: { key: "em", value: 50 },
 };
 
-type InternalAttribute = {
-  base: number;
-  fiBonus: number;
-  dyBonus: number;
+type AttributeLog = {
+  stat: AttributeStat;
+  value: number;
+  label: string;
 };
 
-type AddableAttributeKey = keyof Pick<InternalAttribute, "base" | "fiBonus" | "dyBonus">;
-
-type InternalAttributes = Map<AttributeStat, InternalAttribute>;
-
 type AttributeControlConstructOptions = {
-  attrs?: InternalAttributes;
+  attrs?: AllAttributes;
   finals?: AllAttributes;
 };
 
 export class AttributeControl {
-  private attrs: InternalAttributes = new Map();
+  private attrs: AllAttributes;
+  private logs: AttributeLog[] = [];
 
-  finals: AllAttributes = new TypeCounter();
+  finals: AllAttributes;
 
   constructor(options: AttributeControlConstructOptions = {}) {
-    const { attrs = new Map(), finals = new TypeCounter() } = options;
+    const {
+      attrs = new TypeCounter({}, { allowNegative: true }),
+      finals = new TypeCounter({}, { allowNegative: true }),
+    } = options;
 
     this.attrs = attrs;
     this.finals = finals;
+  }
+
+  private _add(stat: AttributeStat, value: number, label = "Character base stat") {
+    this.attrs.add(stat, value);
+    this.logs.push({ stat, value, label });
   }
 
   init(member: Member, resonanceElmts: AutoRsnElmtType[]) {
@@ -68,19 +75,19 @@ export class AttributeControl {
 
       const ascensionMult = ASC_MULT_BY_ASC[member.ascension];
 
-      this.add("hp", "base", hp.level * levelMult + hp.ascension * ascensionMult);
-      this.add("atk", "base", atk.level * atkLevelMult + atk.ascension * ascensionMult);
-      this.add("def", "base", def.level * levelMult + def.ascension * ascensionMult);
-      this.add("cRate_", "base", 5);
-      this.add("cDmg_", "base", 50);
-      this.add("er_", "base", 100);
-      this.add("naAtkSpd_", "base", 100);
-      this.add("caAtkSpd_", "base", 100);
+      this._add("hp", hp.level * levelMult + hp.ascension * ascensionMult);
+      this._add("atk", atk.level * atkLevelMult + atk.ascension * ascensionMult);
+      this._add("def", def.level * levelMult + def.ascension * ascensionMult);
+      this._add("cRate_", 5);
+      this._add("cDmg_", 50);
+      this._add("er_", 100);
+      this._add("naAtkSpd_", 100);
+      this._add("caAtkSpd_", 100);
     }
 
     // ===== Innate stats =====
     data.statInnates?.forEach((stat) => {
-      this.add(stat.type, "base", stat.value);
+      this._add(stat.type, stat.value, "Character innate stat");
     });
 
     // ===== Ascension stats =====
@@ -89,7 +96,7 @@ export class AttributeControl {
       const ascensionStatMult = member.ascension > 2 ? member.ascension - 2 : 0;
       const ascensionStatValue = statBonus.value * ascensionStatMult;
 
-      this.add(statBonus.type, "fiBonus", ascensionStatValue);
+      this._add(statBonus.type, ascensionStatValue, "Character ascension stat");
     }
 
     // ===== Weapon =====
@@ -97,10 +104,10 @@ export class AttributeControl {
       const { subStat } = member.weapon.data;
       const { mainStatValue, subStatValue } = member.weapon;
 
-      this.add("atk", "base", mainStatValue);
+      this._add("atk", mainStatValue, "Weapon main stat");
 
       if (subStatValue && subStat) {
-        this.add(subStat.type, "fiBonus", subStatValue);
+        this._add(subStat.type, subStatValue, "Weapon sub stat");
       }
     }
 
@@ -108,7 +115,7 @@ export class AttributeControl {
     member.atfGear.attributes.forEach((stat, value) => {
       const validStat: AttributeStat = isBaseStat(stat) ? baseStatToCoreStat(stat) : stat;
 
-      this.add(validStat, "fiBonus", value);
+      this._add(validStat, value, "Artifact stat");
     });
 
     // ===== Resonances =====
@@ -116,94 +123,46 @@ export class AttributeControl {
       if (elmt in AUTO_RESONANCE_STATS) {
         const { key, value } = AUTO_RESONANCE_STATS[elmt];
 
-        this.add(key, "fiBonus", value);
+        this._add(key, value, "Resonance bonus");
       }
     }
 
     return this.attrs;
   }
 
-  get(stat: AttributeStat): InternalAttribute {
-    const attr = this.attrs.get(stat);
+  /** For getting stat value before finalize */
+  get(stat: AttributeStat) {
+    const base = this.attrs.get(stat);
 
-    if (attr) {
-      return attr;
+    if (isCoreStat(stat)) {
+      const percent = this.attrs.get(`${stat}_`);
+      return base + (base * percent) / 100;
     }
 
-    const newAttr = genAttr();
-    this.attrs.set(stat, newAttr);
-
-    return newAttr;
+    return base;
   }
 
-  getTotal(key: AttributeStat, fixedOnly = false) {
-    const { base, fiBonus, dyBonus } = this.get(key);
-    let total = base + fiBonus;
+  finalize(bonusRecord: AttributeBonusRecord = {}) {
+    const finals: AllAttributes = this.attrs.clone();
 
-    if (!fixedOnly) {
-      total += dyBonus;
-    }
+    for (const [stat, bonuses] of Object_.entries(bonusRecord)) {
+      if (!bonuses?.length) continue;
 
-    if (isCoreStat(key)) {
-      const percent = this.get(`${key}_`);
-      let totalPercent = percent.base + percent.fiBonus;
-
-      if (!fixedOnly) {
-        totalPercent += percent.dyBonus;
+      for (const bonus of bonuses) {
+        finals.add(stat, bonus.value);
       }
-
-      total += (base * totalPercent) / 100;
     }
 
-    return total;
-  }
+    for (const stat of CORE_STAT_TYPES) {
+      const base = finals.get(stat);
+      const percent = finals.get(`${stat}_`);
 
-  add(stat: AttributeStat, key: AddableAttributeKey, value: number) {
-    this.get(stat)[key] += value;
-  }
-
-  finalize() {
-    const finals: AllAttributes = new TypeCounter(undefined, {
-      allowNegative: true,
-    });
-
-    for (const [stat, attr] of this.attrs) {
-      let final = attr.base + attr.fiBonus + attr.dyBonus;
-
-      if (isCoreStat(stat)) {
-        const percentAttr = this.get(`${stat}_`);
-        const percent = percentAttr.base + percentAttr.fiBonus + percentAttr.dyBonus;
-
-        final += (attr.base * percent) / 100;
-        finals.add(`base_${stat}`, attr.base);
-      }
-
-      finals.add(stat, final);
+      finals.add(`base_${stat}`, base);
+      finals.add(stat, (base * percent) / 100);
     }
 
     this.finals = finals;
 
     return finals;
   }
-
-  clone() {
-    const clonedAttrs: InternalAttributes = new Map();
-
-    for (const [stat, attr] of this.attrs) {
-      clonedAttrs.set(stat, { ...attr });
-    }
-
-    return new AttributeControl({
-      attrs: clonedAttrs,
-      finals: this.finals.clone(),
-    });
-  }
-}
-
-function genAttr(): InternalAttribute {
-  return {
-    base: 0,
-    fiBonus: 0,
-    dyBonus: 0,
-  };
 }

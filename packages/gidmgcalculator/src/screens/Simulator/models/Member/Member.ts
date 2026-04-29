@@ -1,5 +1,3 @@
-import { Object_ } from "ron-utils";
-
 import type { Clonable, Serializable } from "@/models/interfaces";
 import type {
   AmplifyingReaction,
@@ -187,16 +185,6 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
       attrsCtrl,
       bonusCtrl,
       lvBonusCtrl,
-    });
-  }
-
-  deepClone() {
-    return new Member(this.code, this.data, this.weapon.clone(), {
-      state: this.state,
-      atfGear: this.atfGear.deepClone(),
-      attrsCtrl: this.attrsCtrl.clone(),
-      bonusCtrl: new BonusControl(), // TODO
-      lvBonusCtrl: Object_.clone(this.lvlBonusCtrl),
     });
   }
 

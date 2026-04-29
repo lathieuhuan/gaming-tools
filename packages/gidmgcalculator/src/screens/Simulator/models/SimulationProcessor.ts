@@ -1,4 +1,4 @@
-import type { WritableDraft } from "immer/src/internal.js";
+import { Array_ } from "ron-utils";
 
 import type { TargetCalc } from "@/models";
 import type { AttackElement, AttackReaction, LunarType } from "@/types";
@@ -51,25 +51,14 @@ export class SimulationProcessor {
   }
 
   // TODO optimize
-  processTimeline(
-    timeline: SimulationEvent[],
-    members: Map<number, Member | WritableDraft<Member>>
-  ) {
+  runTimeline(timeline: SimulationEvent[]) {
     this.#hitLogs = [];
     this.target = this.target.clone();
-
-    const memberClones = new Map<number, Member>();
-
-    for (const member of members.values()) {
-      memberClones.set(member.code, member.deepClone());
-    }
-
-    this.team = new Team(memberClones, this.team.onFieldMember.code);
 
     for (const event of timeline) {
       switch (event.cate) {
         case "M": {
-          this.processMemberEvent(event);
+          this.runMemberEvent(event);
           break;
         }
         case "E": {
@@ -88,14 +77,14 @@ export class SimulationProcessor {
 
   // # Member Event
 
-  processMemberEvent(event: MemberEvent) {
+  runMemberEvent(event: MemberEvent) {
     switch (event.type) {
       case "SI": {
-        this.processSwitchInEvent(event);
+        this.runSwitchInEvent(event);
         break;
       }
       case "AH": {
-        const log = this.processAbilityHitEvent(event);
+        const log = this.runAbilityHitEvent(event);
 
         this.#hitLogs.push(log);
         break;
@@ -105,7 +94,7 @@ export class SimulationProcessor {
         break;
       }
       case "AB": {
-        this.processAbilityBuffEvent(event);
+        this.runAbilityBuffEvent(event);
         break;
       }
       case "WB": {
@@ -119,7 +108,7 @@ export class SimulationProcessor {
 
   // ## Switch In Event
 
-  processSwitchInEvent(event: SwitchInEvent) {
+  runSwitchInEvent(event: SwitchInEvent) {
     const performer = this.team.getMember(event.performer);
 
     this.team.setOnFieldMember(performer);
@@ -128,7 +117,7 @@ export class SimulationProcessor {
 
   // ## Ability Hit Event
 
-  processAbilityHitEvent(event: AbilityHitEvent): HitLog {
+  runAbilityHitEvent(event: AbilityHitEvent): HitLog {
     const performer = this.team.getMember(event.performer);
     const item = performer.data.calcList[event.talent][event.index];
 
@@ -150,7 +139,7 @@ export class SimulationProcessor {
 
   // ## Ability Buff Event
 
-  processAbilityBuffEvent(event: AbilityBuffEvent) {
+  runAbilityBuffEvent(event: AbilityBuffEvent) {
     const { team } = this;
     const performer = team.getMember(event.performer);
     const performerOps = team.getMemberOps(performer);
@@ -178,29 +167,17 @@ export class SimulationProcessor {
 
     const bonusOps = bonusOperations(performer, this.team, event.inputs);
 
-    if (!Array.isArray(effects)) {
-      // Most buffs only have 1 effect
-      const bonus = performerOps.act.performBonus(effects, {
-        inputs: event.inputs,
-      });
-      const recipients = bonusOps.getAffectedMembers(buff.affect || effects.affect || "SELF");
+    const specs = bonusOps.resolveBonusSpecs(Array_.toArray(effects));
 
-      if (!bonus.value) return;
-
-      bonusOps.deliverBonus(meta, bonus, recipients, effects);
-
-      return;
-    }
-
-    const { tltSpecs, attrSpecs, attkSpecs } = bonusOps.partitionBonusSpecs(effects, buff.affect);
-
-    if (!tltSpecs.length && !attrSpecs.length && !attkSpecs.length) {
+    if (!specs.length) {
       console.info(`No available effects: ${performer.data.name} / ${buff.src}`);
       return;
     }
 
-    if (attrSpecs.length) {
-      bonusOps.performAndDeliverBonuses(meta, attrSpecs);
+    bonusOps.performAndDeliverBonuses(meta, specs, buff.affect);
+
+    for (const recipient of bonusOps.allRecipients) {
+      recipient.attrsCtrl.finalize(recipient.bonusCtrl.attrRecords);
     }
   }
 }

@@ -7,7 +7,9 @@ import type {
 } from "@/types";
 import type {
   AttackBonus,
+  AttackBonusRecord,
   AttributeBonus,
+  AttributeBonusRecord,
   AttributeBonusStat,
   Bonus,
   BonusGroupId,
@@ -27,8 +29,12 @@ export type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
 export class BonusControl {
   groups: BonusByGroupId = new Map();
 
-  private attrRecord: Partial<Record<AttributeBonusStat, AttributeBonus[]>> = {};
-  private attkRecord: Partial<Record<AttackBonusType, AttackBonus[]>> = {};
+  private attrRecord: AttributeBonusRecord = {};
+  private attkRecord: AttackBonusRecord = {};
+
+  get attrRecords() {
+    return this.attrRecord;
+  }
 
   private updateAttrBonus(bonus: AttributeBonus) {
     const current = this.attrRecord[bonus.toStat] || [];

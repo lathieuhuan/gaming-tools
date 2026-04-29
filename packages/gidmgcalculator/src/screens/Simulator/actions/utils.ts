@@ -47,7 +47,6 @@ export function resetSimulation(simulation: WritableDraft<Simulation>) {
   const target = simulation.target.clone();
 
   const members = new Map<number, Member>();
-  const memberClones = new Map<number, Member>();
   const inputs: SimulationInputs = {};
 
   for (const member of simulation.members.values()) {
@@ -92,15 +91,13 @@ export function resetSimulation(simulation: WritableDraft<Simulation>) {
         levelBonuses,
       })
       .attrsCtrl.finalize();
-
-    memberClones.set(member.code, member.deepClone());
   });
 
   simulation.members = members;
   simulation.activeMember = memberOrder[0];
   simulation.inputs = inputs;
   simulation.timeline = [];
-  simulation.processor = new SimulationProcessor(memberClones, target, memberOrder[0]);
+  simulation.processor = new SimulationProcessor(members, target, memberOrder[0]);
 }
 
 /** Return true to process timeline */
@@ -115,7 +112,7 @@ export function onActiveSimulation(action: ActionToActiveSimulation) {
       const shouldProcessTimeline = action(simulation);
 
       if (shouldProcessTimeline) {
-        simulation.processor.processTimeline(simulation.timeline, simulation.members);
+        simulation.processor.runTimeline(simulation.timeline, simulation.members);
       }
     }
   };

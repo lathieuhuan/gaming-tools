@@ -26,3 +26,7 @@ export type AttackBonus = {
 };
 
 export type Bonus = AttributeBonus | AttackBonus;
+
+export type AttributeBonusRecord = Partial<Record<AttributeBonusStat, AttributeBonus[]>>;
+
+export type AttackBonusRecord = Partial<Record<AttackBonusType, AttackBonus[]>>;
