@@ -4,10 +4,9 @@ import type { PenaltySpec } from "./penalty-spec";
 export type ModAffectType =
   | "SELF"
   | "TEAMMATE"
-  | "SELF_TEAMMATE"
   | "PARTY"
-  | "ONE_UNIT"
-  | "ACTIVE_UNIT";
+  | "ONE_UNIT" // "ACTIVE_PERSIST"
+  | "ACTIVE_UNIT"; // "ACTIVE_FIELD"
 
 export type ModInputType =
   | "LEVEL"

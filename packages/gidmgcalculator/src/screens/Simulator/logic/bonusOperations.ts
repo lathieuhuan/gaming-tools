@@ -75,9 +75,8 @@ export function bonusOperations(
         allRecipients.add(team.onFieldMember);
         break;
       }
-      case "SELF_TEAMMATE":
       case "ONE_UNIT": {
-        // TODO redundant, remove
+        // TODO
         break;
       }
       default:
