@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { NORMAL_ATTACKS } from "@/constants";
 import { useTranslation } from "@/hooks";
-import { selectActiveMember, selectSimulation, useSimulatorStore } from "../../store";
+import { selectActiveMember, selectProcessor, useSimulatorStore } from "../../store";
 
 // Components
 import { EventListLayout } from "../EventListLayout";
@@ -11,7 +11,7 @@ import { AbilityEventList } from "./AbilityEventList";
 export function AbilityEventMenu() {
   const { t } = useTranslation();
   const activeMember = useSimulatorStore(selectActiveMember);
-  const target = useSimulatorStore((state) => selectSimulation(state).target);
+  const target = useSimulatorStore((state) => selectProcessor(state).target);
 
   const [activeNames, setActiveNames] = useState<string[]>([]);
 

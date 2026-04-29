@@ -74,7 +74,10 @@ export function AbilityEventItem({
       </div>
 
       <CollapseSpace active={active}>
-        <div className="px-2 py-1">
+        <div
+          className="px-2 py-1"
+          onDoubleClick={() => console.info(calculator.calcAttackItem(item, alter))}
+        >
           <div>{type}</div>
           <div className="flex justify-end">
             <Button

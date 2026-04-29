@@ -53,7 +53,6 @@ export class SimulationProcessor {
   // TODO optimize
   runTimeline(timeline: SimulationEvent[]) {
     this.#hitLogs = [];
-    this.target = this.target.clone();
 
     for (const event of timeline) {
       switch (event.cate) {

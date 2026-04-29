@@ -93,8 +93,11 @@ export function resetSimulation(simulation: WritableDraft<Simulation>) {
       .attrsCtrl.finalize();
   });
 
+  target.finalize();
+
   simulation.members = members;
   simulation.activeMember = memberOrder[0];
+  simulation.target = target;
   simulation.inputs = inputs;
   simulation.timeline = [];
   simulation.processor = new SimulationProcessor(members, target, memberOrder[0]);
@@ -112,7 +115,7 @@ export function onActiveSimulation(action: ActionToActiveSimulation) {
       const shouldProcessTimeline = action(simulation);
 
       if (shouldProcessTimeline) {
-        simulation.processor.runTimeline(simulation.timeline, simulation.members);
+        simulation.processor.runTimeline(simulation.timeline);
       }
     }
   };
