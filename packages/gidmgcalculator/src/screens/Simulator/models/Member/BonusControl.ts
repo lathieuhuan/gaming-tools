@@ -16,25 +16,21 @@ import type {
   BonusGroupMeta,
 } from "./types";
 
-type BonusData = {
+type BonusGroup = {
   meta: BonusGroupMeta;
   ids: Set<string>;
   bonuses: Bonus[];
 };
 
-type BonusByGroupId = Map<BonusGroupId, BonusData>;
+type BonusGroupsById = Map<BonusGroupId, BonusGroup>;
 
 export type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
 
 export class BonusControl {
-  groups: BonusByGroupId = new Map();
+  groups: BonusGroupsById = new Map();
 
-  private attrRecord: AttributeBonusRecord = {};
-  private attkRecord: AttackBonusRecord = {};
-
-  get attrRecords() {
-    return this.attrRecord;
-  }
+  attrRecord: AttributeBonusRecord = {};
+  attkRecord: AttackBonusRecord = {};
 
   private updateAttrBonus(bonus: AttributeBonus) {
     const current = this.attrRecord[bonus.toStat] || [];

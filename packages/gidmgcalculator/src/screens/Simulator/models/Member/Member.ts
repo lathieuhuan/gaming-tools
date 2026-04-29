@@ -1,5 +1,8 @@
+import { Object_ } from "ron-utils";
+
 import type { Clonable, Serializable } from "@/models/interfaces";
 import type {
+  AllAttributes,
   AmplifyingReaction,
   AppCharacter,
   AttackElement,
@@ -11,7 +14,9 @@ import type {
   QuickenReaction,
   RawCharacter,
 } from "@/types";
+import type { TalentLevelBonus } from "./types";
 
+import { CORE_STAT_TYPES } from "@/constants";
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
 
 import { ArtifactGear } from "@/models/ArtifactGear";
@@ -19,12 +24,6 @@ import { Weapon } from "@/models/Weapon";
 import { AttributeControl } from "./AttributeControl";
 import { BonusControl } from "./BonusControl";
 import { MemberState } from "./MemberState";
-
-export type TalentLevelBonus = {
-  id: string;
-  value: number;
-  toType: LevelableTalentType;
-};
 
 type LevelBonusControl = Map<string, TalentLevelBonus>;
 
@@ -93,8 +92,8 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     this.atfGear = atfGear;
 
     this.attrsCtrl = attrsCtrl;
-    this.lvlBonusCtrl = lvBonusCtrl;
     this.bonusCtrl = bonusCtrl;
+    this.lvlBonusCtrl = lvBonusCtrl;
   }
 
   // ===== GETTERS =====
@@ -144,7 +143,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   }
 
   getAttr(key: AttributeStat) {
-    return this.attrsCtrl.finals.get(key);
+    return this.attrsCtrl.get(key);
   }
 
   // ===== CALCULATION =====
@@ -153,14 +152,40 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
     const { resonanceElmts = [], levelBonuses = [] } = options;
 
     this.attrsCtrl.init(this, resonanceElmts);
-    this.lvlBonusCtrl.clear();
     this.bonusCtrl = new BonusControl();
+
+    this.lvlBonusCtrl.clear();
 
     levelBonuses.forEach((bonus) => {
       this.lvlBonusCtrl.set(bonus.id, bonus);
     });
 
+    this.finalizeAttrs();
+
     return this;
+  }
+
+  finalizeAttrs() {
+    const finals: AllAttributes = this.attrsCtrl.getCopy();
+
+    for (const [stat, bonuses] of Object_.entries(this.bonusCtrl.attrRecord)) {
+      if (!bonuses?.length) continue;
+
+      for (const bonus of bonuses) {
+        finals.add(stat, bonus.value);
+      }
+    }
+
+    for (const stat of CORE_STAT_TYPES) {
+      const base = finals.get(`base_${stat}`);
+      const percent = finals.get(`${stat}_`);
+
+      finals.add(stat, base + (base * percent) / 100);
+    }
+
+    this.attrsCtrl.finals = finals;
+
+    return finals;
   }
 
   //

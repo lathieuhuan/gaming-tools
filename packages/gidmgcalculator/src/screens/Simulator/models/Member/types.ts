@@ -1,10 +1,21 @@
-import type { AllAttributeStat, AttackBonusKey, AttackBonusType } from "@/types";
+import type {
+  AllAttributeStat,
+  AttackBonusKey,
+  AttackBonusType,
+  LevelableTalentType,
+} from "@/types";
 
 export type BonusGroupId = string;
 
 export type BonusGroupMeta = {
   id: BonusGroupId;
   src: string;
+};
+
+export type TalentLevelBonus = {
+  id: string;
+  value: number;
+  toType: LevelableTalentType;
 };
 
 export type AttributeBonus = {

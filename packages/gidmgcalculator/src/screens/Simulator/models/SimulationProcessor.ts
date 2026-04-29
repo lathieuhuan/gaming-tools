@@ -41,18 +41,31 @@ export class SimulationProcessor {
   #hitLogs: HitLog[] = [];
 
   public team: Team;
+  public target: TargetCalc;
 
   get hitLogs() {
     return this.#hitLogs;
   }
 
-  constructor(members: Map<number, Member>, public target: TargetCalc, onFieldMember: number) {
-    this.team = new Team(members, onFieldMember);
+  constructor(members: Map<number, Member>, target: TargetCalc, onFieldMember: number) {
+    const team = new Team(members, onFieldMember);
+
+    this.team = team;
+    this.target = target;
+
+    team.init();
+    target.finalize();
+  }
+
+  private reset() {
+    this.#hitLogs = [];
+    // TODO optimize by replace
+    this.team.init();
   }
 
   // TODO optimize
   runTimeline(timeline: SimulationEvent[]) {
-    this.#hitLogs = [];
+    this.reset();
 
     for (const event of timeline) {
       switch (event.cate) {
@@ -176,7 +189,7 @@ export class SimulationProcessor {
     bonusOps.performAndDeliverBonuses(meta, specs, buff.affect);
 
     for (const recipient of bonusOps.allRecipients) {
-      recipient.attrsCtrl.finalize(recipient.bonusCtrl.attrRecords);
+      recipient.finalizeAttrs();
     }
   }
 }

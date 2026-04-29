@@ -144,26 +144,7 @@ export class AttributeControl {
     return value;
   }
 
-  finalize(bonusRecord: AttributeBonusRecord = {}) {
-    const finals: AllAttributes = this.attrs.clone();
-
-    for (const [stat, bonuses] of Object_.entries(bonusRecord)) {
-      if (!bonuses?.length) continue;
-
-      for (const bonus of bonuses) {
-        finals.add(stat, bonus.value);
-      }
-    }
-
-    for (const stat of CORE_STAT_TYPES) {
-      const base = finals.get(`base_${stat}`);
-      const percent = finals.get(`${stat}_`);
-
-      finals.add(stat, base + (base * percent) / 100);
-    }
-
-    this.finals = finals;
-
-    return finals;
+  getCopy() {
+    return this.attrs.clone();
   }
 }
