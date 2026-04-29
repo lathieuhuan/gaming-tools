@@ -88,7 +88,7 @@ export function talentCalc(performer: Member, target: TargetCalc, expectAttPatt:
 
     const recorder = new ResultRecorder(
       {
-        exclusives: performer.attkBonusCtrl.collectExclusiveBonuses(item.id),
+        exclusives: performer.bonusCtrl.collectExclusiveBonuses(item.id),
       },
       true
     );

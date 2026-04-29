@@ -62,7 +62,7 @@ export class AttackBonusControl {
     return result;
   }
 
-  remove(groupId: number) {
+  remove(groupId: BonusGroupId) {
     const data = this.byGroupId.get(groupId);
 
     if (!data?.bonuses.length) {

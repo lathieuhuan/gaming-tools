@@ -1,7 +1,7 @@
 import type { WritableDraft } from "immer/src/internal.js";
 
 import type { TargetCalc } from "@/models";
-import type { AttackElement, AttackReaction, LunarType, ModAffectType } from "@/types";
+import type { AttackElement, AttackReaction, LunarType } from "@/types";
 import type {
   AbilityBuffEvent,
   AbilityHitEvent,
@@ -9,10 +9,11 @@ import type {
   SimulationEvent,
   SwitchInEvent,
 } from "../types";
+import type { BonusGroupMeta, Member } from "./Member";
 
-import { BonusGroupMeta, Member } from "@/screens/Simulator/models/Member";
+import { bonusOperations } from "../logic/bonusOperations";
 import { talentCalc } from "../logic/talentCalc";
-import { PartitionedItem, Team } from "./Team";
+import { Team } from "./Team";
 
 export enum EHitLogType {
   MEMBER = "M",
@@ -38,7 +39,6 @@ type HitLog = MemberHitLog | EnvironmentHitLog;
 
 export class SimulationProcessor {
   #hitLogs: HitLog[] = [];
-  #onFieldCode: number;
 
   public team: Team;
 
@@ -46,13 +46,8 @@ export class SimulationProcessor {
     return this.#hitLogs;
   }
 
-  get onFieldCode(): number {
-    return this.#onFieldCode;
-  }
-
   constructor(members: Map<number, Member>, public target: TargetCalc, onFieldMember: number) {
-    this.#onFieldCode = onFieldMember;
-    this.team = new Team(members);
+    this.team = new Team(members, onFieldMember);
   }
 
   // TODO optimize
@@ -69,7 +64,7 @@ export class SimulationProcessor {
       memberClones.set(member.code, member.deepClone());
     }
 
-    this.team = new Team(memberClones);
+    this.team = new Team(memberClones, this.team.onFieldMember.code);
 
     for (const event of timeline) {
       switch (event.cate) {
@@ -127,7 +122,7 @@ export class SimulationProcessor {
   processSwitchInEvent(event: SwitchInEvent) {
     const performer = this.team.getMember(event.performer);
 
-    this.#onFieldCode = performer.code;
+    this.team.setOnFieldMember(performer);
     // TODO redirect on-field buffs to this member
   }
 
@@ -155,61 +150,10 @@ export class SimulationProcessor {
 
   // ## Ability Buff Event
 
-  private getRecipients(performerCode: number, affect: ModAffectType) {
-    const performer = this.team.getMember(performerCode);
-    let members: Member[] = [];
-
-    switch (affect) {
-      case "SELF": {
-        members.push(performer);
-        break;
-      }
-      case "TEAMMATE": {
-        members = this.team.memberList.filter((member) => member !== performer);
-        break;
-      }
-      case "PARTY": {
-        members = this.team.memberList;
-        break;
-      }
-      case "ACTIVE_UNIT": {
-        members.push(this.team.getMember(this.#onFieldCode));
-        break;
-      }
-      case "SELF_TEAMMATE":
-      case "ONE_UNIT": {
-        // TODO redundant, remove
-        break;
-      }
-      default:
-        affect satisfies never;
-    }
-
-    return members;
-  }
-
-  processBonus(
-    performerCode: number,
-    meta: BonusGroupMeta,
-    items: PartitionedItem[],
-    inputs: number[] = []
-  ) {
-    const { ops } = this.team;
-
-    for (const item of items) {
-      const bonus = ops.act(performerCode).performBonus(item.spec, inputs);
-      if (!bonus.value) continue;
-
-      const recipients = this.getRecipients(performerCode, item.affect);
-
-      ops.deliverBonus(meta, bonus, recipients, item.spec.targets, inputs);
-    }
-  }
-
   processAbilityBuffEvent(event: AbilityBuffEvent) {
     const { team } = this;
-    const { ops } = team;
     const performer = team.getMember(event.performer);
+    const performerOps = team.getMemberOps(performer);
     const buff = performer.data.buffs?.find((buff) => buff.index === event.modId);
 
     if (!buff) {
@@ -218,7 +162,7 @@ export class SimulationProcessor {
       return;
     }
 
-    if (!ops.can(performer.code).performEffect(buff, event.inputs)) {
+    if (!performerOps.can.performEffect(buff, event.inputs)) {
       // TODO handle error not valid
       console.warn(`Buff not valid: ${performer.data.name} / ${buff.src}`);
       return;
@@ -226,25 +170,37 @@ export class SimulationProcessor {
 
     if (!buff.effects) return;
 
-    const { tltItems, attrItems, attkItems } = ops.partitionBonusSpecs(
-      performer.code,
-      buff.effects,
-      {
-        inputs: event.inputs,
-        defaultAffect: buff.affect,
-      }
-    );
+    const { effects } = buff;
+    const meta: BonusGroupMeta = {
+      id: `c${performer.code}-${buff.index}`,
+      src: `${performer.data.name} / ${buff.src}`,
+    };
 
-    if (!tltItems.length && !attrItems.length && !attkItems.length) {
+    const bonusOps = bonusOperations(performer, this.team, event.inputs);
+
+    if (!Array.isArray(effects)) {
+      // Most buffs only have 1 effect
+      const bonus = performerOps.act.performBonus(effects, {
+        inputs: event.inputs,
+      });
+      const recipients = bonusOps.getAffectedMembers(buff.affect || effects.affect || "SELF");
+
+      if (!bonus.value) return;
+
+      bonusOps.deliverBonus(meta, bonus, recipients, effects);
+
+      return;
+    }
+
+    const { tltSpecs, attrSpecs, attkSpecs } = bonusOps.partitionBonusSpecs(effects, buff.affect);
+
+    if (!tltSpecs.length && !attrSpecs.length && !attkSpecs.length) {
       console.info(`No available effects: ${performer.data.name} / ${buff.src}`);
       return;
     }
 
-    const meta: BonusGroupMeta = {
-      id: buff.index,
-      src: `${performer.data.name} / ${buff.src}`,
-    };
-
-    this.processBonus(performer.code, meta, tltItems, event.inputs);
+    if (attrSpecs.length) {
+      bonusOps.performAndDeliverBonuses(meta, attrSpecs);
+    }
   }
 }

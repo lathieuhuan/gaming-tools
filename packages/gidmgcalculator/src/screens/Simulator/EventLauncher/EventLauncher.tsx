@@ -33,13 +33,13 @@ type EventLauncherProps = {
 
 export function EventLauncher({ className }: EventLauncherProps) {
   const memberOrder = useSimulatorStore((state) => selectSimulation(state).memberOrder);
-  const onFieldCode = useSimulatorStore((state) => selectProcessor(state).onFieldCode);
+  // const onFieldCode = useSimulatorStore((state) => selectProcessor(state).onFieldCode);
   const team = useSimulatorStore((state) => selectProcessor(state).team);
   const activeMember = useSimulatorStore(selectActiveMember);
 
   const [activeTab, setActiveTab] = useState(TABS[0]);
 
-  const activeMemberIsOnField = activeMember.code === onFieldCode;
+  const activeMemberIsOnField = activeMember.code === team.onFieldMember.code;
 
   return (
     <div className={cn("flex flex-col", className)}>

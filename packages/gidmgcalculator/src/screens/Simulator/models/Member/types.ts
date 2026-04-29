@@ -1,6 +1,6 @@
 import type { AttackBonusKey, AttackBonusType, BaseAttributeStat, AttributeStat } from "@/types";
 
-export type BonusGroupId = number;
+export type BonusGroupId = string;
 
 export type BonusGroupMeta = {
   id: BonusGroupId;

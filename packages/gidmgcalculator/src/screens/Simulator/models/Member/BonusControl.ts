@@ -1,4 +1,10 @@
-import type { AttackBonusKey, AttackBonusType } from "@/types";
+import type {
+  AttackBonusKey,
+  AttackBonusType,
+  ExclusiveAttackBonus,
+  ExclusiveAttackBonusGroup,
+  TalentCalcItemBonusId,
+} from "@/types";
 import type {
   AttackBonus,
   AttributeBonus,
@@ -10,6 +16,7 @@ import type {
 
 type BonusData = {
   meta: BonusGroupMeta;
+  ids: Set<string>;
   bonuses: Bonus[];
 };
 
@@ -62,34 +69,88 @@ export class BonusControl {
   }
 
   private _add(meta: BonusGroupMeta, bonus: AttackBonus | AttributeBonus) {
-    const current = this.groups.get(meta.id) || { meta, bonuses: [] };
+    const id = bonusId(bonus);
+    const current = this.groups.get(meta.id) || { meta, ids: new Set(), bonuses: [] };
 
+    if (current.ids.has(id)) {
+      return;
+    }
+
+    current.ids.add(id);
     current.bonuses.push(bonus);
     this.groups.set(meta.id, current);
   }
 
+  /** Update if already exists */
   addAttrBonus(meta: BonusGroupMeta, bonus: AttributeBonus) {
+    bonus = { ...bonus };
+
     this._add(meta, bonus);
     this.updateAttrBonus(bonus);
   }
 
   /** Update if already exists */
   addAttkBonus(meta: BonusGroupMeta, bonus: AttackBonus) {
+    bonus = { ...bonus };
+
     this._add(meta, bonus);
     this.updateAttkBonus(bonus);
   }
 
+  totalAttrBonus(key: AttributeBonusStat, fixedOnly = true) {
+    const bonuses = this.attrRecord[key] || [];
+
+    return bonuses.reduce(
+      (total, bonus) => total + (bonus.isDynamic && fixedOnly ? 0 : bonus.value),
+      0
+    );
+  }
+
   totalAttkBonus(key: AttackBonusKey, paths: GetBonusPaths) {
-    let result = 0;
-
-    for (const path of paths) {
+    return paths.reduce((total, path) => {
       const bonuses = (path && this.attkRecord[path]) || [];
+      const pathTotal = bonuses.reduce(
+        (total, bonus) => total + (bonus.toKey === key ? bonus.value : 0),
+        0
+      );
 
-      result += bonuses.reduce((total, bonus) => {
-        return total + (bonus.toKey === key ? bonus.value : 0);
-      }, 0);
+      return total + pathTotal;
+    }, 0);
+  }
+
+  collectExclusiveBonuses = (id?: TalentCalcItemBonusId) => {
+    const result: ExclusiveAttackBonusGroup[] = [];
+    const bonusRecords = (id && this.attkRecord[id]) || [];
+
+    for (const record of bonusRecords) {
+      const existed = result.find((filterRecord) => filterRecord.type === record.toKey);
+      const newRecord: ExclusiveAttackBonus = {
+        value: record.value,
+        label: "record.label", // TODO
+      };
+
+      if (existed) {
+        existed.items.push(newRecord);
+      } else {
+        result.push({
+          type: record.toKey,
+          items: [newRecord],
+        });
+      }
     }
 
     return result;
+  };
+}
+
+function bonusId(bonus: AttributeBonus | AttackBonus) {
+  switch (bonus.type) {
+    case "ATTR":
+      return `${bonus.groupId}-${bonus.toStat}`;
+    case "ATTK":
+      return `${bonus.groupId}-${bonus.toType}-${bonus.toKey}`;
+    default:
+      bonus satisfies never;
+      return "";
   }
 }

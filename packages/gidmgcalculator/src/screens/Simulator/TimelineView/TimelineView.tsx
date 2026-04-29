@@ -12,10 +12,9 @@ type TimelineViewProps = {
 
 export function TimelineView({ className }: TimelineViewProps) {
   const timeline = useSimulatorStore((state) => selectSimulation(state).timeline);
-  const processor = useSimulatorStore(selectProcessor);
+  const team = useSimulatorStore((state) => selectProcessor(state).team);
 
-  const { team, onFieldCode } = processor;
-  const onFieldMember = team.getMember(onFieldCode);
+  const onFieldMember = team.onFieldMember;
 
   return (
     <div className={className}>

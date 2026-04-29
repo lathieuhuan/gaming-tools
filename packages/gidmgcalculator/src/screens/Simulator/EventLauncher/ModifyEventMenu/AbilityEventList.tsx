@@ -13,12 +13,11 @@ import {
 
 export function AbilityEventList() {
   const activeMember = useSimulatorStore(selectActiveMember);
-  const teamOps = useSimulatorStore((state) => selectProcessor(state).team.ops);
+  const team = useSimulatorStore((state) => selectProcessor(state).team);
   const inputsById = useSimulatorStore(selectModInputs("ABILITY_BUFF"));
 
   const { data } = activeMember;
-  const memberCan = teamOps.can(data.code);
-  const memberShow = teamOps.show(data.code);
+  const memberOps = team.getMemberOps(team.getMember(data.code));
 
   const handleInputChange = (modId: number, inputIndex: number, value: number) => {
     updateAbilityInputs("ABILITY_BUFF", modId, (inputs) => {
@@ -41,14 +40,14 @@ export function AbilityEventList() {
     <div>
       <div className="space-y-2">
         {data.buffs?.map((buff, index) => {
-          if (!memberCan.performEffect(buff)) {
+          if (!memberOps.can.performEffect(buff)) {
             return null;
           }
 
           const inputConfigs = buff.inputConfigs;
           const inputs = inputsById[buff.index] || [];
 
-          const description = memberShow.buffText(buff, inputs);
+          const description = memberOps.show.buffText(buff, inputs);
 
           return (
             <div key={index} className="p-2 bg-dark-2 rounded-xs">

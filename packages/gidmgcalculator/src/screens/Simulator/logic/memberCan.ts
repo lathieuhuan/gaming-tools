@@ -1,12 +1,12 @@
 import type { EffectPerformableConditionSpecs, EffectReceiverConditionSpecs } from "@/types";
-import type { Team } from "./Team";
+import type { Member } from "../models/Member";
+import type { Team } from "../models/Team";
 
 import { isPassedComparison } from "@/models/utils/isPassedComparison";
 import { isValidInput } from "@/models/utils/isValidInput";
 
-export function memberCan(memberCode: number, team: Team) {
-  const member = team.getMember(memberCode);
-
+export function memberCan(member: Member, team: Team) {
+  //
   function performEffect(condition: EffectPerformableConditionSpecs, inputs: number[] = []) {
     if (!team.state.isAvailableEffect(condition)) {
       return false;
@@ -52,7 +52,7 @@ export function memberCan(memberCode: number, team: Team) {
   }
 
   // TODO also check for monoId
-  function receiveEffect(condition: EffectReceiverConditionSpecs) {
+  function receiveBonus(condition: EffectReceiverConditionSpecs) {
     const { data } = member;
 
     if (condition.forNation && condition.forNation !== data.nation) {
@@ -92,6 +92,6 @@ export function memberCan(memberCode: number, team: Team) {
 
   return {
     performEffect,
-    receiveEffect,
+    receiveBonus,
   };
 }

@@ -3,17 +3,19 @@ import type { AutoRsnElmtType, ElementCount, ElementType } from "@/types";
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
 import { createWeapon } from "@/logic/entity.logic";
-import { Member } from "@/screens/Simulator/models/Member";
 import { $AppCharacter } from "@/services";
-import { teamOperations, TeamOperations } from "./teamOperations";
+import { memberAct } from "../../logic/memberAct";
+import { memberCan } from "../../logic/memberCan";
+import { memberShow } from "../../logic/memberShow";
+import { Member } from "../Member";
 import { TeamState } from "./TeamState";
 
 @FlatGetters("state", ["resonances", "moonsignLv", "witchRiteLv", "elmtCount"])
 export class Team implements Clonable<Team> {
   private members: Map<number, Member>;
+  private onFieldMemberCode: number;
 
   state: TeamState;
-  ops: TeamOperations;
 
   declare resonances: AutoRsnElmtType[];
   declare moonsignLv: number;
@@ -24,15 +26,19 @@ export class Team implements Clonable<Team> {
     return Array.from(this.members.values());
   }
 
-  constructor(members: Member[] | Map<number, Member> = []) {
+  get onFieldMember() {
+    return this.getMember(this.onFieldMemberCode);
+  }
+
+  constructor(members: Member[] | Map<number, Member> = [], onFieldMember: number) {
     this.members = new Map();
 
     for (const member of members.values()) {
       this.setMember(member);
     }
 
+    this.onFieldMemberCode = onFieldMember;
     this.state = new TeamState(this.members);
-    this.ops = teamOperations(this);
   }
 
   static createMember(code: number) {
@@ -40,6 +46,10 @@ export class Team implements Clonable<Team> {
     const weapon = createWeapon({ type: data.weaponType });
 
     return new Member(code, data, weapon);
+  }
+
+  setOnFieldMember(member: number | Member) {
+    this.onFieldMemberCode = typeof member === "number" ? member : member.code;
   }
 
   hasMember(code: number) {
@@ -81,10 +91,18 @@ export class Team implements Clonable<Team> {
     return true;
   }
 
+  getMemberOps(member: Member) {
+    return {
+      act: memberAct(member, this),
+      can: memberCan(member, this),
+      show: memberShow(member, this),
+    };
+  }
+
   clone() {
     const members = Array.from(this.members.values(), (member) => member.clone());
 
-    return new Team(members);
+    return new Team(members, this.onFieldMemberCode);
   }
 
   // prepare() {

@@ -5,16 +5,14 @@ import type { CalcResultAttackItem, CalcResultItemValue } from "@/calculation/ty
 import type { TargetCalc } from "@/models";
 import type {
   ActualAttackPattern,
-  AttackBonus,
   AttackBonusKey,
   AttackElement,
   AttackReaction,
-  TalentCalcItemBonusId,
+  TalentCalcItemBonusId
 } from "@/types";
 
-import { QUICKEN_BUFF_LABEL } from "@/calculation/constants";
 import { limitCRate } from "@/logic/stat.logic";
-import { GetBonusOptions, Member } from "@/screens/Simulator/models/Member";
+import { Member } from "@/screens/Simulator/models/Member";
 
 type MakeAttackCalcTools = {
   attElmt?: AttackElement;
@@ -29,7 +27,7 @@ export function makeAttackItemCalc(
   target: TargetCalc,
   tools: MakeAttackCalcTools = {}
 ) {
-  const { attkBonusCtrl, bareLv } = performer;
+  const { bonusCtrl, bareLv } = performer;
   const { attElmt = "phys", attPatt = "none", itemId, reaction = null, noU = false } = tools;
 
   // TODO implement
@@ -42,14 +40,16 @@ export function makeAttackItemCalc(
 
   function getBonus(key: AttackBonusKey) {
     if (attPatt === "none") {
-      return attkBonusCtrl.get(key, ["all", attElmt, itemId], {
-        // filter: filterBonus,
-      });
+      return bonusCtrl.totalAttkBonus(key, ["all", attElmt, itemId]);
     }
 
-    return attkBonusCtrl.get(key, ["all", attElmt, itemId, attPatt, `${attPatt}.${attElmt}`], {
-      // filter: filterBonus,
-    });
+    return bonusCtrl.totalAttkBonus(key, [
+      "all",
+      attElmt,
+      itemId,
+      attPatt,
+      `${attPatt}.${attElmt}`,
+    ]);
   }
 
   function calculate(bases: number[], recorder: ResultRecorder): CalcResultAttackItem {

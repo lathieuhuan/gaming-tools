@@ -1,6 +1,5 @@
 import { Array_ } from "ron-utils";
 
-import type { Member } from "@/screens/Simulator/models/Member";
 import type {
   BareBonus,
   BonusAttributeScalingSpec,
@@ -9,7 +8,8 @@ import type {
   EffectMaxSpec,
   ExtraBonusSpec,
 } from "@/types";
-import type { Team } from "./Team";
+import type { Member } from "../Member";
+import type { Team } from "../Team";
 
 import { baseStatToCoreStat, isBaseStat } from "@/logic/stat.logic";
 import { AbstractEffectValueCalc, EffectToGetInitialValue } from "./AbstractEffectValueCalc";
@@ -29,11 +29,11 @@ export class BonusCalc extends AbstractEffectValueCalc {
     this.basedOnFixed = basedOnFixed;
   }
 
-  protected getBasedOn(config: BonusAttributeScalingSpec) {
-    const { field, baseline = 0, isDynamic = true } = this.parseBasedOn(config);
-    const { attrsCtrl } = this.performer;
+  protected getBasedOn(spec: BonusAttributeScalingSpec) {
+    const { field, baseline = 0, isDynamic = true } = this.parseBasedOn(spec);
+    const { attrsCtrl, bonusCtrl } = this.performer;
 
-    let basedOnValue: number;
+    let basedOnValue = bonusCtrl.totalAttrBonus(field, this.basedOnFixed);
 
     if (isBaseStat(field)) {
       const attr = attrsCtrl.get(baseStatToCoreStat(field));
@@ -55,8 +55,8 @@ export class BonusCalc extends AbstractEffectValueCalc {
     return base + increment * this.refi;
   }
 
-  protected parseBasedOn(config: BonusAttributeScalingSpec) {
-    return typeof config === "string" ? { field: config } : config;
+  protected parseBasedOn(spec: BonusAttributeScalingSpec) {
+    return typeof spec === "string" ? { field: spec } : spec;
   }
 
   protected getMax(spec?: EffectMaxSpec) {

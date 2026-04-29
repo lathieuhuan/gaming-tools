@@ -17,6 +17,10 @@ import type { ModAffectType } from "./modifier-specs";
 
 export type ExtraBonusSpec = EffectPerformableConditionSpecs & BonusCoreSpec;
 
+export type BonusOutsourceSpec = {
+  stacks?: EnergyCostStackSpec;
+};
+
 export type BonusCoreSpec = {
   id?: string;
   monoId?: string;
@@ -43,9 +47,7 @@ export type BonusCoreSpec = {
   stacksBonus?: StacksBonusSpec | StacksBonusSpec[];
   /** Added after max */
   extras?: number | ExtraBonusSpec | ExtraBonusSpec[];
-  outsource?: {
-    stacks?: EnergyCostStackSpec;
-  };
+  outsource?: BonusOutsourceSpec;
 };
 
 export type AttributeTargetPath =

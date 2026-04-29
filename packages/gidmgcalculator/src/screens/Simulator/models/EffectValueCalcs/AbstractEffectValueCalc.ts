@@ -14,12 +14,11 @@ import type {
   TalentLevelIncrementBaseSpec,
   TalentLevelIncrementSpec,
 } from "@/types";
-import type { Team } from "./Team";
+import type { Member } from "../Member";
+import type { Team } from "../Team";
 
 import { Character } from "@/models/Character";
-import { Member } from "@/screens/Simulator/models/Member";
 import { wrapText } from "@/utils/descriptionParsers/utils";
-import { memberCan } from "./memberCan";
 
 type AbilityBuff = CharacterBuff | CharacterDebuff;
 
@@ -63,7 +62,7 @@ export abstract class AbstractEffectValueCalc {
   }
 
   protected isPerformableEffect(condition: EffectPerformableConditionSpecs) {
-    return memberCan(this.performer.code, this.team).performEffect(condition, this.inputs);
+    return this.team.getMemberOps(this.performer).can.performEffect(condition, this.inputs);
   }
 
   // MAIN LOGIC

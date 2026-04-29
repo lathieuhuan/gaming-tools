@@ -41,7 +41,7 @@ export class AttributeBonusControl {
     return bonuses.reduce((total, bonus) => total + bonus.value, 0);
   }
 
-  remove(groupId: number) {
+  remove(groupId: BonusGroupId) {
     const data = this.byGroupId.get(groupId);
 
     if (!data?.bonuses.length) {
