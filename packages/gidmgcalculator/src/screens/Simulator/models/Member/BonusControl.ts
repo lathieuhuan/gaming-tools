@@ -32,6 +32,18 @@ export class BonusControl {
   attrRecord: AttributeBonusRecord = {};
   attkRecord: AttackBonusRecord = {};
 
+  static bonusId(bonus: AttributeBonus | AttackBonus) {
+    switch (bonus.type) {
+      case "ATTR":
+        return `${bonus.groupId}-${bonus.toStat}`;
+      case "ATTK":
+        return `${bonus.groupId}-${bonus.toType}-${bonus.toKey}`;
+      default:
+        bonus satisfies never;
+        return "";
+    }
+  }
+
   private updateAttrBonus(bonus: AttributeBonus) {
     const current = this.attrRecord[bonus.toStat] || [];
     let updated = false;
@@ -71,7 +83,7 @@ export class BonusControl {
   }
 
   private _add(meta: BonusGroupMeta, bonus: AttackBonus | AttributeBonus) {
-    const id = bonusId(bonus);
+    const id = BonusControl.bonusId(bonus);
     const current = this.groups.get(meta.id) || { meta, ids: new Set(), bonuses: [] };
 
     if (current.ids.has(id)) {
@@ -143,16 +155,4 @@ export class BonusControl {
 
     return result;
   };
-}
-
-function bonusId(bonus: AttributeBonus | AttackBonus) {
-  switch (bonus.type) {
-    case "ATTR":
-      return `${bonus.groupId}-${bonus.toStat}`;
-    case "ATTK":
-      return `${bonus.groupId}-${bonus.toType}-${bonus.toKey}`;
-    default:
-      bonus satisfies never;
-      return "";
-  }
 }

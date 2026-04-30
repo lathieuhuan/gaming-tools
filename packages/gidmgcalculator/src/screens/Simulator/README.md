@@ -11,7 +11,7 @@ A combat rotation simulator for game Genshin Impact. It enables users to model c
 
 - **Member**: Characters who join the Simulation. See [Member](.\models\Member\README.md)
 - **Team**: Manages the collection of Members inside SimulationProcessor. See [Team](.\models\Team\README.md)
-- **SimulationProcessor**: Timeline processing engine - backbone of the Simulation. It's main production is `HitLog[]`. See [SimulationProcessor](.\models\README.md)
+- **SimulationProcessor**: Timeline processing engine - backbone of the Simulation. It's main production is `HitLog[]`. See [SimulationProcessor](.\models\SimulationProcessor\README.md)
 
 ### Simulation
 

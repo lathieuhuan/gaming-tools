@@ -8,12 +8,12 @@ import type {
   MemberEvent,
   SimulationEvent,
   SwitchInEvent,
-} from "../types";
-import type { BonusGroupMeta, Member } from "./Member";
+} from "../../types";
+import type { BonusGroupMeta, Member } from "../Member";
 
-import { bonusOperations } from "../logic/bonusOperations";
-import { talentCalc } from "../logic/talentCalc";
-import { Team } from "./Team";
+import { bonusOperations } from "../../logic/bonusOperations";
+import { talentCalc } from "../../logic/talentCalc";
+import { Team } from "../Team";
 
 export enum EHitLogType {
   MEMBER = "M",

@@ -1,6 +1,6 @@
 import { AppCharacter } from "@/types";
 
-export function characterMockup(code: number, data?: Partial<AppCharacter>): AppCharacter {
+export function __characterMockup(code: number, data?: Partial<AppCharacter>): AppCharacter {
   return {
     code,
     name: "",

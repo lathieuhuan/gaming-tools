@@ -1,10 +1,8 @@
-import { Object_, round } from "ron-utils";
+import { round } from "ron-utils";
 
 import type { AllAttributes, AllAttributeStat, AttributeStat, AutoRsnElmtType } from "@/types";
 import type { Member } from "./Member";
-import type { AttributeBonusRecord } from "./types";
 
-import { CORE_STAT_TYPES } from "@/constants";
 import { baseStatToCoreStat, isBaseStat, isCoreStat } from "@/logic/stat.logic";
 import TypeCounter from "@/utils/TypeCounter";
 
@@ -23,25 +21,15 @@ type AttributeLog = {
   label: string;
 };
 
-type AttributeControlConstructOptions = {
-  attrs?: AllAttributes;
-  finals?: AllAttributes;
-};
-
 export class AttributeControl {
   private attrs: AllAttributes;
   private logs: AttributeLog[] = [];
 
   finals: AllAttributes;
 
-  constructor(options: AttributeControlConstructOptions = {}) {
-    const {
-      attrs = new TypeCounter({}, { allowNegative: true }),
-      finals = new TypeCounter({}, { allowNegative: true }),
-    } = options;
-
-    this.attrs = attrs;
-    this.finals = finals;
+  constructor() {
+    this.attrs = new TypeCounter({}, { allowNegative: true });
+    this.finals = new TypeCounter({}, { allowNegative: true });
   }
 
   private _add(stat: AllAttributeStat, value: number, label = "Character base stat") {
