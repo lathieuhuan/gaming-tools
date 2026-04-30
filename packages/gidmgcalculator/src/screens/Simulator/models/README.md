@@ -2,23 +2,21 @@
 
 ## Overview
 
-`SimulationProcessor` is the top-level orchestrator of a simulation. It owns a `Team` and a `TargetCalc`, and drives them through a sequence of `SimulationEvent`s.
+`SimulationProcessor` is the top-level orchestrator of a simulation. It owns a `Team` and a `TargetCalc`, and drives them through a sequence of `SimulationEvent`s. On construction it initialises the team and finalises the target so they are ready for calculation.
 
-On construction it initialises the team and finalises the target so they are ready for calculation. The primary entry point is `runTimeline`, which resets all transient state and replays a full event timeline from scratch.
-
-Internally it routes each event to a dedicated handler:
+The primary entry point is `runTimeline`. When running a timeline from scratch, it resets all transient state then process each event in the given timeline. This API routes each event to a dedicated handler:
 
 - Switch-in (`SI`) – Delegates to `Team` to change the on-field member
 
 - Ability hit (`AH`) – Runs `talentCalc` against the performer and target, produces a `HitLog`
 
-- Ability buff (`AB`) – Validates the buff via `memberCan`, then uses `bonusOperations` to resolve, perform, and deliver bonuses to all affected members, finally run `finalizeAttrs` for each affected members
+- Ability buff (`AB`) – Validates the buff via `memberCan`, then uses `bonusOperations` to resolve, perform, and deliver bonuses to all affected members, finally run `finalizeAttrs` on each affected members
 
 - Reaction hit (`RH`) – (not yet implemented)
 
 - Weapon buff (`WB`) – (not yet implemented)
 
-After the timeline is replayed, `SimulationProcessor` exposes the accumulated `hitLogs` — one entry per damage hit.
+After the timeline is replayed, `SimulationProcessor` exposes the accumulated `hitLogs`.
 
 ---
 
