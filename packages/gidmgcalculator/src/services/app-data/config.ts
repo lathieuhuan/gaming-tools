@@ -18,7 +18,7 @@ export const cannedKnowledgeBuff: CharacterInnateBuff = {
   effects: {
     id: "1",
     value: 3,
-    targets: { module: "ATTR", path: "base_atk" },
+    target: { module: "ATTR", path: "base_atk" },
   },
 };
 
@@ -30,17 +30,17 @@ export const skirksTrainingBuff: CharacterInnateBuff = {
     {
       id: "1",
       value: 7,
-      targets: { module: "ATTR", path: "base_atk" },
+      target: { module: "ATTR", path: "base_atk" },
     },
     {
       id: "2",
       value: 50,
-      targets: { module: "ATTR", path: "base_hp" },
+      target: { module: "ATTR", path: "base_hp" },
     },
     {
       id: "3",
       value: 15,
-      targets: { module: "ATTR", path: "em" },
+      target: { module: "ATTR", path: "em" },
     },
   ],
 };
@@ -66,7 +66,7 @@ export const resonatedElmtsBuff: ResonatedElmtBuff = {
       effects: {
         id: "1",
         value: 10,
-        targets: { module: "ATTR", path: "cRate_" },
+        target: { module: "ATTR", path: "cRate_" },
       },
     },
     geo: {
@@ -74,7 +74,7 @@ export const resonatedElmtsBuff: ResonatedElmtBuff = {
       effects: {
         id: "2",
         value: 20,
-        targets: { module: "ATTR", path: "def" },
+        target: { module: "ATTR", path: "def" },
       },
     },
     electro: {
@@ -82,7 +82,7 @@ export const resonatedElmtsBuff: ResonatedElmtBuff = {
       effects: {
         id: "3",
         value: 20,
-        targets: { module: "ATTR", path: "er_" },
+        target: { module: "ATTR", path: "er_" },
       },
     },
     dendro: {
@@ -90,7 +90,7 @@ export const resonatedElmtsBuff: ResonatedElmtBuff = {
       effects: {
         id: "4",
         value: 60,
-        targets: { module: "ATTR", path: "em" },
+        target: { module: "ATTR", path: "em" },
       },
     },
     hydro: {
@@ -98,7 +98,7 @@ export const resonatedElmtsBuff: ResonatedElmtBuff = {
       effects: {
         id: "5",
         value: 20,
-        targets: { module: "ATTR", path: "hp_" },
+        target: { module: "ATTR", path: "hp_" },
       },
     },
     pyro: {
@@ -106,7 +106,7 @@ export const resonatedElmtsBuff: ResonatedElmtBuff = {
       effects: {
         id: "6",
         value: 20,
-        targets: { module: "ATTR", path: "atk_" },
+        target: { module: "ATTR", path: "atk_" },
       },
     },
     cryo: {
@@ -114,7 +114,7 @@ export const resonatedElmtsBuff: ResonatedElmtBuff = {
       effects: {
         id: "7",
         value: 20,
-        targets: { module: "ATTR", path: "cDmg_" },
+        target: { module: "ATTR", path: "cDmg_" },
       },
     },
   },

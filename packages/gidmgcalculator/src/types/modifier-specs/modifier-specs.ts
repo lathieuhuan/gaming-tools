@@ -32,8 +32,7 @@ export type ModInputSpec = {
 };
 
 export type ModifierBaseSpec = {
-  /** This is id */
-  index: number;
+  id: number;
   inputConfigs?: ModInputSpec[];
   teamBuffId?: number;
 };

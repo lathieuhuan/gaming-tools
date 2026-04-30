@@ -156,7 +156,7 @@ export class SimulationProcessor {
     const { team } = this;
     const performer = team.getMember(event.performer);
     const performerOps = team.getMemberOps(performer);
-    const buff = performer.data.buffs?.find((buff) => buff.index === event.modId);
+    const buff = performer.data.buffs?.find((buff) => buff.id === event.modId);
 
     if (!buff) {
       // TODO handle error not found
@@ -174,7 +174,7 @@ export class SimulationProcessor {
 
     const { effects } = buff;
     const meta: BonusGroupMeta = {
-      id: `c${performer.code}-${buff.index}`,
+      id: `c${performer.code}-${buff.id}`,
       src: `${performer.data.name} / ${buff.src}`,
       affect: buff.affect,
     };

@@ -73,7 +73,7 @@ export function createModCtrl(forSelf: boolean) {
     const inputs = createModCtrlInputs(mod.inputConfigs, forSelf);
 
     return {
-      id: mod.index,
+      id: mod.id,
       activated: false,
       data: mod,
       ...(inputs.length ? { inputs } : null),
@@ -108,7 +108,7 @@ export function createTeamBuffCtrls(setup: CalcSetup): TeamBuffCtrl[] {
 
   return Array_.filterMap(
     $AppData.teamBuffs,
-    (buff) => teamBuffIds.has(buff.index),
+    (buff) => teamBuffIds.has(buff.id),
     createModCtrl(false)
   );
 }
@@ -279,7 +279,7 @@ export function enhanceCtrls<T extends ModifierBaseSpec, TExtra extends object =
 ) {
   if (mods) {
     return ctrls.reduce<(ModifierCtrl<T> & TExtra)[]>((result, ctrl) => {
-      const data = mods.find((mod) => mod.index === ctrl.id && extraCheck(ctrl, mod));
+      const data = mods.find((mod) => mod.id === ctrl.id && extraCheck(ctrl, mod));
       return data ? result.concat({ ...ctrl, data, ...extraProps }) : result;
     }, []);
   }

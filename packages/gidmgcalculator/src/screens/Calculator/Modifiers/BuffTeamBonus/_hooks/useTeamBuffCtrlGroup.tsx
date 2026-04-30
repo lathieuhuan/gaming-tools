@@ -14,7 +14,7 @@ function reorderCtrls(teamBuffCtrls: TeamBuffCtrl[] = []) {
   let ascendantCtrl: TeamBuffCtrl | undefined;
 
   const otherCtrls = teamBuffCtrls.filter((ctrl) => {
-    if (ctrl.data.index === MS_ASCENDANT_BUFF_ID) {
+    if (ctrl.data.id === MS_ASCENDANT_BUFF_ID) {
       ascendantCtrl = ctrl;
       return false;
     }
@@ -51,7 +51,7 @@ export function useTeamBuffCtrlGroup(): ControlGroup {
 
             return (
               <GenshinModifierView
-                key={data.index}
+                key={data.id}
                 mutable
                 heading={data.src}
                 description={parseDescription(data.description)}

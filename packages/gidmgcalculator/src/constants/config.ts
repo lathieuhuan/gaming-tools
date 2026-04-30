@@ -7,7 +7,7 @@ export const DOWNLOAD_DATA_VERSION = 5;
 export const PERSISTED_DATA_VERSION = 6;
 export const LEGACY_EXPORTED_SETUP_VERSION = "2";
 export const EXPORTED_SETUP_VERSION = "3";
-export const MINIMUM_SYSTEM_VERSION = "3.43.0";
+export const MINIMUM_SYSTEM_VERSION = "3.44.0";
 
 export const IS_DEV_ENV = import.meta.env.DEV;
 

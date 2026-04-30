@@ -210,7 +210,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
       const code = parseNumber(codeStr, desc);
       const setData = $AppArtifact.getSet(code);
       const ctrl = splitModCtrl(modStrs);
-      const data = ctrl ? getMods(setData)?.find((buff) => buff.index === ctrl.id) : undefined;
+      const data = ctrl ? getMods(setData)?.find((buff) => buff.id === ctrl.id) : undefined;
 
       if (!setData || !data || !ctrl) {
         continue;
@@ -365,7 +365,7 @@ export function decodeSetupPrevious(code: string): DecodeResult {
     .map((ctrl) => {
       const [id, activated, inputs] = split(ctrl, 2);
       const newId = id in oldTeamBuffIdMap ? oldTeamBuffIdMap[id] : +id;
-      const data = $AppData.teamBuffs.find((buff) => buff.index === newId);
+      const data = $AppData.teamBuffs.find((buff) => buff.id === newId);
 
       if (!data) {
         return null;

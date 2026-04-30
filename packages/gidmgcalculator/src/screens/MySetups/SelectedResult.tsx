@@ -26,7 +26,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
 
     for (const ctrl of dbSetup.artBuffCtrls) {
       const setData = atfGear.sets.find((set) => set.data.code === ctrl.code)?.data;
-      const data = setData?.buffs?.find((buff) => buff.index === ctrl.id);
+      const data = setData?.buffs?.find((buff) => buff.id === ctrl.id);
 
       if (setData && data) {
         artBuffCtrls.push({ ...ctrl, data, setData });
@@ -37,7 +37,7 @@ export function SelectedResult({ setup, dbSetup }: SelectedResultProps) {
 
     for (const ctrl of dbSetup.artDebuffCtrls) {
       const setData = $AppArtifact.getSet(ctrl.code)!;
-      const data = setData?.debuffs?.find((debuff) => debuff.index === ctrl.id);
+      const data = setData?.debuffs?.find((debuff) => debuff.id === ctrl.id);
 
       if (setData && data) {
         artDebuffCtrls.push({ ...ctrl, data, setData });

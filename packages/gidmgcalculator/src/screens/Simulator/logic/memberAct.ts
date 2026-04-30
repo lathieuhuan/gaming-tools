@@ -18,7 +18,7 @@ export function memberAct(member: Member, team: Team) {
   function performBonus(spec: BonusSpec, tools: Partial<BonusPerformTools> = {}) {
     tools = {
       ...tools,
-      basedOnFixed: tools.basedOnFixed ?? spec.targets.module === "ATTR",
+      basedOnFixed: tools.basedOnFixed ?? spec.target.module === "ATTR",
     };
 
     return new BonusCalc(member, team, tools).makeBonus(spec);
@@ -51,7 +51,7 @@ export function memberAct(member: Member, team: Team) {
     spec: BonusSpec,
     inputs: number[] = []
   ) {
-    const { targets: target, outsource } = spec;
+    const { target, outsource } = spec;
     let value = bonus.value;
 
     if (outsource) {

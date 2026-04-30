@@ -13,7 +13,7 @@ export function categorizeBonusSpecs(specs: BonusSpec | BonusSpec[], memberCan: 
       continue;
     }
 
-    switch (spec.targets.module) {
+    switch (spec.target.module) {
       case "TLT": {
         tltSpecs.push(spec);
         break;

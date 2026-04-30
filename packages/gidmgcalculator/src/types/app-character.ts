@@ -149,7 +149,7 @@ export type CharacterBuff = CharacterModifierBase &
     alterConfigs?: AttackAlterSpec | AttackAlterSpec[];
   };
 
-export type CharacterInnateBuff = CharacterModifierBase & Pick<BuffSpec, "effects" | "affect">;
+export type CharacterInnateBuff = CharacterModifierBase & Partial<Pick<BuffSpec, "effects" | "affect">>;
 
 // ============ DEBUFF / PENALTY ============
 

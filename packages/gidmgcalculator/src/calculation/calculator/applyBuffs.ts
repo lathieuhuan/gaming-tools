@@ -35,7 +35,7 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
   function processBonus(bonus: BareBonus, spec: BonusSpec, inputs: number[] = [], label: string) {
     if (!bonus.value) return;
 
-    const { outsource, targets } = spec;
+    const { outsource, target } = spec;
 
     if (outsource) {
       const stacks = new BonusCalc(main, team, { inputs }).getStacks(outsource.stacks);
@@ -57,10 +57,10 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
       }
     };
 
-    switch (targets.module) {
+    switch (target.module) {
       case "ATTR": {
-        for (const targetPath of Array_.toArray(targets.path)) {
-          const toStat = getToStat(targetPath, targets.inpIndex ?? 0);
+        for (const targetPath of Array_.toArray(target.path)) {
+          const toStat = getToStat(targetPath, target.inpIndex ?? 0);
           if (!toStat) continue;
 
           main.receiveAttrBonus({
@@ -77,17 +77,17 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
 
         main.levelBonuses.set(spec.id, {
           id: spec.id,
-          talent: targets.path,
+          talent: target.path,
           value: bonus.value,
         });
         break;
       }
       default:
-        for (const module of Array_.toArray(targets.module)) {
+        for (const module of Array_.toArray(target.module)) {
           main.receiveAttkBonus({
             // id: bonus.id,
             toType: module,
-            toKey: targets.path,
+            toKey: target.path,
             value: bonus.value,
             label,
             effectSrc: spec,
@@ -117,8 +117,8 @@ export function applyBuffs(main: Character, teammates: Teammate[], setup: CalcSe
         team.isAvailableEffect(spec) &&
         performer.canPerformEffect(spec, support.inputs)
       ) {
-        const { targets } = spec;
-        const basedOnFixed = !Array.isArray(targets) && targets.module === "ATTR";
+        const { target } = spec;
+        const basedOnFixed = target.module === "ATTR";
 
         const bonus = performer.performBonus(spec, {
           ...support,

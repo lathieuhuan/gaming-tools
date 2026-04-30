@@ -129,12 +129,12 @@ describe("SimulationProcessor", () => {
         dataPatch: {
           buffs: [
             {
-              index: 7,
+              id: 7,
               src: "Test buff",
               description: "",
               checkInput: 1,
               effects: {
-                targets: { module: "ATTR", path: "em" },
+                target: { module: "ATTR", path: "em" },
                 value: 10,
               },
             },
@@ -165,12 +165,12 @@ describe("SimulationProcessor", () => {
         dataPatch: {
           buffs: [
             {
-              index: 8,
+              id: 8,
               src: "Filtered effects",
               description: "",
               checkInput: 1,
               effects: {
-                targets: { module: "ATTR", path: "em" },
+                target: { module: "ATTR", path: "em" },
                 value: 10,
                 checkInput: 999,
               },

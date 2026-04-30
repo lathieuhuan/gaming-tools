@@ -11,7 +11,7 @@ type RenderInfo = {
   inputConfigs?: ModInputSpec[];
 };
 
-export const RESONANCE_BUFFS: Record<string, RenderInfo> = {
+const RESONANCE_BUFFS: Record<string, RenderInfo> = {
   cryo: {
     heading: "Cryo Resonance",
     desc: "Increases {CRIT Rate}#[k] against enemies that are Frozen or affected by Cryo by {15%}#[v].",
@@ -24,11 +24,11 @@ export const RESONANCE_BUFFS: Record<string, RenderInfo> = {
     heading: "Dendro Resonance",
     desc: [
       `After triggering Aggravate, Spread, Hyperbloom, or Burgeon reactions, all nearby party members gain {20}#[v] {Elemental Mastery}#[k] for 6s.`,
-      `After triggering Burning, Quicken, or Bloom reactions, all nearby party members gain {30}#[v] {Elemental Mastery}#[k] for 6s.`,
+      `After triggering Burning, Quicken, Bloom, or Lunar-Bloom reactions, all nearby party members gain {30}#[v] {Elemental Mastery}#[k] for 6s.`,
     ],
     inputConfigs: [
       { label: "Trigger Aggravate, Spread, Hyperbloom, Burgeon", type: "CHECK" },
-      { label: "Trigger Burning, Quicken, Bloom", type: "CHECK" },
+      { label: "Trigger Burning, Quicken, Bloom, Lunar-Bloom", type: "CHECK" },
     ],
   },
 };
@@ -48,7 +48,7 @@ export function ResonanceBuffItem({ element, ...props }: ResonanceBuffItemProps)
   const { heading, desc, inputConfigs } = RESONANCE_BUFFS[element];
   const parsedDesc = Array_.toArray(desc)
     .map((part) => parseDescription(part))
-    .join(" ");
+    .join("<br>");
 
   return (
     <GenshinModifierView

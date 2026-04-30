@@ -80,5 +80,5 @@ export type BonusSpec = EffectPerformableConditionSpecs &
   EffectReceiverConditionSpecs &
   BonusCoreSpec & {
     affect?: ModAffectType;
-    targets: BonusTargetSpec;
+    target: BonusTargetSpec;
   };

@@ -147,7 +147,7 @@ export class CalcSetup extends CalcSetupBase {
 
   updateTeamBuffCtrls() {
     const teamBuffCtrls = createTeamBuffCtrls(this);
-    this.teamBuffCtrls = Array_.sync(this.teamBuffCtrls, teamBuffCtrls, (ctrl) => ctrl.data.index);
+    this.teamBuffCtrls = Array_.sync(this.teamBuffCtrls, teamBuffCtrls, (ctrl) => ctrl.data.id);
   }
 
   updateArtifactDebuffCtrls() {

@@ -31,7 +31,7 @@ export function AbilityEventList() {
   const handleTrigger = (buff: CharacterBuff, inputs: number[]) => {
     triggerAbilityBuffEvent({
       performer: data.code,
-      modId: buff.index,
+      modId: buff.id,
       inputs,
     });
   };
@@ -45,7 +45,7 @@ export function AbilityEventList() {
           }
 
           const inputConfigs = buff.inputConfigs;
-          const inputs = inputsById[buff.index] || [];
+          const inputs = inputsById[buff.id] || [];
 
           const description = memberOps.show.buffText(buff, inputs);
 
@@ -59,13 +59,13 @@ export function AbilityEventList() {
                 inputs={inputs}
                 inputConfigs={inputConfigs}
                 onToggleCheck={(current, inputIndex) => {
-                  handleInputChange(buff.index, inputIndex, current === 1 ? 0 : 1);
+                  handleInputChange(buff.id, inputIndex, current === 1 ? 0 : 1);
                 }}
                 onSelectOption={(value, inputIndex) => {
-                  handleInputChange(buff.index, inputIndex, value);
+                  handleInputChange(buff.id, inputIndex, value);
                 }}
                 onChangeText={(value, inputIndex) => {
-                  handleInputChange(buff.index, inputIndex, value);
+                  handleInputChange(buff.id, inputIndex, value);
                 }}
               />
               <div className="mt-2 flex">

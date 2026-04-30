@@ -25,7 +25,7 @@ export function CharacterEventView({ event, member }: CharacterEventViewProps) {
     }
 
     case "AB": {
-      const buff = data.buffs?.find((buff) => buff.index === event.modId);
+      const buff = data.buffs?.find((buff) => buff.id === event.modId);
 
       if (!buff) {
         return null;

@@ -31,7 +31,7 @@ export function createMemberInputs(member: WritableDraft<Member>): MemberInputs 
   const abilityBuffInputs: InputsById = {};
 
   member.data.buffs?.forEach((buff) => {
-    abilityBuffInputs[buff.index] = createModCtrlInputs(buff.inputConfigs);
+    abilityBuffInputs[buff.id] = createModCtrlInputs(buff.inputConfigs);
   });
 
   return {
