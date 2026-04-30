@@ -14,3 +14,5 @@ export function memberShow(member: Member, team: Team) {
     buffText,
   };
 }
+
+export type MemberShow = ReturnType<typeof memberShow>;

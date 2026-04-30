@@ -14,6 +14,7 @@ import type { BonusGroupMeta, Member } from "../Member";
 import { bonusOperations } from "../../logic/bonusOperations";
 import { talentCalc } from "../../logic/talentCalc";
 import { Team } from "../Team";
+import { categorizeBonusSpecs } from "../../logic/categorizeBonusSpecs";
 
 export enum EHitLogType {
   MEMBER = "M",
@@ -175,20 +176,21 @@ export class SimulationProcessor {
     const meta: BonusGroupMeta = {
       id: `c${performer.code}-${buff.index}`,
       src: `${performer.data.name} / ${buff.src}`,
+      affect: buff.affect,
     };
 
-    const bonusOps = bonusOperations(performer, this.team, event.inputs);
+    const bonusOps = bonusOperations(performer, this.team, { inputs: event.inputs });
 
-    const specs = bonusOps.resolveBonusSpecs(Array_.toArray(effects));
+    const specCates = categorizeBonusSpecs(Array_.toArray(effects), performerOps.can);
 
-    if (!specs.length) {
+    if (!specCates) {
       console.info(`No available effects: ${performer.data.name} / ${buff.src}`);
       return;
     }
 
-    bonusOps.performAndDeliverBonuses(meta, specs, buff.affect);
+    bonusOps.applyBonusSpecs(meta, specCates.rearrange());
 
-    for (const recipient of bonusOps.allRecipients) {
+    for (const recipient of bonusOps.recipients) {
       recipient.finalizeAttrs();
     }
   }

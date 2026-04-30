@@ -1,14 +1,22 @@
 import type { Clonable } from "@/models/interfaces";
-import type { AutoRsnElmtType, ElementCount, ElementType } from "@/types";
+import type { AutoRsnElmtType, BonusSpec, ElementCount, ElementType } from "@/types";
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
 import { createWeapon } from "@/logic/entity.logic";
 import { $AppCharacter } from "@/services";
+import { bonusOperations } from "../../logic/bonusOperations";
+import { categorizeBonusSpecs } from "../../logic/categorizeBonusSpecs";
 import { memberAct } from "../../logic/memberAct";
 import { memberCan } from "../../logic/memberCan";
 import { memberShow } from "../../logic/memberShow";
-import { Member, TalentLevelBonus } from "../Member";
+import { BonusGroupMeta, Member, TalentLevelBonus } from "../Member";
 import { TeamState } from "./TeamState";
+
+type InnateBonusSpec = {
+  meta: BonusGroupMeta;
+  ownerCode: number;
+  spec: BonusSpec;
+};
 
 @FlatGetters("state", ["resonances", "moonsignLv", "witchRiteLv", "elmtCount"])
 export class Team implements Clonable<Team> {
@@ -16,6 +24,7 @@ export class Team implements Clonable<Team> {
   private onFieldMemberCode: number;
 
   state: TeamState;
+  innateBonuses: InnateBonusSpec[] = [];
 
   declare resonances: AutoRsnElmtType[];
   declare moonsignLv: number;
@@ -70,12 +79,77 @@ export class Team implements Clonable<Team> {
       }
     }
 
+    const tltSpecs: InnateBonusSpec[] = [];
+    const attrSpecs: InnateBonusSpec[] = [];
+    const attkSpecs: InnateBonusSpec[] = [];
+
+    this.members.forEach((member) => {
+      const { code, innateBuffs = [] } = member.data;
+      const can = memberCan(member, this);
+
+      for (const buff of innateBuffs) {
+        if (!buff.effects || !can.performEffect(buff)) {
+          continue;
+        }
+
+        const meta: BonusGroupMeta = {
+          id: `c${code}-i`,
+          src: `${member.data.name} / ${buff.src}`,
+          innate: true,
+          affect: buff.affect,
+        };
+        const specCates = categorizeBonusSpecs(buff.effects, can);
+
+        specCates?.tltSpecs.forEach((spec) => {
+          tltSpecs.push({
+            meta,
+            ownerCode: code,
+            spec,
+          });
+        });
+
+        specCates?.attrSpecs.forEach((spec) => {
+          attrSpecs.push({
+            meta,
+            ownerCode: code,
+            spec,
+          });
+        });
+
+        specCates?.attkSpecs.forEach((spec) => {
+          attkSpecs.push({
+            meta,
+            ownerCode: code,
+            spec,
+          });
+        });
+      }
+    });
+
+    this.innateBonuses = [...tltSpecs, ...attrSpecs, ...attkSpecs];
+
     this.members.forEach((member) => {
       member.initCalculation({
         resonanceElmts: this.state.resonances,
         levelBonuses,
       });
     });
+
+    const allRecipients = new Set<Member>();
+
+    for (const { meta, ownerCode, spec } of this.innateBonuses) {
+      const member = this.getMember(ownerCode);
+      const bonusOps = bonusOperations(member, this, { recipients: allRecipients });
+
+      const bonus = memberAct(member, this).performBonus(spec);
+      const recipients = bonusOps.getAffectedMembers(spec.affect || meta.affect);
+
+      bonusOps.deliverBonus(meta, bonus, spec, recipients);
+    }
+
+    for (const recipient of allRecipients) {
+      recipient.finalizeAttrs();
+    }
   }
 
   static createMember(code: number) {

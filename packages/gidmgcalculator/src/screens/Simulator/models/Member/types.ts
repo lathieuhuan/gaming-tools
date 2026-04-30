@@ -3,6 +3,7 @@ import type {
   AttackBonusKey,
   AttackBonusType,
   LevelableTalentType,
+  ModAffectType,
 } from "@/types";
 
 export type BonusGroupId = string;
@@ -10,6 +11,8 @@ export type BonusGroupId = string;
 export type BonusGroupMeta = {
   id: BonusGroupId;
   src: string;
+  affect?: ModAffectType;
+  innate?: boolean;
 };
 
 export type TalentLevelBonus = {

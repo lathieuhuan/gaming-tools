@@ -15,7 +15,12 @@ import type {
   TalentCalcItemBonusId,
   WeaponType,
 } from "./common";
-import type { BuffSpec, DebuffSpec, EffectPerformableConditionSpecs, InputCheckSpec } from "./modifier-specs";
+import type {
+  BuffSpec,
+  DebuffSpec,
+  EffectPerformableConditionSpecs,
+  InputCheckSpec,
+} from "./modifier-specs";
 
 export type AppCharacter = {
   code: number;
@@ -144,7 +149,7 @@ export type CharacterBuff = CharacterModifierBase &
     alterConfigs?: AttackAlterSpec | AttackAlterSpec[];
   };
 
-export type CharacterInnateBuff = CharacterModifierBase & Pick<BuffSpec, "effects">;
+export type CharacterInnateBuff = CharacterModifierBase & Pick<BuffSpec, "effects" | "affect">;
 
 // ============ DEBUFF / PENALTY ============
 

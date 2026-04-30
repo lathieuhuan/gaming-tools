@@ -99,3 +99,5 @@ export function memberAct(member: Member, team: Team) {
     receiveBonus,
   };
 }
+
+export type MemberAct = ReturnType<typeof memberAct>;

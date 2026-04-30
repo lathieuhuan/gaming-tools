@@ -95,3 +95,5 @@ export function memberCan(member: Member, team: Team) {
     receiveBonus,
   };
 }
+
+export type MemberCan = ReturnType<typeof memberCan>;
