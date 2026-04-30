@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
@@ -25,5 +26,9 @@ export default defineConfig({
       "@Store": path.resolve(__dirname, "./src/store"),
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  test: {
+    setupFiles: ["./src/tests/setup.ts"],
+    include: ["./src/**/__tests__/**/*.test.ts"],
   },
 });

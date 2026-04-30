@@ -1,6 +1,0 @@
-import { $AppCharacter } from "../src/services";
-import { __characters } from "./mocks/characters.mock";
-
-export default function () {
-  $AppCharacter.populate(__characters);
-}

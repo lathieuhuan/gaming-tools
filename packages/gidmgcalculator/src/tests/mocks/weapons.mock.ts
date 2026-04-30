@@ -1,14 +1,13 @@
-import { AppWeapon } from "../../src/calculation";
-import { $AppWeapon } from "../../src/services";
+import { AppWeapon } from "@/types";
 
-export enum __EMockWeapon {
-  SWORD = 1,
-  BOW = 2,
-}
+export const MockWeapon = {
+  SWORD: 1,
+  BOW: 2,
+} as const;
 
-export const __weapons: AppWeapon[] = [
+export const MOCK_WEAPONS: AppWeapon[] = [
   {
-    code: __EMockWeapon.SWORD,
+    code: MockWeapon.SWORD,
     icon: "",
     name: "Sword",
     rarity: 5,
@@ -20,7 +19,7 @@ export const __weapons: AppWeapon[] = [
     },
   },
   {
-    code: __EMockWeapon.BOW,
+    code: MockWeapon.BOW,
     icon: "",
     name: "Sword",
     rarity: 5,
@@ -32,5 +31,3 @@ export const __weapons: AppWeapon[] = [
     },
   },
 ];
-
-$AppWeapon.populate(__weapons);
