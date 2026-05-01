@@ -168,7 +168,7 @@ describe("Team", () => {
   });
 
   describe("init", () => {
-    test("passes Tartaglia party NA level bonus to every member initCalculation", () => {
+    test("calls initCalculation on every member", () => {
       const tartaglia = __createMember({ characterCode: CharacterMock.TARTAGLIA });
       const other = __createMember({ characterCode: CharacterMock.PYRO_SWORD_HEXEREI });
       const team = new Team([tartaglia, other], tartaglia.code);
@@ -177,46 +177,21 @@ describe("Team", () => {
 
       team.init();
 
-      const expectedBonuses = [{ id: "c26", toType: "NAs" as const, value: 1 }];
-      expect(spyT).toHaveBeenCalledWith({
-        resonanceElmts: team.state.resonances,
-        levelBonuses: expectedBonuses,
-      });
-      expect(spyO).toHaveBeenCalledWith({
-        resonanceElmts: team.state.resonances,
-        levelBonuses: expectedBonuses,
-      });
+      expect(spyT).toHaveBeenCalledWith();
+      expect(spyO).toHaveBeenCalledWith();
     });
 
-    test("adds Skirk ES bonus only when hydro and cryo counts match the dual-element rule", () => {
+    test("calls finalizeAttrs on every member after applying innate bonuses", () => {
       const tartaglia = __createMember({ characterCode: CharacterMock.TARTAGLIA });
-      const skirk = __createMember({ characterCode: CharacterMock.SKIRK });
-      const validTeam = new Team([tartaglia, skirk], tartaglia.code);
-      const spyValid = vi.spyOn(skirk, "initCalculation");
+      const other = __createMember({ characterCode: CharacterMock.PYRO_SWORD_HEXEREI });
+      const team = new Team([tartaglia, other], tartaglia.code);
+      const spyT = vi.spyOn(tartaglia, "finalizeAttrs");
+      const spyO = vi.spyOn(other, "finalizeAttrs");
 
-      validTeam.init();
+      team.init();
 
-      expect(spyValid).toHaveBeenCalledWith({
-        resonanceElmts: validTeam.state.resonances,
-        levelBonuses: expect.arrayContaining([
-          { id: "c26", toType: "NAs", value: 1 },
-          { id: "c105", toType: "ES", value: 1 },
-        ]),
-      });
-
-      spyValid.mockRestore();
-
-      const skirkOnly = __createMember({ characterCode: CharacterMock.SKIRK });
-      const pyro = __createMember({ characterCode: CharacterMock.PYRO_SWORD_HEXEREI });
-      const invalidTeam = new Team([skirkOnly, pyro], skirkOnly.code);
-      const spyInvalid = vi.spyOn(skirkOnly, "initCalculation");
-
-      invalidTeam.init();
-
-      expect(spyInvalid).toHaveBeenCalledWith({
-        resonanceElmts: invalidTeam.state.resonances,
-        levelBonuses: [],
-      });
+      expect(spyT).toHaveBeenCalled();
+      expect(spyO).toHaveBeenCalled();
     });
   });
 

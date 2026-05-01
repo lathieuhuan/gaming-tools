@@ -4,14 +4,21 @@ import type {
   AttributeBonus,
   AttributeTargetPath,
   BareBonus,
+  BonusOutsourceSpec,
   BonusPerformTools,
   BonusSpec,
+  BonusTargetSpec,
 } from "@/types";
 import type { BonusGroupMeta, Member } from "../models/Member";
 import type { Team } from "../models/Team";
 
 import { ELEMENT_TYPES, PHEC_ELEMENT_TYPES } from "@/constants/global";
 import { BonusCalc } from "../models/EffectValueCalcs";
+
+type ReceiveBonusOptions = {
+  inputs?: number[];
+  outsource?: BonusOutsourceSpec;
+};
 
 export function memberAct(member: Member, team: Team) {
   //
@@ -24,10 +31,10 @@ export function memberAct(member: Member, team: Team) {
     return new BonusCalc(member, team, tools).makeBonus(spec);
   }
 
-  function processToStat(
+  function resolveBonusTargetPath(
     path: AttributeTargetPath,
-    inputs: number[],
-    inpIndex: number
+    inputs: number[] = [],
+    inpIndex: number = 0
   ): AttributeBonus["toStat"] | undefined {
     switch (path) {
       case "INP_ELMT": {
@@ -48,10 +55,10 @@ export function memberAct(member: Member, team: Team) {
   function receiveBonus(
     meta: BonusGroupMeta,
     bonus: BareBonus,
-    spec: BonusSpec,
-    inputs: number[] = []
+    target: BonusTargetSpec,
+    options: ReceiveBonusOptions = {}
   ) {
-    const { target, outsource } = spec;
+    const { inputs = [], outsource } = options;
     let value = bonus.value;
 
     if (outsource) {
@@ -67,7 +74,7 @@ export function memberAct(member: Member, team: Team) {
       }
       case "ATTR": {
         for (const path of Array_.toArray(target.path)) {
-          const toStat = processToStat(path, inputs, target.inpIndex ?? 0);
+          const toStat = resolveBonusTargetPath(path, inputs, target.inpIndex);
           if (!toStat) continue;
 
           member.bonusCtrl.addAttrBonus(meta, {
@@ -95,6 +102,7 @@ export function memberAct(member: Member, team: Team) {
   }
 
   return {
+    resolveBonusTargetPath,
     performBonus,
     receiveBonus,
   };

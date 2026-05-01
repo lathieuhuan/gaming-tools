@@ -8,31 +8,33 @@ import type {
 } from "@/types";
 import type {
   AttackBonus,
-  AttackBonusRecord,
   AttributeBonus,
-  AttributeBonusRecord,
   Bonus,
+  BonusGroup,
   BonusGroupId,
   BonusGroupMeta,
 } from "./types";
 
-type BonusGroup = {
-  meta: BonusGroupMeta;
+type InternalBonusGroup = BonusGroup & {
   ids: Set<string>;
-  bonuses: Bonus[];
 };
 
-type BonusGroupsById = Map<BonusGroupId, BonusGroup>;
+type BonusGroupsById = Map<BonusGroupId, InternalBonusGroup>;
 
 export type GetBonusPaths = Array<AttackBonusType | null | undefined | false>;
 
+type AttributeBonusRecord = Partial<Record<AllAttributeStat, AttributeBonus[]>>;
+
+type AttackBonusRecord = Partial<Record<AttackBonusType, AttackBonus[]>>;
+
 export class BonusControl {
+  innateGroups: BonusGroupsById = new Map();
   groups: BonusGroupsById = new Map();
 
   attrRecord: AttributeBonusRecord = {};
   attkRecord: AttackBonusRecord = {};
 
-  static bonusId(bonus: AttributeBonus | AttackBonus) {
+  static bonusId(bonus: Bonus) {
     switch (bonus.type) {
       case "ATTR":
         return `${bonus.groupId}-${bonus.toStat}`;
@@ -82,7 +84,7 @@ export class BonusControl {
     this.attkRecord[bonus.toType] = current;
   }
 
-  private _add(meta: BonusGroupMeta, bonus: AttackBonus | AttributeBonus) {
+  private _add(meta: BonusGroupMeta, bonus: Bonus) {
     const id = BonusControl.bonusId(bonus);
     const current = this.groups.get(meta.id) || { meta, ids: new Set(), bonuses: [] };
 
@@ -93,6 +95,47 @@ export class BonusControl {
     current.ids.add(id);
     current.bonuses.push(bonus);
     this.groups.set(meta.id, current);
+  }
+
+  private arrangeBonus(bonus: Bonus) {
+    switch (bonus.type) {
+      case "ATTR":
+        this.updateAttrBonus(bonus);
+        break;
+      case "ATTK":
+        this.updateAttkBonus(bonus);
+        break;
+      default:
+        bonus satisfies never;
+        break;
+    }
+  }
+
+  addInnateBonusGroup(group: BonusGroup) {
+    if (group.bonuses.length === 0) {
+      return;
+    }
+
+    const bonusIds = new Set<string>();
+    const bonuses: Bonus[] = [];
+
+    for (const bonus of group.bonuses) {
+      const bonusId = BonusControl.bonusId(bonus);
+
+      if (bonusIds.has(bonusId)) {
+        continue;
+      }
+
+      bonusIds.add(bonusId);
+      bonuses.push(bonus);
+      this.arrangeBonus(bonus);
+    }
+
+    this.innateGroups.set(group.meta.id, {
+      meta: group.meta,
+      ids: bonusIds,
+      bonuses,
+    });
   }
 
   /** Update if already exists */
@@ -155,4 +198,16 @@ export class BonusControl {
 
     return result;
   };
+
+  reset() {
+    this.groups.clear();
+    this.attrRecord = {};
+    this.attkRecord = {};
+
+    for (const group of this.innateGroups.values()) {
+      for (const bonus of group.bonuses) {
+        this.arrangeBonus(bonus);
+      }
+    }
+  }
 }

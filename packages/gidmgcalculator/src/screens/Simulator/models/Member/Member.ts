@@ -7,7 +7,6 @@ import type {
   AppCharacter,
   AttackElement,
   AttributeStat,
-  AutoRsnElmtType,
   CharacterStateData,
   Level,
   LevelableTalentType,
@@ -33,11 +32,6 @@ export type MemberConstructOptions = {
   attrsCtrl?: AttributeControl;
   bonusCtrl?: BonusControl;
   lvBonusCtrl?: LevelBonusControl;
-};
-
-type MemberCalculationInitOptions = {
-  resonanceElmts?: AutoRsnElmtType[];
-  levelBonuses?: TalentLevelBonus[];
 };
 
 export type MemberCloneOptions = MemberConstructOptions & {
@@ -148,19 +142,17 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
 
   // ===== CALCULATION =====
 
-  initCalculation(options: MemberCalculationInitOptions = {}) {
-    const { resonanceElmts = [], levelBonuses = [] } = options;
-
-    this.attrsCtrl.init(this, resonanceElmts);
+  initCalculation() {
+    this.attrsCtrl.init(this);
     this.bonusCtrl = new BonusControl();
-
     this.lvlBonusCtrl.clear();
 
-    levelBonuses.forEach((bonus) => {
-      this.lvlBonusCtrl.set(bonus.id, bonus);
-    });
+    return this;
+  }
 
-    this.finalizeAttrs();
+  resetCalculation() {
+    this.bonusCtrl.reset();
+    this.lvlBonusCtrl.clear();
 
     return this;
   }

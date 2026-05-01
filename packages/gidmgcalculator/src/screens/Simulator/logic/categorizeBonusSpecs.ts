@@ -3,10 +3,13 @@ import { Array_ } from "ron-utils";
 import type { BonusSpec } from "@/types";
 import type { MemberCan } from "./memberCan";
 
+import { isDynamicBonusSpec } from "./isDynamicBonusSpec";
+
 export function categorizeBonusSpecs(specs: BonusSpec | BonusSpec[], memberCan: MemberCan) {
   const tltSpecs: BonusSpec[] = [];
-  const attrSpecs: BonusSpec[] = [];
-  const attkSpecs: BonusSpec[] = [];
+  const fiSpecs: BonusSpec[] = [];
+  const dyAttrSpecs: BonusSpec[] = [];
+  const dyAttkSpecs: BonusSpec[] = [];
 
   for (const spec of Array_.toArray(specs)) {
     if (!memberCan.performEffect(spec)) {
@@ -19,26 +22,39 @@ export function categorizeBonusSpecs(specs: BonusSpec | BonusSpec[], memberCan: 
         break;
       }
       case "ATTR": {
-        attrSpecs.push(spec);
+        if (isDynamicBonusSpec(spec)) {
+          dyAttrSpecs.push(spec);
+        } else {
+          fiSpecs.push(spec);
+        }
         break;
       }
       default: {
-        attkSpecs.push(spec);
+        if (isDynamicBonusSpec(spec)) {
+          dyAttkSpecs.push(spec);
+        } else {
+          fiSpecs.push(spec);
+        }
         break;
       }
     }
   }
 
-  if (!tltSpecs.length && !attrSpecs.length && !attkSpecs.length) {
+  if (
+    !tltSpecs.length &&
+    !fiSpecs.length &&
+    !dyAttrSpecs.length &&
+    !dyAttkSpecs.length
+  ) {
     return null;
   }
 
   return {
-    tltSpecs,
-    attrSpecs,
-    attkSpecs,
+    fiSpecs: [...tltSpecs, ...fiSpecs],
+    dyAttrSpecs,
+    dyAttkSpecs,
     rearrange() {
-      return [...tltSpecs, ...attrSpecs, ...attkSpecs];
+      return [...tltSpecs, ...fiSpecs, ...dyAttrSpecs, ...dyAttkSpecs];
     },
   };
 }

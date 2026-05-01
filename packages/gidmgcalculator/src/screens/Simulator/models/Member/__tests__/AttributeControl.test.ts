@@ -9,7 +9,7 @@ describe("AttributeControl", () => {
     test("returns attrs with default combat stats", () => {
       const ctrl = new AttributeControl();
       const member = __createMember();
-      const attrs = ctrl.init(member, []);
+      const attrs = ctrl.init(member);
 
       expect(attrs.get("cRate_")).toBe(5);
       expect(attrs.get("cDmg_")).toBe(50);
@@ -18,29 +18,19 @@ describe("AttributeControl", () => {
       expect(attrs.get("caAtkSpd_")).toBe(100);
     });
 
-    test("adds elemental resonance bonuses", () => {
-      const ctrl = new AttributeControl();
-      const member = __createMember();
-
-      ctrl.init(member, []);
-      expect(ctrl.get("atk_")).toBeCloseTo(10.8, 5);
-
-      ctrl.init(member, ["pyro", "hydro", "geo", "dendro"]);
-
-      expect(ctrl.get("atk_")).toBeCloseTo(10.8 + 25, 5);
-      expect(ctrl.get("hp_")).toBeCloseTo(25, 5);
-      expect(ctrl.get("shieldS_")).toBeCloseTo(15, 5);
-      expect(ctrl.get("em")).toBe(50);
-    });
-
     test("clears previous init when called again", () => {
       const ctrl = new AttributeControl();
-      const member = __createMember();
+      const withInnate = __createMember({
+        dataPatch: {
+          statInnates: [{ type: "em", value: 99 }],
+        },
+      });
+      const withoutInnate = __createMember();
 
-      ctrl.init(member, ["dendro"]);
-      expect(ctrl.get("em")).toBe(50);
+      ctrl.init(withInnate);
+      expect(ctrl.get("em")).toBe(99);
 
-      ctrl.init(member, []);
+      ctrl.init(withoutInnate);
       expect(ctrl.get("em")).toBe(0);
     });
 
@@ -48,11 +38,11 @@ describe("AttributeControl", () => {
       const ctrl = new AttributeControl();
       const member = __createMember({ level: "1/20" });
 
-      ctrl.init(member, []);
+      ctrl.init(member);
       expect(ctrl.get("atk_")).toBeCloseTo(10.8, 5);
 
       const highAsc = __createMember({ level: "80/90" });
-      ctrl.init(highAsc, []);
+      ctrl.init(highAsc);
       expect(ctrl.get("atk_")).toBeGreaterThan(10.8);
     });
 
@@ -64,7 +54,7 @@ describe("AttributeControl", () => {
         },
       });
 
-      ctrl.init(member, []);
+      ctrl.init(member);
       expect(ctrl.get("em")).toBe(33);
     });
 
@@ -75,7 +65,7 @@ describe("AttributeControl", () => {
       const ctrl = new AttributeControl();
       const member = __createMember({ atfGear: gear });
 
-      ctrl.init(member, []);
+      ctrl.init(member);
       expect(ctrl.get("hp")).toBe(1000 + 400);
     });
 
@@ -90,10 +80,10 @@ describe("AttributeControl", () => {
         dataPatch: { rarity: 4 },
       });
 
-      ctrl.init(fiveStar, []);
+      ctrl.init(fiveStar);
       const baseHpFive = ctrl.get("hp");
 
-      ctrl.init(fourStar, []);
+      ctrl.init(fourStar);
       const baseHpFour = ctrl.get("hp");
 
       expect(baseHpFour).toBeLessThan(baseHpFive);
@@ -110,10 +100,10 @@ describe("AttributeControl", () => {
         dataPatch: { rarity: 5 },
       });
 
-      ctrl.init(normalFive, []);
+      ctrl.init(normalFive);
       const normalHp = ctrl.get("hp");
 
-      ctrl.init(traveler, []);
+      ctrl.init(traveler);
       const travelerHp = ctrl.get("hp");
 
       expect(travelerHp).toBeLessThan(normalHp);
@@ -128,7 +118,7 @@ describe("AttributeControl", () => {
       gear.attributes.add("atk", 30);
 
       const member = __createMember({ atfGear: gear });
-      const attrs = ctrl.init(member, []);
+      const attrs = ctrl.init(member);
 
       const baseAtk = attrs.get("base_atk");
       const atkPct = attrs.get("atk_");
@@ -140,7 +130,7 @@ describe("AttributeControl", () => {
     test("returns stored value for non-core stats", () => {
       const ctrl = new AttributeControl();
       const member = __createMember();
-      ctrl.init(member, []);
+      ctrl.init(member);
 
       expect(ctrl.get("er_")).toBe(100);
     });
@@ -149,8 +139,12 @@ describe("AttributeControl", () => {
   describe("getCopy", () => {
     test("returns a clone of the current snapshot", () => {
       const ctrl = new AttributeControl();
-      const member = __createMember();
-      ctrl.init(member, ["dendro"]);
+      const member = __createMember({
+        dataPatch: {
+          statInnates: [{ type: "em", value: 50 }],
+        },
+      });
+      ctrl.init(member);
 
       const snapshot = ctrl.getCopy();
       expect(snapshot.get("em")).toBe(50);
@@ -159,7 +153,7 @@ describe("AttributeControl", () => {
     test("the returned clone is independent of later mutations", () => {
       const ctrl = new AttributeControl();
       const member = __createMember();
-      ctrl.init(member, []);
+      ctrl.init(member);
 
       const snapshot = ctrl.getCopy();
       snapshot.add("em", 999);

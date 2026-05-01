@@ -39,6 +39,7 @@ export type AttackBonus = {
 
 export type Bonus = AttributeBonus | AttackBonus;
 
-export type AttributeBonusRecord = Partial<Record<AllAttributeStat, AttributeBonus[]>>;
-
-export type AttackBonusRecord = Partial<Record<AttackBonusType, AttackBonus[]>>;
+export type BonusGroup = {
+  meta: BonusGroupMeta;
+  bonuses: Bonus[];
+};

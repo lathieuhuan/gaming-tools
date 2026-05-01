@@ -190,7 +190,7 @@ export class SimulationProcessor {
 
     bonusOps.applyBonusSpecs(meta, specCates.rearrange());
 
-    for (const recipient of bonusOps.recipients) {
+    for (const recipient of bonusOps.allRecipients) {
       recipient.finalizeAttrs();
     }
   }

@@ -246,6 +246,122 @@ describe("BonusControl", () => {
     });
   });
 
+  describe("addInnateBonusGroup", () => {
+    test("adds the group to the innateGroups map", () => {
+      const bc = new BonusControl();
+      bc.addInnateBonusGroup({
+        meta: meta("innate-src"),
+        bonuses: [
+          { type: "ATTR", groupId: "ig", value: 20, toStat: "em" },
+          { type: "ATTK", groupId: "ig", value: 15, toType: "all", toKey: "pct_" },
+        ],
+      });
+
+      expect(bc.innateGroups.size).toBe(1);
+      const g = bc.innateGroups.get("innate-src");
+      expect(g?.meta).toEqual(meta("innate-src"));
+      expect([...g!.ids]).toEqual(["ig-em", "ig-all-pct_"]);
+      expect(g?.bonuses).toHaveLength(2);
+    });
+
+    test("populates attrRecord and attkRecord from the group bonuses", () => {
+      const bc = new BonusControl();
+      bc.addInnateBonusGroup({
+        meta: meta("innate-src"),
+        bonuses: [
+          { type: "ATTR", groupId: "ig", value: 20, toStat: "em" },
+          { type: "ATTK", groupId: "ig", value: 15, toType: "all", toKey: "pct_" },
+        ],
+      });
+
+      expect(bc.totalAttrBonus("em", false)).toBe(20);
+      expect(bc.totalAttkBonus("pct_", ["all"])).toBe(15);
+    });
+
+    test("deduplicates bonuses with the same id within the group", () => {
+      const bc = new BonusControl();
+      bc.addInnateBonusGroup({
+        meta: meta("dup"),
+        bonuses: [
+          { type: "ATTR", groupId: "g", value: 10, toStat: "hp_" },
+          { type: "ATTR", groupId: "g", value: 99, toStat: "hp_" },
+        ],
+      });
+
+      expect(bc.totalAttrBonus("hp_", false)).toBe(10);
+    });
+
+    test("does not add the group to the public groups map", () => {
+      const bc = new BonusControl();
+      bc.addInnateBonusGroup({
+        meta: meta("hidden"),
+        bonuses: [
+          {
+            type: "ATTR",
+            groupId: "g",
+            value: 5,
+            toStat: "em",
+          },
+        ],
+      });
+
+      expect(bc.groups.has("hidden")).toBe(false);
+    });
+  });
+
+  describe("reset", () => {
+    test("clears groups, attrRecord, and attkRecord", () => {
+      const bc = new BonusControl();
+      bc.addAttrBonus(meta("a"), {
+        type: "ATTR",
+        groupId: "a",
+        value: 10,
+        toStat: "em",
+      });
+      bc.addAttkBonus(meta("b"), {
+        type: "ATTK",
+        groupId: "b",
+        value: 5,
+        toType: "all",
+        toKey: "pct_",
+      });
+
+      bc.reset();
+
+      expect(bc.groups.size).toBe(0);
+      expect(bc.totalAttrBonus("em", false)).toBe(0);
+      expect(bc.totalAttkBonus("pct_", ["all"])).toBe(0);
+    });
+
+    test("re-applies innate bonuses after clearing", () => {
+      const bc = new BonusControl();
+      bc.addInnateBonusGroup({
+        meta: meta("innate"),
+        bonuses: [
+          {
+            type: "ATTR",
+            groupId: "ig",
+            value: 30,
+            toStat: "def_",
+          },
+        ],
+      });
+      bc.addAttrBonus(meta("extra"), {
+        type: "ATTR",
+        groupId: "extra",
+        value: 70,
+        toStat: "def_",
+      });
+
+      expect(bc.totalAttrBonus("def_", false)).toBe(100);
+
+      bc.reset();
+
+      expect(bc.totalAttrBonus("def_", false)).toBe(30);
+      expect(bc.groups.size).toBe(0);
+    });
+  });
+
   describe("collectExclusiveBonuses", () => {
     test("returns an empty array when id is omitted", () => {
       const bc = new BonusControl();

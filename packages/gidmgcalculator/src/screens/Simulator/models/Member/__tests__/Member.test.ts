@@ -199,7 +199,7 @@ describe("Member", () => {
   });
 
   describe("initCalculation", () => {
-    test("reinitializes attrs, replaces BonusControl, resets lvlBonusCtrl from options, and returns this", () => {
+    test("reinitializes attrs, replaces BonusControl, clears lvlBonusCtrl, and returns this", () => {
       const member = __createMember({ level: "80/90" });
       const prevBonus = member.bonusCtrl;
       member.bonusCtrl.addAttrBonus(bonusMeta("pre"), {
@@ -211,27 +211,45 @@ describe("Member", () => {
       member.lvlBonusCtrl.set("old", { id: "old", value: 9, toType: "NAs" });
 
       const initSpy = vi.spyOn(member.attrsCtrl, "init");
-      const finalizeSpy = vi.spyOn(member, "finalizeAttrs");
 
-      const ret = member.initCalculation({
-        resonanceElmts: ["pyro"],
-        levelBonuses: [{ id: "nb", value: 3, toType: "EB" }],
-      });
+      const ret = member.initCalculation();
 
       expect(ret).toBe(member);
-      expect(initSpy).toHaveBeenCalledWith(member, ["pyro"]);
+      expect(initSpy).toHaveBeenCalledWith(member);
       expect(member.bonusCtrl).not.toBe(prevBonus);
       expect(member.bonusCtrl.groups.size).toBe(0);
       expect(member.lvlBonusCtrl.has("old")).toBe(false);
-      expect(member.lvlBonusCtrl.get("nb")).toEqual({ id: "nb", value: 3, toType: "EB" });
-      expect(finalizeSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe("resetCalculation", () => {
+    test("resets BonusControl, clears lvlBonusCtrl, and returns this", () => {
+      const member = __createMember();
+      member.bonusCtrl.addAttrBonus(bonusMeta("pre"), {
+        type: "ATTR",
+        groupId: "pre",
+        value: 5,
+        toStat: "em",
+      });
+      member.lvlBonusCtrl.set("x", { id: "x", value: 2, toType: "NAs" });
+
+      const resetSpy = vi.spyOn(member.bonusCtrl, "reset");
+      const prevBonus = member.bonusCtrl;
+
+      const ret = member.resetCalculation();
+
+      expect(ret).toBe(member);
+      expect(member.bonusCtrl).toBe(prevBonus);
+      expect(resetSpy).toHaveBeenCalled();
+      expect(member.bonusCtrl.groups.size).toBe(0);
+      expect(member.lvlBonusCtrl.size).toBe(0);
     });
   });
 
   describe("finalizeAttrs", () => {
     test("merges attribute bonuses into finals and applies core stat formula", () => {
       const member = __createMember({ level: "80/90" });
-      member.attrsCtrl.init(member, []);
+      member.attrsCtrl.init(member);
       const baseEm = member.attrsCtrl.getCopy().get("em");
       member.bonusCtrl.addAttrBonus(bonusMeta("art"), {
         type: "ATTR",
@@ -248,7 +266,7 @@ describe("Member", () => {
 
     test("for hp, atk, and def adds base*(1+pct/100) using bases and percents after merging attr bonuses", () => {
       const member = __createMember({ level: "80/90" });
-      member.attrsCtrl.init(member, []);
+      member.attrsCtrl.init(member);
       member.bonusCtrl.addAttrBonus(bonusMeta("pct"), {
         type: "ATTR",
         groupId: "pct",

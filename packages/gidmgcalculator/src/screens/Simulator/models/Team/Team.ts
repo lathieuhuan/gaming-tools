@@ -1,22 +1,18 @@
 import type { Clonable } from "@/models/interfaces";
-import type { AutoRsnElmtType, BonusSpec, ElementCount, ElementType } from "@/types";
+import type { AutoRsnElmtType, ElementCount, ElementType } from "@/types";
+import type { MemberOperations } from "./types";
 
 import { FlatGetters } from "@/decorators/FlatGetters.decorator";
-import { createWeapon } from "@/logic/entity.logic";
 import { $AppCharacter } from "@/services";
-import { bonusOperations } from "../../logic/bonusOperations";
-import { categorizeBonusSpecs } from "../../logic/categorizeBonusSpecs";
+
+import { createWeapon } from "@/logic/entity.logic";
 import { memberAct } from "../../logic/memberAct";
 import { memberCan } from "../../logic/memberCan";
 import { memberShow } from "../../logic/memberShow";
-import { BonusGroupMeta, Member, TalentLevelBonus } from "../Member";
-import { TeamState } from "./TeamState";
+import { applyInnateBonuses } from "./applyInnateBonuses";
 
-type InnateBonusSpec = {
-  meta: BonusGroupMeta;
-  ownerCode: number;
-  spec: BonusSpec;
-};
+import { Member } from "../Member";
+import { TeamState } from "./TeamState";
 
 @FlatGetters("state", ["resonances", "moonsignLv", "witchRiteLv", "elmtCount"])
 export class Team implements Clonable<Team> {
@@ -24,7 +20,6 @@ export class Team implements Clonable<Team> {
   private onFieldMemberCode: number;
 
   state: TeamState;
-  innateBonuses: InnateBonusSpec[] = [];
 
   declare resonances: AutoRsnElmtType[];
   declare moonsignLv: number;
@@ -51,105 +46,15 @@ export class Team implements Clonable<Team> {
   }
 
   init() {
-    // TODO move to party-wide innate buffs
-    const levelBonuses: TalentLevelBonus[] = [];
-
-    if (this.members.has(26)) {
-      // "Tartaglia"
-      levelBonuses.push({
-        id: "c26",
-        toType: "NAs",
-        value: 1,
-      });
-    }
-
-    if (this.members.has(105)) {
-      // "Skirk"
-      const isValid = this.state.isTeamElmtValid({
-        teamOnlyElmts: ["hydro", "cryo"],
-        teamEachElmtCount: { hydro: 1, cryo: 1 },
-      });
-
-      if (isValid) {
-        levelBonuses.push({
-          id: "c105",
-          toType: "ES",
-          value: 1,
-        });
-      }
-    }
-
-    const tltSpecs: InnateBonusSpec[] = [];
-    const attrSpecs: InnateBonusSpec[] = [];
-    const attkSpecs: InnateBonusSpec[] = [];
-
     this.members.forEach((member) => {
-      const { code, innateBuffs = [] } = member.data;
-      const can = memberCan(member, this);
-
-      for (const buff of innateBuffs) {
-        if (!buff.effects || !can.performEffect(buff)) {
-          continue;
-        }
-
-        const meta: BonusGroupMeta = {
-          id: `c${code}-i`,
-          src: `${member.data.name} / ${buff.src}`,
-          innate: true,
-          affect: buff.affect,
-        };
-        const specCates = categorizeBonusSpecs(buff.effects, can);
-
-        specCates?.tltSpecs.forEach((spec) => {
-          tltSpecs.push({
-            meta,
-            ownerCode: code,
-            spec,
-          });
-        });
-
-        specCates?.attrSpecs.forEach((spec) => {
-          attrSpecs.push({
-            meta,
-            ownerCode: code,
-            spec,
-          });
-        });
-
-        specCates?.attkSpecs.forEach((spec) => {
-          attkSpecs.push({
-            meta,
-            ownerCode: code,
-            spec,
-          });
-        });
-      }
+      member.initCalculation();
     });
 
-    this.innateBonuses = [...tltSpecs, ...attrSpecs, ...attkSpecs];
+    applyInnateBonuses(this);
 
     this.members.forEach((member) => {
-      member.initCalculation({
-        resonanceElmts: this.state.resonances,
-        levelBonuses,
-      });
+      member.finalizeAttrs();
     });
-
-    const allRecipients = new Set<Member>();
-
-    for (const { meta, ownerCode, spec } of this.innateBonuses) {
-      const member = this.getMember(ownerCode);
-      const bonusOps = bonusOperations(member, this, { recipients: allRecipients });
-
-      const bonus = memberAct(member, this).performBonus(spec);
-      const recipients = bonusOps.getAffectedMembers(spec.affect || meta.affect);
-
-      bonusOps.deliverBonus(meta, bonus, spec, recipients);
-    }
-
-    for (const recipient of allRecipients) {
-      recipient.finalizeAttrs();
-    }
   }
 
   static createMember(code: number) {
@@ -202,7 +107,7 @@ export class Team implements Clonable<Team> {
     return true;
   }
 
-  getMemberOps(member: Member) {
+  getMemberOps(member: Member): MemberOperations {
     return {
       act: memberAct(member, this),
       can: memberCan(member, this),
