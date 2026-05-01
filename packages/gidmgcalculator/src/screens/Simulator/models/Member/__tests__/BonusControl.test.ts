@@ -246,6 +246,95 @@ describe("BonusControl", () => {
     });
   });
 
+  describe("addInnateBonus", () => {
+    test("stores the bonus under innateGroups with meta, ids, and bonuses", () => {
+      const bc = new BonusControl();
+      const m = meta("innate-one");
+      bc.addInnateBonus(m, {
+        type: "ATTR",
+        groupId: "ib",
+        value: 8,
+        toStat: "em",
+      });
+
+      expect(bc.innateGroups.size).toBe(1);
+      expect(bc.groups.size).toBe(0);
+      const g = bc.innateGroups.get("innate-one");
+      expect(g?.meta).toEqual(m);
+      expect([...g!.ids]).toEqual(["ib-em"]);
+      expect(g?.bonuses).toHaveLength(1);
+      expect(g?.bonuses[0]).toMatchObject({
+        type: "ATTR",
+        groupId: "ib",
+        value: 8,
+        toStat: "em",
+      });
+    });
+
+    test("updates attrRecord and attkRecord like innate groups", () => {
+      const bc = new BonusControl();
+      bc.addInnateBonus(meta("src"), {
+        type: "ATTR",
+        groupId: "ig",
+        value: 12,
+        toStat: "atk_",
+      });
+      bc.addInnateBonus(meta("src"), {
+        type: "ATTK",
+        groupId: "ig",
+        value: 6,
+        toType: "NA",
+        toKey: "pct_",
+      });
+
+      expect(bc.totalAttrBonus("atk_", false)).toBe(12);
+      expect(bc.totalAttkBonus("pct_", ["NA"])).toBe(6);
+    });
+
+    test("accumulates distinct bonus ids for the same meta", () => {
+      const bc = new BonusControl();
+      const m = meta("multi");
+      bc.addInnateBonus(m, {
+        type: "ATTR",
+        groupId: "a",
+        value: 1,
+        toStat: "em",
+      });
+      bc.addInnateBonus(m, {
+        type: "ATTR",
+        groupId: "a",
+        value: 2,
+        toStat: "hp_",
+      });
+
+      const g = bc.innateGroups.get("multi");
+      expect(g?.ids.size).toBe(2);
+      expect([...g!.ids].sort()).toEqual(["a-em", "a-hp_"]);
+      expect(g?.bonuses).toHaveLength(2);
+    });
+
+    test("ignores a second call with the same bonus id", () => {
+      const bc = new BonusControl();
+      const m = meta("dedupe-innate");
+      bc.addInnateBonus(m, {
+        type: "ATTR",
+        groupId: "g",
+        value: 10,
+        toStat: "def_",
+      });
+      bc.addInnateBonus(m, {
+        type: "ATTR",
+        groupId: "g",
+        value: 99,
+        toStat: "def_",
+      });
+
+      expect(bc.totalAttrBonus("def_", false)).toBe(10);
+      const g = bc.innateGroups.get("dedupe-innate");
+      expect(g?.bonuses).toHaveLength(1);
+    });
+  });
+
   describe("addInnateBonusGroup", () => {
     test("adds the group to the innateGroups map", () => {
       const bc = new BonusControl();
@@ -333,8 +422,14 @@ describe("BonusControl", () => {
       expect(bc.totalAttkBonus("pct_", ["all"])).toBe(0);
     });
 
-    test("re-applies innate bonuses after clearing", () => {
+    test("re-applies innate bonuses from addInnateBonus and addInnateBonusGroup after clearing", () => {
       const bc = new BonusControl();
+      bc.addInnateBonus(meta("single"), {
+        type: "ATTR",
+        groupId: "k",
+        value: 40,
+        toStat: "em",
+      });
       bc.addInnateBonusGroup({
         meta: meta("innate"),
         bonuses: [
@@ -353,10 +448,12 @@ describe("BonusControl", () => {
         toStat: "def_",
       });
 
+      expect(bc.totalAttrBonus("em", false)).toBe(40);
       expect(bc.totalAttrBonus("def_", false)).toBe(100);
 
       bc.reset();
 
+      expect(bc.totalAttrBonus("em", false)).toBe(40);
       expect(bc.totalAttrBonus("def_", false)).toBe(30);
       expect(bc.groups.size).toBe(0);
     });

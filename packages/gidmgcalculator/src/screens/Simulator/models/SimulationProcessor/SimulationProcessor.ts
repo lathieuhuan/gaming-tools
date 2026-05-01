@@ -1,5 +1,3 @@
-import { Array_ } from "ron-utils";
-
 import type { TargetCalc } from "@/models";
 import type { AttackElement, AttackReaction, LunarType } from "@/types";
 import type {
@@ -9,12 +7,11 @@ import type {
   SimulationEvent,
   SwitchInEvent,
 } from "../../types";
-import type { BonusGroupMeta, Member } from "../Member";
+import type { Member } from "../Member";
 
-import { bonusOperations } from "../../logic/bonusOperations";
 import { talentCalc } from "../../logic/talentCalc";
 import { Team } from "../Team";
-import { categorizeBonusSpecs } from "../../logic/categorizeBonusSpecs";
+import { applyAbilityBuff } from "./applyAbilityBuff";
 
 export enum EHitLogType {
   MEMBER = "M",
@@ -170,26 +167,10 @@ export class SimulationProcessor {
       return;
     }
 
-    if (!buff.effects) return;
+    const applied = applyAbilityBuff(buff, performerOps, event.inputs || []);
 
-    const { effects } = buff;
-    const meta: BonusGroupMeta = {
-      id: `c${performer.code}-${buff.id}`,
-      src: `${performer.data.name} / ${buff.src}`,
-      affect: buff.affect,
-    };
-
-    const bonusOps = bonusOperations(performer, team, { inputs: event.inputs });
-
-    const specCates = categorizeBonusSpecs(Array_.toArray(effects), performerOps.can);
-
-    if (!specCates) {
-      console.info(`No available effects: ${performer.data.name} / ${buff.src}`);
-      return;
+    if (applied) {
+      team.finalizeMembers();
     }
-
-    bonusOps.applyBonusSpecs(meta, specCates.rearrange());
-
-    team.finalizeMembers();
   }
 }

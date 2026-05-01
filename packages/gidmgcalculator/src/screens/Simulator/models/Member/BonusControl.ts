@@ -111,6 +111,22 @@ export class BonusControl {
     }
   }
 
+  /** Does not add if bonus already exists by id (constructed from bonus object) */
+  addInnateBonus(meta: BonusGroupMeta, bonus: Bonus) {
+    const id = BonusControl.bonusId(bonus);
+    const current = this.innateGroups.get(meta.id) || { meta, ids: new Set(), bonuses: [] };
+
+    if (current.ids.has(id)) {
+      return;
+    }
+
+    current.ids.add(id);
+    current.bonuses.push(bonus);
+    this.innateGroups.set(meta.id, current);
+    this.arrangeBonus(bonus);
+  }
+
+  /** Replace existing group if any */
   addInnateBonusGroup(group: BonusGroup) {
     if (group.bonuses.length === 0) {
       return;
@@ -129,6 +145,10 @@ export class BonusControl {
       bonusIds.add(bonusId);
       bonuses.push(bonus);
       this.arrangeBonus(bonus);
+    }
+
+    if (bonusIds.size === 0) {
+      return;
     }
 
     this.innateGroups.set(group.meta.id, {

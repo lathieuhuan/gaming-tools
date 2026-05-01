@@ -109,6 +109,8 @@ export class Team implements Clonable<Team> {
 
   getMemberOps(member: Member): MemberOperations {
     return {
+      member,
+      team: this,
       act: memberAct(member, this),
       can: memberCan(member, this),
       show: memberShow(member, this),

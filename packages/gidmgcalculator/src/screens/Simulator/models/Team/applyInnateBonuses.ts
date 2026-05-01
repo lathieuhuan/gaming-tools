@@ -1,17 +1,18 @@
 import { Array_ } from "ron-utils";
 
-import type { AttributeStat, BonusSpec } from "@/types";
-import type { Bonus, BonusGroup } from "../Member";
+import type { AttributeStat, BonusSpec, ModAffectType } from "@/types";
+import type { Bonus, BonusGroup, BonusGroupMeta } from "../Member";
 import type { Team } from "./Team";
+import type { MemberOperations } from "./types";
 
 import { categorizeBonusSpecs } from "../../logic/categorizeBonusSpecs";
 import { getBonusRecipients } from "../../logic/getBonusRecipients";
-import { MemberAct } from "../../logic/memberAct";
 
 export function applyInnateBonuses(team: Team) {
-  const commonGroups: BonusGroup[] = [];
   const { memberList } = team;
   const { resonances } = team.state;
+
+  // ===== RESONANCE =====
 
   if (resonances.length > 0) {
     const groupId = "auto-rsn";
@@ -36,59 +37,16 @@ export function applyInnateBonuses(team: Team) {
       });
     }
 
-    commonGroups.push(rsnGroup);
+    for (const member of memberList) {
+      member.bonusCtrl.addInnateBonusGroup(rsnGroup);
+    }
   }
 
-  // if (this.members.has(26)) {
-  //   // "Tartaglia"
-  //   tltSpecs.push({
-  //     meta: {
-  //       id: "c26-i",
-  //       src: "Tartaglia / Ultility Passive",
-  //       innate: true,
-  //       affect: "PARTY",
-  //     },
-  //     ownerCode: 26,
-  //     spec: {
-  //       id: "c26-i",
-  //       value: 1,
-  //       target: { module: "TLT", path: "NAs" },
-  //     },
-  //   });
-  // }
-
-  // if (this.members.has(105)) {
-  //   // "Skirk"
-  //   const isValid = this.state.isTeamElmtValid({
-  //     teamOnlyElmts: ["hydro", "cryo"],
-  //     teamEachElmtCount: { hydro: 1, cryo: 1 },
-  //   });
-
-  //   if (isValid) {
-  //     tltSpecs.push({
-  //       meta: {
-  //         id: "c105-i",
-  //         src: "Skirk / Ultility Passive",
-  //         innate: true,
-  //         affect: "PARTY",
-  //       },
-  //       ownerCode: 105,
-  //       spec: {
-  //         id: "c105-i",
-  //         value: 1,
-  //         target: { module: "TLT", path: "ES" },
-  //       },
-  //     });
-  //   }
-  // }
-
   for (const member of memberList) {
-    for (const group of commonGroups) {
-      member.bonusCtrl.addInnateBonusGroup(group);
-    }
-
     const { code, innateBuffs = [] } = member.data;
     const memberOps = team.getMemberOps(member);
+
+    // ===== INNATE BUFFS =====
 
     for (const buff of innateBuffs) {
       if (!buff.effects || !memberOps.can.performEffect(buff)) {
@@ -101,72 +59,72 @@ export function applyInnateBonuses(team: Team) {
         continue;
       }
 
-      const groupId = `c${code}-i`;
-
-      const group: BonusGroup = {
-        meta: {
-          id: groupId,
-          src: `${member.data.name} / ${buff.src}`,
-          innate: true,
-          affect: buff.affect,
-        },
-        bonuses: resolveInnateBonusSpecs(groupId, specCates?.fiSpecs, memberOps.act),
+      const meta: BonusGroupMeta = {
+        id: `c${code}-i`,
+        src: `${member.data.name} / ${buff.src}`,
+        innate: true,
+        affect: buff.affect,
       };
 
-      const recipients = getBonusRecipients(member, team, buff.affect);
-
-      recipients.forEach((recipient) => {
-        recipient.bonusCtrl.addInnateBonusGroup(group);
-      });
+      for (const spec of specCates.fiSpecs) {
+        applyMemberInnateBonus(meta, spec, memberOps, buff.affect);
+      }
     }
   }
 }
 
-function resolveInnateBonusSpecs(
-  groupId: string,
-  specs: BonusSpec[],
-  memberAct: MemberAct
-): Bonus[] {
-  const bonuses: Bonus[] = [];
+function applyMemberInnateBonus(
+  meta: BonusGroupMeta,
+  spec: BonusSpec,
+  memberOps: MemberOperations,
+  affect?: ModAffectType
+) {
+  const bareBonus = memberOps.act.performBonus(spec);
+  if (!bareBonus.value) return;
 
-  for (const spec of specs) {
-    const bareBonus = memberAct.performBonus(spec);
+  const recipients = getBonusRecipients(memberOps.member, memberOps.team, spec.affect || affect);
+  if (recipients.length === 0) return;
 
-    switch (spec.target.module) {
-      case "TLT": {
-        //
-        break;
-      }
-      case "ATTR": {
-        for (const path of Array_.toArray(spec.target.path)) {
-          const toStat = memberAct.resolveBonusTargetPath(path);
-          if (!toStat) continue;
+  const groupId = meta.id;
 
-          bonuses.push({
-            type: "ATTR",
-            groupId,
-            toStat,
-            value: bareBonus.value,
-            isDynamic: bareBonus.isDynamic,
-          });
+  switch (spec.target.module) {
+    case "TLT":
+      break;
+    case "ATTR": {
+      for (const path of Array_.toArray(spec.target.path)) {
+        const toStat = memberOps.act.resolveBonusTargetPath(path);
+        if (!toStat) continue;
+
+        const bonus: Bonus = {
+          type: "ATTR",
+          groupId,
+          toStat,
+          value: bareBonus.value,
+          isDynamic: bareBonus.isDynamic,
+        };
+
+        for (const recipient of recipients) {
+          recipient.bonusCtrl.addInnateBonus(meta, bonus);
         }
-        break;
       }
-      default: {
-        for (const module of Array_.toArray(spec.target.module)) {
-          bonuses.push({
-            type: "ATTK",
-            groupId,
-            toType: module,
-            toKey: spec.target.path,
-            value: bareBonus.value,
-          });
+      break;
+    }
+    default: {
+      for (const module of Array_.toArray(spec.target.module)) {
+        const bonus: Bonus = {
+          type: "ATTK",
+          groupId,
+          toType: module,
+          toKey: spec.target.path,
+          value: bareBonus.value,
+        };
+
+        for (const recipient of recipients) {
+          recipient.bonusCtrl.addInnateBonus(meta, bonus);
         }
       }
     }
   }
-
-  return bonuses;
 }
 
 const AUTO_RESONANCE_STATS: Record<string, { key: AttributeStat; value: number }> = {
@@ -175,3 +133,46 @@ const AUTO_RESONANCE_STATS: Record<string, { key: AttributeStat; value: number }
   hydro: { key: "hp_", value: 25 },
   dendro: { key: "em", value: 50 },
 };
+
+// if (this.members.has(26)) {
+//   // "Tartaglia"
+//   tltSpecs.push({
+//     meta: {
+//       id: "c26-i",
+//       src: "Tartaglia / Ultility Passive",
+//       innate: true,
+//       affect: "PARTY",
+//     },
+//     ownerCode: 26,
+//     spec: {
+//       id: "c26-i",
+//       value: 1,
+//       target: { module: "TLT", path: "NAs" },
+//     },
+//   });
+// }
+
+// if (this.members.has(105)) {
+//   // "Skirk"
+//   const isValid = this.state.isTeamElmtValid({
+//     teamOnlyElmts: ["hydro", "cryo"],
+//     teamEachElmtCount: { hydro: 1, cryo: 1 },
+//   });
+
+//   if (isValid) {
+//     tltSpecs.push({
+//       meta: {
+//         id: "c105-i",
+//         src: "Skirk / Ultility Passive",
+//         innate: true,
+//         affect: "PARTY",
+//       },
+//       ownerCode: 105,
+//       spec: {
+//         id: "c105-i",
+//         value: 1,
+//         target: { module: "TLT", path: "ES" },
+//       },
+//     });
+//   }
+// }
