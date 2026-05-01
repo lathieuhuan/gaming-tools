@@ -216,6 +216,21 @@ describe("Team", () => {
     });
   });
 
+  describe("finalizeMembers", () => {
+    test("calls finalizeAttrs on every member", () => {
+      const a = __createMember({ characterCode: CharacterMock.PYRO_SWORD_HEXEREI });
+      const b = __createMember({ characterCode: CharacterMock.HYDRO_CATALYST });
+      const team = new Team([a, b], a.code);
+      const spyA = vi.spyOn(a, "finalizeAttrs");
+      const spyB = vi.spyOn(b, "finalizeAttrs");
+
+      team.finalizeMembers();
+
+      expect(spyA).toHaveBeenCalled();
+      expect(spyB).toHaveBeenCalled();
+    });
+  });
+
   describe("clone", () => {
     test("copies member roster and on-field code using cloned Member instances", () => {
       const a = __createMember({ characterCode: CharacterMock.PYRO_SWORD_HEXEREI });

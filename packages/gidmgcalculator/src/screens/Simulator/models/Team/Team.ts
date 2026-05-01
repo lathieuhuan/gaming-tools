@@ -115,6 +115,12 @@ export class Team implements Clonable<Team> {
     };
   }
 
+  finalizeMembers() {
+    this.members.forEach((member) => {
+      member.finalizeAttrs();
+    });
+  }
+
   clone() {
     const members = Array.from(this.members.values(), (member) => member.clone());
 

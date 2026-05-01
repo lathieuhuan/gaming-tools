@@ -179,7 +179,7 @@ export class SimulationProcessor {
       affect: buff.affect,
     };
 
-    const bonusOps = bonusOperations(performer, this.team, { inputs: event.inputs });
+    const bonusOps = bonusOperations(performer, team, { inputs: event.inputs });
 
     const specCates = categorizeBonusSpecs(Array_.toArray(effects), performerOps.can);
 
@@ -190,8 +190,6 @@ export class SimulationProcessor {
 
     bonusOps.applyBonusSpecs(meta, specCates.rearrange());
 
-    for (const recipient of bonusOps.allRecipients) {
-      recipient.finalizeAttrs();
-    }
+    team.finalizeMembers();
   }
 }
