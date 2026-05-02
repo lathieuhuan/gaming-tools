@@ -1,6 +1,6 @@
 import { Array_ } from "ron-utils";
 
-import type { AttributeStat, BonusSpec, ModAffectType } from "@/types";
+import type { AttributeStat, BareBonus, BonusTargetSpec, ModAffectType } from "@/types";
 import type { Bonus, BonusGroup, BonusGroupMeta } from "../Member";
 import type { Team } from "./Team";
 import type { MemberOperations } from "./types";
@@ -43,11 +43,11 @@ export function applyInnateBonuses(team: Team) {
   }
 
   for (const member of memberList) {
-    const { code, innateBuffs = [] } = member.data;
+    const { weapon, atfGear } = member;
+    const { code, name, innateBuffs = [] } = member.data;
     const memberOps = team.getMemberOps(member);
 
     // ===== INNATE BUFFS =====
-
     for (const buff of innateBuffs) {
       if (!buff.effects || !memberOps.can.performEffect(buff)) {
         continue;
@@ -61,37 +61,74 @@ export function applyInnateBonuses(team: Team) {
 
       const meta: BonusGroupMeta = {
         id: `c${code}-i`,
-        src: `${member.data.name} / ${buff.src}`,
+        src: `${name} / ${buff.src}`,
         innate: true,
         affect: buff.affect,
       };
 
       for (const spec of specCates.fiSpecs) {
-        applyMemberInnateBonus(meta, spec, memberOps, buff.affect);
+        const bareBonus = memberOps.act.performBonus(spec);
+        const affect = buff.affect || spec.affect;
+
+        applyMemberInnateBonus(meta, memberOps, bareBonus, spec.target, affect);
       }
     }
+
+    // ===== WEAPON BONUSES =====
+    {
+      const { data } = weapon;
+
+      if (data.bonuses) {
+        const meta: BonusGroupMeta = {
+          id: `c${code}-w${data.code}-i`,
+          src: `${name} / ${data.name}`,
+          innate: true,
+        };
+
+        for (const spec of data.bonuses) {
+          const bareBonus = memberOps.act.performBonus(spec, { refi: weapon.refi });
+
+          applyMemberInnateBonus(meta, memberOps, bareBonus, spec.target, spec.affect);
+        }
+      }
+    }
+
+    // ===== ARTIFACT BONUSES =====
+    atfGear.forEachSetBonus((specs, set) => {
+      const meta: BonusGroupMeta = {
+        id: `c${code}-a${set.data.code}-i`,
+        src: `${name} / ${set.data.name}`,
+        innate: true,
+      };
+
+      for (const spec of Array_.toArray(specs)) {
+        const bareBonus = memberOps.act.performBonus(spec);
+
+        applyMemberInnateBonus(meta, memberOps, bareBonus, spec.target, spec.affect);
+      }
+    });
   }
 }
 
 function applyMemberInnateBonus(
   meta: BonusGroupMeta,
-  spec: BonusSpec,
   memberOps: MemberOperations,
+  bareBonus: BareBonus,
+  target: BonusTargetSpec,
   affect?: ModAffectType
 ) {
-  const bareBonus = memberOps.act.performBonus(spec);
   if (!bareBonus.value) return;
 
-  const recipients = getBonusRecipients(memberOps.member, memberOps.team, spec.affect || affect);
+  const recipients = getBonusRecipients(memberOps.member, memberOps.team, affect);
   if (recipients.length === 0) return;
 
   const groupId = meta.id;
 
-  switch (spec.target.module) {
+  switch (target.module) {
     case "TLT":
       break;
     case "ATTR": {
-      for (const path of Array_.toArray(spec.target.path)) {
+      for (const path of Array_.toArray(target.path)) {
         const toStat = memberOps.act.resolveBonusTargetPath(path);
         if (!toStat) continue;
 
@@ -110,12 +147,12 @@ function applyMemberInnateBonus(
       break;
     }
     default: {
-      for (const module of Array_.toArray(spec.target.module)) {
+      for (const module of Array_.toArray(target.module)) {
         const bonus: Bonus = {
           type: "ATTK",
           groupId,
           toType: module,
-          toKey: spec.target.path,
+          toKey: target.path,
           value: bareBonus.value,
         };
 

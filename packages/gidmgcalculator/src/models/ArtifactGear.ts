@@ -1,6 +1,6 @@
 import { applyPercent } from "ron-utils";
 
-import type { AllAttributes, ArtifactType, ArtifactGearSet } from "@/types";
+import type { AllAttributes, ArtifactType, ArtifactGearSet, BonusSpec } from "@/types";
 import type { Clonable } from "./interfaces";
 
 import { ARTIFACT_TYPES, CORE_STAT_TYPES } from "@/constants/global";
@@ -91,6 +91,18 @@ export class ArtifactGear implements Clonable<ArtifactGear> {
           }
         : { isFilled: false, type };
     });
+  }
+
+  forEachSetBonus(callback: (specs: BonusSpec | BonusSpec[], set: ArtifactGearSet) => void) {
+    for (const set of this.sets) {
+      for (let i = 0; i <= set.bonusLv; i++) {
+        const specs = set.data.setBonuses?.[i]?.effects;
+
+        if (specs) {
+          callback(specs, set);
+        }
+      }
+    }
   }
 
   finalizeAttributes = (baseStats: { hp_base: number; atk_base: number; def_base: number }) => {

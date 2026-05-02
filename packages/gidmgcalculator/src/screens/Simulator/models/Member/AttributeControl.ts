@@ -34,6 +34,7 @@ export class AttributeControl {
     const { data } = member;
 
     this.attrs.clear();
+    this.logs = [];
 
     // ===== Base stats =====
     {
