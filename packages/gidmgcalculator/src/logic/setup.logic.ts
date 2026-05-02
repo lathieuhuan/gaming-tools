@@ -3,21 +3,15 @@ import { ExactOmit } from "rond";
 
 import type {
   BasicSetupType,
-  ArtifactBuffCtrl,
   DbComplexSetup,
   DbSetup,
   ModifierCtrlState,
-  SetupManager,
-  WeaponBuffCtrl,
   RawTeammate,
-  TeammateArtifact,
+  SetupManager,
 } from "@/types";
 
 import { ArtifactGear, CalcSetup, Team, Weapon } from "@/models";
-import { $AppArtifact, $AppCharacter, $AppWeapon } from "@/services";
-import { enhanceCtrls } from "../logic/modifier.logic";
 import { createCharacter, createTarget, createTeammate } from "./entity.logic";
-import { createArtifactBuffCtrls } from "./modifier.logic";
 
 export function isDbSetup(setup: DbSetup | DbComplexSetup): setup is DbSetup {
   return ["original", "combined"].includes(setup.type);
