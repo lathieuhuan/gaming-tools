@@ -1,11 +1,6 @@
-import type { ArtifactBuff, WeaponBuff } from "@/types";
 import type { MemberOperations } from "../../models/Team";
 
-import {
-  triggerArtifactBuffEvent,
-  triggerWeaponBuffEvent,
-  updateAbilityInputs,
-} from "../../actions/build";
+import { triggerArtifactBuffEvent, updateAbilityInputs } from "../../actions/build";
 import { selectModInputs, useSimulatorStore } from "../../store";
 
 import { BuffEventItem } from "./BuffEventItem";
@@ -28,10 +23,11 @@ export function ArtifactEventList({ memberOps }: ArtifactEventListProps) {
     });
   };
 
-  const handleTrigger = (modId: number, inputs: number[]) => {
+  const handleTrigger = (modId: number, itemId: number, inputs: number[]) => {
     triggerArtifactBuffEvent({
       performer: memberOps.member.code,
       modId,
+      itemId,
       inputs,
     });
   };
@@ -48,17 +44,20 @@ export function ArtifactEventList({ memberOps }: ArtifactEventListProps) {
             return null;
           }
 
-          const inputs = inputsById[buff.id] || [];
+          const modInputId = set.bonusLv * 1000 + buff.id;
+          const inputs = inputsById[modInputId] || [];
 
           return (
             <BuffEventItem
-              key={buff.id}
+              key={modInputId}
               heading={`${data.name}`}
               description={memberOps.show.artifactBuffText(buff, data)}
               inputs={inputs}
               inputConfigs={buff.inputConfigs}
-              onInputChange={(inputIndex, value) => handleInputChange(buff.id, inputIndex, value)}
-              onTrigger={() => handleTrigger(buff.id, inputs)}
+              onInputChange={(inputIndex, value) => {
+                handleInputChange(modInputId, inputIndex, value);
+              }}
+              onTrigger={() => handleTrigger(buff.id, data.code, inputs)}
             />
           );
         });

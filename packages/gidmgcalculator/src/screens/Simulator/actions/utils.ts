@@ -30,6 +30,7 @@ export function createSimulation(id: number = Date.now()) {
 export function createMemberInputs(member: WritableDraft<Member>): MemberInputs {
   const abilityBuffInputs: InputsById = {};
   const weaponBuffInputs: InputsById = {};
+  const artifactBuffInputs: InputsById = {};
 
   member.data.buffs?.forEach((buff) => {
     abilityBuffInputs[buff.id] = createModCtrlInputs(buff.inputConfigs);
@@ -39,10 +40,18 @@ export function createMemberInputs(member: WritableDraft<Member>): MemberInputs 
     weaponBuffInputs[buff.id] = createModCtrlInputs(buff.inputConfigs);
   });
 
+  member.atfGear.sets.forEach((set) => {
+    set.data.buffs?.forEach((buff) => {
+      const id = set.bonusLv * 1000 + buff.id;
+
+      artifactBuffInputs[id] = createModCtrlInputs(buff.inputConfigs);
+    });
+  });
+
   return {
     ABILITY_BUFF: abilityBuffInputs,
     WEAPON_BUFF: weaponBuffInputs,
-    ARTIFACT_BUFF: {},
+    ARTIFACT_BUFF: artifactBuffInputs,
   };
 }
 

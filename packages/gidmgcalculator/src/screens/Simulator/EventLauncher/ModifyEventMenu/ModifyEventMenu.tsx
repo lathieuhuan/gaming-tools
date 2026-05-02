@@ -2,6 +2,7 @@ import { selectProcessor, selectSimulation, useSimulatorStore } from "../../stor
 
 import { EventListLayout } from "../EventListLayout";
 import { AbilityEventList } from "./AbilityEventList";
+import { ArtifactEventList } from "./ArtifactEventList";
 import { WeaponEventList } from "./WeaponEventList";
 
 export function ModifyEventMenu() {
@@ -17,6 +18,10 @@ export function ModifyEventMenu() {
 
       <EventListLayout title={"Weapon"}>
         <WeaponEventList memberOps={memberOps} />
+      </EventListLayout>
+
+      <EventListLayout title={"Artifact"}>
+        <ArtifactEventList memberOps={memberOps} />
       </EventListLayout>
     </div>
   );

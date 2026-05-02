@@ -2,6 +2,7 @@ import type { TargetCalc } from "@/models";
 import type { AttackElement, AttackReaction, LunarType } from "@/types";
 import type {
   DbAbilityHitEvent,
+  DbArtifactBuffEvent,
   DbMemberEvent,
   DbModifyEvent,
   DbSimulationEvent,
@@ -91,7 +92,6 @@ export class SimulationProcessor {
   }
 
   // # Member Event
-
   runMemberEvent(event: DbMemberEvent) {
     switch (event.type) {
       case "SI": {
@@ -115,7 +115,7 @@ export class SimulationProcessor {
         break;
       }
       case EModifyEventType.ARTIFACT_SET_BUFF: {
-        // TODO process artifact set buff event
+        this.runArtifactSetBuffEvent(event);
         break;
       }
       default:
@@ -124,7 +124,6 @@ export class SimulationProcessor {
   }
 
   // ## Switch In Event
-
   runSwitchInEvent(event: DbSwitchInEvent) {
     const performer = this.team.getMember(event.performer);
 
@@ -139,7 +138,6 @@ export class SimulationProcessor {
   }
 
   // ## Ability Hit Event
-
   runAbilityHitEvent(event: DbAbilityHitEvent) {
     const performer = this.team.getMember(event.performer);
     const item = performer.data.calcList[event.talent][event.index];
@@ -167,7 +165,6 @@ export class SimulationProcessor {
   }
 
   // ## Ability Buff Event
-
   runAbilityBuffEvent(event: DbModifyEvent) {
     const { team } = this;
     const performer = team.getMember(event.performer);
@@ -214,6 +211,7 @@ export class SimulationProcessor {
     });
   }
 
+  // ## Weapon Buff Event
   runWeaponBuffEvent(event: DbModifyEvent) {
     const { team } = this;
     const performer = team.getMember(event.performer);
@@ -251,6 +249,49 @@ export class SimulationProcessor {
     this.timeline.push({
       ...event,
       type: EModifyEventType.WEAPON_BUFF,
+      performer: data,
+      item,
+      buff,
+    });
+  }
+
+  // ## Artifact Set Buff Event
+  runArtifactSetBuffEvent(event: DbArtifactBuffEvent) {
+    const { team } = this;
+    const performer = team.getMember(event.performer);
+    const performerOps = team.getMemberOps(performer);
+    const set = performer.atfGear.sets.find((set) => set.data.code === event.itemId);
+    const buff = set?.data.buffs?.find((buff) => buff.id === event.modId);
+
+    if (!buff || !set) {
+      this.timeline.push({
+        id: event.id,
+        cate: EEventCategory.ERROR,
+        message: `Buff not found: ${performer.data.name} / ${event.modId}`,
+      });
+      return;
+    }
+
+    const { data } = performer;
+    const item = set.data;
+
+    const meta: BonusGroupMeta = {
+      id: `c${data.code}-a${item.code}-${buff.id}`,
+      src: `${item.name} (${data.name})`,
+      affect: buff.affect,
+    };
+
+    const applied = applyMemberBuff(meta, buff.effects, performerOps, {
+      inputs: event.inputs,
+    });
+
+    if (applied) {
+      team.finalizeMembers();
+    }
+
+    this.timeline.push({
+      ...event,
+      type: EModifyEventType.ARTIFACT_SET_BUFF,
       performer: data,
       item,
       buff,

@@ -1,4 +1,3 @@
-import type { CharacterBuff } from "@/types";
 import type { MemberOperations } from "../../models/Team";
 
 import { triggerAbilityBuffEvent, updateAbilityInputs } from "../../actions/build";
@@ -24,10 +23,10 @@ export function AbilityEventList({ memberOps }: AbilityEventListProps) {
     });
   };
 
-  const handleTrigger = (buff: CharacterBuff, inputs: number[]) => {
+  const handleTrigger = (modId: number, inputs: number[]) => {
     triggerAbilityBuffEvent({
       performer: data.code,
-      modId: buff.id,
+      modId,
       inputs,
     });
   };
@@ -49,7 +48,7 @@ export function AbilityEventList({ memberOps }: AbilityEventListProps) {
             inputs={inputs}
             inputConfigs={buff.inputConfigs}
             onInputChange={(inputIndex, value) => handleInputChange(buff.id, inputIndex, value)}
-            onTrigger={() => handleTrigger(buff, inputs)}
+            onTrigger={() => handleTrigger(buff.id, inputs)}
           />
         );
       })}

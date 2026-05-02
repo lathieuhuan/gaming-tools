@@ -36,33 +36,61 @@ export type SwitchInEvent = MemberEventBase & SwitchInEventBase;
 
 // # Modify Event
 
-export type DbModifyEvent = DbMemberEventBase & {
-  type: EModifyEventType;
-  modId: number;
-  inputs?: number[];
-};
+export type DbModifyEvent = DbAbilityBuffEvent | DbWeaponBuffEvent | DbArtifactBuffEvent;
 
 export type ModifyEvent = AbilityBuffEvent | WeaponBuffEvent | ArtifactBuffEvent;
 
-export type AbilityBuffEvent = MemberEventBase & {
+// ## Ability Buff Event
+
+type AbilityBuffEventBase = {
   type: EModifyEventType.ABILITY_BUFF;
-  buff: CharacterBuff;
   inputs?: number[];
 };
 
-export type WeaponBuffEvent = MemberEventBase & {
+export type DbAbilityBuffEvent = DbMemberEventBase & AbilityBuffEventBase & {
+  modId: number;
+};
+
+export type AbilityBuffEvent = MemberEventBase &
+  AbilityBuffEventBase & {
+    buff: CharacterBuff;
+  };
+
+// ## Weapon Buff Event
+
+type WeaponBuffEventBase = {
   type: EModifyEventType.WEAPON_BUFF;
-  item: AppWeapon;
-  buff: WeaponBuff;
   inputs?: number[];
 };
 
-export type ArtifactBuffEvent = MemberEventBase & {
+export type DbWeaponBuffEvent = DbMemberEventBase &
+  WeaponBuffEventBase & {
+    modId: number;
+  };
+
+export type WeaponBuffEvent = MemberEventBase &
+  WeaponBuffEventBase & {
+    item: AppWeapon;
+    buff: WeaponBuff;
+  };
+
+// ## Artifact Set Buff Event
+
+type ArtifactBuffEventBase = {
   type: EModifyEventType.ARTIFACT_SET_BUFF;
-  item: AppArtifact;
-  buff: ArtifactBuff;
   inputs?: number[];
 };
+
+export type DbArtifactBuffEvent = DbMemberEventBase & ArtifactBuffEventBase & {
+  itemId: number;
+  modId: number;
+};
+
+export type ArtifactBuffEvent = MemberEventBase &
+  ArtifactBuffEventBase & {
+    item: AppArtifact;
+    buff: ArtifactBuff;
+  };
 
 // # Hit Event
 

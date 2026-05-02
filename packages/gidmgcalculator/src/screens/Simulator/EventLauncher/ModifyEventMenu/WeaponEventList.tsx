@@ -1,4 +1,3 @@
-import type { WeaponBuff } from "@/types";
 import type { MemberOperations } from "../../models/Team";
 
 import { triggerWeaponBuffEvent, updateAbilityInputs } from "../../actions/build";
@@ -24,10 +23,10 @@ export function WeaponEventList({ memberOps }: WeaponEventListProps) {
     });
   };
 
-  const handleTrigger = (buff: WeaponBuff, inputs: number[]) => {
+  const handleTrigger = (modId: number, inputs: number[]) => {
     triggerWeaponBuffEvent({
       performer: memberOps.member.code,
-      modId: buff.id,
+      modId,
       inputs,
     });
   };
@@ -45,7 +44,7 @@ export function WeaponEventList({ memberOps }: WeaponEventListProps) {
             inputs={inputs}
             inputConfigs={buff.inputConfigs}
             onInputChange={(inputIndex, value) => handleInputChange(buff.id, inputIndex, value)}
-            onTrigger={() => handleTrigger(buff, inputs)}
+            onTrigger={() => handleTrigger(buff.id, inputs)}
           />
         );
       })}
