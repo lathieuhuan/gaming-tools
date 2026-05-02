@@ -1,10 +1,10 @@
+import type { AppArtifact, ArtifactBuff, WeaponBuff } from "@/types";
 import type { EffectToParseText } from "../models/EffectValueCalcs";
 import type { Member } from "../models/Member";
 import type { Team } from "../models/Team";
 
+import { getArtifactDesc, getWeaponBuffDesc } from "@/utils/descriptionParsers";
 import { BonusCalc } from "../models/EffectValueCalcs";
-import { getWeaponBuffDesc } from "@/utils/descriptionParsers";
-import { WeaponBuff } from "@/types";
 
 export function memberShow(member: Member, team: Team) {
   //
@@ -17,11 +17,16 @@ export function memberShow(member: Member, team: Team) {
     return getWeaponBuffDesc(data.descriptions, buff, refi);
   }
 
+  function artifactBuffText(buff: ArtifactBuff, setData: AppArtifact) {
+    return getArtifactDesc(setData, buff);
+  }
+
   return {
     member,
     team,
     abilityBuffText,
     weaponBuffText,
+    artifactBuffText,
   };
 }
 

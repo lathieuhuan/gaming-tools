@@ -1,15 +1,16 @@
 import type { TargetCalc } from "@/models";
 import type { AttackElement, AttackReaction, LunarType } from "@/types";
 import type {
-  AbilityBuffEvent,
-  AbilityHitEvent,
-  MemberEvent,
+  DbAbilityHitEvent,
+  DbMemberEvent,
+  DbModifyEvent,
+  DbSimulationEvent,
+  DbSwitchInEvent,
   SimulationEvent,
-  SwitchInEvent,
-  WeaponBuffEvent,
 } from "../../types";
 import type { BonusGroupMeta, Member } from "../Member";
 
+import { EEventCategory, EHitEventType, EModifyEventType } from "../../configs";
 import { talentCalc } from "../../logic/talentCalc";
 import { Team } from "../Team";
 import { applyMemberBuff } from "./applyMemberBuff";
@@ -39,6 +40,8 @@ type HitLog = MemberHitLog | EnvironmentHitLog;
 export class SimulationProcessor {
   #hitLogs: HitLog[] = [];
 
+  timeline: SimulationEvent[] = [];
+
   public team: Team;
   public target: TargetCalc;
 
@@ -58,21 +61,22 @@ export class SimulationProcessor {
 
   private reset() {
     this.#hitLogs = [];
+    this.timeline = [];
     // TODO optimize by replace
     this.team.init();
   }
 
   // TODO optimize
-  runTimeline(timeline: SimulationEvent[]) {
+  runTimeline(timeline: DbSimulationEvent[]) {
     this.reset();
 
     for (const event of timeline) {
       switch (event.cate) {
-        case "M": {
+        case EEventCategory.MEMBER: {
           this.runMemberEvent(event);
           break;
         }
-        case "E": {
+        case EEventCategory.ENVIRONMENT: {
           // TODO process environment event
           break;
         }
@@ -88,28 +92,30 @@ export class SimulationProcessor {
 
   // # Member Event
 
-  runMemberEvent(event: MemberEvent) {
+  runMemberEvent(event: DbMemberEvent) {
     switch (event.type) {
       case "SI": {
         this.runSwitchInEvent(event);
         break;
       }
-      case "AH": {
-        const log = this.runAbilityHitEvent(event);
-
-        this.#hitLogs.push(log);
+      case EHitEventType.ABILITY_HIT: {
+        this.runAbilityHitEvent(event);
         break;
       }
-      case "RH": {
+      case EHitEventType.REACTION_HIT: {
         // TODO process reaction hit event
         break;
       }
-      case "AB": {
+      case EModifyEventType.ABILITY_BUFF: {
         this.runAbilityBuffEvent(event);
         break;
       }
-      case "WB": {
+      case EModifyEventType.WEAPON_BUFF: {
         this.runWeaponBuffEvent(event);
+        break;
+      }
+      case EModifyEventType.ARTIFACT_SET_BUFF: {
+        // TODO process artifact set buff event
         break;
       }
       default:
@@ -119,16 +125,22 @@ export class SimulationProcessor {
 
   // ## Switch In Event
 
-  runSwitchInEvent(event: SwitchInEvent) {
+  runSwitchInEvent(event: DbSwitchInEvent) {
     const performer = this.team.getMember(event.performer);
 
     this.team.setOnFieldMember(performer);
+
+    this.timeline.push({
+      ...event,
+      type: "SI",
+      performer: performer.data,
+    });
     // TODO redirect on-field buffs to this member
   }
 
   // ## Ability Hit Event
 
-  runAbilityHitEvent(event: AbilityHitEvent): HitLog {
+  runAbilityHitEvent(event: DbAbilityHitEvent) {
     const performer = this.team.getMember(event.performer);
     const item = performer.data.calcList[event.talent][event.index];
 
@@ -139,36 +151,47 @@ export class SimulationProcessor {
     });
     const value = result.values.reduce((acc, value) => acc + Math.round(value.average), 0);
 
-    return {
+    this.#hitLogs.push({
       type: EHitLogType.MEMBER,
       performer: event.performer,
       value,
       attElmt: result.attElmt,
       reaction: event.reaction,
-    };
+    });
+
+    this.timeline.push({
+      ...event,
+      type: EHitEventType.ABILITY_HIT,
+      performer: performer.data,
+    });
   }
 
   // ## Ability Buff Event
 
-  runAbilityBuffEvent(event: AbilityBuffEvent) {
+  runAbilityBuffEvent(event: DbModifyEvent) {
     const { team } = this;
     const performer = team.getMember(event.performer);
     const performerOps = team.getMemberOps(performer);
-    const buff = performer.data.buffs?.find((buff) => buff.id === event.modId);
+    const { data } = performer;
+    const buff = data.buffs?.find((buff) => buff.id === event.modId);
 
     if (!buff) {
-      // TODO handle error not found
-      console.warn(`Buff not found: ${performer.data.name} / ${event.modId}`);
+      this.timeline.push({
+        id: event.id,
+        cate: EEventCategory.ERROR,
+        message: `Buff not found: ${data.name} / ${event.modId}`,
+      });
       return;
     }
 
     if (!performerOps.can.performEffect(buff, event.inputs)) {
-      // TODO handle error not valid
-      console.warn(`Buff not valid: ${performer.data.name} / ${buff.src}`);
+      this.timeline.push({
+        id: event.id,
+        cate: EEventCategory.ERROR,
+        message: `Buff not valid: ${data.name} / ${buff.src}`,
+      });
       return;
     }
-
-    const { data } = performerOps.member;
 
     const meta: BonusGroupMeta = {
       id: `c${data.code}-${buff.id}`,
@@ -181,25 +204,38 @@ export class SimulationProcessor {
     if (applied) {
       team.finalizeMembers();
     }
+
+    this.timeline.push({
+      ...event,
+      type: EModifyEventType.ABILITY_BUFF,
+      performer: data,
+      buff,
+      inputs: event.inputs,
+    });
   }
 
-  runWeaponBuffEvent(event: WeaponBuffEvent) {
+  runWeaponBuffEvent(event: DbModifyEvent) {
     const { team } = this;
     const performer = team.getMember(event.performer);
     const performerOps = team.getMemberOps(performer);
-    const buff = performer.weapon.data.buffs?.find((buff) => buff.id === event.modId);
+    const item = performer.weapon.data;
+    const buff = item.buffs?.find((buff) => buff.id === event.modId);
 
     if (!buff) {
-      // TODO handle error not found
-      console.warn(`Buff not found: ${performer.data.name} / ${event.modId}`);
+      this.timeline.push({
+        id: event.id,
+        cate: EEventCategory.ERROR,
+        message: `Buff not found: ${performer.data.name} / ${event.modId}`,
+      });
       return;
     }
 
-    const { data, refi } = performer.weapon;
+    const { data } = performer;
+    const { refi } = performer.weapon;
 
     const meta: BonusGroupMeta = {
-      id: `c${performer.data.code}-w${data.code}-${buff.id}`,
-      src: `${data.name} R${refi} (${performer.data.name})`,
+      id: `c${data.code}-w${item.code}-${buff.id}`,
+      src: `${item.name} R${refi} (${data.name})`,
       affect: buff.affect,
     };
 
@@ -211,5 +247,13 @@ export class SimulationProcessor {
     if (applied) {
       team.finalizeMembers();
     }
+
+    this.timeline.push({
+      ...event,
+      type: EModifyEventType.WEAPON_BUFF,
+      performer: data,
+      item,
+      buff,
+    });
   }
 }

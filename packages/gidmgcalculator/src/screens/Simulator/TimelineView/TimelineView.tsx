@@ -1,17 +1,18 @@
 import { clsx } from "rond";
 
-import { selectProcessor, selectSimulation, useSimulatorStore } from "../store";
+import { EEventCategory } from "../configs";
+import { selectProcessor, useSimulatorStore } from "../store";
 
 // Components
 import { GenshinImage } from "@/components";
-import { CharacterEventView } from "./CharacterEventView";
+import { MemberEventView } from "./MemberEventView";
 
 type TimelineViewProps = {
   className?: string;
 };
 
 export function TimelineView({ className }: TimelineViewProps) {
-  const timeline = useSimulatorStore((state) => selectSimulation(state).timeline);
+  const timeline = useSimulatorStore((state) => selectProcessor(state).timeline);
   const team = useSimulatorStore((state) => selectProcessor(state).team);
 
   const onFieldMember = team.onFieldMember;
@@ -21,9 +22,8 @@ export function TimelineView({ className }: TimelineViewProps) {
       <div className="flex flex-col-reverse gap-2 peer">
         {timeline.map((event) => {
           switch (event.cate) {
-            case "M": {
-              const member = team.getMember(event.performer);
-              const { name, sideIcon, icon } = member.data;
+            case EEventCategory.MEMBER: {
+              const { name, sideIcon, icon } = event.performer;
 
               return (
                 <div key={event.id} className="flex items-center gap-2">
@@ -47,15 +47,19 @@ export function TimelineView({ className }: TimelineViewProps) {
                       />
                     </div>
                   </div>
-                  <CharacterEventView event={event} member={member} />
+                  <MemberEventView event={event} />
                 </div>
               );
             }
-            case "E": {
+            case EEventCategory.ENVIRONMENT: {
               return <div key={event.id}>Environment</div>;
+            }
+            case EEventCategory.ERROR: {
+              return <div key={event.id}>Error</div>;
             }
             default: {
               event satisfies never;
+              return null;
             }
           }
         })}

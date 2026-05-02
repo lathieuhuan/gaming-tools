@@ -1,7 +1,8 @@
 import type { ExactOmit } from "rond";
 
-import type { AbilityBuffEvent, AbilityHitEvent, ModCategory, WeaponBuffEvent } from "../types";
+import type { DbAbilityHitEvent, DbModifyEvent, ModCategory } from "../types";
 
+import { EEventCategory, EHitEventType, EModifyEventType } from "../configs";
 import { useSimulatorStore } from "../store";
 import { resetSimulation, updateActiveSimulation } from "./utils";
 
@@ -60,7 +61,7 @@ export function switchIn(code: number) {
 
     simulation.timeline.push({
       id,
-      cate: "M",
+      cate: EEventCategory.MEMBER,
       type: "SI",
       performer: code,
     });
@@ -69,23 +70,8 @@ export function switchIn(code: number) {
   });
 }
 
-export function triggerAbilityHitEvent(event: ExactOmit<AbilityHitEvent, "id" | "cate" | "type">) {
-  updateActiveSimulation((simulation) => {
-    const id = `${eventId++}`;
-
-    simulation.timeline.push({
-      ...event,
-      id,
-      cate: "M",
-      type: "AH",
-    });
-
-    return true;
-  });
-}
-
-export function triggerAbilityBuffEvent(
-  event: ExactOmit<AbilityBuffEvent, "id" | "cate" | "type">
+export function triggerAbilityHitEvent(
+  event: ExactOmit<DbAbilityHitEvent, "id" | "cate" | "type">
 ) {
   updateActiveSimulation((simulation) => {
     const id = `${eventId++}`;
@@ -93,23 +79,53 @@ export function triggerAbilityBuffEvent(
     simulation.timeline.push({
       ...event,
       id,
-      cate: "M",
-      type: "AB",
+      cate: EEventCategory.MEMBER,
+      type: EHitEventType.ABILITY_HIT,
     });
 
     return true;
   });
 }
 
-export function triggerWeaponBuffEvent(event: ExactOmit<WeaponBuffEvent, "id" | "cate" | "type">) {
+export function triggerAbilityBuffEvent(event: ExactOmit<DbModifyEvent, "id" | "cate" | "type">) {
   updateActiveSimulation((simulation) => {
     const id = `${eventId++}`;
 
     simulation.timeline.push({
       ...event,
       id,
-      cate: "M",
-      type: "WB",
+      cate: EEventCategory.MEMBER,
+      type: EModifyEventType.ABILITY_BUFF,
+    });
+
+    return true;
+  });
+}
+
+export function triggerWeaponBuffEvent(event: ExactOmit<DbModifyEvent, "id" | "cate" | "type">) {
+  updateActiveSimulation((simulation) => {
+    const id = `${eventId++}`;
+
+    simulation.timeline.push({
+      ...event,
+      id,
+      cate: EEventCategory.MEMBER,
+      type: EModifyEventType.WEAPON_BUFF,
+    });
+
+    return true;
+  });
+}
+
+export function triggerArtifactBuffEvent(event: ExactOmit<DbModifyEvent, "id" | "cate" | "type">) {
+  updateActiveSimulation((simulation) => {
+    const id = `${eventId++}`;
+
+    simulation.timeline.push({
+      ...event,
+      id,
+      cate: EEventCategory.MEMBER,
+      type: EModifyEventType.ARTIFACT_SET_BUFF,
     });
 
     return true;

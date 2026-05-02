@@ -1,10 +1,10 @@
 import { describe, expect, test, vi } from "vitest";
 
 import type {
-  AbilityBuffEvent,
-  AbilityHitEvent,
-  SimulationEvent,
-  SwitchInEvent,
+  DbAbilityHitEvent,
+  DbModifyEvent,
+  DbSimulationEvent,
+  DbSwitchInEvent,
 } from "@/screens/Simulator/types";
 
 import { CharacterMock } from "@/__tests__/mocks/characters.mock";
@@ -12,6 +12,7 @@ import { createTarget } from "@/logic/entity.logic";
 import { Target } from "@/models/Target";
 import { TargetCalc } from "@/models/TargetCalc";
 import { __createMember } from "@/screens/Simulator/__tests__/utils";
+import { EEventCategory, EHitEventType, EModifyEventType } from "@/screens/Simulator/configs";
 import { EHitLogType, SimulationProcessor } from "../SimulationProcessor";
 
 function createTargetCalc() {
@@ -48,9 +49,9 @@ describe("SimulationProcessor", () => {
     test("sets the on-field member to the event performer", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
       const bCode = CharacterMock.HYDRO_CATALYST;
-      const event: SwitchInEvent = {
+      const event: DbSwitchInEvent = {
         id: "si-1",
-        cate: "M",
+        cate: EEventCategory.MEMBER,
         type: "SI",
         performer: bCode,
       };
@@ -62,18 +63,20 @@ describe("SimulationProcessor", () => {
   });
 
   describe("runAbilityHitEvent", () => {
-    test("returns a member hit log with performer, value, and attack element from calculation", () => {
+    test("records a member hit log with performer, value, and attack element from calculation", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const event: AbilityHitEvent = {
+      const event: DbAbilityHitEvent = {
         id: "ah-1",
-        cate: "M",
-        type: "AH",
+        cate: EEventCategory.MEMBER,
+        type: EHitEventType.ABILITY_HIT,
         performer: CharacterMock.PYRO_SWORD_HEXEREI,
         talent: "NA",
         index: 0,
       };
 
-      const log = processor.runAbilityHitEvent(event);
+      processor.runAbilityHitEvent(event);
+      expect(processor.hitLogs).toHaveLength(1);
+      const log = processor.hitLogs[0];
 
       expect(log.type).toBe(EHitLogType.MEMBER);
       if (log.type !== EHitLogType.MEMBER) {
@@ -87,10 +90,10 @@ describe("SimulationProcessor", () => {
 
     test("passes optional element and reaction through to the hit log", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const event: AbilityHitEvent = {
+      const event: DbAbilityHitEvent = {
         id: "ah-2",
-        cate: "M",
-        type: "AH",
+        cate: EEventCategory.MEMBER,
+        type: EHitEventType.ABILITY_HIT,
         performer: CharacterMock.PYRO_SWORD_HEXEREI,
         talent: "ES",
         index: 0,
@@ -98,32 +101,35 @@ describe("SimulationProcessor", () => {
         reaction: "melt",
       };
 
-      const log = processor.runAbilityHitEvent(event);
+      processor.runAbilityHitEvent(event);
+      expect(processor.hitLogs).toHaveLength(1);
+      const log = processor.hitLogs[0];
 
       expect(log.reaction).toBe("melt");
     });
   });
 
   describe("runAbilityBuffEvent", () => {
-    test("warns and returns when no buff matches modId", () => {
-      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    test("records an error timeline entry when no buff matches modId", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const event: AbilityBuffEvent = {
+      const event: DbModifyEvent = {
         id: "ab-1",
-        cate: "M",
-        type: "AB",
+        cate: EEventCategory.MEMBER,
+        type: EModifyEventType.ABILITY_BUFF,
         performer: CharacterMock.PYRO_SWORD_HEXEREI,
         modId: 9_999_999,
       };
 
       processor.runAbilityBuffEvent(event);
 
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining("Buff not found"));
-      warn.mockRestore();
+      expect(processor.timeline).toHaveLength(1);
+      expect(processor.timeline[0]).toMatchObject({
+        cate: EEventCategory.ERROR,
+        message: expect.stringContaining("Buff not found"),
+      });
     });
 
-    test("warns and returns when the buff exists but inputs fail performEffect", () => {
-      const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    test("records an error timeline entry when the buff exists but inputs fail performEffect", () => {
       const member = __createMember({
         characterCode: CharacterMock.PYRO_SWORD_HEXEREI,
         dataPatch: {
@@ -143,10 +149,10 @@ describe("SimulationProcessor", () => {
       });
       const members = new Map([[member.code, member]]);
       const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
-      const event: AbilityBuffEvent = {
+      const event: DbModifyEvent = {
         id: "ab-2",
-        cate: "M",
-        type: "AB",
+        cate: EEventCategory.MEMBER,
+        type: EModifyEventType.ABILITY_BUFF,
         performer: member.code,
         modId: 7,
         inputs: [],
@@ -154,8 +160,11 @@ describe("SimulationProcessor", () => {
 
       processor.runAbilityBuffEvent(event);
 
-      expect(warn).toHaveBeenCalledWith(expect.stringContaining("Buff not valid"));
-      warn.mockRestore();
+      expect(processor.timeline).toHaveLength(1);
+      expect(processor.timeline[0]).toMatchObject({
+        cate: EEventCategory.ERROR,
+        message: expect.stringContaining("Buff not valid"),
+      });
     });
 
     test("logs info and returns when no effect specs remain after filtering", () => {
@@ -180,10 +189,10 @@ describe("SimulationProcessor", () => {
       });
       const members = new Map([[member.code, member]]);
       const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
-      const event: AbilityBuffEvent = {
+      const event: DbModifyEvent = {
         id: "ab-3",
-        cate: "M",
-        type: "AB",
+        cate: EEventCategory.MEMBER,
+        type: EModifyEventType.ABILITY_BUFF,
         performer: member.code,
         modId: 8,
         inputs: [1],
@@ -199,16 +208,16 @@ describe("SimulationProcessor", () => {
   describe("runMemberEvent", () => {
     test("routes SI to switch-in and AH to ability hit logging", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const si: SwitchInEvent = {
+      const si: DbSwitchInEvent = {
         id: "m-si",
-        cate: "M",
+        cate: EEventCategory.MEMBER,
         type: "SI",
         performer: CharacterMock.HYDRO_CATALYST,
       };
-      const ah: AbilityHitEvent = {
+      const ah: DbAbilityHitEvent = {
         id: "m-ah",
-        cate: "M",
-        type: "AH",
+        cate: EEventCategory.MEMBER,
+        type: EHitEventType.ABILITY_HIT,
         performer: CharacterMock.HYDRO_CATALYST,
         talent: "NA",
         index: 0,
@@ -226,15 +235,15 @@ describe("SimulationProcessor", () => {
   describe("runTimeline", () => {
     test("clears hit logs on each run then records AH events", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const ah: AbilityHitEvent = {
+      const ah: DbAbilityHitEvent = {
         id: "tl-ah",
-        cate: "M",
-        type: "AH",
+        cate: EEventCategory.MEMBER,
+        type: EHitEventType.ABILITY_HIT,
         performer: CharacterMock.PYRO_SWORD_HEXEREI,
         talent: "NA",
         index: 0,
       };
-      const timeline: SimulationEvent[] = [ah];
+      const timeline: DbSimulationEvent[] = [ah];
 
       processor.runTimeline(timeline);
       expect(processor.hitLogs).toHaveLength(1);
@@ -245,7 +254,12 @@ describe("SimulationProcessor", () => {
 
     test("ignores environment events without throwing", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const timeline: SimulationEvent[] = [{ id: "env", cate: "E" }];
+      const timeline: DbSimulationEvent[] = [
+        {
+          id: "env",
+          cate: EEventCategory.ENVIRONMENT,
+        },
+      ];
 
       expect(() => processor.runTimeline(timeline)).not.toThrow();
       expect(processor.hitLogs).toHaveLength(0);
