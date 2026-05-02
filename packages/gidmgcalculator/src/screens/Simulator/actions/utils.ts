@@ -42,6 +42,7 @@ export function createMemberInputs(member: WritableDraft<Member>): MemberInputs 
   return {
     ABILITY_BUFF: abilityBuffInputs,
     WEAPON_BUFF: weaponBuffInputs,
+    ARTIFACT_BUFF: {},
   };
 }
 

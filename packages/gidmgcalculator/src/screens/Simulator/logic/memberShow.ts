@@ -8,7 +8,7 @@ import { WeaponBuff } from "@/types";
 
 export function memberShow(member: Member, team: Team) {
   //
-  function buffText(spec: EffectToParseText, inputs?: number[]) {
+  function abilityBuffText(spec: EffectToParseText, inputs?: number[]) {
     return new BonusCalc(member, team, { inputs }).parseAbilityText(spec);
   }
 
@@ -20,7 +20,7 @@ export function memberShow(member: Member, team: Team) {
   return {
     member,
     team,
-    buffText,
+    abilityBuffText,
     weaponBuffText,
   };
 }

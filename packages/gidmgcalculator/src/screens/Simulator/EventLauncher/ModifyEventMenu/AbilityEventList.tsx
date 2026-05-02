@@ -1,12 +1,10 @@
-import { Button } from "rond";
-
 import type { CharacterBuff } from "@/types";
 import type { MemberOperations } from "../../models/Team";
 
 import { triggerAbilityBuffEvent, updateAbilityInputs } from "../../actions/build";
 import { selectModInputs, useSimulatorStore } from "../../store";
 
-import { GenshinModifierView } from "@/components";
+import { BuffEventItem } from "./BuffEventItem";
 
 type AbilityEventListProps = {
   memberOps: MemberOperations;
@@ -41,41 +39,18 @@ export function AbilityEventList({ memberOps }: AbilityEventListProps) {
           return null;
         }
 
-        const inputConfigs = buff.inputConfigs;
         const inputs = inputsById[buff.id] || [];
 
-        const description = memberOps.show.buffText(buff, inputs);
-
         return (
-          <div key={buff.id} className="p-2 bg-dark-2 rounded-xs">
-            <GenshinModifierView
-              mutable
-              headingVariant="view"
-              heading={buff.src}
-              description={description}
-              inputs={inputs}
-              inputConfigs={inputConfigs}
-              onToggleCheck={(current, inputIndex) => {
-                handleInputChange(buff.id, inputIndex, current === 1 ? 0 : 1);
-              }}
-              onSelectOption={(value, inputIndex) => {
-                handleInputChange(buff.id, inputIndex, value);
-              }}
-              onChangeText={(value, inputIndex) => {
-                handleInputChange(buff.id, inputIndex, value);
-              }}
-            />
-            <div className="mt-2 flex">
-              <Button
-                size="small"
-                variant="primary"
-                className="ml-auto"
-                onClick={() => handleTrigger(buff, inputs)}
-              >
-                Trigger
-              </Button>
-            </div>
-          </div>
+          <BuffEventItem
+            key={buff.id}
+            heading={buff.src}
+            description={memberOps.show.abilityBuffText(buff, inputs)}
+            inputs={inputs}
+            inputConfigs={buff.inputConfigs}
+            onInputChange={(inputIndex, value) => handleInputChange(buff.id, inputIndex, value)}
+            onTrigger={() => handleTrigger(buff, inputs)}
+          />
         );
       })}
     </div>
