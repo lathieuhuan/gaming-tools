@@ -21,7 +21,8 @@ export type AbilityBuffEvent = BaseEvent & {
 
 export type WeaponBuffEvent = BaseEvent & {
   type: "WB";
-  index: number; // temporary works as id of the buff
+  modId: number;
+  inputs?: number[];
 }
 
 export type ModifyEvent = AbilityBuffEvent | WeaponBuffEvent;

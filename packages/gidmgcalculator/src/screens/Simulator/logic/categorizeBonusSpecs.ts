@@ -3,16 +3,27 @@ import { Array_ } from "ron-utils";
 import type { BonusSpec } from "@/types";
 import type { MemberCan } from "./memberCan";
 
+import { logSection } from "@/utils/window.utils";
 import { isDynamicBonusSpec } from "./isDynamicBonusSpec";
 
-export function categorizeBonusSpecs(specs: BonusSpec | BonusSpec[], memberCan: MemberCan) {
+export function categorizeBonusSpecs(
+  specs: BonusSpec | BonusSpec[],
+  memberCan: MemberCan,
+  inputs?: number[]
+) {
   const tltSpecs: BonusSpec[] = [];
   const fiSpecs: BonusSpec[] = [];
   const dyAttrSpecs: BonusSpec[] = [];
   const dyAttkSpecs: BonusSpec[] = [];
 
   for (const spec of Array_.toArray(specs)) {
-    if (!memberCan.performEffect(spec)) {
+    if (!memberCan.performEffect(spec, inputs)) {
+      logSection(
+        "Cannot perform effect",
+        ["member", memberCan.member],
+        ["spec", spec],
+        ["inputs", inputs]
+      );
       continue;
     }
 
@@ -40,12 +51,7 @@ export function categorizeBonusSpecs(specs: BonusSpec | BonusSpec[], memberCan: 
     }
   }
 
-  if (
-    !tltSpecs.length &&
-    !fiSpecs.length &&
-    !dyAttrSpecs.length &&
-    !dyAttkSpecs.length
-  ) {
+  if (!tltSpecs.length && !fiSpecs.length && !dyAttrSpecs.length && !dyAttkSpecs.length) {
     return null;
   }
 

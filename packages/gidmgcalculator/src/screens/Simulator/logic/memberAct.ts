@@ -102,6 +102,8 @@ export function memberAct(member: Member, team: Team) {
   }
 
   return {
+    member,
+    team,
     resolveBonusTargetPath,
     performBonus,
     receiveBonus,

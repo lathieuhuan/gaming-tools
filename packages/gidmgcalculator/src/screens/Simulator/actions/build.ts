@@ -1,6 +1,6 @@
 import type { ExactOmit } from "rond";
 
-import type { AbilityBuffEvent, AbilityHitEvent, ModCategory } from "../types";
+import type { AbilityBuffEvent, AbilityHitEvent, ModCategory, WeaponBuffEvent } from "../types";
 
 import { useSimulatorStore } from "../store";
 import { resetSimulation, updateActiveSimulation } from "./utils";
@@ -95,6 +95,21 @@ export function triggerAbilityBuffEvent(
       id,
       cate: "M",
       type: "AB",
+    });
+
+    return true;
+  });
+}
+
+export function triggerWeaponBuffEvent(event: ExactOmit<WeaponBuffEvent, "id" | "cate" | "type">) {
+  updateActiveSimulation((simulation) => {
+    const id = `${eventId++}`;
+
+    simulation.timeline.push({
+      ...event,
+      id,
+      cate: "M",
+      type: "WB",
     });
 
     return true;

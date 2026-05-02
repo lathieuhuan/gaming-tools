@@ -1,24 +1,24 @@
 import { Button } from "rond";
 
-import type { CharacterBuff } from "@/types";
+import type { WeaponBuff } from "@/types";
 import type { MemberOperations } from "../../models/Team";
 
-import { triggerAbilityBuffEvent, updateAbilityInputs } from "../../actions/build";
+import { triggerWeaponBuffEvent, updateAbilityInputs } from "../../actions/build";
 import { selectModInputs, useSimulatorStore } from "../../store";
 
 import { GenshinModifierView } from "@/components";
 
-type AbilityEventListProps = {
+type WeaponEventListProps = {
   memberOps: MemberOperations;
 };
 
-export function AbilityEventList({ memberOps }: AbilityEventListProps) {
-  const inputsById = useSimulatorStore(selectModInputs("ABILITY_BUFF"));
+export function WeaponEventList({ memberOps }: WeaponEventListProps) {
+  const inputsById = useSimulatorStore(selectModInputs("WEAPON_BUFF"));
 
-  const { data } = memberOps.member;
+  const { data, refi } = memberOps.member.weapon;
 
   const handleInputChange = (modId: number, inputIndex: number, value: number) => {
-    updateAbilityInputs("ABILITY_BUFF", modId, (inputs) => {
+    updateAbilityInputs("WEAPON_BUFF", modId, (inputs) => {
       const newInputs = inputs.length ? [...inputs] : [];
       newInputs[inputIndex] = value;
 
@@ -26,9 +26,9 @@ export function AbilityEventList({ memberOps }: AbilityEventListProps) {
     });
   };
 
-  const handleTrigger = (buff: CharacterBuff, inputs: number[]) => {
-    triggerAbilityBuffEvent({
-      performer: data.code,
+  const handleTrigger = (buff: WeaponBuff, inputs: number[]) => {
+    triggerWeaponBuffEvent({
+      performer: memberOps.member.code,
       modId: buff.id,
       inputs,
     });
@@ -37,21 +37,17 @@ export function AbilityEventList({ memberOps }: AbilityEventListProps) {
   return (
     <div className="space-y-2">
       {data.buffs?.map((buff) => {
-        if (!memberOps.can.performEffect(buff)) {
-          return null;
-        }
-
         const inputConfigs = buff.inputConfigs;
         const inputs = inputsById[buff.id] || [];
 
-        const description = memberOps.show.buffText(buff, inputs);
+        const description = memberOps.show.weaponBuffText(buff);
 
         return (
           <div key={buff.id} className="p-2 bg-dark-2 rounded-xs">
             <GenshinModifierView
               mutable
               headingVariant="view"
-              heading={buff.src}
+              heading={`${data.name} R${refi}`}
               description={description}
               inputs={inputs}
               inputConfigs={inputConfigs}

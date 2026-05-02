@@ -6,12 +6,13 @@ import type {
   MemberEvent,
   SimulationEvent,
   SwitchInEvent,
+  WeaponBuffEvent,
 } from "../../types";
-import type { Member } from "../Member";
+import type { BonusGroupMeta, Member } from "../Member";
 
 import { talentCalc } from "../../logic/talentCalc";
 import { Team } from "../Team";
-import { applyAbilityBuff } from "./applyAbilityBuff";
+import { applyMemberBuff } from "./applyMemberBuff";
 
 export enum EHitLogType {
   MEMBER = "M",
@@ -108,7 +109,7 @@ export class SimulationProcessor {
         break;
       }
       case "WB": {
-        // TODO process weapon buff event
+        this.runWeaponBuffEvent(event);
         break;
       }
       default:
@@ -167,7 +168,45 @@ export class SimulationProcessor {
       return;
     }
 
-    const applied = applyAbilityBuff(buff, performerOps, event.inputs || []);
+    const { data } = performerOps.member;
+
+    const meta: BonusGroupMeta = {
+      id: `c${data.code}-${buff.id}`,
+      src: `${data.name} / ${buff.src}`,
+      affect: buff.affect,
+    };
+
+    const applied = applyMemberBuff(meta, buff.effects, performerOps, { inputs: event.inputs });
+
+    if (applied) {
+      team.finalizeMembers();
+    }
+  }
+
+  runWeaponBuffEvent(event: WeaponBuffEvent) {
+    const { team } = this;
+    const performer = team.getMember(event.performer);
+    const performerOps = team.getMemberOps(performer);
+    const buff = performer.weapon.data.buffs?.find((buff) => buff.id === event.modId);
+
+    if (!buff) {
+      // TODO handle error not found
+      console.warn(`Buff not found: ${performer.data.name} / ${event.modId}`);
+      return;
+    }
+
+    const { data, refi } = performer.weapon;
+
+    const meta: BonusGroupMeta = {
+      id: `c${performer.data.code}-w${data.code}-${buff.id}`,
+      src: `${data.name} R${refi} (${performer.data.name})`,
+      affect: buff.affect,
+    };
+
+    const applied = applyMemberBuff(meta, buff.effects, performerOps, {
+      inputs: event.inputs,
+      refi,
+    });
 
     if (applied) {
       team.finalizeMembers();

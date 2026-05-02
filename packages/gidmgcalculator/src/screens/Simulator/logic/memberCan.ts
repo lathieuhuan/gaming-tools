@@ -91,6 +91,8 @@ export function memberCan(member: Member, team: Team) {
   }
 
   return {
+    member,
+    team,
     performEffect,
     receiveBonus,
   };

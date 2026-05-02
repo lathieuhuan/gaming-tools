@@ -29,14 +29,19 @@ export function createSimulation(id: number = Date.now()) {
 
 export function createMemberInputs(member: WritableDraft<Member>): MemberInputs {
   const abilityBuffInputs: InputsById = {};
+  const weaponBuffInputs: InputsById = {};
 
   member.data.buffs?.forEach((buff) => {
     abilityBuffInputs[buff.id] = createModCtrlInputs(buff.inputConfigs);
   });
 
+  member.weapon.data.buffs?.forEach((buff) => {
+    weaponBuffInputs[buff.id] = createModCtrlInputs(buff.inputConfigs);
+  });
+
   return {
     ABILITY_BUFF: abilityBuffInputs,
-    WEAPON_BUFF: {},
+    WEAPON_BUFF: weaponBuffInputs,
   };
 }
 
