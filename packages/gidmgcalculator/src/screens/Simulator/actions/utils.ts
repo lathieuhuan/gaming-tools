@@ -33,18 +33,18 @@ export function createMemberInputs(member: WritableDraft<Member>): MemberInputs 
   const artifactBuffInputs: InputsById = {};
 
   member.data.buffs?.forEach((buff) => {
-    abilityBuffInputs[buff.id] = createModCtrlInputs(buff.inputConfigs);
+    abilityBuffInputs[buff.id] = createModCtrlInputs(buff.inputConfigs, true);
   });
 
   member.weapon.data.buffs?.forEach((buff) => {
-    weaponBuffInputs[buff.id] = createModCtrlInputs(buff.inputConfigs);
+    weaponBuffInputs[buff.id] = createModCtrlInputs(buff.inputConfigs, true);
   });
 
   member.atfGear.sets.forEach((set) => {
     set.data.buffs?.forEach((buff) => {
       const id = set.bonusLv * 1000 + buff.id;
 
-      artifactBuffInputs[id] = createModCtrlInputs(buff.inputConfigs);
+      artifactBuffInputs[id] = createModCtrlInputs(buff.inputConfigs, true);
     });
   });
 

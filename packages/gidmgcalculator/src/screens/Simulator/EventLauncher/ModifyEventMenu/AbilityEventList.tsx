@@ -39,6 +39,9 @@ export function AbilityEventList({ memberOps }: AbilityEventListProps) {
         }
 
         const inputs = inputsById[buff.id] || [];
+        const inputConfigs = buff.inputConfigs?.filter(
+          (config) => !config.for || config.for !== "FOR_TEAM"
+        );
 
         return (
           <BuffEventItem
@@ -46,7 +49,7 @@ export function AbilityEventList({ memberOps }: AbilityEventListProps) {
             heading={buff.src}
             description={memberOps.show.abilityBuffText(buff, inputs)}
             inputs={inputs}
-            inputConfigs={buff.inputConfigs}
+            inputConfigs={inputConfigs}
             onInputChange={(inputIndex, value) => handleInputChange(buff.id, inputIndex, value)}
             onTrigger={() => handleTrigger(buff.id, inputs)}
           />

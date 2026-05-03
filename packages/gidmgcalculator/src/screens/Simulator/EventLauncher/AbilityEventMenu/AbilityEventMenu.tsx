@@ -47,25 +47,27 @@ export function AbilityEventMenu() {
         })}
       </EventListLayout>
 
-      {/* <EventListLayout title={t("ES")}>
+      <EventListLayout title={t("ES")}>
         <AbilityEventList
           className="space-y-2"
-          character={activeMember}
+          member={activeMember}
+          target={target}
           attPatt="ES"
           activeNames={activeNames}
           onClickHeading={handleClickHeading}
         />
-      </EventListLayout> */}
+      </EventListLayout>
 
-      {/* <EventListLayout title={t("EB")}>
+      <EventListLayout title={t("EB")}>
         <AbilityEventList
           className="space-y-2"
-          character={activeMember}
+          member={activeMember}
+          target={target}
           attPatt="EB"
           activeNames={activeNames}
           onClickHeading={handleClickHeading}
         />
-      </EventListLayout> */}
+      </EventListLayout>
     </div>
   );
 }

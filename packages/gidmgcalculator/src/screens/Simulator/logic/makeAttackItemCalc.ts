@@ -8,7 +8,7 @@ import type {
   AttackBonusKey,
   AttackElement,
   AttackReaction,
-  TalentCalcItemBonusId
+  TalentCalcItemBonusId,
 } from "@/types";
 
 import { limitCRate } from "@/logic/stat.logic";

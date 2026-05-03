@@ -137,7 +137,7 @@ export class Member implements Clonable<Member>, Serializable<RawCharacter> {
   }
 
   getAttr(key: AttributeStat) {
-    return this.attrsCtrl.get(key);
+    return this.attrsCtrl.finals.get(key);
   }
 
   // ===== CALCULATION =====

@@ -46,6 +46,9 @@ export function ArtifactEventList({ memberOps }: ArtifactEventListProps) {
 
           const modInputId = set.bonusLv * 1000 + buff.id;
           const inputs = inputsById[modInputId] || [];
+          const inputConfigs = buff.inputConfigs?.filter(
+            (config) => !config.for || config.for !== "FOR_TEAM"
+          );
 
           return (
             <BuffEventItem
@@ -53,7 +56,7 @@ export function ArtifactEventList({ memberOps }: ArtifactEventListProps) {
               heading={`${data.name}`}
               description={memberOps.show.artifactBuffText(buff, data)}
               inputs={inputs}
-              inputConfigs={buff.inputConfigs}
+              inputConfigs={inputConfigs}
               onInputChange={(inputIndex, value) => {
                 handleInputChange(modInputId, inputIndex, value);
               }}
