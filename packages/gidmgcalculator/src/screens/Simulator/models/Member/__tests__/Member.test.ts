@@ -7,7 +7,7 @@ import { $AppCharacter } from "@/services";
 import type { AllAttributeStat } from "@/types";
 
 import { CharacterMock } from "@/__tests__/mocks/characters.mock";
-import { __characterMockup } from "@/__tests__/utils/characterMockup";
+import { __appCharacterMock } from "@/__tests__/utils/appCharacterMock";
 import { __createMember } from "../../../__tests__/utils";
 import { AttributeControl } from "../AttributeControl";
 import { BonusControl } from "../BonusControl";
@@ -32,8 +32,8 @@ describe("Member", () => {
     });
 
     test("sets isTraveler when character name ends with Traveler", () => {
-      const travelerData = __characterMockup(999, { name: "Anemo Traveler" });
-      const otherData = __characterMockup(998, { name: "Amber" });
+      const travelerData = __appCharacterMock(999, { name: "Anemo Traveler" });
+      const otherData = __appCharacterMock(998, { name: "Amber" });
 
       const travelerMember = new Member(
         travelerData.code,

@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest";
 
 import { CharacterMock } from "@/__tests__/mocks/characters.mock";
-import { __createMember } from "../../../__tests__/utils";
+import { __createMember } from "@/screens/Simulator/__tests__/utils";
 import { Member } from "../../Member";
 import { Team } from "../Team";
 

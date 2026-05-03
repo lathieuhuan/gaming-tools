@@ -1,6 +1,6 @@
 import { AppWeapon } from "@/types";
 
-export function __weaponMockup(code: number, data: Partial<AppWeapon>): AppWeapon {
+export function __appWeaponMock(code: number, data?: Partial<AppWeapon>): AppWeapon {
   return {
     code,
     icon: "",

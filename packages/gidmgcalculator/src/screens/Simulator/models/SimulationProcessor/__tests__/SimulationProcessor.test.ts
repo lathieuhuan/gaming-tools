@@ -2,21 +2,43 @@ import { describe, expect, test, vi } from "vitest";
 
 import type {
   DbAbilityHitEvent,
+  DbArtifactBuffEvent,
   DbModifyEvent,
   DbSimulationEvent,
   DbSwitchInEvent,
 } from "@/screens/Simulator/types";
 
+import { ArtifactMock } from "@/__tests__/mocks/artifacts.mock";
 import { CharacterMock } from "@/__tests__/mocks/characters.mock";
-import { createTarget } from "@/logic/entity.logic";
+import { WeaponMock } from "@/__tests__/mocks/weapons.mock";
+import { __customWeaponMock } from "@/__tests__/utils/customWeaponMock";
+import { createArtifact, createTarget } from "@/logic/entity.logic";
+import { ArtifactGear } from "@/models/ArtifactGear";
 import { Target } from "@/models/Target";
 import { TargetCalc } from "@/models/TargetCalc";
 import { __createMember } from "@/screens/Simulator/__tests__/utils";
 import { EEventCategory, EHitEventType, EModifyEventType } from "@/screens/Simulator/configs";
+import { Member } from "@/screens/Simulator/models/Member";
+import { $AppCharacter } from "@/services";
 import { EHitLogType, SimulationProcessor } from "../SimulationProcessor";
 
 function createTargetCalc() {
   return new TargetCalc(createTarget({ code: 0 }), Target.DEFAULT_MONSTER);
+}
+
+function atfGearWithTwoPieceSet(code: number) {
+  const flower = createArtifact({
+    ID: 1,
+    code: code,
+    type: "flower",
+  });
+  const plume = createArtifact({
+    ID: 2,
+    code: code,
+    type: "plume",
+  });
+
+  return new ArtifactGear([flower, plume]);
 }
 
 function createTwoMemberProcessor(onFieldCode: number) {
@@ -202,6 +224,200 @@ describe("SimulationProcessor", () => {
 
       expect(info).toHaveBeenCalledWith(expect.stringContaining("No available effects"));
       info.mockRestore();
+    });
+  });
+
+  describe("runWeaponBuffEvent", () => {
+    test("records an error timeline entry when no weapon buff matches modId", () => {
+      const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
+      const event: DbModifyEvent = {
+        id: "wb-1",
+        cate: EEventCategory.MEMBER,
+        type: EModifyEventType.WEAPON_BUFF,
+        performer: CharacterMock.PYRO_SWORD_HEXEREI,
+        modId: 9_999_999,
+      };
+
+      processor.runWeaponBuffEvent(event);
+
+      expect(processor.timeline).toHaveLength(1);
+      expect(processor.timeline[0]).toMatchObject({
+        cate: EEventCategory.ERROR,
+        message: expect.stringContaining("Buff not found"),
+      });
+    });
+
+    test("pushes a weapon buff timeline entry with performer, item, and buff when modId matches", () => {
+      const character = $AppCharacter.get(CharacterMock.PYRO_SWORD_HEXEREI);
+      const weapon = __customWeaponMock(WeaponMock.SWORD, {
+        buffs: [
+          {
+            id: 701,
+            description: 0,
+            effects: {
+              target: { module: "ATTR", path: "atk" },
+              value: 12,
+            },
+          },
+        ],
+      });
+
+      const member = new Member(character.code, character, weapon);
+      const members = new Map([[member.code, member]]);
+      const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
+
+      const event: DbModifyEvent = {
+        id: "wb-2",
+        cate: EEventCategory.MEMBER,
+        type: EModifyEventType.WEAPON_BUFF,
+        performer: member.code,
+        modId: 701,
+      };
+
+      processor.runWeaponBuffEvent(event);
+
+      expect(processor.timeline).toHaveLength(1);
+      expect(processor.timeline[0]).toMatchObject({
+        type: EModifyEventType.WEAPON_BUFF,
+        performer: member.data,
+        item: weapon.data,
+        buff: weapon.data.buffs![0],
+      });
+    });
+
+    test("calls finalizeMembers when weapon buff effects apply", () => {
+      const character = $AppCharacter.get(CharacterMock.PYRO_SWORD_HEXEREI);
+      const weapon = __customWeaponMock(WeaponMock.SWORD, {
+        buffs: [
+          {
+            id: 702,
+            description: 0,
+            effects: {
+              target: { module: "ATTR", path: "atk" },
+              value: 15,
+            },
+          },
+        ],
+      });
+
+      const member = new Member(character.code, character, weapon);
+      const members = new Map([[member.code, member]]);
+      const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
+      const finalize = vi.spyOn(processor.team, "finalizeMembers");
+
+      processor.runWeaponBuffEvent({
+        id: "wb-3",
+        cate: EEventCategory.MEMBER,
+        type: EModifyEventType.WEAPON_BUFF,
+        performer: member.code,
+        modId: 702,
+      });
+
+      expect(finalize).toHaveBeenCalled();
+    });
+  });
+
+  describe("runArtifactSetBuffEvent", () => {
+    test("records an error when no equipped set matches itemId", () => {
+      const member = __createMember({ characterCode: CharacterMock.PYRO_SWORD_HEXEREI });
+      const members = new Map([[member.code, member]]);
+      const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
+      const event: DbArtifactBuffEvent = {
+        id: "asb-1",
+        cate: EEventCategory.MEMBER,
+        type: EModifyEventType.ARTIFACT_SET_BUFF,
+        performer: member.code,
+        itemId: ArtifactMock.SETBONUS_OF_2,
+        modId: 1,
+      };
+
+      processor.runArtifactSetBuffEvent(event);
+
+      expect(processor.timeline).toHaveLength(1);
+      expect(processor.timeline[0]).toMatchObject({
+        cate: EEventCategory.ERROR,
+        message: expect.stringContaining("Buff not found"),
+      });
+    });
+
+    test("records an error when the set is equipped but modId does not match any buff", () => {
+      const atfGear = atfGearWithTwoPieceSet(ArtifactMock.BUFFS_LV_1);
+      const member = __createMember({
+        characterCode: CharacterMock.PYRO_SWORD_HEXEREI,
+        atfGear,
+      });
+      const members = new Map([[member.code, member]]);
+      const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
+      const event: DbArtifactBuffEvent = {
+        id: "asb-2",
+        cate: EEventCategory.MEMBER,
+        type: EModifyEventType.ARTIFACT_SET_BUFF,
+        performer: member.code,
+        itemId: ArtifactMock.BUFFS_LV_1,
+        modId: 9_999,
+      };
+
+      processor.runArtifactSetBuffEvent(event);
+
+      expect(processor.timeline[0]).toMatchObject({
+        cate: EEventCategory.ERROR,
+        message: expect.stringContaining("Buff not found"),
+      });
+    });
+
+    test("pushes an artifact set buff timeline entry with performer, item, and buff when ids match", () => {
+      const buffId = 1;
+      const atfGear = atfGearWithTwoPieceSet(ArtifactMock.BUFFS_LV_1);
+      const data = atfGear.sets[0].data;
+
+      const member = __createMember({
+        characterCode: CharacterMock.PYRO_SWORD_HEXEREI,
+        atfGear,
+      });
+      const members = new Map([[member.code, member]]);
+      const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
+
+      const event: DbArtifactBuffEvent = {
+        id: "asb-3",
+        cate: EEventCategory.MEMBER,
+        type: EModifyEventType.ARTIFACT_SET_BUFF,
+        performer: member.code,
+        itemId: ArtifactMock.BUFFS_LV_1,
+        modId: buffId,
+      };
+
+      processor.runArtifactSetBuffEvent(event);
+
+      expect(processor.timeline).toHaveLength(1);
+      expect(processor.timeline[0]).toMatchObject({
+        type: EModifyEventType.ARTIFACT_SET_BUFF,
+        performer: member.data,
+        item: data,
+        buff: expect.objectContaining({ id: buffId }),
+      });
+    });
+
+    test("calls finalizeMembers when artifact set buff effects apply", () => {
+      const buffId = 2;
+      const atfGear = atfGearWithTwoPieceSet(ArtifactMock.BUFFS_LV_1);
+      const member = __createMember({
+        characterCode: CharacterMock.PYRO_SWORD_HEXEREI,
+        atfGear,
+      });
+      const members = new Map([[member.code, member]]);
+      const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
+      const finalize = vi.spyOn(processor.team, "finalizeMembers");
+
+      processor.runArtifactSetBuffEvent({
+        id: "asb-4",
+        cate: EEventCategory.MEMBER,
+        type: EModifyEventType.ARTIFACT_SET_BUFF,
+        performer: member.code,
+        itemId: ArtifactMock.BUFFS_LV_1,
+        modId: buffId,
+      });
+
+      expect(finalize).toHaveBeenCalled();
     });
   });
 

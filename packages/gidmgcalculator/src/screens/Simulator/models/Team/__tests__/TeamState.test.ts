@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 import { createWeapon } from "@/logic/entity.logic";
 import { ArtifactGear } from "@/models/ArtifactGear";
 import { CharacterMock } from "@/__tests__/mocks/characters.mock";
-import { __characterMockup } from "@/__tests__/utils/characterMockup";
+import { __appCharacterMock } from "@/__tests__/utils/appCharacterMock";
 import { __createMember } from "../../../__tests__/utils";
 import { Member } from "../../Member";
 import { TeamState } from "../TeamState";

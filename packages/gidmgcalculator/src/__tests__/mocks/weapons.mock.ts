@@ -1,5 +1,5 @@
 import { AppWeapon } from "@/types";
-import { __weaponMockup } from "../utils/weaponMockup";
+import { __appWeaponMock } from "../utils/appWeaponMock";
 
 export const WeaponMock = {
   BOW: 11,
@@ -10,19 +10,19 @@ export const WeaponMock = {
 } as const;
 
 export const WEAPON_MOCKS: AppWeapon[] = [
-  __weaponMockup(WeaponMock.BOW, {
+  __appWeaponMock(WeaponMock.BOW, {
     type: "bow",
   }),
-  __weaponMockup(WeaponMock.CATALYST, {
+  __appWeaponMock(WeaponMock.CATALYST, {
     type: "catalyst",
   }),
-  __weaponMockup(WeaponMock.CLAYMORE, {
+  __appWeaponMock(WeaponMock.CLAYMORE, {
     type: "claymore",
   }),
-  __weaponMockup(WeaponMock.POLEARM, {
+  __appWeaponMock(WeaponMock.POLEARM, {
     type: "polearm",
   }),
-  __weaponMockup(WeaponMock.SWORD, {
+  __appWeaponMock(WeaponMock.SWORD, {
     type: "sword",
   }),
 ];
