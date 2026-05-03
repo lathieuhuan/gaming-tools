@@ -449,7 +449,33 @@ describe("SimulationProcessor", () => {
   });
 
   describe("runTimeline", () => {
-    test("clears hit logs on each run then records AH events", () => {
+    test("replays only new trailing events when incoming ids extend the existing prefix", () => {
+      const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
+      const first: DbAbilityHitEvent = {
+        id: "tl-ah-1",
+        cate: EEventCategory.MEMBER,
+        type: EHitEventType.ABILITY_HIT,
+        performer: CharacterMock.PYRO_SWORD_HEXEREI,
+        talent: "NA",
+        index: 0,
+      };
+      const second: DbAbilityHitEvent = {
+        id: "tl-ah-2",
+        cate: EEventCategory.MEMBER,
+        type: EHitEventType.ABILITY_HIT,
+        performer: CharacterMock.PYRO_SWORD_HEXEREI,
+        talent: "NA",
+        index: 0,
+      };
+
+      processor.runTimeline([first]);
+      expect(processor.hitLogs).toHaveLength(1);
+
+      processor.runTimeline([first, second]);
+      expect(processor.hitLogs).toHaveLength(2);
+    });
+
+    test("does not duplicate hits when the same timeline is run again", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
       const ah: DbAbilityHitEvent = {
         id: "tl-ah",
@@ -466,6 +492,31 @@ describe("SimulationProcessor", () => {
 
       processor.runTimeline(timeline);
       expect(processor.hitLogs).toHaveLength(1);
+    });
+
+    test("resets and replays from scratch when a prefix id no longer matches", () => {
+      const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
+      const initial: DbAbilityHitEvent = {
+        id: "tl-ah-a",
+        cate: EEventCategory.MEMBER,
+        type: EHitEventType.ABILITY_HIT,
+        performer: CharacterMock.PYRO_SWORD_HEXEREI,
+        talent: "NA",
+        index: 0,
+      };
+      const replaced: DbAbilityHitEvent = {
+        ...initial,
+        id: "tl-ah-b",
+      };
+
+      processor.runTimeline([initial]);
+      expect(processor.hitLogs).toHaveLength(1);
+      const firstValue = processor.hitLogs[0].value;
+
+      processor.runTimeline([replaced]);
+      expect(processor.hitLogs).toHaveLength(1);
+      expect(processor.hitLogs[0].value).toBe(firstValue);
+      expect(processor.timeline[0]).toMatchObject({ id: "tl-ah-b" });
     });
 
     test("ignores environment events without throwing", () => {

@@ -39,16 +39,11 @@ type EnvironmentHitLog = BaseHitLog & {
 type HitLog = MemberHitLog | EnvironmentHitLog;
 
 export class SimulationProcessor {
-  #hitLogs: HitLog[] = [];
-
   timeline: SimulationEvent[] = [];
+  hitLogs: HitLog[] = [];
 
   public team: Team;
   public target: TargetCalc;
-
-  get hitLogs() {
-    return this.#hitLogs;
-  }
 
   constructor(members: Map<number, Member>, target: TargetCalc, onFieldMember: number) {
     const team = new Team(members, onFieldMember);
@@ -61,34 +56,53 @@ export class SimulationProcessor {
   }
 
   private reset() {
-    this.#hitLogs = [];
+    this.hitLogs = [];
     this.timeline = [];
     // TODO optimize by replace
     this.team.init();
   }
 
-  // TODO optimize
-  runTimeline(timeline: DbSimulationEvent[]) {
-    this.reset();
+  // TODO check if enhance needed
+  private timelineSynced(timeline: DbSimulationEvent[]) {
+    return this.timeline.every((event, index) => event.id === timeline[index].id);
+  }
 
-    for (const event of timeline) {
-      switch (event.cate) {
-        case EEventCategory.MEMBER: {
-          this.runMemberEvent(event);
-          break;
-        }
-        case EEventCategory.ENVIRONMENT: {
-          // TODO process environment event
-          break;
-        }
-        default:
-          event satisfies never;
+  runTimeline(timeline: DbSimulationEvent[]) {
+    if (this.timelineSynced(timeline)) {
+      const eventCount = timeline.length;
+
+      for (let i = this.timeline.length; i < eventCount; i++) {
+        this.runEvent(timeline[i]);
+      }
+
+      this.hitLogs = [...this.hitLogs];
+      this.timeline = [...this.timeline];
+    } else {
+      this.reset();
+
+      for (const event of timeline) {
+        this.runEvent(event);
       }
     }
 
     this.team.memberList.forEach((member) => {
       this.team.setMember(member.clone());
     });
+  }
+
+  runEvent(event: DbSimulationEvent) {
+    switch (event.cate) {
+      case EEventCategory.MEMBER: {
+        this.runMemberEvent(event);
+        break;
+      }
+      case EEventCategory.ENVIRONMENT: {
+        // TODO process environment event
+        break;
+      }
+      default:
+        event satisfies never;
+    }
   }
 
   // # Member Event
@@ -149,7 +163,7 @@ export class SimulationProcessor {
     });
     const value = result.values.reduce((acc, value) => acc + Math.round(value.average), 0);
 
-    this.#hitLogs.push({
+    this.hitLogs.push({
       type: EHitLogType.MEMBER,
       performer: event.performer,
       value,
