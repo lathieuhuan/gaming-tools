@@ -8,7 +8,7 @@ import { selectActiveMember, selectProcessor, selectSimulation, useSimulatorStor
 import { CharacterPortrait } from "@/components";
 import { TabItem, Tabs } from "../components/Tabs";
 import { AbilityEventMenu } from "./AbilityEventMenu";
-import { ModifyEventMenu } from "./ModifyEventMenu";
+import { BuffEventMenu } from "./BuffEventMenu";
 
 type EventLauncherTabItem = TabItem & {
   component: ComponentType;
@@ -21,9 +21,9 @@ const TABS: EventLauncherTabItem[] = [
     component: AbilityEventMenu,
   },
   {
-    label: "Modify",
-    value: "MODIFY",
-    component: ModifyEventMenu,
+    label: "Buff",
+    value: "BUFF",
+    component: BuffEventMenu,
   },
 ];
 

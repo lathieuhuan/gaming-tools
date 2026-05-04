@@ -4,7 +4,7 @@ import type { ModInputSpec } from "@/types";
 
 import { GenshinModifierView } from "@/components";
 
-type BuffEventItemProps = {
+type EventTriggerProps = {
   heading: string;
   description?: string;
   inputs: number[];
@@ -13,14 +13,14 @@ type BuffEventItemProps = {
   onTrigger: () => void;
 };
 
-export function BuffEventItem({
+export function EventTrigger({
   heading,
   description,
   inputs,
   inputConfigs,
   onInputChange,
   onTrigger,
-}: BuffEventItemProps) {
+}: EventTriggerProps) {
   return (
     <div className="p-2 bg-dark-2 rounded-xs">
       <GenshinModifierView

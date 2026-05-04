@@ -3,13 +3,13 @@ import type { MemberOperations } from "../../models/Team";
 import { triggerWeaponBuffEvent, updateAbilityInputs } from "../../actions/build";
 import { selectModInputs, useSimulatorStore } from "../../store";
 
-import { BuffEventItem } from "./BuffEventItem";
+import { EventTrigger } from "./EventTrigger";
 
-type WeaponEventListProps = {
+type WeaponBuffListProps = {
   memberOps: MemberOperations;
 };
 
-export function WeaponEventList({ memberOps }: WeaponEventListProps) {
+export function WeaponBuffList({ memberOps }: WeaponBuffListProps) {
   const inputsById = useSimulatorStore(selectModInputs("WEAPON_BUFF"));
 
   const { data, refi } = memberOps.member.weapon;
@@ -40,7 +40,7 @@ export function WeaponEventList({ memberOps }: WeaponEventListProps) {
         );
 
         return (
-          <BuffEventItem
+          <EventTrigger
             key={buff.id}
             heading={`${data.name} R${refi}`}
             description={memberOps.show.weaponBuffText(buff)}

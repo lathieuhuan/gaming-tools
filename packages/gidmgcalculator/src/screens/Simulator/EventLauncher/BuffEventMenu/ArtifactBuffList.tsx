@@ -3,13 +3,13 @@ import type { MemberOperations } from "../../models/Team";
 import { triggerArtifactBuffEvent, updateAbilityInputs } from "../../actions/build";
 import { selectModInputs, useSimulatorStore } from "../../store";
 
-import { BuffEventItem } from "./BuffEventItem";
+import { EventTrigger } from "./EventTrigger";
 
-type ArtifactEventListProps = {
+type ArtifactBuffListProps = {
   memberOps: MemberOperations;
 };
 
-export function ArtifactEventList({ memberOps }: ArtifactEventListProps) {
+export function ArtifactBuffList({ memberOps }: ArtifactBuffListProps) {
   const inputsById = useSimulatorStore(selectModInputs("ARTIFACT_BUFF"));
 
   const { sets } = memberOps.member.atfGear;
@@ -51,7 +51,7 @@ export function ArtifactEventList({ memberOps }: ArtifactEventListProps) {
           );
 
           return (
-            <BuffEventItem
+            <EventTrigger
               key={modInputId}
               heading={`${data.name}`}
               description={memberOps.show.artifactBuffText(buff, data)}

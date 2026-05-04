@@ -3,13 +3,13 @@ import type { MemberOperations } from "../../models/Team";
 import { triggerAbilityBuffEvent, updateAbilityInputs } from "../../actions/build";
 import { selectModInputs, useSimulatorStore } from "../../store";
 
-import { BuffEventItem } from "./BuffEventItem";
+import { EventTrigger } from "./EventTrigger";
 
-type AbilityEventListProps = {
+type AbilityBuffListProps = {
   memberOps: MemberOperations;
 };
 
-export function AbilityEventList({ memberOps }: AbilityEventListProps) {
+export function AbilityBuffList({ memberOps }: AbilityBuffListProps) {
   const inputsById = useSimulatorStore(selectModInputs("ABILITY_BUFF"));
 
   const { data } = memberOps.member;
@@ -44,7 +44,7 @@ export function AbilityEventList({ memberOps }: AbilityEventListProps) {
         );
 
         return (
-          <BuffEventItem
+          <EventTrigger
             key={buff.id}
             heading={buff.src}
             description={memberOps.show.abilityBuffText(buff, inputs)}
