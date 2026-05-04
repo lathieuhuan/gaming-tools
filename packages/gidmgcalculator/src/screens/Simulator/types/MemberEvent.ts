@@ -11,16 +11,16 @@ import type {
 } from "@/types";
 import type { EEventCategory, EHitEventType, EModifyEventType } from "../configs";
 
-type RawMemberEventBase = {
+type MemberEventCore = {
   id: string;
   cate: EEventCategory.MEMBER;
 };
 
-type DbMemberEventBase = RawMemberEventBase & {
+type RawMemberEventBase = MemberEventCore & {
   performer: number;
 };
 
-type MemberEventBase = RawMemberEventBase & {
+type MemberEventBase = MemberEventCore & {
   performer: AppCharacter;
 };
 
@@ -30,13 +30,13 @@ type SwitchInEventBase = {
   type: "SI";
 };
 
-export type DbSwitchInEvent = DbMemberEventBase & SwitchInEventBase;
+export type RawSwitchInEvent = RawMemberEventBase & SwitchInEventBase;
 
 export type SwitchInEvent = MemberEventBase & SwitchInEventBase;
 
 // # Modify Event
 
-export type DbModifyEvent = DbAbilityBuffEvent | DbWeaponBuffEvent | DbArtifactBuffEvent;
+export type RawModifyEvent = RawAbilityBuffEvent | RawWeaponBuffEvent | RawArtifactBuffEvent;
 
 export type ModifyEvent = AbilityBuffEvent | WeaponBuffEvent | ArtifactBuffEvent;
 
@@ -47,9 +47,10 @@ type AbilityBuffEventBase = {
   inputs?: number[];
 };
 
-export type DbAbilityBuffEvent = DbMemberEventBase & AbilityBuffEventBase & {
-  modId: number;
-};
+export type RawAbilityBuffEvent = RawMemberEventBase &
+  AbilityBuffEventBase & {
+    modId: number;
+  };
 
 export type AbilityBuffEvent = MemberEventBase &
   AbilityBuffEventBase & {
@@ -63,7 +64,7 @@ type WeaponBuffEventBase = {
   inputs?: number[];
 };
 
-export type DbWeaponBuffEvent = DbMemberEventBase &
+export type RawWeaponBuffEvent = RawMemberEventBase &
   WeaponBuffEventBase & {
     modId: number;
   };
@@ -81,10 +82,11 @@ type ArtifactBuffEventBase = {
   inputs?: number[];
 };
 
-export type DbArtifactBuffEvent = DbMemberEventBase & ArtifactBuffEventBase & {
-  itemId: number;
-  modId: number;
-};
+export type RawArtifactBuffEvent = RawMemberEventBase &
+  ArtifactBuffEventBase & {
+    itemId: number;
+    modId: number;
+  };
 
 export type ArtifactBuffEvent = MemberEventBase &
   ArtifactBuffEventBase & {
@@ -94,7 +96,7 @@ export type ArtifactBuffEvent = MemberEventBase &
 
 // # Hit Event
 
-export type DbHitEvent = DbAbilityHitEvent | DbReactionHitEvent;
+export type RawHitEvent = RawAbilityHitEvent | RawReactionHitEvent;
 
 export type HitEvent = AbilityHitEvent | ReactionHitEvent;
 
@@ -108,7 +110,7 @@ type AbilityHitEventBase = {
   reaction?: AttackReaction;
 };
 
-export type DbAbilityHitEvent = DbMemberEventBase & AbilityHitEventBase;
+export type RawAbilityHitEvent = RawMemberEventBase & AbilityHitEventBase;
 
 export type AbilityHitEvent = MemberEventBase & AbilityHitEventBase;
 
@@ -118,12 +120,12 @@ type ReactionHitEventBase = {
   type: EHitEventType.REACTION_HIT;
 };
 
-export type ReactionHitEvent = MemberEventBase & ReactionHitEventBase;
+export type RawReactionHitEvent = RawMemberEventBase & ReactionHitEventBase;
 
-export type DbReactionHitEvent = DbMemberEventBase & ReactionHitEventBase;
+export type ReactionHitEvent = MemberEventBase & ReactionHitEventBase;
 
 // ===== Member Event =====
 
-export type DbMemberEvent = DbSwitchInEvent | DbModifyEvent | DbHitEvent;
+export type RawMemberEvent = RawSwitchInEvent | RawModifyEvent | RawHitEvent;
 
 export type MemberEvent = SwitchInEvent | ModifyEvent | HitEvent;

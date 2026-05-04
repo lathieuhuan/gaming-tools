@@ -1,6 +1,10 @@
 import type { EEventCategory } from "../configs";
 
-export type EnvironmentEvent = {
+type EnvironmentEventCore = {
   id: string;
   cate: EEventCategory.ENVIRONMENT;
 };
+
+export type RawEnvironmentEvent = EnvironmentEventCore;
+
+export type EnvironmentEvent = EnvironmentEventCore;

@@ -1,11 +1,11 @@
 import { describe, expect, test, vi } from "vitest";
 
 import type {
-  DbAbilityHitEvent,
-  DbArtifactBuffEvent,
-  DbModifyEvent,
   DbSimulationEvent,
-  DbSwitchInEvent,
+  RawAbilityHitEvent,
+  RawArtifactBuffEvent,
+  RawModifyEvent,
+  RawSwitchInEvent,
 } from "@/screens/Simulator/types";
 
 import { ArtifactMock } from "@/__tests__/mocks/artifacts.mock";
@@ -71,7 +71,7 @@ describe("SimulationProcessor", () => {
     test("sets the on-field member to the event performer", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
       const bCode = CharacterMock.HYDRO_CATALYST;
-      const event: DbSwitchInEvent = {
+      const event: RawSwitchInEvent = {
         id: "si-1",
         cate: EEventCategory.MEMBER,
         type: "SI",
@@ -87,7 +87,7 @@ describe("SimulationProcessor", () => {
   describe("runAbilityHitEvent", () => {
     test("records a member hit log with performer, value, and attack element from calculation", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const event: DbAbilityHitEvent = {
+      const event: RawAbilityHitEvent = {
         id: "ah-1",
         cate: EEventCategory.MEMBER,
         type: EHitEventType.ABILITY_HIT,
@@ -112,7 +112,7 @@ describe("SimulationProcessor", () => {
 
     test("passes optional element and reaction through to the hit log", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const event: DbAbilityHitEvent = {
+      const event: RawAbilityHitEvent = {
         id: "ah-2",
         cate: EEventCategory.MEMBER,
         type: EHitEventType.ABILITY_HIT,
@@ -134,7 +134,7 @@ describe("SimulationProcessor", () => {
   describe("runAbilityBuffEvent", () => {
     test("records an error timeline entry when no buff matches modId", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const event: DbModifyEvent = {
+      const event: RawModifyEvent = {
         id: "ab-1",
         cate: EEventCategory.MEMBER,
         type: EModifyEventType.ABILITY_BUFF,
@@ -171,7 +171,7 @@ describe("SimulationProcessor", () => {
       });
       const members = new Map([[member.code, member]]);
       const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
-      const event: DbModifyEvent = {
+      const event: RawModifyEvent = {
         id: "ab-2",
         cate: EEventCategory.MEMBER,
         type: EModifyEventType.ABILITY_BUFF,
@@ -211,7 +211,7 @@ describe("SimulationProcessor", () => {
       });
       const members = new Map([[member.code, member]]);
       const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
-      const event: DbModifyEvent = {
+      const event: RawModifyEvent = {
         id: "ab-3",
         cate: EEventCategory.MEMBER,
         type: EModifyEventType.ABILITY_BUFF,
@@ -230,7 +230,7 @@ describe("SimulationProcessor", () => {
   describe("runWeaponBuffEvent", () => {
     test("records an error timeline entry when no weapon buff matches modId", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const event: DbModifyEvent = {
+      const event: RawModifyEvent = {
         id: "wb-1",
         cate: EEventCategory.MEMBER,
         type: EModifyEventType.WEAPON_BUFF,
@@ -266,7 +266,7 @@ describe("SimulationProcessor", () => {
       const members = new Map([[member.code, member]]);
       const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
 
-      const event: DbModifyEvent = {
+      const event: RawModifyEvent = {
         id: "wb-2",
         cate: EEventCategory.MEMBER,
         type: EModifyEventType.WEAPON_BUFF,
@@ -322,7 +322,7 @@ describe("SimulationProcessor", () => {
       const member = __createMember({ characterCode: CharacterMock.PYRO_SWORD_HEXEREI });
       const members = new Map([[member.code, member]]);
       const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
-      const event: DbArtifactBuffEvent = {
+      const event: RawArtifactBuffEvent = {
         id: "asb-1",
         cate: EEventCategory.MEMBER,
         type: EModifyEventType.ARTIFACT_SET_BUFF,
@@ -348,7 +348,7 @@ describe("SimulationProcessor", () => {
       });
       const members = new Map([[member.code, member]]);
       const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
-      const event: DbArtifactBuffEvent = {
+      const event: RawArtifactBuffEvent = {
         id: "asb-2",
         cate: EEventCategory.MEMBER,
         type: EModifyEventType.ARTIFACT_SET_BUFF,
@@ -377,7 +377,7 @@ describe("SimulationProcessor", () => {
       const members = new Map([[member.code, member]]);
       const processor = new SimulationProcessor(members, createTargetCalc(), member.code);
 
-      const event: DbArtifactBuffEvent = {
+      const event: RawArtifactBuffEvent = {
         id: "asb-3",
         cate: EEventCategory.MEMBER,
         type: EModifyEventType.ARTIFACT_SET_BUFF,
@@ -424,13 +424,13 @@ describe("SimulationProcessor", () => {
   describe("runMemberEvent", () => {
     test("routes SI to switch-in and AH to ability hit logging", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const si: DbSwitchInEvent = {
+      const si: RawSwitchInEvent = {
         id: "m-si",
         cate: EEventCategory.MEMBER,
         type: "SI",
         performer: CharacterMock.HYDRO_CATALYST,
       };
-      const ah: DbAbilityHitEvent = {
+      const ah: RawAbilityHitEvent = {
         id: "m-ah",
         cate: EEventCategory.MEMBER,
         type: EHitEventType.ABILITY_HIT,
@@ -451,7 +451,7 @@ describe("SimulationProcessor", () => {
   describe("runTimeline", () => {
     test("replays only new trailing events when incoming ids extend the existing prefix", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const first: DbAbilityHitEvent = {
+      const first: RawAbilityHitEvent = {
         id: "tl-ah-1",
         cate: EEventCategory.MEMBER,
         type: EHitEventType.ABILITY_HIT,
@@ -459,7 +459,7 @@ describe("SimulationProcessor", () => {
         talent: "NA",
         index: 0,
       };
-      const second: DbAbilityHitEvent = {
+      const second: RawAbilityHitEvent = {
         id: "tl-ah-2",
         cate: EEventCategory.MEMBER,
         type: EHitEventType.ABILITY_HIT,
@@ -477,7 +477,7 @@ describe("SimulationProcessor", () => {
 
     test("does not duplicate hits when the same timeline is run again", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const ah: DbAbilityHitEvent = {
+      const ah: RawAbilityHitEvent = {
         id: "tl-ah",
         cate: EEventCategory.MEMBER,
         type: EHitEventType.ABILITY_HIT,
@@ -496,7 +496,7 @@ describe("SimulationProcessor", () => {
 
     test("resets and replays from scratch when a prefix id no longer matches", () => {
       const processor = createTwoMemberProcessor(CharacterMock.PYRO_SWORD_HEXEREI);
-      const initial: DbAbilityHitEvent = {
+      const initial: RawAbilityHitEvent = {
         id: "tl-ah-a",
         cate: EEventCategory.MEMBER,
         type: EHitEventType.ABILITY_HIT,
@@ -504,7 +504,7 @@ describe("SimulationProcessor", () => {
         talent: "NA",
         index: 0,
       };
-      const replaced: DbAbilityHitEvent = {
+      const replaced: RawAbilityHitEvent = {
         ...initial,
         id: "tl-ah-b",
       };

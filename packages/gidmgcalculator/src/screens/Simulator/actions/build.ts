@@ -1,11 +1,11 @@
 import type { ExactOmit } from "rond";
 
 import type {
-  DbAbilityBuffEvent,
-  DbAbilityHitEvent,
-  DbArtifactBuffEvent,
-  DbWeaponBuffEvent,
   ModCategory,
+  RawAbilityBuffEvent,
+  RawAbilityHitEvent,
+  RawArtifactBuffEvent,
+  RawWeaponBuffEvent,
 } from "../types";
 
 import { EEventCategory, EHitEventType, EModifyEventType } from "../configs";
@@ -77,7 +77,7 @@ export function switchIn(code: number) {
 }
 
 export function triggerAbilityHitEvent(
-  event: ExactOmit<DbAbilityHitEvent, "id" | "cate" | "type">
+  event: ExactOmit<RawAbilityHitEvent, "id" | "cate" | "type">
 ) {
   updateActiveSimulation((simulation) => {
     const id = `${eventId++}`;
@@ -94,7 +94,7 @@ export function triggerAbilityHitEvent(
 }
 
 export function triggerAbilityBuffEvent(
-  event: ExactOmit<DbAbilityBuffEvent, "id" | "cate" | "type">
+  event: ExactOmit<RawAbilityBuffEvent, "id" | "cate" | "type">
 ) {
   updateActiveSimulation((simulation) => {
     const id = `${eventId++}`;
@@ -111,7 +111,7 @@ export function triggerAbilityBuffEvent(
 }
 
 export function triggerWeaponBuffEvent(
-  event: ExactOmit<DbWeaponBuffEvent, "id" | "cate" | "type">
+  event: ExactOmit<RawWeaponBuffEvent, "id" | "cate" | "type">
 ) {
   updateActiveSimulation((simulation) => {
     const id = `${eventId++}`;
@@ -128,7 +128,7 @@ export function triggerWeaponBuffEvent(
 }
 
 export function triggerArtifactBuffEvent(
-  event: ExactOmit<DbArtifactBuffEvent, "id" | "cate" | "type">
+  event: ExactOmit<RawArtifactBuffEvent, "id" | "cate" | "type">
 ) {
   updateActiveSimulation((simulation) => {
     const id = `${eventId++}`;

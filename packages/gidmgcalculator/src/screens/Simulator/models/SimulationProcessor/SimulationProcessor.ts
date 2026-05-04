@@ -1,12 +1,12 @@
 import type { TargetCalc } from "@/models";
 import type { AttackElement, AttackReaction, LunarType } from "@/types";
 import type {
-  DbAbilityHitEvent,
-  DbArtifactBuffEvent,
-  DbMemberEvent,
-  DbModifyEvent,
   DbSimulationEvent,
-  DbSwitchInEvent,
+  RawAbilityHitEvent,
+  RawArtifactBuffEvent,
+  RawMemberEvent,
+  RawModifyEvent,
+  RawSwitchInEvent,
   SimulationEvent,
 } from "../../types";
 import type { BonusGroupMeta, Member } from "../Member";
@@ -106,7 +106,7 @@ export class SimulationProcessor {
   }
 
   // # Member Event
-  runMemberEvent(event: DbMemberEvent) {
+  runMemberEvent(event: RawMemberEvent) {
     switch (event.type) {
       case "SI": {
         this.runSwitchInEvent(event);
@@ -138,7 +138,7 @@ export class SimulationProcessor {
   }
 
   // ## Switch In Event
-  runSwitchInEvent(event: DbSwitchInEvent) {
+  runSwitchInEvent(event: RawSwitchInEvent) {
     const performer = this.team.getMember(event.performer);
 
     this.team.setOnFieldMember(performer);
@@ -152,7 +152,7 @@ export class SimulationProcessor {
   }
 
   // ## Ability Hit Event
-  runAbilityHitEvent(event: DbAbilityHitEvent) {
+  runAbilityHitEvent(event: RawAbilityHitEvent) {
     const performer = this.team.getMember(event.performer);
     const item = performer.data.calcList[event.talent][event.index];
 
@@ -179,7 +179,7 @@ export class SimulationProcessor {
   }
 
   // ## Ability Buff Event
-  runAbilityBuffEvent(event: DbModifyEvent) {
+  runAbilityBuffEvent(event: RawModifyEvent) {
     const { team } = this;
     const performer = team.getMember(event.performer);
     const performerOps = team.getMemberOps(performer);
@@ -226,7 +226,7 @@ export class SimulationProcessor {
   }
 
   // ## Weapon Buff Event
-  runWeaponBuffEvent(event: DbModifyEvent) {
+  runWeaponBuffEvent(event: RawModifyEvent) {
     const { team } = this;
     const performer = team.getMember(event.performer);
     const performerOps = team.getMemberOps(performer);
@@ -270,7 +270,7 @@ export class SimulationProcessor {
   }
 
   // ## Artifact Set Buff Event
-  runArtifactSetBuffEvent(event: DbArtifactBuffEvent) {
+  runArtifactSetBuffEvent(event: RawArtifactBuffEvent) {
     const { team } = this;
     const performer = team.getMember(event.performer);
     const performerOps = team.getMemberOps(performer);

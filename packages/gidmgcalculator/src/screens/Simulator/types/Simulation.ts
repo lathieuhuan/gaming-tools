@@ -5,10 +5,10 @@ import type { DbCharacter } from "@/types";
 import type { EEventCategory } from "../configs";
 import type { Member } from "../models/Member";
 import type { SimulationProcessor } from "../models/SimulationProcessor";
-import type { EnvironmentEvent } from "./EnvironmentEvent";
-import type { DbMemberEvent, MemberEvent } from "./MemberEvent";
+import type { EnvironmentEvent, RawEnvironmentEvent } from "./EnvironmentEvent";
+import type { MemberEvent, RawMemberEvent } from "./MemberEvent";
 
-export type DbSimulationEvent = DbMemberEvent | EnvironmentEvent;
+export type DbSimulationEvent = RawMemberEvent | RawEnvironmentEvent;
 
 // ===== DB Simulation =====
 
